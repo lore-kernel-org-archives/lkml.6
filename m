@@ -1,148 +1,138 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751432AbeDYHyX (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 03:54:23 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:62679 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751069AbeDYHyO (ORCPT
+        id S1751320AbeDYH4x (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 03:56:53 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:4441 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750882AbeDYH4u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 03:54:14 -0400
-From: Philippe Cornu <philippe.cornu@st.com>
-To: Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        "Mark Rutland" <mark.rutland@arm.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: Yannick Fertre <yannick.fertre@st.com>,
-        Philippe Cornu <philippe.cornu@st.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-Subject: [PATCH v2 2/2] drm/bridge: sii902x: add optional power supplies
-Date: Wed, 25 Apr 2018 09:53:14 +0200
-Message-ID: <20180425075314.19137-3-philippe.cornu@st.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180425075314.19137-1-philippe.cornu@st.com>
-References: <20180425075314.19137-1-philippe.cornu@st.com>
+        Wed, 25 Apr 2018 03:56:50 -0400
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Wed, 25 Apr 2018 00:56:48 -0700
+Date: Wed, 25 Apr 2018 09:56:43 +0200
+From: Thierry Reding <treding@nvidia.com>
+To: Christoph Hellwig <hch@infradead.org>,
+        Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+        "moderated list:DMA BUFFER SHARING FRAMEWORK"
+        <linaro-mm-sig@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Jerome Glisse <jglisse@redhat.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        "open list:DMA BUFFER SHARING FRAMEWORK"
+        <linux-media@vger.kernel.org>
+Subject: Re: [Linaro-mm-sig] [PATCH 4/8] dma-buf: add peer2peer flag
+Message-ID: <20180425075643.GC2271@ulmo>
+References: <20180420152111.GR31310@phenom.ffwll.local>
+ <20180424184847.GA3247@infradead.org>
+ <CAKMK7uFL68pu+-9LODTgz+GQYvxpnXOGhxfz9zorJ_JKsPVw2g@mail.gmail.com>
+ <20180425054855.GA17038@infradead.org>
+ <CAKMK7uEFitkNQrD6cLX5Txe11XhVO=LC4YKJXH=VNdq+CY=DjQ@mail.gmail.com>
+ <CAKMK7uFx=KB1vup=WhPCyfUFairKQcRR4BEd7aXaX1Pj-vj3Cw@mail.gmail.com>
+ <20180425064335.GB28100@infradead.org>
+ <CAKMK7uGF7p5ko=i6zL4dn0qR-5TVRKMi6xaCGSao_vyfJU+dWQ@mail.gmail.com>
+ <20180425070905.GA24827@infradead.org>
+ <20180425073039.GO25142@phenom.ffwll.local>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.129.5.66]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-25_02:,,
- signatures=0
+In-Reply-To: <20180425073039.GO25142@phenom.ffwll.local>
+X-NVConfidentiality: public
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-Originating-IP: [10.21.62.231]
+X-ClientProxiedBy: UKMAIL102.nvidia.com (10.26.138.15) To UKMAIL101.nvidia.com
+ (10.26.138.13)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="FsscpQKzF/jJk6ya"
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the optional power supplies using the description found in
-"SiI9022A/SiI9024A HDMI Transmitter Data Sheet (August 2016)".
+--FsscpQKzF/jJk6ya
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The sii902x input IOs are not "io safe" so it is important to
-enable/disable voltage regulators during probe/remove phases to
-avoid damages.
+On Wed, Apr 25, 2018 at 09:30:39AM +0200, Daniel Vetter wrote:
+> On Wed, Apr 25, 2018 at 12:09:05AM -0700, Christoph Hellwig wrote:
+> > On Wed, Apr 25, 2018 at 09:02:17AM +0200, Daniel Vetter wrote:
+> > > Can we please not nack everything right away? Doesn't really motivate
+> > > me to show you all the various things we're doing in gpu to make the
+> > > dma layer work for us. That kind of noodling around in lower levels to
+> > > get them to do what we want is absolutely par-for-course for gpu
+> > > drivers. If you just nack everything I point you at for illustrative
+> > > purposes, then I can't show you stuff anymore.
+> >=20
+> > No, it's not.  No driver (and that includes the magic GPUs) has
+> > any business messing with dma ops directly.
+> >=20
+> > A GPU driver imght have a very valid reason to disable the IOMMU,
+> > but the code to do so needs to be at least in the arch code, maybe
+> > in the dma-mapping/iommu code, not in the driver.
+> >=20
+> > As a first step to get the discussion started we'll simply need
+> > to move the code Thierry wrote into a helper in arch/arm and that
+> > alone would be a massive improvement.  I'm not even talking about
+> > minor details like actually using arm_get_dma_map_ops instead
+> > of duplicating it.
+> >=20
+> > And doing this basic trivial work really helps to get this whole
+> > mess under control.
+>=20
+> Ah ok. It did sound a bit like a much more cathegorical NAK than an "ack
+> in principle, but we need to shuffle the implementation into the right
+> place first". In the past we generally got a principled NAK on anything
+> funny we've been doing with the dma api, and the dma api maintainer
+> steaming off telling us we're incompetent idiots. I guess I've been
+> branded a bit on this topic :-/
+>=20
+> Really great that this is changing now.
+>=20
+> On the patch itself: It might not be the right thing in all cases, since
+> for certain compression formats the nv gpu wants larger pages (easy to
+> allocate from vram, not so easy from main memory), so might need the iommu
+> still. But currently that's not implemented:
+>=20
+> https://www.spinics.net/lists/dri-devel/msg173932.html
 
-Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
----
- drivers/gpu/drm/bridge/sii902x.c | 38 ++++++++++++++++++++++++++++++++++----
- 1 file changed, 34 insertions(+), 4 deletions(-)
+To clarify: we do want to use the IOMMU, but we want to use it
+explicitly via the IOMMU API rather than hiding it behind the DMA API.
+We do the same thing in Tegra DRM where we don't want to use the DMA API
+because it doesn't allow us to share the same mapping between multiple
+display controllers in the same way the IOMMU API does. We've also been
+thinking about using the IOMMU API directly in order to support process
+isolation for devices that accept command streams from userspace.
 
-diff --git a/drivers/gpu/drm/bridge/sii902x.c b/drivers/gpu/drm/bridge/sii902x.c
-index 60373d7eb220..c367d7b91ade 100644
---- a/drivers/gpu/drm/bridge/sii902x.c
-+++ b/drivers/gpu/drm/bridge/sii902x.c
-@@ -24,6 +24,7 @@
- #include <linux/i2c.h>
- #include <linux/module.h>
- #include <linux/regmap.h>
-+#include <linux/regulator/consumer.h>
- 
- #include <drm/drmP.h>
- #include <drm/drm_atomic_helper.h>
-@@ -86,6 +87,7 @@ struct sii902x {
- 	struct drm_bridge bridge;
- 	struct drm_connector connector;
- 	struct gpio_desc *reset_gpio;
-+	struct regulator_bulk_data supplies[2];
- };
- 
- static inline struct sii902x *bridge_to_sii902x(struct drm_bridge *bridge)
-@@ -392,23 +394,42 @@ static int sii902x_probe(struct i2c_client *client,
- 		return PTR_ERR(sii902x->reset_gpio);
- 	}
- 
-+	sii902x->supplies[0].supply = "iovcc";
-+	sii902x->supplies[1].supply = "vcc12";
-+	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(sii902x->supplies),
-+				      sii902x->supplies);
-+	if (ret) {
-+		dev_err(dev, "Failed to get power supplies: %d\n", ret);
-+		return ret;
-+	}
-+
-+	ret = regulator_bulk_enable(ARRAY_SIZE(sii902x->supplies),
-+				    sii902x->supplies);
-+	if (ret) {
-+		dev_err(dev, "Failed to enable power supplies: %d\n", ret);
-+		return ret;
-+	}
-+
-+	usleep_range(10000, 20000);
-+
- 	sii902x_reset(sii902x);
- 
- 	ret = regmap_write(sii902x->regmap, SII902X_REG_TPI_RQB, 0x0);
- 	if (ret)
--		return ret;
-+		goto err_disable_regulator;
- 
- 	ret = regmap_bulk_read(sii902x->regmap, SII902X_REG_CHIPID(0),
- 			       &chipid, 4);
- 	if (ret) {
- 		dev_err(dev, "regmap_read failed %d\n", ret);
--		return ret;
-+		goto err_disable_regulator;
- 	}
- 
- 	if (chipid[0] != 0xb0) {
- 		dev_err(dev, "Invalid chipid: %02x (expecting 0xb0)\n",
- 			chipid[0]);
--		return -EINVAL;
-+		ret = -EINVAL;
-+		goto err_disable_regulator;
- 	}
- 
- 	/* Clear all pending interrupts */
-@@ -424,7 +445,7 @@ static int sii902x_probe(struct i2c_client *client,
- 						IRQF_ONESHOT, dev_name(dev),
- 						sii902x);
- 		if (ret)
--			return ret;
-+			goto err_disable_regulator;
- 	}
- 
- 	sii902x->bridge.funcs = &sii902x_bridge_funcs;
-@@ -434,6 +455,12 @@ static int sii902x_probe(struct i2c_client *client,
- 	i2c_set_clientdata(client, sii902x);
- 
- 	return 0;
-+
-+err_disable_regulator:
-+	regulator_bulk_disable(ARRAY_SIZE(sii902x->supplies),
-+			       sii902x->supplies);
-+
-+	return ret;
- }
- 
- static int sii902x_remove(struct i2c_client *client)
-@@ -443,6 +470,9 @@ static int sii902x_remove(struct i2c_client *client)
- 
- 	drm_bridge_remove(&sii902x->bridge);
- 
-+	regulator_bulk_disable(ARRAY_SIZE(sii902x->supplies),
-+			       sii902x->supplies);
-+
- 	return 0;
- }
- 
--- 
-2.15.1
+Fortunately the issue I'm seeing with Nouveau doesn't happen with Tegra
+DRM, which seems to be because we have an IOMMU group with multiple
+devices and that prevents the DMA API from "hijacking" the IOMMU domain
+for the group.
+
+And to add to the confusion, none of this seems to be an issue on 64-bit
+ARM where the generic DMA/IOMMU code from drivers/iommu/dma-iommu.c is
+used.
+
+Thierry
+
+--FsscpQKzF/jJk6ya
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrgNLkACgkQ3SOs138+
+s6FElA//Y4UG8175+Ww3Twe0Ng/0nU5D/3QkBRvSl+IZ1fTkAGn3XUtQVX4Ll8Wb
+GbFn/WLFr87S4+E+LMBIJ526piuRzgXbLqL3X7Q8IOvx7JRWtux9iSlxznCr+hDe
+L6u+d8oKoXjGotnmC9bZTWRRGkijAYojYYBkMWCrOS1TkMCgkiKc0g5kb1KisTaK
+ttVUVendpNQsHMWZzPTXhVPfkBMdVvcbHdgaim1VD+NTRJaJ70S0Q0jhIgxqa18L
+thYrCuJkYweE/yjlHezXo2BMGEeNTBp0khA1lXeCOp5dfv6W8Z/BcGS15OZQ+Ufg
+Dl1Dwfq7WPOB7YB/KQdW4V7FI/h8gSzY4c0+oPMNvESrlqmoSGUHIHp7XV/ngL+T
+Bq/pN7eKUImjMXa/wTzEUzjglRMxFpg6WEwV/7q1QDxgyoKWPKp5a3fa4qXonGIB
+Qf43OcYWBqLAlpFpY03u/UUbdjwwOglZRM7Jo2p70sN90ISu6QpV/RNo26KylJJN
+xEjE4CtIDRD/qHUegL6juDcC8tgCO7EPV/pqsvp6R6UmpguH0HT+TkG7TteR7lkh
+CZm6xle9cx/2g7C4QMxgOHXGgFhxYQdJvwzKfm/UzFbBEs4iLk4iClYctRdnJRAz
+3iWTou/HjHB3lArCebHYBEAxXMIUrUGwbFZdF+gm3BeP97e2x5o=
+=M8KY
+-----END PGP SIGNATURE-----
+
+--FsscpQKzF/jJk6ya--
