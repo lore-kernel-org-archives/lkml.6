@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932351AbeDYSNX (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 14:13:23 -0400
+        id S932338AbeDYSNS (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 14:13:18 -0400
 Received: from mga02.intel.com ([134.134.136.20]:41720 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755911AbeDYSMw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 14:12:52 -0400
+        id S932214AbeDYSMr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 14:12:47 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,327,1520924400";
-   d="scan'208";a="35243745"
+   d="scan'208";a="35243720"
 From: Reinette Chatre <reinette.chatre@intel.com>
 To: tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
         vikas.shivappa@linux.intel.com
@@ -18,9 +18,9 @@ Cc: gavin.hindman@intel.com, jithu.joseph@intel.com, dave.hansen@intel.com,
         mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
         linux-kernel@vger.kernel.org,
         Reinette Chatre <reinette.chatre@intel.com>
-Subject: [PATCH V3 28/39] x86/intel_rdt: Discover supported platforms via prefetch disable bits
-Date: Wed, 25 Apr 2018 03:10:04 -0700
-Message-Id: <65ed6354b7570603f1d4e9bf798049ff4471364d.1524649902.git.reinette.chatre@intel.com>
+Subject: [PATCH V3 23/39] x86/intel_rdt: Introduce pseudo-locked region
+Date: Wed, 25 Apr 2018 03:09:59 -0700
+Message-Id: <e918500df8a98dccf51a418d9b72b226d23b6fb6.1524649902.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <cover.1524649902.git.reinette.chatre@intel.com>
 References: <cover.1524649902.git.reinette.chatre@intel.com>
@@ -30,113 +30,109 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Knowing the model specific prefetch disable bits is required to support
-cache pseudo-locking because the hardware prefetchers need to be disabled
-when the kernel memory is pseudo-locked to cache. We add these bits only
-for platforms known to support cache pseudo-locking.
+A pseudo-locked region is introduced representing an instance of a
+pseudo-locked cache region. Each cache instance (domain) can support
+one pseudo-locked region. Similarly a resource group can be used for
+one pseudo-locked region.
 
-When the user requests locksetup mode to be entered it will fail if the
-prefetch disabling bits are not known for the platform.
+Include a pointer to a pseudo-locked region from the domain and resource
+group structures.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
- arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c | 75 +++++++++++++++++++++++++++++
- 1 file changed, 75 insertions(+)
+ arch/x86/kernel/cpu/intel_rdt.h | 62 ++++++++++++++++++++++++++---------------
+ 1 file changed, 40 insertions(+), 22 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-index ad1da2ff096f..aa3e0a15c246 100644
---- a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
-@@ -20,8 +20,73 @@
- #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
+diff --git a/arch/x86/kernel/cpu/intel_rdt.h b/arch/x86/kernel/cpu/intel_rdt.h
+index 24399f2407d7..75dede416fdb 100644
+--- a/arch/x86/kernel/cpu/intel_rdt.h
++++ b/arch/x86/kernel/cpu/intel_rdt.h
+@@ -122,6 +122,20 @@ struct mongroup {
+ };
  
- #include <linux/slab.h>
-+#include <asm/intel-family.h>
- #include "intel_rdt.h"
- 
-+/*
-+ * MSR_MISC_FEATURE_CONTROL register enables the modification of hardware
-+ * prefetcher state. Details about this register can be found in the MSR
-+ * tables for specific platforms found in Intel's SDM.
+ /**
++ * struct pseudo_lock_region - pseudo-lock region information
++ * @r:			RDT resource to which this pseudo-locked region
++ *			belongs
++ * @d:			RDT domain to which this pseudo-locked region
++ *			belongs
++ * @cbm:		bitmask of the pseudo-locked region
 + */
-+#define MSR_MISC_FEATURE_CONTROL	0x000001a4
-+
-+/*
-+ * The bits needed to disable hardware prefetching varies based on the
-+ * platform. During initialization we will discover which bits to use.
-+ */
-+static u64 prefetch_disable_bits;
++struct pseudo_lock_region {
++	struct rdt_resource	*r;
++	struct rdt_domain	*d;
++	u32			cbm;
++};
 +
 +/**
-+ * get_prefetch_disable_bits - prefetch disable bits of supported platforms
-+ *
-+ * Capture the list of platforms that have been validated to support
-+ * pseudo-locking. This includes testing to ensure pseudo-locked regions
-+ * with low cache miss rates can be created under variety of load conditions
-+ * as well as that these pseudo-locked regions can maintain their low cache
-+ * miss rates under variety of load conditions for significant lengths of time.
-+ *
-+ * After a platform has been validated to support pseudo-locking its
-+ * hardware prefetch disable bits are included here as they are documented
-+ * in the SDM.
-+ *
-+ * Return:
-+ * If platform is supported, the bits to disable hardware prefetchers, 0
-+ * if platform is not supported.
-+ */
-+static u64 get_prefetch_disable_bits(void)
-+{
-+	if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL ||
-+	    boot_cpu_data.x86 != 6)
-+		return 0;
-+
-+	switch (boot_cpu_data.x86_model) {
-+	case INTEL_FAM6_BROADWELL_X:
-+		/*
-+		 * SDM defines bits of MSR_MISC_FEATURE_CONTROL register
-+		 * as:
-+		 * 0    L2 Hardware Prefetcher Disable (R/W)
-+		 * 1    L2 Adjacent Cache Line Prefetcher Disable (R/W)
-+		 * 2    DCU Hardware Prefetcher Disable (R/W)
-+		 * 3    DCU IP Prefetcher Disable (R/W)
-+		 * 63:4 Reserved
-+		 */
-+		return 0xF;
-+	case INTEL_FAM6_ATOM_GOLDMONT:
-+	case INTEL_FAM6_ATOM_GEMINI_LAKE:
-+		/*
-+		 * SDM defines bits of MSR_MISC_FEATURE_CONTROL register
-+		 * as:
-+		 * 0     L2 Hardware Prefetcher Disable (R/W)
-+		 * 1     Reserved
-+		 * 2     DCU Hardware Prefetcher Disable (R/W)
-+		 * 63:3  Reserved
-+		 */
-+		return 0x5;
-+	}
-+
-+	return 0;
-+}
-+
- /**
-  * pseudo_lock_init - Initialize a pseudo-lock region
-  * @rdtgrp: resource group to which new pseudo-locked region will belong
-@@ -233,6 +298,16 @@ int rdtgroup_locksetup_enter(struct rdtgroup *rdtgrp)
- 		return -EINVAL;
- 	}
+  * struct rdtgroup - store rdtgroup's data in resctrl file system.
+  * @kn:				kernfs node
+  * @rdtgroup_list:		linked list for all rdtgroups
+@@ -134,17 +148,19 @@ struct mongroup {
+  *				monitor only or ctrl_mon group
+  * @mon:			mongroup related data
+  * @mode:			mode of resource group
++ * @plr:			pseudo-locked region
+  */
+ struct rdtgroup {
+-	struct kernfs_node	*kn;
+-	struct list_head	rdtgroup_list;
+-	u32			closid;
+-	struct cpumask		cpu_mask;
+-	int			flags;
+-	atomic_t		waitcount;
+-	enum rdt_group_type	type;
+-	struct mongroup		mon;
+-	enum rdtgrp_mode	mode;
++	struct kernfs_node		*kn;
++	struct list_head		rdtgroup_list;
++	u32				closid;
++	struct cpumask			cpu_mask;
++	int				flags;
++	atomic_t			waitcount;
++	enum rdt_group_type		type;
++	struct mongroup			mon;
++	enum rdtgrp_mode		mode;
++	struct pseudo_lock_region	*plr;
+ };
  
-+	/*
-+	 * Not knowing the bits to disable prefetching implies that this
-+	 * platform does not support Cache Pseudo-Locking.
-+	 */
-+	prefetch_disable_bits = get_prefetch_disable_bits();
-+	if (prefetch_disable_bits == 0) {
-+		rdt_last_cmd_puts("pseudo-locking not supported\n");
-+		return -EINVAL;
-+	}
-+
- 	if (rdtgroup_monitor_in_progress(rdtgrp)) {
- 		rdt_last_cmd_puts("monitoring in progress\n");
- 		return -EINVAL;
+ /* rdtgroup.flags */
+@@ -234,21 +250,23 @@ struct mbm_state {
+  * @ctrl_val:	array of cache or mem ctrl values (indexed by CLOSID)
+  * @new_ctrl:	new ctrl value to be loaded
+  * @have_new_ctrl: did user provide new_ctrl for this domain
++ * @plr:	pseudo-locked region (if any) associated with domain
+  */
+ struct rdt_domain {
+-	struct list_head	list;
+-	int			id;
+-	struct cpumask		cpu_mask;
+-	unsigned long		*rmid_busy_llc;
+-	struct mbm_state	*mbm_total;
+-	struct mbm_state	*mbm_local;
+-	struct delayed_work	mbm_over;
+-	struct delayed_work	cqm_limbo;
+-	int			mbm_work_cpu;
+-	int			cqm_work_cpu;
+-	u32			*ctrl_val;
+-	u32			new_ctrl;
+-	bool			have_new_ctrl;
++	struct list_head		list;
++	int				id;
++	struct cpumask			cpu_mask;
++	unsigned long			*rmid_busy_llc;
++	struct mbm_state		*mbm_total;
++	struct mbm_state		*mbm_local;
++	struct delayed_work		mbm_over;
++	struct delayed_work		cqm_limbo;
++	int				mbm_work_cpu;
++	int				cqm_work_cpu;
++	u32				*ctrl_val;
++	u32				new_ctrl;
++	bool				have_new_ctrl;
++	struct pseudo_lock_region	*plr;
+ };
+ 
+ /**
 -- 
 2.13.6
