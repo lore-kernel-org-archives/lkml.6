@@ -1,85 +1,39 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-557887-1524653124-5-17873042951460910858
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524653123; b=otKbLmml+b2VK488OgduUycFfNzy3pQElNsbK3lLV0kyrDXBMG
-    Gp48IOi0mJ02NFvhejEhipkjVB+XgwD8UrWA/ugumU8Pq1W7xiKaNMHtrzi0+zKN
-    fo4HPttKELcEOwWncVmB7+CYMWFcVDqugZPrKcMLjVbVy69QMSpTlJEnHfzwt13I
-    7HP2fNiIUERPj3PidHnc/whw+5E5YAhVisedpcMCct1wXvbisRnZZNmFyQa6NosJ
-    UdeKYa5FGNZ6NWGlocBA7/0aDl0L9PbNvR23vvfUSYfCJwKnmIg4XZ5X7EluYvqT
-    xN+Y48hiCV923tmD0jKOHyzNLTVr/pJ71O4A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524653123; bh=g/wwDvWOjsrU2Z517yYvhfp4VHWV1C
-    WfPrZeGw2J5Z4=; b=G4LKtmYe3XbOjvKkz/qCDm75Xl/BEKg02gpZXn3Mywoda5
-    zybspcPua9igGt38K5faYv4vyTF7S3t3dowJsBEKGImkot4APE3mVQgYvuVcHDRm
-    aW1cHZg6PcRZs1O4e22nd6LC8GXwQik7btDonwJkA1SlqMnqBN2kb/o8utsi7djs
-    gk1AuK67Kjey9xWrRRSnL6csvBJZBK1ojDNzpAskvuazFn7FfVsxxanxCF0kPVW/
-    AxeQlSLpZO8CNK4V+fC3u2Pbj9ofdRgYDba7KGAyuVALBuy7/+oIjEX721kKK948
-    eeFz+YZ2O5BSD7hOzB6RHei7NIc/Kr28hl/V5qMA==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfNS811w9gXRsd65/HHwS0CF8W1WMy2tFFiJuZkOqhfc+YJO76MC3GU9j/e1iRtXlG2thGo6h/vXR4YHfYXtE6q1jccc27RjKfUNUP6NjU4xO5ruWKbeH
-    m584QvlyrU+31N4J9v1MorvLN3Lx+8r1Jg5mOhS7vRlL4qSQLkwAESEZPHRzmZEFHDYgZI0TjFdRrFPb/tWIqVlkBaZuIj7eAtH3XQmGHQSvX9WBlGHSmVnW
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8 a=6rqHouBjAAAA:8 a=TYBLyS7eAAAA:8
-    a=Z4Rwk6OoAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=YMnRgragKNPXYa1Kh6cA:9
-    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Hx1yvPaMooE3kwe23bt7:22
-    a=zvYvwCWiE4KgVXXeO06c:22 a=HkZW87K1Qel5hWWM3VKY:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754069AbeDYKpV (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 25 Apr 2018 06:45:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53552 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753914AbeDYKpS (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 25 Apr 2018 06:45:18 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx49TKsY0iN1USE29/q5FKP7ZEIYuI+lj/yE5ydr8bjgFygEwFJH5hC1Ha4t8fkfGbLoe+8z+
+ARC-Seal: i=1; a=rsa-sha256; t=1524653102; cv=none;
+        d=google.com; s=arc-20160816;
+        b=Lzz2Or5jlGJ3afBAIhD2YIGof0D3Fbq6kmDvikRI8hZnIH7Kl3866+JarfAJRqUVoJ
+         p6SaI5Ak+PtCRFd1JEIjKFhrbQzzmmbpuQEs7T3zttMIIhBvFbnaKEbg08cXuJElwRj4
+         vsHYT7LMo4VnFkA6DocudrDeQlWzpDGCSacANgSvU2mjcvb5BHgasnnlszPD5if1fGO6
+         hjryro1axpzSW1f36ZOSM/1YA5fMhaOVjQnMg+3+refBLPtq37kt0yIiNENgHsbkunAW
+         x8CeQqyx2vlkYhYFL9zZsa7bm7Z2MKb3efZeaCB6H4HDjBsZrbKPlztPI77CZ7EPDTgH
+         GTeg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=cxEc54InZLnu4pEfB0KZINs4BKxo0U0YLUrNwtCvBpo=;
+        b=PH5pamFKTY/pG2aHCwtihIfLrvBYcJa+yICuX/jcD1zYmGtZWgQD+nZ9jnhcti2zPU
+         A/hJDtdyWNlz8C1JcNZNS0nuiwCWN+1cu1O1IpxjR/SOoWSotyLPh/2PixxVnAoN8Un7
+         tXaWMBygsmx6cRNm05WzjPGr1wQMkBR7xp3rHIE8f0InAunikfeMXgQIdeeKvvJgRsIr
+         rFH+avmwU8JXvXW3NjitlYZtp8ZypYjjNfF+PIr9xZVs9lt1f+fOX5J38lEjgpu65Ed2
+         LvYPJMli/8tuEZTGrdq379/QyAMO8Jj2c5RXnHHLre7Ud/kKJV336H8TWh5MzM+2WK5H
+         E2eQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>,
-        Pavel Emelyanov <xemul@openvz.org>,
-        Andrei Vagin <avagin@virtuozzo.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 144/183] proc: fix /proc/*/map_files lookup
-Date: Wed, 25 Apr 2018 12:36:04 +0200
-Message-Id: <20180425103248.332676489@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Hua Rui <huarui.dev@gmail.com>,
+	Tang Junhui <tang.junhui@zte.com.cn>,
+	Michael Lyle <mlyle@lyle.org>,
+	Jens Axboe <axboe@kernel.dk>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 148/183] bcache: fix for allocator and register thread race
+Date: Wed, 25 Apr 2018 12:36:08 +0200
+Message-Id: <20180425103248.485231934@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
@@ -87,9 +41,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1598714651958775857?=
+X-GMAIL-MSGID: =?utf-8?q?1598714651958775857?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -97,104 +52,165 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alexey Dobriyan <adobriyan@gmail.com>
+From: Tang Junhui <tang.junhui@zte.com.cn>
 
 
-[ Upstream commit ac7f1061c2c11bb8936b1b6a94cdb48de732f7a4 ]
+[ Upstream commit 682811b3ce1a5a4e20d700939a9042f01dbc66c4 ]
 
-Current code does:
+After long time running of random small IO writing,
+I reboot the machine, and after the machine power on,
+I found bcache got stuck, the stack is:
+[root@ceph153 ~]# cat /proc/2510/task/*/stack
+[<ffffffffa06b2455>] closure_sync+0x25/0x90 [bcache]
+[<ffffffffa06b6be8>] bch_journal+0x118/0x2b0 [bcache]
+[<ffffffffa06b6dc7>] bch_journal_meta+0x47/0x70 [bcache]
+[<ffffffffa06be8f7>] bch_prio_write+0x237/0x340 [bcache]
+[<ffffffffa06a8018>] bch_allocator_thread+0x3c8/0x3d0 [bcache]
+[<ffffffff810a631f>] kthread+0xcf/0xe0
+[<ffffffff8164c318>] ret_from_fork+0x58/0x90
+[<ffffffffffffffff>] 0xffffffffffffffff
+[root@ceph153 ~]# cat /proc/2038/task/*/stack
+[<ffffffffa06b1abd>] __bch_btree_map_nodes+0x12d/0x150 [bcache]
+[<ffffffffa06b1bd1>] bch_btree_insert+0xf1/0x170 [bcache]
+[<ffffffffa06b637f>] bch_journal_replay+0x13f/0x230 [bcache]
+[<ffffffffa06c75fe>] run_cache_set+0x79a/0x7c2 [bcache]
+[<ffffffffa06c0cf8>] register_bcache+0xd48/0x1310 [bcache]
+[<ffffffff812f702f>] kobj_attr_store+0xf/0x20
+[<ffffffff8125b216>] sysfs_write_file+0xc6/0x140
+[<ffffffff811dfbfd>] vfs_write+0xbd/0x1e0
+[<ffffffff811e069f>] SyS_write+0x7f/0xe0
+[<ffffffff8164c3c9>] system_call_fastpath+0x16/0x1
+The stack shows the register thread and allocator thread
+were getting stuck when registering cache device.
 
-	if (sscanf(dentry->d_name.name, "%lx-%lx", start, end) != 2)
+I reboot the machine several times, the issue always
+exsit in this machine.
 
-However sscanf() is broken garbage.
+I debug the code, and found the call trace as bellow:
+register_bcache()
+   ==>run_cache_set()
+      ==>bch_journal_replay()
+         ==>bch_btree_insert()
+            ==>__bch_btree_map_nodes()
+               ==>btree_insert_fn()
+                  ==>btree_split() //node need split
+                     ==>btree_check_reserve()
+In btree_check_reserve(), It will check if there is enough buckets
+of RESERVE_BTREE type, since allocator thread did not work yet, so
+no buckets of RESERVE_BTREE type allocated, so the register thread
+waits on c->btree_cache_wait, and goes to sleep.
 
-It silently accepts whitespace between format specifiers
-(did you know that?).
+Then the allocator thread initialized, the call trace is bellow:
+bch_allocator_thread()
+==>bch_prio_write()
+   ==>bch_journal_meta()
+      ==>bch_journal()
+         ==>journal_wait_for_write()
+In journal_wait_for_write(), It will check if journal is full by
+journal_full(), but the long time random small IO writing
+causes the exhaustion of journal buckets(journal.blocks_free=0),
+In order to release the journal buckets,
+the allocator calls btree_flush_write() to flush keys to
+btree nodes, and waits on c->journal.wait until btree nodes writing
+over or there has already some journal buckets space, then the
+allocator thread goes to sleep. but in btree_flush_write(), since
+bch_journal_replay() is not finished, so no btree nodes have journal
+(condition "if (btree_current_write(b)->journal)" never satisfied),
+so we got no btree node to flush, no journal bucket released,
+and allocator sleep all the times.
 
-It silently accepts valid strings which result in integer overflow.
+Through the above analysis, we can see that:
+1) Register thread wait for allocator thread to allocate buckets of
+   RESERVE_BTREE type;
+2) Alloctor thread wait for register thread to replay journal, so it
+   can flush btree nodes and get journal bucket.
+   then they are all got stuck by waiting for each other.
 
-Do not use sscanf() for any even remotely reliable parsing code.
+Hua Rui provided a patch for me, by allocating some buckets of
+RESERVE_BTREE type in advance, so the register thread can get bucket
+when btree node splitting and no need to waiting for the allocator
+thread. I tested it, it has effect, and register thread run a step
+forward, but finally are still got stuck, the reason is only 8 bucket
+of RESERVE_BTREE type were allocated, and in bch_journal_replay(),
+after 2 btree nodes splitting, only 4 bucket of RESERVE_BTREE type left,
+then btree_check_reserve() is not satisfied anymore, so it goes to sleep
+again, and in the same time, alloctor thread did not flush enough btree
+nodes to release a journal bucket, so they all got stuck again.
 
-	OK
-	# readlink '/proc/1/map_files/55a23af39000-55a23b05b000'
-	/lib/systemd/systemd
+So we need to allocate more buckets of RESERVE_BTREE type in advance,
+but how much is enough?  By experience and test, I think it should be
+as much as journal buckets. Then I modify the code as this patch,
+and test in the machine, and it works.
 
-	broken
-	# readlink '/proc/1/map_files/               55a23af39000-55a23b05b000'
-	/lib/systemd/systemd
+This patch modified base on Hua Rui’s patch, and allocate more buckets
+of RESERVE_BTREE type in advance to avoid register thread and allocate
+thread going to wait for each other.
 
-	broken
-	# readlink '/proc/1/map_files/55a23af39000-55a23b05b000    '
-	/lib/systemd/systemd
+[patch v2] ca->sb.njournal_buckets would be 0 in the first time after
+cache creation, and no journal exists, so just 8 btree buckets is OK.
 
-	very broken
-	# readlink '/proc/1/map_files/1000000000000000055a23af39000-55a23b05b000'
-	/lib/systemd/systemd
-
-Andrei said:
-
-: This patch breaks criu.  It was a bug in criu.  And this bug is on a minor
-: path, which works when memfd_create() isn't available.  It is a reason why
-: I ask to not backport this patch to stable kernels.
-:
-: In CRIU this bug can be triggered, only if this patch will be backported
-: to a kernel which version is lower than v3.16.
-
-Link: http://lkml.kernel.org/r/20171120212706.GA14325@avx2
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Pavel Emelyanov <xemul@openvz.org>
-Cc: Andrei Vagin <avagin@virtuozzo.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Hua Rui <huarui.dev@gmail.com>
+Signed-off-by: Tang Junhui <tang.junhui@zte.com.cn>
+Reviewed-by: Michael Lyle <mlyle@lyle.org>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/proc/base.c |   29 ++++++++++++++++++++++++++++-
- 1 file changed, 28 insertions(+), 1 deletion(-)
+ drivers/md/bcache/btree.c |    9 ++++++---
+ drivers/md/bcache/super.c |   13 ++++++++++++-
+ 2 files changed, 18 insertions(+), 4 deletions(-)
 
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -100,6 +100,8 @@
- #include "internal.h"
- #include "fd.h"
+--- a/drivers/md/bcache/btree.c
++++ b/drivers/md/bcache/btree.c
+@@ -1868,14 +1868,17 @@ void bch_initial_gc_finish(struct cache_
+ 	 */
+ 	for_each_cache(ca, c, i) {
+ 		for_each_bucket(b, ca) {
+-			if (fifo_full(&ca->free[RESERVE_PRIO]))
++			if (fifo_full(&ca->free[RESERVE_PRIO]) &&
++			    fifo_full(&ca->free[RESERVE_BTREE]))
+ 				break;
  
-+#include "../../lib/kstrtox.h"
-+
- /* NOTE:
-  *	Implementing inode permission operations in /proc is almost
-  *	certainly an error.  Permission checks need to happen during
-@@ -1908,8 +1910,33 @@ end_instantiate:
- static int dname_to_vma_addr(struct dentry *dentry,
- 			     unsigned long *start, unsigned long *end)
+ 			if (bch_can_invalidate_bucket(ca, b) &&
+ 			    !GC_MARK(b)) {
+ 				__bch_invalidate_one_bucket(ca, b);
+-				fifo_push(&ca->free[RESERVE_PRIO],
+-					  b - ca->buckets);
++				if (!fifo_push(&ca->free[RESERVE_PRIO],
++				   b - ca->buckets))
++					fifo_push(&ca->free[RESERVE_BTREE],
++						  b - ca->buckets);
+ 			}
+ 		}
+ 	}
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -1829,6 +1829,7 @@ void bch_cache_release(struct kobject *k
+ static int cache_alloc(struct cache *ca)
  {
--	if (sscanf(dentry->d_name.name, "%lx-%lx", start, end) != 2)
-+	const char *str = dentry->d_name.name;
-+	unsigned long long sval, eval;
-+	unsigned int len;
-+
-+	len = _parse_integer(str, 16, &sval);
-+	if (len & KSTRTOX_OVERFLOW)
-+		return -EINVAL;
-+	if (sval != (unsigned long)sval)
-+		return -EINVAL;
-+	str += len;
-+
-+	if (*str != '-')
- 		return -EINVAL;
-+	str++;
-+
-+	len = _parse_integer(str, 16, &eval);
-+	if (len & KSTRTOX_OVERFLOW)
-+		return -EINVAL;
-+	if (eval != (unsigned long)eval)
-+		return -EINVAL;
-+	str += len;
-+
-+	if (*str != '\0')
-+		return -EINVAL;
-+
-+	*start = sval;
-+	*end = eval;
+ 	size_t free;
++	size_t btree_buckets;
+ 	struct bucket *b;
  
- 	return 0;
- }
+ 	__module_get(THIS_MODULE);
+@@ -1836,9 +1837,19 @@ static int cache_alloc(struct cache *ca)
+ 
+ 	bio_init(&ca->journal.bio, ca->journal.bio.bi_inline_vecs, 8);
+ 
++	/*
++	 * when ca->sb.njournal_buckets is not zero, journal exists,
++	 * and in bch_journal_replay(), tree node may split,
++	 * so bucket of RESERVE_BTREE type is needed,
++	 * the worst situation is all journal buckets are valid journal,
++	 * and all the keys need to replay,
++	 * so the number of  RESERVE_BTREE type buckets should be as much
++	 * as journal buckets
++	 */
++	btree_buckets = ca->sb.njournal_buckets ?: 8;
+ 	free = roundup_pow_of_two(ca->sb.nbuckets) >> 10;
+ 
+-	if (!init_fifo(&ca->free[RESERVE_BTREE], 8, GFP_KERNEL) ||
++	if (!init_fifo(&ca->free[RESERVE_BTREE], btree_buckets, GFP_KERNEL) ||
+ 	    !init_fifo_exact(&ca->free[RESERVE_PRIO], prio_buckets(ca), GFP_KERNEL) ||
+ 	    !init_fifo(&ca->free[RESERVE_MOVINGGC], free, GFP_KERNEL) ||
+ 	    !init_fifo(&ca->free[RESERVE_NONE], free, GFP_KERNEL) ||
