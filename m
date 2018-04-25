@@ -1,5 +1,5 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-900250-1524669234-2-15110655379802090272
+X-Cyrus-Session-Id: sloti22d1t05-900250-1524669233-2-8033316168735781892
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524669233; b=bhneQOs6I6sSHbUp5Hev+YVXH2JfDByu9upThEdZ+38u93XCSd
-    3kdr2BZzT89zECKkpi1LDUq/T4ju2KDq0aiQdpMTfFyMC+r6rNmB2ZZiJu2+psoU
-    125afm5FVONKwtJJIYxjfdJot/4Z4nfWck9ujRZxYGBK3MvbRVYg85o9EXacj9Lr
-    5Jf4+LQP8KZHoIXLHriZKc1A6yOnhIbjGy5qF9e9AqWbpns2etmFw4iQnx6GGl+i
-    3M8YmGb7ZQLOiIj3xHli9q+gaI27x36zkbk369xxdwD7U6k1cuwPlmvjp0PQEFeV
-    +Xy4evvH+rcaPd5IWB0ypzUEjru2iivZVQpQ==
+    1524669232; b=tKDpPdBX+6bNkj4uxUFCFdJ2tEC1pN0rSOfruIDNuBTrNd3LXJ
+    zKiixkFPM/Fne6CZJDRNo5l5AIr9XWWz5ev/C7zYCNsHVyF+sS6kt3N2qtK2FKJh
+    1TtCCOZdpXHg6R/eo3/r9BPltAtAXbP3YITnBioF86kIZzhidPzCfEoSL1Vc4wQg
+    9aaa4RbVUmNjDlKz8Z66zychHSdUwrElgwcLE7z2CH7QptGynTtGJzcmVQ0zmFIc
+    4DhoJ4QS0LgHNpC3ajE2Ow9iYMPgytnG6JsR2m/kIElis85y8LmFe2SLcjZMszIp
+    e+q8z2Km/fSSEqxapUFS7xabaaQAHB2sm3+Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1524669233; bh=
-    Hfd0pB7ZzXtLEBOQ56xQ/8awEnsgMrTBactvzsB5oaI=; b=JduFa+Jp9C9rJw1g
-    N/BkCnXWLCYbbX2R1BUyW+VP1S+NCsMKlEo1Syw8Do8zDzQKGf7rovqvLFALxvYa
-    QzzzVeNrtjthZ3D66XUuwurXXJ2HjYvJrFlVYzw78CPJsXaOuFco2cAccgc4vssa
-    2SlEe6p7SRDbAJHepyB9CZ7r9E41hTOoLYdiOqA/nHTGNZcpdOg9dQWw0c6fx2o+
-    5IggLLXmx0zVZ43RbJqItsl908f6DSbStAJGBQWu1q0vaWklBXMYGV7vuvQg4hu6
-    zIuHl4i6SMZNPUJDztH0tv3ySMt0aj9CxETFfzhhUZMMg+hcR4TLambekF0rGelW
-    aOTFrA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:sender:list-id; s=fm2; t=1524669232; bh=
+    dD9ilnbSt7ngRxD4OQwY+h9xAMs7la8MYipbcP4yibQ=; b=Wp6x8DWApPHIuEss
+    KQUF8V+LmcC/mR19B6f1BVUeFJwdY9Y8//DiNZU8QgtIO4D9S0MpIgSqhgRF9ipI
+    UgCfJx1U3fxARxCy+MMBEmWJxRo23pIBXLLfcZ9QoTA2aTjswxZNXdbcmGw6a3HC
+    IpAO0tBIp0jIECFJWlJvoRl5pC6Ufcd3tqHczYXMxt+58xGcSOTlB6eKqsNh4Ye4
+    MRwPYcHzvHrQq0zXtSOhZBHp4CFMMM/R74Kn/SXUHe9WQiQm5xxVqIA/Oqss5nrw
+    ie4PAvi1qOSdpiIAFSWngNzwdqD7AgtRZl6YbUqAY3pu0oNr0zpQADtq1Cy7NMiK
+    d6Bi3Q==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
@@ -51,21 +51,20 @@ Authentication-Results: mx2.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfLbpxA7dGqLVWH/E9hjrve5D45SvJZowkOXhnBWiWQypVUOZguYHcL/aFLZIoic2IDnBdyAxQTZ3Ml2XZ3956ThQu75imBU1KW7MbBru/6aIXX7uadrU
-    xqM+LkGtVVWgdfVcIvySTNN/dzpskYTx/Tp7jOReQabqucNJQhVhgAy5Y7UuoP9tNOOZXhDYiYBFAvU277nv6ZeRhKpu2Acj3AEJUH3QkYJa3GSPFL2k5NlX
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfEduGPbWbiJ52sOW8BZXOuxjimkc5iR5uxHNU7/21Z2Uj5EW9V9DOF1pOLCDbh8Mkx3KT93NXVqT1IUiv0TdcVaDJdl6WoATdlGVFBd7/fW1lkVAtTFB
+    HBfzSTAIrsdntiTS8Dcf3vtOlVDxR06hRpkrWhtTpBW6/F5q5ABqz5sSPagN0G0hJUw1+8IbOTpCEDIRFkfb1AL6ZTDAXLcA1c3Kv0Zfr5yp6oHIu6+HdntY
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8
-    a=1Y418u4J_7SVKqeaot0A:9 a=lodVfSXsk3HTW-p3:21 a=R7ZINnc8kaS4Yk62:21
-    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=nfMvwj1s_EtHegV2GFMA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754819AbeDYPHK (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 25 Apr 2018 11:07:10 -0400
-Received: from mout.kundenserver.de ([212.227.126.130]:56367 "EHLO
+        id S1755109AbeDYPND (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 25 Apr 2018 11:13:03 -0400
+Received: from mout.kundenserver.de ([212.227.126.133]:57719 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754604AbeDYPHE (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Wed, 25 Apr 2018 11:07:04 -0400
+        with ESMTP id S1754843AbeDYPHQ (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Wed, 25 Apr 2018 11:07:16 -0400
 From: Arnd Bergmann <arnd@arndb.de>
 To: y2038@lists.linaro.org, linux-kernel@vger.kernel.org
 Cc: linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
@@ -77,187 +76,87 @@ Cc: linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
         linux-mips@linux-mips.org, jhogan@kernel.org, ralf@linux-mips.org,
         linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
         zackw@panix.com, noloader@gmail.com, Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v4 04/16] y2038: ia64: Remove unneeded ipc uapi header files
-Date: Wed, 25 Apr 2018 17:05:54 +0200
-Message-Id: <20180425150606.954771-4-arnd@arndb.de>
+Subject: [PATCH v4 16/16] y2038: ipc: Redirect ipc(SEMTIMEDOP, ...) to compat_ksys_semtimedop
+Date: Wed, 25 Apr 2018 17:06:06 +0200
+Message-Id: <20180425150606.954771-16-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
 In-Reply-To: <20180425132242.1500539-1-arnd@arndb.de>
 References: <20180425132242.1500539-1-arnd@arndb.de>
-X-Provags-ID: V03:K1:58aLalUXCtdMgJB9sVefF/qQMXwqIt+G1S7tyRiUU5FbqjK9WSM
- N9R2g/EQcPQEv+9GknPg8XQdl8AVhXtXWc8mVGf6/GnpehE11XZo9Pd+NBrGiFaVoNdKMva
- vnMHVF0ejBiPB5BJ0zZMlbQ2BQmkLrRnbsFapigicS5BdKAdTGoeCJdBABBpQYHUI091mxa
- p9y2ck6ve5mvhQWnWsOnQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:gOYDwd2xF60=:gjY9A6jssiIyyuw+so2j8V
- Q/FitRuA8VmpdOTPsY8DZ894kMLgAH4xmWttQjiQpNYby57572aItGalFq3vMEbEvPrVqKhNO
- bg0lShFJ1+9Ux1tI5/oDAdIGEVs5Daf0haHinRFwUqZzG1PpMgx2naF3Us8OM1NBkXKm9lTbP
- airOmpaoip6KBcWMFqS+joj05LJqg4p3vW2QOyTPzc0lsJYk+TlmhzrdTDijnedl8VrU7krRT
- niDnyZsRVN2ZBm0WpNZi9r6J8VCqA2yfT14jAg45ADowCgvj26g2VypnTOFQx1Do23o3jRcpK
- 0Vc8QwLkMdGTxZMq9Cw4hkJABDYXOTmgzpLRmyxU/RTAHQJgm0tQAR4m4KPtgk4p1S3Blanoo
- 0VDkZIbFUr7FutskrSxaGcDh7/Ail1TW6q653OmmYBiujme9zGFHbei/WwRQM2v+dcDwGx2IL
- dSPxJXWnvGGUY+jxFHj3XVsGx6laU4SkM+5AlqiMbKUoYZN0bawI7Jxr3sq+Et1vzR0Y+HSrz
- k8traXW9g0Wu08B8SgTmKB6jxaClnJQGIagIujosbOBdh4MOLoIujW9f+Pc2COBUCbMY8UHnq
- Hr4VBbeAyA12j2/jb0OOOp7PCw/eFa+FFOMUo3LISjFbC3qUdGI6Qw6mYGMmimdQzWkF1ChJ2
- XaB5qLcdhZvNU1T5irBxOh8+FCpt9/gMKvZSgpDADNyQdjwIhhZXCsM2mTF+61grK2RIpdHub
- zwwvICycUqSDCwtW5T2pWkKnoF5weFTC4BtpdDlTs2bft7fePjoE5hkV2crzZr7g3QfbJIByZ
- qndh6h+fxnT0Xj0nbWxbvGj4E3LEz2tuqdnDZDzRNqN2B4Qu9jfarQDSYjxKrFtpA+NRIhMhe
- q+aaPJeNc7CXKwWTrgSILn3m5QcrVVtPE/U4V9aUOd6GP7gmbZLgl0Lml9gvbr
+X-Provags-ID: V03:K1:Mlabpj+luf20+BILETO7JbXl11x+S63/lDeB9I8xRdnCyML+2y2
+ SEv4/EcskLmyzHqtorUKLjUzHaKIwF3Ds0JuyIVnUSiBRzGFwo4mfePbv/NjOJUH7+wbjgP
+ lmNVVsYy/PzzGz5xplirZQQTSika5eJxOseY0UxWAdqlH+uiS/Q2ThdtOzEu8I7kUv5JvvK
+ 72vyib/moYdduZzTS/ckg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:SqN+npyaZdU=:2iB9BZauhQXqPesFdfkWfK
+ vCbG8Vgy9eKVJKuVzfB9K58T37/tMsSYEdG8+iCyMd15rkm5zdQlv62xWWqATm1JnamavSIrR
+ dOIBdlGpcbYB4xH9Mife2fCp7OBJUH3fVTNw2V7ifw/08z4c/Q0kJqO0g3f1lO0QZaGLYiNBP
+ ylTKkLgcQSoOLgoDIi5sXktp/Jm3z99JasrSdmPovzve8flXC5KzbkHAR733KaU2ECqObcoHb
+ meEIjmuEZdgLNXT80vCxhv7U+vkPOyxO7bVv2yvkkFYKxFUZCqELNcKwQSrbjJ+7ihgT3FlRf
+ YcR6DDqEuDIA/2lfvZSyPPc9fS0BhmVvIdNNZhTo8xgwxByxHSStmnsV8I4lu7boEPgxLJFCH
+ BhhoAwnIYKFA7VJSoD/4At0rDW2ZqHODq0bKsw9DF9KJXXS5Uu/QyFiQayyFT0H09/lawzzhs
+ InT5i4GoJlQ7sbmeSXkFJ88kG2DnxEiJrUDyiVrBe4TaBtn4RUGT4VTCseE1lYIYT7CwYriMX
+ AGT9xePhRrwJvDom+Z4537rZjggZWKyX66M0PuTgsJnTJhwekmiFkBtjlI7QzjtBMNVa7OIR4
+ W4Jl92RwlQKgE0omplLfF7UPjdp4MFGW2JPNpMl5udI/k6mXxmq1YyXpYXE1eFwfFJBir05R9
+ stWRpssw1H+8rGSMKvynbFlVuAPL0Rfsppk30AIFUKlYX/4rXvMuReQesL/csKce2Ewll5K9z
+ ENLb1unuxr5CX6vSUO1teYurJEtv+ALHyMGYCg==
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The ia64 ipcbuf/msgbuf/sembuf/shmbuf header files are all identical
-to the version from asm-generic.
+32-bit architectures implementing 64BIT_TIME and COMPAT_32BIT_TIME
+need to have the traditional semtimedop() behavior with 32-bit timestamps
+for sys_ipc() by calling compat_ksys_semtimedop(), while those that
+are not yet converted need to keep using ksys_semtimedop() like
+64-bit architectures do.
 
-This patch removes the files and replaces them with 'generic-y'
-statements as part of the y2038 changes. While ia64 no longer has
-a compat mode and doesn't need the file any more, it seem nicer
-to clean this up anyway.
+Note that I chose to not implement a new SEMTIMEDOP64 function that
+corresponds to the new sys_semtimedop() with 64-bit timeouts. The reason
+here is that sys_ipc() should no longer be used for new system calls,
+and libc should just call the semtimedop syscall directly.
+
+One open question remain to whether we want to completely avoid the
+sys_ipc() system call for architectures that do not yet have all the
+individual calls as they get converted to 64-bit time_t. Doing that
+would require adding several extra system calls on m68k, mips, powerpc,
+s390, sh, sparc, and x86-32.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/ia64/include/uapi/asm/Kbuild   |  4 ++++
- arch/ia64/include/uapi/asm/ipcbuf.h |  2 --
- arch/ia64/include/uapi/asm/msgbuf.h | 28 --------------------------
- arch/ia64/include/uapi/asm/sembuf.h | 23 ----------------------
- arch/ia64/include/uapi/asm/shmbuf.h | 39 -------------------------------------
- 5 files changed, 4 insertions(+), 92 deletions(-)
- delete mode 100644 arch/ia64/include/uapi/asm/ipcbuf.h
- delete mode 100644 arch/ia64/include/uapi/asm/msgbuf.h
- delete mode 100644 arch/ia64/include/uapi/asm/sembuf.h
- delete mode 100644 arch/ia64/include/uapi/asm/shmbuf.h
+ ipc/syscall.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
-diff --git a/arch/ia64/include/uapi/asm/Kbuild b/arch/ia64/include/uapi/asm/Kbuild
-index c0527cfc48f0..3982e673e967 100644
---- a/arch/ia64/include/uapi/asm/Kbuild
-+++ b/arch/ia64/include/uapi/asm/Kbuild
-@@ -2,5 +2,9 @@
- include include/uapi/asm-generic/Kbuild.asm
+diff --git a/ipc/syscall.c b/ipc/syscall.c
+index 77a883ef2eca..65d405f1ba0c 100644
+--- a/ipc/syscall.c
++++ b/ipc/syscall.c
+@@ -30,9 +30,14 @@ SYSCALL_DEFINE6(ipc, unsigned int, call, int, first, unsigned long, second,
+ 		return ksys_semtimedop(first, (struct sembuf __user *)ptr,
+ 				       second, NULL);
+ 	case SEMTIMEDOP:
+-		return ksys_semtimedop(first, (struct sembuf __user *)ptr,
+-				       second,
+-				       (const struct timespec __user *)fifth);
++		if (IS_ENABLED(CONFIG_64BIT) || !IS_ENABLED(CONFIG_64BIT_TIME))
++			return ksys_semtimedop(first, ptr, second,
++			        (const struct __kernel_timespec __user *)fifth);
++		else if (IS_ENABLED(CONFIG_COMPAT_32BIT_TIME))
++			return compat_ksys_semtimedop(first, ptr, second,
++			        (const struct compat_timespec __user *)fifth);
++		else
++			return -ENOSYS;
  
- generic-y += bpf_perf_event.h
-+generic-y += ipcbuf.h
- generic-y += kvm_para.h
-+generic-y += msgbuf.h
- generic-y += poll.h
-+generic-y += sembuf.h
-+generic-y += shmbuf.h
-diff --git a/arch/ia64/include/uapi/asm/ipcbuf.h b/arch/ia64/include/uapi/asm/ipcbuf.h
-deleted file mode 100644
-index 90d6445a14df..000000000000
---- a/arch/ia64/include/uapi/asm/ipcbuf.h
-+++ /dev/null
-@@ -1,2 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
--#include <asm-generic/ipcbuf.h>
-diff --git a/arch/ia64/include/uapi/asm/msgbuf.h b/arch/ia64/include/uapi/asm/msgbuf.h
-deleted file mode 100644
-index aa25df92d9dc..000000000000
---- a/arch/ia64/include/uapi/asm/msgbuf.h
-+++ /dev/null
-@@ -1,28 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
--#ifndef _ASM_IA64_MSGBUF_H
--#define _ASM_IA64_MSGBUF_H
--
--/*
-- * The msqid64_ds structure for IA-64 architecture.
-- * Note extra padding because this structure is passed back and forth
-- * between kernel and user space.
-- *
-- * Pad space is left for:
-- * - 2 miscellaneous 64-bit values
-- */
--
--struct msqid64_ds {
--	struct ipc64_perm msg_perm;
--	__kernel_time_t msg_stime;	/* last msgsnd time */
--	__kernel_time_t msg_rtime;	/* last msgrcv time */
--	__kernel_time_t msg_ctime;	/* last change time */
--	unsigned long  msg_cbytes;	/* current number of bytes on queue */
--	unsigned long  msg_qnum;	/* number of messages in queue */
--	unsigned long  msg_qbytes;	/* max number of bytes on queue */
--	__kernel_pid_t msg_lspid;	/* pid of last msgsnd */
--	__kernel_pid_t msg_lrpid;	/* last receive pid */
--	unsigned long  __unused1;
--	unsigned long  __unused2;
--};
--
--#endif /* _ASM_IA64_MSGBUF_H */
-diff --git a/arch/ia64/include/uapi/asm/sembuf.h b/arch/ia64/include/uapi/asm/sembuf.h
-deleted file mode 100644
-index 6ed058760afc..000000000000
---- a/arch/ia64/include/uapi/asm/sembuf.h
-+++ /dev/null
-@@ -1,23 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
--#ifndef _ASM_IA64_SEMBUF_H
--#define _ASM_IA64_SEMBUF_H
--
--/*
-- * The semid64_ds structure for IA-64 architecture.
-- * Note extra padding because this structure is passed back and forth
-- * between kernel and user space.
-- *
-- * Pad space is left for:
-- * - 2 miscellaneous 64-bit values
-- */
--
--struct semid64_ds {
--	struct ipc64_perm sem_perm;		/* permissions .. see ipc.h */
--	__kernel_time_t	sem_otime;		/* last semop time */
--	__kernel_time_t	sem_ctime;		/* last change time */
--	unsigned long	sem_nsems;		/* no. of semaphores in array */
--	unsigned long	__unused1;
--	unsigned long	__unused2;
--};
--
--#endif /* _ASM_IA64_SEMBUF_H */
-diff --git a/arch/ia64/include/uapi/asm/shmbuf.h b/arch/ia64/include/uapi/asm/shmbuf.h
-deleted file mode 100644
-index 6ef57cb70dee..000000000000
---- a/arch/ia64/include/uapi/asm/shmbuf.h
-+++ /dev/null
-@@ -1,39 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
--#ifndef _ASM_IA64_SHMBUF_H
--#define _ASM_IA64_SHMBUF_H
--
--/*
-- * The shmid64_ds structure for IA-64 architecture.
-- * Note extra padding because this structure is passed back and forth
-- * between kernel and user space.
-- *
-- * Pad space is left for:
-- * - 2 miscellaneous 64-bit values
-- */
--
--struct shmid64_ds {
--	struct ipc64_perm	shm_perm;	/* operation perms */
--	size_t			shm_segsz;	/* size of segment (bytes) */
--	__kernel_time_t		shm_atime;	/* last attach time */
--	__kernel_time_t		shm_dtime;	/* last detach time */
--	__kernel_time_t		shm_ctime;	/* last change time */
--	__kernel_pid_t		shm_cpid;	/* pid of creator */
--	__kernel_pid_t		shm_lpid;	/* pid of last operator */
--	unsigned long		shm_nattch;	/* no. of current attaches */
--	unsigned long		__unused1;
--	unsigned long		__unused2;
--};
--
--struct shminfo64 {
--	unsigned long	shmmax;
--	unsigned long	shmmin;
--	unsigned long	shmmni;
--	unsigned long	shmseg;
--	unsigned long	shmall;
--	unsigned long	__unused1;
--	unsigned long	__unused2;
--	unsigned long	__unused3;
--	unsigned long	__unused4;
--};
--
--#endif /* _ASM_IA64_SHMBUF_H */
+ 	case SEMGET:
+ 		return ksys_semget(first, second, third);
+@@ -130,6 +135,8 @@ COMPAT_SYSCALL_DEFINE6(ipc, u32, call, int, first, int, second,
+ 		/* struct sembuf is the same on 32 and 64bit :)) */
+ 		return ksys_semtimedop(first, compat_ptr(ptr), second, NULL);
+ 	case SEMTIMEDOP:
++		if (!IS_ENABLED(CONFIG_COMPAT_32BIT_TIME))
++			return -ENOSYS;
+ 		return compat_ksys_semtimedop(first, compat_ptr(ptr), second,
+ 						compat_ptr(fifth));
+ 	case SEMGET:
 -- 
 2.9.0
 
