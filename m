@@ -1,76 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754023AbeDYXAh (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 19:00:37 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45666 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752661AbeDYXAd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 19:00:33 -0400
-Date: Wed, 25 Apr 2018 19:00:30 -0400 (EDT)
-From: Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-cc: David Rientjes <rientjes@google.com>, dm-devel@redhat.com,
-        eric.dumazet@gmail.com, mst@redhat.com, netdev@vger.kernel.org,
-        jasowang@redhat.com, Randy Dunlap <rdunlap@infradead.org>,
-        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
-        edumazet@google.com, Andrew Morton <akpm@linux-foundation.org>,
-        virtualization@lists.linux-foundation.org,
-        David Miller <davem@davemloft.net>, Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [dm-devel] [PATCH v5] fault-injection: introduce kvmalloc fallback
- options
-In-Reply-To: <1524694663.4100.21.camel@HansenPartnership.com>
-Message-ID: <alpine.LRH.2.02.1804251857070.31135@file01.intranet.prod.int.rdu2.redhat.com>
-References: <20180421144757.GC14610@bombadil.infradead.org>  <alpine.LRH.2.02.1804221733520.7995@file01.intranet.prod.int.rdu2.redhat.com>  <20180423151545.GU17484@dhcp22.suse.cz>  <alpine.LRH.2.02.1804232003100.2299@file01.intranet.prod.int.rdu2.redhat.com>
-  <20180424125121.GA17484@dhcp22.suse.cz>  <alpine.LRH.2.02.1804241142340.15660@file01.intranet.prod.int.rdu2.redhat.com>  <20180424162906.GM17484@dhcp22.suse.cz>  <alpine.LRH.2.02.1804241250350.28995@file01.intranet.prod.int.rdu2.redhat.com>
- <20180424170349.GQ17484@dhcp22.suse.cz>  <alpine.LRH.2.02.1804241319390.28995@file01.intranet.prod.int.rdu2.redhat.com>  <20180424173836.GR17484@dhcp22.suse.cz>  <alpine.LRH.2.02.1804251556060.30569@file01.intranet.prod.int.rdu2.redhat.com>
- <1114eda5-9b1f-4db8-2090-556b4a37c532@infradead.org>  <alpine.LRH.2.02.1804251656300.9428@file01.intranet.prod.int.rdu2.redhat.com>  <alpine.DEB.2.21.1804251417470.166306@chino.kir.corp.google.com>  <alpine.LRH.2.02.1804251720090.9428@file01.intranet.prod.int.rdu2.redhat.com>
- <1524694663.4100.21.camel@HansenPartnership.com>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        id S1753990AbeDYXFt (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 19:05:49 -0400
+Received: from mail-vk0-f53.google.com ([209.85.213.53]:42038 "EHLO
+        mail-vk0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752661AbeDYXFq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 19:05:46 -0400
+X-Google-Smtp-Source: AIpwx48TqPw+RKY80XjAzBbzGRGQkD+FBHqmD7oQd8EjtR+LnggH2OsvCKmy7R01OkLeiosxRQRqnwuuHmYSZtqfDXI=
 MIME-Version: 1.0
-Content-Type: MULTIPART/MIXED; BOUNDARY="185206533-1907632136-1524697231=:31135"
+In-Reply-To: <87lgdc1bvr.fsf@xmission.com>
+References: <87604mhrnb.fsf@xmission.com> <20180420143811.9994-19-ebiederm@xmission.com>
+ <7074fe36-27c5-ee82-9659-da703cfc91fe@kot-begemot.co.uk> <CAFLxGvyM+Kru=ERDvccjVuMjSPbu+FQzjbUbMwSyEbL1rVGkBQ@mail.gmail.com>
+ <7ddd238f-88a8-ed03-fe9e-0f4e5f2a490d@kot-begemot.co.uk> <87zi1sd28d.fsf@xmission.com>
+ <CAMD8JhwgcWCp6c=O4-spNW1VdY5M-eAjr7M5PieeAfeTSe_4yw@mail.gmail.com>
+ <CAMD8JhxHwcuXh68o1=fbZ_t6DH7x_dO_0nEMqL=cHXBfZXub=w@mail.gmail.com> <87lgdc1bvr.fsf@xmission.com>
+From: =?UTF-8?Q?Martin_P=C3=A4rtel?= <martin.partel@gmail.com>
+Date: Thu, 26 Apr 2018 02:05:44 +0300
+Message-ID: <CAMD8JhxzzCCjo_OLs8wS7ggOh4NqdxeRAGhcvuEJSUZZLO6NDA@mail.gmail.com>
+Subject: Re: [uml-devel] [REVIEW][PATCH 19/22] signal/um: Use force_sig_fault
+ in relay_signal.
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Anton Ivanov <anton.ivanov@kot-begemot.co.uk>,
+        Richard Weinberger <richard.weinberger@gmail.com>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Richard Weinberger <richard@nod.at>, Jeff Dike <jdike@addtoit.com>,
+        linux-um@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>,
+        "user-mode-linux-devel@lists.sourceforge.net"
+        <user-mode-linux-devel@lists.sourceforge.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+>
+> Then my analysis is correct that you simply missed filtering out the
+> si codes that are not signal specific and do not use the fault layout
+> in struct siginfo.
+> ...
+> I would say that you really need a
+> white-list of si_codes that whose use of struct siginfo that you know.
+> Otherwise you could get into the same problem of under or over copying
+> data.
+>
 
---185206533-1907632136-1524697231=:31135
-Content-Type: TEXT/PLAIN; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-
-
-
-On Wed, 25 Apr 2018, James Bottomley wrote:
-
-> > > Do we really need the new config option?  This could just be
-> > > manually  tunable via fault injection IIUC.
-> > 
-> > We do, because we want to enable it in RHEL and Fedora debugging
-> > kernels, so that it will be tested by the users.
-> > 
-> > The users won't use some extra magic kernel options or debugfs files.
-> 
-> If it can be enabled via a tunable, then the distro can turn it on
-> without the user having to do anything.  If you want to present the
-> user with a different boot option, you can (just have the tunable set
-> on the command line), but being tunable driven means that you don't
-> have to choose that option, you could automatically enable it under a
-> range of circumstances.  I think most sane distributions would want
-> that flexibility.
-> 
-> Kconfig proliferation, conversely, is a bit of a nightmare from both
-> the user and the tester's point of view, so we're trying to avoid it
-> unless absolutely necessary.
-> 
-> James
-
-BTW. even developers who compile their own kernel should have this enabled 
-by a CONFIG option - because if the developer sees the option when 
-browsing through menuconfig, he may enable it. If he doesn't see the 
-option, he won't even know that such an option exists.
-
-Mikulas
---185206533-1907632136-1524697231=:31135--
+I think that's correct, but I'm not super familiar with either UML or
+signal handling.
