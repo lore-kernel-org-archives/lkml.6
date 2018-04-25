@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx491/lkOPTVSaq48/40dq5swcZ6n7ae+mxg1rUBH6Nq43PALFTKSLm7HNl+/9Ks3pLS9+QC3
-ARC-Seal: i=1; a=rsa-sha256; t=1524652674; cv=none;
+X-Google-Smtp-Source: AIpwx48JfTQksEeLFxrokih4WZlWw60L/NDHkmI+gwVvWwLJaZBYmQUB4Rce2uKIpLisGMBOFFlS
+ARC-Seal: i=1; a=rsa-sha256; t=1524652671; cv=none;
         d=google.com; s=arc-20160816;
-        b=D+P4egpscK9GWe1L5uvKuvAfX23AAIQ2ymoSizLRhhF9bKl9NaKFKvITsjZ8j2+2uf
-         w3EwwKd4XNYI5YXmryvS4PjGlgVYtZdH5R/zLOgNMLqzSXHKKFyD185RqWYR9cr+80ss
-         yy6HNagEsBZGpbZjYgks5qcbjBR0GoHMTIYenKGC6cUZzxRRtvnozoW3iHZ8KnC+K1VO
-         2odF0byoVX3A5SQ+O4F3n3C9pxrCba/1bc/Qkv+yhDBI84RlazDNt0gWN6Iz8AMtbAG2
-         CY2CmzBZdW+lRYY7sMJsR/wBX69auYtGgUjbj8c8hZuhg8fEXAXzwl4MJ3+FnRwR7sKK
-         yg+Q==
+        b=CNQaXI/OCz1XRixE21x4bJDr+DD8ULnsfujGSVLKOSYTVBTUPZW/88H2si4J4DRdMH
+         g+l7pcT8bHR+iYvUH92KOdutxrcVWHEvYfb7dvMnaKlAnOv4t5cyb23Aa6brxDaqzspH
+         pl3NqOvYLkzJiFvn0B8Z1BPusgYCHAuGWHESKHBYNAOcqkPTfWqbTBsL2GUQVVoA3LpM
+         ssf5PkGg6v3j3tJl7ghmYclOnEihGE1iuN72Up5NF1xn1VCstAQA1xwTEQTkSMsfWagi
+         cfigwQjDD4V9Rp3J1jb2P+m8tnTi/GJ+GGj//nlhVN+8N8220QFwAvTk+dOp8VCr8xqS
+         9jlg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=QP6JOS8b+KAJj9cpuajv9ngrqLOUYllyEpRkpWebD/w=;
-        b=tLOuaXkdXqR0q4SuC4wYVijj+VhF3MQt0nrLvdQYy9QtBrz13RQ2FxyOj9ZFIRY4Ja
-         S27mQvoK+PE4+nEzCHr7gNcS6//A9By1UJmWyHreh8s8//JWRRlQZy4clbkygDvhUS8X
-         GVZLj7XYjntOMJUB4RVn67h++0DUbnUgoScPjoEW7/BK0kZ3CzH5sBozer1KeXLg4xCw
-         SQxsKymEJClgKb38jRJO2gYT8wYiVPXeNfJmiHXuab9H+TunPKGZlsYPsZ+nJOeLyGWj
-         aGfmX8gZ8MxVa268On65526UCBykmKJeOGroeZbvf38zNqAQLc99vDZwkSBKdEhW2tap
-         NZ8g==
+        bh=ul6KLmrf3faB/fF9WL7MJnBPvOJ3qBh16y05s/vJy0Q=;
+        b=GyPqxsd1rDG7+YEYEx/qTvBNRR6H9BYSK4Gq1fOS30ZiIQ3gVjetU5sFi/91+3CQ7w
+         okRU9TVlKYBeF3E7h3YtGinsAOESs9fRyu4PMUm4lxu+DCUMBwYfZSn7AiVhlzGwv3R3
+         J/wM5aj3X3stK+l2uCjfOvpo29/AN3bB3gkGExIz32jPPpEY954EAMPuk2mZ0Lr0Rq7R
+         cCvjeMnq597xLl3YNd8w6V7odGQI2RjE1b7rtAmsQ5TRPiBe6aatsI7t9PrGUHHgXJDC
+         0hmJODB2+aZcuJJFNQFQcVvi5ergQb4sJ3tlpyme57OQ2iP99afSyWdLWJRxh0WrZUvX
+         Mh4w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,15 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Anson Huang <Anson.Huang@nxp.com>,
+	Li RongQing <lirongqing@baidu.com>,
+	Dou Liyang <douly.fnst@cn.fujitsu.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	Dong Aisheng <Aisheng.dong@nxp.com>,
-	daniel.lezcano@linaro.org,
-	Linux-imx@nxp.com
-Subject: [PATCH 4.14 004/183] clocksource/imx-tpm: Correct -ETIME return condition check
-Date: Wed, 25 Apr 2018 12:33:44 +0200
-Message-Id: <20180425103242.784677410@linuxfoundation.org>
+	len.brown@intel.com,
+	rjw@rjwysocki.net,
+	hpa@zytor.com
+Subject: [PATCH 4.14 003/183] x86/acpi: Prevent X2APIC id 0xffffffff from being accounted
+Date: Wed, 25 Apr 2018 12:33:43 +0200
+Message-Id: <20180425103242.737319561@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
@@ -43,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598714011461585054?=
-X-GMAIL-MSGID: =?utf-8?q?1598714202488646140?=
+X-GMAIL-THRID: =?utf-8?q?1598714008873364541?=
+X-GMAIL-MSGID: =?utf-8?q?1598714200133446857?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,40 +53,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Anson Huang <Anson.Huang@nxp.com>
+From: Dou Liyang <douly.fnst@cn.fujitsu.com>
 
-commit 7407188489c62a7b5694bc75a6db2b82af94c9a5 upstream.
+commit 10daf10ab154e31237a8c07242be3063fb6a9bf4 upstream.
 
-The additional brakects added to tpm_set_next_event's return value
-computation causes (int) forced type conversion NOT taking effect, and the
-incorrect value return will cause various system timer issue, like RCU
-stall etc..
+RongQing reported that there are some X2APIC id 0xffffffff in his machine's
+ACPI MADT table, which makes the number of possible CPU inaccurate.
 
-Remove the additional brackets to make sure tpm_set_next_event always
-returns correct value.
+The reason is that the ACPI X2APIC parser has no sanity check for APIC ID
+0xffffffff, which is an invalid id in all APIC types. See "Intel® 64
+Architecture x2APIC Specification", Chapter 2.4.1.
 
-Fixes: 059ab7b82eec ("clocksource/drivers/imx-tpm: Add imx tpm timer support")
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Add a sanity check to acpi_parse_x2apic() which ignores the invalid id.
+
+Reported-by: Li RongQing <lirongqing@baidu.com>
+Signed-off-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Dong Aisheng <Aisheng.dong@nxp.com>
 Cc: stable@vger.kernel.org
-Cc: daniel.lezcano@linaro.org
-Cc: Linux-imx@nxp.com
-Link: https://lkml.kernel.org/r/1524117883-2484-1-git-send-email-Anson.Huang@nxp.com
+Cc: len.brown@intel.com
+Cc: rjw@rjwysocki.net
+Cc: hpa@zytor.com
+Link: https://lkml.kernel.org/r/20180412014052.25186-1-douly.fnst@cn.fujitsu.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/clocksource/timer-imx-tpm.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/acpi/boot.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/clocksource/timer-imx-tpm.c
-+++ b/drivers/clocksource/timer-imx-tpm.c
-@@ -105,7 +105,7 @@ static int tpm_set_next_event(unsigned l
- 	 * of writing CNT registers which may cause the min_delta event got
- 	 * missed, so we need add a ETIME check here in case it happened.
- 	 */
--	return (int)((next - now) <= 0) ? -ETIME : 0;
-+	return (int)(next - now) <= 0 ? -ETIME : 0;
- }
+--- a/arch/x86/kernel/acpi/boot.c
++++ b/arch/x86/kernel/acpi/boot.c
+@@ -215,6 +215,10 @@ acpi_parse_x2apic(struct acpi_subtable_h
+ 	apic_id = processor->local_apic_id;
+ 	enabled = processor->lapic_flags & ACPI_MADT_ENABLED;
  
- static int tpm_set_state_oneshot(struct clock_event_device *evt)
++	/* Ignore invalid ID */
++	if (apic_id == 0xffffffff)
++		return 0;
++
+ 	/*
+ 	 * We need to register disabled CPU as well to permit
+ 	 * counting disabled CPUs. This allows us to size
