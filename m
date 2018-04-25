@@ -1,64 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753836AbeDYNLP (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 09:11:15 -0400
-Received: from mga03.intel.com ([134.134.136.65]:57956 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752826AbeDYNLN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 09:11:13 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,326,1520924400";
-   d="scan'208";a="49829214"
-Message-ID: <1524661868.21176.552.camel@linux.intel.com>
-Subject: Re: [PATCH v5 06/11] vsprintf: Factor out %p[iI] handler as
- ip_addr_string()
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Petr Mladek <pmladek@suse.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.cz>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        linux-kernel@vger.kernel.org
-Date: Wed, 25 Apr 2018 16:11:08 +0300
-In-Reply-To: <20180425111251.13246-7-pmladek@suse.com>
-References: <20180425111251.13246-1-pmladek@suse.com>
-         <20180425111251.13246-7-pmladek@suse.com>
-Organization: Intel Finland Oy
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5-1+b1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1754011AbeDYNNy (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 09:13:54 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59480 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752349AbeDYNNx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 09:13:53 -0400
+Date: Wed, 25 Apr 2018 15:13:50 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Andrey Grodzovsky <andrey.grodzovsky@amd.com>
+Cc: linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+        Alexander.Deucher@amd.com, Christian.Koenig@amd.com,
+        David.Panariti@amd.com, akpm@linux-foundation.org,
+        ebiederm@xmission.com
+Subject: Re: [PATCH 1/3] signals: Allow generation of SIGKILL to exiting task.
+Message-ID: <20180425131350.GB7592@redhat.com>
+References: <1524583836-12130-1-git-send-email-andrey.grodzovsky@amd.com>
+ <1524583836-12130-2-git-send-email-andrey.grodzovsky@amd.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1524583836-12130-2-git-send-email-andrey.grodzovsky@amd.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-04-25 at 13:12 +0200, Petr Mladek wrote:
-> Move the non-trivial code from the long pointer() function. We are
-> going
-> to add a check for the access to the address that will make it even
-> more
-> complicated.
-> 
-> Also it is better to warn about unknown specifier instead of falling
-> back to the %p behavior. It will help people to understand what is
-> going wrong. They expect the IP address and not a pointer anyway
-> in this situation.
-> 
+On 04/24, Andrey Grodzovsky wrote:
+>
+> Currently calling wait_event_killable as part of exiting process
+> will stall forever since SIGKILL generation is suppresed by PF_EXITING.
 
-Can we split to 1) move out + 2) misc changes ?
+See my reply to 2/3,
 
-> +			return valid_string(buf, end, "(invalid
-> address)",
-> +					    spec);
+> In our partilaur case AMDGPU driver wants to flush all GPU jobs in
+> flight before shutting down. But if some job hangs the pipe we still want to
+> be able to kill it and avoid a process in D state.
 
-I would still put it on one line.
+this patch won't really help in multi-threaded case,
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+> --- a/kernel/signal.c
+> +++ b/kernel/signal.c
+> @@ -886,10 +886,10 @@ static inline int wants_signal(int sig, struct task_struct *p)
+>  {
+>  	if (sigismember(&p->blocked, sig))
+>  		return 0;
+> -	if (p->flags & PF_EXITING)
+> -		return 0;
+>  	if (sig == SIGKILL)
+>  		return 1;
+> +	if (p->flags & PF_EXITING)
+> +		return 0;
+
+So you want to trigger signal_wake_up() at the end of complete_signal().
+
+Unless you use tkill() you can wake another thread, not the thread blocked
+in drm_sched_entity_fini().
+
+And if the whole process is already dying complete_signal() will do nothing
+else.
+
+Oleg.
