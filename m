@@ -1,79 +1,81 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-1619581-1524707662-2-16933799210712570897
+X-Cyrus-Session-Id: sloti22d1t05-945756-1524671477-2-14502197274496237882
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
-  FromHeader='au', MailFrom='org'
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES roen,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+  FromHeader='de', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524707661; b=Jh0HnUZNLs/+A3MLGpWnD5ByvoNy61gOfUBcvq9z2ISCvcbwJu
-    g1+0yNcqQdl8q2X4vu64ajlapwSFvKRpgrRWIj3gtXWXC+i2QDfmqu6d4Br/LO1e
-    N40Ya5gWDc7Y983O2RbKwNAQsl7y/OmVThu7Gwa/LAQIdEfWdGG+bhoU2fH8j4qU
-    cxzZXn6LnBhpmYKe+scMJeKkLym9ZfeZqV+7ctFFBuZuBl0hGMMM75//fixe4qbt
-    3PiLYVpnx+d44KBXln9z96WenD8Y7ab3b1OPjGJLK9dMvi/MkiWxOVNA0JoOKsZG
-    guYkgBQR7uowbq8TEFvTT0s+KC3b32BaHkZw==
+    1524671476; b=vZzxGYg1VkJbMISuR6QkdYO+sLyFdgVeb7XQPOQoZ8/RIEVrto
+    /dWNOlxl1FSjo8GRseabFlYXWzPbGOdDtVuoH4NG3azr+1KZrK0llJkADJ+x1mbu
+    Fwo8RmS9vvHt+HKxH58AsH6YvYH3+SVEN8bsm8z4rhXSocCxPtzS6yrkYtW+4p2K
+    Nph0CzUwARKLWYwOQKOvkBM1kwtUr2s/jyzFa9HkCGS7AnNz+xruNkWEZ2Kguiye
+    +6+o6pEMg5+vwGy2Fg2voL0DA0qeko/Zra30GOGcxWp/isC7RBEhAxIkSPhTge3a
+    tN9cbgVJqiJXLBimBzBBtCSVMKVEu0rqQYrQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:in-reply-to
-    :message-id:references:mime-version:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1524707661; bh=kPmg8
-    q1/uKA1soUhaD0IwIc9a7wWXnMaYKTbEbg+SE4=; b=GTmk8OdLbj27XoMNyNDbj
-    bHeGNMo1qKhk9yQ7/NRA8uI7gGN9Z/kZjG9Kubn4gNPYoCDuZFk3svw5NHtOcntb
-    QphGpiFc2xQLyrsufsMWG4dAe6k1keETYTbtw+fgY+qbzqT5HmiD5zqZkQqNw0nw
-    dQC43zSuHFx124X2m315AbUjpK3KMH/OWBpemy0nK7O8Vi+zQGDPJEcoX8sOfCks
-    x+9vCu2xdDBDCsG9vEmvdn/xCIvNaZEy8fZYY22KKUfRnW5UJu8MkGzxnFxKwG7D
-    7VVXNjF2Yfd9GG+yq6HqHQl/S+/+/3m6OZXIdWtuQXu3kWiWwv7skl3JVnrZB8gM
-    w==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=telegraphics.com.au;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    messagingengine.com; h=from:to:subject:date:message-id
+    :in-reply-to:references:list-id:list-unsubscribe:list-archive
+    :list-post:list-help:list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1524671476; bh=lanKa
+    pHuzM06xSWNexVADI7luxCAkc50AmGuDPz8FNc=; b=nxKkyCVmJxMM7qsOtt0Z9
+    Z12F1MZ5vnTmSUag10ii5RojeYBWu7izMmkcELyBBIm7+SdmHukuSxQBbE0wlMte
+    2MuZRLel53HHuwIYqTlkeKghJk/PcIeZE5g5AuIstP8+yEda0nC4r3L9nmQQaRnY
+    Srnr6YDyaTzAg1F+mxTZHfI0L6quTfUBSjDqEdb5TdWMuYAwY6qm/GfWPfqnA1Qi
+    U8yf0GrBdR3+uoLXwoagkqHbKpFh/7G9L5A01dLy93l910uUpdK7jcnyJW0tbzaz
+    dxULLjX0BWxV3XsgFX1WEczgJ7XsMzF8GflEGOx5JmPFdNhoX6uwNzHizxKqtPpp
+    Q==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=YZif4vFf x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=telegraphics.com.au header.result=pass header_is_org_domain=yes;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=telegraphics.com.au;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=YZif4vFf x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=telegraphics.com.au header.result=pass header_is_org_domain=yes;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfNhIQyJGqTaKPR3asIfxHmWt53fJB0so/7DdY9DVgzwGcEGLm88AxDnxEHVnbxWIoOxxwkgqLE1j0YYaO5SOEJ/C3gkRNNebIcWo8AxKLXRVcVmgwG1z
-    sPDH7dUcAuLon7A90FXOZYPtUHqhmSfYSf/5d4CDjHppElQlq2Q0OfK7j2nphjX6aOD/+4EU5z+8AZiQIyCipC9TqFXcv2QnMuBtlPvmwGnO/FjMqaPLUw9r
-    sExQjN1GQqe25Z5s5UCs/g==
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
-    a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=VbQh5UYEud8E95Pp_A8A:9
+X-CM-Envelope: MS4wfDjJ/Vqvspz9VbOtv3M6R/NTQkGRC26BpQTkb1LAB4g98KEirUlcLfOmwODrgSCDXXYIvW8/0AWkrEdVIVVkKDKysxR2kUPy6VJ9D6wJmDP2W6fq7OsP
+    iB75eK46UV7oqQ6znFaegNutp+sX+vB8FBtT4h1XMKYo2XDHwHFg7+vKSIJffbYGEgMNdkND5tRlDNSLlk90r4Ab99NJxfw6dvqMRSxvFhKBHmwZRRTC/MCK
+    R88+Q2vk0lPucDd1/pxA/g==
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
+    a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=bTxoRwEVK1L5gscA_tkA:9
     a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-Date: Thu, 26 Apr 2018 11:45:50 +1000 (AEST)
-From: Finn Thain <fthain@telegraphics.com.au>
-To: Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH 06/40] proc: introduce proc_create_single{,_data}
-In-Reply-To: <20180425154827.32251-7-hch@lst.de>
-Message-ID: <alpine.LNX.2.21.1804261118050.8@nippy.intranet>
+From: Christoph Hellwig <hch@lst.de>
+To: Andrew Morton <akpm@linux-foundation.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 27/40] rtc/proc: switch to proc_create_single_data
+Date: Wed, 25 Apr 2018 17:48:14 +0200
+Message-Id: <20180425154827.32251-28-hch@lst.de>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180425154827.32251-1-hch@lst.de>
 References: <20180425154827.32251-1-hch@lst.de>
- <20180425154827.32251-7-hch@lst.de>
-MIME-Version: 1.0
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by
+ bombadil.infradead.org. See http://www.infradead.org/rpr.html
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -90,10 +92,10 @@ Cc: linux-rtc@vger.kernel.org, Alessandro Zummo <a.zummo@towertech.it>,
  linux-ide@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
  jfs-discussion@lists.sourceforge.net, linux-afs@lists.infradead.org,
  linux-acpi@vger.kernel.org, netdev@vger.kernel.org,
- netfilter-devel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
- Jiri Slaby <jslaby@suse.com>, Andrew Morton <akpm@linux-foundation.org>,
+ netfilter-devel@vger.kernel.org, Jiri Slaby <jslaby@suse.com>,
  linux-ext4@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>,
  megaraidlinux.pdl@broadcom.com, drbd-dev@lists.linbit.com
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: driverdev-devel-bounces@linuxdriverproject.org
@@ -102,21 +104,64 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, 25 Apr 2018, Christoph Hellwig wrote:
+And stop trying to get a reference on the submodule, procfs code deals
+with release after and unloaded module and thus removed proc entry.
 
->  
-> -/*
-> - * /proc/nubus stuff
-> - */
-> -
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ drivers/rtc/rtc-proc.c | 33 ++-------------------------------
+ 1 file changed, 2 insertions(+), 31 deletions(-)
 
-I don't think that the introduction of proc_create_single{,_data} alters 
-the value of that comment. That comment and similar comments in the same 
-file do have a purpose, which is to keep separate the /proc/nubus 
-implementation is kept separate from the /proc/bus/nubus/devices 
-implementation and so on.
-
+diff --git a/drivers/rtc/rtc-proc.c b/drivers/rtc/rtc-proc.c
+index 31e7e23cc5be..a9dd9218fae2 100644
+--- a/drivers/rtc/rtc-proc.c
++++ b/drivers/rtc/rtc-proc.c
+@@ -107,40 +107,11 @@ static int rtc_proc_show(struct seq_file *seq, void *offset)
+ 	return 0;
+ }
+ 
+-static int rtc_proc_open(struct inode *inode, struct file *file)
+-{
+-	int ret;
+-	struct rtc_device *rtc = PDE_DATA(inode);
+-
+-	if (!try_module_get(rtc->owner))
+-		return -ENODEV;
+-
+-	ret = single_open(file, rtc_proc_show, rtc);
+-	if (ret)
+-		module_put(rtc->owner);
+-	return ret;
+-}
+-
+-static int rtc_proc_release(struct inode *inode, struct file *file)
+-{
+-	int res = single_release(inode, file);
+-	struct rtc_device *rtc = PDE_DATA(inode);
+-
+-	module_put(rtc->owner);
+-	return res;
+-}
+-
+-static const struct file_operations rtc_proc_fops = {
+-	.open		= rtc_proc_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= rtc_proc_release,
+-};
+-
+ void rtc_proc_add_device(struct rtc_device *rtc)
+ {
+ 	if (is_rtc_hctosys(rtc))
+-		proc_create_data("driver/rtc", 0, NULL, &rtc_proc_fops, rtc);
++		proc_create_single_data("driver/rtc", 0, NULL, rtc_proc_show,
++				rtc);
+ }
+ 
+ void rtc_proc_del_device(struct rtc_device *rtc)
 -- 
+2.17.0
+
 _______________________________________________
 devel mailing list
 devel@linuxdriverproject.org
