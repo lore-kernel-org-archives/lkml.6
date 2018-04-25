@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49phruGzMflOtokTI1yLe3VMrz+A+ba05HErUK8XZBeKUVB9wnL7mBhKclbcblKuIIqpinV
-ARC-Seal: i=1; a=rsa-sha256; t=1524652701; cv=none;
+X-Google-Smtp-Source: AIpwx4/g/upc65gXTSLuqhLtnYTddPNg6dDwuxIg7q0aQk+7W++xku6oityBmBaUAsa1Rb5n/PLN
+ARC-Seal: i=1; a=rsa-sha256; t=1524652698; cv=none;
         d=google.com; s=arc-20160816;
-        b=OcEi+NvSkgtSAXx/XHuNQMklLI11Y5pYPEo9i3BJlq96oUIbbFBu5s5HIHIZa47Ztv
-         Hq/fQkP8exc0WptVoUFCOEX9WUV1rGL+v3y46fdCBpPBxyMBNBeZjUMp3F1LWbs578Js
-         b7POCFb/+h6ezCz4FBJmsvQ9rSVK/Ta4MgR1CbWEBvCERMxogB0A37LApAmKHkVvefO3
-         9dePc1UfzKUyR55vrYZxRXRJ+paRv7MJIqvXIXdVI0sa0zjwrT2KYWvxPZgE9wcxhmqo
-         FdstB+DcACILfUHaBP5YnY5WPja7qsSvHBLIz9svIMV7PMkATv+hH0XtFk/vl8muyGFM
-         eHbg==
+        b=mWys7wm3bgeAs5jCCwkeDHiCFkkC8c5F6y1zGwGNu+ggkjyQfs6AqB9xPTEIHZPDSj
+         H+YJo9uSjXBt5n5i9mw/SICOCIRUUtF3bYWa3jru2/K1Ub9sqFKvoiDtIDXJemjhtnKd
+         80YWyDfArepPMt1qsoIUuwdgsZti7V7HaPZFfl27QfFY62VD0H7R4+DsTsDMM8M5VCqP
+         WS/H2SSXDdKbuN2dCApQi71c/slvzugkaOBr2Zxyp3INDrfp319oTOO8DvgaQk2BVcnj
+         mNCcMxLYouKFre1nQ6fVzZK1WM/y/zC+KPaEwnQT3G0w3w186zWn8V0mpFLFUjhvnBBk
+         8VGA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=8vji+TIo2aXZ6lVDvoE8Q35YBBwuInntV0tHW6mvcpg=;
-        b=O9ySDhYO+r2EsigTVcxpaM2mkREbAlgU7aabpU7u5lUN5v1urLiIMHXQhJmfaTO4tn
-         5eOLjJa9IrYzNjXdNcSlerTjKKPBp5zMxEHq1OFeWi6R4RfVLBrLsj6sp21WkJOG9Ris
-         njLLoSqWkCb6qPYKErYOON8GoY9TVVTGPtADWSZXGTXJ9uEqUu71HG6mAxVuKrkLhebe
-         u4ii/tb1TrC1HDC6to+TaZx1eBdaQp657AL8oQfoftcWvjwUEKoQg0qaLgY+sGPSCBfd
-         bT45kNM2qPfcBlsBqlWmkVyz93MdourS0fXztjfarx1UTgBFoIMiS/4OiombJ+yojka9
-         9mTw==
+        bh=yZbsrM3F9eU7vjfuAXMc67buNWLMnFihRvyQD8xOuZY=;
+        b=GT4qn+TUa1vk4IAhIBm13a4vMo5NAiC3jTRIx4rDg3uuC2xmPzPlXJzEs864flW7W6
+         V2o9JKiOfD4ZPbybBvOomsB6ERiWdjSkBUiwcZWHS/7k2ikhZuIi1zCE3cCKOpZtbdhR
+         Nc6zUAD07yjRAW0cJE0XAEManzgbbCQjTRtJtWzmzpPiEthIHBPGP8iqMVZjQx8PpUpw
+         DSHEjWHGeYpack24VXp7ZORvcmcD42aXq9acFbaXRDIR0nFvRwTi2nrSApti+b1SvBiJ
+         9r0z745xdPliG54T6JjjprwPEHr3CsaeLhpM3E+tvywIMl7Yiks8POKgC2hhTscQjSXe
+         uaNg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,18 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Namhyung Kim <namhyung@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	David Ahern <dsahern@gmail.com>,
-	Hendrick Brueckner <brueckner@linux.vnet.ibm.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Thomas Richter <tmricht@linux.vnet.ibm.com>,
-	Wang Nan <wangnan0@huawei.com>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	Quinn Tran <quinn.tran@cavium.com>,
+	Himanshu Madhani <himanshu.madhani@cavium.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 038/183] perf unwind: Do not look just at the global callchain_param.record_mode
-Date: Wed, 25 Apr 2018 12:34:18 +0200
-Message-Id: <20180425103244.106658987@linuxfoundation.org>
+Subject: [PATCH 4.14 037/183] scsi: qla2xxx: Fix warning in qla2x00_async_iocb_timeout()
+Date: Wed, 25 Apr 2018 12:34:17 +0200
+Message-Id: <20180425103244.069187056@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
@@ -47,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598714230427954100?=
-X-GMAIL-MSGID: =?utf-8?q?1598714230427954100?=
+X-GMAIL-THRID: =?utf-8?q?1598714227740513877?=
+X-GMAIL-MSGID: =?utf-8?q?1598714227740513877?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -56,248 +51,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: "himanshu.madhani@cavium.com" <himanshu.madhani@cavium.com>
 
 
-[ Upstream commit eabad8c6856f185f876b54c426c2cc69fe0f0a7d ]
+[ Upstream commit 7ac0c332f96bb9688560726f5e80c097ed8de59a ]
 
-When setting up DWARF callchains on specific events, without using
-'record' or 'trace' --call-graph, but instead doing it like:
+This patch fixes following Smatch warning:
 
-	perf trace -e cycles/call-graph=dwarf/
+drivers/scsi/qla2xxx/qla_init.c:130 qla2x00_async_iocb_timeout() error: we previously assumed 'fcport' could be null (see line 107)
 
-The unwind__prepare_access() call in thread__insert_map() when we
-process PERF_RECORD_MMAP(2) metadata events were not being performed,
-precluding us from using per-event DWARF callchains, handling them just
-when we asked for all events to be DWARF, using "--call-graph dwarf".
-
-We do it in the PERF_RECORD_MMAP because we have to look at one of the
-executable maps to figure out the executable type (64-bit, 32-bit) of
-the DSO laid out in that mmap. Also to look at the architecture where
-the perf.data file was recorded.
-
-All this probably should be deferred to when we process a sample for
-some thread that has callchains, so that we do this processing only for
-the threads with samples, not for all of them.
-
-For now, fix using DWARF on specific events.
-
-Before:
-
-  # perf trace --no-syscalls -e probe_libc:inet_pton/call-graph=dwarf/ ping -6 -c 1 ::1
-  PING ::1(::1) 56 data bytes
-  64 bytes from ::1: icmp_seq=1 ttl=64 time=0.048 ms
-
-  --- ::1 ping statistics ---
-  1 packets transmitted, 1 received, 0% packet loss, time 0ms
-  rtt min/avg/max/mdev = 0.048/0.048/0.048/0.000 ms
-     0.000 probe_libc:inet_pton:(7fe9597bb350))
-  Problem processing probe_libc:inet_pton callchain, skipping...
-  #
-
-After:
-
-  # perf trace --no-syscalls -e probe_libc:inet_pton/call-graph=dwarf/ ping -6 -c 1 ::1
-  PING ::1(::1) 56 data bytes
-  64 bytes from ::1: icmp_seq=1 ttl=64 time=0.060 ms
-
-  --- ::1 ping statistics ---
-  1 packets transmitted, 1 received, 0% packet loss, time 0ms
-  rtt min/avg/max/mdev = 0.060/0.060/0.060/0.000 ms
-       0.000 probe_libc:inet_pton:(7fd4aa930350))
-                                         __inet_pton (inlined)
-                                         gaih_inet.constprop.7 (/usr/lib64/libc-2.26.so)
-                                         __GI_getaddrinfo (inlined)
-                                         [0xffffaa804e51af3f] (/usr/bin/ping)
-                                         __libc_start_main (/usr/lib64/libc-2.26.so)
-                                         [0xffffaa804e51b379] (/usr/bin/ping)
-  #
-  # perf trace --call-graph=dwarf --no-syscalls -e probe_libc:inet_pton/call-graph=dwarf/ ping -6 -c 1 ::1
-  PING ::1(::1) 56 data bytes
-  64 bytes from ::1: icmp_seq=1 ttl=64 time=0.057 ms
-
-  --- ::1 ping statistics ---
-  1 packets transmitted, 1 received, 0% packet loss, time 0ms
-  rtt min/avg/max/mdev = 0.057/0.057/0.057/0.000 ms
-       0.000 probe_libc:inet_pton:(7f9363b9e350))
-                                         __inet_pton (inlined)
-                                         gaih_inet.constprop.7 (/usr/lib64/libc-2.26.so)
-                                         __GI_getaddrinfo (inlined)
-                                         [0xffffa9e8a14e0f3f] (/usr/bin/ping)
-                                         __libc_start_main (/usr/lib64/libc-2.26.so)
-                                         [0xffffa9e8a14e1379] (/usr/bin/ping)
-  #
-  # perf trace --call-graph=fp --no-syscalls -e probe_libc:inet_pton/call-graph=dwarf/ ping -6 -c 1 ::1
-  PING ::1(::1) 56 data bytes
-  64 bytes from ::1: icmp_seq=1 ttl=64 time=0.077 ms
-
-  --- ::1 ping statistics ---
-  1 packets transmitted, 1 received, 0% packet loss, time 0ms
-  rtt min/avg/max/mdev = 0.077/0.077/0.077/0.000 ms
-       0.000 probe_libc:inet_pton:(7f4947e1c350))
-                                         __inet_pton (inlined)
-                                         gaih_inet.constprop.7 (/usr/lib64/libc-2.26.so)
-                                         __GI_getaddrinfo (inlined)
-                                         [0xffffaa716d88ef3f] (/usr/bin/ping)
-                                         __libc_start_main (/usr/lib64/libc-2.26.so)
-                                         [0xffffaa716d88f379] (/usr/bin/ping)
-  #
-  # perf trace --no-syscalls -e probe_libc:inet_pton/call-graph=fp/ ping -6 -c 1 ::1
-  PING ::1(::1) 56 data bytes
-  64 bytes from ::1: icmp_seq=1 ttl=64 time=0.078 ms
-
-  --- ::1 ping statistics ---
-  1 packets transmitted, 1 received, 0% packet loss, time 0ms
-  rtt min/avg/max/mdev = 0.078/0.078/0.078/0.000 ms
-       0.000 probe_libc:inet_pton:(7fa157696350))
-                                         __GI___inet_pton (/usr/lib64/libc-2.26.so)
-                                         getaddrinfo (/usr/lib64/libc-2.26.so)
-                                         [0xffffa9ba39c74f40] (/usr/bin/ping)
-  #
-
-Acked-by: Namhyung Kim <namhyung@kernel.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Hendrick Brueckner <brueckner@linux.vnet.ibm.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Thomas Richter <tmricht@linux.vnet.ibm.com>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/r/20180116182650.GE16107@kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fixes: 5c25d451163c ("scsi: qla2xxx: Fix NULL pointer access for fcport structure")
+Reported by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Quinn Tran <quinn.tran@cavium.com>
+Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/builtin-c2c.c                 |    5 +++--
- tools/perf/builtin-report.c              |    5 +++--
- tools/perf/builtin-script.c              |    5 +++--
- tools/perf/tests/dwarf-unwind.c          |    1 +
- tools/perf/util/callchain.c              |   10 ++++++++++
- tools/perf/util/callchain.h              |    2 ++
- tools/perf/util/unwind-libunwind-local.c |    9 +++------
- 7 files changed, 25 insertions(+), 12 deletions(-)
+ drivers/scsi/qla2xxx/qla_init.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/tools/perf/builtin-c2c.c
-+++ b/tools/perf/builtin-c2c.c
-@@ -2393,9 +2393,10 @@ static int setup_callchain(struct perf_e
- 	enum perf_call_graph_mode mode = CALLCHAIN_NONE;
+--- a/drivers/scsi/qla2xxx/qla_init.c
++++ b/drivers/scsi/qla2xxx/qla_init.c
+@@ -115,6 +115,8 @@ qla2x00_async_iocb_timeout(void *data)
  
- 	if ((sample_type & PERF_SAMPLE_REGS_USER) &&
--	    (sample_type & PERF_SAMPLE_STACK_USER))
-+	    (sample_type & PERF_SAMPLE_STACK_USER)) {
- 		mode = CALLCHAIN_DWARF;
--	else if (sample_type & PERF_SAMPLE_BRANCH_STACK)
-+		dwarf_callchain_users = true;
-+	} else if (sample_type & PERF_SAMPLE_BRANCH_STACK)
- 		mode = CALLCHAIN_LBR;
- 	else if (sample_type & PERF_SAMPLE_CALLCHAIN)
- 		mode = CALLCHAIN_FP;
---- a/tools/perf/builtin-report.c
-+++ b/tools/perf/builtin-report.c
-@@ -328,9 +328,10 @@ static int report__setup_sample_type(str
- 
- 	if (symbol_conf.use_callchain || symbol_conf.cumulate_callchain) {
- 		if ((sample_type & PERF_SAMPLE_REGS_USER) &&
--		    (sample_type & PERF_SAMPLE_STACK_USER))
-+		    (sample_type & PERF_SAMPLE_STACK_USER)) {
- 			callchain_param.record_mode = CALLCHAIN_DWARF;
--		else if (sample_type & PERF_SAMPLE_BRANCH_STACK)
-+			dwarf_callchain_users = true;
-+		} else if (sample_type & PERF_SAMPLE_BRANCH_STACK)
- 			callchain_param.record_mode = CALLCHAIN_LBR;
- 		else
- 			callchain_param.record_mode = CALLCHAIN_FP;
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -2574,9 +2574,10 @@ static void script__setup_sample_type(st
- 
- 	if (symbol_conf.use_callchain || symbol_conf.cumulate_callchain) {
- 		if ((sample_type & PERF_SAMPLE_REGS_USER) &&
--		    (sample_type & PERF_SAMPLE_STACK_USER))
-+		    (sample_type & PERF_SAMPLE_STACK_USER)) {
- 			callchain_param.record_mode = CALLCHAIN_DWARF;
--		else if (sample_type & PERF_SAMPLE_BRANCH_STACK)
-+			dwarf_callchain_users = true;
-+		} else if (sample_type & PERF_SAMPLE_BRANCH_STACK)
- 			callchain_param.record_mode = CALLCHAIN_LBR;
- 		else
- 			callchain_param.record_mode = CALLCHAIN_FP;
---- a/tools/perf/tests/dwarf-unwind.c
-+++ b/tools/perf/tests/dwarf-unwind.c
-@@ -173,6 +173,7 @@ int test__dwarf_unwind(struct test *test
- 	}
- 
- 	callchain_param.record_mode = CALLCHAIN_DWARF;
-+	dwarf_callchain_users = true;
- 
- 	if (init_live_machine(machine)) {
- 		pr_err("Could not init machine\n");
---- a/tools/perf/util/callchain.c
-+++ b/tools/perf/util/callchain.c
-@@ -37,6 +37,15 @@ struct callchain_param callchain_param =
- 	CALLCHAIN_PARAM_DEFAULT
- };
- 
-+/*
-+ * Are there any events usind DWARF callchains?
-+ *
-+ * I.e.
-+ *
-+ * -e cycles/call-graph=dwarf/
-+ */
-+bool dwarf_callchain_users;
-+
- struct callchain_param callchain_param_default = {
- 	CALLCHAIN_PARAM_DEFAULT
- };
-@@ -265,6 +274,7 @@ int parse_callchain_record(const char *a
- 			ret = 0;
- 			param->record_mode = CALLCHAIN_DWARF;
- 			param->dump_size = default_stack_dump_size;
-+			dwarf_callchain_users = true;
- 
- 			tok = strtok_r(NULL, ",", &saveptr);
- 			if (tok) {
---- a/tools/perf/util/callchain.h
-+++ b/tools/perf/util/callchain.h
-@@ -89,6 +89,8 @@ enum chain_value {
- 	CCVAL_COUNT,
- };
- 
-+extern bool dwarf_callchain_users;
-+
- struct callchain_param {
- 	bool			enabled;
- 	enum perf_call_graph_mode record_mode;
---- a/tools/perf/util/unwind-libunwind-local.c
-+++ b/tools/perf/util/unwind-libunwind-local.c
-@@ -631,9 +631,8 @@ static unw_accessors_t accessors = {
- 
- static int _unwind__prepare_access(struct thread *thread)
- {
--	if (callchain_param.record_mode != CALLCHAIN_DWARF)
-+	if (!dwarf_callchain_users)
- 		return 0;
--
- 	thread->addr_space = unw_create_addr_space(&accessors, 0);
- 	if (!thread->addr_space) {
- 		pr_err("unwind: Can't create unwind address space.\n");
-@@ -646,17 +645,15 @@ static int _unwind__prepare_access(struc
- 
- static void _unwind__flush_access(struct thread *thread)
- {
--	if (callchain_param.record_mode != CALLCHAIN_DWARF)
-+	if (!dwarf_callchain_users)
- 		return;
--
- 	unw_flush_cache(thread->addr_space, 0, 0);
- }
- 
- static void _unwind__finish_access(struct thread *thread)
- {
--	if (callchain_param.record_mode != CALLCHAIN_DWARF)
-+	if (!dwarf_callchain_users)
- 		return;
--
- 	unw_destroy_addr_space(thread->addr_space);
- }
- 
+ 	switch (sp->type) {
+ 	case SRB_LOGIN_CMD:
++		if (!fcport)
++			break;
+ 		/* Retry as needed. */
+ 		lio->u.logio.data[0] = MBS_COMMAND_ERROR;
+ 		lio->u.logio.data[1] = lio->u.logio.flags & SRB_LOGIN_RETRIED ?
+@@ -128,6 +130,8 @@ qla2x00_async_iocb_timeout(void *data)
+ 		qla24xx_handle_plogi_done_event(fcport->vha, &ea);
+ 		break;
+ 	case SRB_LOGOUT_CMD:
++		if (!fcport)
++			break;
+ 		qlt_logo_completion_handler(fcport, QLA_FUNCTION_TIMEOUT);
+ 		break;
+ 	case SRB_CT_PTHRU_CMD:
