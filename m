@@ -1,91 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751279AbeDYElb (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 00:41:31 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:44309 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750945AbeDYEl3 (ORCPT
+        id S1751308AbeDYEnW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 00:43:22 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:35132 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750962AbeDYEnR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 00:41:29 -0400
-X-Google-Smtp-Source: AIpwx4/lsXLH5tZReX7hzEvZC2ds0XawNpWc4Hl+GaODNrklqS5Hf9dzHF6VYyuf91nPNn112WaiXw==
-Date: Wed, 25 Apr 2018 10:13:26 +0530
-From: Souptick Joarder <jrdr.linux@gmail.com>
-To: akpm@linux-foundation.org, zi.yan@cs.rutgers.edu,
-        dan.j.williams@intel.com, kirill.shutemov@linux.intel.com,
-        ross.zwisler@linux.intel.com, n-horiguchi@ah.jp.nec.com,
-        mhocko@suse.com, shli@fb.com
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: [PATCH v2] mm: huge_memory: Change return type to vm_fault_t
-Message-ID: <20180425044326.GA21504@jordon-HP-15-Notebook-PC>
+        Wed, 25 Apr 2018 00:43:17 -0400
+X-Google-Smtp-Source: AIpwx4/pSkEh3D4fQQ1/6YTdwcF/pSQMZy4g+nKLerqyvyn2qtQFN+ifqOdcYUMvSY9H79lxkH8S7g==
+Date: Tue, 24 Apr 2018 21:44:25 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Alex Elder <elder@linaro.org>
+Cc: andy.gross@linaro.org, clew@codeaurora.org, aneela@codeaurora.org,
+        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/6] soc: qcom: smem: byte swap values properly
+Message-ID: <20180425044425.GG2052@tuxbook-pro>
+References: <20180410222542.29474-1-elder@linaro.org>
+ <20180410222542.29474-4-elder@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180410222542.29474-4-elder@linaro.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use new return type vm_fault_t for fault handler. For
-now, this is just documenting that the function returns
-a VM_FAULT value rather than an errno. Once all instances
-are converted, vm_fault_t will become a distinct type.
+On Tue 10 Apr 15:25 PDT 2018, Alex Elder wrote:
 
-Commit 1c8f422059ae ("mm: change return type to vm_fault_t")
+> Two places report an error when a partition header is found to
+> not contain the right canary value.  The error messages do not
+> properly byte swap the host ids.  Fix this, and adjust the format
+> specificier to match the 16-bit unsigned data type.
+> 
+> Move the error handling for a bad canary value to the end of
+> qcom_smem_alloc_private().  This avoids some long lines, and
+> reduces the distraction of handling this unexpected problem.
+> 
+> Signed-off-by: Alex Elder <elder@linaro.org>
 
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
----
-v2: Updated the change log
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
- include/linux/huge_mm.h | 5 +++--
- mm/huge_memory.c        | 4 ++--
- 2 files changed, 5 insertions(+), 4 deletions(-)
+Regards,
+Bjorn
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index a8a1262..d3bbf6b 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -3,6 +3,7 @@
- #define _LINUX_HUGE_MM_H
- 
- #include <linux/sched/coredump.h>
-+#include <linux/mm_types.h>
- 
- #include <linux/fs.h> /* only for vma_is_dax() */
- 
-@@ -46,9 +47,9 @@ extern bool move_huge_pmd(struct vm_area_struct *vma, unsigned long old_addr,
- extern int change_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
- 			unsigned long addr, pgprot_t newprot,
- 			int prot_numa);
--int vmf_insert_pfn_pmd(struct vm_area_struct *vma, unsigned long addr,
-+vm_fault_t vmf_insert_pfn_pmd(struct vm_area_struct *vma, unsigned long addr,
- 			pmd_t *pmd, pfn_t pfn, bool write);
--int vmf_insert_pfn_pud(struct vm_area_struct *vma, unsigned long addr,
-+vm_fault_t vmf_insert_pfn_pud(struct vm_area_struct *vma, unsigned long addr,
- 			pud_t *pud, pfn_t pfn, bool write);
- enum transparent_hugepage_flag {
- 	TRANSPARENT_HUGEPAGE_FLAG,
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 87ab9b8..1fe4705 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -755,7 +755,7 @@ static void insert_pfn_pmd(struct vm_area_struct *vma, unsigned long addr,
- 	spin_unlock(ptl);
- }
- 
--int vmf_insert_pfn_pmd(struct vm_area_struct *vma, unsigned long addr,
-+vm_fault_t vmf_insert_pfn_pmd(struct vm_area_struct *vma, unsigned long addr,
- 			pmd_t *pmd, pfn_t pfn, bool write)
- {
- 	pgprot_t pgprot = vma->vm_page_prot;
-@@ -815,7 +815,7 @@ static void insert_pfn_pud(struct vm_area_struct *vma, unsigned long addr,
- 	spin_unlock(ptl);
- }
- 
--int vmf_insert_pfn_pud(struct vm_area_struct *vma, unsigned long addr,
-+vm_fault_t vmf_insert_pfn_pud(struct vm_area_struct *vma, unsigned long addr,
- 			pud_t *pud, pfn_t pfn, bool write)
- {
- 	pgprot_t pgprot = vma->vm_page_prot;
--- 
-1.9.1
+> ---
+>  drivers/soc/qcom/smem.c | 18 +++++++++---------
+>  1 file changed, 9 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/soc/qcom/smem.c b/drivers/soc/qcom/smem.c
+> index 3102aa94aec2..82f0908b90e1 100644
+> --- a/drivers/soc/qcom/smem.c
+> +++ b/drivers/soc/qcom/smem.c
+> @@ -365,13 +365,8 @@ static int qcom_smem_alloc_private(struct qcom_smem *smem,
+>  	cached = phdr_to_last_cached_entry(phdr);
+>  
+>  	while (hdr < end) {
+> -		if (hdr->canary != SMEM_PRIVATE_CANARY) {
+> -			dev_err(smem->dev,
+> -				"Found invalid canary in hosts %d:%d partition\n",
+> -				phdr->host0, phdr->host1);
+> -			return -EINVAL;
+> -		}
+> -
+> +		if (hdr->canary != SMEM_PRIVATE_CANARY)
+> +			goto bad_canary;
+>  		if (le16_to_cpu(hdr->item) == item)
+>  			return -EEXIST;
+>  
+> @@ -400,6 +395,11 @@ static int qcom_smem_alloc_private(struct qcom_smem *smem,
+>  	le32_add_cpu(&phdr->offset_free_uncached, alloc_size);
+>  
+>  	return 0;
+> +bad_canary:
+> +	dev_err(smem->dev, "Found invalid canary in hosts %hu:%hu partition\n",
+> +		le16_to_cpu(phdr->host0), le16_to_cpu(phdr->host1));
+> +
+> +	return -EINVAL;
+>  }
+>  
+>  static int qcom_smem_alloc_global(struct qcom_smem *smem,
+> @@ -563,8 +563,8 @@ static void *qcom_smem_get_private(struct qcom_smem *smem,
+>  	return ERR_PTR(-ENOENT);
+>  
+>  invalid_canary:
+> -	dev_err(smem->dev, "Found invalid canary in hosts %d:%d partition\n",
+> -			phdr->host0, phdr->host1);
+> +	dev_err(smem->dev, "Found invalid canary in hosts %hu:%hu partition\n",
+> +			le16_to_cpu(phdr->host0), le16_to_cpu(phdr->host1));
+>  
+>  	return ERR_PTR(-EINVAL);
+>  }
+> -- 
+> 2.14.1
+> 
