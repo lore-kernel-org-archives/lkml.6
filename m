@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756491AbeDYSZ5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 14:25:57 -0400
-Received: from mga02.intel.com ([134.134.136.20]:41713 "EHLO mga02.intel.com"
+        id S1756500AbeDYS0F (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 14:26:05 -0400
+Received: from mga02.intel.com ([134.134.136.20]:41709 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755788AbeDYSMk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 14:12:40 -0400
+        id S1755762AbeDYSMj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 14:12:39 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,327,1520924400";
-   d="scan'208";a="35243679"
+   d="scan'208";a="35243661"
 From: Reinette Chatre <reinette.chatre@intel.com>
 To: tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
         vikas.shivappa@linux.intel.com
@@ -18,345 +18,85 @@ Cc: gavin.hindman@intel.com, jithu.joseph@intel.com, dave.hansen@intel.com,
         mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
         linux-kernel@vger.kernel.org,
         Reinette Chatre <reinette.chatre@intel.com>
-Subject: [PATCH V3 15/39] x86/intel_rdt: Documentation for Cache Pseudo-Locking
-Date: Wed, 25 Apr 2018 03:09:51 -0700
-Message-Id: <d9c592e53b8a98f04833bd18978a36a18dcb6864.1524649902.git.reinette.chatre@intel.com>
+Subject: [PATCH V3 11/39] x86/intel_rdt: Support flexible data to parsing callbacks
+Date: Wed, 25 Apr 2018 03:09:47 -0700
+Message-Id: <76e98aac194f0b09669071edd86012afcf801050.1524649902.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <cover.1524649902.git.reinette.chatre@intel.com>
 References: <cover.1524649902.git.reinette.chatre@intel.com>
-MIME-Version: 1.0
 In-Reply-To: <cover.1524649902.git.reinette.chatre@intel.com>
 References: <cover.1524649902.git.reinette.chatre@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add description of Cache Pseudo-Locking feature, its interface,
-as well as an example of its usage.
+Each resource is associated with a configurable callback that should be
+used to parse the information provided for the particular resource from
+user space. In addition to the resource and domain pointers this callback
+is provided with just the character buffer being parsed.
+
+In support of flexible parsing the callback is modified to support a
+void pointer as argument. This enables resources that need more data
+than just the user provided data to pass its required data to the
+callback without affecting the signatures for the callbacks of all the
+other resources.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
- Documentation/x86/intel_rdt_ui.txt | 278 ++++++++++++++++++++++++++++++++++++-
- 1 file changed, 276 insertions(+), 2 deletions(-)
+ arch/x86/kernel/cpu/intel_rdt.h             | 6 +++---
+ arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c | 6 ++++--
+ 2 files changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/x86/intel_rdt_ui.txt b/Documentation/x86/intel_rdt_ui.txt
-index f1210ac40e3d..da74fc34dfc0 100644
---- a/Documentation/x86/intel_rdt_ui.txt
-+++ b/Documentation/x86/intel_rdt_ui.txt
-@@ -27,7 +27,11 @@ mount options are:
- L2 and L3 CDP are controlled seperately.
+diff --git a/arch/x86/kernel/cpu/intel_rdt.h b/arch/x86/kernel/cpu/intel_rdt.h
+index 3fb6645de840..3eb2616c4254 100644
+--- a/arch/x86/kernel/cpu/intel_rdt.h
++++ b/arch/x86/kernel/cpu/intel_rdt.h
+@@ -356,7 +356,7 @@ struct rdt_resource {
+ 	struct rdt_cache	cache;
+ 	struct rdt_membw	membw;
+ 	const char		*format_str;
+-	int (*parse_ctrlval)	(char *buf, struct rdt_resource *r,
++	int (*parse_ctrlval)	(void *data, struct rdt_resource *r,
+ 				 struct rdt_domain *d);
+ 	struct list_head	evt_list;
+ 	int			num_rmid;
+@@ -364,8 +364,8 @@ struct rdt_resource {
+ 	unsigned long		fflags;
+ };
  
- RDT features are orthogonal. A particular system may support only
--monitoring, only control, or both monitoring and control.
-+monitoring, only control, or both monitoring and control.  Cache
-+pseudo-locking is a unique way of using cache control to "pin" or
-+"lock" data in the cache. Details can be found in
-+"Cache Pseudo-Locking".
-+
+-int parse_cbm(char *buf, struct rdt_resource *r, struct rdt_domain *d);
+-int parse_bw(char *buf, struct rdt_resource *r,  struct rdt_domain *d);
++int parse_cbm(void *_data, struct rdt_resource *r, struct rdt_domain *d);
++int parse_bw(void *_buf, struct rdt_resource *r,  struct rdt_domain *d);
  
- The mount succeeds if either of allocation or monitoring is present, but
- only those files and directories supported by the system will be created.
-@@ -84,6 +88,8 @@ related to allocation:
- 			      and available for sharing.
- 			"E" - Corresponding region is used exclusively by
- 			      one resource group. No sharing allowed.
-+			"P" - Corresponding region is pseudo-locked. No
-+			      sharing allowed.
+ extern struct mutex rdtgroup_mutex;
  
- Memory bandwitdh(MB) subdirectory contains the following files
- with respect to allocation:
-@@ -190,7 +196,12 @@ When control is enabled all CTRL_MON groups will also contain:
- "mode":
- 	The "mode" of the resource group dictates the sharing of its
- 	allocations. A "shareable" resource group allows sharing of its
--	allocations while an "exclusive" resource group does not.
-+	allocations while an "exclusive" resource group does not. A
-+	cache pseudo-locked region is created by first writing
-+	"pseudo-locksetup" to the "mode" file before writing the cache
-+	pseudo-locked region's schemata to the resource group's "schemata"
-+	file. On successful pseudo-locked region creation the mode will
-+	automatically change to "pseudo-locked".
+diff --git a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
+index 3bd45e6cc9ae..a55bc0b0e0ac 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
++++ b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
+@@ -63,9 +63,10 @@ static bool bw_validate(char *buf, unsigned long *data, struct rdt_resource *r)
+ 	return true;
+ }
  
- When monitoring is enabled all MON groups will also contain:
+-int parse_bw(char *buf, struct rdt_resource *r, struct rdt_domain *d)
++int parse_bw(void *_buf, struct rdt_resource *r, struct rdt_domain *d)
+ {
+ 	unsigned long data;
++	char *buf = _buf;
  
-@@ -360,6 +371,168 @@ L3CODE:0=fffff;1=fffff;2=fffff;3=fffff
- L3DATA:0=fffff;1=fffff;2=3c0;3=fffff
- L3CODE:0=fffff;1=fffff;2=fffff;3=fffff
+ 	if (d->have_new_ctrl) {
+ 		rdt_last_cmd_printf("duplicate domain %d\n", d->id);
+@@ -125,8 +126,9 @@ static bool cbm_validate(char *buf, u32 *data, struct rdt_resource *r)
+  * Read one cache bit mask (hex). Check that it is valid for the current
+  * resource type.
+  */
+-int parse_cbm(char *buf, struct rdt_resource *r, struct rdt_domain *d)
++int parse_cbm(void *_data, struct rdt_resource *r, struct rdt_domain *d)
+ {
++	char *buf = _data;
+ 	u32 cbm_val;
  
-+Cache Pseudo-Locking
-+--------------------
-+CAT enables a user to specify the amount of cache space that an
-+application can fill. Cache pseudo-locking builds on the fact that a
-+CPU can still read and write data pre-allocated outside its current
-+allocated area on a cache hit. With cache pseudo-locking, data can be
-+preloaded into a reserved portion of cache that no application can
-+fill, and from that point on will only serve cache hits. The cache
-+pseudo-locked memory is made accessible to user space where an
-+application can map it into its virtual address space and thus have
-+a region of memory with reduced average read latency.
-+
-+The creation of a cache pseudo-locked region is triggered by a request
-+from the user to do so that is accompanied by a schemata of the region
-+to be pseudo-locked. The cache pseudo-locked region is created as follows:
-+- Create a CAT allocation CLOSNEW with a CBM matching the schemata
-+  from the user of the cache region that will contain the pseudo-locked
-+  memory. This region must not overlap with any current CAT allocation/CLOS
-+  on the system and no future overlap with this cache region is allowed
-+  while the pseudo-locked region exists.
-+- Create a contiguous region of memory of the same size as the cache
-+  region.
-+- Flush the cache, disable hardware prefetchers, disable preemption.
-+- Make CLOSNEW the active CLOS and touch the allocated memory to load
-+  it into the cache.
-+- Set the previous CLOS as active.
-+- At this point the closid CLOSNEW can be released - the cache
-+  pseudo-locked region is protected as long as its CBM does not appear in
-+  any CAT allocation. Even though the cache pseudo-locked region will from
-+  this point on not appear in any CBM of any CLOS an application running with
-+  any CLOS will be able to access the memory in the pseudo-locked region since
-+  the region continues to serve cache hits.
-+- The contiguous region of memory loaded into the cache is exposed to
-+  user-space as a character device.
-+
-+Cache pseudo-locking increases the probability that data will remain
-+in the cache via carefully configuring the CAT feature and controlling
-+application behavior. There is no guarantee that data is placed in
-+cache. Instructions like INVD, WBINVD, CLFLUSH, etc. can still evict
-+“locked” data from cache. Power management C-states may shrink or
-+power off cache. It is thus recommended to limit the processor maximum
-+C-state, for example, by setting the processor.max_cstate kernel parameter.
-+
-+It is required that an application using a pseudo-locked region runs
-+with affinity to the cores (or a subset of the cores) associated
-+with the cache on which the pseudo-locked region resides. A sanity check
-+within the code will not allow an application to map pseudo-locked memory
-+unless it runs with affinity to cores associated with the cache on which the
-+pseudo-locked region resides. The sanity check is only done during the
-+initial mmap() handling, there is no enforcement afterwards and the
-+application self needs to ensure it remains affine to the correct cores.
-+
-+Pseudo-locking is accomplished in two stages:
-+1) During the first stage the system administrator allocates a portion
-+   of cache that should be dedicated to pseudo-locking. At this time an
-+   equivalent portion of memory is allocated, loaded into allocated
-+   cache portion, and exposed as a character device.
-+2) During the second stage a user-space application maps (mmap()) the
-+   pseudo-locked memory into its address space.
-+
-+Cache Pseudo-Locking Interface
-+------------------------------
-+A pseudo-locked region is created using the resctrl interface as follows:
-+
-+1) Create a new resource group by creating a new directory in /sys/fs/resctrl.
-+2) Change the new resource group's mode to "pseudo-locksetup" by writing
-+   "pseudo-locksetup" to the "mode" file.
-+3) Write the schemata of the pseudo-locked region to the "schemata" file. All
-+   bits within the schemata should be "unused" according to the "bit_usage"
-+   file.
-+
-+On successful pseudo-locked region creation the "mode" file will contain
-+"pseudo-locked" and a new character device with the same name as the resource
-+group will exist in /dev/pseudo_lock. This character device can be mmap()'ed
-+by user space in order to obtain access to the pseudo-locked memory region.
-+
-+An example of cache pseudo-locked region creation and usage can be found below.
-+
-+Cache Pseudo-Locking Debugging Interface
-+---------------------------------------
-+The pseudo-locking debugging interface is enabled with
-+CONFIG_INTEL_RDT_DEBUGFS and can be found in /sys/kernel/debug/resctrl.
-+
-+There is no explicit way for the kernel to test if a provided memory
-+location is present in the cache. The pseudo-locking debugging interface uses
-+the tracing infrastructure to provide two ways to measure cache residency of
-+the pseudo-locked region:
-+1) Memory access latency using the pseudo_lock_mem_latency tracepoint. Data
-+   from these measurements are best visualized using a hist trigger (see
-+   example below). In this test the pseudo-locked region is traversed at
-+   a stride of 32 bytes while hardware prefetchers and preemption
-+   are disabled. This also provides a substitute visualization of cache
-+   hits and misses.
-+2) Cache hit and miss measurements using model specific precision counters if
-+   available. Depending on the levels of cache on the system the pseudo_lock_l2
-+   and pseudo_lock_l3 tracepoints are available.
-+   WARNING: triggering this  measurement uses from two (for just L2
-+   measurements) to four (for L2 and L3 measurements) precision counters on
-+   the system, if any other measurements are in progress the counters and
-+   their corresponding event registers will be clobbered.
-+
-+When a pseudo-locked region is created a new debugfs directory is created for
-+it in debugfs as /sys/kernel/debug/resctrl/<newdir>. A single
-+write-only file, pseudo_lock_measure, is present in this directory. The
-+measurement on the pseudo-locked region depends on the number, 1 or 2,
-+written to this debugfs file. Since the measurements are recorded with the
-+tracing infrastructure the relevant tracepoints need to be enabled before the
-+measurement is triggered.
-+
-+Example of latency debugging interface:
-+In this example a pseudo-locked region named "newlock" was created. Here is
-+how we can measure the latency in cycles of reading from this region:
-+# :> /sys/kernel/debug/tracing/trace
-+# echo 'hist:keys=latency' > /sys/kernel/debug/tracing/events/resctrl/pseudo_lock_mem_latency/trigger
-+# echo 1 > /sys/kernel/debug/tracing/events/resctrl/pseudo_lock_mem_latency/enable
-+# echo 1 > /sys/kernel/debug/resctrl/newlock/pseudo_lock_measure
-+# echo 0 > /sys/kernel/debug/tracing/events/resctrl/pseudo_lock_mem_latency/enable
-+# cat /sys/kernel/debug/tracing/events/resctrl/pseudo_lock_mem_latency/hist
-+
-+# event histogram
-+#
-+# trigger info: hist:keys=latency:vals=hitcount:sort=hitcount:size=2048 [active]
-+#
-+
-+{ latency:        456 } hitcount:          1
-+{ latency:         50 } hitcount:         83
-+{ latency:         36 } hitcount:         96
-+{ latency:         44 } hitcount:        174
-+{ latency:         48 } hitcount:        195
-+{ latency:         46 } hitcount:        262
-+{ latency:         42 } hitcount:        693
-+{ latency:         40 } hitcount:       3204
-+{ latency:         38 } hitcount:       3484
-+
-+Totals:
-+    Hits: 8192
-+    Entries: 9
-+   Dropped: 0
-+
-+Example of cache hits/misses debugging:
-+In this example a pseudo-locked region named "newlock" was created on the L2
-+cache of a platform. Here is how we can obtain details of the cache hits
-+and misses using the platform's precision counters.
-+
-+# :> /sys/kernel/debug/tracing/trace
-+# echo 1 > /sys/kernel/debug/tracing/events/resctrl/pseudo_lock_l2/enable
-+# echo 2 > /sys/kernel/debug/resctrl/newlock/pseudo_lock_measure
-+# echo 0 > /sys/kernel/debug/tracing/events/resctrl/pseudo_lock_l2/enable
-+# cat /sys/kernel/debug/tracing/trace
-+
-+# tracer: nop
-+#
-+#                              _-----=> irqs-off
-+#                             / _----=> need-resched
-+#                            | / _---=> hardirq/softirq
-+#                            || / _--=> preempt-depth
-+#                            ||| /     delay
-+#           TASK-PID   CPU#  ||||    TIMESTAMP  FUNCTION
-+#              | |       |   ||||       |         |
-+ pseudo_lock_mea-1672  [002] ....  3132.860500: pseudo_lock_l2: hits=4097 miss=0
-+
-+
- Examples for RDT allocation usage:
- 
- Example 1
-@@ -537,6 +710,107 @@ A resource group cannot be forced to overlap with an exclusive resource group:
- # cat info/last_cmd_status
- overlaps with exclusive group
- 
-+Example of Cache Pseudo-Locking
-+-------------------------------
-+Lock portion of L2 cache from cache id 1 using CBM 0x3. Pseudo-locked
-+region is exposed at /dev/pseudo_lock/newlock that can be provided to
-+application for argument to mmap().
-+
-+# mount -t resctrl resctrl /sys/fs/resctrl/
-+# cd /sys/fs/resctrl
-+
-+Ensure that there are bits available that can be pseudo-locked, since only
-+unused bits can be pseudo-locked the bits to be pseudo-locked needs to be
-+removed from the default resource group's schemata:
-+# cat info/L2/bit_usage
-+0=SSSSSSSS;1=SSSSSSSS
-+# echo 'L2:1=0xfc' > schemata
-+# cat info/L2/bit_usage
-+0=SSSSSSSS;1=SSSSSS00
-+
-+Create a new resource group that will be associated with the pseudo-locked
-+region, indicate that it will be used for a pseudo-locked region, and
-+configure the requested pseudo-locked region capacity bitmask:
-+
-+# mkdir newlock
-+# echo pseudo-locksetup > newlock/mode
-+# echo 'L2:1=0x3' > newlock/schemata
-+
-+On success the resource group's mode will change to pseudo-locked, the
-+bit_usage will reflect the pseudo-locked region, and the character device
-+exposing the pseudo-locked region will exist:
-+
-+# cat newlock/mode
-+pseudo-locked
-+# cat info/L2/bit_usage
-+0=SSSSSSSS;1=SSSSSSPP
-+# ls -l /dev/pseudo_lock/newlock
-+crw------- 1 root root 243, 0 Apr  3 05:01 /dev/pseudo_lock/newlock
-+
-+/*
-+ * Example code to access one page of pseudo-locked cache region
-+ * from user space.
-+ */
-+#define _GNU_SOURCE
-+#include <fcntl.h>
-+#include <sched.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <unistd.h>
-+#include <sys/mman.h>
-+
-+/*
-+ * It is required that the application runs with affinity to only
-+ * cores associated with the pseudo-locked region. Here the cpu
-+ * is hardcoded for convenience of example.
-+ */
-+static int cpuid = 2;
-+
-+int main(int argc, char *argv[])
-+{
-+	cpu_set_t cpuset;
-+	long page_size;
-+	void *mapping;
-+	int dev_fd;
-+	int ret;
-+
-+	page_size = sysconf(_SC_PAGESIZE);
-+
-+	CPU_ZERO(&cpuset);
-+	CPU_SET(cpuid, &cpuset);
-+	ret = sched_setaffinity(0, sizeof(cpuset), &cpuset);
-+	if (ret < 0) {
-+		perror("sched_setaffinity");
-+		exit(EXIT_FAILURE);
-+	}
-+
-+	dev_fd = open("/dev/pseudo_lock/newlock", O_RDWR);
-+	if (dev_fd < 0) {
-+		perror("open");
-+		exit(EXIT_FAILURE);
-+	}
-+
-+	mapping = mmap(0, page_size, PROT_READ | PROT_WRITE, MAP_SHARED,
-+		       dev_fd, 0);
-+	if (mapping == MAP_FAILED) {
-+		perror("mmap");
-+		close(dev_fd);
-+		exit(EXIT_FAILURE);
-+	}
-+
-+	/* Application interacts with pseudo-locked memory @mapping */
-+
-+	ret = munmap(mapping, page_size);
-+	if (ret < 0) {
-+		perror("munmap");
-+		close(dev_fd);
-+		exit(EXIT_FAILURE);
-+	}
-+
-+	close(dev_fd);
-+	exit(EXIT_SUCCESS);
-+}
-+
- Locking between applications
- ----------------------------
- 
+ 	if (d->have_new_ctrl) {
 -- 
 2.13.6
