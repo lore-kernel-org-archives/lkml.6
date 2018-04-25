@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AB8JxZrZhOda/rMFLRB4hJf2tTOx5wynTksuTJLCGx5my1ZqrQv+Y1GGmGbB2F1dgJpD7mrDFZaA
-ARC-Seal: i=1; a=rsa-sha256; t=1524652657; cv=none;
+X-Google-Smtp-Source: AB8JxZrl42CNEv5Em/UcrlWM+RfjJCFAJ48sq7/T8hbFc3hUXYYg9W2DCYl8huRXz4uut5y+P4iC
+ARC-Seal: i=1; a=rsa-sha256; t=1524652652; cv=none;
         d=google.com; s=arc-20160816;
-        b=iOruYKY1J5AvZC6bXuNYHsNYNhoQlE43SxXgacYnVvPr10tJZ7ze2fQdOFLX0l3e+A
-         Hjq11WMrjEGGUKSsvPxgaq+gUN0p3dgkt3ePTC7oC50Kl2g1jqF9XAFe19j79NsbJUh3
-         TW7Ck+t1bbt5u+yNFmBN4Vm+zRk+lL+R2sfG/jUOdCiQ8AWGU7poutnTglVCOMK8TDjx
-         sz4fBX36rQsMUwOuPTi0dPKLDVw8dD8eSB653CBFcRXdBAJmEASIcFbvY+0P7hdeTR7/
-         iIRl4G7SgQKxBGc5GP4xnQXQgfuEWrzPI4Pli3NstQwFfXbCFvgnvssDvwJyEPqOW6ED
-         t5xQ==
+        b=iCpBhWcOtaep5C0Rn7xeqqFLA5Yqi0se5tild6xDIKMBV+e2WTlNnxqyoBzETTqbLw
+         1Rka4OmApgSEma3f057e8XCP6lHfkS28UHFEkF4ust8jXlskBXKAsKEWakMjfkZ+/euC
+         f6+DZA5XJYSVDKtwRuEeFCQe4lK+yzDvYKhfpbkYRm9amJaauV1zXwISIN5QsgT0/kJ1
+         KdAMr1ml+Az+ivku3A/oHUFVta/3qpxy6r6QdcxdiWB9/55Wf3l351ikZMvlLhujG1OZ
+         jcPajtvaSC/UY8bhz9TlrRn3qnImpKzJfJ+HyAJvAUFMb/UK/3GgmpcbIIbgKidR8CP8
+         C8Og==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=+BeNr2t/r6VBadvhTBAG33/Olb1JrWyQhEE1UArE1K0=;
-        b=T2y+K17glteqpcFHnTgVqGnUa9suxYyAMAtNEvy1GC8SUHuTAr+aw4KxtEAPoQQIkM
-         KZVorwliHoYnTNLw14Ghwh3hTwbu3EqJC+yA+G7eSHBqRJ1ionPF7FhdF3gTcdJj7NOf
-         3iyG+01o9nqY2FcgzugAl5DGfnIQEYF1tZGtXXhITaU87rQGMxYjf20p6ogubVzaxyZ+
-         tABq9DHUdCO6prA/e4/ZTGI0MYqhbiKKVZSlU2b7V/OAUkdoaF6AdL5BAzVDGClmiGEs
-         DWoJxOih3CrxiDiRFSdjHH2Nb90TJwCl6CpEHD/WCk62WHniy7OIVwDHamsN75dMDEkV
-         pH7g==
+        bh=J6F9yC81d9rvlNl/8i2ULVtFFLwtninHb1u4JFtzeWU=;
+        b=mZq7r6YdiBIBsV1KFpx48sMIId/ZnYuabGLFUPhRCu1L909pfyrsCfOqlcs8F/pUWN
+         R9zQTJ38lCdBZrc82q7QKokNSt1+kRWtGSxCW2Y7EkmmPR2BaNxBkun/OZ4uInymTA9A
+         7xcet/2KKHc4FWuZPimRSNQ4xHb9JTjuRxv+uxlLhhrzKPUlHTIkFVtn5ifB8x6BmMBF
+         Tb+ls9NSoBHsxVIa3TUJSVSSORVfIcAA5dWyjmBeLMPLATQX/39ms7NKHB2160Bdira6
+         HMP8EsQILxq/DYB/PhGzCbZKytP0q80F43Ptuc8QMIsuM9Go7iN0yBNVhKIJP8Ks4vr6
+         0eIA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dan Carpenter <dan.carpenter@oracle.com>,
-	Mark Brown <broonie@kernel.org>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 021/183] ASoC: au1x: Fix timeout tests in au1xac97c_ac97_read()
-Date: Wed, 25 Apr 2018 12:34:01 +0200
-Message-Id: <20180425103243.457111558@linuxfoundation.org>
+	Liu Bo <bo.liu@linux.alibaba.com>,
+	David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.14 002/183] btrfs: fix unaligned access in readdir
+Date: Wed, 25 Apr 2018 12:33:42 +0200
+Message-Id: <20180425103242.696627331@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598714185220866802?=
-X-GMAIL-MSGID: =?utf-8?q?1598714185220866802?=
+X-GMAIL-THRID: =?utf-8?q?1598714003012608660?=
+X-GMAIL-MSGID: =?utf-8?q?1598714179778432819?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,44 +49,74 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: David Sterba <dsterba@suse.com>
 
+commit 92d32170847bfff2dd08af2c016085779f2fd2a1 upstream.
 
-[ Upstream commit 123af9043e93cb6f235207d260d50f832cdb5439 ]
+The last update to readdir introduced a temporary buffer to store the
+emitted readdir data, but as there are file names of variable length,
+there's a lot of unaligned access.
 
-The loop timeout doesn't work because it's a post op and ends with "tmo"
-set to -1.  I changed it from a post-op to a pre-op and I changed the
-initial the starting value from 5 to 6 so we still iterate 5 times.  I
-left the other as it was because it's a large number.
+This was observed on a sparc64 machine:
 
-Fixes: b3c70c9ea62a ("ASoC: Alchemy AC97C/I2SC audio support")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+  Kernel unaligned access at TPC[102f3080] btrfs_real_readdir+0x51c/0x718 [btrfs]
+
+Fixes: 23b5ec74943 ("btrfs: fix readdir deadlock with pagefault")
+CC: stable@vger.kernel.org # 4.14+
+Reported-and-tested-by: René Rebe <rene@exactcode.com>
+Reviewed-by: Liu Bo <bo.liu@linux.alibaba.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- sound/soc/au1x/ac97c.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/sound/soc/au1x/ac97c.c
-+++ b/sound/soc/au1x/ac97c.c
-@@ -91,8 +91,8 @@ static unsigned short au1xac97c_ac97_rea
- 	do {
- 		mutex_lock(&ctx->lock);
+---
+ fs/btrfs/inode.c |   20 ++++++++++++--------
+ 1 file changed, 12 insertions(+), 8 deletions(-)
+
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -42,6 +42,7 @@
+ #include <linux/blkdev.h>
+ #include <linux/posix_acl_xattr.h>
+ #include <linux/uio.h>
++#include <asm/unaligned.h>
+ #include "ctree.h"
+ #include "disk-io.h"
+ #include "transaction.h"
+@@ -5980,11 +5981,13 @@ static int btrfs_filldir(void *addr, int
+ 		struct dir_entry *entry = addr;
+ 		char *name = (char *)(entry + 1);
  
--		tmo = 5;
--		while ((RD(ctx, AC97_STATUS) & STAT_CP) && tmo--)
-+		tmo = 6;
-+		while ((RD(ctx, AC97_STATUS) & STAT_CP) && --tmo)
- 			udelay(21);	/* wait an ac97 frame time */
- 		if (!tmo) {
- 			pr_debug("ac97rd timeout #1\n");
-@@ -105,7 +105,7 @@ static unsigned short au1xac97c_ac97_rea
- 		 * poll, Forrest, poll...
- 		 */
- 		tmo = 0x10000;
--		while ((RD(ctx, AC97_STATUS) & STAT_CP) && tmo--)
-+		while ((RD(ctx, AC97_STATUS) & STAT_CP) && --tmo)
- 			asm volatile ("nop");
- 		data = RD(ctx, AC97_CMDRESP);
+-		ctx->pos = entry->offset;
+-		if (!dir_emit(ctx, name, entry->name_len, entry->ino,
+-			      entry->type))
++		ctx->pos = get_unaligned(&entry->offset);
++		if (!dir_emit(ctx, name, get_unaligned(&entry->name_len),
++					 get_unaligned(&entry->ino),
++					 get_unaligned(&entry->type)))
+ 			return 1;
+-		addr += sizeof(struct dir_entry) + entry->name_len;
++		addr += sizeof(struct dir_entry) +
++			get_unaligned(&entry->name_len);
+ 		ctx->pos++;
+ 	}
+ 	return 0;
+@@ -6078,14 +6081,15 @@ again:
+ 		}
  
+ 		entry = addr;
+-		entry->name_len = name_len;
++		put_unaligned(name_len, &entry->name_len);
+ 		name_ptr = (char *)(entry + 1);
+ 		read_extent_buffer(leaf, name_ptr, (unsigned long)(di + 1),
+ 				   name_len);
+-		entry->type = btrfs_filetype_table[btrfs_dir_type(leaf, di)];
++		put_unaligned(btrfs_filetype_table[btrfs_dir_type(leaf, di)],
++				&entry->type);
+ 		btrfs_dir_item_key_to_cpu(leaf, di, &location);
+-		entry->ino = location.objectid;
+-		entry->offset = found_key.offset;
++		put_unaligned(location.objectid, &entry->ino);
++		put_unaligned(found_key.offset, &entry->offset);
+ 		entries++;
+ 		addr += sizeof(struct dir_entry) + name_len;
+ 		total_len += sizeof(struct dir_entry) + name_len;
