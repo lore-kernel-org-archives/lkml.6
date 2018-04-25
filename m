@@ -1,46 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751247AbeDYHVm (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 03:21:42 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:34202 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750841AbeDYHVl (ORCPT
+        id S1751399AbeDYHWv (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 03:22:51 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:46393 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750941AbeDYHWq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 03:21:41 -0400
-Date: Wed, 25 Apr 2018 00:21:38 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Christoph Hellwig <hch@infradead.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Arvind Yadav <arvind.yadav.cs@gmail.com>,
-        mjpeg-users@lists.sourceforge.net,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] media: zoran: move to dma-mapping interface
-Message-ID: <20180425072138.GA16375@infradead.org>
-References: <20180424204158.2764095-1-arnd@arndb.de>
- <20180425061537.GA23383@infradead.org>
- <CAK8P3a06ragAPWpHGm-bGoZ8t6QyAttWJfD0jU_wcGy7FqLb5w@mail.gmail.com>
+        Wed, 25 Apr 2018 03:22:46 -0400
+Subject: Re: [PATCH 1/3] dt-bindings: iio: stm32-adc: add support for
+ STM32MP1.
+To: Rob Herring <robh@kernel.org>
+CC: <jic23@kernel.org>, <alexandre.torgue@st.com>, <mark.rutland@arm.com>,
+        <mcoquelin.stm32@gmail.com>, <lars@metafoo.de>, <knaack.h@gmx.de>,
+        <pmeerw@pmeerw.net>, <linux-iio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <benjamin.gaignard@linaro.org>
+References: <1524065874-434-1-git-send-email-fabrice.gasnier@st.com>
+ <1524065874-434-2-git-send-email-fabrice.gasnier@st.com>
+ <20180424162721.qbfsc7j3syzzykeh@rob-hp-laptop>
+From: Fabrice Gasnier <fabrice.gasnier@st.com>
+Message-ID: <ee92eb8d-9675-3c94-1c0d-f6e8f091d878@st.com>
+Date: Wed, 25 Apr 2018 09:22:02 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a06ragAPWpHGm-bGoZ8t6QyAttWJfD0jU_wcGy7FqLb5w@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20180424162721.qbfsc7j3syzzykeh@rob-hp-laptop>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.48]
+X-ClientProxiedBy: SFHDAG3NODE2.st.com (10.75.127.8) To SFHDAG5NODE3.st.com
+ (10.75.127.15)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-25_02:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 25, 2018 at 09:08:13AM +0200, Arnd Bergmann wrote:
-> > That probably also means it can use dma_mmap_coherent instead of the
-> > handcrafted remap_pfn_range loop and the PageReserved abuse.
+On 04/24/2018 06:27 PM, Rob Herring wrote:
+> On Wed, Apr 18, 2018 at 05:37:52PM +0200, Fabrice Gasnier wrote:
+>> Document support for STM32MP1 ADC. It's quite similar to STM32H7 ADC.
+>> Introduce "st,stm32mp1-adc" compatible to handle variants of this
+>> hardware such as vregready flag, interrupts, clock rate.
+>>
+>> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+>> ---
+>>  Documentation/devicetree/bindings/iio/adc/st,stm32-adc.txt | 6 +++++-
+>>  1 file changed, 5 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/iio/adc/st,stm32-adc.txt b/Documentation/devicetree/bindings/iio/adc/st,stm32-adc.txt
+>> index e8bb824..9994384 100644
+>> --- a/Documentation/devicetree/bindings/iio/adc/st,stm32-adc.txt
+>> +++ b/Documentation/devicetree/bindings/iio/adc/st,stm32-adc.txt
+>> @@ -24,8 +24,11 @@ Required properties:
+>>  - compatible: Should be one of:
+>>    "st,stm32f4-adc-core"
+>>    "st,stm32h7-adc-core"
+>> +  "st,stm32mp1-adc-core"
+>>  - reg: Offset and length of the ADC block register set.
+>> -- interrupts: Must contain the interrupt for ADC block.
+>> +- interrupts: One or more interrupts for ADC block. Some parts like stm32f4
+>> +  and stm32h7 share a common ADC interrupt line. stm32mp1 has separate
+>> +  lines for each ADC within ADC block.
 > 
-> I'd rather not touch that code. How about adding a comment about
-> the fact that it should use dma_mmap_coherent()?
+> How many interrupt lines is that?
 
-Maybe the real question is if there is anyone that actually cares
-for this driver, or if we are better off just removing it?
+Hi Rob, Jonathan,
 
-Same is true for various other virt_to_bus using drivers, e.g. the
-grotty atm drivers.
+I should have mentioned this: stm32mp1 has two separate interrupt lines
+for each ADC within ADC block.
+
+Do you wish I send a V2 for this ? Or a patch to fix this ?
+
+Please let me know,
+BR,
+Fabrice
+
+> 
+>>  - clocks: Core can use up to two clocks, depending on part used:
+>>    - "adc" clock: for the analog circuitry, common to all ADCs.
+>>      It's required on stm32f4.
+>> @@ -53,6 +56,7 @@ Required properties:
+>>  - compatible: Should be one of:
+>>    "st,stm32f4-adc"
+>>    "st,stm32h7-adc"
+>> +  "st,stm32mp1-adc"
+>>  - reg: Offset of ADC instance in ADC block (e.g. may be 0x0, 0x100, 0x200).
+>>  - clocks: Input clock private to this ADC instance. It's required only on
+>>    stm32f4, that has per instance clock input for registers access.
+>> -- 
+>> 1.9.1
+>>
