@@ -1,67 +1,152 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754531AbeDYOSM (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 10:18:12 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47128 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753336AbeDYOSL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 10:18:11 -0400
-Date: Wed, 25 Apr 2018 16:18:07 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: Andrey Grodzovsky <Andrey.Grodzovsky@amd.com>,
-        Michel =?iso-8859-1?Q?D=E4nzer?= <michel@daenzer.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>, David.Panariti@amd.com,
-        Eric Biederman <ebiederm@xmission.com>,
-        Alex Deucher <Alexander.Deucher@amd.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <Christian.Koenig@amd.com>
-Subject: Re: [PATCH 2/3] drm/scheduler: Don't call wait_event_killable for
- signaled process.
-Message-ID: <20180425141807.GA8212@redhat.com>
-References: <1524583836-12130-1-git-send-email-andrey.grodzovsky@amd.com>
- <1524583836-12130-3-git-send-email-andrey.grodzovsky@amd.com>
- <7313704c-0693-0bb9-8818-99cd2b7c0ca0@daenzer.net>
- <20180424194418.GE25142@phenom.ffwll.local>
- <aa2d8587-651e-2c24-a673-4682e7035a8f@amd.com>
- <20180424214027.GG25142@phenom.ffwll.local>
- <20180425132228.GC7592@redhat.com>
- <CAKMK7uF7LumuFWw3Xezw+QYDEhz6pFrJueZqFvSnmmoynYqpgQ@mail.gmail.com>
+        id S1754569AbeDYOTi (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 10:19:38 -0400
+Received: from omr-a015e.mx.aol.com ([204.29.186.63]:40457 "EHLO
+        omr-a015e.mx.aol.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753283AbeDYOTe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 10:19:34 -0400
+Subject: Re: [PATCH] perf test: Adapt test case record+probe_libc_inet_pton.sh
+ for s390
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Thomas Richter <tmricht@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com
+References: <20180412081959.85193-1-tmricht@linux.ibm.com>
+ <20180412131012.GC9818@kernel.org>
+From: Martin Vuille <jpmv27@aim.com>
+Message-ID: <25418aa4-60bb-9f16-c880-8caaf8a20931@aim.com>
+Date: Wed, 25 Apr 2018 10:19:14 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKMK7uF7LumuFWw3Xezw+QYDEhz6pFrJueZqFvSnmmoynYqpgQ@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180412131012.GC9818@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+x-aol-global-disposition: G
+x-aol-sid: 3039ac1b02225ae080621c4e
+X-AOL-IP: 99.246.128.134
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/25, Daniel Vetter wrote:
->
-> On Wed, Apr 25, 2018 at 3:22 PM, Oleg Nesterov <oleg@redhat.com> wrote:
-> > On 04/24, Daniel Vetter wrote:
-> >>
-> >> wait_event_killabel doesn't check for fatal_signal_pending before calling
-> >> schedule, so definitely has a nice race there.
-> >
-> > This is fine. See the signal_pending_state() check in __schedule().
-> >
-> > And this doesn't differ from wait_event_interruptible(), it too doesn't
-> > check signal_pending(), we rely on schedule() which must not block if the
-> > caller is signalled/killed.
-> >
-> > The problem is that it is not clear what should fatal_signal_pending() or
-> > even signal_pending() mean after exit_signals().
->
-> Uh, I was totally thrown off in all the wait_event* macros and somehow
-> landed in the _locked variants, which all need to recheck before they
-> drop the lock, for efficiency reasons. See do_wait_intr().
+Apologies for any problems my patch may be causing.
 
-Just in case, note that do_wait_intr() has to check signal_pending() for
-completely differerent reason. We need to return non-zero code to stop the
-main loop in __wait_event_interruptible_locked(); unlike ___wait_event()
-it doesn't check signal_pending() itself.
+I'm unclear on what is the proposed fix, other than reverting the commit.
 
-Oleg.
+In the problem scenario, is a --symfs option used? Is the debug info being obtained from the symfs directory?
+
+Unfortunately, I've had to change my focus for the time being, so won't be able to investigate further for a while.
+
+Arnaldo, I'm fine with you reverting this change for now.
+
+Regards,
+
+MV
+
+
+On 04/12/18 09:10, Arnaldo Carvalho de Melo wrote:
+> Em Thu, Apr 12, 2018 at 10:19:59AM +0200, Thomas Richter escreveu:
+>> perf test case 58 (record+probe_libc_inet_pton.sh)
+>> executed on s390x using kernel 4.16.0rc3
+>> displays this result:
+>>   # ./perf trace --no-syscalls
+>>             -e probe_libc:inet_pton/call-graph=dwarf/ ping -6 -c 1 ::1
+>>       probe_libc:inet_pton: (3ffa0240448)
+>> 	      __GI___inet_pton (/usr/lib64/libc-2.26.so)
+>> 	      gaih_inet (inlined)
+>> 	      __GI_getaddrinfo (inlined)
+>> 	      main (/usr/bin/ping)
+>> 	      __libc_start_main (/usr/lib64/libc-2.26.so)
+>> 	     _start (/usr/bin/ping)
+>>
+>> After I installed kernel 4.16.0 the same tests uses
+>> commands
+>>   # perf record -e probe_libc:inet_pton/call-graph=dwarf/
+>>        -o /tmp/perf.data.abc ping -6 -c 1 ::1
+>>   # perf script -i /tmp/perf.data.abc
+>> and displays:
+>>   ping 39048 [006] 84230.381198: probe_libc:inet_pton: (3ffa0240448)
+>> 	       140448 __GI___inet_pton (/usr/lib64/libc-2.26.so)
+>> 	       fbde1 gaih_inet (inlined)
+>> 	       fe2b9 __GI_getaddrinfo (inlined)
+>> 	        398d main (/usr/bin/ping)
+>>
+>> Nothing else changed including glibc elfutils and other libraries
+>> picked up by the build.
+>> The entries for __libc_start_main and _start are missing.
+>>
+>> I bisected missing __libc_start_main and _start to commit
+>> 3d20c6246690219881786de10d2dda93f616d0ac
+>> ("perf unwind: Unwind with libdw doesn't take symfs into account")
+> You forgot to add the author of that changeset to the CC list. Doing so
+> will give him the chance to look at this unintended consequence of his
+> work and maybe allow him to comment on your fix or provide an
+> alternative solution.
+>
+> I've added him to the CC list now, Martin, can you please comment on
+> this?
+>
+> - Arnaldo
+>
+>> When I undo this commit I get this call stack on s390:
+>>   [root@s35lp76 perf]# ./perf script  -i /tmp/perf.data.abc
+>>   ping 39048 [006] 84230.381198: probe_libc:inet_pton: (3ffa0240448)
+>> 	140448 __GI___inet_pton (/usr/lib64/libc-2.26.so)
+>> 	 fbde1 gaih_inet (inlined)
+>> 	 fe2b9 __GI_getaddrinfo (inlined)
+>> 	  398d main (/usr/bin/ping)
+>> 	 22fbd __libc_start_main (/usr/lib64/libc-2.26.so)
+>> 	  457b _start (/usr/bin/ping)
+>>
+>> Looks like dwarf functions dwfl_xxx  create different call back
+>> stack trace when using file
+>> /usr/lib/debug/usr/bin/ping-20161105-7.fc27.s390x.debug instead of
+>> file /usr/bin/ping.
+>>
+>> Fix this test case on s390 and do not expect any call back stack
+>> entry after the main() function. Also be more robust and accept a
+>> leading __GI_ prefix in front of getaddrinfo.
+>>
+>> On x86 this test case shows the same call stack using
+>> both kernel versions 4.16.0rc3 and 4.16.0 and also
+>> stops at main:
+>>
+>> [root@f27 perf]# ./perf script -i /tmp/perf.data.tmr
+>> ping  4446 [000]   172.027088: probe_libc:inet_pton: (7fdfa08c93c0)
+>> 	           1393c0 __GI___inet_pton (/usr/lib64/libc-2.26.so)
+>> 	            fe60d getaddrinfo (/usr/lib64/libc-2.26.so)
+>> 	             2f40 main (/usr/bin/ping)
+>>
+>> [root@f27 perf]#
+>>
+>> Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+>> Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
+>> ---
+>>   tools/perf/tests/shell/record+probe_libc_inet_pton.sh | 6 ++----
+>>   1 file changed, 2 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+>> index 1ecc1f0ff84a..016882dbbc16 100755
+>> --- a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+>> +++ b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+>> @@ -19,12 +19,10 @@ trace_libc_inet_pton_backtrace() {
+>>   	expected[1]=".*inet_pton[[:space:]]\($libc\)$"
+>>   	case "$(uname -m)" in
+>>   	s390x)
+>> -		eventattr='call-graph=dwarf'
+>> +		eventattr='call-graph=dwarf,max-stack=4'
+>>   		expected[2]="gaih_inet.*[[:space:]]\($libc|inlined\)$"
+>> -		expected[3]="__GI_getaddrinfo[[:space:]]\($libc|inlined\)$"
+>> +		expected[3]="(__GI_)?getaddrinfo[[:space:]]\($libc|inlined\)$"
+>>   		expected[4]="main[[:space:]]\(.*/bin/ping.*\)$"
+>> -		expected[5]="__libc_start_main[[:space:]]\($libc\)$"
+>> -		expected[6]="_start[[:space:]]\(.*/bin/ping.*\)$"
+>>   		;;
+>>   	*)
+>>   		eventattr='max-stack=3'
+>> -- 
+>> 2.14.3
