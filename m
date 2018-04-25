@@ -1,269 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756121AbeDYSkz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 14:40:55 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:38923 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754974AbeDYSkv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 14:40:51 -0400
-X-Google-Smtp-Source: AIpwx49HvGquqb2OCVmsk49a2+VqVTuy8upBn/sIafa/KvA+WLSvcKqYfXdf+W+yguZZQpgs6HiJlA==
-Subject: Re: [PATCH v7 2/5] of: change overlay apply input data from
- unflattened to FDT
-To: Jan Kiszka <jan.kiszka@web.de>, Rob Herring <robh+dt@kernel.org>,
-        Alan Tull <atull@kernel.org>
-Cc: Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Pantelis Antoniou <panto@antoniou-consulting.com>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Jailhouse <jailhouse-dev@googlegroups.com>
-References: <1520122673-11003-1-git-send-email-frowand.list@gmail.com>
- <1520122673-11003-3-git-send-email-frowand.list@gmail.com>
- <09e3db63-cbf9-52a2-ee77-520979f17fea@web.de>
- <7bbf615b-3cdd-6bb4-6918-33e48de4225d@gmail.com>
- <a21dbee8-6e4e-9ceb-c798-dda43c2eae2d@web.de>
- <d7e94a45-5d46-0491-e5dc-2b098a11c5b1@gmail.com>
- <CAL_Jsq+MmUTMrd+jNqUB2=A-q3cCy7+QWOKG0iF6zM0hjCy3PQ@mail.gmail.com>
- <e508f3de-f21b-2510-2c6a-b810073ba1a7@web.de>
- <e06d1c0f-f60d-fc23-cd74-82f557dbc432@web.de>
- <7bbb9472-9c96-6012-68e6-4ec2773c7732@gmail.com>
- <4483492d-37d2-63ad-6739-2cb297fa5058@gmail.com>
- <127c3c71-769e-32cf-72c1-6950382b8189@web.de>
-From: Frank Rowand <frowand.list@gmail.com>
-Message-ID: <cc66a8b3-9f26-166e-427b-b885a9009af7@gmail.com>
-Date: Wed, 25 Apr 2018 11:40:48 -0700
+        id S1756153AbeDYSlJ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 14:41:09 -0400
+Received: from mail-bn3nam01on0074.outbound.protection.outlook.com ([104.47.33.74]:41687
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1756127AbeDYSlB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 14:41:01 -0400
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Andrey.Grodzovsky@amd.com;
+Subject: Re: [PATCH 2/3] drm/scheduler: Don't call wait_event_killable for
+ signaled process.
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+        Alexander.Deucher@amd.com, Christian.Koenig@amd.com,
+        David.Panariti@amd.com, akpm@linux-foundation.org
+References: <1524583836-12130-1-git-send-email-andrey.grodzovsky@amd.com>
+ <1524583836-12130-3-git-send-email-andrey.grodzovsky@amd.com>
+ <87muxsbmkp.fsf@xmission.com> <8840ac96-50c4-f94d-eb7c-f007940163f3@amd.com>
+ <877eowa5qh.fsf@xmission.com> <20180425135552.GD7592@redhat.com>
+ <f45c7017-c75a-7f0c-b6d5-4d79600cdd33@amd.com>
+ <20180425171757.GA10441@redhat.com>
+From: Andrey Grodzovsky <Andrey.Grodzovsky@amd.com>
+Message-ID: <c39cb438-1e8a-4f2c-50f6-c6e2a144487b@amd.com>
+Date: Wed, 25 Apr 2018 14:40:54 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+ Thunderbird/52.4.0
 MIME-Version: 1.0
-In-Reply-To: <127c3c71-769e-32cf-72c1-6950382b8189@web.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <20180425171757.GA10441@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [165.204.55.251]
+X-ClientProxiedBy: YQBPR0101CA0072.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c00:1::49) To DM5PR1201MB0123.namprd12.prod.outlook.com
+ (2603:10b6:4:55::12)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DM5PR1201MB0123;
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR1201MB0123;3:tJPD/o/kKPC6ae1gnAqqP8w0lag7GT+JLSvInA/35GkSFBfPrIH/MEzRPSAfRKk4KT38iGyrG+qt4C0v0mmtNgeFBfViz+D2LGKpTxTRLwG/PhOjEHnchqOY+5wOAeXLAWz3wxh9eEYvWnKrpoPVdyuQuczoF+bBxodZ4N3ZqA6d9VrZbvXq8obLOfpr1V7jVP7pJ6HGWQA38RyV3tMsY5j3rrwvxi2Gh5jNkJOXQWT2ag+sImaKVFn033X1e9nE;25:jkQHrcTzf/1qx2Su4l1g/CrvNqVXBSmx0gmhSY3wwsxnlwzcFn1Z9OYcxqkCGaGY9LsF3jYTPq62gimXId2LdTB46bzWhNPmFuMuBpnJsEsBWKnnio121148B9PjTmOiPzEJlKSWptfyD3MXZ147IFhEH2Xu2j/C0R2FfocTbAYonsUFpEByrsGEpNiC4euWC6wJN5TKhxbyimZ0AYx4z8rFpF1ntEok0JRGO9vKP4qX1NCHrrSeqxsSSTg7Xg4g9uRuXTLzK9e13RD/q0Q1VQpS9amkxIOg5cRv6DAEqM1VNYgKY0l1v9HX3IN6isvVXpYbKTpkxbGgmHOch77DdQ==;31:qudD20fDsYjNavRBwDhU/kBCAEKwh5xDAZAKqXWQHj39htqcmdjiEtAiGD8ofoi2UoNzQ3QcASwPMtiPINNuAmKRryQ3Vp8G+jKj2OsN16InJ2+sTHpOAW/IkTyr/d3TlgfHCwgvmDqsU6vaL8kfwLO5QbOmgI1CZIW8BJMvNxiNYoe+RkimEYxA/mPgiamTbpv+sU7ptyOhItTnaOchD/FukAW6gZYyEmguXMaXaSY=
+X-MS-TrafficTypeDiagnostic: DM5PR1201MB0123:
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR1201MB0123;20:lvz2VQpYgubtc3uFKSyH+J6rPafT6G7hNRkYH+tt8h0SCTdtZ5PeOUjpxlCcLTvDGO6avgQtNyIh/Yd/guPHYWje5FTh3w0tikzNiE5sPWJ8HK0GX1xX6atGrRmfltTNp49aIKUEskfIl78g2/D/MR1kwAs10Tx9RKAqJprQdJC041Yem9TIWcS7IRv66V2fS8Ro9pGXcbcoCq2Rnh3ESjvccOEMdBRE9gY1Amva9UV7Ovr0gFXqAteGHfvApZrbvHcLJzHT08Ku/6bH0rPhYQbBUCM+yMBnNH+zQ5rW5YXaTGWVntNWyXlkmFs0C764b2f2GAu8HYGS/lLTzqROObmFi+NeZXOBGx29u5jdGz3x+T6VpNu2nqn75RGYSnV1n5bxByqgmzJzZuYCaaM6BDvpAAKHLM1W6nk686qCEHOK35FbDtYJe1zJ7BTLFht/zZfpX9a4pkxfK1Qgg6mtmAVpD05u7HcPuUszxz9NmjruqazZTyP9rRgql9AjwlC8;4:1o1i3ENjTl1CqjCIM577aunYPJrXUEwVY0HdjTMVdtcL96rhva4YrxehMOJAeZvMWz4j/BqLraOpKEX1h+0YC9PlqTeAR5rE4FUNHpzgjVTx6cZOIBLaR1gVwasayRkrt4oyIcxZnn3/kwc4T8A2OPd1AyZIHVBMKHLtiiMA8yps0ofteC9FbMoYetrEePmE1jzKPEUSpJElIJfL7kTc0bsMIiFLfPdXwIVTYHqZgJqbZEHu5yFn9c3BYeMy9jFEjkk7njFD3b+o0hPk2zZkxg==
+X-Microsoft-Antispam-PRVS: <DM5PR1201MB01239ACF593BC353C635C8CFEA8F0@DM5PR1201MB0123.namprd12.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(93006095)(93001095)(10201501046)(3231232)(944501410)(52105095)(6055026)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:DM5PR1201MB0123;BCL:0;PCL:0;RULEID:;SRVR:DM5PR1201MB0123;
+X-Forefront-PRVS: 06530126A4
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6049001)(396003)(366004)(346002)(376002)(39860400002)(39380400002)(199004)(189003)(50466002)(64126003)(16576012)(486006)(93886005)(956004)(446003)(2616005)(72206003)(11346002)(31686004)(25786009)(476003)(3846002)(2906002)(229853002)(230700001)(97736004)(6116002)(8676002)(68736007)(86362001)(8936002)(478600001)(6486002)(65826007)(7736002)(4326008)(6666003)(65956001)(36756003)(6916009)(53936002)(81156014)(47776003)(305945005)(6246003)(31696002)(105586002)(106356001)(81166006)(53546011)(66066001)(58126008)(16526019)(2486003)(186003)(23676004)(52146003)(77096007)(67846002)(76176011)(52116002)(386003)(65806001)(316002)(5660300001)(26005);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR1201MB0123;H:[172.27.230.118];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtETTVQUjEyMDFNQjAxMjM7MjM6Y1pSR216QkFpZUVWa3pMQXRjU3NjUFMr?=
+ =?utf-8?B?TkhkTVFzVDVzY2VBaFpMVnRMK05mOEZjUFRqQVNlRDBUaFRBUEErRENSTnA3?=
+ =?utf-8?B?UGVIUnNhNVRPekJ3U2tYYi9ESGhTVjZYTXd4TGNtSlc3VmFhZk0xMFZYZmNs?=
+ =?utf-8?B?VkFJNGV1TzczcWNWNGtUdDBBZXBzMmNUdGo1VTBjTTg3bFJjT0RyQjFlWUZR?=
+ =?utf-8?B?eXZ5RnkzSExLaHlaS043a3ZzeHRCcnJNK3I0NmlNeE5TWldhaHNwZDFSazNx?=
+ =?utf-8?B?M1VIVHlDNTF6RFRpY0h2TkJmVlJ3VUJjTlFvQS91RWdaWjhiRDh4UXBkS3Zs?=
+ =?utf-8?B?WUZqTU9JdFV6cmRzSVJFYmxUMUlkSFJPZmIxSmhEQkFXbVh2ZjdrMHZnL2lS?=
+ =?utf-8?B?Z2NJeWtxczdaSDBOb094K3YwWGMxTEJOazBDVHd3RTRHTTkzMldvSGladmha?=
+ =?utf-8?B?ajUwcTBpTWdIOG9ZeEsyazl5ZFBLTVYyUk1LWVQ2WTdpeGd3cW02TExhc3Fj?=
+ =?utf-8?B?bXZ5REdza2Q4OVhDdWJiZVh5b1pBenZoVGJCVzFRNlJsNGVZdTlkaHpjR2Jn?=
+ =?utf-8?B?YkxRYTlmbXNERmFzYkc0QVJlS3YwUEZPMDNlNWpvZEg1cG95NnpDUmFmR2tR?=
+ =?utf-8?B?c1QxNDlkWGp2YnRENFFld29YUEljbmozb05jSU5CVXJyK0ZBRk10NXJPQ0w5?=
+ =?utf-8?B?VkhmbFhMcGRaOVVYMjVrTHJFdXJTNzVXVURJWlhHZ2wvS3c2Um1iVGlvMFMy?=
+ =?utf-8?B?bkZLeTF1V1MxckNQLzc3MGF4VlBpMFZMLzRySHVIMkVqR0ROb2dpbXhXWkxa?=
+ =?utf-8?B?T2lRMkptZVZqT1EzNFZzdDM0QUtvMFBlREl0UlozY0dqTUl5YmY4QURkZ2dM?=
+ =?utf-8?B?SXV3MXAvOUdpVmlFUC93RFlmd1Q1aERUVEwrYWVudFVCUzIvWDB5c2F4S215?=
+ =?utf-8?B?K2ZSNmJZSXdodVVJNVJJNXJoK2R4ZHVnOXRESVhURFcvR1F4OHl5WGtaODMr?=
+ =?utf-8?B?RW56U2F0NWJkc2kvZjU5cXF3RFJkenRIUmVUeG9HRnhZL0w0b2Fnem1Pby9S?=
+ =?utf-8?B?UVNIYlRJTEZ5d2dSN0c5RFpEUXdSYnEycUFVQ2dKK3pBZ3NDa1NkQ2VQb1Jj?=
+ =?utf-8?B?cE9NR1J0RWJFY0RtM004VC8zYkZzYjlIVnpJd0NaN21zdG1LcER0akY4RWRa?=
+ =?utf-8?B?Qkxjd3dKQ1hjeXpyTkpLOFFaRU9GT1ZwWEJZRURBeUFxUUJSa1RFR1J0UGtZ?=
+ =?utf-8?B?VlEzS2VqZUlyL0h2OXBMbFZPTnZGazhBcTV4T0lISUdqR0djVkxIV3U0dVBT?=
+ =?utf-8?B?UWJPZWdoWDA1N0tvZjNHUUw0Vlc1Q0hQaDZrQ2gvZElsMm0xRGxiOFNESCtS?=
+ =?utf-8?B?MkxBTGJiTTJjSUJ1aHhLeUJrd0tueC9FdmN0SmMrSCtoSC9qZTg5dUZiZkU1?=
+ =?utf-8?B?UEE0RjBTc0djMlUwYjJwbGZ1NFZSU3NQZGsrZmVhcGI0Rk9Bb0w1Q003OWEr?=
+ =?utf-8?B?NzlUVG0yWVllbEhLUjVlRGUyeXk0bmI0aS9jTTJIS3dQcC8yM2J6TlhDQm5Q?=
+ =?utf-8?B?cHVENWFMbUpZT1U4TityRG9wNFB1NEh0Z002UHpTWnNrcWt2RU5UK1JtOUpG?=
+ =?utf-8?B?WXN0a3Y4ZFNzRVYySXBnY1FtaS9HaGh3SEExMlFZazZtVXM4ZG5BTGwvNmZT?=
+ =?utf-8?B?VEJHb0JrYzZSdi9oUVZQbysxZ1dXdHpmYkM5MnoxbHVsM1JUOEt5T2w3MWE0?=
+ =?utf-8?B?dUJpNmxmWFNjcmczeWpLci9BQm1FY01jYkRVeUovRTkvSVFHMUpOWjM4b0Ji?=
+ =?utf-8?B?RXZlbDN5YzRJQzNjSlJOdjJMQ1hXNnVzWjdXUktrR3ExQktXVnMvN1BPU3Y2?=
+ =?utf-8?B?bmZhZmFxWEdxdDJVT2VOZ3A0bHl4dFl6T1ZSN0pJY1oyUHJnNlNKa0V1dnE2?=
+ =?utf-8?B?aCtUWSsvZTMydTBCZC9yYitvb1NrdThjbVg2ekpXMlJ1SUFXQkNFZU40cVVj?=
+ =?utf-8?B?c2ljQVh1RTVETUhmcXhpVHZ5QTZzWXhHSHV5c2pRPT0=?=
+X-Microsoft-Antispam-Message-Info: OFTBDsp9A/HDf8Xy/+ql/qmyllErteiiZBB8JhdpMFnB+BS5rf+GSY1ohHuXwyAq/hjXS6N4Izh1WsZTsP5Ff6BbT5FS1DfnikGTzn0d4p/SAZQ73JoJd++2XUKUCfOAZwydTQ2xD9nPshHmB22CNnSg32z44KPRSm23aNpfZQyek9Tk6D78A75ktZhr6aZX
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR1201MB0123;6:XsZxQENVDBG3IiKkOyUc+1fmZSdhCCmVltNfy214GedA7ZsLMVzUU7osbcKveGrzYE/yIqlrnuAt+cvvQOMZaNnWnTVjWBw4jzVaYV5oacUE2o0tBRGAGWCAXp9n1/4KYbUayG3winbA6w8mQbqi7zQzKPJqW3KWhcvaiCCjQnYTQrxJrxT4samzpJ5xMKrPNlNENfKki1uhfGIrO1prCSaZnsOZF7h/3LJ4cuJbvZ5Eq9r8LEcRpy643gVADaGAkQlm5J5IJ5I1vSeKmYjGeL1e7h4Qq/ZqWK+UwyF3UM7q35E4LuBTYSMaEEbQx6BQq/xMPcwki2UPREhmf9CbHSLPT+GO4+bf+Wg9QWPAyny+DEZdRiZjU920shhhAt2tZvuaOKVQStdrMME26QZDkFz0lVcVuTbcBt82VepCO+5+SmCqdjvG9z4mAAbieyo/JCTueNL6TMPgnsj4ZMHLog==;5:auPSVjpYYUaCl+/veMGEFCwYy0HTiJx/udNdmyQaB2ah7GEd0FCxLlW5R9i2ex1ozKGfzgAZDzweKycERSCJxOwD0r4JrPO8RPQUJp7ycJXqTMJAJvDDv9R3NtypKu0vTMxACUFEAlM3S+7gpUqX9bFmYmlVPQUT8y8CvboSecU=;24:E8SkQzqRZz8b6PhvpH1+oozzkh2Qfc3KWIKrONif3RAR+G29n/TV4HqRlMkvOcqXIgnDd+XmYzUdmw9URe5TEu22ejSgakdpfq9QETFt3Xs=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR1201MB0123;7:C5+3rPIEFiKpc1diKoa17EIt8cVgsWRG0VuSwQP+6XhSI1MB2INOuuqZt7n+w7d9ZjgzlBg9pC3Aq963yWfoer35TfH+n3tu218iRDr/VaZEa7rU3bZeSyaNMuvCmOmhhmlxdyDysfbFDP+C9X6ib29uSXbs95uxszDrHfK1ciqsxajDGLuIs0kIDapHp5geWXXW8Hu2a5UzQKJmFhFvvvCdlNhB5gQnFiqYi9VCiUjnHIVJjz73fkSKe6a4Fdy9;20:0mM79q2eWirKGeFMc5fuvWsE6wJBDBhi9dEI4ZsdKyBYJ6ZyJAY4RzORZBgaPjw7Qg+jNftHtuK2O0gADaZ24/TTS5v43H/6I2X4ae8PGgKIRWFuQexb1WkjvG6M7qH/xjwRWKZ/bfRWBD26m8nIxEBEhtxkXNQRxeqrA97y0daLr0YKUNga+FJhfd27NaW2qJslS1zorthTdJrDg1fsyQ7J5mzn9mlzBd1LzXkiszCak7Y3+0+dnHPOnQu+KBPI
+X-MS-Office365-Filtering-Correlation-Id: 1bfcab8d-5a15-489d-9861-08d5aadc169c
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Apr 2018 18:40:58.5431 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1bfcab8d-5a15-489d-9861-08d5aadc169c
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR1201MB0123
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/24/18 22:23, Jan Kiszka wrote:
-> On 2018-04-24 22:56, Frank Rowand wrote:
->> Hi Alan,
->>
->> On 04/23/18 15:38, Frank Rowand wrote:
->>> Hi Jan,
->>>
->>> + Alan Tull for fpga perspective
->>>
->>> On 04/22/18 03:30, Jan Kiszka wrote:
->>>> On 2018-04-11 07:42, Jan Kiszka wrote:
->>>>> On 2018-04-05 23:12, Rob Herring wrote:
->>>>>> On Thu, Apr 5, 2018 at 2:28 PM, Frank Rowand <frowand.list@gmail.com> wrote:
->>>>>>> On 04/05/18 12:13, Jan Kiszka wrote:
->>>>>>>> On 2018-04-05 20:59, Frank Rowand wrote:
->>>>>>>>> Hi Jan,
->>>>>>>>>
->>>>>>>>> On 04/04/18 15:35, Jan Kiszka wrote:
->>>>>>>>>> Hi Frank,
->>>>>>>>>>
->>>>>>>>>> On 2018-03-04 01:17, frowand.list@gmail.com wrote:
->>>>>>>>>>> From: Frank Rowand <frank.rowand@sony.com>
->>>>>>>>>>>
->>>>>>>>>>> Move duplicating and unflattening of an overlay flattened devicetree
->>>>>>>>>>> (FDT) into the overlay application code.  To accomplish this,
->>>>>>>>>>> of_overlay_apply() is replaced by of_overlay_fdt_apply().
->>>>>>>>>>>
->>>>>>>>>>> The copy of the FDT (aka "duplicate FDT") now belongs to devicetree
->>>>>>>>>>> code, which is thus responsible for freeing the duplicate FDT.  The
->>>>>>>>>>> caller of of_overlay_fdt_apply() remains responsible for freeing the
->>>>>>>>>>> original FDT.
->>>>>>>>>>>
->>>>>>>>>>> The unflattened devicetree now belongs to devicetree code, which is
->>>>>>>>>>> thus responsible for freeing the unflattened devicetree.
->>>>>>>>>>>
->>>>>>>>>>> These ownership changes prevent early freeing of the duplicated FDT
->>>>>>>>>>> or the unflattened devicetree, which could result in use after free
->>>>>>>>>>> errors.
->>>>>>>>>>>
->>>>>>>>>>> of_overlay_fdt_apply() is a private function for the anticipated
->>>>>>>>>>> overlay loader.
->>>>>>>>>>
->>>>>>>>>> We are using of_fdt_unflatten_tree + of_overlay_apply in the
->>>>>>>>>> (out-of-tree) Jailhouse loader driver in order to register a virtual
->>>>>>>>>> device during hypervisor activation with Linux. The DT overlay is
->>>>>>>>>> created from a a template but modified prior to application to account
->>>>>>>>>> for runtime-specific parameters. See [1] for the current implementation.
->>>>>>>>>>
->>>>>>>>>> I'm now wondering how to model that scenario best with the new API.
->>>>>>>>>> Given that the loader lost ownership of the unflattened tree but the
->>>>>>>>>> modification API exist only for the that DT state, I'm not yet seeing a
->>>>>>>>>> clear solution. Should we apply the template in disabled form (status =
->>>>>>>>>> "disabled"), modify it, and then activate it while it is already applied?
->>>>>>>>>
->>>>>>>>> Thank you for the pointer to the driver - that makes it much easier to
->>>>>>>>> understand the use case and consider solutions.
->>>>>>>>>
->>>>>>>>> If you can make the changes directly on the FDT instead of on the
->>>>>>>>> expanded devicetree, then you could move to the new API.
->>>>>>>>
->>>>>>>> Are there some examples/references on how to edit FDTs in-place in the
->>>>>>>> kernel? I'd like to avoid writing the n-th FDT parser/generator.
->>>>>>>
->>>>>>> I don't know of any existing in-kernel edits of the FDT (but they might
->>>>>>> exist).  The functions to access an FDT are in libfdt, which is in
->>>>>>> scripts/dtc/libfdt/.
->>>>>>
->>>>>> Let's please not go down that route of doing FDT modifications. There
->>>>>> is little reason to other than for early boot changes. And it is much
->>>>>> easier to work on unflattened trees.
->>>>>
->>>>> I just briefly looked into libfdt, and it would have meant building it
->>>>> into the module as there are no library functions exported by the kernel
->>>>> either. Another reason to drop that.
->>>>>
->>>>> What's apparently working now is the pattern I initially suggested:
->>>>> Register template with status = "disabled" as overlay, then prepare and
->>>>> apply changeset that contains all needed modifications and sets the
->>>>> status to "ok". I might be leaking additional resources, but to find
->>>>> that out, I will now finally have to resolve clean unbinding of the
->>>>> generic PCI host controller [1] first.
->>>>
->>>> static void free_overlay_changeset(struct overlay_changeset *ovcs)
->>>> {
->>>> 	[...]
->>>> 	/*
->>>> 	 * TODO
->>>> 	 *
->>>> 	 * would like to: kfree(ovcs->overlay_tree);
->>>> 	 * but can not since drivers may have pointers into this data
->>>> 	 *
->>>> 	 * would like to: kfree(ovcs->fdt);
->>>> 	 * but can not since drivers may have pointers into this data
->>>> 	 */
->>>>
->>>> 	kfree(ovcs);
->>>> }
->>>>
->>>> What's this? I have kmemleak now jumping at me over this. Who is suppose
->>>> to plug these leaks? The caller of of_overlay_fdt_apply has no pointers
->>>> to those objects. I would say that's a regression of the new API.
->>>
->>> The problem already existed but it was hidden.  We have never been able to
->>> kfree() these object because we do not know if there are any pointers into
->>> these objects.  The new API makes the problem visible to kmemleak.
->>>
->>> The reason that we do not know if there are any pointers into these objects
->>> is that devicetree access APIs return pointers into the devicetree internal
->>> data structures (that is, into the overlay unflattened devicetree).  If we
->>> want to be able to do the kfree()s, we could change the devicetree access
->>> APIs.
->>>
->>> The reason that pointers into the overlay flattened tree (ovcs->fdt) are
->>> also exposed is that the overlay unflattened devicetree property values
->>> are pointers into the overlay fdt.
->>>
->>> ** This paragraph becomes academic (and not needed) if the fix in the next
->>> paragraph can be implemented. **
->>> I _think_ that the fdt issue __for overlays__ can be fixed somewhat easily.
->>> (I would want to read through the code again to make sure I'm not missing
->>> any issues.)  If the of_fdt_unflatten_tree() called by of_overlay_fdt_apply()
->>> was modified so that property values were copied into newly allocated memory
->>> and the live tree property pointers were set to the copy instead of to
->>> the value in the fdt, then I _think_ the fdt could be freed in
->>> of_overlay_fdt_apply() after calling of_overlay_apply().  The code that
->>> frees a devicetree would also have to be aware of this change -- I'm not
->>> sure if that leads to ugly complications or if it is easy.  The other
->>> question to consider is whether to make the same change to
->>> of_fdt_unflatten_tree() when it is called in early boot to unflatten
->>> the base devicetree.  Doing so would increase the memory usage of the
->>> live tree (we would not be able to free the base fdt after unflattening
->>> it because we make the fdt visible in /sys/firmware/fdt -- though
->>> _maybe_ that could be conditioned on CONFIG_KEXEC).
->>
->> Question added below this paragraph.
->>
->>
->>> But all of the complexity of that fix is _only_ because of_overlay_apply()
->>> and of_overlay_remove() call overlay_notify(), passing in the overlay
->>> unflattened devicetree (which has pointers into the overlay fdt). Pointers
->>> into the overlay unflattened devicetree are then passed to the notifiers.
->>> (Again, I may be missing some other place that the overlay unflattened
->>> devicetree is made visible to other code -- a more thorough reading of
->>> the code is needed.) If the notifiers could be modified to accept the
->>> changeset list instead of of pointers to the fragments in the overlay
->>> unflattened devicetree then there would be no possibility of the notifiers
->>> keeping a pointer into the overlay fdt. I do not know if this is a
->>> practical change for the notifiers -- there are no callers of
->>> of_overlay_notifier_register() in the mainline kernel source. My
->>> recollection is that the overlay notifiers were added for the fpga
->>> subsystem.
->>
->> Can the fpga notifiers be changed to have the changeset as an input
->> instead of having the overlay devicetree fragment and target as an
->> input?
->>
->> The changeset lists nodes and properties to be added, but does not
->> expose any pointers to the overlay fdt or the overlay unflattened
->> devicetree.  This guarantees no leakage of pointers into the overlay
->> fdt or the overlay unflattened devicetree.  The changeset contains
->> pointers to copies of data, but those copies are never freed (and
->> thus they are yet another existing memory leak).
-> 
-> Also they are freed, of course: When the last reference to the node they
-> point to reaches 0 (e.g. triggered by of_changeset_destroy), that node
-> goes away and takes down remaining dead properties. I've ran through
-> this already. And I also made sure that my code is not triggering such
-> kind of leaks as well.
-
-mea culpa.  I go around in circles while trying to remember all the
-overlay related issues.  I needed to go back and read the code to
-refresh my memory.  Thanks for the prod to re-read the code.
-
-Yes, of_changeset_destroy() will lead to the kfree() of the node and
-it's properties _if_ the node reference count is correct.  So what I
-said about a memory leak was incorrect in a perfect world (and my
-memory was wrong).  However, this is not a perfect world and we know
-that the reference count on devicetree nodes is often incorrect due
-to bugs in common infrastructure and drivers.  This issue will not
-be resolved until we pull all reference count manipulation into the
-devicetree core.  The net result is that we should not expect
-overlay removal to correctly free all memory that was allocated
-when applying the overlay.
-
-I _think_ (but did not spend the time to verify) that there is a small
-corner case memory leak even if the reference count on devicetree
-nodes is correct.  If an overlay adds a property to an existing node
-then removing the overlay will not kfree() the property, and it
-will remain on the deadprops list.  There are some places that
-properties are removed from deadprops, but I don't think they fully
-resolve the issue.  Again, this is a corner case, and I am willing
-to document it as a limitation until it gets fixed.
-
-Then returning to me going around in circles... This thread led me to
-think that since since the overlay apply code copied data into never
-freed memory (false premise, as you pointed out) that we did not
-have to worry about drivers retaining pointers into overlay data
-after the overlay had been freed (with the one remaining exposure
-being via the overlay notifiers, which _might_ be easily resolved,
-pending Alan's analysis) -- this would have been great news for
-removing an issue for general use of overlays.
-
-But now we are back to the long-standing problem that we have no way
-of knowing whether there are any live pointers to the memory that is
-freed by of_changeset_destroy().  And I am not aware of any solution
-to this problem other than changing the devicetree access API so that
-it never returns any pointer into the live devicetree.
-
-The practical impact of all of this, is if we can change the overlay
-notifier parameters to include the overlay changeset instead of
-the overlay devicetree, then I think that of_overlay_apply() will
-be able to kfree() the overlay fdt and overlay devicetree.  And
-if not of_overlay_apply(), then free_overlay_changeset().
 
 
-> I agree that object management in dynamic OF code is hairy and easy to
-> get wrong, e.g. by passing in static objects that suddenly change
-> ownership, and the new owner expects dynamically allocated objects...
-> But that is not cured by leaking memory.
-> 
-> Jan
-> 
+On 04/25/2018 01:17 PM, Oleg Nesterov wrote:
+> On 04/25, Andrey Grodzovsky wrote:
+>> here (drm_sched_entity_fini) is also a bad idea, but we still want to be
+>> able to exit immediately
+>> and not wait for GPU jobs completion when the reason for reaching this code
+>> is because of KILL
+>> signal to the user process who opened the device file.
+> Can you hook f_op->flush method?
+
+But this one is called for each task releasing a reference to the the 
+file, so not sure I see how this solves the problem.
+
+Andrey
+
+>
+> Oleg.
+>
