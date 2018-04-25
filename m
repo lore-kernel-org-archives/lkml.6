@@ -1,60 +1,229 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753850AbeDYNX4 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 09:23:56 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51138 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754458AbeDYNXy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 09:23:54 -0400
-Date: Wed, 25 Apr 2018 15:23:52 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>, Tejun Heo <tj@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [PATCHv2] printk: wake up klogd in vprintk_emit
-Message-ID: <20180425132352.cs22ak5jzwr2f4v4@pathway.suse.cz>
-References: <20180414030145.26304-1-sergey.senozhatsky@gmail.com>
- <20180419014250.5692-1-sergey.senozhatsky@gmail.com>
- <20180419100248.rflodqcvpvnve5vl@pathway.suse.cz>
- <20180420015221.GA6397@jagdpanzerIV>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180420015221.GA6397@jagdpanzerIV>
-User-Agent: NeoMutt/20170421 (1.8.2)
+        id S1754148AbeDYNXA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 09:23:00 -0400
+Received: from mout.kundenserver.de ([217.72.192.75]:56069 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751705AbeDYNW6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 09:22:58 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: y2038@lists.linaro.org, linux-kernel@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH v4 01/16] y2038: asm-generic: Extend sysvipc data structures
+Date: Wed, 25 Apr 2018 15:22:27 +0200
+Message-Id: <20180425132242.1500539-2-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+In-Reply-To: <20180425132242.1500539-1-arnd@arndb.de>
+References: <20180425132242.1500539-1-arnd@arndb.de>
+X-Provags-ID: V03:K1:QYCyxVRnoRy9Hk+2mwz9zq6aFgwoNeCl8lDL4XVuUCMPE/0uhxN
+ n99QW50Laoqg1E1HKit2mh5UFVdQv8/NQH0uYMYsjEM3F3ImxHRvDtbTumsqQ0UzcF3bvBL
+ kISTXKq4ck2yoMRo7zzmxjQOc9pf/jYVKwfElHbnln9aYsEQ8IqAIt6p6+XpJfTABB6i2d8
+ iOyNSU89+FcaMlLaIq2lQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:P+y59aTOQAY=:QGdylhjntopVQpGbRpgfee
+ OhWVAIlXIfpWTsCrzyWuPb0JAwz+a3fNRYHAmp8y7Yj0tzzN4AzSz/YyJvr/essCqnM8V+oiR
+ mAINpuWvP72bxZ7mzO6yneyjjwIJN/fNz6YxGedh4KWWVb5pSyQiquBmjKBu9YyhC6pniDEOe
+ zQqgAQEuwLowveB0MJtkCjoT+duEGb5AOWJtB1zeK63vFWsNO7KFkUE4fIMG4E7CTbD2AIAVl
+ HkTagn8wVYt3D21JR3QOk9PcYj/ToMFGT8epOxUT1YFJneH1aqEk3wIMJWM/GUxHfDSEw4xJG
+ 77f4bZMgIvNkT66trv9l5vpDzaFss2SOusAld++o4Z2Pu6DiGUHChNC5m+XfOWgjuh/65RDW6
+ PmE1pbTPCTPmCu7ZN3njLMkJVDMyHerhiAkw14Q2Ylm+dx0g5al8wKZ4oeT3LofZt6RtVECxj
+ B9AzqHlwJ//HppACRKIlD/3QwYC/51BzQSYQSrdyQNkIP/X8hDzlqfWH+vL/Y3Zm+gHm7EVei
+ 8xPSiuMcVjyYGulbNi5Xe1L1yvzqj+z+JvHBUw37x/lA/r98dJRre5gFhBZv651ogpfWvLb55
+ 5IP16zFDjdFiuPiqg2KuxjJV0FQVK+bWUx7ovmpp+HZZqxUZmWjN/O8ZTp9NKHisWNOsbzlkl
+ 7PtRRjI+GrocLUhhGH6IbiDlWJTEoy0xrSns/SCugS0TvigSyWCHtg0vM3jD+Iv1DSthu47TI
+ t8pGZB4/gPYIyP8nxBRz4pOx/subK1lLTZPdwA==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 2018-04-20 10:52:21, Sergey Senozhatsky wrote:
-> On (04/19/18 12:02), Petr Mladek wrote:
-> > On Thu 2018-04-19 10:42:50, Sergey Senozhatsky wrote:
-> > > We wake up klogd very late - only when current console_sem owner
-> > > is done pushing pending kernel messages to the serial/net consoles.
-> > > In some cases this results in lost syslog messages, because kernel
-> > > log buffer is a circular buffer and if we don't wakeup syslog long
-> > > enough there are chances that logbuf simply will wrap around.
-> > > 
-> > > The patch moves the klog wake up call to vprintk_emit(), which is
-> > > the only legit way for a kernel message to appear in the logbuf,
-> > > right before we attempt to grab the console_sem (possibly spinning
-> > > on it waiting for the hand off) and call console drivers.
-> > 
-> > The last two lines need an update. What about?
-> 
-> Ah. Indeed!
-> 
-> > "right after the attempt to handle consoles. As a result, klog
-> > will get waken either after flushing the new message to consoles
-> > or immediately when consoles are still busy with older messages."
-> 
-> Looks good. Do you want me to resend the patch?
+Most architectures now use the asm-generic copy of the sysvipc data
+structures (msqid64_ds, semid64_ds, shmid64_ds), which use 32-bit
+__kernel_time_t on 32-bit architectures but have padding behind them to
+allow extending the type to 64-bit.
 
-JFYI, I have updated the commit message and pushed the patch into
-printk.git, for-4.18 branch.
+Unfortunately, that fails on all big-endian architectures, which have the
+padding on the wrong side. As so many of them get it wrong, we decided to
+not bother even trying to fix it up when we introduced the asm-generic
+copy. Instead we always use the padding word now to provide the upper
+32 bits of the seconds value, regardless of the endianess.
 
-Best Regards,
-Petr
+A libc implementation on a typical big-endian system can deal with
+this by providing its own copy of the structure definition to user
+space, and swapping the two 32-bit words before returning from the
+semctl/shmctl/msgctl system calls.
+
+Note that msqid64_ds and shmid64_ds were broken on x32 since commit
+f4b4aae18288 ("x86/headers/uapi: Fix __BITS_PER_LONG value for x32
+builds"). I have sent a separate fix for that, but as we no longer
+have to worry about x32 here, I no longer worry about x32 here and
+use 'unsigned long' instead of __kernel_ulong_t.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ include/uapi/asm-generic/msgbuf.h | 27 +++++++++++++-------------
+ include/uapi/asm-generic/sembuf.h | 26 +++++++++++++++----------
+ include/uapi/asm-generic/shmbuf.h | 41 +++++++++++++++++++--------------------
+ 3 files changed, 49 insertions(+), 45 deletions(-)
+
+diff --git a/include/uapi/asm-generic/msgbuf.h b/include/uapi/asm-generic/msgbuf.h
+index fb306ebdb36f..9fe4881557cb 100644
+--- a/include/uapi/asm-generic/msgbuf.h
++++ b/include/uapi/asm-generic/msgbuf.h
+@@ -18,31 +18,30 @@
+  * On big-endian systems, the padding is in the wrong place.
+  *
+  * Pad space is left for:
+- * - 64-bit time_t to solve y2038 problem
+  * - 2 miscellaneous 32-bit values
+  */
+ 
+ struct msqid64_ds {
+ 	struct ipc64_perm msg_perm;
++#if __BITS_PER_LONG == 64
+ 	__kernel_time_t msg_stime;	/* last msgsnd time */
+-#if __BITS_PER_LONG != 64
+-	unsigned long	__unused1;
+-#endif
+ 	__kernel_time_t msg_rtime;	/* last msgrcv time */
+-#if __BITS_PER_LONG != 64
+-	unsigned long	__unused2;
+-#endif
+ 	__kernel_time_t msg_ctime;	/* last change time */
+-#if __BITS_PER_LONG != 64
+-	unsigned long	__unused3;
++#else
++	unsigned long	msg_stime;	/* last msgsnd time */
++	unsigned long	msg_stime_high;
++	unsigned long	msg_rtime;	/* last msgrcv time */
++	unsigned long	msg_rtime_high;
++	unsigned long	msg_ctime;	/* last change time */
++	unsigned long	msg_ctime_high;
+ #endif
+-	__kernel_ulong_t msg_cbytes;	/* current number of bytes on queue */
+-	__kernel_ulong_t msg_qnum;	/* number of messages in queue */
+-	__kernel_ulong_t msg_qbytes;	/* max number of bytes on queue */
++	unsigned long	msg_cbytes;	/* current number of bytes on queue */
++	unsigned long	msg_qnum;	/* number of messages in queue */
++	unsigned long	 msg_qbytes;	/* max number of bytes on queue */
+ 	__kernel_pid_t msg_lspid;	/* pid of last msgsnd */
+ 	__kernel_pid_t msg_lrpid;	/* last receive pid */
+-	__kernel_ulong_t __unused4;
+-	__kernel_ulong_t __unused5;
++	unsigned long	 __unused4;
++	unsigned long	 __unused5;
+ };
+ 
+ #endif /* __ASM_GENERIC_MSGBUF_H */
+diff --git a/include/uapi/asm-generic/sembuf.h b/include/uapi/asm-generic/sembuf.h
+index cbf9cfe977d6..0bae010f1b64 100644
+--- a/include/uapi/asm-generic/sembuf.h
++++ b/include/uapi/asm-generic/sembuf.h
+@@ -13,23 +13,29 @@
+  * everyone just ended up making identical copies without specific
+  * optimizations, so we may just as well all use the same one.
+  *
+- * 64 bit architectures typically define a 64 bit __kernel_time_t,
++ * 64 bit architectures use a 64-bit __kernel_time_t here, while
++ * 32 bit architectures have a pair of unsigned long values.
+  * so they do not need the first two padding words.
+- * On big-endian systems, the padding is in the wrong place.
+  *
+- * Pad space is left for:
+- * - 64-bit time_t to solve y2038 problem
+- * - 2 miscellaneous 32-bit values
++ * On big-endian systems, the padding is in the wrong place for
++ * historic reasons, so user space has to reconstruct a time_t
++ * value using
++ *
++ * user_semid_ds.sem_otime = kernel_semid64_ds.sem_otime +
++ *		((long long)kernel_semid64_ds.sem_otime_high << 32)
++ *
++ * Pad space is left for 2 miscellaneous 32-bit values
+  */
+ struct semid64_ds {
+ 	struct ipc64_perm sem_perm;	/* permissions .. see ipc.h */
++#if __BITS_PER_LONG == 64
+ 	__kernel_time_t	sem_otime;	/* last semop time */
+-#if __BITS_PER_LONG != 64
+-	unsigned long	__unused1;
+-#endif
+ 	__kernel_time_t	sem_ctime;	/* last change time */
+-#if __BITS_PER_LONG != 64
+-	unsigned long	__unused2;
++#else
++	unsigned long	sem_otime;	/* last semop time */
++	unsigned long	sem_otime_high;
++	unsigned long	sem_ctime;	/* last change time */
++	unsigned long	sem_ctime_high;
+ #endif
+ 	unsigned long	sem_nsems;	/* no. of semaphores in array */
+ 	unsigned long	__unused3;
+diff --git a/include/uapi/asm-generic/shmbuf.h b/include/uapi/asm-generic/shmbuf.h
+index 2b6c3bb97f97..e504422fc501 100644
+--- a/include/uapi/asm-generic/shmbuf.h
++++ b/include/uapi/asm-generic/shmbuf.h
+@@ -19,42 +19,41 @@
+  *
+  *
+  * Pad space is left for:
+- * - 64-bit time_t to solve y2038 problem
+  * - 2 miscellaneous 32-bit values
+  */
+ 
+ struct shmid64_ds {
+ 	struct ipc64_perm	shm_perm;	/* operation perms */
+ 	size_t			shm_segsz;	/* size of segment (bytes) */
++#if __BITS_PER_LONG == 64
+ 	__kernel_time_t		shm_atime;	/* last attach time */
+-#if __BITS_PER_LONG != 64
+-	unsigned long		__unused1;
+-#endif
+ 	__kernel_time_t		shm_dtime;	/* last detach time */
+-#if __BITS_PER_LONG != 64
+-	unsigned long		__unused2;
+-#endif
+ 	__kernel_time_t		shm_ctime;	/* last change time */
+-#if __BITS_PER_LONG != 64
+-	unsigned long		__unused3;
++#else
++	unsigned long		shm_atime;	/* last attach time */
++	unsigned long		shm_atime_high;
++	unsigned long		shm_dtime;	/* last detach time */
++	unsigned long		shm_dtime_high;
++	unsigned long		shm_ctime;	/* last change time */
++	unsigned long		shm_ctime_high;
+ #endif
+ 	__kernel_pid_t		shm_cpid;	/* pid of creator */
+ 	__kernel_pid_t		shm_lpid;	/* pid of last operator */
+-	__kernel_ulong_t	shm_nattch;	/* no. of current attaches */
+-	__kernel_ulong_t	__unused4;
+-	__kernel_ulong_t	__unused5;
++	unsigned long		shm_nattch;	/* no. of current attaches */
++	unsigned long		__unused4;
++	unsigned long		__unused5;
+ };
+ 
+ struct shminfo64 {
+-	__kernel_ulong_t	shmmax;
+-	__kernel_ulong_t	shmmin;
+-	__kernel_ulong_t	shmmni;
+-	__kernel_ulong_t	shmseg;
+-	__kernel_ulong_t	shmall;
+-	__kernel_ulong_t	__unused1;
+-	__kernel_ulong_t	__unused2;
+-	__kernel_ulong_t	__unused3;
+-	__kernel_ulong_t	__unused4;
++	unsigned long		shmmax;
++	unsigned long		shmmin;
++	unsigned long		shmmni;
++	unsigned long		shmseg;
++	unsigned long		shmall;
++	unsigned long		__unused1;
++	unsigned long		__unused2;
++	unsigned long		__unused3;
++	unsigned long		__unused4;
+ };
+ 
+ #endif /* __ASM_GENERIC_SHMBUF_H */
+-- 
+2.9.0
