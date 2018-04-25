@@ -1,114 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753737AbeDYLXp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 07:23:45 -0400
-Received: from foss.arm.com ([217.140.101.70]:38272 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753033AbeDYLXh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 07:23:37 -0400
-Date: Wed, 25 Apr 2018 12:23:32 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org,
-        drjones@redhat.com, cdall@kernel.org, arnd@arndb.de,
-        suzuki.poulose@arm.com, marc.zyngier@arm.com, awallis@codeaurora.org,
-        kernel-hardening@lists.openwall.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, ramana.radhakrishnan@arm.com,
-        kvmarm@lists.cs.columbia.edu
-Subject: Re: [PATCHv3 07/11] arm64: add basic pointer authentication support
-Message-ID: <20180425112331.hke7afxnslyrwf3h@armageddon.cambridge.arm.com>
-References: <20180417183735.56985-1-mark.rutland@arm.com>
- <20180417183735.56985-8-mark.rutland@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180417183735.56985-8-mark.rutland@arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S1753608AbeDYLYe (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 07:24:34 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36744 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752938AbeDYLY2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 07:24:28 -0400
+From: Pankaj Gupta <pagupta@redhat.com>
+To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        qemu-devel@nongnu.org, linux-nvdimm@ml01.01.org, linux-mm@kvack.org
+Cc: jack@suse.cz, stefanha@redhat.com, dan.j.williams@intel.com,
+        riel@surriel.com, haozhong.zhang@intel.com, nilal@redhat.com,
+        kwolf@redhat.com, pbonzini@redhat.com, ross.zwisler@intel.com,
+        david@redhat.com, xiaoguangrong.eric@gmail.com, hch@infradead.org,
+        marcel@redhat.com, mst@redhat.com, niteshnarayanlal@hotmail.com,
+        imammedo@redhat.com, pagupta@redhat.com, lcapitulino@redhat.com
+Subject: [RFC v2 0/2] kvm "fake DAX" device flushing
+Date: Wed, 25 Apr 2018 16:54:12 +0530
+Message-Id: <20180425112415.12327-1-pagupta@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mark,
+This is RFC V2 for 'fake DAX' flushing interface sharing
+for review. This patchset has two main parts:
 
-On Tue, Apr 17, 2018 at 07:37:31PM +0100, Mark Rutland wrote:
-> diff --git a/arch/arm64/include/asm/mmu_context.h b/arch/arm64/include/asm/mmu_context.h
-> index 39ec0b8a689e..caf0d3010112 100644
-> --- a/arch/arm64/include/asm/mmu_context.h
-> +++ b/arch/arm64/include/asm/mmu_context.h
-> @@ -29,7 +29,6 @@
->  #include <asm/cacheflush.h>
->  #include <asm/cpufeature.h>
->  #include <asm/proc-fns.h>
-> -#include <asm-generic/mm_hooks.h>
->  #include <asm/cputype.h>
->  #include <asm/pgtable.h>
->  #include <asm/sysreg.h>
-> @@ -168,7 +167,14 @@ static inline void cpu_replace_ttbr1(pgd_t *pgdp)
->  #define destroy_context(mm)		do { } while(0)
->  void check_and_switch_context(struct mm_struct *mm, unsigned int cpu);
->  
-> -#define init_new_context(tsk,mm)	({ atomic64_set(&(mm)->context.id, 0); 0; })
-> +static inline int init_new_context(struct task_struct *tsk,
-> +			struct mm_struct *mm)
-> +{
-> +	atomic64_set(&mm->context.id, 0);
-> +	mm_ctx_ptrauth_init(&mm->context);
-> +
-> +	return 0;
-> +}
->  
->  #ifdef CONFIG_ARM64_SW_TTBR0_PAN
->  static inline void update_saved_ttbr0(struct task_struct *tsk,
-> @@ -216,6 +222,8 @@ static inline void __switch_mm(struct mm_struct *next)
->  		return;
->  	}
->  
-> +	mm_ctx_ptrauth_switch(&next->context);
-> +
->  	check_and_switch_context(next, cpu);
->  }
->  
-> @@ -241,6 +249,19 @@ switch_mm(struct mm_struct *prev, struct mm_struct *next,
->  void verify_cpu_asid_bits(void);
->  void post_ttbr_update_workaround(void);
->  
-> +static inline void arch_dup_mmap(struct mm_struct *oldmm,
-> +				 struct mm_struct *mm)
-> +{
-> +	mm_ctx_ptrauth_dup(&oldmm->context, &mm->context);
-> +}
-> +#define arch_dup_mmap arch_dup_mmap
+- Guest virtio-pmem driver
+  Guest driver reads persistent memory range from paravirt 
+  device and registers with 'nvdimm_bus'. 'nvdimm/pmem' 
+  driver uses this information to allocate persistent 
+  memory range. Also, we have implemented guest side of 
+  VIRTIO flushing interface.
 
-IIUC, we could skip the arch_dup_mmap() and init_new_context() here for
-the fork() case since the ptrauth_keys would be copied as part of the
-dup_mm(). There is another situation where init_new_context() is called
-bprm_mm_init() -> mm_alloc() -> mm_init() -> init_new_context().
-However, in this case the core code also calls arch_bprm_mm_init(). So I
-think we only need to update the latter to get a new random key.
+- Qemu virtio-pmem device
+  It exposes a persistent memory range to KVM guest which 
+  at host side is file backed memory and works as persistent 
+  memory device. In addition to this it provides virtio 
+  device handling of flushing interface. KVM guest performs
+  Qemu side asynchronous sync using this interface.
 
-> diff --git a/arch/arm64/include/asm/pointer_auth.h b/arch/arm64/include/asm/pointer_auth.h
-> new file mode 100644
-> index 000000000000..a2e8fb91fdee
-> --- /dev/null
-> +++ b/arch/arm64/include/asm/pointer_auth.h
-> @@ -0,0 +1,89 @@
-> +/*
-> + * Copyright (C) 2016 ARM Ltd.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + *
-> + * You should have received a copy of the GNU General Public License
-> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-> + */
+Changes from previous RFC[1]:
 
-Nitpick: 2018. You could also use the SPDX header, save some lines.
+- Reuse existing 'pmem' code for registering persistent 
+  memory and other operations instead of creating an entirely 
+  new block driver.
+- Use VIRTIO driver to register memory information with 
+  nvdimm_bus and create region_type accordingly. 
+- Call VIRTIO flush from existing pmem driver.
 
--- 
-Catalin
+Details of project idea for 'fake DAX' flushing interface is 
+shared [2] & [3].
+
+Pankaj Gupta (2):
+   Add virtio-pmem guest driver
+   pmem: device flush over VIRTIO
+
+[1] https://marc.info/?l=linux-mm&m=150782346802290&w=2
+[2] https://www.spinics.net/lists/kvm/msg149761.html
+[3] https://www.spinics.net/lists/kvm/msg153095.html  
+
+ drivers/nvdimm/region_devs.c     |    7 ++
+ drivers/virtio/Kconfig           |   12 +++
+ drivers/virtio/Makefile          |    1 
+ drivers/virtio/virtio_pmem.c     |  118 +++++++++++++++++++++++++++++++++++++++
+ include/linux/libnvdimm.h        |    4 +
+ include/uapi/linux/virtio_ids.h  |    1 
+ include/uapi/linux/virtio_pmem.h |   58 +++++++++++++++++++
+ 7 files changed, 201 insertions(+)
