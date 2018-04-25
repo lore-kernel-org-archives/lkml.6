@@ -1,25 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932096AbeDYQD7 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 12:03:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46906 "EHLO mail.kernel.org"
+        id S932111AbeDYQEB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 12:04:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46870 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755445AbeDYQAZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 12:00:25 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 821E121789
+        id S1755307AbeDYQAW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 12:00:22 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C390E21759
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
 To: Ingo Molnar <mingo@kernel.org>
 Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Thomas Richter <tmricht@linux.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 02/12] perf list: Remove s390 specific strcmp_cpuid_cmp function
-Date: Wed, 25 Apr 2018 12:59:58 -0300
-Message-Id: <20180425160008.3407-3-acme@kernel.org>
+        linux-perf-users@vger.kernel.org, Namhyung Kim <namhyung@kernel.org>,
+        Jiri Olsa <jolsa@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+        kernel-team@lge.com, Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 01/12] perf machine: Set main kernel end address properly
+Date: Wed, 25 Apr 2018 12:59:57 -0300
+Message-Id: <20180425160008.3407-2-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180425160008.3407-1-acme@kernel.org>
 References: <20180425160008.3407-1-acme@kernel.org>
@@ -27,93 +25,88 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Richter <tmricht@linux.ibm.com>
+From: Namhyung Kim <namhyung@kernel.org>
 
-Make the type field in pmu-events/arch/s390/mapfile.cvs more generic to
-match the created cpuid string for s390.
+map_groups__fixup_end() was called to set the end addresses of kernel
+and module maps.  But now since machine__create_modules() sets the end
+address of modules properly, the only remaining piece is the kernel map.
 
-The pattern also checks for the counter first version number and counter
-second version number ([13]\.[1-5]) and the authorization field which
-follows.
+We can set it with adjacent module's address directly instead of calling
+map_groups__fixup_end().  If there's no module after the kernel map, the
+end address will be ~0ULL.
 
-These numbers do not exist in the cpuid identification string when perf
-commands are executed on a z/VM environment (which does not support CPU
-counter measurement facility).
+Since it also changes the start address of the kernel map, it needs to
+re-insert the map to the kmaps in order to keep a correct ordering.  Kim
+reported that it caused problems on ARM64.
 
-CPUID string for LPAR:
-   cpuid : IBM,3906,704,M03,3.5,002f
-CPUID string for z/VM:
-   cpuid : IBM,2964,702,N96
-
-This allows the removal of s390 specific cpuid compare code and uses the
-common compare function with its regular expression matching algorithm.
-
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Link: http://lkml.kernel.org/r/20180423081745.3672-1-tmricht@linux.ibm.com
+Reported-by: Kim Phillips <kim.phillips@arm.com>
+Tested-by: Kim Phillips <kim.phillips@arm.com>
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: kernel-team@lge.com
+Link: http://lkml.kernel.org/r/20180419235915.GA19067@sejong
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/arch/s390/util/header.c          | 18 ------------------
- tools/perf/pmu-events/arch/s390/mapfile.csv | 10 +++++-----
- tools/perf/util/pmu.c                       |  2 +-
- 3 files changed, 6 insertions(+), 24 deletions(-)
+ tools/perf/util/machine.c | 30 ++++++++++++++++++------------
+ 1 file changed, 18 insertions(+), 12 deletions(-)
 
-diff --git a/tools/perf/arch/s390/util/header.c b/tools/perf/arch/s390/util/header.c
-index a4c30f1c70be..163b92f33998 100644
---- a/tools/perf/arch/s390/util/header.c
-+++ b/tools/perf/arch/s390/util/header.c
-@@ -146,21 +146,3 @@ char *get_cpuid_str(struct perf_pmu *pmu __maybe_unused)
- 		zfree(&buf);
- 	return buf;
+diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+index 2eca8478e24f..32d50492505d 100644
+--- a/tools/perf/util/machine.c
++++ b/tools/perf/util/machine.c
+@@ -1019,13 +1019,6 @@ int machine__load_vmlinux_path(struct machine *machine, enum map_type type)
+ 	return ret;
  }
--
--/*
-- * Compare the cpuid string returned by get_cpuid() function
-- * with the name generated by the jevents file read from
-- * pmu-events/arch/s390/mapfile.csv.
-- *
-- * Parameter mapcpuid is the cpuid as stored in the
-- * pmu-events/arch/s390/mapfile.csv. This is just the type number.
-- * Parameter cpuid is the cpuid returned by function get_cpuid().
-- */
--int strcmp_cpuid_str(const char *mapcpuid, const char *cpuid)
+ 
+-static void map_groups__fixup_end(struct map_groups *mg)
 -{
--	char *cp = strchr(cpuid, ',');
--
--	if (cp == NULL)
--		return -1;
--	return strncmp(cp + 1, mapcpuid, strlen(mapcpuid));
+-	int i;
+-	for (i = 0; i < MAP__NR_TYPES; ++i)
+-		__map_groups__fixup_end(mg, i);
 -}
-diff --git a/tools/perf/pmu-events/arch/s390/mapfile.csv b/tools/perf/pmu-events/arch/s390/mapfile.csv
-index ca7682748a4b..78bcf7f8e206 100644
---- a/tools/perf/pmu-events/arch/s390/mapfile.csv
-+++ b/tools/perf/pmu-events/arch/s390/mapfile.csv
-@@ -1,6 +1,6 @@
- Family-model,Version,Filename,EventType
--209[78],1,cf_z10,core
--281[78],1,cf_z196,core
--282[78],1,cf_zec12,core
--296[45],1,cf_z13,core
--3906,3,cf_z14,core
-+^IBM.209[78].*[13]\.[1-5].[[:xdigit:]]+$,1,cf_z10,core
-+^IBM.281[78].*[13]\.[1-5].[[:xdigit:]]+$,1,cf_z196,core
-+^IBM.282[78].*[13]\.[1-5].[[:xdigit:]]+$,1,cf_zec12,core
-+^IBM.296[45].*[13]\.[1-5].[[:xdigit:]]+$,1,cf_z13,core
-+^IBM.390[67].*[13]\.[1-5].[[:xdigit:]]+$,3,cf_z14,core
-diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-index 61a5e5027338..af4bedf4cf98 100644
---- a/tools/perf/util/pmu.c
-+++ b/tools/perf/util/pmu.c
-@@ -586,7 +586,7 @@ char * __weak get_cpuid_str(struct perf_pmu *pmu __maybe_unused)
-  * cpuid string generated on this platform.
-  * Otherwise return non-zero.
-  */
--int __weak strcmp_cpuid_str(const char *mapcpuid, const char *cpuid)
-+int strcmp_cpuid_str(const char *mapcpuid, const char *cpuid)
+-
+ static char *get_kernel_version(const char *root_dir)
  {
- 	regex_t re;
- 	regmatch_t pmatch[1];
+ 	char version[PATH_MAX];
+@@ -1233,6 +1226,7 @@ int machine__create_kernel_maps(struct machine *machine)
+ {
+ 	struct dso *kernel = machine__get_kernel(machine);
+ 	const char *name = NULL;
++	struct map *map;
+ 	u64 addr = 0;
+ 	int ret;
+ 
+@@ -1259,13 +1253,25 @@ int machine__create_kernel_maps(struct machine *machine)
+ 			machine__destroy_kernel_maps(machine);
+ 			return -1;
+ 		}
+-		machine__set_kernel_mmap(machine, addr, 0);
++
++		/* we have a real start address now, so re-order the kmaps */
++		map = machine__kernel_map(machine);
++
++		map__get(map);
++		map_groups__remove(&machine->kmaps, map);
++
++		/* assume it's the last in the kmaps */
++		machine__set_kernel_mmap(machine, addr, ~0ULL);
++
++		map_groups__insert(&machine->kmaps, map);
++		map__put(map);
+ 	}
+ 
+-	/*
+-	 * Now that we have all the maps created, just set the ->end of them:
+-	 */
+-	map_groups__fixup_end(&machine->kmaps);
++	/* update end address of the kernel map using adjacent module address */
++	map = map__next(machine__kernel_map(machine));
++	if (map)
++		machine__set_kernel_mmap(machine, addr, map->start);
++
+ 	return 0;
+ }
+ 
 -- 
 2.14.3
