@@ -1,94 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752785AbeDYMnf (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 08:43:35 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:52133 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751525AbeDYMne (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 08:43:34 -0400
-X-Google-Smtp-Source: AIpwx4/6qH/qL559LUfmer3WQRBHMR6UHLM1+pFrTfgrY/kJwBNAyfgT8m9Mqi+gSCRSQMdIgNUMOQ==
-Subject: Re: [PATCH v5 10/11] vsprintf: WARN() on invalid pointer access
-To: Petr Mladek <pmladek@suse.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.cz>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        linux-kernel@vger.kernel.org
-References: <20180425111251.13246-1-pmladek@suse.com>
- <20180425111251.13246-11-pmladek@suse.com>
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <f01f7010-f757-c2d2-ff31-eba2b12974e3@rasmusvillemoes.dk>
-Date: Wed, 25 Apr 2018 14:43:29 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1753051AbeDYMnp (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 08:43:45 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38342 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751525AbeDYMnh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 08:43:37 -0400
+Date: Wed, 25 Apr 2018 08:43:32 -0400 (EDT)
+From: Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To: Michal Hocko <mhocko@kernel.org>
+cc: Richard Weinberger <richard@nod.at>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Artem Bityutskiy <dedekind1@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Trond Myklebust <trond.myklebust@primarydata.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        linux-mtd@lists.infradead.org, linux-ext4@vger.kernel.org,
+        cluster-devel@redhat.com, linux-nfs@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: vmalloc with GFP_NOFS
+In-Reply-To: <20180424232517.GC17484@dhcp22.suse.cz>
+Message-ID: <alpine.LRH.2.02.1804250841230.16455@file01.intranet.prod.int.rdu2.redhat.com>
+References: <20180424162712.GL17484@dhcp22.suse.cz> <3732370.1623zxSvNg@blindfold> <20180424192803.GT17484@dhcp22.suse.cz> <3894056.cxOY6eVYVp@blindfold> <20180424230943.GY17484@dhcp22.suse.cz> <alpine.LRH.2.02.1804241911040.19786@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180424232517.GC17484@dhcp22.suse.cz>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-In-Reply-To: <20180425111251.13246-11-pmladek@suse.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-04-25 13:12, Petr Mladek wrote:
 
->  
-> diff --git a/lib/test_printf.c b/lib/test_printf.c
-> index 45c33143fb4a..74dff6c44ec6 100644
-> --- a/lib/test_printf.c
-> +++ b/lib/test_printf.c
-> @@ -285,12 +285,19 @@ null_pointer(void)
->  
->  #define PTR_INVALID ((void *)0x000000ab)
->  
-> +extern int test_printf_pointer_access;
-> +
->  static void __init
->  invalid_pointer(void)
->  {
-> +	/* Avoid calling WARN() */
-> +	test_printf_pointer_access = 1;
-> +
->  	plain(PTR_INVALID);
->  	test(ZEROS "000000ab", "%px", PTR_INVALID);
->  	test("(efault)", "%pE", PTR_INVALID);
-> +
-> +	test_printf_pointer_access = 0;
->  }
->  
->  static void __init
-> diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-> index 5dfdc7e11d05..46e3e7c71229 100644
-> --- a/lib/vsprintf.c
-> +++ b/lib/vsprintf.c
-> @@ -610,6 +610,9 @@ static char *valid_string(char *buf, char *end, const char *s,
->  	return widen_string(buf, len, end, spec);
->  }
->  
-> +int test_printf_pointer_access;
-> +EXPORT_SYMBOL_GPL(test_printf_pointer_access);
-> +
 
-I understand that the printf test module needs this hook, and I
-considered adding similar things for other tests when I originally wrote
-the printf test module. But can we please make that
+On Tue, 24 Apr 2018, Michal Hocko wrote:
 
-#if IS_ENABLED(CONFIG_TEST_PRINTF)
-int test_printf_pointer_access;
-EXPORT_SYMBOL_GPL(test_printf_pointer_access);
-#else
-#define test_printf_pointer_access 0
-#endif
+> On Tue 24-04-18 19:17:12, Mikulas Patocka wrote:
+> > 
+> > 
+> > On Tue, 24 Apr 2018, Michal Hocko wrote:
+> > 
+> > > On Wed 25-04-18 00:18:40, Richard Weinberger wrote:
+> > > > Am Dienstag, 24. April 2018, 21:28:03 CEST schrieb Michal Hocko:
+> > > > > > Also only for debugging.
+> > > > > > Getting rid of vmalloc with GFP_NOFS in UBIFS is no big problem.
+> > > > > > I can prepare a patch.
+> > > > > 
+> > > > > Cool!
+> > > > > 
+> > > > > Anyway, if UBIFS has some reclaim recursion critical sections in general
+> > > > > it would be really great to have them documented and that is where the
+> > > > > scope api is really handy. Just add the scope and document what is the
+> > > > > recursion issue. This will help people reading the code as well. Ideally
+> > > > > there shouldn't be any explicit GFP_NOFS in the code.
+> > > > 
+> > > > So in a perfect world a filesystem calls memalloc_nofs_save/restore and
+> > > > always uses GFP_KERNEL for kmalloc/vmalloc?
+> > > 
+> > > Exactly! And in a dream world those memalloc_nofs_save act as a
+> > > documentation of the reclaim recursion documentation ;)
+> > > -- 
+> > > Michal Hocko
+> > > SUSE Labs
+> > 
+> > BTW. should memalloc_nofs_save and memalloc_noio_save be merged into just 
+> > one that prevents both I/O and FS recursion?
+> 
+> Why should FS usage stop IO altogether?
 
-and maybe also wrap the EXPORT_SYMBOL_GPL in another #if
-IS_MODULE(CONFIG_TEST_PRINTF). It's not something random modules should
-play with, and I'd hate adding ~100 bytes (or whatever the export
-metadata uses these days) to vmlinux for the sake of a module that is
-most likely not built at all.
+Because the IO may reach loop and loop may redirect it to the same 
+filesystem that is running under memalloc_nofs_save and deadlock.
 
-Rasmus
+> > memalloc_nofs_save allows submitting bios to I/O stack and the bios 
+> > created under memalloc_nofs_save could be sent to the loop device and the 
+> > loop device calls the filesystem...
+> 
+> Don't those use NOIO context?
+
+What do you mean?
+
+Mikulas
