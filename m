@@ -1,79 +1,173 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753973AbeDYNDW (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 09:03:22 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:40599 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752418AbeDYNDT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 09:03:19 -0400
-Date: Wed, 25 Apr 2018 15:03:13 +0200 (CEST)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-cc: John Stultz <john.stultz@linaro.org>, Genki Sky <sky@genki.is>,
-        David Herrmann <dh.herrmann@gmail.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>, Pavel Machek <pavel@ucw.cz>,
-        linux-pm@vger.kernel.org
-Subject: Re: [RFC/RFT patch 0/7] timekeeping: Unify clock MONOTONIC and clock
- BOOTTIME
-In-Reply-To: <1858767.c2KKoU8fl2@aspire.rjw.lan>
-Message-ID: <alpine.DEB.2.21.1804251502310.2082@nanos.tec.linutronix.de>
-References: <CANq1E4QppGAaU5PYbGpuC00S6wGQcAt70Z7CntZHiLC6748z2A@mail.gmail.com> <alpine.DEB.2.21.1804241007410.5261@nanos.tec.linutronix.de> <1996930.B4PaKZ6i1F@aspire.rjw.lan> <1858767.c2KKoU8fl2@aspire.rjw.lan>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1754039AbeDYNDm (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 09:03:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49596 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752276AbeDYNDj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 09:03:39 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12EDA214C5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=chao@kernel.org
+Subject: Re: [f2fs-dev] [PATCH 4/5] f2fs: sanity check for total valid blocks
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+References: <20180425054613.2700-1-jaegeuk@kernel.org>
+ <20180425054613.2700-4-jaegeuk@kernel.org>
+From: Chao Yu <chao@kernel.org>
+Message-ID: <e9ccab38-0773-156f-67b1-0374b0aeb6ed@kernel.org>
+Date: Wed, 25 Apr 2018 21:03:30 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180425054613.2700-4-jaegeuk@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 25 Apr 2018, Rafael J. Wysocki wrote:
-> On Wednesday, April 25, 2018 10:52:18 AM CEST Rafael J. Wysocki wrote:
-> > On Tuesday, April 24, 2018 10:09:28 AM CEST Thomas Gleixner wrote:
-> > > On Mon, 23 Apr 2018, John Stultz wrote:
-> > > 
-> > > > On Mon, Apr 23, 2018 at 7:45 PM, Genki Sky <sky@genki.is> wrote:
-> > > > > Quoting Genki Sky (2018/04/23 20:40:36 -0400)
-> > > > >> I came across this thread for same reason as [0]: Daemons getting
-> > > > >> killed by systemd on resume (after >WatchdogSec seconds of
-> > > > >> suspending). I'm using master branch of systemd and the kernel. As
-> > > > >> mentioned, systemd uses CLOCK_MONOTONIC, originally expecting it to
-> > > > >> not include suspend time.
-> > > > >>
-> > > > >> Correct me if I'm mistaken, but I don't see the ambiguity of whether
-> > > > >> this patch series breaks systemd. If it's implemented correctly, you'd
-> > > > >> hope it *would* break it!
-> > > > >
-> > > > > This sounded a little weak on re-reading, sorry. So, I just confirmed
-> > > > > that after booting a "git revert -m 1 680014d6d1da", the issue no
-> > > > > longer appears. (I.e., a suspend for >WatchDog sec doesn't result in
-> > > > > any daemon getting killed).
-> > > > >
-> > > > > Let me know if I can help in any way.
-> > > > 
-> > > > Yea, this is the sort of thing I was worried about.
-> > > > 
-> > > > Thomas: I think reverting this change is needed.
-> > > 
-> > > Sigh. I hoped that something like this would be catched before I sent the
-> > > pull request by those who were actually interested in this change...
-> > 
-> > The "git revert -m 1 680014d6d1da" makes resume issues on my Aspire S5
-> > go away (cf. https://marc.info/?l=linux-kernel&m=152460804018920&w=2).
-> > 
-> > I'll try with just the "monotonic" vs "boottime" clock changes reverted.
-> 
-> FWICS (so far) system resume still works here with the commits between
-> d6ed449afdb3 (timekeeping: Make the MONOTONIC clock behave like the BOOTTIME
-> clock) and 127bfa5f4342 (hrtimer: Unify MONOTONIC and BOOTTIME clock behavior)
-> inclusive reverted on top of 4.17-rc2.  [I probably should revert commit
-> 92af4dcb4e1c (tracing: Unify the "boot" and "mono" tracing clocks) too, but
-> it doesn't revert cleanly and it doesn't apprear to affect things here too.]
+Hi Jaegeuk,
 
-Right, it does not matter. The real interesting one is d6ed449afdb3.
+This patch makes generic/008 failed, because for fallocate case, total valid
+block count can not be calculated by gathering valid_blocks of all sit entries.
 
 Thanks,
 
-	tglx
+On 2018/4/25 13:46, Jaegeuk Kim wrote:
+> This patch enhances sanity check for SIT entries.
+> 
+> syzbot hit the following crash on upstream commit
+> 83beed7b2b26f232d782127792dd0cd4362fdc41 (Fri Apr 20 17:56:32 2018 +0000)
+> Merge branch 'fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal
+> syzbot dashboard link: https://syzkaller.appspot.com/bug?extid=bf9253040425feb155ad
+> 
+> syzkaller reproducer: https://syzkaller.appspot.com/x/repro.syz?id=5692130282438656
+> Raw console output: https://syzkaller.appspot.com/x/log.txt?id=5095924598571008
+> Kernel config: https://syzkaller.appspot.com/x/.config?id=1808800213120130118
+> compiler: gcc (GCC) 8.0.1 20180413 (experimental)
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+bf9253040425feb155ad@syzkaller.appspotmail.com
+> It will help syzbot understand when the bug is fixed. See footer for details.
+> If you forward the report, please keep this part and the footer.
+> 
+> F2FS-fs (loop0): invalid crc value
+> F2FS-fs (loop0): Try to recover 1th superblock, ret: 0
+> F2FS-fs (loop0): Mounted with checkpoint version = d
+> F2FS-fs (loop0): Bitmap was wrongly cleared, blk:9740
+> ------------[ cut here ]------------
+> kernel BUG at fs/f2fs/segment.c:1884!
+> invalid opcode: 0000 [#1] SMP KASAN
+> Dumping ftrace buffer:
+>    (ftrace buffer empty)
+> Modules linked in:
+> CPU: 1 PID: 4508 Comm: syz-executor0 Not tainted 4.17.0-rc1+ #10
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> RIP: 0010:update_sit_entry+0x1215/0x1590 fs/f2fs/segment.c:1882
+> RSP: 0018:ffff8801af526708 EFLAGS: 00010282
+> RAX: ffffed0035ea4cc0 RBX: ffff8801ad454f90 RCX: 0000000000000000
+> RDX: 0000000000000000 RSI: ffffffff82eeb87e RDI: ffffed0035ea4cb6
+> RBP: ffff8801af526760 R08: ffff8801ad4a2480 R09: ffffed003b5e4f90
+> R10: ffffed003b5e4f90 R11: ffff8801daf27c87 R12: ffff8801adb8d380
+> R13: 0000000000000001 R14: 0000000000000008 R15: 00000000ffffffff
+> FS:  00000000014af940(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f06bc223000 CR3: 00000001adb02000 CR4: 00000000001406e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  allocate_data_block+0x66f/0x2050 fs/f2fs/segment.c:2663
+>  do_write_page+0x105/0x1b0 fs/f2fs/segment.c:2727
+>  write_node_page+0x129/0x350 fs/f2fs/segment.c:2770
+>  __write_node_page+0x7da/0x1370 fs/f2fs/node.c:1398
+>  sync_node_pages+0x18cf/0x1eb0 fs/f2fs/node.c:1652
+>  block_operations+0x429/0xa60 fs/f2fs/checkpoint.c:1088
+>  write_checkpoint+0x3ba/0x5380 fs/f2fs/checkpoint.c:1405
+>  f2fs_sync_fs+0x2fb/0x6a0 fs/f2fs/super.c:1077
+>  __sync_filesystem fs/sync.c:39 [inline]
+>  sync_filesystem+0x265/0x310 fs/sync.c:67
+>  generic_shutdown_super+0xd7/0x520 fs/super.c:429
+>  kill_block_super+0xa4/0x100 fs/super.c:1191
+>  kill_f2fs_super+0x9f/0xd0 fs/f2fs/super.c:3030
+>  deactivate_locked_super+0x97/0x100 fs/super.c:316
+>  deactivate_super+0x188/0x1b0 fs/super.c:347
+>  cleanup_mnt+0xbf/0x160 fs/namespace.c:1174
+>  __cleanup_mnt+0x16/0x20 fs/namespace.c:1181
+>  task_work_run+0x1e4/0x290 kernel/task_work.c:113
+>  tracehook_notify_resume include/linux/tracehook.h:191 [inline]
+>  exit_to_usermode_loop+0x2bd/0x310 arch/x86/entry/common.c:166
+>  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
+>  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
+>  do_syscall_64+0x6ac/0x800 arch/x86/entry/common.c:290
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x457d97
+> RSP: 002b:00007ffd46f9c8e8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
+> RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000457d97
+> RDX: 00000000014b09a3 RSI: 0000000000000002 RDI: 00007ffd46f9da50
+> RBP: 00007ffd46f9da50 R08: 0000000000000000 R09: 0000000000000009
+> R10: 0000000000000005 R11: 0000000000000246 R12: 00000000014b0940
+> R13: 0000000000000000 R14: 0000000000000002 R15: 000000000000658e
+> RIP: update_sit_entry+0x1215/0x1590 fs/f2fs/segment.c:1882 RSP: ffff8801af526708
+> ---[ end trace f498328bb02610a2 ]---
+> 
+> Reported-and-tested-by: syzbot+bf9253040425feb155ad@syzkaller.appspotmail.com
+> Reported-and-tested-by: syzbot+7d6d31d3bc702f566ce3@syzkaller.appspotmail.com
+> Reported-and-tested-by: syzbot+0a725420475916460f12@syzkaller.appspotmail.com
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/segment.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 20250b88bf51..a55647f61232 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -3612,6 +3612,7 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
+>  	unsigned int i, start, end;
+>  	unsigned int readed, start_blk = 0;
+>  	int err = 0;
+> +	block_t total_valid_blocks = 0;
+>  
+>  	do {
+>  		readed = ra_meta_pages(sbi, start_blk, BIO_MAX_PAGES,
+> @@ -3634,6 +3635,7 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
+>  			if (err)
+>  				return err;
+>  			seg_info_from_raw_sit(se, &sit);
+> +			total_valid_blocks += se->valid_blocks;
+>  
+>  			/* build discard map only one time */
+>  			if (f2fs_discard_en(sbi)) {
+> @@ -3675,11 +3677,13 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
+>  		sit = sit_in_journal(journal, i);
+>  
+>  		old_valid_blocks = se->valid_blocks;
+> +		total_valid_blocks -= old_valid_blocks;
+>  
+>  		err = check_block_count(sbi, start, &sit);
+>  		if (err)
+>  			break;
+>  		seg_info_from_raw_sit(se, &sit);
+> +		total_valid_blocks += se->valid_blocks;
+>  
+>  		if (f2fs_discard_en(sbi)) {
+>  			if (is_set_ckpt_flags(sbi, CP_TRIMMED_FLAG)) {
+> @@ -3698,6 +3702,15 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
+>  				se->valid_blocks - old_valid_blocks;
+>  	}
+>  	up_read(&curseg->journal_rwsem);
+> +
+> +	if (!err && total_valid_blocks != valid_user_blocks(sbi)) {
+> +		f2fs_msg(sbi->sb, KERN_ERR,
+> +			"SIT is corrupted %u vs %u",
+> +			total_valid_blocks, valid_user_blocks(sbi));
+> +		set_sbi_flag(sbi, SBI_NEED_FSCK);
+> +		err = -EINVAL;
+> +	}
+> +
+>  	return err;
+>  }
+>  
+> 
