@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx481pOIFjw8r7gltMs+tqaWkp7nBJzf2dwH27D+X09UBwPOgSC5SgiNocmwW3wXcBlCRfYhx
-ARC-Seal: i=1; a=rsa-sha256; t=1524652904; cv=none;
+X-Google-Smtp-Source: AIpwx4/wJDkNr0ir3zM2Zho3tgJyZXSkSoyhACcP38r35+FYM/bM0pPtllluJf//8xeDnZ3wQLjc
+ARC-Seal: i=1; a=rsa-sha256; t=1524652899; cv=none;
         d=google.com; s=arc-20160816;
-        b=aF0Ft9cBgB+ATXhOW7hCLoIEC0SP2IhJvx3fgxxEW0YSmZmLx9KqSK3DVgtGITzJ/v
-         +vba4kCuOP1HAbx3vgbmST+sIHO0P5QnhJ4obpc+Lw7ZQEgyGTpGIJd3FGY8rf9+pDQS
-         eM6fBupbaOaxowCiYTURbkMCq62Xfh7/C/XrXPkgw313UITi3XPI3XdWn6Yth1sUrEBr
-         HumpeyzS4L6obk8vvGsGvf8Fu9ap+W56djWCTcE94BcMhtNpbY2or5uiZV79NvViYH1T
-         /L45a17bsZuu7qOfqbPbg9I/5WuSj1ulb21sD1DNrP8Rt4ZCSek6mfj9MZKLCYjh08f3
-         ogZw==
+        b=m+fkkM9q2wpOI5VX+asUEyhtNG3wO1hZOeswqcDX1Xdn2b2PhcvVp/UxFBfHh4H9rW
+         tMedyLCZQ+AEeWLT/620Re6eZfQfnD850APgAyaAP/q8VPEk377ySn1Mr5bmy/67Xbbm
+         rZPJL+x1B/mAL7d7BPbdvfSKKPrUgEROHj6h6z1dSNwQrwS4LNOywoi2FCt/n/LXsMMA
+         sMS3UtakPLYtiCLjeOrewiY7AJbxuf8ZzN3vf5PWQHJ4C+UKdCVGoczYpZ45dCzZIZox
+         ZJzrJ3QnPMtyoVfwuQ9/yGA7GQ4mbU/6rZ28jjDL2cocdoxW+uQ4ynMBJ54upn2iU338
+         k3CA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=xt6iHrR/0nzpNgxsgZpKENP9aQlkVz+NcmI+2nnL5iY=;
-        b=xDVdU62fIQz8JDlv/3+GpJ0VM3+KIq7g1R9HHnkYdCC79v9C+B4J9tECVbI+6GVslP
-         cfPlvAU7dU58ComoY6m5+3zTRBpzowrFHYWy5AyPf4C3YLxot6DHhxi8gfq4EwIFQpys
-         Q3wEGVu9odgRIDha0JFP5MnSD5NjVpZ3M8O+dC0SKCOXor1wsetBKCvW7LcOHgjQX41L
-         7OkWMwDqCUDzshZF7yJHBOJVCkmmUKcdrDHvpP8KjrS5LwtKSSyDfaCNHnqqVG/pT+ao
-         w38u/OcJ1JZy4nL8MSCphBrQ/Wt0btiuVvjyR8ntKURi64VfQLX7fGuiCeY7cVHTDUhW
-         pp6A==
+        bh=3/wOuH/uK930gu39Wp64NG+Hi+2VTGRxLtroj8Qw8iM=;
+        b=yQX6npM6bH6I2DUULfADKpXglTs7iduFT48+gN6Hlg6ErC5xb861VQzGIsNctaY02f
+         NirPIAXsfI/OMYoXq1HwfhWovkDq+94DYbsogAElf+N9i5FpNLrqK2VaZXVcPuSl7fOP
+         NKBjWQU93m2Ks3S3bR5+0MK8mjVLlk0qFCqheDMYUQN3CfkkegBSq236bjI31/4GiJeC
+         nMB8EMNi06EeEK5DYi4CDHq5AE0FgqVp1pYDtagIRyCzm3FjhRBS2u0EMW4WPKLMqZYY
+         aFdWdUBz0sEQFW85UaOJCe3+h++ghF9D7+h61urloJ79/b+sF6m/nkBW3+n0V1pVyIua
+         mWUw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Anand Jain <anand.jain@oracle.com>,
-	Qu Wenruo <wqu@suse.com>,
-	David Sterba <dsterba@suse.com>,
+	Dan Carpenter <dan.carpenter@oracle.com>,
+	Silvan Jegen <s.jegen@gmail.com>,
+	Jiri Kosina <jkosina@suse.cz>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 066/183] btrfs: fail mount when sb flag is not in BTRFS_SUPER_FLAG_SUPP
-Date: Wed, 25 Apr 2018 12:34:46 +0200
-Message-Id: <20180425103245.176575157@linuxfoundation.org>
+Subject: [PATCH 4.14 074/183] HID: roccat: prevent an out of bounds read in kovaplus_profile_activated()
+Date: Wed, 25 Apr 2018 12:34:54 +0200
+Message-Id: <20180425103245.490352414@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598714444098534177?=
-X-GMAIL-MSGID: =?utf-8?q?1598714444098534177?=
+X-GMAIL-THRID: =?utf-8?q?1598714438274949546?=
+X-GMAIL-MSGID: =?utf-8?q?1598714438274949546?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,43 +51,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Anand Jain <Anand.Jain@oracle.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
 
-[ Upstream commit 6f794e3c5c8f8fdd3b5bb20d9ded894e685b5bbe ]
+[ Upstream commit 7ad81482cad67cbe1ec808490d1ddfc420c42008 ]
 
-It appears from the original commit [1] that there isn't any design
-specific reason not to fail the mount instead of just warning. This
-patch will change it to fail.
+We get the "new_profile_index" value from the mouse device when we're
+handling raw events.  Smatch taints it as untrusted data and complains
+that we need a bounds check.  This seems like a reasonable warning
+otherwise there is a small read beyond the end of the array.
 
-[1]
- commit 319e4d0661e5323c9f9945f0f8fb5905e5fe74c3
-    btrfs: Enhance super validation check
-
-Fixes: 319e4d0661e5323 ("btrfs: Enhance super validation check")
-Signed-off-by: Anand Jain <anand.jain@oracle.com>
-Reviewed-by: Qu Wenruo <wqu@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Fixes: 0e70f97f257e ("HID: roccat: Add support for Kova[+] mouse")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Silvan Jegen <s.jegen@gmail.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/disk-io.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/hid/hid-roccat-kovaplus.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -4063,9 +4063,11 @@ static int btrfs_check_super_valid(struc
- 		btrfs_err(fs_info, "no valid FS found");
- 		ret = -EINVAL;
- 	}
--	if (btrfs_super_flags(sb) & ~BTRFS_SUPER_FLAG_SUPP)
--		btrfs_warn(fs_info, "unrecognized super flag: %llu",
-+	if (btrfs_super_flags(sb) & ~BTRFS_SUPER_FLAG_SUPP) {
-+		btrfs_err(fs_info, "unrecognized or unsupported super flag: %llu",
- 				btrfs_super_flags(sb) & ~BTRFS_SUPER_FLAG_SUPP);
-+		ret = -EINVAL;
-+	}
- 	if (btrfs_super_root_level(sb) >= BTRFS_MAX_LEVEL) {
- 		btrfs_err(fs_info, "tree_root level too big: %d >= %d",
- 				btrfs_super_root_level(sb), BTRFS_MAX_LEVEL);
+--- a/drivers/hid/hid-roccat-kovaplus.c
++++ b/drivers/hid/hid-roccat-kovaplus.c
+@@ -37,6 +37,8 @@ static uint kovaplus_convert_event_cpi(u
+ static void kovaplus_profile_activated(struct kovaplus_device *kovaplus,
+ 		uint new_profile_index)
+ {
++	if (new_profile_index >= ARRAY_SIZE(kovaplus->profile_settings))
++		return;
+ 	kovaplus->actual_profile = new_profile_index;
+ 	kovaplus->actual_cpi = kovaplus->profile_settings[new_profile_index].cpi_startup_level;
+ 	kovaplus->actual_x_sensitivity = kovaplus->profile_settings[new_profile_index].sensitivity_x;
