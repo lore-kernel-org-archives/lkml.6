@@ -1,72 +1,309 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754382AbeDYLQ0 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 07:16:26 -0400
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:47685 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753943AbeDYLPg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 07:15:36 -0400
-X-Originating-IP: 2.224.242.101
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert@linux-m68k.org, horms@verge.net.au, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] dt-bindings: media: renesas-ceu: Add R-Mobile R8A7740
-Date: Wed, 25 Apr 2018 13:15:19 +0200
-Message-Id: <1524654920-18749-2-git-send-email-jacopo+renesas@jmondi.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1524654920-18749-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1524654920-18749-1-git-send-email-jacopo+renesas@jmondi.org>
+        id S1753898AbeDYLNk (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 07:13:40 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56876 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752824AbeDYLNd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 07:13:33 -0400
+From: Petr Mladek <pmladek@suse.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.cz>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        linux-kernel@vger.kernel.org, Petr Mladek <pmladek@suse.com>
+Subject: [PATCH v5 01/11] vsprintf: Shuffle misc pointer to string functions
+Date: Wed, 25 Apr 2018 13:12:41 +0200
+Message-Id: <20180425111251.13246-2-pmladek@suse.com>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <20180425111251.13246-1-pmladek@suse.com>
+References: <20180425111251.13246-1-pmladek@suse.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add R-Mobile A1 R8A7740 SoC to the list of compatible values for the CEU
-unit.
+This is just a preparation step for further changes.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+The patch does not change the code.
+
+Signed-off-by: Petr Mladek <pmladek@suse.com>
 ---
- Documentation/devicetree/bindings/media/renesas,ceu.txt | 7 ++++---
- drivers/media/platform/renesas-ceu.c                    | 1 +
- 2 files changed, 5 insertions(+), 3 deletions(-)
+ lib/vsprintf.c | 244 ++++++++++++++++++++++++++++-----------------------------
+ 1 file changed, 122 insertions(+), 122 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/media/renesas,ceu.txt b/Documentation/devicetree/bindings/media/renesas,ceu.txt
-index 3fc66df..8a7a616 100644
---- a/Documentation/devicetree/bindings/media/renesas,ceu.txt
-+++ b/Documentation/devicetree/bindings/media/renesas,ceu.txt
-@@ -2,14 +2,15 @@ Renesas Capture Engine Unit (CEU)
- ----------------------------------------------
+diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+index b82f0c6c2aec..19fdfe621b40 100644
+--- a/lib/vsprintf.c
++++ b/lib/vsprintf.c
+@@ -613,6 +613,128 @@ char *string(char *buf, char *end, const char *s, struct printf_spec spec)
+ }
  
- The Capture Engine Unit is the image capture interface found in the Renesas
--SH Mobile and RZ SoCs.
-+SH Mobile, R-Mobile and RZ SoCs.
+ static noinline_for_stack
++char *pointer_string(char *buf, char *end, const void *ptr,
++		     struct printf_spec spec)
++{
++	spec.base = 16;
++	spec.flags |= SMALL;
++	if (spec.field_width == -1) {
++		spec.field_width = 2 * sizeof(ptr);
++		spec.flags |= ZEROPAD;
++	}
++
++	return number(buf, end, (unsigned long int)ptr, spec);
++}
++
++static bool have_filled_random_ptr_key __read_mostly;
++static siphash_key_t ptr_key __read_mostly;
++
++static void fill_random_ptr_key(struct random_ready_callback *unused)
++{
++	get_random_bytes(&ptr_key, sizeof(ptr_key));
++	/*
++	 * have_filled_random_ptr_key==true is dependent on get_random_bytes().
++	 * ptr_to_id() needs to see have_filled_random_ptr_key==true
++	 * after get_random_bytes() returns.
++	 */
++	smp_mb();
++	WRITE_ONCE(have_filled_random_ptr_key, true);
++}
++
++static struct random_ready_callback random_ready = {
++	.func = fill_random_ptr_key
++};
++
++static int __init initialize_ptr_random(void)
++{
++	int ret = add_random_ready_callback(&random_ready);
++
++	if (!ret) {
++		return 0;
++	} else if (ret == -EALREADY) {
++		fill_random_ptr_key(&random_ready);
++		return 0;
++	}
++
++	return ret;
++}
++early_initcall(initialize_ptr_random);
++
++/* Maps a pointer to a 32 bit unique identifier. */
++static char *ptr_to_id(char *buf, char *end, void *ptr, struct printf_spec spec)
++{
++	const char *str = sizeof(ptr) == 8 ? "(____ptrval____)" : "(ptrval)";
++	unsigned long hashval;
++
++	if (unlikely(!have_filled_random_ptr_key)) {
++		spec.field_width = 2 * sizeof(ptr);
++		/* string length must be less than default_width */
++		return string(buf, end, str, spec);
++	}
++
++#ifdef CONFIG_64BIT
++	hashval = (unsigned long)siphash_1u64((u64)ptr, &ptr_key);
++	/*
++	 * Mask off the first 32 bits, this makes explicit that we have
++	 * modified the address (and 32 bits is plenty for a unique ID).
++	 */
++	hashval = hashval & 0xffffffff;
++#else
++	hashval = (unsigned long)siphash_1u32((u32)ptr, &ptr_key);
++#endif
++	return pointer_string(buf, end, (const void *)hashval, spec);
++}
++
++int kptr_restrict __read_mostly;
++
++static noinline_for_stack
++char *restricted_pointer(char *buf, char *end, const void *ptr,
++			 struct printf_spec spec)
++{
++	switch (kptr_restrict) {
++	case 0:
++		/* Always print %pK values */
++		break;
++	case 1: {
++		const struct cred *cred;
++
++		/*
++		 * kptr_restrict==1 cannot be used in IRQ context
++		 * because its test for CAP_SYSLOG would be meaningless.
++		 */
++		if (in_irq() || in_serving_softirq() || in_nmi()) {
++			if (spec.field_width == -1)
++				spec.field_width = 2 * sizeof(ptr);
++			return string(buf, end, "pK-error", spec);
++		}
++
++		/*
++		 * Only print the real pointer value if the current
++		 * process has CAP_SYSLOG and is running with the
++		 * same credentials it started with. This is because
++		 * access to files is checked at open() time, but %pK
++		 * checks permission at read() time. We don't want to
++		 * leak pointer values if a binary opens a file using
++		 * %pK and then elevates privileges before reading it.
++		 */
++		cred = current_cred();
++		if (!has_capability_noaudit(current, CAP_SYSLOG) ||
++		    !uid_eq(cred->euid, cred->uid) ||
++		    !gid_eq(cred->egid, cred->gid))
++			ptr = NULL;
++		break;
++	}
++	case 2:
++	default:
++		/* Always print 0's for %pK */
++		ptr = NULL;
++		break;
++	}
++
++	return pointer_string(buf, end, ptr, spec);
++}
++
++static noinline_for_stack
+ char *dentry_name(char *buf, char *end, const struct dentry *d, struct printf_spec spec,
+ 		  const char *fmt)
+ {
+@@ -1358,69 +1480,6 @@ char *uuid_string(char *buf, char *end, const u8 *addr,
+ }
  
- The interface supports a single parallel input with data bus width of 8 or 16
- bits.
+ static noinline_for_stack
+-char *pointer_string(char *buf, char *end, const void *ptr,
+-		     struct printf_spec spec)
+-{
+-	spec.base = 16;
+-	spec.flags |= SMALL;
+-	if (spec.field_width == -1) {
+-		spec.field_width = 2 * sizeof(ptr);
+-		spec.flags |= ZEROPAD;
+-	}
+-
+-	return number(buf, end, (unsigned long int)ptr, spec);
+-}
+-
+-int kptr_restrict __read_mostly;
+-
+-static noinline_for_stack
+-char *restricted_pointer(char *buf, char *end, const void *ptr,
+-			 struct printf_spec spec)
+-{
+-	switch (kptr_restrict) {
+-	case 0:
+-		/* Always print %pK values */
+-		break;
+-	case 1: {
+-		const struct cred *cred;
+-
+-		/*
+-		 * kptr_restrict==1 cannot be used in IRQ context
+-		 * because its test for CAP_SYSLOG would be meaningless.
+-		 */
+-		if (in_irq() || in_serving_softirq() || in_nmi()) {
+-			if (spec.field_width == -1)
+-				spec.field_width = 2 * sizeof(ptr);
+-			return string(buf, end, "pK-error", spec);
+-		}
+-
+-		/*
+-		 * Only print the real pointer value if the current
+-		 * process has CAP_SYSLOG and is running with the
+-		 * same credentials it started with. This is because
+-		 * access to files is checked at open() time, but %pK
+-		 * checks permission at read() time. We don't want to
+-		 * leak pointer values if a binary opens a file using
+-		 * %pK and then elevates privileges before reading it.
+-		 */
+-		cred = current_cred();
+-		if (!has_capability_noaudit(current, CAP_SYSLOG) ||
+-		    !uid_eq(cred->euid, cred->uid) ||
+-		    !gid_eq(cred->egid, cred->gid))
+-			ptr = NULL;
+-		break;
+-	}
+-	case 2:
+-	default:
+-		/* Always print 0's for %pK */
+-		ptr = NULL;
+-		break;
+-	}
+-
+-	return pointer_string(buf, end, ptr, spec);
+-}
+-
+-static noinline_for_stack
+ char *netdev_bits(char *buf, char *end, const void *addr, const char *fmt)
+ {
+ 	unsigned long long num;
+@@ -1654,65 +1713,6 @@ char *device_node_string(char *buf, char *end, struct device_node *dn,
+ 	return widen_string(buf, buf - buf_start, end, spec);
+ }
  
- Required properties:
--- compatible: Shall be "renesas,r7s72100-ceu" for CEU units found in RZ/A1H
--  and RZ/A1M SoCs.
-+- compatible: Shall be one of the following values:
-+	"renesas,r7s72100-ceu" for CEU units found in RZ/A1H and RZ/A1M SoCs
-+	"renesas,r8a7740-ceu" for CEU units found in R-Mobile A1 R8A7740 SoCs
- - reg: Registers address base and size.
- - interrupts: The interrupt specifier.
- 
-diff --git a/drivers/media/platform/renesas-ceu.c b/drivers/media/platform/renesas-ceu.c
-index 6599dba..c964a56 100644
---- a/drivers/media/platform/renesas-ceu.c
-+++ b/drivers/media/platform/renesas-ceu.c
-@@ -1545,6 +1545,7 @@ static const struct ceu_data ceu_data_sh4 = {
- #if IS_ENABLED(CONFIG_OF)
- static const struct of_device_id ceu_of_match[] = {
- 	{ .compatible = "renesas,r7s72100-ceu", .data = &ceu_data_rz },
-+	{ .compatible = "renesas,r8a7740-ceu", .data = &ceu_data_rz },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, ceu_of_match);
+-static bool have_filled_random_ptr_key __read_mostly;
+-static siphash_key_t ptr_key __read_mostly;
+-
+-static void fill_random_ptr_key(struct random_ready_callback *unused)
+-{
+-	get_random_bytes(&ptr_key, sizeof(ptr_key));
+-	/*
+-	 * have_filled_random_ptr_key==true is dependent on get_random_bytes().
+-	 * ptr_to_id() needs to see have_filled_random_ptr_key==true
+-	 * after get_random_bytes() returns.
+-	 */
+-	smp_mb();
+-	WRITE_ONCE(have_filled_random_ptr_key, true);
+-}
+-
+-static struct random_ready_callback random_ready = {
+-	.func = fill_random_ptr_key
+-};
+-
+-static int __init initialize_ptr_random(void)
+-{
+-	int ret = add_random_ready_callback(&random_ready);
+-
+-	if (!ret) {
+-		return 0;
+-	} else if (ret == -EALREADY) {
+-		fill_random_ptr_key(&random_ready);
+-		return 0;
+-	}
+-
+-	return ret;
+-}
+-early_initcall(initialize_ptr_random);
+-
+-/* Maps a pointer to a 32 bit unique identifier. */
+-static char *ptr_to_id(char *buf, char *end, void *ptr, struct printf_spec spec)
+-{
+-	const char *str = sizeof(ptr) == 8 ? "(____ptrval____)" : "(ptrval)";
+-	unsigned long hashval;
+-
+-	if (unlikely(!have_filled_random_ptr_key)) {
+-		spec.field_width = 2 * sizeof(ptr);
+-		/* string length must be less than default_width */
+-		return string(buf, end, str, spec);
+-	}
+-
+-#ifdef CONFIG_64BIT
+-	hashval = (unsigned long)siphash_1u64((u64)ptr, &ptr_key);
+-	/*
+-	 * Mask off the first 32 bits, this makes explicit that we have
+-	 * modified the address (and 32 bits is plenty for a unique ID).
+-	 */
+-	hashval = hashval & 0xffffffff;
+-#else
+-	hashval = (unsigned long)siphash_1u32((u32)ptr, &ptr_key);
+-#endif
+-	return pointer_string(buf, end, (const void *)hashval, spec);
+-}
+-
+ /*
+  * Show a '%p' thing.  A kernel extension is that the '%p' is followed
+  * by an extra set of alphanumeric characters that are extended format
 -- 
-2.7.4
+2.13.6
