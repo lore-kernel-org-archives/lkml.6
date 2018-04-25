@@ -1,60 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754691AbeDYOir (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 10:38:47 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:56898 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754562AbeDYOi1 (ORCPT
+        id S1754672AbeDYOkp (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 10:40:45 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:39540 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753632AbeDYOkm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 10:38:27 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 67E4D60AE0
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
-From: Sibi Sankar <sibis@codeaurora.org>
-To: andy.gross@linaro.org, mark.rutland@arm.com,
-        bjorn.andersson@linaro.org
-Cc: david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
-        georgi.djakov@linaro.org, devicetree@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jassisinghbrar@gmail.com, will.deacon@arm.com, catalin.marinas@arm.com,
-        Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH 3/3] arm64: dts: qcom: Add APSS shared mailbox node to SDM845
-Date: Wed, 25 Apr 2018 20:08:03 +0530
-Message-Id: <20180425143803.11260-3-sibis@codeaurora.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180425143803.11260-1-sibis@codeaurora.org>
-References: <20180425143803.11260-1-sibis@codeaurora.org>
+        Wed, 25 Apr 2018 10:40:42 -0400
+X-Google-Smtp-Source: AB8JxZrGcvaECtFSEpd+0TbI7jRo79EsZasEyFAjJ7TsNiwcdqfcdFcAYwt4Ohr5EBWxoiOJAKvPAQ==
+From: Arvind Yadav <arvind.yadav.cs@gmail.com>
+To: linux@armlinux.org.uk, rafael.j.wysocki@intel.com,
+        ulf.hansson@linaro.org
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] ARM: locomo: use put_device() instead of kfree()
+Date: Wed, 25 Apr 2018 20:10:29 +0530
+Message-Id: <76a6e68332d57d67757bf2ba735fb2d3d3118d1f.1524667039.git.arvind.yadav.cs@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch add the node to support APSS shared
-mailbox on SDM845
+Never directly free @dev after calling device_register(), even
+if it returned an error. Always use put_device() to give up the
+reference initialized.
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
 ---
+ arch/arm/common/locomo.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-This patch depends on https://patchwork.kernel.org/patch/10276419/
-
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index 486ace9a9e8b..9be763da0664 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -338,5 +338,11 @@
- 				status = "disabled";
- 			};
- 		};
+diff --git a/arch/arm/common/locomo.c b/arch/arm/common/locomo.c
+index 51936bd..23a5079 100644
+--- a/arch/arm/common/locomo.c
++++ b/arch/arm/common/locomo.c
+@@ -226,8 +226,7 @@ locomo_init_one_child(struct locomo *lchip, struct locomo_dev_info *info)
+ 
+ 	dev = kzalloc(sizeof(struct locomo_dev), GFP_KERNEL);
+ 	if (!dev) {
+-		ret = -ENOMEM;
+-		goto out;
++		return -ENOMEM;
+ 	}
+ 
+ 	/*
+@@ -256,10 +255,9 @@ locomo_init_one_child(struct locomo *lchip, struct locomo_dev_info *info)
+ 			NO_IRQ : lchip->irq_base + info->irq[0];
+ 
+ 	ret = device_register(&dev->dev);
+-	if (ret) {
+- out:
+-		kfree(dev);
+-	}
++	if (ret)
++		put_device(&dev->dev);
 +
-+		apss_shared: mailbox@17990000 {
-+			compatible = "qcom,sdm845-apss-shared";
-+			reg = <0x17990000 0x1000>;
-+			#mbox-cells = <1>;
-+		};
- 	};
- };
+ 	return ret;
+ }
+ 
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
