@@ -1,151 +1,133 @@
-Return-Path: <kernel-hardening-return-13129-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AB8JxZqU6NPONjD24da53sRqNf4krRH3hwqgBe9AoAXxlMwbGpFXkN5FSG+cHOmpPXpwQS7Qa/Kr
-ARC-Seal: i=1; a=rsa-sha256; t=1524619083; cv=none;
+Return-Path: <kernel-hardening-return-13130-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AIpwx490sdmaDG9mIWz/oIOPJOLHO5Z7b2C3JrINixyLiyLEXgSzT3RqMSglOMmUL413AJRNnZy4
+ARC-Seal: i=1; a=rsa-sha256; t=1524624362; cv=none;
         d=google.com; s=arc-20160816;
-        b=p2suPdAimQqQFib4DcbGIZgWfr6lKyHmkAWySdbRDlf2a/UeKlnJrzsY9zXuDSowB2
-         X2OBrNzUcosW4chTSu8qFXzu3YSa7LTIVWUKhGoSJodN3bx9Sf+jsqDSFL2tTs4wk79h
-         ff7jT9DrlTmjMS7ldzos8z7xO14dJBC+bFZxFsT6ryuROWprUoOWxb2pp56GeCvkbDrn
-         zdy9GYvRzW2lMoryvAE6tnjac7JERa+/Us+jE/h7rVYsBm3IkbPpvaMgZYa/WFljjAU9
-         E50CNvQ8x5ag2xi0JbyXg5AG55szGTjx2zEP+Ko6mgjJtbJco8UU6Z7iQcO5PvLaq+oz
-         YYCA==
+        b=g0lBiOsmthmBx7jR6OJE4RUDai7Tm/unW+hmny4pzjN1UkS+vCBVRIf1y6DWQT0Lnv
+         qaqQDrb44N0ameuCdXxLrxxduS+FUN2CJj5RXqvi27tg1IsU00Bs3zL79sayj81slCJ2
+         09203tze26q2tApE4UPSL4knzx6okNm6eI4frC3iIccELWlF8nkVXjn8FfrsY+PC2uiY
+         r0LkvtcjdopkLQ5mKr+T3rokDXXabqoPY8Zt3s3VRfwwrGdQsq4CAUN3G30/512Ufhiw
+         pJsE+P2Nj90XVi6Dsk/XLA8hqoTp88+tz5vdjlCmgBfKRCPqDcUNeFIZQ/s7OGSdoI2p
+         1Fuw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:references:in-reply-to:message-id:subject:cc:to:from
-         :date:dkim-signature:delivered-to:list-id:list-subscribe
-         :list-unsubscribe:list-help:list-post:precedence:mailing-list
-         :arc-authentication-results;
-        bh=hgxLNEy4+mqKJqmZYSV0FqPgQF9EpKnSrBX8z27Wmtc=;
-        b=bSwWAR3vriYPErDpNKcTMMsMvOFzMksGYttdhlddLjK1R+r/9MpoY4ahcpb8luy9Bs
-         zPntmvJ1crbCJpKIn6igGM5eaDW/DcW6NtPDWYY9k1/t1bGv7Qu+kScDfz/Y1sN++EjN
-         3+hhyBLkrv+6+U94RyzJ/MiF3+sBQoRjl60HQOVUwzUmH9oG7Nbzj3DxYdqxiOaHQkud
-         JVRqzcew1kfTJtteD2wi/KhebtZt0f+32Gv8Rqn+b20UUOe2yRWjp5JFi7zQtiLnuaww
-         kKWunUrzvLEUc3B1A20L1vjxXzI5ji7aX23p2vE8UOwVBF6PqEDvX2JS9/venNa0o9NY
-         ooVQ==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
+         :mime-version:dkim-signature:dkim-signature:delivered-to:list-id
+         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
+         :mailing-list:arc-authentication-results;
+        bh=tpkNcth3pA6lmT+BCyhw5+31EWlt41Fsp5rcNtzmOd8=;
+        b=cuN5HhlUQ41+I2464Rux8ePgyt0dqODzrbMcTAh7/aHnX0mVx+TCMg1yuHWtIhYmcs
+         KjGvZ6kF0GhhXptUNg9VrJghyEiBcJTz8vMas+M9qGVK8JVmpx6aPYaqdr9XeVgwDXGm
+         ZtAtTkzzFOnWBjpvHGUndaurvses3l7VkD++QG3uXYbYLL6XQDwoq1gLsyR1s0EhDLrn
+         Pg7AHb4JzxqOiOBT7vNnYayBLRY8PF+QNBHRLlH4gtBoUZ9CWcIfgW0godrKODskKk+c
+         UpACBpJB8VA+k8gvwi2GGxD09BJ+PWMMvzbtGm7zMaXi5c98/cBH3u43jG9k0KaElbZV
+         BPBQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@canb.auug.org.au header.s=201702 header.b=DBU3WeCE;
-       spf=pass (google.com: domain of kernel-hardening-return-13129-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13129-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=pass header.i=@google.com header.s=20161025 header.b=DaGqTiOr;
+       dkim=pass header.i=@chromium.org header.s=google header.b=McCjQ0hE;
+       spf=pass (google.com: domain of kernel-hardening-return-13130-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13130-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@canb.auug.org.au header.s=201702 header.b=DBU3WeCE;
-       spf=pass (google.com: domain of kernel-hardening-return-13129-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13129-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=pass header.i=@google.com header.s=20161025 header.b=DaGqTiOr;
+       dkim=pass header.i=@chromium.org header.s=google header.b=McCjQ0hE;
+       spf=pass (google.com: domain of kernel-hardening-return-13130-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13130-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Wed, 25 Apr 2018 11:16:17 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, Kees Cook <keescook@chromium.org>,
- Segher Boessenkool <segher@kernel.crashing.org>, Kernel Hardening
- <kernel-hardening@lists.openwall.com>, Andrew Morton
- <akpm@linuxfoundation.org>, Boris Brezillon
- <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>,
- David Woodhouse <dwmw2@infradead.org>, Alasdair Kergon <agk@redhat.com>,
- Mike Snitzer <snitzer@redhat.com>, Anton Vorontsov <anton@enomsg.org>,
- Colin Cross <ccross@android.com>, Tony Luck <tony.luck@intel.com>, Neil
- Brown <neilb@suse.com>
-Subject: Re: [patch V3 01/10] rslib: Add GFP aware init function
-Message-ID: <20180425111617.2f4dc127@canb.auug.org.au>
-In-Reply-To: <20180422162512.363154748@linutronix.de>
-References: <20180422162345.004292133@linutronix.de>
-	<20180422162512.363154748@linutronix.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/FEjP3biZc_p55XmvXMS7DkJ"; protocol="application/pgp-signature"
+Sender: keescook@google.com
+In-Reply-To: <20180425111617.2f4dc127@canb.auug.org.au>
+References: <20180422162345.004292133@linutronix.de> <20180422162512.363154748@linutronix.de>
+ <20180425111617.2f4dc127@canb.auug.org.au>
+From: Kees Cook <keescook@chromium.org>
+Date: Tue, 24 Apr 2018 19:45:42 -0700
+X-Google-Sender-Auth: ez9WLqjOHok6nIQ2o8MZX1Vgxbk
+Message-ID: <CAGXu5jLUgNGW-SXY3L2fJrBV3PpmAH9uXFV87xmPe14BrYnWMw@mail.gmail.com>
+Subject: Re: [patch V3 01/10] rslib: Add GFP aware init function
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>,
+	Segher Boessenkool <segher@kernel.crashing.org>,
+	Kernel Hardening <kernel-hardening@lists.openwall.com>,
+	Andrew Morton <akpm@linuxfoundation.org>,
+	Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>,
+	David Woodhouse <dwmw2@infradead.org>, Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>,
+	Anton Vorontsov <anton@enomsg.org>, Colin Cross <ccross@android.com>, Tony Luck <tony.luck@intel.com>,
+	Neil Brown <neilb@suse.com>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1598464733406749436?=
-X-GMAIL-MSGID: =?utf-8?q?1598678980420729691?=
+X-GMAIL-MSGID: =?utf-8?q?1598684515634289324?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
---Sig_/FEjP3biZc_p55XmvXMS7DkJ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi Thomas,
-
-On Sun, 22 Apr 2018 18:23:46 +0200 Thomas Gleixner <tglx@linutronix.de> wro=
-te:
+On Tue, Apr 24, 2018 at 6:16 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Thomas,
 >
-> The rslib usage in dm/verity_fec is broken because init_rs() can nest in
-> GFP_NOIO mempool allocations as init_rs() is invoked from the mempool all=
-oc
-> callback.
->=20
-> Provide a variant which takes gfp_t flags as argument.
->=20
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Mike Snitzer <snitzer@redhat.com>
-> Cc: Alasdair Kergon <agk@redhat.com>
-> Cc: Neil Brown <neilb@suse.com>
-> ---
->  include/linux/rslib.h           |   26 +++++++++++++++++++++++---
->  lib/reed_solomon/reed_solomon.c |   36 ++++++++++++++++++++-------------=
----
->  2 files changed, 43 insertions(+), 19 deletions(-)
->=20
-> --- a/include/linux/rslib.h
-> +++ b/include/linux/rslib.h
-> @@ -77,10 +77,30 @@ int decode_rs16(struct rs_control *rs, u
->  #endif
-> =20
->  /* Create or get a matching rs control structure */
-> -struct rs_control *init_rs(int symsize, int gfpoly, int fcr, int prim,
-> -			   int nroots);
-> +struct rs_control *init_rs_gfp(int symsize, int gfpoly, int fcr, int pri=
-m,
-> +			       int nroots, gfp_t gfp);
-> +
-> +/**
-> + * init_rs - Create a RS control struct and initialize it
-> + *  @symsize:	the symbol size (number of bits)
-> + *  @gfpoly:	the extended Galois field generator polynomial coefficients,
-> + *		with the 0th coefficient in the low order bit. The polynomial
-> + *		must be primitive;
-> + *  @fcr:	the first consecutive root of the rs code generator polynomial
-> + *		in index form
-> + *  @prim:	primitive element to generate polynomial roots
-> + *  @nroots:	RS code generator polynomial degree (number of roots)
-> + *
-> + * Allocations use GFP_KERNEL.
-> + */
-> +static inline struct rs_control *init_rs(int symsize, int gfpoly, int fc=
-r,
-> +					 int prim, int nroots)
-> +{
-> +	return init_rs_gfp(symsize, gfpoly, fcr, prim, nroots, GFP_KERNEL);
-> +}
-> +
+> On Sun, 22 Apr 2018 18:23:46 +0200 Thomas Gleixner <tglx@linutronix.de> wrote:
+>>
+>> The rslib usage in dm/verity_fec is broken because init_rs() can nest in
+>> GFP_NOIO mempool allocations as init_rs() is invoked from the mempool alloc
+>> callback.
+>>
+>> Provide a variant which takes gfp_t flags as argument.
+>>
+>> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+>> Cc: Mike Snitzer <snitzer@redhat.com>
+>> Cc: Alasdair Kergon <agk@redhat.com>
+>> Cc: Neil Brown <neilb@suse.com>
+>> ---
+>>  include/linux/rslib.h           |   26 +++++++++++++++++++++++---
+>>  lib/reed_solomon/reed_solomon.c |   36 ++++++++++++++++++++----------------
+>>  2 files changed, 43 insertions(+), 19 deletions(-)
+>>
+>> --- a/include/linux/rslib.h
+>> +++ b/include/linux/rslib.h
+>> @@ -77,10 +77,30 @@ int decode_rs16(struct rs_control *rs, u
+>>  #endif
+>>
+>>  /* Create or get a matching rs control structure */
+>> -struct rs_control *init_rs(int symsize, int gfpoly, int fcr, int prim,
+>> -                        int nroots);
+>> +struct rs_control *init_rs_gfp(int symsize, int gfpoly, int fcr, int prim,
+>> +                            int nroots, gfp_t gfp);
+>> +
+>> +/**
+>> + * init_rs - Create a RS control struct and initialize it
+>> + *  @symsize:        the symbol size (number of bits)
+>> + *  @gfpoly: the extended Galois field generator polynomial coefficients,
+>> + *           with the 0th coefficient in the low order bit. The polynomial
+>> + *           must be primitive;
+>> + *  @fcr:    the first consecutive root of the rs code generator polynomial
+>> + *           in index form
+>> + *  @prim:   primitive element to generate polynomial roots
+>> + *  @nroots: RS code generator polynomial degree (number of roots)
+>> + *
+>> + * Allocations use GFP_KERNEL.
+>> + */
+>> +static inline struct rs_control *init_rs(int symsize, int gfpoly, int fcr,
+>> +                                      int prim, int nroots)
+>> +{
+>> +     return init_rs_gfp(symsize, gfpoly, fcr, prim, nroots, GFP_KERNEL);
+>> +}
+>> +
+>
+> The version of this patch that Kees has committed to his kspp tree in linux-next has
+>
+> #include <linux/slab.h>
+>
+> why not just
+>
+> #include <linux/types.h>        /* for gpf_t */
+> #include <linux/gpf.h>          /* for GFP_KERNEL */
+>
+> ?
 
-The version of this patch that Kees has committed to his kspp tree in linux=
--next has
+We could certainly switch to that. (Why doesn't gfp.h include types.h?)
 
-#include <linux/slab.h>
+-Kees
 
-why not just
 
-#include <linux/types.h>	/* for gpf_t */
-#include <linux/gpf.h>		/* for GFP_KERNEL */
-
-?
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/FEjP3biZc_p55XmvXMS7DkJ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrf1uEACgkQAVBC80lX
-0GwdiAgAh2IsI8eH5M4eMgRi4XhtunwTjLxD+o2o1Dsrfa33+uh3y4bzOVJA7Kwq
-xaU6+1q40QG6TYZNAK0uLWu/s9kyb6klmUUCxxX3I3+3BxN/qmEwrlQS1gG8uUSE
-qxtvRDSbAVZu8BF5l/aWelIao8qMQECZOP+Aj8OgoxMd9YDT2jtJMDqqmdvsckQG
-Wtbz1Z6i+W2CAIahQImw5uGiSdeoKwXvWKWd8mzbqM4Ys6p1sAEyz1RZQs36AlyE
-T8ApRe9UjU/WHVidHiv6uJAUoC2xLMqIFbyjo5bHY6qe9xgMuu2OfxogQ7Lh0hY5
-OUqADjuYkyowdIlYXo0BbJaWGdUHsw==
-=oadR
------END PGP SIGNATURE-----
-
---Sig_/FEjP3biZc_p55XmvXMS7DkJ--
+-- 
+Kees Cook
+Pixel Security
