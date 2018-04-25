@@ -1,74 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754423AbeDYN2m (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 09:28:42 -0400
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:13153 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754129AbeDYN2A (ORCPT
+        id S1753672AbeDYNcP (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 09:32:15 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:39628 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752949AbeDYNcL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 09:28:00 -0400
-From: Kishon Vijay Abraham I <kishon@ti.com>
-To: Santosh Shilimkar <ssantosh@kernel.org>
-CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        <kishon@ti.com>, <linux-mmc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Tony Lindgren <tony@atomide.com>
-Subject: [PATCH 1/3] ARM: dts: keystone-k2g-evm: Add "vqmmc-supply" property for mmc0/mmc1
-Date: Wed, 25 Apr 2018 18:57:44 +0530
-Message-ID: <20180425132746.13911-2-kishon@ti.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180425132746.13911-1-kishon@ti.com>
-References: <20180425132746.13911-1-kishon@ti.com>
+        Wed, 25 Apr 2018 09:32:11 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Vaishali Thakkar <vthakkar1994@gmail.com>
+Cc: airlied@linux.ie, dri-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm: rcar-du: Use drm_dev_put
+Date: Wed, 25 Apr 2018 16:32:25 +0300
+Message-ID: <5811471.PjpYk9OX8O@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20180425121036.28965-1-vthakkar1994@gmail.com>
+References: <20180425121036.28965-1-vthakkar1994@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add "vqmmc-supply" property for mmc0/mmc1 to indicate the supply connected
-to the IO lines. Also add dt node for ldo1 regulator required for mmc1
-vqmmc-supply.
+Hi Vaishali,
 
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
----
- arch/arm/boot/dts/keystone-k2g-evm.dts | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Thank you for the patch.
 
-diff --git a/arch/arm/boot/dts/keystone-k2g-evm.dts b/arch/arm/boot/dts/keystone-k2g-evm.dts
-index 6a4657799b99..60b4f59899d2 100644
---- a/arch/arm/boot/dts/keystone-k2g-evm.dts
-+++ b/arch/arm/boot/dts/keystone-k2g-evm.dts
-@@ -37,6 +37,14 @@
- 		regulator-max-microvolt = <3300000>;
- 		regulator-always-on;
- 	};
-+
-+	vcc1v8_ldo1_reg: fixedregulator-vcc1v8-ldo1 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "ldo1";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-always-on;
-+	};
- };
- 
- &k2g_pinctrl {
-@@ -130,6 +138,7 @@
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&mmc0_pins>;
- 	vmmc-supply = <&vcc3v3_dcin_reg>;
-+	vqmmc-supply = <&vcc3v3_dcin_reg>;
- 	cd-gpios = <&gpio1 12 GPIO_ACTIVE_LOW>;
- 	status = "okay";
- };
-@@ -138,6 +147,7 @@
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&mmc1_pins>;
- 	vmmc-supply = <&vcc3v3_dcin_reg>; /* VCC3V3_EMMC is connected to VCC3V3_DCIN */
-+	vqmmc-supply = <&vcc1v8_ldo1_reg>;
- 	ti,non-removable;
- 	status = "okay";
- };
+On Wednesday, 25 April 2018 15:10:36 EEST Vaishali Thakkar wrote:
+> As specified in drm_drv.c, drm_dev_unref is a compatibility alias
+> for drm_dev_put and shouldn't be used in new code. So, use
+> drm_dev_put instead.
+
+This looks good to me. However, how about taking it one step further and mass-
+patching all drivers to use drm_dev_put() ? We could then remove 
+drm_dev_unref() completely.
+
+> Signed-off-by: Vaishali Thakkar <vthakkar1994@gmail.com>
+> ---
+>  drivers/gpu/drm/rcar-du/rcar_du_drv.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> b/drivers/gpu/drm/rcar-du/rcar_du_drv.c index 05745e86d73e..418a80e6b2f4
+> 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> @@ -378,7 +378,7 @@ static int rcar_du_remove(struct platform_device *pdev)
+>  	drm_kms_helper_poll_fini(ddev);
+>  	drm_mode_config_cleanup(ddev);
+> 
+> -	drm_dev_unref(ddev);
+> +	drm_dev_put(ddev);
+> 
+>  	return 0;
+>  }
+
 -- 
-2.17.0
+Regards,
+
+Laurent Pinchart
