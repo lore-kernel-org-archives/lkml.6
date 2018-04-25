@@ -1,142 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751483AbeDYIxu (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 04:53:50 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:33634 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750882AbeDYIxn (ORCPT
+        id S1751422AbeDYIyr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 04:54:47 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58654 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750969AbeDYIyn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 04:53:43 -0400
-X-Google-Smtp-Source: AIpwx48AQVTV5B5n8IMj9mrYK2zFVYwb+BRubEafKhqHm9lJkkPt6I6W2aYq3Y+j4VxAMI84a4X+JiXP+3ZUvnwPSK0=
-MIME-Version: 1.0
-In-Reply-To: <20180330143051.26423-1-nsekhar@ti.com>
-References: <20180330143051.26423-1-nsekhar@ti.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 25 Apr 2018 10:53:42 +0200
-Message-ID: <CAMRc=Mdsqc-ZJy9WMkdh_S=ehh1CfyFtgyF6mWwFT=xnNGhieg@mail.gmail.com>
-Subject: Re: [PATCH] mtd: nand: davinci: don't acquire and enable clock
-To: Sekhar Nori <nsekhar@ti.com>
-Cc: Boris Brezillon <boris.brezillon@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        linux-mtd@lists.infradead.org,
+        Wed, 25 Apr 2018 04:54:43 -0400
+Date: Wed, 25 Apr 2018 01:54:39 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Thierry Reding <treding@nvidia.com>
+Cc: Christoph Hellwig <hch@infradead.org>, Daniel Vetter <daniel@ffwll.ch>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        "moderated list:DMA BUFFER SHARING FRAMEWORK"
+        <linaro-mm-sig@lists.linaro.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        David Lechner <david@lechnology.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Jerome Glisse <jglisse@redhat.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        "open list:DMA BUFFER SHARING FRAMEWORK"
+        <linux-media@vger.kernel.org>,
+        iommu@lists.linux-foundation.org, linux-arm-kernel@lists.infradead.org
+Subject: noveau vs arm dma ops
+Message-ID: <20180425085439.GA29996@infradead.org>
+References: <f1100bd6-dd98-55a9-a92f-1cad919f235f@amd.com>
+ <20180420124625.GA31078@infradead.org>
+ <20180420152111.GR31310@phenom.ffwll.local>
+ <20180424184847.GA3247@infradead.org>
+ <CAKMK7uFL68pu+-9LODTgz+GQYvxpnXOGhxfz9zorJ_JKsPVw2g@mail.gmail.com>
+ <20180425054855.GA17038@infradead.org>
+ <CAKMK7uEFitkNQrD6cLX5Txe11XhVO=LC4YKJXH=VNdq+CY=DjQ@mail.gmail.com>
+ <CAKMK7uFx=KB1vup=WhPCyfUFairKQcRR4BEd7aXaX1Pj-vj3Cw@mail.gmail.com>
+ <20180425064335.GB28100@infradead.org>
+ <20180425074151.GA2271@ulmo>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180425074151.GA2271@ulmo>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-03-30 16:30 GMT+02:00 Sekhar Nori <nsekhar@ti.com>:
-> NAND itself is an asynchronous interface, it does not have any
-> clock input. DaVinci NAND driver acquires clock for AEMIF
-> (asynchronous external memory interface) which is an on-chip
-> IP to which NAND is connected.
->
-> The same clock is also enabled in AEMIF driver (either present
-> drivers/memory or from machine code for some older platforms).
-> AEMIF timing must be initialized before NAND can be accessed.
-> This ensures that AEMIF clock is enabled too.
->
-> Remove the superfluous clock acquisition and enable in DaVinci
-> NAND driver.
->
-> Tested on K2L, K2HK, K2E, DA850 EVM, DA850 LCDK in device-tree
-> boot and DM644x EVM in legacy boot.
->
-> Signed-off-by: Sekhar Nori <nsekhar@ti.com>
-> ---
-> Hi Boris,
->
-> If/when this patch gets accepted, it will nice to put this on
-> an immutable branch others can merge. There is potential cleanup
-> in drivers/clock and in DaVinci machine code that will depend
-> on this.
->
-> Thanks,
-> Sekhar
->
->  drivers/mtd/nand/raw/davinci_nand.c | 25 +------------------------
->  1 file changed, 1 insertion(+), 24 deletions(-)
->
-> diff --git a/drivers/mtd/nand/raw/davinci_nand.c b/drivers/mtd/nand/raw/davinci_nand.c
-> index 0f09518d980f..7255a0d94374 100644
-> --- a/drivers/mtd/nand/raw/davinci_nand.c
-> +++ b/drivers/mtd/nand/raw/davinci_nand.c
-> @@ -27,7 +27,6 @@
->  #include <linux/module.h>
->  #include <linux/platform_device.h>
->  #include <linux/err.h>
-> -#include <linux/clk.h>
->  #include <linux/io.h>
->  #include <linux/mtd/rawnand.h>
->  #include <linux/mtd/partitions.h>
-> @@ -55,7 +54,6 @@ struct davinci_nand_info {
->         struct nand_chip        chip;
->
->         struct device           *dev;
-> -       struct clk              *clk;
->
->         bool                    is_readmode;
->
-> @@ -703,22 +701,6 @@ static int nand_davinci_probe(struct platform_device *pdev)
->         /* Use board-specific ECC config */
->         info->chip.ecc.mode     = pdata->ecc_mode;
->
-> -       ret = -EINVAL;
-> -
-> -       info->clk = devm_clk_get(&pdev->dev, "aemif");
-> -       if (IS_ERR(info->clk)) {
-> -               ret = PTR_ERR(info->clk);
-> -               dev_dbg(&pdev->dev, "unable to get AEMIF clock, err %d\n", ret);
-> -               return ret;
-> -       }
-> -
-> -       ret = clk_prepare_enable(info->clk);
-> -       if (ret < 0) {
-> -               dev_dbg(&pdev->dev, "unable to enable AEMIF clock, err %d\n",
-> -                       ret);
-> -               goto err_clk_enable;
-> -       }
-> -
->         spin_lock_irq(&davinci_nand_lock);
->
->         /* put CSxNAND into NAND mode */
-> @@ -732,7 +714,7 @@ static int nand_davinci_probe(struct platform_device *pdev)
->         ret = nand_scan_ident(mtd, pdata->mask_chipsel ? 2 : 1, NULL);
->         if (ret < 0) {
->                 dev_dbg(&pdev->dev, "no NAND chip(s) found\n");
-> -               goto err;
-> +               return ret;
->         }
->
->         switch (info->chip.ecc.mode) {
-> @@ -838,9 +820,6 @@ static int nand_davinci_probe(struct platform_device *pdev)
->         nand_cleanup(&info->chip);
->
->  err:
-> -       clk_disable_unprepare(info->clk);
-> -
-> -err_clk_enable:
->         spin_lock_irq(&davinci_nand_lock);
->         if (info->chip.ecc.mode == NAND_ECC_HW_SYNDROME)
->                 ecc4_busy = false;
-> @@ -859,8 +838,6 @@ static int nand_davinci_remove(struct platform_device *pdev)
->
->         nand_release(nand_to_mtd(&info->chip));
->
-> -       clk_disable_unprepare(info->clk);
-> -
->         return 0;
->  }
->
-> --
-> 2.16.2
->
+[discussion about this patch, which should have been cced to the iommu
+ and linux-arm-kernel lists, but wasn't:
+ https://www.spinics.net/lists/dri-devel/msg173630.html]
 
-Tested-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Wed, Apr 25, 2018 at 09:41:51AM +0200, Thierry Reding wrote:
+> > API from the iommu/dma-mapping code.  Drivers have no business poking
+> > into these details.
+> 
+> The interfaces that the above patch uses are all EXPORT_SYMBOL_GPL,
+> which is rather misleading if they are not meant to be used by drivers
+> directly.
+
+The only reason the DMA ops are exported is because get_arch_dma_ops
+references (or in case of the coherent ones used to reference).  We
+don't let drivers assign random dma ops.
+
+> 
+> > Thierry, please resend this with at least the iommu list and
+> > linux-arm-kernel in Cc to have a proper discussion on the right API.
+> 
+> I'm certainly open to help with finding a correct solution, but the
+> patch above was purposefully terse because this is something that I
+> hope we can get backported to v4.16 to unbreak Nouveau. Coordinating
+> such a backport between ARM and DRM trees does not sound like something
+> that would help getting this fixed in v4.16.
+
+Coordinating the backport of a trivial helper in the arm tree is not
+the end of the world.  Really, this cowboy attitude is a good reason
+why graphics folks have such a bad rep.  You keep poking into random
+kernel internals, don't talk to anoyone and then complain if people
+are upset.  This shouldn't be surprising.
+
+> Granted, this issue could've been caught with a little more testing, but
+> in retrospect I think it would've been a lot better if ARM_DMA_USE_IOMMU
+> was just enabled unconditionally if it has side-effects that platforms
+> don't opt in to but have to explicitly opt out of.
+
+Agreed on that count.  Please send a patch.
