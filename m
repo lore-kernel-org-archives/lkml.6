@@ -1,80 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754642AbeDYOv6 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 10:51:58 -0400
-Received: from mga01.intel.com ([192.55.52.88]:1970 "EHLO mga01.intel.com"
+        id S1754739AbeDYOwD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 10:52:03 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:59840 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753327AbeDYOv4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1754300AbeDYOv4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 25 Apr 2018 10:51:56 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,326,1520924400";
-   d="scan'208";a="223317337"
-Date: Wed, 25 Apr 2018 17:51:51 +0300
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-To: "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc: Michal Hocko <mhocko@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Fengguang Wu <fengguang.wu@intel.com>, linux-kernel@vger.kernel.org,
-        lkp@01.org
-Subject: Re: [dummy_stm_init] swapper/0: page allocation failure: order:9,
- mode:0x14040c0(GFP_KERNEL|__GFP_COMP), nodemask=(null)
-Message-ID: <20180425145151.mbwpkpes6u4xy22w@um.fi.intel.com>
-References: <20180419023639.cddsueaq47mohfma@wfg-t540p.sh.intel.com>
- <20180419065111.GM17484@dhcp22.suse.cz>
- <20180419102114.irntfpy6i77apfq5@node.shutemov.name>
- <20180422134439.GK17484@dhcp22.suse.cz>
- <20180424112734.qectc5qqnxbuq4wd@kshutemo-mobl1.Home>
+Date: Wed, 25 Apr 2018 10:51:54 -0400 (EDT)
+From: Pankaj Gupta <pagupta@redhat.com>
+To: Eric Blake <eblake@redhat.com>
+Cc: qemu-devel@nongnu.org, jack@suse.cz, kvm@vger.kernel.org,
+        david@redhat.com, linux-nvdimm@ml01.01.org,
+        ross zwisler <ross.zwisler@intel.com>, lcapitulino@redhat.com,
+        linux-mm@kvack.org, niteshnarayanlal@hotmail.com, mst@redhat.com,
+        hch@infradead.org, marcel@redhat.com, nilal@redhat.com,
+        haozhong zhang <haozhong.zhang@intel.com>, famz@redhat.com,
+        riel@surriel.com, stefanha@redhat.com, pbonzini@redhat.com,
+        dan j williams <dan.j.williams@intel.com>, kwolf@redhat.com,
+        xiaoguangrong eric <xiaoguangrong.eric@gmail.com>,
+        linux-kernel@vger.kernel.org, imammedo@redhat.com
+Message-ID: <1327760552.22648230.1524667914875.JavaMail.zimbra@redhat.com>
+In-Reply-To: <79f72139-0fcb-3d5e-a16c-24f3b5ee1a07@redhat.com>
+References: <152465613714.2268.4576822049531163532@71c20359a636> <1558768042.22416958.1524657509446.JavaMail.zimbra@redhat.com> <79f72139-0fcb-3d5e-a16c-24f3b5ee1a07@redhat.com>
+Subject: Re: [Qemu-devel] [RFC v2] qemu: Add virtio pmem device
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180424112734.qectc5qqnxbuq4wd@kshutemo-mobl1.Home>
-User-Agent: NeoMutt/20171215
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.116.111, 10.4.195.16]
+Thread-Topic: qemu: Add virtio pmem device
+Thread-Index: ftl7xGMC60YP2PSRIfnpPCDpHgGBkQ==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 24, 2018 at 02:27:35PM +0300, Kirill A. Shutemov wrote:
-> On Sun, Apr 22, 2018 at 07:44:39AM -0600, Michal Hocko wrote:
-> > On Thu 19-04-18 13:21:14, Kirill A. Shutemov wrote:
-> > > On Thu, Apr 19, 2018 at 08:51:11AM +0200, Michal Hocko wrote:
-> > > > On Thu 19-04-18 10:36:39, Wu Fengguang wrote:
-> > > > > Hi Alexander,
-> > > > > 
-> > > > > FYI this happens in mainline kernel 4.17.0-rc1.
-> > > > > It dates back to at least v4.15.
-> > > > > 
-> > > > > It occurs in 4 out of 4 boots. Here KVM has 1G memory.
-> > > > > 
-> > > > > This high order allocation caused lots of noises in our boot testing.
-> > > > > We could disable this device in our tests, but it would be great if
-> > > > > there are better ways out.
-> > > > > 
-> > > > > [   75.039408]       Product name: fake-design-for-testing
-> > > > > [   75.040995] fmc fake-design-for-testing-f001: Driver has no ID: matches all
-> > > > > [   75.042509] fmc_trivial: probe of fake-design-for-testing-f001 failed with error -95
-> > > > > [   75.044323] fmc fake-design-for-testing-f001: Driver has no ID: matches all
-> > > > > [   75.045644] fmc_chardev fake-design-for-testing-f001: Created misc device "fake-design-for-testing-f001"
-> > > > > [   75.061570] swapper/0: page allocation failure: order:9, mode:0x14040c0(GFP_KERNEL|__GFP_COMP), nodemask=(null)
-> > > > 
-> > > > Is there any reason why
-> > > > > [   75.063338]  stm_register_device+0xf3/0x5c0:
-> > > > > 						stm_register_device at drivers/hwtracing/stm/core.c:695
-> > > > 
-> > > > cannot use kvzalloc?
-> > > 
-> > > Michal, do you understand how allocating ~512kB leads to order-9 failure?
-> > > Shouldn't it be order-8 at most? That's not clear to me.
+
+
+> > Hi,
 > > 
-> > How do you tell it is 512kB? The page allocator consumes order so maybe
-> > something miscalculated the order when calling the allocator?
+> > Compile failures are because Qemu 'Memory-Device changes' are not yet
+> > in qemu master. As mentioned in Qemu patch message patch is
+> > dependent on 'Memeory-device' patches by 'David Hildenbrand'.
 > 
-> Alexander, was it 513kB, right?
+> 
+> On 04/25/2018 06:24 AM, Pankaj Gupta wrote:
+> > This PV device code is dependent and tested
+> > with 'David Hildenbrand's ' patchset[1] to
+> > map non-PCDIMM devices to guest address space.
+> > There is still upstream discussion on using
+> > among PCI bar vs memory device, will update
+> > as per concensus.
+> >
+> > [1] https://marc.info/?l=qemu-devel&m=152450249319168&w=2
+> 
+> Then let's spell that in a way that patchew understands (since patchew
+> does not know how to turn marc.info references into Message-IDs):
+> 
+> Based-on: <20180423165126.15441-1-david@redhat.com>
 
-Yes, 526024 bytes.
+o.k
 
-Regards,
---
-Alex
+Thank you!
+
+> 
+> --
+> Eric Blake, Principal Software Engineer
+> Red Hat, Inc.           +1-919-301-3266
+> Virtualization:  qemu.org | libvirt.org
+> 
+> 
