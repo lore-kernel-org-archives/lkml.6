@@ -1,69 +1,229 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752316AbeDYV2l (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 17:28:41 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:50464 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751574AbeDYV2i (ORCPT
+        id S1752513AbeDYVbM (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 17:31:12 -0400
+Received: from mout.kundenserver.de ([217.72.192.75]:48041 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750986AbeDYVbI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 17:28:38 -0400
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Mark Salyzyn <salyzyn@android.com>, Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        John Stultz <john.stultz@linaro.org>, Peter Anvin <hpa@zytor.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Prarit Bhargava <prarit@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>, Pavel Machek <pavel@ucw.cz>,
-        Kevin Easton <kevin@guarana.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        SergeySenozhatsky <sergey.senozhatsky@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-tip-commits@vger.kernel.org
-Subject: Re: [tip:timers/urgent] Revert: Unify CLOCK_MONOTONIC and CLOCK_BOOTTIME
-Date: Wed, 25 Apr 2018 23:28:27 +0200
-Message-ID: <2814513.Yf7f2L7MUC@aspire.rjw.lan>
-In-Reply-To: <alpine.DEB.2.21.1804252108280.1589@nanos.tec.linutronix.de>
-References: <tip-757d5a9b3052a4eebd029f207f1e1df59bef7b7d@git.kernel.org> <CA+55aFypQ0aMSO7T0hxN2YCvckSLZh6BMTuz185TyJZ69jRUrg@mail.gmail.com> <alpine.DEB.2.21.1804252108280.1589@nanos.tec.linutronix.de>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Wed, 25 Apr 2018 17:31:08 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Sakari Ailus <sakari.ailus@iki.fi>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] [RESEND] [media] omap3isp: support 64-bit version of omap3isp_stat_data
+Date: Wed, 25 Apr 2018 23:30:10 +0200
+Message-Id: <20180425213044.1535393-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:nuHq7sbGxwpJ6Cn4eZrW/Gw6QUfpG7/WFTaXjNJNbrI2WT1HpEN
+ L3zz/lTpKEsxriGCAm0lD/ruhaqNMFrnxeR54aEolX0nh6IctRfOGt6HKXegGLMoc+F9xGW
+ nK0W2QplSl+tvaZf8DqBVYWAjmEIRghe2ciLm9t85+t2D303u3rnFU3k9bkFib8uWgnAiEd
+ A9BUuxKiERpaVrhpDvSSg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:gBlm+8FjdD4=:xB8V08caDYzWY+n2sZ2FKU
+ AOCNzSs8FxGVbLUZq/vdKfVaY/oE7iU+O3FY+igSr5ehkvoIVpsLpkbbETLpMrKLBn1TpQZMB
+ aNCPVcDLTuOLCdVFZwhFr+fcZK0MtHaB/9fM4fxqIY9ONLabIwBDgV5ctH+SadghSDUz7DpA8
+ K7Ml7JLderM3rZmjjek+2+56WT9ig7lO6z4580WSE3DgP8NJZnfd/F5QZZ0QfuZey+d6heQ4d
+ IrZEhfZJ5Hlwq8gOsLPeyTweaguEzhhjnaKMEZdvjJH0KqH6M2ZKe9fqnjK05OGIjqVwZOv4B
+ VHJgDMTIBlaS+U1GUSCwOmCnuHEK02n2xkNlAEC02q4FzFlIaHBCwgzDnIIaA5bSv9v0zYia3
+ bejO/XZ5cPHJcVI/XWeTanKPNt6H2zNf1mN6hxi8QhkC9YKOrTQkZpexpL0HIPnGZaqFhjAJf
+ Hajsj4OPNJNlXd3oGFZgqzZqR5QDjfzChKPqsd94ljk6PNrQ8JoURTi2Ma+gTszaqgNAtE6az
+ Lf3GCaR5OEhzcpOQTSvFJLjw9K4Z/8Z6DWWhz0KS/+l9+F8ZyiWwgWs+Hjdwo/v0ZENpD5FOj
+ Y9tWONhIFVzGLkdwKPV8vh57IfDKqG5H0gArMuyIHdsHXPxczkjxNX8yoHCBIuZNOe7eiWwbL
+ QsA/yRB2Id2nCUkgl6d1BkfWhYGozh5HZKcX7IlxMTsSZMded3z4vHclf97/BS69a8hwjE5UJ
+ DAhVgKEJH9Ktz4+kBEQRFwn6WNMa8NWvgqYc2A==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday, April 25, 2018 9:09:29 PM CEST Thomas Gleixner wrote:
-> On Wed, 25 Apr 2018, Linus Torvalds wrote:
-> > On Wed, Apr 25, 2018 at 6:45 AM, tip-bot for Thomas Gleixner
-> > <tipbot@zytor.com> wrote:
-> > >
-> > > As stated in the pull request for the unification of CLOCK_MONOTONIC and
-> > > CLOCK_BOOTTIME, it was clear that we might have to revert the change.
-> > 
-> > I'm ok with the revert., but I do want the revert message to talk
-> > about *exactly* what broke.
-> > 
-> > I don't see the reported watchdog things, and I run systemd and I ran
-> > these patches.
-> 
-> With suspend/resume?
-> 
-> > So it's not just "systemd uses this for a watchdog". It must be
-> > something specific that made it trigger for some people and not
-> > others, and it's that specific thing that we should document so that
-> > we know why this simplification failed.
-> 
-> Fair enough. Do the reporters have more information or do I have to chase
-> it down myself?
+C libraries with 64-bit time_t use an incompatible format for
+struct omap3isp_stat_data. This changes the kernel code to
+support either version, by moving over the normal handling
+to the 64-bit variant, and adding compatiblity code to handle
+the old binary format with the existing ioctl command code.
 
-Well, if CLOCK_MONOTONIC did not count when the system was suspended and now
-it does that due to the change in question, then this is a significant
-difference in behavior likely to confuse things even in principle.
+Fortunately, the command code includes the size of the structure,
+so the difference gets handled automatically. In the process of
+eliminating the references to 'struct timeval' from the kernel,
+I also change the way the timestamp is generated internally,
+basically by open-coding the v4l2_get_timestamp() call.
 
-While it may not confuse things on some systems after all, does this really
-matter?
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Sakari Ailus <sakari.ailus@iki.fi>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+I submitted this one in November and asked again in January,
+still waiting for a review so it can be applied.
+---
+ drivers/media/platform/omap3isp/isph3a_aewb.c |  2 ++
+ drivers/media/platform/omap3isp/isph3a_af.c   |  2 ++
+ drivers/media/platform/omap3isp/isphist.c     |  2 ++
+ drivers/media/platform/omap3isp/ispstat.c     | 21 +++++++++++++++++++--
+ drivers/media/platform/omap3isp/ispstat.h     |  4 +++-
+ include/uapi/linux/omap3isp.h                 | 22 ++++++++++++++++++++++
+ 6 files changed, 50 insertions(+), 3 deletions(-)
 
-Thanks,
-Rafael
+diff --git a/drivers/media/platform/omap3isp/isph3a_aewb.c b/drivers/media/platform/omap3isp/isph3a_aewb.c
+index d44626f20ac6..3c82dea4d375 100644
+--- a/drivers/media/platform/omap3isp/isph3a_aewb.c
++++ b/drivers/media/platform/omap3isp/isph3a_aewb.c
+@@ -250,6 +250,8 @@ static long h3a_aewb_ioctl(struct v4l2_subdev *sd, unsigned int cmd, void *arg)
+ 		return omap3isp_stat_config(stat, arg);
+ 	case VIDIOC_OMAP3ISP_STAT_REQ:
+ 		return omap3isp_stat_request_statistics(stat, arg);
++	case VIDIOC_OMAP3ISP_STAT_REQ_TIME32:
++		return omap3isp_stat_request_statistics_time32(stat, arg);
+ 	case VIDIOC_OMAP3ISP_STAT_EN: {
+ 		unsigned long *en = arg;
+ 		return omap3isp_stat_enable(stat, !!*en);
+diff --git a/drivers/media/platform/omap3isp/isph3a_af.c b/drivers/media/platform/omap3isp/isph3a_af.c
+index 99bd6cc21d86..4da25c84f0c6 100644
+--- a/drivers/media/platform/omap3isp/isph3a_af.c
++++ b/drivers/media/platform/omap3isp/isph3a_af.c
+@@ -314,6 +314,8 @@ static long h3a_af_ioctl(struct v4l2_subdev *sd, unsigned int cmd, void *arg)
+ 		return omap3isp_stat_config(stat, arg);
+ 	case VIDIOC_OMAP3ISP_STAT_REQ:
+ 		return omap3isp_stat_request_statistics(stat, arg);
++	case VIDIOC_OMAP3ISP_STAT_REQ_TIME32:
++		return omap3isp_stat_request_statistics_time32(stat, arg);
+ 	case VIDIOC_OMAP3ISP_STAT_EN: {
+ 		int *en = arg;
+ 		return omap3isp_stat_enable(stat, !!*en);
+diff --git a/drivers/media/platform/omap3isp/isphist.c b/drivers/media/platform/omap3isp/isphist.c
+index a4ed5d140d48..d4be3d0e06f9 100644
+--- a/drivers/media/platform/omap3isp/isphist.c
++++ b/drivers/media/platform/omap3isp/isphist.c
+@@ -435,6 +435,8 @@ static long hist_ioctl(struct v4l2_subdev *sd, unsigned int cmd, void *arg)
+ 		return omap3isp_stat_config(stat, arg);
+ 	case VIDIOC_OMAP3ISP_STAT_REQ:
+ 		return omap3isp_stat_request_statistics(stat, arg);
++	case VIDIOC_OMAP3ISP_STAT_REQ_TIME32:
++		return omap3isp_stat_request_statistics_time32(stat, arg);
+ 	case VIDIOC_OMAP3ISP_STAT_EN: {
+ 		int *en = arg;
+ 		return omap3isp_stat_enable(stat, !!*en);
+diff --git a/drivers/media/platform/omap3isp/ispstat.c b/drivers/media/platform/omap3isp/ispstat.c
+index 47cbc7e3d825..5967dfd0a9f7 100644
+--- a/drivers/media/platform/omap3isp/ispstat.c
++++ b/drivers/media/platform/omap3isp/ispstat.c
+@@ -18,6 +18,7 @@
+ #include <linux/dma-mapping.h>
+ #include <linux/slab.h>
+ #include <linux/uaccess.h>
++#include <linux/timekeeping.h>
+ 
+ #include "isp.h"
+ 
+@@ -237,7 +238,7 @@ static int isp_stat_buf_queue(struct ispstat *stat)
+ 	if (!stat->active_buf)
+ 		return STAT_NO_BUF;
+ 
+-	v4l2_get_timestamp(&stat->active_buf->ts);
++	ktime_get_ts64(&stat->active_buf->ts);
+ 
+ 	stat->active_buf->buf_size = stat->buf_size;
+ 	if (isp_stat_buf_check_magic(stat, stat->active_buf)) {
+@@ -500,7 +501,8 @@ int omap3isp_stat_request_statistics(struct ispstat *stat,
+ 		return PTR_ERR(buf);
+ 	}
+ 
+-	data->ts = buf->ts;
++	data->ts.tv_sec = buf->ts.tv_sec;
++	data->ts.tv_usec = buf->ts.tv_nsec / NSEC_PER_USEC;
+ 	data->config_counter = buf->config_counter;
+ 	data->frame_number = buf->frame_number;
+ 	data->buf_size = buf->buf_size;
+@@ -512,6 +514,21 @@ int omap3isp_stat_request_statistics(struct ispstat *stat,
+ 	return 0;
+ }
+ 
++int omap3isp_stat_request_statistics_time32(struct ispstat *stat,
++					struct omap3isp_stat_data_time32 *data)
++{
++	struct omap3isp_stat_data data64;
++	int ret;
++
++	ret = omap3isp_stat_request_statistics(stat, &data64);
++
++	data->ts.tv_sec = data64.ts.tv_sec;
++	data->ts.tv_usec = data64.ts.tv_usec;
++	memcpy(&data->buf, &data64.buf, sizeof(*data) - sizeof(data->ts));
++
++	return ret;
++}
++
+ /*
+  * omap3isp_stat_config - Receives new statistic engine configuration.
+  * @new_conf: Pointer to config structure.
+diff --git a/drivers/media/platform/omap3isp/ispstat.h b/drivers/media/platform/omap3isp/ispstat.h
+index 6d9b0244f320..923b38cfc682 100644
+--- a/drivers/media/platform/omap3isp/ispstat.h
++++ b/drivers/media/platform/omap3isp/ispstat.h
+@@ -39,7 +39,7 @@ struct ispstat_buffer {
+ 	struct sg_table sgt;
+ 	void *virt_addr;
+ 	dma_addr_t dma_addr;
+-	struct timeval ts;
++	struct timespec64 ts;
+ 	u32 buf_size;
+ 	u32 frame_number;
+ 	u16 config_counter;
+@@ -130,6 +130,8 @@ struct ispstat_generic_config {
+ int omap3isp_stat_config(struct ispstat *stat, void *new_conf);
+ int omap3isp_stat_request_statistics(struct ispstat *stat,
+ 				     struct omap3isp_stat_data *data);
++int omap3isp_stat_request_statistics_time32(struct ispstat *stat,
++				     struct omap3isp_stat_data_time32 *data);
+ int omap3isp_stat_init(struct ispstat *stat, const char *name,
+ 		       const struct v4l2_subdev_ops *sd_ops);
+ void omap3isp_stat_cleanup(struct ispstat *stat);
+diff --git a/include/uapi/linux/omap3isp.h b/include/uapi/linux/omap3isp.h
+index 1a920145db04..87b55755f4ff 100644
+--- a/include/uapi/linux/omap3isp.h
++++ b/include/uapi/linux/omap3isp.h
+@@ -55,6 +55,8 @@
+ 	_IOWR('V', BASE_VIDIOC_PRIVATE + 5, struct omap3isp_h3a_af_config)
+ #define VIDIOC_OMAP3ISP_STAT_REQ \
+ 	_IOWR('V', BASE_VIDIOC_PRIVATE + 6, struct omap3isp_stat_data)
++#define VIDIOC_OMAP3ISP_STAT_REQ_TIME32 \
++	_IOWR('V', BASE_VIDIOC_PRIVATE + 6, struct omap3isp_stat_data_time32)
+ #define VIDIOC_OMAP3ISP_STAT_EN \
+ 	_IOWR('V', BASE_VIDIOC_PRIVATE + 7, unsigned long)
+ 
+@@ -165,7 +167,14 @@ struct omap3isp_h3a_aewb_config {
+  * @config_counter: Number of the configuration associated with the data.
+  */
+ struct omap3isp_stat_data {
++#ifdef __KERNEL__
++	struct {
++		__s64	tv_sec;
++		__s64	tv_usec;
++	} ts;
++#else
+ 	struct timeval ts;
++#endif
+ 	void __user *buf;
+ 	__u32 buf_size;
+ 	__u16 frame_number;
+@@ -173,6 +182,19 @@ struct omap3isp_stat_data {
+ 	__u16 config_counter;
+ };
+ 
++#ifdef __KERNEL__
++struct omap3isp_stat_data_time32 {
++	struct {
++		__s32	tv_sec;
++		__s32	tv_usec;
++	} ts;
++	__u32 buf;
++	__u32 buf_size;
++	__u16 frame_number;
++	__u16 cur_frame;
++	__u16 config_counter;
++};
++#endif
+ 
+ /* Histogram related structs */
+ 
+-- 
+2.9.0
