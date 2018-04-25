@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+9Lj+JVHv9xmNnZtWXtMeGi/qtgq9eN3/KVY3XfCH8Mdz8PljQA5NCDhhLYi9h8j4GXcJa
-ARC-Seal: i=1; a=rsa-sha256; t=1524652749; cv=none;
+X-Google-Smtp-Source: AIpwx49aOGOd+IdwDKA9ILEiD4N0aMe9gY++za2Vzktonz8CaYALrkVzssp+gSg0HHI+t211n5sM
+ARC-Seal: i=1; a=rsa-sha256; t=1524652747; cv=none;
         d=google.com; s=arc-20160816;
-        b=lZQ9aEZHRzm0Ik+JANhtnbiJE3MgNgpfAk0RyfGnNthtWjIxdGCCjECo7RUt9IZvb5
-         E/x599mupTgC/yaZB+vPcAny0OugbJ9S4/W/sJ4Lc8wC+WhM4hm9mCERx6mB5osvdgzz
-         bywAJiyyoDYbVRCld6DL+1DNMWsYdB9m8bvGNucvm21cpxEVbUiqWzSAwaViBpPmSWIB
-         rzCzqBkkXEcMpcJbRJrodfoBSQAAHqAd0AjBSGHfjZYPn/uGRgPWaIB7z/JCgCdIPALl
-         8PbWuPoJJm8aj9HODfRjshsMRe3+EniaGqGEbyv3gaujw5uCgg1I3JKyuoKxFlqBqCyc
-         p51w==
+        b=hPcEwzmJKUQUnXd3ONQ9tX/DbTLVryKO10KOcxhKWV7hUJ+Dw11oy0f01JZHfIuUWi
+         XYP7tGhJf56w6bwEVoXi4Cd5JdeHCy9ZHMX1EJmhs7MPQ7KyxcsxRgrTSrjscjrO9JnA
+         2841dNumhar5ONZf9OFZtZgM74mHtvb/+g4xJnVKSKPZFxBYjNgCujrvS8QVTHH/xjD5
+         GgeNkvfhY7vxkNxY5+7q8/Nnx3qRXlLuKOdBgAwDo0vN9VbkextaijSpMMdoACEq4jAq
+         mtP35ewZ3I/Vn911nYaYDrH2TO1d9PCId/E/TM/S30K1G2knmCNFP304mgwbjBoQEGZp
+         5/+Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=zevzqNU1hMAsgYiE/Ebq/5RscHMoZiindGQnXuJYKuQ=;
-        b=fKk3u0k+FBSEFBRfF+2vagfFIXZd7ywnXb6l+2sg9Q/KSQ1v9XJvtTIotykAtHti1p
-         lcl8xpjeiosiP9NWxmfIvKSB+Y8jnsyxVuZJkDPs6GHceTUh7JyUTnD7qTR0zEI6inI7
-         Rb8Bf2ISieaWjG8yqSVJaRqBF5hmn9Q+K4ALtYJWtzAJfEh+dUglau1ooCVSThXKFvJC
-         EPq7LNf6KN2VzwVvDjVUSkBHOBw14xpTQ6raoPXhC5f59g6Y9tupEqCjbfUQ2u1/tSVe
-         vxKrbewimWvNygPjksM4nVBrZrYrmhvUcTdV/FIO16a1MRCzxGCHVikSVYgPUAZUxADv
-         WM0g==
+        bh=liZQmUBJXuczseUeMXg4T6EtSA0oSyz6HwIWO1HITOs=;
+        b=gZRx1PSLU842ZiiCjbtv+qjqxk28a3ybsJYD/Q+j5dD2kHUB4vMQT/CSDf1ZaKVa6c
+         rs7lvWQdRCKcbdzbtCAb6Evny627DNxTasldN1S5svfqEzB8gPGqfP5jld3Kw8Bhd0AT
+         sKxuHL1KgunY2f/IzYYBdGKdFL9Wm5tRbFBDA00Wkg/a9Y2ZETRdMVQlD1+NwyA4Ke/Z
+         tQN90TyKHxzSxSWqlFN5UVZC9eQWNfs+gtI6GRm6xzsRbrk8cShMj3mo+JWmBjeM7UIq
+         xvkTZ3X12E11kDSi9QcHbdoS66at7ke8kQ8rb6j5t1Te7tqCUrnMd1OEYmWVAyqUfoY0
+         WAgw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	James Hogan <jhogan@kernel.org>,
-	Ralf Baechle <ralf@linux-mips.org>,
-	linux-mips@linux-mips.org,
+	Jan Chochol <jan@chochol.info>,
+	Trond Myklebust <trond.myklebust@primarydata.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 055/183] MIPS: Fix clean of vmlinuz.{32,ecoff,bin,srec}
-Date: Wed, 25 Apr 2018 12:34:35 +0200
-Message-Id: <20180425103244.760450636@linuxfoundation.org>
+Subject: [PATCH 4.14 054/183] nfs: Do not convert nfs_idmap_cache_timeout to jiffies
+Date: Wed, 25 Apr 2018 12:34:34 +0200
+Message-Id: <20180425103244.718591963@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598714281951494253?=
-X-GMAIL-MSGID: =?utf-8?q?1598714281951494253?=
+X-GMAIL-THRID: =?utf-8?q?1598714279535347194?=
+X-GMAIL-MSGID: =?utf-8?q?1598714279535347194?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,35 +50,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: James Hogan <jhogan@kernel.org>
+From: Jan Chochol <jan@chochol.info>
 
 
-[ Upstream commit 5f2483eb2423152445b39f2db59d372f523e664e ]
+[ Upstream commit cbebc6ef4fc830f4040d4140bf53484812d5d5d9 ]
 
-Make doesn't expand shell style "vmlinuz.{32,ecoff,bin,srec}" to the 4
-separate files, so none of these files get cleaned up by make clean.
-List the files separately instead.
+Since commit 57e62324e469 ("NFS: Store the legacy idmapper result in the
+keyring") nfs_idmap_cache_timeout changed units from jiffies to seconds.
+Unfortunately sysctl interface was not updated accordingly.
 
-Fixes: ec3352925b74 ("MIPS: Remove all generated vmlinuz* files on "make clean"")
-Signed-off-by: James Hogan <jhogan@kernel.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Patchwork: https://patchwork.linux-mips.org/patch/18491/
+As a effect updating /proc/sys/fs/nfs/idmap_cache_timeout with some
+value will incorrectly multiply this value by HZ.
+Also reading /proc/sys/fs/nfs/idmap_cache_timeout will show real value
+divided by HZ.
+
+Fixes: 57e62324e469 ("NFS: Store the legacy idmapper result in the keyring")
+Signed-off-by: Jan Chochol <jan@chochol.info>
+Signed-off-by: Trond Myklebust <trond.myklebust@primarydata.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/mips/boot/compressed/Makefile |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ fs/nfs/nfs4sysctl.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/mips/boot/compressed/Makefile
-+++ b/arch/mips/boot/compressed/Makefile
-@@ -133,4 +133,8 @@ vmlinuz.srec: vmlinuz
- uzImage.bin: vmlinuz.bin FORCE
- 	$(call if_changed,uimage,none)
- 
--clean-files := $(objtree)/vmlinuz $(objtree)/vmlinuz.{32,ecoff,bin,srec}
-+clean-files += $(objtree)/vmlinuz
-+clean-files += $(objtree)/vmlinuz.32
-+clean-files += $(objtree)/vmlinuz.ecoff
-+clean-files += $(objtree)/vmlinuz.bin
-+clean-files += $(objtree)/vmlinuz.srec
+--- a/fs/nfs/nfs4sysctl.c
++++ b/fs/nfs/nfs4sysctl.c
+@@ -32,7 +32,7 @@ static struct ctl_table nfs4_cb_sysctls[
+ 		.data = &nfs_idmap_cache_timeout,
+ 		.maxlen = sizeof(int),
+ 		.mode = 0644,
+-		.proc_handler = proc_dointvec_jiffies,
++		.proc_handler = proc_dointvec,
+ 	},
+ 	{ }
+ };
