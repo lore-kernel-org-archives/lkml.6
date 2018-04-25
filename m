@@ -1,292 +1,180 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-3823599-1524809490-2-5319833707214141584
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='UNK'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524809489; b=iWDDrFyjmJjijrz8HZ7LOQm4PTk3ohnCvoo1msq6vXivTbRhGi
-    ZOi8eEOX17oSKruCZVlHB8R3qmRIMGYWCUQ1cdWOqYavJPiLApSRCUVJA/5hLTst
-    ayVAzcKmzyAPVRHo5K8bo0SQs4gjhnIaeZJjuFeO2gfrwoH1jU3QLcfsECCHUkRQ
-    4XGgKhvkqxCGk9PHDNVSbfaCCL8Nn9r/4pMJ6SgVTWOnduFzKD0IQie4RDzM9oT6
-    NOwvG9AkZg9Fa2Fx+p/4SLEhg/RZizPoYoQ/MBlHHbWY6IkbTpDbUsmfkBbzfrGD
-    MXCB01EjBe4mHm1hLeNRg+N2hNUyGZO3Lu1g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:subject:date:message-id
-    :references:in-reply-to:mime-version:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1524809489; bh=9DsDw
-    G1WxeuoHBdsMOrUUE7a8DmmEsoGKP7C2DAg8V0=; b=nhsxXomAgEp3fUJeycJzt
-    0qPypxGkzt5WkP8KbV5f8MiCGPx0+fF+6vsYrfAZIJOek6XshDQWnfwdZPliaW5n
-    zPOD3SgNY3iC3VMiUS7cAvR5+qPXlwLv5yavdm62dggActKHotzO8lTPFXq/Euy0
-    heo+U+XbnNWPFqzZVWW002WzYvtC7ycwjcwt2j2d2L66j6Vaw5XDADdYsKejtsEt
-    maZ0gCAZwnLso1rHiriyO+Hop+CfoeBIOUkCCSGRIyYRDmh5ncCp/W9hx7320yX7
-    5EW6FnS2b2jrw3RK7wwDolTcXHU1tgM2LsSCA/NjGqzzVIFcxrZ7hYb1ciN8UFl7
-    g==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=fuPvK11F x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=fail (p=reject,has-list-id=yes,d=reject) header.from=microsoft.com;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (body has been altered, 1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=fuPvK11F x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=fail (p=reject,has-list-id=yes,d=reject) header.from=microsoft.com;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDYtiPDB2WmlnH5NE40KKAgozKWfc54/4xyJo97W3urL5RyJ7dEvtE03ve6ySvfZuYHEdAoAE5l9ao4jHnAy4W+WH0Qln7V0m3U8B6T3Jd4WTUWufkwH
-    kuJfbTzgP4BLNl6kTNLb1K6g27hw01a89XYIBWrI0wIZ970uNQC9trjzienTD7UwucTwEzYZaJIYO9VcOj8eyu2WuBVZ3ze+ytQSadwG2RIRSHDAYMyGxmFB
-    15/HLA99vy6wV7kOJtv+XA==
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
-    a=584k1XxxM9pnnVd4MmWcNA==:17 a=2_GqYZIPIjsA:10 a=P6MAjPsMllQA:10
-    a=kj9zAlcOel0A:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10 a=Lf-vpJhqX20A:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=yMhMjlubAAAA:8 a=VwQbUJbxAAAA:8
-    a=ag1SF4gXAAAA:8 a=DDOyTI_5AAAA:8 a=DfNHnWVPAAAA:8 a=20KFwNOVAAAA:8
-    a=oGMlB6cnAAAA:8 a=Odnh0R2cAAAA:8 a=9HAh1oLsx4lBsO9bjgwA:9
-    a=SQfKkDsCKQBFOkhy:21 a=priwg6WY3vhThofV:21 a=CjuIK1q_8ugA:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22 a=_BcfOz0m4U4ohdxiHPKc:22
-    a=rjTVMONInIDnV1a_A2c_:22 a=NdAtdrkLVvyUPsUoGJp4:22 a=lNAA6UHySJB7qmBR1x20:22
-    cc=dsc
-X-ME-CMScore: 0
-X-ME-CMCategory: discussion
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-From: KY Srinivasan <kys@microsoft.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Subject: RE: [PATCH 2/5] X86: Hyper-V: Enable IPI enlightenments
-Thread-Topic: [PATCH 2/5] X86: Hyper-V: Enable IPI enlightenments
-Thread-Index: AQHT3MEu4uYWJdgpmkipM8S1SvacPaQTnMUAgACBqNA=
-Date: Fri, 27 Apr 2018 06:11:17 +0000
-Message-ID: <MW2PR2101MB11131D0D8C0B985B68308C25A08D0@MW2PR2101MB1113.namprd21.prod.outlook.com>
+Return-Path: <kys@linuxonhyperv2.linuxonhyperv.com>
+X-Google-Smtp-Source: AIpwx4+tOyitMjyiPzbaQhoIF9Q0d/QVw8cGvCRPE89ZUQkW3adWl8Kx3Ij3v+0gdYZ13hACJ6CB
+ARC-Seal: i=1; a=rsa-sha256; t=1524680034; cv=none;
+        d=google.com; s=arc-20160816;
+        b=kfmIlDby7NVKOrhcC4nFsoOpKC3kGScgkSiZzN5oP1UBv8f4z8RR4CFZSu2HFzWSfi
+         6Hpx4iaSR/J7xSuyNghdzTIoEx2EAt25WoDQPRFkSiCDLbifrggk1VMqdVWYd3NNsW6z
+         y6Ap5INN/+TYp8upsvGM7npW1bJ7uT/Puk0TZD3eQX7FObUyVbAreD9nc9vKRHWnREnZ
+         4g5lAf2Ie89TmEznBwQWvhoqfA365wwYWrAfxolzkbFD+ROnPX0v3oWz4j29caKlmz3J
+         +ltVPtDCI5ypgQj/2VglFMACXW23YDY6AP4aafv9i81dEEGORMSG0nqxTuoKUxdxF+6O
+         36KA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=reply-to:references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=gFbKq7oglGyheGL061j2i3WsRFbvcSKooT1J5u3wd6o=;
+        b=OuZxHvovwf3RaEoOuixA+dXopytw94nqaCaLpkNmoIn/LxHGUPxMpHlsQ4g4nM2vV5
+         AQpHRf9noLoJijHeBhYPEeLKGigtza8KwEwca5ehJMcaeEI1YDwFPG3fqJn6d2IzL3EF
+         4srfWFm+acoqVoR96SRx+LinQbZMIprtt0LymXJfyvdvapPRYqtF/kn5wgnr6W0LZEuy
+         gBbkncrs4nmlmK0hkoOhe8Kf5/fbMAROPBbx5M47Csv/kPwl/zxjy29mpzKrWWcFLsC4
+         UuYMIal2IxF00DuoaCqrpjB8GMtAL6l+Zzf6/IbIJvsgsd+IuKfB7IB3I6e+z5U6AlfW
+         Ifbg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=neutral (google.com: 198.71.225.38 is neither permitted nor denied by best guess record for domain of kys@linuxonhyperv2.linuxonhyperv.com) smtp.mailfrom=kys@linuxonhyperv2.linuxonhyperv.com
+Authentication-Results: mx.google.com;
+       spf=neutral (google.com: 198.71.225.38 is neither permitted nor denied by best guess record for domain of kys@linuxonhyperv2.linuxonhyperv.com) smtp.mailfrom=kys@linuxonhyperv2.linuxonhyperv.com
+x-originating-ip: 107.180.71.197
+From: kys@linuxonhyperv.com
+To: x86@kernel.org,
+	gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	devel@linuxdriverproject.org,
+	olaf@aepfle.de,
+	apw@canonical.com,
+	jasowang@redhat.com,
+	tglx@linutronix.de,
+	hpa@zytor.com,
+	sthemmin@microsoft.com,
+	Michael.H.Kelley@microsoft.com,
+	vkuznets@redhat.com
+Cc: "K. Y. Srinivasan" <kys@microsoft.com>
+Subject: [PATCH 5/5] X86: Hyper-V: Consolidate the allocation of the hypercall input page
+Date: Wed, 25 Apr 2018 11:12:50 -0700
+Message-Id: <20180425181250.8740-5-kys@linuxonhyperv.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180425181250.8740-1-kys@linuxonhyperv.com>
 References: <20180425181110.8683-1-kys@linuxonhyperv.com>
  <20180425181250.8740-1-kys@linuxonhyperv.com>
- <20180425181250.8740-2-kys@linuxonhyperv.com>
- <alpine.DEB.2.21.1804262350040.1596@nanos.tec.linutronix.de>
-In-Reply-To: <alpine.DEB.2.21.1804262350040.1596@nanos.tec.linutronix.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [2601:600:a280:b50:3d34:9b63:3fe:d485]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1; MW2PR2101MB1065;
- 7:H0CupVo9XfVx0Q5CgXfEU2aloPE/RSXEBchyYP1IcuVromCvTCDW93uHLMcn8cx9dWxmfVlUxDFb+1pzz+tSvNuXjQD/UuIK8CxgfEDAADZQO9HnIHJ05jXlb/mtkLC8q5yvZU99p8qFijem0wAi/kS1Qea8YsGo+jtL+SvC0DRbNiUcKZYgSEXNxmUaUJkMKFgNjy1XnuOpb2A1UAy4KA+vKdoiaPRuNBS79NO0byvzaVB3soPC3V7Rz7twljs2;
- 20:Bv/kWN+ZRI7gsez5FA8x3+FkDSWEVc/vG6iH//w1ZrR3qg1hrps6IJ40jpII/gO73cOOUNEVdJnG3AWN9MZm3w/0AnX8BMQPDcZTAj68OCsWa8qmhNDhUzwnVrznYXHdFFd0FSc8bQFvP893t4RvdUHOPnEkpWnXQRd5is1G94o=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:; BCL:0; PCL:0;
- RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(48565401081)(2017052603328)(7193020);
- SRVR:MW2PR2101MB1065;
-x-ms-traffictypediagnostic: MW2PR2101MB1065:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=kys@microsoft.com;
-x-microsoft-antispam-prvs: <MW2PR2101MB106583A4037159314A1F6370A08D0@MW2PR2101MB1065.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(209352067349851)(9452136761055)(198206253151910);
-x-exchange-antispam-report-cfa-test: BCL:0; PCL:0;
- RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(3231232)(944501410)(52105095)(10201501046)(93006095)(93001095)(6055026)(6041310)(20161123560045)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(6072148)(201708071742011);
- SRVR:MW2PR2101MB1065; BCL:0; PCL:0; RULEID:; SRVR:MW2PR2101MB1065;
-x-forefront-prvs: 0655F9F006
-x-forefront-antispam-report: SFV:NSPM;
- SFS:(10019020)(39860400002)(396003)(39380400002)(376002)(346002)(366004)(13464003)(189003)(199004)(11346002)(81166006)(97736004)(81156014)(6116002)(476003)(3280700002)(59450400001)(46003)(446003)(6436002)(2906002)(486006)(8936002)(8676002)(5250100002)(55016002)(2900100001)(186003)(33656002)(9686003)(68736007)(6246003)(10090500001)(3660700001)(14454004)(102836004)(4326008)(8990500004)(54906003)(25786009)(99286004)(305945005)(316002)(5660300001)(76176011)(106356001)(22452003)(93886005)(6506007)(7416002)(478600001)(86362001)(86612001)(10290500003)(74316002)(53936002)(7736002)(6916009)(105586002)(7696005)(53546011)(229853002);
- DIR:OUT; SFP:1102; SCL:1; SRVR:MW2PR2101MB1065;
- H:MW2PR2101MB1113.namprd21.prod.outlook.com; FPR:; SPF:None; LANG:en;
- PTR:InfoNoRecords; MX:1; A:1;
-x-microsoft-antispam-message-info: FJCMcFGM17yhZ5r7FZg/qtJ5afVYyxJ3V+j6UkH2vkDugQtnyIXXvfrM/N9Dut+U8k2M8A8wvo47DPMiHX91x8VjKP5ek9Hdp7Pg1dTuSDC7sOpTGSrDNIK+GspYaYtEztrvkrq11lGvBPYZQdPBX+Sn8fbXM2HnBfjKCDdldUbIhWiqMfJwYWXbnkvY9YVr
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: 60d109e8-9715-470c-e8f9-08d5ac05b050
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 60d109e8-9715-470c-e8f9-08d5ac05b050
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Apr 2018 06:11:17.3568 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR2101MB1065
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: "olaf@aepfle.de" <olaf@aepfle.de>,
- Stephen Hemminger <sthemmin@microsoft.com>,
- "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
- "jasowang@redhat.com" <jasowang@redhat.com>, "x86@kernel.org" <x86@kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>,
- "hpa@zytor.com" <hpa@zytor.com>, "apw@canonical.com" <apw@canonical.com>,
- "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
- "vkuznets@redhat.com" <vkuznets@redhat.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Reply-To: kys@microsoft.com
+X-CMAE-Envelope: MS4wfF+YQRvckSE3NznmVOAns93K8bIwlSeIowyFdltd7dg61ubPjnN9eF9BpezmYVQsDNMdFT2kBiuVO+PrKc7DO5oh09rKzjnLk+lnNZmsFtVZyvVXfWos
+ ouy8STjayzc9inMmpRDRb9XPIvoW2OeveiwZKsups5/E2AZDE9rCxNhtMYVJufSKvXqvT0dUZQBvYged5J46pWNH6TCtmET48T/ueCQ/HbTGZYZb9v999Ijl
+ fZuRfKGQYWVQTEzjAxZnfPSJEC3zS8oG6k9HNo0bSiXnY/ZcgUwa3XaFF25tx1j/lURsnbj41Qi+dHvvbmk87C2HwApCV9aLIfq46QyiKdTb/NzyCKs1AxXG
+ vjLD3+ygROXbRzFgyA0YNknrdOGDDscAf/H3aN22V28mamRcLZqy5WXkqiCklvHaYvP0EJfLUKvzWCRdcvl9MRSoaBDYQxI/YV3wCw51Dwe5xJk+2p6io0PF
+ HhUzd8vzB0HBaoUbJzQN6KMGqNQ68kKSGmkCQrwOIoL/V/FRZFDXS9fL3l5zmna+Upbtg0IHFCQJFbCbXeQPH2CwaB5O+a7MpbhFAPlSctyMQlCN8yJ8+XCa
+ 8ky5kZc9TLa7VmozTKN6yI1R
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1598742891262366400?=
+X-GMAIL-MSGID: =?utf-8?q?1598742891262366400?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+From: "K. Y. Srinivasan" <kys@microsoft.com>
 
+Consolidate the allocation of the hypercall input page.
 
-> -----Original Message-----
-> From: Thomas Gleixner <tglx@linutronix.de>
-> Sent: Thursday, April 26, 2018 3:09 PM
-> To: KY Srinivasan <kys@microsoft.com>
-> Cc: x86@kernel.org; gregkh@linuxfoundation.org; linux-
-> kernel@vger.kernel.org; devel@linuxdriverproject.org; olaf@aepfle.de;
-> apw@canonical.com; jasowang@redhat.com; hpa@zytor.com; Stephen
-> Hemminger <sthemmin@microsoft.com>; Michael Kelley (EOSG)
-> <Michael.H.Kelley@microsoft.com>; vkuznets@redhat.com
-> Subject: Re: [PATCH 2/5] X86: Hyper-V: Enable IPI enlightenments
-> 
-> On Wed, 25 Apr 2018, kys@linuxonhyperv.com wrote:
-> > +static int __send_ipi_mask(const struct cpumask *mask, int vector)
-> > +{
-> > +	int cur_cpu, vcpu;
-> > +	struct ipi_arg_non_ex **arg;
-> > +	struct ipi_arg_non_ex *ipi_arg;
-> > +	int ret = 1;
-> 
-> So this indicates whether __send_ipi_mask() can send to @mask or not. So
-> please make it a bool and let it return false when it does not work, true
-> otherwise. If you had used -Exxxx then it would have been more obvious,
-> but
-> this is really a boolean decision.
+Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
+---
+ arch/x86/hyperv/hv_init.c       |  2 --
+ arch/x86/hyperv/mmu.c           | 33 +++++++++------------------------
+ arch/x86/include/asm/mshyperv.h |  1 -
+ 3 files changed, 9 insertions(+), 27 deletions(-)
 
-Agreed.
-> 
-> > +	unsigned long flags;
-> > +
-> > +	if (cpumask_empty(mask))
-> > +		return 0;
-> > +
-> > +	if (!hv_hypercall_pg)
-> > +		return ret;
-> > +
-> > +	if ((vector < HV_IPI_LOW_VECTOR) || (vector >
-> HV_IPI_HIGH_VECTOR))
-> > +		return ret;
-> > +
-> > +	local_irq_save(flags);
-> > +	arg = (struct ipi_arg_non_ex
-> **)this_cpu_ptr(hyperv_pcpu_input_arg);
-> > +
-> > +	ipi_arg = *arg;
-> > +	if (unlikely(!ipi_arg))
-> > +		goto ipi_mask_done;
-> > +
-> > +
-> 
-> Stray newline
-> 
-> > +	ipi_arg->vector = vector;
-> > +	ipi_arg->reserved = 0;
-> > +	ipi_arg->cpu_mask = 0;
-> > +
-> > +	for_each_cpu(cur_cpu, mask) {
-> > +		vcpu = hv_cpu_number_to_vp_number(cur_cpu);
-> > +		if (vcpu >= 64)
-> > +			goto ipi_mask_done;
-> 
-> This is completely magic and deserves a comment.
-> 
-> > +
-> > +		__set_bit(vcpu, (unsigned long *)&ipi_arg->cpu_mask);
-> > +	}
-> > +
-> > +	ret = hv_do_hypercall(HVCALL_SEND_IPI, ipi_arg, NULL);
-> > +
-> > +ipi_mask_done:
-> > +	local_irq_restore(flags);
-> > +	return ret;
-> > +}
-> 
-> ....
-> 
-> >  static int hv_cpu_init(unsigned int cpu)
-> >  {
-> >  	u64 msr_vp_index;
-> >  	struct hv_vp_assist_page **hvp =
-> &hv_vp_assist_page[smp_processor_id()];
-> > +	void **input_arg;
-> > +
-> > +	input_arg = (void **)this_cpu_ptr(hyperv_pcpu_input_arg);
-> > +	*input_arg = page_address(alloc_page(GFP_ATOMIC));
-> 
-> This is called from the cpu hotplug thread and there is no need for an
-> atomic allocation. Please use GFP_KERNEL.
-> 
-> >  	hv_get_vp_index(msr_vp_index);
-> >
-> > @@ -217,6 +224,10 @@ static int hv_cpu_die(unsigned int cpu)
-> >  {
-> >  	struct hv_reenlightenment_control re_ctrl;
-> >  	unsigned int new_cpu;
-> > +	void **input_arg;
-> > +
-> > +	input_arg = (void **)this_cpu_ptr(hyperv_pcpu_input_arg);
-> > +	free_page((unsigned long)*input_arg);
-> 
-> Hrm. Again this is called from the CPU hotplug thread when the cou is about
-> to go down. But you can be scheduled out after free() and before disabling
-> the assist thing below and the pointer persist. There is no guarantee that
-> nothing sends an IPI anymore after this point.
-> 
-> So you have two options here:
-> 
->   1) Disable interrupts, get the pointer, set the per cpu pointer to NULL,
->      reenable interruots and free the page
-I will implement this approach.
-> 
->   2) Keep the page around and check for it in the CPU UP path and avoid the
->      allocation when the CPU comes online again.
-> 
-> >  	if (hv_vp_assist_page && hv_vp_assist_page[cpu])
-> >  		wrmsrl(HV_X64_MSR_VP_ASSIST_PAGE, 0);
-> > @@ -260,6 +271,12 @@ void __init hyperv_init(void)
-> >  	if ((ms_hyperv.features & required_msrs) != required_msrs)
-> >  		return;
-> >
-> > +	/* Allocate the per-CPU state for the hypercall input arg */
-> > +	hyperv_pcpu_input_arg = alloc_percpu(void  *);
-> > +
-> > +	if (hyperv_pcpu_input_arg == NULL)
-> > +		return;
-> 
-> Huch. When that allocation fails, you return and ignore the rest of the
-> function which has been there before. Weird decision.
-I should have explained this. Failure of this allocation means that we would not have the
-per-cpu hypercall input page which in turn would mean that we would not be able to invoke
-any hypercalls. 
-
-Regards,
-
-K. Y
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
+index a895662b6b4c..72befd0e2c35 100644
+--- a/arch/x86/hyperv/hv_init.c
++++ b/arch/x86/hyperv/hv_init.c
+@@ -314,8 +314,6 @@ void __init hyperv_init(void)
+ 	hypercall_msr.guest_physical_address = vmalloc_to_pfn(hv_hypercall_pg);
+ 	wrmsrl(HV_X64_MSR_HYPERCALL, hypercall_msr.as_uint64);
+ 
+-	hyper_alloc_mmu();
+-
+ 	hv_apic_init();
+ 
+ 	/*
+diff --git a/arch/x86/hyperv/mmu.c b/arch/x86/hyperv/mmu.c
+index c9cd28f0bae4..c4466af72e77 100644
+--- a/arch/x86/hyperv/mmu.c
++++ b/arch/x86/hyperv/mmu.c
+@@ -32,9 +32,6 @@ struct hv_flush_pcpu_ex {
+ /* Each gva in gva_list encodes up to 4096 pages to flush */
+ #define HV_TLB_FLUSH_UNIT (4096 * PAGE_SIZE)
+ 
+-static struct hv_flush_pcpu __percpu **pcpu_flush;
+-
+-static struct hv_flush_pcpu_ex __percpu **pcpu_flush_ex;
+ 
+ /*
+  * Fills in gva_list starting from offset. Returns the number of items added.
+@@ -77,7 +74,7 @@ static void hyperv_flush_tlb_others(const struct cpumask *cpus,
+ 
+ 	trace_hyperv_mmu_flush_tlb_others(cpus, info);
+ 
+-	if (!pcpu_flush || !hv_hypercall_pg)
++	if (!hv_hypercall_pg)
+ 		goto do_native;
+ 
+ 	if (cpumask_empty(cpus))
+@@ -85,10 +82,8 @@ static void hyperv_flush_tlb_others(const struct cpumask *cpus,
+ 
+ 	local_irq_save(flags);
+ 
+-	flush_pcpu = this_cpu_ptr(pcpu_flush);
+-
+-	if (unlikely(!*flush_pcpu))
+-		*flush_pcpu = page_address(alloc_page(GFP_ATOMIC));
++	flush_pcpu = (struct hv_flush_pcpu **)
++		     this_cpu_ptr(hyperv_pcpu_input_arg);
+ 
+ 	flush = *flush_pcpu;
+ 
+@@ -164,7 +159,7 @@ static void hyperv_flush_tlb_others_ex(const struct cpumask *cpus,
+ 
+ 	trace_hyperv_mmu_flush_tlb_others(cpus, info);
+ 
+-	if (!pcpu_flush_ex || !hv_hypercall_pg)
++	if (!hv_hypercall_pg)
+ 		goto do_native;
+ 
+ 	if (cpumask_empty(cpus))
+@@ -172,10 +167,8 @@ static void hyperv_flush_tlb_others_ex(const struct cpumask *cpus,
+ 
+ 	local_irq_save(flags);
+ 
+-	flush_pcpu = this_cpu_ptr(pcpu_flush_ex);
+-
+-	if (unlikely(!*flush_pcpu))
+-		*flush_pcpu = page_address(alloc_page(GFP_ATOMIC));
++	flush_pcpu = (struct hv_flush_pcpu_ex **)
++		     this_cpu_ptr(hyperv_pcpu_input_arg);
+ 
+ 	flush = *flush_pcpu;
+ 
+@@ -249,6 +242,9 @@ void hyperv_setup_mmu_ops(void)
+ 	if (!(ms_hyperv.hints & HV_X64_REMOTE_TLB_FLUSH_RECOMMENDED))
+ 		return;
+ 
++	if (hyperv_pcpu_input_arg == NULL)
++		return;
++
+ 	if (!(ms_hyperv.hints & HV_X64_EX_PROCESSOR_MASKS_RECOMMENDED)) {
+ 		pr_info("Using hypercall for remote TLB flush\n");
+ 		pv_mmu_ops.flush_tlb_others = hyperv_flush_tlb_others;
+@@ -257,14 +253,3 @@ void hyperv_setup_mmu_ops(void)
+ 		pv_mmu_ops.flush_tlb_others = hyperv_flush_tlb_others_ex;
+ 	}
+ }
+-
+-void hyper_alloc_mmu(void)
+-{
+-	if (!(ms_hyperv.hints & HV_X64_REMOTE_TLB_FLUSH_RECOMMENDED))
+-		return;
+-
+-	if (!(ms_hyperv.hints & HV_X64_EX_PROCESSOR_MASKS_RECOMMENDED))
+-		pcpu_flush = alloc_percpu(struct hv_flush_pcpu *);
+-	else
+-		pcpu_flush_ex = alloc_percpu(struct hv_flush_pcpu_ex *);
+-}
+diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
+index 956e8603bed2..9931f9908fe2 100644
+--- a/arch/x86/include/asm/mshyperv.h
++++ b/arch/x86/include/asm/mshyperv.h
+@@ -300,7 +300,6 @@ static inline int cpumask_to_vpset(struct hv_vpset *vpset,
+ 
+ void __init hyperv_init(void);
+ void hyperv_setup_mmu_ops(void);
+-void hyper_alloc_mmu(void);
+ void hyperv_report_panic(struct pt_regs *regs, long err);
+ bool hv_is_hyperv_initialized(void);
+ void hyperv_cleanup(void);
+-- 
+2.15.1
