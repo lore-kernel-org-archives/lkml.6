@@ -1,101 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751494AbeDYJZz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 05:25:55 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:40430 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751212AbeDYJZw (ORCPT
+        id S1751547AbeDYJ0M (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 05:26:12 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:39176 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751499AbeDYJ0E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 05:25:52 -0400
-Date: Wed, 25 Apr 2018 10:25:33 +0100
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Thierry Reding <treding@nvidia.com>
-Cc: Christoph Hellwig <hch@infradead.org>,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK"
-        <linaro-mm-sig@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Jerome Glisse <jglisse@redhat.com>, iommu@lists.linux-foundation.org,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        linux-arm-kernel@lists.infradead.org,
-        "open list:DMA BUFFER SHARING FRAMEWORK"
-        <linux-media@vger.kernel.org>
-Subject: Re: noveau vs arm dma ops
-Message-ID: <20180425092533.GO16141@n2100.armlinux.org.uk>
-References: <20180420124625.GA31078@infradead.org>
- <20180420152111.GR31310@phenom.ffwll.local>
- <20180424184847.GA3247@infradead.org>
- <CAKMK7uFL68pu+-9LODTgz+GQYvxpnXOGhxfz9zorJ_JKsPVw2g@mail.gmail.com>
- <20180425054855.GA17038@infradead.org>
- <CAKMK7uEFitkNQrD6cLX5Txe11XhVO=LC4YKJXH=VNdq+CY=DjQ@mail.gmail.com>
- <CAKMK7uFx=KB1vup=WhPCyfUFairKQcRR4BEd7aXaX1Pj-vj3Cw@mail.gmail.com>
- <20180425064335.GB28100@infradead.org>
- <20180425074151.GA2271@ulmo>
- <20180425085439.GA29996@infradead.org>
+        Wed, 25 Apr 2018 05:26:04 -0400
+X-Google-Smtp-Source: AIpwx48XIQC2IlhpK2mbdfNdnWjg99i4KmfMK6OeKUU4nXQrgcGP3+yBhNldKH6DeUBHkW6rvv3Zhg==
+Date: Wed, 25 Apr 2018 17:25:47 +0800
+From: Leo Yan <leo.yan@linaro.org>
+To: Daniel Borkmann <daniel@iogearbox.net>
+Cc: "David S. Miller" <davem@davemloft.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf-next] bpf: Allow bpf_jit_enable = 2 with
+ BPF_JIT_ALWAYS_ON config
+Message-ID: <20180425092547.GA24401@leoy-ThinkPad-X240s>
+References: <1524644322-9263-1-git-send-email-leo.yan@linaro.org>
+ <a90e398e-c012-2630-6909-6d413e03cc96@iogearbox.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180425085439.GA29996@infradead.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <a90e398e-c012-2630-6909-6d413e03cc96@iogearbox.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 25, 2018 at 01:54:39AM -0700, Christoph Hellwig wrote:
-> [discussion about this patch, which should have been cced to the iommu
->  and linux-arm-kernel lists, but wasn't:
->  https://www.spinics.net/lists/dri-devel/msg173630.html]
-> 
-> On Wed, Apr 25, 2018 at 09:41:51AM +0200, Thierry Reding wrote:
-> > > API from the iommu/dma-mapping code.  Drivers have no business poking
-> > > into these details.
+Hi Daniel,
+
+On Wed, Apr 25, 2018 at 11:12:21AM +0200, Daniel Borkmann wrote:
+> On 04/25/2018 10:18 AM, Leo Yan wrote:
+> > After enabled BPF_JIT_ALWAYS_ON config, bpf_jit_enable always equals to
+> > 1; it is impossible to set 'bpf_jit_enable = 2' and the kernel has no
+> > chance to call bpf_jit_dump().
 > > 
-> > The interfaces that the above patch uses are all EXPORT_SYMBOL_GPL,
-> > which is rather misleading if they are not meant to be used by drivers
-> > directly.
+> > This patch relaxes bpf_jit_enable range to [1..2] when kernel config
+> > BPF_JIT_ALWAYS_ON is enabled so can invoke jit dump.
+> > 
+> > Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> 
+> Is there a specific reason why you need this here instead of retrieving the
+> dump from the newer interface available from bpftool (tools/bpf/bpftool/)?
+> The bpf_jit_enable = 2 is not recommended these days since it dumps into the
+> kernel log which is often readable from unpriv as well. bpftool makes use
+> of the BPF_OBJ_GET_INFO_BY_FD interface via bpf syscall to get the JIT dump
+> instead when bpf_jit_enable is set.
 
-EXPORT_SYMBOL* means nothing as far as whether a driver should
-be able to use the symbol or not - it merely means that the symbol is
-made available to a module.  Modules cover much more than just device
-drivers - we have library modules, filesystem modules, helper modules
-to name a few non-driver classes of modules.
+Thanks for reviewing.
 
-We also have symbols that are exported as part of the architecture
-implementation detail of a public interface.  For example, the
-public interface "copy_from_user" is implemented as an inline
-function (actually several layers of inline functions) eventually
-calling into arm_copy_from_user().  arm_copy_from_user() is exported,
-but drivers (in fact no module) is allowed to make direct reference
-to arm_copy_from_user() - it'd fail when software PAN is enabled.
+When I read the doc Documentation/networking/filter.txt and the
+section "JIT compiler" it suggests as below.  So I tried to set
+'bpf_jit_enable = 2' to dump JIT code, but it failed.
 
-The whole idea that "if a symbol is exported, it's fine for a driver
-to use it" is a complete work of fiction, always has been, and always
-will be.
+If we have concern for security issue, should we remove support for
+'bpf_jit_enable = 2' and modify the doc to reflect this change?
 
-We've had this with the architecture implementation details of the
-DMA API before, and with the architecture implementation details of
-the CPU cache flushing.  There's only so much commentry, or __
-prefixes you can add to a symbol before things get rediculous, and
-none of it stops people creating this abuse.  The only thing that
-seems to prevent it is to make life hard for folk wanting to use
-the symbols (eg, hiding the symbol prototype in a private header,
-etc.)
+---8<---
 
-Never, ever go under the covers of an interface.  If the interface
-doesn't do what you want, _discuss_ it, don't just think "oh, that
-architecture private facility looks like what I need, I'll use that
-directly."
+For JIT developers, doing audits etc, each compile run can output the generated
+opcode image into the kernel log via: 
 
-If you ever are on the side of trying to maintain those implementation
-details that are abused in this way, you'll soon understand why this
-behaviour by driver authors is soo annoying, and the maintainability
-problems it creates.
+  echo 2 > /proc/sys/net/core/bpf_jit_enable
 
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
-According to speedtest.net: 8.21Mbps down 510kbps up
+Example output from dmesg:
+
+[ 3389.935842] flen=6 proglen=70 pass=3 image=ffffffffa0069c8f
+[ 3389.935847] JIT code: 00000000: 55 48 89 e5 48 83 ec 60 48 89 5d f8 44 8b 4f 68
+[ 3389.935849] JIT code: 00000010: 44 2b 4f 6c 4c 8b 87 d8 00 00 00 be 0c 00 00 00
+[ 3389.935850] JIT code: 00000020: e8 1d 94 ff e0 3d 00 08 00 00 75 16 be 17 00 00
+[ 3389.935851] JIT code: 00000030: 00 e8 28 94 ff e0 83 f8 01 75 07 b8 ff ff 00 00
+[ 3389.935852] JIT code: 00000040: eb 02 31 c0 c9 c3
+
+> > ---
+> >  net/core/sysctl_net_core.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/net/core/sysctl_net_core.c b/net/core/sysctl_net_core.c
+> > index b1a2c5e..6a39b22 100644
+> > --- a/net/core/sysctl_net_core.c
+> > +++ b/net/core/sysctl_net_core.c
+> > @@ -371,7 +371,7 @@ static int proc_dointvec_minmax_bpf_enable(struct ctl_table *table, int write,
+> >  		.proc_handler	= proc_dointvec_minmax_bpf_enable,
+> >  # ifdef CONFIG_BPF_JIT_ALWAYS_ON
+> >  		.extra1		= &one,
+> > -		.extra2		= &one,
+> > +		.extra2		= &two,
+> >  # else
+> >  		.extra1		= &zero,
+> >  		.extra2		= &two,
+> > 
+> 
