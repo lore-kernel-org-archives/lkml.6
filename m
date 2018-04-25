@@ -1,138 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751989AbeDYKEj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 06:04:39 -0400
-Received: from mail-wm0-f49.google.com ([74.125.82.49]:38764 "EHLO
-        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751725AbeDYKEe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 06:04:34 -0400
-X-Google-Smtp-Source: AIpwx4/bHMn9PKaioKbcwuxem8bU8MEfv8+/l4ONu2dF/1RFZHeA+4wMBHm7dtZUovYTdrBgi3v1bQ==
-Date: Wed, 25 Apr 2018 12:04:29 +0200
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Thierry Reding <treding@nvidia.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK"
-        <linaro-mm-sig@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        "open list:DMA BUFFER SHARING FRAMEWORK"
-        <linux-media@vger.kernel.org>,
-        iommu@lists.linux-foundation.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: noveau vs arm dma ops
-Message-ID: <20180425100429.GR25142@phenom.ffwll.local>
-Mail-Followup-To: Christoph Hellwig <hch@infradead.org>,
-        Thierry Reding <treding@nvidia.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK" <linaro-mm-sig@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        "open list:DMA BUFFER SHARING FRAMEWORK" <linux-media@vger.kernel.org>,
-        iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20180420124625.GA31078@infradead.org>
- <20180420152111.GR31310@phenom.ffwll.local>
- <20180424184847.GA3247@infradead.org>
- <CAKMK7uFL68pu+-9LODTgz+GQYvxpnXOGhxfz9zorJ_JKsPVw2g@mail.gmail.com>
- <20180425054855.GA17038@infradead.org>
- <CAKMK7uEFitkNQrD6cLX5Txe11XhVO=LC4YKJXH=VNdq+CY=DjQ@mail.gmail.com>
- <CAKMK7uFx=KB1vup=WhPCyfUFairKQcRR4BEd7aXaX1Pj-vj3Cw@mail.gmail.com>
- <20180425064335.GB28100@infradead.org>
- <20180425074151.GA2271@ulmo>
- <20180425085439.GA29996@infradead.org>
+        id S1751648AbeDYKHs (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 06:07:48 -0400
+Received: from mout.gmx.net ([212.227.17.20]:54073 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751264AbeDYKHp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 06:07:45 -0400
+From: =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To: linux-kernel@vger.kernel.org
+Cc: linux-pm@vger.kernel.org,
+        =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Jonathan Corbet <corbet@lwn.net>, Lukas Wunner <lukas@wunner.de>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        linux-doc@vger.kernel.org
+Subject: [PATCH] PM: docs: sleep-states: Fix a typo ("includig")
+Date: Wed, 25 Apr 2018 12:07:03 +0200
+Message-Id: <20180425100715.17235-1-j.neuschaefer@gmx.net>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180425085439.GA29996@infradead.org>
-X-Operating-System: Linux phenom 4.15.0-1-amd64 
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:sAfiFVdFOlV7c6VzJ9l45Oe3RmlAOv8aDM39DdCKAnDH7nn7wD/
+ HS6odjAQHVCLx/L5YNJhps92NreM5IAUwb3WmH65EXTvpERDiNg2pSbEfrXL8OS+QGGA6lH
+ uIVd9SwfVf5pX/qmg4b8p/LGgR9pqLyI4a3k7bI9Yl9wBZOFFFkyywLJuVf6kgLpoWXQcb8
+ pSaDcEnUc+9dU2NZ1JzlQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:tK/FmaU5Goc=:ZBATzmAZ6rctrmUYiMlaWi
+ I8ZO6iBvqPl1WQ8UsGF3PGcvk71U+IMl4GhDNE/zbSzjcdD596WqGXb4viIF89X+vyjZ8AdNy
+ jVC4MWJB+A6QCPXLv0ywfs/blC1svvs4XuHGtUXTmzrnQEzEB7K5LJyd7aM7rIDSmYGpWOwTc
+ k94QacTatWJzqC8AgG7XqrOH/yY0I4o8z/zTWb4edgGE2apsCLf3ruKjTqITmSa6Jf2KhN9yG
+ Z1KqAZbrANgjORqHpbPPSMtPKzhZY0krzFv8xAQzBkqXJTvko3gJ311102qYnDezyR7KskVqC
+ 4NxOUFU5khsBnhwHdr7JyWkufQnvdiikaudaDVWDNlAbQ7gHDBT2T2swKxForDFYmvmQw2pyt
+ J3GkiLMvSlYIRnlAmMSG66kt+dfhgcePoOG00hspnKqRNzTN/saHdz/13honvP8GVzLG64kkh
+ 1z0zzeZ289+JO3AzVqrgPX4C6oCqExup5WQoXQmGHxtmdKmOGiwMmGe7CY2O7W3wSyy1VYQSQ
+ PZg51sNa1GLa3pA/eDdFLvabQFwzTC81UI935k0LFpw25AprHIyVRoxkc3PKcgsscf9fMBj6l
+ /AgeiX4dBIPfFkOkj7FZ67dP6soLncVk0k1UQglEMqmFhHe9d7B1KjQ0dwCLbi/LUIyAFSC16
+ 7dvhhHl2cpjjRxWonZnRxMU3Z3U3LiT8Y4Tbzb9tozg2NPqRKAQcgtLsGyDnMDYPGyvelZMUn
+ g8vj5Zn4yzxPG5RhzMZ695tHlnXQXmHERvNuIgsJL3b3skmQxlUfWrJD/W1ATdpEhffqiG1Zo
+ AcimA8XZmODymDXGQda7q32nL1y1t5ueZf2yRYb9pQD1zg8ikI=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 25, 2018 at 01:54:39AM -0700, Christoph Hellwig wrote:
-> [discussion about this patch, which should have been cced to the iommu
->  and linux-arm-kernel lists, but wasn't:
->  https://www.spinics.net/lists/dri-devel/msg173630.html]
-> 
-> On Wed, Apr 25, 2018 at 09:41:51AM +0200, Thierry Reding wrote:
-> > > API from the iommu/dma-mapping code.  Drivers have no business poking
-> > > into these details.
-> > 
-> > The interfaces that the above patch uses are all EXPORT_SYMBOL_GPL,
-> > which is rather misleading if they are not meant to be used by drivers
-> > directly.
-> 
-> The only reason the DMA ops are exported is because get_arch_dma_ops
-> references (or in case of the coherent ones used to reference).  We
-> don't let drivers assign random dma ops.
-> 
-> > 
-> > > Thierry, please resend this with at least the iommu list and
-> > > linux-arm-kernel in Cc to have a proper discussion on the right API.
-> > 
-> > I'm certainly open to help with finding a correct solution, but the
-> > patch above was purposefully terse because this is something that I
-> > hope we can get backported to v4.16 to unbreak Nouveau. Coordinating
-> > such a backport between ARM and DRM trees does not sound like something
-> > that would help getting this fixed in v4.16.
-> 
-> Coordinating the backport of a trivial helper in the arm tree is not
-> the end of the world.  Really, this cowboy attitude is a good reason
-> why graphics folks have such a bad rep.  You keep poking into random
-> kernel internals, don't talk to anoyone and then complain if people
-> are upset.  This shouldn't be surprising.
+Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
+---
+ Documentation/admin-guide/pm/sleep-states.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Not really agreeing on the cowboy thing. The fundamental problem is that
-the dma api provides abstraction that seriously gets in the way of writing
-a gpu driver. Some examples:
-
-- We never want bounce buffers, ever. dma_map_sg gives us that, so there's
-  hacks to fall back to a cache of pages allocated using
-  dma_alloc_coherent if you build a kernel with bounce buffers.
-
-- dma api hides the cache flushing requirements from us. GPUs love
-  non-snooped access, and worse give userspace control over that. We want
-  a strict separation between mapping stuff and flushing stuff. With the
-  IOMMU api we mostly have the former, but for the later arch maintainers
-  regularly tells they won't allow that. So we have drm_clflush.c.
-
-- dma api hides how/where memory is allocated. Kinda similar problem,
-  except now for CMA or address limits. So either we roll our own
-  allocators and then dma_map_sg (and pray it doesn't bounce buffer), or
-  we use dma_alloc_coherent and then grab the sgt to get at the CMA
-  allocations because that's the only way. Which sucks, because we can't
-  directly tell CMA how to back off if there's some way to make CMA memory
-  available through other means (gpus love to hog all of memory, so we
-  have shrinkers and everything).
-
-For display drivers the dma api mostly works, until you start sharing
-buffers with other devices.
-
-So from our perspective it looks fairly often that core folks just don't
-want to support gpu use-cases, so we play a bit more cowboy and get things
-done some other way. Since this has been going on for years now we often
-don't even bother to start a discussion first, since it tended to go
-nowhere useful.
--Daniel
-
-> > Granted, this issue could've been caught with a little more testing, but
-> > in retrospect I think it would've been a lot better if ARM_DMA_USE_IOMMU
-> > was just enabled unconditionally if it has side-effects that platforms
-> > don't opt in to but have to explicitly opt out of.
-> 
-> Agreed on that count.  Please send a patch.
-
+diff --git a/Documentation/admin-guide/pm/sleep-states.rst b/Documentation/admin-guide/pm/sleep-states.rst
+index 1e5c0f00cb2f..dbf5acd49f35 100644
+--- a/Documentation/admin-guide/pm/sleep-states.rst
++++ b/Documentation/admin-guide/pm/sleep-states.rst
+@@ -15,7 +15,7 @@ Sleep States That Can Be Supported
+ ==================================
+ 
+ Depending on its configuration and the capabilities of the platform it runs on,
+-the Linux kernel can support up to four system sleep states, includig
++the Linux kernel can support up to four system sleep states, including
+ hibernation and up to three variants of system suspend.  The sleep states that
+ can be supported by the kernel are listed below.
+ 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.17.0
