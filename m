@@ -1,132 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753981AbeDYWzS (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 18:55:18 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:49878 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752661AbeDYWzN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 18:55:13 -0400
-Date: Wed, 25 Apr 2018 23:54:43 +0100
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Thierry Reding <treding@nvidia.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK"
-        <linaro-mm-sig@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        "open list:DMA BUFFER SHARING FRAMEWORK"
-        <linux-media@vger.kernel.org>,
-        iommu@lists.linux-foundation.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: noveau vs arm dma ops
-Message-ID: <20180425225443.GQ16141@n2100.armlinux.org.uk>
-References: <20180424184847.GA3247@infradead.org>
- <CAKMK7uFL68pu+-9LODTgz+GQYvxpnXOGhxfz9zorJ_JKsPVw2g@mail.gmail.com>
- <20180425054855.GA17038@infradead.org>
- <CAKMK7uEFitkNQrD6cLX5Txe11XhVO=LC4YKJXH=VNdq+CY=DjQ@mail.gmail.com>
- <CAKMK7uFx=KB1vup=WhPCyfUFairKQcRR4BEd7aXaX1Pj-vj3Cw@mail.gmail.com>
- <20180425064335.GB28100@infradead.org>
- <20180425074151.GA2271@ulmo>
- <20180425085439.GA29996@infradead.org>
- <20180425100429.GR25142@phenom.ffwll.local>
- <20180425153312.GD27076@infradead.org>
+        id S1754015AbeDYW4y (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 18:56:54 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59296 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753774AbeDYW4u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 18:56:50 -0400
+Date: Wed, 25 Apr 2018 18:56:49 -0400 (EDT)
+From: Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To: David Rientjes <rientjes@google.com>
+cc: James Bottomley <James.Bottomley@hansenpartnership.com>,
+        dm-devel@redhat.com, eric.dumazet@gmail.com, mst@redhat.com,
+        netdev@vger.kernel.org, jasowang@redhat.com,
+        Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>, Michal Hocko <mhocko@kernel.org>,
+        linux-mm@kvack.org, edumazet@google.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        virtualization@lists.linux-foundation.org,
+        David Miller <davem@davemloft.net>, Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [dm-devel] [PATCH v5] fault-injection: introduce kvmalloc fallback
+ options
+In-Reply-To: <alpine.DEB.2.21.1804251546240.58229@chino.kir.corp.google.com>
+Message-ID: <alpine.LRH.2.02.1804251853460.31135@file01.intranet.prod.int.rdu2.redhat.com>
+References: <20180421144757.GC14610@bombadil.infradead.org>  <alpine.LRH.2.02.1804221733520.7995@file01.intranet.prod.int.rdu2.redhat.com>  <20180423151545.GU17484@dhcp22.suse.cz>  <alpine.LRH.2.02.1804232003100.2299@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180424170349.GQ17484@dhcp22.suse.cz>  <alpine.LRH.2.02.1804241319390.28995@file01.intranet.prod.int.rdu2.redhat.com>  <20180424173836.GR17484@dhcp22.suse.cz>  <alpine.LRH.2.02.1804251556060.30569@file01.intranet.prod.int.rdu2.redhat.com>
+ <1114eda5-9b1f-4db8-2090-556b4a37c532@infradead.org>  <alpine.LRH.2.02.1804251656300.9428@file01.intranet.prod.int.rdu2.redhat.com>  <alpine.DEB.2.21.1804251417470.166306@chino.kir.corp.google.com>  <alpine.LRH.2.02.1804251720090.9428@file01.intranet.prod.int.rdu2.redhat.com>
+ <1524694663.4100.21.camel@HansenPartnership.com> <alpine.LRH.2.02.1804251830540.25124@file01.intranet.prod.int.rdu2.redhat.com> <alpine.DEB.2.21.1804251546240.58229@chino.kir.corp.google.com>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180425153312.GD27076@infradead.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 25, 2018 at 08:33:12AM -0700, Christoph Hellwig wrote:
-> On Wed, Apr 25, 2018 at 12:04:29PM +0200, Daniel Vetter wrote:
-> > - dma api hides the cache flushing requirements from us. GPUs love
-> >   non-snooped access, and worse give userspace control over that. We want
-> >   a strict separation between mapping stuff and flushing stuff. With the
-> >   IOMMU api we mostly have the former, but for the later arch maintainers
-> >   regularly tells they won't allow that. So we have drm_clflush.c.
+
+
+On Wed, 25 Apr 2018, David Rientjes wrote:
+
+> On Wed, 25 Apr 2018, Mikulas Patocka wrote:
 > 
-> The problem is that a cache flushing API entirely separate is hard. That
-> being said if you look at my generic dma-noncoherent API series it tries
-> to move that way.  So far it is in early stages and apparently rather
-> buggy unfortunately.
+> > You need to enable it on boot. Enabling it when the kernel starts to 
+> > execute userspace code is already too late (because you would miss 
+> > kvmalloc calls in the kernel boot path).
+> 
+> Is your motivation that since kvmalloc() never falls back to vmalloc() on 
+> boot because fragmentation is not be an issue at boot that we should catch 
+> bugs where it would matter if it had fallen back?  If we are worrying 
+> about falling back to vmalloc before even initscripts have run I think we 
+> have bigger problems.
 
-And if folk want a cacheable mapping with explicit cache flushing, the
-cache flushing must not be defined in terms of "this is what CPU seems
-to need" but from the point of view of a CPU with infinite prefetching,
-infinite caching and infinite capacity to perform writebacks of dirty
-cache lines at unexpected moments when the memory is mapped in a
-cacheable mapping.
+The same driver can be compiled directly into the kernel or be loaded as a 
+module. If the user (or the person preparing distro kernel) compiles the 
+driver directly into the kernel, kvmalloc should be tested on that driver, 
+because a different user or distribution can compile that driver as a 
+module.
 
-(The reason for that is you're operating in a non-CPU specific space,
-so you can't make any guarantees as to how much caching or prefetching
-will occur by the CPU - different CPUs will do different amounts.)
-
-So, for example, the sequence:
-
-GPU writes to memory
-			CPU reads from cacheable memory
-
-if the memory was previously dirty (iow, CPU has written), you need to
-flush the dirty cache lines _before_ the GPU writes happen, but you
-don't know whether the CPU has speculatively prefetched, so you need
-to flush any prefetched cache lines before reading from the cacheable
-memory _after_ the GPU has finished writing.
-
-Also note that "flush" there can be "clean the cache", "clean and
-invalidate the cache" or "invalidate the cache" as appropriate - some
-CPUs are able to perform those three operations, and the appropriate
-one depends on not only where in the above sequence it's being used,
-but also on what the operations are.
-
-So, the above sequence could be:
-
-			CPU invalidates cache for memory
-				(due to possible dirty cache lines)
-GPU writes to memory
-			CPU invalidates cache for memory
-				(to get rid of any speculatively prefetched
-				 lines)
-			CPU reads from cacheable memory
-
-Yes, in the above case, _two_ cache operations are required to ensure
-correct behaviour.  However, if you know for certain that the memory was
-previously clean, then the first cache operation can be skipped.
-
-What I'm pointing out is there's much more than just "I want to flush
-the cache" here, which is currently what DRM seems to assume at the
-moment with the code in drm_cache.c.
-
-If we can agree a set of interfaces that allows _proper_ use of these
-facilities, one which can be used appropriately, then there shouldn't
-be a problem.  The DMA API does that via it's ideas about who owns a
-particular buffer (because of the above problem) and that's something
-which would need to be carried over to such a cache flushing API (it
-should be pretty obvious that having a GPU read or write memory while
-the cache for that memory is being cleaned will lead to unexpected
-results.)
-
-Also note that things get even more interesting in a SMP environment
-if cache operations aren't broadcasted across the SMP cluster (which
-means cache operations have to be IPI'd to other CPUs.)
-
-The next issue, which I've brought up before, is that exposing cache
-flushing to userspace on architectures where it isn't already exposed
-comes.  As has been shown by Google Project Zero, this risks exposing
-those architectures to Spectre and Meltdown exploits where they weren't
-at such a risk before.  (I've pretty much shown here that you _do_
-need to control which cache lines get flushed to make these exploits
-work, and flushing the cache by reading lots of data in liu of having
-the ability to explicitly flush bits of cache makes it very difficult
-to impossible for them to work.)
-
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
-According to speedtest.net: 8.21Mbps down 510kbps up
+Mikulas
