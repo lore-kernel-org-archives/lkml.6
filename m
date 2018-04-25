@@ -1,92 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754102AbeDYX3d (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 19:29:33 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:45922 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751563AbeDYX32 (ORCPT
+        id S1754061AbeDYXgL convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 19:36:11 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:7961 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752958AbeDYXgI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 19:29:28 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 068AF60227
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=clew@codeaurora.org
-Subject: Re: [PATCH] soc: qcom: smem: introduce qcom_smem_virt_to_phys()
-To: Alex Elder <elder@linaro.org>, andy.gross@linaro.org
-Cc: aneela@codeaurora.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180425151820.25595-1-elder@linaro.org>
-From: Chris Lew <clew@codeaurora.org>
-Message-ID: <4a127dda-576c-4eae-80d3-a928e578a1b9@codeaurora.org>
-Date: Wed, 25 Apr 2018 16:29:26 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 25 Apr 2018 19:36:08 -0400
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Wed, 25 Apr 2018 16:36:06 -0700
+From: Rohit Khanna <rokhanna@nvidia.com>
+To: "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Thierry Reding" <treding@nvidia.com>,
+        Alexander Van Brunt <avanbrunt@nvidia.com>, "Bo Yan" <byan@nvidia.com>,
+        Jason Sequeira <jsequeira@nvidia.com>
+Subject: Re: [PATCH] arm64: skip cpu nodes marked as disabled in DT
+Thread-Topic: [PATCH] arm64: skip cpu nodes marked as disabled in DT
+Thread-Index: AQHT3OpPpC2oxqlzZUeaW3pC5uzQlqQSIj0r
+Date: Wed, 25 Apr 2018 23:36:06 +0000
+Message-ID: <1524699380207.85374@nvidia.com>
+References: <1524697712-20208-1-git-send-email-rokhanna@nvidia.com>
+In-Reply-To: <1524697712-20208-1-git-send-email-rokhanna@nvidia.com>
+Accept-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [172.17.136.184]
 MIME-Version: 1.0
-In-Reply-To: <20180425151820.25595-1-elder@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alex,
+Adding few other folks.
 
-Minor comment.
+Thanks
+Rohit
+________________________________________
+From: Rohit Khanna
+Sent: Wednesday, April 25, 2018 4:08 PM
+To: catalin.marinas@arm.com; will.deacon@arm.com
+Cc: linux-kernel@vger.kernel.org; Rohit Khanna
+Subject: [PATCH] arm64: skip cpu nodes marked as disabled in DT
 
-On 4/25/2018 8:18 AM, Alex Elder wrote:
-> Create function qcom_smem_virt_to_phys(), which returns the physical
-> address corresponding to a given SMEM item's virtual address.  This
-> feature is required for a driver that will soon be out for review.
-> 
-> Signed-off-by: Alex Elder <elder@linaro.org>
-> ---
->   drivers/soc/qcom/smem.c       | 27 +++++++++++++++++++++++++++
->   include/linux/soc/qcom/smem.h |  2 ++
->   2 files changed, 29 insertions(+)
-> 
-> diff --git a/drivers/soc/qcom/smem.c b/drivers/soc/qcom/smem.c
-> index 7d9a43da5084..70b2ee80d6bd 100644
-> --- a/drivers/soc/qcom/smem.c
-> +++ b/drivers/soc/qcom/smem.c
-> @@ -655,6 +655,33 @@ int qcom_smem_get_free_space(unsigned host)
->   }
->   EXPORT_SYMBOL(qcom_smem_get_free_space);
->   
-> +/**
-> + * qcom_smem_virt_to_phys() - return the physical address associated
-> + * with an smem item pointer (previously returned by qcom_smem_get()
-> + * @p:	the virtual address to convert
-> + *
-> + * Returns 0 if the pointer provided is not within any smem region.
-> + */
-> +phys_addr_t qcom_smem_virt_to_phys(void *p)
-> +{
-> +	unsigned i;
-> +
+Skip the CPU nodes that are marked as disabled in DT.
 
-We have a null pointer check for __smem here since it is called by 
-external clients. This case should probably never happen though.
+Bug 1828570
 
-> +	for (i = 0; i < __smem->num_regions; i++) {
-> +		struct smem_region *region = &__smem->regions[i];
-> +
-> +		if (p < region->virt_base)
-> +			continue;
-> +		if (p < region->virt_base + region->size) {
-> +			u64 offset = p - region->virt_base;
-> +
-> +			return (phys_addr_t)region->aux_base + offset;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL(qcom_smem_virt_to_phys);
+Signed-off-by: Rohit Khanna <rokhanna@nvidia.com>
+Reviewed-on: http://git-master/r/1245333
+Reviewed-by: Alexander Van Brunt <avanbrunt@nvidia.com>
+---
+ arch/arm64/kernel/smp.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Thanks,
-Chris
+diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
+index f3e2e3aec0b0..2b4371b0948d 100644
+--- a/arch/arm64/kernel/smp.c
++++ b/arch/arm64/kernel/smp.c
+@@ -578,6 +578,10 @@ static void __init of_parse_and_init_cpus(void)
+        for_each_node_by_type(dn, "cpu") {
+                u64 hwid = of_get_cpu_mpidr(dn);
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
++               /* Check to see if the cpu is disabled */
++               if (!of_device_is_available(dn))
++                       goto next;
++
+                if (hwid == INVALID_HWID)
+                        goto next;
+
+--
+2.1.4
