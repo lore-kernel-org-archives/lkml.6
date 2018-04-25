@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751602AbeDYJdL (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 05:33:11 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:42507 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751487AbeDYJc7 (ORCPT
+        id S1752105AbeDYJeR (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 05:34:17 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:63767 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751672AbeDYJdL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 05:32:59 -0400
-X-UUID: 2365ed257fc7436e84c1133faef4fffa-20180425
+        Wed, 25 Apr 2018 05:33:11 -0400
+X-UUID: 5068cb08ac964c0391187cb62fa78904-20180425
 From: <sean.wang@mediatek.com>
 To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <sre@kernel.org>,
         <lee.jones@linaro.org>, <a.zummo@towertech.it>,
@@ -16,10 +16,10 @@ To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <sre@kernel.org>,
 CC: <devicetree@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
         <linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        "Sean Wang" <sean.wang@mediatek.com>
-Subject: [PATCH v2 14/17] rtc: mt6397: update license converting to using SPDX identifiers
-Date: Wed, 25 Apr 2018 17:32:40 +0800
-Message-ID: <b1d290e72ee060e70cac8a64ffedc16761efafe3.1524646231.git.sean.wang@mediatek.com>
+        Sean Wang <sean.wang@mediatek.com>
+Subject: [PATCH v2 17/17] MAINTAINERS: add an entry for MediaTek board level shutdown driver
+Date: Wed, 25 Apr 2018 17:32:43 +0800
+Message-ID: <a356e91c593d600418c7a37cdae58bf2d80c0a94.1524646231.git.sean.wang@mediatek.com>
 X-Mailer: git-send-email 1.7.9.5
 In-Reply-To: <cover.1524646231.git.sean.wang@mediatek.com>
 References: <cover.1524646231.git.sean.wang@mediatek.com>
@@ -32,41 +32,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sean Wang <sean.wang@mediatek.com>
 
-update the license and convert to using SPDX identifiers
+Add an entry for the MediaTek board level shutdown driver.
 
 Signed-off-by: Sean Wang <sean.wang@mediatek.com>
 ---
- drivers/rtc/rtc-mt6397.c | 20 ++++++++------------
- 1 file changed, 8 insertions(+), 12 deletions(-)
+ MAINTAINERS | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/rtc/rtc-mt6397.c b/drivers/rtc/rtc-mt6397.c
-index 3672d622..1ebeaaf 100644
---- a/drivers/rtc/rtc-mt6397.c
-+++ b/drivers/rtc/rtc-mt6397.c
-@@ -1,16 +1,12 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
--* Copyright (c) 2014-2015 MediaTek Inc.
--* Author: Tianping.Fang <tianping.fang@mediatek.com>
--*
--* This program is free software; you can redistribute it and/or modify
--* it under the terms of the GNU General Public License version 2 as
--* published by the Free Software Foundation.
--*
--* This program is distributed in the hope that it will be useful,
--* but WITHOUT ANY WARRANTY; without even the implied warranty of
--* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
--* GNU General Public License for more details.
--*/
-+ * MediaTek PMIC RTC driver
-+ *
-+ * Copyright (C) 2014-2018 MediaTek Inc.
-+ *
-+ * Author: Tianping.Fang <tianping.fang@mediatek.com>
-+ *	   Sean Wang <sean.wang@mediatek.com>
-+ */
+diff --git a/MAINTAINERS b/MAINTAINERS
+index a7ef37f..816554b 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8912,6 +8912,13 @@ S:	Maintained
+ F:	drivers/net/dsa/mt7530.*
+ F:	net/dsa/tag_mtk.c
  
- #include <linux/err.h>
- #include <linux/interrupt.h>
++MEDIATEK BOARD LEVEL SHUTDOWN DRIVERS
++M:	Sean Wang <sean.wang@mediatek.com>
++L:	linux-pm@vger.kernel.org
++S:	Maintained
++F:	Documentation/devicetree/bindings/power/reset/mt6323-poweroff.txt
++F:	drivers/power/reset/mt6323-poweroff.c
++
+ MEDIATEK JPEG DRIVER
+ M:	Rick Chang <rick.chang@mediatek.com>
+ M:	Bin Liu <bin.liu@mediatek.com>
 -- 
 2.7.4
