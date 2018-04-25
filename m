@@ -1,71 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755327AbeDYQbB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 12:31:01 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:43572 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755176AbeDYQa5 (ORCPT
+        id S1755376AbeDYQdN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 12:33:13 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:36987 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754849AbeDYQdK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 12:30:57 -0400
-X-Google-Smtp-Source: AIpwx4/cd+FtaTItsRSlCUyGpS5UBNi12qeG8qhdp7KqTxVqoDxz7wjAHmpq5uCEOmSamGTbSWco/A==
-Date: Wed, 25 Apr 2018 09:30:54 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Sibi Sankar <sibis@codeaurora.org>
-Cc: andy.gross@linaro.org, mark.rutland@arm.com, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
-        devicetree@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jassisinghbrar@gmail.com,
-        will.deacon@arm.com, catalin.marinas@arm.com
-Subject: Re: [PATCH 3/3] arm64: dts: qcom: Add APSS shared mailbox node to
- SDM845
-Message-ID: <20180425163054.GH18510@minitux>
-References: <20180425143803.11260-1-sibis@codeaurora.org>
- <20180425143803.11260-3-sibis@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180425143803.11260-3-sibis@codeaurora.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Wed, 25 Apr 2018 12:33:10 -0400
+X-Google-Smtp-Source: AB8JxZrVtP1Y8t2fDHdzsRZLI3Fpvz4AanH0a3mmc3imeEUmcZYKb/XoZSaP4/5uV80ePca2j3/SWA==
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+        Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-amlogic@lists.infradead.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/7] clk: meson: axg: add audio clock controller support
+Date: Wed, 25 Apr 2018 18:32:57 +0200
+Message-Id: <20180425163304.10852-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 25 Apr 07:38 PDT 2018, Sibi Sankar wrote:
+The purpose of this patchset is to add support for the clock controller
+dedicated to the audio subsystem found on A113 based SoCs
 
-> This patch add the node to support APSS shared
-> mailbox on SDM845
-> 
-> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+The series depends on the CLK_MUX_ROUND_CLOSEST fixes [0] and the duty
+cycle support [1] making their way into CCF.
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+First patch is a clean-up of the meson clk Kconfig.
+Then, there is 3 clock provider drivers for clocks found in the audio
+The last 3 are for the clock controller itself.
 
-Regards,
-Bjorn
+[0]: https://lkml.kernel.org/r/152389589448.51482.15489333464741262913@swboyd.mtv.corp.google.com
+[1]: https://lkml.kernel.org/r/20180420211141.28929-1-jbrunet@baylibre.com
 
-> ---
-> 
-> This patch depends on https://patchwork.kernel.org/patch/10276419/
-> 
->  arch/arm64/boot/dts/qcom/sdm845.dtsi | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> index 486ace9a9e8b..9be763da0664 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> @@ -338,5 +338,11 @@
->  				status = "disabled";
->  			};
->  		};
-> +
-> +		apss_shared: mailbox@17990000 {
-> +			compatible = "qcom,sdm845-apss-shared";
-> +			reg = <0x17990000 0x1000>;
-> +			#mbox-cells = <1>;
-> +		};
->  	};
->  };
-> -- 
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
-> 
+Jerome Brunet (7):
+  clk: meson: clean-up meson clock configuration
+  clk: meson: add clk-phase clock driver
+  clk: meson: add triple phase clock driver
+  clk: meson: add axg audio sclk divider driver
+  clk: meson: axg: export audio clock controller id bindings
+  clk: meson: axg: document bindings for the audio clock controller
+  clk: meson: axg: add the audio clock controller driver
+
+ .../bindings/clock/amlogic,axg-audio-clkc.txt      |  56 ++
+ drivers/clk/meson/Kconfig                          |  25 +-
+ drivers/clk/meson/Makefile                         |   3 +
+ drivers/clk/meson/axg-audio.c                      | 845 +++++++++++++++++++++
+ drivers/clk/meson/axg-audio.h                      | 127 ++++
+ drivers/clk/meson/clk-phase.c                      |  63 ++
+ drivers/clk/meson/clk-triphase.c                   |  68 ++
+ drivers/clk/meson/clkc-audio.h                     |  28 +
+ drivers/clk/meson/clkc.h                           |   8 +
+ drivers/clk/meson/sclk-div.c                       | 243 ++++++
+ include/dt-bindings/clock/axg-audio-clkc.h         |  94 +++
+ 11 files changed, 1553 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.txt
+ create mode 100644 drivers/clk/meson/axg-audio.c
+ create mode 100644 drivers/clk/meson/axg-audio.h
+ create mode 100644 drivers/clk/meson/clk-phase.c
+ create mode 100644 drivers/clk/meson/clk-triphase.c
+ create mode 100644 drivers/clk/meson/clkc-audio.h
+ create mode 100644 drivers/clk/meson/sclk-div.c
+ create mode 100644 include/dt-bindings/clock/axg-audio-clkc.h
+
+-- 
+2.14.3
