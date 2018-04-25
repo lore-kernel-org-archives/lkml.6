@@ -1,23 +1,23 @@
 Return-Path: <jeremy.linton@arm.com>
-X-Google-Smtp-Source: AIpwx49ftbkK/rCeggxdS+EyrAmoXe0j7MCeKmcuqQGCFm4n/KAb0oIgZ7aR6I1eBE3/DDT3Mzy5
-ARC-Seal: i=1; a=rsa-sha256; t=1524702380; cv=none;
+X-Google-Smtp-Source: AB8JxZooR4jxy1R6s1o2v9X1mdBt/lds3Y2WsIPBbHwmYcflj7qmsK6Hb+s4rJVhoj8eqYAE2g/h
+ARC-Seal: i=1; a=rsa-sha256; t=1524702376; cv=none;
         d=google.com; s=arc-20160816;
-        b=iwUM5BkhsK6qj2RZawO9X+NSHkd+tL+9GMEL/n5VaMZczfwUUvEosEcfQxeNUuqzFP
-         a6MGfOPa+BzDh//r6pDnT+xojpYDRBtIuJe0KGHUncrLthu0A4JBU3PMEKMIVGRl9EdJ
-         facE7b8Lcumqa5I/u6PB8/q/CIytZ3YI0d/lmXZ7nDsnwZPHJ/UARcyxbnMchkuEl/i6
-         lKzrxv1jOyGT0cjE1TdU00m0ceYLGNHn19MwvJAaqto/FgdRscFEE21H38RHMVGq6G7F
-         l5VvSwIcNmgKNXCCjsO61Rr8AP8uFcJ5x7Y4pcjaCHI4+eqMUiTZ6NLL5DJwtI/JKNww
-         lc5A==
+        b=atvaFUA8lPTlBik6o8KlM/HmmkC6WQwpCcFx5ZayweIG0mlihiutxiyrPFvdq4ieLt
+         RZErDgP9FoHaM4ydfCxhdrdBJLEtmj3kz2Toa1ud333IrKYSq/SmAOFf6kLV0nPsA98H
+         qowdfxdhesTl/xIMmPOSEW6YWwYd1FZkAgh4pQwic+V3wwDvtzJ+rnKE54DtAq2kLgsu
+         fW88PynNsDB6Q/kqRplTGg+LZOMQLmEdmvkH3XA+INu5I7G4QUL61cxY4J0WWcnnKLu3
+         5k3T3bjRky9UI0HEbJV8XPnxwmOK7MNPWJXlfCGCYBD6a2Xdkgm1IoP7+dRHbHnQUNXr
+         uLUg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=pw/1FJVVpEwBqN8kfTu2DwucS6iimCd0vcO/ASj9O94=;
-        b=eXRuNZDtIHGXpd+j5RD2vgk41djvgipMJ1AIe9ZSrGKO4Aw2D+4idtLi/+PwaM0/Zy
-         anJSJJ9Z/YK85KdEmlYjKMYQLyAc88yD9oQgw8A+CWloMvNo/vC15KHgk3+xsBlPrZkW
-         ZFfyRO7wkKlbsyBPH2VUWA7Fiq28CIDk9AB51KkWUtR9V4LzogEVKAaMbYEaQhCDfH0K
-         LFbbVYc4aLSfRHq8j9EGdRNRnJLOdzQPC1P9RatTdMLrQZfKcDDoTAIZLdQuoJdg0QCc
-         ZzeA8ZxlwevJ1QNFPxoZQ1tNgCvFgo5QNU0LiXDhYOhv+ZukEhvyLBgN0iqPdP3xEfH8
-         h2Bg==
+        bh=iPZKjSeNcnhcG2wFRWM3tqfYzqKCEuP7rtJqHUpKyCs=;
+        b=ist88FgR+TWCfs7Zw0tSvNRzd69giccA2QePoEB/izcmBvG/U4/KMJPlTb2mOUpcmP
+         miHS8vRn5gysSu/3ehoFICUxSkxUsYoIdVZmZ0OPf7rFQEfU2juVGh4gs+fgDxTr46xP
+         mKlVsumKlcYVWiK/sf1g3xc2eHcVdHRh+8ta85QgBEI7pFVXy8FhBbvrykKk2gdg+eCr
+         rNOeTKBc6qNW03hGzGdPNBZ91PhUiqTlYB6CJcPfscgRiU6q5CNOJTQ2NqYQeZ/dMG/U
+         IteryohW730lT+P56xFe3VkThLdzSTsjYkDFlVhk/YPNERJKbc86TSRzKL+z1t76SQCP
+         6GRA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of jeremy.linton@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=jeremy.linton@arm.com
 Authentication-Results: mx.google.com;
@@ -49,76 +49,66 @@ Cc: Sudeep.Holla@arm.com,
 	timur@qti.qualcomm.com,
 	ard.biesheuvel@linaro.org,
 	Jeremy Linton <jeremy.linton@arm.com>
-Subject: [PATCH v8 08/13] arm64: Add support for ACPI based firmware tables
-Date: Wed, 25 Apr 2018 18:31:16 -0500
-Message-Id: <20180425233121.13270-9-jeremy.linton@arm.com>
+Subject: [PATCH v8 06/13] ACPI: Enable PPTT support on ARM64
+Date: Wed, 25 Apr 2018 18:31:14 -0500
+Message-Id: <20180425233121.13270-7-jeremy.linton@arm.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20180425233121.13270-1-jeremy.linton@arm.com>
 References: <20180425233121.13270-1-jeremy.linton@arm.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598766323366552984?=
-X-GMAIL-MSGID: =?utf-8?q?1598766323366552984?=
+X-GMAIL-THRID: =?utf-8?q?1598766319386198121?=
+X-GMAIL-MSGID: =?utf-8?q?1598766319386198121?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The /sys cache entries should support ACPI/PPTT generated cache
-topology information. Lets detect ACPI systems and call
-an arch specific cache_setup_acpi() routine to update the hardware
-probed cache topology.
-
-For arm64, if ACPI is enabled, determine the max number of cache
-levels and populate them using the PPTT table if one is available.
+Now that we have a PPTT parser, in preparation for its use
+on arm64, lets build it.
 
 Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
 Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
 ---
- arch/arm64/kernel/cacheinfo.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ arch/arm64/Kconfig    | 1 +
+ drivers/acpi/Kconfig  | 3 +++
+ drivers/acpi/Makefile | 1 +
+ 3 files changed, 5 insertions(+)
 
-diff --git a/arch/arm64/kernel/cacheinfo.c b/arch/arm64/kernel/cacheinfo.c
-index 380f2e2fbed5..0bf0a835122f 100644
---- a/arch/arm64/kernel/cacheinfo.c
-+++ b/arch/arm64/kernel/cacheinfo.c
-@@ -17,6 +17,7 @@
-  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index eb2cf4938f6d..cff33d9eff0c 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -7,6 +7,7 @@ config ARM64
+ 	select ACPI_REDUCED_HARDWARE_ONLY if ACPI
+ 	select ACPI_MCFG if ACPI
+ 	select ACPI_SPCR_TABLE if ACPI
++	select ACPI_PPTT if ACPI
+ 	select ARCH_CLOCKSOURCE_DATA
+ 	select ARCH_HAS_DEBUG_VIRTUAL
+ 	select ARCH_HAS_DEVMEM_IS_ALLOWED
+diff --git a/drivers/acpi/Kconfig b/drivers/acpi/Kconfig
+index 516d7b36d6fb..b533eeb6139d 100644
+--- a/drivers/acpi/Kconfig
++++ b/drivers/acpi/Kconfig
+@@ -547,6 +547,9 @@ config ACPI_CONFIGFS
  
-+#include <linux/acpi.h>
- #include <linux/cacheinfo.h>
- #include <linux/of.h>
- 
-@@ -46,7 +47,7 @@ static void ci_leaf_init(struct cacheinfo *this_leaf,
- 
- static int __init_cache_level(unsigned int cpu)
- {
--	unsigned int ctype, level, leaves, of_level;
-+	unsigned int ctype, level, leaves, fw_level;
- 	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
- 
- 	for (level = 1, leaves = 0; level <= MAX_CACHE_LEVEL; level++) {
-@@ -59,15 +60,19 @@ static int __init_cache_level(unsigned int cpu)
- 		leaves += (ctype == CACHE_TYPE_SEPARATE) ? 2 : 1;
- 	}
- 
--	of_level = of_find_last_cache_level(cpu);
--	if (level < of_level) {
-+	if (acpi_disabled)
-+		fw_level = of_find_last_cache_level(cpu);
-+	else
-+		fw_level = acpi_find_last_cache_level(cpu);
+ if ARM64
+ source "drivers/acpi/arm64/Kconfig"
 +
-+	if (level < fw_level) {
- 		/*
- 		 * some external caches not specified in CLIDR_EL1
- 		 * the information may be available in the device tree
- 		 * only unified external caches are considered here
- 		 */
--		leaves += (of_level - level);
--		level = of_level;
-+		leaves += (fw_level - level);
-+		level = fw_level;
- 	}
++config ACPI_PPTT
++	bool
+ endif
  
- 	this_cpu_ci->num_levels = level;
+ config TPS68470_PMIC_OPREGION
+diff --git a/drivers/acpi/Makefile b/drivers/acpi/Makefile
+index 48e202752754..6d59aa109a91 100644
+--- a/drivers/acpi/Makefile
++++ b/drivers/acpi/Makefile
+@@ -88,6 +88,7 @@ obj-$(CONFIG_ACPI_BGRT)		+= bgrt.o
+ obj-$(CONFIG_ACPI_CPPC_LIB)	+= cppc_acpi.o
+ obj-$(CONFIG_ACPI_SPCR_TABLE)	+= spcr.o
+ obj-$(CONFIG_ACPI_DEBUGGER_USER) += acpi_dbg.o
++obj-$(CONFIG_ACPI_PPTT) 	+= pptt.o
+ 
+ # processor has its own "processor." module_param namespace
+ processor-y			:= processor_driver.o
 -- 
 2.13.6
