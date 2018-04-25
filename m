@@ -1,78 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754774AbeDYOrc (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 10:47:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35388 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754203AbeDYOra (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 10:47:30 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46314217D9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh+dt@kernel.org
-X-Google-Smtp-Source: AB8JxZpZof4hY8WpFccYDrFKD/pBz537bub1hmRpXEhWh5r/m77O0L3ZzE3ZWa0xfbaHTu3rZnSb5u31sZjx27b/uCY=
+        id S1754783AbeDYOru (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 10:47:50 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:54015 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754203AbeDYOrs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 10:47:48 -0400
+X-Google-Smtp-Source: AB8JxZqoWjXxLYfP6SRIjwIbOiV5D06NdAuUkbhDsoeVimgvZakpq7fjL+PteNaw6X67GyXUJq1LVg==
+Subject: Re: [PATCH] remoteproc: rename "crashed" parameter
+To: Arnaud Pouliquen <arnaud.pouliquen@st.com>, ohad@wizery.com,
+        bjorn.andersson@linaro.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180425133626.11781-1-elder@linaro.org>
+ <93951de4-3758-0293-eeb1-bba9dd561c4b@st.com>
+From: Alex Elder <elder@linaro.org>
+Message-ID: <31b8864a-d94e-64cf-40dd-d03d40963513@linaro.org>
+Date: Wed, 25 Apr 2018 09:47:46 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180425125449.19755-12-kishon@ti.com>
-References: <20180425125449.19755-1-kishon@ti.com> <20180425125449.19755-12-kishon@ti.com>
-From: Rob Herring <robh+dt@kernel.org>
-Date: Wed, 25 Apr 2018 09:47:08 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqKBXbcQxbN7z9j_DKgiaQg4buUa+08fg9zPELv-ucpRZA@mail.gmail.com>
-Message-ID: <CAL_JsqKBXbcQxbN7z9j_DKgiaQg4buUa+08fg9zPELv-ucpRZA@mail.gmail.com>
-Subject: Re: [PATCH v3 11/15] ARM: dts: dra7-evm: Add wilink8 wlan support
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>, Jonathan Corbet <corbet@lwn.net>,
-        Mark Rutland <mark.rutland@arm.com>, linux-doc@vger.kernel.org,
-        linux-mmc <linux-mmc@vger.kernel.org>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-omap <linux-omap@vger.kernel.org>,
-        Hari Nagalla <hnagalla@ti.com>, Ido Yariv <ido@wizery.com>,
-        Eyal Reizer <eyalr@ti.com>, Sekhar Nori <nsekhar@ti.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <93951de4-3758-0293-eeb1-bba9dd561c4b@st.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 25, 2018 at 7:54 AM, Kishon Vijay Abraham I <kishon@ti.com> wrote:
-> From: Hari Nagalla <hnagalla@ti.com>
->
-> The wilink module is a combo wireless connectivity sdio
-> card based on Texas Instrument's wl18xx solution. It is a
-> 4-wire, 1.8V, embedded sdio wlan device with an external
-> irq line and is power-controlled by a gpio-based fixed
-> regulator.
->
-> Add pinmux configuration and IODelay values for MMC4.
-> On dra7-evm, MMC4 is used for connecting to wilink module.
->
-> IODelay data credits to :  Vishal Mahaveer <vishalm@ti.com>
-> and Sekhar Nori <nsekhar@ti.com>
->
-> Signed-off-by: Ido Yariv <ido@wizery.com>
-> Signed-off-by: Eyal Reizer <eyalr@ti.com>
-> Signed-off-by: Hari Nagalla <hnagalla@ti.com>
-> Signed-off-by: Sekhar Nori <nsekhar@ti.com>
-> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-> ---
->  arch/arm/boot/dts/dra7-evm-common.dtsi | 15 +++++++++++++++
->  arch/arm/boot/dts/dra7-evm.dts         | 25 +++++++++++++++++++++++++
->  2 files changed, 40 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/dra7-evm-common.dtsi b/arch/arm/boot/dts/dra7-evm-common.dtsi
-> index 05a7b1a01bc3..3590c40fc112 100644
-> --- a/arch/arm/boot/dts/dra7-evm-common.dtsi
-> +++ b/arch/arm/boot/dts/dra7-evm-common.dtsi
-> @@ -260,3 +260,18 @@
->  &pcie1_rc {
->         status = "okay";
->  };
-> +
-> +&mmc4 {
-> +       bus-width = <4>;
-> +       cap-power-off-card;
-> +       keep-power-in-suspend;
-> +       non-removable;
-> +       #address-cells = <1>;
-> +       #size-cells = <0>;
-> +       wlcore: wlcore@2 {
+On 04/25/2018 08:49 AM, Arnaud Pouliquen wrote:
+> Hello Alex,
+> 
+> I have already proposed it few weeks ago.
+> 
+> https://lkml.org/lkml/2018/4/10/192
+> 
+> could you ack it, if you test it on your side?
 
-wifi@2
+I am unable to test it.  I found the bug by inspection (perhaps as
+you did).  However I'll give you:
+
+Acked-by: Alex Elder <elder@linaro.org>
+
+or 
+
+Reviewed-by: Alex Elder <elder@linaro.org>
+
+					-Alex
+
+> Thanks,
+> Arnaud
+> 
+> On 04/25/2018 03:36 PM, Alex Elder wrote:
+>> The last commit to "remoteproc_core.c":
+>>   880f5b388252 remoteproc: eAPass type of shutdown to subdev remove
+>> added a Boolean flag to the subdevice remove method, to distinguish
+>> between graceful shutdown and a crash.  Unfortunately, the names of
+>> the parameters were inconsistent, and in fact have opposite meanings.
+>>
+>> In most cases, the parameter is named "crashed", but rproc_add_subdev()
+>> names the parameter "graceful" in the prototype for the remove method.
+>>
+>> The remove method is ultimately called (and supplied with the Boolean
+>> flag value) by rproc_remove_subdevices().  That is only called by
+>> rproc_stop(), and in the two spots where that is used, "graceful" is
+>> the right name for the flag:
+>>   rproc_shutdown() passes true, indicating a graceful shutdown
+>>   rproc_trigger_recovery() passes false, indicating a crash
+>>
+>> The fix is to make the parameter name consistent, and making the
+>> name and sense of the parameter to always be "crashed" produces the
+>> smallest change.  So that's what this patch does.
+>>
+>> To verify this change, rproc_add_subdev() is called in five spots:
+>>   - qcom_add_glink_subdev() passes glink_subdev_remove()
+>>   - qcom_add_smd_subdev() passes smd_subdev_remove()
+>>   - qcom_add_ssr_subdev() passes ssr_notify_stop()
+>>   - qcom_add_sysmon_subdev() passes sysmon_stop()
+>>   - rproc_handle_vdev() passes rproc_vdev_do_remove()
+>>
+>> Of these, only sysmon_stop() uses its "crashed" parameter.  And it
+>> clearly assumes that "crashed" is the intended meaning:
+>>
+>>         /* Don't request graceful shutdown if we've crashed */
+>>         if (crashed)
+>>                 return;
+>>
+>> So this function (added after the "crashed" parameter was added)
+>> exhibited buggy behavior, which is now fixed by this patch.
+>>
+>> Signed-off-by: Alex Elder <elder@linaro.org>
+>> ---
+>>  drivers/remoteproc/remoteproc_core.c | 4 ++--
+>>  include/linux/remoteproc.h           | 2 +-
+>>  2 files changed, 3 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+>> index 6d9c5832ce47..a9609d971f7f 100644
+>> --- a/drivers/remoteproc/remoteproc_core.c
+>> +++ b/drivers/remoteproc/remoteproc_core.c
+>> @@ -1163,7 +1163,7 @@ int rproc_trigger_recovery(struct rproc *rproc)
+>>  	if (ret)
+>>  		return ret;
+>>  
+>> -	ret = rproc_stop(rproc, false);
+>> +	ret = rproc_stop(rproc, true);
+>>  	if (ret)
+>>  		goto unlock_mutex;
+>>  
+>> @@ -1316,7 +1316,7 @@ void rproc_shutdown(struct rproc *rproc)
+>>  	if (!atomic_dec_and_test(&rproc->power))
+>>  		goto out;
+>>  
+>> -	ret = rproc_stop(rproc, true);
+>> +	ret = rproc_stop(rproc, false);
+>>  	if (ret) {
+>>  		atomic_inc(&rproc->power);
+>>  		goto out;
+>> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+>> index d09a9c7af109..dfdaede9139e 100644
+>> --- a/include/linux/remoteproc.h
+>> +++ b/include/linux/remoteproc.h
+>> @@ -569,7 +569,7 @@ static inline struct rproc *vdev_to_rproc(struct virtio_device *vdev)
+>>  void rproc_add_subdev(struct rproc *rproc,
+>>  		      struct rproc_subdev *subdev,
+>>  		      int (*probe)(struct rproc_subdev *subdev),
+>> -		      void (*remove)(struct rproc_subdev *subdev, bool graceful));
+>> +		      void (*remove)(struct rproc_subdev *subdev, bool crashed));
+>>  
+>>  void rproc_remove_subdev(struct rproc *rproc, struct rproc_subdev *subdev);
+>>  
+>>
