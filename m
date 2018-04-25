@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752391AbeDYLl5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 07:41:57 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:59646 "EHLO mail.bootlin.com"
+        id S1752623AbeDYLna (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 07:43:30 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:59724 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751523AbeDYLlx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 07:41:53 -0400
+        id S1751525AbeDYLn0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 07:43:26 -0400
 From: Gregory CLEMENT <gregory.clement@bootlin.com>
 To: Maxime Chevallier <maxime.chevallier@bootlin.com>
 Cc: davem@davemloft.net, netdev@vger.kernel.org,
@@ -15,13 +15,13 @@ Cc: davem@davemloft.net, netdev@vger.kernel.org,
         nadavh@marvell.com, stefanc@marvell.com, ymarkman@marvell.com,
         mw@semihalf.com, linux@armlinux.org.uk,
         linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH net 3/3] ARM64: dts: marvell: armada-cp110: Add clocks for the xmdio node
+Subject: Re: [PATCH net 2/3] net: mvpp2: Fix clock resource by adding missing mg_core_clk
 References: <20180425110731.20153-1-maxime.chevallier@bootlin.com>
-        <20180425110731.20153-4-maxime.chevallier@bootlin.com>
-Date: Wed, 25 Apr 2018 13:41:40 +0200
-In-Reply-To: <20180425110731.20153-4-maxime.chevallier@bootlin.com> (Maxime
-        Chevallier's message of "Wed, 25 Apr 2018 13:07:31 +0200")
-Message-ID: <87muxrecnf.fsf@bootlin.com>
+        <20180425110731.20153-3-maxime.chevallier@bootlin.com>
+Date: Wed, 25 Apr 2018 13:43:14 +0200
+In-Reply-To: <20180425110731.20153-3-maxime.chevallier@bootlin.com> (Maxime
+        Chevallier's message of "Wed, 25 Apr 2018 13:07:30 +0200")
+Message-ID: <87in8feckt.fsf@bootlin.com>
 User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -33,44 +33,137 @@ Hi Maxime,
  
  On mer., avril 25 2018, Maxime Chevallier <maxime.chevallier@bootlin.com> wrote:
 
-> The Marvell XSMI controller needs 3 clocks to operate correctly :
->  - The MG clock (clk 5)
->  - The MG Core clock (clk 6)
->  - The GOP clock (clk 18)
+> Marvell's PPv2.2 IP needs an additional clock named "MG Core clock".
+> This is required on Armada 7K and 8K.
 >
->  This commit adds them, to avoid system hangs when using these
->  interfaces.
+> This commit adds the required clock, updates the devicetree and its
+> documentation accordingly, also fixing a small typo in the
+> marvell-mpp2.txt examples.
 >
 > Fixes: c7e92def1ef4 ("clk: mvebu: cp110: Fix clock tree representation")
 > Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+> ---
+>  .../devicetree/bindings/net/marvell-pp2.txt          |  9 +++++----
+>  arch/arm64/boot/dts/marvell/armada-cp110.dtsi        |  5 +++--
 
-This patch should not have been sent with the net prefix and should not
-be merge through the net subsystem.
-
-I will take care of it to avoid conflict in the devei tree file during
-the merge windows.
+Could you remove the dtsi part and submit it as a separate patch. Then I
+will take care of it.
 
 Thanks,
 
 Gregory
 
-> ---
->  arch/arm64/boot/dts/marvell/armada-cp110.dtsi | 2 ++
->  1 file changed, 2 insertions(+)
+
+>  drivers/net/ethernet/marvell/mvpp2.c                 | 20 ++++++++++++++++++--
+>  3 files changed, 26 insertions(+), 8 deletions(-)
 >
+> diff --git a/Documentation/devicetree/bindings/net/marvell-pp2.txt b/Documentation/devicetree/bindings/net/marvell-pp2.txt
+> index 1814fa13f6ab..fc019df0d863 100644
+> --- a/Documentation/devicetree/bindings/net/marvell-pp2.txt
+> +++ b/Documentation/devicetree/bindings/net/marvell-pp2.txt
+> @@ -21,9 +21,10 @@ Required properties:
+>  	- main controller clock (for both armada-375-pp2 and armada-7k-pp2)
+>  	- GOP clock (for both armada-375-pp2 and armada-7k-pp2)
+>  	- MG clock (only for armada-7k-pp2)
+> +	- MG Core clock (only for armada-7k-pp2)
+>  	- AXI clock (only for armada-7k-pp2)
+> -- clock-names: names of used clocks, must be "pp_clk", "gop_clk", "mg_clk"
+> -  and "axi_clk" (the 2 latter only for armada-7k-pp2).
+> +- clock-names: names of used clocks, must be "pp_clk", "gop_clk", "mg_clk",
+> +  "mg_core_clk" and "axi_clk" (the 3 latter only for armada-7k-pp2).
+>  
+>  The ethernet ports are represented by subnodes. At least one port is
+>  required.
+> @@ -80,8 +81,8 @@ cpm_ethernet: ethernet@0 {
+>  	compatible = "marvell,armada-7k-pp22";
+>  	reg = <0x0 0x100000>, <0x129000 0xb000>;
+>  	clocks = <&cpm_syscon0 1 3>, <&cpm_syscon0 1 9>,
+> -		 <&cpm_syscon0 1 5>, <&cpm_syscon0 1 18>;
+> -	clock-names = "pp_clk", "gop_clk", "gp_clk", "axi_clk";
+> +		 <&cpm_syscon0 1 5>, <&cpm_syscon0 1 6>, <&cpm_syscon0 1 18>;
+> +	clock-names = "pp_clk", "gop_clk", "mg_clk", "mg_core_clk", "axi_clk";
+>  
+>  	eth0: eth0 {
+>  		interrupts = <ICU_GRP_NSR 39 IRQ_TYPE_LEVEL_HIGH>,
 > diff --git a/arch/arm64/boot/dts/marvell/armada-cp110.dtsi b/arch/arm64/boot/dts/marvell/armada-cp110.dtsi
-> index 6c137ac656e9..ed2f1237ea1e 100644
+> index 48cad7919efa..6c137ac656e9 100644
 > --- a/arch/arm64/boot/dts/marvell/armada-cp110.dtsi
 > +++ b/arch/arm64/boot/dts/marvell/armada-cp110.dtsi
-> @@ -142,6 +142,8 @@
->  			#size-cells = <0>;
->  			compatible = "marvell,xmdio";
->  			reg = <0x12a600 0x10>;
-> +			clocks = <&CP110_LABEL(clk) 1 5>,
-> +				 <&CP110_LABEL(clk) 1 6>, <&CP110_LABEL(clk) 1 18>;
+> @@ -38,9 +38,10 @@
+>  			compatible = "marvell,armada-7k-pp22";
+>  			reg = <0x0 0x100000>, <0x129000 0xb000>;
+>  			clocks = <&CP110_LABEL(clk) 1 3>, <&CP110_LABEL(clk) 1 9>,
+> -				 <&CP110_LABEL(clk) 1 5>, <&CP110_LABEL(clk) 1 18>;
+> +				 <&CP110_LABEL(clk) 1 5>, <&CP110_LABEL(clk) 1 6>,
+> +				 <&CP110_LABEL(clk) 1 18>;
+>  			clock-names = "pp_clk", "gop_clk",
+> -				      "mg_clk", "axi_clk";
+> +				      "mg_clk", "mg_core_clk", "axi_clk";
+>  			marvell,system-controller = <&CP110_LABEL(syscon0)>;
 >  			status = "disabled";
->  		};
+>  			dma-coherent;
+> diff --git a/drivers/net/ethernet/marvell/mvpp2.c b/drivers/net/ethernet/marvell/mvpp2.c
+> index 0c2f04813d42..6a17b67a0d61 100644
+> --- a/drivers/net/ethernet/marvell/mvpp2.c
+> +++ b/drivers/net/ethernet/marvell/mvpp2.c
+> @@ -942,6 +942,7 @@ struct mvpp2 {
+>  	struct clk *pp_clk;
+>  	struct clk *gop_clk;
+>  	struct clk *mg_clk;
+> +	struct clk *mg_core_clk;
+>  	struct clk *axi_clk;
 >  
+>  	/* List of pointers to port structures */
+> @@ -8768,18 +8769,28 @@ static int mvpp2_probe(struct platform_device *pdev)
+>  			err = clk_prepare_enable(priv->mg_clk);
+>  			if (err < 0)
+>  				goto err_gop_clk;
+> +
+> +			priv->mg_core_clk = devm_clk_get(&pdev->dev, "mg_core_clk");
+> +			if (IS_ERR(priv->mg_core_clk)) {
+> +				err = PTR_ERR(priv->mg_core_clk);
+> +				goto err_mg_clk;
+> +			}
+> +
+> +			err = clk_prepare_enable(priv->mg_core_clk);
+> +			if (err < 0)
+> +				goto err_mg_clk;
+>  		}
+>  
+>  		priv->axi_clk = devm_clk_get(&pdev->dev, "axi_clk");
+>  		if (IS_ERR(priv->axi_clk)) {
+>  			err = PTR_ERR(priv->axi_clk);
+>  			if (err == -EPROBE_DEFER)
+> -				goto err_mg_clk;
+> +				goto err_mg_core_clk;
+>  			priv->axi_clk = NULL;
+>  		} else {
+>  			err = clk_prepare_enable(priv->axi_clk);
+>  			if (err < 0)
+> -				goto err_mg_clk;
+> +				goto err_mg_core_clk;
+>  		}
+>  
+>  		/* Get system's tclk rate */
+> @@ -8851,6 +8862,10 @@ static int mvpp2_probe(struct platform_device *pdev)
+>  	}
+>  err_axi_clk:
+>  	clk_disable_unprepare(priv->axi_clk);
+> +
+> +err_mg_core_clk:
+> +	if (priv->hw_version == MVPP22)
+> +		clk_disable_unprepare(priv->mg_core_clk);
+>  err_mg_clk:
+>  	if (priv->hw_version == MVPP22)
+>  		clk_disable_unprepare(priv->mg_clk);
+> @@ -8898,6 +8913,7 @@ static int mvpp2_remove(struct platform_device *pdev)
+>  		return 0;
+>  
+>  	clk_disable_unprepare(priv->axi_clk);
+> +	clk_disable_unprepare(priv->mg_core_clk);
+>  	clk_disable_unprepare(priv->mg_clk);
+>  	clk_disable_unprepare(priv->pp_clk);
+>  	clk_disable_unprepare(priv->gop_clk);
 > -- 
 > 2.11.0
 >
