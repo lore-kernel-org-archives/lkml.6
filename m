@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx497I5g8hY2e2IqZCqYLvhNlqFCUYVSSNHNurOzmngHGTX+7FOeXl9Sti0f/BCEexpToZXLh
-ARC-Seal: i=1; a=rsa-sha256; t=1524652679; cv=none;
+X-Google-Smtp-Source: AIpwx49IG9WRxgWIQ/7lPFd4lqkL+7fBSJsJlGKJ9AT/eEUQYkNuuuv+oL8cpjzEYTy2aSIN6uqt
+ARC-Seal: i=1; a=rsa-sha256; t=1524652676; cv=none;
         d=google.com; s=arc-20160816;
-        b=bcqhvCac9bx+67Q/ujTFqltmA6YNLsFmTvkos4X1l5YOWy6KDFsPWWQV4FadMS2f02
-         sgXC6NF49cKpg8zwm1QeHwSIYV+MaJ8GhacAKwRs9qPnlbCtWqnGScDDzdsaIbHIE+iH
-         kjBXBj0Z2MEk3dBu6KB/Ll85PVWOuHLfTcKzsWY4pO1V0U6sm5nSWGYwKcQ7d8fKeztR
-         Tz/Fa1ly4cgr6dRDe6OXuWainEDDeW/cu8xBPcMF5q2E0B0H1/OedU0+jbtSdr0K6aha
-         bow0EqT2SAvh6LsrvsevV4nKXAQDu4VGLxYdr/z8ZiqBNX8B0a7Dz2HVOsgpuHwwzo4q
-         Z51g==
+        b=xSVnSnytSTLJFY44DTQyoURbqIsbgJLiF0zrrUKkcpp4+5CFlUS4vJGCAZxVda75p0
+         o5lKSPb+LQR1MnYQ29U/BiLxxUTpjUIeWb76lDkfkT5jIc+3J+66WzvdvZdkLqGtQic7
+         U0uEb1RR6F1SmdQSSRLBsXq8uSK7sXXVhnHAWlfLgoXOu7LrOMYuLG5P96EFFhVSfzbt
+         t+nmaA+Z8fXdMKBNNpQi2k/qqgROBpce3mugtdY+R5IVNrInyYIVKQk5OmnwvVFkYYDW
+         BdaY8vqpatPWsVAlisoKCD4bPCqQRmIf8wS23H/kIiX519dgBK7lBBVKXxWsR7oN9eTW
+         etfg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=V5v2JSDv4r0vxUhKpKqq6D1eEIeMboTNrFs3PoXVDQY=;
-        b=T4A2RHE/D/9Rv9gnOevJ8APpUCVAl8oKPicJZH2gs2zxR5boOUuoho199zg6SntJw6
-         JPH6YHnEtekULONqXJOTcc6Y9wb9B5TkdciST0b4S5ubbtPV3EslKsI2/l6+6uKs+Hn6
-         Riwzw9DoygdalocQK91jLqv03zlOiV68mB2FfIgpGwAR/eH0M2I6/Qt//kI/OO3UkHV2
-         AA65AvP8v3IE+DTvi7g3vgL9eXq9hph6TGdThpWBlZu8029n+x2hzO+OV6W8pNd10MWE
-         RWw2gRQJzPQ+hp93ZsFZBR3V6XkutkUjv0tWGyBbL0lSZv23sWIUKuMi4c6xIWJTDmtg
-         ea9w==
+        bh=NPnhIHT4yXgqCOr4H2/zUqleeYAINfJ6H9ryAnk0+L4=;
+        b=Krdwh2DcMm9DggHRY0/I0wW+iUmAE6fFtlo/QX9lQRJDFMliK+YjRas9gOHVi3uDS3
+         oO5RJ2VUpPcNx39DF2v3X4vvSiJKdd2b62GDNwco80fDDSziSgrB4dzPtGGsxWYezDkL
+         sdvqtmzayLOKEQqgz98o5rXeMwUegQYBP/gdRc5bq3e+7qE3O3MPbfuh7L3YZma98JTr
+         44K+wC1RkecSma0PQpvFHCC7n3Xdk8YYklK6cW6lWJwfQcytXxjGmuuHSHvr1KDtoLyB
+         JqEMHl+T8kiZ+iz3Sd31LmccrZVZgFoZOt/cpxM2kkL6pwtjHN8hX1NpzuSNYnVFgXE7
+         /FOg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Daniel J Blueman <daniel@quora.org>,
-	Eric Anholt <eric@anholt.net>
-Subject: [PATCH 4.14 006/183] drm/vc4: Fix memory leak during BO teardown
-Date: Wed, 25 Apr 2018 12:33:46 +0200
-Message-Id: <20180425103242.861086942@linuxfoundation.org>
+	Xiaoming Gao <newtongao@tencent.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	peterz@infradead.org,
+	hpa@zytor.com
+Subject: [PATCH 4.14 005/183] x86/tsc: Prevent 32bit truncation in calc_hpet_ref()
+Date: Wed, 25 Apr 2018 12:33:45 +0200
+Message-Id: <20180425103242.822858601@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
@@ -40,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598714020312773239?=
-X-GMAIL-MSGID: =?utf-8?q?1598714207716893555?=
+X-GMAIL-THRID: =?utf-8?q?1598714017581239687?=
+X-GMAIL-MSGID: =?utf-8?q?1598714205078002778?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,52 +51,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Daniel J Blueman <daniel@quora.org>
+From: Xiaoming Gao <gxm.linux.kernel@gmail.com>
 
-commit c0db1b677e1d584fab5d7ac76a32e1c0157542e0 upstream.
+commit d3878e164dcd3925a237a20e879432400e369172 upstream.
 
-During BO teardown, an indirect list 'uniform_addr_offsets' wasn't being
-freed leading to leaking many 128B allocations. Fix the memory leak by
-releasing it at teardown time.
+The TSC calibration code uses HPET as reference. The conversion normalizes
+the delta of two HPET timestamps:
 
+    hpetref = ((tshpet1 - tshpet2) * HPET_PERIOD) / 1e6
+
+and then divides the normalized delta of the corresponding TSC timestamps
+by the result to calulate the TSC frequency.
+
+    tscfreq = ((tstsc1 - tstsc2 ) * 1e6) / hpetref
+
+This uses do_div() which takes an u32 as the divisor, which worked so far
+because the HPET frequency was low enough that 'hpetref' never exceeded
+32bit.
+
+On Skylake machines the HPET frequency increased so 'hpetref' can exceed
+32bit. do_div() truncates the divisor, which causes the calibration to
+fail.
+
+Use div64_u64() to avoid the problem.
+
+[ tglx: Fixes whitespace mangled patch and rewrote changelog ]
+
+Signed-off-by: Xiaoming Gao <newtongao@tencent.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Cc: stable@vger.kernel.org
-Fixes: 6d45c81d229d ("drm/vc4: Add support for branching in shader validation.")
-Signed-off-by: Daniel J Blueman <daniel@quora.org>
-Signed-off-by: Eric Anholt <eric@anholt.net>
-Reviewed-by: Eric Anholt <eric@anholt.net>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180402071035.25356-1-daniel@quora.org
+Cc: peterz@infradead.org
+Cc: hpa@zytor.com
+Link: https://lkml.kernel.org/r/38894564-4fc9-b8ec-353f-de702839e44e@gmail.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/vc4/vc4_bo.c               |    2 ++
- drivers/gpu/drm/vc4/vc4_validate_shaders.c |    1 +
- 2 files changed, 3 insertions(+)
+ arch/x86/kernel/tsc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/vc4/vc4_bo.c
-+++ b/drivers/gpu/drm/vc4/vc4_bo.c
-@@ -173,6 +173,7 @@ static void vc4_bo_destroy(struct vc4_bo
- 	vc4_bo_set_label(obj, -1);
+--- a/arch/x86/kernel/tsc.c
++++ b/arch/x86/kernel/tsc.c
+@@ -316,7 +316,7 @@ static unsigned long calc_hpet_ref(u64 d
+ 	hpet2 -= hpet1;
+ 	tmp = ((u64)hpet2 * hpet_readl(HPET_PERIOD));
+ 	do_div(tmp, 1000000);
+-	do_div(deltatsc, tmp);
++	deltatsc = div64_u64(deltatsc, tmp);
  
- 	if (bo->validated_shader) {
-+		kfree(bo->validated_shader->uniform_addr_offsets);
- 		kfree(bo->validated_shader->texture_samples);
- 		kfree(bo->validated_shader);
- 		bo->validated_shader = NULL;
-@@ -432,6 +433,7 @@ void vc4_free_object(struct drm_gem_obje
- 	}
- 
- 	if (bo->validated_shader) {
-+		kfree(bo->validated_shader->uniform_addr_offsets);
- 		kfree(bo->validated_shader->texture_samples);
- 		kfree(bo->validated_shader);
- 		bo->validated_shader = NULL;
---- a/drivers/gpu/drm/vc4/vc4_validate_shaders.c
-+++ b/drivers/gpu/drm/vc4/vc4_validate_shaders.c
-@@ -942,6 +942,7 @@ vc4_validate_shader(struct drm_gem_cma_o
- fail:
- 	kfree(validation_state.branch_targets);
- 	if (validated_shader) {
-+		kfree(validated_shader->uniform_addr_offsets);
- 		kfree(validated_shader->texture_samples);
- 		kfree(validated_shader);
- 	}
+ 	return (unsigned long) deltatsc;
+ }
