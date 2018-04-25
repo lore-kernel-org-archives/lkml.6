@@ -1,203 +1,143 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751540AbeDYJrI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 05:47:08 -0400
-Received: from mail-wr0-f173.google.com ([209.85.128.173]:37830 "EHLO
-        mail-wr0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751212AbeDYJrF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 05:47:05 -0400
-X-Google-Smtp-Source: AIpwx49gqLtNl64Gc2duA1b9DRvWlPBXnoB93Ce4xhU1+A0ZddDn84RDdvWSJTGq8kXw4e8oUJGnqA==
-From: Holger Schurig <holgerschurig@gmail.com>
-To: Alexander Duyck <alexander.duyck@gmail.com>
-Cc: Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        intel-wired-lan <intel-wired-lan@lists.osuosl.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [BUG] igb: reconnecting of cable not always detected
-In-Reply-To: <CAKgT0Udj+d7yzPN4Jph8uk7Z6fz0oyWrO+6W6CfygSYTkGJ0Xw@mail.gmail.com>
-References: <87h8o0ocul.fsf@gmail.com> <CAKgT0Udj+d7yzPN4Jph8uk7Z6fz0oyWrO+6W6CfygSYTkGJ0Xw@mail.gmail.com>
-Date: Wed, 25 Apr 2018 11:47:02 +0200
-Message-ID: <877eovobxl.fsf@gmail.com>
+        id S1751575AbeDYJtF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 05:49:05 -0400
+Received: from mout.gmx.net ([212.227.15.15]:46815 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751328AbeDYJtB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 05:49:01 -0400
+To: kvm@vger.kernel.org, qemu-devel@nongnu.org
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+From: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Subject: ridiculously slow VM memory performance on Ryzen CPU
+Openpgp: preference=signencrypt
+Autocrypt: addr=quwenruo.btrfs@gmx.com; prefer-encrypt=mutual; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
+ BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCWdWCnQUJCWYC
+ bgAKCRDCPZHzoSX+qAR8B/94VAsSNygx1C6dhb1u1Wp1Jr/lfO7QIOK/nf1PF0VpYjTQ2au8
+ ihf/RApTna31sVjBx3jzlmpy+lDoPdXwbI3Czx1PwDbdhAAjdRbvBmwM6cUWyqD+zjVm4RTG
+ rFTPi3E7828YJ71Vpda2qghOYdnC45xCcjmHh8FwReLzsV2A6FtXsvd87bq6Iw2axOHVUax2
+ FGSbardMsHrya1dC2jF2R6n0uxaIc1bWGweYsq0LXvLcvjWH+zDgzYCUB0cfb+6Ib/ipSCYp
+ 3i8BevMsTs62MOBmKz7til6Zdz0kkqDdSNOq8LgWGLOwUTqBh71+lqN2XBpTDu1eLZaNbxSI
+ ilaVzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
+ CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
+ /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
+ GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
+ q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
+ ABEBAAHCwHwEGAEIACYWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCWdWBrwIbDAUJA8JnAAAK
+ CRDCPZHzoSX+qA3xB/4zS8zYh3Cbm3FllKz7+RKBw/ETBibFSKedQkbJzRlZhBc+XRwF61mi
+ f0SXSdqKMbM1a98fEg8H5kV6GTo62BzvynVrf/FyT+zWbIVEuuZttMk2gWLIvbmWNyrQnzPl
+ mnjK4AEvZGIt1pk+3+N/CMEfAZH5Aqnp0PaoytRZ/1vtMXNgMxlfNnb96giC3KMR6U0E+siA
+ 4V7biIoyNoaN33t8m5FwEwd2FQDG9dAXWhG13zcm9gnk63BN3wyCQR+X5+jsfBaS4dvNzvQv
+ h8Uq/YGjCoV1ofKYh3WKMY8avjq25nlrhzD/Nto9jHp8niwr21K//pXVA81R2qaXqGbql+zo
+Message-ID: <c0eaa5d5-7b1a-74f9-1d34-d8ac7cff3546@gmx.com>
+Date: Wed, 25 Apr 2018 17:48:42 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="hgvx0C9aY42QQ0JhcwaibquzkKs4AzNqq"
+X-Provags-ID: V03:K1:UyY6a5S9qXv8HeJ96ICEk2ZM7iaCKQNjT1U6c43uRRwwKjCesX2
+ RkJ2gX6uXIi01aG7ZXo6j+XMVqbRaEtIxJUV00EtcEs9kDLWtJZDfEEBs4z3ry/ihgFS5fM
+ hsYDnc1UFfwQLyRyiG5sxDM8mGBj5K02+BP3VAuC8/Id/ZV80IU0P0cipRBZ5yM7ZpoF9h2
+ V/snDSKdC076q81ERBgdQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:a6WgYp3FQTA=:l3dqH47bzT5ZcrlCfK/4Lt
+ xY0r4KJa9hx63H2x8SD/U9eqKE7L7eL2rA7k+kd5jYnBqfdddQSBHI04mDGHbl64g+wc2R5Cy
+ RnbHr2naRnxmobBFR8GfN3Y/cNx2meFF1lkMp/fmFXlmtdOQ3WFZIwIROYhRMO0uAVTgR28+W
+ ijS5vDC/JZv0J6XRZKOLaSkaVHrb3Iq7mZbJVz8u7RYe50QOYvNhYHfdkL22yJvcBrWCPvM6j
+ OkvmXUD1Cqce+urL0QAzqc4qa87IYgne8jLjfMPJ/4K5PByUtHc8UaIuBmhOtolV7a6k8NTGm
+ QjLkIZf1MjansHcLhTjnpxFiW4yJnFDSzdv9Bjhjlec1GDKJGft0kEDqLFTKEum1nnQiz63Z4
+ Lx7mFkTWsbaxG4l0PvYHHdbJQX8+O2SRNGXHfsUVZcmxpv8Laql6kqTRqdpUlXVK8l1TpweH8
+ RLfjFCfdinUcMzI/r7QF6RsQj/BtGy6oNHGzbqm83FhChViNjv/XZMBDDEm6v0CbdhCA4Y1pm
+ UtLFnkyuHOE7nOxJPMho1d3FcZBofwfSsOZU1AM3wJe0qoIph4Fui3X9gcQWpFHd9uoKIaKBC
+ gO59f6GTIei1kZpkxsexPRoaYvvRmUJ7B425Ahh6QN9KDgjXe3GVinjcqGYeNuuwQWproFkeY
+ IqTTD/Xfpo184NN3eyky4AZYzX3nh5g4kNdmN5Pu0IG5ElA1BGi/sdNgylXMmKRA26rjt54QK
+ z0265hxAS11vN1apf6VswIyU1ar4Nn5Stp+xuNXQ+EPQy3gym6ViYzZE6nq21bbxf1X7SFNQf
+ WiaRCUMXe+SflT1Ii3iONfgd/0MgA==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alex,
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--hgvx0C9aY42QQ0JhcwaibquzkKs4AzNqq
+Content-Type: multipart/mixed; boundary="ewIvWyEpQ5cyPhrj7WR4uKUJBwPZMfZG0";
+ protected-headers="v1"
+From: Qu Wenruo <quwenruo.btrfs@gmx.com>
+To: kvm@vger.kernel.org, qemu-devel@nongnu.org
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Message-ID: <c0eaa5d5-7b1a-74f9-1d34-d8ac7cff3546@gmx.com>
+Subject: ridiculously slow VM memory performance on Ryzen CPU
 
-(Sent a 2nd time, this time with "Reply to all" and without HTML, so
-that it hits the kernel archives as well. Sorry for the noise.
+--ewIvWyEpQ5cyPhrj7WR4uKUJBwPZMfZG0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
+Hi,
 
-
-
-> Sounds like the link is failing to re-establish. You might double
-> check a few things. One is to verify if the link partner is
-> recognizing the link as coming up or not.
-
-It turns on differently. Before I remove the cable, the LED on the TP
-LINK "TL SG-108" was green. After removing the cable, the LED went off.
-After reinserting the cable, it became orange after some while.
-
-Green LED means 1000 MB/s, orange LED means 10/100 MB/s.
-
-
-I have a different, even older switch: "Allnet ALL8039". Here the same:
-the switch detects a link, but igb not.
+When testing IO heavy work on my VM backed by Ryzen 1700 CPU, I turned
+to brd modules, but surprisingly, the speed is even slower than some HDD:=
 
 
+---
+$ sudo modprobe brd rd_nr=3D1 rd_size=3D1048576
+$ dd if=3D/dev/zero of=3D/dev/ram0 bs=3D1M count=3D1024
+1024+0 records in
+1024+0 records out
+1073741824 bytes (1.1 GB, 1.0 GiB) copied, 9.9928 s, 107 MB/s
+---
+107MB is pretty lame...
+Even some HDD could be faster than this.
 
-> If you could also provide an "lspci -vvv"
+On host, it's much better:
+---
+$ if=3D/dev/zero of=3D/dev/ram0 bs=3D1M count=3D1024
+1024+0 records in
+1024+0 records out
+1073741824 bytes (1.1 GB, 1.0 GiB) copied, 0.754641 s, 1.4 GB/s
+---
 
-02:00.0 Ethernet controller: Intel Corporation I210 Gigabit Network
-Connection (rev 03)
-        Control: I/O+ Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr-
-Stepping- SERR- FastB2B- DisINTx+
-        Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort-
-<TAbort- <MAbort- >SERR- <PERR- INTx-
-        Latency: 0, Cache Line Size: 64 bytes
-        Interrupt: pin A routed to IRQ 19
-        Region 0: Memory at 90600000 (32-bit, non-prefetchable) [size=512K]
-        Region 2: I/O ports at d000 [size=32]
-        Region 3: Memory at 90680000 (32-bit, non-prefetchable) [size=16K]
-        Capabilities: [40] Power Management version 3
-                Flags: PMEClk- DSI+ D1- D2- AuxCurrent=0mA
-PME(D0+,D1-,D2-,D3hot+,D3cold+)
-                Status: D0 NoSoftRst+ PME-Enable- DSel=0 DScale=1 PME-
-        Capabilities: [50] MSI: Enable- Count=1/1 Maskable+ 64bit+
-                Address: 0000000000000000  Data: 0000
-                Masking: 00000000  Pending: 00000000
-        Capabilities: [70] MSI-X: Enable+ Count=5 Masked-
-                Vector table: BAR=3 offset=00000000
-                PBA: BAR=3 offset=00002000
-        Capabilities: [a0] Express (v2) Endpoint, MSI 00
-                DevCap: MaxPayload 512 bytes, PhantFunc 0, Latency L0s
-<512ns, L1 <64us
-                        ExtTag- AttnBtn- AttnInd- PwrInd- RBE+ FLReset+
-SlotPowerLimit 0.000W
-                DevCtl: Report errors: Correctable+ Non-Fatal+ Fatal+
-Unsupported+
-                        RlxdOrd- ExtTag- PhantFunc- AuxPwr- NoSnoop+
-FLReset-
-                        MaxPayload 128 bytes, MaxReadReq 512 bytes
-                DevSta: CorrErr+ UncorrErr- FatalErr- UnsuppReq+ AuxPwr+
-TransPend-
-                LnkCap: Port #0, Speed 2.5GT/s, Width x1, ASPM L0s L1, Exit
-Latency L0s <2us, L1 <16us
-                        ClockPM- Surprise- LLActRep- BwNot- ASPMOptComp+
-                LnkCtl: ASPM Disabled; RCB 64 bytes Disabled- CommClk+
-                        ExtSynch- ClockPM- AutWidDis- BWInt- AutBWInt-
-                LnkSta: Speed 2.5GT/s, Width x1, TrErr- Train- SlotClk+
-DLActive- BWMgmt- ABWMgmt-
-                DevCap2: Completion Timeout: Range ABCD, TimeoutDis+, LTR-,
-OBFF Not Supported
-                DevCtl2: Completion Timeout: 50us to 50ms, TimeoutDis+,
-LTR-, OBFF Disabled
-                LnkCtl2: Target Link Speed: 2.5GT/s, EnterCompliance-
-SpeedDis-
-                         Transmit Margin: Normal Operating Range,
-EnterModifiedCompliance- ComplianceSOS-
-                         Compliance De-emphasis: -6dB
-                LnkSta2: Current De-emphasis Level: -6dB,
-EqualizationComplete-, EqualizationPhase1-
-                         EqualizationPhase2-, EqualizationPhase3-,
-LinkEqualizationRequest-
-        Capabilities: [100 v2] Advanced Error Reporting
-                UESta:  DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt- UnxCmplt-
-RxOF- MalfTLP- ECRC- UnsupReq- ACSViol-
-                UEMsk:  DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt- UnxCmplt-
-RxOF- MalfTLP- ECRC- UnsupReq- ACSViol-
-                UESvrt: DLP+ SDES+ TLP- FCP+ CmpltTO- CmpltAbrt- UnxCmplt-
-RxOF+ MalfTLP+ ECRC- UnsupReq- ACSViol-
-                CESta:  RxErr- BadTLP- BadDLLP- Rollover- Timeout-
-NonFatalErr-
-                CEMsk:  RxErr- BadTLP- BadDLLP- Rollover- Timeout-
-NonFatalErr+
-                AERCap: First Error Pointer: 00, GenCap+ CGenEn- ChkCap+
-ChkEn-
-        Capabilities: [140 v1] Device Serial Number 00-13-95-ff-ff-1a-54-33
-        Capabilities: [1a0 v1] Transaction Processing Hints
-                Device specific mode supported
-                Steering table in TPH capability structure
-        Kernel driver in use: igb
-        Kernel modules: igb
+For host hardware:
+CPU: Ryzen 1700 All cores @ 3.8G
+Mem: DDR4 2400 dual channel (8G x 2)
 
-> and "ethtool -i" for the
+For host software:
+Kernel:       4.16.3-1-ARCH
+Qemu:         2.11.1-2
+Distribution: Archlinux
 
-driver: igb
-version: 5.4.0-k
-firmware-version: 3.20, 0x80000553
-expansion-rom-version:
-bus-info: 0000:02:00.0
-supports-statistics: yes
-supports-test: yes
-supports-eeprom-access: yes
-supports-register-dump: yes
-supports-priv-flags: yes
+VM setup is mostly default setup done by libvirt.
+
+I'm not sure if this is related to this bug:
+https://www.redhat.com/archives/vfio-users/2017-April/msg00019.html
+
+Thanks,
+Qu
 
 
+--ewIvWyEpQ5cyPhrj7WR4uKUJBwPZMfZG0--
 
-One thing that is interesting is how igb reacts to ethtool inquiries
-once it goes into the failed state. You inquired for "ethtool -i eth0",
-but in the failed state I only get this:
+--hgvx0C9aY42QQ0JhcwaibquzkKs4AzNqq
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
-Cannot restart autonegotiation: No such device
+-----BEGIN PGP SIGNATURE-----
 
-But eth0 is of course still there, "ip -d link show eth0" shows:
+iQEzBAEBCAAdFiEELd9y5aWlW6idqkLhwj2R86El/qgFAlrgTvoACgkQwj2R86El
+/qhsqQgAlHEgMh4WOzZhYL464zlCGeiEJxoulYvJCPQ0MyVHcUQUXizevvAJUE95
+62+mmJTHzGS6Leeh/alfDbrES8aevE3R0ewNrFGxcPBNwgjbVZoAaA5hRfAW+fsb
+HzcjUmiS4dheLjk3LppCWcb7VQehY0L8lxZ93BwzCC9mXztEUnLhnG0p+hJ5dZX/
+/000A22OvOcv04BRnjRo+OVjXTJrDY+5192Psd1u1ZEBQEG/tNPAJg4TG+CY9FIz
+W5B3JD8h2UCS0GOnvA+z2yyIL+5cR06dGOhfaxc31WmSYmsASDNEqfnmjsvic1KO
+dzRWBHFwHQmsKC8nR8ukzVlnawmSUQ==
+=Osjm
+-----END PGP SIGNATURE-----
 
-
-2: eth0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc mq state DOWN
-mode DEFAULT group default qlen 1000
-    link/ether 00:13:95:1a:54:33 brd ff:ff:ff:ff:ff:ff promiscuity 0
-    numtxqueues 8 numrxqueues 8 gso_max_size 65536 gso_max_segs 65535
-
-
-
-
-
-Other ethtool commands also don't report any information once the link
-went bogus. Here one output from "ethtool eth0":
-
-Settings for eth0:
-        Supported ports: [ TP ]
-        Supported link modes:   10baseT/Half 10baseT/Full
-                                100baseT/Half 100baseT/Full
-                                1000baseT/Full
-        Supported pause frame use: Symmetric
-        Supports auto-negotiation: Yes
-        Advertised link modes:  10baseT/Half 10baseT/Full
-                                100baseT/Half 100baseT/Full
-                                1000baseT/Full
-        Advertised pause frame use: Symmetric
-        Advertised auto-negotiation: Yes
-        Speed: 1000Mb/s
-        Duplex: Full
-        Port: Twisted Pair
-        PHYAD: 1
-        Transceiver: internal
-        Auto-negotiation: on
-        MDI-X: off (auto)
-        Supports Wake-on: pumbg
-        Wake-on: g
-        Current message level: 0x00000007 (7)
-                               drv probe link
-        Link detected: yes
-
-... and here another:
-
-Settings for eth0:
-Cannot get device settings: No such device
-Cannot get wake-on-lan settings: No such device
-Cannot get message level: No such device
-Cannot get link status: No such device
-Settings for eth0:
-No data available
-
-
-
-I'm willing to pepper the source with printk, if this helps :-)
-
-
-Greetings,
-Holger
+--hgvx0C9aY42QQ0JhcwaibquzkKs4AzNqq--
