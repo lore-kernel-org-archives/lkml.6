@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/PUzYzcx0PCTzgX101o5ArRQv3NzYX67eLFYtw3fw2Tk0O5Q21z0id5oSswucoT5il5PZG
-ARC-Seal: i=1; a=rsa-sha256; t=1524652730; cv=none;
+X-Google-Smtp-Source: AIpwx48GTKgE92NoADYMmX7wpZc+XSkSXEji5gqPTgNx0/LNcAecAUYl4LufzJDyor0QhgJ5pfIG
+ARC-Seal: i=1; a=rsa-sha256; t=1524652728; cv=none;
         d=google.com; s=arc-20160816;
-        b=g2a9zWnKUDaZXCqd4Tu3mA4cAq2jllMBz4wHsRwYg6y2Iso/pdo28Hk264fzM1xZej
-         hzhzM4R1SpeBXvTtbdKAFVTADdh4/wXq2ly/J095eXAS5+AaHIPr1eCrEZ7bmLxa0n2A
-         mUNZWv/sHzj2Ip0+p+F/ZurNS7N1Yzc48SpkqQydDbahq2BUAQx+w4mxF8Uizsqqx2YX
-         sZS2KLj3hx6C8qdmVIbzOJx6mRR7aAvrJWHy3KGvkKvUQB35GvY1iDIgawWYVI9E3d8R
-         Tg4QxBPwGfuCGp6rtbMYcwxLH40kPrRdGwsuG4t+CWRuT1tJQOdxbsX743jwncNwCUIJ
-         aMXg==
+        b=fbV3XWJ7zxvKN/xXkKhKLw5G0qG16HPB7UEhKeg0RW6QQKhw2DE/fpTfv0KPZupqLf
+         /PyOJkZPWNzJ2MKGxpzkc6tM9fBINOPN5gf/fuKH/7BulE+TCgcBq0/QlaahcRpY7nkC
+         BHWJyRyiuR+H4igudQMymMS9n+9swgyTWqlOSvAEUzeVeIm1hIiq44w5ckEVWf3azbT4
+         TbeKm9gTr6cK5++wTyfUo3VlDY+DK/Ijn/+Uqq9lGFbh6cccqnAfMMdI7mX1XXasNx2Q
+         mNiXokm0SHvyHxcmvcrbyKmDNK3NlSjULLNiJKH10Gajjg5vqw9D22rvIr74Wzn4lNCO
+         BpJw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=fkDgSCACzuACG/zLUYfvBMCHlaITGc68KMd5cC7zq4s=;
-        b=StndUpfVysoZVZ9S4Yhbkh47wNZ61r4tmByPuR/gGsfP7AFuVWYAxKZILZZjY/hS/A
-         ugTTxShsx/xe5BcX+PB6lmjQQcVgpKWW1b5AYa77uJDQaRev4uRONThhca2moRmyWsGV
-         9tSiSUM1aBOI+/rqDbv6qYOj/P9yeUD45HjLcb6pb8Cd+CuUCgi5QtfI8WPshKUbMJ7V
-         C1sgduP/zlcJ91cyBA9yXuzC/J6fgi19MJJqoyx5LQ9KGSPshZ3jGlQrRU62McYi50qY
-         9/i/p4hNUlDnF6K+B28aV4+z44efVd944e1O0WiLbXYLrgz515mVmGtdFkGa+Wt9Tc+h
-         kOqw==
+        bh=og0TpxR1x/UTlATeGxD/kf0Q4SVM17ci7gdjuXVp7GQ=;
+        b=c2iST1i4OBicM4m6CzNc8yOfx93sFgMNLOsJMYNgYtm67dmRozMZRmKtt0wWc7+zOl
+         8a/yy803PyJ5hnth7MzfhlaRZaIVHHHBiLJZ3EPsDxtaXf+Gi6gSa1A25/Ull1VrL11I
+         7WaIpDIb2ZG/CFHay2X+ACOTknHkZcYNi+jv/laTJP8vAXg9d6szH4Ol0kL26ojxnj9s
+         sMCJY9w0dd9hXPwG7+eUqx/TzbSTz8bCeplZejD6vfbhvq25F+IBZwdxbQMsDKIHw/u/
+         bzkFt3t0f4yBj+tUcDAUpCDxHTlFP4ofnP0lgSRml17Y0OPVkIX7/GSOUIKh+EP7K260
+         jKmQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,17 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Christian Borntraeger <borntraeger@de.ibm.com>,
-	Stefan Haberland <sth@linux.vnet.ibm.com>,
-	Christoph Hellwig <hch@lst.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"jianchao.wang" <jianchao.w.wang@oracle.com>,
 	Ming Lei <ming.lei@redhat.com>,
-	Jens Axboe <axboe@kernel.dk>,
+	Mike Snitzer <snitzer@redhat.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 048/183] blk-mq: turn WARN_ON in __blk_mq_run_hw_queue into printk
-Date: Wed, 25 Apr 2018 12:34:28 +0200
-Message-Id: <20180425103244.490454373@linuxfoundation.org>
+Subject: [PATCH 4.14 047/183] dm mpath: return DM_MAPIO_REQUEUE on blk-mq rq allocation failure
+Date: Wed, 25 Apr 2018 12:34:27 +0200
+Message-Id: <20180425103244.450168940@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
@@ -46,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598714261869187543?=
-X-GMAIL-MSGID: =?utf-8?q?1598714261869187543?=
+X-GMAIL-THRID: =?utf-8?q?1598714258841274040?=
+X-GMAIL-MSGID: =?utf-8?q?1598714258841274040?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -58,56 +53,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Ming Lei <ming.lei@redhat.com>
 
 
-[ Upstream commit 7df938fbc4ee641e70e05002ac67c24b19e86e74 ]
+[ Upstream commit 050af08ffb1b62af69196d61c22a0755f9a3cdbd ]
 
-We know this WARN_ON is harmless and in reality it may be trigged,
-so convert it to printk() and dump_stack() to avoid to confusing
-people.
+blk-mq will rerun queue via RESTART or dispatch wake after one request
+is completed, so not necessary to wait random time for requeuing, we
+should trust blk-mq to do it.
 
-Also add comment about two releated races here.
+More importantly, we need to return BLK_STS_RESOURCE to blk-mq so that
+dequeuing from the I/O scheduler can be stopped, this results in
+improved I/O merging.
 
-Cc: Christian Borntraeger <borntraeger@de.ibm.com>
-Cc: Stefan Haberland <sth@linux.vnet.ibm.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: "jianchao.wang" <jianchao.w.wang@oracle.com>
 Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- block/blk-mq.c |   22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
+ drivers/md/dm-mpath.c |   14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -1143,9 +1143,27 @@ static void __blk_mq_run_hw_queue(struct
- 	/*
- 	 * We should be running this queue from one of the CPUs that
- 	 * are mapped to it.
-+	 *
-+	 * There are at least two related races now between setting
-+	 * hctx->next_cpu from blk_mq_hctx_next_cpu() and running
-+	 * __blk_mq_run_hw_queue():
-+	 *
-+	 * - hctx->next_cpu is found offline in blk_mq_hctx_next_cpu(),
-+	 *   but later it becomes online, then this warning is harmless
-+	 *   at all
-+	 *
-+	 * - hctx->next_cpu is found online in blk_mq_hctx_next_cpu(),
-+	 *   but later it becomes offline, then the warning can't be
-+	 *   triggered, and we depend on blk-mq timeout handler to
-+	 *   handle dispatched requests to this hctx
- 	 */
--	WARN_ON(!cpumask_test_cpu(raw_smp_processor_id(), hctx->cpumask) &&
--		cpu_online(hctx->next_cpu));
-+	if (!cpumask_test_cpu(raw_smp_processor_id(), hctx->cpumask) &&
-+		cpu_online(hctx->next_cpu)) {
-+		printk(KERN_WARNING "run queue from wrong CPU %d, hctx %s\n",
-+			raw_smp_processor_id(),
-+			cpumask_empty(hctx->cpumask) ? "inactive": "active");
-+		dump_stack();
-+	}
- 
- 	/*
- 	 * We can't run the queue inline with ints disabled. Ensure that
+--- a/drivers/md/dm-mpath.c
++++ b/drivers/md/dm-mpath.c
+@@ -502,8 +502,20 @@ static int multipath_clone_and_map(struc
+ 		if (queue_dying) {
+ 			atomic_inc(&m->pg_init_in_progress);
+ 			activate_or_offline_path(pgpath);
++			return DM_MAPIO_DELAY_REQUEUE;
+ 		}
+-		return DM_MAPIO_DELAY_REQUEUE;
++
++		/*
++		 * blk-mq's SCHED_RESTART can cover this requeue, so we
++		 * needn't deal with it by DELAY_REQUEUE. More importantly,
++		 * we have to return DM_MAPIO_REQUEUE so that blk-mq can
++		 * get the queue busy feedback (via BLK_STS_RESOURCE),
++		 * otherwise I/O merging can suffer.
++		 */
++		if (q->mq_ops)
++			return DM_MAPIO_REQUEUE;
++		else
++			return DM_MAPIO_DELAY_REQUEUE;
+ 	}
+ 	clone->bio = clone->biotail = NULL;
+ 	clone->rq_disk = bdev->bd_disk;
