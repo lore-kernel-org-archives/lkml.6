@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AB8JxZrX/2MduiJNq/RkFQ6o47yA0vdMtYAXsqVm0UKub50sODcOU14LW4j6+yvgxRdxcftcA5SJ
-ARC-Seal: i=1; a=rsa-sha256; t=1524652660; cv=none;
+X-Google-Smtp-Source: AB8JxZrZhOda/rMFLRB4hJf2tTOx5wynTksuTJLCGx5my1ZqrQv+Y1GGmGbB2F1dgJpD7mrDFZaA
+ARC-Seal: i=1; a=rsa-sha256; t=1524652657; cv=none;
         d=google.com; s=arc-20160816;
-        b=qp8hlpRIJYDE5UHGdFgC3/V1Jd6a2yFdQXtCiZcofYQkX3qGQNDKu1gY/Avl7/SbJ4
-         aag3M+g9taDKHXUQsjRKL98qyalB4voLGssc1kFEJ3xJNsI3nXMUBWEGDQsSBADv1prS
-         Wt15GHcoOoWNLCSn1EGnZh91SLtuOx4fbmMXr5+KM3GFwZchtAydHaSwFcPzxd+HMd1Q
-         GWTbPXP2YGrmJJ10E88C4Spbgr6TWKUMIQENZEa2Yi0odqYkkVhLHEBEvw6lOeUn/8kT
-         qPU2V5lnso7p+5PgJ1SUmKpechOm5m63cYqVCvnVBVxzaUlt7XsFC8g6MFsWErRFI6tS
-         UrvQ==
+        b=iOruYKY1J5AvZC6bXuNYHsNYNhoQlE43SxXgacYnVvPr10tJZ7ze2fQdOFLX0l3e+A
+         Hjq11WMrjEGGUKSsvPxgaq+gUN0p3dgkt3ePTC7oC50Kl2g1jqF9XAFe19j79NsbJUh3
+         TW7Ck+t1bbt5u+yNFmBN4Vm+zRk+lL+R2sfG/jUOdCiQ8AWGU7poutnTglVCOMK8TDjx
+         sz4fBX36rQsMUwOuPTi0dPKLDVw8dD8eSB653CBFcRXdBAJmEASIcFbvY+0P7hdeTR7/
+         iIRl4G7SgQKxBGc5GP4xnQXQgfuEWrzPI4Pli3NstQwFfXbCFvgnvssDvwJyEPqOW6ED
+         t5xQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=2zZrnecd3NPJ398J52gZxDEdx7F9GqA1fdOpMctkwf4=;
-        b=vsmuHpBB/OmvUFkzaDYYui/oTGHBdZUJgum30wWk8X4ojFrH4//8QTOV+B6wrd8eHS
-         +xs3G9GrNQwvT2+0bpfEgT89gfgRc+Qwn21erpDetBEbbJmZJgujXMDwLNTAn3veOOkM
-         5V9t/mn12QkdJ235znd2F2p51ddmJv0i8jM3OnVMof0FjRPiw6dgRWeqj2va89JAhhH6
-         z7zXYd+q1gK5Lv68SoZ2W9BpJ4q0WZi2mE8P5dBr3jWbAjEkDxwoTYshkZ7vlMkCu3nf
-         qdSw78BHRislVe/E1gXHC9fCGvINZCMp9Rrj0N8AyTSCZdwEDTWkL4gXlpFyYKOejVpt
-         zrfA==
+        bh=+BeNr2t/r6VBadvhTBAG33/Olb1JrWyQhEE1UArE1K0=;
+        b=T2y+K17glteqpcFHnTgVqGnUa9suxYyAMAtNEvy1GC8SUHuTAr+aw4KxtEAPoQQIkM
+         KZVorwliHoYnTNLw14Ghwh3hTwbu3EqJC+yA+G7eSHBqRJ1ionPF7FhdF3gTcdJj7NOf
+         3iyG+01o9nqY2FcgzugAl5DGfnIQEYF1tZGtXXhITaU87rQGMxYjf20p6ogubVzaxyZ+
+         tABq9DHUdCO6prA/e4/ZTGI0MYqhbiKKVZSlU2b7V/OAUkdoaF6AdL5BAzVDGClmiGEs
+         DWoJxOih3CrxiDiRFSdjHH2Nb90TJwCl6CpEHD/WCk62WHniy7OIVwDHamsN75dMDEkV
+         pH7g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	kernel-hardening@lists.openwall.com,
-	Kees Cook <keescook@chromium.org>,
-	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
+	Dan Carpenter <dan.carpenter@oracle.com>,
+	Mark Brown <broonie@kernel.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 022/183] kvm: x86: fix KVM_XEN_HVM_CONFIG ioctl
-Date: Wed, 25 Apr 2018 12:34:02 +0200
-Message-Id: <20180425103243.501870353@linuxfoundation.org>
+Subject: [PATCH 4.14 021/183] ASoC: au1x: Fix timeout tests in au1xac97c_ac97_read()
+Date: Wed, 25 Apr 2018 12:34:01 +0200
+Message-Id: <20180425103243.457111558@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
@@ -43,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598714187972473710?=
-X-GMAIL-MSGID: =?utf-8?q?1598714187972473710?=
+X-GMAIL-THRID: =?utf-8?q?1598714185220866802?=
+X-GMAIL-MSGID: =?utf-8?q?1598714185220866802?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,50 +50,44 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Paolo Bonzini <pbonzini@redhat.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
 
-[ Upstream commit 51776043afa415435c7e4636204fbe4f7edc4501 ]
+[ Upstream commit 123af9043e93cb6f235207d260d50f832cdb5439 ]
 
-This ioctl is obsolete (it was used by Xenner as far as I know) but
-still let's not break it gratuitously...  Its handler is copying
-directly into struct kvm.  Go through a bounce buffer instead, with
-the added benefit that we can actually do something useful with the
-flags argument---the previous code was exiting with -EINVAL but still
-doing the copy.
+The loop timeout doesn't work because it's a post op and ends with "tmo"
+set to -1.  I changed it from a post-op to a pre-op and I changed the
+initial the starting value from 5 to 6 so we still iterate 5 times.  I
+left the other as it was because it's a large number.
 
-This technically is a userspace ABI breakage, but since no one should be
-using the ioctl, it's a good occasion to see if someone actually
-complains.
-
-Cc: kernel-hardening@lists.openwall.com
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Kees Cook <keescook@chromium.org>
+Fixes: b3c70c9ea62a ("ASoC: Alchemy AC97C/I2SC audio support")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kvm/x86.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ sound/soc/au1x/ac97c.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -4225,13 +4225,14 @@ long kvm_arch_vm_ioctl(struct file *filp
- 		mutex_unlock(&kvm->lock);
- 		break;
- 	case KVM_XEN_HVM_CONFIG: {
-+		struct kvm_xen_hvm_config xhc;
- 		r = -EFAULT;
--		if (copy_from_user(&kvm->arch.xen_hvm_config, argp,
--				   sizeof(struct kvm_xen_hvm_config)))
-+		if (copy_from_user(&xhc, argp, sizeof(xhc)))
- 			goto out;
- 		r = -EINVAL;
--		if (kvm->arch.xen_hvm_config.flags)
-+		if (xhc.flags)
- 			goto out;
-+		memcpy(&kvm->arch.xen_hvm_config, &xhc, sizeof(xhc));
- 		r = 0;
- 		break;
- 	}
+--- a/sound/soc/au1x/ac97c.c
++++ b/sound/soc/au1x/ac97c.c
+@@ -91,8 +91,8 @@ static unsigned short au1xac97c_ac97_rea
+ 	do {
+ 		mutex_lock(&ctx->lock);
+ 
+-		tmo = 5;
+-		while ((RD(ctx, AC97_STATUS) & STAT_CP) && tmo--)
++		tmo = 6;
++		while ((RD(ctx, AC97_STATUS) & STAT_CP) && --tmo)
+ 			udelay(21);	/* wait an ac97 frame time */
+ 		if (!tmo) {
+ 			pr_debug("ac97rd timeout #1\n");
+@@ -105,7 +105,7 @@ static unsigned short au1xac97c_ac97_rea
+ 		 * poll, Forrest, poll...
+ 		 */
+ 		tmo = 0x10000;
+-		while ((RD(ctx, AC97_STATUS) & STAT_CP) && tmo--)
++		while ((RD(ctx, AC97_STATUS) & STAT_CP) && --tmo)
+ 			asm volatile ("nop");
+ 		data = RD(ctx, AC97_CMDRESP);
+ 
