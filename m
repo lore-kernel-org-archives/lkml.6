@@ -1,15 +1,15 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751363AbeDYHmE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 03:42:04 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:7604 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750962AbeDYHl6 (ORCPT
+        id S1751320AbeDYHnw (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 03:43:52 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:7435 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750941AbeDYHnp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 03:41:58 -0400
+        Wed, 25 Apr 2018 03:43:45 -0400
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 25 Apr 2018 00:41:57 -0700
-Date: Wed, 25 Apr 2018 09:41:51 +0200
+        by hqpgpgate101.nvidia.com on Wed, 25 Apr 2018 00:43:45 -0700
+Date: Wed, 25 Apr 2018 09:43:38 +0200
 From: Thierry Reding <treding@nvidia.com>
 To: Christoph Hellwig <hch@infradead.org>
 CC: Daniel Vetter <daniel@ffwll.ch>,
@@ -25,10 +25,8 @@ CC: Daniel Vetter <daniel@ffwll.ch>,
         "open list:DMA BUFFER SHARING FRAMEWORK"
         <linux-media@vger.kernel.org>
 Subject: Re: [Linaro-mm-sig] [PATCH 4/8] dma-buf: add peer2peer flag
-Message-ID: <20180425074151.GA2271@ulmo>
-References: <20180420101755.GA11400@infradead.org>
- <f1100bd6-dd98-55a9-a92f-1cad919f235f@amd.com>
- <20180420124625.GA31078@infradead.org>
+Message-ID: <20180425074338.GB2271@ulmo>
+References: <20180420124625.GA31078@infradead.org>
  <20180420152111.GR31310@phenom.ffwll.local>
  <20180424184847.GA3247@infradead.org>
  <CAKMK7uFL68pu+-9LODTgz+GQYvxpnXOGhxfz9zorJ_JKsPVw2g@mail.gmail.com>
@@ -36,88 +34,76 @@ References: <20180420101755.GA11400@infradead.org>
  <CAKMK7uEFitkNQrD6cLX5Txe11XhVO=LC4YKJXH=VNdq+CY=DjQ@mail.gmail.com>
  <CAKMK7uFx=KB1vup=WhPCyfUFairKQcRR4BEd7aXaX1Pj-vj3Cw@mail.gmail.com>
  <20180425064335.GB28100@infradead.org>
+ <CAKMK7uGF7p5ko=i6zL4dn0qR-5TVRKMi6xaCGSao_vyfJU+dWQ@mail.gmail.com>
+ <20180425070905.GA24827@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20180425064335.GB28100@infradead.org>
+In-Reply-To: <20180425070905.GA24827@infradead.org>
 X-NVConfidentiality: public
 User-Agent: Mutt/1.9.5 (2018-04-13)
 X-Originating-IP: [10.21.62.231]
 X-ClientProxiedBy: UKMAIL102.nvidia.com (10.26.138.15) To UKMAIL101.nvidia.com
  (10.26.138.13)
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="3MwIy2ne0vdjdPXF"
+        protocol="application/pgp-signature"; boundary="tsOsTdHNUZQcU9Ye"
 Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---3MwIy2ne0vdjdPXF
+--tsOsTdHNUZQcU9Ye
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 24, 2018 at 11:43:35PM -0700, Christoph Hellwig wrote:
-> On Wed, Apr 25, 2018 at 08:23:15AM +0200, Daniel Vetter wrote:
-> > For more fun:
-> >=20
-> > https://www.spinics.net/lists/dri-devel/msg173630.html
-> >=20
-> > Yeah, sometimes we want to disable the iommu because the on-gpu
-> > pagetables are faster ...
+On Wed, Apr 25, 2018 at 12:09:05AM -0700, Christoph Hellwig wrote:
+> On Wed, Apr 25, 2018 at 09:02:17AM +0200, Daniel Vetter wrote:
+> > Can we please not nack everything right away? Doesn't really motivate
+> > me to show you all the various things we're doing in gpu to make the
+> > dma layer work for us. That kind of noodling around in lower levels to
+> > get them to do what we want is absolutely par-for-course for gpu
+> > drivers. If you just nack everything I point you at for illustrative
+> > purposes, then I can't show you stuff anymore.
 >=20
-> I am not on this list, but remote NAK from here.  This needs an
-> API from the iommu/dma-mapping code.  Drivers have no business poking
-> into these details.
+> No, it's not.  No driver (and that includes the magic GPUs) has
+> any business messing with dma ops directly.
+>=20
+> A GPU driver imght have a very valid reason to disable the IOMMU,
+> but the code to do so needs to be at least in the arch code, maybe
+> in the dma-mapping/iommu code, not in the driver.
+>=20
+> As a first step to get the discussion started we'll simply need
+> to move the code Thierry wrote into a helper in arch/arm and that
+> alone would be a massive improvement.  I'm not even talking about
+> minor details like actually using arm_get_dma_map_ops instead
+> of duplicating it.
+>=20
+> And doing this basic trivial work really helps to get this whole
+> mess under control.
 
-The interfaces that the above patch uses are all EXPORT_SYMBOL_GPL,
-which is rather misleading if they are not meant to be used by drivers
-directly.
-
-> Thierry, please resend this with at least the iommu list and
-> linux-arm-kernel in Cc to have a proper discussion on the right API.
-
-I'm certainly open to help with finding a correct solution, but the
-patch above was purposefully terse because this is something that I
-hope we can get backported to v4.16 to unbreak Nouveau. Coordinating
-such a backport between ARM and DRM trees does not sound like something
-that would help getting this fixed in v4.16.
-
-The fundamental issue here is that the DMA/IOMMU integration is
-something that has caused a number of surprising regressions in the past
-because it tends to sneak in unexpectedly. For example the current
-regression shows up only if CONFIG_ARM_DMA_USE_IOMMU=3Dy because the DMA
-API will then transparently create a second mapping and mess things up.
-Everything works fine if that option is disabled. This is ultimately why
-we didn't notice, since we don't enable that option by default. I do
-have a patch that I plan to apply to the Tegra tree that will always
-enable CONFIG_ARM_DMA_USE_IOMMU=3Dy on Tegra to avoid any such surprises
-in the future, but I can obviously only apply that once the above patch
-is applied to Nouveau, otherwise we'll break Nouveau unconditionally.
-
-Granted, this issue could've been caught with a little more testing, but
-in retrospect I think it would've been a lot better if ARM_DMA_USE_IOMMU
-was just enabled unconditionally if it has side-effects that platforms
-don't opt in to but have to explicitly opt out of.
+That's a good idea and I can prepare patches for this, but I'd like to
+make those changes on top of the fix to keep the option of getting this
+into v4.16 if at all possible.
 
 Thierry
 
---3MwIy2ne0vdjdPXF
+--tsOsTdHNUZQcU9Ye
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrgMTwACgkQ3SOs138+
-s6FhzxAAhAWFPLKYY1teMqCaHfPUBIUiOMRZJU7ufMMjY28rJFHHZGQoa0Tj3WzZ
-2msD0RZKxdnYuRAs90G3XHtYYULICSYi3XJ31V9pLHHmptLNHmeAbzQ39lLue19L
-Cc+1LozOpc99zmDTW94SdXzzoIqHzaPA0Pm+020+np6ASBxfn5jnkVTbB48Wm4WF
-ug5gt+6n7jCX3jXOomaHJVeZKSCj57SIKb9YxJ7kconRU6J3zgVSaprku2yxKpeV
-/ii6IdAMlb1vpFi126ssD81aJ72e2yWBwegLkn2m+exnz7BzkL2qs82ERiTYJZ8x
-IeKoC8tNQcA1Ev6v8MpeUjpaGJuiTQjXXUvrBj3xh5hG+5yt8gFcRE1h4/hFHz2O
-/GJwPNfWZsESd82c/uOAEGhuYiRkh85mP3JqRZOXt3xryf9tdpqGf6YI0dpE6Yle
-Xc1hNRdDOKPswQxdSKoI75yRWD42fWEr2g3nY2KQO/FMZqPMq8Sp/vGzoBI1ZALH
-W3f6ACLxBzrmUtLcBWWX20FoQ+wwrQefezXXljVIU8i/ZPh1Pcn9u9PCAW3FgGV6
-lSdzTjsupvbC5rFvH/JL0vKcBf1UAZdctbV5preQOGBOv0qyy/mSPDUJCRhZc3M5
-A5Y0hGYKZPw4EyGyA/YzsqcOFj5EmdXS5DQVoeYk/8ENbm+WEHI=
-=wFUj
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrgMaoACgkQ3SOs138+
+s6ErIw/9HFD80SMNmmYDdnDExj7GI+wX3JQtrnVIcvE0xhgwvEGghdvwuIitFnhe
+0sSTzNFY1R3uZp+csLeMOjb7aBqI+txD+aX+KmGcdNLT015nMt/gOUjv/msbzuyN
+y6gUXvEqqvByVOTuM/nrjPZhA+8PCB0n2UVfx9V7Z5FkraLvQnCiGxd+ds+tujvy
+WhYItT846t9fgeiuSm2pmN/I7b8pBBMoQrA2y4h8zhuK6DI6hEC5xrd1Ebv2eMNq
+yLPpWYqWokPvvlzcDbVTxQZEAY7PyAjB22DKMnQN5pgh9lrczDSVq89wmzsO4VKz
+ajcglwDU7Z1of7HM1PbmgKGKwaB7zC6d0XD7wF0oUDtMYrnXbRUcAS9Lra2a39xf
+u5I/8ehFct/uEkaDqgguMZDPKBEfeDEZ70DGHuSuebonUyYTupQZCCP4pSw+gPQi
+7zlcoxbfO5Tp44mioLGgoMmwVfb6oIIvPLx5SueBOonSV172x2TqCYM4odsL8B7b
+vYBMQgrcS95kar3smWMRf9VBT7n0EGW8G/3XgJM3hL5j/mMIJca7xXdKjuuc38Fn
+wRIYQ/4znL5J8DQ7mkP2Ujv74O4Qq9nunVm+WL10JEKxbmqExGYwTH8dV/kYqPJy
+Z9O+6FYV7u9PxvUDNIW0Hm/ruE+DqaTg/Vn4Hhd/8lnCmwWrcPo=
+=PmGP
 -----END PGP SIGNATURE-----
 
---3MwIy2ne0vdjdPXF--
+--tsOsTdHNUZQcU9Ye--
