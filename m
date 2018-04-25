@@ -1,94 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751084AbeDYF5Y (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 01:57:24 -0400
-Received: from verein.lst.de ([213.95.11.211]:34787 "EHLO newverein.lst.de"
+        id S1751285AbeDYGFm (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 02:05:42 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53309 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750841AbeDYF5V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 01:57:21 -0400
-Date: Wed, 25 Apr 2018 07:58:56 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: hch@lst.de, m.szyprowski@samsung.com, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dma-debug: Check scatterlist segments
-Message-ID: <20180425055856.GA10738@lst.de>
-References: <5952922c7980b5c9091692d886bbca220e7371c2.1524586299.git.robin.murphy@arm.com>
+        id S1751247AbeDYGFj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 02:05:39 -0400
+Date: Wed, 25 Apr 2018 08:05:34 +0200
+From: Jean Delvare <jdelvare@suse.de>
+To: Sam Hansen <hansens@google.com>
+Cc: linux-i2c@vger.kernel.org, wsa@the-dreams.de, corbet@lwn.net,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Documentation/i2c: direct users to i2c-tools regarding
+ i2c/smbus.h
+Message-ID: <20180425080534.53877bec@endymion>
+In-Reply-To: <20180419222356.242535-1-hansens@google.com>
+References: <20180419222356.242535-1-hansens@google.com>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5952922c7980b5c9091692d886bbca220e7371c2.1524586299.git.robin.murphy@arm.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This looks interesting.  I suspect it is going to blow up in
-quite a few places, so maybe at least for now it might make sense
-to have a separate config option?
+Hi Sam,
 
-On Tue, Apr 24, 2018 at 05:12:19PM +0100, Robin Murphy wrote:
-> Drivers/subsystems creating scatterlists for DMA should be taking care
-> to respect the scatter-gather limitations of the appropriate device, as
-> described by dma_parms. A DMA API implementation cannot feasibly split
-> a scatterlist into *more* entries than originally passed, so it is not
-> well defined what they should do when given a segment larger than the
-> limit they are also required to respect.
+Please don't include the same persons in To: and Cc:. It makes the
+message delivered twice to them.
+
+On Thu, 19 Apr 2018 15:23:56 -0700, Sam Hansen wrote:
+> The current examples reference i2c/smbus.h, which is the first reference
+> in Documentation/i2c/dev-interface to anything related to the i2c-tools
+> project.  This moves the existing reference to i2c-tools up into the
+> C-example, directing the user to the project's git repository.
 > 
-> Conversely, devices which are less limited than the rather conservative
-> defaults, or indeed have no limitations at all (e.g. GPUs with their own
-> internal MMU), should be encouraged to set appropriate dma_parms, as
-> they may get more efficient DMA mapping performance out of it.
-> 
-> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+> Signed-off-by: Sam Hansen <hansens@google.com>
 > ---
->  lib/dma-debug.c | 26 ++++++++++++++++++++++++++
->  1 file changed, 26 insertions(+)
+>  Documentation/i2c/dev-interface | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 > 
-> diff --git a/lib/dma-debug.c b/lib/dma-debug.c
-> index 7f5cdc1e6b29..9f158941004d 100644
-> --- a/lib/dma-debug.c
-> +++ b/lib/dma-debug.c
-> @@ -1293,6 +1293,30 @@ static void check_sync(struct device *dev,
->  	put_hash_bucket(bucket, &flags);
->  }
+> diff --git a/Documentation/i2c/dev-interface b/Documentation/i2c/dev-interface
+> index fbed645ccd75..ed20f7b7851a 100644
+> --- a/Documentation/i2c/dev-interface
+> +++ b/Documentation/i2c/dev-interface
+> @@ -23,6 +23,10 @@ First, you need to include these two headers:
+>    #include <linux/i2c-dev.h>
+>    #include <i2c/smbus.h>
 >  
-> +static void check_sg_segment(struct device *dev, struct scatterlist *sg)
-> +{
-> +	unsigned int max_seg = dma_get_max_seg_size(dev);
-> +	dma_addr_t start, end, boundary = dma_get_seg_boundary(dev);
+> +The i2c/smbus header file is provided by the i2c-tools project.  For more info
+> +about i2c-tools, see:
+> +https://git.kernel.org/pub/scm/utils/i2c-tools/i2c-tools.git/
 > +
-> +	/*
-> +	 * Either the driver forgot to set dma_parms appropriately, or
-> +	 * whoever generated the list forgot to check them.
-> +	 */
-> +	if (sg->length > max_seg)
-> +		err_printk(dev, NULL, "DMA-API: mapping sg segment longer than device claims to support [len=%u] [max=%u]\n",
-> +			   sg->length, max_seg);
-> +	/*
-> +	 * In some cases this could potentially be the DMA API
-> +	 * implementation's fault, but it would usually imply that
-> +	 * the scatterlist was built inappropriately to begin with.
-> +	 */
-> +	start = sg_dma_address(sg);
-> +	end = start + sg_dma_len(sg) - 1;
-> +	if ((start ^ end) & ~boundary)
-> +		err_printk(dev, NULL, "DMA-API: mapping sg segment across boundary [start=0x%016llx] [end=0x%016llx] [boundary=0x%016llx]\n",
-> +			   start, end, boundary);
-> +}
-> +
->  void debug_dma_map_page(struct device *dev, struct page *page, size_t offset,
->  			size_t size, int direction, dma_addr_t dma_addr,
->  			bool map_single)
-> @@ -1423,6 +1447,8 @@ void debug_dma_map_sg(struct device *dev, struct scatterlist *sg,
->  			check_for_illegal_area(dev, sg_virt(s), sg_dma_len(s));
->  		}
+>  Now, you have to decide which adapter you want to access. You should
+>  inspect /sys/class/i2c-dev/ or run "i2cdetect -l" to decide this.
+>  Adapter numbers are assigned somewhat dynamically, so you can not
+> @@ -163,10 +167,6 @@ what happened. The 'write' transactions return 0 on success; the
+>  returns the number of values read. The block buffers need not be longer
+>  than 32 bytes.
 >  
-> +		check_sg_segment(dev, s);
-> +
->  		add_dma_entry(entry);
->  	}
->  }
-> -- 
-> 2.17.0.dirty
----end quoted text---
+> -The above functions are made available by linking against the libi2c library,
+> -which is provided by the i2c-tools project.  See:
+> -https://git.kernel.org/pub/scm/utils/i2c-tools/i2c-tools.git/.
+> -
+
+I'm fine with moving the pointer to i2c-tools up in the document.
+However I find it unfortunate to remove the only reference to libi2c.
+Typically, distributions will only include the tools in i2c-tools, and
+they are not relevant in this case. The library will be in a separate
+package (libi2c or similar), and the header file in yet another package
+(libi2c-devel or similar.) Although the exact package names are
+distribution specific, it would be convenient to hint the reader at
+which packages he is supposed to install. You could also mention that
+the C program must be compiled with -li2c.
+
+>  
+>  Implementation details
+>  ======================
+
+
+-- 
+Jean Delvare
+SUSE L3 Support
