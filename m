@@ -1,90 +1,148 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754665AbeDYOYN (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 10:24:13 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47814 "EHLO mx1.redhat.com"
+        id S1754455AbeDYOZn (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 10:25:43 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48146 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754131AbeDYOYL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 10:24:11 -0400
+        id S1753283AbeDYOZl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 10:25:41 -0400
 Subject: Re: [Qemu-devel] [RFC v2] qemu: Add virtio pmem device
-To: Pankaj Gupta <pagupta@redhat.com>, qemu-devel@nongnu.org
-References: <152465613714.2268.4576822049531163532@71c20359a636>
- <1558768042.22416958.1524657509446.JavaMail.zimbra@redhat.com>
-Cc: jack@suse.cz, kvm@vger.kernel.org, david@redhat.com,
-        linux-nvdimm@ml01.01.org, ross zwisler <ross.zwisler@intel.com>,
-        lcapitulino@redhat.com, linux-mm@kvack.org,
-        niteshnarayanlal@hotmail.com, mst@redhat.com, hch@infradead.org,
-        marcel@redhat.com, nilal@redhat.com,
-        haozhong zhang <haozhong.zhang@intel.com>, famz@redhat.com,
-        riel@surriel.com, stefanha@redhat.com, pbonzini@redhat.com,
-        dan j williams <dan.j.williams@intel.com>, kwolf@redhat.com,
-        xiaoguangrong eric <xiaoguangrong.eric@gmail.com>,
-        linux-kernel@vger.kernel.org, imammedo@redhat.com
+To: Pankaj Gupta <pagupta@redhat.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, qemu-devel@nongnu.org, linux-nvdimm@ml01.01.org,
+        linux-mm@kvack.org
+References: <20180425112415.12327-1-pagupta@redhat.com>
+ <20180425112415.12327-4-pagupta@redhat.com>
+Cc: kwolf@redhat.com, haozhong.zhang@intel.com, jack@suse.cz,
+        xiaoguangrong.eric@gmail.com, riel@surriel.com,
+        niteshnarayanlal@hotmail.com, david@redhat.com, ross.zwisler@intel.com,
+        lcapitulino@redhat.com, hch@infradead.org, mst@redhat.com,
+        stefanha@redhat.com, imammedo@redhat.com, marcel@redhat.com,
+        pbonzini@redhat.com, dan.j.williams@intel.com, nilal@redhat.com
 From: Eric Blake <eblake@redhat.com>
 Openpgp: url=http://people.redhat.com/eblake/eblake.gpg
 Organization: Red Hat, Inc.
-Message-ID: <79f72139-0fcb-3d5e-a16c-24f3b5ee1a07@redhat.com>
-Date: Wed, 25 Apr 2018 09:23:45 -0500
+Message-ID: <25f3e433-cfa6-4a62-ba7f-47aef1119dfc@redhat.com>
+Date: Wed, 25 Apr 2018 09:25:37 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <1558768042.22416958.1524657509446.JavaMail.zimbra@redhat.com>
+In-Reply-To: <20180425112415.12327-4-pagupta@redhat.com>
 Content-Type: multipart/signed; micalg=pgp-sha256;
  protocol="application/pgp-signature";
- boundary="mmDwZV4M0zXDDT20DagSjiWsqCXrchrth"
+ boundary="CFJqPHc1lVbGj70GneZIm5syNGVZjNCpA"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---mmDwZV4M0zXDDT20DagSjiWsqCXrchrth
-Content-Type: multipart/mixed; boundary="vBkAcENT23vZalYco71XxAjzoGHE2FcjS";
+--CFJqPHc1lVbGj70GneZIm5syNGVZjNCpA
+Content-Type: multipart/mixed; boundary="1IGSjTW0uM1A8ilmt1jp7ZPWiEf26VDfr";
  protected-headers="v1"
 From: Eric Blake <eblake@redhat.com>
-To: Pankaj Gupta <pagupta@redhat.com>, qemu-devel@nongnu.org
-Cc: jack@suse.cz, kvm@vger.kernel.org, david@redhat.com,
- linux-nvdimm@ml01.01.org, ross zwisler <ross.zwisler@intel.com>,
- lcapitulino@redhat.com, linux-mm@kvack.org, niteshnarayanlal@hotmail.com,
- mst@redhat.com, hch@infradead.org, marcel@redhat.com, nilal@redhat.com,
- haozhong zhang <haozhong.zhang@intel.com>, famz@redhat.com,
- riel@surriel.com, stefanha@redhat.com, pbonzini@redhat.com,
- dan j williams <dan.j.williams@intel.com>, kwolf@redhat.com,
- xiaoguangrong eric <xiaoguangrong.eric@gmail.com>,
- linux-kernel@vger.kernel.org, imammedo@redhat.com
-Message-ID: <79f72139-0fcb-3d5e-a16c-24f3b5ee1a07@redhat.com>
+To: Pankaj Gupta <pagupta@redhat.com>, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org, qemu-devel@nongnu.org, linux-nvdimm@ml01.01.org,
+ linux-mm@kvack.org
+Cc: kwolf@redhat.com, haozhong.zhang@intel.com, jack@suse.cz,
+ xiaoguangrong.eric@gmail.com, riel@surriel.com,
+ niteshnarayanlal@hotmail.com, david@redhat.com, ross.zwisler@intel.com,
+ lcapitulino@redhat.com, hch@infradead.org, mst@redhat.com,
+ stefanha@redhat.com, imammedo@redhat.com, marcel@redhat.com,
+ pbonzini@redhat.com, dan.j.williams@intel.com, nilal@redhat.com
+Message-ID: <25f3e433-cfa6-4a62-ba7f-47aef1119dfc@redhat.com>
 Subject: Re: [Qemu-devel] [RFC v2] qemu: Add virtio pmem device
-References: <152465613714.2268.4576822049531163532@71c20359a636>
- <1558768042.22416958.1524657509446.JavaMail.zimbra@redhat.com>
-In-Reply-To: <1558768042.22416958.1524657509446.JavaMail.zimbra@redhat.com>
+References: <20180425112415.12327-1-pagupta@redhat.com>
+ <20180425112415.12327-4-pagupta@redhat.com>
+In-Reply-To: <20180425112415.12327-4-pagupta@redhat.com>
 
---vBkAcENT23vZalYco71XxAjzoGHE2FcjS
+--1IGSjTW0uM1A8ilmt1jp7ZPWiEf26VDfr
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
 
-On 04/25/2018 06:58 AM, Pankaj Gupta wrote:
->=20
-> Hi,
->=20
-> Compile failures are because Qemu 'Memory-Device changes' are not yet
-> in qemu master. As mentioned in Qemu patch message patch is
-> dependent on 'Memeory-device' patches by 'David Hildenbrand'.
-
-
 On 04/25/2018 06:24 AM, Pankaj Gupta wrote:
-> This PV device code is dependent and tested
-> with 'David Hildenbrand's ' patchset[1] to
+> This patch adds virtio-pmem Qemu device.
+>=20
+> This device presents memory address range=20
+> information to guest which is backed by file=20
+> backend type. It acts like persistent memory=20
+> device for KVM guest. Guest can perform read=20
+> and persistent write operations on this memory=20
+> range with the help of DAX capable filesystem.
+>=20
+> Persistent guest writes are assured with the=20
+> help of virtio based flushing interface. When=20
+> guest userspace space performs fsync on file=20
+> fd on pmem device, a flush command is send to=20
+> Qemu over VIRTIO and host side flush/sync is=20
+> done on backing image file.
+>=20
+> This PV device code is dependent and tested=20
+> with 'David Hildenbrand's ' patchset[1] to=20
 > map non-PCDIMM devices to guest address space.
-> There is still upstream discussion on using
-> among PCI bar vs memory device, will update
+
+This sentence doesn't belong in git history.  It is better to put
+information like this...
+
+> There is still upstream discussion on using=20
+> among PCI bar vs memory device, will update=20
 > as per concensus.
->
+
+s/concensus/consensus/
+
+>=20
 > [1] https://marc.info/?l=3Dqemu-devel&m=3D152450249319168&w=3D2
+>=20
+> Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
+> ---
 
-Then let's spell that in a way that patchew understands (since patchew
-does not know how to turn marc.info references into Message-IDs):
+=2E..here, where it is part of the email, but not picked up by 'git am'.
 
-Based-on: <20180423165126.15441-1-david@redhat.com>
+
+> +++ b/qapi/misc.json
+> @@ -2871,6 +2871,29 @@
+>            }
+>  }
+> =20
+> +##
+> +# @VirtioPMemDeviceInfo:
+> +#
+> +# VirtioPMem state information
+> +#
+> +# @id: device's ID
+> +#
+> +# @start: physical address, where device is mapped
+> +#
+> +# @size: size of memory that the device provides
+> +#
+> +# @memdev: memory backend linked with device
+> +#
+> +# Since: 2.13
+> +##
+> +{ 'struct': 'VirtioPMemDeviceInfo',
+> +    'data': { '*id': 'str',
+> +	      'start': 'size',
+> +	      'size': 'size',
+
+TAB damage.
+
+> +              'memdev': 'str'
+> +	    }
+> +}
+> +
+>  ##
+>  # @MemoryDeviceInfo:
+>  #
+> @@ -2880,7 +2903,8 @@
+>  ##
+>  { 'union': 'MemoryDeviceInfo',
+>    'data': { 'dimm': 'PCDIMMDeviceInfo',
+> -            'nvdimm': 'PCDIMMDeviceInfo'
+> +            'nvdimm': 'PCDIMMDeviceInfo',
+> +	    'virtio-pmem': 'VirtioPMemDeviceInfo'
+>            }
+>  }
+> =20
+>=20
 
 --=20
 Eric Blake, Principal Software Engineer
@@ -92,9 +150,9 @@ Red Hat, Inc.           +1-919-301-3266
 Virtualization:  qemu.org | libvirt.org
 
 
---vBkAcENT23vZalYco71XxAjzoGHE2FcjS--
+--1IGSjTW0uM1A8ilmt1jp7ZPWiEf26VDfr--
 
---mmDwZV4M0zXDDT20DagSjiWsqCXrchrth
+--CFJqPHc1lVbGj70GneZIm5syNGVZjNCpA
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
@@ -103,14 +161,14 @@ Content-Disposition: attachment; filename="signature.asc"
 Comment: Public key at http://people.redhat.com/eblake/eblake.gpg
 Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
 
-iQEzBAEBCAAdFiEEccLMIrHEYCkn0vOqp6FrSiUnQ2oFAlrgj3EACgkQp6FrSiUn
-Q2rWJgf9Fi1g3YjOnasyD2+TxIYRagQbx7/Sg/F2VvSqM3NyJ+Wk9/7iNIzkyLPg
-99LY6CY46HaSyftjTGrQqc9D5bwpvXWn4gg2O311rMOlrSO+dPBixFs7fMm3wxgx
-WGZ9W5NdfYWLG+crVHyCBymKvwW/l+bVvAn4URLoiHXCJQu6DKhsdp/N8bpdSUfr
-XPbCVzgqIoA3dpVOR3aEHqIyVPqwnKwbI9Lya11/upKF7Zczvjp+TJZe/1k+v7v1
-pD1CNy0v32pYYgEqt7lwo4eWCM+ZS8zyWHV+MG6pXHg4jfFEmPbsOwGSYm1T5zjH
-4hQowL4JcnXSBPhNr8ew9xwqW0kBbw==
-=e3JN
+iQEzBAEBCAAdFiEEccLMIrHEYCkn0vOqp6FrSiUnQ2oFAlrgj+EACgkQp6FrSiUn
+Q2oftQgAkgISPCCNGA8QYSXkQfHKQ2qPa3CR6cJ1vSVXjJWEsPypyfrQ4P/caxJC
+OaTfjufz0Tgn/kn1MOzeDYgQGnOjYZJC+1YYcMhR8arrUb6Whv4ejHpnXGNC1lxJ
+hLcRxPhD7fg7CW55xgi/pXF1OLUxMMQdtyd57SCW5rCt5NPi8TZRsDOiM34KEbDW
+EewLjBrjnueBaLVywp5I0KFODWua4/qSmkzB3E/EnHw66uHKrWH0PAHnH2s3OnwL
+0o4eBB2YnSrf2eKCuLY5XvJwD9HyRQm9h6sKnuP7+PqzaLlycHphA1jfOL+hNK2w
+txr4zrD38INfFRWQy0QHUt84HMGbPg==
+=ylBq
 -----END PGP SIGNATURE-----
 
---mmDwZV4M0zXDDT20DagSjiWsqCXrchrth--
+--CFJqPHc1lVbGj70GneZIm5syNGVZjNCpA--
