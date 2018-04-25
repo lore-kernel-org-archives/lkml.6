@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-557887-1524653671-2-756705180118866415
+X-Cyrus-Session-Id: sloti22d1t05-558212-1524653667-2-11654010049120383031
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524653670; b=WLB8vgLHCTdOWFnou5ycdoRZ3z+X3QZ4qPFrnD6zZuFErNZJn7
-    SxcPriGbJUDrxfW5zt35OtJbHg1zzT2b6yre+aQ4pUmeSegTYaYDSTrGbzBuva1m
-    0Ht3+y6EVlO7lNRnzPwjG71vGEaH8GxQZP6dyefgypYpR1C0eHKC5C12KCeyWwkH
-    LQYoTaFJ/48Hi8pTdHyne/XOEPyeU1xurWokinvT6eba700gqFo/XWqVEzaB7J7q
-    iJDNQVUB/1980NBjiriTX2jtegw/3/wN3enky3AhzEo/BiG2DQi42x1Q0W83sTHE
-    jLTDnk2dXsqzlvS2z2CgUAVT4wMD+ZYAeBpg==
+    1524653667; b=uFlmCKtk2FdN12onTK/TQ2wycYLt6BThgh0qHHJHDFudx9R7d3
+    /tLpMSRgkWX7y0S6QxcPSXccBKvmt28/tmqGciXVo7ww/tWGtt3ynqUY554FgrfG
+    dTBPBdKp6pw7dYSPMTpraTPQpNRd2YNtbR07zTC//SM0m9kp6McnfQwCGJe7R6aV
+    AqObcvudETVjC6uRkYyQ5UOdlV5nfg6H8c1d2dHQwCKDe7FF4xXxHuAilXKcfvfY
+    ZGrz69WzYvlEMT7Asub3m1PqTf2Wx9nU8zOtep+DttekEomm6cMvZoIt0xVX3dO3
+    YP+C9CuD3V9ErTDlUSRxk7yWDcvEEKzUq8kw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524653670; bh=tMWWiwaUlzzY25OYrZuC9jKUxAfOw3
-    1U/3nVYR3W0Vc=; b=qvmjU9W3khK2qwI7Fwca7GTnMWU8mjJTcFKLZTX2Q56ZqZ
-    o249IEkQu6DVXYNQyez3veLOVx1JohHY1mX5F5cbjlrfDBVmYGZsrH+SRaZANeMz
-    eaEexcXH+OLlo6XQwxBihO7p2W2F3cUNTVVUjCI94SNvh7W9AfYvb57bspNr7Y8N
-    4GkRdzKw4AQ9jxADyK7lXJWwrNpROcx6u2jP6bRD6eBeyoz7rLS3kP1i/JjhLHVR
-    8+tfuH4C54CXburq9+DJkrr8DqUxK8Em0K3D/x2j0Lv/aFx0LgB9uQNPbIjjk5Q4
-    cEWDNDCjwI3MEuZupdSAVmndj7EtL6EFMBAzhEFA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1524653667; bh=bVr+rOjn0Y616hv/SIkMBhAW9K0rM8
+    n+ftHgt17OH8s=; b=JafYYYeFjy1Aubn1Svoode6JR8u5tNLj6Djq640g1hqqFP
+    LAQ2tx6os/Z9th1tW/Y7M7zz5aBzMOiXZuV9mpAOJuzhA6b32Cpm296Phgx+q/Tm
+    VNPs/a39PXUNfSOIXrt9n02mXxYGlzSeF6U55sAC82wKw9TkMvcPjmZA4gMDAR3o
+    k2sRzLB11hVvicnP5PGtqMTMFw3uLmnEDyVDcFQ78eSGkaygopgivND0An2J7nVN
+    QPlhC6Lf0uiwvUJe6d3oQCrTvRPHtKKN80vrH5h2+/KqdvI90EgWoshXBCKeGdLm
+    76NawVqjLM83ZHDCxbsBOIFSd6W0g44fmUpZ6AWg==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,52 +51,33 @@ Authentication-Results: mx4.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFibLAg1BL7EkOqrP1aDZDPwHkIKD/uabDNVjTvcuL5ZegP5VSn4f8IRe1//WnMFU93GP7+JR4YC/XWA4uzdhipbRj5wiT9HAc8/VKk2bue3W4d8s/f0
-    SJvp5tz5eqyK2qVzx3rjcRjY2VEe9f9QO/s2lmt83iJf2g1ULfchiMZaIJlmOw7KS3Z1OpgGivcwB0JxkQ2/s0AeWqtb++/zJL+5v0bUC6fMHD35kcYd446o
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfOY40O8q01HDRsMYDiS+OMCTBIEA7u88fDTf7hXlWhBBaCnmP3WPJdneAlLCzFanAl774VmDlN+tmvlNlBp1DIFV13Y8EfWWTY4F9PTi1aFXnlVRuGDy
+    L4IoiLcLgqlPQ9GZ/CcEt2a8ZVM8EVV2iph+oFGPZ4UZ5o1zte/MT2lvdEre1acGQcZN++jHRAlFw8PQDoOIprcQKLOuHvl5NhYQZnR/kuTpYWut8I6P8TTX
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=20KFwNOVAAAA:8 a=VnNF1IyMAAAA:8
-    a=7CQSdrXTAAAA:8 a=zAyngx5bAAAA:8 a=J1Y8HTJGAAAA:8 a=oGMlB6cnAAAA:8
-    a=1XWaLZrsAAAA:8 a=yPCof4ZbAAAA:8 a=WPyIoOwQAAAA:8 a=jIQo8A4GAAAA:8
-    a=Z4Rwk6OoAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=hzj1nXxdle4KTAAxqCMA:9
-    a=8_EjQHUU7Cj42UGb:21 a=uCfH2SEsDRPKLTTm:21 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=a-qgeE7W1pNrGK8U0ZQC:22 a=4LA4qAFo6bo561LpWNDU:22
-    a=y1Q9-5lHfBjTkpIzbSAN:22 a=NdAtdrkLVvyUPsUoGJp4:22 a=S-HzPIwwDS8t1QcwSuWs:22
-    a=Lf5xNeLK5dgiOs8hzIjU:22 a=HkZW87K1Qel5hWWM3VKY:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=yPCof4ZbAAAA:8 a=JDjsHSkAAAAA:8 a=20KFwNOVAAAA:8 a=yMhMjlubAAAA:8
+    a=ag1SF4gXAAAA:8 a=l2jCzf7jOVhU8yY9kJsA:9 a=OeDwdVjzLO2CIJ2_:21
+    a=DaWiiW_IgbzS1-IW:21 a=QEXdDO2ut3YA:10 a=dseMxAR1CDlncBZeV_se:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754212AbeDYKna (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 25 Apr 2018 06:43:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53014 "EHLO
+        id S1751934AbeDYKyK (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 25 Apr 2018 06:54:10 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53064 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753730AbeDYKnZ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 25 Apr 2018 06:43:25 -0400
+        with ESMTP id S1753847AbeDYKnf (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 25 Apr 2018 06:43:35 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        David Daney <david.daney@cavium.com>,
-        David Miller <davem@davemloft.net>,
-        "H. Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Nitin Gupta <nitin.m.gupta@oracle.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Olga Kornievskaia <kolga@netapp.com>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        "J. Bruce Fields" <bfields@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 113/183] asm-generic: provide generic_pmdp_establish()
-Date: Wed, 25 Apr 2018 12:35:33 +0200
-Message-Id: <20180425103246.988906567@linuxfoundation.org>
+Subject: [PATCH 4.14 154/183] svcrdma: Fix Read chunk round-up
+Date: Wed, 25 Apr 2018 12:36:14 +0200
+Message-Id: <20180425103248.730641230@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
@@ -114,86 +95,86 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+From: Chuck Lever <chuck.lever@oracle.com>
 
 
-[ Upstream commit c58f0bb77ed8bf93dfdde762b01cb67eebbdfc29 ]
+[ Upstream commit 175e03101d36c3034f3c80038d4c28838351a7f2 ]
 
-Patch series "Do not lose dirty bit on THP pages", v4.
+A single NFSv4 WRITE compound can often have three operations:
+PUTFH, WRITE, then GETATTR.
 
-Vlastimil noted that pmdp_invalidate() is not atomic and we can lose
-dirty and access bits if CPU sets them after pmdp dereference, but
-before set_pmd_at().
+When the WRITE payload is sent in a Read chunk, the client places
+the GETATTR in the inline part of the RPC/RDMA message, just after
+the WRITE operation (sans payload). The position value in the Read
+chunk enables the receiver to insert the Read chunk at the correct
+place in the received XDR stream; that is between the WRITE and
+GETATTR.
 
-The bug can lead to data loss, but the race window is tiny and I haven't
-seen any reports that suggested that it happens in reality.  So I don't
-think it worth sending it to stable.
+According to RFC 8166, an NFS/RDMA client does not have to add XDR
+round-up to the Read chunk that carries the WRITE payload. The
+receiver adds XDR round-up padding if it is absent and the
+receiver's XDR decoder requires it to be present.
 
-Unfortunately, there's no way to address the issue in a generic way.  We
-need to fix all architectures that support THP one-by-one.
+Commit 193bcb7b3719 ("svcrdma: Populate tail iovec when receiving")
+attempted to add support for receiving such a compound so that just
+the WRITE payload appears in rq_arg's page list, and the trailing
+GETATTR is placed in rq_arg's tail iovec. (TCP just strings the
+whole compound into the head iovec and page list, without regard
+to the alignment of the WRITE payload).
 
-All architectures that have THP supported have to provide atomic
-pmdp_invalidate() that returns previous value.
+The server transport logic also had to accommodate the optional XDR
+round-up of the Read chunk, which it did simply by lengthening the
+tail iovec when round-up was needed. This approach is adequate for
+the NFSv2 and NFSv3 WRITE decoders.
 
-If generic implementation of pmdp_invalidate() is used, architecture
-needs to provide atomic pmdp_estabish().
+Unfortunately it is not sufficient for nfsd4_decode_write. When the
+Read chunk length is a couple of bytes less than PAGE_SIZE, the
+computation at the end of nfsd4_decode_write allows argp->pagelen to
+go negative, which breaks the logic in read_buf that looks for the
+tail iovec.
 
-pmdp_estabish() is not used out-side generic implementation of
-pmdp_invalidate() so far, but I think this can change in the future.
+The result is that a WRITE operation whose payload length is just
+less than a multiple of a page succeeds, but the subsequent GETATTR
+in the same compound fails with NFS4ERR_OP_ILLEGAL because the XDR
+decoder can't find it. Clients ignore the error, but they must
+update their attribute cache via a separate round trip.
 
-This patch (of 12):
+As nfsd4_decode_write appears to expect the payload itself to always
+have appropriate XDR round-up, have svc_rdma_build_normal_read_chunk
+add the Read chunk XDR round-up to the page_len rather than
+lengthening the tail iovec.
 
-This is an implementation of pmdp_establish() that is only suitable for
-an architecture that doesn't have hardware dirty/accessed bits.  In this
-case we can't race with CPU which sets these bits and non-atomic
-approach is fine.
-
-Link: http://lkml.kernel.org/r/20171213105756.69879-2-kirill.shutemov@linux.intel.com
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: David Daney <david.daney@cavium.com>
-Cc: David Miller <davem@davemloft.net>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: Nitin Gupta <nitin.m.gupta@oracle.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vineet Gupta <vgupta@synopsys.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Reported-by: Olga Kornievskaia <kolga@netapp.com>
+Fixes: 193bcb7b3719 ("svcrdma: Populate tail iovec when receiving")
+Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+Tested-by: Olga Kornievskaia <kolga@netapp.com>
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/asm-generic/pgtable.h |   15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ net/sunrpc/xprtrdma/svc_rdma_rw.c |   12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
---- a/include/asm-generic/pgtable.h
-+++ b/include/asm-generic/pgtable.h
-@@ -309,6 +309,21 @@ extern void pgtable_trans_huge_deposit(s
- extern pgtable_t pgtable_trans_huge_withdraw(struct mm_struct *mm, pmd_t *pmdp);
- #endif
+--- a/net/sunrpc/xprtrdma/svc_rdma_rw.c
++++ b/net/sunrpc/xprtrdma/svc_rdma_rw.c
+@@ -727,12 +727,16 @@ static int svc_rdma_build_normal_read_ch
+ 		head->arg.head[0].iov_len - info->ri_position;
+ 	head->arg.head[0].iov_len = info->ri_position;
  
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+/*
-+ * This is an implementation of pmdp_establish() that is only suitable for an
-+ * architecture that doesn't have hardware dirty/accessed bits. In this case we
-+ * can't race with CPU which sets these bits and non-atomic aproach is fine.
-+ */
-+static inline pmd_t generic_pmdp_establish(struct vm_area_struct *vma,
-+		unsigned long address, pmd_t *pmdp, pmd_t pmd)
-+{
-+	pmd_t old_pmd = *pmdp;
-+	set_pmd_at(vma->vm_mm, address, pmdp, pmd);
-+	return old_pmd;
-+}
-+#endif
-+
- #ifndef __HAVE_ARCH_PMDP_INVALIDATE
- extern void pmdp_invalidate(struct vm_area_struct *vma, unsigned long address,
- 			    pmd_t *pmdp);
+-	/* Read chunk may need XDR roundup (see RFC 5666, s. 3.7).
++	/* Read chunk may need XDR roundup (see RFC 8166, s. 3.4.5.2).
+ 	 *
+-	 * NFSv2/3 write decoders need the length of the tail to
+-	 * contain the size of the roundup padding.
++	 * If the client already rounded up the chunk length, the
++	 * length does not change. Otherwise, the length of the page
++	 * list is increased to include XDR round-up.
++	 *
++	 * Currently these chunks always start at page offset 0,
++	 * thus the rounded-up length never crosses a page boundary.
+ 	 */
+-	head->arg.tail[0].iov_len += 4 - (info->ri_chunklen & 3);
++	info->ri_chunklen = XDR_QUADLEN(info->ri_chunklen) << 2;
+ 
+ 	head->arg.page_len = info->ri_chunklen;
+ 	head->arg.len += info->ri_chunklen;
