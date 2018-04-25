@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+7pZQ7G6Pn8q5VTcMqAFkqBcPNftSWXr2m3aDPcuxGiiENHheJdiYL9ZXosJjQJztnMMQJ
-ARC-Seal: i=1; a=rsa-sha256; t=1524653018; cv=none;
+X-Google-Smtp-Source: AB8JxZoWfMtHJUD3MOIonRlwSFGZJkxGAeQHKDk85mmbf4q1TH9p2WsHu26vMc68gqAhcyJE/m8w
+ARC-Seal: i=1; a=rsa-sha256; t=1524653010; cv=none;
         d=google.com; s=arc-20160816;
-        b=AFx1TEV3/acijnggVppYLIMxB5yrwj2vhUVl6y88FZtv9DAmPQarMqfi/FIy7gxMVg
-         uu7AAWSJBeBy6gvPXB5Wr0KebKU3ogvw+Q/RBtClkb7YRELN6D4NTpNnzeCEVNBqBhB4
-         mxDpQYHnKjwrA9cTi+RR1vE8ShTNBu/jSJI4ehR5JhKXYWZkULUfRyRWec4NUx0oVTog
-         f4AqAkvvMO3QEYnJRKXvF0CyClF+bLnxU+th3I74Q9/qweLtSD25GLC/WR03HKjVvo7Y
-         UCGEOXJUaiS3yQj4XhzIAiyUby3aSNw0yUChHBP2HLaIOqdUUawm2P7BM4lbCVvhqTha
-         EpQw==
+        b=bZJ4kTTai655WyBSw1RIf7aoqUe8VVBdYtXkjYdPRQbYZOnPPoG4my8idW48MgAd0l
+         vDnuTb2BKTjLsuphBtgQtoyvO7AKZRjHRBlIeOPorl6JHhhGbPqlIyKqKQtzotjeYZLt
+         Isf+3M/qJiKw+9VlxoWlMIdULKsOG+lcQIarIrP8AFcexPN5heuSYWYBen6ZKdtHFcOk
+         yxDx3kzec/q4wVzIyRJOrwDu/nqRB4L0Ud4InnOi8TsHid7Uasn+1Q/o6Oaj9tt1NpFK
+         bDl6rpjvCrM3QMl3avI97yeudpPQMInxzbS+1+KDyuqpaKggTOT//so+WPQiRULIHvRB
+         UYmg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=SHu+a1O04LHkVjhXegVyJJMt8BVwVexmYCYV3W2x564=;
-        b=Gs4SnwC0zRcEW56uT/w1kvLqns+Sk1CHg5R0u47HwEHDm9A2mtR5Vu5WjMemqepd1c
-         pww0D/8o98BUYuOyrJWiPl0W1RpvTp2gJ0fhIOxlA//T7Pz/emOuhNwetJeLWtFlRST4
-         0tU3xXgt0TIFdfPyL7ZZT5HnH0zcvN9hoeLjNKjdZqD7dc6Xm6x+ol5uE+GKVlcRYceO
-         BGd6mDnADNQl5YSstVGfF8SEfJpcCLVR/1Sv1lMLpL39McSw3WsOmhPAt7d9zMZZRppK
-         ndWnHk8oJK5TFEd1DLt6cjNYEazSCOEIM30GqAdHCdhO2I2NS42D4Uz9G7tlplIWrp/J
-         gPhw==
+        bh=K7dxIPf3nzbTyl5qrRIBsLn+f8RSHeZcSvNZHIA9MOU=;
+        b=vCApXU67byuGr5qylH9ZpeIbHzeb+Z8VWjTlLTUgL37yaj8X7NB7UuJFpb0UOqupzB
+         2NDNMeSCiuK2fU0DYNEFmS/VTnM0joxzAlV4Fr1NLLXdPRWnNjBHyX5NWlonbflwHel3
+         v3kvcvnxtLbBQoQ3Oeg6L9rI+IV1+K1+awm12v3YOMGFrCqm35xF6/X4ygpqT+FAP2pv
+         ahi7j4GHRvX2XfujyT6rdHMgVoxmJntm1HwpU2iCfu7ylqU+LASYhR1BX000ch6G+j2d
+         1pyDahtIgppnCbPt1FX+2oC1TKITRKCdE8peM9s8V23rew4t7fUd43K4ancA8/+FVUWl
+         e+0Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mathieu Malaterre <malat@debian.org>,
-	"David S. Miller" <davem@davemloft.net>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+	kvm@vger.kernel.org,
+	KarimAllah Ahmed <karahmed@amazon.de>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 155/183] net: Extra _get in declaration of arch_get_platform_mac_address
-Date: Wed, 25 Apr 2018 12:36:15 +0200
-Message-Id: <20180425103248.771916977@linuxfoundation.org>
+Subject: [PATCH 4.14 105/183] kvm: Map PFN-type memory regions as writable (if possible)
+Date: Wed, 25 Apr 2018 12:35:25 +0200
+Message-Id: <20180425103246.671364610@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180425103242.532713678@linuxfoundation.org>
 References: <20180425103242.532713678@linuxfoundation.org>
@@ -41,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598714563356981057?=
-X-GMAIL-MSGID: =?utf-8?q?1598714563356981057?=
+X-GMAIL-THRID: =?utf-8?q?1598714555037361339?=
+X-GMAIL-MSGID: =?utf-8?q?1598714555037361339?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,42 +52,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mathieu Malaterre <malat@debian.org>
+From: KarimAllah Ahmed <karahmed@amazon.de>
 
 
-[ Upstream commit e728789c52afccc1275cba1dd812f03abe16ea3c ]
+[ Upstream commit a340b3e229b24a56f1c7f5826b15a3af0f4b13e5 ]
 
-In commit c7f5d105495a ("net: Add eth_platform_get_mac_address() helper."),
-two declarations were added:
+For EPT-violations that are triggered by a read, the pages are also mapped with
+write permissions (if their memory region is also writable). That would avoid
+getting yet another fault on the same page when a write occurs.
 
-  int eth_platform_get_mac_address(struct device *dev, u8 *mac_addr);
-  unsigned char *arch_get_platform_get_mac_address(void);
+This optimization only happens when you have a "struct page" backing the memory
+region. So also enable it for memory regions that do not have a "struct page".
 
-An extra '_get' was introduced in arch_get_platform_get_mac_address, remove
-it. Fix compile warning using W=1:
-
-  CC      net/ethernet/eth.o
-net/ethernet/eth.c:523:24: warning: no previous prototype for ‘arch_get_platform_mac_address’ [-Wmissing-prototypes]
- unsigned char * __weak arch_get_platform_mac_address(void)
-                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  AR      net/ethernet/built-in.o
-
-Signed-off-by: Mathieu Malaterre <malat@debian.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: kvm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/etherdevice.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ virt/kvm/kvm_main.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/include/linux/etherdevice.h
-+++ b/include/linux/etherdevice.h
-@@ -31,7 +31,7 @@
- #ifdef __KERNEL__
- struct device;
- int eth_platform_get_mac_address(struct device *dev, u8 *mac_addr);
--unsigned char *arch_get_platform_get_mac_address(void);
-+unsigned char *arch_get_platform_mac_address(void);
- u32 eth_get_headlen(void *data, unsigned int max_len);
- __be16 eth_type_trans(struct sk_buff *skb, struct net_device *dev);
- extern const struct header_ops eth_header_ops;
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -1434,7 +1434,8 @@ static bool vma_is_valid(struct vm_area_
+ 
+ static int hva_to_pfn_remapped(struct vm_area_struct *vma,
+ 			       unsigned long addr, bool *async,
+-			       bool write_fault, kvm_pfn_t *p_pfn)
++			       bool write_fault, bool *writable,
++			       kvm_pfn_t *p_pfn)
+ {
+ 	unsigned long pfn;
+ 	int r;
+@@ -1460,6 +1461,8 @@ static int hva_to_pfn_remapped(struct vm
+ 
+ 	}
+ 
++	if (writable)
++		*writable = true;
+ 
+ 	/*
+ 	 * Get a reference here because callers of *hva_to_pfn* and
+@@ -1525,7 +1528,7 @@ retry:
+ 	if (vma == NULL)
+ 		pfn = KVM_PFN_ERR_FAULT;
+ 	else if (vma->vm_flags & (VM_IO | VM_PFNMAP)) {
+-		r = hva_to_pfn_remapped(vma, addr, async, write_fault, &pfn);
++		r = hva_to_pfn_remapped(vma, addr, async, write_fault, writable, &pfn);
+ 		if (r == -EAGAIN)
+ 			goto retry;
+ 		if (r < 0)
