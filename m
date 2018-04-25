@@ -1,5 +1,5 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-900250-1524669233-2-8033316168735781892
+X-Cyrus-Session-Id: sloti22d1t05-900250-1524669224-2-1032724092140286290
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524669232; b=tKDpPdBX+6bNkj4uxUFCFdJ2tEC1pN0rSOfruIDNuBTrNd3LXJ
-    zKiixkFPM/Fne6CZJDRNo5l5AIr9XWWz5ev/C7zYCNsHVyF+sS6kt3N2qtK2FKJh
-    1TtCCOZdpXHg6R/eo3/r9BPltAtAXbP3YITnBioF86kIZzhidPzCfEoSL1Vc4wQg
-    9aaa4RbVUmNjDlKz8Z66zychHSdUwrElgwcLE7z2CH7QptGynTtGJzcmVQ0zmFIc
-    4DhoJ4QS0LgHNpC3ajE2Ow9iYMPgytnG6JsR2m/kIElis85y8LmFe2SLcjZMszIp
-    e+q8z2Km/fSSEqxapUFS7xabaaQAHB2sm3+Q==
+    1524669223; b=ihG8A5PR94vNpwETfcQp4P3jDT4NuXYPgAjkDhjf8rlcRbBvsd
+    SFTyzn+n8SPeETkaqSsJcAypk7vZwfWMx63csIsDWMGU0IW5Ub370lHvciigs9d3
+    uQ5ee06X5hLCQVm77g8Fz4ZSv6DL585xC0kCMkVuIAFAUh8ILBv9sAGbP3Pb9J5v
+    yOXMPt2SSoqUIX5qdf0pXjFywZG7bFjkUPW+3yMELG7nOQ+iCnXhkbM4KYSoIBl0
+    nWTlXCMYes3ZFj3kBn6AY1CKHAzSfzJGgqIWgafRVBeVTGQcc1EuLG/BQd7G3GZp
+    5edPeG19GCCCOKt8jVeFELWQVQcc6KI+YHeA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1524669232; bh=
-    dD9ilnbSt7ngRxD4OQwY+h9xAMs7la8MYipbcP4yibQ=; b=Wp6x8DWApPHIuEss
-    KQUF8V+LmcC/mR19B6f1BVUeFJwdY9Y8//DiNZU8QgtIO4D9S0MpIgSqhgRF9ipI
-    UgCfJx1U3fxARxCy+MMBEmWJxRo23pIBXLLfcZ9QoTA2aTjswxZNXdbcmGw6a3HC
-    IpAO0tBIp0jIECFJWlJvoRl5pC6Ufcd3tqHczYXMxt+58xGcSOTlB6eKqsNh4Ye4
-    MRwPYcHzvHrQq0zXtSOhZBHp4CFMMM/R74Kn/SXUHe9WQiQm5xxVqIA/Oqss5nrw
-    ie4PAvi1qOSdpiIAFSWngNzwdqD7AgtRZl6YbUqAY3pu0oNr0zpQADtq1Cy7NMiK
-    d6Bi3Q==
+    :in-reply-to:references:sender:list-id; s=fm2; t=1524669223; bh=
+    l0jyEFY+hkPMnUceLQIWEALESZeX15JkgRWAQrHiulM=; b=QALVuaIA+o6VT8Vd
+    z2IxuRRnwopWY0eOMqra0PLf3AI4YuiC5YxsMMt+natrtP2PNJaDxYZLye9XRA44
+    X6KXfDOUA4DTlcAfYDptHXc6/gAA+nLqExle9XiyBJgkWBeyxtdSy4kanN1YnLhb
+    hohkB0osfo8hGaJPXdedCz6uy2FVaEtaOlPbNvLloYXZboIiki70k6TKqlsn1zh1
+    HBcp2z6098E2/baZ0zsPMvCrl3sOhnbu9lk2fqPNdvk7L7h80LtQ9NWyu+0CpTdM
+    EG3wnuY1GOkTqIHm5Sm7s0UZfpk0qLhSAf2AOeQ8+UGxule9r5ESUST3PcCqVx6e
+    HRkAOg==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
@@ -51,20 +51,21 @@ Authentication-Results: mx3.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfEduGPbWbiJ52sOW8BZXOuxjimkc5iR5uxHNU7/21Z2Uj5EW9V9DOF1pOLCDbh8Mkx3KT93NXVqT1IUiv0TdcVaDJdl6WoATdlGVFBd7/fW1lkVAtTFB
-    HBfzSTAIrsdntiTS8Dcf3vtOlVDxR06hRpkrWhtTpBW6/F5q5ABqz5sSPagN0G0hJUw1+8IbOTpCEDIRFkfb1AL6ZTDAXLcA1c3Kv0Zfr5yp6oHIu6+HdntY
+X-CM-Envelope: MS4wfE+z4e8//Pctmr4ipBt4UtoPhGOzXaaCWQv/X/GckL1DhfewZ+OhlX1bjTs4C2Zq2YJ4Gv72Kc+ix/IPwgeUk1b4PbQsMD4v9pfPiWOkalQaDZ32qXpK
+    p8gN1in2LcK+UGiEQ6pXqq+VAa5F+8f8PauTOYk2mwSMRm8KOxe2SrxV8DdswkpgvH3RPsb0Lwdb26IanS+NwCXfAE7j+pC4PoE0yzn5GGvc9/vkthcVwOH+
 X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8
-    a=nfMvwj1s_EtHegV2GFMA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=uoltoFHUlbKcE8_BlpwA:9 a=5m7Ad2VrR9ME0qSz:21 a=arKeV7zCrVa9cqf6:21
+    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755109AbeDYPND (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 25 Apr 2018 11:13:03 -0400
-Received: from mout.kundenserver.de ([212.227.126.133]:57719 "EHLO
+        id S1755243AbeDYPNF (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 25 Apr 2018 11:13:05 -0400
+Received: from mout.kundenserver.de ([212.227.126.134]:50611 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754843AbeDYPHQ (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Wed, 25 Apr 2018 11:07:16 -0400
+        with ESMTP id S1754757AbeDYPHO (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Wed, 25 Apr 2018 11:07:14 -0400
 From: Arnd Bergmann <arnd@arndb.de>
 To: y2038@lists.linaro.org, linux-kernel@vger.kernel.org
 Cc: linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
@@ -76,87 +77,139 @@ Cc: linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
         linux-mips@linux-mips.org, jhogan@kernel.org, ralf@linux-mips.org,
         linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
         zackw@panix.com, noloader@gmail.com, Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v4 16/16] y2038: ipc: Redirect ipc(SEMTIMEDOP, ...) to compat_ksys_semtimedop
-Date: Wed, 25 Apr 2018 17:06:06 +0200
-Message-Id: <20180425150606.954771-16-arnd@arndb.de>
+Subject: [PATCH v4 14/16] y2038: ipc: Use __kernel_timespec
+Date: Wed, 25 Apr 2018 17:06:04 +0200
+Message-Id: <20180425150606.954771-14-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
 In-Reply-To: <20180425132242.1500539-1-arnd@arndb.de>
 References: <20180425132242.1500539-1-arnd@arndb.de>
-X-Provags-ID: V03:K1:Mlabpj+luf20+BILETO7JbXl11x+S63/lDeB9I8xRdnCyML+2y2
- SEv4/EcskLmyzHqtorUKLjUzHaKIwF3Ds0JuyIVnUSiBRzGFwo4mfePbv/NjOJUH7+wbjgP
- lmNVVsYy/PzzGz5xplirZQQTSika5eJxOseY0UxWAdqlH+uiS/Q2ThdtOzEu8I7kUv5JvvK
- 72vyib/moYdduZzTS/ckg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:SqN+npyaZdU=:2iB9BZauhQXqPesFdfkWfK
- vCbG8Vgy9eKVJKuVzfB9K58T37/tMsSYEdG8+iCyMd15rkm5zdQlv62xWWqATm1JnamavSIrR
- dOIBdlGpcbYB4xH9Mife2fCp7OBJUH3fVTNw2V7ifw/08z4c/Q0kJqO0g3f1lO0QZaGLYiNBP
- ylTKkLgcQSoOLgoDIi5sXktp/Jm3z99JasrSdmPovzve8flXC5KzbkHAR733KaU2ECqObcoHb
- meEIjmuEZdgLNXT80vCxhv7U+vkPOyxO7bVv2yvkkFYKxFUZCqELNcKwQSrbjJ+7ihgT3FlRf
- YcR6DDqEuDIA/2lfvZSyPPc9fS0BhmVvIdNNZhTo8xgwxByxHSStmnsV8I4lu7boEPgxLJFCH
- BhhoAwnIYKFA7VJSoD/4At0rDW2ZqHODq0bKsw9DF9KJXXS5Uu/QyFiQayyFT0H09/lawzzhs
- InT5i4GoJlQ7sbmeSXkFJ88kG2DnxEiJrUDyiVrBe4TaBtn4RUGT4VTCseE1lYIYT7CwYriMX
- AGT9xePhRrwJvDom+Z4537rZjggZWKyX66M0PuTgsJnTJhwekmiFkBtjlI7QzjtBMNVa7OIR4
- W4Jl92RwlQKgE0omplLfF7UPjdp4MFGW2JPNpMl5udI/k6mXxmq1YyXpYXE1eFwfFJBir05R9
- stWRpssw1H+8rGSMKvynbFlVuAPL0Rfsppk30AIFUKlYX/4rXvMuReQesL/csKce2Ewll5K9z
- ENLb1unuxr5CX6vSUO1teYurJEtv+ALHyMGYCg==
+X-Provags-ID: V03:K1:GC8B4lvTkw5Lm1bzN/Q0A6HXJ7loY8D2WCpwJQcWGCLtmTYV60x
+ 6nydte5iGaMkPNezDbJHWv2T6A5ubHs7YDmFg3Y2rfsTkcd05ISLJSwWNww0aqKLEIMuBwL
+ or/J5Y0U0t8pM6SeboCMYjU7H/bpZ1ZaW+jVR/WfxHY71ZZ9GAJ9SfKNTQe4gvR6NkpfqTr
+ C1PYQCGo71GjBGpLYbk3g==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:BJXUDQ6Vvto=:iFZRn5T++Cyo0hzYvieKxi
+ Ok5PngjIt0vhLUEbGiUjM/SlfiQ5tCzDqq375Cr2Rph9Zv9x0mr1syd10p7LKMtRWHWbGKwf6
+ Z4+7h7MCrn0+YL0b7oxUtgxxv54/8r0fjP5Hzz1zAFl4mrbgIrdiL/VZp5w2xDFY7c7ReWwsj
+ /fRzQYXKkfRqlHYI3pUhDWW4AXEti+yFtXik5o28vdGYBwFrBQ+DLp6BaJZv8DovmZcYIPdcT
+ rFjEOiY1bfWKgfI+JAHkyodQWDzRJShBR6cJRDEzv5U9Kb1JqQMocf/a/ORBCN0FpIDO6wBls
+ zKwWGUazjo1e5JlASCCKCAaB6CfAiDICLHR3YFTfRHhdFAW+cPwCHuR/rXuQP5dxqf1sMHrzQ
+ gH43ULgvkBOedwCl6Dl/NFLAuEJ6o3B3DnC3x25FlQks1H3a92c1Cuv0Y8TFU50u9GiQkTtRi
+ Dznbz8ZwrcUyncvhH5yp+QBLEX5iRqda/coMPqXqKjNeQTkq8MUZkgzOP6YTo4SjP238pd9tF
+ 1/e5QuKpH8SjunVfmQ82mYZZ83hBkabum39IAi3bmL3L+RtniK71/sVhDdZw8P24OzbVXmKBL
+ PYKhk1N0qJUaXGbsSy3F2QuTY7fybJLnlXolQibwapDSpXLk2q4guJy67YYrw43FhcYMKq2Yd
+ jld6R9gbggwVYyWntTBG6EB+kGuf64QdQAinoNjAhS5D9DlnDoDWxCmZDJ2juli2d6SlM5GDM
+ zr0tmga1eO6+Zdmn0Vyv6ZlG8kh2VpTPSlv3uA==
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-32-bit architectures implementing 64BIT_TIME and COMPAT_32BIT_TIME
-need to have the traditional semtimedop() behavior with 32-bit timestamps
-for sys_ipc() by calling compat_ksys_semtimedop(), while those that
-are not yet converted need to keep using ksys_semtimedop() like
-64-bit architectures do.
+This is a preparatation for changing over __kernel_timespec to 64-bit
+times, which involves assigning new system call numbers for mq_timedsend(),
+mq_timedreceive() and semtimedop() for compatibility with future y2038
+proof user space.
 
-Note that I chose to not implement a new SEMTIMEDOP64 function that
-corresponds to the new sys_semtimedop() with 64-bit timeouts. The reason
-here is that sys_ipc() should no longer be used for new system calls,
-and libc should just call the semtimedop syscall directly.
-
-One open question remain to whether we want to completely avoid the
-sys_ipc() system call for architectures that do not yet have all the
-individual calls as they get converted to 64-bit time_t. Doing that
-would require adding several extra system calls on m68k, mips, powerpc,
-s390, sh, sparc, and x86-32.
+The existing ABIs will remain available through compat code.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- ipc/syscall.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ include/linux/syscalls.h | 6 +++---
+ ipc/mqueue.c             | 6 +++---
+ ipc/sem.c                | 4 ++--
+ ipc/util.h               | 2 +-
+ 4 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/ipc/syscall.c b/ipc/syscall.c
-index 77a883ef2eca..65d405f1ba0c 100644
---- a/ipc/syscall.c
-+++ b/ipc/syscall.c
-@@ -30,9 +30,14 @@ SYSCALL_DEFINE6(ipc, unsigned int, call, int, first, unsigned long, second,
- 		return ksys_semtimedop(first, (struct sembuf __user *)ptr,
- 				       second, NULL);
- 	case SEMTIMEDOP:
--		return ksys_semtimedop(first, (struct sembuf __user *)ptr,
--				       second,
--				       (const struct timespec __user *)fifth);
-+		if (IS_ENABLED(CONFIG_64BIT) || !IS_ENABLED(CONFIG_64BIT_TIME))
-+			return ksys_semtimedop(first, ptr, second,
-+			        (const struct __kernel_timespec __user *)fifth);
-+		else if (IS_ENABLED(CONFIG_COMPAT_32BIT_TIME))
-+			return compat_ksys_semtimedop(first, ptr, second,
-+			        (const struct compat_timespec __user *)fifth);
-+		else
-+			return -ENOSYS;
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index c9a2a2601852..b92cb79d38c3 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -680,8 +680,8 @@ asmlinkage long sys_sysinfo(struct sysinfo __user *info);
+ /* ipc/mqueue.c */
+ asmlinkage long sys_mq_open(const char __user *name, int oflag, umode_t mode, struct mq_attr __user *attr);
+ asmlinkage long sys_mq_unlink(const char __user *name);
+-asmlinkage long sys_mq_timedsend(mqd_t mqdes, const char __user *msg_ptr, size_t msg_len, unsigned int msg_prio, const struct timespec __user *abs_timeout);
+-asmlinkage long sys_mq_timedreceive(mqd_t mqdes, char __user *msg_ptr, size_t msg_len, unsigned int __user *msg_prio, const struct timespec __user *abs_timeout);
++asmlinkage long sys_mq_timedsend(mqd_t mqdes, const char __user *msg_ptr, size_t msg_len, unsigned int msg_prio, const struct __kernel_timespec __user *abs_timeout);
++asmlinkage long sys_mq_timedreceive(mqd_t mqdes, char __user *msg_ptr, size_t msg_len, unsigned int __user *msg_prio, const struct __kernel_timespec __user *abs_timeout);
+ asmlinkage long sys_mq_notify(mqd_t mqdes, const struct sigevent __user *notification);
+ asmlinkage long sys_mq_getsetattr(mqd_t mqdes, const struct mq_attr __user *mqstat, struct mq_attr __user *omqstat);
  
- 	case SEMGET:
- 		return ksys_semget(first, second, third);
-@@ -130,6 +135,8 @@ COMPAT_SYSCALL_DEFINE6(ipc, u32, call, int, first, int, second,
- 		/* struct sembuf is the same on 32 and 64bit :)) */
- 		return ksys_semtimedop(first, compat_ptr(ptr), second, NULL);
- 	case SEMTIMEDOP:
-+		if (!IS_ENABLED(CONFIG_COMPAT_32BIT_TIME))
-+			return -ENOSYS;
- 		return compat_ksys_semtimedop(first, compat_ptr(ptr), second,
- 						compat_ptr(fifth));
- 	case SEMGET:
+@@ -698,7 +698,7 @@ asmlinkage long sys_semget(key_t key, int nsems, int semflg);
+ asmlinkage long sys_semctl(int semid, int semnum, int cmd, unsigned long arg);
+ asmlinkage long sys_semtimedop(int semid, struct sembuf __user *sops,
+ 				unsigned nsops,
+-				const struct timespec __user *timeout);
++				const struct __kernel_timespec __user *timeout);
+ asmlinkage long sys_semop(int semid, struct sembuf __user *sops,
+ 				unsigned nsops);
+ 
+diff --git a/ipc/mqueue.c b/ipc/mqueue.c
+index a808f29d4c5a..9610afcfa2e5 100644
+--- a/ipc/mqueue.c
++++ b/ipc/mqueue.c
+@@ -691,7 +691,7 @@ static void __do_notify(struct mqueue_inode_info *info)
+ 	wake_up(&info->wait_q);
+ }
+ 
+-static int prepare_timeout(const struct timespec __user *u_abs_timeout,
++static int prepare_timeout(const struct __kernel_timespec __user *u_abs_timeout,
+ 			   struct timespec64 *ts)
+ {
+ 	if (get_timespec64(ts, u_abs_timeout))
+@@ -1128,7 +1128,7 @@ static int do_mq_timedreceive(mqd_t mqdes, char __user *u_msg_ptr,
+ 
+ SYSCALL_DEFINE5(mq_timedsend, mqd_t, mqdes, const char __user *, u_msg_ptr,
+ 		size_t, msg_len, unsigned int, msg_prio,
+-		const struct timespec __user *, u_abs_timeout)
++		const struct __kernel_timespec __user *, u_abs_timeout)
+ {
+ 	struct timespec64 ts, *p = NULL;
+ 	if (u_abs_timeout) {
+@@ -1142,7 +1142,7 @@ SYSCALL_DEFINE5(mq_timedsend, mqd_t, mqdes, const char __user *, u_msg_ptr,
+ 
+ SYSCALL_DEFINE5(mq_timedreceive, mqd_t, mqdes, char __user *, u_msg_ptr,
+ 		size_t, msg_len, unsigned int __user *, u_msg_prio,
+-		const struct timespec __user *, u_abs_timeout)
++		const struct __kernel_timespec __user *, u_abs_timeout)
+ {
+ 	struct timespec64 ts, *p = NULL;
+ 	if (u_abs_timeout) {
+diff --git a/ipc/sem.c b/ipc/sem.c
+index 8935cd8cf166..b951e25ba2db 100644
+--- a/ipc/sem.c
++++ b/ipc/sem.c
+@@ -2176,7 +2176,7 @@ static long do_semtimedop(int semid, struct sembuf __user *tsops,
+ }
+ 
+ long ksys_semtimedop(int semid, struct sembuf __user *tsops,
+-		     unsigned int nsops, const struct timespec __user *timeout)
++		     unsigned int nsops, const struct __kernel_timespec __user *timeout)
+ {
+ 	if (timeout) {
+ 		struct timespec64 ts;
+@@ -2188,7 +2188,7 @@ long ksys_semtimedop(int semid, struct sembuf __user *tsops,
+ }
+ 
+ SYSCALL_DEFINE4(semtimedop, int, semid, struct sembuf __user *, tsops,
+-		unsigned int, nsops, const struct timespec __user *, timeout)
++		unsigned int, nsops, const struct __kernel_timespec __user *, timeout)
+ {
+ 	return ksys_semtimedop(semid, tsops, nsops, timeout);
+ }
+diff --git a/ipc/util.h b/ipc/util.h
+index acc5159e96d0..975c6de2df9d 100644
+--- a/ipc/util.h
++++ b/ipc/util.h
+@@ -251,7 +251,7 @@ static inline int compat_ipc_parse_version(int *cmd)
+ /* for __ARCH_WANT_SYS_IPC */
+ long ksys_semtimedop(int semid, struct sembuf __user *tsops,
+ 		     unsigned int nsops,
+-		     const struct timespec __user *timeout);
++		     const struct __kernel_timespec __user *timeout);
+ long ksys_semget(key_t key, int nsems, int semflg);
+ long ksys_semctl(int semid, int semnum, int cmd, unsigned long arg);
+ long ksys_msgget(key_t key, int msgflg);
 -- 
 2.9.0
 
