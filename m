@@ -1,99 +1,132 @@
-Return-Path: <joeypabalinas@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1524635290; cv=none;
-        d=google.com; s=arc-20160816;
-        b=ltN8ctpZei+W+sFcL+NV0DB6OBPpzYq4MSOs9zPFgNi4xcyhJ3xXDucn7GMsPkSoRq
-         f6NCp1qhRU0tRZoCeE3nnf3MuLUfZJ7PIvZAYH5vQOJxkdBbDMzZSzAogWS3gqBbglpX
-         0pPca2oy8yLMJHMRcGJTYOO+D811tuxcz9IrDiQKx/t3sQZpFA1E+p2QeB2gnCIDjm/s
-         EmQGzd+0DXPCgpfJs59V6G9+zNUdiP1OjL2gdLhsVyFvdUJO06sXAMiHguknjEnyh4UT
-         EZLwe+6Lybv/iNOgZxOaiQ9Ro0b19hiLwcv7+qtN0t7/pnHZjfQO2LaFEdDcsOIs7CB4
-         a0aw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:references:in-reply-to:message-id:date
-         :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=lMi5pxK3BOyQ7ChzFEMFNE3LB0pf1GMyjBKaXdAouX4=;
-        b=H8lIbxCXQiHuEAG/JX/UxGIhrdH0q/TCX1xzpxC7z03zwTNaUWFG6DlJC+C4dXyb8T
-         lYRhqmOm5G1xWy1LR50b1S0Kzp8jKotcRKd+B/Q2tYGDgtPDFREfR/NWXbyNV00o6cpD
-         eo7QGr/Uo0eJrlqwxDDwJJ3hE5Qe1yvwNSPitTnHmiTu17Yqq6fyunYYsbaFtekNFEVj
-         y9Hf32JrWPmkB1LvqT4nErwEhgQgT8bvLAmpJ/E3dxC3Sf53McO/DMT8nWGdCYLPhbEc
-         AU0GUGl67WUMuq+w3jy71mtawHyiAhjfI1MVJeKCPlIJfOszD8p1fhhI891ZM4QwyIZO
-         5Oyg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=di2MV487;
-       spf=pass (google.com: domain of joeypabalinas@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=joeypabalinas@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=di2MV487;
-       spf=pass (google.com: domain of joeypabalinas@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=joeypabalinas@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AIpwx495aqw0iLu5pW88JhKeKgCF4BtZ8DLCQJyZMNJwVfn/6FPXLethgnaTXxE/p98zfVi23sGyaQ==
-From: Joey Pabalinas <joeypabalinas@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Jiri Slaby <jslaby@suse.cz>
-Subject: [PATCH v4 1/2] tty/nozomi: cleanup DUMP() macro
-Date: Tue, 24 Apr 2018 19:48:03 -1000
-Message-Id: <58b559776732f0fc14b1c30ec7da6fc27c3f1cc8.1524634929.git.joeypabalinas@gmail.com>
-X-Mailer: git-send-email 2.17.0.rc1.35.g90bbd502d54fe92035.dirty
-In-Reply-To: <cover.1524634929.git.joeypabalinas@gmail.com>
-References: <cover.1524634929.git.joeypabalinas@gmail.com>
-In-Reply-To: <cover.1524634929.git.joeypabalinas@gmail.com>
-References: <cover.1524634929.git.joeypabalinas@gmail.com>
-X-Mailer-Send-Delay: 1
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-144809-1524637109-2-8351713420420782243
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, UNPARSEABLE_RELAY 0.001,
+  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-usb-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524637108; b=SPqamdR3bafbmUXwEaz9zwuOo939RXYdIN1yZluLzh8K6cB4dh
+    lMUm1aaNCtNLTj+Pz7ELwC4fPLoWPM/YuHP3fA8CT55d7RqfUcl4ZeyRn3X4RGmB
+    KvaVGxjC1yu6DlqnmPg74YfahfKnjemU5lZgvz/XArXi8YQtCOK3cKx+g9PPEET8
+    Sr3arHqmNcak1yCiCBeYZxVmtZHAFR8mHtI6r9XNBA2Zdvlcba7d267dkg/gRoDY
+    ZWRi97WkTe4jVvlkcncEFFX+9/jCrnCZCQGO9ODnX39M04unykgTdAGt5OkLoJ/8
+    sE+4ee3EhNPa4Lt1dFeykZqAqtVFQgcQmM2Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :mime-version:content-type:sender:list-id; s=fm2; t=1524637108;
+    bh=2/GosktaF+ti2RN5OZO1p2KdVQ2xJujoPIfAI+22joI=; b=KVkunBPra15B
+    Iu1QVYN9IBzWkvIO98FWqWXpRwfATRFq2FzbP4OUgbMiaLTswEP5/8it9CUpt5lQ
+    nb3ajwqXn9Frn0idGEiiliLUmIp0oMsz2KrxDUFGN1ivNSagD0WLqmBRz8a/plLn
+    sWrBCrKLS/42pqH6m5TizW1kcLU1jdJHa/n0F1UZlfCwxc01CJU1fYfdlAMohYzH
+    SL2RfbL2flDCiFWG8y6rl8yOR0MZpMHjUqdlnpvscvo8XCe3S4Hd4DnHDmSNdUHI
+    a5ortNQywkb9dT+EOAmdW+dbAnrIjampXc15+VLcJbJGEWFbadlCfJq1inmS/nsB
+    S8rKvDqCcA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=mediatek.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=mediatek.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=mediatek.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=mediatek.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfCHx8UrsyLxv0jyZLQ1NBwHAZT6p5dCRJXtOWOAAcPAbk0nAGWb+N9IgVvrxwXsjQEr0m24OrBbv0FbFJLElEIfIhzGV9/2EMt1UimnIxO4xvnh5KhAk
+    0zE4F1BJxXZasoj0Yjo9lX4oHW+380HdabJ1EuQxd1ENRYi7iAd+g2SaR/W/ULX3aXM80rqwpP1O7KVPCUU6y5Y/DtimGMnnbTg4Cu0cS8QNEBzfCob7daHA
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=mpaa-ttXAAAA:8
+    a=VwQbUJbxAAAA:8 a=MIK1vUhpFAYyWxR2ApkA:9 a=x8gzFH9gYPwA:10
+    a=6heAxKwa5pAsJatQ0mat:22 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751276AbeDYGSQ (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 25 Apr 2018 02:18:16 -0400
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:52614 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1750949AbeDYGSP (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Wed, 25 Apr 2018 02:18:15 -0400
+X-UUID: c18ede16b6764f30bd2b59d172e5a641-20180425
+From: Chunfeng Yun <chunfeng.yun@mediatek.com>
+To: Kishon Vijay Abraham I <kishon@ti.com>
+CC: Matthias Brugger <matthias.bgg@gmail.com>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-usb@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+        <devicetree@vger.kernel.org>
+Subject: [PATCH] phy: phy-mtk-tphy: fix checkpatch.pl warning about SPDX_LICENSE_TAG
+Date: Wed, 25 Apr 2018 14:17:55 +0800
+Message-ID: <13d5ecd89f312af71dde347aadb18b65b1fac462.1524636174.git.chunfeng.yun@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
+MIME-Version: 1.0
+Content-Type: text/plain
+X-MTK: N
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598668996565319671?=
-X-GMAIL-MSGID: =?utf-8?q?1598695974186338348?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Replace snprint() with strscpy() and use min_t() instead of
-the conditional operator to clamp buffer length.
+Use SPDX-License-Identifier tag instead of the GPL license text
 
-Signed-off-by: Joey Pabalinas <joeypabalinas@gmail.com>
+Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
 ---
- drivers/tty/nozomi.c | 26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+ drivers/phy/mediatek/Makefile       |  1 +
+ drivers/phy/mediatek/phy-mtk-tphy.c | 10 +---------
+ 2 files changed, 2 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/tty/nozomi.c b/drivers/tty/nozomi.c
-index b57b35066ebea94639..f26bf1d1e9ee0e74eb 100644
---- a/drivers/tty/nozomi.c
-+++ b/drivers/tty/nozomi.c
-@@ -70,23 +70,23 @@ do {							\
+diff --git a/drivers/phy/mediatek/Makefile b/drivers/phy/mediatek/Makefile
+index 763a92e..1bdab14 100644
+--- a/drivers/phy/mediatek/Makefile
++++ b/drivers/phy/mediatek/Makefile
+@@ -1,3 +1,4 @@
++# SPDX-License-Identifier: GPL-2.0
+ #
+ # Makefile for the phy drivers.
+ #
+diff --git a/drivers/phy/mediatek/phy-mtk-tphy.c b/drivers/phy/mediatek/phy-mtk-tphy.c
+index 38c281b..b962339 100644
+--- a/drivers/phy/mediatek/phy-mtk-tphy.c
++++ b/drivers/phy/mediatek/phy-mtk-tphy.c
+@@ -1,16 +1,8 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Copyright (c) 2015 MediaTek Inc.
+  * Author: Chunfeng Yun <chunfeng.yun@mediatek.com>
+  *
+- * This software is licensed under the terms of the GNU General Public
+- * License version 2, as published by the Free Software Foundation, and
+- * may be copied, distributed, and modified under those terms.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+  */
  
- /* TODO: rewrite to optimize macros... */
- 
- #define TMP_BUF_MAX 256
- 
--#define DUMP(buf__,len__) \
--  do {  \
--    char tbuf[TMP_BUF_MAX] = {0};\
--    if (len__ > 1) {\
--	snprintf(tbuf, len__ > TMP_BUF_MAX ? TMP_BUF_MAX : len__, "%s", buf__);\
--	if (tbuf[len__-2] == '\r') {\
--		tbuf[len__-2] = 'r';\
--	} \
--	DBG1("SENDING: '%s' (%d+n)", tbuf, len__);\
--    } else {\
--	DBG1("SENDING: '%s' (%d)", tbuf, len__);\
--    } \
--} while (0)
-+#define DUMP(buf__, len__)						\
-+	do {								\
-+		char tbuf[TMP_BUF_MAX] = {0};				\
-+		if (len__ > 1) {					\
-+			u32 data_len = min_t(u32, len__, TMP_BUF_MAX);	\
-+			strscpy(tbuf, buf__, data_len);			\
-+			if (tbuf[data_len - 2] == '\r')			\
-+				tbuf[data_len - 2] = 'r';		\
-+			DBG1("SENDING: '%s' (%d+n)", tbuf, len__);	\
-+		} else {						\
-+			DBG1("SENDING: '%s' (%d)", tbuf, len__);	\
-+		}							\
-+	} while (0)
- 
- /*    Defines */
- #define NOZOMI_NAME		"nozomi"
- #define NOZOMI_NAME_TTY		"nozomi_tty"
- #define DRIVER_DESC		"Nozomi driver"
+ #include <dt-bindings/phy/phy.h>
 -- 
-2.17.0.rc1.35.g90bbd502d54fe92035.dirty
+1.9.1
+
