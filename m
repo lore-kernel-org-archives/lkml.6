@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756376AbeDYSZZ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 14:25:25 -0400
-Received: from mga02.intel.com ([134.134.136.20]:41709 "EHLO mga02.intel.com"
+        id S932121AbeDYSZa (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 14:25:30 -0400
+Received: from mga02.intel.com ([134.134.136.20]:41714 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932136AbeDYSMl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S932135AbeDYSMl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 25 Apr 2018 14:12:41 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,327,1520924400";
-   d="scan'208";a="35243686"
+   d="scan'208";a="35243683"
 From: Reinette Chatre <reinette.chatre@intel.com>
 To: tglx@linutronix.de, fenghua.yu@intel.com, tony.luck@intel.com,
         vikas.shivappa@linux.intel.com
@@ -18,9 +18,9 @@ Cc: gavin.hindman@intel.com, jithu.joseph@intel.com, dave.hansen@intel.com,
         mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
         linux-kernel@vger.kernel.org,
         Reinette Chatre <reinette.chatre@intel.com>
-Subject: [PATCH V3 17/39] x86/intel_rdt: Respect read and write access
-Date: Wed, 25 Apr 2018 03:09:53 -0700
-Message-Id: <45ac48e7b8eab515586bc6906cb66eb8336eb1bc.1524649902.git.reinette.chatre@intel.com>
+Subject: [PATCH V3 16/39] x86/intel_rdt: Introduce the Cache Pseudo-Locking modes
+Date: Wed, 25 Apr 2018 03:09:52 -0700
+Message-Id: <28015495278b862704a3921f33aaeae51a7df50a.1524649902.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <cover.1524649902.git.reinette.chatre@intel.com>
 References: <cover.1524649902.git.reinette.chatre@intel.com>
@@ -30,41 +30,81 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-By default, if the opener has CAP_DAC_OVERRIDE, a kernfs file can be
-opened regardless of RW permissions. Writing to a kernfs file will thus
-succeed even if permissions are 0000.
-
-We would like to restrict the actions that can be performed on a
-resource group from userspace based on the mode of the resource group.
-This restriction will be done through a modification of the file
-permissions. That is, for example, if a resource group is locked then
-the user cannot add tasks to the resource group.
-
-For this restriction through file permissions to work we have to ensure
-that the permissions are always respected. To do so the resctrl
-filesystem is created with the KERNFS_ROOT_EXTRA_OPEN_PERM_CHECK flag
-that will result in open(2) failing with -EACCESS regardless of
-CAP_DAC_OVERRIDE if the permission does not have the respective read or
-write access.
+The two modes used to manage Cache Pseudo-Locked regions are introduced.
+A resource group is assigned "pseudo-locksetup" mode when the user
+indicates that this resource group will be used for a Cache
+Pseudo-Locked region. When the Cache Pseudo-Locked region has been set
+up successfully after the user wrote the requested schemata to the
+"schemata" file, then the mode will automatically changed to
+"pseudo-locked".  The user is not able to modify the mode to
+"pseudo-locked" by writing "pseudo-locked" to the "mode" file directly.
 
 Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/x86/kernel/cpu/intel_rdt.h          | 10 ++++++++++
+ arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 13 +++++++++++--
+ 2 files changed, 21 insertions(+), 2 deletions(-)
 
+diff --git a/arch/x86/kernel/cpu/intel_rdt.h b/arch/x86/kernel/cpu/intel_rdt.h
+index 6658608330fb..fa2aa7e8ad73 100644
+--- a/arch/x86/kernel/cpu/intel_rdt.h
++++ b/arch/x86/kernel/cpu/intel_rdt.h
+@@ -83,15 +83,25 @@ enum rdt_group_type {
+  * enum rdtgrp_mode - Mode of a RDT resource group
+  * @RDT_MODE_SHAREABLE: This resource group allows sharing of its allocations
+  * @RDT_MODE_EXCLUSIVE: No sharing of this resource group's allocations allowed
++ * @RDT_MODE_PSEUDO_LOCKSETUP: Resource group will be used for Pseudo-Locking
++ * @RDT_MODE_PSEUDO_LOCKED: No sharing of this resource group's allocations
++ *                          allowed AND the allocations are Cache Pseudo-Locked
+  *
+  * The mode of a resource group enables control over the allowed overlap
+  * between allocations associated with different resource groups (classes
+  * of service). User is able to modify the mode of a resource group by
+  * writing to the "mode" resctrl file associated with the resource group.
++ *
++ * The "shareable", "exclusive", and "pseudo-locksetup" modes are set by
++ * writing the appropriate text to the "mode" file. A resource group enters
++ * "pseudo-locked" mode after the schemata is written while the resource
++ * group is in "pseudo-locksetup" mode.
+  */
+ enum rdtgrp_mode {
+ 	RDT_MODE_SHAREABLE = 0,
+ 	RDT_MODE_EXCLUSIVE,
++	RDT_MODE_PSEUDO_LOCKSETUP,
++	RDT_MODE_PSEUDO_LOCKED,
+ 
+ 	/* Must be last */
+ 	RDT_NUM_MODES,
 diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-index 595a40ec69d2..541103a2dea0 100644
+index 9337f72983ec..595a40ec69d2 100644
 --- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
 +++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-@@ -2457,7 +2457,8 @@ static int __init rdtgroup_setup_root(void)
- 	int ret;
+@@ -161,8 +161,10 @@ enum rdtgrp_mode rdtgroup_mode_by_closid(int closid)
+ }
  
- 	rdt_root = kernfs_create_root(&rdtgroup_kf_syscall_ops,
--				      KERNFS_ROOT_CREATE_DEACTIVATED,
-+				      KERNFS_ROOT_CREATE_DEACTIVATED |
-+				      KERNFS_ROOT_EXTRA_OPEN_PERM_CHECK,
- 				      &rdtgroup_default);
- 	if (IS_ERR(rdt_root))
- 		return PTR_ERR(rdt_root);
+ static const char * const rdt_mode_str[] = {
+-	[RDT_MODE_SHAREABLE]	= "shareable",
+-	[RDT_MODE_EXCLUSIVE]	= "exclusive",
++	[RDT_MODE_SHAREABLE]		= "shareable",
++	[RDT_MODE_EXCLUSIVE]		= "exclusive",
++	[RDT_MODE_PSEUDO_LOCKSETUP]	= "pseudo-locksetup",
++	[RDT_MODE_PSEUDO_LOCKED]	= "pseudo-locked",
+ };
+ 
+ /**
+@@ -758,6 +760,13 @@ static int rdt_bit_usage_show(struct kernfs_open_file *of,
+ 				case RDT_MODE_EXCLUSIVE:
+ 					exclusive |= *ctrl;
+ 					break;
++				/*
++				 * Temporarily handle pseudo-locking enums
++				 * to silence compile warnings until handling
++				 * added in later patches.
++				 */
++				case RDT_MODE_PSEUDO_LOCKSETUP:
++				case RDT_MODE_PSEUDO_LOCKED:
+ 				case RDT_NUM_MODES:
+ 					WARN(1,
+ 					     "invalid mode for closid %d\n", i);
 -- 
 2.13.6
