@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757026AbeDZVRK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 17:17:10 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:59860 "EHLO
+        id S1756463AbeDZVSc (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 17:18:32 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:59900 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753708AbeDZVRI (ORCPT
+        with ESMTP id S1752000AbeDZVSa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 17:17:08 -0400
+        Thu, 26 Apr 2018 17:18:30 -0400
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 Cc: linux-renesas-soc@vger.kernel.org,
@@ -20,12 +20,12 @@ Cc: linux-renesas-soc@vger.kernel.org,
         "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)"
         <linux-arm-kernel@lists.infradead.org>,
         open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 13/17] arm64: dts: r8a77965: Add HDMI encoder instance
-Date: Fri, 27 Apr 2018 00:17:21 +0300
-Message-ID: <4835359.vC9i7RXgb2@avalon>
+Subject: Re: [PATCH 14/17] arm64: dts: r8a77965-salvator-x: Add DU external dot clocks
+Date: Fri, 27 Apr 2018 00:18:43 +0300
+Message-ID: <2252433.qtOjIrpDLV@avalon>
 Organization: Ideas on Board Oy
-In-Reply-To: <20180426165346.494-14-kieran.bingham+renesas@ideasonboard.com>
-References: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com> <20180426165346.494-14-kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <20180426165346.494-15-kieran.bingham+renesas@ideasonboard.com>
+References: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com> <20180426165346.494-15-kieran.bingham+renesas@ideasonboard.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -37,69 +37,42 @@ Hi Kieran,
 
 Thank you for the patch.
 
-On Thursday, 26 April 2018 19:53:42 EEST Kieran Bingham wrote:
-> Add the HDMI encoder to the R8A77965 DT in disabled state.
+On Thursday, 26 April 2018 19:53:43 EEST Kieran Bingham wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 > 
-> Based on a similar patch of the R8A7796 device tree
-> by Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>.
-> 
+> The DU1 external dot clock is provided by the fixed frequency clock
+> generator X21, while the DU0 and DU3 clocks are provided by the
+> programmable Versaclock5 clock generator.
+
+I think you can squash this with patch 15/17.
+
 > Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> [Kieran: Rebase to top of tree]
 > Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
 > ---
->  arch/arm64/boot/dts/renesas/r8a77965.dtsi | 28 +++++++++++++++++++++++
->  1 file changed, 28 insertions(+)
+>  arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 > 
-> diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-> b/arch/arm64/boot/dts/renesas/r8a77965.dtsi index
-> 8a40bba53027..972be1460a32 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-> @@ -1105,6 +1105,33 @@
->  			};
->  		};
-> 
-> +		hdmi0: hdmi@fead0000 {
-> +			compatible = "renesas,r8a77965-hdmi",
-> +				     "renesas,rcar-gen3-hdmi";
-> +			reg = <0 0xfead0000 0 0x10000>;
-> +			interrupts = <GIC_SPI 389 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&cpg CPG_MOD 729>,
-> +				 <&cpg CPG_CORE R8A77965_CLK_HDMI>;
-> +			clock-names = "iahb", "isfr";
-> +			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-> +			resets = <&cpg 729>;
-> +			status = "disabled";
+> diff --git a/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
+> b/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts index
+> 75d890d91df9..a2b8fb20fef8 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
+> +++ b/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
+> @@ -19,3 +19,15 @@
+>  		reg = <0x0 0x48000000 0x0 0x78000000>;
+>  	};
+>  };
 > +
-> +			ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +				port@0 {
-> +					reg = <0>;
-> +					dw_hdmi0_in: endpoint {
-> +						remote-endpoint = <&du_out_hdmi0>;
-> +					};
-> +				};
-> +				port@1 {
-> +					reg = <1>;
-> +				};
-> +			};
-> +		};
-> +
->  		du: display@feb00000 {
->  			compatible = "renesas,du-r8a77965";
->  			reg = <0 0xfeb00000 0 0x80000>,
-> @@ -1134,6 +1161,7 @@
->  				port@1 {
->  					reg = <1>;
->  					du_out_hdmi0: endpoint {
-> +						remote-endpoint = <&dw_hdmi0_in>;
->  					};
->  				};
->  				port@2 {
+> +&du {
+> +	clocks = <&cpg CPG_MOD 724>,
+> +		 <&cpg CPG_MOD 723>,
+> +		 <&cpg CPG_MOD 721>,
+> +		 <&cpg CPG_MOD 727>,
+> +		 <&versaclock5 1>,
+> +		 <&x21_clk>,
+> +		 <&versaclock5 2>;
+> +	clock-names = "du.0", "du.1", "du.3", "lvds.0",
+> +		      "dclkin.0", "dclkin.1", "dclkin.3";
+> +};
 
 -- 
 Regards,
