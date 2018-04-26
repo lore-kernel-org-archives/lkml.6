@@ -1,107 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751743AbeDZEqn (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 00:46:43 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48762 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750924AbeDZEqk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 00:46:40 -0400
-X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "Cc"
-From: NeilBrown <neilb@suse.com>
-To: Shaohua Li <shli@kernel.org>
-Date: Thu, 26 Apr 2018 14:46:29 +1000
-Cc: Goldwyn Rodrigues <rgoldwyn@suse.de>
-Subject: [PATCH] md: fix two problems with setting the "re-add" device state.
-cc: Linux RAID Mailing List <linux-raid@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Message-ID: <87efj2mv6i.fsf@notabene.neil.brown.name>
+        id S1752171AbeDZEum (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 00:50:42 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:58095 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751895AbeDZEui (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 00:50:38 -0400
+From: YueHaibing <yuehaibing@huawei.com>
+To: <will.deacon@arm.com>, <robin.murphy@arm.com>, <joro@8bytes.org>
+CC: <linux-arm-kernel@lists.infradead.org>,
+        <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH] iommu/io-pgtable-arm: Use for_each_set_bit to simplify code
+Date: Thu, 26 Apr 2018 12:49:29 +0800
+Message-ID: <20180426044929.16896-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+We can use for_each_set_bit() to simplify code slightly in the
+ARM io-pgtable self tests while unmapping.
 
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/iommu/io-pgtable-arm-v7s.c | 5 +----
+ drivers/iommu/io-pgtable-arm.c     | 5 +----
+ 2 files changed, 2 insertions(+), 8 deletions(-)
 
-If "re-add" is written to the "state" file for a device
-which is faulty, this has an effect similar to removing
-and re-adding the device.  It should take up the
-same slot in the array that it previously had, and
-an accelerated (e.g. bitmap-based) rebuild should happen.
-
-The slot that "it previously had" is determined by
-rdev->saved_raid_disk.
-However this is not set when a device fails (only when a device
-is added), and it is cleared when resync completes.
-This means that "re-add" will normally work once, but may not work a
-second time.
-
-This patch includes two fixes.
-1/ when a device fails, record the ->raid_disk value in
-    ->saved_raid_disk before clearing ->raid_disk
-2/ when "re-add" is written to a device for which
-    ->saved_raid_disk is not set, fail.
-
-I think this is suitable for stable as it can
-cause re-adding a device to be forced to do a full
-resync which takes a lot longer and so puts data at
-more risk.
-
-Cc: <stable@vger.kernel.org> (v4.1)
-Fixes: 97f6cd39da22 ("md-cluster: re-add capabilities")
-Signed-off-by: NeilBrown <neilb@suse.com>
-=2D--
- drivers/md/md.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/md/md.c b/drivers/md/md.c
-index 3bea45e8ccff..ecd4235c6e30 100644
-=2D-- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -2853,7 +2853,8 @@ state_store(struct md_rdev *rdev, const char *buf, si=
-ze_t len)
- 			err =3D 0;
+diff --git a/drivers/iommu/io-pgtable-arm-v7s.c b/drivers/iommu/io-pgtable-arm-v7s.c
+index 10e4a3d..50e3a9f 100644
+--- a/drivers/iommu/io-pgtable-arm-v7s.c
++++ b/drivers/iommu/io-pgtable-arm-v7s.c
+@@ -898,8 +898,7 @@ static int __init arm_v7s_do_selftests(void)
+ 
+ 	/* Full unmap */
+ 	iova = 0;
+-	i = find_first_bit(&cfg.pgsize_bitmap, BITS_PER_LONG);
+-	while (i != BITS_PER_LONG) {
++	for_each_set_bit(i, &cfg.pgsize_bitmap, BITS_PER_LONG) {
+ 		size = 1UL << i;
+ 
+ 		if (ops->unmap(ops, iova, size) != size)
+@@ -916,8 +915,6 @@ static int __init arm_v7s_do_selftests(void)
+ 			return __FAIL(ops);
+ 
+ 		iova += SZ_16M;
+-		i++;
+-		i = find_next_bit(&cfg.pgsize_bitmap, BITS_PER_LONG, i);
+ 	}
+ 
+ 	free_io_pgtable_ops(ops);
+diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
+index 39c2a05..4ffdd88 100644
+--- a/drivers/iommu/io-pgtable-arm.c
++++ b/drivers/iommu/io-pgtable-arm.c
+@@ -1120,8 +1120,7 @@ static int __init arm_lpae_run_tests(struct io_pgtable_cfg *cfg)
+ 
+ 		/* Full unmap */
+ 		iova = 0;
+-		j = find_first_bit(&cfg->pgsize_bitmap, BITS_PER_LONG);
+-		while (j != BITS_PER_LONG) {
++		for_each_set_bit(j, &cfg->pgsize_bitmap, BITS_PER_LONG) {
+ 			size = 1UL << j;
+ 
+ 			if (ops->unmap(ops, iova, size) != size)
+@@ -1138,8 +1137,6 @@ static int __init arm_lpae_run_tests(struct io_pgtable_cfg *cfg)
+ 				return __FAIL(ops, i);
+ 
+ 			iova += SZ_1G;
+-			j++;
+-			j = find_next_bit(&cfg->pgsize_bitmap, BITS_PER_LONG, j);
  		}
- 	} else if (cmd_match(buf, "re-add")) {
-=2D		if (test_bit(Faulty, &rdev->flags) && (rdev->raid_disk =3D=3D -1)) {
-+		if (test_bit(Faulty, &rdev->flags) && (rdev->raid_disk =3D=3D -1) &&
-+			rdev->saved_raid_disk >=3D 0) {
- 			/* clear_bit is performed _after_ all the devices
- 			 * have their local Faulty bit cleared. If any writes
- 			 * happen in the meantime in the local node, they
-@@ -8641,6 +8642,7 @@ static int remove_and_add_spares(struct mddev *mddev,
- 			if (mddev->pers->hot_remove_disk(
- 				    mddev, rdev) =3D=3D 0) {
- 				sysfs_unlink_rdev(mddev, rdev);
-+				rdev->saved_raid_disk =3D rdev->raid_disk;
- 				rdev->raid_disk =3D -1;
- 				removed++;
- 			}
-=2D-=20
-2.14.0.rc0.dirty
-
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlrhWacACgkQOeye3VZi
-gbnh6xAAwFgySWHCe6ljmhD+Qu/+qbFw9MJIWlp0SoyjpZJ+ruH1Uxpa4GV7XCH4
-HrP/M5esTbd2+IjjuMzIGYYCLSdIpaO09COFTJGJwI1oaQ3Ia14kBskLYrlEoAhS
-i8UtWMOrdzUWaamcn6kc6dtCRd73U39jiZLykq0n5QBxAibTBWP/Kb0nFjx6Utw5
-SBesdJMdExYv0sI+3MiF2vrcHWgapfzOYrQtQqXGK7BemwZ0fEaN3D9us4S1LwPE
-s43rJ/N0DNlW9yBYMPTE6yMuIPm3xvXzBUM00GUDwPDDQcvwMYTNkX2neQRJQfZT
-cu0fkgs//1/ZvNp+P6LjpSuNbd0QrtKX6+YWhX9GyCsM09DXbU5cSSRGifd+PPV/
-3710Gt7LurjrubsBwUnJxR5fpYMzGIpcaOaGv/bVNNe4bTecIe/PB522ONN+MKoc
-UwITKhXScmyZ11Me4Tz0KrWU8CMRonOM6dpIGuB2JPs6hh+KEFvIrmSD6Q7DGezr
-JqvNwsy6DK/fLeeTgtAHndJKNLR3cD21tW7YN5PK9LByVQbxAB4AeRBoMiCrdK79
-zv67lsm5Y0LcIumZ2wJT7CT8Fj1VvQHEBt/uHa3IK22fzWNDfS/tHk5rCFxQa7L9
-SFooTamiJ6mCY+wjGyecv9kIgLyD2+X7Pf53VJ1VSnMvBVvBzwA=
-=cysZ
------END PGP SIGNATURE-----
---=-=-=--
+ 
+ 		free_io_pgtable_ops(ops);
+-- 
+2.7.0
