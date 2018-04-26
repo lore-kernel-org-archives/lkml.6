@@ -1,49 +1,138 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756557AbeDZOke (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 10:40:34 -0400
-Received: from mga06.intel.com ([134.134.136.31]:7032 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754847AbeDZOkd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 10:40:33 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,330,1520924400";
-   d="scan'208";a="49335020"
-Date: Thu, 26 Apr 2018 17:40:27 +0300
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: John Garry <john.garry@huawei.com>
-Cc: andriy.shevchenko@linux.intel.com, rjw@rjwysocki.net,
-        linux-acpi@vger.kernel.org, lenb@kernel.org, lorenzo.pieralisi@arm.com,
-        linux-kernel@vger.kernel.org, arnd@arndb.de, graeme.gregory@linaro.org,
-        helgaas@kernel.org, linuxarm@huawei.com, z.liuxinliang@hisilicon.com,
-        "Liguozhu (Kenneth)" <liguozhu@hisilicon.com>
-Subject: Re: [RFC PATCH 1/2] ACPI / PNP: Don't add "enumeration_by_parent"
- devices
-Message-ID: <20180426144027.GL2173@lahna.fi.intel.com>
-References: <1524218846-169934-1-git-send-email-john.garry@huawei.com>
- <1524218846-169934-2-git-send-email-john.garry@huawei.com>
- <20180420130727.GV2173@lahna.fi.intel.com>
- <27c3f84e-4d53-4b6b-7382-04908082ed01@huawei.com>
- <20180420135222.GY2173@lahna.fi.intel.com>
- <75eae3ac-228f-d6a4-bb0e-4bd27e35c55d@huawei.com>
- <09e3aa95-86ae-ca30-7bb5-a9704d296b43@huawei.com>
- <20180426140808.GK2173@lahna.fi.intel.com>
- <15443a87-2622-01ee-f7f2-426a51ca0f11@huawei.com>
+        id S932100AbeDZOlq (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 10:41:46 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:46042 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755698AbeDZOll (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 10:41:41 -0400
+X-Google-Smtp-Source: AB8JxZoYkl5xUgZ8/5e2Gha1IZx+ZSLV8/9TywI0Zpf5tVGBMsSnh6xa1LO5XABaYZbqQ798DyM9ig==
+Date: Thu, 26 Apr 2018 16:41:38 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: Potential problem with 31e77c93e432dec7 ("sched/fair: Update
+ blocked load when newly idle")
+Message-ID: <20180426144137.GC3315@bigcity.dyn.berto.se>
+References: <CAKfTPtAE3qeWcTdT-WL8nrbZmP_+OaxPyyjUfVCzn=rax9tQZQ@mail.gmail.com>
+ <20180412111519.GH12256@bigcity.dyn.berto.se>
+ <20180412133031.GA551@linaro.org>
+ <20180412223904.GJ12256@bigcity.dyn.berto.se>
+ <CAKfTPtDRtto7w806gYgdS_bCJ77EY0RRtszycB+TnG6aQ6ve4Q@mail.gmail.com>
+ <20180420160013.GA13769@linaro.org>
+ <20180422221827.GB27674@bigcity.dyn.berto.se>
+ <20180423095420.GA23995@linaro.org>
+ <20180425225603.GA26177@bigcity.dyn.berto.se>
+ <20180426103133.GA6953@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <15443a87-2622-01ee-f7f2-426a51ca0f11@huawei.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180426103133.GA6953@linaro.org>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 26, 2018 at 03:23:17PM +0100, John Garry wrote:
-> Not that I know about. Can you describe this method? I guess I also don't
-> need to set the mfd_cell pnpid either for this special case device.
+Hi Vincent,
 
-There is some documentation in "MFD devices" chapter of
-Documentation/acpi/enumeration.txt at least.
+Thanks for all your help.
+
+On 2018-04-26 12:31:33 +0200, Vincent Guittot wrote:
+> Hi Niklas,
+> 
+> Le Thursday 26 Apr 2018 à 00:56:03 (+0200), Niklas Söderlund a écrit :
+> > Hi Vincent,
+> > 
+> > Here are the result, sorry for the delay.
+> > 
+> > On 2018-04-23 11:54:20 +0200, Vincent Guittot wrote:
+> > 
+> > [snip]
+> > 
+> > > 
+> > > Thanks for the report. Can you re run with the following trace-cmd sequence ? My previous sequence disables ftrace events
+> > > 
+> > > trace-cmd reset > /dev/null
+> > > trace-cmd start -b 40000 -p function -l dump_backtrace:traceoff -e sched -e cpu_idle -e cpu_frequency -e timer -e ipi -e irq -e printk
+> > > trace-cmd start -b 40000 -p function -l dump_backtrace -e sched -e cpu_idle -e cpu_frequency -e timer -e ipi -e irq -e printk
+> > > 
+> > > I have updated the patch and added traces to check that scheduler returns from idle_balance function and doesn't stay stuck
+> > 
+> > Once more I applied the change bellow on-top of c18bb396d3d261eb ("Merge 
+> > git://git.kernel.org/pub/scm/linux/kernel/git/davem/net").
+> > 
+> > This time the result of 'trace-cmd report' is so large I do not include 
+> > it here, but I attach the trace.dat file. Not sure why but the timing of 
+> > sending the NMI to the backtrace print is different (but content the 
+> > same AFIK) so in the odd change it can help figure this out:
+> > 
+> 
+> Thanks for the trace, I have been able to catch a problem with it.
+> Could you test the patch below to confirm that the problem is solved ?
+> The patch apply on-top of
+> c18bb396d3d261eb ("Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net")
+
+I can confirm that with the patch bellow I can no longer produce the 
+problem. Thanks!
+
+> 
+> From: Vincent Guittot <vincent.guittot@linaro.org>
+> Date: Thu, 26 Apr 2018 12:19:32 +0200
+> Subject: [PATCH] sched/fair: fix the update of blocked load when newly idle
+> MIME-Version: 1.0
+> Content-Type: text/plain; charset=UTF-8
+> Content-Transfer-Encoding: 8bit
+> 
+> With commit 31e77c93e432 ("sched/fair: Update blocked load when newly idle"),
+> we release the rq->lock when updating blocked load of idle CPUs. This open
+> a time window during which another CPU can add a task to this CPU's cfs_rq.
+> The check for newly added task of idle_balance() is not in the common path.
+> Move the out label to include this check.
+> 
+> Fixes: 31e77c93e432 ("sched/fair: Update blocked load when newly idle")
+> Reported-by: Heiner Kallweit <hkallweit1@gmail.com>
+> Reported-by: Niklas Söderlund <niklas.soderlund@ragnatech.se>
+> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> ---
+>  kernel/sched/fair.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 0951d1c..15a9f5e 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -9847,6 +9847,7 @@ static int idle_balance(struct rq *this_rq, struct rq_flags *rf)
+>  	if (curr_cost > this_rq->max_idle_balance_cost)
+>  		this_rq->max_idle_balance_cost = curr_cost;
+>  
+> +out:
+>  	/*
+>  	 * While browsing the domains, we released the rq lock, a task could
+>  	 * have been enqueued in the meantime. Since we're not going idle,
+> @@ -9855,7 +9856,6 @@ static int idle_balance(struct rq *this_rq, struct rq_flags *rf)
+>  	if (this_rq->cfs.h_nr_running && !pulled_task)
+>  		pulled_task = 1;
+>  
+> -out:
+>  	/* Move the next balance forward */
+>  	if (time_after(this_rq->next_balance, next_balance))
+>  		this_rq->next_balance = next_balance;
+> -- 
+> 2.7.4
+> 
+> 
+> 
+> [snip]
+> 
+
+-- 
+Regards,
+Niklas Söderlund
