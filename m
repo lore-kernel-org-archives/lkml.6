@@ -1,60 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756647AbeDZVl1 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 17:41:27 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:60844 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756258AbeDZVl0 (ORCPT
+        id S1756665AbeDZVlf (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 17:41:35 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:50616 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756708AbeDZVld (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 17:41:26 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Peter Rosin <peda@axentia.se>
-Cc: linux-kernel@vger.kernel.org, Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>, David Airlie <airlied@linux.ie>,
-        Hans Verkuil <hans.verkuil@cisco.com>, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH] drm/bridge: adv7511: fix spelling of driver name in Kconfig
-Date: Fri, 27 Apr 2018 00:41:39 +0300
-Message-ID: <1577204.ITjXg41EEb@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20180426213644.29318-1-peda@axentia.se>
-References: <20180426213644.29318-1-peda@axentia.se>
+        Thu, 26 Apr 2018 17:41:33 -0400
+X-Google-Smtp-Source: AB8JxZrbW688MrmoLrows77YBn+E7LXQe95RA8r9s5tIl7ufO3A+J1qp2osvT1DZAli2dKyfQ13ejmZka8YnLRMDXQc=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+References: <20180426212807.196279-1-ndesaulniers@google.com>
+In-Reply-To: <20180426212807.196279-1-ndesaulniers@google.com>
+From: Nick Desaulniers <ndesaulniers@google.com>
+Date: Thu, 26 Apr 2018 21:41:21 +0000
+Message-ID: <CAKwvOdnjgEWDo8vjOiAS_TsEoJFZZagJgaqBAdW99L-Nkr9BxA@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: gcov: enable -fno-tree-loop-im if supported
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Prasad Sodagudi <psodagud@quicinc.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
+Hi Masahiro and Michal,
 
-Thank you for the patch.
+The reporter has asked for their email address to be updated to:
 
-On Friday, 27 April 2018 00:36:44 EEST Peter Rosin wrote:
-> Could perhaps prevent some confusion.
-> 
-> Signed-off-by: Peter Rosin <peda@axentia.se>
+psodagud@codeaurora.org
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+if you're ok with this version of the patch and choose to apply it, can you
+please update the commit message. Otherwise, I'll make this change should
+we need other changes necessitating a v2.
+On Thu, Apr 26, 2018 at 2:29 PM Nick Desaulniers <ndesaulniers@google.com>
+wrote:
 
+> Clang does not recognize this compiler option.
+
+> Reported-by: Prasad Sodagudi <psodagud@quicinc.com>
+> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
 > ---
->  drivers/gpu/drm/bridge/adv7511/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/adv7511/Kconfig
-> b/drivers/gpu/drm/bridge/adv7511/Kconfig index 592b9d2ec034..944e440c4fde
-> 100644
-> --- a/drivers/gpu/drm/bridge/adv7511/Kconfig
-> +++ b/drivers/gpu/drm/bridge/adv7511/Kconfig
-> @@ -1,5 +1,5 @@
->  config DRM_I2C_ADV7511
-> -	tristate "AV7511 encoder"
-> +	tristate "ADV7511 encoder"
->  	depends on OF
->  	select DRM_KMS_HELPER
->  	select REGMAP_I2C
+>   Makefile | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
+
+> diff --git a/Makefile b/Makefile
+> index 83b6c541565a..7f653c924c18 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -623,7 +623,9 @@ all: vmlinux
+
+>   KBUILD_CFLAGS  += $(call cc-option,-fno-PIE)
+>   KBUILD_AFLAGS  += $(call cc-option,-fno-PIE)
+> -CFLAGS_GCOV    := -fprofile-arcs -ftest-coverage -fno-tree-loop-im
+$(call cc-disable-warning,maybe-uninitialized,)
+> +CFLAGS_GCOV    := -fprofile-arcs -ftest-coverage \
+> +       $(call cc-option,-fno-tree-loop-im) \
+> +       $(call cc-disable-warning,maybe-uninitialized,)
+>   export CFLAGS_GCOV CFLAGS_KCOV
+
+>   # The arch Makefile can set ARCH_{CPP,A,C}FLAGS to override the default
+> --
+> 2.17.0.441.gb46fe60e1d-goog
 
 
--- 
-Regards,
 
-Laurent Pinchart
+--
+Thanks,
+~Nick Desaulniers
