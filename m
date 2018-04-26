@@ -1,191 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756549AbeDZPBY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 11:01:24 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55998 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754847AbeDZPBX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 11:01:23 -0400
-Date: Thu, 26 Apr 2018 17:01:17 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc: akpm@linux-foundation.org, peterz@infradead.org,
-        viro@zeniv.linux.org.uk, mingo@kernel.org, paulmck@linux.vnet.ibm.com,
-        keescook@chromium.org, riel@redhat.com, mhocko@suse.com,
-        tglx@linutronix.de, kirill.shutemov@linux.intel.com,
-        marcos.souza.org@gmail.com, hoeun.ryu@gmail.com,
-        pasha.tatashin@oracle.com, gs051095@gmail.com, ebiederm@xmission.com,
-        dhowells@redhat.com, rppt@linux.vnet.ibm.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] exit: Move read_unlock() up in mm_update_next_owner()
-Message-ID: <20180426150116.GA14818@redhat.com>
-References: <152473763015.29458.1131542311542381803.stgit@localhost.localdomain>
- <152474043375.29458.13978538538182642678.stgit@localhost.localdomain>
+        id S1756694AbeDZPBn (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 11:01:43 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:41205 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756611AbeDZPBj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 11:01:39 -0400
+X-Google-Smtp-Source: AIpwx4/uxZO8hwHOEIUPSiyG36J9MWh95Dp85VE0kSDYyVsV/VGteOudgbA9Cfku5t4wbCfbZVIoQ8djWTTm2u99j/0=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <152474043375.29458.13978538538182642678.stgit@localhost.localdomain>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Originating-IP: [176.63.54.97]
+In-Reply-To: <20180426145641.GB4308@redhat.com>
+References: <20180412150826.20988-1-mszeredi@redhat.com> <20180412150826.20988-10-mszeredi@redhat.com>
+ <20180426141337.GA4308@redhat.com> <CAJfpegv9by9L_b-STRMy4U8Uqv03UrOYDuAa3HdF-9zKxZQRcA@mail.gmail.com>
+ <20180426145641.GB4308@redhat.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 26 Apr 2018 17:01:37 +0200
+Message-ID: <CAJfpeguCtZ+3q6Fr7bu1Q5B3JXFQfS2Y9XJHgr0-OR9g=J9JsA@mail.gmail.com>
+Subject: Re: [RFC PATCH 09/35] ovl: stack file ops
+To: Vivek Goyal <vgoyal@redhat.com>
+Cc: Miklos Szeredi <mszeredi@redhat.com>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/26, Kirill Tkhai wrote:
+On Thu, Apr 26, 2018 at 4:56 PM, Vivek Goyal <vgoyal@redhat.com> wrote:
+> On Thu, Apr 26, 2018 at 04:43:53PM +0200, Miklos Szeredi wrote:
+>> On Thu, Apr 26, 2018 at 4:13 PM, Vivek Goyal <vgoyal@redhat.com> wrote:
+>> > On Thu, Apr 12, 2018 at 05:08:00PM +0200, Miklos Szeredi wrote:
+>> >
+>> > [..]
+>> >> diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+>> >> new file mode 100644
+>> >> index 000000000000..a0b606885c41
+>> >> --- /dev/null
+>> >> +++ b/fs/overlayfs/file.c
+>> >> @@ -0,0 +1,76 @@
+>> >> +/*
+>> >> + * Copyright (C) 2017 Red Hat, Inc.
+>> >> + *
+>> >> + * This program is free software; you can redistribute it and/or modify it
+>> >> + * under the terms of the GNU General Public License version 2 as published by
+>> >> + * the Free Software Foundation.
+>> >> + */
+>> >> +
+>> >> +#include <linux/cred.h>
+>> >> +#include <linux/file.h>
+>> >> +#include <linux/xattr.h>
+>> >> +#include "overlayfs.h"
+>> >> +
+>> >> +static struct file *ovl_open_realfile(const struct file *file)
+>> >> +{
+>> >> +     struct inode *inode = file_inode(file);
+>> >> +     struct inode *upperinode = ovl_inode_upper(inode);
+>> >> +     struct inode *realinode = upperinode ?: ovl_inode_lower(inode);
+>> >> +     struct file *realfile;
+>> >> +     const struct cred *old_cred;
+>> >> +
+>> >> +     old_cred = ovl_override_creds(inode->i_sb);
+>> >> +     realfile = path_open(&file->f_path, file->f_flags | O_NOATIME,
+>> >> +                          realinode, current_cred(), false);
+>> >> +     revert_creds(old_cred);
+>> >> +
+>> >> +     pr_debug("open(%p[%pD2/%c], 0%o) -> (%p, 0%o)\n",
+>> >> +              file, file, upperinode ? 'u' : 'l', file->f_flags,
+>> >> +              realfile, IS_ERR(realfile) ? 0 : realfile->f_flags);
+>> >> +
+>> >> +     return realfile;
+>> >> +}
+>> >> +
+>> >> +static int ovl_open(struct inode *inode, struct file *file)
+>> >> +{
+>> >> +     struct dentry *dentry = file_dentry(file);
+>> >
+>> > Hi Miklos,
+>> >
+>> > There is one thing I can't wrap my head around, so I better ask.
+>> >
+>> > file_dentry() will call ovl_d_real() and try to find dentry based on
+>> > inode installed in f->f_inode. If ovl_d_real() can't find inode dentry
+>> > matching the passed in inode, it warns.
+>> >
+>> > Assume, I have a stacked overlay configuration. Let me call top level
+>> > overlay layer ovl1 and lower level overlay layer ovl2. Say I open a
+>> > file foo.txt. Now ovl_open() in ovl1 decides that realinode is a lower
+>> > inode and installs that inode f->f_inode of realfile. (This should be
+>> > ovl2 layer inode, let me call it ovl2_inode). Now ovl_open() of ovl2 layer
+>> > will be called and it will call file_dentry() and will look for dentry
+>> > corresponding to ovl2_inode. I am wondering what if a copy up of foo.txt
+>> > was triggered in ovl1 and by the time we called ovl_d_real(dentry,
+>> > ovl2_inode), it will start comparing with inode of ovl1_upper and never
+>> > find ovl2_inode.
+>>
+>> Okay, so we've modified ovl_d_real() to allow returning the overlay
+>> dentry itself.  This is important: when we fail to match ovl1_upper
+>> with ovl2_inode, well go on to get ovl2_dentry and call d_real()
+>> recursively.  That recursive call should match the inode, return it to
+>> outer ovl_d_real(), which again will match the inode and return
+>> without warning.
 >
-> @@ -464,18 +464,15 @@ void mm_update_next_owner(struct mm_struct *mm)
->  	return;
->  
->  assign_new_owner:
-> -	BUG_ON(c == p);
->  	get_task_struct(c);
-> +	read_unlock(&tasklist_lock);
-> +	BUG_ON(c == p);
-> +
->  	/*
->  	 * The task_lock protects c->mm from changing.
->  	 * We always want mm->owner->mm == mm
->  	 */
->  	task_lock(c);
-> -	/*
-> -	 * Delay read_unlock() till we have the task_lock()
-> -	 * to ensure that c does not slip away underneath us
-> -	 */
-> -	read_unlock(&tasklist_lock);
+> So current code does following.
+>
+> ovl_d_real() {
+>         ...
+>         ...
+>
+>         real = ovl_dentry_real(dentry);
+>         if (inode == d_inode(real))
+>                 return real;
+>
+>         /* Handle recursion */
+>         if (unlikely(real->d_flags & DCACHE_OP_REAL))
+>                 return real->d_op->d_real(real, inode);
+> }
+>
+> If file got copied up in ovl1, then "real" will be ovl1_upper dentry. And
+> upper is regular fs (only ovl1 lower is overlay), then it should not have
+> DCACHE_OP_REAL set and that means we will not recurse further and not
+> find ovl2 dentry matching ovl2_inode and print warning and return
+> ovl1 dentry.
+>
+> What am I missing.
 
-I think this is correct, but...
+Ah,  that's indeed buggy.  The bug is in "[RFC PATCH 34/35] vfs:
+simplify d_op->d_real()".
 
-Firstly, I agree with Michal, it would be nice to kill mm_update_next_owner()
-altogether.
+I've already reverted that (due to d_real_inode() acquiring a new
+user) and the old code should be good (AFAICS).
 
-If this is not possible I agree, it needs cleanups and we can change it to
-avoid tasklist (although your 4/4 looks overcomplicated to me at first glance).
-
-But in this case I think that whatever we do we should start with something like
-the patch below. I wrote it 3 years ago but it still applies.
-
-Oleg.
-
-Subject: [PATCH 1/3] memcg: introduce assign_new_owner()
-
-The code under "assign_new_owner" looks very ugly and suboptimal.
-
-We do not really need get_task_struct/put_task_struct(), we can
-simply recheck/change mm->owner under tasklist_lock. And we do not
-want to restart from the very beginning if ->mm was changed by the
-time we take task_lock(), we can simply continue (if we do not drop
-tasklist_lock).
-
-Just move this code into the new simple helper, assign_new_owner().
-
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
----
- kernel/exit.c |   56 ++++++++++++++++++++++++++------------------------------
- 1 files changed, 26 insertions(+), 30 deletions(-)
-
-diff --git a/kernel/exit.c b/kernel/exit.c
-index 22fcc05..4d446ab 100644
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -293,6 +293,23 @@ kill_orphaned_pgrp(struct task_struct *tsk, struct task_struct *parent)
- }
- 
- #ifdef CONFIG_MEMCG
-+static bool assign_new_owner(struct mm_struct *mm, struct task_struct *c)
-+{
-+	bool ret = false;
-+
-+	if (c->mm != mm)
-+		return ret;
-+
-+	task_lock(c); /* protects c->mm from changing */
-+	if (c->mm == mm) {
-+		mm->owner = c;
-+		ret = true;
-+	}
-+	task_unlock(c);
-+
-+	return ret;
-+}
-+
- /*
-  * A task is exiting.   If it owned this mm, find a new owner for the mm.
-  */
-@@ -300,7 +317,6 @@ void mm_update_next_owner(struct mm_struct *mm)
- {
- 	struct task_struct *c, *g, *p = current;
- 
--retry:
- 	/*
- 	 * If the exiting or execing task is not the owner, it's
- 	 * someone else's problem.
-@@ -322,16 +338,16 @@ retry:
- 	 * Search in the children
- 	 */
- 	list_for_each_entry(c, &p->children, sibling) {
--		if (c->mm == mm)
--			goto assign_new_owner;
-+		if (assign_new_owner(mm, c))
-+			goto done;
- 	}
- 
- 	/*
- 	 * Search in the siblings
- 	 */
- 	list_for_each_entry(c, &p->real_parent->children, sibling) {
--		if (c->mm == mm)
--			goto assign_new_owner;
-+		if (assign_new_owner(mm, c))
-+			goto done;
- 	}
- 
- 	/*
-@@ -341,42 +357,22 @@ retry:
- 		if (g->flags & PF_KTHREAD)
- 			continue;
- 		for_each_thread(g, c) {
--			if (c->mm == mm)
--				goto assign_new_owner;
-+			if (assign_new_owner(mm, c))
-+				goto done;
- 			if (c->mm)
- 				break;
- 		}
- 	}
--	read_unlock(&tasklist_lock);
-+
- 	/*
- 	 * We found no owner yet mm_users > 1: this implies that we are
- 	 * most likely racing with swapoff (try_to_unuse()) or /proc or
- 	 * ptrace or page migration (get_task_mm()).  Mark owner as NULL.
- 	 */
- 	mm->owner = NULL;
--	return;
--
--assign_new_owner:
--	BUG_ON(c == p);
--	get_task_struct(c);
--	/*
--	 * The task_lock protects c->mm from changing.
--	 * We always want mm->owner->mm == mm
--	 */
--	task_lock(c);
--	/*
--	 * Delay read_unlock() till we have the task_lock()
--	 * to ensure that c does not slip away underneath us
--	 */
-+done:
- 	read_unlock(&tasklist_lock);
--	if (c->mm != mm) {
--		task_unlock(c);
--		put_task_struct(c);
--		goto retry;
--	}
--	mm->owner = c;
--	task_unlock(c);
--	put_task_struct(c);
-+	return;
- }
- #endif /* CONFIG_MEMCG */
- 
--- 
-1.5.5.1
+Thanks,
+Miklos
