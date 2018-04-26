@@ -1,101 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754317AbeDZUSA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 16:18:00 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:59352 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751405AbeDZUR7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 16:17:59 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org, David Airlie <airlied@linux.ie>,
-        "open list:DRM DRIVERS FOR RENESAS" <dri-devel@lists.freedesktop.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 04/17] drm: rcar-du: Use the correct naming for ODPM fields in DEFR6
-Date: Thu, 26 Apr 2018 23:18:12 +0300
-Message-ID: <1962449.rfF5AqLB98@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20180426165346.494-5-kieran.bingham+renesas@ideasonboard.com>
-References: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com> <20180426165346.494-5-kieran.bingham+renesas@ideasonboard.com>
+        id S1755294AbeDZUS6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 16:18:58 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44022 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752000AbeDZUS5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 16:18:57 -0400
+Subject: Re: [PATCH v3 00/14] kernel/locking: qspinlock improvements
+To: Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, peterz@infradead.org,
+        mingo@kernel.org, boqun.feng@gmail.com, paulmck@linux.vnet.ibm.com
+References: <1524738868-31318-1-git-send-email-will.deacon@arm.com>
+From: Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <8fdcfa2d-7717-5eb6-a938-53524db8ea41@redhat.com>
+Date: Thu, 26 Apr 2018 16:18:56 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1524738868-31318-1-git-send-email-will.deacon@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kieran,
+On 04/26/2018 06:34 AM, Will Deacon wrote:
+> Hi all,
+>
+> This is version three of the qspinlock patches I posted previously:
+>
+>   v1: https://lkml.org/lkml/2018/4/5/496
+>   v2: https://lkml.org/lkml/2018/4/11/618
+>
+> Changes since v2 include:
+>   * Fixed bisection issues
+>   * Fixed x86 PV build
+>   * Added patch proposing me as a co-maintainer
+>   * Rebased onto -rc2
+>
+> All feedback welcome,
+>
+> Will
+>
+> --->8
+>
+> Jason Low (1):
+>   locking/mcs: Use smp_cond_load_acquire() in mcs spin loop
+>
+> Waiman Long (1):
+>   locking/qspinlock: Add stat tracking for pending vs slowpath
+>
+> Will Deacon (12):
+>   barriers: Introduce smp_cond_load_relaxed and atomic_cond_read_relaxed
+>   locking/qspinlock: Merge struct __qspinlock into struct qspinlock
+>   locking/qspinlock: Bound spinning on pending->locked transition in
+>     slowpath
+>   locking/qspinlock/x86: Increase _Q_PENDING_LOOPS upper bound
+>   locking/qspinlock: Remove unbounded cmpxchg loop from locking slowpath
+>   locking/qspinlock: Kill cmpxchg loop when claiming lock from head of
+>     queue
+>   locking/qspinlock: Use atomic_cond_read_acquire
+>   locking/qspinlock: Use smp_cond_load_relaxed to wait for next node
+>   locking/qspinlock: Make queued_spin_unlock use smp_store_release
+>   locking/qspinlock: Elide back-to-back RELEASE operations with
+>     smp_wmb()
+>   locking/qspinlock: Use try_cmpxchg instead of cmpxchg when locking
+>   MAINTAINERS: Add myself as a co-maintainer for LOCKING PRIMITIVES
+>
+>  MAINTAINERS                               |   1 +
+>  arch/x86/include/asm/qspinlock.h          |  21 ++-
+>  arch/x86/include/asm/qspinlock_paravirt.h |   3 +-
+>  include/asm-generic/atomic-long.h         |   2 +
+>  include/asm-generic/barrier.h             |  27 +++-
+>  include/asm-generic/qspinlock.h           |   2 +-
+>  include/asm-generic/qspinlock_types.h     |  32 +++-
+>  include/linux/atomic.h                    |   2 +
+>  kernel/locking/mcs_spinlock.h             |  10 +-
+>  kernel/locking/qspinlock.c                | 247 ++++++++++++++----------------
+>  kernel/locking/qspinlock_paravirt.h       |  44 ++----
+>  kernel/locking/qspinlock_stat.h           |   9 +-
+>  12 files changed, 209 insertions(+), 191 deletions(-)
+>
+Other than my comment on patch 5 (which can wait as the code path is
+unlikely to be used soon), I have no other issue with this patchset.
 
-Thank you for the patch.
+Acked-by: Waiman Long <longman@redhat.com>
 
-On Thursday, 26 April 2018 19:53:33 EEST Kieran Bingham wrote:
-> The naming of the fields for the ODPM signals in the DU extensional
-> function control register 6 (DEFR6) is incorrect against the data sheets
-> for both R-Car Gen2 and R-Car Gen3.
-> 
-> Rename the fields to match the datasheet.
-> 
-> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-and taken in my tree.
-
-> ---
->  drivers/gpu/drm/rcar-du/rcar_du_group.c |  4 ++--
->  drivers/gpu/drm/rcar-du/rcar_du_regs.h  | 16 ++++++++--------
->  2 files changed, 10 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_group.c
-> b/drivers/gpu/drm/rcar-du/rcar_du_group.c index 2f37ea901873..eead202c95c7
-> 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_group.c
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_group.c
-> @@ -46,10 +46,10 @@ void rcar_du_group_write(struct rcar_du_group *rgrp, u32
-> reg, u32 data)
-> 
->  static void rcar_du_group_setup_pins(struct rcar_du_group *rgrp)
->  {
-> -	u32 defr6 = DEFR6_CODE | DEFR6_ODPM12_DISP;
-> +	u32 defr6 = DEFR6_CODE | DEFR6_ODPM02_DISP;
-> 
->  	if (rgrp->num_crtcs > 1)
-> -		defr6 |= DEFR6_ODPM22_DISP;
-> +		defr6 |= DEFR6_ODPM12_DISP;
-> 
->  	rcar_du_group_write(rgrp, DEFR6, defr6);
->  }
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_regs.h
-> b/drivers/gpu/drm/rcar-du/rcar_du_regs.h index d5bae99d3cfe..9dfd220ceda1
-> 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_regs.h
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_regs.h
-> @@ -187,14 +187,14 @@
-> 
->  #define DEFR6			0x000e8
->  #define DEFR6_CODE		(0x7778 << 16)
-> -#define DEFR6_ODPM22_DSMR	(0 << 10)
-> -#define DEFR6_ODPM22_DISP	(2 << 10)
-> -#define DEFR6_ODPM22_CDE	(3 << 10)
-> -#define DEFR6_ODPM22_MASK	(3 << 10)
-> -#define DEFR6_ODPM12_DSMR	(0 << 8)
-> -#define DEFR6_ODPM12_DISP	(2 << 8)
-> -#define DEFR6_ODPM12_CDE	(3 << 8)
-> -#define DEFR6_ODPM12_MASK	(3 << 8)
-> +#define DEFR6_ODPM12_DSMR	(0 << 10)
-> +#define DEFR6_ODPM12_DISP	(2 << 10)
-> +#define DEFR6_ODPM12_CDE	(3 << 10)
-> +#define DEFR6_ODPM12_MASK	(3 << 10)
-> +#define DEFR6_ODPM02_DSMR	(0 << 8)
-> +#define DEFR6_ODPM02_DISP	(2 << 8)
-> +#define DEFR6_ODPM02_CDE	(3 << 8)
-> +#define DEFR6_ODPM02_MASK	(3 << 8)
->  #define DEFR6_TCNE1		(1 << 6)
->  #define DEFR6_TCNE0		(1 << 4)
->  #define DEFR6_MLOS1		(1 << 2)
-
--- 
-Regards,
-
-Laurent Pinchart
+Cheers,
+Longman
