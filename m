@@ -1,71 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756070AbeDZNYA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 09:24:00 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:37340 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755405AbeDZNX6 (ORCPT
+        id S1756172AbeDZNY6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 09:24:58 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:45077 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754516AbeDZNY4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 09:23:58 -0400
-X-Google-Smtp-Source: AIpwx49jjg728b/RtblX4sIBqeODepcNIhCY2cNNy0Eq8ARNtImIQjgvoJcswpopn3XE8mb/xQOTlRHONd6iQp0gD7w=
+        Thu, 26 Apr 2018 09:24:56 -0400
+X-Google-Smtp-Source: AIpwx483BctVWJenwLypQKquXabFyqDwLh3IPgB8ujGVObmr32/HCPQVv6vxY/+WhGj3CmhzjGg32Rkwe4Tl01CSayM=
 MIME-Version: 1.0
-In-Reply-To: <20180416100306.5f6bzkzlsx3ufvw7@mani>
-References: <20180414031811.11351-1-manivannan.sadhasivam@linaro.org>
- <20180414031811.11351-2-manivannan.sadhasivam@linaro.org> <9acdd412-9b6d-ec63-c5ca-c5fa8d98d489@linaro.org>
- <20180416100306.5f6bzkzlsx3ufvw7@mani>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 26 Apr 2018 15:23:57 +0200
-Message-ID: <CACRpkdZxwz5=oTxGWBgVHfy-D9s-f03qqjypUeJj6GrpXQcEcQ@mail.gmail.com>
-Subject: Re: [dragonboard] [PATCH 1/1] dts: qcom: db820c: Add gpio-line-names property
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Todor Tomov <todor.tomov@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dragonboard@lists.96boards.org,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
+X-Originating-IP: [176.63.54.97]
+In-Reply-To: <20180423172135.4050588-1-songliubraving@fb.com>
+References: <20180423172135.4050588-1-songliubraving@fb.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 26 Apr 2018 15:24:55 +0200
+Message-ID: <CAJfpegv807ktfv+tjYE65Yr_TbGnjds6ZCtoYX_yQTg_1wodzQ@mail.gmail.com>
+Subject: Re: [PATCH v5 1/2] tracing: fix bad use of igrab in trace_uprobe.c
+To: Song Liu <songliubraving@fb.com>
+Cc: linux-kernel@vger.kernel.org, kernel-team <kernel-team@fb.com>,
+        Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>,
+        Howard McLauchlan <hmclauchlan@fb.com>, Josef Bacik <jbacik@fb.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 16, 2018 at 12:03 PM, Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
-> On Mon, Apr 16, 2018 at 11:48:59AM +0300, Todor Tomov wrote:
-
->> > + * When the 96Board naming of a line and the schematic name of
->> > + * the same line are in conflict, the 96Board specification
->> > + * takes precedence, which means that the external UART on the
->> > + * LSEC is named UART0 while the schematic and SoC names this
->> > + * UART3. This is only for the informational lines i.e. "[FOO]",
->>
->> It seems to me that this can lead to some confusion for cases when
->> some schematic names have 96board names and others don't. (An
->> example below.) However I don't really see any better way to do
->> it. I'm wondering whether adding the schematic name in
->> the comment (for gpios which are named with 96board names)
->> can help a little. What do you think? Or any other idea?
->>
+On Mon, Apr 23, 2018 at 7:21 PM, Song Liu <songliubraving@fb.com> wrote:
+> As Miklos reported and suggested:
 >
-> Specifying the schematic names in comments is a good idea!
+>   This pattern repeats two times in trace_uprobe.c and in
+>   kernel/events/core.c as well:
 >
-> Linus: Do you have any suggestion here?
+>       ret = kern_path(filename, LOOKUP_FOLLOW, &path);
+>       if (ret)
+>           goto fail_address_parse;
+>
+>       inode = igrab(d_inode(path.dentry));
+>       path_put(&path);
+>
+>   And it's wrong.  You can only hold a reference to the inode if you
+>   have an active ref to the superblock as well (which is normally
+>   through path.mnt) or holding s_umount.
+>
+>   This way unmounting the containing filesystem while the tracepoint is
+>   active will give you the "VFS: Busy inodes after unmount..." message
+>   and a crash when the inode is finally put.
+>
+>   Solution: store path instead of inode.
+>
+> This patch fixes two instances in trace_uprobe.c. struct path is added to
+> struct trace_uprobe to keep the inode and containing mount point
+> referenced.
+>
+> Fixes: f3f096cfedf8 ("tracing: Provide trace events interface for uprobes")
+> Fixes: 33ea4b24277b ("perf/core: Implement the 'perf_uprobe' PMU")
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Howard McLauchlan <hmclauchlan@fb.com>
+> Cc: Josef Bacik <jbacik@fb.com>
+> Cc: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+> Cc: Miklos Szeredi <miklos@szeredi.hu>
+> Reported-by: Miklos Szeredi <miklos@szeredi.hu>
+> Signed-off-by: Song Liu <songliubraving@fb.com>
 
-Go for this.
-
-Generally ask the question: what does the user need?
-
-In this case, especially userspace libraries like mriaa (right name?)
-should be able to work out-of-the-box without knowing what
-board it is but know it has a 96board connector.
-
-Yours,
-Linus Walleij
+Acked-by: Miklos Szeredi <mszeredi@redhat.com>
