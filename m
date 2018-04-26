@@ -1,143 +1,260 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756614AbeDZOUP (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 10:20:15 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:50377 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756431AbeDZOUL (ORCPT
+        id S932121AbeDZOUX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 10:20:23 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42498 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756524AbeDZOUU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 10:20:11 -0400
-Date: Thu, 26 Apr 2018 07:19:48 -0700
-From: tip-bot for Borislav Petkov <tipbot@zytor.com>
-Message-ID: <tip-f0a1d7c11c3ebe2f601b448d13e7fbc3a0364a03@git.kernel.org>
-Cc: tglx@linutronix.de, bp@suse.de, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, jpoimboe@redhat.com, mingo@kernel.org,
-        peterz@infradead.org, luto@amacapital.net,
-        torvalds@linux-foundation.org
-Reply-To: hpa@zytor.com, bp@suse.de, tglx@linutronix.de, mingo@kernel.org,
-        jpoimboe@redhat.com, linux-kernel@vger.kernel.org, luto@amacapital.net,
-        peterz@infradead.org, torvalds@linux-foundation.org
-In-Reply-To: <20180417161124.5294-4-bp@alien8.de>
-References: <20180417161124.5294-4-bp@alien8.de>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cleanups] x86/dumpstack: Carve out code-dumping into a
- function
-Git-Commit-ID: f0a1d7c11c3ebe2f601b448d13e7fbc3a0364a03
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        Thu, 26 Apr 2018 10:20:20 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Ryder Lee <ryder.lee@mediatek.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        alsa-devel@alsa-project.org, Garlic Tseng <garlic.tseng@mediatek.com>,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: mediatek: Add MTK_STREAM_NUM to mtk-base-afe.h" to the asoc tree
+In-Reply-To: <3b7d64ba9a84651575f69de5bbcbecf42d157250.1524628914.git.ryder.lee@mediatek.com>
+Message-Id: <E1fBhku-000474-In@debutante>
+Date: Thu, 26 Apr 2018 15:20:16 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  f0a1d7c11c3ebe2f601b448d13e7fbc3a0364a03
-Gitweb:     https://git.kernel.org/tip/f0a1d7c11c3ebe2f601b448d13e7fbc3a0364a03
-Author:     Borislav Petkov <bp@suse.de>
-AuthorDate: Tue, 17 Apr 2018 18:11:18 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Thu, 26 Apr 2018 16:15:26 +0200
+The patch
 
-x86/dumpstack: Carve out code-dumping into a function
+   ASoC: mediatek: Add MTK_STREAM_NUM to mtk-base-afe.h
 
-No functionality change, carve it out into a separate function for later
-changes.
+has been applied to the asoc tree at
 
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Link: https://lkml.kernel.org/r/20180417161124.5294-4-bp@alien8.de
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From ab7b4ee9861a340b470e59f8d19360f7bc81e9dd Mon Sep 17 00:00:00 2001
+From: Ryder Lee <ryder.lee@mediatek.com>
+Date: Wed, 25 Apr 2018 12:19:56 +0800
+Subject: [PATCH] ASoC: mediatek: Add MTK_STREAM_NUM to mtk-base-afe.h
+
+Add MTK_STREAM_NUM to common header and modify related stuff so that
+the other SoCs can reuse it.
+
+Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+Reviewed-by: Garlic Tseng <garlic.tseng@mediatek.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/x86/kernel/dumpstack.c | 57 ++++++++++++++++++++++++---------------------
- 1 file changed, 30 insertions(+), 27 deletions(-)
+ sound/soc/mediatek/common/mtk-base-afe.h      |  2 +
+ .../mediatek/mt2701/mt2701-afe-clock-ctrl.c   | 15 +++--
+ sound/soc/mediatek/mt2701/mt2701-afe-common.h | 17 ++---
+ sound/soc/mediatek/mt2701/mt2701-afe-pcm.c    | 67 ++++---------------
+ 4 files changed, 30 insertions(+), 71 deletions(-)
 
-diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
-index 579455c2b91e..eb9d6c00a52f 100644
---- a/arch/x86/kernel/dumpstack.c
-+++ b/arch/x86/kernel/dumpstack.c
-@@ -70,6 +70,35 @@ static void printk_stack_address(unsigned long address, int reliable,
- 	printk("%s %s%pB\n", log_lvl, reliable ? "" : "? ", (void *)address);
- }
+diff --git a/sound/soc/mediatek/common/mtk-base-afe.h b/sound/soc/mediatek/common/mtk-base-afe.h
+index 3a78f6f17195..e50adc9116cf 100644
+--- a/sound/soc/mediatek/common/mtk-base-afe.h
++++ b/sound/soc/mediatek/common/mtk-base-afe.h
+@@ -17,6 +17,8 @@
+ #ifndef _MTK_BASE_AFE_H_
+ #define _MTK_BASE_AFE_H_
  
-+static void show_opcodes(u8 *rip)
-+{
-+	unsigned int code_prologue = OPCODE_BUFSIZE * 43 / 64;
-+	unsigned int code_len = OPCODE_BUFSIZE;
-+	unsigned char c;
-+	u8 *ip;
-+	int i;
++#define MTK_STREAM_NUM (SNDRV_PCM_STREAM_LAST + 1)
 +
-+	printk(KERN_DEFAULT "Code: ");
-+
-+	ip = (u8 *)rip - code_prologue;
-+	if (ip < (u8 *)PAGE_OFFSET || probe_kernel_address(ip, c)) {
-+		/* try starting at IP */
-+		ip = (u8 *)rip;
-+		code_len = code_len - code_prologue + 1;
-+	}
-+	for (i = 0; i < code_len; i++, ip++) {
-+		if (ip < (u8 *)PAGE_OFFSET || probe_kernel_address(ip, c)) {
-+			pr_cont(" Bad RIP value.");
-+			break;
-+		}
-+		if (ip == (u8 *)rip)
-+			pr_cont("<%02x> ", c);
-+		else
-+			pr_cont("%02x ", c);
-+	}
-+	pr_cont("\n");
-+}
-+
- void show_iret_regs(struct pt_regs *regs)
- {
- 	printk(KERN_DEFAULT "RIP: %04x:%pS\n", (int)regs->cs, (void *)regs->ip);
-@@ -359,7 +388,6 @@ void die(const char *str, struct pt_regs *regs, long err)
- void show_regs(struct pt_regs *regs)
- {
- 	bool all = true;
--	int i;
+ struct mtk_base_memif_data {
+ 	int id;
+ 	const char *name;
+diff --git a/sound/soc/mediatek/mt2701/mt2701-afe-clock-ctrl.c b/sound/soc/mediatek/mt2701/mt2701-afe-clock-ctrl.c
+index 565005f821d0..d4e6a5ea63f4 100644
+--- a/sound/soc/mediatek/mt2701/mt2701-afe-clock-ctrl.c
++++ b/sound/soc/mediatek/mt2701/mt2701-afe-clock-ctrl.c
+@@ -46,6 +46,7 @@ int mt2701_init_clock(struct mtk_base_afe *afe)
+ 	/* Get I2S related clocks */
+ 	for (i = 0; i < MT2701_I2S_NUM; i++) {
+ 		struct mt2701_i2s_path *i2s_path = &afe_priv->i2s_path[i];
++		struct clk *i2s_ck;
+ 		char name[13];
  
- 	show_regs_print_info(KERN_DEFAULT);
+ 		snprintf(name, sizeof(name), "i2s%d_src_sel", i);
+@@ -70,18 +71,20 @@ int mt2701_init_clock(struct mtk_base_afe *afe)
+ 		}
  
-@@ -373,32 +401,7 @@ void show_regs(struct pt_regs *regs)
- 	 * time of the fault..
- 	 */
- 	if (!user_mode(regs)) {
--		unsigned int code_prologue = OPCODE_BUFSIZE * 43 / 64;
--		unsigned int code_len = OPCODE_BUFSIZE;
--		unsigned char c;
--		u8 *ip;
+ 		snprintf(name, sizeof(name), "i2so%d_hop_ck", i);
+-		i2s_path->hop_ck[I2S_OUT] = devm_clk_get(afe->dev, name);
+-		if (IS_ERR(i2s_path->hop_ck[I2S_OUT])) {
++		i2s_ck = devm_clk_get(afe->dev, name);
++		if (IS_ERR(i2s_ck)) {
+ 			dev_err(afe->dev, "failed to get %s\n", name);
+-			return PTR_ERR(i2s_path->hop_ck[I2S_OUT]);
++			return PTR_ERR(i2s_ck);
+ 		}
++		i2s_path->hop_ck[SNDRV_PCM_STREAM_PLAYBACK] = i2s_ck;
+ 
+ 		snprintf(name, sizeof(name), "i2si%d_hop_ck", i);
+-		i2s_path->hop_ck[I2S_IN] = devm_clk_get(afe->dev, name);
+-		if (IS_ERR(i2s_path->hop_ck[I2S_IN])) {
++		i2s_ck = devm_clk_get(afe->dev, name);
++		if (IS_ERR(i2s_ck)) {
+ 			dev_err(afe->dev, "failed to get %s\n", name);
+-			return PTR_ERR(i2s_path->hop_ck[I2S_IN]);
++			return PTR_ERR(i2s_ck);
+ 		}
++		i2s_path->hop_ck[SNDRV_PCM_STREAM_CAPTURE] = i2s_ck;
+ 
+ 		snprintf(name, sizeof(name), "asrc%d_out_ck", i);
+ 		i2s_path->asrco_ck = devm_clk_get(afe->dev, name);
+diff --git a/sound/soc/mediatek/mt2701/mt2701-afe-common.h b/sound/soc/mediatek/mt2701/mt2701-afe-common.h
+index ae8ddeacfbfe..8dabf1913533 100644
+--- a/sound/soc/mediatek/mt2701/mt2701-afe-common.h
++++ b/sound/soc/mediatek/mt2701/mt2701-afe-common.h
+@@ -23,7 +23,6 @@
+ #include "mt2701-reg.h"
+ #include "../common/mtk-base-afe.h"
+ 
+-#define MT2701_STREAM_DIR_NUM (SNDRV_PCM_STREAM_LAST + 1)
+ #define MT2701_PLL_DOMAIN_0_RATE	98304000
+ #define MT2701_PLL_DOMAIN_1_RATE	90316800
+ #define MT2701_I2S_NUM	4
+@@ -100,19 +99,13 @@ struct mt2701_i2s_data {
+ 	int i2s_asrc_fs_mask;
+ };
+ 
+-enum mt2701_i2s_dir {
+-	I2S_OUT,
+-	I2S_IN,
+-	I2S_DIR_NUM,
+-};
 -
- 		show_trace_log_lvl(current, regs, NULL, KERN_DEFAULT);
--
--		printk(KERN_DEFAULT "Code: ");
--
--		ip = (u8 *)regs->ip - code_prologue;
--		if (ip < (u8 *)PAGE_OFFSET || probe_kernel_address(ip, c)) {
--			/* try starting at IP */
--			ip = (u8 *)regs->ip;
--			code_len = code_len - code_prologue + 1;
--		}
--		for (i = 0; i < code_len; i++, ip++) {
--			if (ip < (u8 *)PAGE_OFFSET ||
--					probe_kernel_address(ip, c)) {
--				pr_cont(" Bad RIP value.");
--				break;
--			}
--			if (ip == (u8 *)regs->ip)
--				pr_cont("<%02x> ", c);
--			else
--				pr_cont("%02x ", c);
--		}
-+		show_opcodes((u8 *)regs->ip);
+ struct mt2701_i2s_path {
+ 	int dai_id;
+ 	int mclk_rate;
+-	int on[I2S_DIR_NUM];
+-	int occupied[I2S_DIR_NUM];
+-	const struct mt2701_i2s_data *i2s_data[I2S_DIR_NUM];
+-	struct clk *hop_ck[I2S_DIR_NUM];
++	int on[MTK_STREAM_NUM];
++	int occupied[MTK_STREAM_NUM];
++	const struct mt2701_i2s_data *i2s_data[MTK_STREAM_NUM];
++	struct clk *hop_ck[MTK_STREAM_NUM];
+ 	struct clk *sel_ck;
+ 	struct clk *div_ck;
+ 	struct clk *mclk_ck;
+@@ -123,7 +116,7 @@ struct mt2701_afe_private {
+ 	struct mt2701_i2s_path i2s_path[MT2701_I2S_NUM];
+ 	struct clk *base_ck[MT2701_BASE_CLK_NUM];
+ 	struct clk *mrgif_ck;
+-	bool mrg_enable[MT2701_STREAM_DIR_NUM];
++	bool mrg_enable[MTK_STREAM_NUM];
+ };
+ 
+ #endif
+diff --git a/sound/soc/mediatek/mt2701/mt2701-afe-pcm.c b/sound/soc/mediatek/mt2701/mt2701-afe-pcm.c
+index 2a161f4d01f6..99094a574213 100644
+--- a/sound/soc/mediatek/mt2701/mt2701-afe-pcm.c
++++ b/sound/soc/mediatek/mt2701/mt2701-afe-pcm.c
+@@ -1256,63 +1256,24 @@ static const struct mtk_base_irq_data irq_data[MT2701_IRQ_ASYS_END] = {
  	}
--	pr_cont("\n");
- }
+ };
+ 
+-static const struct mt2701_i2s_data mt2701_i2s_data[MT2701_I2S_NUM][2] = {
++static const struct mt2701_i2s_data mt2701_i2s_data[][2] = {
+ 	{
+-		{
+-			.i2s_ctrl_reg = ASYS_I2SO1_CON,
+-			.i2s_asrc_fs_shift = 0,
+-			.i2s_asrc_fs_mask = 0x1f,
+-
+-		},
+-		{
+-			.i2s_ctrl_reg = ASYS_I2SIN1_CON,
+-			.i2s_asrc_fs_shift = 0,
+-			.i2s_asrc_fs_mask = 0x1f,
+-
+-		},
++		{ ASYS_I2SO1_CON, 0, 0x1f },
++		{ ASYS_I2SIN1_CON, 0, 0x1f },
+ 	},
+ 	{
+-		{
+-			.i2s_ctrl_reg = ASYS_I2SO2_CON,
+-			.i2s_asrc_fs_shift = 5,
+-			.i2s_asrc_fs_mask = 0x1f,
+-
+-		},
+-		{
+-			.i2s_ctrl_reg = ASYS_I2SIN2_CON,
+-			.i2s_asrc_fs_shift = 5,
+-			.i2s_asrc_fs_mask = 0x1f,
+-
+-		},
++		{ ASYS_I2SO2_CON, 5, 0x1f },
++		{ ASYS_I2SIN2_CON, 5, 0x1f },
+ 	},
+ 	{
+-		{
+-			.i2s_ctrl_reg = ASYS_I2SO3_CON,
+-			.i2s_asrc_fs_shift = 10,
+-			.i2s_asrc_fs_mask = 0x1f,
+-
+-		},
+-		{
+-			.i2s_ctrl_reg = ASYS_I2SIN3_CON,
+-			.i2s_asrc_fs_shift = 10,
+-			.i2s_asrc_fs_mask = 0x1f,
+-
+-		},
++		{ ASYS_I2SO3_CON, 10, 0x1f },
++		{ ASYS_I2SIN3_CON, 10, 0x1f },
+ 	},
+ 	{
+-		{
+-			.i2s_ctrl_reg = ASYS_I2SO4_CON,
+-			.i2s_asrc_fs_shift = 15,
+-			.i2s_asrc_fs_mask = 0x1f,
+-
+-		},
+-		{
+-			.i2s_ctrl_reg = ASYS_I2SIN4_CON,
+-			.i2s_asrc_fs_shift = 15,
+-			.i2s_asrc_fs_mask = 0x1f,
+-
+-		},
++		{ ASYS_I2SO4_CON, 15, 0x1f },
++		{ ASYS_I2SIN4_CON, 15, 0x1f },
+ 	},
++	/* TODO - extend control registers supported by newer SoCs */
+ };
+ 
+ static irqreturn_t mt2701_asys_isr(int irq_id, void *dev)
+@@ -1434,10 +1395,10 @@ static int mt2701_afe_pcm_dev_probe(struct platform_device *pdev)
+ 
+ 	/* I2S initialize */
+ 	for (i = 0; i < MT2701_I2S_NUM; i++) {
+-		afe_priv->i2s_path[i].i2s_data[I2S_OUT]
+-			= &mt2701_i2s_data[i][I2S_OUT];
+-		afe_priv->i2s_path[i].i2s_data[I2S_IN]
+-			= &mt2701_i2s_data[i][I2S_IN];
++		afe_priv->i2s_path[i].i2s_data[SNDRV_PCM_STREAM_PLAYBACK] =
++			&mt2701_i2s_data[i][SNDRV_PCM_STREAM_PLAYBACK];
++		afe_priv->i2s_path[i].i2s_data[SNDRV_PCM_STREAM_CAPTURE] =
++			&mt2701_i2s_data[i][SNDRV_PCM_STREAM_CAPTURE];
+ 	}
+ 
+ 	afe->mtk_afe_hardware = &mt2701_afe_hardware;
+-- 
+2.17.0
