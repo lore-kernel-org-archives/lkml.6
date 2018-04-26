@@ -1,78 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752769AbeDZDtt (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 23:49:49 -0400
-Received: from mail-pf0-f175.google.com ([209.85.192.175]:44355 "EHLO
-        mail-pf0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751995AbeDZDts (ORCPT
+        id S1752689AbeDZDwX (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 23:52:23 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:47708 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751525AbeDZDwV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 23:49:48 -0400
-X-Google-Smtp-Source: AB8JxZpyQblYTSp/aRlzKosFdHrAACJJRURfV7VE9LxjDLtg8RI1kAcsXpsu94XsR4FpEFZVbfFquQ==
-Subject: Re: Affinity for GIC irq line
-To: Marc Zyngier <marc.zyngier@arm.com>, linux-kernel@vger.kernel.org
-References: <2880aee6-704c-a5aa-e193-75bba1bce43d@gmail.com>
- <2d9f0678-ec5c-2b09-7ddd-407dd37c55a1@arm.com>
-Cc: tglx@linutronix.de, jason@lakedaemon.net,
-        Catalin Marinas <catalin.marinas@arm.com>
-From: valmiki <valmikibow@gmail.com>
-Message-ID: <f7958252-8a3f-ae77-f3c9-e4c0686db1dc@gmail.com>
-Date: Thu, 26 Apr 2018 09:19:40 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
-MIME-Version: 1.0
-In-Reply-To: <2d9f0678-ec5c-2b09-7ddd-407dd37c55a1@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Wed, 25 Apr 2018 23:52:21 -0400
+From: Jianchao Wang <jianchao.w.wang@oracle.com>
+To: monis@mellanox.com, dledford@redhat.com, jgg@ziepe.ca
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] IB/rxe: add RXE_START_MASK for rxe_opcode IB_OPCODE_RC_SEND_ONLY_INV
+Date: Thu, 26 Apr 2018 11:52:39 +0800
+Message-Id: <1524714759-14654-1-git-send-email-jianchao.w.wang@oracle.com>
+X-Mailer: git-send-email 2.7.4
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8874 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=625
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804260037
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On 25/04/18 04:23, valmiki wrote:
->> Hi all,
->>
->> When an IRQ line is set affinity using irq_set_affinity, which calls
->> irq_do_set_affinity, this API copies affinity mask to affinity variable
->> in irq_common_data of this irq descriptor.
->
-> It does a wee bit more. Crucially, it contains the line:
->
->         ret = chip->irq_set_affinity(data, mask, force);
-Yes, i overlooked this part.
->
->> But as per ARM GICv2 document in order to drive a interrupt to a
->> specific CPU we need to program GICD_ITARGETSRn register.
->>
->> But irq_set_affinity isn't writing to this register.Please correct me if
->> I'm wrong i did not find code for this register being updated in
->> irq_set_affinity flow.
->> So how affinity is being set for an IRQ line ?
->
-> I would have though that a function name such as "gic_set_affinity" was
-> clear enough?
->
->> If affinity was set successfully on what CPU does asm_do_IRQ run ?
->
-> It runs on the CPU that the interrupt targets, I'd say.
-Thanks Marc.
-How does affinity for virtual irq work ?
-For example pci-xgene-msi.c has xgene_msi_set_affinity function which 
-sets affinity for each virq.
-As per arm64/boot/dts/apm/apm-storm.dtsi they use GICv2.
-They are trying to map each virq to specific cpu but already GIC lines 
-affinity is set, when this affinity would be used ?
+w/o RXE_START_MASK, the last_psn of IB_OPCODE_RC_SEND_ONLY_INV
+will not be updated in update_wqe_psn, and the corresponding
+wqe will not be acked in rxe_completer due to its last_psn is
+zero. Finally, the other wqe will also not be able to be acked,
+because the wqe of IB_OPCODE_RC_SEND_ONLY_INV with last_psn 0
+is still there. This causes large amount of io timeout when
+nvmeof is over rxe.
 
-What does
-/* Update MSI number to target the new CPU */
-irqdata->hwirq = hwirq_to_canonical_hwirq(irqdata->hwirq) + target_cpu;
+Add RXE_START_MASK for IB_OPCODE_RC_SEND_ONLY_INV to fix this.
 
-the above code do ?
-Already mapping for hwirq to virq is done by this time for this domain.
-Now if hwirq is updated its mapping doesn't it lead to wrong virq ?
-
-Regards,
-Valmiki
-
-
+Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
 ---
-This email has been checked for viruses by Avast antivirus software.
-https://www.avast.com/antivirus
+ drivers/infiniband/sw/rxe/rxe_opcode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/infiniband/sw/rxe/rxe_opcode.c b/drivers/infiniband/sw/rxe/rxe_opcode.c
+index 61927c1..4cf1106 100644
+--- a/drivers/infiniband/sw/rxe/rxe_opcode.c
++++ b/drivers/infiniband/sw/rxe/rxe_opcode.c
+@@ -390,7 +390,7 @@ struct rxe_opcode_info rxe_opcode[RXE_NUM_OPCODE] = {
+ 		.name	= "IB_OPCODE_RC_SEND_ONLY_INV",
+ 		.mask	= RXE_IETH_MASK | RXE_PAYLOAD_MASK | RXE_REQ_MASK
+ 				| RXE_COMP_MASK | RXE_RWR_MASK | RXE_SEND_MASK
+-				| RXE_END_MASK,
++				| RXE_END_MASK  | RXE_START_MASK,
+ 		.length = RXE_BTH_BYTES + RXE_IETH_BYTES,
+ 		.offset = {
+ 			[RXE_BTH]	= 0,
+-- 
+2.7.4
