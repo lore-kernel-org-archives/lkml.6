@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2209064-1524730436-2-6652079605079574528
+X-Cyrus-Session-Id: sloti22d1t05-2209064-1524730325-2-14942759868951510238
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -7,28 +7,28 @@ X-Spam-hits: BAYES_00 -1.9, MAILING_LIST_MULTI -1, ME_NOAUTH 0.01, RCVD_IN_DNSWL
   LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='US-ASCII'
+X-Spam-charsets: plain='utf-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524730435; b=WJBKODR3+ELK65kDzodyBUHIvX68bfdjajWV2qINdAl6FAf+Bw
-    2z4vCWHQmQ2sJtTGw+a/MPw1RsHIRGOotgH+vi0RWaT81e2GtPcZCxPt9cLUSHSe
-    cd9rbzY2VCFLjvx5tg49GTn58CqS/S5IgyEjf12SGXFPOoGIOiqaafaUcJAsJb80
-    9aVMEEVZCyQt9A4IFecoRcJEqosNIkZgiPD23e7Nsan1Bnn1Im6vywV+6EdYeqyH
-    GjSILPGc48wgJdKSEhXpFjAdb3QGwpUl6gTyLeUNivgHo+X4jrEGc/N4PELwaE5B
-    kvSmQIMZJ0+ccCYOelC9Cy1vLA2vOfCMtOjA==
+    1524730325; b=GVhUsK7C2/8lyhJCzDVAdfzyAVpHJ0KQz7vs6BQy2/AYF81fLI
+    ieidFzuGXAJa9r4Zm/vMnV6LP/RMSlrOMr7yf5ZwTwejfx7W5Qckb1TkBV2afbKx
+    R+0SMYWBZonFQ6NDbfNGjpj38sqUzM2HZCmmhycpFyJ3dScBj4Z+Ljn2ssi9wf02
+    DvadVdJjGqmx9bgFmhMjNILsi6lKmvdmmxT4IBEnxZ30EKMMOn9TPyHXOnFrxhNd
+    S6BV+IL94vkiNflrhj6E8enRkVeNErPJTfrs4CxDsNIqqPzEiHjvHIFphBCz7m2W
+    VF6R7yXGFI8BCF0XcxDqyWYWJlEXXNMYLX6g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
+    messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1524730435;
-    bh=oGoFrHk64Ci+hE2Ld1BYmo7dpHuBVWBkdergx982PDc=; b=s5V6xRTDSsEn
-    VBmJOGMnYuhoVoMEbfp7Hb7m2p4MlgRfw/su1CqhG9phDpWpmYqvPRkQYjBRJH7G
-    yfe2dDxvydzPqislT2YaWuQNDjyRbk+Zit8GPBlowoebKgbad6ziKwNaK8HepgzC
-    M8mcTelJUvi5sANOc/3uMQ/YGUZE04Dw0jfKmJN9fo1hJEjFNM0Fip+03+/XfGWF
-    eyg+zwc8ZjpALWGRIAvxtqYmfyxx+zS9BV17CCLctTtG8zYYa/rfaQ3Rw86y0phO
-    muXpyQadu3EXpS44ed1xfwkU2wx9m2Ze1QIvjybJFramGRk1BxB0/6MFhSfwZdPH
-    +hLjCGk2UQ==
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1524730325;
+    bh=S4kOOUFOvfU41S6KLIDsvZCXQzxeu7aJtCJnGTr0qtY=; b=WO1mP/Ea5Hr6
+    TB5ikqHwRqq5Nu50Eg3x4reGPWySWeoCbPGZsRVQOx3lSYt01KYJmAj16fNdj9ab
+    FH3PZNrYiAQ+gccOKK/4vih3yzzuZ7iZA6B31H8cQ2NALt/T+jhcj6mOqusuTIxT
+    ie7Pg6W/AW8KP5pcNrPjySZYRzVgbJxRKRVjW2eaJy7zaqLz2DXsmdy+RLgBBbBs
+    AULaWCiFU3FaQSbnP7l7p1KWgrc5Wjo1bCzIYIFf0M1tOI5LOkWjwHMjcurT9Z2F
+    pQ2MLItgWSIkUkT9I3cDkIo8GSkO/Pm5MQn2m/HSv/fGd2EYEl+bAgTt32peO0/s
+    URbR8LmVRQ==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-85 state=0
+    x-vs=clean score=-100 state=0
 Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
@@ -49,33 +49,30 @@ Authentication-Results: mx1.messagingengine.com;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-85 state=0
+    x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJ02bpX8wMXMgHG4UjD/N/TZ0Xmgu963aqeLEMTWH34Unq60sljE8nWB7Rb2xRqQpv+7dJfWoq/e37mwKFpT715tl6kbmiSgCBbDtOq+MAULeE8NvcPy
-    hsNPtJyNDXN6COiy1quNN+rZdsykvA+vZ2srKIfg+JpmCvYwgrV6rcfoPMZGTuerNlxOZQmJN6v7Th3TAd7A+oCvSwIm8oc8eySScfODICRHjxyUN90EPKRr
+X-CM-Envelope: MS4wfNl4a+BegU7ZHe253t98YoCsdIDFAfvGR8DAr8BzBOS1AP1XQGMo5GcCtCXXwgIiNSXE9pMiUrn11ACB6r7vS76l62l7kvwvyBpkG+52bSc0ywFW/zWv
+    MEhetFScSfkJdXVQjI9Uf8hBtM98riIHHFkuNvZ58JVIXcrgrofV4ELe+UWXqxqDWuCa2XMQ9OEuzsCbZtlIaIw+0Ptg3LPSw/hsRN7+Twq/TwntqVEPaiFq
 X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=VwQbUJbxAAAA:8 a=D19gQVrFAAAA:8 a=Ag2GKY2TJ1JtHe2dNT8A:9
-    a=S9Id25sPtRSk1PkC:21 a=T3OiLwuRxJ7hajPE:21 a=CjuIK1q_8ugA:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=W4TVW4IDbPiebHqcZpNg:22
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=VwQbUJbxAAAA:8 a=7CQSdrXTAAAA:8 a=kimOT7yt1_a6A--e_mAA:9 a=QEXdDO2ut3YA:10
+    a=AjGcO6oz07-iQ99wixmX:22 a=a-qgeE7W1pNrGK8U0ZQC:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754183AbeDZINw (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 26 Apr 2018 04:13:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36472 "EHLO mail.kernel.org"
+        id S1754249AbeDZIMD (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 26 Apr 2018 04:12:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35824 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753968AbeDZINs (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 26 Apr 2018 04:13:48 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE92821781
+        id S1754128AbeDZIMB (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 26 Apr 2018 04:12:01 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E3F921781
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
-Date: Thu, 26 Apr 2018 17:13:43 +0900
 From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+To: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
+Cc: Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
+        x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
         Ananth N Mavinakayanahalli <ananth@in.ibm.com>,
         Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
         "David S . Miller" <davem@davemloft.net>,
@@ -90,13 +87,15 @@ Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
         akpm@linux-foundation.org, acme@kernel.org, rostedt@goodmis.org,
         brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
         stable@vger.kernel.org
-Subject: Re: [PATCH -tip v2 0/7] kprobes: Fix %p in kprobes
-Message-Id: <20180426171343.630332329e9998a1ef617851@kernel.org>
+Subject: [PATCH -tip v2 7/7] kprobes/arm64: Fix %p uses in error messages
+Date: Thu, 26 Apr 2018 17:11:35 +0900
+Message-Id: <152473029530.8819.16999245501020107222.stgit@devbox>
+X-Mailer: git-send-email 2.13.6
 In-Reply-To: <152473007907.8819.10449983839199591406.stgit@devbox>
 References: <152473007907.8819.10449983839199591406.stgit@devbox>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: StGit/0.17.1-dirty
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
@@ -104,74 +103,34 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, 26 Apr 2018 17:08:00 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
+Fix %p uses in error messages by removing it because
+those are redundant or meaningless.
 
-> Hi,
-> 
-> This 2nd version of the series which fixes %p uses in kprobes.
-> Some by replacing with %pS, some by replacing with %px but
-> masking with kallsyms_show_value().
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Acked-by: Will Deacon <will.deacon@arm.com>
+---
+ arch/arm64/kernel/probes/kprobes.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Oops, I missed to porting this on tip tree, but since this is
-including some other archs, it can go directly to each trees
-or linus tree.
-
-Anyway, those should be cleanly applicable for the latest
-linus tree too.
-
-Thanks,
-
-> 
-> V1 series is here:
->  https://lkml.org/lkml/2018/1/25/1
-> 
-> I've read the thread about %pK and if I understand correctly
-> we shouldn't print kernel addresses. However, kprobes debugfs
-> interface can not stop to show the actual probe address because
-> it should be compared with addresses in kallsyms for debugging.
-> So, it depends on that kallsyms_show_value() allows to show
-> address to user, because if it returns true, anyway that user
-> can dump /proc/kallsyms.
-> 
-> Other error messages are replaced it with %pS, and one critical
-> function uses %px which is called right before BUG().
-> 
-> Also, I tried to fix this issue on each arch port. I searched
-> it by
-> 
->  # find arch/* | grep -e 'kprobe.*c' | xargs grep -w %p
-> 
-> And fixed all %p uses in those files.
-> 
-> Changes in this version;
->  - [1/7] is newly added.
->  - patches for MN10300(deleted) and s390(merged) are removed.
-> 
-> Thank you,
-> 
-> ---
-> 
-> Masami Hiramatsu (7):
->       kprobes: Make blacklist root user read only
->       kprobes: Show blacklist addresses as same as kallsyms does
->       kprobes: Show address of kprobes if kallsyms does
->       kprobes: Replace %p with other pointer types
->       kprobes/x86: Fix %p uses in error messages
->       kprobes/arm: Fix %p uses in error messages
->       kprobes/arm64: Fix %p uses in error messages
-> 
-> 
->  arch/arm/probes/kprobes/core.c      |   10 ++++----
->  arch/arm/probes/kprobes/test-core.c |    1 -
->  arch/arm64/kernel/probes/kprobes.c  |    4 ++-
->  arch/x86/kernel/kprobes/core.c      |   12 +++------
->  kernel/kprobes.c                    |   46 ++++++++++++++++++++++-------------
->  5 files changed, 40 insertions(+), 33 deletions(-)
-> 
-> --
-> Masami Hiramatsu (Linaro) <mhiramat@kernel.org>
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+diff --git a/arch/arm64/kernel/probes/kprobes.c b/arch/arm64/kernel/probes/kprobes.c
+index d849d9804011..34f78d07a068 100644
+--- a/arch/arm64/kernel/probes/kprobes.c
++++ b/arch/arm64/kernel/probes/kprobes.c
+@@ -275,7 +275,7 @@ static int __kprobes reenter_kprobe(struct kprobe *p,
+ 		break;
+ 	case KPROBE_HIT_SS:
+ 	case KPROBE_REENTER:
+-		pr_warn("Unrecoverable kprobe detected at %p.\n", p->addr);
++		pr_warn("Unrecoverable kprobe detected.\n");
+ 		dump_kprobe(p);
+ 		BUG();
+ 		break;
+@@ -521,7 +521,7 @@ int __kprobes longjmp_break_handler(struct kprobe *p, struct pt_regs *regs)
+ 		    (struct pt_regs *)kcb->jprobe_saved_regs.sp;
+ 		pr_err("current sp %lx does not match saved sp %lx\n",
+ 		       orig_sp, stack_addr);
+-		pr_err("Saved registers for jprobe %p\n", jp);
++		pr_err("Saved registers for jprobe\n");
+ 		__show_regs(saved_regs);
+ 		pr_err("Current registers\n");
+ 		__show_regs(regs);
