@@ -1,99 +1,187 @@
 Return-Path: <srinivas.kandagatla@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1524856620; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1524736201; cv=none;
         d=google.com; s=arc-20160816;
-        b=hVkDDOaNPGT7FPrUQSCn+yzErBAEBJ3/Hn4RvuaP5m6qA7slmv0XLwKEOlwg4YZGHY
-         afGBMq/0blVAqRzP4vWjY7h4WutPTUAl7r7jdqsFnCGvPNQS9Z4htjEWkW15mlbIAF1M
-         p6Ic5Uw29qSogZATSXYK5LFxTfC5R7jYlKLWrA0krS5iCEaHW90OcDFYPuttJGrTW26/
-         Mklr2yydGryiVZ4+o2GPyLz1uE1lYqe6By0ACy+0juOp0CpAqvfZ4/AzIouPhzw5HcWm
-         yP61AkrrVWiXG8KBlieh3/P2q2DLF84N6PG0ulp4PgYDD6lfowBptlojO82e9kOvjFUj
-         9BOA==
+        b=cnAAP1xQg0CEx0jq4S7QFJr4OuNAAw/bt5qrs/zvnwj5wNmU/wkUttRlwpSRNUvnDe
+         dQOaYVEFfSy2OGDnAWJZnzoAuxQJGnsMiTe2FVLp3rTR1rCWHDRQkVua+sxETMnopHNP
+         HudtpbHxIIASNZABVbsbDaOwH9aBXSek986GeYXK1VXGe3Nc680tYCh1CocQigyWKhBq
+         ywkz3857cqUZRkmbKHCevUq0zTBcuUQ9sBgpN5m5MI2h/jSgUD6X7dn6gr6hj+HR6YMU
+         fKISzU+IqHg7xpQTFtYTmFF1LPPuUGIJpPatJxyIXHny2hF32ONXl4EpqQZd8ZqZSIFy
+         y7NA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=KJVxt9RqcdJvy6k0oLFd9t0zth/m+Po+PI5bQJWhzSI=;
-        b=B05GADFrI89UDHDN4nUSBT4DPVKLrsnJn1tw4GsVXLwzvJrbSw6W/ItTODYDLkNL+a
-         djnGelwRqxVRvunYDnHe+KreLihc6fK1P9dfO4sSzx/hxnvqmQMs1o3KA7FzV24ggOiM
-         +R/c6MrgDgEQu8uEr26goXeX2FF7w2cCARBL13pHgmyw8S/mpSpE7jEhpIDrfMtenBmr
-         oOLV4QgwW4lwoKanco/wp0akouCy9DY6I2ZZfRxYyg6AurRKd/DAmi/4Tmma9dZaRUrw
-         MwBow3xS6SrwZ16WhzFDhVW8kmJN+oUTCbHxPVWtIBOD0uCoY74c+/c7VCl8a12zoymi
-         LF2A==
+        bh=Akk0CFdFzuBeUJ4EiX/zxUJWGT6AWy0ZdV3sw7FfXLw=;
+        b=WfGuNZX0bzol7N+vENVC+t2dIZrCWBkHR/fFqT6eddKcfwPIwI/nFQg2ccZWyU2xMV
+         I1tZ0WssbKCfhm9pbywVrtDndD70Ul4EBMVk6fowKokFKRyrXD2RAeL0WbfnVhxt5MxE
+         Mjl+MXZvbn6bfiYlfBxqmAYKmfIvmZR5xQJQDKQfTF0PmwF6ujQ8BxZJajEZNERfz9VJ
+         KUWSUD56ziaAgaEe2I4HQFzCWfV4o9lLalovAs68wIeqmxpK/ISAmc8K/MbXFdXjVWIM
+         JW3TYvRfR6XUdHCq3sPJKS5IQWY0CBR1dbmGkjrDBp/PcjclRsAOYt5Yg2hP12M+/OaX
+         eEWw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=ksehrvmw;
-       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
+       dkim=pass header.i=@linaro.org header.s=google header.b=cwbhRblL;
+       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=ksehrvmw;
-       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
+       dkim=pass header.i=@linaro.org header.s=google header.b=cwbhRblL;
+       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AB8JxZro3mpsSH7iPGkfEQgVj70d5ajToHdQnt/zRfJmz2F10NvfuKezcY5Xty10L7t8r5Ke3yc/3g==
-Subject: Re: [PATCH v6 04/24] ASoC: qdsp6: dt-bindings: Add q6afe dt bindings
-To: Rob Herring <robh@kernel.org>
-Cc: Andy Gross <andy.gross@linaro.org>, Mark Brown <broonie@kernel.org>,
- linux-arm-msm <linux-arm-msm@vger.kernel.org>,
- Linux-ALSA <alsa-devel@alsa-project.org>,
- Banajit Goswami <bgoswami@codeaurora.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- David Brown <david.brown@linaro.org>, Mark Rutland <mark.rutland@arm.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Patrick Lai <plai@codeaurora.org>,
- Takashi Iwai <tiwai@suse.com>, Jaroslav Kysela <perex@perex.cz>,
- devicetree@vger.kernel.org,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
- <linux-arm-kernel@lists.infradead.org>, rohkumar@qti.qualcomm.com,
- spatakok@qti.qualcomm.com
+X-Google-Smtp-Source: AIpwx4+zVcqrC6y6aM1kCUkNi4OVgjSAOaORapoomkYR9LI/9vPXSWYwX/bklC/4THo1qwu7bMiY4A==
+From: srinivas.kandagatla@linaro.org
+To: andy.gross@linaro.org,
+	broonie@kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	alsa-devel@alsa-project.org,
+	robh+dt@kernel.org,
+	bgoswami@codeaurora.org
+Cc: gregkh@linuxfoundation.org,
+	david.brown@linaro.org,
+	mark.rutland@arm.com,
+	lgirdwood@gmail.com,
+	plai@codeaurora.org,
+	tiwai@suse.com,
+	perex@perex.cz,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	rohkumar@qti.qualcomm.com,
+	spatakok@qti.qualcomm.com,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH v6 22/24] ASoC: qdsp6: dt-bindings: Add apq8096 machine bindings
+Date: Thu, 26 Apr 2018 10:46:04 +0100
+Message-Id: <20180426094606.4775-23-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180426094606.4775-1-srinivas.kandagatla@linaro.org>
 References: <20180426094606.4775-1-srinivas.kandagatla@linaro.org>
- <20180426094606.4775-5-srinivas.kandagatla@linaro.org>
- <20180427141323.2ykh676xpdf7b6bl@rob-hp-laptop>
- <dd30b0ed-d958-9bf8-13cf-55d100b645ab@linaro.org>
- <CAL_JsqLLqr87F53rbR+DU9Qj9=9SWWrw45TWZaG6f_gnYfPNgw@mail.gmail.com>
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <16204d76-c3f9-a185-6e1d-34d86dc40688@linaro.org>
-Date: Fri, 27 Apr 2018 20:16:57 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
-MIME-Version: 1.0
-In-Reply-To: <CAL_JsqLLqr87F53rbR+DU9Qj9=9SWWrw45TWZaG6f_gnYfPNgw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598801759184316258?=
-X-GMAIL-MSGID: =?utf-8?q?1598928055462037034?=
+X-GMAIL-THRID: =?utf-8?q?1598801787140996997?=
+X-GMAIL-MSGID: =?utf-8?q?1598801787140996997?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
+Add devicetree bindings documentation file for Qualcomm apq8096 sound card.
 
-On 27/04/18 19:32, Rob Herring wrote:
->>>> +
->>>> += AFE DAIs (Digial Audio Interface)
->>>> +"dais" subnode of the AFE node represents dai specific configuration
->>>> +
->>>> +- #sound-dai-cells
->>>> +       Usage: required
->>>> +       Value type: <u32>
->>>> +       Definition: Must be 1
->>>> +
->>>> +- reg
->>>
->>> It's not clear here these are in a grandchild node.
->>>
->> Every afe port/dai has some board specifics, to allow that we need dai
->> specific child nodes.
-> Yes, but what I mean is #sound-dai-cells is a property of the dais
-> node, but reg and qcom,sd-lines are properties of child nodes under
-> the dais node. It is evident in the example, but not without the
-> example. >
-> Also, anywhere with reg needs #address-cells and #size-cells in the parent node.
->
-Yep, #address-cells and #size-cells are missing, Will add them along 
-with some notes.
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+---
+ .../devicetree/bindings/sound/qcom,apq8096.txt     | 109 +++++++++++++++++++++
+ 1 file changed, 109 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/qcom,apq8096.txt
 
-thanks,
-srini
-
-
-
-
-> Rob
+diff --git a/Documentation/devicetree/bindings/sound/qcom,apq8096.txt b/Documentation/devicetree/bindings/sound/qcom,apq8096.txt
+new file mode 100644
+index 000000000000..aa54e49fc8a2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/qcom,apq8096.txt
+@@ -0,0 +1,109 @@
++* Qualcomm Technologies APQ8096 ASoC sound card driver
++
++This binding describes the APQ8096 sound card, which uses qdsp for audio.
++
++- compatible:
++	Usage: required
++	Value type: <stringlist>
++	Definition: must be "qcom,apq8096-sndcard"
++
++- qcom,audio-routing:
++	Usage: Optional
++	Value type: <stringlist>
++	Definition:  A list of the connections between audio components.
++		  Each entry is a pair of strings, the first being the
++		  connection's sink, the second being the connection's
++		  source. Valid names could be power supplies, MicBias
++		  of codec and the jacks on the board:
++		  Valid names include:
++
++		Board Connectors:
++			"Headphone Left"
++			"Headphone Right"
++			"Earphone"
++			"Line Out1"
++			"Line Out2"
++			"Line Out3"
++			"Line Out4"
++			"Analog Mic1"
++			"Analog Mic2"
++			"Analog Mic3"
++			"Analog Mic4"
++			"Analog Mic5"
++			"Analog Mic6"
++			"Digital Mic2"
++			"Digital Mic3"
++
++		Audio pins and MicBias on WCD9335 Codec:
++			"MIC_BIAS1
++			"MIC_BIAS2"
++			"MIC_BIAS3"
++			"MIC_BIAS4"
++			"AMIC1"
++			"AMIC2"
++			"AMIC3"
++			"AMIC4"
++			"AMIC5"
++			"AMIC6"
++			"AMIC6"
++			"DMIC1"
++			"DMIC2"
++			"DMIC3"
++= dailinks
++Each subnode of sndcard represents either a dailink, and subnodes of each
++dailinks would be cpu/codec/platform dais.
++
++- link-name:
++	Usage: required
++	Value type: <string>
++	Definition: User friendly name for dai link
++
++= CPU, PLATFORM, CODEC dais subnodes
++- cpu:
++	Usage: required
++	Value type: <subnode>
++	Definition: cpu dai sub-node
++
++- codec:
++	Usage: Optional
++	Value type: <subnode>
++	Definition: codec dai sub-node
++
++- platform:
++	Usage: Optional
++	Value type: <subnode>
++	Definition: platform dai sub-node
++
++- sound-dai:
++	Usage: required
++	Value type: <phandle with arguments>
++	Definition: dai phandle/s and port of CPU/CODEC/PLATFORM node.
++
++Example:
++
++audio {
++	compatible = "qcom,apq8096-sndcard";
++	qcom,model = "DB820c";
++
++	mm1-dai-link {
++		link-name = "MultiMedia1";
++		cpu {
++			sound-dai = <&q6asmdai MSM_FRONTEND_DAI_MULTIMEDIA1>;
++		};
++	};
++
++	hdmi-dai-link {
++		link-name = "HDMI Playback";
++		cpu {
++			sound-dai = <&q6afe HDMI_RX>;
++		};
++
++		platform {
++			sound-dai = <&q6adm>;
++		};
++
++		codec {
++			sound-dai = <&hdmi 0>;
++		};
++	};
++};
+-- 
+2.16.2
