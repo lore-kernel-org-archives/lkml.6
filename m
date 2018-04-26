@@ -1,82 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754920AbeDZVkS (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 17:40:18 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:50360 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752000AbeDZVkR (ORCPT
+        id S1755861AbeDZVlE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 17:41:04 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:40872 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752962AbeDZVlC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 17:40:17 -0400
-Date: Thu, 26 Apr 2018 23:40:14 +0200 (CEST)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Imre Deak <imre.deak@intel.com>
-cc: LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        =?ISO-8859-15?Q?Ville_Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>,
-        Mika Kuoppala <mika.kuoppala@intel.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>
-Subject: Re: Early timeouts due to inaccurate jiffies during system
- suspend/resume
-In-Reply-To: <20180424140741.yxn5u6rdviblhtzx@ideak-desk.fi.intel.com>
-Message-ID: <alpine.DEB.2.21.1804262331280.1596@nanos.tec.linutronix.de>
-References: <20180419013200.wxkzqfdacfsijci5@ideak-desk.fi.intel.com> <alpine.DEB.2.21.1804191256200.1563@nanos.tec.linutronix.de> <20180423170128.mf7g26rniimm7asf@ideak-desk.fi.intel.com> <20180424140741.yxn5u6rdviblhtzx@ideak-desk.fi.intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 26 Apr 2018 17:41:02 -0400
+X-Google-Smtp-Source: AB8JxZpkoiX0QFuvF+7H3Je9LqlJ7cBdd7jMjAPHqenuzyEr4itNvQ0s2oH8Qz4Uq/YAZIUy8G8aJg==
+Subject: Re: [PATCH v2 net-next 0/2] tcp: mmap: rework zerocopy receive
+To: Andy Lutomirski <luto@kernel.org>,
+        Eric Dumazet <eric.dumazet@gmail.com>
+Cc: Soheil Hassas Yeganeh <soheil@google.com>,
+        Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Network Development <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>
+References: <20180425214307.159264-1-edumazet@google.com>
+ <CACSApvZF8CJqcRx7FGkMGitBiC6m0=_FT9XRZ=VV07U62wGM3Q@mail.gmail.com>
+ <a2c405e1-0ebc-dd33-fb0d-575bf06a1ff6@gmail.com>
+ <CALCETrVBQD1tPUzc_t7HmoPfApTdFW+x-0DqL8+XHjrmEpYMXQ@mail.gmail.com>
+From: Eric Dumazet <eric.dumazet@gmail.com>
+Message-ID: <2a8ea6bd-02dd-14dd-c797-2d8cba626f79@gmail.com>
+Date: Thu, 26 Apr 2018 14:40:59 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <CALCETrVBQD1tPUzc_t7HmoPfApTdFW+x-0DqL8+XHjrmEpYMXQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 24 Apr 2018, Imre Deak wrote:
-> On Mon, Apr 23, 2018 at 08:01:28PM +0300, Imre Deak wrote:
-> > On Thu, Apr 19, 2018 at 01:05:39PM +0200, Thomas Gleixner wrote:
-> > > On Thu, 19 Apr 2018, Imre Deak wrote:
-> > > > Hi,
-> > > > 
-> > > > while checking bug [1], I noticed that jiffies based timing loops like
-> > > > 
-> > > > 	expire = jiffies + timeout + 1;
-> > > > 	while (!time_after(jiffies, expire))
-> > > > 		do_something;
-> > > > 
-> > > > can last shorter than expected (that is less than timeout).
-> > > 
-> > > Yes, that can happen when the timer interrupt is delayed long enough for
-> > > whatever reason. If you need accurate timing then you need to use
-> > > ktime_get().
-> > 
-> > Thanks. I always regarded jiffies as non-accurate, but something that
-> > gives a minimum time delay guarantee (when adjusted by +1 as above). I
-> > wonder if there are other callers in kernel that don't expect an early
-> > timeout.
+
+
+On 04/26/2018 02:16 PM, Andy Lutomirski wrote:
+> At the risk of further muddying the waters, there's another minor tweak
+> that could improve performance on certain workloads.  Currently you mmap()
+> a range for a given socket and then getsockopt() to receive.  If you made
+> it so you could mmap() something once for any number of sockets (by
+> mmapping /dev/misc/tcp_zero_receive or whatever), then the performance of
+> the getsockopt() bit would be identical, but you could release the mapping
+> for many sockets at once with only a single flush.  For some use cases,
+> this could be a big win.
 > 
-> msleep and any other schedule_timeout based waits are also affected. At the
-> same time for example msleep's documentation says:
-> "msleep - sleep safely even with waitqueue interruptions".
+> You could also add this later easily enough, too.
 > 
-> To me that suggests a wait with a minimum guaranteed delay.
 
-Kinda :) The problem with jiffies is that it's a software maintained
-counter which depends on interrupt delivery. Contrary to hardware based
-counters which just work (most of the time at least).
+I believe I implemented what you just described.
 
-> Ville had an idea to make the behavior more deterministic by clamping
-> the jiffies increment to 1 for each timer interrupt. Would that work?
+The getsockopt() call checks that the VMA was created by a mmap() to one TCP socket.
 
-In theory, but there is the problem with NOHZ. NOHZ idle allows the CPU to
-sleep for more than 1 jiffie in order to safe power by not waking up just
-to increment jiffies and go back to sleep. So we need to push jiffies
-forward when the system was completely idle for some time. We already make
-sure that jiffies are updated on interrupt entry from idle before any code
-relying on them is run.
+It does not check that the vma was created by mmap() on the same socket,
+because we do not need this extra check really.
 
-Now for the weird case where interrupts get delayed awfully long, the right
-answer is to break these long interrupt disabled sections. Anything which
-holds interrupts disabled longer than a couple of microseconds is broken.
+So you presumably could use mmap() to grab 1GB of virtual space, then split it
+as you wish for different sockets.
 
-Thanks,
-
-	tglx
+Thanks.
