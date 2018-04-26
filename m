@@ -1,87 +1,118 @@
-Return-Path: <mr.nuke.me@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1525110088; cv=none;
+Return-Path: <tbaicar@codeaurora.org>
+X-Google-Smtp-Source: AIpwx48Yk8fR/qDhymCNh5YYaps+8T/Vps3rzQlQOHJiOA3aBYK6Q+aI2OBeUFR9Q6z0JZUsM8v+
+ARC-Seal: i=1; a=rsa-sha256; t=1524763670; cv=none;
         d=google.com; s=arc-20160816;
-        b=RL4zNKiPzl6l3uH3/aHQpUnIhr07UgJ0qXOIokW7728z1EaD+71s/agCbwnZkHQyXF
-         M7pRNsWmNEVB12wZPKdlXR5nSQ01UgjfqXmSj3lzOVjMAzyjXFz1yAGB29rUR9pz/VX7
-         I34rAtlj6azREfAwRXYRTxoIwoEhWFxt+wDkgHv1HI96naccsNzuDf0hc1ioHljmwOIA
-         krnUTM9qB4FGWpvPe5nOvREGHg8KDruP/D+hBFxL2rSTYuWQpEnaUj8sgwDrQZF2m5PT
-         hDEsa+xAJcxzT+1cel1c/S4rDB5mUn6VMesVAIwaGbOug+s9f4gVeDnF5r0F8TNm6L3h
-         YkAg==
+        b=twBDNMwcRnbuEudxd2qi1Udgv8KsF/ysoIDq1ca289rJSmYgMWnbWBrNeQg5CLSgw8
+         57V4HYCBPq0QD0ytuUO2VqQx/9hFL8MWg5CfO4+A8FTKQCSyufZeYUu1Pj7S1gsCDbp7
+         eergKvq8NBFyLzSNsKkR33/ohemONpSZ1JNqS7M7w6k5Mjm22NWOxupChvIZqHqKANB3
+         eGWayEwmWC1ENEDBeWdJpQc3+HgdWCQ6VhdoGZe8MMKhZjm5vMxozOG4FgFUr0Ze+63x
+         u3gkYEKLHSmuPrwyxLaNLEz6V7SWrjRWBwwf4Dj2Q63RW2Qmk0Bw/jWJwJmECnmULFbe
+         HyvQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+        h=content-language:content-transfer-encoding:in-reply-to:mime-version
          :user-agent:date:message-id:from:references:cc:to:subject
-         :dkim-signature:arc-authentication-results;
-        bh=uLfQqqkI98fgsIspshT/SVJb0OerH4QAhj+gdzXY6B4=;
-        b=XOwHnliztw88+VskL6uT1W72E9QEsa1ASnW/Vl8jKfRrfxQiUtBz4r9PYC8iPmrYZY
-         EDnWVIFNw5Vs3ToSPxt1mUf25UlfrL+KxMXQpRDymc94yQfFQOJdckS5vqm3cVMlwLnZ
-         5VQNteN1YVUBKjU8RyrecMMELMSR5tqwUJaqm7nFhIJnP2CjyPKMHOvzUVaeOEw2ZNYh
-         0CMLXzafiNZask04Zu96XBsyT4oQ8YKhZ2Fzmo/nq6KdWG99tqj/nw1K9CF3d+NKLjoX
-         ZRq2grRMAvFFMnG1o1E28zBQz7TINPsCkPOV1ooqh8tmoYy4FoK06bJcLK8MPgqfbRzZ
-         NJtg==
+         :dmarc-filter:dkim-signature:dkim-signature
+         :arc-authentication-results;
+        bh=ExaoLP6BzlUaofr04NmtWm2AD6PQO0u2W6PQJ/rpFxo=;
+        b=Z8E7SdUfpagv1xXVUfaZHovXu7dY7tMT6mWlZrMId2pibtYhdr2c3OEDHfaR1eGtSw
+         rGmiLSYwPK4rx4RttTcxUmJS6yYap6KYPX0QAaM1Zr/z7hptRiFm9g92DNJubo+jUXOa
+         1YT//i6jGFMI6rgMErg2g66dDrdNEhhaRHQe5DkpV5OLIj5YTjyx13blAIJb7JW6eKmP
+         LWnuFZv3cGmaed7N7eJcUiIg7Eze1l4klWndGVHmPxmkmb99x2IGqvG2BzjSpHKr6gvK
+         MBhVjDq04Br9h3ORwKtXW7h7MviBXHI1Amd8NKw4iMr73vgb04yXQP1orwb0kiCnGsUp
+         oMwg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=D3EtrySR;
-       spf=pass (google.com: domain of mr.nuke.me@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=mr.nuke.me@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=XNNpWcFX;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=WXO4jM1Z;
+       spf=pass (google.com: domain of tbaicar@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=tbaicar@codeaurora.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=D3EtrySR;
-       spf=pass (google.com: domain of mr.nuke.me@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=mr.nuke.me@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AB8JxZpJm47/Sdoxnbm+t55dh+gLIkbXN2yJg9En71u3plhMc2GqExtuIHtYBNHlcHene8CC1Wmk7Q==
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=XNNpWcFX;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=WXO4jM1Z;
+       spf=pass (google.com: domain of tbaicar@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=tbaicar@codeaurora.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DB35760C64
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tbaicar@codeaurora.org
 Subject: Re: [PATCH RESEND] PCI/AER: Use a common function to print AER error
  bits
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
- gregkh@linuxfoundation.org, fred@fredlawl.com, linux-kernel@vger.kernel.org,
- alex_gagniuc@dellteam.com, austin_bolen@dell.com, keith.busch@intel.com
+To: Alexandru Gagniuc <mr.nuke.me@gmail.com>, bhelgaas@google.com,
+ linux-pci@vger.kernel.org
+Cc: gregkh@linuxfoundation.org, fred@fredlawl.com,
+ linux-kernel@vger.kernel.org, alex_gagniuc@dellteam.com,
+ austin_bolen@dell.com, keith.busch@intel.com
 References: <20180417170943.1767-1-mr.nuke.me@gmail.com>
- <20180427224337.GC73256@bhelgaas-glaptop.roam.corp.google.com>
- <12343e44-2d8a-51e1-a0be-e6804e9bd8a3@gmail.com>
- <220bb125-b933-abf3-7b30-63446634e8d6@gmail.com>
- <20180430171531.GB95643@bhelgaas-glaptop.roam.corp.google.com>
-From: "Alex G." <mr.nuke.me@gmail.com>
-Message-ID: <8e8a8de1-a90c-ab88-c8ac-bbe8bcc7d49c@gmail.com>
-Date: Mon, 30 Apr 2018 12:41:26 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+From: Tyler Baicar <tbaicar@codeaurora.org>
+Message-ID: <ab79f650-180f-24b4-f3d6-c07d10e5318c@codeaurora.org>
+Date: Thu, 26 Apr 2018 13:27:47 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180430171531.GB95643@bhelgaas-glaptop.roam.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <20180417170943.1767-1-mr.nuke.me@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1598014086120567687?=
-X-GMAIL-MSGID: =?utf-8?q?1599193836183343381?=
+X-GMAIL-MSGID: =?utf-8?q?1598830591050080996?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+On 4/17/2018 1:09 PM, Alexandru Gagniuc wrote:
+> On errors reported from CPER, cper_print_bits() was used to log the
+> AER bits. This resulted in hard-to-understand messages, without a
+> prefix. Instead use __aer_print_error() for both native AER and CPER
+> to provide a more consistent log format.
+>
+> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+Tested-by: Tyler Baicar <tbaicar@codeaurora.org>
 
+Thanks!
+> ---
+>   drivers/pci/pcie/aer/aerdrv_errprint.c | 16 +++++++++-------
+>   1 file changed, 9 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/pci/pcie/aer/aerdrv_errprint.c b/drivers/pci/pcie/aer/aerdrv_errprint.c
+> index cfc89dd57831..cfae4d52f848 100644
+> --- a/drivers/pci/pcie/aer/aerdrv_errprint.c
+> +++ b/drivers/pci/pcie/aer/aerdrv_errprint.c
+> @@ -216,28 +216,30 @@ EXPORT_SYMBOL_GPL(cper_severity_to_aer);
+>   void cper_print_aer(struct pci_dev *dev, int aer_severity,
+>   		    struct aer_capability_regs *aer)
+>   {
+> -	int layer, agent, status_strs_size, tlp_header_valid = 0;
+> +	int layer, agent, tlp_header_valid = 0;
+>   	u32 status, mask;
+> -	const char **status_strs;
+> +	struct aer_err_info info;
+>   
+>   	if (aer_severity == AER_CORRECTABLE) {
+>   		status = aer->cor_status;
+>   		mask = aer->cor_mask;
+> -		status_strs = aer_correctable_error_string;
+> -		status_strs_size = ARRAY_SIZE(aer_correctable_error_string);
+>   	} else {
+>   		status = aer->uncor_status;
+>   		mask = aer->uncor_mask;
+> -		status_strs = aer_uncorrectable_error_string;
+> -		status_strs_size = ARRAY_SIZE(aer_uncorrectable_error_string);
+>   		tlp_header_valid = status & AER_LOG_TLP_MASKS;
+>   	}
+>   
+>   	layer = AER_GET_LAYER_ERROR(aer_severity, status);
+>   	agent = AER_GET_AGENT(aer_severity, status);
+>   
+> +	memset(&info, 0, sizeof(info));
+> +	info.severity = aer_severity;
+> +	info.status = status;
+> +	info.mask = mask;
+> +	info.first_error = 0x1f;
+> +
+>   	pci_err(dev, "aer_status: 0x%08x, aer_mask: 0x%08x\n", status, mask);
+> -	cper_print_bits("", status, status_strs, status_strs_size);
+> +	__aer_print_error(dev, &info);
+>   	pci_err(dev, "aer_layer=%s, aer_agent=%s\n",
+>   		aer_error_layer[layer], aer_agent_string[agent]);
+>   
 
-On 04/30/2018 12:15 PM, Bjorn Helgaas wrote:
-> On Sat, Apr 28, 2018 at 12:07:48PM -0500, Alex G. wrote:
-
-(snip)
->> I could update the offending line to say:
->>  +	info.first_error = PCI_ERR_CAP_FEP(aer->cap_control);
-> 
-> That's what I would have expected.  So I'd say either do this, or add
-> a comment about why it's not the right thing to do.
-
-Okay.
-
->> Though I still have the concerns with validating CPER data:
->>
->>> I can see a way to use even more common printk code, but that requires
->>> validating the PCI regs we get from firmware. That means we need to make
->>> a guarantee about CPER that is beyond the scope of this patch.
-> 
-> Sounds like this is material for another patch, but if/when you do
-> that, I'd like to understand your concern about validating the
-> registers we get from firmware.  Are you worried about getting
-> incorrect register contents, then printing the wrong info, making
-> the wrong decision about how to recover, something else?
-
-I don't trust firmware, and I have daymares about firmware leaving these
-fields uninitialized. In jargon, I'd like to treat it as external
-untrusted serialized data.
-
-Alex
+-- 
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project.
