@@ -1,85 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753758AbeDZTLz (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 15:11:55 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37864 "EHLO mx2.suse.de"
+        id S1753564AbeDZTOS convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 15:14:18 -0400
+Received: from mail.stoffel.org ([104.236.43.127]:58090 "EHLO mail.stoffel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751128AbeDZTLy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 15:11:54 -0400
-Date: Thu, 26 Apr 2018 21:11:52 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        akpm@linux-foundation.org, kirill.shutemov@linux.intel.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH] mm: sections are not offlined during memory hotremove
-Message-ID: <20180426191152.GW17484@dhcp22.suse.cz>
-References: <20180426155834.16845-1-pasha.tatashin@oracle.com>
- <20180426191111.GV17484@dhcp22.suse.cz>
+        id S1751128AbeDZTOR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 15:14:17 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180426191111.GV17484@dhcp22.suse.cz>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8BIT
+Message-ID: <23266.8532.619051.784274@quad.stoffel.home>
+Date: Thu, 26 Apr 2018 14:58:28 -0400
+From: "John Stoffel" <john@stoffel.org>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: Mikulas Patocka <mpatocka@redhat.com>, Michal@stoffel.org,
+        eric.dumazet@gmail.com, mst@redhat.com, netdev@vger.kernel.org,
+        jasowang@redhat.com, Randy Dunlap <rdunlap@infradead.org>,
+        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
+        Hocko <mhocko@kernel.org>, linux-mm@kvack.org, dm-devel@redhat.com,
+        Vlastimil Babka <vbabka@suse.cz>, Andrew@stoffel.org,
+        David Rientjes <rientjes@google.com>,
+        Morton <akpm@linux-foundation.org>,
+        virtualization@lists.linux-foundation.org,
+        David Miller <davem@davemloft.net>, edumazet@google.com
+Subject: Re: [dm-devel] [PATCH v5] fault-injection: introduce kvmalloc
+ fallback options
+In-Reply-To: <1524697697.4100.23.camel@HansenPartnership.com>
+References: <20180421144757.GC14610@bombadil.infradead.org>
+        <alpine.LRH.2.02.1804221733520.7995@file01.intranet.prod.int.rdu2.redhat.com>
+        <20180423151545.GU17484@dhcp22.suse.cz>
+        <alpine.LRH.2.02.1804232003100.2299@file01.intranet.prod.int.rdu2.redhat.com>
+        <20180424125121.GA17484@dhcp22.suse.cz>
+        <alpine.LRH.2.02.1804241142340.15660@file01.intranet.prod.int.rdu2.redhat.com>
+        <20180424162906.GM17484@dhcp22.suse.cz>
+        <alpine.LRH.2.02.1804241250350.28995@file01.intranet.prod.int.rdu2.redhat.com>
+        <20180424170349.GQ17484@dhcp22.suse.cz>
+        <alpine.LRH.2.02.1804241319390.28995@file01.intranet.prod.int.rdu2.redhat.com>
+        <20180424173836.GR17484@dhcp22.suse.cz>
+        <alpine.LRH.2.02.1804251556060.30569@file01.intranet.prod.int.rdu2.redhat.com>
+        <1114eda5-9b1f-4db8-2090-556b4a37c532@infradead.org>
+        <alpine.LRH.2.02.1804251656300.9428@file01.intranet.prod.int.rdu2.redhat.com>
+        <alpine.DEB.2.21.1804251417470.166306@chino.kir.corp.google.com>
+        <alpine.LRH.2.02.1804251720090.9428@file01.intranet.prod.int.rdu2.redhat.com>
+        <1524694663.4100.21.camel@HansenPartnership.com>
+        <alpine.LRH.2.02.1804251857070.31135@file01.intranet.prod.int.rdu2.redhat.com>
+        <1524697697.4100.23.camel@HansenPartnership.com>
+X-Mailer: VM 8.2.0b under 24.5.1 (x86_64-pc-linux-gnu)
+X-Clacks-Overhead: GNU Terry Pratchett
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 26-04-18 21:11:11, Michal Hocko wrote:
-> On Thu 26-04-18 11:58:34, Pavel Tatashin wrote:
-> > Memory hotplug, and hotremove operate with per-block granularity. If
-> > machine has large amount of memory (more than 64G), the size of memory
-> > block can span multiple sections. By mistake, during hotremove we set
-> > only the first section to offline state.
-> > 
-> > The bug was discovered because kernel selftest started to fail:
-> > https://lkml.kernel.org/r/20180423011247.GK5563@yexl-desktop
-> > 
-> > After commit, "mm/memory_hotplug: optimize probe routine". But, the bug is
-> > older than this commit. In this optimization we also added a check for
-> > sections to be in a proper state during hotplug operation.
-> > 
-> > Fixes: 2d070eab2e82 ("mm: consider zone which is not fully populated to have holes")
-> 
-> Dohh. When I saw this I've had that feeling that I have fixed this
-> already and it must have get lost somewhere. But no, this was the same
-> bug in a different path b4ccec41af82 ("mm/sparse.c: fix typo in
-> online_mem_sections"). I wonder why I haven't noticed the same pattern
-> in the offline path.
-> 
-> Thanks for noticing and fixing this.
-> 
-> > Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
-> 
-> Acked-by: Michal Hocko <mhocko@suse.com>
+>>>>> "James" == James Bottomley <James.Bottomley@HansenPartnership.com> writes:
 
-Btw. Cc: stable would be appropriate.
+James> On Wed, 2018-04-25 at 19:00 -0400, Mikulas Patocka wrote:
+>> 
+>> On Wed, 25 Apr 2018, James Bottomley wrote:
+>> 
+>> > > > Do we really need the new config option?  This could just be
+>> > > > manually  tunable via fault injection IIUC.
+>> > > 
+>> > > We do, because we want to enable it in RHEL and Fedora debugging
+>> > > kernels, so that it will be tested by the users.
+>> > > 
+>> > > The users won't use some extra magic kernel options or debugfs
+>> files.
+>> > 
+>> > If it can be enabled via a tunable, then the distro can turn it on
+>> > without the user having to do anything.  If you want to present the
+>> > user with a different boot option, you can (just have the tunable
+>> set
+>> > on the command line), but being tunable driven means that you don't
+>> > have to choose that option, you could automatically enable it under
+>> a
+>> > range of circumstances.  I think most sane distributions would want
+>> > that flexibility.
+>> > 
+>> > Kconfig proliferation, conversely, is a bit of a nightmare from
+>> both
+>> > the user and the tester's point of view, so we're trying to avoid
+>> it
+>> > unless absolutely necessary.
+>> > 
+>> > James
+>> 
+>> BTW. even developers who compile their own kernel should have this
+>> enabled by a CONFIG option - because if the developer sees the option
+>> when browsing through menuconfig, he may enable it. If he doesn't see
+>> the option, he won't even know that such an option exists.
 
-> 
-> >  mm/sparse.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/mm/sparse.c b/mm/sparse.c
-> > index 62eef264a7bd..73dc2fcc0eab 100644
-> > --- a/mm/sparse.c
-> > +++ b/mm/sparse.c
-> > @@ -629,7 +629,7 @@ void offline_mem_sections(unsigned long start_pfn, unsigned long end_pfn)
-> >  	unsigned long pfn;
-> >  
-> >  	for (pfn = start_pfn; pfn < end_pfn; pfn += PAGES_PER_SECTION) {
-> > -		unsigned long section_nr = pfn_to_section_nr(start_pfn);
-> > +		unsigned long section_nr = pfn_to_section_nr(pfn);
-> >  		struct mem_section *ms;
-> >  
-> >  		/*
-> > -- 
-> > 1.8.3.1
-> > 
-> 
-> -- 
-> Michal Hocko
-> SUSE Labs
+James> I may be an atypical developer but I'd rather have a root canal
+James> than browse through menuconfig options.  The way to get people
+James> to learn about new debugging options is to blog about it (or
+James> write an lwn.net article) which google will find the next time
+James> I ask it how I debug XXX.  Google (probably as a service to
+James> humanity) rarely turns up Kconfig options in response to a
+James> query.
 
--- 
-Michal Hocko
-SUSE Labs
+I agree with James here.  Looking at the SLAB vs SLUB Kconfig entries
+tells me *nothing* about why I should pick one or the other, as an
+example.
+
+John
