@@ -1,34 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754899AbeDZIyN (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 04:54:13 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:46256 "EHLO
+        id S1755172AbeDZIzt (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 04:55:49 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:46268 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754054AbeDZIyH (ORCPT
+        with ESMTP id S1754813AbeDZIzq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 04:54:07 -0400
-Date: Thu, 26 Apr 2018 10:53:40 +0200 (CEST)
+        Thu, 26 Apr 2018 04:55:46 -0400
+Date: Thu, 26 Apr 2018 10:55:40 +0200 (CEST)
 From: Thomas Gleixner <tglx@linutronix.de>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Mark Salyzyn <salyzyn@android.com>, Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        John Stultz <john.stultz@linaro.org>, Peter Anvin <hpa@zytor.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Prarit Bhargava <prarit@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>, Pavel Machek <pavel@ucw.cz>,
-        Kevin Easton <kevin@guarana.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        SergeySenozhatsky <sergey.senozhatsky@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-tip-commits@vger.kernel.org,
-        Mike Galbraith <efault@gmx.de>
-Subject: Re: [tip:timers/urgent] Revert: Unify CLOCK_MONOTONIC and
- CLOCK_BOOTTIME
-In-Reply-To: <1937172.K7anUBJQAz@aspire.rjw.lan>
-Message-ID: <alpine.DEB.2.21.1804261053020.1584@nanos.tec.linutronix.de>
-References: <tip-757d5a9b3052a4eebd029f207f1e1df59bef7b7d@git.kernel.org> <alpine.DEB.2.21.1804252108280.1589@nanos.tec.linutronix.de> <2814513.Yf7f2L7MUC@aspire.rjw.lan> <1937172.K7anUBJQAz@aspire.rjw.lan>
+To: Shakeel Butt <shakeelb@google.com>
+cc: Dave Hansen <dave.hansen@linux.intel.com>,
+        LKML <linux-kernel@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        stable@kernel.org, linuxram@us.ibm.com,
+        Dave Hansen <dave.hansen@intel.com>, mpe@ellerman.id.au,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>, shuah@kernel.org
+Subject: Re: [PATCH 4/9] x86, pkeys: override pkey when moving away from
+ PROT_EXEC
+In-Reply-To: <CALvZod5NTauM6MHW7D=h0mTDNYFd-1QyWrOxnhiixCgtHP=Taw@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1804261054540.1584@nanos.tec.linutronix.de>
+References: <20180326172721.D5B2CBB4@viggo.jf.intel.com> <20180326172727.025EBF16@viggo.jf.intel.com> <CALvZod5NTauM6MHW7D=h0mTDNYFd-1QyWrOxnhiixCgtHP=Taw@mail.gmail.com>
 User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -36,31 +28,45 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 26 Apr 2018, Rafael J. Wysocki wrote:
-> FWIW, here's a list of issues reported and narrowed down to the commit
-> in question so far I could find:
+On Wed, 25 Apr 2018, Shakeel Butt wrote:
+> On Mon, Mar 26, 2018 at 5:27 PM, Dave Hansen
+> <dave.hansen@linux.intel.com> wrote:
+> >
+> > From: Dave Hansen <dave.hansen@linux.intel.com>
+> >
+> > I got a bug report that the following code (roughly) was
+> > causing a SIGSEGV:
+> >
+> >         mprotect(ptr, size, PROT_EXEC);
+> >         mprotect(ptr, size, PROT_NONE);
+> >         mprotect(ptr, size, PROT_READ);
+> >         *ptr = 100;
+> >
+> > The problem is hit when the mprotect(PROT_EXEC)
+> > is implicitly assigned a protection key to the VMA, and made
+> > that key ACCESS_DENY|WRITE_DENY.  The PROT_NONE mprotect()
+> > failed to remove the protection key, and the PROT_NONE->
+> > PROT_READ left the PTE usable, but the pkey still in place
+> > and left the memory inaccessible.
+> >
+> > To fix this, we ensure that we always "override" the pkee
+> > at mprotect() if the VMA does not have execute-only
+> > permissions, but the VMA has the execute-only pkey.
+> >
+> > We had a check for PROT_READ/WRITE, but it did not work
+> > for PROT_NONE.  This entirely removes the PROT_* checks,
+> > which ensures that PROT_NONE now works.
+> >
+> > Reported-by: Shakeel Butt <shakeelb@google.com>
+> >
+> > Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+> > Fixes: 62b5f7d013f ("mm/core, x86/mm/pkeys: Add execute-only protection keys support")
 > 
-> * systemd kills daemons on resume, after >WatchdogSec seconds
->   of suspending (Genki Sky).  [Verified that that's because systemd uses
->   CLOCK_MONOTONIC and expects it to not include the suspend time.]
-> 
-> * systemd-journald misbehaves after resume:
->   systemd-journald[7266]: File /var/log/journal/016627c3c4784cd4812d4b7e96a34226/system.journal corrupted or uncleanly shut down, renaming and replacing.
->   (	Mike Galbraith).
-> 
-> * NetworkManager reports "networking disabled" and networking is broken
->   after resume 50% of the time (Pavel).  [May be because of systemd.]
-> 
-> * MATE desktop dims the display and starts the screensaver right after
->   system resume (Pavel).
-> 
-> * Full system hang during resume (me).  [May be due to systemd or NM or both.]
-> 
-> I'm not sure if all of the above can be connected to one specific thing (other
-> than the fact that things get confused if they expect CLOCK_MONOTONIC to not
-> include system suspend time).
+> Hi Dave, are you planning to send the next version of this patch or
+> going with this one?
 
-Thanks for collecting the info. I'll amend the changelog with those.
+Right, some enlightment would be appreciated. I'm lost in the dozen
+different threads discussing this back and forth.
 
 Thanks,
 
