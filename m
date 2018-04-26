@@ -1,97 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756848AbeDZR5E (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 13:57:04 -0400
-Received: from mail-vk0-f54.google.com ([209.85.213.54]:46918 "EHLO
-        mail-vk0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754014AbeDZR5A (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 13:57:00 -0400
-X-Google-Smtp-Source: AIpwx4+AtrhjJfGyoud+at5QweBjMcc66tIacZ+rLZd7Ae4YinPkR1rQM5MGWL3oF+f7/aM8pM4iFfNDzn7rd+v7thY=
+        id S1757015AbeDZR5d (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 13:57:33 -0400
+Received: from mga14.intel.com ([192.55.52.115]:35663 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756942AbeDZR5c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 13:57:32 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,331,1520924400";
+   d="scan'208";a="51082966"
+Subject: Re: [PATCH 4/9] x86, pkeys: override pkey when moving away from
+ PROT_EXEC
+To: Ram Pai <linuxram@us.ibm.com>
+References: <20180326172721.D5B2CBB4@viggo.jf.intel.com>
+ <20180326172727.025EBF16@viggo.jf.intel.com>
+ <20180407000943.GA15890@ram.oc3035372033.ibm.com>
+ <6e3f8e1c-afed-64de-9815-8478e18532aa@intel.com>
+ <20180407010919.GB15890@ram.oc3035372033.ibm.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org, shakeelb@google.com,
+        stable@kernel.org, tglx@linutronix.de, mpe@ellerman.id.au,
+        mingo@kernel.org, akpm@linux-foundation.org, shuah@kernel.org
+From: Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Message-ID: <aedcb0b6-73f5-f72f-742e-b417131895d3@intel.com>
+Date: Thu, 26 Apr 2018 10:57:31 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180426195303.1f08d2cd@bbrezillon>
-References: <1523276721-4982-1-git-send-email-geert+renesas@glider.be>
- <9bea3ad8-7e84-87c2-9963-de81ad4cb3bf@gmail.com> <CAMuHMdWHoxrq-tj=QznAhuZ8eC22gTTgWFi9HgyqT9pNfJFJyw@mail.gmail.com>
- <20180426195303.1f08d2cd@bbrezillon>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 26 Apr 2018 19:56:58 +0200
-X-Google-Sender-Auth: evvzOJKHIUZKXpf2Ow15vhDGkdg
-Message-ID: <CAMuHMdWRyZYX+oKN-nxzKbCqZn1zojKwX8Gv6tGg=UZSa3k_LA@mail.gmail.com>
-Subject: Re: [PATCH] mtd: partitions: Handle add_mtd_device() failures gracefully
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: Marek Vasut <marek.vasut@gmail.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Richard Weinberger <richard@nod.at>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        MTD Maling List <linux-mtd@lists.infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180407010919.GB15890@ram.oc3035372033.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris,
+On 04/06/2018 06:09 PM, Ram Pai wrote:
+> Well :). my point is add this code and delete the other
+> code that you add later in that function.
 
-On Thu, Apr 26, 2018 at 7:53 PM, Boris Brezillon
-<boris.brezillon@bootlin.com> wrote:
-> On Tue, 10 Apr 2018 15:26:20 +0200
-> Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->> On Mon, Apr 9, 2018 at 11:59 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
->> > On 04/09/2018 02:25 PM, Geert Uytterhoeven wrote:
->> >> Currently add_mtd_device() failures are plainly ignored, which may lead
->> >> to kernel crashes later.
->>
->> >> Fix this by ignoring and freeing partitions that failed to add in
->> >> add_mtd_partitions().  The same issue is present in mtd_add_partition(),
->> >> so fix that as well.
->> >>
->> >> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> >> ---
->> >> I don't know if it is worthwhile factoring out the common handling.
->> >>
->> >> Should allocate_partition() fail instead?  There's a comment saying
->> >> "let's register it anyway to preserve ordering".
->>
->> >> --- a/drivers/mtd/mtdpart.c
->> >> +++ b/drivers/mtd/mtdpart.c
->>
->> >> @@ -746,7 +753,15 @@ int add_mtd_partitions(struct mtd_info *master,
->> >>               list_add(&slave->list, &mtd_partitions);
->> >>               mutex_unlock(&mtd_partitions_mutex);
->> >>
->> >> -             add_mtd_device(&slave->mtd);
->> >> +             ret = add_mtd_device(&slave->mtd);
->> >> +             if (ret) {
->> >> +                     mutex_lock(&mtd_partitions_mutex);
->> >> +                     list_del(&slave->list);
->> >> +                     mutex_unlock(&mtd_partitions_mutex);
->> >> +                     free_partition(slave);
->> >> +                     continue;
->> >> +             }
->> >
->> > Why is the partition even in the list in the first place ? Can we avoid
->> > adding it rather than adding and removing it ?
->>
->> Hence my question "Should allocate_partition() fail instead?".
->
-> I'd prefer this option too. Can you prepare a new version doing that?
+I don't think I'm understanding what your suggestion was.  I looked at
+the code and I honestly do not think I can remove any of it.
 
-OK, then I have another question ;-)
+For the plain (non-explicit pkey_mprotect()) case, there are exactly
+four paths through __arch_override_mprotect_pkey(), resulting in three
+different results.
 
-Should this be a special failure, so all other valid partitions on the
-same FLASH
-are still added, or should it be fatal, so no partitions are added at all?
+1. New prot==PROT_EXEC, no pkey-exec support -> do not override
+2. New prot!=PROT_EXEC, old VMA not PROT_EXEC-> do not override
+3. New prot==PROT_EXEC, w/ pkey-exec support -> override to exec pkey
+4. New prot!=PROT_EXEC, old VMA is PROT_EXEC -> override to default
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+I don't see any redundancy there, or any code that we can eliminate or
+simplify.  It was simpler before, but that's what where bug was.
