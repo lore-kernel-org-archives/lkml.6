@@ -1,161 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751605AbeDZE6B (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 00:58:01 -0400
-Received: from relay04.infra.be.a11.eu ([185.83.138.20]:46909 "EHLO
-        relay04.infra.be.a11.eu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751372AbeDZE57 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 00:57:59 -0400
-Subject: Re: [Bug 199473] New: pcieport does not scan devices behind PEX
- switch, while resources are allocated
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-pci@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <bug-199473-41252@https.bugzilla.kernel.org/>
- <CAErSpo4BOD3V7pgR75Gm7dYqvXYq1QfChjj16Jn1QgSK1W=Drw@mail.gmail.com>
- <000701d3dc6f$61f91230$25eb3690$@dommel.be>
- <CAErSpo7FoAWrrCo9ifzCHtihsZUBG4HDS=kCT2ZjPi7qpVgWzg@mail.gmail.com>
-From: Janpieter Sollie <janpieter.sollie@dommel.be>
-Message-ID: <c4a4d74d-9914-19eb-6097-4ef8e0ed09c6@dommel.be>
-Date: Thu, 26 Apr 2018 04:57:57 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751763AbeDZFBE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 01:01:04 -0400
+Received: from imap.thunk.org ([74.207.234.97]:60278 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750760AbeDZFA6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 01:00:58 -0400
+Date: Thu, 26 Apr 2018 01:00:56 -0400
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+To: Sultan Alsawaf <sultanxda@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Jann Horn <jannh@google.com>
+Subject: Re: Linux messages full of `random: get_random_u32 called from`
+Message-ID: <20180426050056.GF18803@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Sultan Alsawaf <sultanxda@gmail.com>, linux-kernel@vger.kernel.org,
+        Jann Horn <jannh@google.com>
+References: <d92d049a-8810-a765-d57a-2a7a805fadaf@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAErSpo7FoAWrrCo9ifzCHtihsZUBG4HDS=kCT2ZjPi7qpVgWzg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d92d049a-8810-a765-d57a-2a7a805fadaf@gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-lspci -vv loaded in bugzilla.
-I referred to a pci port nr as the nr in an expansion slot
+On Wed, Apr 25, 2018 at 09:11:08PM -0700, Sultan Alsawaf wrote:
+> I noticed "systems without sufficient boot randomness" and would like to add to this.
+> 
+> With the changes to /dev/random going from 4.16.3 to 4.16.4, my low-spec Chromebook does not reach
+> the login screen upon boot (it stays stuck on a black screen) until I provide a source of entropy to
+> the system via interrupts (e.g., holding down a key on the keyboard for 5 sec or moving my finger
+> across the touchpad a lot). After providing a source of entropy for long enough,
+> "random: crng init done" prints out in dmesg and the login screen finally pops up.
 
-On 25-04-18 19:05, Bjorn Helgaas wrote:
-> [Please retain the mailing list cc when replying]
->
-> On Wed, Apr 25, 2018 at 3:28 AM Janpieter Sollie
-> <janpieter.sollie@dommel.be>
-> wrote:
->
->> Hi Bjorn,
->> I'm at work now, but I saw your mail contained much more info than only
-> the remark "does it work at 4.17?", so I'll try to answer all your
-> questions:
->> 1. as stated, it only assigns the address space of the second and 3rd
-> device when the PCI device is hotplugged and then the pc is restarted on a
-> port before the first device.  In this case:
->>            - The Ellesmere 01.0-[4f] device is connected to port 3 (0-7) and
-> is always reported.  For other devices, this is not the case.
->>            - The other devices are at port 1 and 2.  When adding them on a
-> higher port, the workaround does not work.
->>            - The devices 05.0-[4c] and 07.0-[4b] are ALSO NOT VISIBLE in the
-> BIOS IRQ listing, it just talks about an endpoint.  Not even with the
-> workaround.  So a trick to discard bios info and let the PCIe switch report
-> its devices would be nice.
->
-> BIOS info is not used when we enumerate devices, so I don't think there's
-> really anything to discard.
->
->> 2. I am always building my kernel from the kernel.org sources, not from
-> Gentoo sources, so it's not a distro problem.
->> 3. The workaround only works with kernel 4.17
->> 4. You are probably right about the Broadcom driver, as it only picks up
-> the endpoint at 42.00.1 when loaded.  I have no idea wat it does either,
-> besides taining the kernel.
->
-> Let's simplify the situation by focusing only on v4.17.  We can
-> also ignore the Broadcom driver, since it's not involved in enumeration.
->
->> So, to summarize:
->> - Why are ports 4-7 not working when a device is plugged in at port 3?
-> I don't know what "port 3" and "ports 4-7" refer to.  Are these labels on
-> slots in an expansion chassis?  Something from lspci, e.g., the port number
-> from Link Capabilites, or the slot number from Slot Capabilities?
->
->> - Why do I need a hotplug event to push the device name into the kernel
-> after a cold start?  This is complete madness, isn't it?
->
-> I don't know why the hotplug would make a difference.  It does sound like
-> complete madness.
->
->> - Why are resources allocated while the PCI slot is empty?
-> I don't know exactly what resources you're referring to (bus numbers, MMIO
-> space, I/O port space).  In general we try to allocate some space for all
-> of those even if the slot is currently empty, because that makes it
-> possible to hot-add devices in the slot later.
->
-> In this case, the bus number space is quite constrained because the host
-> bridge leading to the PEX switch only supports [bus 40-4f].  But I think
-> that should be enough for this case, since the only switch in this tree is
-> the PEX, and your Bonaire/Tobago/Ellesmere devices are all endpoints that
-> only require one bus number each.
->
-> If you run "lspci -vv" as root, it'll decode more details.
->
->> -----Original Message-----
->> From: Bjorn Helgaas [mailto:bhelgaas@google.com]
->> Sent: dinsdag 24 april 2018 21:31
->> To: janpieter.sollie@dommel.be
->> Cc: linux-pci@vger.kernel.org; Linux Kernel Mailing List
->> Subject: Fwd: [Bug 199473] New: pcieport does not scan devices behind PEX
-> switch, while resources are allocated
->
->> Thanks for the report!
->> I don't understand exactly what the issue is yet.  You attached lspci
->> output from v4.14.27 and v4.17-rc1.  The v4.17-rc1 output shows several
->> devices (4b:00, 4c:00, 4f:00) below the PEX switch, while the v4.14.27
->> output shows only the 4f:00 devices.
->> Is the problem that v4.14.27 doesn't find the 4b:00 and 4c:00 devices?
->> Does v4.17-rc1 work correctly?
->> If v4.17-rc1 works but v4.14.27 does not, it's probably a question of
->> working with your distro to see if they can (1) identify some change that
->> fixed things, and (2) backport that change to the distro kernel.
->> The Broadcom driver you attached at comment #4 shouldn't be related to
-> this
->> problem.  Device enumeration is performed by the PCI core and doesn't
->> require any additional drivers.  I didn't look at the Broadcom driver, so
-> I
->> don't know what it does.  The PEX switch does include an endpoint
->> (42:00.1); it's possible the driver is for some functionality provided by
->> that endpoint.
->> ---------- Forwarded message ---------
->> From: <bugzilla-daemon@bugzilla.kernel.org>
->> Date: Mon, Apr 23, 2018 at 12:20 AM
->> Subject: [Bug 199473] New: pcieport does not scan devices behind PEX
->> switch, while resources are allocated
->> To: <bhelgaas@google.com>
->
->> https://bugzilla.kernel.org/show_bug.cgi?id=199473
->>                 Bug ID: 199473
->>                Summary: pcieport does not scan devices behind PEX switch,
->>                         while resources are allocated
->>                Product: Drivers
->>                Version: 2.5
->>         Kernel Version: 4.17-rc1
->>               Hardware: x86-64
->>                     OS: Linux
->>                   Tree: Mainline
->>                 Status: NEW
->>               Severity: normal
->>               Priority: P1
->>              Component: PCI
->>               Assignee: drivers_pci@kernel-bugs.osdl.org
->>               Reporter: janpieter.sollie@dommel.be
->>             Regression: No
->> Created attachment 275511
->>       --> https://bugzilla.kernel.org/attachment.cgi?id=275511&action=edit
->> dmesg stable kernel
->> pcieport assigns the PEX 8619 pcie expander switch ports, but does not
-> scan
->> them for additional objects behind the ports. only 1 device is added @ pci
->> region 4f.  Workaround for getting all devices online: while pc is on,
->> remove
->> the card, reinsert it at a slot before the working device, and make a cold
->> start.
->> It would be nice if the pcie switches are scanned properly.
->> --
->> You are receiving this mail because:
->> You are watching the assignee of the bug.
+Thanks for the report!
+
+I assume since you're upgrading your own kernel, you must not be
+running Chrome OS on your Acer CB3-431 Chromebook (Edgar).  Are you
+running Chromium --- or some Linux distribution on it?
+
+Thanks,
+
+					- Ted
