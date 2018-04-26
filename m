@@ -1,67 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755693AbeDZKf2 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 06:35:28 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51148 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755227AbeDZKeL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 06:34:11 -0400
-From: Will Deacon <will.deacon@arm.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, peterz@infradead.org,
-        mingo@kernel.org, boqun.feng@gmail.com, paulmck@linux.vnet.ibm.com,
-        longman@redhat.com, will.deacon@arm.com
-Subject: [PATCH v3 12/14] locking/qspinlock: Use try_cmpxchg instead of cmpxchg when locking
-Date: Thu, 26 Apr 2018 11:34:26 +0100
-Message-Id: <1524738868-31318-13-git-send-email-will.deacon@arm.com>
-X-Mailer: git-send-email 2.1.4
-In-Reply-To: <1524738868-31318-1-git-send-email-will.deacon@arm.com>
-References: <1524738868-31318-1-git-send-email-will.deacon@arm.com>
+        id S1755896AbeDZKg4 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 06:36:56 -0400
+Received: from mondschein.lichtvoll.de ([194.150.191.11]:35619 "EHLO
+        mail.lichtvoll.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755862AbeDZKgx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 06:36:53 -0400
+Authentication-Results: auth=pass smtp.auth=martin smtp.mailfrom=martin@lichtvoll.de
+From: Martin Steigerwald <martin@lichtvoll.de>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: Moving unmaintained filesystems to staging
+Date: Thu, 26 Apr 2018 12:36:50 +0200
+Message-ID: <4153280.6zxFApgOmi@merkaba>
+In-Reply-To: <20180426061108.GB4977@amd>
+References: <20180425154602.GA8546@bombadil.infradead.org> <20180426061108.GB4977@amd>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When reaching the head of an uncontended queue on the qspinlock slow-path,
-using a try_cmpxchg instead of a cmpxchg operation to transition the
-lock work to _Q_LOCKED_VAL generates slightly better code for x86 and
-pretty much identical code for arm64.
+Pavel Machek - 26.04.18, 08:11:
+> On Wed 2018-04-25 08:46:02, Matthew Wilcox wrote:
+> > Recently ncpfs got moved to staging.  Also recently, we had some
+> > fuzzer developers report bugs in hfs, which they deem a security
+> > hole because Ubuntu attempts to automount an inserted USB device as
+> > hfs.
+> 
+> We promise "no-regressions" for code in main repository, no such
+> promise for staging. We have quite a lot of code without maintainer.
+> 
+> Moving code to staging means it will get broken -- staging was not
+> designed for this. I believe moving anything there is bad idea.
+> 
+> Staging is for ugly code, not for code that needs new maintainter.
 
-Cc: Ingo Molnar <mingo@kernel.org>
-Reported-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
----
- kernel/locking/qspinlock.c | 19 +++++++++----------
- 1 file changed, 9 insertions(+), 10 deletions(-)
+Good point.
 
-diff --git a/kernel/locking/qspinlock.c b/kernel/locking/qspinlock.c
-index fa5d2ab369f9..1e3ddc42135e 100644
---- a/kernel/locking/qspinlock.c
-+++ b/kernel/locking/qspinlock.c
-@@ -467,16 +467,15 @@ void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
- 	 * Otherwise, we only need to grab the lock.
- 	 */
- 
--	/* In the PV case we might already have _Q_LOCKED_VAL set */
--	if ((val & _Q_TAIL_MASK) == tail) {
--		/*
--		 * The atomic_cond_read_acquire() call above has provided the
--		 * necessary acquire semantics required for locking.
--		 */
--		old = atomic_cmpxchg_relaxed(&lock->val, val, _Q_LOCKED_VAL);
--		if (old == val)
--			goto release; /* No contention */
--	}
-+	/*
-+	 * In the PV case we might already have _Q_LOCKED_VAL set.
-+	 *
-+	 * The atomic_cond_read_acquire() call above has provided the
-+	 * necessary acquire semantics required for locking.
-+	 */
-+	if (((val & _Q_TAIL_MASK) == tail) &&
-+	    atomic_try_cmpxchg_relaxed(&lock->val, &val, _Q_LOCKED_VAL))
-+		goto release; /* No contention */
- 
- 	/* Either somebody is queued behind us or _Q_PENDING_VAL is set */
- 	set_locked(lock);
+Moving things in and out to some "unmaintained" directory… I am not sure 
+about that either. I tend to think that moving code around does not 
+solve the underlying issue.
+
+Which, according to what I got from Matthew, was that distributors 
+enable just about every filesystem they can enable which lead to hfs 
+being used for automounting an USB stick formatted with it.
+
+In the end what may be beneficial would be hinting distributors and 
+people who compile their own kernels at what features are considered 
+stable, secure and well tested and what features are not, but how to 
+determine that? The hint could be some kernel option flag that would be 
+displayed by make *config. But then it probably needs also a 
+justification or at least a link to more information.
+
+Actually did ever someone audit the whole kernel source?
+
+Thanks,
 -- 
-2.1.4
+Martin
