@@ -1,138 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754028AbeDZHrJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 03:47:09 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36792 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752018AbeDZHrH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 03:47:07 -0400
-Subject: Re: [PATCH v3 04/12] KVM: arm/arm64: Helper to locate free rdist
- index
-To: Christoffer Dall <christoffer.dall@arm.com>
-References: <1523607658-9166-1-git-send-email-eric.auger@redhat.com>
- <1523607658-9166-5-git-send-email-eric.auger@redhat.com>
- <20180424210704.GG4533@C02W217FHV2R.local>
-Cc: eric.auger.pro@gmail.com, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
-        marc.zyngier@arm.com, cdall@kernel.org, peter.maydell@linaro.org,
-        andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
-From: Auger Eric <eric.auger@redhat.com>
-Message-ID: <40978427-0cf7-3a03-f12e-bde73548180e@redhat.com>
-Date: Thu, 26 Apr 2018 09:47:00 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
-MIME-Version: 1.0
-In-Reply-To: <20180424210704.GG4533@C02W217FHV2R.local>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+        id S1754010AbeDZHwU (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 03:52:20 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:59277 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753068AbeDZHwQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 03:52:16 -0400
+X-Google-Smtp-Source: AIpwx49uNQlBG7Hp7lONoy0qQlzuu4Gn/j/2Y2WCIoc9b0H/sb17EGHUL9SaYS4KpeE9NAT4pfVzOg==
+Content-Type: text/plain;
+        charset=utf-8;
+        delsp=yes;
+        format=flowed
+Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
+Subject: Re: [alsa-devel] [PATCH v4 3/3] ALSA: hda: Disabled unused audio
+ controller for Dell platforms with Switchable Graphics
+From: Kai Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <20180424211347.GA18258@wunner.de>
+Date: Thu, 26 Apr 2018 15:52:08 +0800
+Cc: =?utf-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>,
+        Takashi Iwai <tiwai@suse.de>, mjg59@srcf.ucam.org,
+        dvhart@infradead.org, andy@infradead.org,
+        Mario Limonciello <mario.limonciello@dell.com>,
+        alsa-devel@alsa-project.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        platform-driver-x86@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Message-Id: <A9269F25-2239-4E3C-A3B3-FFDD69A90DD0@canonical.com>
+References: <20180420094432.13133-1-kai.heng.feng@canonical.com>
+ <20180420094432.13133-3-kai.heng.feng@canonical.com>
+ <s5hbmeew01d.wl-tiwai@suse.de>
+ <E5D0F76C-0A83-4D2C-81F7-BD5768C0A7DC@canonical.com>
+ <20180423080844.yh6ndicpu6mwy336@pali>
+ <FF30493D-012C-41E8-B379-85138E1EDE05@canonical.com>
+ <20180424211347.GA18258@wunner.de>
+To: Lukas Wunner <lukas@wunner.de>
+X-Mailer: Apple Mail (2.3445.6.18)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christoffer,
-On 04/24/2018 11:07 PM, Christoffer Dall wrote:
-> On Fri, Apr 13, 2018 at 10:20:50AM +0200, Eric Auger wrote:
->> We introduce vgic_v3_rdist_free_slot to help identifying
->> where we can place a new 2x64KB redistributor.
->>
->> Signed-off-by: Eric Auger <eric.auger@redhat.com>
->> ---
->>  virt/kvm/arm/vgic/vgic-mmio-v3.c |  3 +--
->>  virt/kvm/arm/vgic/vgic-v3.c      | 17 +++++++++++++++++
->>  virt/kvm/arm/vgic/vgic.h         | 11 +++++++++++
->>  3 files changed, 29 insertions(+), 2 deletions(-)
->>
->> diff --git a/virt/kvm/arm/vgic/vgic-mmio-v3.c b/virt/kvm/arm/vgic/vgic-mmio-v3.c
->> index d1aab18..49ca176 100644
->> --- a/virt/kvm/arm/vgic/vgic-mmio-v3.c
->> +++ b/virt/kvm/arm/vgic/vgic-mmio-v3.c
->> @@ -593,8 +593,7 @@ int vgic_register_redist_iodev(struct kvm_vcpu *vcpu)
->>  	 * function for all VCPUs when the base address is set.  Just return
->>  	 * without doing any work for now.
->>  	 */
->> -	rdreg = list_first_entry(&vgic->rd_regions,
->> -				 struct vgic_redist_region, list);
->> +	rdreg = vgic_v3_rdist_free_slot(&vgic->rd_regions);
->>  	if (!rdreg)
->>  		return 0;
->>  
->> diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-v3.c
->> index 94de6cd..820012a 100644
->> --- a/virt/kvm/arm/vgic/vgic-v3.c
->> +++ b/virt/kvm/arm/vgic/vgic-v3.c
->> @@ -444,6 +444,23 @@ bool vgic_v3_check_base(struct kvm *kvm)
->>  	return false;
->>  }
->>  
->> +/**
->> + * vgic_v3_rdist_free_slot - Look up registered rdist regions and identify one
->> + * which has free space to put a new rdist regions
-> 
-> Can this structure ever be sparse or do we always find the first empty
-> one, as we fill them consecutively ?
-We always find the first empty 2x64kB slot within the region (stride
-between redistributors = 0). Regions are filled in the index order. The
-only hole that can exist is at the end of the region if its size is not
-multiple of 2x64kB.
-> 
-> I assume there is some mapping between the regions and the VCPUs'
-> redistributors, so perhaps the wording in this comment can be more
-> precise.
-changed into:
-"
-A redistributor regions maps n redistributors, n = region size / (2 x 64kB).
-Stride between redistributors is 0 and regions are filled in the index
-order.
-"
 
-> 
->> + *
->> + * If any, return this redist region handle, otherwise returns NULL.
->> + */
->> +struct vgic_redist_region *vgic_v3_rdist_free_slot(struct list_head *rd_regions)
->> +{
->> +	struct vgic_redist_region *rdreg;
->> +
->> +	list_for_each_entry(rdreg, rd_regions, list) {
->> +		if (!vgic_v3_redist_region_full(rdreg))
->> +			return rdreg;
->> +	}
->> +	return NULL;
->> +}
->> +
->>  int vgic_v3_map_resources(struct kvm *kvm)
->>  {
->>  	int ret = 0;
->> diff --git a/virt/kvm/arm/vgic/vgic.h b/virt/kvm/arm/vgic/vgic.h
->> index 830e815..fea32cb 100644
->> --- a/virt/kvm/arm/vgic/vgic.h
->> +++ b/virt/kvm/arm/vgic/vgic.h
->> @@ -251,6 +251,17 @@ static inline int vgic_v3_max_apr_idx(struct kvm_vcpu *vcpu)
->>  	}
->>  }
->>  
->> +static inline bool
->> +vgic_v3_redist_region_full(struct vgic_redist_region *region)
->> +{
->> +	if (!region->count)
->> +		return false;
->> +
->> +	return (region->free_index >= region->count);
->> +}
->> +
->> +struct vgic_redist_region *vgic_v3_rdist_free_slot(struct list_head *rdregs);
->> +
->>  int vgic_its_resolve_lpi(struct kvm *kvm, struct vgic_its *its,
->>  			 u32 devid, u32 eventid, struct vgic_irq **irq);
->>  struct vgic_its *vgic_msi_to_its(struct kvm *kvm, struct kvm_msi *msi);
->> -- 
->> 2.5.5
+> On Apr 25, 2018, at 5:13 AM, Lukas Wunner <lukas@wunner.de> wrote:
+>
+> On Mon, Apr 23, 2018 at 04:18:35PM +0800, Kai Heng Feng wrote:
+>>> On Apr 23, 2018, at 4:08 PM, Pali RohÃ¡r <pali.rohar@gmail.com> wrote:
+>>> On Monday 23 April 2018 16:04:55 Kai Heng Feng wrote:
+>>>>> On Apr 20, 2018, at 8:10 PM, Takashi Iwai <tiwai@suse.de> wrote:
+>>>>> On Fri, 20 Apr 2018 11:44:32 +0200, Kai-Heng Feng wrote:
+>>>>>> Now it's a typical discrete-only system. HDMI audio comes from AMD  
+>>>>>> audio
+>>>>>> controller, others from Intel audio controller.
+>>>>>>
+>>>>>> When SG is enabled, the unused AMD audio contoller still exposes its
+>>>>>> sysfs, so userspace still opens the control file and stream. If
+>>>>>> userspace tries to output sound through the stream, it hangs the  
+>>>>>> system.
+>>>>>
+>>>>> Hm, could you give more information about how it hangs?
+>>>>
+>>>> Well, I should say "it hangs the userspace process" instead.
+>>>>
+>>>> $ speaker-test -t wav -c 2 -D hw:CARD=HDMI,DEV=3
+>>>> ...and it just stopped. Can't Ctrl+C to break it.
+>>>
+>>> So userspace process cannot be killed at all? Then it is different bug
+>>> in kernel and disabling pci device is just a workaround. Not a real fix.
+>>>
+>>> I would propose to find out what happen and why it cannot be killed
+>>> (probably it stuck somewhere in kernel) and fix it properly.
 >>
-> 
-> Asides from the above:
-> 
-> Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
-Thanks
+>> That's because the audio device got runtime suspended by the graphics.
+>>
+>> In this case, if we really want to use the the discrete audio, then we  
+>> also
+>> need to wake up the graphics.
+>> The discrete audio is totally useless when SG is enabled, so my approach  
+>> is
+>> just to disable it.
+>
+> I don't quite follow, that should be fixed by commit 07f4f97d7b4b
+> ("vga_switcheroo: Use device link for HDA controller") which landed
+> in v4.17-rc1.
 
-Eric
-> 
+Looks like I hit a new bug: the discrete GFX and its audio controller never  
+enters to D3.
+The GFX can enter to D3 with my prosed patch.
+
+>
+> My understanding was that with SG enabled, the external DP/HDMI ports
+> are muxed to the Intel GPU, so audio can only be streamed to external
+> displays by the Intel HDA, not by the HDA integrated into the discrete
+> AMD/Nvidia GPU.  Audio streamed to the latter would essentially end up
+> in a blackhole.  And preventing the user from seeing such useless audio
+> devices was the sole purpose of this commit.  Am I missing something?
+
+Yes this is the intention.
+
+Kai-Heng
+
+>
+> Thanks,
+>
+> Lukas
