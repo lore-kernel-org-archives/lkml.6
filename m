@@ -1,65 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755293AbeDZWpa (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 18:45:30 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:32960 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754728AbeDZWp0 (ORCPT
+        id S1756177AbeDZWq0 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 18:46:26 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:34457 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754258AbeDZWqY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 18:45:26 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: panel: lvds: Fix path to display timing bindings
-Date: Fri, 27 Apr 2018 01:45:39 +0300
-Message-ID: <101662296.DZBr8NQOBO@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <1524642578-2885-1-git-send-email-geert+renesas@glider.be>
-References: <1524642578-2885-1-git-send-email-geert+renesas@glider.be>
+        Thu, 26 Apr 2018 18:46:24 -0400
+X-Google-Smtp-Source: AB8JxZq3US/aFBjvHfo7Tup3PeWedjspgf7K6uPWOYn5CTwRofebIrJprRLTOQu3m7XOTLZQb8L9ivnfA7QoU/ew5os=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1523904956-18239-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1523904956-18239-1-git-send-email-jacopo+renesas@jmondi.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 27 Apr 2018 00:46:23 +0200
+Message-ID: <CACRpkdYy9kabXXmA7RwqDCMv-z0QSSMfQa7agp4aaBfoxO=QOA@mail.gmail.com>
+Subject: Re: [PATCH v2] dt-bindings: gpio: Add support for r8a77965
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Geert,
+On Mon, Apr 16, 2018 at 8:55 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
 
-Thank you for the patch.
-
-On Wednesday, 25 April 2018 10:49:38 EEST Geert Uytterhoeven wrote:
-> Fixes: 14da3ed8dd08c581 ("devicetree/bindings: display: Document common
-> panel properties")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
+> Add compatible string for R-Car M3-N (r8a77965) in gpio-rcar.
+>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 > ---
->  Documentation/devicetree/bindings/display/panel/panel-common.txt | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git
-> a/Documentation/devicetree/bindings/display/panel/panel-common.txt
-> b/Documentation/devicetree/bindings/display/panel/panel-common.txt index
-> 557fa765adcb9450..5d2519af4bb5ca5e 100644
-> --- a/Documentation/devicetree/bindings/display/panel/panel-common.txt
-> +++ b/Documentation/devicetree/bindings/display/panel/panel-common.txt
-> @@ -38,7 +38,7 @@ Display Timings
->    require specific display timings. The panel-timing subnode expresses
-> those timings as specified in the timing subnode section of the display
-> timing bindings defined in
-> -  Documentation/devicetree/bindings/display/display-timing.txt.
-> +  Documentation/devicetree/bindings/display/panel/display-timing.txt.
-> 
-> 
->  Connectivity
+>
+> Renesas R-Car M3-N support has been merged for v4.17.
+> Document the missing device tree bindings.
+>
+> v1 -> v2:
+> - Add Simon and Rob Reviewed-by tags
 
+Patch applied.
 
--- 
-Regards,
-
-Laurent Pinchart
+Yours,
+Linus Walleij
