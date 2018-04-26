@@ -1,223 +1,162 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2662433-1523995106-2-3707440234604958619
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2888943-1524763952-2-463108238587333369
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES endask.us-ascii,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='ISO-8859-15'
+X-Attached: 0004-kprobes-Fix-random-address-output-of-blacklist-file.patch
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523995104; b=WqVjRUsfEjEQ8sqMkrar4avbgAYr9w7wAUa8Ez8XVSr1/Fw5mx
-    YtvvdQDFEZVCbd+jCWDOhjmVx1d48JK1+Mp4bKnmrlHGJKIGjmDh+tvB1W/SsvDV
-    h6KLihSDiJyl+Go47xtMIk+iajC0dHMETYR0SG2jqTCJ3dGY+uzk49GCpmAjlEMr
-    P0C+JIiY15Hg3EhSJTIh01GnYwbK1KyMejiR284Zx4oF5iErbG9zH1/lZBt2mcd0
-    F6A/dFoFDp12SSDUcaiT9ftTTv7BF2VRDrovtgNDK1LEPpM7vG5NfNZPc8qYMySI
-    /epUhxnMI1cvzucYrp+9hrTJneTKW6vsmCHg==
+    1524763952; b=tM0NSoRfsR/9T8+tuabNxsw4PboAlg6MXO9ElzZ7vuDq7RmYvb
+    V4yzmeB8ojOdu2jyZWnZjdv3eVrsmqZqeODvS7GWZzZXOzytDYTEvfsK3e+1RUm2
+    Rl1IB3GEqla4DLVQF8F7Z8JDIzyu/rqndJHkIFfb6vL+JvPhx+t7yq7jUNZEFWUR
+    YdK9ytbiMa+Kqv+tCZ0Hbyd2gLt0sLYCTRwz5XYYPYIe56Ntu7dj/xcLi54MvWq8
+    NvYgxu20a6SFHiUFcdeqt6EK5+3L/4NBvL08c+ye5cKQlYkaoBrg1JeWc5Ie4MYZ
+    dYfsoF4e84hLv9utQtcaCxQJ2GbCN7IBmudQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :references:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1523995104; bh=HonZS
-    4gzSvQWH5KnmIvknisMJ0Nk4NdWvlSEC1CdyrA=; b=fdOXakqpSRHQF+gs7yz+4
-    JaXjXlV8zsjrsKlsabb+/N2yDZ4PSCch1VpC2Kz2hlUZW+r7tJJN9OhG7f8IkYEf
-    twyK22glGj8TShuN5Mgf8yZt0yOnUaP0ddv7TOhaxPY4pT6jQJOAHgB9otLzwX7b
-    i7HmFxyYdzTrqtXd5/9VAAAuSu/YKOHoLYTQUdJlZqe+T5UC3Mo6jrRNxkZBAwcZ
-    cUS5jTEjrdHzowSDMq/je5CA5Z40m58dixInd0odRsMxKkkuKzxpdbodR/cNDOdh
-    xvtWbWhzVfgHVi8Q9LgQ5uZsMD05q5bvVszWD5s1djDFC8CqMTS9t+NvkndeOjzV
-    g==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=message-id:date:from:to:cc:subject
+    :references:mime-version:content-type:sender:list-id; s=fm2; t=
+    1524763952; bh=tUDoPYpDO6i9aIHfk46Z+ae7XmdlgYlgMuffnHcycI8=; b=X
+    ioU8ASDJ+OGsON/BGoP01nxIDZaZbHaIxrOumKjkoRZU6svDkzML7DLaf1+xTRGZ
+    JsPyY7Ge8UrdjDG0YAVqWqvduyJ8vIA2cnI0vNb1RKWQgJa1UrMc4TXY8pWwN0Hg
+    BaZGOOS6dT0rPY2eCCszE/9sr6YiMYSNevWw3Yfs8J9lrH6B7UOLI7O9pE451P31
+    fE+PdAlLrcJTBsFjCwXIZWQ9AwIIJ+TmYW04S9HB5KOLnPKq/x1EQUbk92L4fq6z
+    c1r9+Wit7HAA5D4l3fnDY4NViYUxnBCFYy7CfHLhZVAzwyGysCpMM1nA9i5OAJxK
+    4LKLHRHnhI3n8wz+V2V0Q==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=goodmis.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=intel.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=goodmis.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=goodmis.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=intel.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=goodmis.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfP8bmKvxvKHS1+ZbBGq6H4xdCsfQ96U41WyFmkIfezx621izGTESLS/PT5oDxjrA73Gx+yfT3t2LnU8+RaZtwezEEg6NitYnDjTQedPwaq2ZnALFCT38
-    MN+JerpiIjFE5MrjGFlb8AvGKWCXQPRxznVOxDr+otvQbkqb8PWNINXI5krxFLemfvoRTfe1iiG0GLFtoFbE/1JN4H8J6tR6ZMQxQtMcGJEXNWXXv34zYAX0
-    ZX7gwvqkrF8AlrSZDH320w==
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
-    a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=NEAV23lmAAAA:8 a=bt8Zh30PAAAA:8
-    a=mDV3o1hIAAAA:8 a=UEFuTGg-AAAA:8 a=ag1SF4gXAAAA:8 a=i3X5FwGiAAAA:8
-    a=DDOyTI_5AAAA:8 a=rTH4mTLeCMmadjnfT6oA:9 a=CjuIK1q_8ugA:10
-    a=_FVE-zBwftR9WsbkzFJk:22 a=mz-9cL3ZSiV3bxg4Spyn:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-    a=mmqRlSCDY2ywfjPLJ4af:22 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-CM-Envelope: MS4wfIRc57HeoxrDot/XSbn94AGK4bo1xdN6jXRBNg9jmAvJRok7oUdeIkK/z8v5uPW4TvS34FhSljEmfSUuk0PQEWJ5/r7tAQLcEGqKriMjmwiWYsrWu61h
+    Bxu+rMloIcWeiIMeZN3e1SUIRgZA92yJ7Y7NhIYBQ7v1duzB13b6g48LNXTGTJ2aNcCOyZzSnZtkQp6moL8MQj99MJ5LHGMn64PbocBruJvt88DiBERxW2B/
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Q9fys5e9bTEA:10 a=Kd1tUaAdevIA:10
+    a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=QyXUC8HyAAAA:8 a=J1Y8HTJGAAAA:8
+    a=meVymXHHAAAA:8 a=ww5qIvrlSSbEfUhZvcEA:9 a=eIdllpx3aPQ52tTZ:21
+    a=fiRZSLlAwhvWP4so:21 a=PUjeQqilurYA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=y1Q9-5lHfBjTkpIzbSAN:22 a=2JgSa4NbpEOStq-L5dxp:22
 X-ME-CMScore: 0
-X-ME-CMCategory: discussion
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,464,1517904000"; d="scan'208";a="47719601"
-Date: Wed, 18 Apr 2018 03:56:55 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Kirill Marinushkin <k.marinushkin@gmail.com>
-Subject: Re: [PATCH] staging: bcm2835-audio: Disconnect and free
- vchi_instance on module_exit()
-Message-ID: <201804180307.q5MrL5v1%fengguang.wu@intel.com>
-References: <20180417050028.19372-1-k.marinushkin@gmail.com>
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S932135AbeDZRc3 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 26 Apr 2018 13:32:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46400 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756798AbeDZRcD (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 26 Apr 2018 13:32:03 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 333342183A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Message-Id: <20180426173202.083173270@goodmis.org>
+User-Agent: quilt/0.63-1
+Date: Thu, 26 Apr 2018 13:30:43 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable@vger.kernel.org,
+        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        David S Miller <davem@davemloft.net>,
+        Masami Hiramatsu <mhiramat@kernel.org>, acme@kernel.org,
+        Thomas Richter <tmricht@linux.ibm.com>
+Subject: [PATCH 4/7] kprobes: Fix random address output of blacklist file
+References: <20180426173039.426131207@goodmis.org>
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20180417050028.19372-1-k.marinushkin@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: Stefan Wahren <stefan.wahren@i2se.com>, devel@driverdev.osuosl.org,
- Florian Fainelli <f.fainelli@gmail.com>, Scott Branden <sbranden@broadcom.com>,
- linux-arm-kernel@lists.infradead.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org,
- Eric Anholt <eric@anholt.net>, Andy Shevchenko <andy.shevchenko@gmail.com>,
- bcm-kernel-feedback-list@broadcom.com, kbuild-all@01.org,
- Ray Jui <rjui@broadcom.com>, Kirill Marinushkin <k.marinushkin@gmail.com>,
- linux-rpi-kernel@lists.infradead.org
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Disposition: inline; filename=0004-kprobes-Fix-random-address-output-of-blacklist-file.patch
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Kirill,
+From: Thomas Richter <tmricht@linux.ibm.com>
 
-Thank you for the patch! Perhaps something to improve:
+File /sys/kernel/debug/kprobes/blacklist displays random addresses:
 
-[auto build test WARNING on staging/staging-testing]
-[also build test WARNING on v4.17-rc1]
-[cannot apply to anholt/for-next]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+[root@s8360046 linux]# cat /sys/kernel/debug/kprobes/blacklist
+0x0000000047149a90-0x00000000bfcb099a	print_type_x8
+....
 
-url:    https://github.com/0day-ci/linux/commits/Kirill-Marinushkin/staging-bcm2835-audio-Disconnect-and-free-vchi_instance-on-module_exit/20180417-193147
-config: arm-allmodconfig
-compiler: arm-linux-gnueabi-gcc (Debian 7.2.0-11) 7.2.0
-reproduce:
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        make.cross ARCH=arm  allmodconfig
-        make.cross ARCH=arm 
+This breaks 'perf probe' which uses the blacklist file to prohibit
+probes on certain functions by checking the address range.
 
-Note: it may well be a FALSE warning. FWIW you are at least aware of it now.
-http://gcc.gnu.org/wiki/Better_Uninitialized_Warnings
+Fix this by printing the correct (unhashed) address.
 
-All warnings (new ones prefixed by >>):
+The file mode is read all but this is not an issue as the file
+hierarchy points out:
+ # ls -ld /sys/ /sys/kernel/ /sys/kernel/debug/ /sys/kernel/debug/kprobes/
+	/sys/kernel/debug/kprobes/blacklist
+dr-xr-xr-x 12 root root 0 Apr 19 07:56 /sys/
+drwxr-xr-x  8 root root 0 Apr 19 07:56 /sys/kernel/
+drwx------ 16 root root 0 Apr 19 06:56 /sys/kernel/debug/
+drwxr-xr-x  2 root root 0 Apr 19 06:56 /sys/kernel/debug/kprobes/
+-r--r--r--  1 root root 0 Apr 19 06:56 /sys/kernel/debug/kprobes/blacklist
 
+Everything in and below /sys/kernel/debug is rwx to root only,
+no group or others have access.
 
-vim +/err +307 drivers/staging/vc04_services/bcm2835-audio/bcm2835.c
+Background:
+Directory /sys/kernel/debug/kprobes is created by debugfs_create_dir()
+which sets the mode bits to rwxr-xr-x. Maybe change that to use the
+parent's directory mode bits instead?
 
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  274  
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  275  static int snd_add_child_device(struct device *device,
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  276  				struct bcm2835_audio_driver *audio_driver,
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  277  				u32 numchans)
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  278  {
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  279  	struct snd_card *card;
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  280  	struct device *child;
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  281  	struct bcm2835_chip *chip;
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  282  	int err, i;
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  283  
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  284  	child = snd_create_device(device, &audio_driver->driver,
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  285  				  audio_driver->driver.name);
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  286  	if (IS_ERR(child)) {
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  287  		dev_err(device,
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  288  			"Unable to create child device %p, error %ld",
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  289  			audio_driver->driver.name,
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  290  			PTR_ERR(child));
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  291  		return PTR_ERR(child);
-23b028c8 drivers/staging/bcm2835-audio/bcm2835.c               Michael Zoran      2017-01-25  292  	}
-23b028c8 drivers/staging/bcm2835-audio/bcm2835.c               Michael Zoran      2017-01-25  293  
-626118b4 drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Kirill Marinushkin 2018-03-23  294  	card = snd_bcm2835_card_new(child);
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  295  	if (IS_ERR(card)) {
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  296  		dev_err(child, "Failed to create card");
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  297  		return PTR_ERR(card);
-23b028c8 drivers/staging/bcm2835-audio/bcm2835.c               Michael Zoran      2017-01-25  298  	}
-23b028c8 drivers/staging/bcm2835-audio/bcm2835.c               Michael Zoran      2017-01-25  299  
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  300  	snd_card_set_dev(card, child);
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  301  	strcpy(card->driver, audio_driver->driver.name);
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  302  	strcpy(card->shortname, audio_driver->shortname);
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  303  	strcpy(card->longname, audio_driver->longname);
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  304  
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  305  	err = snd_bcm2835_create(card, &chip);
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  306  	if (err) {
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14 @307  		dev_err(child, "Failed to create chip, error %d\n", err);
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  308  		return err;
-23b028c8 drivers/staging/bcm2835-audio/bcm2835.c               Michael Zoran      2017-01-25  309  	}
-23b028c8 drivers/staging/bcm2835-audio/bcm2835.c               Michael Zoran      2017-01-25  310  
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  311  	chip->dev = child;
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  312  
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  313  	err = audio_driver->newpcm(chip, audio_driver->shortname,
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  314  		audio_driver->route,
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  315  		numchans);
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  316  	if (err) {
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  317  		dev_err(child, "Failed to create pcm, error %d\n", err);
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  318  		return err;
-23b028c8 drivers/staging/bcm2835-audio/bcm2835.c               Michael Zoran      2017-01-25  319  	}
-23b028c8 drivers/staging/bcm2835-audio/bcm2835.c               Michael Zoran      2017-01-25  320  
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  321  	err = audio_driver->newctl(chip);
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  322  	if (err) {
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  323  		dev_err(child, "Failed to create controls, error %d\n", err);
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  324  		return err;
-23b028c8 drivers/staging/bcm2835-audio/bcm2835.c               Michael Zoran      2017-01-25  325  	}
-23b028c8 drivers/staging/bcm2835-audio/bcm2835.c               Michael Zoran      2017-01-25  326  
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  327  	for (i = 0; i < numchans; i++)
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  328  		chip->avail_substreams |= (1 << i);
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  329  
-23b028c8 drivers/staging/bcm2835-audio/bcm2835.c               Michael Zoran      2017-01-25  330  	err = snd_card_register(card);
-23b028c8 drivers/staging/bcm2835-audio/bcm2835.c               Michael Zoran      2017-01-25  331  	if (err) {
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  332  		dev_err(child, "Failed to register card, error %d\n", err);
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  333  		return err;
-23b028c8 drivers/staging/bcm2835-audio/bcm2835.c               Michael Zoran      2017-01-25  334  	}
-23b028c8 drivers/staging/bcm2835-audio/bcm2835.c               Michael Zoran      2017-01-25  335  
-626118b4 drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Kirill Marinushkin 2018-03-23  336  	dev_set_drvdata(child, chip);
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  337  	dev_info(child, "card created with %d channels\n", numchans);
-23b028c8 drivers/staging/bcm2835-audio/bcm2835.c               Michael Zoran      2017-01-25  338  
-23b028c8 drivers/staging/bcm2835-audio/bcm2835.c               Michael Zoran      2017-01-25  339  	return 0;
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  340  }
-325b5b6c drivers/staging/vc04_services/bcm2835-audio/bcm2835.c Michael Zoran      2017-03-14  341  
+Link: http://lkml.kernel.org/r/20180419105556.86664-1-tmricht@linux.ibm.com
 
-:::::: The code at line 307 was first introduced by commit
-:::::: 325b5b6c96a863989078df402d1670d061f52d88 staging: bcm2835-audio: Add support for simultanous HDMI and Headphone audio
+Fixes: ad67b74d2469 ("printk: hash addresses printed with %p")
+Cc: stable@vger.kernel.org
+Cc: <stable@vger.kernel.org> # v4.15+
+Cc: Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>
+Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
+Cc: David S Miller <davem@davemloft.net>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: acme@kernel.org
 
-:::::: TO: Michael Zoran <mzoran@crowfest.net>
-:::::: CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+ kernel/kprobes.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/kprobes.c b/kernel/kprobes.c
+index 102160ff5c66..ea619021d901 100644
+--- a/kernel/kprobes.c
++++ b/kernel/kprobes.c
+@@ -2428,7 +2428,7 @@ static int kprobe_blacklist_seq_show(struct seq_file *m, void *v)
+ 	struct kprobe_blacklist_entry *ent =
+ 		list_entry(v, struct kprobe_blacklist_entry, list);
+ 
+-	seq_printf(m, "0x%p-0x%p\t%ps\n", (void *)ent->start_addr,
++	seq_printf(m, "0x%px-0x%px\t%ps\n", (void *)ent->start_addr,
+ 		   (void *)ent->end_addr, (void *)ent->start_addr);
+ 	return 0;
+ }
+-- 
+2.16.3
