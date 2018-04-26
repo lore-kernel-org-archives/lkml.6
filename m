@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754948AbeDZVVq (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 17:21:46 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:59930 "EHLO
+        id S1756052AbeDZVWV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 17:22:21 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:59946 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751496AbeDZVVn (ORCPT
+        with ESMTP id S1754345AbeDZVWT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 17:21:43 -0400
+        Thu, 26 Apr 2018 17:22:19 -0400
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 Cc: linux-renesas-soc@vger.kernel.org,
@@ -20,12 +20,12 @@ Cc: linux-renesas-soc@vger.kernel.org,
         "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)"
         <linux-arm-kernel@lists.infradead.org>,
         open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 15/17] arm64: dts: r8a77965-salvator-x: Enable HDMI output
-Date: Fri, 27 Apr 2018 00:21:55 +0300
-Message-ID: <2345148.J1marZVneP@avalon>
+Subject: Re: [PATCH 16/17] arm64: dts: r8a77965-salvator-xs: Add DU external dot clocks
+Date: Fri, 27 Apr 2018 00:22:32 +0300
+Message-ID: <2242585.ilfyDprk4a@avalon>
 Organization: Ideas on Board Oy
-In-Reply-To: <20180426165346.494-16-kieran.bingham+renesas@ideasonboard.com>
-References: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com> <20180426165346.494-16-kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <20180426165346.494-17-kieran.bingham+renesas@ideasonboard.com>
+References: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com> <20180426165346.494-17-kieran.bingham+renesas@ideasonboard.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -37,53 +37,44 @@ Hi Kieran,
 
 Thank you for the patch.
 
-On Thursday, 26 April 2018 19:53:44 EEST Kieran Bingham wrote:
+On Thursday, 26 April 2018 19:53:45 EEST Kieran Bingham wrote:
 > From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 > 
-> Enable the HDMI encoder for the M3N Salvator-X board and hook it up to
-> the HDMI connector.
+> The DU1 external dot clock is provided by the fixed frequency clock
+> generator X21, while the DU0 and DU3 clocks are provided by the
+> programmable Versaclock6 clock generator.
 > 
-> Based on a similar patches of the the Salvator-X board
-> on the R8A7796 SoC device tree
-> by Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-How about adding the VGA output too ? I think you can add both VGA and HDMI in 
-a single patch that enables display in one go for the board. Same comment for 
-the Salvator-XS.
-
 > Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 > Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 > ---
->  .../boot/dts/renesas/r8a77965-salvator-x.dts    | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
+>  arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 > 
-> diff --git a/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
-> b/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts index
-> a2b8fb20fef8..11e8d43e9e11 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
-> +++ b/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
-> @@ -31,3 +31,20 @@
->  	clock-names = "du.0", "du.1", "du.3", "lvds.0",
->  		      "dclkin.0", "dclkin.1", "dclkin.3";
+> diff --git a/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts
+> b/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts index
+> a83a00deed9e..2223cc2bd6bc 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts
+> +++ b/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts
+> @@ -19,3 +19,15 @@
+>  		reg = <0x0 0x48000000 0x0 0x78000000>;
+>  	};
 >  };
 > +
-> +&hdmi0 {
-> +	status = "okay";
-> +
-> +	ports {
-> +		port@1 {
-> +			reg = <1>;
-> +			rcar_dw_hdmi0_out: endpoint {
-> +				remote-endpoint = <&hdmi0_con>;
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +&hdmi0_con {
-> +	remote-endpoint = <&rcar_dw_hdmi0_out>;
+> +&du {
+> +	clocks = <&cpg CPG_MOD 724>,
+> +		 <&cpg CPG_MOD 723>,
+> +		 <&cpg CPG_MOD 721>,
+> +		 <&cpg CPG_MOD 727>,
+> +		 <&versaclock6 1>,
+> +		 <&x21_clk>,
+> +		 <&versaclock6 2>;
+> +	clock-names = "du.0", "du.1", "du.3", "lvds.0",
+> +		      "dclkin.0", "dclkin.1", "dclkin.3";
+
+There's no LVDS clock in the DU anymore, you can drop it.
+
+As for patch 14/17, I think you can squash this one with 17/17.
+
 > +};
 
 -- 
