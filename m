@@ -1,59 +1,154 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756669AbeDZPLj (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 11:11:39 -0400
-Received: from mail-pf0-f171.google.com ([209.85.192.171]:44615 "EHLO
-        mail-pf0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756481AbeDZPLa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 11:11:30 -0400
-X-Google-Smtp-Source: AIpwx4/PFJaVNVmJWtJvox1tDPUtx7Gi3Pcibg2fOl/M9BNO43PqAmXiNF0/uZwLhskGs/qqM03cHA==
-Subject: Re: [PATCH 2/5] ide: kill ide_toggle_bounce
-To: Christoph Hellwig <hch@lst.de>
-Cc: iommu@lists.linux-foundation.org, linux-arch@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-ide@vger.kernel.org,
-        linux-scsi@vger.kernel.org, netdev@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>, linux-kernel@vger.kernel.org
-References: <20180424181625.22410-1-hch@lst.de>
- <20180424181625.22410-3-hch@lst.de>
- <5aaca0d3-417f-57f3-969f-b4c777c3fd48@kernel.dk>
- <20180426072033.GA14700@lst.de>
-From: Jens Axboe <axboe@kernel.dk>
-Message-ID: <682db9af-33bc-639d-8930-7a66c30bc644@kernel.dk>
-Date: Thu, 26 Apr 2018 09:11:21 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        id S1756683AbeDZPNJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 11:13:09 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55958 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1756262AbeDZPNG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 11:13:06 -0400
+Date: Thu, 26 Apr 2018 11:13:05 -0400
+From: Vivek Goyal <vgoyal@redhat.com>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Miklos Szeredi <mszeredi@redhat.com>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 09/35] ovl: stack file ops
+Message-ID: <20180426151305.GC4308@redhat.com>
+References: <20180412150826.20988-1-mszeredi@redhat.com>
+ <20180412150826.20988-10-mszeredi@redhat.com>
+ <20180426141337.GA4308@redhat.com>
+ <CAJfpegv9by9L_b-STRMy4U8Uqv03UrOYDuAa3HdF-9zKxZQRcA@mail.gmail.com>
+ <20180426145641.GB4308@redhat.com>
+ <CAJfpeguCtZ+3q6Fr7bu1Q5B3JXFQfS2Y9XJHgr0-OR9g=J9JsA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180426072033.GA14700@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpeguCtZ+3q6Fr7bu1Q5B3JXFQfS2Y9XJHgr0-OR9g=J9JsA@mail.gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/26/18 1:20 AM, Christoph Hellwig wrote:
-> On Tue, Apr 24, 2018 at 08:02:56PM -0600, Jens Axboe wrote:
->> On 4/24/18 12:16 PM, Christoph Hellwig wrote:
->>> ide_toggle_bounce did select various strange block bounce limits, including
->>> not bouncing at all as soon as an iommu is present in the system.  Given
->>> that the dma_map routines now handle any required bounce buffering except
->>> for ISA DMA, and the ide code already must handle either ISA DMA or highmem
->>> at least for iommu equipped systems we can get rid of the block layer
->>> bounce limit setting entirely.
->>
->> Pretty sure I was the one to add this code, when highmem page IO was
->> enabled about two decades ago...
->>
->> Outside of DMA, the issue was that the PIO code could not handle
->> highmem. That's not the case anymore, so this should be fine.
+On Thu, Apr 26, 2018 at 05:01:37PM +0200, Miklos Szeredi wrote:
+> On Thu, Apr 26, 2018 at 4:56 PM, Vivek Goyal <vgoyal@redhat.com> wrote:
+> > On Thu, Apr 26, 2018 at 04:43:53PM +0200, Miklos Szeredi wrote:
+> >> On Thu, Apr 26, 2018 at 4:13 PM, Vivek Goyal <vgoyal@redhat.com> wrote:
+> >> > On Thu, Apr 12, 2018 at 05:08:00PM +0200, Miklos Szeredi wrote:
+> >> >
+> >> > [..]
+> >> >> diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+> >> >> new file mode 100644
+> >> >> index 000000000000..a0b606885c41
+> >> >> --- /dev/null
+> >> >> +++ b/fs/overlayfs/file.c
+> >> >> @@ -0,0 +1,76 @@
+> >> >> +/*
+> >> >> + * Copyright (C) 2017 Red Hat, Inc.
+> >> >> + *
+> >> >> + * This program is free software; you can redistribute it and/or modify it
+> >> >> + * under the terms of the GNU General Public License version 2 as published by
+> >> >> + * the Free Software Foundation.
+> >> >> + */
+> >> >> +
+> >> >> +#include <linux/cred.h>
+> >> >> +#include <linux/file.h>
+> >> >> +#include <linux/xattr.h>
+> >> >> +#include "overlayfs.h"
+> >> >> +
+> >> >> +static struct file *ovl_open_realfile(const struct file *file)
+> >> >> +{
+> >> >> +     struct inode *inode = file_inode(file);
+> >> >> +     struct inode *upperinode = ovl_inode_upper(inode);
+> >> >> +     struct inode *realinode = upperinode ?: ovl_inode_lower(inode);
+> >> >> +     struct file *realfile;
+> >> >> +     const struct cred *old_cred;
+> >> >> +
+> >> >> +     old_cred = ovl_override_creds(inode->i_sb);
+> >> >> +     realfile = path_open(&file->f_path, file->f_flags | O_NOATIME,
+> >> >> +                          realinode, current_cred(), false);
+> >> >> +     revert_creds(old_cred);
+> >> >> +
+> >> >> +     pr_debug("open(%p[%pD2/%c], 0%o) -> (%p, 0%o)\n",
+> >> >> +              file, file, upperinode ? 'u' : 'l', file->f_flags,
+> >> >> +              realfile, IS_ERR(realfile) ? 0 : realfile->f_flags);
+> >> >> +
+> >> >> +     return realfile;
+> >> >> +}
+> >> >> +
+> >> >> +static int ovl_open(struct inode *inode, struct file *file)
+> >> >> +{
+> >> >> +     struct dentry *dentry = file_dentry(file);
+> >> >
+> >> > Hi Miklos,
+> >> >
+> >> > There is one thing I can't wrap my head around, so I better ask.
+> >> >
+> >> > file_dentry() will call ovl_d_real() and try to find dentry based on
+> >> > inode installed in f->f_inode. If ovl_d_real() can't find inode dentry
+> >> > matching the passed in inode, it warns.
+> >> >
+> >> > Assume, I have a stacked overlay configuration. Let me call top level
+> >> > overlay layer ovl1 and lower level overlay layer ovl2. Say I open a
+> >> > file foo.txt. Now ovl_open() in ovl1 decides that realinode is a lower
+> >> > inode and installs that inode f->f_inode of realfile. (This should be
+> >> > ovl2 layer inode, let me call it ovl2_inode). Now ovl_open() of ovl2 layer
+> >> > will be called and it will call file_dentry() and will look for dentry
+> >> > corresponding to ovl2_inode. I am wondering what if a copy up of foo.txt
+> >> > was triggered in ovl1 and by the time we called ovl_d_real(dentry,
+> >> > ovl2_inode), it will start comparing with inode of ovl1_upper and never
+> >> > find ovl2_inode.
+> >>
+> >> Okay, so we've modified ovl_d_real() to allow returning the overlay
+> >> dentry itself.  This is important: when we fail to match ovl1_upper
+> >> with ovl2_inode, well go on to get ovl2_dentry and call d_real()
+> >> recursively.  That recursive call should match the inode, return it to
+> >> outer ovl_d_real(), which again will match the inode and return
+> >> without warning.
+> >
+> > So current code does following.
+> >
+> > ovl_d_real() {
+> >         ...
+> >         ...
+> >
+> >         real = ovl_dentry_real(dentry);
+> >         if (inode == d_inode(real))
+> >                 return real;
+> >
+> >         /* Handle recursion */
+> >         if (unlikely(real->d_flags & DCACHE_OP_REAL))
+> >                 return real->d_op->d_real(real, inode);
+> > }
+> >
+> > If file got copied up in ovl1, then "real" will be ovl1_upper dentry. And
+> > upper is regular fs (only ovl1 lower is overlay), then it should not have
+> > DCACHE_OP_REAL set and that means we will not recurse further and not
+> > find ovl2 dentry matching ovl2_inode and print warning and return
+> > ovl1 dentry.
+> >
+> > What am I missing.
 > 
-> Yes, that is the rationale.  Any chance to you could look over the
-> other patches as well?  Except for the networking one for which I'd
-> really like to see a review from Dave all the users of the interface
-> are block related.
+> Ah,  that's indeed buggy.  The bug is in "[RFC PATCH 34/35] vfs:
+> simplify d_op->d_real()".
+> 
+> I've already reverted that (due to d_real_inode() acquiring a new
+> user) and the old code should be good (AFAICS).
 
-You can add my reviewed-by to 1-3, and 5. Looks good to me.
+Aha, cool. thanks. While I am at it, let me just ask one more stupid
+question.
 
--- 
-Jens Axboe
+I am wondering while opening the underlying realfile, why do we pass
+in the path/dentry of ovl layer (and not underlying real layer).
+
+        realfile = path_open(&file->f_path, file->f_flags | O_NOATIME,
+                             realinode, current_cred(), false);
+
+This forces us to do file_dentry() in ovl_open() later to map top level
+dentry to underlying dentry.
+
+We know the realinode and should be figure out real dentry. Can't we
+construct path from underlying dentry and mount point and use that
+to open underlying real file.  I am sure there is some reason for doing
+this way, just trying to understand it.
+
+Vivek
