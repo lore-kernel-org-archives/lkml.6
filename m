@@ -1,116 +1,138 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754359AbeDZHo2 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 03:44:28 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:38227 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754316AbeDZHoW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 03:44:22 -0400
-X-Google-Smtp-Source: AB8JxZooYxHlQWJdja0OblqcOege9L1AONoyTPmbUpQifPGZ2uGUvbWSkYpc3FBUTZstNBd1S+4Raw==
-Date: Thu, 26 Apr 2018 08:44:18 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Kyle Spiers <ksspiers@google.com>
-Cc: Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rave-sp: Remove VLA
-Message-ID: <20180426074418.lcj6y726ypzlizfr@dell>
-References: <20180423200255.154645-1-ksspiers@google.com>
- <20180424054315.2yjpnht5pu62i54q@dell>
- <CAGXu5jL5j6ZknsKN8ve+4qgSQLKsssUTto_UXORABgfHop=-7w@mail.gmail.com>
- <20180425103128.tp4wcvyp7rcm4jge@dell>
- <CAM9OsyKauRJCWfJ360+SAiUAOE1+aBZ1hp_AMDgmzkQ-MYrqxA@mail.gmail.com>
+        id S1754028AbeDZHrJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 03:47:09 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36792 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752018AbeDZHrH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 03:47:07 -0400
+Subject: Re: [PATCH v3 04/12] KVM: arm/arm64: Helper to locate free rdist
+ index
+To: Christoffer Dall <christoffer.dall@arm.com>
+References: <1523607658-9166-1-git-send-email-eric.auger@redhat.com>
+ <1523607658-9166-5-git-send-email-eric.auger@redhat.com>
+ <20180424210704.GG4533@C02W217FHV2R.local>
+Cc: eric.auger.pro@gmail.com, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
+        marc.zyngier@arm.com, cdall@kernel.org, peter.maydell@linaro.org,
+        andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
+From: Auger Eric <eric.auger@redhat.com>
+Message-ID: <40978427-0cf7-3a03-f12e-bde73548180e@redhat.com>
+Date: Thu, 26 Apr 2018 09:47:00 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAM9OsyKauRJCWfJ360+SAiUAOE1+aBZ1hp_AMDgmzkQ-MYrqxA@mail.gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180424210704.GG4533@C02W217FHV2R.local>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On Wed, Apr 25, 2018 at 3:31 AM Lee Jones <lee.jones@linaro.org> wrote:
+Hi Christoffer,
+On 04/24/2018 11:07 PM, Christoffer Dall wrote:
+> On Fri, Apr 13, 2018 at 10:20:50AM +0200, Eric Auger wrote:
+>> We introduce vgic_v3_rdist_free_slot to help identifying
+>> where we can place a new 2x64KB redistributor.
+>>
+>> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+>> ---
+>>  virt/kvm/arm/vgic/vgic-mmio-v3.c |  3 +--
+>>  virt/kvm/arm/vgic/vgic-v3.c      | 17 +++++++++++++++++
+>>  virt/kvm/arm/vgic/vgic.h         | 11 +++++++++++
+>>  3 files changed, 29 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/virt/kvm/arm/vgic/vgic-mmio-v3.c b/virt/kvm/arm/vgic/vgic-mmio-v3.c
+>> index d1aab18..49ca176 100644
+>> --- a/virt/kvm/arm/vgic/vgic-mmio-v3.c
+>> +++ b/virt/kvm/arm/vgic/vgic-mmio-v3.c
+>> @@ -593,8 +593,7 @@ int vgic_register_redist_iodev(struct kvm_vcpu *vcpu)
+>>  	 * function for all VCPUs when the base address is set.  Just return
+>>  	 * without doing any work for now.
+>>  	 */
+>> -	rdreg = list_first_entry(&vgic->rd_regions,
+>> -				 struct vgic_redist_region, list);
+>> +	rdreg = vgic_v3_rdist_free_slot(&vgic->rd_regions);
+>>  	if (!rdreg)
+>>  		return 0;
+>>  
+>> diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-v3.c
+>> index 94de6cd..820012a 100644
+>> --- a/virt/kvm/arm/vgic/vgic-v3.c
+>> +++ b/virt/kvm/arm/vgic/vgic-v3.c
+>> @@ -444,6 +444,23 @@ bool vgic_v3_check_base(struct kvm *kvm)
+>>  	return false;
+>>  }
+>>  
+>> +/**
+>> + * vgic_v3_rdist_free_slot - Look up registered rdist regions and identify one
+>> + * which has free space to put a new rdist regions
 > 
-> > On Tue, 24 Apr 2018, Kees Cook wrote:
+> Can this structure ever be sparse or do we always find the first empty
+> one, as we fill them consecutively ?
+We always find the first empty 2x64kB slot within the region (stride
+between redistributors = 0). Regions are filled in the index order. The
+only hole that can exist is at the end of the region if its size is not
+multiple of 2x64kB.
 > 
-> > > On Mon, Apr 23, 2018 at 10:43 PM, Lee Jones <lee.jones@linaro.org>
-> wrote:
-> > > > On Mon, 23 Apr 2018, Kyle Spiers wrote:
-> > > >
-> > > >> As part of the effort to remove VLAs from the kernel[1], this creates
-> > > >> constants for the checksum lengths of CCITT and 8B2C and changes
-> > > >> crc_calculated to be the maximum size of a checksum.
-> > > >>
-> > > >> https://lkml.org/lkml/2018/3/7/621
-> > > >>
-> > > >> Signed-off-by: Kyle Spiers <ksspiers@google.com>
-> > > >> ---
-> > > >>  drivers/mfd/rave-sp.c | 11 +++++++++--
-> > > >>  1 file changed, 9 insertions(+), 2 deletions(-)
-> > > >>
-> > > >> diff --git a/drivers/mfd/rave-sp.c b/drivers/mfd/rave-sp.c
-> > > >> index 5c858e784a89..99fa482419f9 100644
-> > > >> --- a/drivers/mfd/rave-sp.c
-> > > >> +++ b/drivers/mfd/rave-sp.c
-> > > >> @@ -45,7 +45,9 @@
-> > > >>  #define RAVE_SP_DLE                  0x10
-> > > >>
-> > > >>  #define RAVE_SP_MAX_DATA_SIZE                64
-> > > >> -#define RAVE_SP_CHECKSUM_SIZE                2  /* Worst case
-> scenario on RDU2 */
-> > > >> +#define RAVE_SP_CHECKSUM_8B2C                1
-> > > >> +#define RAVE_SP_CHECKSUM_CCITT               2
-> > > >> +#define RAVE_SP_CHECKSUM_SIZE                RAVE_SP_CHECKSUM_CCITT
-> > > >>  /*
-> > > >>   * We don't store STX, ETX and unescaped bytes, so Rx is only
-> > > >>   * DATA + CSUM
-> > > >> @@ -415,7 +417,12 @@ static void rave_sp_receive_frame(struct
-> rave_sp *sp,
-> > > >>       const size_t payload_length  = length - checksum_length;
-> > > >>       const u8 *crc_reported       = &data[payload_length];
-> > > >>       struct device *dev           = &sp->serdev->dev;
-> > > >> -     u8 crc_calculated[checksum_length];
-> > > >> +     u8 crc_calculated[RAVE_SP_CHECKSUM_SIZE];
-> > > >> +
-> > > >> +     if (unlikely(length > sizeof(crc_calculated))) {
-> > > >
-> > > > Forgive me if I have this wrong (it's still very early here), but this
-> > > > doesn't leave any room for the payload?
-> > > >
-> > > >     <--       length         -->
-> > > >     <ck len><- payload length ->
-> > > >     [CK][CK][D][A][T][A] .. [64]
-> > > >
-> > > > It is my hope that length would always be larger than the size of the
-> > > > checksum, or else there would never be any data?
-> > > >
-> > > > Should this not be:
-> > > >
-> > > >     if (unlikely(length > RAVE_SP_MAX_DATA_SIZE))
-> > >
-> > > Oh, whoops, no, this should be:
-> > >
-> > > +     if (unlikely(checksum_lengh > sizeof(crc_calculated))) {
-> > >
-> > > (To validate the VLA max size.)
-> 
-> > That doesn't match the OP's error message though:
-> 
-> >    dev_warn(dev, "Dropping oversized frame\n");
-> 
-> > Which I assume is designed to complement the existing warning:
-> 
-> >    if (unlikely(length <= checksum_length))
-> >            dev_warn(dev, "Dropping short frame\n");
+> I assume there is some mapping between the regions and the VCPUs'
+> redistributors, so perhaps the wording in this comment can be more
+> precise.
+changed into:
+"
+A redistributor regions maps n redistributors, n = region size / (2 x 64kB).
+Stride between redistributors is 0 and regions are filled in the index
+order.
+"
 
-[MOVING - Please don't top post - reply in-line] 
+> 
+>> + *
+>> + * If any, return this redist region handle, otherwise returns NULL.
+>> + */
+>> +struct vgic_redist_region *vgic_v3_rdist_free_slot(struct list_head *rd_regions)
+>> +{
+>> +	struct vgic_redist_region *rdreg;
+>> +
+>> +	list_for_each_entry(rdreg, rd_regions, list) {
+>> +		if (!vgic_v3_redist_region_full(rdreg))
+>> +			return rdreg;
+>> +	}
+>> +	return NULL;
+>> +}
+>> +
+>>  int vgic_v3_map_resources(struct kvm *kvm)
+>>  {
+>>  	int ret = 0;
+>> diff --git a/virt/kvm/arm/vgic/vgic.h b/virt/kvm/arm/vgic/vgic.h
+>> index 830e815..fea32cb 100644
+>> --- a/virt/kvm/arm/vgic/vgic.h
+>> +++ b/virt/kvm/arm/vgic/vgic.h
+>> @@ -251,6 +251,17 @@ static inline int vgic_v3_max_apr_idx(struct kvm_vcpu *vcpu)
+>>  	}
+>>  }
+>>  
+>> +static inline bool
+>> +vgic_v3_redist_region_full(struct vgic_redist_region *region)
+>> +{
+>> +	if (!region->count)
+>> +		return false;
+>> +
+>> +	return (region->free_index >= region->count);
+>> +}
+>> +
+>> +struct vgic_redist_region *vgic_v3_rdist_free_slot(struct list_head *rdregs);
+>> +
+>>  int vgic_its_resolve_lpi(struct kvm *kvm, struct vgic_its *its,
+>>  			 u32 devid, u32 eventid, struct vgic_irq **irq);
+>>  struct vgic_its *vgic_msi_to_its(struct kvm *kvm, struct kvm_msi *msi);
+>> -- 
+>> 2.5.5
+>>
+> 
+> Asides from the above:
+> 
+> Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
+Thanks
 
-> The error message is also wrong. Would "Checksum length too large" be fine?
-
-"Checksum too long, dropping" ?
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Eric
+> 
