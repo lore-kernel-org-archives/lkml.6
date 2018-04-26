@@ -1,92 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756177AbeDZNcB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 09:32:01 -0400
-Received: from mail-pf0-f175.google.com ([209.85.192.175]:33823 "EHLO
-        mail-pf0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755974AbeDZNb4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 09:31:56 -0400
-X-Google-Smtp-Source: AIpwx4/OqaWn7mWJSkxXEMFjUiVr8r+ouIQfdJiMN9VrzkMpiaKjYnXf/UhJIaRqQIiSQrqdAJbC7A==
-Date: Thu, 26 Apr 2018 19:01:45 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Todor Tomov <todor.tomov@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dragonboard@lists.96boards.org,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [dragonboard] [PATCH 1/1] dts: qcom: db820c: Add gpio-line-names
- property
-Message-ID: <20180426133145.24dfnfarnuunf2wy@mani>
-References: <20180414031811.11351-1-manivannan.sadhasivam@linaro.org>
- <20180414031811.11351-2-manivannan.sadhasivam@linaro.org>
- <9acdd412-9b6d-ec63-c5ca-c5fa8d98d489@linaro.org>
- <20180416100306.5f6bzkzlsx3ufvw7@mani>
- <CACRpkdZxwz5=oTxGWBgVHfy-D9s-f03qqjypUeJj6GrpXQcEcQ@mail.gmail.com>
+        id S1756006AbeDZNfV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 09:35:21 -0400
+Received: from foss.arm.com ([217.140.101.70]:53780 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751713AbeDZNfO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 09:35:14 -0400
+Subject: Re: [PATCH v2 08/17] kvm: arm/arm64: Prepare for VM specific stage2
+ translations
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc: ard.biesheuvel@linaro.org, kvm@vger.kernel.org, marc.zyngier@arm.com,
+        catalin.marinas@arm.com, punit.agrawal@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, kristina.martsenko@arm.com,
+        pbonzini@redhat.com, kvmarm@lists.cs.columbia.edu
+References: <1522156531-28348-1-git-send-email-suzuki.poulose@arm.com>
+ <1522156531-28348-9-git-send-email-suzuki.poulose@arm.com>
+From: Julien Grall <julien.grall@arm.com>
+Message-ID: <7f67fca2-b936-25d9-0fe8-aece1fadafdc@arm.com>
+Date: Thu, 26 Apr 2018 14:35:10 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZxwz5=oTxGWBgVHfy-D9s-f03qqjypUeJj6GrpXQcEcQ@mail.gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <1522156531-28348-9-git-send-email-suzuki.poulose@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Hi Suzuki,
 
-On Thu, Apr 26, 2018 at 03:23:57PM +0200, Linus Walleij wrote:
-> On Mon, Apr 16, 2018 at 12:03 PM, Manivannan Sadhasivam
-> <manivannan.sadhasivam@linaro.org> wrote:
-> > On Mon, Apr 16, 2018 at 11:48:59AM +0300, Todor Tomov wrote:
+On 27/03/18 14:15, Suzuki K Poulose wrote:
+> Right now the stage2 page table for a VM is hard coded, assuming
+> an IPA of 40bits. As we are about to add support for per VM IPA,
+> prepare the stage2 page table helpers to accept the kvm instance
+> to make the right decision for the VM. No functional changes.
 > 
-> >> > + * When the 96Board naming of a line and the schematic name of
-> >> > + * the same line are in conflict, the 96Board specification
-> >> > + * takes precedence, which means that the external UART on the
-> >> > + * LSEC is named UART0 while the schematic and SoC names this
-> >> > + * UART3. This is only for the informational lines i.e. "[FOO]",
-> >>
-> >> It seems to me that this can lead to some confusion for cases when
-> >> some schematic names have 96board names and others don't. (An
-> >> example below.) However I don't really see any better way to do
-> >> it. I'm wondering whether adding the schematic name in
-> >> the comment (for gpios which are named with 96board names)
-> >> can help a little. What do you think? Or any other idea?
-> >>
-> >
-> > Specifying the schematic names in comments is a good idea!
-> >
-> > Linus: Do you have any suggestion here?
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Cc: Christoffer Dall <cdall@kernel.org>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+>   arch/arm/include/asm/kvm_arm.h                |   3 +-
+>   arch/arm/include/asm/kvm_mmu.h                |  15 +++-
+>   arch/arm/include/asm/stage2_pgtable.h         |  42 ++++-----
+>   arch/arm64/include/asm/kvm_mmu.h              |   7 +-
+>   arch/arm64/include/asm/stage2_pgtable-nopmd.h |  18 ++--
+>   arch/arm64/include/asm/stage2_pgtable-nopud.h |  16 ++--
+>   arch/arm64/include/asm/stage2_pgtable.h       |  49 ++++++-----
+>   virt/kvm/arm/arm.c                            |   2 +-
+>   virt/kvm/arm/mmu.c                            | 119 +++++++++++++-------------
+>   virt/kvm/arm/vgic/vgic-kvm-device.c           |   2 +-
+>   10 files changed, 148 insertions(+), 125 deletions(-)
 > 
-> Go for this.
-> 
+> diff --git a/arch/arm/include/asm/kvm_arm.h b/arch/arm/include/asm/kvm_arm.h
+> index 3ab8b37..c3f1f9b 100644
+> --- a/arch/arm/include/asm/kvm_arm.h
+> +++ b/arch/arm/include/asm/kvm_arm.h
+> @@ -133,8 +133,7 @@
+>    * space.
+>    */
+>   #define KVM_PHYS_SHIFT	(40)
+> -#define KVM_PHYS_SIZE	(_AC(1, ULL) << KVM_PHYS_SHIFT)
+> -#define KVM_PHYS_MASK	(KVM_PHYS_SIZE - _AC(1, ULL))
 
-Thanks!
+I assume you are moving them to kvm_mmu.h in order to match the arm64 
+side, right? If so, would not it make sense to make KVM_PHYS_SHIFT with it?
 
-> Generally ask the question: what does the user need?
-> 
-> In this case, especially userspace libraries like mriaa (right name?)
+[...]
 
-MRAA :)
+> diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
+> index 7faed6e..594c4e6 100644
+> --- a/arch/arm64/include/asm/kvm_mmu.h
+> +++ b/arch/arm64/include/asm/kvm_mmu.h
+> @@ -134,8 +134,11 @@ static inline unsigned long __kern_hyp_va(unsigned long v)
+>    * We currently only support a 40bit IPA.
+>    */
+>   #define KVM_PHYS_SHIFT	(40)
+> -#define KVM_PHYS_SIZE	(1UL << KVM_PHYS_SHIFT)
+> -#define KVM_PHYS_MASK	(KVM_PHYS_SIZE - 1UL)
+> +
+> +#define kvm_phys_shift(kvm)		KVM_PHYS_SHIFT
+> +#define kvm_phys_size(kvm)		(_AC(1, ULL) << kvm_phys_shift(kvm))
 
-> should be able to work out-of-the-box without knowing what
-> board it is but know it has a 96board connector.
->
+NIT: is the _AC(...) necessary? It does not look like this function is 
+going to be usable in assembly.
 
-I have sent out v2, incorporating the review comments from Todor.
-Can you please review it?
+> +#define kvm_phys_mask(kvm)		(kvm_phys_size(kvm) - _AC(1, ULL))
 
-Thanks,
-Mani
+Same here.
 
-> Yours,
-> Linus Walleij
+-- 
+Julien Grall
