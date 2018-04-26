@@ -1,129 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757065AbeDZQzF (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 12:55:05 -0400
-Received: from foss.arm.com ([217.140.101.70]:56530 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1757043AbeDZQy7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 12:54:59 -0400
-Date: Thu, 26 Apr 2018 17:55:19 +0100
-From: Will Deacon <will.deacon@arm.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        mingo@kernel.org, boqun.feng@gmail.com, paulmck@linux.vnet.ibm.com,
-        longman@redhat.com
-Subject: Re: [PATCH v3 05/14] locking/qspinlock: Remove unbounded cmpxchg
- loop from locking slowpath
-Message-ID: <20180426165518.GC898@arm.com>
-References: <1524738868-31318-1-git-send-email-will.deacon@arm.com>
- <1524738868-31318-6-git-send-email-will.deacon@arm.com>
- <20180426155335.GL4064@hirez.programming.kicks-ass.net>
+        id S1757142AbeDZQ4b (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 12:56:31 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56584 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756801AbeDZQ40 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 12:56:26 -0400
+Date: Thu, 26 Apr 2018 17:56:14 +0100
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Cc: bhelgaas@google.com, Joao.Pinto@synopsys.com, jingoohan1@gmail.com,
+        kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v7 3/9] PCI: endpoint: functions/pci-epf-test: Add second
+ entry
+Message-ID: <20180426165605.GA6370@e107981-ln.cambridge.arm.com>
+References: <cover.1524577064.git.gustavo.pimentel@synopsys.com>
+ <c6cfd167838ae8e226dee0820983efe918fa4e1f.1524577064.git.gustavo.pimentel@synopsys.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180426155335.GL4064@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <c6cfd167838ae8e226dee0820983efe918fa4e1f.1524577064.git.gustavo.pimentel@synopsys.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
+On Tue, Apr 24, 2018 at 02:44:40PM +0100, Gustavo Pimentel wrote:
+> Adds a seconds entry on the pci_epf_test_ids structure that disables the
 
-On Thu, Apr 26, 2018 at 05:53:35PM +0200, Peter Zijlstra wrote:
-> On Thu, Apr 26, 2018 at 11:34:19AM +0100, Will Deacon wrote:
-> > @@ -290,58 +312,50 @@ void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
-> >  	}
-> >  
-> >  	/*
-> > +	 * If we observe any contention; queue.
-> > +	 */
-> > +	if (val & ~_Q_LOCKED_MASK)
-> > +		goto queue;
-> > +
-> > +	/*
-> >  	 * trylock || pending
-> >  	 *
-> >  	 * 0,0,0 -> 0,0,1 ; trylock
-> >  	 * 0,0,1 -> 0,1,1 ; pending
-> >  	 */
-> > +	val = atomic_fetch_or_acquire(_Q_PENDING_VAL, &lock->val);
-> > +	if (!(val & ~_Q_LOCKED_MASK)) {
-> >  		/*
-> > +		 * we're pending, wait for the owner to go away.
-> > +		 *
-> > +		 * *,1,1 -> *,1,0
+"Add a second entry to..."
+
+> linkup_notifier parameter on driver for the designware EP.
 > 
-> Tail must be 0 here, right?
-
-Not necessarily. If we're concurrently setting pending with another slowpath
-locker, they could queue in the tail behind us, so we can't mess with those
-upper bits.
-
-> > +		 *
-> > +		 * this wait loop must be a load-acquire such that we match the
-> > +		 * store-release that clears the locked bit and create lock
-> > +		 * sequentiality; this is because not all
-> > +		 * clear_pending_set_locked() implementations imply full
-> > +		 * barriers.
-> >  		 */
-> > +		if (val & _Q_LOCKED_MASK) {
-> > +			smp_cond_load_acquire(&lock->val.counter,
-> > +					      !(VAL & _Q_LOCKED_MASK));
-> > +		}
-> >  
-> >  		/*
-> > +		 * take ownership and clear the pending bit.
-> > +		 *
-> > +		 * *,1,0 -> *,0,1
-> >  		 */
+> This allows designware EPs that doesn't have linkup notification signal
+> to work with pcitest.
 > 
-> Idem.
+> Updates the binding documentation accordingly.
 
-Same here, hence why clear_pending_set_locked is either a 16-bit store or an
-RmW (we can't just clobber the tail with 0).
+Valid for all the series: use imperative sentences.
 
-> > +		clear_pending_set_locked(lock);
-> >  		return;
-> > +	}
-> >  
-> >  	/*
-> > +	 * If pending was clear but there are waiters in the queue, then
-> > +	 * we need to undo our setting of pending before we queue ourselves.
-> >  	 */
-> > +	if (!(val & _Q_PENDING_MASK))
-> > +		clear_pending(lock);
+eg:
+
+"Update the binding documentation accordingly".
+
+not
+
+"Updates the binding documentation accordingly".
+
+> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+> Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+> ---
+> Change v2->v3:
+>  - Added second entry in pci_epf_test_ids structure.
+>  - Remove test_reg_bar field assignment on second entry.
+> Changes v3->v4:
+>  - Nothing changed, just to follow the patch set version.
+> Changes v4->v5:
+>  - Changed pci_epf_test_cfg2 to pci_epf_test_designware.
+> Changes v5->v6:
+>  - Changed name field from pci_epf_test_designware to pci_epf_test_dw.
+> Changes v6->v7:
+>  - Changed variable name from data_cfg2 to data_linkup_notifier_disabled.
 > 
-> This is the branch for when we have !0 tail.
-
-That's the case where "val" has a !0 tail, but I think the comments are
-trying to talk about the status of the lockword in memory, no?
-
-> >  	/*
-> >  	 * End of pending bit optimistic spinning and beginning of MCS
+>  Documentation/PCI/endpoint/function/binding/pci-test.txt | 2 ++
+>  drivers/pci/endpoint/functions/pci-epf-test.c            | 8 ++++++++
+>  2 files changed, 10 insertions(+)
 > 
-> > @@ -445,15 +459,15 @@ void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
-> >  	 * claim the lock:
-> >  	 *
-> >  	 * n,0,0 -> 0,0,1 : lock, uncontended
-> > +	 * *,*,0 -> *,*,1 : lock, contended
-> >  	 *
-> > +	 * If the queue head is the only one in the queue (lock value == tail)
-> > +	 * and nobody is pending, clear the tail code and grab the lock.
-> > +	 * Otherwise, we only need to grab the lock.
-> >  	 */
-> >  	for (;;) {
-> >  		/* In the PV case we might already have _Q_LOCKED_VAL set */
-> > +		if ((val & _Q_TAIL_MASK) != tail || (val & _Q_PENDING_MASK)) {
-> >  			set_locked(lock);
-> >  			break;
-> >  		}
-> 
-> This one hunk is terrible on the brain. I'm fairly sure I get it, but I
-> feel that comment can use help. Or at least, I need help reading it.
-> 
-> I'll try and cook up something when my brain starts working again.
+> diff --git a/Documentation/PCI/endpoint/function/binding/pci-test.txt b/Documentation/PCI/endpoint/function/binding/pci-test.txt
+> index 3b68b95..dc39f47 100644
+> --- a/Documentation/PCI/endpoint/function/binding/pci-test.txt
+> +++ b/Documentation/PCI/endpoint/function/binding/pci-test.txt
+> @@ -1,6 +1,8 @@
+>  PCI TEST ENDPOINT FUNCTION
+>  
+>  name: Should be "pci_epf_test" to bind to the pci_epf_test driver.
+> +name: Should be "pci_epf_test_dw" to bind to the pci_epf_test driver
+> +      with a custom configuration for the designware EP.
 
-Cheers. I think the code is a bit easier to read if you look at it after the
-whole series is applied, but the comments could probably still be improved.
+The link between the "name" and the device created is quite obscure and
+reading pci-test-howto.txt certainly does not clarify it.
 
-Will
+In pci-test-howto.txt an explanation should be added to the configs
+device creation paragraph to clarify it.
+
+>  Configurable Fields:
+>  vendorid	 : should be 0x104c
+> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
+> index 7cef851..4ab463b 100644
+> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
+> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+> @@ -459,10 +459,18 @@ static int pci_epf_test_bind(struct pci_epf *epf)
+>  	return 0;
+>  }
+>  
+> +static const struct pci_epf_test_data data_linkup_notifier_disabled = {
+> +	.linkup_notifier = false
+> +};
+> +
+>  static const struct pci_epf_device_id pci_epf_test_ids[] = {
+>  	{
+>  		.name = "pci_epf_test",
+>  	},
+> +	{
+> +		.name = "pci_epf_test_dw",
+> +		.driver_data = (kernel_ulong_t)&data_linkup_notifier_disabled,
+> +	},
+>  	{},
+
+Should not this be a property derived from the controller compatible
+property instead of the test device name written in configfs ?
+
+I think I am missing something in the whole scheme of things, please
+clarify.
+
+Thanks,
+Lorenzo
