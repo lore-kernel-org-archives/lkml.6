@@ -1,65 +1,139 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756078AbeDZL6I (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 07:58:08 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:34822 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756163AbeDZL6A (ORCPT
+        id S1755776AbeDZMEj (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 08:04:39 -0400
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:49542 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1755468AbeDZMEg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 07:58:00 -0400
-X-Google-Smtp-Source: AB8JxZr5DKA/Esc6xCgG/TBaWdeHSsq9HQmNsA2Ay8mLi/C8a8kMZx4Nb5hwQOlQ0cAaEnb4wMIYj2OvR1wC0a04NpQ=
+        Thu, 26 Apr 2018 08:04:36 -0400
+Date: Thu, 26 Apr 2018 15:04:34 +0300
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Todor Tomov <todor.tomov@linaro.org>
+Cc: mchehab@kernel.org, hverkuil@xs4all.nl,
+        laurent.pinchart@ideasonboard.com, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] media: Add a driver for the ov7251 camera sensor
+Message-ID: <20180426120434.2k6kkwpchm5pnksz@valkosipuli.retiisi.org.uk>
+References: <1524673246-14175-1-git-send-email-todor.tomov@linaro.org>
+ <1524673246-14175-3-git-send-email-todor.tomov@linaro.org>
+ <20180426065010.a67iqsaicpgu7m5b@valkosipuli.retiisi.org.uk>
+ <c065854a-084d-8bc8-a76e-2988be8c3788@linaro.org>
+ <20180426071656.wuq5f7prg6kig6oy@valkosipuli.retiisi.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <1524063005-1716-6-git-send-email-geert+renesas@glider.be>
-References: <1524063005-1716-1-git-send-email-geert+renesas@glider.be> <1524063005-1716-6-git-send-email-geert+renesas@glider.be>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 26 Apr 2018 13:57:58 +0200
-Message-ID: <CACRpkdYdkb0WRLr55dT1ZbgjCy6d+xj0tbhf6OnXMuM5ktJ9xQ@mail.gmail.com>
-Subject: Re: [PATCH v3 5/5] pinctrl: sunxi: Use of_clk_get_parent_count()
- instead of open coding
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Heiko Stuebner <heiko@sntech.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        linux-tegra@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180426071656.wuq5f7prg6kig6oy@valkosipuli.retiisi.org.uk>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 18, 2018 at 4:50 PM, Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+On Thu, Apr 26, 2018 at 10:16:56AM +0300, Sakari Ailus wrote:
+> On Thu, Apr 26, 2018 at 10:04:25AM +0300, Todor Tomov wrote:
+> > Hi Sakari,
+> > 
+> > On 26.04.2018 09:50, Sakari Ailus wrote:
+> > > Hi Todor,
+> > > 
+> > > On Wed, Apr 25, 2018 at 07:20:46PM +0300, Todor Tomov wrote:
+> > > ...
+> > >> +static int ov7251_write_reg(struct ov7251 *ov7251, u16 reg, u8 val)
+> > >> +{
+> > >> +	u8 regbuf[3];
+> > >> +	int ret;
+> > >> +
+> > >> +	regbuf[0] = reg >> 8;
+> > >> +	regbuf[1] = reg & 0xff;
+> > >> +	regbuf[2] = val;
+> > >> +
+> > >> +	ret = i2c_master_send(ov7251->i2c_client, regbuf, 3);
+> > >> +	if (ret < 0) {
+> > >> +		dev_err(ov7251->dev, "%s: write reg error %d: reg=%x, val=%x\n",
+> > >> +			__func__, ret, reg, val);
+> > >> +		return ret;
+> > >> +	}
+> > >> +
+> > >> +	return 0;
+> > > 
+> > > How about:
+> > > 
+> > > 	return ov7251_write_seq_regs(ov7251, reg, &val, 1);
+> > > 
+> > > And put the function below ov2751_write_seq_regs().
+> > 
+> > I'm not sure... It will calculate message length each time and then check
+> > that it is not greater than 5, which it is. Seems redundant.
+> > 
+> > > 
+> > >> +}
+> > >> +
+> > >> +static int ov7251_write_seq_regs(struct ov7251 *ov7251, u16 reg, u8 *val,
+> > >> +				 u8 num)
+> > >> +{
+> > >> +	const u8 maxregbuf = 5;
+> > >> +	u8 regbuf[maxregbuf];
 
-> A new open coder has crept in since 470b73a38470e8ba ("pinctrl: sunxi:
-> Use of_clk_get_parent_count() instead of open coding"), replace it.
->
-> of_clk_get_parent_count() was moved to <linux/of_clk.h>, so include that
-> instead of <linux/clk-provider.h>.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> ---
-> This depends on "[PATCH v3 1/5] clk: Extract OF clock helpers in
-> <linux/of_clk.h>".
->
-> v3:
->   - Add Acked-by,
+Apparently this leads to bad positive sparse warning. I'd fix it by:
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+diff --git a/drivers/media/i2c/ov7251.c b/drivers/media/i2c/ov7251.c
+index 3e2c0c03dfa9..d3ebb7529fca 100644
+--- a/drivers/media/i2c/ov7251.c
++++ b/drivers/media/i2c/ov7251.c
+@@ -643,12 +643,11 @@ static int ov7251_write_reg(struct ov7251 *ov7251, u16 reg, u8 val)
+ static int ov7251_write_seq_regs(struct ov7251 *ov7251, u16 reg, u8 *val,
+                                 u8 num)
+ {
+-       const u8 maxregbuf = 5;
+-       u8 regbuf[maxregbuf];
++       u8 regbuf[5];
+        u8 nregbuf = sizeof(reg) + num * sizeof(*val);
+        int ret = 0;
+ 
+-       if (nregbuf > maxregbuf)
++       if (nregbuf > sizeof(regbuf))
+                return -EINVAL;
+ 
+        regbuf[0] = reg >> 8;
 
-Please merge this through the clk tree.
+Let me know if you're happy with that; I can merge it to the original
+patch.
 
-Yours,
-Linus Walleij
+> > >> +	u8 nregbuf = sizeof(reg) + num * sizeof(*val);
+> > >> +	int ret = 0;
+> > >> +
+> > >> +	if (nregbuf > maxregbuf)
+> > >> +		return -EINVAL;
+> > >> +
+> > >> +	regbuf[0] = reg >> 8;
+> > >> +	regbuf[1] = reg & 0xff;
+> > >> +
+> > >> +	memcpy(regbuf + 2, val, num);
+> > >> +
+> > >> +	ret = i2c_master_send(ov7251->i2c_client, regbuf, nregbuf);
+> > >> +	if (ret < 0) {
+> > >> +		dev_err(ov7251->dev, "%s: write seq regs error %d: first reg=%x\n",
+> > > 
+> > > This line is over 80... 
+> > 
+> > Yes indeed. Somehow checkpatch does not report this line, I don't know why.
+> > 
+> > > 
+> > > If you're happy with these, I can make the changes, too; they're trivial.
+> > 
+> > Only the second one? Thanks :)
+> 
+> Works for me. I'd still think the overhead of managing the buffer is
+> irrelevant where to having an extra function to do essentially the same
+> thing is a source of maintenance and review work. Note that we're even now
+> spending time to discuss it. ;-)
+> 
+> -- 
+> Kind regards,
+> 
+> Sakari Ailus
+> e-mail: sakari.ailus@iki.fi
+
+-- 
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi
