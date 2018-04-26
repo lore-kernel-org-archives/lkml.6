@@ -1,115 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755014AbeDZKRH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 06:17:07 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50694 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754428AbeDZKRC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 06:17:02 -0400
-Date: Thu, 26 Apr 2018 12:16:59 +0200
-From: Christoffer Dall <christoffer.dall@arm.com>
-To: Auger Eric <eric.auger@redhat.com>
-Cc: eric.auger.pro@gmail.com, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
-        marc.zyngier@arm.com, cdall@kernel.org, peter.maydell@linaro.org,
-        andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
-Subject: Re: [PATCH v3 09/12] KVM: arm/arm64: Check all vcpu redistributors
- are set on map_resources
-Message-ID: <20180426101659.GD19872@C02W217FHV2R.local>
-References: <1523607658-9166-1-git-send-email-eric.auger@redhat.com>
- <1523607658-9166-10-git-send-email-eric.auger@redhat.com>
- <20180424210809.GJ4533@C02W217FHV2R.local>
- <cd56c99f-a266-dc04-41d7-62f35165a39b@redhat.com>
-MIME-Version: 1.0
+        id S1755255AbeDZKR6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 06:17:58 -0400
+Received: from mo4-p02-ob.smtp.rzone.de ([81.169.146.170]:14249 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754842AbeDZKRm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 06:17:42 -0400
+X-RZG-AUTH: :JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj4Qpw87WisdN1GTaY
+X-RZG-CLASS-ID: mo00
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cd56c99f-a266-dc04-41d7-62f35165a39b@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Subject: Re: [Letux-kernel] [PATCH v3 2/4] gpio: pca953x: add register definitions for pcal6524 and fix address calculation
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <CAHp75Vdsdc7K1sGO-WASeF0HCTWv1HaYP7vMxU5YZ1viMwyuDQ@mail.gmail.com>
+Date: Thu, 26 Apr 2018 12:17:23 +0200
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        Alexandre Courbot <gnurou@gmail.com>, Pawel Moll <pawel.moll@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Linus Walleij <linus.walleij@linaro.org>, kernel@pyra-handheld.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>,
+        Discussions about the Letux Kernel
+        <letux-kernel@openphoenux.org>
+Message-Id: <C60F920E-6873-4CBF-B34B-F3ED21CF5F0E@goldelico.com>
+References: <cover.1523376423.git.hns@goldelico.com> <0e9bea79eae7504e61fabdb4a0311f8fdc2f6b25.1523376423.git.hns@goldelico.com> <CAHp75VfYk1tSJ9PUshDvY2RaYrc+wR+hyrK8Ck1oQSUXPr-0fQ@mail.gmail.com> <EDF7FA02-C79C-4ADF-A10C-F8C4DBFE5158@goldelico.com> <65085C47-CDA8-4F8C-8307-C145F21F7D19@goldelico.com> <CAHp75Vdsdc7K1sGO-WASeF0HCTWv1HaYP7vMxU5YZ1viMwyuDQ@mail.gmail.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+X-Mailer: Apple Mail (2.3124)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3QAI3kH019720
 
-On Thu, Apr 26, 2018 at 11:56:10AM +0200, Auger Eric wrote:
-> 
-> 
-> On 04/24/2018 11:08 PM, Christoffer Dall wrote:
-> > On Fri, Apr 13, 2018 at 10:20:55AM +0200, Eric Auger wrote:
-> >> On vcpu first run, we eventually know the actual number of vcpus.
-> >> This is a synchronization point to check all redistributors regions
-> >> were assigned.
-> > 
-> > Isn't it the other way around?  We want to check that all redistributors
-> > (one for every VCPU) has its base address set?  (I don't suppose we care
-> > about unused redistributor regions).
-> Yes I meant "to check all redistributors were assigned"
-> > 
-> >> On kvm_vgic_map_resources() we check both dist and
-> >> redist were set, eventually check potential base address inconsistencies.
-> > 
-> > Do we need to check that again?  Didn't we check that at
-> > creation/register time?
-> Yes we need to, to handle the case where the userspace does not provide
-> sufficient rdist region space
-> 
-> create 8 vcpus (no iodev registered)
-> define a redist region for 4 (4 iodevs registered)
-> start the vcpus
-> > 
-> >>
-> >> Signed-off-by: Eric Auger <eric.auger@redhat.com>
-> >> ---
-> >>  virt/kvm/arm/vgic/vgic-v3.c | 19 ++++++++++++++-----
-> >>  1 file changed, 14 insertions(+), 5 deletions(-)
-> >>
-> >> diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-v3.c
-> >> index b80f650..feabc24 100644
-> >> --- a/virt/kvm/arm/vgic/vgic-v3.c
-> >> +++ b/virt/kvm/arm/vgic/vgic-v3.c
-> >> @@ -484,16 +484,25 @@ struct vgic_redist_region *vgic_v3_rdist_region_from_index(struct kvm *kvm,
-> >>  
-> >>  int vgic_v3_map_resources(struct kvm *kvm)
-> >>  {
-> >> -	int ret = 0;
-> >>  	struct vgic_dist *dist = &kvm->arch.vgic;
-> >> -	struct vgic_redist_region *rdreg =
-> >> -		list_first_entry(&dist->rd_regions,
-> >> -				 struct vgic_redist_region, list);
-> >> +	struct kvm_vcpu *vcpu;
-> >> +	int ret = 0;
-> >> +	int c;
-> >>  
-> >>  	if (vgic_ready(kvm))
-> >>  		goto out;
-> >>  
-> >> -	if (IS_VGIC_ADDR_UNDEF(dist->vgic_dist_base) || !rdreg) {
-> >> +	kvm_for_each_vcpu(c, vcpu, kvm) {
-> >> +		struct vgic_cpu *vgic_cpu = &vcpu->arch.vgic_cpu;
-> >> +
-> >> +		if (IS_VGIC_ADDR_UNDEF(vgic_cpu->rd_iodev.base_addr)) {
-> >> +			kvm_err("vcpu %d redistributor base not set\n", c);
-> > 
-> > Shouldn't this be a kvm_debug instead?  I think the user can just
-> > provoke this by failing to register enough redistributor regions.
-> yes indeed.
-> > 
-> > I'm also wondering if we could check this on vgic_init time for gicv3,
-> > which should have a defined vgic init ordering requirement.  That would
-> > make debugging it slightly easier to debug than "my machine isn't
-> > starting, and I get -ENXIO, and it can mean anything".
-> 
-> Well at vgic_init time, vcpus are frozen but dist and redist regions are
-> not forced to be set, hence the late check we do in map_resources, on
-> 1st VCPU run. Not sure I get this one?
-> 
+Hi Andy,
 
-I thought we required userspace to register the redist regions before
-initializing the vgic, but if there is no defined order there, then
-fine.
+> Am 26.04.2018 um 12:06 schrieb Andy Shevchenko <andy.shevchenko@gmail.com>:
+> 
+> On Wed, Apr 25, 2018 at 9:05 PM, H. Nikolaus Schaller <hns@goldelico.com> wrote:
+>>> Am 11.04.2018 um 07:00 schrieb H. Nikolaus Schaller <hns@goldelico.com>:
+>>>> Am 10.04.2018 um 20:06 schrieb Andy Shevchenko <andy.shevchenko@gmail.com>:
+>>>> On Tue, Apr 10, 2018 at 7:07 PM, H. Nikolaus Schaller <hns@goldelico.com> wrote:
+> 
+>>>>> PCAL chips ("L" seems to stand for "latched") have additional
+>>>>> registers starting at address 0x40 to control the latches,
+>>>>> interrupt mask, pull-up and pull down etc.
+>>>>> 
+>>>>> The constants are so far defined in a way that they fit for
+>>>>> the pcal9555a when shifted by the number of banks, i.e. multiplied
+>>>>> by 2.
+>>>>> 
+>>>>> Now the pcal6524 has 3 banks which means the relative offset
+>>>>> must be multiplied by 4 which gives a wrong result if not done
+>>>>> carefully, since the base offset is already included in the offset.
+>>>>> 
+>>>>> For the basic registers shared with all pca93xx/tca64xx chips
+>>>>> there is no such offset.
+>>>>> 
+>>>>> Therefore, we add code to adjust the register number for exended
+>>>>> registers to the 24 bit accessor functions.
+>>>>> 
+>>>>> And we add additional register offset constants (not yet used by
+>>>>> the driver code) which are specific to the pcal6524.
+> 
+>>>> First of all, as I said, please split this to two patches. Don't mix the things.
+>>> Ok. Queued for v4.
+> 
+> I actually think it would be even more patches:
+> - move to hex from dec
+> - add new definitions for PCAL953x
+> - append new code for registers (see below)
+> - add definitions for PCAL6524
 
-(Although I'm getting the feeling we should have been more strict on our
-ordering requirement, and that the whole "you can create anything you
-want in any order you want" makes the kernel implementation really
-complex.  I may be reversing my own oppinion on this matter here.)
+It is already done in my local git,
+just waiting for the address thing...
 
-Thanks,
--Christoffer
+> 
+>>>>> +       /* adjust register address for pcal6524 */
+>>>>> +       if (reg >= PCAL953X_OUT_STRENGTH)
+>>>>> +               reg -= PCAL953X_OUT_STRENGTH >> 1;
+>>>>> +
+>>>> 
+>>>> Give me some days to think about it.
+> 
+> So, what about something like:
+> 
+> --- 8< --- 8< ---
+> #define PCAL953X_GPIO_MASK GENMASK(5,0) // this makes sense even for
+> your initial solution
+> 
+> int bank_shift = fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
+> int addr = (reg & PCAL953X_GPIO_MASK) << bank_shift;
+> int pinctrl = (reg & ~PCAL953X_GPIO_MASK) << 1;
+
+Ok! Intersting idea.
+
+Basically decomposes register bank number (pinctrl) and register offset (addr)
+and shifts them differently.
+
+> 
+> return i2c_smbus_write_i2c_block_data(chip->client,
+>                                             pinctrl | addr  | REG_ADDR_AI,
+>                                             NBANK(chip), val);
+> 
+> // similar for read.
+
+Looks good. I'll test asap.
+
+BR and thanks,
+Nikolaus
+
+> 
+> --- 8< --- 8< ---
+> 
+> Keep in mind your solution has a bug for registers starting from 0x30.
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
