@@ -1,208 +1,248 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754032AbeDZUPv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 16:15:51 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:59326 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751615AbeDZUPt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 16:15:49 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 03/17] pinctrl: sh-pfc: r8a77965: Add DU RGB output pins, groups and functions
-Date: Thu, 26 Apr 2018 23:16:02 +0300
-Message-ID: <2121989.nfLzmt0Wff@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20180426165346.494-4-kieran.bingham+renesas@ideasonboard.com>
-References: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com> <20180426165346.494-4-kieran.bingham+renesas@ideasonboard.com>
+        id S1754228AbeDZUQc (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 16:16:32 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39848 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752769AbeDZUQb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 16:16:31 -0400
+Subject: Re: [PATCH v3 05/14] locking/qspinlock: Remove unbounded cmpxchg loop
+ from locking slowpath
+To: Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, peterz@infradead.org,
+        mingo@kernel.org, boqun.feng@gmail.com, paulmck@linux.vnet.ibm.com
+References: <1524738868-31318-1-git-send-email-will.deacon@arm.com>
+ <1524738868-31318-6-git-send-email-will.deacon@arm.com>
+From: Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <1adce90b-7627-ed71-fd34-bb33388790d5@redhat.com>
+Date: Thu, 26 Apr 2018 16:16:30 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
+In-Reply-To: <1524738868-31318-6-git-send-email-will.deacon@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3QKFvqk031086
 
-Hi Kieran,
-
-Thank you for the patch.
-
-On Thursday, 26 April 2018 19:53:32 EEST Kieran Bingham wrote:
-> This patch adds pins, groups and functions for parallel RGB output
-> signals from DU. The HDMI and TCON pins are added to separate groups.
-> 
-> Based on a similar patch of the R8A7796 PFC driver by Niklas Söderlund
-> <niklas.soderlund+renesas@ragnatech.se>.
-> 
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> [Kieran: Rebase on top of tree]
-> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-I expect Geert to take this patch in his tree.
-
+On 04/26/2018 06:34 AM, Will Deacon wrote:
+> The qspinlock locking slowpath utilises a "pending" bit as a simple form
+> of an embedded test-and-set lock that can avoid the overhead of explicit
+> queuing in cases where the lock is held but uncontended. This bit is
+> managed using a cmpxchg loop which tries to transition the uncontended
+> lock word from (0,0,0) -> (0,0,1) or (0,0,1) -> (0,1,1).
+>
+> Unfortunately, the cmpxchg loop is unbounded and lockers can be starved
+> indefinitely if the lock word is seen to oscillate between unlocked
+> (0,0,0) and locked (0,0,1). This could happen if concurrent lockers are
+> able to take the lock in the cmpxchg loop without queuing and pass it
+> around amongst themselves.
+>
+> This patch fixes the problem by unconditionally setting _Q_PENDING_VAL
+> using atomic_fetch_or, and then inspecting the old value to see whether
+> we need to spin on the current lock owner, or whether we now effectively
+> hold the lock. The tricky scenario is when concurrent lockers end up
+> queuing on the lock and the lock becomes available, causing us to see
+> a lockword of (n,0,0). With pending now set, simply queuing could lead
+> to deadlock as the head of the queue may not have observed the pending
+> flag being cleared. Conversely, if the head of the queue did observe
+> pending being cleared, then it could transition the lock from (n,0,0) ->
+> (0,0,1) meaning that any attempt to "undo" our setting of the pending
+> bit could race with a concurrent locker trying to set it.
+>
+> We handle this race by preserving the pending bit when taking the lock
+> after reaching the head of the queue and leaving the tail entry intact
+> if we saw pending set, because we know that the tail is going to be
+> updated shortly.
+>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Signed-off-by: Will Deacon <will.deacon@arm.com>
 > ---
->  drivers/pinctrl/sh-pfc/pfc-r8a77965.c | 116 ++++++++++++++++++++++++++
->  1 file changed, 116 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-> b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c index 3771b2d10f39..f5a37d3ea753
-> 100644
-> --- a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-> @@ -1662,6 +1662,102 @@ static const unsigned int avb_avtp_capture_b_mux[] =
-> { AVB_AVTP_CAPTURE_B_MARK,
->  };
-> 
-> +/* - DU ---------------------------------------------------------------- */
-> +static const unsigned int du_rgb666_pins[] = {
-> +	/* R[7:2], G[7:2], B[7:2] */
-> +	RCAR_GP_PIN(0, 15), RCAR_GP_PIN(0, 14), RCAR_GP_PIN(0, 13),
-> +	RCAR_GP_PIN(0, 12), RCAR_GP_PIN(0, 11), RCAR_GP_PIN(0, 10),
-> +	RCAR_GP_PIN(1, 15), RCAR_GP_PIN(1, 14), RCAR_GP_PIN(1, 13),
-> +	RCAR_GP_PIN(1, 12), RCAR_GP_PIN(1, 19), RCAR_GP_PIN(1, 18),
-> +	RCAR_GP_PIN(1, 7),  RCAR_GP_PIN(1, 6),  RCAR_GP_PIN(1, 5),
-> +	RCAR_GP_PIN(1, 4),  RCAR_GP_PIN(1, 3),  RCAR_GP_PIN(1, 2),
-> +};
+>  kernel/locking/qspinlock.c          | 102 ++++++++++++++++++++----------------
+>  kernel/locking/qspinlock_paravirt.h |   5 --
+>  2 files changed, 58 insertions(+), 49 deletions(-)
+>
+> diff --git a/kernel/locking/qspinlock.c b/kernel/locking/qspinlock.c
+> index a0f7976348f8..ad94b7def005 100644
+> --- a/kernel/locking/qspinlock.c
+> +++ b/kernel/locking/qspinlock.c
+> @@ -128,6 +128,17 @@ static inline __pure struct mcs_spinlock *decode_tail(u32 tail)
+>  
+>  #if _Q_PENDING_BITS == 8
+>  /**
+> + * clear_pending - clear the pending bit.
+> + * @lock: Pointer to queued spinlock structure
+> + *
+> + * *,1,* -> *,0,*
+> + */
+> +static __always_inline void clear_pending(struct qspinlock *lock)
+> +{
+> +	WRITE_ONCE(lock->pending, 0);
+> +}
 > +
-> +static const unsigned int du_rgb666_mux[] = {
-> +	DU_DR7_MARK, DU_DR6_MARK, DU_DR5_MARK, DU_DR4_MARK,
-> +	DU_DR3_MARK, DU_DR2_MARK,
-> +	DU_DG7_MARK, DU_DG6_MARK, DU_DG5_MARK, DU_DG4_MARK,
-> +	DU_DG3_MARK, DU_DG2_MARK,
-> +	DU_DB7_MARK, DU_DB6_MARK, DU_DB5_MARK, DU_DB4_MARK,
-> +	DU_DB3_MARK, DU_DB2_MARK,
-> +};
+> +/**
+>   * clear_pending_set_locked - take ownership and clear the pending bit.
+>   * @lock: Pointer to queued spinlock structure
+>   *
+> @@ -163,6 +174,17 @@ static __always_inline u32 xchg_tail(struct qspinlock *lock, u32 tail)
+>  #else /* _Q_PENDING_BITS == 8 */
+>  
+>  /**
+> + * clear_pending - clear the pending bit.
+> + * @lock: Pointer to queued spinlock structure
+> + *
+> + * *,1,* -> *,0,*
+> + */
+> +static __always_inline void clear_pending(struct qspinlock *lock)
+> +{
+> +	atomic_andnot(_Q_PENDING_VAL, &lock->val);
+> +}
 > +
-> +static const unsigned int du_rgb888_pins[] = {
-> +	/* R[7:0], G[7:0], B[7:0] */
-> +	RCAR_GP_PIN(0, 15), RCAR_GP_PIN(0, 14), RCAR_GP_PIN(0, 13),
-> +	RCAR_GP_PIN(0, 12), RCAR_GP_PIN(0, 11), RCAR_GP_PIN(0, 10),
-> +	RCAR_GP_PIN(0, 9),  RCAR_GP_PIN(0, 8),
-> +	RCAR_GP_PIN(1, 15), RCAR_GP_PIN(1, 14), RCAR_GP_PIN(1, 13),
-> +	RCAR_GP_PIN(1, 12), RCAR_GP_PIN(1, 19), RCAR_GP_PIN(1, 18),
-> +	RCAR_GP_PIN(1, 17), RCAR_GP_PIN(1, 16),
-> +	RCAR_GP_PIN(1, 7),  RCAR_GP_PIN(1, 6),  RCAR_GP_PIN(1, 5),
-> +	RCAR_GP_PIN(1, 4),  RCAR_GP_PIN(1, 3),  RCAR_GP_PIN(1, 2),
-> +	RCAR_GP_PIN(1, 1),  RCAR_GP_PIN(1, 0),
-> +};
+> +/**
+>   * clear_pending_set_locked - take ownership and clear the pending bit.
+>   * @lock: Pointer to queued spinlock structure
+>   *
+> @@ -266,7 +288,7 @@ static __always_inline u32  __pv_wait_head_or_lock(struct qspinlock *lock,
+>  void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
+>  {
+>  	struct mcs_spinlock *prev, *next, *node;
+> -	u32 new, old, tail;
+> +	u32 old, tail;
+>  	int idx;
+>  
+>  	BUILD_BUG_ON(CONFIG_NR_CPUS >= (1U << _Q_TAIL_CPU_BITS));
+> @@ -290,58 +312,50 @@ void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
+>  	}
+>  
+>  	/*
+> +	 * If we observe any contention; queue.
+> +	 */
+> +	if (val & ~_Q_LOCKED_MASK)
+> +		goto queue;
 > +
-> +static const unsigned int du_rgb888_mux[] = {
-> +	DU_DR7_MARK, DU_DR6_MARK, DU_DR5_MARK, DU_DR4_MARK,
-> +	DU_DR3_MARK, DU_DR2_MARK, DU_DR1_MARK, DU_DR0_MARK,
-> +	DU_DG7_MARK, DU_DG6_MARK, DU_DG5_MARK, DU_DG4_MARK,
-> +	DU_DG3_MARK, DU_DG2_MARK, DU_DG1_MARK, DU_DG0_MARK,
-> +	DU_DB7_MARK, DU_DB6_MARK, DU_DB5_MARK, DU_DB4_MARK,
-> +	DU_DB3_MARK, DU_DB2_MARK, DU_DB1_MARK, DU_DB0_MARK,
-> +};
-> +
-> +static const unsigned int du_clk_out_0_pins[] = {
-> +	/* CLKOUT */
-> +	RCAR_GP_PIN(1, 27),
-> +};
-> +
-> +static const unsigned int du_clk_out_0_mux[] = {
-> +	DU_DOTCLKOUT0_MARK
-> +};
-> +
-> +static const unsigned int du_clk_out_1_pins[] = {
-> +	/* CLKOUT */
-> +	RCAR_GP_PIN(2, 3),
-> +};
-> +
-> +static const unsigned int du_clk_out_1_mux[] = {
-> +	DU_DOTCLKOUT1_MARK
-> +};
-> +
-> +static const unsigned int du_sync_pins[] = {
-> +	/* EXVSYNC/VSYNC, EXHSYNC/HSYNC */
-> +	RCAR_GP_PIN(2, 5), RCAR_GP_PIN(2, 4),
-> +};
-> +
-> +static const unsigned int du_sync_mux[] = {
-> +	DU_EXVSYNC_DU_VSYNC_MARK, DU_EXHSYNC_DU_HSYNC_MARK
-> +};
-> +
-> +static const unsigned int du_oddf_pins[] = {
-> +	/* EXDISP/EXODDF/EXCDE */
-> +	RCAR_GP_PIN(2, 2),
-> +};
-> +
-> +static const unsigned int du_oddf_mux[] = {
-> +	DU_EXODDF_DU_ODDF_DISP_CDE_MARK,
-> +};
-> +
-> +static const unsigned int du_cde_pins[] = {
-> +	/* CDE */
-> +	RCAR_GP_PIN(2, 0),
-> +};
-> +
-> +static const unsigned int du_cde_mux[] = {
-> +	DU_CDE_MARK,
-> +};
-> +
-> +static const unsigned int du_disp_pins[] = {
-> +	/* DISP */
-> +	RCAR_GP_PIN(2, 1),
-> +};
-> +
-> +static const unsigned int du_disp_mux[] = {
-> +	DU_DISP_MARK,
-> +};
-> +
->  /* - INTC-EX ----------------------------------------------------------- */
->  static const unsigned int intc_ex_irq0_pins[] = {
->  	/* IRQ0 */
-> @@ -2756,6 +2852,14 @@ static const struct sh_pfc_pin_group pinmux_groups[]
-> = { SH_PFC_PIN_GROUP(avb_avtp_capture_a),
->  	SH_PFC_PIN_GROUP(avb_avtp_match_b),
->  	SH_PFC_PIN_GROUP(avb_avtp_capture_b),
-> +	SH_PFC_PIN_GROUP(du_rgb666),
-> +	SH_PFC_PIN_GROUP(du_rgb888),
-> +	SH_PFC_PIN_GROUP(du_clk_out_0),
-> +	SH_PFC_PIN_GROUP(du_clk_out_1),
-> +	SH_PFC_PIN_GROUP(du_sync),
-> +	SH_PFC_PIN_GROUP(du_oddf),
-> +	SH_PFC_PIN_GROUP(du_cde),
-> +	SH_PFC_PIN_GROUP(du_disp),
->  	SH_PFC_PIN_GROUP(intc_ex_irq0),
->  	SH_PFC_PIN_GROUP(intc_ex_irq1),
->  	SH_PFC_PIN_GROUP(intc_ex_irq2),
-> @@ -2922,6 +3026,17 @@ static const char * const avb_groups[] = {
->  	"avb_avtp_capture_b",
->  };
-> 
-> +static const char * const du_groups[] = {
-> +	"du_rgb666",
-> +	"du_rgb888",
-> +	"du_clk_out_0",
-> +	"du_clk_out_1",
-> +	"du_sync",
-> +	"du_oddf",
-> +	"du_cde",
-> +	"du_disp",
-> +};
-> +
->  static const char * const intc_ex_groups[] = {
->  	"intc_ex_irq0",
->  	"intc_ex_irq1",
-> @@ -3139,6 +3254,7 @@ static const char * const usb30_groups[] = {
-> 
->  static const struct sh_pfc_function pinmux_functions[] = {
->  	SH_PFC_FUNCTION(avb),
-> +	SH_PFC_FUNCTION(du),
->  	SH_PFC_FUNCTION(intc_ex),
->  	SH_PFC_FUNCTION(msiof0),
->  	SH_PFC_FUNCTION(msiof1),
+> +	/*
+>  	 * trylock || pending
+>  	 *
+>  	 * 0,0,0 -> 0,0,1 ; trylock
+>  	 * 0,0,1 -> 0,1,1 ; pending
+>  	 */
+> -	for (;;) {
+> +	val = atomic_fetch_or_acquire(_Q_PENDING_VAL, &lock->val);
+> +	if (!(val & ~_Q_LOCKED_MASK)) {
+>  		/*
+> -		 * If we observe any contention; queue.
+> +		 * we're pending, wait for the owner to go away.
+> +		 *
+> +		 * *,1,1 -> *,1,0
+> +		 *
+> +		 * this wait loop must be a load-acquire such that we match the
+> +		 * store-release that clears the locked bit and create lock
+> +		 * sequentiality; this is because not all
+> +		 * clear_pending_set_locked() implementations imply full
+> +		 * barriers.
+>  		 */
+> -		if (val & ~_Q_LOCKED_MASK)
+> -			goto queue;
+> -
+> -		new = _Q_LOCKED_VAL;
+> -		if (val == new)
+> -			new |= _Q_PENDING_VAL;
+> +		if (val & _Q_LOCKED_MASK) {
+> +			smp_cond_load_acquire(&lock->val.counter,
+> +					      !(VAL & _Q_LOCKED_MASK));
+> +		}
+>  
+>  		/*
+> -		 * Acquire semantic is required here as the function may
+> -		 * return immediately if the lock was free.
+> +		 * take ownership and clear the pending bit.
+> +		 *
+> +		 * *,1,0 -> *,0,1
+>  		 */
+> -		old = atomic_cmpxchg_acquire(&lock->val, val, new);
+> -		if (old == val)
+> -			break;
+> -
+> -		val = old;
+> -	}
+> -
+> -	/*
+> -	 * we won the trylock
+> -	 */
+> -	if (new == _Q_LOCKED_VAL)
+> +		clear_pending_set_locked(lock);
+>  		return;
+> +	}
+>  
+>  	/*
+> -	 * we're pending, wait for the owner to go away.
+> -	 *
+> -	 * *,1,1 -> *,1,0
+> -	 *
+> -	 * this wait loop must be a load-acquire such that we match the
+> -	 * store-release that clears the locked bit and create lock
+> -	 * sequentiality; this is because not all clear_pending_set_locked()
+> -	 * implementations imply full barriers.
+> -	 */
+> -	smp_cond_load_acquire(&lock->val.counter, !(VAL & _Q_LOCKED_MASK));
+> -
+> -	/*
+> -	 * take ownership and clear the pending bit.
+> -	 *
+> -	 * *,1,0 -> *,0,1
+> +	 * If pending was clear but there are waiters in the queue, then
+> +	 * we need to undo our setting of pending before we queue ourselves.
+>  	 */
+> -	clear_pending_set_locked(lock);
+> -	return;
+> +	if (!(val & _Q_PENDING_MASK))
+> +		clear_pending(lock);
+>  
+>  	/*
+>  	 * End of pending bit optimistic spinning and beginning of MCS
+> @@ -445,15 +459,15 @@ void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
+>  	 * claim the lock:
+>  	 *
+>  	 * n,0,0 -> 0,0,1 : lock, uncontended
+> -	 * *,0,0 -> *,0,1 : lock, contended
+> +	 * *,*,0 -> *,*,1 : lock, contended
+>  	 *
+> -	 * If the queue head is the only one in the queue (lock value == tail),
+> -	 * clear the tail code and grab the lock. Otherwise, we only need
+> -	 * to grab the lock.
+> +	 * If the queue head is the only one in the queue (lock value == tail)
+> +	 * and nobody is pending, clear the tail code and grab the lock.
+> +	 * Otherwise, we only need to grab the lock.
+>  	 */
+>  	for (;;) {
+>  		/* In the PV case we might already have _Q_LOCKED_VAL set */
+> -		if ((val & _Q_TAIL_MASK) != tail) {
+> +		if ((val & _Q_TAIL_MASK) != tail || (val & _Q_PENDING_MASK)) {
+>  			set_locked(lock);
+>  			break;
+>  		}
+> diff --git a/kernel/locking/qspinlock_paravirt.h b/kernel/locking/qspinlock_paravirt.h
+> index 2711940429f5..2dbad2f25480 100644
+> --- a/kernel/locking/qspinlock_paravirt.h
+> +++ b/kernel/locking/qspinlock_paravirt.h
+> @@ -118,11 +118,6 @@ static __always_inline void set_pending(struct qspinlock *lock)
+>  	WRITE_ONCE(lock->pending, 1);
+>  }
+>  
+> -static __always_inline void clear_pending(struct qspinlock *lock)
+> -{
+> -	WRITE_ONCE(lock->pending, 0);
+> -}
+> -
+>  /*
+>   * The pending bit check in pv_queued_spin_steal_lock() isn't a memory
+>   * barrier. Therefore, an atomic cmpxchg_acquire() is used to acquire the
 
--- 
-Regards,
+There is another clear_pending() function after the "#else /*
+_Q_PENDING_BITS == 8 */" line that need to be removed as well.
 
-Laurent Pinchart
+-Longman
