@@ -1,78 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756549AbeDZOLV (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 10:11:21 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:38466 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755384AbeDZOLR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 10:11:17 -0400
-X-Google-Smtp-Source: AIpwx4+1DMbRTN4Ze75dkToHEH/X2ulXmlGw/z4L5X2GvHpXxTn8m08XiWi3Vyz8cR2s0YeaZIT1Mw==
-From: Ahmed Abdelsalam <amsalam20@gmail.com>
-To: davem@davemloft.net, dav.lebrun@gmail.com, netdev@vger.kernel.org,
+        id S1756516AbeDZONm (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 10:13:42 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53266 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754847AbeDZONh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 10:13:37 -0400
+Date: Thu, 26 Apr 2018 10:13:37 -0400
+From: Vivek Goyal <vgoyal@redhat.com>
+To: Miklos Szeredi <mszeredi@redhat.com>
+Cc: linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Cc: Ahmed Abdelsalam <amsalam20@gmail.com>
-Subject: [net-next] ipv6: sr: Extract the right key values for "seg6_make_flowlabel"
-Date: Thu, 26 Apr 2018 16:11:11 +0200
-Message-Id: <1524751871-1353-1-git-send-email-amsalam20@gmail.com>
-X-Mailer: git-send-email 2.1.4
+Subject: Re: [RFC PATCH 09/35] ovl: stack file ops
+Message-ID: <20180426141337.GA4308@redhat.com>
+References: <20180412150826.20988-1-mszeredi@redhat.com>
+ <20180412150826.20988-10-mszeredi@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180412150826.20988-10-mszeredi@redhat.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The seg6_make_flowlabel() is used by seg6_do_srh_encap() to compute the
-flowlabel from a given skb. It relies on skb_get_hash() which eventually
-calls __skb_flow_dissect() to extract the flow_keys struct values from
-the skb.
+On Thu, Apr 12, 2018 at 05:08:00PM +0200, Miklos Szeredi wrote:
 
-In case of IPv4 traffic, calling seg6_make_flowlabel() after skb_push(),
-skb_reset_network_header(), and skb_mac_header_rebuild() will results in
-flow_keys struct of all key values set to zero.
+[..]
+> diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+> new file mode 100644
+> index 000000000000..a0b606885c41
+> --- /dev/null
+> +++ b/fs/overlayfs/file.c
+> @@ -0,0 +1,76 @@
+> +/*
+> + * Copyright (C) 2017 Red Hat, Inc.
+> + *
+> + * This program is free software; you can redistribute it and/or modify it
+> + * under the terms of the GNU General Public License version 2 as published by
+> + * the Free Software Foundation.
+> + */
+> +
+> +#include <linux/cred.h>
+> +#include <linux/file.h>
+> +#include <linux/xattr.h>
+> +#include "overlayfs.h"
+> +
+> +static struct file *ovl_open_realfile(const struct file *file)
+> +{
+> +	struct inode *inode = file_inode(file);
+> +	struct inode *upperinode = ovl_inode_upper(inode);
+> +	struct inode *realinode = upperinode ?: ovl_inode_lower(inode);
+> +	struct file *realfile;
+> +	const struct cred *old_cred;
+> +
+> +	old_cred = ovl_override_creds(inode->i_sb);
+> +	realfile = path_open(&file->f_path, file->f_flags | O_NOATIME,
+> +			     realinode, current_cred(), false);
+> +	revert_creds(old_cred);
+> +
+> +	pr_debug("open(%p[%pD2/%c], 0%o) -> (%p, 0%o)\n",
+> +		 file, file, upperinode ? 'u' : 'l', file->f_flags,
+> +		 realfile, IS_ERR(realfile) ? 0 : realfile->f_flags);
+> +
+> +	return realfile;
+> +}
+> +
+> +static int ovl_open(struct inode *inode, struct file *file)
+> +{
+> +	struct dentry *dentry = file_dentry(file);
 
-This patch calls seg6_make_flowlabel() before resetting the headers of skb
-to get the right key values.
+Hi Miklos,
 
-Extracted Key values are based on the type inner packet as follows:
-1) IPv6 traffic: src_IP, dst_IP, L4 proto, and flowlabel of inner packet.
-2) IPv4 traffic: src_IP, dst_IP, L4 proto, src_port, and dst_port
-3) L2 traffic: depends on what kind of traffic carried into the L2
-frame. IPv6 and IPv4 traffic works as discussed 1) and 2)
+There is one thing I can't wrap my head around, so I better ask.
 
-Signed-off-by: Ahmed Abdelsalam <amsalam20@gmail.com>
----
- net/ipv6/seg6_iptunnel.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+file_dentry() will call ovl_d_real() and try to find dentry based on
+inode installed in f->f_inode. If ovl_d_real() can't find inode dentry
+matching the passed in inode, it warns.
 
-diff --git a/net/ipv6/seg6_iptunnel.c b/net/ipv6/seg6_iptunnel.c
-index 9898926..0df83c0 100644
---- a/net/ipv6/seg6_iptunnel.c
-+++ b/net/ipv6/seg6_iptunnel.c
-@@ -119,6 +119,9 @@ int seg6_do_srh_encap(struct sk_buff *skb, struct ipv6_sr_hdr *osrh, int proto)
- 	int hdrlen, tot_len, err;
- 	__be32 flowlabel;
- 
-+	inner_hdr = ipv6_hdr(skb);
-+	flowlabel = seg6_make_flowlabel(net, skb, inner_hdr);
-+
- 	hdrlen = (osrh->hdrlen + 1) << 3;
- 	tot_len = hdrlen + sizeof(*hdr);
- 
-@@ -126,8 +129,6 @@ int seg6_do_srh_encap(struct sk_buff *skb, struct ipv6_sr_hdr *osrh, int proto)
- 	if (unlikely(err))
- 		return err;
- 
--	inner_hdr = ipv6_hdr(skb);
--
- 	skb_push(skb, tot_len);
- 	skb_reset_network_header(skb);
- 	skb_mac_header_rebuild(skb);
-@@ -138,7 +139,6 @@ int seg6_do_srh_encap(struct sk_buff *skb, struct ipv6_sr_hdr *osrh, int proto)
- 	 * decapsulation will overwrite inner hlim with outer hlim
- 	 */
- 
--	flowlabel = seg6_make_flowlabel(net, skb, inner_hdr);
- 	if (skb->protocol == htons(ETH_P_IPV6)) {
- 		ip6_flow_hdr(hdr, ip6_tclass(ip6_flowinfo(inner_hdr)),
- 			     flowlabel);
--- 
-2.1.4
+Assume, I have a stacked overlay configuration. Let me call top level
+overlay layer ovl1 and lower level overlay layer ovl2. Say I open a 
+file foo.txt. Now ovl_open() in ovl1 decides that realinode is a lower
+inode and installs that inode f->f_inode of realfile. (This should be
+ovl2 layer inode, let me call it ovl2_inode). Now ovl_open() of ovl2 layer
+will be called and it will call file_dentry() and will look for dentry
+corresponding to ovl2_inode. I am wondering what if a copy up of foo.txt
+was triggered in ovl1 and by the time we called ovl_d_real(dentry,
+ovl2_inode), it will start comparing with inode of ovl1_upper and never
+find ovl2_inode.
+
+IOW, I am not able to figure out how do we protect agains copy up races
+when ovl_open() calls file_dentry().
+
+Thanks
+Vivek
