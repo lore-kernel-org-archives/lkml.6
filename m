@@ -1,65 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756921AbeDZSEC (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 14:04:02 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:33051 "EHLO mail.bootlin.com"
+        id S932234AbeDZSEL (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 14:04:11 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:59400 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756433AbeDZSEA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 14:04:00 -0400
-Date: Thu, 26 Apr 2018 20:03:48 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Luca Ellero <luca.ellero@brickedbrain.com>
-Cc: Marek Vasut <marek.vasut@gmail.com>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Richard Weinberger <richard@nod.at>, linux-kernel@vger.kernel.org,
-        linux-mtd@lists.infradead.org,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [PATCH] mtd: dataflash: replace msleep with usleep_range
-Message-ID: <20180426200348.7c4eef72@bbrezillon>
-In-Reply-To: <1524043588-25816-1-git-send-email-luca.ellero@brickedbrain.com>
-References: <1524043588-25816-1-git-send-email-luca.ellero@brickedbrain.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1754582AbeDZSEJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 14:04:09 -0400
+Date: Thu, 26 Apr 2018 20:03:35 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Alex G." <mr.nuke.me@gmail.com>
+Cc: linux-acpi@vger.kernel.org, linux-edac@vger.kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
+        Tony Luck <tony.luck@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Robert Moore <robert.moore@intel.com>,
+        Erik Schmauss <erik.schmauss@intel.com>,
+        Tyler Baicar <tbaicar@codeaurora.org>,
+        Will Deacon <will.deacon@arm.com>, James Morse <james.morse@arm.com>,
+        Shiju Jose <shiju.jose@huawei.com>,
+        "Jonathan (Zhixiong) Zhang" <zjzhang@codeaurora.org>,
+        Dongjiu Geng <gengdongjiu@huawei.com>, linux-kernel@vger.kernel.org,
+        devel@acpica.org
+Subject: Re: [RFC PATCH v3 3/3] acpi: apei: Warn when GHES marks correctable
+ errors as "fatal"
+Message-ID: <20180426180335.GA11100@pd.tnic>
+References: <20180416215903.7318-1-mr.nuke.me@gmail.com>
+ <20180425203957.18224-1-mr.nuke.me@gmail.com>
+ <20180425203957.18224-4-mr.nuke.me@gmail.com>
+ <20180426112057.GB15009@pd.tnic>
+ <e58482cf-37f6-808b-4382-fcf24c6f8db8@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <e58482cf-37f6-808b-4382-fcf24c6f8db8@gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 18 Apr 2018 11:26:26 +0200
-Luca Ellero <luca.ellero@brickedbrain.com> wrote:
+On Thu, Apr 26, 2018 at 12:47:30PM -0500, Alex G. wrote:
+> " Borislav, if you don't like the third patch in the series, feel free to
+> leave it out. THings will work beautifully with or without it."
 
-> Since msleep is based on jiffies, this 3 ms sleep becomes actually 20 ms.
-> Worst of all, since this sleep is used in a loop when writing, a single page
-> write (256 to 1024 bytes) causes 17 ms extra time.
-> When writing large files (for example u-boot is usually 512 KB) this delay
-> adds up to minutes.
-> See Documentation/timers/timers-howto.txt "Why not msleep for (1ms - 20ms)".
-> 
-> Signed-off-by: Luca Ellero <luca.ellero@brickedbrain.com>
+Then don't send it.
 
-Applied.
+-- 
+Regards/Gruss,
+    Boris.
 
-Thanks,
-
-Boris
-
-> ---
->  drivers/mtd/devices/mtd_dataflash.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mtd/devices/mtd_dataflash.c b/drivers/mtd/devices/mtd_dataflash.c
-> index aaaeaae..3a6f450 100644
-> --- a/drivers/mtd/devices/mtd_dataflash.c
-> +++ b/drivers/mtd/devices/mtd_dataflash.c
-> @@ -140,7 +140,7 @@ static int dataflash_waitready(struct spi_device *spi)
->  		if (status & (1 << 7))	/* RDY/nBSY */
->  			return status;
->  
-> -		msleep(3);
-> +		usleep_range(3000, 4000);
->  	}
->  }
->  
+Good mailing practices for 400: avoid top-posting and trim the reply.
