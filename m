@@ -1,128 +1,212 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756747AbeDZPaI (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 11:30:08 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:33235 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756627AbeDZPaD (ORCPT
+        id S1756731AbeDZPb0 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 11:31:26 -0400
+Received: from smtprelay6.synopsys.com ([198.182.37.59]:60006 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756414AbeDZPbW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 11:30:03 -0400
-X-Google-Smtp-Source: AB8JxZqdbQel9QndiIDyN5U0e8cqGBF/a2miWOkRi4/hrD2fcRVKNAd8wOMyU2vWxqtghYT7fDRaqw==
-Date: Thu, 26 Apr 2018 17:29:42 +0200
-From: Andrea Parri <andrea.parri@amarulasolutions.com>
-To: Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc: akpm@linux-foundation.org, peterz@infradead.org, oleg@redhat.com,
-        viro@zeniv.linux.org.uk, mingo@kernel.org, paulmck@linux.vnet.ibm.com,
-        keescook@chromium.org, riel@redhat.com, mhocko@suse.com,
-        tglx@linutronix.de, kirill.shutemov@linux.intel.com,
-        marcos.souza.org@gmail.com, hoeun.ryu@gmail.com,
-        pasha.tatashin@oracle.com, gs051095@gmail.com, ebiederm@xmission.com,
-        dhowells@redhat.com, rppt@linux.vnet.ibm.com,
-        linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        Will Deacon <will.deacon@arm.com>, Boqun Feng <boqun.feng@gmail.com>
-Subject: Re: [PATCH 4/4] exit: Lockless iteration over task list in
- mm_update_next_owner()
-Message-ID: <20180426152942.GA2737@andrea>
-References: <152473763015.29458.1131542311542381803.stgit@localhost.localdomain>
- <152474046779.29458.5294808258041953930.stgit@localhost.localdomain>
- <20180426123542.GA819@andrea>
- <c21ad28c-cd23-2a75-6622-ba49c37137db@virtuozzo.com>
+        Thu, 26 Apr 2018 11:31:22 -0400
+Subject: Re: [RFC 01/10] PCI: dwc: Add MSI-X callbacks handler
+To: Kishon Vijay Abraham I <kishon@ti.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "adouglas@cadence.com" <adouglas@cadence.com>,
+        "niklas.cassel@axis.com" <niklas.cassel@axis.com>,
+        "jesper.nilsson@axis.com" <jesper.nilsson@axis.com>
+Cc: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <cover.1523379766.git.gustavo.pimentel@synopsys.com>
+ <77b7b2687e9618d3f7d1f11c3fc6ecec9a9442ef.1523379766.git.gustavo.pimentel@synopsys.com>
+ <0b7023d9-29c6-0993-07d3-b046d25b67ff@ti.com>
+ <e2fe7d5f-9f57-0e67-d321-541ff4706792@synopsys.com>
+ <0e8b8ce9-db12-1e11-3eb5-62f3fa686d59@ti.com>
+ <16d237b2-0052-447e-13cb-bc2f15848be4@synopsys.com>
+ <eeb3ace0-9206-efbf-f5db-97ccea0f47b7@ti.com>
+From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Message-ID: <45ad7d7e-9986-cebe-c2c0-3f0693b56a9b@synopsys.com>
+Date: Thu, 26 Apr 2018 16:30:09 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c21ad28c-cd23-2a75-6622-ba49c37137db@virtuozzo.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <eeb3ace0-9206-efbf-f5db-97ccea0f47b7@ti.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 26, 2018 at 04:52:39PM +0300, Kirill Tkhai wrote:
-> On 26.04.2018 15:35, Andrea Parri wrote:
 
-[...]
+Hi Kishon,
 
-> > 
-> > Mmh, it's possible that I am misunderstanding this statement but it does
-> > not seem quite correct to me; a counter-example would be provided by the
-> > test at "tools/memory-model/litmus-tests/SB+mbonceonces.litmus" (replace
-> > either of the smp_mb() with the sequence:
-> > 
-> >    spin_lock(s); spin_unlock(s); spin_lock(s); spin_unlock(s); ).
-> > 
-> > BTW, your commit message suggests that your case would work with "imply
-> > an smp_wmb()".  This implication should hold "w.r.t. current implementa-
-> > tions".  We (LKMM people) discussed changes to the LKMM to make it hold
-> > in LKMM but such changes are still in our TODO list as of today...
+On 24/04/2018 12:24, Kishon Vijay Abraham I wrote:
+> Hi,
 > 
-> I'm not close to LKMM, so the test you referenced is not clear for me.
+> On Tuesday 24 April 2018 03:06 PM, Gustavo Pimentel wrote:
+>> Hi Kishon,
+>>
+>> On 24/04/2018 08:07, Kishon Vijay Abraham I wrote:
+>>> Hi,
+>>>
+>>> On Monday 23 April 2018 03:06 PM, Gustavo Pimentel wrote:
+>>>> Hi Kishon,
+>>>>
+>>>> On 16/04/2018 10:29, Kishon Vijay Abraham I wrote:
+>>>>> Hi Gustavo,
+>>>>>
+>>>>> On Tuesday 10 April 2018 10:44 PM, Gustavo Pimentel wrote:
+>>>>>> Changes the pcie_raise_irq function signature, namely the interrupt_num
+>>>>>> variable type from u8 to u16 to accommodate the MSI-X maximum interrupts
+>>>>>> of 2048.
+>>>>>>
+>>>>>> Implements a PCIe config space capability iterator function to search and
+>>>>>> save the MSI and MSI-X pointers. With this method the code becomes more
+>>>>>> generic and flexible.
+>>>>>>
+>>>>>> Implements MSI-X set/get functions for sysfs interface in order to change
+>>>>>> the EP entries number.
+>>>>>>
+>>>>>> Implements EP MSI-X interface for triggering interruptions.
+>>>>>>
+>>>>>> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+>>>>>> ---
+>>>>>>  drivers/pci/dwc/pci-dra7xx.c           |   2 +-
+>>>>>>  drivers/pci/dwc/pcie-artpec6.c         |   2 +-
+>>>>>>  drivers/pci/dwc/pcie-designware-ep.c   | 145 ++++++++++++++++++++++++++++++++-
+>>>>>>  drivers/pci/dwc/pcie-designware-plat.c |   6 +-
+>>>>>>  drivers/pci/dwc/pcie-designware.h      |  23 +++++-
+>>>>>>  5 files changed, 173 insertions(+), 5 deletions(-)
+>>>>>>
+>>>>>> diff --git a/drivers/pci/dwc/pci-dra7xx.c b/drivers/pci/dwc/pci-dra7xx.c
+>>>>>> index ed8558d..5265725 100644
+>>>>>> --- a/drivers/pci/dwc/pci-dra7xx.c
+>>>>>> +++ b/drivers/pci/dwc/pci-dra7xx.c
+>>>>>> @@ -369,7 +369,7 @@ static void dra7xx_pcie_raise_msi_irq(struct dra7xx_pcie *dra7xx,
+>>>>>>  }
+>>>>>>  
+>>>>>>  static int dra7xx_pcie_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
+>>>>>> -				 enum pci_epc_irq_type type, u8 interrupt_num)
+>>>>>> +				 enum pci_epc_irq_type type, u16 interrupt_num)
+>>>>>>  {
+>>>>>>  	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+>>>>>>  	struct dra7xx_pcie *dra7xx = to_dra7xx_pcie(pci);
+>>>>>> diff --git a/drivers/pci/dwc/pcie-artpec6.c b/drivers/pci/dwc/pcie-artpec6.c
+>>>>>> index e66cede..96dc259 100644
+>>>>>> --- a/drivers/pci/dwc/pcie-artpec6.c
+>>>>>> +++ b/drivers/pci/dwc/pcie-artpec6.c
+>>>>>> @@ -428,7 +428,7 @@ static void artpec6_pcie_ep_init(struct dw_pcie_ep *ep)
+>>>>>>  }
+>>>>>>  
+>>>>>>  static int artpec6_pcie_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
+>>>>>> -				  enum pci_epc_irq_type type, u8 interrupt_num)
+>>>>>> +				  enum pci_epc_irq_type type, u16 interrupt_num)
+>>>>>>  {
+>>>>>>  	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+>>>>>>  
+>>>>>> diff --git a/drivers/pci/dwc/pcie-designware-ep.c b/drivers/pci/dwc/pcie-designware-ep.c
+>>>>>> index 15b22a6..874d4c2 100644
+>>>>>> --- a/drivers/pci/dwc/pcie-designware-ep.c
+>>>>>> +++ b/drivers/pci/dwc/pcie-designware-ep.c
+>>>>>> @@ -40,6 +40,44 @@ void dw_pcie_ep_reset_bar(struct dw_pcie *pci, enum pci_barno bar)
+>>>>>>  	__dw_pcie_ep_reset_bar(pci, bar, 0);
+>>>>>>  }
+>>>>>>  
+>>>>>> +void dw_pcie_ep_find_cap_addr(struct dw_pcie_ep *ep)
+>>>>>> +{
+>>>>>
+>>>>> This should be implemented in a generic way similar to pci_find_capability().
+>>>>> It'll be useful when we try to implement other capabilities as well.
+>>>>
+>>>> Hum, what you suggest? Something implemented on the pci-epf-core?
+>>>
+>>> yeah, Initially thought it could be implemented as a helper function in
+>>> pci-epc-core so that both designware and cadence can use it.
+>>
+>> That would be nice, however I couldn't find out how to access the config space,
+>> through the pci_epf or pci_epc structs.
+> 
+> It's just a helper function so it can directly take the base address of the
+> configuration space as argument (in our case, it should be dbi_base).
 
-The test could be concisely described by:
+I don't think it will bring much benefit to this particular scope at this time
+being. In any case this could be improved later.
 
-   {initially: x=y=0; }
-
-   Thread0	Thread1
-
-   x = 1;	y = 1;
-   MB		MB
-   r0 = y;	r1 = x;
-
-   Can r0,r1 be both 0 after joining?
-
-The answer to the question is -No-; however, if you replaced any of the
-MB with the locking sequence described above, then the answer is -Yes-:
-full fences on both sides are required to forbid that state and this is
-something that the locking sequences won't be able to provide (think at
-the implementation of these primitives for powerpc, for example).
-
-
-> Does LKMM show the real hardware behavior? Or there are added the most
-> cases, and work is still in progress?
-
-Very roughly speaking, LKMM is an "envelope" of the underlying hardware
-memory models/architectures supported by the Linux kernel which in turn
-may not coincide with the observable behavior on a given implementation
-/processor of that architecture.  Also, LKMM doesn't aim to be a "tight"
-envelope.  I'd refer to the documentation within "tools/memory-model/";
-please let me know if I can provide further info.
-
+Regards,
+Gustavo
 
 > 
-> In the patch I used the logic, that the below code:
+> Thanks
+> Kishon
 > 
-> 	x = A;
-> 	spin_lock();
-> 	spin_unlock();
-> 	spin_lock();
-> 	spin_unlock();
-> 	y = B;
-> 
-> cannot reorder much than:
-> 
-> 	spin_lock();
-> 	x = A;		<- this can't become visible later, that spin_unlock()
-> 	spin_unlock();
-> 	spin_lock();
-> 	y = B;		<- this can't become visible earlier, than spin_lock()
-> 	spin_unlock();
-> 
-> Is there a problem?
-
-As mentioned in the previous email, if smp_wmb() is what you're looking
-for then this should be fine (considering current implementations; LKMM
-will likely be there soon...).
-
-BTW, the behavior in question has been recently discussed on the list;
-c.f., for example, the test "unlock-lock-write-ordering" described in:
-
-  http://lkml.kernel.org/r/1519301990-11766-1-git-send-email-parri.andrea@gmail.com
-
-as well as
-
-  0123f4d76ca63b7b895f40089be0ce4809e392d8
-  ("riscv/spinlock: Strengthen implementations with fences")
-
-  Andrea
-
-
-> 
-> Kirill
+>>
+>> So, I reworked the functions like this:
+>>
+>> (on pcie-designware-ep.c)
+>>
+>> u8 __dw_pcie_ep_find_next_cap(struct dw_pcie *pci, u8 cap_ptr,
+>>                               u8 cap)
+>> {
+>>         u8 cap_id, next_cap_ptr;
+>>         u16 reg;
+>>
+>>         reg = dw_pcie_readw_dbi(pci, cap_ptr);
+>>         next_cap_ptr = (reg & 0xff00) >> 8;
+>>         cap_id = (reg & 0x00ff);
+>>
+>>         if (!next_cap_ptr || cap_id > PCI_CAP_ID_MAX)
+>>                 return 0;
+>>
+>>         if (cap_id == cap)
+>>                 return cap_ptr;
+>>
+>>         return __dw_pcie_ep_find_next_cap(pci, next_cap_ptr, cap);
+>> }
+>>
+>> u8 dw_pcie_ep_find_capability(struct dw_pcie *pci, u8 cap)
+>> {
+>>         u8 next_cap_ptr;
+>>         u16 reg;
+>>
+>>         reg = dw_pcie_readw_dbi(pci, PCI_CAPABILITY_LIST);
+>>         next_cap_ptr = (reg & 0x00ff);
+>>
+>>         if (!next_cap_ptr)
+>>                 return 0;
+>>
+>>         return __dw_pcie_ep_find_next_cap(pci, next_cap_ptr, cap);
+>> }
+>>
+>> int dw_pcie_ep_init(struct dw_pcie_ep *ep)
+>> {
+>> [...]
+>>         ep->msi_cap = dw_pcie_ep_find_capability(pci, PCI_CAP_ID_MSI);
+>>         ep->msix_cap = dw_pcie_ep_find_capability(pci, PCI_CAP_ID_MSIX);
+>> [...]
+>> }
+>>
+>>>
+>>> But do we really have to find the address like this? since all designware IP's
+>>> will have a particular capability at a fixed address offset, why not follow use
+>>> existing mechanism in dw_pcie_ep_get_msi?
+>>
+>> The capabilities are not fixed to a specific address offset by default they
+>> assume those values, but they can be easily change at design stage.
+>>
+>>>
+>>> Or is it possible for a particular capability to have address offsets for
+>>> different vendors? How is it for cadence?
+>>
+>> Yes, it's possible to have different address offset for different vendors.
+>>
+>>>
+>>> Thanks
+>>> Kishon
+>>>
+>>
+>> Thanks,
+>> Gustavo
+>>
