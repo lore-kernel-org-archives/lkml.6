@@ -1,402 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756738AbeDZPpC (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 11:45:02 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:44526 "EHLO mx1.redhat.com"
+        id S1756741AbeDZPsV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 11:48:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33956 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755871AbeDZPpA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 11:45:00 -0400
-Date: Thu, 26 Apr 2018 11:44:59 -0400 (EDT)
-From: Pankaj Gupta <pagupta@redhat.com>
-To: Stefan Hajnoczi <stefanha@gmail.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        qemu-devel@nongnu.org, linux-nvdimm@ml01.01.org, linux-mm@kvack.org,
-        kwolf@redhat.com, haozhong zhang <haozhong.zhang@intel.com>,
-        jack@suse.cz, xiaoguangrong eric <xiaoguangrong.eric@gmail.com>,
-        riel@surriel.com, niteshnarayanlal@hotmail.com, david@redhat.com,
-        ross zwisler <ross.zwisler@intel.com>, lcapitulino@redhat.com,
-        hch@infradead.org, mst@redhat.com, stefanha@redhat.com,
-        imammedo@redhat.com, marcel@redhat.com, pbonzini@redhat.com,
-        dan j williams <dan.j.williams@intel.com>, nilal@redhat.com
-Message-ID: <197910974.22984070.1524757499459.JavaMail.zimbra@redhat.com>
-In-Reply-To: <20180426131236.GA30991@stefanha-x1.localdomain>
-References: <20180425112415.12327-1-pagupta@redhat.com> <20180425112415.12327-2-pagupta@redhat.com> <20180426131236.GA30991@stefanha-x1.localdomain>
-Subject: Re: [Qemu-devel] [RFC v2 1/2] virtio: add pmem driver
+        id S1756528AbeDZPsS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 11:48:18 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA212217D9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
+Date: Thu, 26 Apr 2018 09:48:17 -0600
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <yuchao0@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        chao@kernel.org
+Subject: Re: [PATCH] f2fs: fix to wait IO writeback in __revoke_inmem_pages()
+Message-ID: <20180426154817.GF68594@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180426083247.86337-1-yuchao0@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.116.119, 10.4.195.7]
-Thread-Topic: virtio: add pmem driver
-Thread-Index: yojIJxOUasV/0U8Z9V/U2TJhHaj1Tw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180426083247.86337-1-yuchao0@huawei.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-> > This patch adds virtio-pmem driver for KVM
-> > guest.
-> > 
-> > Guest reads the persistent memory range
-> > information from Qemu over VIRTIO and registers
-> > it on nvdimm_bus. It also creates a nd_region
-> > object with the persistent memory range
-> > information so that existing 'nvdimm/pmem'
-> > driver can reserve this into system memory map.
-> > This way 'virtio-pmem' driver uses existing
-> > functionality of pmem driver to register persistent
-> > memory compatible for DAX capable filesystems.
-> > 
-> > This also provides function to perform guest flush
-> > over VIRTIO from 'pmem' driver when userspace
-> > performs flush on DAX memory range.
-> > 
-> > Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
-> > ---
-> >  drivers/virtio/Kconfig           |  12 ++++
-> >  drivers/virtio/Makefile          |   1 +
-> >  drivers/virtio/virtio_pmem.c     | 118
-> >  +++++++++++++++++++++++++++++++++++++++
-> >  include/linux/libnvdimm.h        |   4 ++
-> >  include/uapi/linux/virtio_ids.h  |   1 +
-> >  include/uapi/linux/virtio_pmem.h |  58 +++++++++++++++++++
-> >  6 files changed, 194 insertions(+)
-> >  create mode 100644 drivers/virtio/virtio_pmem.c
-> >  create mode 100644 include/uapi/linux/virtio_pmem.h
-> > 
-> > diff --git a/drivers/virtio/Kconfig b/drivers/virtio/Kconfig
-> > index 3589764..879335d 100644
-> > --- a/drivers/virtio/Kconfig
-> > +++ b/drivers/virtio/Kconfig
-> > @@ -42,6 +42,18 @@ config VIRTIO_PCI_LEGACY
-> >  
-> >  	  If unsure, say Y.
-> >  
-> > +config VIRTIO_PMEM
-> > +	tristate "Virtio pmem driver"
-> > +	depends on VIRTIO
-> > +	help
-> > +	 This driver adds persistent memory range to nd_region and registers
-> > +	 with nvdimm bus. NVDIMM 'pmem' driver later allocates a persistent
-> > +	 memory range on the memory information added by this driver. In addition
-> > +	 to this, 'virtio-pmem' driver also provides a paravirt flushing
-> > interface
-> > +	 from guest to host.
-> > +
-> > +	 If unsure, say M.
-> > +
-> >  config VIRTIO_BALLOON
-> >  	tristate "Virtio balloon driver"
-> >  	depends on VIRTIO
-> > diff --git a/drivers/virtio/Makefile b/drivers/virtio/Makefile
-> > index 3a2b5c5..cbe91c6 100644
-> > --- a/drivers/virtio/Makefile
-> > +++ b/drivers/virtio/Makefile
-> > @@ -6,3 +6,4 @@ virtio_pci-y := virtio_pci_modern.o virtio_pci_common.o
-> >  virtio_pci-$(CONFIG_VIRTIO_PCI_LEGACY) += virtio_pci_legacy.o
-> >  obj-$(CONFIG_VIRTIO_BALLOON) += virtio_balloon.o
-> >  obj-$(CONFIG_VIRTIO_INPUT) += virtio_input.o
-> > +obj-$(CONFIG_VIRTIO_PMEM) += virtio_pmem.o
-> > diff --git a/drivers/virtio/virtio_pmem.c b/drivers/virtio/virtio_pmem.c
-> > new file mode 100644
-> > index 0000000..0906d2d
-> > --- /dev/null
-> > +++ b/drivers/virtio/virtio_pmem.c
-> > @@ -0,0 +1,118 @@
+On 04/26, Chao Yu wrote:
+> Thread A				Thread B
+> - f2fs_ioc_commit_atomic_write
+>  - commit_inmem_pages
+>   - f2fs_submit_merged_write_cond
+>   : write data
+> 					- write_checkpoint
+> 					 - do_checkpoint
+> 					 : commit all node within CP
+> 					 -> SPO
+>   - f2fs_do_sync_file
+>    - file_write_and_wait_range
+>    : wait data writeback
 > 
-> SPDX license line?  See Documentation/process/license-rules.rst.
+> In above race condition, data/node can be flushed in reversed order when
+> coming a checkpoint before f2fs_do_sync_file, after SPOR, it results in
+> atomic written data being corrupted.
 
-o.k. 
+Wait, what is the problem here? Thread B could succeed checkpoint, there is
+no problem. If it fails, there is no fsync mark where we can recover it, so
+we can just ignore the last written data as nothing.
 
 > 
-> > +/* Virtio pmem Driver
-> > + *
-> > + * Discovers persitent memory range information
+> This patch adds f2fs_wait_on_page_writeback in __revoke_inmem_pages() to
+> keep data and node of atomic file being flushed orderly.
 > 
-> s/persitent/persistent/
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> ---
+>  fs/f2fs/file.c    | 4 ++++
+>  fs/f2fs/segment.c | 3 +++
+>  2 files changed, 7 insertions(+)
 > 
-> > + * from host and provides a virtio based flushing
-> > + * interface.
-> > + */
-> > +
-> > +#include <linux/virtio.h>
-> > +#include <linux/swap.h>
-> > +#include <linux/workqueue.h>
-> > +#include <linux/delay.h>
-> > +#include <linux/slab.h>
-> > +#include <linux/module.h>
-> > +#include <linux/oom.h>
-> > +#include <linux/wait.h>
-> > +#include <linux/magic.h>
-> > +#include <linux/virtio_pmem.h>
-> > +#include <linux/libnvdimm.h>
-> 
-> Are all these headers really needed?  delay.h?  oom.h?
-
-Will remove not required ones. There are from previous
-RFC where used *memremap* and other mm & block includes.
-
-> 
-> > +
-> > +static int init_vq(struct virtio_pmem *vpmem)
-> > +{
-> > +	struct virtqueue *vq;
-> > +
-> > +	/* single vq */
-> > +	vpmem->req_vq = vq = virtio_find_single_vq(vpmem->vdev,
-> > +				NULL, "flush_queue");
-> > +
-> > +	if (IS_ERR(vq))
-> > +		return PTR_ERR(vq);
-> > +
-> > +	return 0;
-> > +};
-> > +
-> > +static int virtio_pmem_probe(struct virtio_device *vdev)
-> > +{
-> > +	int err = 0;
-> > +	struct resource res;
-> > +	struct virtio_pmem *vpmem;
-> > +	struct nvdimm_bus *nvdimm_bus;
-> > +	struct nd_region_desc ndr_desc;
-> > +	int nid = dev_to_node(&vdev->dev);
-> > +	static struct nvdimm_bus_descriptor nd_desc;
-> > +
-> > +	if (!vdev->config->get) {
-> > +		dev_err(&vdev->dev, "%s failure: config disabled\n",
-> > +			__func__);
-> > +		return -EINVAL;
-> > +	}
-> > +
-> > +	vdev->priv = vpmem = devm_kzalloc(&vdev->dev, sizeof(*vpmem),
-> > +			GFP_KERNEL);
-> > +	if (!vpmem) {
-> > +		err = -ENOMEM;
-> > +		goto out;
-> > +	}
-> > +
-> > +	vpmem->vdev = vdev;
-> > +	err = init_vq(vpmem);
-> > +	if (err)
-> > +		goto out;
-> > +
-> > +	virtio_cread(vpmem->vdev, struct virtio_pmem_config,
-> > +			start, &vpmem->start);
-> > +	virtio_cread(vpmem->vdev, struct virtio_pmem_config,
-> > +			size, &vpmem->size);
-> > +
-> > +	res.start = vpmem->start;
-> > +	res.end   = vpmem->start + vpmem->size-1;
-> > +
-> > +	memset(&nd_desc, 0, sizeof(nd_desc));
-> > +	nd_desc.provider_name = "virtio-pmem";
-> > +	nd_desc.module = THIS_MODULE;
-> > +	nvdimm_bus = nvdimm_bus_register(&vdev->dev, &nd_desc);
-> > +
-> > +	if (!nvdimm_bus)
-> > +		goto out_nd;
-> > +	dev_set_drvdata(&vdev->dev, nvdimm_bus);
-> > +
-> > +	memset(&ndr_desc, 0, sizeof(ndr_desc));
-> > +	ndr_desc.res = &res;
-> > +	ndr_desc.numa_node = nid;
-> > +	set_bit(ND_REGION_PAGEMAP, &ndr_desc.flags);
-> > +	set_bit(ND_REGION_VIRTIO, &ndr_desc.flags);
-> > +
-> > +	if (!nvdimm_pmem_region_create(nvdimm_bus, &ndr_desc))
-> > +		goto out_nd;
-> > +
-> > +	virtio_device_ready(vdev);
-> > +	return 0;
-> > +
-> > +out_nd:
-> > +	nvdimm_bus_unregister(nvdimm_bus);
-> > +out:
-> > +	dev_err(&vdev->dev, "failed to register virtio pmem memory\n");
-> > +	vdev->config->del_vqs(vdev);
-> > +	return err;
-> > +}
-> > +
-> > +static void virtio_pmem_remove(struct virtio_device *vdev)
-> > +{
-> > +	struct nvdimm_bus *nvdimm_bus = dev_get_drvdata(&vdev->dev);
-> > +
-> > +	nvdimm_bus_unregister(nvdimm_bus);
-> > +	vdev->config->del_vqs(vdev);
-> > +}
-> > +
-> > +static struct virtio_driver virtio_pmem_driver = {
-> > +	.driver.name		= KBUILD_MODNAME,
-> > +	.driver.owner		= THIS_MODULE,
-> > +	.id_table		= id_table,
-> > +	.probe			= virtio_pmem_probe,
-> > +	.remove			= virtio_pmem_remove,
-> > +};
-> > +
-> > +module_virtio_driver(virtio_pmem_driver);
-> > +MODULE_DEVICE_TABLE(virtio, id_table);
-> > +MODULE_DESCRIPTION("Virtio pmem driver");
-> > +MODULE_LICENSE("GPL");
-> > diff --git a/include/linux/libnvdimm.h b/include/linux/libnvdimm.h
-> > index 097072c..b1b7f14 100644
-> > --- a/include/linux/libnvdimm.h
-> > +++ b/include/linux/libnvdimm.h
-> > @@ -58,6 +58,10 @@ enum {
-> >  	 * (ADR)
-> >  	 */
-> >  	ND_REGION_PERSIST_MEMCTRL = 2,
-> > +	/*
-> > +	 * region flag indicating to use VIRTIO flush interface for pmem
-> > +	 */
-> > +	ND_REGION_VIRTIO = 3,
-> 
-> Can you add a generic flush callback to libnvdimm instead?  That way
-> virtio and other drivers can hook in without hardcoding knowledge of
-> these drivers into libnvdimm.
-
-Sure! Working on this. Same suggestion by Dan.
-
-> 
-> >  
-> >  	/* mark newly adjusted resources as requiring a label update */
-> >  	DPA_RESOURCE_ADJUSTED = 1 << 0,
-> > diff --git a/include/uapi/linux/virtio_ids.h
-> > b/include/uapi/linux/virtio_ids.h
-> > index 6d5c3b2..5ebd049 100644
-> > --- a/include/uapi/linux/virtio_ids.h
-> > +++ b/include/uapi/linux/virtio_ids.h
-> > @@ -43,5 +43,6 @@
-> >  #define VIRTIO_ID_INPUT        18 /* virtio input */
-> >  #define VIRTIO_ID_VSOCK        19 /* virtio vsock transport */
-> >  #define VIRTIO_ID_CRYPTO       20 /* virtio crypto */
-> > +#define VIRTIO_ID_PMEM         21 /* virtio pmem */
-> >  
-> >  #endif /* _LINUX_VIRTIO_IDS_H */
-> > diff --git a/include/uapi/linux/virtio_pmem.h
-> > b/include/uapi/linux/virtio_pmem.h
-> > new file mode 100644
-> > index 0000000..2ec27cb
-> > --- /dev/null
-> > +++ b/include/uapi/linux/virtio_pmem.h
-> > @@ -0,0 +1,58 @@
-> > +/* Virtio pmem Driver
-> > + *
-> > + * Discovers persitent memory range information
-> 
-> s/persitent/persistent/
-> 
-> > + * from host and provides a virtio based flushing
-> > + * interface.
-> > + */
-> > +
-> > +#ifndef _LINUX_VIRTIO_PMEM_H
-> > +#define _LINUX_VIRTIO_PMEM_H
-> > +
-> > +#include <linux/types.h>
-> > +#include <linux/virtio_types.h>
-> > +#include <linux/virtio_ids.h>
-> > +#include <linux/virtio_config.h>
-> > +#include <linux/virtio_ring.h>
-> > +
-> > +
-> > +struct virtio_pmem_config {
-> > +
-> > +	uint64_t start;
-> > +	uint64_t size;
-> > +};
-> > +
-> > +struct virtio_pmem {
-> > +
-> > +	struct virtio_device *vdev;
-> > +	struct virtqueue *req_vq;
-> > +
-> > +	uint64_t start;
-> > +	uint64_t size;
-> > +} __packed;
-> 
-> This is a userspace API header file, it should contain definitions that
-> userspace programs need.  struct virtio_pmem is a kernel-internal struct
-> that should not be in the uapi headers.
-> 
-> Only define virtio spec structs in this header file (e.g. config space,
-> request structs, etc).
-
-o.k 
-
-> 
-> > +static struct virtio_device_id id_table[] = {
-> > +	{ VIRTIO_ID_PMEM, VIRTIO_DEV_ANY_ID },
-> > +	{ 0 },
-> > +};
-> 
-> Why is static variable in the header file?
-
-mistake :)
-
-> 
-> > +
-> > +void virtio_pmem_flush(struct device *dev)
-> 
-> This only implements flush command submission, not completion.  Maybe
-> the next patch will implement that but it's a little strange to only see
-> half of the flush operation.
-> 
-> Please put the whole flush operation in one patch so it can be reviewed
-> easily.  At this point I don't know if you've forgotten to implement
-> wait for completion.
-> 
-> > +{
-> 
-> Why is this function body in the header file?
-
-Because I was trying to use it from pmem module without loading
-virtio_pmem driver or load it dynamically. I think adding flush function in
-'nd_region' struct and set it as per region type looks better solution. 
-Suggested by Dan & you. 
-
-> 
-> > +	struct scatterlist sg;
-> > +	struct virtio_device *vdev  = dev_to_virtio(dev->parent->parent);
-> > +	struct virtio_pmem   *vpmem = vdev->priv;
-> > +	char *buf = "FLUSH";
-> 
-> I'm surprised this compiles without a warning.  String literals should
-> be constant but the char pointer isn't constant.
-
-Point taken.
-
-> 
-> > +	int err;
-> > +
-> > +	sg_init_one(&sg, buf, sizeof(buf));
-> > +
-> > +	err = virtqueue_add_outbuf(vpmem->req_vq, &sg, 1, buf, GFP_KERNEL);
-> > +
-> > +	if (err) {
-> > +		dev_err(&vdev->dev, "failed to send command to virtio pmem device\n");
-> > +		return;
-> > +	}
-> > +
-> > +	virtqueue_kick(vpmem->req_vq);
-> 
-> Is any locking necessary?  Two CPUs must not invoke virtio_pmem_flush()
-> at the same time.  Not sure if anything guarantees this, maybe you're
-> relying on libnvdimm but I haven't checked.
-
-I thought about it to some extent, and wanted to go ahead with simple version first:
-
-- I think file 'inode -> locking' sill is there for request on single file.
-- For multiple files, our aim is to just flush the backend block image.
-- Even there is collision for virt queue read/write entry it should just trigger a Qemu fsync. 
-  We just want most recent flush to assure guest writes are synced properly.
-
-Important point here: We are doing entire block fsync for guest virtual disk.
-
-> 
-> > +};
-> > +
-> > +#endif
-> > --
-> > 2.9.3
-> > 
-> > 
-> 
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index be7578774a47..a352804af244 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -217,6 +217,9 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+>  
+>  	trace_f2fs_sync_file_enter(inode);
+>  
+> +	if (atomic)
+> +		goto write_done;
+> +
+>  	/* if fdatasync is triggered, let's do in-place-update */
+>  	if (datasync || get_dirty_pages(inode) <= SM_I(sbi)->min_fsync_blocks)
+>  		set_inode_flag(inode, FI_NEED_IPU);
+> @@ -228,6 +231,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+>  		return ret;
+>  	}
+>  
+> +write_done:
+>  	/* if the inode is dirty, let's recover all the time */
+>  	if (!f2fs_skip_inode_update(inode, datasync)) {
+>  		f2fs_write_inode(inode, NULL);
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 584483426584..9ca3d0a43d93 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -230,6 +230,8 @@ static int __revoke_inmem_pages(struct inode *inode,
+>  
+>  		lock_page(page);
+>  
+> +		f2fs_wait_on_page_writeback(page, DATA, true);
+> +
+>  		if (recover) {
+>  			struct dnode_of_data dn;
+>  			struct node_info ni;
+> @@ -415,6 +417,7 @@ static int __commit_inmem_pages(struct inode *inode)
+>  		/* drop all uncommitted pages */
+>  		__revoke_inmem_pages(inode, &fi->inmem_pages, true, false);
+>  	} else {
+> +		/* wait all committed IOs writeback and release them from list */
+>  		__revoke_inmem_pages(inode, &revoke_list, false, false);
+>  	}
+>  
+> -- 
+> 2.15.0.55.gc2ece9dc4de6
