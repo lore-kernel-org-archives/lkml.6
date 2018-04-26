@@ -1,55 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753628AbeDZHPE (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 03:15:04 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:32883 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752148AbeDZHPD (ORCPT
+        id S1753957AbeDZHRC (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 03:17:02 -0400
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:46636 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752148AbeDZHQ6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 03:15:03 -0400
-X-Google-Smtp-Source: AB8JxZr2OJEIAag3/MPEXObhWs61RZJdLic8tvfj+zOKDeBnCEr92A+wDPXLUACB6z4+zFgjyh2Eiaw58rX97xGbuXk=
+        Thu, 26 Apr 2018 03:16:58 -0400
+Date: Thu, 26 Apr 2018 10:16:56 +0300
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Todor Tomov <todor.tomov@linaro.org>
+Cc: mchehab@kernel.org, hverkuil@xs4all.nl,
+        laurent.pinchart@ideasonboard.com, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] media: Add a driver for the ov7251 camera sensor
+Message-ID: <20180426071656.wuq5f7prg6kig6oy@valkosipuli.retiisi.org.uk>
+References: <1524673246-14175-1-git-send-email-todor.tomov@linaro.org>
+ <1524673246-14175-3-git-send-email-todor.tomov@linaro.org>
+ <20180426065010.a67iqsaicpgu7m5b@valkosipuli.retiisi.org.uk>
+ <c065854a-084d-8bc8-a76e-2988be8c3788@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <201804261013.6YZ6XwpM%fengguang.wu@intel.com>
-References: <201804261013.6YZ6XwpM%fengguang.wu@intel.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Thu, 26 Apr 2018 09:15:01 +0200
-X-Google-Sender-Auth: a9rOlvO0fe4GJd7bjfR4dnRfvu4
-Message-ID: <CAK8P3a0tpU7RFasJUuG7V2ZYUoR-iYDzjO13neF08ToAdnLX+w@mail.gmail.com>
-Subject: Re: Makefile:636: arch/score/Makefile: No such file or directory
-To: kbuild test robot <lkp@intel.com>,
-        Fengguang Wu <fengguang.wu@intel.com>
-Cc: kbuild-all@01.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c065854a-084d-8bc8-a76e-2988be8c3788@linaro.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 26, 2018 at 4:23 AM, kbuild test robot <lkp@intel.com> wrote:
-> Hi Arnd,
->
-> FYI, the error/warning still remains.
->
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> head:   26ed24e429d89e045e5eb2d2b75215244347b7f2
-> commit: b8c9c8f0190f4004d3d4364edb2dea5978dfc824 arch: remove score port
-> date:   7 weeks ago
-> config: score-spct6600_defconfig
+On Thu, Apr 26, 2018 at 10:04:25AM +0300, Todor Tomov wrote:
+> Hi Sakari,
+> 
+> On 26.04.2018 09:50, Sakari Ailus wrote:
+> > Hi Todor,
+> > 
+> > On Wed, Apr 25, 2018 at 07:20:46PM +0300, Todor Tomov wrote:
+> > ...
+> >> +static int ov7251_write_reg(struct ov7251 *ov7251, u16 reg, u8 val)
+> >> +{
+> >> +	u8 regbuf[3];
+> >> +	int ret;
+> >> +
+> >> +	regbuf[0] = reg >> 8;
+> >> +	regbuf[1] = reg & 0xff;
+> >> +	regbuf[2] = val;
+> >> +
+> >> +	ret = i2c_master_send(ov7251->i2c_client, regbuf, 3);
+> >> +	if (ret < 0) {
+> >> +		dev_err(ov7251->dev, "%s: write reg error %d: reg=%x, val=%x\n",
+> >> +			__func__, ret, reg, val);
+> >> +		return ret;
+> >> +	}
+> >> +
+> >> +	return 0;
+> > 
+> > How about:
+> > 
+> > 	return ov7251_write_seq_regs(ov7251, reg, &val, 1);
+> > 
+> > And put the function below ov2751_write_seq_regs().
+> 
+> I'm not sure... It will calculate message length each time and then check
+> that it is not greater than 5, which it is. Seems redundant.
+> 
+> > 
+> >> +}
+> >> +
+> >> +static int ov7251_write_seq_regs(struct ov7251 *ov7251, u16 reg, u8 *val,
+> >> +				 u8 num)
+> >> +{
+> >> +	const u8 maxregbuf = 5;
+> >> +	u8 regbuf[maxregbuf];
+> >> +	u8 nregbuf = sizeof(reg) + num * sizeof(*val);
+> >> +	int ret = 0;
+> >> +
+> >> +	if (nregbuf > maxregbuf)
+> >> +		return -EINVAL;
+> >> +
+> >> +	regbuf[0] = reg >> 8;
+> >> +	regbuf[1] = reg & 0xff;
+> >> +
+> >> +	memcpy(regbuf + 2, val, num);
+> >> +
+> >> +	ret = i2c_master_send(ov7251->i2c_client, regbuf, nregbuf);
+> >> +	if (ret < 0) {
+> >> +		dev_err(ov7251->dev, "%s: write seq regs error %d: first reg=%x\n",
+> > 
+> > This line is over 80... 
+> 
+> Yes indeed. Somehow checkpatch does not report this line, I don't know why.
+> 
+> > 
+> > If you're happy with these, I can make the changes, too; they're trivial.
+> 
+> Only the second one? Thanks :)
 
-Please stop trying to build the removed architectures: tile, blackfin,
-metag, m32r, frv, mn10300, cris and score.
+Works for me. I'd still think the overhead of managing the buffer is
+irrelevant where to having an extra function to do essentially the same
+thing is a source of maintenance and review work. Note that we're even now
+spending time to discuss it. ;-)
 
-https://lwn.net/Articles/748074/ has details about why this broke.
+-- 
+Kind regards,
 
-Note that we do have a few new architectures that you may want
-to add if you haven't done this already: nds32 and riscv were added
-this year, and a couple of older architectures that didn't have upstream
-gcc releases now have those, and I uploaded gcc binaries to
-https://cdn.kernel.org/pub/tools/crosstool/.
-
-This should allow building everything we have in the kernel now.
-Unfortunately the nds32 toolchain I uploaded is a little incomplete,
-but I have a gcc-6.4 build that (mostly) works and gcc-8 should
-be fine as well once it gets released.
-
-      Arnd
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi
