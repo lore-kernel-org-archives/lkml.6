@@ -1,163 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755873AbeDZM43 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 08:56:29 -0400
-Received: from mga07.intel.com ([134.134.136.100]:65273 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754516AbeDZM41 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 08:56:27 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,330,1520924400";
-   d="scan'208";a="46228076"
-From: "Wan, Kaike" <kaike.wan@intel.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-        Frederic Weisbecker <frederic@kernel.org>
-CC: "Marciniszyn, Mike" <mike.marciniszyn@intel.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        "Weiny, Ira" <ira.weiny@intel.com>,
-        "Fleck, John" <john.fleck@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: RE: [PATCH] tick/sched: Do not mess with an enqueued hrtimer
-Thread-Topic: [PATCH] tick/sched: Do not mess with an enqueued hrtimer
-Thread-Index: AQHT3AGYnFIKYp+V/Uy/KvwnCpnvbqQTAznA
-Date: Thu, 26 Apr 2018 12:56:11 +0000
-Message-ID: <3F128C9216C9B84BB6ED23EF16290AFB634CACE9@CRSMSX101.amr.corp.intel.com>
-References: <alpine.DEB.2.21.1804242119210.1597@nanos.tec.linutronix.de>
-In-Reply-To: <alpine.DEB.2.21.1804242119210.1597@nanos.tec.linutronix.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMTgxZTJjYzItMDMyMS00YzdhLTk3MzMtMjRkMTliYzYyOWM1IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiJYWWxEMVwvSDVtc1prcEZRczhjVGlUYVlcL2lDV2g0VVkzTVVaN2FlOHhpeVNpczBHZG5hTURaSHhyaXRyWFVEREcifQ==
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.200.100
-dlp-reaction: no-action
-x-originating-ip: [172.18.205.10]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1756086AbeDZM4m (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 08:56:42 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53270 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755959AbeDZM4j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 08:56:39 -0400
+Date: Thu, 26 Apr 2018 13:56:35 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Chunyu Hu <chuhu@redhat.com>
+Cc: Michal Hocko <mhocko@kernel.org>, Chunyu Hu <chuhu.ncepu@gmail.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        LKML <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>
+Subject: Re: [RFC] mm: kmemleak: replace __GFP_NOFAIL to GFP_NOWAIT in
+ gfp_kmemleak_mask
+Message-ID: <20180426125634.uybpbbk5puee7fsg@armageddon.cambridge.arm.com>
+References: <1524243513-29118-1-git-send-email-chuhu@redhat.com>
+ <20180420175023.3c4okuayrcul2bom@armageddon.cambridge.arm.com>
+ <20180422125141.GF17484@dhcp22.suse.cz>
+ <CACT4Y+YWUgyzCBadg+Oe8wDkFCaBzmcKDgu3rKjQxim7NXNLpg@mail.gmail.com>
+ <CABATaM6eWtssvuj3UW9LHLK3HWo8P9g0z9VzFnuqKPKO5KMJ3A@mail.gmail.com>
+ <20180424132057.GE17484@dhcp22.suse.cz>
+ <850575801.19606468.1524588530119.JavaMail.zimbra@redhat.com>
+ <20180424170239.GP17484@dhcp22.suse.cz>
+ <732114897.20075296.1524745398991.JavaMail.zimbra@redhat.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <732114897.20075296.1524745398991.JavaMail.zimbra@redhat.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: linux-rdma-owner@vger.kernel.org [mailto:linux-rdma-
-> owner@vger.kernel.org] On Behalf Of Thomas Gleixner
-> Sent: Tuesday, April 24, 2018 3:22 PM
-> To: Frederic Weisbecker <frederic@kernel.org>
-> Cc: Wan, Kaike <kaike.wan@intel.com>; Marciniszyn, Mike
-> <mike.marciniszyn@intel.com>; Dalessandro, Dennis
-> <dennis.dalessandro@intel.com>; Weiny, Ira <ira.weiny@intel.com>; Fleck,
-> John <john.fleck@intel.com>; linux-kernel@vger.kernel.org; linux-
-> rdma@vger.kernel.org; Peter Zijlstra <peterz@infradead.org>; Anna-Maria
-> Gleixner <anna-maria@linutronix.de>; Frederic Weisbecker
-> <fweisbec@gmail.com>; Ingo Molnar <mingo@kernel.org>
-> Subject: [PATCH] tick/sched: Do not mess with an enqueued hrtimer
+On Thu, Apr 26, 2018 at 08:23:19AM -0400, Chunyu Hu wrote:
+> kmemleak is using kmem_cache to record every pointers returned from kernel mem 
+> allocation activities such as kmem_cache_alloc(). every time an object from
+> slab allocator is returned, a following new kmemleak object is allocated.  
 > 
-> Kaike reported that in tests rdma hrtimers occasionaly stopped working. He
-> did great debugging, which provided enough context to decode the problem.
+> And when a slab object is freed, then the kmemleak object which contains
+> the ptr will also be freed. 
 > 
-> CPU 3			     	      	     CPU 2
+> and kmemleak scan thread will run in period to scan the kernel data, stack, 
+> and per cpu areas to check that every pointers recorded by kmemleak has at least
+> one reference in those areas beside the one recorded by kmemleak. If there
+> is no place in the memory acreas recording the ptr, then it's possible a leak.
 > 
-> idle
-> start sched_timer expires = 712171000000  queue->next = sched_timer
-> 					    start rdmavt timer. expires =
-> 712172915662
-> 					    lock(baseof(CPU3))
-> tick_nohz_stop_tick()
-> tick = 716767000000			    timerqueue_add(tmr)
+> so once a kmemleak object allocation failed, it has to disable itself, otherwise
+> it would lose track of some object pointers, and become less meaningful to 
+> continue record and scan the kernel memory for the pointers. So disable
+> it forever. so this is why kmemleak can't tolerate a slab alloc fail (from fault injection)
 > 
-> hrtimer_set_expires(sched_timer, tick);
->   sched_timer->expires = 716767000000  <---- FAIL
-> 					     if (tmr->expires < queue->next-
-> >expires)
-> hrtimer_start(sched_timer)		          queue->next = tmr;
-> lock(baseof(CPU3))
-> 					     unlock(baseof(CPU3))
-> timerqueue_remove()
-> timerqueue_add()
+> @Catalin,
 > 
-> ts->sched_timer is queued and queue->next is pointing to it, but then
-> ts->sched_timer.expires is modified.
-> 
-> This not only corrupts the ordering of the timerqueue RB tree, it also makes
-> CPU2 see the new expiry time of timerqueue->next->expires when checking
-> whether timerqueue->next needs to be updated. So CPU2 sees that the
-> rdma timer is earlier than timerqueue->next and sets the rdma timer as new
-> next.
-> 
-> Depending on whether it had also seen the new time at RB tree enqueue, it
-> might have queued the rdma timer at the wrong place and then after
-> removing the sched_timer the RB tree is completely hosed.
-> 
-> The problem was introduced with a commit which tried to solve
-> inconsistency between the hrtimer in the tick_sched data and the underlying
-> hardware clockevent. It split out hrtimer_set_expires() to store the new tick
-> time in both the NOHZ and the NOHZ + HIGHRES case, but missed the fact
-> that in the NOHZ + HIGHRES case the hrtimer might still be queued.
-> 
-> Use hrtimer_start(timer, tick...) for the NOHZ + HIGHRES case which sets
-> timer->expires after canceling the timer and move the
-> timer->hrtimer_set_expires()
-> invocation into the NOHZ only code path which is not affected as it merily
-> uses the hrtimer as next event storage so code pathes can be shared with
-> the NOHZ + HIGHRES case.
-> 
-> Fixes: d4af6d933ccf ("nohz: Fix spurious warning when hrtimer and
-> clockevent get out of sync")
-> Reported-by: "Wan Kaike" <kaike.wan@intel.com>
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: "Marciniszyn Mike" <mike.marciniszyn@intel.com>
-> Cc: Anna-Maria Gleixner <anna-maria@linutronix.de>
-> Cc: linux-rdma@vger.kernel.org
-> Cc: "Dalessandro Dennis" <dennis.dalessandro@intel.com>
-> Cc: "Fleck John" <john.fleck@intel.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Frederic Weisbecker <fweisbec@gmail.com>
-> Cc: "Weiny Ira" <ira.weiny@intel.com>
-> Cc: "linux-rdma@vger.kernel.org"
-> Cc: stable@vger.kernel.org
-> Link:
-> https://lkml.kernel.org/r/alpine.DEB.2.21.1804241637390.1679@nanos.tec.lin
-> utronix.de
-> 
-> ---
->  kernel/time/tick-sched.c |   10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> --- a/kernel/time/tick-sched.c
-> +++ b/kernel/time/tick-sched.c
-> @@ -804,12 +804,12 @@ static void tick_nohz_stop_tick(struct t
->  		return;
->  	}
-> 
-> -	hrtimer_set_expires(&ts->sched_timer, tick);
-> -
-> -	if (ts->nohz_mode == NOHZ_MODE_HIGHRES)
-> -		hrtimer_start_expires(&ts->sched_timer,
-> HRTIMER_MODE_ABS_PINNED);
-> -	else
-> +	if (ts->nohz_mode == NOHZ_MODE_HIGHRES) {
-> +		hrtimer_start(&ts->sched_timer, tick,
-> HRTIMER_MODE_ABS_PINNED);
-> +	} else {
-> +		hrtimer_set_expires(&ts->sched_timer, tick);
->  		tick_program_event(tick, 1);
-> +	}
->  }
-> 
->  static void tick_nohz_retain_tick(struct tick_sched *ts)
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-rdma" in the
-> body of a message to majordomo@vger.kernel.org More majordomo info at
-> http://vger.kernel.org/majordomo-info.html
+> Is this right? If something not so correct or precise, please correct me.
 
+That's a good description, thanks.
 
-Tested-by: Kaike Wan <Kaike.wan@intel.com>
+> I'm thinking about, is it possible that make kmemleak don't disable itself
+> when fail_page_alloc is enabled?  I can't think clearly what would happen
+> if several memory allocation missed by kmelkeak trace, what's the bad result? 
+
+Take for example a long linked list. If kmemleak doesn't track an object
+in such list (because the metadata allocation failed), such list_head is
+never scanned and the subsequent objects in the list (pointed at by
+'next') will be reported as leaks. Kmemleak pretty much becomes unusable
+with a high number of false positives.
+
+-- 
+Catalin
