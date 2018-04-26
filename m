@@ -1,87 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754777AbeDZW2R (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 18:28:17 -0400
-Received: from mail-ot0-f180.google.com ([74.125.82.180]:33790 "EHLO
-        mail-ot0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753881AbeDZW2P (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 18:28:15 -0400
-X-Google-Smtp-Source: AB8JxZqpF5taSygaFFbTgssbrnKLtHepdC59HjQrIX2C0Z3HsXunpO1v3l5ZGHxn+V/gJJKchcaYDkY5P2v+7bq0lOw=
+        id S1755614AbeDZW2a (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 18:28:30 -0400
+Received: from imap.thunk.org ([74.207.234.97]:35924 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754949AbeDZW22 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 18:28:28 -0400
+Date: Thu, 26 Apr 2018 17:03:57 -0400
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: jannh@google.com,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: random: GFP_KERNEL from irq context
+Message-ID: <20180426210357.GF5965@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Jens Axboe <axboe@kernel.dk>, jannh@google.com,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <c10e7248-4463-59d4-a977-1e4433c7231f@kernel.dk>
 MIME-Version: 1.0
-In-Reply-To: <1523898937.22952.13.camel@amazon.de>
-References: <1523545958-28059-1-git-send-email-karahmed@amazon.de>
- <1523545958-28059-2-git-send-email-karahmed@amazon.de> <CALMp9eSS4nL1-1i1Df=vyPFT1FZVprPB0Yx-JX0auknNc09Gtg@mail.gmail.com>
- <1523898937.22952.13.camel@amazon.de>
-From: Jim Mattson <jmattson@google.com>
-Date: Thu, 26 Apr 2018 15:28:13 -0700
-Message-ID: <CALMp9eS6D4pfbGEfcz7MpRncTte5weUJE9g-C_qMVxnaGd+RtQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] kvm: nVMX: Introduce KVM_CAP_STATE
-To: "Raslan, KarimAllah" <karahmed@amazon.de>
-Cc: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c10e7248-4463-59d4-a977-1e4433c7231f@kernel.dk>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I'll send out a patch to deal with nested_run_pending.
+On Thu, Apr 26, 2018 at 10:28:13AM -0600, Jens Axboe wrote:
+> during boot. We end up doing the numa_crng_init() from interrupt context, which
+> makes things unhappy since you do GFP_KERNEL | __GFP_NOFAIL allocations from
+> there.
 
-The other thing that comes to mind is that there are some new fields
-in the VMCS12 since I first implemented this. One potentially
-troublesome field is the VMX preemption timer. If the current timer
-value is not saved on VM-exit, then it won't be stashed in the shadow
-VMCS12 by sync_vmcs12. Post-migration, the timer will be reset to its
-original value.
+I've already sent a pull request to Linux to fix this; see the
+random.git tree.
 
-Do we care? Is this any different from what happens on real hardware
-when there's an SMI? According to the SDM, this appears to be exacty
-what happens when the dual-monitor treatment of SMIs and SMM is
-active, but it's not clear what happens with the default treatment of
-SMIs and SMM.
+Apologies for not noticing this earlier.  My test environment had
+virtio-rng enabled by default, and while I did test the CONFIG_NUMA
+case, the call to add randomness doesn't happen from interrupt context
+with virtio-rng so I missed it in my testing.
 
-On Mon, Apr 16, 2018 at 10:15 AM, Raslan, KarimAllah <karahmed@amazon.de> wrote:
-> On Mon, 2018-04-16 at 09:22 -0700, Jim Mattson wrote:
->> On Thu, Apr 12, 2018 at 8:12 AM, KarimAllah Ahmed <karahmed@amazon.de> wrote:
->>
->> >
->> > v2 -> v3:
->> > - Remove the forced VMExit from L2 after reading the kvm_state. The actual
->> >   problem is solved.
->> > - Rebase again!
->> > - Set nested_run_pending during restore (not sure if it makes sense yet or
->> >   not).
->>
->> This doesn't actually make sense. Nested_run_pending should only be
->> set between L1 doing a VMLAUNCH/VMRESUME and the first instruction
->> executing in L2. That is extremely unlikely at a restore point.
->
-> Yeah, I am afraid I put very little thought into it as I was focused
-> on the TSC issue :)
->
-> Will handle it properly in next version.
->
->>
->> To deal with nested_run_pending and nested save/restore,
->> nested_run_pending should be set to 1 before calling
->> enter_vmx_non_root_mode, as it was prior to commit 7af40ad37b3f. That
->> means that it has to be cleared when emulating VM-entry to the halted
->> state (prior to calling kvm_vcpu_halt). And all of the from_vmentry
->> arguments that Paolo added when rebasing commit cf8b84f48a59 should be
->> removed, so that nested_run_pending is propagated correctly duting a
->> restore.
->>
->> It should be possible to eliminate this strange little wart, but I
->> haven't looked deeply into it.
->>
-> Amazon Development Center Germany GmbH
-> Berlin - Dresden - Aachen
-> main office: Krausenstr. 38, 10117 Berlin
-> Geschaeftsfuehrer: Dr. Ralf Herbrich, Christian Schlaeger
-> Ust-ID: DE289237879
-> Eingetragen am Amtsgericht Charlottenburg HRB 149173 B
+Cheers,
+
+					- Ted
