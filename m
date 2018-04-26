@@ -1,75 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932228AbeDZR2l (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 13:28:41 -0400
-Received: from mail-ot0-f178.google.com ([74.125.82.178]:45982 "EHLO
-        mail-ot0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756831AbeDZR2h (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 13:28:37 -0400
-X-Google-Smtp-Source: AIpwx49X7gM2mCDmUbMoq9+Mb9OHCklnH3im/IJ9/Ycx/TzqtQVolheeHhmaJUFrjZL54FL8PWT0M0G4a+dYAOT235E=
+        id S1756943AbeDZRar (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 13:30:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46220 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754553AbeDZRan (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 13:30:43 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D207621745
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Date: Thu, 26 Apr 2018 12:30:41 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Loic Poulain <loic.poulain@linaro.org>, Evan Wang <xswang@marvell.com>,
+        Victor Gu <xigu@marvell.com>
+Subject: [GIT PULL] PCI fixes for v4.17
+Message-ID: <20180426173041.GX28657@bhelgaas-glaptop.roam.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <DB5PR04MB132072FEDCAFEDF6592C6A32F58E0@DB5PR04MB1320.eurprd04.prod.outlook.com>
-References: <1524455219-6736-1-git-send-email-Anson.Huang@nxp.com>
- <1524455219-6736-4-git-send-email-Anson.Huang@nxp.com> <CAOMZO5CDAQtw7Q6NgSzKP4ogaqRaGSE0A+st1iqZ=cQsK49moQ@mail.gmail.com>
- <AM3PR04MB131566E1C8033D256686F192F5880@AM3PR04MB1315.eurprd04.prod.outlook.com>
- <CAOMZO5Dm=MFRoh=y54Qf2RrncWfQPTUJ2ZNfvYnUD=idp8RPNA@mail.gmail.com>
- <AM3PR04MB1315ED599A20F67BB9FEFEE1F58F0@AM3PR04MB1315.eurprd04.prod.outlook.com>
- <AM3PR04MB1315B04BE46755E3EB82E04CF58F0@AM3PR04MB1315.eurprd04.prod.outlook.com>
- <CAOMZO5AS=aH8p1+tmgJ4ooeqExNqOALh7vbPAsQdqdky8CkXyQ@mail.gmail.com> <DB5PR04MB132072FEDCAFEDF6592C6A32F58E0@DB5PR04MB1320.eurprd04.prod.outlook.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Thu, 26 Apr 2018 14:28:35 -0300
-Message-ID: <CAOMZO5Df__UpcLXVUrW0sT24g=Kmu2132QeQSBE9aZrjcyqsCw@mail.gmail.com>
-Subject: Re: [PATCH 4/5] ARM: dts: imx6sx-sabreauto: add fec support
-To: Anson Huang <anson.huang@nxp.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Andy Duan <fugang.duan@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 26, 2018 at 3:57 AM, Anson Huang <anson.huang@nxp.com> wrote:
+PCI fixes:
 
-> The 'phy-supply' is for enabling/disabling phy regulator, but here the MAX7322 IO0 is NOT for
-> enabling/disabling PHY regulator, it is for IO voltage switch between 1.5V and 1.8V, our ENET
-> IO can work with both 1.5V and 1.8V, so any config is OK for ENET function.
+  - fix Aardvark MRRS setting (Evan Wang)
 
-Thanks for the clarification.
+  - clarify "bandwidth available" link status message (Jakub Kicinski)
 
-> The 1.5V/1.8V selection is a one time setting thing, that means we only need to
-> config it once during boot up, most of i.MX platforms does NOT provide such voltage
-> switch function for ENET IO, on this 6SX sabre auto board, it is more like a backup or
-> validation purpose. With default settings, ENET's function is NOT impacted at all.
->
-> I think we can add a gpio regulator for it and let the regulator initialization set the GPIO
-> Level for fec, such below, with " enable-active-high " present, GPIO will be at LOW and voltage
-> is 1.5V, without this property, GPIO will be HIGH and voltage will be 1.8V.
-> +               reg_fec: fec_io_supply {
-> +                       compatible = "regulator-gpio";
-> +                       regulator-name = "1.8V_1.5V_FEC";
-> +                       regulator-min-microvolt = <1500000>;
-> +                       regulator-max-microvolt = <1800000>;
-> +                       states = <1500000 0x0 1800000 0x1>;
-> +                       enable-gpio = <&max7322 0 GPIO_ACTIVE_HIGH>;
-> +                       vin-supply = <&sw2_reg>;
-> +                       enable-active-high;
+  - update Kirin GPIO name to fix probe failure (Loic Poulain)
 
-If there is no consumer for this regulator, the regulator API will disable it.
+  - fix Aardvark IRQ usage (Victor Gu)
 
-It seems you need a 'regulator-always-on;'.
+  - fix Aardvark config accessor issues (Victor Gu)
 
 
-> +               };
-> +
->
-> Anson.
->
+The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
+
+  Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
+
+are available in the Git repository at:
+
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git tags/pci-v4.17-fixes-1
+
+for you to fetch changes up to 0cf22d6b317ce0103b7d5a47878aa5ef94240433:
+
+  PCI: Add "PCIe" to pcie_print_link_status() messages (2018-04-20 12:56:36 -0500)
+
+----------------------------------------------------------------
+pci-v4.17-fixes-1
+
+----------------------------------------------------------------
+Bjorn Helgaas (1):
+      Merge remote-tracking branch 'lorenzo/pci/host/fixes' into for-linus
+
+Evan Wang (1):
+      PCI: aardvark: Fix PCIe Max Read Request Size setting
+
+Jakub Kicinski (1):
+      PCI: Add "PCIe" to pcie_print_link_status() messages
+
+Loic Poulain (1):
+      PCI: kirin: Fix reset gpio name
+
+Victor Gu (3):
+      PCI: aardvark: Fix logic in advk_pcie_{rd,wr}_conf()
+      PCI: aardvark: Set PIO_ADDR_LS correctly in advk_pcie_rd_conf()
+      PCI: aardvark: Use ISR1 instead of ISR0 interrupt in legacy irq mode
+
+ drivers/pci/dwc/pcie-kirin.c    |  2 +-
+ drivers/pci/host/pci-aardvark.c | 53 +++++++++++++++++++++++------------------
+ drivers/pci/pci.c               |  4 ++--
+ 3 files changed, 33 insertions(+), 26 deletions(-)
