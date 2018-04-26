@@ -1,62 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754124AbeDZH3T (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 03:29:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56972 "EHLO mail.kernel.org"
+        id S1753482AbeDZHcE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 03:32:04 -0400
+Received: from david.siemens.de ([192.35.17.14]:43763 "EHLO david.siemens.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751626AbeDZH3R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 03:29:17 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00B67217DF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=krzk@kernel.org
-X-Google-Smtp-Source: AIpwx48/TAmK2SAqiAwxeKYDgkG/hsEM6e9mHr33DdsEgpydyPeBKB1NaxaLmDLU8My5AxEeHiQU6s+gv93DB5A1mis=
+        id S1751465AbeDZHcA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 03:32:00 -0400
+Subject: Re: [PATCH] of: overlay: Stop leaking resources on overlay removal
+To: Frank Rowand <frowand.list@gmail.com>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        devicetree <devicetree@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alan Tull <atull@kernel.org>
+References: <097f1b01-6cb4-8dcb-0498-7b4c59a7ea53@siemens.com>
+ <7aca82c1-a02c-2f84-bc32-6e8a118ba601@gmail.com>
+ <90e7da9d-d40a-17f1-e627-873f58a3dce5@siemens.com>
+ <b813ac8f-a1e3-3e27-2e44-0a576e05d01c@gmail.com>
+ <17561711-94f7-b3d4-8f06-9cfa69daaf23@gmail.com>
+ <033fba6b-d93c-249c-d552-1f5336b34387@gmail.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Openpgp: preference=signencrypt
+Message-ID: <46dbbff8-79ee-d397-7f8e-791fb1bc594c@siemens.com>
+Date: Thu, 26 Apr 2018 09:31:54 +0200
+User-Agent: Mozilla/5.0 (X11; U; Linux i686 (x86_64); de; rv:1.8.1.12)
+ Gecko/20080226 SUSE/2.0.0.12-1.1 Thunderbird/2.0.0.12 Mnenhy/0.7.5.666
 MIME-Version: 1.0
-In-Reply-To: <20180426091940.16bb1faf@canb.auug.org.au>
-References: <20180426091940.16bb1faf@canb.auug.org.au>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Thu, 26 Apr 2018 09:29:14 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPexiwOyPwmAV8KQj4JAnWHYYP4o8eVYodhvRYfKFGVbNw@mail.gmail.com>
-Message-ID: <CAJKOXPexiwOyPwmAV8KQj4JAnWHYYP4o8eVYodhvRYfKFGVbNw@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the clk-samsung tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        "linux-samsung-soc@vger.kernel.org"
-        <linux-samsung-soc@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <033fba6b-d93c-249c-d552-1f5336b34387@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 26, 2018 at 1:19 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Sylwester,
->
-> After merging the clk-samsung tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
->
-> In file included from arch/arm/boot/dts/exynos5440-sd5v1.dts:10:0:
-> arch/arm/boot/dts/exynos5440.dtsi:9:10: fatal error: dt-bindings/clock/exynos5440.h: No such file or directory
->  #include <dt-bindings/clock/exynos5440.h>
->           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> compilation terminated.
-> scripts/Makefile.lib:291: recipe for target 'arch/arm/boot/dts/exynos5440-sd5v1.dtb' failed
-> In file included from arch/arm/boot/dts/exynos5440-ssdk5440.dts:10:0:
-> arch/arm/boot/dts/exynos5440.dtsi:9:10: fatal error: dt-bindings/clock/exynos5440.h: No such file or directory
->  #include <dt-bindings/clock/exynos5440.h>
->           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->
-> Caused by commit
->
->   f986c0e40ff5 ("clk: samsung: Remove support for Exynos5440")
->
-> I used the version of the clk-samsung tree from next-20180424 for today.
+On 2018-04-26 02:44, Frank Rowand wrote:
+> On 04/25/18 17:32, Frank Rowand wrote:
+>> Hi Jan,
+>>
+>> On 04/24/18 13:58, Frank Rowand wrote:
+>>> On 04/24/18 10:50, Jan Kiszka wrote:
+>>>> On 2018-04-24 19:44, Frank Rowand wrote:
+>>>>> On 04/24/18 09:19, Jan Kiszka wrote:
+>>>>>> Only the overlay notifier callbacks have a chance to potentially get
+>>>>>> hold of references to those two resources, but they do not store them.
+>>>>>> So it is safe to stop the intentional leaking.
+>>>>>>
+>>>>>> See also https://lkml.org/lkml/2018/4/23/1063 and following.
+>>>>>>
+>>>>>> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+>>>>>> ---
+>>>>>>
+>>>>>> Ideally, we sort out any remaining worries during the 4.17-rc cycle.
+>>>>>>
+>>>>>>  drivers/of/overlay.c | 13 ++-----------
+>>>>>>  1 file changed, 2 insertions(+), 11 deletions(-)
+>>>>>>
+>>>>>> diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
+>>>>>> index b35fe88f1851..3553f1f57a62 100644
+>>>>>> --- a/drivers/of/overlay.c
+>>>>>> +++ b/drivers/of/overlay.c
+>>>>>> @@ -671,17 +671,8 @@ static void free_overlay_changeset(struct overlay_changeset *ovcs)
+>>>>>>  		of_node_put(ovcs->fragments[i].overlay);
+>>>>>>  	}
+>>>>>>  	kfree(ovcs->fragments);
+>>>>>> -
+>>>>>> -	/*
+>>>>>> -	 * TODO
+>>>>>> -	 *
+>>>>>> -	 * would like to: kfree(ovcs->overlay_tree);
+>>>>>> -	 * but can not since drivers may have pointers into this data
+>>>>>> -	 *
+>>>>>> -	 * would like to: kfree(ovcs->fdt);
+>>>>>> -	 * but can not since drivers may have pointers into this data
+>>>>>> -	 */
+>>>>>> -
+>>>>>> +	kfree(ovcs->overlay_tree);
+>>>>>> +	kfree(ovcs->fdt);
+>>>>>>  	kfree(ovcs);
+>>>>>>  }
+>>>>>>  
+>>>>>>
+>>>>>
+>>>>> Nack.  It is premature to submit this while the conversation is
+>>>>> continuing in the other thread.
+>>>>>
+>>>>> I'll continue the conversation in the other thread.
+>>>>>
+>>>>
+>>>> Well, at least the strongest argument has been resolved now, the
+>>>> notifier topic. Curious to learn what remains. As I noted, we should
+>>>> work hard to sort out the API regression prior to the release.
+>>>
+>>> Nope, the notifier discussion continues in the other thread.
+>>
+>> Thanks for your patience in the other thread.
+>>
+>> As I noted there, I am now willing to accept this patch with some
+>> small changes.  Please add a minimal section to
+>> Documentation/devicetree/overlay-notes.txt about overlay notifiers.
+>> The most important thing to note there is that the overlay notifiers
+>> are not allowed to retain any pointers into the overlay devicetree.
+> 
+> Please also add a function header comment to of_overlay_notifier_register()
+> in drivers/of/overlay.c that notes the restriction on the overlay notifier.
+> 
+> 
+>> Also, instead of removing the "TODO" comment in free_overlay_changeset(),
+>> change it to say something to the effect of "there should be no live pointers
+>> into ovcs->overlay_tree and ovcs->fdt due to the policy that overlay
+>> notifiers are not allowed to retain pointers into the overlay devicetree".
+>>
+>> I will also add myself to the OPEN FIRMWARE AND DEVICE TREE OVERLAYS
+>> entry of MAINTAINERS and add a keyword line to catch overlay notifiers.
+>>
+>> I am not happy about freeing the overlay devicetree and overlay fdt
+>> while overlay notifiers are able to retain pointers into the overlay
+>> devicetree and overlay fdt, but am willing to accept documentation and
+>> review as a partial protection until the devicetree access APIs can be
+>> modified to prevent the notifiers from accessing the pointers.  The
+>> volume of overlay notifier patches should be small enough to not be
+>> a review burden.
+>>
+>> -Frank
+>>
+>>
+> 
 
-Thanks for the report, kbuild also mentioned this. The DTS which are
-using this header are removed in first patch of patchset... which was
-not applied yet and anyway would end in different tree. I think the
-patch removing clk header should wait till DTS change get merged into
-mainline.
+Thanks for reconsidering! I'll look into your change requests soon and
+come up with v2.
 
-Best regards,
-Krzysztof
+Jan
+
+-- 
+Siemens AG, Corporate Technology, CT RDA IOT SES-DE
+Corporate Competence Center Embedded Linux
