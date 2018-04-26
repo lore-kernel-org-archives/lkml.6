@@ -1,124 +1,939 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755451AbeDZKbl (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 06:31:41 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:42204 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754723AbeDZKbh (ORCPT
+        id S1755477AbeDZKcH (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 06:32:07 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:46033 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754723AbeDZKcC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 06:31:37 -0400
-X-Google-Smtp-Source: AIpwx48EWXwJTzzj1++/yPTeVjrXR6D10I16JmBie5XtdvuHoDypgSctu2zj4NlLp4u+wIgFV+FMwQ==
-Date: Thu, 26 Apr 2018 12:31:33 +0200
-From: Vincent Guittot <vincent.guittot@linaro.org>
-To: Niklas =?iso-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund@ragnatech.se>,
-        Heiner Kallweit <hkallweit1@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: Potential problem with 31e77c93e432dec7 ("sched/fair: Update
- blocked load when newly idle")
-Message-ID: <20180426103133.GA6953@linaro.org>
-References: <20180412091822.GG12256@bigcity.dyn.berto.se>
- <CAKfTPtAE3qeWcTdT-WL8nrbZmP_+OaxPyyjUfVCzn=rax9tQZQ@mail.gmail.com>
- <20180412111519.GH12256@bigcity.dyn.berto.se>
- <20180412133031.GA551@linaro.org>
- <20180412223904.GJ12256@bigcity.dyn.berto.se>
- <CAKfTPtDRtto7w806gYgdS_bCJ77EY0RRtszycB+TnG6aQ6ve4Q@mail.gmail.com>
- <20180420160013.GA13769@linaro.org>
- <20180422221827.GB27674@bigcity.dyn.berto.se>
- <20180423095420.GA23995@linaro.org>
- <20180425225603.GA26177@bigcity.dyn.berto.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180425225603.GA26177@bigcity.dyn.berto.se>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Thu, 26 Apr 2018 06:32:02 -0400
+X-Google-Smtp-Source: AB8JxZpr3dDFIIHM5ozTPihDHPsadHJG+TIL3g3EdnK3jNI2pNbiJMffto5iLGz2GLTfNIRAHlD/Kg==
+From: Vaishali Thakkar <vthakkar1994@gmail.com>
+To: alexander.deucher@amd.com
+Cc: christian.koenig@amd.com, David1.Zhou@amd.com, airlied@linux.ie,
+        brodkin@synopsys.com, linux@armlinux.org.uk,
+        boris.brezillon@bootlin.com, nicolas.ferre@microchip.com,
+        alexandre.belloni@bootlin.com, gustavo@padovan.org,
+        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
+        l.stach@pengutronix.de, christian.gmeiner@gmail.com,
+        inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com,
+        kyungmin.park@samsung.com, kgene@kernel.org, krzk@kernel.org,
+        stefan@agner.ch, alison.wang@freescale.com,
+        z.liuxinliang@hisilicon.com, zourongrong@gmail.com,
+        kong.kongxinwei@hisilicon.com, puck.chen@hisilicon.com,
+        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
+        rodrigo.vivi@intel.com, p.zabel@pengutronix.de, ck.hu@mediatek.com,
+        matthias.bgg@gmail.com, robdclark@gmail.com, marex@denx.de,
+        bskeggs@redhat.com, tomi.valkeinen@ti.com, eric@anholt.net,
+        airlied@redhat.com, kraxel@redhat.com,
+        laurent.pinchart@ideasonboard.com, hjc@rock-chips.com, heiko@sntech.de,
+        benjamin.gaignard@linaro.org, vincent.abriou@st.com,
+        yannick.fertre@st.com, philippe.cornu@st.com,
+        maxime.ripard@bootlin.com, wens@csie.org, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, noralf@tronnes.org, linus.walleij@linaro.org,
+        shawnguo@kernel.org, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, etnaviv@lists.freedesktop.org,
+        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        linux-tegra@vger.kernel.org, Vaishali Thakkar <vthakkar1994@gmail.com>
+Subject: [PATCH] drm/core: Remove drm_dev_unref() and it's uses
+Date: Thu, 26 Apr 2018 15:58:19 +0530
+Message-Id: <20180426102819.6985-1-vthakkar1994@gmail.com>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Niklas,
+It's been a while since we introduced drm_dev{get/put} functions
+to replace reference/unreference in drm subsystem for the
+consistency purpose. So, with this patch, let's just replace
+all current use cases of drm_dev_unref() with drm_dev_put and remove
+the function itself.
 
-Le Thursday 26 Apr 2018 à 00:56:03 (+0200), Niklas Söderlund a écrit :
-> Hi Vincent,
-> 
-> Here are the result, sorry for the delay.
-> 
-> On 2018-04-23 11:54:20 +0200, Vincent Guittot wrote:
-> 
-> [snip]
-> 
-> > 
-> > Thanks for the report. Can you re run with the following trace-cmd sequence ? My previous sequence disables ftrace events
-> > 
-> > trace-cmd reset > /dev/null
-> > trace-cmd start -b 40000 -p function -l dump_backtrace:traceoff -e sched -e cpu_idle -e cpu_frequency -e timer -e ipi -e irq -e printk
-> > trace-cmd start -b 40000 -p function -l dump_backtrace -e sched -e cpu_idle -e cpu_frequency -e timer -e ipi -e irq -e printk
-> > 
-> > I have updated the patch and added traces to check that scheduler returns from idle_balance function and doesn't stay stuck
-> 
-> Once more I applied the change bellow on-top of c18bb396d3d261eb ("Merge 
-> git://git.kernel.org/pub/scm/linux/kernel/git/davem/net").
-> 
-> This time the result of 'trace-cmd report' is so large I do not include 
-> it here, but I attach the trace.dat file. Not sure why but the timing of 
-> sending the NMI to the backtrace print is different (but content the 
-> same AFIK) so in the odd change it can help figure this out:
-> 
+Coccinelle was used for mass-patching.
 
-Thanks for the trace, I have been able to catch a problem with it.
-Could you test the patch below to confirm that the problem is solved ?
-The patch apply on-top of
-c18bb396d3d261eb ("Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net")
-
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Thu, 26 Apr 2018 12:19:32 +0200
-Subject: [PATCH] sched/fair: fix the update of blocked load when newly idle
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-With commit 31e77c93e432 ("sched/fair: Update blocked load when newly idle"),
-we release the rq->lock when updating blocked load of idle CPUs. This open
-a time window during which another CPU can add a task to this CPU's cfs_rq.
-The check for newly added task of idle_balance() is not in the common path.
-Move the out label to include this check.
-
-Fixes: 31e77c93e432 ("sched/fair: Update blocked load when newly idle")
-Reported-by: Heiner Kallweit <hkallweit1@gmail.com>
-Reported-by: Niklas Söderlund <niklas.soderlund@ragnatech.se>
-Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+Signed-off-by: Vaishali Thakkar <vthakkar1994@gmail.com>
 ---
- kernel/sched/fair.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c            |  4 ++--
+ drivers/gpu/drm/arc/arcpgu_drv.c                   |  4 ++--
+ drivers/gpu/drm/armada/armada_drv.c                |  6 +++---
+ drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c       |  4 ++--
+ drivers/gpu/drm/drm_drv.c                          | 13 -------------
+ drivers/gpu/drm/etnaviv/etnaviv_drv.c              |  4 ++--
+ drivers/gpu/drm/exynos/exynos_drm_drv.c            |  4 ++--
+ drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c          |  4 ++--
+ drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c    |  4 ++--
+ drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c    |  8 ++++----
+ drivers/gpu/drm/i915/selftests/huge_pages.c        |  2 +-
+ drivers/gpu/drm/i915/selftests/i915_gem_dmabuf.c   |  2 +-
+ drivers/gpu/drm/i915/selftests/i915_gem_evict.c    |  2 +-
+ drivers/gpu/drm/i915/selftests/i915_gem_gtt.c      |  2 +-
+ drivers/gpu/drm/i915/selftests/i915_gem_object.c   |  2 +-
+ drivers/gpu/drm/i915/selftests/i915_request.c      |  2 +-
+ drivers/gpu/drm/i915/selftests/i915_vma.c          |  2 +-
+ drivers/gpu/drm/i915/selftests/intel_breadcrumbs.c |  2 +-
+ drivers/gpu/drm/imx/imx-drm-core.c                 |  4 ++--
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c             |  6 +++---
+ drivers/gpu/drm/msm/msm_drv.c                      |  8 ++++----
+ drivers/gpu/drm/mxsfb/mxsfb_drv.c                  |  4 ++--
+ drivers/gpu/drm/nouveau/nouveau_platform.c         |  2 +-
+ drivers/gpu/drm/omapdrm/omap_drv.c                 |  4 ++--
+ drivers/gpu/drm/pl111/pl111_drv.c                  |  4 ++--
+ drivers/gpu/drm/qxl/qxl_drv.c                      |  2 +-
+ drivers/gpu/drm/rcar-du/rcar_du_drv.c              |  2 +-
+ drivers/gpu/drm/rockchip/rockchip_drm_drv.c        |  4 ++--
+ drivers/gpu/drm/shmobile/shmob_drm_drv.c           |  4 ++--
+ drivers/gpu/drm/sti/sti_drv.c                      |  8 ++++----
+ drivers/gpu/drm/stm/drv.c                          |  4 ++--
+ drivers/gpu/drm/sun4i/sun4i_drv.c                  |  4 ++--
+ drivers/gpu/drm/tegra/drm.c                        |  4 ++--
+ drivers/gpu/drm/tinydrm/core/tinydrm-core.c        |  6 +++---
+ drivers/gpu/drm/tve200/tve200_drv.c                |  4 ++--
+ drivers/gpu/drm/udl/udl_drv.c                      |  2 +-
+ drivers/gpu/drm/vc4/vc4_drv.c                      |  4 ++--
+ drivers/gpu/drm/vgem/vgem_drv.c                    |  2 +-
+ drivers/gpu/drm/virtio/virtgpu_drm_bus.c           |  2 +-
+ drivers/gpu/drm/zte/zx_drm_drv.c                   |  4 ++--
+ include/drm/drm_drv.h                              |  1 -
+ 41 files changed, 73 insertions(+), 87 deletions(-)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 0951d1c..15a9f5e 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -9847,6 +9847,7 @@ static int idle_balance(struct rq *this_rq, struct rq_flags *rf)
- 	if (curr_cost > this_rq->max_idle_balance_cost)
- 		this_rq->max_idle_balance_cost = curr_cost;
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
+index 0b19482b36b8..5fb455febeba 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
+@@ -647,7 +647,7 @@ static int amdgpu_pci_probe(struct pci_dev *pdev,
+ err_pci:
+ 	pci_disable_device(pdev);
+ err_free:
+-	drm_dev_unref(dev);
++	drm_dev_put(dev);
+ 	return ret;
+ }
  
-+out:
+@@ -657,7 +657,7 @@ amdgpu_pci_remove(struct pci_dev *pdev)
+ 	struct drm_device *dev = pci_get_drvdata(pdev);
+ 
+ 	drm_dev_unregister(dev);
+-	drm_dev_unref(dev);
++	drm_dev_put(dev);
+ 	pci_disable_device(pdev);
+ 	pci_set_drvdata(pdev, NULL);
+ }
+diff --git a/drivers/gpu/drm/arc/arcpgu_drv.c b/drivers/gpu/drm/arc/arcpgu_drv.c
+index f067de4e1e82..dcb06d4e9135 100644
+--- a/drivers/gpu/drm/arc/arcpgu_drv.c
++++ b/drivers/gpu/drm/arc/arcpgu_drv.c
+@@ -216,7 +216,7 @@ static int arcpgu_probe(struct platform_device *pdev)
+ 	arcpgu_unload(drm);
+ 
+ err_unref:
+-	drm_dev_unref(drm);
++	drm_dev_put(drm);
+ 
+ 	return ret;
+ }
+@@ -227,7 +227,7 @@ static int arcpgu_remove(struct platform_device *pdev)
+ 
+ 	drm_dev_unregister(drm);
+ 	arcpgu_unload(drm);
+-	drm_dev_unref(drm);
++	drm_dev_put(drm);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/gpu/drm/armada/armada_drv.c b/drivers/gpu/drm/armada/armada_drv.c
+index 4b11b6b52f1d..d1705d298a39 100644
+--- a/drivers/gpu/drm/armada/armada_drv.c
++++ b/drivers/gpu/drm/armada/armada_drv.c
+@@ -109,7 +109,7 @@ static int armada_drm_bind(struct device *dev)
+ 
  	/*
- 	 * While browsing the domains, we released the rq lock, a task could
- 	 * have been enqueued in the meantime. Since we're not going idle,
-@@ -9855,7 +9856,6 @@ static int idle_balance(struct rq *this_rq, struct rq_flags *rf)
- 	if (this_rq->cfs.h_nr_running && !pulled_task)
- 		pulled_task = 1;
+ 	 * The drm_device structure must be at the start of
+-	 * armada_private for drm_dev_unref() to work correctly.
++	 * armada_private for drm_dev_put() to work correctly.
+ 	 */
+ 	BUILD_BUG_ON(offsetof(struct armada_private, drm) != 0);
  
--out:
- 	/* Move the next balance forward */
- 	if (time_after(this_rq->next_balance, next_balance))
- 		this_rq->next_balance = next_balance;
+@@ -180,7 +180,7 @@ static int armada_drm_bind(struct device *dev)
+ 	drm_mode_config_cleanup(&priv->drm);
+ 	drm_mm_takedown(&priv->linear);
+ 	flush_work(&priv->fb_unref_work);
+-	drm_dev_unref(&priv->drm);
++	drm_dev_put(&priv->drm);
+ 	return ret;
+ }
+ 
+@@ -200,7 +200,7 @@ static void armada_drm_unbind(struct device *dev)
+ 	drm_mm_takedown(&priv->linear);
+ 	flush_work(&priv->fb_unref_work);
+ 
+-	drm_dev_unref(&priv->drm);
++	drm_dev_put(&priv->drm);
+ }
+ 
+ static int compare_of(struct device *dev, void *data)
+diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
+index c1ea5c36b006..1c8487803a70 100644
+--- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
++++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
+@@ -774,7 +774,7 @@ static int atmel_hlcdc_dc_drm_probe(struct platform_device *pdev)
+ 	atmel_hlcdc_dc_unload(ddev);
+ 
+ err_unref:
+-	drm_dev_unref(ddev);
++	drm_dev_put(ddev);
+ 
+ 	return ret;
+ }
+@@ -785,7 +785,7 @@ static int atmel_hlcdc_dc_drm_remove(struct platform_device *pdev)
+ 
+ 	drm_dev_unregister(ddev);
+ 	atmel_hlcdc_dc_unload(ddev);
+-	drm_dev_unref(ddev);
++	drm_dev_put(ddev);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/gpu/drm/drm_drv.c b/drivers/gpu/drm/drm_drv.c
+index a1b9338736e3..3dc507b13cf2 100644
+--- a/drivers/gpu/drm/drm_drv.c
++++ b/drivers/gpu/drm/drm_drv.c
+@@ -656,19 +656,6 @@ void drm_dev_put(struct drm_device *dev)
+ }
+ EXPORT_SYMBOL(drm_dev_put);
+ 
+-/**
+- * drm_dev_unref - Drop reference of a DRM device
+- * @dev: device to drop reference of or NULL
+- *
+- * This is a compatibility alias for drm_dev_put() and should not be used by new
+- * code.
+- */
+-void drm_dev_unref(struct drm_device *dev)
+-{
+-	drm_dev_put(dev);
+-}
+-EXPORT_SYMBOL(drm_dev_unref);
+-
+ static int create_compat_control_link(struct drm_device *dev)
+ {
+ 	struct drm_minor *minor;
+diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.c b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
+index ab50090d066c..716187a07227 100644
+--- a/drivers/gpu/drm/etnaviv/etnaviv_drv.c
++++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
+@@ -613,7 +613,7 @@ static int etnaviv_bind(struct device *dev)
+ out_bind:
+ 	kfree(priv);
+ out_unref:
+-	drm_dev_unref(drm);
++	drm_dev_put(drm);
+ 
+ 	return ret;
+ }
+@@ -630,7 +630,7 @@ static void etnaviv_unbind(struct device *dev)
+ 	drm->dev_private = NULL;
+ 	kfree(priv);
+ 
+-	drm_dev_unref(drm);
++	drm_dev_put(drm);
+ }
+ 
+ static const struct component_master_ops etnaviv_master_ops = {
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+index a518e9c6d6cc..3629e5c93e3a 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+@@ -411,7 +411,7 @@ static int exynos_drm_bind(struct device *dev)
+ err_free_private:
+ 	kfree(private);
+ err_free_drm:
+-	drm_dev_unref(drm);
++	drm_dev_put(drm);
+ 
+ 	return ret;
+ }
+@@ -435,7 +435,7 @@ static void exynos_drm_unbind(struct device *dev)
+ 	drm->dev_private = NULL;
+ 	dev_set_drvdata(dev, NULL);
+ 
+-	drm_dev_unref(drm);
++	drm_dev_put(drm);
+ }
+ 
+ static const struct component_master_ops exynos_drm_ops = {
+diff --git a/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c b/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c
+index 80232321a244..664ac9dc1f65 100644
+--- a/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c
++++ b/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c
+@@ -358,7 +358,7 @@ static int fsl_dcu_drm_probe(struct platform_device *pdev)
+ 	return 0;
+ 
+ unref:
+-	drm_dev_unref(drm);
++	drm_dev_put(drm);
+ unregister_pix_clk:
+ 	clk_unregister(fsl_dev->pix_clk);
+ disable_clk:
+@@ -371,7 +371,7 @@ static int fsl_dcu_drm_remove(struct platform_device *pdev)
+ 	struct fsl_dcu_drm_device *fsl_dev = platform_get_drvdata(pdev);
+ 
+ 	drm_dev_unregister(fsl_dev->drm);
+-	drm_dev_unref(fsl_dev->drm);
++	drm_dev_put(fsl_dev->drm);
+ 	clk_disable_unprepare(fsl_dev->clk);
+ 	clk_unregister(fsl_dev->pix_clk);
+ 
+diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
+index d4f6f1f9df5b..ec878c7e3f75 100644
+--- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
++++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
+@@ -387,7 +387,7 @@ static int hibmc_pci_probe(struct pci_dev *pdev,
+ err_disable:
+ 	pci_disable_device(pdev);
+ err_free:
+-	drm_dev_unref(dev);
++	drm_dev_put(dev);
+ 
+ 	return ret;
+ }
+@@ -398,7 +398,7 @@ static void hibmc_pci_remove(struct pci_dev *pdev)
+ 
+ 	drm_dev_unregister(dev);
+ 	hibmc_unload(dev);
+-	drm_dev_unref(dev);
++	drm_dev_put(dev);
+ }
+ 
+ static struct pci_device_id hibmc_pci_table[] = {
+diff --git a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c
+index ddb0403f1975..e6a62d5a00a3 100644
+--- a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c
++++ b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c
+@@ -193,7 +193,7 @@ static int kirin_drm_bind(struct device *dev)
+ 
+ 	ret = kirin_drm_kms_init(drm_dev);
+ 	if (ret)
+-		goto err_drm_dev_unref;
++		goto err_drm_dev_put;
+ 
+ 	ret = drm_dev_register(drm_dev, 0);
+ 	if (ret)
+@@ -203,8 +203,8 @@ static int kirin_drm_bind(struct device *dev)
+ 
+ err_kms_cleanup:
+ 	kirin_drm_kms_cleanup(drm_dev);
+-err_drm_dev_unref:
+-	drm_dev_unref(drm_dev);
++err_drm_dev_put:
++	drm_dev_put(drm_dev);
+ 
+ 	return ret;
+ }
+@@ -215,7 +215,7 @@ static void kirin_drm_unbind(struct device *dev)
+ 
+ 	drm_dev_unregister(drm_dev);
+ 	kirin_drm_kms_cleanup(drm_dev);
+-	drm_dev_unref(drm_dev);
++	drm_dev_put(drm_dev);
+ }
+ 
+ static const struct component_master_ops kirin_drm_ops = {
+diff --git a/drivers/gpu/drm/i915/selftests/huge_pages.c b/drivers/gpu/drm/i915/selftests/huge_pages.c
+index 05bbef363fff..22de60920b1a 100644
+--- a/drivers/gpu/drm/i915/selftests/huge_pages.c
++++ b/drivers/gpu/drm/i915/selftests/huge_pages.c
+@@ -1720,7 +1720,7 @@ int i915_gem_huge_page_mock_selftests(void)
+ 
+ 	i915_modparams.enable_ppgtt = saved_ppgtt;
+ 
+-	drm_dev_unref(&dev_priv->drm);
++	drm_dev_put(&dev_priv->drm);
+ 
+ 	return err;
+ }
+diff --git a/drivers/gpu/drm/i915/selftests/i915_gem_dmabuf.c b/drivers/gpu/drm/i915/selftests/i915_gem_dmabuf.c
+index 89dc25a5a53b..a7055b12e53c 100644
+--- a/drivers/gpu/drm/i915/selftests/i915_gem_dmabuf.c
++++ b/drivers/gpu/drm/i915/selftests/i915_gem_dmabuf.c
+@@ -389,7 +389,7 @@ int i915_gem_dmabuf_mock_selftests(void)
+ 
+ 	err = i915_subtests(tests, i915);
+ 
+-	drm_dev_unref(&i915->drm);
++	drm_dev_put(&i915->drm);
+ 	return err;
+ }
+ 
+diff --git a/drivers/gpu/drm/i915/selftests/i915_gem_evict.c b/drivers/gpu/drm/i915/selftests/i915_gem_evict.c
+index ab9d7bee0aae..7b21e4135aa5 100644
+--- a/drivers/gpu/drm/i915/selftests/i915_gem_evict.c
++++ b/drivers/gpu/drm/i915/selftests/i915_gem_evict.c
+@@ -490,7 +490,7 @@ int i915_gem_evict_mock_selftests(void)
+ 	err = i915_subtests(tests, i915);
+ 	mutex_unlock(&i915->drm.struct_mutex);
+ 
+-	drm_dev_unref(&i915->drm);
++	drm_dev_put(&i915->drm);
+ 	return err;
+ }
+ 
+diff --git a/drivers/gpu/drm/i915/selftests/i915_gem_gtt.c b/drivers/gpu/drm/i915/selftests/i915_gem_gtt.c
+index f7dc926f4ef1..1cf4e9af0b65 100644
+--- a/drivers/gpu/drm/i915/selftests/i915_gem_gtt.c
++++ b/drivers/gpu/drm/i915/selftests/i915_gem_gtt.c
+@@ -1646,7 +1646,7 @@ int i915_gem_gtt_mock_selftests(void)
+ 	err = i915_subtests(tests, i915);
+ 	mutex_unlock(&i915->drm.struct_mutex);
+ 
+-	drm_dev_unref(&i915->drm);
++	drm_dev_put(&i915->drm);
+ 	return err;
+ }
+ 
+diff --git a/drivers/gpu/drm/i915/selftests/i915_gem_object.c b/drivers/gpu/drm/i915/selftests/i915_gem_object.c
+index fbdb2419d418..7066f22ef8f1 100644
+--- a/drivers/gpu/drm/i915/selftests/i915_gem_object.c
++++ b/drivers/gpu/drm/i915/selftests/i915_gem_object.c
+@@ -586,7 +586,7 @@ int i915_gem_object_mock_selftests(void)
+ 
+ 	err = i915_subtests(tests, i915);
+ 
+-	drm_dev_unref(&i915->drm);
++	drm_dev_put(&i915->drm);
+ 	return err;
+ }
+ 
+diff --git a/drivers/gpu/drm/i915/selftests/i915_request.c b/drivers/gpu/drm/i915/selftests/i915_request.c
+index 94bc2e1898a4..5d069de4a19a 100644
+--- a/drivers/gpu/drm/i915/selftests/i915_request.c
++++ b/drivers/gpu/drm/i915/selftests/i915_request.c
+@@ -262,7 +262,7 @@ int i915_request_mock_selftests(void)
+ 		return -ENOMEM;
+ 
+ 	err = i915_subtests(tests, i915);
+-	drm_dev_unref(&i915->drm);
++	drm_dev_put(&i915->drm);
+ 
+ 	return err;
+ }
+diff --git a/drivers/gpu/drm/i915/selftests/i915_vma.c b/drivers/gpu/drm/i915/selftests/i915_vma.c
+index eb89e301b602..9fbba5defb3e 100644
+--- a/drivers/gpu/drm/i915/selftests/i915_vma.c
++++ b/drivers/gpu/drm/i915/selftests/i915_vma.c
+@@ -734,7 +734,7 @@ int i915_vma_mock_selftests(void)
+ 	err = i915_subtests(tests, i915);
+ 	mutex_unlock(&i915->drm.struct_mutex);
+ 
+-	drm_dev_unref(&i915->drm);
++	drm_dev_put(&i915->drm);
+ 	return err;
+ }
+ 
+diff --git a/drivers/gpu/drm/i915/selftests/intel_breadcrumbs.c b/drivers/gpu/drm/i915/selftests/intel_breadcrumbs.c
+index 46580026c7fc..b6c9deeeda7b 100644
+--- a/drivers/gpu/drm/i915/selftests/intel_breadcrumbs.c
++++ b/drivers/gpu/drm/i915/selftests/intel_breadcrumbs.c
+@@ -463,7 +463,7 @@ int intel_breadcrumbs_mock_selftests(void)
+ 		return -ENOMEM;
+ 
+ 	err = i915_subtests(tests, i915->engine[RCS]);
+-	drm_dev_unref(&i915->drm);
++	drm_dev_put(&i915->drm);
+ 
+ 	return err;
+ }
+diff --git a/drivers/gpu/drm/imx/imx-drm-core.c b/drivers/gpu/drm/imx/imx-drm-core.c
+index 1d053bbefc02..27f54cbee7fb 100644
+--- a/drivers/gpu/drm/imx/imx-drm-core.c
++++ b/drivers/gpu/drm/imx/imx-drm-core.c
+@@ -307,7 +307,7 @@ static int imx_drm_bind(struct device *dev)
+ err_kms:
+ 	drm_mode_config_cleanup(drm);
+ err_unref:
+-	drm_dev_unref(drm);
++	drm_dev_put(drm);
+ 
+ 	return ret;
+ }
+@@ -327,7 +327,7 @@ static void imx_drm_unbind(struct device *dev)
+ 	component_unbind_all(drm->dev, drm);
+ 	dev_set_drvdata(dev, NULL);
+ 
+-	drm_dev_unref(drm);
++	drm_dev_put(drm);
+ }
+ 
+ static const struct component_master_ops imx_drm_ops = {
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+index a2ca90fc403c..5d024a154e1a 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+@@ -341,7 +341,7 @@ static int mtk_drm_bind(struct device *dev)
+ err_deinit:
+ 	mtk_drm_kms_deinit(drm);
+ err_free:
+-	drm_dev_unref(drm);
++	drm_dev_put(drm);
+ 	return ret;
+ }
+ 
+@@ -350,7 +350,7 @@ static void mtk_drm_unbind(struct device *dev)
+ 	struct mtk_drm_private *private = dev_get_drvdata(dev);
+ 
+ 	drm_dev_unregister(private->drm);
+-	drm_dev_unref(private->drm);
++	drm_dev_put(private->drm);
+ 	private->drm = NULL;
+ }
+ 
+@@ -504,7 +504,7 @@ static int mtk_drm_remove(struct platform_device *pdev)
+ 
+ 	drm_dev_unregister(drm);
+ 	mtk_drm_kms_deinit(drm);
+-	drm_dev_unref(drm);
++	drm_dev_put(drm);
+ 
+ 	component_master_del(&pdev->dev, &mtk_drm_ops);
+ 	pm_runtime_disable(&pdev->dev);
+diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/msm_drv.c
+index 30cd514d8f7c..558a82f828b8 100644
+--- a/drivers/gpu/drm/msm/msm_drv.c
++++ b/drivers/gpu/drm/msm/msm_drv.c
+@@ -260,7 +260,7 @@ static int msm_drm_uninit(struct device *dev)
+ 	msm_mdss_destroy(ddev);
+ 
+ 	ddev->dev_private = NULL;
+-	drm_dev_unref(ddev);
++	drm_dev_put(ddev);
+ 
+ 	kfree(priv);
+ 
+@@ -368,7 +368,7 @@ static int msm_drm_init(struct device *dev, struct drm_driver *drv)
+ 
+ 	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
+ 	if (!priv) {
+-		drm_dev_unref(ddev);
++		drm_dev_put(ddev);
+ 		return -ENOMEM;
+ 	}
+ 
+@@ -378,7 +378,7 @@ static int msm_drm_init(struct device *dev, struct drm_driver *drv)
+ 	ret = msm_mdss_init(ddev);
+ 	if (ret) {
+ 		kfree(priv);
+-		drm_dev_unref(ddev);
++		drm_dev_put(ddev);
+ 		return ret;
+ 	}
+ 
+@@ -398,7 +398,7 @@ static int msm_drm_init(struct device *dev, struct drm_driver *drv)
+ 	if (ret) {
+ 		msm_mdss_destroy(ddev);
+ 		kfree(priv);
+-		drm_dev_unref(ddev);
++		drm_dev_put(ddev);
+ 		return ret;
+ 	}
+ 
+diff --git a/drivers/gpu/drm/mxsfb/mxsfb_drv.c b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
+index 5cae8db9dcd4..1ca9bafcd4f2 100644
+--- a/drivers/gpu/drm/mxsfb/mxsfb_drv.c
++++ b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
+@@ -403,7 +403,7 @@ static int mxsfb_probe(struct platform_device *pdev)
+ err_unload:
+ 	mxsfb_unload(drm);
+ err_free:
+-	drm_dev_unref(drm);
++	drm_dev_put(drm);
+ 
+ 	return ret;
+ }
+@@ -414,7 +414,7 @@ static int mxsfb_remove(struct platform_device *pdev)
+ 
+ 	drm_dev_unregister(drm);
+ 	mxsfb_unload(drm);
+-	drm_dev_unref(drm);
++	drm_dev_put(drm);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/gpu/drm/nouveau/nouveau_platform.c b/drivers/gpu/drm/nouveau/nouveau_platform.c
+index 1ada186fab77..039e23548e08 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_platform.c
++++ b/drivers/gpu/drm/nouveau/nouveau_platform.c
+@@ -36,7 +36,7 @@ static int nouveau_platform_probe(struct platform_device *pdev)
+ 
+ 	ret = drm_dev_register(drm, 0);
+ 	if (ret < 0) {
+-		drm_dev_unref(drm);
++		drm_dev_put(drm);
+ 		return ret;
+ 	}
+ 
+diff --git a/drivers/gpu/drm/omapdrm/omap_drv.c b/drivers/gpu/drm/omapdrm/omap_drv.c
+index 3632854c2b91..e12cedc15e27 100644
+--- a/drivers/gpu/drm/omapdrm/omap_drv.c
++++ b/drivers/gpu/drm/omapdrm/omap_drv.c
+@@ -598,7 +598,7 @@ static int omapdrm_init(struct omap_drm_private *priv, struct device *dev)
+ 	omap_drm_irq_uninstall(ddev);
+ err_free_drm_dev:
+ 	omap_gem_deinit(ddev);
+-	drm_dev_unref(ddev);
++	drm_dev_put(ddev);
+ err_destroy_wq:
+ 	destroy_workqueue(priv->wq);
+ 	omap_disconnect_dssdevs();
+@@ -627,7 +627,7 @@ static void omapdrm_cleanup(struct omap_drm_private *priv)
+ 	omap_drm_irq_uninstall(ddev);
+ 	omap_gem_deinit(ddev);
+ 
+-	drm_dev_unref(ddev);
++	drm_dev_put(ddev);
+ 
+ 	destroy_workqueue(priv->wq);
+ 
+diff --git a/drivers/gpu/drm/pl111/pl111_drv.c b/drivers/gpu/drm/pl111/pl111_drv.c
+index 4621259d5387..6e21308dd6c6 100644
+--- a/drivers/gpu/drm/pl111/pl111_drv.c
++++ b/drivers/gpu/drm/pl111/pl111_drv.c
+@@ -304,7 +304,7 @@ static int pl111_amba_probe(struct amba_device *amba_dev,
+ 	return 0;
+ 
+ dev_unref:
+-	drm_dev_unref(drm);
++	drm_dev_put(drm);
+ 	return ret;
+ }
+ 
+@@ -318,7 +318,7 @@ static int pl111_amba_remove(struct amba_device *amba_dev)
+ 	if (priv->panel)
+ 		drm_panel_bridge_remove(priv->bridge);
+ 	drm_mode_config_cleanup(drm);
+-	drm_dev_unref(drm);
++	drm_dev_put(drm);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/gpu/drm/qxl/qxl_drv.c b/drivers/gpu/drm/qxl/qxl_drv.c
+index 2445e75cf7ea..86bd42dca09c 100644
+--- a/drivers/gpu/drm/qxl/qxl_drv.c
++++ b/drivers/gpu/drm/qxl/qxl_drv.c
+@@ -119,7 +119,7 @@ qxl_pci_remove(struct pci_dev *pdev)
+ 
+ 	dev->dev_private = NULL;
+ 	kfree(qdev);
+-	drm_dev_unref(dev);
++	drm_dev_put(dev);
+ }
+ 
+ static const struct file_operations qxl_fops = {
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+index 3917d839c04c..1adcf80912e1 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+@@ -378,7 +378,7 @@ static int rcar_du_remove(struct platform_device *pdev)
+ 	drm_kms_helper_poll_fini(ddev);
+ 	drm_mode_config_cleanup(ddev);
+ 
+-	drm_dev_unref(ddev);
++	drm_dev_put(ddev);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
+index f814d37b1db2..9c846be8fc64 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
+@@ -184,7 +184,7 @@ static int rockchip_drm_bind(struct device *dev)
+ err_free:
+ 	drm_dev->dev_private = NULL;
+ 	dev_set_drvdata(dev, NULL);
+-	drm_dev_unref(drm_dev);
++	drm_dev_put(drm_dev);
+ 	return ret;
+ }
+ 
+@@ -204,7 +204,7 @@ static void rockchip_drm_unbind(struct device *dev)
+ 
+ 	drm_dev->dev_private = NULL;
+ 	dev_set_drvdata(dev, NULL);
+-	drm_dev_unref(drm_dev);
++	drm_dev_put(drm_dev);
+ }
+ 
+ static const struct file_operations rockchip_drm_driver_fops = {
+diff --git a/drivers/gpu/drm/shmobile/shmob_drm_drv.c b/drivers/gpu/drm/shmobile/shmob_drm_drv.c
+index 592572554eb0..8d1ff596c774 100644
+--- a/drivers/gpu/drm/shmobile/shmob_drm_drv.c
++++ b/drivers/gpu/drm/shmobile/shmob_drm_drv.c
+@@ -198,7 +198,7 @@ static int shmob_drm_remove(struct platform_device *pdev)
+ 	drm_kms_helper_poll_fini(ddev);
+ 	drm_mode_config_cleanup(ddev);
+ 	drm_irq_uninstall(ddev);
+-	drm_dev_unref(ddev);
++	drm_dev_put(ddev);
+ 
+ 	return 0;
+ }
+@@ -294,7 +294,7 @@ static int shmob_drm_probe(struct platform_device *pdev)
+ 	drm_kms_helper_poll_fini(ddev);
+ 	drm_mode_config_cleanup(ddev);
+ err_free_drm_dev:
+-	drm_dev_unref(ddev);
++	drm_dev_put(ddev);
+ 
+ 	return ret;
+ }
+diff --git a/drivers/gpu/drm/sti/sti_drv.c b/drivers/gpu/drm/sti/sti_drv.c
+index 55b6967d27e1..e8d6199878ce 100644
+--- a/drivers/gpu/drm/sti/sti_drv.c
++++ b/drivers/gpu/drm/sti/sti_drv.c
+@@ -242,7 +242,7 @@ static int sti_bind(struct device *dev)
+ 
+ 	ret = sti_init(ddev);
+ 	if (ret)
+-		goto err_drm_dev_unref;
++		goto err_drm_dev_put;
+ 
+ 	ret = component_bind_all(ddev->dev, ddev);
+ 	if (ret)
+@@ -266,8 +266,8 @@ static int sti_bind(struct device *dev)
+ 	drm_mode_config_cleanup(ddev);
+ err_cleanup:
+ 	sti_cleanup(ddev);
+-err_drm_dev_unref:
+-	drm_dev_unref(ddev);
++err_drm_dev_put:
++	drm_dev_put(ddev);
+ 	return ret;
+ }
+ 
+@@ -277,7 +277,7 @@ static void sti_unbind(struct device *dev)
+ 
+ 	drm_dev_unregister(ddev);
+ 	sti_cleanup(ddev);
+-	drm_dev_unref(ddev);
++	drm_dev_put(ddev);
+ }
+ 
+ static const struct component_master_ops sti_ops = {
+diff --git a/drivers/gpu/drm/stm/drv.c b/drivers/gpu/drm/stm/drv.c
+index 9ab00a87f7cc..6ece3acabd56 100644
+--- a/drivers/gpu/drm/stm/drv.c
++++ b/drivers/gpu/drm/stm/drv.c
+@@ -159,7 +159,7 @@ static int stm_drm_platform_probe(struct platform_device *pdev)
+ 	return 0;
+ 
+ err_unref:
+-	drm_dev_unref(ddev);
++	drm_dev_put(ddev);
+ 
+ 	return ret;
+ }
+@@ -172,7 +172,7 @@ static int stm_drm_platform_remove(struct platform_device *pdev)
+ 
+ 	drm_dev_unregister(ddev);
+ 	drv_unload(ddev);
+-	drm_dev_unref(ddev);
++	drm_dev_put(ddev);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
+index 50d19605c38f..42c881d5275d 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_drv.c
++++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+@@ -143,7 +143,7 @@ static int sun4i_drv_bind(struct device *dev)
+ 	drm_mode_config_cleanup(drm);
+ 	of_reserved_mem_device_release(dev);
+ free_drm:
+-	drm_dev_unref(drm);
++	drm_dev_put(drm);
+ 	return ret;
+ }
+ 
+@@ -156,7 +156,7 @@ static void sun4i_drv_unbind(struct device *dev)
+ 	sun4i_framebuffer_free(drm);
+ 	drm_mode_config_cleanup(drm);
+ 	of_reserved_mem_device_release(dev);
+-	drm_dev_unref(drm);
++	drm_dev_put(drm);
+ }
+ 
+ static const struct component_master_ops sun4i_drv_master_ops = {
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index 7afe2f635f74..f5119f2bbf5f 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -1210,7 +1210,7 @@ static int host1x_drm_probe(struct host1x_device *dev)
+ 	return 0;
+ 
+ unref:
+-	drm_dev_unref(drm);
++	drm_dev_put(drm);
+ 	return err;
+ }
+ 
+@@ -1219,7 +1219,7 @@ static int host1x_drm_remove(struct host1x_device *dev)
+ 	struct drm_device *drm = dev_get_drvdata(&dev->dev);
+ 
+ 	drm_dev_unregister(drm);
+-	drm_dev_unref(drm);
++	drm_dev_put(drm);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/gpu/drm/tinydrm/core/tinydrm-core.c b/drivers/gpu/drm/tinydrm/core/tinydrm-core.c
+index 4c6616278c48..ca2b6a8b74c2 100644
+--- a/drivers/gpu/drm/tinydrm/core/tinydrm-core.c
++++ b/drivers/gpu/drm/tinydrm/core/tinydrm-core.c
+@@ -135,7 +135,7 @@ static int tinydrm_init(struct device *parent, struct tinydrm_device *tdev,
+ 	/*
+ 	 * We don't embed drm_device, because that prevent us from using
+ 	 * devm_kzalloc() to allocate tinydrm_device in the driver since
+-	 * drm_dev_unref() frees the structure. The devm_ functions provide
++	 * drm_dev_put() frees the structure. The devm_ functions provide
+ 	 * for easy error handling.
+ 	 */
+ 	drm = drm_dev_alloc(driver, parent);
+@@ -155,7 +155,7 @@ static void tinydrm_fini(struct tinydrm_device *tdev)
+ 	drm_mode_config_cleanup(tdev->drm);
+ 	mutex_destroy(&tdev->dirty_lock);
+ 	tdev->drm->dev_private = NULL;
+-	drm_dev_unref(tdev->drm);
++	drm_dev_put(tdev->drm);
+ }
+ 
+ static void devm_tinydrm_release(void *data)
+@@ -172,7 +172,7 @@ static void devm_tinydrm_release(void *data)
+  *
+  * This function initializes @tdev, the underlying DRM device and it's
+  * mode_config. Resources will be automatically freed on driver detach (devres)
+- * using drm_mode_config_cleanup() and drm_dev_unref().
++ * using drm_mode_config_cleanup() and drm_dev_put().
+  *
+  * Returns:
+  * Zero on success, negative error code on failure.
+diff --git a/drivers/gpu/drm/tve200/tve200_drv.c b/drivers/gpu/drm/tve200/tve200_drv.c
+index ac344ddb23bc..e36a78ef68b7 100644
+--- a/drivers/gpu/drm/tve200/tve200_drv.c
++++ b/drivers/gpu/drm/tve200/tve200_drv.c
+@@ -250,7 +250,7 @@ static int tve200_probe(struct platform_device *pdev)
+ clk_disable:
+ 	clk_disable_unprepare(priv->pclk);
+ dev_unref:
+-	drm_dev_unref(drm);
++	drm_dev_put(drm);
+ 	return ret;
+ }
+ 
+@@ -265,7 +265,7 @@ static int tve200_remove(struct platform_device *pdev)
+ 		drm_panel_bridge_remove(priv->bridge);
+ 	drm_mode_config_cleanup(drm);
+ 	clk_disable_unprepare(priv->pclk);
+-	drm_dev_unref(drm);
++	drm_dev_put(drm);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/gpu/drm/udl/udl_drv.c b/drivers/gpu/drm/udl/udl_drv.c
+index 3c45a3064726..d5e94eb7a4ca 100644
+--- a/drivers/gpu/drm/udl/udl_drv.c
++++ b/drivers/gpu/drm/udl/udl_drv.c
+@@ -94,7 +94,7 @@ static int udl_usb_probe(struct usb_interface *interface,
+ 	return 0;
+ 
+ err_free:
+-	drm_dev_unref(dev);
++	drm_dev_put(dev);
+ 	return r;
+ }
+ 
+diff --git a/drivers/gpu/drm/vc4/vc4_drv.c b/drivers/gpu/drm/vc4/vc4_drv.c
+index 94b99c90425a..259c85fcd32c 100644
+--- a/drivers/gpu/drm/vc4/vc4_drv.c
++++ b/drivers/gpu/drm/vc4/vc4_drv.c
+@@ -312,7 +312,7 @@ static int vc4_drm_bind(struct device *dev)
+ 	vc4_gem_destroy(drm);
+ 	vc4_bo_cache_destroy(drm);
+ dev_unref:
+-	drm_dev_unref(drm);
++	drm_dev_put(drm);
+ 	return ret;
+ }
+ 
+@@ -327,7 +327,7 @@ static void vc4_drm_unbind(struct device *dev)
+ 
+ 	drm_mode_config_cleanup(drm);
+ 
+-	drm_dev_unref(drm);
++	drm_dev_put(drm);
+ }
+ 
+ static const struct component_master_ops vc4_drm_ops = {
+diff --git a/drivers/gpu/drm/vgem/vgem_drv.c b/drivers/gpu/drm/vgem/vgem_drv.c
+index 2524ff116f00..305f87665499 100644
+--- a/drivers/gpu/drm/vgem/vgem_drv.c
++++ b/drivers/gpu/drm/vgem/vgem_drv.c
+@@ -505,7 +505,7 @@ static int __init vgem_init(void)
+ static void __exit vgem_exit(void)
+ {
+ 	drm_dev_unregister(&vgem_device->drm);
+-	drm_dev_unref(&vgem_device->drm);
++	drm_dev_put(&vgem_device->drm);
+ }
+ 
+ module_init(vgem_init);
+diff --git a/drivers/gpu/drm/virtio/virtgpu_drm_bus.c b/drivers/gpu/drm/virtio/virtgpu_drm_bus.c
+index 7df8d0c9026a..094b876f6da6 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_drm_bus.c
++++ b/drivers/gpu/drm/virtio/virtgpu_drm_bus.c
+@@ -85,6 +85,6 @@ int drm_virtio_init(struct drm_driver *driver, struct virtio_device *vdev)
+ 	return 0;
+ 
+ err_free:
+-	drm_dev_unref(dev);
++	drm_dev_put(dev);
+ 	return ret;
+ }
+diff --git a/drivers/gpu/drm/zte/zx_drm_drv.c b/drivers/gpu/drm/zte/zx_drm_drv.c
+index 6f4205e80378..02ae1caf6e8a 100644
+--- a/drivers/gpu/drm/zte/zx_drm_drv.c
++++ b/drivers/gpu/drm/zte/zx_drm_drv.c
+@@ -122,7 +122,7 @@ static int zx_drm_bind(struct device *dev)
+ 	component_unbind_all(dev, drm);
+ out_unregister:
+ 	dev_set_drvdata(dev, NULL);
+-	drm_dev_unref(drm);
++	drm_dev_put(drm);
+ 	return ret;
+ }
+ 
+@@ -136,7 +136,7 @@ static void zx_drm_unbind(struct device *dev)
+ 	drm_mode_config_cleanup(drm);
+ 	component_unbind_all(dev, drm);
+ 	dev_set_drvdata(dev, NULL);
+-	drm_dev_unref(drm);
++	drm_dev_put(drm);
+ }
+ 
+ static const struct component_master_ops zx_drm_master_ops = {
+diff --git a/include/drm/drm_drv.h b/include/drm/drm_drv.h
+index d23dcdd1bd95..c16dd4424b8a 100644
+--- a/include/drm/drm_drv.h
++++ b/include/drm/drm_drv.h
+@@ -622,7 +622,6 @@ void drm_dev_unregister(struct drm_device *dev);
+ 
+ void drm_dev_get(struct drm_device *dev);
+ void drm_dev_put(struct drm_device *dev);
+-void drm_dev_unref(struct drm_device *dev);
+ void drm_put_dev(struct drm_device *dev);
+ void drm_dev_unplug(struct drm_device *dev);
+ 
 -- 
-2.7.4
-
-
-
-[snip]
+2.14.1
