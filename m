@@ -1,74 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755818AbeDZMQJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 08:16:09 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:46778 "EHLO mail.bootlin.com"
+        id S1755885AbeDZMQR (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 08:16:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60104 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755172AbeDZMQF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 08:16:05 -0400
-Date: Thu, 26 Apr 2018 14:15:59 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Vaishali Thakkar <vthakkar1994@gmail.com>
-Cc: alexander.deucher@amd.com, christian.koenig@amd.com,
-        David1.Zhou@amd.com, airlied@linux.ie, brodkin@synopsys.com,
-        linux@armlinux.org.uk, nicolas.ferre@microchip.com,
-        alexandre.belloni@bootlin.com, gustavo@padovan.org,
-        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
-        l.stach@pengutronix.de, christian.gmeiner@gmail.com,
-        inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com,
-        kyungmin.park@samsung.com, kgene@kernel.org, krzk@kernel.org,
-        stefan@agner.ch, alison.wang@freescale.com,
-        z.liuxinliang@hisilicon.com, zourongrong@gmail.com,
-        kong.kongxinwei@hisilicon.com, puck.chen@hisilicon.com,
-        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
-        rodrigo.vivi@intel.com, p.zabel@pengutronix.de, ck.hu@mediatek.com,
-        matthias.bgg@gmail.com, robdclark@gmail.com, marex@denx.de,
-        bskeggs@redhat.com, tomi.valkeinen@ti.com, eric@anholt.net,
-        airlied@redhat.com, kraxel@redhat.com,
-        laurent.pinchart@ideasonboard.com, hjc@rock-chips.com, heiko@sntech.de,
-        benjamin.gaignard@linaro.org, vincent.abriou@st.com,
-        yannick.fertre@st.com, philippe.cornu@st.com,
-        maxime.ripard@bootlin.com, wens@csie.org, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, noralf@tronnes.org, linus.walleij@linaro.org,
-        shawnguo@kernel.org, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, etnaviv@lists.freedesktop.org,
-        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] drm/core: Remove drm_dev_unref() and it's uses
-Message-ID: <20180426141559.6811127b@bbrezillon>
-In-Reply-To: <20180426102819.6985-1-vthakkar1994@gmail.com>
-References: <20180426102819.6985-1-vthakkar1994@gmail.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1755821AbeDZMQN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 08:16:13 -0400
+Date: Thu, 26 Apr 2018 14:16:10 +0200 (CEST)
+From: Jiri Kosina <jikos@kernel.org>
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+cc: "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH] x86/mm: vmemmap and vmalloc base addressess are usngined
+ longs
+In-Reply-To: <20180416094603.fj3wevho5j7wy7s6@black.fi.intel.com>
+Message-ID: <nycvar.YFH.7.76.1804261415360.28147@cbobk.fhfr.pm>
+References: <nycvar.YFH.7.76.1804121437350.28129@cbobk.fhfr.pm> <20180412142801.oi7bzju3frgkdskp@node.shutemov.name> <nycvar.YFH.7.76.1804161133500.28129@cbobk.fhfr.pm> <20180416094603.fj3wevho5j7wy7s6@black.fi.intel.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 26 Apr 2018 15:58:19 +0530
-Vaishali Thakkar <vthakkar1994@gmail.com> wrote:
+On Mon, 16 Apr 2018, Kirill A. Shutemov wrote:
 
-> It's been a while since we introduced drm_dev{get/put} functions
-> to replace reference/unreference in drm subsystem for the
-> consistency purpose. So, with this patch, let's just replace
-> all current use cases of drm_dev_unref() with drm_dev_put and remove
-> the function itself.
+> > > > Commits 9b46a051e4 ("x86/mm: Initialize vmemmap_base at boot-time") and 
+> > > > a7412546d8 ("x86/mm: Adjust vmalloc base and size at boot-time") lost the 
+> > > > type information for __VMALLOC_BASE_L4, __VMALLOC_BASE_L5, 
+> > > > __VMEMMAP_BASE_L4 and __VMEMMAP_BASE_L5 constants.
+> > > > 
+> > > > Let's declare them explicitly unsigned long again.
+> > > 
+> > > It is just cosmetics, right? I mean these literals are 'unsigned long'
+> > > anyway.
+> > 
+> > Yeah, I can't imagine this particular case leading to any overflow 
+> > scenario, as the literal is big enough to be automatically treated as 
+> > unsigned long by the compiler, but it shuts up sparse which treats this as 
+> > a generic case (where the missing UL might be a problem), and totally 
+> > pollutes the build output.
+> > 
+> > Either we put the 'UL' there, or teach sparse about figuring out the 
+> > 'closer bigger fitting type' for hexadecimal literals, which might be more 
+> > tricky.
 > 
-> Coccinelle was used for mass-patching.
+> I don't have a problem with the patch:
 > 
-> Signed-off-by: Vaishali Thakkar <vthakkar1994@gmail.com>
-> ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c            |  4 ++--
->  drivers/gpu/drm/arc/arcpgu_drv.c                   |  4 ++--
->  drivers/gpu/drm/armada/armada_drv.c                |  6 +++---
->  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c       |  4 ++--
+> Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
-For atmel-hlcdc:
+ping, please?
 
-Acked-by: Boris Brezillon <boris.brezillon@bootlin.com>
+sparse build is still noisy like hell :/
+
+Thanks,
+
+-- 
+Jiri Kosina
+SUSE Labs
