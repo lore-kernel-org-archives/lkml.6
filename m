@@ -1,65 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754324AbeDZIaH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 04:30:07 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:44255 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754213AbeDZI35 (ORCPT
+        id S1754368AbeDZIa6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 04:30:58 -0400
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:41583 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752972AbeDZIay (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 04:29:57 -0400
-Date: Thu, 26 Apr 2018 10:29:51 +0200
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-        <u.kleine-koenig@pengutronix.de>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Baolin Wang <baolin.wang@linaro.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] gpio: eic: Add edge trigger emulation for EIC
-Message-ID: <20180426082951.rfnyyd3d6ux65ld5@pengutronix.de>
-References: <bdaaa8823cc3aef44352ee867fb6274278f2a2a9.1522392153.git.baolin.wang@linaro.org>
- <CACRpkdY+rbEqk3CqkrD09WEO=zLsD4VK1P56K4o=k_4gATaS0w@mail.gmail.com>
+        Thu, 26 Apr 2018 04:30:54 -0400
+X-Google-Smtp-Source: AB8JxZrpoU12C55lBcowonX7NyKu7asyp6RFXyxZUSmGdhRlkZCAYea6zIQCFSS94o3yiY9haQble1ZXlf7T1lW3klU=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACRpkdY+rbEqk3CqkrD09WEO=zLsD4VK1P56K4o=k_4gATaS0w@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <201804261345.1lsWsCDl%fengguang.wu@intel.com>
+References: <7373ade7cb5a8d6a5fca07e78cf992ba7372bd7f.1524570852.git.baolin.wang@linaro.org>
+ <201804261345.1lsWsCDl%fengguang.wu@intel.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Thu, 26 Apr 2018 10:30:52 +0200
+X-Google-Sender-Auth: XLdvjeq4HLnMcHEMzyPaUSGrrug
+Message-ID: <CAK8P3a2TpW8rDw9YrWsJRkyawi+VkqaZQR6_WCSRpn96W6UbEg@mail.gmail.com>
+Subject: Re: [PATCH 1/8] ALSA: Replace timespec with timespec64
+To: kbuild test robot <lkp@intel.com>
+Cc: Baolin Wang <baolin.wang@linaro.org>, kbuild-all@01.org,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        Ingo Molnar <mingo@kernel.org>,
+        SF Markus Elfring <elfring@users.sourceforge.net>,
+        Dan Carpenter <dan.carpenter@oracle.com>, jeeja.kp@intel.com,
+        Vinod Koul <vinod.koul@intel.com>,
+        Guneshwor Singh <guneshwor.o.singh@intel.com>,
+        subhransu.s.prusty@intel.com, Bhumika Goyal <bhumirks@gmail.com>,
+        gudishax.kranthikumar@intel.com, Naveen M <naveen.m@intel.com>,
+        hardik.t.shah@intel.com, Arvind Yadav <arvind.yadav.cs@gmail.com>,
+        Fabian Frederick <fabf@skynet.be>, alsa-devel@alsa-project.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Linus,
+On Thu, Apr 26, 2018 at 10:15 AM, kbuild test robot <lkp@intel.com> wrote:
+> Hi Baolin,
+>
+> I love your patch! Yet something to improve:
+>
+> [auto build test ERROR on v4.17-rc2]
+> [also build test ERROR on next-20180424]
+> [cannot apply to sound/for-next asoc/for-next arm-soc/for-next]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+>
+> url:    https://github.com/0day-ci/linux/commits/Baolin-Wang/Fix-year-2038-issue-for-sound-subsystem/20180426-010145
+> config: sh-ecovec24_defconfig (attached as .config)
+> compiler: sh4-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
+> reproduce:
+>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         # save the attached .config to linux build tree
+>         make.cross ARCH=sh
+>
+> Note: the linux-review/Baolin-Wang/Fix-year-2038-issue-for-sound-subsystem/20180426-010145 HEAD 53cdcc389f07bdd923be240cdb746a97de063301 builds fine.
+>       It only hurts bisectibility.
+>
+> All errors (new ones prefixed by >>):
+>
+>    sound/core/pcm_lib.c: In function 'update_audio_tstamp':
+>>> sound/core/pcm_lib.c:256:54: error: passing argument 2 of 'timespec_equal' from incompatible pointer type [-Werror=incompatible-pointer-types]
+>      if (!timespec_equal(&runtime->status->audio_tstamp, audio_tstamp)) {
+>                                                          ^~~~~~~~~~~~
 
-On Thu, Apr 26, 2018 at 10:10:11AM +0200, Linus Walleij wrote:
-> On Fri, Mar 30, 2018 at 9:02 AM, Baolin Wang <baolin.wang@linaro.org> wrote:
-> 
-> > The Spreadtrum debounce EIC and latch EIC can not support edge trigger,
-> > but most GPIO users (like gpio-key driver) only use the edge trigger,
-> > thus the EIC driver need add some support to emulate the edge trigger
-> > to satisfy this requirement.
-> >
-> > Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-> 
-> Patch applied.
-> 
-> The patch is fine and in line with other kernel drivers doing edge
-> trigger emulation and we do not hold back on useful features.
-> 
-> But I want to take this opportunity to ping Uwe Kleine-König about
-> his ideas for an edge trigger emulation library in the gpiolib core,
-> and whether this also follows the pattern.
 
-up to now it's still only this: an idea.
+Probably a mistake during rebasing: patch 8/8 fixes this, but it should be done
+right here by moving the open-coded comparison into the first patch:
 
-Best regards
-Uwe
+-       if (!timespec_equal(&runtime->status->audio_tstamp, audio_tstamp)) {
++       if (runtime->status->audio_tstamp.tv_sec != audio_tstamp->tv_sec ||
++           runtime->status->audio_tstamp.tv_nsec != audio_tstamp->tv_nsec) {
 
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+       Arnd
