@@ -1,98 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752885AbeDZFkd (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 01:40:33 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:14354 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751317AbeDZFk1 (ORCPT
+        id S1752689AbeDZFm3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 01:42:29 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:44888 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751317AbeDZFm0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 01:40:27 -0400
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Wed, 25 Apr 2018 22:40:25 -0700
-Subject: Re: [PATCH] net: phy: marvell: clear wol event before setting it
-To: Andrew Lunn <andrew@lunn.ch>,
-        Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-CC: Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Jingju Hou <Jingju.Hou@synaptics.com>
-References: <20180419160232.519d15be@xhacker.debian>
- <20180419121801.GC17888@lunn.ch>
-From: Bhadram Varka <vbhadram@nvidia.com>
-Message-ID: <4273f766-a017-b336-7d14-a28901d274b9@nvidia.com>
-Date: Thu, 26 Apr 2018 11:10:21 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Thu, 26 Apr 2018 01:42:26 -0400
+Subject: Re: [PATCH 0/3] K2G: mmc: Update mmc dt node to use sdhci-omap
+To: Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>
+References: <20180425132746.13911-1-kishon@ti.com>
+ <fc5f3498-62fd-15d3-90df-206c51649cb4@oracle.com>
+CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Tony Lindgren <tony@atomide.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <2d03fa36-5fa1-322c-cc82-2dc3749dcaa3@ti.com>
+Date: Thu, 26 Apr 2018 11:12:12 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180419121801.GC17888@lunn.ch>
-X-Originating-IP: [10.24.193.56]
-X-ClientProxiedBy: BGMAIL103.nvidia.com (10.25.59.12) To bgmail102.nvidia.com
- (10.25.59.11)
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <fc5f3498-62fd-15d3-90df-206c51649cb4@oracle.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On 4/19/2018 5:48 PM, Andrew Lunn wrote:
-> On Thu, Apr 19, 2018 at 04:02:32PM +0800, Jisheng Zhang wrote:
->> From: Jingju Hou <Jingju.Hou@synaptics.com>
+
+On Wednesday 25 April 2018 11:10 PM, Santosh Shilimkar wrote:
+> On 4/25/2018 6:27 AM, Kishon Vijay Abraham I wrote:
+>> Update mmc dt node to use sdhci-omap binding instead of omap_hsmmc
+>> binding.
 >>
->> If WOL event happened once, the LED[2] interrupt pin will not be
->> cleared unless reading the CSISR register. So clear the WOL event
->> before enabling it.
+>> I've also updated keystone_defconfig to enable CONFIG_MMC_SDHCI_OMAP.
+>> Everyone who use a custom .config should also enable
+>> CONFIG_MMC_SDHCI_OMAP for MMC to work.
 >>
->> Signed-off-by: Jingju Hou <Jingju.Hou@synaptics.com>
->> Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
->> ---
->>   drivers/net/phy/marvell.c | 9 +++++++++
->>   1 file changed, 9 insertions(+)
+>> This series should be merged only after [1]
+>> [1] -> https://marc.info/?l=linux-kernel&m=152465820531802&w=2
 >>
->> diff --git a/drivers/net/phy/marvell.c b/drivers/net/phy/marvell.c
->> index c22e8e383247..b6abe1cbc84b 100644
->> --- a/drivers/net/phy/marvell.c
->> +++ b/drivers/net/phy/marvell.c
->> @@ -115,6 +115,9 @@
->>   /* WOL Event Interrupt Enable */
->>   #define MII_88E1318S_PHY_CSIER_WOL_EIE			BIT(7)
->>   
->> +/* Copper Specific Interrupt Status Register */
->> +#define MII_88E1318S_PHY_CSISR				0x13
->> +
->>   /* LED Timer Control Register */
->>   #define MII_88E1318S_PHY_LED_TCR			0x12
->>   #define MII_88E1318S_PHY_LED_TCR_FORCE_INT		BIT(15)
->> @@ -1393,6 +1396,12 @@ static int m88e1318_set_wol(struct phy_device *phydev,
->>   		if (err < 0)
->>   			goto error;
->>   
->> +		/* If WOL event happened once, the LED[2] interrupt pin
->> +		 * will not be cleared unless reading the CSISR register.
->> +		 * So clear the WOL event first before enabling it.
->> +		 */
->> +		phy_read(phydev, MII_88E1318S_PHY_CSISR);
->> +
-> Hi Jisheng
->
-> The problem with this is, you could be clearing a real interrupt, link
-> down/up etc. If interrupts are in use, i think the normal interrupt
-> handling will clear the WOL interrupt? So can you make this read
-> conditional on !phy_interrupt_is_valid()?
-So this will clear WoL interrupt bit from Copper Interrupt status register.
+> Keep me posted once the dependency gets merged.
 
-How about clearing WoL status (Page 17, register 17) for every WOL event ?
+sure.
 
-Observed that once WoL event occurred for magic packet then for next 
-magic packet WoL event is not asserted.
-Need to explicitly clear WOL status so that WOL interrupt will be 
-generated by the HW.
-
-Thanks,
-Bhadram.
-
-
-
-Thanks,
-Bhadram
+Regards
+Kishon
