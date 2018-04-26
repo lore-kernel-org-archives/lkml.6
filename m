@@ -1,207 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756973AbeDZXbQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 19:31:16 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:43975 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751405AbeDZXbO (ORCPT
+        id S932190AbeDZXbz (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 19:31:55 -0400
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:34935 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753763AbeDZXbw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 19:31:14 -0400
-X-Google-Smtp-Source: AB8JxZqhXaChxYG+Ea17cFHUc5jT6TqgbuXYsq7NibnkcJHy9jSz/g1afPyfx9YC9F4yIsJwqkUomdGyqDKD9jVlnOU=
+        Thu, 26 Apr 2018 19:31:52 -0400
+X-Google-Smtp-Source: AB8JxZrilg3s2qqVv4kmZlpR9KnifqwQ2hoUurFjfRLhsuO5T+qmzD+Ufl5fqkyqSYT7Ua7vYmmWDKhXlSjGj7bzkJM=
 MIME-Version: 1.0
-In-Reply-To: <5cd29779-fc70-930a-7060-ee3332c15558@oracle.com>
-References: <1524775057-8012-1-git-send-email-qing.huang@oracle.com>
- <CALzJLG8=dnyLGRXamLR5-eYJ9Q8WCwKe44sHHZ57=1h_x0RCRA@mail.gmail.com> <5cd29779-fc70-930a-7060-ee3332c15558@oracle.com>
-From: Saeed Mahameed <saeedm@dev.mellanox.co.il>
-Date: Thu, 26 Apr 2018 16:30:52 -0700
-Message-ID: <CALzJLG8atGxoJNQj4F6wR3kRg7jrj4oQi3O-1i0=UOo+3HPq0w@mail.gmail.com>
-Subject: Re: [PATCH] net/mlx5: report persistent netdev stats across
- ifdown/ifup commands
-To: Qing Huang <qing.huang@oracle.com>
-Cc: Eran Ben Elisha <eranbe@mellanox.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        RDMA mailing list <linux-rdma@vger.kernel.org>,
-        Linux Netdev List <netdev@vger.kernel.org>,
-        Leon Romanovsky <leon@kernel.org>, Matan Barak <matanb@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>
+In-Reply-To: <20180411044315.GA46144@beast>
+References: <20180411044315.GA46144@beast>
+From: Kees Cook <keescook@chromium.org>
+Date: Thu, 26 Apr 2018 16:31:50 -0700
+X-Google-Sender-Auth: Ygh3f9ZHoZRUO3BArPtm7p4JSJA
+Message-ID: <CAGXu5jLUTF0c3DLGjFFnSwJ3FJmiOMYRu3vqTqNVEBQehyn4KA@mail.gmail.com>
+Subject: Re: [PATCH] dm/raid1: Remove VLA usage
+To: Alasdair Kergon <agk@redhat.com>
+Cc: Mike Snitzer <snitzer@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
+        dm-devel@redhat.com, Tycho Andersen <tycho@tycho.ws>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 26, 2018 at 3:37 PM, Qing Huang <qing.huang@oracle.com> wrote:
+On Tue, Apr 10, 2018 at 9:43 PM, Kees Cook <keescook@chromium.org> wrote:
+> On the quest to remove all VLAs from the kernel[1], this avoids VLAs
+> in dm-raid1.c by just using the maximum size for the stack arrays.
+> The nr_mirrors value was already capped at 9, so this makes it a trivial
+> adjustment to the array sizes.
+>
+> [1] https://lkml.org/lkml/2018/3/7/621
+>
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+
+Friendly ping... can someone take this, or should this go via another tree?
+
+Thanks!
+
+-Kees
+
+> ---
+>  drivers/md/dm-raid1.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/md/dm-raid1.c b/drivers/md/dm-raid1.c
+> index 580c49cc8079..5903e492bb34 100644
+> --- a/drivers/md/dm-raid1.c
+> +++ b/drivers/md/dm-raid1.c
+> @@ -23,6 +23,8 @@
+>
+>  #define MAX_RECOVERY 1 /* Maximum number of regions recovered in parallel. */
+>
+> +#define MAX_NR_MIRRORS (DM_KCOPYD_MAX_REGIONS + 1)
+> +
+>  #define DM_RAID1_HANDLE_ERRORS 0x01
+>  #define DM_RAID1_KEEP_LOG      0x02
+>  #define errors_handled(p)      ((p)->features & DM_RAID1_HANDLE_ERRORS)
+> @@ -255,7 +257,7 @@ static int mirror_flush(struct dm_target *ti)
+>         unsigned long error_bits;
+>
+>         unsigned int i;
+> -       struct dm_io_region io[ms->nr_mirrors];
+> +       struct dm_io_region io[MAX_NR_MIRRORS];
+>         struct mirror *m;
+>         struct dm_io_request io_req = {
+>                 .bi_op = REQ_OP_WRITE,
+> @@ -651,7 +653,7 @@ static void write_callback(unsigned long error, void *context)
+>  static void do_write(struct mirror_set *ms, struct bio *bio)
+>  {
+>         unsigned int i;
+> -       struct dm_io_region io[ms->nr_mirrors], *dest = io;
+> +       struct dm_io_region io[MAX_NR_MIRRORS], *dest = io;
+>         struct mirror *m;
+>         struct dm_io_request io_req = {
+>                 .bi_op = REQ_OP_WRITE,
+> @@ -1083,7 +1085,7 @@ static int mirror_ctr(struct dm_target *ti, unsigned int argc, char **argv)
+>         argc -= args_used;
+>
+>         if (!argc || sscanf(argv[0], "%u%c", &nr_mirrors, &dummy) != 1 ||
+> -           nr_mirrors < 2 || nr_mirrors > DM_KCOPYD_MAX_REGIONS + 1) {
+> +           nr_mirrors < 2 || nr_mirrors > MAX_NR_MIRRORS) {
+>                 ti->error = "Invalid number of mirrors";
+>                 dm_dirty_log_destroy(dl);
+>                 return -EINVAL;
+> @@ -1404,7 +1406,7 @@ static void mirror_status(struct dm_target *ti, status_type_t type,
+>         int num_feature_args = 0;
+>         struct mirror_set *ms = (struct mirror_set *) ti->private;
+>         struct dm_dirty_log *log = dm_rh_dirty_log(ms->rh);
+> -       char buffer[ms->nr_mirrors + 1];
+> +       char buffer[MAX_NR_MIRRORS + 1];
+>
+>         switch (type) {
+>         case STATUSTYPE_INFO:
+> --
+> 2.7.4
 >
 >
-> On 04/26/2018 02:50 PM, Saeed Mahameed wrote:
->>
->> On Thu, Apr 26, 2018 at 1:37 PM, Qing Huang <qing.huang@oracle.com> wrote:
->>>
->>> Current stats collecting scheme in mlx5 driver is to periodically fetch
->>> aggregated stats from all the active mlx5 software channels associated
->>> with the device. However when a mlx5 interface is brought down(ifdown),
->>> all the channels will be deactivated and closed. A new set of channels
->>> will be created when next ifup command or a similar command is called.
->>> Unfortunately the new channels will have all stats reset to 0. So you
->>> lose the accumulated stats information. This behavior is different from
->>> other netdev drivers including the mlx4 driver. In order to fix it, we
->>> now save prior mlx5 software stats into netdev stats fields, so all the
->>> accumulated stats will survive multiple runs of ifdown/ifup commands and
->>> be shown correctly.
->>>
->>> Orabug: 27548610
+> --
+> Kees Cook
+> Pixel Security
 
-I don't think we need this internal bug reference, let's remove it.
 
->>>
->>> Signed-off-by: Qing Huang <qing.huang@oracle.com>
->>> ---
->>
->> Hi Qing,
->>
->> I am adding Eran since he is currently working on a similar patch,
->> He is also taking care of all cores/rings stats to make them
->> persistent, so you won't have discrepancy  between
->> ethtool and ifconfig stats.
->>
->> I am ok with this patch, but this means Eran has to work his way around
->> it.
->>
->> so we have two options:
->>
->> 1. Temporary accept this patch, and change it later with Eran's work.
->> 2. Wait for Eran's work.
->>
->> I am ok with either one of them, please let me know.
->>
->> Thanks !
->
-> Hi Saeed,
->
-> Any idea on rough ETA of Eran's stats work to be in upstream? If it will be
 
-All i know that it is planned for v4.18.
-
-> available soon, I think
-> we can wait a bit. If it will take a while to redesign the whole stats
-> scheme (for both ethtool and ifconfig),
-> maybe we can go with this incremental fix first?
->
-
-Yes we can go with incremental fix,
-but let's fix the commit message as requested above and make the patch
-title prefix "net/mlx5e:"
-since this is a mlx5 netdev related change, not mlx5/core.
-also please see a comments below.
-
-Thanks,
-Saeed.
-
-> Thanks!
->
->
->>
->>>   drivers/net/ethernet/mellanox/mlx5/core/en_main.c | 30
->>> +++++++++++++++++++----
->>>   1 file changed, 25 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
->>> b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
->>> index f1fe490..5d50e69 100644
->>> --- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
->>> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
->>> @@ -2621,6 +2621,23 @@ static void mlx5e_netdev_set_tcs(struct net_device
->>> *netdev)
->>>                  netdev_set_tc_queue(netdev, tc, nch, 0);
->>>   }
->>>
->>> +static void mlx5e_netdev_save_stats(struct mlx5e_priv *priv)
->>> +{
->>> +       struct net_device *netdev = priv->netdev;
->>> +
->>> +       netdev->stats.rx_packets += priv->stats.sw.rx_packets;
->>> +       netdev->stats.rx_bytes   += priv->stats.sw.rx_bytes;
->>> +       netdev->stats.tx_packets += priv->stats.sw.tx_packets;
->>> +       netdev->stats.tx_bytes   += priv->stats.sw.tx_bytes;
->>> +       netdev->stats.tx_dropped += priv->stats.sw.tx_queue_dropped;
->>> +
->>> +       priv->stats.sw.rx_packets       = 0;
->>> +       priv->stats.sw.rx_bytes         = 0;
->>> +       priv->stats.sw.tx_packets       = 0;
->>> +       priv->stats.sw.tx_bytes         = 0;
->>> +       priv->stats.sw.tx_queue_dropped = 0;
-
-Note: it is safe to do this here since writing to priv->stats.sw is
-currently done under priv->state_lock,
-Please add a comment to this function that it must be called under
-priv->state_lock
-
->>> +}
->>> +
->>
->> This means that we are now explicitly clearing channels stats on
->> ifconfig down or switch_channels.
->> and now after ifconfing down, ethtool will always show 0, before this
->> patch it didn't.
->> Anyway update sw stats function will always override them with the new
->> channels stats next time we load new channels.
->> so it is not that big of a deal.
->>
->>
->>>   static void mlx5e_build_channels_tx_maps(struct mlx5e_priv *priv)
->>>   {
->>>          struct mlx5e_channel *c;
->>> @@ -2691,6 +2708,7 @@ void mlx5e_switch_priv_channels(struct mlx5e_priv
->>> *priv,
->>>                  netif_set_real_num_tx_queues(netdev, new_num_txqs);
->>>
->>>          mlx5e_deactivate_priv_channels(priv);
->>> +       mlx5e_netdev_save_stats(priv);
-
-This function call doesn't have to be between deactivate and close,
-lets move it to after
-mlx5e_close_channels here and below to avoid confusion.
-
-also you need to accumulate what is left in the rings/channels stats,
-before calling
-mlx5e_close_channels, see mlx5e_grp_sw_update_stats.
-
->>>          mlx5e_close_channels(&priv->channels);
->>>
->>>          priv->channels = *new_chs;
->>> @@ -2770,6 +2788,7 @@ int mlx5e_close_locked(struct net_device *netdev)
->>>
->>>          netif_carrier_off(priv->netdev);
->>>          mlx5e_deactivate_priv_channels(priv);
->>> +       mlx5e_netdev_save_stats(priv);
->>>          mlx5e_close_channels(&priv->channels);
->>>
->>>          return 0;
->>> @@ -3215,11 +3234,12 @@ static int mlx5e_setup_tc(struct net_device *dev,
->>> enum tc_setup_type type,
->>>                  stats->tx_packets = PPORT_802_3_GET(pstats,
->>> a_frames_transmitted_ok);
->>>                  stats->tx_bytes   = PPORT_802_3_GET(pstats,
->>> a_octets_transmitted_ok);
->>>          } else {
->>> -               stats->rx_packets = sstats->rx_packets;
->>> -               stats->rx_bytes   = sstats->rx_bytes;
->>> -               stats->tx_packets = sstats->tx_packets;
->>> -               stats->tx_bytes   = sstats->tx_bytes;
->>> -               stats->tx_dropped = sstats->tx_queue_dropped;
->>> +               stats->rx_packets = sstats->rx_packets +
->>> dev->stats.rx_packets;
->>> +               stats->rx_bytes   = sstats->rx_bytes +
->>> dev->stats.rx_bytes;
->>> +               stats->tx_packets = sstats->tx_packets +
->>> dev->stats.tx_packets;
->>> +               stats->tx_bytes   = sstats->tx_bytes +
->>> dev->stats.tx_bytes;
->>> +               stats->tx_dropped = sstats->tx_queue_dropped +
->>> +                                   dev->stats.tx_dropped;
->>>          }
->>>
->>>          stats->rx_dropped = priv->stats.qcnt.rx_out_of_buffer;
->>> --
->>> 1.8.3.1
->>>
->
+-- 
+Kees Cook
+Pixel Security
