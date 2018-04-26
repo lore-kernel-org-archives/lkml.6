@@ -1,55 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755454AbeDZTZn (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 15:25:43 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:45398 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755234AbeDZTZk (ORCPT
+        id S1755628AbeDZTZr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 15:25:47 -0400
+Received: from mail-wr0-f178.google.com ([209.85.128.178]:36164 "EHLO
+        mail-wr0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755422AbeDZTZn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 15:25:40 -0400
-X-Google-Smtp-Source: AIpwx48g9nIXmfIM1VmFprhYc4grN4BcG9sETFHg7Bvb2/1xersxlKbNB/MQOYYsI4Jmuk01bailCA==
-Date: Thu, 26 Apr 2018 21:25:36 +0200
-From: Niklas Cassel <niklas.cassel@linaro.org>
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: andy.gross@linaro.org, david.brown@linaro.org, sboyd@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        Thu, 26 Apr 2018 15:25:43 -0400
+X-Google-Smtp-Source: AIpwx4+nXElH3uhRQaXEi4F0wcwfrah23SUd9PE+Bzo1FQUjFFqC9DUmDF24OniR5obBH7BTedLhvA==
+Date: Thu, 26 Apr 2018 22:25:38 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: dsterba@suse.cz, akpm@linux-foundation.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND] firmware: qcom: scm: Fix crash in
- qcom_scm_call_atomic1()
-Message-ID: <20180426192536.GA28548@centauri>
-References: <20180426115534.20971-1-niklas.cassel@linaro.org>
- <20180426180130.GL18510@minitux>
+Subject: Re: [PATCH] proc: use #pragma once
+Message-ID: <20180426192538.GB4919@avx2>
+References: <20180423213534.GA9043@avx2>
+ <20180424135409.GA22709@infradead.org>
+ <20180425205531.GA9020@avx2>
+ <20180426102629.scwtdeijbo3342gp@twin.jikos.cz>
+ <20180426103304.GA4639@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180426180130.GL18510@minitux>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180426103304.GA4639@infradead.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 26, 2018 at 11:01:30AM -0700, Bjorn Andersson wrote:
-> On Thu 26 Apr 04:55 PDT 2018, Niklas Cassel wrote:
-> 
-> > qcom_scm_call_atomic1() can crash with a NULL pointer dereference at
-> > qcom_scm_call_atomic1+0x30/0x48.
+On Thu, Apr 26, 2018 at 03:33:04AM -0700, Christoph Hellwig wrote:
+> On Thu, Apr 26, 2018 at 12:26:29PM +0200, David Sterba wrote:
+> > There are about 20k header files, none of them has #pragma once.
+> > Updating that will bring many unnesessry git commits.
 > > 
+> > I doubt that one more define in preprocessor tables is a problem we
+> > should fix. The LOC argument also does not sound very convincing. The
+> > include protection is at the top of the file, not mixed among other
+> > code. Replacing 2-3 lines with one will be barely noticeable.
 > 
-> Hi Niklas,
-> 
-> The change has been picked up for v4.18, as you can see here:
-> https://git.kernel.org/pub/scm/linux/kernel/git/agross/linux.git/log/?h=for-next
+> Let's put it another way:  does this make any noticable difference
+> for compile times?
 
-Hello Björn,
-
-I just looked at today's linux-next tag: next-20180426.
-I didn't bother to check Andy's tree.
-
-Andy's for-next branch is included in linux-next, so it
-will probably be included in tomorrow's linux-next tag.
-
-Sorry for the noise.
-
-Kind regards,
-Niklas
+Should be the same as include guard pattern is recognized and becomes
+#pragma once internally.
