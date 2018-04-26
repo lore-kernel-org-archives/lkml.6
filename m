@@ -1,84 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753590AbeDZGnW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 02:43:22 -0400
-Received: from verein.lst.de ([213.95.11.211]:40552 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752630AbeDZGnS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 02:43:18 -0400
-Date: Thu, 26 Apr 2018 08:45:00 +0200
-From: "hch@lst.de" <hch@lst.de>
-To: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-Cc: "hch@lst.de" <hch@lst.de>, "deanbo422@gmail.com" <deanbo422@gmail.com>,
-        "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "nios2-dev@lists.rocketboards.org" <nios2-dev@lists.rocketboards.org>,
-        "linux-xtensa@linux-xtensa.org" <linux-xtensa@linux-xtensa.org>,
-        "linux-m68k@lists.linux-m68k.org" <linux-m68k@vger.kernel.org>,
-        "linux-alpha@vger.kernel.org" <linux-alpha@vger.kernel.org>,
-        "linux-hexagon@vger.kernel.org" <linux-hexagon@vger.kernel.org>,
-        "linux-snps-arc@lists.infradead.org"
-        <linux-snps-arc@lists.infradead.org>,
-        "green.hu@gmail.com" <green.hu@gmail.com>,
-        "openrisc@lists.librecores.org" <openrisc@lists.librecores.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "monstr@monstr.eu" <monstr@monstr.eu>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linux-c6x-dev@linux-c6x.org" <linux-c6x-dev@linux-c6x.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>
-Subject: Re: [PATCH 06/22] arc: use generic dma_noncoherent_ops
-Message-ID: <20180426064500.GB13895@lst.de>
-References: <20180420080313.18796-1-hch@lst.de> <20180420080313.18796-7-hch@lst.de> <1524655020.5315.9.camel@synopsys.com>
+        id S1753547AbeDZGsP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 02:48:15 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:61084 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751465AbeDZGsM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 02:48:12 -0400
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mark Salyzyn <salyzyn@android.com>, Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        John Stultz <john.stultz@linaro.org>, Peter Anvin <hpa@zytor.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Prarit Bhargava <prarit@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Kevin Easton <kevin@guarana.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        SergeySenozhatsky <sergey.senozhatsky@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-tip-commits@vger.kernel.org
+Subject: Re: [tip:timers/urgent] Revert: Unify CLOCK_MONOTONIC and CLOCK_BOOTTIME
+Date: Thu, 26 Apr 2018 08:48:00 +0200
+Message-ID: <1818264.9sG3yaIMPm@aspire.rjw.lan>
+In-Reply-To: <20180425184140.6b6e524d@vmware.local.home>
+References: <tip-757d5a9b3052a4eebd029f207f1e1df59bef7b7d@git.kernel.org> <5695751.Ycq0WTIcbj@aspire.rjw.lan> <20180425184140.6b6e524d@vmware.local.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1524655020.5315.9.camel@synopsys.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 25, 2018 at 11:17:01AM +0000, Alexey Brodkin wrote:
-> Which is actually strange as I would expect ARC code to be built by bots.
+On Thursday, April 26, 2018 12:41:40 AM CEST Steven Rostedt wrote:
+> On Wed, 25 Apr 2018 22:57:12 +0200
+> "Rafael J. Wysocki" <rjw@rjwysocki.net> wrote:
+> 
+> > FWIW, I run (64-bit) OpenSUSE 42.3 on the failing machine (Acer Aspire S5) with
+> > my own kernel (custom config based on the distro one).
+> > 
+> > The problem here is that the machine doesn't resume from S2R.  It appears to
+> > just hang somewhere around where we return to user space.  However, to trigger
+> > the issue it needs to stay in suspend for several minutes (not sure how many
+> > exactly).  If it is just back-to-back suspend/resume, it will resume correctly.
+> 
+> I guess the question that needs to be asked is, have you tried a kernel
+> with this commit reverted and it works?
 
-I don't think I got any notification.  Thank for the fixes!
+Yes, I have.
 
-I think I found the bug, based on the fact that so far all tests for
-architectures that also need a cache op for device to cpu transitions
-failed.  I did a stupid typo when changing kconfig symbols, so please
-try the patch below.
+> I'd play a bit going back and
+> forth between two kernels, one with the commit and one without and no
+> other differences, to make sure that is indeed the problem commit.
 
->  
->  static int l2_line_sz;
->  static int ioc_exists;
-> -int slc_enable = 1, ioc_enable = 1;
-> +int slc_enable = 1, ioc_enable = 0;
+I've done that.
 
-Hmm.  It seems if ioc_enable is 0 we should simply be using
-dma_direct_ops on arc, but that is a different discussion.
+It is the problem commit.
 
----
-diff --git a/lib/dma-noncoherent.c b/lib/dma-noncoherent.c
-index f4b8532c20ac..a2c192b3508d 100644
---- a/lib/dma-noncoherent.c
-+++ b/lib/dma-noncoherent.c
-@@ -48,7 +48,7 @@ static int dma_noncoherent_map_sg(struct device *dev, struct scatterlist *sgl,
- 	return nents;
- }
- 
--#ifdef CONFIG_DMA_NONCOHERENT_SYNC_FOR_CPU
-+#ifdef CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU
- static void dma_noncoherent_sync_single_for_cpu(struct device *dev,
- 		dma_addr_t addr, size_t size, enum dma_data_direction dir)
- {
-@@ -88,7 +88,7 @@ const struct dma_map_ops dma_noncoherent_ops = {
- 	.sync_sg_for_device	= dma_noncoherent_sync_sg_for_device,
- 	.map_page		= dma_noncoherent_map_page,
- 	.map_sg			= dma_noncoherent_map_sg,
--#ifdef CONFIG_DMA_NONCOHERENT_SYNC_FOR_CPU
-+#ifdef CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU
- 	.sync_single_for_cpu	= dma_noncoherent_sync_single_for_cpu,
- 	.sync_sg_for_cpu	= dma_noncoherent_sync_sg_for_cpu,
- 	.unmap_page		= dma_noncoherent_unmap_page,
+Thanks,
+Rafael
