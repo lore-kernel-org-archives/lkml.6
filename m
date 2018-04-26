@@ -1,97 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753347AbeDZGxq (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 02:53:46 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:60258 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752018AbeDZGxn (ORCPT
+        id S1753619AbeDZGxy (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 02:53:54 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:54932 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753378AbeDZGxt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 02:53:43 -0400
-X-UUID: b16aa31a20be4dbfb0c105cdf96bb694-20180426
-Message-ID: <1524725617.31521.0.camel@mhfsdcap03>
-Subject: Re: [GIT PULL] Immutable branch between MFD, Input and RTC due for
- the v4.18 merge window
-From: Chen Zhong <chen.zhong@mediatek.com>
-To: Lee Jones <lee.jones@linaro.org>
-CC: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        "Eddie Huang" <eddie.huang@mediatek.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Beomho Seo <beomho.seo@samsung.com>,
-        Javier Martinez Canillas <javier@osg.samsung.com>,
-        Jaechul Lee <jcsing.lee@samsung.com>,
-        "Krzysztof Kozlowski" <krzk@kernel.org>, <linux-input@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-rtc@vger.kernel.org>
-Date: Thu, 26 Apr 2018 14:53:37 +0800
-In-Reply-To: <20180416141809.34l2ofmeljqvyicm@dell>
-References: <1508937364-30054-1-git-send-email-chen.zhong@mediatek.com>
-         <20180416141809.34l2ofmeljqvyicm@dell>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 8bit
+        Thu, 26 Apr 2018 02:53:49 -0400
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mark Salyzyn <salyzyn@android.com>, Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        John Stultz <john.stultz@linaro.org>, Peter Anvin <hpa@zytor.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Prarit Bhargava <prarit@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>, Kevin Easton <kevin@guarana.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        SergeySenozhatsky <sergey.senozhatsky@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-tip-commits@vger.kernel.org
+Subject: Re: [tip:timers/urgent] Revert: Unify CLOCK_MONOTONIC and CLOCK_BOOTTIME
+Date: Thu, 26 Apr 2018 08:53:37 +0200
+Message-ID: <1862218.3bTVVn1vea@aspire.rjw.lan>
+In-Reply-To: <20180425201908.GA1977@amd>
+References: <tip-757d5a9b3052a4eebd029f207f1e1df59bef7b7d@git.kernel.org> <CA+55aFz2_cwCjBDAqvzeX89Md26JR=DLhQxTPGuq8OQkWi0ehw@mail.gmail.com> <20180425201908.GA1977@amd>
 MIME-Version: 1.0
-X-MTK: N
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-04-16 at 15:18 +0100, Lee Jones wrote:
-> Enjoy!
+On Wednesday, April 25, 2018 10:19:08 PM CEST Pavel Machek wrote:
 > 
-> The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
+> --J2SCkAp4GZ/dPZZf
+> Content-Type: text/plain; charset=us-ascii
+> Content-Disposition: inline
+> Content-Transfer-Encoding: quoted-printable
 > 
->   Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
+> On Wed 2018-04-25 12:41:23, Linus Torvalds wrote:
+> > On Wed, Apr 25, 2018 at 12:09 PM, Thomas Gleixner <tglx@linutronix.de> wr=
+> ote:
+> > > On Wed, 25 Apr 2018, Linus Torvalds wrote:
+> > >>
+> > >> I don't see the reported watchdog things, and I run systemd and I ran
+> > >> these patches.
+> > >
+> > > With suspend/resume?
+> >=20
+> > Yes. I run them on my laptop, and while I don't do a _lot_ of
+> > suspend/resume, I do some. My laptop right now is running a "just
+> > after rc1" kernel, and has been for the last week, and has a couple of
+> > suspends in that time. Type "closed my laptop, took it elsewhere,
+> > opened it again", so more than a few minutes.
+> >=20
+> > > Fair enough. Do the reporters have more information or do I have to cha=
+> se
+> > > it down myself?
+> >=20
+> > I think reporters should just say what distro they are running, and
+> > systemd versions etc, and how they debugged this. Maybe the pattern is
+> > obvious.
+> >=20
+> > For the record, I just run plain F27, obviously with my own kernel
+> > (and a tweaked config, but it approaches just being a "make
+> > localmodconfig" of the distro config).
 > 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git ib-mfd-input-rtc-v4.18
-> 
-> for you to fetch changes up to 55d1d1547ab5e52269988af5e7c553796ff68e97:
-> 
->   mfd: mt6397: Add PMIC keys support to MT6397 driver (2018-04-16 15:16:11 +0100)
-> 
-> ----------------------------------------------------------------
-> Immutable branch between MFD, Input and RTC due for the v4.18 merge window
-> 
-> ----------------------------------------------------------------
-> Chen Zhong (5):
->       mfd: mt6397: Create irq mappings in mfd core driver
->       dt-bindings: input: Add document bindings for mtk-pmic-keys
->       dt-bindings: mfd: Add bindings for the keys as subnode of PMIC
->       input: Add MediaTek PMIC keys support
->       mfd: mt6397: Add PMIC keys support to MT6397 driver
-> 
->  .../devicetree/bindings/input/mtk-pmic-keys.txt    |  43 +++
->  Documentation/devicetree/bindings/mfd/mt6397.txt   |   6 +
->  drivers/input/keyboard/Kconfig                     |   9 +
->  drivers/input/keyboard/Makefile                    |   1 +
->  drivers/input/keyboard/mtk-pmic-keys.c             | 339 +++++++++++++++++++++
->  drivers/mfd/mt6397-core.c                          |  26 +-
->  drivers/rtc/rtc-mt6397.c                           |   7 +-
->  7 files changed, 424 insertions(+), 7 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/input/mtk-pmic-keys.txt
->  create mode 100644 drivers/input/keyboard/mtk-pmic-keys.c
-> 
+> So... I do have debian 8.10.
 
-Hi Lee,
+Does that use systemd at all?
 
-I’m sorry that I found this patch
-https://patchwork.kernel.org/patch/10026705/
+> With 4.17-rc1, I get "networking
+> disabled" message from network manager (and broken network), about
+> half of the time.
+> 
+> But there's more visible symptom: suspend/resume with 4.16, machine is
+> okay after resume. With 4.17-rc1, just after resume, display starts
+> dimming and screensaver will kick in. MATE desktop.
 
-is missing in the git repository at:
+Yeah, why not.  It thinks that you've been inactive for the duration of system
+sleep. :-)
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git
-ib-mfd-input-rtc-v4.18
-
-Could you please take this patch up?
-
-Thanks.
-
-Best regards,
-Chen Zhong
+Thanks,
+Rafael
