@@ -1,117 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751808AbeDZAcL (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 20:32:11 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:45739 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751298AbeDZAcH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 20:32:07 -0400
-X-Google-Smtp-Source: AIpwx49GimdsHu2Wwa609EHQmTTwgE+MRRwotPs8Ni7NW9I7eDEcJkcf9qILYgZ/r6NIYypkUbeLoQ==
-Subject: Re: [PATCH] of: overlay: Stop leaking resources on overlay removal
-From: Frank Rowand <frowand.list@gmail.com>
-To: Jan Kiszka <jan.kiszka@siemens.com>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        devicetree <devicetree@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alan Tull <atull@kernel.org>
-References: <097f1b01-6cb4-8dcb-0498-7b4c59a7ea53@siemens.com>
- <7aca82c1-a02c-2f84-bc32-6e8a118ba601@gmail.com>
- <90e7da9d-d40a-17f1-e627-873f58a3dce5@siemens.com>
- <b813ac8f-a1e3-3e27-2e44-0a576e05d01c@gmail.com>
-Message-ID: <17561711-94f7-b3d4-8f06-9cfa69daaf23@gmail.com>
-Date: Wed, 25 Apr 2018 17:32:05 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <b813ac8f-a1e3-3e27-2e44-0a576e05d01c@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1751852AbeDZAgR (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 20:36:17 -0400
+Received: from mga04.intel.com ([192.55.52.120]:20423 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751298AbeDZAgP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 20:36:15 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,328,1520924400";
+   d="scan'208";a="44667885"
+From: Chen Yu <yu.c.chen@intel.com>
+To: Len Brown <len.brown@intel.com>
+Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Chen Yu <yu.c.chen@intel.com>, Len Brown <lenb@kernel.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Artem Bityutskiy <artem.bityutskiy@intel.com>,
+        Doug Smythies <dsmythies@telus.net>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH][v6] tools/power turbostat: if --iterations, print for specific count of iterations
+Date: Thu, 26 Apr 2018 08:41:03 +0800
+Message-Id: <1524703263-22303-1-git-send-email-yu.c.chen@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jan,
+There's a use case during test to only print specific round of iterations
+if --iterations is specified, for example, with this patch applied:
 
-On 04/24/18 13:58, Frank Rowand wrote:
-> On 04/24/18 10:50, Jan Kiszka wrote:
->> On 2018-04-24 19:44, Frank Rowand wrote:
->>> On 04/24/18 09:19, Jan Kiszka wrote:
->>>> Only the overlay notifier callbacks have a chance to potentially get
->>>> hold of references to those two resources, but they do not store them.
->>>> So it is safe to stop the intentional leaking.
->>>>
->>>> See also https://lkml.org/lkml/2018/4/23/1063 and following.
->>>>
->>>> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
->>>> ---
->>>>
->>>> Ideally, we sort out any remaining worries during the 4.17-rc cycle.
->>>>
->>>>  drivers/of/overlay.c | 13 ++-----------
->>>>  1 file changed, 2 insertions(+), 11 deletions(-)
->>>>
->>>> diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
->>>> index b35fe88f1851..3553f1f57a62 100644
->>>> --- a/drivers/of/overlay.c
->>>> +++ b/drivers/of/overlay.c
->>>> @@ -671,17 +671,8 @@ static void free_overlay_changeset(struct overlay_changeset *ovcs)
->>>>  		of_node_put(ovcs->fragments[i].overlay);
->>>>  	}
->>>>  	kfree(ovcs->fragments);
->>>> -
->>>> -	/*
->>>> -	 * TODO
->>>> -	 *
->>>> -	 * would like to: kfree(ovcs->overlay_tree);
->>>> -	 * but can not since drivers may have pointers into this data
->>>> -	 *
->>>> -	 * would like to: kfree(ovcs->fdt);
->>>> -	 * but can not since drivers may have pointers into this data
->>>> -	 */
->>>> -
->>>> +	kfree(ovcs->overlay_tree);
->>>> +	kfree(ovcs->fdt);
->>>>  	kfree(ovcs);
->>>>  }
->>>>  
->>>>
->>>
->>> Nack.  It is premature to submit this while the conversation is
->>> continuing in the other thread.
->>>
->>> I'll continue the conversation in the other thread.
->>>
->>
->> Well, at least the strongest argument has been resolved now, the
->> notifier topic. Curious to learn what remains. As I noted, we should
->> work hard to sort out the API regression prior to the release.
-> 
-> Nope, the notifier discussion continues in the other thread.
+turbostat -i 5 -r 4
+will capture 4 samples with 5 seconds interval.
 
-Thanks for your patience in the other thread.
+Cc: Len Brown <lenb@kernel.org>
+Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
+Cc: Artem Bityutskiy <artem.bityutskiy@intel.com>
+Cc: Doug Smythies <dsmythies@telus.net>
+Cc: linux-pm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+---
+ tools/power/x86/turbostat/turbostat.8 |  2 ++
+ tools/power/x86/turbostat/turbostat.c | 23 ++++++++++++++++++++++-
+ 2 files changed, 24 insertions(+), 1 deletion(-)
 
-As I noted there, I am now willing to accept this patch with some
-small changes.  Please add a minimal section to
-Documentation/devicetree/overlay-notes.txt about overlay notifiers.
-The most important thing to note there is that the overlay notifiers
-are not allowed to retain any pointers into the overlay devicetree.
-Also, instead of removing the "TODO" comment in free_overlay_changeset(),
-change it to say something to the effect of "there should be no live pointers
-into ovcs->overlay_tree and ovcs->fdt due to the policy that overlay
-notifiers are not allowed to retain pointers into the overlay devicetree".
-
-I will also add myself to the OPEN FIRMWARE AND DEVICE TREE OVERLAYS
-entry of MAINTAINERS and add a keyword line to catch overlay notifiers.
-
-I am not happy about freeing the overlay devicetree and overlay fdt
-while overlay notifiers are able to retain pointers into the overlay
-devicetree and overlay fdt, but am willing to accept documentation and
-review as a partial protection until the devicetree access APIs can be
-modified to prevent the notifiers from accessing the pointers.  The
-volume of overlay notifier patches should be small enough to not be
-a review burden.
-
--Frank
+diff --git a/tools/power/x86/turbostat/turbostat.8 b/tools/power/x86/turbostat/turbostat.8
+index ccf2a69..7452dc4 100644
+--- a/tools/power/x86/turbostat/turbostat.8
++++ b/tools/power/x86/turbostat/turbostat.8
+@@ -64,6 +64,8 @@ name as necessary to disambiguate it from others is necessary.  Note that option
+ .PP
+ \fB--interval seconds\fP overrides the default 5.0 second measurement interval.
+ .PP
++\fB--iterations count\fP number of the measurement iterations.
++.PP
+ \fB--out output_file\fP turbostat output is written to the specified output_file.
+ The file is truncated if it already exists, and it is created if it does not exist.
+ .PP
+diff --git a/tools/power/x86/turbostat/turbostat.c b/tools/power/x86/turbostat/turbostat.c
+index bd9c6b3..0220892 100644
+--- a/tools/power/x86/turbostat/turbostat.c
++++ b/tools/power/x86/turbostat/turbostat.c
+@@ -48,6 +48,7 @@ char *proc_stat = "/proc/stat";
+ FILE *outf;
+ int *fd_percpu;
+ struct timespec interval_ts = {5, 0};
++int iterations;
+ unsigned int debug;
+ unsigned int quiet;
+ unsigned int sums_need_wide_columns;
+@@ -470,6 +471,7 @@ void help(void)
+ 	"		{core | package | j,k,l..m,n-p }\n"
+ 	"--quiet	skip decoding system configuration header\n"
+ 	"--interval sec	Override default 5-second measurement interval\n"
++	"--iterations count	number of the measurement iterations\n"
+ 	"--help		print this help message\n"
+ 	"--list		list column headers only\n"
+ 	"--out file	create or truncate \"file\" for all output\n"
+@@ -2565,6 +2567,7 @@ void turbostat_loop()
+ {
+ 	int retval;
+ 	int restarted = 0;
++	int done_iters = 0;
+ 
+ restart:
+ 	restarted++;
+@@ -2581,6 +2584,7 @@ void turbostat_loop()
+ 		goto restart;
+ 	}
+ 	restarted = 0;
++	done_iters = 0;
+ 	gettimeofday(&tv_even, (struct timezone *)NULL);
+ 
+ 	while (1) {
+@@ -2607,6 +2611,10 @@ void turbostat_loop()
+ 		compute_average(EVEN_COUNTERS);
+ 		format_all_counters(EVEN_COUNTERS);
+ 		flush_output_stdout();
++
++		if (iterations && ++done_iters >= iterations)
++			break;
++
+ 		nanosleep(&interval_ts, NULL);
+ 		if (snapshot_proc_sysfs_files())
+ 			goto restart;
+@@ -2626,6 +2634,9 @@ void turbostat_loop()
+ 		compute_average(ODD_COUNTERS);
+ 		format_all_counters(ODD_COUNTERS);
+ 		flush_output_stdout();
++
++		if (iterations && ++done_iters >= iterations)
++			break;
+ 	}
+ }
+ 
+@@ -4999,6 +5010,7 @@ void cmdline(int argc, char **argv)
+ 		{"Dump",	no_argument,		0, 'D'},
+ 		{"debug",	no_argument,		0, 'd'},	/* internal, not documented */
+ 		{"interval",	required_argument,	0, 'i'},
++		{"iterations",	required_argument,	0, 'r'},
+ 		{"help",	no_argument,		0, 'h'},
+ 		{"hide",	required_argument,	0, 'H'},	// meh, -h taken by --help
+ 		{"Joules",	no_argument,		0, 'J'},
+@@ -5014,7 +5026,7 @@ void cmdline(int argc, char **argv)
+ 
+ 	progname = argv[0];
+ 
+-	while ((opt = getopt_long_only(argc, argv, "+C:c:Ddhi:JM:m:o:qST:v",
++	while ((opt = getopt_long_only(argc, argv, "+C:c:Ddhi:JM:m:o:qr:ST:v",
+ 				long_options, &option_index)) != -1) {
+ 		switch (opt) {
+ 		case 'a':
+@@ -5063,6 +5075,15 @@ void cmdline(int argc, char **argv)
+ 		case 'q':
+ 			quiet = 1;
+ 			break;
++		case 'r':
++			iterations = strtod(optarg, NULL);
++
++			if (iterations <= 0) {
++				fprintf(outf, "iterations %d should be positive number\n",
++					iterations);
++				exit(2);
++			}
++			break;
+ 		case 's':
+ 			parse_show_hide(optarg, SHOW_LIST);
+ 			break;
+-- 
+2.7.4
