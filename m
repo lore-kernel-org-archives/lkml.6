@@ -1,70 +1,82 @@
-Return-Path: <vinod.koul@intel.com>
-X-Google-Smtp-Source: AIpwx4/HTSP70ribZS1NhlvlY72VkvAAeAyLiGJrRJgrBEQHNTy4yxihdub9kBGihzJII7W1RdWt
-ARC-Seal: i=1; a=rsa-sha256; t=1524734516; cv=none;
+Return-Path: <ulf.hansson@linaro.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1524732806; cv=none;
         d=google.com; s=arc-20160816;
-        b=C5DX522XSb/CblrFnZweGmsHcVMrUXH6Vdxuym5thDhr1nKQtrsAGNJYf9uxH8r1jG
-         IDJcmwLUKqq6qwvw257oizauGkM4mOdxWOwOshR6zjHclwvDi/Y1Gka+ABHMnfUCx3h+
-         bOd2mxaZoDMZVaat34tWzu8XRg6gCkeaDEaa9HkP+mM+PtU5mnaGAW36ulBKcmJgHGfn
-         clBSupfNv3ZtBRhaNrvb/dqDqACfCcor/VYhBkRIQ3gY8rzgcZv6Yc1cMxR6/mQr1kBa
-         P//YcxzRQ4yuC3+Ynq7cZL1IwyEe0INoaJfnvHsS9EYyxeSbi+udYA3q23ToAviTgn+d
-         sn0g==
+        b=C+jf7M1SZJ8mCim9hpfcSCMCuPcdPPon4+c9F1OaJuHp3HlyLxGNF9zjSQe9XE7njT
+         KRD+9zRevNGWBiaYpDIt1VRfOjsXAFsEHBhwbRIKa4y75i2EZBR+EhuoTcI6qfN4bjEO
+         AiNNouosxzS9hQlBz+fNwiggUNUDGOWDA7UCDTvYUR7UOmEv3SaDYFRBF1/8c5S5yOK5
+         RPLTcicaVTQzY8aQ8+vstkDLKfbhRXPrc/1ivWyEeWFcvkzOjyG5kGsVQtIh7nJsWozO
+         GJtcBb6+18Y9WDWd5auire82FqOUVJXPRVenX3eky0bbIViik/x37pXIPug4N8JNFpDI
+         cm9w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=kvGoivuRAH51+e435uSApdynkxdqqraxx7Tht/MOlns=;
-        b=V8uzEAjE0nXhkykdOxXhR2e9tpIROct29Jwk8/cFfzbpbr2rtg8GlQf6rlWAqCbuF6
-         ae20UWWRRJnpkfTaq2vkm3Sy7/sKCaIA1LqQEvlLXSOEVQYCQzj2Sb+vxvf6KJCThwMM
-         sLY4CQSlSBZn0BuP+EdlgfddXCn6nmF1pQnRYq/W72ZhEuzPh2zIfWRTYKqa2MwDOEgH
-         L879vHB7TR79DKlG/xeGgp1haXwxkWMw8EyXEVFmq78NE1NoMFQGbaT7Yuwq729vrh5U
-         hBnXtn0UapXNVV5cHIlZnGBwtpvZt++kXHcRHe97hJFOTuwBH40yl32CsabWfHkY8C0c
-         t6hQ==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=hU5FXEWc+uiOnBCNzHi77rqnIeKqwSZvkLGgu3DHGbc=;
+        b=i8irMgt1/e68pR9TUovK/LqwJWEyqxqFy+pufuvvwSkflOqrP5nvyxAXHnytSNgmU2
+         cprXZgIXORHTV15o+/uhbbI5683IIFjVCJGhuqi2zMHcyEX2HTfeJ2aBXIufUbRrYkQu
+         YVsFHI84y6GqMpPu1DMSFRHoqO0eSI+gg9DO2sNLHhKENPE9SeslpCeBDZ+z2sBBx+fl
+         IdjghxCdQ9coPC+/bjw1TfwQbB6s/NlgUdD0MiVx3SEMbKdM0Lsk4EXGgVP+SCz64u9X
+         U66hhcKLwsRDTfuNFzXz4BsxpdDw2M79OSWZ2tGHVaXn9YM/OQY/rCvEnIaVWiTog21e
+         PFEA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of vinod.koul@intel.com designates 192.55.52.151 as permitted sender) smtp.mailfrom=vinod.koul@intel.com
+       dkim=pass header.i=@linaro.org header.s=google header.b=QhaqIzG9;
+       spf=pass (google.com: domain of ulf.hansson@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=ulf.hansson@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of vinod.koul@intel.com designates 192.55.52.151 as permitted sender) smtp.mailfrom=vinod.koul@intel.com
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,330,1520924400";
-   d="scan'208";a="37181013"
-Date: Thu, 26 Apr 2018 14:56:32 +0530
-From: Vinod Koul <vinod.koul@intel.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+       dkim=pass header.i=@linaro.org header.s=google header.b=QhaqIzG9;
+       spf=pass (google.com: domain of ulf.hansson@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=ulf.hansson@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+X-Google-Smtp-Source: AB8JxZoJgNcglg0Z2vo/HvKrEcTo/CLva2VpGhVnoHZ6oCSVLLaX0T1EUL3fdeUHLPnCdbV531886w==
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-pm@vger.kernel.org, Kevin Hilman <khilman@kernel.org>,
+	linux-pm@vger.kernel.org
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+	Kevin Hilman <khilman@kernel.org>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Viresh Kumar <viresh.kumar@linaro.org>,
 	Vincent Guittot <vincent.guittot@linaro.org>,
 	Mark Brown <broonie@kernel.org>,
+	Vinod Koul <vinod.koul@intel.com>,
 	Sanyog Kale <sanyog.r.kale@intel.com>,
 	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
 	Wolfram Sang <wsa@the-dreams.de>,
-	Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>,
+	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 10/11] soundwire: Respect all error codes from
- dev_pm_domain_attach()
-Message-ID: <20180426092632.GU6014@localhost>
+Subject: [PATCH 08/11] i2c: Respect all error codes from dev_pm_domain_attach()
+Date: Thu, 26 Apr 2018 10:53:07 +0200
+Message-Id: <1524732790-2234-9-git-send-email-ulf.hansson@linaro.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1524732790-2234-1-git-send-email-ulf.hansson@linaro.org>
 References: <1524732790-2234-1-git-send-email-ulf.hansson@linaro.org>
- <1524732790-2234-11-git-send-email-ulf.hansson@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1524732790-2234-11-git-send-email-ulf.hansson@linaro.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598798230564470166?=
-X-GMAIL-MSGID: =?utf-8?q?1598800020072065468?=
+X-GMAIL-THRID: =?utf-8?q?1598798227731676848?=
+X-GMAIL-MSGID: =?utf-8?q?1598798227731676848?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Apr 26, 2018 at 10:53:09AM +0200, Ulf Hansson wrote:
-> The limitation of being able to check only for -EPROBE_DEFER from
-> dev_pm_domain_attach() has been removed. Hence let's respect all error
-> codes and bail out accordingly.
+The limitation of being able to check only for -EPROBE_DEFER from
+dev_pm_domain_attach() has been removed. Hence let's respect all error
+codes and bail out accordingly.
 
-Acked-by: Vinod Koul <vkoul@kernel.org>
+Cc: Wolfram Sang <wsa@the-dreams.de>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+---
+ drivers/i2c/i2c-core-base.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
+index 1ba40bb..a17f46a 100644
+--- a/drivers/i2c/i2c-core-base.c
++++ b/drivers/i2c/i2c-core-base.c
+@@ -363,7 +363,7 @@ static int i2c_device_probe(struct device *dev)
+ 		goto err_clear_wakeup_irq;
+ 
+ 	status = dev_pm_domain_attach(&client->dev, true);
+-	if (status == -EPROBE_DEFER)
++	if (status)
+ 		goto err_clear_wakeup_irq;
+ 
+ 	/*
 -- 
-~Vinod
+2.7.4
