@@ -1,31 +1,31 @@
 Return-Path: <yangbo.lu@nxp.com>
-X-Google-Smtp-Source: AB8JxZqlnesxVvkJ6ZWcWCOpLu7ug5P3iIDt95UhLLIok4e1fPrbL5eKZII0PKzAQKrg1FCPTW06
-ARC-Seal: i=1; a=rsa-sha256; t=1524738284; cv=none;
+X-Google-Smtp-Source: AB8JxZrPPdBtbnsJzbdXYo2iYsRYGg7MC3K1W4CYe20B/sUKrUzun7CPQxsjxmgyaQ2x6UpBeYl3
+ARC-Seal: i=1; a=rsa-sha256; t=1524738282; cv=none;
         d=google.com; s=arc-20160816;
-        b=G9SYOms9qpzm6yA2Ut35cRnKcTAqbvNS7P06EyGBJBUjnwX/3m394K9RYmRNpflugp
-         WLPc1vp4nCLzwBXWxSaiX7zbDI2dAELcNFGSRFlubRwjb0nPgNQ65vdqu4duLbqv7aSG
-         XupGCjnePllo3gDFynoyBfmu5w5FaQeaWxmBaI3Z9tJHHUHu/d1r5SBEAtvfoP/Of/99
-         46NkQj+wRYwrWCAeY59V2evD3QRPj46zPfLtfOgOVS5LOJA+GWNZFNcv/3VjKepcL9SE
-         aLEXqdevI9u2CSGKgwEhTzS3vU8Wn9Gp/1iT+w2sKS/xP2U9JdJpte/aTnS+2CnKih5b
-         VQDQ==
+        b=ptyK1vtcu46eIjQIMx+EJ7qqO/IYw9yXXkvbkPJM9G/yLCq5RsDsxdGiBD/L8Q0ghl
+         1qIT8+asNA7i4OYqWUfPHQsQKDjt9IhcYy0HUiIAmzjE0bO+tNdTbKHUn+bSxXqTe6LE
+         w2hI9zJ50YgmooCxhyZ0EiyJgw1m5IuYfw89m4XBhvLFnY6QQFjxO1lN98/McVXPHTu3
+         +tn8CAufFPEezen0KYP6jw76KE22aG9kAQr+KtZEQRrxdXiWP3Fb6xc+AcutvmSS6nJj
+         Yh+ec+Gr/w3yO/t+i7++bUGOsyk/Rf5fkI8a7NuO+RMhnw2VpME9WZNqLIbugKCnzhBH
+         YlPQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=spamdiagnosticmetadata:spamdiagnosticoutput:mime-version:references
          :in-reply-to:message-id:date:subject:cc:to:from:dkim-signature
          :arc-authentication-results;
-        bh=S8YmpCqecEvftzud+GNZ4YZZUxOo7lINRELwiCYAaeM=;
-        b=jHPjm5uClrY473mxBbY+ktLbzHhjq6Z+GEQ0prRc/Z90sB55FpAr7Lxtrde2zyGC74
-         EDlwB5dbmohLPz8YIs/HclOJ8mfKB9htK2v+tV26aa3ywBgf5qMJJCJ9wxeA+vVnPj/v
-         2gc9tS5g2zMBLS7FXTbDwSvL0b0CIJzmwTK4vx+/SHh5At6Fszvv99F/aGiPLQ5gv5Zm
-         mpHObdbitojknJmdkKDjNI/WiBZ2U+bYkwbrQ5W3rLLYR35D6+h8x1o8EjoowGIB/Gy2
-         TxfEMy/5kVm4iW9pxCvu3xkRIqsfpTaCf6+eOsxvtwQfQd00DvLokjQcbpocWk6VKaiP
-         RfhA==
+        bh=8dglrOq8efVU538mHT+ge++lZlfVWo7QVMulz9E7+40=;
+        b=qqqySEN68Tzt/JN/2PwtChEkU2FQfzO9SV6JuvqA8CG+iH7+eumJ+18upNPiT3vh96
+         2ZrrE/tVvhWUcKPMNq+jE60JZR8lPZfo4gCD1M2S49fBEbf0KFppGfuCN+I2S78INW5z
+         uRQ5WiYW5mwf3lrP3AEZM/xmnQjeyXaOvbGBi0AnqHPwLHpmdcO0OQB8ylRwBHlrDWJn
+         Ri5knIyKOqAmYIn0fbq3cYEMKXyxjuCUPhV19tlMME+i9EYViEga3ixNpnRnxaaQk6Kk
+         MIn0z41zj9AmXR9lBFVvP7EO3wDXtsT8+5OEB40B9z/CstMnuYBK5ADz7PlYGzL0G38X
+         AhfQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@freescale.onmicrosoft.com header.s=selector1-freescale-onmicrosoft-com header.b=QI4HiiDY;
-       spf=pass (google.com: domain of yangbo.lu@nxp.com designates 104.47.40.90 as permitted sender) smtp.mailfrom=yangbo.lu@nxp.com;
+       dkim=pass header.i=@freescale.onmicrosoft.com header.s=selector1-freescale-onmicrosoft-com header.b=TOLUAJ13;
+       spf=pass (google.com: domain of yangbo.lu@nxp.com designates 104.47.33.135 as permitted sender) smtp.mailfrom=yangbo.lu@nxp.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nxp.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@freescale.onmicrosoft.com header.s=selector1-freescale-onmicrosoft-com header.b=QI4HiiDY;
-       spf=pass (google.com: domain of yangbo.lu@nxp.com designates 104.47.40.90 as permitted sender) smtp.mailfrom=yangbo.lu@nxp.com;
+       dkim=pass header.i=@freescale.onmicrosoft.com header.s=selector1-freescale-onmicrosoft-com header.b=TOLUAJ13;
+       spf=pass (google.com: domain of yangbo.lu@nxp.com designates 104.47.33.135 as permitted sender) smtp.mailfrom=yangbo.lu@nxp.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nxp.com
 Authentication-Results: spf=fail (sender IP is 64.157.242.222)
  smtp.mailfrom=nxp.com; driverdev.osuosl.org; dkim=none (message not signed)
@@ -37,147 +37,139 @@ To: <devel@driverdev.osuosl.org>, <linux-kernel@vger.kernel.org>, Greg
 	<richardcochran@gmail.com>, <dan.carpenter@oracle.com>, Ioana Radulescu
 	<ruxandra.radulescu@nxp.com>
 CC: Yangbo Lu <yangbo.lu@nxp.com>
-Subject: [v2, 3/3] staging: fsl-dpaa2/rtc: support phc_index of ethtool_ts_info
-Date: Thu, 26 Apr 2018 18:23:49 +0800
-Message-ID: <20180426102349.45222-3-yangbo.lu@nxp.com>
+Subject: [v2, 2/3] staging: fsl-dpaa2/eth: add the get_ts_info interface for ethtool
+Date: Thu, 26 Apr 2018 18:23:48 +0800
+Message-ID: <20180426102349.45222-2-yangbo.lu@nxp.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180426102349.45222-1-yangbo.lu@nxp.com>
 References: <20180426102349.45222-1-yangbo.lu@nxp.com>
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:64.157.242.222;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10019020)(376002)(39860400002)(39380400002)(346002)(396003)(2980300002)(1110001)(1109001)(339900001)(199004)(189003)(486006)(86362001)(77096007)(336012)(2616005)(126002)(6666003)(446003)(11346002)(498600001)(39060400002)(85426001)(2906002)(6636002)(53936002)(50226002)(5660300001)(48376002)(50466002)(44832011)(106466001)(305945005)(316002)(8656006)(110136005)(8936002)(76176011)(4326008)(476003)(36756003)(47776003)(1076002)(59450400001)(81166006)(8676002)(16586007)(51416003)(26005)(97736004)(105606002)(356003)(81156014);DIR:OUT;SFP:1102;SCL:1;SRVR:BLUPR03MB389;H:tx30smr01.am.freescale.net;FPR:;SPF:Fail;LANG:en;PTR:ErrorRetry;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;BL2FFO11FD007;1:R2VN0EYAtL950+h5DzQffrt1eYdU/mQiueY54JfXFbHpStBhPWrzbbzXAacgpwJx3TepC7QwwLDVnmVuX+iUios6wVxXbFhhX7DJIN6s9+rHi+d9T7EvUCSTGlzWfHWf
+X-Forefront-Antispam-Report: CIP:64.157.242.222;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10019020)(39860400002)(376002)(396003)(39380400002)(346002)(2980300002)(1109001)(1110001)(339900001)(189003)(199004)(5660300001)(336012)(8656006)(47776003)(11346002)(305945005)(2616005)(53936002)(110136005)(8676002)(498600001)(356003)(48376002)(44832011)(316002)(36756003)(476003)(446003)(97736004)(50466002)(486006)(86362001)(126002)(81156014)(81166006)(16586007)(39060400002)(6666003)(4326008)(6636002)(106466001)(26005)(77096007)(51416003)(8936002)(76176011)(85426001)(105606002)(50226002)(2906002)(1076002);DIR:OUT;SFP:1102;SCL:1;SRVR:BN3PR03MB2177;H:tx30smr01.am.freescale.net;FPR:;SPF:Fail;LANG:en;PTR:ErrorRetry;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;BN1BFFO11FD019;1:8MLrpe//8uj2P1T92BOXuxNJ5NBsFmfTbEYxIrt8pzb5lDJE5K7xGL9arfTDPg7DeP6ORGzLKzFmptInmXpVIId2GSJcrWkD0RHRxKXy1rtQ4g7xOZjvMATF13bFR8mE
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MS-PublicTrafficType: Email
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(8559017)(2017052603328);SRVR:BLUPR03MB389;
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR03MB389;3:ecqzLHaMRuNMT4Rms3UTzLj8KfkNcrKbT0Os4abKqk3xQc/RvC/UEMSm5r5kEIfLQsswsz1KftR5pePMrGtuXoXod4QEt1CU1MAZXLijoZ7vzqjnF+q+O8hbmQ+Hb4t3yEhidJ4Nuk5/CaGTtkw7lTw6ZEjdiKjCoJblaQz4jAS/rRRe0HtfWTjmDn6V+npLzWp/NpilchYgiLkUWSE3cETRjnYIbliAGUFJts5qnUmxAWokSYX2LefmupEyZmediBbs12E/tzHCikRxSwVTjT0QJr8f2Jq+NEMaybPhE/2a3PqcDqapX4HBjMO3ZqAgmBAXTzB46gMFFYvCcOypmkkjhwydGYGmpVQ3yCFbRyE=;25:ILmZxrWItoYjAKWBhJvmlr9TcpC4Yu7+1vPEUx2tS3/wCokJJh4EZ8euIrYKeq96leZMETfzirq+MoyAjJHNbqi/EAT6G7ZUj8kxEPU74mmjnQ/fU+GkDdk7U+bcv4rrTmff9jhe9T6M3W1ausNFn579OFKwzSrAsTpyYM4kUKmdbHcTF2GsHHP09wKAtkotAhqShKruegmm9A+7Il1uW4/HVUawKLiHbUGTc4iGudqkV6Hvi7ofmYB3XyWutNYANWQdLSyPIDkXzfudyJ0D2kTGWsflElwx5f6KXb0DIiP+4iz3GWtjV9ipm0cJQHDLs5xjOTif3hcHNk5sFpyrWe1O4GNntQ5AH9Lkx4RADgg=
-X-MS-TrafficTypeDiagnostic: BLUPR03MB389:
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR03MB389;31:AACxxWKJp50cXig5EdfqT8U/g3JmMTz8MBSEjpWOARMgHMbyRtOt6fbixW0KMDpXQRv0XpPoTNZKQcargYB3TUcij1RXKxne0JSfm0T3DAA5/pLj4NSB++NdEp0oisVfqjnKR52tMH22oDyhjo4D+g36aclkeeHcQakaBRadb52oVsO0glnzwAgYp5iZHiBsIAp8HPpoCpbqwUthldf6JTbaDyOlhBeGdUxpSpyozAk=;20:6UnmzUf4kz3uz8/kUlBiGO+rh/e6vs790RKSFv6l+HKEowrN90yDwrQEK/dky4BFNzKXrYuxp/czv1LX72CCZ1NF29uPqOtWiKNicC2Tp7Vo+3mQdGtnoNJLb62jxLDHwYv83Rpg8hh82zda/Gh0C0wUB/7+TrFDfPUxWt8E1bFfLzFh3G7o7C5XjmW1Feexx0lkyDRr1S2FbVqklbgDmrRBoknhvfmaKsDa316gFxEVFfkOWhXAMkU9/MXZDBJje2XT5l0E/VYbyuzzPkKNVkKzlhfJBTTj/8tP46D+We5Sjc/YAeRiYjjK8lnKzbPSirCDrZH5ekuulYg8pTBS3ouzzATJ/y8iNDY3ZI6fonLzlNUwLkskWomjP8VqGgG7lmgtCo5Qx9Ghv3mjG7dgJhC+JV0e0j+1/U5HDQdMzY05o3m1yCvtoiNJLyG5h9nnqBPLNxFWRM6VNGDn20ZXXdCWvdZoDLCLjVYBDZSMowLmBeZc4fxw5JhLa74WVuSif1Znw6PYOb7bnNmS11PbXGX+HfrLz6lMMlRoxb51ipu28mfZs4pHfgKLqe8U7WCb+EU+F9l8VTFQ4M4nDpnygmzNeYU58GC1mqjs7Tgv6og=
-X-Microsoft-Antispam-PRVS: <BLUPR03MB38978B131685647F95156CAF88E0@BLUPR03MB389.namprd03.prod.outlook.com>
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(8559017)(2017052603328);SRVR:BN3PR03MB2177;
+X-Microsoft-Exchange-Diagnostics: 1;BN3PR03MB2177;3:rE4zJoQNJzFHZ3xLYF30nPTF5Z2IShdQ3YXjIRiwCvq8UudSVdjGpaRzvLakLnJHEA4j2PMRUVA2xQrCm0nXoR8ennYbCjj1dYd2yk7ubPo2XWRmX2JL6hZtMKoValU/YamRl8a1/Gi+F66pjgXdnyQ53yR+8BnIteR2oRAbLnmy9Y9TxiY3fyUKnEdwueiTfWYxSkdlskHdFIMHeDWJp/4nOESLvMJIFHzlRTnHRd/qmAwe9DC84MS8kcrGHcOJFO0Tx/5zcE2ItuXkRaJamIkKJ0DFjgK34Pcg7E06Slg4oErkKJZeQHnSyCgNGqsGpoOG/4yul27qhq/EHLaAxlj8uw9EHC4Da+mq+rt2M5A=;25:2okmpEgoCvshiZmN188dooENq+P9J4xv2zPHydKUGHH+iCIC0aVvwK+n+4PvYECK8corL+y4FM9VO/ipvyHeLtnF+T6/Ab7xoGjJn2nruspWXfPNadv96isjWyq4AS47/O7JVdMXednVKXDkP3r9HFmc/8srQ/OaJoKA/SJ4AxFNVDoSzJ5CCeAE0bkvH7PzSN3ThV+tbQh6vZieLbpHPJlm6jXlRzUaszNHhGI9xlBvi7gVBISzEpOFZqQeKiQUkMx1sxYXNSKoDAzt6eBGS0HK4SEiN9PH3j3dnPXNib3rospX/85DWcU/BvtGTsOb7OAppkiDC3azfYw4tAGZaQ==
+X-MS-TrafficTypeDiagnostic: BN3PR03MB2177:
+X-Microsoft-Exchange-Diagnostics: 1;BN3PR03MB2177;31:WwTZ+Hl0ktmqsz5KWvsstmp1oGKe9Auv/AavdbsFjMbb2ZIoijkDpatbYtMRoqcSdTQiPEbt8HKaPHmxWPh9aDyEQ/aigEU8S7Zow0KnrPAJj/YUJBuC3eY6ZErkVNKWXV4pT6x2GiLEULz7+QQARTyF4qldD3S2i9xNOIPxEM05NzsW31u8LZZKpH3WETIsXGqzv0rmz2r0oO+CSxJK1UC6x4eH9Cf4qiAhRtt1eLk=;20:kFF/rd1zrw3jjXr0bDcK5a6Cz0wD/Sws8TctnwAppwsOE2FUXJytVqf17VxOqbL4C5VXnSV9fvwjyWGOIehRMuO5lQGLW8BL5oEkPYBXahqD6ICSuCQmq4d6adzOQPzCX6Ofm3BSARNhvQ8dQ+bAZhU+38ZtLhFYPzlH043KsTYVvIJRioxnTOoXPMhft7bmYrFvHsDcWVkKwoAiMIR3CfM3eaGNQ4CxmHVeyIFw6ymBEAyO5gQhmzplO/kkRZwUGQ4R/tSba/iT06IRoXcnZdvf7i+MyfS1G35fDPnSuus3ZcRKD0pTqd4S+7QRrf01P4wewYVJDZXG1OemZxvYgjL+5vyK1cmP9F8lJOY/xYBleZkeVMBIQIF/L2FA2i1V5L4eS8jR05Ef1Z0Ju+3zUM+6G0lpurjhjm8lI/ffGMvIQnSSoQn2vA/Lr2sdfhyCo0jlRVFAN+Iffs1M7ngOnPhwM2FRBouwulwmDTILFWDw2IYRcxu+cyTSoz5lP7n81n9xlksP8Wa6tiDEu2rhacFDpSy/oH1CjCNDwyREghWsgDTie5wgxsP/Ou/bnNzpbrCiCxBkOLyeD+VoWi+lmg0yrlLv1HHFYRo+KgjOnP4=
+X-Microsoft-Antispam-PRVS: <BN3PR03MB2177D64920BC3C825880CF07F88E0@BN3PR03MB2177.namprd03.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(93006095)(93003095)(3231232)(944501410)(52105095)(6055026)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061750153)(20161123560045)(20161123558120)(20161123562045)(6072148)(201708071742011);SRVR:BLUPR03MB389;BCL:0;PCL:0;RULEID:;SRVR:BLUPR03MB389;
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR03MB389;4:035kl5rZ0yNr4fhqo+rN9caw38UBxS8DhwMz0l2srCXPkn4rtsPBEzmYIULrU/eP9d6HrjWJqzFu+0hZPTsstMjuvMYe5al1WdAlqoD1QxZNGakqiUdnbI+MbJAREuIy69GXaG1oM4PiImr6mXrDoVcLec8z9pJHrHOFO+of1T8bVI61Hoi+K2xUxgmo2/mTMvoZDB2m2+Vqh96IVHqMbVbksmjoLRuKSD+QwuynoDX/E+7tixt/V29fXT6o2aspIySK5pPX6wvccXcENfZegZ+GNtA4fJ9KZRXRbdSQ7jiRbR9hje3+eTk9en0NUiRI
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(93003095)(3231232)(944501410)(52105095)(10201501046)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061750153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(6072148)(201708071742011);SRVR:BN3PR03MB2177;BCL:0;PCL:0;RULEID:;SRVR:BN3PR03MB2177;
+X-Microsoft-Exchange-Diagnostics: 1;BN3PR03MB2177;4:5EeZqalYtKPwfwDD0RSGkp1cNFqMzKLgq9/pw7c5t7cYrlEGNBIKsM3NwAaFmvv6zjM1LDBSUeHE/aYXDBHo1nQwesdFv8iJ3r+SIhBFD5FN6fjCW4/XYHKlcemmKg+aYDa6MuBQNVTqLdrkj9jWYurKiJn3iTW6qtmLMK8uPInjySsBS9PhZVxfob8CUkDOGoMIvErvUWHzJqdepre3vUpF8xPttlY4gWgvr29XJcOzM9MsRaQszMKty71RdVHrie3IuR4FBq9h+sdGJ/QhzXy2jdvivHvb7XrcuTPBIy3/X7S0qNSsGJJn23RLSm7N
 X-Forefront-PRVS: 0654257CF5
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BLUPR03MB389;23:4ChHoRjHtbLVKx9YtkvgjIyrCt4MheIwISOnNhoqyO?=
- =?us-ascii?Q?HM2k68xpiKNLqz32k/lj94vESIuCikr/TnRHRmcE4Xnf1OKClTNBeWXdYXfU?=
- =?us-ascii?Q?cDxTQJ9v1HDDrHJzE9Tcv40BXcmwCgW/GLjBLP5NKEQbiv4+sCIfp0Kt6pvy?=
- =?us-ascii?Q?lMlHAgRhH7PYd8onPIWsuNUM4N523eeBFTV0lgSfxHw0PpRGLrm8kRgenOM3?=
- =?us-ascii?Q?GBq86epfKlWXy5+3qb4IZyiXBbl1vTuB47bWwNcBkm5TwiPxOj3ITKdIg5Cr?=
- =?us-ascii?Q?FMLJMbBx12eX3eR8Kpbc8ZNIL5tNMdxDrpk+/2hyn9jaX7jtZr6M8hpaQoBm?=
- =?us-ascii?Q?LNHEdq4ivzS8j9HbFzrmwYnPSO3eGZOXxUDrn8qEhotIO0czWdJoItbSbCjK?=
- =?us-ascii?Q?KP7iJAzGCofMErW6Hb9jdtJa/orsIeaBZ+xcsGA2EJVH01VFFcUR4ZqHgc7U?=
- =?us-ascii?Q?Dof2O1ceqBhW+q+aFEGd+L4fGB2sZa/ySnxreKM4jw+yZJKRI7taI2BX0XCn?=
- =?us-ascii?Q?ghrWhC5gfMT3MjoYafA4xZopgtXi2ayUfEPeiIDR/UcTnbFZj3uG2glwTYv5?=
- =?us-ascii?Q?ODiH+P2yzRMTEbEnkYTa5T6FqQ84iT1rcpIHsBsl30qG++1XLFsZDZQHIySt?=
- =?us-ascii?Q?bDVyBcIDGObhE1qLL9xzejIbVkPcbDZfeuD0/d7krUdt/ydQjTvIsu6EqfrQ?=
- =?us-ascii?Q?p0FdfhYm9lxE8J1ldGAErs4uK2bKNopGsDT084xC9liZFCad39bKPMEBtdMU?=
- =?us-ascii?Q?WYlMTWKHX9pSwKGpYEPoMAjS4EFRYNs9/2o2GwnRKcQbX2p3U/GpFcLX71Z6?=
- =?us-ascii?Q?yOfGD77F+f55Nit9wLM8tfEv0DiORvYoY0rh0DSBrWAkpVysinr0pS/APi58?=
- =?us-ascii?Q?+9pL97E+DJpZEwdDeopm2+KaaMmmxHSpl9kdSdPzqNw1ZDKvHQLghKFxw4Ob?=
- =?us-ascii?Q?gj5I54X1sQLbqpmq0hwmrgm+nPPHspkOxLGva8rizTtMA2m4Jg+Vwg4MTHg5?=
- =?us-ascii?Q?sAMyn5ohwNIvxinB3vdwbyxsc+IR2jh8w5Eb05mNfUxloW0nb95Kc/d/vXHF?=
- =?us-ascii?Q?0xwhGlznoiDLyRJYgjeclpkaZ8dxT5hvfWxTb/ULqHGgPJzoIPM05c6wqvto?=
- =?us-ascii?Q?7KV3jFWutytqfmplAgt3K84zWRYl/LMeFbqX1CEN0pd8HniA8NNHr7QB6zlC?=
- =?us-ascii?Q?3COL038lLipPztU8VSvg2KgQOROTviKNCs?=
-X-Microsoft-Antispam-Message-Info: 03Im2Xds5fnDyWaArhRXrXi+WqnfqxvgBBKJsJ8+5C/527YcJV5zaqsSB2Snp8XfmOvY8ZFzWp7ymIWK7j0bGC/zaWjusH68OrvbL6c3A5DkbGjA/vH2ALYUoUCHVSWNoW9aSkeDAlNlRg5jmYYtlh4R0sck5gRWvlvHwwRXND67StaILXTbWStukT0EkeEj
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR03MB389;6:6SHz6GKBQSb/bBHUI0uSW3eSn1Uw0tsmMZ9JiSGWTdo50UOdIRz/bFFvyZ3ycddf2cXETk58BoFB6yDxVL9tSRSeyvbH+1GSNKLKdzJeQByHT/jF3ctBtzu7mCz6L4buZDgCF8xyCcXeZ7IQ/LVbJlWklKVGhXy2MWYHTbjqOhPZSpdxvNZ3+ihyZ9XZwhcqkh+XsL+N0Xe5Hidi2m8jYmVxzCGpf4x8S0CAa3zNJKm62Qnd9r5xYZfPfertvxvK1M7qylJuKnEFMpJVJrtyjUZ8tCBTtPHKg7+vCmNSXLD78tmj1WroHm8R+jnxGRQmlAdDlwEVE79emVsyTZ1AgLA3P6M7Xr9ogSSvriHtnBdhMYxxAynCK/FzeeSchmqhF2RXuIqFaaPzm5eZ8LZbzcohmjaoU8PKkJb8n89babIApDTaKKwMPd3jpKJli7010P6W/RoMM4X/UbyZyjV1Bw==;5:mdFmHH8uGAznhIlXSd/R1xnqJdZeF1qe5YjA1qbdOqbtAbo3PbOPp8/wirwktmRJG3vxJSh5zGaYyrcyjWqVETmD40oyWKCChscH7ZGlmKPwL+1VlFxlwwEAk1Y8HA45Z8tPeifQZHzRsduBiBLoM7AmBw+x+m3bdPPLnhoMoZQ=;24:Up0s4L4/ad1SBguTScwnlSJWru6pVkY89hZD9h94NlcUwx6tmhV7ostq7bEWXYb9WkbMYyn3W9J+V7jl4gjgj2zCTtgSWSGCMoDdDtFeObY=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN3PR03MB2177;23:q4+zCUgbp3Uzd4dRfdGRlRYDc7gunzhVoDzGoqhSM?=
+ =?us-ascii?Q?QDMCfdWYjlfgp73o7/15aeJ+jJKOuxhAb4uxK6wdUzN8+aMszmnhn86+ohIw?=
+ =?us-ascii?Q?2RG6DpBxd45aYXI7/QcxXP6jJSLPsO0t0ckI94uz+hbzi+SXujo22Nu7iJ+1?=
+ =?us-ascii?Q?498TWzXEsbp62uFa9w/OpDc/0QsEg16kh8AjA2La6MdgGxnVRZtCdSh+HoQe?=
+ =?us-ascii?Q?VmSFiT/jzGrKGSwW+C/8v11DZnHBb69jjVrMn+sCf1nZjfZ5gt29bAFcUtNL?=
+ =?us-ascii?Q?+C6ZCgf4KPcqpTh7fEF7yrB5p3TdYQFI6XsKx+EdvnL+Y0vKHXcWPlBTv2ID?=
+ =?us-ascii?Q?SgWqOzygu4Yy45tQs8NPJ3pak4tMrTKxTvA/cnz5KUNFulx6ln99U4mUo4he?=
+ =?us-ascii?Q?kTSxO3uTltJPWcHjfdoQCdzYcIr3Mw8YgyK9LcnvS8QzPPJMvwVUgFOHSp60?=
+ =?us-ascii?Q?OkEh+RUBEfVwouguDiIEDueO678TyEji7d4rwcb9+KhsZAZpl+dgomHQ9SBh?=
+ =?us-ascii?Q?9NeJu9wdxCCvEYH9oujKLc5vlMNL2jB5CvjnMfChQwzox7piWeA2Szrij0BO?=
+ =?us-ascii?Q?VbhJhqwqC3zK0zOw0CAqlO9PndMbKMg7GGn4tCILExxQ1bQMH8X6BhYgGjfs?=
+ =?us-ascii?Q?q7Q8Uo0kE9Mkwq9cfOyd/Pecc3nLz+P2LMHXD8Z1DlUfctjWM/O+GMYRZrTW?=
+ =?us-ascii?Q?UQDTYqDO1923uGQaK13ag7h9xATSwey497qxTpOl+QC5CimXR+vAFoamB/ig?=
+ =?us-ascii?Q?r4RLQ9GSUhcg/0TdDwnINy5ihi+6LXwkpXKbz/9EgfcgQWhyKY5H1mWgdhRt?=
+ =?us-ascii?Q?sWP1cwaiZbfPbcoiqytp4629WRVj5MbUsKb0UbD9wc1PDJi+LxbWd0sEU7+3?=
+ =?us-ascii?Q?qt2GHcbVdmTQTORwJ8W496M4Lak6OrkqCmopSOFdwepgowyN1nc/0q4llaIL?=
+ =?us-ascii?Q?DEFAm1yFu+bguoBtgxWw4QhAibilXgHbAkIeJplBbGoUuAu1qmXu8tbkhxJb?=
+ =?us-ascii?Q?c/yCylP59s9LMzevYHXg/qyMTVxJz6PkhGz2/VviTPwx+fxWPzfzg+cbvj8O?=
+ =?us-ascii?Q?tvd0KmM6/6rddkF5NVCVclR3juCGjerG9srXwf2kbA2A7enYZa1j2zRt6UEn?=
+ =?us-ascii?Q?FoVKELCI1/jeGQWyf9YUZSNAMQNd69bUyEND9t79fcV9bTtpZ6gIO5Bom2+R?=
+ =?us-ascii?Q?7W6ATHF1qY9uA4=3D?=
+X-Microsoft-Antispam-Message-Info: yD+R2ZBK+CbeqcHqXWE7gOJinBPFSjTdHRvtqmT+0kJTVIx3zvgMKGFBPxz4qYC6JFU4FmMfxZmQ8SXPOqyMq/2tEftdWw68bVoW+/O9Vba1xElb8JtuAHlyPFqdxMkgabdXUizaq2pNKT/LZal5YOHWpncgwQNKil9KJI/LpMTA3yLvgt+x5QnAziZOvP0f
+X-Microsoft-Exchange-Diagnostics: 1;BN3PR03MB2177;6:t2QgpNpXIns86pIpFH5r1dfQjMzEUpFwaTXNqoOsoz7NW1XHDZ1WXRdEx9+A7WLxU8A+g3/wD9r1nIbkzWaeIacnMjggSVrCNZy6vBmjwooJ07a8zD+JcJsnHcMOZz2efGZBak7LX+mxSY7qwLSqtn3Loh46+M/c2KOfWPO7X+djAtPBIVDSnt1uhraO0LNRLRDcH4Z2t0vg09hvhKHT0X4COvXm2qZirizusB8C+r+nUl2jYeTLM2Y3+n/YGTSpIINOiQ51yJ2xncsXjWVUfRo1D1KSi+EuBHmTkgwuf0RW9KMsQk78itAb3hBiBMW3342V2JGTlyfv+KD7fnBWzYnoJLsIB3twq672EjyZ5BtxKUtCl237JH5a0Dd7WYh/obC5R5xRArekQfALE6qlD9rplVfuAdQXvc7qcC6hIG78YqszNthJ313JHeTShj3XDyC9IwVifK5ETPcVH6vfPw==;5:+gxaA/sWbVmoV4UJqsvDthvEVkFab8Fxt6QU6mPjdzj5ADUOSlcG/G71tw6Ub/XaVmZRd6SU7NdEpWT/KpHRddSbbDrxo9ViYzGnMx0Q1v81PC9kxvMqh5vWREk5TI1dBwZ3F5J8n/wWhG2Ldyz30jx7jQs0yCxUXQsCRSdz4hE=;24:KwH2lX/N8IdfVFeaVA2A8SRmL0q244V0yWXOcx5Qei7iJ7zc9M85nRqYyHsqZCjedrEeR3Ds0Wiyc+TCSM5oDfZq1S6E8b135k73Ajofs2c=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR03MB389;7:GNksIccB8qvZouwRwCgRoU4wgqzFGAbUBqgFgr2IC+gRFwg4g1sEo8qWAVtf8aYjP5XAqaz54PqfbWiIiG2BhltwzAR8ibgplkrIwtT+VdDB+pnNxBZNwpUPRU25k5jFRNgSEilND4Y7J7lIg6jE351Ia9EBD7cs/Xky3WN9FxXVcX/H6JM0pTTKCZOntxYF8x4qX+OQcm8SPNVUAXs7g30Ce1hhI4Fxmkj5HEprBJgY/IFvU7yiOfeGAZ+mT5Lz
-X-MS-Office365-Filtering-Correlation-Id: d87a5fda-e74f-47d3-d737-08d5ab5feb74
+X-Microsoft-Exchange-Diagnostics: 1;BN3PR03MB2177;7:YCxRbplOuL9cP2M2eVxiRpmZInl+83VsrDIBoWhCyhGMw5H/RDl2hzhVfiuifMa8qwIoQUdE7CXsOqAvtV1DPSI0bGHyRkqIaXq5rVdtjJuOfGOEJWkoq+I0B1MapjwCa5DOrkrVgOmxNwVcayxfwgo+tPN1eSAE+IEM82ZAnA/TLtyCsXf25f/wxgqstl+GzjpKZosPlilW5Y+IU4O50yoIotjil9n25GhWGdXLKqP49ZuanU3DWKcSPKj/Hvbr
+X-MS-Office365-Filtering-Correlation-Id: d9e4b65a-b195-4508-6f92-08d5ab5fea5b
 X-OriginatorOrg: freescale.onmicrosoft.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Apr 2018 10:24:40.1623
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Apr 2018 10:24:38.3024
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d87a5fda-e74f-47d3-d737-08d5ab5feb74
+X-MS-Exchange-CrossTenant-Network-Message-Id: d9e4b65a-b195-4508-6f92-08d5ab5fea5b
 X-MS-Exchange-CrossTenant-Id: 710a03f5-10f6-4d38-9ff4-a80b81da590d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=710a03f5-10f6-4d38-9ff4-a80b81da590d;Ip=[64.157.242.222];Helo=[tx30smr01.am.freescale.net]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLUPR03MB389
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN3PR03MB2177
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598803971836363795?=
-X-GMAIL-MSGID: =?utf-8?q?1598803971836363795?=
+X-GMAIL-THRID: =?utf-8?q?1598803969254694104?=
+X-GMAIL-MSGID: =?utf-8?q?1598803969254694104?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patch is to support phc_index of ethtool_ts_info.
-Also make the rtc drvier depend on FSL_DPAA2_ETH because
-this driver is only useful when PTP programs are getting
-hardware time stamps on the PTP Ethernet packets using the
-SO_TIMESTAMPING API.
+Since hardware timestmaping has been supported in driver, this
+patch is to add the get_ts_info interface for ethtool to show
+timestamping capability.
 
 Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
 ---
 Changes for v2:
 	- Added this patch.
 ---
- drivers/staging/fsl-dpaa2/Kconfig   |    2 +-
- drivers/staging/fsl-dpaa2/rtc/rtc.c |    6 ++----
- drivers/staging/fsl-dpaa2/rtc/rtc.h |   14 ++++++++++++++
- 3 files changed, 17 insertions(+), 5 deletions(-)
- create mode 100644 drivers/staging/fsl-dpaa2/rtc/rtc.h
+ drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.h     |    1 +
+ drivers/staging/fsl-dpaa2/ethernet/dpaa2-ethtool.c |   23 ++++++++++++++++++++
+ 2 files changed, 24 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/staging/fsl-dpaa2/Kconfig b/drivers/staging/fsl-dpaa2/Kconfig
-index ea2d4aa..cad016a 100644
---- a/drivers/staging/fsl-dpaa2/Kconfig
-+++ b/drivers/staging/fsl-dpaa2/Kconfig
-@@ -27,7 +27,7 @@ config FSL_DPAA2_ETHSW
+diff --git a/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.h b/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.h
+index ff204c2..905a4e6 100644
+--- a/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.h
++++ b/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.h
+@@ -390,6 +390,7 @@ struct dpaa2_eth_priv {
  
- config FSL_DPAA2_PTP_CLOCK
- 	tristate "Freescale DPAA2 PTP Clock"
--	depends on FSL_DPAA2
-+	depends on FSL_DPAA2_ETH
- 	select PTP_1588_CLOCK
- 	help
- 	  This driver adds support for using the DPAA2 1588 timer module
-diff --git a/drivers/staging/fsl-dpaa2/rtc/rtc.c b/drivers/staging/fsl-dpaa2/rtc/rtc.c
-index 1d6405b..0d52cb8 100644
---- a/drivers/staging/fsl-dpaa2/rtc/rtc.c
-+++ b/drivers/staging/fsl-dpaa2/rtc/rtc.c
-@@ -9,14 +9,12 @@
- #include <linux/ptp_clock_kernel.h>
- #include <linux/fsl/mc.h>
- 
--#include "dprtc.h"
--#include "dprtc-cmd.h"
-+#include "rtc.h"
- 
- struct ptp_dpaa2_priv {
- 	struct fsl_mc_device *rtc_mc_dev;
- 	struct ptp_clock *clock;
- 	struct ptp_clock_info caps;
--	int phc_index;
- 	u32 freq_comp;
- };
- 
-@@ -173,7 +171,7 @@ static int rtc_probe(struct fsl_mc_device *mc_dev)
- 		goto err_close;
- 	}
- 
--	ptp_dpaa2->phc_index = ptp_clock_index(ptp_dpaa2->clock);
-+	dpaa2_phc_index = ptp_clock_index(ptp_dpaa2->clock);
- 
- 	dev_set_drvdata(dev, ptp_dpaa2);
- 
-diff --git a/drivers/staging/fsl-dpaa2/rtc/rtc.h b/drivers/staging/fsl-dpaa2/rtc/rtc.h
-new file mode 100644
-index 0000000..ff2e177
---- /dev/null
-+++ b/drivers/staging/fsl-dpaa2/rtc/rtc.h
-@@ -0,0 +1,14 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright 2018 NXP
-+ */
-+
-+#ifndef __RTC_H
-+#define __RTC_H
-+
-+#include "dprtc.h"
-+#include "dprtc-cmd.h"
-+
+ extern const struct ethtool_ops dpaa2_ethtool_ops;
+ extern const char dpaa2_eth_drv_version[];
 +extern int dpaa2_phc_index;
+ 
+ static inline int dpaa2_eth_cmp_dpni_ver(struct dpaa2_eth_priv *priv,
+ 					 u16 ver_major, u16 ver_minor)
+diff --git a/drivers/staging/fsl-dpaa2/ethernet/dpaa2-ethtool.c b/drivers/staging/fsl-dpaa2/ethernet/dpaa2-ethtool.c
+index bfc8b64..1ae779a 100644
+--- a/drivers/staging/fsl-dpaa2/ethernet/dpaa2-ethtool.c
++++ b/drivers/staging/fsl-dpaa2/ethernet/dpaa2-ethtool.c
+@@ -30,6 +30,8 @@
+  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  */
+ 
++#include <linux/net_tstamp.h>
 +
-+#endif
+ #include "dpni.h"	/* DPNI_LINK_OPT_* */
+ #include "dpaa2-eth.h"
+ 
+@@ -274,6 +276,26 @@ static int dpaa2_eth_get_rxnfc(struct net_device *net_dev,
+ 	return 0;
+ }
+ 
++int dpaa2_phc_index = -1;
++EXPORT_SYMBOL(dpaa2_phc_index);
++
++static int dpaa2_eth_get_ts_info(struct net_device *dev,
++				 struct ethtool_ts_info *info)
++{
++	info->so_timestamping = SOF_TIMESTAMPING_TX_HARDWARE |
++				SOF_TIMESTAMPING_RX_HARDWARE |
++				SOF_TIMESTAMPING_RAW_HARDWARE;
++
++	info->phc_index = dpaa2_phc_index;
++
++	info->tx_types = (1 << HWTSTAMP_TX_OFF) |
++			 (1 << HWTSTAMP_TX_ON);
++
++	info->rx_filters = (1 << HWTSTAMP_FILTER_NONE) |
++			   (1 << HWTSTAMP_FILTER_ALL);
++	return 0;
++}
++
+ const struct ethtool_ops dpaa2_ethtool_ops = {
+ 	.get_drvinfo = dpaa2_eth_get_drvinfo,
+ 	.get_link = ethtool_op_get_link,
+@@ -283,4 +305,5 @@ static int dpaa2_eth_get_rxnfc(struct net_device *net_dev,
+ 	.get_ethtool_stats = dpaa2_eth_get_ethtool_stats,
+ 	.get_strings = dpaa2_eth_get_strings,
+ 	.get_rxnfc = dpaa2_eth_get_rxnfc,
++	.get_ts_info = dpaa2_eth_get_ts_info,
+ };
 -- 
 1.7.1
