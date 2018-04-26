@@ -1,128 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756284AbeDZOTO (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 10:19:14 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40572 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754727AbeDZOTN (ORCPT
+        id S1756510AbeDZOTZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 10:19:25 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:40597 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756425AbeDZOTU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 10:19:13 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Mukunda@sirena.org.uk, Vijendar <Vijendar.Mukunda@amd.com>
-Cc: Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
-        Mark Brown <broonie@kernel.org>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..."
-        <alsa-devel@alsa-project.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Takashi Iwai <tiwai@suse.com>, Jason Clinton <jclinton@chromium.org>,
-        Mark Brown <broonie@kernel.org>,
-        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Akshu Agrawal <akshu.agrawal@amd.com>,
-        Guenter Roeck <linux@roeck-us.net>, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: amd: rename audio_substream_data variable" to the asoc tree
-In-Reply-To: <1524741374-13523-1-git-send-email-Vijendar.Mukunda@amd.com>
-Message-Id: <E1fBhjm-0003zD-9F@debutante>
-Date: Thu, 26 Apr 2018 15:19:06 +0100
+        Thu, 26 Apr 2018 10:19:20 -0400
+Date: Thu, 26 Apr 2018 07:18:46 -0700
+From: tip-bot for Borislav Petkov <tipbot@zytor.com>
+Message-ID: <tip-5d12f0424edf01ccd8abbcba1c7d45fe0b23c779@git.kernel.org>
+Cc: linux-kernel@vger.kernel.org, jpoimboe@redhat.com, mingo@kernel.org,
+        peterz@infradead.org, luto@amacapital.net, hpa@zytor.com,
+        torvalds@linux-foundation.org, bp@suse.de, tglx@linutronix.de
+Reply-To: tglx@linutronix.de, bp@suse.de, torvalds@linux-foundation.org,
+        hpa@zytor.com, luto@amacapital.net, peterz@infradead.org,
+        mingo@kernel.org, jpoimboe@redhat.com, linux-kernel@vger.kernel.org
+In-Reply-To: <20180417161124.5294-2-bp@alien8.de>
+References: <20180417161124.5294-2-bp@alien8.de>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/cleanups] x86/dumpstack: Remove code_bytes
+Git-Commit-ID: 5d12f0424edf01ccd8abbcba1c7d45fe0b23c779
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+Commit-ID:  5d12f0424edf01ccd8abbcba1c7d45fe0b23c779
+Gitweb:     https://git.kernel.org/tip/5d12f0424edf01ccd8abbcba1c7d45fe0b23c779
+Author:     Borislav Petkov <bp@suse.de>
+AuthorDate: Tue, 17 Apr 2018 18:11:16 +0200
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Thu, 26 Apr 2018 16:15:25 +0200
 
-   ASoC: amd: rename audio_substream_data variable
+x86/dumpstack: Remove code_bytes
 
-has been applied to the asoc tree at
+This was added by
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+  86c418374223 ("[PATCH] i386: add option to show more code in oops reports")
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+long time ago but experience shows that 64 instruction bytes are plenty
+when deciphering an oops. So get rid of it.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+Removing it will simplify further enhancements to the opcodes dumping
+machinery coming in the following patches.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Link: https://lkml.kernel.org/r/20180417161124.5294-2-bp@alien8.de
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 8349b7f53da03a46c08cb6c33833df68837b61e0 Mon Sep 17 00:00:00 2001
-From: "Mukunda, Vijendar" <Vijendar.Mukunda@amd.com>
-Date: Thu, 26 Apr 2018 16:45:47 +0530
-Subject: [PATCH] ASoC: amd: rename audio_substream_data variable
-
-In order to make audio_substream_data structure variable
-consistent throughout the code, changed the name from
-audio_config to rtd wherever applicable.
-
-Signed-off-by: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/amd/acp-pcm-dma.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ Documentation/admin-guide/kernel-parameters.txt |  5 -----
+ arch/x86/kernel/dumpstack.c                     | 27 ++++---------------------
+ 2 files changed, 4 insertions(+), 28 deletions(-)
 
-diff --git a/sound/soc/amd/acp-pcm-dma.c b/sound/soc/amd/acp-pcm-dma.c
-index 5ffe2efc6363..9c026c4d26d4 100644
---- a/sound/soc/amd/acp-pcm-dma.c
-+++ b/sound/soc/amd/acp-pcm-dma.c
-@@ -317,13 +317,13 @@ static void acp_pte_config(void __iomem *acp_mmio, struct page *pg,
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 11fc28ecdb6d..47aa554e41b7 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -587,11 +587,6 @@
+ 			Sets the size of memory pool for coherent, atomic dma
+ 			allocations, by default set to 256K.
+ 
+-	code_bytes	[X86] How many bytes of object code to print
+-			in an oops report.
+-			Range: 0 - 8192
+-			Default: 64
+-
+ 	com20020=	[HW,NET] ARCnet - COM20020 chipset
+ 			Format:
+ 			<io>[,<irq>[,<nodeID>[,<backplane>[,<ckp>[,<timeout>]]]]]
+diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
+index 18fa9d74c182..593db796374d 100644
+--- a/arch/x86/kernel/dumpstack.c
++++ b/arch/x86/kernel/dumpstack.c
+@@ -22,9 +22,10 @@
+ #include <asm/stacktrace.h>
+ #include <asm/unwind.h>
+ 
++#define OPCODE_BUFSIZE 64
++
+ int panic_on_unrecovered_nmi;
+ int panic_on_io_nmi;
+-static unsigned int code_bytes = 64;
+ static int die_counter;
+ 
+ bool in_task_stack(unsigned long *stack, struct task_struct *task,
+@@ -356,26 +357,6 @@ void die(const char *str, struct pt_regs *regs, long err)
+ 	oops_end(flags, regs, sig);
  }
  
- static void config_acp_dma(void __iomem *acp_mmio,
--			   struct audio_substream_data *audio_config,
-+			   struct audio_substream_data *rtd,
- 			   u32 asic_type)
+-static int __init code_bytes_setup(char *s)
+-{
+-	ssize_t ret;
+-	unsigned long val;
+-
+-	if (!s)
+-		return -EINVAL;
+-
+-	ret = kstrtoul(s, 0, &val);
+-	if (ret)
+-		return ret;
+-
+-	code_bytes = val;
+-	if (code_bytes > 8192)
+-		code_bytes = 8192;
+-
+-	return 1;
+-}
+-__setup("code_bytes=", code_bytes_setup);
+-
+ void show_regs(struct pt_regs *regs)
  {
- 	u32 pte_offset, sram_bank;
- 	u16 ch1, ch2, destination, dma_dscr_idx;
+ 	bool all = true;
+@@ -393,8 +374,8 @@ void show_regs(struct pt_regs *regs)
+ 	 * time of the fault..
+ 	 */
+ 	if (!user_mode(regs)) {
+-		unsigned int code_prologue = code_bytes * 43 / 64;
+-		unsigned int code_len = code_bytes;
++		unsigned int code_prologue = OPCODE_BUFSIZE * 43 / 64;
++		unsigned int code_len = OPCODE_BUFSIZE;
+ 		unsigned char c;
+ 		u8 *ip;
  
--	if (audio_config->direction == SNDRV_PCM_STREAM_PLAYBACK) {
-+	if (rtd->direction == SNDRV_PCM_STREAM_PLAYBACK) {
- 		pte_offset = ACP_PLAYBACK_PTE_OFFSET;
- 		ch1 = SYSRAM_TO_ACP_CH_NUM;
- 		ch2 = ACP_TO_I2S_DMA_CH_NUM;
-@@ -344,25 +344,25 @@ static void config_acp_dma(void __iomem *acp_mmio,
- 		destination = FROM_ACP_I2S_1;
- 	}
- 
--	acp_pte_config(acp_mmio, audio_config->pg, audio_config->num_of_pages,
-+	acp_pte_config(acp_mmio, rtd->pg, rtd->num_of_pages,
- 		       pte_offset);
--	if (audio_config->direction == SNDRV_PCM_STREAM_PLAYBACK)
-+	if (rtd->direction == SNDRV_PCM_STREAM_PLAYBACK)
- 		dma_dscr_idx = PLAYBACK_START_DMA_DESCR_CH12;
- 	else
- 		dma_dscr_idx = CAPTURE_START_DMA_DESCR_CH14;
- 
- 	/* Configure System memory <-> ACP SRAM DMA descriptors */
--	set_acp_sysmem_dma_descriptors(acp_mmio, audio_config->size,
--				       audio_config->direction, pte_offset, ch1,
-+	set_acp_sysmem_dma_descriptors(acp_mmio, rtd->size,
-+				       rtd->direction, pte_offset, ch1,
- 				       sram_bank, dma_dscr_idx, asic_type);
- 
--	if (audio_config->direction == SNDRV_PCM_STREAM_PLAYBACK)
-+	if (rtd->direction == SNDRV_PCM_STREAM_PLAYBACK)
- 		dma_dscr_idx = PLAYBACK_START_DMA_DESCR_CH13;
- 	else
- 		dma_dscr_idx = CAPTURE_START_DMA_DESCR_CH15;
- 	/* Configure ACP SRAM <-> I2S DMA descriptors */
--	set_acp_to_i2s_dma_descriptors(acp_mmio, audio_config->size,
--				       audio_config->direction, sram_bank,
-+	set_acp_to_i2s_dma_descriptors(acp_mmio, rtd->size,
-+				       rtd->direction, sram_bank,
- 				       destination, ch2, dma_dscr_idx,
- 				       asic_type);
- }
--- 
-2.17.0
