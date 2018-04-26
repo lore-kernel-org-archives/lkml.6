@@ -1,86 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755216AbeDZI4c (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 04:56:32 -0400
-Received: from mga12.intel.com ([192.55.52.136]:65508 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754785AbeDZI40 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 04:56:26 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,330,1520924400";
-   d="scan'208";a="194529438"
-Subject: Re: [PATCH v4 05/12] mmc: sdhci: Disable HS200/HS400 mode if
- controller can't support 1.8v
-To: Kishon Vijay Abraham I <kishon@ti.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        Tony Lindgren <tony@atomide.com>
-References: <20180425120937.29867-1-kishon@ti.com>
- <20180425120937.29867-6-kishon@ti.com>
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <6bdf4feb-bc12-3779-3de6-e08af1d4f518@intel.com>
-Date: Thu, 26 Apr 2018 11:55:20 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1754789AbeDZI5C (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 04:57:02 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43730 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754015AbeDZI44 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 04:56:56 -0400
+Date: Thu, 26 Apr 2018 16:56:49 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Borislav Petkov <bp@suse.de>
+Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        robh+dt@kernel.org, dan.j.williams@intel.com, nicolas.pitre@linaro.org,
+        josh@joshtriplett.org, Thomas Gleixner <tglx@linutronix.de>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Wei Yang <richard.weiyang@gmail.com>
+Subject: Re: [PATCH v3 2/3] resource: add walk_system_ram_res_rev()
+Message-ID: <20180426085649.GC18395@localhost.localdomain>
+References: <20180419001848.3041-1-bhe@redhat.com>
+ <20180419001848.3041-3-bhe@redhat.com>
+ <20180419100745.GC3896@pd.tnic>
 MIME-Version: 1.0
-In-Reply-To: <20180425120937.29867-6-kishon@ti.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180419100745.GC3896@pd.tnic>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25/04/18 15:09, Kishon Vijay Abraham I wrote:
-> Though MMC controller can indicate HS200/HS400 mode capability (by
-> using "mmc-hs200-1_8v"/"mmc-hs400-1_8v" dt property), if the IO lines
-> in the board is connected to 3.3v supply, HS200/HS400 mode cannot be
-> supported. Such boards have "no-1-8-v" property in their dts file.
-> Disable HS200/HS400 mode for boards which have "no-1-8-v" set.
-> 
-> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-> Acked-by: Tony Lindgren <tony@atomide.com>
-> ---
->  drivers/mmc/host/sdhci.c | 1 +
->  include/linux/mmc/host.h | 1 +
->  2 files changed, 2 insertions(+)
-> 
-> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> index 2ededa7f43df..b5f047b5f3ae 100644
-> --- a/drivers/mmc/host/sdhci.c
-> +++ b/drivers/mmc/host/sdhci.c
-> @@ -3672,6 +3672,7 @@ int sdhci_setup_host(struct sdhci_host *host)
->  	if (host->quirks2 & SDHCI_QUIRK2_NO_1_8_V) {
->  		host->caps1 &= ~(SDHCI_SUPPORT_SDR104 | SDHCI_SUPPORT_SDR50 |
->  				 SDHCI_SUPPORT_DDR50);
-> +		mmc->caps2 &= ~MMC_CAP2_HSX00_1_8V;
+Sorry to all reviewers, I had a redhat urgent issue, this patchset
+discussing is delayed.
 
-Seems weird for sdhci to clear flags it never set.  Also couldn't we
-reasonably expect dt properties to be consistent?  Is this really about
-setting SDHCI_QUIRK2_NO_1_8_V in your driver and expecting it to override
-other dt properties?  Although that still begs the question why anyone would
-set dt properties that the hardware doesn't support?  I guess you should
-also clear MMC_CAP2_HS400_ES.
-
->  	}
->  
->  	/* Any UHS-I mode in caps implies SDR12 and SDR25 support. */
-> diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
-> index 7c6eaf63f5ce..58832451767b 100644
-> --- a/include/linux/mmc/host.h
-> +++ b/include/linux/mmc/host.h
-> @@ -345,6 +345,7 @@ struct mmc_host {
->  #define MMC_CAP2_HS400_1_2V	(1 << 16)	/* Can support HS400 1.2V */
->  #define MMC_CAP2_HS400		(MMC_CAP2_HS400_1_8V | \
->  				 MMC_CAP2_HS400_1_2V)
-> +#define MMC_CAP2_HSX00_1_8V	(MMC_CAP2_HS200_1_8V_SDR | MMC_CAP2_HS400_1_8V)
->  #define MMC_CAP2_HSX00_1_2V	(MMC_CAP2_HS200_1_2V_SDR | MMC_CAP2_HS400_1_2V)
->  #define MMC_CAP2_SDIO_IRQ_NOTHREAD (1 << 17)
->  #define MMC_CAP2_NO_WRITE_PROTECT (1 << 18)	/* No physical write protect pin, assume that card is always read-write */
+On 04/19/18 at 12:07pm, Borislav Petkov wrote:
+> On Thu, Apr 19, 2018 at 08:18:47AM +0800, Baoquan He wrote:
+> > This function, being a variant of walk_system_ram_res() introduced in
+> > commit 8c86e70acead ("resource: provide new functions to walk through
+> > resources"), walks through a list of all the resources of System RAM
+> > in reversed order, i.e., from higher to lower.
+> > 
+> > It will be used in kexec_file code.
 > 
+> Of course, what is missing is the big *WHY* you need this to happen this
+> way...
+
+Sorry for that, I just ran scripts/get_maintainer.pl to get expert's
+name and added them into each patch. The reason this change is made is
+in patch 3/3. Test robot reported a code bug on the latest kernel, will
+repost and CC everyone in all patches.
+
+
+Rob Herring asked the same question in v2, I explained to him. The
+discussion can be found here:
+https://lkml.org/lkml/2018/4/10/484
+
+> 
+> >  /*
+> > + * This function, being a variant of walk_system_ram_res(), calls the @func
+> > + * callback against all memory ranges of type System RAM which are marked as
+> > + * IORESOURCE_SYSTEM_RAM and IORESOUCE_BUSY in reversed order, i.e., from
+> > + * higher to lower.
+> > + */
+> > +int walk_system_ram_res_rev(u64 start, u64 end, void *arg,
+> > +				int (*func)(struct resource *, void *))
+> > +{
+> > +	unsigned long flags;
+> > +	struct resource *res;
+> > +	int ret = -1;
+> > +
+> > +	flags = IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY;
+> > +
+> > +	read_lock(&resource_lock);
+> > +	list_for_each_entry_reverse(res, &iomem_resource.child, sibling) {
+> 
+> ... and the other thing that I'm not clear on is why are you
+> slapping this function just like that instead of extending
+> __walk_iomem_res_desc() to do reverse direction too?
+
+Yes, I planned to do as you said when started to write code. After investigation,
+I changed to use the way of this patch. Because __walk_iomem_res_desc()
+provides two interfaces by calling find_next_iomem_res(). If
+'first_level_children_only' is true, it only iterates system RAM
+resource; if 'first_level_children_only' is false, it does depth first
+iteration in iomem_resource. The 1st interface is only used by
+walk_system_ram_res() and walk_mem_res(). While the 2nd interface need
+call find_next_iomem_res() which resorts to next_resource().
+next_resource() will check 'sibling_only' to decide if iterate
+iomem_resource's children, or walk over all resources of iomem_resource
+with depth first. For walk_system_ram_res_rev(), we only need to iterate
+iomem_resource's children, and seems no one has requirement to
+iterate all iomem_resource's children and grand children
+revresedly. For simplifying code implementation, I just did as in this
+patch, surely, if any suggestion or scenario given about the reversed
+iteration of all resources, I can change to add below functions, and
+based on them to implement walk_system_ram_res_rev().
+
+walk_system_ram_res_rev
+	->__walk_iomem_res_desc_rev
+		->find_next_iomem_res_rev
+			->next_resource_rev
+
+Thanks
+Baoquan
+
+
+> 
+> SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
+> -- 
