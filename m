@@ -1,69 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754875AbeDZKGP (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 06:06:15 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45318 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753942AbeDZKGI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 06:06:08 -0400
-Date: Thu, 26 Apr 2018 12:06:03 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Fengguang Wu <fengguang.wu@intel.com>, linux-kernel@vger.kernel.org
-Subject: Re: printk feature for syzbot?
-Message-ID: <20180426100603.czif6sat75fjsazp@pathway.suse.cz>
-References: <201804232233.CIC65675.OJSOMFQOFFHVtL@I-love.SAKURA.ne.jp>
- <CACT4Y+boyw_Qy=y-iTnsKZrtTgF0Hk3nHN_xtqUdX4etgiYDQw@mail.gmail.com>
- <20180424013336.GA1376@jagdpanzerIV>
+        id S1754968AbeDZKG0 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 06:06:26 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50432 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753403AbeDZKGV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 06:06:21 -0400
+Date: Thu, 26 Apr 2018 12:06:15 +0200
+From: Christoffer Dall <christoffer.dall@arm.com>
+To: Auger Eric <eric.auger@redhat.com>
+Cc: eric.auger.pro@gmail.com, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
+        marc.zyngier@arm.com, cdall@kernel.org, peter.maydell@linaro.org,
+        andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
+Subject: Re: [PATCH v3 07/12] KVM: arm/arm64: Adapt vgic_v3_check_base to
+ multiple rdist regions
+Message-ID: <20180426100615.GB19872@C02W217FHV2R.local>
+References: <1523607658-9166-1-git-send-email-eric.auger@redhat.com>
+ <1523607658-9166-8-git-send-email-eric.auger@redhat.com>
+ <20180424210748.GH4533@C02W217FHV2R.local>
+ <557b2aaf-3f6f-ea11-55e2-5667b651922b@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180424013336.GA1376@jagdpanzerIV>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <557b2aaf-3f6f-ea11-55e2-5667b651922b@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 2018-04-24 10:33:36, Sergey Senozhatsky wrote:
-> Yes, Tetsuo, we use a bunch of "printk prefix" extensions at Samsung.
-> For instance, we prefix printk messages with the CPU number: messages
-> sometimes mix up, we also see partial pr_cont flushes, and so on.
-> Grep-ping serial logs by CPU number is quite powerful.
+On Thu, Apr 26, 2018 at 10:29:35AM +0200, Auger Eric wrote:
+> Hi Christoffer,
+> On 04/24/2018 11:07 PM, Christoffer Dall wrote:
+> > On Fri, Apr 13, 2018 at 10:20:53AM +0200, Eric Auger wrote:
+> >> We introduce a new helper to check there is no overlap between
+> >> dist region (if set) and registered rdist regions. This both
+> >> handles the case of legacy single rdist region (implicitly sized
+> >> with the number of online vcpus) and the new case of multiple
+> >> explicitly sized rdist regions.
+> > 
+> > I don't understand this change, really.  Is this just a cleanup, or
+> > changing some functionality (why?).
+> > 
+> > I think this could have come with the introduction of
+> > vgic_v3_rdist_overlap() before patch 6, and then patch 6 could have been
+> > simplified (hopefully) to just call this "check that nothing in the
+> > world ever collides withi itself" function.
+> I have merged this patch and vgic_v3_rd_region_size +
+> vgic_v3_rdist_overlap and put it before this patch.
 > 
-> Upstreaming those printk prefixes can be a bit challenging, but may
-> be it's not all so bad. I personally think that syzbot, and build-test
-> bots in general [like 0day], are helpful indeed, and I don't see why life
-> should be any more complex for syzbot/0day guys. If printk prefixes can
-> help - then we probably should consider such an extension.
+> Also I reworked the commit message which was unclear I acknowledge.
 > 
-> The main argument from the upstream is that tweaking struct printk_log
-> breaks user space (tools like crash, and so on). But I guess we can do
-> something about it. E.g. put a PRINTK_CONTEXT_TRACKING_PREFIX kconfig
-> option somewhere in "Kernel hacking"->"printk and dmesg options" and
-> make available only for DEBUG kernels, or something similar.
+> With respect to using the adapted  vgic_v3_check_base() in
+> vgic_v3_insert_redist_region(), it is less obvious to me.
+> 
+> In vgic_v3_insert_redist_region we do the checks *before* inserting the
+> new rdist region in the list of redist regions. While
+> vgic_v3_check_base() does the checks on already registered rdist and
+> dist regions. So I would be tempted to leave
+> vgic_v3_insert_redist_region() implementation as it is.
+> 
 
-> Petr, Steven, Fengguang, what do you think? Do you have any objections?
-> Ideas?
+ok, but do see my suggestion there to factor out the check, which should
+make that function slightly easier to read.
 
-I wonder if we could create some mechanism that would help to extend
-struct printk_log easier in the future.
+Then perhaps you can use that function from vgic_v3_check_base to check
+that each rdist doesn't overlap with the distributor?
 
-I know only about crash tool implementation. It uses information provided
-by log_buf_vmcoreinfo_setup(). The size of the structure is already
-public. Therefore crash should be able to find all existing information
-even if we increase the size of the structure.
-
-log_buf_vmcoreinfo_setup() even allows to inform about newly added
-structure items. We could probably extend it to inform also about
-the offset of the new optional elements.
-
-I am not sure about other tools. But I think that it should be
-doable.
-
-Best Regards,
-Petr
+Thanks,
+-Christoffer
