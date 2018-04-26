@@ -1,93 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932172AbeDZOXP (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 10:23:15 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:42461 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756111AbeDZOXN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 10:23:13 -0400
-Date: Thu, 26 Apr 2018 07:22:50 -0700
-From: tip-bot for Borislav Petkov <tipbot@zytor.com>
-Message-ID: <tip-4dba072cd097f35fa8f77c49d909ada2b079a4c4@git.kernel.org>
-Cc: jpoimboe@redhat.com, torvalds@linux-foundation.org,
-        peterz@infradead.org, tglx@linutronix.de, hpa@zytor.com,
-        mingo@kernel.org, luto@amacapital.net, linux-kernel@vger.kernel.org,
-        bp@suse.de
-Reply-To: jpoimboe@redhat.com, torvalds@linux-foundation.org,
-        peterz@infradead.org, tglx@linutronix.de, hpa@zytor.com,
-        mingo@kernel.org, luto@amacapital.net, linux-kernel@vger.kernel.org,
-        bp@suse.de
-In-Reply-To: <20180417161124.5294-10-bp@alien8.de>
-References: <20180417161124.5294-10-bp@alien8.de>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cleanups] x86/dumpstack: Explain the reasoning for the
- prologue and buffer size
-Git-Commit-ID: 4dba072cd097f35fa8f77c49d909ada2b079a4c4
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1756544AbeDZOXp (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 10:23:45 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7634 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1755998AbeDZOXo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 10:23:44 -0400
+Subject: Re: [RFC PATCH 1/2] ACPI / PNP: Don't add "enumeration_by_parent"
+ devices
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+References: <1524218846-169934-1-git-send-email-john.garry@huawei.com>
+ <1524218846-169934-2-git-send-email-john.garry@huawei.com>
+ <20180420130727.GV2173@lahna.fi.intel.com>
+ <27c3f84e-4d53-4b6b-7382-04908082ed01@huawei.com>
+ <20180420135222.GY2173@lahna.fi.intel.com>
+ <75eae3ac-228f-d6a4-bb0e-4bd27e35c55d@huawei.com>
+ <09e3aa95-86ae-ca30-7bb5-a9704d296b43@huawei.com>
+ <20180426140808.GK2173@lahna.fi.intel.com>
+CC: <andriy.shevchenko@linux.intel.com>, <rjw@rjwysocki.net>,
+        <linux-acpi@vger.kernel.org>, <lenb@kernel.org>,
+        <lorenzo.pieralisi@arm.com>, <linux-kernel@vger.kernel.org>,
+        <arnd@arndb.de>, <graeme.gregory@linaro.org>, <helgaas@kernel.org>,
+        <linuxarm@huawei.com>, <z.liuxinliang@hisilicon.com>,
+        "Liguozhu (Kenneth)" <liguozhu@hisilicon.com>
+From: John Garry <john.garry@huawei.com>
+Message-ID: <15443a87-2622-01ee-f7f2-426a51ca0f11@huawei.com>
+Date: Thu, 26 Apr 2018 15:23:17 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <20180426140808.GK2173@lahna.fi.intel.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.227.238]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  4dba072cd097f35fa8f77c49d909ada2b079a4c4
-Gitweb:     https://git.kernel.org/tip/4dba072cd097f35fa8f77c49d909ada2b079a4c4
-Author:     Borislav Petkov <bp@suse.de>
-AuthorDate: Tue, 17 Apr 2018 18:11:24 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Thu, 26 Apr 2018 16:15:28 +0200
+On 26/04/2018 15:08, Mika Westerberg wrote:
+> On Thu, Apr 26, 2018 at 02:49:49PM +0100, John Garry wrote:
+>> diff --git a/drivers/bus/hisi_lpc.c b/drivers/bus/hisi_lpc.c
+>> index 2d4611e..b04425b 100644
+>> --- a/drivers/bus/hisi_lpc.c
+>> +++ b/drivers/bus/hisi_lpc.c
+>> @@ -18,6 +18,8 @@
+>>  #include <linux/of_platform.h>
+>>  #include <linux/pci.h>
+>>  #include <linux/slab.h>
+>> +#include <linux/serial_8250.h>
+>> +#include "../tty/serial/8250/8250.h"
+>>
+>>  #define DRV_NAME "hisi-lpc"
+>>
+>> @@ -345,6 +347,7 @@ static void hisi_lpc_comm_outs(void *hostdata, unsigned
+>> long pio,
+>>  #define MFD_CHILD_NAME_LEN (ACPI_ID_LEN + sizeof(MFD_CHILD_NAME_PREFIX) -
+>> 1)
+>>
+>>  struct hisi_lpc_mfd_cell {
+>> +	struct plat_serial8250_port serial8250_port;
+>>  	struct mfd_cell_acpi_match acpi_match;
+>>  	char name[MFD_CHILD_NAME_LEN];
+>>  	char pnpid[ACPI_ID_LEN];
+>> @@ -513,10 +516,31 @@ static int hisi_lpc_acpi_probe(struct device *hostdev)
+>>  		dev_warn(&child->dev, "set resource fail (%d)\n", ret);
+>>  			return ret;
+>>  		}
+>> +	if (!strcmp(acpi_device_hid(child), "HISI1031")) {
+>
 
-x86/dumpstack: Explain the reasoning for the prologue and buffer size
+Hi Mika,
 
-The whole reasoning behind the amount of opcode bytes dumped and prologue
-length isn't very clear so write down some of the reasons for why it is
-done the way it is.
+> Hmm, there is a way in struct mfd_cell to match child devices using _HID
+> so is there something preventing you from using that?
 
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Link: https://lkml.kernel.org/r/20180417161124.5294-10-bp@alien8.de
+Not that I know about. Can you describe this method? I guess I also 
+don't need to set the mfd_cell pnpid either for this special case device.
 
----
- arch/x86/kernel/dumpstack.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+Thanks,
+John
 
-diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
-index ee344030fd0a..666a284116ac 100644
---- a/arch/x86/kernel/dumpstack.c
-+++ b/arch/x86/kernel/dumpstack.c
-@@ -72,6 +72,25 @@ static void printk_stack_address(unsigned long address, int reliable,
- 	printk("%s %s%pB\n", log_lvl, reliable ? "" : "? ", (void *)address);
- }
- 
-+/*
-+ * There are a couple of reasons for the 2/3rd prologue, courtesy of Linus:
-+ *
-+ * In case where we don't have the exact kernel image (which, if we did, we can
-+ * simply disassemble and navigate to the RIP), the purpose of the bigger
-+ * prologue is to have more context and to be able to correlate the code from
-+ * the different toolchains better.
-+ *
-+ * In addition, it helps in recreating the register allocation of the failing
-+ * kernel and thus make sense of the register dump.
-+ *
-+ * What is more, the additional complication of a variable length insn arch like
-+ * x86 warrants having longer byte sequence before rIP so that the disassembler
-+ * can "sync" up properly and find instruction boundaries when decoding the
-+ * opcode bytes.
-+ *
-+ * Thus, the 2/3rds prologue and 64 byte OPCODE_BUFSIZE is just a random
-+ * guesstimate in attempt to achieve all of the above.
-+ */
- void show_opcodes(u8 *rip, const char *loglvl)
- {
- 	unsigned int code_prologue = OPCODE_BUFSIZE * 2 / 3;
+
+>
+> .
+>
