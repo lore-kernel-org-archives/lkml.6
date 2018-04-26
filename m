@@ -1,49 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752421AbeDZSlK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 14:41:10 -0400
-Received: from relay8-d.mail.gandi.net ([217.70.183.201]:33063 "EHLO
-        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751269AbeDZSlI (ORCPT
+        id S1753520AbeDZSoq (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 14:44:46 -0400
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:50047 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751903AbeDZSoo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 14:41:08 -0400
+        Thu, 26 Apr 2018 14:44:44 -0400
 X-Originating-IP: 2.224.242.101
-Date: Thu, 26 Apr 2018 20:40:56 +0200
+Date: Thu, 26 Apr 2018 20:44:37 +0200
 From: jacopo mondi <jacopo@jmondi.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Peter Rosin <peda@axentia.se>
 Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, architt@codeaurora.org,
-        a.hajda@samsung.com, airlied@linux.ie, daniel@ffwll.ch,
-        peda@axentia.se, linux-renesas-soc@vger.kernel.org,
+        a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
+        airlied@linux.ie, daniel@ffwll.ch, linux-renesas-soc@vger.kernel.org,
         linux-media@vger.kernel.org, devicetree@vger.kernel.org,
         dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH 1/8] drm: bridge: Add support for static image formats
-Message-ID: <20180426184056.GQ4235@w540>
+Message-ID: <20180426184437.GR4235@w540>
 References: <1524130269-32688-1-git-send-email-jacopo+renesas@jmondi.org>
  <1524130269-32688-2-git-send-email-jacopo+renesas@jmondi.org>
- <3108314.q4SV6s3NXE@avalon>
+ <10891e93-ede5-8c39-b53e-da892e163b52@axentia.se>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="XjbSsFHOHxvQpKib"
+        protocol="application/pgp-signature"; boundary="EEx6GiKZGZ1wKUra"
 Content-Disposition: inline
-In-Reply-To: <3108314.q4SV6s3NXE@avalon>
+In-Reply-To: <10891e93-ede5-8c39-b53e-da892e163b52@axentia.se>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---XjbSsFHOHxvQpKib
+--EEx6GiKZGZ1wKUra
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 
-Hi Laurent,
+Hi Peter,
 
-On Mon, Apr 23, 2018 at 12:27:39PM +0300, Laurent Pinchart wrote:
-> Hi Jacopo,
->
-> Thank you for the patch.
->
-> On Thursday, 19 April 2018 12:31:02 EEST Jacopo Mondi wrote:
+On Sun, Apr 22, 2018 at 10:02:23PM +0200, Peter Rosin wrote:
+> On 2018-04-19 11:31, Jacopo Mondi wrote:
 > > Add support for storing image format information in DRM bridges with
 > > associated helper function.
 > >
@@ -67,44 +63,35 @@ On Mon, Apr 23, 2018 at 12:27:39PM +0300, Laurent Pinchart wrote:
 > > + * drm_bridge_set_bus_formats() - set bridge supported image formats
 > > + * @bridge: the bridge to set image formats in
 > > + * @formats: array of MEDIA_BUS_FMT\_ supported image formats
->
-> Why the \ (here and below) ?
-
-mmm, I can't tell where I made that up from... Will change with
-MEDIA_BUS_FMT_*
-
->
 > > + * @num_formats: number of elements in the @formats array
 > > + *
 > > + * Store a list of supported image formats in a bridge.
-> > + * See MEDIA_BUS_FMT_* definitions in include/uapi/linux/media-bus-format.h
-> > for
+> > + * See MEDIA_BUS_FMT_* definitions in include/uapi/linux/media-bus-format.h for
 > > + * a full list of available formats.
 > > + */
-> > +int drm_bridge_set_bus_formats(struct drm_bridge *bridge, const u32
-> > *formats,
+> > +int drm_bridge_set_bus_formats(struct drm_bridge *bridge, const u32 *formats,
 > > +			       unsigned int num_formats)
 > > +{
 > > +	u32 *fmts;
 > > +
 > > +	if (!formats || !num_formats)
 > > +		return -EINVAL;
-> > +
-> > +	fmts = kmemdup(formats, sizeof(*formats) * num_formats, GFP_KERNEL);
 >
-> This memory will be leaked when the bridge is destroyed.
+> I see no compelling reason to forbid restoring the number of reported
+> input formats to zero? I can't think of a use right now of course, but it
+> seems a bit odd all the same.
 
-Right. I'm afraid this may open a pandora box, but, ehm, where is the
-bridge objects lifetime managed? The best I can think of is to use the
-resource managed version of kmemdup, associating that memory to
-the drm_device device object. That means the memory will be freed at
-DRM pipeline teardown time only if I'm not wrong. Can a bridge be
-destroyed before that?
+It is, you're right. Will fix in v2 and will allow bridges to just
+restore formats to 0 (as it is done for drm_connectors, by the way)
 
 Thanks
    j
-
 >
+> Cheers,
+> Peter
+>
+> > +
+> > +	fmts = kmemdup(formats, sizeof(*formats) * num_formats, GFP_KERNEL);
 > > +	if (!fmts)
 > > +		return -ENOMEM;
 > > +
@@ -128,8 +115,7 @@ Thanks
 > >   * @encoder: encoder to which this bridge is connected
 > >   * @next: the next bridge in the encoder chain
 > >   * @of_node: device node pointer to the bridge
-> > + * @bus_formats: wire image formats. Array of @num_bus_formats
-> > MEDIA_BUS_FMT\_
+> > + * @bus_formats: wire image formats. Array of @num_bus_formats MEDIA_BUS_FMT\_
 > > + * elements
 > > + * @num_bus_formats: size of @bus_formats array
 > >   * @list: to keep track of all added bridges
@@ -154,34 +140,28 @@ Thanks
 > >
 > >  #ifdef CONFIG_DRM_PANEL_BRIDGE
 > >  struct drm_bridge *drm_panel_bridge_add(struct drm_panel *panel,
->
-> --
-> Regards,
->
-> Laurent Pinchart
->
->
+> >
 >
 
---XjbSsFHOHxvQpKib
+--EEx6GiKZGZ1wKUra
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iQIcBAEBAgAGBQJa4h03AAoJEHI0Bo8WoVY8q+wP/0ttfJ3DbbFi82FZvilz9zPE
-4fzTqr/SQyP7SixvfX8/P/f5bK2VB62pmUbDnUIO9PChMWYcaz0PYnVXKgnCpcpW
-TYPk5CKtnXLSbCC3B7Jl1/39Qy2I6ACgXuhDMtYe3z099mGDVImuSEB3ibMYrwCR
-GkcnC9Eqk9E9hPDsJTL3C4pzDlUxCLR+KXt21SnMlgy1jTuntjD56AeXl6FRDMnT
-+mmWw8Cd9DXoSmDoVrxIACTzGlQypeDY+3YhTJXY0PlJ0LoG01YZDpjShq0qzFlU
-jcTbVItr5Sxe5SNIMEKyf6qVhd8d0oyax8HA4mp8YE63TCrqQY0EBbdvlacmCyMt
-IAS65gwn50NsgDoCU2cMRQ14TyYsi4zL7XVd1c/dznOYM05QrS5mb/AJhjTbGC90
-F1yxvZe3umv85HUGmTXN/OG4XIsyENtGY9cV6UT6eRXykdNx+cVWQb6qOdDV6n4p
-rDYKNq2S9df8NowfTsOFKB4BIQ243HvB8CklqxZhNHJX4rWuT1DEVDAZtCSkYhw7
-p6KCm7ohjphurt2ni15xdDTNnCdn9Ae86GI4u6Z4Og8cYlXgi/fCmfgGpb567Jia
-mWkwqV1c9CQSnQFl5g0T71kR9hiqBlZ5myhi7EUsY8BTjFew+PsrjUyPyzgEVbla
-GrTNopn4sckxVWJ1GAng
-=F88E
+iQIcBAEBAgAGBQJa4h4VAAoJEHI0Bo8WoVY8thgQAJkEA6XyBCY6uuUOGtVB/rxH
+fLBQASfGMmI3oxYbJ2u0XnmJsN3BycHo9Wkh2d4lgvoRNp5DO2xliOzZMs+A0YLO
+ZrEsCwsDf0c4pJ6m3DRlX0wA2xoVbpihE6SV4bUglZreUem4AsZHCi/FZWbX/iO+
+qtmNvS90u5QBs0l0p+1GMAzJLLpr5+0Ema0D2uioQxYCjc+aHzE3+upbXwYBV0pC
+7KED32km0chJRNP4sUTgBA2hZy5XsWE3LxCwoioVHaimx0F99sSF20wWdkvLtpHW
+CDT0jzf6bJg8EQAIiS7iO4WDvEPKlGErmbO4MhcDNLrXagIpAj+Ke3qAI+xyzxBo
+udWtgN5lzKqB0WM5lWEAFRWfnfUEqVanpYlM+pYgdfKyt74r++QoTiQH5GcaTkRp
+97nenLb/IneP2sXEsS1zh68f71ObqoTsA6G1gw2bpwbUtQekAauxgLrJh3JxGzg5
+11BSsu3FSadRsiYBKxZh7Ss8HYmgRavC2s1gOGHd4tHIiHjIwgx8/vfywedxCuSi
+LVdCrXNKlwd5n7DIZkEr92r9FfbwORPkize1I13rZ72cJvzPOevg3H0ozSOoeg3G
+Sglus58UPQIe6O8uvw1LXIXZKH/kBS5skopKxrjyFH2qJN22fMNmKjydouAMg0zz
+r5vn8ltg8XMBpKgnyqq6
+=mQ24
 -----END PGP SIGNATURE-----
 
---XjbSsFHOHxvQpKib--
+--EEx6GiKZGZ1wKUra--
