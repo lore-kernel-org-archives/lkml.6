@@ -1,93 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756527AbeDZNyv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 09:54:51 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:44209 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756424AbeDZNyt (ORCPT
+        id S932107AbeDZN5P (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 09:57:15 -0400
+Received: from omr-a010e.mx.aol.com ([204.29.186.54]:34101 "EHLO
+        omr-a010e.mx.aol.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755974AbeDZN5M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 09:54:49 -0400
-X-Google-Smtp-Source: AIpwx4+jjHuGhx1A5rmfCyjlykPAXTIMxFgJuarXQqqumEtuQIzgIkdOzC+xHAq1QFfEkRL4bYDPA9Ayh5I6j67SDsg=
+        Thu, 26 Apr 2018 09:57:12 -0400
+Subject: Re: [PATCH] perf test: Adapt test case record+probe_libc_inet_pton.sh
+ for s390
+To: Thomas-Mich Richter <tmricht@linux.ibm.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com
+References: <20180412081959.85193-1-tmricht@linux.ibm.com>
+ <20180412131012.GC9818@kernel.org>
+ <25418aa4-60bb-9f16-c880-8caaf8a20931@aim.com>
+ <151b93fd-8e12-4abf-1e69-329de6eab777@linux.ibm.com>
+From: Martin Vuille <jpmv27@aim.com>
+Message-ID: <daaa4338-0e78-d11c-8699-5b432db6993e@aim.com>
+Date: Thu, 26 Apr 2018 09:57:08 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-In-Reply-To: <20180426103817.12675-1-jbrunet@baylibre.com>
-References: <20180426103817.12675-1-jbrunet@baylibre.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 26 Apr 2018 15:54:48 +0200
-Message-ID: <CAPDyKFooqSGrgKqKxTTRBYbi6s-199GhRNhQvVD0wzWWK3UG=Q@mail.gmail.com>
-Subject: Re: [PATCH] mmc: meson-gx: add device reset
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <151b93fd-8e12-4abf-1e69-329de6eab777@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+x-aol-global-disposition: G
+x-aol-sid: 3039ac1b02615ae1dab62e87
+X-AOL-IP: 99.246.128.134
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26 April 2018 at 12:38, Jerome Brunet <jbrunet@baylibre.com> wrote:
-> Trigger the reset line of the mmc controller while probing, if available
-> The reset should be optional for now, at least until all related DT node
-> have the reset property
->
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->  Documentation/devicetree/bindings/mmc/amlogic,meson-gx.txt | 2 ++
 
-Please move DT doc changes into separate patches. And make the DT
-maintainers are in to field as well.
 
-Otherwise, this looks good to me.
+On 04/26/18 04:09, Thomas-Mich Richter wrote:
+>
+> Martin,
+>
+> there is no need to revert the patch. I have adopted the test case for s390 and it
+> now stops at main, which is identical to x86.
+>
+> The --symfs option was not used, however the debug file selected for dwarf examination
+> was different. With you patch it changed from /usr/lib64/libc.so (old) to
+> /usr/lib/debug/lib64/libc-2.26.so.debug (new)
+> and I think that this file has not all the info (at least on s390).
+>
+Thomas,
 
-Kind regards
-Uffe
+Thanks for the additional information. My change was intended to only affect
+the case where a --symfs option is used, so your finding is surprising.
 
->  drivers/mmc/host/meson-gx-mmc.c                            | 6 ++++++
->  2 files changed, 8 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/mmc/amlogic,meson-gx.txt b/Documentation/devicetree/bindings/mmc/amlogic,meson-gx.txt
-> index 5add8d7d855f..ba434375e7f2 100644
-> --- a/Documentation/devicetree/bindings/mmc/amlogic,meson-gx.txt
-> +++ b/Documentation/devicetree/bindings/mmc/amlogic,meson-gx.txt
-> @@ -20,6 +20,7 @@ Required properties:
->         "clkin1" - Other parent clock of internal mux
->    The driver has an internal mux clock which switches between clkin0 and clkin1 depending on the
->    clock rate requested by the MMC core.
-> +- reset      : phandle of the internal reset line
->
->  Example:
->
-> @@ -30,4 +31,5 @@ Example:
->                 clocks = <&clkc CLKID_SD_EMMC_A>, <&xtal>, <&clkc CLKID_FCLK_DIV2>;
->                 clock-names = "core", "clkin0", "clkin1";
->                 pinctrl-0 = <&emmc_pins>;
-> +               resets = <&reset RESET_SD_EMMC_A>;
->         };
-> diff --git a/drivers/mmc/host/meson-gx-mmc.c b/drivers/mmc/host/meson-gx-mmc.c
-> index 55bbd67177df..9d214622c8cf 100644
-> --- a/drivers/mmc/host/meson-gx-mmc.c
-> +++ b/drivers/mmc/host/meson-gx-mmc.c
-> @@ -35,6 +35,7 @@
->  #include <linux/clk.h>
->  #include <linux/clk-provider.h>
->  #include <linux/regulator/consumer.h>
-> +#include <linux/reset.h>
->  #include <linux/interrupt.h>
->  #include <linux/bitfield.h>
->  #include <linux/pinctrl/consumer.h>
-> @@ -1212,6 +1213,11 @@ static int meson_mmc_probe(struct platform_device *pdev)
->                 goto free_host;
->         }
->
-> +       ret = device_reset_optional(&pdev->dev);
-> +       if (ret)
-> +               if (ret != -EPROBE_DEFER)
-> +                       dev_err(&pdev->dev, "device reset failed: %d\n", ret);
-> +
->         res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->         host->regs = devm_ioremap_resource(&pdev->dev, res);
->         if (IS_ERR(host->regs)) {
-> --
-> 2.14.3
->
+I'll take a look to see why this is happening.
+
+Regards,
+MV
