@@ -1,199 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932067AbeDZMsT (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 08:48:19 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:36391 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755643AbeDZMsP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 08:48:15 -0400
-X-Google-Smtp-Source: AB8JxZoJ3u0e0thhsFUVrdluOxMU2DV6un7eq3IP5fCoy+6ziMeFysED8tzWTCokjPg1S1ikB/gFvrFg6mkVkTINMhc=
+        id S1756003AbeDZMtc (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 08:49:32 -0400
+Received: from bert.emutex.com ([91.103.1.109]:55032 "EHLO bert.emutex.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755384AbeDZMt1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 08:49:27 -0400
+Date: Thu, 26 Apr 2018 13:49:22 +0100
+From: Javier Arteaga <javier@emutex.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, "Dan O'Donovan" <dan@emutex.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH RESEND 2/3] leds: upboard: Add LED support
+Message-ID: <20180426124922.haddppocljgnj2ei@localhost>
+References: <20180421085009.28773-1-javier@emutex.com>
+ <20180421085009.28773-3-javier@emutex.com>
+ <1524672945.21176.594.camel@linux.intel.com>
+ <20180426023441.f2a7337sjlyd6xhf@localhost>
+ <1524729349.21176.614.camel@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <1523440025-18077-3-git-send-email-amelie.delaunay@st.com>
-References: <1523440025-18077-1-git-send-email-amelie.delaunay@st.com> <1523440025-18077-3-git-send-email-amelie.delaunay@st.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 26 Apr 2018 14:48:13 +0200
-Message-ID: <CACRpkdb-=QU74-MZxMdB6QPqMLZr97WxN80iyOoTFqXPicL75w@mail.gmail.com>
-Subject: Re: [PATCH 2/5] pinctrl: Add STMFX GPIO expander Pinctrl/GPIO driver
-To: Amelie Delaunay <amelie.delaunay@st.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Lee Jones <lee.jones@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1524729349.21176.614.camel@linux.intel.com>
+X-Spam-Score: -1.0 (-)
+X-Spam-Report: Spam detection software, running on the system "statler.emutex.com",
+ has NOT identified this incoming email as spam.  The original
+ message has been attached to this so you can view it or label
+ similar future email.  If you have any questions, see
+ the administrator of that system for details.
+ Content preview:  Thanks Andy for these pointers :) On Thu, Apr 26, 2018 at
+   10:55:49AM +0300, Andy Shevchenko wrote: > On Thu, 2018-04-26 at 03:34 +0100,
+    Javier Arteaga wrote: > > My understanding was that in this context, __init
+    allows this probe() > > to > > be dropped from memory after module load.
+   > > > > What am I doing wrong there? > > Just give another thought about it.
+    The keyword(s) here is(are): time to > live of the objects in question. It's
+    good to get knowing what unbind- > bind means (for built-in drivers). [...]
+ Content analysis details:   (-1.0 points, 5.0 required)
+  pts rule name              description
+ ---- ---------------------- --------------------------------------------------
+ -1.0 ALL_TRUSTED            Passed through trusted hosts only via SMTP
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 11, 2018 at 11:47 AM, Amelie Delaunay
-<amelie.delaunay@st.com> wrote:
+Thanks Andy for these pointers :)
 
-Hi Amelie, thanks for your patch!
+On Thu, Apr 26, 2018 at 10:55:49AM +0300, Andy Shevchenko wrote:
+> On Thu, 2018-04-26 at 03:34 +0100, Javier Arteaga wrote:
+> > My understanding was that in this context, __init allows this probe()
+> > to
+> > be dropped from memory after module load.
+> > 
+> > What am I doing wrong there?
+> 
+> Just give another thought about it. The keyword(s) here is(are): time to
+> live of the objects in question. It's good to get knowing what unbind-
+> bind means (for built-in drivers).
 
-> This patch adds pinctrl/GPIO driver for STMicroelectronics
-> Multi-Function eXpander (STMFX) GPIO expander.
-> STMFX is an I2C slave controller, offering up to 24 GPIOs.
-> The driver relies on generic pin config interface to configure the GPIOs.
->
-> Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
+So this is the bit that I _believed_ applied to the platform drivers for
+these MFD-registered devices (from driver-model/platform.txt):
 
-This is looking very good.
+  Or, in common situations where the device is known not to be hot-pluggable,
+  the probe() routine can live in an init section to reduce the driver's
+  runtime memory footprint:
 
-The overall architecture of this patch set is excellent.
+  	int platform_driver_probe(struct platform_driver *drv,
+  			  int (*probe)(struct platform_device *))
 
-I have only one major question about whether this should be
-a MFD parent and GPIO-pinctrl-child split driver, see below.
+I'm thinking my misunderstanding probably stems from assuming that these
+leds/pinctrl drivers will always find all devices registered at init
+time. Can't say I've validated that assumption - I just didn't see
+anything obviously blowing up in my tests so far :)
 
-> +config PINCTRL_STMFX
-> +       tristate "STMicroelectronics STMFX I2C GPIO expander pinctrl driver"
-> +       depends on GPIOLIB && I2C=y
-> +       select GENERIC_PINCONF
-> +       select GPIOLIB_IRQCHIP
-> +       select REGMAP_I2C
+I'll keep reading and test out a few more things so I fully understand.
+Until then, I've taken out __init annotations from next version.
 
-Thanks for using all the helpers, it makes the code very small and
-consistent and easy to review and maintain.
+> > > Don't use direct dereference to platform_data.
+> > 
+> > Sorry, I don't understand this one. What's the alternative?
+> 
+> See other drivers how they do that stuff. Hint: check inline functions
+> in include/linux/device.h.
 
-> +#include <linux/bitfield.h>
-> +#include <linux/gpio.h>
-
-Please just use:
- #include <linux/gpio/driver.h>
-
-> +static void stmfx_gpio_irq_toggle_trigger(struct stmfx_pinctrl *pctl,
-> +                                         unsigned int offset)
-> +{
-> +       u32 reg = get_reg(offset);
-> +       u32 mask = get_mask(offset);
-> +       int val;
-> +
-> +       if (!(pctl->irq_toggle_edge[reg] & mask))
-> +               return;
-> +
-> +       val = stmfx_gpio_get(&pctl->gpio_chip, offset);
-> +       if (val < 0)
-> +               return;
-> +
-> +       if (val) {
-> +               pctl->irq_gpi_type[reg] &= mask;
-> +               regmap_write_bits(pctl->regmap, STMFX_REG_IRQ_GPI_TYPE + reg,
-> +                                 get_mask(offset), 0);
-> +
-> +       } else {
-> +               pctl->irq_gpi_type[reg] |= mask;
-> +               regmap_write_bits(pctl->regmap, STMFX_REG_IRQ_GPI_TYPE + reg,
-> +                                 get_mask(offset), get_mask(offset));
-> +       }
-> +}
-
-We had a bit of discussion about edge trigger emulation on the
-mailing list. Strange that these HW engineers didn't think of this,
-I thought it was widely known that double-edge trigger (not just one
-or the other) is needed in contemporary GPIO HW.
-
-> +       if (!of_find_property(np, "gpio-ranges", NULL)) {
-> +               ret = gpiochip_add_pin_range(&pctl->gpio_chip,
-> +                                            dev_name(pctl->dev),
-> +                                            0, 0, pctl->pctl_desc.npins);
-> +               if (ret)
-> +                       return ret;
-
-Do you really need to support DTBs without gpio-ranges?
-
-I.e. can't you just print an error and exit if there is no range?
-
-I think other drivers has this handling because of older
-DT bindings and trees drifting around.
-
-> +static const struct regmap_config stmfx_regmap_config = {
-> +       .reg_bits = 8,
-> +       .val_bits = 8,
-> +};
-
-This can probably be improved in the future.
-Or are there really exactly 255 registers?
-
-> +static int stmfx_probe(struct i2c_client *client,
-> +                      const struct i2c_device_id *id)
-> +{
-> +       struct device_node *np = client->dev.of_node, *child;
-> +       struct stmfx *stmfx;
-> +       int ret;
-> +
-> +       stmfx = devm_kzalloc(&client->dev, sizeof(*stmfx), GFP_KERNEL);
-> +       if (!stmfx)
-> +               return -ENOMEM;
-> +
-> +       i2c_set_clientdata(client, stmfx);
-> +
-> +       stmfx->dev = &client->dev;
-> +
-> +       stmfx->regmap = devm_regmap_init_i2c(client, &stmfx_regmap_config);
-> +       if (IS_ERR(stmfx->regmap)) {
-> +               ret = PTR_ERR(stmfx->regmap);
-> +               dev_err(stmfx->dev,
-> +                       "Failed to allocate register map: %d\n", ret);
-> +               return ret;
-> +       }
-> +
-> +       ret = stmfx_chip_init(stmfx, client);
-> +       if (ret) {
-> +               if (ret == -ETIMEDOUT)
-> +                       return -EPROBE_DEFER;
-> +               return ret;
-> +       }
-> +
-> +       stmfx->irq = client->irq;
-> +       ret = stmfx_irq_init(stmfx);
-> +       if (ret)
-> +               return ret;
-> +
-> +       for_each_available_child_of_node(np, child) {
-> +               if (of_property_read_bool(child, "gpio-controller")) {
-> +                       ret = stmfx_gpio_init(stmfx, child);
-> +                       if (ret)
-> +                               goto err;
-> +               }
-> +       }
-
-Hm so you do not use a MFD driver for the core of the driver?
-
-Instead this driver becomes the core driver?
-
-I guess it is fine as long as the chip is only doing GPIO
-and pin control. If the chip has more abilities (such as PWM,
-LED...) then the core should be an MFD driver that spawns
-GPIO/pinctrl driver as a child, then this child looks up the
-regmap from the parent MFD driver.
-
-See for example how the simple STw481x driver does things:
-drivers/mfd/stw481x.c
-drivers/regulator/stw481x-vmmc.c
-
-This MFD has no GPIO/pin control but it illustrates a simple
-parent/child instantiation with an MFD core driver.
-
-It has this DTS entry:
-
-                stw4811@2d {
-                        compatible = "st,stw4811";
-                        reg = <0x2d>;
-                        vmmc_regulator: vmmc {
-                                compatible = "st,stw481x-vmmc";
-                                regulator-name = "VMMC";
-                                regulator-min-microvolt = <1800000>;
-                                regulator-max-microvolt = <3300000>;
-                        };
-                };
-
-The MFD driver matches and spawns the VMMC child
-then that driver mathes to the vmmc node.
-
-Yours,
-Linus Walleij
+I wasn't looking at the right other drivers :)
+I'll use the dev_get_platdata() wrapper going forwards.
