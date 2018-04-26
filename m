@@ -1,92 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756610AbeDZOpj (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 10:45:39 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:50010 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1756319AbeDZOpg (ORCPT
+        id S932086AbeDZOtm (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 10:49:42 -0400
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:35562 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754727AbeDZOtk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 10:45:36 -0400
-Message-ID: <1524753932.3226.5.camel@HansenPartnership.com>
-Subject: Re: [dm-devel] [PATCH v5] fault-injection: introduce kvmalloc
- fallback options
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Mikulas Patocka <mpatocka@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>
-Cc: David Rientjes <rientjes@google.com>, dm-devel@redhat.com,
-        eric.dumazet@gmail.com, mst@redhat.com, netdev@vger.kernel.org,
-        jasowang@redhat.com, Randy Dunlap <rdunlap@infradead.org>,
-        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
-        linux-mm@kvack.org, edumazet@google.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        virtualization@lists.linux-foundation.org,
-        David Miller <davem@davemloft.net>, Vlastimil Babka <vbabka@suse.cz>
-Date: Thu, 26 Apr 2018 07:45:32 -0700
-In-Reply-To: <alpine.LRH.2.02.1804261006120.32722@file01.intranet.prod.int.rdu2.redhat.com>
-References: <20180424170349.GQ17484@dhcp22.suse.cz>
-         <alpine.LRH.2.02.1804241319390.28995@file01.intranet.prod.int.rdu2.redhat.com>
-         <20180424173836.GR17484@dhcp22.suse.cz>
-         <alpine.LRH.2.02.1804251556060.30569@file01.intranet.prod.int.rdu2.redhat.com>
-         <1114eda5-9b1f-4db8-2090-556b4a37c532@infradead.org>
-         <alpine.LRH.2.02.1804251656300.9428@file01.intranet.prod.int.rdu2.redhat.com>
-         <alpine.DEB.2.21.1804251417470.166306@chino.kir.corp.google.com>
-         <alpine.LRH.2.02.1804251720090.9428@file01.intranet.prod.int.rdu2.redhat.com>
-         <1524694663.4100.21.camel@HansenPartnership.com>
-         <alpine.LRH.2.02.1804251830540.25124@file01.intranet.prod.int.rdu2.redhat.com>
-         <20180426125817.GO17484@dhcp22.suse.cz>
-         <alpine.LRH.2.02.1804261006120.32722@file01.intranet.prod.int.rdu2.redhat.com>
+        Thu, 26 Apr 2018 10:49:40 -0400
+X-Google-Smtp-Source: AB8JxZroMtOaocyYoDYr4czlWzwokobOpwHcFivMqqRNb2cqFLuu1JBgfTdfKhfPr1JBU1GQ3WQjEXUbp+kGpDXwPJY=
+MIME-Version: 1.0
+In-Reply-To: <20180417125308.GA30884@flawful.org>
+References: <20180417125308.GA30884@flawful.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Thu, 26 Apr 2018 16:49:38 +0200
+X-Google-Sender-Auth: KPGPlMLxsxvkJEgFUbcvV3Iswq8
+Message-ID: <CAK8P3a2Q6xmEKWOC-Wpcv5Jbwo7y1j6BzSTqPPhwaBpXcBbuOA@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: Remove myself as maintainer
+To: Niklas Cassel <nks@flawful.org>
+Cc: arm-soc <arm@kernel.org>, linux-pci <linux-pci@vger.kernel.org>,
+        linux-arm-kernel@axis.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-04-26 at 10:28 -0400, Mikulas Patocka wrote:
-> 
-> On Thu, 26 Apr 2018, Michal Hocko wrote:
-> 
-> > On Wed 25-04-18 18:42:57, Mikulas Patocka wrote:
-> > > 
-> > > 
-> > > On Wed, 25 Apr 2018, James Bottomley wrote:
-> > [...]
-> > > > Kconfig proliferation, conversely, is a bit of a nightmare from
-> both
-> > > > the user and the tester's point of view, so we're trying to
-> avoid it
-> > > > unless absolutely necessary.
-> > > > 
-> > > > James
-> > > 
-> > > I already offered that we don't need to introduce a new kernel
-> option and 
-> > > we can bind this feature to any other kernel option, that is
-> enabled in 
-> > > the debug kernel, for example CONFIG_DEBUG_SG. Michal said no and
-> he said 
-> > > that he wants a new kernel option instead.
-> > 
-> > Just for the record. I didn't say I _want_ a config option. Do not
-> > misinterpret my words. I've said that a config option would be
-> > acceptable if there is no way to deliver the functionality via
-> kernel
-> > package automatically. You haven't provided any argument that would
-> > explain why the kernel package cannot add a boot option. Maybe
-> there are
-> > some but I do not see them right now.
-> 
-> AFAIK Grub doesn't load per-kernel options from a per-kernel file.
-> Even if we hacked grub scripts to add this option, other
-> distributions won't.
+On Tue, Apr 17, 2018 at 2:53 PM, Niklas Cassel <nks@flawful.org> wrote:
+> From: Niklas Cassel <niklas.cassel@axis.com>
+>
+> I am leaving Axis, so this address will bounce in the not too
+> distant future.
+>
+> Fortunately, I will still be working with the community.
+>
+> Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
+> ---
+> Hello arm-soc, could you please pick this up?
+> The email address has started to bounce.
 
-Perhaps find out beforehand instead of insisting on an approach without
-knowing.  On openSUSE the grub config is built from the files in
-/etc/grub.d/ so any package can add a kernel option (and various
-conditions around activating it) simply by adding a new file.  The
-config files are quite sophisticated, so you can add what looks to be a
-new kernel, but is really an existing kernel with different options
-this way.
+Applied to fixes now, thanks
 
-James
+      Arnd
