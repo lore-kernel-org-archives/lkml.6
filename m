@@ -1,96 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754630AbeDZId0 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 04:33:26 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:7214 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754592AbeDZIdV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 04:33:21 -0400
-From: Chao Yu <yuchao0@huawei.com>
-To: <jaegeuk@kernel.org>
-CC: <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: fix to wait IO writeback in __revoke_inmem_pages()
-Date: Thu, 26 Apr 2018 16:32:47 +0800
-Message-ID: <20180426083247.86337-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.15.0.55.gc2ece9dc4de6
+        id S1754234AbeDZIfk (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 04:35:40 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:51266 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753676AbeDZIfg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 04:35:36 -0400
+X-Google-Smtp-Source: AB8JxZry467MSE8nZcAchKPq12wUs3DFMk8y7beegXU4ffmhkMnjwhqCnQJZDgzdNdD5LDsL9cW94g==
+Subject: Re: [PATCH] spi: meson-axg: Fix error handling in meson_spicc_probe()
+To: Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        Mark Brown <broonie@kernel.org>, Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>
+Cc: linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        ldv-project@linuxtesting.org
+References: <1523655586-4163-1-git-send-email-khoroshilov@ispras.ru>
+From: Neil Armstrong <narmstrong@baylibre.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
+ GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
+ RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
+ NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
+ 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
+ ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
+ YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
+ GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
+ coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
+ SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
+ YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
+ mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
+ zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
+ 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
+ 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
+ RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
+ C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
+ Acmp6h8g
+Organization: Baylibre
+Message-ID: <a2a9cde3-5192-ce05-cc5c-d0191f0e811a@baylibre.com>
+Date: Thu, 26 Apr 2018 10:35:33 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
+In-Reply-To: <1523655586-4163-1-git-send-email-khoroshilov@ispras.ru>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thread A				Thread B
-- f2fs_ioc_commit_atomic_write
- - commit_inmem_pages
-  - f2fs_submit_merged_write_cond
-  : write data
-					- write_checkpoint
-					 - do_checkpoint
-					 : commit all node within CP
-					 -> SPO
-  - f2fs_do_sync_file
-   - file_write_and_wait_range
-   : wait data writeback
+Hi Alexey,
 
-In above race condition, data/node can be flushed in reversed order when
-coming a checkpoint before f2fs_do_sync_file, after SPOR, it results in
-atomic written data being corrupted.
 
-This patch adds f2fs_wait_on_page_writeback in __revoke_inmem_pages() to
-keep data and node of atomic file being flushed orderly.
+On 13/04/2018 23:39, Alexey Khoroshilov wrote:
+> If devm_spi_register_master() fails in meson_spicc_probe(),
+> spicc->core is left undisabled. The patch fixes that.
+> 
+> Found by Linux Driver Verification project (linuxtesting.org).
+> 
+> Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+> ---
+>  drivers/spi/spi-meson-spicc.c | 11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/spi/spi-meson-spicc.c b/drivers/spi/spi-meson-spicc.c
+> index 5c82910e3480..7fe4488ace57 100644
+> --- a/drivers/spi/spi-meson-spicc.c
+> +++ b/drivers/spi/spi-meson-spicc.c
+> @@ -574,10 +574,15 @@ static int meson_spicc_probe(struct platform_device *pdev)
+>  		master->max_speed_hz = rate >> 2;
+>  
+>  	ret = devm_spi_register_master(&pdev->dev, master);
+> -	if (!ret)
+> -		return 0;
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "spi master registration failed\n");
+> +		goto out_clk;
+> +	}
+>  
+> -	dev_err(&pdev->dev, "spi master registration failed\n");
+> +	return 0;
+> +
+> +out_clk:
+> +	clk_disable_unprepare(spicc->core);
+>  
+>  out_master:
+>  	spi_master_put(master);
+> 
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/file.c    | 4 ++++
- fs/f2fs/segment.c | 3 +++
- 2 files changed, 7 insertions(+)
+The correct subject should be "spi: meson-spicc:"
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index be7578774a47..a352804af244 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -217,6 +217,9 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
- 
- 	trace_f2fs_sync_file_enter(inode);
- 
-+	if (atomic)
-+		goto write_done;
-+
- 	/* if fdatasync is triggered, let's do in-place-update */
- 	if (datasync || get_dirty_pages(inode) <= SM_I(sbi)->min_fsync_blocks)
- 		set_inode_flag(inode, FI_NEED_IPU);
-@@ -228,6 +231,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
- 		return ret;
- 	}
- 
-+write_done:
- 	/* if the inode is dirty, let's recover all the time */
- 	if (!f2fs_skip_inode_update(inode, datasync)) {
- 		f2fs_write_inode(inode, NULL);
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 584483426584..9ca3d0a43d93 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -230,6 +230,8 @@ static int __revoke_inmem_pages(struct inode *inode,
- 
- 		lock_page(page);
- 
-+		f2fs_wait_on_page_writeback(page, DATA, true);
-+
- 		if (recover) {
- 			struct dnode_of_data dn;
- 			struct node_info ni;
-@@ -415,6 +417,7 @@ static int __commit_inmem_pages(struct inode *inode)
- 		/* drop all uncommitted pages */
- 		__revoke_inmem_pages(inode, &fi->inmem_pages, true, false);
- 	} else {
-+		/* wait all committed IOs writeback and release them from list */
- 		__revoke_inmem_pages(inode, &revoke_list, false, false);
- 	}
- 
--- 
-2.15.0.55.gc2ece9dc4de6
+Apart that :
+Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+
+Neil
