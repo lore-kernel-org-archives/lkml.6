@@ -1,106 +1,162 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756550AbeDZPFX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 11:05:23 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56420 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754847AbeDZPFT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 11:05:19 -0400
-Date: Thu, 26 Apr 2018 11:05:13 -0400 (EDT)
-From: Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-cc: Michal Hocko <mhocko@kernel.org>, David Rientjes <rientjes@google.com>,
-        dm-devel@redhat.com, eric.dumazet@gmail.com, mst@redhat.com,
-        netdev@vger.kernel.org, jasowang@redhat.com,
-        Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
-        edumazet@google.com, Andrew Morton <akpm@linux-foundation.org>,
-        virtualization@lists.linux-foundation.org,
-        David Miller <davem@davemloft.net>, Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [dm-devel] [PATCH v5] fault-injection: introduce kvmalloc fallback
- options
-In-Reply-To: <1524753932.3226.5.camel@HansenPartnership.com>
-Message-ID: <alpine.LRH.2.02.1804261100170.12157@file01.intranet.prod.int.rdu2.redhat.com>
-References: <20180424170349.GQ17484@dhcp22.suse.cz>  <alpine.LRH.2.02.1804241319390.28995@file01.intranet.prod.int.rdu2.redhat.com>  <20180424173836.GR17484@dhcp22.suse.cz>  <alpine.LRH.2.02.1804251556060.30569@file01.intranet.prod.int.rdu2.redhat.com>
- <1114eda5-9b1f-4db8-2090-556b4a37c532@infradead.org>  <alpine.LRH.2.02.1804251656300.9428@file01.intranet.prod.int.rdu2.redhat.com>  <alpine.DEB.2.21.1804251417470.166306@chino.kir.corp.google.com>  <alpine.LRH.2.02.1804251720090.9428@file01.intranet.prod.int.rdu2.redhat.com>
-  <1524694663.4100.21.camel@HansenPartnership.com>  <alpine.LRH.2.02.1804251830540.25124@file01.intranet.prod.int.rdu2.redhat.com>  <20180426125817.GO17484@dhcp22.suse.cz>  <alpine.LRH.2.02.1804261006120.32722@file01.intranet.prod.int.rdu2.redhat.com>
- <1524753932.3226.5.camel@HansenPartnership.com>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        id S1756673AbeDZPGZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 11:06:25 -0400
+Received: from mail.netline.ch ([148.251.143.178]:56512 "EHLO
+        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756611AbeDZPGX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 11:06:23 -0400
+From: =?UTF-8?q?Michel=20D=C3=A4nzer?= <michel@daenzer.net>
+To: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Roger He <Hongbo.He@amd.com>
+Cc: dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] drm/ttm: Add TTM_PAGE_FLAG_TRANSHUGE
+Date: Thu, 26 Apr 2018 17:06:17 +0200
+Message-Id: <20180426150618.13470-1-michel@daenzer.net>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-Content-Type: MULTIPART/MIXED; BOUNDARY="185206533-1285601647-1524755113=:12157"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+From: Michel Dänzer <michel.daenzer@amd.com>
 
---185206533-1285601647-1524755113=:12157
-Content-Type: TEXT/PLAIN; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+When it's set, TTM tries to allocate huge pages if possible. Drivers
+which can take advantage of huge pages should set it.
 
+Drivers not setting this flag no longer incur any overhead related to
+allocating or freeing huge pages.
 
+Cc: stable@vger.kernel.org
+Signed-off-by: Michel Dänzer <michel.daenzer@amd.com>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c  |  2 +-
+ drivers/gpu/drm/ttm/ttm_page_alloc.c     | 14 ++++++++++----
+ drivers/gpu/drm/ttm/ttm_page_alloc_dma.c |  8 +++++---
+ include/drm/ttm/ttm_tt.h                 |  1 +
+ 4 files changed, 17 insertions(+), 8 deletions(-)
 
-On Thu, 26 Apr 2018, James Bottomley wrote:
-
-> On Thu, 2018-04-26 at 10:28 -0400, Mikulas Patocka wrote:
-> > 
-> > On Thu, 26 Apr 2018, Michal Hocko wrote:
-> > 
-> > > On Wed 25-04-18 18:42:57, Mikulas Patocka wrote:
-> > > > 
-> > > > 
-> > > > On Wed, 25 Apr 2018, James Bottomley wrote:
-> > > [...]
-> > > > > Kconfig proliferation, conversely, is a bit of a nightmare from
-> > both
-> > > > > the user and the tester's point of view, so we're trying to
-> > avoid it
-> > > > > unless absolutely necessary.
-> > > > > 
-> > > > > James
-> > > > 
-> > > > I already offered that we don't need to introduce a new kernel
-> > option and 
-> > > > we can bind this feature to any other kernel option, that is
-> > enabled in 
-> > > > the debug kernel, for example CONFIG_DEBUG_SG. Michal said no and
-> > he said 
-> > > > that he wants a new kernel option instead.
-> > > 
-> > > Just for the record. I didn't say I _want_ a config option. Do not
-> > > misinterpret my words. I've said that a config option would be
-> > > acceptable if there is no way to deliver the functionality via
-> > kernel
-> > > package automatically. You haven't provided any argument that would
-> > > explain why the kernel package cannot add a boot option. Maybe
-> > there are
-> > > some but I do not see them right now.
-> > 
-> > AFAIK Grub doesn't load per-kernel options from a per-kernel file.
-> > Even if we hacked grub scripts to add this option, other
-> > distributions won't.
-> 
-> Perhaps find out beforehand instead of insisting on an approach without
-> knowing.  On openSUSE the grub config is built from the files in
-> /etc/grub.d/ so any package can add a kernel option (and various
-> conditions around activating it) simply by adding a new file.
-
-And then, different versions of the debug kernel will clash when 
-attempting to create the same file.
-
-And what about other distributions? What about people who the RHEL kernel 
-from source with "make"?
-
-The problem with this approach that you are trying to bother more and more 
-people with this little silly feature.
-
-> The config files are quite sophisticated, so you can add what looks to 
-> be a new kernel, but is really an existing kernel with different options 
-> this way.
-> 
-> James
-
-Mikulas
---185206533-1285601647-1524755113=:12157--
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
+index dfd22db13fb1..e03e9e361e2a 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
+@@ -988,7 +988,7 @@ static struct ttm_tt *amdgpu_ttm_tt_create(struct ttm_buffer_object *bo,
+ 		return NULL;
+ 	}
+ 	gtt->ttm.ttm.func = &amdgpu_backend_func;
+-	if (ttm_sg_tt_init(&gtt->ttm, bo, page_flags)) {
++	if (ttm_sg_tt_init(&gtt->ttm, bo, page_flags | TTM_PAGE_FLAG_TRANSHUGE)) {
+ 		kfree(gtt);
+ 		return NULL;
+ 	}
+diff --git a/drivers/gpu/drm/ttm/ttm_page_alloc.c b/drivers/gpu/drm/ttm/ttm_page_alloc.c
+index f0481b7b60c5..2ce91272b111 100644
+--- a/drivers/gpu/drm/ttm/ttm_page_alloc.c
++++ b/drivers/gpu/drm/ttm/ttm_page_alloc.c
+@@ -760,7 +760,7 @@ static void ttm_put_pages(struct page **pages, unsigned npages, int flags,
+ {
+ 	struct ttm_page_pool *pool = ttm_get_pool(flags, false, cstate);
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+-	struct ttm_page_pool *huge = ttm_get_pool(flags, true, cstate);
++	struct ttm_page_pool *huge = NULL;
+ #endif
+ 	unsigned long irq_flags;
+ 	unsigned i;
+@@ -780,7 +780,8 @@ static void ttm_put_pages(struct page **pages, unsigned npages, int flags,
+ 			}
+ 
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+-			if (!(flags & TTM_PAGE_FLAG_DMA32)) {
++			if ((flags & (TTM_PAGE_FLAG_DMA32 | TTM_PAGE_FLAG_TRANSHUGE)) ==
++			    TTM_PAGE_FLAG_TRANSHUGE) {
+ 				for (j = 0; j < HPAGE_PMD_NR; ++j)
+ 					if (p++ != pages[i + j])
+ 					    break;
+@@ -805,6 +806,8 @@ static void ttm_put_pages(struct page **pages, unsigned npages, int flags,
+ 
+ 	i = 0;
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
++	if (flags & TTM_PAGE_FLAG_TRANSHUGE)
++		huge = ttm_get_pool(flags, true, cstate);
+ 	if (huge) {
+ 		unsigned max_size, n2free;
+ 
+@@ -877,7 +880,7 @@ static int ttm_get_pages(struct page **pages, unsigned npages, int flags,
+ {
+ 	struct ttm_page_pool *pool = ttm_get_pool(flags, false, cstate);
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+-	struct ttm_page_pool *huge = ttm_get_pool(flags, true, cstate);
++	struct ttm_page_pool *huge = NULL;
+ #endif
+ 	struct list_head plist;
+ 	struct page *p = NULL;
+@@ -906,7 +909,8 @@ static int ttm_get_pages(struct page **pages, unsigned npages, int flags,
+ 
+ 		i = 0;
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+-		if (!(gfp_flags & GFP_DMA32)) {
++		if ((flags & (TTM_PAGE_FLAG_DMA32 | TTM_PAGE_FLAG_TRANSHUGE)) ==
++		    TTM_PAGE_FLAG_TRANSHUGE) {
+ 			while (npages >= HPAGE_PMD_NR) {
+ 				gfp_t huge_flags = gfp_flags;
+ 
+@@ -946,6 +950,8 @@ static int ttm_get_pages(struct page **pages, unsigned npages, int flags,
+ 	count = 0;
+ 
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
++	if (flags & TTM_PAGE_FLAG_TRANSHUGE)
++		huge = ttm_get_pool(flags, true, cstate);
+ 	if (huge && npages >= HPAGE_PMD_NR) {
+ 		INIT_LIST_HEAD(&plist);
+ 		ttm_page_pool_get_pages(huge, &plist, flags, cstate,
+diff --git a/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c b/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
+index 8a25d1974385..291b04213ec5 100644
+--- a/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
++++ b/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
+@@ -949,7 +949,8 @@ int ttm_dma_populate(struct ttm_dma_tt *ttm_dma, struct device *dev,
+ 	type = ttm_to_type(ttm->page_flags, ttm->caching_state);
+ 
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+-	if (ttm->page_flags & TTM_PAGE_FLAG_DMA32)
++	if ((ttm->page_flags & (TTM_PAGE_FLAG_DMA32 | TTM_PAGE_FLAG_TRANSHUGE))
++	    != TTM_PAGE_FLAG_TRANSHUGE)
+ 		goto skip_huge;
+ 
+ 	pool = ttm_dma_find_pool(dev, type | IS_HUGE);
+@@ -1035,7 +1036,7 @@ void ttm_dma_unpopulate(struct ttm_dma_tt *ttm_dma, struct device *dev)
+ {
+ 	struct ttm_tt *ttm = &ttm_dma->ttm;
+ 	struct ttm_mem_global *mem_glob = ttm->bdev->glob->mem_glob;
+-	struct dma_pool *pool;
++	struct dma_pool *pool = NULL;
+ 	struct dma_page *d_page, *next;
+ 	enum pool_type type;
+ 	bool is_cached = false;
+@@ -1045,7 +1046,8 @@ void ttm_dma_unpopulate(struct ttm_dma_tt *ttm_dma, struct device *dev)
+ 	type = ttm_to_type(ttm->page_flags, ttm->caching_state);
+ 
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+-	pool = ttm_dma_find_pool(dev, type | IS_HUGE);
++	if (ttm->page_flags & TTM_PAGE_FLAG_TRANSHUGE)
++		pool = ttm_dma_find_pool(dev, type | IS_HUGE);
+ 	if (pool) {
+ 		count = 0;
+ 		list_for_each_entry_safe(d_page, next, &ttm_dma->pages_list,
+diff --git a/include/drm/ttm/ttm_tt.h b/include/drm/ttm/ttm_tt.h
+index c0e928abf592..c7d2120f0362 100644
+--- a/include/drm/ttm/ttm_tt.h
++++ b/include/drm/ttm/ttm_tt.h
+@@ -41,6 +41,7 @@ struct ttm_operation_ctx;
+ #define TTM_PAGE_FLAG_DMA32           (1 << 7)
+ #define TTM_PAGE_FLAG_SG              (1 << 8)
+ #define TTM_PAGE_FLAG_NO_RETRY	      (1 << 9)
++#define TTM_PAGE_FLAG_TRANSHUGE       (1 << 10)
+ 
+ enum ttm_caching_state {
+ 	tt_uncached,
+-- 
+2.17.0
