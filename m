@@ -1,79 +1,221 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756699AbeDZQ2U (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 12:28:20 -0400
-Received: from mail-pf0-f179.google.com ([209.85.192.179]:43032 "EHLO
-        mail-pf0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754553AbeDZQ2T (ORCPT
+        id S1756780AbeDZQdp (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 12:33:45 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:52444 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756506AbeDZQdl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 12:28:19 -0400
-X-Google-Smtp-Source: AIpwx488iuu0Bxjtz7ndbUPstpquKdD3Wfa2WLYAJzHtYPcMvcjBPyU8xYhZjCIIk5ulLol+BCMcuw==
-To: "Theodore Ts'o" <tytso@mit.edu>
-Cc: jannh@google.com,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From: Jens Axboe <axboe@kernel.dk>
-Subject: random: GFP_KERNEL from irq context
-Message-ID: <c10e7248-4463-59d4-a977-1e4433c7231f@kernel.dk>
-Date: Thu, 26 Apr 2018 10:28:13 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Thu, 26 Apr 2018 12:33:41 -0400
+X-Google-Smtp-Source: AB8JxZrJ4DMZr6iAabXcoTPheGl+3cZfz8Q7fFnhfr8GqAcVdaRY8wGAhdSXpnjnzxTJA/d01P6bl5B6N9mnOtIsHn4=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <1524759587-7007-1-git-send-email-phil.edworthy@renesas.com>
+References: <1524759587-7007-1-git-send-email-phil.edworthy@renesas.com>
+From: Hoan Tran <hotran@apm.com>
+Date: Thu, 26 Apr 2018 09:33:40 -0700
+Message-ID: <CAFHUOYxW6C9F-etiPSw5WBH7UDc6nia+5m9bqMND=SdfteJCPg@mail.gmail.com>
+Subject: Re: [PATCH v5] gpio: dwapb: Add support for 1 interrupt per port A GPIO
+To: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
+        linux-gpio@vger.kernel.org,
+        Devicetree List <devicetree@vger.kernel.org>,
+        linux-renesas-soc@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ted,
+Hi,
 
-Just triggered this on my test box:
+On Thu, Apr 26, 2018 at 9:19 AM, Phil Edworthy
+<phil.edworthy@renesas.com> wrote:
+> The DesignWare GPIO IP can be configured for either 1 interrupt or 1
+> per GPIO in port A, but the driver currently only supports 1 interrupt.
+> See the DesignWare DW_apb_gpio Databook description of the
+> 'GPIO_INTR_IO' parameter.
+>
+> This change allows the driver to work with up to 32 interrupts, it will
+> get as many interrupts as specified in the DT 'interrupts' property.
+> It doesn't do anything clever with the different interrupts, it just calls
+> the same handler used for single interrupt hardware.
+>
+> ACPI companion code provided by Hoan Tran <hotran@apm.com>. This was tested
+> on X-Gene by Hoan.
+>
+> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Acked-by: Lee Jones <lee.jones@linaro.org>
+> ---
+> One point to mention is that I have made it possible for users to have
+> unconncted interrupts by specifying holes in the list of interrupts. This is
+> done by supporting the interrupts-extended DT prop.
+> However, I have no use for this and had to hack some test case for this.
+> Perhaps the driver should support 1 interrupt or all GPIOa as interrupts?
+>
+> v5:
+>  - Rolled ACPI companion code provided by Hoan Tran into this patch.
+> v4:
+>  - Use of_irq_get() instead of of_irq_parse_one()+irq_create_of_mapping()
+> v3:
+>  - Rolled mfd: intel_quark_i2c_gpio fix into this patch to avoid bisect problems
+> v2:
+>  - Replaced interrupt-mask DT prop with support for the interrupts-extended
+>    prop. This means replacing the call to irq_of_parse_and_map() with calls
+>    to of_irq_parse_one() and irq_create_of_mapping().
+>
+> Note: There are a few *code* lines over 80 chars, but this is just guidance,
+>    right? Especially as there are already some lines over 80 chars.
+> ---
+>  .../devicetree/bindings/gpio/snps-dwapb-gpio.txt   |  9 ++++-
+>  drivers/gpio/gpio-dwapb.c                          | 46 +++++++++++++++++-----
+>  drivers/mfd/intel_quark_i2c_gpio.c                 |  3 +-
+>  include/linux/platform_data/gpio-dwapb.h           |  3 +-
+>  4 files changed, 48 insertions(+), 13 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt b/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
+> index 4a75da7..3c1118b 100644
+> --- a/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
+> +++ b/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
+> @@ -26,8 +26,13 @@ controller.
+>    the second encodes the triger flags encoded as described in
+>    Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
+>  - interrupt-parent : The parent interrupt controller.
+> -- interrupts : The interrupt to the parent controller raised when GPIOs
+> -  generate the interrupts.
+> +- interrupts : The interrupts to the parent controller raised when GPIOs
+> +  generate the interrupts. If the controller provides one combined interrupt
+> +  for all GPIOs, specify a single interrupt. If the controller provides one
+> +  interrupt for each GPIO, provide a list of interrupts that correspond to each
+> +  of the GPIO pins. When specifying multiple interrupts, if any are unconnected,
+> +  use the interrupts-extended property to specify the interrupts and set the
+> +  interrupt controller handle for unused interrupts to 0.
+>  - snps,nr-gpios : The number of pins in the port, a single cell.
+>  - resets : Reset line for the controller.
+>
+> diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
+> index 226977f..7dcd06b 100644
+> --- a/drivers/gpio/gpio-dwapb.c
+> +++ b/drivers/gpio/gpio-dwapb.c
+> @@ -441,14 +441,19 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
+>         irq_gc->chip_types[1].handler = handle_edge_irq;
+>
+>         if (!pp->irq_shared) {
+> -               irq_set_chained_handler_and_data(pp->irq, dwapb_irq_handler,
+> -                                                gpio);
+> +               int i;
+> +
+> +               for (i = 0; i < pp->ngpio; i++) {
+> +                       if (pp->irq[i])
+> +                               irq_set_chained_handler_and_data(pp->irq[i],
+> +                                               dwapb_irq_handler, gpio);
+> +               }
+>         } else {
+>                 /*
+>                  * Request a shared IRQ since where MFD would have devices
+>                  * using the same irq pin
+>                  */
+> -               err = devm_request_irq(gpio->dev, pp->irq,
+> +               err = devm_request_irq(gpio->dev, pp->irq[0],
+>                                        dwapb_irq_handler_mfd,
+>                                        IRQF_SHARED, "gpio-dwapb-mfd", gpio);
+>                 if (err) {
+> @@ -524,7 +529,7 @@ static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
+>         if (pp->idx == 0)
+>                 port->gc.set_config = dwapb_gpio_set_config;
+>
+> -       if (pp->irq)
+> +       if (pp->has_irq)
+>                 dwapb_configure_irqs(gpio, port, pp);
+>
+>         err = gpiochip_add_data(&port->gc, port);
+> @@ -535,7 +540,7 @@ static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
+>                 port->is_registered = true;
+>
+>         /* Add GPIO-signaled ACPI event support */
+> -       if (pp->irq)
+> +       if (pp->has_irq)
+>                 acpi_gpiochip_request_interrupts(&port->gc);
+>
+>         return err;
+> @@ -601,13 +606,36 @@ dwapb_gpio_get_pdata(struct device *dev)
+>                 if (dev->of_node && pp->idx == 0 &&
+>                         fwnode_property_read_bool(fwnode,
+>                                                   "interrupt-controller")) {
+> -                       pp->irq = irq_of_parse_and_map(to_of_node(fwnode), 0);
+> -                       if (!pp->irq)
+> +                       struct device_node *np = to_of_node(fwnode);
+> +                       unsigned int j;
+> +
+> +                       /*
+> +                        * The IP has configuration options to allow a single
+> +                        * combined interrupt or one per gpio. If one per gpio,
+> +                        * some might not be used.
+> +                        */
+> +                       for (j = 0; j < pp->ngpio; j++) {
+> +                               int irq = of_irq_get(np, j);
+> +                               if (irq < 0)
+> +                                       continue;
+> +
+> +                               pp->irq[j] = irq;
+> +                               pp->has_irq = true;
+> +                       }
+> +
+> +                       if (!pp->has_irq)
+>                                 dev_warn(dev, "no irq for port%d\n", pp->idx);
+>                 }
+>
+> -               if (has_acpi_companion(dev) && pp->idx == 0)
+> -                       pp->irq = platform_get_irq(to_platform_device(dev), 0);
+> +               if (has_acpi_companion(dev) && pp->idx == 0) {
+> +                       unsigned int j;
+> +
+> +                       for (j = 0; j < pp->ngpio; j++) {
+> +                               pp->irq[j] = platform_get_irq(to_platform_device(dev), j);
+> +                               if (pp->irq[j])
+> +                                       pp->has_irq = true;
+> +                       }
+> +               }
+>
+>                 pp->irq_shared  = false;
+>                 pp->gpio_base   = -1;
+> diff --git a/drivers/mfd/intel_quark_i2c_gpio.c b/drivers/mfd/intel_quark_i2c_gpio.c
+> index 90e35de..5bddb84 100644
+> --- a/drivers/mfd/intel_quark_i2c_gpio.c
+> +++ b/drivers/mfd/intel_quark_i2c_gpio.c
+> @@ -233,7 +233,8 @@ static int intel_quark_gpio_setup(struct pci_dev *pdev, struct mfd_cell *cell)
+>         pdata->properties->idx          = 0;
+>         pdata->properties->ngpio        = INTEL_QUARK_MFD_NGPIO;
+>         pdata->properties->gpio_base    = INTEL_QUARK_MFD_GPIO_BASE;
+> -       pdata->properties->irq          = pdev->irq;
+> +       pdata->properties->irq[0]       = pdev->irq;
+> +       pdata->properties->has_irq      = true;
+>         pdata->properties->irq_shared   = true;
+>
+>         cell->platform_data = pdata;
+> diff --git a/include/linux/platform_data/gpio-dwapb.h b/include/linux/platform_data/gpio-dwapb.h
+> index 2dc7f4a..5a52d69 100644
+> --- a/include/linux/platform_data/gpio-dwapb.h
+> +++ b/include/linux/platform_data/gpio-dwapb.h
+> @@ -19,7 +19,8 @@ struct dwapb_port_property {
+>         unsigned int    idx;
+>         unsigned int    ngpio;
+>         unsigned int    gpio_base;
+> -       unsigned int    irq;
+> +       unsigned int    irq[32];
+> +       bool            has_irq;
+>         bool            irq_shared;
+>  };
+>
 
-[   16.992068] BUG: sleeping function called from invalid context at mm/slab.h:421
-[   17.001136] in_atomic(): 1, irqs_disabled(): 1, pid: 0, name: swapper/30
-[   17.009116] CPU: 30 PID: 0 Comm: swapper/30 Not tainted 4.17.0-rc2+ #665
-[   17.017092] Hardware name: Dell Inc. PowerEdge T630/0NT78X, BIOS 2.3.4 11/09/2016
-[   17.026354] Call Trace:
-[   17.029573]  <IRQ>
-[   17.032318]  dump_stack+0x46/0x5b
-[   17.036509]  ___might_sleep+0xd5/0x110
-[   17.041189]  __kmalloc+0x166/0x1f0
-[   17.045486]  crng_reseed+0x10c/0x2f0
-[   17.049965]  ? add_interrupt_randomness+0x161/0x1e0
-[   17.055903]  credit_entropy_bits+0x272/0x280
-[   17.061163]  add_interrupt_randomness+0x161/0x1e0
-[   17.066905]  handle_irq_event_percpu+0x2e/0x50
-[   17.072362]  handle_irq_event+0x34/0x60
-[   17.077222]  handle_edge_irq+0x71/0x180
-[   17.081996]  handle_irq+0xa5/0x110
-[   17.086286]  do_IRQ+0x41/0xc0
-[   17.090091]  common_interrupt+0xf/0xf
-[   17.094670]  </IRQ>
-[   17.097501] RIP: 0010:cpuidle_enter_state+0x9f/0x2d0
-[   17.103533] RSP: 0018:ffff880101747ed0 EFLAGS: 00000246 ORIG_RAX: ffffffffffffffde
-[   17.112900] RAX: ffff881fffbe0f80 RBX: 00000003f4cdab59 RCX: 000000000000001f
-[   17.121364] RDX: 20c49ba5e353f7cf RSI: 000000003a3fcf2c RDI: 0000000000000000
-[   17.129829] RBP: 0000000000000002 R08: 0000000000000e7d R09: 0000004d7a7575c0
-[   17.138292] R10: ffff880101747eb8 R11: 000000000000002d R12: ffff883ffb1e2c00
-[   17.146760] R13: ffffffff820cc818 R14: 0000000000000000 R15: 00000003d7b784fc
-[   17.155227]  do_idle+0x1b6/0x200
-[   17.159321]  cpu_startup_entry+0x19/0x20
-[   17.164191]  secondary_startup_64+0xa5/0xb0
-[   17.169382] random: crng init done
+Acked-by: Hoan Tran <hotran@apm.com>
 
-during boot. We end up doing the numa_crng_init() from interrupt context, which
-makes things unhappy since you do GFP_KERNEL | __GFP_NOFAIL allocations from
-there. This was caused by:
+Thanks
+Hoan
 
-commit 8ef35c866f8862df074a49a93b0309725812dea8
-Author: Theodore Ts'o <tytso@mit.edu>
-Date:   Wed Apr 11 15:23:56 2018 -0400
-
-    random: set up the NUMA crng instances after the CRNG is fully initialized
-    
-I was going to send the trivial GFP_KERNEL -> GFP_ATOMIC patch, but with the
-__GFP_NOFAIL, that's kind of tricky. We can't feasibly do init from when we
-add randomness, if you want it to be a NOFAIL kind of thing.
-
--- 
-Jens Axboe
+> --
+> 2.7.4
+>
