@@ -1,103 +1,562 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752962AbeDZG0l (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 02:26:41 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:1942 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751477AbeDZG0j (ORCPT
+        id S1753435AbeDZG1Q (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 02:27:16 -0400
+Received: from lb1-smtp-cloud7.xs4all.net ([194.109.24.24]:42522 "EHLO
+        lb1-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753074AbeDZG1O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 02:26:39 -0400
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Wed, 25 Apr 2018 23:26:37 -0700
-Subject: Re: [PATCH] net: phy: marvell: clear wol event before setting it
-To: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-CC: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Jingju Hou <Jingju.Hou@synaptics.com>
-References: <20180419160232.519d15be@xhacker.debian>
- <20180419121801.GC17888@lunn.ch>
- <4273f766-a017-b336-7d14-a28901d274b9@nvidia.com>
- <20180426141508.6660a633@xhacker.debian>
-From: Bhadram Varka <vbhadram@nvidia.com>
-Message-ID: <be2addb5-b3fd-13cb-ad33-f0527931a0d2@nvidia.com>
-Date: Thu, 26 Apr 2018 11:56:33 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Thu, 26 Apr 2018 02:27:14 -0400
+Subject: Re: [PATCH v8 09/13] [media] vb2: add in-fence support to QBUF
+To: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+Cc: Gustavo Padovan <gustavo@padovan.org>,
+        linux-media <linux-media@vger.kernel.org>, kernel@collabora.com,
+        Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
+        Shuah Khan <shuahkh@osg.samsung.com>, Pawel Osciak <pawel@osciak.com>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Sakari Ailus <sakari.ailus@iki.fi>,
+        Brian Starkey <brian.starkey@arm.com>, linux-kernel@vger.kernel.org,
+        Gustavo Padovan <gustavo.padovan@collabora.com>
+References: <20180309174920.22373-1-gustavo@padovan.org>
+ <20180309174920.22373-10-gustavo@padovan.org>
+ <c053b011-4273-7b32-71f0-f6b6054a7be2@xs4all.nl>
+ <CAAEAJfBs2SpXxHEKvhuxq_hDQhoeNB+HysrN6KG5Qk7qanxLtw@mail.gmail.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <4d50b641-44fc-91a0-fd63-203c2f2cbff9@xs4all.nl>
+Date: Thu, 26 Apr 2018 08:27:07 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <20180426141508.6660a633@xhacker.debian>
-X-Originating-IP: [10.19.65.191]
-X-ClientProxiedBy: BGMAIL104.nvidia.com (10.25.59.13) To bgmail102.nvidia.com
- (10.25.59.11)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAAEAJfBs2SpXxHEKvhuxq_hDQhoeNB+HysrN6KG5Qk7qanxLtw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfAkvYMWXHL87hiQeuUNoWqBtU5XgBIx7W1yCO56y5UMaH6BvL9SLiye5D5K5ZkdJzfn7YBwLjjrF/NHwKrhY2mJ+6KS5AQsUQTmpPRcm66z/5gByVFjW
+ dCA4liSh+HtXjhAYMkNhAys3qzDK56N0L2vrLfOsbro8QbewECFFmenOGo/yt0rzwOBYU6KUvWrVh7aYPQ6+8PrTh3Qg6lUthyMCof04ZY8WY73uuUV12aMG
+ 0RadXv6FUDRDS2HM5yOCiqBLZuxjFo/5dsJvtSv7xvIW2Ncu7T4l2eCOQlFOMxOVyE72UFEdL419eA9C53D0283Zw+CFp2Eb1lL6Gfwp33xY/+3BR97KNBCr
+ 49Hh6muf6fdFY8Cwfvgv7nutyl7XrYLSGGvcJMljrG6FBt4ffTzjlT+AmuiITRLa2eAizzRV7rmSVrToHQofqrJAFVaaYuMvkz2qrGwfCtY0BjSFDvlJf4YO
+ 3lhmr5jF4p3WMQ9Ul33B8NlvLtRVFHwLcKsob1kg4jo44G9/1Snfzuz8VCrtQBC7ak9opGWB+uMb/s2JQz2VnkjtPh1A4bMkOu9JVm99sl/wutyqU45HHGqK
+ P7xE0CsW2kP+z6uGmZIZfwfUU1cu0VYYy+XNrUVxvck6W6QMcQIjNUS6Mk4p6TOFUlanQLiXHHN5YUYev3BwNDVd
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-On 4/26/2018 11:45 AM, Jisheng Zhang wrote:
-> Hi,
->
-> On Thu, 26 Apr 2018 11:10:21 +0530 Bhadram Varka wrote:
->
->> Hi,
->>
->> On 4/19/2018 5:48 PM, Andrew Lunn wrote:
->>> On Thu, Apr 19, 2018 at 04:02:32PM +0800, Jisheng Zhang wrote:
->>>> From: Jingju Hou <Jingju.Hou@synaptics.com>
->>>>
->>>> If WOL event happened once, the LED[2] interrupt pin will not be
->>>> cleared unless reading the CSISR register. So clear the WOL event
->>>> before enabling it.
->>>>
->>>> Signed-off-by: Jingju Hou <Jingju.Hou@synaptics.com>
->>>> Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
->>>> ---
->>>>    drivers/net/phy/marvell.c | 9 +++++++++
->>>>    1 file changed, 9 insertions(+)
->>>>
->>>> diff --git a/drivers/net/phy/marvell.c b/drivers/net/phy/marvell.c
->>>> index c22e8e383247..b6abe1cbc84b 100644
->>>> --- a/drivers/net/phy/marvell.c
->>>> +++ b/drivers/net/phy/marvell.c
->>>> @@ -115,6 +115,9 @@
->>>>    /* WOL Event Interrupt Enable */
->>>>    #define MII_88E1318S_PHY_CSIER_WOL_EIE			BIT(7)
->>>>    
->>>> +/* Copper Specific Interrupt Status Register */
->>>> +#define MII_88E1318S_PHY_CSISR				0x13
->>>> +
->>>>    /* LED Timer Control Register */
->>>>    #define MII_88E1318S_PHY_LED_TCR			0x12
->>>>    #define MII_88E1318S_PHY_LED_TCR_FORCE_INT		BIT(15)
->>>> @@ -1393,6 +1396,12 @@ static int m88e1318_set_wol(struct phy_device *phydev,
->>>>    		if (err < 0)
->>>>    			goto error;
->>>>    
->>>> +		/* If WOL event happened once, the LED[2] interrupt pin
->>>> +		 * will not be cleared unless reading the CSISR register.
->>>> +		 * So clear the WOL event first before enabling it.
->>>> +		 */
->>>> +		phy_read(phydev, MII_88E1318S_PHY_CSISR);
->>>> +
->>> Hi Jisheng
+On 04/25/2018 10:11 PM, Ezequiel Garcia wrote:
+> On 14 March 2018 at 12:55, Hans Verkuil <hverkuil@xs4all.nl> wrote:
+>> On 03/09/2018 09:49 AM, Gustavo Padovan wrote:
+>>> From: Gustavo Padovan <gustavo.padovan@collabora.com>
 >>>
->>> The problem with this is, you could be clearing a real interrupt, link
->>> down/up etc. If interrupts are in use, i think the normal interrupt
->>> handling will clear the WOL interrupt? So can you make this read
->>> conditional on !phy_interrupt_is_valid()?
->> So this will clear WoL interrupt bit from Copper Interrupt status register.
+>>> Receive in-fence from userspace and add support for waiting on them
+>>> before queueing the buffer to the driver. Buffers can't be queued to the
+>>> driver before its fences signal. And a buffer can't be queue to the driver
 >>
->> How about clearing WoL status (Page 17, register 17) for every WOL event ?
+>> queue -> queued
 >>
-> This is already properly done by setting MII_88E1318S_PHY_WOL_CTRL_CLEAR_WOL_STATUS
-> in m88e1318_set_wol()
-This part of the code executes only when we enable WOL through ethtool 
-(ethtool -s eth0 wol g)
+>>> out of the order they were queued from userspace. That means that even if
+>>> it fence signal it must wait all other buffers, ahead of it in the queue,
+>>
+>> it fence signal -> its fence signals
+>> wait all -> wait for all
+>>
+>>> to signal first.
+>>>
+>>> If the fence for some buffer fails we do not queue it to the driver,
+>>> instead we mark it as error and wait until the previous buffer is done
+>>> to notify userspace of the error. We wait here to deliver the buffers back
+>>> to userspace in order.
+>>>
+>>> v9:   - rename fence to in_fence in many places
+>>>       - handle fences signalling with error better (Hans Verkuil)
+>>>
+>>> v8:   - improve comments and docs (Hans Verkuil)
+>>>       - fix unlocking of vb->fence_cb_lock on vb2_core_qbuf (Hans Verkuil)
+>>>       - move in-fences code that was in the out-fences patch here (Alex)
+>>>
+>>> v8:   - improve comments about fences with errors
+>>
+>> v9? Two v8 entries?
+>>
+>>>
+>>> v7:
+>>>       - get rid of the fence array stuff for ordering and just use
+>>>       get_num_buffers_ready() (Hans)
+>>>       - fix issue of queuing the buffer twice (Hans)
+>>>       - avoid the dma_fence_wait() in core_qbuf() (Alex)
+>>>       - merge preparation commit in
+>>>
+>>> v6:
+>>>       - With fences always keep the order userspace queues the buffers.
+>>>       - Protect in_fence manipulation with a lock (Brian Starkey)
+>>>       - check if fences have the same context before adding a fence array
+>>>       - Fix last_fence ref unbalance in __set_in_fence() (Brian Starkey)
+>>>       - Clean up fence if __set_in_fence() fails (Brian Starkey)
+>>>       - treat -EINVAL from dma_fence_add_callback() (Brian Starkey)
+>>>
+>>> v5:   - use fence_array to keep buffers ordered in vb2 core when
+>>>       needed (Brian Starkey)
+>>>       - keep backward compat on the reserved2 field (Brian Starkey)
+>>>       - protect fence callback removal with lock (Brian Starkey)
+>>>
+>>> v4:
+>>>       - Add a comment about dma_fence_add_callback() not returning a
+>>>       error (Hans)
+>>>       - Call dma_fence_put(vb->in_fence) if fence signaled (Hans)
+>>>       - select SYNC_FILE under config VIDEOBUF2_CORE (Hans)
+>>>       - Move dma_fence_is_signaled() check to __enqueue_in_driver() (Hans)
+>>>       - Remove list_for_each_entry() in __vb2_core_qbuf() (Hans)
+>>>       -  Remove if (vb->state != VB2_BUF_STATE_QUEUED) from
+>>>       vb2_start_streaming() (Hans)
+>>>       - set IN_FENCE flags on __fill_v4l2_buffer (Hans)
+>>>       - Queue buffers to the driver as soon as they are ready (Hans)
+>>>       - call fill_user_buffer() after queuing the buffer (Hans)
+>>>       - add err: label to clean up fence
+>>>       - add dma_fence_wait() before calling vb2_start_streaming()
+>>>
+>>> v3:   - document fence parameter
+>>>       - remove ternary if at vb2_qbuf() return (Mauro)
+>>>       - do not change if conditions behaviour (Mauro)
+>>>
+>>> v2:
+>>>       - fix vb2_queue_or_prepare_buf() ret check
+>>>       - remove check for VB2_MEMORY_DMABUF only (Javier)
+>>>       - check num of ready buffers to start streaming
+>>>       - when queueing, start from the first ready buffer
+>>>       - handle queue cancel
+>>>
+>>> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
+>>> ---
+>>>  drivers/media/common/videobuf2/videobuf2-core.c | 197 ++++++++++++++++++++----
+>>>  drivers/media/common/videobuf2/videobuf2-v4l2.c |  34 +++-
+>>>  drivers/media/v4l2-core/Kconfig                 |  33 ++++
+>>>  include/media/videobuf2-core.h                  |  14 +-
+>>>  4 files changed, 248 insertions(+), 30 deletions(-)
+>>>
+>>> diff --git a/drivers/media/common/videobuf2/videobuf2-core.c b/drivers/media/common/videobuf2/videobuf2-core.c
+>>> index d3f7bb33a54d..5de5e35cfc40 100644
+>>> --- a/drivers/media/common/videobuf2/videobuf2-core.c
+>>> +++ b/drivers/media/common/videobuf2/videobuf2-core.c
+>>> @@ -352,6 +352,7 @@ static int __vb2_queue_alloc(struct vb2_queue *q, enum vb2_memory memory,
+>>>               vb->index = q->num_buffers + buffer;
+>>>               vb->type = q->type;
+>>>               vb->memory = memory;
+>>> +             spin_lock_init(&vb->fence_cb_lock);
+>>>               for (plane = 0; plane < num_planes; ++plane) {
+>>>                       vb->planes[plane].length = plane_sizes[plane];
+>>>                       vb->planes[plane].min_length = plane_sizes[plane];
+>>> @@ -891,20 +892,12 @@ void *vb2_plane_cookie(struct vb2_buffer *vb, unsigned int plane_no)
+>>>  }
+>>>  EXPORT_SYMBOL_GPL(vb2_plane_cookie);
+>>>
+>>> -void vb2_buffer_done(struct vb2_buffer *vb, enum vb2_buffer_state state)
+>>> +static void vb2_process_buffer_done(struct vb2_buffer *vb, enum vb2_buffer_state state)
+>>>  {
+>>>       struct vb2_queue *q = vb->vb2_queue;
+>>>       unsigned long flags;
+>>>       unsigned int plane;
+>>>
+>>> -     if (WARN_ON(vb->state != VB2_BUF_STATE_ACTIVE))
+>>> -             return;
+>>> -
+>>> -     if (WARN_ON(state != VB2_BUF_STATE_DONE &&
+>>> -                 state != VB2_BUF_STATE_ERROR &&
+>>> -                 state != VB2_BUF_STATE_QUEUED &&
+>>> -                 state != VB2_BUF_STATE_REQUEUEING))
+>>> -             state = VB2_BUF_STATE_ERROR;
+>>>
+>>>  #ifdef CONFIG_VIDEO_ADV_DEBUG
+>>>       /*
+>>> @@ -921,6 +914,9 @@ void vb2_buffer_done(struct vb2_buffer *vb, enum vb2_buffer_state state)
+>>>               call_void_memop(vb, finish, vb->planes[plane].mem_priv);
+>>>
+>>>       spin_lock_irqsave(&q->done_lock, flags);
+>>> +     if (vb->state == VB2_BUF_STATE_ACTIVE)
+>>> +             atomic_dec(&q->owned_by_drv_count);
+>>> +
+>>>       if (state == VB2_BUF_STATE_QUEUED ||
+>>>           state == VB2_BUF_STATE_REQUEUEING) {
+>>>               vb->state = VB2_BUF_STATE_QUEUED;
+>>> @@ -929,7 +925,7 @@ void vb2_buffer_done(struct vb2_buffer *vb, enum vb2_buffer_state state)
+>>>               list_add_tail(&vb->done_entry, &q->done_list);
+>>>               vb->state = state;
+>>>       }
+>>> -     atomic_dec(&q->owned_by_drv_count);
+>>> +
+>>>       spin_unlock_irqrestore(&q->done_lock, flags);
+>>>
+>>>       trace_vb2_buf_done(q, vb);
+>>> @@ -946,6 +942,36 @@ void vb2_buffer_done(struct vb2_buffer *vb, enum vb2_buffer_state state)
+>>>               wake_up(&q->done_wq);
+>>>               break;
+>>>       }
+>>> +
+>>> +}
+>>> +
+>>> +void vb2_buffer_done(struct vb2_buffer *vb, enum vb2_buffer_state state)
+>>> +{
+>>> +     if (WARN_ON(vb->state != VB2_BUF_STATE_ACTIVE))
+>>> +             return;
+>>> +
+>>> +     if (WARN_ON(state != VB2_BUF_STATE_DONE &&
+>>> +                 state != VB2_BUF_STATE_ERROR &&
+>>> +                 state != VB2_BUF_STATE_QUEUED &&
+>>> +                 state != VB2_BUF_STATE_REQUEUEING))
+>>> +             state = VB2_BUF_STATE_ERROR;
+>>> +
+>>> +     vb2_process_buffer_done(vb, state);
+>>> +
+>>> +     /*
+>>> +      * Check if there is any buffer with error in the next position of the queue,
+>>> +      * buffers whose in-fence signaled with error are not queued to the driver
+>>> +      * and kept on the queue until the buffer before them is done, so to not
+>>> +      * delivery buffers back to userspace in the wrong order. Here we process
+>>
+>> delivery -> deliver
+>>
+>>> +      * any existing buffers with errors and wake up userspace.
+>>> +      */
+>>> +     for (;;) {
+>>> +             vb = list_next_entry(vb, queued_entry);
+>>> +             if (!vb || vb->state != VB2_BUF_STATE_ERROR)
+>>> +                     break;
+>>> +
+>>> +             vb2_process_buffer_done(vb, VB2_BUF_STATE_ERROR);
+>>> +        }
+>>>  }
+>>>  EXPORT_SYMBOL_GPL(vb2_buffer_done);
+>>>
+>>> @@ -1230,6 +1256,9 @@ static void __enqueue_in_driver(struct vb2_buffer *vb)
+>>>  {
+>>>       struct vb2_queue *q = vb->vb2_queue;
+>>>
+>>> +     if (vb->in_fence && !dma_fence_is_signaled(vb->in_fence))
+>>> +             return;
+>>> +
+>>>       vb->state = VB2_BUF_STATE_ACTIVE;
+>>>       atomic_inc(&q->owned_by_drv_count);
+>>>
+>>> @@ -1281,6 +1310,24 @@ static int __buf_prepare(struct vb2_buffer *vb, const void *pb)
+>>>       return 0;
+>>>  }
+>>>
+>>> +static int __get_num_ready_buffers(struct vb2_queue *q)
+>>> +{
+>>> +     struct vb2_buffer *vb;
+>>> +     int ready_count = 0;
+>>> +     unsigned long flags;
+>>> +
+>>> +     /* count num of buffers ready in front of the queued_list */
+>>> +     list_for_each_entry(vb, &q->queued_list, queued_entry) {
+>>> +             spin_lock_irqsave(&vb->fence_cb_lock, flags);
+>>> +             if (vb->in_fence && !dma_fence_is_signaled(vb->in_fence))
+>>> +                     break;
+>>> +             ready_count++;
+>>> +             spin_unlock_irqrestore(&vb->fence_cb_lock, flags);
+>>> +     }
+>>> +
+>>> +     return ready_count;
+>>> +}
+>>> +
+>>>  int vb2_core_prepare_buf(struct vb2_queue *q, unsigned int index, void *pb)
+>>>  {
+>>>       struct vb2_buffer *vb;
+>>> @@ -1369,9 +1416,43 @@ static int vb2_start_streaming(struct vb2_queue *q)
+>>>       return ret;
+>>>  }
+>>>
+>>> -int vb2_core_qbuf(struct vb2_queue *q, unsigned int index, void *pb)
+>>> +static void vb2_qbuf_fence_cb(struct dma_fence *f, struct dma_fence_cb *cb)
+>>> +{
+>>> +     struct vb2_buffer *vb = container_of(cb, struct vb2_buffer, fence_cb);
+>>> +     struct vb2_queue *q = vb->vb2_queue;
+>>> +     unsigned long flags;
+>>> +
+>>> +     spin_lock_irqsave(&vb->fence_cb_lock, flags);
+>>> +     /*
+>>> +      * If the fence signals with an error we mark the buffer as such
+>>> +      * and avoid using it by setting it to VB2_BUF_STATE_ERROR and
+>>> +      * not queueing it to the driver. However we can't notify the error
+>>> +      * to userspace right now because, at the time this callback run, QBUF
+>>> +      * returned already.
+>>
+>> returned -> has returned
+>>
+>>> +      * So we delay that to DQBUF time. See comments in vb2_buffer_done()
+>>> +      * as well.
+>>> +      */
+>>> +     if (vb->in_fence->error)
+>>> +             vb->state = VB2_BUF_STATE_ERROR;
+>>> +
+>>> +     dma_fence_put(vb->in_fence);
+>>> +     vb->in_fence = NULL;
+>>> +
+>>> +     if (vb->state == VB2_BUF_STATE_ERROR) {
+>>> +             spin_unlock_irqrestore(&vb->fence_cb_lock, flags);
+>>> +             return;
+>>> +     }
+>>> +
+>>> +     if (q->start_streaming_called)
+>>> +             __enqueue_in_driver(vb);
+>>> +     spin_unlock_irqrestore(&vb->fence_cb_lock, flags);
+>>> +}
+>>> +
+>>> +int vb2_core_qbuf(struct vb2_queue *q, unsigned int index, void *pb,
+>>> +               struct dma_fence *in_fence)
+>>>  {
+>>>       struct vb2_buffer *vb;
+>>> +     unsigned long flags;
+>>>       int ret;
+>>>
+>>>       vb = q->bufs[index];
+>>> @@ -1380,16 +1461,18 @@ int vb2_core_qbuf(struct vb2_queue *q, unsigned int index, void *pb)
+>>>       case VB2_BUF_STATE_DEQUEUED:
+>>>               ret = __buf_prepare(vb, pb);
+>>>               if (ret)
+>>> -                     return ret;
+>>> +                     goto err;
+>>>               break;
+>>>       case VB2_BUF_STATE_PREPARED:
+>>>               break;
+>>>       case VB2_BUF_STATE_PREPARING:
+>>>               dprintk(1, "buffer still being prepared\n");
+>>> -             return -EINVAL;
+>>> +             ret = -EINVAL;
+>>> +             goto err;
+>>>       default:
+>>>               dprintk(1, "invalid buffer state %d\n", vb->state);
+>>> -             return -EINVAL;
+>>> +             ret = -EINVAL;
+>>> +             goto err;
+>>>       }
+>>>
+>>>       /*
+>>> @@ -1400,6 +1483,7 @@ int vb2_core_qbuf(struct vb2_queue *q, unsigned int index, void *pb)
+>>>       q->queued_count++;
+>>>       q->waiting_for_buffers = false;
+>>>       vb->state = VB2_BUF_STATE_QUEUED;
+>>> +     vb->in_fence = in_fence;
+>>>
+>>>       if (pb)
+>>>               call_void_bufop(q, copy_timestamp, vb, pb);
+>>> @@ -1407,15 +1491,40 @@ int vb2_core_qbuf(struct vb2_queue *q, unsigned int index, void *pb)
+>>>       trace_vb2_qbuf(q, vb);
+>>>
+>>>       /*
+>>> -      * If already streaming, give the buffer to driver for processing.
+>>> -      * If not, the buffer will be given to driver on next streamon.
+>>> +      * For explicit synchronization: If the fence didn't signal
+>>> +      * yet we setup a callback to queue the buffer once the fence
+>>> +      * signals, and then, return successfully. But if the fence
+>>
+>> , and then, -> and then (no commas)
+>>
+>>> +      * already signaled we lose the reference we held and queue the
+>>> +      * buffer to the driver.
+>>>        */
+>>> -     if (q->start_streaming_called)
+>>> -             __enqueue_in_driver(vb);
+>>> +     spin_lock_irqsave(&vb->fence_cb_lock, flags);
+>>> +     if (vb->in_fence) {
+>>> +             ret = dma_fence_add_callback(vb->in_fence, &vb->fence_cb,
+>>> +                                          vb2_qbuf_fence_cb);
+>>> +             /* is the fence signaled? */
+>>> +             if (ret == -ENOENT) {
+>>> +                     dma_fence_put(vb->in_fence);
+>>> +                     vb->in_fence = NULL;
+>>> +             } else if (ret) {
+>>> +                     goto unlock;
+>>> +             }
+>>> +     }
+>>>
+>>> -     /* Fill buffer information for the userspace */
+>>> -     if (pb)
+>>> -             call_void_bufop(q, fill_user_buffer, vb, pb);
+>>> +     /*
+>>> +      * If already streaming and there is no fence to wait on
+>>> +      * give the buffer to driver for processing.
+>>> +      */
+>>> +     if (q->start_streaming_called) {
+>>> +             struct vb2_buffer *b;
+>>> +
+>>> +             list_for_each_entry(b, &q->queued_list, queued_entry) {
+>>> +                     if (b->state != VB2_BUF_STATE_QUEUED)
+>>> +                             continue;
+>>> +                     if (b->in_fence)
+>>> +                             break;
+>>> +                     __enqueue_in_driver(b);
+>>> +             }
+>>> +     }
+>>>
+>>>       /*
+>>>        * If streamon has been called, and we haven't yet called
+>>> @@ -1424,14 +1533,36 @@ int vb2_core_qbuf(struct vb2_queue *q, unsigned int index, void *pb)
+>>>        * then we can finally call start_streaming().
+>>>        */
+>>>       if (q->streaming && !q->start_streaming_called &&
+>>> -         q->queued_count >= q->min_buffers_needed) {
+>>> +         __get_num_ready_buffers(q) >= q->min_buffers_needed) {
+>>>               ret = vb2_start_streaming(q);
+>>>               if (ret)
+>>> -                     return ret;
+>>> +                     goto unlock;
+>>>       }
+>>>
+>>> +     spin_unlock_irqrestore(&vb->fence_cb_lock, flags);
+>>> +
+>>> +     /* Fill buffer information for the userspace */
+>>> +     if (pb)
+>>> +             call_void_bufop(q, fill_user_buffer, vb, pb);
+>>> +
+>>>       dprintk(2, "qbuf of buffer %d succeeded\n", vb->index);
+>>>       return 0;
+>>> +
+>>> +unlock:
+>>> +     spin_unlock_irqrestore(&vb->fence_cb_lock, flags);
+>>> +
+>>> +err:
+>>> +     /* Fill buffer information for the userspace */
+>>> +     if (pb)
+>>> +             call_void_bufop(q, fill_user_buffer, vb, pb);
+>>> +
+>>> +     if (vb->in_fence) {
+>>> +             dma_fence_put(vb->in_fence);
+>>> +             vb->in_fence = NULL;
+>>> +     }
+>>> +
+>>> +     return ret;
+>>> +
+>>>  }
+>>>  EXPORT_SYMBOL_GPL(vb2_core_qbuf);
+>>>
+>>> @@ -1642,6 +1773,8 @@ EXPORT_SYMBOL_GPL(vb2_core_dqbuf);
+>>>  static void __vb2_queue_cancel(struct vb2_queue *q)
+>>>  {
+>>>       unsigned int i;
+>>> +     struct vb2_buffer *vb;
+>>> +     unsigned long flags;
+>>>
+>>>       /*
+>>>        * Tell driver to stop all transactions and release all queued
+>>> @@ -1672,6 +1805,16 @@ static void __vb2_queue_cancel(struct vb2_queue *q)
+>>>       q->queued_count = 0;
+>>>       q->error = 0;
+>>>
+>>> +     list_for_each_entry(vb, &q->queued_list, queued_entry) {
+>>> +             spin_lock_irqsave(&vb->fence_cb_lock, flags);
+>>> +             if (vb->in_fence) {
+>>> +                     dma_fence_remove_callback(vb->in_fence, &vb->fence_cb);
+>>> +                     dma_fence_put(vb->in_fence);
+>>> +                     vb->in_fence = NULL;
+>>> +             }
+>>> +             spin_unlock_irqrestore(&vb->fence_cb_lock, flags);
+>>> +     }
+>>> +
+>>>       /*
+>>>        * Remove all buffers from videobuf's list...
+>>>        */
+>>> @@ -1742,7 +1885,7 @@ int vb2_core_streamon(struct vb2_queue *q, unsigned int type)
+>>>        * Tell driver to start streaming provided sufficient buffers
+>>>        * are available.
+>>>        */
+>>> -     if (q->queued_count >= q->min_buffers_needed) {
+>>> +     if (__get_num_ready_buffers(q) >= q->min_buffers_needed) {
+>>>               ret = v4l_vb2q_enable_media_source(q);
+>>>               if (ret)
+>>>                       return ret;
+>>> @@ -2264,7 +2407,7 @@ static int __vb2_init_fileio(struct vb2_queue *q, int read)
+>>>                * Queue all buffers.
+>>>                */
+>>>               for (i = 0; i < q->num_buffers; i++) {
+>>> -                     ret = vb2_core_qbuf(q, i, NULL);
+>>> +                     ret = vb2_core_qbuf(q, i, NULL, NULL);
+>>>                       if (ret)
+>>>                               goto err_reqbufs;
+>>>                       fileio->bufs[i].queued = 1;
+>>> @@ -2443,7 +2586,7 @@ static size_t __vb2_perform_fileio(struct vb2_queue *q, char __user *data, size_
+>>>
+>>>               if (copy_timestamp)
+>>>                       b->timestamp = ktime_get_ns();
+>>> -             ret = vb2_core_qbuf(q, index, NULL);
+>>> +             ret = vb2_core_qbuf(q, index, NULL, NULL);
+>>>               dprintk(5, "vb2_dbuf result: %d\n", ret);
+>>>               if (ret)
+>>>                       return ret;
+>>> @@ -2546,7 +2689,7 @@ static int vb2_thread(void *data)
+>>>               if (copy_timestamp)
+>>>                       vb->timestamp = ktime_get_ns();
+>>>               if (!threadio->stop)
+>>> -                     ret = vb2_core_qbuf(q, vb->index, NULL);
+>>> +                     ret = vb2_core_qbuf(q, vb->index, NULL, NULL);
+>>>               call_void_qop(q, wait_prepare, q);
+>>>               if (ret || threadio->stop)
+>>>                       break;
+>>> diff --git a/drivers/media/common/videobuf2/videobuf2-v4l2.c b/drivers/media/common/videobuf2/videobuf2-v4l2.c
+>>> index ad1e032c3bf5..1df5dd01c0cd 100644
+>>> --- a/drivers/media/common/videobuf2/videobuf2-v4l2.c
+>>> +++ b/drivers/media/common/videobuf2/videobuf2-v4l2.c
+>>> @@ -23,6 +23,7 @@
+>>>  #include <linux/sched.h>
+>>>  #include <linux/freezer.h>
+>>>  #include <linux/kthread.h>
+>>> +#include <linux/sync_file.h>
+>>>
+>>>  #include <media/v4l2-dev.h>
+>>>  #include <media/v4l2-fh.h>
+>>> @@ -178,6 +179,17 @@ static int vb2_queue_or_prepare_buf(struct vb2_queue *q, struct v4l2_buffer *b,
+>>>               return -EINVAL;
+>>>       }
+>>>
+>>> +     if ((b->fence_fd != 0 && b->fence_fd != -1) &&
+>>> +         !(b->flags & V4L2_BUF_FLAG_IN_FENCE)) {
+>>> +             dprintk(1, "%s: fence_fd set without IN_FENCE flag\n", opname);
+>>> +             return -EINVAL;
+>>> +     }
+>>> +
+>>> +     if (b->fence_fd < 0 && (b->flags & V4L2_BUF_FLAG_IN_FENCE)) {
+>>> +             dprintk(1, "%s: IN_FENCE flag set but no fence_fd\n", opname);
+>>> +             return -EINVAL;
+>>> +     }
+>>> +
+>>>       return __verify_planes_array(q->bufs[b->index], b);
+>>>  }
+>>>
+>>> @@ -203,9 +215,14 @@ static void __fill_v4l2_buffer(struct vb2_buffer *vb, void *pb)
+>>>       b->timestamp = ns_to_timeval(vb->timestamp);
+>>>       b->timecode = vbuf->timecode;
+>>>       b->sequence = vbuf->sequence;
+>>> -     b->fence_fd = 0;
+>>>       b->reserved = 0;
+>>>
+>>> +     b->fence_fd = 0;
+>>> +     if (vb->in_fence)
+>>> +             b->flags |= V4L2_BUF_FLAG_IN_FENCE;
+>>> +     else
+>>> +             b->flags &= ~V4L2_BUF_FLAG_IN_FENCE;
+>>> +
+>>
+>> I was wondering: if the in-fence was already triggered this flag is not set because
+>> vb->in_fence will be NULL. Would it be useful to add a vb2 flag that is set when the
+>> in-fence triggered and report that here somehow? It might be useful for debugging.
+>>
+>> Just wondering.
+>>
+> 
+> I'm also wondering :-) ... does it make sense to use a flag for this?
+> 
+> #define V4L2_BUF_FLAG_IN_FENCE                  0x00200000
+> #define V4L2_BUF_FLAG_OUT_FENCE                 0x00400000
+> #define V4L2_BUF_FLAG_IN_FENCE_SIGNALED         0x00800000
+> 
+> Aren't we using a very limited resource? Is it worry?
 
-Lets say once WOL enabled through magic packet - HW generates WOL 
-interrupt once magic packet received.
-The problem that I see here is that for the next immediate magic packet 
-I don't see WOL interrupt generated by the HW.
-I need to explicitly clear WOL status for HW to generate WOL interrupt.
+No, not a worry. It is very, very likely that there will be a new set of streaming ioctls
+anyway (I have patches pending and will continue with that once fences and request API
+are in). At that point there will be a new v4l2_buffer struct with more room. And besides,
+there are still 8 bits left after this.
+
+Regards,
+
+	Hans
+
+> 
+> Thanks,
+> 
