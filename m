@@ -1,46 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755861AbeDZVNr (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 17:13:47 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:53769 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752991AbeDZVNo (ORCPT
+        id S1756318AbeDZVQO (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 17:16:14 -0400
+Received: from mail-vk0-f45.google.com ([209.85.213.45]:36317 "EHLO
+        mail-vk0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752358AbeDZVQM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 17:13:44 -0400
-X-Google-Smtp-Source: AB8JxZog4C6dGdcqGuVX/U7blXs2Fq+x5oAfhMOD8/CqpJtQiIMASRSSnpZozwrNRjNmv03j+RW9fQ==
-From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-To: Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Michal Simek <michal.simek@xilinx.com>,
-        linux-can@vger.kernel.org (open list:CAN NETWORK DRIVERS),
-        netdev@vger.kernel.org (open list:NETWORKING DRIVERS),
-        linux-kernel@vger.kernel.org (open list),
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Allwinner
-        sunXi SoC support)
-Subject: [PATCH 0/3] can: fix ndo_start_xmit()'s return type
-Date: Thu, 26 Apr 2018 23:13:35 +0200
-Message-Id: <20180426211339.30821-1-luc.vanoostenryck@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Thu, 26 Apr 2018 17:16:12 -0400
+X-Google-Smtp-Source: AIpwx48KGT1r7m/6zqcgpHJiYw5ONa7WPYin5VbExwWhL0FJ5+71IbagHCsoxJuYKTbzEhuLzOUv7JARy4zASj2yAFI=
+MIME-Version: 1.0
+In-Reply-To: <823082096.24861749.1524771086176.JavaMail.zimbra@redhat.com>
+References: <981100282.24860394.1524770798522.JavaMail.zimbra@redhat.com> <823082096.24861749.1524771086176.JavaMail.zimbra@redhat.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Thu, 26 Apr 2018 14:16:11 -0700
+X-Google-Sender-Auth: Flt3Bziq1QjjMsZrHgJRq4D2lck
+Message-ID: <CAGXu5j+3LpvTk49p8o4oBiS3e=3UBAqL5oHzBZB1i9AegvMmDg@mail.gmail.com>
+Subject: Re: BUG: /proc/kcore does not export direct-mapped memory on arm64
+ (and presumably some other architectures)
+To: Dave Anderson <anderson@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Laura Abbott <labbott@redhat.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, Andi Kleen <andi@firstfloor.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ndo_start_xmit() is defined as returing an 'netdev_tx_t'.
-However, several can drivers use 'int' as the return type
-of their start_xmit() method.
-This series contains the fix for all three of them.
+On Thu, Apr 26, 2018 at 12:31 PM, Dave Anderson <anderson@redhat.com> wrote:
+>
+> While testing /proc/kcore as the live memory source for the crash utility,
+> it fails on arm64.  The failure on arm64 occurs because only the
+> vmalloc/module space segments are exported in PT_LOAD segments,
+> and it's missing all of the PT_LOAD segments for the generic
+> unity-mapped regions of physical memory, as well as their associated
+> vmemmap sections.
+>
+> The mapping of unity-mapped RAM segments in fs/proc/kcore.c is
+> architecture-neutral, and after debugging it, I found this as the
+> problem.  For each chunk of physical memory, kcore_update_ram()
+> calls walk_system_ram_range(), passing kclist_add_private() as a
+> callback function to add the chunk to the kclist, and eventually
+> leading to the creation of a PT_LOAD segment.
+>
+> kclist_add_private() does some verification of the memory region,
+> but this one below is bogus for arm64:
+>
+>     static int
+>     kclist_add_private(unsigned long pfn, unsigned long nr_pages, void *arg)
+>     {
+>     ... [ cut ] ...
+>             ent->addr = (unsigned long)__va((pfn << PAGE_SHIFT));
+>     ... [ cut ] ...
+>
+>             /* Sanity check: Can happen in 32bit arch...maybe */
+>             if (ent->addr < (unsigned long) __va(0))
+>                     goto free_out;
+>
+> And that's because __va(0) is a bogus check for arm64.  It is checking
+> whether the ent->addr value is less than the lowest possible unity-mapped
+> address.  But "0" should not be used as a physical address on arm64; the
+> lowest legitimate physical address for this __va() check would be the arm64
+> PHYS_OFFSET, or memstart_addr:
+>
+> Here's the arm64 __va() and PHYS_OFFSET:
+>
+>   #define __va(x) ((void *)__phys_to_virt((phys_addr_t)(x)))
+>   #define __phys_to_virt(x)       ((unsigned long)((x) - PHYS_OFFSET) | PAGE_OFFSET)
+>
+>   extern s64                      memstart_addr;
+>   /* PHYS_OFFSET - the physical address of the start of memory. */
+>   #define PHYS_OFFSET             ({ VM_BUG_ON(memstart_addr & 1); memstart_addr; })
+>
+> If PHYS_OFFSET/memstart_addr is anything other than 0 (it is 0x4000000000 on my
+> test system), the __va(0) calculation goes negative and creates a bogus, very
+> large, virtual address.  And since the ent->addr virtual address is less than
+> bogus __va(0) address, the test fails, and the memory chunk is rejected.
+>
+> Looking at the kernel sources, it seems that this would affect other
+> architectures as well, i.e., the ones whose __va() is not a simple
+> addition of the physical address with PAGE_OFFSET.
+>
+> Anyway, I don't know what the best approach for an architecture-neutral
+> fix would be in this case.  So I figured I'd throw it out to you guys for
+> some ideas.
 
-Luc Van Oostenryck (3):
-  can: janz-ican3: fix ican3_xmit()'s return type
-  can: sun4i: fix sun4ican_start_xmit()'s return type
-  can: xilinx: fix xcan_start_xmit()'s return type
+I'm not as familiar with this code, but I've added Ard and Laura to CC
+here, as this feels like something they'd be able to comment on. :)
 
- drivers/net/can/janz-ican3.c | 2 +-
- drivers/net/can/sun4i_can.c  | 2 +-
- drivers/net/can/xilinx_can.c | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+-Kees
 
 -- 
-2.17.0
+Kees Cook
+Pixel Security
