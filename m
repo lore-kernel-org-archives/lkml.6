@@ -1,92 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752991AbeDZCYq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 22:24:46 -0400
-Received: from mail-yw0-f195.google.com ([209.85.161.195]:42310 "EHLO
-        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751528AbeDZCYm (ORCPT
+        id S1752020AbeDZC1O (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 22:27:14 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:33572 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751274AbeDZC1M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 22:24:42 -0400
-X-Google-Smtp-Source: AIpwx49TwFDD0xjhA0SbcM8Hc6F/C8EC/CIKlgoaO/TgJucrdVa762/LKLbKE71KoSd89LzJoniJbm6uVcTq0Krq6N4=
-MIME-Version: 1.0
-References: <20180425223424.207228-1-gthelen@google.com> <14810de7b209468bc36fdb696db639242bbad9f9.camel@wdc.com>
-In-Reply-To: <14810de7b209468bc36fdb696db639242bbad9f9.camel@wdc.com>
-From: Greg Thelen <gthelen@google.com>
-Date: Thu, 26 Apr 2018 02:24:30 +0000
-Message-ID: <CAHH2K0aT+NOKFgVZSwdD2uOKx2ZVSO6sbFHj7KQEUWL8RL8RMw@mail.gmail.com>
-Subject: Re: [PATCH 5/5] IB: make INFINIBAND_ADDR_TRANS configurable
-To: Bart Van Assche <Bart.VanAssche@wdc.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, Doug Ledford <dledford@redhat.com>,
-        Christoph Hellwig <hch@lst.de>, LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma@vger.kernel.org, Tarick Bedeir <tarick@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 25 Apr 2018 22:27:12 -0400
+X-Google-Smtp-Source: AIpwx4+gmxQtgDeKVUG9f6dEaNb/ZM9jvdsR9cb3cOQBw23t45dCDA5BCBaf5MTYncyNC2teqS6oWQ==
+From: Leo Yan <leo.yan@linaro.org>
+To: Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jonathan Corbet <corbet@lwn.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Cc: Leo Yan <leo.yan@linaro.org>
+Subject: [PATCH bpf-next] bpf, doc: Update bpf_jit_enable limitation for CONFIG_BPF_JIT_ALWAYS_ON
+Date: Thu, 26 Apr 2018 10:26:51 +0800
+Message-Id: <1524709611-29437-1-git-send-email-leo.yan@linaro.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 25, 2018 at 7:13 PM Bart Van Assche <Bart.VanAssche@wdc.com>
-wrote:
+When CONFIG_BPF_JIT_ALWAYS_ON is enabled, kernel has limitation for
+bpf_jit_enable, so it has fixed value 1 and we cannot set it to 2
+for JIT opcode dumping; this patch is to update the doc for it.
 
-> On Wed, 2018-04-25 at 15:34 -0700, Greg Thelen wrote:
-> > Allow INFINIBAND without INFINIBAND_ADDR_TRANS because fuzzing has been
-> > finding fair number of CM bugs.  So provide option to disable it.
-> >
-> > Signed-off-by: Greg Thelen <gthelen@google.com>
-> > Cc: Tarick Bedeir <tarick@google.com>
-> > ---
-> >  drivers/infiniband/Kconfig | 5 ++++-
-> >  1 file changed, 4 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/infiniband/Kconfig b/drivers/infiniband/Kconfig
-> > index ee270e065ba9..2a972ed6851b 100644
-> > --- a/drivers/infiniband/Kconfig
-> > +++ b/drivers/infiniband/Kconfig
-> > @@ -61,9 +61,12 @@ config INFINIBAND_ON_DEMAND_PAGING
-> >         pages on demand instead.
-> >
-> >  config INFINIBAND_ADDR_TRANS
-> > -     bool
-> > +     bool "RDMA/CM"
-> >       depends on INFINIBAND
-> >       default y
-> > +     ---help---
-> > +       Support for RDMA communication manager (CM).
-> > +       This allows for a generic connection abstraction over RDMA.
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+---
+ Documentation/networking/filter.txt | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-> Hello Greg,
-
-> Please provide a cover letter when posting a patch series. Such a cover
-> letter is not only informative but also makes it easy for people who want
-> to comment on a patch series as a whole. I have a question that applies
-> to the entire patch series. The RDMA/CM code defines functions like
-> rdma_create_id() and rdma_create_qp(). If I search through the kernel tree
-> for callers of these functions then I find several more kernel modules
-than
-> the ones that are modified by this patch series:
-
-> $ git grep -lE '[[:blank:]](rdma_create_id|rdma_create_qp)\('
-> drivers/infiniband/core/cma.c
-> drivers/infiniband/ulp/iser/iser_verbs.c
-> drivers/infiniband/ulp/isert/ib_isert.c
-> drivers/infiniband/ulp/srp/ib_srp.c
-> drivers/infiniband/ulp/srpt/ib_srpt.c
-> drivers/nvme/host/rdma.c
-> drivers/nvme/target/rdma.c
-> drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c
-> drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.h
-> fs/cifs/smbdirect.c
-> include/rdma/rdma_cm.h
-> net/9p/trans_rdma.c
-> net/rds/ib.c
-> net/rds/ib_cm.c
-> net/rds/rdma_transport.c
-> net/sunrpc/xprtrdma/svc_rdma_transport.c
-> net/sunrpc/xprtrdma/verbs.c
-
-> Are you sure that this patch series is complete?
-
-I'll check your cited files.  I'll resend with cover letter.
-
-FYI: I already rand this series through the 0-day builder, which presumably
-would've caught most config dep issues.  But I'll research your list before
-reposting.
+diff --git a/Documentation/networking/filter.txt b/Documentation/networking/filter.txt
+index fd55c7d..feddab9 100644
+--- a/Documentation/networking/filter.txt
++++ b/Documentation/networking/filter.txt
+@@ -483,6 +483,12 @@ Example output from dmesg:
+ [ 3389.935851] JIT code: 00000030: 00 e8 28 94 ff e0 83 f8 01 75 07 b8 ff ff 00 00
+ [ 3389.935852] JIT code: 00000040: eb 02 31 c0 c9 c3
+ 
++When CONFIG_BPF_JIT_ALWAYS_ON is enabled, bpf_jit_enable is set to 1 by default
++and it returns failure if change to any other value from proc node; this is
++for security consideration to avoid leaking info to unprivileged users. In this
++case, we can't directly dump JIT opcode image from kernel log, alternatively we
++need to use bpf tool for the dumping.
++
+ In the kernel source tree under tools/bpf/, there's bpf_jit_disasm for
+ generating disassembly out of the kernel log's hexdump:
+ 
+-- 
+1.9.1
