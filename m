@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755751AbeDZLRY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 07:17:24 -0400
-Received: from mail-by2nam01on0047.outbound.protection.outlook.com ([104.47.34.47]:60284
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        id S1755774AbeDZLRv (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 07:17:51 -0400
+Received: from mail-by2nam03on0067.outbound.protection.outlook.com ([104.47.42.67]:64048
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755384AbeDZLRU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 07:17:20 -0400
+        id S1755511AbeDZLRs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 07:17:48 -0400
 Authentication-Results: spf=none (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; huawei.com; dkim=none (message not signed)
  header.d=none;huawei.com; dmarc=permerror action=none header.from=amd.com;
@@ -21,9 +21,9 @@ CC: Akshu Agrawal <akshu.agrawal@amd.com>,
         "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..."
         <alsa-devel@alsa-project.org>,
         open list <linux-kernel@vger.kernel.org>
-Subject: [PATCH 08/11] ASoC: AMD: Move clk enable from hw_params/free to startup/shutdown
-Date: Thu, 26 Apr 2018 16:45:54 +0530
-Message-ID: <1524741374-13523-8-git-send-email-Vijendar.Mukunda@amd.com>
+Subject: [PATCH 09/11] ASoC: AMD: Fix clocks in CZ DA7219 machine driver
+Date: Thu, 26 Apr 2018 16:45:55 +0530
+Message-ID: <1524741374-13523-9-git-send-email-Vijendar.Mukunda@amd.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1524741374-13523-1-git-send-email-Vijendar.Mukunda@amd.com>
 References: <1524741374-13523-1-git-send-email-Vijendar.Mukunda@amd.com>
@@ -31,54 +31,54 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:165.204.84.17;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39380400002)(396003)(346002)(376002)(39860400002)(2980300002)(428003)(189003)(199004)(86362001)(76176011)(81166006)(5660300001)(1671002)(126002)(426003)(104016004)(4326008)(316002)(6666003)(68736007)(105586002)(2906002)(16586007)(36756003)(109986005)(7696005)(72206003)(54906003)(50226002)(51416003)(47776003)(478600001)(8936002)(26005)(8676002)(186003)(50466002)(53936002)(97736004)(2616005)(11346002)(336012)(77096007)(446003)(305945005)(81156014)(356003)(476003)(106466001)(39060400002)(53416004)(486006)(48376002)(266003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM2PR12MB0332;H:SATLEXCHOV01.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoDomainNonexistent;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: 1;CO1NAM03FT062;1:fiZf16ybdmhbvnLSHDj4u5GW8+O2b9zVA5SX7noPMeIF2vppTwpUL7nQZUzgH1CYe3EjM4AhWc76VG0FyHOrNCtg3PwVn8TsxkgMYqsTSTb1w26KhOepk55HMYd0IEdl
+X-Forefront-Antispam-Report: CIP:165.204.84.17;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39380400002)(346002)(376002)(39860400002)(396003)(2980300002)(428003)(199004)(189003)(426003)(48376002)(356003)(50466002)(1671002)(105586002)(53936002)(4326008)(5660300001)(6666003)(7696005)(109986005)(77096007)(26005)(68736007)(486006)(50226002)(54906003)(53416004)(39060400002)(186003)(106466001)(316002)(2906002)(81156014)(8676002)(16586007)(81166006)(8936002)(476003)(126002)(11346002)(86362001)(47776003)(478600001)(76176011)(104016004)(51416003)(36756003)(97736004)(336012)(2616005)(305945005)(446003)(72206003)(266003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM3PR12MB0762;H:SATLEXCHOV01.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoDomainNonexistent;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;CO1NAM03FT063;1:cPklYH58FZM8gxCgK3LKTQExrDY/QtP78pjOjddmC5B4oSE3R+4OHsWalIkTsbEs/kjcWcAfyazPb6D69xtdCmnFi10Ut4l7zm5re/SwnWY7OzPicN/HyoUlyVTlPM8T
 X-MS-PublicTrafficType: Email
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060);SRVR:DM2PR12MB0332;
-X-Microsoft-Exchange-Diagnostics: 1;DM2PR12MB0332;3:5Bipu74NudiSBOzmPluzwZvg6SQsEINSL0DtgZvAOjj/ddBlYGayM5kGdXcOxRmtjn6Z3sL7GknKufswqqIG3ej2SPfpfo2BaX/cg8SlNZIouzCG+Iz1ABYDBsXb/LlpM9jAF/GphqAYH9zttSwVUhKDjn/5RhIezGcQrVtVmJRp270gARD27L8kdu/6qONgTo04w2d8jUr7F7SQMUj/thSKm0v9v4+nwTOODeGEzMbVMmZA8yb+gxlWlvdKiGJVcmM6dt0zspJj7DGwhu4x7UtXsexPizOuujq78byNYqCmWP87xYsltXg0RVSpbdbnqnOm6lBFrJfBGDTWEQxbaBhKcf8trbfYgcDQ01iIHzc=;25:7x0ue2ZiIMsmjRn+WdCgNfXNUtloYAOcQCH7KvdkuUTB0lFzrgdF5uTH7/qaypfx+Ko1iptvZvcZhAHF2psAA/CeqdnuB93AtDkGiwAhyy/K1Ybm5tXEhRtzuvZtFFyJs2yY1sUTadhcIFL+RSmqXYKD5hq23n3iSTaYOmBK6xDddDmSIcTD1ZE7Z1Ju4nP3F1+RvklMEBXA9/8nJJOhAsWzptM75v3eHY0dEHcfIm57A9VXVYj3qDYsH+Cxb1I6Vbea1n/KJQVKhssWlMgicZcCKKcojPo6vDZ6LQ6iSYA0/hBY7uWVcLYYwZrRw1U2BIOCTMGMWoNvrpyeLNtF5EK9cIvIxqu7zzw/nAmAS6E=
-X-MS-TrafficTypeDiagnostic: DM2PR12MB0332:
-X-Microsoft-Exchange-Diagnostics: 1;DM2PR12MB0332;31:J6YSziMVvjl94XavRKvdEP4O+4yRRj8gFP5x2T2yA6w0FoyQ2WmuRMa8qhNjxYapc9rkhDJafLTAYc9xXqHJrsXyLg7nGjbheA/vXcgVgywwfTdh4fe1LYu2xv0mGimxxpR8mwrhUZTgqZrOCddkLPyD/nkV1ei/2m55Ex87f4HIJRV5yg+TSAIHt6vyjAZAnjKWvPMSwKzEF7bj5njyLDJ1Wb2wa+PEBGe6/KiZq6Q=;20:peH+4zX6q8A7iZ4RMm/QFpsbWTjFzecDWIWlhdeTAR4wNr96UkzBs8XPILbPgKmmwoFifV0NOGe7hBJhQOo6bRodpXeoS9a9tfziH9YCppk/YQSVzm0HCh+uCIG2DKFZn2xcreVnRmzzzb67fFfEBf4ybi6SdjUbuayXrna7G1sCUmc+q0whfbR12Q1WNrsXDzkKs7hbp4vc/qhERnZDdI9UbI5OavFzqNsTFMPNfUU66JxdOXtqG2e2rmpsORwoeBGHfOZWJ+6CrTT01UuaZ55pKgxv72PB6ecY++KH/NXrqdLRnc/MGzGeydcjBPraoPFwuGTEGfXA+fQPDhokFRHphMs7Ej1M7Q5aaEsmjD2TNepFxwq5laXZMTsfhVM5QQupNuA2/h42/MhlMIG3cdaksqiF1FGtgoNd+VXYtYlg8wLFEhuBMv0qqlcNag2ltO080wJgloP5EsBU+rA5lw5uCHpSgitCgrxkRl3QeLcwhJCClNf1MrWySwNgZ3x0
-X-Microsoft-Antispam-PRVS: <DM2PR12MB03320210FB47DB9D566F72FE978E0@DM2PR12MB0332.namprd12.prod.outlook.com>
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060);SRVR:DM3PR12MB0762;
+X-Microsoft-Exchange-Diagnostics: 1;DM3PR12MB0762;3:IxIaVjJapKI2sfybg/mVZoPSPVEjkojOS+/s7405bHgwnZLv0A7x/tIVrO8jJMuQRYahmlj7Gc2oQPY9L2qfjjqrSe/8uxx37oea/O9lfBhHq+j8jb8wXaY68Gp5PxB22I/UYGq+B3lVHa86i5ynzLWpQ8UIWIbpEJDX9NXQ9gokCOqXXLbAAK1lXRcH3kL3pzCt1rN3RPjhMftBdcrqQTI6WcvHUkpEccme91MalM/bMskjGQrNYi8PaGiAX/mstbjc+LAUz7AXUkn7DmFTReWcX5bQhGbOIbfMSB22/unRn6XuXFSMMl0DP5EPFYtE7m4qnioyndjKkH2XKfJGWunLWxzQd6MnHhryb1NBD0M=;25:HPvBjd4665H62OBrmtWK0f32dyJi1ZBi3jZ1JE3lSjbG4rvBqdaOGnjRzNJ+6d73X5JV1c4cq8psQXyiyGGBc7rQuHY+m4rnV8xjb9YKy/l0i6bMxHdJHrFt5H7BWO670xK35ceRjR233yNBwo/CfkY5lF1+aji75oh7gqP3gYS9+V1/FJ+Pq/0GgoBU7/htIAEax7v3EnFQAOKgtlJ/fMfc1ZHJSVB7iQmGbXWKfVLh8OW4JGNTAU4j/HPKZgzzjScfajMrvHI/r2xwC8Bosr9m0LHc6IXRZilLcjHxvpoJtDaQylSCl5347S77KRv8fk68mGcEFksMiaoKNNd82s+1ce/7Cah46Ovx607S5ng=
+X-MS-TrafficTypeDiagnostic: DM3PR12MB0762:
+X-Microsoft-Exchange-Diagnostics: 1;DM3PR12MB0762;31:CBfDXbIFgDDxgOAmZK1QpdIJT+rBz3vDw10V0itCSRuNtR+5ccS1k5PamfafBD8RgvH9kMY1wqUgyCGTiDhDa+DTf1dkrwj/bxeXVCNxgJ01QtQYmKGrgawf4LV9B3/mFnhlB7/skIDCkN1VLz8QPZIODbtC8iv0THkrv/O5MJmi4vHCG2cw0yOWUWHy+Yp9F2j4q/tbx3LwxCYjfiVTfglTc+R7Ad8+qcBL9xKxZxA=;20:WDv2kEWcwl8iticS4AyXc7WfjZw9L2v0HgLFWGFYw+Sy0IMGQcjQ4L1Z/EiZ9bory8ISUavbyHSMA3H+6S0dkoYUqO6k5MqXrs1xKCQ752ynichGYhejvioml4XkyRpXo5eI35ZdOiB4+Ch3SmdWx/xlHT9EO5olwX/C7b8x78fR2hEuooWBfVMTczLnWWQeXJM59rczhsZqU3/J8tvCLBG/AIM5o3Ow++8rYvgMnjATnTJ9O6cPxyyIL05Vc0G53NgQdYk9fuIzIphMifvcNtKMnoGMASMBFK5PdqoKjPwipYrjHNwGGWYHsVB1hnjEpzqNbseALYuRTyd/o/tw8YwjwZMfKSHuD/PlbH9hwfxpthnCaep3Qd6Q3HamagBFYZA3XfwuLEA2vrmGMOmULfHhu4Sq42PQWv4YJgomyYKUlwYnlsUyrMskLz+KjaA0YZWBx5dlo37TZJCXf94f7OCEGwLUqU8pmdIdND7qEvIOEsLOlQ0v+jkjA0RAHr+7
+X-Microsoft-Antispam-PRVS: <DM3PR12MB076209664A5C750C6BB22759978E0@DM3PR12MB0762.namprd12.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(767451399110);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231232)(944501410)(52105095)(93006095)(93003095)(6055026)(6041310)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(6072148)(201708071742011);SRVR:DM2PR12MB0332;BCL:0;PCL:0;RULEID:;SRVR:DM2PR12MB0332;
-X-Microsoft-Exchange-Diagnostics: 1;DM2PR12MB0332;4:GTEknSQ+fnTVYOrE6ZroeVbUL+l0y5+mf51YwoxZjw5AkPfpp7rcGnrqYWnzGxYniqBd340saQ475gf18Qlwmy53K7oy1sxS8/nz99dfRTw1CmNdcZ52hoqaV0Espz0YXOJjjJ1L2Gss7MuX50/+5upwa2/7vopAzPDwxC+Pj9F1L4gyV05cSyy8FQ3FTdumFu3Vhv1rQbG8tgDNQYDyaOI6z0PNyVbwMfd4PzV1uljRlzaCiqhYgwIemauNGQqdUXlLeNu03f9MJxV6x1VAQ3lj57BWUMb2wfvcK1wSl3Gd63/zZ5UegwmjmT087EDJ
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93003095)(3231232)(944501410)(52105095)(10201501046)(3002001)(6055026)(6041310)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(6072148)(201708071742011);SRVR:DM3PR12MB0762;BCL:0;PCL:0;RULEID:;SRVR:DM3PR12MB0762;
+X-Microsoft-Exchange-Diagnostics: 1;DM3PR12MB0762;4:ODsqzXaa8GT1QWxhwETzGUbrH3O9vM5B94bhbapskYiydGtW+R/O8/LakGS0cPH2wpBoMtAdwrUGSVsWTJomvCnEMLQefS+3VBbKHioxwHXO7xKYzcyWGxYJ6o4XccqxpkrkEd2/QbLuVl7XOcrQTHLc47K9Hnlo8SK8gIJbqK741fe4i+3RFfeBjhFcbpgnP9k/yfS/klURHJWrzKk9gCSeskK/lMfeBD57WcUIdve865Htu2FvcF3Cn4BSdy7OrjyLTDCmzLkbhUJHdMs6eWnCMr0NF/v2tulGRxJ1h5HsgyST8r+VfZ8l5U5bNTcp
 X-Forefront-PRVS: 0654257CF5
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM2PR12MB0332;23:hea3qphIol/zsmMYAzUzKGp2NZHVb3nHCf2/7MJaK?=
- =?us-ascii?Q?ilA09zS0Mn+bwseZzEx9sebqLJwMGzpTApFsLBqFZB9k13PbezNh56HOH4Zd?=
- =?us-ascii?Q?i/Qfb5XdN8jYUjTZNtqEg4aPO9NLW/5FIeNbfZStW2gB0kBPYD9MU2SDVLr5?=
- =?us-ascii?Q?keNXR4YfvrMAeHOb0dmzH0L7wj2UdhXsLms3h0TtRzAFmY0WvMit+n9Jt853?=
- =?us-ascii?Q?YFJtlOLjEb5Fw8ZJAiQSEFpQnLaAYVnMumRoBe7BIjIOKdR20D+M7Cn6W2Wn?=
- =?us-ascii?Q?EcpRAf2vdJ+8cnUAT8bl588/J2gRRNb41ZZwRHN2R6LJ/yPOsaQLo5b4eLtR?=
- =?us-ascii?Q?EvgeMHFdj9YlM3bL88sLAn5pL5kzYlg1ZRQzc2OZHxaTHUBFLpc5bAtzuayv?=
- =?us-ascii?Q?SL3y57zWEmLvkOqhW2+psL50RtsBUFqjILErOWL7DccHmNdIMbsbokkvMkeX?=
- =?us-ascii?Q?GN9rcp5puEvYp8g6X/xa+FVHLtQC3ecfRWebssBqoWOkXaAdcqJARxKtBlXK?=
- =?us-ascii?Q?7TmLbwM0w+KfPJyRAElXjKwpGaD/3pst/ztjmFyyyyU4KL8WrAhs0nn04f6+?=
- =?us-ascii?Q?TNGK9iI0D2D0wUT5lZHEJI4SMwg2b4SndnU9YjkN7z+qdJb3pY5Z6k315/eV?=
- =?us-ascii?Q?YXY/3POPul612TCGndJPW+SE5nB88XTUtDwE03T8b5Q8+uEQekbmoDnhWBiB?=
- =?us-ascii?Q?uUIyKMTR87lsjC76v4EVDCGcPD62YxTRzaH4fT0d2f4IF7FUW4uHHiCUuxJN?=
- =?us-ascii?Q?YIOJFtVnfg5jWgtLzGnTcIFvJUWvP6JWDBo7iB25HFzlMjJVU3GVYU38THQK?=
- =?us-ascii?Q?d97L3JzMiNjW6zKKi5oc+tHkiEsvx3OlNWGT+JZZ8Rws7k3opEk7WyPkZT8J?=
- =?us-ascii?Q?u4djgNbAIZFOvs1B/QBVIZeLd1SCWb5RCZIB3WHPNU91yzWTftDSimgdre5a?=
- =?us-ascii?Q?bnOs0HeK90/RsnOMsiRe1Q5qv/M01puyOTlb8DsLwzlrUwkVUhpnqRAXDtGu?=
- =?us-ascii?Q?RDBozXSQhN754NGpncyyFZFJ180cvOaevRc3ZtNyXrUvRaFQ8M74uwvWoiV2?=
- =?us-ascii?Q?8B2JGEh85tP+XUlXEA9aC1jsudiydH317I8olQkVnTzyyLoEp8ubG3/WVYnL?=
- =?us-ascii?Q?bOsn/MdAlSPCGiBlLbFnNLTnZnc2AOi0YmDVuwFkQm082mm0VCUqSRa5IHDI?=
- =?us-ascii?Q?/atcGmwfEUQ82rwYoCn9nG41hGJL8abGLE7pBDh7qp2cf1ZX02h7l+JCg=3D?=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM3PR12MB0762;23:0oIgOCdgoxKp3wXwK2EbR4jjNpTrM6olXJwdVJcM0?=
+ =?us-ascii?Q?RRBU4EmI8A0YJ/CgyT8IpVrUqbAnNeuyVCwLTEF/IgzjpZ6iRv3YFvsTO8sO?=
+ =?us-ascii?Q?YtHL08ZTR/MY5RuAJ6qthbSpiUzSwsdeT6/4DBbsicqI4L8qp/K8NsIBc7dp?=
+ =?us-ascii?Q?maec5kyywytvD+BdSyLEKNUZ44x2j7s19kO952/5oahSsx/Fp5JImrDyWi2k?=
+ =?us-ascii?Q?46+C7YUnCR4FWylncO2tUVtYke7BXgLSGbRopT3Ok6xHUFuxyZPy3JD4rSRt?=
+ =?us-ascii?Q?gfiP45noI9UMbXLT3PykvMessRy+P5N6rlG415vnJH8m/GqzJdzEHMRjk8Jg?=
+ =?us-ascii?Q?soOjsXtdo2YPHW7m9vpPcBIlYRzrO2Glpsxfn+y3UigkFEqm52m9QauYnc+R?=
+ =?us-ascii?Q?fLqimFQJt38XhY6Lbu+FvNcLjT5UARvj5TOBs4ODKlI8flWBYFkXB6fHnYxv?=
+ =?us-ascii?Q?iy/tXqHpj+L61CqC2Zynoo+/kcc9Fa94CT54LlztKIKrSBe0iymZd9njY+QF?=
+ =?us-ascii?Q?E8p5UjFGESTBUzuYKmcJeA3tGxaTqpnC5rbHQP2T2d7BhEVTHsiU4P34TV4w?=
+ =?us-ascii?Q?QWXZg41opGOiPPxZF/xkDA0G/Yd3S5UDR7324RT62W0JUtdMhdhkWWG/Fr/9?=
+ =?us-ascii?Q?TiIsd5rv7Bkf0rr26SWbGrRtgg0DyS6c3Rcn3w7K0amir/XDQnZF/oxE/01Y?=
+ =?us-ascii?Q?wqGqivRguvjEuUeP1GYP9AZZnFUyfhJapM5jBczNhm8TThwBpckUNyhTXokt?=
+ =?us-ascii?Q?w3yNhLJbmdf1IfTKaHlP8hVLM9hhDyt3FwodCTsR9U6DfM93YVcWRX/PpP5c?=
+ =?us-ascii?Q?C5+jeySVv3SL/PcdHiEN4PBzUwDd7mMitN2dyiJvq0OouM1+R/DbzQYeF7lN?=
+ =?us-ascii?Q?UpCMjaR+ahKxLwCu21RF6lxTn9VSRopmZP47lFWhsGUEGVr80h7DgTVFn31H?=
+ =?us-ascii?Q?CH8l3aSFgfY5E0Fk0dggtJlCXGpIkX/BNxjPg9ma+cRsgXIsqGzC4jnhBG7r?=
+ =?us-ascii?Q?RkK6wjckVSZibAUSdfXv3H2dQOZAtmu0m3/RR4eoTcbXCDFbCA8YzefIn45v?=
+ =?us-ascii?Q?JbA8naFn1efj3OOKXHlIIZOqQU+dvt/ETqT/7NssBtlym4R7wyA08QSWbFFS?=
+ =?us-ascii?Q?AbHGsU5OaynViZrhY6vz3V8gpOUlQ+DCRr6dWXIXXSk+BH/bQIOvzLDt9gR6?=
+ =?us-ascii?Q?f2C0zVYrmT9m5CxLnj9X+KSQmTMn1+NaDoavjxAZDD9wF5HNMVAzByGqQ=3D?=
  =?us-ascii?Q?=3D?=
-X-Microsoft-Antispam-Message-Info: kSjNAIehi6BOOQNehSnphgb/Bm1FqpC031wIo2jq6p2GVifJJLk7QXMIboSmnNhsw/6XJ9v8f1EpWNkhPnzxFaLsx87vAXa4GUvGS0wuMUoZAlPc/HqAIJCdwEus8fJ9GvDby6ZKFaEvTowzKID9zfhgRqwcS8qQVPxxIVtPxJDq3PQGpzZ+rvOG0fQgdg5N
-X-Microsoft-Exchange-Diagnostics: 1;DM2PR12MB0332;6:b2bgK7xlVucL0pr8RQLHIp4biipSR4/dIuseesEASLqu4e3FYeMSagzhgeTaoR1NoJhakoHsCLbvwp7lQdnR8i5yC+8M+QJpqmYNRoZcSKV3sDorOTELGFP/Gvag7p82OEzxCGfdM8qMMjpgIrUGLNx0rnic2KxCm0MRrJM/vIED/2jblp+Mg82SLiCDrenqa0GrY1Iww1Xpj6EAxkZnH0GXgkXTX++A4jDTZgWA4+sFF7Q9CImgtT86ft4xrFzMsEr7yslLvPnF1fDKynY6MhA6yYQhFS2OfDutN9GkMRnKzkPQU+ebZZRWkndIGpMivLxU0MC0VkzFlv/0ZtQ1zeO83LwR7UYtqOmW45fdB560c+xP7ixtxEBG0n0OUDcsuHSfh9vVkczByZ6wqABwwO1DScMAkRyNqAQhNiGG/UezXa4ITGThKpDg440/Wi1Wun3fl7A5HhNMmHI1raMs2Q==;5:YcDPSghjfUe7ZlsCh20la1gESs7AqwV7//XJ43f54dcP2rzl0El9yY0uZr+ThcBUfi9dciChfng4QvE+Kpa5MA7AozQ43pjA2S+mpgcECPZfcvd7eQ7V8gkUj0WiuBlwu3RKcNj+TwtJ/EpqltxsJkTpuAMuEdC9hOq7GkGCLMo=;24:VbRF8LZkn4RL1qInXRePRPPCrt3jsnGjBpvfCpBqOyJbGwQXFIf7wq3DktAX2+Cl4y43jZN45l/1k8O4f3NqbMsJ1kF0KPUN5x1mTXjDmIc=
+X-Microsoft-Antispam-Message-Info: pXiNXsY/HUM7UfpY3l01Q/P29Z12PmK5UGOaJNVfw/zBxRYbx4cjr1+TR3zpAyQffMnKiQ/p/138JCCkXUy2i29wAP9KeiAv20emaHm5XVXHXVlxO8+UdmXbG773vE+n0wyalB3s/15YxIDlzR9Qr1AjcX8aqOHt2DPh5KPyi9HGNTnZTamoAyGC5WcaoOqG
+X-Microsoft-Exchange-Diagnostics: 1;DM3PR12MB0762;6:0vTRLPOdF48X59G8D4jXEJLj40dut6iGw4ls9aX4j8rUTvePgWj4OyF4LMPvtSVNuzgUjmMYMUZHBUYC0Zm/VWNBzuAtOqzolZvMBIWhqsGCmunabYZ0XekHqypjpAvPYtGYiYctSgN2i0jX0vrM7Cy+KW8oU//sY7AMHoa4lkL7eQZYDMZEpP+tU2h9H6u7Q6OICLPcXUmqAQ4BV9gLvSKpZ7IIWhxbwR7EMdW7/XpJYJGVZ88lxaHZvDqwglJGRkaaHSym26u4hpYuEbbvynU75JZuBwcfhhZVg4uTeRTNiDoCuPUKzOt88sRUml4rLZUQpR7fqT6/3WnfozSKLQSSkP7NuhT5xB23QheSHgSX2DL0N1W9xVbmy8+YPhgfZ8V+QyU3/P9rqnyrYC9IoXkgjWCpWBMnuiJQ9IF1kavq7v8er986WMSNkawUjedmGH5CDlz5KHYxiAN9YxxZYg==;5:r8EWy1fbtRbM4D3BsXllKgJ+nAH2+itPgWVMbzPKDG8iBc9wvgNqK4yUkdgItkZx9Md+F/emFxU737tv7toore0EM9xRZ1nu8LogJ7N56Tz6oA8a8KtCtOx2lzOx/q8KPw860iqkhjO2PEdrNyFkNsHZGbHCGITtt4RiMluGuug=;24:kwCa1gokDeI2b5wrF55qUTE3E3siCHks0yrWP0r+8UWhAKZufCiOwrrJQR4LnjWlZo8de0hxCoG3mNZOGUpDYV9ZIEyny3QdpMt7jAdB/Oc=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;DM2PR12MB0332;7:9q3L/vWlFQNwpEd+OJxcgbkKuIHRIAP86UcR/wrvHJV+jaDPyOFwj5Fb7ohhvnogunRDv6jn++Ljn2KNvvdDQUGYTsasFoTWqaHIlctfAyKMb9hMQaO+qQ+AeCJMgrdFIZGB1sicsY+a89HAhP5M4qsJXwXAwVJv61QTVyq1KstqXpVdCOMawF0/CyAobcIEwFVQYdKIjjcxSAgH+z7NsVv6kEpi0tRtPfMZeN0+sMJxgkZOGAKBbacNHV4OQD9W;20:CqIREcN63tLMFHCc/PQTwHFZr+qwD72+e0jQL0uYdI7IBzZFSjB8NFPC/WGgLopuYM43ZqhbvXBjCskBILpD/FBI4uD3dxkwnb2s0dT7ozOO41nCLb9rPtMK2d0J/C8fv+oFCOJn+eqyO7gOAtLzsrDPoCcWUiaLirQyw6BRwRRpe/7rf45ZN+766py6LSE3e2kD/f9TE9ySl4+vseKMg9Cz1620tHsliAmOmHniGt7949vkSaztRAIRAqyvIzao
-X-MS-Office365-Filtering-Correlation-Id: cbf01bcb-2034-4ca2-5c1e-08d5ab6745d7
+X-Microsoft-Exchange-Diagnostics: 1;DM3PR12MB0762;7:zIa8vAbbohxE9dvFljxp57evu+pJnlA/bdAoa9hF0+FJC4EmSkeMhf1NzlifPPVPw9Hsab96YCNVIj0acRjLhEz78HH5biWOa/mngmSPL1Pid5f+pcedziSD+k4ZpycIEw2+ThNG8ilmS8qV0TA3CcnLyNFIJPoZ4D9JBIGORa10R+p3ldr2ykmGMvkIkxj7RpajpCOw7z72cXy6FMjZ05dFlOFhtcOPQ3iqGjHeiRoBmvwr6LTrJS6BeNW9ZIi0;20:KMreIMZMwnn1TgkkAxsEth3GLlBlGhzh+/mnLohkDrp+u9PIGaEIxinvppB+NdgBReUxLcrDhtNqE6sIbA+CVdaKxLV0kxlAhrE5OcAvbKKAbvUJeeyWy8I9muTsVEqfevBJHOvG8J/hnU9zPj0bB0dZrlBRIS1rEc+kgnaZmPYmf+fTiuUAQtfGBR3LT/lkssZBi2+w+TJiGO6D521NBc6cqp9vJkYTrMsf6sEY9lY0ToJeeGksPgZqyjMruTsx
+X-MS-Office365-Filtering-Correlation-Id: bec1d87e-a066-435a-01f8-08d5ab675641
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Apr 2018 11:17:18.1547
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Apr 2018 11:17:45.7062
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: cbf01bcb-2034-4ca2-5c1e-08d5ab6745d7
+X-MS-Exchange-CrossTenant-Network-Message-Id: bec1d87e-a066-435a-01f8-08d5ab675641
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXCHOV01.amd.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM2PR12MB0332
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR12MB0762
 To: unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -86,107 +86,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Akshu Agrawal <akshu.agrawal@amd.com>
 
-hw_param can be called multiple times and thus we can have
-more clk enable. The clk may not get diabled due to refcounting.
-startup/shutdown ensures single clk enable/disable call.
+System clock on the platform is 25Mhz and not 24Mhz.
+
+PLL_OUT for da7219 codec to use DA7219_PLL_FREQ_OUT_98304
+as it is for 48KHz SR.
 
 Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
 Signed-off-by: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
 ---
- sound/soc/amd/acp-da7219-max98357a.c | 49 +++++++++++++++++++++++++-----------
- 1 file changed, 35 insertions(+), 14 deletions(-)
+ sound/soc/amd/acp-da7219-max98357a.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
 diff --git a/sound/soc/amd/acp-da7219-max98357a.c b/sound/soc/amd/acp-da7219-max98357a.c
-index 215b06b..6495eed 100644
+index 6495eed..fa5ad5b 100644
 --- a/sound/soc/amd/acp-da7219-max98357a.c
 +++ b/sound/soc/amd/acp-da7219-max98357a.c
-@@ -91,8 +91,7 @@ static int cz_da7219_init(struct snd_soc_pcm_runtime *rtd)
- 	return 0;
- }
+@@ -39,8 +39,7 @@
+ #include "../codecs/da7219.h"
+ #include "../codecs/da7219-aad.h"
  
--static int cz_da7219_hw_params(struct snd_pcm_substream *substream,
--			     struct snd_pcm_hw_params *params)
-+static int da7219_clk_enable(struct snd_pcm_substream *substream)
- {
- 	int ret = 0;
- 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-@@ -106,11 +105,9 @@ static int cz_da7219_hw_params(struct snd_pcm_substream *substream,
- 	return ret;
- }
+-#define CZ_PLAT_CLK 24000000
+-#define MCLK_RATE 24576000
++#define CZ_PLAT_CLK 25000000
+ #define DUAL_CHANNEL		2
  
--static int cz_da7219_hw_free(struct snd_pcm_substream *substream)
-+static void da7219_clk_disable(void)
- {
- 	clk_disable_unprepare(da7219_dai_clk);
--
--	return 0;
- }
+ static struct snd_soc_jack cz_jack;
+@@ -63,7 +62,7 @@ static int cz_da7219_init(struct snd_soc_pcm_runtime *rtd)
+ 	}
  
- static const unsigned int channels[] = {
-@@ -133,7 +130,7 @@ static const struct snd_pcm_hw_constraint_list constraints_channels = {
- 	.mask = 0,
- };
- 
--static int cz_fe_startup(struct snd_pcm_substream *substream)
-+static int cz_da7219_startup(struct snd_pcm_substream *substream)
- {
- 	struct snd_pcm_runtime *runtime = substream->runtime;
- 
-@@ -147,23 +144,47 @@ static int cz_fe_startup(struct snd_pcm_substream *substream)
- 	snd_pcm_hw_constraint_list(runtime, 0, SNDRV_PCM_HW_PARAM_RATE,
- 				   &constraints_rates);
- 
--	return 0;
-+	return da7219_clk_enable(substream);
-+}
-+
-+static void cz_da7219_shutdown(struct snd_pcm_substream *substream)
-+{
-+	da7219_clk_disable();
-+}
-+
-+static int cz_max_startup(struct snd_pcm_substream *substream)
-+{
-+	return da7219_clk_enable(substream);
-+}
-+
-+static void cz_max_shutdown(struct snd_pcm_substream *substream)
-+{
-+	da7219_clk_disable();
-+}
-+
-+static int cz_dmic_startup(struct snd_pcm_substream *substream)
-+{
-+	return da7219_clk_enable(substream);
-+}
-+
-+static void cz_dmic_shutdown(struct snd_pcm_substream *substream)
-+{
-+	da7219_clk_disable();
- }
- 
- static struct snd_soc_ops cz_da7219_cap_ops = {
--	.hw_params = cz_da7219_hw_params,
--	.hw_free = cz_da7219_hw_free,
--	.startup = cz_fe_startup,
-+	.startup = cz_da7219_startup,
-+	.shutdown = cz_da7219_shutdown,
- };
- 
- static struct snd_soc_ops cz_max_play_ops = {
--	.hw_params = cz_da7219_hw_params,
--	.hw_free = cz_da7219_hw_free,
-+	.startup = cz_max_startup,
-+	.shutdown = cz_max_shutdown,
- };
- 
- static struct snd_soc_ops cz_dmic_cap_ops = {
--	.hw_params = cz_da7219_hw_params,
--	.hw_free = cz_da7219_hw_free,
-+	.startup = cz_dmic_startup,
-+	.shutdown = cz_dmic_shutdown,
- };
- 
- static struct snd_soc_dai_link cz_dai_7219_98357[] = {
+ 	ret = snd_soc_dai_set_pll(codec_dai, 0, DA7219_SYSCLK_PLL,
+-				  CZ_PLAT_CLK, MCLK_RATE);
++				  CZ_PLAT_CLK, DA7219_PLL_FREQ_OUT_98304);
+ 	if (ret < 0) {
+ 		dev_err(rtd->dev, "can't set codec pll: %d\n", ret);
+ 		return ret;
 -- 
 2.7.4
