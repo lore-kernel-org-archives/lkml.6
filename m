@@ -1,113 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757181AbeDZQ6B (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 12:58:01 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:36764 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756779AbeDZQ5q (ORCPT
+        id S932249AbeDZQ5t (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 12:57:49 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:58064 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756892AbeDZQyG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 12:57:46 -0400
-X-Google-Smtp-Source: AIpwx4+zMbo3YZbhAWgJWPdYCTF/udYCnxF8x2vzBhcZiCYg+2ptkoGV07o6/EGvmsTOq6MbcTXfcDuI2tiWzJFXBKQ=
-MIME-Version: 1.0
-In-Reply-To: <58645254.23011245.1524760853269.JavaMail.zimbra@redhat.com>
-References: <20180425112415.12327-1-pagupta@redhat.com> <20180425112415.12327-3-pagupta@redhat.com>
- <20180426131517.GB30991@stefanha-x1.localdomain> <58645254.23011245.1524760853269.JavaMail.zimbra@redhat.com>
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Thu, 26 Apr 2018 09:57:45 -0700
-Message-ID: <CAPcyv4jv-hJNKJxak98T7aCnWztVEDTE8o=8fjvOrVmrTfyjdA@mail.gmail.com>
-Subject: Re: [RFC v2 2/2] pmem: device flush over VIRTIO
-To: Pankaj Gupta <pagupta@redhat.com>
-Cc: Stefan Hajnoczi <stefanha@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        KVM list <kvm@vger.kernel.org>,
-        Qemu Developers <qemu-devel@nongnu.org>,
-        linux-nvdimm <linux-nvdimm@ml01.01.org>, Linux MM <linux-mm@kvack.org>,
-        Jan Kara <jack@suse.cz>, Stefan Hajnoczi <stefanha@redhat.com>,
-        Rik van Riel <riel@surriel.com>,
-        haozhong zhang <haozhong.zhang@intel.com>,
-        Nitesh Narayan Lal <nilal@redhat.com>, Kevin Wolf <kwolf@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        ross zwisler <ross.zwisler@intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        xiaoguangrong eric <xiaoguangrong.eric@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Marcel Apfelbaum <marcel@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>, niteshnarayanlal@hotmail.com,
-        Igor Mammedov <imammedo@redhat.com>, lcapitulino@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 26 Apr 2018 12:54:06 -0400
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS),
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM64 PORT
+        (AARCH64 ARCHITECTURE)),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 14/17] arm64: dts: r8a77965-salvator-x: Add DU external dot clocks
+Date: Thu, 26 Apr 2018 17:53:43 +0100
+Message-Id: <20180426165346.494-15-kieran.bingham+renesas@ideasonboard.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com>
+References: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 26, 2018 at 9:40 AM, Pankaj Gupta <pagupta@redhat.com> wrote:
->
->>
->> On Wed, Apr 25, 2018 at 04:54:14PM +0530, Pankaj Gupta wrote:
->> > This patch adds functionality to perform
->> > flush from guest to hosy over VIRTIO
->> > when 'ND_REGION_VIRTIO'flag is set on
->> > nd_negion. Flag is set by 'virtio-pmem'
->> > driver.
->> >
->> > Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
->> > ---
->> >  drivers/nvdimm/region_devs.c | 7 +++++++
->> >  1 file changed, 7 insertions(+)
->> >
->> > diff --git a/drivers/nvdimm/region_devs.c b/drivers/nvdimm/region_devs.c
->> > index a612be6..6c6454e 100644
->> > --- a/drivers/nvdimm/region_devs.c
->> > +++ b/drivers/nvdimm/region_devs.c
->> > @@ -20,6 +20,7 @@
->> >  #include <linux/nd.h>
->> >  #include "nd-core.h"
->> >  #include "nd.h"
->> > +#include <linux/virtio_pmem.h>
->> >
->> >  /*
->> >   * For readq() and writeq() on 32-bit builds, the hi-lo, lo-hi order is
->> > @@ -1074,6 +1075,12 @@ void nvdimm_flush(struct nd_region *nd_region)
->> >     struct nd_region_data *ndrd = dev_get_drvdata(&nd_region->dev);
->> >     int i, idx;
->> >
->> > +       /* call PV device flush */
->> > +   if (test_bit(ND_REGION_VIRTIO, &nd_region->flags)) {
->> > +           virtio_pmem_flush(&nd_region->dev);
->> > +           return;
->> > +   }
->>
->> How does libnvdimm know when flush has completed?
->>
->> Callers expect the flush to be finished when nvdimm_flush() returns but
->> the virtio driver has only queued the request, it hasn't waited for
->> completion!
->
-> I tried to implement what nvdimm does right now. It just writes to
-> flush hint address to make sure data persists.
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-nvdimm_flush() is currently expected to be synchronous. Currently it
-is sfence(); write to special address; sfence(). By the time the
-second sfence returns the data is flushed. So you would need to make
-this virtio flush interface synchronous as well, but that appears
-problematic to stop the guest for unbounded amounts of time. Instead,
-you need to rework nvdimm_flush() and the pmem driver to make these
-flush requests asynchronous and add the plumbing for completion
-callbacks via bio_endio().
+The DU1 external dot clock is provided by the fixed frequency clock
+generator X21, while the DU0 and DU3 clocks are provided by the
+programmable Versaclock5 clock generator.
 
-> I just did not want to block guest write requests till host side
-> fsync completes.
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+---
+ arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-You must complete the flush before bio_endio(), otherwise you're
-violating the expectations of the guest filesystem/block-layer.
-
->
-> be worse for operations on different guest files because all these operations would happen
-> ultimately on same file at host.
->
-> I think with current way, we can achieve an asynchronous queuing mechanism on cost of not
-> 100% sure when fsync would complete but it is assured it will happen. Also, its entire block
-> flush.
-
-No, again,  that's broken. We need to add the plumbing for
-communicating the fsync() completion relative the WRITE_{FLUSH,FUA}
-bio in the guest.
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
+index 75d890d91df9..a2b8fb20fef8 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
+@@ -19,3 +19,15 @@
+ 		reg = <0x0 0x48000000 0x0 0x78000000>;
+ 	};
+ };
++
++&du {
++	clocks = <&cpg CPG_MOD 724>,
++		 <&cpg CPG_MOD 723>,
++		 <&cpg CPG_MOD 721>,
++		 <&cpg CPG_MOD 727>,
++		 <&versaclock5 1>,
++		 <&x21_clk>,
++		 <&versaclock5 2>;
++	clock-names = "du.0", "du.1", "du.3", "lvds.0",
++		      "dclkin.0", "dclkin.1", "dclkin.3";
++};
+-- 
+2.17.0
