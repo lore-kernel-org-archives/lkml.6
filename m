@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757014AbeDZQyi (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 12:54:38 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:58064 "EHLO
+        id S1757029AbeDZQyn (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 12:54:43 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:58080 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756903AbeDZQyI (ORCPT
+        with ESMTP id S1756899AbeDZQyI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 26 Apr 2018 12:54:08 -0400
 From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
@@ -20,9 +20,9 @@ Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         linux-arm-kernel@lists.infradead.org (moderated list:ARM64 PORT
         (AARCH64 ARCHITECTURE)),
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 16/17] arm64: dts: r8a77965-salvator-xs: Add DU external dot clocks
-Date: Thu, 26 Apr 2018 17:53:45 +0100
-Message-Id: <20180426165346.494-17-kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH 15/17] arm64: dts: r8a77965-salvator-x: Enable HDMI output
+Date: Thu, 26 Apr 2018 17:53:44 +0100
+Message-Id: <20180426165346.494-16-kieran.bingham+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com>
 References: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com>
@@ -32,35 +32,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-The DU1 external dot clock is provided by the fixed frequency clock
-generator X21, while the DU0 and DU3 clocks are provided by the
-programmable Versaclock6 clock generator.
+Enable the HDMI encoder for the M3N Salvator-X board and hook it up to
+the HDMI connector.
+
+Based on a similar patches of the the Salvator-X board
+on the R8A7796 SoC device tree
+by Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
 Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
- arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ .../boot/dts/renesas/r8a77965-salvator-x.dts    | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts
-index a83a00deed9e..2223cc2bd6bc 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts
-@@ -19,3 +19,15 @@
- 		reg = <0x0 0x48000000 0x0 0x78000000>;
- 	};
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
+index a2b8fb20fef8..11e8d43e9e11 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
+@@ -31,3 +31,20 @@
+ 	clock-names = "du.0", "du.1", "du.3", "lvds.0",
+ 		      "dclkin.0", "dclkin.1", "dclkin.3";
  };
 +
-+&du {
-+	clocks = <&cpg CPG_MOD 724>,
-+		 <&cpg CPG_MOD 723>,
-+		 <&cpg CPG_MOD 721>,
-+		 <&cpg CPG_MOD 727>,
-+		 <&versaclock6 1>,
-+		 <&x21_clk>,
-+		 <&versaclock6 2>;
-+	clock-names = "du.0", "du.1", "du.3", "lvds.0",
-+		      "dclkin.0", "dclkin.1", "dclkin.3";
++&hdmi0 {
++	status = "okay";
++
++	ports {
++		port@1 {
++			reg = <1>;
++			rcar_dw_hdmi0_out: endpoint {
++				remote-endpoint = <&hdmi0_con>;
++			};
++		};
++	};
++};
++
++&hdmi0_con {
++	remote-endpoint = <&rcar_dw_hdmi0_out>;
 +};
 -- 
 2.17.0
