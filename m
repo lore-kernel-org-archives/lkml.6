@@ -1,50 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754068AbeDZTqP (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 15:46:15 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39052 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751933AbeDZTqB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 15:46:01 -0400
-Date: Thu, 26 Apr 2018 22:45:57 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Mikulas Patocka <mpatocka@redhat.com>
-Cc: James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Michal Hocko <mhocko@kernel.org>, David Rientjes <rientjes@google.com>,
-        dm-devel@redhat.com, eric.dumazet@gmail.com, netdev@vger.kernel.org,
-        jasowang@redhat.com, Randy Dunlap <rdunlap@infradead.org>,
-        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
-        linux-mm@kvack.org, edumazet@google.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        virtualization@lists.linux-foundation.org,
-        David Miller <davem@davemloft.net>, Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [dm-devel] [PATCH v5] fault-injection: introduce kvmalloc
- fallback options
-Message-ID: <20180426223925-mutt-send-email-mst@kernel.org>
-References: <1524753932.3226.5.camel@HansenPartnership.com>
- <alpine.LRH.2.02.1804261100170.12157@file01.intranet.prod.int.rdu2.redhat.com>
- <1524756256.3226.7.camel@HansenPartnership.com>
- <alpine.LRH.2.02.1804261142480.21152@file01.intranet.prod.int.rdu2.redhat.com>
- <20180426184845-mutt-send-email-mst@kernel.org>
- <alpine.LRH.2.02.1804261202350.24656@file01.intranet.prod.int.rdu2.redhat.com>
- <20180426214011-mutt-send-email-mst@kernel.org>
- <alpine.LRH.2.02.1804261451120.23716@file01.intranet.prod.int.rdu2.redhat.com>
- <20180426220523-mutt-send-email-mst@kernel.org>
- <alpine.LRH.2.02.1804261516250.26980@file01.intranet.prod.int.rdu2.redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.LRH.2.02.1804261516250.26980@file01.intranet.prod.int.rdu2.redhat.com>
+        id S1753205AbeDZTtd (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 15:49:33 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40763 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751615AbeDZTtc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 15:49:32 -0400
+From: Johannes Thumshirn <jthumshirn@suse.de>
+To: Keith Busch <keith.busch@intel.com>
+Cc: Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
+        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+        Johannes Thumshirn <jthumshirn@suse.de>
+Subject: [PATCH] nvme: change order of qid and cmdid in completion trace
+Date: Thu, 26 Apr 2018 13:49:26 -0600
+Message-Id: <20180426194926.18767-1-jthumshirn@suse.de>
+X-Mailer: git-send-email 2.16.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 26, 2018 at 03:36:14PM -0400, Mikulas Patocka wrote:
-> People on this list argue "this should be a kernel parameter".
+Keith reported that command submission and command completion
+tracepoints have the order of the cmdid and qid fileds swapped.
 
-How about making it a writeable attribute, so it's easy to turn on/off
-after boot. Then you can keep it deterministic, userspace can play with
-the attribute at random if it wants to.
+While it isn't easily possible to change the command submission
+tracepoint, as there is a regression test parsing it in blktests we
+can swap the command completion tracepoint to have the fileds aligned.
 
+Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
+Reported-by: Keith Busch <keith.busch@intel.com>
+---
+ drivers/nvme/host/trace.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/nvme/host/trace.h b/drivers/nvme/host/trace.h
+index ea91fccd1bc0..01390f0e1671 100644
+--- a/drivers/nvme/host/trace.h
++++ b/drivers/nvme/host/trace.h
+@@ -148,8 +148,8 @@ TRACE_EVENT(nvme_complete_rq,
+ 		    __entry->flags = nvme_req(req)->flags;
+ 		    __entry->status = nvme_req(req)->status;
+ 	    ),
+-	    TP_printk("cmdid=%u, qid=%d, res=%llu, retries=%u, flags=0x%x, status=%u",
+-		      __entry->cid, __entry->qid, __entry->result,
++	    TP_printk("qid=%d, cmdid=%u, res=%llu, retries=%u, flags=0x%x, status=%u",
++		      __entry->qid, __entry->cid, __entry->result,
+ 		      __entry->retries, __entry->flags, __entry->status)
+ 
+ );
 -- 
-MST
+2.16.3
