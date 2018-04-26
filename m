@@ -1,69 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932320AbeDZOKd (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 10:10:33 -0400
-Received: from mail-wr0-f174.google.com ([209.85.128.174]:39883 "EHLO
-        mail-wr0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932088AbeDZOK1 (ORCPT
+        id S1756549AbeDZOLV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 10:11:21 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:38466 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755384AbeDZOLR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 10:10:27 -0400
-X-Google-Smtp-Source: AIpwx48GRO1oi8nMQxguJrpr+Kn9XFY8ZQ8DdDD3DWeUePs39DHCd2QVLUmzk8GkknB9F6HjM4u8jQ==
-Date: Thu, 26 Apr 2018 16:10:23 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Lin Huang <hl@rock-chips.com>
-Cc: emil.l.velikov@gmail.com, briannorris@chromium.org, robh+dt@kernel.org,
-        seanpaul@chromium.org, airlied@linux.ie, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v4 1/3] drm/panel: refactor INNOLUX P079ZCA panel driver
-Message-ID: <20180426141023.GA31888@ulmo>
-References: <1521018736-20980-1-git-send-email-hl@rock-chips.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="jRHKVT23PllUwdXP"
-Content-Disposition: inline
-In-Reply-To: <1521018736-20980-1-git-send-email-hl@rock-chips.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        Thu, 26 Apr 2018 10:11:17 -0400
+X-Google-Smtp-Source: AIpwx4+1DMbRTN4Ze75dkToHEH/X2ulXmlGw/z4L5X2GvHpXxTn8m08XiWi3Vyz8cR2s0YeaZIT1Mw==
+From: Ahmed Abdelsalam <amsalam20@gmail.com>
+To: davem@davemloft.net, dav.lebrun@gmail.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Ahmed Abdelsalam <amsalam20@gmail.com>
+Subject: [net-next] ipv6: sr: Extract the right key values for "seg6_make_flowlabel"
+Date: Thu, 26 Apr 2018 16:11:11 +0200
+Message-Id: <1524751871-1353-1-git-send-email-amsalam20@gmail.com>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The seg6_make_flowlabel() is used by seg6_do_srh_encap() to compute the
+flowlabel from a given skb. It relies on skb_get_hash() which eventually
+calls __skb_flow_dissect() to extract the flow_keys struct values from
+the skb.
 
---jRHKVT23PllUwdXP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In case of IPv4 traffic, calling seg6_make_flowlabel() after skb_push(),
+skb_reset_network_header(), and skb_mac_header_rebuild() will results in
+flow_keys struct of all key values set to zero.
 
-On Wed, Mar 14, 2018 at 05:12:14PM +0800, Lin Huang wrote:
-> From: huang lin <hl@rock-chips.com>
->=20
-> Refactor Innolux P079ZCA panel driver, let it support
-> multi panel.
->=20
-> Change-Id: If89be5e56dba8cb498e2d50c1bbeb0e8016123a2
+This patch calls seg6_make_flowlabel() before resetting the headers of skb
+to get the right key values.
 
-When you send out a revised set of these patches, please drop the
-Change-Id: line from the commit message. It is useless for upstream.
+Extracted Key values are based on the type inner packet as follows:
+1) IPv6 traffic: src_IP, dst_IP, L4 proto, and flowlabel of inner packet.
+2) IPv4 traffic: src_IP, dst_IP, L4 proto, src_port, and dst_port
+3) L2 traffic: depends on what kind of traffic carried into the L2
+frame. IPv6 and IPv4 traffic works as discussed 1) and 2)
 
-Thierry
+Signed-off-by: Ahmed Abdelsalam <amsalam20@gmail.com>
+---
+ net/ipv6/seg6_iptunnel.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---jRHKVT23PllUwdXP
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrh3c0ACgkQ3SOs138+
-s6HZZBAAnhNfIbnGuaaADkHiCF7ONEimxOAw+BThaE5/CZeDMFpaR8bFSC4tYUVU
-DzSjn8rflha0CFdPkJNMd0elcDpI3+vlMZk/aiHW9VxVBNAdaBd2OrAT7Cn4zJGL
-cNIBR/KhpvgpRURtZA3pvak376esIqPjA90CGJ3x/KwgrGVwKMj2Sk3xBduiIqxh
-PHrkRUtMGF3MzNr6a+AlXi5W5QwksPYSgDKVKYqqlySEbjvSybLsYVg23Hqn8dzb
-C00Dw0UMngjHWZJ7Nxkq9xdJ9dph/1nqtUXSK2pmj0IHr0CgYqR4QntwIdI8gAbq
-djxd7otBQoSN2G6cfcK1RlnAaI27zRNFWmz9ZTAB0v6jEABgbrt7oQ6xxNrLJmK7
-NlTzOTwBjAX10NeRSCoPLOnPvleqjQZWz+U84+YomB4R7VQTE7Tpd6OGFlEa5Pza
-/ckqvUb5MdJa+wb/3yvRahSm+w2P8pOwknZ9hnaQ5zuWRBWzGMWj0rCBsVBlnG5r
-lnUKjBaODI2um0pVO1Jugjl+CmpmdvfTwzDU5az2aI6b7ajrG5WLcui+aXEcaxPX
-PE82NjkujTNrR8SAWW0/c8U1PfZlE4CI65uDkRA6Z3TLapRt0MepxkH7NebcGm15
-ao55BUUJgPpdO3yv3ySJhtEQx5FQqZ1lGMlHpCK3Nn5AQ/u+fbw=
-=xMI+
------END PGP SIGNATURE-----
-
---jRHKVT23PllUwdXP--
+diff --git a/net/ipv6/seg6_iptunnel.c b/net/ipv6/seg6_iptunnel.c
+index 9898926..0df83c0 100644
+--- a/net/ipv6/seg6_iptunnel.c
++++ b/net/ipv6/seg6_iptunnel.c
+@@ -119,6 +119,9 @@ int seg6_do_srh_encap(struct sk_buff *skb, struct ipv6_sr_hdr *osrh, int proto)
+ 	int hdrlen, tot_len, err;
+ 	__be32 flowlabel;
+ 
++	inner_hdr = ipv6_hdr(skb);
++	flowlabel = seg6_make_flowlabel(net, skb, inner_hdr);
++
+ 	hdrlen = (osrh->hdrlen + 1) << 3;
+ 	tot_len = hdrlen + sizeof(*hdr);
+ 
+@@ -126,8 +129,6 @@ int seg6_do_srh_encap(struct sk_buff *skb, struct ipv6_sr_hdr *osrh, int proto)
+ 	if (unlikely(err))
+ 		return err;
+ 
+-	inner_hdr = ipv6_hdr(skb);
+-
+ 	skb_push(skb, tot_len);
+ 	skb_reset_network_header(skb);
+ 	skb_mac_header_rebuild(skb);
+@@ -138,7 +139,6 @@ int seg6_do_srh_encap(struct sk_buff *skb, struct ipv6_sr_hdr *osrh, int proto)
+ 	 * decapsulation will overwrite inner hlim with outer hlim
+ 	 */
+ 
+-	flowlabel = seg6_make_flowlabel(net, skb, inner_hdr);
+ 	if (skb->protocol == htons(ETH_P_IPV6)) {
+ 		ip6_flow_hdr(hdr, ip6_tclass(ip6_flowinfo(inner_hdr)),
+ 			     flowlabel);
+-- 
+2.1.4
