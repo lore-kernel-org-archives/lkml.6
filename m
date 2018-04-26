@@ -1,89 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756165AbeDZNPH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 09:15:07 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:48703 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755207AbeDZNPF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 09:15:05 -0400
-Date: Thu, 26 Apr 2018 15:14:53 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Daniel Vetter <daniel@ffwll.ch>,
-        Vaishali Thakkar <vthakkar1994@gmail.com>, alexander.deucher@amd.com,
-        linux-renesas-soc@vger.kernel.org, heiko@sntech.de, airlied@linux.ie,
-        linus.walleij@linaro.org, stefan@agner.ch, hjc@rock-chips.com,
-        kraxel@redhat.com, benjamin.gaignard@linaro.org,
-        nouveau@lists.freedesktop.org, marex@denx.de, David1.Zhou@amd.com,
-        linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com,
-        linux-rockchip@lists.infradead.org, tomi.valkeinen@ti.com,
-        linux@armlinux.org.uk, krzk@kernel.org, jonathanh@nvidia.com,
-        z.liuxinliang@hisilicon.com, maxime.ripard@bootlin.com,
-        kong.kongxinwei@hisilicon.com, kgene@kernel.org, bskeggs@redhat.com,
-        linux-arm-msm@vger.kernel.org, ck.hu@mediatek.com, airlied@redhat.com,
-        virtualization@lists.linux-foundation.org, linux-tegra@vger.kernel.org,
-        puck.chen@hisilicon.com, intel-gfx@lists.freedesktop.org,
-        etnaviv@lists.freedesktop.org, brodkin@synopsys.com,
-        dri-devel@lists.freedesktop.org, rodrigo.vivi@intel.com,
-        matthias.bgg@gmail.com, wens@csie.org, vincent.abriou@st.com,
-        linux-arm-kernel@lists.infradead.org, inki.dae@samsung.com,
-        amd-gfx@lists.freedesktop.org, alison.wang@freescale.com,
-        freedreno@lists.freedesktop.org, sw0312.kim@samsung.com,
-        nicolas.ferre@microchip.com, philippe.cornu@st.com,
-        linux-kernel@vger.kernel.org, yannick.fertre@st.com,
-        kyungmin.park@samsung.com, noralf@tronnes.org, p.zabel@pengutronix.de,
-        zourongrong@gmail.com, linux-mediatek@lists.infradead.org,
-        shawnguo@kernel.org, christian.koenig@amd.com, l.stach@pengutronix.de
-Subject: Re: [Intel-gfx] [PATCH] drm/core: Remove drm_dev_unref() and it's
- uses
-Message-ID: <20180426131404.GP4813@piout.net>
-References: <20180426102819.6985-1-vthakkar1994@gmail.com>
- <20180426123615.GA12521@phenom.ffwll.local>
- <1556510.Xu6NnhyFGZ@avalon>
+        id S1756235AbeDZNPX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 09:15:23 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:52366 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754516AbeDZNPU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 09:15:20 -0400
+X-Google-Smtp-Source: AB8JxZpW0c4iYokawwQTCuH4778ompolha6AGIHY71AIaAIZzZt7aSXeMbATHpCXRes2VAxukXWEDg==
+Date: Thu, 26 Apr 2018 14:15:17 +0100
+From: Stefan Hajnoczi <stefanha@gmail.com>
+To: Pankaj Gupta <pagupta@redhat.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        qemu-devel@nongnu.org, linux-nvdimm@ml01.01.org, linux-mm@kvack.org,
+        jack@suse.cz, stefanha@redhat.com, dan.j.williams@intel.com,
+        riel@surriel.com, haozhong.zhang@intel.com, nilal@redhat.com,
+        kwolf@redhat.com, pbonzini@redhat.com, ross.zwisler@intel.com,
+        david@redhat.com, xiaoguangrong.eric@gmail.com, hch@infradead.org,
+        marcel@redhat.com, mst@redhat.com, niteshnarayanlal@hotmail.com,
+        imammedo@redhat.com, lcapitulino@redhat.com
+Subject: Re: [RFC v2 2/2] pmem: device flush over VIRTIO
+Message-ID: <20180426131517.GB30991@stefanha-x1.localdomain>
+References: <20180425112415.12327-1-pagupta@redhat.com>
+ <20180425112415.12327-3-pagupta@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="NDin8bjvE/0mNLFQ"
 Content-Disposition: inline
-In-Reply-To: <1556510.Xu6NnhyFGZ@avalon>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180425112415.12327-3-pagupta@redhat.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On 26/04/2018 15:45:44+0300, Laurent Pinchart wrote:
-> Hi Daniel,
-> 
-> On Thursday, 26 April 2018 15:36:15 EEST Daniel Vetter wrote:
-> > On Thu, Apr 26, 2018 at 03:58:19PM +0530, Vaishali Thakkar wrote:
-> > > It's been a while since we introduced drm_dev{get/put} functions
-> > > to replace reference/unreference in drm subsystem for the
-> > > consistency purpose. So, with this patch, let's just replace
-> > > all current use cases of drm_dev_unref() with drm_dev_put and remove
-> > > the function itself.
-> > > 
-> > > Coccinelle was used for mass-patching.
-> > > 
-> > > Signed-off-by: Vaishali Thakkar <vthakkar1994@gmail.com>
-> > 
-> > Thanks for doing this. Unfortunately drm moves pretty fast, so already a
-> > conflict when I tried to apply this. Some drivers are also in their own
-> > trees, so this might lead to more fun :-/
-> > 
-> > Can you pls split it up per-driver (just the directories under
-> > drivers/gpu/drm/ is enough)? Final patch to remove the function might then
-> > get stalled a bit ofc.
-> 
-> I requested a single patch instead of splitting it per driver, you might want 
-> to blame me for that.
-> 
+--NDin8bjvE/0mNLFQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Doesn't splitting the change per driver break bisectability unless there
-is a guarantee that the change in include/drm/drm_drv.h is applied after
-all the driver trees have been merged?
+On Wed, Apr 25, 2018 at 04:54:14PM +0530, Pankaj Gupta wrote:
+> This patch adds functionality to perform=20
+> flush from guest to hosy over VIRTIO=20
+> when 'ND_REGION_VIRTIO'flag is set on=20
+> nd_negion. Flag is set by 'virtio-pmem'
+> driver.
+>=20
+> Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
+> ---
+>  drivers/nvdimm/region_devs.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>=20
+> diff --git a/drivers/nvdimm/region_devs.c b/drivers/nvdimm/region_devs.c
+> index a612be6..6c6454e 100644
+> --- a/drivers/nvdimm/region_devs.c
+> +++ b/drivers/nvdimm/region_devs.c
+> @@ -20,6 +20,7 @@
+>  #include <linux/nd.h>
+>  #include "nd-core.h"
+>  #include "nd.h"
+> +#include <linux/virtio_pmem.h>
+> =20
+>  /*
+>   * For readq() and writeq() on 32-bit builds, the hi-lo, lo-hi order is
+> @@ -1074,6 +1075,12 @@ void nvdimm_flush(struct nd_region *nd_region)
+>  	struct nd_region_data *ndrd =3D dev_get_drvdata(&nd_region->dev);
+>  	int i, idx;
+> =20
+> +       /* call PV device flush */
+> +	if (test_bit(ND_REGION_VIRTIO, &nd_region->flags)) {
+> +		virtio_pmem_flush(&nd_region->dev);
+> +		return;
+> +	}
 
+How does libnvdimm know when flush has completed?
 
--- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Callers expect the flush to be finished when nvdimm_flush() returns but
+the virtio driver has only queued the request, it hasn't waited for
+completion!
+
+--NDin8bjvE/0mNLFQ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEcBAEBAgAGBQJa4dDlAAoJEJykq7OBq3PI980IAJY41FLfXhqcQzxR13OvtKqj
+cM7mQMJIee6fETlh9HYqEh7dOvOHhpqojY9PEKA+Bu1f/KC3Y03liilCCKdLiHc+
+WpCVSyT3nOTjPlY4tS+e4WEEzaCwqNYu8rbz7sfJxd1c+4Hl9VuLfBQLieSnTsmE
+GUawKQak2e+c7EdOdKxmxtaeZfX1qJcm6ZMhbqSrvIrzR+E+fz4WKmntxrdgeDwY
+4IzZHK5h2u4z0jSeLf0tfdWf/77y1IWPqKGvuK6MTZHFxvMn6AiI4VZ116LfXgNC
+l7SS25ehqJ5WGgBrUYsL40QAimQDSCQL2ouNwyx/Q1+Ub/xi6TWKN17u3UV5Bpc=
+=i3H2
+-----END PGP SIGNATURE-----
+
+--NDin8bjvE/0mNLFQ--
