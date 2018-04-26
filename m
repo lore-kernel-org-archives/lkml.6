@@ -1,102 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756994AbeDZRcu (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 13:32:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46362 "EHLO mail.kernel.org"
+        id S932335AbeDZRct (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 13:32:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46372 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756664AbeDZRcD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1756784AbeDZRcD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 26 Apr 2018 13:32:03 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFD8C217D9
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFC63217DF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Message-Id: <20180426173201.764690367@goodmis.org>
+Message-Id: <20180426173201.924880227@goodmis.org>
 User-Agent: quilt/0.63-1
-Date: Thu, 26 Apr 2018 13:30:41 -0400
+Date: Thu, 26 Apr 2018 13:30:42 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Linus Torvalds <torvalds@linux-foundation.org>,
         Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 2/7] tracing/x86: Update syscall trace events to handle new prefixed
- syscall func names
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Subject: [PATCH 3/7] tracing: Fix kernel crash while using empty filter with perf
 References: <20180426173039.426131207@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=0002-tracing-x86-Update-syscall-trace-events-to-handle-ne.patch
+Content-Disposition: inline; filename=0003-tracing-Fix-kernel-crash-while-using-empty-filter-wi.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+From: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
 
-Arnaldo noticed that the latest kernel is missing the syscall event system
-directory in x86. I bisected it down to d5a00528b58c ("syscalls/core,
-syscalls/x86: Rename struct pt_regs-based sys_*() to __x64_sys_*()").
+Kernel is crashing when user tries to record 'ftrace:function' event
+with empty filter:
 
-The system call trace events are special, as there is only one trace event
-for all system calls (the raw_syscalls). But a macro that wraps the system
-calls creates meta data for them that copies the name to find the system
-call that maps to the system call table (the number). At boot up, it does a
-kallsyms lookup of the system call table to find the function that maps to
-the meta data of the system call. If it does not find a function, then that
-system call is ignored.
+  # perf record -e ftrace:function --filter="" ls
 
-Because the x86 system calls had "__x64_", or "__ia32_" prefixed to the
-"sys" for the names, they do not match the default compare algorithm. As
-this was a problem for power pc, the algorithm can be overwritten by the
-architecture. The solution is to have x86 have its own algorithm to do the
-compare and this brings back the system call trace events.
+  # dmesg
+  BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
+  Oops: 0000 [#1] SMP PTI
+  ...
+  RIP: 0010:ftrace_profile_set_filter+0x14b/0x2d0
+  RSP: 0018:ffffa4a7c0da7d20 EFLAGS: 00010246
+  RAX: ffffa4a7c0da7d64 RBX: 0000000000000000 RCX: 0000000000000006
+  RDX: 0000000000000000 RSI: 0000000000000092 RDI: ffff8c48ffc968f0
+  ...
+  Call Trace:
+   _perf_ioctl+0x54a/0x6b0
+   ? rcu_all_qs+0x5/0x30
+  ...
 
-Link: http://lkml.kernel.org/r/20180417174128.0f3457f0@gandalf.local.home
+After patch:
+  # perf record -e ftrace:function --filter="" ls
+  failed to set filter "" on event ftrace:function with 22 (Invalid argument)
 
-Reported-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Acked-by: Dominik Brodowski <linux@dominikbrodowski.net>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Fixes: d5a00528b58c ("syscalls/core, syscalls/x86: Rename struct pt_regs-based sys_*() to __x64_sys_*()")
+Also, if user tries to echo "" > filter, it used to throw an error.
+This behavior got changed by commit 80765597bc58 ("tracing: Rewrite
+filter logic to be simpler and faster"). This patch restores the
+behavior as a side effect:
+
+Before patch:
+  # echo "" > filter
+  #
+
+After patch:
+  # echo "" > filter
+  bash: echo: write error: Invalid argument
+  #
+
+Link: http://lkml.kernel.org/r/20180420150758.19787-1-ravi.bangoria@linux.ibm.com
+
+Fixes: 80765597bc58 ("tracing: Rewrite filter logic to be simpler and faster")
+Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- arch/x86/include/asm/ftrace.h | 19 +++++++++++++++++--
- 1 file changed, 17 insertions(+), 2 deletions(-)
+ kernel/trace/trace_events_filter.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/arch/x86/include/asm/ftrace.h b/arch/x86/include/asm/ftrace.h
-index 09ad88572746..cc8f8fcf9b4a 100644
---- a/arch/x86/include/asm/ftrace.h
-+++ b/arch/x86/include/asm/ftrace.h
-@@ -46,7 +46,21 @@ int ftrace_int3_handler(struct pt_regs *regs);
- #endif /* CONFIG_FUNCTION_TRACER */
+diff --git a/kernel/trace/trace_events_filter.c b/kernel/trace/trace_events_filter.c
+index 9b4716bb8bb0..1f951b3df60c 100644
+--- a/kernel/trace/trace_events_filter.c
++++ b/kernel/trace/trace_events_filter.c
+@@ -1499,14 +1499,14 @@ static int process_preds(struct trace_event_call *call,
+ 		return ret;
+ 	}
  
- 
--#if !defined(__ASSEMBLY__) && !defined(COMPILE_OFFSETS)
-+#ifndef __ASSEMBLY__
+-	if (!nr_preds) {
+-		prog = NULL;
+-	} else {
+-		prog = predicate_parse(filter_string, nr_parens, nr_preds,
++	if (!nr_preds)
++		return -EINVAL;
 +
-+#define ARCH_HAS_SYSCALL_MATCH_SYM_NAME
-+static inline bool arch_syscall_match_sym_name(const char *sym, const char *name)
-+{
-+	/*
-+	 * Compare the symbol name with the system call name. Skip the
-+	 * "__x64_sys", "__ia32_sys" or simple "sys" prefix.
-+	 */
-+	return !strcmp(sym + 3, name + 3) ||
-+		(!strncmp(sym, "__x64_", 6) && !strcmp(sym + 9, name + 3)) ||
-+		(!strncmp(sym, "__ia32_", 7) && !strcmp(sym + 10, name + 3));
-+}
++	prog = predicate_parse(filter_string, nr_parens, nr_preds,
+ 			       parse_pred, call, pe);
+-		if (IS_ERR(prog))
+-			return PTR_ERR(prog);
+-	}
++	if (IS_ERR(prog))
++		return PTR_ERR(prog);
 +
-+#ifndef COMPILE_OFFSETS
- 
- #if defined(CONFIG_FTRACE_SYSCALLS) && defined(CONFIG_IA32_EMULATION)
- #include <asm/compat.h>
-@@ -67,6 +81,7 @@ static inline bool arch_trace_is_compat_syscall(struct pt_regs *regs)
- 	return false;
+ 	rcu_assign_pointer(filter->prog, prog);
+ 	return 0;
  }
- #endif /* CONFIG_FTRACE_SYSCALLS && CONFIG_IA32_EMULATION */
--#endif /* !__ASSEMBLY__  && !COMPILE_OFFSETS */
-+#endif /* !COMPILE_OFFSETS */
-+#endif /* !__ASSEMBLY__ */
- 
- #endif /* _ASM_X86_FTRACE_H */
 -- 
 2.16.3
