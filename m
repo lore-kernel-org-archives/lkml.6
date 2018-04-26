@@ -1,92 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755294AbeDZUS6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 16:18:58 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44022 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752000AbeDZUS5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 16:18:57 -0400
-Subject: Re: [PATCH v3 00/14] kernel/locking: qspinlock improvements
-To: Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, peterz@infradead.org,
-        mingo@kernel.org, boqun.feng@gmail.com, paulmck@linux.vnet.ibm.com
-References: <1524738868-31318-1-git-send-email-will.deacon@arm.com>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <8fdcfa2d-7717-5eb6-a938-53524db8ea41@redhat.com>
-Date: Thu, 26 Apr 2018 16:18:56 -0400
+        id S1754287AbeDZUUr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 16:20:47 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:39972 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752358AbeDZUUp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 16:20:45 -0400
+X-Google-Smtp-Source: AIpwx4/MDZ4jeMSDg5LIEgCeoLKjjovTl313lxokvVxjrCrbtdujVt0CDephgDcl+DSmYAzVnfps1A==
+Subject: Re: [PATCH v2] of: overlay: Stop leaking resources on overlay removal
+To: Jan Kiszka <jan.kiszka@siemens.com>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        devicetree <devicetree@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alan Tull <atull@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+References: <e8704374-857c-d80e-e91c-89d59e1cffbe@siemens.com>
+From: Frank Rowand <frowand.list@gmail.com>
+Message-ID: <bb034d02-6bff-6828-bbf6-021bf4d39a95@gmail.com>
+Date: Thu, 26 Apr 2018 13:20:43 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <1524738868-31318-1-git-send-email-will.deacon@arm.com>
+In-Reply-To: <e8704374-857c-d80e-e91c-89d59e1cffbe@siemens.com>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/26/2018 06:34 AM, Will Deacon wrote:
-> Hi all,
->
-> This is version three of the qspinlock patches I posted previously:
->
->   v1: https://lkml.org/lkml/2018/4/5/496
->   v2: https://lkml.org/lkml/2018/4/11/618
->
-> Changes since v2 include:
->   * Fixed bisection issues
->   * Fixed x86 PV build
->   * Added patch proposing me as a co-maintainer
->   * Rebased onto -rc2
->
-> All feedback welcome,
->
-> Will
->
-> --->8
->
-> Jason Low (1):
->   locking/mcs: Use smp_cond_load_acquire() in mcs spin loop
->
-> Waiman Long (1):
->   locking/qspinlock: Add stat tracking for pending vs slowpath
->
-> Will Deacon (12):
->   barriers: Introduce smp_cond_load_relaxed and atomic_cond_read_relaxed
->   locking/qspinlock: Merge struct __qspinlock into struct qspinlock
->   locking/qspinlock: Bound spinning on pending->locked transition in
->     slowpath
->   locking/qspinlock/x86: Increase _Q_PENDING_LOOPS upper bound
->   locking/qspinlock: Remove unbounded cmpxchg loop from locking slowpath
->   locking/qspinlock: Kill cmpxchg loop when claiming lock from head of
->     queue
->   locking/qspinlock: Use atomic_cond_read_acquire
->   locking/qspinlock: Use smp_cond_load_relaxed to wait for next node
->   locking/qspinlock: Make queued_spin_unlock use smp_store_release
->   locking/qspinlock: Elide back-to-back RELEASE operations with
->     smp_wmb()
->   locking/qspinlock: Use try_cmpxchg instead of cmpxchg when locking
->   MAINTAINERS: Add myself as a co-maintainer for LOCKING PRIMITIVES
->
->  MAINTAINERS                               |   1 +
->  arch/x86/include/asm/qspinlock.h          |  21 ++-
->  arch/x86/include/asm/qspinlock_paravirt.h |   3 +-
->  include/asm-generic/atomic-long.h         |   2 +
->  include/asm-generic/barrier.h             |  27 +++-
->  include/asm-generic/qspinlock.h           |   2 +-
->  include/asm-generic/qspinlock_types.h     |  32 +++-
->  include/linux/atomic.h                    |   2 +
->  kernel/locking/mcs_spinlock.h             |  10 +-
->  kernel/locking/qspinlock.c                | 247 ++++++++++++++----------------
->  kernel/locking/qspinlock_paravirt.h       |  44 ++----
->  kernel/locking/qspinlock_stat.h           |   9 +-
->  12 files changed, 209 insertions(+), 191 deletions(-)
->
-Other than my comment on patch 5 (which can wait as the code path is
-unlikely to be used soon), I have no other issue with this patchset.
+On 04/26/18 04:00, Jan Kiszka wrote:
+> Only the overlay notifier callbacks have a chance to potentially get
+> hold of references to those two resources, but they are not supposed to
+> store them beyond OF_OVERLAY_POST_REMOVE.
+> 
+> Document the overlay notifier API, its constraint regarding pointer
+> lifetime, and then remove intentional leaks of ovcs->overlay_tree and
+> ovcs->fdt from free_overlay_changeset.
+> 
+> See also https://lkml.org/lkml/2018/4/23/1063 and following.
+> 
+> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+> ---
+>  Documentation/devicetree/overlay-notes.txt |  8 ++++++++
+>  drivers/of/overlay.c                       | 30 +++++++++++++++++++++---------
+>  2 files changed, 29 insertions(+), 9 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/overlay-notes.txt b/Documentation/devicetree/overlay-notes.txt
+> index a4feb6dde8cd..725fb8d255c1 100644
+> --- a/Documentation/devicetree/overlay-notes.txt
+> +++ b/Documentation/devicetree/overlay-notes.txt
+> @@ -98,6 +98,14 @@ Finally, if you need to remove all overlays in one-go, just call
+>  of_overlay_remove_all() which will remove every single one in the correct
+>  order.
+>  
+> +In addition, there is the option to register notifiers that get called on
+> +overlay operations. See of_overlay_notifier_register/unregister and
+> +enum of_overlay_notify_action for details.
+> +
+> +Note that a notifier callback is not supposed to store pointers to a device
+> +tree node or its content beyond OF_OVERLAY_POST_REMOVE corresponding to the
+> +respective node it received.
+> +
+>  Overlay DTS Format
+>  ------------------
+>  
+> diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
+> index b35fe88f1851..7baa53e5b1d7 100644
+> --- a/drivers/of/overlay.c
+> +++ b/drivers/of/overlay.c
+> @@ -102,12 +102,28 @@ static DEFINE_IDR(ovcs_idr);
+>  
+>  static BLOCKING_NOTIFIER_HEAD(overlay_notify_chain);
+>  
+> +/**
+> + * of_overlay_notifier_register() - Register notifier for overlay operations
+> + * @nb:		Notifier block to register
+> + *
+> + * Register for notification on overlay operations on device tree nodes. The
+> + * reported actions definied by @of_reconfig_change. The notifier callback
+> + * furthermore receives a pointer to the affected device tree node.
+> + *
+> + * Note that a notifier callback is not supposed to store pointers to a device
+> + * tree node or its content beyond @OF_OVERLAY_POST_REMOVE corresponding to the
+> + * respective node it received.
+> + */
+>  int of_overlay_notifier_register(struct notifier_block *nb)
+>  {
+>  	return blocking_notifier_chain_register(&overlay_notify_chain, nb);
+>  }
+>  EXPORT_SYMBOL_GPL(of_overlay_notifier_register);
+>  
+> +/**
+> + * of_overlay_notifier_register() - Unregister notifier for overlay operations
+> + * @nb:		Notifier block to unregister
+> + */
+>  int of_overlay_notifier_unregister(struct notifier_block *nb)
+>  {
+>  	return blocking_notifier_chain_unregister(&overlay_notify_chain, nb);
+> @@ -671,17 +687,13 @@ static void free_overlay_changeset(struct overlay_changeset *ovcs)
+>  		of_node_put(ovcs->fragments[i].overlay);
+>  	}
+>  	kfree(ovcs->fragments);
+> -
+>  	/*
+> -	 * TODO
+> -	 *
+> -	 * would like to: kfree(ovcs->overlay_tree);
+> -	 * but can not since drivers may have pointers into this data
+> -	 *
+> -	 * would like to: kfree(ovcs->fdt);
+> -	 * but can not since drivers may have pointers into this data
+> +	 * There should be no live pointers into ovcs->overlay_tree and
+> +	 * ovcs->fdt due to the policy that overlay notifiers are not allowed
+> +	 * to retain pointers into the overlay devicetree.
+>  	 */
+> -
+> +	kfree(ovcs->overlay_tree);
+> +	kfree(ovcs->fdt);
+>  	kfree(ovcs);
+>  }
+>  
+> 
 
-Acked-by: Waiman Long <longman@redhat.com>
+These added kfree()s are depending on good review of overlay notifier
+patches to prevent retaining pointers into this freed memory.  When
+this patch is accepted I will submit a patch to add a "K:" pattern
+line to the Overlay MAINTAINERS entry to catch when overlay notifiers
+are added.
 
-Cheers,
-Longman
+Reviewed-by: Frank Rowand <frowand.list@gmail.com>
