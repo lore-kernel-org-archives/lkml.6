@@ -1,95 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756318AbeDZVQO (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 17:16:14 -0400
-Received: from mail-vk0-f45.google.com ([209.85.213.45]:36317 "EHLO
-        mail-vk0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752358AbeDZVQM (ORCPT
+        id S1756579AbeDZVQ1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 17:16:27 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:59838 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753621AbeDZVQN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 17:16:12 -0400
-X-Google-Smtp-Source: AIpwx48KGT1r7m/6zqcgpHJiYw5ONa7WPYin5VbExwWhL0FJ5+71IbagHCsoxJuYKTbzEhuLzOUv7JARy4zASj2yAFI=
+        Thu, 26 Apr 2018 17:16:13 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)"
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 09/17] arm64: dts: r8a77965: Use the correct CPG header
+Date: Fri, 27 Apr 2018 00:16:27 +0300
+Message-ID: <4644695.5hyXcXK7su@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20180426165346.494-10-kieran.bingham+renesas@ideasonboard.com>
+References: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com> <20180426165346.494-10-kieran.bingham+renesas@ideasonboard.com>
 MIME-Version: 1.0
-In-Reply-To: <823082096.24861749.1524771086176.JavaMail.zimbra@redhat.com>
-References: <981100282.24860394.1524770798522.JavaMail.zimbra@redhat.com> <823082096.24861749.1524771086176.JavaMail.zimbra@redhat.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Thu, 26 Apr 2018 14:16:11 -0700
-X-Google-Sender-Auth: Flt3Bziq1QjjMsZrHgJRq4D2lck
-Message-ID: <CAGXu5j+3LpvTk49p8o4oBiS3e=3UBAqL5oHzBZB1i9AegvMmDg@mail.gmail.com>
-Subject: Re: BUG: /proc/kcore does not export direct-mapped memory on arm64
- (and presumably some other architectures)
-To: Dave Anderson <anderson@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Laura Abbott <labbott@redhat.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, Andi Kleen <andi@firstfloor.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 26, 2018 at 12:31 PM, Dave Anderson <anderson@redhat.com> wrote:
->
-> While testing /proc/kcore as the live memory source for the crash utility,
-> it fails on arm64.  The failure on arm64 occurs because only the
-> vmalloc/module space segments are exported in PT_LOAD segments,
-> and it's missing all of the PT_LOAD segments for the generic
-> unity-mapped regions of physical memory, as well as their associated
-> vmemmap sections.
->
-> The mapping of unity-mapped RAM segments in fs/proc/kcore.c is
-> architecture-neutral, and after debugging it, I found this as the
-> problem.  For each chunk of physical memory, kcore_update_ram()
-> calls walk_system_ram_range(), passing kclist_add_private() as a
-> callback function to add the chunk to the kclist, and eventually
-> leading to the creation of a PT_LOAD segment.
->
-> kclist_add_private() does some verification of the memory region,
-> but this one below is bogus for arm64:
->
->     static int
->     kclist_add_private(unsigned long pfn, unsigned long nr_pages, void *arg)
->     {
->     ... [ cut ] ...
->             ent->addr = (unsigned long)__va((pfn << PAGE_SHIFT));
->     ... [ cut ] ...
->
->             /* Sanity check: Can happen in 32bit arch...maybe */
->             if (ent->addr < (unsigned long) __va(0))
->                     goto free_out;
->
-> And that's because __va(0) is a bogus check for arm64.  It is checking
-> whether the ent->addr value is less than the lowest possible unity-mapped
-> address.  But "0" should not be used as a physical address on arm64; the
-> lowest legitimate physical address for this __va() check would be the arm64
-> PHYS_OFFSET, or memstart_addr:
->
-> Here's the arm64 __va() and PHYS_OFFSET:
->
->   #define __va(x) ((void *)__phys_to_virt((phys_addr_t)(x)))
->   #define __phys_to_virt(x)       ((unsigned long)((x) - PHYS_OFFSET) | PAGE_OFFSET)
->
->   extern s64                      memstart_addr;
->   /* PHYS_OFFSET - the physical address of the start of memory. */
->   #define PHYS_OFFSET             ({ VM_BUG_ON(memstart_addr & 1); memstart_addr; })
->
-> If PHYS_OFFSET/memstart_addr is anything other than 0 (it is 0x4000000000 on my
-> test system), the __va(0) calculation goes negative and creates a bogus, very
-> large, virtual address.  And since the ent->addr virtual address is less than
-> bogus __va(0) address, the test fails, and the memory chunk is rejected.
->
-> Looking at the kernel sources, it seems that this would affect other
-> architectures as well, i.e., the ones whose __va() is not a simple
-> addition of the physical address with PAGE_OFFSET.
->
-> Anyway, I don't know what the best approach for an architecture-neutral
-> fix would be in this case.  So I figured I'd throw it out to you guys for
-> some ideas.
+Hi Kieran,
 
-I'm not as familiar with this code, but I've added Ard and Laura to CC
-here, as this feels like something they'd be able to comment on. :)
+Thank you for the patch.
 
--Kees
+On Thursday, 26 April 2018 19:53:38 EEST Kieran Bingham wrote:
+> The SoC dtsi includes the generic renesas-cpg-mssr header, which does
+> not contain all of the relevant SoC specific definitions.
+> 
+> Adapt this to be the r8a77965 specific header.
+
+I would squash this with patch 13/17.
+
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> ---
+>  arch/arm64/boot/dts/renesas/r8a77965.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+> b/arch/arm64/boot/dts/renesas/r8a77965.dtsi index
+> 02de36b9e581..894903a59bdc 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+> @@ -8,7 +8,7 @@
+>   * Copyright (C) 2016 Renesas Electronics Corp.
+>   */
+> 
+> -#include <dt-bindings/clock/renesas-cpg-mssr.h>
+> +#include <dt-bindings/clock/r8a77965-cpg-mssr.h>
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>  #include <dt-bindings/power/r8a77965-sysc.h>
+
 
 -- 
-Kees Cook
-Pixel Security
+Regards,
+
+Laurent Pinchart
