@@ -1,112 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756576AbeDZOn4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 10:43:56 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:41227 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754528AbeDZOny (ORCPT
+        id S1756588AbeDZOo7 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 10:44:59 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:38297 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755998AbeDZOo5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 10:43:54 -0400
-X-Google-Smtp-Source: AIpwx4/BGY8F0ShltfPTGWHSTihGcwa8kvRu40PChuQuNuVIglSAHbgKBF1pe98PgomCPyWxDnUCD4RfXwQRfPcnlAw=
+        Thu, 26 Apr 2018 10:44:57 -0400
+X-Google-Smtp-Source: AIpwx4+NTD8TBkwEx4jdb3I1d/Owm1Px1JL9OKGp3ZR9FVb2k2VA2fs58+I/85JTLyAz3UOcOReM03vgrk9lGfHrCAg=
 MIME-Version: 1.0
-X-Originating-IP: [176.63.54.97]
-In-Reply-To: <20180426141337.GA4308@redhat.com>
-References: <20180412150826.20988-1-mszeredi@redhat.com> <20180412150826.20988-10-mszeredi@redhat.com>
- <20180426141337.GA4308@redhat.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Thu, 26 Apr 2018 16:43:53 +0200
-Message-ID: <CAJfpegv9by9L_b-STRMy4U8Uqv03UrOYDuAa3HdF-9zKxZQRcA@mail.gmail.com>
-Subject: Re: [RFC PATCH 09/35] ovl: stack file ops
-To: Vivek Goyal <vgoyal@redhat.com>
-Cc: Miklos Szeredi <mszeredi@redhat.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 26 Apr 2018 16:44:56 +0200
+X-Google-Sender-Auth: RG62aGMuwfD4VoCaZ6nnuYrG2r4
+Message-ID: <CAJZ5v0i9VLKS5bz8R8EGWjBQaHEsm-jOYwHAAWNt+eS8301cvA@mail.gmail.com>
+Subject: [GIT PULL] ACPI fixes for v4.17-rc3
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 26, 2018 at 4:13 PM, Vivek Goyal <vgoyal@redhat.com> wrote:
-> On Thu, Apr 12, 2018 at 05:08:00PM +0200, Miklos Szeredi wrote:
->
-> [..]
->> diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
->> new file mode 100644
->> index 000000000000..a0b606885c41
->> --- /dev/null
->> +++ b/fs/overlayfs/file.c
->> @@ -0,0 +1,76 @@
->> +/*
->> + * Copyright (C) 2017 Red Hat, Inc.
->> + *
->> + * This program is free software; you can redistribute it and/or modify it
->> + * under the terms of the GNU General Public License version 2 as published by
->> + * the Free Software Foundation.
->> + */
->> +
->> +#include <linux/cred.h>
->> +#include <linux/file.h>
->> +#include <linux/xattr.h>
->> +#include "overlayfs.h"
->> +
->> +static struct file *ovl_open_realfile(const struct file *file)
->> +{
->> +     struct inode *inode = file_inode(file);
->> +     struct inode *upperinode = ovl_inode_upper(inode);
->> +     struct inode *realinode = upperinode ?: ovl_inode_lower(inode);
->> +     struct file *realfile;
->> +     const struct cred *old_cred;
->> +
->> +     old_cred = ovl_override_creds(inode->i_sb);
->> +     realfile = path_open(&file->f_path, file->f_flags | O_NOATIME,
->> +                          realinode, current_cred(), false);
->> +     revert_creds(old_cred);
->> +
->> +     pr_debug("open(%p[%pD2/%c], 0%o) -> (%p, 0%o)\n",
->> +              file, file, upperinode ? 'u' : 'l', file->f_flags,
->> +              realfile, IS_ERR(realfile) ? 0 : realfile->f_flags);
->> +
->> +     return realfile;
->> +}
->> +
->> +static int ovl_open(struct inode *inode, struct file *file)
->> +{
->> +     struct dentry *dentry = file_dentry(file);
->
-> Hi Miklos,
->
-> There is one thing I can't wrap my head around, so I better ask.
->
-> file_dentry() will call ovl_d_real() and try to find dentry based on
-> inode installed in f->f_inode. If ovl_d_real() can't find inode dentry
-> matching the passed in inode, it warns.
->
-> Assume, I have a stacked overlay configuration. Let me call top level
-> overlay layer ovl1 and lower level overlay layer ovl2. Say I open a
-> file foo.txt. Now ovl_open() in ovl1 decides that realinode is a lower
-> inode and installs that inode f->f_inode of realfile. (This should be
-> ovl2 layer inode, let me call it ovl2_inode). Now ovl_open() of ovl2 layer
-> will be called and it will call file_dentry() and will look for dentry
-> corresponding to ovl2_inode. I am wondering what if a copy up of foo.txt
-> was triggered in ovl1 and by the time we called ovl_d_real(dentry,
-> ovl2_inode), it will start comparing with inode of ovl1_upper and never
-> find ovl2_inode.
+Hi Linus,
 
-Okay, so we've modified ovl_d_real() to allow returning the overlay
-dentry itself.  This is important: when we fail to match ovl1_upper
-with ovl2_inode, well go on to get ovl2_dentry and call d_real()
-recursively.  That recursive call should match the inode, return it to
-outer ovl_d_real(), which again will match the inode and return
-without warning.
+Please pull from the tag
 
-> IOW, I am not able to figure out how do we protect agains copy up races
-> when ovl_open() calls file_dentry().
+ git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+ acpi-4.17-rc3
 
-Racing with a copy up cannot matter, since we'll continue looking for
-the inode in the layers and stacks below, regardless of whether we
-checked the upper dentry or not.
+with top-most commit bd6dff55de7acb2e5065e69706400c41b1bd0521
 
-Does that make it clearer?
+ Merge branches 'acpi-watchdog', 'acpi-button' and 'acpi-video'
 
-Thanks,
-Miklos
+on top of commit 6d08b06e67cd117f6992c46611dfb4ce267cd71e
+
+ Linux 4.17-rc2
+
+to receive ACPI fixes for 4.17-rc3.
+
+These are two watchdog-related fixes, fix for a backlight regression
+from the 4.16 cycle that unfortunately was propagated to -stable and
+a button module modification to prevent graphics driver modules from
+failing to load due to unmet dependencies if ACPI is disabled from
+the kernel command line.
+
+Specifics:
+
+ - Change the ACPI subsystem initialization ordering to initialize
+   the WDAT watchodg before reserving PNP motherboard resources so
+   as to allow the watchdog to allocate its resources before the PNP
+   code gets to them and prevents it from working correctly (Mika
+   Westerberg).
+
+ - Add a quirk for Lenovo Z50-70 to use the iTCO watchdog instead of
+   the WDAT one which conflicts with the RTC on that platform (Mika
+   Westerberg).
+
+ - Avoid breaking backlight handling on Dell XPS 13 2013 model by
+   allowing laptops to use the ACPI backlight by default even if they
+   are Windows 8-ready in principle (Hans de Goede).
+
+ - Prevent the ACPI button module from failing to load if ACPI is
+   disabled via the kernel command line so as to allow graphics
+   driver modules depending on the ACPI button module to load in
+   that case (Ard Biesheuvel).
+
+Thanks!
+
+
+---------------
+
+Ard Biesheuvel (1):
+      ACPI / button: make module loadable when booted in non-ACPI mode
+
+Hans de Goede (1):
+      ACPI / video: Only default only_lcd to true on Win8-ready _desktops_
+
+Mika Westerberg (2):
+      ACPI / scan: Initialize watchdog before PNP
+      ACPI / watchdog: Prefer iTCO_wdt on Lenovo Z50-70
+
+---------------
+
+ drivers/acpi/acpi_video.c    | 27 ++++++++++++++++++--
+ drivers/acpi/acpi_watchdog.c | 59 ++++++++++++++++++++++++++++++++++++--------
+ drivers/acpi/button.c        | 24 +++++++++++++++++-
+ drivers/acpi/scan.c          |  2 +-
+ 4 files changed, 98 insertions(+), 14 deletions(-)
