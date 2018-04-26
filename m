@@ -1,140 +1,190 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756665AbeDZO4s (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 10:56:48 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59264 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1756664AbeDZO4m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 10:56:42 -0400
-Date: Thu, 26 Apr 2018 10:56:41 -0400
-From: Vivek Goyal <vgoyal@redhat.com>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Miklos Szeredi <mszeredi@redhat.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 09/35] ovl: stack file ops
-Message-ID: <20180426145641.GB4308@redhat.com>
-References: <20180412150826.20988-1-mszeredi@redhat.com>
- <20180412150826.20988-10-mszeredi@redhat.com>
- <20180426141337.GA4308@redhat.com>
- <CAJfpegv9by9L_b-STRMy4U8Uqv03UrOYDuAa3HdF-9zKxZQRcA@mail.gmail.com>
+        id S1756564AbeDZO6T (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 10:58:19 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:50228 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755172AbeDZO6R (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 10:58:17 -0400
+X-Google-Smtp-Source: AIpwx48Jpv8SY5PIOP5LTQReuUqQTmDNdS7v8vUH/ujj+lyN5ngo6A0vNGCdIIpXlM6PB2kY1Rln2MzMsa3fQvzF2CY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpegv9by9L_b-STRMy4U8Uqv03UrOYDuAa3HdF-9zKxZQRcA@mail.gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180426145056.220325-3-edumazet@google.com>
+References: <20180426145056.220325-1-edumazet@google.com> <20180426145056.220325-3-edumazet@google.com>
+From: Soheil Hassas Yeganeh <soheil@google.com>
+Date: Thu, 26 Apr 2018 10:57:36 -0400
+Message-ID: <CACSApvbbgGKUjGdW+K0ALA__5FdeSGK5xLpNwL6Cx96L=d=Ggg@mail.gmail.com>
+Subject: Re: [PATCH v3 net-next 2/2] selftests: net: tcp_mmap must use TCP_ZEROCOPY_RECEIVE
+To: Eric Dumazet <edumazet@google.com>
+Cc: "David S . Miller" <davem@davemloft.net>,
+        netdev <netdev@vger.kernel.org>, Andy Lutomirski <luto@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Ka-Cheong Poon <ka-cheong.poon@oracle.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 26, 2018 at 04:43:53PM +0200, Miklos Szeredi wrote:
-> On Thu, Apr 26, 2018 at 4:13 PM, Vivek Goyal <vgoyal@redhat.com> wrote:
-> > On Thu, Apr 12, 2018 at 05:08:00PM +0200, Miklos Szeredi wrote:
-> >
-> > [..]
-> >> diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-> >> new file mode 100644
-> >> index 000000000000..a0b606885c41
-> >> --- /dev/null
-> >> +++ b/fs/overlayfs/file.c
-> >> @@ -0,0 +1,76 @@
-> >> +/*
-> >> + * Copyright (C) 2017 Red Hat, Inc.
-> >> + *
-> >> + * This program is free software; you can redistribute it and/or modify it
-> >> + * under the terms of the GNU General Public License version 2 as published by
-> >> + * the Free Software Foundation.
-> >> + */
-> >> +
-> >> +#include <linux/cred.h>
-> >> +#include <linux/file.h>
-> >> +#include <linux/xattr.h>
-> >> +#include "overlayfs.h"
-> >> +
-> >> +static struct file *ovl_open_realfile(const struct file *file)
-> >> +{
-> >> +     struct inode *inode = file_inode(file);
-> >> +     struct inode *upperinode = ovl_inode_upper(inode);
-> >> +     struct inode *realinode = upperinode ?: ovl_inode_lower(inode);
-> >> +     struct file *realfile;
-> >> +     const struct cred *old_cred;
-> >> +
-> >> +     old_cred = ovl_override_creds(inode->i_sb);
-> >> +     realfile = path_open(&file->f_path, file->f_flags | O_NOATIME,
-> >> +                          realinode, current_cred(), false);
-> >> +     revert_creds(old_cred);
-> >> +
-> >> +     pr_debug("open(%p[%pD2/%c], 0%o) -> (%p, 0%o)\n",
-> >> +              file, file, upperinode ? 'u' : 'l', file->f_flags,
-> >> +              realfile, IS_ERR(realfile) ? 0 : realfile->f_flags);
-> >> +
-> >> +     return realfile;
-> >> +}
-> >> +
-> >> +static int ovl_open(struct inode *inode, struct file *file)
-> >> +{
-> >> +     struct dentry *dentry = file_dentry(file);
-> >
-> > Hi Miklos,
-> >
-> > There is one thing I can't wrap my head around, so I better ask.
-> >
-> > file_dentry() will call ovl_d_real() and try to find dentry based on
-> > inode installed in f->f_inode. If ovl_d_real() can't find inode dentry
-> > matching the passed in inode, it warns.
-> >
-> > Assume, I have a stacked overlay configuration. Let me call top level
-> > overlay layer ovl1 and lower level overlay layer ovl2. Say I open a
-> > file foo.txt. Now ovl_open() in ovl1 decides that realinode is a lower
-> > inode and installs that inode f->f_inode of realfile. (This should be
-> > ovl2 layer inode, let me call it ovl2_inode). Now ovl_open() of ovl2 layer
-> > will be called and it will call file_dentry() and will look for dentry
-> > corresponding to ovl2_inode. I am wondering what if a copy up of foo.txt
-> > was triggered in ovl1 and by the time we called ovl_d_real(dentry,
-> > ovl2_inode), it will start comparing with inode of ovl1_upper and never
-> > find ovl2_inode.
-> 
-> Okay, so we've modified ovl_d_real() to allow returning the overlay
-> dentry itself.  This is important: when we fail to match ovl1_upper
-> with ovl2_inode, well go on to get ovl2_dentry and call d_real()
-> recursively.  That recursive call should match the inode, return it to
-> outer ovl_d_real(), which again will match the inode and return
-> without warning.
+On Thu, Apr 26, 2018 at 10:50 AM, Eric Dumazet <edumazet@google.com> wrote:
+> After prior kernel change, mmap() on TCP socket only reserves VMA.
+>
+> We have to use getsockopt(fd, IPPROTO_TCP, TCP_ZEROCOPY_RECEIVE, ...)
+> to perform the transfert of pages from skbs in TCP receive queue into such VMA.
+>
+> struct tcp_zerocopy_receive {
+>         __u64 address;          /* in: address of mapping */
+>         __u32 length;           /* in/out: number of bytes to map/mapped */
+>         __u32 recv_skip_hint;   /* out: amount of bytes to skip */
+> };
+>
+> After a successful getsockopt(...TCP_ZEROCOPY_RECEIVE...), @length contains
+> number of bytes that were mapped, and @recv_skip_hint contains number of bytes
+> that should be read using conventional read()/recv()/recvmsg() system calls,
+> to skip a sequence of bytes that can not be mapped, because not properly page
+> aligned.
+>
+> Signed-off-by: Eric Dumazet <edumazet@google.com>
+> Cc: Andy Lutomirski <luto@kernel.org>
+> Cc: Soheil Hassas Yeganeh <soheil@google.com>
 
-So current code does following.
+Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
 
-ovl_d_real() {
-	...
-	...
+Thank you, again!
 
-        real = ovl_dentry_real(dentry);
-        if (inode == d_inode(real))
-                return real;
-
-        /* Handle recursion */
-        if (unlikely(real->d_flags & DCACHE_OP_REAL))
-                return real->d_op->d_real(real, inode);
-}
-
-If file got copied up in ovl1, then "real" will be ovl1_upper dentry. And
-upper is regular fs (only ovl1 lower is overlay), then it should not have
-DCACHE_OP_REAL set and that means we will not recurse further and not
-find ovl2 dentry matching ovl2_inode and print warning and return
-ovl1 dentry.
-
-What am I missing.
-
-Vivek
-
-> 
-> > IOW, I am not able to figure out how do we protect agains copy up races
-> > when ovl_open() calls file_dentry().
-> 
-> Racing with a copy up cannot matter, since we'll continue looking for
-> the inode in the layers and stacks below, regardless of whether we
-> checked the upper dentry or not.
-> 
-> Does that make it clearer?
-> 
-> Thanks,
-> Miklos
+> ---
+>  tools/testing/selftests/net/tcp_mmap.c | 64 +++++++++++++++-----------
+>  1 file changed, 37 insertions(+), 27 deletions(-)
+>
+> diff --git a/tools/testing/selftests/net/tcp_mmap.c b/tools/testing/selftests/net/tcp_mmap.c
+> index dea342fe6f4e88b5709d2ac37b2fc9a2a320bf44..77f762780199ff1f69f9f6b3f18e72deddb69f5e 100644
+> --- a/tools/testing/selftests/net/tcp_mmap.c
+> +++ b/tools/testing/selftests/net/tcp_mmap.c
+> @@ -76,9 +76,10 @@
+>  #include <time.h>
+>  #include <sys/time.h>
+>  #include <netinet/in.h>
+> -#include <netinet/tcp.h>
+>  #include <arpa/inet.h>
+>  #include <poll.h>
+> +#include <linux/tcp.h>
+> +#include <assert.h>
+>
+>  #ifndef MSG_ZEROCOPY
+>  #define MSG_ZEROCOPY    0x4000000
+> @@ -134,11 +135,12 @@ void hash_zone(void *zone, unsigned int length)
+>  void *child_thread(void *arg)
+>  {
+>         unsigned long total_mmap = 0, total = 0;
+> +       struct tcp_zerocopy_receive zc;
+>         unsigned long delta_usec;
+>         int flags = MAP_SHARED;
+>         struct timeval t0, t1;
+>         char *buffer = NULL;
+> -       void *oaddr = NULL;
+> +       void *addr = NULL;
+>         double throughput;
+>         struct rusage ru;
+>         int lu, fd;
+> @@ -153,41 +155,46 @@ void *child_thread(void *arg)
+>                 perror("malloc");
+>                 goto error;
+>         }
+> +       if (zflg) {
+> +               addr = mmap(NULL, chunk_size, PROT_READ, flags, fd, 0);
+> +               if (addr == (void *)-1)
+> +                       zflg = 0;
+> +       }
+>         while (1) {
+>                 struct pollfd pfd = { .fd = fd, .events = POLLIN, };
+>                 int sub;
+>
+>                 poll(&pfd, 1, 10000);
+>                 if (zflg) {
+> -                       void *naddr;
+> +                       socklen_t zc_len = sizeof(zc);
+> +                       int res;
+>
+> -                       naddr = mmap(oaddr, chunk_size, PROT_READ, flags, fd, 0);
+> -                       if (naddr == (void *)-1) {
+> -                               if (errno == EAGAIN) {
+> -                                       /* That is if SO_RCVLOWAT is buggy */
+> -                                       usleep(1000);
+> -                                       continue;
+> -                               }
+> -                               if (errno == EINVAL) {
+> -                                       flags = MAP_SHARED;
+> -                                       oaddr = NULL;
+> -                                       goto fallback;
+> -                               }
+> -                               if (errno != EIO)
+> -                                       perror("mmap()");
+> +                       zc.address = (__u64)addr;
+> +                       zc.length = chunk_size;
+> +                       zc.recv_skip_hint = 0;
+> +                       res = getsockopt(fd, IPPROTO_TCP, TCP_ZEROCOPY_RECEIVE,
+> +                                        &zc, &zc_len);
+> +                       if (res == -1)
+>                                 break;
+> +
+> +                       if (zc.length) {
+> +                               assert(zc.length <= chunk_size);
+> +                               total_mmap += zc.length;
+> +                               if (xflg)
+> +                                       hash_zone(addr, zc.length);
+> +                               total += zc.length;
+>                         }
+> -                       total_mmap += chunk_size;
+> -                       if (xflg)
+> -                               hash_zone(naddr, chunk_size);
+> -                       total += chunk_size;
+> -                       if (!keepflag) {
+> -                               flags |= MAP_FIXED;
+> -                               oaddr = naddr;
+> +                       if (zc.recv_skip_hint) {
+> +                               assert(zc.recv_skip_hint <= chunk_size);
+> +                               lu = read(fd, buffer, zc.recv_skip_hint);
+> +                               if (lu > 0) {
+> +                                       if (xflg)
+> +                                               hash_zone(buffer, lu);
+> +                                       total += lu;
+> +                               }
+>                         }
+>                         continue;
+>                 }
+> -fallback:
+>                 sub = 0;
+>                 while (sub < chunk_size) {
+>                         lu = read(fd, buffer + sub, chunk_size - sub);
+> @@ -228,6 +235,8 @@ void *child_thread(void *arg)
+>  error:
+>         free(buffer);
+>         close(fd);
+> +       if (zflg)
+> +               munmap(addr, chunk_size);
+>         pthread_exit(0);
+>  }
+>
+> @@ -371,7 +380,8 @@ int main(int argc, char *argv[])
+>                 setup_sockaddr(cfg_family, host, &listenaddr);
+>
+>                 if (mss &&
+> -                   setsockopt(fdlisten, SOL_TCP, TCP_MAXSEG, &mss, sizeof(mss)) == -1) {
+> +                   setsockopt(fdlisten, IPPROTO_TCP, TCP_MAXSEG,
+> +                              &mss, sizeof(mss)) == -1) {
+>                         perror("setsockopt TCP_MAXSEG");
+>                         exit(1);
+>                 }
+> @@ -402,7 +412,7 @@ int main(int argc, char *argv[])
+>         setup_sockaddr(cfg_family, host, &addr);
+>
+>         if (mss &&
+> -           setsockopt(fd, SOL_TCP, TCP_MAXSEG, &mss, sizeof(mss)) == -1) {
+> +           setsockopt(fd, IPPROTO_TCP, TCP_MAXSEG, &mss, sizeof(mss)) == -1) {
+>                 perror("setsockopt TCP_MAXSEG");
+>                 exit(1);
+>         }
+> --
+> 2.17.0.484.g0c8726318c-goog
+>
