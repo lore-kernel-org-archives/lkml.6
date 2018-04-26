@@ -1,28 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754715AbeDZJR4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 05:17:56 -0400
-Received: from mail-it0-f43.google.com ([209.85.214.43]:55897 "EHLO
-        mail-it0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753676AbeDZJRr (ORCPT
+        id S1754646AbeDZJUt (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 05:20:49 -0400
+Received: from mail-io0-f173.google.com ([209.85.223.173]:35896 "EHLO
+        mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753487AbeDZJUp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 05:17:47 -0400
-X-Google-Smtp-Source: AIpwx48V/hn+SuMGEJKmmEbI6lxN4CYynBZs5sTxt+XdA3PcvmAZk6gp90yR3/GCcZ6RJiMi9a9D1i6ILrFlcxwh2SA=
+        Thu, 26 Apr 2018 05:20:45 -0400
+X-Google-Smtp-Source: AB8JxZrrkkCXGvoySEum4ad22BhlHjW/oMWgELdtgyX3DAmJBZyQvMI2E+gXWIc4sQYXCp+Z8gHZn+zG1z16CB364nU=
 MIME-Version: 1.0
 X-Originating-IP: [2a02:168:5635:0:39d2:f87e:2033:9f6]
-In-Reply-To: <20180425232646.GR16141@n2100.armlinux.org.uk>
-References: <CAKMK7uFL68pu+-9LODTgz+GQYvxpnXOGhxfz9zorJ_JKsPVw2g@mail.gmail.com>
+In-Reply-To: <20180425225443.GQ16141@n2100.armlinux.org.uk>
+References: <20180424184847.GA3247@infradead.org> <CAKMK7uFL68pu+-9LODTgz+GQYvxpnXOGhxfz9zorJ_JKsPVw2g@mail.gmail.com>
  <20180425054855.GA17038@infradead.org> <CAKMK7uEFitkNQrD6cLX5Txe11XhVO=LC4YKJXH=VNdq+CY=DjQ@mail.gmail.com>
  <CAKMK7uFx=KB1vup=WhPCyfUFairKQcRR4BEd7aXaX1Pj-vj3Cw@mail.gmail.com>
  <20180425064335.GB28100@infradead.org> <20180425074151.GA2271@ulmo>
  <20180425085439.GA29996@infradead.org> <20180425100429.GR25142@phenom.ffwll.local>
- <20180425153312.GD27076@infradead.org> <CAKMK7uH14qupTYDa1pr8UC434Vs+97eUXj+fYi=+2uijCLayMA@mail.gmail.com>
- <20180425232646.GR16141@n2100.armlinux.org.uk>
-From: Daniel Vetter <daniel@ffwll.ch>
-Date: Thu, 26 Apr 2018 11:17:46 +0200
-X-Google-Sender-Auth: 4U09zLSNS-UAIUhiFFbKraEeQho
-Message-ID: <CAKMK7uGF9HAkBPK1+p9fPqP-fdSUOE+i=RGdUPfUiJh8uSnKRg@mail.gmail.com>
-Subject: Re: noveau vs arm dma ops
+ <20180425153312.GD27076@infradead.org> <20180425225443.GQ16141@n2100.armlinux.org.uk>
+From: Daniel Vetter <daniel.vetter@ffwll.ch>
+Date: Thu, 26 Apr 2018 11:20:44 +0200
+Message-ID: <CAKMK7uG9R6paoP4BmvqDVUP_4Db4Dz8MSXeLwUBMYaORa5-kVw@mail.gmail.com>
+Subject: Re: [Linaro-mm-sig] noveau vs arm dma ops
 To: Russell King - ARM Linux <linux@armlinux.org.uk>
 Cc: Christoph Hellwig <hch@infradead.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
@@ -43,95 +41,106 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 26, 2018 at 1:26 AM, Russell King - ARM Linux
+On Thu, Apr 26, 2018 at 12:54 AM, Russell King - ARM Linux
 <linux@armlinux.org.uk> wrote:
-> On Wed, Apr 25, 2018 at 11:35:13PM +0200, Daniel Vetter wrote:
->> On arm that doesn't work. The iommu api seems like a good fit, except
->> the dma-api tends to get in the way a bit (drm/msm apparently has
->> similar problems like tegra), and if you need contiguous memory
->> dma_alloc_coherent is the only way to get at contiguous memory. There
->> was a huge discussion years ago about that, and direct cma access was
->> shot down because it would have exposed too much of the caching
->> attribute mangling required (most arm platforms need wc-pages to not
->> be in the kernel's linear map apparently).
+> On Wed, Apr 25, 2018 at 08:33:12AM -0700, Christoph Hellwig wrote:
+>> On Wed, Apr 25, 2018 at 12:04:29PM +0200, Daniel Vetter wrote:
+>> > - dma api hides the cache flushing requirements from us. GPUs love
+>> >   non-snooped access, and worse give userspace control over that. We want
+>> >   a strict separation between mapping stuff and flushing stuff. With the
+>> >   IOMMU api we mostly have the former, but for the later arch maintainers
+>> >   regularly tells they won't allow that. So we have drm_clflush.c.
+>>
+>> The problem is that a cache flushing API entirely separate is hard. That
+>> being said if you look at my generic dma-noncoherent API series it tries
+>> to move that way.  So far it is in early stages and apparently rather
+>> buggy unfortunately.
 >
-> I think you completely misunderstand ARM from what you've written above,
-> and this worries me greatly about giving DRM the level of control that
-> is being asked for.
+> And if folk want a cacheable mapping with explicit cache flushing, the
+> cache flushing must not be defined in terms of "this is what CPU seems
+> to need" but from the point of view of a CPU with infinite prefetching,
+> infinite caching and infinite capacity to perform writebacks of dirty
+> cache lines at unexpected moments when the memory is mapped in a
+> cacheable mapping.
 >
-> Modern ARMs have a PIPT cache or a non-aliasing VIPT cache, and cache
-> attributes are stored in the page tables.  These caches are inherently
-> non-aliasing when there are multiple mappings (which is a great step
-> forward compared to the previous aliasing caches.)
+> (The reason for that is you're operating in a non-CPU specific space,
+> so you can't make any guarantees as to how much caching or prefetching
+> will occur by the CPU - different CPUs will do different amounts.)
 >
-> As the cache attributes are stored in the page tables, this in theory
-> allows different virtual mappings of the same physical memory to have
-> different cache attributes.  However, there's a problem, and that's
-> called speculative prefetching.
+> So, for example, the sequence:
 >
-> Let's say you have one mapping which is cacheable, and another that is
-> marked as write combining.  If a cache line is speculatively prefetched
-> through the cacheable mapping of this memory, and then you read the
-> same physical location through the write combining mapping, it is
-> possible that you could read cached data.
+> GPU writes to memory
+>                         CPU reads from cacheable memory
 >
-> So, it is generally accepted that all mappings of any particular
-> physical bit of memory should have the same cache attributes to avoid
-> unpredictable behaviour.
+> if the memory was previously dirty (iow, CPU has written), you need to
+> flush the dirty cache lines _before_ the GPU writes happen, but you
+> don't know whether the CPU has speculatively prefetched, so you need
+> to flush any prefetched cache lines before reading from the cacheable
+> memory _after_ the GPU has finished writing.
 >
-> This presents a problem with what is generally called "lowmem" where
-> the memory is mapped in kernel virtual space with cacheable
-> attributes.  It can also happen with highmem if the memory is
-> kmapped.
+> Also note that "flush" there can be "clean the cache", "clean and
+> invalidate the cache" or "invalidate the cache" as appropriate - some
+> CPUs are able to perform those three operations, and the appropriate
+> one depends on not only where in the above sequence it's being used,
+> but also on what the operations are.
 >
-> This is why, on ARM, you can't use something like get_free_pages() to
-> grab some pages from the system, pass it to the GPU, map it into
-> userspace as write-combining, etc.  It _might_ work for some CPUs,
-> but ARM CPUs vary in how much prefetching they do, and what may work
-> for one particular CPU is in no way guaranteed to work for another
-> ARM CPU.
+> So, the above sequence could be:
 >
-> The official line from architecture folk is to assume that the caches
-> infinitely speculate, are of infinite size, and can writeback *dirty*
-> data at any moment.
+>                         CPU invalidates cache for memory
+>                                 (due to possible dirty cache lines)
+> GPU writes to memory
+>                         CPU invalidates cache for memory
+>                                 (to get rid of any speculatively prefetched
+>                                  lines)
+>                         CPU reads from cacheable memory
 >
-> The way to stop things like speculative prefetches to particular
-> physical memory is to, quite "simply", not have any cacheable
-> mappings of that physical memory anywhere in the system.
+> Yes, in the above case, _two_ cache operations are required to ensure
+> correct behaviour.  However, if you know for certain that the memory was
+> previously clean, then the first cache operation can be skipped.
 >
-> Now, cache flushes on ARM tend to be fairly expensive for GPU buffers.
-> If you have, say, an 8MB buffer (for a 1080p frame) and you need to
-> do a cache operation on that buffer, you'll be iterating over it
-> 32 or maybe 64 bytes at a time "just in case" there's a cache line
-> present.  Referring to my previous email, where I detailed the
-> potential need for _two_ flushes, one before the GPU operation and
-> one after, and this becomes _really_ expensive.  At that point, you're
-> probably way better off using write-combine memory where you don't
-> need to spend CPU cycles performing cache flushing - potentially
-> across all CPUs in the system if cache operations aren't broadcasted.
+> What I'm pointing out is there's much more than just "I want to flush
+> the cache" here, which is currently what DRM seems to assume at the
+> moment with the code in drm_cache.c.
 >
-> This isn't a simple matter of "just provide some APIs for cache
-> operations" - there's much more that needs to be understood by
-> all parties here, especially when we have GPU drivers that can be
-> used with quite different CPUs.
+> If we can agree a set of interfaces that allows _proper_ use of these
+> facilities, one which can be used appropriately, then there shouldn't
+> be a problem.  The DMA API does that via it's ideas about who owns a
+> particular buffer (because of the above problem) and that's something
+> which would need to be carried over to such a cache flushing API (it
+> should be pretty obvious that having a GPU read or write memory while
+> the cache for that memory is being cleaned will lead to unexpected
+> results.)
 >
-> It may well be that for some combinations of CPUs and workloads, it's
-> better to use write-combine memory without cache flushing, but for
-> other CPUs that tradeoff (for the same workload) could well be
-> different.
+> Also note that things get even more interesting in a SMP environment
+> if cache operations aren't broadcasted across the SMP cluster (which
+> means cache operations have to be IPI'd to other CPUs.)
 >
-> Older ARMs get more interesting, because they have aliasing caches.
-> That means the CPU cache aliases across different virtual space
-> mappings in some way, which complicates (a) the mapping of memory
-> and (b) handling the cache operations on it.
->
-> It's too late for me to go into that tonight, and I probably won't
-> be reading mail for the next week and a half, sorry.
+> The next issue, which I've brought up before, is that exposing cache
+> flushing to userspace on architectures where it isn't already exposed
+> comes.  As has been shown by Google Project Zero, this risks exposing
+> those architectures to Spectre and Meltdown exploits where they weren't
+> at such a risk before.  (I've pretty much shown here that you _do_
+> need to control which cache lines get flushed to make these exploits
+> work, and flushing the cache by reading lots of data in liu of having
+> the ability to explicitly flush bits of cache makes it very difficult
+> to impossible for them to work.)
 
-I didn't know all the details well enough (and neither had the time to
-write a few paragraphs like you did), but the above is what I had in
-mind and meant. Sorry if my sloppy reply sounded like I'm mixing stuff
-up.
+The above is already what we're implementing in i915, at least
+conceptually (it all boils down to clflush instructions because those
+both invalidate and flush).
+
+One architectural guarantee we're exploiting is that prefetched (and
+hence non-dirty) cachelines will never get written back, but dropped
+instead. But we kinda need that, otherwise the cpu could randomly
+corrupt the data the gpu is writing and non-coherent would just not
+work on those platforms. But aside from that, yes we do an invalidate
+before reading, and flushing after every writing (or anything else
+that could leave dirty cachelines behind). Plus a bit of tracking in
+the driver (kernel/userspace both do this, together, with some
+hilariously bad evolved semantics at least for i915, but oh well can't
+fix uapi mistakes) to avoid redundant cacheline flushes/invalidates.
+
+So ack.
 -Daniel
 -- 
 Daniel Vetter
