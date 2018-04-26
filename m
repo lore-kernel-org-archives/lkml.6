@@ -1,163 +1,188 @@
-Return-Path: <kernel-hardening-return-13018-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AIpwx4/KUmRLVXTWahryV/ATKzTAr8MJUIZ3fiFide6OExOXCWDx8z/VxogpBnODx7m869H4j+mi
-ARC-Seal: i=1; a=rsa-sha256; t=1523990325; cv=none;
-        d=google.com; s=arc-20160816;
-        b=nLrbrDGHj3K/raAvnkPJ1fIhu/GEXj7XK6s+iKBQaMwR9nZyvUk2HDVcQ6bZs4icG4
-         qs8dQvuqA01c34+OKfFOBAqtddVMEBaNFkVh/em0sr9w4X7F7Y9JjyVwn7SGnxvOFgtR
-         fFYrm97+Kg99iGdvIDvWfqq5B+G9+t4zAHpbisjPvKPb53L/e4PQIHBbFbVxVr8aZrIH
-         iRafszYTvjdD+ByTiwbShgNDNWtnB8yn1xx/94n4+WcZLjq7AR2S96dNuZbxWhQjGtim
-         3auMSUYzVyu5dBLG8DDnZ8g9wke1lkR0mL5v64TN5YH/5bpsDy80h9yjJtXxyI/KqumP
-         TjoA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
-         :list-post:precedence:mailing-list:arc-authentication-results;
-        bh=LMD5f0EwKBjsG6J9F8f4uIaYPevd2L8RCUaeSal7aGQ=;
-        b=JFg3F0hoHJVqVJcS5xN3Kicvb5DH0EnEPFi5BS45iOhMwRvB3vwfqsJ8jYn/yXY1VI
-         FMGPmLhDahYp8vNp5A5xV8MbybmfhFYJ0DC1CiIFwkKnPr9eWN2nNRl3FXdmUL3B2ozT
-         stEOsfeUX178uNEnYwVjuPm7fNEydaPnAoP3fnaNZLQIvXiei1H5mYcOmJyjk7k+uCUv
-         hloamMn9wC8NrW3DHeHPdgms43v3+fQriGp7VG2UEFq5aghqtl1dVaFS6A60DWGq2HF0
-         I5sEw9pixd1XwhrRHFV8N9Qd8DI96ePhC2C6c/GdaXs4xKo/SmfH1ZJScbH7N3I3Qhpa
-         +uAw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-13018-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13018-gregkh=linuxfoundation.org@lists.openwall.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-13018-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13018-gregkh=linuxfoundation.org@lists.openwall.com
-Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
-List-Post: <mailto:kernel-hardening@lists.openwall.com>
-List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
-List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
-List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-From: Mark Rutland <mark.rutland@arm.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: arnd@arndb.de,
-	catalin.marinas@arm.com,
-	cdall@kernel.org,
-	drjones@redhat.com,
-	kvmarm@lists.cs.columbia.edu,
-	linux-arch@vger.kernel.org,
-	marc.zyngier@arm.com,
-	mark.rutland@arm.com,
-	ramana.radhakrishnan@arm.com,
-	suzuki.poulose@arm.com,
-	will.deacon@arm.com,
-	linux-kernel@vger.kernel.org,
-	awallis@codeaurora.org,
-	kernel-hardening@lists.openwall.com
-Subject: [PATCHv3 01/11] arm64: add pointer authentication register bits
-Date: Tue, 17 Apr 2018 19:37:25 +0100
-Message-Id: <20180417183735.56985-2-mark.rutland@arm.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180417183735.56985-1-mark.rutland@arm.com>
-References: <20180417183735.56985-1-mark.rutland@arm.com>
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2684841-1524754788-2-6298475830331303985
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-usb-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524754786; b=CQgJfUdhHXoYDS40F6h2eo7Ik/wfRm3ZsNhp03Qaf3ysTCU+f/
+    YngPwZeVpiTAM9OARkXYdYQkEt9kUMv5WklDn1PoauBnISRUlm4RfRbWhgpRLhmd
+    9ItK4iDoQ7Tg9Ho6zzdIx9cZjwLGQPrrnferwEr/5wQDA0CtkHfVR0A8cvtKhNv0
+    sMkAk0UjUaEP5fdGgZ2kMnzrFPz9yvGAQiIHn4oCL3ggWtLsqc567aExRDDWgjXP
+    +9+UVFHOY7HctRPsq1Ypxa8z9YDof6xldr+QY8MifhMYdS+1ZbiX7rA4Oo7esIMv
+    kjgfRQnA2mrG6g57zIHx4vOEEBRYZxEJ8ssQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :mime-version:content-type:sender:list-id; s=fm2; t=1524754786;
+    bh=VFD5uh1QZp0EhMcrpQXHq9i7oZvdPkzcQUsEUL7282A=; b=F3jLTG6QEaKa
+    +PNOFk4oQcquzctoDwA7JbtSnTQdkSBPFqOsOWs8CDyqboDeVkwPCO3Eb0G1kDAT
+    JWYtJwZsli2w5uDLc/KFXmo7Ap0lLKY/gYsrp5gRicojVJeInf2blB5QM/S8Uimr
+    igEY5G0w+GPSMerJA11ecI5eNqeB0oPcvgY0uvmERkxLOdCCSgbIpcp9EArluMD5
+    6GbEX2YsaMX+H5nTuZh6VZsRgYKrRDJnvj+Ufbn0LswcgodRQyqA7NecAEprhL9Z
+    gKwJCCXzegE9aC/UAyZIW2QByXQthVVlLHvhzA5TtuJo/A/VD47oBQCEtezWRiIB
+    kikneeZDAQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=nvidia.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=nvidia.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=nvidia.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=nvidia.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfHaFUXqN1NUxHFuz/L/7rQ/ABYGouXk3SxK9PpsBEoHNFc59HwohTCI5+9vw0p4spBL5Muj0+EHimbI4n5gXsSahxwxLK6F53A/gPWoWUB1me8ZMo7qS
+    WTwC+t/YqZx3J6htN6cYXBCxdtQz0NVdAZaZOEsYNnydOQZVHQSzA8L1dnZrsv/l6IurqXB1oUTKGqJqy0BhD2STjdBDG/hAUfOfTSPBqVE4nzFOm5MMxill
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=Ikd4Dj_1AAAA:8
+    a=VwQbUJbxAAAA:8 a=-6V1eyReLdMGPuAhdLEA:9 a=izTRuUMC3c5Q45v9:21
+    a=9abNnzZTqCh6LVMi:21 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1756682AbeDZO7Z (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 26 Apr 2018 10:59:25 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:13566 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755861AbeDZO7S (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Thu, 26 Apr 2018 10:59:18 -0400
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 26 Apr 2018 07:59:17 -0700
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Mathias Nyman <mathias.nyman@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thierry Reding <thierry.reding@gmail.com>
+CC: <linux-usb@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH V2 1/3] usb: xhci: tegra: Prepare for adding runtime PM support
+Date: Thu, 26 Apr 2018 15:59:08 +0100
+Message-ID: <1524754750-3633-1-git-send-email-jonathanh@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598019679846665173?=
-X-GMAIL-MSGID: =?utf-8?q?1598019679846665173?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The ARMv8.3 pointer authentication extension adds:
+When adding runtime PM support to the Tegra XHCI driver, it is desirable
+to move the function calls to enable the clocks, regulators and PHY from
+the tegra_xusb_probe into the runtime PM handlers. Currently, the
+clocks, regulators and PHY are all enabled before we call
+usb_create_hcd() in tegra_xusb_probe(), however, we cannot call
+pm_runtime_get_sync() at this point because the platform device data is
+not yet initialised. Fortunately, the function usb_create_hcd() can be
+called before we enable the clocks, regulators and PHY and so prepare
+for adding runtime PM support, by moving the call to usb_create_hcd()
+before we enable the hardware.
 
-* New fields in ID_AA64ISAR1 to report the presence of pointer
-  authentication functionality.
-
-* New control bits in SCTLR_ELx to enable this functionality.
-
-* New system registers to hold the keys necessary for this
-  functionality.
-
-* A new ESR_ELx.EC code used when the new instructions are affected by
-  configurable traps
-
-This patch adds the relevant definitions to <asm/sysreg.h> and
-<asm/esr.h> for these, to be used by subsequent patches.
-
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 ---
- arch/arm64/include/asm/esr.h    |  3 ++-
- arch/arm64/include/asm/sysreg.h | 30 ++++++++++++++++++++++++++++++
- 2 files changed, 32 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/include/asm/esr.h b/arch/arm64/include/asm/esr.h
-index ce70c3ffb993..022785162281 100644
---- a/arch/arm64/include/asm/esr.h
-+++ b/arch/arm64/include/asm/esr.h
-@@ -30,7 +30,8 @@
- #define ESR_ELx_EC_CP14_LS	(0x06)
- #define ESR_ELx_EC_FP_ASIMD	(0x07)
- #define ESR_ELx_EC_CP10_ID	(0x08)
--/* Unallocated EC: 0x09 - 0x0B */
-+#define ESR_ELx_EC_PAC		(0x09)
-+/* Unallocated EC: 0x0A - 0x0B */
- #define ESR_ELx_EC_CP14_64	(0x0C)
- /* Unallocated EC: 0x0d */
- #define ESR_ELx_EC_ILL		(0x0E)
-diff --git a/arch/arm64/include/asm/sysreg.h b/arch/arm64/include/asm/sysreg.h
-index 6171178075dc..426f0eb90101 100644
---- a/arch/arm64/include/asm/sysreg.h
-+++ b/arch/arm64/include/asm/sysreg.h
-@@ -171,6 +171,19 @@
- #define SYS_TTBR1_EL1			sys_reg(3, 0, 2, 0, 1)
- #define SYS_TCR_EL1			sys_reg(3, 0, 2, 0, 2)
+Changes since V1:
+- None
+
+ drivers/usb/host/xhci-tegra.c | 34 +++++++++++++++++-----------------
+ 1 file changed, 17 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
+index 2c076ea80522..02b0b24faa58 100644
+--- a/drivers/usb/host/xhci-tegra.c
++++ b/drivers/usb/host/xhci-tegra.c
+@@ -1054,10 +1054,23 @@ static int tegra_xusb_probe(struct platform_device *pdev)
+ 		}
+ 	}
  
-+#define SYS_APIAKEYLO_EL1		sys_reg(3, 0, 2, 1, 0)
-+#define SYS_APIAKEYHI_EL1		sys_reg(3, 0, 2, 1, 1)
-+#define SYS_APIBKEYLO_EL1		sys_reg(3, 0, 2, 1, 2)
-+#define SYS_APIBKEYHI_EL1		sys_reg(3, 0, 2, 1, 3)
++	tegra->hcd = usb_create_hcd(&tegra_xhci_hc_driver, &pdev->dev,
++				    dev_name(&pdev->dev));
++	if (!tegra->hcd) {
++		err = -ENOMEM;
++		goto put_padctl;
++	}
 +
-+#define SYS_APDAKEYLO_EL1		sys_reg(3, 0, 2, 2, 0)
-+#define SYS_APDAKEYHI_EL1		sys_reg(3, 0, 2, 2, 1)
-+#define SYS_APDBKEYLO_EL1		sys_reg(3, 0, 2, 2, 2)
-+#define SYS_APDBKEYHI_EL1		sys_reg(3, 0, 2, 2, 3)
++	/*
++	 * This must happen after usb_create_hcd(), because usb_create_hcd()
++	 * will overwrite the drvdata of the device with the hcd it creates.
++	 */
++	platform_set_drvdata(pdev, tegra);
 +
-+#define SYS_APGAKEYLO_EL1		sys_reg(3, 0, 2, 3, 0)
-+#define SYS_APGAKEYHI_EL1		sys_reg(3, 0, 2, 3, 1)
-+
- #define SYS_ICC_PMR_EL1			sys_reg(3, 0, 4, 6, 0)
+ 	err = tegra_xusb_clk_enable(tegra);
+ 	if (err) {
+ 		dev_err(&pdev->dev, "failed to enable clocks: %d\n", err);
+-		goto put_padctl;
++		goto put_usb2;
+ 	}
  
- #define SYS_AFSR0_EL1			sys_reg(3, 0, 5, 1, 0)
-@@ -417,9 +430,13 @@
- #define SYS_ICH_LR15_EL2		__SYS__LR8_EL2(7)
+ 	err = regulator_bulk_enable(tegra->soc->num_supplies, tegra->supplies);
+@@ -1080,19 +1093,6 @@ static int tegra_xusb_probe(struct platform_device *pdev)
+ 		goto disable_phy;
+ 	}
  
- /* Common SCTLR_ELx flags. */
-+#define SCTLR_ELx_ENIA	(1 << 31)
-+#define SCTLR_ELx_ENIB	(1 << 30)
-+#define SCTLR_ELx_ENDA	(1 << 27)
- #define SCTLR_ELx_EE    (1 << 25)
- #define SCTLR_ELx_IESB	(1 << 21)
- #define SCTLR_ELx_WXN	(1 << 19)
-+#define SCTLR_ELx_ENDB	(1 << 13)
- #define SCTLR_ELx_I	(1 << 12)
- #define SCTLR_ELx_SA	(1 << 3)
- #define SCTLR_ELx_C	(1 << 2)
-@@ -510,11 +527,24 @@
- #define ID_AA64ISAR0_AES_SHIFT		4
+-	tegra->hcd = usb_create_hcd(&tegra_xhci_hc_driver, &pdev->dev,
+-				    dev_name(&pdev->dev));
+-	if (!tegra->hcd) {
+-		err = -ENOMEM;
+-		goto disable_phy;
+-	}
+-
+-	/*
+-	 * This must happen after usb_create_hcd(), because usb_create_hcd()
+-	 * will overwrite the drvdata of the device with the hcd it creates.
+-	 */
+-	platform_set_drvdata(pdev, tegra);
+-
+ 	tegra->hcd->regs = tegra->regs;
+ 	tegra->hcd->rsrc_start = regs->start;
+ 	tegra->hcd->rsrc_len = resource_size(regs);
+@@ -1100,7 +1100,7 @@ static int tegra_xusb_probe(struct platform_device *pdev)
+ 	err = usb_add_hcd(tegra->hcd, tegra->xhci_irq, IRQF_SHARED);
+ 	if (err < 0) {
+ 		dev_err(&pdev->dev, "failed to add USB HCD: %d\n", err);
+-		goto put_usb2;
++		goto disable_phy;
+ 	}
  
- /* id_aa64isar1 */
-+#define ID_AA64ISAR1_GPI_SHIFT		28
-+#define ID_AA64ISAR1_GPA_SHIFT		24
- #define ID_AA64ISAR1_LRCPC_SHIFT	20
- #define ID_AA64ISAR1_FCMA_SHIFT		16
- #define ID_AA64ISAR1_JSCVT_SHIFT	12
-+#define ID_AA64ISAR1_API_SHIFT		8
-+#define ID_AA64ISAR1_APA_SHIFT		4
- #define ID_AA64ISAR1_DPB_SHIFT		0
- 
-+#define ID_AA64ISAR1_APA_NI		0x0
-+#define ID_AA64ISAR1_APA_ARCHITECTED	0x1
-+#define ID_AA64ISAR1_API_NI		0x0
-+#define ID_AA64ISAR1_API_IMP_DEF	0x1
-+#define ID_AA64ISAR1_GPA_NI		0x0
-+#define ID_AA64ISAR1_GPA_ARCHITECTED	0x1
-+#define ID_AA64ISAR1_GPI_NI		0x0
-+#define ID_AA64ISAR1_GPI_IMP_DEF	0x1
-+
- /* id_aa64pfr0 */
- #define ID_AA64PFR0_CSV3_SHIFT		60
- #define ID_AA64PFR0_CSV2_SHIFT		56
+ 	device_wakeup_enable(tegra->hcd->self.controller);
+@@ -1155,14 +1155,14 @@ static int tegra_xusb_probe(struct platform_device *pdev)
+ 	usb_put_hcd(xhci->shared_hcd);
+ remove_usb2:
+ 	usb_remove_hcd(tegra->hcd);
+-put_usb2:
+-	usb_put_hcd(tegra->hcd);
+ disable_phy:
+ 	tegra_xusb_phy_disable(tegra);
+ disable_regulator:
+ 	regulator_bulk_disable(tegra->soc->num_supplies, tegra->supplies);
+ disable_clk:
+ 	tegra_xusb_clk_disable(tegra);
++put_usb2:
++	usb_put_hcd(tegra->hcd);
+ put_padctl:
+ 	tegra_xusb_padctl_put(tegra->padctl);
+ 	return err;
 -- 
-2.11.0
+2.7.4
+
