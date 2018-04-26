@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932268AbeDZW7h (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 18:59:37 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:37738 "EHLO
+        id S932195AbeDZW7g (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 18:59:36 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:37852 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757151AbeDZW73 (ORCPT
+        with ESMTP id S1757029AbeDZW72 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 18:59:29 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C67C760F6B
+        Thu, 26 Apr 2018 18:59:28 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 32E4860F93
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=clew@codeaurora.org
 From: Chris Lew <clew@codeaurora.org>
@@ -17,9 +17,9 @@ Cc: aneela@codeaurora.org, linux-arm-msm@vger.kernel.org,
         linux-remoteproc@vger.kernel.org, linux-soc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         clew@codeaurora.org
-Subject: [PATCH v3 6/6] rpmsg: glink: Expose rpmsg name attr for glink
-Date: Thu, 26 Apr 2018 15:59:05 -0700
-Message-Id: <1524783545-21951-7-git-send-email-clew@codeaurora.org>
+Subject: [PATCH v3 5/6] rpmsg: glink: Add support for rpmsg glink chrdev
+Date: Thu, 26 Apr 2018 15:59:04 -0700
+Message-Id: <1524783545-21951-6-git-send-email-clew@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1524783545-21951-1-git-send-email-clew@codeaurora.org>
 References: <1524783545-21951-1-git-send-email-clew@codeaurora.org>
@@ -27,58 +27,84 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Expose the name field as an attr so clients listening to uevents for
-rpmsg can identify the edge the events correspond to.
+RPMSG provides a char device interface to userspace. Probe the rpmsg
+chrdev channel to enable the rpmsg_ctrl device creation on glink
+transports.
 
 Signed-off-by: Chris Lew <clew@codeaurora.org>
 ---
 
-Changes since v2:
-- Remove const on attribute struct
-
 Changes since v1:
-- Add const to attribute struct
-- Get name from glink channel
+- Use qcom_glink_alloc_channel to create the chrdev rpmsg device
 
- drivers/rpmsg/qcom_glink_native.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ drivers/rpmsg/qcom_glink_native.c | 40 ++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 39 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index 1418926f6110..c2983a53058f 100644
+index 120d6b9bb9f3..1418926f6110 100644
 --- a/drivers/rpmsg/qcom_glink_native.c
 +++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -1552,6 +1552,22 @@ static void qcom_glink_work(struct work_struct *work)
+@@ -1166,7 +1166,7 @@ static int qcom_glink_announce_create(struct rpmsg_device *rpdev)
+ 	__be32 *val = defaults;
+ 	int size;
+ 
+-	if (glink->intentless)
++	if (glink->intentless || !completion_done(&channel->open_ack))
+ 		return 0;
+ 
+ 	prop = of_find_property(np, "qcom,intents", NULL);
+@@ -1552,6 +1552,40 @@ static void qcom_glink_work(struct work_struct *work)
  	}
  }
  
-+static ssize_t rpmsg_name_show(struct device *dev,
-+			       struct device_attribute *attr, char *buf)
++static void qcom_glink_device_release(struct device *dev)
 +{
 +	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
 +	struct glink_channel *channel = to_glink_channel(rpdev->ept);
 +
-+	return snprintf(buf, RPMSG_NAME_SIZE, "%s\n", channel->glink->name);
++	/* Release qcom_glink_alloc_channel() reference */
++	kref_put(&channel->refcount, qcom_glink_channel_release);
++	kfree(rpdev);
 +}
-+static DEVICE_ATTR_RO(rpmsg_name);
 +
-+static struct attribute *qcom_glink_attrs[] = {
-+	&dev_attr_rpmsg_name.attr,
-+	NULL
-+};
-+ATTRIBUTE_GROUPS(qcom_glink);
++static int qcom_glink_create_chrdev(struct qcom_glink *glink)
++{
++	struct rpmsg_device *rpdev;
++	struct glink_channel *channel;
 +
- static void qcom_glink_device_release(struct device *dev)
- {
- 	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
-@@ -1601,6 +1617,8 @@ struct qcom_glink *qcom_glink_native_probe(struct device *dev,
- 		return ERR_PTR(-ENOMEM);
++	rpdev = kzalloc(sizeof(*rpdev), GFP_KERNEL);
++	if (!rpdev)
++		return -ENOMEM;
++
++	channel = qcom_glink_alloc_channel(glink, "rpmsg_chrdev");
++	if (IS_ERR(channel)) {
++		kfree(rpdev);
++		return PTR_ERR(channel);
++	}
++	channel->rpdev = rpdev;
++
++	rpdev->ept = &channel->ept;
++	rpdev->ops = &glink_device_ops;
++	rpdev->dev.parent = glink->dev;
++	rpdev->dev.release = qcom_glink_device_release;
++
++	return rpmsg_chrdev_register_device(rpdev);
++}
++
+ struct qcom_glink *qcom_glink_native_probe(struct device *dev,
+ 					   unsigned long features,
+ 					   struct qcom_glink_pipe *rx,
+@@ -1611,6 +1645,10 @@ struct qcom_glink *qcom_glink_native_probe(struct device *dev,
+ 	if (ret)
+ 		return ERR_PTR(ret);
  
- 	glink->dev = dev;
-+	glink->dev->groups = qcom_glink_groups;
++	ret = qcom_glink_create_chrdev(glink);
++	if (ret)
++		dev_err(glink->dev, "failed to register chrdev\n");
 +
- 	glink->tx_pipe = tx;
- 	glink->rx_pipe = rx;
- 
+ 	return glink;
+ }
+ EXPORT_SYMBOL_GPL(qcom_glink_native_probe);
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
