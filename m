@@ -1,78 +1,191 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756657AbeDZO7Q (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 10:59:16 -0400
-Received: from mail-sn1nam01on0051.outbound.protection.outlook.com ([104.47.32.51]:34400
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
+        id S1756549AbeDZPBY (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 11:01:24 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55998 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755861AbeDZO7J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 10:59:09 -0400
-From: Bharat Kumar Gogada <bharatku@xilinx.com>
-To: "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: "keith.busch@intel.com" <keith.busch@intel.com>,
-        "hch@lst.de" <hch@lst.de>, "axboe@fb.com" <axboe@fb.com>
-Subject: NVMe Poll CQ on timeout
-Thread-Topic: NVMe Poll CQ on timeout
-Thread-Index: AdPdbaKnll1ikIRyRXyNIhFzf8HT4w==
-Date: Thu, 26 Apr 2018 14:59:06 +0000
-Message-ID: <BLUPR0201MB1505A10C31E4E3A3BDF7BDBAA58E0@BLUPR0201MB1505.namprd02.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=bharatku@xilinx.com;
-x-originating-ip: [182.72.145.30]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BLUPR0201MB1777;7:GQ9e/abtBhiZab/JIei2w43C08zTxjFEz/YgZkfvJNxYg5MK+CYeGojagSjekvV3bj6KDephUcwp4z74ukYHBcG6zGw73QBrZxDhLnaYRXGs89D0yvdxvPyZowd/q7vDUO9iBKAkEUfxl0ElNBYvY6jw0HITvsuIC+IMBoOADDjUYR4OibJJymytDnDy1D67iLHtDc4i4u5EEFchkukBBSTFYb8B4TUWNkefjyU3c8YyGoIBbNS0mxE6t3bVdf8w
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:BLUPR0201MB1777;
-x-ms-traffictypediagnostic: BLUPR0201MB1777:
-x-ld-processed: 657af505-d5df-48d0-8300-c31994686c5c,ExtAddr
-x-microsoft-antispam-prvs: <BLUPR0201MB1777976CBBE97A7BD097F18CA58E0@BLUPR0201MB1777.namprd02.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231232)(944501410)(52105095)(93006095)(93001095)(6055026)(6041310)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:BLUPR0201MB1777;BCL:0;PCL:0;RULEID:;SRVR:BLUPR0201MB1777;
-x-forefront-prvs: 0654257CF5
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(366004)(39380400002)(376002)(346002)(199004)(189003)(3660700001)(2906002)(106356001)(25786009)(6116002)(3846002)(316002)(105586002)(54906003)(9686003)(3280700002)(110136005)(55016002)(476003)(6436002)(478600001)(53936002)(97736004)(486006)(102836004)(55236004)(14454004)(74316002)(186003)(8936002)(305945005)(26005)(68736007)(86362001)(5660300001)(6506007)(7736002)(99286004)(2501003)(5250100002)(8676002)(81156014)(66066001)(2900100001)(33656002)(4326008)(81166006)(7696005);DIR:OUT;SFP:1101;SCL:1;SRVR:BLUPR0201MB1777;H:BLUPR0201MB1505.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: 29RKqejh66qipfqsNXskBbTjgYCx7y7CukpMJIwogTZmX9NluDzbHiyGdiwBRfAkeDluXc0IMkJfka6bxb1DiIxMJhVVfUXg/EKfJeYvIMqlkdN201e5vVc7jgMuAxwbI4EPQXkcL+qv0zDVlByhBx6+n5JIdFQ4q9WcEXtcmmKkz4RVt5PelwJSTgbHh310
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
+        id S1754847AbeDZPBX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 11:01:23 -0400
+Date: Thu, 26 Apr 2018 17:01:17 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc: akpm@linux-foundation.org, peterz@infradead.org,
+        viro@zeniv.linux.org.uk, mingo@kernel.org, paulmck@linux.vnet.ibm.com,
+        keescook@chromium.org, riel@redhat.com, mhocko@suse.com,
+        tglx@linutronix.de, kirill.shutemov@linux.intel.com,
+        marcos.souza.org@gmail.com, hoeun.ryu@gmail.com,
+        pasha.tatashin@oracle.com, gs051095@gmail.com, ebiederm@xmission.com,
+        dhowells@redhat.com, rppt@linux.vnet.ibm.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] exit: Move read_unlock() up in mm_update_next_owner()
+Message-ID: <20180426150116.GA14818@redhat.com>
+References: <152473763015.29458.1131542311542381803.stgit@localhost.localdomain>
+ <152474043375.29458.13978538538182642678.stgit@localhost.localdomain>
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: 33e20fc2-8d8d-4a51-9aad-08d5ab864217
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 33e20fc2-8d8d-4a51-9aad-08d5ab864217
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Apr 2018 14:59:06.3311
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLUPR0201MB1777
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <152474043375.29458.13978538538182642678.stgit@localhost.localdomain>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3QExMLg006694
 
-Hi,
+On 04/26, Kirill Tkhai wrote:
+>
+> @@ -464,18 +464,15 @@ void mm_update_next_owner(struct mm_struct *mm)
+>  	return;
+>  
+>  assign_new_owner:
+> -	BUG_ON(c == p);
+>  	get_task_struct(c);
+> +	read_unlock(&tasklist_lock);
+> +	BUG_ON(c == p);
+> +
+>  	/*
+>  	 * The task_lock protects c->mm from changing.
+>  	 * We always want mm->owner->mm == mm
+>  	 */
+>  	task_lock(c);
+> -	/*
+> -	 * Delay read_unlock() till we have the task_lock()
+> -	 * to ensure that c does not slip away underneath us
+> -	 */
+> -	read_unlock(&tasklist_lock);
 
-We are testing NVMe cards on ARM64 platform, the card uses legacy interrupts.
-Intermittently we are hitting following case in drivers/nvme/host/pci.c
-       /*
-         * Did we miss an interrupt?
-         */
-        if (__nvme_poll(nvmeq, req->tag)) {
-                dev_warn(dev->ctrl.device,
-                         "I/O %d QID %d timeout, completion polled\n",
-                         req->tag, nvmeq->qid);
-                return BLK_EH_HANDLED;
-        }
+I think this is correct, but...
 
-Can anyone tell when does nvme_timeout gets invoked ?
-What does "Did we miss an interrupt mean" ? Does it mean host missing
-to service a interrupt raised by EP card ?
+Firstly, I agree with Michal, it would be nice to kill mm_update_next_owner()
+altogether.
 
-Regards,
-Bharat
+If this is not possible I agree, it needs cleanups and we can change it to
+avoid tasklist (although your 4/4 looks overcomplicated to me at first glance).
+
+But in this case I think that whatever we do we should start with something like
+the patch below. I wrote it 3 years ago but it still applies.
+
+Oleg.
+
+Subject: [PATCH 1/3] memcg: introduce assign_new_owner()
+
+The code under "assign_new_owner" looks very ugly and suboptimal.
+
+We do not really need get_task_struct/put_task_struct(), we can
+simply recheck/change mm->owner under tasklist_lock. And we do not
+want to restart from the very beginning if ->mm was changed by the
+time we take task_lock(), we can simply continue (if we do not drop
+tasklist_lock).
+
+Just move this code into the new simple helper, assign_new_owner().
+
+Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+---
+ kernel/exit.c |   56 ++++++++++++++++++++++++++------------------------------
+ 1 files changed, 26 insertions(+), 30 deletions(-)
+
+diff --git a/kernel/exit.c b/kernel/exit.c
+index 22fcc05..4d446ab 100644
+--- a/kernel/exit.c
++++ b/kernel/exit.c
+@@ -293,6 +293,23 @@ kill_orphaned_pgrp(struct task_struct *tsk, struct task_struct *parent)
+ }
+ 
+ #ifdef CONFIG_MEMCG
++static bool assign_new_owner(struct mm_struct *mm, struct task_struct *c)
++{
++	bool ret = false;
++
++	if (c->mm != mm)
++		return ret;
++
++	task_lock(c); /* protects c->mm from changing */
++	if (c->mm == mm) {
++		mm->owner = c;
++		ret = true;
++	}
++	task_unlock(c);
++
++	return ret;
++}
++
+ /*
+  * A task is exiting.   If it owned this mm, find a new owner for the mm.
+  */
+@@ -300,7 +317,6 @@ void mm_update_next_owner(struct mm_struct *mm)
+ {
+ 	struct task_struct *c, *g, *p = current;
+ 
+-retry:
+ 	/*
+ 	 * If the exiting or execing task is not the owner, it's
+ 	 * someone else's problem.
+@@ -322,16 +338,16 @@ retry:
+ 	 * Search in the children
+ 	 */
+ 	list_for_each_entry(c, &p->children, sibling) {
+-		if (c->mm == mm)
+-			goto assign_new_owner;
++		if (assign_new_owner(mm, c))
++			goto done;
+ 	}
+ 
+ 	/*
+ 	 * Search in the siblings
+ 	 */
+ 	list_for_each_entry(c, &p->real_parent->children, sibling) {
+-		if (c->mm == mm)
+-			goto assign_new_owner;
++		if (assign_new_owner(mm, c))
++			goto done;
+ 	}
+ 
+ 	/*
+@@ -341,42 +357,22 @@ retry:
+ 		if (g->flags & PF_KTHREAD)
+ 			continue;
+ 		for_each_thread(g, c) {
+-			if (c->mm == mm)
+-				goto assign_new_owner;
++			if (assign_new_owner(mm, c))
++				goto done;
+ 			if (c->mm)
+ 				break;
+ 		}
+ 	}
+-	read_unlock(&tasklist_lock);
++
+ 	/*
+ 	 * We found no owner yet mm_users > 1: this implies that we are
+ 	 * most likely racing with swapoff (try_to_unuse()) or /proc or
+ 	 * ptrace or page migration (get_task_mm()).  Mark owner as NULL.
+ 	 */
+ 	mm->owner = NULL;
+-	return;
+-
+-assign_new_owner:
+-	BUG_ON(c == p);
+-	get_task_struct(c);
+-	/*
+-	 * The task_lock protects c->mm from changing.
+-	 * We always want mm->owner->mm == mm
+-	 */
+-	task_lock(c);
+-	/*
+-	 * Delay read_unlock() till we have the task_lock()
+-	 * to ensure that c does not slip away underneath us
+-	 */
++done:
+ 	read_unlock(&tasklist_lock);
+-	if (c->mm != mm) {
+-		task_unlock(c);
+-		put_task_struct(c);
+-		goto retry;
+-	}
+-	mm->owner = c;
+-	task_unlock(c);
+-	put_task_struct(c);
++	return;
+ }
+ #endif /* CONFIG_MEMCG */
+ 
+-- 
+1.5.5.1
