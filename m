@@ -1,74 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756950AbeDZR2P (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 13:28:15 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:37994 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756922AbeDZR2I (ORCPT
+        id S932228AbeDZR2l (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 13:28:41 -0400
+Received: from mail-ot0-f178.google.com ([74.125.82.178]:45982 "EHLO
+        mail-ot0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756831AbeDZR2h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 13:28:08 -0400
-X-Google-Smtp-Source: AB8JxZpNdMBlqHtn/1fFvRTqrYglZAOxHZ8ZXvSpb2OnSArXWxqfg8Hq+ppCpG2BuJomrJXA9UNmeA==
-Date: Thu, 26 Apr 2018 10:28:04 -0700
-From: Eduardo Valentin <edubezval@gmail.com>
-To: Zhang Rui <rui.zhang@intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] Thermal management updates for v4.17-rc2
-Message-ID: <20180426172802.GA2086@localhost.localdomain>
-References: <20180420161834.GA22776@localhost.localdomain>
- <1524576345.2597.31.camel@intel.com>
+        Thu, 26 Apr 2018 13:28:37 -0400
+X-Google-Smtp-Source: AIpwx49X7gM2mCDmUbMoq9+Mb9OHCklnH3im/IJ9/Ycx/TzqtQVolheeHhmaJUFrjZL54FL8PWT0M0G4a+dYAOT235E=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1524576345.2597.31.camel@intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <DB5PR04MB132072FEDCAFEDF6592C6A32F58E0@DB5PR04MB1320.eurprd04.prod.outlook.com>
+References: <1524455219-6736-1-git-send-email-Anson.Huang@nxp.com>
+ <1524455219-6736-4-git-send-email-Anson.Huang@nxp.com> <CAOMZO5CDAQtw7Q6NgSzKP4ogaqRaGSE0A+st1iqZ=cQsK49moQ@mail.gmail.com>
+ <AM3PR04MB131566E1C8033D256686F192F5880@AM3PR04MB1315.eurprd04.prod.outlook.com>
+ <CAOMZO5Dm=MFRoh=y54Qf2RrncWfQPTUJ2ZNfvYnUD=idp8RPNA@mail.gmail.com>
+ <AM3PR04MB1315ED599A20F67BB9FEFEE1F58F0@AM3PR04MB1315.eurprd04.prod.outlook.com>
+ <AM3PR04MB1315B04BE46755E3EB82E04CF58F0@AM3PR04MB1315.eurprd04.prod.outlook.com>
+ <CAOMZO5AS=aH8p1+tmgJ4ooeqExNqOALh7vbPAsQdqdky8CkXyQ@mail.gmail.com> <DB5PR04MB132072FEDCAFEDF6592C6A32F58E0@DB5PR04MB1320.eurprd04.prod.outlook.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Thu, 26 Apr 2018 14:28:35 -0300
+Message-ID: <CAOMZO5Df__UpcLXVUrW0sT24g=Kmu2132QeQSBE9aZrjcyqsCw@mail.gmail.com>
+Subject: Re: [PATCH 4/5] ARM: dts: imx6sx-sabreauto: add fec support
+To: Anson Huang <anson.huang@nxp.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Andy Duan <fugang.duan@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey Rui,
+On Thu, Apr 26, 2018 at 3:57 AM, Anson Huang <anson.huang@nxp.com> wrote:
 
-On Tue, Apr 24, 2018 at 09:25:45PM +0800, Zhang Rui wrote:
-> Hi, Eduardo,
-> 
-> On 五, 2018-04-20 at 09:18 -0700, Eduardo Valentin wrote:
-> > Hello Linus,
-> > 
-> > Here are a couple of fixes on thermal subsystem.
-> > Please consider pulling from
-> > 
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-
-> > thermal fixes
-> > 
-> > to receive Thermal Management updates for v4.17-rc2 with top-most
-> > 
-> > e04907dbc25930b88ee2328fe692c776f63ddf2c:
-> > 
-> >   dt-bindings: thermal: Remove "cooling-{min|max}-level" properties
-> > (2018-04-18 07:04:28 -0700)
-> > 
-> > on top of commit 60cc43fc888428bb2f18f08997432d426a243338:
-> > 
-> >   Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
-> > 
-> As this does not hit 4.17-rc2, and I have some thermal core fixes now,
-> would you mind rebase the patches on top of 4.17-rc2, and send the pull
-> request to me, including the exynos fixes, so that I can pull and queue
-> for next -rc?
+> The 'phy-supply' is for enabling/disabling phy regulator, but here the MAX7322 IO0 is NOT for
+> enabling/disabling PHY regulator, it is for IO voltage switch between 1.5V and 1.8V, our ENET
+> IO can work with both 1.5V and 1.8V, so any config is OK for ENET function.
 
-Linus already pulled this:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=83beed7b2b26f232d782127792dd0cd4362fdc41
+Thanks for the clarification.
 
-But for this week I will rebase the fixes I have and send them to you
-first, so you send to Linus a combined one.
+> The 1.5V/1.8V selection is a one time setting thing, that means we only need to
+> config it once during boot up, most of i.MX platforms does NOT provide such voltage
+> switch function for ENET IO, on this 6SX sabre auto board, it is more like a backup or
+> validation purpose. With default settings, ENET's function is NOT impacted at all.
+>
+> I think we can add a gpio regulator for it and let the regulator initialization set the GPIO
+> Level for fec, such below, with " enable-active-high " present, GPIO will be at LOW and voltage
+> is 1.5V, without this property, GPIO will be HIGH and voltage will be 1.8V.
+> +               reg_fec: fec_io_supply {
+> +                       compatible = "regulator-gpio";
+> +                       regulator-name = "1.8V_1.5V_FEC";
+> +                       regulator-min-microvolt = <1500000>;
+> +                       regulator-max-microvolt = <1800000>;
+> +                       states = <1500000 0x0 1800000 0x1>;
+> +                       enable-gpio = <&max7322 0 GPIO_ACTIVE_HIGH>;
+> +                       vin-supply = <&sw2_reg>;
+> +                       enable-active-high;
 
-> 
-> thanks,
-> rui
+If there is no consumer for this regulator, the regulator API will disable it.
 
-BR,
+It seems you need a 'regulator-always-on;'.
 
-Eduardo
+
+> +               };
+> +
+>
+> Anson.
+>
