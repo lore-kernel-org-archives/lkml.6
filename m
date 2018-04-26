@@ -1,20 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754740AbeDZJG2 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 05:06:28 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7633 "EHLO huawei.com"
+        id S1754775AbeDZJGo (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 05:06:44 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7632 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754450AbeDZJGZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1753951AbeDZJGZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 26 Apr 2018 05:06:25 -0400
 From: Chao Yu <yuchao0@huawei.com>
 To: <jaegeuk@kernel.org>
 CC: <linux-f2fs-devel@lists.sourceforge.net>,
         <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
         Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 1/2] f2fs: treat volatile file's data as hot one
-Date: Thu, 26 Apr 2018 17:05:50 +0800
-Message-ID: <20180426090551.92364-1-yuchao0@huawei.com>
+Subject: [PATCH 2/2] Revert "f2fs: add ovp valid_blocks check for bg gc victim to fg_gc"
+Date: Thu, 26 Apr 2018 17:05:51 +0800
+Message-ID: <20180426090551.92364-2-yuchao0@huawei.com>
 X-Mailer: git-send-email 2.15.0.55.gc2ece9dc4de6
+In-Reply-To: <20180426090551.92364-1-yuchao0@huawei.com>
+References: <20180426090551.92364-1-yuchao0@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.120.216.130]
@@ -23,60 +25,103 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Volatile file's data will be updated oftenly, so it'd better to place
-its data into hot data segment.
+For extreme case:
+10 section, op = 10%, no_fggc_threshold = 90%
+All section usage: 85% 85% 85% 85% 90% 90% 95% 95% 95% 95%
 
-In addition, for atomic file, we change to check FI_ATOMIC_FILE instead
-of FI_HOT_DATA to make code readability better.
+During foreground GC, if we skip select dirty section whose usage
+is larger than no_fggc_threshold, we can only recycle 80% invalid
+space from four 85% usage sections and two 90% usage sections,
+result in encountering out-of-space issue.
+
+This reverts commit e93b9865251a0503d83fd570e7d5a7c8bc351715 to
+fix this issue, besides, we keep the logic that we scan all dirty
+section when searching a victim, so that GC can select victim with
+least valid blocks.
 
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/file.c    | 2 --
- fs/f2fs/segment.c | 5 +++--
- 2 files changed, 3 insertions(+), 4 deletions(-)
+ fs/f2fs/f2fs.h    |  3 ---
+ fs/f2fs/gc.c      | 16 ----------------
+ fs/f2fs/segment.h |  9 ---------
+ 3 files changed, 28 deletions(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index e88d94846d50..05b2045888a3 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1700,7 +1700,6 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
- 	if (ret)
- 		goto out;
- skip_flush:
--	set_inode_flag(inode, FI_HOT_DATA);
- 	set_inode_flag(inode, FI_ATOMIC_FILE);
- 	clear_inode_flag(inode, FI_ATOMIC_REVOKE_REQUEST);
- 	f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
-@@ -1744,7 +1743,6 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
- 		ret = f2fs_do_sync_file(filp, 0, LLONG_MAX, 0, true);
- 		if (!ret) {
- 			clear_inode_flag(inode, FI_ATOMIC_FILE);
--			clear_inode_flag(inode, FI_HOT_DATA);
- 			stat_dec_atomic_write(inode);
- 		}
- 	} else {
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 1fc23572067d..e339a5ff381f 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -314,7 +314,6 @@ void drop_inmem_pages(struct inode *inode)
- 	mutex_unlock(&fi->inmem_lock);
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 64e3677998d8..9f8b327272df 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1192,9 +1192,6 @@ struct f2fs_sb_info {
+ 	struct f2fs_gc_kthread	*gc_thread;	/* GC thread */
+ 	unsigned int cur_victim_sec;		/* current victim section num */
  
- 	clear_inode_flag(inode, FI_ATOMIC_FILE);
--	clear_inode_flag(inode, FI_HOT_DATA);
- 	stat_dec_atomic_write(inode);
+-	/* threshold for converting bg victims for fg */
+-	u64 fggc_threshold;
+-
+ 	/* threshold for gc trials on pinned files */
+ 	u64 gc_pin_file_threshold;
+ 
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 3134dd781252..62eba4a71123 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -263,10 +263,6 @@ static unsigned int check_bg_victims(struct f2fs_sb_info *sbi)
+ 	for_each_set_bit(secno, dirty_i->victim_secmap, MAIN_SECS(sbi)) {
+ 		if (sec_usage_check(sbi, secno))
+ 			continue;
+-
+-		if (no_fggc_candidate(sbi, secno))
+-			continue;
+-
+ 		clear_bit(secno, dirty_i->victim_secmap);
+ 		return GET_SEG_FROM_SEC(sbi, secno);
+ 	}
+@@ -406,9 +402,6 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
+ 			goto next;
+ 		if (gc_type == BG_GC && test_bit(secno, dirty_i->victim_secmap))
+ 			goto next;
+-		if (gc_type == FG_GC && p.alloc_mode == LFS &&
+-					no_fggc_candidate(sbi, secno))
+-			goto next;
+ 
+ 		cost = get_gc_cost(sbi, segno, &p);
+ 
+@@ -1152,17 +1145,8 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+ 
+ void build_gc_manager(struct f2fs_sb_info *sbi)
+ {
+-	u64 main_count, resv_count, ovp_count;
+-
+ 	DIRTY_I(sbi)->v_ops = &default_v_ops;
+ 
+-	/* threshold of # of valid blocks in a section for victims of FG_GC */
+-	main_count = SM_I(sbi)->main_segments << sbi->log_blocks_per_seg;
+-	resv_count = SM_I(sbi)->reserved_segments << sbi->log_blocks_per_seg;
+-	ovp_count = SM_I(sbi)->ovp_segments << sbi->log_blocks_per_seg;
+-
+-	sbi->fggc_threshold = div64_u64((main_count - ovp_count) *
+-				BLKS_PER_SEC(sbi), (main_count - resv_count));
+ 	sbi->gc_pin_file_threshold = DEF_GC_FAILED_PINNED_FILES;
+ 
+ 	/* give warm/cold data area from slower device */
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index 7702b054689c..c385daabcb67 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -774,15 +774,6 @@ static inline block_t sum_blk_addr(struct f2fs_sb_info *sbi, int base, int type)
+ 				- (base + 1) + type;
  }
  
-@@ -1637,7 +1636,9 @@ static int __get_segment_type_6(struct f2fs_io_info *fio)
- 		if (is_cold_data(fio->page) || file_is_cold(inode))
- 			return CURSEG_COLD_DATA;
- 		if (file_is_hot(inode) ||
--				is_inode_flag_set(inode, FI_HOT_DATA))
-+				is_inode_flag_set(inode, FI_HOT_DATA) ||
-+				is_inode_flag_set(inode, FI_ATOMIC_FILE) ||
-+				is_inode_flag_set(inode, FI_VOLATILE_FILE))
- 			return CURSEG_HOT_DATA;
- 		return rw_hint_to_seg_type(inode->i_write_hint);
- 	} else {
+-static inline bool no_fggc_candidate(struct f2fs_sb_info *sbi,
+-						unsigned int secno)
+-{
+-	if (get_valid_blocks(sbi, GET_SEG_FROM_SEC(sbi, secno), true) >
+-						sbi->fggc_threshold)
+-		return true;
+-	return false;
+-}
+-
+ static inline bool sec_usage_check(struct f2fs_sb_info *sbi, unsigned int secno)
+ {
+ 	if (IS_CURSEC(sbi, secno) || (sbi->cur_victim_sec == secno))
 -- 
 2.15.0.55.gc2ece9dc4de6
