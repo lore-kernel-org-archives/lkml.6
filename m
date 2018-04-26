@@ -1,118 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755454AbeDZKlc (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 06:41:32 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:38853 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755318AbeDZKl1 (ORCPT
+        id S1755561AbeDZKnE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 06:43:04 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:55796 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754559AbeDZKnA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 06:41:27 -0400
-X-Google-Smtp-Source: AB8JxZo/DwCyr1JYlF2A9ahYbOSmN0Sy85qr/jo1MsmTqDKUf1DW7pW1ug5lUz3laqLwRq4m1N5BwA==
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, devicetree@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM64: dts: meson: add MMC resets
-Date: Thu, 26 Apr 2018 12:41:19 +0200
-Message-Id: <20180426104119.13659-1-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.14.3
+        Thu, 26 Apr 2018 06:43:00 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Vaishali Thakkar <vthakkar1994@gmail.com>
+Cc: alexander.deucher@amd.com, christian.koenig@amd.com,
+        David1.Zhou@amd.com, airlied@linux.ie, brodkin@synopsys.com,
+        linux@armlinux.org.uk, boris.brezillon@bootlin.com,
+        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+        gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
+        seanpaul@chromium.org, l.stach@pengutronix.de,
+        christian.gmeiner@gmail.com, inki.dae@samsung.com,
+        jy0922.shim@samsung.com, sw0312.kim@samsung.com,
+        kyungmin.park@samsung.com, kgene@kernel.org, krzk@kernel.org,
+        stefan@agner.ch, alison.wang@freescale.com,
+        z.liuxinliang@hisilicon.com, zourongrong@gmail.com,
+        kong.kongxinwei@hisilicon.com, puck.chen@hisilicon.com,
+        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
+        rodrigo.vivi@intel.com, p.zabel@pengutronix.de, ck.hu@mediatek.com,
+        matthias.bgg@gmail.com, robdclark@gmail.com, marex@denx.de,
+        bskeggs@redhat.com, tomi.valkeinen@ti.com, eric@anholt.net,
+        airlied@redhat.com, kraxel@redhat.com, hjc@rock-chips.com,
+        heiko@sntech.de, benjamin.gaignard@linaro.org, vincent.abriou@st.com,
+        yannick.fertre@st.com, philippe.cornu@st.com,
+        maxime.ripard@bootlin.com, wens@csie.org, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, noralf@tronnes.org, linus.walleij@linaro.org,
+        shawnguo@kernel.org, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, etnaviv@lists.freedesktop.org,
+        linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] drm/core: Remove drm_dev_unref() and it's uses
+Date: Thu, 26 Apr 2018 13:43:09 +0300
+Message-ID: <2767328.18DNhHKilX@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20180426102819.6985-1-vthakkar1994@gmail.com>
+References: <20180426102819.6985-1-vthakkar1994@gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add reset lines to the mmc controllers of the meson gx and axg SoCs
+Hi Vaishali,
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- arch/arm64/boot/dts/amlogic/meson-axg.dtsi  | 3 +++
- arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi | 3 +++
- arch/arm64/boot/dts/amlogic/meson-gxl.dtsi  | 5 ++++-
- 3 files changed, 10 insertions(+), 1 deletion(-)
+Thank you for the patch.
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-index 854d5b25effd..56c84afb2802 100644
---- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-@@ -8,6 +8,7 @@
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/clock/axg-clkc.h>
- #include <dt-bindings/gpio/meson-axg-gpio.h>
-+#include <dt-bindings/reset/amlogic,meson-axg-reset.h>
- 
- / {
- 	compatible = "amlogic,meson-axg";
-@@ -130,6 +131,7 @@
- 					<&clkc CLKID_SD_EMMC_B_CLK0>,
- 					<&clkc CLKID_FCLK_DIV2>;
- 				clock-names = "core", "clkin0", "clkin1";
-+				resets = <&reset RESET_SD_EMMC_B>;
- 			};
- 
- 			sd_emmc_c: mmc@7000 {
-@@ -141,6 +143,7 @@
- 					<&clkc CLKID_SD_EMMC_C_CLK0>,
- 					<&clkc CLKID_FCLK_DIV2>;
- 				clock-names = "core", "clkin0", "clkin1";
-+				resets = <&reset RESET_SD_EMMC_C>;
- 			};
- 		};
- 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-index c3b8e0d3fbc9..1cbb0829b15d 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-@@ -715,6 +715,7 @@
- 		 <&clkc CLKID_SD_EMMC_A_CLK0>,
- 		 <&clkc CLKID_FCLK_DIV2>;
- 	clock-names = "core", "clkin0", "clkin1";
-+	resets = <&reset RESET_SD_EMMC_A>;
- };
- 
- &sd_emmc_b {
-@@ -722,6 +723,7 @@
- 		 <&clkc CLKID_SD_EMMC_B_CLK0>,
- 		 <&clkc CLKID_FCLK_DIV2>;
- 	clock-names = "core", "clkin0", "clkin1";
-+	resets = <&reset RESET_SD_EMMC_B>;
- };
- 
- &sd_emmc_c {
-@@ -729,6 +731,7 @@
- 		 <&clkc CLKID_SD_EMMC_C_CLK0>,
- 		 <&clkc CLKID_FCLK_DIV2>;
- 	clock-names = "core", "clkin0", "clkin1";
-+	resets = <&reset RESET_SD_EMMC_C>;
- };
- 
- &spicc {
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
-index 00b5bbd0b3e1..6e4a07112ed8 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
-@@ -724,13 +724,15 @@
- 		 <&clkc CLKID_SD_EMMC_A_CLK0>,
- 		 <&clkc CLKID_FCLK_DIV2>;
- 	clock-names = "core", "clkin0", "clkin1";
-+	resets = <&reset RESET_SD_EMMC_A>;
- };
- 
- &sd_emmc_b {
- 	clocks = <&clkc CLKID_SD_EMMC_B>,
- 		 <&clkc CLKID_SD_EMMC_B_CLK0>,
- 		 <&clkc CLKID_FCLK_DIV2>;
--       clock-names = "core", "clkin0", "clkin1";
-+	clock-names = "core", "clkin0", "clkin1";
-+	resets = <&reset RESET_SD_EMMC_B>;
- };
- 
- &sd_emmc_c {
-@@ -738,6 +740,7 @@
- 		 <&clkc CLKID_SD_EMMC_C_CLK0>,
- 		 <&clkc CLKID_FCLK_DIV2>;
- 	clock-names = "core", "clkin0", "clkin1";
-+	resets = <&reset RESET_SD_EMMC_C>;
- };
- 
- &spicc {
+On Thursday, 26 April 2018 13:28:19 EEST Vaishali Thakkar wrote:
+> It's been a while since we introduced drm_dev{get/put} functions
+> to replace reference/unreference in drm subsystem for the
+> consistency purpose. So, with this patch, let's just replace
+> all current use cases of drm_dev_unref() with drm_dev_put and remove
+> the function itself.
+> 
+> Coccinelle was used for mass-patching.
+> 
+> Signed-off-by: Vaishali Thakkar <vthakkar1994@gmail.com>
+
+I love seeing deprecated functions go.
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c            |  4 ++--
+>  drivers/gpu/drm/arc/arcpgu_drv.c                   |  4 ++--
+>  drivers/gpu/drm/armada/armada_drv.c                |  6 +++---
+>  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c       |  4 ++--
+>  drivers/gpu/drm/drm_drv.c                          | 13 -------------
+>  drivers/gpu/drm/etnaviv/etnaviv_drv.c              |  4 ++--
+>  drivers/gpu/drm/exynos/exynos_drm_drv.c            |  4 ++--
+>  drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c          |  4 ++--
+>  drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c    |  4 ++--
+>  drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c    |  8 ++++----
+>  drivers/gpu/drm/i915/selftests/huge_pages.c        |  2 +-
+>  drivers/gpu/drm/i915/selftests/i915_gem_dmabuf.c   |  2 +-
+>  drivers/gpu/drm/i915/selftests/i915_gem_evict.c    |  2 +-
+>  drivers/gpu/drm/i915/selftests/i915_gem_gtt.c      |  2 +-
+>  drivers/gpu/drm/i915/selftests/i915_gem_object.c   |  2 +-
+>  drivers/gpu/drm/i915/selftests/i915_request.c      |  2 +-
+>  drivers/gpu/drm/i915/selftests/i915_vma.c          |  2 +-
+>  drivers/gpu/drm/i915/selftests/intel_breadcrumbs.c |  2 +-
+>  drivers/gpu/drm/imx/imx-drm-core.c                 |  4 ++--
+>  drivers/gpu/drm/mediatek/mtk_drm_drv.c             |  6 +++---
+>  drivers/gpu/drm/msm/msm_drv.c                      |  8 ++++----
+>  drivers/gpu/drm/mxsfb/mxsfb_drv.c                  |  4 ++--
+>  drivers/gpu/drm/nouveau/nouveau_platform.c         |  2 +-
+>  drivers/gpu/drm/omapdrm/omap_drv.c                 |  4 ++--
+>  drivers/gpu/drm/pl111/pl111_drv.c                  |  4 ++--
+>  drivers/gpu/drm/qxl/qxl_drv.c                      |  2 +-
+>  drivers/gpu/drm/rcar-du/rcar_du_drv.c              |  2 +-
+>  drivers/gpu/drm/rockchip/rockchip_drm_drv.c        |  4 ++--
+>  drivers/gpu/drm/shmobile/shmob_drm_drv.c           |  4 ++--
+>  drivers/gpu/drm/sti/sti_drv.c                      |  8 ++++----
+>  drivers/gpu/drm/stm/drv.c                          |  4 ++--
+>  drivers/gpu/drm/sun4i/sun4i_drv.c                  |  4 ++--
+>  drivers/gpu/drm/tegra/drm.c                        |  4 ++--
+>  drivers/gpu/drm/tinydrm/core/tinydrm-core.c        |  6 +++---
+>  drivers/gpu/drm/tve200/tve200_drv.c                |  4 ++--
+>  drivers/gpu/drm/udl/udl_drv.c                      |  2 +-
+>  drivers/gpu/drm/vc4/vc4_drv.c                      |  4 ++--
+>  drivers/gpu/drm/vgem/vgem_drv.c                    |  2 +-
+>  drivers/gpu/drm/virtio/virtgpu_drm_bus.c           |  2 +-
+>  drivers/gpu/drm/zte/zx_drm_drv.c                   |  4 ++--
+>  include/drm/drm_drv.h                              |  1 -
+>  41 files changed, 73 insertions(+), 87 deletions(-)
+
 -- 
-2.14.3
+Regards,
+
+Laurent Pinchart
