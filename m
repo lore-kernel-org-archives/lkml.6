@@ -1,81 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932310AbeDZOKE (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 10:10:04 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:34077 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932288AbeDZOKA (ORCPT
+        id S932320AbeDZOKd (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 10:10:33 -0400
+Received: from mail-wr0-f174.google.com ([209.85.128.174]:39883 "EHLO
+        mail-wr0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932088AbeDZOK1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 10:10:00 -0400
-Date: Thu, 26 Apr 2018 07:09:46 -0700
-From: tip-bot for Yazen Ghannam <tipbot@zytor.com>
-Message-ID: <tip-da6fa7ef67f07108a1b0cb9fd9e7fcaabd39c051@git.kernel.org>
-Cc: bp@suse.de, linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        yazen.ghannam@amd.com, mingo@kernel.org, Yazen.Ghannam@amd.com,
-        hpa@zytor.com
-Reply-To: Yazen.Ghannam@amd.com, hpa@zytor.com, mingo@kernel.org,
-        tglx@linutronix.de, yazen.ghannam@amd.com, bp@suse.de,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <20180403140228.58540-1-Yazen.Ghannam@amd.com>
-References: <20180403140228.58540-1-Yazen.Ghannam@amd.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/smpboot: Don't use mwait_play_dead() on AMD
- systems
-Git-Commit-ID: da6fa7ef67f07108a1b0cb9fd9e7fcaabd39c051
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 26 Apr 2018 10:10:27 -0400
+X-Google-Smtp-Source: AIpwx48GRO1oi8nMQxguJrpr+Kn9XFY8ZQ8DdDD3DWeUePs39DHCd2QVLUmzk8GkknB9F6HjM4u8jQ==
+Date: Thu, 26 Apr 2018 16:10:23 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Lin Huang <hl@rock-chips.com>
+Cc: emil.l.velikov@gmail.com, briannorris@chromium.org, robh+dt@kernel.org,
+        seanpaul@chromium.org, airlied@linux.ie, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v4 1/3] drm/panel: refactor INNOLUX P079ZCA panel driver
+Message-ID: <20180426141023.GA31888@ulmo>
+References: <1521018736-20980-1-git-send-email-hl@rock-chips.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="jRHKVT23PllUwdXP"
 Content-Disposition: inline
+In-Reply-To: <1521018736-20980-1-git-send-email-hl@rock-chips.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  da6fa7ef67f07108a1b0cb9fd9e7fcaabd39c051
-Gitweb:     https://git.kernel.org/tip/da6fa7ef67f07108a1b0cb9fd9e7fcaabd39c051
-Author:     Yazen Ghannam <yazen.ghannam@amd.com>
-AuthorDate: Tue, 3 Apr 2018 09:02:28 -0500
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Thu, 26 Apr 2018 16:06:19 +0200
 
-x86/smpboot: Don't use mwait_play_dead() on AMD systems
+--jRHKVT23PllUwdXP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Recent AMD systems support using MWAIT for C1 state. However, MWAIT will
-not allow deeper cstates than C1 on current systems.
+On Wed, Mar 14, 2018 at 05:12:14PM +0800, Lin Huang wrote:
+> From: huang lin <hl@rock-chips.com>
+>=20
+> Refactor Innolux P079ZCA panel driver, let it support
+> multi panel.
+>=20
+> Change-Id: If89be5e56dba8cb498e2d50c1bbeb0e8016123a2
 
-play_dead() expects to use the deepest state available.  The deepest state
-available on AMD systems is reached through SystemIO or HALT. If MWAIT is
-available, it is preferred over the other methods, so the CPU never reaches
-the deepest possible state.
+When you send out a revised set of these patches, please drop the
+Change-Id: line from the commit message. It is useless for upstream.
 
-Don't try to use MWAIT to play_dead() on AMD systems. Instead, use CPUIDLE
-to enter the deepest state advertised by firmware. If CPUIDLE is not
-available then fallback to HALT.
+Thierry
 
-Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Borislav Petkov <bp@suse.de>
-Cc: stable@vger.kernel.org
-Cc: Yazen Ghannam <Yazen.Ghannam@amd.com>
-Link: https://lkml.kernel.org/r/20180403140228.58540-1-Yazen.Ghannam@amd.com
+--jRHKVT23PllUwdXP
+Content-Type: application/pgp-signature; name="signature.asc"
 
----
- arch/x86/kernel/smpboot.c | 2 ++
- 1 file changed, 2 insertions(+)
+-----BEGIN PGP SIGNATURE-----
 
-diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-index 45175b81dd5b..0f1cbb042f49 100644
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -1571,6 +1571,8 @@ static inline void mwait_play_dead(void)
- 	void *mwait_ptr;
- 	int i;
- 
-+	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD)
-+		return;
- 	if (!this_cpu_has(X86_FEATURE_MWAIT))
- 		return;
- 	if (!this_cpu_has(X86_FEATURE_CLFLUSH))
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrh3c0ACgkQ3SOs138+
+s6HZZBAAnhNfIbnGuaaADkHiCF7ONEimxOAw+BThaE5/CZeDMFpaR8bFSC4tYUVU
+DzSjn8rflha0CFdPkJNMd0elcDpI3+vlMZk/aiHW9VxVBNAdaBd2OrAT7Cn4zJGL
+cNIBR/KhpvgpRURtZA3pvak376esIqPjA90CGJ3x/KwgrGVwKMj2Sk3xBduiIqxh
+PHrkRUtMGF3MzNr6a+AlXi5W5QwksPYSgDKVKYqqlySEbjvSybLsYVg23Hqn8dzb
+C00Dw0UMngjHWZJ7Nxkq9xdJ9dph/1nqtUXSK2pmj0IHr0CgYqR4QntwIdI8gAbq
+djxd7otBQoSN2G6cfcK1RlnAaI27zRNFWmz9ZTAB0v6jEABgbrt7oQ6xxNrLJmK7
+NlTzOTwBjAX10NeRSCoPLOnPvleqjQZWz+U84+YomB4R7VQTE7Tpd6OGFlEa5Pza
+/ckqvUb5MdJa+wb/3yvRahSm+w2P8pOwknZ9hnaQ5zuWRBWzGMWj0rCBsVBlnG5r
+lnUKjBaODI2um0pVO1Jugjl+CmpmdvfTwzDU5az2aI6b7ajrG5WLcui+aXEcaxPX
+PE82NjkujTNrR8SAWW0/c8U1PfZlE4CI65uDkRA6Z3TLapRt0MepxkH7NebcGm15
+ao55BUUJgPpdO3yv3ySJhtEQx5FQqZ1lGMlHpCK3Nn5AQ/u+fbw=
+=xMI+
+-----END PGP SIGNATURE-----
+
+--jRHKVT23PllUwdXP--
