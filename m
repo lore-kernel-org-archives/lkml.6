@@ -1,27 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753119AbeDZFwb (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 01:52:31 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:48375 "EHLO
+        id S1753228AbeDZFwl (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 01:52:41 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:43959 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752777AbeDZFw2 (ORCPT
+        with ESMTP id S1752566AbeDZFwe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 01:52:28 -0400
-Date: Wed, 25 Apr 2018 22:51:50 -0700
-From: tip-bot for Namhyung Kim <tipbot@zytor.com>
-Message-ID: <tip-ee05d21791db6db954bbb7b79bb18d88b5f6b7ff@git.kernel.org>
-Cc: namhyung@kernel.org, jolsa@kernel.org, hpa@zytor.com,
-        kim.phillips@arm.com, tglx@linutronix.de, acme@redhat.com,
-        mingo@kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org
-Reply-To: tglx@linutronix.de, kim.phillips@arm.com,
-        linux-kernel@vger.kernel.org, peterz@infradead.org, mingo@kernel.org,
-        acme@redhat.com, namhyung@kernel.org, hpa@zytor.com, jolsa@kernel.org
-In-Reply-To: <20180419235915.GA19067@sejong>
-References: <20180419235915.GA19067@sejong>
+        Thu, 26 Apr 2018 01:52:34 -0400
+Date: Wed, 25 Apr 2018 22:52:27 -0700
+From: tip-bot for Thomas Richter <tipbot@zytor.com>
+Message-ID: <tip-ce04abfbd3ea545a8eb38a8b6a48fb6e7d139dcb@git.kernel.org>
+Cc: tmricht@linux.ibm.com, brueckner@linux.ibm.com,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de, acme@redhat.com,
+        hpa@zytor.com, mingo@kernel.org, heiko.carstens@de.ibm.com,
+        schwidefsky@de.ibm.com
+Reply-To: brueckner@linux.ibm.com, linux-kernel@vger.kernel.org,
+        tmricht@linux.ibm.com, mingo@kernel.org, hpa@zytor.com,
+        heiko.carstens@de.ibm.com, schwidefsky@de.ibm.com, tglx@linutronix.de,
+        acme@redhat.com
+In-Reply-To: <20180423081745.3672-1-tmricht@linux.ibm.com>
+References: <20180423081745.3672-1-tmricht@linux.ibm.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf machine: Set main kernel end address
- properly
-Git-Commit-ID: ee05d21791db6db954bbb7b79bb18d88b5f6b7ff
+Subject: [tip:perf/urgent] perf list: Remove s390 specific strcmp_cpuid_cmp
+ function
+Git-Commit-ID: ce04abfbd3ea545a8eb38a8b6a48fb6e7d139dcb
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -34,93 +36,98 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  ee05d21791db6db954bbb7b79bb18d88b5f6b7ff
-Gitweb:     https://git.kernel.org/tip/ee05d21791db6db954bbb7b79bb18d88b5f6b7ff
-Author:     Namhyung Kim <namhyung@kernel.org>
-AuthorDate: Mon, 19 Feb 2018 19:05:45 +0900
+Commit-ID:  ce04abfbd3ea545a8eb38a8b6a48fb6e7d139dcb
+Gitweb:     https://git.kernel.org/tip/ce04abfbd3ea545a8eb38a8b6a48fb6e7d139dcb
+Author:     Thomas Richter <tmricht@linux.ibm.com>
+AuthorDate: Mon, 23 Apr 2018 10:17:45 +0200
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 23 Apr 2018 10:52:55 -0300
+CommitDate: Mon, 23 Apr 2018 11:03:13 -0300
 
-perf machine: Set main kernel end address properly
+perf list: Remove s390 specific strcmp_cpuid_cmp function
 
-map_groups__fixup_end() was called to set the end addresses of kernel
-and module maps.  But now since machine__create_modules() sets the end
-address of modules properly, the only remaining piece is the kernel map.
+Make the type field in pmu-events/arch/s390/mapfile.cvs more generic to
+match the created cpuid string for s390.
 
-We can set it with adjacent module's address directly instead of calling
-map_groups__fixup_end().  If there's no module after the kernel map, the
-end address will be ~0ULL.
+The pattern also checks for the counter first version number and counter
+second version number ([13]\.[1-5]) and the authorization field which
+follows.
 
-Since it also changes the start address of the kernel map, it needs to
-re-insert the map to the kmaps in order to keep a correct ordering.  Kim
-reported that it caused problems on ARM64.
+These numbers do not exist in the cpuid identification string when perf
+commands are executed on a z/VM environment (which does not support CPU
+counter measurement facility).
 
-Reported-by: Kim Phillips <kim.phillips@arm.com>
-Tested-by: Kim Phillips <kim.phillips@arm.com>
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: kernel-team@lge.com
-Link: http://lkml.kernel.org/r/20180419235915.GA19067@sejong
+CPUID string for LPAR:
+   cpuid : IBM,3906,704,M03,3.5,002f
+CPUID string for z/VM:
+   cpuid : IBM,2964,702,N96
+
+This allows the removal of s390 specific cpuid compare code and uses the
+common compare function with its regular expression matching algorithm.
+
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Link: http://lkml.kernel.org/r/20180423081745.3672-1-tmricht@linux.ibm.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/machine.c | 30 ++++++++++++++++++------------
- 1 file changed, 18 insertions(+), 12 deletions(-)
+ tools/perf/arch/s390/util/header.c          | 18 ------------------
+ tools/perf/pmu-events/arch/s390/mapfile.csv | 10 +++++-----
+ tools/perf/util/pmu.c                       |  2 +-
+ 3 files changed, 6 insertions(+), 24 deletions(-)
 
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index 2eca8478e24f..32d50492505d 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -1019,13 +1019,6 @@ int machine__load_vmlinux_path(struct machine *machine, enum map_type type)
- 	return ret;
+diff --git a/tools/perf/arch/s390/util/header.c b/tools/perf/arch/s390/util/header.c
+index a4c30f1c70be..163b92f33998 100644
+--- a/tools/perf/arch/s390/util/header.c
++++ b/tools/perf/arch/s390/util/header.c
+@@ -146,21 +146,3 @@ char *get_cpuid_str(struct perf_pmu *pmu __maybe_unused)
+ 		zfree(&buf);
+ 	return buf;
  }
- 
--static void map_groups__fixup_end(struct map_groups *mg)
--{
--	int i;
--	for (i = 0; i < MAP__NR_TYPES; ++i)
--		__map_groups__fixup_end(mg, i);
--}
 -
- static char *get_kernel_version(const char *root_dir)
+-/*
+- * Compare the cpuid string returned by get_cpuid() function
+- * with the name generated by the jevents file read from
+- * pmu-events/arch/s390/mapfile.csv.
+- *
+- * Parameter mapcpuid is the cpuid as stored in the
+- * pmu-events/arch/s390/mapfile.csv. This is just the type number.
+- * Parameter cpuid is the cpuid returned by function get_cpuid().
+- */
+-int strcmp_cpuid_str(const char *mapcpuid, const char *cpuid)
+-{
+-	char *cp = strchr(cpuid, ',');
+-
+-	if (cp == NULL)
+-		return -1;
+-	return strncmp(cp + 1, mapcpuid, strlen(mapcpuid));
+-}
+diff --git a/tools/perf/pmu-events/arch/s390/mapfile.csv b/tools/perf/pmu-events/arch/s390/mapfile.csv
+index ca7682748a4b..78bcf7f8e206 100644
+--- a/tools/perf/pmu-events/arch/s390/mapfile.csv
++++ b/tools/perf/pmu-events/arch/s390/mapfile.csv
+@@ -1,6 +1,6 @@
+ Family-model,Version,Filename,EventType
+-209[78],1,cf_z10,core
+-281[78],1,cf_z196,core
+-282[78],1,cf_zec12,core
+-296[45],1,cf_z13,core
+-3906,3,cf_z14,core
++^IBM.209[78].*[13]\.[1-5].[[:xdigit:]]+$,1,cf_z10,core
++^IBM.281[78].*[13]\.[1-5].[[:xdigit:]]+$,1,cf_z196,core
++^IBM.282[78].*[13]\.[1-5].[[:xdigit:]]+$,1,cf_zec12,core
++^IBM.296[45].*[13]\.[1-5].[[:xdigit:]]+$,1,cf_z13,core
++^IBM.390[67].*[13]\.[1-5].[[:xdigit:]]+$,3,cf_z14,core
+diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
+index 61a5e5027338..af4bedf4cf98 100644
+--- a/tools/perf/util/pmu.c
++++ b/tools/perf/util/pmu.c
+@@ -586,7 +586,7 @@ char * __weak get_cpuid_str(struct perf_pmu *pmu __maybe_unused)
+  * cpuid string generated on this platform.
+  * Otherwise return non-zero.
+  */
+-int __weak strcmp_cpuid_str(const char *mapcpuid, const char *cpuid)
++int strcmp_cpuid_str(const char *mapcpuid, const char *cpuid)
  {
- 	char version[PATH_MAX];
-@@ -1233,6 +1226,7 @@ int machine__create_kernel_maps(struct machine *machine)
- {
- 	struct dso *kernel = machine__get_kernel(machine);
- 	const char *name = NULL;
-+	struct map *map;
- 	u64 addr = 0;
- 	int ret;
- 
-@@ -1259,13 +1253,25 @@ int machine__create_kernel_maps(struct machine *machine)
- 			machine__destroy_kernel_maps(machine);
- 			return -1;
- 		}
--		machine__set_kernel_mmap(machine, addr, 0);
-+
-+		/* we have a real start address now, so re-order the kmaps */
-+		map = machine__kernel_map(machine);
-+
-+		map__get(map);
-+		map_groups__remove(&machine->kmaps, map);
-+
-+		/* assume it's the last in the kmaps */
-+		machine__set_kernel_mmap(machine, addr, ~0ULL);
-+
-+		map_groups__insert(&machine->kmaps, map);
-+		map__put(map);
- 	}
- 
--	/*
--	 * Now that we have all the maps created, just set the ->end of them:
--	 */
--	map_groups__fixup_end(&machine->kmaps);
-+	/* update end address of the kernel map using adjacent module address */
-+	map = map__next(machine__kernel_map(machine));
-+	if (map)
-+		machine__set_kernel_mmap(machine, addr, map->start);
-+
- 	return 0;
- }
- 
+ 	regex_t re;
+ 	regmatch_t pmatch[1];
