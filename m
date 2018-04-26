@@ -1,100 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755880AbeDZMpN (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 08:45:13 -0400
-Received: from mga07.intel.com ([134.134.136.100]:64879 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754516AbeDZMpL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 08:45:11 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,330,1520924400";
-   d="scan'208";a="50140395"
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Dave Jones <davej@codemonkey.org.uk>,
-        Linux Kernel <linux-kernel@vger.kernel.org>
-Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>, intel-gfx@lists.freedesktop.org,
-        "Lankhorst\, Maarten" <maarten.lankhorst@intel.com>,
-        Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-Subject: Re: 4.17-rc2: Could not determine valid watermarks for inherited state
-In-Reply-To: <20180423152713.2rrwwye3wfstbv5v@codemonkey.org.uk>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20180423152713.2rrwwye3wfstbv5v@codemonkey.org.uk>
-Date: Thu, 26 Apr 2018 15:47:51 +0300
-Message-ID: <87tvryb0co.fsf@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S1755966AbeDZMp3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 08:45:29 -0400
+Received: from mout.kundenserver.de ([212.227.126.130]:52243 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755709AbeDZMp1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 08:45:27 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: y2038@lists.linaro.org, linux-kernel@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Jaroslav Kysela <perex@perex.cz>,
+        tiwai@suse.com, lgirdwood@gmail.com, broonie@kernel.org,
+        o-takashi@sakamocchi.jp, alsa-devel@alsa-project.org,
+        Baolin Wang <baolin.wang@linaro.org>
+Subject: [PATCH 0/4] ALSA: Fix year 2038 issue for sound subsystem, alternative
+Date: Thu, 26 Apr 2018 14:44:18 +0200
+Message-Id: <20180426124422.2921744-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:Ufsgb5tXjabCDRIuC3i0IVPaNHddszVnSjvrqnrdQkGUWKBVbmT
+ MEUlfv1fsu3fAJez06AFo57UM8iG7XCGxIi/ODz/YEHRg4UumZQ7dxcG25lytepMqtVbF+B
+ YXtT1vSBkypwEOBP8Q47p0rMayu/rwah6lYfOqH2uGo2xeE7YaBmGETJMdxCbvOHel1bVD1
+ AXDUzEMYeXEOI3y1eWo2A==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:q0vocCu1Zpk=:XS7qEjQS0TOQc3dZc24qWd
+ JJH4CycYpEMaVbRgIJEOhOZG3m6KBeW6hDvMlVS5g8eWUMAJpfAXMJ5wuOtdHqospD1Yl/q6z
+ QyHFKE9v+YiU35qLIxIAZkBJq3DN7iDA6cU0UKNC1piHRmFFxO/YqNNTXsAGUvDJiiEVojc0/
+ lchhxI6/Zj9PZlCfV1Aa0lD5i2EJknkSKf8kH+CjkWpsOUYZAWnXT9ImwVQ9Vy6A62kUCx2Tv
+ g4xkRu6svb3c1Z3hgGk3ujmBqSoHwylM0fNJjhy1zp+OIWtQFDCbXTH/CF4CFkoN7ow+2yVvr
+ YqX7fCp2cT3Upgi9OUk7droxoWzyJmx+huPeL0sl0vhF7fEF4WGTGnw5kZTEgSWO9hOyYvjX3
+ 6Z6XMTv9FejZCQv9x8iZTAbBKlcuZJb2B9dOZHQTQ4/a6SVz/0w0jGbBZu5D73unDAMBghGsO
+ lU/T2K9mSn8jHdofP/ihRT0IE19Ptzh0V+UhYHjyjKzi33sZB4PcswR/Zfc9tzlhvvH7N/d3k
+ zH4rbJF6HyEoEjLO2AdNwK/JVOuH6IZemyztInxv6N95WZ85PX1PcfMp8ZfYlx156EAgc/SwI
+ uxafTRbUwUO+RxGLKXvsb54QYUrhu1CU5QR/ran4UFmqoT0Vjgdldl72QOmLsoypWSYZW7Y/A
+ S52bDXK32BHxMPjbk60bq2XrqFiuHWIKMPiRMRhAvondg1MDtpdOMxF30kgXzAihh2nI=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+I've tried the suggestion from Jaroslaw, doing a minimal change to the
+UAPI headers to keep the existing binary interface. As he predicted,
+this is a much simpler set of kernel changes, but we will pay for that
+with added complexity in alsa-lib.
 
-Cc: Maarten, Ville
+The first two patches in this series are taken from Baolin's patch
+set, with a small bugfix folded in to avoid a compile-time regression.
 
-On Mon, 23 Apr 2018, Dave Jones <davej@codemonkey.org.uk> wrote:
-> This warning just started appearing during boot on a machine I upgraded
-> to 4.17-rc2.  The warning seems to have been there since 2015, but it
-> has never triggered before today.
->
-> 	Dave
->
-> [    1.158500] fb: switching to inteldrmfb from EFI VGA
-> [    1.159073] Console: switching to colour dummy device 80x25
-> [    1.159523] checking generic (a0000 10000) vs hw (e0000000 10000000)
-> [    1.159539] fb: switching to inteldrmfb from VGA16 VGA
-> [    1.159752] [drm] Replacing VGA console driver
-> [    1.164454] [drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
-> [    1.164472] [drm] Driver supports precise vblank timestamp query.
-> [    1.167285] i915 0000:00:02.0: vgaarb: changed VGA decodes: olddecodes=io+mem,decodes=io+mem:owns=io+mem
-> [    1.170212] ------------[ cut here ]------------
-> [    1.170230] Could not determine valid watermarks for inherited state
-> [    1.170267] WARNING: CPU: 1 PID: 1 at drivers/gpu/drm/i915/intel_display.c:14584 sanitize_watermarks+0x17b/0x1c0
-> [    1.170291] CPU: 1 PID: 1 Comm: swapper/0 Not tainted 4.17.0-rc2+ #1
-> [    1.170308] Hardware name: Shuttle Inc. SH87R/FH87, BIOS 2.03 06/19/2014
-> [    1.170325] RIP: 0010:sanitize_watermarks+0x17b/0x1c0
-> [    1.170338] RSP: 0000:ffffa944c0023bf0 EFLAGS: 00010246
-> [    1.170352] RAX: 0000000000000000 RBX: ffff9193508c0000 RCX: 0000000000000000
-> [    1.170369] RDX: 0000000000000001 RSI: ffffffff990b7399 RDI: ffffffff990b7399
-> [    1.170385] RBP: ffff9193508c0000 R08: 0000000000000001 R09: 0000000000000001
-> [    1.170401] R10: 0000000000000000 R11: 0000000000000000 R12: 00000000ffffffea
-> [    1.170418] R13: ffff9193508faa88 R14: ffff919350823528 R15: ffff9193508c0a08
-> [    1.170434] FS:  0000000000000000(0000) GS:ffff919356400000(0000) knlGS:0000000000000000
-> [    1.170453] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [    1.170466] CR2: 0000000000000000 CR3: 000000011d224001 CR4: 00000000000606e0
-> [    1.170483] Call Trace:
-> [    1.170493]  intel_modeset_init+0x769/0x18f0
-> [    1.170506]  i915_driver_load+0x9b9/0xf30
-> [    1.170519]  ? _raw_spin_unlock_irqrestore+0x3f/0x70
-> [    1.170534]  pci_device_probe+0xa3/0x120
-> [    1.170546]  driver_probe_device+0x28a/0x320
-> [    1.170557]  __driver_attach+0x9e/0xb0
-> [    1.170568]  ? driver_probe_device+0x320/0x320
-> [    1.170581]  bus_for_each_dev+0x68/0xc0
-> [    1.170592]  bus_add_driver+0x11d/0x210
-> [    1.170604]  ? mipi_dsi_bus_init+0x11/0x11
-> [    1.170615]  driver_register+0x5b/0xd0
-> [    1.170627]  do_one_initcall+0x10b/0x33f
-> [    1.170638]  ? do_early_param+0x8b/0x8b
-> [    1.170651]  ? rcu_read_lock_sched_held+0x66/0x70
-> [    1.170663]  ? do_early_param+0x8b/0x8b
-> [    1.170674]  kernel_init_freeable+0x1c3/0x249
-> [    1.170687]  ? rest_init+0xc0/0xc0
-> [    1.170697]  kernel_init+0xa/0x100
-> [    1.170707]  ret_from_fork+0x24/0x30
-> [    1.170717] Code: 00 00 00 65 48 33 04 25 28 00 00 00 75 4f 48 8d a4 24 88 00 00 00 5b 5d 41 5c 41 5d 41 5e c3 48 c7 c7 e0 5d 04 9a e8 25 33 b1 ff <0f> 0b eb a4 48 c7 c6 d5 73 04 9a 48 c7 c7 0f c6 fe 99 e8 0e 33 
-> [    1.170847] irq event stamp: 1449710
-> [    1.170858] hardirqs last  enabled at (1449709): [<ffffffff990b6f8b>] console_unlock+0x51b/0x6b0
-> [    1.170879] hardirqs last disabled at (1449710): [<ffffffff99a00ff6>] error_entry+0x86/0x100
-> [    1.170900] softirqs last  enabled at (1449580): [<ffffffff99c003dd>] __do_softirq+0x3dd/0x521
-> [    1.170922] softirqs last disabled at (1449563): [<ffffffff9905d327>] irq_exit+0xb7/0xc0
->
->
-> 00:02.0 VGA compatible controller: Intel Corporation Xeon E3-1200 v3/4th Gen Core Processor Integrated Graphics Controller (rev 06)
->
-> (That's 8086:0402 fwiw)
->
+The other two patches are to redefine the UAPI and to deprecate
+the support for CLOCK_REALTIME time stamps, which we can no longer
+allow with user space that we expect to survive beyond 2038.
+
+Overall, I'd still be happier with Baolin's approach since it allows
+us to keep compatiblity with CLOCK_REALTIME users and requires
+fewer changes in user space, but this would work as well.
+
+	Arnd
+
+Cc: Jaroslav Kysela <perex@perex.cz>
+Cc: tiwai@suse.com
+Cc: lgirdwood@gmail.com
+Cc: broonie@kernel.org
+Cc: o-takashi@sakamocchi.jp
+Cc: y2038@lists.linaro.org
+Cc: alsa-devel@alsa-project.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Baolin Wang <baolin.wang@linaro.org>
+
+Arnd Bergmann (2):
+  ALSA: replace timespec types in uapi headers
+  ALSA: Deprecate CLOCK_REALTIME timestamps
+
+Baolin Wang (2):
+  ALSA: Replace timespec with timespec64
+  ALSA: Avoid using timespec for struct snd_ctl_elem_value
+
+ include/sound/asound.h            |  8 +++++
+ include/sound/pcm.h               | 22 +++++++-----
+ include/sound/timer.h             |  4 +--
+ include/uapi/sound/asound.h       | 53 +++++++++++++++++++++--------
+ sound/core/Kconfig                | 11 ++++++
+ sound/core/compat.h               | 11 ++++++
+ sound/core/pcm.c                  |  3 ++
+ sound/core/pcm_compat.c           | 70 ++++++++++++++++++++++-----------------
+ sound/core/pcm_lib.c              | 36 ++++++++++++--------
+ sound/core/pcm_native.c           | 25 ++++++++++----
+ sound/core/rawmidi_compat.c       | 12 +++----
+ sound/core/timer.c                | 28 ++++++++--------
+ sound/core/timer_compat.c         |  4 ++-
+ sound/pci/hda/hda_controller.c    | 14 +++++---
+ sound/soc/intel/skylake/skl-pcm.c |  4 +--
+ 15 files changed, 203 insertions(+), 102 deletions(-)
+ create mode 100644 sound/core/compat.h
 
 -- 
-Jani Nikula, Intel Open Source Technology Center
+2.9.0
