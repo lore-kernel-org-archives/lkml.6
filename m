@@ -1,80 +1,161 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751900AbeDZEyX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 00:54:23 -0400
-Received: from ozlabs.org ([203.11.71.1]:56933 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750760AbeDZEyV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 00:54:21 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Thu, 26 Apr 2018 14:52:55 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Evan Green <evgreen@chromium.org>
-Cc: agross@codeaurora.org, linux-next@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Karthikeyan Ramasubramanian <kramasub@codeaurora.org>,
-        Sagar Dharia <sdharia@codeaurora.org>,
-        Girish Mahadevan <girishm@codeaurora.org>, groeck@chromium.org
-Subject: Re: linux-next: build failure after merge of the qcom tree
-Message-ID: <20180426145255.0141300e@canb.auug.org.au>
-In-Reply-To: <CAE=gft6e6wo1nj+Rw5=f+UXxhx3Hof7Nt=E9+-OAzvvv8Gct1g@mail.gmail.com>
-References: <20180426084041.5cf81918@canb.auug.org.au>
-        <CAE=gft6e6wo1nj+Rw5=f+UXxhx3Hof7Nt=E9+-OAzvvv8Gct1g@mail.gmail.com>
+        id S1751605AbeDZE6B (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 00:58:01 -0400
+Received: from relay04.infra.be.a11.eu ([185.83.138.20]:46909 "EHLO
+        relay04.infra.be.a11.eu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751372AbeDZE57 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 00:57:59 -0400
+Subject: Re: [Bug 199473] New: pcieport does not scan devices behind PEX
+ switch, while resources are allocated
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-pci@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <bug-199473-41252@https.bugzilla.kernel.org/>
+ <CAErSpo4BOD3V7pgR75Gm7dYqvXYq1QfChjj16Jn1QgSK1W=Drw@mail.gmail.com>
+ <000701d3dc6f$61f91230$25eb3690$@dommel.be>
+ <CAErSpo7FoAWrrCo9ifzCHtihsZUBG4HDS=kCT2ZjPi7qpVgWzg@mail.gmail.com>
+From: Janpieter Sollie <janpieter.sollie@dommel.be>
+Message-ID: <c4a4d74d-9914-19eb-6097-4ef8e0ed09c6@dommel.be>
+Date: Thu, 26 Apr 2018 04:57:57 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/SOXE.hkvNdgGH/L+LqXa.X."; protocol="application/pgp-signature"
+In-Reply-To: <CAErSpo7FoAWrrCo9ifzCHtihsZUBG4HDS=kCT2ZjPi7qpVgWzg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/SOXE.hkvNdgGH/L+LqXa.X.
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+lspci -vv loaded in bugzilla.
+I referred to a pci port nr as the nr in an expansion slot
 
-Hi Evan,
-
-On Thu, 26 Apr 2018 03:39:25 +0000 Evan Green <evgreen@chromium.org> wrote:
+On 25-04-18 19:05, Bjorn Helgaas wrote:
+> [Please retain the mailing list cc when replying]
 >
-> Guenter and I had a fix for compile test here, which had failures that
-> looked similar:
->=20
-> https://lkml.org/lkml/2018/4/18/752
-
-That looks like it could very well be the problem/solution.
-
-> I was hoping to verify myself whether or not this fixed allmodconfig, but
-> my machine at home is not so fast, and I must be missing something, either
-> in the configuration or the tree. Which tree exactly are you building?
-
-I was attempting to compile my partial linux-next for today after
-merging the qcom tree.  So once I release linux-next, it will be commit
-a72d0aa48d2e ("Merge remote-tracking branch 'omap/for-next'") plus a
-merge of the qcom tree
-(git://git.kernel.org/pub/scm/linux/kernel/git/agross/linux.git#for-next
-- which today meant commit c78d6951a806 ("Merge branch 'soc-for-4.18'
-into all-for-4.18")).
-
-I suspect that just Linus' tree merged with the qcom tree would have
-been enough to cause the failure.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/SOXE.hkvNdgGH/L+LqXa.X.
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrhWycACgkQAVBC80lX
-0GyXTwf9G4O54ZmKheXsNx6bOBbYRi2EVAVoCg1rAn8+iD58jh4u4QhT4not62+r
-g+jtNyeiXbjF+JGDw4jBgesgpE+6R9SOE0/UjM0TK7w2KHPCt73cIHKN3dqGyqXb
-vYf/TpvAEdnuJogyuSBgjb2c8wEAlXGwX15t3JDt/Fk78vbEGc23p+Q4v7kO4eyd
-E97m4KxeUsUAADGS9xHe823UJoICTfGVoFGKNUxNkG2xZFZuXPnQhrFrekVSSGUz
-s9755rahN+OUcKMCknSFGd3ypgEwuRj3EiBKK+E4CBPINCmkdfTzKw6PWI0b9O6f
-L1PzK8vLS0UXYrSDGcOWS72UX5MLeg==
-=k6im
------END PGP SIGNATURE-----
-
---Sig_/SOXE.hkvNdgGH/L+LqXa.X.--
+> On Wed, Apr 25, 2018 at 3:28 AM Janpieter Sollie
+> <janpieter.sollie@dommel.be>
+> wrote:
+>
+>> Hi Bjorn,
+>> I'm at work now, but I saw your mail contained much more info than only
+> the remark "does it work at 4.17?", so I'll try to answer all your
+> questions:
+>> 1. as stated, it only assigns the address space of the second and 3rd
+> device when the PCI device is hotplugged and then the pc is restarted on a
+> port before the first device.  In this case:
+>>            - The Ellesmere 01.0-[4f] device is connected to port 3 (0-7) and
+> is always reported.  For other devices, this is not the case.
+>>            - The other devices are at port 1 and 2.  When adding them on a
+> higher port, the workaround does not work.
+>>            - The devices 05.0-[4c] and 07.0-[4b] are ALSO NOT VISIBLE in the
+> BIOS IRQ listing, it just talks about an endpoint.  Not even with the
+> workaround.  So a trick to discard bios info and let the PCIe switch report
+> its devices would be nice.
+>
+> BIOS info is not used when we enumerate devices, so I don't think there's
+> really anything to discard.
+>
+>> 2. I am always building my kernel from the kernel.org sources, not from
+> Gentoo sources, so it's not a distro problem.
+>> 3. The workaround only works with kernel 4.17
+>> 4. You are probably right about the Broadcom driver, as it only picks up
+> the endpoint at 42.00.1 when loaded.  I have no idea wat it does either,
+> besides taining the kernel.
+>
+> Let's simplify the situation by focusing only on v4.17.  We can
+> also ignore the Broadcom driver, since it's not involved in enumeration.
+>
+>> So, to summarize:
+>> - Why are ports 4-7 not working when a device is plugged in at port 3?
+> I don't know what "port 3" and "ports 4-7" refer to.  Are these labels on
+> slots in an expansion chassis?  Something from lspci, e.g., the port number
+> from Link Capabilites, or the slot number from Slot Capabilities?
+>
+>> - Why do I need a hotplug event to push the device name into the kernel
+> after a cold start?  This is complete madness, isn't it?
+>
+> I don't know why the hotplug would make a difference.  It does sound like
+> complete madness.
+>
+>> - Why are resources allocated while the PCI slot is empty?
+> I don't know exactly what resources you're referring to (bus numbers, MMIO
+> space, I/O port space).  In general we try to allocate some space for all
+> of those even if the slot is currently empty, because that makes it
+> possible to hot-add devices in the slot later.
+>
+> In this case, the bus number space is quite constrained because the host
+> bridge leading to the PEX switch only supports [bus 40-4f].  But I think
+> that should be enough for this case, since the only switch in this tree is
+> the PEX, and your Bonaire/Tobago/Ellesmere devices are all endpoints that
+> only require one bus number each.
+>
+> If you run "lspci -vv" as root, it'll decode more details.
+>
+>> -----Original Message-----
+>> From: Bjorn Helgaas [mailto:bhelgaas@google.com]
+>> Sent: dinsdag 24 april 2018 21:31
+>> To: janpieter.sollie@dommel.be
+>> Cc: linux-pci@vger.kernel.org; Linux Kernel Mailing List
+>> Subject: Fwd: [Bug 199473] New: pcieport does not scan devices behind PEX
+> switch, while resources are allocated
+>
+>> Thanks for the report!
+>> I don't understand exactly what the issue is yet.  You attached lspci
+>> output from v4.14.27 and v4.17-rc1.  The v4.17-rc1 output shows several
+>> devices (4b:00, 4c:00, 4f:00) below the PEX switch, while the v4.14.27
+>> output shows only the 4f:00 devices.
+>> Is the problem that v4.14.27 doesn't find the 4b:00 and 4c:00 devices?
+>> Does v4.17-rc1 work correctly?
+>> If v4.17-rc1 works but v4.14.27 does not, it's probably a question of
+>> working with your distro to see if they can (1) identify some change that
+>> fixed things, and (2) backport that change to the distro kernel.
+>> The Broadcom driver you attached at comment #4 shouldn't be related to
+> this
+>> problem.  Device enumeration is performed by the PCI core and doesn't
+>> require any additional drivers.  I didn't look at the Broadcom driver, so
+> I
+>> don't know what it does.  The PEX switch does include an endpoint
+>> (42:00.1); it's possible the driver is for some functionality provided by
+>> that endpoint.
+>> ---------- Forwarded message ---------
+>> From: <bugzilla-daemon@bugzilla.kernel.org>
+>> Date: Mon, Apr 23, 2018 at 12:20 AM
+>> Subject: [Bug 199473] New: pcieport does not scan devices behind PEX
+>> switch, while resources are allocated
+>> To: <bhelgaas@google.com>
+>
+>> https://bugzilla.kernel.org/show_bug.cgi?id=199473
+>>                 Bug ID: 199473
+>>                Summary: pcieport does not scan devices behind PEX switch,
+>>                         while resources are allocated
+>>                Product: Drivers
+>>                Version: 2.5
+>>         Kernel Version: 4.17-rc1
+>>               Hardware: x86-64
+>>                     OS: Linux
+>>                   Tree: Mainline
+>>                 Status: NEW
+>>               Severity: normal
+>>               Priority: P1
+>>              Component: PCI
+>>               Assignee: drivers_pci@kernel-bugs.osdl.org
+>>               Reporter: janpieter.sollie@dommel.be
+>>             Regression: No
+>> Created attachment 275511
+>>       --> https://bugzilla.kernel.org/attachment.cgi?id=275511&action=edit
+>> dmesg stable kernel
+>> pcieport assigns the PEX 8619 pcie expander switch ports, but does not
+> scan
+>> them for additional objects behind the ports. only 1 device is added @ pci
+>> region 4f.  Workaround for getting all devices online: while pc is on,
+>> remove
+>> the card, reinsert it at a slot before the working device, and make a cold
+>> start.
+>> It would be nice if the pcie switches are scanned properly.
+>> --
+>> You are receiving this mail because:
+>> You are watching the assignee of the bug.
