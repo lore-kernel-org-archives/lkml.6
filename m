@@ -1,146 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756083AbeDZVKy (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 17:10:54 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:59772 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752991AbeDZVKx (ORCPT
+        id S1755522AbeDZVLj (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 17:11:39 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:50255 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752991AbeDZVLi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 17:10:53 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)"
-        <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 11/17] arm64: dts: r8a77965: Add VSP instances
-Date: Fri, 27 Apr 2018 00:11:05 +0300
-Message-ID: <1787243.JuNJAuBqMb@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20180426165346.494-12-kieran.bingham+renesas@ideasonboard.com>
-References: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com> <20180426165346.494-12-kieran.bingham+renesas@ideasonboard.com>
+        Thu, 26 Apr 2018 17:11:38 -0400
+Date: Thu, 26 Apr 2018 23:11:23 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Paul Menzel <pmenzel+linux-x86@molgen.mpg.de>
+cc: Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Reducing time of smpboot
+In-Reply-To: <a93a1222-cd94-3129-7a11-59fce1af12a5@molgen.mpg.de>
+Message-ID: <alpine.DEB.2.21.1804262308140.1596@nanos.tec.linutronix.de>
+References: <a93a1222-cd94-3129-7a11-59fce1af12a5@molgen.mpg.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/mixed; boundary="8323329-726770841-1524777083=:1596"
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kieran,
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Thank you for the patch.
+--8323329-726770841-1524777083=:1596
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 
-On Thursday, 26 April 2018 19:53:40 EEST Kieran Bingham wrote:
-> The r8a77965 has 4 VSP instances.
+Paul,
+
+On Thu, 5 Apr 2018, Paul Menzel wrote:
+> Looking at the Linux 4.16 messages and the time stamps on the ASRock E350M1,
+> there is the 100 ms jump below.
 > 
-> Based on a similar patch of the R8A7796 device tree
-> by Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>.
+> ```
+> [    0.024000] Freeing SMP alternatives memory: 24K
+> [    0.132000] smpboot: CPU0: AMD E-350D APU with Radeon(tm) HD Graphics
+> (family: 0x14, model: 0x2, stepping: 0x0)
+> […]
+> [    0.132000] smp: Bringing up secondary CPUs ...
+> [    0.132000] NMI watchdog: Enabled. Permanently consumes one hw-PMU counter.
+> [    0.157950] CPU 1 irqstacks, hard=afb6c892 soft=83b5a704
+> [    0.157956] x86: Booting SMP configuration:
+> [    0.157959] .... node  #0, CPUs:      #1
+> [    0.004000] Initializing CPU#1
+> [    0.160213] smp: Brought up 1 node, 2 CPUs
+> [    0.160213] smpboot: Max logical packages: 1
+> [    0.160213] smpboot: Total of 2 processors activated (6400.34 BogoMIPS)
+> ```
 > 
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> [Kieran: Rebased to top of tree, fixed sort orders]
-> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> ---
->  arch/arm64/boot/dts/renesas/r8a77965.dtsi | 44 +++++++++++++++++++++++
->  1 file changed, 44 insertions(+)
+> Also, the time stamp of the second CPU is out of order. Is that expected?
+
+Kinda. It has not yet set up the proper infrastructure for printing correct
+time stamps. That's a chicken and egg problem ...
+
+> Are there debug options to figure out, what is happening in the 100 ms,
+> without having to sprinkle print statements throughout the code?
 > 
-> diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-> b/arch/arm64/boot/dts/renesas/r8a77965.dtsi index
-> 1f44ed7c1b1c..e92e6b03333a 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-> @@ -1009,6 +1009,17 @@
->  			resets = <&cpg 615>;
->  		};
-> 
-> +		vspb: vsp@fe960000 {
-> +			compatible = "renesas,vsp2";
-> +			reg = <0 0xfe960000 0 0x8000>;
-> +			interrupts = <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&cpg CPG_MOD 626>;
-> +			power-domains = <&sysc R8A77965_PD_A3VP>;
-> +			resets = <&cpg 626>;
-> +
-> +			renesas,fcp = <&fcpvb0>;
-> +		};
-> +
->  		fcpvb0: fcp@fe96f000 {
->  			compatible = "renesas,fcpv";
->  			reg = <0 0xfe96f000 0 0x200>;
-> @@ -1017,6 +1028,17 @@
->  			resets = <&cpg 607>;
->  		};
-> 
-> +		vspi0: vsp@fe9a0000 {
-> +			compatible = "renesas,vsp2";
-> +			reg = <0 0xfe9a0000 0 0x8000>;
-> +			interrupts = <GIC_SPI 444 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&cpg CPG_MOD 631>;
-> +			power-domains = <&sysc R8A77965_PD_A3VP>;
-> +			resets = <&cpg 631>;
-> +
-> +			renesas,fcp = <&fcpvi0>;
-> +		};
-> +
->  		fcpvi0: fcp@fe9af000 {
->  			compatible = "renesas,fcpv";
->  			reg = <0 0xfe9af000 0 0x200>;
-> @@ -1025,6 +1047,17 @@
->  			resets = <&cpg 611>;
->  		};
-> 
-> +		vspd0: vsp@fea20000 {
-> +			compatible = "renesas,vsp2";
-> +			reg = <0 0xfea20000 0 0x4000>;
+> Also, can the time be reduced? The firmware, coreboot in this case, should
+> already set up the CPUs. So, can the second SMP init be avoided?
 
-RFP2 has a CLUT so the register range needs to be extended. I'd recommend 
-covering the entire space (0x8000) even if no LUT or CLU module is present.
+There is a difference between setup and bringup. The secondary CPU is
+brought up via a special IPI or NMI and then it takes a break in the micro
+code to prepare itself before magically making an appearance in the
+kernel. There is not much we can do about that.
 
-> +			interrupts = <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&cpg CPG_MOD 623>;
-> +			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-> +			resets = <&cpg 623>;
-> +
-> +			renesas,fcp = <&fcpvd0>;
-> +		};
-> +
->  		fcpvd0: fcp@fea27000 {
->  			compatible = "renesas,fcpv";
->  			reg = <0 0xfea27000 0 0x200>;
-> @@ -1033,6 +1066,17 @@
->  			resets = <&cpg 603>;
->  		};
-> 
-> +		vspd1: vsp@fea28000 {
-> +			compatible = "renesas,vsp2";
-> +			reg = <0 0xfea28000 0 0x4000>;
+Thanks,
 
-Same here.
-
-With this fixed,
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> +			interrupts = <GIC_SPI 467 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&cpg CPG_MOD 622>;
-> +			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-> +			resets = <&cpg 622>;
-> +
-> +			renesas,fcp = <&fcpvd1>;
-> +		};
-> +
->  		fcpvd1: fcp@fea2f000 {
->  			compatible = "renesas,fcpv";
->  			reg = <0 0xfea2f000 0 0x200>;
-
-
--- 
-Regards,
-
-Laurent Pinchart
+	tglx
+--8323329-726770841-1524777083=:1596--
