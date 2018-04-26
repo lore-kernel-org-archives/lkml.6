@@ -1,115 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756604AbeDZPDJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 11:03:09 -0400
-Received: from mail.efficios.com ([167.114.142.138]:37158 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755709AbeDZPDE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 11:03:04 -0400
-Date: Thu, 26 Apr 2018 11:03:02 -0400 (EDT)
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: rostedt <rostedt@goodmis.org>
-Cc: Joel Fernandes <joelaf@google.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Boqun Feng <boqun.feng@gmail.com>, fweisbec <fweisbec@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        kbuild test robot <fengguang.wu@intel.com>,
-        baohong liu <baohong.liu@intel.com>,
-        vedang patel <vedang.patel@intel.com>,
-        kernel-team <kernel-team@lge.com>
-Message-ID: <1609895968.1947.1524754982656.JavaMail.zimbra@efficios.com>
-In-Reply-To: <20180425185149.64f89922@vmware.local.home>
-References: <20180423172244.694dbc9d@gandalf.local.home> <849066633.939.1524612064698.JavaMail.zimbra@efficios.com> <68e4c123-a223-5e26-e57a-da2515041bf3@google.com> <20180425001049.GX26088@linux.vnet.ibm.com> <20180425042056.GA21412@linux.vnet.ibm.com> <CAJWu+orWC=W0Jn2Jo7f+u5mbHMi+D1yuCmhD-xSgjWZ6Ynw32Q@mail.gmail.com> <1267842641.1791.1524692456344.JavaMail.zimbra@efficios.com> <20180425185149.64f89922@vmware.local.home>
-Subject: Re: [RFC v4 3/4] irqflags: Avoid unnecessary calls to trace_ if you
- can
+        id S1756550AbeDZPFX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 11:05:23 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56420 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754847AbeDZPFT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 11:05:19 -0400
+Date: Thu, 26 Apr 2018 11:05:13 -0400 (EDT)
+From: Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+cc: Michal Hocko <mhocko@kernel.org>, David Rientjes <rientjes@google.com>,
+        dm-devel@redhat.com, eric.dumazet@gmail.com, mst@redhat.com,
+        netdev@vger.kernel.org, jasowang@redhat.com,
+        Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
+        edumazet@google.com, Andrew Morton <akpm@linux-foundation.org>,
+        virtualization@lists.linux-foundation.org,
+        David Miller <davem@davemloft.net>, Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [dm-devel] [PATCH v5] fault-injection: introduce kvmalloc fallback
+ options
+In-Reply-To: <1524753932.3226.5.camel@HansenPartnership.com>
+Message-ID: <alpine.LRH.2.02.1804261100170.12157@file01.intranet.prod.int.rdu2.redhat.com>
+References: <20180424170349.GQ17484@dhcp22.suse.cz>  <alpine.LRH.2.02.1804241319390.28995@file01.intranet.prod.int.rdu2.redhat.com>  <20180424173836.GR17484@dhcp22.suse.cz>  <alpine.LRH.2.02.1804251556060.30569@file01.intranet.prod.int.rdu2.redhat.com>
+ <1114eda5-9b1f-4db8-2090-556b4a37c532@infradead.org>  <alpine.LRH.2.02.1804251656300.9428@file01.intranet.prod.int.rdu2.redhat.com>  <alpine.DEB.2.21.1804251417470.166306@chino.kir.corp.google.com>  <alpine.LRH.2.02.1804251720090.9428@file01.intranet.prod.int.rdu2.redhat.com>
+  <1524694663.4100.21.camel@HansenPartnership.com>  <alpine.LRH.2.02.1804251830540.25124@file01.intranet.prod.int.rdu2.redhat.com>  <20180426125817.GO17484@dhcp22.suse.cz>  <alpine.LRH.2.02.1804261006120.32722@file01.intranet.prod.int.rdu2.redhat.com>
+ <1524753932.3226.5.camel@HansenPartnership.com>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.8_GA_2009 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_2009)
-Thread-Topic: irqflags: Avoid unnecessary calls to trace_ if you can
-Thread-Index: mybaxXBBKgbWEr/xuPnyKoKZZ+t8+w==
+Content-Type: MULTIPART/MIXED; BOUNDARY="185206533-1285601647-1524755113=:12157"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Apr 25, 2018, at 6:51 PM, rostedt rostedt@goodmis.org wrote:
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-> On Wed, 25 Apr 2018 17:40:56 -0400 (EDT)
-> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+--185206533-1285601647-1524755113=:12157
+Content-Type: TEXT/PLAIN; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+
+
+
+On Thu, 26 Apr 2018, James Bottomley wrote:
+
+> On Thu, 2018-04-26 at 10:28 -0400, Mikulas Patocka wrote:
+> > 
+> > On Thu, 26 Apr 2018, Michal Hocko wrote:
+> > 
+> > > On Wed 25-04-18 18:42:57, Mikulas Patocka wrote:
+> > > > 
+> > > > 
+> > > > On Wed, 25 Apr 2018, James Bottomley wrote:
+> > > [...]
+> > > > > Kconfig proliferation, conversely, is a bit of a nightmare from
+> > both
+> > > > > the user and the tester's point of view, so we're trying to
+> > avoid it
+> > > > > unless absolutely necessary.
+> > > > > 
+> > > > > James
+> > > > 
+> > > > I already offered that we don't need to introduce a new kernel
+> > option and 
+> > > > we can bind this feature to any other kernel option, that is
+> > enabled in 
+> > > > the debug kernel, for example CONFIG_DEBUG_SG. Michal said no and
+> > he said 
+> > > > that he wants a new kernel option instead.
+> > > 
+> > > Just for the record. I didn't say I _want_ a config option. Do not
+> > > misinterpret my words. I've said that a config option would be
+> > > acceptable if there is no way to deliver the functionality via
+> > kernel
+> > > package automatically. You haven't provided any argument that would
+> > > explain why the kernel package cannot add a boot option. Maybe
+> > there are
+> > > some but I do not see them right now.
+> > 
+> > AFAIK Grub doesn't load per-kernel options from a per-kernel file.
+> > Even if we hacked grub scripts to add this option, other
+> > distributions won't.
 > 
->> One problem with your approach is that you can have multiple callers
->> for the same tracepoint name, where some could be non-preemptible and
->> others blocking. Also, there is then no clear way for the callback
->> registration API to enforce whether the callback expects the tracepoint
->> to be blocking or non-preemptible. This can introduce hard to diagnose
->> issues in a kernel without debug options enabled.
+> Perhaps find out beforehand instead of insisting on an approach without
+> knowing.  On openSUSE the grub config is built from the files in
+> /etc/grub.d/ so any package can add a kernel option (and various
+> conditions around activating it) simply by adding a new file.
+
+And then, different versions of the debug kernel will clash when 
+attempting to create the same file.
+
+And what about other distributions? What about people who the RHEL kernel 
+from source with "make"?
+
+The problem with this approach that you are trying to bother more and more 
+people with this little silly feature.
+
+> The config files are quite sophisticated, so you can add what looks to 
+> be a new kernel, but is really an existing kernel with different options 
+> this way.
 > 
-> I agree that it should not be tied to an implementation name. But
-> "blocking" is confusing. I would say "can_sleep" or some such name that
-> states that the trace point caller is indeed something that can sleep.
+> James
 
-"trace_*event*_{can,might,may}_sleep" are all acceptable candidates for
-me.
-
-> 
->> 
->> Regarding the name, I'm OK with having something along the lines of
->> trace_*event*_blocking or such. Please don't use "srcu" or other naming
->> that is explicitly tied to the underlying mechanism used internally
->> however: what we want to convey is that this specific tracepoint probe
->> can be preempted and block. The underlying implementation could move to
->> a different RCU flavor brand in the future, and it should not impact
->> users of the tracepoint APIs.
->> 
->> In order to ensure that probes that may block only register themselves
->> to tracepoints that allow blocking, we should introduce new tracepoint
->> declaration/definition *and* registration APIs also contain the
->> "BLOCKING/blocking" keywords (or such), so we can ensure that a
->> tracepoint probe being registered to a "blocking" tracepoint is indeed
->> allowed to block.
-> 
-> I'd really don't want to add more declaration/definitions, as we
-> already have too many as is, and with different meanings and the number
-> is of incarnations is n! in growth.
-> 
-> I'd say we just stick with a trace_<event>_can_sleep() call, and make
-> sure that if that is used that no trace_<event>() call is also used, and
-> enforce this with linker or compiler tricks.
-
-My main concern is not about having both trace_<event>_can_sleep() mixed
-with trace_<event>() calls. It's more about having a registration API allowing
-modules registering probes that may need to sleep to explicitly declare it,
-and enforce that tracepoint never connects a probe that may need to sleep
-with an instrumentation site which cannot sleep.
-
-I'm unsure what's the best way to achieve this goal though. We could possibly
-extend the tracepoint_probe_register_* APIs to introduce e.g.
-tracepoint_probe_register_prio_flags() and provide a TRACEPOINT_PROBE_CAN_SLEEP
-as parameter upon registration. If this flag is provided, then we could figure out
-an way to iterate on all callers, and ensure they are all "can_sleep" type of
-callers.
-
-Thoughts ?
-
-Thanks,
-
-Mathieu
-
-
-
-> 
-> -- Steve
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+Mikulas
+--185206533-1285601647-1524755113=:12157--
