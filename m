@@ -1,28 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756653AbeDZOWp (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 10:22:45 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:52297 "EHLO
+        id S932172AbeDZOXP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 10:23:15 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:42461 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756111AbeDZOWm (ORCPT
+        with ESMTP id S1756111AbeDZOXN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 10:22:42 -0400
-Date: Thu, 26 Apr 2018 07:22:20 -0700
+        Thu, 26 Apr 2018 10:23:13 -0400
+Date: Thu, 26 Apr 2018 07:22:50 -0700
 From: tip-bot for Borislav Petkov <tipbot@zytor.com>
-Message-ID: <tip-602bd705da334f214fc03db328dc37d2f1f33307@git.kernel.org>
-Cc: tglx@linutronix.de, luto@amacapital.net, bp@suse.de, hpa@zytor.com,
-        mingo@kernel.org, jpoimboe@redhat.com, torvalds@linux-foundation.org,
-        peterz@infradead.org, linux-kernel@vger.kernel.org
-Reply-To: peterz@infradead.org, linux-kernel@vger.kernel.org,
-        jpoimboe@redhat.com, torvalds@linux-foundation.org, bp@suse.de,
-        hpa@zytor.com, mingo@kernel.org, luto@amacapital.net,
-        tglx@linutronix.de
-In-Reply-To: <20180417161124.5294-9-bp@alien8.de>
-References: <20180417161124.5294-9-bp@alien8.de>
+Message-ID: <tip-4dba072cd097f35fa8f77c49d909ada2b079a4c4@git.kernel.org>
+Cc: jpoimboe@redhat.com, torvalds@linux-foundation.org,
+        peterz@infradead.org, tglx@linutronix.de, hpa@zytor.com,
+        mingo@kernel.org, luto@amacapital.net, linux-kernel@vger.kernel.org,
+        bp@suse.de
+Reply-To: jpoimboe@redhat.com, torvalds@linux-foundation.org,
+        peterz@infradead.org, tglx@linutronix.de, hpa@zytor.com,
+        mingo@kernel.org, luto@amacapital.net, linux-kernel@vger.kernel.org,
+        bp@suse.de
+In-Reply-To: <20180417161124.5294-10-bp@alien8.de>
+References: <20180417161124.5294-10-bp@alien8.de>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cleanups] x86/dumpstack: Save first regs set for the
- executive summary
-Git-Commit-ID: 602bd705da334f214fc03db328dc37d2f1f33307
+Subject: [tip:x86/cleanups] x86/dumpstack: Explain the reasoning for the
+ prologue and buffer size
+Git-Commit-ID: 4dba072cd097f35fa8f77c49d909ada2b079a4c4
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -35,17 +36,18 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  602bd705da334f214fc03db328dc37d2f1f33307
-Gitweb:     https://git.kernel.org/tip/602bd705da334f214fc03db328dc37d2f1f33307
+Commit-ID:  4dba072cd097f35fa8f77c49d909ada2b079a4c4
+Gitweb:     https://git.kernel.org/tip/4dba072cd097f35fa8f77c49d909ada2b079a4c4
 Author:     Borislav Petkov <bp@suse.de>
-AuthorDate: Tue, 17 Apr 2018 18:11:23 +0200
+AuthorDate: Tue, 17 Apr 2018 18:11:24 +0200
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Thu, 26 Apr 2018 16:15:28 +0200
 
-x86/dumpstack: Save first regs set for the executive summary
+x86/dumpstack: Explain the reasoning for the prologue and buffer size
 
-Save the regs set when __die() is onvoked for the first time and print it
-in oops_end().
+The whole reasoning behind the amount of opcode bytes dumped and prologue
+length isn't very clear so write down some of the reasons for why it is
+done the way it is.
 
 Signed-off-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -53,77 +55,39 @@ Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Andy Lutomirski <luto@amacapital.net>
-Link: https://lkml.kernel.org/r/20180417161124.5294-9-bp@alien8.de
+Link: https://lkml.kernel.org/r/20180417161124.5294-10-bp@alien8.de
 
 ---
- arch/x86/kernel/dumpstack.c | 32 ++++++++++++--------------------
- 1 file changed, 12 insertions(+), 20 deletions(-)
+ arch/x86/kernel/dumpstack.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
 diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
-index 82da808b5c36..ee344030fd0a 100644
+index ee344030fd0a..666a284116ac 100644
 --- a/arch/x86/kernel/dumpstack.c
 +++ b/arch/x86/kernel/dumpstack.c
-@@ -28,6 +28,8 @@ int panic_on_unrecovered_nmi;
- int panic_on_io_nmi;
- static int die_counter;
- 
-+static struct pt_regs exec_summary_regs;
-+
- bool in_task_stack(unsigned long *stack, struct task_struct *task,
- 		   struct stack_info *info)
- {
-@@ -321,6 +323,9 @@ void oops_end(unsigned long flags, struct pt_regs *regs, int signr)
- 	raw_local_irq_restore(flags);
- 	oops_exit();
- 
-+	/* Executive summary in case the oops scrolled away */
-+	__show_regs(&exec_summary_regs, true);
-+
- 	if (!signr)
- 		return;
- 	if (in_interrupt())
-@@ -339,10 +344,10 @@ NOKPROBE_SYMBOL(oops_end);
- 
- int __die(const char *str, struct pt_regs *regs, long err)
- {
--#ifdef CONFIG_X86_32
--	unsigned short ss;
--	unsigned long sp;
--#endif
-+	/* Save the regs of the first oops for the executive summary later. */
-+	if (!die_counter)
-+		exec_summary_regs = *regs;
-+
- 	printk(KERN_DEFAULT
- 	       "%s: %04lx [#%d]%s%s%s%s%s\n", str, err & 0xffff, ++die_counter,
- 	       IS_ENABLED(CONFIG_PREEMPT) ? " PREEMPT"         : "",
-@@ -352,26 +357,13 @@ int __die(const char *str, struct pt_regs *regs, long err)
- 	       IS_ENABLED(CONFIG_PAGE_TABLE_ISOLATION) ?
- 	       (boot_cpu_has(X86_FEATURE_PTI) ? " PTI" : " NOPTI") : "");
- 
-+	show_regs(regs);
-+	print_modules();
-+
- 	if (notify_die(DIE_OOPS, str, regs, err,
- 			current->thread.trap_nr, SIGSEGV) == NOTIFY_STOP)
- 		return 1;
- 
--	print_modules();
--	show_regs(regs);
--#ifdef CONFIG_X86_32
--	if (user_mode(regs)) {
--		sp = regs->sp;
--		ss = regs->ss;
--	} else {
--		sp = kernel_stack_pointer(regs);
--		savesegment(ss, ss);
--	}
--	printk(KERN_EMERG "EIP: %pS SS:ESP: %04x:%08lx\n",
--	       (void *)regs->ip, ss, sp);
--#else
--	/* Executive summary in case the oops scrolled away */
--	printk(KERN_ALERT "RIP: %pS RSP: %016lx\n", (void *)regs->ip, regs->sp);
--#endif
- 	return 0;
+@@ -72,6 +72,25 @@ static void printk_stack_address(unsigned long address, int reliable,
+ 	printk("%s %s%pB\n", log_lvl, reliable ? "" : "? ", (void *)address);
  }
- NOKPROBE_SYMBOL(__die);
+ 
++/*
++ * There are a couple of reasons for the 2/3rd prologue, courtesy of Linus:
++ *
++ * In case where we don't have the exact kernel image (which, if we did, we can
++ * simply disassemble and navigate to the RIP), the purpose of the bigger
++ * prologue is to have more context and to be able to correlate the code from
++ * the different toolchains better.
++ *
++ * In addition, it helps in recreating the register allocation of the failing
++ * kernel and thus make sense of the register dump.
++ *
++ * What is more, the additional complication of a variable length insn arch like
++ * x86 warrants having longer byte sequence before rIP so that the disassembler
++ * can "sync" up properly and find instruction boundaries when decoding the
++ * opcode bytes.
++ *
++ * Thus, the 2/3rds prologue and 64 byte OPCODE_BUFSIZE is just a random
++ * guesstimate in attempt to achieve all of the above.
++ */
+ void show_opcodes(u8 *rip, const char *loglvl)
+ {
+ 	unsigned int code_prologue = OPCODE_BUFSIZE * 2 / 3;
