@@ -1,118 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752972AbeDZBWL (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 21:22:11 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:35555 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752268AbeDZBWJ (ORCPT
+        id S1751887AbeDZBYz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 21:24:55 -0400
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:38749 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750868AbeDZBYv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 21:22:09 -0400
-X-Google-Smtp-Source: AIpwx48NNoxFnBCBH9hJpEv9IFJWWYBWMTGEH39yKQrWLJVG5fB9RSM7i3E5N1BOyWbxxqtQaqQ/ug==
-Subject: Re: [PATCH] soc: qcom: smem: introduce qcom_smem_virt_to_phys()
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: andy.gross@linaro.org, clew@codeaurora.org, aneela@codeaurora.org,
-        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180425151820.25595-1-elder@linaro.org>
- <20180425231424.GJ18510@minitux>
-From: Alex Elder <elder@linaro.org>
-Message-ID: <725190d3-a4bf-3170-d88a-5964c64a9077@linaro.org>
-Date: Wed, 25 Apr 2018 20:22:06 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 25 Apr 2018 21:24:51 -0400
+X-Google-Smtp-Source: AIpwx494uFtZt7Y6KRriysRFrqqEsLFGejt2wwC6M51XLxqapi9wZCtAO2O/eXfznQJtf4Ig4IoMBR02bf8GyaQzusc=
 MIME-Version: 1.0
-In-Reply-To: <20180425231424.GJ18510@minitux>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <87wowvuvml.fsf@xmission.com>
+References: <87604mhrnb.fsf@xmission.com> <20180420143811.9994-9-ebiederm@xmission.com>
+ <CAJsyPhy_GbfnzCNa_rJDMSRrUfVKOJKCVqrkWkDUmH6jPDGPhw@mail.gmail.com> <87wowvuvml.fsf@xmission.com>
+From: Greentime Hu <green.hu@gmail.com>
+Date: Thu, 26 Apr 2018 09:24:09 +0800
+Message-ID: <CAEbi=3d69M=DB_2aDbei+a=8cRj33LTJc7v5ieD_xVnO72Kw9Q@mail.gmail.com>
+Subject: Re: [REVIEW][PATCH 09/22] signal/nds32: Use force_sig_fault where appropriate
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Vincent Chen <deanbo422@gmail.com>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/25/2018 06:14 PM, Bjorn Andersson wrote:
-> On Wed 25 Apr 08:18 PDT 2018, Alex Elder wrote:
-> 
->> Create function qcom_smem_virt_to_phys(), which returns the physical
->> address corresponding to a given SMEM item's virtual address.  This
->> feature is required for a driver that will soon be out for review.
+2018-04-25 23:57 GMT+08:00 Eric W. Biederman <ebiederm@xmission.com>:
+> Vincent Chen <deanbo422@gmail.com> writes:
+>
+>> 2018-04-20 22:37 GMT+08:00 Eric W. Biederman <ebiederm@xmission.com>:
+>>> Filling in struct siginfo before calling force_sig_info a tedious and
+>>> error prone process, where once in a great while the wrong fields
+>>> are filled out, and siginfo has been inconsistently cleared.
+>>>
+>>> Simplify this process by using the helper force_sig_fault.  Which
+>>> takes as a parameters all of the information it needs, ensures
+>>> all of the fiddly bits of filling in struct siginfo are done properly
+>>> and then calls force_sig_info.
+>>>
+>>> In short about a 5 line reduction in code for every time force_sig_info
+>>> is called, which makes the calling function clearer.
+>>>
+>>> Cc: Greentime Hu <green.hu@gmail.com>
+>>> Cc: Vincent Chen <deanbo422@gmail.com>
+>>> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+>>> ---
+>>>  arch/nds32/kernel/traps.c | 20 ++++----------------
+>>>  arch/nds32/mm/fault.c     | 19 +++++--------------
+>>>  2 files changed, 9 insertions(+), 30 deletions(-)
+>>>
+>>> diff --git a/arch/nds32/kernel/traps.c b/arch/nds32/kernel/traps.c
+>>> index 46911768f4b5..636d1c7aa895 100644
+>>> --- a/arch/nds32/kernel/traps.c
+>>> +++ b/arch/nds32/kernel/traps.c
+>>> @@ -222,20 +222,13 @@ void die_if_kernel(const char *str, struct pt_regs *regs, int err)
+>>>
+>>>  int bad_syscall(int n, struct pt_regs *regs)
+>>>  {
+>>> -       siginfo_t info;
+>>> -
+>>>         if (current->personality != PER_LINUX) {
+>>>                 send_sig(SIGSEGV, current, 1);
+>>>                 return regs->uregs[0];
+>>>         }
+>>>
+>>> -       clear_siginfo(&info);
+>>> -       info.si_signo = SIGILL;
+>>> -       info.si_errno = 0;
+>>> -       info.si_code = ILL_ILLTRP;
+>>> -       info.si_addr = (void __user *)instruction_pointer(regs) - 4;
+>>> -
+>>> -       force_sig_info(SIGILL, &info, current);
+>>> +       force_sig_fault(SIGILL, ILL_ILLTRP,
+>>> +                       (void __user *)instruction_pointer(regs) - 4, current);
+>>>         die_if_kernel("Oops - bad syscall", regs, n);
+>>>         return regs->uregs[0];
+>>>  }
+>>> @@ -288,16 +281,11 @@ void __init early_trap_init(void)
+>>>  void send_sigtrap(struct task_struct *tsk, struct pt_regs *regs,
+>>>                   int error_code, int si_code)
+>>>  {
+>>> -       struct siginfo info;
+>>> -
+>>>         tsk->thread.trap_no = ENTRY_DEBUG_RELATED;
+>>>         tsk->thread.error_code = error_code;
+>>>
+>>> -       clear_siginfo(&info);
+>>> -       info.si_signo = SIGTRAP;
+>>> -       info.si_code = si_code;
+>>> -       info.si_addr = (void __user *)instruction_pointer(regs);
+>>> -       force_sig_info(SIGTRAP, &info, tsk);
+>>> +       force_sig_fault(SIGTRAP, si_code
+>>> +                       (void __user *)instruction_pointer(regs), tsk);
+>>>  }
+>>>
 >>
-> 
-> It might be wise to turn the aux_base in smem_region into a phys_addr_t
-> and then mask that with AUX_BASE_MASK before comparing with the entry's
-> aux_base in qcom_smem_get_global(). But this will work fine until the
-> day someone places smem above 4GB.
+>> I found a comma is missing after argument si_code.
+>
+> Good catch.  Fixed.
+>
+> Unfortunately the only compiler I have for nds32 is my eyeballs so
+> this slipped through.  Grr.
+>
+>
 
-I thought of that but went for this for now, because it made for a
-nice, concise change.  I agree with you though.
+Sorry for that. Our nds32 toolchain upstreaming is on-going.
+You may try this one. It is able to build defconfig and allnoconfig
 
-Thanks a lot for the quick review.
+https://lkml.org/lkml/2018/4/17/395
+https://www.kernel.org/pub/tools/crosstool/files/bin/x86_64/6.4.0/x86_64-gcc-6.4.0-nolibc-nds32le-linux.tar.xz
 
-					-Alex
-
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> 
-> Regards,
-> Bjorn
-> 
->> Signed-off-by: Alex Elder <elder@linaro.org>
->> ---
->>  drivers/soc/qcom/smem.c       | 27 +++++++++++++++++++++++++++
->>  include/linux/soc/qcom/smem.h |  2 ++
->>  2 files changed, 29 insertions(+)
->>
->> diff --git a/drivers/soc/qcom/smem.c b/drivers/soc/qcom/smem.c
->> index 7d9a43da5084..70b2ee80d6bd 100644
->> --- a/drivers/soc/qcom/smem.c
->> +++ b/drivers/soc/qcom/smem.c
->> @@ -655,6 +655,33 @@ int qcom_smem_get_free_space(unsigned host)
->>  }
->>  EXPORT_SYMBOL(qcom_smem_get_free_space);
->>  
->> +/**
->> + * qcom_smem_virt_to_phys() - return the physical address associated
->> + * with an smem item pointer (previously returned by qcom_smem_get()
->> + * @p:	the virtual address to convert
->> + *
->> + * Returns 0 if the pointer provided is not within any smem region.
->> + */
->> +phys_addr_t qcom_smem_virt_to_phys(void *p)
->> +{
->> +	unsigned i;
->> +
->> +	for (i = 0; i < __smem->num_regions; i++) {
->> +		struct smem_region *region = &__smem->regions[i];
->> +
->> +		if (p < region->virt_base)
->> +			continue;
->> +		if (p < region->virt_base + region->size) {
->> +			u64 offset = p - region->virt_base;
->> +
->> +			return (phys_addr_t)region->aux_base + offset;
->> +		}
->> +	}
->> +
->> +	return 0;
->> +}
->> +EXPORT_SYMBOL(qcom_smem_virt_to_phys);
->> +
->>  static int qcom_smem_get_sbl_version(struct qcom_smem *smem)
->>  {
->>  	struct smem_header *header;
->> diff --git a/include/linux/soc/qcom/smem.h b/include/linux/soc/qcom/smem.h
->> index c1657ed27b30..86e1b358688a 100644
->> --- a/include/linux/soc/qcom/smem.h
->> +++ b/include/linux/soc/qcom/smem.h
->> @@ -9,4 +9,6 @@ void *qcom_smem_get(unsigned host, unsigned item, size_t *size);
->>  
->>  int qcom_smem_get_free_space(unsigned host);
->>  
->> +phys_addr_t qcom_smem_virt_to_phys(void *p);
->> +
->>  #endif
->> -- 
->> 2.14.1
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+or this one with glibc support
+https://github.com/andestech/build_script.git
+https://github.com/greentime/prebuilt-nds32-toolchain/releases
