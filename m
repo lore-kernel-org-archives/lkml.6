@@ -1,200 +1,240 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755384AbeDZKxT (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 06:53:19 -0400
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:38130 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754219AbeDZKxR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 06:53:17 -0400
-X-Google-Smtp-Source: AB8JxZr9QNh3yUa4NgXg8RFWtBOysObuMOjE4oxHYoZNCwVIJ9OQJ6dLZO/1cy1Bh9xyksu8MnT5EVBpgzpimPrUGig=
+        id S1755288AbeDZKzA (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 06:55:00 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51748 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754727AbeDZKy6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 06:54:58 -0400
+Subject: Re: [PATCH v2 03/17] arm64: Make page table helpers reusable
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc: ard.biesheuvel@linaro.org, kvm@vger.kernel.org, marc.zyngier@arm.com,
+        catalin.marinas@arm.com, punit.agrawal@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, kristina.martsenko@arm.com,
+        pbonzini@redhat.com, kvmarm@lists.cs.columbia.edu
+References: <1522156531-28348-1-git-send-email-suzuki.poulose@arm.com>
+ <1522156531-28348-4-git-send-email-suzuki.poulose@arm.com>
+From: Julien Grall <julien.grall@arm.com>
+Message-ID: <2afc71dd-0e97-7a86-b70f-a941ff4b4f26@arm.com>
+Date: Thu, 26 Apr 2018 11:54:55 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <201804261703.caDB8Qo5%fengguang.wu@intel.com>
-References: <7809a25514e8f7f72a276d19414346b2e4100945.1524570852.git.baolin.wang@linaro.org>
- <201804261703.caDB8Qo5%fengguang.wu@intel.com>
-From: Baolin Wang <baolin.wang@linaro.org>
-Date: Thu, 26 Apr 2018 18:53:16 +0800
-Message-ID: <CAMz4kuJ0xy-0UByd8UzSUyc9iwgytH7EYE2JPDXFTe-1PFG3+A@mail.gmail.com>
-Subject: Re: [PATCH 4/8] ALSA: Avoid using timespec for struct snd_pcm_status
-To: kbuild test robot <lkp@intel.com>
-Cc: kbuild-all@01.org, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, Arnd Bergmann <arnd@arndb.de>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-        Ingo Molnar <mingo@kernel.org>,
-        SF Markus Elfring <elfring@users.sourceforge.net>,
-        Dan Carpenter <dan.carpenter@oracle.com>, jeeja.kp@intel.com,
-        Vinod Koul <vinod.koul@intel.com>,
-        Guneshwor Singh <guneshwor.o.singh@intel.com>,
-        subhransu.s.prusty@intel.com, Bhumika Goyal <bhumirks@gmail.com>,
-        gudishax.kranthikumar@intel.com, Naveen M <naveen.m@intel.com>,
-        hardik.t.shah@intel.com, Arvind Yadav <arvind.yadav.cs@gmail.com>,
-        Fabian Frederick <fabf@skynet.be>, alsa-devel@alsa-project.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1522156531-28348-4-git-send-email-suzuki.poulose@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3QArO8b023618
 
-Hi Arnd,
+Hi Suzuki,
 
-On 26 April 2018 at 17:20, kbuild test robot <lkp@intel.com> wrote:
-> Hi Baolin,
->
-> I love your patch! Perhaps something to improve:
->
-> [auto build test WARNING on v4.17-rc2]
-> [cannot apply to sound/for-next asoc/for-next arm-soc/for-next next-20180426]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
->
-> url:    https://github.com/0day-ci/linux/commits/Baolin-Wang/Fix-year-2038-issue-for-sound-subsystem/20180426-010145
-> reproduce:
->         # apt-get install sparse
->         make ARCH=x86_64 allmodconfig
->         make C=1 CF=-D__CHECK_ENDIAN__
->
->
-> sparse warnings: (new ones prefixed by >>)
->
->    sound/core/pcm_native.c:561:51: sparse: incorrect type in assignment (different base types) @@    expected restricted snd_pcm_state_t [usertype] state @@    got t [usertype] state @@
->    sound/core/pcm_native.c:561:51:    expected restricted snd_pcm_state_t [usertype] state
->    sound/core/pcm_native.c:561:51:    got int [signed] state
->    sound/core/pcm_native.c:726:38: sparse: incorrect type in argument 2 (different base types) @@    expected int [signed] state @@    got restricted snd_pcm_state_int [signed] state @@
->    sound/core/pcm_native.c:726:38:    expected int [signed] state
->    sound/core/pcm_native.c:726:38:    got restricted snd_pcm_state_t [usertype] <noident>
->    sound/core/pcm_native.c:738:38: sparse: incorrect type in argument 2 (different base types) @@    expected int [signed] state @@    got restricted snd_pcm_state_int [signed] state @@
->    sound/core/pcm_native.c:738:38:    expected int [signed] state
->    sound/core/pcm_native.c:738:38:    got restricted snd_pcm_state_t [usertype] <noident>
->    sound/core/pcm_native.c:787:38: sparse: incorrect type in argument 2 (different base types) @@    expected int [signed] state @@    got restricted snd_pcm_state_int [signed] state @@
->    sound/core/pcm_native.c:787:38:    expected int [signed] state
->    sound/core/pcm_native.c:787:38:    got restricted snd_pcm_state_t [usertype] <noident>
->>> sound/core/pcm_native.c:995:34: sparse: incorrect type in initializer (different base types) @@    expected signed int [signed] [usertype] [explicitly-signed] state @@    got restricted ssigned int [signed] [usertype] [explicitly-signed] state @@
->    sound/core/pcm_native.c:995:34:    expected signed int [signed] [usertype] [explicitly-signed] state
->    sound/core/pcm_native.c:995:34:    got restricted snd_pcm_state_t [addressable] [assigned] [usertype] state
->>> sound/core/pcm_native.c:1006:44: sparse: incorrect type in initializer (different base types) @@    expected signed int [signed] [usertype] [explicitly-signed] suspended_state @@    got restricted ssigned int [signed] [usertype] [explicitly-signed] suspended_state @@
->    sound/core/pcm_native.c:1006:44:    expected signed int [signed] [usertype] [explicitly-signed] suspended_state
->    sound/core/pcm_native.c:1006:44:    got restricted snd_pcm_state_t [addressable] [assigned] [usertype] suspended_state
->    sound/core/pcm_native.c:1259:32: sparse: incorrect type in assignment (different base types) @@    expected restricted snd_pcm_state_t [usertype] state @@    got t [usertype] state @@
->    sound/core/pcm_native.c:1259:32:    expected restricted snd_pcm_state_t [usertype] state
->    sound/core/pcm_native.c:1259:32:    got int [signed] state
->    sound/core/pcm_native.c:1283:31: sparse: incorrect type in argument 3 (different base types) @@    expected int [signed] state @@    got restricted snd_pcm_state_int [signed] state @@
->    sound/core/pcm_native.c:1283:31:    expected int [signed] state
->    sound/core/pcm_native.c:1283:31:    got restricted snd_pcm_state_t [usertype] <noident>
->    sound/core/pcm_native.c:1290:40: sparse: incorrect type in argument 3 (different base types) @@    expected int [signed] state @@    got restricted snd_pcm_state_int [signed] state @@
->    sound/core/pcm_native.c:1290:40:    expected int [signed] state
->    sound/core/pcm_native.c:1290:40:    got restricted snd_pcm_state_t [usertype] <noident>
->    sound/core/pcm_native.c:1316:28: sparse: restricted snd_pcm_state_t degrades to integer
->    sound/core/pcm_native.c:1318:40: sparse: incorrect type in assignment (different base types) @@    expected restricted snd_pcm_state_t [usertype] state @@    got t [usertype] state @@
->    sound/core/pcm_native.c:1318:40:    expected restricted snd_pcm_state_t [usertype] state
->    sound/core/pcm_native.c:1318:40:    got int [signed] state
->    sound/core/pcm_native.c:1342:64: sparse: incorrect type in argument 3 (different base types) @@    expected int [signed] state @@    got restricted snd_pcm_state_int [signed] state @@
->    sound/core/pcm_native.c:1342:64:    expected int [signed] state
->    sound/core/pcm_native.c:1342:64:    got restricted snd_pcm_state_t [usertype] state
->    sound/core/pcm_native.c:1358:38: sparse: incorrect type in argument 3 (different base types) @@    expected int [signed] state @@    got restricted snd_pcm_state_int [signed] state @@
->    sound/core/pcm_native.c:1358:38:    expected int [signed] state
->    sound/core/pcm_native.c:1358:38:    got restricted snd_pcm_state_t [usertype] <noident>
->    sound/core/pcm_native.c:1717:38: sparse: incorrect type in argument 2 (different base types) @@    expected int [signed] state @@    got restricted snd_pcm_state_int [signed] state @@
->    sound/core/pcm_native.c:1717:38:    expected int [signed] state
->    sound/core/pcm_native.c:1717:38:    got restricted snd_pcm_state_t [usertype] <noident>
->    sound/core/pcm_native.c:1783:61: sparse: incorrect type in argument 2 (different base types) @@    expected int [signed] state @@    got restricted snd_pcm_state_int [signed] state @@
->    sound/core/pcm_native.c:1783:61:    expected int [signed] state
->    sound/core/pcm_native.c:1783:61:    got restricted snd_pcm_state_t [usertype] <noident>
->    sound/core/pcm_native.c:1784:63: sparse: incorrect type in argument 2 (different base types) @@    expected int [signed] state @@    got restricted snd_pcm_state_int [signed] state @@
->    sound/core/pcm_native.c:1784:63:    expected int [signed] state
->    sound/core/pcm_native.c:1784:63:    got restricted snd_pcm_state_t [usertype] <noident>
->    sound/core/pcm_native.c:1801:76: sparse: incorrect type in initializer (different base types) @@    expected int [signed] new_state @@    got restricted snint [signed] new_state @@
->    sound/core/pcm_native.c:1801:76:    expected int [signed] new_state
->    sound/core/pcm_native.c:1801:76:    got restricted snd_pcm_state_t
->    sound/core/pcm_native.c:1904:40: sparse: expression using sizeof(void)
->    sound/core/pcm_native.c:1904:40: sparse: expression using sizeof(void)
->    sound/core/pcm_native.c:2122:26: sparse: restricted snd_pcm_format_t degrades to integer
->    sound/core/pcm_native.c:2126:54: sparse: incorrect type in argument 1 (different base types) @@    expected restricted snd_pcm_format_t [usertype] format @@    got ricted snd_pcm_format_t [usertype] format @@
->    sound/core/pcm_native.c:2126:54:    expected restricted snd_pcm_format_t [usertype] format
->    sound/core/pcm_native.c:2126:54:    got unsigned int [unsigned] [assigned] k
->    sound/core/pcm_native.c:2144:26: sparse: restricted snd_pcm_format_t degrades to integer
->    sound/core/pcm_native.c:2148:54: sparse: incorrect type in argument 1 (different base types) @@    expected restricted snd_pcm_format_t [usertype] format @@    got ricted snd_pcm_format_t [usertype] format @@
->    sound/core/pcm_native.c:2148:54:    expected restricted snd_pcm_format_t [usertype] format
->    sound/core/pcm_native.c:2148:54:    got unsigned int [unsigned] [assigned] k
->    sound/core/pcm_native.c:2328:30: sparse: restricted snd_pcm_access_t degrades to integer
->    sound/core/pcm_native.c:2330:30: sparse: restricted snd_pcm_access_t degrades to integer
->    sound/core/pcm_native.c:2333:38: sparse: restricted snd_pcm_access_t degrades to integer
->    sound/core/pcm_native.c:2335:38: sparse: restricted snd_pcm_access_t degrades to integer
->    sound/core/pcm_native.c:2337:38: sparse: restricted snd_pcm_access_t degrades to integer
->    sound/core/pcm_native.c:2347:86: sparse: restricted snd_pcm_subformat_t degrades to integer
->    include/sound/pcm.h:1093:47: sparse: cast removes address space of expression
->    include/sound/pcm.h:1100:47: sparse: cast removes address space of expression
->    include/sound/pcm.h:1100:47: sparse: cast removes address space of expression
->    include/sound/pcm.h:1093:47: sparse: cast removes address space of expression
->    sound/core/pcm_compat.c:241:32: sparse: incorrect type in initializer (different base types) @@    expected signed int [signed] [usertype] [explicitly-signed] state @@    got restricted ssigned int [signed] [usertype] [explicitly-signed] state @@
->    sound/core/pcm_compat.c:241:32:    expected signed int [signed] [usertype] [explicitly-signed] state
->    sound/core/pcm_compat.c:241:32:    got restricted snd_pcm_state_t [addressable] [assigned] [usertype] state
->    sound/core/pcm_compat.c:252:42: sparse: incorrect type in initializer (different base types) @@    expected signed int [signed] [usertype] [explicitly-signed] suspended_state @@    got restricted ssigned int [signed] [usertype] [explicitly-signed] suspended_state @@
->    sound/core/pcm_compat.c:252:42:    expected signed int [signed] [usertype] [explicitly-signed] suspended_state
->    sound/core/pcm_compat.c:252:42:    got restricted snd_pcm_state_t [addressable] [assigned] [usertype] suspended_state
->    include/sound/pcm.h:1093:47: sparse: cast removes address space of expression
->    include/sound/pcm.h:1100:47: sparse: cast removes address space of expression
->    sound/core/pcm_compat.c:480:13: sparse: incorrect type in assignment (different base types) @@    expected signed int [signed] [explicitly-signed] __pu_val @@    got restrictesigned int [signed] [explicitly-signed] __pu_val @@
->    sound/core/pcm_compat.c:480:13:    expected signed int [signed] [explicitly-signed] __pu_val
->    sound/core/pcm_compat.c:480:13:    got restricted snd_pcm_state_t [assigned] [usertype] state
->    sound/core/pcm_compat.c:483:13: sparse: incorrect type in assignment (different base types) @@    expected signed int [signed] [explicitly-signed] __pu_val @@    got restrictesigned int [signed] [explicitly-signed] __pu_val @@
->    sound/core/pcm_compat.c:483:13:    expected signed int [signed] [explicitly-signed] __pu_val
->    sound/core/pcm_compat.c:483:13:    got restricted snd_pcm_state_t [assigned] [usertype] suspended_state
->    sound/core/pcm_compat.c:569:13: sparse: incorrect type in assignment (different base types) @@    expected signed int [signed] [explicitly-signed] __pu_val @@    got restrictesigned int [signed] [explicitly-signed] __pu_val @@
->    sound/core/pcm_compat.c:569:13:    expected signed int [signed] [explicitly-signed] __pu_val
->    sound/core/pcm_compat.c:569:13:    got restricted snd_pcm_state_t [assigned] [usertype] state
->    sound/core/pcm_compat.c:572:13: sparse: incorrect type in assignment (different base types) @@    expected signed int [signed] [explicitly-signed] __pu_val @@    got restrictesigned int [signed] [explicitly-signed] __pu_val @@
->    sound/core/pcm_compat.c:572:13:    expected signed int [signed] [explicitly-signed] __pu_val
->    sound/core/pcm_compat.c:572:13:    got restricted snd_pcm_state_t [assigned] [usertype] suspended_state
->    sound/core/pcm_native.c:112:9: sparse: context imbalance in 'snd_pcm_stream_lock' - different lock contexts for basic block
->    sound/core/pcm_native.c:134:28: sparse: context imbalance in 'snd_pcm_stream_unlock' - unexpected unlock
->    sound/core/pcm_native.c:1130:52: sparse: context imbalance in 'snd_pcm_action_group' - unexpected unlock
->
-> vim +995 sound/core/pcm_native.c
->
->    971
->    972  static int snd_pcm_status_user32(struct snd_pcm_substream *substream,
->    973                                   struct snd_pcm_status32 __user * _status,
->    974                                   bool ext)
->    975  {
->    976          struct snd_pcm_status64 status64;
->    977          struct snd_pcm_status32 status32;
->    978          int res;
->    979
->    980          memset(&status64, 0, sizeof(status64));
->    981          memset(&status32, 0, sizeof(status32));
->    982          /*
->    983           * with extension, parameters are read/write,
->    984           * get audio_tstamp_data from user,
->    985           * ignore rest of status structure
->    986           */
->    987          if (ext && get_user(status64.audio_tstamp_data,
->    988                              (u32 __user *)(&_status->audio_tstamp_data)))
->    989                  return -EFAULT;
->    990          res = snd_pcm_status64(substream, &status64);
->    991          if (res < 0)
->    992                  return res;
->    993
->    994          status32 = (struct snd_pcm_status32) {
->  > 995                  .state = status64.state,
->    996                  .trigger_tstamp_sec = status64.trigger_tstamp_sec,
->    997                  .trigger_tstamp_nsec = status64.trigger_tstamp_nsec,
->    998                  .tstamp_sec = status64.tstamp_sec,
->    999                  .tstamp_nsec = status64.tstamp_nsec,
->   1000                  .appl_ptr = status64.appl_ptr,
->   1001                  .hw_ptr = status64.hw_ptr,
->   1002                  .delay = status64.delay,
->   1003                  .avail = status64.avail,
->   1004                  .avail_max = status64.avail_max,
->   1005                  .overrange = status64.overrange,
->> 1006                  .suspended_state = status64.suspended_state,
+On 27/03/18 14:15, Suzuki K Poulose wrote:
+> This patch rearranges the page table level helpers so that it can
+> be reused for a page table with different number of levels
+> (e.g, stage2 page table for a VM) than the kernel page tables.
+> As such there is no functional change with this patch.
+> 
+> The page table helpers are defined to do the right thing for the
+> fixed page table levels set for the kernel. This patch tries to
+> refactor the code such that, we can have helpers for each level,
+> which should be used when the caller knows that the level exists
+> for the page table dealt with. Since the kernel defines helpers
+> p.d_action and __p.d_action, for consistency, we name the raw
+> page table action helpers __raw_p.d_action.
+> 
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Steve Capper <steve.capper@arm.com>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Cc: Christoffer Dall <cdall@kernel.org>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-I am not sure for the warning here, we should change 'snd_pcm_state_t'
-to 's32' for struct snd_pcm_status64?
+Reviewed-by: Julien Grall <julien.grall@arm.com>
 
-typedef int __bitwise snd_pcm_state_t;
+Cheers,
+
+> ---
+>   arch/arm64/include/asm/pgalloc.h | 34 +++++++++++++++++++----
+>   arch/arm64/include/asm/pgtable.h | 60 +++++++++++++++++++++++++---------------
+>   2 files changed, 66 insertions(+), 28 deletions(-)
+> 
+> diff --git a/arch/arm64/include/asm/pgalloc.h b/arch/arm64/include/asm/pgalloc.h
+> index 2e05bcd..ab4662c 100644
+> --- a/arch/arm64/include/asm/pgalloc.h
+> +++ b/arch/arm64/include/asm/pgalloc.h
+> @@ -29,6 +29,30 @@
+>   #define PGALLOC_GFP	(GFP_KERNEL | __GFP_ZERO)
+>   #define PGD_SIZE	(PTRS_PER_PGD * sizeof(pgd_t))
+>   
+> +static inline void __raw_pmd_free(pmd_t *pmdp)
+> +{
+> +	BUG_ON((unsigned long)pmdp & (PAGE_SIZE-1));
+> +	free_page((unsigned long)pmdp);
+> +}
+> +
+> +static inline void
+> +__raw_pud_populate(pud_t *pudp, phys_addr_t pmdp, pudval_t prot)
+> +{
+> +	__raw_set_pud(pudp, __pud(__phys_to_pud_val(pmdp) | prot));
+> +}
+> +
+> +static inline void __raw_pud_free(pud_t *pudp)
+> +{
+> +	BUG_ON((unsigned long)pudp & (PAGE_SIZE-1));
+> +	free_page((unsigned long)pudp);
+> +}
+> +
+> +static inline void
+> +__raw_pgd_populate(pgd_t *pgdp, phys_addr_t pudp, pgdval_t prot)
+> +{
+> +	__raw_set_pgd(pgdp, __pgd(__phys_to_pgd_val(pudp) | prot));
+> +}
+> +
+>   #if CONFIG_PGTABLE_LEVELS > 2
+>   
+>   static inline pmd_t *pmd_alloc_one(struct mm_struct *mm, unsigned long addr)
+> @@ -38,13 +62,12 @@ static inline pmd_t *pmd_alloc_one(struct mm_struct *mm, unsigned long addr)
+>   
+>   static inline void pmd_free(struct mm_struct *mm, pmd_t *pmdp)
+>   {
+> -	BUG_ON((unsigned long)pmdp & (PAGE_SIZE-1));
+> -	free_page((unsigned long)pmdp);
+> +	__raw_pmd_free(pmdp);
+>   }
+>   
+>   static inline void __pud_populate(pud_t *pudp, phys_addr_t pmdp, pudval_t prot)
+>   {
+> -	set_pud(pudp, __pud(__phys_to_pud_val(pmdp) | prot));
+> +	__raw_pud_populate(pudp, pmdp, prot);
+>   }
+>   
+>   static inline void pud_populate(struct mm_struct *mm, pud_t *pudp, pmd_t *pmdp)
+> @@ -67,13 +90,12 @@ static inline pud_t *pud_alloc_one(struct mm_struct *mm, unsigned long addr)
+>   
+>   static inline void pud_free(struct mm_struct *mm, pud_t *pudp)
+>   {
+> -	BUG_ON((unsigned long)pudp & (PAGE_SIZE-1));
+> -	free_page((unsigned long)pudp);
+> +	__raw_pud_free(pudp);
+>   }
+>   
+>   static inline void __pgd_populate(pgd_t *pgdp, phys_addr_t pudp, pgdval_t prot)
+>   {
+> -	set_pgd(pgdp, __pgd(__phys_to_pgd_val(pudp) | prot));
+> +	__raw_pgd_populate(pgdp, pudp, prot);
+>   }
+>   
+>   static inline void pgd_populate(struct mm_struct *mm, pgd_t *pgdp, pud_t *pudp)
+> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+> index 7e2c27e..5e22503 100644
+> --- a/arch/arm64/include/asm/pgtable.h
+> +++ b/arch/arm64/include/asm/pgtable.h
+> @@ -475,31 +475,39 @@ static inline phys_addr_t pmd_page_paddr(pmd_t pmd)
+>    */
+>   #define mk_pte(page,prot)	pfn_pte(page_to_pfn(page),prot)
+>   
+> -#if CONFIG_PGTABLE_LEVELS > 2
+> +#define __raw_pud_none(pud)	(!pud_val(pud))
+> +#define __raw_pud_bad(pud)	(!(pud_val(pud) & PUD_TABLE_BIT))
+> +#define __raw_pud_present(pud)	pte_present(pud_pte(pud))
+>   
+> -#define pmd_ERROR(pmd)		__pmd_error(__FILE__, __LINE__, pmd_val(pmd))
+> -
+> -#define pud_none(pud)		(!pud_val(pud))
+> -#define pud_bad(pud)		(!(pud_val(pud) & PUD_TABLE_BIT))
+> -#define pud_present(pud)	pte_present(pud_pte(pud))
+> -
+> -static inline void set_pud(pud_t *pudp, pud_t pud)
+> +static inline void __raw_set_pud(pud_t *pudp, pud_t pud)
+>   {
+>   	WRITE_ONCE(*pudp, pud);
+>   	dsb(ishst);
+>   	isb();
+>   }
+>   
+> -static inline void pud_clear(pud_t *pudp)
+> +static inline void __raw_pud_clear(pud_t *pudp)
+>   {
+> -	set_pud(pudp, __pud(0));
+> +	__raw_set_pud(pudp, __pud(0));
+>   }
+>   
+> -static inline phys_addr_t pud_page_paddr(pud_t pud)
+> +static inline phys_addr_t __raw_pud_page_paddr(pud_t pud)
+>   {
+>   	return __pud_to_phys(pud);
+>   }
+>   
+> +#if CONFIG_PGTABLE_LEVELS > 2
+> +
+> +#define pmd_ERROR(pmd)		__pmd_error(__FILE__, __LINE__, pmd_val(pmd))
+> +
+> +#define pud_none(pud)		__raw_pud_none(pud)
+> +#define pud_bad(pud)		__raw_pud_bad(pud)
+> +#define pud_present(pud)	__raw_pud_present(pud)
+> +
+> +#define set_pud(pudp, pud)	__raw_set_pud((pudp), (pud))
+> +#define pud_clear(pudp)		__raw_pud_clear((pudp))
+> +#define pud_page_paddr(pud)	__raw_pud_page_paddr((pud))
+> +
+>   /* Find an entry in the second-level page table. */
+>   #define pmd_index(addr)		(((addr) >> PMD_SHIFT) & (PTRS_PER_PMD - 1))
+>   
+> @@ -528,30 +536,38 @@ static inline phys_addr_t pud_page_paddr(pud_t pud)
+>   
+>   #endif	/* CONFIG_PGTABLE_LEVELS > 2 */
+>   
+> -#if CONFIG_PGTABLE_LEVELS > 3
+> +#define __raw_pgd_none(pgd)	(!pgd_val(pgd))
+> +#define __raw_pgd_bad(pgd)	(!(pgd_val(pgd) & 2))
+> +#define __raw_pgd_present(pgd)	(pgd_val(pgd))
+>   
+> -#define pud_ERROR(pud)		__pud_error(__FILE__, __LINE__, pud_val(pud))
+> -
+> -#define pgd_none(pgd)		(!pgd_val(pgd))
+> -#define pgd_bad(pgd)		(!(pgd_val(pgd) & 2))
+> -#define pgd_present(pgd)	(pgd_val(pgd))
+> -
+> -static inline void set_pgd(pgd_t *pgdp, pgd_t pgd)
+> +static inline void __raw_set_pgd(pgd_t *pgdp, pgd_t pgd)
+>   {
+>   	WRITE_ONCE(*pgdp, pgd);
+>   	dsb(ishst);
+>   }
+>   
+> -static inline void pgd_clear(pgd_t *pgdp)
+> +static inline void __raw_pgd_clear(pgd_t *pgdp)
+>   {
+> -	set_pgd(pgdp, __pgd(0));
+> +	__raw_set_pgd(pgdp, __pgd(0));
+>   }
+>   
+> -static inline phys_addr_t pgd_page_paddr(pgd_t pgd)
+> +static inline phys_addr_t __raw_pgd_page_paddr(pgd_t pgd)
+>   {
+>   	return __pgd_to_phys(pgd);
+>   }
+>   
+> +#if CONFIG_PGTABLE_LEVELS > 3
+> +
+> +#define pud_ERROR(pud)		__pud_error(__FILE__, __LINE__, pud_val(pud))
+> +
+> +#define pgd_none(pgd)		__raw_pgd_none((pgd))
+> +#define pgd_bad(pgd)		__raw_pgd_bad((pgd))
+> +#define pgd_present(pgd)	__raw_pgd_present((pgd))
+> +
+> +#define set_pgd(pgdp, pgd)	__raw_set_pgd((pgdp), (pgd))
+> +#define pgd_clear(pgdp)		__raw_pgd_clear((pgdp))
+> +#define pgd_page_paddr(pgd)	__raw_pgd_page_paddr((pgd))
+> +
+>   /* Find an entry in the frst-level page table. */
+>   #define pud_index(addr)		(((addr) >> PUD_SHIFT) & (PTRS_PER_PUD - 1))
+>   
+> 
 
 -- 
-Baolin.wang
-Best Regards
+Julien Grall
