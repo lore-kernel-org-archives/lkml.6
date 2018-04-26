@@ -1,81 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754564AbeDZIXP (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 04:23:15 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:38683 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753219AbeDZIXK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 04:23:10 -0400
-X-Google-Smtp-Source: AIpwx4+YIlorhKbOXh5xWbOxofDE3/ruS9FFKtFTZWaGwNbfNhL1dQaprmQyOum9sIbp7Rp3f2Goug==
-Date: Thu, 26 Apr 2018 10:23:06 +0200
-From: Ahmed Abdelsalam <amsalam20@gmail.com>
-To: David Miller <davem@davemloft.net>
-Cc: dav.lebrun@gmail.com, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [net-next v3] ipv6: sr: Compute flowlabel for outer IPv6 header
- of seg6 encap mode
-Message-Id: <20180426102306.5febbb0b545be315a784dd75@gmail.com>
-In-Reply-To: <20180425.130304.1605881647944477071.davem@davemloft.net>
-References: <1524594196-12383-1-git-send-email-amsalam20@gmail.com>
-        <20180425.130304.1605881647944477071.davem@davemloft.net>
-X-Mailer: Sylpheed 3.4.1 (GTK+ 2.24.21; x86_64-apple-darwin10.8.0)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1754655AbeDZIXf (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 04:23:35 -0400
+Received: from verein.lst.de ([213.95.11.211]:40967 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754584AbeDZIX3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 04:23:29 -0400
+Date: Thu, 26 Apr 2018 10:25:12 +0200
+From: "hch@lst.de" <hch@lst.de>
+To: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+Cc: "hch@lst.de" <hch@lst.de>, "deanbo422@gmail.com" <deanbo422@gmail.com>,
+        "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "nios2-dev@lists.rocketboards.org" <nios2-dev@lists.rocketboards.org>,
+        "linux-xtensa@linux-xtensa.org" <linux-xtensa@linux-xtensa.org>,
+        "linux-m68k@lists.linux-m68k.org" <linux-m68k@vger.kernel.org>,
+        "linux-alpha@vger.kernel.org" <linux-alpha@vger.kernel.org>,
+        "linux-hexagon@vger.kernel.org" <linux-hexagon@vger.kernel.org>,
+        "linux-snps-arc@lists.infradead.org"
+        <linux-snps-arc@lists.infradead.org>,
+        "green.hu@gmail.com" <green.hu@gmail.com>,
+        "openrisc@lists.librecores.org" <openrisc@lists.librecores.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "monstr@monstr.eu" <monstr@monstr.eu>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "linux-c6x-dev@linux-c6x.org" <linux-c6x-dev@linux-c6x.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>
+Subject: Re: [PATCH 06/22] arc: use generic dma_noncoherent_ops
+Message-ID: <20180426082512.GB15580@lst.de>
+References: <20180420080313.18796-1-hch@lst.de> <20180420080313.18796-7-hch@lst.de> <1524655020.5315.9.camel@synopsys.com> <20180426064500.GB13895@lst.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180426064500.GB13895@lst.de>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 25 Apr 2018 13:03:04 -0400 (EDT)
-David Miller <davem@davemloft.net> wrote:
-
-> From: Ahmed Abdelsalam <amsalam20@gmail.com>
-> Date: Tue, 24 Apr 2018 20:23:16 +0200
+On Thu, Apr 26, 2018 at 08:45:00AM +0200, hch@lst.de wrote:
+> On Wed, Apr 25, 2018 at 11:17:01AM +0000, Alexey Brodkin wrote:
+> > Which is actually strange as I would expect ARC code to be built by bots.
 > 
-> > ECMP (equal-cost multipath) hashes are typically computed on the packets'
-> > 5-tuple(src IP, dst IP, src port, dst port, L4 proto).
-> > 
-> > For encapsulated packets, the L4 data is not readily available and ECMP
-> > hashing will often revert to (src IP, dst IP). This will lead to traffic
-> > polarization on a single ECMP path, causing congestion and waste of network
-> > capacity.
-> > 
-> > In IPv6, the 20-bit flow label field is also used as part of the ECMP hash.
-> > In the lack of L4 data, the hashing will be on (src IP, dst IP, flow
-> > label). Having a non-zero flow label is thus important for proper traffic
-> > load balancing when L4 data is unavailable (i.e., when packets are
-> > encapsulated).
-> > 
-> > Currently, the seg6_do_srh_encap() function extracts the original packet's
-> > flow label and set it as the outer IPv6 flow label. There are two issues
-> > with this behaviour:
-> > 
-> > a) There is no guarantee that the inner flow label is set by the source.
-> > b) If the original packet is not IPv6, the flow label will be set to
-> > zero (e.g., IPv4 or L2 encap).
-> > 
-> > This patch adds a function, named seg6_make_flowlabel(), that computes a
-> > flow label from a given skb. It supports IPv6, IPv4 and L2 payloads, and
-> > leverages the per namespace 'seg6_flowlabel" sysctl value.
-> > 
-> > The currently support behaviours are as follows:
-> > -1 set flowlabel to zero.
-> > 0 copy flowlabel from Inner paceket in case of Inner IPv6
-> > (Set flowlabel to 0 in case IPv4/L2)
-> > 1 Compute the flowlabel using seg6_make_flowlabel()
-> > 
-> > This patch has been tested for IPv6, IPv4, and L2 traffic.
-> > 
-> > Signed-off-by: Ahmed Abdelsalam <amsalam20@gmail.com>
+> I don't think I got any notification.  Thank for the fixes!
 > 
-> Applied.
-> 
-> Please submit a patch which adds appropriate documentation for this new sysctl
-> to Documentation/networking/ip-sysctl.txt
+> I think I found the bug, based on the fact that so far all tests for
+> architectures that also need a cache op for device to cpu transitions
+> failed.  I did a stupid typo when changing kconfig symbols, so please
+> try the patch below.
 
-Thanks David
-I will send you a patch for ip-sysctl.txt
+Confirmed to work for nds32, so here is a git tree with the core, arc
+and nds32 fixes folded in, feel free to test that one:
 
--- 
-Ahmed Abdelsalam <amsalam20@gmail.com>
+git://git.infradead.org/users/hch/misc.git generic-dma-noncoherent
