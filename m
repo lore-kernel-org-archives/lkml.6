@@ -1,140 +1,162 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754846AbeDZJIb (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 05:08:31 -0400
-Received: from mail-wr0-f180.google.com ([209.85.128.180]:33688 "EHLO
-        mail-wr0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754428AbeDZJI0 (ORCPT
+        id S1754382AbeDZJJy (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 05:09:54 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43168 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753780AbeDZJJt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 05:08:26 -0400
-X-Google-Smtp-Source: AIpwx4+boaENrvYYeo4L2QbiL61HAQ80BC2nJFu2vWANhHXIpwxUNRiFt61bJyhGHgAvTM9F8Eu7Jw==
-From: Holger Schurig <holgerschurig@gmail.com>
-To: Alexander Duyck <alexander.duyck@gmail.com>
-Cc: Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        intel-wired-lan <intel-wired-lan@lists.osuosl.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [BUG] igb: reconnecting of cable not always detected
-In-Reply-To: <CAKgT0UdTf5pf53==hB71Ba_N1gJ-TH_3uMajozr1wykLEbK80g@mail.gmail.com>
-References: <87h8o0ocul.fsf@gmail.com> <CAKgT0Udj+d7yzPN4Jph8uk7Z6fz0oyWrO+6W6CfygSYTkGJ0Xw@mail.gmail.com> <877eovobxl.fsf@gmail.com> <CAKgT0UdTf5pf53==hB71Ba_N1gJ-TH_3uMajozr1wykLEbK80g@mail.gmail.com>
-Date: Thu, 26 Apr 2018 11:08:22 +0200
-Message-ID: <87wowumj21.fsf@gmail.com>
+        Thu, 26 Apr 2018 05:09:49 -0400
+Date: Thu, 26 Apr 2018 02:09:42 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: Christoph Hellwig <hch@infradead.org>,
+        Thierry Reding <treding@nvidia.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        "moderated list:DMA BUFFER SHARING FRAMEWORK"
+        <linaro-mm-sig@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Jerome Glisse <jglisse@redhat.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        "open list:DMA BUFFER SHARING FRAMEWORK"
+        <linux-media@vger.kernel.org>,
+        iommu@lists.linux-foundation.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: noveau vs arm dma ops
+Message-ID: <20180426090942.GA18811@infradead.org>
+References: <CAKMK7uFL68pu+-9LODTgz+GQYvxpnXOGhxfz9zorJ_JKsPVw2g@mail.gmail.com>
+ <20180425054855.GA17038@infradead.org>
+ <CAKMK7uEFitkNQrD6cLX5Txe11XhVO=LC4YKJXH=VNdq+CY=DjQ@mail.gmail.com>
+ <CAKMK7uFx=KB1vup=WhPCyfUFairKQcRR4BEd7aXaX1Pj-vj3Cw@mail.gmail.com>
+ <20180425064335.GB28100@infradead.org>
+ <20180425074151.GA2271@ulmo>
+ <20180425085439.GA29996@infradead.org>
+ <20180425100429.GR25142@phenom.ffwll.local>
+ <20180425153312.GD27076@infradead.org>
+ <CAKMK7uH14qupTYDa1pr8UC434Vs+97eUXj+fYi=+2uijCLayMA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKMK7uH14qupTYDa1pr8UC434Vs+97eUXj+fYi=+2uijCLayMA@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Wed, Apr 25, 2018 at 11:35:13PM +0200, Daniel Vetter wrote:
+> > get_required_mask() is supposed to tell you if you are safe.  However
+> > we are missing lots of implementations of it for iommus so you might get
+> > some false negatives, improvements welcome.  It's been on my list of
+> > things to fix in the DMA API, but it is nowhere near the top.
+> 
+> I hasn't come up in a while in some fireworks, so I honestly don't
+> remember exactly what the issues have been. But
+> 
+> commit d766ef53006c2c38a7fe2bef0904105a793383f2
+> Author: Chris Wilson <chris@chris-wilson.co.uk>
+> Date:   Mon Dec 19 12:43:45 2016 +0000
+> 
+>     drm/i915: Fallback to single PAGE_SIZE segments for DMA remapping
+> 
+> and the various bits of code that a
+> 
+> $ git grep SWIOTLB -- drivers/gpu
+> 
+> turns up is what we're doing to hack around that stuff. And in general
+> (there's some exceptions) gpus should be able to address everything,
+> so I never fully understood where that's even coming from.
 
-> Thanks. I'm suspecting we may need to instrument igb_rd32 at this
-> point. In order to trigger what you are seeing I am assuming the
-> device has been detached due to a read failure of some sort.
+I'm pretty sure I've seen some oddly low dma masks in GPU drivers.  E.g.
+duplicated in various AMD files:
 
-Okay, I added a printk to igb_rd32. And because no one calls this
-function directly (all access goes via the rd32/rd32_array macro) I also
-added the output of the calling function. This should help greatly in
-identifying the read from the hardware to the consumer.
+	adev->need_dma32 = false;
+        dma_bits = adev->need_dma32 ? 32 : 40;
+        r = pci_set_dma_mask(adev->pdev, DMA_BIT_MASK(dma_bits));
+        if (r) {
+                adev->need_dma32 = true;
+                dma_bits = 32;
+                dev_warn(adev->dev, "amdgpu: No suitable DMA available.\n");
+        }
 
-Finally, I noticed that igb_update_stats() produced a lot of churn that
-most likely are unrelated. So I helper variable to make output from this
-function go away.
+synopsis:
 
-I installed this modified driver, rebooted, and removed / inserted the
-LAN cable until the error was present.
+drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c:    pdevinfo.dma_mask       = DMA_BIT_MASK(32);
+drivers/gpu/drm/bridge/synopsys/dw-hdmi.c:              pdevinfo.dma_mask = DMA_BIT_MASK(32);
+drivers/gpu/drm/bridge/synopsys/dw-hdmi.c:              pdevinfo.dma_mask = DMA_BIT_MASK(32);
 
-As before, "ethtool" and "mii-tool" now said that the device is not
-there, while "ip link" showed the device as present.
+etnaviv gets it right:
 
-
-The full output of "journalctl -fk | grep igb" is 600 kB. So put the
-whole file at Google Drive:
-
-https://drive.google.com/open?id=1p9cCT2d_EHnSHh29oS3AepUgFTKGFSeA
+drivers/gpu/drm/etnaviv/etnaviv_gpu.c:          u32 dma_mask = (u32)dma_get_required_mask(gpu->dev);
 
 
+But yes, the swiotlb hackery really irks me.  I just have some more
+important and bigger fires to fight first, but I plan to get back to the
+root cause of that eventually.
 
-I looked at the output to see patterns, e.g with
+> 
+> >> - dma api hides the cache flushing requirements from us. GPUs love
+> >>   non-snooped access, and worse give userspace control over that. We want
+> >>   a strict separation between mapping stuff and flushing stuff. With the
+> >>   IOMMU api we mostly have the former, but for the later arch maintainers
+> >>   regularly tells they won't allow that. So we have drm_clflush.c.
+> >
+> > The problem is that a cache flushing API entirely separate is hard. That
+> > being said if you look at my generic dma-noncoherent API series it tries
+> > to move that way.  So far it is in early stages and apparently rather
+> > buggy unfortunately.
+> 
+> I'm assuming this stuff here?
+> 
+> https://lkml.org/lkml/2018/4/20/146
+> 
+> Anyway got lost in all that work a bit, looks really nice.
 
-grep -n igb_get_cfg_done_i210 igb.error.txt
-grep -n __igb_shutdown igb.error.txt
-...
+That url doesn't seem to work currently.  But I am talking about the
+thread titled '[RFC] common non-cache coherent direct dma mapping ops'
 
-(and almost all other function names). I hoped to see patterns. But for
-my untrained eye, things looked not out of the order.
+> Yeah the above is pretty much what we do on x86. dma-api believes
+> everything is coherent, so dma_map_sg does the mapping we want and
+> nothing else (minus swiotlb fun). Cache flushing, allocations, all
+> done by the driver.
 
+Which sounds like the right thing to do to me.
 
+> On arm that doesn't work. The iommu api seems like a good fit, except
+> the dma-api tends to get in the way a bit (drm/msm apparently has
+> similar problems like tegra), and if you need contiguous memory
+> dma_alloc_coherent is the only way to get at contiguous memory. There
+> was a huge discussion years ago about that, and direct cma access was
+> shot down because it would have exposed too much of the caching
+> attribute mangling required (most arm platforms need wc-pages to not
+> be in the kernel's linear map apparently).
 
+Simple cma_alloc() doesn't do anything about cache handling, it
+just is a very dumb allocator for large contiguous regions inside
+a big pool.
 
+I'm not the CMA maintainer, but in general I'd love to see an
+EXPORT_SYMBOL_GPL slapped onto cma_alloc/release and drivers use
+that were needed.  Using that plus dma_map*/dma_unmap* sounds like
+a much saner interface than dma_alloc_attrs + DMA_ATTR_NON_CONSISTENT
+or DMA_ATTR_NO_KERNEL_MAPPING.
 
-(For reference, here is the debug patch)
+You don't happen to have a pointer to that previous discussion?
 
-Index: linux-4.16/drivers/net/ethernet/intel/igb/igb_main.c
-===================================================================
---- linux-4.16.orig/drivers/net/ethernet/intel/igb/igb_main.c	2018-04-01 23:20:27.000000000 +0200
-+++ linux-4.16/drivers/net/ethernet/intel/igb/igb_main.c	2018-04-26 10:36:09.625135952 +0200
-@@ -759,7 +759,8 @@
- 	}
- }
- 
--u32 igb_rd32(struct e1000_hw *hw, u32 reg)
-+int igb_rd32_silent = 0;
-+u32 igb_rd32(const char *func, struct e1000_hw *hw, u32 reg)
- {
- 	struct igb_adapter *igb = container_of(hw, struct igb_adapter, hw);
- 	u8 __iomem *hw_addr = READ_ONCE(hw->hw_addr);
-@@ -769,6 +770,8 @@
- 		return ~value;
- 
- 	value = readl(&hw_addr[reg]);
-+	if (!igb_rd32_silent)
-+	printk("rd32 %s %08x %08x\n", func, reg, value);
- 
- 	/* reads should not return all F's */
- 	if (!(~value) && (!reg || !(~readl(hw_addr)))) {
-@@ -5935,6 +5938,7 @@
- 	if (pci_channel_offline(pdev))
- 		return;
- 
-+	igb_rd32_silent = 1;
- 	bytes = 0;
- 	packets = 0;
- 
-@@ -6100,6 +6104,7 @@
- 		adapter->stats.b2ospc += rd32(E1000_B2OSPC);
- 		adapter->stats.b2ogprc += rd32(E1000_B2OGPRC);
- 	}
-+	igb_rd32_silent = 0;
- }
- 
- static void igb_tsync_interrupt(struct igb_adapter *adapter)
-Index: linux-4.16/drivers/net/ethernet/intel/igb/e1000_regs.h
-===================================================================
---- linux-4.16.orig/drivers/net/ethernet/intel/igb/e1000_regs.h	2018-04-01 23:20:27.000000000 +0200
-+++ linux-4.16/drivers/net/ethernet/intel/igb/e1000_regs.h	2018-04-26 10:34:24.332157000 +0200
-@@ -370,7 +370,8 @@
- 
- struct e1000_hw;
- 
--u32 igb_rd32(struct e1000_hw *hw, u32 reg);
-+extern int igb_rd32_silent;
-+u32 igb_rd32(const char *fname, struct e1000_hw *hw, u32 reg);
- 
- /* write operations, indexed using DWORDS */
- #define wr32(reg, val) \
-@@ -380,14 +381,14 @@
- 		writel((val), &hw_addr[(reg)]); \
- } while (0)
- 
--#define rd32(reg) (igb_rd32(hw, reg))
-+#define rd32(reg) (igb_rd32(__func__, hw, reg))
- 
- #define wrfl() ((void)rd32(E1000_STATUS))
- 
- #define array_wr32(reg, offset, value) \
- 	wr32((reg) + ((offset) << 2), (value))
- 
--#define array_rd32(reg, offset) (igb_rd32(hw, reg + ((offset) << 2)))
-+#define array_rd32(reg, offset) (igb_rd32(__func__, hw, reg + ((offset) << 2)))
- 
- /* DMA Coalescing registers */
- #define E1000_PCIEMISC	0x05BB8 /* PCIE misc config register */
+> Anything that separate these 3 things more (allocation pools, mapping
+> through IOMMUs and flushing cpu caches) sounds like the right
+> direction to me. Even if that throws some portability across platforms
+> away - drivers who want to control things in this much detail aren't
+> really portable (without some serious work) anyway.
+
+As long as we stay away from the dma coherent allocations separating
+them is fine, and I'm working towards it.  dma coherent allocations on
+the other hand are very hairy beasts, and provide by very different
+implementations depending on the architecture, or often even depending
+on the specifics of individual implementations inside the architecture.
+
+So for your GPU/media case it seems like you'd better stay away from
+them as much as you can.
