@@ -1,86 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754976AbeDZKPx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 06:15:53 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:39120 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753403AbeDZKPs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 06:15:48 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180426101546euoutp01cf842b2fd8f3df408cc95dae36e1fe82~o9ObloIjX1606516065euoutp01b
-X-AuditID: cbfec7f4-b4fc79c0000043e4-bd-5ae1a6cc3b3b
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Alexey Khoroshilov <khoroshilov@ispras.ru>,
-        Bhumika Goyal <bhumirks@gmail.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 2/4] video: sm501fb: Improve a size determination in
- sm501fb_probe()
-Date: Thu, 26 Apr 2018 12:15:38 +0200
-Message-id: <1859038.Xq2p7m02WJ@amdc3058>
-User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
-In-reply-to: <08ed1e90-5714-04b7-b3dc-067a3d9bc38b@users.sourceforge.net>
-MIME-version: 1.0
-Content-transfer-encoding: 7Bit
-Content-type: text/plain; charset="us-ascii"
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprEKsWRmVeSWpSXmKPExsWy7djP87pnlj2MMtj+2sbi071+Novfq3vZ
-        LK58fc9mcb5zObPFyiX72Sy23pK22LFuJ7vFib4PrBaXd81hszhwegqzA5fHrIZeNo91B1U9
-        ds66y+4x499URo/73ceZPJpOtbN6fN4kF8AexWWTkpqTWZZapG+XwJVx9dA31oIlrBVHdv1i
-        bmBcydLFyMkhIWAise/xdVYQW0hgBaPEp0nBXYxcQPZnRoktc5czwhSdeneEDSKxjFHi453J
-        zBDOb0aJL7ueg7WzCVhJTGxfBdTBwSEiYCrx50QISA2zwAsmiTd728AmCQtESXyYfAzMZhFQ
-        lZi5fA4TSD2vgKZE17wSkLCogJfEln3tTCA2p4CnxOcda8DG8woISvyYfA/samYBeYl9+6ey
-        Qtg6EmePrWME2SUhcJ9N4uTjt2AzJQRcJL61qUE8ICzx6vgWdghbRqKz4yATRH0zo8S3HXuY
-        IRITGCX2rBeCsK0lDh+/CLWAT2LStunMEDN5JTraoEo8JB6tfQcNIEeJ64fWsULC5DajxK01
-        3cwTGGVnIbl7FpK7ZyG5ewEj8ypG8dTS4tz01GKjvNRyveLE3OLSvHS95PzcTYzAlHL63/Ev
-        Oxh3/Uk6xCjAwajEw/tj3oMoIdbEsuLK3EOMEhzMSiK88a0Po4R4UxIrq1KL8uOLSnNSiw8x
-        SnOwKInzxmnURQkJpCeWpGanphakFsFkmTg4pRoYecqu3t438Vp5YPeDFw8f/vk48aDPXbdV
-        te4vI27sWHiX+QV3ztY2F6nt5TxL6kPDFMSSfB79SNFN61nypfNzbv93oTdPtTdJNcmx65xi
-        Umm+/J4z68L+R1/n5LfqLizjtvmrc3NjrNgSDyGP3Ok614Nez78i5D1v3eeD1nds47z7P1fc
-        0/FTUGIpzkg01GIuKk4EAAmE5+ElAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGLMWRmVeSWpSXmKPExsVy+t/xq7qnlj2MMmh6Ymrx6V4/m8Xv1b1s
-        Fle+vmezON+5nNli5ZL9bBZbb0lb7Fi3k93iRN8HVovLu+awWRw4PYXZgctjVkMvm8e6g6oe
-        O2fdZfeY8W8qo8f97uNMHk2n2lk9Pm+SC2CP4rJJSc3JLEst0rdL4Mq4eugba8ES1ooju34x
-        NzCuZOli5OSQEDCROPXuCFsXIxeHkMASRolHk7qgnL+MEn1nVjGCVLEJWElMbAexOThEBEwl
-        /pwIAalhFnjFJDG19TJYjbBAlMSHycfAbBYBVYmZy+cwgdTzCmhKdM0rAQmLCnhJbNnXzgRi
-        cwp4SnzesYYVYtdtRomGP8vYQBK8AoISPybfA7uOWUBeYt/+qawQtpbE+p3HmSYw8s9CUjYL
-        SdksJGULGJlXMYqklhbnpucWG+oVJ+YWl+al6yXn525iBIb+tmM/N+9gvLQx+BCjAAejEg/v
-        j3kPooRYE8uKK3MPMUpwMCuJ8Ma3PowS4k1JrKxKLcqPLyrNSS0+xCjNwaIkznveoDJKSCA9
-        sSQ1OzW1ILUIJsvEwSnVwDhrloHQnrO5R3+/05lU/Viz1Ks5aXvcDJmyt1azGbwXXHNjutbS
-        nWZWoZ71rnfKTJOVsiwv50b/F/V/2TN/0l5VN4/YGe19HBuijnLNOy1Yq5WunmBqGqVjum5Z
-        W/6LTa8vHfih+KDSdP2KU4dDd3KeCcnhttuyUn+5i4+ZePKm6bWPtDentyixFGckGmoxFxUn
-        AgC8ry7AeQIAAA==
-X-CMS-MailID: 20180426101538eucas1p176c9e18041fd069396d89e130e4bc5ab
-X-Msg-Generator: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20171126101848epcas2p3725dcc0b645cf4d4d9730f8f8edbad70
-X-RootMTR: 20171126101848epcas2p3725dcc0b645cf4d4d9730f8f8edbad70
-References: <efb981db-e9a0-d6f7-00d4-c76e1162770c@users.sourceforge.net>
-        <CGME20171126101848epcas2p3725dcc0b645cf4d4d9730f8f8edbad70@epcas2p3.samsung.com>
-        <08ed1e90-5714-04b7-b3dc-067a3d9bc38b@users.sourceforge.net>
+        id S1755014AbeDZKRH (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 06:17:07 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50694 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754428AbeDZKRC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 06:17:02 -0400
+Date: Thu, 26 Apr 2018 12:16:59 +0200
+From: Christoffer Dall <christoffer.dall@arm.com>
+To: Auger Eric <eric.auger@redhat.com>
+Cc: eric.auger.pro@gmail.com, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
+        marc.zyngier@arm.com, cdall@kernel.org, peter.maydell@linaro.org,
+        andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
+Subject: Re: [PATCH v3 09/12] KVM: arm/arm64: Check all vcpu redistributors
+ are set on map_resources
+Message-ID: <20180426101659.GD19872@C02W217FHV2R.local>
+References: <1523607658-9166-1-git-send-email-eric.auger@redhat.com>
+ <1523607658-9166-10-git-send-email-eric.auger@redhat.com>
+ <20180424210809.GJ4533@C02W217FHV2R.local>
+ <cd56c99f-a266-dc04-41d7-62f35165a39b@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cd56c99f-a266-dc04-41d7-62f35165a39b@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sunday, November 26, 2017 11:18:26 AM SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 26 Nov 2017 10:22:37 +0100
+On Thu, Apr 26, 2018 at 11:56:10AM +0200, Auger Eric wrote:
 > 
-> Replace the specification of a data structure by a pointer dereference
-> as the parameter for the operator "sizeof" to make the corresponding size
-> determination a bit safer according to the Linux coding style convention.
 > 
-> This issue was detected by using the Coccinelle software.
+> On 04/24/2018 11:08 PM, Christoffer Dall wrote:
+> > On Fri, Apr 13, 2018 at 10:20:55AM +0200, Eric Auger wrote:
+> >> On vcpu first run, we eventually know the actual number of vcpus.
+> >> This is a synchronization point to check all redistributors regions
+> >> were assigned.
+> > 
+> > Isn't it the other way around?  We want to check that all redistributors
+> > (one for every VCPU) has its base address set?  (I don't suppose we care
+> > about unused redistributor regions).
+> Yes I meant "to check all redistributors were assigned"
+> > 
+> >> On kvm_vgic_map_resources() we check both dist and
+> >> redist were set, eventually check potential base address inconsistencies.
+> > 
+> > Do we need to check that again?  Didn't we check that at
+> > creation/register time?
+> Yes we need to, to handle the case where the userspace does not provide
+> sufficient rdist region space
 > 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> create 8 vcpus (no iodev registered)
+> define a redist region for 4 (4 iodevs registered)
+> start the vcpus
+> > 
+> >>
+> >> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+> >> ---
+> >>  virt/kvm/arm/vgic/vgic-v3.c | 19 ++++++++++++++-----
+> >>  1 file changed, 14 insertions(+), 5 deletions(-)
+> >>
+> >> diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-v3.c
+> >> index b80f650..feabc24 100644
+> >> --- a/virt/kvm/arm/vgic/vgic-v3.c
+> >> +++ b/virt/kvm/arm/vgic/vgic-v3.c
+> >> @@ -484,16 +484,25 @@ struct vgic_redist_region *vgic_v3_rdist_region_from_index(struct kvm *kvm,
+> >>  
+> >>  int vgic_v3_map_resources(struct kvm *kvm)
+> >>  {
+> >> -	int ret = 0;
+> >>  	struct vgic_dist *dist = &kvm->arch.vgic;
+> >> -	struct vgic_redist_region *rdreg =
+> >> -		list_first_entry(&dist->rd_regions,
+> >> -				 struct vgic_redist_region, list);
+> >> +	struct kvm_vcpu *vcpu;
+> >> +	int ret = 0;
+> >> +	int c;
+> >>  
+> >>  	if (vgic_ready(kvm))
+> >>  		goto out;
+> >>  
+> >> -	if (IS_VGIC_ADDR_UNDEF(dist->vgic_dist_base) || !rdreg) {
+> >> +	kvm_for_each_vcpu(c, vcpu, kvm) {
+> >> +		struct vgic_cpu *vgic_cpu = &vcpu->arch.vgic_cpu;
+> >> +
+> >> +		if (IS_VGIC_ADDR_UNDEF(vgic_cpu->rd_iodev.base_addr)) {
+> >> +			kvm_err("vcpu %d redistributor base not set\n", c);
+> > 
+> > Shouldn't this be a kvm_debug instead?  I think the user can just
+> > provoke this by failing to register enough redistributor regions.
+> yes indeed.
+> > 
+> > I'm also wondering if we could check this on vgic_init time for gicv3,
+> > which should have a defined vgic init ordering requirement.  That would
+> > make debugging it slightly easier to debug than "my machine isn't
+> > starting, and I get -ENXIO, and it can mean anything".
+> 
+> Well at vgic_init time, vcpus are frozen but dist and redist regions are
+> not forced to be set, hence the late check we do in map_resources, on
+> 1st VCPU run. Not sure I get this one?
+> 
 
-Hand applied and queued for 4.18, thanks.
+I thought we required userspace to register the redist regions before
+initializing the vgic, but if there is no defined order there, then
+fine.
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+(Although I'm getting the feeling we should have been more strict on our
+ordering requirement, and that the whole "you can create anything you
+want in any order you want" makes the kernel implementation really
+complex.  I may be reversing my own oppinion on this matter here.)
+
+Thanks,
+-Christoffer
