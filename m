@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757127AbeDZW72 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 18:59:28 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:37544 "EHLO
+        id S932312AbeDZXAu (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 19:00:50 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:37738 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754472AbeDZW7Z (ORCPT
+        with ESMTP id S1756394AbeDZW71 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 18:59:25 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2FE1460556
+        Thu, 26 Apr 2018 18:59:27 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F1E8060F5F
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=clew@codeaurora.org
 From: Chris Lew <clew@codeaurora.org>
@@ -17,45 +17,51 @@ Cc: aneela@codeaurora.org, linux-arm-msm@vger.kernel.org,
         linux-remoteproc@vger.kernel.org, linux-soc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         clew@codeaurora.org
-Subject: [PATCH v3 0/6] Add chrdev and name query support for GLINK
-Date: Thu, 26 Apr 2018 15:58:59 -0700
-Message-Id: <1524783545-21951-1-git-send-email-clew@codeaurora.org>
+Subject: [PATCH v3 3/6] rpmsg: glink: Use complete_all for open states
+Date: Thu, 26 Apr 2018 15:59:02 -0700
+Message-Id: <1524783545-21951-4-git-send-email-clew@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1524783545-21951-1-git-send-email-clew@codeaurora.org>
+References: <1524783545-21951-1-git-send-email-clew@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for the GLINK rpmsg transport to register a rpmsg chrdev.
-This will create the rpmsg_ctrl nodes for userspace clients to open 
-rpmsg epts. Create a label property that will help userspace clients
-distinguish between the different GLINK links. The rpmsg chrdev 
-allocation is done by allocating a local channel which also allocates
-an ept. We need to add some guards against edge cases for this chrdev
-because it will never fully open.
+The open_req and open_ack completion variables are the state variables
+to represet a remote channel as open. Use complete_all so there are no
+races with waiters and using completion_done.
 
-Changes since v2:
-- Revert change to make glink attribute table const
+Signed-off-by: Chris Lew <clew@codeaurora.org>
+---
 
 Changes since v1:
-- Add explanation to dt-bindings commit message
-- Add patch complete_all the open_req/ack variables
-- Add patch to prevent null pointer dereference in chrdev channel release
-- Change chrdev allocation to use glink channel allocation
-- Change glink attr struct to const
+- New change
 
-Chris Lew (6):
-  dt-bindings: soc: qcom: Add label for GLINK bindings
-  rpmsg: glink: Store edge name for glink device
-  rpmsg: glink: Use complete_all for open states
-  rpmsg: Guard against null endpoint ops in destroy
-  rpmsg: glink: Add support for rpmsg glink chrdev
-  rpmsg: glink: Expose rpmsg name attr for glink
+ drivers/rpmsg/qcom_glink_native.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- .../devicetree/bindings/soc/qcom/qcom,glink.txt    |  5 ++
- drivers/rpmsg/qcom_glink_native.c                  | 68 +++++++++++++++++++++-
- drivers/rpmsg/rpmsg_core.c                         |  2 +-
- 3 files changed, 71 insertions(+), 4 deletions(-)
-
+diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+index c3f548e2ff20..120d6b9bb9f3 100644
+--- a/drivers/rpmsg/qcom_glink_native.c
++++ b/drivers/rpmsg/qcom_glink_native.c
+@@ -957,7 +957,7 @@ static int qcom_glink_rx_open_ack(struct qcom_glink *glink, unsigned int lcid)
+ 		return -EINVAL;
+ 	}
+ 
+-	complete(&channel->open_ack);
++	complete_all(&channel->open_ack);
+ 
+ 	return 0;
+ }
+@@ -1401,7 +1401,7 @@ static int qcom_glink_rx_open(struct qcom_glink *glink, unsigned int rcid,
+ 	channel->rcid = ret;
+ 	spin_unlock_irqrestore(&glink->idr_lock, flags);
+ 
+-	complete(&channel->open_req);
++	complete_all(&channel->open_req);
+ 
+ 	if (create_device) {
+ 		rpdev = kzalloc(sizeof(*rpdev), GFP_KERNEL);
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
