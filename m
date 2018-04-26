@@ -1,29 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753520AbeDZFx6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 01:53:58 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:34761 "EHLO
+        id S1753654AbeDZFy3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 01:54:29 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:47567 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751647AbeDZFxx (ORCPT
+        with ESMTP id S1753596AbeDZFy0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 01:53:53 -0400
-Date: Wed, 25 Apr 2018 22:53:31 -0700
+        Thu, 26 Apr 2018 01:54:26 -0400
+Date: Wed, 25 Apr 2018 22:54:06 -0700
 From: tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-129193bb0c43d42f1c397c175346e3e0dba5a578@git.kernel.org>
-Cc: acme@redhat.com, alexander.shishkin@linux.intel.com, dsahern@gmail.com,
-        tglx@linutronix.de, linux-kernel@vger.kernel.org, mingo@kernel.org,
-        hpa@zytor.com, jolsa@kernel.org, namhyung@kernel.org,
-        peterz@infradead.org
-Reply-To: namhyung@kernel.org, peterz@infradead.org, hpa@zytor.com,
-        mingo@kernel.org, jolsa@kernel.org, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, acme@redhat.com, dsahern@gmail.com,
-        alexander.shishkin@linux.intel.com
-In-Reply-To: <20180423090823.32309-4-jolsa@kernel.org>
-References: <20180423090823.32309-4-jolsa@kernel.org>
+Message-ID: <tip-9a4a931ce847f4aaa12edf11b2e050e18bf45910@git.kernel.org>
+Cc: alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
+        hpa@zytor.com, peterz@infradead.org, namhyung@kernel.org,
+        acme@redhat.com, mingo@kernel.org, jolsa@kernel.org,
+        tglx@linutronix.de, dsahern@gmail.com
+Reply-To: alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
+        hpa@zytor.com, peterz@infradead.org, namhyung@kernel.org,
+        acme@redhat.com, mingo@kernel.org, jolsa@kernel.org,
+        tglx@linutronix.de, dsahern@gmail.com
+In-Reply-To: <20180423090823.32309-5-jolsa@kernel.org>
+References: <20180423090823.32309-5-jolsa@kernel.org>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf stat: Keep the / modifier separator in
- fallback
-Git-Commit-ID: 129193bb0c43d42f1c397c175346e3e0dba5a578
+Subject: [tip:perf/urgent] perf pmu: Fix pmu events parsing rule
+Git-Commit-ID: 9a4a931ce847f4aaa12edf11b2e050e18bf45910
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -36,63 +35,75 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  129193bb0c43d42f1c397c175346e3e0dba5a578
-Gitweb:     https://git.kernel.org/tip/129193bb0c43d42f1c397c175346e3e0dba5a578
+Commit-ID:  9a4a931ce847f4aaa12edf11b2e050e18bf45910
+Gitweb:     https://git.kernel.org/tip/9a4a931ce847f4aaa12edf11b2e050e18bf45910
 Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Mon, 23 Apr 2018 11:08:17 +0200
+AuthorDate: Mon, 23 Apr 2018 11:08:18 +0200
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 23 Apr 2018 11:14:10 -0300
+CommitDate: Mon, 23 Apr 2018 11:17:27 -0300
 
-perf stat: Keep the / modifier separator in fallback
+perf pmu: Fix pmu events parsing rule
 
-The 'perf stat' fallback for EACCES error sets the exclude_kernel
-perf_event_attr and tries perf_event_open() again with it. In addition,
-it also changes the name of the event to reflect that change by adding
-the 'u' modifier.
+Currently all the event parsing fails end up in the event_pmu rule, and
+display misleading help like:
 
-But it does not take into account the '/' separator, so the event name
-can end up mangled, like: (note the '/:' characters)
-
-  $ perf stat -e cpu/cpu-cycles/ kill
+  $ perf stat -e inst kill
+  event syntax error: 'inst'
+                       \___ Cannot find PMU `inst'. Missing kernel support?
   ...
-             386,832      cpu/cpu-cycles/:u
 
-Adding the code to check on the '/' separator and set the following
-correct event name:
+The reason is that the event_pmu is too strong and match also single
+string. Changing it to force the '/' separators to be part of the rule,
+and getting the proper error now:
 
-  $ perf stat -e cpu/cpu-cycles/ kill
+  $ perf stat -e inst kill
+  event syntax error: 'inst'
+                       \___ parser error
+  Run 'perf list' for a list of valid events
   ...
-             388,548      cpu/cpu-cycles/u
 
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Reported-by: Ingo Molnar <mingo@kernel.org>
 Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: David Ahern <dsahern@gmail.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180423090823.32309-4-jolsa@kernel.org
+Link: http://lkml.kernel.org/r/20180423090823.32309-5-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/evsel.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ tools/perf/util/parse-events.y | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index 3e87486c28fe..7eb1e9850abf 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -2754,8 +2754,14 @@ bool perf_evsel__fallback(struct perf_evsel *evsel, int err,
- 		   (paranoid = perf_event_paranoid()) > 1) {
- 		const char *name = perf_evsel__name(evsel);
- 		char *new_name;
-+		const char *sep = ":";
+diff --git a/tools/perf/util/parse-events.y b/tools/perf/util/parse-events.y
+index 7afeb80cc39e..d14464c42714 100644
+--- a/tools/perf/util/parse-events.y
++++ b/tools/perf/util/parse-events.y
+@@ -224,15 +224,15 @@ event_def: event_pmu |
+ 	   event_bpf_file
  
--		if (asprintf(&new_name, "%s%su", name, strchr(name, ':') ? "" : ":") < 0)
-+		/* Is there already the separator in the name. */
-+		if (strchr(name, '/') ||
-+		    strchr(name, ':'))
-+			sep = "";
-+
-+		if (asprintf(&new_name, "%s%su", name, sep) < 0)
- 			return false;
+ event_pmu:
+-PE_NAME opt_event_config
++PE_NAME '/' event_config '/'
+ {
+ 	struct list_head *list, *orig_terms, *terms;
  
- 		if (evsel->name)
+-	if (parse_events_copy_term_list($2, &orig_terms))
++	if (parse_events_copy_term_list($3, &orig_terms))
+ 		YYABORT;
+ 
+ 	ALLOC_LIST(list);
+-	if (parse_events_add_pmu(_parse_state, list, $1, $2, false)) {
++	if (parse_events_add_pmu(_parse_state, list, $1, $3, false)) {
+ 		struct perf_pmu *pmu = NULL;
+ 		int ok = 0;
+ 		char *pattern;
+@@ -262,7 +262,7 @@ PE_NAME opt_event_config
+ 		if (!ok)
+ 			YYABORT;
+ 	}
+-	parse_events_terms__delete($2);
++	parse_events_terms__delete($3);
+ 	parse_events_terms__delete(orig_terms);
+ 	$$ = list;
+ }
