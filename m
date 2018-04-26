@@ -1,75 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756579AbeDZOzt (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 10:55:49 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49010 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1756326AbeDZOzq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 10:55:46 -0400
-Date: Thu, 26 Apr 2018 10:55:44 -0400 (EDT)
-From: Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-cc: David Rientjes <rientjes@google.com>, dm-devel@redhat.com,
-        eric.dumazet@gmail.com, mst@redhat.com, netdev@vger.kernel.org,
-        jasowang@redhat.com, Randy Dunlap <rdunlap@infradead.org>,
-        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
-        edumazet@google.com, Andrew Morton <akpm@linux-foundation.org>,
-        virtualization@lists.linux-foundation.org,
-        David Miller <davem@davemloft.net>, Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [dm-devel] [PATCH v5] fault-injection: introduce kvmalloc fallback
- options
-In-Reply-To: <1524697697.4100.23.camel@HansenPartnership.com>
-Message-ID: <alpine.LRH.2.02.1804261045001.9108@file01.intranet.prod.int.rdu2.redhat.com>
-References: <20180421144757.GC14610@bombadil.infradead.org>   <alpine.LRH.2.02.1804221733520.7995@file01.intranet.prod.int.rdu2.redhat.com>   <20180423151545.GU17484@dhcp22.suse.cz>   <alpine.LRH.2.02.1804232003100.2299@file01.intranet.prod.int.rdu2.redhat.com>
-  <20180424125121.GA17484@dhcp22.suse.cz>   <alpine.LRH.2.02.1804241142340.15660@file01.intranet.prod.int.rdu2.redhat.com>   <20180424162906.GM17484@dhcp22.suse.cz>   <alpine.LRH.2.02.1804241250350.28995@file01.intranet.prod.int.rdu2.redhat.com>  
- <20180424170349.GQ17484@dhcp22.suse.cz>   <alpine.LRH.2.02.1804241319390.28995@file01.intranet.prod.int.rdu2.redhat.com>   <20180424173836.GR17484@dhcp22.suse.cz>   <alpine.LRH.2.02.1804251556060.30569@file01.intranet.prod.int.rdu2.redhat.com>  
- <1114eda5-9b1f-4db8-2090-556b4a37c532@infradead.org>   <alpine.LRH.2.02.1804251656300.9428@file01.intranet.prod.int.rdu2.redhat.com>   <alpine.DEB.2.21.1804251417470.166306@chino.kir.corp.google.com>   <alpine.LRH.2.02.1804251720090.9428@file01.intranet.prod.int.rdu2.redhat.com>
-  <1524694663.4100.21.camel@HansenPartnership.com>  <alpine.LRH.2.02.1804251857070.31135@file01.intranet.prod.int.rdu2.redhat.com> <1524697697.4100.23.camel@HansenPartnership.com>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        id S1756606AbeDZO4T (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 10:56:19 -0400
+Received: from mga02.intel.com ([134.134.136.20]:18542 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755698AbeDZO4S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 10:56:18 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,330,1520924400";
+   d="scan'208";a="34843535"
+Date: Thu, 26 Apr 2018 17:56:14 +0300
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To: Dave Jones <davej@codemonkey.org.uk>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>, intel-gfx@lists.freedesktop.org
+Subject: Re: [Intel-gfx] 4.17-rc2: Could not determine valid watermarks for
+ inherited state
+Message-ID: <20180426145614.GP23723@intel.com>
+References: <20180423152713.2rrwwye3wfstbv5v@codemonkey.org.uk>
+ <20180426131045.GH23723@intel.com>
+ <20180426142719.fzivt2e6kialcbp4@codemonkey.org.uk>
 MIME-Version: 1.0
-Content-Type: MULTIPART/MIXED; BOUNDARY="185206533-886270301-1524754049=:9108"
-Content-ID: <alpine.LRH.2.02.1804261047430.9108@file01.intranet.prod.int.rdu2.redhat.com>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180426142719.fzivt2e6kialcbp4@codemonkey.org.uk>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Thu, Apr 26, 2018 at 10:27:19AM -0400, Dave Jones wrote:
+> [    1.176131] [drm:i9xx_get_initial_plane_config] pipe A/primary A with fb: size=800x600@32, offset=0, pitch 3200, size 0x1d4c00
+> [    1.176161] [drm:i915_gem_object_create_stolen_for_preallocated] creating preallocated stolen object: stolen_offset=0x0000000000000000, gtt_offset=0x0000000000000000, size=0x00000000001d5000
+> [    1.176312] [drm:intel_alloc_initial_plane_obj.isra.127] initial plane fb obj         (ptrval)
+> [    1.176351] [drm:intel_modeset_init] pipe A active planes 0x1
+> [    1.176456] [drm:drm_atomic_helper_check_plane_state] Plane must cover entire CRTC
+> [    1.176481] [drm:drm_rect_debug_print] dst: 800x600+0+0
+> [    1.176494] [drm:drm_rect_debug_print] clip: 1366x768+0+0
 
---185206533-886270301-1524754049=:9108
-Content-Type: TEXT/PLAIN; CHARSET=ISO-8859-15
-Content-Transfer-Encoding: 8BIT
-Content-ID: <alpine.LRH.2.02.1804261047431.9108@file01.intranet.prod.int.rdu2.redhat.com>
+OK, so that's the problem right there. The fb we took over from the
+BIOS was 800x600, but now we're trying to set up a 1366x768 mode.
 
+We seem to be missing checks to make sure the initial fb is actually
+big enough for the mode we're currently using :(
 
-
-On Wed, 25 Apr 2018, James Bottomley wrote:
-
-> > BTW. even developers who compile their own kernel should have this
-> > enabled by a CONFIG option - because if the developer sees the option
-> > when browsing through menuconfig, he may enable it. If he doesn't see
-> > the option, he won't even know that such an option exists.
-> 
-> I may be an atypical developer but I'd rather have a root canal than
-> browse through menuconfig options.  The way to get people to learn
-> about new debugging options is to blog about it (or write an lwn.net
-> article) which google will find the next time I ask it how I debug XXX.
->  Google (probably as a service to humanity) rarely turns up Kconfig
-> options in response to a query.
-
->From my point of view, this feature should be as little disruptive to the 
-developer as possible. It should work automatically behind the scenes 
-without the developer or the tester even knowing that it is working. From 
-this point of view, binding it to CONFIG_DEBUG_SG (or any other commonly 
-used debugging option) would be ideal, because driver developers already 
-enable CONFIG_DEBUG_SG, so they'll get this kvmalloc test for free.
-
->From your point of view, you should introduce a sysfs file and a kernel 
-parameter that no one knows about - and then start blogging about it - to 
-let people know. Why would you bother people with this knowledge? They'll 
-forget about it anyway and won't turn it on.
-
-Mikulas
---185206533-886270301-1524754049=:9108--
+-- 
+Ville Syrjälä
+Intel
