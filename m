@@ -1,29 +1,33 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753780AbeDZF4D (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 01:56:03 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:51669 "EHLO
+        id S1753168AbeDZF4v (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 01:56:51 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:50679 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753547AbeDZFz5 (ORCPT
+        with ESMTP id S1751396AbeDZF4r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 01:55:57 -0400
-Date: Wed, 25 Apr 2018 22:54:37 -0700
-From: tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-e9add8bac6c69edb4bf391e537faa659b2ed70d2@git.kernel.org>
-Cc: peterz@infradead.org, kan.liang@linux.intel.com, dsahern@gmail.com,
-        tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org, hpa@zytor.com,
-        namhyung@kernel.org, mingo@kernel.org, acme@redhat.com
-Reply-To: peterz@infradead.org, kan.liang@linux.intel.com, dsahern@gmail.com,
-        tglx@linutronix.de, alexander.shishkin@linux.intel.com,
-        jolsa@kernel.org, linux-kernel@vger.kernel.org, namhyung@kernel.org,
-        mingo@kernel.org, hpa@zytor.com, acme@redhat.com
-In-Reply-To: <20180423090823.32309-6-jolsa@kernel.org>
-References: <20180423090823.32309-6-jolsa@kernel.org>
+        Thu, 26 Apr 2018 01:56:47 -0400
+Date: Wed, 25 Apr 2018 22:56:17 -0700
+From: tip-bot for Kan Liang <tipbot@zytor.com>
+Message-ID: <tip-292c34c10249c64a70def442f0d977bf9d466ed7@git.kernel.org>
+Cc: jolsa@redhat.com, will.deacon@arm.com, peterz@infradead.org,
+        ak@linux.intel.com, agustinv@codeaurora.org, tglx@linutronix.de,
+        kan.liang@linux.intel.com, namhyung@kernel.org,
+        linux-kernel@vger.kernel.org, ganapatrao.kulkarni@cavium.com,
+        yao.jin@linux.intel.com, acme@redhat.com, hpa@zytor.com,
+        zhangshaokun@hisilicon.com, mingo@kernel.org
+Reply-To: will.deacon@arm.com, jolsa@redhat.com, agustinv@codeaurora.org,
+        tglx@linutronix.de, kan.liang@linux.intel.com, peterz@infradead.org,
+        ak@linux.intel.com, hpa@zytor.com, acme@redhat.com,
+        zhangshaokun@hisilicon.com, namhyung@kernel.org,
+        linux-kernel@vger.kernel.org, yao.jin@linux.intel.com,
+        ganapatrao.kulkarni@cavium.com, mingo@kernel.org
+In-Reply-To: <1524594014-79243-1-git-send-email-kan.liang@linux.intel.com>
+References: <1524594014-79243-1-git-send-email-kan.liang@linux.intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf evsel: Disable write_backward for leader
- sampling group events
-Git-Commit-ID: e9add8bac6c69edb4bf391e537faa659b2ed70d2
+Subject: [tip:perf/urgent] perf pmu: Fix core PMU alias list for X86
+ platform
+Git-Commit-ID: 292c34c10249c64a70def442f0d977bf9d466ed7
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -36,68 +40,112 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  e9add8bac6c69edb4bf391e537faa659b2ed70d2
-Gitweb:     https://git.kernel.org/tip/e9add8bac6c69edb4bf391e537faa659b2ed70d2
-Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Mon, 23 Apr 2018 11:08:19 +0200
+Commit-ID:  292c34c10249c64a70def442f0d977bf9d466ed7
+Gitweb:     https://git.kernel.org/tip/292c34c10249c64a70def442f0d977bf9d466ed7
+Author:     Kan Liang <kan.liang@linux.intel.com>
+AuthorDate: Tue, 24 Apr 2018 11:20:10 -0700
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 23 Apr 2018 11:21:56 -0300
+CommitDate: Tue, 24 Apr 2018 16:02:29 -0300
 
-perf evsel: Disable write_backward for leader sampling group events
+perf pmu: Fix core PMU alias list for X86 platform
 
-.. and other related fields that do not need to be enabled
-for events that have sampling leader.
+When counting uncore event with alias, core event is mistakenly
+involved, for example:
 
-It fixes the perf top usage Ingo reported broken:
+  perf stat --no-merge -e "unc_m_cas_count.all" -C0  sleep 1
 
-  # perf top -e '{cycles,msr/aperf/}:S'
+  Performance counter stats for 'CPU(s) 0':
 
-The 'msr/aperf/' event is configured for write_back sampling, which is
-not allowed by the MSR PMU, so it fails to create the event.
+                 0      unc_m_cas_count.all [uncore_imc_4]
+                 0      unc_m_cas_count.all [uncore_imc_2]
+                 0      unc_m_cas_count.all [uncore_imc_0]
+           153,640      unc_m_cas_count.all [cpu]
+                 0      unc_m_cas_count.all [uncore_imc_5]
+            25,026      unc_m_cas_count.all [uncore_imc_3]
+                 0      unc_m_cas_count.all [uncore_imc_1]
 
-Adjusting related attr test.
+       1.001447890 seconds time elapsed
 
-Reported-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+The reason is that current implementation doesn't check PMU name of a
+event when adding its alias into the alias list for core PMU. The
+uncore event aliases are mistakenly added.
+
+This bug was introduced in:
+  commit 14b22ae028de ("perf pmu: Add helper function is_pmu_core to
+  detect PMU CORE devices")
+
+Checking the PMU name for all PMUs on X86 and other architectures except
+ARM.
+There is no behavior change for ARM.
+
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Agustin Vega-Frias <agustinv@codeaurora.org>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
+Cc: Jin Yao <yao.jin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180423090823.32309-6-jolsa@kernel.org
+Cc: Shaokun Zhang <zhangshaokun@hisilicon.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Fixes: 14b22ae028de ("perf pmu: Add helper function is_pmu_core to detect PMU CORE devices")
+Link: http://lkml.kernel.org/r/1524594014-79243-1-git-send-email-kan.liang@linux.intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/tests/attr/test-record-group-sampling | 3 +++
- tools/perf/util/evsel.c                          | 7 +++++--
- 2 files changed, 8 insertions(+), 2 deletions(-)
+ tools/perf/util/pmu.c | 20 +++++++-------------
+ 1 file changed, 7 insertions(+), 13 deletions(-)
 
-diff --git a/tools/perf/tests/attr/test-record-group-sampling b/tools/perf/tests/attr/test-record-group-sampling
-index f906b793196f..8a33ca4f9e1f 100644
---- a/tools/perf/tests/attr/test-record-group-sampling
-+++ b/tools/perf/tests/attr/test-record-group-sampling
-@@ -35,3 +35,6 @@ inherit=0
- # sampling disabled
- sample_freq=0
- sample_period=0
-+freq=0
-+write_backward=0
-+sample_id_all=0
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index 7eb1e9850abf..26bdeecc0452 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -930,8 +930,11 @@ void perf_evsel__config(struct perf_evsel *evsel, struct record_opts *opts,
- 	 * than leader in case leader 'leads' the sampling.
- 	 */
- 	if ((leader != evsel) && leader->sample_read) {
--		attr->sample_freq   = 0;
--		attr->sample_period = 0;
-+		attr->freq           = 0;
-+		attr->sample_freq    = 0;
-+		attr->sample_period  = 0;
-+		attr->write_backward = 0;
-+		attr->sample_id_all  = 0;
- 	}
+diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
+index af4bedf4cf98..d2fb597c9a8c 100644
+--- a/tools/perf/util/pmu.c
++++ b/tools/perf/util/pmu.c
+@@ -539,9 +539,10 @@ static bool pmu_is_uncore(const char *name)
  
- 	if (opts->no_samples)
+ /*
+  *  PMU CORE devices have different name other than cpu in sysfs on some
+- *  platforms. looking for possible sysfs files to identify as core device.
++ *  platforms.
++ *  Looking for possible sysfs files to identify the arm core device.
+  */
+-static int is_pmu_core(const char *name)
++static int is_arm_pmu_core(const char *name)
+ {
+ 	struct stat st;
+ 	char path[PATH_MAX];
+@@ -550,12 +551,6 @@ static int is_pmu_core(const char *name)
+ 	if (!sysfs)
+ 		return 0;
+ 
+-	/* Look for cpu sysfs (x86 and others) */
+-	scnprintf(path, PATH_MAX, "%s/bus/event_source/devices/cpu", sysfs);
+-	if ((stat(path, &st) == 0) &&
+-			(strncmp(name, "cpu", strlen("cpu")) == 0))
+-		return 1;
+-
+ 	/* Look for cpu sysfs (specific to arm) */
+ 	scnprintf(path, PATH_MAX, "%s/bus/event_source/devices/%s/cpus",
+ 				sysfs, name);
+@@ -668,6 +663,7 @@ static void pmu_add_cpu_aliases(struct list_head *head, struct perf_pmu *pmu)
+ 	struct pmu_events_map *map;
+ 	struct pmu_event *pe;
+ 	const char *name = pmu->name;
++	const char *pname;
+ 
+ 	map = perf_pmu__find_map(pmu);
+ 	if (!map)
+@@ -686,11 +682,9 @@ static void pmu_add_cpu_aliases(struct list_head *head, struct perf_pmu *pmu)
+ 			break;
+ 		}
+ 
+-		if (!is_pmu_core(name)) {
+-			/* check for uncore devices */
+-			if (pe->pmu == NULL)
+-				continue;
+-			if (strncmp(pe->pmu, name, strlen(pe->pmu)))
++		if (!is_arm_pmu_core(name)) {
++			pname = pe->pmu ? pe->pmu : "cpu";
++			if (strncmp(pname, name, strlen(pname)))
+ 				continue;
+ 		}
+ 
