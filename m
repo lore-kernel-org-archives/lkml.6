@@ -1,61 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756660AbeDZPVn (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 11:21:43 -0400
-Received: from mail-ot0-f170.google.com ([74.125.82.170]:36311 "EHLO
-        mail-ot0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756434AbeDZPVl (ORCPT
+        id S1756706AbeDZPVu (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 11:21:50 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:51350 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756434AbeDZPVo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 11:21:41 -0400
-X-Google-Smtp-Source: AB8JxZqpfOk/x4W5k/htDcDpOtun8/V4X6B/MledeGXUaaytefj0Wk8KQXrImfjdruomgHdHCW7e2AdVY5NuZqf/TBg=
+        Thu, 26 Apr 2018 11:21:44 -0400
+Date: Thu, 26 Apr 2018 17:20:53 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc: Andrea Parri <andrea.parri@amarulasolutions.com>,
+        akpm@linux-foundation.org, oleg@redhat.com, viro@zeniv.linux.org.uk,
+        mingo@kernel.org, paulmck@linux.vnet.ibm.com, keescook@chromium.org,
+        riel@redhat.com, mhocko@suse.com, tglx@linutronix.de,
+        kirill.shutemov@linux.intel.com, marcos.souza.org@gmail.com,
+        hoeun.ryu@gmail.com, pasha.tatashin@oracle.com, gs051095@gmail.com,
+        ebiederm@xmission.com, dhowells@redhat.com, rppt@linux.vnet.ibm.com,
+        linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
+        Will Deacon <will.deacon@arm.com>, Boqun Feng <boqun.feng@gmail.com>
+Subject: Re: [PATCH 4/4] exit: Lockless iteration over task list in
+ mm_update_next_owner()
+Message-ID: <20180426152053.GC4082@hirez.programming.kicks-ass.net>
+References: <152473763015.29458.1131542311542381803.stgit@localhost.localdomain>
+ <152474046779.29458.5294808258041953930.stgit@localhost.localdomain>
+ <20180426123542.GA819@andrea>
+ <c21ad28c-cd23-2a75-6622-ba49c37137db@virtuozzo.com>
 MIME-Version: 1.0
-X-Originating-IP: [176.63.54.97]
-In-Reply-To: <20180426151305.GC4308@redhat.com>
-References: <20180412150826.20988-1-mszeredi@redhat.com> <20180412150826.20988-10-mszeredi@redhat.com>
- <20180426141337.GA4308@redhat.com> <CAJfpegv9by9L_b-STRMy4U8Uqv03UrOYDuAa3HdF-9zKxZQRcA@mail.gmail.com>
- <20180426145641.GB4308@redhat.com> <CAJfpeguCtZ+3q6Fr7bu1Q5B3JXFQfS2Y9XJHgr0-OR9g=J9JsA@mail.gmail.com>
- <20180426151305.GC4308@redhat.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Thu, 26 Apr 2018 17:21:40 +0200
-Message-ID: <CAJfpegundJm30UnRCtfJPWZqou7evbhovW3Q5Wo-4HSy5g4wZA@mail.gmail.com>
-Subject: Re: [RFC PATCH 09/35] ovl: stack file ops
-To: Vivek Goyal <vgoyal@redhat.com>
-Cc: Miklos Szeredi <mszeredi@redhat.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c21ad28c-cd23-2a75-6622-ba49c37137db@virtuozzo.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 26, 2018 at 5:13 PM, Vivek Goyal <vgoyal@redhat.com> wrote:
+On Thu, Apr 26, 2018 at 04:52:39PM +0300, Kirill Tkhai wrote:
+> >>
+> >> 1)for_each_process(g)            copy_process()
+> >>                                    p->mm = mm
+> >>     smp_rmb();                     smp_wmb() implied by alloc_pid()
+> >>     if (g->flags & PF_KTHREAD)     list_add_tail_rcu(&p->tasks, &init_task.tasks)
+> >>
+> >> 2)for_each_thread(g, c)          copy_process()
+> >>                                    p->mm = mm
+> >>     smp_rmb();                     smp_wmb() implied by alloc_pid()
+> >>     tmp = READ_ONCE(c->mm)         list_add_tail_rcu(&p->thread_node, ...)
 
-> Aha, cool. thanks. While I am at it, let me just ask one more stupid
-> question.
->
-> I am wondering while opening the underlying realfile, why do we pass
-> in the path/dentry of ovl layer (and not underlying real layer).
->
->         realfile = path_open(&file->f_path, file->f_flags | O_NOATIME,
->                              realinode, current_cred(), false);
->
-> This forces us to do file_dentry() in ovl_open() later to map top level
-> dentry to underlying dentry.
->
-> We know the realinode and should be figure out real dentry. Can't we
-> construct path from underlying dentry and mount point and use that
-> to open underlying real file.  I am sure there is some reason for doing
-> this way, just trying to understand it.
-
-The logical thing would be to just use the real path (as returned by
-ovl_path_real()).
-
-The reason we don't do that is because mmap stores the real file in
-vma->vm_file and vm_file->f_path is used in various places (e.g.
-/proc/PID/maps).
-
-We could have a separate realfile for mmap, but that would be
-additional complexity and memory use, so I don't think it makes sense.
-
-Thanks,
-Miklos
+For these two; what's the purpose of the smp_rmb()? which loads are
+ordered?
