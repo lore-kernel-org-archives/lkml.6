@@ -1,148 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755968AbeDZMki (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 08:40:38 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:34260 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755725AbeDZMkf (ORCPT
+        id S1756010AbeDZMk4 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 08:40:56 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42858 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754277AbeDZMkz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 08:40:35 -0400
-X-Google-Smtp-Source: AIpwx48zWpT6/KjkfuTiHG7eQerPo7we5BkpVU5PBOyc5e2Pddg1gLCtHG5jP5S26sVE4ChqtOCA1Q==
-Subject: Re: [PATCH v4 2/2] media: Add a driver for the ov7251 camera sensor
-To: Sakari Ailus <sakari.ailus@iki.fi>
-Cc: mchehab@kernel.org, hverkuil@xs4all.nl,
-        laurent.pinchart@ideasonboard.com, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1524673246-14175-1-git-send-email-todor.tomov@linaro.org>
- <1524673246-14175-3-git-send-email-todor.tomov@linaro.org>
- <20180426065010.a67iqsaicpgu7m5b@valkosipuli.retiisi.org.uk>
- <c065854a-084d-8bc8-a76e-2988be8c3788@linaro.org>
- <20180426071656.wuq5f7prg6kig6oy@valkosipuli.retiisi.org.uk>
- <20180426120434.2k6kkwpchm5pnksz@valkosipuli.retiisi.org.uk>
-From: Todor Tomov <todor.tomov@linaro.org>
-Message-ID: <704e6f56-75c5-487c-cdd3-e4a59e0d7176@linaro.org>
-Date: Thu, 26 Apr 2018 15:40:31 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Thu, 26 Apr 2018 08:40:55 -0400
+Date: Thu, 26 Apr 2018 14:40:46 +0200 (CEST)
+From: Sebastian Ott <sebott@linux.ibm.com>
+X-X-Sender: sebott@schleppi
+To: Arend van Spriel <arend.vanspriel@broadcom.com>
+cc: Robert Jarzmik <robert.jarzmik@free.fr>, linux-kernel@vger.kernel.org
+Subject: Re: make TAGS broken with commit 99443f811c452c6 ("scripts/tags.sh:
+ change find_other_sources()...")
+In-Reply-To: <alpine.LFD.2.21.1804261311150.1592@schleppi>
+References: <alpine.LFD.2.21.1804261311150.1592@schleppi>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+Organization: =?ISO-8859-15?Q?=22IBM_Deutschland_Research_&_Development_GmbH?=
+ =?ISO-8859-15?Q?_=2F_Vorsitzende_des_Aufsichtsrats=3A_Martina?=
+ =?ISO-8859-15?Q?_Koederitz_Gesch=E4ftsf=FChrung=3A_Dirk_Wittkopp?=
+ =?ISO-8859-15?Q?_Sitz_der_Gesellschaft=3A_B=F6blingen_=2F_Reg?=
+ =?ISO-8859-15?Q?istergericht=3A_Amtsgericht_Stuttgart=2C_HRB_2432?=
+ =?ISO-8859-15?Q?94=22?=
 MIME-Version: 1.0
-In-Reply-To: <20180426120434.2k6kkwpchm5pnksz@valkosipuli.retiisi.org.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+X-TM-AS-GCONF: 00
+x-cbid: 18042612-0044-0000-0000-0000054C58A6
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18042612-0045-0000-0000-0000288D5F74
+Message-Id: <alpine.LFD.2.21.1804261438580.1592@schleppi>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-26_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=4 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804260121
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26.04.2018 15:04, Sakari Ailus wrote:
-> On Thu, Apr 26, 2018 at 10:16:56AM +0300, Sakari Ailus wrote:
->> On Thu, Apr 26, 2018 at 10:04:25AM +0300, Todor Tomov wrote:
->>> Hi Sakari,
->>>
->>> On 26.04.2018 09:50, Sakari Ailus wrote:
->>>> Hi Todor,
->>>>
->>>> On Wed, Apr 25, 2018 at 07:20:46PM +0300, Todor Tomov wrote:
->>>> ...
->>>>> +static int ov7251_write_reg(struct ov7251 *ov7251, u16 reg, u8 val)
->>>>> +{
->>>>> +	u8 regbuf[3];
->>>>> +	int ret;
->>>>> +
->>>>> +	regbuf[0] = reg >> 8;
->>>>> +	regbuf[1] = reg & 0xff;
->>>>> +	regbuf[2] = val;
->>>>> +
->>>>> +	ret = i2c_master_send(ov7251->i2c_client, regbuf, 3);
->>>>> +	if (ret < 0) {
->>>>> +		dev_err(ov7251->dev, "%s: write reg error %d: reg=%x, val=%x\n",
->>>>> +			__func__, ret, reg, val);
->>>>> +		return ret;
->>>>> +	}
->>>>> +
->>>>> +	return 0;
->>>>
->>>> How about:
->>>>
->>>> 	return ov7251_write_seq_regs(ov7251, reg, &val, 1);
->>>>
->>>> And put the function below ov2751_write_seq_regs().
->>>
->>> I'm not sure... It will calculate message length each time and then check
->>> that it is not greater than 5, which it is. Seems redundant.
->>>
->>>>
->>>>> +}
->>>>> +
->>>>> +static int ov7251_write_seq_regs(struct ov7251 *ov7251, u16 reg, u8 *val,
->>>>> +				 u8 num)
->>>>> +{
->>>>> +	const u8 maxregbuf = 5;
->>>>> +	u8 regbuf[maxregbuf];
+On Thu, 26 Apr 2018, Sebastian Ott wrote:
+> on my s390 test system make TAGS is broken since commit 99443f811c452c6
+> ("scripts/tags.sh: change find_other_sources() for include directories")
 > 
-> Apparently this leads to bad positive sparse warning. I'd fix it by:
+> # make TAGS
+>   GEN     TAGS
+> xargs: etags: terminated by signal 11
 > 
-> diff --git a/drivers/media/i2c/ov7251.c b/drivers/media/i2c/ov7251.c
-> index 3e2c0c03dfa9..d3ebb7529fca 100644
-> --- a/drivers/media/i2c/ov7251.c
-> +++ b/drivers/media/i2c/ov7251.c
-> @@ -643,12 +643,11 @@ static int ov7251_write_reg(struct ov7251 *ov7251, u16 reg, u8 val)
->  static int ov7251_write_seq_regs(struct ov7251 *ov7251, u16 reg, u8 *val,
->                                  u8 num)
->  {
-> -       const u8 maxregbuf = 5;
-> -       u8 regbuf[maxregbuf];
-> +       u8 regbuf[5];
->         u8 nregbuf = sizeof(reg) + num * sizeof(*val);
->         int ret = 0;
->  
-> -       if (nregbuf > maxregbuf)
-> +       if (nregbuf > sizeof(regbuf))
->                 return -EINVAL;
->  
->         regbuf[0] = reg >> 8;
-> 
-> Let me know if you're happy with that; I can merge it to the original
-> patch.
+> This is a rather old etags from fedora 24. On x86 using a more recent
+> etags (fedora 27) make TAGS works as expected. I'll try to update the
+> test system maybe that'll fix the problem..
 
-Yes, thanks.
+Using the same etags version as on x86 now but it still fails.
 
-> 
->>>>> +	u8 nregbuf = sizeof(reg) + num * sizeof(*val);
->>>>> +	int ret = 0;
->>>>> +
->>>>> +	if (nregbuf > maxregbuf)
->>>>> +		return -EINVAL;
->>>>> +
->>>>> +	regbuf[0] = reg >> 8;
->>>>> +	regbuf[1] = reg & 0xff;
->>>>> +
->>>>> +	memcpy(regbuf + 2, val, num);
->>>>> +
->>>>> +	ret = i2c_master_send(ov7251->i2c_client, regbuf, nregbuf);
->>>>> +	if (ret < 0) {
->>>>> +		dev_err(ov7251->dev, "%s: write seq regs error %d: first reg=%x\n",
->>>>
->>>> This line is over 80... 
->>>
->>> Yes indeed. Somehow checkpatch does not report this line, I don't know why.
->>>
->>>>
->>>> If you're happy with these, I can make the changes, too; they're trivial.
->>>
->>> Only the second one? Thanks :)
->>
->> Works for me. I'd still think the overhead of managing the buffer is
->> irrelevant where to having an extra function to do essentially the same
->> thing is a source of maintenance and review work. Note that we're even now
->> spending time to discuss it. ;-)
->>
->> -- 
->> Kind regards,
->>
->> Sakari Ailus
->> e-mail: sakari.ailus@iki.fi
-> 
-
--- 
-Best regards,
-Todor Tomov
+Regards,
+Sebastian
