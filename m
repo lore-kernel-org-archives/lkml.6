@@ -1,57 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756631AbeDZVNx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 17:13:53 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:37616 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756187AbeDZVNt (ORCPT
+        id S1756845AbeDZVOO (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 17:14:14 -0400
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:37361 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756273AbeDZVNu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 17:13:49 -0400
-X-Google-Smtp-Source: AB8JxZrEIeef+hxuBmeZ+uO/ogVt8g3ACRqvWyX+H6M1Nwm4r3n9LxOTw19IE616/xi59OKDFSDBow==
-From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-To: Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Michal Simek <michal.simek@xilinx.com>,
-        linux-can@vger.kernel.org (open list:CAN NETWORK DRIVERS),
-        netdev@vger.kernel.org (open list:NETWORKING DRIVERS),
-        linux-kernel@vger.kernel.org (open list),
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Allwinner
-        sunXi SoC support)
-Subject: [PATCH 3/3] can: xilinx: fix xcan_start_xmit()'s return type
-Date: Thu, 26 Apr 2018 23:13:38 +0200
-Message-Id: <20180426211339.30821-4-luc.vanoostenryck@gmail.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180426211339.30821-1-luc.vanoostenryck@gmail.com>
-References: <20180426211339.30821-1-luc.vanoostenryck@gmail.com>
+        Thu, 26 Apr 2018 17:13:50 -0400
+X-Google-Smtp-Source: AB8JxZr0cF0SdyHfKr2VzTk4fQEPud3YJBdO5BztMdfwMcnI+pw10dXhc68mZMSacDHlIVFw5z+s5w==
+Date: Thu, 26 Apr 2018 16:13:44 -0500
+From: Andy Gross <andy.gross@linaro.org>
+To: Niklas Cassel <niklas.cassel@linaro.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, david.brown@linaro.org,
+        sboyd@kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND] firmware: qcom: scm: Fix crash in
+ qcom_scm_call_atomic1()
+Message-ID: <20180426211344.GA25699@hector.attlocal.net>
+References: <20180426115534.20971-1-niklas.cassel@linaro.org>
+ <20180426180130.GL18510@minitux>
+ <20180426192536.GA28548@centauri>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180426192536.GA28548@centauri>
+User-Agent: Mutt/1.5.23.1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
-which is a typedef for an enum type, but the implementation in this
-driver returns an 'int'.
+On Thu, Apr 26, 2018 at 09:25:36PM +0200, Niklas Cassel wrote:
+> On Thu, Apr 26, 2018 at 11:01:30AM -0700, Bjorn Andersson wrote:
+> > On Thu 26 Apr 04:55 PDT 2018, Niklas Cassel wrote:
+> > 
+> > > qcom_scm_call_atomic1() can crash with a NULL pointer dereference at
+> > > qcom_scm_call_atomic1+0x30/0x48.
+> > > 
+> > 
+> > Hi Niklas,
+> > 
+> > The change has been picked up for v4.18, as you can see here:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/agross/linux.git/log/?h=for-next
+> 
+> Hello Björn,
+> 
+> I just looked at today's linux-next tag: next-20180426.
+> I didn't bother to check Andy's tree.
+> 
+> Andy's for-next branch is included in linux-next, so it
+> will probably be included in tomorrow's linux-next tag.
+> 
+> Sorry for the noise.
 
-Fix this by returning 'netdev_tx_t' in this driver too.
+I'm pretty bad about broadcasting which patches i am taking. Sorry bout that.
 
-Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
----
- drivers/net/can/xilinx_can.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/can/xilinx_can.c b/drivers/net/can/xilinx_can.c
-index 89aec07c2..a19648606 100644
---- a/drivers/net/can/xilinx_can.c
-+++ b/drivers/net/can/xilinx_can.c
-@@ -386,7 +386,7 @@ static int xcan_do_set_mode(struct net_device *ndev, enum can_mode mode)
-  *
-  * Return: 0 on success and failure value on error
-  */
--static int xcan_start_xmit(struct sk_buff *skb, struct net_device *ndev)
-+static netdev_tx_t xcan_start_xmit(struct sk_buff *skb, struct net_device *ndev)
- {
- 	struct xcan_priv *priv = netdev_priv(ndev);
- 	struct net_device_stats *stats = &ndev->stats;
--- 
-2.17.0
+Andy
