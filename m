@@ -1,90 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756588AbeDZOo7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 10:44:59 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:38297 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755998AbeDZOo5 (ORCPT
+        id S1756610AbeDZOpj (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 10:45:39 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:50010 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1756319AbeDZOpg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 10:44:57 -0400
-X-Google-Smtp-Source: AIpwx4+NTD8TBkwEx4jdb3I1d/Owm1Px1JL9OKGp3ZR9FVb2k2VA2fs58+I/85JTLyAz3UOcOReM03vgrk9lGfHrCAg=
-MIME-Version: 1.0
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 26 Apr 2018 16:44:56 +0200
-X-Google-Sender-Auth: RG62aGMuwfD4VoCaZ6nnuYrG2r4
-Message-ID: <CAJZ5v0i9VLKS5bz8R8EGWjBQaHEsm-jOYwHAAWNt+eS8301cvA@mail.gmail.com>
-Subject: [GIT PULL] ACPI fixes for v4.17-rc3
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Thu, 26 Apr 2018 10:45:36 -0400
+Message-ID: <1524753932.3226.5.camel@HansenPartnership.com>
+Subject: Re: [dm-devel] [PATCH v5] fault-injection: introduce kvmalloc
+ fallback options
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Mikulas Patocka <mpatocka@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>
+Cc: David Rientjes <rientjes@google.com>, dm-devel@redhat.com,
+        eric.dumazet@gmail.com, mst@redhat.com, netdev@vger.kernel.org,
+        jasowang@redhat.com, Randy Dunlap <rdunlap@infradead.org>,
+        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
+        linux-mm@kvack.org, edumazet@google.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        virtualization@lists.linux-foundation.org,
+        David Miller <davem@davemloft.net>, Vlastimil Babka <vbabka@suse.cz>
+Date: Thu, 26 Apr 2018 07:45:32 -0700
+In-Reply-To: <alpine.LRH.2.02.1804261006120.32722@file01.intranet.prod.int.rdu2.redhat.com>
+References: <20180424170349.GQ17484@dhcp22.suse.cz>
+         <alpine.LRH.2.02.1804241319390.28995@file01.intranet.prod.int.rdu2.redhat.com>
+         <20180424173836.GR17484@dhcp22.suse.cz>
+         <alpine.LRH.2.02.1804251556060.30569@file01.intranet.prod.int.rdu2.redhat.com>
+         <1114eda5-9b1f-4db8-2090-556b4a37c532@infradead.org>
+         <alpine.LRH.2.02.1804251656300.9428@file01.intranet.prod.int.rdu2.redhat.com>
+         <alpine.DEB.2.21.1804251417470.166306@chino.kir.corp.google.com>
+         <alpine.LRH.2.02.1804251720090.9428@file01.intranet.prod.int.rdu2.redhat.com>
+         <1524694663.4100.21.camel@HansenPartnership.com>
+         <alpine.LRH.2.02.1804251830540.25124@file01.intranet.prod.int.rdu2.redhat.com>
+         <20180426125817.GO17484@dhcp22.suse.cz>
+         <alpine.LRH.2.02.1804261006120.32722@file01.intranet.prod.int.rdu2.redhat.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Thu, 2018-04-26 at 10:28 -0400, Mikulas Patocka wrote:
+> 
+> On Thu, 26 Apr 2018, Michal Hocko wrote:
+> 
+> > On Wed 25-04-18 18:42:57, Mikulas Patocka wrote:
+> > > 
+> > > 
+> > > On Wed, 25 Apr 2018, James Bottomley wrote:
+> > [...]
+> > > > Kconfig proliferation, conversely, is a bit of a nightmare from
+> both
+> > > > the user and the tester's point of view, so we're trying to
+> avoid it
+> > > > unless absolutely necessary.
+> > > > 
+> > > > James
+> > > 
+> > > I already offered that we don't need to introduce a new kernel
+> option and 
+> > > we can bind this feature to any other kernel option, that is
+> enabled in 
+> > > the debug kernel, for example CONFIG_DEBUG_SG. Michal said no and
+> he said 
+> > > that he wants a new kernel option instead.
+> > 
+> > Just for the record. I didn't say I _want_ a config option. Do not
+> > misinterpret my words. I've said that a config option would be
+> > acceptable if there is no way to deliver the functionality via
+> kernel
+> > package automatically. You haven't provided any argument that would
+> > explain why the kernel package cannot add a boot option. Maybe
+> there are
+> > some but I do not see them right now.
+> 
+> AFAIK Grub doesn't load per-kernel options from a per-kernel file.
+> Even if we hacked grub scripts to add this option, other
+> distributions won't.
 
-Please pull from the tag
+Perhaps find out beforehand instead of insisting on an approach without
+knowing.  On openSUSE the grub config is built from the files in
+/etc/grub.d/ so any package can add a kernel option (and various
+conditions around activating it) simply by adding a new file.  The
+config files are quite sophisticated, so you can add what looks to be a
+new kernel, but is really an existing kernel with different options
+this way.
 
- git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
- acpi-4.17-rc3
-
-with top-most commit bd6dff55de7acb2e5065e69706400c41b1bd0521
-
- Merge branches 'acpi-watchdog', 'acpi-button' and 'acpi-video'
-
-on top of commit 6d08b06e67cd117f6992c46611dfb4ce267cd71e
-
- Linux 4.17-rc2
-
-to receive ACPI fixes for 4.17-rc3.
-
-These are two watchdog-related fixes, fix for a backlight regression
-from the 4.16 cycle that unfortunately was propagated to -stable and
-a button module modification to prevent graphics driver modules from
-failing to load due to unmet dependencies if ACPI is disabled from
-the kernel command line.
-
-Specifics:
-
- - Change the ACPI subsystem initialization ordering to initialize
-   the WDAT watchodg before reserving PNP motherboard resources so
-   as to allow the watchdog to allocate its resources before the PNP
-   code gets to them and prevents it from working correctly (Mika
-   Westerberg).
-
- - Add a quirk for Lenovo Z50-70 to use the iTCO watchdog instead of
-   the WDAT one which conflicts with the RTC on that platform (Mika
-   Westerberg).
-
- - Avoid breaking backlight handling on Dell XPS 13 2013 model by
-   allowing laptops to use the ACPI backlight by default even if they
-   are Windows 8-ready in principle (Hans de Goede).
-
- - Prevent the ACPI button module from failing to load if ACPI is
-   disabled via the kernel command line so as to allow graphics
-   driver modules depending on the ACPI button module to load in
-   that case (Ard Biesheuvel).
-
-Thanks!
-
-
----------------
-
-Ard Biesheuvel (1):
-      ACPI / button: make module loadable when booted in non-ACPI mode
-
-Hans de Goede (1):
-      ACPI / video: Only default only_lcd to true on Win8-ready _desktops_
-
-Mika Westerberg (2):
-      ACPI / scan: Initialize watchdog before PNP
-      ACPI / watchdog: Prefer iTCO_wdt on Lenovo Z50-70
-
----------------
-
- drivers/acpi/acpi_video.c    | 27 ++++++++++++++++++--
- drivers/acpi/acpi_watchdog.c | 59 ++++++++++++++++++++++++++++++++++++--------
- drivers/acpi/button.c        | 24 +++++++++++++++++-
- drivers/acpi/scan.c          |  2 +-
- 4 files changed, 98 insertions(+), 14 deletions(-)
+James
