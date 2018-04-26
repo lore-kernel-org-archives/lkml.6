@@ -1,127 +1,140 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754775AbeDZJGo (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 05:06:44 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7632 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753951AbeDZJGZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 05:06:25 -0400
-From: Chao Yu <yuchao0@huawei.com>
-To: <jaegeuk@kernel.org>
-CC: <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 2/2] Revert "f2fs: add ovp valid_blocks check for bg gc victim to fg_gc"
-Date: Thu, 26 Apr 2018 17:05:51 +0800
-Message-ID: <20180426090551.92364-2-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.15.0.55.gc2ece9dc4de6
-In-Reply-To: <20180426090551.92364-1-yuchao0@huawei.com>
-References: <20180426090551.92364-1-yuchao0@huawei.com>
+        id S1754846AbeDZJIb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 05:08:31 -0400
+Received: from mail-wr0-f180.google.com ([209.85.128.180]:33688 "EHLO
+        mail-wr0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754428AbeDZJI0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 05:08:26 -0400
+X-Google-Smtp-Source: AIpwx4+boaENrvYYeo4L2QbiL61HAQ80BC2nJFu2vWANhHXIpwxUNRiFt61bJyhGHgAvTM9F8Eu7Jw==
+From: Holger Schurig <holgerschurig@gmail.com>
+To: Alexander Duyck <alexander.duyck@gmail.com>
+Cc: Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        intel-wired-lan <intel-wired-lan@lists.osuosl.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [BUG] igb: reconnecting of cable not always detected
+In-Reply-To: <CAKgT0UdTf5pf53==hB71Ba_N1gJ-TH_3uMajozr1wykLEbK80g@mail.gmail.com>
+References: <87h8o0ocul.fsf@gmail.com> <CAKgT0Udj+d7yzPN4Jph8uk7Z6fz0oyWrO+6W6CfygSYTkGJ0Xw@mail.gmail.com> <877eovobxl.fsf@gmail.com> <CAKgT0UdTf5pf53==hB71Ba_N1gJ-TH_3uMajozr1wykLEbK80g@mail.gmail.com>
+Date: Thu, 26 Apr 2018 11:08:22 +0200
+Message-ID: <87wowumj21.fsf@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For extreme case:
-10 section, op = 10%, no_fggc_threshold = 90%
-All section usage: 85% 85% 85% 85% 90% 90% 95% 95% 95% 95%
+Hi,
 
-During foreground GC, if we skip select dirty section whose usage
-is larger than no_fggc_threshold, we can only recycle 80% invalid
-space from four 85% usage sections and two 90% usage sections,
-result in encountering out-of-space issue.
+> Thanks. I'm suspecting we may need to instrument igb_rd32 at this
+> point. In order to trigger what you are seeing I am assuming the
+> device has been detached due to a read failure of some sort.
 
-This reverts commit e93b9865251a0503d83fd570e7d5a7c8bc351715 to
-fix this issue, besides, we keep the logic that we scan all dirty
-section when searching a victim, so that GC can select victim with
-least valid blocks.
+Okay, I added a printk to igb_rd32. And because no one calls this
+function directly (all access goes via the rd32/rd32_array macro) I also
+added the output of the calling function. This should help greatly in
+identifying the read from the hardware to the consumer.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/f2fs.h    |  3 ---
- fs/f2fs/gc.c      | 16 ----------------
- fs/f2fs/segment.h |  9 ---------
- 3 files changed, 28 deletions(-)
+Finally, I noticed that igb_update_stats() produced a lot of churn that
+most likely are unrelated. So I helper variable to make output from this
+function go away.
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 64e3677998d8..9f8b327272df 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1192,9 +1192,6 @@ struct f2fs_sb_info {
- 	struct f2fs_gc_kthread	*gc_thread;	/* GC thread */
- 	unsigned int cur_victim_sec;		/* current victim section num */
- 
--	/* threshold for converting bg victims for fg */
--	u64 fggc_threshold;
--
- 	/* threshold for gc trials on pinned files */
- 	u64 gc_pin_file_threshold;
- 
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 3134dd781252..62eba4a71123 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -263,10 +263,6 @@ static unsigned int check_bg_victims(struct f2fs_sb_info *sbi)
- 	for_each_set_bit(secno, dirty_i->victim_secmap, MAIN_SECS(sbi)) {
- 		if (sec_usage_check(sbi, secno))
- 			continue;
--
--		if (no_fggc_candidate(sbi, secno))
--			continue;
--
- 		clear_bit(secno, dirty_i->victim_secmap);
- 		return GET_SEG_FROM_SEC(sbi, secno);
+I installed this modified driver, rebooted, and removed / inserted the
+LAN cable until the error was present.
+
+As before, "ethtool" and "mii-tool" now said that the device is not
+there, while "ip link" showed the device as present.
+
+
+The full output of "journalctl -fk | grep igb" is 600 kB. So put the
+whole file at Google Drive:
+
+https://drive.google.com/open?id=1p9cCT2d_EHnSHh29oS3AepUgFTKGFSeA
+
+
+
+I looked at the output to see patterns, e.g with
+
+grep -n igb_get_cfg_done_i210 igb.error.txt
+grep -n __igb_shutdown igb.error.txt
+...
+
+(and almost all other function names). I hoped to see patterns. But for
+my untrained eye, things looked not out of the order.
+
+
+
+
+
+(For reference, here is the debug patch)
+
+Index: linux-4.16/drivers/net/ethernet/intel/igb/igb_main.c
+===================================================================
+--- linux-4.16.orig/drivers/net/ethernet/intel/igb/igb_main.c	2018-04-01 23:20:27.000000000 +0200
++++ linux-4.16/drivers/net/ethernet/intel/igb/igb_main.c	2018-04-26 10:36:09.625135952 +0200
+@@ -759,7 +759,8 @@
  	}
-@@ -406,9 +402,6 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
- 			goto next;
- 		if (gc_type == BG_GC && test_bit(secno, dirty_i->victim_secmap))
- 			goto next;
--		if (gc_type == FG_GC && p.alloc_mode == LFS &&
--					no_fggc_candidate(sbi, secno))
--			goto next;
- 
- 		cost = get_gc_cost(sbi, segno, &p);
- 
-@@ -1152,17 +1145,8 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
- 
- void build_gc_manager(struct f2fs_sb_info *sbi)
- {
--	u64 main_count, resv_count, ovp_count;
--
- 	DIRTY_I(sbi)->v_ops = &default_v_ops;
- 
--	/* threshold of # of valid blocks in a section for victims of FG_GC */
--	main_count = SM_I(sbi)->main_segments << sbi->log_blocks_per_seg;
--	resv_count = SM_I(sbi)->reserved_segments << sbi->log_blocks_per_seg;
--	ovp_count = SM_I(sbi)->ovp_segments << sbi->log_blocks_per_seg;
--
--	sbi->fggc_threshold = div64_u64((main_count - ovp_count) *
--				BLKS_PER_SEC(sbi), (main_count - resv_count));
- 	sbi->gc_pin_file_threshold = DEF_GC_FAILED_PINNED_FILES;
- 
- 	/* give warm/cold data area from slower device */
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index 7702b054689c..c385daabcb67 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -774,15 +774,6 @@ static inline block_t sum_blk_addr(struct f2fs_sb_info *sbi, int base, int type)
- 				- (base + 1) + type;
  }
  
--static inline bool no_fggc_candidate(struct f2fs_sb_info *sbi,
--						unsigned int secno)
--{
--	if (get_valid_blocks(sbi, GET_SEG_FROM_SEC(sbi, secno), true) >
--						sbi->fggc_threshold)
--		return true;
--	return false;
--}
--
- static inline bool sec_usage_check(struct f2fs_sb_info *sbi, unsigned int secno)
+-u32 igb_rd32(struct e1000_hw *hw, u32 reg)
++int igb_rd32_silent = 0;
++u32 igb_rd32(const char *func, struct e1000_hw *hw, u32 reg)
  {
- 	if (IS_CURSEC(sbi, secno) || (sbi->cur_victim_sec == secno))
--- 
-2.15.0.55.gc2ece9dc4de6
+ 	struct igb_adapter *igb = container_of(hw, struct igb_adapter, hw);
+ 	u8 __iomem *hw_addr = READ_ONCE(hw->hw_addr);
+@@ -769,6 +770,8 @@
+ 		return ~value;
+ 
+ 	value = readl(&hw_addr[reg]);
++	if (!igb_rd32_silent)
++	printk("rd32 %s %08x %08x\n", func, reg, value);
+ 
+ 	/* reads should not return all F's */
+ 	if (!(~value) && (!reg || !(~readl(hw_addr)))) {
+@@ -5935,6 +5938,7 @@
+ 	if (pci_channel_offline(pdev))
+ 		return;
+ 
++	igb_rd32_silent = 1;
+ 	bytes = 0;
+ 	packets = 0;
+ 
+@@ -6100,6 +6104,7 @@
+ 		adapter->stats.b2ospc += rd32(E1000_B2OSPC);
+ 		adapter->stats.b2ogprc += rd32(E1000_B2OGPRC);
+ 	}
++	igb_rd32_silent = 0;
+ }
+ 
+ static void igb_tsync_interrupt(struct igb_adapter *adapter)
+Index: linux-4.16/drivers/net/ethernet/intel/igb/e1000_regs.h
+===================================================================
+--- linux-4.16.orig/drivers/net/ethernet/intel/igb/e1000_regs.h	2018-04-01 23:20:27.000000000 +0200
++++ linux-4.16/drivers/net/ethernet/intel/igb/e1000_regs.h	2018-04-26 10:34:24.332157000 +0200
+@@ -370,7 +370,8 @@
+ 
+ struct e1000_hw;
+ 
+-u32 igb_rd32(struct e1000_hw *hw, u32 reg);
++extern int igb_rd32_silent;
++u32 igb_rd32(const char *fname, struct e1000_hw *hw, u32 reg);
+ 
+ /* write operations, indexed using DWORDS */
+ #define wr32(reg, val) \
+@@ -380,14 +381,14 @@
+ 		writel((val), &hw_addr[(reg)]); \
+ } while (0)
+ 
+-#define rd32(reg) (igb_rd32(hw, reg))
++#define rd32(reg) (igb_rd32(__func__, hw, reg))
+ 
+ #define wrfl() ((void)rd32(E1000_STATUS))
+ 
+ #define array_wr32(reg, offset, value) \
+ 	wr32((reg) + ((offset) << 2), (value))
+ 
+-#define array_rd32(reg, offset) (igb_rd32(hw, reg + ((offset) << 2)))
++#define array_rd32(reg, offset) (igb_rd32(__func__, hw, reg + ((offset) << 2)))
+ 
+ /* DMA Coalescing registers */
+ #define E1000_PCIEMISC	0x05BB8 /* PCIE misc config register */
