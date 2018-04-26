@@ -1,219 +1,231 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-497764-1524650643-2-9948860697506949024
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, UNPARSEABLE_RELAY 0.001,
-  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524650643; b=o6A7WfnMXJ5QcEcqlTcAGFA6Gc1lDpATT688DUXp3Drchz2Rjp
-    o+s++StijHkjAscgim30Hl44psIQR9NefBPabdc89lS5TnWZT0CbmAwd4ofvbveL
-    vzkH7qK4kxYfSOGCMtF15ZoRS+fVxJ/WI5iOBxK19JqtvUsGIbjJipsfAlWVKlqU
-    d9j0KVYRtOsRyCrLqLRfokcamDugG9kT4F7WEFUvD1fP3flvnxWitNeSXxwG0iOz
-    N5zQU08FnirQ2kRdfuLHPNCstHz9nvQYq3XpCrRTW2CiV+LOaBrYC9crLb35EcBB
-    xefo1gemFQg8rULno5UgEo3EG0kXGlTx6whg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :references:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1524650643; bh=DLes2
-    cpJfucGrS0JezmTzWRMgNkHqk1AgNUYp/UWE5s=; b=nV+r17njunVAns6Ygbtgt
-    mL54NCCGYiRQVeuhgSR6h6pr5MhDQt6DPVj8XIaDTh8xRY5w5P/TT1gia0iJB+cf
-    bptCXhyrZe6Xi2vf3kRrbwWcplQv6/gxhnBpShOv34IeOUO3aJtoSUl060RGAjz9
-    zRupN5Ld7jmsj959FHWIwT3FnJgtWD6oQdu5rq8svNyqNQBBsjG7NcZmBCN26iIb
-    YBS03BuWdcFgD4P/D/mwv7wV2yHyugcqznaTIRtFA4eVfGTR7wVdVKsULY6yQBJh
-    +FCZMnjjq5XZ2YOjr+C7g8t2gnJJtcLHmh1do2gWsRvT9VjiS5QynXNcFqJCr85y
-    w==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=l5LV8oOW x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=oracle.com;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=oracle.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=l5LV8oOW x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=oracle.com;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=oracle.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfHmAGjDOW3TEgkvkuH6uWzWe8PYBi4mDTt8Z6TuDmv+dYyldkCAmB1UgMNGYfThbt59h1OvcbYTNYWZxCqCauBif5hBPYVd82p/ps0JTrLFbIlPwxPYt
-    CqPy3g1sDUMnWIwxMwbGu4Y/oDYcsnAhi+4HFLoqlGxt6x3gL0VwEu6JWhgnWCedDS+DawZN1qZe9nAE5ESOCYd3Dlw5JrFNL9pmFNCEgkb7eiLSXW6bGtnL
-    NWv9iC1V4XRcrb/Cd1Fb7Q==
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
-    a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=3JM7wWF9qpnLQrVuEQkA:9
-    a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
-X-ME-CMScore: 0
-X-ME-CMCategory: discussion
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-Date: Wed, 25 Apr 2018 13:03:45 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Yangbo Lu <yangbo.lu@nxp.com>
-Subject: Re: [PATCH] staging: fsl-dpaa2/eth: Add support for hardware
+Return-Path: <yangbo.lu@nxp.com>
+X-Google-Smtp-Source: AIpwx48yIOWdLmgu2aeuWTnvBwX/w0WmMDfYCzxC1WbjZefzLzKfek5f/GDaYeoy4MSUk+vVAdue
+ARC-Seal: i=1; a=rsa-sha256; t=1524737861; cv=none;
+        d=google.com; s=arc-20160816;
+        b=X79jYLHN1hWuw+MoaBnRvvvoHrAqrivEjrQtvAJ4NvkGAnp05yRvqcOD10Hz1Wi6hZ
+         AGrv4WJtzvAxWSeYvOP44BUg7VEkLgj8ErakAtflyi1yDX5lyYFfd+q3SiGJwtBOjr2U
+         3dFf2VYcCsh5nRU3g5BNG5R1NkFqQ5o3okGAHWvGZ4wABnpPpXGaRvNHZQfPW9wFXCIW
+         f12SOpeNhqmWTNB1NavOeADZHgQTPX3KUIRY+1xYmSFslcdD+qmL7Mk2zx7nphofLaOc
+         36wmYzYMTpLRCLiOx6+YMOexg5Rm8//rCMrRursXK2E5DYrKhg9E9mg7gvvW9v2+39eE
+         yjeA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:content-transfer-encoding:spamdiagnosticmetadata
+         :spamdiagnosticoutput:content-language:accept-language:in-reply-to
+         :references:message-id:date:thread-index:thread-topic:subject:cc:to
+         :from:dkim-signature:arc-authentication-results;
+        bh=feolRsYNknym0t/kNTDPppBZQ+Gcpj5He4ePhrMEOPc=;
+        b=Vk/pSSZA3sYDtsxqjpikBpgPdCKcx1rBc2FCt0jDbL4iB50ub8BDCK/2a6PnqN7UEi
+         jzWSZKzfOVKj4ltaUIqX2GvwKQ4/IzWsfaKmZUdOGRZJQMtOIcIzq7Z5m0H96ymRTrfp
+         qyP1TGWejURuqbH2DS9zJywhGs2LNg9olgrIIWlM93Ebwzp0WSkv0ietuO2gt9Nz1OEd
+         d9uFQiY8DtwkVjqpGDMmFh+azzcXDKT0uSZEEqGTsv4R37FMOhF1cFcEAOMF9dyrvx8i
+         k0AzywfsXJIMOmo89VNax5iRlLXlgzmErdgcW4jBjx81epcm6HmkkFFqp2203AkY22Yv
+         KBOw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@nxp.com header.s=selector1 header.b=BQpDhG2T;
+       spf=pass (google.com: domain of yangbo.lu@nxp.com designates 40.107.0.86 as permitted sender) smtp.mailfrom=yangbo.lu@nxp.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nxp.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@nxp.com header.s=selector1 header.b=BQpDhG2T;
+       spf=pass (google.com: domain of yangbo.lu@nxp.com designates 40.107.0.86 as permitted sender) smtp.mailfrom=yangbo.lu@nxp.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nxp.com
+From: "Y.b. Lu" <yangbo.lu@nxp.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+CC: "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Richard Cochran
+	<richardcochran@gmail.com>, Ruxandra Ioana Ciocoi Radulescu
+	<ruxandra.radulescu@nxp.com>
+Subject: RE: [PATCH] staging: fsl-dpaa2/eth: Add support for hardware
  timestamping
-Message-ID: <20180425100345.b5oxgdjyud7t6kzc@mwanda>
+Thread-Topic: [PATCH] staging: fsl-dpaa2/eth: Add support for hardware
+ timestamping
+Thread-Index: AQHT3HZv/Y/PznkfA0CVZRkLjjVOL6QRQHeAgAGUuKA=
+Date: Thu, 26 Apr 2018 10:17:38 +0000
+Message-ID: <DB6PR0401MB25361EE5633F24AA34F0063CF88E0@DB6PR0401MB2536.eurprd04.prod.outlook.com>
 References: <20180425091749.46841-1-yangbo.lu@nxp.com>
-MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20180425091749.46841-1-yangbo.lu@nxp.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8873
- signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2
- malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804250093
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Richard Cochran <richardcochran@gmail.com>, linux-kernel@vger.kernel.org
+ <20180425100345.b5oxgdjyud7t6kzc@mwanda>
+In-Reply-To: <20180425100345.b5oxgdjyud7t6kzc@mwanda>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=yangbo.lu@nxp.com;
+x-originating-ip: [119.31.174.73]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DB6PR0401MB2501;7:/F+TiHI6F0RcOjxjvQV+v8SDek5kJNbl9FugkNnf90Xd5TGW+lkOTatQJI3Fjf25NQFKF9lw5ibI89lhb40CIFGxx//2owudDgqpfWXzle1dsNDYbnl5oTz1Ze6GuEaiC/FobaRqnvm6RyU6+APRd+VIrWwAnP+kv20ljSBdToket4cCp08cmOnl2MTNDD0U9CCaWcgN2H0b64g/iI8SM+Hhx2X1sx7XJXfObi8Utv7M9BPU3TpSO2RuvlI4Ai6v
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DB6PR0401MB2501;
+x-ms-traffictypediagnostic: DB6PR0401MB2501:
+x-microsoft-antispam-prvs: <DB6PR0401MB250138962A6A3511BC51194FF88E0@DB6PR0401MB2501.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(185117386973197)(85827821059158)(146099531331640);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231232)(944501410)(52105095)(6055026)(6041310)(20161123560045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(6072148)(201708071742011);SRVR:DB6PR0401MB2501;BCL:0;PCL:0;RULEID:;SRVR:DB6PR0401MB2501;
+x-forefront-prvs: 0654257CF5
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39380400002)(376002)(39860400002)(366004)(346002)(189003)(13464003)(199004)(186003)(53546011)(54906003)(446003)(476003)(316002)(106356001)(26005)(9686003)(55016002)(6916009)(11346002)(5250100002)(99286004)(68736007)(6506007)(59450400001)(102836004)(86362001)(229853002)(478600001)(7696005)(486006)(6436002)(53936002)(76176011)(74316002)(7736002)(4326008)(2906002)(14454004)(6246003)(105586002)(305945005)(3280700002)(81166006)(33656002)(97736004)(66066001)(8676002)(6116002)(3846002)(2900100001)(39060400002)(5660300001)(81156014)(8936002)(25786009)(3660700001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR0401MB2501;H:DB6PR0401MB2536.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: ipwc5jvP1Q5BEqaDO48rszu8aUNeBzx9da/zpw+8LWgPxDKifIVHuXoB6IBUl2mSzu0lFpSfWJ4K1AUmRmi/B9PKNRUt7DlW+JoUAeUjXjSNxHSnlm/ywRiHlPUYEwbq8OSbFcI8iJ0vlWkMBI97G2uQWdb0H3TrLhSnDRfRsbQiIgPwu5MDO0DIs5X9zcr7
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-Office365-Filtering-Correlation-Id: 507f77ac-32bc-47be-0e4c-08d5ab5ef044
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 507f77ac-32bc-47be-0e4c-08d5ab5ef044
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Apr 2018 10:17:38.8123
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0401MB2501
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1598709231870413604?=
+X-GMAIL-MSGID: =?utf-8?q?1598803528078554878?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Apr 25, 2018 at 05:17:49PM +0800, Yangbo Lu wrote:
-> @@ -275,6 +278,16 @@ static void dpaa2_eth_rx(struct dpaa2_eth_priv *priv,
->  
->  	prefetch(skb->data);
->  
-> +	/* Get the timestamp value */
-> +	if (priv->ts_rx_en) {
-> +		struct skb_shared_hwtstamps *shhwtstamps = skb_hwtstamps(skb);
-> +		u64 *ns = dpaa2_get_ts(vaddr, false);
-> +
-> +		*ns = DPAA2_PTP_NOMINAL_FREQ_PERIOD_NS * le64_to_cpup(ns);
+Hi Dan,
 
-This will cause Sparse endianess warnings.
+> -----Original Message-----
+> From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
+> Sent: Wednesday, April 25, 2018 6:04 PM
+> To: Y.b. Lu <yangbo.lu@nxp.com>
+> Cc: devel@driverdev.osuosl.org; linux-kernel@vger.kernel.org; Greg
+> Kroah-Hartman <gregkh@linuxfoundation.org>; Richard Cochran
+> <richardcochran@gmail.com>; Ruxandra Ioana Ciocoi Radulescu
+> <ruxandra.radulescu@nxp.com>
+> Subject: Re: [PATCH] staging: fsl-dpaa2/eth: Add support for hardware
+> timestamping
+>=20
+> On Wed, Apr 25, 2018 at 05:17:49PM +0800, Yangbo Lu wrote:
+> > @@ -275,6 +278,16 @@ static void dpaa2_eth_rx(struct dpaa2_eth_priv
+> > *priv,
+> >
+> >  	prefetch(skb->data);
+> >
+> > +	/* Get the timestamp value */
+> > +	if (priv->ts_rx_en) {
+> > +		struct skb_shared_hwtstamps *shhwtstamps =3D skb_hwtstamps(skb);
+> > +		u64 *ns =3D dpaa2_get_ts(vaddr, false);
+> > +
+> > +		*ns =3D DPAA2_PTP_NOMINAL_FREQ_PERIOD_NS * le64_to_cpup(ns);
+>=20
+> This will cause Sparse endianess warnings.
+>=20
+> I don't totally understand why we're writing to *ns.  Do we access *ns ag=
+ain
+> or not?  Either way, this doesn't seem right.  In other words, why don't =
+we
+> do this:
+>=20
+> 		__le64 *period =3D dpaa2_get_ts(vaddr, false);
+> 		u64 ns;
+>=20
+> 		ns =3D DPAA2_PTP_NOMINAL_FREQ_PERIOD_NS *
+> le64_to_cpup(period);
+> 		memset(shhwtstamps, 0, sizeof(*shhwtstamps));
+> 		shhwtstamps->hwtstamp =3D ns_to_ktime(ns);
+>=20
+> Then if we need to save a munged *ns then we can do this at the end:
+>=20
+> 		/* we need this because blah blah blah */
+> 		*period =3D (__le64)ns;
+>=20
 
-I don't totally understand why we're writing to *ns.  Do we access *ns
-again or not?  Either way, this doesn't seem right.  In other words, why
-don't we do this:
+[Y.b. Lu] You're right. I will modify the code according to your suggestion=
+.
 
-		__le64 *period = dpaa2_get_ts(vaddr, false);
-		u64 ns;
+>=20
+> > +		memset(shhwtstamps, 0, sizeof(*shhwtstamps));
+> > +		shhwtstamps->hwtstamp =3D ns_to_ktime(*ns);
+> > +	}
+> > +
+> >  	/* Check if we need to validate the L4 csum */
+> >  	if (likely(dpaa2_fd_get_frc(fd) & DPAA2_FD_FRC_FASV)) {
+> >  		status =3D le32_to_cpu(fas->status);
+>=20
+> [ snip ]
+>=20
+> > @@ -520,6 +561,19 @@ static void free_tx_fd(const struct dpaa2_eth_priv
+> *priv,
+> >  		return;
+> >  	}
+> >
+> > +	/* Get the timestamp value */
+> > +	if (priv->ts_tx_en && skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP) {
+> > +		struct skb_shared_hwtstamps shhwtstamps;
+> > +		u64 *ns;
+> > +
+> > +		memset(&shhwtstamps, 0, sizeof(shhwtstamps));
+> > +
+> > +		ns =3D dpaa2_get_ts(skbh, true);
+> > +		*ns =3D DPAA2_PTP_NOMINAL_FREQ_PERIOD_NS * le64_to_cpup(ns);
+> > +		shhwtstamps.hwtstamp =3D ns_to_ktime(*ns);
+> > +		skb_tstamp_tx(skb, &shhwtstamps);
+>=20
+> Sparse issues here also.
 
-		ns = DPAA2_PTP_NOMINAL_FREQ_PERIOD_NS * le64_to_cpup(period);
-		memset(shhwtstamps, 0, sizeof(*shhwtstamps));
-		shhwtstamps->hwtstamp = ns_to_ktime(ns);
+[Y.b. Lu] Will modify the code according to your suggestion.
 
-Then if we need to save a munged *ns then we can do this at the end:
+>=20
+> > +	}
+> > +
+> >  	/* Free SGT buffer allocated on tx */
+> >  	if (fd_format !=3D dpaa2_fd_single)
+> >  		skb_free_frag(skbh);
+> > @@ -552,6 +606,10 @@ static netdev_tx_t dpaa2_eth_tx(struct sk_buff
+> *skb, struct net_device *net_dev)
+> >  			goto err_alloc_headroom;
+> >  		}
+> >  		percpu_extras->tx_reallocs++;
+> > +
+> > +		if (skb->sk)
+> > +			skb_set_owner_w(ns, skb->sk);
+>=20
+> Is this really related?  (I have not looked at this code).
 
-		/* we need this because blah blah blah */
-		*period = (__le64)ns;
+[Y.b. Lu] Yes. The skb_tstamp_tx() function will check that.
 
+>=20
+> > +
+> >  		dev_kfree_skb(skb);
+> >  		skb =3D ns;
+> >  	}
+>=20
+> [ snip ]
+>=20
+> > @@ -319,6 +351,9 @@ struct dpaa2_eth_priv {
+> >  	u16 bpid;
+> >  	struct iommu_domain *iommu_domain;
+> >
+> > +	bool ts_tx_en; /* Tx timestamping enabled */
+> > +	bool ts_rx_en; /* Rx timestamping enabled */
+>=20
+> These variable names are not great.  I wouldn't have understood "ts_"
+> without the comment.  "tx_" is good.  "en" is confusing until you read th=
+e
+> comment.  But really it should just be left out because "enable" is assum=
+ed,
+> generally.  Last week I asked someone to rewrite a patch that had a _disa=
+ble
+> variable because negative variables lead to double negatives which screw =
+with
+> my tiny head.
+>=20
+> 	if (blah_disable !=3D 0) {
+>=20
+> OH MY BLASTED WORD MY BRIAN ESPLODED!!!1!
+>=20
+> So let's just name these "tx_timestamps" or something.
 
-> +		memset(shhwtstamps, 0, sizeof(*shhwtstamps));
-> +		shhwtstamps->hwtstamp = ns_to_ktime(*ns);
-> +	}
-> +
->  	/* Check if we need to validate the L4 csum */
->  	if (likely(dpaa2_fd_get_frc(fd) & DPAA2_FD_FRC_FASV)) {
->  		status = le32_to_cpu(fas->status);
+[Y.b. Lu] Ok. Let me use tx_tstamp/rx_tstamp instead. The tstamp is common =
+used in driver.
 
-[ snip ]
-
-> @@ -520,6 +561,19 @@ static void free_tx_fd(const struct dpaa2_eth_priv *priv,
->  		return;
->  	}
->  
-> +	/* Get the timestamp value */
-> +	if (priv->ts_tx_en && skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP) {
-> +		struct skb_shared_hwtstamps shhwtstamps;
-> +		u64 *ns;
-> +
-> +		memset(&shhwtstamps, 0, sizeof(shhwtstamps));
-> +
-> +		ns = dpaa2_get_ts(skbh, true);
-> +		*ns = DPAA2_PTP_NOMINAL_FREQ_PERIOD_NS * le64_to_cpup(ns);
-> +		shhwtstamps.hwtstamp = ns_to_ktime(*ns);
-> +		skb_tstamp_tx(skb, &shhwtstamps);
-
-Sparse issues here also.
-
-> +	}
-> +
->  	/* Free SGT buffer allocated on tx */
->  	if (fd_format != dpaa2_fd_single)
->  		skb_free_frag(skbh);
-> @@ -552,6 +606,10 @@ static netdev_tx_t dpaa2_eth_tx(struct sk_buff *skb, struct net_device *net_dev)
->  			goto err_alloc_headroom;
->  		}
->  		percpu_extras->tx_reallocs++;
-> +
-> +		if (skb->sk)
-> +			skb_set_owner_w(ns, skb->sk);
-
-Is this really related?  (I have not looked at this code).
-
-> +
->  		dev_kfree_skb(skb);
->  		skb = ns;
->  	}
-
-[ snip ]
-
-> @@ -319,6 +351,9 @@ struct dpaa2_eth_priv {
->  	u16 bpid;
->  	struct iommu_domain *iommu_domain;
->  
-> +	bool ts_tx_en; /* Tx timestamping enabled */
-> +	bool ts_rx_en; /* Rx timestamping enabled */
-
-These variable names are not great.  I wouldn't have understood "ts_"
-without the comment.  "tx_" is good.  "en" is confusing until you read
-the comment.  But really it should just be left out because "enable" is
-assumed, generally.  Last week I asked someone to rewrite a patch that
-had a _disable variable because negative variables lead to double
-negatives which screw with my tiny head.
-
-	if (blah_disable != 0) {
-
-OH MY BLASTED WORD MY BRIAN ESPLODED!!!1!
-
-So let's just name these "tx_timestamps" or something.
-
-
-> +
->  	u16 tx_qdid;
->  	u16 rx_buf_align;
->  	struct fsl_mc_io *mc_io;
-
-regards,
-dan carpenter
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+>=20
+>=20
+> > +
+> >  	u16 tx_qdid;
+> >  	u16 rx_buf_align;
+> >  	struct fsl_mc_io *mc_io;
+>=20
+> regards,
+> dan carpenter
