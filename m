@@ -1,93 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753717AbeDZGug (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 02:50:36 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:38444 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753554AbeDZGuc (ORCPT
+        id S1753347AbeDZGxq (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 02:53:46 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:60258 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752018AbeDZGxn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 02:50:32 -0400
-X-Google-Smtp-Source: AB8JxZqHGlTQDvmaIM13NCt2fQv7g1g60sgJPHehG8P84lzup4dbGkHL3yCczoohdrx8iqVQmNSzHg==
-Date: Thu, 26 Apr 2018 07:50:28 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Javier Arteaga <javier@emutex.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        "Dan O'Donovan" <dan@emutex.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, linux-gpio@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH RESEND 3/3] pinctrl: upboard: Add UP2 pinctrl and
- gpio driver
-Message-ID: <20180426065028.fvdf7ke5va2kacmv@dell>
-References: <20180421085009.28773-1-javier@emutex.com>
- <20180421085009.28773-4-javier@emutex.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+        Thu, 26 Apr 2018 02:53:43 -0400
+X-UUID: b16aa31a20be4dbfb0c105cdf96bb694-20180426
+Message-ID: <1524725617.31521.0.camel@mhfsdcap03>
+Subject: Re: [GIT PULL] Immutable branch between MFD, Input and RTC due for
+ the v4.18 merge window
+From: Chen Zhong <chen.zhong@mediatek.com>
+To: Lee Jones <lee.jones@linaro.org>
+CC: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "Eddie Huang" <eddie.huang@mediatek.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Beomho Seo <beomho.seo@samsung.com>,
+        Javier Martinez Canillas <javier@osg.samsung.com>,
+        Jaechul Lee <jcsing.lee@samsung.com>,
+        "Krzysztof Kozlowski" <krzk@kernel.org>, <linux-input@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-rtc@vger.kernel.org>
+Date: Thu, 26 Apr 2018 14:53:37 +0800
+In-Reply-To: <20180416141809.34l2ofmeljqvyicm@dell>
+References: <1508937364-30054-1-git-send-email-chen.zhong@mediatek.com>
+         <20180416141809.34l2ofmeljqvyicm@dell>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180421085009.28773-4-javier@emutex.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+MIME-Version: 1.0
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 21 Apr 2018, Javier Arteaga wrote:
+On Mon, 2018-04-16 at 15:18 +0100, Lee Jones wrote:
+> Enjoy!
+> 
+> The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
+> 
+>   Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git ib-mfd-input-rtc-v4.18
+> 
+> for you to fetch changes up to 55d1d1547ab5e52269988af5e7c553796ff68e97:
+> 
+>   mfd: mt6397: Add PMIC keys support to MT6397 driver (2018-04-16 15:16:11 +0100)
+> 
+> ----------------------------------------------------------------
+> Immutable branch between MFD, Input and RTC due for the v4.18 merge window
+> 
+> ----------------------------------------------------------------
+> Chen Zhong (5):
+>       mfd: mt6397: Create irq mappings in mfd core driver
+>       dt-bindings: input: Add document bindings for mtk-pmic-keys
+>       dt-bindings: mfd: Add bindings for the keys as subnode of PMIC
+>       input: Add MediaTek PMIC keys support
+>       mfd: mt6397: Add PMIC keys support to MT6397 driver
+> 
+>  .../devicetree/bindings/input/mtk-pmic-keys.txt    |  43 +++
+>  Documentation/devicetree/bindings/mfd/mt6397.txt   |   6 +
+>  drivers/input/keyboard/Kconfig                     |   9 +
+>  drivers/input/keyboard/Makefile                    |   1 +
+>  drivers/input/keyboard/mtk-pmic-keys.c             | 339 +++++++++++++++++++++
+>  drivers/mfd/mt6397-core.c                          |  26 +-
+>  drivers/rtc/rtc-mt6397.c                           |   7 +-
+>  7 files changed, 424 insertions(+), 7 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/input/mtk-pmic-keys.txt
+>  create mode 100644 drivers/input/keyboard/mtk-pmic-keys.c
+> 
 
-> The UP2 board features a Raspberry Pi compatible pin header (HAT) and a
-> board-specific expansion connector (EXHAT). Both expose assorted
-> functions from either the SoC (such as GPIO, I2C, SPI, UART...) or other
-> on-board devices (ADC, FPGA IP blocks...).
-> 
-> These lines are routed through an on-board FPGA. The platform controller
-> in its stock firmware provides register fields to change:
-> 
-> - Line enable (FPGA pins enabled / high impedance)
-> - Line direction (SoC driven / FPGA driven)
-> 
-> To enable using SoC GPIOs on the pin header, this arrangement requires
-> both configuring the platform controller, and updating the SoC pad
-> registers in sync.
-> 
-> Add a frontend pinctrl/GPIO driver that registers a new set of GPIO
-> lines for the header pins. When these are requested, the driver
-> propagates this request to the backend SoC pinctrl/GPIO driver by
-> grabbing a GPIO descriptor for the matching SoC GPIO line. The needed
-> mapping for this is retrieved via ACPI properties.
-> 
-> Signed-off-by: Javier Arteaga <javier@emutex.com>
-> ---
+Hi Lee,
 
-[...]
-> 
->  drivers/mfd/upboard.c             |   1 +
->  drivers/pinctrl/Kconfig           |  13 +
->  drivers/pinctrl/Makefile          |   1 +
->  drivers/pinctrl/pinctrl-upboard.c | 523 ++++++++++++++++++++++++++++++
->  4 files changed, 538 insertions(+)
->  create mode 100644 drivers/pinctrl/pinctrl-upboard.c
-> 
-> diff --git a/drivers/mfd/upboard.c b/drivers/mfd/upboard.c
-> index 6e4767e4dc41..35111981dfdf 100644
-> --- a/drivers/mfd/upboard.c
-> +++ b/drivers/mfd/upboard.c
-> @@ -132,6 +132,7 @@ static struct upboard_led_data upboard_up2_led_data[] = {
->  };
->  
->  static const struct mfd_cell upboard_up2_mfd_cells[] = {
-> +	{ .name = "upboard-pinctrl" },
->  	UPBOARD_LED_CELL(upboard_up2_led_data, 0),
->  	UPBOARD_LED_CELL(upboard_up2_led_data, 1),
->  	UPBOARD_LED_CELL(upboard_up2_led_data, 2),
+I’m sorry that I found this patch
+https://patchwork.kernel.org/patch/10026705/
 
-Please made this a separate patch.
+is missing in the git repository at:
 
-There aren't any build dependencies between the files.
+  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git
+ib-mfd-input-rtc-v4.18
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Could you please take this patch up?
+
+Thanks.
+
+Best regards,
+Chen Zhong
