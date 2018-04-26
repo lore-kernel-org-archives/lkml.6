@@ -1,78 +1,149 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755900AbeDZUec (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 16:34:32 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:37457 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753975AbeDZUea (ORCPT
+        id S1755573AbeDZUgh (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 16:36:37 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:59594 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754119AbeDZUgf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 16:34:30 -0400
-Date: Thu, 26 Apr 2018 13:34:25 -0700
-From: tip-bot for Bartosz Golaszewski <tipbot@zytor.com>
-Message-ID: <tip-b5c5f3959bb3c018a68f5659bcd6adf05e141a03@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, mingo@kernel.org, hpa@zytor.com,
-        tglx@linutronix.de, brgl@bgdev.pl
-Reply-To: brgl@bgdev.pl, linux-kernel@vger.kernel.org, mingo@kernel.org,
-        tglx@linutronix.de, hpa@zytor.com
-In-Reply-To: <20180426200747.8344-2-brgl@bgdev.pl>
-References: <20180426200747.8344-2-brgl@bgdev.pl>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:irq/core] genirq/irq_sim: Use the SPDX license identifier in
- the header
-Git-Commit-ID: b5c5f3959bb3c018a68f5659bcd6adf05e141a03
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 26 Apr 2018 16:36:35 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, David Airlie <airlied@linux.ie>,
+        "open list:DRM DRIVERS FOR RENESAS" <dri-devel@lists.freedesktop.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 06/17] drm: rcar-du: Allow DU groups to work with hardware indexing
+Date: Thu, 26 Apr 2018 23:36:48 +0300
+Message-ID: <10312647.9oa0HbEkDa@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20180426165346.494-7-kieran.bingham+renesas@ideasonboard.com>
+References: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com> <20180426165346.494-7-kieran.bingham+renesas@ideasonboard.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  b5c5f3959bb3c018a68f5659bcd6adf05e141a03
-Gitweb:     https://git.kernel.org/tip/b5c5f3959bb3c018a68f5659bcd6adf05e141a03
-Author:     Bartosz Golaszewski <brgl@bgdev.pl>
-AuthorDate: Thu, 26 Apr 2018 22:07:47 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Thu, 26 Apr 2018 22:26:39 +0200
+Hi Kieran,
 
-genirq/irq_sim: Use the SPDX license identifier in the header
+Thank you for the patch.
 
-Use C-style comment for the identifier as per
-Documentation/process/license-rules.rst and remove the license boilerplate.
+On Thursday, 26 April 2018 19:53:35 EEST Kieran Bingham wrote:
+> The group objects assume linear indexing, and more so always assume that
+> channel 0 of any active group is used.
+> 
+> Now that the CRTC objects support non-linear indexing, adapt the groups
+> to remove assumptions that channel 0 is utilised in each group by using
+> the channel mask provided in the device structures.
+> 
+> Finally ensure that the RGB routing is determined from the index of the
+> CRTC object (which represents the hardware DU channel index).
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> ---
+>  drivers/gpu/drm/rcar-du/rcar_du_group.c | 14 +++++++++-----
+>  drivers/gpu/drm/rcar-du/rcar_du_group.h |  2 ++
+>  drivers/gpu/drm/rcar-du/rcar_du_kms.c   |  5 ++++-
+>  3 files changed, 15 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_group.c
+> b/drivers/gpu/drm/rcar-du/rcar_du_group.c index eead202c95c7..c52091fe02ba
+> 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_group.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_group.c
+> @@ -46,9 +46,12 @@ void rcar_du_group_write(struct rcar_du_group *rgrp, u32
+> reg, u32 data)
+> 
+>  static void rcar_du_group_setup_pins(struct rcar_du_group *rgrp)
+>  {
+> -	u32 defr6 = DEFR6_CODE | DEFR6_ODPM02_DISP;
+> +	u32 defr6 = DEFR6_CODE;
+> 
+> -	if (rgrp->num_crtcs > 1)
+> +	if (rgrp->channel_mask & BIT(0))
+> +		defr6 |= DEFR6_ODPM02_DISP;
+> +
+> +	if (rgrp->channel_mask & BIT(1))
+>  		defr6 |= DEFR6_ODPM12_DISP;
 
-Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20180426200747.8344-2-brgl@bgdev.pl
+So much cleaner with the channels mask, I like this.
 
----
- include/linux/irq_sim.h | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+>  	rcar_du_group_write(rgrp, DEFR6, defr6);
+> @@ -80,10 +83,11 @@ static void rcar_du_group_setup_defr8(struct
+> rcar_du_group *rgrp) * On Gen3 VSPD routing can't be configured, but DPAD
+> routing
+>  		 * needs to be set despite having a single option available.
+>  		 */
+> -		u32 crtc = ffs(possible_crtcs) - 1;
+> +		unsigned int rgb_crtc = ffs(possible_crtcs) - 1;
+> +		struct rcar_du_crtc *crtc = &rcdu->crtcs[rgb_crtc];
+> 
+> -		if (crtc / 2 == rgrp->index)
+> -			defr8 |= DEFR8_DRGBS_DU(crtc);
+> +		if (crtc->index / 2 == rgrp->index)
+> +			defr8 |= DEFR8_DRGBS_DU(crtc->index);
+>  	}
+> 
+>  	rcar_du_group_write(rgrp, DEFR8, defr8);
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_group.h
+> b/drivers/gpu/drm/rcar-du/rcar_du_group.h index 5e3adc6b31b5..d29a68e006a7
+> 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_group.h
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_group.h
+> @@ -25,6 +25,7 @@ struct rcar_du_device;
+>   * @dev: the DU device
+>   * @mmio_offset: registers offset in the device memory map
+>   * @index: group index
+> + * @channel_mask: bitmask of populated DU channels in this group
+>   * @num_crtcs: number of CRTCs in this group (1 or 2)
+>   * @use_count: number of users of the group (rcar_du_group_(get|put))
+>   * @used_crtcs: number of CRTCs currently in use
+> @@ -39,6 +40,7 @@ struct rcar_du_group {
+>  	unsigned int mmio_offset;
+>  	unsigned int index;
+> 
+> +	unsigned int channel_mask;
 
-diff --git a/include/linux/irq_sim.h b/include/linux/irq_sim.h
-index 0380d899b955..630a57e55db6 100644
---- a/include/linux/irq_sim.h
-+++ b/include/linux/irq_sim.h
-@@ -1,14 +1,11 @@
--#ifndef _LINUX_IRQ_SIM_H
--#define _LINUX_IRQ_SIM_H
-+/* SPDX-License-Identifier: GPL-2.0+ */
- /*
-- * Copyright (C) 2017 Bartosz Golaszewski <brgl@bgdev.pl>
-- *
-- * This program is free software; you can redistribute  it and/or modify it
-- * under  the terms of  the GNU General  Public License as published by the
-- * Free Software Foundation;  either version 2 of the  License, or (at your
-- * option) any later version.
-+ * Copyright (C) 2017-2018 Bartosz Golaszewski <brgl@bgdev.pl>
-  */
- 
-+#ifndef _LINUX_IRQ_SIM_H
-+#define _LINUX_IRQ_SIM_H
-+
- #include <linux/irq_work.h>
- #include <linux/device.h>
- 
+Depending on how you like my suggestion in patch 05/17, this might be better 
+called channels_mask.
+
+>  	unsigned int num_crtcs;
+>  	unsigned int use_count;
+>  	unsigned int used_crtcs;
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+> b/drivers/gpu/drm/rcar-du/rcar_du_kms.c index 19a445fbc879..45fb554fd3c7
+> 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+> @@ -597,7 +597,10 @@ int rcar_du_modeset_init(struct rcar_du_device *rcdu)
+>  		rgrp->dev = rcdu;
+>  		rgrp->mmio_offset = mmio_offsets[i];
+>  		rgrp->index = i;
+> -		rgrp->num_crtcs = min(rcdu->num_crtcs - 2 * i, 2U);
+> +		/* Extract the channel mask for this group only */
+
+s/only/only./
+
+> +		rgrp->channel_mask = (rcdu->info->channel_mask >> (2 * i))
+> +				   & GENMASK(1, 0);
+> +		rgrp->num_crtcs = hweight8(rgrp->channel_mask);
+
+You could optimize this by computing it as
+
+	rgrp->num_crtcs = (rgrp->channel_mask >> 1)
+			| (rgrp->channel_mask & 1);
+
+as you know that only two bits at most can be set. Up to you.
+
+>  		/*
+>  		 * If we have more than one CRTCs in this group pre-associate
+
+With those small issues fixed,
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+-- 
+Regards,
+
+Laurent Pinchart
