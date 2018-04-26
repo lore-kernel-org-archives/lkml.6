@@ -1,23 +1,23 @@
 Return-Path: <hdegoede@redhat.com>
-X-Google-Smtp-Source: AB8JxZofBj9q9EyIpO31rBuMNu9QgB7awJVx3celTNVxmpOOyPJpNMdaIpJKHZ474Lk/wEp9amMo
-ARC-Seal: i=1; a=rsa-sha256; t=1524744416; cv=none;
+X-Google-Smtp-Source: AB8JxZovFzTEWMUCVXavemNt9FptnMPY8Sp2VUyMEmmeG1IWt8gf33zwyLfPyUfqsJMcjmF3YGX5
+ARC-Seal: i=1; a=rsa-sha256; t=1524744413; cv=none;
         d=google.com; s=arc-20160816;
-        b=Q79kWPc2YikKlKNUrH3F/pXx2QTsK0/6acTKRotrfsuOgB1QFHx7Y9OZ17DH0zsCtJ
-         hlqYgUt3EkIHLjGM6qovJXH+cs4AULYtH/5/U+ffzQy9wExo20uv9InBBLP0PRQXPsJi
-         dpPGuBwoAT1HrKGYVBAthuVm8hOZ/01zOOX+eQVErqX6kddKJ1UBMdD1h3FLexREa0+Z
-         3mAVKwJ1nf6MaLtaYz9rBUjwgjn/8szn1cG18ED/PDHzFld2iQOUG41nfanHhkKF921m
-         oWFsYFqIOpAXopFj5VWxUqTL35gC5FGzq75mbSPqBnenwyRz4pgw/tN2pFvJgkpeZ7JK
-         100g==
+        b=YE7BIyEizwad+J2fqE5/NjqxT4MjYFrivwvRItNel67IW4MCIslMW4755qxGHFZwM2
+         xQKEG4w1TiHf/zNwiAUo2Wbqp3l6298SaoTw0JAC2EJo/BZtpHInJSU/TLgkC+2rs+fW
+         vuw+uf7JMVJLvw6JrsWEzoGPXJRwoWCEocEN2LTUQnK4Vq4had27fx4rbQg2WBbZVVgl
+         AiHg61px2lAoWwZt2XwkNfSCnvWdyZPs7Z3SX3yYmiVyaH1+PZJunl3uwE/XQYPfVyCQ
+         gXNKxL/3rzPG4gMWqJUrJGQwNvCBfpbVeEnbYQv3Z0zIbTL8F2mWeBzGAZ2BPL7r6lEd
+         dMCw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=K3QNLsmtpyx4Kz22wWz7pz1vN6KJ1XzzUAGtyqV73yM=;
-        b=MC40+i54Lvi8UEaLrndZBvyvZCDMC2RGRnY2NVrkE+oUZdJwvRwT6vpJiSu2w7w/x2
-         dSpnz4ZO02QrQUy29nH0UHJf+vZlET5rF4EsrGQJvJIMlSKXTiluitp51KI/exT73HLI
-         KhxHUcq3xb4OLl0wnR379bSLp/vBUtD9gUM9X8gj4tDG/lTqRMHtMGSSXFBSe3q4mEWz
-         5V8hhvI7pjrMCBA8xr/6J4OE3LQmGXLiLWfp+FVU4HF2FO1IbJF4cLImjxB24QknKqUO
-         OV22o0jKpPEYkRb3pG5D5MphnHt4ysUvRUoY5yRcorbe2vqaL6s1p8kWNIj2ZmSitGgj
-         /j5w==
+        bh=hnzBAZx33wMqTZuvWTX5uGlmsNvY2nOUr5tINEuKR30=;
+        b=YRIo+N5P+/BCNl2AoqSse8F+nlokvBdd2GW3618r1iaBah7QtWSRJcbNjHvz9Onde7
+         twj/KH2yyKNFkIQpGfkyQZrQEmTmmQAGoqR74gGZ2M+EnAvTA/e1y1szYtWXMbBiai70
+         A7M6fA/lT8Gn23vc2c9nQqRKGqa7JwYcn+6JPZ+FfQUzsWCMp4jApTfZDm2T+Hwc4Ouw
+         4dgkGsMZqgA3E0f/9CrZfbZz8hVtKqKJIukKnMPTDzCBGC+LZzzmCVNq/XcQj2fD6nUz
+         RmXZISg1he0h7dPJn5ZJjXW0uuc1lthYxeDetKRPiHHoLawL3WuBuS2hAmckF52o3RZ/
+         sVrw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of hdegoede@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
@@ -52,157 +52,347 @@ Cc: Hans de Goede <hdegoede@redhat.com>,
 	x86@kernel.org,
 	linux-efi@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 4/5] platform/x86: touchscreen_dmi: Add EFI embedded firmware info support
-Date: Thu, 26 Apr 2018 14:06:36 +0200
-Message-Id: <20180426120637.21258-5-hdegoede@redhat.com>
+Subject: [PATCH v4 3/5] platform/x86: Rename silead_dmi to touchscreen_dmi
+Date: Thu, 26 Apr 2018 14:06:35 +0200
+Message-Id: <20180426120637.21258-4-hdegoede@redhat.com>
 In-Reply-To: <20180426120637.21258-1-hdegoede@redhat.com>
 References: <20180426120637.21258-1-hdegoede@redhat.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598810401828339398?=
-X-GMAIL-MSGID: =?utf-8?q?1598810401828339398?=
+X-GMAIL-THRID: =?utf-8?q?1598810398127320015?=
+X-GMAIL-MSGID: =?utf-8?q?1598810398127320015?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Sofar we have been unable to get permission from the vendors to put the
-firmware for touchscreens listed in touchscreen_dmi in linux-firmware.
+Not only silead touchscreens need some extra info not available in the
+ACPI tables to work properly. X86 devices with a Chipone ICN8505 chip also
+need some DMI based extra configuration.
 
-Some of the tablets with such a touchscreen have a touchscreen driver, and
-thus a copy of the firmware, as part of their EFI code.
+There is no reason to have separate dmi config code per touchscreen
+controller vendor. This commit renames silead_dmi to a more generic
+touchscreen_dmi name (and Kconfig option) in preparation of adding
+info for tablets with an ICN8505 based touchscreen.
 
-This commit adds the necessary info for the new EFI embedded-firmware code
-to extract these firmwares, making the touchscreen work OOTB without the
-user needing to manually add the firmware.
+Note there are no functional changes all code changes are limited to
+removing references to silead where these are no longer applicable.
 
 Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 ---
- drivers/firmware/efi/embedded-firmware.c |  3 +++
- drivers/platform/x86/Kconfig             |  1 +
- drivers/platform/x86/touchscreen_dmi.c   | 26 +++++++++++++++++++++++-
- include/linux/efi_embedded_fw.h          |  2 ++
- 4 files changed, 31 insertions(+), 1 deletion(-)
+ MAINTAINERS                                   |  2 +-
+ drivers/platform/x86/Kconfig                  | 16 ++---
+ drivers/platform/x86/Makefile                 |  2 +-
+ .../x86/{silead_dmi.c => touchscreen_dmi.c}   | 66 +++++++++----------
+ 4 files changed, 43 insertions(+), 43 deletions(-)
+ rename drivers/platform/x86/{silead_dmi.c => touchscreen_dmi.c} (87%)
 
-diff --git a/drivers/firmware/efi/embedded-firmware.c b/drivers/firmware/efi/embedded-firmware.c
-index ef6282945307..bbc6d218a82d 100644
---- a/drivers/firmware/efi/embedded-firmware.c
-+++ b/drivers/firmware/efi/embedded-firmware.c
-@@ -23,6 +23,9 @@ struct embedded_fw {
- static LIST_HEAD(found_fw_list);
+diff --git a/MAINTAINERS b/MAINTAINERS
+index bee29977a3bd..5a215bcd6660 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12795,7 +12795,7 @@ L:	linux-input@vger.kernel.org
+ L:	platform-driver-x86@vger.kernel.org
+ S:	Maintained
+ F:	drivers/input/touchscreen/silead.c
+-F:	drivers/platform/x86/silead_dmi.c
++F:	drivers/platform/x86/touchscreen_dmi.c
  
- static const struct dmi_system_id * const embedded_fw_table[] = {
-+#ifdef CONFIG_TOUCHSCREEN_DMI
-+	touchscreen_dmi_table,
-+#endif
- 	NULL
- };
- 
+ SILICON MOTION SM712 FRAME BUFFER DRIVER
+ M:	Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-index 7ff206e5edfe..cc4d95459190 100644
+index 39d06dd1f63a..7ff206e5edfe 100644
 --- a/drivers/platform/x86/Kconfig
 +++ b/drivers/platform/x86/Kconfig
-@@ -1199,6 +1199,7 @@ config INTEL_TURBO_MAX_3
- config TOUCHSCREEN_DMI
- 	bool "DMI based touchscreen configuration info"
+@@ -1196,16 +1196,16 @@ config INTEL_TURBO_MAX_3
+ 	  This driver is only required when the system is not using Hardware
+ 	  P-States (HWP). In HWP mode, priority can be read from ACPI tables.
+ 
+-config SILEAD_DMI
+-	bool "Tablets with Silead touchscreens"
++config TOUCHSCREEN_DMI
++	bool "DMI based touchscreen configuration info"
  	depends on ACPI && DMI && I2C=y && TOUCHSCREEN_SILEAD
-+	select EFI_EMBEDDED_FIRMWARE if EFI
  	---help---
- 	  Certain ACPI based tablets with e.g. Silead or Chipone touchscreens
- 	  do not have enough data in ACPI tables for the touchscreen driver to
-diff --git a/drivers/platform/x86/touchscreen_dmi.c b/drivers/platform/x86/touchscreen_dmi.c
-index 87fc839b28f7..6488cd50ba79 100644
---- a/drivers/platform/x86/touchscreen_dmi.c
+-	  Certain ACPI based tablets with Silead touchscreens do not have
+-	  enough data in ACPI tables for the touchscreen driver to handle
+-	  the touchscreen properly, as OEMs expected the data to be baked
+-	  into the tablet model specific version of the driver shipped
+-	  with the OS-image for the device. This option supplies the missing
+-	  information. Enable this for x86 tablets with Silead touchscreens.
++	  Certain ACPI based tablets with e.g. Silead or Chipone touchscreens
++	  do not have enough data in ACPI tables for the touchscreen driver to
++	  handle the touchscreen properly, as OEMs expect the data to be baked
++	  into the tablet model specific version of the driver shipped with the
++	  the OS-image for the device. This option supplies the missing info.
++	  Enable this for x86 tablets with Silead or Chipone touchscreens.
+ 
+ config INTEL_CHTDC_TI_PWRBTN
+ 	tristate "Intel Cherry Trail Dollar Cove TI power button driver"
+diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
+index 2ba6cb795338..8d9477114fb5 100644
+--- a/drivers/platform/x86/Makefile
++++ b/drivers/platform/x86/Makefile
+@@ -78,7 +78,7 @@ obj-$(CONFIG_INTEL_SMARTCONNECT)	+= intel-smartconnect.o
+ obj-$(CONFIG_PVPANIC)           += pvpanic.o
+ obj-$(CONFIG_ALIENWARE_WMI)	+= alienware-wmi.o
+ obj-$(CONFIG_INTEL_PMC_IPC)	+= intel_pmc_ipc.o
+-obj-$(CONFIG_SILEAD_DMI)	+= silead_dmi.o
++obj-$(CONFIG_TOUCHSCREEN_DMI)	+= touchscreen_dmi.o
+ obj-$(CONFIG_SURFACE_PRO3_BUTTON)	+= surfacepro3_button.o
+ obj-$(CONFIG_SURFACE_3_BUTTON)	+= surface3_button.o
+ obj-$(CONFIG_INTEL_PUNIT_IPC)  += intel_punit_ipc.o
+diff --git a/drivers/platform/x86/silead_dmi.c b/drivers/platform/x86/touchscreen_dmi.c
+similarity index 87%
+rename from drivers/platform/x86/silead_dmi.c
+rename to drivers/platform/x86/touchscreen_dmi.c
+index 452aacabaa8e..87fc839b28f7 100644
+--- a/drivers/platform/x86/silead_dmi.c
 +++ b/drivers/platform/x86/touchscreen_dmi.c
-@@ -15,12 +15,15 @@
- #include <linux/acpi.h>
- #include <linux/device.h>
- #include <linux/dmi.h>
-+#include <linux/efi_embedded_fw.h>
- #include <linux/i2c.h>
- #include <linux/notifier.h>
+@@ -1,5 +1,5 @@
+ /*
+- * Silead touchscreen driver DMI based configuration code
++ * Touchscreen driver DMI based configuration code
+  *
+  * Copyright (c) 2017 Red Hat Inc.
+  *
+@@ -20,7 +20,7 @@
  #include <linux/property.h>
  #include <linux/string.h>
  
- struct ts_dmi_data {
-+	/* The EFI embedded-fw code expects this to be the first member! */
-+	struct efi_embedded_fw_desc embedded_fw;
+-struct silead_ts_dmi_data {
++struct ts_dmi_data {
  	const char *acpi_name;
  	const struct property_entry *properties;
  };
-@@ -31,10 +34,17 @@ static const struct property_entry cube_iwork8_air_props[] = {
- 	PROPERTY_ENTRY_BOOL("touchscreen-swapped-x-y"),
- 	PROPERTY_ENTRY_STRING("firmware-name", "gsl3670-cube-iwork8-air.fw"),
- 	PROPERTY_ENTRY_U32("silead,max-fingers", 10),
-+	PROPERTY_ENTRY_BOOL("efi-embedded-firmware"),
+@@ -34,7 +34,7 @@ static const struct property_entry cube_iwork8_air_props[] = {
  	{ }
  };
  
- static const struct ts_dmi_data cube_iwork8_air_data = {
-+	.embedded_fw = {
-+		.name	= "silead/gsl3670-cube-iwork8-air.fw",
-+		.prefix = { 0xf0, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00 },
-+		.length	= 38808,
-+		.crc	= 0xfecde51f,
-+	},
+-static const struct silead_ts_dmi_data cube_iwork8_air_data = {
++static const struct ts_dmi_data cube_iwork8_air_data = {
  	.acpi_name	= "MSSL1680:00",
  	.properties	= cube_iwork8_air_props,
  };
-@@ -119,10 +129,17 @@ static const struct property_entry pipo_w2s_props[] = {
- 	PROPERTY_ENTRY_BOOL("touchscreen-swapped-x-y"),
- 	PROPERTY_ENTRY_STRING("firmware-name",
- 			      "gsl1680-pipo-w2s.fw"),
-+	PROPERTY_ENTRY_BOOL("efi-embedded-firmware"),
+@@ -48,7 +48,7 @@ static const struct property_entry jumper_ezpad_mini3_props[] = {
  	{ }
  };
  
- static const struct ts_dmi_data pipo_w2s_data = {
-+	.embedded_fw = {
-+		.name	= "silead/gsl1680-pipo-w2s.fw",
-+		.prefix = { 0xf0, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00 },
-+		.length	= 39072,
-+		.crc	= 0x28d5dc6c,
-+	},
+-static const struct silead_ts_dmi_data jumper_ezpad_mini3_data = {
++static const struct ts_dmi_data jumper_ezpad_mini3_data = {
+ 	.acpi_name	= "MSSL1680:00",
+ 	.properties	= jumper_ezpad_mini3_props,
+ };
+@@ -62,7 +62,7 @@ static const struct property_entry dexp_ursus_7w_props[] = {
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data dexp_ursus_7w_data = {
++static const struct ts_dmi_data dexp_ursus_7w_data = {
+ 	.acpi_name	= "MSSL1680:00",
+ 	.properties	= dexp_ursus_7w_props,
+ };
+@@ -77,7 +77,7 @@ static const struct property_entry surftab_twin_10_1_st10432_8_props[] = {
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data surftab_twin_10_1_st10432_8_data = {
++static const struct ts_dmi_data surftab_twin_10_1_st10432_8_data = {
+ 	.acpi_name	= "MSSL1680:00",
+ 	.properties	= surftab_twin_10_1_st10432_8_props,
+ };
+@@ -92,7 +92,7 @@ static const struct property_entry surftab_wintron70_st70416_6_props[] = {
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data surftab_wintron70_st70416_6_data = {
++static const struct ts_dmi_data surftab_wintron70_st70416_6_data = {
+ 	.acpi_name	= "MSSL1680:00",
+ 	.properties	= surftab_wintron70_st70416_6_props,
+ };
+@@ -107,7 +107,7 @@ static const struct property_entry gp_electronic_t701_props[] = {
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data gp_electronic_t701_data = {
++static const struct ts_dmi_data gp_electronic_t701_data = {
+ 	.acpi_name	= "MSSL1680:00",
+ 	.properties	= gp_electronic_t701_props,
+ };
+@@ -122,7 +122,7 @@ static const struct property_entry pipo_w2s_props[] = {
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data pipo_w2s_data = {
++static const struct ts_dmi_data pipo_w2s_data = {
  	.acpi_name	= "MSSL1680:00",
  	.properties	= pipo_w2s_props,
  };
-@@ -162,10 +179,17 @@ static const struct property_entry chuwi_hi8_pro_props[] = {
- 	PROPERTY_ENTRY_BOOL("touchscreen-swapped-x-y"),
- 	PROPERTY_ENTRY_STRING("firmware-name", "gsl3680-chuwi-hi8-pro.fw"),
- 	PROPERTY_ENTRY_BOOL("silead,home-button"),
-+	PROPERTY_ENTRY_BOOL("efi-embedded-firmware"),
+@@ -137,7 +137,7 @@ static const struct property_entry pov_mobii_wintab_p800w_props[] = {
  	{ }
  };
  
- static const struct ts_dmi_data chuwi_hi8_pro_data = {
-+	.embedded_fw = {
-+		.name	= "silead/gsl3680-chuwi-hi8-pro.fw",
-+		.prefix = { 0xf0, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00 },
-+		.length	= 39864,
-+		.crc	= 0xfe2bedba,
-+	},
+-static const struct silead_ts_dmi_data pov_mobii_wintab_p800w_data = {
++static const struct ts_dmi_data pov_mobii_wintab_p800w_data = {
+ 	.acpi_name	= "MSSL1680:00",
+ 	.properties	= pov_mobii_wintab_p800w_props,
+ };
+@@ -151,7 +151,7 @@ static const struct property_entry itworks_tw891_props[] = {
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data itworks_tw891_data = {
++static const struct ts_dmi_data itworks_tw891_data = {
+ 	.acpi_name	= "MSSL1680:00",
+ 	.properties	= itworks_tw891_props,
+ };
+@@ -165,7 +165,7 @@ static const struct property_entry chuwi_hi8_pro_props[] = {
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data chuwi_hi8_pro_data = {
++static const struct ts_dmi_data chuwi_hi8_pro_data = {
  	.acpi_name	= "MSSL1680:00",
  	.properties	= chuwi_hi8_pro_props,
  };
-@@ -277,7 +301,7 @@ static const struct ts_dmi_data teclast_x3_plus_data = {
+@@ -181,7 +181,7 @@ static const struct property_entry digma_citi_e200_props[] = {
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data digma_citi_e200_data = {
++static const struct ts_dmi_data digma_citi_e200_data = {
+ 	.acpi_name	= "MSSL1680:00",
+ 	.properties	= digma_citi_e200_props,
+ };
+@@ -198,7 +198,7 @@ static const struct property_entry onda_obook_20_plus_props[] = {
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data onda_obook_20_plus_data = {
++static const struct ts_dmi_data onda_obook_20_plus_data = {
+ 	.acpi_name	= "MSSL1680:00",
+ 	.properties	= onda_obook_20_plus_props,
+ };
+@@ -212,7 +212,7 @@ static const struct property_entry chuwi_hi8_props[] = {
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data chuwi_hi8_data = {
++static const struct ts_dmi_data chuwi_hi8_data = {
+ 	.acpi_name      = "MSSL0001:00",
+ 	.properties     = chuwi_hi8_props,
+ };
+@@ -227,7 +227,7 @@ static const struct property_entry chuwi_vi8_props[] = {
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data chuwi_vi8_data = {
++static const struct ts_dmi_data chuwi_vi8_data = {
+ 	.acpi_name      = "MSSL1680:00",
+ 	.properties     = chuwi_vi8_props,
+ };
+@@ -242,7 +242,7 @@ static const struct property_entry trekstor_primebook_c13_props[] = {
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data trekstor_primebook_c13_data = {
++static const struct ts_dmi_data trekstor_primebook_c13_data = {
+ 	.acpi_name	= "MSSL1680:00",
+ 	.properties	= trekstor_primebook_c13_props,
+ };
+@@ -258,7 +258,7 @@ static const struct property_entry teclast_x98plus2_props[] = {
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data teclast_x98plus2_data = {
++static const struct ts_dmi_data teclast_x98plus2_data = {
+ 	.acpi_name	= "MSSL1680:00",
+ 	.properties	= teclast_x98plus2_props,
+ };
+@@ -272,12 +272,12 @@ static const struct property_entry teclast_x3_plus_props[] = {
+ 	{ }
+ };
+ 
+-static const struct silead_ts_dmi_data teclast_x3_plus_data = {
++static const struct ts_dmi_data teclast_x3_plus_data = {
+ 	.acpi_name	= "MSSL1680:00",
  	.properties	= teclast_x3_plus_props,
  };
  
--static const struct dmi_system_id touchscreen_dmi_table[] = {
-+const struct dmi_system_id touchscreen_dmi_table[] = {
+-static const struct dmi_system_id silead_ts_dmi_table[] = {
++static const struct dmi_system_id touchscreen_dmi_table[] = {
  	{
  		/* CUBE iwork8 Air */
  		.driver_data = (void *)&cube_iwork8_air_data,
-diff --git a/include/linux/efi_embedded_fw.h b/include/linux/efi_embedded_fw.h
-index 0f7d4df3f57a..4c8cfe38ec02 100644
---- a/include/linux/efi_embedded_fw.h
-+++ b/include/linux/efi_embedded_fw.h
-@@ -20,6 +20,8 @@ struct efi_embedded_fw_desc {
- 	u32 crc;
+@@ -466,22 +466,22 @@ static const struct dmi_system_id silead_ts_dmi_table[] = {
+ 	{ },
  };
  
-+extern const struct dmi_system_id touchscreen_dmi_table[];
-+
- int efi_get_embedded_fw(const char *name, void **dat, size_t *sz, size_t msize);
+-static const struct silead_ts_dmi_data *silead_ts_data;
++static const struct ts_dmi_data *ts_data;
  
- #endif
+-static void silead_ts_dmi_add_props(struct i2c_client *client)
++static void ts_dmi_add_props(struct i2c_client *client)
+ {
+ 	struct device *dev = &client->dev;
+ 	int error;
+ 
+ 	if (has_acpi_companion(dev) &&
+-	    !strncmp(silead_ts_data->acpi_name, client->name, I2C_NAME_SIZE)) {
+-		error = device_add_properties(dev, silead_ts_data->properties);
++	    !strncmp(ts_data->acpi_name, client->name, I2C_NAME_SIZE)) {
++		error = device_add_properties(dev, ts_data->properties);
+ 		if (error)
+ 			dev_err(dev, "failed to add properties: %d\n", error);
+ 	}
+ }
+ 
+-static int silead_ts_dmi_notifier_call(struct notifier_block *nb,
++static int ts_dmi_notifier_call(struct notifier_block *nb,
+ 				       unsigned long action, void *data)
+ {
+ 	struct device *dev = data;
+@@ -491,7 +491,7 @@ static int silead_ts_dmi_notifier_call(struct notifier_block *nb,
+ 	case BUS_NOTIFY_ADD_DEVICE:
+ 		client = i2c_verify_client(dev);
+ 		if (client)
+-			silead_ts_dmi_add_props(client);
++			ts_dmi_add_props(client);
+ 		break;
+ 
+ 	default:
+@@ -501,22 +501,22 @@ static int silead_ts_dmi_notifier_call(struct notifier_block *nb,
+ 	return 0;
+ }
+ 
+-static struct notifier_block silead_ts_dmi_notifier = {
+-	.notifier_call = silead_ts_dmi_notifier_call,
++static struct notifier_block ts_dmi_notifier = {
++	.notifier_call = ts_dmi_notifier_call,
+ };
+ 
+-static int __init silead_ts_dmi_init(void)
++static int __init ts_dmi_init(void)
+ {
+ 	const struct dmi_system_id *dmi_id;
+ 	int error;
+ 
+-	dmi_id = dmi_first_match(silead_ts_dmi_table);
++	dmi_id = dmi_first_match(touchscreen_dmi_table);
+ 	if (!dmi_id)
+ 		return 0; /* Not an error */
+ 
+-	silead_ts_data = dmi_id->driver_data;
++	ts_data = dmi_id->driver_data;
+ 
+-	error = bus_register_notifier(&i2c_bus_type, &silead_ts_dmi_notifier);
++	error = bus_register_notifier(&i2c_bus_type, &ts_dmi_notifier);
+ 	if (error)
+ 		pr_err("%s: failed to register i2c bus notifier: %d\n",
+ 			__func__, error);
+@@ -529,4 +529,4 @@ static int __init silead_ts_dmi_init(void)
+  * itself is ready (which happens at postcore initcall level), but before
+  * ACPI starts enumerating devices (at subsys initcall level).
+  */
+-arch_initcall(silead_ts_dmi_init);
++arch_initcall(ts_dmi_init);
 -- 
 2.17.0
