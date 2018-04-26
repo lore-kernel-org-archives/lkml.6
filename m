@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757037AbeDZS1S (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 14:27:18 -0400
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:38090 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757280AbeDZS1C (ORCPT
+        id S1757319AbeDZS1d (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 14:27:33 -0400
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:4191 "EHLO
+        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757146AbeDZS13 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 14:27:02 -0400
+        Thu, 26 Apr 2018 14:27:29 -0400
 X-IronPort-AV: E=Sophos;i="5.49,331,1520870400";
-   d="scan'208";a="77490817"
+   d="scan'208";a="76852414"
 From: Bart Van Assche <Bart.VanAssche@wdc.com>
 To: "tarick@google.com" <tarick@google.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
@@ -22,14 +22,14 @@ To: "tarick@google.com" <tarick@google.com>,
         "keith.busch@intel.com" <keith.busch@intel.com>,
         "jgg@ziepe.ca" <jgg@ziepe.ca>,
         "dledford@redhat.com" <dledford@redhat.com>
-Subject: Re: [PATCH 5/6] ib_srp: depend on INFINIBAND_ADDR_TRANS
-Thread-Topic: [PATCH 5/6] ib_srp: depend on INFINIBAND_ADDR_TRANS
-Thread-Index: AQHT3YtRtSmB9NkpB0C+/t8pz7bQi6QTXPEA
-Date: Thu, 26 Apr 2018 18:25:57 +0000
-Message-ID: <3297b7f5896bfb31692f55ebb799dcb3eb7d0db3.camel@wdc.com>
+Subject: Re: [PATCH 6/6] IB: make INFINIBAND_ADDR_TRANS configurable
+Thread-Topic: [PATCH 6/6] IB: make INFINIBAND_ADDR_TRANS configurable
+Thread-Index: AQHT3YtYNkzAw6pPGEabVMjvkb21yKQTXQ4A
+Date: Thu, 26 Apr 2018 18:26:24 +0000
+Message-ID: <cdbccbcb15ed155243149a6ec3ee540df523990c.camel@wdc.com>
 References: <20180426181935.32977-1-gthelen@google.com>
-         <20180426181935.32977-6-gthelen@google.com>
-In-Reply-To: <20180426181935.32977-6-gthelen@google.com>
+         <20180426181935.32977-7-gthelen@google.com>
+In-Reply-To: <20180426181935.32977-7-gthelen@google.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -38,40 +38,39 @@ authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Bart.VanAssche@wdc.com;
 x-originating-ip: [199.255.44.173]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR04MB0992;7:2eziAgsxsnYa//kH6HEfupmZewr8yw1imo4BL+dzYGSb/iwFawbwF0eGdmh/O34T62c/RcXn1Dz1VYZki07E/pSaBlGQI6fF0qeFdV92bRP/hwgB500QYAO53BlI1lBMcYQGOuwQAkw31g3KKLpLiHGCt01jcUoNUJY0TKbYvzsiYBrElpDveKcYK5Vx2nhqGXmYmZltNan1uROFahAU/bxxBQI0JUTUe5kQ8602ZXi0vX6ry2hV8xF8NwU2c3AM;20:xj/7Oywiffe7QTYwqHAhVmNMV1yBbFwEkkJzHWlQSm+IgWT8SaarhIKIAnmQQAM10Z+7XGrUbUmtOQKssVXezD0CLdFm3B95dlcLSH4Nf/OJwqo7V9zCwWh4zwU8EGK3ajjI8wi3aXyNc5bVmr9IOS4AiEhs5stCEmcvXfi/mso=
+x-microsoft-exchange-diagnostics: 1;MWHPR04MB0590;7:z3TnQIBpNYwMstW5Z0eQKN2DEBPYZSxG80pnptKfSyzsOPgyOyh19uHRI76f/rkEofKP+FAK1R271UbsSBnhoi3YyoCh85Xm8Kog9FgADn6mcXrWxWgINfrzeOUc1Y2llBZNSMMX+WXbKp9oGllafCKPAM+LyL94e1uUfMW5sOmLF6p6GKsBiZAHGshTWBfg3BIvdotOEDe8ZfiKW1W+jxCjRGYuiPDdEKRgL+H9B8YBmC+VSdHW+AkYrDgygo6c;20:W7HjyiEv6jb5AtJ0A8oAQsovy/ZGPoXi5q9276S4fEuIiFPeXuSsUpqagcxuSvW87aUuwR5NJonXV3XEYqGdch7MNOUUeIwJor9O4h4GIo/OQ5Wyw68YSMGEloDjTk/uFfdIHgxj1eArx+FiGx2U+wV7HJtMAgiobUCIGGqgz18=
 x-ms-exchange-antispam-srfa-diagnostics: SOS;
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB0992;
-x-ms-traffictypediagnostic: MWHPR04MB0992:
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB0590;
+x-ms-traffictypediagnostic: MWHPR04MB0590:
 wdcipoutbound: EOP-TRUE
-x-microsoft-antispam-prvs: <MWHPR04MB0992425ACF676ED4E09F3892988E0@MWHPR04MB0992.namprd04.prod.outlook.com>
+x-microsoft-antispam-prvs: <MWHPR04MB05902B6227915C2077775489988E0@MWHPR04MB0590.namprd04.prod.outlook.com>
 x-exchange-antispam-report-test: UriScan:;
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(3231232)(944501410)(52105095)(93006095)(93001095)(3002001)(6055026)(6041310)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:MWHPR04MB0992;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB0992;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231232)(944501410)(52105095)(93006095)(93001095)(6055026)(6041310)(20161123558120)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(6072148)(201708071742011);SRVR:MWHPR04MB0590;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB0590;
 x-forefront-prvs: 0654257CF5
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39860400002)(346002)(376002)(39380400002)(366004)(377424004)(189003)(199004)(97736004)(229853002)(7416002)(53936002)(2201001)(118296001)(86362001)(2906002)(99286004)(186003)(6512007)(5660300001)(106356001)(3280700002)(478600001)(110136005)(105586002)(6116002)(6486002)(14454004)(8676002)(3660700001)(102836004)(305945005)(76176011)(66066001)(476003)(6246003)(81156014)(486006)(11346002)(72206003)(3846002)(26005)(8936002)(2900100001)(68736007)(5250100002)(316002)(25786009)(81166006)(446003)(558084003)(7736002)(2501003)(6506007)(36756003)(2616005)(6436002)(921003)(1121003);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB0992;H:MWHPR04MB1198.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: wWne+Z6MfI3CydH+p49dieS9SzY4ZJJSW67sKBfdygUUsTtKRA6/6kQFPMKoVd7kKN7ry2ofTLYpgv4xF1a6aGKZL3hi9rz6dTrx6Ypu4mQU8OFhnflwN2ovmLAwM8FPnFw7ptUERymCBLaKwjSvbbiRDbNpkUq8QqOsFR2nvJPNRQbfKCZfVsSMbeY/LleT
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(376002)(39860400002)(396003)(346002)(39380400002)(377424004)(199004)(189003)(476003)(6506007)(14454004)(446003)(110136005)(316002)(102836004)(558084003)(186003)(3660700001)(99286004)(3280700002)(76176011)(118296001)(26005)(72206003)(5660300001)(36756003)(53936002)(7416002)(6246003)(8936002)(2900100001)(6436002)(6486002)(2501003)(229853002)(6512007)(68736007)(8676002)(6116002)(2906002)(3846002)(486006)(105586002)(106356001)(25786009)(305945005)(81166006)(81156014)(7736002)(2616005)(5250100002)(478600001)(66066001)(97736004)(11346002)(2201001)(86362001)(921003)(1121003);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB0590;H:MWHPR04MB1198.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: h0Jbu8nyFGadmB4DpLegCC40ubdABflTSgsJ/jFoPQav3DkAMogMsAtTRQmOuNC572BU8kZ45JVZs4Zl5b3Xbczhpof+oQHSuR3pUfZg4ZUiR4UQWFvPXQbKHdFFmQM7AKe8BHkI5PiwoNlFWfMLixZeJknxTu3K9lbvgeuPiEWI3DNxv7X3phmlcUXaFAs9
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="utf-8"
-Content-ID: <471151BD12A011488829D7AAED8D7771@namprd04.prod.outlook.com>
+Content-ID: <F63C1884A294C043B05A393659C45726@namprd04.prod.outlook.com>
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: 2a25c100-a0b2-4339-e39f-08d5aba327f2
+X-MS-Office365-Filtering-Correlation-Id: d50d8084-5b98-42d9-1f48-08d5aba3379d
 X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2a25c100-a0b2-4339-e39f-08d5aba327f2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Apr 2018 18:25:57.9479
+X-MS-Exchange-CrossTenant-Network-Message-Id: d50d8084-5b98-42d9-1f48-08d5aba3379d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Apr 2018 18:26:24.2449
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB0992
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB0590
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3QIRO65023248
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3QIRfaw023252
 
 On Thu, 2018-04-26 at 11:19 -0700, Greg Thelen wrote:
-> INFINIBAND_SRP code depends on INFINIBAND_ADDR_TRANS provided symbols.
-> So declare the kconfig dependency.  This is necessary to allow for
-> enabling INFINIBAND without INFINIBAND_ADDR_TRANS.
+> Allow INFINIBAND without INFINIBAND_ADDR_TRANS because fuzzing has been
+> finding fair number of CM bugs.  So provide option to disable it.
 
 Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
