@@ -1,177 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756657AbeDZP1O (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 11:27:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59002 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756262AbeDZP1M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 11:27:12 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E46EE21745
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
-Date: Thu, 26 Apr 2018 09:27:11 -0600
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [f2fs-dev] [PATCH 4/5] f2fs: sanity check for total valid blocks
-Message-ID: <20180426152711.GC68594@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180425054613.2700-1-jaegeuk@kernel.org>
- <20180425054613.2700-4-jaegeuk@kernel.org>
- <e9ccab38-0773-156f-67b1-0374b0aeb6ed@kernel.org>
+        id S932177AbeDZP1r (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 11:27:47 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:36146 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756519AbeDZP1p (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 11:27:45 -0400
+X-Google-Smtp-Source: AIpwx4+ojNHAqTs1Pp2A4o+A/WPtJ9YFS/QsOoYWh+fQyQ0yRdsFWxYJSfSpOn9gVDOQliu9MEOuYYL+K9KNOYQNS7I=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e9ccab38-0773-156f-67b1-0374b0aeb6ed@kernel.org>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+In-Reply-To: <20180426144137.GC3315@bigcity.dyn.berto.se>
+References: <CAKfTPtAE3qeWcTdT-WL8nrbZmP_+OaxPyyjUfVCzn=rax9tQZQ@mail.gmail.com>
+ <20180412111519.GH12256@bigcity.dyn.berto.se> <20180412133031.GA551@linaro.org>
+ <20180412223904.GJ12256@bigcity.dyn.berto.se> <CAKfTPtDRtto7w806gYgdS_bCJ77EY0RRtszycB+TnG6aQ6ve4Q@mail.gmail.com>
+ <20180420160013.GA13769@linaro.org> <20180422221827.GB27674@bigcity.dyn.berto.se>
+ <20180423095420.GA23995@linaro.org> <20180425225603.GA26177@bigcity.dyn.berto.se>
+ <20180426103133.GA6953@linaro.org> <20180426144137.GC3315@bigcity.dyn.berto.se>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Thu, 26 Apr 2018 17:27:24 +0200
+Message-ID: <CAKfTPtBpmXieT=0PEmNgTPg=r-zEbvhH-d0_qxC_S2iVUJ7HRw@mail.gmail.com>
+Subject: Re: Potential problem with 31e77c93e432dec7 ("sched/fair: Update
+ blocked load when newly idle")
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3QFRpMU006969
 
-On 04/25, Chao Yu wrote:
-> Hi Jaegeuk,
-> 
-> This patch makes generic/008 failed, because for fallocate case, total valid
-> block count can not be calculated by gathering valid_blocks of all sit entries.
+Hi Niklas,
 
-Yeah, I got that too, and I've been testing to change it by valid_node_count,
-which works for syzbot case as well.
+>> Thanks for the trace, I have been able to catch a problem with it.
+>> Could you test the patch below to confirm that the problem is solved ?
+>> The patch apply on-top of
+>> c18bb396d3d261eb ("Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net")
+>
+> I can confirm that with the patch bellow I can no longer produce the
+> problem. Thanks!
 
-> 
-> Thanks,
-> 
-> On 2018/4/25 13:46, Jaegeuk Kim wrote:
-> > This patch enhances sanity check for SIT entries.
-> > 
-> > syzbot hit the following crash on upstream commit
-> > 83beed7b2b26f232d782127792dd0cd4362fdc41 (Fri Apr 20 17:56:32 2018 +0000)
-> > Merge branch 'fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal
-> > syzbot dashboard link: https://syzkaller.appspot.com/bug?extid=bf9253040425feb155ad
-> > 
-> > syzkaller reproducer: https://syzkaller.appspot.com/x/repro.syz?id=5692130282438656
-> > Raw console output: https://syzkaller.appspot.com/x/log.txt?id=5095924598571008
-> > Kernel config: https://syzkaller.appspot.com/x/.config?id=1808800213120130118
-> > compiler: gcc (GCC) 8.0.1 20180413 (experimental)
-> > 
-> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > Reported-by: syzbot+bf9253040425feb155ad@syzkaller.appspotmail.com
-> > It will help syzbot understand when the bug is fixed. See footer for details.
-> > If you forward the report, please keep this part and the footer.
-> > 
-> > F2FS-fs (loop0): invalid crc value
-> > F2FS-fs (loop0): Try to recover 1th superblock, ret: 0
-> > F2FS-fs (loop0): Mounted with checkpoint version = d
-> > F2FS-fs (loop0): Bitmap was wrongly cleared, blk:9740
-> > ------------[ cut here ]------------
-> > kernel BUG at fs/f2fs/segment.c:1884!
-> > invalid opcode: 0000 [#1] SMP KASAN
-> > Dumping ftrace buffer:
-> >    (ftrace buffer empty)
-> > Modules linked in:
-> > CPU: 1 PID: 4508 Comm: syz-executor0 Not tainted 4.17.0-rc1+ #10
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> > RIP: 0010:update_sit_entry+0x1215/0x1590 fs/f2fs/segment.c:1882
-> > RSP: 0018:ffff8801af526708 EFLAGS: 00010282
-> > RAX: ffffed0035ea4cc0 RBX: ffff8801ad454f90 RCX: 0000000000000000
-> > RDX: 0000000000000000 RSI: ffffffff82eeb87e RDI: ffffed0035ea4cb6
-> > RBP: ffff8801af526760 R08: ffff8801ad4a2480 R09: ffffed003b5e4f90
-> > R10: ffffed003b5e4f90 R11: ffff8801daf27c87 R12: ffff8801adb8d380
-> > R13: 0000000000000001 R14: 0000000000000008 R15: 00000000ffffffff
-> > FS:  00000000014af940(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: 00007f06bc223000 CR3: 00000001adb02000 CR4: 00000000001406e0
-> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > Call Trace:
-> >  allocate_data_block+0x66f/0x2050 fs/f2fs/segment.c:2663
-> >  do_write_page+0x105/0x1b0 fs/f2fs/segment.c:2727
-> >  write_node_page+0x129/0x350 fs/f2fs/segment.c:2770
-> >  __write_node_page+0x7da/0x1370 fs/f2fs/node.c:1398
-> >  sync_node_pages+0x18cf/0x1eb0 fs/f2fs/node.c:1652
-> >  block_operations+0x429/0xa60 fs/f2fs/checkpoint.c:1088
-> >  write_checkpoint+0x3ba/0x5380 fs/f2fs/checkpoint.c:1405
-> >  f2fs_sync_fs+0x2fb/0x6a0 fs/f2fs/super.c:1077
-> >  __sync_filesystem fs/sync.c:39 [inline]
-> >  sync_filesystem+0x265/0x310 fs/sync.c:67
-> >  generic_shutdown_super+0xd7/0x520 fs/super.c:429
-> >  kill_block_super+0xa4/0x100 fs/super.c:1191
-> >  kill_f2fs_super+0x9f/0xd0 fs/f2fs/super.c:3030
-> >  deactivate_locked_super+0x97/0x100 fs/super.c:316
-> >  deactivate_super+0x188/0x1b0 fs/super.c:347
-> >  cleanup_mnt+0xbf/0x160 fs/namespace.c:1174
-> >  __cleanup_mnt+0x16/0x20 fs/namespace.c:1181
-> >  task_work_run+0x1e4/0x290 kernel/task_work.c:113
-> >  tracehook_notify_resume include/linux/tracehook.h:191 [inline]
-> >  exit_to_usermode_loop+0x2bd/0x310 arch/x86/entry/common.c:166
-> >  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
-> >  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
-> >  do_syscall_64+0x6ac/0x800 arch/x86/entry/common.c:290
-> >  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> > RIP: 0033:0x457d97
-> > RSP: 002b:00007ffd46f9c8e8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
-> > RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000457d97
-> > RDX: 00000000014b09a3 RSI: 0000000000000002 RDI: 00007ffd46f9da50
-> > RBP: 00007ffd46f9da50 R08: 0000000000000000 R09: 0000000000000009
-> > R10: 0000000000000005 R11: 0000000000000246 R12: 00000000014b0940
-> > R13: 0000000000000000 R14: 0000000000000002 R15: 000000000000658e
-> > RIP: update_sit_entry+0x1215/0x1590 fs/f2fs/segment.c:1882 RSP: ffff8801af526708
-> > ---[ end trace f498328bb02610a2 ]---
-> > 
-> > Reported-and-tested-by: syzbot+bf9253040425feb155ad@syzkaller.appspotmail.com
-> > Reported-and-tested-by: syzbot+7d6d31d3bc702f566ce3@syzkaller.appspotmail.com
-> > Reported-and-tested-by: syzbot+0a725420475916460f12@syzkaller.appspotmail.com
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > ---
-> >  fs/f2fs/segment.c | 13 +++++++++++++
-> >  1 file changed, 13 insertions(+)
-> > 
-> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> > index 20250b88bf51..a55647f61232 100644
-> > --- a/fs/f2fs/segment.c
-> > +++ b/fs/f2fs/segment.c
-> > @@ -3612,6 +3612,7 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
-> >  	unsigned int i, start, end;
-> >  	unsigned int readed, start_blk = 0;
-> >  	int err = 0;
-> > +	block_t total_valid_blocks = 0;
-> >  
-> >  	do {
-> >  		readed = ra_meta_pages(sbi, start_blk, BIO_MAX_PAGES,
-> > @@ -3634,6 +3635,7 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
-> >  			if (err)
-> >  				return err;
-> >  			seg_info_from_raw_sit(se, &sit);
-> > +			total_valid_blocks += se->valid_blocks;
-> >  
-> >  			/* build discard map only one time */
-> >  			if (f2fs_discard_en(sbi)) {
-> > @@ -3675,11 +3677,13 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
-> >  		sit = sit_in_journal(journal, i);
-> >  
-> >  		old_valid_blocks = se->valid_blocks;
-> > +		total_valid_blocks -= old_valid_blocks;
-> >  
-> >  		err = check_block_count(sbi, start, &sit);
-> >  		if (err)
-> >  			break;
-> >  		seg_info_from_raw_sit(se, &sit);
-> > +		total_valid_blocks += se->valid_blocks;
-> >  
-> >  		if (f2fs_discard_en(sbi)) {
-> >  			if (is_set_ckpt_flags(sbi, CP_TRIMMED_FLAG)) {
-> > @@ -3698,6 +3702,15 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
-> >  				se->valid_blocks - old_valid_blocks;
-> >  	}
-> >  	up_read(&curseg->journal_rwsem);
-> > +
-> > +	if (!err && total_valid_blocks != valid_user_blocks(sbi)) {
-> > +		f2fs_msg(sbi->sb, KERN_ERR,
-> > +			"SIT is corrupted %u vs %u",
-> > +			total_valid_blocks, valid_user_blocks(sbi));
-> > +		set_sbi_flag(sbi, SBI_NEED_FSCK);
-> > +		err = -EINVAL;
-> > +	}
-> > +
-> >  	return err;
-> >  }
-> >  
-> > 
+Thanks for testing
+Do you mind if I add
+Tested-by: Niklas Söderlund <niklas.soderlund@ragnatech.se>
+
+Peter, Ingo,
+Do you want me to re-send the patch with all tags or you will take
+this version ?
+
+Regards,
+Vincent
+
+>
+>>
+>> From: Vincent Guittot <vincent.guittot@linaro.org>
+>> Date: Thu, 26 Apr 2018 12:19:32 +0200
+>> Subject: [PATCH] sched/fair: fix the update of blocked load when newly idle
+>> MIME-Version: 1.0
+>> Content-Type: text/plain; charset=UTF-8
+>> Content-Transfer-Encoding: 8bit
+>>
+>> With commit 31e77c93e432 ("sched/fair: Update blocked load when newly idle"),
+>> we release the rq->lock when updating blocked load of idle CPUs. This open
+>> a time window during which another CPU can add a task to this CPU's cfs_rq.
+>> The check for newly added task of idle_balance() is not in the common path.
+>> Move the out label to include this check.
+>>
+>> Fixes: 31e77c93e432 ("sched/fair: Update blocked load when newly idle")
+>> Reported-by: Heiner Kallweit <hkallweit1@gmail.com>
+>> Reported-by: Niklas Söderlund <niklas.soderlund@ragnatech.se>
+>> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+>> ---
+>>  kernel/sched/fair.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+>> index 0951d1c..15a9f5e 100644
+>> --- a/kernel/sched/fair.c
+>> +++ b/kernel/sched/fair.c
+>> @@ -9847,6 +9847,7 @@ static int idle_balance(struct rq *this_rq, struct rq_flags *rf)
+>>       if (curr_cost > this_rq->max_idle_balance_cost)
+>>               this_rq->max_idle_balance_cost = curr_cost;
+>>
+>> +out:
+>>       /*
+>>        * While browsing the domains, we released the rq lock, a task could
+>>        * have been enqueued in the meantime. Since we're not going idle,
+>> @@ -9855,7 +9856,6 @@ static int idle_balance(struct rq *this_rq, struct rq_flags *rf)
+>>       if (this_rq->cfs.h_nr_running && !pulled_task)
+>>               pulled_task = 1;
+>>
+>> -out:
+>>       /* Move the next balance forward */
+>>       if (time_after(this_rq->next_balance, next_balance))
+>>               this_rq->next_balance = next_balance;
+>> --
+>> 2.7.4
+>>
+>>
+>>
+>> [snip]
+>>
+>
+> --
+> Regards,
+> Niklas Söderlund
