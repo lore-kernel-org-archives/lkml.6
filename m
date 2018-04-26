@@ -1,92 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932272AbeDZQ5z (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 12:57:55 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:58080 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756890AbeDZQyG (ORCPT
+        id S1757181AbeDZQ6B (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 12:58:01 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:36764 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756779AbeDZQ5q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 12:54:06 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS),
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM64 PORT
-        (AARCH64 ARCHITECTURE)),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 13/17] arm64: dts: r8a77965: Add HDMI encoder instance
-Date: Thu, 26 Apr 2018 17:53:42 +0100
-Message-Id: <20180426165346.494-14-kieran.bingham+renesas@ideasonboard.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com>
-References: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com>
+        Thu, 26 Apr 2018 12:57:46 -0400
+X-Google-Smtp-Source: AIpwx4+zMbo3YZbhAWgJWPdYCTF/udYCnxF8x2vzBhcZiCYg+2ptkoGV07o6/EGvmsTOq6MbcTXfcDuI2tiWzJFXBKQ=
+MIME-Version: 1.0
+In-Reply-To: <58645254.23011245.1524760853269.JavaMail.zimbra@redhat.com>
+References: <20180425112415.12327-1-pagupta@redhat.com> <20180425112415.12327-3-pagupta@redhat.com>
+ <20180426131517.GB30991@stefanha-x1.localdomain> <58645254.23011245.1524760853269.JavaMail.zimbra@redhat.com>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Thu, 26 Apr 2018 09:57:45 -0700
+Message-ID: <CAPcyv4jv-hJNKJxak98T7aCnWztVEDTE8o=8fjvOrVmrTfyjdA@mail.gmail.com>
+Subject: Re: [RFC v2 2/2] pmem: device flush over VIRTIO
+To: Pankaj Gupta <pagupta@redhat.com>
+Cc: Stefan Hajnoczi <stefanha@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        KVM list <kvm@vger.kernel.org>,
+        Qemu Developers <qemu-devel@nongnu.org>,
+        linux-nvdimm <linux-nvdimm@ml01.01.org>, Linux MM <linux-mm@kvack.org>,
+        Jan Kara <jack@suse.cz>, Stefan Hajnoczi <stefanha@redhat.com>,
+        Rik van Riel <riel@surriel.com>,
+        haozhong zhang <haozhong.zhang@intel.com>,
+        Nitesh Narayan Lal <nilal@redhat.com>, Kevin Wolf <kwolf@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        ross zwisler <ross.zwisler@intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        xiaoguangrong eric <xiaoguangrong.eric@gmail.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Marcel Apfelbaum <marcel@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>, niteshnarayanlal@hotmail.com,
+        Igor Mammedov <imammedo@redhat.com>, lcapitulino@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the HDMI encoder to the R8A77965 DT in disabled state.
+On Thu, Apr 26, 2018 at 9:40 AM, Pankaj Gupta <pagupta@redhat.com> wrote:
+>
+>>
+>> On Wed, Apr 25, 2018 at 04:54:14PM +0530, Pankaj Gupta wrote:
+>> > This patch adds functionality to perform
+>> > flush from guest to hosy over VIRTIO
+>> > when 'ND_REGION_VIRTIO'flag is set on
+>> > nd_negion. Flag is set by 'virtio-pmem'
+>> > driver.
+>> >
+>> > Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
+>> > ---
+>> >  drivers/nvdimm/region_devs.c | 7 +++++++
+>> >  1 file changed, 7 insertions(+)
+>> >
+>> > diff --git a/drivers/nvdimm/region_devs.c b/drivers/nvdimm/region_devs.c
+>> > index a612be6..6c6454e 100644
+>> > --- a/drivers/nvdimm/region_devs.c
+>> > +++ b/drivers/nvdimm/region_devs.c
+>> > @@ -20,6 +20,7 @@
+>> >  #include <linux/nd.h>
+>> >  #include "nd-core.h"
+>> >  #include "nd.h"
+>> > +#include <linux/virtio_pmem.h>
+>> >
+>> >  /*
+>> >   * For readq() and writeq() on 32-bit builds, the hi-lo, lo-hi order is
+>> > @@ -1074,6 +1075,12 @@ void nvdimm_flush(struct nd_region *nd_region)
+>> >     struct nd_region_data *ndrd = dev_get_drvdata(&nd_region->dev);
+>> >     int i, idx;
+>> >
+>> > +       /* call PV device flush */
+>> > +   if (test_bit(ND_REGION_VIRTIO, &nd_region->flags)) {
+>> > +           virtio_pmem_flush(&nd_region->dev);
+>> > +           return;
+>> > +   }
+>>
+>> How does libnvdimm know when flush has completed?
+>>
+>> Callers expect the flush to be finished when nvdimm_flush() returns but
+>> the virtio driver has only queued the request, it hasn't waited for
+>> completion!
+>
+> I tried to implement what nvdimm does right now. It just writes to
+> flush hint address to make sure data persists.
 
-Based on a similar patch of the R8A7796 device tree
-by Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>.
+nvdimm_flush() is currently expected to be synchronous. Currently it
+is sfence(); write to special address; sfence(). By the time the
+second sfence returns the data is flushed. So you would need to make
+this virtio flush interface synchronous as well, but that appears
+problematic to stop the guest for unbounded amounts of time. Instead,
+you need to rework nvdimm_flush() and the pmem driver to make these
+flush requests asynchronous and add the plumbing for completion
+callbacks via bio_endio().
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[Kieran: Rebase to top of tree]
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 28 +++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+> I just did not want to block guest write requests till host side
+> fsync completes.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index 8a40bba53027..972be1460a32 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -1105,6 +1105,33 @@
- 			};
- 		};
- 
-+		hdmi0: hdmi@fead0000 {
-+			compatible = "renesas,r8a77965-hdmi",
-+				     "renesas,rcar-gen3-hdmi";
-+			reg = <0 0xfead0000 0 0x10000>;
-+			interrupts = <GIC_SPI 389 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 729>,
-+				 <&cpg CPG_CORE R8A77965_CLK_HDMI>;
-+			clock-names = "iahb", "isfr";
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			resets = <&cpg 729>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				port@0 {
-+					reg = <0>;
-+					dw_hdmi0_in: endpoint {
-+						remote-endpoint = <&du_out_hdmi0>;
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+				};
-+			};
-+		};
-+
- 		du: display@feb00000 {
- 			compatible = "renesas,du-r8a77965";
- 			reg = <0 0xfeb00000 0 0x80000>,
-@@ -1134,6 +1161,7 @@
- 				port@1 {
- 					reg = <1>;
- 					du_out_hdmi0: endpoint {
-+						remote-endpoint = <&dw_hdmi0_in>;
- 					};
- 				};
- 				port@2 {
--- 
-2.17.0
+You must complete the flush before bio_endio(), otherwise you're
+violating the expectations of the guest filesystem/block-layer.
+
+>
+> be worse for operations on different guest files because all these operations would happen
+> ultimately on same file at host.
+>
+> I think with current way, we can achieve an asynchronous queuing mechanism on cost of not
+> 100% sure when fsync would complete but it is assured it will happen. Also, its entire block
+> flush.
+
+No, again,  that's broken. We need to add the plumbing for
+communicating the fsync() completion relative the WRITE_{FLUSH,FUA}
+bio in the guest.
