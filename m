@@ -1,45 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757181AbeDZX5P (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 19:57:15 -0400
-Received: from mail.savoirfairelinux.com ([208.88.110.44]:39848 "EHLO
-        mail.savoirfairelinux.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756405AbeDZX5N (ORCPT
+        id S1757217AbeDZX7B (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 19:59:01 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:39312 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751780AbeDZX65 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 19:57:13 -0400
-From: Vivien Didelot <vivien.didelot@savoirfairelinux.com>
-To: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Joe Perches <joe@perches.com>,
-        Vivien Didelot <vivien.didelot@savoirfairelinux.com>
-Subject: [RFC PATCH] MAINTAINERS: add davem in NETWORKING DRIVERS
-Date: Thu, 26 Apr 2018 19:47:35 -0400
-Message-Id: <20180426234735.30112-1-vivien.didelot@savoirfairelinux.com>
+        Thu, 26 Apr 2018 19:58:57 -0400
+X-Google-Smtp-Source: AB8JxZrFvV/QO9rEP1+U3Z3SS0TnPOMDV4FGC3xFhOAySKXmxiLiNgtILHutD4gtpFt6t4FzYfKJRw==
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>
+Cc: linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v1 1/4] clk: tegra20: Add DEV1/DEV2 OSC dividers
+Date: Fri, 27 Apr 2018 02:58:15 +0300
+Message-Id: <20180426235818.10018-2-digetx@gmail.com>
 X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180426235818.10018-1-digetx@gmail.com>
+References: <20180426235818.10018-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"./scripts/get_maintainer.pl -f" does not actually show us David as the
-maintainer of drivers/net directories such as team, bonding, phy or dsa.
-Adding him in an M: entry of NETWORKING DRIVERS fixes this.
+CDEV1/CDEV2 clocks could have corresponding oscillator clock divider as
+a parent. Add these dividers in order to be able to provide that parent
+option.
 
-Signed-off-by: Vivien Didelot <vivien.didelot@savoirfairelinux.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/tegra/clk-tegra20.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a52800867850..21038e0dadc2 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9732,6 +9732,7 @@ W:	https://fedorahosted.org/dropwatch/
- F:	net/core/drop_monitor.c
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index 0ee56dd04cec..16cf4108f2ff 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -26,6 +26,8 @@
+ #include "clk.h"
+ #include "clk-id.h"
  
- NETWORKING DRIVERS
-+M:	"David S. Miller" <davem@davemloft.net>
- L:	netdev@vger.kernel.org
- W:	http://www.linuxfoundation.org/en/Net
- Q:	http://patchwork.ozlabs.org/project/netdev/list/
++#define MISC_CLK_ENB 0x48
++
+ #define OSC_CTRL 0x50
+ #define OSC_CTRL_OSC_FREQ_MASK (3<<30)
+ #define OSC_CTRL_OSC_FREQ_13MHZ (0<<30)
+@@ -831,6 +833,16 @@ static void __init tegra20_periph_clk_init(void)
+ 				    periph_clk_enb_refcnt);
+ 	clks[TEGRA20_CLK_PEX] = clk;
+ 
++	/* cdev1 OSC divider */
++	clk_register_divider(NULL, "cdev1_osc_div", "clk_m",
++			     0, clk_base + MISC_CLK_ENB, 20, 2,
++			     CLK_DIVIDER_POWER_OF_TWO, NULL);
++
++	/* cdev2 OSC divider */
++	clk_register_divider(NULL, "cdev2_osc_div", "clk_m",
++			     0, clk_base + MISC_CLK_ENB, 22, 2,
++			     CLK_DIVIDER_POWER_OF_TWO, NULL);
++
+ 	/* cdev1 */
+ 	clk = clk_register_fixed_rate(NULL, "cdev1_fixed", NULL, 0, 26000000);
+ 	clk = tegra_clk_register_periph_gate("cdev1", "cdev1_fixed", 0,
 -- 
 2.17.0
