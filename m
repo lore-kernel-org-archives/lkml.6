@@ -1,47 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755614AbeDZW2a (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 18:28:30 -0400
-Received: from imap.thunk.org ([74.207.234.97]:35924 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754949AbeDZW22 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 18:28:28 -0400
-Date: Thu, 26 Apr 2018 17:03:57 -0400
-From: "Theodore Y. Ts'o" <tytso@mit.edu>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: jannh@google.com,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: random: GFP_KERNEL from irq context
-Message-ID: <20180426210357.GF5965@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Jens Axboe <axboe@kernel.dk>, jannh@google.com,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <c10e7248-4463-59d4-a977-1e4433c7231f@kernel.dk>
+        id S1756531AbeDZW35 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 18:29:57 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:43966 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754348AbeDZW3z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 18:29:55 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2003660390
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=clew@codeaurora.org
+Subject: Re: [PATCH v2] net: qrtr: Expose tunneling endpoint to user space
+To: Bjorn Andersson <bjorn.andersson@linaro.org>,
+        "David S. Miller" <davem@davemloft.net>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+References: <20180423214653.10016-1-bjorn.andersson@linaro.org>
+From: Chris Lew <clew@codeaurora.org>
+Message-ID: <46fe45d8-6f3a-5bed-c02c-6e61ba1175d2@codeaurora.org>
+Date: Thu, 26 Apr 2018 15:29:53 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c10e7248-4463-59d4-a977-1e4433c7231f@kernel.dk>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+In-Reply-To: <20180423214653.10016-1-bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 26, 2018 at 10:28:13AM -0600, Jens Axboe wrote:
-> during boot. We end up doing the numa_crng_init() from interrupt context, which
-> makes things unhappy since you do GFP_KERNEL | __GFP_NOFAIL allocations from
-> there.
 
-I've already sent a pull request to Linux to fix this; see the
-random.git tree.
 
-Apologies for not noticing this earlier.  My test environment had
-virtio-rng enabled by default, and while I did test the CONFIG_NUMA
-case, the call to add randomness doesn't happen from interrupt context
-with virtio-rng so I missed it in my testing.
+On 4/23/2018 2:46 PM, Bjorn Andersson wrote:
+> This implements a misc character device named "qrtr-tun" for the purpose
+> of allowing user space applications to implement endpoints in the qrtr
+> network.
+> 
+> This allows more advanced (and dynamic) testing of the qrtr code as well
+> as opens up the ability of tunneling qrtr over a network or USB link.
+> 
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-Cheers,
+Acked-by: Chris Lew <clew@codeaurora.org>
 
-					- Ted
+> +static ssize_t qrtr_tun_read_iter(struct kiocb *iocb, struct iov_iter *to)
+> +{
+> +	struct file *filp = iocb->ki_filp;
+> +	struct qrtr_tun *tun = filp->private_data;
+> +	struct sk_buff *skb;
+> +	int count;
+> +
+> +	while (!(skb = skb_dequeue(&tun->queue))) {
+> +		if (filp->f_flags & O_NONBLOCK)
+> +			return -EAGAIN;
+> +
+> +		/* Wait until we get data or the endpoint goes away */
+> +		if (wait_event_interruptible(tun->readq,
+> +					     !skb_queue_empty(&tun->queue)))
+> +			return -ERESTARTSYS;
+> +	}
+> +
+> +	count = min_t(size_t, iov_iter_count(to), skb->len);
+> +	if (copy_to_iter(skb->data, count, to) != count)
+> +		count = -EFAULT;
+> +
+> +	kfree_skb(skb);
+
+Is it better to use consume_skb() since this is the expected behavior path?
+
+> +
+> +	return count;
+> +}
+> +
+
+Thanks,
+Chris
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
