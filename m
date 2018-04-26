@@ -1,58 +1,307 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754760AbeDZKDG (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 06:03:06 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:55504 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753487AbeDZKDC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 06:03:02 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Sakari Ailus <sakari.ailus@iki.fi>
-Cc: Colin King <colin.king@canonical.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] media: ispstat: don't dereference user_cfg before a null check
-Date: Thu, 26 Apr 2018 13:03:15 +0300
-Message-ID: <2302951.d1m0yxIoYN@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20180426083731.72bmygsp2waf3eeu@valkosipuli.retiisi.org.uk>
-References: <20180424130618.18211-1-colin.king@canonical.com> <20180426083731.72bmygsp2waf3eeu@valkosipuli.retiisi.org.uk>
+        id S1753882AbeDZKEb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 06:04:31 -0400
+Received: from foss.arm.com ([217.140.101.70]:50374 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753677AbeDZKE3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 06:04:29 -0400
+Date: Thu, 26 Apr 2018 12:04:25 +0200
+From: Christoffer Dall <christoffer.dall@arm.com>
+To: Auger Eric <eric.auger@redhat.com>
+Cc: eric.auger.pro@gmail.com, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
+        marc.zyngier@arm.com, cdall@kernel.org, peter.maydell@linaro.org,
+        andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
+Subject: Re: [PATCH v3 06/12] KVM: arm/arm64: Helper to register a new
+ redistributor region
+Message-ID: <20180426100425.GA19872@C02W217FHV2R.local>
+References: <1523607658-9166-1-git-send-email-eric.auger@redhat.com>
+ <1523607658-9166-7-git-send-email-eric.auger@redhat.com>
+ <20180424164712.GB4533@C02W217FHV2R.local>
+ <8ad17ccb-9880-ca67-8ed8-25fb9557942c@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8ad17ccb-9880-ca67-8ed8-25fb9557942c@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sakari,
-
-On Thursday, 26 April 2018 11:37:31 EEST Sakari Ailus wrote:
-> On Tue, Apr 24, 2018 at 02:06:18PM +0100, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > The pointer user_cfg (a copy of new_conf) is dereference before
-> > new_conf is null checked, hence we may have a null pointer dereference
-> > on user_cfg when assigning buf_size from user_cfg->buf_size. Ensure
-> > this does not occur by moving the assignment of buf_size after the
-> > null check.
-> > 
-> > Detected by CoverityScan, CID#1468386 ("Dereference before null check")
-> > 
-> > Fixes: 68e342b3068c ("[media] omap3isp: Statistics")
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+On Thu, Apr 26, 2018 at 09:32:49AM +0200, Auger Eric wrote:
+> Hi Christoffer,
 > 
-> Thanks for the patch.
+> On 04/24/2018 06:47 PM, Christoffer Dall wrote:
+> > On Fri, Apr 13, 2018 at 10:20:52AM +0200, Eric Auger wrote:
+> >> We introduce a new helper that creates and inserts a new redistributor
+> >> region into the rdist region list. This helper both handles the case
+> >> where the redistributor region size is known at registration time
+> >> and the legacy case where it is not (eventually depending on the number
+> >> of online vcpus). Depending on pfns, we perform all the possible checks
+> >> that we can do:
+> >>
+> >> - end of memory crossing
+> >> - incorrect alignment of the base address
+> >> - collision with distributor region if already defined
+> >> - collision with already registered rdist regions
+> >> - check of the new index
+> >>
+> >> Rdist regions must be inserted by increasing order of indices. Indices
+> >> must be contiguous.
+> >>
+> >> We also introduce vgic_v3_rdist_region_from_index() which will be used
+> >> from the vgic kvm-device, later on.
+> >>
+> >> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+> >> ---
+> >>  | 95 +++++++++++++++++++++++++++++++++-------
+> >>  virt/kvm/arm/vgic/vgic-v3.c      | 29 ++++++++++++
+> >>  virt/kvm/arm/vgic/vgic.h         | 14 ++++++
+> >>  3 files changed, 122 insertions(+), 16 deletions(-)
+> >>
+> >> diff --git a/virt/kvm/arm/vgic/vgic-mmio-v3.c b/virt/kvm/arm/vgic/vgic-mmio-v3.c
+> >> index ce5c927..5273fb8 100644
+> >> --- a/virt/kvm/arm/vgic/vgic-mmio-v3.c
+> >> +++ b/virt/kvm/arm/vgic/vgic-mmio-v3.c
+> >> @@ -680,14 +680,66 @@ static int vgic_register_all_redist_iodevs(struct kvm *kvm)
+> >>  	return ret;
+> >>  }
+> >>  
+> >> -int vgic_v3_set_redist_base(struct kvm *kvm, u64 addr)
+> >> +/**
+> >> + * vgic_v3_insert_redist_region - Insert a new redistributor region
+> >> + *
+> >> + * Performs various checks before inserting the rdist region in the list.
+> >> + * Those tests depend on whether the size of the rdist region is known
+> >> + * (ie. count != 0). The list is sorted by rdist region index.
+> >> + *
+> >> + * @kvm: kvm handle
+> >> + * @index: redist region index
+> >> + * @base: base of the new rdist region
+> >> + * @count: number of redistributors the region is made of (of 0 in the old style
+> >> + * single region, whose size is induced from the number of vcpus)
+> >> + *
+> >> + * Return 0 on success, < 0 otherwise
+> >> + */
+> >> +static int vgic_v3_insert_redist_region(struct kvm *kvm, uint32_t index,
+> >> +					gpa_t base, uint32_t count)
+> >>  {
+> >> -	struct vgic_dist *vgic = &kvm->arch.vgic;
+> >> +	struct vgic_dist *d = &kvm->arch.vgic;
+> >>  	struct vgic_redist_region *rdreg;
+> >> +	struct list_head *rd_regions = &d->rd_regions;
+> >> +	struct list_head *last = rd_regions->prev;
+> >> +
+> > 
+> > nit: extra blank line?
+> > 
+> >> +	gpa_t new_start, new_end;
+> >> +	size_t size = count * KVM_VGIC_V3_REDIST_SIZE;
+> >>  	int ret;
+> >>  
+> >> -	/* vgic_check_ioaddr makes sure we don't do this twice */
+> >> -	if (!list_empty(&vgic->rd_regions))
+> >> +	/* single rdist region already set ?*/
+> >> +	if (!count && !list_empty(rd_regions))
+> >> +		return -EINVAL;
+> >> +
+> >> +	/* cross the end of memory ? */
+> >> +	if (base + size < base)
+> >> +		return -EINVAL;
+> > 
+> > what is the size of memory?  This seems to check for a gpa_t overflow,
+> > but not againt the IPA space of the VM...
+> Yes it checks for a gpa_t overflow. This check is currently done in
+> vgic_v3_check_base() for dist and redist region and I replicated it.
+
+fair enough, the comment is a bit misleading though.  We could also
+consider checking against KVM_PHYS_SHIFT.
+
+> > 
+> >> +
+> >> +	if (list_empty(rd_regions)) {
+> >> +		if (index != 0)
+> >> +			return -EINVAL;
+> > 
+> > note, I think this can be simplified if we can rid of the index.
+> So I eventually keep the index.
+
+Yes.
+
+> > 
+> >> +	} else {
+> >> +		rdreg = list_entry(last, struct vgic_redist_region, list);
+> > 
+> > you can use list_last_entry here and get rid of the 'last' temporary
+> > variable above.
+> definitively, thank you for the nit.
+> > 
+> >> +		if (index != rdreg->index + 1)
+> >> +			return -EINVAL;
+> >> +
+> >> +		/* Cannot add an explicitly sized regions after legacy region */
+> >> +		if (!rdreg->count)
+> >> +			return -EINVAL;
+> >> +	}
+> >> +
+> >> +	/*
+> >> +	 * collision with already set dist region ?
+> >> +	 * this assumes we know the size of the new rdist region (pfns != 0)
+> >> +	 * otherwise we can only test this when all vcpus are registered
+> >> +	 */
+> > 
+> > I don't really understand this commentary... :(
+> I meant we cannot perform the check below if we are inserting a unique
+> legacy rdist region (old API), whose size is not explicitly set but
+> induced from the number of online vcpus.
 > 
-> Gustavo sent effectively the same patch a moment earlier, and that patch
-> got applied instead.
 
-Isn't there a guarantee that new_buf won't be NULL ? The new_buf pointer comes 
-from the parg variable in video_usercopy(), which should always point to a 
-valid buffer given that the ioctl number specifies a non-zero size.
+ok, given the complexity of the logic below, I think you should just
+explain it:
+	/*
+	 * For legacy single-region redistributor regions (!count),
+	 * check that the redistributor region does not overlap with the
+	 * distributor's address space.
+	 */
 
--- 
-Regards,
+> > 
+> >> +	if (!count && !IS_VGIC_ADDR_UNDEF(d->vgic_dist_base) &&
+> >> +		(!(d->vgic_dist_base + KVM_VGIC_V3_DIST_SIZE <= base)) &&
+> >> +		(!(base + size <= d->vgic_dist_base)))
+> >> +		return -EINVAL;
+> > 
+> > Can't you call vgic_v3_check_base() here instead?
+> no I can't because vgic_v3_check_base() currently only works with the
+> unique legacy rdist region. There, redist_size  is
+> atomic_read(&kvm->online_vcpus) * KVM_VGIC_V3_REDIST_SIZE.
 
-Laurent Pinchart
+Hmmm, ok.  I'm not completely clear if that can be reworked to be reused
+or not, but perhaps you could just introduce a primitive ?
+
+	static bool redist_overlaps_dist(struct kvm *kvm, gpa_t rd_base, size_t rd_size);
+
+> > 
+> >> +
+> >> +	/* collision with any other rdist region? */
+> >> +	if (vgic_v3_rdist_overlap(kvm, base, size))
+> >>  		return -EINVAL;
+> >>  
+> >>  	rdreg = kzalloc(sizeof(*rdreg), GFP_KERNEL);
+> >> @@ -696,17 +748,32 @@ int vgic_v3_set_redist_base(struct kvm *kvm, u64 addr)
+> >>  
+> >>  	rdreg->base = VGIC_ADDR_UNDEF;
+> >>  
+> >> -	ret = vgic_check_ioaddr(kvm, &rdreg->base, addr, SZ_64K);
+> >> +	ret = vgic_check_ioaddr(kvm, &rdreg->base, base, SZ_64K);
+> >>  	if (ret)
+> >> -		goto out;
+> >> +		goto free;
+> >>  
+> >> -	rdreg->base = addr;
+> >> -	if (!vgic_v3_check_base(kvm)) {
+> >> -		ret = -EINVAL;
+> >> -		goto out;
+> >> -	}
+> >> +	rdreg->base = base;
+> >> +	rdreg->count = count;
+> >> +	rdreg->free_index = 0;
+> >> +	rdreg->index = index;
+> >>  
+> >> -	list_add(&rdreg->list, &vgic->rd_regions);
+> >> +	new_start = base;
+> >> +	new_end = base + size - 1;
+> > 
+> > What are these variables used for?
+> Hum reminder from an old version :-(
+> > 
+> >> +
+> >> +	list_add_tail(&rdreg->list, rd_regions);
+> >> +	return 0;
+> >> +free:
+> >> +	kfree(rdreg);
+> >> +	return ret;
+> >> +}
+> >> +
+> >> +int vgic_v3_set_redist_base(struct kvm *kvm, u64 addr)
+> >> +{
+> >> +	int ret;
+> >> +
+> >> +	ret = vgic_v3_insert_redist_region(kvm, 0, addr, 0);
+> >> +	if (ret)
+> >> +		return ret;
+> >>  
+> >>  	/*
+> >>  	 * Register iodevs for each existing VCPU.  Adding more VCPUs
+> >> @@ -717,10 +784,6 @@ int vgic_v3_set_redist_base(struct kvm *kvm, u64 addr)
+> >>  		return ret;
+> >>  
+> >>  	return 0;
+> >> -
+> >> -out:
+> >> -	kfree(rdreg);
+> >> -	return ret;
+> >>  }
+> >>  
+> >>  int vgic_v3_has_attr_regs(struct kvm_device *dev, struct kvm_device_attr *attr)
+> >> diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-v3.c
+> >> index 820012a..dbcba5f 100644
+> >> --- a/virt/kvm/arm/vgic/vgic-v3.c
+> >> +++ b/virt/kvm/arm/vgic/vgic-v3.c
+> >> @@ -410,6 +410,21 @@ int vgic_v3_save_pending_tables(struct kvm *kvm)
+> >>  	return 0;
+> >>  }
+> >>  
+> >> +/* return true if there is an overlap between any rdist */
+> > 
+> > Checks if base+size overlaps with any existing redistributor.
+> > 
+> >> +bool vgic_v3_rdist_overlap(struct kvm *kvm, gpa_t base, size_t size)
+> >> +{
+> >> +	struct vgic_dist *d = &kvm->arch.vgic;
+> >> +	struct vgic_redist_region *rdreg;
+> >> +
+> >> +	list_for_each_entry(rdreg, &d->rd_regions, list) {
+> >> +		if ((base + size <= rdreg->base) ||
+> >> +			(rdreg->base + vgic_v3_rd_region_size(kvm, rdreg) <= base))
+> >> +			continue;
+> >> +		return true;
+> > 
+> > can you invert the check above and return false instead of the continue?
+> > 
+> > (DeMorgan's law should be handy here.)
+> sure
+> > 
+> >> +	}
+> >> +	return false;
+> >> +}
+> >> +
+> >>  /*
+> >>   * Check for overlapping regions and for regions crossing the end of memory
+> >>   * for base addresses which have already been set.
+> >> @@ -461,6 +476,20 @@ struct vgic_redist_region *vgic_v3_rdist_free_slot(struct list_head *rd_regions)
+> >>  	return NULL;
+> >>  }
+> >>  
+> >> +struct vgic_redist_region *vgic_v3_rdist_region_from_index(struct kvm *kvm,
+> >> +							   uint32_t index)
+> >> +{
+> >> +	struct list_head *rd_regions = &kvm->arch.vgic.rd_regions;
+> >> +	struct vgic_redist_region *rdreg;
+> >> +
+> >> +	list_for_each_entry(rdreg, rd_regions, list) {
+> >> +		if (rdreg->index == index)
+> >> +			return rdreg;
+> >> +	}
+> > 
+> > if this ends up being a common operation, we could allocate an array of
+> > pointers for constant-time lookup instead.  Let's hope it's not too
+> > common.
+> This is only used when reading the characteristics of a redist region
+> from userspace so I don't think we care.
+> 
+
+ok, fine.
+
+Thanks,
+-Christoffer
