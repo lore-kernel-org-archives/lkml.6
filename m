@@ -1,47 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756991AbeDZUFT (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 16:05:19 -0400
-Received: from mail-wm0-f46.google.com ([74.125.82.46]:39114 "EHLO
-        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755248AbeDZUFP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 16:05:15 -0400
-X-Google-Smtp-Source: AIpwx49MQDyBaBTZP1f9M4n0uegXZyBWB2h7Yz2ZsLHanabHTX73bB8ATnoVJM9IOJd6omdrKzYGxA==
-Date: Thu, 26 Apr 2018 22:05:11 +0200
-From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-To: Sven Eckelmann <sven@narfation.org>
-Cc: b.a.t.m.a.n@lists.open-mesh.org, linux-kernel@vger.kernel.org,
-        Marek Lindner <mareklindner@neomailbox.ch>, netdev@vger.kernel.org,
-        Antonio Quartulli <a@unstable.cc>
-Subject: Re: [B.A.T.M.A.N.] [PATCH] batman-adv: fix batadv_interface_tx()'s
- return type
-Message-ID: <20180426200511.j45uth6y5y6ncsj6@ltop.local>
-References: <20180424131847.5469-1-luc.vanoostenryck@gmail.com>
- <2141097.l2ETxyu3Mo@sven-edge>
+        id S932253AbeDZUFa (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 16:05:30 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56536 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1756198AbeDZUF0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 16:05:26 -0400
+Date: Thu, 26 Apr 2018 16:05:25 -0400 (EDT)
+From: Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To: "Michael S. Tsirkin" <mst@redhat.com>
+cc: James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Michal Hocko <mhocko@kernel.org>, David Rientjes <rientjes@google.com>,
+        dm-devel@redhat.com, eric.dumazet@gmail.com, netdev@vger.kernel.org,
+        jasowang@redhat.com, Randy Dunlap <rdunlap@infradead.org>,
+        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
+        linux-mm@kvack.org, edumazet@google.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        virtualization@lists.linux-foundation.org,
+        David Miller <davem@davemloft.net>, Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [dm-devel] [PATCH v5] fault-injection: introduce kvmalloc fallback
+ options
+In-Reply-To: <20180426223925-mutt-send-email-mst@kernel.org>
+Message-ID: <alpine.LRH.2.02.1804261556290.3850@file01.intranet.prod.int.rdu2.redhat.com>
+References: <1524753932.3226.5.camel@HansenPartnership.com> <alpine.LRH.2.02.1804261100170.12157@file01.intranet.prod.int.rdu2.redhat.com> <1524756256.3226.7.camel@HansenPartnership.com> <alpine.LRH.2.02.1804261142480.21152@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180426184845-mutt-send-email-mst@kernel.org> <alpine.LRH.2.02.1804261202350.24656@file01.intranet.prod.int.rdu2.redhat.com> <20180426214011-mutt-send-email-mst@kernel.org> <alpine.LRH.2.02.1804261451120.23716@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180426220523-mutt-send-email-mst@kernel.org> <alpine.LRH.2.02.1804261516250.26980@file01.intranet.prod.int.rdu2.redhat.com> <20180426223925-mutt-send-email-mst@kernel.org>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2141097.l2ETxyu3Mo@sven-edge>
-User-Agent: NeoMutt/20180323
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 25, 2018 at 07:35:00PM +0200, Sven Eckelmann wrote:
-> On Dienstag, 24. April 2018 15:18:46 CEST Luc Van Oostenryck wrote:
-> > The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
-> > which is a typedef for an enum type, but the implementation in this
-> > driver returns an 'int'.
-> > 
-> > Fix this by returning 'netdev_tx_t' in this driver too.
-> > 
-> > Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-> > ---
-> >  net/batman-adv/soft-interface.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> Applied as 6bf9e4d39a58 [1] but the alignment was fixed
 
-Thanks for this,
--- Luc 
+
+On Thu, 26 Apr 2018, Michael S. Tsirkin wrote:
+
+> On Thu, Apr 26, 2018 at 03:36:14PM -0400, Mikulas Patocka wrote:
+> > People on this list argue "this should be a kernel parameter".
+> 
+> How about making it a writeable attribute, so it's easy to turn on/off
+> after boot. Then you can keep it deterministic, userspace can play with
+> the attribute at random if it wants to.
+> 
+> -- 
+> MST
+
+It is already controllable by an attribute in debugfs.
+
+Will you email all the testers about this attribute? How many of them will 
+remember to set it? How many of them will remember to set it a year after? 
+Will you write a userspace program that manages it and introduce it into 
+the distributon?
+
+This is a little feature.
+
+Mikulas
