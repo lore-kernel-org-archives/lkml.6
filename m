@@ -1,60 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932138AbeDZO3E (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 10:29:04 -0400
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:40417 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1756467AbeDZO2v (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1756650AbeDZO3I (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 10:29:08 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53978 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1756459AbeDZO2v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 26 Apr 2018 10:28:51 -0400
-X-ME-Sender: <xms:IuLhWs2jFFyNusyS8hhBParYeuukhatyxMvXkfuvWMl2VfXmKWgd9g>
-From: Zi Yan <zi.yan@sent.com>
-To: linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Cc: Zi Yan <zi.yan@cs.rutgers.edu>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Steve Capper <steve.capper@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Kristina Martsenko <kristina.martsenko@arm.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [RFC PATCH 3/9] arm64: mm: migrate: add pmd swap entry to support thp migration.
-Date: Thu, 26 Apr 2018 10:27:58 -0400
-Message-Id: <20180426142804.180152-4-zi.yan@sent.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180426142804.180152-1-zi.yan@sent.com>
-References: <20180426142804.180152-1-zi.yan@sent.com>
+Date: Thu, 26 Apr 2018 10:28:45 -0400 (EDT)
+From: Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To: Michal Hocko <mhocko@kernel.org>
+cc: James Bottomley <James.Bottomley@HansenPartnership.com>,
+        David Rientjes <rientjes@google.com>, dm-devel@redhat.com,
+        eric.dumazet@gmail.com, mst@redhat.com, netdev@vger.kernel.org,
+        jasowang@redhat.com, Randy Dunlap <rdunlap@infradead.org>,
+        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
+        linux-mm@kvack.org, edumazet@google.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        virtualization@lists.linux-foundation.org,
+        David Miller <davem@davemloft.net>, Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [dm-devel] [PATCH v5] fault-injection: introduce kvmalloc fallback
+ options
+In-Reply-To: <20180426125817.GO17484@dhcp22.suse.cz>
+Message-ID: <alpine.LRH.2.02.1804261006120.32722@file01.intranet.prod.int.rdu2.redhat.com>
+References: <20180424170349.GQ17484@dhcp22.suse.cz> <alpine.LRH.2.02.1804241319390.28995@file01.intranet.prod.int.rdu2.redhat.com> <20180424173836.GR17484@dhcp22.suse.cz> <alpine.LRH.2.02.1804251556060.30569@file01.intranet.prod.int.rdu2.redhat.com>
+ <1114eda5-9b1f-4db8-2090-556b4a37c532@infradead.org> <alpine.LRH.2.02.1804251656300.9428@file01.intranet.prod.int.rdu2.redhat.com> <alpine.DEB.2.21.1804251417470.166306@chino.kir.corp.google.com> <alpine.LRH.2.02.1804251720090.9428@file01.intranet.prod.int.rdu2.redhat.com>
+ <1524694663.4100.21.camel@HansenPartnership.com> <alpine.LRH.2.02.1804251830540.25124@file01.intranet.prod.int.rdu2.redhat.com> <20180426125817.GO17484@dhcp22.suse.cz>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zi Yan <zi.yan@cs.rutgers.edu>
 
-Signed-off-by: Zi Yan <zi.yan@cs.rutgers.edu>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Steve Capper <steve.capper@arm.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Kristina Martsenko <kristina.martsenko@arm.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-mm@kvack.org
----
- arch/arm64/include/asm/pgtable.h | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-index 7e2c27e63cd8..1cdc9d3db2c7 100644
---- a/arch/arm64/include/asm/pgtable.h
-+++ b/arch/arm64/include/asm/pgtable.h
-@@ -742,7 +742,9 @@ extern pgd_t tramp_pg_dir[PTRS_PER_PGD];
- #define __swp_entry(type,offset) ((swp_entry_t) { ((type) << __SWP_TYPE_SHIFT) | ((offset) << __SWP_OFFSET_SHIFT) })
- 
- #define __pte_to_swp_entry(pte)	((swp_entry_t) { pte_val(pte) })
-+#define __pmd_to_swp_entry(pmd)	((swp_entry_t) { pmd_val(pmd) })
- #define __swp_entry_to_pte(swp)	((pte_t) { (swp).val })
-+#define __swp_entry_to_pmd(swp)	((pmd_t) { (swp).val })
- 
- /*
-  * Ensure that there are not more swap files than can be encoded in the kernel
--- 
-2.17.0
+On Thu, 26 Apr 2018, Michal Hocko wrote:
+
+> On Wed 25-04-18 18:42:57, Mikulas Patocka wrote:
+> > 
+> > 
+> > On Wed, 25 Apr 2018, James Bottomley wrote:
+> [...]
+> > > Kconfig proliferation, conversely, is a bit of a nightmare from both
+> > > the user and the tester's point of view, so we're trying to avoid it
+> > > unless absolutely necessary.
+> > > 
+> > > James
+> > 
+> > I already offered that we don't need to introduce a new kernel option and 
+> > we can bind this feature to any other kernel option, that is enabled in 
+> > the debug kernel, for example CONFIG_DEBUG_SG. Michal said no and he said 
+> > that he wants a new kernel option instead.
+> 
+> Just for the record. I didn't say I _want_ a config option. Do not
+> misinterpret my words. I've said that a config option would be
+> acceptable if there is no way to deliver the functionality via kernel
+> package automatically. You haven't provided any argument that would
+> explain why the kernel package cannot add a boot option. Maybe there are
+> some but I do not see them right now.
+
+AFAIK Grub doesn't load per-kernel options from a per-kernel file. Even if 
+we hacked grub scripts to add this option, other distributions won't.
+
+Mikulas
