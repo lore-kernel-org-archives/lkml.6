@@ -1,31 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754728AbeDZJAQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 05:00:16 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:35899 "EHLO
+        id S1754786AbeDZJAY (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 05:00:24 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:33859 "EHLO
         metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754277AbeDZJAO (ORCPT
+        with ESMTP id S1752419AbeDZJAS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 05:00:14 -0400
-Message-ID: <1524733179.3408.5.camel@pengutronix.de>
-Subject: Re: [PATCH v7 4/7] dt-bindings: clock: reset: Add AXG AO Clock and
- Reset Bindings
+        Thu, 26 Apr 2018 05:00:18 -0400
+Message-ID: <1524733169.3408.3.camel@pengutronix.de>
+Subject: Re: [PATCH v7 5/7] clk: meson-axg: Add AO Clock and Reset
+ controller driver
 From: Philipp Zabel <p.zabel@pengutronix.de>
 To: Yixun Lan <yixun.lan@amlogic.com>,
         Neil Armstrong <narmstrong@baylibre.com>,
         Jerome Brunet <jbrunet@baylibre.com>,
         Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
-Cc: Rob Herring <robh@kernel.org>,
+Cc: Qiufang Dai <qiufang.dai@amlogic.com>, Rob Herring <robh@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Date: Thu, 26 Apr 2018 10:59:39 +0200
-In-Reply-To: <20180426084437.192394-5-yixun.lan@amlogic.com>
+        Stephen Boyd <sboyd@codeaurora.org>, linux-amlogic@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Date: Thu, 26 Apr 2018 10:59:29 +0200
+In-Reply-To: <20180426084437.192394-6-yixun.lan@amlogic.com>
 References: <20180426084437.192394-1-yixun.lan@amlogic.com>
-         <20180426084437.192394-5-yixun.lan@amlogic.com>
+         <20180426084437.192394-6-yixun.lan@amlogic.com>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.22.6-1+deb9u1 
 Mime-Version: 1.0
@@ -39,14 +37,14 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Thu, 2018-04-26 at 16:44 +0800, Yixun Lan wrote:
-> Add dt-bindings headers for the Meson-AXG's AO clock and
-> reset controller.
+> From: Qiufang Dai <qiufang.dai@amlogic.com>
 > 
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+> Adds a Clock and Reset controller driver for the Always-On part
+> of the Amlogic Meson-AXG SoC.
+> 
+> Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
 
-This one is
-Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
+Wrong patch, I have not formed an opinion on this one.
 
 regards
 Philipp
