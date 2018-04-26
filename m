@@ -1,126 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752712AbeDZAoo (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 20:44:44 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:45989 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751422AbeDZAol (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 20:44:41 -0400
-X-Google-Smtp-Source: AIpwx4+F3JTlodjUqYdY3jvzgZlN8jxUeqO7i4GEG8yvxBAejCIz+d4KfgRGGuW8nuDgFCPLYL4nNA==
-Subject: Re: [PATCH] of: overlay: Stop leaking resources on overlay removal
-From: Frank Rowand <frowand.list@gmail.com>
-To: Jan Kiszka <jan.kiszka@siemens.com>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        devicetree <devicetree@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alan Tull <atull@kernel.org>
-References: <097f1b01-6cb4-8dcb-0498-7b4c59a7ea53@siemens.com>
- <7aca82c1-a02c-2f84-bc32-6e8a118ba601@gmail.com>
- <90e7da9d-d40a-17f1-e627-873f58a3dce5@siemens.com>
- <b813ac8f-a1e3-3e27-2e44-0a576e05d01c@gmail.com>
- <17561711-94f7-b3d4-8f06-9cfa69daaf23@gmail.com>
-Message-ID: <033fba6b-d93c-249c-d552-1f5336b34387@gmail.com>
-Date: Wed, 25 Apr 2018 17:44:39 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752473AbeDZAub (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 20:50:31 -0400
+Received: from ozlabs.org ([203.11.71.1]:40687 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751785AbeDZAua (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 20:50:30 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Thu, 26 Apr 2018 10:49:02 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Networking <netdev@vger.kernel.org>,
+        David Miller <davem@davemloft.net>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Anders Roxell <anders.roxell@linaro.org>
+Subject: linux-next: manual merge of the bpf-next tree with the net-next
+ tree
+Message-ID: <20180426104902.548c3fdb@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <17561711-94f7-b3d4-8f06-9cfa69daaf23@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/SZJBMm3xf5aUcubd9unALkk"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/25/18 17:32, Frank Rowand wrote:
-> Hi Jan,
-> 
-> On 04/24/18 13:58, Frank Rowand wrote:
->> On 04/24/18 10:50, Jan Kiszka wrote:
->>> On 2018-04-24 19:44, Frank Rowand wrote:
->>>> On 04/24/18 09:19, Jan Kiszka wrote:
->>>>> Only the overlay notifier callbacks have a chance to potentially get
->>>>> hold of references to those two resources, but they do not store them.
->>>>> So it is safe to stop the intentional leaking.
->>>>>
->>>>> See also https://lkml.org/lkml/2018/4/23/1063 and following.
->>>>>
->>>>> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
->>>>> ---
->>>>>
->>>>> Ideally, we sort out any remaining worries during the 4.17-rc cycle.
->>>>>
->>>>>  drivers/of/overlay.c | 13 ++-----------
->>>>>  1 file changed, 2 insertions(+), 11 deletions(-)
->>>>>
->>>>> diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
->>>>> index b35fe88f1851..3553f1f57a62 100644
->>>>> --- a/drivers/of/overlay.c
->>>>> +++ b/drivers/of/overlay.c
->>>>> @@ -671,17 +671,8 @@ static void free_overlay_changeset(struct overlay_changeset *ovcs)
->>>>>  		of_node_put(ovcs->fragments[i].overlay);
->>>>>  	}
->>>>>  	kfree(ovcs->fragments);
->>>>> -
->>>>> -	/*
->>>>> -	 * TODO
->>>>> -	 *
->>>>> -	 * would like to: kfree(ovcs->overlay_tree);
->>>>> -	 * but can not since drivers may have pointers into this data
->>>>> -	 *
->>>>> -	 * would like to: kfree(ovcs->fdt);
->>>>> -	 * but can not since drivers may have pointers into this data
->>>>> -	 */
->>>>> -
->>>>> +	kfree(ovcs->overlay_tree);
->>>>> +	kfree(ovcs->fdt);
->>>>>  	kfree(ovcs);
->>>>>  }
->>>>>  
->>>>>
->>>>
->>>> Nack.  It is premature to submit this while the conversation is
->>>> continuing in the other thread.
->>>>
->>>> I'll continue the conversation in the other thread.
->>>>
->>>
->>> Well, at least the strongest argument has been resolved now, the
->>> notifier topic. Curious to learn what remains. As I noted, we should
->>> work hard to sort out the API regression prior to the release.
->>
->> Nope, the notifier discussion continues in the other thread.
-> 
-> Thanks for your patience in the other thread.
-> 
-> As I noted there, I am now willing to accept this patch with some
-> small changes.  Please add a minimal section to
-> Documentation/devicetree/overlay-notes.txt about overlay notifiers.
-> The most important thing to note there is that the overlay notifiers
-> are not allowed to retain any pointers into the overlay devicetree.
+--Sig_/SZJBMm3xf5aUcubd9unALkk
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Please also add a function header comment to of_overlay_notifier_register()
-in drivers/of/overlay.c that notes the restriction on the overlay notifier.
+Hi all,
 
+Today's linux-next merge of the bpf-next tree got a conflict in:
 
-> Also, instead of removing the "TODO" comment in free_overlay_changeset(),
-> change it to say something to the effect of "there should be no live pointers
-> into ovcs->overlay_tree and ovcs->fdt due to the policy that overlay
-> notifiers are not allowed to retain pointers into the overlay devicetree".
-> 
-> I will also add myself to the OPEN FIRMWARE AND DEVICE TREE OVERLAYS
-> entry of MAINTAINERS and add a keyword line to catch overlay notifiers.
-> 
-> I am not happy about freeing the overlay devicetree and overlay fdt
-> while overlay notifiers are able to retain pointers into the overlay
-> devicetree and overlay fdt, but am willing to accept documentation and
-> review as a partial protection until the devicetree access APIs can be
-> modified to prevent the notifiers from accessing the pointers.  The
-> volume of overlay notifier patches should be small enough to not be
-> a review burden.
-> 
-> -Frank
-> 
-> 
+  tools/testing/selftests/bpf/.gitignore
+
+between commit:
+
+  0abf854d7cbb ("selftests: bpf: update .gitignore with missing generated f=
+iles")
+
+from the net-next tree and commit:
+
+  b6fd9cf796e6 ("selftests: bpf: update .gitignore with missing file")
+
+from the bpf-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc tools/testing/selftests/bpf/.gitignore
+index 5e1ab2f0eb79,da19f0562bf8..000000000000
+--- a/tools/testing/selftests/bpf/.gitignore
++++ b/tools/testing/selftests/bpf/.gitignore
+@@@ -12,6 -12,4 +12,7 @@@ test_tcpbpf_use
+  test_verifier_log
+  feature
+  test_libbpf_open
++ test_btf
+ +test_sock
+ +test_sock_addr
+ +urandom_read
+
+--Sig_/SZJBMm3xf5aUcubd9unALkk
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrhIf4ACgkQAVBC80lX
+0GzizQf8D+RtAykYa/2oIEiLQQCuO94if/PLvdJBhN5bISiS96IexctZNGwtoRQe
+Ib3jW4wRY9Jsta87L8/VIhj/489qh2EYJgutCRlmP4blbkIV2cuoPw6b4jFAENes
+UqDZ9GNDmoDdlWjoi26INSJNddV21qtBpu+DGdtbmMfS5jL6xPnoJyxPIqxGwdoz
+ce9YOpiXAjc2f2PXXuT6MlM4SUgTVtBYstgTZ0/lH4QksJsF8MqL66e5kuzSlR8x
+mimsBbkchWxUMQfJmjMc83U4J0pbW3ypKeDBah1I9PGVe57O8MF+Ip90bL6+UWla
+5Y5ou9MU+R9Sb53gR9Tg/IOI3Cm5Ng==
+=qhdg
+-----END PGP SIGNATURE-----
+
+--Sig_/SZJBMm3xf5aUcubd9unALkk--
