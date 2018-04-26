@@ -1,50 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753665AbeDZTFS (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 15:05:18 -0400
-Received: from mslow2.mail.gandi.net ([217.70.178.242]:53396 "EHLO
-        slow1-d.mail.gandi.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751481AbeDZTFO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 15:05:14 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert@linux-m68k.org, horms@verge.net.au, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/2]
-Date: Thu, 26 Apr 2018 20:24:41 +0200
-Message-Id: <1524767083-19862-1-git-send-email-jacopo+renesas@jmondi.org>
-X-Mailer: git-send-email 2.7.4
+        id S1754279AbeDZTFU (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 15:05:20 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34003 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751481AbeDZTFT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 15:05:19 -0400
+Date: Thu, 26 Apr 2018 22:05:15 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Mikulas Patocka <mpatocka@redhat.com>
+Cc: James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Michal Hocko <mhocko@kernel.org>, David Rientjes <rientjes@google.com>,
+        dm-devel@redhat.com, eric.dumazet@gmail.com, netdev@vger.kernel.org,
+        jasowang@redhat.com, Randy Dunlap <rdunlap@infradead.org>,
+        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
+        linux-mm@kvack.org, edumazet@google.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        virtualization@lists.linux-foundation.org,
+        David Miller <davem@davemloft.net>, Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [dm-devel] [PATCH v5] fault-injection: introduce kvmalloc
+ fallback options
+Message-ID: <20180426220314-mutt-send-email-mst@kernel.org>
+References: <1524694663.4100.21.camel@HansenPartnership.com>
+ <alpine.LRH.2.02.1804251830540.25124@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180426125817.GO17484@dhcp22.suse.cz>
+ <alpine.LRH.2.02.1804261006120.32722@file01.intranet.prod.int.rdu2.redhat.com>
+ <1524753932.3226.5.camel@HansenPartnership.com>
+ <alpine.LRH.2.02.1804261100170.12157@file01.intranet.prod.int.rdu2.redhat.com>
+ <1524756256.3226.7.camel@HansenPartnership.com>
+ <alpine.LRH.2.02.1804261142480.21152@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180426184845-mutt-send-email-mst@kernel.org>
+ <alpine.LRH.2.02.1804261454380.23716@file01.intranet.prod.int.rdu2.redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LRH.2.02.1804261454380.23716@file01.intranet.prod.int.rdu2.redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-   this small series add R-Mobile A1 R8A7740 to the list of CEU supported
-SoCs, and adds the CEU node to r8a7740.dtsi.
+On Thu, Apr 26, 2018 at 02:58:08PM -0400, Mikulas Patocka wrote:
+> 
+> 
+> On Thu, 26 Apr 2018, Michael S. Tsirkin wrote:
+> 
+> > How do you make sure QA tests a specific corner case? Add it to
+> > the test plan :)
+> 
+> BTW. how many "lines of code" of corporate bureaucracy would that take? :-)
 
-All the information on CEU clocks, power domains and memory regions have been
-deducted from the now-deleted board file:
-arch/arm/mach-shmobile/board-armadillo800eva.c
+It's pretty easy at least here at Red Hat.
 
-Thanks
-   j
-
-v1 -> v2:
-- Enlarge the memory range as suggested by Simon
-- Fix power domain, as reported by Simon
-- s/Enable/[Describe|Add] in commit message
-
-Jacopo Mondi (2):
-  dt-bindings: media: renesas-ceu: Add R-Mobile R8A7740
-  ARM: dts: r8a7740: Add CEU0
-
- Documentation/devicetree/bindings/media/renesas,ceu.txt |  7 ++++---
- arch/arm/boot/dts/r8a7740.dtsi                          | 10 ++++++++++
- drivers/media/platform/renesas-ceu.c                    |  1 +
- 3 files changed, 15 insertions(+), 3 deletions(-)
-
---
-2.7.4
+> > I don't speak for Red Hat, etc.
+> > 
+> > -- 
+> > MST
+> 
+> Mikulas
