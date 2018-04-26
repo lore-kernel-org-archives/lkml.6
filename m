@@ -1,110 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932253AbeDZOJG (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 10:09:06 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54160 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932216AbeDZOI7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 10:08:59 -0400
-Subject: Re: [kvmtool PATCH 21/17] kvmtool: arm: Add support for creating VM
- with PA size
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc: ard.biesheuvel@linaro.org, kvm@vger.kernel.org, marc.zyngier@arm.com,
-        catalin.marinas@arm.com, punit.agrawal@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, kristina.martsenko@arm.com,
-        pbonzini@redhat.com, kvmarm@lists.cs.columbia.edu
-References: <1522156531-28348-1-git-send-email-suzuki.poulose@arm.com>
- <1522156531-28348-22-git-send-email-suzuki.poulose@arm.com>
-From: Julien Grall <julien.grall@arm.com>
-Message-ID: <c660b148-34ae-5409-665f-aadc94669752@arm.com>
-Date: Thu, 26 Apr 2018 15:08:55 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <1522156531-28348-22-git-send-email-suzuki.poulose@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S932270AbeDZOJR (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 10:09:17 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:45845 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932216AbeDZOJO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 10:09:14 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH 2/3] arm64: allwinner: h6: add device tree nodes for MMC controllers
+Date: Thu, 26 Apr 2018 22:07:27 +0800
+Message-Id: <20180426140728.43155-3-icenowy@aosc.io>
+In-Reply-To: <20180426140728.43155-1-icenowy@aosc.io>
+References: <20180426140728.43155-1-icenowy@aosc.io>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Suzuki,
+The Allwinner H6 SoC have 3 MMC controllers.
 
-On 27/03/18 14:15, Suzuki K Poulose wrote:
-> Specify the physical size for the VM encoded in the vm type.
-> 
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> ---
->   arm/include/arm-common/kvm-arch.h |  6 +++++-
->   arm/kvm.c                         | 21 +++++++++++++++++++++
->   2 files changed, 26 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arm/include/arm-common/kvm-arch.h b/arm/include/arm-common/kvm-arch.h
-> index ca7ab0f..64bc92a 100644
-> --- a/arm/include/arm-common/kvm-arch.h
-> +++ b/arm/include/arm-common/kvm-arch.h
-> @@ -42,7 +42,11 @@
->   
->   #define KVM_IRQ_OFFSET		GIC_SPI_IRQ_BASE
->   
-> -#define KVM_VM_TYPE		0
-> +extern unsigned long		kvm_arm_type;
-> +extern void kvm__arch_init_hyp(struct kvm *kvm);
-> +
-> +#define KVM_VM_TYPE		kvm_arm_type
-> +#define kvm__arch_init_hyp	kvm__arch_init_hyp
->   
->   #define VIRTIO_DEFAULT_TRANS(kvm)	\
->   	((kvm)->cfg.arch.virtio_trans_pci ? VIRTIO_PCI : VIRTIO_MMIO)
-> diff --git a/arm/kvm.c b/arm/kvm.c
-> index 5701d41..a9a9140 100644
-> --- a/arm/kvm.c
-> +++ b/arm/kvm.c
-> @@ -11,6 +11,8 @@
->   #include <linux/kvm.h>
->   #include <linux/sizes.h>
->   
-> +unsigned long kvm_arm_type;
-> +
->   struct kvm_ext kvm_req_ext[] = {
->   	{ DEFINE_KVM_EXT(KVM_CAP_IRQCHIP) },
->   	{ DEFINE_KVM_EXT(KVM_CAP_ONE_REG) },
-> @@ -18,6 +20,25 @@ struct kvm_ext kvm_req_ext[] = {
->   	{ 0, 0 },
->   };
->   
-> +#ifndef KVM_ARM_GET_MAX_VM_PHYS_SHIFT
-> +#define KVM_ARM_GET_MAX_VM_PHYS_SHIFT		_IO(KVMIO, 0x0a)
-> +#endif
+Add device tree nodes for them.
 
-Once the IOCTL is agreed, I think you would need to update 
-include/linux/kvm.h.
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 56 ++++++++++++++++++++++++++++
+ 1 file changed, 56 insertions(+)
 
-> +
-> +void kvm__arch_init_hyp(struct kvm *kvm)
-> +{
-> +	unsigned max_ipa;
-> +
-> +	max_ipa = ioctl(kvm->sys_fd, KVM_ARM_GET_MAX_VM_PHYS_SHIFT);
-> +	if (max_ipa < 0)
-> +		max_ipa = 40;
-> +	if (!kvm->cfg.arch.phys_shift)
-> +		kvm->cfg.arch.phys_shift = 40;
-> +	if (kvm->cfg.arch.phys_shift > max_ipa)
-> +		die("Requested PA size (%u) is not supported by the host (%ubits)\n",
-> +		    kvm->cfg.arch.phys_shift, max_ipa);
-> +	kvm_arm_type = kvm->cfg.arch.phys_shift;
-
-FWIW, older Linux will not accept a KVM type other than 0. So I think 
-the best would be to bail out if KVM_ARM_GET_MAX_VM_PHYS_SHIFT does not 
-exist.
-
-For safety, you could even check that arch.phys_shift is always 40 when 
-running under older Linux.
-
-Cheers,
-
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+index 4debc3962830..3cbfc035c979 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+@@ -124,12 +124,68 @@
+ 			interrupt-controller;
+ 			#interrupt-cells = <3>;
+ 
++			mmc0_pins: mmc0-pins {
++				pins = "PF0", "PF1", "PF2", "PF3",
++				       "PF4", "PF5";
++				function = "mmc0";
++				drive-strength = <30>;
++				bias-pull-up;
++			};
++
++			mmc2_pins: mmc2-pins {
++				pins = "PC1", "PC4", "PC5", "PC6",
++				       "PC7", "PC8", "PC9", "PC10",
++				       "PC11", "PC12", "PC13", "PC14";
++				function = "mmc2";
++				drive-strength = <30>;
++				bias-pull-up;
++			};
++
+ 			uart0_ph_pins: uart0-ph {
+ 				pins = "PH0", "PH1";
+ 				function = "uart0";
+ 			};
+ 		};
+ 
++		mmc0: mmc@4020000 {
++			compatible = "allwinner,sun50i-h6-mmc";
++			reg = <0x04020000 0x1000>;
++			clocks = <&ccu CLK_BUS_MMC0>, <&ccu CLK_MMC0>;
++			clock-names = "ahb", "mmc";
++			resets = <&ccu RST_BUS_MMC0>;
++			reset-names = "ahb";
++			interrupts = <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
++			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
++		mmc1: mmc@4021000 {
++			compatible = "allwinner,sun50i-h6-mmc";
++			reg = <0x04021000 0x1000>;
++			clocks = <&ccu CLK_BUS_MMC1>, <&ccu CLK_MMC1>;
++			clock-names = "ahb", "mmc";
++			resets = <&ccu RST_BUS_MMC1>;
++			reset-names = "ahb";
++			interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
++			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
++		mmc2: mmc@4022000 {
++			compatible = "allwinner,sun50i-h6-emmc";
++			reg = <0x04022000 0x1000>;
++			clocks = <&ccu CLK_BUS_MMC2>, <&ccu CLK_MMC2>;
++			clock-names = "ahb", "mmc";
++			resets = <&ccu RST_BUS_MMC2>;
++			reset-names = "ahb";
++			interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
++			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
+ 		uart0: serial@5000000 {
+ 			compatible = "snps,dw-apb-uart";
+ 			reg = <0x05000000 0x400>;
 -- 
-Julien Grall
+2.15.1
