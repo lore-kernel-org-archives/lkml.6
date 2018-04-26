@@ -1,222 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757190AbeDZXn7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 19:43:59 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:35388 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757106AbeDZXny (ORCPT
+        id S1757208AbeDZXoG (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 19:44:06 -0400
+Received: from mail-yw0-f193.google.com ([209.85.161.193]:37503 "EHLO
+        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757082AbeDZXoA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 19:43:54 -0400
-X-Google-Smtp-Source: AB8JxZpXEcUOP3pJ5CNWeVSF9euIoVa0zbw6BjHpXfN0n4UXyqTMVJNBreWD/Ec+o/lVlzEPGYDhsxdfAavYTeWAJVo=
-MIME-Version: 1.0
-In-Reply-To: <CALzJLG8atGxoJNQj4F6wR3kRg7jrj4oQi3O-1i0=UOo+3HPq0w@mail.gmail.com>
-References: <1524775057-8012-1-git-send-email-qing.huang@oracle.com>
- <CALzJLG8=dnyLGRXamLR5-eYJ9Q8WCwKe44sHHZ57=1h_x0RCRA@mail.gmail.com>
- <5cd29779-fc70-930a-7060-ee3332c15558@oracle.com> <CALzJLG8atGxoJNQj4F6wR3kRg7jrj4oQi3O-1i0=UOo+3HPq0w@mail.gmail.com>
-From: Saeed Mahameed <saeedm@dev.mellanox.co.il>
-Date: Thu, 26 Apr 2018 16:43:32 -0700
-Message-ID: <CALzJLG_ROqv1Kby1FbGXFSgB5My4Gj=3cubw=DEts_9_3V3=3A@mail.gmail.com>
-Subject: Re: [PATCH] net/mlx5: report persistent netdev stats across
- ifdown/ifup commands
-To: Qing Huang <qing.huang@oracle.com>
-Cc: Eran Ben Elisha <eranbe@mellanox.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        RDMA mailing list <linux-rdma@vger.kernel.org>,
-        Linux Netdev List <netdev@vger.kernel.org>,
-        Leon Romanovsky <leon@kernel.org>, Matan Barak <matanb@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 26 Apr 2018 19:44:00 -0400
+X-Google-Smtp-Source: AB8JxZqUBFMPG7sdEn9TbRpaA7jJuswlmY0xto7+fyCPsf1hArN2Irq3R1XHLTJTlmDzPVRv64QgPQ==
+From: Igor Stoppa <igor.stoppa@gmail.com>
+X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
+To: willy@infradead.org, mhocko@kernel.org, akpm@linux-foundation.org,
+        linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, igor.stoppa@huawei.com
+Subject: [PATCH 2/2] vmalloc: rename llist field in vmap_area
+Date: Fri, 27 Apr 2018 03:42:43 +0400
+Message-Id: <20180426234243.22267-3-igor.stoppa@huawei.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180426234243.22267-1-igor.stoppa@huawei.com>
+References: <20180426234243.22267-1-igor.stoppa@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 26, 2018 at 4:30 PM, Saeed Mahameed
-<saeedm@dev.mellanox.co.il> wrote:
-> On Thu, Apr 26, 2018 at 3:37 PM, Qing Huang <qing.huang@oracle.com> wrote:
->>
->>
->> On 04/26/2018 02:50 PM, Saeed Mahameed wrote:
->>>
->>> On Thu, Apr 26, 2018 at 1:37 PM, Qing Huang <qing.huang@oracle.com> wrote:
->>>>
->>>> Current stats collecting scheme in mlx5 driver is to periodically fetch
->>>> aggregated stats from all the active mlx5 software channels associated
->>>> with the device. However when a mlx5 interface is brought down(ifdown),
->>>> all the channels will be deactivated and closed. A new set of channels
->>>> will be created when next ifup command or a similar command is called.
->>>> Unfortunately the new channels will have all stats reset to 0. So you
->>>> lose the accumulated stats information. This behavior is different from
->>>> other netdev drivers including the mlx4 driver. In order to fix it, we
->>>> now save prior mlx5 software stats into netdev stats fields, so all the
->>>> accumulated stats will survive multiple runs of ifdown/ifup commands and
->>>> be shown correctly.
->>>>
->>>> Orabug: 27548610
->
-> I don't think we need this internal bug reference, let's remove it.
->
->>>>
->>>> Signed-off-by: Qing Huang <qing.huang@oracle.com>
->>>> ---
->>>
->>> Hi Qing,
->>>
->>> I am adding Eran since he is currently working on a similar patch,
->>> He is also taking care of all cores/rings stats to make them
->>> persistent, so you won't have discrepancy  between
->>> ethtool and ifconfig stats.
->>>
->>> I am ok with this patch, but this means Eran has to work his way around
->>> it.
->>>
->>> so we have two options:
->>>
->>> 1. Temporary accept this patch, and change it later with Eran's work.
->>> 2. Wait for Eran's work.
->>>
->>> I am ok with either one of them, please let me know.
->>>
->>> Thanks !
->>
->> Hi Saeed,
->>
->> Any idea on rough ETA of Eran's stats work to be in upstream? If it will be
->
-> All i know that it is planned for v4.18.
->
->> available soon, I think
->> we can wait a bit. If it will take a while to redesign the whole stats
->> scheme (for both ethtool and ifconfig),
->> maybe we can go with this incremental fix first?
->>
+The vmap_area structure has a field of type struct llist_node, named
+purge_list and is used when performing lazy purge of the area.
 
-Qing,
+Such field is left unused during the actual utilization of the
+structure.
 
-Before you address my comments, it looks like Eran's work is
-converging and we will finalize the internal
-review next week, in which case submission will take 2-3 weeks from today.
+This patch renames the field to a more generic "area_list", to allow for
+utilization outside of the purging phase.
 
-So i suggest to wait.
+Since the purging happens after the vmap_area is dismissed, its use is
+mutually exclusive with any use performed while the area is allocated.
 
-please checkout:
-https://git.kernel.org/pub/scm/linux/kernel/git/saeed/linux.git/commit/?h=testing/mlx5e-stats&id=15ffb7f87432d073e8ac0e6b895188d40fdda4d4
+Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
+---
+ include/linux/vmalloc.h | 2 +-
+ mm/vmalloc.c            | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
->
-> Yes we can go with incremental fix,
-> but let's fix the commit message as requested above and make the patch
-> title prefix "net/mlx5e:"
-> since this is a mlx5 netdev related change, not mlx5/core.
-> also please see a comments below.
->
-> Thanks,
-> Saeed.
->
->> Thanks!
->>
->>
->>>
->>>>   drivers/net/ethernet/mellanox/mlx5/core/en_main.c | 30
->>>> +++++++++++++++++++----
->>>>   1 file changed, 25 insertions(+), 5 deletions(-)
->>>>
->>>> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
->>>> b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
->>>> index f1fe490..5d50e69 100644
->>>> --- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
->>>> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
->>>> @@ -2621,6 +2621,23 @@ static void mlx5e_netdev_set_tcs(struct net_device
->>>> *netdev)
->>>>                  netdev_set_tc_queue(netdev, tc, nch, 0);
->>>>   }
->>>>
->>>> +static void mlx5e_netdev_save_stats(struct mlx5e_priv *priv)
->>>> +{
->>>> +       struct net_device *netdev = priv->netdev;
->>>> +
->>>> +       netdev->stats.rx_packets += priv->stats.sw.rx_packets;
->>>> +       netdev->stats.rx_bytes   += priv->stats.sw.rx_bytes;
->>>> +       netdev->stats.tx_packets += priv->stats.sw.tx_packets;
->>>> +       netdev->stats.tx_bytes   += priv->stats.sw.tx_bytes;
->>>> +       netdev->stats.tx_dropped += priv->stats.sw.tx_queue_dropped;
->>>> +
->>>> +       priv->stats.sw.rx_packets       = 0;
->>>> +       priv->stats.sw.rx_bytes         = 0;
->>>> +       priv->stats.sw.tx_packets       = 0;
->>>> +       priv->stats.sw.tx_bytes         = 0;
->>>> +       priv->stats.sw.tx_queue_dropped = 0;
->
-> Note: it is safe to do this here since writing to priv->stats.sw is
-> currently done under priv->state_lock,
-> Please add a comment to this function that it must be called under
-> priv->state_lock
->
->>>> +}
->>>> +
->>>
->>> This means that we are now explicitly clearing channels stats on
->>> ifconfig down or switch_channels.
->>> and now after ifconfing down, ethtool will always show 0, before this
->>> patch it didn't.
->>> Anyway update sw stats function will always override them with the new
->>> channels stats next time we load new channels.
->>> so it is not that big of a deal.
->>>
->>>
->>>>   static void mlx5e_build_channels_tx_maps(struct mlx5e_priv *priv)
->>>>   {
->>>>          struct mlx5e_channel *c;
->>>> @@ -2691,6 +2708,7 @@ void mlx5e_switch_priv_channels(struct mlx5e_priv
->>>> *priv,
->>>>                  netif_set_real_num_tx_queues(netdev, new_num_txqs);
->>>>
->>>>          mlx5e_deactivate_priv_channels(priv);
->>>> +       mlx5e_netdev_save_stats(priv);
->
-> This function call doesn't have to be between deactivate and close,
-> lets move it to after
-> mlx5e_close_channels here and below to avoid confusion.
->
-> also you need to accumulate what is left in the rings/channels stats,
-> before calling
-> mlx5e_close_channels, see mlx5e_grp_sw_update_stats.
->
->>>>          mlx5e_close_channels(&priv->channels);
->>>>
->>>>          priv->channels = *new_chs;
->>>> @@ -2770,6 +2788,7 @@ int mlx5e_close_locked(struct net_device *netdev)
->>>>
->>>>          netif_carrier_off(priv->netdev);
->>>>          mlx5e_deactivate_priv_channels(priv);
->>>> +       mlx5e_netdev_save_stats(priv);
->>>>          mlx5e_close_channels(&priv->channels);
->>>>
->>>>          return 0;
->>>> @@ -3215,11 +3234,12 @@ static int mlx5e_setup_tc(struct net_device *dev,
->>>> enum tc_setup_type type,
->>>>                  stats->tx_packets = PPORT_802_3_GET(pstats,
->>>> a_frames_transmitted_ok);
->>>>                  stats->tx_bytes   = PPORT_802_3_GET(pstats,
->>>> a_octets_transmitted_ok);
->>>>          } else {
->>>> -               stats->rx_packets = sstats->rx_packets;
->>>> -               stats->rx_bytes   = sstats->rx_bytes;
->>>> -               stats->tx_packets = sstats->tx_packets;
->>>> -               stats->tx_bytes   = sstats->tx_bytes;
->>>> -               stats->tx_dropped = sstats->tx_queue_dropped;
->>>> +               stats->rx_packets = sstats->rx_packets +
->>>> dev->stats.rx_packets;
->>>> +               stats->rx_bytes   = sstats->rx_bytes +
->>>> dev->stats.rx_bytes;
->>>> +               stats->tx_packets = sstats->tx_packets +
->>>> dev->stats.tx_packets;
->>>> +               stats->tx_bytes   = sstats->tx_bytes +
->>>> dev->stats.tx_bytes;
->>>> +               stats->tx_dropped = sstats->tx_queue_dropped +
->>>> +                                   dev->stats.tx_dropped;
->>>>          }
->>>>
->>>>          stats->rx_dropped = priv->stats.qcnt.rx_out_of_buffer;
->>>> --
->>>> 1.8.3.1
->>>>
->>
+diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
+index 1e5d8c392f15..2d07dfef3cfd 100644
+--- a/include/linux/vmalloc.h
++++ b/include/linux/vmalloc.h
+@@ -47,7 +47,7 @@ struct vmap_area {
+ 	unsigned long flags;
+ 	struct rb_node rb_node;         /* address sorted rbtree */
+ 	struct list_head list;          /* address sorted list */
+-	struct llist_node purge_list;    /* "lazy purge" list */
++	struct llist_node area_list;    /* generic list of areas */
+ 	struct vm_struct *vm;
+ 	struct rcu_head rcu_head;
+ };
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index 61a1ca22b0f6..1bb2233bb262 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -682,7 +682,7 @@ static bool __purge_vmap_area_lazy(unsigned long start, unsigned long end)
+ 	lockdep_assert_held(&vmap_purge_lock);
+ 
+ 	valist = llist_del_all(&vmap_purge_list);
+-	llist_for_each_entry(va, valist, purge_list) {
++	llist_for_each_entry(va, valist, area_list) {
+ 		if (va->va_start < start)
+ 			start = va->va_start;
+ 		if (va->va_end > end)
+@@ -696,7 +696,7 @@ static bool __purge_vmap_area_lazy(unsigned long start, unsigned long end)
+ 	flush_tlb_kernel_range(start, end);
+ 
+ 	spin_lock(&vmap_area_lock);
+-	llist_for_each_entry_safe(va, n_va, valist, purge_list) {
++	llist_for_each_entry_safe(va, n_va, valist, area_list) {
+ 		int nr = (va->va_end - va->va_start) >> PAGE_SHIFT;
+ 
+ 		__free_vmap_area(va);
+@@ -743,7 +743,7 @@ static void free_vmap_area_noflush(struct vmap_area *va)
+ 				    &vmap_lazy_nr);
+ 
+ 	/* After this point, we may free va at any time */
+-	llist_add(&va->purge_list, &vmap_purge_list);
++	llist_add(&va->area_list, &vmap_purge_list);
+ 
+ 	if (unlikely(nr_lazy > lazy_max_pages()))
+ 		try_purge_vmap_area_lazy();
+-- 
+2.14.1
