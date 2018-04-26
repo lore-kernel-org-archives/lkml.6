@@ -1,78 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756968AbeDZRcL (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 13:32:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46358 "EHLO mail.kernel.org"
+        id S932293AbeDZRcj (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 13:32:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46440 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755998AbeDZRcD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 13:32:03 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 915BE21745
+        id S1756804AbeDZRcE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 13:32:04 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AA6A21835
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Message-Id: <20180426173039.426131207@goodmis.org>
+Message-Id: <20180426173202.268314519@goodmis.org>
 User-Agent: quilt/0.63-1
-Date: Thu, 26 Apr 2018 13:30:39 -0400
+Date: Thu, 26 Apr 2018 13:30:44 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Linus Torvalds <torvalds@linux-foundation.org>,
         Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 0/7] [GIT PULL] tracing: Fixes for v4.17-rc1
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: [PATCH 5/7] selftests: ftrace: Fix trigger extended error testcase
+References: <20180426173039.426131207@goodmis.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Disposition: inline; filename=0005-selftests-ftrace-Fix-trigger-extended-error-testcase.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-Linus,
+Previous testcase redirects echo-out into /dev/null
+using "&>" as below
 
-Following tracing fixes:
+echo "trigger-command" >> trigger &> /dev/null
 
- - Add workqueue forward declaration (for new work, but a nice clean up)
+But this means redirecting both stdout and stderr into
+/dev/null because it is same as below
 
- - seftest fixes for the new histogram code
+echo "trigger-command" >> trigger > /dev/null 2>&1
 
- - Print output fix for hwlat tracer
+So ">> trigger" redirects stdout to trigger file, but
+next "> /dev/null" redirects stdout to /dev/null again
+and the last "2>/&1" redirects stderr to stdout (/dev/null)
 
- - Fix missing system call events - due to change in x86 syscall naming
+This fixes it by "2> /dev/null". And also, since it
+must fail, add "!" to echo command.
 
- - Fix kprobe address being used by perf being hashed
+Link: http://lkml.kernel.org/r/152292052250.15769.12565292689264162435.stgit@devbox
 
-Please pull the latest trace-v4.17-rc1 tree, which can be found at:
+Fixes: f06eec4d0f2c ("selftests: ftrace: Add inter-event hist triggers testcases")
+Reviewed-by: Tom Zanussi <tom.zanussi@linux.intel.com>
+Tested-by: Tom Zanussi <tom.zanussi@linux.intel.com>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+ .../ftrace/test.d/trigger/inter-event/trigger-extended-error-support.tc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
-trace-v4.17-rc1
-
-Tag SHA1: c9521e0e3e53b547e39eff37bf58baf2ec146c9d
-Head SHA1: 9a0fd675304d410f3a9586e1b333e16f4658d56c
-
-
-Ahbong Chang (1):
-      tracing: Add missing forward declaration
-
-Masami Hiramatsu (2):
-      selftests: ftrace: Fix trigger extended error testcase
-      selftests: ftrace: Add a testcase for multiple actions on trigger
-
-Peter Xu (1):
-      tracing: Fix missing tab for hwlat_detector print format
-
-Ravi Bangoria (1):
-      tracing: Fix kernel crash while using empty filter with perf
-
-Steven Rostedt (VMware) (1):
-      tracing/x86: Update syscall trace events to handle new prefixed syscall func names
-
-Thomas Richter (1):
-      kprobes: Fix random address output of blacklist file
-
-----
- arch/x86/include/asm/ftrace.h                      | 19 +++++++++-
- include/trace/events/workqueue.h                   |  2 +
- kernel/kprobes.c                                   |  2 +-
- kernel/trace/trace_entries.h                       |  2 +-
- kernel/trace/trace_events_filter.c                 | 14 +++----
- .../inter-event/trigger-extended-error-support.tc  |  2 +-
- .../inter-event/trigger-multi-actions-accept.tc    | 44 ++++++++++++++++++++++
- 7 files changed, 73 insertions(+), 12 deletions(-)
- create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-multi-actions-accept.tc
+diff --git a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-extended-error-support.tc b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-extended-error-support.tc
+index 786dce7e48be..2aabab363cfb 100644
+--- a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-extended-error-support.tc
++++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-extended-error-support.tc
+@@ -29,7 +29,7 @@ do_reset
+ 
+ echo "Test extended error support"
+ echo 'hist:keys=pid:ts0=common_timestamp.usecs if comm=="ping"' > events/sched/sched_wakeup/trigger
+-echo 'hist:keys=pid:ts0=common_timestamp.usecs if comm=="ping"' >> events/sched/sched_wakeup/trigger &>/dev/null
++! echo 'hist:keys=pid:ts0=common_timestamp.usecs if comm=="ping"' >> events/sched/sched_wakeup/trigger 2> /dev/null
+ if ! grep -q "ERROR:" events/sched/sched_wakeup/hist; then
+     fail "Failed to generate extended error in histogram"
+ fi
+-- 
+2.16.3
