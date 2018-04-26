@@ -1,1011 +1,206 @@
-Date: Thu, 26 Apr 2018 14:58:04 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
-	torvalds@linux-foundation.org, stable@vger.kernel.org
-Cc: lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
-Subject: Re: Linux 4.16.5
-Message-ID: <20180426125804.GB12833@kroah.com>
-References: <20180426125759.GA12833@kroah.com>
+Return-Path: <DavidWang@zhaoxin.com>
+X-Google-Smtp-Source: AIpwx4/Bkys7hKrZ4P6FTX5jluBERanMQ1VQiyMR7UOkDVuJNRyaCubYnvRGI1IJcXteajoJbHvy
+ARC-Seal: i=1; a=rsa-sha256; t=1524739655; cv=none;
+        d=google.com; s=arc-20160816;
+        b=NUycyBuiDqcQG46GQ/jBCibIVQas9y69d97jO3BtseT1sCq+mDzhr23Skkt8fXvJid
+         KxivHRyCCMb6wmO8jrrxbxkeaLl3Edv6zrYtD0PEFomhriW7h9JyFtjImmMjcZlw4rd8
+         2kBAnf+Wio289RqKDEWxGZswEPtaEOUrZiebTgtj5Jvwv64v/hU1PHd/Lp/PwnqA95wx
+         Jj4/RCzQqLEX1Om1q3xTivgVEWc3oIXSXNEJlzm5Ld7EesSSAN6iiIpMph/nj1rH5exY
+         +viks0/Q/lnD1jNThh3GTPeaqFafCy3oCaXHPsel61EUpcKfDnasVuDWFAI4pKwPcbE5
+         PyVA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=3wA/lSlupvgTpYom109prSUkanAkjG9YdBpCfj1gGyQ=;
+        b=Zp7Hlpl6M5eyUEXN8OwaGMf3fJKqMnaBnFhxctKz6c9G3Qc3EBCOMlwjgCEmclzpOf
+         a83CT3vRwaY62BlCU/A6SGU6BVrdr/ILUbBFQxXZ3XSOnRaARES4t0BM7VFj5xLgZFGQ
+         rav3uc1Gc4OViF65+NPthNmXcrq1q5Uoh0+j4ZJO1zYFuXsRSVXAw5c1budGfGO3B+hg
+         TmO+leX9HNYCiH9Ix/xrH+HiWHo1s5YfbZxPcnV4i9hOtiNrKEfa9m52RrH/rnbrUppB
+         jZXM5neiA4R25hMI5KsK3KBMzL6JHws78pCJwBwoJVoXOzJDatHo9GAatsZU8BAEpL4P
+         TQTA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=neutral (google.com: 203.148.12.81 is neither permitted nor denied by best guess record for domain of davidwang@zhaoxin.com) smtp.mailfrom=DavidWang@zhaoxin.com
+Authentication-Results: mx.google.com;
+       spf=neutral (google.com: 203.148.12.81 is neither permitted nor denied by best guess record for domain of davidwang@zhaoxin.com) smtp.mailfrom=DavidWang@zhaoxin.com
+From: David Wang <davidwang@zhaoxin.com>
+To: <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
+	<gregkh@linuxfoundation.org>, <x86@kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <brucechang@via-alliance.com>, <cooperyan@zhaoxin.com>,
+	<qiyuanwang@zhaoxin.com>, <benjaminpan@viatech.com>, <lukelin@viacpu.com>,
+	<timguo@zhaoxin.com>, David Wang <davidwang@zhaoxin.com>
+Subject: [PATCH v3] report correct CPU/cache topology
+Date: Thu, 26 Apr 2018 18:47:27 +0800
+Message-ID: <1524739647-30980-1-git-send-email-davidwang@zhaoxin.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180426125759.GA12833@kroah.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain
+X-Originating-IP: [10.29.8.54]
+X-ClientProxiedBy: zxbjmbx1.zhaoxin.com (10.29.252.163) To
+ zxbjmbx3.zhaoxin.com (10.29.252.165)
+X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1598805408410089263?=
+X-GMAIL-MSGID: =?utf-8?q?1598805408410089263?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-diff --git a/Makefile b/Makefile
-index d51175192ac1..6678a90f355b 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- VERSION = 4
- PATCHLEVEL = 16
--SUBLEVEL = 4
-+SUBLEVEL = 5
- EXTRAVERSION =
- NAME = Fearless Coyote
+Centaur CPUs enumerate the cache topology in the same way as Intel CPUs,
+but the function is unused so far.
+The Centaur init code also misses to initialize x86_info::max_cores, so
+the CPU topology can't be described correctly.
+
+Initialize x86_info::max_cores and invoke init_intel_cachinfo() to make
+CPU and cache topology information avaliable and correct
+
+Signed-off-by: David Wang <davidwang@zhaoxin.com>
+
+Changes from v2 to v3:
+*1 define new detect_num_cpu_cores() in common.c to replace the original
+intel_num_cpu_cores;  
+*2 move cpu_detect_cache_sizes inside init_intel_cacheinfo.
+
+Changes from v1 to v2:
+*1 replace centaur_num_cpu_cores with early_init_centaur_mc according to 
+suggestions from tglx;
+*2 call cpu_detect_cache_sizes when init_intel_cacheinfo returns 0. For
+some very old Centaur CPUs can't support the mechanisms defined in init_
+intel_cacheinfo.
+
+---
+ arch/x86/include/asm/processor.h      |  1 +
+ arch/x86/kernel/cpu/centaur.c         |  5 +++++
+ arch/x86/kernel/cpu/common.c          | 14 ++++++++++++++
+ arch/x86/kernel/cpu/intel.c           | 28 ++--------------------------
+ arch/x86/kernel/cpu/intel_cacheinfo.c |  6 ++++++
+ 5 files changed, 28 insertions(+), 26 deletions(-)
+
+diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+index 21a1149..96e9070 100644
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -192,6 +192,7 @@ extern u32 get_scattered_cpuid_leaf(unsigned int level,
+ 				    enum cpuid_regs_idx reg);
+ extern unsigned int init_intel_cacheinfo(struct cpuinfo_x86 *c);
+ extern void init_amd_cacheinfo(struct cpuinfo_x86 *c);
++extern int detect_num_cpu_cores(struct cpuinfo_x86 *c);
  
-diff --git a/arch/x86/kernel/acpi/boot.c b/arch/x86/kernel/acpi/boot.c
-index 5ee33a6e33bb..9bf2a1a4bd22 100644
---- a/arch/x86/kernel/acpi/boot.c
-+++ b/arch/x86/kernel/acpi/boot.c
-@@ -215,6 +215,10 @@ acpi_parse_x2apic(struct acpi_subtable_header *header, const unsigned long end)
- 	apic_id = processor->local_apic_id;
- 	enabled = processor->lapic_flags & ACPI_MADT_ENABLED;
+ extern void detect_extended_topology(struct cpuinfo_x86 *c);
+ extern void detect_ht(struct cpuinfo_x86 *c);
+diff --git a/arch/x86/kernel/cpu/centaur.c b/arch/x86/kernel/cpu/centaur.c
+index 80d5110..c265494 100644
+--- a/arch/x86/kernel/cpu/centaur.c
++++ b/arch/x86/kernel/cpu/centaur.c
+@@ -160,6 +160,11 @@ static void init_centaur(struct cpuinfo_x86 *c)
+ 	clear_cpu_cap(c, 0*32+31);
+ #endif
+ 	early_init_centaur(c);
++	init_intel_cacheinfo(c);
++	c->x86_max_cores = detect_num_cpu_cores(c);
++#ifdef CONFIG_X86_32
++	detect_ht(c);
++#endif
  
-+	/* Ignore invalid ID */
-+	if (apic_id == 0xffffffff)
-+		return 0;
+ 	if (c->cpuid_level > 9) {
+ 		unsigned int eax = cpuid_eax(10);
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 8a5b185..0c80d50 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -577,6 +577,20 @@ static void get_model_name(struct cpuinfo_x86 *c)
+ 	*(s + 1) = '\0';
+ }
+ 
++int detect_num_cpu_cores(struct cpuinfo_x86 *c)
++{
++	unsigned int eax, ebx, ecx, edx;
 +
- 	/*
- 	 * We need to register disabled CPU as well to permit
- 	 * counting disabled CPUs. This allows us to size
-diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
-index fb4302738410..3615c0f255e9 100644
---- a/arch/x86/kernel/tsc.c
-+++ b/arch/x86/kernel/tsc.c
-@@ -317,7 +317,7 @@ static unsigned long calc_hpet_ref(u64 deltatsc, u64 hpet1, u64 hpet2)
- 	hpet2 -= hpet1;
- 	tmp = ((u64)hpet2 * hpet_readl(HPET_PERIOD));
- 	do_div(tmp, 1000000);
--	do_div(deltatsc, tmp);
-+	deltatsc = div64_u64(deltatsc, tmp);
- 
- 	return (unsigned long) deltatsc;
- }
-diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-index 763bb3bade63..8494dbae41b9 100644
---- a/arch/x86/kvm/mmu.c
-+++ b/arch/x86/kvm/mmu.c
-@@ -3031,7 +3031,7 @@ static int kvm_handle_bad_page(struct kvm_vcpu *vcpu, gfn_t gfn, kvm_pfn_t pfn)
- 		return RET_PF_RETRY;
- 	}
- 
--	return RET_PF_EMULATE;
-+	return -EFAULT;
- }
- 
- static void transparent_hugepage_adjust(struct kvm_vcpu *vcpu,
-diff --git a/drivers/clocksource/timer-imx-tpm.c b/drivers/clocksource/timer-imx-tpm.c
-index 21bffdcb2f20..557ed25b42e3 100644
---- a/drivers/clocksource/timer-imx-tpm.c
-+++ b/drivers/clocksource/timer-imx-tpm.c
-@@ -105,7 +105,7 @@ static int tpm_set_next_event(unsigned long delta,
- 	 * of writing CNT registers which may cause the min_delta event got
- 	 * missed, so we need add a ETIME check here in case it happened.
- 	 */
--	return (int)((next - now) <= 0) ? -ETIME : 0;
-+	return (int)(next - now) <= 0 ? -ETIME : 0;
- }
- 
- static int tpm_set_state_oneshot(struct clock_event_device *evt)
-diff --git a/drivers/gpu/drm/drm_dp_dual_mode_helper.c b/drivers/gpu/drm/drm_dp_dual_mode_helper.c
-index 02a50929af67..e7f4fe2848a5 100644
---- a/drivers/gpu/drm/drm_dp_dual_mode_helper.c
-+++ b/drivers/gpu/drm/drm_dp_dual_mode_helper.c
-@@ -350,19 +350,44 @@ int drm_dp_dual_mode_set_tmds_output(enum drm_dp_dual_mode_type type,
++	if (!IS_ENABLED(CONFIG_SMP) || c->cpuid_level < 4)
++		return 1;
++
++	cpuid_count(4, 0, &eax, &ebx, &ecx, &edx);
++	if (eax & 0x1f)
++		return (eax >> 26) + 1;
++	else
++		return 1;
++}
++
+ void cpu_detect_cache_sizes(struct cpuinfo_x86 *c)
  {
- 	uint8_t tmds_oen = enable ? 0 : DP_DUAL_MODE_TMDS_DISABLE;
- 	ssize_t ret;
-+	int retry;
- 
- 	if (type < DRM_DP_DUAL_MODE_TYPE2_DVI)
- 		return 0;
- 
--	ret = drm_dp_dual_mode_write(adapter, DP_DUAL_MODE_TMDS_OEN,
--				     &tmds_oen, sizeof(tmds_oen));
--	if (ret) {
--		DRM_DEBUG_KMS("Failed to %s TMDS output buffers\n",
--			      enable ? "enable" : "disable");
--		return ret;
-+	/*
-+	 * LSPCON adapters in low-power state may ignore the first write, so
-+	 * read back and verify the written value a few times.
-+	 */
-+	for (retry = 0; retry < 3; retry++) {
-+		uint8_t tmp;
-+
-+		ret = drm_dp_dual_mode_write(adapter, DP_DUAL_MODE_TMDS_OEN,
-+					     &tmds_oen, sizeof(tmds_oen));
-+		if (ret) {
-+			DRM_DEBUG_KMS("Failed to %s TMDS output buffers (%d attempts)\n",
-+				      enable ? "enable" : "disable",
-+				      retry + 1);
-+			return ret;
-+		}
-+
-+		ret = drm_dp_dual_mode_read(adapter, DP_DUAL_MODE_TMDS_OEN,
-+					    &tmp, sizeof(tmp));
-+		if (ret) {
-+			DRM_DEBUG_KMS("I2C read failed during TMDS output buffer %s (%d attempts)\n",
-+				      enable ? "enabling" : "disabling",
-+				      retry + 1);
-+			return ret;
-+		}
-+
-+		if (tmp == tmds_oen)
-+			return 0;
- 	}
- 
--	return 0;
-+	DRM_DEBUG_KMS("I2C write value mismatch during TMDS output buffer %s\n",
-+		      enable ? "enabling" : "disabling");
-+
-+	return -EIO;
- }
- EXPORT_SYMBOL(drm_dp_dual_mode_set_tmds_output);
- 
-diff --git a/drivers/gpu/drm/i915/gvt/dmabuf.c b/drivers/gpu/drm/i915/gvt/dmabuf.c
-index 2fb7b34ef561..82cd2fbe2cb3 100644
---- a/drivers/gpu/drm/i915/gvt/dmabuf.c
-+++ b/drivers/gpu/drm/i915/gvt/dmabuf.c
-@@ -323,6 +323,7 @@ static void update_fb_info(struct vfio_device_gfx_plane_info *gvt_dmabuf,
- 		      struct intel_vgpu_fb_info *fb_info)
- {
- 	gvt_dmabuf->drm_format = fb_info->drm_format;
-+	gvt_dmabuf->drm_format_mod = fb_info->drm_format_mod;
- 	gvt_dmabuf->width = fb_info->width;
- 	gvt_dmabuf->height = fb_info->height;
- 	gvt_dmabuf->stride = fb_info->stride;
-diff --git a/drivers/gpu/drm/i915/gvt/kvmgt.c b/drivers/gpu/drm/i915/gvt/kvmgt.c
-index 021f722e2481..f34d7f1e6c4e 100644
---- a/drivers/gpu/drm/i915/gvt/kvmgt.c
-+++ b/drivers/gpu/drm/i915/gvt/kvmgt.c
-@@ -1284,7 +1284,7 @@ static long intel_vgpu_ioctl(struct mdev_device *mdev, unsigned int cmd,
- 
- 	}
- 
--	return 0;
-+	return -ENOTTY;
+ 	unsigned int n, dummy, ebx, ecx, edx, l2size;
+diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+index b9693b8..e1138da 100644
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -453,24 +453,6 @@ static void srat_detect_node(struct cpuinfo_x86 *c)
+ #endif
  }
  
- static ssize_t
-diff --git a/drivers/gpu/drm/i915/i915_gem_execbuffer.c b/drivers/gpu/drm/i915/i915_gem_execbuffer.c
-index 3ab1ace2a6bd..df505868d65a 100644
---- a/drivers/gpu/drm/i915/i915_gem_execbuffer.c
-+++ b/drivers/gpu/drm/i915/i915_gem_execbuffer.c
-@@ -728,7 +728,7 @@ static int eb_lookup_vmas(struct i915_execbuffer *eb)
- 
- 		err = radix_tree_insert(handles_vma, handle, vma);
- 		if (unlikely(err)) {
--			kfree(lut);
-+			kmem_cache_free(eb->i915->luts, lut);
- 			goto err_obj;
- 		}
- 
-diff --git a/drivers/gpu/drm/i915/intel_audio.c b/drivers/gpu/drm/i915/intel_audio.c
-index 4a01f62a392d..0ef7856d8155 100644
---- a/drivers/gpu/drm/i915/intel_audio.c
-+++ b/drivers/gpu/drm/i915/intel_audio.c
-@@ -729,7 +729,7 @@ static void i915_audio_component_codec_wake_override(struct device *kdev,
- 	struct drm_i915_private *dev_priv = kdev_to_i915(kdev);
- 	u32 tmp;
- 
--	if (!IS_GEN9_BC(dev_priv))
-+	if (!IS_GEN9(dev_priv))
- 		return;
- 
- 	i915_audio_component_get_power(kdev);
-diff --git a/drivers/gpu/drm/i915/intel_bios.c b/drivers/gpu/drm/i915/intel_bios.c
-index b49a2df44430..9b992e1b5996 100644
---- a/drivers/gpu/drm/i915/intel_bios.c
-+++ b/drivers/gpu/drm/i915/intel_bios.c
-@@ -1255,7 +1255,6 @@ static void parse_ddi_port(struct drm_i915_private *dev_priv, enum port port,
- 		return;
- 
- 	aux_channel = child->aux_channel;
--	ddc_pin = child->ddc_pin;
- 
- 	is_dvi = child->device_type & DEVICE_TYPE_TMDS_DVI_SIGNALING;
- 	is_dp = child->device_type & DEVICE_TYPE_DISPLAYPORT_OUTPUT;
-@@ -1302,9 +1301,15 @@ static void parse_ddi_port(struct drm_i915_private *dev_priv, enum port port,
- 		DRM_DEBUG_KMS("Port %c is internal DP\n", port_name(port));
- 
- 	if (is_dvi) {
--		info->alternate_ddc_pin = map_ddc_pin(dev_priv, ddc_pin);
+-/*
+- * find out the number of processor cores on the die
+- */
+-static int intel_num_cpu_cores(struct cpuinfo_x86 *c)
+-{
+-	unsigned int eax, ebx, ecx, edx;
 -
--		sanitize_ddc_pin(dev_priv, port);
-+		ddc_pin = map_ddc_pin(dev_priv, child->ddc_pin);
-+		if (intel_gmbus_is_valid_pin(dev_priv, ddc_pin)) {
-+			info->alternate_ddc_pin = ddc_pin;
-+			sanitize_ddc_pin(dev_priv, port);
-+		} else {
-+			DRM_DEBUG_KMS("Port %c has invalid DDC pin %d, "
-+				      "sticking to defaults\n",
-+				      port_name(port), ddc_pin);
-+		}
- 	}
- 
- 	if (is_dp) {
-diff --git a/drivers/gpu/drm/vc4/vc4_bo.c b/drivers/gpu/drm/vc4/vc4_bo.c
-index 2decc8e2c79f..add9cc97a3b6 100644
---- a/drivers/gpu/drm/vc4/vc4_bo.c
-+++ b/drivers/gpu/drm/vc4/vc4_bo.c
-@@ -195,6 +195,7 @@ static void vc4_bo_destroy(struct vc4_bo *bo)
- 	vc4_bo_set_label(obj, -1);
- 
- 	if (bo->validated_shader) {
-+		kfree(bo->validated_shader->uniform_addr_offsets);
- 		kfree(bo->validated_shader->texture_samples);
- 		kfree(bo->validated_shader);
- 		bo->validated_shader = NULL;
-@@ -591,6 +592,7 @@ void vc4_free_object(struct drm_gem_object *gem_bo)
- 	}
- 
- 	if (bo->validated_shader) {
-+		kfree(bo->validated_shader->uniform_addr_offsets);
- 		kfree(bo->validated_shader->texture_samples);
- 		kfree(bo->validated_shader);
- 		bo->validated_shader = NULL;
-diff --git a/drivers/gpu/drm/vc4/vc4_validate_shaders.c b/drivers/gpu/drm/vc4/vc4_validate_shaders.c
-index d3f15bf60900..7cf82b071de2 100644
---- a/drivers/gpu/drm/vc4/vc4_validate_shaders.c
-+++ b/drivers/gpu/drm/vc4/vc4_validate_shaders.c
-@@ -942,6 +942,7 @@ vc4_validate_shader(struct drm_gem_cma_object *shader_obj)
- fail:
- 	kfree(validation_state.branch_targets);
- 	if (validated_shader) {
-+		kfree(validated_shader->uniform_addr_offsets);
- 		kfree(validated_shader->texture_samples);
- 		kfree(validated_shader);
- 	}
-diff --git a/drivers/infiniband/hw/mlx5/qp.c b/drivers/infiniband/hw/mlx5/qp.c
-index a2e1aa86e133..6c424afea25f 100644
---- a/drivers/infiniband/hw/mlx5/qp.c
-+++ b/drivers/infiniband/hw/mlx5/qp.c
-@@ -3157,7 +3157,8 @@ static int __mlx5_ib_modify_qp(struct ib_qp *ibqp,
- 	 * If we moved a kernel QP to RESET, clean up all old CQ
- 	 * entries and reinitialize the QP.
- 	 */
--	if (new_state == IB_QPS_RESET && !ibqp->uobject) {
-+	if (new_state == IB_QPS_RESET &&
-+	    !ibqp->uobject && ibqp->qp_type != IB_QPT_XRC_TGT) {
- 		mlx5_ib_cq_clean(recv_cq, base->mqp.qpn,
- 				 ibqp->srq ? to_msrq(ibqp->srq) : NULL);
- 		if (send_cq != recv_cq)
-diff --git a/drivers/net/wireless/mac80211_hwsim.c b/drivers/net/wireless/mac80211_hwsim.c
-index 35b21f8152bb..20af54378cc0 100644
---- a/drivers/net/wireless/mac80211_hwsim.c
-+++ b/drivers/net/wireless/mac80211_hwsim.c
-@@ -3484,8 +3484,11 @@ static void __net_exit hwsim_exit_net(struct net *net)
- 		list_del(&data->list);
- 		rhashtable_remove_fast(&hwsim_radios_rht, &data->rht,
- 				       hwsim_rht_params);
--		INIT_WORK(&data->destroy_work, destroy_radio);
--		queue_work(hwsim_wq, &data->destroy_work);
-+		spin_unlock_bh(&hwsim_radio_lock);
-+		mac80211_hwsim_del_radio(data,
-+					 wiphy_name(data->hw->wiphy),
-+					 NULL);
-+		spin_lock_bh(&hwsim_radio_lock);
- 	}
- 	spin_unlock_bh(&hwsim_radio_lock);
- }
-diff --git a/fs/btrfs/delayed-ref.c b/fs/btrfs/delayed-ref.c
-index 7ab5e0128f0c..1e9a20a4c06c 100644
---- a/fs/btrfs/delayed-ref.c
-+++ b/fs/btrfs/delayed-ref.c
-@@ -553,8 +553,10 @@ add_delayed_ref_head(struct btrfs_fs_info *fs_info,
- 		     struct btrfs_delayed_ref_head *head_ref,
- 		     struct btrfs_qgroup_extent_record *qrecord,
- 		     u64 bytenr, u64 num_bytes, u64 ref_root, u64 reserved,
--		     int action, int is_data, int *qrecord_inserted_ret,
-+		     int action, int is_data, int is_system,
-+		     int *qrecord_inserted_ret,
- 		     int *old_ref_mod, int *new_ref_mod)
-+
+-	if (!IS_ENABLED(CONFIG_SMP) || c->cpuid_level < 4)
+-		return 1;
+-
+-	/* Intel has a non-standard dependency on %ecx for this CPUID level. */
+-	cpuid_count(4, 0, &eax, &ebx, &ecx, &edx);
+-	if (eax & 0x1f)
+-		return (eax >> 26) + 1;
+-	else
+-		return 1;
+-}
+-
+ static void detect_vmx_virtcap(struct cpuinfo_x86 *c)
  {
- 	struct btrfs_delayed_ref_head *existing;
- 	struct btrfs_delayed_ref_root *delayed_refs;
-@@ -598,6 +600,7 @@ add_delayed_ref_head(struct btrfs_fs_info *fs_info,
- 	head_ref->ref_mod = count_mod;
- 	head_ref->must_insert_reserved = must_insert_reserved;
- 	head_ref->is_data = is_data;
-+	head_ref->is_system = is_system;
- 	head_ref->ref_tree = RB_ROOT;
- 	INIT_LIST_HEAD(&head_ref->ref_add_list);
- 	RB_CLEAR_NODE(&head_ref->href_node);
-@@ -785,6 +788,7 @@ int btrfs_add_delayed_tree_ref(struct btrfs_fs_info *fs_info,
- 	struct btrfs_delayed_ref_root *delayed_refs;
- 	struct btrfs_qgroup_extent_record *record = NULL;
- 	int qrecord_inserted;
-+	int is_system = (ref_root == BTRFS_CHUNK_TREE_OBJECTID);
- 
- 	BUG_ON(extent_op && extent_op->is_data);
- 	ref = kmem_cache_alloc(btrfs_delayed_tree_ref_cachep, GFP_NOFS);
-@@ -813,8 +817,8 @@ int btrfs_add_delayed_tree_ref(struct btrfs_fs_info *fs_info,
- 	 */
- 	head_ref = add_delayed_ref_head(fs_info, trans, head_ref, record,
- 					bytenr, num_bytes, 0, 0, action, 0,
--					&qrecord_inserted, old_ref_mod,
--					new_ref_mod);
-+					is_system, &qrecord_inserted,
-+					old_ref_mod, new_ref_mod);
- 
- 	add_delayed_tree_ref(fs_info, trans, head_ref, &ref->node, bytenr,
- 			     num_bytes, parent, ref_root, level, action);
-@@ -881,7 +885,7 @@ int btrfs_add_delayed_data_ref(struct btrfs_fs_info *fs_info,
- 	 */
- 	head_ref = add_delayed_ref_head(fs_info, trans, head_ref, record,
- 					bytenr, num_bytes, ref_root, reserved,
--					action, 1, &qrecord_inserted,
-+					action, 1, 0, &qrecord_inserted,
- 					old_ref_mod, new_ref_mod);
- 
- 	add_delayed_data_ref(fs_info, trans, head_ref, &ref->node, bytenr,
-@@ -911,9 +915,14 @@ int btrfs_add_delayed_extent_op(struct btrfs_fs_info *fs_info,
- 	delayed_refs = &trans->transaction->delayed_refs;
- 	spin_lock(&delayed_refs->lock);
- 
-+	/*
-+	 * extent_ops just modify the flags of an extent and they don't result
-+	 * in ref count changes, hence it's safe to pass false/0 for is_system
-+	 * argument
-+	 */
- 	add_delayed_ref_head(fs_info, trans, head_ref, NULL, bytenr,
- 			     num_bytes, 0, 0, BTRFS_UPDATE_DELAYED_HEAD,
--			     extent_op->is_data, NULL, NULL, NULL);
-+			     extent_op->is_data, 0, NULL, NULL, NULL);
- 
- 	spin_unlock(&delayed_refs->lock);
- 	return 0;
-diff --git a/fs/btrfs/delayed-ref.h b/fs/btrfs/delayed-ref.h
-index c4f625e5a691..ba97d18cc168 100644
---- a/fs/btrfs/delayed-ref.h
-+++ b/fs/btrfs/delayed-ref.h
-@@ -139,6 +139,7 @@ struct btrfs_delayed_ref_head {
- 	 */
- 	unsigned int must_insert_reserved:1;
- 	unsigned int is_data:1;
-+	unsigned int is_system:1;
- 	unsigned int processing:1;
- };
- 
-diff --git a/fs/btrfs/extent-tree.c b/fs/btrfs/extent-tree.c
-index c1618ab9fecf..16b54b1ff20e 100644
---- a/fs/btrfs/extent-tree.c
-+++ b/fs/btrfs/extent-tree.c
-@@ -2615,13 +2615,19 @@ static int cleanup_ref_head(struct btrfs_trans_handle *trans,
- 	trace_run_delayed_ref_head(fs_info, head, 0);
- 
- 	if (head->total_ref_mod < 0) {
--		struct btrfs_block_group_cache *cache;
-+		struct btrfs_space_info *space_info;
-+		u64 flags;
- 
--		cache = btrfs_lookup_block_group(fs_info, head->bytenr);
--		ASSERT(cache);
--		percpu_counter_add(&cache->space_info->total_bytes_pinned,
-+		if (head->is_data)
-+			flags = BTRFS_BLOCK_GROUP_DATA;
-+		else if (head->is_system)
-+			flags = BTRFS_BLOCK_GROUP_SYSTEM;
-+		else
-+			flags = BTRFS_BLOCK_GROUP_METADATA;
-+		space_info = __find_space_info(fs_info, flags);
-+		ASSERT(space_info);
-+		percpu_counter_add(&space_info->total_bytes_pinned,
- 				   -head->num_bytes);
--		btrfs_put_block_group(cache);
- 
- 		if (head->is_data) {
- 			spin_lock(&delayed_refs->lock);
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index c7b75dd58fad..ef1cf323832a 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -44,6 +44,7 @@
- #include <linux/uio.h>
- #include <linux/magic.h>
- #include <linux/iversion.h>
-+#include <asm/unaligned.h>
- #include "ctree.h"
- #include "disk-io.h"
- #include "transaction.h"
-@@ -5951,11 +5952,13 @@ static int btrfs_filldir(void *addr, int entries, struct dir_context *ctx)
- 		struct dir_entry *entry = addr;
- 		char *name = (char *)(entry + 1);
- 
--		ctx->pos = entry->offset;
--		if (!dir_emit(ctx, name, entry->name_len, entry->ino,
--			      entry->type))
-+		ctx->pos = get_unaligned(&entry->offset);
-+		if (!dir_emit(ctx, name, get_unaligned(&entry->name_len),
-+					 get_unaligned(&entry->ino),
-+					 get_unaligned(&entry->type)))
- 			return 1;
--		addr += sizeof(struct dir_entry) + entry->name_len;
-+		addr += sizeof(struct dir_entry) +
-+			get_unaligned(&entry->name_len);
- 		ctx->pos++;
- 	}
- 	return 0;
-@@ -6045,14 +6048,15 @@ static int btrfs_real_readdir(struct file *file, struct dir_context *ctx)
- 		}
- 
- 		entry = addr;
--		entry->name_len = name_len;
-+		put_unaligned(name_len, &entry->name_len);
- 		name_ptr = (char *)(entry + 1);
- 		read_extent_buffer(leaf, name_ptr, (unsigned long)(di + 1),
- 				   name_len);
--		entry->type = btrfs_filetype_table[btrfs_dir_type(leaf, di)];
-+		put_unaligned(btrfs_filetype_table[btrfs_dir_type(leaf, di)],
-+				&entry->type);
- 		btrfs_dir_item_key_to_cpu(leaf, di, &location);
--		entry->ino = location.objectid;
--		entry->offset = found_key.offset;
-+		put_unaligned(location.objectid, &entry->ino);
-+		put_unaligned(found_key.offset, &entry->offset);
- 		entries++;
- 		addr += sizeof(struct dir_entry) + name_len;
- 		total_len += sizeof(struct dir_entry) + name_len;
-diff --git a/fs/cifs/dir.c b/fs/cifs/dir.c
-index 81ba6e0d88d8..925844343038 100644
---- a/fs/cifs/dir.c
-+++ b/fs/cifs/dir.c
-@@ -684,6 +684,9 @@ int cifs_mknod(struct inode *inode, struct dentry *direntry, umode_t mode,
- 		goto mknod_out;
- 	}
- 
-+	if (!S_ISCHR(mode) && !S_ISBLK(mode))
-+		goto mknod_out;
-+
- 	if (!(cifs_sb->mnt_cifs_flags & CIFS_MOUNT_UNX_EMUL))
- 		goto mknod_out;
- 
-@@ -692,10 +695,8 @@ int cifs_mknod(struct inode *inode, struct dentry *direntry, umode_t mode,
- 
- 	buf = kmalloc(sizeof(FILE_ALL_INFO), GFP_KERNEL);
- 	if (buf == NULL) {
--		kfree(full_path);
- 		rc = -ENOMEM;
--		free_xid(xid);
--		return rc;
-+		goto mknod_out;
- 	}
- 
- 	if (backup_cred(cifs_sb))
-@@ -742,7 +743,7 @@ int cifs_mknod(struct inode *inode, struct dentry *direntry, umode_t mode,
- 		pdev->minor = cpu_to_le64(MINOR(device_number));
- 		rc = tcon->ses->server->ops->sync_write(xid, &fid, &io_parms,
- 							&bytes_written, iov, 1);
--	} /* else if (S_ISFIFO) */
-+	}
- 	tcon->ses->server->ops->close(xid, tcon, &fid);
- 	d_drop(direntry);
- 
-diff --git a/fs/cifs/smbdirect.c b/fs/cifs/smbdirect.c
-index 52cccdbb7e14..34be5c5d027f 100644
---- a/fs/cifs/smbdirect.c
-+++ b/fs/cifs/smbdirect.c
-@@ -2194,6 +2194,8 @@ int smbd_send(struct smbd_connection *info, struct smb_rqst *rqst)
- 						goto done;
- 				}
- 				i++;
-+				if (i == rqst->rq_nvec)
-+					break;
- 			}
- 			start = i;
- 			buflen = 0;
-diff --git a/fs/super.c b/fs/super.c
-index 672538ca9831..afbf4d220c27 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -166,6 +166,7 @@ static void destroy_unused_super(struct super_block *s)
- 	security_sb_free(s);
- 	put_user_ns(s->s_user_ns);
- 	kfree(s->s_subtype);
-+	free_prealloced_shrinker(&s->s_shrink);
- 	/* no delays needed */
- 	destroy_super_work(&s->destroy_work);
- }
-@@ -251,6 +252,8 @@ static struct super_block *alloc_super(struct file_system_type *type, int flags,
- 	s->s_shrink.count_objects = super_cache_count;
- 	s->s_shrink.batch = 1024;
- 	s->s_shrink.flags = SHRINKER_NUMA_AWARE | SHRINKER_MEMCG_AWARE;
-+	if (prealloc_shrinker(&s->s_shrink))
-+		goto fail;
- 	return s;
- 
- fail:
-@@ -517,11 +520,7 @@ struct super_block *sget_userns(struct file_system_type *type,
- 	hlist_add_head(&s->s_instances, &type->fs_supers);
- 	spin_unlock(&sb_lock);
- 	get_filesystem(type);
--	err = register_shrinker(&s->s_shrink);
--	if (err) {
--		deactivate_locked_super(s);
--		s = ERR_PTR(err);
--	}
-+	register_shrinker_prepared(&s->s_shrink);
- 	return s;
- }
- 
-diff --git a/include/linux/netfilter/x_tables.h b/include/linux/netfilter/x_tables.h
-index 14529511c4b8..065d605adea0 100644
---- a/include/linux/netfilter/x_tables.h
-+++ b/include/linux/netfilter/x_tables.h
-@@ -301,6 +301,7 @@ int xt_data_to_user(void __user *dst, const void *src,
- 
- void *xt_copy_counters_from_user(const void __user *user, unsigned int len,
- 				 struct xt_counters_info *info, bool compat);
-+struct xt_counters *xt_counters_alloc(unsigned int counters);
- 
- struct xt_table *xt_register_table(struct net *net,
- 				   const struct xt_table *table,
-@@ -509,7 +510,7 @@ void xt_compat_unlock(u_int8_t af);
- 
- int xt_compat_add_offset(u_int8_t af, unsigned int offset, int delta);
- void xt_compat_flush_offsets(u_int8_t af);
--void xt_compat_init_offsets(u_int8_t af, unsigned int number);
-+int xt_compat_init_offsets(u8 af, unsigned int number);
- int xt_compat_calc_jump(u_int8_t af, unsigned int offset);
- 
- int xt_compat_match_offset(const struct xt_match *match);
-diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
-index 388ff2936a87..6794490f25b2 100644
---- a/include/linux/shrinker.h
-+++ b/include/linux/shrinker.h
-@@ -75,6 +75,9 @@ struct shrinker {
- #define SHRINKER_NUMA_AWARE	(1 << 0)
- #define SHRINKER_MEMCG_AWARE	(1 << 1)
- 
--extern int register_shrinker(struct shrinker *);
--extern void unregister_shrinker(struct shrinker *);
-+extern int prealloc_shrinker(struct shrinker *shrinker);
-+extern void register_shrinker_prepared(struct shrinker *shrinker);
-+extern int register_shrinker(struct shrinker *shrinker);
-+extern void unregister_shrinker(struct shrinker *shrinker);
-+extern void free_prealloced_shrinker(struct shrinker *shrinker);
- #endif
-diff --git a/kernel/events/callchain.c b/kernel/events/callchain.c
-index 772a43fea825..73cc26e321de 100644
---- a/kernel/events/callchain.c
-+++ b/kernel/events/callchain.c
-@@ -119,19 +119,22 @@ int get_callchain_buffers(int event_max_stack)
- 		goto exit;
- 	}
- 
-+	/*
-+	 * If requesting per event more than the global cap,
-+	 * return a different error to help userspace figure
-+	 * this out.
-+	 *
-+	 * And also do it here so that we have &callchain_mutex held.
-+	 */
-+	if (event_max_stack > sysctl_perf_event_max_stack) {
-+		err = -EOVERFLOW;
-+		goto exit;
-+	}
-+
- 	if (count > 1) {
- 		/* If the allocation failed, give up */
- 		if (!callchain_cpus_entries)
- 			err = -ENOMEM;
--		/*
--		 * If requesting per event more than the global cap,
--		 * return a different error to help userspace figure
--		 * this out.
--		 *
--		 * And also do it here so that we have &callchain_mutex held.
--		 */
--		if (event_max_stack > sysctl_perf_event_max_stack)
--			err = -EOVERFLOW;
- 		goto exit;
- 	}
- 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index b32bc0698a2a..ca7298760c83 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -9730,9 +9730,9 @@ static int perf_copy_attr(struct perf_event_attr __user *uattr,
- 		 * __u16 sample size limit.
+ 	/* Intel VMX MSR indicated features */
+@@ -671,19 +653,13 @@ static void init_intel(struct cpuinfo_x86 *c)
+ 		 * let's use the legacy cpuid vector 0x1 and 0x4 for topology
+ 		 * detection.
  		 */
- 		if (attr->sample_stack_user >= USHRT_MAX)
--			ret = -EINVAL;
-+			return -EINVAL;
- 		else if (!IS_ALIGNED(attr->sample_stack_user, sizeof(u64)))
--			ret = -EINVAL;
-+			return -EINVAL;
+-		c->x86_max_cores = intel_num_cpu_cores(c);
++		c->x86_max_cores = detect_num_cpu_cores(c);
+ #ifdef CONFIG_X86_32
+ 		detect_ht(c);
+ #endif
  	}
  
- 	if (attr->sample_type & PERF_SAMPLE_REGS_INTR)
-diff --git a/kernel/time/alarmtimer.c b/kernel/time/alarmtimer.c
-index ec09ce9a6012..639321bf2e39 100644
---- a/kernel/time/alarmtimer.c
-+++ b/kernel/time/alarmtimer.c
-@@ -326,6 +326,17 @@ static int alarmtimer_resume(struct device *dev)
- }
- #endif
- 
-+static void
-+__alarm_init(struct alarm *alarm, enum alarmtimer_type type,
-+	     enum alarmtimer_restart (*function)(struct alarm *, ktime_t))
-+{
-+	timerqueue_init(&alarm->node);
-+	alarm->timer.function = alarmtimer_fired;
-+	alarm->function = function;
-+	alarm->type = type;
-+	alarm->state = ALARMTIMER_STATE_INACTIVE;
-+}
-+
- /**
-  * alarm_init - Initialize an alarm structure
-  * @alarm: ptr to alarm to be initialized
-@@ -335,13 +346,9 @@ static int alarmtimer_resume(struct device *dev)
- void alarm_init(struct alarm *alarm, enum alarmtimer_type type,
- 		enum alarmtimer_restart (*function)(struct alarm *, ktime_t))
- {
--	timerqueue_init(&alarm->node);
- 	hrtimer_init(&alarm->timer, alarm_bases[type].base_clockid,
--			HRTIMER_MODE_ABS);
--	alarm->timer.function = alarmtimer_fired;
--	alarm->function = function;
--	alarm->type = type;
--	alarm->state = ALARMTIMER_STATE_INACTIVE;
-+		     HRTIMER_MODE_ABS);
-+	__alarm_init(alarm, type, function);
- }
- EXPORT_SYMBOL_GPL(alarm_init);
- 
-@@ -719,6 +726,8 @@ static int alarmtimer_do_nsleep(struct alarm *alarm, ktime_t absexp,
- 
- 	__set_current_state(TASK_RUNNING);
- 
-+	destroy_hrtimer_on_stack(&alarm->timer);
-+
- 	if (!alarm->data)
- 		return 0;
- 
-@@ -740,6 +749,15 @@ static int alarmtimer_do_nsleep(struct alarm *alarm, ktime_t absexp,
- 	return -ERESTART_RESTARTBLOCK;
- }
- 
-+static void
-+alarm_init_on_stack(struct alarm *alarm, enum alarmtimer_type type,
-+		    enum alarmtimer_restart (*function)(struct alarm *, ktime_t))
-+{
-+	hrtimer_init_on_stack(&alarm->timer, alarm_bases[type].base_clockid,
-+			      HRTIMER_MODE_ABS);
-+	__alarm_init(alarm, type, function);
-+}
-+
- /**
-  * alarm_timer_nsleep_restart - restartblock alarmtimer nsleep
-  * @restart: ptr to restart block
-@@ -752,7 +770,7 @@ static long __sched alarm_timer_nsleep_restart(struct restart_block *restart)
- 	ktime_t exp = restart->nanosleep.expires;
- 	struct alarm alarm;
- 
--	alarm_init(&alarm, type, alarmtimer_nsleep_wakeup);
-+	alarm_init_on_stack(&alarm, type, alarmtimer_nsleep_wakeup);
- 
- 	return alarmtimer_do_nsleep(&alarm, exp, type);
- }
-@@ -784,7 +802,7 @@ static int alarm_timer_nsleep(const clockid_t which_clock, int flags,
- 	if (!capable(CAP_WAKE_ALARM))
- 		return -EPERM;
- 
--	alarm_init(&alarm, type, alarmtimer_nsleep_wakeup);
-+	alarm_init_on_stack(&alarm, type, alarmtimer_nsleep_wakeup);
- 
- 	exp = timespec64_to_ktime(*tsreq);
- 	/* Convert (if necessary) to absolute time */
-diff --git a/kernel/time/posix-cpu-timers.c b/kernel/time/posix-cpu-timers.c
-index 2541bd89f20e..5a6251ac6f7a 100644
---- a/kernel/time/posix-cpu-timers.c
-+++ b/kernel/time/posix-cpu-timers.c
-@@ -1205,10 +1205,12 @@ void set_process_cpu_timer(struct task_struct *tsk, unsigned int clock_idx,
- 			   u64 *newval, u64 *oldval)
- {
- 	u64 now;
-+	int ret;
- 
- 	WARN_ON_ONCE(clock_idx == CPUCLOCK_SCHED);
-+	ret = cpu_timer_sample_group(clock_idx, tsk, &now);
- 
--	if (oldval && cpu_timer_sample_group(clock_idx, tsk, &now) != -EINVAL) {
-+	if (oldval && ret != -EINVAL) {
- 		/*
- 		 * We are setting itimer. The *oldval is absolute and we update
- 		 * it to be relative, *newval argument is relative and we update
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index cd5dc3faaa57..f6a1587f9f31 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -258,7 +258,7 @@ unsigned long lruvec_lru_size(struct lruvec *lruvec, enum lru_list lru, int zone
- /*
-  * Add a shrinker callback to be called from the vm.
-  */
--int register_shrinker(struct shrinker *shrinker)
-+int prealloc_shrinker(struct shrinker *shrinker)
- {
- 	size_t size = sizeof(*shrinker->nr_deferred);
- 
-@@ -268,10 +268,29 @@ int register_shrinker(struct shrinker *shrinker)
- 	shrinker->nr_deferred = kzalloc(size, GFP_KERNEL);
- 	if (!shrinker->nr_deferred)
- 		return -ENOMEM;
-+	return 0;
-+}
-+
-+void free_prealloced_shrinker(struct shrinker *shrinker)
-+{
-+	kfree(shrinker->nr_deferred);
-+	shrinker->nr_deferred = NULL;
-+}
- 
-+void register_shrinker_prepared(struct shrinker *shrinker)
-+{
- 	down_write(&shrinker_rwsem);
- 	list_add_tail(&shrinker->list, &shrinker_list);
- 	up_write(&shrinker_rwsem);
-+}
-+
-+int register_shrinker(struct shrinker *shrinker)
-+{
-+	int err = prealloc_shrinker(shrinker);
-+
-+	if (err)
-+		return err;
-+	register_shrinker_prepared(shrinker);
- 	return 0;
- }
- EXPORT_SYMBOL(register_shrinker);
-diff --git a/net/bridge/netfilter/ebtables.c b/net/bridge/netfilter/ebtables.c
-index a94d23b0a9af..752112539753 100644
---- a/net/bridge/netfilter/ebtables.c
-+++ b/net/bridge/netfilter/ebtables.c
-@@ -1821,10 +1821,14 @@ static int compat_table_info(const struct ebt_table_info *info,
- {
- 	unsigned int size = info->entries_size;
- 	const void *entries = info->entries;
-+	int ret;
- 
- 	newinfo->entries_size = size;
- 
--	xt_compat_init_offsets(NFPROTO_BRIDGE, info->nentries);
-+	ret = xt_compat_init_offsets(NFPROTO_BRIDGE, info->nentries);
-+	if (ret)
-+		return ret;
-+
- 	return EBT_ENTRY_ITERATE(entries, size, compat_calc_entry, info,
- 							entries, newinfo);
- }
-@@ -2268,7 +2272,9 @@ static int compat_do_replace(struct net *net, void __user *user,
- 
- 	xt_compat_lock(NFPROTO_BRIDGE);
- 
--	xt_compat_init_offsets(NFPROTO_BRIDGE, tmp.nentries);
-+	ret = xt_compat_init_offsets(NFPROTO_BRIDGE, tmp.nentries);
-+	if (ret < 0)
-+		goto out_unlock;
- 	ret = compat_copy_entries(entries_tmp, tmp.entries_size, &state);
- 	if (ret < 0)
- 		goto out_unlock;
-diff --git a/net/ipv4/netfilter/arp_tables.c b/net/ipv4/netfilter/arp_tables.c
-index e3e420f3ba7b..b940d6aaa94f 100644
---- a/net/ipv4/netfilter/arp_tables.c
-+++ b/net/ipv4/netfilter/arp_tables.c
-@@ -781,7 +781,9 @@ static int compat_table_info(const struct xt_table_info *info,
- 	memcpy(newinfo, info, offsetof(struct xt_table_info, entries));
- 	newinfo->initial_entries = 0;
- 	loc_cpu_entry = info->entries;
--	xt_compat_init_offsets(NFPROTO_ARP, info->number);
-+	ret = xt_compat_init_offsets(NFPROTO_ARP, info->number);
-+	if (ret)
-+		return ret;
- 	xt_entry_foreach(iter, loc_cpu_entry, info->size) {
- 		ret = compat_calc_entry(iter, info, loc_cpu_entry, newinfo);
- 		if (ret != 0)
-@@ -895,7 +897,7 @@ static int __do_replace(struct net *net, const char *name,
- 	struct arpt_entry *iter;
- 
- 	ret = 0;
--	counters = vzalloc(num_counters * sizeof(struct xt_counters));
-+	counters = xt_counters_alloc(num_counters);
- 	if (!counters) {
- 		ret = -ENOMEM;
- 		goto out;
-@@ -1167,7 +1169,7 @@ static int translate_compat_table(struct xt_table_info **pinfo,
- 	struct compat_arpt_entry *iter0;
- 	struct arpt_replace repl;
- 	unsigned int size;
--	int ret = 0;
-+	int ret;
- 
- 	info = *pinfo;
- 	entry0 = *pentry0;
-@@ -1176,7 +1178,9 @@ static int translate_compat_table(struct xt_table_info **pinfo,
- 
- 	j = 0;
- 	xt_compat_lock(NFPROTO_ARP);
--	xt_compat_init_offsets(NFPROTO_ARP, compatr->num_entries);
-+	ret = xt_compat_init_offsets(NFPROTO_ARP, compatr->num_entries);
-+	if (ret)
-+		goto out_unlock;
- 	/* Walk through entries, checking offsets. */
- 	xt_entry_foreach(iter0, entry0, compatr->size) {
- 		ret = check_compat_entry_size_and_hooks(iter0, info, &size,
-diff --git a/net/ipv4/netfilter/ip_tables.c b/net/ipv4/netfilter/ip_tables.c
-index e38395a8dcf2..34f22450da5b 100644
---- a/net/ipv4/netfilter/ip_tables.c
-+++ b/net/ipv4/netfilter/ip_tables.c
-@@ -945,7 +945,9 @@ static int compat_table_info(const struct xt_table_info *info,
- 	memcpy(newinfo, info, offsetof(struct xt_table_info, entries));
- 	newinfo->initial_entries = 0;
- 	loc_cpu_entry = info->entries;
--	xt_compat_init_offsets(AF_INET, info->number);
-+	ret = xt_compat_init_offsets(AF_INET, info->number);
-+	if (ret)
-+		return ret;
- 	xt_entry_foreach(iter, loc_cpu_entry, info->size) {
- 		ret = compat_calc_entry(iter, info, loc_cpu_entry, newinfo);
- 		if (ret != 0)
-@@ -1057,7 +1059,7 @@ __do_replace(struct net *net, const char *name, unsigned int valid_hooks,
- 	struct ipt_entry *iter;
- 
- 	ret = 0;
--	counters = vzalloc(num_counters * sizeof(struct xt_counters));
-+	counters = xt_counters_alloc(num_counters);
- 	if (!counters) {
- 		ret = -ENOMEM;
- 		goto out;
-@@ -1418,7 +1420,9 @@ translate_compat_table(struct net *net,
- 
- 	j = 0;
- 	xt_compat_lock(AF_INET);
--	xt_compat_init_offsets(AF_INET, compatr->num_entries);
-+	ret = xt_compat_init_offsets(AF_INET, compatr->num_entries);
-+	if (ret)
-+		goto out_unlock;
- 	/* Walk through entries, checking offsets. */
- 	xt_entry_foreach(iter0, entry0, compatr->size) {
- 		ret = check_compat_entry_size_and_hooks(iter0, info, &size,
-diff --git a/net/ipv6/netfilter/ip6_tables.c b/net/ipv6/netfilter/ip6_tables.c
-index 62358b93bbac..41db3c8f469f 100644
---- a/net/ipv6/netfilter/ip6_tables.c
-+++ b/net/ipv6/netfilter/ip6_tables.c
-@@ -962,7 +962,9 @@ static int compat_table_info(const struct xt_table_info *info,
- 	memcpy(newinfo, info, offsetof(struct xt_table_info, entries));
- 	newinfo->initial_entries = 0;
- 	loc_cpu_entry = info->entries;
--	xt_compat_init_offsets(AF_INET6, info->number);
-+	ret = xt_compat_init_offsets(AF_INET6, info->number);
-+	if (ret)
-+		return ret;
- 	xt_entry_foreach(iter, loc_cpu_entry, info->size) {
- 		ret = compat_calc_entry(iter, info, loc_cpu_entry, newinfo);
- 		if (ret != 0)
-@@ -1075,7 +1077,7 @@ __do_replace(struct net *net, const char *name, unsigned int valid_hooks,
- 	struct ip6t_entry *iter;
- 
- 	ret = 0;
--	counters = vzalloc(num_counters * sizeof(struct xt_counters));
-+	counters = xt_counters_alloc(num_counters);
- 	if (!counters) {
- 		ret = -ENOMEM;
- 		goto out;
-@@ -1425,7 +1427,7 @@ translate_compat_table(struct net *net,
- 	struct compat_ip6t_entry *iter0;
- 	struct ip6t_replace repl;
- 	unsigned int size;
--	int ret = 0;
-+	int ret;
- 
- 	info = *pinfo;
- 	entry0 = *pentry0;
-@@ -1434,7 +1436,9 @@ translate_compat_table(struct net *net,
- 
- 	j = 0;
- 	xt_compat_lock(AF_INET6);
--	xt_compat_init_offsets(AF_INET6, compatr->num_entries);
-+	ret = xt_compat_init_offsets(AF_INET6, compatr->num_entries);
-+	if (ret)
-+		goto out_unlock;
- 	/* Walk through entries, checking offsets. */
- 	xt_entry_foreach(iter0, entry0, compatr->size) {
- 		ret = check_compat_entry_size_and_hooks(iter0, info, &size,
-diff --git a/net/netfilter/x_tables.c b/net/netfilter/x_tables.c
-index 4aa01c90e9d1..a94c0e3cdcf0 100644
---- a/net/netfilter/x_tables.c
-+++ b/net/netfilter/x_tables.c
-@@ -40,6 +40,7 @@ MODULE_AUTHOR("Harald Welte <laforge@netfilter.org>");
- MODULE_DESCRIPTION("{ip,ip6,arp,eb}_tables backend module");
- 
- #define XT_PCPU_BLOCK_SIZE 4096
-+#define XT_MAX_TABLE_SIZE	(512 * 1024 * 1024)
- 
- struct compat_delta {
- 	unsigned int offset; /* offset in kernel */
-@@ -553,14 +554,8 @@ int xt_compat_add_offset(u_int8_t af, unsigned int offset, int delta)
- {
- 	struct xt_af *xp = &xt[af];
- 
--	if (!xp->compat_tab) {
--		if (!xp->number)
--			return -EINVAL;
--		xp->compat_tab = vmalloc(sizeof(struct compat_delta) * xp->number);
--		if (!xp->compat_tab)
--			return -ENOMEM;
--		xp->cur = 0;
+-	l2 = init_intel_cacheinfo(c);
+-
+-	/* Detect legacy cache sizes if init_intel_cacheinfo did not */
+-	if (l2 == 0) {
+-		cpu_detect_cache_sizes(c);
+-		l2 = c->x86_cache_size;
 -	}
-+	if (WARN_ON(!xp->compat_tab))
-+		return -ENOMEM;
++	init_intel_cacheinfo(c);
  
- 	if (xp->cur >= xp->number)
- 		return -EINVAL;
-@@ -603,10 +598,28 @@ int xt_compat_calc_jump(u_int8_t af, unsigned int offset)
- }
- EXPORT_SYMBOL_GPL(xt_compat_calc_jump);
+ 	if (c->cpuid_level > 9) {
+ 		unsigned eax = cpuid_eax(10);
+diff --git a/arch/x86/kernel/cpu/intel_cacheinfo.c b/arch/x86/kernel/cpu/intel_cacheinfo.c
+index 54d04d5..2a0597c 100644
+--- a/arch/x86/kernel/cpu/intel_cacheinfo.c
++++ b/arch/x86/kernel/cpu/intel_cacheinfo.c
+@@ -20,6 +20,8 @@
+ #include <asm/amd_nb.h>
+ #include <asm/smp.h>
  
--void xt_compat_init_offsets(u_int8_t af, unsigned int number)
-+int xt_compat_init_offsets(u8 af, unsigned int number)
- {
-+	size_t mem;
++#include "cpu.h"
 +
-+	if (!number || number > (INT_MAX / sizeof(struct compat_delta)))
-+		return -EINVAL;
-+
-+	if (WARN_ON(xt[af].compat_tab))
-+		return -EINVAL;
-+
-+	mem = sizeof(struct compat_delta) * number;
-+	if (mem > XT_MAX_TABLE_SIZE)
-+		return -ENOMEM;
-+
-+	xt[af].compat_tab = vmalloc(mem);
-+	if (!xt[af].compat_tab)
-+		return -ENOMEM;
-+
- 	xt[af].number = number;
- 	xt[af].cur = 0;
-+
-+	return 0;
- }
- EXPORT_SYMBOL(xt_compat_init_offsets);
+ #define LVL_1_INST	1
+ #define LVL_1_DATA	2
+ #define LVL_2		3
+@@ -802,6 +804,10 @@ unsigned int init_intel_cacheinfo(struct cpuinfo_x86 *c)
  
-@@ -805,6 +818,9 @@ EXPORT_SYMBOL(xt_check_entry_offsets);
-  */
- unsigned int *xt_alloc_entry_offsets(unsigned int size)
- {
-+	if (size > XT_MAX_TABLE_SIZE / sizeof(unsigned int))
-+		return NULL;
-+
- 	return kvmalloc_array(size, sizeof(unsigned int), GFP_KERNEL | __GFP_ZERO);
+ 	c->x86_cache_size = l3 ? l3 : (l2 ? l2 : (l1i+l1d));
  
- }
-@@ -1029,7 +1045,7 @@ struct xt_table_info *xt_alloc_table_info(unsigned int size)
- 	struct xt_table_info *info = NULL;
- 	size_t sz = sizeof(*info) + size;
- 
--	if (sz < sizeof(*info))
-+	if (sz < sizeof(*info) || sz >= XT_MAX_TABLE_SIZE)
- 		return NULL;
- 
- 	/* __GFP_NORETRY is not fully supported by kvmalloc but it should
-@@ -1198,6 +1214,21 @@ static int xt_jumpstack_alloc(struct xt_table_info *i)
- 	return 0;
++	if (!l2) {
++		cpu_detect_cache_sizes(c);
++		l2 = c->x86_cache_size;
++	}
+ 	return l2;
  }
  
-+struct xt_counters *xt_counters_alloc(unsigned int counters)
-+{
-+	struct xt_counters *mem;
-+
-+	if (counters == 0 || counters > INT_MAX / sizeof(*mem))
-+		return NULL;
-+
-+	counters *= sizeof(*mem);
-+	if (counters > XT_MAX_TABLE_SIZE)
-+		return NULL;
-+
-+	return vzalloc(counters);
-+}
-+EXPORT_SYMBOL(xt_counters_alloc);
-+
- struct xt_table_info *
- xt_replace_table(struct xt_table *table,
- 	      unsigned int num_counters,
+-- 
+1.9.1
