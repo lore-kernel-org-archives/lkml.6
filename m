@@ -1,233 +1,202 @@
-Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AIpwx4+GN6wXgnK6ZA/VRlFw+nwsf9cSupt1HSp1LOT7imLsB4tKcWXgwcsexyYd5hvMHi1HKgNY
-ARC-Seal: i=1; a=rsa-sha256; t=1524658622; cv=none;
-        d=google.com; s=arc-20160816;
-        b=GW476EtXIgXLty0ZC/0S536FQTuaPuIB+8YK0smg+i3eqvKwUNzWOyIcdlrvvoFxFW
-         F3bsTh3e4UPU4v/f8zi+bkaG3dsIhvhJHYq24Nc6Zd2nVNVNtF/QYElQuz87Z82Y4d+9
-         CDwriY+P1q2BxdLgUovlG56cSAg2pqlJHRS/P5HkHjZtuy6l8VI/7GlthN/C2gpjSApa
-         gP5N9Du0yFiXG5zNqU+yLZqNoPrR/xucFAD0iyXABF6x69/wib5JPqioFe2nrHbNJEll
-         H3JwgKzPKD7w1cAG0Ylyt1kBmyEBK7l0FTHM1teGXriFsrC5E/AtRIgfZhXW5IetLLIh
-         4u6Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:content-transfer-encoding:mime-version
-         :user-agent:references:in-reply-to:message-id:date:subject:cc:to
-         :from:dmarc-filter:arc-authentication-results;
-        bh=bSp25PnA5BNbgfhT9ExFCVOMa0raZYDNbrpP3RsSpRI=;
-        b=XTdiXOFxOP74sV0H2biSD2IjmpsmkC/cvQ9jdHhllYvau8LUrJw98zMtCX13itC3OZ
-         12VHEKfxNu5c377VBEl4iL6SS1DFxEppm1lcGDMwqDC72KfRp+HrTLsVYeS4oU8EWRAI
-         WJyrBXgVVhc5iXnrzWV3CCc1Yb33J5C2c/24U/pwHt5w+qKe6rj+l43v9RXplNUb3vcJ
-         tL2T0hGv/a7WbcLUCFGxoxFzMwgI/c6chOtEP55Uwo3sCavNCLtzi3MNAlWYiIR8W3nB
-         UlHvhVMrB1knaeXggbR0X2wnS75NV5mAmlF4/oES3/pIMtAX/wJkCObXGWEKc/qvmfFc
-         t7Dg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
+Return-Path: <linux-api-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3396683-1524786423-2-11560918466826176881
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, MAILING_LIST_MULTI -1, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
+  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-api-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524786422; b=VVZUH1SXazYF7haJ1EK2oGpQMbdDPzENRtRB42s+hLJi3yHJK7
+    fn/m2+daQmmN7devV9XvW3YZEUBjzZaIiXjQxq6LIzcTbMahWnXgPnglDhi+fWvv
+    c87xgSJbbw3WP66ABbofTE/2JDBeIfob4cxnRH9DE8zV2fJ2UbhBe1X4dZ13CY0N
+    GwKG/kZWiOlQ1U0qTRGRbp2NP4oDktDTks0jwoR3odq7qrCezATfgkK7q3pYfS99
+    UPZ++5TjTToei5Q4l8bC/E6XO69qqnKokahce29FSRKS29OgrshFUPeeqFyaAD+c
+    +PMvualB3iDMd9+b+kr0pJnj1tfL7siMjGVw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1524786422; bh=N9Mr2/ZPWhFsdw2FZTuV6eAVjIjF4Z
+    SYPWKa+jtnxtg=; b=LDohZYc92+oyOskupGVgpY01x3vKirC6Z0xWuVgjFwUZrZ
+    i7Jfj+2rEczB6HEuYq/JwUrurt5LAK1GV7DgtHGlQzm/WKcZBqBI9w3KJSRuVBrr
+    tXomRAgoshq3+ycIaNH7uXcWe2hXSr47VYG9nEyOFsZCyl+AT+a2blHkYt0wIInT
+    0zOz8zLaQ6TBcoSESTzzLSti5XrVEQQkwXMXd/2zlVVoR+3c+iAAIqSqIaVzzd5F
+    48f9QSlyOQqpqwl0qsKJRMKxNjuj+LMfSS8+H3L1i+itd1p1l+VtzDzONoy5C08T
+    g0I3OSx++Mpg3lzWdn1L5D2moQA+g/eD9b2uBh6w==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=orgdomain_pass (Domain org match);
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=orgdomain_pass (Domain org match);
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfDZvytLBvD9Lsfa0s8Yj1yJibPKI8+oTQvCuztkSvSMG3rz27R+Y3yGpwO5uTsplhZrSPK6T7EGeI1nepRv1CzZKQhPzfHJ76uPkFRz7svcmUoy6p3U7
+    LYo7GQjJdYdxTEi+PZCFxuWQQ8AicqndWQLtAFJe7XiaMwROWCNnzOEojChOzCuj+p8dx225YG4m81Cy6tbWr/Ij8jO+sxnzm8N7kxjiXd0DdePZx0pKIgG3
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=xNf9USuDAAAA:8
+    a=VwQbUJbxAAAA:8 a=u8oXkYziLMnxz89bddIA:9 a=x8gzFH9gYPwA:10
+    a=SEwjQc04WA-l_NiBhQ7s:22 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753040AbeDYMRB (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Wed, 25 Apr 2018 08:17:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37502 "EHLO mail.kernel.org"
+        id S1751626AbeDZXqq (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 26 Apr 2018 19:46:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38154 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752949AbeDYMRA (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
-        Wed, 25 Apr 2018 08:17:00 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6152421748
+        id S1751139AbeDZXqp (ORCPT <rfc822;linux-api@vger.kernel.org>);
+        Thu, 26 Apr 2018 19:46:45 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 556AE217D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org
-Cc: mhiramat@kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        linux-trace-users@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        shuah@kernel.org, Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Subject: [PATCH v7 01/16] tracing: probeevent: Cleanup print argument functions
-Date: Wed, 25 Apr 2018 21:16:36 +0900
-Message-Id: <152465859635.26224.13452846788717102315.stgit@devbox>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <152465856498.26224.16969986455942749517.stgit@devbox>
-References: <152465856498.26224.16969986455942749517.stgit@devbox>
-User-Agent: StGit/0.17.1-dirty
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Sender: linux-kselftest-owner@vger.kernel.org
-X-Mailing-List: linux-kselftest@vger.kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mcgrof@kernel.org
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+To: viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org
+Cc: sandeen@sandeen.net, darrick.wong@oracle.com, dhowells@redhat.com,
+        tytso@mit.edu, fliu@suse.com, jack@suse.cz, jeffm@suse.com,
+        nborisov@suse.com, jake.norris@suse.com, mtk.manpages@gmail.com,
+        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>
+Subject: [RFC] vfs: skip extra attributes check on removal for symlinks
+Date: Thu, 26 Apr 2018 16:46:39 -0700
+Message-Id: <20180426234639.12480-1-mcgrof@kernel.org>
+X-Mailer: git-send-email 2.13.2
+Sender: linux-api-owner@vger.kernel.org
+X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598720439549360394?=
-X-GMAIL-MSGID: =?utf-8?q?1598720439549360394?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Cleanup the print-argument function to decouple it into
-print-name and print-value, so that it can support more
-flexible expression, like array type.
+Linux filesystems cannot set extra file attributes (stx_attributes as per
+statx(2)) on a symbolic link. To set extra file attributes you issue
+ioctl(2) with FS_IOC_SETFLAGS, *all* ioctl(2) calls on a symbolic link
+yield EBADF.
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+This is because ioctl(2) tries to obtain struct fd from the symbolic link
+file descriptor passed using fdget(), fdget() in turn always returns no
+file set when a file descriptor is open with O_PATH. As per symlink(2)
+O_PATH and O_NOFOLLOW must *always* be used when you want to get the file
+descriptor of a symbolic link, and this holds true for Linux, as such extra
+file attributes cannot possibly be set on symbolic links on Linux.
+
+Filesystems repair utilities should be updated to detect this as
+corruption and correct this, however, the VFS *does* respect these
+extra attributes on symlinks for removal.
+
+Since we cannot set these attributes we should special-case the
+immutable/append on delete for symlinks, this would be consistent with
+what we *do* allow on Linux for all filesystems.
+
+The userspace utility chattr(1) cannot set these attributes on symlinks
+*and* other special files as well:
+
+	# chattr -a symlink
+	chattr: Operation not supported while reading flags on b
+
+The reason for this is different though. Refer to commit 023d111e92195
+("chattr.1.in: Document the compression attribute flags E, X, and ...")
+merged on e2fsprogs v1.28 since August 2002. This commit prevented
+issuing the ioctl() for symlink *and* special files in consideration for
+a buggy DRM driver where issuing lsattr on their special files crashed
+the system. For details refer to Debian bug 152029 [0].
+
+You can craft your own tool to query the extra file attributes with
+the new shiny statx(2) tool, statx(2) will list the attributes if
+they were set for instance on a corrupt filesystem. However statx(2)
+is only used for *querying* -- not for setting the attributes.
+
+If you implement issuing your own ioctl() for FS_IOC_FSGETXATTR or
+FS_IOC_FSSETXATTR on special files (block, char, fifo) it will fail
+returning -1 and errno is set to ENOTTY (Inappropriate ioctl for
+device). The reason for this is different than for symlinks.
+For special files this fails on vfs_ioctl() when the filesystem
+f_op callbacks are not set for these special files:
+
+long vfs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+{
+	int error = -ENOTTY;
+
+        if (!filp->f_op->unlocked_ioctl)
+		goto out;
+
+	error = filp->f_op->unlocked_ioctl(filp, cmd, arg);
+	if (error == -ENOIOCTLCMD)
+		error = -ENOTTY;
+out:
+	return error;
+}
+
+The same applies to PF_LOCAL named sockets. Since this varies by
+filesystem for special files, only make a special rule to respect
+the immutable and append attribute on symlinks.
+
+[0] https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=152029
+
+Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
 ---
- kernel/trace/trace_kprobe.c |   20 ++++++--------------
- kernel/trace/trace_probe.c  |   12 +++++-------
- kernel/trace/trace_probe.h  |   19 ++++++++++++++++---
- kernel/trace/trace_uprobe.c |    9 ++-------
- 4 files changed, 29 insertions(+), 31 deletions(-)
 
-diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
-index 1cd3fb4d70f8..81e2eb5a1566 100644
---- a/kernel/trace/trace_kprobe.c
-+++ b/kernel/trace/trace_kprobe.c
-@@ -1090,8 +1090,6 @@ print_kprobe_event(struct trace_iterator *iter, int flags,
- 	struct kprobe_trace_entry_head *field;
- 	struct trace_seq *s = &iter->seq;
- 	struct trace_probe *tp;
--	u8 *data;
--	int i;
- 
- 	field = (struct kprobe_trace_entry_head *)iter->ent;
- 	tp = container_of(event, struct trace_probe, call.event);
-@@ -1103,11 +1101,9 @@ print_kprobe_event(struct trace_iterator *iter, int flags,
- 
- 	trace_seq_putc(s, ')');
- 
--	data = (u8 *)&field[1];
--	for (i = 0; i < tp->nr_args; i++)
--		if (!tp->args[i].type->print(s, tp->args[i].name,
--					     data + tp->args[i].offset, field))
--			goto out;
-+	if (print_probe_args(s, tp->args, tp->nr_args,
-+			     (u8 *)&field[1], field) < 0)
-+		goto out;
- 
- 	trace_seq_putc(s, '\n');
-  out:
-@@ -1121,8 +1117,6 @@ print_kretprobe_event(struct trace_iterator *iter, int flags,
- 	struct kretprobe_trace_entry_head *field;
- 	struct trace_seq *s = &iter->seq;
- 	struct trace_probe *tp;
--	u8 *data;
--	int i;
- 
- 	field = (struct kretprobe_trace_entry_head *)iter->ent;
- 	tp = container_of(event, struct trace_probe, call.event);
-@@ -1139,11 +1133,9 @@ print_kretprobe_event(struct trace_iterator *iter, int flags,
- 
- 	trace_seq_putc(s, ')');
- 
--	data = (u8 *)&field[1];
--	for (i = 0; i < tp->nr_args; i++)
--		if (!tp->args[i].type->print(s, tp->args[i].name,
--					     data + tp->args[i].offset, field))
--			goto out;
-+	if (print_probe_args(s, tp->args, tp->nr_args,
-+			     (u8 *)&field[1], field) < 0)
-+		goto out;
- 
- 	trace_seq_putc(s, '\n');
- 
-diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
-index daf54bda4dc8..8894b81e29b0 100644
---- a/kernel/trace/trace_probe.c
-+++ b/kernel/trace/trace_probe.c
-@@ -38,10 +38,9 @@ const char *reserved_field_names[] = {
- 
- /* Printing  in basic type function template */
- #define DEFINE_BASIC_PRINT_TYPE_FUNC(tname, type, fmt)			\
--int PRINT_TYPE_FUNC_NAME(tname)(struct trace_seq *s, const char *name,	\
--				void *data, void *ent)			\
-+int PRINT_TYPE_FUNC_NAME(tname)(struct trace_seq *s, void *data, void *ent)\
- {									\
--	trace_seq_printf(s, " %s=" fmt, name, *(type *)data);		\
-+	trace_seq_printf(s, fmt, *(type *)data);			\
- 	return !trace_seq_has_overflowed(s);				\
- }									\
- const char PRINT_TYPE_FMT_NAME(tname)[] = fmt;				\
-@@ -61,15 +60,14 @@ DEFINE_BASIC_PRINT_TYPE_FUNC(x32, u32, "0x%x")
- DEFINE_BASIC_PRINT_TYPE_FUNC(x64, u64, "0x%Lx")
- 
- /* Print type function for string type */
--int PRINT_TYPE_FUNC_NAME(string)(struct trace_seq *s, const char *name,
--				 void *data, void *ent)
-+int PRINT_TYPE_FUNC_NAME(string)(struct trace_seq *s, void *data, void *ent)
- {
- 	int len = *(u32 *)data >> 16;
- 
- 	if (!len)
--		trace_seq_printf(s, " %s=(fault)", name);
-+		trace_seq_puts(s, "(fault)");
- 	else
--		trace_seq_printf(s, " %s=\"%s\"", name,
-+		trace_seq_printf(s, "\"%s\"",
- 				 (const char *)get_loc_data(data, ent));
- 	return !trace_seq_has_overflowed(s);
+As discussed at LSF/MM -- I'd follow up on this low hanging fruit as
+the discussion had stalled on linux-xfs on review of the respective
+xfs_repair changes. This addresses the general API question, and
+as such I think could help establish order in how we split up patches
+for those changes.
+
+This requires some other eyeballs, and it also requires a putting it through
+xfstests which I can do in the next few days, hence the RFC. But better put it
+out for review already. I'd also like feedback from the linux-api folks to
+see if this matches their own known / documented expectations.
+
+ fs/namei.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/fs/namei.c b/fs/namei.c
+index 186bd2464fd5..0f9069468cfb 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -2719,6 +2719,14 @@ int __check_sticky(struct inode *dir, struct inode *inode)
  }
-diff --git a/kernel/trace/trace_probe.h b/kernel/trace/trace_probe.h
-index 75daff22ccea..0c8e66f9c855 100644
---- a/kernel/trace/trace_probe.h
-+++ b/kernel/trace/trace_probe.h
-@@ -94,7 +94,7 @@ static nokprobe_inline void *get_loc_data(u32 *dl, void *ent)
- /* Data fetch function type */
- typedef	void (*fetch_func_t)(struct pt_regs *, void *, void *);
- /* Printing function type */
--typedef int (*print_type_func_t)(struct trace_seq *, const char *, void *, void *);
-+typedef int (*print_type_func_t)(struct trace_seq *, void *, void *);
+ EXPORT_SYMBOL(__check_sticky);
  
- /* Fetch types */
- enum {
-@@ -136,8 +136,7 @@ typedef u32 string_size;
- 
- /* Printing  in basic type function template */
- #define DECLARE_BASIC_PRINT_TYPE_FUNC(type)				\
--int PRINT_TYPE_FUNC_NAME(type)(struct trace_seq *s, const char *name,	\
--				void *data, void *ent);			\
-+int PRINT_TYPE_FUNC_NAME(type)(struct trace_seq *s, void *data, void *ent);\
- extern const char PRINT_TYPE_FMT_NAME(type)[]
- 
- DECLARE_BASIC_PRINT_TYPE_FUNC(u8);
-@@ -415,6 +414,20 @@ store_trace_args(int ent_size, struct trace_probe *tp, struct pt_regs *regs,
- 	}
- }
- 
-+static inline int
-+print_probe_args(struct trace_seq *s, struct probe_arg *args, int nr_args,
-+		 u8 *data, void *field)
++/* Process extra file attributes only when they make sense */
++static bool may_delete_stx_attributes(struct inode *inode)
 +{
-+	int i;
-+
-+	for (i = 0; i < nr_args; i++) {
-+		trace_seq_printf(s, " %s=", args[i].name);
-+		if (!args[i].type->print(s, data + args[i].offset, field))
-+			return -ENOMEM;
-+	}
-+	return 0;
++	if (!S_ISLNK(inode->i_mode) && (IS_APPEND(inode) || IS_IMMUTABLE(inode)))
++		return false;
++	return  true;
 +}
 +
- extern int set_print_fmt(struct trace_probe *tp, bool is_return);
+ /*
+  *	Check whether we can remove a link victim from directory dir, check
+  *  whether the type of victim is right.
+@@ -2757,8 +2765,8 @@ static int may_delete(struct inode *dir, struct dentry *victim, bool isdir)
+ 	if (IS_APPEND(dir))
+ 		return -EPERM;
  
- #ifdef CONFIG_PERF_EVENTS
-diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-index 34fd0e0ec51d..d5e7d84e375a 100644
---- a/kernel/trace/trace_uprobe.c
-+++ b/kernel/trace/trace_uprobe.c
-@@ -851,7 +851,6 @@ print_uprobe_event(struct trace_iterator *iter, int flags, struct trace_event *e
- 	struct trace_seq *s = &iter->seq;
- 	struct trace_uprobe *tu;
- 	u8 *data;
--	int i;
- 
- 	entry = (struct uprobe_trace_entry_head *)iter->ent;
- 	tu = container_of(event, struct trace_uprobe, tp.call.event);
-@@ -868,12 +867,8 @@ print_uprobe_event(struct trace_iterator *iter, int flags, struct trace_event *e
- 		data = DATAOF_TRACE_ENTRY(entry, false);
- 	}
- 
--	for (i = 0; i < tu->tp.nr_args; i++) {
--		struct probe_arg *parg = &tu->tp.args[i];
--
--		if (!parg->type->print(s, parg->name, data + parg->offset, entry))
--			goto out;
--	}
-+	if (print_probe_args(s, tu->tp.args, tu->tp.nr_args, data, entry) < 0)
-+		goto out;
- 
- 	trace_seq_putc(s, '\n');
- 
+-	if (check_sticky(dir, inode) || IS_APPEND(inode) ||
+-	    IS_IMMUTABLE(inode) || IS_SWAPFILE(inode) || HAS_UNMAPPED_ID(inode))
++	if (check_sticky(dir, inode) || !may_delete_stx_attributes(inode) ||
++	    IS_SWAPFILE(inode) || HAS_UNMAPPED_ID(inode))
+ 		return -EPERM;
+ 	if (isdir) {
+ 		if (!d_is_dir(victim))
+-- 
+2.17.0
 
