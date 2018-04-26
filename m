@@ -1,41 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755159AbeDZKdI (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 06:33:08 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52192 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754277AbeDZKdG (ORCPT
+        id S1755516AbeDZKdZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 06:33:25 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:49232 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755074AbeDZKdW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 06:33:06 -0400
-Date: Thu, 26 Apr 2018 03:33:04 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: dsterba@suse.cz, Alexey Dobriyan <adobriyan@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] proc: use #pragma once
-Message-ID: <20180426103304.GA4639@infradead.org>
-References: <20180423213534.GA9043@avx2>
- <20180424135409.GA22709@infradead.org>
- <20180425205531.GA9020@avx2>
- <20180426102629.scwtdeijbo3342gp@twin.jikos.cz>
+        Thu, 26 Apr 2018 06:33:22 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1F68C6019F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From: Kalle Valo <kvalo@codeaurora.org>
+To: Luciano Coelho <luciano.coelho@intel.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Wireless <linux-wireless@vger.kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Haim Dreyfuss <haim.dreyfuss@intel.com>,
+        Shaul Triebitz <shaul.triebitz@intel.com>
+Subject: Re: linux-next: manual merge of the wireless-drivers-next tree with the wireless-drivers tree
+References: <20180426110917.446204af@canb.auug.org.au>
+        <6f5ba028f120d092bd5c96557144750518faf9c1.camel@intel.com>
+Date: Thu, 26 Apr 2018 13:33:09 +0300
+In-Reply-To: <6f5ba028f120d092bd5c96557144750518faf9c1.camel@intel.com>
+        (Luciano Coelho's message of "Thu, 26 Apr 2018 10:38:11 +0300")
+Message-ID: <87a7tq6yvu.fsf@kamboji.qca.qualcomm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180426102629.scwtdeijbo3342gp@twin.jikos.cz>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 26, 2018 at 12:26:29PM +0200, David Sterba wrote:
-> There are about 20k header files, none of them has #pragma once.
-> Updating that will bring many unnesessry git commits.
-> 
-> I doubt that one more define in preprocessor tables is a problem we
-> should fix. The LOC argument also does not sound very convincing. The
-> include protection is at the top of the file, not mixed among other
-> code. Replacing 2-3 lines with one will be barely noticeable.
+Luciano Coelho <luciano.coelho@intel.com> writes:
 
-Let's put it another way:  does this make any noticable difference
-for compile times?
+> On Thu, 2018-04-26 at 11:09 +1000, Stephen Rothwell wrote:
+>> Hi all,
+>> 
+>> Today's linux-next merge of the wireless-drivers-next tree got a
+>> conflict in:
+>> 
+>>   drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c
+>> 
+>> between commit:
+>> 
+>>   77e30e10ee28 ("iwlwifi: mvm: query regdb for wmm rule if needed")
+>> 
+>> from the wireless-drivers tree and commits:
+>> 
+>>   9c4f7d512740 ("iwlwifi: move all NVM parsing code to the common
+>> files")
+>>   4c625c564ba2 ("iwlwifi: get rid of fw/nvm.c")
+>> 
+>> from the wireless-drivers-next tree.
+>> 
+>> I fixed it up (see below) and can carry the fix as necessary. This
+>> is now fixed as far as linux-next is concerned, but any non trivial
+>> conflicts should be mentioned to your upstream maintainer when your
+>> tree
+>> is submitted for merging.  You may also want to consider cooperating
+>> with the maintainer of the conflicting tree to minimise any
+>> particularly
+>> complex conflicts.
+>
+> Thanks for resolving this, Stephen!
+>
+> I checked your resolution and it's spot on.
+
+I now merged w-d to w-d-next to fix this, please check:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/kvalo/wireless-drivers-next.git/commit/?id=0ddcf3e76ae4d02918e609342a1020b50258fadd
+
+I was not sure what to do with these includes so I left them in:
+
+#include "fw/api/commands.h"
+#include "fw/api/cmdhdr.h"
+#include "fw/img.h"
+
+-- 
+Kalle Valo
