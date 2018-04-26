@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756875AbeDZQTh (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 12:19:37 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:32739 "EHLO
+        id S1756884AbeDZQT4 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 12:19:56 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:52642 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1756838AbeDZQT0 (ORCPT
+        by vger.kernel.org with ESMTP id S1756848AbeDZQT3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 12:19:26 -0400
+        Thu, 26 Apr 2018 12:19:29 -0400
 From: Ludovic Barre <ludovic.Barre@st.com>
 To: Thomas Gleixner <tglx@linutronix.de>,
         Jason Cooper <jason@lakedaemon.net>,
@@ -17,9 +17,9 @@ CC: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         Loic PALLARDY <loic.pallardy@st.com>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
         "Ludovic Barre" <ludovic.barre@st.com>
-Subject: [PATCH 02/11] irqchip: stm32: checkpatch fix
-Date: Thu, 26 Apr 2018 18:18:25 +0200
-Message-ID: <1524759514-12392-3-git-send-email-ludovic.Barre@st.com>
+Subject: [PATCH 09/11] pinctrl: stm32: add irq_eoi for stm32gpio irqchip
+Date: Thu, 26 Apr 2018 18:18:32 +0200
+Message-ID: <1524759514-12392-10-git-send-email-ludovic.Barre@st.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1524759514-12392-1-git-send-email-ludovic.Barre@st.com>
 References: <1524759514-12392-1-git-send-email-ludovic.Barre@st.com>
@@ -34,35 +34,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Ludovic Barre <ludovic.barre@st.com>
 
--WARNING: struct irq_domain_ops should normally be const
--CHECK: Alignment should match open parenthesis
+-Parent domain of stm32gpio evolves to hierarchy domain
+ and could have a handle_fasteoi_irq. So an irq_eoi parent callback
+ is needed for children.
+-Replace space by tabulation.
 
 Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
 ---
- drivers/irqchip/irq-stm32-exti.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pinctrl/stm32/pinctrl-stm32.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/irqchip/irq-stm32-exti.c b/drivers/irqchip/irq-stm32-exti.c
-index 8013a87..b91a8c2 100644
---- a/drivers/irqchip/irq-stm32-exti.c
-+++ b/drivers/irqchip/irq-stm32-exti.c
-@@ -186,7 +186,7 @@ static void stm32_exti_free(struct irq_domain *d, unsigned int virq,
- 	irq_domain_reset_irq_data(data);
+diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
+index 6cbcff4..dfed609 100644
+--- a/drivers/pinctrl/stm32/pinctrl-stm32.c
++++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
+@@ -267,12 +267,13 @@ static void stm32_gpio_irq_release_resources(struct irq_data *irq_data)
  }
  
--struct irq_domain_ops irq_exti_domain_ops = {
-+static const struct irq_domain_ops irq_exti_domain_ops = {
- 	.map	= irq_map_generic_chip,
- 	.alloc  = stm32_exti_alloc,
- 	.free	= stm32_exti_free,
-@@ -221,7 +221,7 @@ __init stm32_exti_init(const struct stm32_exti_bank **stm32_exti_banks,
- 					     handle_edge_irq, clr, 0, 0);
- 	if (ret) {
- 		pr_err("%pOF: Could not allocate generic interrupt chip.\n",
--			node);
-+		       node);
- 		goto out_free_domain;
- 	}
- 
+ static struct irq_chip stm32_gpio_irq_chip = {
+-	.name           = "stm32gpio",
+-	.irq_ack       = irq_chip_ack_parent,
+-	.irq_mask       = irq_chip_mask_parent,
+-	.irq_unmask     = irq_chip_unmask_parent,
+-	.irq_set_type   = irq_chip_set_type_parent,
+-	.irq_set_wake   = irq_chip_set_wake_parent,
++	.name		= "stm32gpio",
++	.irq_eoi	= irq_chip_eoi_parent,
++	.irq_ack	= irq_chip_ack_parent,
++	.irq_mask	= irq_chip_mask_parent,
++	.irq_unmask	= irq_chip_unmask_parent,
++	.irq_set_type	= irq_chip_set_type_parent,
++	.irq_set_wake	= irq_chip_set_wake_parent,
+ 	.irq_request_resources = stm32_gpio_irq_request_resources,
+ 	.irq_release_resources = stm32_gpio_irq_release_resources,
+ };
 -- 
 2.7.4
