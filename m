@@ -1,85 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756825AbeDZQFq (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 12:05:46 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:41884 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756519AbeDZQFo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 12:05:44 -0400
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
-Subject: Re: [PATCH] IB/core: Make ib_mad_client_id atomic
-From: =?utf-8?Q?H=C3=A5kon_Bugge?= <haakon.bugge@oracle.com>
-In-Reply-To: <20180423221618.0000795d@dev.mellanox.co.il>
-Date: Thu, 26 Apr 2018 18:06:10 +0200
-Cc: Don Hiatt <don.hiatt@intel.com>, Ira Weiny <ira.weiny@intel.com>,
-        Sean Hefty <sean.hefty@intel.com>,
-        OFED mailing list <linux-rdma@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, jackm <jackm@dev.mellanox.co.il>
-Message-Id: <C546E163-297B-438E-AF76-CC04247ABFBA@oracle.com>
-References: <20180418142450.15581-1-Haakon.Bugge@oracle.com>
- <1524196555.11756.30.camel@redhat.com> <20180420153451.GF30433@ziepe.ca>
- <50E3FE4A-2C6E-4493-92E1-383C349FAE3A@oracle.com>
- <20180423221618.0000795d@dev.mellanox.co.il>
-To: Jason Gunthorpe <jgg@ziepe.ca>, Doug Ledford <dledford@redhat.com>
-X-Mailer: Apple Mail (2.3445.6.18)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8875 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=848
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804260151
+        id S1756792AbeDZQHc (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 12:07:32 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59832 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1756519AbeDZQHb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 12:07:31 -0400
+Date: Thu, 26 Apr 2018 12:07:25 -0400 (EDT)
+From: Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To: "Michael S. Tsirkin" <mst@redhat.com>
+cc: James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Michal Hocko <mhocko@kernel.org>, David Rientjes <rientjes@google.com>,
+        dm-devel@redhat.com, eric.dumazet@gmail.com, netdev@vger.kernel.org,
+        jasowang@redhat.com, Randy Dunlap <rdunlap@infradead.org>,
+        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
+        linux-mm@kvack.org, edumazet@google.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        virtualization@lists.linux-foundation.org,
+        David Miller <davem@davemloft.net>, Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [dm-devel] [PATCH v5] fault-injection: introduce kvmalloc fallback
+ options
+In-Reply-To: <20180426184845-mutt-send-email-mst@kernel.org>
+Message-ID: <alpine.LRH.2.02.1804261202350.24656@file01.intranet.prod.int.rdu2.redhat.com>
+References: <alpine.DEB.2.21.1804251417470.166306@chino.kir.corp.google.com> <alpine.LRH.2.02.1804251720090.9428@file01.intranet.prod.int.rdu2.redhat.com> <1524694663.4100.21.camel@HansenPartnership.com> <alpine.LRH.2.02.1804251830540.25124@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180426125817.GO17484@dhcp22.suse.cz> <alpine.LRH.2.02.1804261006120.32722@file01.intranet.prod.int.rdu2.redhat.com> <1524753932.3226.5.camel@HansenPartnership.com> <alpine.LRH.2.02.1804261100170.12157@file01.intranet.prod.int.rdu2.redhat.com>
+ <1524756256.3226.7.camel@HansenPartnership.com> <alpine.LRH.2.02.1804261142480.21152@file01.intranet.prod.int.rdu2.redhat.com> <20180426184845-mutt-send-email-mst@kernel.org>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+MIME-Version: 1.0
+Content-Type: MULTIPART/MIXED; BOUNDARY="185206533-1736142901-1524758846=:24656"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3QG5rnR010646
+
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--185206533-1736142901-1524758846=:24656
+Content-Type: TEXT/PLAIN; charset=iso-8859-1
+Content-Transfer-Encoding: 8BIT
 
 
 
-> On 23 Apr 2018, at 21:16, jackm <jackm@dev.mellanox.co.il> wrote:
-> 
-> On Mon, 23 Apr 2018 16:19:57 +0200
-> Håkon Bugge <haakon.bugge@oracle.com> wrote:
-> 
-> 
->>> 
->>> This actually looks like a genuine bug, why is it described only as
->>> 'confusing'? ib_register_mad_agent is callable from userspace, so at
->>> least two userspace agents can race and get the same TID’s.  
->> 
->> My understanding is that every lookup is using the {port, TID} tuple.
->> As such, it is not a bug, but, very confusing.
-> Haakon, you are correct (see snippet from the IB spec, below).
-> 
-> We will NOT have a situation where there are 2 threads/apps
-> with the same agent ID on the *same port* (accessing the agent ID
-> allocator is protected by a per-port spinlock). Having the same agent ID
-> on DIFFERENT ports is OK.
-> Thus, there is NO bug here. (But as Haakon says, IMHO it is more robust
-> to avoid having the same agent ID for 2 agents even if those agents are
-> on different ports).
-> 
->> 
->>> TIDs need to be globally unique on the entire machine.  
->> 
-> Jason, that is not exactly correct.
-> 
-> From the IB Spec 1.3, C13-18.1.1 (in section 13.4.6.4 - TransactionID
-> usage):
-> "When initiating a new operation, MADHeader:TransactionID
-> shall be set to such a value that within that MAD the combination of
-> TID, SGID, and MgmtClass is different from that of any other currently
-> executing operation. If the MAD does not have a GRH, its SLID is used
-> in the combination in place of an SGID."
-> 
-> Since the SGID/SLID is different for each port, the per-port guarantee
-> of no 2 agents receiving the same agent-ID value is sufficient.
-> 
-> -Jack
+On Thu, 26 Apr 2018, Michael S. Tsirkin wrote:
 
-Shall I interpret this silence as my commit is good to go or that I should add Jack’s tangible information to the commit message?
+> On Thu, Apr 26, 2018 at 11:44:21AM -0400, Mikulas Patocka wrote:
+> > 
+> > 
+> > On Thu, 26 Apr 2018, James Bottomley wrote:
+> > 
+> > > On Thu, 2018-04-26 at 11:05 -0400, Mikulas Patocka wrote:
+> > > > 
+> > > > On Thu, 26 Apr 2018, James Bottomley wrote:
+> > > [...]
+> > > > > Perhaps find out beforehand instead of insisting on an approach
+> > > > without
+> > > > > knowing.� On openSUSE the grub config is built from the files in
+> > > > > /etc/grub.d/ so any package can add a kernel option (and various
+> > > > > conditions around activating it) simply by adding a new file.
+> > > > 
+> > > > And then, different versions of the debug kernel will clash when�
+> > > > attempting to create the same file.
+> > > 
+> > > Don't be silly ... there are many ways of coping with that in rpm/dpkg.
+> > 
+> > I know you can deal with it - but how many lines of code will that 
+> > consume? Multiplied by the total number of rpm-based distros.
+> > 
+> > Mikulas
+> 
+> I don't think debug kernels should inject faults by default.
 
+But it is not injecting any faults. It is using the fault-injection 
+framework because Michal said that it should use it. The original version 
+of the patch didn't use the fault-injection framework at all.
 
-Thxs, Håkon
+The kvmalloc function can take two branches, the kmalloc branch and 
+vmalloc branch. The vmalloc branch is taken rarely, so the kernel contains 
+bugs regarding this path - and the patch increases the probability that 
+the vmalloc patch is taken, to discover the bugs early and make them 
+reproducible.
+
+> IIUC debug kernels mainly exist so people who experience e.g. memory
+> corruption can try and debug the failure. In this case, CONFIG_DEBUG_SG
+> will *already* catch a failure early. Nothing special needs to be done.
+
+The patch helps people debug such memory coprruptions (such as using DMA 
+API on the result of kvmalloc).
+
+> There is a much smaller class of people like QA who go actively looking
+> for trouble. That's the kind of thing fault injection is good for, and
+> IMO you do not want your QA team to test a separate kernel - otherwise
+> you are never quite sure whatever was tested will work in the field.
+> So a config option won't help them either.
+> 
+> How do you make sure QA tests a specific corner case? Add it to
+> the test plan :)
+> 
+> I don't speak for Red Hat, etc.
+> 
+> -- 
+> MST
+
+Mikulas
+--185206533-1736142901-1524758846=:24656--
