@@ -1,107 +1,96 @@
-Return-Path: <pavel@ucw.cz>
-X-Google-Smtp-Source: AB8JxZr4IKdmHF9Vn8Ar/wrNzAueKjdo2IrqHCsvuLZw9KEab7vSK9XSO/zQ/H35XmwCGzo8YEaw
-ARC-Seal: i=1; a=rsa-sha256; t=1525012204; cv=none;
+Return-Path: <ulf.hansson@linaro.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1524732795; cv=none;
         d=google.com; s=arc-20160816;
-        b=T/IW585muXxi//3VCnE4Fis6MBX1ICFj+qqruF2ZaOfvxXrUhiqcHeTM8dOO36ywVn
-         VpuZ3LeTSJ9rQKFrfKnGvQ9Q2KRi0oaZSaU1xbabPxTMqzhPFKIFqNTcNElx5N/Ptdj4
-         mdzZR7masyrxutCgyigehmqfBvcTba6YzfhcMiI4uaVpPeNaCXOklJDdPz7pRF+AI/s7
-         A3Oapfm7Fg62LLGjo3K6f4JMpEnRrZ6P8G2yiWIyuODNoTc0+BAHH6YjLlypckZBloun
-         dyH61BpnopnRq6jKVlmgHaFjsioh7jjvkxpomNTEoB65zQvmZDhEScGALcbrssY1t7Ez
-         NVWA==
+        b=v0pfzKfA2wfoZPef2qiourM7/6ZYg51N3X6zf/niE+UXAgwtlPQ23rD1XlMp2QbHqn
+         4ejfFekcoFbND0Ly3NHl2E61oqpp9xxJYh6+JioZgi/WW2Y5+mc4h6FX8l2W5hOpxkjy
+         O/E4Leoq+bKjW8XAssO9SjAsde1G7WjTaAZjYH8wbuQHImUHKMEGXwem0uwAPNFDXwDJ
+         vQ0AFeLJ/VNkY3GYjLMDz6sHxXx3j5h2UagjKa88AhqnSpc9yT7kgU77zdweEDqhy7GG
+         /U2NStWkWvgkOLkJCKDWWn0h6W0XroHc9RS8b2u3T5K1CFZhItuWECRlUrsMc8tR5W17
+         XgVQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=K56ULmRtuBdAWxi1/Qxk2kPM5KT+l6XXPTf1x2vvHV8=;
-        b=kwqUNnjRIJoQFleNuhIDc0kAhRAPxJbEtYBT1SSEcKx/G349QQUheeIZ+OoHtq9HeJ
-         nJuMHBjeqyN9xo8jWcrbF5tzZht1bFvuoMVkgjhlPZdhCEke58/pss+4C8HYh4MspWbw
-         2XMk8YdRmnzfm4dXKZeallH33qLyCqkasIMuti2in1fArl8PQWO0jSoWnuN3QiQ4KQnh
-         gN2fpHvxr8SrEVsfqY282mqFHuCX+1Irj2UlZ1vndABwEhNp79ZLOxIAxIyZ6oYLiwY4
-         KASOEv2O6odFqfVgs7ZzZqr1GguXRsc/s0KsGkId0kOVauZIPc1itRFoEC139fm+Zoxi
-         CW7Q==
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=BKyv6xwF8Xm1RgBOJm9c8M4cgM43KKWLhCuI4xFY+ho=;
+        b=UdR0ndxEANskRGHWPKCTs0EDmUhpRqRrw2nX2q5xA5dssc+iWmZdJz1W9NdTr+CAf0
+         US8/s3Ie+rBh0o+PkIQLG9fCOJZc9d5VoaLUITfPauuaH27Axj4B91i+7JTTJXh6TZGP
+         K79e0DdLl86++d4mvocc/4jiPqhGxg1nrxcZgY21TXV2cqtWDJPOZBKJbAuYXKvmhcnB
+         mbf9VTcEdP5Blj8e+iWhF2ppQOCNv0IkOk5goIDcmCn9MJnUrSEUQhM0ZsLM16L8yMz6
+         mUsDujG8NvsAQU1yOaXuQRXdzyEHEGi3XTUV8Qqi+ci5k0LoSw4fI+xRNlaeK3wgriXB
+         JZ+w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 195.113.26.193 is neither permitted nor denied by best guess record for domain of pavel@ucw.cz) smtp.mailfrom=pavel@ucw.cz
+       dkim=pass header.i=@linaro.org header.s=google header.b=h3H6rFI2;
+       spf=pass (google.com: domain of ulf.hansson@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=ulf.hansson@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 195.113.26.193 is neither permitted nor denied by best guess record for domain of pavel@ucw.cz) smtp.mailfrom=pavel@ucw.cz
-Date: Sun, 29 Apr 2018 16:30:02 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Ganesh Mahendran <opensource.ganesh@gmail.com>
-Cc: rjw@rjwysocki.net, len.brown@intel.com, rafael@kernel.org,
-	gregkh@linuxfoundation.org, geert@linux-m68k.org,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] PM / wakeup: use seq_open() to show wakeup stats
-Message-ID: <20180429143002.GC13475@amd>
-References: <1524653971-10425-1-git-send-email-opensource.ganesh@gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="8X7/QrJGcKSMr1RN"
-Content-Disposition: inline
-In-Reply-To: <1524653971-10425-1-git-send-email-opensource.ganesh@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+       dkim=pass header.i=@linaro.org header.s=google header.b=h3H6rFI2;
+       spf=pass (google.com: domain of ulf.hansson@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=ulf.hansson@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+X-Google-Smtp-Source: AB8JxZr/9HZ4K2rf7hHC9GQ6n+NLAr97l5Bpo+qeyWNTLtXZO766NNEUdd2y6H0U6skrYIBd7Y10pw==
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-pm@vger.kernel.org
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+	Kevin Hilman <khilman@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Mark Brown <broonie@kernel.org>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Sanyog Kale <sanyog.r.kale@intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+	Wolfram Sang <wsa@the-dreams.de>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 00/11] PM / Domains: Fixup error paths with dev_pm_domain_attach()
+Date: Thu, 26 Apr 2018 10:52:59 +0200
+Message-Id: <1524732790-2234-1-git-send-email-ulf.hansson@linaro.org>
+X-Mailer: git-send-email 2.7.4
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598715584055641513?=
-X-GMAIL-MSGID: =?utf-8?q?1599091197155368646?=
+X-GMAIL-THRID: =?utf-8?q?1598798215227519391?=
+X-GMAIL-MSGID: =?utf-8?q?1598798215227519391?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+While I was on working adding support for multiple PM domains to genpd, I
+stumbled over several problems in the error path related to
+dev_pm_domain_attach(). Hence, I decided to fix these problems first, which is
+what this series intends to address.
 
---8X7/QrJGcKSMr1RN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+There first patch is material for stable, as it fixes a real bug in genpd,
+while the rest may be considered as improvement of the error paths when devices
+fails to be attached to their PM domains.
 
-On Wed 2018-04-25 18:59:31, Ganesh Mahendran wrote:
-> single_open() interface requires that the whole output must
-> fit into a single buffer. This will lead to timeout when
-> system memory is not in a good situation.
->=20
-> This patch use seq_open() to show wakeup stats. This method
-> need only one page, so timeout will not be observed.
+I am seeking acks from subsystem maintainers and suggest with funnel the hole
+series through Rafael's linux-pm tree, unless there are objections to that of
+course.
 
-Sounds like magic.
+Ulf Hansson (11):
+  PM / Domains: Fix error path during attach in genpd
+  PM / Domains: Drop comment in genpd about legacy Samsung DT binding
+  PM / Domains: Drop redundant code in genpd while attaching devices
+  PM / Domains: Check for existing PM domain in dev_pm_domain_attach()
+  PM / Domains: Allow a better error handling of dev_pm_domain_attach()
+  amba: Respect all error codes from dev_pm_domain_attach()
+  driver core: Respect all error codes from dev_pm_domain_attach()
+  i2c: Respect all error codes from dev_pm_domain_attach()
+  mmc: sdio: Respect all error codes from dev_pm_domain_attach()
+  soundwire: Respect all error codes from dev_pm_domain_attach()
+  spi: Respect all error codes from dev_pm_domain_attach()
 
-> -static int wakeup_sources_stats_show(struct seq_file *m, void *unused)
-> +static void *wakeup_sources_stats_seq_start(struct seq_file *m,
-> +					loff_t *pos)
->  {
-=2E..
-> -	srcuidx =3D srcu_read_lock(&wakeup_srcu);
-> -	list_for_each_entry_rcu(ws, &wakeup_sources, entry)
-> -		print_wakeup_source_stats(m, ws);
-> -	srcu_read_unlock(&wakeup_srcu, srcuidx);
-> +	*srcuidx =3D srcu_read_lock(&wakeup_srcu);
-> +	list_for_each_entry_rcu(ws, &wakeup_sources, entry) {
-> +		if (n-- <=3D 0)
-> +			return ws;
-> +	}
-> +
-> +	return NULL;
-> +}
-=2E..
-> +static void wakeup_sources_stats_seq_stop(struct seq_file *m, void *v)
-> +{
-> +	int *srcuidx =3D m->private;
-> +
-> +	srcu_read_unlock(&wakeup_srcu, *srcuidx);
-> +}
+ drivers/acpi/device_pm.c     |  9 +++------
+ drivers/amba/bus.c           |  4 ++--
+ drivers/base/platform.c      | 17 ++++++++---------
+ drivers/base/power/common.c  | 10 +++++++---
+ drivers/base/power/domain.c  | 45 +++++++++++++++-----------------------------
+ drivers/i2c/i2c-core-base.c  |  2 +-
+ drivers/mmc/core/sdio_bus.c  |  2 +-
+ drivers/soundwire/bus_type.c | 15 +++++++--------
+ drivers/spi/spi.c            | 11 ++++++-----
+ include/linux/acpi.h         |  2 +-
+ include/linux/pm_domain.h    |  2 +-
+ 11 files changed, 52 insertions(+), 67 deletions(-)
 
-But you are holding srcu_lock over return to userspace, and somehow I
-don't think that's permitted?
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---8X7/QrJGcKSMr1RN
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlrl1uoACgkQMOfwapXb+vLWfQCfec1XrdlLE0AwT0gWMJILdKJP
-fLgAoIqn6yp9O1011jbE2eSYNL1XyMHR
-=uMnk
------END PGP SIGNATURE-----
-
---8X7/QrJGcKSMr1RN--
+-- 
+2.7.4
