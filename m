@@ -1,150 +1,564 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754889AbeDZK61 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 06:58:27 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51834 "EHLO
+        id S1755043AbeDZK7s (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 06:59:48 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51876 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752985AbeDZK6X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 06:58:23 -0400
-Subject: Re: [PATCH v2 05/17] arm64: Helper for parange to PASize
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc: ard.biesheuvel@linaro.org, kvm@vger.kernel.org, marc.zyngier@arm.com,
-        catalin.marinas@arm.com, punit.agrawal@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, kristina.martsenko@arm.com,
-        pbonzini@redhat.com, kvmarm@lists.cs.columbia.edu
-References: <1522156531-28348-1-git-send-email-suzuki.poulose@arm.com>
- <1522156531-28348-6-git-send-email-suzuki.poulose@arm.com>
-From: Julien Grall <julien.grall@arm.com>
-Message-ID: <2910d406-315f-6f0f-7456-df9d80a08087@arm.com>
-Date: Thu, 26 Apr 2018 11:58:19 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1754678AbeDZK7q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 06:59:46 -0400
+Date: Thu, 26 Apr 2018 11:59:38 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, Will.Deacon@arm.com,
+        jnair@caviumnetworks.com, Robert.Richter@cavium.com,
+        Vadim.Lomovtsev@cavium.com, Jan.Glauber@cavium.com, gklkml16@gmail.com
+Subject: Re: [PATCH v4 2/2] ThunderX2: Add Cavium ThunderX2 SoC UNCORE PMU
+ driver
+Message-ID: <20180426105938.y6unpt36lisb7kbr@lakrids.cambridge.arm.com>
+References: <20180425090047.6485-1-ganapatrao.kulkarni@cavium.com>
+ <20180425090047.6485-3-ganapatrao.kulkarni@cavium.com>
 MIME-Version: 1.0
-In-Reply-To: <1522156531-28348-6-git-send-email-suzuki.poulose@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180425090047.6485-3-ganapatrao.kulkarni@cavium.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Suzuki,
+Hi,
 
-On 27/03/18 14:15, Suzuki K Poulose wrote:
-> Add a helper to convert ID_AA64MMFR0_EL1:PARange to they physical
-> size shift. Limit the size to the maximum supported by the kernel.
-> We are about to move the user of this code and this helps to
-> keep the changes cleaner.
+On Wed, Apr 25, 2018 at 02:30:47PM +0530, Ganapatrao Kulkarni wrote:
+> +
+> +/* L3c and DMC has 16 and 8 channels per socket respectively.
+> + * Each Channel supports UNCORE PMU device and consists of
+> + * 4 independent programmable counters. Counters are 32 bit
+> + * and does not support overflow interrupt, they needs to be
+> + * sampled before overflow(i.e, at every 2 seconds).
+> + */
+> +
+> +#define UNCORE_MAX_COUNTERS		4
+> +#define UNCORE_L3_MAX_TILES		16
+> +#define UNCORE_DMC_MAX_CHANNELS		8
+> +
+> +#define UNCORE_HRTIMER_INTERVAL		(2 * NSEC_PER_SEC)
 
-It is probably worth to mention that you are also adding 52-bit support 
-in the patch.
+How was a period of two seconds chosen?
 
-Cheers,
+What's the maximum clock speed for the L3C and DMC?
 
-> 
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: Christoffer Dall <cdall@kernel.org>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> ---
->   arch/arm64/include/asm/cpufeature.h | 16 ++++++++++++++++
->   arch/arm64/kvm/hyp/s2-setup.c       | 28 +++++-----------------------
->   2 files changed, 21 insertions(+), 23 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
-> index fbf0aab..1f2a5dd 100644
-> --- a/arch/arm64/include/asm/cpufeature.h
-> +++ b/arch/arm64/include/asm/cpufeature.h
-> @@ -311,6 +311,22 @@ static inline u64 read_zcr_features(void)
->   	return zcr;
->   }
->   
-> +static inline u32 id_aa64mmfr0_parange_to_phys_shift(int parange)
+Given that all channels compete for access to the muxed register
+interface, I suspect we need to try more often than once every 2
+seconds...
+
+[...]
+
+> +struct active_timer {
+> +	struct perf_event *event;
+> +	struct hrtimer hrtimer;
+> +};
+> +
+> +/*
+> + * pmu on each socket has 2 uncore devices(dmc and l3),
+> + * each uncore device has up to 16 channels, each channel can sample
+> + * events independently with counters up to 4.
+> + *
+> + * struct thunderx2_pmu_uncore_channel created per channel.
+> + * struct thunderx2_pmu_uncore_dev per uncore device.
+> + */
+> +struct thunderx2_pmu_uncore_channel {
+> +	struct thunderx2_pmu_uncore_dev *uncore_dev;
+> +	struct pmu pmu;
+
+Can we put the pmu first in the struct, please?
+
+> +	int counter;
+
+AFAICT, this counter field is never used.
+
+> +	int channel;
+> +	DECLARE_BITMAP(counter_mask, UNCORE_MAX_COUNTERS);
+> +	struct active_timer *active_timers;
+
+You should only need a single timer per channel, rather than one per
+event.
+
+I think you can get rid of the active_timer structure, and have:
+
+	struct perf_event *events[UNCORE_MAX_COUNTERS];
+	struct hrtimer timer;
+
+> +	/* to sync counter alloc/release */
+> +	raw_spinlock_t lock;
+> +};
+> +
+> +struct thunderx2_pmu_uncore_dev {
+> +	char *name;
+> +	struct device *dev;
+> +	enum thunderx2_uncore_type type;
+> +	unsigned long base;
+
+This should be:
+
+void __iomem *base;
+
+[...]
+
+> +static ssize_t cpumask_show(struct device *dev,
+> +				struct device_attribute *attr, char *buf)
 > +{
-> +	switch (parange) {
-> +	case 0: return 32;
-> +	case 1: return 36;
-> +	case 2: return 40;
-> +	case 3: return 42;
-> +	case 4: return 44;
-> +	/* Report 48 bit if the kernel doesn't support 52bit */
-> +	default:
-> +	case 5: return 48;
-> +#ifdef CONFIG_ARM64_PA_BITS_52
-> +	case 6: return 52;
-> +#endif
-> +	}
+> +	struct cpumask cpu_mask;
+> +	struct thunderx2_pmu_uncore_channel *pmu_uncore =
+> +		pmu_to_thunderx2_pmu_uncore(dev_get_drvdata(dev));
+> +
+> +	/* Pick first online cpu from the node */
+> +	cpumask_clear(&cpu_mask);
+> +	cpumask_set_cpu(cpumask_first(
+> +			cpumask_of_node(pmu_uncore->uncore_dev->node)),
+> +			&cpu_mask);
+> +
+> +	return cpumap_print_to_pagebuf(true, buf, &cpu_mask);
 > +}
->   #endif /* __ASSEMBLY__ */
->   
->   #endif
-> diff --git a/arch/arm64/kvm/hyp/s2-setup.c b/arch/arm64/kvm/hyp/s2-setup.c
-> index 603e1ee..b1129c8 100644
-> --- a/arch/arm64/kvm/hyp/s2-setup.c
-> +++ b/arch/arm64/kvm/hyp/s2-setup.c
-> @@ -19,11 +19,13 @@
->   #include <asm/kvm_arm.h>
->   #include <asm/kvm_asm.h>
->   #include <asm/kvm_hyp.h>
-> +#include <asm/cpufeature.h>
->   
->   u32 __hyp_text __init_stage2_translation(void)
->   {
->   	u64 val = VTCR_EL2_FLAGS;
->   	u64 parange;
-> +	u32 phys_shift;
->   	u64 tmp;
->   
->   	/*
-> @@ -37,27 +39,7 @@ u32 __hyp_text __init_stage2_translation(void)
->   	val |= parange << 16;
->   
->   	/* Compute the actual PARange... */
-> -	switch (parange) {
-> -	case 0:
-> -		parange = 32;
-> -		break;
-> -	case 1:
-> -		parange = 36;
-> -		break;
-> -	case 2:
-> -		parange = 40;
-> -		break;
-> -	case 3:
-> -		parange = 42;
-> -		break;
-> -	case 4:
-> -		parange = 44;
-> -		break;
-> -	case 5:
-> -	default:
-> -		parange = 48;
-> -		break;
-> -	}
-> +	phys_shift = id_aa64mmfr0_parange_to_phys_shift(parange);
->   
->   	/*
->   	 * ... and clamp it to 40 bits, unless we have some braindead
-> @@ -65,7 +47,7 @@ u32 __hyp_text __init_stage2_translation(void)
->   	 * return that value for the rest of the kernel to decide what
->   	 * to do.
->   	 */
-> -	val |= 64 - (parange > 40 ? 40 : parange);
-> +	val |= 64 - (phys_shift > 40 ? 40 : phys_shift);
->   
->   	/*
->   	 * Check the availability of Hardware Access Flag / Dirty Bit
-> @@ -86,5 +68,5 @@ u32 __hyp_text __init_stage2_translation(void)
->   
->   	write_sysreg(val, vtcr_el2);
->   
-> -	return parange;
-> +	return phys_shift;
->   }
-> 
 
--- 
-Julien Grall
+AFAICT cpumask_of_node() returns a mask that can include offline CPUs.
+
+Regardless, I don't think that you can keep track of the management CPU
+this way. Please keep track of the CPU the PMU should be managed by,
+either with a cpumask or int embedded within the PMU structure.
+
+At hotplug time, you'll need to update the management CPU, calling
+perf_pmu_migrate_context() when it is offlined.
+
+[...]
+
+> +static int alloc_counter(struct thunderx2_pmu_uncore_channel *pmu_uncore)
+> +{
+> +	int counter;
+> +
+> +	raw_spin_lock(&pmu_uncore->lock);
+> +	counter = find_first_zero_bit(pmu_uncore->counter_mask,
+> +				pmu_uncore->uncore_dev->max_counters);
+> +	if (counter == pmu_uncore->uncore_dev->max_counters) {
+> +		raw_spin_unlock(&pmu_uncore->lock);
+> +		return -ENOSPC;
+> +	}
+> +	set_bit(counter, pmu_uncore->counter_mask);
+> +	raw_spin_unlock(&pmu_uncore->lock);
+> +	return counter;
+> +}
+> +
+> +static void free_counter(struct thunderx2_pmu_uncore_channel *pmu_uncore,
+> +					int counter)
+> +{
+> +	raw_spin_lock(&pmu_uncore->lock);
+> +	clear_bit(counter, pmu_uncore->counter_mask);
+> +	raw_spin_unlock(&pmu_uncore->lock);
+> +}
+
+I don't believe that locking is required in either of these, as the perf
+core serializes pmu::add() and pmu::del(), where these get called.
+
+> +
+> +/*
+> + * DMC and L3 counter interface is muxed across all channels.
+> + * hence we need to select the channel before accessing counter
+> + * data/control registers.
+
+Are there separate interfaces for all-dmc-channels and all-l3c-channels?
+
+... or is a single interface used by all-dmc-and-l3c-channels?
+
+> + *
+> + *  L3 Tile and DMC channel selection is through SMC call
+> + *  SMC call arguments,
+> + *	x0 = THUNDERX2_SMC_CALL_ID	(Vendor SMC call Id)
+> + *	x1 = THUNDERX2_SMC_SET_CHANNEL	(Id to set DMC/L3C channel)
+> + *	x2 = Node id
+
+How do we map Linux node IDs to the firmware's view of node IDs?
+
+I don't believe the two are necessarily the same -- Linux's node IDs are
+a Linux-specific construct.
+
+It would be much nicer if we could pass something based on the MPIDR,
+which is a known HW construct, or if this implicitly affected the
+current node.
+
+It would be vastly more sane for this to not be muxed at all. :/
+
+> + *	x3 = DMC(1)/L3C(0)
+> + *	x4 = channel Id
+> + */
+> +static void uncore_select_channel(struct perf_event *event)
+> +{
+> +	struct arm_smccc_res res;
+> +	struct thunderx2_pmu_uncore_channel *pmu_uncore =
+> +		pmu_to_thunderx2_pmu_uncore(event->pmu);
+> +
+> +	arm_smccc_smc(THUNDERX2_SMC_CALL_ID, THUNDERX2_SMC_SET_CHANNEL,
+> +			pmu_uncore->uncore_dev->node,
+> +			pmu_uncore->uncore_dev->type,
+> +			pmu_uncore->channel, 0, 0, 0, &res);
+> +
+> +}
+
+Why aren't we checking the return value of the SMC call?
+
+The muxing and SMC sound quite scary. :/
+
+> +
+> +static void uncore_start_event_l3c(struct perf_event *event, int flags)
+> +{
+> +	u32 val;
+> +	struct hw_perf_event *hwc = &event->hw;
+> +
+> +	/* event id encoded in bits [07:03] */
+> +	val = GET_EVENTID(event) << 3;
+> +	reg_writel(val, hwc->config_base);
+> +
+> +	if (flags & PERF_EF_RELOAD) {
+> +		u64 prev_raw_count =
+> +			local64_read(&event->hw.prev_count);
+> +		reg_writel(prev_raw_count, hwc->event_base);
+> +	}
+> +	local64_set(&event->hw.prev_count,
+> +			reg_readl(hwc->event_base));
+
+It would be simpler to ignore PERF_EF_RELOAD, and always reprogram the
+prev_count and HW to zero.
+
+> +}
+> +
+> +static void uncore_start_event_dmc(struct perf_event *event, int flags)
+> +{
+> +	u32 val, event_shift = 8;
+> +	struct hw_perf_event *hwc = &event->hw;
+> +
+> +	/* enable and start counters and read current value in prev_count */
+> +	val = reg_readl(hwc->config_base);
+> +
+> +	/* 8 bits for each counter,
+> +	 * bits [05:01] of a counter to set event type.
+> +	 */
+> +	reg_writel((val & ~(0x1f << (((GET_COUNTERID(event)) *
+> +		event_shift) + 1))) |
+> +		(GET_EVENTID(event) <<
+> +		 (((GET_COUNTERID(event)) * event_shift) + 1)),
+> +		hwc->config_base);
+
+This would be far more legible if val were constructed before the
+reg_writel(), especially if there were a helper for the event field
+shifting, e.g.
+
+	#define DMC_EVENT_CFG(idx, val)	((val) << (((idx) * 8) + 1))
+
+	int id = GET_COUNTERID(event);
+	int event = GET_EVENTID(event);
+
+	val = reg_readl(hwc->config_base);
+	val &= ~DMC_EVENT_CFG(id, 0x1f);
+	val |= DMCC_EVENT_CFG(id, event);
+	reg_writel(val, hwc->config_base));
+
+What are bits 7:6 and 1 used for?
+
+> +
+> +	if (flags & PERF_EF_RELOAD) {
+> +		u64 prev_raw_count =
+> +			local64_read(&event->hw.prev_count);
+> +		reg_writel(prev_raw_count, hwc->event_base);
+> +	}
+> +	local64_set(&event->hw.prev_count,
+> +			reg_readl(hwc->event_base));
+
+
+As with the L3C events, it would be simpler to always reprogram the
+prev_count and HW to zero.
+
+> +}
+> +
+> +static void uncore_stop_event_l3c(struct perf_event *event)
+> +{
+> +	reg_writel(0, event->hw.config_base);
+> +}
+> +
+> +static void uncore_stop_event_dmc(struct perf_event *event)
+> +{
+> +	u32 val, event_shift = 8;
+> +	struct hw_perf_event *hwc = &event->hw;
+> +
+> +	val = reg_readl(hwc->config_base);
+> +	reg_writel((val & ~(0xff << ((GET_COUNTERID(event)) * event_shift))),
+> +			hwc->config_base);
+
+
+This could be simplified with the helper proposed above.
+
+> +}
+> +
+> +static void init_cntr_base_l3c(struct perf_event *event,
+> +		struct thunderx2_pmu_uncore_dev *uncore_dev)
+> +{
+> +
+> +	struct hw_perf_event *hwc = &event->hw;
+> +
+> +	/* counter ctrl/data reg offset at 8 */
+
+Offset 8, or stride 8?
+
+What does the register layout look like?
+
+> +	hwc->config_base = uncore_dev->base
+> +		+ L3C_COUNTER_CTL + (8 * GET_COUNTERID(event));
+> +	hwc->event_base =  uncore_dev->base
+> +		+ L3C_COUNTER_DATA + (8 * GET_COUNTERID(event));
+> +}
+> +
+> +static void init_cntr_base_dmc(struct perf_event *event,
+> +		struct thunderx2_pmu_uncore_dev *uncore_dev)
+> +{
+> +
+> +	struct hw_perf_event *hwc = &event->hw;
+> +
+> +	hwc->config_base = uncore_dev->base
+> +		+ DMC_COUNTER_CTL;
+> +	/* counter data reg offset at 0xc */
+
+A stride of 0xc seems unusual.
+
+What does the register layout look like?
+
+> +	hwc->event_base =  uncore_dev->base
+> +		+ DMC_COUNTER_DATA + (0xc * GET_COUNTERID(event));
+> +}
+> +
+> +static void thunderx2_uncore_update(struct perf_event *event)
+> +{
+> +	s64 prev, new = 0;
+> +	u64 delta;
+> +	struct hw_perf_event *hwc = &event->hw;
+> +	struct thunderx2_pmu_uncore_channel *pmu_uncore;
+> +	enum thunderx2_uncore_type type;
+> +
+> +	pmu_uncore = pmu_to_thunderx2_pmu_uncore(event->pmu);
+> +	type = pmu_uncore->uncore_dev->type;
+
+AFAICT this variable is not used below.
+
+> +
+> +	if (pmu_uncore->uncore_dev->select_channel)
+> +		pmu_uncore->uncore_dev->select_channel(event);
+
+This should always be non-NULL, right?
+
+[...]
+
+> +static bool thunderx2_uncore_validate_event_group(struct perf_event *event)
+> +{
+> +	struct pmu *pmu = event->pmu;
+> +	struct perf_event *leader = event->group_leader;
+> +	struct perf_event *sibling;
+> +	int counters = 0;
+> +
+> +	if (leader->pmu != event->pmu && !is_software_event(leader))
+> +		return false;
+> +
+> +	counters++;
+
+I don't think this is right when event != leader and the leader is a SW
+event. In that case, the leader doesn't take a HW counter.
+
+> +
+> +	for_each_sibling_event(sibling, event->group_leader) {
+> +		if (is_software_event(sibling))
+> +			continue;
+> +		if (sibling->pmu != pmu)
+> +			return false;
+> +		counters++;
+> +	}
+> +
+> +	/*
+> +	 * If the group requires more counters than the HW has,
+> +	 * it cannot ever be scheduled.
+> +	 */
+> +	return counters <= UNCORE_MAX_COUNTERS;
+> +}
+
+[...]
+
+> +static int thunderx2_uncore_event_init(struct perf_event *event)
+> +{
+> +	struct hw_perf_event *hwc = &event->hw;
+> +	struct thunderx2_pmu_uncore_channel *pmu_uncore;
+
+> +	pmu_uncore = pmu_to_thunderx2_pmu_uncore(event->pmu);
+> +
+> +	if (!pmu_uncore)
+> +		return -ENODEV;
+
+This cannot happen, given pmu_to_thunderx2_pmu_uncore() is a wrapper
+around container_of().
+
+> +
+> +	/* Pick first online cpu from the node */
+> +	event->cpu = cpumask_first(
+> +			cpumask_of_node(pmu_uncore->uncore_dev->node));
+
+I don't believe this is safe. You must keep track of which CPU is
+managing the PMU, with hotplug callbacks.
+
+[...]
+
+> +static void thunderx2_uncore_start(struct perf_event *event, int flags)
+> +{
+> +	struct hw_perf_event *hwc = &event->hw;
+> +	struct thunderx2_pmu_uncore_channel *pmu_uncore;
+> +	struct thunderx2_pmu_uncore_dev *uncore_dev;
+> +	unsigned long irqflags;
+> +	struct active_timer *active_timer;
+> +
+> +	hwc->state = 0;
+> +	pmu_uncore = pmu_to_thunderx2_pmu_uncore(event->pmu);
+> +	uncore_dev = pmu_uncore->uncore_dev;
+> +
+> +	raw_spin_lock_irqsave(&uncore_dev->lock, irqflags);
+> +
+> +	if (uncore_dev->select_channel)
+> +		uncore_dev->select_channel(event);
+> +	uncore_dev->start_event(event, flags);
+> +	raw_spin_unlock_irqrestore(&uncore_dev->lock, irqflags);
+> +
+> +	perf_event_update_userpage(event);
+> +	active_timer = &pmu_uncore->active_timers[GET_COUNTERID(event)];
+> +	active_timer->event = event;
+> +
+> +	hrtimer_start(&active_timer->hrtimer,
+> +			ns_to_ktime(uncore_dev->hrtimer_interval),
+> +			HRTIMER_MODE_REL_PINNED);
+> +}
+
+Please use a single hrtimer, and update *all* of the events when it
+fires.
+
+I *think* that can be done in the pmu::pmu_enable() and
+pmu::pmu_disable() callbacks.
+
+Are there control bits to enable/disable all counters, or can that only
+be done through the event configuration registers?
+
+> +static void thunderx2_uncore_stop(struct perf_event *event, int flags)
+> +{
+> +	struct hw_perf_event *hwc = &event->hw;
+> +	struct thunderx2_pmu_uncore_channel *pmu_uncore;
+> +	struct thunderx2_pmu_uncore_dev *uncore_dev;
+> +	unsigned long irqflags;
+> +
+> +	if (hwc->state & PERF_HES_UPTODATE)
+> +		return;
+> +
+> +	pmu_uncore = pmu_to_thunderx2_pmu_uncore(event->pmu);
+> +	uncore_dev = pmu_uncore->uncore_dev;
+> +
+> +	raw_spin_lock_irqsave(&uncore_dev->lock, irqflags);
+> +
+> +	if (uncore_dev->select_channel)
+> +		uncore_dev->select_channel(event);
+
+AFAICT this cannot be NULL.
+
+[...]
+
+> +static int thunderx2_pmu_uncore_register(
+> +		struct thunderx2_pmu_uncore_channel *pmu_uncore)
+> +{
+> +	struct device *dev = pmu_uncore->uncore_dev->dev;
+> +	char *name = pmu_uncore->uncore_dev->name;
+> +	int channel = pmu_uncore->channel;
+> +
+> +	/* Perf event registration */
+> +	pmu_uncore->pmu = (struct pmu) {
+> +		.attr_groups	= pmu_uncore->uncore_dev->attr_groups,
+> +		.task_ctx_nr	= perf_invalid_context,
+> +		.event_init	= thunderx2_uncore_event_init,
+> +		.add		= thunderx2_uncore_add,
+> +		.del		= thunderx2_uncore_del,
+> +		.start		= thunderx2_uncore_start,
+> +		.stop		= thunderx2_uncore_stop,
+> +		.read		= thunderx2_uncore_read,
+> +	};
+> +
+> +	pmu_uncore->pmu.name = devm_kasprintf(dev, GFP_KERNEL,
+> +			"%s_%d", name, channel);
+
+Does the channel idx take the NUMA node into account?
+
+[...]
+
+> +static int thunderx2_pmu_uncore_add(struct thunderx2_pmu_uncore_dev *uncore_dev,
+> +		int channel)
+> +{
+
+> +	/* we can run up to (max_counters * max_channels) events
+> +	 * simultaneously, allocate hrtimers per channel.
+> +	 */
+> +	pmu_uncore->active_timers = devm_kzalloc(uncore_dev->dev,
+> +			sizeof(struct active_timer) * uncore_dev->max_counters,
+> +			GFP_KERNEL);
+
+Please just fold a single hrtimer into the thunderx2_pmu_uncore_channel
+structure, and you can get rid of this allocation...
+
+> +
+> +	for (counter = 0; counter < uncore_dev->max_counters; counter++) {
+> +		hrtimer_init(&pmu_uncore->active_timers[counter].hrtimer,
+> +				CLOCK_MONOTONIC,
+> +				HRTIMER_MODE_REL);
+> +		pmu_uncore->active_timers[counter].hrtimer.function =
+> +				thunderx2_uncore_hrtimer_callback;
+> +	}
+
+... and simplify this initialization.
+
+[...]
+
+> +static struct thunderx2_pmu_uncore_dev *init_pmu_uncore_dev(
+> +		struct device *dev, acpi_handle handle,
+> +		struct acpi_device *adev, u32 type)
+> +{
+> +	struct thunderx2_pmu_uncore_dev *uncore_dev;
+> +	unsigned long base;
+
+> +	base = (unsigned long)devm_ioremap_resource(dev, &res);
+> +	if (IS_ERR((void *)base)) {
+> +		dev_err(dev, "PMU type %d: Fail to map resource\n", type);
+> +		return NULL;
+> +	}
+
+Please treat this as a void __iomem *base.
+
+[...]
+
+> +static int thunderx2_uncore_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct arm_smccc_res res;
+> +
+> +	set_dev_node(dev, acpi_get_node(ACPI_HANDLE(dev)));
+> +
+> +	/* Make sure firmware supports DMC/L3C set channel smc call */
+> +	arm_smccc_smc(THUNDERX2_SMC_CALL_ID, THUNDERX2_SMC_SET_CHANNEL,
+> +			dev_to_node(dev), 0, 0, 0, 0, 0, &res);
+> +	if (res.a0) {
+> +		dev_err(dev, "No Firmware support for PMU UNCORE(%d)\n",
+> +				dev_to_node(dev));
+> +		return -ENODEV;
+> +	}
+
+Please re-use the uncore_select_channel() wrapper rather than
+open-coding this.
+
+Which FW supports this interface?
+
+Thanks,
+Mark.
