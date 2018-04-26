@@ -1,88 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932237AbeDZOJD (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 10:09:03 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:45824 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932214AbeDZOI7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S932253AbeDZOJG (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 10:09:06 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54160 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932216AbeDZOI7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 26 Apr 2018 10:08:59 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 1/3] mmc: sunxi: add support for the MMC controller on H6
-Date: Thu, 26 Apr 2018 22:07:26 +0800
-Message-Id: <20180426140728.43155-2-icenowy@aosc.io>
-In-Reply-To: <20180426140728.43155-1-icenowy@aosc.io>
-References: <20180426140728.43155-1-icenowy@aosc.io>
+Subject: Re: [kvmtool PATCH 21/17] kvmtool: arm: Add support for creating VM
+ with PA size
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc: ard.biesheuvel@linaro.org, kvm@vger.kernel.org, marc.zyngier@arm.com,
+        catalin.marinas@arm.com, punit.agrawal@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, kristina.martsenko@arm.com,
+        pbonzini@redhat.com, kvmarm@lists.cs.columbia.edu
+References: <1522156531-28348-1-git-send-email-suzuki.poulose@arm.com>
+ <1522156531-28348-22-git-send-email-suzuki.poulose@arm.com>
+From: Julien Grall <julien.grall@arm.com>
+Message-ID: <c660b148-34ae-5409-665f-aadc94669752@arm.com>
+Date: Thu, 26 Apr 2018 15:08:55 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <1522156531-28348-22-git-send-email-suzuki.poulose@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The new Allwinner H6 SoC have 3 MMC controllers. The first and second
-ones are similar to the ones on A64, but the third one adds EMCE
-(Embedded Crypto Engine) support which does hardware transparent crypto
-on the eMMC.
+Hi Suzuki,
 
-As we still do not have support for EMCE, and the support of it is
-disabled by defualt, we just duplicate the A64 mmc configurations and
-change the compatible string.
+On 27/03/18 14:15, Suzuki K Poulose wrote:
+> Specify the physical size for the VM encoded in the vm type.
+> 
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+>   arm/include/arm-common/kvm-arch.h |  6 +++++-
+>   arm/kvm.c                         | 21 +++++++++++++++++++++
+>   2 files changed, 26 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arm/include/arm-common/kvm-arch.h b/arm/include/arm-common/kvm-arch.h
+> index ca7ab0f..64bc92a 100644
+> --- a/arm/include/arm-common/kvm-arch.h
+> +++ b/arm/include/arm-common/kvm-arch.h
+> @@ -42,7 +42,11 @@
+>   
+>   #define KVM_IRQ_OFFSET		GIC_SPI_IRQ_BASE
+>   
+> -#define KVM_VM_TYPE		0
+> +extern unsigned long		kvm_arm_type;
+> +extern void kvm__arch_init_hyp(struct kvm *kvm);
+> +
+> +#define KVM_VM_TYPE		kvm_arm_type
+> +#define kvm__arch_init_hyp	kvm__arch_init_hyp
+>   
+>   #define VIRTIO_DEFAULT_TRANS(kvm)	\
+>   	((kvm)->cfg.arch.virtio_trans_pci ? VIRTIO_PCI : VIRTIO_MMIO)
+> diff --git a/arm/kvm.c b/arm/kvm.c
+> index 5701d41..a9a9140 100644
+> --- a/arm/kvm.c
+> +++ b/arm/kvm.c
+> @@ -11,6 +11,8 @@
+>   #include <linux/kvm.h>
+>   #include <linux/sizes.h>
+>   
+> +unsigned long kvm_arm_type;
+> +
+>   struct kvm_ext kvm_req_ext[] = {
+>   	{ DEFINE_KVM_EXT(KVM_CAP_IRQCHIP) },
+>   	{ DEFINE_KVM_EXT(KVM_CAP_ONE_REG) },
+> @@ -18,6 +20,25 @@ struct kvm_ext kvm_req_ext[] = {
+>   	{ 0, 0 },
+>   };
+>   
+> +#ifndef KVM_ARM_GET_MAX_VM_PHYS_SHIFT
+> +#define KVM_ARM_GET_MAX_VM_PHYS_SHIFT		_IO(KVMIO, 0x0a)
+> +#endif
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
- Documentation/devicetree/bindings/mmc/sunxi-mmc.txt |  2 ++
- drivers/mmc/host/sunxi-mmc.c                        | 16 ++++++++++++++++
- 2 files changed, 18 insertions(+)
+Once the IOCTL is agreed, I think you would need to update 
+include/linux/kvm.h.
 
-diff --git a/Documentation/devicetree/bindings/mmc/sunxi-mmc.txt b/Documentation/devicetree/bindings/mmc/sunxi-mmc.txt
-index 132e0007d7d6..e6aa5c7a5e12 100644
---- a/Documentation/devicetree/bindings/mmc/sunxi-mmc.txt
-+++ b/Documentation/devicetree/bindings/mmc/sunxi-mmc.txt
-@@ -16,6 +16,8 @@ Required properties:
-    * "allwinner,sun9i-a80-mmc"
-    * "allwinner,sun50i-a64-emmc"
-    * "allwinner,sun50i-a64-mmc"
-+   * "allwinner,sun50i-h6-emmc"
-+   * "allwinner,sun50i-h6-mmc"
-  - reg : mmc controller base registers
-  - clocks : a list with 4 phandle + clock specifier pairs
-  - clock-names : must contain "ahb", "mmc", "output" and "sample"
-diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc.c
-index 97c6b79b7d6f..05e2b5fd7aa4 100644
---- a/drivers/mmc/host/sunxi-mmc.c
-+++ b/drivers/mmc/host/sunxi-mmc.c
-@@ -1168,6 +1168,20 @@ static const struct sunxi_mmc_cfg sun50i_a64_emmc_cfg = {
- 	.can_calibrate = true,
- };
- 
-+static const struct sunxi_mmc_cfg sun50i_h6_cfg = {
-+	.idma_des_size_bits = 16,
-+	.clk_delays = NULL,
-+	.can_calibrate = true,
-+	.mask_data0 = true,
-+	.needs_new_timings = true,
-+};
-+
-+static const struct sunxi_mmc_cfg sun50i_h6_emmc_cfg = {
-+	.idma_des_size_bits = 13,
-+	.clk_delays = NULL,
-+	.can_calibrate = true,
-+};
-+
- static const struct of_device_id sunxi_mmc_of_match[] = {
- 	{ .compatible = "allwinner,sun4i-a10-mmc", .data = &sun4i_a10_cfg },
- 	{ .compatible = "allwinner,sun5i-a13-mmc", .data = &sun5i_a13_cfg },
-@@ -1176,6 +1190,8 @@ static const struct of_device_id sunxi_mmc_of_match[] = {
- 	{ .compatible = "allwinner,sun9i-a80-mmc", .data = &sun9i_a80_cfg },
- 	{ .compatible = "allwinner,sun50i-a64-mmc", .data = &sun50i_a64_cfg },
- 	{ .compatible = "allwinner,sun50i-a64-emmc", .data = &sun50i_a64_emmc_cfg },
-+	{ .compatible = "allwinner,sun50i-h6-mmc", .data = &sun50i_h6_cfg },
-+	{ .compatible = "allwinner,sun50i-h6-emmc", .data = &sun50i_h6_emmc_cfg },
- 	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, sunxi_mmc_of_match);
+> +
+> +void kvm__arch_init_hyp(struct kvm *kvm)
+> +{
+> +	unsigned max_ipa;
+> +
+> +	max_ipa = ioctl(kvm->sys_fd, KVM_ARM_GET_MAX_VM_PHYS_SHIFT);
+> +	if (max_ipa < 0)
+> +		max_ipa = 40;
+> +	if (!kvm->cfg.arch.phys_shift)
+> +		kvm->cfg.arch.phys_shift = 40;
+> +	if (kvm->cfg.arch.phys_shift > max_ipa)
+> +		die("Requested PA size (%u) is not supported by the host (%ubits)\n",
+> +		    kvm->cfg.arch.phys_shift, max_ipa);
+> +	kvm_arm_type = kvm->cfg.arch.phys_shift;
+
+FWIW, older Linux will not accept a KVM type other than 0. So I think 
+the best would be to bail out if KVM_ARM_GET_MAX_VM_PHYS_SHIFT does not 
+exist.
+
+For safety, you could even check that arch.phys_shift is always 40 when 
+running under older Linux.
+
+Cheers,
+
 -- 
-2.15.1
+Julien Grall
