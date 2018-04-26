@@ -1,59 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756916AbeDZRYk (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 13:24:40 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37056 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753282AbeDZRYf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 13:24:35 -0400
-From: Jeff Moyer <jmoyer@redhat.com>
-To: Pankaj Gupta <pagupta@redhat.com>
-Cc: Dan Williams <dan.j.williams@intel.com>, Jan Kara <jack@suse.cz>,
-        KVM list <kvm@vger.kernel.org>, David Hildenbrand <david@redhat.com>,
-        linux-nvdimm <linux-nvdimm@ml01.01.org>,
-        Ross Zwisler <ross.zwisler@intel.com>,
-        Qemu Developers <qemu-devel@nongnu.org>, lcapitulino@redhat.com,
-        Linux MM <linux-mm@kvack.org>, niteshnarayanlal@hotmail.com,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Marcel Apfelbaum <marcel@redhat.com>,
-        Nitesh Narayan Lal <nilal@redhat.com>,
-        Haozhong Zhang <haozhong.zhang@intel.com>,
-        Rik van Riel <riel@surriel.com>, Stefan Hajnoczi <stefanha@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>, Kevin Wolf <kwolf@redhat.com>,
-        Xiao Guangrong <xiaoguangrong.eric@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Igor Mammedov <imammedo@redhat.com>
-Subject: Re: [Qemu-devel] [RFC v2 1/2] virtio: add pmem driver
-References: <20180425112415.12327-1-pagupta@redhat.com>
-        <20180425112415.12327-2-pagupta@redhat.com>
-        <CAPcyv4hvrB08XPTbVK0xT2_1Xmaid=-v3OMxJVDTNwQucsOHLA@mail.gmail.com>
-        <CAPcyv4hiowWozV527sQA_e4fdgCYbD6xfG==vepAqu0hxQEQcw@mail.gmail.com>
-        <x49o9i6885e.fsf@segfault.boston.devel.redhat.com>
-        <1499190564.23017177.1524762938762.JavaMail.zimbra@redhat.com>
-X-PGP-KeyID: 1F78E1B4
-X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
-X-PCLoadLetter: What the f**k does that mean?
-Date: Thu, 26 Apr 2018 13:24:17 -0400
-In-Reply-To: <1499190564.23017177.1524762938762.JavaMail.zimbra@redhat.com>
-        (Pankaj Gupta's message of "Thu, 26 Apr 2018 13:15:38 -0400 (EDT)")
-Message-ID: <x49in8d6fum.fsf@segfault.boston.devel.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.3 (gnu/linux)
+        id S1756950AbeDZR2P (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 13:28:15 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:37994 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756922AbeDZR2I (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 13:28:08 -0400
+X-Google-Smtp-Source: AB8JxZpNdMBlqHtn/1fFvRTqrYglZAOxHZ8ZXvSpb2OnSArXWxqfg8Hq+ppCpG2BuJomrJXA9UNmeA==
+Date: Thu, 26 Apr 2018 10:28:04 -0700
+From: Eduardo Valentin <edubezval@gmail.com>
+To: Zhang Rui <rui.zhang@intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] Thermal management updates for v4.17-rc2
+Message-ID: <20180426172802.GA2086@localhost.localdomain>
+References: <20180420161834.GA22776@localhost.localdomain>
+ <1524576345.2597.31.camel@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1524576345.2597.31.camel@intel.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Pankaj Gupta <pagupta@redhat.com> writes:
+Hey Rui,
 
->> Ideally, qemu (seabios?) would advertise a platform capabilities
->> sub-table that doesn't fill in the flush bits.
->
-> Could you please elaborate on this, how its related to disabling
-> MAP_SYNC? We are not doing entire nvdimm device emulation. 
+On Tue, Apr 24, 2018 at 09:25:45PM +0800, Zhang Rui wrote:
+> Hi, Eduardo,
+> 
+> On 五, 2018-04-20 at 09:18 -0700, Eduardo Valentin wrote:
+> > Hello Linus,
+> > 
+> > Here are a couple of fixes on thermal subsystem.
+> > Please consider pulling from
+> > 
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-
+> > thermal fixes
+> > 
+> > to receive Thermal Management updates for v4.17-rc2 with top-most
+> > 
+> > e04907dbc25930b88ee2328fe692c776f63ddf2c:
+> > 
+> >   dt-bindings: thermal: Remove "cooling-{min|max}-level" properties
+> > (2018-04-18 07:04:28 -0700)
+> > 
+> > on top of commit 60cc43fc888428bb2f18f08997432d426a243338:
+> > 
+> >   Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
+> > 
+> As this does not hit 4.17-rc2, and I have some thermal core fixes now,
+> would you mind rebase the patches on top of 4.17-rc2, and send the pull
+> request to me, including the exynos fixes, so that I can pull and queue
+> for next -rc?
 
-My mistake.  If you're not providing an NFIT, then you can ignore this
-comment.  I'll have a closer look at your patches next week.
+Linus already pulled this:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=83beed7b2b26f232d782127792dd0cd4362fdc41
 
--Jeff
+But for this week I will rebase the fixes I have and send them to you
+first, so you send to Linus a combined one.
+
+> 
+> thanks,
+> rui
+
+BR,
+
+Eduardo
