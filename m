@@ -1,56 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756988AbeDZRri (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 13:47:38 -0400
-Received: from mail-oi0-f46.google.com ([209.85.218.46]:37918 "EHLO
-        mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756940AbeDZRrc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 13:47:32 -0400
-X-Google-Smtp-Source: AB8JxZriC+Ec54UK9Ip8+4XekpL4BDLwIiWVvyWCVjU4RpwUMFbhgsz4NUQNr2M/QV4ViIFr+KOeRw==
-Subject: Re: [RFC PATCH v3 3/3] acpi: apei: Warn when GHES marks correctable
- errors as "fatal"
-To: Borislav Petkov <bp@alien8.de>
-Cc: linux-acpi@vger.kernel.org, linux-edac@vger.kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Robert Moore <robert.moore@intel.com>,
-        Erik Schmauss <erik.schmauss@intel.com>,
-        Tyler Baicar <tbaicar@codeaurora.org>,
-        Will Deacon <will.deacon@arm.com>, James Morse <james.morse@arm.com>,
-        Shiju Jose <shiju.jose@huawei.com>,
-        "Jonathan (Zhixiong) Zhang" <zjzhang@codeaurora.org>,
-        Dongjiu Geng <gengdongjiu@huawei.com>, linux-kernel@vger.kernel.org,
-        devel@acpica.org
-References: <20180416215903.7318-1-mr.nuke.me@gmail.com>
- <20180425203957.18224-1-mr.nuke.me@gmail.com>
- <20180425203957.18224-4-mr.nuke.me@gmail.com>
- <20180426112057.GB15009@pd.tnic>
-From: "Alex G." <mr.nuke.me@gmail.com>
-Message-ID: <e58482cf-37f6-808b-4382-fcf24c6f8db8@gmail.com>
-Date: Thu, 26 Apr 2018 12:47:30 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1756943AbeDZRsq (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 13:48:46 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:60666 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754557AbeDZRsp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 13:48:45 -0400
+Date: Thu, 26 Apr 2018 19:48:43 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/6] ARM: at91: add TCB registers definitions
+Message-ID: <20180426174843.GT4813@piout.net>
+References: <20180418105143.3577-1-alexandre.belloni@bootlin.com>
+ <20180418105143.3577-2-alexandre.belloni@bootlin.com>
+ <20180426165242.x5pvpyfirkmvvqjo@breakpoint.cc>
 MIME-Version: 1.0
-In-Reply-To: <20180426112057.GB15009@pd.tnic>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180426165242.x5pvpyfirkmvvqjo@breakpoint.cc>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/26/2018 06:20 AM, Borislav Petkov wrote:
-> Pasting the same comment from last time since you missed it:
+On 26/04/2018 18:52:43+0200, Sebastian Andrzej Siewior wrote:
+> On 2018-04-18 12:51:38 [+0200], Alexandre Belloni wrote:
+> > diff --git a/include/soc/at91/atmel_tcb.h b/include/soc/at91/atmel_tcb.h
+> > new file mode 100644
+> > index 000000000000..d263ea677225
+> > --- /dev/null
+> > +++ b/include/soc/at91/atmel_tcb.h
+> …
+> > +static inline struct clk *tcb_clk_get(struct device_node *node, int channel)
+> > +{
+> > +	struct clk *clk;
+> > +	char clk_name[] = "t0_clk";
+> > +
+> > +	clk_name[1] += channel;
+> > +	clk = of_clk_get_by_name(node->parent, clk_name);
+> > +	if (!IS_ERR(clk))
+> > +		return clk;
+> > +
+> > +	return of_clk_get_by_name(node->parent, "t0_clk");
+> > +}
+> > +
+> > +static inline int tcb_irq_get(struct device_node *node, int channel)
+> > +{
+> > +	int irq;
+> > +
+> > +	irq = of_irq_get(node->parent, channel);
+> > +	if (irq > 0)
+> > +		return irq;
+> > +
+> > +	return of_irq_get(node->parent, 0);
+> > +}
+> > +
+> > +static const u8 atmel_tc_divisors[5] = { 2, 8, 32, 128, 0, };
+> > +
+> > +struct atmel_tcb_info {
+> > +	int bits;
+> > +};
+> > +
+> > +static const struct atmel_tcb_info atmel_tcb_infos[] = {
+> > +	{ .bits = 16 },
+> > +	{ .bits = 32 },
+> > +};
+> > +
+> > +static const struct of_device_id atmel_tcb_dt_ids[] = {
+> > +	{
+> > +		.compatible = "atmel,at91rm9200-tcb",
+> > +		.data = &atmel_tcb_infos[0],
+> > +	}, {
+> > +		.compatible = "atmel,at91sam9x5-tcb",
+> > +		.data = &atmel_tcb_infos[1],
+> > +	}, {
+> > +		/* sentinel */
+> > +	}
+> > +};
 > 
-> "No, I don't want any of that crap issuing stuff in dmesg and then people
-> opening bugs and running around and trying to replace hardware.
+> After the series is applied, I see only one user of that file. The data
+> structures don't look like they belong here. Same goes for the static
+> inline of the code above.
 > 
-> We either can handle the error and log a normal record somewhere or we
-> cannot and explode. The complaining about the FW doesn't bring shit."
 
-" Borislav, if you don't like the third patch in the series, feel free 
-to leave it out. THings will work beautifully with or without it."
+There is another user coming later (the pwm driver) but I didn't repost,
+I'll do so after this series is applied.
 
-:)
+> > +#endif /* __SOC_ATMEL_TCB_H */
+> 
+> Sebastian
+
+-- 
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
