@@ -1,51 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756218AbeDZNHJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 09:07:09 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36137 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755671AbeDZNHE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 09:07:04 -0400
-Date: Thu, 26 Apr 2018 15:07:00 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc: akpm@linux-foundation.org, peterz@infradead.org, oleg@redhat.com,
-        viro@zeniv.linux.org.uk, mingo@kernel.org, paulmck@linux.vnet.ibm.com,
-        keescook@chromium.org, riel@redhat.com, tglx@linutronix.de,
-        kirill.shutemov@linux.intel.com, marcos.souza.org@gmail.com,
-        hoeun.ryu@gmail.com, pasha.tatashin@oracle.com, gs051095@gmail.com,
-        ebiederm@xmission.com, dhowells@redhat.com, rppt@linux.vnet.ibm.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] exit: Make unlikely case in mm_update_next_owner()
- more scalable
-Message-ID: <20180426130700.GP17484@dhcp22.suse.cz>
-References: <152473763015.29458.1131542311542381803.stgit@localhost.localdomain>
+        id S1756268AbeDZNIa (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 09:08:30 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:40693 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755979AbeDZNI1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 09:08:27 -0400
+X-Google-Smtp-Source: AB8JxZoMvYCOcnTg60Us9GHxSo5b+h3i4uUW9K29sK47d7AI29H1SnFjaOoOiAbFZmw2BrHtStHGI/Yvx1SzIzJaDcY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <152473763015.29458.1131542311542381803.stgit@localhost.localdomain>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <6ee982f8eb6e07f9ecbb0cc5093152f4a16b9c31.1523454899.git.michal.simek@xilinx.com>
+References: <6ee982f8eb6e07f9ecbb0cc5093152f4a16b9c31.1523454899.git.michal.simek@xilinx.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 26 Apr 2018 15:08:24 +0200
+Message-ID: <CACRpkdbOa+AvhQT1RCWA_zQuTpp4qfNjZBFDOKLdaFqMGAe+cw@mail.gmail.com>
+Subject: Re: [PATCH] gpio: zynq: Setup chip->base based on alias ID
+To: Michal Simek <michal.simek@xilinx.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michal Simek <monstr@monstr.eu>,
+        Steffen Trumtrar <s.trumtrar@pengutronix.de>,
+        Peter Crosthwaite <peter.crosthwaite@xilinx.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Rob Herring <robherring2@gmail.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 26-04-18 14:00:19, Kirill Tkhai wrote:
-> This function searches for a new mm owner in children and siblings,
-> and then iterates over all processes in the system in unlikely case.
-> Despite the case is unlikely, its probability growths with the number
-> of processes in the system. The time, spent on iterations, also growths.
-> I regulary observe mm_update_next_owner() in crash dumps (not related
-> to this function) of the nodes with many processes (20K+), so it looks
-> like it's not so unlikely case.
+On Wed, Apr 11, 2018 at 3:55 PM, Michal Simek <michal.simek@xilinx.com> wrote:
 
-Did you manage to find the pattern that forces mm_update_next_owner to
-slow paths? This really shouldn't trigger very often. If we can fallback
-easily then I suspect that we should be better off reconsidering
-mm->owner and try to come up with something more clever. I've had a
-patch to remove owner few years back. It needed some work to finish but
-maybe that would be a better than try to make non-scalable thing suck
-less.
+Thanks for your patch!
 
--- 
-Michal Hocko
-SUSE Labs
+> In past Xilinx gpio-zynq driver was setting up gpio chip->base as 0
+> which was chagned to autodetection when driver was upstreamed. Older
+> systems, which were using this old version, setup SW stack which expects
+> zynq gpio base as 0 and right now there is no way how to set this up.
+>
+> The patch is adding an option to setup chip->base based on aliases which
+> is something what some other drivers are doing too.
+> It means when gpio0 alias is setup then chip->base is 0. When gpio alias
+> is not setup gpiochip_find_base() set it up properly which is current
+> behavior.
+>
+> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+
+In general, we stopped any controlling of the GPIO base.
+
+Also this use would have to be OK with the DT maintainers
+as I never saw this use of alias before.
+
+Please describe the use case for this.
+
+The only use case which I can think about is userspace sysfs
+and then I would really like to know why these userspace
+users cannot use the character device that is nowadays
+supported by libgpiod and there is even patches for some
+IoT libraries to use it. The character device makes the
+GPIO Linux "base" irrelevant for userspace.
+
+GPIO sysfs is deprecated and moved to the obsolete ABI.
+
+If there are legacy applications that use this I would have
+to consider it, but since this has been -1 since the driver
+was merged I find that unlikely.
+
+Yours,
+Linus Walleij
