@@ -1,82 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756973AbeDZWV6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 18:21:58 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45738 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754684AbeDZWVz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 18:21:55 -0400
-Date: Fri, 27 Apr 2018 01:21:52 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Mikulas Patocka <mpatocka@redhat.com>
-Cc: John Stoffel <john@stoffel.org>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Michal@stoffel.org, eric.dumazet@gmail.com, netdev@vger.kernel.org,
-        jasowang@redhat.com, Randy Dunlap <rdunlap@infradead.org>,
-        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
-        Hocko <mhocko@kernel.org>, linux-mm@kvack.org, dm-devel@redhat.com,
-        Vlastimil Babka <vbabka@suse.cz>, Andrew@stoffel.org,
-        David Rientjes <rientjes@google.com>,
-        Morton <akpm@linux-foundation.org>,
-        virtualization@lists.linux-foundation.org,
-        David Miller <davem@davemloft.net>, edumazet@google.com
-Subject: Re: [dm-devel] [PATCH v5] fault-injection: introduce kvmalloc
- fallback options
-Message-ID: <20180427005213-mutt-send-email-mst@kernel.org>
-References: <alpine.LRH.2.02.1804251556060.30569@file01.intranet.prod.int.rdu2.redhat.com>
- <1114eda5-9b1f-4db8-2090-556b4a37c532@infradead.org>
- <alpine.LRH.2.02.1804251656300.9428@file01.intranet.prod.int.rdu2.redhat.com>
- <alpine.DEB.2.21.1804251417470.166306@chino.kir.corp.google.com>
- <alpine.LRH.2.02.1804251720090.9428@file01.intranet.prod.int.rdu2.redhat.com>
- <1524694663.4100.21.camel@HansenPartnership.com>
- <alpine.LRH.2.02.1804251857070.31135@file01.intranet.prod.int.rdu2.redhat.com>
- <1524697697.4100.23.camel@HansenPartnership.com>
- <23266.8532.619051.784274@quad.stoffel.home>
- <alpine.LRH.2.02.1804261726540.13401@file01.intranet.prod.int.rdu2.redhat.com>
+        id S1754777AbeDZW2R (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 18:28:17 -0400
+Received: from mail-ot0-f180.google.com ([74.125.82.180]:33790 "EHLO
+        mail-ot0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753881AbeDZW2P (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 18:28:15 -0400
+X-Google-Smtp-Source: AB8JxZqpF5taSygaFFbTgssbrnKLtHepdC59HjQrIX2C0Z3HsXunpO1v3l5ZGHxn+V/gJJKchcaYDkY5P2v+7bq0lOw=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.LRH.2.02.1804261726540.13401@file01.intranet.prod.int.rdu2.redhat.com>
+In-Reply-To: <1523898937.22952.13.camel@amazon.de>
+References: <1523545958-28059-1-git-send-email-karahmed@amazon.de>
+ <1523545958-28059-2-git-send-email-karahmed@amazon.de> <CALMp9eSS4nL1-1i1Df=vyPFT1FZVprPB0Yx-JX0auknNc09Gtg@mail.gmail.com>
+ <1523898937.22952.13.camel@amazon.de>
+From: Jim Mattson <jmattson@google.com>
+Date: Thu, 26 Apr 2018 15:28:13 -0700
+Message-ID: <CALMp9eS6D4pfbGEfcz7MpRncTte5weUJE9g-C_qMVxnaGd+RtQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] kvm: nVMX: Introduce KVM_CAP_STATE
+To: "Raslan, KarimAllah" <karahmed@amazon.de>
+Cc: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 26, 2018 at 05:50:20PM -0400, Mikulas Patocka wrote:
-> How is the user or developer supposed to learn about this option, if 
-> he gets no crash at all?
+I'll send out a patch to deal with nested_run_pending.
 
-Look in /sys/kernel/debug/fail* ? That actually lets you
-filter by module, process etc.
+The other thing that comes to mind is that there are some new fields
+in the VMCS12 since I first implemented this. One potentially
+troublesome field is the VMX preemption timer. If the current timer
+value is not saved on VM-exit, then it won't be stashed in the shadow
+VMCS12 by sync_vmcs12. Post-migration, the timer will be reset to its
+original value.
 
-I think this patch conflates two things:
+Do we care? Is this any different from what happens on real hardware
+when there's an SMI? According to the SDM, this appears to be exacty
+what happens when the dual-monitor treatment of SMIs and SMM is
+active, but it's not clear what happens with the default treatment of
+SMIs and SMM.
 
-1. Make kvmalloc use the vmalloc path.
-    This seems a bit narrow.
-    What is special about kvmalloc? IMHO nothing - it's yet another user
-    of __GFP_NORETRY or __GFP_RETRY_MAYFAIL. As any such
-    user, it either recovers correctly or not.
-    So IMHO it's just a case of
-    making __GFP_NORETRY, __GFP_RETRY_MAYFAIL, or both
-    fail once in a while.
-    Seems like a better extension to me than focusing on vmalloc.
-    I think you will find more bugs this way.
-
-2. Ability to control this from a separate config
-   option.
-
-   It's still not that clear to me why is this such a
-   hard requirement.  If a distro wants to force specific
-   boot time options, why isn't CONFIG_CMDLINE sufficient?
-
-   But assuming it's important to control this kind of
-   fault injection to be controlled from
-   a dedicated menuconfig option, why not the rest of
-   faults?
-
-IMHO if you split 1/2 up, and generalize, the path upstream
-will be much smoother.
-
-Hope this helps.
-
--- 
-MST
+On Mon, Apr 16, 2018 at 10:15 AM, Raslan, KarimAllah <karahmed@amazon.de> wrote:
+> On Mon, 2018-04-16 at 09:22 -0700, Jim Mattson wrote:
+>> On Thu, Apr 12, 2018 at 8:12 AM, KarimAllah Ahmed <karahmed@amazon.de> wrote:
+>>
+>> >
+>> > v2 -> v3:
+>> > - Remove the forced VMExit from L2 after reading the kvm_state. The actual
+>> >   problem is solved.
+>> > - Rebase again!
+>> > - Set nested_run_pending during restore (not sure if it makes sense yet or
+>> >   not).
+>>
+>> This doesn't actually make sense. Nested_run_pending should only be
+>> set between L1 doing a VMLAUNCH/VMRESUME and the first instruction
+>> executing in L2. That is extremely unlikely at a restore point.
+>
+> Yeah, I am afraid I put very little thought into it as I was focused
+> on the TSC issue :)
+>
+> Will handle it properly in next version.
+>
+>>
+>> To deal with nested_run_pending and nested save/restore,
+>> nested_run_pending should be set to 1 before calling
+>> enter_vmx_non_root_mode, as it was prior to commit 7af40ad37b3f. That
+>> means that it has to be cleared when emulating VM-entry to the halted
+>> state (prior to calling kvm_vcpu_halt). And all of the from_vmentry
+>> arguments that Paolo added when rebasing commit cf8b84f48a59 should be
+>> removed, so that nested_run_pending is propagated correctly duting a
+>> restore.
+>>
+>> It should be possible to eliminate this strange little wart, but I
+>> haven't looked deeply into it.
+>>
+> Amazon Development Center Germany GmbH
+> Berlin - Dresden - Aachen
+> main office: Krausenstr. 38, 10117 Berlin
+> Geschaeftsfuehrer: Dr. Ralf Herbrich, Christian Schlaeger
+> Ust-ID: DE289237879
+> Eingetragen am Amtsgericht Charlottenburg HRB 149173 B
