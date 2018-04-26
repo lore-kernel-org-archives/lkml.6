@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3724309-1524805688-2-10784803546310830725
+X-Cyrus-Session-Id: sloti22d1t05-2209064-1524730436-2-6652079605079574528
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,24 +12,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524805687; b=HIFG3h9MthxKgxaV+CwLUUbZrnqCVwibYTT7y5InJKAPi2QJmp
-    D4izO/F3M7KBE6578csKlTLS+nDCjr0ccCvuGwLh5JHaeiiSoyLffXBBVg2jLbJs
-    50GQIa/WKr2Pe5FSuzBTfLdt7xFSxPJbOfOAQ6sCnQjZVrbwILYeFxr9AB8wsO6/
-    WdwBPD0f9SKWChBXdZ301/4www6IkFa0cQRvV/PCtJK9c15foSvefnSukiBcpwaq
-    NqA0/eWuAhu8faFyaTJkSxNaSRdKP+DSgg9pOa6xGO8qm4eOBj5c9efxuxj7dKrd
-    97odQWZnHQyMd5iSqLUNXcCEYNtIpdXGwxLw==
+    1524730435; b=WJBKODR3+ELK65kDzodyBUHIvX68bfdjajWV2qINdAl6FAf+Bw
+    2z4vCWHQmQ2sJtTGw+a/MPw1RsHIRGOotgH+vi0RWaT81e2GtPcZCxPt9cLUSHSe
+    cd9rbzY2VCFLjvx5tg49GTn58CqS/S5IgyEjf12SGXFPOoGIOiqaafaUcJAsJb80
+    9aVMEEVZCyQt9A4IFecoRcJEqosNIkZgiPD23e7Nsan1Bnn1Im6vywV+6EdYeqyH
+    GjSILPGc48wgJdKSEhXpFjAdb3QGwpUl6gTyLeUNivgHo+X4jrEGc/N4PELwaE5B
+    kvSmQIMZJ0+ccCYOelC9Cy1vLA2vOfCMtOjA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:cc:subject:message-id
     :in-reply-to:references:mime-version:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1524805687;
-    bh=M5xGA+f/KHpGV6IuM4VnZ8zc+nhncOsf5kaP+xwXjk8=; b=lgSatAYsO4NS
-    ac8bVEzOLXPatfTvH0NCpzE8j8luSyE//UYztqfRuMDuY12dZA9645TeFzvP+Yhu
-    RpqfAiHM4Df4CGa9XFOUxtTAGcKIApieNilk9sAjQXAgXcHWEqebCRCDdMinCl2R
-    +LzvrtP9LgFepcHN3MB+yx/w/rOE4Tm4wE/tXNbqHKPDDiw/ugEZO4Mmy+dO30CB
-    IjStbMH2u/W/4wiW4n8SJDhqeWq1ldCAEiQgMDS34ai0R+VFvsykAh+OkDI9yb0o
-    9tjoadUDYjQHUlZau8T0qUMmXSJ1Mqr5ghRpEWVwSMigvqp9yV7MnOSd8BnURb2R
-    w70SgosPyQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1524730435;
+    bh=oGoFrHk64Ci+hE2Ld1BYmo7dpHuBVWBkdergx982PDc=; b=s5V6xRTDSsEn
+    VBmJOGMnYuhoVoMEbfp7Hb7m2p4MlgRfw/su1CqhG9phDpWpmYqvPRkQYjBRJH7G
+    yfe2dDxvydzPqislT2YaWuQNDjyRbk+Zit8GPBlowoebKgbad6ziKwNaK8HepgzC
+    M8mcTelJUvi5sANOc/3uMQ/YGUZE04Dw0jfKmJN9fo1hJEjFNM0Fip+03+/XfGWF
+    eyg+zwc8ZjpALWGRIAvxtqYmfyxx+zS9BV17CCLctTtG8zYYa/rfaQ3Rw86y0phO
+    muXpyQadu3EXpS44ed1xfwkU2wx9m2Ze1QIvjybJFramGRk1BxB0/6MFhSfwZdPH
+    +hLjCGk2UQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,8 +38,8 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+    x-vs=clean score=-85 state=0
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
@@ -49,30 +49,30 @@ Authentication-Results: mx3.messagingengine.com;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+    x-vs=clean score=-85 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDcdxw+zHEzjKtvLcCgq73VOFllyXNl0YnFCnGz1pBjJnQQp3w+cWraR7Ab8VLXeVrE3fDFxeisjMhHOvpEUbivyzzJB1by5SRJst7KQ3R4KuLiMOc2F
-    SbZnlcxnqwtZBQBvpVnuJDW1SOkrYPzHK/Vo70Oh1Jf0kYO4o8wBsV0ILX7EIxB2PUe0NBcCEHp1fQGSbC2Sww76jkAlAGqzhlC3koGcl5uoi5Ffxh0V3ES9
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfJ02bpX8wMXMgHG4UjD/N/TZ0Xmgu963aqeLEMTWH34Unq60sljE8nWB7Rb2xRqQpv+7dJfWoq/e37mwKFpT715tl6kbmiSgCBbDtOq+MAULeE8NvcPy
+    hsNPtJyNDXN6COiy1quNN+rZdsykvA+vZ2srKIfg+JpmCvYwgrV6rcfoPMZGTuerNlxOZQmJN6v7Th3TAd7A+oCvSwIm8oc8eySScfODICRHjxyUN90EPKRr
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=meVymXHHAAAA:8 a=VwQbUJbxAAAA:8 a=alyLhzZ2wJ2f5D7GUyMA:9
-    a=3IpnG7oYPH8QZCRD:21 a=zuDihmPB_AKjqZvJ:21 a=CjuIK1q_8ugA:10
-    a=2JgSa4NbpEOStq-L5dxp:22 a=AjGcO6oz07-iQ99wixmX:22
+    a=VwQbUJbxAAAA:8 a=D19gQVrFAAAA:8 a=Ag2GKY2TJ1JtHe2dNT8A:9
+    a=S9Id25sPtRSk1PkC:21 a=T3OiLwuRxJ7hajPE:21 a=CjuIK1q_8ugA:10
+    a=AjGcO6oz07-iQ99wixmX:22 a=W4TVW4IDbPiebHqcZpNg:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751502AbeD0FIE (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 27 Apr 2018 01:08:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45796 "EHLO mail.kernel.org"
+        id S1754183AbeDZINw (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 26 Apr 2018 04:13:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36472 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751291AbeD0FID (ORCPT <rfc822;stable@vger.kernel.org>);
-        Fri, 27 Apr 2018 01:08:03 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2E6221838
+        id S1753968AbeDZINs (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 26 Apr 2018 04:13:48 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE92821781
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
-Date: Fri, 27 Apr 2018 14:07:57 +0900
+Date: Thu, 26 Apr 2018 17:13:43 +0900
 From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
+To: Masami Hiramatsu <mhiramat@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
         Ingo Molnar <mingo@redhat.com>,
         "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
@@ -87,18 +87,13 @@ Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
         "Tobin C . Harding" <me@tobin.cc>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Thomas Richter <tmricht@linux.ibm.com>,
-        akpm@linux-foundation.org, acme@kernel.org,
+        akpm@linux-foundation.org, acme@kernel.org, rostedt@goodmis.org,
         brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
         stable@vger.kernel.org
-Subject: Re: [PATCH -tip v2 4/7] kprobes: Replace %p with other pointer
- types
-Message-Id: <20180427140757.39c937eea546ccfdafb38332@kernel.org>
-In-Reply-To: <20180426224824.3492232e@vmware.local.home>
+Subject: Re: [PATCH -tip v2 0/7] kprobes: Fix %p in kprobes
+Message-Id: <20180426171343.630332329e9998a1ef617851@kernel.org>
+In-Reply-To: <152473007907.8819.10449983839199591406.stgit@devbox>
 References: <152473007907.8819.10449983839199591406.stgit@devbox>
-        <152473020349.8819.11597612324633031612.stgit@devbox>
-        <20180426211351.419d3502@vmware.local.home>
-        <20180427113951.8e3192af570c0bae925b2a71@kernel.org>
-        <20180426224824.3492232e@vmware.local.home>
 X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -109,73 +104,73 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, 26 Apr 2018 22:48:24 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On Thu, 26 Apr 2018 17:08:00 +0900
+Masami Hiramatsu <mhiramat@kernel.org> wrote:
 
-> On Fri, 27 Apr 2018 11:39:51 +0900
-> Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> Hi,
 > 
-> > On Thu, 26 Apr 2018 21:13:51 -0400
-> > Steven Rostedt <rostedt@goodmis.org> wrote:
-> > 
-> > > On Thu, 26 Apr 2018 17:10:03 +0900
-> > > Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> > >   
-> > > > Replace %p with appropriate pointer types (or just remove it)
-> > > >  - Use %pS if possible
-> > > >  - Use %px only for the function right before BUG().
-> > > >  - Remove unneeded error message.  
-> > > 
-> > > I'm not sure "right before BUG()" is legitimate for using %px. Why not
-> > > still use %pS?  
-> > 
-> > Since BUG() will dump all registers and stacks which includes
-> > raw address information and reboot the system (means reset the
-> > kaslr base offset), I thought it may not add additional damage.
-> 
-> BUG() has been changed to print out %pS and not the address while doing
-> the stack dump. It only prints the address if it doesn't find a
-> function name. For example:
-> 
-> CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.11.0-rc3-test+ #48
-> Hardware name: MSI MS-7823/CSM-H87M-G43 (MS-7823), BIOS V1.6 02/22/2014
-> Call Trace:
->  dump_stack+0x68/0x92
->  lockdep_rcu_suspicious+0xf7/0x100
->  rcu_read_lock+0x5f/0x61
->  __is_insn_slot_addr+0x23/0x5c
->  __kernel_text_address+0x4a/0x80
->  show_trace_log_lvl+0x157/0x296
->  ? module_assert_mutex_or_preempt+0x4f/0x51
->  show_stack+0x3d/0x3f
->  dump_stack+0x68/0x92
->  __warn+0xc2/0xdd
->  ? 0xffffffffa0026077
->  warn_slowpath_null+0x1d/0x1f
->  module_assert_mutex_or_preempt+0x4f/0x51
->  __module_address+0x2a/0xac
->  ? 0xffffffffa0026077
->  __module_text_address+0x12/0x59
->  ? 0xffffffffa0026077
->  is_module_text_address+0xe/0x16
->  __kernel_text_address+0x2b/0x80
->  ? 0xffffffffa0026077
->  unwind_get_return_address+0x50/0x5c
-> 
+> This 2nd version of the series which fixes %p uses in kprobes.
+> Some by replacing with %pS, some by replacing with %px but
+> masking with kallsyms_show_value().
 
-Ah...
-OK, I'll fix that.
+Oops, I missed to porting this on tip tree, but since this is
+including some other archs, it can go directly to each trees
+or linus tree.
+
+Anyway, those should be cleanly applicable for the latest
+linus tree too.
+
+Thanks,
 
 > 
-> > 
-> > Anyway, for this patch we can use %pS. For the next [5/7] patch,
-> > I'm not sure %pS is good for dumping a stack address...
+> V1 series is here:
+>  https://lkml.org/lkml/2018/1/25/1
 > 
-> Although it now is.
-
-Got it.
-
-Thank you!
+> I've read the thread about %pK and if I understand correctly
+> we shouldn't print kernel addresses. However, kprobes debugfs
+> interface can not stop to show the actual probe address because
+> it should be compared with addresses in kallsyms for debugging.
+> So, it depends on that kallsyms_show_value() allows to show
+> address to user, because if it returns true, anyway that user
+> can dump /proc/kallsyms.
+> 
+> Other error messages are replaced it with %pS, and one critical
+> function uses %px which is called right before BUG().
+> 
+> Also, I tried to fix this issue on each arch port. I searched
+> it by
+> 
+>  # find arch/* | grep -e 'kprobe.*c' | xargs grep -w %p
+> 
+> And fixed all %p uses in those files.
+> 
+> Changes in this version;
+>  - [1/7] is newly added.
+>  - patches for MN10300(deleted) and s390(merged) are removed.
+> 
+> Thank you,
+> 
+> ---
+> 
+> Masami Hiramatsu (7):
+>       kprobes: Make blacklist root user read only
+>       kprobes: Show blacklist addresses as same as kallsyms does
+>       kprobes: Show address of kprobes if kallsyms does
+>       kprobes: Replace %p with other pointer types
+>       kprobes/x86: Fix %p uses in error messages
+>       kprobes/arm: Fix %p uses in error messages
+>       kprobes/arm64: Fix %p uses in error messages
+> 
+> 
+>  arch/arm/probes/kprobes/core.c      |   10 ++++----
+>  arch/arm/probes/kprobes/test-core.c |    1 -
+>  arch/arm64/kernel/probes/kprobes.c  |    4 ++-
+>  arch/x86/kernel/kprobes/core.c      |   12 +++------
+>  kernel/kprobes.c                    |   46 ++++++++++++++++++++++-------------
+>  5 files changed, 40 insertions(+), 33 deletions(-)
+> 
+> --
+> Masami Hiramatsu (Linaro) <mhiramat@kernel.org>
 
 
 -- 
