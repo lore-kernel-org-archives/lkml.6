@@ -1,114 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932212AbeDZOI5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 10:08:57 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:51047 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756536AbeDZOI2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 10:08:28 -0400
-X-Google-Smtp-Source: AIpwx4+cc72ajMMhLspxpiO/9AMNkQx5kiTKGTuQanP0C2Sg9X8jAMJ4cihajVAcPTn+lYdf89Xs7w==
-From: Michal Simek <michal.simek@xilinx.com>
-To: linux-kernel@vger.kernel.org, monstr@monstr.eu,
-        gnomes@lxorguk.ukuu.org.uk, Alexander Graf <agraf@suse.de>
-Cc: devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>
-Subject: [RFC PATCH 1/3] of: base: Introduce of_alias_check_id() to check alias IDs
-Date: Thu, 26 Apr 2018 16:08:17 +0200
-Message-Id: <6045807691c310ccdd57ab16524b7525f26a1dc1.1524751696.git.michal.simek@xilinx.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <cover.1524751696.git.michal.simek@xilinx.com>
-References: <cover.1524751696.git.michal.simek@xilinx.com>
-In-Reply-To: <cover.1524751696.git.michal.simek@xilinx.com>
-References: <cover.1524751696.git.michal.simek@xilinx.com>
+        id S932237AbeDZOJD (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 10:09:03 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:45824 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932214AbeDZOI7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 10:08:59 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH 1/3] mmc: sunxi: add support for the MMC controller on H6
+Date: Thu, 26 Apr 2018 22:07:26 +0800
+Message-Id: <20180426140728.43155-2-icenowy@aosc.io>
+In-Reply-To: <20180426140728.43155-1-icenowy@aosc.io>
+References: <20180426140728.43155-1-icenowy@aosc.io>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function travers the lookup table to check if the request alias
-id is compatible with the device driver match structure.
-This function will be used by serial drivers to check if requested alias
-is allocated or free to use.
+The new Allwinner H6 SoC have 3 MMC controllers. The first and second
+ones are similar to the ones on A64, but the third one adds EMCE
+(Embedded Crypto Engine) support which does hardware transparent crypto
+on the eMMC.
 
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+As we still do not have support for EMCE, and the support of it is
+disabled by defualt, we just duplicate the A64 mmc configurations and
+change the compatible string.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
+ Documentation/devicetree/bindings/mmc/sunxi-mmc.txt |  2 ++
+ drivers/mmc/host/sunxi-mmc.c                        | 16 ++++++++++++++++
+ 2 files changed, 18 insertions(+)
 
- drivers/of/base.c  | 49 ++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/of.h |  2 ++
- 2 files changed, 51 insertions(+)
-
-diff --git a/drivers/of/base.c b/drivers/of/base.c
-index 848f549164cd..382de01acc72 100644
---- a/drivers/of/base.c
-+++ b/drivers/of/base.c
-@@ -1892,6 +1892,55 @@ int of_alias_get_id(struct device_node *np, const char *stem)
- }
- EXPORT_SYMBOL_GPL(of_alias_get_id);
+diff --git a/Documentation/devicetree/bindings/mmc/sunxi-mmc.txt b/Documentation/devicetree/bindings/mmc/sunxi-mmc.txt
+index 132e0007d7d6..e6aa5c7a5e12 100644
+--- a/Documentation/devicetree/bindings/mmc/sunxi-mmc.txt
++++ b/Documentation/devicetree/bindings/mmc/sunxi-mmc.txt
+@@ -16,6 +16,8 @@ Required properties:
+    * "allwinner,sun9i-a80-mmc"
+    * "allwinner,sun50i-a64-emmc"
+    * "allwinner,sun50i-a64-mmc"
++   * "allwinner,sun50i-h6-emmc"
++   * "allwinner,sun50i-h6-mmc"
+  - reg : mmc controller base registers
+  - clocks : a list with 4 phandle + clock specifier pairs
+  - clock-names : must contain "ahb", "mmc", "output" and "sample"
+diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc.c
+index 97c6b79b7d6f..05e2b5fd7aa4 100644
+--- a/drivers/mmc/host/sunxi-mmc.c
++++ b/drivers/mmc/host/sunxi-mmc.c
+@@ -1168,6 +1168,20 @@ static const struct sunxi_mmc_cfg sun50i_a64_emmc_cfg = {
+ 	.can_calibrate = true,
+ };
  
-+/**
-+ * of_alias_check_id - Check alias id for the give compatibility
-+ * @matches:	Array of of device match structures to search in
-+ * @stem:	Alias stem of the given device_node
-+ * @id:		Alias ID for checking
-+ *
-+ * The function travers the lookup table to check if the request alias id
-+ * is compatible with the device driver match structure
-+ *
-+ * Return true if ID is allocated, return false if not
-+ */
-+bool of_alias_check_id(const struct of_device_id *matches, const char *stem,
-+		       int id)
-+{
-+	struct alias_prop *app;
-+	bool ret = false;
++static const struct sunxi_mmc_cfg sun50i_h6_cfg = {
++	.idma_des_size_bits = 16,
++	.clk_delays = NULL,
++	.can_calibrate = true,
++	.mask_data0 = true,
++	.needs_new_timings = true,
++};
 +
-+	mutex_lock(&of_mutex);
-+	pr_debug("%s: Looking for stem: %s, id: %d\n", __func__, stem, id);
-+	list_for_each_entry(app, &aliases_lookup, link) {
-+		pr_debug("%s: stem: %s, id: %d\n",
-+			 __func__, app->stem, app->id);
++static const struct sunxi_mmc_cfg sun50i_h6_emmc_cfg = {
++	.idma_des_size_bits = 13,
++	.clk_delays = NULL,
++	.can_calibrate = true,
++};
 +
-+		if (strcmp(app->stem, stem) != 0) {
-+			pr_debug("%s: stem comparison doesn't passed %s\n",
-+				 __func__, app->stem);
-+			continue;
-+		}
-+
-+		if (app->id != id) {
-+			pr_debug("%s: id comparison doesn't passed %d\n",
-+				 __func__, app->id);
-+			continue;
-+		}
-+
-+		if (of_match_node(matches, app->np)) {
-+			pr_debug("%s: Allocated ID %d\n", __func__, app->id);
-+			ret = true;
-+			break;
-+		}
-+		pr_debug("%s: Free ID %d\n", __func__, app->id);
-+		break;
-+	}
-+	mutex_unlock(&of_mutex);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(of_alias_check_id);
-+
- /**
-  * of_alias_get_highest_id - Get highest alias id for the given stem
-  * @stem:	Alias stem to be examined
-diff --git a/include/linux/of.h b/include/linux/of.h
-index 4d25e4f952d9..a18a390a6129 100644
---- a/include/linux/of.h
-+++ b/include/linux/of.h
-@@ -387,6 +387,8 @@ extern int of_phandle_iterator_args(struct of_phandle_iterator *it,
- extern void of_alias_scan(void * (*dt_alloc)(u64 size, u64 align));
- extern int of_alias_get_id(struct device_node *np, const char *stem);
- extern int of_alias_get_highest_id(const char *stem);
-+extern bool of_alias_check_id(const struct of_device_id *matches,
-+			      const char *stem, int id);
- 
- extern int of_machine_is_compatible(const char *compat);
- 
+ static const struct of_device_id sunxi_mmc_of_match[] = {
+ 	{ .compatible = "allwinner,sun4i-a10-mmc", .data = &sun4i_a10_cfg },
+ 	{ .compatible = "allwinner,sun5i-a13-mmc", .data = &sun5i_a13_cfg },
+@@ -1176,6 +1190,8 @@ static const struct of_device_id sunxi_mmc_of_match[] = {
+ 	{ .compatible = "allwinner,sun9i-a80-mmc", .data = &sun9i_a80_cfg },
+ 	{ .compatible = "allwinner,sun50i-a64-mmc", .data = &sun50i_a64_cfg },
+ 	{ .compatible = "allwinner,sun50i-a64-emmc", .data = &sun50i_a64_emmc_cfg },
++	{ .compatible = "allwinner,sun50i-h6-mmc", .data = &sun50i_h6_cfg },
++	{ .compatible = "allwinner,sun50i-h6-emmc", .data = &sun50i_h6_emmc_cfg },
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, sunxi_mmc_of_match);
 -- 
-2.17.0
+2.15.1
