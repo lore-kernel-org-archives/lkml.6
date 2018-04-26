@@ -1,15 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756958AbeDZQyV (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 12:54:21 -0400
+        id S1756972AbeDZQy0 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 12:54:26 -0400
 Received: from perceval.ideasonboard.com ([213.167.242.64]:58064 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756732AbeDZQyB (ORCPT
+        with ESMTP id S1756872AbeDZQyD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 12:54:01 -0400
+        Thu, 26 Apr 2018 12:54:03 -0400
 From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
         Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
@@ -19,9 +20,9 @@ Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         linux-arm-kernel@lists.infradead.org (moderated list:ARM64 PORT
         (AARCH64 ARCHITECTURE)),
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 08/17] arm64: dts: r8a77965: Provide sysc header definitions
-Date: Thu, 26 Apr 2018 17:53:37 +0100
-Message-Id: <20180426165346.494-9-kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH 10/17] arm64: dts: r8a77965: Add FCPF and FCPV instances
+Date: Thu, 26 Apr 2018 17:53:39 +0100
+Message-Id: <20180426165346.494-11-kieran.bingham+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com>
 References: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com>
@@ -29,25 +30,69 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Include the r8a77965-sysc header to provide power domain enumerations
-and definitions.
+The FCPs handle the interface between various IP cores and memory. Add
+the instances related to the FDPs and VSP2s.
 
+Based on a similar patch of the R8A7796 device tree
+by Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>.
+
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+[Kieran: Rebase to top of tree]
 Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi | 40 +++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index b12f41755aea..02de36b9e581 100644
+index 894903a59bdc..1f44ed7c1b1c 100644
 --- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -10,6 +10,7 @@
+@@ -1001,6 +1001,46 @@
+ 			/* placeholder */
+ 		};
  
- #include <dt-bindings/clock/renesas-cpg-mssr.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/power/r8a77965-sysc.h>
- 
- #define CPG_AUDIO_CLK_I		10
- 
++		fcpf0: fcp@fe950000 {
++			compatible = "renesas,fcpf";
++			reg = <0 0xfe950000 0 0x200>;
++			clocks = <&cpg CPG_MOD 615>;
++			power-domains = <&sysc R8A77965_PD_A3VP>;
++			resets = <&cpg 615>;
++		};
++
++		fcpvb0: fcp@fe96f000 {
++			compatible = "renesas,fcpv";
++			reg = <0 0xfe96f000 0 0x200>;
++			clocks = <&cpg CPG_MOD 607>;
++			power-domains = <&sysc R8A77965_PD_A3VP>;
++			resets = <&cpg 607>;
++		};
++
++		fcpvi0: fcp@fe9af000 {
++			compatible = "renesas,fcpv";
++			reg = <0 0xfe9af000 0 0x200>;
++			clocks = <&cpg CPG_MOD 611>;
++			power-domains = <&sysc R8A77965_PD_A3VP>;
++			resets = <&cpg 611>;
++		};
++
++		fcpvd0: fcp@fea27000 {
++			compatible = "renesas,fcpv";
++			reg = <0 0xfea27000 0 0x200>;
++			clocks = <&cpg CPG_MOD 603>;
++			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
++			resets = <&cpg 603>;
++		};
++
++		fcpvd1: fcp@fea2f000 {
++			compatible = "renesas,fcpv";
++			reg = <0 0xfea2f000 0 0x200>;
++			clocks = <&cpg CPG_MOD 602>;
++			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
++			resets = <&cpg 602>;
++		};
++
+ 		csi20: csi2@fea80000 {
+ 			reg = <0 0xfea80000 0 0x10000>;
+ 			/* placeholder */
 -- 
 2.17.0
