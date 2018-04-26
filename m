@@ -1,51 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756706AbeDZPVu (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 11:21:50 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:51350 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756434AbeDZPVo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 11:21:44 -0400
-Date: Thu, 26 Apr 2018 17:20:53 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc: Andrea Parri <andrea.parri@amarulasolutions.com>,
-        akpm@linux-foundation.org, oleg@redhat.com, viro@zeniv.linux.org.uk,
-        mingo@kernel.org, paulmck@linux.vnet.ibm.com, keescook@chromium.org,
-        riel@redhat.com, mhocko@suse.com, tglx@linutronix.de,
-        kirill.shutemov@linux.intel.com, marcos.souza.org@gmail.com,
-        hoeun.ryu@gmail.com, pasha.tatashin@oracle.com, gs051095@gmail.com,
-        ebiederm@xmission.com, dhowells@redhat.com, rppt@linux.vnet.ibm.com,
-        linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        Will Deacon <will.deacon@arm.com>, Boqun Feng <boqun.feng@gmail.com>
-Subject: Re: [PATCH 4/4] exit: Lockless iteration over task list in
- mm_update_next_owner()
-Message-ID: <20180426152053.GC4082@hirez.programming.kicks-ass.net>
-References: <152473763015.29458.1131542311542381803.stgit@localhost.localdomain>
- <152474046779.29458.5294808258041953930.stgit@localhost.localdomain>
- <20180426123542.GA819@andrea>
- <c21ad28c-cd23-2a75-6622-ba49c37137db@virtuozzo.com>
+        id S1756730AbeDZPWu (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 11:22:50 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57288 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1756431AbeDZPWr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 11:22:47 -0400
+Date: Thu, 26 Apr 2018 11:22:38 -0400 (EDT)
+From: Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+cc: David Rientjes <rientjes@google.com>, dm-devel@redhat.com,
+        eric.dumazet@gmail.com, mst@redhat.com, netdev@vger.kernel.org,
+        jasowang@redhat.com, Randy Dunlap <rdunlap@infradead.org>,
+        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
+        edumazet@google.com, Andrew Morton <akpm@linux-foundation.org>,
+        virtualization@lists.linux-foundation.org,
+        David Miller <davem@davemloft.net>, Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [dm-devel] [PATCH v5] fault-injection: introduce kvmalloc fallback
+ options
+In-Reply-To: <alpine.LRH.2.02.1804261045001.9108@file01.intranet.prod.int.rdu2.redhat.com>
+Message-ID: <alpine.LRH.2.02.1804261116470.14894@file01.intranet.prod.int.rdu2.redhat.com>
+References: <alpine.LRH.2.02.1804261045001.9108@file01.intranet.prod.int.rdu2.redhat.com>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c21ad28c-cd23-2a75-6622-ba49c37137db@virtuozzo.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Type: MULTIPART/MIXED; BOUNDARY="185206533-997862569-1524756159=:14894"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 26, 2018 at 04:52:39PM +0300, Kirill Tkhai wrote:
-> >>
-> >> 1)for_each_process(g)            copy_process()
-> >>                                    p->mm = mm
-> >>     smp_rmb();                     smp_wmb() implied by alloc_pid()
-> >>     if (g->flags & PF_KTHREAD)     list_add_tail_rcu(&p->tasks, &init_task.tasks)
-> >>
-> >> 2)for_each_thread(g, c)          copy_process()
-> >>                                    p->mm = mm
-> >>     smp_rmb();                     smp_wmb() implied by alloc_pid()
-> >>     tmp = READ_ONCE(c->mm)         list_add_tail_rcu(&p->thread_node, ...)
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-For these two; what's the purpose of the smp_rmb()? which loads are
-ordered?
+--185206533-997862569-1524756159=:14894
+Content-Type: TEXT/PLAIN; charset=ISO-8859-15
+Content-Transfer-Encoding: 8BIT
+
+
+
+On Thu, 26 Apr 2018, Mikulas Patocka wrote:
+
+> 
+> 
+> On Wed, 25 Apr 2018, James Bottomley wrote:
+> 
+> > > BTW. even developers who compile their own kernel should have this
+> > > enabled by a CONFIG option - because if the developer sees the option
+> > > when browsing through menuconfig, he may enable it. If he doesn't see
+> > > the option, he won't even know that such an option exists.
+> > 
+> > I may be an atypical developer but I'd rather have a root canal than
+> > browse through menuconfig options.  The way to get people to learn
+> > about new debugging options is to blog about it (or write an lwn.net
+> > article) which google will find the next time I ask it how I debug XXX.
+> >  Google (probably as a service to humanity) rarely turns up Kconfig
+> > options in response to a query.
+> 
+> From my point of view, this feature should be as little disruptive to the 
+> developer as possible. It should work automatically behind the scenes 
+> without the developer or the tester even knowing that it is working. From 
+> this point of view, binding it to CONFIG_DEBUG_SG (or any other commonly 
+> used debugging option) would be ideal, because driver developers already 
+> enable CONFIG_DEBUG_SG, so they'll get this kvmalloc test for free.
+> 
+> From your point of view, you should introduce a sysfs file and a kernel 
+> parameter that no one knows about - and then start blogging about it - to 
+> let people know. Why would you bother people with this knowledge? They'll 
+> forget about it anyway and won't turn it on.
+
+BTW. try to think about - how many total lines of code should this feature 
+consume in the whole Linux ecosystem?
+
+I made a 10-line patch. I got pushback.
+
+I remade it to a 53-line patch. And you try to suggest that 53 lines is 
+not enough and we must also change kernel packaging scripts in distro 
+kernels, because the kernel just cannot enable this feature on its own.
+
+If we hack kernel packaging scripts in most distros, how many lines of 
+code would that be? What's your target?
+
+Mikulas
+--185206533-997862569-1524756159=:14894--
