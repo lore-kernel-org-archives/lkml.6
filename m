@@ -1,31 +1,31 @@
 Return-Path: <srinivas.kandagatla@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1524736187; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1524736186; cv=none;
         d=google.com; s=arc-20160816;
-        b=F1u6CAPqjrJFinmYpsXkoChpCXW5BnX+6UF9zswedEs2XAjCgGohfss5hj+vzHzVQs
-         Nxce5BjWKuQhFpdY54AAVMVis1xAkWymKzwR4Ju24CRj7BaRVIyj90UFkng+i4RGcT/1
-         xMNOsfWcARvZwC+r1Nc+OjWMQIRbOgEAT9eiS3O/IeyAyhbolNI2BXpicil2XeAuNS0/
-         aIpMVIoYnYhM3jsX5A1yDuPkNJRl7dpH11/yt8TggCiMsXrs3WwHNegjx+NG8nuMAKFK
-         4jPLnrot81owUYMBp3T+Dr8QUoC/QS1FNBgsFOIvhjfbz/OYEfz9NWsTAV2tLDD/OiFr
-         OE+Q==
+        b=Tq5WSdYii+0Y78JK/DQB+9IGjzwEZ9iHhpDXT9b8K+TsyA547YUohm/iFrUc5XkdXD
+         76vGwvlt6UK9etVHe3ULOghpd7T+hurQl+bWeBen/P20f7ZJjrwidjJvqNNSe04sDN3n
+         TbQCRn/C961nw8QmL+aSg34Ya0BB/nX8V3IPZmAGpAcBuxhMB2QqJPPzYlguAj5Q/yrL
+         MLjYp3wOkdOD3796w8rfCrG2n5JoMMO1aRbNNXzt0wHoFKypQ6yfS7A2oKPCYhtxYxB4
+         ojf7NkiQ0sfx7HlTLIHf+Fg8Leg66hDuUGFirnLQ3k7LPIInYulAYD5Luwoo5zh14WGd
+         Oy6w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=SYCW3ettLMNdosvyAOCu+Wy0VXfjLHQFceeUOFUibVc=;
-        b=iI2ZVDmxR/3wsj7c3XFZ/Bx9QjalcBOjkBu1clnazBpP3m3o12La58LSLN3otUpX5+
-         zLo3Yus2iUs5BZdPkrwrah+IELOlJ7gxKAw8Ux22eH2OE6t4lAAtcYZmV+6Nkc64742z
-         o25xkMPWN1P/bN/w9+YskRI+8pDPCm5gaCV6GCPyib1G/1/FLMlTAwBCXto7L0ZIQ/Kv
-         iv2Gwvap9rgSWrB1K/W5WAZv4CCpSyZ98QhebPFlA/OzTjDqSLRQQkoiLDSgcf31L0IW
-         5Csom77pumlBZeD49CwttbjXJd4N12EyvImEx9Dk+7ywzr6UrL1lfWuck8c0I53tHZJq
-         sw6w==
+        bh=6OzWLrksCW5wv/e7jdCCP8HyVejF8YTmD9RS/u0Xbvk=;
+        b=fRNHxORl9VMbqGoA//QAsZM4lnT1r417zYHLOYTxeqCEIbd5Qum/3e4gLmKza+UF1J
+         JUJq5mUKDup2UMwHm/wtzzdc48m9N4sX5T7DD6nL/wLWGZcG2YuhSWK5EF4ZSZ32Gire
+         TohBl9GXEnymm/IX/dSfp8c2cMkq2tXOFIBjObIDqrV0e293ty9Hi9FB+jPezVi95xYX
+         J30hrG3MiOBvkEWTZic83g+SG2ZS5YkvJsHe5ip5CgszGsLV2sHSteHmeHw8MRLRxHK7
+         u5X/PGUcJfaE6x/WqNtxy1dTKwHEFYDSypB77RDBdL/p35Wmj3AWrjY5cACKIK3wEN0d
+         bd6w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=USUb/Nmm;
+       dkim=pass header.i=@linaro.org header.s=google header.b=Se5zAMIW;
        spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=USUb/Nmm;
+       dkim=pass header.i=@linaro.org header.s=google header.b=Se5zAMIW;
        spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AIpwx4+GKsi2l+Euo0W9Mk1sVLeQez0cloEWhc7rbO77c5kJzslR2eoqwuapSXxXdXL8HOdn0coMrg==
+X-Google-Smtp-Source: AB8JxZq+tDSHND30nkZNDk2QPrDAZjsegNaT+2MFz4fC8Ih1jFnbbqLPLHRvLdrlci9lrS8IHT5pMQ==
 From: srinivas.kandagatla@linaro.org
 To: andy.gross@linaro.org,
 	broonie@kernel.org,
@@ -46,741 +46,455 @@ Cc: gregkh@linuxfoundation.org,
 	rohkumar@qti.qualcomm.com,
 	spatakok@qti.qualcomm.com,
 	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v6 13/24] ASoC: qdsp6: q6adm: Add q6adm driver
-Date: Thu, 26 Apr 2018 10:45:55 +0100
-Message-Id: <20180426094606.4775-14-srinivas.kandagatla@linaro.org>
+Subject: [PATCH v6 12/24] ASoC: qdsp6: q6afe: Add support to MI2S sysclks
+Date: Thu, 26 Apr 2018 10:45:54 +0100
+Message-Id: <20180426094606.4775-13-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180426094606.4775-1-srinivas.kandagatla@linaro.org>
 References: <20180426094606.4775-1-srinivas.kandagatla@linaro.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598801772979963934?=
-X-GMAIL-MSGID: =?utf-8?q?1598801772979963934?=
+X-GMAIL-THRID: =?utf-8?q?1598801771324468002?=
+X-GMAIL-MSGID: =?utf-8?q?1598801771324468002?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-This patch adds support to Q6ADM (Audio Device Manager) module in
-q6dsp. ADM performs routing between audio streams and AFE ports.
-It does Rate matching for streams going to devices driven by
-different clocks, it handles volume ramping, Mixing with channel
-and bit-width. ADM creates and destroys dynamic COPP services
-for device-related audio processing as needed.
-
-This patch adds basic support to ADM.
+This patch adds support to LPASS Bit clock, LPASS Digital
+core clock and OSR clock. These clocks are required for both
+MI2S and PCM setup.
 
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Reviewed-and-tested-by: Rohit kumar <rohitkr@codeaurora.org>
 ---
- sound/soc/qcom/Kconfig        |   4 +
- sound/soc/qcom/qdsp6/Makefile |   1 +
- sound/soc/qcom/qdsp6/q6adm.c  | 635 ++++++++++++++++++++++++++++++++++++++++++
- sound/soc/qcom/qdsp6/q6adm.h  |  25 ++
- 4 files changed, 665 insertions(+)
- create mode 100644 sound/soc/qcom/qdsp6/q6adm.c
- create mode 100644 sound/soc/qcom/qdsp6/q6adm.h
+ sound/soc/qcom/qdsp6/q6afe.c | 211 ++++++++++++++++++++++++++++++++++++++++++-
+ sound/soc/qcom/qdsp6/q6afe.h | 131 +++++++++++++++++++++++++++
+ 2 files changed, 340 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/qcom/Kconfig b/sound/soc/qcom/Kconfig
-index 3c0596b4cfa2..b89c0378fd29 100644
---- a/sound/soc/qcom/Kconfig
-+++ b/sound/soc/qcom/Kconfig
-@@ -53,12 +53,16 @@ config SND_SOC_QDSP6_CORE
- config SND_SOC_QDSP6_AFE
- 	tristate
+diff --git a/sound/soc/qcom/qdsp6/q6afe.c b/sound/soc/qcom/qdsp6/q6afe.c
+index 6a81fc7fd576..065786693ab2 100644
+--- a/sound/soc/qcom/qdsp6/q6afe.c
++++ b/sound/soc/qcom/qdsp6/q6afe.c
+@@ -26,6 +26,7 @@
+ #define AFE_PORT_CMD_DEVICE_START	0x000100E5
+ #define AFE_PORT_CMD_DEVICE_STOP	0x000100E6
+ #define AFE_PORT_CMD_SET_PARAM_V2	0x000100EF
++#define AFE_SVC_CMD_SET_PARAM		0x000100f3
+ #define AFE_PORT_CMDRSP_GET_PARAM_V2	0x00010106
+ #define AFE_PARAM_ID_HDMI_CONFIG	0x00010210
+ #define AFE_MODULE_AUDIO_DEV_INTERFACE	0x0001020C
+@@ -68,6 +69,11 @@
+ #define AFE_PORT_ID_MULTICHAN_HDMI_RX	0x100E
  
-+config SND_SOC_QDSP6_ADM
-+	tristate
+ #define AFE_API_VERSION_SLIMBUS_CONFIG 0x1
++/* Clock set API version */
++#define AFE_API_VERSION_CLOCK_SET 1
++#define Q6AFE_LPASS_CLK_CONFIG_API_VERSION	0x1
++#define AFE_MODULE_CLOCK_SET		0x0001028F
++#define AFE_PARAM_ID_CLOCK_SET		0x00010290
+ 
+ /* SLIMbus Rx port on channel 0. */
+ #define AFE_PORT_ID_SLIMBUS_MULTI_CHAN_0_RX      0x4000
+@@ -146,6 +152,13 @@ struct afe_port_param_data_v2 {
+ 	u16 reserved;
+ } __packed;
+ 
++struct afe_svc_cmd_set_param {
++	uint32_t payload_size;
++	uint32_t payload_address_lsw;
++	uint32_t payload_address_msw;
++	uint32_t mem_map_handle;
++} __packed;
 +
- config SND_SOC_QDSP6
- 	tristate "SoC ALSA audio driver for QDSP6"
- 	depends on QCOM_APR && HAS_DMA
- 	select SND_SOC_QDSP6_COMMON
- 	select SND_SOC_QDSP6_CORE
- 	select SND_SOC_QDSP6_AFE
-+	select SND_SOC_QDSP6_ADM
- 	help
- 	 To add support for MSM QDSP6 Soc Audio.
- 	 This will enable sound soc platform specific
-diff --git a/sound/soc/qcom/qdsp6/Makefile b/sound/soc/qcom/qdsp6/Makefile
-index 7ff666bd10ca..95cdb3a12694 100644
---- a/sound/soc/qcom/qdsp6/Makefile
-+++ b/sound/soc/qcom/qdsp6/Makefile
-@@ -1,3 +1,4 @@
- obj-$(CONFIG_SND_SOC_QDSP6_COMMON) += q6dsp-common.o
- obj-$(CONFIG_SND_SOC_QDSP6_CORE) += q6core.o
- obj-$(CONFIG_SND_SOC_QDSP6_AFE) += q6afe.o
-+obj-$(CONFIG_SND_SOC_QDSP6_ADM) += q6adm.o
-diff --git a/sound/soc/qcom/qdsp6/q6adm.c b/sound/soc/qcom/qdsp6/q6adm.c
-new file mode 100644
-index 000000000000..d5ff46615d1e
---- /dev/null
-+++ b/sound/soc/qcom/qdsp6/q6adm.c
-@@ -0,0 +1,635 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2011-2017, The Linux Foundation. All rights reserved.
-+// Copyright (c) 2018, Linaro Limited
+ struct afe_port_cmd_set_param_v2 {
+ 	u16 port_id;
+ 	u16 payload_size;
+@@ -206,6 +219,23 @@ struct afe_param_id_slimbus_cfg {
+  */
+ } __packed;
+ 
++struct afe_clk_cfg {
++	u32                  i2s_cfg_minor_version;
++	u32                  clk_val1;
++	u32                  clk_val2;
++	u16                  clk_src;
++	u16                  clk_root;
++	u16                  clk_set_mode;
++	u16                  reserved;
++} __packed;
 +
-+#include <linux/slab.h>
-+#include <linux/wait.h>
-+#include <linux/kernel.h>
-+#include <linux/device.h>
-+#include <linux/module.h>
-+#include <linux/sched.h>
-+#include <linux/jiffies.h>
-+#include <linux/of.h>
-+#include <linux/of_platform.h>
-+#include <linux/kref.h>
-+#include <linux/wait.h>
-+#include <linux/soc/qcom/apr.h>
-+#include <linux/platform_device.h>
-+#include <sound/asound.h>
-+#include "q6adm.h"
-+#include "q6afe.h"
-+#include "q6core.h"
-+#include "q6dsp-errno.h"
-+#include "q6dsp-common.h"
++struct afe_digital_clk_cfg {
++	u32                  i2s_cfg_minor_version;
++	u32                  clk_val;
++	u16                  clk_root;
++	u16                  reserved;
++} __packed;
 +
-+#define ADM_CMD_DEVICE_OPEN_V5		0x00010326
-+#define ADM_CMDRSP_DEVICE_OPEN_V5	0x00010329
-+#define ADM_CMD_DEVICE_CLOSE_V5		0x00010327
-+#define ADM_CMD_MATRIX_MAP_ROUTINGS_V5	0x00010325
+ struct afe_param_id_i2s_cfg {
+ 	u32	i2s_cfg_minor_version;
+ 	u16	bit_width;
+@@ -223,6 +253,39 @@ union afe_port_config {
+ 	struct afe_param_id_i2s_cfg	i2s_cfg;
+ } __packed;
+ 
 +
-+#define TIMEOUT_MS 1000
-+#define RESET_COPP_ID 99
-+#define INVALID_COPP_ID 0xFF
-+/* Definition for a legacy device session. */
-+#define ADM_LEGACY_DEVICE_SESSION	0
-+#define ADM_MATRIX_ID_AUDIO_RX		0
-+#define ADM_MATRIX_ID_AUDIO_TX		1
-+
-+struct copp {
-+	int afe_port;
-+	int copp_idx;
-+	int id;
-+	int topology;
-+	int mode;
-+	int rate;
-+	int bit_width;
-+	int channels;
-+	int app_type;
-+	int acdb_id;
-+
-+	struct aprv2_ibasic_rsp_result_t result;
-+	struct kref refcount;
-+	wait_queue_head_t wait;
-+	struct list_head node;
-+	struct q6adm *adm;
++struct afe_clk_set {
++	uint32_t clk_set_minor_version;
++	uint32_t clk_id;
++	uint32_t clk_freq_in_hz;
++	uint16_t clk_attri;
++	uint16_t clk_root;
++	uint32_t enable;
 +};
 +
-+struct q6adm {
-+	struct apr_device *apr;
-+	struct device *dev;
-+	struct q6core_svc_api_info ainfo;
-+	unsigned long copp_bitmap[AFE_MAX_PORTS];
-+	struct list_head copps_list;
-+	spinlock_t copps_list_lock;
-+	struct aprv2_ibasic_rsp_result_t result;
-+	struct mutex lock;
-+	wait_queue_head_t matrix_map_wait;
-+	struct platform_device *pdev_routing;
-+};
-+
-+struct adm_cmd_device_open_v5 {
-+	struct apr_hdr hdr;
-+	u16 flags;
-+	u16 mode_of_operation;
-+	u16 endpoint_id_1;
-+	u16 endpoint_id_2;
-+	u32 topology_id;
-+	u16 dev_num_channel;
-+	u16 bit_width;
-+	u32 sample_rate;
-+	u8 dev_channel_mapping[8];
++struct afe_lpass_clk_config_command {
++	struct apr_hdr			 hdr;
++	struct afe_port_cmd_set_param_v2 param;
++	struct afe_port_param_data_v2    pdata;
++	struct afe_clk_cfg clk_cfg;
 +} __packed;
 +
-+struct adm_cmd_matrix_map_routings_v5 {
-+	struct apr_hdr hdr;
-+	u32 matrix_id;
-+	u32 num_sessions;
++struct afe_lpass_clk_config_command_v2 {
++	struct apr_hdr			hdr;
++	struct afe_svc_cmd_set_param	param;
++	struct afe_port_param_data_v2    pdata;
++	struct afe_clk_set		clk_cfg;
 +} __packed;
 +
-+struct adm_session_map_node_v5 {
-+	u16 session_id;
-+	u16 num_copps;
++
++
++struct afe_lpass_digital_clk_config_command {
++	struct apr_hdr			 hdr;
++	struct afe_port_cmd_set_param_v2 param;
++	struct afe_port_param_data_v2    pdata;
++	struct afe_digital_clk_cfg clk_cfg;
 +} __packed;
 +
-+static struct copp *adm_find_copp(struct q6adm *adm, int port_idx,
-+				  int copp_idx)
+ struct q6afe_port {
+ 	wait_queue_head_t wait;
+ 	union afe_port_config port_cfg;
+@@ -326,6 +389,7 @@ static int q6afe_callback(struct apr_device *adev,
+ 		case AFE_PORT_CMD_SET_PARAM_V2:
+ 		case AFE_PORT_CMD_DEVICE_STOP:
+ 		case AFE_PORT_CMD_DEVICE_START:
++		case AFE_SVC_CMD_SET_PARAM:
+ 			port = afe_find_port(afe, data->token);
+ 			if (port) {
+ 				port->result = *res;
+@@ -397,6 +461,46 @@ static int afe_apr_send_pkt(struct q6afe *afe, void *data,
+ 	return ret;
+ }
+ 
++static int q6afe_port_set_param(struct q6afe_port *port, void *data,
++				   int param_id, int module_id, int psize)
 +{
-+	struct copp *c = NULL;
-+	struct copp *ret = NULL;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&adm->copps_list_lock, flags);
-+	list_for_each_entry(c, &adm->copps_list, node) {
-+		if ((port_idx == c->afe_port) && (copp_idx == c->copp_idx)) {
-+			ret = c;
-+			break;
-+		}
-+	}
-+
-+	spin_unlock_irqrestore(&adm->copps_list_lock, flags);
-+
-+	return ret;
-+
-+}
-+
-+static int q6adm_callback(struct apr_device *adev,
-+			struct apr_client_message *data)
-+{
-+	struct aprv2_ibasic_rsp_result_t *result = data->payload;
-+	int port_idx, copp_idx;
-+	struct copp *copp;
-+	struct q6adm *adm = dev_get_drvdata(&adev->dev);
-+
-+	if (!data->payload_size)
-+		return 0;
-+
-+	copp_idx = (data->token) & 0XFF;
-+	port_idx = ((data->token) >> 16) & 0xFF;
-+	if (port_idx < 0 || port_idx >= AFE_MAX_PORTS) {
-+		dev_err(&adev->dev, "Invalid port idx %d token %d\n",
-+		       port_idx, data->token);
-+		return 0;
-+	}
-+	if (copp_idx < 0 || copp_idx >= MAX_COPPS_PER_PORT) {
-+		dev_err(&adev->dev, "Invalid copp idx %d token %d\n",
-+			copp_idx, data->token);
-+		return 0;
-+	}
-+
-+	switch (data->opcode) {
-+	case APR_BASIC_RSP_RESULT: {
-+		if (result->status != 0) {
-+			dev_err(&adev->dev, "cmd = 0x%x return error = 0x%x\n",
-+				result->opcode, result->status);
-+		}
-+		switch (result->opcode) {
-+		case ADM_CMD_DEVICE_OPEN_V5:
-+		case ADM_CMD_DEVICE_CLOSE_V5:
-+			copp = adm_find_copp(adm, port_idx, copp_idx);
-+			if (!copp)
-+				return 0;
-+
-+			copp->result = *result;
-+			wake_up(&copp->wait);
-+			break;
-+		case ADM_CMD_MATRIX_MAP_ROUTINGS_V5:
-+			adm->result = *result;
-+			wake_up(&adm->matrix_map_wait);
-+			break;
-+
-+		default:
-+			dev_err(&adev->dev, "Unknown Cmd: 0x%x\n",
-+				result->opcode);
-+			break;
-+		}
-+		return 0;
-+	}
-+	case ADM_CMDRSP_DEVICE_OPEN_V5: {
-+		struct adm_cmd_rsp_device_open_v5 {
-+			u32 status;
-+			u16 copp_id;
-+			u16 reserved;
-+		} __packed * open = data->payload;
-+
-+		open = data->payload;
-+		copp = adm_find_copp(adm, port_idx, copp_idx);
-+		if (!copp)
-+			return 0;
-+
-+		if (open->copp_id == INVALID_COPP_ID) {
-+			dev_err(&adev->dev, "Invalid coppid rxed %d\n",
-+				open->copp_id);
-+			copp->result.status = ADSP_EBADPARAM;
-+			wake_up(&copp->wait);
-+			break;
-+		}
-+		copp->result.opcode = data->opcode;
-+		copp->id = open->copp_id;
-+		wake_up(&copp->wait);
-+	}
-+	break;
-+	default:
-+		dev_err(&adev->dev, "Unknown cmd:0x%x\n",
-+		       data->opcode);
-+		break;
-+	}
-+
-+	return 0;
-+}
-+
-+static struct copp *adm_alloc_copp(struct q6adm *adm, int port_idx)
-+{
-+	struct copp *c;
-+	int idx;
-+
-+	idx = find_first_zero_bit(&adm->copp_bitmap[port_idx],
-+				  MAX_COPPS_PER_PORT);
-+
-+	if (idx > MAX_COPPS_PER_PORT)
-+		return ERR_PTR(-EBUSY);
-+
-+	c = kzalloc(sizeof(*c), GFP_KERNEL);
-+	if (!c)
-+		return ERR_PTR(-ENOMEM);
-+
-+	set_bit(idx, &adm->copp_bitmap[port_idx]);
-+	c->copp_idx = idx;
-+	c->afe_port = port_idx;
-+	c->adm = adm;
-+
-+	init_waitqueue_head(&c->wait);
-+
-+	return c;
-+}
-+
-+static int q6adm_apr_send_copp_pkt(struct q6adm *adm, struct copp *copp,
-+				   void *data, uint32_t rsp_opcode)
-+{
-+	struct device *dev = adm->dev;
-+	struct apr_hdr *hdr = data;
-+	uint32_t opcode = hdr->opcode;
++	struct apr_hdr *hdr;
++	struct afe_svc_cmd_set_param *param;
++	struct afe_port_param_data_v2 *pdata;
++	struct q6afe *afe = port->afe;
++	u16 port_id = port->id;
 +	int ret;
 +
-+	mutex_lock(&adm->lock);
-+	copp->result.opcode = 0;
-+	copp->result.status = 0;
-+	ret = apr_send_pkt(adm->apr, data);
-+	if (ret < 0) {
-+		dev_err(dev, "Failed to send APR packet\n");
-+		ret = -EINVAL;
-+		goto err;
-+	}
++	hdr = data;
++	param = data + sizeof(*hdr);
++	pdata = data + sizeof(*hdr) + sizeof(*param);
 +
-+	/* Wait for the callback with copp id */
-+	if (rsp_opcode)
-+		ret = wait_event_timeout(copp->wait,
-+					 (copp->result.opcode == opcode) ||
-+					 (copp->result.opcode == rsp_opcode),
-+					 msecs_to_jiffies(TIMEOUT_MS));
-+	else
-+		ret = wait_event_timeout(copp->wait,
-+					 (copp->result.opcode == opcode),
-+					 msecs_to_jiffies(TIMEOUT_MS));
++	hdr->hdr_field = APR_HDR_FIELD(APR_MSG_TYPE_SEQ_CMD,
++					      APR_HDR_LEN(APR_HDR_SIZE),
++					      APR_PKT_VER);
++	hdr->pkt_size = sizeof(*hdr) + sizeof(*param) +
++			sizeof(*pdata) + psize;
++	hdr->src_port = 0;
++	hdr->dest_port = 0;
++	hdr->token = port->token;
++	hdr->opcode = AFE_SVC_CMD_SET_PARAM;
 +
-+	if (!ret) {
-+		dev_err(dev, "ADM copp cmd timedout\n");
-+		ret = -EINVAL;
-+	} else if (copp->result.status > 0) {
-+		dev_err(dev, "DSP returned error[%d]\n",
-+			copp->result.status);
-+		ret = -EINVAL;
-+	}
++	param->payload_size = sizeof(*pdata) + psize;
++	param->payload_address_lsw = 0x00;
++	param->payload_address_msw = 0x00;
++	param->mem_map_handle = 0x00;
++	pdata->module_id = module_id;
++	pdata->param_id = param_id;
++	pdata->param_size = psize;
 +
-+err:
-+	mutex_unlock(&adm->lock);
-+	return ret;
-+}
-+
-+static int q6adm_device_close(struct q6adm *adm, struct copp *copp,
-+			      int port_id, int copp_idx)
-+{
-+	struct apr_hdr close = {0};
-+
-+	close.hdr_field = APR_HDR_FIELD(APR_MSG_TYPE_SEQ_CMD,
-+					APR_HDR_LEN(APR_HDR_SIZE),
-+					APR_PKT_VER);
-+	close.pkt_size = sizeof(close);
-+	close.src_svc = APR_SVC_ADM;
-+	close.src_domain = APR_DOMAIN_APPS;
-+	close.src_port = port_id;
-+	close.dest_svc = APR_SVC_ADM;
-+	close.dest_domain = APR_DOMAIN_ADSP;
-+	close.dest_port = copp->id;
-+	close.token = port_id << 16 | copp_idx;
-+	close.opcode = ADM_CMD_DEVICE_CLOSE_V5;
-+
-+	return q6adm_apr_send_copp_pkt(adm, copp, &close, 0);
-+}
-+
-+static void adm_free_copp(struct kref *ref)
-+{
-+	struct copp *c = container_of(ref, struct copp, refcount);
-+	struct q6adm *adm = c->adm;
-+	int port_idx = c->afe_port;
-+	int copp_idx = c->copp_idx;
-+	unsigned long flags;
-+	int ret;
-+
-+	ret = q6adm_device_close(adm, c, port_idx, copp_idx);
-+	if (ret < 0)
-+		dev_err(adm->dev, "Failed to close copp %d\n", ret);
-+
-+	clear_bit(c->copp_idx, &adm->copp_bitmap[port_idx]);
-+	spin_lock_irqsave(&adm->copps_list_lock, flags);
-+	list_del(&c->node);
-+	spin_unlock_irqrestore(&adm->copps_list_lock, flags);
-+	kfree(c);
-+}
-+
-+static struct copp *adm_find_matching_copp(struct q6adm *adm,
-+					   int port_id, int topology,
-+					   int mode, int rate, int channel_mode,
-+					   int bit_width, int app_type)
-+{
-+	unsigned long flags;
-+	struct copp *c;
-+
-+	spin_lock_irqsave(&adm->copps_list_lock, flags);
-+
-+	list_for_each_entry(c, &adm->copps_list, node) {
-+		if ((port_id == c->afe_port) && (topology == c->topology) &&
-+		    (mode == c->mode) && (rate == c->rate) &&
-+		    (bit_width == c->bit_width) && (app_type == c->app_type)) {
-+			spin_unlock_irqrestore(&adm->copps_list_lock, flags);
-+			kref_get(&c->refcount);
-+			return c;
-+		}
-+	}
-+	spin_unlock_irqrestore(&adm->copps_list_lock, flags);
-+
-+	c = adm_alloc_copp(adm, port_id);
-+	if (IS_ERR_OR_NULL(c))
-+		return ERR_CAST(c);
-+
-+	kref_init(&c->refcount);
-+	c->topology = topology;
-+	c->mode = mode;
-+	c->rate = rate;
-+	c->channels = channel_mode;
-+	c->bit_width = bit_width;
-+	c->app_type = app_type;
-+
-+	spin_lock_irqsave(&adm->copps_list_lock, flags);
-+	list_add_tail(&c->node, &adm->copps_list);
-+	spin_unlock_irqrestore(&adm->copps_list_lock, flags);
-+
-+	return c;
-+
-+}
-+
-+static int q6adm_device_open(struct q6adm *adm, struct copp *copp, int port_id,
-+			     int path, int topology, int channel_mode,
-+			     int bit_width, int rate)
-+{
-+	struct adm_cmd_device_open_v5 open = { {0} };
-+	int afe_port = q6afe_get_port_id(port_id);
-+	int ret;
-+
-+	open.hdr.hdr_field = APR_HDR_FIELD(APR_MSG_TYPE_SEQ_CMD,
-+					   APR_HDR_LEN(APR_HDR_SIZE),
-+					   APR_PKT_VER);
-+	open.hdr.pkt_size = sizeof(open);
-+	open.hdr.src_svc = APR_SVC_ADM;
-+	open.hdr.src_domain = APR_DOMAIN_APPS;
-+	open.hdr.src_port = afe_port;
-+	open.hdr.dest_svc = APR_SVC_ADM;
-+	open.hdr.dest_domain = APR_DOMAIN_ADSP;
-+	open.hdr.dest_port = afe_port;
-+	open.hdr.token = port_id << 16 | copp->copp_idx;
-+	open.hdr.opcode = ADM_CMD_DEVICE_OPEN_V5;
-+	open.flags = ADM_LEGACY_DEVICE_SESSION;
-+	open.mode_of_operation = path;
-+	open.endpoint_id_1 = afe_port;
-+	open.topology_id = topology;
-+	open.dev_num_channel = channel_mode & 0x00FF;
-+	open.bit_width = bit_width;
-+	open.sample_rate = rate;
-+
-+	ret = q6dsp_map_channels(&open.dev_channel_mapping[0],
-+				 channel_mode);
++	ret = afe_apr_send_pkt(afe, data, port);
 +	if (ret)
-+		return ret;
++		dev_err(afe->dev, "AFE enable for port 0x%x failed %d\n",
++		       port_id, ret);
 +
-+	return q6adm_apr_send_copp_pkt(adm, copp, &open,
-+				       ADM_CMDRSP_DEVICE_OPEN_V5);
-+}
-+
-+/**
-+ * q6adm_open() - open adm and grab a free copp
-+ *
-+ * @dev: Pointer to adm child device.
-+ * @port_id: port id
-+ * @path: playback or capture path.
-+ * @rate: rate at which copp is required.
-+ * @channel_mode: channel mode
-+ * @topology: adm topology id
-+ * @perf_mode: performace mode.
-+ * @bit_width: audio sample bit width
-+ * @app_type: Application type.
-+ * @acdb_id: ACDB id
-+ *
-+ * Return: Will be an negative on error or a valid copp index on success.
-+ */
-+int q6adm_open(struct device *dev, int port_id, int path, int rate,
-+	       int channel_mode, int topology, int perf_mode,
-+	       uint16_t bit_width, int app_type, int acdb_id)
-+{
-+	struct q6adm *adm = dev_get_drvdata(dev->parent);
-+	struct copp *copp;
-+	int ret = 0;
-+
-+	if (port_id < 0) {
-+		dev_err(dev, "Invalid port_id 0x%x\n", port_id);
-+		return -EINVAL;
-+	}
-+
-+	copp = adm_find_matching_copp(adm, port_id, topology, perf_mode,
-+				      rate, channel_mode, bit_width, app_type);
-+	if (kref_read(&copp->refcount) == 1) {
-+		/* not initialized yet */
-+		ret = q6adm_device_open(adm, copp, port_id, path, topology,
-+				  channel_mode, bit_width, rate);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
-+	return copp->copp_idx;
-+}
-+EXPORT_SYMBOL_GPL(q6adm_open);
-+
-+/**
-+ * q6adm_matrix_map() - Map asm streams and afe ports using payload
-+ *
-+ * @dev: Pointer to adm child device.
-+ * @path: playback or capture path.
-+ * @payload_map: map between session id and afe ports.
-+ * @perf_mode: Performace mode.
-+ *
-+ * Return: Will be an negative on error or a zero on success.
-+ */
-+int q6adm_matrix_map(struct device *dev, int path,
-+		     struct route_payload payload_map, int perf_mode)
-+{
-+	struct q6adm *adm = dev_get_drvdata(dev->parent);
-+	struct adm_cmd_matrix_map_routings_v5 *route;
-+	struct adm_session_map_node_v5 *node;
-+	uint16_t *copps_list;
-+	int cmd_size, ret, i, copp_idx;
-+	void *matrix_map = NULL;
-+	struct copp *copp;
-+
-+	/* Assumes port_ids have already been validated during adm_open */
-+	cmd_size = (sizeof(*route) +
-+		    sizeof(*node) +
-+		    (sizeof(uint32_t) * payload_map.num_copps));
-+	matrix_map = kzalloc(cmd_size, GFP_KERNEL);
-+	if (!matrix_map)
-+		return -ENOMEM;
-+
-+	route = matrix_map;
-+	route->hdr.hdr_field = APR_HDR_FIELD(APR_MSG_TYPE_SEQ_CMD,
-+					     APR_HDR_LEN(APR_HDR_SIZE),
-+					     APR_PKT_VER);
-+	route->hdr.pkt_size = cmd_size;
-+	route->hdr.src_svc = 0;
-+	route->hdr.src_domain = APR_DOMAIN_APPS;
-+	route->hdr.dest_svc = APR_SVC_ADM;
-+	route->hdr.dest_domain = APR_DOMAIN_ADSP;
-+	route->hdr.token = 0;
-+	route->hdr.opcode = ADM_CMD_MATRIX_MAP_ROUTINGS_V5;
-+	route->num_sessions = 1;
-+
-+	switch (path) {
-+	case ADM_PATH_PLAYBACK:
-+		route->matrix_id = ADM_MATRIX_ID_AUDIO_RX;
-+		break;
-+	case ADM_PATH_LIVE_REC:
-+		route->matrix_id = ADM_MATRIX_ID_AUDIO_TX;
-+		break;
-+	default:
-+		dev_err(dev, "Wrong path set[%d]\n", path);
-+
-+		break;
-+	}
-+
-+	node = matrix_map + sizeof(*route);
-+	node->session_id = payload_map.session_id;
-+	node->num_copps = payload_map.num_copps;
-+	copps_list = matrix_map + sizeof(*route) + sizeof(*node);
-+
-+	for (i = 0; i < payload_map.num_copps; i++) {
-+		int port_idx = payload_map.port_id[i];
-+
-+		if (port_idx < 0) {
-+			dev_err(dev, "Invalid port_id 0x%x\n",
-+				payload_map.port_id[i]);
-+			ret = -EINVAL;
-+			goto fail_cmd;
-+		}
-+		copp_idx = payload_map.copp_idx[i];
-+
-+		copp = adm_find_copp(adm, port_idx, copp_idx);
-+		if (!copp) {
-+			ret = -EINVAL;
-+			goto fail_cmd;
-+		}
-+
-+		copps_list[i] = copp->id;
-+	}
-+
-+	mutex_lock(&adm->lock);
-+	adm->result.status = 0;
-+	adm->result.opcode = 0;
-+
-+	ret = apr_send_pkt(adm->apr, matrix_map);
-+	if (ret < 0) {
-+		dev_err(dev, "routing for syream %d failed ret %d\n",
-+		       payload_map.session_id, ret);
-+		goto fail_cmd;
-+	}
-+	ret = wait_event_timeout(adm->matrix_map_wait,
-+				 adm->result.opcode == route->hdr.opcode,
-+				 msecs_to_jiffies(TIMEOUT_MS));
-+	if (!ret) {
-+		dev_err(dev, "routing for syream %d failed\n",
-+		       payload_map.session_id);
-+		ret = -ETIMEDOUT;
-+		goto fail_cmd;
-+	} else if (adm->result.status > 0) {
-+		dev_err(dev, "DSP returned error[%d]\n",
-+			adm->result.status);
-+		ret = -EINVAL;
-+		goto fail_cmd;
-+	}
-+
-+fail_cmd:
-+	mutex_unlock(&adm->lock);
-+	kfree(matrix_map);
 +	return ret;
 +}
-+EXPORT_SYMBOL_GPL(q6adm_matrix_map);
 +
-+/**
-+ * q6adm_close() - Close adm copp
-+ *
-+ * @dev: Pointer to adm child device.
-+ * @port_id: afe port id.
-+ * @perf_mode: perf_mode mode
-+ * @copp_idx: copp index to close
-+ *
-+ * Return: Will be an negative on error or a zero on success.
-+ */
-+int q6adm_close(struct device *dev, int port_id, int perf_mode, int copp_idx)
+ static int q6afe_port_set_param_v2(struct q6afe_port *port, void *data,
+ 				   int param_id, int psize)
+ {
+@@ -438,6 +542,110 @@ static int q6afe_port_set_param_v2(struct q6afe_port *port, void *data,
+ 	return ret;
+ }
+ 
++static int q6afe_set_lpass_clock(struct q6afe_port *port,
++				 struct afe_clk_cfg *cfg)
 +{
-+	struct q6adm *adm = dev_get_drvdata(dev->parent);
-+	struct copp *copp;
++	struct afe_lpass_clk_config_command clk_cfg = { {0} };
++	int param_id = AFE_PARAM_ID_LPAIF_CLK_CONFIG;
++	struct q6afe *afe = port->afe;
 +
-+	if (port_id < 0) {
-+		dev_err(dev, "Invalid port_id 0x%x\n", port_id);
++	if (!cfg) {
++		dev_err(afe->dev, "clock cfg is NULL\n");
 +		return -EINVAL;
 +	}
 +
-+	if ((copp_idx < 0) || (copp_idx >= MAX_COPPS_PER_PORT)) {
-+		dev_err(dev, "Invalid copp idx: %d\n", copp_idx);
++	clk_cfg.clk_cfg = *cfg;
++
++	return q6afe_port_set_param_v2(port, &clk_cfg, param_id, sizeof(*cfg));
++}
++
++static int q6afe_set_lpass_clock_v2(struct q6afe_port *port,
++				 struct afe_clk_set *cfg)
++{
++	struct afe_lpass_clk_config_command_v2 clk_cfg = { {0} };
++	int param_id = AFE_PARAM_ID_CLOCK_SET;
++	int module_id = AFE_MODULE_CLOCK_SET;
++	struct q6afe *afe = port->afe;
++
++	if (!cfg) {
++		dev_err(afe->dev, "clock cfg is NULL\n");
 +		return -EINVAL;
 +	}
 +
-+	copp = adm_find_copp(adm, port_id, copp_idx);
-+	if (!copp)
-+		return -EINVAL;
++	clk_cfg.clk_cfg = *cfg;
 +
-+	kref_put(&copp->refcount, adm_free_copp);
-+
-+	return 0;
++	return q6afe_port_set_param(port, &clk_cfg, param_id,
++				       module_id, sizeof(*cfg));
 +}
-+EXPORT_SYMBOL_GPL(q6adm_close);
 +
-+static int q6adm_probe(struct apr_device *adev)
++static int q6afe_set_digital_codec_core_clock(struct q6afe_port *port,
++					      struct afe_digital_clk_cfg *cfg)
 +{
-+	struct device *dev = &adev->dev;
-+	struct device_node *dais_np;
-+	struct q6adm *adm;
++	struct afe_lpass_digital_clk_config_command clk_cfg = { {0} };
++	int param_id = AFE_PARAM_ID_INTERNAL_DIGITAL_CDC_CLK_CONFIG;
++	struct q6afe *afe = port->afe;
 +
-+	adm = devm_kzalloc(&adev->dev, sizeof(*adm), GFP_KERNEL);
-+	if (!adm)
-+		return -ENOMEM;
-+
-+	adm->apr = adev;
-+	dev_set_drvdata(&adev->dev, adm);
-+	adm->dev = dev;
-+	q6core_get_svc_api_info(adev->svc_id, &adm->ainfo);
-+	mutex_init(&adm->lock);
-+	init_waitqueue_head(&adm->matrix_map_wait);
-+
-+	INIT_LIST_HEAD(&adm->copps_list);
-+	spin_lock_init(&adm->copps_list_lock);
-+
-+	dais_np = of_get_child_by_name(dev->of_node, "routing");
-+	if (dais_np) {
-+		adm->pdev_routing = of_platform_device_create(dais_np,
-+							   "q6routing", dev);
-+		of_node_put(dais_np);
++	if (!cfg) {
++		dev_err(afe->dev, "clock cfg is NULL\n");
++		return -EINVAL;
 +	}
 +
-+	return 0;
++	clk_cfg.clk_cfg = *cfg;
++
++	return q6afe_port_set_param_v2(port, &clk_cfg, param_id, sizeof(*cfg));
 +}
 +
-+static int q6adm_remove(struct apr_device *adev)
++int q6afe_port_set_sysclk(struct q6afe_port *port, int clk_id,
++			  int clk_src, int clk_root,
++			  unsigned int freq, int dir)
 +{
-+	struct q6adm *adm = dev_get_drvdata(&adev->dev);
++	struct afe_clk_cfg ccfg = {0,};
++	struct afe_clk_set cset = {0,};
++	struct afe_digital_clk_cfg dcfg = {0,};
++	int ret;
 +
-+	if (adm->pdev_routing)
-+		of_platform_device_destroy(&adm->pdev_routing->dev, NULL);
++	switch (clk_id) {
++	case LPAIF_DIG_CLK:
++		dcfg.i2s_cfg_minor_version = AFE_API_VERSION_I2S_CONFIG;
++		dcfg.clk_val = freq;
++		dcfg.clk_root = clk_root;
++		ret = q6afe_set_digital_codec_core_clock(port, &dcfg);
++		break;
++	case LPAIF_BIT_CLK:
++		ccfg.i2s_cfg_minor_version = AFE_API_VERSION_I2S_CONFIG;
++		ccfg.clk_val1 = freq;
++		ccfg.clk_src = clk_src;
++		ccfg.clk_root = clk_root;
++		ccfg.clk_set_mode = Q6AFE_LPASS_MODE_CLK1_VALID;
++		ret = q6afe_set_lpass_clock(port, &ccfg);
++		break;
 +
-+	return 0;
++	case LPAIF_OSR_CLK:
++		ccfg.i2s_cfg_minor_version = AFE_API_VERSION_I2S_CONFIG;
++		ccfg.clk_val2 = freq;
++		ccfg.clk_src = clk_src;
++		ccfg.clk_root = clk_root;
++		ccfg.clk_set_mode = Q6AFE_LPASS_MODE_CLK2_VALID;
++		ret = q6afe_set_lpass_clock(port, &ccfg);
++		break;
++	case Q6AFE_LPASS_CLK_ID_PRI_MI2S_IBIT ... Q6AFE_LPASS_CLK_ID_INT_MCLK_1:
++		cset.clk_set_minor_version = AFE_API_VERSION_CLOCK_SET;
++		cset.clk_id = clk_id;
++		cset.clk_freq_in_hz = freq;
++		cset.clk_attri = clk_src;
++		cset.clk_root = clk_root;
++		cset.enable = !!freq;
++		ret = q6afe_set_lpass_clock_v2(port, &cset);
++		break;
++	default:
++		ret = -EINVAL;
++		break;
++	}
++
++	return ret;
 +}
++EXPORT_SYMBOL_GPL(q6afe_port_set_sysclk);
 +
-+static const struct of_device_id q6adm_device_id[]  = {
-+	{ .compatible = "qcom,q6adm" },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, q6adm_device_id);
+ /**
+  * q6afe_port_stop() - Stop a afe port
+  *
+@@ -530,8 +738,7 @@ EXPORT_SYMBOL_GPL(q6afe_hdmi_port_prepare);
+  *
+  * @port: Instance of afe port
+  * @cfg: I2S configuration for the afe port
+- *
+-  Return: Will be an negative on error and zero on success.
++ * Return: Will be an negative on error and zero on success.
+  */
+ int q6afe_i2s_port_prepare(struct q6afe_port *port, struct q6afe_i2s_cfg *cfg)
+ {
+diff --git a/sound/soc/qcom/qdsp6/q6afe.h b/sound/soc/qcom/qdsp6/q6afe.h
+index 3cb3bb4985a9..5ca54a9bdfd5 100644
+--- a/sound/soc/qcom/qdsp6/q6afe.h
++++ b/sound/soc/qcom/qdsp6/q6afe.h
+@@ -16,6 +16,134 @@
+ #define AFE_MAX_CHAN_COUNT	8
+ #define AFE_PORT_MAX_AUDIO_CHAN_CNT	0x8
+ 
++#define Q6AFE_LPASS_CLK_SRC_INTERNAL 1
++#define Q6AFE_LPASS_CLK_ROOT_DEFAULT 0
 +
-+static struct apr_driver qcom_q6adm_driver = {
-+	.probe = q6adm_probe,
-+	.remove = q6adm_remove,
-+	.callback = q6adm_callback,
-+	.driver = {
-+		.name = "qcom-q6adm",
-+		.of_match_table = of_match_ptr(q6adm_device_id),
-+	},
-+};
++#define LPAIF_DIG_CLK	1
++#define LPAIF_BIT_CLK	2
++#define LPAIF_OSR_CLK	3
 +
-+module_apr_driver(qcom_q6adm_driver);
-+MODULE_DESCRIPTION("Q6 Audio Device Manager");
-+MODULE_LICENSE("GPL v2");
-diff --git a/sound/soc/qcom/qdsp6/q6adm.h b/sound/soc/qcom/qdsp6/q6adm.h
-new file mode 100644
-index 000000000000..d7c13970ee18
---- /dev/null
-+++ b/sound/soc/qcom/qdsp6/q6adm.h
-@@ -0,0 +1,25 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __Q6_ADM_V2_H__
-+#define __Q6_ADM_V2_H__
++/* Clock ID for Primary I2S IBIT */
++#define Q6AFE_LPASS_CLK_ID_PRI_MI2S_IBIT                          0x100
++/* Clock ID for Primary I2S EBIT */
++#define Q6AFE_LPASS_CLK_ID_PRI_MI2S_EBIT                          0x101
++/* Clock ID for Secondary I2S IBIT */
++#define Q6AFE_LPASS_CLK_ID_SEC_MI2S_IBIT                          0x102
++/* Clock ID for Secondary I2S EBIT */
++#define Q6AFE_LPASS_CLK_ID_SEC_MI2S_EBIT                          0x103
++/* Clock ID for Tertiary I2S IBIT */
++#define Q6AFE_LPASS_CLK_ID_TER_MI2S_IBIT                          0x104
++/* Clock ID for Tertiary I2S EBIT */
++#define Q6AFE_LPASS_CLK_ID_TER_MI2S_EBIT                          0x105
++/* Clock ID for Quartnery I2S IBIT */
++#define Q6AFE_LPASS_CLK_ID_QUAD_MI2S_IBIT                         0x106
++/* Clock ID for Quartnery I2S EBIT */
++#define Q6AFE_LPASS_CLK_ID_QUAD_MI2S_EBIT                         0x107
++/* Clock ID for Speaker I2S IBIT */
++#define Q6AFE_LPASS_CLK_ID_SPEAKER_I2S_IBIT                       0x108
++/* Clock ID for Speaker I2S EBIT */
++#define Q6AFE_LPASS_CLK_ID_SPEAKER_I2S_EBIT                       0x109
++/* Clock ID for Speaker I2S OSR */
++#define Q6AFE_LPASS_CLK_ID_SPEAKER_I2S_OSR                        0x10A
 +
-+#define ADM_PATH_PLAYBACK	0x1
-+#define ADM_PATH_LIVE_REC	0x2
-+#define MAX_COPPS_PER_PORT	8
-+#define NULL_COPP_TOPOLOGY	0x00010312
++/* Clock ID for QUINARY  I2S IBIT */
++#define Q6AFE_LPASS_CLK_ID_QUI_MI2S_IBIT			0x10B
++/* Clock ID for QUINARY  I2S EBIT */
++#define Q6AFE_LPASS_CLK_ID_QUI_MI2S_EBIT			0x10C
++/* Clock ID for SENARY  I2S IBIT */
++#define Q6AFE_LPASS_CLK_ID_SEN_MI2S_IBIT			0x10D
++/* Clock ID for SENARY  I2S EBIT */
++#define Q6AFE_LPASS_CLK_ID_SEN_MI2S_EBIT			0x10E
++/* Clock ID for INT0 I2S IBIT  */
++#define Q6AFE_LPASS_CLK_ID_INT0_MI2S_IBIT                       0x10F
++/* Clock ID for INT1 I2S IBIT  */
++#define Q6AFE_LPASS_CLK_ID_INT1_MI2S_IBIT                       0x110
++/* Clock ID for INT2 I2S IBIT  */
++#define Q6AFE_LPASS_CLK_ID_INT2_MI2S_IBIT                       0x111
++/* Clock ID for INT3 I2S IBIT  */
++#define Q6AFE_LPASS_CLK_ID_INT3_MI2S_IBIT                       0x112
++/* Clock ID for INT4 I2S IBIT  */
++#define Q6AFE_LPASS_CLK_ID_INT4_MI2S_IBIT                       0x113
++/* Clock ID for INT5 I2S IBIT  */
++#define Q6AFE_LPASS_CLK_ID_INT5_MI2S_IBIT                       0x114
++/* Clock ID for INT6 I2S IBIT  */
++#define Q6AFE_LPASS_CLK_ID_INT6_MI2S_IBIT                       0x115
 +
-+/* multiple copp per stream. */
-+struct route_payload {
-+	int num_copps;
-+	int session_id;
-+	int copp_idx[MAX_COPPS_PER_PORT];
-+	int port_id[MAX_COPPS_PER_PORT];
-+};
++/* Clock ID for QUINARY MI2S OSR CLK  */
++#define Q6AFE_LPASS_CLK_ID_QUI_MI2S_OSR                         0x116
 +
-+int q6adm_open(struct device *dev, int port_id, int path, int rate,
-+	       int channel_mode, int topology, int perf_mode,
-+	       uint16_t bit_width, int app_type, int acdb_id);
-+int q6adm_close(struct device *dev, int port, int topology, int perf_mode);
-+int q6adm_matrix_map(struct device *dev, int path,
-+		     struct route_payload payload_map, int perf_mode);
++/* Clock ID for Primary PCM IBIT */
++#define Q6AFE_LPASS_CLK_ID_PRI_PCM_IBIT                           0x200
++/* Clock ID for Primary PCM EBIT */
++#define Q6AFE_LPASS_CLK_ID_PRI_PCM_EBIT                           0x201
++/* Clock ID for Secondary PCM IBIT */
++#define Q6AFE_LPASS_CLK_ID_SEC_PCM_IBIT                           0x202
++/* Clock ID for Secondary PCM EBIT */
++#define Q6AFE_LPASS_CLK_ID_SEC_PCM_EBIT                           0x203
++/* Clock ID for Tertiary PCM IBIT */
++#define Q6AFE_LPASS_CLK_ID_TER_PCM_IBIT                           0x204
++/* Clock ID for Tertiary PCM EBIT */
++#define Q6AFE_LPASS_CLK_ID_TER_PCM_EBIT                           0x205
++/* Clock ID for Quartery PCM IBIT */
++#define Q6AFE_LPASS_CLK_ID_QUAD_PCM_IBIT                          0x206
++/* Clock ID for Quartery PCM EBIT */
++#define Q6AFE_LPASS_CLK_ID_QUAD_PCM_EBIT                          0x207
++/* Clock ID for Quinary PCM IBIT */
++#define Q6AFE_LPASS_CLK_ID_QUIN_PCM_IBIT                          0x208
++/* Clock ID for Quinary PCM EBIT */
++#define Q6AFE_LPASS_CLK_ID_QUIN_PCM_EBIT                          0x209
++/* Clock ID for QUINARY PCM OSR  */
++#define Q6AFE_LPASS_CLK_ID_QUI_PCM_OSR                            0x20A
 +
-+#endif /* __Q6_ADM_V2_H__ */
++/** Clock ID for Primary TDM IBIT */
++#define Q6AFE_LPASS_CLK_ID_PRI_TDM_IBIT                           0x200
++/** Clock ID for Primary TDM EBIT */
++#define Q6AFE_LPASS_CLK_ID_PRI_TDM_EBIT                           0x201
++/** Clock ID for Secondary TDM IBIT */
++#define Q6AFE_LPASS_CLK_ID_SEC_TDM_IBIT                           0x202
++/** Clock ID for Secondary TDM EBIT */
++#define Q6AFE_LPASS_CLK_ID_SEC_TDM_EBIT                           0x203
++/** Clock ID for Tertiary TDM IBIT */
++#define Q6AFE_LPASS_CLK_ID_TER_TDM_IBIT                           0x204
++/** Clock ID for Tertiary TDM EBIT */
++#define Q6AFE_LPASS_CLK_ID_TER_TDM_EBIT                           0x205
++/** Clock ID for Quartery TDM IBIT */
++#define Q6AFE_LPASS_CLK_ID_QUAD_TDM_IBIT                          0x206
++/** Clock ID for Quartery TDM EBIT */
++#define Q6AFE_LPASS_CLK_ID_QUAD_TDM_EBIT                          0x207
++/** Clock ID for Quinary TDM IBIT */
++#define Q6AFE_LPASS_CLK_ID_QUIN_TDM_IBIT                          0x208
++/** Clock ID for Quinary TDM EBIT */
++#define Q6AFE_LPASS_CLK_ID_QUIN_TDM_EBIT                          0x209
++/** Clock ID for Quinary TDM OSR */
++#define Q6AFE_LPASS_CLK_ID_QUIN_TDM_OSR                           0x20A
++
++/* Clock ID for MCLK1 */
++#define Q6AFE_LPASS_CLK_ID_MCLK_1                                 0x300
++/* Clock ID for MCLK2 */
++#define Q6AFE_LPASS_CLK_ID_MCLK_2                                 0x301
++/* Clock ID for MCLK3 */
++#define Q6AFE_LPASS_CLK_ID_MCLK_3                                 0x302
++/* Clock ID for MCLK4 */
++#define Q6AFE_LPASS_CLK_ID_MCLK_4                                 0x304
++/* Clock ID for Internal Digital Codec Core */
++#define Q6AFE_LPASS_CLK_ID_INTERNAL_DIGITAL_CODEC_CORE            0x303
++/* Clock ID for INT MCLK0 */
++#define Q6AFE_LPASS_CLK_ID_INT_MCLK_0                             0x305
++/* Clock ID for INT MCLK1 */
++#define Q6AFE_LPASS_CLK_ID_INT_MCLK_1                             0x306
++
++/* Clock attribute for invalid use (reserved for internal usage) */
++#define Q6AFE_LPASS_CLK_ATTRIBUTE_INVALID		0x0
++/* Clock attribute for no couple case */
++#define Q6AFE_LPASS_CLK_ATTRIBUTE_COUPLE_NO		0x1
++/* Clock attribute for dividend couple case */
++#define Q6AFE_LPASS_CLK_ATTRIBUTE_COUPLE_DIVIDEND	0x2
++/* Clock attribute for divisor couple case */
++#define Q6AFE_LPASS_CLK_ATTRIBUTE_COUPLE_DIVISOR	0x3
++/* Clock attribute for invert and no couple case */
++#define Q6AFE_LPASS_CLK_ATTRIBUTE_INVERT_COUPLE_NO	0x4
++
+ struct q6afe_hdmi_cfg {
+ 	u16                  datatype;
+ 	u16                  channel_allocation;
+@@ -59,4 +187,7 @@ void q6afe_slim_port_prepare(struct q6afe_port *port,
+ 			  struct q6afe_slim_cfg *cfg);
+ int q6afe_i2s_port_prepare(struct q6afe_port *port, struct q6afe_i2s_cfg *cfg);
+ 
++int q6afe_port_set_sysclk(struct q6afe_port *port, int clk_id,
++			  int clk_src, int clk_root,
++			  unsigned int freq, int dir);
+ #endif /* __Q6AFE_H__ */
 -- 
 2.16.2
