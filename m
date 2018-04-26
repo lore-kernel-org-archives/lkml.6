@@ -1,95 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752358AbeDZFrk (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 01:47:40 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:55002 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750924AbeDZFrg (ORCPT
+        id S1752285AbeDZFvJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 01:51:09 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:54703 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750924AbeDZFvI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 01:47:36 -0400
-X-Google-Smtp-Source: AIpwx4/ozpAVYmFqRex++OAyEDYer1rDJB8jp2x8I+qh57dg2lcbVGepqR39n6UBrKlc1SLPLIeRew==
-From: Eyal Reizer <eyalreizer@gmail.com>
-X-Google-Original-From: Eyal Reizer <eyalr@ti.com>
-To: kvalo@codeaurora.org, linux-wireless@vger.kernel.org, robh@kernel.org,
-        sre@kernel.org, tony@atomide.com, linux-kernel@vger.kernel.org
-Cc: Eyal Reizer <eyalr@ti.com>
-Subject: [PATCH v2] wlcore: sdio: allow pm to handle sdio power
-Date: Thu, 26 Apr 2018 08:47:11 +0300
-Message-Id: <1524721631-5983-1-git-send-email-eyalr@ti.com>
-X-Mailer: git-send-email 2.7.4
+        Thu, 26 Apr 2018 01:51:08 -0400
+Date: Thu, 26 Apr 2018 07:51:06 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Paul Menzel <pmenzel+linux-random-number@molgen.mpg.de>
+Cc: "Theodore Ts'o" <tytso@mit.edu>, linux-kernel@vger.kernel.org
+Subject: Re: Linux messages full of `random: get_random_u32 called from`
+Message-ID: <20180426055106.GA4977@amd>
+References: <42c1b84b-ab1f-5577-6304-e0985a637cf9@molgen.mpg.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <42c1b84b-ab1f-5577-6304-e0985a637cf9@molgen.mpg.de>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pm_runtime handles sdio power on and power off transitions.
-An old workaround for trying to control the power explicitly from the
-driver was in fact causing failures on suspend/resume as the mmc layer
-already power the module on resume.
+Hi!
 
-In case of resume pm_runtime_get sync returns a positive device's usage
-count causing the driver to try an re-initialize an already initialized
-device. This was causing sdio bus failure on resume.
+> Since Linux 4.17-rcX, Linux spams a lot of `random: get_random_u32 called
+> from` messages. I believe, this setting should be reverted by default as
+> otherwise a lot of other messages are not seen.
+> 
+> Please find my configuration attached.
 
-Remove this manual power on/off sequence as it is in-fact not needed.
+Same here, thinkpad X60:
 
-Signed-off-by: Eyal Reizer <eyalr@ti.com>
-Acked-by: Tony Lindgren <tony@atomide.com>
----
- drivers/net/wireless/ti/wlcore/sdio.c | 27 ++++++---------------------
- 1 file changed, 6 insertions(+), 21 deletions(-)
+[    3.163839] systemd[1]: Failed to insert module 'ipv6'
+[    3.181266] systemd[1]: Set hostname to <amd>.
+[    3.267243] random: systemd-sysv-ge: uninitialized urandom read (16
+bytes read)
+[    3.669590] random: systemd-sysv-ge: uninitialized urandom read (16
+bytes read)
+[    3.696242] random: systemd: uninitialized urandom read (16 bytes
+read)
+[    3.700066] random: systemd: uninitialized urandom read (16 bytes
+read)
+[    3.703716] random: systemd: uninitialized urandom read (16 bytes
+read)
+[    3.756137] random: systemd: uninitialized urandom read (16 bytes
+read)
+[    3.760460] random: systemd: uninitialized urandom read (16 bytes
+read)
+[    3.764515] random: systemd: uninitialized urandom read (16 bytes
+read)
+[    3.835312] random: systemd: uninitialized urandom read (16 bytes
+read)
+[    4.173204] systemd[1]: Binding to IPv6 address not available since
+kernel does not support IPv6.
+[    4.176977] systemd[1]: [/lib/systemd/system/gpsd.socket:6] Failed
+to parse address value, ignoring: [::1]:2947
+[    4.186472] systemd[1]: Starting Forward Password Requests to Wall
+Directory Watch.
+[    4.188845] systemd[1]: Started Forward Password Requests to Wall
+Directory Watch.
 
-diff --git a/drivers/net/wireless/ti/wlcore/sdio.c b/drivers/net/wireless/ti/wlcore/sdio.c
-index 1f727ba..6dbe61d 100644
---- a/drivers/net/wireless/ti/wlcore/sdio.c
-+++ b/drivers/net/wireless/ti/wlcore/sdio.c
-@@ -155,17 +155,11 @@ static int wl12xx_sdio_power_on(struct wl12xx_sdio_glue *glue)
- 	struct mmc_card *card = func->card;
- 
- 	ret = pm_runtime_get_sync(&card->dev);
--	if (ret) {
--		/*
--		 * Runtime PM might be temporarily disabled, or the device
--		 * might have a positive reference counter. Make sure it is
--		 * really powered on.
--		 */
--		ret = mmc_power_restore_host(card->host);
--		if (ret < 0) {
--			pm_runtime_put_sync(&card->dev);
--			goto out;
--		}
-+	if (ret < 0) {
-+		pm_runtime_put_noidle(&card->dev);
-+		dev_err(glue->dev, "%s: failed to get_sync(%d)\n",
-+			__func__, ret);
-+		goto out;
- 	}
- 
- 	sdio_claim_host(func);
-@@ -178,7 +172,6 @@ static int wl12xx_sdio_power_on(struct wl12xx_sdio_glue *glue)
- 
- static int wl12xx_sdio_power_off(struct wl12xx_sdio_glue *glue)
- {
--	int ret;
- 	struct sdio_func *func = dev_to_sdio_func(glue->dev);
- 	struct mmc_card *card = func->card;
- 
-@@ -186,16 +179,8 @@ static int wl12xx_sdio_power_off(struct wl12xx_sdio_glue *glue)
- 	sdio_disable_func(func);
- 	sdio_release_host(func);
- 
--	/* Power off the card manually in case it wasn't powered off above */
--	ret = mmc_power_save_host(card->host);
--	if (ret < 0)
--		goto out;
--
- 	/* Let runtime PM know the card is powered off */
--	pm_runtime_put_sync(&card->dev);
--
--out:
--	return ret;
-+	return pm_runtime_put_sync(&card->dev);
- }
- 
- static int wl12xx_sdio_set_power(struct device *child, bool enable)
 -- 
-2.7.4
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
