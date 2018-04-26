@@ -1,50 +1,38 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756823AbeDZWsk (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 18:48:40 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:40766 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754684AbeDZWsh (ORCPT
+        id S1755332AbeDZWvx (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 18:51:53 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:36193 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753393AbeDZWvv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 18:48:37 -0400
-X-Google-Smtp-Source: AB8JxZp7jRQSvejJ/OZr31PjMYl9sMgv/mNdDBt0WANCES6F1E0ER1+L18T1hJnl8+ZGlMbiFQ6J6gG+UMWFaiz5jMs=
+        Thu, 26 Apr 2018 18:51:51 -0400
+X-Google-Smtp-Source: AB8JxZrqFO7g7719He/qluFUw1VgQrd7Brney1ju9EbpyvzRdal0RiaDAzUVo6Bf2x7VWIY5B7HV7V28/oSv0nu4guY=
 MIME-Version: 1.0
-In-Reply-To: <20180411214257.14902-1-rjpdasilva@gmail.com>
-References: <20180411214257.14902-1-rjpdasilva@gmail.com>
+In-Reply-To: <c8748c81711b0d41e83418b6c23d82d8c78c7094.1523845138.git.ryder.lee@mediatek.com>
+References: <c8748c81711b0d41e83418b6c23d82d8c78c7094.1523845138.git.ryder.lee@mediatek.com>
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 27 Apr 2018 00:48:36 +0200
-Message-ID: <CACRpkdYsiDhNcOwRnza1UjQ_wSfewS05nTHO0fiyuAnEMAM4Pw@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: pinctrl: mcp23s08: Clarify gpiospec flags
- cell usage
-To: Ricardo Silva <rjpdasilva@gmail.com>
-Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+Date: Fri, 27 Apr 2018 00:51:50 +0200
+Message-ID: <CACRpkdbM7fpU_WZVv8y12MCBPzkoOGX6EjOQAro8hpVa3CjSuA@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: mediatek: update pinmux defintions for MT7623
+To: Ryder Lee <ryder.lee@mediatek.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
         <devicetree@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support"
+        <linux-mediatek@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 11, 2018 at 11:42 PM, Ricardo Silva <rjpdasilva@gmail.com> wrote:
+On Mon, Apr 16, 2018 at 4:32 AM, Ryder Lee <ryder.lee@mediatek.com> wrote:
 
-> The pinctrl-mcp23s08 driver doesn't provide a specific gpiospec
-> of_xlate() function, causing the gpiolib-of's of_gpio_simple_xlate()
-> function to be used instead, which takes the gpiospec's second cell as
-> the flags specifier according to 'include/dt-bindings/gpio/gpio.h'.
+> Fulfill the pinmux macros for MT7623
 >
-> The pinctrl-mcp23s08 bindings document was mentioning that the flags
-> were unused, which is not accurate because values in that second cell
-> are indeed used by the gpiolib-of's of_gpio_simple_xlate() for
-> configuring the gpio (e.g. its polarity).
->
-> This way, replace the "flags currently unused" reference in the
-> dt-bindings document with references to the appropriate files specifying
-> the possible flag values and gpiospec description.
->
-> CC: devicetree@vger.kernel.org
-> Signed-off-by: Ricardo Silva <rjpdasilva@gmail.com>
+> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
 
 Patch applied with Rob's review tag.
 
