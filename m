@@ -1,120 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754036AbeDZH0F (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 03:26:05 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:58759 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753938AbeDZH0B (ORCPT
+        id S1754070AbeDZH0q (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 03:26:46 -0400
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:52639 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752148AbeDZH0n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 03:26:01 -0400
-X-Google-Smtp-Source: AIpwx49qGoC2y1VR5KiHYbI/8V9KEaTgsEYpEF3pYMJfJfV1my3k6ClEQcuKPhCkuImqjpMzTX2i5g==
-Content-Type: text/plain;
-        charset=us-ascii;
-        delsp=yes;
-        format=flowed
-Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
-Subject: Re: [PATCH v4 1/3] dell-led: Change dell-led.h to dell-common.h
-From: Kai Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <s5hbme8lge5.wl-tiwai@suse.de>
-Date: Thu, 26 Apr 2018 15:25:53 +0800
-Cc: mario.limonciello@dell.com, pali.rohar@gmail.com, andy@infradead.org,
-        dvhart@infradead.org, mjg59@srcf.ucam.org, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <45CFE5AD-EA91-47B4-BF4E-846D7135A5FD@canonical.com>
-References: <20180420094432.13133-1-kai.heng.feng@canonical.com>
- <s5hbme8lge5.wl-tiwai@suse.de>
-To: Takashi Iwai <tiwai@suse.de>
-X-Mailer: Apple Mail (2.3445.6.18)
+        Thu, 26 Apr 2018 03:26:43 -0400
+X-Originating-IP: 2.224.242.101
+Date: Thu, 26 Apr 2018 09:26:09 +0200
+From: jacopo mondi <jacopo@jmondi.org>
+To: Simon Horman <horms@verge.net.au>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, geert@linux-m68k.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] ARM: dts: r8a7740: Enable CEU0
+Message-ID: <20180426072609.GH17088@w540>
+References: <1524654920-18749-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1524654920-18749-3-git-send-email-jacopo+renesas@jmondi.org>
+ <20180426061124.hvgl3ijf6ulrdkmn@verge.net.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="Q6STzHxy03qt/hK9"
+Content-Disposition: inline
+In-Reply-To: <20180426061124.hvgl3ijf6ulrdkmn@verge.net.au>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-> On Apr 25, 2018, at 12:26 AM, Takashi Iwai <tiwai@suse.de> wrote:
->
-> On Fri, 20 Apr 2018 11:44:30 +0200,
-> Kai-Heng Feng wrote:
->> This header will be used for more than just led. Change it to a more
->> generic name.
->>
->> Cc: Mario Limonciello <mario.limonciello@dell.com>
->> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
->
-> BTW, wouldn't it be better postpone the rename?
-> Renaming a file in a cross-tree patchset makes harder to apply in
-> general.
->
+--Q6STzHxy03qt/hK9
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-You are right, I'll keep the original filename in next version.
+Hi Simon,
 
-Kai-Heng
+On Thu, Apr 26, 2018 at 08:11:30AM +0200, Simon Horman wrote:
+> Thanks Jacopo,
+>
+> I'm very pleased to see this series.
+
+Credits to Geert that pointed out to me R-Mobile A1 comes with a CEU.
+I should mention him in next iteration actually, sorry about that.
 
 >
-> thanks,
+> On Wed, Apr 25, 2018 at 01:15:20PM +0200, Jacopo Mondi wrote:
+> > Enable CEU0 peripheral for Renesas R-Mobile A1 R8A7740.
 >
-> Takashi
+> Given 'status = "disabled"' below I think you
+> are describing but not enabling CEU0. Also in the subject.
+
+Right.
+
 >
->> ---
->> v4: Change the commit message to clarify there's no more runtime pm
->>     warning.
->>     Also skip the check for thunderbolt attached devices.
->>
->> v3: Simplify dell_switchable_gfx_is_enabled() by returning bool instead
->>     of error code.
->>     Use DMI_DEV_TYPE_OEM_STRING to match Dell System.
->>
->> v2: Mario suggested to squash the HDA part into the same series.
->>
->>  drivers/platform/x86/dell-laptop.c          | 2 +-
->>  include/linux/{dell-led.h => dell-common.h} | 4 ++--
->>  sound/pci/hda/dell_wmi_helper.c             | 2 +-
->>  3 files changed, 4 insertions(+), 4 deletions(-)
->>  rename include/linux/{dell-led.h => dell-common.h} (61%)
->>
->> diff --git a/drivers/platform/x86/dell-laptop.c  
->> b/drivers/platform/x86/dell-laptop.c
->> index c52c6723374b..8ba820e6c3d0 100644
->> --- a/drivers/platform/x86/dell-laptop.c
->> +++ b/drivers/platform/x86/dell-laptop.c
->> @@ -29,7 +29,7 @@
->>  #include <linux/mm.h>
->>  #include <linux/i8042.h>
->>  #include <linux/debugfs.h>
->> -#include <linux/dell-led.h>
->> +#include <linux/dell-common.h>
->>  #include <linux/seq_file.h>
->>  #include <acpi/video.h>
->>  #include "dell-rbtn.h"
->> diff --git a/include/linux/dell-led.h b/include/linux/dell-common.h
->> similarity index 61%
->> rename from include/linux/dell-led.h
->> rename to include/linux/dell-common.h
->> index 92521471517f..37e4b614dd74 100644
->> --- a/include/linux/dell-led.h
->> +++ b/include/linux/dell-common.h
->> @@ -1,6 +1,6 @@
->>  /* SPDX-License-Identifier: GPL-2.0 */
->> -#ifndef __DELL_LED_H__
->> -#define __DELL_LED_H__
->> +#ifndef __DELL_COMMON_H__
->> +#define __DELL_COMMON_H__
->>
->>  int dell_micmute_led_set(int on);
->>
->> diff --git a/sound/pci/hda/dell_wmi_helper.c  
->> b/sound/pci/hda/dell_wmi_helper.c
->> index 1b48a8c19d28..56050cc3c0ee 100644
->> --- a/sound/pci/hda/dell_wmi_helper.c
->> +++ b/sound/pci/hda/dell_wmi_helper.c
->> @@ -4,7 +4,7 @@
->>   */
->>
->>  #if IS_ENABLED(CONFIG_DELL_LAPTOP)
->> -#include <linux/dell-led.h>
->> +#include <linux/dell-common.h>
->>
->>  enum {
->>  	MICMUTE_LED_ON,
->> -- 
->> 2.17.0
+> Should we also describe CEU1?
+
+Armadillo board file only describe CEU0. If there are R-Mobile A1
+board files where I can steal informations from I can do that. If
+there's a public datasheet, that would be even better.
+>
+> >
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > ---
+> >  arch/arm/boot/dts/r8a7740.dtsi | 10 ++++++++++
+> >  1 file changed, 10 insertions(+)
+> >
+> > diff --git a/arch/arm/boot/dts/r8a7740.dtsi b/arch/arm/boot/dts/r8a7740.dtsi
+> > index afd3bc5..05ec41e 100644
+> > --- a/arch/arm/boot/dts/r8a7740.dtsi
+> > +++ b/arch/arm/boot/dts/r8a7740.dtsi
+> > @@ -67,6 +67,16 @@
+> >  		power-domains = <&pd_d4>;
+> >  	};
+> >
+> > +	ceu0: ceu@fe910000 {
+> > +		reg = <0xfe910000 0x100>;
+>
+> Should the size of the range be 0x3000 ?
+> That would seem to match my reading of table 32.3
+> and also be consistent with r7s72100.dtsi.
+
+I got this from
+
+static struct resource ceu0_resources[] = {
+	[0] = {
+		.name	= "CEU",
+		.start	= 0xfe910000,
+		.end	= 0xfe91009f,
+		.flags	= IORESOURCE_MEM,
+	},
+but I also noticed the r7s72100 one was bigger.
+I'm fine enlarging this, if that's what the manual reports too.
+
+> > +		compatible = "renesas,r8a7740-ceu";
+> > +		interrupts = <GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>;
+> > +		clocks = <&mstp1_clks R8A7740_CLK_CEU20>;
+> > +		clock-names = "ceu20";
+> > +		power-domains = <&pd_a4mp>;
+>
+> My reading of table 1.7 is that the power domain should be A4R (&pd_a4r).
+
+Ah yes, my bad.
+
+The long time goal would be describe the camera module (mt9t112) which
+is installed on armadillo. Unfortunately that would probably require
+some more work on the CEU side.
+
+Thanks
+   j
+
+>
+> > +		status = "disabled";
+> > +	};
+> > +
+> >  	cmt1: timer@e6138000 {
+> >  		compatible = "renesas,cmt-48-r8a7740", "renesas,cmt-48";
+> >  		reg = <0xe6138000 0x170>;
+> > --
+> > 2.7.4
+> >
+
+--Q6STzHxy03qt/hK9
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJa4X8RAAoJEHI0Bo8WoVY82XIP/RDgvPffkjSFo/rfbxZvVy8Z
+eKyaRX0oSCzIMcd4PrHfzcwvpvhJSLKkITMt8XyHWG2ce0Xy3eLJ1ttkSMN8zbdc
+DB5ieEu4/sksBo7lDPLIfp0cf6vNYIdghGPdluxefc/1LBOBrbxp78GJSEL43WYL
+Tz0W33yOCkQxC3l3z23QjP+oQH3lUkQWdtFVjKQUHM4KyguUHJ7V0WQs8oyI3Mos
+8EaOYHM/xZzXbnq1Uju1WsEAYb22//232iLZoT62AEpv0VcqZWgY4nbuDzzokuw0
+yFs7/nYndU5ZssfLOPmhYWwxHQ+2a//7NGLkR7UPpcbCC3bSuRCOHVPkBsIKoqPl
+ZPO3+Q0Al/HusBi7YdSBTZTVdILcgNYY+UstJWHE1j9W3RP4LKxl5I4ofO70fPxI
+ENVht5W1tSAcwjj+u0kN54dduZLHMP3t8V2PwlJR5KPEOrGdgLjuLdNy0HNTZeDE
+neUJMTEbFqgay0oli+VhsXmx332rWwGRkXHcbN2bzQPGmb209FXn+P7Bs+bbLeS7
+9zs3pkL7vAcrmpj6SBYlWqZrPUhfdZ9LRaxLMxkH6nbf2kaONnDt51tSl+bVpcvr
+giycfNoxiYAFDEJ+xDxciRcmQ8717BSfMg9hoG1jGBYQDvka4p0jjowm3si0ex/9
+sj6z720geab7BK5UUR/M
+=w6OS
+-----END PGP SIGNATURE-----
+
+--Q6STzHxy03qt/hK9--
