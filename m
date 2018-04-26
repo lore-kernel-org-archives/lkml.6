@@ -1,147 +1,206 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2046117-1524725926-2-13154445179453094908
+Return-Path: <linux-serial-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2603440-1524751727-2-1590754285888957645
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='net', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
+X-Mail-from: linux-serial-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524725925; b=Qxu0nYSuJalNGV40No6hxI/tDHZkrQNVgSu8Zhw4n7QpjuYgX9
-    ciUqsQHG1s90IUwHuTzcgrwICC3D6ynzob5QYbGnMPkALf3qn6flbBK8qjPxTWuM
-    RHmIkR+meIqau0OTxpS66o77/oytY0GZfhlEE9frgnQ9xbdSvNlC1+IWwhl7hHye
-    feiGQaXefvfVJ9i2TI2ptz5zNTGIJciJFGuIWCW0gwwMvBwwyYRrTREqM3N6fmtH
-    WOjQ1hBV1Ew26OQrlTe08BRq2aLmDnywNVX0cFphFlzGFE8ixurzD+yY1w4ia9Fv
-    RH7uw+AznSpJFo5Ipy3WKI/tlvtuxEYX0hyQ==
+    1524751726; b=SIH6+qhOj59jJQwMdaeXRKi5LYzybzHUptIxoUndlP+1p5QfZp
+    z/EjjHJm7I4Mv45AxEP43ADVBGNoF/Rrt2+6espyyeWdcCQ9jD6zOkdkzdoaR1Lg
+    bQ6BuyeOJugjhdQn9x6++usWxo/AZ90mGzktIO1phtWpujPp6wTJ8pU4/P86Vo++
+    YnUaQcRtcdV023wa4sSGRxgadc/1Ckqqbazk92Em+quwWu8NzTJUlhsJAVc6yZI5
+    iv+sQZCPjJiLrXMTcovis+QmYGUdDb7bAWm+g2ig5Vs8X7nM0g1xsvwKkQKkD0TF
+    gew3M5RMyNwXeTTKOzuH/+W0M9CagOkQ650w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-transfer-encoding
-    :content-type:sender:list-id; s=fm2; t=1524725925; bh=WYF4m6VXhw
-    htjneCos2HatN9TOA6tp1GpjgQvMtmmQI=; b=aDegYjO610xlGsHmOgsVqiYf1l
-    QQ0QHt0S6fNv6yTHgth3BrQeHriGA74sDWjplblsM6yT49aYsN5ZxWnVE++o2i2f
-    WhBP5UKEoZHVRin5BZUpCT8Cw3vLwGe8p0U5Bo3HDNKmDE9YVhLbaukXEdDSQC25
-    XHxWx3lOttERaLLMKtOBCdYCgWe5M7k9ZtsCglKbp5GllEDFPzctCkCt4rQwG4Ja
-    Pn/fk4526EO6HPoPavLrNXE/I5+PLLoOK8xrvEZLszIb0g/TwUUGVHPmdpGy8Fe4
-    f9MBDeTHkSw/ZrTGa6fwsnucEgku+ihUG3iXRCL5BNoPCvcS2JIGvsa1s6aw==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=rjwysocki.net;
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1524751726; bh=wLC5i7ItM0GfduvHGAK7+N6mwsqoNh
+    R2zoLE/EBvpeM=; b=sj7UhhqN5S3Z89ZQD3MQ+gOsvsfvOAM7RpyKAZcvZuwEYq
+    MXfxyO5S+GJrZ/QsX5+AF06mmykz5O6yoRnIrsKU6fiSoO2iW7ETgCx/nZKTJNqe
+    HIbQ6qZhvSv/YzwZsa4uA3GkzuK0uC29nl0YrFZawZU8OXm9Il/IVueVZaaoTqPi
+    k+S0PTYJin1xOShZsQgXY3VtPxkBEKcb/5wK3yRaLxAHATrDKqEZk85eH1zDuPS3
+    Iz1iCTDf04mJid0xjGR7MXl+kWzWpyYABF3fIHCASFV4u+ORw/8zRYl5zkwBxbsb
+    ROjYzO9MWybxgrV1XKRQKaHn0WanFGnfXB2GzyBg==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=monstr-eu.20150623.gappssmtp.com header.i=@monstr-eu.20150623.gappssmtp.com header.b=IsQk0qsF x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=xilinx.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=lfvhZjrC;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=rjwysocki.net header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=xilinx.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=rjwysocki.net;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=monstr-eu.20150623.gappssmtp.com header.i=@monstr-eu.20150623.gappssmtp.com header.b=IsQk0qsF x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=xilinx.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=lfvhZjrC;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=rjwysocki.net header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=xilinx.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfHpRICtm+4IzMZxviGfDDMQtP5IDnt8ti9wQqJiX4XF/qpBm2qXlRHKu6PxUT5WG6yLtd3H6XTD/z80A6D/OHFo2JQv+wEVghMH65wfNFAotSaPyXRZZ
-    ri7XfDHkpjFVW0KE5VL1Dpt4N64tANRUUlg1KWnDvuw+1TPwI6b+tQxOKBE08lpX4JNnKT1kau6SCHYpT9I6Gx/9BFMF3H73uDfUq6yYcJBoz9jluyIoIWCm
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=p-nOP-kxAAAA:8 a=DfNHnWVPAAAA:8 a=VwQbUJbxAAAA:8 a=QyXUC8HyAAAA:8
-    a=Rz-Wza_AFUVwgLTmuoEA:9 a=CjuIK1q_8ugA:10 a=XN2wCei03jY4uMu7D0Wg:22
-    a=rjTVMONInIDnV1a_A2c_:22 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfGepaBimgHK8gK7hO1kbL5RnkTL+BDaY66qI7K0pY6IDJJLdCer8/55FOke2xZwuwKJvspjmzNojRvaLOUVCyFq2Z/U/AwZeyxHTMIAKrl0IEzFNDE5u
+    l12OdKw0Eu/DPWjgpxfI7ycL5h4IBliiJeBeWwPm2tK1Bqz2RTcfvhML12Bug1fm3Ng8NIxPKkFAGIRCj2eXY5CKou9blh0LIVYXPG6kAxd7bcm2Ohsisi95
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8
+    a=ERBoA_1hzK5CDDegt40A:9 a=E0cOJMorxDq_GPi4:21 a=_eb7AxrDv_5DxRSb:21
+    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753504AbeDZG6o (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 26 Apr 2018 02:58:44 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:58737 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751528AbeDZG6o (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 26 Apr 2018 02:58:44 -0400
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Kai Heng Feng <kai.heng.feng@canonical.com>
-Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v3] PCI / PM: Always check PME wakeup capability for runtime wakeup support
-Date: Thu, 26 Apr 2018 08:58:32 +0200
-Message-ID: <190600314.NA7iiQVSFY@aspire.rjw.lan>
-In-Reply-To: <C07517A2-0AE5-4EE2-AB64-7F0767C988DF@canonical.com>
-References: <20180331164022.24220-1-kai.heng.feng@canonical.com> <10732937.eAR6mAEfiz@aspire.rjw.lan> <C07517A2-0AE5-4EE2-AB64-7F0767C988DF@canonical.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+        id S1756543AbeDZOIc (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 26 Apr 2018 10:08:32 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:51039 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756433AbeDZOI1 (ORCPT
+        <rfc822;linux-serial@vger.kernel.org>);
+        Thu, 26 Apr 2018 10:08:27 -0400
+X-Google-Smtp-Source: AB8JxZruEe7nvh/WMiUxl+qgZ7+s0fEmt1usLGh+cxuuZo2H7fzZbZSue5MkWyrHfRyi8Sx/MRoP1A==
+From: Michal Simek <michal.simek@xilinx.com>
+To: linux-kernel@vger.kernel.org, monstr@monstr.eu,
+        gnomes@lxorguk.ukuu.org.uk, Alexander Graf <agraf@suse.de>
+Cc: devicetree@vger.kernel.org, Jiri Slaby <jslaby@suse.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>, linux-serial@vger.kernel.org,
+        Frank Rowand <frowand.list@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [RFC PATCH 0/3] serial: uartps: Add run time support for more IPs than hardcoded 2
+Date: Thu, 26 Apr 2018 16:08:16 +0200
+Message-Id: <cover.1524751696.git.michal.simek@xilinx.com>
+X-Mailer: git-send-email 2.17.0
+Sender: linux-serial-owner@vger.kernel.org
+X-Mailing-List: linux-serial@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thursday, April 26, 2018 8:54:14 AM CEST Kai Heng Feng wrote:
-> 
-> > On Apr 13, 2018, at 3:29 PM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> >
-> > On Friday, April 13, 2018 8:58:11 AM CEST Kai Heng Feng wrote:
-> >> Hi Bjorn and Rafael,
-> >>
-> >>> On Apr 1, 2018, at 12:40 AM, Kai-Heng Feng <kai.heng.feng@canonical.com>
-> >>> wrote:
-> >>>
-> >>> USB controller ASM1042 stops working after commit de3ef1eb1cd0 ("PM /
-> >>> core: Drop run_wake flag from struct dev_pm_info").
-> >>>
-> >>> The device in question is not power managed by platform firmware,
-> >>> furthermore, it only supports PME# from D3cold:
-> >>> Capabilities: [78] Power Management version 3
-> >>>        Flags: PMEClk- DSI- D1- D2- AuxCurrent=55mA PME(D0-,D1-,D2-,D3hot-,D3cold+)
-> >>>        Status: D0 NoSoftRst+ PME-Enable- DSel=0 DScale=0 PME-
-> >>>
-> >>> Before commit de3ef1eb1cd0, the device never gets runtime suspended.
-> >>> After that commit, the device gets runtime suspended, so it does not
-> >>> respond to any PME#.
-> >>>
-> >>> usb_hcd_pci_probe() mandatorily calls device_wakeup_enable(), hence
-> >>> device_can_wakeup() in pci_dev_run_wake() always returns true.
-> >>>
-> >>> So pci_dev_run_wake() needs to check PME wakeup capability as its first
-> >>> condition.
-> >>>
-> >>> In addition, change wakeup flag passed to pci_target_state() from false
-> >>> to true, because we want to find the deepest state that the device can
-> >>> still generate PME#.
-> >>>
-> >>> Fixes: de3ef1eb1cd0 ("PM / core: Drop run_wake flag from struct
-> >>> dev_pm_info")
-> >>> Cc: stable@vger.kernel.org # 4.13+
-> >>> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-> >>> ---
-> >>> v3: State the reason why the wakeup flag gets changed.
-> >>>
-> >>> v2: Explicitly check dev->pme_support.
-> >>
-> >> If this patch is good enough, I am hoping it can get merged in v4.17.
-> >
-> > OK
-> >
-> > Bjorn, if you want to take this:
-> >
-> >  Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > Otherwise please let me know and I'll queue it up.
-> 
-> Hi, Rafael,
-> Can this patch be merged into your tree?
+Hi,
 
-If Bjorn tells me to do that, then yes, it can.
+this series is trying to address discussion I had with Alan in past
+https://patchwork.kernel.org/patch/9738445/.
+
+It is moving uart_register_driver() to probe function like it is done in
+pl011 driver.
+And also introducing new function for alias compatibility checking to
+resolve cases where some IPs have alias and some of them not.
+This case is detected in pl011_probe_dt_alias() but not properly solved.
+
+Also keep status of free ids/minor numbers in bitmap to know what's the
+next unallocated number.
+
+The same solution can be used in pl011, uart16550 and uartlite to really
+get unified kernel.
+
+Tested on these use cases:
+Notes:
+ff000000 is the first PS uart listed in dtsi
+ff010000 is the second PS uart listed in dtsi
+
+Standard zcu102 setting
+		serial0 = &uart0;
+		serial1 = &uart1;
+[    0.196628] ff000000.serial: ttyPS0 at MMIO 0xff000000 (irq = 33,
+base_baud = 6250000) is a xuartps
+[    0.642542] ff010000.serial: ttyPS1 at MMIO 0xff010000 (irq = 34,
+base_baud = 6250000) is a xuartps
+
+Swapped zcu102 setting
+		serial0 = &uart1;
+		serial1 = &uart0;
+[    0.196472] ff000000.serial: ttyPS1 at MMIO 0xff000000 (irq = 33,
+base_baud = 6250000) is a xuartps
+[    0.196824] ff010000.serial: ttyPS0 at MMIO 0xff010000 (irq = 34,
+base_baud = 6250000) is a xuartps
+
+uart0 on alias higher then MAX uart ports
+		serial0 = &uart1;
+		serial200 = &uart0;
+[    0.176793] ff000000.serial: ttyPS200 at MMIO 0xff000000 (irq = 33,
+base_baud = 6250000) is a xuartps
+[    0.177288] ff010000.serial: ttyPS0 at MMIO 0xff010000 (irq = 34,
+base_baud = 6250000) is a xuartps
+
+Both uarts on higher aliases
+		serial1 = &uart1;
+		serial2 = &uart0;
+[    0.196470] ff000000.serial: ttyPS2 at MMIO 0xff000000 (irq = 33,
+base_baud = 6250000) is a xuartps
+[    0.196823] ff010000.serial: ttyPS1 at MMIO 0xff010000 (irq = 34,
+base_baud = 6250000) is a xuartps
+
+uart0 not listed but it is probed first that's why should be ttyPS0 but
+there is uart1 via alias
+		serial0 = &uart1;
+[    0.176656] xuartps ff000000.serial: No serial alias passed. Using
+the first free id
+[    0.176671] xuartps ff000000.serial: Validate id 0
+[    0.176680] xuartps ff000000.serial: The empty id is 0
+[    0.176692] xuartps ff000000.serial: ID 0 already taken - skipped
+[    0.176701] xuartps ff000000.serial: Validate id 1
+[    0.176710] xuartps ff000000.serial: The empty id is 1
+[    0.176719] xuartps ff000000.serial: Selected ID 1 allocation passed
+[    0.176760] ff000000.serial: ttyPS1 at MMIO 0xff000000 (irq = 33,
+base_baud = 6250000) is a xuartps
+[    0.177104] ff010000.serial: ttyPS0 at MMIO 0xff010000 (irq = 34,
+base_baud = 6250000) is a xuartps
+
+uart0 not listed but it is probed first that's why should be ttyPS0
+		serial1 = &uart1;
+[    0.176661] xuartps ff000000.serial: No serial alias passed. Using
+the first free id
+[    0.176676] xuartps ff000000.serial: Validate id 0
+[    0.176686] xuartps ff000000.serial: The empty id is 0
+[    0.176696] xuartps ff000000.serial: Selected ID 0 allocation passed
+[    0.176737] ff000000.serial: ttyPS0 at MMIO 0xff000000 (irq = 33,
+base_baud = 6250000) is a xuartps
+[    0.177069] ff010000.serial: ttyPS1 at MMIO 0xff010000 (irq = 34,
+base_baud = 6250000) is a xuartps
+
+uarts not listed in aliases list
+[    0.176673] xuartps ff000000.serial: No serial alias passed. Using
+the first free id
+[    0.176687] xuartps ff000000.serial: Validate id 0
+[    0.176697] xuartps ff000000.serial: The empty id is 0
+[    0.176707] xuartps ff000000.serial: Selected ID 0 allocation passed
+[    0.176746] ff000000.serial: ttyPS0 at MMIO 0xff000000 (irq = 33,
+base_baud = 6250000) is a xuartps
+[    0.177057] xuartps ff010000.serial: No serial alias passed. Using
+the first free id
+[    0.177070] xuartps ff010000.serial: Validate id 0
+[    0.177079] xuartps ff010000.serial: The empty id is 0
+[    0.177089] xuartps ff010000.serial: Selected ID 0 allocation failed
+[    0.177098] xuartps ff010000.serial: Validate id 1
+[    0.177107] xuartps ff010000.serial: The empty id is 1
+[    0.177116] xuartps ff010000.serial: Selected ID 1 allocation passed
+[    0.177149] ff010000.serial: ttyPS1 at MMIO 0xff010000 (irq = 34,
+base_baud = 6250000) is a xuartps
 
 Thanks,
-Rafael
+Michal
+
+
+Michal Simek (3):
+  of: base: Introduce of_alias_check_id() to check alias IDs
+  serial: uartps: Move register to probe based on run time detection
+  serial: uartps: Change uart ports allocation
+
+ drivers/of/base.c                  |  49 +++++++++++
+ drivers/tty/serial/xilinx_uartps.c | 128 +++++++++++++++++++++++------
+ include/linux/of.h                 |   2 +
+ 3 files changed, 153 insertions(+), 26 deletions(-)
+
+-- 
+2.17.0
+
