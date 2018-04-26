@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756172AbeDZNY6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 09:24:58 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:45077 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754516AbeDZNY4 (ORCPT
+        id S932067AbeDZNZ4 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 09:25:56 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:38042 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755074AbeDZNZz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 09:24:56 -0400
-X-Google-Smtp-Source: AIpwx483BctVWJenwLypQKquXabFyqDwLh3IPgB8ujGVObmr32/HCPQVv6vxY/+WhGj3CmhzjGg32Rkwe4Tl01CSayM=
+        Thu, 26 Apr 2018 09:25:55 -0400
+X-Google-Smtp-Source: AIpwx4/iqrph42Oa1sUbcaVF3w36v8Q7j/sdwhggB5gOdF/Vg+4qCUuyy3yFz4nKwY8hjvbQKHhPRdzs0kJAfu7EVpY=
 MIME-Version: 1.0
 X-Originating-IP: [176.63.54.97]
-In-Reply-To: <20180423172135.4050588-1-songliubraving@fb.com>
-References: <20180423172135.4050588-1-songliubraving@fb.com>
+In-Reply-To: <20180423172135.4050588-2-songliubraving@fb.com>
+References: <20180423172135.4050588-1-songliubraving@fb.com> <20180423172135.4050588-2-songliubraving@fb.com>
 From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Thu, 26 Apr 2018 15:24:55 +0200
-Message-ID: <CAJfpegv807ktfv+tjYE65Yr_TbGnjds6ZCtoYX_yQTg_1wodzQ@mail.gmail.com>
-Subject: Re: [PATCH v5 1/2] tracing: fix bad use of igrab in trace_uprobe.c
+Date: Thu, 26 Apr 2018 15:25:53 +0200
+Message-ID: <CAJfpegvp7dGpwrq0Zj2gQnnxsADfFvvFcrjcB82jT1p+8dqKaw@mail.gmail.com>
+Subject: Re: [PATCH v5 2/2] tracing: remove igrab() iput() call from uprobes.c
 To: Song Liu <songliubraving@fb.com>
 Cc: linux-kernel@vger.kernel.org, kernel-team <kernel-team@fb.com>,
         Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>,
@@ -27,41 +27,25 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Mon, Apr 23, 2018 at 7:21 PM, Song Liu <songliubraving@fb.com> wrote:
-> As Miklos reported and suggested:
+> Caller of uprobe_register is required to keep the inode and containing
+> mount point referenced.
 >
->   This pattern repeats two times in trace_uprobe.c and in
->   kernel/events/core.c as well:
+> There was misuse of igrab() in uprobes.c and trace_uprobe.c. This is
+> because igrab() will not prevent umount of the containing mount point.
+> To fix this, we added path to struct trace_uprobe, which keeps the inode
+> and containing mount reference.
 >
->       ret = kern_path(filename, LOOKUP_FOLLOW, &path);
->       if (ret)
->           goto fail_address_parse;
+> For uprobes.c, it is not necessary to call igrab() in uprobe_register(),
+> as the caller is required to keep the inode reference. The igrab() is
+> removed and comments on this requirement is added to uprobe_register().
 >
->       inode = igrab(d_inode(path.dentry));
->       path_put(&path);
->
->   And it's wrong.  You can only hold a reference to the inode if you
->   have an active ref to the superblock as well (which is normally
->   through path.mnt) or holding s_umount.
->
->   This way unmounting the containing filesystem while the tracepoint is
->   active will give you the "VFS: Busy inodes after unmount..." message
->   and a crash when the inode is finally put.
->
->   Solution: store path instead of inode.
->
-> This patch fixes two instances in trace_uprobe.c. struct path is added to
-> struct trace_uprobe to keep the inode and containing mount point
-> referenced.
->
-> Fixes: f3f096cfedf8 ("tracing: Provide trace events interface for uprobes")
-> Fixes: 33ea4b24277b ("perf/core: Implement the 'perf_uprobe' PMU")
+> Link: http://lkml.kernel.org/r/CAELBmZB2XX=qEOLAdvGG4cPx4GEntcSnWQquJLUK1ongRj35cA@mail.gmail.com
 > Cc: Steven Rostedt <rostedt@goodmis.org>
 > Cc: Ingo Molnar <mingo@redhat.com>
 > Cc: Howard McLauchlan <hmclauchlan@fb.com>
 > Cc: Josef Bacik <jbacik@fb.com>
 > Cc: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
 > Cc: Miklos Szeredi <miklos@szeredi.hu>
-> Reported-by: Miklos Szeredi <miklos@szeredi.hu>
 > Signed-off-by: Song Liu <songliubraving@fb.com>
 
 Acked-by: Miklos Szeredi <mszeredi@redhat.com>
