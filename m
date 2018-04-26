@@ -1,107 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752630AbeDZFwW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 01:52:22 -0400
-Received: from mail.sysgo.com ([176.9.12.79]:46128 "EHLO mail.sysgo.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752895AbeDZFwT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 01:52:19 -0400
-Subject: Re: [PATCH] i2c: at91: Read all available bytes at once
-To: Ludovic Desroches <ludovic.desroches@microchip.com>
-References: <20180418124055.21333-1-david.engraf@sysgo.com>
- <20180425150853.GU13305@rfolt0960.corp.atmel.com>
-Cc: nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-        linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-From: David Engraf <david.engraf@sysgo.com>
-Message-ID: <ddc4beb3-5620-dc69-5b16-bce2737fb59f@sysgo.com>
-Date: Thu, 26 Apr 2018 07:52:17 +0200
+        id S1753119AbeDZFwb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 01:52:31 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:48375 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752777AbeDZFw2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 01:52:28 -0400
+Date: Wed, 25 Apr 2018 22:51:50 -0700
+From: tip-bot for Namhyung Kim <tipbot@zytor.com>
+Message-ID: <tip-ee05d21791db6db954bbb7b79bb18d88b5f6b7ff@git.kernel.org>
+Cc: namhyung@kernel.org, jolsa@kernel.org, hpa@zytor.com,
+        kim.phillips@arm.com, tglx@linutronix.de, acme@redhat.com,
+        mingo@kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org
+Reply-To: tglx@linutronix.de, kim.phillips@arm.com,
+        linux-kernel@vger.kernel.org, peterz@infradead.org, mingo@kernel.org,
+        acme@redhat.com, namhyung@kernel.org, hpa@zytor.com, jolsa@kernel.org
+In-Reply-To: <20180419235915.GA19067@sejong>
+References: <20180419235915.GA19067@sejong>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] perf machine: Set main kernel end address
+ properly
+Git-Commit-ID: ee05d21791db6db954bbb7b79bb18d88b5f6b7ff
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <20180425150853.GU13305@rfolt0960.corp.atmel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ludovic,
+Commit-ID:  ee05d21791db6db954bbb7b79bb18d88b5f6b7ff
+Gitweb:     https://git.kernel.org/tip/ee05d21791db6db954bbb7b79bb18d88b5f6b7ff
+Author:     Namhyung Kim <namhyung@kernel.org>
+AuthorDate: Mon, 19 Feb 2018 19:05:45 +0900
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 23 Apr 2018 10:52:55 -0300
 
-Am 25.04.2018 um 17:08 schrieb Ludovic Desroches:
-> Hi David,
-> 
-> On Wed, Apr 18, 2018 at 02:40:55PM +0200, David Engraf wrote:
->> With FIFO enabled it is possible to read multiple bytes
->> at once in the interrupt handler as long as RXRDY is
->> set. This may also reduce the number of interrupts.
->>
->> Signed-off-by: David Engraf <david.engraf@sysgo.com>
->> ---
->>   drivers/i2c/busses/i2c-at91.c | 8 ++++++--
->>   1 file changed, 6 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/i2c/busses/i2c-at91.c b/drivers/i2c/busses/i2c-at91.c
->> index bfd1fdff64a9..d01c2b2384bd 100644
->> --- a/drivers/i2c/busses/i2c-at91.c
->> +++ b/drivers/i2c/busses/i2c-at91.c
->> @@ -518,8 +518,12 @@ static irqreturn_t atmel_twi_interrupt(int irq, void *dev_id)
->>   	 * the RXRDY interrupt first in order to not keep garbage data in the
->>   	 * Receive Holding Register for the next transfer.
->>   	 */
->> -	if (irqstatus & AT91_TWI_RXRDY)
->> -		at91_twi_read_next_byte(dev);
->> +	if (irqstatus & AT91_TWI_RXRDY) {
->> +		/* read all available bytes at once when FIFO is used */
->> +		do {
->> +			at91_twi_read_next_byte(dev);
->> +		} while (at91_twi_read(dev, AT91_TWI_SR) & AT91_TWI_RXRDY);
-> 
-> You can avoid this check by using the RXFL field to know the number of
-> data you can read. Did you try to use it? If yes, did you notice some issues?
+perf machine: Set main kernel end address properly
 
-I did a quick test by reading RXFL and it worked as well but I decided 
-to use the more readable solution by polling RXRDY. Also I don't need to 
-check if the FIFO has been enabled.
+map_groups__fixup_end() was called to set the end addresses of kernel
+and module maps.  But now since machine__create_modules() sets the end
+address of modules properly, the only remaining piece is the kernel map.
 
-If you prefer using RXFL I can create a new patch.
+We can set it with adjacent module's address directly instead of calling
+map_groups__fixup_end().  If there's no module after the kernel map, the
+end address will be ~0ULL.
 
-Best regards
-- David
+Since it also changes the start address of the kernel map, it needs to
+re-insert the map to the kmaps in order to keep a correct ordering.  Kim
+reported that it caused problems on ARM64.
 
+Reported-by: Kim Phillips <kim.phillips@arm.com>
+Tested-by: Kim Phillips <kim.phillips@arm.com>
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: kernel-team@lge.com
+Link: http://lkml.kernel.org/r/20180419235915.GA19067@sejong
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/machine.c | 30 ++++++++++++++++++------------
+ 1 file changed, 18 insertions(+), 12 deletions(-)
 
-> Regards
-> 
-> Ludovic
-> 
->> +	}
->>   
->>   	/*
->>   	 * When a NACK condition is detected, the I2C controller sets the NACK,
->> -- 
->> 2.14.1
->>
-
--- 
-Mit freundlichen Grüßen/Best regards,
-
-David Engraf
-Product Engineer
-
-SYSGO AG
-Office Mainz
-Am Pfaffenstein 14 / D-55270 Klein-Winternheim / Germany
-
-Phone: +49-6136-9948-0 / Fax: +49-6136-9948-10
-E-mail: david.engraf@sysgo.com
-_________________________________________________________________________________
-
-Web: https://www.sysgo.com
-Blog: https://www.sysgo.com/blog
-Events: https://www.sysgo.com/events
-Newsletter: https://www.sysgo.com/newsletter
-_________________________________________________________________________________
-
-Handelsregister/Commercial Registry: HRB Mainz 90 HRB 8066
-Vorstand/Executive Board: Etienne Butery (CEO), Kai Sablotny (COO)
-Aufsichtsratsvorsitzender/Supervisory Board Chairman: Marc Darmon
-USt-Id-Nr./VAT-Id-No.: DE 149062328
+diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+index 2eca8478e24f..32d50492505d 100644
+--- a/tools/perf/util/machine.c
++++ b/tools/perf/util/machine.c
+@@ -1019,13 +1019,6 @@ int machine__load_vmlinux_path(struct machine *machine, enum map_type type)
+ 	return ret;
+ }
+ 
+-static void map_groups__fixup_end(struct map_groups *mg)
+-{
+-	int i;
+-	for (i = 0; i < MAP__NR_TYPES; ++i)
+-		__map_groups__fixup_end(mg, i);
+-}
+-
+ static char *get_kernel_version(const char *root_dir)
+ {
+ 	char version[PATH_MAX];
+@@ -1233,6 +1226,7 @@ int machine__create_kernel_maps(struct machine *machine)
+ {
+ 	struct dso *kernel = machine__get_kernel(machine);
+ 	const char *name = NULL;
++	struct map *map;
+ 	u64 addr = 0;
+ 	int ret;
+ 
+@@ -1259,13 +1253,25 @@ int machine__create_kernel_maps(struct machine *machine)
+ 			machine__destroy_kernel_maps(machine);
+ 			return -1;
+ 		}
+-		machine__set_kernel_mmap(machine, addr, 0);
++
++		/* we have a real start address now, so re-order the kmaps */
++		map = machine__kernel_map(machine);
++
++		map__get(map);
++		map_groups__remove(&machine->kmaps, map);
++
++		/* assume it's the last in the kmaps */
++		machine__set_kernel_mmap(machine, addr, ~0ULL);
++
++		map_groups__insert(&machine->kmaps, map);
++		map__put(map);
+ 	}
+ 
+-	/*
+-	 * Now that we have all the maps created, just set the ->end of them:
+-	 */
+-	map_groups__fixup_end(&machine->kmaps);
++	/* update end address of the kernel map using adjacent module address */
++	map = map__next(machine__kernel_map(machine));
++	if (map)
++		machine__set_kernel_mmap(machine, addr, map->start);
++
+ 	return 0;
+ }
+ 
