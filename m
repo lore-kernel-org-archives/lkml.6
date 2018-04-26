@@ -1,66 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756783AbeDZQSp (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 12:18:45 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:39773 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756661AbeDZQSh (ORCPT
+        id S1756817AbeDZQTT (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 12:19:19 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:52612 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753207AbeDZQTP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 12:18:37 -0400
-X-Google-Smtp-Source: AIpwx48M8MdSPpHjnToSSHcrIPnx9Yz3vmOp6mNm5fUlob7atlToakLqt/g5z5Xz13Wqm4nQhjAHkQ==
-From: Moritz Fischer <mdf@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: dmaengine@vger.kernel.org, vinod.koul@intel.com,
-        dan.j.williams@intel.com, lars@metafoo.de,
-        Moritz Fischer <mdf@kernel.org>
-Subject: [PATCH 1/2] dmaengine: axi-dmac: Use devm_request_irq()
-Date: Thu, 26 Apr 2018 09:12:38 -0700
-Message-Id: <20180426161239.15234-1-mdf@kernel.org>
-X-Mailer: git-send-email 2.17.0
+        Thu, 26 Apr 2018 12:19:15 -0400
+From: Ludovic Barre <ludovic.Barre@st.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>, Rob Herring <robh+dt@kernel.org>
+CC: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Gerald BAEZA <gerald.baeza@st.com>,
+        Loic PALLARDY <loic.pallardy@st.com>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        "Ludovic Barre" <ludovic.barre@st.com>
+Subject: [PATCH 11/11] ARM: dts: stm32: add exti support to stm32mp157 pinctrl
+Date: Thu, 26 Apr 2018 18:18:34 +0200
+Message-ID: <1524759514-12392-12-git-send-email-ludovic.Barre@st.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1524759514-12392-1-git-send-email-ludovic.Barre@st.com>
+References: <1524759514-12392-1-git-send-email-ludovic.Barre@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.48.0.237]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-26_06:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use devm_request_irq() instead of request_irq() to request the IRQ.
+From: Ludovic Barre <ludovic.barre@st.com>
 
-Signed-off-by: Moritz Fischer <mdf@kernel.org>
+This patch adds support of external interrupt for
+gpio[a..k], gpioz
+
+Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
 ---
+ arch/arm/boot/dts/stm32mp157-pinctrl.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Hi Lars,
-
-was there a specific reason not to use devm_request_irq() ?
-
-Cheers,
-
-Moritz
-
----
- drivers/dma/dma-axi-dmac.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/dma/dma-axi-dmac.c b/drivers/dma/dma-axi-dmac.c
-index 2419fe524daa..75ccedaa96d2 100644
---- a/drivers/dma/dma-axi-dmac.c
-+++ b/drivers/dma/dma-axi-dmac.c
-@@ -687,8 +687,9 @@ static int axi_dmac_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto err_unregister_device;
+diff --git a/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi b/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
+index 6f044100..2f6872b 100644
+--- a/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
++++ b/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
+@@ -12,6 +12,8 @@
+ 			#size-cells = <1>;
+ 			compatible = "st,stm32mp157-pinctrl";
+ 			ranges = <0 0x50002000 0xa400>;
++			interrupt-parent = <&exti>;
++			st,syscfg = <&exti 0x60 0xff>;
+ 			pins-are-numbered;
  
--	ret = request_irq(dmac->irq, axi_dmac_interrupt_handler, 0,
--		dev_name(&pdev->dev), dmac);
-+	ret = devm_request_irq(&pdev->dev, dmac->irq,
-+			       axi_dmac_interrupt_handler, 0,
-+			       dev_name(&pdev->dev), dmac);
- 	if (ret)
- 		goto err_unregister_of;
+ 			gpioa: gpio@50002000 {
+@@ -166,6 +168,8 @@
+ 			compatible = "st,stm32mp157-z-pinctrl";
+ 			ranges = <0 0x54004000 0x400>;
+ 			pins-are-numbered;
++			interrupt-parent = <&exti>;
++			st,syscfg = <&exti 0x60 0xff>;
+ 			status = "disabled";
  
-@@ -711,7 +712,6 @@ static int axi_dmac_remove(struct platform_device *pdev)
- 	struct axi_dmac *dmac = platform_get_drvdata(pdev);
- 
- 	of_dma_controller_free(pdev->dev.of_node);
--	free_irq(dmac->irq, dmac);
- 	tasklet_kill(&dmac->chan.vchan.task);
- 	dma_async_device_unregister(&dmac->dma_dev);
- 	clk_disable_unprepare(dmac->clk);
+ 			gpioz: gpio@54004000 {
 -- 
-2.17.0
+2.7.4
