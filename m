@@ -1,55 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756165AbeDZVfi (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 17:35:38 -0400
-Received: from mail-yb0-f195.google.com ([209.85.213.195]:41566 "EHLO
-        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754345AbeDZVfg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 17:35:36 -0400
-X-Google-Smtp-Source: AIpwx49XEZQWS5OEmtD1iyWEANPi2/SnN8D5Aml/OqVgnFc9I11nLFfKkeIzPNUS4FjMo9yB/PqPxA==
-Date: Thu, 26 Apr 2018 14:35:33 -0700
-From: Tejun Heo <tj@kernel.org>
-To: lizefan@huawei.com, hannes@cmpxchg.org
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, guro@fb.com,
-        kernel-team@fb.com
-Subject: Re: [PATCHSET] cgroup/for-4.17: Make cgroup_rstat available to
- controllers
-Message-ID: <20180426213533.GW1911913@devbig577.frc2.facebook.com>
-References: <20180323231313.1254142-1-tj@kernel.org>
+        id S1756889AbeDZVgY (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 17:36:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48162 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753964AbeDZVgX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 17:36:23 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4827C21789
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Subject: [PATCH 0/3] PM / core: Clean up suspend/resume diagnostic messages
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Thu, 26 Apr 2018 16:36:20 -0500
+Message-ID: <152477804633.202432.12678470890830085798.stgit@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: StGit/0.18
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180323231313.1254142-1-tj@kernel.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 23, 2018 at 04:13:05PM -0700, Tejun Heo wrote:
-> Hello,
-> 
-> cgroup has scalable recursive stat mechanism implemented in
-> kernel/stat.c.  It's currently only used to track cpu consumptions and
-> difficult to use outside of cgroup core.  This patchset generalizes
-> the mechanism and exposes it as cgroup_rstat so that controllers can
-> use it.
-> 
-> This patchset contains the following eight patches.  A follow-up
-> patchset will add usages.
-> 
->  0001-cgroup-Rename-kernel-cgroup-stat.c-to-kernel-cgroup-.patch
->  0002-cgroup-Rename-stat-to-rstat.patch
->  0003-cgroup-Distinguish-base-resource-stat-implementation.patch
->  0004-cgroup-Reorganize-kernel-cgroup-rstat.c.patch
->  0005-cgroup-Factor-out-and-expose-cgroup_rstat_-interface.patch
->  0006-cgroup-Replace-cgroup_rstat_mutex-with-a-spinlock.patch
->  0007-cgroup-Add-cgroup_subsys-css_rstat_flush.patch
->  0008-cgroup-Add-memory-barriers-to-plug-cgroup_rstat_upda.patch
+These are pretty minor cleanups to the suspend/resume diagnostic messages.
 
-Applied 1-8 to cgroup/for-4.18.
+The first two are trivial.  The third may break scripts that parse dmesg
+output.  I looked at scripts/bootgraph.pl, and I don't think it is
+affected, but there may be others I don't know about.  Let me know if there
+are.
 
-Thanks.
+---
 
--- 
-tejun
+Bjorn Helgaas (3):
+      PM / core: Remove unused initcall_debug_report() arguments
+      PM / core: Simplify initcall_debug_report() timing
+      PM / core: Use dev_printk() and symbols in suspend/resume diagnostics
+
+
+ drivers/base/power/main.c |   37 +++++++++++++++++--------------------
+ 1 file changed, 17 insertions(+), 20 deletions(-)
