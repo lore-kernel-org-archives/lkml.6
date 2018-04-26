@@ -1,75 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757062AbeDZUCe (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 16:02:34 -0400
-Received: from mx0a-00010702.pphosted.com ([148.163.156.75]:47550 "EHLO
-        mx0b-00010702.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1756715AbeDZUC1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 16:02:27 -0400
-From: Julia Cartwright <julia@ni.com>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Thomas Gleixner <tglx@linutronix.de>
-CC: Al Viro <viro@zeniv.linux.org.uk>,
-        John Ogness <john.ogness@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        "Peter Zijlstra" <peterz@infradead.org>,
-        Gratian Crisan <gratian.crisan@ni.com>,
-        <linux-rt-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <stable-rt@vger.kernel.org>
-Subject: [PATCH RT] seqlock: provide the same ordering semantics as mainline
-Date: Thu, 26 Apr 2018 15:02:03 -0500
-Message-ID: <20180426200203.11560-1-julia@ni.com>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180426192258.GK12238@jcartwri.amer.corp.natinst.com>
-References: <20180426192258.GK12238@jcartwri.amer.corp.natinst.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-26_07:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
+        id S932081AbeDZUCE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 16:02:04 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:35242 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755830AbeDZT7i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 15:59:38 -0400
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: "David S . Miller" <davem@davemloft.net>
+Cc: Allan Nielsen <Allan.Nielsen@microsemi.com>, razvan.stefanescu@nxp.com,
+        po.liu@nxp.com, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
+        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>
+Subject: [PATCH net-next v2 1/7] dt-bindings: net: add DT bindings for Microsemi MIIM
+Date: Thu, 26 Apr 2018 21:59:25 +0200
+Message-Id: <20180426195931.5393-2-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180426195931.5393-1-alexandre.belloni@bootlin.com>
+References: <20180426195931.5393-1-alexandre.belloni@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The mainline implementation of read_seqbegin() orders prior loads w.r.t.
-the read-side critical section.  Fixup the RT writer-boosting
-implementation to provide the same guarantee.
+DT bindings for the Microsemi MII Management Controller found on Microsemi
+SoCs
 
-Also, while we're here, update the usage of ACCESS_ONCE() to use
-READ_ONCE().
-
-Fixes: e69f15cf77c23 ("seqlock: Prevent rt starvation")
-Cc: stable-rt@vger.kernel.org
-Signed-off-by: Julia Cartwright <julia@ni.com>
+Cc: Rob Herring <robh+dt@kernel.org>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
-Found during code inspection of the RT seqlock implementation.
+ .../devicetree/bindings/net/mscc-miim.txt     | 26 +++++++++++++++++++
+ 1 file changed, 26 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/net/mscc-miim.txt
 
-   Julia
-
- include/linux/seqlock.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/include/linux/seqlock.h b/include/linux/seqlock.h
-index a59751276b94..597ce5a9e013 100644
---- a/include/linux/seqlock.h
-+++ b/include/linux/seqlock.h
-@@ -453,7 +453,7 @@ static inline unsigned read_seqbegin(seqlock_t *sl)
- 	unsigned ret;
- 
- repeat:
--	ret = ACCESS_ONCE(sl->seqcount.sequence);
-+	ret = READ_ONCE(sl->seqcount.sequence);
- 	if (unlikely(ret & 1)) {
- 		/*
- 		 * Take the lock and let the writer proceed (i.e. evtl
-@@ -462,6 +462,7 @@ static inline unsigned read_seqbegin(seqlock_t *sl)
- 		spin_unlock_wait(&sl->lock);
- 		goto repeat;
- 	}
-+	smp_rmb();
- 	return ret;
- }
- #endif
+diff --git a/Documentation/devicetree/bindings/net/mscc-miim.txt b/Documentation/devicetree/bindings/net/mscc-miim.txt
+new file mode 100644
+index 000000000000..7104679cf59d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/net/mscc-miim.txt
+@@ -0,0 +1,26 @@
++Microsemi MII Management Controller (MIIM) / MDIO
++=================================================
++
++Properties:
++- compatible: must be "mscc,ocelot-miim"
++- reg: The base address of the MDIO bus controller register bank. Optionally, a
++  second register bank can be defined if there is an associated reset register
++  for internal PHYs
++- #address-cells: Must be <1>.
++- #size-cells: Must be <0>.  MDIO addresses have no size component.
++- interrupts: interrupt specifier (refer to the interrupt binding)
++
++Typically an MDIO bus might have several children.
++
++Example:
++	mdio@107009c {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "mscc,ocelot-miim";
++		reg = <0x107009c 0x36>, <0x10700f0 0x8>;
++		interrupts = <14>;
++
++		phy0: ethernet-phy@0 {
++			reg = <0>;
++		};
++	};
 -- 
-2.16.1
+2.17.0
