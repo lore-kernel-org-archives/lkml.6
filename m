@@ -1,74 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755352AbeDZLJV (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 07:09:21 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50663 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755159AbeDZLJU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 07:09:20 -0400
-Date: Thu, 26 Apr 2018 13:09:05 +0200
-From: Borislav Petkov <bp@suse.de>
-To: Baoquan He <bhe@redhat.com>
-Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        robh+dt@kernel.org, dan.j.williams@intel.com, nicolas.pitre@linaro.org,
-        josh@joshtriplett.org, Thomas Gleixner <tglx@linutronix.de>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Wei Yang <richard.weiyang@gmail.com>
-Subject: Re: [PATCH v3 2/3] resource: add walk_system_ram_res_rev()
-Message-ID: <20180426110905.GH15043@pd.tnic>
-References: <20180419001848.3041-1-bhe@redhat.com>
- <20180419001848.3041-3-bhe@redhat.com>
- <20180419100745.GC3896@pd.tnic>
- <20180426085649.GC18395@localhost.localdomain>
+        id S1755150AbeDZLNE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 07:13:04 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:58524 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754277AbeDZLNB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 07:13:01 -0400
+Date: Thu, 26 Apr 2018 12:12:41 +0100
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Daniel Vetter <daniel@ffwll.ch>,
+        "moderated list:DMA BUFFER SHARING FRAMEWORK"
+        <linaro-mm-sig@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Jerome Glisse <jglisse@redhat.com>, iommu@lists.linux-foundation.org,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK"
+        <linux-media@vger.kernel.org>
+Subject: Re: noveau vs arm dma ops
+Message-ID: <20180426111240.GS16141@n2100.armlinux.org.uk>
+References: <20180425054855.GA17038@infradead.org>
+ <CAKMK7uEFitkNQrD6cLX5Txe11XhVO=LC4YKJXH=VNdq+CY=DjQ@mail.gmail.com>
+ <CAKMK7uFx=KB1vup=WhPCyfUFairKQcRR4BEd7aXaX1Pj-vj3Cw@mail.gmail.com>
+ <20180425064335.GB28100@infradead.org>
+ <20180425074151.GA2271@ulmo>
+ <20180425085439.GA29996@infradead.org>
+ <20180425100429.GR25142@phenom.ffwll.local>
+ <20180425153312.GD27076@infradead.org>
+ <CAKMK7uH14qupTYDa1pr8UC434Vs+97eUXj+fYi=+2uijCLayMA@mail.gmail.com>
+ <20180426090942.GA18811@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180426085649.GC18395@localhost.localdomain>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180426090942.GA18811@infradead.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 26, 2018 at 04:56:49PM +0800, Baoquan He wrote:
-> Sorry for that, I just ran scripts/get_maintainer.pl to get expert's
-> name and added them into each patch. The reason this change is made is
-> in patch 3/3. Test robot reported a code bug on the latest kernel, will
-> repost and CC everyone in all patches.
+(While there's a rain shower...)
+
+On Thu, Apr 26, 2018 at 02:09:42AM -0700, Christoph Hellwig wrote:
+> synopsis:
 > 
-> 
-> Rob Herring asked the same question in v2, I explained to him. The
-> discussion can be found here:
-> https://lkml.org/lkml/2018/4/10/484
+> drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c:    pdevinfo.dma_mask       = DMA_BIT_MASK(32);
+> drivers/gpu/drm/bridge/synopsys/dw-hdmi.c:              pdevinfo.dma_mask = DMA_BIT_MASK(32);
 
-... and when I open that link, the first paragraph says:
+This is for the AHB audio driver, and is a correct default on two counts:
 
-"This is the explanation I made when Andrew helped to review the v1 post:
-https://lkml.org/lkml/2018/3/23/78"
+1. It is historically usual to initialise DMA masks to 32-bit, and leave
+   it to the device drivers to negotiate via the DMA mask functions if
+   they wish to use higher orders of bits.
 
-Do you see the absurdity of the link chasing of your explanation?!
+2. The AHB audio hardware in the HDMI block only supports 32-bit addresses.
 
-Instead, the explanation *WHY* should be in the commit message of the
-patch - not in mail replies when people ask you about it.
+What I've missed from the AHB audio driver is calling the DMA mask
+functions... oops.  Patch below.
 
-Also, do not use lkml.org when referencing a mail on lkml but
-use the Message-ID of the header. We have a proper redirector at
-https://lkml.kernel.org/r/<Message-ID>
+> drivers/gpu/drm/bridge/synopsys/dw-hdmi.c:              pdevinfo.dma_mask = DMA_BIT_MASK(32);
 
-Now lemme read the reason finally...
+This is for the I2S audio driver, and I suspect is wrong - I doubt
+that the I2S sub-device itself does any DMA what so ever.
 
-"We need unify these two interfaces on behaviour since they are the same
-on essense from the users' point of view... "
+8<===
+From: Russell King <rmk+kernel@armlinux.org.uk>
+Subject: drm: bridge: dw-hdmi: Negotiate dma mask with DMA API
 
-That's not a good enough reason for me to cause code churn. If the only
-reason is: because the one does it top-down and the other bottom-up, I'm
-not convinced.
+DMA drivers are supposed to negotiate the DMA mask with the DMA API,
+but this was missing from the AHB audio driver.  Add the necessary
+call.
+
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+---
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi-ahb-audio.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-ahb-audio.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-ahb-audio.c
+index cf3f0caf9c63..16c45b6cd6af 100644
+--- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-ahb-audio.c
++++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-ahb-audio.c
+@@ -539,6 +539,10 @@ static int snd_dw_hdmi_probe(struct platform_device *pdev)
+ 	unsigned revision;
+ 	int ret;
+ 
++	ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(32));
++	if (ret)
++		return ret;
++
+ 	writeb_relaxed(HDMI_IH_MUTE_AHBDMAAUD_STAT0_ALL,
+ 		       data->base + HDMI_IH_MUTE_AHBDMAAUD_STAT0);
+ 	revision = readb_relaxed(data->base + HDMI_REVISION_ID);
+
 
 -- 
-Regards/Gruss,
-    Boris.
-
-SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
--- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
+According to speedtest.net: 8.21Mbps down 510kbps up
