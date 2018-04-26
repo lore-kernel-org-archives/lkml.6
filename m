@@ -1,143 +1,108 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2888943-1524763360-2-13698044936985908555
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES rosk.us-ascii,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: 
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524763359; b=bn/BVELrBTFofLijfSEPZ87c5t9GTpS3XFAgIfb/y+o4sdwHDg
-    PRQMPkLPyMkAV/q5mhgvmg7w8zVZtIeQEe0KkCgdM4/K+XO/cndrQBHybi3VWPdb
-    wGt7FGVZc9MpGsTh4ADOlyxOLS/Be2m9jVYdSfJjjqSBdibn/IhmYz3wpYmkrHrx
-    s+QPQeKhnFy55rHouaLiN0LIOaADpQ2bQhH9GC+USgsTT213/GJPIbwIvS1uFsmo
-    0lwCQJPOpc/8pPW9kn3KzU33f/VeuqGg6ZJXJ7SN01LVJ6ezNZa9UMk72szDUP16
-    IvpC8iVGa5Etg9ruJMb990rCw91QBCpkeRgA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=fm2; t=1524763359; bh=L2ySq/cXPYkHqOV77TJRDYh5rOrKc4
-    VXf1EAweBOddg=; b=ldlpGErD/XO1xKYIhwEpO2iWFG9O/OsFfM8E0SbAO+YjAK
-    O3wIslKYjFqxDponlkgyyuvG261JUaEr9tMoEBDRiF84k8ByJNjx22W1M8APu0C2
-    2uhtCLm5BIBDRNt52eaMmw/WKvmQMKcwR5EOKSv7Xc2Fx2v9MtShTXJVXIsUKYzG
-    2WY6qU9BsMXk3aru5KaiJOCXI27GvpBAU6iSZ6VqybJh7olp4dC3tg5A6tyoaj6A
-    xaxfUzA+5+Fi2hUozmTxSCsK+HFHB6a9ID1SoX7u7yaLBgEAcX2oL1RdHxMHSwXt
-    zZIYgQyHwT+8xYoqYac6F9D8XO5CO4zdB6OrSOPg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.intel.com header.result=pass header_org.domain=intel.com header_org.result=pass header_is_org_domain=no;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.intel.com header.result=pass header_org.domain=intel.com header_org.result=pass header_is_org_domain=no;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIvWiZklZZtYYxhygxemy+2ykVZpE1+0UlQisKLl2XRpqUgvKCzqLWOgYPU43nGfyDleDKQ7WrQwVWhS4rRi8dDD4jJnkd0G8uvdbOuzyoV8ozOh+mc2
-    bhJRRfryzQX7fCc/keBZeShAFLUyNUYBokoq8cdycbzx05e6ZNc43RatoWe80+aeJm8h7XJStpxpbsD9y5MHGtTWzu/O6lzHUj/UNj2e5btXhgq2DpxyKh+R
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=QyXUC8HyAAAA:8
-    a=VwQbUJbxAAAA:8 a=w_Cx_DjtcGcFuUi5bA0A:9 a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756732AbeDZRWg (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 26 Apr 2018 13:22:36 -0400
-Received: from mga02.intel.com ([134.134.136.20]:32942 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753282AbeDZRWf (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 26 Apr 2018 13:22:35 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,331,1520924400";
-   d="scan'208";a="46296694"
-From: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
-        stable <stable@vger.kernel.org>
-Subject: [PATCH] clk:aspeed: Fix reset bits for PCI/VGA and PECI
-Date: Thu, 26 Apr 2018 10:22:32 -0700
-Message-Id: <20180426172232.12535-1-jae.hyun.yoo@linux.intel.com>
-X-Mailer: git-send-email 2.17.0
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Return-Path: <tom.hromatka@oracle.com>
+X-Google-Smtp-Source: AIpwx4/KMCigssfxJCwQokto4Nb3HWW6pbnO5KKATrDt3LMIMhe0f0amlBswTvzTnngojSgcLYrf
+ARC-Seal: i=1; a=rsa-sha256; t=1524761658; cv=none;
+        d=google.com; s=arc-20160816;
+        b=r2J4I8C8eXBSVAqzKbq+2umMGCVxpZL2jSIQbceIyETeAeMHYjCBkhs59nrhZt1etc
+         IT5O2upBDxYbwFvY1Fd7da2ZxMYBFCxUcbURktWaPbpK2mxxeWEK+3AAF/q63orxW8Yc
+         pgpflgIG+OVWpHmcrTdgwpAu0G27ZLYFC8A7i3se2hBbgJuVefCK0pabwKl5j3tZnOdE
+         b2WXeo8dOJjWY5pgd1Lbf0lhZjbX+LzjmTqPEim3giH3yEsRO4sU/IGCdBmtYAWQAVEa
+         siBtAht9RPQDGHffqQbevAIEZxARJU8rLJ586B7V+tOgnsKR3sfuthcWFjMMpnSRKrEv
+         aInQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=iFnoAs35Tacxef3SMac1BwOOlKg7TVCRs0qMx7ISPl0=;
+        b=UKTXaMTxRieO/1u/juQ8aGIrfaiqu4I4iqdkY5rnHgdmRenElb8TKL/YG1FvufHC04
+         wNB1hytKTBX7EsGlPM/Q1cB9kDXYmk6I4nWSffTRccyPf2sm5Fn8rPmzjC9TZFwSC+cT
+         8OCak5jttrciUs20SkHkNNV9OMMWOARnw7rB4/W4fPfhC5YBwpHsYfjUKYAQ9C+xO1Jd
+         OUv2eU2D6dpwf+4brPWwFyQqLAFPce5nOWlmYMygL9mPPj5tMlsMrwARx+Nr+e/mYI0o
+         zgH860udjyqKs5clC6JAFhzi/5bSss2tGlr4Q1S3xx2cPFX7EZGnQIhnYneRs5bbN56I
+         0USg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=qMzpqEaA;
+       spf=pass (google.com: domain of tom.hromatka@oracle.com designates 141.146.126.79 as permitted sender) smtp.mailfrom=tom.hromatka@oracle.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=qMzpqEaA;
+       spf=pass (google.com: domain of tom.hromatka@oracle.com designates 141.146.126.79 as permitted sender) smtp.mailfrom=tom.hromatka@oracle.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
+From: Tom Hromatka <tom.hromatka@oracle.com>
+To: davem@davemloft.net
+Cc: sparclinux@vger.kernel.org, arnd@arndb.de, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, tom.hromatka@oracle.com,
+        shuah@kernel.org, linux-kselftest@vger.kernel.org,
+        allen.pais@oracle.com, khalid.aziz@oracle.com,
+        shannon.nelson@oracle.com, anthony.yznaga@oracle.com
+Subject: [PATCH v6 0/2] sparc64: Add privileged ADI driver
+Date: Thu, 26 Apr 2018 10:54:07 -0600
+Message-Id: <20180426165409.716764-1-tom.hromatka@oracle.com>
+X-Mailer: git-send-email 2.15.0
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8875 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=700
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804260157
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1598828480711346055?=
+X-GMAIL-MSGID: =?utf-8?q?1598828480711346055?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This commit fixes incorrect setting of reset bits for PCI/VGA and
-PECI modules.
+ADI is a feature supported on SPARC M7 and newer processors to allow
+hardware to catch rogue accesses to memory. ADI is supported for data
+fetches only and not instruction fetches. An app can enable ADI on its
+data pages, set version tags on them and use versioned addresses to
+access the data pages. Upper bits of the address contain the version
+tag. On M7 processors, upper four bits (bits 63-60) contain the version
+tag. If a rogue app attempts to access ADI enabled data pages, its
+access is blocked and processor generates an exception. Please see
+Documentation/sparc/adi.txt for further details.
 
-1. Reset bit for PCI/VGA is 8.
-2. PECI reset bit is missing so added bit 10 as its reset bit.
+This patchset implements a char driver to read/write ADI versions from
+privileged user space processes.  Intended consumers are makedumpfile
+and crash.
 
-Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Fixes: 15ed8ce5f84e ("clk: aspeed: Register gated clocks")
-Cc: stable <stable@vger.kernel.org>
----
- drivers/clk/clk-aspeed.c                 | 4 ++--
- include/dt-bindings/clock/aspeed-clock.h | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+v6:
+  * Addressed a few action items from greg k-h
+  * Added Reviewed-by Greg Kroah-Hartman and Shuah Khan
+v5:
+  * Fixed MODULE_LICENSE() for adi.c
+v4:
+  * Fixed messed up subject lines.
+v3:
+  * Really fixed the copyright headers to use SPDX GPL v2.  Really.
+v2:
+  * Simplified copyright headers
+  * Completely reworked sparc64 selftests Makefiles.  Used the
+    android selftests Makefiles as an example
+  * Added run.sh and drivers_test.sh to the sparc64 selftest
+    directory.  Used bpf/test_kmod.sh and the android selftests
+    as examples
+  * Minor cleanups in the selftest adi-test.c
+  * Added calls to ksft_test_*() in the adi-test.c
 
-diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
-index 5eb50c31e455..2c23e7d7ba28 100644
---- a/drivers/clk/clk-aspeed.c
-+++ b/drivers/clk/clk-aspeed.c
-@@ -88,7 +88,7 @@ static const struct aspeed_gate_data aspeed_gates[] = {
- 	[ASPEED_CLK_GATE_GCLK] =	{  1,  7, "gclk-gate",		NULL,	0 }, /* 2D engine */
- 	[ASPEED_CLK_GATE_MCLK] =	{  2, -1, "mclk-gate",		"mpll",	CLK_IS_CRITICAL }, /* SDRAM */
- 	[ASPEED_CLK_GATE_VCLK] =	{  3,  6, "vclk-gate",		NULL,	0 }, /* Video Capture */
--	[ASPEED_CLK_GATE_BCLK] =	{  4, 10, "bclk-gate",		"bclk",	0 }, /* PCIe/PCI */
-+	[ASPEED_CLK_GATE_BCLK] =	{  4,  8, "bclk-gate",		"bclk",	0 }, /* PCIe/PCI */
- 	[ASPEED_CLK_GATE_DCLK] =	{  5, -1, "dclk-gate",		NULL,	0 }, /* DAC */
- 	[ASPEED_CLK_GATE_REFCLK] =	{  6, -1, "refclk-gate",	"clkin", CLK_IS_CRITICAL },
- 	[ASPEED_CLK_GATE_USBPORT2CLK] =	{  7,  3, "usb-port2-gate",	NULL,	0 }, /* USB2.0 Host port 2 */
-@@ -297,7 +297,7 @@ static const u8 aspeed_resets[] = {
- 	[ASPEED_RESET_JTAG_MASTER] = 22,
- 	[ASPEED_RESET_MIC]	= 18,
- 	[ASPEED_RESET_PWM]	=  9,
--	[ASPEED_RESET_PCIVGA]	=  8,
-+	[ASPEED_RESET_PECI]	= 10,
- 	[ASPEED_RESET_I2C]	=  2,
- 	[ASPEED_RESET_AHB]	=  1,
- };
-diff --git a/include/dt-bindings/clock/aspeed-clock.h b/include/dt-bindings/clock/aspeed-clock.h
-index d3558d897a4d..8d69b9134bef 100644
---- a/include/dt-bindings/clock/aspeed-clock.h
-+++ b/include/dt-bindings/clock/aspeed-clock.h
-@@ -45,7 +45,7 @@
- #define ASPEED_RESET_JTAG_MASTER	3
- #define ASPEED_RESET_MIC		4
- #define ASPEED_RESET_PWM		5
--#define ASPEED_RESET_PCIVGA		6
-+#define ASPEED_RESET_PECI		6
- #define ASPEED_RESET_I2C		7
- #define ASPEED_RESET_AHB		8
- 
+Tom Hromatka (2):
+  char: sparc64: Add privileged ADI driver
+  selftests: sparc64: char: Selftest for privileged ADI driver
+
+ drivers/char/Kconfig                               |  12 +
+ drivers/char/Makefile                              |   1 +
+ drivers/char/adi.c                                 | 239 +++++++
+ tools/testing/selftests/Makefile                   |   1 +
+ tools/testing/selftests/sparc64/Makefile           |  46 ++
+ tools/testing/selftests/sparc64/drivers/.gitignore |   1 +
+ tools/testing/selftests/sparc64/drivers/Makefile   |  15 +
+ tools/testing/selftests/sparc64/drivers/adi-test.c | 721 +++++++++++++++++++++
+ .../selftests/sparc64/drivers/drivers_test.sh      |  30 +
+ tools/testing/selftests/sparc64/run.sh             |   3 +
+ 10 files changed, 1069 insertions(+)
+ create mode 100644 drivers/char/adi.c
+ create mode 100644 tools/testing/selftests/sparc64/Makefile
+ create mode 100644 tools/testing/selftests/sparc64/drivers/.gitignore
+ create mode 100644 tools/testing/selftests/sparc64/drivers/Makefile
+ create mode 100644 tools/testing/selftests/sparc64/drivers/adi-test.c
+ create mode 100755 tools/testing/selftests/sparc64/drivers/drivers_test.sh
+ create mode 100755 tools/testing/selftests/sparc64/run.sh
+
 -- 
-2.17.0
+2.15.0
