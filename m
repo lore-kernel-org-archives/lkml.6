@@ -1,95 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754824AbeDZJNT (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 05:13:19 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:47548 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754781AbeDZJNO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 05:13:14 -0400
-Date: Thu, 26 Apr 2018 02:13:10 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc: Christoph Hellwig <hch@infradead.org>,
-        Thierry Reding <treding@nvidia.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK"
-        <linaro-mm-sig@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        "open list:DMA BUFFER SHARING FRAMEWORK"
-        <linux-media@vger.kernel.org>,
-        iommu@lists.linux-foundation.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: noveau vs arm dma ops
-Message-ID: <20180426091310.GB18811@infradead.org>
-References: <CAKMK7uFL68pu+-9LODTgz+GQYvxpnXOGhxfz9zorJ_JKsPVw2g@mail.gmail.com>
- <20180425054855.GA17038@infradead.org>
- <CAKMK7uEFitkNQrD6cLX5Txe11XhVO=LC4YKJXH=VNdq+CY=DjQ@mail.gmail.com>
- <CAKMK7uFx=KB1vup=WhPCyfUFairKQcRR4BEd7aXaX1Pj-vj3Cw@mail.gmail.com>
- <20180425064335.GB28100@infradead.org>
- <20180425074151.GA2271@ulmo>
- <20180425085439.GA29996@infradead.org>
- <20180425100429.GR25142@phenom.ffwll.local>
- <20180425153312.GD27076@infradead.org>
- <20180425225443.GQ16141@n2100.armlinux.org.uk>
+        id S1754883AbeDZJN2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 05:13:28 -0400
+Received: from mga11.intel.com ([192.55.52.93]:6876 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754686AbeDZJNX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 05:13:23 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,330,1520924400";
+   d="scan'208";a="37179351"
+Date: Thu, 26 Apr 2018 17:03:27 +0800
+From: "Du, Changbin" <changbin.du@intel.com>
+To: joro@8bytes.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iommu/vt-d: fix shift-out-of-bounds in bug checking
+Message-ID: <20180426090327.ciune4mldns2a6nl@intel.com>
+References: <1524202195-4656-1-git-send-email-changbin.du@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180425225443.GQ16141@n2100.armlinux.org.uk>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <1524202195-4656-1-git-send-email-changbin.du@intel.com>
+User-Agent: NeoMutt/20180323-6-5ca392
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 25, 2018 at 11:54:43PM +0100, Russell King - ARM Linux wrote:
+Hello, any reviewer? Thanks!
+
+On Fri, Apr 20, 2018 at 01:29:55PM +0800, changbin.du@intel.com wrote:
+> From: Changbin Du <changbin.du@intel.com>
 > 
-> if the memory was previously dirty (iow, CPU has written), you need to
-> flush the dirty cache lines _before_ the GPU writes happen, but you
-> don't know whether the CPU has speculatively prefetched, so you need
-> to flush any prefetched cache lines before reading from the cacheable
-> memory _after_ the GPU has finished writing.
+> It allows to flush more than 4GB of device TLBs. So the mask should be
+> 64bit wide. UBSAN captured this fault as below.
 > 
-> Also note that "flush" there can be "clean the cache", "clean and
-> invalidate the cache" or "invalidate the cache" as appropriate - some
-> CPUs are able to perform those three operations, and the appropriate
-> one depends on not only where in the above sequence it's being used,
-> but also on what the operations are.
+> [    3.760024] ================================================================================
+> [    3.768440] UBSAN: Undefined behaviour in drivers/iommu/dmar.c:1348:3
+> [    3.774864] shift exponent 64 is too large for 32-bit type 'int'
+> [    3.780853] CPU: 2 PID: 0 Comm: swapper/2 Tainted: G     U            4.17.0-rc1+ #89
+> [    3.788661] Hardware name: Dell Inc. OptiPlex 7040/0Y7WYT, BIOS 1.2.8 01/26/2016
+> [    3.796034] Call Trace:
+> [    3.798472]  <IRQ>
+> [    3.800479]  dump_stack+0x90/0xfb
+> [    3.803787]  ubsan_epilogue+0x9/0x40
+> [    3.807353]  __ubsan_handle_shift_out_of_bounds+0x10e/0x170
+> [    3.812916]  ? qi_flush_dev_iotlb+0x124/0x180
+> [    3.817261]  qi_flush_dev_iotlb+0x124/0x180
+> [    3.821437]  iommu_flush_dev_iotlb+0x94/0xf0
+> [    3.825698]  iommu_flush_iova+0x10b/0x1c0
+> [    3.829699]  ? fq_ring_free+0x1d0/0x1d0
+> [    3.833527]  iova_domain_flush+0x25/0x40
+> [    3.837448]  fq_flush_timeout+0x55/0x160
+> [    3.841368]  ? fq_ring_free+0x1d0/0x1d0
+> [    3.845200]  ? fq_ring_free+0x1d0/0x1d0
+> [    3.849034]  call_timer_fn+0xbe/0x310
+> [    3.852696]  ? fq_ring_free+0x1d0/0x1d0
+> [    3.856530]  run_timer_softirq+0x223/0x6e0
+> [    3.860625]  ? sched_clock+0x5/0x10
+> [    3.864108]  ? sched_clock+0x5/0x10
+> [    3.867594]  __do_softirq+0x1b5/0x6f5
+> [    3.871250]  irq_exit+0xd4/0x130
+> [    3.874470]  smp_apic_timer_interrupt+0xb8/0x2f0
+> [    3.879075]  apic_timer_interrupt+0xf/0x20
+> [    3.883159]  </IRQ>
+> [    3.885255] RIP: 0010:poll_idle+0x60/0xe7
+> [    3.889252] RSP: 0018:ffffb1b201943e30 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
+> [    3.896802] RAX: 0000000080200000 RBX: 000000000000008e RCX: 000000000000001f
+> [    3.903918] RDX: 0000000000000000 RSI: 000000002819aa06 RDI: 0000000000000000
+> [    3.911031] RBP: ffff9e93c6b33280 R08: 00000010f717d567 R09: 000000000010d205
+> [    3.918146] R10: ffffb1b201943df8 R11: 0000000000000001 R12: 00000000e01b169d
+> [    3.925260] R13: 0000000000000000 R14: ffffffffb12aa400 R15: 0000000000000000
+> [    3.932382]  cpuidle_enter_state+0xb4/0x470
+> [    3.936558]  do_idle+0x222/0x310
+> [    3.939779]  cpu_startup_entry+0x78/0x90
+> [    3.943693]  start_secondary+0x205/0x2e0
+> [    3.947607]  secondary_startup_64+0xa5/0xb0
+> [    3.951783] ================================================================================
+> 
+> Signed-off-by: Changbin Du <changbin.du@intel.com>
+> ---
+>  drivers/iommu/dmar.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iommu/dmar.c b/drivers/iommu/dmar.c
+> index accf5838..e4ae600 100644
+> --- a/drivers/iommu/dmar.c
+> +++ b/drivers/iommu/dmar.c
+> @@ -1345,7 +1345,7 @@ void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 qdep,
+>  	struct qi_desc desc;
+>  
+>  	if (mask) {
+> -		BUG_ON(addr & ((1 << (VTD_PAGE_SHIFT + mask)) - 1));
+> +		BUG_ON(addr & ((1ULL << (VTD_PAGE_SHIFT + mask)) - 1));
+>  		addr |= (1ULL << (VTD_PAGE_SHIFT + mask - 1)) - 1;
+>  		desc.high = QI_DEV_IOTLB_ADDR(addr) | QI_DEV_IOTLB_SIZE;
+>  	} else
+> -- 
+> 2.7.4
+> 
 
-Agreed on all these counts.
-
-> If we can agree a set of interfaces that allows _proper_ use of these
-> facilities, one which can be used appropriately, then there shouldn't
-> be a problem.  The DMA API does that via it's ideas about who owns a
-> particular buffer (because of the above problem) and that's something
-> which would need to be carried over to such a cache flushing API (it
-> should be pretty obvious that having a GPU read or write memory while
-> the cache for that memory is being cleaned will lead to unexpected
-> results.)
-
-I've been trying to come up with such an interface, for now only for
-internal use in a generic set of noncoherent ops.  The API is basically
-a variant of the existing dma_sync_single_to_device/cpu calls:
-
-http://git.infradead.org/users/hch/misc.git/commitdiff/044dae5f94509288f4655de2f22cb0bea85778af
-
-Review welcome!
-
-> The next issue, which I've brought up before, is that exposing cache
-> flushing to userspace on architectures where it isn't already exposed
-> comes.  As has been shown by Google Project Zero, this risks exposing
-> those architectures to Spectre and Meltdown exploits where they weren't
-> at such a risk before.  (I've pretty much shown here that you _do_
-> need to control which cache lines get flushed to make these exploits
-> work, and flushing the cache by reading lots of data in liu of having
-> the ability to explicitly flush bits of cache makes it very difficult
-> to impossible for them to work.)
-
-Extending dma coherence to userspace is going to be the next major
-nightmare indeed.  I'm not sure how much of that actually still is
-going on in the graphics world, but we'll need a coherent (pun intended)
-plan how to deal with it.
+-- 
+Thanks,
+Changbin Du
