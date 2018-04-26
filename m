@@ -1,128 +1,76 @@
-Return-Path: <julia.lawall@lip6.fr>
-X-Google-Smtp-Source: AB8JxZr5RsThn7R29WPJqY17TqqaRPUcYT8Tblc7qDv6p5EEhkPVAHqDYILcS00plWfOJRM/MYkn
-ARC-Seal: i=1; a=rsa-sha256; t=1524899758; cv=none;
+Return-Path: <arvind.yadav.cs@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1524757341; cv=none;
         d=google.com; s=arc-20160816;
-        b=ox9v9OFHyeX/Er6Rj33VKruY/evdSC94WFV/t9IeJGv5KfWliY6/ngNfhLDDczVLiW
-         whEyMmw2ZUruSgV9URt69oYIhV17yT/UQyoy9r0+DrpUhPh5FNZ/T42Zstq6ADYacuSG
-         Ao8QXv3xMyquYTF+hxQj1ZKT46T4QHqGXs29tNeOry6eQjy2xPgq35MLDVTXzgSw/a6t
-         NCS3eLHpQAam8gBAE3vqhE8qTgCIhhQwDJ8gduQQP5b4EbdsU8PG+k7+WJz5HFo+Pwuy
-         E/8RKw6Uurxkn8uYNUHn8TyQCJeMaw7MOuj697/EG20irpBL6hKK5LluktK7cqsM4DvP
-         +sIw==
+        b=ZuG7Lw0c+gLeUcsEqDP0V5lcW5ACj3on4hQ5iUBbRYZg+ikL1cmeQCqjMic1AfFl3u
+         W+uSwb1r2K7zroUf2dpV8Y4EB5DG31sNR7knTyIWq2Jw7+g224tq1hVo7zS6aKcUeG+J
+         v+4yYdyUnQrR+lwghqon51XdiadqUf6CpYWOtEE44e0rbbgsdwnG2v3OKzOsRxXP+2ID
+         r0/5iMp0dLyAHTKJPxNv6LBJ4KiUuRPu/IBbOXpMJnTROBKHmpWaTb2L+gW6LqrmcBJW
+         xbxM5MyI+gHw5OR9tGnijOcNwqRcSwjNCIBDECFlPSYjAvSYJBJJhROEUjjrDXHfd9Of
+         aaKQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:message-id:subject:cc:to:from:date
+        h=message-id:date:subject:cc:to:from:dkim-signature
          :arc-authentication-results;
-        bh=TiPC3/qCxp5qvpo1IdrWQEfHi8hjDIWpreEI3CSsbIM=;
-        b=GoyTBQSS0GsHk1eE2hJve0yS3U2hLBCe8TIakNKlf6x6KbuboAn1r69zuPIEYb1bc7
-         WEgRuhV2nhVOOtpW18iJhxlqzVITLMfbiBm69Im4RrNGZ5tWG7mBpCathLdJLCvIB/MW
-         8DKf9yL9kZa4PvDIrtlCD5vGTzl10aQisyFFSXl0QlXabRWLGEjsOqh7iPOqJX+iLFOR
-         AKHJMoKzFMjcIvXFneBAP/em0wx8ay1OpcbRzCtBggexeinLgDbu8e2+dBBqITGF0Ivq
-         1/PmZd6rJBzjE5SRvWDm1wMpLKWaispfE+pK+bs8en9xdUqcXlKprLjymZWKtKZnw+Vr
-         hhpg==
+        bh=lShAgALU82Oh7seLjPtDXPQIN9V2v/kS65BJsLnAkU4=;
+        b=kZimSTVeFkhnqy21xKG9V9864D3+1O52hG+t2v8WzTQakTgBdQi8R5iVRzEh7YskbG
+         nsfADctbSI1OhL+VF4e2m3fTcYs+bK30qQCtv4+TghIJycNK1C3AodI+SxkQp4Ez7dKs
+         ETLX9uBLjxgG+rCKcmPSTlkFRPd2vv0jELIqODumlVpT7pYS/nOmJjtP6HgldjcCekzE
+         CmBcXzzF080+JlgJKJIm0e143lRuu9kb32RfVpsmomelbHDhZCuEQlWAKx9ucGXhQBj2
+         ScZvqP4mY/BhCfVZq1Jjl9o5xT6EVVQ7M855rwtX7sV0Is0mUhbLH8g4NBmy26i8VKRT
+         AsmA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 192.134.164.83 is neither permitted nor denied by domain of julia.lawall@lip6.fr) smtp.mailfrom=julia.lawall@lip6.fr
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=HqA0b9NF;
+       spf=pass (google.com: domain of arvind.yadav.cs@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=arvind.yadav.cs@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 192.134.164.83 is neither permitted nor denied by domain of julia.lawall@lip6.fr) smtp.mailfrom=julia.lawall@lip6.fr
-X-IronPort-AV: E=Sophos;i="5.49,338,1520895600";
-   d="scan'208";a="324880146"
-Date: Sat, 28 Apr 2018 09:15:57 +0200 (CEST)
-From: Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To: Sujeev Dias <sdias@codeaurora.org>
-cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-    Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
-    linux-arm-msm@vger.kernel.org, Tony Truong <truong@codeaurora.org>,
-    kbuild-all@01.org
-Subject: [PATCH] mhi_bus: controller: fix debugfs_simple_attr.cocci
- warnings
-Message-ID: <alpine.DEB.2.20.1804280914120.2700@hadrien>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=HqA0b9NF;
+       spf=pass (google.com: domain of arvind.yadav.cs@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=arvind.yadav.cs@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AIpwx4/P6U5sETWDeaLcgcvbHqBVOVo8RW4vsRzL9tFLnZKyLBmbYZfdjP4+AzwTZM9FNE4E1gc/eA==
+From: Arvind Yadav <arvind.yadav.cs@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH] mm: memory_hotplug: use put_device() if device_register fail
+Date: Thu, 26 Apr 2018 21:12:09 +0530
+Message-Id: <2987b5bdb31e7c18cd837da0f1e32a98fecd3278.1524757165.git.arvind.yadav.cs@gmail.com>
+X-Mailer: git-send-email 2.7.4
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598973289034377334?=
-X-GMAIL-MSGID: =?utf-8?q?1598973289034377334?=
+X-GMAIL-THRID: =?utf-8?q?1598823954747248901?=
+X-GMAIL-MSGID: =?utf-8?q?1598823954747248901?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Fengguang Wu <fengguang.wu@intel.com>
+if device_register() returned an error. Always use put_device()
+to give up the initialized reference and release allocated memory.
 
- Use DEFINE_DEBUGFS_ATTRIBUTE rather than DEFINE_SIMPLE_ATTRIBUTE
- for debugfs files.
-
- Rationale: DEFINE_SIMPLE_ATTRIBUTE + debugfs_create_file()
- imposes some significant overhead as compared to
- DEFINE_DEBUGFS_ATTRIBUTE + debugfs_create_file_unsafe().
-
-Generated by: scripts/coccinelle/api/debugfs/debugfs_simple_attr.cocci
-
-Fixes: 6190c08efd64 ("mhi_bus: controller: MHI support for QCOM modems")
-CC: Sujeev Dias <sdias@codeaurora.org>
-Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
-Signed-off-by: Julia Lawall <julia.lawall@lip6.fr>
+Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
 ---
+ drivers/base/memory.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-url:
-https://github.com/0day-ci/linux/commits/Sujeev-Dias/mhi_bus-core-Add-support-for-MHI-host-interface/20180428-065959
-:::::: branch date: 4 hours ago
-:::::: commit date: 4 hours ago
-
- mhi_qcom.c |   26 ++++++++++++++------------
- 1 file changed, 14 insertions(+), 12 deletions(-)
-
---- a/drivers/bus/mhi/controllers/mhi_qcom.c
-+++ b/drivers/bus/mhi/controllers/mhi_qcom.c
-@@ -335,11 +335,11 @@ int mhi_debugfs_trigger_m3(void *data, u
- 	return 0;
- }
-
--DEFINE_SIMPLE_ATTRIBUTE(debugfs_trigger_m0_fops, NULL,
--			mhi_debugfs_trigger_m0, "%llu\n");
-+DEFINE_DEBUGFS_ATTRIBUTE(debugfs_trigger_m0_fops, NULL,
-+			 mhi_debugfs_trigger_m0, "%llu\n");
-
--DEFINE_SIMPLE_ATTRIBUTE(debugfs_trigger_m3_fops, NULL,
--			mhi_debugfs_trigger_m3, "%llu\n");
-+DEFINE_DEBUGFS_ATTRIBUTE(debugfs_trigger_m3_fops, NULL,
-+			 mhi_debugfs_trigger_m3, "%llu\n");
-
- static int mhi_init_debugfs_trigger_go(void *data, u64 val)
+diff --git a/drivers/base/memory.c b/drivers/base/memory.c
+index bffe861..f5e5601 100644
+--- a/drivers/base/memory.c
++++ b/drivers/base/memory.c
+@@ -649,13 +649,19 @@ static const struct attribute_group *memory_memblk_attr_groups[] = {
+ static
+ int register_memory(struct memory_block *memory)
  {
-@@ -351,8 +351,8 @@ static int mhi_init_debugfs_trigger_go(v
-
- 	return 0;
++	int ret;
++
+ 	memory->dev.bus = &memory_subsys;
+ 	memory->dev.id = memory->start_section_nr / sections_per_block;
+ 	memory->dev.release = memory_block_release;
+ 	memory->dev.groups = memory_memblk_attr_groups;
+ 	memory->dev.offline = memory->state == MEM_OFFLINE;
+ 
+-	return device_register(&memory->dev);
++	ret = device_register(&memory->dev);
++	if (ret)
++		put_device(&memory->dev);
++
++	return ret;
  }
--DEFINE_SIMPLE_ATTRIBUTE(mhi_init_debugfs_trigger_go_fops, NULL,
--			mhi_init_debugfs_trigger_go, "%llu\n");
-+DEFINE_DEBUGFS_ATTRIBUTE(mhi_init_debugfs_trigger_go_fops, NULL,
-+			 mhi_init_debugfs_trigger_go, "%llu\n");
-
-
- int mhi_init_debugfs_debug_show(struct seq_file *m, void *d)
-@@ -434,8 +434,8 @@ static ssize_t mhi_init_debugfs_debug_wr
- 	}
-
- 	mhi_dev->debug_mode = true;
--	debugfs_create_file("go", 0444, mhi_cntrl->parent, mhi_cntrl,
--			    &mhi_init_debugfs_trigger_go_fops);
-+	debugfs_create_file_unsafe("go", 0444, mhi_cntrl->parent, mhi_cntrl,
-+				   &mhi_init_debugfs_trigger_go_fops);
- 	pr_info(
- 		"%s: ret:%d pcidev:0x%x smm_cfg:%u timeout:%u\n",
- 		__func__, ret, args[1], mhi_dev->smmu_cfg,
-@@ -504,10 +504,12 @@ int mhi_pci_probe(struct pci_dev *pci_de
- 	pm_runtime_allow(&pci_dev->dev);
-
- 	if (mhi_cntrl->dentry) {
--		debugfs_create_file("m0", 0444, mhi_cntrl->dentry, mhi_cntrl,
--				    &debugfs_trigger_m0_fops);
--		debugfs_create_file("m3", 0444, mhi_cntrl->dentry, mhi_cntrl,
--				    &debugfs_trigger_m3_fops);
-+		debugfs_create_file_unsafe("m0", 0444, mhi_cntrl->dentry,
-+					   mhi_cntrl,
-+					   &debugfs_trigger_m0_fops);
-+		debugfs_create_file_unsafe("m3", 0444, mhi_cntrl->dentry,
-+					   mhi_cntrl,
-+					   &debugfs_trigger_m3_fops);
- 	}
-
- 	MHI_LOG("Return successful\n");
+ 
+ static int init_memory_block(struct memory_block **memory,
+-- 
+2.7.4
