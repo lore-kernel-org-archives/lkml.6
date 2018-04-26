@@ -1,76 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754010AbeDZHN1 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 03:13:27 -0400
-Received: from victor.provo.novell.com ([137.65.250.26]:49549 "EHLO
-        prv3-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753068AbeDZHNZ (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Thu, 26 Apr 2018 03:13:25 -0400
-From: Gang He <ghe@suse.com>
-To: teigland@redhat.com
-Cc: Gang He <ghe@suse.com>, cluster-devel@redhat.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] dlm: make sctp_connect_to_sock() return in specified time
-Date: Thu, 26 Apr 2018 15:14:36 +0800
-Message-Id: <1524726876-4770-1-git-send-email-ghe@suse.com>
-X-Mailer: git-send-email 1.8.5.6
+        id S1753628AbeDZHPE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 03:15:04 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:32883 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752148AbeDZHPD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 03:15:03 -0400
+X-Google-Smtp-Source: AB8JxZr2OJEIAag3/MPEXObhWs61RZJdLic8tvfj+zOKDeBnCEr92A+wDPXLUACB6z4+zFgjyh2Eiaw58rX97xGbuXk=
+MIME-Version: 1.0
+In-Reply-To: <201804261013.6YZ6XwpM%fengguang.wu@intel.com>
+References: <201804261013.6YZ6XwpM%fengguang.wu@intel.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Thu, 26 Apr 2018 09:15:01 +0200
+X-Google-Sender-Auth: a9rOlvO0fe4GJd7bjfR4dnRfvu4
+Message-ID: <CAK8P3a0tpU7RFasJUuG7V2ZYUoR-iYDzjO13neF08ToAdnLX+w@mail.gmail.com>
+Subject: Re: Makefile:636: arch/score/Makefile: No such file or directory
+To: kbuild test robot <lkp@intel.com>,
+        Fengguang Wu <fengguang.wu@intel.com>
+Cc: kbuild-all@01.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the user setup a two-ring cluster, DLM kernel module
-will automatically selects to use SCTP protocol to communicate
-between each node. There will be about 5 minute hang in DLM
-kernel module, in case one ring is broken before switching to
-another ring, this will potentially affect the dependent upper
-applications, e.g. ocfs2, gfs2, clvm and clustered-MD, etc.
-Unfortunately, if the user setup a two-ring cluster, we can not
-specify DLM communication protocol with TCP explicitly, since
-DLM kernel module only supports SCTP protocol for multiple
-ring cluster.
-Base on my investigation, the time is spent in sock->ops->connect()
-function before returns ETIMEDOUT(-110) error, since O_NONBLOCK
-argument in connect() function does not work here, then we should
-make sock->ops->connect() function return in specified time via
-setting socket SO_SNDTIMEO atrribute.
+On Thu, Apr 26, 2018 at 4:23 AM, kbuild test robot <lkp@intel.com> wrote:
+> Hi Arnd,
+>
+> FYI, the error/warning still remains.
+>
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   26ed24e429d89e045e5eb2d2b75215244347b7f2
+> commit: b8c9c8f0190f4004d3d4364edb2dea5978dfc824 arch: remove score port
+> date:   7 weeks ago
+> config: score-spct6600_defconfig
 
-Signed-off-by: Gang He <ghe@suse.com>
----
- fs/dlm/lowcomms.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Please stop trying to build the removed architectures: tile, blackfin,
+metag, m32r, frv, mn10300, cris and score.
 
-diff --git a/fs/dlm/lowcomms.c b/fs/dlm/lowcomms.c
-index 5243989..b786acc 100644
---- a/fs/dlm/lowcomms.c
-+++ b/fs/dlm/lowcomms.c
-@@ -1037,6 +1037,7 @@ static void sctp_connect_to_sock(struct connection *con)
- 	int result;
- 	int addr_len;
- 	struct socket *sock;
-+	struct timeval tv = { .tv_sec = 5, .tv_usec = 0 };
- 
- 	if (con->nodeid == 0) {
- 		log_print("attempt to connect sock 0 foiled");
-@@ -1083,8 +1084,19 @@ static void sctp_connect_to_sock(struct connection *con)
- 	kernel_setsockopt(sock, SOL_TCP, TCP_NODELAY, (char *)&one,
- 			  sizeof(one));
- 
-+	/*
-+	 * Make sock->ops->connect() function return in specified time,
-+	 * since O_NONBLOCK argument in connect() function does not work here,
-+	 * then, we should restore the default value of this attribute.
-+	 */
-+	kernel_setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, (char *)&tv,
-+			  sizeof(tv));
- 	result = sock->ops->connect(sock, (struct sockaddr *)&daddr, addr_len,
- 				   O_NONBLOCK);
-+	memset(&tv, 0, sizeof(tv));
-+	kernel_setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, (char *)&tv,
-+			  sizeof(tv));
-+
- 	if (result == -EINPROGRESS)
- 		result = 0;
- 	if (result == 0)
--- 
-1.8.5.6
+https://lwn.net/Articles/748074/ has details about why this broke.
+
+Note that we do have a few new architectures that you may want
+to add if you haven't done this already: nds32 and riscv were added
+this year, and a couple of older architectures that didn't have upstream
+gcc releases now have those, and I uploaded gcc binaries to
+https://cdn.kernel.org/pub/tools/crosstool/.
+
+This should allow building everything we have in the kernel now.
+Unfortunately the nds32 toolchain I uploaded is a little incomplete,
+but I have a gcc-6.4 build that (mostly) works and gcc-8 should
+be fine as well once it gets released.
+
+      Arnd
