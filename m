@@ -1,135 +1,147 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754584AbeDZU4G (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 16:56:06 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43962 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754228AbeDZU4E (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 16:56:04 -0400
-Subject: Re: [PATCH v4 1/2] perf: uncore: Adding documentation for ThunderX2
- pmu uncore driver
-To: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc: Will.Deacon@arm.com, mark.rutland@arm.com, jnair@caviumnetworks.com,
-        Robert.Richter@cavium.com, Vadim.Lomovtsev@cavium.com,
-        Jan.Glauber@cavium.com, gklkml16@gmail.com
-References: <20180425090047.6485-1-ganapatrao.kulkarni@cavium.com>
- <20180425090047.6485-2-ganapatrao.kulkarni@cavium.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <7c8ff675-2b27-8e7b-f046-513b73f1ae5f@infradead.org>
-Date: Thu, 26 Apr 2018 13:55:59 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1755189AbeDZVDZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 17:03:25 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49372 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753000AbeDZVDX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 17:03:23 -0400
+Subject: Re: [RFC] [PATCH 0/5] procfs: reduce duplication by using symlinks
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>, Oleg Nesterov <oleg@redhat.com>
+References: <20180424022106.16952-1-jeffm@suse.com>
+ <87in8ghetm.fsf@xmission.com>
+From: Jeff Mahoney <jeffm@suse.com>
+Openpgp: preference=signencrypt
+Message-ID: <07eaa5d0-2dc3-16b7-34b4-2672f0cc6c24@suse.com>
+Date: Thu, 26 Apr 2018 17:03:18 -0400
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180425090047.6485-2-ganapatrao.kulkarni@cavium.com>
+In-Reply-To: <87in8ghetm.fsf@xmission.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-Just a few typo corrections...
-
-On 04/25/2018 02:00 AM, Ganapatrao Kulkarni wrote:
-> Documentation for the UNCORE PMUs on Cavium's ThunderX2 SoC.
-> The SoC has PMU support in its L3 cache controller (L3C) and in the
-> DDR4 Memory Controller (DMC).
+On 4/24/18 10:14 AM, Eric W. Biederman wrote:
+> jeffm@suse.com writes:
 > 
-> Signed-off-by: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
-> ---
->  Documentation/perf/thunderx2-pmu.txt | 66 ++++++++++++++++++++++++++++++++++++
->  1 file changed, 66 insertions(+)
->  create mode 100644 Documentation/perf/thunderx2-pmu.txt
+>> From: Jeff Mahoney <jeffm@suse.com>
+>>
+>> Hi all -
+>>
+>> I recently encountered a customer issue where, on a machine with many TiB
+>> of memory and a few hundred cores, after a task with a few thousand threads
+>> and hundreds of files open exited, the system would softlockup.  That
+>> issue was (is still) being addressed by Nik Borisov's patch to add a
+>> cond_resched call to shrink_dentry_list.  The underlying issue is still
+>> there, though.  We just don't complain as loudly.  When a huge task
+>> exits, now the system is more or less unresponsive for about eight
+>> minutes.  All CPUs are pinned and every one of them is going through
+>> dentry and inode eviction for the procfs files associated with each
+>> thread.  It's made worse by every CPU contending on the super's
+>> inode list lock.
+>>
+>> The numbers get big.  My test case was 4096 threads with 16384 files
+>> open.  It's a contrived example, but not that far off from the actual
+>> customer case.  In this case, a simple "find /proc" would create around
+>> 300 million dentry/inode pairs.  More practically, lsof(1) does it too,
+>> it just takes longer.  On smaller systems, memory pressure starts pushing
+>> them out. Memory pressure isn't really an issue on this machine, so we
+>> end up using well over 100GB for proc files.  It's the combination of
+>> the wasted CPU cycles in teardown and the wasted memory at runtime that
+>> pushed me to take this approach.
+>>
+>> The biggest culprit is the "fd" and "fdinfo" directories, but those are
+>> made worse by there being multiple copies of them even for the same
+>> task without threads getting involved:
+>>
+>> - /proc/pid/fd and /proc/pid/task/pid/fd are identical but share no
+>>   resources.
+>>
+>> - Every /proc/pid/task/*/fd directory in a thread group has identical
+>>   contents (unless unshare(CLONE_FILES) was called), but share no
+>>   resources.
+>>
+>> - If we do a lookup like /proc/pid/fd on a member of a thread group,
+>>   we'll get a valid directory.  Inside, there will be a complete
+>>   copy of /proc/pid/task/* just like in /proc/tgid/task.  Again,
+>>   nothing is shared.
+>>
+>> This patch set reduces some (most) of the duplication by conditionally
+>> replacing some of the directories with symbolic links to copies that are
+>> identical.
+>>
+>> 1) Eliminate the duplication of the task directories between threads.
+>>    The task directory belongs to the thread leader and the threads
+>>    link to it: e.g. /proc/915/task -> ../910/task  This mainly
+>>    reduces duplication when individual threads are looked up directly
+>>    at the tgid level.  The impact varies based on the number of threads.
+>>    The user has to go out of their way in order to mess up their system
+>>    in this way.  But if they were so inclined, they could create ~550
+>>    billion inodes and dentries using the test case.
+>>
+>> 2) Eliminate the duplication of directories that are created identically
+>>    between the tgid-level pid directory and its task directory: fd,
+>>    fdinfo, ns, net, attr.  There is obviously more duplication between
+>>    the two directories, but replacing a file with a symbolic link
+>>    doesn't get us anything.  This reduces the number of files associated
+>>    with fd and fdinfo by half if threads aren't involved.
+>>
+>> 3) Eliminate the duplication of fd and fdinfo directories among threads
+>>    that share a files_struct.  We check at directory creation time if
+>>    the task is a group leader and if not, whether it shares ->files with
+>>    the group leader.  If so, we create a symbolic link to ../tgid/fd*.
+>>    We use a d_revalidate callback to check whether the thread has called
+>>    unshare(CLONE_FILES) and, if so, fail the revalidation for the symlink.
+>>    Upon re-lookup, a directory will be created in its place.  This is
+>>    pretty simple, so if the thread group leader calls unshare, all threads
+>>    get directories.
+>>
+>> With these patches applied, running the same testcase, the proc_inode
+>> cache only gets to about 600k objects, which is about 99.7% fewer.  I
+>> get that procfs isn't supposed to be scalable, but this is kind of
+>> extreme. :)
+>>
+>> Finally, I'm not a procfs expert.  I'm posting this as an RFC for folks
+>> with more knowledge of the details to pick it apart.  The biggest is that
+>> I'm not sure if any tools depend on any of these things being directories
+>> instead of symlinks.  I'd hope not, but I don't have the answer.  I'm
+>> sure there are corner cases I'm missing.  Hopefully, it's not just flat
+>> out broken since this is a problem that does need solving.
+>>
+>> Now I'll go put on the fireproof suit.
 > 
-> diff --git a/Documentation/perf/thunderx2-pmu.txt b/Documentation/perf/thunderx2-pmu.txt
-> new file mode 100644
-> index 0000000..9e9f535
-> --- /dev/null
-> +++ b/Documentation/perf/thunderx2-pmu.txt
-> @@ -0,0 +1,66 @@
-> +
-> +Cavium ThunderX2 SoC Performance Monitoring Unit (PMU UNCORE)
-> +==========================================================================
-> +
-> +ThunderX2 SoC PMU consists of independent system wide per Socket PMUs such
-> +as Level 3 Cache(L3C) and DDR4 Memory Controller(DMC).
-> +
-> +It has 8 independent DMC PMUs to capture performance events corresponding
-> +to 8 channels of DDR4 Memory Controller. There are 16 independent L3C PMUs
-> +to capture events corresponding to 16 tiles of L3 cache. Each PMU supports
-> +up to 4 counters.
-> +
-> +Counters are independent programmable and can be started and stopped
+> This needs to be tested against at least apparmor to see if this breaks
+> common policies.  Changing files to symlinks in proc has a bad habit of
+> either breaking apparmor policies or userspace assumptions.   Symbolic
+> links are unfortunately visible to userspace.
 
-                independently
+That's my biggest concern as well.
 
-> +individually. Each counter can be set to sample specific perf events.
-> +Counters are 32 bit and does not support overflow interrupt, they are
-
-                           do not                    interrupt; they are
-
-
-> +sampled at every 2 seconds. The Counters register access are multiplexed
-> +across channels of DMC and L3C. The muxing(select channel) is done through
-> +write to a Secure register using smcc calls.
-> +
-> +PMU UNCORE (perf) driver:
-> +
-> +The thunderx2-pmu driver registers several perf PMUs for DMC and L3C devices.
-> +Each of the PMU provides description of its available events
-
-        of the PMUs
-
-> +and configuration options in sysfs.
-> +	see /sys/devices/uncore_<l3c_S_X/dmc_S_X/>
-> +
-> +S is socket id and X represents channel number.
-> +Each PMU can be used to sample up to 4 events simultaneously.
-> +
-> +The "format" directory describes format of the config (event ID).
-> +The "events" directory provides configuration templates for all
-> +supported event types that can be used with perf tool.
-> +
-> +For example, "uncore_dmc_0_0/cnt_cycles/" is an
-> +equivalent of "uncore_dmc_0_0/config=0x1/".
-> +
-> +Each perf driver also provides a "cpumask" sysfs attribute, which contains a
-> +single CPU ID of the processor which is likely to be used to handle all the
-> +PMU events. It will be the first online CPU from the NUMA node of PMU device.
-> +
-> +Example for perf tool use:
-> +
-> +perf stat -a -e \
-> +uncore_dmc_0_0/cnt_cycles/,\
-> +uncore_dmc_0_1/cnt_cycles/,\
-> +uncore_dmc_0_2/cnt_cycles/,\
-> +uncore_dmc_0_3/cnt_cycles/,\
-> +uncore_dmc_0_4/cnt_cycles/,\
-> +uncore_dmc_0_5/cnt_cycles/,\
-> +uncore_dmc_0_6/cnt_cycles/,\
-> +uncore_dmc_0_7/cnt_cycles/ sleep 1
-> +
-> +perf stat -a -e \
-> +uncore_dmc_0_0/cancelled_read_txns/,\
-> +uncore_dmc_0_0/cnt_cycles/,\
-> +uncore_dmc_0_0/consumed_read_txns/,\
-> +uncore_dmc_0_0/data_transfers/ sleep 1
-> +
-> +perf stat -a -e \
-> +uncore_l3c_0_0/l3_retry/,\
-> +uncore_l3c_0_0/read_hit/,\
-> +uncore_l3c_0_0/read_request/,\
-> +uncore_l3c_0_0/inv_request/ sleep 1
-> +
-> +The driver does not support sampling, therefore "perf record" will
-> +not work. Per-task (without "-a") perf sessions are not supported.
+> Further the proc structure is tgid/task/tid where the leaf directories
+> are per thread.
 > 
+> We more likely could get away with some magic symlinks (that would not
+> be user visible) rather than actual symlinks.
 
+I'd considered that, but we'll need to instantiate other portions of the
+tree in order to use those dentries as magic symlink targets.  That
+seemed like it might not fly, so I went with the regular symlink approach.
+
+> So I think you are probably on the right track to reduce the memory
+> usage but I think some more work will be needed to make it transparently
+> backwards compatible.
+
+Thanks for the review,
+
+-Jeff
 
 -- 
-~Randy
+Jeff Mahoney
+SUSE Labs
