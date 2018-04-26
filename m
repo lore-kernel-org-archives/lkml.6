@@ -1,87 +1,192 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754231AbeDZHFP (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 03:05:15 -0400
-Received: from mail-vk0-f48.google.com ([209.85.213.48]:36081 "EHLO
-        mail-vk0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753676AbeDZHFI (ORCPT
+        id S1753975AbeDZHKJ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 03:10:09 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:3363 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753860AbeDZHKG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 03:05:08 -0400
-X-Google-Smtp-Source: AB8JxZouzm5+9krkQXuOtNYvgojOu/QCNAaoZSjHPhBDSGxm4KcjmSDix28afbQRMxGWudby3wdUGBKAV0x1gQYBIhE=
+        Thu, 26 Apr 2018 03:10:06 -0400
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Thu, 26 Apr 2018 00:10:03 -0700
+Subject: Re: [PATCH] net: phy: marvell: clear wol event before setting it
+From: Bhadram Varka <vbhadram@nvidia.com>
+To: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+CC: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Jingju Hou <Jingju.Hou@synaptics.com>
+References: <20180419160232.519d15be@xhacker.debian>
+ <20180419121801.GC17888@lunn.ch>
+ <4273f766-a017-b336-7d14-a28901d274b9@nvidia.com>
+ <20180426141508.6660a633@xhacker.debian>
+ <be2addb5-b3fd-13cb-ad33-f0527931a0d2@nvidia.com>
+Message-ID: <73e21c83-f78a-8b22-a421-f179ef6adef1@nvidia.com>
+Date: Thu, 26 Apr 2018 12:39:59 +0530
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-X-Originating-IP: [217.140.96.140]
-In-Reply-To: <0caa0d1d-eb05-c5a1-9958-2285bb11db8c@microchip.com>
-References: <1524468316-6606-1-git-send-email-gilad@benyossef.com>
- <1524468316-6606-2-git-send-email-gilad@benyossef.com> <0caa0d1d-eb05-c5a1-9958-2285bb11db8c@microchip.com>
-From: Gilad Ben-Yossef <gilad@benyossef.com>
-Date: Thu, 26 Apr 2018 10:05:06 +0300
-Message-ID: <CAOtvUMd-Fkva9RGqRu0HkDjGLfuw9vtvPxQ0r6SBtinOZ=Q1_w@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] crypto: ccree: enable support for hardware keys
-To: Tudor Ambarus <tudor.ambarus@microchip.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Ofir Drang <ofir.drang@arm.com>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <be2addb5-b3fd-13cb-ad33-f0527931a0d2@nvidia.com>
+X-Originating-IP: [10.19.65.191]
+X-ClientProxiedBy: BGMAIL104.nvidia.com (10.25.59.13) To bgmail102.nvidia.com
+ (10.25.59.11)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 25, 2018 at 6:47 PM, Tudor Ambarus
-<tudor.ambarus@microchip.com> wrote:
-> Hi, Gilad,
+Hi,
+
+On 4/26/2018 11:56 AM, Bhadram Varka wrote:
+> Hi,
+> On 4/26/2018 11:45 AM, Jisheng Zhang wrote:
+>> Hi,
+>>
+>> On Thu, 26 Apr 2018 11:10:21 +0530 Bhadram Varka wrote:
+>>
+>>> Hi,
+>>>
+>>> On 4/19/2018 5:48 PM, Andrew Lunn wrote:
+>>>> On Thu, Apr 19, 2018 at 04:02:32PM +0800, Jisheng Zhang wrote:
+>>>>> From: Jingju Hou <Jingju.Hou@synaptics.com>
+>>>>>
+>>>>> If WOL event happened once, the LED[2] interrupt pin will not be
+>>>>> cleared unless reading the CSISR register. So clear the WOL event
+>>>>> before enabling it.
+>>>>>
+>>>>> Signed-off-by: Jingju Hou <Jingju.Hou@synaptics.com>
+>>>>> Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+>>>>> ---
+>>>>>    drivers/net/phy/marvell.c | 9 +++++++++
+>>>>>    1 file changed, 9 insertions(+)
+>>>>>
+>>>>> diff --git a/drivers/net/phy/marvell.c b/drivers/net/phy/marvell.c
+>>>>> index c22e8e383247..b6abe1cbc84b 100644
+>>>>> --- a/drivers/net/phy/marvell.c
+>>>>> +++ b/drivers/net/phy/marvell.c
+>>>>> @@ -115,6 +115,9 @@
+>>>>>    /* WOL Event Interrupt Enable */
+>>>>>    #define MII_88E1318S_PHY_CSIER_WOL_EIE BIT(7)
+>>>>>    +/* Copper Specific Interrupt Status Register */
+>>>>> +#define MII_88E1318S_PHY_CSISR                0x13
+>>>>> +
+>>>>>    /* LED Timer Control Register */
+>>>>>    #define MII_88E1318S_PHY_LED_TCR            0x12
+>>>>>    #define MII_88E1318S_PHY_LED_TCR_FORCE_INT BIT(15)
+>>>>> @@ -1393,6 +1396,12 @@ static int m88e1318_set_wol(struct 
+>>>>> phy_device *phydev,
+>>>>>            if (err < 0)
+>>>>>                goto error;
+>>>>>    +        /* If WOL event happened once, the LED[2] interrupt pin
+>>>>> +         * will not be cleared unless reading the CSISR register.
+>>>>> +         * So clear the WOL event first before enabling it.
+>>>>> +         */
+>>>>> +        phy_read(phydev, MII_88E1318S_PHY_CSISR);
+>>>>> +
+>>>> Hi Jisheng
+>>>>
+>>>> The problem with this is, you could be clearing a real interrupt, link
+>>>> down/up etc. If interrupts are in use, i think the normal interrupt
+>>>> handling will clear the WOL interrupt? So can you make this read
+>>>> conditional on !phy_interrupt_is_valid()?
+>>> So this will clear WoL interrupt bit from Copper Interrupt status 
+>>> register.
+>>>
+>>> How about clearing WoL status (Page 17, register 17) for every WOL 
+>>> event ?
+>>>
+>> This is already properly done by setting 
+>> MII_88E1318S_PHY_WOL_CTRL_CLEAR_WOL_STATUS
+>> in m88e1318_set_wol()
+> This part of the code executes only when we enable WOL through ethtool 
+> (ethtool -s eth0 wol g)
 >
-> On 04/23/2018 10:25 AM, Gilad Ben-Yossef wrote:
->>
->> Enable CryptoCell support for hardware keys.
->>
->> Hardware keys are regular AES keys loaded into CryptoCell internal memory
->> via firmware, often from secure boot ROM or hardware fuses at boot time.
->>
->> As such, they can be used for enc/dec purposes like any other key but
->> cannot (read: extremely hard to) be extracted since since they are not
->> available anywhere in RAM during runtime.
->>
->> The mechanism has some similarities to s390 secure keys although the keys
->> are not wrapped or sealed, but simply loaded offline. The interface was
->> therefore modeled based on the s390 secure keys support.
->
->
-> I'm interested in hardware keys, ecc508 supports them too. In your
-> proposal you expect that the user will provide a specific key token that
-> is meaningful only for the ccree driver. If another driver that supports
-> "cbc(paes)" shows up, you will force the user to select a specific
-> driver implementation and to know what kind of key token to provide.
-> Shouldn't we have a common API that can address other drivers too?
+> Lets say once WOL enabled through magic packet - HW generates WOL 
+> interrupt once magic packet received.
+> The problem that I see here is that for the next immediate magic 
+> packet I don't see WOL interrupt generated by the HW.
+> I need to explicitly clear WOL status for HW to generate WOL interrupt.
 
-The v1 of the patch gave a unique name ("haes") to the CryptoCell HW
-key format, since the information in the key for CryptoCell and the
-s390 is very different (in short: cryptocell uses key size + slot
-index, s390 provide an key encrypted by a HW known key).
-Herbert expressed the sentiment that since the user needs to be aware
-of the specific format of the token for each device anyway, she must
-be aware of which tfm provider is being used anyway, so must be using
-the device specific name.
-Hence, I change the name to use "paes" just like the s390.
+With the below patch I see WOL event interrupt for every magic packet 
+that HW receives...
 
-It's pretty obvious that the s390 and CryptoCell HW/protected keys
-don't have anything in common and are not interchangeable.
-I would say that if the ecc508 tokens are yet a third format, we
-should follow the same example and just leave it as "paes" and let the
-user specify an exact device name.
+diff --git a/drivers/net/phy/marvell.c b/drivers/net/phy/marvell.c
+index ed8a67d..5d3d138 100644
+--- a/drivers/net/phy/marvell.c
++++ b/drivers/net/phy/marvell.c
+@@ -55,6 +55,7 @@
 
-However, if we can find a common token format for ecc508 with either
-CryptoCell or the s390 (probably less likely), maybe its worth using a
-common name for those and a different for the outlier?
+  #define MII_M1011_IEVENT               0x13
+  #define MII_M1011_IEVENT_CLEAR         0x0000
++#define MII_M1011_IEVENT_WOL_EVENT     BIT(7)
 
-Gilad
+  #define MII_M1011_IMASK                        0x12
+- #define MII_M1011_IMASK_INIT           0x6400
++ #define MII_M1011_IMASK_INIT           0x6480
 
+@@ -195,13 +196,40 @@ struct marvell_priv {
+         bool copper;
+  };
 
--- 
-Gilad Ben-Yossef
-Chief Coffee Drinker
++static int marvell_clear_wol_status(struct phy_device *phydev)
++{
++       int err, temp, oldpage;
++
++       oldpage = phy_read(phydev, MII_MARVELL_PHY_PAGE);
++       if (oldpage < 0)
++               return oldpage;
++
++       err = phy_write(phydev, MII_MARVELL_PHY_PAGE,
++                        MII_88E1318S_PHY_WOL_PAGE);
++       if (err < 0)
++               return err;
++
++       /*
++        * Clear WOL status so that for next WOL event
++        * interrupt will be generated by HW
++        */
++       temp = phy_read(phydev, MII_88E1318S_PHY_WOL_CTRL);
++       temp |= MII_88E1318S_PHY_WOL_CTRL_CLEAR_WOL_STATUS;
++       err = phy_write(phydev, MII_88E1318S_PHY_WOL_CTRL, temp);
++       if (err < 0)
++               return err;
++
++
++       phy_write(phydev, MII_MARVELL_PHY_PAGE, oldpage);
++
++       return 0;
++}
++
+  static int marvell_ack_interrupt(struct phy_device *phydev)
+  {
+         int err;
 
-"If you take a class in large-scale robotics, can you end up in a
-situation where the homework eats your dog?"
- -- Jean-Baptiste Queru
+         /* Clear the interrupts by reading the reg */
+         err = phy_read(phydev, MII_M1011_IEVENT);
+-
+         if (err < 0)
+                 return err;
+
+@@ -1454,12 +1482,18 @@ static int marvell_aneg_done(struct phy_device 
+*phydev)
+
+  static int m88e1121_did_interrupt(struct phy_device *phydev)
+  {
+-       int imask;
++       int imask, err;
+
+         imask = phy_read(phydev, MII_M1011_IEVENT);
+
+-       if (imask & MII_M1011_IMASK_INIT)
++       if (imask & MII_M1011_IMASK_INIT) {
++               if (imask & MII_M1011_IEVENT_WOL_EVENT) {
++                       err = marvell_clear_wol_status(phydev);
++                       if (err < 0)
++                               return 0;
++               }
+                 return 1;
++       }
+
+         return 0;
+  }
