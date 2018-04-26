@@ -1,102 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756943AbeDZRsq (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 13:48:46 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:60666 "EHLO mail.bootlin.com"
+        id S1756969AbeDZRuo (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 13:50:44 -0400
+Received: from mga17.intel.com ([192.55.52.151]:63408 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754557AbeDZRsp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 13:48:45 -0400
-Date: Thu, 26 Apr 2018 19:48:43 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/6] ARM: at91: add TCB registers definitions
-Message-ID: <20180426174843.GT4813@piout.net>
-References: <20180418105143.3577-1-alexandre.belloni@bootlin.com>
- <20180418105143.3577-2-alexandre.belloni@bootlin.com>
- <20180426165242.x5pvpyfirkmvvqjo@breakpoint.cc>
+        id S1756723AbeDZRuj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 13:50:39 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,331,1520924400";
+   d="scan'208";a="223669422"
+Date: Fri, 27 Apr 2018 01:49:46 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: kbuild-all@01.org, Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Hans Verkuil <hans.verkuil@cisco.com>,
+        Arvind Yadav <arvind.yadav.cs@gmail.com>,
+        mjpeg-users@lists.sourceforge.net, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: zoran: move to dma-mapping interface
+Message-ID: <201804270105.mwD8eUNH%fengguang.wu@intel.com>
+References: <20180424204158.2764095-1-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180426165242.x5pvpyfirkmvvqjo@breakpoint.cc>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180424204158.2764095-1-arnd@arndb.de>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26/04/2018 18:52:43+0200, Sebastian Andrzej Siewior wrote:
-> On 2018-04-18 12:51:38 [+0200], Alexandre Belloni wrote:
-> > diff --git a/include/soc/at91/atmel_tcb.h b/include/soc/at91/atmel_tcb.h
-> > new file mode 100644
-> > index 000000000000..d263ea677225
-> > --- /dev/null
-> > +++ b/include/soc/at91/atmel_tcb.h
-> …
-> > +static inline struct clk *tcb_clk_get(struct device_node *node, int channel)
-> > +{
-> > +	struct clk *clk;
-> > +	char clk_name[] = "t0_clk";
-> > +
-> > +	clk_name[1] += channel;
-> > +	clk = of_clk_get_by_name(node->parent, clk_name);
-> > +	if (!IS_ERR(clk))
-> > +		return clk;
-> > +
-> > +	return of_clk_get_by_name(node->parent, "t0_clk");
-> > +}
-> > +
-> > +static inline int tcb_irq_get(struct device_node *node, int channel)
-> > +{
-> > +	int irq;
-> > +
-> > +	irq = of_irq_get(node->parent, channel);
-> > +	if (irq > 0)
-> > +		return irq;
-> > +
-> > +	return of_irq_get(node->parent, 0);
-> > +}
-> > +
-> > +static const u8 atmel_tc_divisors[5] = { 2, 8, 32, 128, 0, };
-> > +
-> > +struct atmel_tcb_info {
-> > +	int bits;
-> > +};
-> > +
-> > +static const struct atmel_tcb_info atmel_tcb_infos[] = {
-> > +	{ .bits = 16 },
-> > +	{ .bits = 32 },
-> > +};
-> > +
-> > +static const struct of_device_id atmel_tcb_dt_ids[] = {
-> > +	{
-> > +		.compatible = "atmel,at91rm9200-tcb",
-> > +		.data = &atmel_tcb_infos[0],
-> > +	}, {
-> > +		.compatible = "atmel,at91sam9x5-tcb",
-> > +		.data = &atmel_tcb_infos[1],
-> > +	}, {
-> > +		/* sentinel */
-> > +	}
-> > +};
-> 
-> After the series is applied, I see only one user of that file. The data
-> structures don't look like they belong here. Same goes for the static
-> inline of the code above.
-> 
+Hi Arnd,
 
-There is another user coming later (the pwm driver) but I didn't repost,
-I'll do so after this series is applied.
+I love your patch! Perhaps something to improve:
 
-> > +#endif /* __SOC_ATMEL_TCB_H */
-> 
-> Sebastian
+[auto build test WARNING on linuxtv-media/master]
+[also build test WARNING on v4.17-rc2 next-20180426]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
--- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+url:    https://github.com/0day-ci/linux/commits/Arnd-Bergmann/media-zoran-move-to-dma-mapping-interface/20180426-032120
+base:   git://linuxtv.org/media_tree.git master
+reproduce:
+        # apt-get install sparse
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
+
+
+sparse warnings: (new ones prefixed by >>)
+
+>> drivers/media/pci/zoran/zoran_driver.c:419:33: sparse: incorrect type in argument 2 (different base types) @@    expected unsigned long long [unsigned] [usertype] addr @@    got nsigned long long [unsigned] [usertype] addr @@
+   drivers/media/pci/zoran/zoran_driver.c:419:33:    expected unsigned long long [unsigned] [usertype] addr
+   drivers/media/pci/zoran/zoran_driver.c:419:33:    got restricted __le32 [assigned] [usertype] frag_tab
+
+vim +419 drivers/media/pci/zoran/zoran_driver.c
+
+   395	
+   396	/* free the MJPEG grab buffers */
+   397	static void jpg_fbuffer_free(struct zoran_fh *fh)
+   398	{
+   399		struct zoran *zr = fh->zr;
+   400		int i, j, off;
+   401		unsigned char *mem;
+   402		__le32 frag_tab;
+   403		struct zoran_buffer *buffer;
+   404	
+   405		dprintk(4, KERN_DEBUG "%s: %s\n", ZR_DEVNAME(zr), __func__);
+   406	
+   407		for (i = 0, buffer = &fh->buffers.buffer[0];
+   408		     i < fh->buffers.num_buffers; i++, buffer++) {
+   409			if (!buffer->jpg.frag_tab)
+   410				continue;
+   411	
+   412			if (fh->buffers.need_contiguous) {
+   413				frag_tab = buffer->jpg.frag_tab[0];
+   414	
+   415				if (frag_tab) {
+   416					mem = buffer->jpg.frag_virt_tab[0];
+   417					for (off = 0; off < fh->buffers.buffer_size; off += PAGE_SIZE)
+   418						ClearPageReserved(virt_to_page(mem + off));
+ > 419					dma_unmap_single(&zr->pci_dev->dev, frag_tab, PAGE_SIZE, DMA_FROM_DEVICE);
+   420					kfree(mem);
+   421					buffer->jpg.frag_tab[0] = 0;
+   422					buffer->jpg.frag_tab[1] = 0;
+   423				}
+   424			} else {
+   425				for (j = 0; j < fh->buffers.buffer_size / PAGE_SIZE; j++) {
+   426					frag_tab = buffer->jpg.frag_tab[2 * j];
+   427	
+   428					if (!frag_tab)
+   429						break;
+   430					ClearPageReserved(virt_to_page(buffer->jpg.frag_virt_tab[j]));
+   431					dma_unmap_single(&zr->pci_dev->dev, le32_to_cpu(frag_tab), PAGE_SIZE, DMA_FROM_DEVICE);
+   432					free_page((unsigned long)buffer->jpg.frag_virt_tab[j]);
+   433					buffer->jpg.frag_virt_tab[j] = NULL;
+   434					buffer->jpg.frag_tab[2 * j] = 0;
+   435					buffer->jpg.frag_tab[2 * j + 1] = 0;
+   436				}
+   437			}
+   438	
+   439			dma_unmap_single(&zr->pci_dev->dev, buffer->jpg.frag_tab_dma, PAGE_SIZE, DMA_TO_DEVICE);
+   440			free_page((unsigned long)buffer->jpg.frag_tab);
+   441			free_page((unsigned long)buffer->jpg.frag_virt_tab);
+   442			buffer->jpg.frag_virt_tab = NULL;
+   443			buffer->jpg.frag_tab = NULL;
+   444		}
+   445	
+   446		fh->buffers.allocated = 0;
+   447	}
+   448	
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
