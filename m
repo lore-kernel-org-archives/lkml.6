@@ -1,51 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755199AbeDZW6y (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 18:58:54 -0400
-Received: from mail-io0-f173.google.com ([209.85.223.173]:45009 "EHLO
-        mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753882AbeDZW6w (ORCPT
+        id S932268AbeDZW7h (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 18:59:37 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:37738 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757151AbeDZW73 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 18:58:52 -0400
-X-Google-Smtp-Source: AB8JxZo4bILslx9XWasfL2eKLtTvTlwoJEFwA07RKxTHJOKYTH5vj5pnUJyIlat/WuQFcjliqMZCm15SCtYXnYAaSuA=
-MIME-Version: 1.0
-In-Reply-To: <bc752fb8-8f2f-70bc-e786-221eb39c618b@opensource.cirrus.com>
-References: <20180313131904.13700-1-rf@opensource.cirrus.com>
- <20180313131904.13700-8-rf@opensource.cirrus.com> <CACRpkdZspUbmCk7OwA-rva6zd89TZXt45t5mFes0feuRyOUp9w@mail.gmail.com>
- <bc752fb8-8f2f-70bc-e786-221eb39c618b@opensource.cirrus.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 27 Apr 2018 00:58:51 +0200
-Message-ID: <CACRpkdYjkcjvNyxcLFezSMQ9f9ERNTCcaNv2PYqn8WLgayjJvg@mail.gmail.com>
-Subject: Re: [PATCH v9 7/9] pinctrl: madera: Add DT bindings for Cirrus Logic
- Madera codecs
-To: Richard Fitzgerald <rf@opensource.cirrus.com>
-Cc: Lee Jones <lee.jones@linaro.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, patches@opensource.cirrus.com,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 26 Apr 2018 18:59:29 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C67C760F6B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=clew@codeaurora.org
+From: Chris Lew <clew@codeaurora.org>
+To: bjorn.andersson@linaro.org, andy.gross@linaro.org,
+        david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: aneela@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        clew@codeaurora.org
+Subject: [PATCH v3 6/6] rpmsg: glink: Expose rpmsg name attr for glink
+Date: Thu, 26 Apr 2018 15:59:05 -0700
+Message-Id: <1524783545-21951-7-git-send-email-clew@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1524783545-21951-1-git-send-email-clew@codeaurora.org>
+References: <1524783545-21951-1-git-send-email-clew@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 17, 2018 at 10:53 AM, Richard Fitzgerald
-<rf@opensource.cirrus.com> wrote:
+Expose the name field as an attr so clients listening to uevents for
+rpmsg can identify the edge the events correspond to.
 
-> What is your opinion of the i.MX6 pinctrl failure after my bugfix patch
-> for the hogs?
+Signed-off-by: Chris Lew <clew@codeaurora.org>
+---
 
-Don't know yet. I will answer to that patch, when I get to it.
+Changes since v2:
+- Remove const on attribute struct
 
-> If you would want to revert my patch I would need to change this pinctrl
-> driver so it has its own child node as a workaround to the hog bug.
->
-> Or do you think it is more likely a bug in the i.MX6 pinctrl driver?
+Changes since v1:
+- Add const to attribute struct
+- Get name from glink channel
 
-No idea yet. I bet you folks have battled it out and know it better
-than me already.
+ drivers/rpmsg/qcom_glink_native.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+index 1418926f6110..c2983a53058f 100644
+--- a/drivers/rpmsg/qcom_glink_native.c
++++ b/drivers/rpmsg/qcom_glink_native.c
+@@ -1552,6 +1552,22 @@ static void qcom_glink_work(struct work_struct *work)
+ 	}
+ }
+ 
++static ssize_t rpmsg_name_show(struct device *dev,
++			       struct device_attribute *attr, char *buf)
++{
++	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
++	struct glink_channel *channel = to_glink_channel(rpdev->ept);
++
++	return snprintf(buf, RPMSG_NAME_SIZE, "%s\n", channel->glink->name);
++}
++static DEVICE_ATTR_RO(rpmsg_name);
++
++static struct attribute *qcom_glink_attrs[] = {
++	&dev_attr_rpmsg_name.attr,
++	NULL
++};
++ATTRIBUTE_GROUPS(qcom_glink);
++
+ static void qcom_glink_device_release(struct device *dev)
+ {
+ 	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
+@@ -1601,6 +1617,8 @@ struct qcom_glink *qcom_glink_native_probe(struct device *dev,
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	glink->dev = dev;
++	glink->dev->groups = qcom_glink_groups;
++
+ 	glink->tx_pipe = tx;
+ 	glink->rx_pipe = rx;
+ 
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
