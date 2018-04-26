@@ -1,104 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755830AbeDZLuj (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 07:50:39 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44878 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755778AbeDZLug (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 07:50:36 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mark Brown <broonie@kernel.org>, broonie@kernel.org,
-        linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        alsa-devel@alsa-project.org
-Subject: Applied "ASoC: msm8916-wcd-analog: use threaded context for mbhc events" to the asoc tree
-In-Reply-To: <20180418174637.24041-1-srinivas.kandagatla@linaro.org>
-Message-Id: <E1fBfQ1-0007MB-76@debutante>
-Date: Thu, 26 Apr 2018 12:50:33 +0100
+        id S1755900AbeDZLvu (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 07:51:50 -0400
+Received: from mga11.intel.com ([192.55.52.93]:12629 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755346AbeDZLvt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 07:51:49 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,330,1520924400";
+   d="scan'208";a="223575608"
+Message-ID: <2c255e56c8e8c64cd31d30dba975c7c2ff580b89.camel@intel.com>
+Subject: Re: linux-next: manual merge of the wireless-drivers-next tree with
+ the wireless-drivers tree
+From: Luciano Coelho <luciano.coelho@intel.com>
+To: Kalle Valo <kvalo@codeaurora.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Wireless <linux-wireless@vger.kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Haim Dreyfuss <haim.dreyfuss@intel.com>,
+        Shaul Triebitz <shaul.triebitz@intel.com>
+Date: Thu, 26 Apr 2018 14:51:45 +0300
+In-Reply-To: <87a7tq6yvu.fsf@kamboji.qca.qualcomm.com>
+References: <20180426110917.446204af@canb.auug.org.au>
+         <6f5ba028f120d092bd5c96557144750518faf9c1.camel@intel.com>
+         <87a7tq6yvu.fsf@kamboji.qca.qualcomm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Thu, 2018-04-26 at 13:33 +0300, Kalle Valo wrote:
+> Luciano Coelho <luciano.coelho@intel.com> writes:
+> 
+> > On Thu, 2018-04-26 at 11:09 +1000, Stephen Rothwell wrote:
+> > > Hi all,
+> > > 
+> > > Today's linux-next merge of the wireless-drivers-next tree got a
+> > > conflict in:
+> > > 
+> > >   drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c
+> > > 
+> > > between commit:
+> > > 
+> > >   77e30e10ee28 ("iwlwifi: mvm: query regdb for wmm rule if
+> > > needed")
+> > > 
+> > > from the wireless-drivers tree and commits:
+> > > 
+> > >   9c4f7d512740 ("iwlwifi: move all NVM parsing code to the common
+> > > files")
+> > >   4c625c564ba2 ("iwlwifi: get rid of fw/nvm.c")
+> > > 
+> > > from the wireless-drivers-next tree.
+> > > 
+> > > I fixed it up (see below) and can carry the fix as necessary.
+> > > This
+> > > is now fixed as far as linux-next is concerned, but any non
+> > > trivial
+> > > conflicts should be mentioned to your upstream maintainer when
+> > > your
+> > > tree
+> > > is submitted for merging.  You may also want to consider
+> > > cooperating
+> > > with the maintainer of the conflicting tree to minimise any
+> > > particularly
+> > > complex conflicts.
+> > 
+> > Thanks for resolving this, Stephen!
+> > 
+> > I checked your resolution and it's spot on.
+> 
+> I now merged w-d to w-d-next to fix this, please check:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/kvalo/wireless-driver
+> s-next.git/commit/?id=0ddcf3e76ae4d02918e609342a1020b50258fadd
+> 
+> I was not sure what to do with these includes so I left them in:
+> 
+> #include "fw/api/commands.h"
+> #include "fw/api/cmdhdr.h"
+> #include "fw/img.h"
 
-   ASoC: msm8916-wcd-analog: use threaded context for mbhc events
+That's fine, these are all in our internal tree too.
 
-has been applied to the asoc tree at
+Thanks!
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From a8419a0cd98ddf628a9e38a92110af7cc650dde7 Mon Sep 17 00:00:00 2001
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Date: Wed, 18 Apr 2018 18:46:37 +0100
-Subject: [PATCH] ASoC: msm8916-wcd-analog: use threaded context for mbhc
- events
-
-As snd_soc_jack_report() can sleep, move handling of mbhc events to a
-thread context rather than in interrupt context.
-
-Fixes: de66b3455023 ('ASoC: codecs: msm8916-wcd-analog: add MBHC support')
-Reported-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/msm8916-wcd-analog.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/sound/soc/codecs/msm8916-wcd-analog.c b/sound/soc/codecs/msm8916-wcd-analog.c
-index 12ee83d52405..b7cf7cce95fe 100644
---- a/sound/soc/codecs/msm8916-wcd-analog.c
-+++ b/sound/soc/codecs/msm8916-wcd-analog.c
-@@ -1187,7 +1187,8 @@ static int pm8916_wcd_analog_spmi_probe(struct platform_device *pdev)
- 		return irq;
- 	}
- 
--	ret = devm_request_irq(dev, irq, pm8916_mbhc_switch_irq_handler,
-+	ret = devm_request_threaded_irq(dev, irq, NULL,
-+			       pm8916_mbhc_switch_irq_handler,
- 			       IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING |
- 			       IRQF_ONESHOT,
- 			       "mbhc switch irq", priv);
-@@ -1201,7 +1202,8 @@ static int pm8916_wcd_analog_spmi_probe(struct platform_device *pdev)
- 			return irq;
- 		}
- 
--		ret = devm_request_irq(dev, irq, mbhc_btn_press_irq_handler,
-+		ret = devm_request_threaded_irq(dev, irq, NULL,
-+				       mbhc_btn_press_irq_handler,
- 				       IRQF_TRIGGER_RISING |
- 				       IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
- 				       "mbhc btn press irq", priv);
-@@ -1214,7 +1216,8 @@ static int pm8916_wcd_analog_spmi_probe(struct platform_device *pdev)
- 			return irq;
- 		}
- 
--		ret = devm_request_irq(dev, irq, mbhc_btn_release_irq_handler,
-+		ret = devm_request_threaded_irq(dev, irq, NULL,
-+				       mbhc_btn_release_irq_handler,
- 				       IRQF_TRIGGER_RISING |
- 				       IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
- 				       "mbhc btn release irq", priv);
--- 
-2.17.0
+--
+Cheers,
+Luca.
