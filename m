@@ -1,170 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754428AbeDZJmT (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 05:42:19 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42978 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753403AbeDZJmO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 05:42:14 -0400
-Date: Thu, 26 Apr 2018 11:42:11 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, akpm@linux-foundation.org,
-        linux-mm@kvack.org, Peter Zijlstra <peterz@infradead.org>,
-        Jan Kara <jack@suse.cz>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [PATCH] printk: Ratelimit messages printed by console drivers
-Message-ID: <20180426094211.okftwdzgfn72rik3@pathway.suse.cz>
-References: <20180420091224.cotxcfycmtt2hm4m@pathway.suse.cz>
- <20180420080428.622a8e7f@gandalf.local.home>
- <20180420140157.2nx5nkojj7l2y7if@pathway.suse.cz>
- <20180420101751.6c1c70e8@gandalf.local.home>
- <20180420145720.hb7bbyd5xbm5je32@pathway.suse.cz>
- <20180420111307.44008fc7@gandalf.local.home>
- <20180423103232.k23yulv2e7fah42r@pathway.suse.cz>
- <20180423073603.6b3294ba@gandalf.local.home>
- <20180423124502.423fb57thvbf3zet@pathway.suse.cz>
- <20180425053146.GA25288@jagdpanzerIV>
+        id S1754592AbeDZJo6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 05:44:58 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:45352 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753629AbeDZJo4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 05:44:56 -0400
+Date: Thu, 26 Apr 2018 17:44:45 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: "Dey, Megha" <megha.dey@intel.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "davem@davemloft.net" <davem@davemloft.net>
+Subject: Re: [PATCH V8 1/5] crypto: Multi-buffer encryption infrastructure
+ support
+Message-ID: <20180426094445.4jiwondmtbenepo2@gondor.apana.org.au>
+References: <1515542948-24041-1-git-send-email-megha.dey@linux.intel.com>
+ <1515542948-24041-2-git-send-email-megha.dey@linux.intel.com>
+ <20180118113905.GA19904@gondor.apana.org.au>
+ <1516322661.2526.3.camel@megha-Z97X-UD7-TH>
+ <20180316145351.GA6231@gondor.apana.org.au>
+ <C440BA31B54DCD4AAC682D2365C8FEE738C13267@ORSMSX111.amr.corp.intel.com>
+ <20180418110115.v2w3o5yfv4u3gc4r@gondor.apana.org.au>
+ <C440BA31B54DCD4AAC682D2365C8FEE738C13DDE@ORSMSX111.amr.corp.intel.com>
+ <20180419032525.6csodbz6lrksyudd@gondor.apana.org.au>
+ <C440BA31B54DCD4AAC682D2365C8FEE738C270FC@ORSMSX111.amr.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180425053146.GA25288@jagdpanzerIV>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <C440BA31B54DCD4AAC682D2365C8FEE738C270FC@ORSMSX111.amr.corp.intel.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 2018-04-25 14:31:46, Sergey Senozhatsky wrote:
-> On (04/23/18 14:45), Petr Mladek wrote:
-> [..]
-> > I am not sure how slow are the slowest consoles. If I take that
-> > everything should be faster than 1200 bauds. Then 10 minutes
-> > should be enough for 1000 lines and 80 characters per-line:
+On Wed, Apr 25, 2018 at 01:14:26AM +0000, Dey, Megha wrote:
 > 
-> Well, the problem with the numbers is that they are too... simple...
-> let me put it this way.
+> Is there any existing implementation of async crypto algorithm that uses the above approach? The ones I could find are either sync, have an outer and inner algorithm or use cryptd.
+> 
+> I tried removing the mcryptd layer and the outer algorithm and some plumbing to pass the correct structures, but see crashes.(obviously some errors in the plumbing)
 
-Sometimes a simple solution is the acceptable one.
+OK, you can't just remove it because the inner algorithm requires
+kernel_fpu_begin/kernel_fpu_end.  So we do need two layers but I
+don't think we need cryptd or mcryptd.
 
-For example, I created a complicated solution for lock-less printk
-in NMI that reduced loosing messages to minimum. It ended in lkml
-archives, covered by not very nice comments. Instead we ended with
-quite limited per-CPU buffers.
+The existing simd wrapper should work just fine on the inner
+algorithm, provided that we add hash support to it.
 
-Believe me, I could perfectly understand the desire to create perfect
-defensive solutions that would never break anything. It is not easy
-to decide when the best-effort solutions are worth the risk.
+> I am not sure if we remove mcryptd, how would we queue work, flush partially completed jobs or call completions (currently done by mcryptd) if we simply call the inner algorithm.
 
+I don't think mcryptd is providing any real facility to the flushing
+apart from a helper.  That same helper can live anywhere.
 
-> What if I don't have a slow serial console? Or what if I have NMI
-> watchdog set to 40 seconds? Or what if I don't have NMIs at all?
-> Why am I all of a sudden limited by "1200 bauds"?
-
-Because it keeps the solution simple and I believe that it might
-be enough.
-
-
-> We limit the number of times vprintk_func() was called, which is != the
-> number of added lines. Because vprintk_func() is also called for
-> pr_cont().
-
-Good point. Well, it is rather trivial to count characters instead
-of a number of calls.
-
-
-> Another problem is that nothing tells us that we *actually* have an
-> infinite loop. This can be a one time thing.
-
-  + one time event => should fit into limit => nothing lost
-
-  + repeated thing => repeated message does not bring new information
-     => limiting is acceptable and even useful.
-
-Honestly, I do not believe that console drivers are like Scheherazade.
-They are not able to make up long interesting stories. Let's say that
-lockdep splat has more than 100 lines but it can happen only once.
-Let's say that WARNs have about 40 lines. I somehow doubt that we
-could ever see 10 different WARN calls from one con->write() call.
-
-1200 baud slow console is able to handle 90kB of text within 10
-minutes:
-
-   (1200 / 8) * 60 * 10 = 90000
-
-It is more than 1000 lines full of 80 characters:
-
-   (1200 / 8) * 60 * 10 / 80 = 1125
-
-IMHO, it is more than enough to get useful report.
-
-
-> But we first need a real reason. Right now it looks to me like
-> we have "a solution" to a problem which we have never witnessed.
-
-I am trying to find a "simple" and generic solution for the problem
-reported by Tejun:
-
-<paste from 20180110170223.GF3668920@devbig577.frc2.facebook.com>
-The particular case that we've been seeing regularly in the fleet was
-the following scenario
-
-1. Console is IPMI emulated serial console.  Super slow.  Also
-   netconsole is in use.
-2. System runs out of memory, OOM triggers.
-3. OOM handler is printing out OOM debug info.
-4. While trying to emit the messages for netconsole, the network stack
-   / driver tries to allocate memory and then fail, which in turn
-   triggers allocation failure or other warning messages.  printk was
-   already flushing, so the messages are queued on the ring.
-5. OOM handler keeps flushing but 4 repeats and the queue is never
-   shrinking.  Because OOM handler is trapped in printk flushing, it
-   never manages to free memory and no one else can enter OOM path
-   either, so the system is trapped in this state.
-</paste>
-
-It was a bit specific because offloading helped to unblock OOM path
-and calm down the errors.
-
-But let me use your words:
-
-<paste from 20180425053146.GA25288@jagdpanzerIV>
-call_console_drivers() is super complex, unbelievable complex. In fact,
-it's so complex that we never know where we will end up, because it can
-pass the control to almost every core kernel mechanism or subsystem:
-kobjects, spin locks, tty, sdp, uart, vt, fbdev, dri, kms, timers,
-timekeeping, networking, mm, scheduler, you name it. Thousands and
-thousands lines of code, which are not executed exclusively by the
-console drivers.
-</paste>
-
-For me it is hard to believe that all these possible errors will be
-cured just by offloading. Not to say that offloading is not trivial
-and there is some resistance against it.
-
-Finally, the limiting does not only help to unblock the victim that
-called console_unlock(). I also helps printk() subsystem to survive
-a potential infinite DOS attack.
-
-
-
-Well, I think about alternative solution inspired by:
-
-<paste from 20180416042553.GA555@jagdpanzerIV>
-I'd really prefer to rate limit the function which flushes per-CPU
-printk_safe buffers; not the function that appends new messages to
-the per-CPU printk_safe buffers.
-</paste>
-
-The is one unused flag in struct printk_log flags:5. We could use
-it to mark messages from console drivers context. Then we could store
-all messages and ratelimit only flushing these messages to the
-console.
-
-I still think that limiting the write into the log buffer is better
-approach because it would prevent loosing other useful messages.
-But this alternative approach is definitely more conservative.
-
-Best Regards,
-Petr
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
