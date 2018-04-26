@@ -1,39 +1,34 @@
-Return-Path: <andreyknvl@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1524077603; cv=none;
+Return-Path: <catalin.marinas@arm.com>
+X-Google-Smtp-Source: AB8JxZplXu/Awjminna7Rc+Xi9tPigkgqzH4idmu7sE05VKZGrRryUtpyCKddVCLt+x3l1m0GBa9
+ARC-Seal: i=1; a=rsa-sha256; t=1524757653; cv=none;
         d=google.com; s=arc-20160816;
-        b=njaZv0Ct50xnkoMRvir8TxmEamUmDuyRUUPqd3fPBi4LFNrMUq6aTsVMmgm2WZL/SE
-         tff2f/nMdmm8xnaMeYqIPmVhfbiQuazLH0LWl/UgaflshXM405yFAhDsFnpXgx9D+U0v
-         A0PiYbk44SDBVvRl9B7av9R5F6NH4w4ore7GNQGll0zWrt9e2AMcNQdJxmOIovAs+ko6
-         UDIFm6i2LJGVpYp3ba2Yea+sconD6M9hyJXfdToajEYIwmuWR7tkl4O8hGmhe7MbWjup
-         c/ZvaLHV8VRkezZPWYgKBnypaFoVoerG1fEMMSaPNV5CVBMHU5GkIpFcdYu+ik4yHxzU
-         JMTA==
+        b=EpPSRPcJstc4CUrT65bMnUwubUHIdbZrvZzydWOj7ClaQOuaHCFM9aDphbVMgA7Qjz
+         PoFWqqbn08tIdf0yg96+qTiak/odk4poICEnmezYw+iytKYK1zjl9NsLZihq4Q7Yd0Fy
+         dWCX3XnC1vd87XidCpo71yptSEr2UcafXMKJRg2ujGtyCufASDV5Ik8UyWsTG0EFsdnu
+         qEYgggI06aE2Fi4ykAnn8iBpClOMdinpSpjBExqVF1nhxhxJ5CqdUIJP/DeGKLNsEuSV
+         mccgBp/OMnfXv+zI/xVBQ4/Ihx4Lo/NCtCBcyPn9sak6L7dWhMpRE2Zl7ih3rr+dnt2h
+         Oi7w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:references:in-reply-to:message-id:date
-         :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=QMF8XDyX8uZ/Zov9SXCN5rgufNs9uhqTRQTKwFRg5lw=;
-        b=xJQgqk2VDHEXXEmD/QVpxb1PYSPncSDb22eaDH3437I6tWW0sDJyvaLvhWprN9WRah
-         dp2/NIH71XkcIVG0TfxWSocG8VJNoCt/NEJRltFidDsddrsjcM6MOdaqb7yKHpH+I7WB
-         ja1a+/bLfuyvGEMoxxGL6tb7oL1wU8FjkybMe1kYwzhVImqLA/WnPe8IGO7f20mvouXB
-         oHTj9NuwQeGJZvDU645j8twxiPhwnmmZ+cqPL1fdeCM9KFHK4TsiHuEninXHNMgHA+Ir
-         aKPGgZLbtCnmi8HIoeFsH690hp5ueyaXwqUwys/zFkzjPHKXNA2QOhYbiHXm79cRpXb+
-         svTg==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=OG9B5dNycAAY30vBTOJqUq+f3w3nvMf2/Po6sjvVRCU=;
+        b=bLkmH29jR/9LqxkojvyHerR5IeexVayfAOi0D3BWwib3bFWYsalax7/IiCyonbzJeC
+         MnpyVN17E4IT0LnkPkPC5ZZgiljSoI4jNkAG+GvN+Z3MS31jrGFbTdOBPR4uEms7DXF+
+         fDkMno+mqvUbM5UoNZ+Fa2ozcXhOcswlIod84Ja5Fu8m9U26+sCpD3ABjS0MvgHbn+9C
+         czgqUUBz/NOeyhVQxGj/j9XcPnncfyzoAtg4nvRgxjX+GhleD00de/eWcqc0gOjulO39
+         jlYvbL3m5rVWLUguX/P7rzzalMoMQCn5Pahghl1QSp81t5iRTKY27cRA4IFMwOR+vfMA
+         XIHQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=qegfrnN0;
-       spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
+       spf=pass (google.com: domain of catalin.marinas@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=catalin.marinas@arm.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=qegfrnN0;
-       spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-X-Google-Smtp-Source: AIpwx492GvuhPEjMG2W8I64jHz+nZayfp/4zSvo+ArBaT/Wb6JPZpMMwmnLtMw3uOBQMOx8/SrQWJQ==
-From: Andrey Konovalov <andreyknvl@google.com>
-To: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Jonathan Corbet <corbet@lwn.net>,
+       spf=pass (google.com: domain of catalin.marinas@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=catalin.marinas@arm.com
+Date: Thu, 26 Apr 2018 16:47:25 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Andrey Konovalov <andreyknvl@google.com>
+Cc: Will Deacon <will.deacon@arm.com>, Jonathan Corbet <corbet@lwn.net>,
 	Mark Rutland <mark.rutland@arm.com>,
 	Robin Murphy <robin.murphy@arm.com>,
 	Al Viro <viro@zeniv.linux.org.uk>,
-	Andrey Konovalov <andreyknvl@google.com>,
 	James Morse <james.morse@arm.com>,
 	Kees Cook <keescook@chromium.org>,
 	Bart Van Assche <bart.vanassche@wdc.com>,
@@ -47,72 +42,73 @@ To: Catalin Marinas <catalin.marinas@arm.com>,
 	Dan Williams <dan.j.williams@intel.com>,
 	"Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
 	Zi Yan <zi.yan@cs.rutgers.edu>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Cc: Dmitry Vyukov <dvyukov@google.com>,
-	Kostya Serebryany <kcc@google.com>,
-	Evgeniy Stepanov <eugenis@google.com>,
-	Lee Smith <Lee.Smith@arm.com>,
-	Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
 	Jacob Bramley <Jacob.Bramley@arm.com>,
-	Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>
-Subject: [PATCH 3/6] arm64: untag user addresses in copy_from_user and others
-Date: Wed, 18 Apr 2018 20:53:12 +0200
-Message-Id: <949c343a4b02b41b80f324c2b7cd56b75e6a04f3.1524077494.git.andreyknvl@google.com>
-X-Mailer: git-send-email 2.17.0.484.g0c8726318c-goog
-In-Reply-To: <cover.1524077494.git.andreyknvl@google.com>
+	Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+	Lee Smith <Lee.Smith@arm.com>, Kostya Serebryany <kcc@google.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+	Evgeniy Stepanov <eugenis@google.com>
+Subject: Re: [PATCH 3/6] arm64: untag user addresses in copy_from_user and
+ others
+Message-ID: <20180426154725.74a33tnevvbtqx63@armageddon.cambridge.arm.com>
 References: <cover.1524077494.git.andreyknvl@google.com>
-In-Reply-To: <cover.1524077494.git.andreyknvl@google.com>
-References: <cover.1524077494.git.andreyknvl@google.com>
+ <949c343a4b02b41b80f324c2b7cd56b75e6a04f3.1524077494.git.andreyknvl@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <949c343a4b02b41b80f324c2b7cd56b75e6a04f3.1524077494.git.andreyknvl@google.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1598111197844196620?=
-X-GMAIL-MSGID: =?utf-8?q?1598111197844196620?=
+X-GMAIL-MSGID: =?utf-8?q?1598824281513969643?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-copy_from_user (and a few other similar functions) are used to copy data
-from user memory into the kernel memory or vice versa. Since a user can
-provided a tagged pointer to one of the syscalls that use copy_from_user,
-we need to correctly handle such pointers.
+On Wed, Apr 18, 2018 at 08:53:12PM +0200, Andrey Konovalov wrote:
+> @@ -238,12 +239,15 @@ static inline void uaccess_enable_not_uao(void)
+>  /*
+>   * Sanitise a uaccess pointer such that it becomes NULL if above the
+>   * current addr_limit.
+> + * Also untag user pointers that have the top byte tag set.
+>   */
+>  #define uaccess_mask_ptr(ptr) (__typeof__(ptr))__uaccess_mask_ptr(ptr)
+>  static inline void __user *__uaccess_mask_ptr(const void __user *ptr)
+>  {
+>  	void __user *safe_ptr;
+>  
+> +	ptr = untagged_addr(ptr);
+> +
+>  	asm volatile(
+>  	"	bics	xzr, %1, %2\n"
+>  	"	csel	%0, %1, xzr, eq\n"
 
-Do this by untagging user pointers in access_ok and in __uaccess_mask_ptr.
+First of all, passing a tagged user pointer throughout the kernel is
+safe with uaccess routines but not suitable for find_vma() etc.
 
-Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
----
- arch/arm64/include/asm/uaccess.h | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+With this change, we may have an inconsistent behaviour on the tag
+masking, depending on whether the entry code uses __uaccess_mask_ptr()
+or not. We could preserve the tag with something like:
 
 diff --git a/arch/arm64/include/asm/uaccess.h b/arch/arm64/include/asm/uaccess.h
-index 2d6451cbaa86..24a221678fe3 100644
+index e66b0fca99c2..ed15bfcbd797 100644
 --- a/arch/arm64/include/asm/uaccess.h
 +++ b/arch/arm64/include/asm/uaccess.h
-@@ -105,7 +105,8 @@ static inline unsigned long __range_ok(const void __user *addr, unsigned long si
- #define untagged_addr(addr)		\
- 	((__typeof__(addr))sign_extend64((__u64)(addr), 55))
- 
--#define access_ok(type, addr, size)	__range_ok(addr, size)
-+#define access_ok(type, addr, size)	\
-+	__range_ok(untagged_addr(addr), size)
- #define user_addr_max			get_fs
- 
- #define _ASM_EXTABLE(from, to)						\
-@@ -238,12 +239,15 @@ static inline void uaccess_enable_not_uao(void)
- /*
-  * Sanitise a uaccess pointer such that it becomes NULL if above the
-  * current addr_limit.
-+ * Also untag user pointers that have the top byte tag set.
-  */
- #define uaccess_mask_ptr(ptr) (__typeof__(ptr))__uaccess_mask_ptr(ptr)
- static inline void __user *__uaccess_mask_ptr(const void __user *ptr)
- {
+@@ -244,10 +244,11 @@ static inline void __user *__uaccess_mask_ptr(const void __user *ptr)
  	void __user *safe_ptr;
  
-+	ptr = untagged_addr(ptr);
-+
  	asm volatile(
- 	"	bics	xzr, %1, %2\n"
+-	"	bics	xzr, %1, %2\n"
++	"	bics	xzr, %3, %2\n"
  	"	csel	%0, %1, xzr, eq\n"
+ 	: "=&r" (safe_ptr)
+-	: "r" (ptr), "r" (current_thread_info()->addr_limit)
++	: "r" (ptr), "r" (current_thread_info()->addr_limit),
++	  "r" (untagged_addr(ptr))
+ 	: "cc");
+ 
+ 	csdb();
+
 -- 
-2.17.0.484.g0c8726318c-goog
+Catalin
