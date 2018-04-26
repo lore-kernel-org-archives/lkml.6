@@ -1,68 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755856AbeDZMFa (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 08:05:30 -0400
-Received: from mga17.intel.com ([192.55.52.151]:44812 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754428AbeDZMF3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 08:05:29 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,330,1520924400";
-   d="scan'208";a="40743281"
-Date: Thu, 26 Apr 2018 20:04:29 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org
-Subject: net/core/dev.c:1588:2-3: Unneeded semicolon
-Message-ID: <201804262021.shCCSL92%fengguang.wu@intel.com>
+        id S1755995AbeDZMHN (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 08:07:13 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:43103 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755405AbeDZMHB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 08:07:01 -0400
+X-Google-Smtp-Source: AIpwx4+Me+FscpTCF6Pnv0vjHpaLG4LKeEPcSO6W8Tl9qIZ2h6x8AtuANCsYBiDCriNVZwKQTYYfaw==
+Date: Thu, 26 Apr 2018 14:06:57 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Vaishali Thakkar <vthakkar1994@gmail.com>
+Cc: alexander.deucher@amd.com, christian.koenig@amd.com,
+        David1.Zhou@amd.com, airlied@linux.ie, brodkin@synopsys.com,
+        linux@armlinux.org.uk, boris.brezillon@bootlin.com,
+        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+        gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
+        seanpaul@chromium.org, l.stach@pengutronix.de,
+        christian.gmeiner@gmail.com, inki.dae@samsung.com,
+        jy0922.shim@samsung.com, sw0312.kim@samsung.com,
+        kyungmin.park@samsung.com, kgene@kernel.org, krzk@kernel.org,
+        stefan@agner.ch, alison.wang@freescale.com,
+        z.liuxinliang@hisilicon.com, zourongrong@gmail.com,
+        kong.kongxinwei@hisilicon.com, puck.chen@hisilicon.com,
+        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
+        rodrigo.vivi@intel.com, p.zabel@pengutronix.de, ck.hu@mediatek.com,
+        matthias.bgg@gmail.com, robdclark@gmail.com, marex@denx.de,
+        bskeggs@redhat.com, tomi.valkeinen@ti.com, eric@anholt.net,
+        airlied@redhat.com, kraxel@redhat.com,
+        laurent.pinchart@ideasonboard.com, hjc@rock-chips.com, heiko@sntech.de,
+        benjamin.gaignard@linaro.org, vincent.abriou@st.com,
+        yannick.fertre@st.com, philippe.cornu@st.com,
+        maxime.ripard@bootlin.com, wens@csie.org, jonathanh@nvidia.com,
+        noralf@tronnes.org, linus.walleij@linaro.org, shawnguo@kernel.org,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        etnaviv@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        nouveau@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] drm/core: Remove drm_dev_unref() and it's uses
+Message-ID: <20180426120657.GB11985@ulmo>
+References: <20180426102819.6985-1-vthakkar1994@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="2B/JsCI69OhZNC5r"
 Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+In-Reply-To: <20180426102819.6985-1-vthakkar1994@gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   69bfd470f4623d2d57ad62cb33791cded0c662f4
-commit: ede2762d93ff16e0974f7446516b46b1022db213 net: Make NETDEV_XXX commands enum { }
-date:   4 weeks ago
 
+--2B/JsCI69OhZNC5r
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-coccinelle warnings: (new ones prefixed by >>)
+On Thu, Apr 26, 2018 at 03:58:19PM +0530, Vaishali Thakkar wrote:
+> It's been a while since we introduced drm_dev{get/put} functions
+> to replace reference/unreference in drm subsystem for the
+> consistency purpose. So, with this patch, let's just replace
+> all current use cases of drm_dev_unref() with drm_dev_put and remove
+> the function itself.
+>=20
+> Coccinelle was used for mass-patching.
+>=20
+> Signed-off-by: Vaishali Thakkar <vthakkar1994@gmail.com>
 
->> net/core/dev.c:1588:2-3: Unneeded semicolon
+Yes, please.
 
-vim +1588 net/core/dev.c
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-  1573	
-  1574	const char *netdev_cmd_to_name(enum netdev_cmd cmd)
-  1575	{
-  1576	#define N(val) 						\
-  1577		case NETDEV_##val:				\
-  1578			return "NETDEV_" __stringify(val);
-  1579		switch (cmd) {
-  1580		N(UP) N(DOWN) N(REBOOT) N(CHANGE) N(REGISTER) N(UNREGISTER)
-  1581		N(CHANGEMTU) N(CHANGEADDR) N(GOING_DOWN) N(CHANGENAME) N(FEAT_CHANGE)
-  1582		N(BONDING_FAILOVER) N(PRE_UP) N(PRE_TYPE_CHANGE) N(POST_TYPE_CHANGE)
-  1583		N(POST_INIT) N(RELEASE) N(NOTIFY_PEERS) N(JOIN) N(CHANGEUPPER)
-  1584		N(RESEND_IGMP) N(PRECHANGEMTU) N(CHANGEINFODATA) N(BONDING_INFO)
-  1585		N(PRECHANGEUPPER) N(CHANGELOWERSTATE) N(UDP_TUNNEL_PUSH_INFO)
-  1586		N(UDP_TUNNEL_DROP_INFO) N(CHANGE_TX_QUEUE_LEN)
-  1587		N(UNREGISTER_FINAL)
-> 1588		};
-  1589	#undef N
-  1590		return "UNKNOWN_NETDEV_EVENT";
-  1591	}
-  1592	EXPORT_SYMBOL_GPL(netdev_cmd_to_name);
-  1593	
+--2B/JsCI69OhZNC5r
+Content-Type: application/pgp-signature; name="signature.asc"
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrhwOAACgkQ3SOs138+
+s6EGqg/+JmUt+aqBk15/OXUKzwedusn2nurTmzPRqGoZEK54C7+31kYWTZJrfyn8
+0YB/LnpBFLPsv0n2h5NAxTqdrk3XwnZnsh74EFMWWLT0xj05ieLMg/TfbQmwM8p/
+keZqR/h1C6MpS5KXblD2tM7Gx7Nsp35RdhchLobvvXR2yUDxZO4afSKCehyeVnuv
+57JIN5zMp+bQkuBMwjIEcCIqOxjQv5ISLzifNFdmHWLIJ3RO6W17MyrFYJzzQEqe
+x2PLjnaaSashIqtezCM8y3K04QvclybTHT9uQ1SB7YmEj+R4U/ywLLWkDr346hNL
+uVsx2P4Rgnj9y0hqaf5f37Z0peThUWU0vcNRcHCfNPrzJhZa1EQDXkeLItACiSNO
++qJFncLsqNYuV/Pq5gcPLaQe3C88Uh//dL3HKN3b/3OfmXmQbVVH7XKRWng2U0Fm
+oTxpOG1l/GSEwkr/gjpuebN2VkxmITYLHjKc2QYZtD2j49gB0CPEsK/pPC5vmdso
+/OmBBSlkvG6wqmCwW7FfXD+m+rtV5s3pFTL99/37lKE6jLqteXbZB1eXWjCktDSG
+SA8grVw8+LiTmKyNAhg+B85bgGm7TVuym+DqkzUaMjkdQlISjMGCX6jMHtjila0+
+skm7Hqo/qwKR+I3JOa0TMtFKmKero2xpRcSk8EFI2fnUy1UBwoo=
+=nKx9
+-----END PGP SIGNATURE-----
+
+--2B/JsCI69OhZNC5r--
