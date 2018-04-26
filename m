@@ -1,89 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753498AbeDZG1a (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 02:27:30 -0400
-Received: from mga01.intel.com ([192.55.52.88]:47854 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753228AbeDZG1X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 02:27:23 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,329,1520924400";
-   d="scan'208";a="37149905"
-Date: Thu, 26 Apr 2018 14:26:35 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org
-Subject: Kconfig:12: can't open file "arch/tile/Kconfig"
-Message-ID: <201804261418.I7Eav1aZ%fengguang.wu@intel.com>
+        id S1753578AbeDZG2I (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 02:28:08 -0400
+Received: from mail-io0-f174.google.com ([209.85.223.174]:45273 "EHLO
+        mail-io0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751508AbeDZG2F (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 02:28:05 -0400
+X-Google-Smtp-Source: AB8JxZpsk5kZm/KDQjcLVvwar04LQ0QUcjUFZjxKjKh55Mtpieku6aYLW3lcXPiSMihRt1d+q1rkqhBHF4e5Nig4bVA=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+In-Reply-To: <1524664417.18209.16.camel@synopsys.com>
+References: <20180417121130.25281-1-Eugeniy.Paltsev@synopsys.com>
+ <CAPDyKFqxZLtx_=0UU9NgBnW0Vmw=456q2FFbMBK4LKEaF-ua7A@mail.gmail.com>
+ <1524239609.10138.47.camel@synopsys.com> <CAPDyKFpY7JsQukY=E2PRg=iVfmis4i1kvST+b2wtshNc5Jn+jw@mail.gmail.com>
+ <1524664417.18209.16.camel@synopsys.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 26 Apr 2018 08:28:04 +0200
+Message-ID: <CAPDyKFr4WXgFEDLGztRoSrAFMrHC7ASJxaxCTKMeGN8i-Ns86w@mail.gmail.com>
+Subject: Re: [RFC 0/2] dw_mmc: add multislot support
+To: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Cc: "jh80.chung@samsung.com" <jh80.chung@samsung.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Alexey.Brodkin@synopsys.com" <Alexey.Brodkin@synopsys.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "krzk@kernel.org" <krzk@kernel.org>,
+        "linux-snps-arc@lists.infradead.org"
+        <linux-snps-arc@lists.infradead.org>,
+        "kgene@kernel.org" <kgene@kernel.org>,
+        "shawn.lin@rock-chips.com" <shawn.lin@rock-chips.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-samsung-soc@vger.kernel.org"
+        <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   69bfd470f4623d2d57ad62cb33791cded0c662f4
-commit: bb9d812643d8a121df7d614a2b9c60193a92deb0 arch: remove tile port
-date:   6 weeks ago
-config: tile-allmodconfig
-compiler: tilegx-linux-gcc (GCC) 7.2.0
-reproduce:
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        git checkout bb9d812643d8a121df7d614a2b9c60193a92deb0
-        make.cross ARCH=tile  allmodconfig
-        make.cross ARCH=tile 
+[...]
 
-All errors (new ones prefixed by >>):
+> A bit remark for better understanding:
+>
+> All card settings change are serialized too. These settings are applied
+> after slot switch before execution of new request for this slot.
+>
+> So situations like calling any host_0 ops while another host (host_1) is active
+> are handled by current code.
+>
+> This is example of simultaneous ops calls for both slots:
+>
+> host (slot) 0    | host (slot) 1
+> -----------------------------------
+> h0->set_ios()    |    h1->set_ios()
+> h0->request()    |    h1->request()
+> h0->set_ios()    |    h1->set_ios()
+> h0->request()    |    h1->request()
+> h0->request()    |
+> h0->request()    |
+> h0->request()    |
+>
+> How it will be serialized in the mmc driver:
+>
+> h0->set_ios()   // h0 settings save
+> h1->set_ios()   // h1 settings save
+> h0->request()   // apply settings for h0 and do request
 
-   Makefile:497: arch/tile/Makefile: No such file or directory
-   make[1]: *** No rule to make target 'arch/tile/Makefile'.
-   make[1]: Failed to remake makefile 'arch/tile/Makefile'.
->> Kconfig:12: can't open file "arch/tile/Kconfig"
-   make[2]: *** [allmodconfig] Error 1
-   make[1]: *** [allmodconfig] Error 2
-   make: *** [sub-make] Error 2
---
-   Makefile:497: arch/tile/Makefile: No such file or directory
-   make[1]: *** No rule to make target 'arch/tile/Makefile'.
-   make[1]: Failed to remake makefile 'arch/tile/Makefile'.
->> Kconfig:12: can't open file "arch/tile/Kconfig"
-   make[2]: *** [oldconfig] Error 1
-   make[1]: *** [oldconfig] Error 2
-   make: *** [sub-make] Error 2
---
-   Makefile:497: arch/tile/Makefile: No such file or directory
-   make[1]: *** No rule to make target 'arch/tile/Makefile'.
-   make[1]: Failed to remake makefile 'arch/tile/Makefile'.
->> Kconfig:12: can't open file "arch/tile/Kconfig"
-   make[2]: *** [olddefconfig] Error 1
-   make[2]: Target 'oldnoconfig' not remade because of errors.
-   make[1]: *** [oldnoconfig] Error 2
-   make: *** [sub-make] Error 2
+This doesn't work as it would mean violation of the specs in some
+scenarios. Particular during the card initialization and card power
+off.
 
-vim +12 Kconfig
+> ------ slot switch to h1 ------
+> h1->request()   // apply settings for h1 and do request
 
-838a2e55 Arnaud Lacombe 2010-09-04   7  
-838a2e55 Arnaud Lacombe 2010-09-04   8  config SRCARCH
-838a2e55 Arnaud Lacombe 2010-09-04   9  	string
-838a2e55 Arnaud Lacombe 2010-09-04  10  	option env="SRCARCH"
-838a2e55 Arnaud Lacombe 2010-09-04  11  
-838a2e55 Arnaud Lacombe 2010-09-04 @12  source "arch/$SRCARCH/Kconfig"
+Ditto. Etc...
 
-:::::: The code at line 12 was first introduced by commit
-:::::: 838a2e55e6a4e9e8a10451ed2ef0f7a08dabdb04 kbuild: migrate all arch to the kconfig mainmenu upgrade
+> h0->set_ios()   // h0 settings save
+> h1->set_ios()   // h1 settings save
+> ------ slot switch to h0 ------
+> h0->request()   // apply settings for h0 and do request
+> ------ slot switch to h1 ------
+> h1->request()   // apply settings for h1 and do request
+> ------ slot switch to h0 ------
+> h0->request()   // do request (no new settings to apply)
+> h0->request()   // do request (no new settings to apply)
+> h0->request()   // do request (no new settings to apply)
+>
 
-:::::: TO: Arnaud Lacombe <lacombar@gmail.com>
-:::::: CC: Arnaud Lacombe <lacombar@gmail.com>
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+Kind regards
+Uffe
