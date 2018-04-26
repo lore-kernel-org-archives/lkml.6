@@ -1,58 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756083AbeDZUIC (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 16:08:02 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:36766 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755737AbeDZUIA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1755761AbeDZUIA (ORCPT <rfc822;w@1wt.eu>);
         Thu, 26 Apr 2018 16:08:00 -0400
-X-Google-Smtp-Source: AB8JxZr8LwAdQfr66fubz5WcC91e+MJlc44KCTL49PWPJBUbUYPSy0dCfyMrbIngx6ijXe7PuY11lw==
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH 2/2] genirq/irq_sim: use the SPDX license identifier in the header
-Date: Thu, 26 Apr 2018 22:07:47 +0200
-Message-Id: <20180426200747.8344-2-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180426200747.8344-1-brgl@bgdev.pl>
-References: <20180426200747.8344-1-brgl@bgdev.pl>
+Received: from perceval.ideasonboard.com ([213.167.242.64]:59242 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755376AbeDZUH6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 16:07:58 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        "open list:DRM DRIVERS FOR RENESAS" <dri-devel@lists.freedesktop.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 01/17] dt-bindings: display: renesas: du: Increase indent in output table
+Date: Thu, 26 Apr 2018 23:08:11 +0300
+Message-ID: <2616564.acR4Iy4qTH@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20180426165346.494-2-kieran.bingham+renesas@ideasonboard.com>
+References: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com> <20180426165346.494-2-kieran.bingham+renesas@ideasonboard.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use C-style comment for the identifier as per
-Documentation/process/license-rules.rst and remove the license
-boilerplate.
+Hi Kieran,
 
-Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
----
- include/linux/irq_sim.h | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+Thank you for the patch.
 
-diff --git a/include/linux/irq_sim.h b/include/linux/irq_sim.h
-index 0380d899b955..630a57e55db6 100644
---- a/include/linux/irq_sim.h
-+++ b/include/linux/irq_sim.h
-@@ -1,14 +1,11 @@
--#ifndef _LINUX_IRQ_SIM_H
--#define _LINUX_IRQ_SIM_H
-+/* SPDX-License-Identifier: GPL-2.0+ */
- /*
-- * Copyright (C) 2017 Bartosz Golaszewski <brgl@bgdev.pl>
-- *
-- * This program is free software; you can redistribute  it and/or modify it
-- * under  the terms of  the GNU General  Public License as published by the
-- * Free Software Foundation;  either version 2 of the  License, or (at your
-- * option) any later version.
-+ * Copyright (C) 2017-2018 Bartosz Golaszewski <brgl@bgdev.pl>
-  */
- 
-+#ifndef _LINUX_IRQ_SIM_H
-+#define _LINUX_IRQ_SIM_H
-+
- #include <linux/irq_work.h>
- #include <linux/device.h>
- 
+On Thursday, 26 April 2018 19:53:30 EEST Kieran Bingham wrote:
+> The DU output table lists the port combinations for each supported DU
+> type.  Newer models of R-Car Gen3 platforms have an increased string
+> length.
+> 
+> Increase the table indentation in preparation for supporting new target
+> types.
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+and applied to my tree.
+
+> ---
+>  .../bindings/display/renesas,du.txt           | 26 +++++++++----------
+>  1 file changed, 13 insertions(+), 13 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/renesas,du.txt
+> b/Documentation/devicetree/bindings/display/renesas,du.txt index
+> c9cd17f99702..a36a6e7ee54f 100644
+> --- a/Documentation/devicetree/bindings/display/renesas,du.txt
+> +++ b/Documentation/devicetree/bindings/display/renesas,du.txt
+> @@ -47,20 +47,20 @@ bindings specified in
+> Documentation/devicetree/bindings/graph.txt. The following table lists for
+> each supported model the port number corresponding to each DU output.
+> 
+> -                      Port0          Port1          Port2          Port3
+> +                        Port0          Port1          Port2          Port3
+>  ---------------------------------------------------------------------------
+> -- - R8A7743 (RZ/G1M)     DPAD 0         LVDS 0         -              - -
+> R8A7745 (RZ/G1E)     DPAD 0         DPAD 1         -              - -
+> R8A7779 (R-Car H1)   DPAD 0         DPAD 1         -              - -
+> R8A7790 (R-Car H2)   DPAD 0         LVDS 0         LVDS 1         - -
+> R8A7791 (R-Car M2-W) DPAD 0         LVDS 0         -              - -
+> R8A7792 (R-Car V2H)  DPAD 0         DPAD 1         -              - -
+> R8A7793 (R-Car M2-N) DPAD 0         LVDS 0         -              - -
+> R8A7794 (R-Car E2)   DPAD 0         DPAD 1         -              - -
+> R8A7795 (R-Car H3)   DPAD 0         HDMI 0         HDMI 1         LVDS 0 -
+> R8A7796 (R-Car M3-W) DPAD 0         HDMI 0         LVDS 0         - -
+> R8A77970 (R-Car V3M) DPAD 0         LVDS 0         -              - -
+> R8A77995 (R-Car D3)  DPAD 0         LVDS 0         LVDS 1         - +
+> R8A7743 (RZ/G1M)       DPAD 0         LVDS 0         -              - +
+> R8A7745 (RZ/G1E)       DPAD 0         DPAD 1         -              - +
+> R8A7779 (R-Car H1)     DPAD 0         DPAD 1         -              - +
+> R8A7790 (R-Car H2)     DPAD 0         LVDS 0         LVDS 1         - +
+> R8A7791 (R-Car M2-W)   DPAD 0         LVDS 0         -              - +
+> R8A7792 (R-Car V2H)    DPAD 0         DPAD 1         -              - +
+> R8A7793 (R-Car M2-N)   DPAD 0         LVDS 0         -              - +
+> R8A7794 (R-Car E2)     DPAD 0         DPAD 1         -              - +
+> R8A7795 (R-Car H3)     DPAD 0         HDMI 0         HDMI 1         LVDS 0
+> + R8A7796 (R-Car M3-W)   DPAD 0         HDMI 0         LVDS 0         - +
+> R8A77970 (R-Car V3M)   DPAD 0         LVDS 0         -              - +
+> R8A77995 (R-Car D3)    DPAD 0         LVDS 0         LVDS 1         -
+> 
+> 
+>  Example: R8A7795 (R-Car H3) ES2.0 DU
+
+
 -- 
-2.17.0
+Regards,
+
+Laurent Pinchart
