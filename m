@@ -1,206 +1,218 @@
-Return-Path: <linux-serial-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2603440-1524751727-2-1590754285888957645
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: 
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-serial-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524751726; b=SIH6+qhOj59jJQwMdaeXRKi5LYzybzHUptIxoUndlP+1p5QfZp
-    z/EjjHJm7I4Mv45AxEP43ADVBGNoF/Rrt2+6espyyeWdcCQ9jD6zOkdkzdoaR1Lg
-    bQ6BuyeOJugjhdQn9x6++usWxo/AZ90mGzktIO1phtWpujPp6wTJ8pU4/P86Vo++
-    YnUaQcRtcdV023wa4sSGRxgadc/1Ckqqbazk92Em+quwWu8NzTJUlhsJAVc6yZI5
-    iv+sQZCPjJiLrXMTcovis+QmYGUdDb7bAWm+g2ig5Vs8X7nM0g1xsvwKkQKkD0TF
-    gew3M5RMyNwXeTTKOzuH/+W0M9CagOkQ650w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=fm2; t=1524751726; bh=wLC5i7ItM0GfduvHGAK7+N6mwsqoNh
-    R2zoLE/EBvpeM=; b=sj7UhhqN5S3Z89ZQD3MQ+gOsvsfvOAM7RpyKAZcvZuwEYq
-    MXfxyO5S+GJrZ/QsX5+AF06mmykz5O6yoRnIrsKU6fiSoO2iW7ETgCx/nZKTJNqe
-    HIbQ6qZhvSv/YzwZsa4uA3GkzuK0uC29nl0YrFZawZU8OXm9Il/IVueVZaaoTqPi
-    k+S0PTYJin1xOShZsQgXY3VtPxkBEKcb/5wK3yRaLxAHATrDKqEZk85eH1zDuPS3
-    Iz1iCTDf04mJid0xjGR7MXl+kWzWpyYABF3fIHCASFV4u+ORw/8zRYl5zkwBxbsb
-    ROjYzO9MWybxgrV1XKRQKaHn0WanFGnfXB2GzyBg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=monstr-eu.20150623.gappssmtp.com header.i=@monstr-eu.20150623.gappssmtp.com header.b=IsQk0qsF x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=xilinx.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=lfvhZjrC;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=xilinx.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=monstr-eu.20150623.gappssmtp.com header.i=@monstr-eu.20150623.gappssmtp.com header.b=IsQk0qsF x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=xilinx.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=lfvhZjrC;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=xilinx.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfGepaBimgHK8gK7hO1kbL5RnkTL+BDaY66qI7K0pY6IDJJLdCer8/55FOke2xZwuwKJvspjmzNojRvaLOUVCyFq2Z/U/AwZeyxHTMIAKrl0IEzFNDE5u
-    l12OdKw0Eu/DPWjgpxfI7ycL5h4IBliiJeBeWwPm2tK1Bqz2RTcfvhML12Bug1fm3Ng8NIxPKkFAGIRCj2eXY5CKou9blh0LIVYXPG6kAxd7bcm2Ohsisi95
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8
-    a=ERBoA_1hzK5CDDegt40A:9 a=E0cOJMorxDq_GPi4:21 a=_eb7AxrDv_5DxRSb:21
-    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756543AbeDZOIc (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 26 Apr 2018 10:08:32 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:51039 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756433AbeDZOI1 (ORCPT
-        <rfc822;linux-serial@vger.kernel.org>);
-        Thu, 26 Apr 2018 10:08:27 -0400
-X-Google-Smtp-Source: AB8JxZruEe7nvh/WMiUxl+qgZ7+s0fEmt1usLGh+cxuuZo2H7fzZbZSue5MkWyrHfRyi8Sx/MRoP1A==
+Return-Path: <monstr@monstr.eu>
+ARC-Seal: i=1; a=rsa-sha256; t=1524751710; cv=none;
+        d=google.com; s=arc-20160816;
+        b=S5Hx8KoIlZIvU3yGDrytEqg+9yPD4kNnLaY/wSS813AVEk0Jc1NU7HTu5ZGrIIFLGm
+         glUBrynd35yfZMjunV7kAgFSoiFxPc32DT75OId5Xr8dh1poNMwdPXlzq43ACtUY3zB1
+         obW3U7j2kw6bx5jcrUJTO/xyFDv5KsVskzRyRwu/YuyaDsfoogrU87SHHfInOwP8RTVY
+         131yOndKq2etihwHloESmLL0dp8BCQD9W03Z2ZteyHe+0RGVpOkkUW/NkICkxAclO8qP
+         KVE8Jy+rNOsvkC/c+fuDyZBJaKHSTeM4tjXJ7L/X4nPBaEi/pNE0RrS0MkTKkTOUBD2P
+         6FXA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=references:in-reply-to:references:in-reply-to:message-id:date
+         :subject:cc:to:from:sender:dkim-signature:arc-authentication-results;
+        bh=lXiRgNIlbs2ZhrTnuwv/Pzzy/qNw0VwwFxMvzSF1djc=;
+        b=N8A92hFOB+FEqiP5oGGiWLqHGR7pwqR7/MXT+uAW3GoWd/RrBMyt7WwNWRSghnA8Ui
+         kZde4PH5yivzemV00Wt0wqN2znz8zDk4pKCZlIQzfCnZnsTN1mGoJNRTafzqV7kS569q
+         /qAe8TkT+bgBolFW6bwnhPHkCdFGSEOwgeylkuuA78OXkrtQiOZxWOZ7m2lQ3x8aoRdS
+         4Rjetm6y5PJteCAZYv7Qc5ba+/md29AshhWA75lpuknrbtXtQJs6ZaYoW1cunjNQZDY3
+         m49Mm/8F3E3ie0Ym8NjA1AOrHyWuo0d/bqe1zwraziHgRtxo8e3BS8DF+VQ7VWNsKXpS
+         XiLg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@monstr-eu.20150623.gappssmtp.com header.s=20150623 header.b=tsJqkxYm;
+       spf=neutral (google.com: 209.85.220.65 is neither permitted nor denied by best guess record for domain of monstr@monstr.eu) smtp.mailfrom=monstr@monstr.eu
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@monstr-eu.20150623.gappssmtp.com header.s=20150623 header.b=tsJqkxYm;
+       spf=neutral (google.com: 209.85.220.65 is neither permitted nor denied by best guess record for domain of monstr@monstr.eu) smtp.mailfrom=monstr@monstr.eu
+X-Google-Smtp-Source: AIpwx480BV/ztfitKnHUxarWHs2qHaTlgihptGsFL+362KU99m8E8/tWyyQ27N1bSmJOQC1mnQVvmQ==
+Sender: Michal Simek <monstr@monstr.eu>
 From: Michal Simek <michal.simek@xilinx.com>
-To: linux-kernel@vger.kernel.org, monstr@monstr.eu,
-        gnomes@lxorguk.ukuu.org.uk, Alexander Graf <agraf@suse.de>
-Cc: devicetree@vger.kernel.org, Jiri Slaby <jslaby@suse.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>, linux-serial@vger.kernel.org,
-        Frank Rowand <frowand.list@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [RFC PATCH 0/3] serial: uartps: Add run time support for more IPs than hardcoded 2
-Date: Thu, 26 Apr 2018 16:08:16 +0200
-Message-Id: <cover.1524751696.git.michal.simek@xilinx.com>
+To: linux-kernel@vger.kernel.org,
+	monstr@monstr.eu,
+	gnomes@lxorguk.ukuu.org.uk,
+	Alexander Graf <agraf@suse.de>
+Cc: Jiri Slaby <jslaby@suse.com>,
+	linux-serial@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-arm-kernel@lists.infradead.org
+Subject: [RFC PATCH 3/3] serial: uartps: Change uart ports allocation
+Date: Thu, 26 Apr 2018 16:08:19 +0200
+Message-Id: <782bf2c500578db1a8ee327cc48ed905d3e50497.1524751696.git.michal.simek@xilinx.com>
 X-Mailer: git-send-email 2.17.0
-Sender: linux-serial-owner@vger.kernel.org
-X-Mailing-List: linux-serial@vger.kernel.org
+In-Reply-To: <cover.1524751696.git.michal.simek@xilinx.com>
+References: <cover.1524751696.git.michal.simek@xilinx.com>
+In-Reply-To: <cover.1524751696.git.michal.simek@xilinx.com>
+References: <cover.1524751696.git.michal.simek@xilinx.com>
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1598818049279373202?=
+X-GMAIL-MSGID: =?utf-8?q?1598818049279373202?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi,
+For ips which have alias algorightm all the tim using that alias and
+minor number. It means serial20 alias ends up as ttyPS20.
 
-this series is trying to address discussion I had with Alan in past
-https://patchwork.kernel.org/patch/9738445/.
+If aliases are not setup for enabled core the first unused position is
+used but that's need to be checked if it is really empty because another
+instance doesn't need to be probed. of_alias_check_id() does that test.
+If alias pointing to different not compatible IP, it is free to use.
 
-It is moving uart_register_driver() to probe function like it is done in
-pl011 driver.
-And also introducing new function for alias compatibility checking to
-resolve cases where some IPs have alias and some of them not.
-This case is detected in pl011_probe_dt_alias() but not properly solved.
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+---
 
-Also keep status of free ids/minor numbers in bitmap to know what's the
-next unallocated number.
+ drivers/tty/serial/xilinx_uartps.c | 96 ++++++++++++++++++++++++++----
+ 1 file changed, 85 insertions(+), 11 deletions(-)
 
-The same solution can be used in pl011, uart16550 and uartlite to really
-get unified kernel.
-
-Tested on these use cases:
-Notes:
-ff000000 is the first PS uart listed in dtsi
-ff010000 is the second PS uart listed in dtsi
-
-Standard zcu102 setting
-		serial0 = &uart0;
-		serial1 = &uart1;
-[    0.196628] ff000000.serial: ttyPS0 at MMIO 0xff000000 (irq = 33,
-base_baud = 6250000) is a xuartps
-[    0.642542] ff010000.serial: ttyPS1 at MMIO 0xff010000 (irq = 34,
-base_baud = 6250000) is a xuartps
-
-Swapped zcu102 setting
-		serial0 = &uart1;
-		serial1 = &uart0;
-[    0.196472] ff000000.serial: ttyPS1 at MMIO 0xff000000 (irq = 33,
-base_baud = 6250000) is a xuartps
-[    0.196824] ff010000.serial: ttyPS0 at MMIO 0xff010000 (irq = 34,
-base_baud = 6250000) is a xuartps
-
-uart0 on alias higher then MAX uart ports
-		serial0 = &uart1;
-		serial200 = &uart0;
-[    0.176793] ff000000.serial: ttyPS200 at MMIO 0xff000000 (irq = 33,
-base_baud = 6250000) is a xuartps
-[    0.177288] ff010000.serial: ttyPS0 at MMIO 0xff010000 (irq = 34,
-base_baud = 6250000) is a xuartps
-
-Both uarts on higher aliases
-		serial1 = &uart1;
-		serial2 = &uart0;
-[    0.196470] ff000000.serial: ttyPS2 at MMIO 0xff000000 (irq = 33,
-base_baud = 6250000) is a xuartps
-[    0.196823] ff010000.serial: ttyPS1 at MMIO 0xff010000 (irq = 34,
-base_baud = 6250000) is a xuartps
-
-uart0 not listed but it is probed first that's why should be ttyPS0 but
-there is uart1 via alias
-		serial0 = &uart1;
-[    0.176656] xuartps ff000000.serial: No serial alias passed. Using
-the first free id
-[    0.176671] xuartps ff000000.serial: Validate id 0
-[    0.176680] xuartps ff000000.serial: The empty id is 0
-[    0.176692] xuartps ff000000.serial: ID 0 already taken - skipped
-[    0.176701] xuartps ff000000.serial: Validate id 1
-[    0.176710] xuartps ff000000.serial: The empty id is 1
-[    0.176719] xuartps ff000000.serial: Selected ID 1 allocation passed
-[    0.176760] ff000000.serial: ttyPS1 at MMIO 0xff000000 (irq = 33,
-base_baud = 6250000) is a xuartps
-[    0.177104] ff010000.serial: ttyPS0 at MMIO 0xff010000 (irq = 34,
-base_baud = 6250000) is a xuartps
-
-uart0 not listed but it is probed first that's why should be ttyPS0
-		serial1 = &uart1;
-[    0.176661] xuartps ff000000.serial: No serial alias passed. Using
-the first free id
-[    0.176676] xuartps ff000000.serial: Validate id 0
-[    0.176686] xuartps ff000000.serial: The empty id is 0
-[    0.176696] xuartps ff000000.serial: Selected ID 0 allocation passed
-[    0.176737] ff000000.serial: ttyPS0 at MMIO 0xff000000 (irq = 33,
-base_baud = 6250000) is a xuartps
-[    0.177069] ff010000.serial: ttyPS1 at MMIO 0xff010000 (irq = 34,
-base_baud = 6250000) is a xuartps
-
-uarts not listed in aliases list
-[    0.176673] xuartps ff000000.serial: No serial alias passed. Using
-the first free id
-[    0.176687] xuartps ff000000.serial: Validate id 0
-[    0.176697] xuartps ff000000.serial: The empty id is 0
-[    0.176707] xuartps ff000000.serial: Selected ID 0 allocation passed
-[    0.176746] ff000000.serial: ttyPS0 at MMIO 0xff000000 (irq = 33,
-base_baud = 6250000) is a xuartps
-[    0.177057] xuartps ff010000.serial: No serial alias passed. Using
-the first free id
-[    0.177070] xuartps ff010000.serial: Validate id 0
-[    0.177079] xuartps ff010000.serial: The empty id is 0
-[    0.177089] xuartps ff010000.serial: Selected ID 0 allocation failed
-[    0.177098] xuartps ff010000.serial: Validate id 1
-[    0.177107] xuartps ff010000.serial: The empty id is 1
-[    0.177116] xuartps ff010000.serial: Selected ID 1 allocation passed
-[    0.177149] ff010000.serial: ttyPS1 at MMIO 0xff010000 (irq = 34,
-base_baud = 6250000) is a xuartps
-
-Thanks,
-Michal
-
-
-Michal Simek (3):
-  of: base: Introduce of_alias_check_id() to check alias IDs
-  serial: uartps: Move register to probe based on run time detection
-  serial: uartps: Change uart ports allocation
-
- drivers/of/base.c                  |  49 +++++++++++
- drivers/tty/serial/xilinx_uartps.c | 128 +++++++++++++++++++++++------
- include/linux/of.h                 |   2 +
- 3 files changed, 153 insertions(+), 26 deletions(-)
-
+diff --git a/drivers/tty/serial/xilinx_uartps.c b/drivers/tty/serial/xilinx_uartps.c
+index ffb5b66a05b5..7c616b48c117 100644
+--- a/drivers/tty/serial/xilinx_uartps.c
++++ b/drivers/tty/serial/xilinx_uartps.c
+@@ -45,6 +45,9 @@ static int rx_timeout = 10;
+ module_param(rx_timeout, uint, S_IRUGO);
+ MODULE_PARM_DESC(rx_timeout, "Rx timeout, 1-255");
+ 
++/* The inuse bitfield is recording which IDs are free/used by the driver. */
++static unsigned long *inuse;
++
+ /* Register offsets for the UART. */
+ #define CDNS_UART_CR		0x00  /* Control Register */
+ #define CDNS_UART_MR		0x04  /* Mode Register */
+@@ -1418,6 +1421,75 @@ static const struct of_device_id cdns_uart_of_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, cdns_uart_of_match);
+ 
++static int cdns_get_id(struct platform_device *pdev)
++{
++	int id;
++
++	/* Look for a serialN alias */
++	id = of_alias_get_id(pdev->dev.of_node, "serial");
++	if (id < 0) {
++		dev_warn(&pdev->dev,
++			 "No serial alias passed. Using the first free id\n");
++
++		/*
++		 * Start with id 0 and check if there is no serial0 alias
++		 * which points to device which is compatible with this driver.
++		 * If alias exists then try next free position.
++		 */
++		id = 0;
++
++		for (;;) {
++			dev_dbg(&pdev->dev, "Validate id %d\n", id);
++			id = find_next_zero_bit(inuse, id,
++						cdns_uart_uart_driver.nr);
++
++			dev_dbg(&pdev->dev, "The empty id is %d\n", id);
++			/* Check if ID is empty */
++
++			if (of_alias_check_id(cdns_uart_of_match,
++					      "serial", id)) {
++				dev_dbg(&pdev->dev,
++					"ID %d already taken - skipped\n", id);
++				/* Try next one */
++				id++;
++				continue;
++			}
++
++			/* It shouldn't happen anytime */
++			if (id >= cdns_uart_uart_driver.nr) {
++				dev_dbg(&pdev->dev,
++					"ID %d is greater than NR of ports\n",
++					cdns_uart_uart_driver.nr);
++				return -ENXIO;
++			}
++
++			/* Break the loop if bit is taken */
++			if (!test_and_set_bit(id, inuse)) {
++				dev_dbg(&pdev->dev,
++					"Selected ID %d allocation passed\n",
++					id);
++				break;
++			}
++			dev_dbg(&pdev->dev,
++				"Selected ID %d allocation failed\n", id);
++			/* if taking bit fails then try next one */
++			id++;
++		}
++	} else {
++		/*
++		 * If alias was found there is no reason to check
++		 * anything else
++		 */
++		if (test_and_set_bit(id, inuse)) {
++			dev_dbg(&pdev->dev,
++				 "ID %d allocation failed\n", id);
++			return -EAGAIN;
++		}
++	}
++
++	return id;
++}
++
+ /**
+  * cdns_uart_probe - Platform driver probe
+  * @pdev: Pointer to the platform device structure
+@@ -1446,6 +1518,13 @@ static int cdns_uart_probe(struct platform_device *pdev)
+ 			dev_err(&pdev->dev, "Failed to register driver\n");
+ 			return rc;
+ 		}
++
++		/* Create bitfield to record which ids are free */
++		inuse = devm_kcalloc(&pdev->dev,
++				     BITS_TO_LONGS(cdns_uart_uart_driver.nr),
++				     sizeof(unsigned long), GFP_KERNEL);
++		if (!inuse)
++			return -ENOMEM;
+ 	}
+ 
+ 	cdns_uart_data = devm_kzalloc(&pdev->dev, sizeof(*cdns_uart_data),
+@@ -1463,6 +1542,10 @@ static int cdns_uart_probe(struct platform_device *pdev)
+ 		cdns_uart_data->quirks = data->quirks;
+ 	}
+ 
++	id = cdns_get_id(pdev);
++	if (id < 0)
++		return id;
++
+ 	cdns_uart_data->pclk = devm_clk_get(&pdev->dev, "pclk");
+ 	if (IS_ERR(cdns_uart_data->pclk)) {
+ 		cdns_uart_data->pclk = devm_clk_get(&pdev->dev, "aper_clk");
+@@ -1515,16 +1598,6 @@ static int cdns_uart_probe(struct platform_device *pdev)
+ 				&cdns_uart_data->clk_rate_change_nb))
+ 		dev_warn(&pdev->dev, "Unable to register clock notifier.\n");
+ #endif
+-	/* Look for a serialN alias */
+-	id = of_alias_get_id(pdev->dev.of_node, "serial");
+-	if (id < 0)
+-		id = 0;
+-
+-	if (id >= CDNS_UART_NR_PORTS) {
+-		dev_err(&pdev->dev, "Cannot get uart_port structure\n");
+-		rc = -ENODEV;
+-		goto err_out_notif_unreg;
+-	}
+ 
+ 	/* At this point, we've got an empty uart_port struct, initialize it */
+ 	spin_lock_init(&port->lock);
+@@ -1583,10 +1656,10 @@ static int cdns_uart_probe(struct platform_device *pdev)
+ 	return 0;
+ 
+ err_out_pm_disable:
++	clear_bit(port->line, inuse);
+ 	pm_runtime_disable(&pdev->dev);
+ 	pm_runtime_set_suspended(&pdev->dev);
+ 	pm_runtime_dont_use_autosuspend(&pdev->dev);
+-err_out_notif_unreg:
+ #ifdef CONFIG_COMMON_CLK
+ 	clk_notifier_unregister(cdns_uart_data->uartclk,
+ 			&cdns_uart_data->clk_rate_change_nb);
+@@ -1618,6 +1691,7 @@ static int cdns_uart_remove(struct platform_device *pdev)
+ #endif
+ 	rc = uart_remove_one_port(&cdns_uart_uart_driver, port);
+ 	port->mapbase = 0;
++	clear_bit(port->line, inuse);
+ 	clk_disable_unprepare(cdns_uart_data->uartclk);
+ 	clk_disable_unprepare(cdns_uart_data->pclk);
+ 	pm_runtime_disable(&pdev->dev);
 -- 
 2.17.0
-
