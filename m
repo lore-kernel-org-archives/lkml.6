@@ -1,96 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756235AbeDZNPX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 09:15:23 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:52366 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754516AbeDZNPU (ORCPT
+        id S1756388AbeDZNPd (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 09:15:33 -0400
+Received: from gateway36.websitewelcome.com ([192.185.199.121]:31192 "EHLO
+        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1755725AbeDZNPW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 09:15:20 -0400
-X-Google-Smtp-Source: AB8JxZpW0c4iYokawwQTCuH4778ompolha6AGIHY71AIaAIZzZt7aSXeMbATHpCXRes2VAxukXWEDg==
-Date: Thu, 26 Apr 2018 14:15:17 +0100
-From: Stefan Hajnoczi <stefanha@gmail.com>
-To: Pankaj Gupta <pagupta@redhat.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        qemu-devel@nongnu.org, linux-nvdimm@ml01.01.org, linux-mm@kvack.org,
-        jack@suse.cz, stefanha@redhat.com, dan.j.williams@intel.com,
-        riel@surriel.com, haozhong.zhang@intel.com, nilal@redhat.com,
-        kwolf@redhat.com, pbonzini@redhat.com, ross.zwisler@intel.com,
-        david@redhat.com, xiaoguangrong.eric@gmail.com, hch@infradead.org,
-        marcel@redhat.com, mst@redhat.com, niteshnarayanlal@hotmail.com,
-        imammedo@redhat.com, lcapitulino@redhat.com
-Subject: Re: [RFC v2 2/2] pmem: device flush over VIRTIO
-Message-ID: <20180426131517.GB30991@stefanha-x1.localdomain>
-References: <20180425112415.12327-1-pagupta@redhat.com>
- <20180425112415.12327-3-pagupta@redhat.com>
+        Thu, 26 Apr 2018 09:15:22 -0400
+X-Authority-Reason: nr=8
+Date: Thu, 26 Apr 2018 08:13:24 -0500
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Amitkumar Karwar <amit.karwar@redpinesignals.com>,
+        Kalle Valo <kvalo@codeaurora.org>
+Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] rsi_91x_usb: fix uninitialized variable
+Message-ID: <20180426131324.GA982@embeddedor.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="NDin8bjvE/0mNLFQ"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180425112415.12327-3-pagupta@redhat.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.145.33.162
+X-Source-L: No
+X-Exim-ID: 1fBgiG-00370h-B6
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.145.33.162]:41440
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 10
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+There is a potential execution path in which variable ret is returned
+without being properly initialized previously.
 
---NDin8bjvE/0mNLFQ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fix this by storing the value returned by function
+rsi_usb_master_reg_write into _ret_.
 
-On Wed, Apr 25, 2018 at 04:54:14PM +0530, Pankaj Gupta wrote:
-> This patch adds functionality to perform=20
-> flush from guest to hosy over VIRTIO=20
-> when 'ND_REGION_VIRTIO'flag is set on=20
-> nd_negion. Flag is set by 'virtio-pmem'
-> driver.
->=20
-> Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
-> ---
->  drivers/nvdimm/region_devs.c | 7 +++++++
->  1 file changed, 7 insertions(+)
->=20
-> diff --git a/drivers/nvdimm/region_devs.c b/drivers/nvdimm/region_devs.c
-> index a612be6..6c6454e 100644
-> --- a/drivers/nvdimm/region_devs.c
-> +++ b/drivers/nvdimm/region_devs.c
-> @@ -20,6 +20,7 @@
->  #include <linux/nd.h>
->  #include "nd-core.h"
->  #include "nd.h"
-> +#include <linux/virtio_pmem.h>
-> =20
->  /*
->   * For readq() and writeq() on 32-bit builds, the hi-lo, lo-hi order is
-> @@ -1074,6 +1075,12 @@ void nvdimm_flush(struct nd_region *nd_region)
->  	struct nd_region_data *ndrd =3D dev_get_drvdata(&nd_region->dev);
->  	int i, idx;
-> =20
-> +       /* call PV device flush */
-> +	if (test_bit(ND_REGION_VIRTIO, &nd_region->flags)) {
-> +		virtio_pmem_flush(&nd_region->dev);
-> +		return;
-> +	}
+Addresses-Coverity-ID: 1468407 ("Uninitialized scalar variable")
+Fixes: 16d3bb7b2f37 ("rsi: disable fw watchdog timer during reset")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/net/wireless/rsi/rsi_91x_usb.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-How does libnvdimm know when flush has completed?
-
-Callers expect the flush to be finished when nvdimm_flush() returns but
-the virtio driver has only queued the request, it hasn't waited for
-completion!
-
---NDin8bjvE/0mNLFQ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEcBAEBAgAGBQJa4dDlAAoJEJykq7OBq3PI980IAJY41FLfXhqcQzxR13OvtKqj
-cM7mQMJIee6fETlh9HYqEh7dOvOHhpqojY9PEKA+Bu1f/KC3Y03liilCCKdLiHc+
-WpCVSyT3nOTjPlY4tS+e4WEEzaCwqNYu8rbz7sfJxd1c+4Hl9VuLfBQLieSnTsmE
-GUawKQak2e+c7EdOdKxmxtaeZfX1qJcm6ZMhbqSrvIrzR+E+fz4WKmntxrdgeDwY
-4IzZHK5h2u4z0jSeLf0tfdWf/77y1IWPqKGvuK6MTZHFxvMn6AiI4VZ116LfXgNC
-l7SS25ehqJ5WGgBrUYsL40QAimQDSCQL2ouNwyx/Q1+Ub/xi6TWKN17u3UV5Bpc=
-=i3H2
------END PGP SIGNATURE-----
-
---NDin8bjvE/0mNLFQ--
+diff --git a/drivers/net/wireless/rsi/rsi_91x_usb.c b/drivers/net/wireless/rsi/rsi_91x_usb.c
+index b065438..6ce6b75 100644
+--- a/drivers/net/wireless/rsi/rsi_91x_usb.c
++++ b/drivers/net/wireless/rsi/rsi_91x_usb.c
+@@ -687,9 +687,10 @@ static int rsi_reset_card(struct rsi_hw *adapter)
+ 	 */
+ 	msleep(100);
+ 
+-	if (rsi_usb_master_reg_write(adapter, SWBL_REGOUT,
+-				     RSI_FW_WDT_DISABLE_REQ,
+-				     RSI_COMMON_REG_SIZE) < 0) {
++	ret = rsi_usb_master_reg_write(adapter, SWBL_REGOUT,
++				       RSI_FW_WDT_DISABLE_REQ,
++				       RSI_COMMON_REG_SIZE);
++	if (ret < 0) {
+ 		rsi_dbg(ERR_ZONE, "Disabling firmware watchdog timer failed\n");
+ 		goto fail;
+ 	}
+-- 
+2.7.4
