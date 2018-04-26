@@ -1,88 +1,2754 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754094AbeDZKNT (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 06:13:19 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:33588 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754116AbeDZKNB (ORCPT
+        id S1754949AbeDZKNF (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 06:13:05 -0400
+Received: from mail-pg0-f49.google.com ([74.125.83.49]:42696 "EHLO
+        mail-pg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753403AbeDZKM7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 06:13:01 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DAC8460117
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From: Kalle Valo <kvalo@codeaurora.org>
-To: David Miller <davem@davemloft.net>
-Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        Thu, 26 Apr 2018 06:12:59 -0400
+X-Google-Smtp-Source: AIpwx49DYkygRV0lZgESMIHPgCmKu6IukKXkzFl6JvIc699SergQAYQ6xuwADZkVG8iknLB5ndhenQ==
+Date: Thu, 26 Apr 2018 18:12:57 +0800
+From: Wang YanQing <udknight@gmail.com>
+To: daniel@iogearbox.net
+Cc: ast@kernel.org, illusionist.neo@gmail.com, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com, davem@davemloft.net, x86@kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4] bpf, x86_32: add eBPF JIT compiler for ia32
+Message-ID: <20180426101257.GA29387@udknight>
+Mail-Followup-To: Wang YanQing <udknight@gmail.com>, daniel@iogearbox.net,
+        ast@kernel.org, illusionist.neo@gmail.com, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com, davem@davemloft.net,
+        x86@kernel.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: pull-request: wireless-drivers 2018-04-26
-Date: Thu, 26 Apr 2018 13:12:54 +0300
-Message-ID: <87h8ny6ztl.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.7.1 (2016-10-04)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dave,
+The JIT compiler emits ia32 bit instructions. Currently, It supports eBPF
+only. Classic BPF is supported because of the conversion by BPF core.
 
-here's a pull request to net tree, more info below. Please let me know
-if you have any problems.
+Almost all instructions from eBPF ISA supported except the following:
+BPF_ALU64 | BPF_DIV | BPF_K
+BPF_ALU64 | BPF_DIV | BPF_X
+BPF_ALU64 | BPF_MOD | BPF_K
+BPF_ALU64 | BPF_MOD | BPF_X
+BPF_STX | BPF_XADD | BPF_W
+BPF_STX | BPF_XADD | BPF_DW
 
-Kalle
+It doesn't support BPF_JMP|BPF_CALL with BPF_PSEUDO_CALL at the moment.
 
-The following changes since commit 4608f064532c28c0ea3c03fe26a3a5909852811a:
+IA32 has few general purpose registers, EAX|EDX|ECX|EBX|ESI|EDI. I use
+EAX|EDX|ECX|EBX as temporary registers to simulate instructions in eBPF
+ISA, and allocate ESI|EDI to BPF_REG_AX for constant blinding, all others
+eBPF registers, R0-R10, are simulated through scratch space on stack.
 
-  Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/sparc-next (2018-04-03 14:08:58 -0700)
+The reasons behind the hardware registers allocation policy are:
+1:MUL need EAX:EDX, shift operation need ECX, so they aren't fit
+  for general eBPF 64bit register simulation.
+2:We need at least 4 registers to simulate most eBPF ISA operations
+  on registers operands instead of on register&memory operands.
+3:We need to put BPF_REG_AX on hardware registers, or constant blinding
+  will degrade jit performance heavily.
 
-are available in the git repository at:
+Tested on PC (Intel(R) Core(TM) i5-5200U CPU).
+Testing results on i5-5200U:
+1) test_bpf: Summary: 349 PASSED, 0 FAILED, [319/341 JIT'ed]
+2) test_progs: Summary: 83 PASSED, 0 FAILED.
+3) test_lpm: OK
+4) test_lru_map: OK
+5) test_verifier: Summary: 828 PASSED, 0 FAILED.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/kvalo/wireless-drivers.git tags/wireless-drivers-for-davem-2018-04-26
+Above tests are all done in following two conditions separately:
+1:bpf_jit_enable=1 and bpf_jit_harden=0
+2:bpf_jit_enable=1 and bpf_jit_harden=2
 
-for you to fetch changes up to af8a41cccf8f469165c6debc8fe07c5fd2ca501a:
+Below are some numbers for this jit implementation:
+Note:
+  I run test_progs in kselftest 100 times continuously for every condition,
+  the numbers are in format: total/times=avg.
+  The numbers that test_bpf reports show almost the same relation.
 
-  rtlwifi: cleanup 8723be ant_sel definition (2018-04-24 13:15:08 +0300)
+a:jit_enable=0 and jit_harden=0            b:jit_enable=1 and jit_harden=0
+  test_pkt_access:PASS:ipv4:15622/100=156    test_pkt_access:PASS:ipv4:10674/100=106
+  test_pkt_access:PASS:ipv6:9130/100=91      test_pkt_access:PASS:ipv6:4855/100=48
+  test_xdp:PASS:ipv4:240198/100=2401         test_xdp:PASS:ipv4:138912/100=1389
+  test_xdp:PASS:ipv6:137326/100=1373         test_xdp:PASS:ipv6:68542/100=685
+  test_l4lb:PASS:ipv4:61100/100=611          test_l4lb:PASS:ipv4:37302/100=373
+  test_l4lb:PASS:ipv6:101000/100=1010        test_l4lb:PASS:ipv6:55030/100=550
 
-----------------------------------------------------------------
-wireless-drivers fixes for 4.17
+c:jit_enable=1 and jit_harden=2
+  test_pkt_access:PASS:ipv4:10558/100=105
+  test_pkt_access:PASS:ipv6:5092/100=50
+  test_xdp:PASS:ipv4:131902/100=1319
+  test_xdp:PASS:ipv6:77932/100=779
+  test_l4lb:PASS:ipv4:38924/100=389
+  test_l4lb:PASS:ipv6:57520/100=575
 
-A few fixes for 4.17 but nothing really special. The new ETSI WMM
-parameter support for iwlwifi is not technically a bugfix but
-important for regulatory compliance.
+The numbers show we get 30%~50% improvement.
 
-iwlwifi
+See Documentation/networking/filter.txt for more information.
 
-* use new ETSI WMM parameters from regulatory database
+Signed-off-by: Wang YanQing <udknight@gmail.com>
+---
+ Changes v3-v4:
+ 1:Fix changelog in commit.
+   I install llvm-6.0, then test_progs willn't report errors.
+   I submit another patch:
+   "bpf: fix misaligned access for BPF_PROG_TYPE_PERF_EVENT program type on x86_32 platform"
+   to fix another problem, after that patch, test_verifier willn't report errors too.
+ 2:Fix clear r0[1] twice unnecessarily in *BPF_IND|BPF_ABS* simulation.
 
-* fix a regression with the older firmware API 31 (eg. 31.560484.0)
+ Changes v2-v3:
+ 1:Move BPF_REG_AX to real hardware registers for performance reason.
+ 3:Using bpf_load_pointer instead of bpf_jit32.S, suggested by Daniel Borkmann.
+ 4:Delete partial codes in 1c2a088a6626, suggested by Daniel Borkmann.
+ 5:Some bug fixes and comments improvement.
 
-brcmfmac
+ Changes v1-v2:
+ 1:Fix bug in emit_ia32_neg64.
+ 2:Fix bug in emit_ia32_arsh_r64.
+ 3:Delete filename in top level comment, suggested by Thomas Gleixner.
+ 4:Delete unnecessary boiler plate text, suggested by Thomas Gleixner.
+ 5:Rewrite some words in changelog.
+ 6:CodingSytle improvement and a little more comments.
 
-* fix a double free in nvmam loading fails
+ Hi all!
+ This is the fourth version of this patch, and I think it is good enough
+ to launch, any more suggestion?
 
-rtlwifi
+ Thanks.
 
-* yet another fix for ant_sel module parameter
+ arch/x86/Kconfig                     |    2 +-
+ arch/x86/include/asm/nospec-branch.h |   26 +-
+ arch/x86/net/Makefile                |    9 +-
+ arch/x86/net/bpf_jit_comp32.c        | 2530 ++++++++++++++++++++++++++++++++++
+ 4 files changed, 2562 insertions(+), 5 deletions(-)
+ create mode 100644 arch/x86/net/bpf_jit_comp32.c
 
-----------------------------------------------------------------
-Arend Van Spriel (1):
-      brcmfmac: fix firmware request processing if nvram load fails
-
-Haim Dreyfuss (1):
-      iwlwifi: mvm: query regdb for wmm rule if needed
-
-Luca Coelho (1):
-      iwlwifi: mvm: fix old scan version sizes
-
-Ping-Ke Shih (1):
-      rtlwifi: cleanup 8723be ant_sel definition
-
- .../broadcom/brcm80211/brcmfmac/firmware.c         |  36 ++++---
- drivers/net/wireless/intel/iwlwifi/fw/api/scan.h   |  13 +--
- drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c | 111 ++++++++++++++++++---
- drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.h |   6 +-
- drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c  |   3 +-
- .../realtek/rtlwifi/btcoexist/halbtcoutsrc.c       |  15 ---
- .../net/wireless/realtek/rtlwifi/rtl8723be/hw.c    |  11 +-
- drivers/net/wireless/realtek/rtlwifi/wifi.h        |   5 +
- 8 files changed, 138 insertions(+), 62 deletions(-)
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 00fcf81..1f5fa2f 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -137,7 +137,7 @@ config X86
+ 	select HAVE_DMA_CONTIGUOUS
+ 	select HAVE_DYNAMIC_FTRACE
+ 	select HAVE_DYNAMIC_FTRACE_WITH_REGS
+-	select HAVE_EBPF_JIT			if X86_64
++	select HAVE_EBPF_JIT
+ 	select HAVE_EFFICIENT_UNALIGNED_ACCESS
+ 	select HAVE_EXIT_THREAD
+ 	select HAVE_FENTRY			if X86_64 || DYNAMIC_FTRACE
+diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+index f928ad9..a4c7ca4 100644
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -291,14 +291,17 @@ static inline void indirect_branch_prediction_barrier(void)
+  *    lfence
+  *    jmp spec_trap
+  *  do_rop:
+- *    mov %rax,(%rsp)
++ *    mov %rax,(%rsp) for x86_64
++ *    mov %edx,(%esp) for x86_32
+  *    retq
+  *
+  * Without retpolines configured:
+  *
+- *    jmp *%rax
++ *    jmp *%rax for x86_64
++ *    jmp *%edx for x86_32
+  */
+ #ifdef CONFIG_RETPOLINE
++#ifdef CONFIG_X86_64
+ # define RETPOLINE_RAX_BPF_JIT_SIZE	17
+ # define RETPOLINE_RAX_BPF_JIT()				\
+ 	EMIT1_off32(0xE8, 7);	 /* callq do_rop */		\
+@@ -310,9 +313,28 @@ static inline void indirect_branch_prediction_barrier(void)
+ 	EMIT4(0x48, 0x89, 0x04, 0x24); /* mov %rax,(%rsp) */	\
+ 	EMIT1(0xC3);             /* retq */
+ #else
++# define RETPOLINE_EDX_BPF_JIT()				\
++do {								\
++	EMIT1_off32(0xE8, 7);	 /* call do_rop */		\
++	/* spec_trap: */					\
++	EMIT2(0xF3, 0x90);       /* pause */			\
++	EMIT3(0x0F, 0xAE, 0xE8); /* lfence */			\
++	EMIT2(0xEB, 0xF9);       /* jmp spec_trap */		\
++	/* do_rop: */						\
++	EMIT3(0x89, 0x14, 0x24); /* mov %edx,(%esp) */		\
++	EMIT1(0xC3);             /* ret */			\
++} while (0)
++#endif
++#else /* !CONFIG_RETPOLINE */
++
++#ifdef CONFIG_X86_64
+ # define RETPOLINE_RAX_BPF_JIT_SIZE	2
+ # define RETPOLINE_RAX_BPF_JIT()				\
+ 	EMIT2(0xFF, 0xE0);	 /* jmp *%rax */
++#else
++# define RETPOLINE_EDX_BPF_JIT()				\
++	EMIT2(0xFF, 0xE2) /* jmp *%edx */
++#endif
+ #endif
+ 
+ #endif /* _ASM_X86_NOSPEC_BRANCH_H_ */
+diff --git a/arch/x86/net/Makefile b/arch/x86/net/Makefile
+index fefb4b6..f54c9d4 100644
+--- a/arch/x86/net/Makefile
++++ b/arch/x86/net/Makefile
+@@ -1,6 +1,11 @@
+ #
+ # Arch-specific network modules
+ #
+-OBJECT_FILES_NON_STANDARD_bpf_jit.o += y
+ 
+-obj-$(CONFIG_BPF_JIT) += bpf_jit.o bpf_jit_comp.o
++
++ifeq ($(CONFIG_X86_32),y)
++        obj-$(CONFIG_BPF_JIT) += bpf_jit_comp32.o
++else
++        OBJECT_FILES_NON_STANDARD_bpf_jit.o += y
++        obj-$(CONFIG_BPF_JIT) += bpf_jit.o bpf_jit_comp.o
++endif
+diff --git a/arch/x86/net/bpf_jit_comp32.c b/arch/x86/net/bpf_jit_comp32.c
+new file mode 100644
+index 0000000..376bf95
+--- /dev/null
++++ b/arch/x86/net/bpf_jit_comp32.c
+@@ -0,0 +1,2530 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Just-In-Time compiler for eBPF filters on IA32 (32bit x86)
++ *
++ * Author: Wang YanQing (udknight@gmail.com)
++ * The code based on code and ideas from:
++ * Eric Dumazet (eric.dumazet@gmail.com)
++ * and from:
++ * Shubham Bansal <illusionist.neo@gmail.com>
++ */
++
++#include <linux/netdevice.h>
++#include <linux/filter.h>
++#include <linux/if_vlan.h>
++#include <asm/cacheflush.h>
++#include <asm/set_memory.h>
++#include <asm/nospec-branch.h>
++#include <linux/bpf.h>
++
++/*
++ * eBPF prog stack layout:
++ *
++ *                         high
++ * original ESP =>        +-----+
++ *                        |     | callee saved registers
++ *                        +-----+
++ *                        | ... | eBPF JIT scratch space
++ * BPF_FP,IA32_EBP  =>    +-----+
++ *                        | ... | eBPF prog stack
++ *                        +-----+
++ *                        |RSVD | JIT scratchpad
++ * current ESP =>         +-----+
++ *                        |     |
++ *                        | ... | Function call stack
++ *                        |     |
++ *                        +-----+
++ *                          low
++ *
++ * The callee saved registers:
++ *
++ *                                high
++ * original ESP =>        +------------------+ \
++ *                        |        ebp       | |
++ * current EBP =>         +------------------+ } callee saved registers
++ *                        |    ebx,esi,edi   | |
++ *                        +------------------+ /
++ *                                low
++ */
++
++static u8 *emit_code(u8 *ptr, u32 bytes, unsigned int len)
++{
++	if (len == 1)
++		*ptr = bytes;
++	else if (len == 2)
++		*(u16 *)ptr = bytes;
++	else {
++		*(u32 *)ptr = bytes;
++		barrier();
++	}
++	return ptr + len;
++}
++
++#define EMIT(bytes, len) \
++	do { prog = emit_code(prog, bytes, len); cnt += len; } while (0)
++
++#define EMIT1(b1)		EMIT(b1, 1)
++#define EMIT2(b1, b2)		EMIT((b1) + ((b2) << 8), 2)
++#define EMIT3(b1, b2, b3)	EMIT((b1) + ((b2) << 8) + ((b3) << 16), 3)
++#define EMIT4(b1, b2, b3, b4)   \
++	EMIT((b1) + ((b2) << 8) + ((b3) << 16) + ((b4) << 24), 4)
++
++#define EMIT1_off32(b1, off) \
++	do {EMIT1(b1); EMIT(off, 4); } while (0)
++#define EMIT2_off32(b1, b2, off) \
++	do {EMIT2(b1, b2); EMIT(off, 4); } while (0)
++#define EMIT3_off32(b1, b2, b3, off) \
++	do {EMIT3(b1, b2, b3); EMIT(off, 4); } while (0)
++#define EMIT4_off32(b1, b2, b3, b4, off) \
++	do {EMIT4(b1, b2, b3, b4); EMIT(off, 4); } while (0)
++
++#define jmp_label(label, jmp_insn_len) (label - cnt - jmp_insn_len)
++
++static bool is_imm8(int value)
++{
++	return value <= 127 && value >= -128;
++}
++
++static bool is_simm32(s64 value)
++{
++	return value == (s64) (s32) value;
++}
++
++#define STACK_OFFSET(k)	(k)
++#define TCALL_CNT	(MAX_BPF_JIT_REG + 0)	/* Tail Call Count */
++
++#define IA32_EAX	(0x0)
++#define IA32_EBX	(0x3)
++#define IA32_ECX	(0x1)
++#define IA32_EDX	(0x2)
++#define IA32_ESI	(0x6)
++#define IA32_EDI	(0x7)
++#define IA32_EBP	(0x5)
++#define IA32_ESP	(0x4)
++
++/* list of x86 cond jumps opcodes (. + s8)
++ * Add 0x10 (and an extra 0x0f) to generate far jumps (. + s32)
++ */
++#define IA32_JB  0x72
++#define IA32_JAE 0x73
++#define IA32_JE  0x74
++#define IA32_JNE 0x75
++#define IA32_JBE 0x76
++#define IA32_JA  0x77
++#define IA32_JL  0x7C
++#define IA32_JGE 0x7D
++#define IA32_JLE 0x7E
++#define IA32_JG  0x7F
++
++/*
++ * Map eBPF registers to x86_32 32bit registers or stack scratch space.
++ *
++ * 1. All the registers, R0-R10, are mapped to scratch space on stack.
++ * 2. We need two 64 bit temp registers to do complex operations on eBPF
++ *    registers.
++ * 3. For performance reason, the BPF_REG_AX for blinding constant, is
++ *    mapped to real hardware register pair, IA32_ESI and IA32_EDI.
++ *
++ * As the eBPF registers are all 64 bit registers and x86_32 has only 32 bit
++ * registers, we have to map each eBPF registers with two x86_32 32 bit regs
++ * or scratch memory space and we have to build eBPF 64 bit register from those.
++ *
++ * We use IA32_EAX, IA32_EDX, IA32_ECX, IA32_EBX as temporary registers.
++ */
++static const u8 bpf2ia32[][2] = {
++	/* return value from in-kernel function, and exit value from eBPF */
++	[BPF_REG_0] = {STACK_OFFSET(0), STACK_OFFSET(4)},
++
++	/* arguments from eBPF program to in-kernel function */
++	/* Stored on stack scratch space */
++	[BPF_REG_1] = {STACK_OFFSET(8), STACK_OFFSET(12)},
++	[BPF_REG_2] = {STACK_OFFSET(16), STACK_OFFSET(20)},
++	[BPF_REG_3] = {STACK_OFFSET(24), STACK_OFFSET(28)},
++	[BPF_REG_4] = {STACK_OFFSET(32), STACK_OFFSET(36)},
++	[BPF_REG_5] = {STACK_OFFSET(40), STACK_OFFSET(44)},
++
++	/* callee saved registers that in-kernel function will preserve */
++	/* Stored on stack scratch space */
++	[BPF_REG_6] = {STACK_OFFSET(48), STACK_OFFSET(52)},
++	[BPF_REG_7] = {STACK_OFFSET(56), STACK_OFFSET(60)},
++	[BPF_REG_8] = {STACK_OFFSET(64), STACK_OFFSET(68)},
++	[BPF_REG_9] = {STACK_OFFSET(72), STACK_OFFSET(76)},
++
++	/* Read only Frame Pointer to access Stack */
++	[BPF_REG_FP] = {STACK_OFFSET(80), STACK_OFFSET(84)},
++
++	/* temporary register for blinding constants. */
++	[BPF_REG_AX] = {IA32_ESI, IA32_EDI},
++
++	/* Tail call count. Stored on stack scratch space. */
++	[TCALL_CNT] = {STACK_OFFSET(88), STACK_OFFSET(92)},
++};
++
++#define dst_lo	dst[0]
++#define dst_hi	dst[1]
++#define src_lo	src[0]
++#define src_hi	src[1]
++
++#define STACK_ALIGNMENT	8
++/* Stack space for BPF_REG_1, BPF_REG_2, BPF_REG_3, BPF_REG_4,
++ * BPF_REG_5, BPF_REG_6, BPF_REG_7, BPF_REG_8, BPF_REG_9,
++ * BPF_REG_FP, BPF_REG_AX and Tail call counts.
++ */
++#define SCRATCH_SIZE 96
++
++/* total stack size used in JITed code */
++#define _STACK_SIZE \
++	(stack_depth + \
++	 + SCRATCH_SIZE + \
++	 + 4 /* extra for skb_copy_bits buffer */)
++
++#define STACK_SIZE ALIGN(_STACK_SIZE, STACK_ALIGNMENT)
++
++/* Get the offset of eBPF REGISTERs stored on scratch space. */
++#define STACK_VAR(off) (off)
++
++/* Offset of skb_copy_bits buffer */
++#define SKB_BUFFER STACK_VAR(SCRATCH_SIZE)
++
++/* encode 'dst_reg' register into x86_32 opcode 'byte' */
++static u8 add_1reg(u8 byte, u32 dst_reg)
++{
++	return byte + dst_reg;
++}
++
++/* encode 'dst_reg' and 'src_reg' registers into x86_32 opcode 'byte' */
++static u8 add_2reg(u8 byte, u32 dst_reg, u32 src_reg)
++{
++	return byte + dst_reg + (src_reg << 3);
++}
++
++static void jit_fill_hole(void *area, unsigned int size)
++{
++	/* fill whole space with int3 instructions */
++	memset(area, 0xcc, size);
++}
++
++/* Checks whether BPF register is on scratch stack space or not. */
++static inline bool is_on_stack(u8 bpf_reg)
++{
++	static u8 stack_regs[] = {BPF_REG_AX};
++	int i, reg_len = sizeof(stack_regs);
++
++	for (i = 0 ; i < reg_len ; i++) {
++		if (bpf_reg == stack_regs[i])
++			return false;
++	}
++	return true;
++}
++
++static inline void emit_ia32_mov_i(const u8 dst, const u32 val, bool dstk,
++				   u8 **pprog)
++{
++	u8 *prog = *pprog;
++	int cnt = 0;
++
++	if (dstk) {
++		if (val == 0) {
++			/* xor eax,eax */
++			EMIT2(0x33, add_2reg(0xC0, IA32_EAX, IA32_EAX));
++			/* mov dword ptr [ebp+off],eax */
++			EMIT3(0x89, add_2reg(0x40, IA32_EBP, IA32_EAX),
++			      STACK_VAR(dst));
++		} else {
++			EMIT3_off32(0xC7, add_1reg(0x40, IA32_EBP),
++				    STACK_VAR(dst), val);
++		}
++	} else {
++		if (val == 0)
++			EMIT2(0x33, add_2reg(0xC0, dst, dst));
++		else
++			EMIT2_off32(0xC7, add_1reg(0xC0, dst),
++				    val);
++	}
++	*pprog = prog;
++}
++
++/* dst = imm (4 bytes)*/
++static inline void emit_ia32_mov_r(const u8 dst, const u8 src, bool dstk,
++				   bool sstk, u8 **pprog)
++{
++	u8 *prog = *pprog;
++	int cnt = 0;
++	u8 sreg = sstk ? IA32_EAX : src;
++
++	if (sstk)
++		/* mov eax,dword ptr [ebp+off] */
++		EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EAX), STACK_VAR(src));
++	if (dstk)
++		/* mov dword ptr [ebp+off],eax */
++		EMIT3(0x89, add_2reg(0x40, IA32_EBP, sreg), STACK_VAR(dst));
++	else
++		/* mov dst,sreg */
++		EMIT2(0x89, add_2reg(0xC0, dst, sreg));
++
++	*pprog = prog;
++}
++
++/* dst = src */
++static inline void emit_ia32_mov_r64(const bool is64, const u8 dst[],
++				     const u8 src[], bool dstk,
++				     bool sstk, u8 **pprog)
++{
++	emit_ia32_mov_r(dst_lo, src_lo, dstk, sstk, pprog);
++	if (is64)
++		/* complete 8 byte move */
++		emit_ia32_mov_r(dst_hi, src_hi, dstk, sstk, pprog);
++	else
++		/* zero out high 4 bytes */
++		emit_ia32_mov_i(dst_hi, 0, dstk, pprog);
++}
++
++/* Sign extended move */
++static inline void emit_ia32_mov_i64(const bool is64, const u8 dst[],
++				     const u32 val, bool dstk, u8 **pprog)
++{
++	u32 hi = 0;
++
++	if (is64 && (val & (1<<31)))
++		hi = (u32)~0;
++	emit_ia32_mov_i(dst_lo, val, dstk, pprog);
++	emit_ia32_mov_i(dst_hi, hi, dstk, pprog);
++}
++
++/* ALU operation (32 bit)
++ * dst = dst * src
++ */
++static inline void emit_ia32_mul_r(const u8 dst, const u8 src, bool dstk,
++				   bool sstk, u8 **pprog)
++{
++	u8 *prog = *pprog;
++	int cnt = 0;
++	u8 sreg = sstk ? IA32_ECX : src;
++
++	if (sstk)
++		/* mov ecx,dword ptr [ebp+off] */
++		EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_ECX), STACK_VAR(src));
++
++	if (dstk)
++		/* mov eax,dword ptr [ebp+off] */
++		EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EAX), STACK_VAR(dst));
++	else
++		/* mov eax,dst */
++		EMIT2(0x8B, add_2reg(0xC0, dst, IA32_EAX));
++
++
++	EMIT2(0xF7, add_1reg(0xE0, sreg));
++
++	if (dstk)
++		/* mov dword ptr [ebp+off],eax */
++		EMIT3(0x89, add_2reg(0x40, IA32_EBP, IA32_EAX),
++		      STACK_VAR(dst));
++	else
++		/* mov dst,eax */
++		EMIT2(0x89, add_2reg(0xC0, dst, IA32_EAX));
++
++	*pprog = prog;
++}
++
++static inline void emit_ia32_to_le_r64(const u8 dst[], s32 val,
++					 bool dstk, u8 **pprog)
++{
++	u8 *prog = *pprog;
++	int cnt = 0;
++	u8 dreg_lo = dstk ? IA32_EAX : dst_lo;
++	u8 dreg_hi = dstk ? IA32_EDX : dst_hi;
++
++	if (dstk && val != 64) {
++		EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EAX),
++		      STACK_VAR(dst_lo));
++		EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EDX),
++		      STACK_VAR(dst_hi));
++	}
++	switch (val) {
++	case 16:
++		/* emit 'movzwl eax,ax' to zero extend 16-bit
++		 * into 64 bit
++		 */
++		EMIT2(0x0F, 0xB7);
++		EMIT1(add_2reg(0xC0, dreg_lo, dreg_lo));
++		/* xor dreg_hi,dreg_hi */
++		EMIT2(0x33, add_2reg(0xC0, dreg_hi, dreg_hi));
++		break;
++	case 32:
++		/* xor dreg_hi,dreg_hi */
++		EMIT2(0x33, add_2reg(0xC0, dreg_hi, dreg_hi));
++		break;
++	case 64:
++		/* nop */
++		break;
++	}
++
++	if (dstk && val != 64) {
++		/* mov dword ptr [ebp+off],dreg_lo */
++		EMIT3(0x89, add_2reg(0x40, IA32_EBP, dreg_lo),
++		      STACK_VAR(dst_lo));
++		/* mov dword ptr [ebp+off],dreg_hi */
++		EMIT3(0x89, add_2reg(0x40, IA32_EBP, dreg_hi),
++		      STACK_VAR(dst_hi));
++	}
++	*pprog = prog;
++}
++
++static inline void emit_ia32_to_be_r64(const u8 dst[], s32 val,
++				       bool dstk, u8 **pprog)
++{
++	u8 *prog = *pprog;
++	int cnt = 0;
++	u8 dreg_lo = dstk ? IA32_EAX : dst_lo;
++	u8 dreg_hi = dstk ? IA32_EDX : dst_hi;
++
++	if (dstk) {
++		EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EAX),
++		      STACK_VAR(dst_lo));
++		EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EDX),
++		      STACK_VAR(dst_hi));
++	}
++	switch (val) {
++	case 16:
++		/* emit 'ror %ax, 8' to swap lower 2 bytes */
++		EMIT1(0x66);
++		EMIT3(0xC1, add_1reg(0xC8, dreg_lo), 8);
++
++		EMIT2(0x0F, 0xB7);
++		EMIT1(add_2reg(0xC0, dreg_lo, dreg_lo));
++
++		/* xor dreg_hi,dreg_hi */
++		EMIT2(0x33, add_2reg(0xC0, dreg_hi, dreg_hi));
++		break;
++	case 32:
++		/* emit 'bswap eax' to swap lower 4 bytes */
++		EMIT1(0x0F);
++		EMIT1(add_1reg(0xC8, dreg_lo));
++
++		/* xor dreg_hi,dreg_hi */
++		EMIT2(0x33, add_2reg(0xC0, dreg_hi, dreg_hi));
++		break;
++	case 64:
++		/* emit 'bswap eax' to swap lower 4 bytes */
++		EMIT1(0x0F);
++		EMIT1(add_1reg(0xC8, dreg_lo));
++
++		/* emit 'bswap edx' to swap lower 4 bytes */
++		EMIT1(0x0F);
++		EMIT1(add_1reg(0xC8, dreg_hi));
++
++		/* mov ecx,dreg_hi */
++		EMIT2(0x89, add_2reg(0xC0, IA32_ECX, dreg_hi));
++		/* mov dreg_hi,dreg_lo */
++		EMIT2(0x89, add_2reg(0xC0, dreg_hi, dreg_lo));
++		/* mov dreg_lo,ecx */
++		EMIT2(0x89, add_2reg(0xC0, dreg_lo, IA32_ECX));
++
++		break;
++	}
++	if (dstk) {
++		/* mov dword ptr [ebp+off],dreg_lo */
++		EMIT3(0x89, add_2reg(0x40, IA32_EBP, dreg_lo),
++		      STACK_VAR(dst_lo));
++		/* mov dword ptr [ebp+off],dreg_hi */
++		EMIT3(0x89, add_2reg(0x40, IA32_EBP, dreg_hi),
++		      STACK_VAR(dst_hi));
++	}
++	*pprog = prog;
++}
++
++/* ALU operation (32 bit)
++ * dst = dst (div|mod) src
++ */
++static inline void emit_ia32_div_mod_r(const u8 op, const u8 dst, const u8 src,
++				       bool dstk, bool sstk, u8 **pprog)
++{
++	u8 *prog = *pprog;
++	int cnt = 0;
++
++	if (sstk)
++		/* mov ecx,dword ptr [ebp+off] */
++		EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_ECX),
++		      STACK_VAR(src));
++	else if (src != IA32_ECX)
++		/* mov ecx,src */
++		EMIT2(0x8B, add_2reg(0xC0, src, IA32_ECX));
++
++	if (dstk)
++		/* mov eax,dword ptr [ebp+off] */
++		EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EAX),
++		      STACK_VAR(dst));
++	else
++		/* mov eax,dst */
++		EMIT2(0x8B, add_2reg(0xC0, dst, IA32_EAX));
++
++	/* xor edx,edx */
++	EMIT2(0x31, add_2reg(0xC0, IA32_EDX, IA32_EDX));
++	/* div ecx */
++	EMIT2(0xF7, add_1reg(0xF0, IA32_ECX));
++
++	if (op == BPF_MOD) {
++		if (dstk)
++			EMIT3(0x89, add_2reg(0x40, IA32_EBP, IA32_EDX),
++			      STACK_VAR(dst));
++		else
++			EMIT2(0x89, add_2reg(0xC0, dst, IA32_EDX));
++	} else {
++		if (dstk)
++			EMIT3(0x89, add_2reg(0x40, IA32_EBP, IA32_EAX),
++			      STACK_VAR(dst));
++		else
++			EMIT2(0x89, add_2reg(0xC0, dst, IA32_EAX));
++	}
++	*pprog = prog;
++}
++
++/* ALU operation (32 bit)
++ * dst = dst (shift) src
++ */
++static inline void emit_ia32_shift_r(const u8 op, const u8 dst, const u8 src,
++				     bool dstk, bool sstk, u8 **pprog)
++{
++	u8 *prog = *pprog;
++	int cnt = 0;
++	u8 dreg = dstk ? IA32_EAX : dst;
++	u8 b2;
++
++	if (dstk)
++		/* mov eax,dword ptr [ebp+off] */
++		EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EAX), STACK_VAR(dst));
++
++	if (sstk)
++		/* mov ecx,dword ptr [ebp+off] */
++		EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_ECX), STACK_VAR(src));
++	else if (src != IA32_ECX)
++		/* mov ecx,src */
++		EMIT2(0x8B, add_2reg(0xC0, src, IA32_ECX));
++
++	switch (op) {
++	case BPF_LSH:
++		b2 = 0xE0; break;
++	case BPF_RSH:
++		b2 = 0xE8; break;
++	case BPF_ARSH:
++		b2 = 0xF8; break;
++	default:
++		return;
++	}
++	EMIT2(0xD3, add_1reg(b2, dreg));
++
++	if (dstk)
++		/* mov dword ptr [ebp+off],dreg */
++		EMIT3(0x89, add_2reg(0x40, IA32_EBP, dreg), STACK_VAR(dst));
++	*pprog = prog;
++}
++
++/* ALU operation (32 bit)
++ * dst = dst (op) src
++ */
++static inline void emit_ia32_alu_r(const bool is64, const bool hi, const u8 op,
++				   const u8 dst, const u8 src, bool dstk,
++				   bool sstk, u8 **pprog)
++{
++	u8 *prog = *pprog;
++	int cnt = 0;
++	u8 sreg = sstk ? IA32_EAX : src;
++	u8 dreg = dstk ? IA32_EDX : dst;
++
++	if (sstk)
++		/* mov eax,dword ptr [ebp+off] */
++		EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EAX), STACK_VAR(src));
++
++	if (dstk)
++		/* mov eax,dword ptr [ebp+off] */
++		EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EDX), STACK_VAR(dst));
++
++	switch (BPF_OP(op)) {
++	/* dst = dst + src */
++	case BPF_ADD:
++		if (hi && is64)
++			EMIT2(0x11, add_2reg(0xC0, dreg, sreg));
++		else
++			EMIT2(0x01, add_2reg(0xC0, dreg, sreg));
++		break;
++	/* dst = dst - src */
++	case BPF_SUB:
++		if (hi && is64)
++			EMIT2(0x19, add_2reg(0xC0, dreg, sreg));
++		else
++			EMIT2(0x29, add_2reg(0xC0, dreg, sreg));
++		break;
++	/* dst = dst | src */
++	case BPF_OR:
++		EMIT2(0x09, add_2reg(0xC0, dreg, sreg));
++		break;
++	/* dst = dst & src */
++	case BPF_AND:
++		EMIT2(0x21, add_2reg(0xC0, dreg, sreg));
++		break;
++	/* dst = dst ^ src */
++	case BPF_XOR:
++		EMIT2(0x31, add_2reg(0xC0, dreg, sreg));
++		break;
++	}
++
++	if (dstk)
++		/* mov dword ptr [ebp+off],dreg */
++		EMIT3(0x89, add_2reg(0x40, IA32_EBP, dreg),
++		      STACK_VAR(dst));
++	*pprog = prog;
++}
++
++/* ALU operation (64 bit) */
++static inline void emit_ia32_alu_r64(const bool is64, const u8 op,
++				     const u8 dst[], const u8 src[],
++				     bool dstk,  bool sstk,
++				     u8 **pprog)
++{
++	u8 *prog = *pprog;
++
++	emit_ia32_alu_r(is64, false, op, dst_lo, src_lo, dstk, sstk, &prog);
++	if (is64)
++		emit_ia32_alu_r(is64, true, op, dst_hi, src_hi, dstk, sstk,
++				&prog);
++	else
++		emit_ia32_mov_i(dst_hi, 0, dstk, &prog);
++	*pprog = prog;
++}
++
++/* ALU operation (32 bit)
++ * dst = dst (op) val
++ */
++static inline void emit_ia32_alu_i(const bool is64, const bool hi, const u8 op,
++				   const u8 dst, const s32 val, bool dstk,
++				   u8 **pprog)
++{
++	u8 *prog = *pprog;
++	int cnt = 0;
++	u8 dreg = dstk ? IA32_EAX : dst;
++	u8 sreg = IA32_EDX;
++
++	if (dstk)
++		/* mov eax,dword ptr [ebp+off] */
++		EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EAX), STACK_VAR(dst));
++
++	if (!is_imm8(val))
++		/* mov edx,imm32*/
++		EMIT2_off32(0xC7, add_1reg(0xC0, IA32_EDX), val);
++
++	switch (op) {
++	/* dst = dst + val */
++	case BPF_ADD:
++		if (hi && is64) {
++			if (is_imm8(val))
++				EMIT3(0x83, add_1reg(0xD0, dreg), val);
++			else
++				EMIT2(0x11, add_2reg(0xC0, dreg, sreg));
++		} else {
++			if (is_imm8(val))
++				EMIT3(0x83, add_1reg(0xC0, dreg), val);
++			else
++				EMIT2(0x01, add_2reg(0xC0, dreg, sreg));
++		}
++		break;
++	/* dst = dst - val */
++	case BPF_SUB:
++		if (hi && is64) {
++			if (is_imm8(val))
++				EMIT3(0x83, add_1reg(0xD8, dreg), val);
++			else
++				EMIT2(0x19, add_2reg(0xC0, dreg, sreg));
++		} else {
++			if (is_imm8(val))
++				EMIT3(0x83, add_1reg(0xE8, dreg), val);
++			else
++				EMIT2(0x29, add_2reg(0xC0, dreg, sreg));
++		}
++		break;
++	/* dst = dst | val */
++	case BPF_OR:
++		if (is_imm8(val))
++			EMIT3(0x83, add_1reg(0xC8, dreg), val);
++		else
++			EMIT2(0x09, add_2reg(0xC0, dreg, sreg));
++		break;
++	/* dst = dst & val */
++	case BPF_AND:
++		if (is_imm8(val))
++			EMIT3(0x83, add_1reg(0xE0, dreg), val);
++		else
++			EMIT2(0x21, add_2reg(0xC0, dreg, sreg));
++		break;
++	/* dst = dst ^ val */
++	case BPF_XOR:
++		if (is_imm8(val))
++			EMIT3(0x83, add_1reg(0xF0, dreg), val);
++		else
++			EMIT2(0x31, add_2reg(0xC0, dreg, sreg));
++		break;
++	case BPF_NEG:
++		EMIT2(0xF7, add_1reg(0xD8, dreg));
++		break;
++	}
++
++	if (dstk)
++		/* mov dword ptr [ebp+off],dreg */
++		EMIT3(0x89, add_2reg(0x40, IA32_EBP, dreg),
++		      STACK_VAR(dst));
++	*pprog = prog;
++}
++
++/* ALU operation (64 bit) */
++static inline void emit_ia32_alu_i64(const bool is64, const u8 op,
++				     const u8 dst[], const u32 val,
++				     bool dstk, u8 **pprog)
++{
++	u8 *prog = *pprog;
++	u32 hi = 0;
++
++	if (is64 && (val & (1<<31)))
++		hi = (u32)~0;
++
++	emit_ia32_alu_i(is64, false, op, dst_lo, val, dstk, &prog);
++	if (is64)
++		emit_ia32_alu_i(is64, true, op, dst_hi, hi, dstk, &prog);
++	else
++		emit_ia32_mov_i(dst_hi, 0, dstk, &prog);
++
++	*pprog = prog;
++}
++
++/* dst = ~dst (64 bit) */
++static inline void emit_ia32_neg64(const u8 dst[], bool dstk, u8 **pprog)
++{
++	u8 *prog = *pprog;
++	int cnt = 0;
++	u8 dreg_lo = dstk ? IA32_EAX : dst_lo;
++	u8 dreg_hi = dstk ? IA32_EDX : dst_hi;
++
++	if (dstk) {
++		EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EAX),
++		      STACK_VAR(dst_lo));
++		EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EDX),
++		      STACK_VAR(dst_hi));
++	}
++
++	/* xor ecx,ecx */
++	EMIT2(0x31, add_2reg(0xC0, IA32_ECX, IA32_ECX));
++	/* sub dreg_lo,ecx */
++	EMIT2(0x2B, add_2reg(0xC0, dreg_lo, IA32_ECX));
++	/* mov dreg_lo,ecx */
++	EMIT2(0x89, add_2reg(0xC0, dreg_lo, IA32_ECX));
++
++	/* xor ecx,ecx */
++	EMIT2(0x31, add_2reg(0xC0, IA32_ECX, IA32_ECX));
++	/* sbb dreg_hi,ecx */
++	EMIT2(0x19, add_2reg(0xC0, dreg_hi, IA32_ECX));
++	/* mov dreg_hi,ecx */
++	EMIT2(0x89, add_2reg(0xC0, dreg_hi, IA32_ECX));
++
++	if (dstk) {
++		/* mov dword ptr [ebp+off],dreg_lo */
++		EMIT3(0x89, add_2reg(0x40, IA32_EBP, dreg_lo),
++		      STACK_VAR(dst_lo));
++		/* mov dword ptr [ebp+off],dreg_hi */
++		EMIT3(0x89, add_2reg(0x40, IA32_EBP, dreg_hi),
++		      STACK_VAR(dst_hi));
++	}
++	*pprog = prog;
++}
++
++/* dst = dst << src */
++static inline void emit_ia32_lsh_r64(const u8 dst[], const u8 src[],
++				     bool dstk, bool sstk, u8 **pprog)
++{
++	u8 *prog = *pprog;
++	int cnt = 0;
++	static int jmp_label1 = -1;
++	static int jmp_label2 = -1;
++	static int jmp_label3 = -1;
++	u8 dreg_lo = dstk ? IA32_EAX : dst_lo;
++	u8 dreg_hi = dstk ? IA32_EDX : dst_hi;
++
++	if (dstk) {
++		EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EAX),
++		      STACK_VAR(dst_lo));
++		EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EDX),
++		      STACK_VAR(dst_hi));
++	}
++
++	if (sstk)
++		/* mov ecx,dword ptr [ebp+off] */
++		EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_ECX),
++		      STACK_VAR(src_lo));
++	else
++		/* mov ecx,src_lo */
++		EMIT2(0x8B, add_2reg(0xC0, src_lo, IA32_ECX));
++
++	/* cmp ecx,32 */
++	EMIT3(0x83, add_1reg(0xF8, IA32_ECX), 32);
++	/* jumps when >= 32 */
++	if (is_imm8(jmp_label(jmp_label1, 2)))
++		EMIT2(IA32_JAE, jmp_label(jmp_label1, 2));
++	else
++		EMIT2_off32(0x0F, IA32_JAE + 0x10, jmp_label(jmp_label1, 6));
++
++	/* < 32 */
++	/* shl dreg_hi,cl */
++	EMIT2(0xD3, add_1reg(0xE0, dreg_hi));
++	/* mov ebx,dreg_lo */
++	EMIT2(0x8B, add_2reg(0xC0, dreg_lo, IA32_EBX));
++	/* shl dreg_lo,cl */
++	EMIT2(0xD3, add_1reg(0xE0, dreg_lo));
++
++	/* IA32_ECX = -IA32_ECX + 32 */
++	/* neg ecx */
++	EMIT2(0xF7, add_1reg(0xD8, IA32_ECX));
++	/* add ecx,32 */
++	EMIT3(0x83, add_1reg(0xC0, IA32_ECX), 32);
++
++	/* shr ebx,cl */
++	EMIT2(0xD3, add_1reg(0xE8, IA32_EBX));
++	/* or dreg_hi,ebx */
++	EMIT2(0x09, add_2reg(0xC0, dreg_hi, IA32_EBX));
++
++	/* goto out; */
++	if (is_imm8(jmp_label(jmp_label3, 2)))
++		EMIT2(0xEB, jmp_label(jmp_label3, 2));
++	else
++		EMIT1_off32(0xE9, jmp_label(jmp_label3, 5));
++
++	/* >= 32 */
++	if (jmp_label1 == -1)
++		jmp_label1 = cnt;
++
++	/* cmp ecx,64 */
++	EMIT3(0x83, add_1reg(0xF8, IA32_ECX), 64);
++	/* jumps when >= 64 */
++	if (is_imm8(jmp_label(jmp_label2, 2)))
++		EMIT2(IA32_JAE, jmp_label(jmp_label2, 2));
++	else
++		EMIT2_off32(0x0F, IA32_JAE + 0x10, jmp_label(jmp_label2, 6));
++
++	/* >= 32 && < 64 */
++	/* sub ecx,32 */
++	EMIT3(0x83, add_1reg(0xE8, IA32_ECX), 32);
++	/* shl dreg_lo,cl */
++	EMIT2(0xD3, add_1reg(0xE0, dreg_lo));
++	/* mov dreg_hi,dreg_lo */
++	EMIT2(0x89, add_2reg(0xC0, dreg_hi, dreg_lo));
++
++	/* xor dreg_lo,dreg_lo */
++	EMIT2(0x33, add_2reg(0xC0, dreg_lo, dreg_lo));
++
++	/* goto out; */
++	if (is_imm8(jmp_label(jmp_label3, 2)))
++		EMIT2(0xEB, jmp_label(jmp_label3, 2));
++	else
++		EMIT1_off32(0xE9, jmp_label(jmp_label3, 5));
++
++	/* >= 64 */
++	if (jmp_label2 == -1)
++		jmp_label2 = cnt;
++	/* xor dreg_lo,dreg_lo */
++	EMIT2(0x33, add_2reg(0xC0, dreg_lo, dreg_lo));
++	/* xor dreg_hi,dreg_hi */
++	EMIT2(0x33, add_2reg(0xC0, dreg_hi, dreg_hi));
++
++	if (jmp_label3 == -1)
++		jmp_label3 = cnt;
++
++	if (dstk) {
++		/* mov dword ptr [ebp+off],dreg_lo */
++		EMIT3(0x89, add_2reg(0x40, IA32_EBP, dreg_lo),
++		      STACK_VAR(dst_lo));
++		/* mov dword ptr [ebp+off],dreg_hi */
++		EMIT3(0x89, add_2reg(0x40, IA32_EBP, dreg_hi),
++		      STACK_VAR(dst_hi));
++	}
++	/* out: */
++	*pprog = prog;
++}
++
++/* dst = dst >> src (signed)*/
++static inline void emit_ia32_arsh_r64(const u8 dst[], const u8 src[],
++				      bool dstk, bool sstk, u8 **pprog)
++{
++	u8 *prog = *pprog;
++	int cnt = 0;
++	static int jmp_label1 = -1;
++	static int jmp_label2 = -1;
++	static int jmp_label3 = -1;
++	u8 dreg_lo = dstk ? IA32_EAX : dst_lo;
++	u8 dreg_hi = dstk ? IA32_EDX : dst_hi;
++
++	if (dstk) {
++		EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EAX),
++		      STACK_VAR(dst_lo));
++		EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EDX),
++		      STACK_VAR(dst_hi));
++	}
++
++	if (sstk)
++		/* mov ecx,dword ptr [ebp+off] */
++		EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_ECX),
++		      STACK_VAR(src_lo));
++	else
++		/* mov ecx,src_lo */
++		EMIT2(0x8B, add_2reg(0xC0, src_lo, IA32_ECX));
++
++	/* cmp ecx,32 */
++	EMIT3(0x83, add_1reg(0xF8, IA32_ECX), 32);
++	/* jumps when >= 32 */
++	if (is_imm8(jmp_label(jmp_label1, 2)))
++		EMIT2(IA32_JAE, jmp_label(jmp_label1, 2));
++	else
++		EMIT2_off32(0x0F, IA32_JAE + 0x10, jmp_label(jmp_label1, 6));
++
++	/* < 32 */
++	/* lshr dreg_lo,cl */
++	EMIT2(0xD3, add_1reg(0xE8, dreg_lo));
++	/* mov ebx,dreg_hi */
++	EMIT2(0x8B, add_2reg(0xC0, dreg_hi, IA32_EBX));
++	/* ashr dreg_hi,cl */
++	EMIT2(0xD3, add_1reg(0xF8, dreg_hi));
++
++	/* IA32_ECX = -IA32_ECX + 32 */
++	/* neg ecx */
++	EMIT2(0xF7, add_1reg(0xD8, IA32_ECX));
++	/* add ecx,32 */
++	EMIT3(0x83, add_1reg(0xC0, IA32_ECX), 32);
++
++	/* shl ebx,cl */
++	EMIT2(0xD3, add_1reg(0xE0, IA32_EBX));
++	/* or dreg_lo,ebx */
++	EMIT2(0x09, add_2reg(0xC0, dreg_lo, IA32_EBX));
++
++	/* goto out; */
++	if (is_imm8(jmp_label(jmp_label3, 2)))
++		EMIT2(0xEB, jmp_label(jmp_label3, 2));
++	else
++		EMIT1_off32(0xE9, jmp_label(jmp_label3, 5));
++
++	/* >= 32 */
++	if (jmp_label1 == -1)
++		jmp_label1 = cnt;
++
++	/* cmp ecx,64 */
++	EMIT3(0x83, add_1reg(0xF8, IA32_ECX), 64);
++	/* jumps when >= 64 */
++	if (is_imm8(jmp_label(jmp_label2, 2)))
++		EMIT2(IA32_JAE, jmp_label(jmp_label2, 2));
++	else
++		EMIT2_off32(0x0F, IA32_JAE + 0x10, jmp_label(jmp_label2, 6));
++
++	/* >= 32 && < 64 */
++	/* sub ecx,32 */
++	EMIT3(0x83, add_1reg(0xE8, IA32_ECX), 32);
++	/* ashr dreg_hi,cl */
++	EMIT2(0xD3, add_1reg(0xF8, dreg_hi));
++	/* mov dreg_lo,dreg_hi */
++	EMIT2(0x89, add_2reg(0xC0, dreg_lo, dreg_hi));
++
++	/* ashr dreg_hi,imm8 */
++	EMIT3(0xC1, add_1reg(0xF8, dreg_hi), 31);
++
++	/* goto out; */
++	if (is_imm8(jmp_label(jmp_label3, 2)))
++		EMIT2(0xEB, jmp_label(jmp_label3, 2));
++	else
++		EMIT1_off32(0xE9, jmp_label(jmp_label3, 5));
++
++	/* >= 64 */
++	if (jmp_label2 == -1)
++		jmp_label2 = cnt;
++	/* ashr dreg_hi,imm8 */
++	EMIT3(0xC1, add_1reg(0xF8, dreg_hi), 31);
++	/* mov dreg_lo,dreg_hi */
++	EMIT2(0x89, add_2reg(0xC0, dreg_lo, dreg_hi));
++
++	if (jmp_label3 == -1)
++		jmp_label3 = cnt;
++
++	if (dstk) {
++		/* mov dword ptr [ebp+off],dreg_lo */
++		EMIT3(0x89, add_2reg(0x40, IA32_EBP, dreg_lo),
++		      STACK_VAR(dst_lo));
++		/* mov dword ptr [ebp+off],dreg_hi */
++		EMIT3(0x89, add_2reg(0x40, IA32_EBP, dreg_hi),
++		      STACK_VAR(dst_hi));
++	}
++	/* out: */
++	*pprog = prog;
++}
++
++/* dst = dst >> src */
++static inline void emit_ia32_rsh_r64(const u8 dst[], const u8 src[], bool dstk,
++				     bool sstk, u8 **pprog)
++{
++	u8 *prog = *pprog;
++	int cnt = 0;
++	static int jmp_label1 = -1;
++	static int jmp_label2 = -1;
++	static int jmp_label3 = -1;
++	u8 dreg_lo = dstk ? IA32_EAX : dst_lo;
++	u8 dreg_hi = dstk ? IA32_EDX : dst_hi;
++
++	if (dstk) {
++		EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EAX),
++		      STACK_VAR(dst_lo));
++		EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EDX),
++		      STACK_VAR(dst_hi));
++	}
++
++	if (sstk)
++		/* mov ecx,dword ptr [ebp+off] */
++		EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_ECX),
++		      STACK_VAR(src_lo));
++	else
++		/* mov ecx,src_lo */
++		EMIT2(0x8B, add_2reg(0xC0, src_lo, IA32_ECX));
++
++	/* cmp ecx,32 */
++	EMIT3(0x83, add_1reg(0xF8, IA32_ECX), 32);
++	/* jumps when >= 32 */
++	if (is_imm8(jmp_label(jmp_label1, 2)))
++		EMIT2(IA32_JAE, jmp_label(jmp_label1, 2));
++	else
++		EMIT2_off32(0x0F, IA32_JAE + 0x10, jmp_label(jmp_label1, 6));
++
++	/* < 32 */
++	/* lshr dreg_lo,cl */
++	EMIT2(0xD3, add_1reg(0xE8, dreg_lo));
++	/* mov ebx,dreg_hi */
++	EMIT2(0x8B, add_2reg(0xC0, dreg_hi, IA32_EBX));
++	/* shr dreg_hi,cl */
++	EMIT2(0xD3, add_1reg(0xE8, dreg_hi));
++
++	/* IA32_ECX = -IA32_ECX + 32 */
++	/* neg ecx */
++	EMIT2(0xF7, add_1reg(0xD8, IA32_ECX));
++	/* add ecx,32 */
++	EMIT3(0x83, add_1reg(0xC0, IA32_ECX), 32);
++
++	/* shl ebx,cl */
++	EMIT2(0xD3, add_1reg(0xE0, IA32_EBX));
++	/* or dreg_lo,ebx */
++	EMIT2(0x09, add_2reg(0xC0, dreg_lo, IA32_EBX));
++
++	/* goto out; */
++	if (is_imm8(jmp_label(jmp_label3, 2)))
++		EMIT2(0xEB, jmp_label(jmp_label3, 2));
++	else
++		EMIT1_off32(0xE9, jmp_label(jmp_label3, 5));
++
++	/* >= 32 */
++	if (jmp_label1 == -1)
++		jmp_label1 = cnt;
++	/* cmp ecx,64 */
++	EMIT3(0x83, add_1reg(0xF8, IA32_ECX), 64);
++	/* jumps when >= 64 */
++	if (is_imm8(jmp_label(jmp_label2, 2)))
++		EMIT2(IA32_JAE, jmp_label(jmp_label2, 2));
++	else
++		EMIT2_off32(0x0F, IA32_JAE + 0x10, jmp_label(jmp_label2, 6));
++
++	/* >= 32 && < 64 */
++	/* sub ecx,32 */
++	EMIT3(0x83, add_1reg(0xE8, IA32_ECX), 32);
++	/* shr dreg_hi,cl */
++	EMIT2(0xD3, add_1reg(0xE8, dreg_hi));
++	/* mov dreg_lo,dreg_hi */
++	EMIT2(0x89, add_2reg(0xC0, dreg_lo, dreg_hi));
++	/* xor dreg_hi,dreg_hi */
++	EMIT2(0x33, add_2reg(0xC0, dreg_hi, dreg_hi));
++
++	/* goto out; */
++	if (is_imm8(jmp_label(jmp_label3, 2)))
++		EMIT2(0xEB, jmp_label(jmp_label3, 2));
++	else
++		EMIT1_off32(0xE9, jmp_label(jmp_label3, 5));
++
++	/* >= 64 */
++	if (jmp_label2 == -1)
++		jmp_label2 = cnt;
++	/* xor dreg_lo,dreg_lo */
++	EMIT2(0x33, add_2reg(0xC0, dreg_lo, dreg_lo));
++	/* xor dreg_hi,dreg_hi */
++	EMIT2(0x33, add_2reg(0xC0, dreg_hi, dreg_hi));
++
++	if (jmp_label3 == -1)
++		jmp_label3 = cnt;
++
++	if (dstk) {
++		/* mov dword ptr [ebp+off],dreg_lo */
++		EMIT3(0x89, add_2reg(0x40, IA32_EBP, dreg_lo),
++		      STACK_VAR(dst_lo));
++		/* mov dword ptr [ebp+off],dreg_hi */
++		EMIT3(0x89, add_2reg(0x40, IA32_EBP, dreg_hi),
++		      STACK_VAR(dst_hi));
++	}
++	/* out: */
++	*pprog = prog;
++}
++
++/* dst = dst << val */
++static inline void emit_ia32_lsh_i64(const u8 dst[], const u32 val,
++				     bool dstk, u8 **pprog)
++{
++	u8 *prog = *pprog;
++	int cnt = 0;
++	u8 dreg_lo = dstk ? IA32_EAX : dst_lo;
++	u8 dreg_hi = dstk ? IA32_EDX : dst_hi;
++
++	if (dstk) {
++		EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EAX),
++		      STACK_VAR(dst_lo));
++		EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EDX),
++		      STACK_VAR(dst_hi));
++	}
++	/* Do LSH operation */
++	if (val < 32) {
++		/* shl dreg_hi,imm8 */
++		EMIT3(0xC1, add_1reg(0xE0, dreg_hi), val);
++		/* mov ebx,dreg_lo */
++		EMIT2(0x8B, add_2reg(0xC0, dreg_lo, IA32_EBX));
++		/* shl dreg_lo,imm8 */
++		EMIT3(0xC1, add_1reg(0xE0, dreg_lo), val);
++
++		/* IA32_ECX = 32 - val */
++		/* mov ecx,val */
++		EMIT2(0xB1, val);
++		/* movzx ecx,ecx */
++		EMIT3(0x0F, 0xB6, add_2reg(0xC0, IA32_ECX, IA32_ECX));
++		/* neg ecx */
++		EMIT2(0xF7, add_1reg(0xD8, IA32_ECX));
++		/* add ecx,32 */
++		EMIT3(0x83, add_1reg(0xC0, IA32_ECX), 32);
++
++		/* shr ebx,cl */
++		EMIT2(0xD3, add_1reg(0xE8, IA32_EBX));
++		/* or dreg_hi,ebx */
++		EMIT2(0x09, add_2reg(0xC0, dreg_hi, IA32_EBX));
++	} else if (val >= 32 && val < 64) {
++		u32 value = val - 32;
++
++		/* shl dreg_lo,imm8 */
++		EMIT3(0xC1, add_1reg(0xE0, dreg_lo), value);
++		/* mov dreg_hi,dreg_lo */
++		EMIT2(0x89, add_2reg(0xC0, dreg_hi, dreg_lo));
++		/* xor dreg_lo,dreg_lo */
++		EMIT2(0x33, add_2reg(0xC0, dreg_lo, dreg_lo));
++	} else {
++		/* xor dreg_lo,dreg_lo */
++		EMIT2(0x33, add_2reg(0xC0, dreg_lo, dreg_lo));
++		/* xor dreg_hi,dreg_hi */
++		EMIT2(0x33, add_2reg(0xC0, dreg_hi, dreg_hi));
++	}
++
++	if (dstk) {
++		/* mov dword ptr [ebp+off],dreg_lo */
++		EMIT3(0x89, add_2reg(0x40, IA32_EBP, dreg_lo),
++		      STACK_VAR(dst_lo));
++		/* mov dword ptr [ebp+off],dreg_hi */
++		EMIT3(0x89, add_2reg(0x40, IA32_EBP, dreg_hi),
++		      STACK_VAR(dst_hi));
++	}
++	*pprog = prog;
++}
++
++/* dst = dst >> val */
++static inline void emit_ia32_rsh_i64(const u8 dst[], const u32 val,
++				     bool dstk, u8 **pprog)
++{
++	u8 *prog = *pprog;
++	int cnt = 0;
++	u8 dreg_lo = dstk ? IA32_EAX : dst_lo;
++	u8 dreg_hi = dstk ? IA32_EDX : dst_hi;
++
++	if (dstk) {
++		EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EAX),
++		      STACK_VAR(dst_lo));
++		EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EDX),
++		      STACK_VAR(dst_hi));
++	}
++
++	/* Do RSH operation */
++	if (val < 32) {
++		/* shr dreg_lo,imm8 */
++		EMIT3(0xC1, add_1reg(0xE8, dreg_lo), val);
++		/* mov ebx,dreg_hi */
++		EMIT2(0x8B, add_2reg(0xC0, dreg_hi, IA32_EBX));
++		/* shr dreg_hi,imm8 */
++		EMIT3(0xC1, add_1reg(0xE8, dreg_hi), val);
++
++		/* IA32_ECX = 32 - val */
++		/* mov ecx,val */
++		EMIT2(0xB1, val);
++		/* movzx ecx,ecx */
++		EMIT3(0x0F, 0xB6, add_2reg(0xC0, IA32_ECX, IA32_ECX));
++		/* neg ecx */
++		EMIT2(0xF7, add_1reg(0xD8, IA32_ECX));
++		/* add ecx,32 */
++		EMIT3(0x83, add_1reg(0xC0, IA32_ECX), 32);
++
++		/* shl ebx,cl */
++		EMIT2(0xD3, add_1reg(0xE0, IA32_EBX));
++		/* or dreg_lo,ebx */
++		EMIT2(0x09, add_2reg(0xC0, dreg_lo, IA32_EBX));
++	} else if (val >= 32 && val < 64) {
++		u32 value = val - 32;
++
++		/* shr dreg_hi,imm8 */
++		EMIT3(0xC1, add_1reg(0xE8, dreg_hi), value);
++		/* mov dreg_lo,dreg_hi */
++		EMIT2(0x89, add_2reg(0xC0, dreg_lo, dreg_hi));
++		/* xor dreg_hi,dreg_hi */
++		EMIT2(0x33, add_2reg(0xC0, dreg_hi, dreg_hi));
++	} else {
++		/* xor dreg_lo,dreg_lo */
++		EMIT2(0x33, add_2reg(0xC0, dreg_lo, dreg_lo));
++		/* xor dreg_hi,dreg_hi */
++		EMIT2(0x33, add_2reg(0xC0, dreg_hi, dreg_hi));
++	}
++
++	if (dstk) {
++		/* mov dword ptr [ebp+off],dreg_lo */
++		EMIT3(0x89, add_2reg(0x40, IA32_EBP, dreg_lo),
++		      STACK_VAR(dst_lo));
++		/* mov dword ptr [ebp+off],dreg_hi */
++		EMIT3(0x89, add_2reg(0x40, IA32_EBP, dreg_hi),
++		      STACK_VAR(dst_hi));
++	}
++	*pprog = prog;
++}
++
++/* dst = dst >> val (signed) */
++static inline void emit_ia32_arsh_i64(const u8 dst[], const u32 val,
++				      bool dstk, u8 **pprog)
++{
++	u8 *prog = *pprog;
++	int cnt = 0;
++	u8 dreg_lo = dstk ? IA32_EAX : dst_lo;
++	u8 dreg_hi = dstk ? IA32_EDX : dst_hi;
++
++	if (dstk) {
++		EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EAX),
++		      STACK_VAR(dst_lo));
++		EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EDX),
++		      STACK_VAR(dst_hi));
++	}
++	/* Do RSH operation */
++	if (val < 32) {
++		/* shr dreg_lo,imm8 */
++		EMIT3(0xC1, add_1reg(0xE8, dreg_lo), val);
++		/* mov ebx,dreg_hi */
++		EMIT2(0x8B, add_2reg(0xC0, dreg_hi, IA32_EBX));
++		/* ashr dreg_hi,imm8 */
++		EMIT3(0xC1, add_1reg(0xF8, dreg_hi), val);
++
++		/* IA32_ECX = 32 - val */
++		/* mov ecx,val */
++		EMIT2(0xB1, val);
++		/* movzx ecx,ecx */
++		EMIT3(0x0F, 0xB6, add_2reg(0xC0, IA32_ECX, IA32_ECX));
++		/* neg ecx */
++		EMIT2(0xF7, add_1reg(0xD8, IA32_ECX));
++		/* add ecx,32 */
++		EMIT3(0x83, add_1reg(0xC0, IA32_ECX), 32);
++
++		/* shl ebx,cl */
++		EMIT2(0xD3, add_1reg(0xE0, IA32_EBX));
++		/* or dreg_lo,ebx */
++		EMIT2(0x09, add_2reg(0xC0, dreg_lo, IA32_EBX));
++	} else if (val >= 32 && val < 64) {
++		u32 value = val - 32;
++
++		/* ashr dreg_hi,imm8 */
++		EMIT3(0xC1, add_1reg(0xF8, dreg_hi), value);
++		/* mov dreg_lo,dreg_hi */
++		EMIT2(0x89, add_2reg(0xC0, dreg_lo, dreg_hi));
++
++		/* ashr dreg_hi,imm8 */
++		EMIT3(0xC1, add_1reg(0xF8, dreg_hi), 31);
++	} else {
++		/* ashr dreg_hi,imm8 */
++		EMIT3(0xC1, add_1reg(0xF8, dreg_hi), 31);
++		/* mov dreg_lo,dreg_hi */
++		EMIT2(0x89, add_2reg(0xC0, dreg_lo, dreg_hi));
++	}
++
++	if (dstk) {
++		/* mov dword ptr [ebp+off],dreg_lo */
++		EMIT3(0x89, add_2reg(0x40, IA32_EBP, dreg_lo),
++		      STACK_VAR(dst_lo));
++		/* mov dword ptr [ebp+off],dreg_hi */
++		EMIT3(0x89, add_2reg(0x40, IA32_EBP, dreg_hi),
++		      STACK_VAR(dst_hi));
++	}
++	*pprog = prog;
++}
++
++static inline void emit_ia32_mul_r64(const u8 dst[], const u8 src[], bool dstk,
++				     bool sstk, u8 **pprog)
++{
++	u8 *prog = *pprog;
++	int cnt = 0;
++
++	if (dstk)
++		/* mov eax,dword ptr [ebp+off] */
++		EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EAX),
++		      STACK_VAR(dst_hi));
++	else
++		/* mov eax,dst_hi */
++		EMIT2(0x8B, add_2reg(0xC0, dst_hi, IA32_EAX));
++
++	if (sstk)
++		/* mul dword ptr [ebp+off] */
++		EMIT3(0xF7, add_1reg(0x60, IA32_EBP), STACK_VAR(src_lo));
++	else
++		/* mul src_lo */
++		EMIT2(0xF7, add_1reg(0xE0, src_lo));
++
++	/* mov ecx,eax */
++	EMIT2(0x89, add_2reg(0xC0, IA32_ECX, IA32_EAX));
++
++	if (dstk)
++		/* mov eax,dword ptr [ebp+off] */
++		EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EAX),
++		      STACK_VAR(dst_lo));
++	else
++		/* mov eax,dst_lo */
++		EMIT2(0x8B, add_2reg(0xC0, dst_lo, IA32_EAX));
++
++	if (sstk)
++		/* mul dword ptr [ebp+off] */
++		EMIT3(0xF7, add_1reg(0x60, IA32_EBP), STACK_VAR(src_hi));
++	else
++		/* mul src_hi */
++		EMIT2(0xF7, add_1reg(0xE0, src_hi));
++
++	/* add eax,eax */
++	EMIT2(0x01, add_2reg(0xC0, IA32_ECX, IA32_EAX));
++
++	if (dstk)
++		/* mov eax,dword ptr [ebp+off] */
++		EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EAX),
++		      STACK_VAR(dst_lo));
++	else
++		/* mov eax,dst_lo */
++		EMIT2(0x8B, add_2reg(0xC0, dst_lo, IA32_EAX));
++
++	if (sstk)
++		/* mul dword ptr [ebp+off] */
++		EMIT3(0xF7, add_1reg(0x60, IA32_EBP), STACK_VAR(src_lo));
++	else
++		/* mul src_lo */
++		EMIT2(0xF7, add_1reg(0xE0, src_lo));
++
++	/* add ecx,edx */
++	EMIT2(0x01, add_2reg(0xC0, IA32_ECX, IA32_EDX));
++
++	if (dstk) {
++		/* mov dword ptr [ebp+off],eax */
++		EMIT3(0x89, add_2reg(0x40, IA32_EBP, IA32_EAX),
++		      STACK_VAR(dst_lo));
++		/* mov dword ptr [ebp+off],ecx */
++		EMIT3(0x89, add_2reg(0x40, IA32_EBP, IA32_ECX),
++		      STACK_VAR(dst_hi));
++	} else {
++		/* mov dst_lo,eax */
++		EMIT2(0x89, add_2reg(0xC0, dst_lo, IA32_EAX));
++		/* mov dst_hi,ecx */
++		EMIT2(0x89, add_2reg(0xC0, dst_hi, IA32_ECX));
++	}
++
++	*pprog = prog;
++}
++
++static inline void emit_ia32_mul_i64(const u8 dst[], const u32 val,
++				     bool dstk, u8 **pprog)
++{
++	u8 *prog = *pprog;
++	int cnt = 0;
++	u32 hi;
++
++	hi = val & (1<<31) ? (u32)~0 : 0;
++	/* movl eax,imm32 */
++	EMIT2_off32(0xC7, add_1reg(0xC0, IA32_EAX), val);
++	if (dstk)
++		/* mul dword ptr [ebp+off] */
++		EMIT3(0xF7, add_1reg(0x60, IA32_EBP), STACK_VAR(dst_hi));
++	else
++		/* mul dst_hi */
++		EMIT2(0xF7, add_1reg(0xE0, dst_hi));
++
++	/* mov ecx,eax */
++	EMIT2(0x89, add_2reg(0xC0, IA32_ECX, IA32_EAX));
++
++	/* movl eax,imm32 */
++	EMIT2_off32(0xC7, add_1reg(0xC0, IA32_EAX), hi);
++	if (dstk)
++		/* mul dword ptr [ebp+off] */
++		EMIT3(0xF7, add_1reg(0x60, IA32_EBP), STACK_VAR(dst_lo));
++	else
++		/* mul dst_lo */
++		EMIT2(0xF7, add_1reg(0xE0, dst_lo));
++	/* add ecx,eax */
++	EMIT2(0x01, add_2reg(0xC0, IA32_ECX, IA32_EAX));
++
++	/* movl eax,imm32 */
++	EMIT2_off32(0xC7, add_1reg(0xC0, IA32_EAX), val);
++	if (dstk)
++		/* mul dword ptr [ebp+off] */
++		EMIT3(0xF7, add_1reg(0x60, IA32_EBP), STACK_VAR(dst_lo));
++	else
++		/* mul dst_lo */
++		EMIT2(0xF7, add_1reg(0xE0, dst_lo));
++
++	/* add ecx,edx */
++	EMIT2(0x01, add_2reg(0xC0, IA32_ECX, IA32_EDX));
++
++	if (dstk) {
++		/* mov dword ptr [ebp+off],eax */
++		EMIT3(0x89, add_2reg(0x40, IA32_EBP, IA32_EAX),
++		      STACK_VAR(dst_lo));
++		/* mov dword ptr [ebp+off],ecx */
++		EMIT3(0x89, add_2reg(0x40, IA32_EBP, IA32_ECX),
++		      STACK_VAR(dst_hi));
++	} else {
++		/* mov dword ptr [ebp+off],eax */
++		EMIT2(0x89, add_2reg(0xC0, dst_lo, IA32_EAX));
++		/* mov dword ptr [ebp+off],ecx */
++		EMIT2(0x89, add_2reg(0xC0, dst_hi, IA32_ECX));
++	}
++
++	*pprog = prog;
++}
++
++static int bpf_size_to_x86_bytes(int bpf_size)
++{
++	if (bpf_size == BPF_W)
++		return 4;
++	else if (bpf_size == BPF_H)
++		return 2;
++	else if (bpf_size == BPF_B)
++		return 1;
++	else if (bpf_size == BPF_DW)
++		return 4; /* imm32 */
++	else
++		return 0;
++}
++
++struct jit_context {
++	int cleanup_addr; /* epilogue code offset */
++};
++
++/* maximum number of bytes emitted while JITing one eBPF insn */
++#define BPF_MAX_INSN_SIZE	128
++#define BPF_INSN_SAFETY		64
++
++#define PROLOGUE_SIZE 35
++
++/* emit prologue code for BPF program and check it's size.
++ * bpf_tail_call helper will skip it while jumping into another program
++ */
++static void emit_prologue(u8 **pprog, u32 stack_depth)
++{
++	u8 *prog = *pprog;
++	int cnt = 0;
++	const u8 *r1 = bpf2ia32[BPF_REG_1];
++	const u8 fplo = bpf2ia32[BPF_REG_FP][0];
++	const u8 fphi = bpf2ia32[BPF_REG_FP][1];
++	const u8 *tcc = bpf2ia32[TCALL_CNT];
++
++	/* push ebp */
++	EMIT1(0x55);
++	/* mov ebp,esp */
++	EMIT2(0x89, 0xE5);
++	/* push edi */
++	EMIT1(0x57);
++	/* push esi */
++	EMIT1(0x56);
++	/* push ebx */
++	EMIT1(0x53);
++
++	/* sub esp,STACK_SIZE */
++	EMIT2_off32(0x81, 0xEC, STACK_SIZE);
++	/* sub ebp,SCRATCH_SIZE+4+12*/
++	EMIT3(0x83, add_1reg(0xE8, IA32_EBP), SCRATCH_SIZE + 16);
++	/* xor ebx,ebx */
++	EMIT2(0x31, add_2reg(0xC0, IA32_EBX, IA32_EBX));
++
++	/* Set up BPF prog stack base register */
++	EMIT3(0x89, add_2reg(0x40, IA32_EBP, IA32_EBP), STACK_VAR(fplo));
++	EMIT3(0x89, add_2reg(0x40, IA32_EBP, IA32_EBX), STACK_VAR(fphi));
++
++	/* Move BPF_CTX (EAX) to BPF_REG_R1 */
++	/* mov dword ptr [ebp+off],eax */
++	EMIT3(0x89, add_2reg(0x40, IA32_EBP, IA32_EAX), STACK_VAR(r1[0]));
++	EMIT3(0x89, add_2reg(0x40, IA32_EBP, IA32_EBX), STACK_VAR(r1[1]));
++
++	/* Initialize Tail Count */
++	EMIT3(0x89, add_2reg(0x40, IA32_EBP, IA32_EBX), STACK_VAR(tcc[0]));
++	EMIT3(0x89, add_2reg(0x40, IA32_EBP, IA32_EBX), STACK_VAR(tcc[1]));
++
++	BUILD_BUG_ON(cnt != PROLOGUE_SIZE);
++	*pprog = prog;
++}
++
++/* Emit epilogue code for BPF program */
++static void emit_epilogue(u8 **pprog, u32 stack_depth)
++{
++	u8 *prog = *pprog;
++	const u8 *r0 = bpf2ia32[BPF_REG_0];
++	int cnt = 0;
++
++	/* mov eax,dword ptr [ebp+off]*/
++	EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EAX), STACK_VAR(r0[0]));
++	/* mov edx,dword ptr [ebp+off]*/
++	EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EDX), STACK_VAR(r0[1]));
++
++	/* add ebp,SCRATCH_SIZE+4+12*/
++	EMIT3(0x83, add_1reg(0xC0, IA32_EBP), SCRATCH_SIZE + 16);
++
++	/* mov ebx,dword ptr [ebp-12]*/
++	EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EBX), -12);
++	/* mov esi,dword ptr [ebp-8]*/
++	EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_ESI), -8);
++	/* mov edi,dword ptr [ebp-4]*/
++	EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EDI), -4);
++
++	EMIT1(0xC9); /* leave */
++	EMIT1(0xC3); /* ret */
++	*pprog = prog;
++}
++
++/* generate the following code:
++ * ... bpf_tail_call(void *ctx, struct bpf_array *array, u64 index) ...
++ *   if (index >= array->map.max_entries)
++ *     goto out;
++ *   if (++tail_call_cnt > MAX_TAIL_CALL_CNT)
++ *     goto out;
++ *   prog = array->ptrs[index];
++ *   if (prog == NULL)
++ *     goto out;
++ *   goto *(prog->bpf_func + prologue_size);
++ * out:
++ */
++static void emit_bpf_tail_call(u8 **pprog)
++{
++	u8 *prog = *pprog;
++	int cnt = 0;
++	const u8 *r1 = bpf2ia32[BPF_REG_1];
++	const u8 *r2 = bpf2ia32[BPF_REG_2];
++	const u8 *r3 = bpf2ia32[BPF_REG_3];
++	const u8 *tcc = bpf2ia32[TCALL_CNT];
++	u32 lo, hi;
++	static int jmp_label1 = -1;
++
++	/* if (index >= array->map.max_entries)
++	 *   goto out;
++	 */
++	/* mov eax,dword ptr [ebp+off] */
++	EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EAX), STACK_VAR(r2[0]));
++	/* mov edx,dword ptr [ebp+off] */
++	EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EDX), STACK_VAR(r3[0]));
++
++	/* cmp dword ptr [eax+off],edx */
++	EMIT3(0x39, add_2reg(0x40, IA32_EAX, IA32_EDX),
++	      offsetof(struct bpf_array, map.max_entries));
++	/* jbe out */
++	EMIT2(IA32_JBE, jmp_label(jmp_label1, 2));
++
++	/* if (tail_call_cnt > MAX_TAIL_CALL_CNT)
++	 *   goto out;
++	 */
++	lo = (u32)MAX_TAIL_CALL_CNT;
++	hi = (u32)((u64)MAX_TAIL_CALL_CNT >> 32);
++	EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_ECX), STACK_VAR(tcc[0]));
++	EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EBX), STACK_VAR(tcc[1]));
++
++	EMIT3(0x83, add_1reg(0xF8, IA32_EBX), hi);   /* cmp edx, hi */
++	EMIT2(IA32_JNE, 3);
++	EMIT3(0x83, add_1reg(0xF8, IA32_ECX), lo);   /* cmp ecx, lo */
++
++	EMIT2(IA32_JAE, jmp_label(jmp_label1, 2));   /* ja out */
++
++	EMIT3(0x83, add_1reg(0xC0, IA32_ECX), 0x01);   /* add eax, 0x1 */
++	EMIT3(0x83, add_1reg(0xD0, IA32_EBX), 0x00);   /* adc ebx, 0x0 */
++
++	/* mov dword ptr [ebp+off],eax */
++	EMIT3(0x89, add_2reg(0x40, IA32_EBP, IA32_ECX), STACK_VAR(tcc[0]));
++	/* mov dword ptr [ebp+off],edx */
++	EMIT3(0x89, add_2reg(0x40, IA32_EBP, IA32_EBX), STACK_VAR(tcc[1]));
++
++	/* prog = array->ptrs[index]; */
++	/* mov edx, [eax + edx * 4 + offsetof(...)] */
++	EMIT3_off32(0x8B, 0x94, 0x90, offsetof(struct bpf_array, ptrs));
++
++	/* if (prog == NULL)
++	 *   goto out;
++	 */
++	EMIT2(0x85, add_2reg(0xC0, IA32_EDX, IA32_EDX)); /* test edx,edx */
++	EMIT2(IA32_JE, jmp_label(jmp_label1, 2)); /* je out */
++
++	/* goto *(prog->bpf_func + prologue_size); */
++	/* mov edx, dword ptr [edx + 32] */
++	EMIT3(0x8B, add_2reg(0x40, IA32_EDX, IA32_EDX),
++	      offsetof(struct bpf_prog, bpf_func));
++	/* add edx, prologue_size */
++	EMIT3(0x83, add_1reg(0xC0, IA32_EDX), PROLOGUE_SIZE);
++
++	/* mov eax,dword ptr [ebp+off] */
++	EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EAX), STACK_VAR(r1[0]));
++
++	/* now we're ready to jump into next BPF program
++	 * eax == ctx (1st arg)
++	 * edx == prog->bpf_func + prologue_size
++	 */
++	RETPOLINE_EDX_BPF_JIT();
++
++	if (jmp_label1 == -1)
++		jmp_label1 = cnt;
++
++	/* out: */
++	*pprog = prog;
++}
++
++// push the scratch stack register on top of the stack
++static inline void emit_push_r64(const u8 src[], u8 **pprog)
++{
++	u8 *prog = *pprog;
++	int cnt = 0;
++
++	/* mov ecx,dword ptr [ebp+off] */
++	EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_ECX), STACK_VAR(src_hi));
++	/* push ecx */
++	EMIT1(0x51);
++
++	/* mov ecx,dword ptr [ebp+off] */
++	EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_ECX), STACK_VAR(src_lo));
++	/* push ecx */
++	EMIT1(0x51);
++
++	*pprog = prog;
++}
++
++static int do_jit(struct bpf_prog *bpf_prog, int *addrs, u8 *image,
++		  int oldproglen, struct jit_context *ctx)
++{
++	struct bpf_insn *insn = bpf_prog->insnsi;
++	int insn_cnt = bpf_prog->len;
++	bool seen_exit = false;
++	u8 temp[BPF_MAX_INSN_SIZE + BPF_INSN_SAFETY];
++	int i, cnt = 0;
++	int proglen = 0;
++	u8 *prog = temp;
++
++	emit_prologue(&prog, bpf_prog->aux->stack_depth);
++
++	for (i = 0; i < insn_cnt; i++, insn++) {
++		const s32 imm32 = insn->imm;
++		const bool is64 = BPF_CLASS(insn->code) == BPF_ALU64;
++		const bool dstk = is_on_stack(insn->dst_reg);
++		const bool sstk = is_on_stack(insn->src_reg);
++		const u8 code = insn->code;
++		const u8 *dst = bpf2ia32[insn->dst_reg];
++		const u8 *src = bpf2ia32[insn->src_reg];
++		const u8 *r0 = bpf2ia32[BPF_REG_0];
++		s64 jmp_offset;
++		u8 jmp_cond;
++		int ilen;
++		u8 *func;
++
++		switch (code) {
++		/* ALU operations */
++		/* dst = src */
++		case BPF_ALU | BPF_MOV | BPF_K:
++		case BPF_ALU | BPF_MOV | BPF_X:
++		case BPF_ALU64 | BPF_MOV | BPF_K:
++		case BPF_ALU64 | BPF_MOV | BPF_X:
++			switch (BPF_SRC(code)) {
++			case BPF_X:
++				emit_ia32_mov_r64(is64, dst, src, dstk,
++						  sstk, &prog);
++				break;
++			case BPF_K:
++				/* Sign-extend immediate value to dst reg */
++				emit_ia32_mov_i64(is64, dst, imm32,
++						  dstk, &prog);
++				break;
++			}
++			break;
++		/* dst = dst + src/imm */
++		/* dst = dst - src/imm */
++		/* dst = dst | src/imm */
++		/* dst = dst & src/imm */
++		/* dst = dst ^ src/imm */
++		/* dst = dst * src/imm */
++		/* dst = dst << src */
++		/* dst = dst >> src */
++		case BPF_ALU | BPF_ADD | BPF_K:
++		case BPF_ALU | BPF_ADD | BPF_X:
++		case BPF_ALU | BPF_SUB | BPF_K:
++		case BPF_ALU | BPF_SUB | BPF_X:
++		case BPF_ALU | BPF_OR | BPF_K:
++		case BPF_ALU | BPF_OR | BPF_X:
++		case BPF_ALU | BPF_AND | BPF_K:
++		case BPF_ALU | BPF_AND | BPF_X:
++		case BPF_ALU | BPF_XOR | BPF_K:
++		case BPF_ALU | BPF_XOR | BPF_X:
++		case BPF_ALU64 | BPF_ADD | BPF_K:
++		case BPF_ALU64 | BPF_ADD | BPF_X:
++		case BPF_ALU64 | BPF_SUB | BPF_K:
++		case BPF_ALU64 | BPF_SUB | BPF_X:
++		case BPF_ALU64 | BPF_OR | BPF_K:
++		case BPF_ALU64 | BPF_OR | BPF_X:
++		case BPF_ALU64 | BPF_AND | BPF_K:
++		case BPF_ALU64 | BPF_AND | BPF_X:
++		case BPF_ALU64 | BPF_XOR | BPF_K:
++		case BPF_ALU64 | BPF_XOR | BPF_X:
++			switch (BPF_SRC(code)) {
++			case BPF_X:
++				emit_ia32_alu_r64(is64, BPF_OP(code), dst,
++						  src, dstk, sstk, &prog);
++				break;
++			case BPF_K:
++				emit_ia32_alu_i64(is64, BPF_OP(code), dst,
++						  imm32, dstk, &prog);
++				break;
++			}
++			break;
++		case BPF_ALU | BPF_MUL | BPF_K:
++		case BPF_ALU | BPF_MUL | BPF_X:
++			switch (BPF_SRC(code)) {
++			case BPF_X:
++				emit_ia32_mul_r(dst_lo, src_lo, dstk,
++						sstk, &prog);
++				break;
++			case BPF_K:
++				/* mov ecx,imm32*/
++				EMIT2_off32(0xC7, add_1reg(0xC0, IA32_ECX),
++					    imm32);
++				emit_ia32_mul_r(dst_lo, IA32_ECX, dstk,
++						false, &prog);
++				break;
++			}
++			emit_ia32_mov_i(dst_hi, 0, dstk, &prog);
++			break;
++		case BPF_ALU | BPF_LSH | BPF_X:
++		case BPF_ALU | BPF_RSH | BPF_X:
++		case BPF_ALU | BPF_ARSH | BPF_K:
++		case BPF_ALU | BPF_ARSH | BPF_X:
++			switch (BPF_SRC(code)) {
++			case BPF_X:
++				emit_ia32_shift_r(BPF_OP(code), dst_lo, src_lo,
++						  dstk, sstk, &prog);
++				break;
++			case BPF_K:
++				/* mov ecx,imm32*/
++				EMIT2_off32(0xC7, add_1reg(0xC0, IA32_ECX),
++					    imm32);
++				emit_ia32_shift_r(BPF_OP(code), dst_lo,
++						  IA32_ECX, dstk, false,
++						  &prog);
++				break;
++			}
++			emit_ia32_mov_i(dst_hi, 0, dstk, &prog);
++			break;
++		/* dst = dst / src(imm) */
++		/* dst = dst % src(imm) */
++		case BPF_ALU | BPF_DIV | BPF_K:
++		case BPF_ALU | BPF_DIV | BPF_X:
++		case BPF_ALU | BPF_MOD | BPF_K:
++		case BPF_ALU | BPF_MOD | BPF_X:
++			switch (BPF_SRC(code)) {
++			case BPF_X:
++				emit_ia32_div_mod_r(BPF_OP(code), dst_lo,
++						    src_lo, dstk, sstk, &prog);
++				break;
++			case BPF_K:
++				/* mov ecx,imm32*/
++				EMIT2_off32(0xC7, add_1reg(0xC0, IA32_ECX),
++					    imm32);
++				emit_ia32_div_mod_r(BPF_OP(code), dst_lo,
++						    IA32_ECX, dstk, false,
++						    &prog);
++				break;
++			}
++			emit_ia32_mov_i(dst_hi, 0, dstk, &prog);
++			break;
++		case BPF_ALU64 | BPF_DIV | BPF_K:
++		case BPF_ALU64 | BPF_DIV | BPF_X:
++		case BPF_ALU64 | BPF_MOD | BPF_K:
++		case BPF_ALU64 | BPF_MOD | BPF_X:
++			goto notyet;
++		/* dst = dst >> imm */
++		/* dst = dst << imm */
++		case BPF_ALU | BPF_RSH | BPF_K:
++		case BPF_ALU | BPF_LSH | BPF_K:
++			if (unlikely(imm32 > 31))
++				return -EINVAL;
++			/* mov ecx,imm32*/
++			EMIT2_off32(0xC7, add_1reg(0xC0, IA32_ECX), imm32);
++			emit_ia32_shift_r(BPF_OP(code), dst_lo, IA32_ECX, dstk,
++					  false, &prog);
++			emit_ia32_mov_i(dst_hi, 0, dstk, &prog);
++			break;
++		/* dst = dst << imm */
++		case BPF_ALU64 | BPF_LSH | BPF_K:
++			if (unlikely(imm32 > 63))
++				return -EINVAL;
++			emit_ia32_lsh_i64(dst, imm32, dstk, &prog);
++			break;
++		/* dst = dst >> imm */
++		case BPF_ALU64 | BPF_RSH | BPF_K:
++			if (unlikely(imm32 > 63))
++				return -EINVAL;
++			emit_ia32_rsh_i64(dst, imm32, dstk, &prog);
++			break;
++		/* dst = dst << src */
++		case BPF_ALU64 | BPF_LSH | BPF_X:
++			emit_ia32_lsh_r64(dst, src, dstk, sstk, &prog);
++			break;
++		/* dst = dst >> src */
++		case BPF_ALU64 | BPF_RSH | BPF_X:
++			emit_ia32_rsh_r64(dst, src, dstk, sstk, &prog);
++			break;
++		/* dst = dst >> src (signed) */
++		case BPF_ALU64 | BPF_ARSH | BPF_X:
++			emit_ia32_arsh_r64(dst, src, dstk, sstk, &prog);
++			break;
++		/* dst = dst >> imm (signed) */
++		case BPF_ALU64 | BPF_ARSH | BPF_K:
++			if (unlikely(imm32 > 63))
++				return -EINVAL;
++			emit_ia32_arsh_i64(dst, imm32, dstk, &prog);
++			break;
++		/* dst = ~dst */
++		case BPF_ALU | BPF_NEG:
++			emit_ia32_alu_i(is64, false, BPF_OP(code),
++					dst_lo, 0, dstk, &prog);
++			emit_ia32_mov_i(dst_hi, 0, dstk, &prog);
++			break;
++		/* dst = ~dst (64 bit) */
++		case BPF_ALU64 | BPF_NEG:
++			emit_ia32_neg64(dst, dstk, &prog);
++			break;
++		/* dst = dst * src/imm */
++		case BPF_ALU64 | BPF_MUL | BPF_X:
++		case BPF_ALU64 | BPF_MUL | BPF_K:
++			switch (BPF_SRC(code)) {
++			case BPF_X:
++				emit_ia32_mul_r64(dst, src, dstk, sstk, &prog);
++				break;
++			case BPF_K:
++				emit_ia32_mul_i64(dst, imm32, dstk, &prog);
++				break;
++			}
++			break;
++		/* dst = htole(dst) */
++		case BPF_ALU | BPF_END | BPF_FROM_LE:
++			emit_ia32_to_le_r64(dst, imm32, dstk, &prog);
++			break;
++		/* dst = htobe(dst) */
++		case BPF_ALU | BPF_END | BPF_FROM_BE:
++			emit_ia32_to_be_r64(dst, imm32, dstk, &prog);
++			break;
++		/* dst = imm64 */
++		case BPF_LD | BPF_IMM | BPF_DW: {
++			s32 hi, lo = imm32;
++
++			hi = insn[1].imm;
++			emit_ia32_mov_i(dst_lo, lo, dstk, &prog);
++			emit_ia32_mov_i(dst_hi, hi, dstk, &prog);
++			insn++;
++			i++;
++			break;
++		}
++		/* ST: *(u8*)(dst_reg + off) = imm */
++		case BPF_ST | BPF_MEM | BPF_H:
++		case BPF_ST | BPF_MEM | BPF_B:
++		case BPF_ST | BPF_MEM | BPF_W:
++		case BPF_ST | BPF_MEM | BPF_DW:
++			if (dstk)
++				/* mov eax,dword ptr [ebp+off] */
++				EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EAX),
++				      STACK_VAR(dst_lo));
++			else
++				/* mov eax,dst_lo */
++				EMIT2(0x8B, add_2reg(0xC0, dst_lo, IA32_EAX));
++
++			switch (BPF_SIZE(code)) {
++			case BPF_B:
++				EMIT(0xC6, 1); break;
++			case BPF_H:
++				EMIT2(0x66, 0xC7); break;
++			case BPF_W:
++			case BPF_DW:
++				EMIT(0xC7, 1); break;
++			}
++
++			if (is_imm8(insn->off))
++				EMIT2(add_1reg(0x40, IA32_EAX), insn->off);
++			else
++				EMIT1_off32(add_1reg(0x80, IA32_EAX),
++					    insn->off);
++			EMIT(imm32, bpf_size_to_x86_bytes(BPF_SIZE(code)));
++
++			if (BPF_SIZE(code) == BPF_DW) {
++				u32 hi;
++
++				hi = imm32 & (1<<31) ? (u32)~0 : 0;
++				EMIT2_off32(0xC7, add_1reg(0x80, IA32_EAX),
++					    insn->off + 4);
++				EMIT(hi, 4);
++			}
++			break;
++
++		/* STX: *(u8*)(dst_reg + off) = src_reg */
++		case BPF_STX | BPF_MEM | BPF_B:
++		case BPF_STX | BPF_MEM | BPF_H:
++		case BPF_STX | BPF_MEM | BPF_W:
++		case BPF_STX | BPF_MEM | BPF_DW:
++			if (dstk)
++				/* mov eax,dword ptr [ebp+off] */
++				EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EAX),
++				      STACK_VAR(dst_lo));
++			else
++				/* mov eax,dst_lo */
++				EMIT2(0x8B, add_2reg(0xC0, dst_lo, IA32_EAX));
++
++			if (sstk)
++				/* mov edx,dword ptr [ebp+off] */
++				EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EDX),
++				      STACK_VAR(src_lo));
++			else
++				/* mov edx,src_lo */
++				EMIT2(0x8B, add_2reg(0xC0, src_lo, IA32_EDX));
++
++			switch (BPF_SIZE(code)) {
++			case BPF_B:
++				EMIT(0x88, 1); break;
++			case BPF_H:
++				EMIT2(0x66, 0x89); break;
++			case BPF_W:
++			case BPF_DW:
++				EMIT(0x89, 1); break;
++			}
++
++			if (is_imm8(insn->off))
++				EMIT2(add_2reg(0x40, IA32_EAX, IA32_EDX),
++				      insn->off);
++			else
++				EMIT1_off32(add_2reg(0x80, IA32_EAX, IA32_EDX),
++					    insn->off);
++
++			if (BPF_SIZE(code) == BPF_DW) {
++				if (sstk)
++					/* mov edi,dword ptr [ebp+off] */
++					EMIT3(0x8B, add_2reg(0x40, IA32_EBP,
++							     IA32_EDX),
++					      STACK_VAR(src_hi));
++				else
++					/* mov edi,src_hi */
++					EMIT2(0x8B, add_2reg(0xC0, src_hi,
++							     IA32_EDX));
++				EMIT1(0x89);
++				if (is_imm8(insn->off + 4)) {
++					EMIT2(add_2reg(0x40, IA32_EAX,
++						       IA32_EDX),
++					      insn->off + 4);
++				} else {
++					EMIT1(add_2reg(0x80, IA32_EAX,
++						       IA32_EDX));
++					EMIT(insn->off + 4, 4);
++				}
++			}
++			break;
++
++		/* LDX: dst_reg = *(u8*)(src_reg + off) */
++		case BPF_LDX | BPF_MEM | BPF_B:
++		case BPF_LDX | BPF_MEM | BPF_H:
++		case BPF_LDX | BPF_MEM | BPF_W:
++		case BPF_LDX | BPF_MEM | BPF_DW:
++			if (sstk)
++				/* mov eax,dword ptr [ebp+off] */
++				EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EAX),
++				      STACK_VAR(src_lo));
++			else
++				/* mov eax,dword ptr [ebp+off] */
++				EMIT2(0x8B, add_2reg(0xC0, src_lo, IA32_EAX));
++
++			switch (BPF_SIZE(code)) {
++			case BPF_B:
++				EMIT2(0x0F, 0xB6); break;
++			case BPF_H:
++				EMIT2(0x0F, 0xB7); break;
++			case BPF_W:
++			case BPF_DW:
++				EMIT(0x8B, 1); break;
++			}
++
++			if (is_imm8(insn->off))
++				EMIT2(add_2reg(0x40, IA32_EAX, IA32_EDX),
++				      insn->off);
++			else
++				EMIT1_off32(add_2reg(0x80, IA32_EAX, IA32_EDX),
++					    insn->off);
++
++			if (dstk)
++				/* mov dword ptr [ebp+off],edx */
++				EMIT3(0x89, add_2reg(0x40, IA32_EBP, IA32_EDX),
++				      STACK_VAR(dst_lo));
++			else
++				/* mov dst_lo,edx */
++				EMIT2(0x89, add_2reg(0xC0, dst_lo, IA32_EDX));
++			switch (BPF_SIZE(code)) {
++			case BPF_B:
++			case BPF_H:
++			case BPF_W:
++				if (dstk) {
++					EMIT3(0xC7, add_1reg(0x40, IA32_EBP),
++					      STACK_VAR(dst_hi));
++					EMIT(0x0, 4);
++				} else {
++					EMIT3(0xC7, add_1reg(0xC0, dst_hi), 0);
++				}
++				break;
++			case BPF_DW:
++				EMIT2_off32(0x8B,
++					    add_2reg(0x80, IA32_EAX, IA32_EDX),
++					    insn->off + 4);
++				if (dstk)
++					EMIT3(0x89,
++					      add_2reg(0x40, IA32_EBP,
++						       IA32_EDX),
++					      STACK_VAR(dst_hi));
++				else
++					EMIT2(0x89,
++					      add_2reg(0xC0, dst_hi, IA32_EDX));
++				break;
++			default:
++				break;
++			}
++			break;
++		/* call */
++		case BPF_JMP | BPF_CALL:
++		{
++			const u8 *r1 = bpf2ia32[BPF_REG_1];
++			const u8 *r2 = bpf2ia32[BPF_REG_2];
++			const u8 *r3 = bpf2ia32[BPF_REG_3];
++			const u8 *r4 = bpf2ia32[BPF_REG_4];
++			const u8 *r5 = bpf2ia32[BPF_REG_5];
++
++			if (insn->src_reg == BPF_PSEUDO_CALL)
++				goto notyet;
++
++			func = (u8 *) __bpf_call_base + imm32;
++			jmp_offset = func - (image + addrs[i]);
++
++			if (!imm32 || !is_simm32(jmp_offset)) {
++				pr_err("unsupported bpf func %d addr %p image %p\n",
++				       imm32, func, image);
++				return -EINVAL;
++			}
++
++			/* mov eax,dword ptr [ebp+off] */
++			EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EAX),
++			      STACK_VAR(r1[0]));
++			/* mov edx,dword ptr [ebp+off] */
++			EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EDX),
++			      STACK_VAR(r1[1]));
++
++			emit_push_r64(r5, &prog);
++			emit_push_r64(r4, &prog);
++			emit_push_r64(r3, &prog);
++			emit_push_r64(r2, &prog);
++
++			EMIT1_off32(0xE8, jmp_offset + 9);
++
++			/* mov dword ptr [ebp+off],eax */
++			EMIT3(0x89, add_2reg(0x40, IA32_EBP, IA32_EAX),
++			      STACK_VAR(r0[0]));
++			/* mov dword ptr [ebp+off],edx */
++			EMIT3(0x89, add_2reg(0x40, IA32_EBP, IA32_EDX),
++			      STACK_VAR(r0[1]));
++
++			/* add esp,32 */
++			EMIT3(0x83, add_1reg(0xC0, IA32_ESP), 32);
++			break;
++		}
++		case BPF_JMP | BPF_TAIL_CALL:
++			emit_bpf_tail_call(&prog);
++			break;
++
++		/* cond jump */
++		case BPF_JMP | BPF_JEQ | BPF_X:
++		case BPF_JMP | BPF_JNE | BPF_X:
++		case BPF_JMP | BPF_JGT | BPF_X:
++		case BPF_JMP | BPF_JLT | BPF_X:
++		case BPF_JMP | BPF_JGE | BPF_X:
++		case BPF_JMP | BPF_JLE | BPF_X:
++		case BPF_JMP | BPF_JSGT | BPF_X:
++		case BPF_JMP | BPF_JSLE | BPF_X:
++		case BPF_JMP | BPF_JSLT | BPF_X:
++		case BPF_JMP | BPF_JSGE | BPF_X: {
++			u8 dreg_lo = dstk ? IA32_EAX : dst_lo;
++			u8 dreg_hi = dstk ? IA32_EDX : dst_hi;
++			u8 sreg_lo = sstk ? IA32_ECX : src_lo;
++			u8 sreg_hi = sstk ? IA32_EBX : src_hi;
++
++			if (dstk) {
++				EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EAX),
++				      STACK_VAR(dst_lo));
++				EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EDX),
++				      STACK_VAR(dst_hi));
++			}
++
++			if (sstk) {
++				EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_ECX),
++				      STACK_VAR(src_lo));
++				EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EBX),
++				      STACK_VAR(src_hi));
++			}
++
++			/* cmp dreg_hi,sreg_hi */
++			EMIT2(0x39, add_2reg(0xC0, dreg_hi, sreg_hi));
++			EMIT2(IA32_JNE, 2);
++			/* cmp dreg_lo,sreg_lo */
++			EMIT2(0x39, add_2reg(0xC0, dreg_lo, sreg_lo));
++			goto emit_cond_jmp;
++		}
++		case BPF_JMP | BPF_JSET | BPF_X: {
++			u8 dreg_lo = dstk ? IA32_EAX : dst_lo;
++			u8 dreg_hi = dstk ? IA32_EDX : dst_hi;
++			u8 sreg_lo = sstk ? IA32_ECX : src_lo;
++			u8 sreg_hi = sstk ? IA32_EBX : src_hi;
++
++			if (dstk) {
++				EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EAX),
++				      STACK_VAR(dst_lo));
++				EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EDX),
++				      STACK_VAR(dst_hi));
++			}
++
++			if (sstk) {
++				EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_ECX),
++				      STACK_VAR(src_lo));
++				EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EBX),
++				      STACK_VAR(src_hi));
++			}
++			/* and dreg_lo,sreg_lo */
++			EMIT2(0x23, add_2reg(0xC0, sreg_lo, dreg_lo));
++			/* and dreg_hi,sreg_hi */
++			EMIT2(0x23, add_2reg(0xC0, sreg_hi, dreg_hi));
++			/* or dreg_lo,dreg_hi */
++			EMIT2(0x09, add_2reg(0xC0, dreg_lo, dreg_hi));
++			goto emit_cond_jmp;
++		}
++		case BPF_JMP | BPF_JSET | BPF_K: {
++			u32 hi;
++			u8 dreg_lo = dstk ? IA32_EAX : dst_lo;
++			u8 dreg_hi = dstk ? IA32_EDX : dst_hi;
++			u8 sreg_lo = IA32_ECX;
++			u8 sreg_hi = IA32_EBX;
++
++			if (dstk) {
++				EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EAX),
++				      STACK_VAR(dst_lo));
++				EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EDX),
++				      STACK_VAR(dst_hi));
++			}
++			hi = imm32 & (1<<31) ? (u32)~0 : 0;
++
++			/* mov ecx,imm32 */
++			EMIT2_off32(0xC7, add_1reg(0xC0, IA32_ECX), imm32);
++			/* mov ebx,imm32 */
++			EMIT2_off32(0xC7, add_1reg(0xC0, IA32_EBX), hi);
++
++			/* and dreg_lo,sreg_lo */
++			EMIT2(0x23, add_2reg(0xC0, sreg_lo, dreg_lo));
++			/* and dreg_hi,sreg_hi */
++			EMIT2(0x23, add_2reg(0xC0, sreg_hi, dreg_hi));
++			/* or dreg_lo,dreg_hi */
++			EMIT2(0x09, add_2reg(0xC0, dreg_lo, dreg_hi));
++			goto emit_cond_jmp;
++		}
++		case BPF_JMP | BPF_JEQ | BPF_K:
++		case BPF_JMP | BPF_JNE | BPF_K:
++		case BPF_JMP | BPF_JGT | BPF_K:
++		case BPF_JMP | BPF_JLT | BPF_K:
++		case BPF_JMP | BPF_JGE | BPF_K:
++		case BPF_JMP | BPF_JLE | BPF_K:
++		case BPF_JMP | BPF_JSGT | BPF_K:
++		case BPF_JMP | BPF_JSLE | BPF_K:
++		case BPF_JMP | BPF_JSLT | BPF_K:
++		case BPF_JMP | BPF_JSGE | BPF_K: {
++			u32 hi;
++			u8 dreg_lo = dstk ? IA32_EAX : dst_lo;
++			u8 dreg_hi = dstk ? IA32_EDX : dst_hi;
++			u8 sreg_lo = IA32_ECX;
++			u8 sreg_hi = IA32_EBX;
++
++			if (dstk) {
++				EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EAX),
++				      STACK_VAR(dst_lo));
++				EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EDX),
++				      STACK_VAR(dst_hi));
++			}
++
++			hi = imm32 & (1<<31) ? (u32)~0 : 0;
++			/* mov ecx,imm32 */
++			EMIT2_off32(0xC7, add_1reg(0xC0, IA32_ECX), imm32);
++			/* mov ebx,imm32 */
++			EMIT2_off32(0xC7, add_1reg(0xC0, IA32_EBX), hi);
++
++			/* cmp dreg_hi,sreg_hi */
++			EMIT2(0x39, add_2reg(0xC0, dreg_hi, sreg_hi));
++			EMIT2(IA32_JNE, 2);
++			/* cmp dreg_lo,sreg_lo */
++			EMIT2(0x39, add_2reg(0xC0, dreg_lo, sreg_lo));
++
++emit_cond_jmp:		/* convert BPF opcode to x86 */
++			switch (BPF_OP(code)) {
++			case BPF_JEQ:
++				jmp_cond = IA32_JE;
++				break;
++			case BPF_JSET:
++			case BPF_JNE:
++				jmp_cond = IA32_JNE;
++				break;
++			case BPF_JGT:
++				/* GT is unsigned '>', JA in x86 */
++				jmp_cond = IA32_JA;
++				break;
++			case BPF_JLT:
++				/* LT is unsigned '<', JB in x86 */
++				jmp_cond = IA32_JB;
++				break;
++			case BPF_JGE:
++				/* GE is unsigned '>=', JAE in x86 */
++				jmp_cond = IA32_JAE;
++				break;
++			case BPF_JLE:
++				/* LE is unsigned '<=', JBE in x86 */
++				jmp_cond = IA32_JBE;
++				break;
++			case BPF_JSGT:
++				/* signed '>', GT in x86 */
++				jmp_cond = IA32_JG;
++				break;
++			case BPF_JSLT:
++				/* signed '<', LT in x86 */
++				jmp_cond = IA32_JL;
++				break;
++			case BPF_JSGE:
++				/* signed '>=', GE in x86 */
++				jmp_cond = IA32_JGE;
++				break;
++			case BPF_JSLE:
++				/* signed '<=', LE in x86 */
++				jmp_cond = IA32_JLE;
++				break;
++			default: /* to silence gcc warning */
++				return -EFAULT;
++			}
++			jmp_offset = addrs[i + insn->off] - addrs[i];
++			if (is_imm8(jmp_offset)) {
++				EMIT2(jmp_cond, jmp_offset);
++			} else if (is_simm32(jmp_offset)) {
++				EMIT2_off32(0x0F, jmp_cond + 0x10, jmp_offset);
++			} else {
++				pr_err("cond_jmp gen bug %llx\n", jmp_offset);
++				return -EFAULT;
++			}
++
++			break;
++		}
++		case BPF_JMP | BPF_JA:
++			jmp_offset = addrs[i + insn->off] - addrs[i];
++			if (!jmp_offset)
++				/* optimize out nop jumps */
++				break;
++emit_jmp:
++			if (is_imm8(jmp_offset)) {
++				EMIT2(0xEB, jmp_offset);
++			} else if (is_simm32(jmp_offset)) {
++				EMIT1_off32(0xE9, jmp_offset);
++			} else {
++				pr_err("jmp gen bug %llx\n", jmp_offset);
++				return -EFAULT;
++			}
++			break;
++
++		case BPF_LD | BPF_ABS | BPF_W:
++		case BPF_LD | BPF_ABS | BPF_H:
++		case BPF_LD | BPF_ABS | BPF_B:
++		case BPF_LD | BPF_IND | BPF_W:
++		case BPF_LD | BPF_IND | BPF_H:
++		case BPF_LD | BPF_IND | BPF_B:
++		{
++			int size;
++			const u8 *r6 = bpf2ia32[BPF_REG_6];
++
++			/* Setting up first argument */
++			/* mov eax,dword ptr [ebp+off] */
++			EMIT3(0x8B, add_2reg(0x40, IA32_EBP, IA32_EAX),
++			      STACK_VAR(r6[0]));
++
++			/* Setting up second argument */
++			if (BPF_MODE(code) == BPF_ABS) {
++				/* mov %edx, imm32 */
++				EMIT1_off32(0xBA, imm32);
++			} else {
++				if (sstk)
++					/* mov edx,dword ptr [ebp+off] */
++					EMIT3(0x8B, add_2reg(0x40, IA32_EBP,
++							     IA32_EDX),
++					      STACK_VAR(src_lo));
++				else
++					/* mov edx,src_lo */
++					EMIT2(0x8B, add_2reg(0xC0, src_lo,
++							     IA32_EDX));
++				if (imm32) {
++					if (is_imm8(imm32))
++						/* add %edx, imm8 */
++						EMIT3(0x83, 0xC2, imm32);
++					else
++						/* add %edx, imm32 */
++						EMIT2_off32(0x81, 0xC2, imm32);
++				}
++			}
++
++			/* Setting up third argument */
++			switch (BPF_SIZE(code)) {
++			case BPF_W:
++				size = 4;
++				break;
++			case BPF_H:
++				size = 2;
++				break;
++			case BPF_B:
++				size = 1;
++				break;
++			default:
++				return -EINVAL;
++			}
++			/* mov ecx,val */
++			EMIT2(0xB1, size);
++			/* movzx ecx,ecx */
++			EMIT3(0x0F, 0xB6, add_2reg(0xC0, IA32_ECX, IA32_ECX));
++
++			/* mov ebx,ebp */
++			EMIT2(0x8B, add_2reg(0xC0, IA32_EBP, IA32_EBX));
++			/* add %ebx,imm8 */
++			EMIT3(0x83, add_1reg(0xC0, IA32_EBX), SKB_BUFFER);
++			/* push ebx */
++			EMIT1(0x53);
++
++			/* Setting up function pointer to call */
++			/* mov ebx,imm32*/
++			EMIT2_off32(0xC7, add_1reg(0xC0, IA32_EBX),
++				    (unsigned int)bpf_load_pointer);
++
++			EMIT2(0xFF, add_1reg(0xD0, IA32_EBX));
++			/* add %esp,4 */
++			EMIT3(0x83, add_1reg(0xC0, IA32_ESP), 4);
++			/* xor edx,edx */
++			EMIT2(0x33, add_2reg(0xC0, IA32_EDX, IA32_EDX));
++
++			/* mov dword ptr [ebp+off],eax */
++			EMIT3(0x89, add_2reg(0x40, IA32_EBP, IA32_EDX),
++			      STACK_VAR(r0[0]));
++			/* mov dword ptr [ebp+off],edx */
++			EMIT3(0x89, add_2reg(0x40, IA32_EBP, IA32_EDX),
++			      STACK_VAR(r0[1]));
++
++			/* Check if return address is NULL or not.
++			 * if NULL then jump to epilogue
++			 * else continue to load the value from retn address
++			 */
++			EMIT3(0x83, add_1reg(0xF8, IA32_EAX), 0);
++			jmp_offset = ctx->cleanup_addr - addrs[i];
++
++			switch (BPF_SIZE(code)) {
++			case BPF_W:
++				jmp_offset += 7;
++				break;
++			case BPF_H:
++				jmp_offset += 10;
++				break;
++			case BPF_B:
++				jmp_offset += 6;
++				break;
++			}
++
++			EMIT2_off32(0x0F, IA32_JE + 0x10, jmp_offset);
++			/* Load value from the address */
++			switch (BPF_SIZE(code)) {
++			case BPF_W:
++				/* mov eax,[eax] */
++				EMIT2(0x8B, 0x0);
++				/* emit 'bswap eax' */
++				EMIT2(0x0F, add_1reg(0xC8, IA32_EAX));
++				break;
++			case BPF_H:
++				EMIT3(0x0F, 0xB7, 0x0);
++				EMIT1(0x66);
++				EMIT3(0xC1, add_1reg(0xC8, IA32_EAX), 8);
++				break;
++			case BPF_B:
++				EMIT3(0x0F, 0xB6, 0x0);
++				break;
++			}
++
++			/* mov dword ptr [ebp+off],eax */
++			EMIT3(0x89, add_2reg(0x40, IA32_EBP, IA32_EAX),
++			      STACK_VAR(r0[0]));
++			break;
++		}
++		/* STX XADD: lock *(u32 *)(dst + off) += src */
++		case BPF_STX | BPF_XADD | BPF_W:
++		/* STX XADD: lock *(u64 *)(dst + off) += src */
++		case BPF_STX | BPF_XADD | BPF_DW:
++			goto notyet;
++		case BPF_JMP | BPF_EXIT:
++			if (seen_exit) {
++				jmp_offset = ctx->cleanup_addr - addrs[i];
++				goto emit_jmp;
++			}
++			seen_exit = true;
++			/* update cleanup_addr */
++			ctx->cleanup_addr = proglen;
++			emit_epilogue(&prog, bpf_prog->aux->stack_depth);
++			break;
++notyet:
++			pr_info_once("*** NOT YET: opcode %02x ***\n", code);
++			return -EFAULT;
++		default:
++			/* This error will be seen if new instruction was added
++			 * to interpreter, but not to JIT
++			 * or if there is junk in bpf_prog
++			 */
++			pr_err("bpf_jit: unknown opcode %02x\n", code);
++			return -EINVAL;
++		}
++
++		ilen = prog - temp;
++		if (ilen > BPF_MAX_INSN_SIZE) {
++			pr_err("bpf_jit: fatal insn size error\n");
++			return -EFAULT;
++		}
++
++		if (image) {
++			if (unlikely(proglen + ilen > oldproglen)) {
++				pr_err("bpf_jit: fatal error\n");
++				return -EFAULT;
++			}
++			memcpy(image + proglen, temp, ilen);
++		}
++		proglen += ilen;
++		addrs[i] = proglen;
++		prog = temp;
++	}
++	return proglen;
++}
++
++struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *prog)
++{
++	struct bpf_binary_header *header = NULL;
++	struct bpf_prog *tmp, *orig_prog = prog;
++	int proglen, oldproglen = 0;
++	struct jit_context ctx = {};
++	bool tmp_blinded = false;
++	u8 *image = NULL;
++	int *addrs;
++	int pass;
++	int i;
++
++	if (!prog->jit_requested)
++		return orig_prog;
++
++	tmp = bpf_jit_blind_constants(prog);
++	/* If blinding was requested and we failed during blinding,
++	 * we must fall back to the interpreter.
++	 */
++	if (IS_ERR(tmp))
++		return orig_prog;
++	if (tmp != prog) {
++		tmp_blinded = true;
++		prog = tmp;
++	}
++
++	addrs = kmalloc(prog->len * sizeof(*addrs), GFP_KERNEL);
++	if (!addrs) {
++		prog = orig_prog;
++		goto out;
++	}
++
++	/* Before first pass, make a rough estimation of addrs[]
++	 * each bpf instruction is translated to less than 64 bytes
++	 */
++	for (proglen = 0, i = 0; i < prog->len; i++) {
++		proglen += 64;
++		addrs[i] = proglen;
++	}
++	ctx.cleanup_addr = proglen;
++
++	/* JITed image shrinks with every pass and the loop iterates
++	 * until the image stops shrinking. Very large bpf programs
++	 * may converge on the last pass. In such case do one more
++	 * pass to emit the final image
++	 */
++	for (pass = 0; pass < 20 || image; pass++) {
++		proglen = do_jit(prog, addrs, image, oldproglen, &ctx);
++		if (proglen <= 0) {
++			image = NULL;
++			if (header)
++				bpf_jit_binary_free(header);
++			prog = orig_prog;
++			goto out_addrs;
++		}
++		if (image) {
++			if (proglen != oldproglen) {
++				pr_err("bpf_jit: proglen=%d != oldproglen=%d\n",
++				       proglen, oldproglen);
++				prog = orig_prog;
++				goto out_addrs;
++			}
++			break;
++		}
++		if (proglen == oldproglen) {
++			header = bpf_jit_binary_alloc(proglen, &image,
++						      1, jit_fill_hole);
++			if (!header) {
++				prog = orig_prog;
++				goto out_addrs;
++			}
++		}
++		oldproglen = proglen;
++		cond_resched();
++	}
++
++	if (bpf_jit_enable > 1)
++		bpf_jit_dump(prog->len, proglen, pass + 1, image);
++
++	if (image) {
++		bpf_jit_binary_lock_ro(header);
++		prog->bpf_func = (void *)image;
++		prog->jited = 1;
++		prog->jited_len = proglen;
++	} else {
++		prog = orig_prog;
++	}
++
++out_addrs:
++	kfree(addrs);
++out:
++	if (tmp_blinded)
++		bpf_jit_prog_release_other(prog, prog == orig_prog ?
++					   tmp : orig_prog);
++	return prog;
++}
+-- 
+1.8.5.6.2.g3d8a54e.dirty
