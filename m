@@ -1,150 +1,124 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3121895-1524773031-2-5144673794758658668
+X-Cyrus-Session-Id: sloti22d1t05-3258746-1524779723-2-5486527259607463592
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, MAILING_LIST_MULTI -1, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
-  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='US-ASCII'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524773029; b=wTHk/GK1szEJ4z6x374lBKG69ni4yzOK4LrFAtT9mktWc76aCi
-    j+fxSioYKfli/2y7tD4r0txFGdZX+ytwo1XbdUDBVZsm88B64QairpAvUN2eAKXU
-    WLxGVcUjU5wpvAZ9SP+I+9OKCTsdanR7IUB07MFsXPQxa0IWxy9PZNHs0NKQk86h
-    3VI4aEKBQ/o/eP4glr8F7goqg+YnuwUsEW33e7qdkpE9xDyNIYeguPZlkIS2Ik4C
-    UNF0NH1gtIYl7fKx/P6X78d4/xJsElBvjfHsgnzF8RWzJ8zgJv9fhFIReTXQp4tG
-    pz0sdT2hvi5MRe3w7OSrlEXLQq69P68CwROA==
+    1524779722; b=C7hR57Cgc9b9Fn+2t9vuM5l8481d2CIljKVVZoOYLQta0ogWHS
+    emG1P4kFeWjreGyR6IjzYskZp46Dw0k+XRmIKcpQYXLqdQFPMFHHwtvh93RYWDj+
+    cHMX00ME3RPUQa1J9IgyPd7mcsLujdbhMkfjP44PmBSZCfzb6SgWEgbgZAoB3eNj
+    CVGoWzf/kY3VC2vqHNSVxR8WY1mOKbmQNRTaIZI1yt9EFZgNnwwUnIzHgf4a5q1c
+    S2LL7InzBonXV5mAnCwrNKVXDZ1YUheoUVpgC2nVhvzCwFoYextkASpJVdYn1l2/
+    M5XheflikglA/E7Ia7lS5U02nk/i5smp52ew==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1524773029; bh=FYmyfDbHiJ3vcasR1coomV+caX6tdU
-    Ax8vaQQ5XspBo=; b=QuV4r57ntkik6n6dOybC489u8OitzSCnaZqaz8YqggDByp
-    uS/TluJjiKN+4q+c5HTS8T40vGxGFdaYjt0X+SXDUyCIwl7OAHXQufZxsDtAz8ya
-    k2cgPBBWS2fDzFFAKxCiHKMqZSIQwys0L7xyVOJp7wSSZ9cqFuEkVH9Q2VQNF6mX
-    mYVAMBZYKDcv6CPPV7GQeImjAIUVSQt4wpZcxNtCEfoVviK5DEhIpPqut/3VZimY
-    /6q8mwqIbrRXkWo9E0O8xNJuzTAMpU85S24SuzpTGkRhJoC2OKlbumGiWOzPcT4Z
-    HZ3+PzEvVyrt0tSTAfZDY5EfKdT0+zIQimuiHIwQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    messagingengine.com; h=date:from:to:cc:subject:in-reply-to
+    :message-id:references:mime-version:content-type:sender:list-id;
+    s=fm2; t=1524779722; bh=m11X7m5M2w7H9Z/zNtfxlxJD0saYzpA1mzxFDIL
+    wRAg=; b=Y171Sge+rk/NmQ95HsXZLaktWcSPGpmu6mE1iV2OPYeACQxMYjiA/5a
+    R6QHGgm6wI9a6yuRS9mkcN6P72suXTzrdSrBjMbIyDxWmQuL0Q5tMNyQnlym46P7
+    GrpzuN9pmw6Ykqy4NUKkJevBB8Ht49aC7aJ377Rl+gGRodUiUNQfmUzMtqkKSofu
+    fGymz/Df/UfoqZ9awvy4cdltbqfCCw5Ozc+hJqVo8SWUryHzII2IQM15SrFzP82w
+    7YIS260m3cnMoU5Anu2UKfxno7SYG7SUBcRepIHl6EumNCmC6jz8onM50Hlyc6nj
+    5O5AE7n7HrWDfbI+1HjZLX03iu50ncw==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=google.com header.i=@google.com header.b=YX4h5oLO x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=reject,has-list-id=yes,d=reject) header.from=google.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
+    x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=tI3Qld0c;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=google.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=google.com header.i=@google.com header.b=YX4h5oLO x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=reject,has-list-id=yes,d=reject) header.from=google.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
+    x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=tI3Qld0c;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=google.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfAaQAagcQOXZDGtsqUfxCxKypmVt5gScyISaBY/Ck4mMO79Hd+wLwAF+y2StrttbD9scL5/aRgYauJR2ykpYih0Y0P3+wbNPgDmhl/8edLLKCt/YiuOn
-    3ATF2FssKiGO4Y/AM7tZL5CICwB5YQc3OrFGZKajSsBy8qQbusARKNJ6Bq1BJQbu643YvoZmJUOMdoOCmut7TAT1cLXirBX1MJhtWxFtqteLOXkdwqtr2A1b
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=FOH2dFAWAAAA:8 a=JfrnYn6hAAAA:8 a=Z4Rwk6OoAAAA:8 a=drOt6m5kAAAA:8
-    a=iox4zFpeAAAA:8 a=ufHFDILaAAAA:8 a=VwQbUJbxAAAA:8 a=HlR1BP9YCU_Ax4rQYlQA:9
-    a=9_sauB0ltD2lJV1Y:21 a=QBAYB7Gwgt-Oyznt:21 a=CjuIK1q_8ugA:10
-    a=x8gzFH9gYPwA:10 a=i3VuKzQdj-NEYjvDI-p3:22 a=1CNFftbPRP8L7MoqJWF3:22
-    a=HkZW87K1Qel5hWWM3VKY:22 a=RMMjzBEyIzXRtoq5n5K6:22 a=WzC6qhA0u3u7Ye7llzcV:22
-    a=ZmIg1sZ3JBWsdXgziEIF:22 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfKURjs7/wntSCXYvmhpoTe47+T0Jt/o6lqKSVILWdbrtVAGJsXoEF3kQdv44BPPyAXywEcT7YuuFoPshQ4SbAfqk5PomcuGtA4jyFmlyTl25aoQJy4bN
+    XiztrWs3iiAsKf4XfLdD1Z3zmeYuJreS9QlbzuGIO9PDJtEUWGNoxMO/3AyVh9SfBa9cvtwZ5N2BFR2b5bWU+ZvLSRQY+iR9R1MSQY3FHSBx/UDbEWLK8Dnr
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=xqWC_Br6kY4A:10
+    a=Kd1tUaAdevIA:10 a=FOH2dFAWAAAA:8 a=JfrnYn6hAAAA:8 a=Z4Rwk6OoAAAA:8
+    a=drOt6m5kAAAA:8 a=iox4zFpeAAAA:8 a=ufHFDILaAAAA:8 a=VwQbUJbxAAAA:8
+    a=FJhQjeMXZctLDUCBs8cA:9 a=oxnmrYahi5d5i0S2:21 a=mD_BqaylhbH7tJed:21
+    a=CjuIK1q_8ugA:10 a=x8gzFH9gYPwA:10 a=i3VuKzQdj-NEYjvDI-p3:22
+    a=1CNFftbPRP8L7MoqJWF3:22 a=HkZW87K1Qel5hWWM3VKY:22 a=RMMjzBEyIzXRtoq5n5K6:22
+    a=WzC6qhA0u3u7Ye7llzcV:22 a=ZmIg1sZ3JBWsdXgziEIF:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757101AbeDZUDf (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 26 Apr 2018 16:03:35 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45728 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756685AbeDZUDd (ORCPT <rfc822;linux-api@vger.kernel.org>);
-        Thu, 26 Apr 2018 16:03:33 -0400
-Date: Thu, 26 Apr 2018 22:03:31 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Roman Gushchin <guro@fb.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, kernel-team@fb.com,
-        Vlastimil Babka <vbabka@suse.cz>,
+        id S1756568AbeDZVzI (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 26 Apr 2018 17:55:08 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:38035 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754786AbeDZVzH (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Thu, 26 Apr 2018 17:55:07 -0400
+X-Google-Smtp-Source: AB8JxZr1ddzPPiSh4iuWKXPOJ+4Pd7FNutsPZCILV9XQKMgj0EQlvimnBV6tBJ4Rc4qQ2WjGFWcU2w==
+Date: Thu, 26 Apr 2018 14:55:05 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To: Michal Hocko <mhocko@kernel.org>
+cc: Roman Gushchin <guro@fb.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        kernel-team@fb.com, Vlastimil Babka <vbabka@suse.cz>,
         Matthew Wilcox <willy@infradead.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [PATCH] mm: don't show nr_indirectly_reclaimable in /proc/vmstat
-Message-ID: <20180426200331.GZ17484@dhcp22.suse.cz>
-References: <20180425191422.9159-1-guro@fb.com>
+Subject: Re: [PATCH] mm: don't show nr_indirectly_reclaimable in
+ /proc/vmstat
+In-Reply-To: <20180426200331.GZ17484@dhcp22.suse.cz>
+Message-ID: <alpine.DEB.2.21.1804261453460.238822@chino.kir.corp.google.com>
+References: <20180425191422.9159-1-guro@fb.com> <20180426200331.GZ17484@dhcp22.suse.cz>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180425191422.9159-1-guro@fb.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed 25-04-18 20:14:22, Roman Gushchin wrote:
-> Don't show nr_indirectly_reclaimable in /proc/vmstat,
-> because there is no need in exporting this vm counter
-> to the userspace, and some changes are expected
-> in reclaimable object accounting, which can alter
-> this counter.
+On Thu, 26 Apr 2018, Michal Hocko wrote:
+
+> > Don't show nr_indirectly_reclaimable in /proc/vmstat,
+> > because there is no need in exporting this vm counter
+> > to the userspace, and some changes are expected
+> > in reclaimable object accounting, which can alter
+> > this counter.
+> > 
+> > Signed-off-by: Roman Gushchin <guro@fb.com>
+> > Cc: Vlastimil Babka <vbabka@suse.cz>
+> > Cc: Matthew Wilcox <willy@infradead.org>
+> > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> > Cc: Michal Hocko <mhocko@suse.com>
+> > Cc: Johannes Weiner <hannes@cmpxchg.org>
 > 
-> Signed-off-by: Roman Gushchin <guro@fb.com>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-
-This is quite a hack. I would much rather revert the counter and fixed
-it the way Vlastimil has proposed. But if there is a strong opposition
-to the revert then this is probably the simples thing to do. Therefore
-
-Unhappy-Acked-by: Michal Hocko <mhocko@suse.com>
-
-> ---
->  mm/vmstat.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
+> This is quite a hack. I would much rather revert the counter and fixed
+> it the way Vlastimil has proposed. But if there is a strong opposition
+> to the revert then this is probably the simples thing to do. Therefore
 > 
-> diff --git a/mm/vmstat.c b/mm/vmstat.c
-> index 536332e988b8..a2b9518980ce 100644
-> --- a/mm/vmstat.c
-> +++ b/mm/vmstat.c
-> @@ -1161,7 +1161,7 @@ const char * const vmstat_text[] = {
->  	"nr_vmscan_immediate_reclaim",
->  	"nr_dirtied",
->  	"nr_written",
-> -	"nr_indirectly_reclaimable",
-> +	"", /* nr_indirectly_reclaimable */
->  
->  	/* enum writeback_stat_item counters */
->  	"nr_dirty_threshold",
-> @@ -1740,6 +1740,10 @@ static int vmstat_show(struct seq_file *m, void *arg)
->  	unsigned long *l = arg;
->  	unsigned long off = l - (unsigned long *)m->private;
->  
-> +	/* Skip hidden vmstat items. */
-> +	if (*vmstat_text[off] == '\0')
-> +		return 0;
-> +
->  	seq_puts(m, vmstat_text[off]);
->  	seq_put_decimal_ull(m, " ", *l);
->  	seq_putc(m, '\n');
-> -- 
-> 2.14.3
 
--- 
-Michal Hocko
-SUSE Labs
+Implementing this counter as a vmstat doesn't make much sense based on how 
+it's used.  Do you have a link to what Vlastimil proposed?  I haven't seen 
+mention of alternative ideas.
