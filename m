@@ -1,51 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754667AbeDZJGP (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 05:06:15 -0400
-Received: from mail-it0-f46.google.com ([209.85.214.46]:39556 "EHLO
-        mail-it0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754592AbeDZJGG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 05:06:06 -0400
-X-Google-Smtp-Source: AB8JxZoLofqYy7dFYMSzeWirk7QRbhJgDqNy1UBIT/CW+Te9cxT5EN7DEMFZL0DUXZHbxGXlqr7qlGWnojLY6vXcMZE=
+        id S1754740AbeDZJG2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 05:06:28 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7633 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754450AbeDZJGZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 05:06:25 -0400
+From: Chao Yu <yuchao0@huawei.com>
+To: <jaegeuk@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH 1/2] f2fs: treat volatile file's data as hot one
+Date: Thu, 26 Apr 2018 17:05:50 +0800
+Message-ID: <20180426090551.92364-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.15.0.55.gc2ece9dc4de6
 MIME-Version: 1.0
-In-Reply-To: <20180405120012.7671-1-colin.king@canonical.com>
-References: <20180405120012.7671-1-colin.king@canonical.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 26 Apr 2018 11:06:05 +0200
-Message-ID: <CACRpkdZ2zRJfcSWbi_zwvtMnu_eGqAi684Wh3qWfjMazJqNsUA@mail.gmail.com>
-Subject: Re: [PATCH] gpio: 104-dio-48e: make array 'ports' static, shrinks
- object size
-To: Colin King <colin.king@canonical.com>
-Cc: William Breathitt Gray <vilhelm.gray@gmail.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 5, 2018 at 2:00 PM, Colin King <colin.king@canonical.com> wrote:
+Volatile file's data will be updated oftenly, so it'd better to place
+its data into hot data segment.
 
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Don't populate the const read-only array 'ports' on the stack but instead
-> make it static. Makes the object code smaller by over 100 buytes:
->
-> Before:
->    text    data     bss     dec     hex filename
->   10959    4952     832   16743    4167 drivers/gpio/gpio-104-dio-48e.o
->
-> After:
->    text    data     bss     dec     hex filename
->   10790    5008     832   16630    40f6 drivers/gpio/gpio-104-dio-48e.o
->
-> (gcc version 7.2.0 x86_64)
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+In addition, for atomic file, we change to check FI_ATOMIC_FILE instead
+of FI_HOT_DATA to make code readability better.
 
-Patch applied with William's ACK.
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/file.c    | 2 --
+ fs/f2fs/segment.c | 5 +++--
+ 2 files changed, 3 insertions(+), 4 deletions(-)
 
-Yours,
-Linus Walleij
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index e88d94846d50..05b2045888a3 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1700,7 +1700,6 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
+ 	if (ret)
+ 		goto out;
+ skip_flush:
+-	set_inode_flag(inode, FI_HOT_DATA);
+ 	set_inode_flag(inode, FI_ATOMIC_FILE);
+ 	clear_inode_flag(inode, FI_ATOMIC_REVOKE_REQUEST);
+ 	f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
+@@ -1744,7 +1743,6 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
+ 		ret = f2fs_do_sync_file(filp, 0, LLONG_MAX, 0, true);
+ 		if (!ret) {
+ 			clear_inode_flag(inode, FI_ATOMIC_FILE);
+-			clear_inode_flag(inode, FI_HOT_DATA);
+ 			stat_dec_atomic_write(inode);
+ 		}
+ 	} else {
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 1fc23572067d..e339a5ff381f 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -314,7 +314,6 @@ void drop_inmem_pages(struct inode *inode)
+ 	mutex_unlock(&fi->inmem_lock);
+ 
+ 	clear_inode_flag(inode, FI_ATOMIC_FILE);
+-	clear_inode_flag(inode, FI_HOT_DATA);
+ 	stat_dec_atomic_write(inode);
+ }
+ 
+@@ -1637,7 +1636,9 @@ static int __get_segment_type_6(struct f2fs_io_info *fio)
+ 		if (is_cold_data(fio->page) || file_is_cold(inode))
+ 			return CURSEG_COLD_DATA;
+ 		if (file_is_hot(inode) ||
+-				is_inode_flag_set(inode, FI_HOT_DATA))
++				is_inode_flag_set(inode, FI_HOT_DATA) ||
++				is_inode_flag_set(inode, FI_ATOMIC_FILE) ||
++				is_inode_flag_set(inode, FI_VOLATILE_FILE))
+ 			return CURSEG_HOT_DATA;
+ 		return rw_hint_to_seg_type(inode->i_write_hint);
+ 	} else {
+-- 
+2.15.0.55.gc2ece9dc4de6
