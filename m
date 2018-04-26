@@ -1,110 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754348AbeDZIxI (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 04:53:08 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:39254 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752419AbeDZIxF (ORCPT
+        id S1754899AbeDZIyN (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 04:54:13 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:46256 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754054AbeDZIyH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 04:53:05 -0400
-Date: Thu, 26 Apr 2018 10:53:00 +0200
-From: Simon Horman <horms@verge.net.au>
-To: jacopo mondi <jacopo@jmondi.org>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, geert@linux-m68k.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] ARM: dts: r8a7740: Enable CEU0
-Message-ID: <20180426085259.lqxr4emk75oz7vug@verge.net.au>
-References: <1524654920-18749-1-git-send-email-jacopo+renesas@jmondi.org>
- <1524654920-18749-3-git-send-email-jacopo+renesas@jmondi.org>
- <20180426061124.hvgl3ijf6ulrdkmn@verge.net.au>
- <20180426072609.GH17088@w540>
+        Thu, 26 Apr 2018 04:54:07 -0400
+Date: Thu, 26 Apr 2018 10:53:40 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Mark Salyzyn <salyzyn@android.com>, Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        John Stultz <john.stultz@linaro.org>, Peter Anvin <hpa@zytor.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Prarit Bhargava <prarit@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>, Pavel Machek <pavel@ucw.cz>,
+        Kevin Easton <kevin@guarana.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        SergeySenozhatsky <sergey.senozhatsky@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-tip-commits@vger.kernel.org,
+        Mike Galbraith <efault@gmx.de>
+Subject: Re: [tip:timers/urgent] Revert: Unify CLOCK_MONOTONIC and
+ CLOCK_BOOTTIME
+In-Reply-To: <1937172.K7anUBJQAz@aspire.rjw.lan>
+Message-ID: <alpine.DEB.2.21.1804261053020.1584@nanos.tec.linutronix.de>
+References: <tip-757d5a9b3052a4eebd029f207f1e1df59bef7b7d@git.kernel.org> <alpine.DEB.2.21.1804252108280.1589@nanos.tec.linutronix.de> <2814513.Yf7f2L7MUC@aspire.rjw.lan> <1937172.K7anUBJQAz@aspire.rjw.lan>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180426072609.GH17088@w540>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 26, 2018 at 09:26:09AM +0200, jacopo mondi wrote:
-> Hi Simon,
+On Thu, 26 Apr 2018, Rafael J. Wysocki wrote:
+> FWIW, here's a list of issues reported and narrowed down to the commit
+> in question so far I could find:
 > 
-> On Thu, Apr 26, 2018 at 08:11:30AM +0200, Simon Horman wrote:
-> > Thanks Jacopo,
-> >
-> > I'm very pleased to see this series.
+> * systemd kills daemons on resume, after >WatchdogSec seconds
+>   of suspending (Genki Sky).  [Verified that that's because systemd uses
+>   CLOCK_MONOTONIC and expects it to not include the suspend time.]
 > 
-> Credits to Geert that pointed out to me R-Mobile A1 comes with a CEU.
-> I should mention him in next iteration actually, sorry about that.
+> * systemd-journald misbehaves after resume:
+>   systemd-journald[7266]: File /var/log/journal/016627c3c4784cd4812d4b7e96a34226/system.journal corrupted or uncleanly shut down, renaming and replacing.
+>   (	Mike Galbraith).
 > 
-> >
-> > On Wed, Apr 25, 2018 at 01:15:20PM +0200, Jacopo Mondi wrote:
-> > > Enable CEU0 peripheral for Renesas R-Mobile A1 R8A7740.
-> >
-> > Given 'status = "disabled"' below I think you
-> > are describing but not enabling CEU0. Also in the subject.
+> * NetworkManager reports "networking disabled" and networking is broken
+>   after resume 50% of the time (Pavel).  [May be because of systemd.]
 > 
-> Right.
+> * MATE desktop dims the display and starts the screensaver right after
+>   system resume (Pavel).
 > 
-> >
-> > Should we also describe CEU1?
+> * Full system hang during resume (me).  [May be due to systemd or NM or both.]
 > 
-> Armadillo board file only describe CEU0. If there are R-Mobile A1
-> board files where I can steal informations from I can do that. If
-> there's a public datasheet, that would be even better.
+> I'm not sure if all of the above can be connected to one specific thing (other
+> than the fact that things get confused if they expect CLOCK_MONOTONIC to not
+> include system suspend time).
 
-I have the datasheet, so perhaps I can add CEU1 after you have added CEU0.
+Thanks for collecting the info. I'll amend the changelog with those.
 
-> > > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > > ---
-> > >  arch/arm/boot/dts/r8a7740.dtsi | 10 ++++++++++
-> > >  1 file changed, 10 insertions(+)
-> > >
-> > > diff --git a/arch/arm/boot/dts/r8a7740.dtsi b/arch/arm/boot/dts/r8a7740.dtsi
-> > > index afd3bc5..05ec41e 100644
-> > > --- a/arch/arm/boot/dts/r8a7740.dtsi
-> > > +++ b/arch/arm/boot/dts/r8a7740.dtsi
-> > > @@ -67,6 +67,16 @@
-> > >  		power-domains = <&pd_d4>;
-> > >  	};
-> > >
-> > > +	ceu0: ceu@fe910000 {
-> > > +		reg = <0xfe910000 0x100>;
-> >
-> > Should the size of the range be 0x3000 ?
-> > That would seem to match my reading of table 32.3
-> > and also be consistent with r7s72100.dtsi.
-> 
-> I got this from
-> 
-> static struct resource ceu0_resources[] = {
-> 	[0] = {
-> 		.name	= "CEU",
-> 		.start	= 0xfe910000,
-> 		.end	= 0xfe91009f,
-> 		.flags	= IORESOURCE_MEM,
-> 	},
-> but I also noticed the r7s72100 one was bigger.
-> I'm fine enlarging this, if that's what the manual reports too.
+Thanks,
 
-I think that would be best.
-
-> > > +		compatible = "renesas,r8a7740-ceu";
-> > > +		interrupts = <GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>;
-> > > +		clocks = <&mstp1_clks R8A7740_CLK_CEU20>;
-> > > +		clock-names = "ceu20";
-> > > +		power-domains = <&pd_a4mp>;
-> >
-> > My reading of table 1.7 is that the power domain should be A4R (&pd_a4r).
-> 
-> Ah yes, my bad.
-> 
-> The long time goal would be describe the camera module (mt9t112) which
-> is installed on armadillo. Unfortunately that would probably require
-> some more work on the CEU side.
-
-Thanks, understood.
+	tglx
