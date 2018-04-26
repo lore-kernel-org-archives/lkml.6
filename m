@@ -1,52 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932148AbeDZPUH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 11:20:07 -0400
-Received: from smtp.nue.novell.com ([195.135.221.5]:43414 "EHLO
-        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756204AbeDZPUC (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Thu, 26 Apr 2018 11:20:02 -0400
-Message-ID: <1524476031.2075.24.camel@suse.com>
-Subject: Re: [PATCH v3 0/6] scsi: handle special return codes for ABORTED
- COMMAND
-From: Martin Wilck <mwilck@suse.com>
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Hannes Reinecke <hare@suse.de>,
-        James Bottomley <jejb@linux.vnet.ibm.com>,
-        Xose Vazquez Perez <xose.vazquez@gmail.com>,
-        Bart Van Assche <Bart.VanAssche@sandisk.com>
-In-Reply-To: <yq1efj9h3l1.fsf@oracle.com>
-References: <20180417233511.6573-1-mwilck@suse.com>
-         <yq1efj9h3l1.fsf@oracle.com>
+        id S932195AbeDZPUS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 11:20:18 -0400
+Received: from mail-it0-f44.google.com ([209.85.214.44]:37034 "EHLO
+        mail-it0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932135AbeDZPUG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 11:20:06 -0400
+X-Google-Smtp-Source: AB8JxZq2WF5upE2KM8qwCb5tKpz+9boaT04zy5yHbFEZ+8mMOgrIJGCDNfUUiB9QMIPZhFc9Od5pUgEpzKp1MJEVKZw=
+MIME-Version: 1.0
+In-Reply-To: <2099399401.1995.1524755596613.JavaMail.zimbra@efficios.com>
+References: <20180423172244.694dbc9d@gandalf.local.home> <849066633.939.1524612064698.JavaMail.zimbra@efficios.com>
+ <68e4c123-a223-5e26-e57a-da2515041bf3@google.com> <20180425001049.GX26088@linux.vnet.ibm.com>
+ <20180425042056.GA21412@linux.vnet.ibm.com> <CAJWu+orWC=W0Jn2Jo7f+u5mbHMi+D1yuCmhD-xSgjWZ6Ynw32Q@mail.gmail.com>
+ <1267842641.1791.1524692456344.JavaMail.zimbra@efficios.com>
+ <CAJWu+oq7dqn4PEySyrrETaGNg4TsJvHobu=UdMEves+V3fgVZQ@mail.gmail.com> <2099399401.1995.1524755596613.JavaMail.zimbra@efficios.com>
+From: Joel Fernandes <joelaf@google.com>
+Date: Thu, 26 Apr 2018 08:20:03 -0700
+Message-ID: <CAJWu+opff+qtLixJgK79FFos17oe2-N16THoDFvg7zCpwNjUCQ@mail.gmail.com>
+Subject: Re: [RFC v4 3/4] irqflags: Avoid unnecessary calls to trace_ if you can
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        rostedt <rostedt@goodmis.org>, Namhyung Kim <namhyung@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Boqun Feng <boqun.feng@gmail.com>, fweisbec <fweisbec@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        kbuild test robot <fengguang.wu@intel.com>,
+        baohong liu <baohong.liu@intel.com>,
+        vedang patel <vedang.patel@intel.com>,
+        kernel-team <kernel-team@lge.com>,
+        "Cc: Android Kernel" <kernel-team@android.com>
 Content-Type: text/plain; charset="UTF-8"
-Date: Mon, 23 Apr 2018 11:33:51 +0200
-Mime-Version: 1.0
-X-Mailer: Evolution 3.28.1 
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-04-20 at 19:15 -0400, Martin K. Petersen wrote:
-> 
-> Much better, thanks for reworking this. Applied to 4.18/scsi-queue.
+On Thu, Apr 26, 2018 at 8:13 AM, Mathieu Desnoyers
+<mathieu.desnoyers@efficios.com> wrote:
+[...]
+>>> Regarding the name, I'm OK with having something along the lines of
+>>> trace_*event*_blocking or such. Please don't use "srcu" or other naming
+>>> that is explicitly tied to the underlying mechanism used internally
+>>> however: what we want to convey is that this specific tracepoint probe
+>>
+>> Problem is that _blocking isn't the right word either. In my IRQ trace
+>> point case, it will look something like this then:
+>>
+>> local_irq_disable();
+>> // IRQs are now off.
+>> trace_irq_disable_blocking(..);
+>>
+>> This wouldn't make sense. What we really want is to use the SRCU
+>> implementation so that its low overhead...
+>>
+>> So it would be something like:
+>>
+>> local_irq_disable();
+>> // IRQs are now off.
+>> trace_irq_disable_srcu(..);
+>>
+>> I also Ok if, as Paul was saying in his last email, that just for
+>> _rcuidle, we use SRCU so that we don't have to do the rcu_enter_irq
+>> stuff. Or we kill the _rcuidle API completely and use _srcu for those
+>> users instead. We already have 1 implementation specific name anyway
+>> (rcuidle), we're just replacing it with another one. If in the future,
+>> if we want to change that name we can always do so (Also if you will,
+>> correcting the existing already bad naming is a different problem and
+>> we're not making it any worse tbh).
+>
+> Using SRCU rather than the sched-rcu tracepoint synchronization in your
+> use-case it caused by a limitation of sched-rcu: it cannot be efficiently
+> used within idle code. So you don't care about the "can_sleep" property
+> of SRCU. You could event mix SRCU and sched-rcu callsites for the same
+> probe name, and it would be perfectly valid.
+>
+> So even though both "can_sleep" and "rcuidle" caller variants would end
+> up using SRCU under the hood, each can have its own caller API, e.g.:
+>
+> * trace_<event>() -> only non-sleeping probes can register to those.
+>                      Uses sched-rcu under the hood.
+>
+> * trace_<event>_can_sleep() -> both sleeping and non-sleeping probes can
+>                                register to those. Uses SRCU under the hood.
+>
+> * trace_<event>_rcuidle() -> only non-sleeping probes can register to those,
+>                              uses SRCU under the hood.
+>
 
-Thank you!
+Cool, sounds good to me!
+For starters I was thinking of changing the _rcuidle underlying
+implementation as you pointed. This should be simple enough and needs
+no further additional APIs. I'll work on a patch along these lines and
+send it out soon. Also would love to work on your sleeping callback
+case in the future as well incase you wanted to spend your cycles
+working on other things.
 
-By the way, I've been wondering whether declaring blist_flags_t
-__bitwise was a wise decision. blist_flags_t is kernel-internal, thus
-endianness doesn't matter. OTOH, using __bitwise requires explicit
-casts in many places, which may suppress warnings about integer size
-mismatch and made me overlook some places where I had to change
-"unsigned long" to "unsigned long long" in the first place
-(in the submitted and applied version I think I caught them all).
+thanks,
 
-Regards,
-Martin
-
--- 
-Dr. Martin Wilck <mwilck@suse.com>, Tel. +49 (0)911 74053 2107
-SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
+- Joel
