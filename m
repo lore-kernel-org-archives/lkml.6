@@ -1,139 +1,144 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755776AbeDZMEj (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 08:04:39 -0400
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:49542 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755468AbeDZMEg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1755574AbeDZMEg (ORCPT <rfc822;w@1wt.eu>);
         Thu, 26 Apr 2018 08:04:36 -0400
-Date: Thu, 26 Apr 2018 15:04:34 +0300
-From: Sakari Ailus <sakari.ailus@iki.fi>
-To: Todor Tomov <todor.tomov@linaro.org>
-Cc: mchehab@kernel.org, hverkuil@xs4all.nl,
-        laurent.pinchart@ideasonboard.com, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] media: Add a driver for the ov7251 camera sensor
-Message-ID: <20180426120434.2k6kkwpchm5pnksz@valkosipuli.retiisi.org.uk>
-References: <1524673246-14175-1-git-send-email-todor.tomov@linaro.org>
- <1524673246-14175-3-git-send-email-todor.tomov@linaro.org>
- <20180426065010.a67iqsaicpgu7m5b@valkosipuli.retiisi.org.uk>
- <c065854a-084d-8bc8-a76e-2988be8c3788@linaro.org>
- <20180426071656.wuq5f7prg6kig6oy@valkosipuli.retiisi.org.uk>
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:46669 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754559AbeDZMEb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 08:04:31 -0400
+X-Google-Smtp-Source: AB8JxZqQ7Bz0bL9Nt5Kd2zf71CgNMhSH982ywXoW2wBSGDXRdwcQNHcL/LYTx8rS3PNYUeOrOpnGmQ==
+Subject: Re: [PATCH] connector: add parent pid and tgid to coredump and exit
+ events
+To: Jesper Derehag <jderehag@hotmail.com>,
+        David Miller <davem@davemloft.net>,
+        "zbr@ioremap.net" <zbr@ioremap.net>
+Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "xe-linux-external@cisco.com" <xe-linux-external@cisco.com>,
+        "matt.helsley@gmail.com" <matt.helsley@gmail.com>
+References: <20180329141247.20943-1-sstrogin@cisco.com>
+ <20180330.125921.653839794312978457.davem@davemloft.net>
+ <7d976488-6375-b3a8-e9d7-dc86b4c51b86@cisco.com>
+ <DB6P190MB0389513E240BD8ECEE575DB4DDBB0@DB6P190MB0389.EURP190.PROD.OUTLOOK.COM>
+From: Stefan Strogin <stefan.strogin@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=stefan.strogin@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <32f14672-5715-3e21-ba85-b27dc8d2c6b0@gmail.com>
+Date: Thu, 26 Apr 2018 15:04:29 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180426071656.wuq5f7prg6kig6oy@valkosipuli.retiisi.org.uk>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <DB6P190MB0389513E240BD8ECEE575DB4DDBB0@DB6P190MB0389.EURP190.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 26, 2018 at 10:16:56AM +0300, Sakari Ailus wrote:
-> On Thu, Apr 26, 2018 at 10:04:25AM +0300, Todor Tomov wrote:
-> > Hi Sakari,
-> > 
-> > On 26.04.2018 09:50, Sakari Ailus wrote:
-> > > Hi Todor,
-> > > 
-> > > On Wed, Apr 25, 2018 at 07:20:46PM +0300, Todor Tomov wrote:
-> > > ...
-> > >> +static int ov7251_write_reg(struct ov7251 *ov7251, u16 reg, u8 val)
-> > >> +{
-> > >> +	u8 regbuf[3];
-> > >> +	int ret;
-> > >> +
-> > >> +	regbuf[0] = reg >> 8;
-> > >> +	regbuf[1] = reg & 0xff;
-> > >> +	regbuf[2] = val;
-> > >> +
-> > >> +	ret = i2c_master_send(ov7251->i2c_client, regbuf, 3);
-> > >> +	if (ret < 0) {
-> > >> +		dev_err(ov7251->dev, "%s: write reg error %d: reg=%x, val=%x\n",
-> > >> +			__func__, ret, reg, val);
-> > >> +		return ret;
-> > >> +	}
-> > >> +
-> > >> +	return 0;
-> > > 
-> > > How about:
-> > > 
-> > > 	return ov7251_write_seq_regs(ov7251, reg, &val, 1);
-> > > 
-> > > And put the function below ov2751_write_seq_regs().
-> > 
-> > I'm not sure... It will calculate message length each time and then check
-> > that it is not greater than 5, which it is. Seems redundant.
-> > 
-> > > 
-> > >> +}
-> > >> +
-> > >> +static int ov7251_write_seq_regs(struct ov7251 *ov7251, u16 reg, u8 *val,
-> > >> +				 u8 num)
-> > >> +{
-> > >> +	const u8 maxregbuf = 5;
-> > >> +	u8 regbuf[maxregbuf];
+Hi David, Evgeniy,
 
-Apparently this leads to bad positive sparse warning. I'd fix it by:
+Sorry to bother you, but could you please comment about the UAPI change and the patch?
 
-diff --git a/drivers/media/i2c/ov7251.c b/drivers/media/i2c/ov7251.c
-index 3e2c0c03dfa9..d3ebb7529fca 100644
---- a/drivers/media/i2c/ov7251.c
-+++ b/drivers/media/i2c/ov7251.c
-@@ -643,12 +643,11 @@ static int ov7251_write_reg(struct ov7251 *ov7251, u16 reg, u8 val)
- static int ov7251_write_seq_regs(struct ov7251 *ov7251, u16 reg, u8 *val,
-                                 u8 num)
- {
--       const u8 maxregbuf = 5;
--       u8 regbuf[maxregbuf];
-+       u8 regbuf[5];
-        u8 nregbuf = sizeof(reg) + num * sizeof(*val);
-        int ret = 0;
- 
--       if (nregbuf > maxregbuf)
-+       if (nregbuf > sizeof(regbuf))
-                return -EINVAL;
- 
-        regbuf[0] = reg >> 8;
+Thanks, Jesper.
 
-Let me know if you're happy with that; I can merge it to the original
-patch.
+--
+Stefan
 
-> > >> +	u8 nregbuf = sizeof(reg) + num * sizeof(*val);
-> > >> +	int ret = 0;
-> > >> +
-> > >> +	if (nregbuf > maxregbuf)
-> > >> +		return -EINVAL;
-> > >> +
-> > >> +	regbuf[0] = reg >> 8;
-> > >> +	regbuf[1] = reg & 0xff;
-> > >> +
-> > >> +	memcpy(regbuf + 2, val, num);
-> > >> +
-> > >> +	ret = i2c_master_send(ov7251->i2c_client, regbuf, nregbuf);
-> > >> +	if (ret < 0) {
-> > >> +		dev_err(ov7251->dev, "%s: write seq regs error %d: first reg=%x\n",
-> > > 
-> > > This line is over 80... 
-> > 
-> > Yes indeed. Somehow checkpatch does not report this line, I don't know why.
-> > 
-> > > 
-> > > If you're happy with these, I can make the changes, too; they're trivial.
-> > 
-> > Only the second one? Thanks :)
+On 05/04/18 12:07, Jesper Derehag wrote:
+> Unless David comes back with something I have (also) missed regarding uapi breakage, this looks good to me.
 > 
-> Works for me. I'd still think the overhead of managing the buffer is
-> irrelevant where to having an extra function to do essentially the same
-> thing is a source of maintenance and review work. Note that we're even now
-> spending time to discuss it. ;-)
+> /Jesper
 > 
-> -- 
-> Kind regards,
+> ________________________________________
+> Från: Stefan Strogin <sstrogin@cisco.com>
+> Skickat: den 2 april 2018 17:18
+> Till: David Miller
+> Kopia: zbr@ioremap.net; netdev@vger.kernel.org; linux-kernel@vger.kernel.org; xe-linux-external@cisco.com; jderehag@hotmail.com; matt.helsley@gmail.com; minipli@googlemail.com
+> Ämne: Re: [PATCH] connector: add parent pid and tgid to coredump and exit events
 > 
-> Sakari Ailus
-> e-mail: sakari.ailus@iki.fi
-
--- 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi
+> Hi David,
+> 
+> I don't see how it breaks UAPI. The point is that structures
+> coredump_proc_event and exit_proc_event are members of *union*
+> event_data, thus position of the existing data in the structure is
+> unchanged. Furthermore, this change won't increase size of struct
+> proc_event, because comm_proc_event (also a member of event_data) is
+> of bigger size than the changed structures.
+> 
+> If I'm wrong, could you please explain what exactly will the change
+> break in UAPI?
+> 
+> 
+> On 30/03/18 19:59, David Miller wrote:
+>> From: Stefan Strogin <sstrogin@cisco.com>
+>> Date: Thu, 29 Mar 2018 17:12:47 +0300
+>>
+>>> diff --git a/include/uapi/linux/cn_proc.h b/include/uapi/linux/cn_proc.h
+>>> index 68ff25414700..db210625cee8 100644
+>>> --- a/include/uapi/linux/cn_proc.h
+>>> +++ b/include/uapi/linux/cn_proc.h
+>>> @@ -116,12 +116,16 @@ struct proc_event {
+>>>              struct coredump_proc_event {
+>>>                      __kernel_pid_t process_pid;
+>>>                      __kernel_pid_t process_tgid;
+>>> +                    __kernel_pid_t parent_pid;
+>>> +                    __kernel_pid_t parent_tgid;
+>>>              } coredump;
+>>>
+>>>              struct exit_proc_event {
+>>>                      __kernel_pid_t process_pid;
+>>>                      __kernel_pid_t process_tgid;
+>>>                      __u32 exit_code, exit_signal;
+>>> +                    __kernel_pid_t parent_pid;
+>>> +                    __kernel_pid_t parent_tgid;
+>>>              } exit;
+>>>
+>>>      } event_data;
+>>
+>> I don't think you can add these members without breaking UAPI.
+>>
+> 
