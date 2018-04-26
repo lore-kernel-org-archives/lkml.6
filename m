@@ -1,56 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755122AbeDZTFz (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 15:05:55 -0400
-Received: from mslow2.mail.gandi.net ([217.70.178.242]:53446 "EHLO
-        slow1-d.mail.gandi.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751647AbeDZTFQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 15:05:16 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert@linux-m68k.org, horms@verge.net.au, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] ARM: dts: r8a7740: Add CEU0
-Date: Thu, 26 Apr 2018 20:24:43 +0200
-Message-Id: <1524767083-19862-3-git-send-email-jacopo+renesas@jmondi.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1524767083-19862-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1524767083-19862-1-git-send-email-jacopo+renesas@jmondi.org>
+        id S1753774AbeDZTLQ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 15:11:16 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37818 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751645AbeDZTLP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 15:11:15 -0400
+Date: Thu, 26 Apr 2018 21:11:11 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Pavel Tatashin <pasha.tatashin@oracle.com>
+Cc: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
+        akpm@linux-foundation.org, kirill.shutemov@linux.intel.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH] mm: sections are not offlined during memory hotremove
+Message-ID: <20180426191111.GV17484@dhcp22.suse.cz>
+References: <20180426155834.16845-1-pasha.tatashin@oracle.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180426155834.16845-1-pasha.tatashin@oracle.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Describe CEU0 peripheral for Renesas R-Mobile A1 R8A7740 Soc.
+On Thu 26-04-18 11:58:34, Pavel Tatashin wrote:
+> Memory hotplug, and hotremove operate with per-block granularity. If
+> machine has large amount of memory (more than 64G), the size of memory
+> block can span multiple sections. By mistake, during hotremove we set
+> only the first section to offline state.
+> 
+> The bug was discovered because kernel selftest started to fail:
+> https://lkml.kernel.org/r/20180423011247.GK5563@yexl-desktop
+> 
+> After commit, "mm/memory_hotplug: optimize probe routine". But, the bug is
+> older than this commit. In this optimization we also added a check for
+> sections to be in a proper state during hotplug operation.
+> 
+> Fixes: 2d070eab2e82 ("mm: consider zone which is not fully populated to have holes")
 
-Reported-by: Geert Uytterhoeven <geert@glider.be>
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- arch/arm/boot/dts/r8a7740.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Dohh. When I saw this I've had that feeling that I have fixed this
+already and it must have get lost somewhere. But no, this was the same
+bug in a different path b4ccec41af82 ("mm/sparse.c: fix typo in
+online_mem_sections"). I wonder why I haven't noticed the same pattern
+in the offline path.
 
-diff --git a/arch/arm/boot/dts/r8a7740.dtsi b/arch/arm/boot/dts/r8a7740.dtsi
-index afd3bc5..508d934 100644
---- a/arch/arm/boot/dts/r8a7740.dtsi
-+++ b/arch/arm/boot/dts/r8a7740.dtsi
-@@ -67,6 +67,16 @@
- 		power-domains = <&pd_d4>;
- 	};
- 
-+	ceu0: ceu@fe910000 {
-+		reg = <0xfe910000 0x3000>;
-+		compatible = "renesas,r8a7740-ceu";
-+		interrupts = <GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&mstp1_clks R8A7740_CLK_CEU20>;
-+		clock-names = "ceu20";
-+		power-domains = <&pd_a4r>;
-+		status = "disabled";
-+	};
-+
- 	cmt1: timer@e6138000 {
- 		compatible = "renesas,cmt-48-r8a7740", "renesas,cmt-48";
- 		reg = <0xe6138000 0x170>;
+Thanks for noticing and fixing this.
+
+> Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+
+Acked-by: Michal Hocko <mhocko@suse.com>
+
+> ---
+>  mm/sparse.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/mm/sparse.c b/mm/sparse.c
+> index 62eef264a7bd..73dc2fcc0eab 100644
+> --- a/mm/sparse.c
+> +++ b/mm/sparse.c
+> @@ -629,7 +629,7 @@ void offline_mem_sections(unsigned long start_pfn, unsigned long end_pfn)
+>  	unsigned long pfn;
+>  
+>  	for (pfn = start_pfn; pfn < end_pfn; pfn += PAGES_PER_SECTION) {
+> -		unsigned long section_nr = pfn_to_section_nr(start_pfn);
+> +		unsigned long section_nr = pfn_to_section_nr(pfn);
+>  		struct mem_section *ms;
+>  
+>  		/*
+> -- 
+> 1.8.3.1
+> 
+
 -- 
-2.7.4
+Michal Hocko
+SUSE Labs
