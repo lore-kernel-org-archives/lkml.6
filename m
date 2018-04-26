@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753351AbeDZGfD (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 02:35:03 -0400
-Received: from mail-bl2nam02on0134.outbound.protection.outlook.com ([104.47.38.134]:10082
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        id S1753385AbeDZGg7 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 02:36:59 -0400
+Received: from mail-sn1nam01on0114.outbound.protection.outlook.com ([104.47.32.114]:20288
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751508AbeDZGe6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 02:34:58 -0400
+        id S1751508AbeDZGgz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 02:36:55 -0400
 From: <Yasunari.Takiguchi@sony.com>
 To: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 CC: <tbird20d@gmail.com>, <frowand.list@gmail.com>,
         <Yasunari.Takiguchi@sony.com>, <Masayuki.Yamamoto@sony.com>,
         <Hideki.Nozawa@sony.com>, <Kota.Yonezawa@sony.com>,
         <Toshihiko.Matsumoto@sony.com>, <Satoshi.C.Watanabe@sony.com>
-Subject: [PATCH 1/3] [media] cxd2880-spi: Modified how to declare structure
-Date: Thu, 26 Apr 2018 15:39:17 +0900
-Message-ID: <20180426063917.32068-1-Yasunari.Takiguchi@sony.com>
+Subject: [PATCH 2/3] [media] cxd2880:Optimized spi drive current and BER/PER set/get condition
+Date: Thu, 26 Apr 2018 15:41:29 +0900
+Message-ID: <20180426064129.32161-1-Yasunari.Takiguchi@sony.com>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180426063635.31923-1-Yasunari.Takiguchi@sony.com>
 References: <20180426063635.31923-1-Yasunari.Takiguchi@sony.com>
@@ -24,61 +24,64 @@ Content-Type: text/plain
 X-Originating-IP: [43.25.41.244]
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:117.103.190.41;IPV:NLI;CTRY:JP;EFV:NLI;SFV:NSPM;SFS:(10019020)(346002)(39860400002)(396003)(39380400002)(376002)(2980300002)(438002)(189003)(199004)(8676002)(426003)(66066001)(336012)(316002)(478600001)(50226002)(8936002)(47776003)(36756003)(246002)(126002)(6346003)(51416003)(486006)(7636002)(86152003)(26005)(76176011)(356003)(50466002)(7736002)(6666003)(48376002)(476003)(16526019)(106466001)(107886003)(2906002)(16586007)(6116002)(956004)(186003)(2876002)(72206003)(39060400002)(4326008)(1076002)(446003)(106002)(49486002)(86362001)(5660300001)(110136005)(305945005)(11346002)(3846002)(54906003)(2616005);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR1301MB2032;H:jp.sony.com;FPR:;SPF:Pass;LANG:en;PTR:jpyokxeg101.jp.sony.com;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: 1;CY1NAM02FT044;1:UqT3A8O/zJh6245uYClyiNSAZfH+BPjkiTvcglO5pg0Dakjlv0VgjeiRXS2dCYoFuVuvgMqmflGwkwYMnkkZatdVwdNJxfn7FTF58qYa0vSn7i2i1CnlO2CqlT42fcqv
+X-Forefront-Antispam-Report: CIP:117.103.190.44;IPV:NLI;CTRY:JP;EFV:NLI;SFV:NSPM;SFS:(10019020)(39860400002)(346002)(39380400002)(396003)(376002)(2980300002)(438002)(199004)(189003)(305945005)(72206003)(356003)(1076002)(7736002)(956004)(7636002)(2876002)(246002)(51416003)(26005)(16526019)(186003)(336012)(126002)(59450400001)(49486002)(486006)(2616005)(76176011)(476003)(86362001)(50226002)(2906002)(6666003)(5660300001)(11346002)(3846002)(66066001)(47776003)(106466001)(478600001)(446003)(4326008)(426003)(8676002)(8936002)(106002)(36756003)(48376002)(39060400002)(50466002)(6116002)(110136005)(6346003)(16586007)(54906003)(316002)(107886003)(86152003);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR13MB1424;H:jp.sony.com;FPR:;SPF:Pass;LANG:en;PTR:jpyokxeg104.jp.sony.com;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;BL2NAM02FT045;1:O8rTbMg1ujG6no272gojsiXx1gEEAlEUTkXcnt/as8e5hqkySUQJVt+wwpBTv1NOx4M2V2xW/Zs8ibLwEvcu+Hqa9CR/mUy1NsrKY+awZ9DBU/ufb2h0t2tfTra14crl
 X-MS-PublicTrafficType: Email
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4608076)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:MWHPR1301MB2032;
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR1301MB2032;3:0tEtmEJ+dlVifkllZPWTLJfySy0DJhYK65cP0Yw12fTUhuUh6cD1IlvXHoWbcjnx0Xw9lFMXTqKmkpJ7PxaYZo+l1Vdi+kLtLL1Uz7nK9l+4WcoO5A9cb648/JehhBd3G4Sz1++kr/sGM+UaQkJoXgDW79nHn/rG6ghGjPzhC/9XzC7wJ7f3/5DXobw3o/uWwAJUwgrAdqEddIjF14sdPvqPb2DvF/6RpWlZoDQjdvrm8RL+38vakTpH4YfD5d8q23KCKACkBB6awoawBoP419NUyD0bulWsCQHYe3jFtSx6bX1FelertT1VGJMCvTHJu9h3ktb20DmiboJvhelOZUk3mZFYNjeI96TcRkL+WOI=;25:JKHNhJFsalX0i42EleksX3U8qoIM29I/2a2Gxt7eYArMbItURw17pIp/hbfSCodhVBs3rH2hXE6vCRfHdIPcJ6H7d0tpmhSoZPU5WsEGuGrI0kmQpk2pudsWOhyfN2DCT/DdfhDy8U6B5FCSumKCo2xR70ys4e8UDegnM6M6+2iaptzv4nUcoTwDbnQb3WxK4rjwMUGbrTvw129dee9TIlbU7WC/QpzvsZMbjX4TMnWRCYpLsy0RfmtVtzANjW9as5UnioLT2AX09sLG9rnXcj7vB2ctWjewKDmxHK7OEFZqPPpn4IX16dziB2Sj0LVliya68kfr3ijSecQu2wu+1A==
-X-MS-TrafficTypeDiagnostic: MWHPR1301MB2032:
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR1301MB2032;31:2kWrMm0dt+1m/sqEtkVTe3aPeJfK4shlmvpKIC/MDAAnasOiDC1p/0YU9QAa3UeYWcI3n0galBT4xL13z7/COQIcf6oRIeLlb3rBi78gh0pYgns6L7BkzM8c/+Li7xXzk4tuHBu4fg4OBWEEhPCUMHsaejCyyudxMI09L2LpSGaeCiKs8a2wFCLjkTZlxrjd06mzAsJaXQw1NF19wTfVMg4MoVltsgWFUC6AV+Ae8ks=;20:vU64h18QUKv947PgHE7pDInzKmBR9IyNypnMj5VL+auSdwVwA+OWpWtmHa8HrZt8HoIVHfAHsmvkzCx+euTAgG/Jrr57dDYBQKGFLvNBkScRlECr2/egpwKqZ5F3kAobQNrIz8CmhOnEa2hmn+PcsPzczlB9JRhvTtL/gBLfEdy2ILDmtLptEtPRFkqGvYHCJwhdHu2tOscJVZV2iB4fkCFi24W3+vPT1OrwygiNWpz+Y2SvIgIx8Rx0A5DlRNs0lcnCKy/uEbrzfI/7iz8ymlPGCbhmD5Lcz1dENzBpCvMTEQLu20uEzw7Pl3duZY0BHyVtNNm6yQScGWBVyMccZWRlqWSw/4j3PlixcByI+ifmn9VjMYrxA1RgUE3n1smSRHUNylr+tc1RwSFv73fBN24r47elLE8U0RTecYql2qe6PAMkMHAZh82f1sXarB/eBtDr6Xm6cVSTzqc0fwdHpjcErlXP4ojolDL+Ior5av0JU8UdMZAFOBlVKopO3Duc
-X-Microsoft-Antispam-PRVS: <MWHPR1301MB20323CE53297F1FF084F288BFD8E0@MWHPR1301MB2032.namprd13.prod.outlook.com>
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4608076)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:MWHPR13MB1424;
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR13MB1424;3:yK0dka+tEUAW5Np/slsn2aq+aBcfBmEcXUKrzsVnLixFrDvha7OdMejyxIH5GbIEyvRI4P6ogyR7geoylDZ0D7xj6VQCNT/GarxZWVTUwB7wA65cbZDXe0vG1jPLJmoGW31Jfe6CyhrH63AwNju1qN8mYkVBPmaVI3/jN+nBS5olF6b5P3igSFKSTUd1022Peh5h8uBsfSp7rSW+n0Z46sqMoRobrl5cqFEeqfL/zdJgbROMvqJQdN1xJ+YgVsy1Ecy/M9/8IbAWWIIw8B5DnsXETYKKgjQWaXHcHiO0Tbjpr9M+Ogh9+BGWWep/CiUnZfsqv7bXwrZwsBllJ4mnDIEthz0nqdq1MShlUiDpaVA=;25:Di4JiUqHIbopHx+G/j1Z8cgX0CZ7ytDIr9jmHtT2rBwiIF+lrWFLcJ9s2IWcPCLOKoD+uaehgUd7hCZTqpMYNty0+trXBH1uz8rHcmiTb7v+6XsdH9eVkykk3AGnxyJ/BtsybZqiDcKq6c1SKg1E5ulhkkXk9qmISw8zmLstHei94kDW8uG6NkB6WoKyH60RN830lgunhuf0m+pq/blL0QzjFo3+LrLVYsElWeDIm+CD9x2M1q7VNMjJWgcMpUeP8ha/o9RLZz8UO0vbbuMOSHHbOC8XgcIJiiRxmDRJ+UV5X+KqBjF5sY93Sq4/OWQtuz2Z1f1I9H5jYJ5aF7aveg==
+X-MS-TrafficTypeDiagnostic: MWHPR13MB1424:
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR13MB1424;31:7yMHNY7q8MG3M7a5tb12r7NALNw39zSEZiRfXYmMnTtkUDg8YdRv4dC2ULD2tOtcy+bj30+nxL2uoLuh846psPiF6ZDiLtaCJXaOMUZWOCXI6qoRjW6i8sMTnXXQDiH3dYz2Z7sUITDp1UB4DsFFV6G3oo7faBTMmX3G8GrvTFvkqihXYeV2Q9ip2mZE5F2mDORt+dZHHqo1lyXKIGOROxn5EztHCiP8ImPLCIYQAHk=;20:VhFyYBRmRjgb/IjEHNw8oUCoA7pTct/d2izb08wxy1L29napLz9b+jZ5lDiaun2ylNxejZH4MUqisdv/+UWVfp9yS28oA8YzUnjD+VRxcKuufwfE7MOAjbq8nWyIFSH1BEyA2iEsoSt5/iELFUFUjI1GAPd9+IhKYDFDe+IGUwtr5bt0HYqJMJ+fenEbzNgz5HthZsf/zxPnq7A0QWeEG7NtqkW/ucvF3tWUuEzotcxlpRSOysrrd6KyTgxkqmG203yoBXm+Sf/qBoSChdMgdmr3Naxxey1s8pX2EimQLMJVKeUCDYwzGu800HDT8SVyzCLekCcxJMfT8O+rPILy74iISQ3Bx+/z1eTOznWm0FjotqSNywep1NBAMN3nGPwFL8eh8Vo6WUOk3oYU7pwmU61RvbNZOVDT8yhomA74bcxpT7G3Sj0qTt5M1MtlIazLImCOKemZb17WQL0xrjsldKWRGElYB8lUaSbJ82qk4gxOsrdH5IOrehLhmCQmKwvM
+X-Microsoft-Antispam-PRVS: <MWHPR13MB14240517E75C4AFB1A2999B2FD8E0@MWHPR13MB1424.namprd13.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(182409339516656);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(3231232)(11241501184)(944501410)(52105095)(93006095)(93004095)(10201501046)(6055026)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123558120)(6072148)(201708071742011);SRVR:MWHPR1301MB2032;BCL:0;PCL:0;RULEID:;SRVR:MWHPR1301MB2032;
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR1301MB2032;4:8Kfjsdu3S1yOHeUSE+8c6nSrE9VO+pYPMIR6pfDOtGjeR/nf9nnBqyhomBiivhEHhhoaOrYugaz5VV6T/GYiiQ8ZaA4iZZK92g3SLdb3IJEiujRXTYiIThbV9oxDLECRcMc0k3bKOzCK9WIf7Yb4P4RkA91oNJzkcIN4dXMS1kfA/gdvBpBQPFYUS5fiPbf18MhvZ78nWCKwjg1OEiki71k6CpLbD/ZsG+sXMroMa9uVUMTTzEvQXCQdDmUGvLSYiP2peTSZ4h5sqTWdvDtdet4+cUDKrb5GIeVk2H8YljyO9poh7MsXYifdWRdsfpUa
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231232)(11241501184)(944501410)(52105095)(93006095)(93004095)(10201501046)(3002001)(6055026)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(6072148)(201708071742011);SRVR:MWHPR13MB1424;BCL:0;PCL:0;RULEID:;SRVR:MWHPR13MB1424;
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR13MB1424;4:zr2HOd9oMt7FRco4rhlYk31rrpxCJ36MPCpvWXiheAhARjf2jhjWuRt/GjjtKwdjrO2TFazgbaiqUCPVZ6TA0Hkn2G+pNZL5xHzUprceYbk78pRTuvnD8eYhPr6XQSHRyWX5+OJMe4R6O/TJSGwn7M3xuFjI+FCaBLXnL8on4HwVr2s3pbw/V/r6kfN9p+aEX3ixHAZv7lSKpmfY0b2Si4dkF5sIqFIH8qCAwuGdbkX6rFlBhczV/OzP0AlOkqypjQ+wUc3eSTYEU/wZaPiAr2HRScilCi3Avzkmo+ykH8QVFpaykgtp3q9XRSNVMcXi
 X-Forefront-PRVS: 0654257CF5
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;MWHPR1301MB2032;23:dIU3GNf06F5tVK48Nm0btNDzygqu5yixboEE3yJ?=
- =?us-ascii?Q?WFfm2brk8yBUZsvW0im1maZI44pGXTsblAeIKYfFXLX5gPgZnrmXfaP+8BXn?=
- =?us-ascii?Q?Ib+igH6rVuN1EBjEBefZ3DIi/om8kWQpd0IuraMq2MmocsfDHUvCal7Qqaes?=
- =?us-ascii?Q?zrSqJ/zNhFokBpc8pW2RBwSykmG+muZX/DGJ8En4exXH8xLmIW7amgQ4RDqh?=
- =?us-ascii?Q?AYfFd+S+UXYaXNKBs7AXHMpRsGgdMKtBqBsL808A1hOM7mf3YEoSXmxlk/Lb?=
- =?us-ascii?Q?YYsovw5hDFpWPZOhAZrP14p11bRbvWKP70Id/HlchG7EXGpa0tQ1ZE2HElB1?=
- =?us-ascii?Q?ipsFJuuOoSSq6ECGggIRuViMeojimhsWLaziqwdibniVc+n7sMK9/9ULaRgO?=
- =?us-ascii?Q?YWWOQ8/w+bV82oL5nWw5CK6+Dj7g6opB6osjweOV1aSgK36joolDdrWaqda7?=
- =?us-ascii?Q?XFIKhZpokzEQR3r+ybpkuJpFnaNbsA3LeDRwv3HWBMIk8SZeGyTmANS9SSK2?=
- =?us-ascii?Q?sVXNTdZG9+mRazkI5PLFXiLvoxyQZuJSZeBe5T595gU0XJSDWA/SlDMO6KW2?=
- =?us-ascii?Q?w2KyN9ihX4pb0ubagws6lYFGEkFN35pzAQEMusb2YaYMW1pK1Nqbw+HawAcj?=
- =?us-ascii?Q?gEos1RjSPqU1PAXS7Lfvsm97u414TQO29q7DvW3DDcsCfCB2lunvSy1yZ7NN?=
- =?us-ascii?Q?bCkEgHvt4zFG5hISTwNp36dukDVx98/p1DMAKDeVWcU6a4onzWLIR/3AG2bm?=
- =?us-ascii?Q?YzyurAA7FKeJDkWzMr3xo6zLAP8VfAhkaXWSASh7ZsbIei3GCbupYS5d0SZK?=
- =?us-ascii?Q?UzLb6fsYeh8mbcZZtzI3mzaahMJPqyUAO7jVsM3x/xI3d/fqAIWG2QlOXcQ4?=
- =?us-ascii?Q?GBYa1cm7CE/dbE/p2uRT7NWwyyNyWz4TOrY9MV8soxJtUaXuEPw4QL6VrjZS?=
- =?us-ascii?Q?bBuvXKsyeMLt7HWmaSuZmo1hM0hfilW/1jDbRDFEI2swCeldIW4661Gsntt8?=
- =?us-ascii?Q?jv21y1waSzci+UW1pYiENqkfjc8ep3/SCHrDfoqEMqKcohYC+/gFAsnnLLlX?=
- =?us-ascii?Q?6hzPjUvy1H7/cLGJ6I/zMQP5rM9pR/owpe+27S0hZBLzrgPwDrxHsaUYNSVi?=
- =?us-ascii?Q?2/AbTb4tvqGcy5dGsC4G1o5nN4211vWBNeKqGC2+QR40d7Sgv5ochrXluKNW?=
- =?us-ascii?Q?mnqQyidUudZs4VQC+SnU55AOGgaonVKLZYAuYB1wBZW1dK4d64RFqPmTaptE?=
- =?us-ascii?Q?PMRzYmonvfJbJiJKe5hkinMNHTS9GuSBmaKOzgzbc?=
-X-Microsoft-Antispam-Message-Info: ynSe/zkn72ZF1MkeCJsKEalSBA7vxtn5xtjNCiOgCGaz0GGp8z+UDl6JRQwponC/oYDxF1AB3xyVIxempn/NmcBCAzoH10EY8GQaPFyGvd07asHErx85aztvRI7sgxplNIuql+sr6D+VXS3LsoIXmn4AmjFBOpdd7ZR0XvCaMypfMVxBdD8/Hg9Ny4xDZdfm
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR1301MB2032;6:45Bmflrqw8nuufPdxCnhl/qJo4uihrAMGyzFyB4oPOXKswrnaeysTz4tP29eplXEovODo81BQSqtDHiN1J6siUnMdqPxMJntrwiXQTkQtXP23KTpb8RwMyDjHUd/la7IBm3UNq5SPqvdkrTmwMVTUr7hXVpghrjI+CU21RqIdjRQ99Ekwjj7rPXBMLDKJ9a2l2jgRSfp+5FOqBkTnqMGgAWjimtKS12XmGMjBSnAIkC/gKr4Hg8YiLp53mmYkeLCM1FG2MItUxyrd3rcL0bw2n37/ghw9X8vxNiA7euaamRfdlmed6oSSmHUPn5XVXiz7LL2hk4RbQv/+j4yBhkQEg3oD5NAdnRkZy9yiHetyU7P30SlAzTpYvLwOOQ3XeFX0HsAH/yjgsbh0GdZiz+F6l4sCYyNRCrpF/m4NwNR98tUi9NArocSdvuYdV+zd+2PreGr7s9F9ExRQmVJVTdqEw==;5:QR5UbAmjDX1RGLcnHbROK1ot9kkoXYR7OSwf7CYf3cuRfCqhZPNw5f52cpBdYocLDUeJcR9VO2juOfgmOwQiAgj5WVgddEPPTdmvN1CaicX/K+xZwVxSQBJ8XUsxqu4jY4HXvMH/xLa8pKLzQm99K8Hc8427eOg7nZkkusGaaQo=;24:7iF0k8Mk+8iwxzv3U3djNPST4Vru4ybKslWcFkkt33hZ+i+iSQcT1tyvQFv5ZtA/8ffSZHwk5GolSDon3XzTf/1GUcpuqBQ407Ntp8xm1Ok=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;MWHPR13MB1424;23:MN7mkUL3gu5uif+i/wJ3pG5Kmpe9G8Ia0DaNgjBsX?=
+ =?us-ascii?Q?yWuL5PEEVdF2Elvdg8XWrKWUZyHfdZYDsaTyclSiyyXFeZv45zcjKfWaSXCK?=
+ =?us-ascii?Q?nIGASRkVSmEGRzLVZ+2XERdiuPdqul2L4w2tOkrJ+xy1fidInCuAvkTiwjsA?=
+ =?us-ascii?Q?3VydK+hGKx4zrmC7M+jSWN6/m3RUNYkKMLfPD3qzH4LzklFIRdUPUAHH77kf?=
+ =?us-ascii?Q?IlE8nrWPIb3rZl8w2LUB6g7QM+Bmh7Q1Fgtk3ESirPUyhQ37gxcLzZu7L+Nv?=
+ =?us-ascii?Q?R8Z6RStuL3hN6hfYkw/YxYvtx1XL4+QddpeC2Jko64+WNtsSJnkg+Sb6QmEO?=
+ =?us-ascii?Q?VrR/qqxbV5ABfaLJYXmp9Cxyq9bn6odxCBPBhGNhOxBdr4gA0JeO/ZEIC0DF?=
+ =?us-ascii?Q?EoVHwtRAMAGhD5jyr/zryLr40uuaZat2NthH25xNZZO3W7ZYF/UqS2TDA5m8?=
+ =?us-ascii?Q?yHFdELLAKX/oIWILxBc20ns7kJ+oh+bp0Olql1K9WOCgZl+kCVT3xwQDrCJ7?=
+ =?us-ascii?Q?BC49NWk/68TK744TJU+3yTP187Ive6WE5cCg2anqKV5UAYbw4z+pJRiqyqHR?=
+ =?us-ascii?Q?gcxY8FxbasGnz2qTkXrZlaTVEN9SytouOXmbgH7y4IEzcaNjPho3j5mtXGv9?=
+ =?us-ascii?Q?RYG/WWM10k+e1tO1tuZLgIjNGbOweXWupp796PtrP+kczNELWBBO/nyYOjKs?=
+ =?us-ascii?Q?5iYfRWWXRIAiVMAAGSrKlhorasgFYrg4NmUtu3VLtWK2sdk3yN3VGHIiyjAN?=
+ =?us-ascii?Q?PZGF7MgKs73ANRZn/RYklFOXyig5g+tty9TPRWtnIfO2U1So9SHiR/+RED+9?=
+ =?us-ascii?Q?Dcw3TVsXfk7OBl/0y6SSs0qDytHIdmVUpxpRRZsda6hJ3Mlwn7kW2mCFJHv5?=
+ =?us-ascii?Q?7ZHbEz6JZcDHef9SsOk74PFQ8YbK8ABhF1qzR5yLGE08VqA1cbjfBO2yRZqd?=
+ =?us-ascii?Q?oMT17gc1Sn19jUCHjv62h1tP6a5WGL+5xKPwLf9dnCyx65dS42H3sJTzlMKI?=
+ =?us-ascii?Q?hCxKqjaTE+d60UOKd7yvsjvaOqvuBK9NcwiFnfVMc+3bY93pldTMJUMR0DeA?=
+ =?us-ascii?Q?dsfi1p1uYXq/3jFjVx8RGAa/GZ5LIicOK671o0xUSFmEe0t6J8WJRpKRsBgS?=
+ =?us-ascii?Q?gmbEl+DksjybFv1nLqHc1zhF6+C/JoFbGOlcneakqoj66KtO4xHCgc7QLhI5?=
+ =?us-ascii?Q?lH7/wa1RuWLGcVGIuxDPWnpm2WNDTJzDTKbU+An14NVyP/POHPyb/fzulOHe?=
+ =?us-ascii?Q?mp1JqH86vA/AQxQCK/uyizNSMK4TSuWLV3tfWeW/Avu22+tOL9AtIs+NdsYw?=
+ =?us-ascii?B?dz09?=
+X-Microsoft-Antispam-Message-Info: TJjrCAgy/6MsBFgorAIwu/2b7fCVBN4TE+qepkL12Qxdh/6aHSfkVUsAx8virzGKMw85NSbAo7+C+4is/FYW6noNNBPorgqphF+6NWE3DJZIm4Kpn78JPglN8M3ijsZuRos+uq8J+RM1imE8pgW0a3jHEvBQddAgqkqgJ+vVNG55p1v4N2O4KPwHeRqDZ807
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR13MB1424;6:b7RucoJClFrHGFVWgmhYQEUvMrF7hcn+oZsMQov7o/JKMe9lcHqlBSy7EX+mDQF6+YdH13kH0isZN5uky8ndif24SF5Qe/HU6lbWS/9YDINEekGOYpPlTen++BHiDEN/w6PgM+Q4l4PzU6N8UN1m2Uiltm8PL5D4pxmCsH9I0jXjcg09jwx3KhIFyGPdXCHwuIsfUB4HLD19Rx28EAQ2C6lPeFDvMbhXVVV/XuyhvKPkWUyo2PcV5jod2YO6RnI3ZUzMV3HVvhOWuytAAKHSlCk2GO4ckmT1TF6882LADeMUYHKlfjvI4TEql2KzkeybIc6CdTk/F2j9un0N7gTBPfzgh0mad7q/v/WODayttwcILParbnxyMysnIhi26N2kHDxTVzweZnzUs/1Ffy4EqwIELsc/8BsJ+uu8iHrXXtKWJMeBXsGOZZ32UDnIE9S94ZdjhSGzy3uptZXtT1U/mA==;5:fMl8irRCeTFT/Fz/YPfRwEIgq1OZnv9EWosQEsUYRKOhtAMKb4bbeViqUDjdFOrFzb/s+fBU9Wl60GFRCXsbzdoP6zh63WVrip0634IDqVcgasysVubjfrM2WnLWIpngpHUEJZNkLSBRx4mYWGJ0P8yr2hk3ZTbAtIUNR4Ys8aM=;24:caWhtcg2RyO+FEF55eDCNtaBfkgWPiY+lf6+jBwwEmfdDWOYrAT+K49MSQUTarjniDFiOyeGf1CqoaJTAp3a08GXo38SdaQVdvszAOIgMks=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR1301MB2032;7:Yiqh/KAQLgRWhfZciacalen+XDFE6blCjYV6qXjWDWflfowmlBooARXRjyqb4VZsrT8mpmEdmzCEET3lxJfo2VI+NA8yoUAhohRT3QHt4i205qESQhGAW31neGAuU9SEOOZnEr/9PXljBop3I9QmfaOWXjv1p5GJezi1H6VyrAlbnJ+DYFNnek4dw+oesxKQRGR56yjmvcpBMcaYnMnYzuizq1wqsdaPOAAGr3ObT9fEl7Bdbk3ujsfvD57ZMcAK
-X-MS-Office365-Filtering-Correlation-Id: 7f8b52af-11b9-4653-1b53-08d5ab3fd2b8
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR13MB1424;7:PlSuMD9c+/ZuD8FZbxIPC4kgEynKzRuBgkeChmpyeWfqJSArM19UnVWOPujUSvh1wncZ7aPugEIIClRzU2a9jrMVmX0qPkF07KwPxlEY4eVH4J9e6WDAii/vG5HfCUTN1mSLVqxHqD5qx1n5ZXhJq9n2jnetfGzS8FC5D1fKIT1PReYxOPU6ccp4j7M1iUbBicaSphoFNXqhkkw9yy6hWVFU5Zp1iIunBwFsv+wMrHqTLVb3kMCe0bWcn1TdLsNR
+X-MS-Office365-Filtering-Correlation-Id: 0e546e13-7458-4c48-ec62-08d5ab401894
 X-OriginatorOrg: sony.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Apr 2018 06:34:54.4988
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Apr 2018 06:36:51.6619
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7f8b52af-11b9-4653-1b53-08d5ab3fd2b8
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0e546e13-7458-4c48-ec62-08d5ab401894
 X-MS-Exchange-CrossTenant-Id: 66c65d8a-9158-4521-a2d8-664963db48e4
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=66c65d8a-9158-4521-a2d8-664963db48e4;Ip=[117.103.190.41];Helo=[jp.sony.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=66c65d8a-9158-4521-a2d8-664963db48e4;Ip=[117.103.190.44];Helo=[jp.sony.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR1301MB2032
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR13MB1424
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Yasunari Takiguchi <Yasunari.Takiguchi@sony.com>
 
-This is the modification of structure declaration for spi_transfer. 
+This is the optimization for SPI drive current and 
+signal lock condition check part for BER/PER measure
+to ensure BER/PER are stable
 
 Signed-off-by: Yasunari Takiguchi <Yasunari.Takiguchi@sony.com>
 Signed-off-by: Masayuki Yamamoto <Masayuki.Yamamoto@sony.com>
@@ -87,58 +90,54 @@ Signed-off-by: Kota Yonezawa <Kota.Yonezawa@sony.com>
 Signed-off-by: Toshihiko Matsumoto <Toshihiko.Matsumoto@sony.com>
 Signed-off-by: Satoshi Watanabe <Satoshi.C.Watanabe@sony.com>
 ---
+
 [Change list]
-   drivers/media/spi/cxd2880-spi.c
-      -modified how to declare spi_transfer structure
+   drivers/media/dvb-frontends/cxd2880/cxd2880_top.c
+      -reduced the SPI output drive current
+      -optimized signal lock condition check part for BER/PER measure
+       to ensure BER/PER are stable
 
- drivers/media/spi/cxd2880-spi.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/media/dvb-frontends/cxd2880/cxd2880_top.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/spi/cxd2880-spi.c b/drivers/media/spi/cxd2880-spi.c
-index 4df3bd312f48..754940f7e964 100644
---- a/drivers/media/spi/cxd2880-spi.c
-+++ b/drivers/media/spi/cxd2880-spi.c
-@@ -60,14 +60,13 @@ DVB_DEFINE_MOD_OPT_ADAPTER_NR(adapter_nr);
- static int cxd2880_write_spi(struct spi_device *spi, u8 *data, u32 size)
- {
- 	struct spi_message msg;
--	struct spi_transfer tx;
-+	struct spi_transfer tx = {};
- 
- 	if (!spi || !data) {
- 		pr_err("invalid arg\n");
- 		return -EINVAL;
+diff --git a/drivers/media/dvb-frontends/cxd2880/cxd2880_top.c b/drivers/media/dvb-frontends/cxd2880/cxd2880_top.c
+index d474dc1b05da..bd9101e246d5 100644
+--- a/drivers/media/dvb-frontends/cxd2880/cxd2880_top.c
++++ b/drivers/media/dvb-frontends/cxd2880/cxd2880_top.c
+@@ -520,6 +520,15 @@ static int cxd2880_init(struct dvb_frontend *fe)
+ 		pr_err("cxd2880 integ init failed %d\n", ret);
+ 		return ret;
  	}
++
++	ret = cxd2880_tnrdmd_set_cfg(&priv->tnrdmd,
++				     CXD2880_TNRDMD_CFG_TSPIN_CURRENT,
++				     0x00);
++	if (ret) {
++		mutex_unlock(priv->spi_mutex);
++		pr_err("cxd2880 set config failed %d\n", ret);
++		return ret;
++	}
+ 	mutex_unlock(priv->spi_mutex);
  
--	memset(&tx, 0, sizeof(tx));
- 	tx.tx_buf = data;
- 	tx.len = size;
+ 	pr_debug("OK.\n");
+@@ -1126,7 +1135,7 @@ static int cxd2880_get_stats(struct dvb_frontend *fe,
+ 	priv = fe->demodulator_priv;
+ 	c = &fe->dtv_property_cache;
  
-@@ -130,7 +129,7 @@ static int cxd2880_spi_read_ts(struct spi_device *spi,
- 	int ret;
- 	u8 data[3];
- 	struct spi_message message;
--	struct spi_transfer transfer[2];
-+	struct spi_transfer transfer[2] = {};
+-	if (!(status & FE_HAS_LOCK)) {
++	if (!(status & FE_HAS_LOCK) || !(status & FE_HAS_CARRIER)) {
+ 		c->pre_bit_error.len = 1;
+ 		c->pre_bit_error.stat[0].scale = FE_SCALE_NOT_AVAILABLE;
+ 		c->pre_bit_count.len = 1;
+@@ -1345,7 +1354,8 @@ static int cxd2880_read_status(struct dvb_frontend *fe,
  
- 	if (!spi || !read_data || !packet_num) {
- 		pr_err("invalid arg\n");
-@@ -146,7 +145,6 @@ static int cxd2880_spi_read_ts(struct spi_device *spi,
- 	data[2] = packet_num;
+ 	pr_debug("status %d\n", *status);
  
- 	spi_message_init(&message);
--	memset(transfer, 0, sizeof(transfer));
- 
- 	transfer[0].len = 3;
- 	transfer[0].tx_buf = data;
-@@ -383,7 +381,7 @@ static int cxd2880_start_feed(struct dvb_demux_feed *feed)
- 			}
- 		}
- 		if (i == CXD2880_MAX_FILTER_SIZE) {
--			pr_err("PID filter is full. Assumed bug.\n");
-+			pr_err("PID filter is full.\n");
- 			return -EINVAL;
- 		}
- 		if (!dvb_spi->all_pid_feed_count)
+-	if (priv->s == 0 && (*status & FE_HAS_LOCK)) {
++	if (priv->s == 0 && (*status & FE_HAS_LOCK) &&
++	    (*status & FE_HAS_CARRIER)) {
+ 		mutex_lock(priv->spi_mutex);
+ 		if (c->delivery_system == SYS_DVBT) {
+ 			ret = cxd2880_set_ber_per_period_t(fe);
 -- 
 2.15.1
