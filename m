@@ -1,94 +1,135 @@
-Return-Path: <jdelvare@suse.de>
-X-Google-Smtp-Source: AIpwx48gXPOVdQ2wrcFytMLdb6yl8OgEuLT/u6wE9ZacwVt+RdM1B6LJbvSCKUURICl/1FZ661rd
-ARC-Seal: i=1; a=rsa-sha256; t=1524740475; cv=none;
+Return-Path: <brgl@bgdev.pl>
+ARC-Seal: i=1; a=rsa-sha256; t=1524756574; cv=none;
         d=google.com; s=arc-20160816;
-        b=kolsBAPEYyalQy7wQH0CCz/kivaswXY4U6Y65S9regfbPWn+NQtdSst4kYWlOJoKlV
-         pFhx1mx7DuwZJA96UVu90BOA+JR/UVnWp09S680Cva0JBSSquChKcFANAdbEmIwMRGS7
-         Wkf/B74XuDnEKY5oWKUzgjKxdp9nkSWTpzan/Y/97+Qg/iW6wCUA6uprxpuOIsHAGRfU
-         p3W3uYYBr5b2Icf4hK3hQzQvHO5T4kYlkXRvSAeDxjydE48EVfsaBupd+JXztIIVkSeC
-         MKUyXOhCQmUEXd5ZsYOyiMxH/08JXR0Rc9FefkeTMagfXT5nPAFWVyNYLC4vZpeEy+fv
-         d7Tw==
+        b=TJMris3XtRDMyHqgzbljTorKIaGd7zZNiLhRC2EO+CVf4TTuVnj6ZsdYvmT5Z3SYFR
+         yYTFMjbtu1uEphn4hf4QZL+T4912ib4q3eBlFbHAxHkWuani3ePizKVy1qdNRkA6uMyu
+         lNA+8qQLh81cs9rVETkmTUkJ0EMXARnNlXf4xxS77e+T+UElKmiSYKyLbyluESSg5lj8
+         58wM4IDnTjNk80rf4+9o+R2ewJvuFRVY0sSk1eZxudOd+SWVURRoDkZfvwBDFMWUS1QX
+         7ATo8O38ht+rlAgXoLDTzaCBsztEXJ8bZejTanpqBrTo7J1a31lTJnalRsY+0yWH9G3V
+         hfqw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:organization:references
-         :in-reply-to:date:cc:to:from:subject:message-id
+        h=message-id:date:subject:cc:to:from:dkim-signature
          :arc-authentication-results;
-        bh=mPquu67GgQ+RuWe1yMSA18tNgSdiUXfakgumo3OMvzA=;
-        b=J6lHaZVLG2U3bFSS6sQefso7qxz8knqP8fV0ZIPHQpnHbVk2ksthIb4UmIfkStuIln
-         k2gA5LqL/73+p9Ge/lxz3P9mNUdyOkdJvhUkTE95z1k79XTEfNUJ0nGeCwZl+hzHi6JI
-         Es3alMwTa+ucto2Y+NKjxtha43Opuj5ZUgjajbTTxYc3yZSZ9jyMXIKBYoSPJDfr4pom
-         jsmp7Mers4k35v0BksSyLF8PYTHamNfva+ipRYBb+vxSowqV/T+y+p6fvXaYZuEexmWK
-         dqv7/neuSSuBEU0IUXMNc0R/LOuViE8EuHOlw/8wrrgED76v/TKkzMIA3shuLAYghyQo
-         AaHQ==
+        bh=psxLmNITlMYHCRdygaR0WxL86seus5FiYSOervPjrTw=;
+        b=JRARdL/k53YjpTyB5wl+XSXwFaPRoj0XTmI0v021hRLhvtL5+NhjyTUVq+Rs6X9/y5
+         gPr4O/sgEwqj2nWPwcikHICulhDgHR3/Y9HFzeML4cVw8pwPwhBBeNaT41wD+hkuckS6
+         orFuo7QJKREV7eE/d12dYf3Pm5Ym1Ltq6VsulVzFff7nYWs/K0TpJ9TNSCaJlJq4mrfi
+         5gb2uh+s19RlXsg024aahlQZ/CTZlfzqVxBadWB9+8pjmonf1Wmo5yEBFaI15wwVRm7/
+         dC5B5lHuVABFaUX/CR2t6sYzUTxhoyujf74J16xHP7gMJvOy3NXNk/NDJ6RvVjUEbZnM
+         9QKA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of jdelvare@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=jdelvare@suse.de
+       dkim=pass header.i=@bgdev-pl.20150623.gappssmtp.com header.s=20150623 header.b=fUAYMrEF;
+       spf=neutral (google.com: 209.85.220.65 is neither permitted nor denied by best guess record for domain of brgl@bgdev.pl) smtp.mailfrom=brgl@bgdev.pl
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of jdelvare@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=jdelvare@suse.de
-Message-ID: <1524740470.5117.3.camel@suse.de>
-Subject: Re: [PATCH] firmware: dmi: Add access to the SKU ID string
-From: Jean Delvare <jdelvare@suse.de>
-To: Vinod Koul <vinod.koul@intel.com>, Simon Glass <sjg@chromium.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, C Shapiro <shapiroc@chromium.org>,
- Aaron Durbin <adurbin@chromium.org>, Mika Westerberg
- <mika.westerberg@linux.intel.com>, Jonathan Corbet <corbet@lwn.net>,
- Philippe Ombredanne <pombredanne@nexb.com>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Alex Hung <alex.hung@canonical.com>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, sayli karnik <karniksayli1995@gmail.com>,
- Sagar Dharia <sdharia@codeaurora.org>
-Date: Thu, 26 Apr 2018 13:01:10 +0200
-In-Reply-To: <20180426093324.GV6014@localhost>
-References: <20180424211111.140374-1-sjg@chromium.org>
-	 <20180425025125.GH6014@localhost>
-	 <CAPnjgZ1ExEQHL8W2+k=+wS98O3CCX25dKngv_PFNvgAKVBD4Hw@mail.gmail.com>
-	 <20180426093324.GV6014@localhost>
-Organization: Suse Linux
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+       dkim=pass header.i=@bgdev-pl.20150623.gappssmtp.com header.s=20150623 header.b=fUAYMrEF;
+       spf=neutral (google.com: 209.85.220.65 is neither permitted nor denied by best guess record for domain of brgl@bgdev.pl) smtp.mailfrom=brgl@bgdev.pl
+X-Google-Smtp-Source: AB8JxZqvPqIeS95a2Vm+3+VO9jb9Wt9rm/8C1cvUxJzhbESzn7nfh+cQq5UU5kmvXRBOxxB9vIGNdw==
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Rich Felker <dalias@libc.org>,
+	Frank Rowand <frowand.list@gmail.com>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Arend van Spriel <aspriel@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Michal Suchanek <msuchanek@suse.de>,
+	Jan Kiszka <jan.kiszka@siemens.com>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Marc Zyngier <marc.zyngier@arm.com>,
+	Peter Rosin <peda@axentia.se>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH RFC PoC 0/2] platform: different approach to early platform drivers
+Date: Thu, 26 Apr 2018 17:29:18 +0200
+Message-Id: <20180426152920.21569-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.17.0
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598663453447525196?=
-X-GMAIL-MSGID: =?utf-8?q?1598806268937663466?=
+X-GMAIL-THRID: =?utf-8?q?1598823149958129846?=
+X-GMAIL-MSGID: =?utf-8?q?1598823149958129846?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On jeu., 2018-04-26 at 15:03 +0530, Vinod Koul wrote:
-> On Wed, Apr 25, 2018 at 03:17:37PM -0600, Simon Glass wrote:
-> > 
-> > Hi Vinod,
-> > 
-> > On 24 April 2018 at 20:51, Vinod Koul <vinod.koul@intel.com> wrote:
-> > > 
-> > > On Tue, Apr 24, 2018 at 03:11:11PM -0600, Simon Glass wrote:
-> > > > 
-> > > > This is used in some systems from user space for determining the identity
-> > > > of the device.
-> > > > 
-> > > > Expose this as a file so that that user-space tools don't need to read
-> > > > from /sys/firmware/dmi/tables/DMI
-> > > 
-> > > sysfs is an ABI and needs to be documented, I don't see that in this patch,
-> > > pls add.
-> > 
-> > Thanks for taking a look. The only mention of the dmi/id I can find is
-> > in Kconfig:
-> 
-> Sorry I should have been explicit. All sysfs entries are ABI to userspace.
-> So they are documented in kernel and the meaning of files should not
-> typically get modfied over time.
-> Please read Documentation/ABI/README
-> 
-> For DMI, quick grep told me you should add to
-> Documentation/ABI/testing/sysfs-firmware-dmi-tables
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-No. This is a different interface to user-space (binary tables, instead
-of already decoded, selected attributes.)
+This is a follow to my series[1] the aim of which was to introduce device tree
+support for early platform devices.
 
-There is currently no formal documentation of the
-/sys/devices/virtual/dmi/id contents, so there's no file Simon can
-modify to mention product_sku. Instead, documentation of the whole
-directory should be added in a separate patch.
+It was received rather negatively. Aside from using device tree to pass
+implementation specific details to the system, two important concerns were
+raised: no probe deferral support and the fact that currently the early devices
+never get converted to actual platform drivers. This series is a
+proof-of-concept that's trying to address those issues.
+
+The only user of the current version of early platform drivers is the SuperH
+architecture. If this series eventually gets merged, we could simply replace
+the other solution.
+
+The current implementation of early platform drivers is pretty much a hack
+built on top of the early_param mechanism. The devices only look like platform
+devices and use the same structures but never actually get registered with the
+driver model.
+
+The idea behind this series is to allow users to probe platform devices very
+early in the boot sequence and then switch the early devices to actual platform
+devices and the early drivers to platform drivers in during device_initcall.
+
+If any of the early registration functions is called after device_initcall,
+we'll just end up calling the normal platform_driver/device_register routines.
+
+The user can specify if he wants the device to be probed the second time after
+this conversion and the check if it's an early or a normal probe from the
+driver code.
+
+We also support a simple version of probe deferral: initially each new
+registered device is added to the head of the early devices list. If it matches
+an early driver, it will be probed. If probe return -EPROBE_DEFER, it will be
+moved to the tail of the list and reprobed the next time we match a device
+but after all other devices.
+
+This implementation has certain shortcomings that will be addressed if the
+feedback is at least somewhat positive. For instance: the driver registration
+happens in early_initcall(). This may be too late for certain clocksource or
+clk drivers. The solution for that would be defining a new section in which the
+init callbacks of the drivers would reside and let the architecture call the
+actual registration function whenever it's needed.
+
+I also need to figure out if any locking is needed.
+
+We don't support DT in this series either. The proposed approach would be to
+walk over the devices nodes early in the boot sequence and allocate and probe
+the matching early devices and then register them with the driver model later.
+
+[1] https://lkml.org/lkml/2018/4/24/937
+
+Bartosz Golaszewski (2):
+  earlydev: implement a new way to probe platform devices early
+  misc: implement a dummy early platform driver
+
+ drivers/base/Kconfig            |   3 +
+ drivers/base/Makefile           |   1 +
+ drivers/base/earlydev.c         | 175 ++++++++++++++++++++++++++++++++
+ drivers/base/platform.c         |  11 ++
+ drivers/misc/Kconfig            |   8 ++
+ drivers/misc/Makefile           |   1 +
+ drivers/misc/dummy-early.c      |  46 +++++++++
+ include/linux/earlydev.h        |  63 ++++++++++++
+ include/linux/platform_device.h |   4 +
+ 9 files changed, 312 insertions(+)
+ create mode 100644 drivers/base/earlydev.c
+ create mode 100644 drivers/misc/dummy-early.c
+ create mode 100644 include/linux/earlydev.h
 
 -- 
-Jean Delvare
-SUSE L3 Support
+2.17.0
