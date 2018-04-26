@@ -1,43 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757050AbeDZVRM (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 17:17:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46616 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756518AbeDZVRH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 17:17:07 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28AFA21838
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
-X-Google-Smtp-Source: AB8JxZocxN/3X9DXHLQCA1ho6lbCirZCO3cCZW2QyahMexVIT1/EMRi2vTTd0qFZ35tXYWyh9+y9nyCPz2YqNHUOHBI=
+        id S1757026AbeDZVRK (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 17:17:10 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:59860 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753708AbeDZVRI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 17:17:08 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)"
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 13/17] arm64: dts: r8a77965: Add HDMI encoder instance
+Date: Fri, 27 Apr 2018 00:17:21 +0300
+Message-ID: <4835359.vC9i7RXgb2@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20180426165346.494-14-kieran.bingham+renesas@ideasonboard.com>
+References: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com> <20180426165346.494-14-kieran.bingham+renesas@ideasonboard.com>
 MIME-Version: 1.0
-References: <20180425214307.159264-1-edumazet@google.com> <CACSApvZF8CJqcRx7FGkMGitBiC6m0=_FT9XRZ=VV07U62wGM3Q@mail.gmail.com>
- <a2c405e1-0ebc-dd33-fb0d-575bf06a1ff6@gmail.com>
-In-Reply-To: <a2c405e1-0ebc-dd33-fb0d-575bf06a1ff6@gmail.com>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Thu, 26 Apr 2018 21:16:55 +0000
-X-Gmail-Original-Message-ID: <CALCETrVBQD1tPUzc_t7HmoPfApTdFW+x-0DqL8+XHjrmEpYMXQ@mail.gmail.com>
-Message-ID: <CALCETrVBQD1tPUzc_t7HmoPfApTdFW+x-0DqL8+XHjrmEpYMXQ@mail.gmail.com>
-Subject: Re: [PATCH v2 net-next 0/2] tcp: mmap: rework zerocopy receive
-To: Eric Dumazet <eric.dumazet@gmail.com>
-Cc: Soheil Hassas Yeganeh <soheil@google.com>,
-        Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Network Development <netdev@vger.kernel.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-At the risk of further muddying the waters, there's another minor tweak
-that could improve performance on certain workloads.  Currently you mmap()
-a range for a given socket and then getsockopt() to receive.  If you made
-it so you could mmap() something once for any number of sockets (by
-mmapping /dev/misc/tcp_zero_receive or whatever), then the performance of
-the getsockopt() bit would be identical, but you could release the mapping
-for many sockets at once with only a single flush.  For some use cases,
-this could be a big win.
+Hi Kieran,
 
-You could also add this later easily enough, too.
+Thank you for the patch.
+
+On Thursday, 26 April 2018 19:53:42 EEST Kieran Bingham wrote:
+> Add the HDMI encoder to the R8A77965 DT in disabled state.
+> 
+> Based on a similar patch of the R8A7796 device tree
+> by Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>.
+> 
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> [Kieran: Rebase to top of tree]
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  arch/arm64/boot/dts/renesas/r8a77965.dtsi | 28 +++++++++++++++++++++++
+>  1 file changed, 28 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+> b/arch/arm64/boot/dts/renesas/r8a77965.dtsi index
+> 8a40bba53027..972be1460a32 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+> @@ -1105,6 +1105,33 @@
+>  			};
+>  		};
+> 
+> +		hdmi0: hdmi@fead0000 {
+> +			compatible = "renesas,r8a77965-hdmi",
+> +				     "renesas,rcar-gen3-hdmi";
+> +			reg = <0 0xfead0000 0 0x10000>;
+> +			interrupts = <GIC_SPI 389 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&cpg CPG_MOD 729>,
+> +				 <&cpg CPG_CORE R8A77965_CLK_HDMI>;
+> +			clock-names = "iahb", "isfr";
+> +			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
+> +			resets = <&cpg 729>;
+> +			status = "disabled";
+> +
+> +			ports {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +				port@0 {
+> +					reg = <0>;
+> +					dw_hdmi0_in: endpoint {
+> +						remote-endpoint = <&du_out_hdmi0>;
+> +					};
+> +				};
+> +				port@1 {
+> +					reg = <1>;
+> +				};
+> +			};
+> +		};
+> +
+>  		du: display@feb00000 {
+>  			compatible = "renesas,du-r8a77965";
+>  			reg = <0 0xfeb00000 0 0x80000>,
+> @@ -1134,6 +1161,7 @@
+>  				port@1 {
+>  					reg = <1>;
+>  					du_out_hdmi0: endpoint {
+> +						remote-endpoint = <&dw_hdmi0_in>;
+>  					};
+>  				};
+>  				port@2 {
+
+-- 
+Regards,
+
+Laurent Pinchart
