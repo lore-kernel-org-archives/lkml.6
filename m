@@ -1,194 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757115AbeDZQ7c (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 12:59:32 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:58080 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756688AbeDZQxz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 12:53:55 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org (open list:PIN CONTROL SUBSYSTEM),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 03/17] pinctrl: sh-pfc: r8a77965: Add DU RGB output pins, groups and functions
-Date: Thu, 26 Apr 2018 17:53:32 +0100
-Message-Id: <20180426165346.494-4-kieran.bingham+renesas@ideasonboard.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com>
-References: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com>
+        id S1756870AbeDZRNr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 13:13:47 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55524 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754544AbeDZRNp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 13:13:45 -0400
+Date: Thu, 26 Apr 2018 13:13:44 -0400 (EDT)
+From: Pankaj Gupta <pagupta@redhat.com>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Stefan Hajnoczi <stefanha@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        KVM list <kvm@vger.kernel.org>,
+        Qemu Developers <qemu-devel@nongnu.org>,
+        linux-nvdimm <linux-nvdimm@ml01.01.org>, Linux MM <linux-mm@kvack.org>,
+        Jan Kara <jack@suse.cz>, Stefan Hajnoczi <stefanha@redhat.com>,
+        Rik van Riel <riel@surriel.com>,
+        haozhong zhang <haozhong.zhang@intel.com>,
+        Nitesh Narayan Lal <nilal@redhat.com>, Kevin Wolf <kwolf@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        ross zwisler <ross.zwisler@intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        xiaoguangrong eric <xiaoguangrong.eric@gmail.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Marcel Apfelbaum <marcel@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>, niteshnarayanlal@hotmail.com,
+        Igor Mammedov <imammedo@redhat.com>, lcapitulino@redhat.com
+Message-ID: <1302242642.23016855.1524762824836.JavaMail.zimbra@redhat.com>
+In-Reply-To: <CAPcyv4jv-hJNKJxak98T7aCnWztVEDTE8o=8fjvOrVmrTfyjdA@mail.gmail.com>
+References: <20180425112415.12327-1-pagupta@redhat.com> <20180425112415.12327-3-pagupta@redhat.com> <20180426131517.GB30991@stefanha-x1.localdomain> <58645254.23011245.1524760853269.JavaMail.zimbra@redhat.com> <CAPcyv4jv-hJNKJxak98T7aCnWztVEDTE8o=8fjvOrVmrTfyjdA@mail.gmail.com>
+Subject: Re: [RFC v2 2/2] pmem: device flush over VIRTIO
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.116.119, 10.4.195.13]
+Thread-Topic: pmem: device flush over VIRTIO
+Thread-Index: DZPGUYMDKi1XNbxWoqEECLMq+ppbKA==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds pins, groups and functions for parallel RGB output
-signals from DU. The HDMI and TCON pins are added to separate groups.
 
-Based on a similar patch of the R8A7796 PFC driver by Niklas Söderlund
-<niklas.soderlund+renesas@ragnatech.se>.
+> >
+> >>
+> >> On Wed, Apr 25, 2018 at 04:54:14PM +0530, Pankaj Gupta wrote:
+> >> > This patch adds functionality to perform
+> >> > flush from guest to hosy over VIRTIO
+> >> > when 'ND_REGION_VIRTIO'flag is set on
+> >> > nd_negion. Flag is set by 'virtio-pmem'
+> >> > driver.
+> >> >
+> >> > Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
+> >> > ---
+> >> >  drivers/nvdimm/region_devs.c | 7 +++++++
+> >> >  1 file changed, 7 insertions(+)
+> >> >
+> >> > diff --git a/drivers/nvdimm/region_devs.c b/drivers/nvdimm/region_devs.c
+> >> > index a612be6..6c6454e 100644
+> >> > --- a/drivers/nvdimm/region_devs.c
+> >> > +++ b/drivers/nvdimm/region_devs.c
+> >> > @@ -20,6 +20,7 @@
+> >> >  #include <linux/nd.h>
+> >> >  #include "nd-core.h"
+> >> >  #include "nd.h"
+> >> > +#include <linux/virtio_pmem.h>
+> >> >
+> >> >  /*
+> >> >   * For readq() and writeq() on 32-bit builds, the hi-lo, lo-hi order is
+> >> > @@ -1074,6 +1075,12 @@ void nvdimm_flush(struct nd_region *nd_region)
+> >> >     struct nd_region_data *ndrd = dev_get_drvdata(&nd_region->dev);
+> >> >     int i, idx;
+> >> >
+> >> > +       /* call PV device flush */
+> >> > +   if (test_bit(ND_REGION_VIRTIO, &nd_region->flags)) {
+> >> > +           virtio_pmem_flush(&nd_region->dev);
+> >> > +           return;
+> >> > +   }
+> >>
+> >> How does libnvdimm know when flush has completed?
+> >>
+> >> Callers expect the flush to be finished when nvdimm_flush() returns but
+> >> the virtio driver has only queued the request, it hasn't waited for
+> >> completion!
+> >
+> > I tried to implement what nvdimm does right now. It just writes to
+> > flush hint address to make sure data persists.
+> 
+> nvdimm_flush() is currently expected to be synchronous. Currently it
+> is sfence(); write to special address; sfence(). By the time the
+> second sfence returns the data is flushed. So you would need to make
+> this virtio flush interface synchronous as well, but that appears
+> problematic to stop the guest for unbounded amounts of time. Instead,
+> you need to rework nvdimm_flush() and the pmem driver to make these
+> flush requests asynchronous and add the plumbing for completion
+> callbacks via bio_endio().
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[Kieran: Rebase on top of tree]
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- drivers/pinctrl/sh-pfc/pfc-r8a77965.c | 116 ++++++++++++++++++++++++++
- 1 file changed, 116 insertions(+)
+o.k. 
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-index 3771b2d10f39..f5a37d3ea753 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-@@ -1662,6 +1662,102 @@ static const unsigned int avb_avtp_capture_b_mux[] = {
- 	AVB_AVTP_CAPTURE_B_MARK,
- };
- 
-+/* - DU --------------------------------------------------------------------- */
-+static const unsigned int du_rgb666_pins[] = {
-+	/* R[7:2], G[7:2], B[7:2] */
-+	RCAR_GP_PIN(0, 15), RCAR_GP_PIN(0, 14), RCAR_GP_PIN(0, 13),
-+	RCAR_GP_PIN(0, 12), RCAR_GP_PIN(0, 11), RCAR_GP_PIN(0, 10),
-+	RCAR_GP_PIN(1, 15), RCAR_GP_PIN(1, 14), RCAR_GP_PIN(1, 13),
-+	RCAR_GP_PIN(1, 12), RCAR_GP_PIN(1, 19), RCAR_GP_PIN(1, 18),
-+	RCAR_GP_PIN(1, 7),  RCAR_GP_PIN(1, 6),  RCAR_GP_PIN(1, 5),
-+	RCAR_GP_PIN(1, 4),  RCAR_GP_PIN(1, 3),  RCAR_GP_PIN(1, 2),
-+};
-+
-+static const unsigned int du_rgb666_mux[] = {
-+	DU_DR7_MARK, DU_DR6_MARK, DU_DR5_MARK, DU_DR4_MARK,
-+	DU_DR3_MARK, DU_DR2_MARK,
-+	DU_DG7_MARK, DU_DG6_MARK, DU_DG5_MARK, DU_DG4_MARK,
-+	DU_DG3_MARK, DU_DG2_MARK,
-+	DU_DB7_MARK, DU_DB6_MARK, DU_DB5_MARK, DU_DB4_MARK,
-+	DU_DB3_MARK, DU_DB2_MARK,
-+};
-+
-+static const unsigned int du_rgb888_pins[] = {
-+	/* R[7:0], G[7:0], B[7:0] */
-+	RCAR_GP_PIN(0, 15), RCAR_GP_PIN(0, 14), RCAR_GP_PIN(0, 13),
-+	RCAR_GP_PIN(0, 12), RCAR_GP_PIN(0, 11), RCAR_GP_PIN(0, 10),
-+	RCAR_GP_PIN(0, 9),  RCAR_GP_PIN(0, 8),
-+	RCAR_GP_PIN(1, 15), RCAR_GP_PIN(1, 14), RCAR_GP_PIN(1, 13),
-+	RCAR_GP_PIN(1, 12), RCAR_GP_PIN(1, 19), RCAR_GP_PIN(1, 18),
-+	RCAR_GP_PIN(1, 17), RCAR_GP_PIN(1, 16),
-+	RCAR_GP_PIN(1, 7),  RCAR_GP_PIN(1, 6),  RCAR_GP_PIN(1, 5),
-+	RCAR_GP_PIN(1, 4),  RCAR_GP_PIN(1, 3),  RCAR_GP_PIN(1, 2),
-+	RCAR_GP_PIN(1, 1),  RCAR_GP_PIN(1, 0),
-+};
-+
-+static const unsigned int du_rgb888_mux[] = {
-+	DU_DR7_MARK, DU_DR6_MARK, DU_DR5_MARK, DU_DR4_MARK,
-+	DU_DR3_MARK, DU_DR2_MARK, DU_DR1_MARK, DU_DR0_MARK,
-+	DU_DG7_MARK, DU_DG6_MARK, DU_DG5_MARK, DU_DG4_MARK,
-+	DU_DG3_MARK, DU_DG2_MARK, DU_DG1_MARK, DU_DG0_MARK,
-+	DU_DB7_MARK, DU_DB6_MARK, DU_DB5_MARK, DU_DB4_MARK,
-+	DU_DB3_MARK, DU_DB2_MARK, DU_DB1_MARK, DU_DB0_MARK,
-+};
-+
-+static const unsigned int du_clk_out_0_pins[] = {
-+	/* CLKOUT */
-+	RCAR_GP_PIN(1, 27),
-+};
-+
-+static const unsigned int du_clk_out_0_mux[] = {
-+	DU_DOTCLKOUT0_MARK
-+};
-+
-+static const unsigned int du_clk_out_1_pins[] = {
-+	/* CLKOUT */
-+	RCAR_GP_PIN(2, 3),
-+};
-+
-+static const unsigned int du_clk_out_1_mux[] = {
-+	DU_DOTCLKOUT1_MARK
-+};
-+
-+static const unsigned int du_sync_pins[] = {
-+	/* EXVSYNC/VSYNC, EXHSYNC/HSYNC */
-+	RCAR_GP_PIN(2, 5), RCAR_GP_PIN(2, 4),
-+};
-+
-+static const unsigned int du_sync_mux[] = {
-+	DU_EXVSYNC_DU_VSYNC_MARK, DU_EXHSYNC_DU_HSYNC_MARK
-+};
-+
-+static const unsigned int du_oddf_pins[] = {
-+	/* EXDISP/EXODDF/EXCDE */
-+	RCAR_GP_PIN(2, 2),
-+};
-+
-+static const unsigned int du_oddf_mux[] = {
-+	DU_EXODDF_DU_ODDF_DISP_CDE_MARK,
-+};
-+
-+static const unsigned int du_cde_pins[] = {
-+	/* CDE */
-+	RCAR_GP_PIN(2, 0),
-+};
-+
-+static const unsigned int du_cde_mux[] = {
-+	DU_CDE_MARK,
-+};
-+
-+static const unsigned int du_disp_pins[] = {
-+	/* DISP */
-+	RCAR_GP_PIN(2, 1),
-+};
-+
-+static const unsigned int du_disp_mux[] = {
-+	DU_DISP_MARK,
-+};
-+
- /* - INTC-EX ---------------------------------------------------------------- */
- static const unsigned int intc_ex_irq0_pins[] = {
- 	/* IRQ0 */
-@@ -2756,6 +2852,14 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(avb_avtp_capture_a),
- 	SH_PFC_PIN_GROUP(avb_avtp_match_b),
- 	SH_PFC_PIN_GROUP(avb_avtp_capture_b),
-+	SH_PFC_PIN_GROUP(du_rgb666),
-+	SH_PFC_PIN_GROUP(du_rgb888),
-+	SH_PFC_PIN_GROUP(du_clk_out_0),
-+	SH_PFC_PIN_GROUP(du_clk_out_1),
-+	SH_PFC_PIN_GROUP(du_sync),
-+	SH_PFC_PIN_GROUP(du_oddf),
-+	SH_PFC_PIN_GROUP(du_cde),
-+	SH_PFC_PIN_GROUP(du_disp),
- 	SH_PFC_PIN_GROUP(intc_ex_irq0),
- 	SH_PFC_PIN_GROUP(intc_ex_irq1),
- 	SH_PFC_PIN_GROUP(intc_ex_irq2),
-@@ -2922,6 +3026,17 @@ static const char * const avb_groups[] = {
- 	"avb_avtp_capture_b",
- };
- 
-+static const char * const du_groups[] = {
-+	"du_rgb666",
-+	"du_rgb888",
-+	"du_clk_out_0",
-+	"du_clk_out_1",
-+	"du_sync",
-+	"du_oddf",
-+	"du_cde",
-+	"du_disp",
-+};
-+
- static const char * const intc_ex_groups[] = {
- 	"intc_ex_irq0",
- 	"intc_ex_irq1",
-@@ -3139,6 +3254,7 @@ static const char * const usb30_groups[] = {
- 
- static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(avb),
-+	SH_PFC_FUNCTION(du),
- 	SH_PFC_FUNCTION(intc_ex),
- 	SH_PFC_FUNCTION(msiof0),
- 	SH_PFC_FUNCTION(msiof1),
--- 
-2.17.0
+> 
+> > I just did not want to block guest write requests till host side
+> > fsync completes.
+> 
+> You must complete the flush before bio_endio(), otherwise you're
+> violating the expectations of the guest filesystem/block-layer.
+
+sure!
+
+> 
+> >
+> > be worse for operations on different guest files because all these
+> > operations would happen
+> > ultimately on same file at host.
+> >
+> > I think with current way, we can achieve an asynchronous queuing mechanism
+> > on cost of not
+> > 100% sure when fsync would complete but it is assured it will happen. Also,
+> > its entire block
+> > flush.
+> 
+> No, again,  that's broken. We need to add the plumbing for
+> communicating the fsync() completion relative the WRITE_{FLUSH,FUA}
+> bio in the guest.
+
+Sure. Thanks Dan & Stefan for the explanation and review. 
+
+Best regards,
+Pankaj
