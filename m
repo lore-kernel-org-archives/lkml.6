@@ -1,63 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753547AbeDZGsP (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 02:48:15 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:61084 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751465AbeDZGsM (ORCPT
+        id S1753307AbeDZGuP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 02:50:15 -0400
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:46430 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751528AbeDZGuM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 02:48:12 -0400
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mark Salyzyn <salyzyn@android.com>, Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        John Stultz <john.stultz@linaro.org>, Peter Anvin <hpa@zytor.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Prarit Bhargava <prarit@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Kevin Easton <kevin@guarana.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        SergeySenozhatsky <sergey.senozhatsky@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-tip-commits@vger.kernel.org
-Subject: Re: [tip:timers/urgent] Revert: Unify CLOCK_MONOTONIC and CLOCK_BOOTTIME
-Date: Thu, 26 Apr 2018 08:48:00 +0200
-Message-ID: <1818264.9sG3yaIMPm@aspire.rjw.lan>
-In-Reply-To: <20180425184140.6b6e524d@vmware.local.home>
-References: <tip-757d5a9b3052a4eebd029f207f1e1df59bef7b7d@git.kernel.org> <5695751.Ycq0WTIcbj@aspire.rjw.lan> <20180425184140.6b6e524d@vmware.local.home>
+        Thu, 26 Apr 2018 02:50:12 -0400
+Date: Thu, 26 Apr 2018 09:50:10 +0300
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Todor Tomov <todor.tomov@linaro.org>
+Cc: mchehab@kernel.org, hverkuil@xs4all.nl,
+        laurent.pinchart@ideasonboard.com, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] media: Add a driver for the ov7251 camera sensor
+Message-ID: <20180426065010.a67iqsaicpgu7m5b@valkosipuli.retiisi.org.uk>
+References: <1524673246-14175-1-git-send-email-todor.tomov@linaro.org>
+ <1524673246-14175-3-git-send-email-todor.tomov@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1524673246-14175-3-git-send-email-todor.tomov@linaro.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday, April 26, 2018 12:41:40 AM CEST Steven Rostedt wrote:
-> On Wed, 25 Apr 2018 22:57:12 +0200
-> "Rafael J. Wysocki" <rjw@rjwysocki.net> wrote:
-> 
-> > FWIW, I run (64-bit) OpenSUSE 42.3 on the failing machine (Acer Aspire S5) with
-> > my own kernel (custom config based on the distro one).
-> > 
-> > The problem here is that the machine doesn't resume from S2R.  It appears to
-> > just hang somewhere around where we return to user space.  However, to trigger
-> > the issue it needs to stay in suspend for several minutes (not sure how many
-> > exactly).  If it is just back-to-back suspend/resume, it will resume correctly.
-> 
-> I guess the question that needs to be asked is, have you tried a kernel
-> with this commit reverted and it works?
+Hi Todor,
 
-Yes, I have.
+On Wed, Apr 25, 2018 at 07:20:46PM +0300, Todor Tomov wrote:
+...
+> +static int ov7251_write_reg(struct ov7251 *ov7251, u16 reg, u8 val)
+> +{
+> +	u8 regbuf[3];
+> +	int ret;
+> +
+> +	regbuf[0] = reg >> 8;
+> +	regbuf[1] = reg & 0xff;
+> +	regbuf[2] = val;
+> +
+> +	ret = i2c_master_send(ov7251->i2c_client, regbuf, 3);
+> +	if (ret < 0) {
+> +		dev_err(ov7251->dev, "%s: write reg error %d: reg=%x, val=%x\n",
+> +			__func__, ret, reg, val);
+> +		return ret;
+> +	}
+> +
+> +	return 0;
 
-> I'd play a bit going back and
-> forth between two kernels, one with the commit and one without and no
-> other differences, to make sure that is indeed the problem commit.
+How about:
 
-I've done that.
+	return ov7251_write_seq_regs(ov7251, reg, &val, 1);
 
-It is the problem commit.
+And put the function below ov2751_write_seq_regs().
 
-Thanks,
-Rafael
+> +}
+> +
+> +static int ov7251_write_seq_regs(struct ov7251 *ov7251, u16 reg, u8 *val,
+> +				 u8 num)
+> +{
+> +	const u8 maxregbuf = 5;
+> +	u8 regbuf[maxregbuf];
+> +	u8 nregbuf = sizeof(reg) + num * sizeof(*val);
+> +	int ret = 0;
+> +
+> +	if (nregbuf > maxregbuf)
+> +		return -EINVAL;
+> +
+> +	regbuf[0] = reg >> 8;
+> +	regbuf[1] = reg & 0xff;
+> +
+> +	memcpy(regbuf + 2, val, num);
+> +
+> +	ret = i2c_master_send(ov7251->i2c_client, regbuf, nregbuf);
+> +	if (ret < 0) {
+> +		dev_err(ov7251->dev, "%s: write seq regs error %d: first reg=%x\n",
+
+This line is over 80... 
+
+If you're happy with these, I can make the changes, too; they're trivial.
+
+> +			__func__, ret, reg);
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+
+-- 
+Kind regards,
+
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi
