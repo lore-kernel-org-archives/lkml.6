@@ -1,109 +1,98 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1849447-1524720741-2-2626512069575018323
+X-Cyrus-Session-Id: sloti22d1t05-1876232-1524719666-2-10752294584050529292
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='iso-8859-1'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524720740; b=S93dBL1norKOW+GSRq9vgtLKpSAjhsBT5WIyVmRRMtmb0JTZpO
-    fJ1wyM6gVsBRvj1GU+NxH3dAZIMeccpogSwatRvJCPpgvnVqRlHwS7uSZ3PRy+6E
-    EGlyIRzlX8C3DruQzTmvAnRIrkIioJRYFjLAfHiO6++VXmyYAOGS2u30wRFERO7g
-    p4NBXIG2ZyAH6htiW6hRs9nDZVsNJff/HXrNqBYA85CeILZAV4VST1EG0PXLMbw8
-    yeYCSOvLlK+yqzUmJvMV7oZwecDOoKJGz1n9F7LDiwdKzEpmiea9InGADMYGVN67
-    91am8waXx5zFtpxDL1a0voRWaRaOYGpk3qnw==
+    1524719665; b=UFkqWqi5JmyMJTrhqJFKCaORjwv8x8DWnzNPDfvMp6PpxC7DX6
+    qoV5VcobB68LU/EkgqOfg/kbUpdyUthFkDtdbZCmJGDageHqU6MKDeVgMDcPtSX5
+    4PxuHrjfAvLWxYQTdSyGjHXdBkRWA9XxeIrsFitjC8psQv6QJ4lbXNPfPzVJoAWj
+    Z7LplZbZmsorFEN431RgLQnTYTU1mh6k2b4zO/EJ3vAYnIIs+TeXCfuxOPsqhGUU
+    PJAHCg/5OgTqHRGibQOgM4c5ZZ1mm4U+u9jfD8ph7qszAFFl5CXnEeAhjF54ZxtF
+    fEgQVyFGL830pBl70gketrxzSPIOvvLmia8g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:reply-to
-    :references:mime-version:content-type:in-reply-to:message-id
-    :sender:list-id; s=fm2; t=1524720740; bh=VxnS2Idh4aj/moexw9dvcPm
-    E0Q22nZdTooyt8UJ1qTs=; b=PtpHg+AMlife2gv0cfq+CLmUrVFfm+Oi8h7E5jV
-    N5eINXxpsNSYxwaWG6IviwmegbxeS7uXRJu8Iq+lwH4Gq5/mdbRtTdbHLxdeV5OV
-    kgeK/mSRV5zrr2M5p72l1V0PpFOoLQNUeKvMYzo6CHR4PYo+9havOVuUOSnhn/AK
-    LCgSEL4vVYb3G1ugpEYMIKngDqQ7zdtdjysGe5qTDAIi8ijcGbilDAU8ntHVpxlT
-    oVtrVMw+zL88Nv0BQ+/lx4AIJzU3InZfwSBySXCkO2EGq9VsSTMT22nbxGg+X9M/
-    0A8hABEFTmrx63XJRWPoUt9DmpIHIRIY3TME4rjeItm284g==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=linux.vnet.ibm.com;
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=fm2; t=1524719665; bh=sVFYgs5eQiDrYrhrvK3gQDhrsg1nJt
+    g9tY2zY8JIZus=; b=nO7KppB/yVQkKZTJZa1prv+hUTiid+rxOoYL8Uac2T5ASW
+    /jD5ZjGJLEIPJ5c+SXjaU0DcScnjo08Da9CMAHNUZ0G7/J1Bdsnrg+0BOVbzXQbU
+    21/Ofq5lsxxxhX+QHPs+eUCO/fhanZQWQ9ScaStneRIqDbHOpzlCDTxU1Be0n6ro
+    opxpwmQN0q2qqvUFqm/GIP0S76Prs233T50XBN8NKKjgw40ZMZaNjKtNLpMIpbiO
+    mK9YuWPLrowhRzB4XwhboSWjJeKCWFzyGos9MpgHqEdUqLQLbFOZR10RPk1bbFSj
+    N44WRHNU3WxiC+no8RKbH3/B/+Y5rD7T/6xMr24g==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=kvduoo03 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=BaWnGRQQ;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.vnet.ibm.com header.result=pass header_org.domain=ibm.com header_org.result=pass header_is_org_domain=no;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=linux.vnet.ibm.com;
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=kvduoo03 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=BaWnGRQQ;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.vnet.ibm.com header.result=pass header_org.domain=ibm.com header_org.result=pass header_is_org_domain=no;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFx2IGSaeVUJkThvg4F3Dv/eeyxkwzrYtTBrt7U46GZXLKGzsk2NbVuKwirpD6ERJJ01uJ6vkwiNOnybML8cw4EZCw94/6dyQRSzHHqXBA30EbAWUCfJ
-    JK2D50LrS2zQ3REXpWGwv8eJ0xfDb3tjsPjqap1QHxAE1TwDX8+PPuJcJboPwtCK9NDlCFgYvoOSzuwaYMyLkFFBWuBMwItv2JZnzlPQ1zsurknSChTWS0uZ
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=8nJEP1OIZ-IA:10 a=Kd1tUaAdevIA:10
-    a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=rai-cAetSdCn4RMDmb8A:9
-    a=wPNLvfGTeEIA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfGNrD8rmORIPmSW2Xd4Ck0C0XfBuOui9epQ9T2wLVBhPYnax/mn6gFpmM4ABW1Ng82d9mpRhmlKDFLdRh2hs61jPDpjg+IKVRbkw/AsYgi9HEFp1mF3D
+    p/cTVS5xksKGx4IfL+IAnj87w/leoxXt7S6wJuUGqVZsNSnCbPnRk/8jZXJBn/vfB4bhCjRWIf/QhcCV13JnOWdlq/XRRGf3jtTB9XMUlE7VIgyH0xKOdJYb
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
+    a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=VnNF1IyMAAAA:8 a=KKAkSRfTAAAA:8
+    a=jzwyn7j8SzP9a3Bmv5kA:9 a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=cvBusfyB2V15izCimMoJ:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751317AbeDZFcR (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 26 Apr 2018 01:32:17 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41616 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750775AbeDZFcQ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 26 Apr 2018 01:32:16 -0400
-Date: Thu, 26 Apr 2018 11:02:03 +0530
-From: Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>
+        id S1751626AbeDZFOY (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 26 Apr 2018 01:14:24 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:34668 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751390AbeDZFOW (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 26 Apr 2018 01:14:22 -0400
+X-Google-Smtp-Source: AB8JxZof/VvVnXaiA7coQbg/hQMlb9nrHLEIk1Qzab39k8pojaLvt3VQhaZu+2CuHd3Rih3epFFf8A==
+Date: Thu, 26 Apr 2018 10:44:18 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
 To: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
-Cc: rjw@rjwysocki.net, viresh.kumar@linaro.org, npiggin@gmail.com,
-        benh@kernel.crashing.org, mpe@ellerman.id.au,
-        linux-pm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, ppaidipe@linux.vnet.ibm.com,
+Cc: rjw@rjwysocki.net, npiggin@gmail.com, benh@kernel.crashing.org,
+        mpe@ellerman.id.au, linux-pm@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        ppaidipe@linux.vnet.ibm.com, svaidy@linux.vnet.ibm.com,
         stable@vger.kernel.org
 Subject: Re: [PATCH V3] cpufreq: powernv: Fix the hardlockup by synchronus
  smp_call in timer interrupt
-Reply-To: svaidy@linux.vnet.ibm.com
+Message-ID: <20180426051418.vpwugncvivub43ej@vireshk-i7>
 References: <1524653971-4919-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <1524653971-4919-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18042605-0044-0000-0000-0000054C315B
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18042605-0045-0000-0000-0000288D34D0
-Message-Id: <20180426053203.GA13662@drishya.in.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-26_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804260052
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-* Shilpa Bhat <shilpa.bhat@linux.vnet.ibm.com> [2018-04-25 16:29:31]:
-
+On 25-04-18, 16:29, Shilpasri G Bhat wrote:
 > gpstate_timer_handler() uses synchronous smp_call to set the pstate
 > on the requested core. This causes the below hard lockup:
 > 
@@ -145,42 +134,8 @@ List-ID: <linux-kernel.vger.kernel.org>
 > - Remove the check for active policy while requeing the migrated timer
 > Changes from V1:
 > - Remove smp_call in the pstate handler.
-> 
->  drivers/cpufreq/powernv-cpufreq.c | 14 +++++++++++---
->  1 file changed, 11 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/cpufreq/powernv-cpufreq.c b/drivers/cpufreq/powernv-cpufreq.c
-> index 71f8682..e368e1f 100644
-> --- a/drivers/cpufreq/powernv-cpufreq.c
-> +++ b/drivers/cpufreq/powernv-cpufreq.c
-> @@ -679,6 +679,16 @@ void gpstate_timer_handler(struct timer_list *t)
-> 
->  	if (!spin_trylock(&gpstates->gpstate_lock))
->  		return;
-> +	/*
-> +	 * If the timer has migrated to the different cpu then bring
-> +	 * it back to one of the policy->cpus
-> +	 */
-> +	if (!cpumask_test_cpu(raw_smp_processor_id(), policy->cpus)) {
-> +		gpstates->timer.expires = jiffies + msecs_to_jiffies(1);
-> +		add_timer_on(&gpstates->timer, cpumask_first(policy->cpus));
-> +		spin_unlock(&gpstates->gpstate_lock);
-> +		return;
-> +	}
-> 
->  	/*
->  	 * If PMCR was last updated was using fast_swtich then
-> @@ -718,10 +728,8 @@ void gpstate_timer_handler(struct timer_list *t)
->  	if (gpstate_idx != gpstates->last_lpstate_idx)
->  		queue_gpstate_timer(gpstates);
-> 
-> +	set_pstate(&freq_data);
->  	spin_unlock(&gpstates->gpstate_lock);
-> -
-> -	/* Timer may get migrated to a different cpu on cpu hot unplug */
-> -	smp_call_function_any(policy->cpus, set_pstate, &freq_data, 1);
->  }
 
-Fix looks good. 
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-Acked-by: Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>
+-- 
+viresh
