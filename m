@@ -1,102 +1,164 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757312AbeDZWhl (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 18:37:41 -0400
-Received: from mail-he1eur01on0126.outbound.protection.outlook.com ([104.47.0.126]:11971
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755095AbeDZWcU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 18:32:20 -0400
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=peda@axentia.se;
-From: Peter Rosin <peda@axentia.se>
-To: linux-kernel@vger.kernel.org
-Cc: Peter Rosin <peda@axentia.se>, Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>, Heiko Stuebner <heiko@sntech.de>,
-        Thierry Escande <thierry.escande@collabora.com>,
-        Sean Paul <seanpaul@chromium.org>, Jyri Sarha <jsarha@ti.com>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH 03/24] drm/bridge/analogix: core: specify the .owner of the bridge
-Date: Fri, 27 Apr 2018 00:31:18 +0200
-Message-Id: <20180426223139.16740-4-peda@axentia.se>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180426223139.16740-1-peda@axentia.se>
-References: <20180426223139.16740-1-peda@axentia.se>
+        id S1757337AbeDZWh7 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 18:37:59 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:59092 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754128AbeDZWhm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 18:37:42 -0400
+Subject: Re: [PATCH] net/mlx5: report persistent netdev stats across
+ ifdown/ifup commands
+To: Saeed Mahameed <saeedm@dev.mellanox.co.il>,
+        Eran Ben Elisha <eranbe@mellanox.com>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>,
+        RDMA mailing list <linux-rdma@vger.kernel.org>,
+        Linux Netdev List <netdev@vger.kernel.org>,
+        Leon Romanovsky <leon@kernel.org>, Matan Barak <matanb@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+References: <1524775057-8012-1-git-send-email-qing.huang@oracle.com>
+ <CALzJLG8=dnyLGRXamLR5-eYJ9Q8WCwKe44sHHZ57=1h_x0RCRA@mail.gmail.com>
+From: Qing Huang <qing.huang@oracle.com>
+Message-ID: <5cd29779-fc70-930a-7060-ee3332c15558@oracle.com>
+Date: Thu, 26 Apr 2018 15:37:29 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [85.226.244.23]
-X-ClientProxiedBy: HE1PR05CA0366.eurprd05.prod.outlook.com
- (2603:10a6:7:94::25) To VI1PR0202MB2782.eurprd02.prod.outlook.com
- (2603:10a6:800:db::7)
-X-MS-PublicTrafficType: Email
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(5600026)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:VI1PR0202MB2782;
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0202MB2782;3:bUxjjJj2+RBBJqUFrkJ+HCGjsRmQ3xOxRfOD5KXhCNObtdQzZ+kLo9Uc8chKu2ITeyN3kO0M7hRwT6rzHZ14qrxoMEvHjcKBq0LhE9pmXyiA5I043ZoJ5RY/2eH9oqLB6GatXGkNL+ffhmbsSBMUPyGaF9UEXL30IYngl6MPPXdfRj3obRK41c8ken4euQjB1EH1BARNouTp+xL/cCjBm7WqNpLzT2IqteXsekuLQbVc3GuJ4CJ0R60xzDUcnJCy;25:ZllVVEp1V4gmhH3jOJ0/hBpx33llQrsKqGH0hR9YKbXDfnbaQBOIHjF6bIX1vVAHvpMW+Y9Wybbpc6AWSrEWzSOeWGIs0mIAFxUjoSSWD9d0xoTSbcKbsnMWTWQuGm7G8ceTBE3SQmWAsc8OqF0kP/1gqssrqlHLuiuOBnsGPE3y4zRvrYa65mRt+uQPdlNUvlQw8V7LozdH+ir4JphMeO/GQ8vewbyQ5/xlUbFt8eFjo+fIxnIk8d66KOsqB9zrimR2KUlWY64l8tJZQMwQNnuDq5HkbOZVzThWxIrUpaOeVf0E7uhRXXcy3BYkWMYsvF7DhNwnJAaqlMQv2HWaXw==;31:H2LCU++9rkxFqwtqOhWOQxyljb3t6LTCiYUzZeoHlImWrGvpS8/mIGZ0RrHk592cK7MeMVh7ftvhi2jDg1TJn23LZUfm7EEEdtEQITj7PCFsbK+xzNK38KfXvEfXzoeBdgCBgVY4qHEU2epMxFK3b+7WeUgmKWLCTK8ITEA6Lo+wiQIrj7dlUqqKoJ+1ryDrhEAgKd7Bv+DC82KVM+Lsj7ye2dmt5EKqbqyPxF/IqHo=
-X-MS-TrafficTypeDiagnostic: VI1PR0202MB2782:
-X-Microsoft-Antispam-PRVS: <VI1PR0202MB2782D407CCBB4683356B032EBC8E0@VI1PR0202MB2782.eurprd02.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3231232)(944501410)(52105095)(93006095)(93001095)(3002001)(10201501046)(6041310)(20161123562045)(20161123564045)(20161123560045)(2016111802025)(20161123558120)(6043046)(6072148)(201708071742011);SRVR:VI1PR0202MB2782;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0202MB2782;
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0202MB2782;4:GSVsmXRCfLCWs7Hbm9ucJ1w7eEH8cbehQq5O0WVZjpdWbBKvmGVwWanNGK1rS47wAJwLNgGtTDaiKd86SdA0bW1I8v1H25X95K1965vOr8i36OizBuZ/dAX/8WUJkHyDaaqIligqEmbBjHRppqWZIv8pTH3WOyqDgisqr1eNHRg2AH041mNqwWMXohpapzlS95tN99zYz8BGUQZlF9Z4giK4U/4iJ/8Hb9vWsVV5N57IvKTaYmeJCeIku56W8HP6ofyIXvezWZ0HbIq2W76vsA==
-X-Forefront-PRVS: 0654257CF5
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(376002)(396003)(346002)(366004)(39380400002)(39840400004)(199004)(189003)(50466002)(186003)(446003)(86362001)(956004)(8676002)(4326008)(476003)(2616005)(54906003)(11346002)(51416003)(53936002)(478600001)(68736007)(97736004)(305945005)(5660300001)(316002)(386003)(52116002)(6512007)(76176011)(26005)(7416002)(6506007)(486006)(3846002)(6916009)(6116002)(7736002)(66066001)(106356001)(2361001)(16586007)(105586002)(81156014)(8936002)(50226002)(47776003)(81166006)(2906002)(16526019)(1076002)(74482002)(6486002)(36756003)(25786009)(2351001)(48376002)(142923001)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0202MB2782;H:orc.pedanet;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR0202MB2782;23:hdAUAaopcgRmdll6ViJMoXOnbVEw8QBFCDJQEOC?=
- =?us-ascii?Q?Q0LPdLqs7njsUXmoHI1oHdIAU9JiyBlE+FGwEBLAsjr5EZyTJ7usnVyWcEZG?=
- =?us-ascii?Q?cXncesd0dZ1giMQcYyFSD2edStCOolPQFo2CP+lgvu9utqXnL7dsyqnNuFmI?=
- =?us-ascii?Q?9duoxLHgN/lYMoqcfHXvY1+8QlAj8pcBGPv2XriCRg951XmmrBYz42AFPIn5?=
- =?us-ascii?Q?TkYg31vzsim/onTlnTSv49r2T9IUZBKW2wZoUkd/eoyqfrWpz8dR4dxOVKPJ?=
- =?us-ascii?Q?MJ4JLR7vmtpm0H14cRTX4WCbxTTFZaXmjUJfSG44Cg/q6RVU6atmC/Sqn382?=
- =?us-ascii?Q?OPyo5hTSNC1wGfSTKiv7sl8BspN1M1LdZ81mH5oGeMuLMuQInP4mID1S7MoF?=
- =?us-ascii?Q?fdS9RmGGVClyfXXLyk1mITDneGe7CW26yai/oXR5K432NJI5CQk9Wm7v4CgJ?=
- =?us-ascii?Q?ZSi+JRukmvXAv4Kb7Hl8mfb2jBz7j0zdA8rTrwBxRLTrDDCsm4p4M+A+z6Te?=
- =?us-ascii?Q?X9+agiPFDUgjOs5utMgaoEa5KKvEqyqbErzAEbXbhWiL1wejS6B/cJV/GDPF?=
- =?us-ascii?Q?rs5blt4Zl+HFnEhWFzeVDhiGj2UHSxXRH238dQphv2I7bk31muk1bNU3WoE5?=
- =?us-ascii?Q?HqXPr9igiNsMxAZQb89OnSISE3KmnUG2koj3zEJKaVfwgFwqzFqWDj9XZizY?=
- =?us-ascii?Q?0FT5q/sugMAawCLa6JcPqEG9q4dHgHM8W1nzj6ghWfpP7SSEzzgMG7xnn+5v?=
- =?us-ascii?Q?nEhcfaKt8zuPb5CQsqGmInZopXmsDFep8/Dgm59cEWdRZ3EvmThtOE5NNF7b?=
- =?us-ascii?Q?yMyYhV6tCPT/TN3wvq7uchLPyoNMzdKmLo5rzXvyG/zPXtbgEkxdgv2TvLHY?=
- =?us-ascii?Q?j68FW1QSommaM/61T+hBSTTyFXpuRyYpdFRBcAKmRjTQgofUa2vC3Oyj9cAG?=
- =?us-ascii?Q?1VAU19m8GnM0WK1yxykmJ8+zsVseOcqKoF1KGTNHDOognQJ0LJw7Xv3xwl8k?=
- =?us-ascii?Q?ESGh/WVxFkyfeSViCPEkgs9WvxiuqZ+vaGedowPe8iEbqqKER9k3Tc+c2Mko?=
- =?us-ascii?Q?/Jv8ilap3+eltNeC8BTuzpjGU5YBAsQO5CiBvTOdptG2vnybqHvo4jrL8+bR?=
- =?us-ascii?Q?20XeqJUywe6eIBbVxBMqRVJ7tBXdafTrqzLtWwxqcAj1GuEE7HL+H0jXugey?=
- =?us-ascii?Q?4APRFz47p2tGbD+DqXo6eY3oY+XDa7pOqok7zFkToh3zOMj8ah4SJ7M4MdIO?=
- =?us-ascii?Q?nFq6DkcTTU3UVcw9HswcnivjUDFGtNY7wXYVPnKE15iCJZ9zf3yBnsw19erC?=
- =?us-ascii?Q?VKKIoQX/3BXoyxtZi8zDxx/U=3D?=
-X-Microsoft-Antispam-Message-Info: hpDo9ltG6MpNJEMEUpjxp0TRT/5WD0QoggbFPvgfdkZYTCKLqa+gS9HpwmL8IZOE0P3vsRjoDO+ehdmNd+fpWL7P8nSXK3Dh1b1Wducedh7fGfR1LD1JN6Foi8I1pfcTj2Bo9w4KlqRHMlzj44n/79YMHjPxCkOOjss7C+VdzRKV3hyPhjWztXhIZGNTjwdP
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0202MB2782;6:M4ibEoqPQdShuUrCjlmne1ea/xWC4npHPww7/hsWTeYcQwzVR0BIZNhKcZ3HDxqAVu93M/8Py5Hg/I5GOmQicsSTB24auLr38B3NZvSeRiPQ+cbFAuu1LKZDXei+5VGAhDf3gMBNFDvviDyKWygH51i5bBBizd7kF1TbeGfPmgQUTl1ZPjqQhVBJJ+Jddgcu0mK/4N9t2pHiSMqztCkKJjNQQVgmkJ/WFSAFN9mJgwirEEi7IkyMMKeOS7v7bmgUHikK4vEOr5M2qIuQR2sRtfZk9YIFRpvRGvXE/4NHc6JT5rvp7CIetm/IJ4kXfGqjjFrRnPgFjR61vghsAu022aXsWY6EAjq9865AaKlYu3H8GMvK331B/7YeOZnYKf5Q0Y7nOPmcTJAoX8G5QDrhSwOoCMB5OnuLA/vSEroHoAyYOhXffKUuvBCcAjdnssCkCKfihFBoE3bOAagr8pBfbw==;5:Nkf2hQHbfmWtJOgQseeDPWxb93OPE71cwM8FO8ztxyAKLxSk3Loz3UrvevypP6ae9iPYT8LuoRV8tfXxYNWKJCQUr410r1e3+SQk/TUh9gnxpr47KhiICFD2dT89RtT6qR8/fxqfoE78HixPcQSDrZa1TeztM8n9zV6Wqyeq9ZA=;24:yQaHUo4B1YIcB/SyWFx6RzNSTNqMU7FV1ewWlp7WcYNMA8WQVHorBrs7uIkFWC0R7v4/VX2bis/lM6eVjphZCseqJWKvF9tjgOKXsNpe9lI=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0202MB2782;7:PkfsldeuPJmFHqN1TOO8VkpiPc2DjJJbLvwNVlw8AErQQ0fvZCOS38+x6TOnRScTeyGcsZmI6UP1vvbVgkgeLAA45hlWgaT67us8ODf9dRz0sHtY3dtoRosS5CFYsAyG8uzS5heZjWFtHg9EBuAdTEGO5UqHm8BvTrjgtybv+XEYxvCMxyzoVu44/toSefqm0sGFDMnD8YVGMRR32X8X2eK5z2aFCATeJBETdRIZQ8fDfD/ejMKXJq660IfaQZi5
-X-MS-Office365-Filtering-Correlation-Id: c71818ef-3858-47fd-bc36-08d5abc59071
-X-OriginatorOrg: axentia.se
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Apr 2018 22:32:15.3697 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c71818ef-3858-47fd-bc36-08d5abc59071
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0202MB2782
+In-Reply-To: <CALzJLG8=dnyLGRXamLR5-eYJ9Q8WCwKe44sHHZ57=1h_x0RCRA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8875 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804260209
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This will become mandatory.
 
-Signed-off-by: Peter Rosin <peda@axentia.se>
----
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 5c52307146c7..5a9dbbd7897a 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -1308,6 +1308,7 @@ static int analogix_dp_create_bridge(struct drm_device *drm_dev,
- 
- 	dp->bridge = bridge;
- 
-+	bridge->owner = dp->dev;
- 	bridge->driver_private = dp;
- 	bridge->funcs = &analogix_dp_bridge_funcs;
- 
--- 
-2.11.0
+On 04/26/2018 02:50 PM, Saeed Mahameed wrote:
+> On Thu, Apr 26, 2018 at 1:37 PM, Qing Huang <qing.huang@oracle.com> wrote:
+>> Current stats collecting scheme in mlx5 driver is to periodically fetch
+>> aggregated stats from all the active mlx5 software channels associated
+>> with the device. However when a mlx5 interface is brought down(ifdown),
+>> all the channels will be deactivated and closed. A new set of channels
+>> will be created when next ifup command or a similar command is called.
+>> Unfortunately the new channels will have all stats reset to 0. So you
+>> lose the accumulated stats information. This behavior is different from
+>> other netdev drivers including the mlx4 driver. In order to fix it, we
+>> now save prior mlx5 software stats into netdev stats fields, so all the
+>> accumulated stats will survive multiple runs of ifdown/ifup commands and
+>> be shown correctly.
+>>
+>> Orabug: 27548610
+>>
+>> Signed-off-by: Qing Huang <qing.huang@oracle.com>
+>> ---
+> Hi Qing,
+>
+> I am adding Eran since he is currently working on a similar patch,
+> He is also taking care of all cores/rings stats to make them
+> persistent, so you won't have discrepancy  between
+> ethtool and ifconfig stats.
+>
+> I am ok with this patch, but this means Eran has to work his way around it.
+>
+> so we have two options:
+>
+> 1. Temporary accept this patch, and change it later with Eran's work.
+> 2. Wait for Eran's work.
+>
+> I am ok with either one of them, please let me know.
+>
+> Thanks !
+Hi Saeed,
+
+Any idea on rough ETA of Eran's stats work to be in upstream? If it will 
+be available soon, I think
+we can wait a bit. If it will take a while to redesign the whole stats 
+scheme (for both ethtool and ifconfig),
+maybe we can go with this incremental fix first?
+
+Thanks!
+
+>
+>>   drivers/net/ethernet/mellanox/mlx5/core/en_main.c | 30 +++++++++++++++++++----
+>>   1 file changed, 25 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+>> index f1fe490..5d50e69 100644
+>> --- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+>> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+>> @@ -2621,6 +2621,23 @@ static void mlx5e_netdev_set_tcs(struct net_device *netdev)
+>>                  netdev_set_tc_queue(netdev, tc, nch, 0);
+>>   }
+>>
+>> +static void mlx5e_netdev_save_stats(struct mlx5e_priv *priv)
+>> +{
+>> +       struct net_device *netdev = priv->netdev;
+>> +
+>> +       netdev->stats.rx_packets += priv->stats.sw.rx_packets;
+>> +       netdev->stats.rx_bytes   += priv->stats.sw.rx_bytes;
+>> +       netdev->stats.tx_packets += priv->stats.sw.tx_packets;
+>> +       netdev->stats.tx_bytes   += priv->stats.sw.tx_bytes;
+>> +       netdev->stats.tx_dropped += priv->stats.sw.tx_queue_dropped;
+>> +
+>> +       priv->stats.sw.rx_packets       = 0;
+>> +       priv->stats.sw.rx_bytes         = 0;
+>> +       priv->stats.sw.tx_packets       = 0;
+>> +       priv->stats.sw.tx_bytes         = 0;
+>> +       priv->stats.sw.tx_queue_dropped = 0;
+>> +}
+>> +
+> This means that we are now explicitly clearing channels stats on
+> ifconfig down or switch_channels.
+> and now after ifconfing down, ethtool will always show 0, before this
+> patch it didn't.
+> Anyway update sw stats function will always override them with the new
+> channels stats next time we load new channels.
+> so it is not that big of a deal.
+>
+>
+>>   static void mlx5e_build_channels_tx_maps(struct mlx5e_priv *priv)
+>>   {
+>>          struct mlx5e_channel *c;
+>> @@ -2691,6 +2708,7 @@ void mlx5e_switch_priv_channels(struct mlx5e_priv *priv,
+>>                  netif_set_real_num_tx_queues(netdev, new_num_txqs);
+>>
+>>          mlx5e_deactivate_priv_channels(priv);
+>> +       mlx5e_netdev_save_stats(priv);
+>>          mlx5e_close_channels(&priv->channels);
+>>
+>>          priv->channels = *new_chs;
+>> @@ -2770,6 +2788,7 @@ int mlx5e_close_locked(struct net_device *netdev)
+>>
+>>          netif_carrier_off(priv->netdev);
+>>          mlx5e_deactivate_priv_channels(priv);
+>> +       mlx5e_netdev_save_stats(priv);
+>>          mlx5e_close_channels(&priv->channels);
+>>
+>>          return 0;
+>> @@ -3215,11 +3234,12 @@ static int mlx5e_setup_tc(struct net_device *dev, enum tc_setup_type type,
+>>                  stats->tx_packets = PPORT_802_3_GET(pstats, a_frames_transmitted_ok);
+>>                  stats->tx_bytes   = PPORT_802_3_GET(pstats, a_octets_transmitted_ok);
+>>          } else {
+>> -               stats->rx_packets = sstats->rx_packets;
+>> -               stats->rx_bytes   = sstats->rx_bytes;
+>> -               stats->tx_packets = sstats->tx_packets;
+>> -               stats->tx_bytes   = sstats->tx_bytes;
+>> -               stats->tx_dropped = sstats->tx_queue_dropped;
+>> +               stats->rx_packets = sstats->rx_packets + dev->stats.rx_packets;
+>> +               stats->rx_bytes   = sstats->rx_bytes + dev->stats.rx_bytes;
+>> +               stats->tx_packets = sstats->tx_packets + dev->stats.tx_packets;
+>> +               stats->tx_bytes   = sstats->tx_bytes + dev->stats.tx_bytes;
+>> +               stats->tx_dropped = sstats->tx_queue_dropped +
+>> +                                   dev->stats.tx_dropped;
+>>          }
+>>
+>>          stats->rx_dropped = priv->stats.qcnt.rx_out_of_buffer;
+>> --
+>> 1.8.3.1
+>>
