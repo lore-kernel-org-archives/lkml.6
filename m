@@ -1,363 +1,189 @@
-Return-Path: <krzk@kernel.org>
-X-Google-Smtp-Source: AIpwx49UZP527mrxBOGdEHH/WabWLdaHS1ZKWlG1NEs6z6tmhdp7pMmOP/i5aOIM+3j/zr49Dq2O
-ARC-Seal: i=1; a=rsa-sha256; t=1524602019; cv=none;
-        d=google.com; s=arc-20160816;
-        b=kOIePkdAC3zo52zvQq+QjUsh2KpGvuM5lKGla60zuw/QvxcAa9Bgkr2sWkETWOeGz0
-         XvZ1CIUuks8+45fl4n48n1aeFbMulMTdZZS4svLfHUKmaO5WBazC5VYAGgSOeT759sw6
-         mEsKjmz9YMeIj+YDXHLqFJioGS9oEobqe+3AVCC+cSwKaxFGlEEXUesOtptwpSFxMywq
-         /vMcUlJjS3hyRfVknG5AjVo7m9UkOuYjHfNUsBaa2x9fd9L56Lwle+FHfq+sx1/u9Opd
-         28pmiJi6pLthOLhRWEXRanfmY9SLyzZIy+kiAbRRNdRJNaHgfbu8nYjKfHo+lK/VOe0c
-         2owg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dmarc-filter:arc-authentication-results;
-        bh=UEKyLrxH3lD4zs50VeNuPA5d1CFUDP73VgZoEhhDRN8=;
-        b=yMULyrk2F7bj/R47xu8zqNccGtRzpTrgE8sPRg3ni0dNxkvLow1By3q7I6FkgZW888
-         K2G0y68mitCuPTBxJ3uaE1RZ+R5alS5xwE2Q7Zehp9arWInUlWtgWDyhQR8sOPxT3UbX
-         lwVLIXhzJY0CUICJ9cd/8PfSkMZ2tG6rbBfOyISIYmyKe4cseLcnFTBWyqX6oKSvvLHi
-         mXTjz+QO64FBIsVP6fLTIrvw9Kj9m7Cn55syNwVjkWHKV5gyVmZmP+/eV/HMh/bfEA/3
-         /2sghP3VpCDh3HJa6ER/iLvxEz2oDzvknC43VDp0crtSq0F8+XV6D1ISNHZ49NgbRMda
-         0iBA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of krzk@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=krzk@kernel.org
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of krzk@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=krzk@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B8EA217D9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=krzk@kernel.org
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Tejun Heo <tj@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Eduardo Valentin <edubezval@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Andi Shyti <andi@etezian.org>,
-	Mark Brown <broonie@kernel.org>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-ide@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-spi@vger.kernel.org,
-	linux-usb@vger.kernel.org
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1619581-1524704354-3-3488273090978401110
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES daensv, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-usb-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524704353; b=psk2PPRowCycbk+dqLngaZw9QT7aJPD4KDkwdOO8t1lXq7YyMm
+    4vVGfAzhTafLLDJFUjW0QfsHDcqmst4N/1ReiVsGVjwDc4/nu+qSqVTkpq/ACxxS
+    zIoiAECx1MGbqRNZPrKM6EuZm6I9zAx+pgWtXHcBPxoc5KHcfdnSHu/RB+Ke+r/T
+    6BiOmdnzBJjkFKa6h4RH2cO84HHDb8Geu3dAPE/FGgijE/kdD7NKJBwTkHunO/JC
+    4xEH2kk2mm2bxJPa+CopUBcYlTCUDwBRLd6sbYGJvH99wFrTd/RrBr85JGfMzIst
+    TzCrdvCrqIUJCPAxMwyHRLXud+5L6LgjDEGw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=mime-version:content-transfer-encoding
+    :content-type:message-id:date:from:to:cc:subject:in-reply-to
+    :references:sender:list-id; s=fm2; t=1524704353; bh=Zz0nrN2SzkXz
+    XxGpE6t6Y/PjYcSQUNcqAGVasJz5Zxc=; b=JsbIyG8hrAd9lUAKnYXXjRKVJ5ky
+    bECJg058Oi3krmYDCwVjeQhioMQ0cqPP9pmaNBeT7KT7gFTdlKkgFl0QgIze4tkS
+    aUkxt+wOoBOYPFsyLlooJashBHBweqPSYPqlUUOv29PGT1NzcEgDHO2o9OmISgNq
+    g02cDtWBWL4lAQi7rH6pxHcKXTZbGUA8b7ahwXZigsa0EWTT4ULTt2syDbhOU2tZ
+    fbdSDGhExg0kVTHY9QTJj3Sf3P7qY1UBJKLWRe7VtKNMD5MD6JsprVC4QYeVP4SE
+    ajf2ApCoFg8NOC5jFH9fA7L0crPBGo90L5B1rsLFTm8tL7XN5KR5KtP1Ng==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 1024-bit rsa key sha256) header.d=samsung.com header.i=@samsung.com header.b=GwElLDcg x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=mail20170921;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=samsung.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=samsung.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (body has been altered, 1024-bit rsa key sha256) header.d=samsung.com header.i=@samsung.com header.b=GwElLDcg x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=mail20170921;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=samsung.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=samsung.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfI+BXuPzhpMFQWhAgDy9G128kRvUwHzbdbXW0NVswGx7R5qa5rw83Fh/r42T2poh68GLo/K54d0OPhjMekRTT+6h4CpamYcQfQ6cfppRVYWEFZ73GYaI
+    vhsQBgP4Hl+8gTK11Ul3vAsb8BS2HnQjYv+mqb3JK3LuxaIz0cRsKdLD4CXrqY8iMXezxFh9HrdBM2icGZPjeoRPjw3krmsb4S9PQY/JaZbyx5NOUBNRVYCI
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=VwQbUJbxAAAA:8 a=hD80L64hAAAA:8 a=KXQFBCsgnY3szuWKRloA:9 a=QEXdDO2ut3YA:10
+    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753021AbeDZA66 (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 25 Apr 2018 20:58:58 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:28213 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751528AbeDZA6s (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Wed, 25 Apr 2018 20:58:48 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20180426005845epoutp02a679b39777463882ff146fb6850879b8~o1oGKhiEB1840018400epoutp02C
+X-AuditID: b6c32a39-8bdff70000000fed-88-5ae12442823e
+MIME-version: 1.0
+Content-transfer-encoding: 8BIT
+Content-type: text/plain; charset="UTF-8"
+Message-id: <5AE12441.2090506@samsung.com>
+Date: Thu, 26 Apr 2018 09:58:41 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
+        Thunderbird/31.6.0
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Tejun Heo <tj@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andi Shyti <andi@etezian.org>, Mark Brown <broonie@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-usb@vger.kernel.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Olof Johansson <olof@lixom.net>,
-	Jaehoon Chung <jh80.chung@samsung.com>
-Subject: [RFC 04/10] clk: samsung: Remove support for Exynos5440
-Date: Tue, 24 Apr 2018 22:32:33 +0200
-Message-Id: <20180424203239.21885-5-krzk@kernel.org>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180424203239.21885-1-krzk@kernel.org>
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [RFC 04/10] clk: samsung: Remove support for Exynos5440
+In-reply-to: <20180424203239.21885-5-krzk@kernel.org>
+X-Brightmail-Tracker: H4sIAAAAAAAAA01TbUxbVRjO6e29tyCdl25zJxgd3kwNTWDcQrfDQhd1zNwpxibzx4aaegM3
+        QEZb7G0XcCrMCUU22ESQCUiZTNGGDyloCoOxQVcWQJAyvlRwCG7ObTCGY4QP56Xt4n6d5zzv
+        87zvOU/yyjBFFxkiSzWYeZOBS6OJQOmPXWHbw1/aNpUQefO7WFS9dF2C1orcJGo83YCjkqkZ
+        Atlc/TiyXRnB0bHqBgLd6i6VoLHlXBydnL6JoYGB70lUvFojQY5pUTJ/YhJHTbZVgPLW/gHI
+        7fxDgoZaKwi0UOAC6PTAeQk6Oj9Ooq++ycFQZ0k7QHWuCRJ9PTooQYM9e1HP6AKB+no9OMpp
+        d5FoZqqQQF23rDj6d6RRik6t/Eyg5ZpLANlbxRGN99gXtrG1lbWAHRoZxNiV5SLAzo3lkOzo
+        2bsY21I2QbLVbTckrMP+CcH+NtJGsB1f1pJs09ks9srlj3B27vwwwTYPW6Vs+cQSYAub7UAb
+        nMDHpvBcEm8K5Q2JxqRUQ7KGfnW/bo9OvSOSCWdi0E461MDpeQ0dF68Nfzk1TQyTDj3MpVlE
+        SssJAr19d6zJaDHzoSlGwayh32QYVQQTuTNCpRLPqLd3qdSi5B0+ZXaoSpp+ncy42F8vzQYV
+        RD4IkEEqGo67x8l8EChTUE4Aj9YXEb7LfQBrjs/hD1Vf9N2W+grnAHxwZ8Jrl1PBcOmzSbEg
+        k2HUVujyHFqnMSoM/nCuwd91AsAZz2W/XgkLl0q9WEo9C61ruV5MiHzHX2Ne/Dj1DBxemgbr
+        eDN1ALbYFr2NNlF5ATB7tRbzTSgHMNeZto43UnHwzn2r1xxAqeFy40Vs3QCpqzJYcW0I830h
+        DrYUH/fjjfDv7mZy/dWQehJ6Lml8eiuA1vZKv7kYwP7RSYnPEAWvncmX+CZvgLP3TuA+sxzm
+        5Sp8EhbWNfX6+78IqwoW/HE1AegosYFT4OmyRxIr+z+xskcSqwKYHTzBpwv6ZF5g0tURAqcX
+        LIbkiESj3gG8C6SMcQJ3f3wnoGSADpJrz1xNUODcYSFT3wmgDKM3yQ8UiJQ8ict8jzcZdSZL
+        Gi90ArUY+KdYyOZEo7iOBrOOUauioqJQNLNDzTD0Fvmf8X0JCiqZM/OHeD6dNz30SWQBIdkg
+        ZsPBLd+W75utP6gLu220OBxre92lQcdai44ERy8GOUMqFlYutNnr50qmLihec2oTpR+88Zjm
+        wS+/v9W9vy7rw93Rixl1vUrpYE3H5x8bMwsjT4YM95Xkm7uf73qq3Dr0XOTyu5VH5m/osl73
+        BL5yd08waNYo+/t+3ZrR8749edfAT9MsLRVSOEaJmQTuP5kLKaZWBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0iTYRjl3XedtPpchm+FVKNQrCyl4PkRUVH5UhkGESaVjfxQ0U3b7GIE
+        WTGXWStM0ay8lzI105moaN6WdhHvTsWsdIZFlpldxlJpM6L+neec85zn/Hh4Sn6fWcZHqGNF
+        jVoZpWBd6JdzVmH9jtUjwRsLRz0gzzYugdnkFg7K0ksZSB0ZYyHL3M5AVq+Fgct5pSxMtKZJ
+        YMCewMAN60cKOjoecZAyUyCBcqvDMnXtNQOmrBkEV2a/IWipGpVAT81dFqavmxGkdzyRwMWp
+        QQ5yH+goaEqtQ1BiHubgfn+XBLpe7IIX/dMstL3sZkBXZ+ZgbMTAQvOEnoE5SxkNN391smAv
+        eIrAWOM4UfadbFtNijOLEemxdFHklz0ZkckBHUf6879SpDpjmCN5tR8kpNyYyJJXllqW1N8r
+        5ogp/wLpfXaJIZNP+lhS0aenyZ1hGyKGCiMKdA122RIqRkWcFjUbth53Cf/ck03HjHNnG9sf
+        0vHoLnsVSXksbMK32z7RTiwXqhF+YPVwYpngim23Xjt4nqeEFdjcHemkKcETJ2fmUleRi8P+
+        BmFrdj39x++NDba0+UxaWIP1swnzmHXw9e8H5vEiYRXus1mRM3OJEISTnsU5c9yEa1Jcaa5h
+        nQMl3EbY1Dk6v7BY2Im//NSzf66ZHMIlPXIKUmEztpc1UjeRkPFf2Yx/ZTP+K5uNKCNaKsZo
+        VWEqrV+Mr1o846NVqrSn1GE+J6JV5cjxPJXN3oYq9CY/pAkJPFIskAXmvA2WM8rT2jhVE8I8
+        pXCTBV13ULJQZdw5URMdojkVJWqb0HKeVrjLhtQth+VCmDJWjBTFGFHzV5Xw0mXxKOWY1D/2
+        3baWBJNl8nm+l31m1Ul304+AhnWuZv/H55dWkobtRR8G56aXdOLxqa3DPbXpxjpqf+D3qoOt
+        JupQyvIjQ3sXjnoNqouONgddPJDkmSP324NSdP66NPfI8USPJGvlAY+Gt/syEwOydqPQ2onU
+        tQHx91ZWjfmVnMCGwu6fClobrvT1pjRa5W8yvnVSOAMAAA==
+X-CMS-MailID: 20180426005842epcas1p1e0a79b60507d80858aec7857f390492e
+X-Msg-Generator: CA
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180424203341epcas5p3a6db7d58b0ce8940d03711823fbf6e41
+X-RootMTR: 20180424203341epcas5p3a6db7d58b0ce8940d03711823fbf6e41
 References: <20180424203239.21885-1-krzk@kernel.org>
+        <CGME20180424203341epcas5p3a6db7d58b0ce8940d03711823fbf6e41@epcas5p3.samsung.com>
+        <20180424203239.21885-5-krzk@kernel.org>
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598661087387202007?=
-X-GMAIL-MSGID: =?utf-8?q?1598661087387202007?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The Exynos5440 is not actively developed, there are no development
-boards available and probably there are no real products with it.
-Remove wide-tree support for Exynos5440.
+Hi Krzysztof,
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- .../devicetree/bindings/clock/exynos5440-clock.txt |  28 ----
- drivers/clk/samsung/Makefile                       |   1 -
- drivers/clk/samsung/clk-exynos5440.c               | 167 ---------------------
- include/dt-bindings/clock/exynos5440.h             |  44 ------
- 4 files changed, 240 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/exynos5440-clock.txt
- delete mode 100644 drivers/clk/samsung/clk-exynos5440.c
- delete mode 100644 include/dt-bindings/clock/exynos5440.h
+On 2018년 04월 25일 05:32, Krzysztof Kozlowski wrote:
+> The Exynos5440 is not actively developed, there are no development
+> boards available and probably there are no real products with it.
+> Remove wide-tree support for Exynos5440.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  .../devicetree/bindings/clock/exynos5440-clock.txt |  28 ----
+>  drivers/clk/samsung/Makefile                       |   1 -
+>  drivers/clk/samsung/clk-exynos5440.c               | 167 ---------------------
+>  include/dt-bindings/clock/exynos5440.h             |  44 ------
+>  4 files changed, 240 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/exynos5440-clock.txt
+>  delete mode 100644 drivers/clk/samsung/clk-exynos5440.c
+>  delete mode 100644 include/dt-bindings/clock/exynos5440.h
+> 
 
-diff --git a/Documentation/devicetree/bindings/clock/exynos5440-clock.txt b/Documentation/devicetree/bindings/clock/exynos5440-clock.txt
-deleted file mode 100644
-index c7d227c31e95..000000000000
---- a/Documentation/devicetree/bindings/clock/exynos5440-clock.txt
-+++ /dev/null
-@@ -1,28 +0,0 @@
--* Samsung Exynos5440 Clock Controller
--
--The Exynos5440 clock controller generates and supplies clock to various
--controllers within the Exynos5440 SoC.
--
--Required Properties:
--
--- compatible: should be "samsung,exynos5440-clock".
--
--- reg: physical base address of the controller and length of memory mapped
--  region.
--
--- #clock-cells: should be 1.
--
--Each clock is assigned an identifier and client nodes can use this identifier
--to specify the clock which they consume.
--
--All available clocks are defined as preprocessor macros in
--dt-bindings/clock/exynos5440.h header and can be used in device
--tree sources.
--
--Example: An example of a clock controller node is listed below.
--
--	clock: clock-controller@10010000 {
--		compatible = "samsung,exynos5440-clock";
--		reg = <0x160000 0x10000>;
--		#clock-cells = <1>;
--	};
-diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
-index 513826393158..1a4e6b787978 100644
---- a/drivers/clk/samsung/Makefile
-+++ b/drivers/clk/samsung/Makefile
-@@ -14,7 +14,6 @@ obj-$(CONFIG_SOC_EXYNOS5410)	+= clk-exynos5410.o
- obj-$(CONFIG_SOC_EXYNOS5420)	+= clk-exynos5420.o
- obj-$(CONFIG_SOC_EXYNOS5420)	+= clk-exynos5-subcmu.o
- obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos5433.o
--obj-$(CONFIG_SOC_EXYNOS5440)	+= clk-exynos5440.o
- obj-$(CONFIG_EXYNOS_AUDSS_CLK_CON) += clk-exynos-audss.o
- obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos-clkout.o
- obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos7.o
-diff --git a/drivers/clk/samsung/clk-exynos5440.c b/drivers/clk/samsung/clk-exynos5440.c
-deleted file mode 100644
-index b08bd54c5e76..000000000000
---- a/drivers/clk/samsung/clk-exynos5440.c
-+++ /dev/null
-@@ -1,167 +0,0 @@
--/*
-- * Copyright (c) 2013 Samsung Electronics Co., Ltd.
-- * Author: Thomas Abraham <thomas.ab@samsung.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- *
-- * Common Clock Framework support for Exynos5440 SoC.
--*/
--
--#include <dt-bindings/clock/exynos5440.h>
--#include <linux/clk-provider.h>
--#include <linux/of.h>
--#include <linux/of_address.h>
--#include <linux/notifier.h>
--#include <linux/reboot.h>
--
--#include "clk.h"
--#include "clk-pll.h"
--
--#define CLKEN_OV_VAL		0xf8
--#define CPU_CLK_STATUS		0xfc
--#define MISC_DOUT1		0x558
--
--static void __iomem *reg_base;
--
--/* parent clock name list */
--PNAME(mout_armclk_p)	= { "cplla", "cpllb" };
--PNAME(mout_spi_p)	= { "div125", "div200" };
--
--/* fixed rate clocks generated outside the soc */
--static struct samsung_fixed_rate_clock exynos5440_fixed_rate_ext_clks[] __initdata = {
--	FRATE(0, "xtal", NULL, 0, 0),
--};
--
--/* fixed rate clocks */
--static const struct samsung_fixed_rate_clock exynos5440_fixed_rate_clks[] __initconst = {
--	FRATE(0, "ppll", NULL, 0, 1000000000),
--	FRATE(0, "usb_phy0", NULL, 0, 60000000),
--	FRATE(0, "usb_phy1", NULL, 0, 60000000),
--	FRATE(0, "usb_ohci12", NULL, 0, 12000000),
--	FRATE(0, "usb_ohci48", NULL, 0, 48000000),
--};
--
--/* fixed factor clocks */
--static const struct samsung_fixed_factor_clock exynos5440_fixed_factor_clks[] __initconst = {
--	FFACTOR(0, "div250", "ppll", 1, 4, 0),
--	FFACTOR(0, "div200", "ppll", 1, 5, 0),
--	FFACTOR(0, "div125", "div250", 1, 2, 0),
--};
--
--/* mux clocks */
--static const struct samsung_mux_clock exynos5440_mux_clks[] __initconst = {
--	MUX(0, "mout_spi", mout_spi_p, MISC_DOUT1, 5, 1),
--	MUX(CLK_ARM_CLK, "arm_clk", mout_armclk_p, CPU_CLK_STATUS, 0, 1),
--};
--
--/* divider clocks */
--static const struct samsung_div_clock exynos5440_div_clks[] __initconst = {
--	DIV(CLK_SPI_BAUD, "div_spi", "mout_spi", MISC_DOUT1, 3, 2),
--};
--
--/* gate clocks */
--static const struct samsung_gate_clock exynos5440_gate_clks[] __initconst = {
--	GATE(CLK_PB0_250, "pb0_250", "div250", CLKEN_OV_VAL, 3, 0, 0),
--	GATE(CLK_PR0_250, "pr0_250", "div250", CLKEN_OV_VAL, 4, 0, 0),
--	GATE(CLK_PR1_250, "pr1_250", "div250", CLKEN_OV_VAL, 5, 0, 0),
--	GATE(CLK_B_250, "b_250", "div250", CLKEN_OV_VAL, 9, 0, 0),
--	GATE(CLK_B_125, "b_125", "div125", CLKEN_OV_VAL, 10, 0, 0),
--	GATE(CLK_B_200, "b_200", "div200", CLKEN_OV_VAL, 11, 0, 0),
--	GATE(CLK_SATA, "sata", "div200", CLKEN_OV_VAL, 12, 0, 0),
--	GATE(CLK_USB, "usb", "div200", CLKEN_OV_VAL, 13, 0, 0),
--	GATE(CLK_GMAC0, "gmac0", "div200", CLKEN_OV_VAL, 14, 0, 0),
--	GATE(CLK_CS250, "cs250", "div250", CLKEN_OV_VAL, 19, 0, 0),
--	GATE(CLK_PB0_250_O, "pb0_250_o", "pb0_250", CLKEN_OV_VAL, 3, 0, 0),
--	GATE(CLK_PR0_250_O, "pr0_250_o", "pr0_250", CLKEN_OV_VAL, 4, 0, 0),
--	GATE(CLK_PR1_250_O, "pr1_250_o", "pr1_250", CLKEN_OV_VAL, 5, 0, 0),
--	GATE(CLK_B_250_O, "b_250_o", "b_250", CLKEN_OV_VAL, 9, 0, 0),
--	GATE(CLK_B_125_O, "b_125_o", "b_125", CLKEN_OV_VAL, 10, 0, 0),
--	GATE(CLK_B_200_O, "b_200_o", "b_200", CLKEN_OV_VAL, 11, 0, 0),
--	GATE(CLK_SATA_O, "sata_o", "sata", CLKEN_OV_VAL, 12, 0, 0),
--	GATE(CLK_USB_O, "usb_o", "usb", CLKEN_OV_VAL, 13, 0, 0),
--	GATE(CLK_GMAC0_O, "gmac0_o", "gmac", CLKEN_OV_VAL, 14, 0, 0),
--	GATE(CLK_CS250_O, "cs250_o", "cs250", CLKEN_OV_VAL, 19, 0, 0),
--};
--
--static const struct of_device_id ext_clk_match[] __initconst = {
--	{ .compatible = "samsung,clock-xtal", .data = (void *)0, },
--	{},
--};
--
--static int exynos5440_clk_restart_notify(struct notifier_block *this,
--		unsigned long code, void *unused)
--{
--	u32 val, status;
--
--	status = readl_relaxed(reg_base + 0xbc);
--	val = readl_relaxed(reg_base + 0xcc);
--	val = (val & 0xffff0000) | (status & 0xffff);
--	writel_relaxed(val, reg_base + 0xcc);
--
--	return NOTIFY_DONE;
--}
--
--/*
-- * Exynos5440 Clock restart notifier, handles restart functionality
-- */
--static struct notifier_block exynos5440_clk_restart_handler = {
--	.notifier_call = exynos5440_clk_restart_notify,
--	.priority = 128,
--};
--
--static const struct samsung_pll_clock exynos5440_plls[] __initconst = {
--	PLL(pll_2550x, CLK_CPLLA, "cplla", "xtal", 0, 0x4c, NULL),
--	PLL(pll_2550x, CLK_CPLLB, "cpllb", "xtal", 0, 0x50, NULL),
--};
--
--/*
-- * Clock aliases for legacy clkdev look-up.
-- */
--static const struct samsung_clock_alias exynos5440_aliases[] __initconst = {
--	ALIAS(CLK_ARM_CLK, NULL, "armclk"),
--};
--
--/* register exynos5440 clocks */
--static void __init exynos5440_clk_init(struct device_node *np)
--{
--	struct samsung_clk_provider *ctx;
--
--	reg_base = of_iomap(np, 0);
--	if (!reg_base) {
--		pr_err("%s: failed to map clock controller registers,"
--			" aborting clock initialization\n", __func__);
--		return;
--	}
--
--	ctx = samsung_clk_init(np, reg_base, CLK_NR_CLKS);
--
--	samsung_clk_of_register_fixed_ext(ctx, exynos5440_fixed_rate_ext_clks,
--		ARRAY_SIZE(exynos5440_fixed_rate_ext_clks), ext_clk_match);
--
--	samsung_clk_register_pll(ctx, exynos5440_plls,
--			ARRAY_SIZE(exynos5440_plls), ctx->reg_base);
--
--	samsung_clk_register_fixed_rate(ctx, exynos5440_fixed_rate_clks,
--			ARRAY_SIZE(exynos5440_fixed_rate_clks));
--	samsung_clk_register_fixed_factor(ctx, exynos5440_fixed_factor_clks,
--			ARRAY_SIZE(exynos5440_fixed_factor_clks));
--	samsung_clk_register_mux(ctx, exynos5440_mux_clks,
--			ARRAY_SIZE(exynos5440_mux_clks));
--	samsung_clk_register_div(ctx, exynos5440_div_clks,
--			ARRAY_SIZE(exynos5440_div_clks));
--	samsung_clk_register_gate(ctx, exynos5440_gate_clks,
--			ARRAY_SIZE(exynos5440_gate_clks));
--	samsung_clk_register_alias(ctx, exynos5440_aliases,
--						ARRAY_SIZE(exynos5440_aliases));
--
--	samsung_clk_of_add_provider(np, ctx);
--
--	if (register_restart_handler(&exynos5440_clk_restart_handler))
--		pr_warn("exynos5440 clock can't register restart handler\n");
--
--	pr_info("Exynos5440: arm_clk = %ldHz\n", _get_rate("arm_clk"));
--	pr_info("exynos5440 clock initialization complete\n");
--}
--CLK_OF_DECLARE(exynos5440_clk, "samsung,exynos5440-clock", exynos5440_clk_init);
-diff --git a/include/dt-bindings/clock/exynos5440.h b/include/dt-bindings/clock/exynos5440.h
-deleted file mode 100644
-index 842cdc0adff1..000000000000
---- a/include/dt-bindings/clock/exynos5440.h
-+++ /dev/null
-@@ -1,44 +0,0 @@
--/*
-- * Copyright (c) 2013 Samsung Electronics Co., Ltd.
-- * Author: Andrzej Hajda <a.hajda@samsung.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- *
-- * Device Tree binding constants for Exynos5440 clock controller.
--*/
--
--#ifndef _DT_BINDINGS_CLOCK_EXYNOS_5440_H
--#define _DT_BINDINGS_CLOCK_EXYNOS_5440_H
--
--#define CLK_XTAL		1
--#define CLK_ARM_CLK		2
--#define CLK_CPLLA		3
--#define CLK_CPLLB		4
--#define CLK_SPI_BAUD		16
--#define CLK_PB0_250		17
--#define CLK_PR0_250		18
--#define CLK_PR1_250		19
--#define CLK_B_250		20
--#define CLK_B_125		21
--#define CLK_B_200		22
--#define CLK_SATA		23
--#define CLK_USB			24
--#define CLK_GMAC0		25
--#define CLK_CS250		26
--#define CLK_PB0_250_O		27
--#define CLK_PR0_250_O		28
--#define CLK_PR1_250_O		29
--#define CLK_B_250_O		30
--#define CLK_B_125_O		31
--#define CLK_B_200_O		32
--#define CLK_SATA_O		33
--#define CLK_USB_O		34
--#define CLK_GMAC0_O		35
--#define CLK_CS250_O		36
--
--/* must be greater than maximal clock id */
--#define CLK_NR_CLKS		37
--
--#endif /* _DT_BINDINGS_CLOCK_EXYNOS_5440_H */
+Looks good to me. Thanks.
+
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+
+[snip]
+
 -- 
-2.14.1
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
