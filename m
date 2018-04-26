@@ -1,84 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756798AbeDZP5Y (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 11:57:24 -0400
-Received: from scorn.kernelslacker.org ([45.56.101.199]:41674 "EHLO
-        scorn.kernelslacker.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756615AbeDZP5W (ORCPT
+        id S1756775AbeDZP6s (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 11:58:48 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:39022 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756519AbeDZP6q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 11:57:22 -0400
-Date: Thu, 26 Apr 2018 11:57:14 -0400
-From: Dave Jones <davej@codemonkey.org.uk>
-To: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-Cc: Linux Kernel <linux-kernel@vger.kernel.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>, intel-gfx@lists.freedesktop.org
-Subject: Re: [Intel-gfx] 4.17-rc2: Could not determine valid watermarks for
- inherited state
-Message-ID: <20180426155714.z24rryrhpvhqt33i@codemonkey.org.uk>
-Mail-Followup-To: Dave Jones <davej@codemonkey.org.uk>,
-        Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        intel-gfx@lists.freedesktop.org
-References: <20180423152713.2rrwwye3wfstbv5v@codemonkey.org.uk>
- <20180426131045.GH23723@intel.com>
- <20180426142719.fzivt2e6kialcbp4@codemonkey.org.uk>
- <20180426145614.GP23723@intel.com>
- <20180426151641.GQ23723@intel.com>
- <20180426152513.GR23723@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180426152513.GR23723@intel.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Spam-Note: SpamAssassin invocation failed
+        Thu, 26 Apr 2018 11:58:46 -0400
+From: Pavel Tatashin <pasha.tatashin@oracle.com>
+To: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
+        akpm@linux-foundation.org, kirill.shutemov@linux.intel.com,
+        linux-kernel@vger.kernel.org, mhocko@suse.com, linux-mm@kvack.org
+Subject: [PATCH] mm: sections are not offlined during memory hotremove
+Date: Thu, 26 Apr 2018 11:58:34 -0400
+Message-Id: <20180426155834.16845-1-pasha.tatashin@oracle.com>
+X-Mailer: git-send-email 2.17.0
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8875 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=782
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804260151
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 26, 2018 at 06:25:13PM +0300, Ville Syrjälä wrote:
- > On Thu, Apr 26, 2018 at 06:16:41PM +0300, Ville Syrjälä wrote:
- > > On Thu, Apr 26, 2018 at 05:56:14PM +0300, Ville Syrjälä wrote:
- > > > On Thu, Apr 26, 2018 at 10:27:19AM -0400, Dave Jones wrote:
- > > > > [    1.176131] [drm:i9xx_get_initial_plane_config] pipe A/primary A with fb: size=800x600@32, offset=0, pitch 3200, size 0x1d4c00
- > > > > [    1.176161] [drm:i915_gem_object_create_stolen_for_preallocated] creating preallocated stolen object: stolen_offset=0x0000000000000000, gtt_offset=0x0000000000000000, size=0x00000000001d5000
- > > > > [    1.176312] [drm:intel_alloc_initial_plane_obj.isra.127] initial plane fb obj         (ptrval)
- > > > > [    1.176351] [drm:intel_modeset_init] pipe A active planes 0x1
- > > > > [    1.176456] [drm:drm_atomic_helper_check_plane_state] Plane must cover entire CRTC
- > > > > [    1.176481] [drm:drm_rect_debug_print] dst: 800x600+0+0
- > > > > [    1.176494] [drm:drm_rect_debug_print] clip: 1366x768+0+0
- > > > 
- > > > OK, so that's the problem right there. The fb we took over from the
- > > > BIOS was 800x600, but now we're trying to set up a 1366x768 mode.
- > > > 
- > > > We seem to be missing checks to make sure the initial fb is actually
- > > > big enough for the mode we're currently using :(
- > > 
- > Hmm. Or maybe we should just stick to the pipe src size.
- > 
- > I'm curious whether this fixes the problem?
- > 
- > diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c
- > index 0f8c7389e87d..30824beedef7 100644
- > --- a/drivers/gpu/drm/i915/intel_display.c
- > +++ b/drivers/gpu/drm/i915/intel_display.c
- > @@ -15284,6 +15284,8 @@ static void intel_modeset_readout_hw_state(struct drm_device *dev)
- >  		memset(&crtc->base.mode, 0, sizeof(crtc->base.mode));
- >  		if (crtc_state->base.active) {
- >  			intel_mode_from_pipe_config(&crtc->base.mode, crtc_state);
- > +			crtc->base.mode.hdisplay = crtc_state->pipe_src_w;
- > +			crtc->base.mode.vdisplay = crtc_state->pipe_src_h;
- >  			intel_mode_from_pipe_config(&crtc_state->base.adjusted_mode, crtc_state);
- >  			WARN_ON(drm_atomic_set_mode_for_crtc(crtc->base.state, &crtc->base.mode));
- > 
+Memory hotplug, and hotremove operate with per-block granularity. If
+machine has large amount of memory (more than 64G), the size of memory
+block can span multiple sections. By mistake, during hotremove we set
+only the first section to offline state.
 
-It does!
+The bug was discovered because kernel selftest started to fail:
+https://lkml.kernel.org/r/20180423011247.GK5563@yexl-desktop
 
-Feel free to throw a Tested-by: Dave Jones <davej@codemonkey.org.uk> in there.
+After commit, "mm/memory_hotplug: optimize probe routine". But, the bug is
+older than this commit. In this optimization we also added a check for
+sections to be in a proper state during hotplug operation.
 
-	Dave
+Fixes: 2d070eab2e82 ("mm: consider zone which is not fully populated to have holes")
+
+Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+---
+ mm/sparse.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mm/sparse.c b/mm/sparse.c
+index 62eef264a7bd..73dc2fcc0eab 100644
+--- a/mm/sparse.c
++++ b/mm/sparse.c
+@@ -629,7 +629,7 @@ void offline_mem_sections(unsigned long start_pfn, unsigned long end_pfn)
+ 	unsigned long pfn;
+ 
+ 	for (pfn = start_pfn; pfn < end_pfn; pfn += PAGES_PER_SECTION) {
+-		unsigned long section_nr = pfn_to_section_nr(start_pfn);
++		unsigned long section_nr = pfn_to_section_nr(pfn);
+ 		struct mem_section *ms;
+ 
+ 		/*
+-- 
+1.8.3.1
