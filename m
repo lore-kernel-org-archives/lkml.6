@@ -1,56 +1,194 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757139AbeDZQ7e (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 12:59:34 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:58064 "EHLO
+        id S1757115AbeDZQ7c (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 12:59:32 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:58080 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756519AbeDZQxy (ORCPT
+        with ESMTP id S1756688AbeDZQxz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 12:53:54 -0400
+        Thu, 26 Apr 2018 12:53:55 -0400
 From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS FOR RENESAS),
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS),
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org (open list:PIN CONTROL SUBSYSTEM),
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 02/17] dt-bindings: display: renesas: du: Document the R8A77965 bindings
-Date: Thu, 26 Apr 2018 17:53:31 +0100
-Message-Id: <20180426165346.494-3-kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH 03/17] pinctrl: sh-pfc: r8a77965: Add DU RGB output pins, groups and functions
+Date: Thu, 26 Apr 2018 17:53:32 +0100
+Message-Id: <20180426165346.494-4-kieran.bingham+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com>
 References: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patch adds pins, groups and functions for parallel RGB output
+signals from DU. The HDMI and TCON pins are added to separate groups.
+
+Based on a similar patch of the R8A7796 PFC driver by Niklas Söderlund
+<niklas.soderlund+renesas@ragnatech.se>.
+
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+[Kieran: Rebase on top of tree]
 Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
- Documentation/devicetree/bindings/display/renesas,du.txt | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/pinctrl/sh-pfc/pfc-r8a77965.c | 116 ++++++++++++++++++++++++++
+ 1 file changed, 116 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/display/renesas,du.txt b/Documentation/devicetree/bindings/display/renesas,du.txt
-index a36a6e7ee54f..7c6854bd0a04 100644
---- a/Documentation/devicetree/bindings/display/renesas,du.txt
-+++ b/Documentation/devicetree/bindings/display/renesas,du.txt
-@@ -13,6 +13,7 @@ Required Properties:
-     - "renesas,du-r8a7794" for R8A7794 (R-Car E2) compatible DU
-     - "renesas,du-r8a7795" for R8A7795 (R-Car H3) compatible DU
-     - "renesas,du-r8a7796" for R8A7796 (R-Car M3-W) compatible DU
-+    - "renesas,du-r8a77965" for R8A77965 (R-Car M3-N) compatible DU
-     - "renesas,du-r8a77970" for R8A77970 (R-Car V3M) compatible DU
-     - "renesas,du-r8a77995" for R8A77995 (R-Car D3) compatible DU
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
+index 3771b2d10f39..f5a37d3ea753 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
+@@ -1662,6 +1662,102 @@ static const unsigned int avb_avtp_capture_b_mux[] = {
+ 	AVB_AVTP_CAPTURE_B_MARK,
+ };
  
-@@ -59,6 +60,7 @@ corresponding to each DU output.
-  R8A7794 (R-Car E2)     DPAD 0         DPAD 1         -              -
-  R8A7795 (R-Car H3)     DPAD 0         HDMI 0         HDMI 1         LVDS 0
-  R8A7796 (R-Car M3-W)   DPAD 0         HDMI 0         LVDS 0         -
-+ R8A77965 (R-Car M3-N)  DPAD 0         HDMI 0         LVDS 0         -
-  R8A77970 (R-Car V3M)   DPAD 0         LVDS 0         -              -
-  R8A77995 (R-Car D3)    DPAD 0         LVDS 0         LVDS 1         -
++/* - DU --------------------------------------------------------------------- */
++static const unsigned int du_rgb666_pins[] = {
++	/* R[7:2], G[7:2], B[7:2] */
++	RCAR_GP_PIN(0, 15), RCAR_GP_PIN(0, 14), RCAR_GP_PIN(0, 13),
++	RCAR_GP_PIN(0, 12), RCAR_GP_PIN(0, 11), RCAR_GP_PIN(0, 10),
++	RCAR_GP_PIN(1, 15), RCAR_GP_PIN(1, 14), RCAR_GP_PIN(1, 13),
++	RCAR_GP_PIN(1, 12), RCAR_GP_PIN(1, 19), RCAR_GP_PIN(1, 18),
++	RCAR_GP_PIN(1, 7),  RCAR_GP_PIN(1, 6),  RCAR_GP_PIN(1, 5),
++	RCAR_GP_PIN(1, 4),  RCAR_GP_PIN(1, 3),  RCAR_GP_PIN(1, 2),
++};
++
++static const unsigned int du_rgb666_mux[] = {
++	DU_DR7_MARK, DU_DR6_MARK, DU_DR5_MARK, DU_DR4_MARK,
++	DU_DR3_MARK, DU_DR2_MARK,
++	DU_DG7_MARK, DU_DG6_MARK, DU_DG5_MARK, DU_DG4_MARK,
++	DU_DG3_MARK, DU_DG2_MARK,
++	DU_DB7_MARK, DU_DB6_MARK, DU_DB5_MARK, DU_DB4_MARK,
++	DU_DB3_MARK, DU_DB2_MARK,
++};
++
++static const unsigned int du_rgb888_pins[] = {
++	/* R[7:0], G[7:0], B[7:0] */
++	RCAR_GP_PIN(0, 15), RCAR_GP_PIN(0, 14), RCAR_GP_PIN(0, 13),
++	RCAR_GP_PIN(0, 12), RCAR_GP_PIN(0, 11), RCAR_GP_PIN(0, 10),
++	RCAR_GP_PIN(0, 9),  RCAR_GP_PIN(0, 8),
++	RCAR_GP_PIN(1, 15), RCAR_GP_PIN(1, 14), RCAR_GP_PIN(1, 13),
++	RCAR_GP_PIN(1, 12), RCAR_GP_PIN(1, 19), RCAR_GP_PIN(1, 18),
++	RCAR_GP_PIN(1, 17), RCAR_GP_PIN(1, 16),
++	RCAR_GP_PIN(1, 7),  RCAR_GP_PIN(1, 6),  RCAR_GP_PIN(1, 5),
++	RCAR_GP_PIN(1, 4),  RCAR_GP_PIN(1, 3),  RCAR_GP_PIN(1, 2),
++	RCAR_GP_PIN(1, 1),  RCAR_GP_PIN(1, 0),
++};
++
++static const unsigned int du_rgb888_mux[] = {
++	DU_DR7_MARK, DU_DR6_MARK, DU_DR5_MARK, DU_DR4_MARK,
++	DU_DR3_MARK, DU_DR2_MARK, DU_DR1_MARK, DU_DR0_MARK,
++	DU_DG7_MARK, DU_DG6_MARK, DU_DG5_MARK, DU_DG4_MARK,
++	DU_DG3_MARK, DU_DG2_MARK, DU_DG1_MARK, DU_DG0_MARK,
++	DU_DB7_MARK, DU_DB6_MARK, DU_DB5_MARK, DU_DB4_MARK,
++	DU_DB3_MARK, DU_DB2_MARK, DU_DB1_MARK, DU_DB0_MARK,
++};
++
++static const unsigned int du_clk_out_0_pins[] = {
++	/* CLKOUT */
++	RCAR_GP_PIN(1, 27),
++};
++
++static const unsigned int du_clk_out_0_mux[] = {
++	DU_DOTCLKOUT0_MARK
++};
++
++static const unsigned int du_clk_out_1_pins[] = {
++	/* CLKOUT */
++	RCAR_GP_PIN(2, 3),
++};
++
++static const unsigned int du_clk_out_1_mux[] = {
++	DU_DOTCLKOUT1_MARK
++};
++
++static const unsigned int du_sync_pins[] = {
++	/* EXVSYNC/VSYNC, EXHSYNC/HSYNC */
++	RCAR_GP_PIN(2, 5), RCAR_GP_PIN(2, 4),
++};
++
++static const unsigned int du_sync_mux[] = {
++	DU_EXVSYNC_DU_VSYNC_MARK, DU_EXHSYNC_DU_HSYNC_MARK
++};
++
++static const unsigned int du_oddf_pins[] = {
++	/* EXDISP/EXODDF/EXCDE */
++	RCAR_GP_PIN(2, 2),
++};
++
++static const unsigned int du_oddf_mux[] = {
++	DU_EXODDF_DU_ODDF_DISP_CDE_MARK,
++};
++
++static const unsigned int du_cde_pins[] = {
++	/* CDE */
++	RCAR_GP_PIN(2, 0),
++};
++
++static const unsigned int du_cde_mux[] = {
++	DU_CDE_MARK,
++};
++
++static const unsigned int du_disp_pins[] = {
++	/* DISP */
++	RCAR_GP_PIN(2, 1),
++};
++
++static const unsigned int du_disp_mux[] = {
++	DU_DISP_MARK,
++};
++
+ /* - INTC-EX ---------------------------------------------------------------- */
+ static const unsigned int intc_ex_irq0_pins[] = {
+ 	/* IRQ0 */
+@@ -2756,6 +2852,14 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(avb_avtp_capture_a),
+ 	SH_PFC_PIN_GROUP(avb_avtp_match_b),
+ 	SH_PFC_PIN_GROUP(avb_avtp_capture_b),
++	SH_PFC_PIN_GROUP(du_rgb666),
++	SH_PFC_PIN_GROUP(du_rgb888),
++	SH_PFC_PIN_GROUP(du_clk_out_0),
++	SH_PFC_PIN_GROUP(du_clk_out_1),
++	SH_PFC_PIN_GROUP(du_sync),
++	SH_PFC_PIN_GROUP(du_oddf),
++	SH_PFC_PIN_GROUP(du_cde),
++	SH_PFC_PIN_GROUP(du_disp),
+ 	SH_PFC_PIN_GROUP(intc_ex_irq0),
+ 	SH_PFC_PIN_GROUP(intc_ex_irq1),
+ 	SH_PFC_PIN_GROUP(intc_ex_irq2),
+@@ -2922,6 +3026,17 @@ static const char * const avb_groups[] = {
+ 	"avb_avtp_capture_b",
+ };
  
++static const char * const du_groups[] = {
++	"du_rgb666",
++	"du_rgb888",
++	"du_clk_out_0",
++	"du_clk_out_1",
++	"du_sync",
++	"du_oddf",
++	"du_cde",
++	"du_disp",
++};
++
+ static const char * const intc_ex_groups[] = {
+ 	"intc_ex_irq0",
+ 	"intc_ex_irq1",
+@@ -3139,6 +3254,7 @@ static const char * const usb30_groups[] = {
+ 
+ static const struct sh_pfc_function pinmux_functions[] = {
+ 	SH_PFC_FUNCTION(avb),
++	SH_PFC_FUNCTION(du),
+ 	SH_PFC_FUNCTION(intc_ex),
+ 	SH_PFC_FUNCTION(msiof0),
+ 	SH_PFC_FUNCTION(msiof1),
 -- 
 2.17.0
