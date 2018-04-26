@@ -1,108 +1,38 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932190AbeDZXbz (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 19:31:55 -0400
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:34935 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753763AbeDZXbw (ORCPT
+        id S1754556AbeDZXfj (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 19:35:39 -0400
+Received: from mail-pf0-f181.google.com ([209.85.192.181]:36247 "EHLO
+        mail-pf0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751314AbeDZXfh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 19:31:52 -0400
-X-Google-Smtp-Source: AB8JxZrilg3s2qqVv4kmZlpR9KnifqwQ2hoUurFjfRLhsuO5T+qmzD+Ufl5fqkyqSYT7Ua7vYmmWDKhXlSjGj7bzkJM=
+        Thu, 26 Apr 2018 19:35:37 -0400
+X-Google-Smtp-Source: AB8JxZqrZmaFL1ARE8wIFu/Ziaki3xkMBlTfThQRo0SqIdyaZV3gTVlSX/7bhyxM+02vrC4Xur+K8w==
+From: Kevin Hilman <khilman@baylibre.com>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Carlo Caione <carlo@caione.org>,
+        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mmc: meson-gx: add device reset
+Organization: BayLibre
+References: <20180426103817.12675-1-jbrunet@baylibre.com>
+Date: Thu, 26 Apr 2018 16:35:34 -0700
+In-Reply-To: <20180426103817.12675-1-jbrunet@baylibre.com> (Jerome Brunet's
+        message of "Thu, 26 Apr 2018 12:38:17 +0200")
+Message-ID: <7ha7tp35ix.fsf@baylibre.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20180411044315.GA46144@beast>
-References: <20180411044315.GA46144@beast>
-From: Kees Cook <keescook@chromium.org>
-Date: Thu, 26 Apr 2018 16:31:50 -0700
-X-Google-Sender-Auth: Ygh3f9ZHoZRUO3BArPtm7p4JSJA
-Message-ID: <CAGXu5jLUTF0c3DLGjFFnSwJ3FJmiOMYRu3vqTqNVEBQehyn4KA@mail.gmail.com>
-Subject: Re: [PATCH] dm/raid1: Remove VLA usage
-To: Alasdair Kergon <agk@redhat.com>
-Cc: Mike Snitzer <snitzer@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
-        dm-devel@redhat.com, Tycho Andersen <tycho@tycho.ws>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 10, 2018 at 9:43 PM, Kees Cook <keescook@chromium.org> wrote:
-> On the quest to remove all VLAs from the kernel[1], this avoids VLAs
-> in dm-raid1.c by just using the maximum size for the stack arrays.
-> The nr_mirrors value was already capped at 9, so this makes it a trivial
-> adjustment to the array sizes.
->
-> [1] https://lkml.org/lkml/2018/3/7/621
->
-> Signed-off-by: Kees Cook <keescook@chromium.org>
+Jerome Brunet <jbrunet@baylibre.com> writes:
 
-Friendly ping... can someone take this, or should this go via another tree?
+> Trigger the reset line of the mmc controller while probing, if available
+> The reset should be optional for now, at least until all related DT node
+> have the reset property
+>
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 
-Thanks!
-
--Kees
-
-> ---
->  drivers/md/dm-raid1.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/md/dm-raid1.c b/drivers/md/dm-raid1.c
-> index 580c49cc8079..5903e492bb34 100644
-> --- a/drivers/md/dm-raid1.c
-> +++ b/drivers/md/dm-raid1.c
-> @@ -23,6 +23,8 @@
->
->  #define MAX_RECOVERY 1 /* Maximum number of regions recovered in parallel. */
->
-> +#define MAX_NR_MIRRORS (DM_KCOPYD_MAX_REGIONS + 1)
-> +
->  #define DM_RAID1_HANDLE_ERRORS 0x01
->  #define DM_RAID1_KEEP_LOG      0x02
->  #define errors_handled(p)      ((p)->features & DM_RAID1_HANDLE_ERRORS)
-> @@ -255,7 +257,7 @@ static int mirror_flush(struct dm_target *ti)
->         unsigned long error_bits;
->
->         unsigned int i;
-> -       struct dm_io_region io[ms->nr_mirrors];
-> +       struct dm_io_region io[MAX_NR_MIRRORS];
->         struct mirror *m;
->         struct dm_io_request io_req = {
->                 .bi_op = REQ_OP_WRITE,
-> @@ -651,7 +653,7 @@ static void write_callback(unsigned long error, void *context)
->  static void do_write(struct mirror_set *ms, struct bio *bio)
->  {
->         unsigned int i;
-> -       struct dm_io_region io[ms->nr_mirrors], *dest = io;
-> +       struct dm_io_region io[MAX_NR_MIRRORS], *dest = io;
->         struct mirror *m;
->         struct dm_io_request io_req = {
->                 .bi_op = REQ_OP_WRITE,
-> @@ -1083,7 +1085,7 @@ static int mirror_ctr(struct dm_target *ti, unsigned int argc, char **argv)
->         argc -= args_used;
->
->         if (!argc || sscanf(argv[0], "%u%c", &nr_mirrors, &dummy) != 1 ||
-> -           nr_mirrors < 2 || nr_mirrors > DM_KCOPYD_MAX_REGIONS + 1) {
-> +           nr_mirrors < 2 || nr_mirrors > MAX_NR_MIRRORS) {
->                 ti->error = "Invalid number of mirrors";
->                 dm_dirty_log_destroy(dl);
->                 return -EINVAL;
-> @@ -1404,7 +1406,7 @@ static void mirror_status(struct dm_target *ti, status_type_t type,
->         int num_feature_args = 0;
->         struct mirror_set *ms = (struct mirror_set *) ti->private;
->         struct dm_dirty_log *log = dm_rh_dirty_log(ms->rh);
-> -       char buffer[ms->nr_mirrors + 1];
-> +       char buffer[MAX_NR_MIRRORS + 1];
->
->         switch (type) {
->         case STATUSTYPE_INFO:
-> --
-> 2.7.4
->
->
-> --
-> Kees Cook
-> Pixel Security
-
-
-
--- 
-Kees Cook
-Pixel Security
+Reviewed-by: Kevin Hilman <khilman@baylibre.com>
