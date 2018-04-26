@@ -1,44 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756664AbeDZPKJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 11:10:09 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44188 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1756511AbeDZPKI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 11:10:08 -0400
-Date: Thu, 26 Apr 2018 17:10:03 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc: Michal Hocko <mhocko@kernel.org>, akpm@linux-foundation.org,
-        peterz@infradead.org, viro@zeniv.linux.org.uk, mingo@kernel.org,
-        paulmck@linux.vnet.ibm.com, keescook@chromium.org, riel@redhat.com,
-        tglx@linutronix.de, kirill.shutemov@linux.intel.com,
-        marcos.souza.org@gmail.com, hoeun.ryu@gmail.com,
-        pasha.tatashin@oracle.com, gs051095@gmail.com, ebiederm@xmission.com,
-        dhowells@redhat.com, rppt@linux.vnet.ibm.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] exit: Make unlikely case in mm_update_next_owner()
- more scalable
-Message-ID: <20180426151002.GB14818@redhat.com>
-References: <152473763015.29458.1131542311542381803.stgit@localhost.localdomain>
- <20180426130700.GP17484@dhcp22.suse.cz>
- <9122972b-9a5b-db65-f145-585d6076b2ed@virtuozzo.com>
+        id S1756669AbeDZPLj (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 11:11:39 -0400
+Received: from mail-pf0-f171.google.com ([209.85.192.171]:44615 "EHLO
+        mail-pf0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756481AbeDZPLa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 11:11:30 -0400
+X-Google-Smtp-Source: AIpwx4/PFJaVNVmJWtJvox1tDPUtx7Gi3Pcibg2fOl/M9BNO43PqAmXiNF0/uZwLhskGs/qqM03cHA==
+Subject: Re: [PATCH 2/5] ide: kill ide_toggle_bounce
+To: Christoph Hellwig <hch@lst.de>
+Cc: iommu@lists.linux-foundation.org, linux-arch@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-ide@vger.kernel.org,
+        linux-scsi@vger.kernel.org, netdev@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>, linux-kernel@vger.kernel.org
+References: <20180424181625.22410-1-hch@lst.de>
+ <20180424181625.22410-3-hch@lst.de>
+ <5aaca0d3-417f-57f3-969f-b4c777c3fd48@kernel.dk>
+ <20180426072033.GA14700@lst.de>
+From: Jens Axboe <axboe@kernel.dk>
+Message-ID: <682db9af-33bc-639d-8930-7a66c30bc644@kernel.dk>
+Date: Thu, 26 Apr 2018 09:11:21 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9122972b-9a5b-db65-f145-585d6076b2ed@virtuozzo.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180426072033.GA14700@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/26, Kirill Tkhai wrote:
->
-> We can rework this simply by adding a list of tasks to mm.
+On 4/26/18 1:20 AM, Christoph Hellwig wrote:
+> On Tue, Apr 24, 2018 at 08:02:56PM -0600, Jens Axboe wrote:
+>> On 4/24/18 12:16 PM, Christoph Hellwig wrote:
+>>> ide_toggle_bounce did select various strange block bounce limits, including
+>>> not bouncing at all as soon as an iommu is present in the system.  Given
+>>> that the dma_map routines now handle any required bounce buffering except
+>>> for ISA DMA, and the ide code already must handle either ISA DMA or highmem
+>>> at least for iommu equipped systems we can get rid of the block layer
+>>> bounce limit setting entirely.
+>>
+>> Pretty sure I was the one to add this code, when highmem page IO was
+>> enabled about two decades ago...
+>>
+>> Outside of DMA, the issue was that the PIO code could not handle
+>> highmem. That's not the case anymore, so this should be fine.
+> 
+> Yes, that is the rationale.  Any chance to you could look over the
+> other patches as well?  Except for the networking one for which I'd
+> really like to see a review from Dave all the users of the interface
+> are block related.
 
-Perhaps, but then I think this list should not depend on mm->owner.
+You can add my reviewed-by to 1-3, and 5. Looks good to me.
 
-I mean, mm->list_of_group_leaders_which_use_this_mm can be used by coredump
-and oom-killer at least. But this is not that simple...
-
-Oleg.
+-- 
+Jens Axboe
