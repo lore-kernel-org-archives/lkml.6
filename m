@@ -1,67 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756319AbeDZM6a (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 08:58:30 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35251 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756163AbeDZM6W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 08:58:22 -0400
-Date: Thu, 26 Apr 2018 14:58:17 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Mikulas Patocka <mpatocka@redhat.com>
-Cc: James Bottomley <James.Bottomley@HansenPartnership.com>,
-        David Rientjes <rientjes@google.com>, dm-devel@redhat.com,
-        eric.dumazet@gmail.com, mst@redhat.com, netdev@vger.kernel.org,
-        jasowang@redhat.com, Randy Dunlap <rdunlap@infradead.org>,
-        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
-        linux-mm@kvack.org, edumazet@google.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        virtualization@lists.linux-foundation.org,
-        David Miller <davem@davemloft.net>, Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [dm-devel] [PATCH v5] fault-injection: introduce kvmalloc
- fallback options
-Message-ID: <20180426125817.GO17484@dhcp22.suse.cz>
-References: <20180424170349.GQ17484@dhcp22.suse.cz>
- <alpine.LRH.2.02.1804241319390.28995@file01.intranet.prod.int.rdu2.redhat.com>
- <20180424173836.GR17484@dhcp22.suse.cz>
- <alpine.LRH.2.02.1804251556060.30569@file01.intranet.prod.int.rdu2.redhat.com>
- <1114eda5-9b1f-4db8-2090-556b4a37c532@infradead.org>
- <alpine.LRH.2.02.1804251656300.9428@file01.intranet.prod.int.rdu2.redhat.com>
- <alpine.DEB.2.21.1804251417470.166306@chino.kir.corp.google.com>
- <alpine.LRH.2.02.1804251720090.9428@file01.intranet.prod.int.rdu2.redhat.com>
- <1524694663.4100.21.camel@HansenPartnership.com>
- <alpine.LRH.2.02.1804251830540.25124@file01.intranet.prod.int.rdu2.redhat.com>
+        id S932085AbeDZM7C (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 08:59:02 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:42409 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756262AbeDZM61 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 08:58:27 -0400
+Date: Thu, 26 Apr 2018 05:57:45 -0700
+From: tip-bot for Thomas Gleixner <tipbot@zytor.com>
+Message-ID: <tip-1f71addd34f4c442bec7d7c749acc1beb58126f2@git.kernel.org>
+Cc: frederic@kernel.org, mike.marciniszyn@intel.com,
+        linux-kernel@vger.kernel.org, hpa@zytor.com, kaike.wan@intel.com,
+        tglx@linutronix.de, dennis.dalessandro@intel.com, fweisbec@gmail.com,
+        anna-maria@linutronix.de, john.fleck@intel.com, ira.weiny@intel.com,
+        mingo@kernel.org, peterz@infradead.org
+Reply-To: frederic@kernel.org, mike.marciniszyn@intel.com,
+        linux-kernel@vger.kernel.org, hpa@zytor.com, kaike.wan@intel.com,
+        tglx@linutronix.de, dennis.dalessandro@intel.com, fweisbec@gmail.com,
+        anna-maria@linutronix.de, john.fleck@intel.com, ira.weiny@intel.com,
+        mingo@kernel.org, peterz@infradead.org
+In-Reply-To: <alpine.DEB.2.21.1804242119210.1597@nanos.tec.linutronix.de>
+References: <alpine.DEB.2.21.1804241637390.1679@nanos.tec.linutronix.de>
+        <alpine.DEB.2.21.1804242119210.1597@nanos.tec.linutronix.de>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:timers/urgent] tick/sched: Do not mess with an enqueued
+ hrtimer
+Git-Commit-ID: 1f71addd34f4c442bec7d7c749acc1beb58126f2
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <alpine.LRH.2.02.1804251830540.25124@file01.intranet.prod.int.rdu2.redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 25-04-18 18:42:57, Mikulas Patocka wrote:
-> 
-> 
-> On Wed, 25 Apr 2018, James Bottomley wrote:
-[...]
-> > Kconfig proliferation, conversely, is a bit of a nightmare from both
-> > the user and the tester's point of view, so we're trying to avoid it
-> > unless absolutely necessary.
-> > 
-> > James
-> 
-> I already offered that we don't need to introduce a new kernel option and 
-> we can bind this feature to any other kernel option, that is enabled in 
-> the debug kernel, for example CONFIG_DEBUG_SG. Michal said no and he said 
-> that he wants a new kernel option instead.
+Commit-ID:  1f71addd34f4c442bec7d7c749acc1beb58126f2
+Gitweb:     https://git.kernel.org/tip/1f71addd34f4c442bec7d7c749acc1beb58126f2
+Author:     Thomas Gleixner <tglx@linutronix.de>
+AuthorDate: Tue, 24 Apr 2018 21:22:18 +0200
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Thu, 26 Apr 2018 14:53:32 +0200
 
-Just for the record. I didn't say I _want_ a config option. Do not
-misinterpret my words. I've said that a config option would be
-acceptable if there is no way to deliver the functionality via kernel
-package automatically. You haven't provided any argument that would
-explain why the kernel package cannot add a boot option. Maybe there are
-some but I do not see them right now.
--- 
-Michal Hocko
-SUSE Labs
+tick/sched: Do not mess with an enqueued hrtimer
+
+Kaike reported that in tests rdma hrtimers occasionaly stopped working. He
+did great debugging, which provided enough context to decode the problem.
+
+CPU 3			     	      	     CPU 2
+
+idle
+start sched_timer expires = 712171000000
+ queue->next = sched_timer
+					    start rdmavt timer. expires = 712172915662
+					    lock(baseof(CPU3))
+tick_nohz_stop_tick()
+tick = 716767000000			    timerqueue_add(tmr)
+
+hrtimer_set_expires(sched_timer, tick);
+  sched_timer->expires = 716767000000  <---- FAIL
+					     if (tmr->expires < queue->next->expires)
+hrtimer_start(sched_timer)		          queue->next = tmr;
+lock(baseof(CPU3))
+					     unlock(baseof(CPU3))
+timerqueue_remove()
+timerqueue_add()
+
+ts->sched_timer is queued and queue->next is pointing to it, but then
+ts->sched_timer.expires is modified.
+
+This not only corrupts the ordering of the timerqueue RB tree, it also
+makes CPU2 see the new expiry time of timerqueue->next->expires when
+checking whether timerqueue->next needs to be updated. So CPU2 sees that
+the rdma timer is earlier than timerqueue->next and sets the rdma timer as
+new next.
+
+Depending on whether it had also seen the new time at RB tree enqueue, it
+might have queued the rdma timer at the wrong place and then after removing
+the sched_timer the RB tree is completely hosed.
+
+The problem was introduced with a commit which tried to solve inconsistency
+between the hrtimer in the tick_sched data and the underlying hardware
+clockevent. It split out hrtimer_set_expires() to store the new tick time
+in both the NOHZ and the NOHZ + HIGHRES case, but missed the fact that in
+the NOHZ + HIGHRES case the hrtimer might still be queued.
+
+Use hrtimer_start(timer, tick...) for the NOHZ + HIGHRES case which sets
+timer->expires after canceling the timer and move the hrtimer_set_expires()
+invocation into the NOHZ only code path which is not affected as it merily
+uses the hrtimer as next event storage so code pathes can be shared with
+the NOHZ + HIGHRES case.
+
+Fixes: d4af6d933ccf ("nohz: Fix spurious warning when hrtimer and clockevent get out of sync")
+Reported-by: "Wan Kaike" <kaike.wan@intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Frederic Weisbecker <frederic@kernel.org>
+Cc: "Marciniszyn Mike" <mike.marciniszyn@intel.com>
+Cc: Anna-Maria Gleixner <anna-maria@linutronix.de>
+Cc: linux-rdma@vger.kernel.org
+Cc: "Dalessandro Dennis" <dennis.dalessandro@intel.com>
+Cc: "Fleck John" <john.fleck@intel.com>
+Cc: stable@vger.kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>
+Cc: "Weiny Ira" <ira.weiny@intel.com>
+Cc: "linux-rdma@vger.kernel.org"
+Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1804241637390.1679@nanos.tec.linutronix.de
+Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1804242119210.1597@nanos.tec.linutronix.de
+
+
+---
+ kernel/time/tick-sched.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
+index 646645e981f9..d31bec177fa5 100644
+--- a/kernel/time/tick-sched.c
++++ b/kernel/time/tick-sched.c
+@@ -804,12 +804,12 @@ static void tick_nohz_stop_tick(struct tick_sched *ts, int cpu)
+ 		return;
+ 	}
+ 
+-	hrtimer_set_expires(&ts->sched_timer, tick);
+-
+-	if (ts->nohz_mode == NOHZ_MODE_HIGHRES)
+-		hrtimer_start_expires(&ts->sched_timer, HRTIMER_MODE_ABS_PINNED);
+-	else
++	if (ts->nohz_mode == NOHZ_MODE_HIGHRES) {
++		hrtimer_start(&ts->sched_timer, tick, HRTIMER_MODE_ABS_PINNED);
++	} else {
++		hrtimer_set_expires(&ts->sched_timer, tick);
+ 		tick_program_event(tick, 1);
++	}
+ }
+ 
+ static void tick_nohz_retain_tick(struct tick_sched *ts)
