@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757195AbeDZX67 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 19:58:59 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:33237 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751626AbeDZX64 (ORCPT
+        id S932278AbeDZX7u (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 19:59:50 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:44647 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753628AbeDZX66 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 19:58:56 -0400
-X-Google-Smtp-Source: AB8JxZrFWXeKnAps6CBZiOfKEfLYVHdWNYAvKggn3mbMjoqPdt2bWk9rKOpHIP9/+v/6roaoI4hORQ==
+        Thu, 26 Apr 2018 19:58:58 -0400
+X-Google-Smtp-Source: AB8JxZplrvcU6cXuTrTvbEdQkPUrw2GzwhaMTRqm9EbWVKMeNdbXjY9CjZXXmD+WOtQbXqPEJ0eTHg==
 From: Dmitry Osipenko <digetx@gmail.com>
 To: Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -19,44 +19,121 @@ To: Thierry Reding <thierry.reding@gmail.com>,
         Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>
 Cc: linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 0/4] Restore ULPI USB on Tegra20
-Date: Fri, 27 Apr 2018 02:58:14 +0300
-Message-Id: <20180426235818.10018-1-digetx@gmail.com>
+Subject: [PATCH v1 2/4] pinctrl: tegra20: Provide CDEV1/2 clock muxes
+Date: Fri, 27 Apr 2018 02:58:16 +0300
+Message-Id: <20180426235818.10018-3-digetx@gmail.com>
 X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180426235818.10018-1-digetx@gmail.com>
+References: <20180426235818.10018-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Muxing of pins MCLK1/2 determine the muxing of the corresponding clocks.
+Make pinctrl driver to provide clock muxes for the CDEV1/2 pingroups, so
+that main clk-controller driver could get an actual parent clock for the
+CDEV1/2 clocks.
 
-This series of patches fixes ULPI USB on Tegra20. The original problem
-was reported by Marcel Ziswiler, he found that "ulpi-link" clock was
-incorrectly set to CDEV2 instead of PLL_P_OUT4. Marcel made a patch
-that changed the "ulpi-link" clock to PLL_P_OUT4 and that fixed issue
-with the USB for the devices that have CDEV2 being enabled by bootloader.
-The patch got into the kernel and later Marc Dietrich found that USB
-stopped working on the "paz00" Tegra20 board. After a bit of discussion
-was revealed that PLL_P_OUT4 is the parent clock of the CDEV2 and clock
-driver was setting CDEV2's parent incorrectly. The parent clock is actually
-determined by the pinmuxing config of CDEV2 pingroup. This patchset fixes
-the parent of CDEV2 clock by making Tegra's pinctrl driver a clock provider,
-providing CDEV1/2 clock muxes (thanks to Peter De Schrijver for the
-suggestion), and then setting these clock muxes as parents for the CDEV1/2
-clocks. In the end Marcel's CDEV2->PLL_P_OUT4 change is reverted since CDEV2
-(aka MCLK2) is the actual clock source for "ulpi-link".
-
-Dmitry Osipenko (4):
-  clk: tegra20: Add DEV1/DEV2 OSC dividers
-  pinctrl: tegra20: Provide CDEV1/2 clock muxes
-  clk: tegra20: Set correct parents for CDEV1/2 clocks
-  ARM: dts: tegra20: Revert "Fix ULPI regression on Tegra20"
-
- arch/arm/boot/dts/tegra20.dtsi          |  2 +-
- drivers/clk/tegra/clk-tegra20.c         | 18 +++++++++++----
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
  drivers/pinctrl/tegra/pinctrl-tegra.c   | 11 ---------
  drivers/pinctrl/tegra/pinctrl-tegra.h   | 11 +++++++++
  drivers/pinctrl/tegra/pinctrl-tegra20.c | 30 ++++++++++++++++++++++++-
- 5 files changed, 55 insertions(+), 17 deletions(-)
+ 3 files changed, 40 insertions(+), 12 deletions(-)
 
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
+index 72c718e66ebb..49c7c1499bc3 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+@@ -33,17 +33,6 @@
+ #include "../pinctrl-utils.h"
+ #include "pinctrl-tegra.h"
+ 
+-struct tegra_pmx {
+-	struct device *dev;
+-	struct pinctrl_dev *pctl;
+-
+-	const struct tegra_pinctrl_soc_data *soc;
+-	const char **group_pins;
+-
+-	int nbanks;
+-	void __iomem **regs;
+-};
+-
+ static inline u32 pmx_readl(struct tegra_pmx *pmx, u32 bank, u32 reg)
+ {
+ 	return readl(pmx->regs[bank] + reg);
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.h b/drivers/pinctrl/tegra/pinctrl-tegra.h
+index 33b17cb1471e..aa33c20766c4 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra.h
++++ b/drivers/pinctrl/tegra/pinctrl-tegra.h
+@@ -16,6 +16,17 @@
+ #ifndef __PINMUX_TEGRA_H__
+ #define __PINMUX_TEGRA_H__
+ 
++struct tegra_pmx {
++	struct device *dev;
++	struct pinctrl_dev *pctl;
++
++	const struct tegra_pinctrl_soc_data *soc;
++	const char **group_pins;
++
++	int nbanks;
++	void __iomem **regs;
++};
++
+ enum tegra_pinconf_param {
+ 	/* argument: tegra_pinconf_pull */
+ 	TEGRA_PINCONF_PARAM_PULL,
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra20.c b/drivers/pinctrl/tegra/pinctrl-tegra20.c
+index 7e38ee9bae78..f31e39d797f9 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra20.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra20.c
+@@ -19,6 +19,7 @@
+  * more details.
+  */
+ 
++#include <linux/clk-provider.h>
+ #include <linux/init.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+@@ -2231,9 +2232,36 @@ static const struct tegra_pinctrl_soc_data tegra20_pinctrl = {
+ 	.drvtype_in_mux = false,
+ };
+ 
++static const char *cdev1_parents[4] = {
++	"cdev1_osc_div", "pll_a_out0", "pll_m_out1", "audio",
++};
++
++static const char *cdev2_parents[4] = {
++	"cdev2_osc_div", "hclk", "pclk", "pll_p_out4",
++};
++
++static void tegra20_pinctrl_register_clock_muxes(struct platform_device *pdev)
++{
++	struct tegra_pmx *pmx = platform_get_drvdata(pdev);
++
++	clk_register_mux(NULL, "cdev1_mux", cdev1_parents, 4, 0,
++			 pmx->regs[1] + 0x8, 2, 2, CLK_MUX_READ_ONLY, NULL);
++
++	clk_register_mux(NULL, "cdev2_mux", cdev2_parents, 4, 0,
++			 pmx->regs[1] + 0x8, 4, 2, CLK_MUX_READ_ONLY, NULL);
++}
++
+ static int tegra20_pinctrl_probe(struct platform_device *pdev)
+ {
+-	return tegra_pinctrl_probe(pdev, &tegra20_pinctrl);
++	int err;
++
++	err = tegra_pinctrl_probe(pdev, &tegra20_pinctrl);
++	if (err)
++		return err;
++
++	tegra20_pinctrl_register_clock_muxes(pdev);
++
++	return 0;
+ }
+ 
+ static const struct of_device_id tegra20_pinctrl_of_match[] = {
 -- 
 2.17.0
