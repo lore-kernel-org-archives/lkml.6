@@ -1,95 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752141AbeDZCwL (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 22:52:11 -0400
-Received: from mga18.intel.com ([134.134.136.126]:37406 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751647AbeDZCwL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 22:52:11 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,329,1520924400";
-   d="scan'208";a="53723925"
-Date: Thu, 26 Apr 2018 10:51:36 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org
-Subject: Makefile:628: arch/tile/Makefile: No such file or directory
-Message-ID: <201804261033.pmYoYKYb%fengguang.wu@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+        id S1752018AbeDZC7n (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 22:59:43 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:36076 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751424AbeDZC7l (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 22:59:41 -0400
+X-Google-Smtp-Source: AB8JxZqf/uzN0qtkQARX3qczeUL+hqbRapTKBlkEhXZ/Pp0GPOwX5Rrn8pFud84fBcHOnl+LR2cpyA==
+From: Baolin Wang <baolin.wang@linaro.org>
+To: a.zummo@towertech.it, alexandre.belloni@bootlin.com
+Cc: baolin.wang@linaro.org, broonie@kernel.org, linux-rtc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] rtc: sprd: Change to use devm_rtc_allocate_device()
+Date: Thu, 26 Apr 2018 10:58:44 +0800
+Message-Id: <95b85b6d0369b4693e9d4e57af5eac49eee87dc9.1524710929.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   26ed24e429d89e045e5eb2d2b75215244347b7f2
-commit: bb9d812643d8a121df7d614a2b9c60193a92deb0 arch: remove tile port
-date:   6 weeks ago
-config: tile-tilegx_defconfig
-compiler: tilegx-linux-gcc (GCC) 7.2.0
-reproduce:
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        git checkout bb9d812643d8a121df7d614a2b9c60193a92deb0
-        make.cross ARCH=tile  tilegx_defconfig
-        make.cross ARCH=tile 
+This is a preparation patch, changing to use devm_rtc_allocate_device()
+that can allow driver to set 'range_max' and 'range_min' for the RTC
+device.
 
-All errors (new ones prefixed by >>):
-
->> Makefile:628: arch/tile/Makefile: No such file or directory
->> make[1]: *** No rule to make target 'arch/tile/Makefile'.
-   make[1]: Failed to remake makefile 'arch/tile/Makefile'.
-   make: *** [sub-make] Error 2
---
-   Makefile:497: arch/tile/Makefile: No such file or directory
->> make[1]: *** No rule to make target 'arch/tile/Makefile'.
-   make[1]: Failed to remake makefile 'arch/tile/Makefile'.
-   Kconfig:12: can't open file "arch/tile/Kconfig"
-   make[2]: *** [oldconfig] Error 1
-   make[1]: *** [oldconfig] Error 2
-   make: *** [sub-make] Error 2
---
-   Makefile:497: arch/tile/Makefile: No such file or directory
->> make[1]: *** No rule to make target 'arch/tile/Makefile'.
-   make[1]: Failed to remake makefile 'arch/tile/Makefile'.
-   Kconfig:12: can't open file "arch/tile/Kconfig"
-   make[2]: *** [olddefconfig] Error 1
-   make[2]: Target 'oldnoconfig' not remade because of errors.
-   make[1]: *** [oldnoconfig] Error 2
-   make: *** [sub-make] Error 2
---
-   Makefile:497: arch/tile/Makefile: No such file or directory
->> make[1]: *** No rule to make target 'arch/tile/Makefile'.
-   make[1]: Failed to remake makefile 'arch/tile/Makefile'.
-   Kconfig:12: can't open file "arch/tile/Kconfig"
-   make[2]: *** [tilegx_defconfig] Error 1
-   make[1]: *** [tilegx_defconfig] Error 2
-   make: *** [sub-make] Error 2
-
-vim +628 Makefile
-
-433dc2eb Masahiro Yamada    2017-10-12  622  
-6dd3f13e Michal Marek       2015-07-16  623  # The arch Makefile can set ARCH_{CPP,A,C}FLAGS to override the default
-6dd3f13e Michal Marek       2015-07-16  624  # values of the respective KBUILD_* variables
-6dd3f13e Michal Marek       2015-07-16  625  ARCH_CPPFLAGS :=
-6dd3f13e Michal Marek       2015-07-16  626  ARCH_AFLAGS :=
-6dd3f13e Michal Marek       2015-07-16  627  ARCH_CFLAGS :=
-a436bb7b Masahiro Yamada    2015-03-27 @628  include arch/$(SRCARCH)/Makefile
-a1c48bb1 Geert Uytterhoeven 2014-05-27  629  
-
-:::::: The code at line 628 was first introduced by commit
-:::::: a436bb7b806383ae0593cab53d17fc9676270cd3 kbuild: use relative path more to include Makefile
-
-:::::: TO: Masahiro Yamada <yamada.masahiro@socionext.com>
-:::::: CC: Michal Marek <mmarek@suse.cz>
-
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+ drivers/rtc/rtc-sc27xx.c |   14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/rtc/rtc-sc27xx.c b/drivers/rtc/rtc-sc27xx.c
+index 00d87d1..ac86322 100644
+--- a/drivers/rtc/rtc-sc27xx.c
++++ b/drivers/rtc/rtc-sc27xx.c
+@@ -600,6 +600,10 @@ static int sprd_rtc_probe(struct platform_device *pdev)
+ 		return rtc->irq;
+ 	}
+ 
++	rtc->rtc = devm_rtc_allocate_device(&pdev->dev);
++	if (IS_ERR(rtc->rtc))
++		return PTR_ERR(rtc->rtc);
++
+ 	rtc->dev = &pdev->dev;
+ 	platform_set_drvdata(pdev, rtc);
+ 
+@@ -626,10 +630,12 @@ static int sprd_rtc_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	rtc->rtc = devm_rtc_device_register(&pdev->dev, pdev->name,
+-					    &sprd_rtc_ops, THIS_MODULE);
+-	if (IS_ERR(rtc->rtc))
+-		return PTR_ERR(rtc->rtc);
++	rtc->rtc->ops = &sprd_rtc_ops;
++	ret = rtc_register_device(rtc->rtc);
++	if (ret) {
++		dev_err(&pdev->dev, "failed to register rtc device\n");
++		return ret;
++	}
+ 
+ 	device_init_wakeup(&pdev->dev, 1);
+ 	return 0;
+-- 
+1.7.9.5
