@@ -1,164 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757337AbeDZWh7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 18:37:59 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:59092 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754128AbeDZWhm (ORCPT
+        id S1755293AbeDZWpa (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 18:45:30 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:32960 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754728AbeDZWp0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 18:37:42 -0400
-Subject: Re: [PATCH] net/mlx5: report persistent netdev stats across
- ifdown/ifup commands
-To: Saeed Mahameed <saeedm@dev.mellanox.co.il>,
-        Eran Ben Elisha <eranbe@mellanox.com>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>,
-        RDMA mailing list <linux-rdma@vger.kernel.org>,
-        Linux Netdev List <netdev@vger.kernel.org>,
-        Leon Romanovsky <leon@kernel.org>, Matan Barak <matanb@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>
-References: <1524775057-8012-1-git-send-email-qing.huang@oracle.com>
- <CALzJLG8=dnyLGRXamLR5-eYJ9Q8WCwKe44sHHZ57=1h_x0RCRA@mail.gmail.com>
-From: Qing Huang <qing.huang@oracle.com>
-Message-ID: <5cd29779-fc70-930a-7060-ee3332c15558@oracle.com>
-Date: Thu, 26 Apr 2018 15:37:29 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Thu, 26 Apr 2018 18:45:26 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: panel: lvds: Fix path to display timing bindings
+Date: Fri, 27 Apr 2018 01:45:39 +0300
+Message-ID: <101662296.DZBr8NQOBO@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <1524642578-2885-1-git-send-email-geert+renesas@glider.be>
+References: <1524642578-2885-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-In-Reply-To: <CALzJLG8=dnyLGRXamLR5-eYJ9Q8WCwKe44sHHZ57=1h_x0RCRA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8875 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804260209
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Geert,
+
+Thank you for the patch.
+
+On Wednesday, 25 April 2018 10:49:38 EEST Geert Uytterhoeven wrote:
+> Fixes: 14da3ed8dd08c581 ("devicetree/bindings: display: Document common
+> panel properties")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  Documentation/devicetree/bindings/display/panel/panel-common.txt | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git
+> a/Documentation/devicetree/bindings/display/panel/panel-common.txt
+> b/Documentation/devicetree/bindings/display/panel/panel-common.txt index
+> 557fa765adcb9450..5d2519af4bb5ca5e 100644
+> --- a/Documentation/devicetree/bindings/display/panel/panel-common.txt
+> +++ b/Documentation/devicetree/bindings/display/panel/panel-common.txt
+> @@ -38,7 +38,7 @@ Display Timings
+>    require specific display timings. The panel-timing subnode expresses
+> those timings as specified in the timing subnode section of the display
+> timing bindings defined in
+> -  Documentation/devicetree/bindings/display/display-timing.txt.
+> +  Documentation/devicetree/bindings/display/panel/display-timing.txt.
+> 
+> 
+>  Connectivity
 
 
-On 04/26/2018 02:50 PM, Saeed Mahameed wrote:
-> On Thu, Apr 26, 2018 at 1:37 PM, Qing Huang <qing.huang@oracle.com> wrote:
->> Current stats collecting scheme in mlx5 driver is to periodically fetch
->> aggregated stats from all the active mlx5 software channels associated
->> with the device. However when a mlx5 interface is brought down(ifdown),
->> all the channels will be deactivated and closed. A new set of channels
->> will be created when next ifup command or a similar command is called.
->> Unfortunately the new channels will have all stats reset to 0. So you
->> lose the accumulated stats information. This behavior is different from
->> other netdev drivers including the mlx4 driver. In order to fix it, we
->> now save prior mlx5 software stats into netdev stats fields, so all the
->> accumulated stats will survive multiple runs of ifdown/ifup commands and
->> be shown correctly.
->>
->> Orabug: 27548610
->>
->> Signed-off-by: Qing Huang <qing.huang@oracle.com>
->> ---
-> Hi Qing,
->
-> I am adding Eran since he is currently working on a similar patch,
-> He is also taking care of all cores/rings stats to make them
-> persistent, so you won't have discrepancy  between
-> ethtool and ifconfig stats.
->
-> I am ok with this patch, but this means Eran has to work his way around it.
->
-> so we have two options:
->
-> 1. Temporary accept this patch, and change it later with Eran's work.
-> 2. Wait for Eran's work.
->
-> I am ok with either one of them, please let me know.
->
-> Thanks !
-Hi Saeed,
+-- 
+Regards,
 
-Any idea on rough ETA of Eran's stats work to be in upstream? If it will 
-be available soon, I think
-we can wait a bit. If it will take a while to redesign the whole stats 
-scheme (for both ethtool and ifconfig),
-maybe we can go with this incremental fix first?
-
-Thanks!
-
->
->>   drivers/net/ethernet/mellanox/mlx5/core/en_main.c | 30 +++++++++++++++++++----
->>   1 file changed, 25 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
->> index f1fe490..5d50e69 100644
->> --- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
->> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
->> @@ -2621,6 +2621,23 @@ static void mlx5e_netdev_set_tcs(struct net_device *netdev)
->>                  netdev_set_tc_queue(netdev, tc, nch, 0);
->>   }
->>
->> +static void mlx5e_netdev_save_stats(struct mlx5e_priv *priv)
->> +{
->> +       struct net_device *netdev = priv->netdev;
->> +
->> +       netdev->stats.rx_packets += priv->stats.sw.rx_packets;
->> +       netdev->stats.rx_bytes   += priv->stats.sw.rx_bytes;
->> +       netdev->stats.tx_packets += priv->stats.sw.tx_packets;
->> +       netdev->stats.tx_bytes   += priv->stats.sw.tx_bytes;
->> +       netdev->stats.tx_dropped += priv->stats.sw.tx_queue_dropped;
->> +
->> +       priv->stats.sw.rx_packets       = 0;
->> +       priv->stats.sw.rx_bytes         = 0;
->> +       priv->stats.sw.tx_packets       = 0;
->> +       priv->stats.sw.tx_bytes         = 0;
->> +       priv->stats.sw.tx_queue_dropped = 0;
->> +}
->> +
-> This means that we are now explicitly clearing channels stats on
-> ifconfig down or switch_channels.
-> and now after ifconfing down, ethtool will always show 0, before this
-> patch it didn't.
-> Anyway update sw stats function will always override them with the new
-> channels stats next time we load new channels.
-> so it is not that big of a deal.
->
->
->>   static void mlx5e_build_channels_tx_maps(struct mlx5e_priv *priv)
->>   {
->>          struct mlx5e_channel *c;
->> @@ -2691,6 +2708,7 @@ void mlx5e_switch_priv_channels(struct mlx5e_priv *priv,
->>                  netif_set_real_num_tx_queues(netdev, new_num_txqs);
->>
->>          mlx5e_deactivate_priv_channels(priv);
->> +       mlx5e_netdev_save_stats(priv);
->>          mlx5e_close_channels(&priv->channels);
->>
->>          priv->channels = *new_chs;
->> @@ -2770,6 +2788,7 @@ int mlx5e_close_locked(struct net_device *netdev)
->>
->>          netif_carrier_off(priv->netdev);
->>          mlx5e_deactivate_priv_channels(priv);
->> +       mlx5e_netdev_save_stats(priv);
->>          mlx5e_close_channels(&priv->channels);
->>
->>          return 0;
->> @@ -3215,11 +3234,12 @@ static int mlx5e_setup_tc(struct net_device *dev, enum tc_setup_type type,
->>                  stats->tx_packets = PPORT_802_3_GET(pstats, a_frames_transmitted_ok);
->>                  stats->tx_bytes   = PPORT_802_3_GET(pstats, a_octets_transmitted_ok);
->>          } else {
->> -               stats->rx_packets = sstats->rx_packets;
->> -               stats->rx_bytes   = sstats->rx_bytes;
->> -               stats->tx_packets = sstats->tx_packets;
->> -               stats->tx_bytes   = sstats->tx_bytes;
->> -               stats->tx_dropped = sstats->tx_queue_dropped;
->> +               stats->rx_packets = sstats->rx_packets + dev->stats.rx_packets;
->> +               stats->rx_bytes   = sstats->rx_bytes + dev->stats.rx_bytes;
->> +               stats->tx_packets = sstats->tx_packets + dev->stats.tx_packets;
->> +               stats->tx_bytes   = sstats->tx_bytes + dev->stats.tx_bytes;
->> +               stats->tx_dropped = sstats->tx_queue_dropped +
->> +                                   dev->stats.tx_dropped;
->>          }
->>
->>          stats->rx_dropped = priv->stats.qcnt.rx_out_of_buffer;
->> --
->> 1.8.3.1
->>
+Laurent Pinchart
