@@ -1,64 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753554AbeDZIHY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 04:07:24 -0400
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:42275 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752972AbeDZIHP (ORCPT
+        id S1754446AbeDZIKI (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 04:10:08 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33480 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754366AbeDZIJz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 04:07:15 -0400
-X-Google-Smtp-Source: AIpwx48NeExR0omRE0oSaLs6aSgt8ueAUNG9R9255zNOFkdZtzbQOp3U4zdpqy0g84hs6FsU/1xkO1BGZbqffinETqQ=
+        Thu, 26 Apr 2018 04:09:55 -0400
+Subject: Re: [PATCH] perf test: Adapt test case record+probe_libc_inet_pton.sh
+ for s390
+To: Martin Vuille <jpmv27@aim.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com
+References: <20180412081959.85193-1-tmricht@linux.ibm.com>
+ <20180412131012.GC9818@kernel.org>
+ <25418aa4-60bb-9f16-c880-8caaf8a20931@aim.com>
+From: Thomas-Mich Richter <tmricht@linux.ibm.com>
+Organization: IBM LTC
+Date: Thu, 26 Apr 2018 10:09:00 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180426064239.GA13895@lst.de>
-References: <20180420080313.18796-1-hch@lst.de> <20180420080313.18796-14-hch@lst.de>
- <CAEbi=3fkakVD2vxGu6SgJM77JnNM8Y79xS8_o6m9d_85BJpMFQ@mail.gmail.com>
- <20180424191640.GA32495@lst.de> <CAEbi=3f7yzE+KAM2GOh6QahC_E6BAUfB3ys3U-WdBSUf3DPZqg@mail.gmail.com>
- <20180425064055.GA11460@lst.de> <CAEbi=3fcd8E=xi_hbef45LnPsBZhZv37yPO-xfZmU1gMaWnDvg@mail.gmail.com>
- <20180426064239.GA13895@lst.de>
-From: Greentime Hu <green.hu@gmail.com>
-Date: Thu, 26 Apr 2018 16:06:34 +0800
-Message-ID: <CAEbi=3e3gM_WpQOtKZXP4Xj2Az4bLf_u6BjDELqXy6-d9HurMQ@mail.gmail.com>
-Subject: Re: [PATCH 13/22] nds32: use generic dma_noncoherent_ops
-To: Christoph Hellwig <hch@lst.de>
-Cc: linux-arch <linux-arch@vger.kernel.org>,
-        Michal Simek <monstr@monstr.eu>, Vincent Chen <deanbo422@gmail.com>,
-        linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
-        linux-hexagon@vger.kernel.org, linux-m68k@vger.kernel.org,
-        nios2-dev@lists.rocketboards.org, openrisc@lists.librecores.org,
-        linux-parisc@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux <sparclinux@vger.kernel.org>, linux-xtensa@linux-xtensa.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <25418aa4-60bb-9f16-c880-8caaf8a20931@aim.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18042608-0020-0000-0000-000004163CBF
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18042608-0021-0000-0000-000042AB409B
+Message-Id: <151b93fd-8e12-4abf-1e69-329de6eab777@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-26_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804260079
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-04-26 14:42 GMT+08:00 Christoph Hellwig <hch@lst.de>:
-> Can you try this patch ontop of either the new or original one?
->
-> ---
-> diff --git a/lib/dma-noncoherent.c b/lib/dma-noncoherent.c
-> index f4b8532c20ac..a2c192b3508d 100644
-> --- a/lib/dma-noncoherent.c
-> +++ b/lib/dma-noncoherent.c
-> @@ -48,7 +48,7 @@ static int dma_noncoherent_map_sg(struct device *dev, struct scatterlist *sgl,
->         return nents;
->  }
->
-> -#ifdef CONFIG_DMA_NONCOHERENT_SYNC_FOR_CPU
-> +#ifdef CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU
->  static void dma_noncoherent_sync_single_for_cpu(struct device *dev,
->                 dma_addr_t addr, size_t size, enum dma_data_direction dir)
->  {
-> @@ -88,7 +88,7 @@ const struct dma_map_ops dma_noncoherent_ops = {
->         .sync_sg_for_device     = dma_noncoherent_sync_sg_for_device,
->         .map_page               = dma_noncoherent_map_page,
->         .map_sg                 = dma_noncoherent_map_sg,
-> -#ifdef CONFIG_DMA_NONCOHERENT_SYNC_FOR_CPU
-> +#ifdef CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU
->         .sync_single_for_cpu    = dma_noncoherent_sync_single_for_cpu,
->         .sync_sg_for_cpu        = dma_noncoherent_sync_sg_for_cpu,
->         .unmap_page             = dma_noncoherent_unmap_page,
+On 04/25/2018 04:19 PM, Martin Vuille wrote:
+> Apologies for any problems my patch may be causing.
+> 
+> I'm unclear on what is the proposed fix, other than reverting the commit.
+> 
+> In the problem scenario, is a --symfs option used? Is the debug info being obtained from the symfs directory?
+> 
+> Unfortunately, I've had to change my focus for the time being, so won't be able to investigate further for a while.
+> 
+> Arnaldo, I'm fine with you reverting this change for now.
+> 
+> Regards,
+> 
+> MV
+> 
+> 
 
-It works!!!
+Martin,
+
+there is no need to revert the patch. I have adopted the test case for s390 and it
+now stops at main, which is identical to x86.
+
+The --symfs option was not used, however the debug file selected for dwarf examination
+was different. With you patch it changed from /usr/lib64/libc.so (old) to
+/usr/lib/debug/lib64/libc-2.26.so.debug (new)
+and I think that this file has not all the info (at least on s390).
+
+-- 
+Thomas Richter, Dept 3303, IBM s390 Linux Development, Boeblingen, Germany
+--
+Vorsitzende des Aufsichtsrats: Martina Koederitz 
+Geschäftsführung: Dirk Wittkopp
+Sitz der Gesellschaft: Böblingen / Registergericht: Amtsgericht Stuttgart, HRB 243294
