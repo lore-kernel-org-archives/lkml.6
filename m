@@ -1,115 +1,170 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756839AbeDZQrD (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 12:47:03 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56410 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754544AbeDZQq6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 12:46:58 -0400
-Subject: Re: [linux-sunxi] [PATCH 3/3] arm64: allwinner: h6: enable MMC0/2 on
- Pine H64
-To: icenowy@aosc.io, Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-References: <20180426140728.43155-1-icenowy@aosc.io>
- <20180426140728.43155-4-icenowy@aosc.io>
-From: Andre Przywara <andre.przywara@arm.com>
-Message-ID: <03cc2e8c-4a35-3fb4-b408-fd8d4ba3e407@arm.com>
-Date: Thu, 26 Apr 2018 17:46:26 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        id S1756674AbeDZQse (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 12:48:34 -0400
+Received: from mga14.intel.com ([192.55.52.115]:31321 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754544AbeDZQsd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 12:48:33 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,330,1520924400";
+   d="scan'208";a="51065579"
+Subject: Re: [V3 PATCH] perf parse-events: Specially handle uncore event alias
+ in small groups
+To: Jiri Olsa <jolsa@redhat.com>
+Cc: acme@kernel.org, mingo@redhat.com, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, namhyung@kernel.org,
+        ganapatrao.kulkarni@cavium.com, zhangshaokun@hisilicon.com,
+        yao.jin@linux.intel.com, will.deacon@arm.com, ak@linux.intel.com,
+        agustinv@codeaurora.org
+References: <1524679123-150715-1-git-send-email-kan.liang@linux.intel.com>
+ <20180426161410.GC2122@krava>
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+Message-ID: <aa201f0f-f3fb-90ae-9578-8e44dcec09bb@linux.intel.com>
+Date: Thu, 26 Apr 2018 12:48:28 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180426140728.43155-4-icenowy@aosc.io>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+In-Reply-To: <20180426161410.GC2122@krava>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On 26/04/18 15:07, Icenowy Zheng wrote:
-> The Pine H64 board have a MicroSD slot connected to MMC0 controller of
-> the H6 SoC and a eMMC slot connected to MMC2.
+
+On 4/26/2018 12:14 PM, Jiri Olsa wrote:
+> On Wed, Apr 25, 2018 at 10:58:43AM -0700, kan.liang@linux.intel.com wrote:
 > 
-> Enable them in the device tree.
+> SNIP
 > 
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> ---
->  .../boot/dts/allwinner/sun50i-h6-pine-h64.dts      | 32 ++++++++++++++++++++++
->  1 file changed, 32 insertions(+)
+>> -void parse_events__set_leader(char *name, struct list_head *list)
+>> +/*
+>> + * Check if the two uncore PMUs are from the same uncore block
+>> + * The format of the uncore PMU name is uncore_#blockname_#pmuidx
+>> + */
+>> +static bool is_same_uncore_block(const char *pmu_name_a, const char *pmu_name_b)
+>> +{
+>> +	char *end_a, *end_b;
+>> +
+>> +	end_a = strrchr(pmu_name_a, '_');
+>> +	end_b = strrchr(pmu_name_b, '_');
+>> +
+>> +	if (!end_a || !end_b)
+>> +		return false;
+>> +
+>> +	if ((end_a - pmu_name_a) != (end_b - pmu_name_b))
+>> +		return false;
+>> +
+>> +	return (strncmp(pmu_name_a, pmu_name_b, end_a - pmu_name_a) == 0);
+>> +}
+>> +
+>> +static int
+>> +parse_events__set_leader_for_uncore_aliase(char *name, struct list_head *list,
+>> +					   struct parse_events_state *parse_state)
+>> +{
+>> +	struct perf_evsel *evsel, *leader;
+>> +	uintptr_t *leaders;
+>> +	bool is_leader = true;
+>> +	int i = 0, nr_pmu = 0, total_members, ret = 0;
+>> +
+>> +	leader = list_entry(list->next, struct perf_evsel, node);
+>> +	evsel = list_entry(list->prev, struct perf_evsel, node);
 > 
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
-> index d36de5eb81f3..78b1cd54687c 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
-> @@ -20,6 +20,38 @@
->  	chosen {
->  		stdout-path = "serial0:115200n8";
->  	};
-> +
-> +	reg_vcc3v3: vcc3v3 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vcc3v3";
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +	};
-> +
-> +	reg_vcc1v8: vcc1v8 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vcc1v8";
-> +		regulator-min-microvolt = <1800000>;
-> +		regulator-max-microvolt = <1800000>;
-> +	};
-> +};
-> +
-> +&mmc0 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&mmc0_pins>;
-> +	vmmc-supply = <&reg_vcc3v3>;
+> could you please use list_last_entry and list_first_entry in here?
+>
 
-So this is actually CLDO1 on the AXP, correct?
+Sure.
 
 
-> +	cd-gpios = <&pio 5 6 GPIO_ACTIVE_LOW>;
-> +	status = "okay";
-> +};
-> +
-> +&mmc2 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&mmc2_pins>;
-> +	vmmc-supply = <&reg_vcc3v3>;
-> +	vqmmc-supply = <&reg_vcc1v8>;
-
-And this is BLDO2?
-
-I am just asking because I want to avoid running into the same problem
-as with the A64 before: that future DTs become incompatible with older
-kernels, because we change the power supply to point to the AXP
-regulators, which this kernel does not support yet.
-
-It looks like there are more users of those power rails, so we could
-keep those supplies connected to these fixed regulators here, even with
-AXP-805 support in the kernel.
-
-Or we keep this back until we get proper AXP support in the kernel? I
-guess it's quite close to the existing PMICs, so it might be more a
-copy&paste exercise to support the AXP-805?
-
-But apart from this this looks correct to me.
-
-Cheers,
-Andre.
-
-> +	non-removable;
-> +	cap-mmc-hw-reset;
-> +	status = "okay";
->  };
->  
->  &uart0 {
+>> +	total_members = evsel->idx - leader->idx + 1;
+>> +
+>> +	leaders = calloc(total_members, sizeof(uintptr_t));
+>> +	if (!leaders)
+>> +		return ret;
 > 
+> returns 0 in here
+
+OK
+
+> 
+>> +
+>> +	 __evlist__for_each_entry(list, evsel) {
+>> +
+>> +		/* Only split the uncore group which members use alias */
+>> +		if (!evsel->use_uncore_alias)
+>> +			goto out;
+>> +
+>> +		/* The events must be from the same uncore block */
+>> +		if (!is_same_uncore_block(leader->pmu_name, evsel->pmu_name))
+>> +			goto out;
+>> +
+>> +		if (!is_leader)
+>> +			continue;
+>> +		/*
+>> +		 * If the event's PMU name starts to repeat, it must be a new
+>> +		 * event. That can be used to distinguish the leader from
+>> +		 * other members, even they have the same event name.
+>> +		 */
+>> +		if ((leader != evsel) && (leader->pmu_name == evsel->pmu_name)) {
+>> +			is_leader = false;
+> 
+> setting "is_leader = false" basically breaks the loop,
+> because of that !leader check above, so why continue?
+>
+
+Because the evsel doesn't belong to leader anymore.
+We should not add it into leaders[].
+
+>> +			continue;
+>> +		}
+>> +		/* The name is always alias name */
+>> +		WARN_ON(strcmp(leader->name, evsel->name));
+>> +
+>> +		leaders[nr_pmu++] = (uintptr_t) evsel;
+>> +	}
+>> +
+>> +	/* only one event alias */
+>> +	if (nr_pmu == total_members) {
+>> +		parse_state->nr_groups--;
+>> +		goto handled;
+>> +	}
+>> +
+>> +	__evlist__for_each_entry(list, evsel) {
+>> +		if (i >= nr_pmu)
+>> +			i = 0;
+>> +		evsel->leader = (struct perf_evsel *) leaders[i++];
+>> +	}
+> 
+> it's not so obvious from the code how the groups
+> are set.. please describe that logic in the comment
+>
+
+Sure. I will add more comments.
+
+Thanks,
+Kan
+
+
+> thanks,
+> jirka
+> 
+>> +
+>> +	for (i = 0; i < nr_pmu; i++) {
+>> +		evsel = (struct perf_evsel *) leaders[i];
+>> +		evsel->nr_members = total_members / nr_pmu;
+>> +		evsel->group_name = name ? strdup(name) : NULL;
+>> +	}
+>> +
+>> +	parse_state->nr_groups += nr_pmu - 1;
+>> +
+>> +handled:
+>> +	ret = 1;
+>> +out:
+>> +	free(leaders);
+>> +	return ret;
+>> +}
