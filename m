@@ -1,63 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752889AbeDZGLL (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 02:11:11 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:55173 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751372AbeDZGLK (ORCPT
+        id S1753007AbeDZGM4 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 02:12:56 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:36624 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751508AbeDZGMx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 02:11:10 -0400
-Date: Thu, 26 Apr 2018 08:11:08 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Moving unmaintained filesystems to staging
-Message-ID: <20180426061108.GB4977@amd>
-References: <20180425154602.GA8546@bombadil.infradead.org>
+        Thu, 26 Apr 2018 02:12:53 -0400
+Date: Thu, 26 Apr 2018 08:11:30 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: geert@linux-m68k.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] ARM: dts: r8a7740: Enable CEU0
+Message-ID: <20180426061124.hvgl3ijf6ulrdkmn@verge.net.au>
+References: <1524654920-18749-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1524654920-18749-3-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="jRHKVT23PllUwdXP"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180425154602.GA8546@bombadil.infradead.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <1524654920-18749-3-git-send-email-jacopo+renesas@jmondi.org>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Thanks Jacopo,
 
---jRHKVT23PllUwdXP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I'm very pleased to see this series.
 
-On Wed 2018-04-25 08:46:02, Matthew Wilcox wrote:
-> Recently ncpfs got moved to staging.  Also recently, we had some fuzzer
-> developers report bugs in hfs, which they deem a security hole because
-> Ubuntu attempts to automount an inserted USB device as hfs.
+On Wed, Apr 25, 2018 at 01:15:20PM +0200, Jacopo Mondi wrote:
+> Enable CEU0 peripheral for Renesas R-Mobile A1 R8A7740.
 
-We promise "no-regressions" for code in main repository, no such
-promise for staging. We have quite a lot of code without maintainer.
+Given 'status = "disabled"' below I think you
+are describing but not enabling CEU0. Also in the subject.
 
-Moving code to staging means it will get broken -- staging was not
-designed for this. I believe moving anything there is bad idea.
+Should we also describe CEU1?
 
-Staging is for ugly code, not for code that needs new maintainter.
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+>  arch/arm/boot/dts/r8a7740.dtsi | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/r8a7740.dtsi b/arch/arm/boot/dts/r8a7740.dtsi
+> index afd3bc5..05ec41e 100644
+> --- a/arch/arm/boot/dts/r8a7740.dtsi
+> +++ b/arch/arm/boot/dts/r8a7740.dtsi
+> @@ -67,6 +67,16 @@
+>  		power-domains = <&pd_d4>;
+>  	};
+>  
+> +	ceu0: ceu@fe910000 {
+> +		reg = <0xfe910000 0x100>;
 
---jRHKVT23PllUwdXP
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Should the size of the range be 0x3000 ?
+That would seem to match my reading of table 32.3
+and also be consistent with r7s72100.dtsi.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+> +		compatible = "renesas,r8a7740-ceu";
+> +		interrupts = <GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>;
+> +		clocks = <&mstp1_clks R8A7740_CLK_CEU20>;
+> +		clock-names = "ceu20";
+> +		power-domains = <&pd_a4mp>;
 
-iEYEARECAAYFAlrhbXwACgkQMOfwapXb+vILRwCePKl/ETUU0wWG96+tXyQKzoiq
-Bq4An1bxPszkX/nco+RsP+Mw1NNlL0Zg
-=K+sj
------END PGP SIGNATURE-----
+My reading of table 1.7 is that the power domain should be A4R (&pd_a4r).
 
---jRHKVT23PllUwdXP--
+> +		status = "disabled";
+> +	};
+> +
+>  	cmt1: timer@e6138000 {
+>  		compatible = "renesas,cmt-48-r8a7740", "renesas,cmt-48";
+>  		reg = <0xe6138000 0x170>;
+> -- 
+> 2.7.4
+> 
