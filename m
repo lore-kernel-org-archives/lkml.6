@@ -1,22 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757096AbeDZQ7S (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 12:59:18 -0400
+        id S1757139AbeDZQ7e (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 12:59:34 -0400
 Received: from perceval.ideasonboard.com ([213.167.242.64]:58064 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756853AbeDZQxz (ORCPT
+        with ESMTP id S1756519AbeDZQxy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 12:53:55 -0400
+        Thu, 26 Apr 2018 12:53:54 -0400
 From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
+        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         dri-devel@lists.freedesktop.org (open list:DRM DRIVERS FOR RENESAS),
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS),
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 04/17] drm: rcar-du: Use the correct naming for ODPM fields in DEFR6
-Date: Thu, 26 Apr 2018 17:53:33 +0100
-Message-Id: <20180426165346.494-5-kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH 02/17] dt-bindings: display: renesas: du: Document the R8A77965 bindings
+Date: Thu, 26 Apr 2018 17:53:31 +0100
+Message-Id: <20180426165346.494-3-kieran.bingham+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com>
 References: <20180426165346.494-1-kieran.bingham+renesas@ideasonboard.com>
@@ -24,61 +27,30 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The naming of the fields for the ODPM signals in the DU extensional
-function control register 6 (DEFR6) is incorrect against the data sheets
-for both R-Car Gen2 and R-Car Gen3.
-
-Rename the fields to match the datasheet.
-
 Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_group.c |  4 ++--
- drivers/gpu/drm/rcar-du/rcar_du_regs.h  | 16 ++++++++--------
- 2 files changed, 10 insertions(+), 10 deletions(-)
+ Documentation/devicetree/bindings/display/renesas,du.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_group.c b/drivers/gpu/drm/rcar-du/rcar_du_group.c
-index 2f37ea901873..eead202c95c7 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_group.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_group.c
-@@ -46,10 +46,10 @@ void rcar_du_group_write(struct rcar_du_group *rgrp, u32 reg, u32 data)
+diff --git a/Documentation/devicetree/bindings/display/renesas,du.txt b/Documentation/devicetree/bindings/display/renesas,du.txt
+index a36a6e7ee54f..7c6854bd0a04 100644
+--- a/Documentation/devicetree/bindings/display/renesas,du.txt
++++ b/Documentation/devicetree/bindings/display/renesas,du.txt
+@@ -13,6 +13,7 @@ Required Properties:
+     - "renesas,du-r8a7794" for R8A7794 (R-Car E2) compatible DU
+     - "renesas,du-r8a7795" for R8A7795 (R-Car H3) compatible DU
+     - "renesas,du-r8a7796" for R8A7796 (R-Car M3-W) compatible DU
++    - "renesas,du-r8a77965" for R8A77965 (R-Car M3-N) compatible DU
+     - "renesas,du-r8a77970" for R8A77970 (R-Car V3M) compatible DU
+     - "renesas,du-r8a77995" for R8A77995 (R-Car D3) compatible DU
  
- static void rcar_du_group_setup_pins(struct rcar_du_group *rgrp)
- {
--	u32 defr6 = DEFR6_CODE | DEFR6_ODPM12_DISP;
-+	u32 defr6 = DEFR6_CODE | DEFR6_ODPM02_DISP;
+@@ -59,6 +60,7 @@ corresponding to each DU output.
+  R8A7794 (R-Car E2)     DPAD 0         DPAD 1         -              -
+  R8A7795 (R-Car H3)     DPAD 0         HDMI 0         HDMI 1         LVDS 0
+  R8A7796 (R-Car M3-W)   DPAD 0         HDMI 0         LVDS 0         -
++ R8A77965 (R-Car M3-N)  DPAD 0         HDMI 0         LVDS 0         -
+  R8A77970 (R-Car V3M)   DPAD 0         LVDS 0         -              -
+  R8A77995 (R-Car D3)    DPAD 0         LVDS 0         LVDS 1         -
  
- 	if (rgrp->num_crtcs > 1)
--		defr6 |= DEFR6_ODPM22_DISP;
-+		defr6 |= DEFR6_ODPM12_DISP;
- 
- 	rcar_du_group_write(rgrp, DEFR6, defr6);
- }
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_regs.h b/drivers/gpu/drm/rcar-du/rcar_du_regs.h
-index d5bae99d3cfe..9dfd220ceda1 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_regs.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_regs.h
-@@ -187,14 +187,14 @@
- 
- #define DEFR6			0x000e8
- #define DEFR6_CODE		(0x7778 << 16)
--#define DEFR6_ODPM22_DSMR	(0 << 10)
--#define DEFR6_ODPM22_DISP	(2 << 10)
--#define DEFR6_ODPM22_CDE	(3 << 10)
--#define DEFR6_ODPM22_MASK	(3 << 10)
--#define DEFR6_ODPM12_DSMR	(0 << 8)
--#define DEFR6_ODPM12_DISP	(2 << 8)
--#define DEFR6_ODPM12_CDE	(3 << 8)
--#define DEFR6_ODPM12_MASK	(3 << 8)
-+#define DEFR6_ODPM12_DSMR	(0 << 10)
-+#define DEFR6_ODPM12_DISP	(2 << 10)
-+#define DEFR6_ODPM12_CDE	(3 << 10)
-+#define DEFR6_ODPM12_MASK	(3 << 10)
-+#define DEFR6_ODPM02_DSMR	(0 << 8)
-+#define DEFR6_ODPM02_DISP	(2 << 8)
-+#define DEFR6_ODPM02_CDE	(3 << 8)
-+#define DEFR6_ODPM02_MASK	(3 << 8)
- #define DEFR6_TCNE1		(1 << 6)
- #define DEFR6_TCNE0		(1 << 4)
- #define DEFR6_MLOS1		(1 << 2)
 -- 
 2.17.0
