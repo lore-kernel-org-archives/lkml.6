@@ -1,173 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932205AbeDZP3f (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 11:29:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59308 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756519AbeDZP3d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 11:29:33 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A83421745
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
-Date: Thu, 26 Apr 2018 09:29:32 -0600
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [f2fs-dev] [PATCH 4/5 v2] f2fs: sanity check for total valid
- blocks
-Message-ID: <20180426152932.GD68594@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180425054613.2700-1-jaegeuk@kernel.org>
- <20180425054613.2700-4-jaegeuk@kernel.org>
- <e9ccab38-0773-156f-67b1-0374b0aeb6ed@kernel.org>
+        id S1756747AbeDZPaI (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 11:30:08 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:33235 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756627AbeDZPaD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 11:30:03 -0400
+X-Google-Smtp-Source: AB8JxZqdbQel9QndiIDyN5U0e8cqGBF/a2miWOkRi4/hrD2fcRVKNAd8wOMyU2vWxqtghYT7fDRaqw==
+Date: Thu, 26 Apr 2018 17:29:42 +0200
+From: Andrea Parri <andrea.parri@amarulasolutions.com>
+To: Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc: akpm@linux-foundation.org, peterz@infradead.org, oleg@redhat.com,
+        viro@zeniv.linux.org.uk, mingo@kernel.org, paulmck@linux.vnet.ibm.com,
+        keescook@chromium.org, riel@redhat.com, mhocko@suse.com,
+        tglx@linutronix.de, kirill.shutemov@linux.intel.com,
+        marcos.souza.org@gmail.com, hoeun.ryu@gmail.com,
+        pasha.tatashin@oracle.com, gs051095@gmail.com, ebiederm@xmission.com,
+        dhowells@redhat.com, rppt@linux.vnet.ibm.com,
+        linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
+        Will Deacon <will.deacon@arm.com>, Boqun Feng <boqun.feng@gmail.com>
+Subject: Re: [PATCH 4/4] exit: Lockless iteration over task list in
+ mm_update_next_owner()
+Message-ID: <20180426152942.GA2737@andrea>
+References: <152473763015.29458.1131542311542381803.stgit@localhost.localdomain>
+ <152474046779.29458.5294808258041953930.stgit@localhost.localdomain>
+ <20180426123542.GA819@andrea>
+ <c21ad28c-cd23-2a75-6622-ba49c37137db@virtuozzo.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e9ccab38-0773-156f-67b1-0374b0aeb6ed@kernel.org>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+In-Reply-To: <c21ad28c-cd23-2a75-6622-ba49c37137db@virtuozzo.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch enhances sanity check for SIT entries.
+On Thu, Apr 26, 2018 at 04:52:39PM +0300, Kirill Tkhai wrote:
+> On 26.04.2018 15:35, Andrea Parri wrote:
 
-syzbot hit the following crash on upstream commit
-83beed7b2b26f232d782127792dd0cd4362fdc41 (Fri Apr 20 17:56:32 2018 +0000)
-Merge branch 'fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal
-syzbot dashboard link: https://syzkaller.appspot.com/bug?extid=bf9253040425feb155ad
+[...]
 
-syzkaller reproducer: https://syzkaller.appspot.com/x/repro.syz?id=5692130282438656
-Raw console output: https://syzkaller.appspot.com/x/log.txt?id=5095924598571008
-Kernel config: https://syzkaller.appspot.com/x/.config?id=1808800213120130118
-compiler: gcc (GCC) 8.0.1 20180413 (experimental)
+> > 
+> > Mmh, it's possible that I am misunderstanding this statement but it does
+> > not seem quite correct to me; a counter-example would be provided by the
+> > test at "tools/memory-model/litmus-tests/SB+mbonceonces.litmus" (replace
+> > either of the smp_mb() with the sequence:
+> > 
+> >    spin_lock(s); spin_unlock(s); spin_lock(s); spin_unlock(s); ).
+> > 
+> > BTW, your commit message suggests that your case would work with "imply
+> > an smp_wmb()".  This implication should hold "w.r.t. current implementa-
+> > tions".  We (LKMM people) discussed changes to the LKMM to make it hold
+> > in LKMM but such changes are still in our TODO list as of today...
+> 
+> I'm not close to LKMM, so the test you referenced is not clear for me.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+bf9253040425feb155ad@syzkaller.appspotmail.com
-It will help syzbot understand when the bug is fixed. See footer for details.
-If you forward the report, please keep this part and the footer.
+The test could be concisely described by:
 
-F2FS-fs (loop0): invalid crc value
-F2FS-fs (loop0): Try to recover 1th superblock, ret: 0
-F2FS-fs (loop0): Mounted with checkpoint version = d
-F2FS-fs (loop0): Bitmap was wrongly cleared, blk:9740
-------------[ cut here ]------------
-kernel BUG at fs/f2fs/segment.c:1884!
-invalid opcode: 0000 [#1] SMP KASAN
-Dumping ftrace buffer:
-   (ftrace buffer empty)
-Modules linked in:
-CPU: 1 PID: 4508 Comm: syz-executor0 Not tainted 4.17.0-rc1+ #10
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:update_sit_entry+0x1215/0x1590 fs/f2fs/segment.c:1882
-RSP: 0018:ffff8801af526708 EFLAGS: 00010282
-RAX: ffffed0035ea4cc0 RBX: ffff8801ad454f90 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff82eeb87e RDI: ffffed0035ea4cb6
-RBP: ffff8801af526760 R08: ffff8801ad4a2480 R09: ffffed003b5e4f90
-R10: ffffed003b5e4f90 R11: ffff8801daf27c87 R12: ffff8801adb8d380
-R13: 0000000000000001 R14: 0000000000000008 R15: 00000000ffffffff
-FS:  00000000014af940(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f06bc223000 CR3: 00000001adb02000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- allocate_data_block+0x66f/0x2050 fs/f2fs/segment.c:2663
- do_write_page+0x105/0x1b0 fs/f2fs/segment.c:2727
- write_node_page+0x129/0x350 fs/f2fs/segment.c:2770
- __write_node_page+0x7da/0x1370 fs/f2fs/node.c:1398
- sync_node_pages+0x18cf/0x1eb0 fs/f2fs/node.c:1652
- block_operations+0x429/0xa60 fs/f2fs/checkpoint.c:1088
- write_checkpoint+0x3ba/0x5380 fs/f2fs/checkpoint.c:1405
- f2fs_sync_fs+0x2fb/0x6a0 fs/f2fs/super.c:1077
- __sync_filesystem fs/sync.c:39 [inline]
- sync_filesystem+0x265/0x310 fs/sync.c:67
- generic_shutdown_super+0xd7/0x520 fs/super.c:429
- kill_block_super+0xa4/0x100 fs/super.c:1191
- kill_f2fs_super+0x9f/0xd0 fs/f2fs/super.c:3030
- deactivate_locked_super+0x97/0x100 fs/super.c:316
- deactivate_super+0x188/0x1b0 fs/super.c:347
- cleanup_mnt+0xbf/0x160 fs/namespace.c:1174
- __cleanup_mnt+0x16/0x20 fs/namespace.c:1181
- task_work_run+0x1e4/0x290 kernel/task_work.c:113
- tracehook_notify_resume include/linux/tracehook.h:191 [inline]
- exit_to_usermode_loop+0x2bd/0x310 arch/x86/entry/common.c:166
- prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
- syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
- do_syscall_64+0x6ac/0x800 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457d97
-RSP: 002b:00007ffd46f9c8e8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000457d97
-RDX: 00000000014b09a3 RSI: 0000000000000002 RDI: 00007ffd46f9da50
-RBP: 00007ffd46f9da50 R08: 0000000000000000 R09: 0000000000000009
-R10: 0000000000000005 R11: 0000000000000246 R12: 00000000014b0940
-R13: 0000000000000000 R14: 0000000000000002 R15: 000000000000658e
-RIP: update_sit_entry+0x1215/0x1590 fs/f2fs/segment.c:1882 RSP: ffff8801af526708
----[ end trace f498328bb02610a2 ]---
+   {initially: x=y=0; }
 
-Reported-and-tested-by: syzbot+bf9253040425feb155ad@syzkaller.appspotmail.com
-Reported-and-tested-by: syzbot+7d6d31d3bc702f566ce3@syzkaller.appspotmail.com
-Reported-and-tested-by: syzbot+0a725420475916460f12@syzkaller.appspotmail.com
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
+   Thread0	Thread1
 
-Change log from v1:
- - check valid node count
+   x = 1;	y = 1;
+   MB		MB
+   r0 = y;	r1 = x;
 
- fs/f2fs/segment.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+   Can r0,r1 be both 0 after joining?
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 20250b88bf51..c60f87822e9c 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -3612,6 +3612,7 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
- 	unsigned int i, start, end;
- 	unsigned int readed, start_blk = 0;
- 	int err = 0;
-+	block_t total_node_blocks = 0;
- 
- 	do {
- 		readed = ra_meta_pages(sbi, start_blk, BIO_MAX_PAGES,
-@@ -3634,6 +3635,8 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
- 			if (err)
- 				return err;
- 			seg_info_from_raw_sit(se, &sit);
-+			if (IS_NODESEG(se->type))
-+				total_node_blocks += se->valid_blocks;
- 
- 			/* build discard map only one time */
- 			if (f2fs_discard_en(sbi)) {
-@@ -3675,11 +3678,15 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
- 		sit = sit_in_journal(journal, i);
- 
- 		old_valid_blocks = se->valid_blocks;
-+		if (IS_NODESEG(se->type))
-+			total_node_blocks -= old_valid_blocks;
- 
- 		err = check_block_count(sbi, start, &sit);
- 		if (err)
- 			break;
- 		seg_info_from_raw_sit(se, &sit);
-+		if (IS_NODESEG(se->type))
-+			total_node_blocks += se->valid_blocks;
- 
- 		if (f2fs_discard_en(sbi)) {
- 			if (is_set_ckpt_flags(sbi, CP_TRIMMED_FLAG)) {
-@@ -3698,6 +3705,15 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
- 				se->valid_blocks - old_valid_blocks;
- 	}
- 	up_read(&curseg->journal_rwsem);
-+
-+	if (!err && total_node_blocks != valid_node_count(sbi)) {
-+		f2fs_msg(sbi->sb, KERN_ERR,
-+			"SIT is corrupted node# %u vs %u",
-+			total_node_blocks, valid_node_count(sbi));
-+		set_sbi_flag(sbi, SBI_NEED_FSCK);
-+		err = -EINVAL;
-+	}
-+
- 	return err;
- }
- 
--- 
-2.17.0.484.g0c8726318c-goog
+The answer to the question is -No-; however, if you replaced any of the
+MB with the locking sequence described above, then the answer is -Yes-:
+full fences on both sides are required to forbid that state and this is
+something that the locking sequences won't be able to provide (think at
+the implementation of these primitives for powerpc, for example).
+
+
+> Does LKMM show the real hardware behavior? Or there are added the most
+> cases, and work is still in progress?
+
+Very roughly speaking, LKMM is an "envelope" of the underlying hardware
+memory models/architectures supported by the Linux kernel which in turn
+may not coincide with the observable behavior on a given implementation
+/processor of that architecture.  Also, LKMM doesn't aim to be a "tight"
+envelope.  I'd refer to the documentation within "tools/memory-model/";
+please let me know if I can provide further info.
+
+
+> 
+> In the patch I used the logic, that the below code:
+> 
+> 	x = A;
+> 	spin_lock();
+> 	spin_unlock();
+> 	spin_lock();
+> 	spin_unlock();
+> 	y = B;
+> 
+> cannot reorder much than:
+> 
+> 	spin_lock();
+> 	x = A;		<- this can't become visible later, that spin_unlock()
+> 	spin_unlock();
+> 	spin_lock();
+> 	y = B;		<- this can't become visible earlier, than spin_lock()
+> 	spin_unlock();
+> 
+> Is there a problem?
+
+As mentioned in the previous email, if smp_wmb() is what you're looking
+for then this should be fine (considering current implementations; LKMM
+will likely be there soon...).
+
+BTW, the behavior in question has been recently discussed on the list;
+c.f., for example, the test "unlock-lock-write-ordering" described in:
+
+  http://lkml.kernel.org/r/1519301990-11766-1-git-send-email-parri.andrea@gmail.com
+
+as well as
+
+  0123f4d76ca63b7b895f40089be0ce4809e392d8
+  ("riscv/spinlock: Strengthen implementations with fences")
+
+  Andrea
+
+
+> 
+> Kirill
