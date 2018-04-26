@@ -1,196 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932227AbeDZQWR (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 12:22:17 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:23546 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755709AbeDZQTQ (ORCPT
+        id S1756975AbeDZQWE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 12:22:04 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:50965 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756689AbeDZQVF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 12:19:16 -0400
-From: Ludovic Barre <ludovic.Barre@st.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>, Rob Herring <robh+dt@kernel.org>
-CC: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Gerald BAEZA <gerald.baeza@st.com>,
-        Loic PALLARDY <loic.pallardy@st.com>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        "Ludovic Barre" <ludovic.barre@st.com>
-Subject: [PATCH 04/11] irqchip: stm32: add suspend support
-Date: Thu, 26 Apr 2018 18:18:27 +0200
-Message-ID: <1524759514-12392-5-git-send-email-ludovic.Barre@st.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1524759514-12392-1-git-send-email-ludovic.Barre@st.com>
-References: <1524759514-12392-1-git-send-email-ludovic.Barre@st.com>
+        Thu, 26 Apr 2018 12:21:05 -0400
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Kirill Tkhai <ktkhai@virtuozzo.com>, akpm@linux-foundation.org,
+        peterz@infradead.org, oleg@redhat.com, viro@zeniv.linux.org.uk,
+        mingo@kernel.org, paulmck@linux.vnet.ibm.com, keescook@chromium.org,
+        riel@redhat.com, tglx@linutronix.de, kirill.shutemov@linux.intel.com,
+        marcos.souza.org@gmail.com, hoeun.ryu@gmail.com,
+        pasha.tatashin@oracle.com, gs051095@gmail.com, dhowells@redhat.com,
+        rppt@linux.vnet.ibm.com, linux-kernel@vger.kernel.org
+References: <152473763015.29458.1131542311542381803.stgit@localhost.localdomain>
+        <20180426130700.GP17484@dhcp22.suse.cz>
+Date: Thu, 26 Apr 2018 11:19:33 -0500
+In-Reply-To: <20180426130700.GP17484@dhcp22.suse.cz> (Michal Hocko's message
+        of "Thu, 26 Apr 2018 15:07:00 +0200")
+Message-ID: <87efj2q6sq.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.48.0.237]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-26_06:,,
- signatures=0
+X-XM-SPF: eid=1fBjdk-00046F-T4;;;mid=<87efj2q6sq.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.174.25;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18GJcmTpH5m6JDbFw/QRGEx3BqHLlxcJIg=
+X-SA-Exim-Connect-IP: 97.119.174.25
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.5 XMGappySubj_01 Very gappy subject
+        *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4999]
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa08 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+        *  0.0 T_TooManySym_02 5+ unique symbols in subject
+        *  0.0 T_TooManySym_03 6+ unique symbols in subject
+X-Spam-DCC: XMission; sa08 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Michal Hocko <mhocko@kernel.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 165 ms - load_scoreonly_sql: 0.04 (0.0%),
+        signal_user_changed: 4.4 (2.6%), b_tie_ro: 3.4 (2.1%), parse: 0.96 (0.6%),
+        extract_message_metadata: 2.5 (1.5%), get_uri_detail_list: 0.76 (0.5%),
+        tests_pri_-1000: 3.5 (2.1%), tests_pri_-950: 1.16 (0.7%), tests_pri_-900:
+        1.04 (0.6%), tests_pri_-400: 17 (10.5%), check_bayes: 16 (9.9%), b_tokenize:
+        4.2 (2.5%), b_tok_get_all: 6 (3.5%), b_comp_prob: 1.22 (0.7%),
+        b_tok_touch_all: 3.0 (1.8%), b_finish: 0.74 (0.4%), tests_pri_0: 123 (74.1%),
+        check_dkim_signature: 0.36 (0.2%), check_dkim_adsp: 2.6 (1.6%),
+        tests_pri_500: 3.7 (2.2%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH 0/4] exit: Make unlikely case in mm_update_next_owner() more scalable
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ludovic Barre <ludovic.barre@st.com>
+Michal Hocko <mhocko@kernel.org> writes:
 
-This patch adds suspend feature.
--Use default irq_set_wake function to store wakeup request.
--Suspend function set wake_active into imr of each bank
- and save rising/falling trigger registers.
--Resume function restore the mask_cache interrupt into
- imr of each bank and restore rising/falling trigger registers.
+> I've had a patch to remove owner few years back. It needed some work
+> to finish but maybe that would be a better than try to make
+> non-scalable thing suck less.
 
-Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
----
- drivers/irqchip/irq-stm32-exti.c | 69 ++++++++++++++++++++++++++++++----------
- 1 file changed, 52 insertions(+), 17 deletions(-)
+I have a question.  Would it be reasonable to just have a mm->memcg?
+That would appear to be the simplest solution to the problem.
 
-diff --git a/drivers/irqchip/irq-stm32-exti.c b/drivers/irqchip/irq-stm32-exti.c
-index 69a4453..1e09667 100644
---- a/drivers/irqchip/irq-stm32-exti.c
-+++ b/drivers/irqchip/irq-stm32-exti.c
-@@ -29,6 +29,14 @@ struct stm32_exti_bank {
- 
- #define UNDEF_REG ~0
- 
-+struct stm32_exti_chip_data {
-+	const struct stm32_exti_bank *reg_bank;
-+	u32 rtsr_cache;
-+	u32 ftsr_cache;
-+};
-+
-+static struct stm32_exti_chip_data *stm32_exti_data;
-+
- static const struct stm32_exti_bank stm32f4xx_exti_b1 = {
- 	.imr_ofst	= 0x00,
- 	.emr_ofst	= 0x04,
-@@ -81,7 +89,8 @@ static const struct stm32_exti_bank *stm32h7xx_exti_banks[] = {
- 
- static unsigned long stm32_exti_pending(struct irq_chip_generic *gc)
- {
--	const struct stm32_exti_bank *stm32_bank = gc->private;
-+	struct stm32_exti_chip_data *chip_data = gc->private;
-+	const struct stm32_exti_bank *stm32_bank = chip_data->reg_bank;
- 	unsigned long pending;
- 
- 	pending = irq_reg_readl(gc, stm32_bank->rpr_ofst);
-@@ -119,7 +128,8 @@ static void stm32_irq_handler(struct irq_desc *desc)
- static int stm32_irq_set_type(struct irq_data *data, unsigned int type)
- {
- 	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(data);
--	const struct stm32_exti_bank *stm32_bank = gc->private;
-+	struct stm32_exti_chip_data *chip_data = gc->private;
-+	const struct stm32_exti_bank *stm32_bank = chip_data->reg_bank;
- 	int pin = data->hwirq % IRQS_PER_BANK;
- 	u32 rtsr, ftsr;
- 
-@@ -154,25 +164,36 @@ static int stm32_irq_set_type(struct irq_data *data, unsigned int type)
- 	return 0;
- }
- 
--static int stm32_irq_set_wake(struct irq_data *data, unsigned int on)
-+static void stm32_irq_suspend(struct irq_chip_generic *gc)
- {
--	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(data);
--	const struct stm32_exti_bank *stm32_bank = gc->private;
--	int pin = data->hwirq % IRQS_PER_BANK;
--	u32 imr;
-+	struct stm32_exti_chip_data *chip_data = gc->private;
-+	const struct stm32_exti_bank *stm32_bank = chip_data->reg_bank;
- 
- 	irq_gc_lock(gc);
- 
--	imr = irq_reg_readl(gc, stm32_bank->imr_ofst);
--	if (on)
--		imr |= BIT(pin);
--	else
--		imr &= ~BIT(pin);
--	irq_reg_writel(gc, imr, stm32_bank->imr_ofst);
-+	/* save rtsr, ftsr registers */
-+	chip_data->rtsr_cache = irq_reg_readl(gc, stm32_bank->rtsr_ofst);
-+	chip_data->ftsr_cache = irq_reg_readl(gc, stm32_bank->ftsr_ofst);
-+
-+	irq_reg_writel(gc, gc->wake_active, stm32_bank->imr_ofst);
- 
- 	irq_gc_unlock(gc);
-+}
- 
--	return 0;
-+static void stm32_irq_resume(struct irq_chip_generic *gc)
-+{
-+	struct stm32_exti_chip_data *chip_data = gc->private;
-+	const struct stm32_exti_bank *stm32_bank = chip_data->reg_bank;
-+
-+	irq_gc_lock(gc);
-+
-+	/* restore rtsr, ftsr registers */
-+	irq_reg_writel(gc, chip_data->rtsr_cache, stm32_bank->rtsr_ofst);
-+	irq_reg_writel(gc, chip_data->ftsr_cache, stm32_bank->ftsr_ofst);
-+
-+	irq_reg_writel(gc, gc->mask_cache, stm32_bank->imr_ofst);
-+
-+	irq_gc_unlock(gc);
- }
- 
- static int stm32_exti_alloc(struct irq_domain *d, unsigned int virq,
-@@ -205,7 +226,8 @@ static const struct irq_domain_ops irq_exti_domain_ops = {
- static void stm32_irq_ack(struct irq_data *d)
- {
- 	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
--	const struct stm32_exti_bank *stm32_bank = gc->private;
-+	struct stm32_exti_chip_data *chip_data = gc->private;
-+	const struct stm32_exti_bank *stm32_bank = chip_data->reg_bank;
- 
- 	irq_gc_lock(gc);
- 
-@@ -232,6 +254,11 @@ __init stm32_exti_init(const struct stm32_exti_bank **stm32_exti_banks,
- 		return -ENOMEM;
- 	}
- 
-+	stm32_exti_data = kcalloc(bank_nr, sizeof(*stm32_exti_data),
-+				  GFP_KERNEL);
-+	if (!stm32_exti_data)
-+		return -ENOMEM;
-+
- 	domain = irq_domain_add_linear(node, bank_nr * IRQS_PER_BANK,
- 				       &irq_exti_domain_ops, NULL);
- 	if (!domain) {
-@@ -251,8 +278,11 @@ __init stm32_exti_init(const struct stm32_exti_bank **stm32_exti_banks,
- 
- 	for (i = 0; i < bank_nr; i++) {
- 		const struct stm32_exti_bank *stm32_bank = stm32_exti_banks[i];
-+		struct stm32_exti_chip_data *chip_data = &stm32_exti_data[i];
- 		u32 irqs_mask;
- 
-+		chip_data->reg_bank = stm32_bank;
-+
- 		gc = irq_get_domain_generic_chip(domain, i * IRQS_PER_BANK);
- 
- 		gc->reg_base = base;
-@@ -261,9 +291,13 @@ __init stm32_exti_init(const struct stm32_exti_bank **stm32_exti_banks,
- 		gc->chip_types->chip.irq_mask = irq_gc_mask_clr_bit;
- 		gc->chip_types->chip.irq_unmask = irq_gc_mask_set_bit;
- 		gc->chip_types->chip.irq_set_type = stm32_irq_set_type;
--		gc->chip_types->chip.irq_set_wake = stm32_irq_set_wake;
-+		gc->chip_types->chip.irq_set_wake = irq_gc_set_wake;
-+		gc->suspend = stm32_irq_suspend;
-+		gc->resume = stm32_irq_resume;
-+		gc->wake_enabled = IRQ_MSK(IRQS_PER_BANK);
-+
- 		gc->chip_types->regs.mask = stm32_bank->imr_ofst;
--		gc->private = (void *)stm32_bank;
-+		gc->private = (void *)chip_data;
- 
- 		/* Determine number of irqs supported */
- 		writel_relaxed(~0UL, base + stm32_bank->rtsr_ofst);
-@@ -300,6 +334,7 @@ __init stm32_exti_init(const struct stm32_exti_bank **stm32_exti_banks,
- 	irq_domain_remove(domain);
- out_unmap:
- 	iounmap(base);
-+	kfree(stm32_exti_data);
- 	return ret;
- }
- 
--- 
-2.7.4
+That would require failing migration between memory cgroups if you are
+not moving all of processes/threads that have a given mm_struct.  That
+should not be a huge restriction as typically it is only threads that
+share a mm.  Further the check should be straigh forward: counting the
+number of threads and verifying the count matches the count on the
+mm_struct.
+
+Eric
