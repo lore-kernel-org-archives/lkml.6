@@ -1,120 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756097AbeDZLwj (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 07:52:39 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:21334 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755529AbeDZLw0 (ORCPT
+        id S1755567AbeDZLww (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 07:52:52 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:48415 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755834AbeDZLwd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 07:52:26 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180426115224epoutp03564791e933951cfe799516979ba316e2~o_izpHeC02115921159epoutp03-
-X-AuditID: b6c32a36-b6dff70000001027-22-5ae1bd787411
+        Thu, 26 Apr 2018 07:52:33 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180426115230epoutp01743e72d2f6b9aaeab754bb7e3f879bc9~o_i5OObJi0232602326epoutp01c
+X-AuditID: b6c32a37-4f9ff70000001030-ba-5ae1bd7e8e89
 From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 To: Eduardo Valentin <edubezval@gmail.com>
 Cc: Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org,
         linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
         b.zolnierkie@samsung.com
-Subject: [PATCH 10/18] thermal: exynos: move IRQs clearing to
- exynos_tmu_initialize()
-Date: Thu, 26 Apr 2018 13:51:25 +0200
-Message-id: <1524743493-28113-11-git-send-email-b.zolnierkie@samsung.com>
+Subject: [PATCH 12/18] thermal: exynos: do not use trips structure directly
+ in ->tmu_initialize
+Date: Thu, 26 Apr 2018 13:51:27 +0200
+Message-id: <1524743493-28113-13-git-send-email-b.zolnierkie@samsung.com>
 X-Mailer: git-send-email 1.9.1
 In-reply-to: <1524743493-28113-1-git-send-email-b.zolnierkie@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBIsWRmVeSWpSXmKPExsWy7bCmrm7F3odRBmd2CFpsnLGe1WL+lWus
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBIsWRmVeSWpSXmKPExsWy7bCmvm7d3odRBnteiVtsnLGe1WL+lWus
         Fpd3zWGz+Nx7hNFixvl9TBZPHvaxObB57Jx1l91j8Z6XTB59W1YxenzeJBfAEsVlk5Kak1mW
-        WqRvl8CVsfX/NqaCpwIVDevPsjQw9vB1MXJwSAiYSFxbFtXFyMkhJLCDUeLyTakuRi4g+zuj
-        xMTZ/xhBEiA1lx5PY4VIbGCUeHn+DxuE84tR4tGXa2wgVWwCVhIT21eBdYgIaEmcuLSdCaSI
-        WWAOo8Ssht0sIAlhgXCJO4f3s4PYLAKqEk1H74M18Ap4SuydsJgdYp2cxMljk1lBbE6g+IUj
-        TSwggyQE/rJKbGp/zwRR5CLRPH8vlC0s8er4FnaIf6QlLh21hahvZpT4tmMPM0TNBEaJPeuF
-        IGxricPHL4ItYBbgk3j3tYcVopdXoqMNqsRD4mrLNWaIsKPE3vW8EA8D/dJ+9wXbBEapBYwM
-        qxjFUguKc9NTiw0LjPSKE3OLS/PS9ZLzczcxguNPy2wH46JzPocYBTgYlXh4AxY+iBJiTSwr
+        WqRvl8CVMWXfVdaCD4IVh9+/YGpgfMvXxcjBISFgItF736yLkYtDSGAHo8TS2dsYIZzvjBIb
+        lzSywBS9/VLXxcgJFN/AKLFzcS5EzS9Gia2TFrOBJNgErCQmtq9iBLFFBLQkTlzazgRSxCww
+        h1FiVsNuFpCEsECixOz395lBbBYBVYkFf16C2bwCnhIb5mwEa5YQkJM4eWwyK4jNCRS/cKSJ
+        BWSQhEAjm8SyrWuYIYpcJNac3csCYQtLvDq+hR3iUmmJS0dtIeqbGSW+7dgDVT+BUWLPeiEI
+        21ri8PGLYAuYBfgk3n3tYYXo5ZXoaIMq8ZD4enkzK4TtKDFv+SY2iI+Bnlm6YDvLBEapBYwM
+        qxjFUguKc9NTiw0LjPWKE3OLS/PS9ZLzczcxguNPy3wH44ZzPocYBTgYlXh4AxY+iBJiTSwr
         rsw9xCjBwawkwhvf+jBKiDclsbIqtSg/vqg0J7X4EKM0B4uSOO9TnzNRQgLpiSWp2ampBalF
-        MFkmDk6pBsaolHsFQqbb2d7fexEpvzlmho/X1BtzVBrCJOY7ZLtE2P9h89aZtjPq/d/pZxfd
-        2vajc/FajchN95Zrndomn8HM+9b9bbfd9uDyV46f5FmlJpWa/b/rLKLju6UogsdjYyYb8/en
-        Mwy/L0jaLtdjd1dwusqx6LQSqcDTC79sK1n2U91INspJ85MSS3FGoqEWc1FxIgDIdvcUuwIA
+        MFkmDk6pBkY/e96YDwpMP5R429/4iqqd3XSr8uCl9u/9XZrcP0NzJn2xOfTW6/e7CNbjOZI8
+        3TpXGPpPPvne/umwQsHMZbevVspNWsQgrlDrGSnn+fdCm+c+aSfByGP/jBkjNhh/OXhZX1Bc
+        1jin0enadXcpc84Sjcs3lNxzF99zvrFx7+GtJ7Y5pO/8aqHEUpyRaKjFXFScCAB3f9PKuwIA
         AA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpkluLIzCtJLcpLzFFi42I5/e+xoG7F3odRBtc9LTbOWM9qMf/KNVaL
-        y7vmsFl87j3CaDHj/D4miycP+9gc2Dx2zrrL7rF4z0smj74tqxg9Pm+SC2CJ4rJJSc3JLEst
-        0rdL4MrY+n8bU8FTgYqG9WdZGhh7+LoYOTkkBEwkLj2exgpiCwmsY5S48kehi5ELyP7FKLGs
-        dw8zSIJNwEpiYvsqRhBbREBL4sSl7UwgRcwCcxglnq+YwwSSEBYIl7hzeD87iM0ioCrRdPQ+
-        WAOvgKfE3gmL2SG2yUmcPDYZbBsnUPzCkSYWiM0eEvf73rNNYORZwMiwilEytaA4Nz232KjA
-        MC+1XK84Mbe4NC9dLzk/dxMjMGC2Hdbq28F4f0n8IUYBDkYlHt6AhQ+ihFgTy4orcw8xSnAw
-        K4nwxrc+jBLiTUmsrEotyo8vKs1JLT7EKM3BoiTOezvvWKSQQHpiSWp2ampBahFMlomDU6qB
-        sZ9Jvy+z5lzu7DmTLM68i+96W/ZtuyDH75cbOxfXTZ1ws/3a93a9g9Ptr6yVKmYQn8HmduDb
-        4gZuD86j03LWLzW8mWDYdXzHKcvjUa2+M1oU2v7oXuLzmbDDffNdYa6XNys37+13ivz2ZuF+
-        OSkO7w1awq+POO5c7LTikqLTtC9Vz3IXv3v++YASS3FGoqEWc1FxIgDfndeHFAIAAA==
-X-CMS-MailID: 20180426115224epcas1p3dde7044de7d11c7ec7a7411df1123552
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpkluLIzCtJLcpLzFFi42I5/e+xoG7t3odRBu82cllsnLGe1WL+lWus
+        Fpd3zWGz+Nx7hNFixvl9TBZPHvaxObB57Jx1l91j8Z6XTB59W1YxenzeJBfAEsVlk5Kak1mW
+        WqRvl8CVMWXfVdaCD4IVh9+/YGpgfMvXxcjBISFgIvH2S10XIxeHkMA6RoknP1ewQzi/GCU2
+        H3nP3MXIycEmYCUxsX0VI4gtIqAlceLSdiaQImaBOYwSz1fMYQKZJCyQKNFxuAykhkVAVWLB
+        n5dgvbwCnhIb5mwE65UQkJM4eWwyK4jNCRS/cKSJBcQWEvCQuN/3nm0CI88CRoZVjJKpBcW5
+        6bnFRgWGeanlesWJucWleel6yfm5mxiBAbPtsFbfDsb7S+IPMQpwMCrx8AYsfBAlxJpYVlyZ
+        e4hRgoNZSYQ3vvVhlBBvSmJlVWpRfnxRaU5q8SFGaQ4WJXHe23nHIoUE0hNLUrNTUwtSi2Cy
+        TBycUg2MeYU8cx8sO6W++7fee8WGixMTzwfzbDiucz/J+0bFtrbYehXemJOWzVWTlaOO7K0w
+        f/Bqm1y5+LMj9zqXJc27sFRUbzGrfcvHM60ZvKsLxJMMRQ+9C3Bd5Nwa6mfXJBT7aguD/NFE
+        5Qm7tgbM++hm6a7bnr8oWGX6puDy/2fst/7YeV5zv+RhJZbijERDLeai4kQAtDBklhQCAAA=
+X-CMS-MailID: 20180426115229epcas1p42ebcc547531485a4f30284dd3be7e43a
 X-Msg-Generator: CA
 CMS-TYPE: 101P
-X-CMS-RootMailID: 20180426115224epcas1p3dde7044de7d11c7ec7a7411df1123552
-X-RootMTR: 20180426115224epcas1p3dde7044de7d11c7ec7a7411df1123552
+X-CMS-RootMailID: 20180426115229epcas1p42ebcc547531485a4f30284dd3be7e43a
+X-RootMTR: 20180426115229epcas1p42ebcc547531485a4f30284dd3be7e43a
 References: <1524743493-28113-1-git-send-email-b.zolnierkie@samsung.com>
-        <CGME20180426115224epcas1p3dde7044de7d11c7ec7a7411df1123552@epcas1p3.samsung.com>
+        <CGME20180426115229epcas1p42ebcc547531485a4f30284dd3be7e43a@epcas1p4.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move ->tmu_clear_irqs call from ->tmu_initialize method to
-exynos_tmu_initialize().
+Use ->get_trip_[temp,hyst] methods instead of using trips structure
+directly in all ->tmu_initialize method implementations.
 
 There should be no functional changes caused by this patch.
 
 Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
- drivers/thermal/samsung/exynos_tmu.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+ drivers/thermal/samsung/exynos_tmu.c | 18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index 1664d37..82484c5 100644
+index 80265d2..12b60e2 100644
 --- a/drivers/thermal/samsung/exynos_tmu.c
 +++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -368,8 +368,10 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
- 	status = readb(data->base + EXYNOS_TMU_REG_STATUS);
- 	if (!status)
- 		ret = -EBUSY;
--	else
-+	else {
- 		data->tmu_initialize(pdev);
-+		data->tmu_clear_irqs(data);
-+	}
+@@ -409,15 +409,13 @@ static void exynos4210_tmu_initialize(struct platform_device *pdev)
+ {
+ 	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+ 	struct thermal_zone_device *tz = data->tzd;
+-	const struct thermal_trip * const trips =
+-		of_thermal_get_trip_points(tz);
+-	unsigned long temp;
+-	int i;
++	int i, temp;
  
- 	clk_disable(data->clk);
- 	mutex_unlock(&data->lock);
-@@ -430,8 +432,6 @@ static void exynos4210_tmu_initialize(struct platform_device *pdev)
- 		writeb(temp - reference, data->base +
- 		       EXYNOS4210_TMU_REG_TRIG_LEVEL0 + i * 4);
+ 	sanitize_temp_error(data, readl(data->base + EXYNOS_TMU_REG_TRIMINFO));
+ 
+ 	for (i = 0; i < of_thermal_get_ntrips(tz); i++) {
+-		temp = trips[i].temperature / MCELSIUS;
++		tz->ops->get_trip_temp(tz, i, &temp);
++		temp /= MCELSIUS;
+ 		exynos4210_tmu_set_trip_temp(data, i, temp);
  	}
--
--	data->tmu_clear_irqs(data);
  }
+@@ -455,11 +453,9 @@ static void exynos4412_tmu_initialize(struct platform_device *pdev)
+ {
+ 	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+ 	struct thermal_zone_device *tz = data->tzd;
+-	const struct thermal_trip * const trips =
+-		of_thermal_get_trip_points(tz);
+-	unsigned long temp, hyst;
+ 	unsigned int trim_info, ctrl;
+ 	int i, ntrips = min_t(int, of_thermal_get_ntrips(tz), data->ntrip);
++	int temp, hyst;
  
- static void exynos4412_tmu_initialize(struct platform_device *pdev)
-@@ -486,8 +486,6 @@ static void exynos4412_tmu_initialize(struct platform_device *pdev)
- 	con = readl(data->base + EXYNOS_TMU_REG_CONTROL);
- 	con |= (1 << EXYNOS_TMU_THERM_TRIP_EN_SHIFT);
- 	writel(con, data->base + EXYNOS_TMU_REG_CONTROL);
--
--	data->tmu_clear_irqs(data);
- }
+ 	if (data->soc == SOC_ARCH_EXYNOS3250 ||
+ 	    data->soc == SOC_ARCH_EXYNOS4412 ||
+@@ -484,10 +480,12 @@ static void exynos4412_tmu_initialize(struct platform_device *pdev)
  
- static void exynos5433_tmu_initialize(struct platform_device *pdev)
-@@ -571,8 +569,6 @@ static void exynos5433_tmu_initialize(struct platform_device *pdev)
- 		falling_threshold |= (threshold_code << j * 8);
- 		writel(falling_threshold, data->base + falling_reg_offset);
+ 	/* Write temperature code for rising and falling threshold */
+ 	for (i = 0; i < ntrips; i++) {
+-		temp = trips[i].temperature / MCELSIUS;
++		tz->ops->get_trip_temp(tz, i, &temp);
++		temp /= MCELSIUS;
+ 		exynos4412_tmu_set_trip_temp(data, i, temp);
+ 
+-		hyst = trips[i].hysteresis / MCELSIUS;
++		tz->ops->get_trip_hyst(tz, i, &hyst);
++		hyst /= MCELSIUS;
+ 		exynos4412_tmu_set_trip_hyst(data, i, temp, hyst);
  	}
--
--	data->tmu_clear_irqs(data);
  }
- 
- static void exynos7_tmu_initialize(struct platform_device *pdev)
-@@ -635,8 +631,6 @@ static void exynos7_tmu_initialize(struct platform_device *pdev)
- 		writel(falling_threshold,
- 		       data->base + EXYNOS7_THD_TEMP_FALL7_6 + reg_off);
- 	}
--
--	data->tmu_clear_irqs(data);
- }
- 
- static void exynos4210_tmu_control(struct platform_device *pdev, bool on)
 -- 
 1.9.1
