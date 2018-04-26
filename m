@@ -1,135 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756694AbeDZPBn (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 11:01:43 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:41205 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756611AbeDZPBj (ORCPT
+        id S1756604AbeDZPDJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 11:03:09 -0400
+Received: from mail.efficios.com ([167.114.142.138]:37158 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755709AbeDZPDE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 11:01:39 -0400
-X-Google-Smtp-Source: AIpwx4/uxZO8hwHOEIUPSiyG36J9MWh95Dp85VE0kSDYyVsV/VGteOudgbA9Cfku5t4wbCfbZVIoQ8djWTTm2u99j/0=
+        Thu, 26 Apr 2018 11:03:04 -0400
+Date: Thu, 26 Apr 2018 11:03:02 -0400 (EDT)
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: rostedt <rostedt@goodmis.org>
+Cc: Joel Fernandes <joelaf@google.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Boqun Feng <boqun.feng@gmail.com>, fweisbec <fweisbec@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        kbuild test robot <fengguang.wu@intel.com>,
+        baohong liu <baohong.liu@intel.com>,
+        vedang patel <vedang.patel@intel.com>,
+        kernel-team <kernel-team@lge.com>
+Message-ID: <1609895968.1947.1524754982656.JavaMail.zimbra@efficios.com>
+In-Reply-To: <20180425185149.64f89922@vmware.local.home>
+References: <20180423172244.694dbc9d@gandalf.local.home> <849066633.939.1524612064698.JavaMail.zimbra@efficios.com> <68e4c123-a223-5e26-e57a-da2515041bf3@google.com> <20180425001049.GX26088@linux.vnet.ibm.com> <20180425042056.GA21412@linux.vnet.ibm.com> <CAJWu+orWC=W0Jn2Jo7f+u5mbHMi+D1yuCmhD-xSgjWZ6Ynw32Q@mail.gmail.com> <1267842641.1791.1524692456344.JavaMail.zimbra@efficios.com> <20180425185149.64f89922@vmware.local.home>
+Subject: Re: [RFC v4 3/4] irqflags: Avoid unnecessary calls to trace_ if you
+ can
 MIME-Version: 1.0
-X-Originating-IP: [176.63.54.97]
-In-Reply-To: <20180426145641.GB4308@redhat.com>
-References: <20180412150826.20988-1-mszeredi@redhat.com> <20180412150826.20988-10-mszeredi@redhat.com>
- <20180426141337.GA4308@redhat.com> <CAJfpegv9by9L_b-STRMy4U8Uqv03UrOYDuAa3HdF-9zKxZQRcA@mail.gmail.com>
- <20180426145641.GB4308@redhat.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Thu, 26 Apr 2018 17:01:37 +0200
-Message-ID: <CAJfpeguCtZ+3q6Fr7bu1Q5B3JXFQfS2Y9XJHgr0-OR9g=J9JsA@mail.gmail.com>
-Subject: Re: [RFC PATCH 09/35] ovl: stack file ops
-To: Vivek Goyal <vgoyal@redhat.com>
-Cc: Miklos Szeredi <mszeredi@redhat.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.8_GA_2009 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_2009)
+Thread-Topic: irqflags: Avoid unnecessary calls to trace_ if you can
+Thread-Index: mybaxXBBKgbWEr/xuPnyKoKZZ+t8+w==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 26, 2018 at 4:56 PM, Vivek Goyal <vgoyal@redhat.com> wrote:
-> On Thu, Apr 26, 2018 at 04:43:53PM +0200, Miklos Szeredi wrote:
->> On Thu, Apr 26, 2018 at 4:13 PM, Vivek Goyal <vgoyal@redhat.com> wrote:
->> > On Thu, Apr 12, 2018 at 05:08:00PM +0200, Miklos Szeredi wrote:
->> >
->> > [..]
->> >> diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
->> >> new file mode 100644
->> >> index 000000000000..a0b606885c41
->> >> --- /dev/null
->> >> +++ b/fs/overlayfs/file.c
->> >> @@ -0,0 +1,76 @@
->> >> +/*
->> >> + * Copyright (C) 2017 Red Hat, Inc.
->> >> + *
->> >> + * This program is free software; you can redistribute it and/or modify it
->> >> + * under the terms of the GNU General Public License version 2 as published by
->> >> + * the Free Software Foundation.
->> >> + */
->> >> +
->> >> +#include <linux/cred.h>
->> >> +#include <linux/file.h>
->> >> +#include <linux/xattr.h>
->> >> +#include "overlayfs.h"
->> >> +
->> >> +static struct file *ovl_open_realfile(const struct file *file)
->> >> +{
->> >> +     struct inode *inode = file_inode(file);
->> >> +     struct inode *upperinode = ovl_inode_upper(inode);
->> >> +     struct inode *realinode = upperinode ?: ovl_inode_lower(inode);
->> >> +     struct file *realfile;
->> >> +     const struct cred *old_cred;
->> >> +
->> >> +     old_cred = ovl_override_creds(inode->i_sb);
->> >> +     realfile = path_open(&file->f_path, file->f_flags | O_NOATIME,
->> >> +                          realinode, current_cred(), false);
->> >> +     revert_creds(old_cred);
->> >> +
->> >> +     pr_debug("open(%p[%pD2/%c], 0%o) -> (%p, 0%o)\n",
->> >> +              file, file, upperinode ? 'u' : 'l', file->f_flags,
->> >> +              realfile, IS_ERR(realfile) ? 0 : realfile->f_flags);
->> >> +
->> >> +     return realfile;
->> >> +}
->> >> +
->> >> +static int ovl_open(struct inode *inode, struct file *file)
->> >> +{
->> >> +     struct dentry *dentry = file_dentry(file);
->> >
->> > Hi Miklos,
->> >
->> > There is one thing I can't wrap my head around, so I better ask.
->> >
->> > file_dentry() will call ovl_d_real() and try to find dentry based on
->> > inode installed in f->f_inode. If ovl_d_real() can't find inode dentry
->> > matching the passed in inode, it warns.
->> >
->> > Assume, I have a stacked overlay configuration. Let me call top level
->> > overlay layer ovl1 and lower level overlay layer ovl2. Say I open a
->> > file foo.txt. Now ovl_open() in ovl1 decides that realinode is a lower
->> > inode and installs that inode f->f_inode of realfile. (This should be
->> > ovl2 layer inode, let me call it ovl2_inode). Now ovl_open() of ovl2 layer
->> > will be called and it will call file_dentry() and will look for dentry
->> > corresponding to ovl2_inode. I am wondering what if a copy up of foo.txt
->> > was triggered in ovl1 and by the time we called ovl_d_real(dentry,
->> > ovl2_inode), it will start comparing with inode of ovl1_upper and never
->> > find ovl2_inode.
->>
->> Okay, so we've modified ovl_d_real() to allow returning the overlay
->> dentry itself.  This is important: when we fail to match ovl1_upper
->> with ovl2_inode, well go on to get ovl2_dentry and call d_real()
->> recursively.  That recursive call should match the inode, return it to
->> outer ovl_d_real(), which again will match the inode and return
->> without warning.
->
-> So current code does following.
->
-> ovl_d_real() {
->         ...
->         ...
->
->         real = ovl_dentry_real(dentry);
->         if (inode == d_inode(real))
->                 return real;
->
->         /* Handle recursion */
->         if (unlikely(real->d_flags & DCACHE_OP_REAL))
->                 return real->d_op->d_real(real, inode);
-> }
->
-> If file got copied up in ovl1, then "real" will be ovl1_upper dentry. And
-> upper is regular fs (only ovl1 lower is overlay), then it should not have
-> DCACHE_OP_REAL set and that means we will not recurse further and not
-> find ovl2 dentry matching ovl2_inode and print warning and return
-> ovl1 dentry.
->
-> What am I missing.
+----- On Apr 25, 2018, at 6:51 PM, rostedt rostedt@goodmis.org wrote:
 
-Ah,  that's indeed buggy.  The bug is in "[RFC PATCH 34/35] vfs:
-simplify d_op->d_real()".
+> On Wed, 25 Apr 2018 17:40:56 -0400 (EDT)
+> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+> 
+>> One problem with your approach is that you can have multiple callers
+>> for the same tracepoint name, where some could be non-preemptible and
+>> others blocking. Also, there is then no clear way for the callback
+>> registration API to enforce whether the callback expects the tracepoint
+>> to be blocking or non-preemptible. This can introduce hard to diagnose
+>> issues in a kernel without debug options enabled.
+> 
+> I agree that it should not be tied to an implementation name. But
+> "blocking" is confusing. I would say "can_sleep" or some such name that
+> states that the trace point caller is indeed something that can sleep.
 
-I've already reverted that (due to d_real_inode() acquiring a new
-user) and the old code should be good (AFAICS).
+"trace_*event*_{can,might,may}_sleep" are all acceptable candidates for
+me.
+
+> 
+>> 
+>> Regarding the name, I'm OK with having something along the lines of
+>> trace_*event*_blocking or such. Please don't use "srcu" or other naming
+>> that is explicitly tied to the underlying mechanism used internally
+>> however: what we want to convey is that this specific tracepoint probe
+>> can be preempted and block. The underlying implementation could move to
+>> a different RCU flavor brand in the future, and it should not impact
+>> users of the tracepoint APIs.
+>> 
+>> In order to ensure that probes that may block only register themselves
+>> to tracepoints that allow blocking, we should introduce new tracepoint
+>> declaration/definition *and* registration APIs also contain the
+>> "BLOCKING/blocking" keywords (or such), so we can ensure that a
+>> tracepoint probe being registered to a "blocking" tracepoint is indeed
+>> allowed to block.
+> 
+> I'd really don't want to add more declaration/definitions, as we
+> already have too many as is, and with different meanings and the number
+> is of incarnations is n! in growth.
+> 
+> I'd say we just stick with a trace_<event>_can_sleep() call, and make
+> sure that if that is used that no trace_<event>() call is also used, and
+> enforce this with linker or compiler tricks.
+
+My main concern is not about having both trace_<event>_can_sleep() mixed
+with trace_<event>() calls. It's more about having a registration API allowing
+modules registering probes that may need to sleep to explicitly declare it,
+and enforce that tracepoint never connects a probe that may need to sleep
+with an instrumentation site which cannot sleep.
+
+I'm unsure what's the best way to achieve this goal though. We could possibly
+extend the tracepoint_probe_register_* APIs to introduce e.g.
+tracepoint_probe_register_prio_flags() and provide a TRACEPOINT_PROBE_CAN_SLEEP
+as parameter upon registration. If this flag is provided, then we could figure out
+an way to iterate on all callers, and ensure they are all "can_sleep" type of
+callers.
+
+Thoughts ?
 
 Thanks,
-Miklos
+
+Mathieu
+
+
+
+> 
+> -- Steve
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
