@@ -1,162 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754382AbeDZJJy (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 05:09:54 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43168 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753780AbeDZJJt (ORCPT
+        id S1754777AbeDZJMu (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 05:12:50 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:60720 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753882AbeDZJMr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 05:09:49 -0400
-Date: Thu, 26 Apr 2018 02:09:42 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: Christoph Hellwig <hch@infradead.org>,
-        Thierry Reding <treding@nvidia.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK"
-        <linaro-mm-sig@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        "open list:DMA BUFFER SHARING FRAMEWORK"
-        <linux-media@vger.kernel.org>,
-        iommu@lists.linux-foundation.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Subject: Re: noveau vs arm dma ops
-Message-ID: <20180426090942.GA18811@infradead.org>
-References: <CAKMK7uFL68pu+-9LODTgz+GQYvxpnXOGhxfz9zorJ_JKsPVw2g@mail.gmail.com>
- <20180425054855.GA17038@infradead.org>
- <CAKMK7uEFitkNQrD6cLX5Txe11XhVO=LC4YKJXH=VNdq+CY=DjQ@mail.gmail.com>
- <CAKMK7uFx=KB1vup=WhPCyfUFairKQcRR4BEd7aXaX1Pj-vj3Cw@mail.gmail.com>
- <20180425064335.GB28100@infradead.org>
- <20180425074151.GA2271@ulmo>
- <20180425085439.GA29996@infradead.org>
- <20180425100429.GR25142@phenom.ffwll.local>
- <20180425153312.GD27076@infradead.org>
- <CAKMK7uH14qupTYDa1pr8UC434Vs+97eUXj+fYi=+2uijCLayMA@mail.gmail.com>
+        Thu, 26 Apr 2018 05:12:47 -0400
+From: Colin King <colin.king@canonical.com>
+To: Kalle Valo <kvalo@qca.qualcomm.com>, ath10k@lists.infradead.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] ath10k: fix spelling mistake: "servive" -> "service"
+Date: Thu, 26 Apr 2018 10:12:44 +0100
+Message-Id: <20180426091244.9160-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKMK7uH14qupTYDa1pr8UC434Vs+97eUXj+fYi=+2uijCLayMA@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 25, 2018 at 11:35:13PM +0200, Daniel Vetter wrote:
-> > get_required_mask() is supposed to tell you if you are safe.  However
-> > we are missing lots of implementations of it for iommus so you might get
-> > some false negatives, improvements welcome.  It's been on my list of
-> > things to fix in the DMA API, but it is nowhere near the top.
-> 
-> I hasn't come up in a while in some fireworks, so I honestly don't
-> remember exactly what the issues have been. But
-> 
-> commit d766ef53006c2c38a7fe2bef0904105a793383f2
-> Author: Chris Wilson <chris@chris-wilson.co.uk>
-> Date:   Mon Dec 19 12:43:45 2016 +0000
-> 
->     drm/i915: Fallback to single PAGE_SIZE segments for DMA remapping
-> 
-> and the various bits of code that a
-> 
-> $ git grep SWIOTLB -- drivers/gpu
-> 
-> turns up is what we're doing to hack around that stuff. And in general
-> (there's some exceptions) gpus should be able to address everything,
-> so I never fully understood where that's even coming from.
+From: Colin Ian King <colin.king@canonical.com>
 
-I'm pretty sure I've seen some oddly low dma masks in GPU drivers.  E.g.
-duplicated in various AMD files:
+Trivial fix to spelling mistake in ath10k_warn warning message text
 
-	adev->need_dma32 = false;
-        dma_bits = adev->need_dma32 ? 32 : 40;
-        r = pci_set_dma_mask(adev->pdev, DMA_BIT_MASK(dma_bits));
-        if (r) {
-                adev->need_dma32 = true;
-                dma_bits = 32;
-                dev_warn(adev->dev, "amdgpu: No suitable DMA available.\n");
-        }
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/ath/ath10k/wmi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-synopsis:
-
-drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c:    pdevinfo.dma_mask       = DMA_BIT_MASK(32);
-drivers/gpu/drm/bridge/synopsys/dw-hdmi.c:              pdevinfo.dma_mask = DMA_BIT_MASK(32);
-drivers/gpu/drm/bridge/synopsys/dw-hdmi.c:              pdevinfo.dma_mask = DMA_BIT_MASK(32);
-
-etnaviv gets it right:
-
-drivers/gpu/drm/etnaviv/etnaviv_gpu.c:          u32 dma_mask = (u32)dma_get_required_mask(gpu->dev);
-
-
-But yes, the swiotlb hackery really irks me.  I just have some more
-important and bigger fires to fight first, but I plan to get back to the
-root cause of that eventually.
-
-> 
-> >> - dma api hides the cache flushing requirements from us. GPUs love
-> >>   non-snooped access, and worse give userspace control over that. We want
-> >>   a strict separation between mapping stuff and flushing stuff. With the
-> >>   IOMMU api we mostly have the former, but for the later arch maintainers
-> >>   regularly tells they won't allow that. So we have drm_clflush.c.
-> >
-> > The problem is that a cache flushing API entirely separate is hard. That
-> > being said if you look at my generic dma-noncoherent API series it tries
-> > to move that way.  So far it is in early stages and apparently rather
-> > buggy unfortunately.
-> 
-> I'm assuming this stuff here?
-> 
-> https://lkml.org/lkml/2018/4/20/146
-> 
-> Anyway got lost in all that work a bit, looks really nice.
-
-That url doesn't seem to work currently.  But I am talking about the
-thread titled '[RFC] common non-cache coherent direct dma mapping ops'
-
-> Yeah the above is pretty much what we do on x86. dma-api believes
-> everything is coherent, so dma_map_sg does the mapping we want and
-> nothing else (minus swiotlb fun). Cache flushing, allocations, all
-> done by the driver.
-
-Which sounds like the right thing to do to me.
-
-> On arm that doesn't work. The iommu api seems like a good fit, except
-> the dma-api tends to get in the way a bit (drm/msm apparently has
-> similar problems like tegra), and if you need contiguous memory
-> dma_alloc_coherent is the only way to get at contiguous memory. There
-> was a huge discussion years ago about that, and direct cma access was
-> shot down because it would have exposed too much of the caching
-> attribute mangling required (most arm platforms need wc-pages to not
-> be in the kernel's linear map apparently).
-
-Simple cma_alloc() doesn't do anything about cache handling, it
-just is a very dumb allocator for large contiguous regions inside
-a big pool.
-
-I'm not the CMA maintainer, but in general I'd love to see an
-EXPORT_SYMBOL_GPL slapped onto cma_alloc/release and drivers use
-that were needed.  Using that plus dma_map*/dma_unmap* sounds like
-a much saner interface than dma_alloc_attrs + DMA_ATTR_NON_CONSISTENT
-or DMA_ATTR_NO_KERNEL_MAPPING.
-
-You don't happen to have a pointer to that previous discussion?
-
-> Anything that separate these 3 things more (allocation pools, mapping
-> through IOMMUs and flushing cpu caches) sounds like the right
-> direction to me. Even if that throws some portability across platforms
-> away - drivers who want to control things in this much detail aren't
-> really portable (without some serious work) anyway.
-
-As long as we stay away from the dma coherent allocations separating
-them is fine, and I'm working towards it.  dma coherent allocations on
-the other hand are very hairy beasts, and provide by very different
-implementations depending on the architecture, or often even depending
-on the specifics of individual implementations inside the architecture.
-
-So for your GPU/media case it seems like you'd better stay away from
-them as much as you can.
+diff --git a/drivers/net/wireless/ath/ath10k/wmi.c b/drivers/net/wireless/ath/ath10k/wmi.c
+index df2e92a6c9bd..622e026ae940 100644
+--- a/drivers/net/wireless/ath/ath10k/wmi.c
++++ b/drivers/net/wireless/ath/ath10k/wmi.c
+@@ -5280,7 +5280,7 @@ void ath10k_wmi_event_service_available(struct ath10k *ar, struct sk_buff *skb)
+ 
+ 	ret = ath10k_wmi_pull_svc_avail(ar, skb, &arg);
+ 	if (ret) {
+-		ath10k_warn(ar, "failed to parse servive available event: %d\n",
++		ath10k_warn(ar, "failed to parse service available event: %d\n",
+ 			    ret);
+ 	}
+ 
+-- 
+2.17.0
