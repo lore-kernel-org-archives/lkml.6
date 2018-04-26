@@ -1,142 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754327AbeDZHyh (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 03:54:37 -0400
-Received: from mail-wr0-f170.google.com ([209.85.128.170]:45009 "EHLO
-        mail-wr0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754282AbeDZHya (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 03:54:30 -0400
-X-Google-Smtp-Source: AIpwx49D7qgNCiBbB4EGSwjdvkTqaZeThKp8DF9wQFWcix6o3ldkn1AKX0ClMEESAO9EEdnjQtG50w==
-From: Holger Schurig <holgerschurig@gmail.com>
-To: Alexander Duyck <alexander.duyck@gmail.com>
-Cc: Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        intel-wired-lan <intel-wired-lan@lists.osuosl.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [BUG] igb: reconnecting of cable not always detected
-In-Reply-To: <CAKgT0UdTf5pf53==hB71Ba_N1gJ-TH_3uMajozr1wykLEbK80g@mail.gmail.com>
-References: <87h8o0ocul.fsf@gmail.com> <CAKgT0Udj+d7yzPN4Jph8uk7Z6fz0oyWrO+6W6CfygSYTkGJ0Xw@mail.gmail.com> <877eovobxl.fsf@gmail.com> <CAKgT0UdTf5pf53==hB71Ba_N1gJ-TH_3uMajozr1wykLEbK80g@mail.gmail.com>
-Date: Thu, 26 Apr 2018 09:54:27 +0200
-Message-ID: <8736zio11o.fsf@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S1754187AbeDZHz5 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 03:55:57 -0400
+Received: from mga03.intel.com ([134.134.136.65]:47202 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752749AbeDZHzy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 03:55:54 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,330,1520924400";
+   d="scan'208";a="53775762"
+Message-ID: <1524729349.21176.614.camel@linux.intel.com>
+Subject: Re: [RFC PATCH RESEND 2/3] leds: upboard: Add LED support
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Javier Arteaga <javier@emutex.com>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, "Dan O'Donovan" <dan@emutex.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Thu, 26 Apr 2018 10:55:49 +0300
+In-Reply-To: <20180426023441.f2a7337sjlyd6xhf@localhost>
+References: <20180421085009.28773-1-javier@emutex.com>
+         <20180421085009.28773-3-javier@emutex.com>
+         <1524672945.21176.594.camel@linux.intel.com>
+         <20180426023441.f2a7337sjlyd6xhf@localhost>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5-1+b1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Was the orange LED on the igb NIC or on the TL SG-108? Based on the
-> comment below I am assuming it is the switch.
+On Thu, 2018-04-26 at 03:34 +0100, Javier Arteaga wrote:
+> On Wed, Apr 25, 2018 at 07:15:45PM +0300, Andy Shevchenko wrote:
+> > On Sat, 2018-04-21 at 09:50 +0100, Javier Arteaga wrote:
 
-The LEDs were on the switch.
+> > > +static int __init upboard_led_probe(struct platform_device *pdev)
+> > 
+> > Are you sure about __init here?
+> 
+> Not 100% now :)
+> 
+> My understanding was that in this context, __init allows this probe()
+> to
+> be dropped from memory after module load.
+> 
+> What am I doing wrong there?
 
-When everything works, the switch says green == 1000 MB/s.
+Just give another thought about it. The keyword(s) here is(are): time to
+live of the objects in question. It's good to get knowing what unbind-
+bind means (for built-in drivers).
 
-When cable is disconnected, switch doesn't light any LED.
+> > > +	struct upboard_led_data * const pdata = pdev-
+> > > > dev.platform_data;
+> > 
+> > Don't use direct dereference to platform_data.
+> 
+> Sorry, I don't understand this one. What's the alternative?
 
-When cable is inserted and things fail, the switch says orange LED == 100 MB/s.
-Sometimes the insertion process works, then the switch will go, of
-course, to the green LED == 1000 MB/s.
+See other drivers how they do that stuff. Hint: check inline functions
+in include/linux/device.h.
 
-I must admit that I didn't look at the LEDs of the device.
-
-
-Now I looked there, and the device the left+green LED is on. In the
-failed case (so, in the dmesg output the last thing I see is "Link is
-Down", but the device still has left+green LED on.
-
-The right+orange LED on the device seems to indicate traffic, and it is
-constantly off in the failed case.
-
-
-
-> I assume you mean "ethtool -r" since that is what is supposed to be
-> restarting negotiation. The "ethtool -i" is what you provided above.
-
-Maybe I've edited my text too much and moved output along. Anyway, in
-the failed case neither "ethtool- r eth0" nor "ethtool -i eth0" nor
-"mii-tool eth0" work at all, they all emit error warning.
-
-> Thanks. I'm suspecting we may need to instrument igb_rd32 at this
-> point. In order to trigger what you are seeing I am assuming the
-> device has been detached due to a read failure of some sort.
-
-I'll do that and reply later. I first need to understand this source
-part :-)
-
-
-> Another thing you could look at doing is narrowing down the possible
-> factors involved. You could go through and limit phy settings and look
-> at possibly dropping features such as EEE if it is enabled on the
-> device.
-
-I actually tried a driver patch to remove 1000 GB/s from the driver, in
-the assumption that maybe this specific hardware has a bad layout and
-thus trouble (I don't really think that, because I never observed any
-data transfer problem).
-
-So, is the following patch (that didn't help) what in the line of what
-you suggested?
-
-
-Index: linux-4.16/drivers/net/ethernet/intel/igb/igb_main.c
-===================================================================
---- linux-4.16.orig/drivers/net/ethernet/intel/igb/igb_main.c	2018-04-01 23:20:27.000000000 +0200
-+++ linux-4.16/drivers/net/ethernet/intel/igb/igb_main.c	2018-04-24 11:35:17.420760650 +0200
-@@ -2080,7 +2080,7 @@
- 
- 	if ((adapter->flags & IGB_FLAG_EEE) &&
- 	    (!hw->dev_spec._82575.eee_disable))
--		adapter->eee_advert = MDIO_EEE_100TX | MDIO_EEE_1000T;
-+		adapter->eee_advert = MDIO_EEE_100TX /* | MDIO_EEE_1000T */;
- 
- 	return 0;
- }
-@@ -2908,7 +2908,7 @@
- 	/* Initialize link properties that are user-changeable */
- 	adapter->fc_autoneg = true;
- 	hw->mac.autoneg = true;
--	hw->phy.autoneg_advertised = 0x2f;
-+	hw->phy.autoneg_advertised = 0x0f;
- 
- 	hw->fc.requested_mode = e1000_fc_default;
- 	hw->fc.current_mode = e1000_fc_default;
-@@ -3099,7 +3099,7 @@
- 			if ((!err) &&
- 			    (!hw->dev_spec._82575.eee_disable)) {
- 				adapter->eee_advert =
--					MDIO_EEE_100TX | MDIO_EEE_1000T;
-+					MDIO_EEE_100TX /* | MDIO_EEE_1000T */;
- 				adapter->flags |= IGB_FLAG_EEE;
- 			}
- 			break;
-@@ -3110,7 +3110,7 @@
- 				if ((!err) &&
- 					(!hw->dev_spec._82575.eee_disable)) {
- 					adapter->eee_advert =
--					   MDIO_EEE_100TX | MDIO_EEE_1000T;
-+					   MDIO_EEE_100TX /* | MDIO_EEE_1000T */;
- 					adapter->flags |= IGB_FLAG_EEE;
- 				}
- 			}
-Index: linux-4.16/drivers/net/ethernet/intel/igb/igb_ethtool.c
-===================================================================
---- linux-4.16.orig/drivers/net/ethernet/intel/igb/igb_ethtool.c	2018-04-01 23:20:27.000000000 +0200
-+++ linux-4.16/drivers/net/ethernet/intel/igb/igb_ethtool.c	2018-04-24 11:42:36.737959749 +0200
-@@ -170,7 +170,7 @@
- 			     SUPPORTED_10baseT_Full |
- 			     SUPPORTED_100baseT_Half |
- 			     SUPPORTED_100baseT_Full |
--			     SUPPORTED_1000baseT_Full|
-+			     /* SUPPORTED_1000baseT_Full| */ 
- 			     SUPPORTED_Autoneg |
- 			     SUPPORTED_TP |
- 			     SUPPORTED_Pause);
-@@ -3003,7 +3003,7 @@
- 	    (hw->phy.media_type != e1000_media_type_copper))
- 		return -EOPNOTSUPP;
- 
--	edata->supported = (SUPPORTED_1000baseT_Full |
-+	edata->supported = (/* SUPPORTED_1000baseT_Full | */
- 			    SUPPORTED_100baseT_Full);
- 	if (!hw->dev_spec._82575.eee_disable)
- 		edata->advertised =
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
