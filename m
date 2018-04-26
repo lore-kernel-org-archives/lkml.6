@@ -1,62 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754655AbeDZIvZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 04:51:25 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:46235 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754404AbeDZIvW (ORCPT
+        id S1754348AbeDZIxI (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 04:53:08 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:39254 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752419AbeDZIxF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 04:51:22 -0400
-Date: Thu, 26 Apr 2018 10:51:14 +0200 (CEST)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-cc: Mike Galbraith <efault@gmx.de>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        John Stultz <john.stultz@linaro.org>, Genki Sky <sky@genki.is>,
-        David Herrmann <dh.herrmann@gmail.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>, Pavel Machek <pavel@ucw.cz>,
-        Linux PM <linux-pm@vger.kernel.org>
-Subject: Re: [RFC/RFT patch 0/7] timekeeping: Unify clock MONOTONIC and clock
- BOOTTIME
-In-Reply-To: <CAJZ5v0hs+B+0KMnBfyy9e7v209t0hGSm+-BqyA4gMXrq7G4E7A@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1804261050130.1584@nanos.tec.linutronix.de>
-References: <CANq1E4QppGAaU5PYbGpuC00S6wGQcAt70Z7CntZHiLC6748z2A@mail.gmail.com> <alpine.DEB.2.21.1804241007410.5261@nanos.tec.linutronix.de> <1996930.B4PaKZ6i1F@aspire.rjw.lan> <1858767.c2KKoU8fl2@aspire.rjw.lan> <alpine.DEB.2.21.1804251502310.2082@nanos.tec.linutronix.de>
- <1524726236.7572.1.camel@gmx.de> <alpine.DEB.2.21.1804260941050.1589@nanos.tec.linutronix.de> <CAJZ5v0hs+B+0KMnBfyy9e7v209t0hGSm+-BqyA4gMXrq7G4E7A@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 26 Apr 2018 04:53:05 -0400
+Date: Thu, 26 Apr 2018 10:53:00 +0200
+From: Simon Horman <horms@verge.net.au>
+To: jacopo mondi <jacopo@jmondi.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, geert@linux-m68k.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] ARM: dts: r8a7740: Enable CEU0
+Message-ID: <20180426085259.lqxr4emk75oz7vug@verge.net.au>
+References: <1524654920-18749-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1524654920-18749-3-git-send-email-jacopo+renesas@jmondi.org>
+ <20180426061124.hvgl3ijf6ulrdkmn@verge.net.au>
+ <20180426072609.GH17088@w540>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180426072609.GH17088@w540>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 26 Apr 2018, Rafael J. Wysocki wrote:
-
-> On Thu, Apr 26, 2018 at 9:42 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> > On Thu, 26 Apr 2018, Mike Galbraith wrote:
-> >> On Wed, 2018-04-25 at 15:03 +0200, Thomas Gleixner wrote:
-> >> > Right, it does not matter. The real interesting one is d6ed449afdb3.
-> >>
-> >> FWIW, three boxen here suspend/resume fine, but repeatably exhibit the
-> >> below after a very few minute suspend, and a short bisect fingered your
-> >> suspect.  Distro is opensuse 42.3.
-> >>
-> >> [  211.113902] Restarting tasks ... done.
-> >> [  211.114817] PM: suspend exit
-> >> [  212.312993] systemd-journald[7266]: File /var/log/journal/016627c3c4784cd4812d4b7e96a34226/system.journal corrupted or uncleanly shut down, renaming and replacing.
-> >> [  212.313363] systemd-coredump[7264]: Detected coredump of the journal daemon itself, diverted to /var/lib/systemd/coredump/core.systemd-journal.0.0aa39276decf4f1ab6fda3464e31f9dd.582.1524720954000000.
-> >>
-> >
-> > Huch, that rather looks like a genuine application bug.
+On Thu, Apr 26, 2018 at 09:26:09AM +0200, jacopo mondi wrote:
+> Hi Simon,
 > 
-> Well, say you set a timer to wake you up in X seconds.  When you wake
-> up, you look at a clock and see that Y seconds have passed and Y is
-> much greater than X.  I guess you'd think that something's wrong. :-)
+> On Thu, Apr 26, 2018 at 08:11:30AM +0200, Simon Horman wrote:
+> > Thanks Jacopo,
+> >
+> > I'm very pleased to see this series.
+> 
+> Credits to Geert that pointed out to me R-Mobile A1 comes with a CEU.
+> I should mention him in next iteration actually, sorry about that.
+> 
+> >
+> > On Wed, Apr 25, 2018 at 01:15:20PM +0200, Jacopo Mondi wrote:
+> > > Enable CEU0 peripheral for Renesas R-Mobile A1 R8A7740.
+> >
+> > Given 'status = "disabled"' below I think you
+> > are describing but not enabling CEU0. Also in the subject.
+> 
+> Right.
+> 
+> >
+> > Should we also describe CEU1?
+> 
+> Armadillo board file only describe CEU0. If there are R-Mobile A1
+> board files where I can steal informations from I can do that. If
+> there's a public datasheet, that would be even better.
 
-And that makes you coredump, right? Brilliant choice.
+I have the datasheet, so perhaps I can add CEU1 after you have added CEU0.
 
-Thanks,
+> > > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > > ---
+> > >  arch/arm/boot/dts/r8a7740.dtsi | 10 ++++++++++
+> > >  1 file changed, 10 insertions(+)
+> > >
+> > > diff --git a/arch/arm/boot/dts/r8a7740.dtsi b/arch/arm/boot/dts/r8a7740.dtsi
+> > > index afd3bc5..05ec41e 100644
+> > > --- a/arch/arm/boot/dts/r8a7740.dtsi
+> > > +++ b/arch/arm/boot/dts/r8a7740.dtsi
+> > > @@ -67,6 +67,16 @@
+> > >  		power-domains = <&pd_d4>;
+> > >  	};
+> > >
+> > > +	ceu0: ceu@fe910000 {
+> > > +		reg = <0xfe910000 0x100>;
+> >
+> > Should the size of the range be 0x3000 ?
+> > That would seem to match my reading of table 32.3
+> > and also be consistent with r7s72100.dtsi.
+> 
+> I got this from
+> 
+> static struct resource ceu0_resources[] = {
+> 	[0] = {
+> 		.name	= "CEU",
+> 		.start	= 0xfe910000,
+> 		.end	= 0xfe91009f,
+> 		.flags	= IORESOURCE_MEM,
+> 	},
+> but I also noticed the r7s72100 one was bigger.
+> I'm fine enlarging this, if that's what the manual reports too.
 
-	tglx
+I think that would be best.
+
+> > > +		compatible = "renesas,r8a7740-ceu";
+> > > +		interrupts = <GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>;
+> > > +		clocks = <&mstp1_clks R8A7740_CLK_CEU20>;
+> > > +		clock-names = "ceu20";
+> > > +		power-domains = <&pd_a4mp>;
+> >
+> > My reading of table 1.7 is that the power domain should be A4R (&pd_a4r).
+> 
+> Ah yes, my bad.
+> 
+> The long time goal would be describe the camera module (mt9t112) which
+> is installed on armadillo. Unfortunately that would probably require
+> some more work on the CEU side.
+
+Thanks, understood.
