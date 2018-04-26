@@ -1,31 +1,31 @@
 Return-Path: <srinivas.kandagatla@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1524736197; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1524736196; cv=none;
         d=google.com; s=arc-20160816;
-        b=yLb1OCoXsmIAQbVIzAX87udaEGNWPTcuAjxybHzmwke5RGRkQAXnUCg6xPJQ4ciL74
-         bqQpe8YtQOc5SK7Bvh5SmQRoDlsnht6yWTmjlT4ygAqYclCatBIG0rfCjQxu7twyTBag
-         LcQO7AW/eSVa7YVeZxlkRwtgBR1zNKmAUenMJi9tsZWuSdjlJkKK6KnyoHmEG9GFURq5
-         SZ+1sv+C6WFMeuMm5PCYZ6XJ0wNbjJgOdQdcvsc8Jff05/FW90iYCDSYGaKD7CWa3GVj
-         F5QmWcOHcn7ZwMZB+vqeqClpc+T9uL6Nx7BPDKsoq0iniGYmX9FcYyZFz2mHe1+Zm2/E
-         QLuw==
+        b=gMcvO3wZxmqbvJ8gZt8+pqqfAecWnXOKy8rOC38g2bu6f1sESJX97Bpwh8e2ODzWTs
+         S/8uhoiK7l83HTddui4B/EH8G/AkcOCQxPtKJtFZtAO9pobmqPf5DEKS+77xM3qjCeDr
+         vBMdNN8gwN0+yorzczAwWQoooB9pBQuCArZkR5WQi2YRgXxgJpo9eqog3iVuRI9qw55q
+         JeGO4pwE/E88Zp9IY1IODhwcKIx8o3vfLxgpHC7GITM8jflwmPc1srV3jWO6vRHsvlld
+         XOjEJMJY2Fy172KVgCVAD+RtP9yYtArvWMjZnJlS3tNvC/+rxQR9+sYM4zLbmcrqCZFP
+         2HWA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=qVMSg5TnG/kUZHteKQNqkrCpT+Dbe6M8mdE8vclEpFI=;
-        b=vVh3xFMZEsY8iYnvQ76pHc/2x6OEdgA9wf1rDqdJ7j81gBKt/ApvTDjI29kvmyKV8R
-         eoHWUAgusqaNcf+RF30li47i9xELRs1rlf3Fr2YxZCVx9MF0s+FkWCecSJfRMtueth/J
-         hTrtd2hZizi/94csIXQk/SY3GFeniLNW6r3OCdoVk7VmJoUT0lWfFai/qv/8uvRa4S5F
-         4XNisY4pEuDbkYALNFq+KiICEoiOSC0cc3Y5jSLmEsa/cPOC7e+Hj5/lQeQGIOE+hhPy
-         s4Xz8dKn1g+0sLkKefFPwjkMWB0M9/s2/cWqh7EG1taxJbl/jKB9jj5f9LVerCoZ9sFB
-         6WRw==
+        bh=MJhvNWabYzx7L+m0naohE7bV07BMIV9Guxy6wN0kMQc=;
+        b=tkxZZS3jfbDoigguUQoBDWFM9H/yf0R6gL79Tz7KcUhwslbGWDlwIWLDKjO0errqRf
+         qpaP8m1Y0ZALQ1VczMn58ABO22IiBtvTFWCrZLuFaTxsVDWNNPUwmW6d43I/bdb7xoEt
+         /3Jfc9YyFvq9KUlLB2UYQ7Lrt9CYp/WnCHuWXR8k8q0szLdyUIUufOIIL+MKJbF/yavT
+         iqoiZgNifeTRkF3L7ies76JB2i+bhPZbKdEEs+aUJrvf50aVs4+/k/pBP3T7zRGsXu7O
+         9tJoKeJqFxeudVjmX2QpI+pyVECT1HAjC64wa4+mUOLEop2anPJm2NioQkHM5byqory7
+         PNTQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=bmhhtQj5;
+       dkim=pass header.i=@linaro.org header.s=google header.b=bVHtGAtB;
        spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=bmhhtQj5;
+       dkim=pass header.i=@linaro.org header.s=google header.b=bVHtGAtB;
        spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AB8JxZrVSZoPto11m7FsJSFaCK0DVqHatCCaxjsZNE/AKtcFvUON4WyWwZ1Cw9TomMZitQ2TKP9UrQ==
+X-Google-Smtp-Source: AIpwx49/tCYGre7kiGkW/XrMkUGkYRMSkq4BNgRdx55mAIYQlbb90bLHP+VhnUZg8IbkTMfU8k+t9g==
 From: srinivas.kandagatla@linaro.org
 To: andy.gross@linaro.org,
 	broonie@kernel.org,
@@ -46,822 +46,389 @@ Cc: gregkh@linuxfoundation.org,
 	rohkumar@qti.qualcomm.com,
 	spatakok@qti.qualcomm.com,
 	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v6 20/24] ASoC: qdsp6: q6afe: Add q6afe dai driver
-Date: Thu, 26 Apr 2018 10:46:02 +0100
-Message-Id: <20180426094606.4775-21-srinivas.kandagatla@linaro.org>
+Subject: [PATCH v6 19/24] ASoC: qdsp6: q6routing: Add support to MI2S Mixers
+Date: Thu, 26 Apr 2018 10:46:01 +0100
+Message-Id: <20180426094606.4775-20-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180426094606.4775-1-srinivas.kandagatla@linaro.org>
 References: <20180426094606.4775-1-srinivas.kandagatla@linaro.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598801783481986589?=
-X-GMAIL-MSGID: =?utf-8?q?1598801783481986589?=
+X-GMAIL-THRID: =?utf-8?q?1598801781837788571?=
+X-GMAIL-MSGID: =?utf-8?q?1598801781837788571?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-This patch adds support to q6afe backend dais driver.
+This patch add support to MI2S mixers required to select path between
+ASM stream and AFE ports.
 
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Reviewed-and-tested-by: Rohit kumar <rohitkr@codeaurora.org>
 ---
- sound/soc/qcom/Kconfig           |   4 +
- sound/soc/qcom/qdsp6/Makefile    |   1 +
- sound/soc/qcom/qdsp6/q6afe-dai.c | 752 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 757 insertions(+)
- create mode 100644 sound/soc/qcom/qdsp6/q6afe-dai.c
+ sound/soc/qcom/qdsp6/q6routing.c | 329 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 329 insertions(+)
 
-diff --git a/sound/soc/qcom/Kconfig b/sound/soc/qcom/Kconfig
-index 5353004cdcf4..8d36f419e0f8 100644
---- a/sound/soc/qcom/Kconfig
-+++ b/sound/soc/qcom/Kconfig
-@@ -53,6 +53,9 @@ config SND_SOC_QDSP6_CORE
- config SND_SOC_QDSP6_AFE
- 	tristate
+diff --git a/sound/soc/qcom/qdsp6/q6routing.c b/sound/soc/qcom/qdsp6/q6routing.c
+index a72651a6343e..164b26eb3519 100644
+--- a/sound/soc/qcom/qdsp6/q6routing.c
++++ b/sound/soc/qcom/qdsp6/q6routing.c
+@@ -232,6 +232,103 @@ static const struct snd_kcontrol_new hdmi_mixer_controls[] = {
+ 		       msm_routing_put_audio_mixer),
+ };
  
-+config SND_SOC_QDSP6_AFE_DAI
-+	tristate
++static const struct snd_kcontrol_new primary_mi2s_rx_mixer_controls[] = {
++	SOC_SINGLE_EXT("MultiMedia1", PRIMARY_MI2S_RX,
++	MSM_FRONTEND_DAI_MULTIMEDIA1, 1, 0, msm_routing_get_audio_mixer,
++	msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("MultiMedia2", PRIMARY_MI2S_RX,
++	MSM_FRONTEND_DAI_MULTIMEDIA2, 1, 0, msm_routing_get_audio_mixer,
++	msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("MultiMedia3", PRIMARY_MI2S_RX,
++	MSM_FRONTEND_DAI_MULTIMEDIA3, 1, 0, msm_routing_get_audio_mixer,
++	msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("MultiMedia4", PRIMARY_MI2S_RX,
++	MSM_FRONTEND_DAI_MULTIMEDIA4, 1, 0, msm_routing_get_audio_mixer,
++	msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("MultiMedia5", PRIMARY_MI2S_RX,
++	MSM_FRONTEND_DAI_MULTIMEDIA5, 1, 0, msm_routing_get_audio_mixer,
++	msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("MultiMedia6", PRIMARY_MI2S_RX,
++	MSM_FRONTEND_DAI_MULTIMEDIA6, 1, 0, msm_routing_get_audio_mixer,
++	msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("MultiMedia7", PRIMARY_MI2S_RX,
++	MSM_FRONTEND_DAI_MULTIMEDIA7, 1, 0, msm_routing_get_audio_mixer,
++	msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("MultiMedia8", PRIMARY_MI2S_RX,
++	MSM_FRONTEND_DAI_MULTIMEDIA8, 1, 0, msm_routing_get_audio_mixer,
++	msm_routing_put_audio_mixer),
++};
 +
- config SND_SOC_QDSP6_ADM
- 	tristate
++static const struct snd_kcontrol_new secondary_mi2s_rx_mixer_controls[] = {
++	SOC_SINGLE_EXT("MultiMedia1", SECONDARY_MI2S_RX,
++	MSM_FRONTEND_DAI_MULTIMEDIA1, 1, 0, msm_routing_get_audio_mixer,
++	msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("MultiMedia2", SECONDARY_MI2S_RX,
++	MSM_FRONTEND_DAI_MULTIMEDIA2, 1, 0, msm_routing_get_audio_mixer,
++	msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("MultiMedia3", SECONDARY_MI2S_RX,
++	MSM_FRONTEND_DAI_MULTIMEDIA3, 1, 0, msm_routing_get_audio_mixer,
++	msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("MultiMedia4", SECONDARY_MI2S_RX,
++	MSM_FRONTEND_DAI_MULTIMEDIA4, 1, 0, msm_routing_get_audio_mixer,
++	msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("MultiMedia5", SECONDARY_MI2S_RX,
++	MSM_FRONTEND_DAI_MULTIMEDIA5, 1, 0, msm_routing_get_audio_mixer,
++	msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("MultiMedia6", SECONDARY_MI2S_RX,
++	MSM_FRONTEND_DAI_MULTIMEDIA6, 1, 0, msm_routing_get_audio_mixer,
++	msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("MultiMedia7", SECONDARY_MI2S_RX,
++	MSM_FRONTEND_DAI_MULTIMEDIA7, 1, 0, msm_routing_get_audio_mixer,
++	msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("MultiMedia8", SECONDARY_MI2S_RX,
++	MSM_FRONTEND_DAI_MULTIMEDIA8, 1, 0, msm_routing_get_audio_mixer,
++	msm_routing_put_audio_mixer),
++};
++
++static const struct snd_kcontrol_new quaternary_mi2s_rx_mixer_controls[] = {
++	SOC_SINGLE_EXT("MultiMedia1", QUATERNARY_MI2S_RX,
++	MSM_FRONTEND_DAI_MULTIMEDIA1, 1, 0, msm_routing_get_audio_mixer,
++	msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("MultiMedia2", QUATERNARY_MI2S_RX,
++	MSM_FRONTEND_DAI_MULTIMEDIA2, 1, 0, msm_routing_get_audio_mixer,
++	msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("MultiMedia3", QUATERNARY_MI2S_RX,
++	MSM_FRONTEND_DAI_MULTIMEDIA3, 1, 0, msm_routing_get_audio_mixer,
++	msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("MultiMedia4", QUATERNARY_MI2S_RX,
++	MSM_FRONTEND_DAI_MULTIMEDIA4, 1, 0, msm_routing_get_audio_mixer,
++	msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("MultiMedia5", QUATERNARY_MI2S_RX,
++	MSM_FRONTEND_DAI_MULTIMEDIA5, 1, 0, msm_routing_get_audio_mixer,
++	msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("MultiMedia6", QUATERNARY_MI2S_RX,
++	MSM_FRONTEND_DAI_MULTIMEDIA6, 1, 0, msm_routing_get_audio_mixer,
++	msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("MultiMedia7", QUATERNARY_MI2S_RX,
++	MSM_FRONTEND_DAI_MULTIMEDIA7, 1, 0, msm_routing_get_audio_mixer,
++	msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("MultiMedia8", QUATERNARY_MI2S_RX,
++	MSM_FRONTEND_DAI_MULTIMEDIA8, 1, 0, msm_routing_get_audio_mixer,
++	msm_routing_put_audio_mixer),
++};
++
++static const struct snd_kcontrol_new tertiary_mi2s_rx_mixer_controls[] = {
++	SOC_SINGLE_EXT("MultiMedia1", TERTIARY_MI2S_RX,
++	MSM_FRONTEND_DAI_MULTIMEDIA1, 1, 0, msm_routing_get_audio_mixer,
++	msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("MultiMedia2", TERTIARY_MI2S_RX,
++	MSM_FRONTEND_DAI_MULTIMEDIA2, 1, 0, msm_routing_get_audio_mixer,
++	msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("MultiMedia3", TERTIARY_MI2S_RX,
++	MSM_FRONTEND_DAI_MULTIMEDIA3, 1, 0, msm_routing_get_audio_mixer,
++	msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("MultiMedia4", TERTIARY_MI2S_RX,
++	MSM_FRONTEND_DAI_MULTIMEDIA4, 1, 0, msm_routing_get_audio_mixer,
++	msm_routing_put_audio_mixer),
++};
++
++
+ static const struct snd_kcontrol_new slimbus_rx_mixer_controls[] = {
+ 	SOC_SINGLE_EXT("MultiMedia1", SLIMBUS_0_RX,
+ 	MSM_FRONTEND_DAI_MULTIMEDIA1, 1, 0, msm_routing_get_audio_mixer,
+@@ -406,6 +503,126 @@ static const struct snd_kcontrol_new slimbus_6_rx_mixer_controls[] = {
+ 	msm_routing_put_audio_mixer),
+ };
  
-@@ -68,6 +71,7 @@ config SND_SOC_QDSP6
- 	select SND_SOC_QDSP6_COMMON
- 	select SND_SOC_QDSP6_CORE
- 	select SND_SOC_QDSP6_AFE
-+	select SND_SOC_QDSP6_AFE_DAI
- 	select SND_SOC_QDSP6_ADM
- 	select SND_SOC_QDSP6_ROUTING
- 	select SND_SOC_QDSP6_ASM
-diff --git a/sound/soc/qcom/qdsp6/Makefile b/sound/soc/qcom/qdsp6/Makefile
-index 0e8e2febb7ec..bada1aa303c2 100644
---- a/sound/soc/qcom/qdsp6/Makefile
-+++ b/sound/soc/qcom/qdsp6/Makefile
-@@ -1,6 +1,7 @@
- obj-$(CONFIG_SND_SOC_QDSP6_COMMON) += q6dsp-common.o
- obj-$(CONFIG_SND_SOC_QDSP6_CORE) += q6core.o
- obj-$(CONFIG_SND_SOC_QDSP6_AFE) += q6afe.o
-+obj-$(CONFIG_SND_SOC_QDSP6_AFE_DAI) += q6afe-dai.o
- obj-$(CONFIG_SND_SOC_QDSP6_ADM) += q6adm.o
- obj-$(CONFIG_SND_SOC_QDSP6_ROUTING) += q6routing.o
- obj-$(CONFIG_SND_SOC_QDSP6_ASM) += q6asm.o
-diff --git a/sound/soc/qcom/qdsp6/q6afe-dai.c b/sound/soc/qcom/qdsp6/q6afe-dai.c
-new file mode 100644
-index 000000000000..eccced580bd5
---- /dev/null
-+++ b/sound/soc/qcom/qdsp6/q6afe-dai.c
-@@ -0,0 +1,752 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2011-2017, The Linux Foundation. All rights reserved.
-+// Copyright (c) 2018, Linaro Limited
-+
-+#include <linux/err.h>
-+#include <linux/init.h>
-+#include <linux/component.h>
-+#include <linux/module.h>
-+#include <linux/device.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+#include <sound/pcm.h>
-+#include <sound/soc.h>
-+#include <sound/pcm_params.h>
-+#include "q6afe.h"
-+
-+struct q6afe_dai_priv_data {
-+	uint32_t sd_line_mask;
++static const struct snd_kcontrol_new mmul1_mixer_controls[] = {
++	SOC_SINGLE_EXT("PRI_MI2S_TX", PRIMARY_MI2S_TX,
++		MSM_FRONTEND_DAI_MULTIMEDIA1, 1, 0, msm_routing_get_audio_mixer,
++		msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("QUAT_MI2S_TX", QUATERNARY_MI2S_TX,
++		MSM_FRONTEND_DAI_MULTIMEDIA1, 1, 0, msm_routing_get_audio_mixer,
++		msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("TERT_MI2S_TX", TERTIARY_MI2S_TX,
++		MSM_FRONTEND_DAI_MULTIMEDIA1, 1, 0, msm_routing_get_audio_mixer,
++		msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("SEC_MI2S_TX", SECONDARY_MI2S_TX,
++		MSM_FRONTEND_DAI_MULTIMEDIA1, 1, 0, msm_routing_get_audio_mixer,
++		msm_routing_put_audio_mixer),
 +};
 +
-+struct q6afe_dai_data {
-+	struct q6afe_port *port[AFE_PORT_MAX];
-+	struct q6afe_port_config port_config[AFE_PORT_MAX];
-+	bool is_port_started[AFE_PORT_MAX];
-+	struct q6afe_dai_priv_data priv[AFE_PORT_MAX];
++static const struct snd_kcontrol_new mmul2_mixer_controls[] = {
++	SOC_SINGLE_EXT("PRI_MI2S_TX", PRIMARY_MI2S_TX,
++		MSM_FRONTEND_DAI_MULTIMEDIA2, 1, 0, msm_routing_get_audio_mixer,
++		msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("QUAT_MI2S_TX", QUATERNARY_MI2S_TX,
++		MSM_FRONTEND_DAI_MULTIMEDIA2, 1, 0, msm_routing_get_audio_mixer,
++		msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("TERT_MI2S_TX", TERTIARY_MI2S_TX,
++		MSM_FRONTEND_DAI_MULTIMEDIA2, 1, 0, msm_routing_get_audio_mixer,
++		msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("SEC_MI2S_TX", SECONDARY_MI2S_TX,
++		MSM_FRONTEND_DAI_MULTIMEDIA2, 1, 0, msm_routing_get_audio_mixer,
++		msm_routing_put_audio_mixer),
 +};
 +
-+static int q6slim_hw_params(struct snd_pcm_substream *substream,
-+			    struct snd_pcm_hw_params *params,
-+			    struct snd_soc_dai *dai)
-+{
-+
-+	struct q6afe_dai_data *dai_data = dev_get_drvdata(dai->dev);
-+	struct q6afe_slim_cfg *slim = &dai_data->port_config[dai->id].slim;
-+
-+	slim->num_channels = params_channels(params);
-+	slim->sample_rate = params_rate(params);
-+
-+	switch (params_format(params)) {
-+	case SNDRV_PCM_FORMAT_S16_LE:
-+	case SNDRV_PCM_FORMAT_SPECIAL:
-+		slim->bit_width = 16;
-+		break;
-+	case SNDRV_PCM_FORMAT_S24_LE:
-+		slim->bit_width = 24;
-+		break;
-+	case SNDRV_PCM_FORMAT_S32_LE:
-+		slim->bit_width = 32;
-+		break;
-+	default:
-+		pr_err("%s: format %d\n",
-+			__func__, params_format(params));
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static int q6hdmi_hw_params(struct snd_pcm_substream *substream,
-+				struct snd_pcm_hw_params *params,
-+				struct snd_soc_dai *dai)
-+{
-+	struct q6afe_dai_data *dai_data = dev_get_drvdata(dai->dev);
-+	int channels = params_channels(params);
-+	struct q6afe_hdmi_cfg *hdmi = &dai_data->port_config[dai->id].hdmi;
-+
-+	hdmi->sample_rate = params_rate(params);
-+	switch (params_format(params)) {
-+	case SNDRV_PCM_FORMAT_S16_LE:
-+		hdmi->bit_width = 16;
-+		break;
-+	case SNDRV_PCM_FORMAT_S24_LE:
-+		hdmi->bit_width = 24;
-+		break;
-+	}
-+
-+	/* HDMI spec CEA-861-E: Table 28 Audio InfoFrame Data Byte 4 */
-+	switch (channels) {
-+	case 2:
-+		hdmi->channel_allocation = 0;
-+		break;
-+	case 3:
-+		hdmi->channel_allocation = 0x02;
-+		break;
-+	case 4:
-+		hdmi->channel_allocation = 0x06;
-+		break;
-+	case 5:
-+		hdmi->channel_allocation = 0x0A;
-+		break;
-+	case 6:
-+		hdmi->channel_allocation = 0x0B;
-+		break;
-+	case 7:
-+		hdmi->channel_allocation = 0x12;
-+		break;
-+	case 8:
-+		hdmi->channel_allocation = 0x13;
-+		break;
-+	default:
-+		dev_err(dai->dev, "invalid Channels = %u\n", channels);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static int q6i2s_hw_params(struct snd_pcm_substream *substream,
-+			   struct snd_pcm_hw_params *params,
-+			   struct snd_soc_dai *dai)
-+{
-+	struct q6afe_dai_data *dai_data = dev_get_drvdata(dai->dev);
-+	struct q6afe_i2s_cfg *i2s = &dai_data->port_config[dai->id].i2s_cfg;
-+
-+	i2s->sample_rate = params_rate(params);
-+	i2s->bit_width = params_width(params);
-+	i2s->num_channels = params_channels(params);
-+	i2s->sd_line_mask = dai_data->priv[dai->id].sd_line_mask;
-+
-+	return 0;
-+}
-+
-+static int q6i2s_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
-+{
-+	struct q6afe_dai_data *dai_data = dev_get_drvdata(dai->dev);
-+	struct q6afe_i2s_cfg *i2s = &dai_data->port_config[dai->id].i2s_cfg;
-+
-+	i2s->fmt = fmt;
-+
-+	return 0;
-+}
-+
-+static void q6afe_dai_shutdown(struct snd_pcm_substream *substream,
-+				struct snd_soc_dai *dai)
-+{
-+	struct q6afe_dai_data *dai_data = dev_get_drvdata(dai->dev);
-+	int rc;
-+
-+	rc = q6afe_port_stop(dai_data->port[dai->id]);
-+	if (rc < 0)
-+		dev_err(dai->dev, "fail to close AFE port (%d)\n", rc);
-+
-+	dai_data->is_port_started[dai->id] = false;
-+
-+}
-+
-+static int q6afe_mi2s_prepare(struct snd_pcm_substream *substream,
-+		struct snd_soc_dai *dai)
-+{
-+	struct q6afe_dai_data *dai_data = dev_get_drvdata(dai->dev);
-+	int rc;
-+
-+	if (dai_data->is_port_started[dai->id]) {
-+		/* stop the port and restart with new port config */
-+		rc = q6afe_port_stop(dai_data->port[dai->id]);
-+		if (rc < 0) {
-+			dev_err(dai->dev, "fail to close AFE port (%d)\n", rc);
-+			return rc;
-+		}
-+	}
-+
-+	rc = q6afe_i2s_port_prepare(dai_data->port[dai->id],
-+			       &dai_data->port_config[dai->id].i2s_cfg);
-+	if (rc < 0) {
-+		dev_err(dai->dev, "fail to prepare AFE port %x\n", dai->id);
-+		return rc;
-+	}
-+
-+	rc = q6afe_port_start(dai_data->port[dai->id]);
-+	if (rc < 0) {
-+		dev_err(dai->dev, "fail to start AFE port %x\n", dai->id);
-+		return rc;
-+	}
-+	dai_data->is_port_started[dai->id] = true;
-+
-+	return 0;
-+}
-+
-+static int q6afe_dai_prepare(struct snd_pcm_substream *substream,
-+		struct snd_soc_dai *dai)
-+{
-+	struct q6afe_dai_data *dai_data = dev_get_drvdata(dai->dev);
-+	int rc;
-+
-+	if (dai_data->is_port_started[dai->id]) {
-+		/* stop the port and restart with new port config */
-+		rc = q6afe_port_stop(dai_data->port[dai->id]);
-+		if (rc < 0) {
-+			dev_err(dai->dev, "fail to close AFE port (%d)\n", rc);
-+			return rc;
-+		}
-+	}
-+
-+	if (dai->id == HDMI_RX)
-+		q6afe_hdmi_port_prepare(dai_data->port[dai->id],
-+					&dai_data->port_config[dai->id].hdmi);
-+	else if (dai->id >= SLIMBUS_0_RX && dai->id <= SLIMBUS_6_TX)
-+		q6afe_slim_port_prepare(dai_data->port[dai->id],
-+					&dai_data->port_config[dai->id].slim);
-+
-+	rc = q6afe_port_start(dai_data->port[dai->id]);
-+	if (rc < 0) {
-+		dev_err(dai->dev, "fail to start AFE port %x\n", dai->id);
-+		return rc;
-+	}
-+	dai_data->is_port_started[dai->id] = true;
-+
-+	return 0;
-+}
-+
-+static int q6slim_set_channel_map(struct snd_soc_dai *dai,
-+				unsigned int tx_num, unsigned int *tx_slot,
-+				unsigned int rx_num, unsigned int *rx_slot)
-+{
-+	struct q6afe_dai_data *dai_data = dev_get_drvdata(dai->dev);
-+	struct q6afe_port_config *pcfg = &dai_data->port_config[dai->id];
-+	int i;
-+
-+	if (!rx_slot) {
-+		pr_err("%s: rx slot not found\n", __func__);
-+		return -EINVAL;
-+	}
-+
-+	for (i = 0; i < rx_num; i++) {
-+		pcfg->slim.ch_mapping[i] =   rx_slot[i];
-+		pr_debug("%s: find number of channels[%d] ch[%d]\n",
-+		       __func__, i, rx_slot[i]);
-+	}
-+
-+	pcfg->slim.num_channels = rx_num;
-+
-+	pr_debug("%s: SLIMBUS_%d_RX cnt[%d] ch[%d %d]\n", __func__,
-+		(dai->id - SLIMBUS_0_RX) / 2, rx_num,
-+		pcfg->slim.ch_mapping[0],
-+		pcfg->slim.ch_mapping[1]);
-+
-+	return 0;
-+}
-+
-+static int q6afe_mi2s_set_sysclk(struct snd_soc_dai *dai,
-+		int clk_id, unsigned int freq, int dir)
-+{
-+	struct q6afe_dai_data *dai_data = dev_get_drvdata(dai->dev);
-+	struct q6afe_port *port = dai_data->port[dai->id];
-+
-+	switch (clk_id) {
-+	case LPAIF_DIG_CLK:
-+		return q6afe_port_set_sysclk(port, clk_id, 0, 5, freq, dir);
-+	case LPAIF_BIT_CLK:
-+	case LPAIF_OSR_CLK:
-+		return q6afe_port_set_sysclk(port, clk_id,
-+					     Q6AFE_LPASS_CLK_SRC_INTERNAL,
-+					     Q6AFE_LPASS_CLK_ROOT_DEFAULT,
-+					     freq, dir);
-+	case Q6AFE_LPASS_CLK_ID_PRI_MI2S_IBIT ... Q6AFE_LPASS_CLK_ID_INT_MCLK_1:
-+		return q6afe_port_set_sysclk(port, clk_id,
-+					     Q6AFE_LPASS_CLK_ATTRIBUTE_COUPLE_NO,
-+					     Q6AFE_LPASS_CLK_ROOT_DEFAULT,
-+					     freq, dir);
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct snd_soc_dapm_route q6afe_dapm_routes[] = {
-+	{"HDMI Playback", NULL, "HDMI_RX"},
-+	{"Slimbus1 Playback", NULL, "SLIMBUS_1_RX"},
-+	{"Slimbus2 Playback", NULL, "SLIMBUS_2_RX"},
-+	{"Slimbus3 Playback", NULL, "SLIMBUS_3_RX"},
-+	{"Slimbus4 Playback", NULL, "SLIMBUS_4_RX"},
-+	{"Slimbus5 Playback", NULL, "SLIMBUS_5_RX"},
-+	{"Slimbus6 Playback", NULL, "SLIMBUS_6_RX"},
-+
-+	{"Primary MI2S Playback", NULL, "PRI_MI2S_RX"},
-+	{"Secondary MI2S Playback", NULL, "SEC_MI2S_RX"},
-+	{"Tertiary MI2S Playback", NULL, "TERT_MI2S_RX"},
-+	{"Quaternary MI2S Playback", NULL, "QUAT_MI2S_RX"},
-+
-+	{"TERT_MI2S_TX", NULL, "Tertiary MI2S Capture"},
-+	{"PRI_MI2S_TX", NULL, "Primary MI2S Capture"},
-+	{"SEC_MI2S_TX", NULL, "Secondary MI2S Capture"},
-+	{"QUAT_MI2S_TX", NULL, "Quaternary MI2S Capture"},
++static const struct snd_kcontrol_new mmul3_mixer_controls[] = {
++	SOC_SINGLE_EXT("PRI_MI2S_TX", PRIMARY_MI2S_TX,
++		MSM_FRONTEND_DAI_MULTIMEDIA3, 1, 0, msm_routing_get_audio_mixer,
++		msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("QUAT_MI2S_TX", QUATERNARY_MI2S_TX,
++		MSM_FRONTEND_DAI_MULTIMEDIA3, 1, 0, msm_routing_get_audio_mixer,
++		msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("TERT_MI2S_TX", TERTIARY_MI2S_TX,
++		MSM_FRONTEND_DAI_MULTIMEDIA3, 1, 0, msm_routing_get_audio_mixer,
++		msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("SEC_MI2S_TX", SECONDARY_MI2S_TX,
++		MSM_FRONTEND_DAI_MULTIMEDIA3, 1, 0, msm_routing_get_audio_mixer,
++		msm_routing_put_audio_mixer),
 +};
 +
-+static struct snd_soc_dai_ops q6hdmi_ops = {
-+	.prepare	= q6afe_dai_prepare,
-+	.hw_params	= q6hdmi_hw_params,
-+	.shutdown	= q6afe_dai_shutdown,
++static const struct snd_kcontrol_new mmul4_mixer_controls[] = {
++	SOC_SINGLE_EXT("PRI_MI2S_TX", PRIMARY_MI2S_TX,
++		MSM_FRONTEND_DAI_MULTIMEDIA4, 1, 0, msm_routing_get_audio_mixer,
++		msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("QUAT_MI2S_TX", QUATERNARY_MI2S_TX,
++		MSM_FRONTEND_DAI_MULTIMEDIA4, 1, 0, msm_routing_get_audio_mixer,
++		msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("TERT_MI2S_TX", TERTIARY_MI2S_TX,
++		MSM_FRONTEND_DAI_MULTIMEDIA4, 1, 0, msm_routing_get_audio_mixer,
++		msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("SEC_MI2S_TX", SECONDARY_MI2S_TX,
++		MSM_FRONTEND_DAI_MULTIMEDIA4, 1, 0, msm_routing_get_audio_mixer,
++		msm_routing_put_audio_mixer),
 +};
 +
-+static struct snd_soc_dai_ops q6i2s_ops = {
-+	.prepare	= q6afe_mi2s_prepare,
-+	.hw_params	= q6i2s_hw_params,
-+	.set_fmt	= q6i2s_set_fmt,
-+	.shutdown	= q6afe_dai_shutdown,
-+	.set_sysclk	= q6afe_mi2s_set_sysclk,
++static const struct snd_kcontrol_new mmul5_mixer_controls[] = {
++	SOC_SINGLE_EXT("PRI_MI2S_TX", PRIMARY_MI2S_TX,
++		MSM_FRONTEND_DAI_MULTIMEDIA5, 1, 0, msm_routing_get_audio_mixer,
++		msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("QUAT_MI2S_TX", QUATERNARY_MI2S_TX,
++		MSM_FRONTEND_DAI_MULTIMEDIA5, 1, 0, msm_routing_get_audio_mixer,
++		msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("TERT_MI2S_TX", TERTIARY_MI2S_TX,
++		MSM_FRONTEND_DAI_MULTIMEDIA5, 1, 0, msm_routing_get_audio_mixer,
++		msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("SEC_MI2S_TX", SECONDARY_MI2S_TX,
++		MSM_FRONTEND_DAI_MULTIMEDIA5, 1, 0, msm_routing_get_audio_mixer,
++		msm_routing_put_audio_mixer),
 +};
 +
-+static struct snd_soc_dai_ops q6slim_ops = {
-+	.prepare	= q6afe_dai_prepare,
-+	.hw_params	= q6slim_hw_params,
-+	.shutdown	= q6afe_dai_shutdown,
-+	.set_channel_map = q6slim_set_channel_map,
++static const struct snd_kcontrol_new mmul6_mixer_controls[] = {
++	SOC_SINGLE_EXT("PRI_MI2S_TX", PRIMARY_MI2S_TX,
++		MSM_FRONTEND_DAI_MULTIMEDIA6, 1, 0, msm_routing_get_audio_mixer,
++		msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("QUAT_MI2S_TX", QUATERNARY_MI2S_TX,
++		MSM_FRONTEND_DAI_MULTIMEDIA6, 1, 0, msm_routing_get_audio_mixer,
++		msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("TERT_MI2S_TX", TERTIARY_MI2S_TX,
++		MSM_FRONTEND_DAI_MULTIMEDIA6, 1, 0, msm_routing_get_audio_mixer,
++		msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("SEC_MI2S_TX", SECONDARY_MI2S_TX,
++		MSM_FRONTEND_DAI_MULTIMEDIA6, 1, 0, msm_routing_get_audio_mixer,
++		msm_routing_put_audio_mixer),
 +};
 +
-+static int msm_dai_q6_dai_probe(struct snd_soc_dai *dai)
-+{
-+	struct q6afe_dai_data *dai_data = dev_get_drvdata(dai->dev);
-+	struct snd_soc_dapm_context *dapm;
-+	struct q6afe_port *port;
-+
-+	dapm = snd_soc_component_get_dapm(dai->component);
-+
-+	port = q6afe_port_get_from_id(dai->dev, dai->id);
-+	if (IS_ERR(port)) {
-+		dev_err(dai->dev, "Unable to get afe port\n");
-+		return -EINVAL;
-+	}
-+	dai_data->port[dai->id] = port;
-+
-+	return 0;
-+}
-+
-+static int msm_dai_q6_dai_remove(struct snd_soc_dai *dai)
-+{
-+	struct q6afe_dai_data *dai_data = dev_get_drvdata(dai->dev);
-+
-+	q6afe_port_put(dai_data->port[dai->id]);
-+	dai_data->port[dai->id] = NULL;
-+
-+	return 0;
-+}
-+
-+static struct snd_soc_dai_driver q6afe_dais[] = {
-+	{
-+		.playback = {
-+			.stream_name = "HDMI Playback",
-+			.rates = SNDRV_PCM_RATE_48000 |
-+				 SNDRV_PCM_RATE_96000 |
-+				 SNDRV_PCM_RATE_192000,
-+			.formats = SNDRV_PCM_FMTBIT_S16_LE |
-+				   SNDRV_PCM_FMTBIT_S24_LE,
-+			.channels_min = 2,
-+			.channels_max = 8,
-+			.rate_max =     192000,
-+			.rate_min =	48000,
-+		},
-+		.ops = &q6hdmi_ops,
-+		.id = HDMI_RX,
-+		.name = "HDMI",
-+		.probe = msm_dai_q6_dai_probe,
-+		.remove = msm_dai_q6_dai_remove,
-+	}, {
-+		.name = "SLIMBUS_0_RX",
-+		.ops = &q6slim_ops,
-+		.id = SLIMBUS_0_RX,
-+		.probe = msm_dai_q6_dai_probe,
-+		.remove = msm_dai_q6_dai_remove,
-+		.playback = {
-+			.stream_name = "Slimbus Playback",
-+			.rates = SNDRV_PCM_RATE_48000 | SNDRV_PCM_RATE_8000 |
-+				 SNDRV_PCM_RATE_16000 | SNDRV_PCM_RATE_96000 |
-+				 SNDRV_PCM_RATE_192000,
-+			.formats = SNDRV_PCM_FMTBIT_S16_LE |
-+				   SNDRV_PCM_FMTBIT_S24_LE,
-+			.channels_min = 1,
-+			.channels_max = 8,
-+			.rate_min = 8000,
-+			.rate_max = 192000,
-+		},
-+	}, {
-+		.playback = {
-+			.stream_name = "Slimbus1 Playback",
-+			.rates = SNDRV_PCM_RATE_8000 | SNDRV_PCM_RATE_16000 |
-+				 SNDRV_PCM_RATE_48000 | SNDRV_PCM_RATE_96000 |
-+				 SNDRV_PCM_RATE_192000,
-+			.formats = SNDRV_PCM_FMTBIT_S16_LE |
-+				   SNDRV_PCM_FMTBIT_S24_LE,
-+			.channels_min = 1,
-+			.channels_max = 2,
-+			.rate_min = 8000,
-+			.rate_max = 192000,
-+		},
-+		.name = "SLIMBUS_1_RX",
-+		.ops = &q6slim_ops,
-+		.id = SLIMBUS_1_RX,
-+		.probe = msm_dai_q6_dai_probe,
-+		.remove = msm_dai_q6_dai_remove,
-+	}, {
-+		.playback = {
-+			.stream_name = "Slimbus2 Playback",
-+			.rates = SNDRV_PCM_RATE_48000 | SNDRV_PCM_RATE_8000 |
-+				 SNDRV_PCM_RATE_16000 | SNDRV_PCM_RATE_96000 |
-+				 SNDRV_PCM_RATE_192000,
-+			.formats = SNDRV_PCM_FMTBIT_S16_LE |
-+				   SNDRV_PCM_FMTBIT_S24_LE,
-+			.channels_min = 1,
-+			.channels_max = 8,
-+			.rate_min = 8000,
-+			.rate_max = 192000,
-+		},
-+		.name = "SLIMBUS_2_RX",
-+		.ops = &q6slim_ops,
-+		.id = SLIMBUS_2_RX,
-+		.probe = msm_dai_q6_dai_probe,
-+		.remove = msm_dai_q6_dai_remove,
-+	}, {
-+		.playback = {
-+			.stream_name = "Slimbus3 Playback",
-+			.rates = SNDRV_PCM_RATE_8000 | SNDRV_PCM_RATE_16000 |
-+				 SNDRV_PCM_RATE_48000 | SNDRV_PCM_RATE_96000 |
-+				 SNDRV_PCM_RATE_192000,
-+			.formats = SNDRV_PCM_FMTBIT_S16_LE |
-+				   SNDRV_PCM_FMTBIT_S24_LE,
-+			.channels_min = 1,
-+			.channels_max = 2,
-+			.rate_min = 8000,
-+			.rate_max = 192000,
-+		},
-+		.name = "SLIMBUS_3_RX",
-+		.ops = &q6slim_ops,
-+		.id = SLIMBUS_3_RX,
-+		.probe = msm_dai_q6_dai_probe,
-+		.remove = msm_dai_q6_dai_remove,
-+	}, {
-+		.playback = {
-+			.stream_name = "Slimbus4 Playback",
-+			.rates = SNDRV_PCM_RATE_8000 | SNDRV_PCM_RATE_16000 |
-+				 SNDRV_PCM_RATE_48000 | SNDRV_PCM_RATE_96000 |
-+				 SNDRV_PCM_RATE_192000,
-+			.formats = SNDRV_PCM_FMTBIT_S16_LE |
-+				   SNDRV_PCM_FMTBIT_S24_LE,
-+			.channels_min = 1,
-+			.channels_max = 2,
-+			.rate_min = 8000,
-+			.rate_max = 192000,
-+		},
-+		.name = "SLIMBUS_4_RX",
-+		.ops = &q6slim_ops,
-+		.id = SLIMBUS_4_RX,
-+		.probe = msm_dai_q6_dai_probe,
-+		.remove = msm_dai_q6_dai_remove,
-+	}, {
-+		.playback = {
-+			.stream_name = "Slimbus5 Playback",
-+			.rates = SNDRV_PCM_RATE_8000 | SNDRV_PCM_RATE_16000 |
-+				 SNDRV_PCM_RATE_48000 | SNDRV_PCM_RATE_96000 |
-+				 SNDRV_PCM_RATE_192000,
-+			.formats = SNDRV_PCM_FMTBIT_S16_LE |
-+				   SNDRV_PCM_FMTBIT_S24_LE,
-+			.channels_min = 1,
-+			.channels_max = 2,
-+			.rate_min = 8000,
-+			.rate_max = 192000,
-+		},
-+		.name = "SLIMBUS_5_RX",
-+		.ops = &q6slim_ops,
-+		.id = SLIMBUS_5_RX,
-+		.probe = msm_dai_q6_dai_probe,
-+		.remove = msm_dai_q6_dai_remove,
-+	}, {
-+		.playback = {
-+			.stream_name = "Slimbus6 Playback",
-+			.rates = SNDRV_PCM_RATE_8000 | SNDRV_PCM_RATE_16000 |
-+				 SNDRV_PCM_RATE_48000 | SNDRV_PCM_RATE_96000 |
-+				 SNDRV_PCM_RATE_192000,
-+			.formats = SNDRV_PCM_FMTBIT_S16_LE |
-+				   SNDRV_PCM_FMTBIT_S24_LE,
-+			.channels_min = 1,
-+			.channels_max = 2,
-+			.rate_min = 8000,
-+			.rate_max = 192000,
-+		},
-+		.ops = &q6slim_ops,
-+		.name = "SLIMBUS_6_RX",
-+		.id = SLIMBUS_6_RX,
-+		.probe = msm_dai_q6_dai_probe,
-+		.remove = msm_dai_q6_dai_remove,
-+	}, {
-+		.playback = {
-+			.stream_name = "Primary MI2S Playback",
-+			.rates = SNDRV_PCM_RATE_48000 | SNDRV_PCM_RATE_8000 |
-+				 SNDRV_PCM_RATE_16000,
-+			.formats = SNDRV_PCM_FMTBIT_S16_LE |
-+				   SNDRV_PCM_FMTBIT_S24_LE,
-+			.rate_min =     8000,
-+			.rate_max =     48000,
-+		},
-+		.id = PRIMARY_MI2S_RX,
-+		.name = "PRI_MI2S_RX",
-+		.ops = &q6i2s_ops,
-+		.probe = msm_dai_q6_dai_probe,
-+		.remove = msm_dai_q6_dai_remove,
-+	}, {
-+		.capture = {
-+			.stream_name = "Primary MI2S Capture",
-+			.rates = SNDRV_PCM_RATE_48000 | SNDRV_PCM_RATE_8000 |
-+				 SNDRV_PCM_RATE_16000,
-+			.formats = SNDRV_PCM_FMTBIT_S16_LE |
-+				   SNDRV_PCM_FMTBIT_S24_LE,
-+			.rate_min =     8000,
-+			.rate_max =     48000,
-+		},
-+		.id = PRIMARY_MI2S_TX,
-+		.name = "PRI_MI2S_TX",
-+		.ops = &q6i2s_ops,
-+		.probe = msm_dai_q6_dai_probe,
-+		.remove = msm_dai_q6_dai_remove,
-+	}, {
-+		.playback = {
-+			.stream_name = "Secondary MI2S Playback",
-+			.rates = SNDRV_PCM_RATE_48000 | SNDRV_PCM_RATE_8000 |
-+				 SNDRV_PCM_RATE_16000,
-+			.formats = SNDRV_PCM_FMTBIT_S16_LE,
-+			.rate_min =     8000,
-+			.rate_max =     48000,
-+		},
-+		.name = "SEC_MI2S_RX",
-+		.id = SECONDARY_MI2S_RX,
-+		.ops = &q6i2s_ops,
-+		.probe = msm_dai_q6_dai_probe,
-+		.remove = msm_dai_q6_dai_remove,
-+	}, {
-+		.capture = {
-+			.stream_name = "Secondary MI2S Capture",
-+			.rates = SNDRV_PCM_RATE_48000 | SNDRV_PCM_RATE_8000 |
-+				 SNDRV_PCM_RATE_16000,
-+			.formats = SNDRV_PCM_FMTBIT_S16_LE |
-+				   SNDRV_PCM_FMTBIT_S24_LE,
-+			.rate_min =     8000,
-+			.rate_max =     48000,
-+		},
-+		.id = SECONDARY_MI2S_TX,
-+		.name = "SEC_MI2S_TX",
-+		.ops = &q6i2s_ops,
-+		.probe = msm_dai_q6_dai_probe,
-+		.remove = msm_dai_q6_dai_remove,
-+	}, {
-+		.playback = {
-+			.stream_name = "Tertiary MI2S Playback",
-+			.rates = SNDRV_PCM_RATE_48000 | SNDRV_PCM_RATE_8000 |
-+				 SNDRV_PCM_RATE_16000,
-+			.formats = SNDRV_PCM_FMTBIT_S16_LE,
-+			.rate_min =     8000,
-+			.rate_max =     48000,
-+		},
-+		.name = "TERT_MI2S_RX",
-+		.id = TERTIARY_MI2S_RX,
-+		.ops = &q6i2s_ops,
-+		.probe = msm_dai_q6_dai_probe,
-+		.remove = msm_dai_q6_dai_remove,
-+	}, {
-+		.capture = {
-+			.stream_name = "Tertiary MI2S Capture",
-+			.rates = SNDRV_PCM_RATE_48000 | SNDRV_PCM_RATE_8000 |
-+				 SNDRV_PCM_RATE_16000,
-+			.formats = SNDRV_PCM_FMTBIT_S16_LE |
-+				   SNDRV_PCM_FMTBIT_S24_LE,
-+			.rate_min =     8000,
-+			.rate_max =     48000,
-+		},
-+		.id = TERTIARY_MI2S_TX,
-+		.name = "TERT_MI2S_TX",
-+		.ops = &q6i2s_ops,
-+		.probe = msm_dai_q6_dai_probe,
-+		.remove = msm_dai_q6_dai_remove,
-+	}, {
-+		.playback = {
-+			.stream_name = "Quaternary MI2S Playback",
-+			.rates = SNDRV_PCM_RATE_48000 | SNDRV_PCM_RATE_8000 |
-+				 SNDRV_PCM_RATE_16000,
-+			.formats = SNDRV_PCM_FMTBIT_S16_LE,
-+			.rate_min =     8000,
-+			.rate_max =     48000,
-+		},
-+		.name = "QUAT_MI2S_RX",
-+		.id = QUATERNARY_MI2S_RX,
-+		.ops = &q6i2s_ops,
-+		.probe = msm_dai_q6_dai_probe,
-+		.remove = msm_dai_q6_dai_remove,
-+	}, {
-+		.capture = {
-+			.stream_name = "Quaternary MI2S Capture",
-+			.rates = SNDRV_PCM_RATE_48000 | SNDRV_PCM_RATE_8000 |
-+				 SNDRV_PCM_RATE_16000,
-+			.formats = SNDRV_PCM_FMTBIT_S16_LE |
-+				   SNDRV_PCM_FMTBIT_S24_LE,
-+			.rate_min =     8000,
-+			.rate_max =     48000,
-+		},
-+		.id = QUATERNARY_MI2S_TX,
-+		.name = "QUAT_MI2S_TX",
-+		.ops = &q6i2s_ops,
-+		.probe = msm_dai_q6_dai_probe,
-+		.remove = msm_dai_q6_dai_remove,
-+	},
++static const struct snd_kcontrol_new mmul7_mixer_controls[] = {
++	SOC_SINGLE_EXT("PRI_MI2S_TX", PRIMARY_MI2S_TX,
++		MSM_FRONTEND_DAI_MULTIMEDIA7, 1, 0, msm_routing_get_audio_mixer,
++		msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("QUAT_MI2S_TX", QUATERNARY_MI2S_TX,
++		MSM_FRONTEND_DAI_MULTIMEDIA7, 1, 0, msm_routing_get_audio_mixer,
++		msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("TERT_MI2S_TX", TERTIARY_MI2S_TX,
++		MSM_FRONTEND_DAI_MULTIMEDIA7, 1, 0, msm_routing_get_audio_mixer,
++		msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("SEC_MI2S_TX", SECONDARY_MI2S_TX,
++		MSM_FRONTEND_DAI_MULTIMEDIA7, 1, 0, msm_routing_get_audio_mixer,
++		msm_routing_put_audio_mixer),
 +};
 +
-+static int q6afe_of_xlate_dai_name(struct snd_soc_component *component,
-+				   struct of_phandle_args *args,
-+				   const char **dai_name)
-+{
-+	int id = args->args[0];
-+	int ret = -EINVAL;
-+	int i;
-+
-+	for (i = 0; i  < ARRAY_SIZE(q6afe_dais); i++) {
-+		if (q6afe_dais[i].id == id) {
-+			*dai_name = q6afe_dais[i].name;
-+			ret = 0;
-+			break;
-+		}
-+	}
-+
-+	return ret;
-+}
-+
-+static const struct snd_soc_dapm_widget q6afe_dai_widgets[] = {
-+	SND_SOC_DAPM_AIF_OUT("HDMI_RX", "HDMI Playback", 0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_OUT("SLIMBUS_0_RX", "Slimbus Playback", 0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_OUT("SLIMBUS_1_RX", "Slimbus1 Playback", 0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_OUT("SLIMBUS_2_RX", "Slimbus2 Playback", 0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_OUT("SLIMBUS_3_RX", "Slimbus3 Playback", 0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_OUT("SLIMBUS_4_RX", "Slimbus4 Playback", 0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_OUT("SLIMBUS_5_RX", "Slimbus5 Playback", 0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_OUT("SLIMBUS_6_RX", "Slimbus6 Playback", 0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_OUT("QUAT_MI2S_RX", "Quaternary MI2S Playback",
-+						0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_IN("QUAT_MI2S_TX", "Quaternary MI2S Capture",
-+						0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_OUT("TERT_MI2S_RX", "Tertiary MI2S Playback",
-+						0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_IN("TERT_MI2S_TX", "Tertiary MI2S Capture",
-+						0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_OUT("SEC_MI2S_RX", "Secondary MI2S Playback",
-+			     0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_IN("SEC_MI2S_TX", "Secondary MI2S Capture",
-+						0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_OUT("SEC_MI2S_RX_SD1",
-+			"Secondary MI2S Playback SD1",
-+			0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_OUT("PRI_MI2S_RX", "Primary MI2S Playback",
-+			     0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_IN("PRI_MI2S_TX", "Primary MI2S Capture",
-+						0, 0, 0, 0),
++static const struct snd_kcontrol_new mmul8_mixer_controls[] = {
++	SOC_SINGLE_EXT("PRI_MI2S_TX", PRIMARY_MI2S_TX,
++		MSM_FRONTEND_DAI_MULTIMEDIA8, 1, 0, msm_routing_get_audio_mixer,
++		msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("QUAT_MI2S_TX", QUATERNARY_MI2S_TX,
++		MSM_FRONTEND_DAI_MULTIMEDIA8, 1, 0, msm_routing_get_audio_mixer,
++		msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("TERT_MI2S_TX", TERTIARY_MI2S_TX,
++		MSM_FRONTEND_DAI_MULTIMEDIA8, 1, 0, msm_routing_get_audio_mixer,
++		msm_routing_put_audio_mixer),
++	SOC_SINGLE_EXT("SEC_MI2S_TX", SECONDARY_MI2S_TX,
++		MSM_FRONTEND_DAI_MULTIMEDIA8, 1, 0, msm_routing_get_audio_mixer,
++		msm_routing_put_audio_mixer),
 +};
 +
-+static const struct snd_soc_component_driver q6afe_dai_component = {
-+	.name		= "q6afe-dai-component",
-+	.dapm_widgets = q6afe_dai_widgets,
-+	.num_dapm_widgets = ARRAY_SIZE(q6afe_dai_widgets),
-+	.dapm_routes = q6afe_dapm_routes,
-+	.num_dapm_routes = ARRAY_SIZE(q6afe_dapm_routes),
-+	.of_xlate_dai_name = q6afe_of_xlate_dai_name,
+ static const struct snd_soc_dapm_widget msm_qdsp6_widgets[] = {
+ 	/* Frontend AIF */
+ 	SND_SOC_DAPM_AIF_IN("MM_DL1", "MultiMedia1 Playback", 0, 0, 0, 0),
+@@ -451,6 +668,35 @@ static const struct snd_soc_dapm_widget msm_qdsp6_widgets[] = {
+ 	SND_SOC_DAPM_MIXER("SLIMBUS_6_RX Audio Mixer", SND_SOC_NOPM, 0, 0,
+ 			   slimbus_6_rx_mixer_controls,
+ 			   ARRAY_SIZE(slimbus_6_rx_mixer_controls)),
++	SND_SOC_DAPM_MIXER("PRI_MI2S_RX Audio Mixer", SND_SOC_NOPM, 0, 0,
++			   primary_mi2s_rx_mixer_controls,
++			   ARRAY_SIZE(primary_mi2s_rx_mixer_controls)),
++	SND_SOC_DAPM_MIXER("SEC_MI2S_RX Audio Mixer", SND_SOC_NOPM, 0, 0,
++			   secondary_mi2s_rx_mixer_controls,
++			   ARRAY_SIZE(secondary_mi2s_rx_mixer_controls)),
++	SND_SOC_DAPM_MIXER("QUAT_MI2S_RX Audio Mixer", SND_SOC_NOPM, 0, 0,
++			   quaternary_mi2s_rx_mixer_controls,
++			   ARRAY_SIZE(quaternary_mi2s_rx_mixer_controls)),
++	SND_SOC_DAPM_MIXER("TERT_MI2S_RX Audio Mixer", SND_SOC_NOPM, 0, 0,
++			   tertiary_mi2s_rx_mixer_controls,
++			   ARRAY_SIZE(tertiary_mi2s_rx_mixer_controls)),
++	SND_SOC_DAPM_MIXER("MultiMedia1 Mixer", SND_SOC_NOPM, 0, 0,
++		mmul1_mixer_controls, ARRAY_SIZE(mmul1_mixer_controls)),
++	SND_SOC_DAPM_MIXER("MultiMedia2 Mixer", SND_SOC_NOPM, 0, 0,
++		mmul2_mixer_controls, ARRAY_SIZE(mmul2_mixer_controls)),
++	SND_SOC_DAPM_MIXER("MultiMedia3 Mixer", SND_SOC_NOPM, 0, 0,
++		mmul3_mixer_controls, ARRAY_SIZE(mmul3_mixer_controls)),
++	SND_SOC_DAPM_MIXER("MultiMedia4 Mixer", SND_SOC_NOPM, 0, 0,
++		mmul4_mixer_controls, ARRAY_SIZE(mmul4_mixer_controls)),
++	SND_SOC_DAPM_MIXER("MultiMedia5 Mixer", SND_SOC_NOPM, 0, 0,
++		mmul5_mixer_controls, ARRAY_SIZE(mmul5_mixer_controls)),
++	SND_SOC_DAPM_MIXER("MultiMedia6 Mixer", SND_SOC_NOPM, 0, 0,
++		mmul6_mixer_controls, ARRAY_SIZE(mmul6_mixer_controls)),
++	SND_SOC_DAPM_MIXER("MultiMedia7 Mixer", SND_SOC_NOPM, 0, 0,
++		mmul7_mixer_controls, ARRAY_SIZE(mmul7_mixer_controls)),
++	SND_SOC_DAPM_MIXER("MultiMedia8 Mixer", SND_SOC_NOPM, 0, 0,
++		mmul8_mixer_controls, ARRAY_SIZE(mmul8_mixer_controls)),
 +
-+};
+ };
+ 
+ static const struct snd_soc_dapm_route intercon[] = {
+@@ -528,6 +774,89 @@ static const struct snd_soc_dapm_route intercon[] = {
+ 	{"SLIMBUS_6_RX Audio Mixer", "MultiMedia7", "MM_DL7"},
+ 	{"SLIMBUS_6_RX Audio Mixer", "MultiMedia8", "MM_DL8"},
+ 	{"SLIMBUS_6_RX", NULL, "SLIMBUS_6_RX Audio Mixer"},
 +
-+static void of_q6afe_parse_dai_data(struct device *dev,
-+				    struct q6afe_dai_data *data)
-+{
-+	struct device_node *node;
-+	int ret;
++	{"QUAT_MI2S_RX Audio Mixer", "MultiMedia1", "MM_DL1"},
++	{"QUAT_MI2S_RX Audio Mixer", "MultiMedia2", "MM_DL2"},
++	{"QUAT_MI2S_RX Audio Mixer", "MultiMedia3", "MM_DL3"},
++	{"QUAT_MI2S_RX Audio Mixer", "MultiMedia4", "MM_DL4"},
++	{"QUAT_MI2S_RX Audio Mixer", "MultiMedia5", "MM_DL5"},
++	{"QUAT_MI2S_RX Audio Mixer", "MultiMedia6", "MM_DL6"},
++	{"QUAT_MI2S_RX Audio Mixer", "MultiMedia7", "MM_DL7"},
++	{"QUAT_MI2S_RX Audio Mixer", "MultiMedia8", "MM_DL8"},
++	{"QUAT_MI2S_RX", NULL, "QUAT_MI2S_RX Audio Mixer"},
 +
-+	for_each_child_of_node(dev->of_node, node) {
-+		unsigned int lines[Q6AFE_MAX_MI2S_LINES];
-+		struct q6afe_dai_priv_data *priv;
-+		int id, i, num_lines;
++	{"TERT_MI2S_RX Audio Mixer", "MultiMedia1", "MM_DL1"},
++	{"TERT_MI2S_RX Audio Mixer", "MultiMedia2", "MM_DL2"},
++	{"TERT_MI2S_RX Audio Mixer", "MultiMedia3", "MM_DL3"},
++	{"TERT_MI2S_RX Audio Mixer", "MultiMedia4", "MM_DL4"},
++	{"TERT_MI2S_RX", NULL, "TERT_MI2S_RX Audio Mixer"},
 +
-+		ret = of_property_read_u32(node, "reg", &id);
-+		if (ret || id > AFE_PORT_MAX) {
-+			dev_err(dev, "valid dai id not found:%d\n", ret);
-+			continue;
-+		}
++	{"SEC_MI2S_RX Audio Mixer", "MultiMedia1", "MM_DL1"},
++	{"SEC_MI2S_RX Audio Mixer", "MultiMedia2", "MM_DL2"},
++	{"SEC_MI2S_RX Audio Mixer", "MultiMedia3", "MM_DL3"},
++	{"SEC_MI2S_RX Audio Mixer", "MultiMedia4", "MM_DL4"},
++	{"SEC_MI2S_RX Audio Mixer", "MultiMedia5", "MM_DL5"},
++	{"SEC_MI2S_RX Audio Mixer", "MultiMedia6", "MM_DL5"},
++	{"SEC_MI2S_RX Audio Mixer", "MultiMedia7", "MM_DL7"},
++	{"SEC_MI2S_RX Audio Mixer", "MultiMedia8", "MM_DL7"},
++	{"SEC_MI2S_RX", NULL, "SEC_MI2S_RX Audio Mixer"},
 +
-+		switch (id) {
-+		/* MI2S specific properties */
-+		case PRIMARY_MI2S_RX ... QUATERNARY_MI2S_TX:
-+			priv = &data->priv[id];
-+			ret = of_property_read_variable_u32_array(node,
-+							"qcom,sd-lines",
-+							lines, 0,
-+							Q6AFE_MAX_MI2S_LINES);
-+			if (ret < 0)
-+				num_lines = 0;
-+			else
-+				num_lines = ret;
++	{"PRI_MI2S_RX Audio Mixer", "MultiMedia1", "MM_DL1"},
++	{"PRI_MI2S_RX Audio Mixer", "MultiMedia2", "MM_DL2"},
++	{"PRI_MI2S_RX Audio Mixer", "MultiMedia3", "MM_DL3"},
++	{"PRI_MI2S_RX Audio Mixer", "MultiMedia4", "MM_DL4"},
++	{"PRI_MI2S_RX Audio Mixer", "MultiMedia5", "MM_DL5"},
++	{"PRI_MI2S_RX Audio Mixer", "MultiMedia7", "MM_DL7"},
++	{"PRI_MI2S_RX", NULL, "PRI_MI2S_RX Audio Mixer"},
 +
-+			priv->sd_line_mask = 0;
++	{"MultiMedia1 Mixer", "PRI_MI2S_TX", "PRI_MI2S_TX"},
++	{"MultiMedia1 Mixer", "SEC_MI2S_TX", "SEC_MI2S_TX"},
++	{"MultiMedia1 Mixer", "QUAT_MI2S_TX", "QUAT_MI2S_TX"},
++	{"MultiMedia1 Mixer", "TERT_MI2S_TX", "TERT_MI2S_TX"},
 +
-+			for (i = 0; i < num_lines; i++)
-+				priv->sd_line_mask |= BIT(lines[i]);
++	{"MultiMedia2 Mixer", "PRI_MI2S_TX", "PRI_MI2S_TX"},
++	{"MultiMedia2 Mixer", "SEC_MI2S_TX", "SEC_MI2S_TX"},
++	{"MultiMedia2 Mixer", "QUAT_MI2S_TX", "QUAT_MI2S_TX"},
++	{"MultiMedia2 Mixer", "TERT_MI2S_TX", "TERT_MI2S_TX"},
 +
-+			break;
-+		default:
-+			break;
-+		}
-+	}
-+}
++	{"MultiMedia3 Mixer", "PRI_MI2S_TX", "PRI_MI2S_TX"},
++	{"MultiMedia3 Mixer", "SEC_MI2S_TX", "SEC_MI2S_TX"},
++	{"MultiMedia3 Mixer", "QUAT_MI2S_TX", "QUAT_MI2S_TX"},
++	{"MultiMedia3 Mixer", "TERT_MI2S_TX", "TERT_MI2S_TX"},
 +
-+static int q6afe_dai_bind(struct device *dev, struct device *master, void *data)
-+{
-+	struct q6afe_dai_data *dai_data;
-+	int rc = 0;
++	{"MultiMedia4 Mixer", "PRI_MI2S_TX", "PRI_MI2S_TX"},
++	{"MultiMedia4 Mixer", "SEC_MI2S_TX", "SEC_MI2S_TX"},
++	{"MultiMedia4 Mixer", "QUAT_MI2S_TX", "QUAT_MI2S_TX"},
++	{"MultiMedia4 Mixer", "TERT_MI2S_TX", "TERT_MI2S_TX"},
 +
-+	dai_data = kzalloc(sizeof(*dai_data), GFP_KERNEL);
-+	if (!dai_data)
-+		rc = -ENOMEM;
++	{"MultiMedia5 Mixer", "PRI_MI2S_TX", "PRI_MI2S_TX"},
++	{"MultiMedia5 Mixer", "SEC_MI2S_TX", "SEC_MI2S_TX"},
++	{"MultiMedia5 Mixer", "QUAT_MI2S_TX", "QUAT_MI2S_TX"},
++	{"MultiMedia5 Mixer", "TERT_MI2S_TX", "TERT_MI2S_TX"},
 +
-+	dev_set_drvdata(dev, dai_data);
++	{"MultiMedia6 Mixer", "PRI_MI2S_TX", "PRI_MI2S_TX"},
++	{"MultiMedia6 Mixer", "SEC_MI2S_TX", "SEC_MI2S_TX"},
++	{"MultiMedia6 Mixer", "QUAT_MI2S_TX", "QUAT_MI2S_TX"},
++	{"MultiMedia6 Mixer", "TERT_MI2S_TX", "TERT_MI2S_TX"},
 +
-+	of_q6afe_parse_dai_data(dev, dai_data);
++	{"MultiMedia7 Mixer", "PRI_MI2S_TX", "PRI_MI2S_TX"},
++	{"MultiMedia7 Mixer", "SEC_MI2S_TX", "SEC_MI2S_TX"},
++	{"MultiMedia7 Mixer", "QUAT_MI2S_TX", "QUAT_MI2S_TX"},
++	{"MultiMedia7 Mixer", "TERT_MI2S_TX", "TERT_MI2S_TX"},
 +
-+	return snd_soc_register_component(dev, &q6afe_dai_component,
-+					  q6afe_dais, ARRAY_SIZE(q6afe_dais));
-+}
++	{"MultiMedia8 Mixer", "PRI_MI2S_TX", "PRI_MI2S_TX"},
++	{"MultiMedia8 Mixer", "SEC_MI2S_TX", "SEC_MI2S_TX"},
++	{"MultiMedia8 Mixer", "QUAT_MI2S_TX", "QUAT_MI2S_TX"},
++	{"MultiMedia8 Mixer", "TERT_MI2S_TX", "TERT_MI2S_TX"},
 +
-+static void q6afe_dai_unbind(struct device *dev, struct device *master,
-+			     void *data)
-+{
-+	struct q6afe_dai_data *dai_data = dev_get_drvdata(dev);
-+
-+	snd_soc_unregister_component(dev);
-+	kfree(dai_data);
-+}
-+
-+static const struct component_ops q6afe_dai_comp_ops = {
-+	.bind   = q6afe_dai_bind,
-+	.unbind = q6afe_dai_unbind,
-+};
-+
-+static int q6afe_dai_dev_probe(struct platform_device *pdev)
-+{
-+	return component_add(&pdev->dev, &q6afe_dai_comp_ops);
-+}
-+
-+static int q6afe_dai_dev_remove(struct platform_device *pdev)
-+{
-+	component_del(&pdev->dev, &q6afe_dai_comp_ops);
-+	return 0;
-+}
-+
-+static struct platform_driver q6afe_dai_platform_driver = {
-+	.driver = {
-+		.name = "q6afe-dai",
-+	},
-+	.probe = q6afe_dai_dev_probe,
-+	.remove = q6afe_dai_dev_remove,
-+};
-+module_platform_driver(q6afe_dai_platform_driver);
-+
-+MODULE_DESCRIPTION("Q6 Audio Fronend dai driver");
-+MODULE_LICENSE("GPL v2");
++	{"MM_UL1", NULL, "MultiMedia1 Mixer"},
++	{"MM_UL2", NULL, "MultiMedia2 Mixer"},
++	{"MM_UL3", NULL, "MultiMedia3 Mixer"},
++	{"MM_UL4", NULL, "MultiMedia4 Mixer"},
++	{"MM_UL5", NULL, "MultiMedia5 Mixer"},
++	{"MM_UL6", NULL, "MultiMedia6 Mixer"},
++	{"MM_UL7", NULL, "MultiMedia7 Mixer"},
++	{"MM_UL8", NULL, "MultiMedia8 Mixer"},
+ };
+ 
+ static int routing_hw_params(struct snd_pcm_substream *substream,
 -- 
 2.16.2
