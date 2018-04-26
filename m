@@ -1,73 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754133AbeDZHUE (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 03:20:04 -0400
-Received: from thoth.sbs.de ([192.35.17.2]:44562 "EHLO thoth.sbs.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753088AbeDZHUD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 03:20:03 -0400
-Subject: Re: [PATCH 6/6] arm: Allow to enable PCI_DOMAINS manually
-To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <cover.1524582822.git.jan.kiszka@siemens.com>
- <4b97c00b9cd72f508aa27f0b58711d73de2cd397.1524582822.git.jan.kiszka@siemens.com>
- <20180425175446.GC21628@e107981-ln.cambridge.arm.com>
-From: Jan Kiszka <jan.kiszka@siemens.com>
-Openpgp: preference=signencrypt
-Message-ID: <ed0e7c92-6ee1-53a9-4448-a679aed8f613@siemens.com>
-Date: Thu, 26 Apr 2018 09:19:37 +0200
-User-Agent: Mozilla/5.0 (X11; U; Linux i686 (x86_64); de; rv:1.8.1.12)
- Gecko/20080226 SUSE/2.0.0.12-1.1 Thunderbird/2.0.0.12 Mnenhy/0.7.5.666
+        id S1753879AbeDZHY6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 03:24:58 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48114 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752964AbeDZHYz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 03:24:55 -0400
+Date: Thu, 26 Apr 2018 08:25:14 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Rohit Khanna <rokhanna@nvidia.com>
+Cc: "will.deacon@arm.com" <will.deacon@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Thierry Reding <treding@nvidia.com>,
+        Alexander Van Brunt <avanbrunt@nvidia.com>, Bo Yan <byan@nvidia.com>,
+        Jason Sequeira <jsequeira@nvidia.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>
+Subject: Re: [PATCH] arm64: skip cpu nodes marked as disabled in DT
+Message-ID: <20180426072514.GA33476@MBP.local>
+References: <1524697712-20208-1-git-send-email-rokhanna@nvidia.com>
+ <1524699380207.85374@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <20180425175446.GC21628@e107981-ln.cambridge.arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1524699380207.85374@nvidia.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-04-25 19:54, Lorenzo Pieralisi wrote:
-> On Tue, Apr 24, 2018 at 05:13:42PM +0200, Jan Kiszka wrote:
->> From: Jan Kiszka <jan.kiszka@siemens.com>
->>
->> Required when running over Jailhouse, and there is already a physical
->> host controller that Jailhouse does not intercept and rather adds a
->> virtual one. That is the case for the Tegra TK1, e.g.
->>
->> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
->> ---
->>  arch/arm/Kconfig | 7 ++++++-
->>  1 file changed, 6 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
->> index a7f8e7f4b88f..5f8190cb057d 100644
->> --- a/arch/arm/Kconfig
->> +++ b/arch/arm/Kconfig
->> @@ -1248,8 +1248,13 @@ config PCI
->>  	  VESA. If you have PCI, say Y, otherwise N.
->>  
->>  config PCI_DOMAINS
->> -	bool
->> +	bool "Support for multiple PCI domains"
->>  	depends on PCI
->> +	help
->> +	  Automatically enabled if the platform supports multiple PCI host
->> +	  controllers. Say Y if running over a hypervisor like Jailhouse that
->> +	  dynamically adds further host controllers while the system is
->> +	  running. Say N otherwise.
+On Wed, Apr 25, 2018 at 11:36:06PM +0000, Rohit Khanna wrote:
+> Adding few other folks.
+
+It looks fine to me but cc'ing Mark and Lorenzo (and it should have been
+posted on linux-arm-kernel@lists.infradead.org).
+
+> From: Rohit Khanna
+> Sent: Wednesday, April 25, 2018 4:08 PM
+> To: catalin.marinas@arm.com; will.deacon@arm.com
+> Cc: linux-kernel@vger.kernel.org; Rohit Khanna
+> Subject: [PATCH] arm64: skip cpu nodes marked as disabled in DT
 > 
-> Alternatively, you could select it under PCI_HOST_GENERIC if that's all
-> you need in Jailhouse. Actually that's a change that makes sense anyway
-> I think.
-
-If that's preferred - will switch!
-
-Thanks,
-Jan
-
--- 
-Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-Corporate Competence Center Embedded Linux
+> Skip the CPU nodes that are marked as disabled in DT.
+> 
+> Bug 1828570
+> 
+> Signed-off-by: Rohit Khanna <rokhanna@nvidia.com>
+> Reviewed-on: http://git-master/r/1245333
+> Reviewed-by: Alexander Van Brunt <avanbrunt@nvidia.com>
+> ---
+>  arch/arm64/kernel/smp.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
+> index f3e2e3aec0b0..2b4371b0948d 100644
+> --- a/arch/arm64/kernel/smp.c
+> +++ b/arch/arm64/kernel/smp.c
+> @@ -578,6 +578,10 @@ static void __init of_parse_and_init_cpus(void)
+>         for_each_node_by_type(dn, "cpu") {
+>                 u64 hwid = of_get_cpu_mpidr(dn);
+> 
+> +               /* Check to see if the cpu is disabled */
+> +               if (!of_device_is_available(dn))
+> +                       goto next;
+> +
+>                 if (hwid == INVALID_HWID)
+>                         goto next;
+> 
+> --
+> 2.1.4
