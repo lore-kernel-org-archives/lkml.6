@@ -1,133 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756665AbeDZWNi convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 18:13:38 -0400
-Received: from mailoutvs4.siol.net ([213.250.19.137]:43384 "EHLO mail.siol.net"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753882AbeDZWNg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 18:13:36 -0400
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: Jagan Teki <jagan@amarulasolutions.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [RFC 00/13] arm64: allwinner: Add A64 DE2 pipeline support
-Date: Fri, 27 Apr 2018 00:13:12 +0200
-Message-ID: <23105300.vUZDKFF453@jernej-laptop>
-In-Reply-To: <CAMty3ZDfiqKMpesTg-oaCRNJ4-gBs48vY-TXgRFJkLB7gjKaYQ@mail.gmail.com>
-References: <20180424133425.24291-1-jagan@amarulasolutions.com> <3749004.y60xFsjo5d@jernej-laptop> <CAMty3ZDfiqKMpesTg-oaCRNJ4-gBs48vY-TXgRFJkLB7gjKaYQ@mail.gmail.com>
+        id S1757142AbeDZWPV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 18:15:21 -0400
+Received: from mail.us.es ([193.147.175.20]:34252 "EHLO mail.us.es"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756930AbeDZWPT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 18:15:19 -0400
+Date: Fri, 27 Apr 2018 00:15:15 +0200
+X-SMTPAUTHUS: auth mail.us.es
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, coreteam@netfilter.org,
+        netfilter-devel@vger.kernel.org, Florian Westphal <fw@strlen.de>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        kbuild test robot <lkp@intel.com>
+Subject: Re: [PATCH] netfilter: fix nf_tables filter chain type build
+Message-ID: <20180426221515.56pyozqb2nf6jadw@salvia>
+References: <c8e42e35-ccff-471c-8c45-61f44855e21a@infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c8e42e35-ccff-471c-8c45-61f44855e21a@infradead.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-Dne četrtek, 26. april 2018 ob 15:26:49 CEST je Jagan Teki napisal(a):
-> On Wed, Apr 25, 2018 at 11:29 PM, Jernej Škrabec
+On Sat, Apr 21, 2018 at 09:10:09PM -0700, Randy Dunlap wrote:
+> From: Randy Dunlap <rdunlap@infradead.org>
 > 
-> <jernej.skrabec@siol.net> wrote:
-> > Hi,
-> > 
-> > Dne sreda, 25. april 2018 ob 12:34:09 CEST je Jagan Teki napisal(a):
-> >> On Tue, Apr 24, 2018 at 9:02 PM, Jernej Škrabec <jernej.skrabec@siol.net>
-> > 
-> > wrote:
-> >> > Hi,
-> >> > 
-> >> > Dne torek, 24. april 2018 ob 15:34:12 CEST je Jagan Teki napisal(a):
-> >> >> Allwinner A64 has display engine pipeline like other Allwinner SOC's
-> >> >> A83T/H3/H5.
-> >> >> 
-> >> >> A64 DE2 behaviour similar to Allwinner A83T where mixer0, connected to
-> >> >> tcon0 with RGB, LVDS MIPI-DSI and mixer1, connected to tcon1 with
-> >> >> HDMI.
-> >> >> This series merely concentrated on HDMI pipeline and rest will add
-> >> >> eventually.
-> >> >> 
-> >> >> patch 1: dt-bindings for a64 DE2 CCU
-> >> >> 
-> >> >> patch 2: a64 DE2 CCU node addition
-> >> >> 
-> >> >> patch 3: dt-bindings for a64 DE2 pipeline
-> >> >> 
-> >> >> patch 4 - 5: dt-bindings for a64 mixer0 and tcon-lcd
-> >> >> 
-> >> >> patch 6: a64 DE2 pipeline node addition
-> >> >> 
-> >> >> patch 7 - 8: dt-bindings for a64 HDMI and HDMI PHY
-> >> >> 
-> >> >> patch 9: a64 HDMI nodes addition
-> >> >> 
-> >> >> patch 10 - 11: dt-bindings for a64 mixer1 and tcon-tv
-> >> >> 
-> >> >> patch 12: a64 HDMI pipeline
-> >> >> 
-> >> >> patch 13: enable HDMI out on bananpi-m64
-> >> >> 
-> >> >> Tested HDMI on bananapi-m64 (along with DE2 SRAM C changes from [1]
-> >> >> thread), able to detect the HDMI but, no penguins on screen.
-> >> >> 
-> >> >> Request for any suggestions.
-> >> > 
-> >> > You are mising sunxi-ng clock patches. PLL_VIDEO0 and PLL_VIDEO1 need
-> >> > fixes by setting minimum stable frequency. Please note that datasheet
-> >> > may
-> >> > have wrong information. That was obvious in H3 case and I had to check
-> >> > minimum stable PLL_VIDEO frequency in BSP driver.
-> >> 
-> >> Can you point me the clock patches?
-> > 
-> > Here is my A64 HDMI wip repo, which includes my clock changes:
-> > https://github.com/jernejsk/linux-1/tree/a64_hdmi_wip
-> > 
-> > At some point HDMI output worked ok, I'm not sure in what state I left the
-> > code.
+> Fix build errors due to a missing Kconfig dependency term.
+> Fixes these build errors:
 > 
-> Jernej, thanks for the regulator change in another mail, yes
-> bananapi-m64 has HVCC regulator for HDMI glue, with this I'm able to
-> see penguins on screen.
+> net/ipv6/netfilter/nft_chain_nat_ipv6.o: In function `nft_nat_do_chain':
+> net/ipv6/netfilter/nft_chain_nat_ipv6.c:37: undefined reference to `nft_do_chain'
+> net/ipv6/netfilter/nft_chain_nat_ipv6.o: In function `nft_chain_nat_ipv6_exit':
+> net/ipv6/netfilter/nft_chain_nat_ipv6.c:94: undefined reference to `nft_unregister_chain_type'
+> net/ipv6/netfilter/nft_chain_nat_ipv6.o: In function `nft_chain_nat_ipv6_init':
+> net/ipv6/netfilter/nft_chain_nat_ipv6.c:87: undefined reference to `nft_register_chain_type'
 
-Ok, great.
+Thanks for sending a patch for this Randy.
 
-> 
-> >> I've phadled only CLK_PLL_VIDEO0
-> >> on hdmi_phy So we need CLK_PLL_VIDEO1 as fourth clock?
-> > 
-> > I'm not sure what is the best way. I guess some research is needed. There
-> > is even the possibility that one bit (SUN8I_HDMI_PHY_PLL_CFG1_CKIN_SEL)
-> > in hdmi phy needs to be toggled depending on which clock is selected as
-> > HDMI source. I never finished my research since I'm waiting to SRAM C
-> > claiming patches.
-> > 
-> > At the end, HDMI driver should be tested by both, PLL_VIDEO0 and
-> > PLL_VIDEO1 as a HDMI clock source, otherwise there is no guarantee that
-> > we got binding right. A83T, H3 and H5 has only one possible HDMI parent
-> > clock, so it was much easier in this regard.
-> 
-> From Figure 3-3.Module Clock Diagram of
-> Allwinner_A64_User_Manual_V1.1.pdf clearly shows PLL_VIDEO1 is
-> connected TCON1 which intern used by HDMI. I've verified both
-> PLL_VIDEO0 and 1 both seems working. I'm thinking we can go for
-> PLL_VIDEO1 as per datasheet, any suggestions?
-> 
-> Jagan.
+We have a patch to address this that should fix this:
 
-Actually, same diagram also shows that PLL_VIDEO0 can be connected to TCON1/
-HDMI. Since DT descibes HW, probably both phandles should be specified and 
-driver should decide some way which one to select. Additionally, HDMI 
-controller and HDMI PHY should use same PLL at the same time. If nothing is 
-done, PLL_VIDEO0 will always be used, which might interfere in dual monitor 
-setup.
+https://git.kernel.org/pub/scm/linux/kernel/git/pablo/nf.git/commit/?id=39f2ff0816e5421476c2bc538b68b4bb0708a78e
 
-Best regards,
-Jernej
+Thanks!
