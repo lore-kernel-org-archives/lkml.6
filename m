@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753307AbeDZCYE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 22:24:04 -0400
-Received: from mga06.intel.com ([134.134.136.31]:17162 "EHLO mga06.intel.com"
+        id S1752757AbeDZCYB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 22:24:01 -0400
+Received: from mga07.intel.com ([134.134.136.100]:41343 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751560AbeDZCX7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1750949AbeDZCX7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 25 Apr 2018 22:23:59 -0400
 X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,329,1520924400";
-   d="scan'208";a="194454959"
-Date: Thu, 26 Apr 2018 10:23:22 +0800
+   d="scan'208";a="44683010"
+Date: Thu, 26 Apr 2018 10:23:17 +0800
 From: kbuild test robot <lkp@intel.com>
 To: Arnd Bergmann <arnd@arndb.de>
 Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org
-Subject: Makefile:636: arch/m32r/Makefile: No such file or directory
-Message-ID: <201804261018.X4R3LDfo%fengguang.wu@intel.com>
+Subject: Makefile:636: arch/score/Makefile: No such file or directory
+Message-ID: <201804261013.6YZ6XwpM%fengguang.wu@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -34,47 +34,47 @@ FYI, the error/warning still remains.
 
 tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
 head:   26ed24e429d89e045e5eb2d2b75215244347b7f2
-commit: 553b085c2075f6a4a2591108554f830fa61e881f arch: remove m32r port
+commit: b8c9c8f0190f4004d3d4364edb2dea5978dfc824 arch: remove score port
 date:   7 weeks ago
-config: m32r-m32104ut_defconfig
-compiler: m32r-linux-gcc (GCC) 7.2.0
+config: score-spct6600_defconfig
+compiler: score-elf-gcc (GCC) 4.9.4
 reproduce:
         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
         chmod +x ~/bin/make.cross
-        git checkout 553b085c2075f6a4a2591108554f830fa61e881f
-        make.cross ARCH=m32r  m32104ut_defconfig
-        make.cross ARCH=m32r 
+        git checkout b8c9c8f0190f4004d3d4364edb2dea5978dfc824
+        make.cross ARCH=score  spct6600_defconfig
+        make.cross ARCH=score 
 
 All errors (new ones prefixed by >>):
 
->> Makefile:636: arch/m32r/Makefile: No such file or directory
->> make[1]: *** No rule to make target 'arch/m32r/Makefile'.
-   make[1]: Failed to remake makefile 'arch/m32r/Makefile'.
+>> Makefile:636: arch/score/Makefile: No such file or directory
+>> make[1]: *** No rule to make target 'arch/score/Makefile'.
+   make[1]: Failed to remake makefile 'arch/score/Makefile'.
    make: *** [sub-make] Error 2
 --
-   Makefile:505: arch/m32r/Makefile: No such file or directory
->> make[1]: *** No rule to make target 'arch/m32r/Makefile'.
-   make[1]: Failed to remake makefile 'arch/m32r/Makefile'.
->> Kconfig:12: can't open file "arch/m32r/Kconfig"
-   make[2]: *** [m32104ut_defconfig] Error 1
-   make[1]: *** [m32104ut_defconfig] Error 2
-   make: *** [sub-make] Error 2
---
-   Makefile:505: arch/m32r/Makefile: No such file or directory
->> make[1]: *** No rule to make target 'arch/m32r/Makefile'.
-   make[1]: Failed to remake makefile 'arch/m32r/Makefile'.
->> Kconfig:12: can't open file "arch/m32r/Kconfig"
+   Makefile:505: arch/score/Makefile: No such file or directory
+>> make[1]: *** No rule to make target 'arch/score/Makefile'.
+   make[1]: Failed to remake makefile 'arch/score/Makefile'.
+>> Kconfig:12: can't open file "arch/score/Kconfig"
    make[2]: *** [oldconfig] Error 1
    make[1]: *** [oldconfig] Error 2
    make: *** [sub-make] Error 2
 --
-   Makefile:505: arch/m32r/Makefile: No such file or directory
->> make[1]: *** No rule to make target 'arch/m32r/Makefile'.
-   make[1]: Failed to remake makefile 'arch/m32r/Makefile'.
->> Kconfig:12: can't open file "arch/m32r/Kconfig"
+   Makefile:505: arch/score/Makefile: No such file or directory
+>> make[1]: *** No rule to make target 'arch/score/Makefile'.
+   make[1]: Failed to remake makefile 'arch/score/Makefile'.
+>> Kconfig:12: can't open file "arch/score/Kconfig"
    make[2]: *** [olddefconfig] Error 1
    make[2]: Target 'oldnoconfig' not remade because of errors.
    make[1]: *** [oldnoconfig] Error 2
+   make: *** [sub-make] Error 2
+--
+   Makefile:505: arch/score/Makefile: No such file or directory
+>> make[1]: *** No rule to make target 'arch/score/Makefile'.
+   make[1]: Failed to remake makefile 'arch/score/Makefile'.
+>> Kconfig:12: can't open file "arch/score/Kconfig"
+   make[2]: *** [spct6600_defconfig] Error 1
+   make[1]: *** [spct6600_defconfig] Error 2
    make: *** [sub-make] Error 2
 
 vim +636 Makefile
