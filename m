@@ -1,102 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754228AbeDZHxg (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 03:53:36 -0400
-Received: from www62.your-server.de ([213.133.104.62]:49278 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752962AbeDZHxc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 03:53:32 -0400
-Subject: Re: [PATCH 3/3] tools bpftool: Display license GPL compatible in prog
- show/list
-To: Jiri Olsa <jolsa@redhat.com>
-Cc: Jakub Kicinski <kubakici@wp.pl>, Jiri Olsa <jolsa@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
-        Quentin Monnet <quentin.monnet@netronome.com>
-References: <20180425174108.6586-1-jolsa@kernel.org>
- <20180425174108.6586-4-jolsa@kernel.org>
- <20180425140346.3e0f3ba7@cakuba.netronome.com>
- <0e84fe67-59c9-a419-5ff7-05be2aa1991e@iogearbox.net>
- <20180426073905.GI3396@krava>
-From: Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <639b2b78-af9e-4605-2b33-9bd1af8e760a@iogearbox.net>
-Date: Thu, 26 Apr 2018 09:53:26 +0200
+        id S1754270AbeDZHy1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 03:54:27 -0400
+Received: from mga07.intel.com ([134.134.136.100]:54200 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752018AbeDZHy0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 03:54:26 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,330,1520924400";
+   d="scan'208";a="194515709"
+Subject: Re: [PATCH v4 09/12] mmc: sdhci-omap: Workaround for Errata i834
+To: Kishon Vijay Abraham I <kishon@ti.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        Tony Lindgren <tony@atomide.com>
+References: <20180425120937.29867-1-kishon@ti.com>
+ <20180425120937.29867-10-kishon@ti.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <142e17bd-1e1d-f26f-1b81-389fbb841fcd@intel.com>
+Date: Thu, 26 Apr 2018 10:53:20 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180426073905.GI3396@krava>
+In-Reply-To: <20180425120937.29867-10-kishon@ti.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/26/2018 09:39 AM, Jiri Olsa wrote:
-> On Wed, Apr 25, 2018 at 11:14:30PM +0200, Daniel Borkmann wrote:
->> On 04/25/2018 11:03 PM, Jakub Kicinski wrote:
->>> On Wed, 25 Apr 2018 19:41:08 +0200, Jiri Olsa wrote:
->>>> @@ -295,6 +297,7 @@ static void print_prog_plain(struct bpf_prog_info *info, int fd)
->>>>  	printf("tag ");
->>>>  	fprint_hex(stdout, info->tag, BPF_TAG_SIZE, "");
->>>>  	print_dev_plain(info->ifindex, info->netns_dev, info->netns_ino);
->>>> +	printf(" license GPL %scompatible", info->gpl_compatible ? "" : "NON ");
->>>
->>> 3 nit picks:
->>>
->>> Other "fields" are separated by two spaces between each other:
->>>
->>>   4: kprobe  name func_begin  tag 57cd311f2e27366b license GPL compatible
->>>            ^^               ^^                    X
->>>           loaded_at Apr 25/11:20  uid 0
->>>                                 ^^
->>>           xlated 16B  not jited  memlock 4096B
->>>                     ^^         ^^
->>>
->>> Could you also update the example outputs in the man page:
->>>
->>> tools/bpf/bpftool/Documentation/bpftool-prog.rst
->>>
->>> Sorry about the bike shedding but I would also vote for:
->>>
->>> "[not] GPL compatible"
->>>
->>> rather than
->>>
->>> "license GPL [NON] compatible"
->>>
->>> for brevity..
->>
->> While we're at it, can we also squeeze this whole thing a bit? Feels like
->> huge string wasted for very little information compared to the rest of the
->> dump. Just append the string "gpl" at the end of the line if info->gpl_compatible
->> is set, otherwise just add nothing. This also allows to naturally grep
->> for it e.g. `bpftool p | grep gpl` if you need a quick summary.
+On 25/04/18 15:09, Kishon Vijay Abraham I wrote:
+> Errata i834 in AM572x Sitara Processors Silicon Revision 2.0, 1.1
+> (SPRZ429L July 2014–Revised April 2018 [1]) mentions the maximum
+> obtainable timeout through MMC host controller is 700ms. And for
+> commands taking longer than 700ms, hardware timeout should be
+> disabled and software timeout should be used.
 > 
-> that's fine with me.. so 'gpl' in here:
+> The workaround for Errata i834 can be achieved by adding
+> SDHCI_QUIRK2_DISABLE_HW_TIMEOUT quirk in sdhci-omap.
 > 
-> 5: tracepoint  name func  tag 57cd311f2e27366b  gpl
->         loaded_at Apr 26/09:37  uid 0
->         xlated 16B  not jited  memlock 4096B
+> [1] -> http://www.ti.com/lit/er/sprz429l/sprz429l.pdf
 > 
-> and keeping tyhe whole name in json output:
-> 
-> [{
->         "id": 5,
->         "type": "tracepoint",
->         "name": "func",
->         "tag": "57cd311f2e27366b",
->         "gpl_compatible": true,
->         "loaded_at": "Apr 26/09:37",
->         "uid": 0,
->         "bytes_xlated": 16,
->         "jited": false,
->         "bytes_memlock": 4096
->     }
-> ]
-> 
-> how about that?
+> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+> Acked-by: Tony Lindgren <tony@atomide.com>
 
-Sounds good, thanks Jiri!
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+
+> ---
+>  drivers/mmc/host/sdhci-omap.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
+> index 2d9ea23610d5..b2c54940d032 100644
+> --- a/drivers/mmc/host/sdhci-omap.c
+> +++ b/drivers/mmc/host/sdhci-omap.c
+> @@ -715,7 +715,8 @@ static const struct sdhci_pltfm_data sdhci_omap_pdata = {
+>  		  SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC,
+>  	.quirks2 = SDHCI_QUIRK2_ACMD23_BROKEN |
+>  		   SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
+> -		   SDHCI_QUIRK2_RSP_136_HAS_CRC,
+> +		   SDHCI_QUIRK2_RSP_136_HAS_CRC |
+> +		   SDHCI_QUIRK2_DISABLE_HW_TIMEOUT,
+>  	.ops = &sdhci_omap_ops,
+>  };
+>  
+> 
