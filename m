@@ -1,117 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756748AbeDZQgx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 12:36:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41880 "EHLO mail.kernel.org"
+        id S1756635AbeDZQk4 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 12:40:56 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:57124 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754462AbeDZQgw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 12:36:52 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC7AC21789
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
-Date: Thu, 26 Apr 2018 10:36:51 -0600
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Chao Yu <chao@kernel.org>
-Cc: Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] f2fs: fix to wait IO writeback in __revoke_inmem_pages()
-Message-ID: <20180426163651.GL68594@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180426083247.86337-1-yuchao0@huawei.com>
- <20180426154817.GF68594@jaegeuk-macbookpro.roam.corp.google.com>
- <7810a3a3-70f3-9b37-e64a-f26dba72b0f9@kernel.org>
+        id S1754462AbeDZQky (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 12:40:54 -0400
+Date: Thu, 26 Apr 2018 12:40:53 -0400 (EDT)
+From: Pankaj Gupta <pagupta@redhat.com>
+To: Stefan Hajnoczi <stefanha@gmail.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        qemu-devel@nongnu.org, linux-nvdimm@ml01.01.org, linux-mm@kvack.org,
+        jack@suse.cz, stefanha@redhat.com,
+        dan j williams <dan.j.williams@intel.com>, riel@surriel.com,
+        haozhong zhang <haozhong.zhang@intel.com>, nilal@redhat.com,
+        kwolf@redhat.com, pbonzini@redhat.com,
+        ross zwisler <ross.zwisler@intel.com>, david@redhat.com,
+        xiaoguangrong eric <xiaoguangrong.eric@gmail.com>, hch@infradead.org,
+        marcel@redhat.com, mst@redhat.com, niteshnarayanlal@hotmail.com,
+        imammedo@redhat.com, lcapitulino@redhat.com
+Message-ID: <58645254.23011245.1524760853269.JavaMail.zimbra@redhat.com>
+In-Reply-To: <20180426131517.GB30991@stefanha-x1.localdomain>
+References: <20180425112415.12327-1-pagupta@redhat.com> <20180425112415.12327-3-pagupta@redhat.com> <20180426131517.GB30991@stefanha-x1.localdomain>
+Subject: Re: [RFC v2 2/2] pmem: device flush over VIRTIO
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7810a3a3-70f3-9b37-e64a-f26dba72b0f9@kernel.org>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.116.119, 10.4.195.10]
+Thread-Topic: pmem: device flush over VIRTIO
+Thread-Index: LQYKnvVqMrEPJ59FVtpvxGsK/zFRrw==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/26, Chao Yu wrote:
-> On 2018/4/26 23:48, Jaegeuk Kim wrote:
-> > On 04/26, Chao Yu wrote:
-> >> Thread A				Thread B
-> >> - f2fs_ioc_commit_atomic_write
-> >>  - commit_inmem_pages
-> >>   - f2fs_submit_merged_write_cond
-> >>   : write data
-> >> 					- write_checkpoint
-> >> 					 - do_checkpoint
-> >> 					 : commit all node within CP
-> >> 					 -> SPO
-> >>   - f2fs_do_sync_file
-> >>    - file_write_and_wait_range
-> >>    : wait data writeback
-> >>
-> >> In above race condition, data/node can be flushed in reversed order when
-> >> coming a checkpoint before f2fs_do_sync_file, after SPOR, it results in
-> >> atomic written data being corrupted.
-> > 
-> > Wait, what is the problem here? Thread B could succeed checkpoint, there is
-> > no problem. If it fails, there is no fsync mark where we can recover it, so
-> 
-> Node is flushed by checkpoint before data, with reversed order, that's the problem.
-
-What do you mean? Data should be in disk, in order to proceed checkpoint.
 
 > 
-> Thanks,
-> 
-> > we can just ignore the last written data as nothing.
+> On Wed, Apr 25, 2018 at 04:54:14PM +0530, Pankaj Gupta wrote:
+> > This patch adds functionality to perform
+> > flush from guest to hosy over VIRTIO
+> > when 'ND_REGION_VIRTIO'flag is set on
+> > nd_negion. Flag is set by 'virtio-pmem'
+> > driver.
 > > 
-> >>
-> >> This patch adds f2fs_wait_on_page_writeback in __revoke_inmem_pages() to
-> >> keep data and node of atomic file being flushed orderly.
-> >>
-> >> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> >> ---
-> >>  fs/f2fs/file.c    | 4 ++++
-> >>  fs/f2fs/segment.c | 3 +++
-> >>  2 files changed, 7 insertions(+)
-> >>
-> >> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> >> index be7578774a47..a352804af244 100644
-> >> --- a/fs/f2fs/file.c
-> >> +++ b/fs/f2fs/file.c
-> >> @@ -217,6 +217,9 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
-> >>  
-> >>  	trace_f2fs_sync_file_enter(inode);
-> >>  
-> >> +	if (atomic)
-> >> +		goto write_done;
-> >> +
-> >>  	/* if fdatasync is triggered, let's do in-place-update */
-> >>  	if (datasync || get_dirty_pages(inode) <= SM_I(sbi)->min_fsync_blocks)
-> >>  		set_inode_flag(inode, FI_NEED_IPU);
-> >> @@ -228,6 +231,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
-> >>  		return ret;
-> >>  	}
-> >>  
-> >> +write_done:
-> >>  	/* if the inode is dirty, let's recover all the time */
-> >>  	if (!f2fs_skip_inode_update(inode, datasync)) {
-> >>  		f2fs_write_inode(inode, NULL);
-> >> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> >> index 584483426584..9ca3d0a43d93 100644
-> >> --- a/fs/f2fs/segment.c
-> >> +++ b/fs/f2fs/segment.c
-> >> @@ -230,6 +230,8 @@ static int __revoke_inmem_pages(struct inode *inode,
-> >>  
-> >>  		lock_page(page);
-> >>  
-> >> +		f2fs_wait_on_page_writeback(page, DATA, true);
-> >> +
-> >>  		if (recover) {
-> >>  			struct dnode_of_data dn;
-> >>  			struct node_info ni;
-> >> @@ -415,6 +417,7 @@ static int __commit_inmem_pages(struct inode *inode)
-> >>  		/* drop all uncommitted pages */
-> >>  		__revoke_inmem_pages(inode, &fi->inmem_pages, true, false);
-> >>  	} else {
-> >> +		/* wait all committed IOs writeback and release them from list */
-> >>  		__revoke_inmem_pages(inode, &revoke_list, false, false);
-> >>  	}
-> >>  
-> >> -- 
-> >> 2.15.0.55.gc2ece9dc4de6
+> > Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
+> > ---
+> >  drivers/nvdimm/region_devs.c | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> > 
+> > diff --git a/drivers/nvdimm/region_devs.c b/drivers/nvdimm/region_devs.c
+> > index a612be6..6c6454e 100644
+> > --- a/drivers/nvdimm/region_devs.c
+> > +++ b/drivers/nvdimm/region_devs.c
+> > @@ -20,6 +20,7 @@
+> >  #include <linux/nd.h>
+> >  #include "nd-core.h"
+> >  #include "nd.h"
+> > +#include <linux/virtio_pmem.h>
+> >  
+> >  /*
+> >   * For readq() and writeq() on 32-bit builds, the hi-lo, lo-hi order is
+> > @@ -1074,6 +1075,12 @@ void nvdimm_flush(struct nd_region *nd_region)
+> >  	struct nd_region_data *ndrd = dev_get_drvdata(&nd_region->dev);
+> >  	int i, idx;
+> >  
+> > +       /* call PV device flush */
+> > +	if (test_bit(ND_REGION_VIRTIO, &nd_region->flags)) {
+> > +		virtio_pmem_flush(&nd_region->dev);
+> > +		return;
+> > +	}
+> 
+> How does libnvdimm know when flush has completed?
+> 
+> Callers expect the flush to be finished when nvdimm_flush() returns but
+> the virtio driver has only queued the request, it hasn't waited for
+> completion!
+
+I tried to implement what nvdimm does right now. It just writes to
+flush hint address to make sure data persists.
+
+I just did not want to block guest write requests till host side 
+fsync completes.
+
+Operations(write/fsync) on same file would be blocking at guest side and wait time could 
+be worse for operations on different guest files because all these operations would happen 
+ultimately on same file at host.
+
+I think with current way, we can achieve an asynchronous queuing mechanism on cost of not 
+100% sure when fsync would complete but it is assured it will happen. Also, its entire block
+flush.
+
+I am open for suggestions here, this is my current thought and implementation. 
+
+Thanks,
+Pankaj
