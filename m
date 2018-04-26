@@ -1,72 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932081AbeDZUCE (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 16:02:04 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:35242 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755830AbeDZT7i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 15:59:38 -0400
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: "David S . Miller" <davem@davemloft.net>
-Cc: Allan Nielsen <Allan.Nielsen@microsemi.com>, razvan.stefanescu@nxp.com,
-        po.liu@nxp.com, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: [PATCH net-next v2 1/7] dt-bindings: net: add DT bindings for Microsemi MIIM
-Date: Thu, 26 Apr 2018 21:59:25 +0200
-Message-Id: <20180426195931.5393-2-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180426195931.5393-1-alexandre.belloni@bootlin.com>
-References: <20180426195931.5393-1-alexandre.belloni@bootlin.com>
+        id S1757085AbeDZUC7 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 16:02:59 -0400
+Received: from mail-pf0-f175.google.com ([209.85.192.175]:37245 "EHLO
+        mail-pf0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751615AbeDZUCD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 16:02:03 -0400
+X-Google-Smtp-Source: AIpwx4/3uHePUjCu54q/4odq3lT5CBIWXKpLDVJM6iyGsIBGqzMaXun9m1HR10WOXjHt6cobf6LmNw==
+Subject: Re: [PATCH] nvme: change order of qid and cmdid in completion trace
+To: Johannes Thumshirn <jthumshirn@suse.de>,
+        Keith Busch <keith.busch@intel.com>
+Cc: Sagi Grimberg <sagi@grimberg.me>,
+        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
+        Christoph Hellwig <hch@lst.de>
+References: <20180426194926.18767-1-jthumshirn@suse.de>
+From: Jens Axboe <axboe@kernel.dk>
+Message-ID: <3e927f7f-fa84-1792-b80e-bf5679e71bcf@kernel.dk>
+Date: Thu, 26 Apr 2018 14:01:59 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
+MIME-Version: 1.0
+In-Reply-To: <20180426194926.18767-1-jthumshirn@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DT bindings for the Microsemi MII Management Controller found on Microsemi
-SoCs
+On 4/26/18 1:49 PM, Johannes Thumshirn wrote:
+> Keith reported that command submission and command completion
+> tracepoints have the order of the cmdid and qid fileds swapped.
+> 
+> While it isn't easily possible to change the command submission
+> tracepoint, as there is a regression test parsing it in blktests we
+> can swap the command completion tracepoint to have the fileds aligned.
 
-Cc: Rob Herring <robh+dt@kernel.org>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- .../devicetree/bindings/net/mscc-miim.txt     | 26 +++++++++++++++++++
- 1 file changed, 26 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/net/mscc-miim.txt
+It also makes more sense to have qid before cmdid.
 
-diff --git a/Documentation/devicetree/bindings/net/mscc-miim.txt b/Documentation/devicetree/bindings/net/mscc-miim.txt
-new file mode 100644
-index 000000000000..7104679cf59d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/net/mscc-miim.txt
-@@ -0,0 +1,26 @@
-+Microsemi MII Management Controller (MIIM) / MDIO
-+=================================================
-+
-+Properties:
-+- compatible: must be "mscc,ocelot-miim"
-+- reg: The base address of the MDIO bus controller register bank. Optionally, a
-+  second register bank can be defined if there is an associated reset register
-+  for internal PHYs
-+- #address-cells: Must be <1>.
-+- #size-cells: Must be <0>.  MDIO addresses have no size component.
-+- interrupts: interrupt specifier (refer to the interrupt binding)
-+
-+Typically an MDIO bus might have several children.
-+
-+Example:
-+	mdio@107009c {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "mscc,ocelot-miim";
-+		reg = <0x107009c 0x36>, <0x10700f0 0x8>;
-+		interrupts = <14>;
-+
-+		phy0: ethernet-phy@0 {
-+			reg = <0>;
-+		};
-+	};
+Also, fileds -> fields, in two spots.
+
+With that:
+
+Reviewed-by: Jens Axboe <axboe@kernel.dk>
+
 -- 
-2.17.0
+Jens Axboe
