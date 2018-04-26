@@ -1,75 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756798AbeDZStW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 14:49:22 -0400
-Received: from bh-25.webhostbox.net ([208.91.199.152]:35269 "EHLO
-        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752754AbeDZStU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 14:49:20 -0400
-From: Guenter Roeck <linux@roeck-us.net>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] hwmon fixes for v4.17-rc3
-Date: Thu, 26 Apr 2018 11:49:18 -0700
-Message-Id: <1524768558-6166-1-git-send-email-linux@roeck-us.net>
-X-Mailer: git-send-email 2.7.4
-X-Authenticated_sender: guenter@roeck-us.net
-X-OutGoing-Spam-Status: No, score=-1.0
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - roeck-us.net
-X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
-X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+        id S1756907AbeDZStg (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 14:49:36 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36892 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753665AbeDZStV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 14:49:21 -0400
+Date: Thu, 26 Apr 2018 21:49:19 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Mikulas Patocka <mpatocka@redhat.com>
+Cc: James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Michal Hocko <mhocko@kernel.org>, David Rientjes <rientjes@google.com>,
+        dm-devel@redhat.com, eric.dumazet@gmail.com, netdev@vger.kernel.org,
+        jasowang@redhat.com, Randy Dunlap <rdunlap@infradead.org>,
+        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
+        linux-mm@kvack.org, edumazet@google.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        virtualization@lists.linux-foundation.org,
+        David Miller <davem@davemloft.net>, Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [dm-devel] [PATCH v5] fault-injection: introduce kvmalloc
+ fallback options
+Message-ID: <20180426214011-mutt-send-email-mst@kernel.org>
+References: <1524694663.4100.21.camel@HansenPartnership.com>
+ <alpine.LRH.2.02.1804251830540.25124@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180426125817.GO17484@dhcp22.suse.cz>
+ <alpine.LRH.2.02.1804261006120.32722@file01.intranet.prod.int.rdu2.redhat.com>
+ <1524753932.3226.5.camel@HansenPartnership.com>
+ <alpine.LRH.2.02.1804261100170.12157@file01.intranet.prod.int.rdu2.redhat.com>
+ <1524756256.3226.7.camel@HansenPartnership.com>
+ <alpine.LRH.2.02.1804261142480.21152@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180426184845-mutt-send-email-mst@kernel.org>
+ <alpine.LRH.2.02.1804261202350.24656@file01.intranet.prod.int.rdu2.redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LRH.2.02.1804261202350.24656@file01.intranet.prod.int.rdu2.redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Thu, Apr 26, 2018 at 12:07:25PM -0400, Mikulas Patocka wrote:
+> > IIUC debug kernels mainly exist so people who experience e.g. memory
+> > corruption can try and debug the failure. In this case, CONFIG_DEBUG_SG
+> > will *already* catch a failure early. Nothing special needs to be done.
+> 
+> The patch helps people debug such memory coprruptions (such as using DMA 
+> API on the result of kvmalloc).
 
-Please pull hwmon fixes for Linux v4.17-rc3 from signed tag:
+That's my point.  I don't think your patch helps debug any memory
+corruptions.  With CONFIG_DEBUG_SG using DMA API already causes a
+BUG_ON, that's before any memory can get corrupted.
 
-    git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-for-linus-v4.17-rc3
-
-Thanks,
-Guenter
-------
-
-The following changes since commit 6d08b06e67cd117f6992c46611dfb4ce267cd71e:
-
-  Linux 4.17-rc2 (2018-04-22 19:20:09 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git tags/hwmon-for-linus-v4.17-rc3
-
-for you to fetch changes up to 877d8948d0aa402fbbede138fc73432bb335b65f:
-
-  hwmon: (k10temp) Add support for AMD Ryzen w/ Vega graphics (2018-04-25 05:31:06 -0700)
-
-----------------------------------------------------------------
-hwmon fixes for v4.17-rc3
-
-- Add support for new Ryzen chips to k10temp driver
-  ... making Phoronix happy
-- Fix inconsistent chip access in nct6683 driver
-- Handle absence of few types of sensors in scmi driver
-
-----------------------------------------------------------------
-Guenter Roeck (3):
-      hwmon: (nct6683) Enable EC access if disabled at boot
-      hwmon: (k10temp) Add temperature offset for Ryzen 2700X
-      hwmon: (k10temp) Add support for AMD Ryzen w/ Vega graphics
-
-Sudeep Holla (1):
-      hwmon: (scmi) handle absence of few types of sensors
-
- drivers/hwmon/k10temp.c    | 17 ++++++++++++++---
- drivers/hwmon/nct6683.c    |  4 ++--
- drivers/hwmon/scmi-hwmon.c |  5 ++++-
- 3 files changed, 20 insertions(+), 6 deletions(-)
+-- 
+MST
