@@ -1,93 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753692AbeDZGkU (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 02:40:20 -0400
-Received: from de-out1.bosch-org.com ([139.15.230.186]:56962 "EHLO
-        de-out1.bosch-org.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751508AbeDZGkO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 02:40:14 -0400
-X-AuditID: 0a3aad10-427ff70000000ee7-f0-5ae17452295d
-From: "Jonas Mark (BT-FIR/ENG1)" <Mark.Jonas@de.bosch.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-CC: "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "hs@denx.de" <hs@denx.de>,
-        "ZHU Yi (BT-FIR/ENG1-Zhu)" <Yi.Zhu5@cn.bosch.com>,
-        "Jonas Mark (BT-FIR/ENG1)" <Mark.Jonas@de.bosch.com>
-Subject: AW: [PATCH v2] Input: add bu21029 touch driver
-Thread-Topic: [PATCH v2] Input: add bu21029 touch driver
-Thread-Index: AQHT1aVA9GELBAUy3U2UugtB3KZAQaQSpTFw
-Date: Thu, 26 Apr 2018 06:40:10 +0000
-Message-ID: <04ff5fe9c5c3449b887eb9b269be1038@de.bosch.com>
-References: <1521651874-15379-1-git-send-email-mark.jonas@de.bosch.com>
- <1523897378-23207-1-git-send-email-mark.jonas@de.bosch.com>
-In-Reply-To: <1523897378-23207-1-git-send-email-mark.jonas@de.bosch.com>
-Accept-Language: de-DE, en-US
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.19.142.147]
-Content-Type: text/plain; charset="iso-8859-1"
+        id S1753803AbeDZGlC (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 02:41:02 -0400
+Received: from verein.lst.de ([213.95.11.211]:40534 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753307AbeDZGk5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 02:40:57 -0400
+Date: Thu, 26 Apr 2018 08:42:39 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Greentime Hu <green.hu@gmail.com>
+Cc: Christoph Hellwig <hch@lst.de>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Michal Simek <monstr@monstr.eu>, Vincent Chen <deanbo422@gmail.com>,
+        linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
+        linux-hexagon@vger.kernel.org, linux-m68k@vger.kernel.org,
+        nios2-dev@lists.rocketboards.org, openrisc@lists.librecores.org,
+        linux-parisc@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux <sparclinux@vger.kernel.org>, linux-xtensa@linux-xtensa.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 13/22] nds32: use generic dma_noncoherent_ops
+Message-ID: <20180426064239.GA13895@lst.de>
+References: <20180420080313.18796-1-hch@lst.de> <20180420080313.18796-14-hch@lst.de> <CAEbi=3fkakVD2vxGu6SgJM77JnNM8Y79xS8_o6m9d_85BJpMFQ@mail.gmail.com> <20180424191640.GA32495@lst.de> <CAEbi=3f7yzE+KAM2GOh6QahC_E6BAUfB3ys3U-WdBSUf3DPZqg@mail.gmail.com> <20180425064055.GA11460@lst.de> <CAEbi=3fcd8E=xi_hbef45LnPsBZhZv37yPO-xfZmU1gMaWnDvg@mail.gmail.com>
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA22Tf0wbZRjHeXt37dFweLQwnjHBrAl/TKUDptm5TbIfarosE4P84fAPd8hB
-        G2nBXotlcZEYyoTgBAMGbg2OwZAsOEgzXGUQpKvbGMvqQswgUoHBwOGYEcZAGNW7HT/6h/89
-        7/N9Ps/3eZ83L4lpvGQcabLYOKuFzdcp1bh6z/fxSRm28azkyb/0zLe+2wRz9dwfiPGMjGLM
-        8NwTghnscimZ83fvKBhnj0+1X2Voa2hDhgbhBm74UQioDO4L5UrDvDvhHSJLvS+HyzcVcdad
-        acfVxpnaaaJwLtxxp/0HrATVkBUonAT6FWi7fQurQGpSQ9cpYODWTSQfuhFMj9atHWYRTPV5
-        FRvKaNeIQuKV9B441TKgkuJo2gGrLT5CKsLonxXwtMuprEAkqaV3Q6DzgFzDwMC1x7gcp8Kv
-        1aVIinE6ESZWvnvWk6L3QtOYh5DNnAjuOZsISQinDTA22vwMQHQ8dHT4MSnG6FhwTy0S8oVo
-        aO6W80DHwIOJICHNAPR2cNUdlMv1MFRbo5Tjl6Cl8U9M9o2C/vpJvArFCiFdhRBECEGEEOQs
-        wi+gmFwuuci8+7UURm/N5vgTySn6DwvMbiS/Ku1BQn+2F9Ek0kVQ9uPjWRqCLeKLzV70KqnQ
-        xVDBDDEVmV2QU2xkeeMHVns+x+viKBQWFqbRbqR5e7bZxPOmAosXAYnpoqn3vhzL0lA5bPEJ
-        zlogY160jcR1sVRlzqdZGjqPtXEfcVwhZ11X95KkDqgEXjSMsnJ5nCPXlG9bl3XxsueWUCXU
-        VkGGe9EuMkL0fmoVW1B8IWvmTXlr+FYZ16xnN9Gb6BD5sKyyEtPglgILFxdLrUg8LVUa7ZaN
-        CeKepxayRSEmRNjsMoOGkLhDLXVMmj9C/Dyb3kB5tK5jmqi15CaU2iwytEsJDZ9boXd4EEF7
-        cBaDmvFqAoJDnRT0nvk6Ek7/3hgJy/W1z4E/INAw1HojBuqa/FugIdiWAJcGlxOgt3ZxOzwo
-        6dkBDwcGd4Cn6tLL8HjhepLI3mcg2N2+D1q/qEyD4fKzB8HXHngDrowNvwm/tJ42QG+/6zD0
-        l147DBfL3EfB803fUXCvVKVDua8xHQT/o8wZca8Kca9slPSmvI21/c9e17Kbl4srQfwnWvyy
-        vdamgsSmF/CyTtfVt1K31ZRm+A3/uKeqDgTOR2ZO7NzlGHcs/vtb6dz8u6O2ldwj79tR89JX
-        W8H9tvH1z06OXL73ZAkr+knoSd8/XX/ONXv9Slr0PNah75pY1d2dDFy8f6pVrVo9iU1g1X0f
-        Zz46dEb/d6Kzb2E5yT+/pMN5I5vyImbl2f8A+hJCetUEAAA=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAEbi=3fcd8E=xi_hbef45LnPsBZhZv37yPO-xfZmU1gMaWnDvg@mail.gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3Q6ePlL003963
 
-Hello,
+Can you try this patch ontop of either the new or original one?
 
-> Betreff: [PATCH v2] Input: add bu21029 touch driver
-> 
-> From: Zhu Yi <yi.zhu5@cn.bosch.com>
-> 
-> Add Rohm BU21029 resistive touch panel controller support with I2C
-> interface.
-> 
-> Signed-off-by: Zhu Yi <yi.zhu5@cn.bosch.com>
-> Signed-off-by: Mark Jonas <mark.jonas@de.bosch.com>
-> Reviewed-by: Heiko Schocher <hs@denx.de>
-> ---
-> Changes in v2:
->  - make ABS_PRESSURE proportionally rising with finger pressure
->  - fix race between interrupt and timer during shutdown
->  - use infrastructure from include/linux/input/touchscreen.h
->  - add SPDX tag for the driver
->  - improve binding documentation
->  - fix multi-line comments
-
-In the mean time I received a Reviewed-by from Rob Herring.
-
-How shall I proceed? I am convinced that we did all the requested
-changes and published them 2018-04-16 in the cited patch above. 
-
-Greetings,
-Mark Jonas
-
-Building Technologies, Panel Software Fire (BT-FIR/ENG1) 
-Bosch Sicherheitssysteme GmbH | Postfach 11 11 | 85626 Grasbrunn | GERMANY | www.boschsecurity.com
-
-Sitz: Stuttgart, Registergericht: Amtsgericht Stuttgart HRB 23118 
-Aufsichtsratsvorsitzender: Stefan Hartung; Geschäftsführung: Gert van Iperen, Andreas Bartz, Thomas Quante, Bernhard Schuster
+---
+diff --git a/lib/dma-noncoherent.c b/lib/dma-noncoherent.c
+index f4b8532c20ac..a2c192b3508d 100644
+--- a/lib/dma-noncoherent.c
++++ b/lib/dma-noncoherent.c
+@@ -48,7 +48,7 @@ static int dma_noncoherent_map_sg(struct device *dev, struct scatterlist *sgl,
+ 	return nents;
+ }
+ 
+-#ifdef CONFIG_DMA_NONCOHERENT_SYNC_FOR_CPU
++#ifdef CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU
+ static void dma_noncoherent_sync_single_for_cpu(struct device *dev,
+ 		dma_addr_t addr, size_t size, enum dma_data_direction dir)
+ {
+@@ -88,7 +88,7 @@ const struct dma_map_ops dma_noncoherent_ops = {
+ 	.sync_sg_for_device	= dma_noncoherent_sync_sg_for_device,
+ 	.map_page		= dma_noncoherent_map_page,
+ 	.map_sg			= dma_noncoherent_map_sg,
+-#ifdef CONFIG_DMA_NONCOHERENT_SYNC_FOR_CPU
++#ifdef CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU
+ 	.sync_single_for_cpu	= dma_noncoherent_sync_single_for_cpu,
+ 	.sync_sg_for_cpu	= dma_noncoherent_sync_sg_for_cpu,
+ 	.unmap_page		= dma_noncoherent_unmap_page,
