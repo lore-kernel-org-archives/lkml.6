@@ -1,76 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756388AbeDZNhB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 09:37:01 -0400
-Received: from bert.emutex.com ([91.103.1.109]:55050 "EHLO bert.emutex.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755172AbeDZNg7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 09:36:59 -0400
-Date: Thu, 26 Apr 2018 14:36:53 +0100
-From: Javier Arteaga <javier@emutex.com>
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        "Dan O'Donovan" <dan@emutex.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, linux-gpio@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH RESEND 3/3] pinctrl: upboard: Add UP2 pinctrl and
- gpio driver
-Message-ID: <20180426133653.4yhjv6uuaox7vt7m@localhost>
-References: <20180421085009.28773-1-javier@emutex.com>
- <20180421085009.28773-4-javier@emutex.com>
- <20180426065028.fvdf7ke5va2kacmv@dell>
+        id S1755974AbeDZNkf (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 09:40:35 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:45964 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751713AbeDZNkd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 09:40:33 -0400
+Subject: Re: [PATCH v2 net-next 1/2] tcp: add TCP_ZEROCOPY_RECEIVE support for
+ zerocopy receive
+To: Eric Dumazet <edumazet@google.com>,
+        "David S . Miller" <davem@davemloft.net>
+Cc: netdev <netdev@vger.kernel.org>, Andy Lutomirski <luto@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>, Eric Dumazet <eric.dumazet@gmail.com>,
+        Soheil Hassas Yeganeh <soheil@google.com>
+References: <20180425214307.159264-1-edumazet@google.com>
+ <20180425214307.159264-2-edumazet@google.com>
+From: Ka-Cheong Poon <ka-cheong.poon@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <d3ad6970-4139-76a9-2417-3df077753aa9@oracle.com>
+Date: Thu, 26 Apr 2018 21:40:14 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180426065028.fvdf7ke5va2kacmv@dell>
-X-Spam-Score: -1.0 (-)
-X-Spam-Report: Spam detection software, running on the system "statler.emutex.com",
- has NOT identified this incoming email as spam.  The original
- message has been attached to this so you can view it or label
- similar future email.  If you have any questions, see
- the administrator of that system for details.
- Content preview:  On Thu, Apr 26, 2018 at 07:50:28AM +0100, Lee Jones wrote:
-    > > static const struct mfd_cell upboard_up2_mfd_cells[] = { > > + { .name
-    = "upboard-pinctrl" }, > > UPBOARD_LED_CELL(upboard_up2_led_data, 0), > >
-    UPBOARD_LED_CELL(upboard_up2_led_data, 1), > > UPBOARD_LED_CELL(upboard_up2_led_data,
-    2), > > Please made this a separate patch. > > There aren't any build dependencies
-    between the files. [...]
- Content analysis details:   (-1.0 points, 5.0 required)
-  pts rule name              description
- ---- ---------------------- --------------------------------------------------
- -1.0 ALL_TRUSTED            Passed through trusted hosts only via SMTP
+In-Reply-To: <20180425214307.159264-2-edumazet@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8874 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=813
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804260130
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 26, 2018 at 07:50:28AM +0100, Lee Jones wrote:
-> >  static const struct mfd_cell upboard_up2_mfd_cells[] = {
-> > +	{ .name = "upboard-pinctrl" },
-> >  	UPBOARD_LED_CELL(upboard_up2_led_data, 0),
-> >  	UPBOARD_LED_CELL(upboard_up2_led_data, 1),
-> >  	UPBOARD_LED_CELL(upboard_up2_led_data, 2),
+On 04/26/2018 05:43 AM, Eric Dumazet wrote:
+> When adding tcp mmap() implementation, I forgot that socket lock
+> had to be taken before current->mm->mmap_sem. syzbot eventually caught
+> the bug.
 > 
-> Please made this a separate patch.
+> Since we can not lock the socket in tcp mmap() handler we have to
+> split the operation in two phases.
 > 
-> There aren't any build dependencies between the files.
+> 1) mmap() on a tcp socket simply reserves VMA space, and nothing else.
+>    This operation does not involve any TCP locking.
+> 
+> 2) setsockopt(fd, IPPROTO_TCP, TCP_ZEROCOPY_RECEIVE, ...) implements
+>   the transfert of pages from skbs to one VMA.
+>    This operation only uses down_read(&current->mm->mmap_sem) after
+>    holding TCP lock, thus solving the lockdep issue.
 
-Will do.
 
-I have one further question about MFD in this patch too - should I keep
-passing regmap into the driver via dev_get_drvdata(pdev->dev.parent),
-or is explicit platform_data preferable?
+A quick question.  Is it a normal practice to return a result
+in setsockopt() given that the optval parameter is supposed to
+be a const void *?
 
-Andy suggested platform_data allows more flexibility on the parent
-device side (although I can't see upboard-pinctrl being used other than
-as a child of the upboard driver).
 
-I went with parent drvdata simply because that's what I found in other
-MFD drivers and material [1].
 
-Thank you!
 
-[1]: http://events17.linuxfoundation.org/sites/events/files/slides/belloni-mfd-regmap-syscon_0.pdf
+-- 
+K. Poon
+ka-cheong.poon@oracle.com
