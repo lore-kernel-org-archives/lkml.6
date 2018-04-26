@@ -1,50 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753520AbeDZS6K (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 14:58:10 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54244 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751285AbeDZS6J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 14:58:09 -0400
-Date: Thu, 26 Apr 2018 14:58:08 -0400 (EDT)
-From: Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To: "Michael S. Tsirkin" <mst@redhat.com>
-cc: James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Michal Hocko <mhocko@kernel.org>, David Rientjes <rientjes@google.com>,
-        dm-devel@redhat.com, eric.dumazet@gmail.com, netdev@vger.kernel.org,
-        jasowang@redhat.com, Randy Dunlap <rdunlap@infradead.org>,
-        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
-        linux-mm@kvack.org, edumazet@google.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        virtualization@lists.linux-foundation.org,
-        David Miller <davem@davemloft.net>, Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [dm-devel] [PATCH v5] fault-injection: introduce kvmalloc fallback
- options
-In-Reply-To: <20180426184845-mutt-send-email-mst@kernel.org>
-Message-ID: <alpine.LRH.2.02.1804261454380.23716@file01.intranet.prod.int.rdu2.redhat.com>
-References: <alpine.DEB.2.21.1804251417470.166306@chino.kir.corp.google.com> <alpine.LRH.2.02.1804251720090.9428@file01.intranet.prod.int.rdu2.redhat.com> <1524694663.4100.21.camel@HansenPartnership.com> <alpine.LRH.2.02.1804251830540.25124@file01.intranet.prod.int.rdu2.redhat.com>
- <20180426125817.GO17484@dhcp22.suse.cz> <alpine.LRH.2.02.1804261006120.32722@file01.intranet.prod.int.rdu2.redhat.com> <1524753932.3226.5.camel@HansenPartnership.com> <alpine.LRH.2.02.1804261100170.12157@file01.intranet.prod.int.rdu2.redhat.com>
- <1524756256.3226.7.camel@HansenPartnership.com> <alpine.LRH.2.02.1804261142480.21152@file01.intranet.prod.int.rdu2.redhat.com> <20180426184845-mutt-send-email-mst@kernel.org>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        id S1753758AbeDZS6v (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 14:58:51 -0400
+Received: from mail-yw0-f179.google.com ([209.85.161.179]:42056 "EHLO
+        mail-yw0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752000AbeDZS6t (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 14:58:49 -0400
+X-Google-Smtp-Source: AB8JxZqiSHdCgzVZMFniXlyGN1bd3TDM9fquWEYVUqBXLJzo/KfEh82mqxOVmFcOCukzkRuQjYoVbg==
+Date: Thu, 26 Apr 2018 11:58:45 -0700
+From: Tejun Heo <tj@kernel.org>
+To: Joel Fernandes <joel.opensrc@gmail.com>
+Cc: Patrick Bellasi <patrick.bellasi@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>, Todd Kjos <tkjos@google.com>
+Subject: Re: [PATCH 4/7] sched/core: uclamp: add utilization clamping to the
+ CPU controller
+Message-ID: <20180426185845.GO1911913@devbig577.frc2.facebook.com>
+References: <20180409165615.2326-1-patrick.bellasi@arm.com>
+ <20180409165615.2326-5-patrick.bellasi@arm.com>
+ <20180409222417.GK3126663@devbig577.frc2.facebook.com>
+ <20180410171612.GJ14248@e110439-lin>
+ <20180410200514.GA793541@devbig577.frc2.facebook.com>
+ <CAEi0qNmwT0h0R5GM0X71CzYyd_VmykxgrT0rPZgnGBw3pSQJNQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAEi0qNmwT0h0R5GM0X71CzYyd_VmykxgrT0rPZgnGBw3pSQJNQ@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello, Joel.
 
+On Sat, Apr 21, 2018 at 02:08:30PM -0700, Joel Fernandes wrote:
+> Actually no, its not about overloading them. What's Patrick is
+> defining here is a property/attribute. What that attribute is used for
+> (the algorithms that use it) are a different topic. Like, it can be
+> used by the frequency selection algorithms or the task placement
+> algorithm. There are multiple algorithms that can use the property. To
+> me, this part of the patch makes sense. Maybe it should really be
+> called "task_size" or something, since that's what it really is.
 
-On Thu, 26 Apr 2018, Michael S. Tsirkin wrote:
+I understand that the interface can encode certain intentions and then
+there can be different strategies to implement that, but the two
+things mentioned here seem fundamentally different to declare them to
+be two different implementations of the same intention.
 
-> How do you make sure QA tests a specific corner case? Add it to
-> the test plan :)
-
-BTW. how many "lines of code" of corporate bureaucracy would that take? :-)
-
-> I don't speak for Red Hat, etc.
+> > Yeah, I think we want to stick to that semantics.  That's what memory
+> > controller does and it'd be really confusing to flip the directions on
+> > different controllers.
 > 
-> -- 
-> MST
+> What about the .high ? I think there was some confusion about how to
+> define that for subgroups. It could perhaps be such that the .high of
+> parent is the lower bound of the .high on child but then I'm not sure
+> if that fits well with the delegation policies...
 
-Mikulas
+The basic rule is simple.  A child can never obtain more than its
+ancestors.
+
+Thanks.
+
+-- 
+tejun
