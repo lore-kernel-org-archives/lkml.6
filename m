@@ -1,107 +1,142 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752829AbeDZBgv (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 25 Apr 2018 21:36:51 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:51180 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750949AbeDZBgr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Apr 2018 21:36:47 -0400
-Subject: Re: [PATCH v2] f2fs: wait IO writeback in commit_inmem_pages()
-To: Chao Yu <chao@kernel.org>, <jaegeuk@kernel.org>
-CC: <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-References: <20180423151425.5019-1-chao@kernel.org>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <6e6fecdc-9411-09b6-a13a-ec0395826556@huawei.com>
-Date: Thu, 26 Apr 2018 09:36:44 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        id S1753533AbeDZBnT (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 25 Apr 2018 21:43:19 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:45147 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752105AbeDZBnP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Apr 2018 21:43:15 -0400
+X-Google-Smtp-Source: AB8JxZp1zh8ozVmLTkrttHQZE+0MIjehHpxLUZ5NCphnkqVq+Ue/R1iNq83HNrDiw/O0/4U0xGpTFQ==
+Date: Thu, 26 Apr 2018 09:43:13 +0800
+From: Wang YanQing <udknight@gmail.com>
+To: Daniel Borkmann <daniel@iogearbox.net>
+Cc: ast@kernel.org, illusionist.neo@gmail.com, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com, davem@davemloft.net, x86@kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] bpf, x86_32: add eBPF JIT compiler for ia32
+Message-ID: <20180426014313.GA23526@udknight>
+Mail-Followup-To: Wang YanQing <udknight@gmail.com>,
+        Daniel Borkmann <daniel@iogearbox.net>, ast@kernel.org,
+        illusionist.neo@gmail.com, tglx@linutronix.de, mingo@redhat.com,
+        hpa@zytor.com, davem@davemloft.net, x86@kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180419155420.GA5468@udknight>
+ <20e1eabd-e821-8240-cb4c-6da253c49585@iogearbox.net>
 MIME-Version: 1.0
-In-Reply-To: <20180423151425.5019-1-chao@kernel.org>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20e1eabd-e821-8240-cb4c-6da253c49585@iogearbox.net>
+User-Agent: Mutt/1.7.1 (2016-10-04)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jaegeuk,
+On Wed, Apr 25, 2018 at 02:11:16AM +0200, Daniel Borkmann wrote:
+> On 04/19/2018 05:54 PM, Wang YanQing wrote:
+> > Testing results on i5-5200U:
+> > 
+> > 1) test_bpf: Summary: 349 PASSED, 0 FAILED, [319/341 JIT'ed]
+> > 2) test_progs: Summary: 81 PASSED, 2 FAILED.
+> >    test_progs report "libbpf: incorrect bpf_call opcode" for
+> >    test_l4lb_noinline and test_xdp_noinline, because there is
+> >    no llvm-6.0 on my machine, and current implementation doesn't
+> >    support BPF_PSEUDO_CALL, so I think we can ignore the two failed
+> >    testcases.
+> > 3) test_lpm: OK
+> > 4) test_lru_map: OK
+> > 5) test_verifier: Summary: 823 PASSED, 5 FAILED
+> >    test_verifier report "invalid bpf_context access off=68 size=1/2/4/8"
+> >    for all the 5 FAILED testcases with/without jit, we need to fix the
+> >    failed testcases themself instead of this jit.
+> 
+> Can you elaborate further on these? Looks like this definitely needs
+> fixing on 32 bit. Would be great to get a better understanding of the
+> underlying bug(s) and properly fix them.
+> 
+Hi Daniel Borkmann, here is the detailed log for failed testcases.
 
-I just look into this flow again, found that in previous patch ("f2fs: fix to
-wait page writeback during revoking atomic write") we have already called
-f2fs_wait_on_page_writeback in __revoke_inmem_pages, so we don't need to call
-redundant filemap_fdatawait here.
+linux: Gentoo 32 bit
+llvm:
+    ~ # llc  --version
+    LLVM (http://llvm.org/):
+    LLVM version 4.0.1
+    Optimized build.
+    Default target: i686-pc-linux-gnu
+    Host CPU: broadwell
+    
+    Registered Targets:
+    amdgcn  - AMD GCN GPUs
+    bpf     - BPF (host endian)
+    bpfeb   - BPF (big endian)
+    bpfel   - BPF (little endian)
+    nvptx   - NVIDIA PTX 32-bit
+    nvptx64 - NVIDIA PTX 64-bit
+    r600    - AMD GPUs HD2XXX-HD6XXX
+    x86     - 32-bit X86: Pentium-Pro and above
+    x86-64  - 64-bit X86: EM64T and AMD64
+    
+    ~ # clang --version
+    clang version 4.0.1 (tags/RELEASE_401/final)
+    Target: i686-pc-linux-gnu
+    Thread model: posix
+    InstalledDir: /usr/lib/llvm/4/bin
 
-Anyway, let me merge these two patches.
+kernel version:4.16.2
+test program:test_verifier in kselftest
+condition:bpf_jit_enable=0,bpf_jit_harden=0
 
-Thanks,
+log:
+#172/p unpriv: spill/fill of different pointers ldx FAIL
+Unexpected error message!
+0: (bf) r6 = r10
+1: (07) r6 += -8
+2: (15) if r1 == 0x0 goto pc+3
+R1=ctx(id=0,off=0,imm=0) R6=fp-8,call_-1 R10=fp0,call_-1
+3: (bf) r2 = r10
+4: (07) r2 += -76
+5: (7b) *(u64 *)(r6 +0) = r2
+6: (55) if r1 != 0x0 goto pc+1
+R1=ctx(id=0,off=0,imm=0) R2=fp-76,call_-1 R6=fp-8,call_-1 R10=fp0,call_-1 fp-8=fp
+7: (7b) *(u64 *)(r6 +0) = r1
+8: (79) r1 = *(u64 *)(r6 +0)
+9: (79) r1 = *(u64 *)(r1 +68)
+invalid bpf_context access off=68 size=8
 
-On 2018/4/23 23:14, Chao Yu wrote:
-> From: Chao Yu <yuchao0@huawei.com>
-> 
-> Thread A				Thread B
-> - f2fs_ioc_commit_atomic_write
->  - commit_inmem_pages
->   - f2fs_submit_merged_write_cond
->   : write data
-> 					- write_checkpoint
-> 					 - do_checkpoint
-> 					 : commit all node within CP
-> 					 -> SPO
->   - f2fs_do_sync_file
->    - file_write_and_wait_range
->    : wait data writeback
-> 
-> In above race condition, data/node can be flushed in reversed order when
-> coming a checkpoint before f2fs_do_sync_file, after SPOR, it results in
-> atomic written data being corrupted.
-> 
-> This patch adds filemap_fdatawait() in commit_inmem_pages() to keep data
-> and node of atomic file being flushed orderly.
-> 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
-> v2:
-> - clean up codes suggested by Jaegeuk.
->  fs/f2fs/file.c    | 4 ++++
->  fs/f2fs/segment.c | 2 ++
->  2 files changed, 6 insertions(+)
-> 
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index bac059474342..0cfa65c21d3f 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -217,6 +217,9 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
->  
->  	trace_f2fs_sync_file_enter(inode);
->  
-> +	if (atomic)
-> +		goto write_done;
-> +
->  	/* if fdatasync is triggered, let's do in-place-update */
->  	if (datasync || get_dirty_pages(inode) <= SM_I(sbi)->min_fsync_blocks)
->  		set_inode_flag(inode, FI_NEED_IPU);
-> @@ -228,6 +231,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
->  		return ret;
->  	}
->  
-> +write_done:
->  	/* if the inode is dirty, let's recover all the time */
->  	if (!f2fs_skip_inode_update(inode, datasync)) {
->  		f2fs_write_inode(inode, NULL);
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 710d817c4350..31336fc54d8e 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -419,6 +419,8 @@ static int __commit_inmem_pages(struct inode *inode)
->  		__revoke_inmem_pages(inode, &fi->inmem_pages, true, false);
->  	} else {
->  		__revoke_inmem_pages(inode, &revoke_list, false, false);
-> +
-> +		err = filemap_fdatawait(inode->i_mapping);
->  	}
->  
->  	return err;
-> 
+#378/p check bpf_perf_event_data->sample_period byte load permitted FAIL
+Failed to load prog 'Permission denied'!
+0: (b7) r0 = 0
+1: (71) r0 = *(u8 *)(r1 +68)
+invalid bpf_context access off=68 size=1
+#379/p check bpf_perf_event_data->sample_period half load permitted FAIL
+Failed to load prog 'Permission denied'!
+0: (b7) r0 = 0
+1: (69) r0 = *(u16 *)(r1 +68)
+invalid bpf_context access off=68 size=2
+#380/p check bpf_perf_event_data->sample_period word load permitted FAIL
+Failed to load prog 'Permission denied'!
+0: (b7) r0 = 0
+1: (61) r0 = *(u32 *)(r1 +68)
+invalid bpf_context access off=68 size=4
+#381/p check bpf_perf_event_data->sample_period dword load permitted FAIL
+Failed to load prog 'Permission denied'!
+0: (b7) r0 = 0
+1: (79) r0 = *(u64 *)(r1 +68)
+invalid bpf_context access off=68 size=8
+
+
+test program:test_progs
+condition:bpf_jit_enable=0,bpf_jit_harden=0
+
+bpf # ./test_progs
+test_pkt_access:PASS:ipv4 53 nsec
+test_pkt_access:PASS:ipv6 47 nsec
+test_xdp:PASS:ipv4 1281 nsec
+test_xdp:PASS:ipv6 749 nsec
+test_l4lb:PASS:ipv4 427 nsec
+test_l4lb:PASS:ipv6 562 nsec
+libbpf: incorrect bpf_call opcode <= caused by ./test_l4lb_noinline.o in function test_l4lb_all 
+libbpf: incorrect bpf_call opcode <= caused by ././test_xdp_noinline.o in function test_xdp_noinline
+
+
+Thanks.
