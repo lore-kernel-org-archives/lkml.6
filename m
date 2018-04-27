@@ -1,96 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758955AbeD0TPv (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 15:15:51 -0400
-Received: from foss.arm.com ([217.140.101.70]:45408 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1758707AbeD0TPs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 15:15:48 -0400
-Date: Fri, 27 Apr 2018 21:15:44 +0200
-From: Christoffer Dall <christoffer.dall@arm.com>
-To: Eric Auger <eric.auger@redhat.com>
-Cc: eric.auger.pro@gmail.com, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
-        marc.zyngier@arm.com, peter.maydell@linaro.org, andre.przywara@arm.com
-Subject: Re: [PATCH v4 02/12] KVM: arm/arm64: Document
- KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
-Message-ID: <20180427191544.GP13249@C02W217FHV2R.local>
-References: <1524838505-3823-1-git-send-email-eric.auger@redhat.com>
- <1524838505-3823-3-git-send-email-eric.auger@redhat.com>
+        id S1759001AbeD0TP6 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 15:15:58 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:33577 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758802AbeD0TPz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 15:15:55 -0400
+From: Colin King <colin.king@canonical.com>
+To: Bradley Grove <linuxdrivers@attotech.com>,
+        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] scsi: esas2r: fix spelling mistake: "asynchromous" -> "asynchronous"
+Date: Fri, 27 Apr 2018 20:15:52 +0100
+Message-Id: <20180427191552.17502-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1524838505-3823-3-git-send-email-eric.auger@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 27, 2018 at 04:14:55PM +0200, Eric Auger wrote:
-> We introduce a new KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION attribute in
-> KVM_DEV_ARM_VGIC_GRP_ADDR group. It allows userspace to provide the
-> base address and size of a redistributor region
-> 
-> Compared to KVM_VGIC_V3_ADDR_TYPE_REDIST, this new attribute allows
-> to declare several separate redistributor regions.
-> 
-> So the whole redist space does not need to be contiguous anymore.
-> 
-> Signed-off-by: Eric Auger <eric.auger@redhat.com>
-> Reviewed-by: Peter Maydell <peter.maydell@linaro.org>
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Christoffer Dall <christoffer.dall@arm.com>
+Trivial fix to spelling mistake in module description text
 
-> 
-> ---
-> v3 -> v4:
-> - Added Peter's R-b
-> ---
->  Documentation/virtual/kvm/devices/arm-vgic-v3.txt | 25 ++++++++++++++++++++++-
->  1 file changed, 24 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/virtual/kvm/devices/arm-vgic-v3.txt b/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
-> index 9293b45..cbc4328 100644
-> --- a/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
-> +++ b/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
-> @@ -27,9 +27,32 @@ Groups:
->        VCPU and all of the redistributor pages are contiguous.
->        Only valid for KVM_DEV_TYPE_ARM_VGIC_V3.
->        This address needs to be 64K aligned.
-> +
-> +    KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION (rw, 64-bit)
-> +      The attr field of kvm_device_attr encodes 3 values:
-> +      bits:     | 63   ....  52  |  51   ....   16 | 15 - 12  |11 - 0
-> +      values:   |     count      |       base      |  flags   | index
-> +      - index encodes the unique redistributor region index
-> +      - flags: reserved for future use, currently 0
-> +      - base field encodes bits [51:16] of the guest physical base address
-> +        of the first redistributor in the region.
-> +      - count encodes the number of redistributors in the region. Must be
-> +        greater than 0.
-> +      There are two 64K pages for each redistributor in the region and
-> +      redistributors are laid out contiguously within the region. Regions
-> +      are filled with redistributors in the index order. The sum of all
-> +      region count fields must be greater than or equal to the number of
-> +      VCPUs. Redistributor regions must be registered in the incremental
-> +      index order, starting from index 0.
-> +      Only valid for KVM_DEV_TYPE_ARM_VGIC_V3.
-> +
-> +  It is invalid to mix calls with KVM_VGIC_V3_ADDR_TYPE_REDIST and
-> +  KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION attributes.
-> +
->    Errors:
->      -E2BIG:  Address outside of addressable IPA range
-> -    -EINVAL: Incorrectly aligned address
-> +    -EINVAL: Incorrectly aligned address, bad redistributor region
-> +             count/index, mixed redistributor region attribute usage
->      -EEXIST: Address already configured
->      -ENXIO:  The group or attribute is unknown/unsupported for this device
->               or hardware support is missing.
-> -- 
-> 2.5.5
-> 
-> _______________________________________________
-> kvmarm mailing list
-> kvmarm@lists.cs.columbia.edu
-> https://lists.cs.columbia.edu/mailman/listinfo/kvmarm
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/esas2r/esas2r_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/esas2r/esas2r_main.c b/drivers/scsi/esas2r/esas2r_main.c
+index e07eac5be087..c07118617d89 100644
+--- a/drivers/scsi/esas2r/esas2r_main.c
++++ b/drivers/scsi/esas2r/esas2r_main.c
+@@ -283,7 +283,7 @@ MODULE_PARM_DESC(num_requests,
+ int num_ae_requests = 4;
+ module_param(num_ae_requests, int, 0);
+ MODULE_PARM_DESC(num_ae_requests,
+-		 "Number of VDA asynchromous event requests.  Default 4.");
++		 "Number of VDA asynchronous event requests.  Default 4.");
+ 
+ int cmd_per_lun = ESAS2R_DEFAULT_CMD_PER_LUN;
+ module_param(cmd_per_lun, int, 0);
+-- 
+2.17.0
