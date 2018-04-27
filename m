@@ -1,39 +1,83 @@
-Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqB/hqZEvRaS7UwJTHvdJcQi8G7HDyOCBnHDDXfZ04gXHfSeyAcEvoOzaa3G6eTl3g+Uklz
-ARC-Seal: i=1; a=rsa-sha256; t=1524837715; cv=none;
-        d=google.com; s=arc-20160816;
-        b=Em3oDY1LVUrGOrVZFU72FaqJY+vPHr4IO3JQbweioxh8DSCQG9HDr2Vmv4dcnPSEQM
-         L9j+jzXScwUsxmKcrTLHuhwvOhld17JD8IfEjk7etcmTMeu/EqpIZMVuveYgjAzXU4g8
-         Wdq2sKeV8k0dqNFH2/EGDqApOnLZ/c0GCE7vR4KBKJVy4mklwrUTuyogdWoBkylZNKbg
-         IfqWE+sciP9hyaEbqkRTR0EVAZdX5WRzm7CRwfSVXsYc9G+qZTerMJX8iNxR+WRegwXt
-         JuHZJdzkMwGbhgdLJwRFNEVMezcHiB2dqDeuKYFcZLrP14DmGILap6tmoien24jnLEAf
-         pwWQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=6ur3U1HJvVcp6Fkk4P4711DleGVYx3Paj7nvjnz1N8Y=;
-        b=H1izS7B6nATDEdjSDwzcFmF4IVM0AWqvTZNIbUVYyMz3xuD1QDrk80xUy81nyeTp9F
-         EbugWufQ388KV/ICwaLfBC/4/BfK7InGdQN01Oj+2+Sy3gCZ6s+wqXkNGdizWp81JtBH
-         scuYK+Yr+ZRsexonyinP9M1AH7kjRpQsq9659D9Am4tOINB20CXEAVmVBtbrTKCFacQQ
-         ndXhKxy7lzQYptJz6HlgZCHAWTBpO7IQI7aHhMxMiYVbQmO7GON8rTOSqf/S0sXIj6JQ
-         tSpD4ZI0cif363Zomiz6xYq+l2pfG0Hvf0VbxLCZZMXwT59E5AfiTKIt9qNzQMtnOTZ4
-         Asbg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAD5B21890
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-288473-1524837716-5-10118576429883529810
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524837715; b=fFVuxhMXqk3yrTXx+SwP73l0ZEt4pEoWWPc6HguyNgI+kB2rq0
+    Hm6LwgnN+dVdiJG7z1JUpeDAnArse1Ga/RKj2ek5ZkApk/yUsNE7x0GneGfXm0MV
+    8sx0dVV0B5DN7p9lubRtQcrblrHMqF1b7Z1ORAZW1X3hAzstm7yNv3oyqPsHqRvT
+    M694oQBQU32vWcBpL3wZ7KQOd2rhQw+7xlfA6agKykvqcpajWfHFDo0cHWw1XFer
+    X0M5ozNEiJr5etgIEl3p4/T0GsBgcnRVnU8W1hZhqq/QWLauXwzVd33cwtSPiTqM
+    ZXS9c31fLwizgLq3JIjFS+AYDQ6GiD0emnNg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1524837715; bh=dUDu8FRPJQAm1z2AbIBO4gglPvHzGd
+    0Ubu2wDZ3XTfs=; b=W8tmETyruvcb5TQ88xzqby7oyfmY5GYgBpuK32RmvHVBDx
+    zuD0qIwztM1FIwj1gmv2AqxXS0E2AyM40E8rzPAy6FcT01XFdP5TRqIKtm7cyyCq
+    mMe76WYOwLWecoEXTs2b6MJFUMsKEcN70qyDZog2s0olIlNs03rls0Hmv+KCGXT9
+    w8lw6OHLOQMZWY7NDx5eZew9b9jJWjEtd6VrVCnv9yfuusN678F157tITKRPm3j6
+    RVYv3uEU28O4wW6AcdTycTzW1241XvDU+KgQdOGWdRDY2CcSrHQ4RfVIJxRiusIR
+    OaP+pRd0bmoMChMDIetJDA1z1Zwpz6TriQxu4NAw==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfFpKXqtA25XRtE/N1l/zTmjxXg2YPXOh03NiD3A64Stv+tYNXpDCUNT2VPU0IqfjsT1yvlwDBiNJrby+K6AaBSiqfBMLjV37JrnvoLN6A1ZHORFQf9LC
+    YqHOlKhKV/AjXV/w7DjKqIQ/mQ7lMk8a18hhe/0OO/IEkQ8v/5oc5tznjwyfkWvfYvK9+RVZpjP2fSkEpdiR5LT6O8kTCAxdjGY3GX56YdcgMF1Rd7DSWudB
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=LpQP-O61AAAA:8 a=ag1SF4gXAAAA:8 a=dK09jAgzlzuUulAh3SYA:9 a=QEXdDO2ut3YA:10
+    a=pioyyrs4ZptJ924tMmac:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S933216AbeD0OBu (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 27 Apr 2018 10:01:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48708 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933197AbeD0OBs (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 27 Apr 2018 10:01:48 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 211FC21897
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 38/50] vlan: Fix reading memory beyond skb->tail in skb_vlan_tagged_multi
-Date: Fri, 27 Apr 2018 15:58:40 +0200
-Message-Id: <20180427135657.935184817@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Karthikeyan Periyasamy <periyasa@codeaurora.org>,
+        Kalle Valo <kvalo@codeaurora.org>, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.4 09/50] Revert "ath10k: send (re)assoc peer command when NSS changed"
+Date: Fri, 27 Apr 2018 15:58:11 +0200
+Message-Id: <20180427135656.260363398@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135655.623669681@linuxfoundation.org>
 References: <20180427135655.623669681@linuxfoundation.org>
@@ -41,10 +85,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908232509203798?=
-X-GMAIL-MSGID: =?utf-8?q?1598908232509203798?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,133 +95,152 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
+From: Karthikeyan Periyasamy <periyasa@codeaurora.org>
 
+commit 55cc11da69895a680940c1733caabc37be685f5e upstream.
 
-[ Upstream commit 7ce2367254e84753bceb07327aaf5c953cfce117 ]
+This reverts commit 55884c045d31a29cf69db8332d1064a1b61dd159.
 
-Syzkaller spotted an old bug which leads to reading skb beyond tail by 4
-bytes on vlan tagged packets.
-This is caused because skb_vlan_tagged_multi() did not check
-skb_headlen.
+When Ath10k is in AP mode and an unassociated STA sends a VHT action frame
+(Operating Mode Notification for the NSS change) periodically to AP this causes
+ath10k to call ath10k_station_assoc() which sends WMI_PEER_ASSOC_CMDID during
+NSS update. Over the time (with a certain client it can happen within 15 mins
+when there are over 500 of these VHT action frames) continuous calls of
+WMI_PEER_ASSOC_CMDID cause firmware to assert due to resource exhaust.
 
-BUG: KMSAN: uninit-value in eth_type_vlan include/linux/if_vlan.h:283 [inline]
-BUG: KMSAN: uninit-value in skb_vlan_tagged_multi include/linux/if_vlan.h:656 [inline]
-BUG: KMSAN: uninit-value in vlan_features_check include/linux/if_vlan.h:672 [inline]
-BUG: KMSAN: uninit-value in dflt_features_check net/core/dev.c:2949 [inline]
-BUG: KMSAN: uninit-value in netif_skb_features+0xd1b/0xdc0 net/core/dev.c:3009
-CPU: 1 PID: 3582 Comm: syzkaller435149 Not tainted 4.16.0+ #82
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:17 [inline]
-  dump_stack+0x185/0x1d0 lib/dump_stack.c:53
-  kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
-  __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:676
-  eth_type_vlan include/linux/if_vlan.h:283 [inline]
-  skb_vlan_tagged_multi include/linux/if_vlan.h:656 [inline]
-  vlan_features_check include/linux/if_vlan.h:672 [inline]
-  dflt_features_check net/core/dev.c:2949 [inline]
-  netif_skb_features+0xd1b/0xdc0 net/core/dev.c:3009
-  validate_xmit_skb+0x89/0x1320 net/core/dev.c:3084
-  __dev_queue_xmit+0x1cb2/0x2b60 net/core/dev.c:3549
-  dev_queue_xmit+0x4b/0x60 net/core/dev.c:3590
-  packet_snd net/packet/af_packet.c:2944 [inline]
-  packet_sendmsg+0x7c57/0x8a10 net/packet/af_packet.c:2969
-  sock_sendmsg_nosec net/socket.c:630 [inline]
-  sock_sendmsg net/socket.c:640 [inline]
-  sock_write_iter+0x3b9/0x470 net/socket.c:909
-  do_iter_readv_writev+0x7bb/0x970 include/linux/fs.h:1776
-  do_iter_write+0x30d/0xd40 fs/read_write.c:932
-  vfs_writev fs/read_write.c:977 [inline]
-  do_writev+0x3c9/0x830 fs/read_write.c:1012
-  SYSC_writev+0x9b/0xb0 fs/read_write.c:1085
-  SyS_writev+0x56/0x80 fs/read_write.c:1082
-  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-RIP: 0033:0x43ffa9
-RSP: 002b:00007fff2cff3948 EFLAGS: 00000217 ORIG_RAX: 0000000000000014
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043ffa9
-RDX: 0000000000000001 RSI: 0000000020000080 RDI: 0000000000000003
-RBP: 00000000006cb018 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000217 R12: 00000000004018d0
-R13: 0000000000401960 R14: 0000000000000000 R15: 0000000000000000
+To my knowledge setting WMI_PEER_NSS peer param itself enough to handle NSS
+updates and no need to call ath10k_station_assoc(). So revert the original
+commit from 2014 as it's unclear why the change was really needed.
+Now the firmware assert doesn't happen anymore.
 
-Uninit was created at:
-  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
-  kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:188
-  kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:314
-  kmsan_slab_alloc+0x11/0x20 mm/kmsan/kmsan.c:321
-  slab_post_alloc_hook mm/slab.h:445 [inline]
-  slab_alloc_node mm/slub.c:2737 [inline]
-  __kmalloc_node_track_caller+0xaed/0x11c0 mm/slub.c:4369
-  __kmalloc_reserve net/core/skbuff.c:138 [inline]
-  __alloc_skb+0x2cf/0x9f0 net/core/skbuff.c:206
-  alloc_skb include/linux/skbuff.h:984 [inline]
-  alloc_skb_with_frags+0x1d4/0xb20 net/core/skbuff.c:5234
-  sock_alloc_send_pskb+0xb56/0x1190 net/core/sock.c:2085
-  packet_alloc_skb net/packet/af_packet.c:2803 [inline]
-  packet_snd net/packet/af_packet.c:2894 [inline]
-  packet_sendmsg+0x6444/0x8a10 net/packet/af_packet.c:2969
-  sock_sendmsg_nosec net/socket.c:630 [inline]
-  sock_sendmsg net/socket.c:640 [inline]
-  sock_write_iter+0x3b9/0x470 net/socket.c:909
-  do_iter_readv_writev+0x7bb/0x970 include/linux/fs.h:1776
-  do_iter_write+0x30d/0xd40 fs/read_write.c:932
-  vfs_writev fs/read_write.c:977 [inline]
-  do_writev+0x3c9/0x830 fs/read_write.c:1012
-  SYSC_writev+0x9b/0xb0 fs/read_write.c:1085
-  SyS_writev+0x56/0x80 fs/read_write.c:1082
-  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+Issue observed in QCA9984 platform with firmware version:10.4-3.5.3-00053.
+This Change tested in QCA9984 with firmware version: 10.4-3.5.3-00053 and
+QCA988x platform with firmware version: 10.2.4-1.0-00036.
 
-Fixes: 58e998c6d239 ("offloading: Force software GSO for multiple vlan tags.")
-Reported-and-tested-by: syzbot+0bbe42c764feafa82c5a@syzkaller.appspotmail.com
-Signed-off-by: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Firmware Assert log:
+
+ath10k_pci 0002:01:00.0: firmware crashed! (guid e61f1274-9acd-4c5b-bcca-e032ea6e723c)
+ath10k_pci 0002:01:00.0: qca9984/qca9994 hw1.0 target 0x01000000 chip_id 0x00000000 sub 168c:cafe
+ath10k_pci 0002:01:00.0: kconfig debug 1 debugfs 1 tracing 0 dfs 1 testmode 1
+ath10k_pci 0002:01:00.0: firmware ver 10.4-3.5.3-00053 api 5 features no-p2p,mfp,peer-flow-ctrl,btcoex-param,allows-mesh-bcast crc32 4c56a386
+ath10k_pci 0002:01:00.0: board_file api 2 bmi_id 0:4 crc32 c2271344
+ath10k_pci 0002:01:00.0: htt-ver 2.2 wmi-op 6 htt-op 4 cal otp max-sta 512 raw 0 hwcrypto 1
+ath10k_pci 0002:01:00.0: firmware register dump:
+ath10k_pci 0002:01:00.0: [00]: 0x0000000A 0x000015B3 0x00981E5F 0x00975B31
+ath10k_pci 0002:01:00.0: [04]: 0x00981E5F 0x00060530 0x00000011 0x00446C60
+ath10k_pci 0002:01:00.0: [08]: 0x0042F1FC 0x00458080 0x00000017 0x00000000
+ath10k_pci 0002:01:00.0: [12]: 0x00000009 0x00000000 0x00973ABC 0x00973AD2
+ath10k_pci 0002:01:00.0: [16]: 0x00973AB0 0x00960E62 0x009606CA 0x00000000
+ath10k_pci 0002:01:00.0: [20]: 0x40981E5F 0x004066DC 0x00400000 0x00981E34
+ath10k_pci 0002:01:00.0: [24]: 0x80983B48 0x0040673C 0x000000C0 0xC0981E5F
+ath10k_pci 0002:01:00.0: [28]: 0x80993DEB 0x0040676C 0x00431AB8 0x0045D0C4
+ath10k_pci 0002:01:00.0: [32]: 0x80993E5C 0x004067AC 0x004303C0 0x0045D0C4
+ath10k_pci 0002:01:00.0: [36]: 0x80994AAB 0x004067DC 0x00000000 0x0045D0C4
+ath10k_pci 0002:01:00.0: [40]: 0x809971A0 0x0040681C 0x004303C0 0x00441B00
+ath10k_pci 0002:01:00.0: [44]: 0x80991904 0x0040688C 0x004303C0 0x0045D0C4
+ath10k_pci 0002:01:00.0: [48]: 0x80963AD3 0x00406A7C 0x004303C0 0x009918FC
+ath10k_pci 0002:01:00.0: [52]: 0x80960E80 0x00406A9C 0x0000001F 0x00400000
+ath10k_pci 0002:01:00.0: [56]: 0x80960E51 0x00406ACC 0x00400000 0x00000000
+ath10k_pci 0002:01:00.0: Copy Engine register dump:
+ath10k_pci 0002:01:00.0: index: addr: sr_wr_idx: sr_r_idx: dst_wr_idx: dst_r_idx:
+ath10k_pci 0002:01:00.0: [00]: 0x0004a000 15 15 3 3
+ath10k_pci 0002:01:00.0: [01]: 0x0004a400 17 17 212 213
+ath10k_pci 0002:01:00.0: [02]: 0x0004a800 21 21 20 21
+ath10k_pci 0002:01:00.0: [03]: 0x0004ac00 25 25 27 25
+ath10k_pci 0002:01:00.0: [04]: 0x0004b000 515 515 144 104
+ath10k_pci 0002:01:00.0: [05]: 0x0004b400 28 28 155 156
+ath10k_pci 0002:01:00.0: [06]: 0x0004b800 12 12 12 12
+ath10k_pci 0002:01:00.0: [07]: 0x0004bc00 1 1 1 1
+ath10k_pci 0002:01:00.0: [08]: 0x0004c000 0 0 127 0
+ath10k_pci 0002:01:00.0: [09]: 0x0004c400 1 1 1 1
+ath10k_pci 0002:01:00.0: [10]: 0x0004c800 0 0 0 0
+ath10k_pci 0002:01:00.0: [11]: 0x0004cc00 0 0 0 0
+ath10k_pci 0002:01:00.0: CE[1] write_index 212 sw_index 213 hw_index 0 nentries_mask 0x000001ff
+ath10k_pci 0002:01:00.0: CE[2] write_index 20 sw_index 21 hw_index 0 nentries_mask 0x0000007f
+ath10k_pci 0002:01:00.0: CE[5] write_index 155 sw_index 156 hw_index 0 nentries_mask 0x000001ff
+ath10k_pci 0002:01:00.0: DMA addr: nbytes: meta data: byte swap: gather:
+ath10k_pci 0002:01:00.0: [455]: 0x580c0042 0 0 0 0
+ath10k_pci 0002:01:00.0: [456]: 0x594a0010 0 0 0 1
+ath10k_pci 0002:01:00.0: [457]: 0x580c0042 0 0 0 0
+ath10k_pci 0002:01:00.0: [458]: 0x594a0038 0 0 0 1
+ath10k_pci 0002:01:00.0: [459]: 0x580c0a42 0 0 0 0
+ath10k_pci 0002:01:00.0: [460]: 0x594a0060 0 0 0 1
+ath10k_pci 0002:01:00.0: [461]: 0x580c0c42 0 0 0 0
+ath10k_pci 0002:01:00.0: [462]: 0x594a0010 0 0 0 1
+ath10k_pci 0002:01:00.0: [463]: 0x580c0c42 0 0 0 0
+ath10k_pci 0002:01:00.0: [464]: 0x594a0038 0 0 0 1
+ath10k_pci 0002:01:00.0: [465]: 0x580c0a42 0 0 0 0
+ath10k_pci 0002:01:00.0: [466]: 0x594a0060 0 0 0 1
+ath10k_pci 0002:01:00.0: [467]: 0x580c0042 0 0 0 0
+ath10k_pci 0002:01:00.0: [468]: 0x594a0010 0 0 0 1
+ath10k_pci 0002:01:00.0: [469]: 0x580c1c42 0 0 0 0
+ath10k_pci 0002:01:00.0: [470]: 0x594a0010 0 0 0 1
+ath10k_pci 0002:01:00.0: [471]: 0x580c1c42 0 0 0 0
+ath10k_pci 0002:01:00.0: [472]: 0x594a0010 0 0 0 1
+ath10k_pci 0002:01:00.0: [473]: 0x580c1c42 0 0 0 0
+ath10k_pci 0002:01:00.0: [474]: 0x594a0010 0 0 0 1
+ath10k_pci 0002:01:00.0: [475]: 0x580c0642 0 0 0 0
+ath10k_pci 0002:01:00.0: [476]: 0x594a0038 0 0 0 1
+ath10k_pci 0002:01:00.0: [477]: 0x580c0842 0 0 0 0
+ath10k_pci 0002:01:00.0: [478]: 0x594a0060 0 0 0 1
+ath10k_pci 0002:01:00.0: [479]: 0x580c0042 0 0 0 0
+ath10k_pci 0002:01:00.0: [480]: 0x594a0010 0 0 0 1
+ath10k_pci 0002:01:00.0: [481]: 0x580c0042 0 0 0 0
+ath10k_pci 0002:01:00.0: [482]: 0x594a0038 0 0 0 1
+ath10k_pci 0002:01:00.0: [483]: 0x580c0842 0 0 0 0
+ath10k_pci 0002:01:00.0: [484]: 0x594a0060 0 0 0 1
+ath10k_pci 0002:01:00.0: [485]: 0x580c0642 0 0 0 0
+ath10k_pci 0002:01:00.0: [486]: 0x594a0010 0 0 0 1
+ath10k_pci 0002:01:00.0: [487]: 0x580c0642 0 0 0 0
+ath10k_pci 0002:01:00.0: [488]: 0x594a0038 0 0 0 1
+ath10k_pci 0002:01:00.0: [489]: 0x580c0842 0 0 0 0
+ath10k_pci 0002:01:00.0: [490]: 0x594a0060 0 0 0 1
+ath10k_pci 0002:01:00.0: [491]: 0x580c0042 0 0 0 0
+ath10k_pci 0002:01:00.0: [492]: 0x58174040 0 1 0 0
+ath10k_pci 0002:01:00.0: [493]: 0x5a946040 0 1 0 0
+ath10k_pci 0002:01:00.0: [494]: 0x59909040 0 1 0 0
+ath10k_pci 0002:01:00.0: [495]: 0x5ae5a040 0 1 0 0
+ath10k_pci 0002:01:00.0: [496]: 0x58096040 0 1 0 0
+ath10k_pci 0002:01:00.0: [497]: 0x594a0010 0 0 0 1
+ath10k_pci 0002:01:00.0: [498]: 0x580c0642 0 0 0 0
+ath10k_pci 0002:01:00.0: [499]: 0x5c1e0040 0 1 0 0
+ath10k_pci 0002:01:00.0: [500]: 0x58153040 0 1 0 0
+ath10k_pci 0002:01:00.0: [501]: 0x58129040 0 1 0 0
+ath10k_pci 0002:01:00.0: [502]: 0x5952f040 0 1 0 0
+ath10k_pci 0002:01:00.0: [503]: 0x59535040 0 1 0 0
+ath10k_pci 0002:01:00.0: [504]: 0x594a0010 0 0 0 1
+ath10k_pci 0002:01:00.0: [505]: 0x580c0042 0 0 0 0
+ath10k_pci 0002:01:00.0: [506]: 0x594a0010 0 0 0 1
+ath10k_pci 0002:01:00.0: [507]: 0x580c0042 0 0 0 0
+ath10k_pci 0002:01:00.0: [508]: 0x594a0010 0 0 0 1
+ath10k_pci 0002:01:00.0: [509]: 0x580c0042 0 0 0 0
+ath10k_pci 0002:01:00.0: [510]: 0x594a0010 0 0 0 1
+ath10k_pci 0002:01:00.0: [511]: 0x580c0042 0 0 0 0
+ath10k_pci 0002:01:00.0: [512]: 0x5adcc040 0 1 0 0
+ath10k_pci 0002:01:00.0: [513]: 0x5cf3d040 0 1 0 0
+ath10k_pci 0002:01:00.0: [514]: 0x5c1e9040 64 1 0 0
+ath10k_pci 0002:01:00.0: [515]: 0x00000000 0 0 0 0
+
+Signed-off-by: Karthikeyan Periyasamy <periyasa@codeaurora.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Cc: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- include/linux/if_vlan.h |    7 +++++--
- net/core/dev.c          |    2 +-
- 2 files changed, 6 insertions(+), 3 deletions(-)
 
---- a/include/linux/if_vlan.h
-+++ b/include/linux/if_vlan.h
-@@ -585,7 +585,7 @@ static inline bool skb_vlan_tagged(const
-  * Returns true if the skb is tagged with multiple vlan headers, regardless
-  * of whether it is hardware accelerated or not.
-  */
--static inline bool skb_vlan_tagged_multi(const struct sk_buff *skb)
-+static inline bool skb_vlan_tagged_multi(struct sk_buff *skb)
- {
- 	__be16 protocol = skb->protocol;
- 
-@@ -596,6 +596,9 @@ static inline bool skb_vlan_tagged_multi
- 			   protocol != htons(ETH_P_8021AD)))
- 			return false;
- 
-+		if (unlikely(!pskb_may_pull(skb, VLAN_ETH_HLEN)))
-+			return false;
-+
- 		veh = (struct vlan_ethhdr *)skb->data;
- 		protocol = veh->h_vlan_encapsulated_proto;
+---
+ drivers/net/wireless/ath/ath10k/mac.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+--- a/drivers/net/wireless/ath/ath10k/mac.c
++++ b/drivers/net/wireless/ath/ath10k/mac.c
+@@ -5285,9 +5285,8 @@ static void ath10k_sta_rc_update_wk(stru
+ 				    sta->addr, smps, err);
  	}
-@@ -613,7 +616,7 @@ static inline bool skb_vlan_tagged_multi
-  *
-  * Returns features without unsafe ones if the skb has multiple tags.
-  */
--static inline netdev_features_t vlan_features_check(const struct sk_buff *skb,
-+static inline netdev_features_t vlan_features_check(struct sk_buff *skb,
- 						    netdev_features_t features)
- {
- 	if (skb_vlan_tagged_multi(skb)) {
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -2706,7 +2706,7 @@ netdev_features_t passthru_features_chec
- }
- EXPORT_SYMBOL(passthru_features_check);
  
--static netdev_features_t dflt_features_check(const struct sk_buff *skb,
-+static netdev_features_t dflt_features_check(struct sk_buff *skb,
- 					     struct net_device *dev,
- 					     netdev_features_t features)
- {
+-	if (changed & IEEE80211_RC_SUPP_RATES_CHANGED ||
+-	    changed & IEEE80211_RC_NSS_CHANGED) {
+-		ath10k_dbg(ar, ATH10K_DBG_MAC, "mac update sta %pM supp rates/nss\n",
++	if (changed & IEEE80211_RC_SUPP_RATES_CHANGED) {
++		ath10k_dbg(ar, ATH10K_DBG_MAC, "mac update sta %pM supp rates\n",
+ 			   sta->addr);
+ 
+ 		err = ath10k_station_assoc(ar, arvif->vif, sta, true);
