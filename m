@@ -1,129 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932285AbeD0Myv (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 08:54:51 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:42918 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757241AbeD0Mys (ORCPT
+        id S1758249AbeD0M7i (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 08:59:38 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:9990 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1757846AbeD0M7h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 08:54:48 -0400
-X-Google-Smtp-Source: AB8JxZrjnbb4Bg2a/wIR8yrT509H7VGIHOn1PFgQHBInB0dwboy2+kKGuchMMHowoRjrwTDQG+KN5A==
-Subject: Re: [PATCH v1 1/4] clk: tegra20: Add DEV1/DEV2 OSC dividers
-To: Marcel Ziswiler <marcel@ziswiler.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Marc Dietrich <marvin24@gmx.de>
-Cc: linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180426235818.10018-1-digetx@gmail.com>
- <20180426235818.10018-2-digetx@gmail.com>
- <1524832404.6979.9.camel@ziswiler.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=digetx@gmail.com; prefer-encrypt=mutual; keydata=
- xsBNBFpX5TwBCADQhg+lBnTunWSPbP5I+rM9q6EKPm5fu2RbqyVAh/W3fRvLyghdb58Yrmjm
- KpDYUhBIZvAQoFLEL1IPAgJBtmPvemO1XUGPxfYNh/3BlcDFBAgERrI3BfA/6pk7SAFn8u84
- p+J1TW4rrPYcusfs44abJrn8CH0GZKt2AZIsGbGQ79O2HHXKHr9V95ZEPWH5AR0UtL6wxg6o
- O56UNG3rIzSL5getRDQW3yCtjcqM44mz6GPhSE2sxNgqureAbnzvr4/93ndOHtQUXPzzTrYB
- z/WqLGhPdx5Ouzn0Q0kSVCQiqeExlcQ7i7aKRRrELz/5/IXbCo2O+53twlX8xOps9iMfABEB
- AAHNIkRtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT7CwJQEEwEIAD4WIQSczHcO
- 3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbAwUJA8JnAAULCQgHAgYVCgkICwIEFgIDAQIeAQIX
- gAAKCRDTNNaPsNRzvFjTCACqAh1M9/YPq73/ai5h2ExDquTgJnjegL8KL2yHL3G+XINwzN5E
- nPI7esoYm+zVWDJbv3UuRqylpookLNSRA01yyvkaMcipB/B128UnqmUiGRqezj9QE20yIauo
- uHRuwHPE2q+UkfUhRX9iuOaEyQtZDiCa0myMjmRkJ+Z8ZetclEPG8dYZu47w04phuMlu1QAt
- a0gkZOaMKvXgj21ushALS6nYnvm7HiIPQXfnEXThartatRvFdmbG4PCn0IoICkQBizwJtXrL
- HEjELIFap0M8krVJlUoZTFaZnaZkGpUDWikeFtAuie2KuIxmVBYPM4X7pM3eP3AVvIPGS7EE
- UUFuzsBNBFpX5TwBCADFNDou220thijaLLGaQsebWjzc/gPRxMixIpk856MRyRaQin+IbGD6
- YskMb5ZSD3nS88LIKNfY4MMH0LwfYztI++ICG2vdFLkbBt78E+LqEa+kZ9072l4W5KO3mWQo
- +jMfxXbpgGlc7iuEReDgl8iyZ27r51kSW665CYvvu2YJhLqgdj6QM1lN2D1UnhEhkkU+pRAj
- 1rJVOxdfJaQNQS4+204p3TrURovzNGkN/brqakpNIcqGOAGQqb8F0tuwwuP7ERq/BzDNkbdr
- qJOrVC/wkHRq1jfabQczWKf8MwYOvivR3HY8d3CpSQxmUXDtdOWfg0XGm1dxYnVfqPjuJaZt
- ABEBAAHCwHwEGAEIACYWIQSczHcO3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbDAUJA8JnAAAK
- CRDTNNaPsNRzvJzuB/9d+sxcwHbO8ZDcgaLX9N+bXFqN9fIRVmBUyWa+qqTSREA4uVAtYcRT
- lfPE2OQ7aMFxaYPwo+/z5SLpu8HcEhN/FG9uIkfYwK0mdCO0vgvlfvBJm4VHe7C6vyAeEPJQ
- DKbBvdgeqFqO+PsLkk2sawF/9sontMJ5iFfjNDj4UeAo4VsdlduTBZv5hHFvIbv/p7jKH6OT
- 90FsgUSVbShh7SH5OzAcgqSy4kxuS1AHizWo6P3f9vei987LZWTyhuEuhJsOfivDsjKIq7qQ
- c5eR+JJtyLEA0Jt4cQGhpzHtWB0yB3XxXzHVa4QUp00BNVWyiJ/t9JHT4S5mdyLfcKm7ddc9
-Message-ID: <a8fc30b9-42ce-b29a-abc6-2867ebf4a9ac@gmail.com>
-Date: Fri, 27 Apr 2018 15:54:44 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <1524832404.6979.9.camel@ziswiler.com>
-Content-Type: text/plain; charset=utf-8
+        Fri, 27 Apr 2018 08:59:37 -0400
+From: Philippe CORNU <philippe.cornu@st.com>
+To: Yannick FERTRE <yannick.fertre@st.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Vincent ABRIOU <vincent.abriou@st.com>,
+        "David Airlie" <airlied@linux.ie>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC: Alexandre TORGUE <alexandre.torgue@st.com>
+Subject: Re: [PATCH] drm/stm: ltdc: fix deferred endpoint management
+Thread-Topic: [PATCH] drm/stm: ltdc: fix deferred endpoint management
+Thread-Index: AQHT1kAeg2xTBfuOqE2IlGfCK/9MDKQQ+3mAgAOFooA=
+Date: Fri, 27 Apr 2018 12:59:25 +0000
+Message-ID: <d2194303-8b95-09f8-0623-d29b9769bd50@st.com>
+References: <20180417113441.8214-1-philippe.cornu@st.com>
+ <22c16fe0-9f0b-c325-4a7c-35f3aa86dd86@st.com>
+In-Reply-To: <22c16fe0-9f0b-c325-4a7c-35f3aa86dd86@st.com>
+Accept-Language: fr-FR, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.44]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <320C3D5BAB3EF740A7FCD8B06913AC7D@st.com>
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-27_03:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3RCxhNd015378
 
-Hi Marcel,
 
-On 27.04.2018 15:33,  Ziswiler wrote:
-> Hi Dmitry
+On 04/25/2018 09:12 AM, Yannick FERTRE wrote:
+> Hi Philippe,
 > 
-> Isn't the CLK_RST_CONTROLLER_MISC_CLK_ENB_0 the other way around e.g.
-> DEV1_OSC_DIV_SEL at bit 23:22 and DEV2_OSC_DIV_SEL at 21:20?
+> Reviewed-by: Yannick Fertré <yannick.fertre@st.com>
+
+Applied on drm-misc-next.
+Many thanks,
+Philippe :-)
+
+
 > 
-> On Fri, 2018-04-27 at 02:58 +0300, Dmitry Osipenko wrote:
->> CDEV1/CDEV2 clocks could have corresponding oscillator clock divider
->> as
->> a parent. Add these dividers in order to be able to provide that
->> parent
->> option.
+> 
+> On 04/17/2018 01:34 PM, Philippe Cornu wrote:
+>> When a driver related to one of the endpoints is deferred
+>> due to probe dependencies (i2c, spi...) but the other one
+>> is ready, ltdc probe continues and the deferred driver
+>> will never be probed again.
 >>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> The fix consists in waiting for all deferred endpoints before
+>> continuing the ltdc probe.
+>>
+>> Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
 >> ---
->>  drivers/clk/tegra/clk-tegra20.c | 12 ++++++++++++
->>  1 file changed, 12 insertions(+)
+>>    drivers/gpu/drm/stm/ltdc.c | 11 +++++------
+>>    1 file changed, 5 insertions(+), 6 deletions(-)
 >>
->> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-
->> tegra20.c
->> index 0ee56dd04cec..16cf4108f2ff 100644
->> --- a/drivers/clk/tegra/clk-tegra20.c
->> +++ b/drivers/clk/tegra/clk-tegra20.c
->> @@ -26,6 +26,8 @@
->>  #include "clk.h"
->>  #include "clk-id.h"
->>  
->> +#define MISC_CLK_ENB 0x48
->> +
->>  #define OSC_CTRL 0x50
->>  #define OSC_CTRL_OSC_FREQ_MASK (3<<30)
->>  #define OSC_CTRL_OSC_FREQ_13MHZ (0<<30)
->> @@ -831,6 +833,16 @@ static void __init tegra20_periph_clk_init(void)
->>  				    periph_clk_enb_refcnt);
->>  	clks[TEGRA20_CLK_PEX] = clk;
->>  
->> +	/* cdev1 OSC divider */
->> +	clk_register_divider(NULL, "cdev1_osc_div", "clk_m",
->> +			     0, clk_base + MISC_CLK_ENB, 20, 2,
-> 
-> So it would be:
-> 
-> +			     0, clk_base + MISC_CLK_ENB, 22, 2,
-> 
->> +			     CLK_DIVIDER_POWER_OF_TWO, NULL);
->> +
->> +	/* cdev2 OSC divider */
->> +	clk_register_divider(NULL, "cdev2_osc_div", "clk_m",
->> +			     0, clk_base + MISC_CLK_ENB, 22, 2,
-> 
-> And:
-> 
-> +			     0, clk_base + MISC_CLK_ENB, 20, 2,
-> 
->> +			     CLK_DIVIDER_POWER_OF_TWO, NULL);
->> +
->>  	/* cdev1 */
->>  	clk = clk_register_fixed_rate(NULL, "cdev1_fixed", NULL, 0,
->> 26000000);
->>  	clk = tegra_clk_register_periph_gate("cdev1", "cdev1_fixed",
->> 0,
-Indeed, good catch! I'll wait for more comments and then re-spin patchset with
-the fix. Thank you.
+>> diff --git a/drivers/gpu/drm/stm/ltdc.c b/drivers/gpu/drm/stm/ltdc.c
+>> index e3121d9e4230..014cef8cef37 100644
+>> --- a/drivers/gpu/drm/stm/ltdc.c
+>> +++ b/drivers/gpu/drm/stm/ltdc.c
+>> @@ -987,14 +987,13 @@ int ltdc_load(struct drm_device *ddev)
+>>    						  &bridge[i]);
+>>    
+>>    		/*
+>> -		 * If at least one endpoint is ready, continue probing,
+>> -		 * else if at least one endpoint is -EPROBE_DEFER and
+>> -		 * there is no previous ready endpoints, defer probing.
+>> +		 * If at least one endpoint is -EPROBE_DEFER, defer probing,
+>> +		 * else if at least one endpoint is ready, continue probing.
+>>    		 */
+>> -		if (!ret)
+>> +		if (ret == -EPROBE_DEFER)
+>> +			return ret;
+>> +		else if (!ret)
+>>    			endpoint_not_ready = 0;
+>> -		else if (ret == -EPROBE_DEFER && endpoint_not_ready)
+>> -			endpoint_not_ready = -EPROBE_DEFER;
+>>    	}
+>>    
+>>    	if (endpoint_not_ready)
