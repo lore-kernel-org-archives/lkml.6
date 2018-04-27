@@ -1,11 +1,11 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-298528-1524838232-2-5667470449973022058
+X-Cyrus-Session-Id: sloti22d1t05-288473-1524838210-2-345633197876394120
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES enfr, BAYES_USED global,
-  SA_VERSION 3.4.0
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524838232; b=iL4YPiY6x/PJieuD73B4RrfIrtnyzLh1iH7U/yjwQnWfOlPuaA
-    2lg66lsfRnDonYGw8kL9RMxG3n11jWC9PvkZ4LaUf+FZuqq9h4Vl2eFSx5wQmyvg
-    LjijL1Hma6PjoTPY6OXoap3aP2mKbE0B2f6OTk4rs0uUO/yoOV0MgfpCh7JDIE1d
-    8Srvhwk7Bo9GQo5o00uvRvOP/ho9mPhb0uObbnOj8jKZyYWKzJv20KUeC4G9hZo0
-    a7UFGV4I5wqral3XaNU1coYIeyIlC/+Bbvg2baABdjipDx08R05qEjux4DVcbLOO
-    MsqzddW3bZmcBrrviKhbAPrDlUZ4KWzMdrDA==
+    1524838209; b=gl1aaJvbn9N+2ZUK8ioDbTpbb14f/6ODxh5pdjbh7dE1TJSD7S
+    ZzzUiVxC6YttXC8CCQw0enqvOx3r7yPiwVcqdqzkCjPCNQwhIbE6pWm1fh72qZWr
+    GU0BHTc5N+KNbrm8Acs/4kCC92oNLQoLMYDUNFxk/vpp9FUgrXhctPtJdiJdTCKD
+    6xQWGzS2cafX61F8RI0QsD1lM7ilMELQN1f16I8SBP4o0j/kjEIlikLiicimuuSa
+    QtMzdZ/V6vVHEUQnykuQQztXf6tM+OIIpMoLDwdHuafvzNO/i9Qm33oeimmLB7bV
+    rVm2qYIFfHqJWScr98bPXen5KrmVasrKkxYw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524838232; bh=uTnhvRs45XK2oIIbLP8fiCgb0X4CsA
-    Oua59TCooR/Kc=; b=llVfskwtJXI5xaebKA+87y3HBLHyhmIybbZNKVi/RhWIWo
-    M0mSOPZF5u6FrQQnAokZWhncJFaJHvoaEvPYUwLLVzaiDN2EZV3TP1TBuU+YC0xI
-    bpJqGgc0LfCJlq3QZmhHYUlYUpA4Gswg5w+opjJGSoTT2DNa18Q6K4D7wSPP1yWU
-    ruUJWK7GvzLf0EMmS3LxSV/GafxaCYj49IHiutezVRGcUhxQH5p6j2nVS9eMQ6Tw
-    2QakB9Wl/KABJM919qZKo5s9i0Yuj11/BxmFxqwp7wBd82Glybl6+K5EF4hn7fgu
-    TSyrNLRJwXeorfmWVGQ0jH+8RpBn7EU7dlNCQpmw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1524838209; bh=FxIMmXKc/PXp/NizzlFjcZDnIXusHU
+    5+d2BbDiMAo6I=; b=nLHCaxav5GoELi3L+/2KKh/yAl2FdYh+HILCFKueAFwCPc
+    dnlrRz7vgql0iMmGs021IT4QzHKE4VYXf6EGrPjeIW0gPdVwaTdbk9diz5xBKtu2
+    lTCd0savJ7tnlsnpUKgUxjiB06rElTjXl1hhhUbAlulMd7HgPk6pUyjBFzaKJhpa
+    I4nXionUQ+OcvJLvMqCbMX5IPimS5W7145UdMUaQVDA4vfcHXaxVa2kQif+QUwtl
+    htQbdtt+O75u6yfYSsf8P7b7OJtmKWQuzBkaWXNiGUw8noDLcHDhUs5mdW+FisR6
+    ndo5ywrB3pFLbCoDlnbCnFLLaD0xPem9fqgeQ0hQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,36 +51,34 @@ Authentication-Results: mx4.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMtjQZkV7QrIwHG62kOkSMS+d96FmnKmHKSz8zji72bDrKqEGGgbIWcrk0nTcQAilK5O7cGvzgbZThQ8GkvVi3YbIoPRmRnHRrOn8dg1y/UrFdkaKZaG
-    6Vois0Zbw3zVQX/uqrZBdK8KjKPMllvpt2tmljDE/93k7munOz3D3yV7vSbfCW/D3cBTNWjsimsb13VUyTMDW9dt4PmMn/4qusiXq/47QNiZ9O2nzl9cJ47T
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfCZ24wlQfPvhn8xLAMT9oxl26m1hqbD6qbLJ4PyctPHqhm0Q4mN2lff2lQQBFFU3fVvSpz8XzoGuoV8l6Cj4QqeNaHQDpKi5VUg/i6LGIxatKU/utE1o
+    nrGmtnE1wBOAG8bDByGkMuggw3t/sCtxYMFr95D3sTQV2QYQH2gJsG2vbtP77A/I/5nBPfv1yjTA1fWZusCDx7bmIc0ZvDkbAiiArbNGnVgWJSrKwsQ71eFh
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=pGLkceISAAAA:8 a=20KFwNOVAAAA:8 a=vmLDa1wCAAAA:8 a=J1Y8HTJGAAAA:8
-    a=ag1SF4gXAAAA:8 a=B5kgTa-OJr302yQp2YMA:9 a=eEFkMGFhjyoL3bTw:21
-    a=goHr4I-h5IuJYFYn:21 a=QEXdDO2ut3YA:10 a=h8Bt5HTj68qkN2fS7gvA:22
+    a=1XWaLZrsAAAA:8 a=4RBUngkUAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
+    a=JrvlcW7RFgscdJ-1EWgA:9 a=QEXdDO2ut3YA:10 a=_sbA2Q-Kp09kWB8D3iXc:22
     a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934819AbeD0OKT (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 27 Apr 2018 10:10:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55442 "EHLO mail.kernel.org"
+        id S934749AbeD0OJz (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 27 Apr 2018 10:09:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55110 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934799AbeD0OKS (ORCPT <rfc822;stable@vger.kernel.org>);
-        Fri, 27 Apr 2018 10:10:18 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3DA921892
+        id S934732AbeD0OJx (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 27 Apr 2018 10:09:53 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2695C21864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jianwen Ji <jiji@redhat.com>,
-        Xin Long <lucien.xin@gmail.com>,
-        Neil Horman <nhorman@tuxdriver.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 24/81] sctp: do not check port in sctp_inet6_cmp_addr
-Date: Fri, 27 Apr 2018 15:58:26 +0200
-Message-Id: <20180427135744.582358944@linuxfoundation.org>
+Subject: [PATCH 4.16 15/81] net: af_packet: fix race in PACKET_{R|T}X_RING
+Date: Fri, 27 Apr 2018 15:58:17 +0200
+Message-Id: <20180427135744.133912226@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135743.216853156@linuxfoundation.org>
 References: <20180427135743.216853156@linuxfoundation.org>
@@ -98,134 +96,119 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Eric Dumazet <edumazet@google.com>
 
 
-[ Upstream commit 1071ec9d453a38023579714b64a951a2fb982071 ]
+[ Upstream commit 5171b37d959641bbc619781caf62e61f7b940871 ]
 
-pf->cmp_addr() is called before binding a v6 address to the sock. It
-should not check ports, like in sctp_inet_cmp_addr.
+In order to remove the race caught by syzbot [1], we need
+to lock the socket before using po->tp_version as this could
+change under us otherwise.
 
-But sctp_inet6_cmp_addr checks the addr by invoking af(6)->cmp_addr,
-sctp_v6_cmp_addr where it also compares the ports.
+This means lock_sock() and release_sock() must be done by
+packet_set_ring() callers.
 
-This would cause that setsockopt(SCTP_SOCKOPT_BINDX_ADD) could bind
-multiple duplicated IPv6 addresses after Commit 40b4f0fd74e4 ("sctp:
-lack the check for ports in sctp_v6_cmp_addr").
+[1] :
+BUG: KMSAN: uninit-value in packet_set_ring+0x1254/0x3870 net/packet/af_packet.c:4249
+CPU: 0 PID: 20195 Comm: syzkaller707632 Not tainted 4.16.0+ #83
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:17 [inline]
+ dump_stack+0x185/0x1d0 lib/dump_stack.c:53
+ kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
+ __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:676
+ packet_set_ring+0x1254/0x3870 net/packet/af_packet.c:4249
+ packet_setsockopt+0x12c6/0x5a90 net/packet/af_packet.c:3662
+ SYSC_setsockopt+0x4b8/0x570 net/socket.c:1849
+ SyS_setsockopt+0x76/0xa0 net/socket.c:1828
+ do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+RIP: 0033:0x449099
+RSP: 002b:00007f42b5307ce8 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
+RAX: ffffffffffffffda RBX: 000000000070003c RCX: 0000000000449099
+RDX: 0000000000000005 RSI: 0000000000000107 RDI: 0000000000000003
+RBP: 0000000000700038 R08: 000000000000001c R09: 0000000000000000
+R10: 00000000200000c0 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000080eecf R14: 00007f42b53089c0 R15: 0000000000000001
 
-This patch is to remove af->cmp_addr called in sctp_inet6_cmp_addr,
-but do the proper check for both v6 addrs and v4mapped addrs.
+Local variable description: ----req_u@packet_setsockopt
+Variable was created at:
+ packet_setsockopt+0x13f/0x5a90 net/packet/af_packet.c:3612
+ SYSC_setsockopt+0x4b8/0x570 net/socket.c:1849
 
-v1->v2:
-  - define __sctp_v6_cmp_addr to do the common address comparison
-    used for both pf and af v6 cmp_addr.
-
-Fixes: 40b4f0fd74e4 ("sctp: lack the check for ports in sctp_v6_cmp_addr")
-Reported-by: Jianwen Ji <jiji@redhat.com>
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Acked-by: Neil Horman <nhorman@tuxdriver.com>
+Fixes: f6fb8f100b80 ("af-packet: TPACKET_V3 flexible buffer implementation.")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sctp/ipv6.c |   60 ++++++++++++++++++++++++++++----------------------------
- 1 file changed, 30 insertions(+), 30 deletions(-)
+ net/packet/af_packet.c |   23 ++++++++++++++---------
+ 1 file changed, 14 insertions(+), 9 deletions(-)
 
---- a/net/sctp/ipv6.c
-+++ b/net/sctp/ipv6.c
-@@ -521,46 +521,49 @@ static void sctp_v6_to_addr(union sctp_a
- 	addr->v6.sin6_scope_id = 0;
- }
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -3008,6 +3008,7 @@ static int packet_release(struct socket
  
--/* Compare addresses exactly.
-- * v4-mapped-v6 is also in consideration.
-- */
--static int sctp_v6_cmp_addr(const union sctp_addr *addr1,
--			    const union sctp_addr *addr2)
-+static int __sctp_v6_cmp_addr(const union sctp_addr *addr1,
-+			      const union sctp_addr *addr2)
- {
- 	if (addr1->sa.sa_family != addr2->sa.sa_family) {
- 		if (addr1->sa.sa_family == AF_INET &&
- 		    addr2->sa.sa_family == AF_INET6 &&
--		    ipv6_addr_v4mapped(&addr2->v6.sin6_addr)) {
--			if (addr2->v6.sin6_port == addr1->v4.sin_port &&
--			    addr2->v6.sin6_addr.s6_addr32[3] ==
--			    addr1->v4.sin_addr.s_addr)
--				return 1;
--		}
-+		    ipv6_addr_v4mapped(&addr2->v6.sin6_addr) &&
-+		    addr2->v6.sin6_addr.s6_addr32[3] ==
-+		    addr1->v4.sin_addr.s_addr)
-+			return 1;
-+
- 		if (addr2->sa.sa_family == AF_INET &&
- 		    addr1->sa.sa_family == AF_INET6 &&
--		    ipv6_addr_v4mapped(&addr1->v6.sin6_addr)) {
--			if (addr1->v6.sin6_port == addr2->v4.sin_port &&
--			    addr1->v6.sin6_addr.s6_addr32[3] ==
--			    addr2->v4.sin_addr.s_addr)
--				return 1;
--		}
-+		    ipv6_addr_v4mapped(&addr1->v6.sin6_addr) &&
-+		    addr1->v6.sin6_addr.s6_addr32[3] ==
-+		    addr2->v4.sin_addr.s_addr)
-+			return 1;
-+
- 		return 0;
+ 	packet_flush_mclist(sk);
+ 
++	lock_sock(sk);
+ 	if (po->rx_ring.pg_vec) {
+ 		memset(&req_u, 0, sizeof(req_u));
+ 		packet_set_ring(sk, &req_u, 1, 0);
+@@ -3017,6 +3018,7 @@ static int packet_release(struct socket
+ 		memset(&req_u, 0, sizeof(req_u));
+ 		packet_set_ring(sk, &req_u, 1, 1);
  	}
--	if (addr1->v6.sin6_port != addr2->v6.sin6_port)
--		return 0;
-+
- 	if (!ipv6_addr_equal(&addr1->v6.sin6_addr, &addr2->v6.sin6_addr))
- 		return 0;
-+
- 	/* If this is a linklocal address, compare the scope_id. */
--	if (ipv6_addr_type(&addr1->v6.sin6_addr) & IPV6_ADDR_LINKLOCAL) {
--		if (addr1->v6.sin6_scope_id && addr2->v6.sin6_scope_id &&
--		    (addr1->v6.sin6_scope_id != addr2->v6.sin6_scope_id)) {
--			return 0;
--		}
--	}
-+	if ((ipv6_addr_type(&addr1->v6.sin6_addr) & IPV6_ADDR_LINKLOCAL) &&
-+	    addr1->v6.sin6_scope_id && addr2->v6.sin6_scope_id &&
-+	    addr1->v6.sin6_scope_id != addr2->v6.sin6_scope_id)
-+		return 0;
++	release_sock(sk);
  
- 	return 1;
- }
+ 	f = fanout_release(sk);
  
-+/* Compare addresses exactly.
-+ * v4-mapped-v6 is also in consideration.
-+ */
-+static int sctp_v6_cmp_addr(const union sctp_addr *addr1,
-+			    const union sctp_addr *addr2)
-+{
-+	return __sctp_v6_cmp_addr(addr1, addr2) &&
-+	       addr1->v6.sin6_port == addr2->v6.sin6_port;
-+}
-+
- /* Initialize addr struct to INADDR_ANY. */
- static void sctp_v6_inaddr_any(union sctp_addr *addr, __be16 port)
- {
-@@ -846,8 +849,8 @@ static int sctp_inet6_cmp_addr(const uni
- 			       const union sctp_addr *addr2,
- 			       struct sctp_sock *opt)
- {
--	struct sctp_af *af1, *af2;
- 	struct sock *sk = sctp_opt2sk(opt);
-+	struct sctp_af *af1, *af2;
+@@ -3645,6 +3647,7 @@ packet_setsockopt(struct socket *sock, i
+ 		union tpacket_req_u req_u;
+ 		int len;
  
- 	af1 = sctp_get_af_specific(addr1->sa.sa_family);
- 	af2 = sctp_get_af_specific(addr2->sa.sa_family);
-@@ -863,10 +866,7 @@ static int sctp_inet6_cmp_addr(const uni
- 	if (sctp_is_any(sk, addr1) || sctp_is_any(sk, addr2))
- 		return 1;
++		lock_sock(sk);
+ 		switch (po->tp_version) {
+ 		case TPACKET_V1:
+ 		case TPACKET_V2:
+@@ -3655,12 +3658,17 @@ packet_setsockopt(struct socket *sock, i
+ 			len = sizeof(req_u.req3);
+ 			break;
+ 		}
+-		if (optlen < len)
+-			return -EINVAL;
+-		if (copy_from_user(&req_u.req, optval, len))
+-			return -EFAULT;
+-		return packet_set_ring(sk, &req_u, 0,
+-			optname == PACKET_TX_RING);
++		if (optlen < len) {
++			ret = -EINVAL;
++		} else {
++			if (copy_from_user(&req_u.req, optval, len))
++				ret = -EFAULT;
++			else
++				ret = packet_set_ring(sk, &req_u, 0,
++						    optname == PACKET_TX_RING);
++		}
++		release_sock(sk);
++		return ret;
+ 	}
+ 	case PACKET_COPY_THRESH:
+ 	{
+@@ -4210,8 +4218,6 @@ static int packet_set_ring(struct sock *
+ 	/* Added to avoid minimal code churn */
+ 	struct tpacket_req *req = &req_u->req;
  
--	if (addr1->sa.sa_family != addr2->sa.sa_family)
--		return 0;
+-	lock_sock(sk);
 -
--	return af1->cmp_addr(addr1, addr2);
-+	return __sctp_v6_cmp_addr(addr1, addr2);
+ 	rb = tx_ring ? &po->tx_ring : &po->rx_ring;
+ 	rb_queue = tx_ring ? &sk->sk_write_queue : &sk->sk_receive_queue;
+ 
+@@ -4349,7 +4355,6 @@ static int packet_set_ring(struct sock *
+ 	if (pg_vec)
+ 		free_pg_vec(pg_vec, order, req->tp_block_nr);
+ out:
+-	release_sock(sk);
+ 	return err;
  }
  
- /* Verify that the provided sockaddr looks bindable.   Common verification,
