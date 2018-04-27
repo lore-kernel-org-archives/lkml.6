@@ -1,73 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758912AbeD0Tgx (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 15:36:53 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44926 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1757590AbeD0Tgv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 15:36:51 -0400
-Date: Fri, 27 Apr 2018 22:36:49 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: Kevin Easton <kevin@guarana.org>, Jason Wang <jasowang@redhat.com>,
-        KVM list <kvm@vger.kernel.org>,
-        virtualization@lists.linux-foundation.org,
-        netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Subject: Re: [PATCH net] vhost: Use kzalloc() to allocate vhost_msg_node
-Message-ID: <20180427223636-mutt-send-email-mst@kernel.org>
-References: <000000000000a5b2b1056a86e98c@google.com>
- <20180427154502.GA22544@la.guarana.org>
- <20180427185501-mutt-send-email-mst@kernel.org>
- <CACT4Y+b4fEOw=GjTsZMHVyQPOZmuqPWj6AJJshpS-UGRx=bhXA@mail.gmail.com>
+        id S1758995AbeD0Thf (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 15:37:35 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:56174 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758565AbeD0Thd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 15:37:33 -0400
+Date: Fri, 27 Apr 2018 21:37:30 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: LKML <linux-kernel@vger.kernel.org>
+cc: Dave Hansen <dave.hansen@linux.intel.com>,
+        Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>
+Subject: [RFD] x86: The future of MPX
+Message-ID: <alpine.DEB.2.21.1804272122390.1596@nanos.tec.linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+b4fEOw=GjTsZMHVyQPOZmuqPWj6AJJshpS-UGRx=bhXA@mail.gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 27, 2018 at 06:11:31PM +0200, Dmitry Vyukov wrote:
-> On Fri, Apr 27, 2018 at 6:05 PM, Michael S. Tsirkin <mst@redhat.com> wrote:
-> > On Fri, Apr 27, 2018 at 11:45:02AM -0400, Kevin Easton wrote:
-> >> The struct vhost_msg within struct vhost_msg_node is copied to userspace,
-> >> so it should be allocated with kzalloc() to ensure all structure padding
-> >> is zeroed.
-> >>
-> >> Signed-off-by: Kevin Easton <kevin@guarana.org>
-> >> Reported-by: syzbot+87cfa083e727a224754b@syzkaller.appspotmail.com
-> >
-> > Does it help if a patch naming the padding is applied,
-> > and then we init just the relevant field?
-> > Just curious.
-> 
-> Yes, it would help.
+Dave,
 
-How about a Tested-by tag then?
+I've got the following MPX related information:
 
-> >> ---
-> >>  drivers/vhost/vhost.c | 2 +-
-> >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-> >> index f3bd8e9..1b84dcff 100644
-> >> --- a/drivers/vhost/vhost.c
-> >> +++ b/drivers/vhost/vhost.c
-> >> @@ -2339,7 +2339,7 @@ EXPORT_SYMBOL_GPL(vhost_disable_notify);
-> >>  /* Create a new message. */
-> >>  struct vhost_msg_node *vhost_new_msg(struct vhost_virtqueue *vq, int type)
-> >>  {
-> >> -     struct vhost_msg_node *node = kmalloc(sizeof *node, GFP_KERNEL);
-> >> +     struct vhost_msg_node *node = kzalloc(sizeof *node, GFP_KERNEL);
-> >>       if (!node)
-> >>               return NULL;
-> >>       node->vq = vq;
-> >> --
-> >> 2.8.1
-> >
-> > --
-> > You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
-> > To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> > To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/20180427185501-mutt-send-email-mst%40kernel.org.
-> > For more options, visit https://groups.google.com/d/optout.
+ .... But they [Intel] certainly haven't maintained the whole MPX support
+ in GCC at all since two or three years (e.g. bootstrap with MPX was broken
+ since forever), so now it's gone from GCC. ....
+
+and I know that GCC is discussing MPX removal since May last year at least.
+To the best of my knowledge clang does not support it either.
+
+So what's the state of this stuff? If we don't have a compiler supporting
+it how on earth is that useful or even testable for anyone who does not
+have access to some magic Intel internal compiler version?
+
+If that's the sad state of affairs, then we just should move the whole
+stuff into staging or simply queue it for removal in 4.18.
+
+Thanks,
+
+	tglx
