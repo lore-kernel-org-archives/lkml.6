@@ -1,240 +1,225 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757340AbeD0F2z (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 01:28:55 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:45505 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751988AbeD0F2x (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 01:28:53 -0400
-X-Google-Smtp-Source: AB8JxZowp0dY6iB5wM1Jx/g756XvJX7CLHA/zgWfukXzx2ePz46MGPU5sjihbfZNw8OsuaNJ8VJ8Eg==
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: "David S. Miller" <davem@davemloft.net>,
-        Chris Lew <clew@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Subject: [PATCH v3] net: qrtr: Expose tunneling endpoint to user space
-Date: Thu, 26 Apr 2018 22:28:49 -0700
-Message-Id: <20180427052849.24899-1-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.16.2
+        id S1757353AbeD0F3R (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 01:29:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54783 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751291AbeD0F3Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 01:29:16 -0400
+X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "Cc"
+From: NeilBrown <neilb@suse.com>
+To: Trond Myklebust <trond.myklebust@primarydata.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Date: Fri, 27 Apr 2018 15:29:03 +1000
+Cc: Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>
+Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] NFS: Avoid quadratic search when freeing delegations.
+Message-ID: <87h8nxkyjk.fsf@notabene.neil.brown.name>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This implements a misc character device named "qrtr-tun" for the purpose
-of allowing user space applications to implement endpoints in the qrtr
-network.
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-This allows more advanced (and dynamic) testing of the qrtr code as well
-as opens up the ability of tunneling qrtr over a network or USB link.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
+If an NFS client has 10,000 delegations which are between 90 and 180 second=
+s old,
+and 10,000 which are between 180 and 270 seconds old, with none of them sti=
+ll
+in use, it is likely that the old ones are at the end of the list.
+The first 10,000 will not be marked to be returned, the last 10,000 will.
 
-Changes since v2:
-- Add support for read poll
+To return these, the code starts at the front of the list and finds the
+first delegation needing to be returned (testing 10,000 on the way).
+Then it drops rcu_readlock(), returns the delegation and starts again,
+and does this 10,000 times.
 
-Changes since v1:
-- Dropped queue lock
+As delegation return is async, it may never block, so these 10,000
+delegation will be returned without stopping for a breath.  The soft-lock
+detector will notice and complain.
 
- net/qrtr/Kconfig  |   7 +++
- net/qrtr/Makefile |   2 +
- net/qrtr/tun.c    | 161 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 170 insertions(+)
- create mode 100644 net/qrtr/tun.c
+This patch makes 3 changes.
 
-diff --git a/net/qrtr/Kconfig b/net/qrtr/Kconfig
-index 326fd97444f5..1944834d225c 100644
---- a/net/qrtr/Kconfig
-+++ b/net/qrtr/Kconfig
-@@ -21,4 +21,11 @@ config QRTR_SMD
- 	  Say Y here to support SMD based ipcrouter channels.  SMD is the
- 	  most common transport for IPC Router.
- 
-+config QRTR_TUN
-+	tristate "TUN device for Qualcomm IPC Router"
-+	---help---
-+	  Say Y here to expose a character device that allows user space to
-+	  implement endpoints of QRTR, for purpose of tunneling data to other
-+	  hosts or testing purposes.
+1/ cond_resched() is added so that the soft-lockup detector doesn't notice.
+2/ A place-holder (an inode) is kept when locks are dropped, so that
+   the place can usually be found again after taking rcu_readlock().
+   This means we don't need to skip over 10,000 entries 10,000 times,
+   100 million pointless operations - which could eaisly be a larger
+   number.
+3/ If nfs_sb_active() fails, break out of the loop - there is no point
+   in continuing.
+
+The patch also add list_for_each_entry_from_rcu() to rculist.h in
+order to achieve 2/.
+
+Signed-off-by: NeilBrown <neilb@suse.com>
+=2D--
+
+Hi,
+ I'm hoping one of the RCU reviewers will provide an Acked-by for the
+ rculist.h change.
+
+ If you'ld like 3 patches instead of just one, please let me know.  But
+ they all see to fit well together.
+
+thanks,
+NeilBrown
+
+
+ fs/nfs/delegation.c     | 57 ++++++++++++++++++++++++++++++++++++++++++++-=
+----
+ include/linux/rculist.h | 10 +++++++++
+ 2 files changed, 62 insertions(+), 5 deletions(-)
+
+diff --git a/fs/nfs/delegation.c b/fs/nfs/delegation.c
+index 1819d0d0ba4b..c3d9e21ab440 100644
+=2D-- a/fs/nfs/delegation.c
++++ b/fs/nfs/delegation.c
+@@ -483,19 +483,56 @@ static bool nfs_delegation_need_return(struct nfs_del=
+egation *delegation)
+ int nfs_client_return_marked_delegations(struct nfs_client *clp)
+ {
+ 	struct nfs_delegation *delegation;
++	struct nfs_delegation *prev;
+ 	struct nfs_server *server;
+ 	struct inode *inode;
++	struct inode *place_holder =3D NULL;
+ 	int err =3D 0;
+=20
+ restart:
++	/*
++	 * To avoid quadratic looping we hold an reference
++	 * to an inode place_holder.  Each time we restart, we
++	 * list nfs_servers from the server of that inode, and
++	 * delegation in the server from the delegations of that
++	 * inode.
++	 * prev is an RCU-protected pointer to a delegation which
++	 * wasn't marked for return and might be a good choice for
++	 * the next place_holder.
++	 */
+ 	rcu_read_lock();
+=2D	list_for_each_entry_rcu(server, &clp->cl_superblocks, client_link) {
+=2D		list_for_each_entry_rcu(delegation, &server->delegations,
+=2D								super_list) {
+=2D			if (!nfs_delegation_need_return(delegation))
++	prev =3D NULL;
++	if (place_holder)
++		server =3D NFS_SERVER(place_holder);
++	else
++		server =3D list_entry_rcu(clp->cl_superblocks.next,
++					struct nfs_server, client_link);
++	list_for_each_entry_from_rcu(server, &clp->cl_superblocks, client_link) {
++		delegation =3D NULL;
++		if (place_holder && server =3D=3D NFS_SERVER(place_holder))
++			delegation =3D rcu_dereference(NFS_I(place_holder)->delegation);
++		if (!delegation)
++			delegation =3D list_entry_rcu(server->delegations.next,
++						    struct nfs_delegation, super_list);
++		list_for_each_entry_from_rcu(delegation, &server->delegations, super_lis=
+t) {
++			struct inode *to_put =3D NULL;
 +
- endif # QRTR
-diff --git a/net/qrtr/Makefile b/net/qrtr/Makefile
-index ab09e40f7c74..be012bfd3e52 100644
---- a/net/qrtr/Makefile
-+++ b/net/qrtr/Makefile
-@@ -2,3 +2,5 @@ obj-$(CONFIG_QRTR) := qrtr.o
- 
- obj-$(CONFIG_QRTR_SMD) += qrtr-smd.o
- qrtr-smd-y	:= smd.o
-+obj-$(CONFIG_QRTR_TUN) += qrtr-tun.o
-+qrtr-tun-y	:= tun.o
-diff --git a/net/qrtr/tun.c b/net/qrtr/tun.c
-new file mode 100644
-index 000000000000..ccff1e544c21
---- /dev/null
-+++ b/net/qrtr/tun.c
-@@ -0,0 +1,161 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2018, Linaro Ltd */
++			if (!nfs_delegation_need_return(delegation)) {
++				prev =3D delegation;
+ 				continue;
++			}
+ 			if (!nfs_sb_active(server->super))
+=2D				continue;
++				break;
 +
-+#include <linux/miscdevice.h>
-+#include <linux/module.h>
-+#include <linux/poll.h>
-+#include <linux/skbuff.h>
-+#include <linux/uaccess.h>
++			if (prev) {
++				struct inode *tmp;
++				tmp =3D nfs_delegation_grab_inode(prev);
++				if (tmp) {
++					to_put =3D place_holder;
++					place_holder =3D tmp;
++				}
++			}
 +
-+#include "qrtr.h"
+ 			inode =3D nfs_delegation_grab_inode(delegation);
+ 			if (inode =3D=3D NULL) {
+ 				rcu_read_unlock();
+@@ -505,16 +542,26 @@ int nfs_client_return_marked_delegations(struct nfs_c=
+lient *clp)
+ 			delegation =3D nfs_start_delegation_return_locked(NFS_I(inode));
+ 			rcu_read_unlock();
+=20
++			if (to_put) {
++				iput(to_put);
++				to_put =3D NULL;
++			}
 +
-+struct qrtr_tun {
-+	struct qrtr_endpoint ep;
+ 			err =3D nfs_end_delegation_return(inode, delegation, 0);
+ 			iput(inode);
+ 			nfs_sb_deactive(server->super);
++			cond_resched();
+ 			if (!err)
+ 				goto restart;
+ 			set_bit(NFS4CLNT_DELEGRETURN, &clp->cl_state);
++			if (place_holder)
++				iput(place_holder);
+ 			return err;
+ 		}
+ 	}
+ 	rcu_read_unlock();
++	if (place_holder)
++		iput(place_holder);
+ 	return 0;
+ }
+=20
+diff --git a/include/linux/rculist.h b/include/linux/rculist.h
+index 127f534fec94..2d86f9869842 100644
+=2D-- a/include/linux/rculist.h
++++ b/include/linux/rculist.h
+@@ -403,6 +403,16 @@ static inline void list_splice_tail_init_rcu(struct li=
+st_head *list,
+ 	     &pos->member !=3D (head);	\
+ 	     pos =3D list_entry_rcu(pos->member.next, typeof(*pos), member))
+=20
++/**
++ * list_for_each_entry_from_rcu - iterate over a list continuing from curr=
+ent point
++ * @pos:	the type * to use as a loop cursor.
++ * @head:	the head for your list.
++ * @member:	the name of the list_node within the struct.
++ */
++#define list_for_each_entry_from_rcu(pos, head, member)			\
++	for (; &(pos)->member !=3D (head);					\
++		pos =3D list_entry_rcu(pos->member.next, typeof(*(pos)), member))
 +
-+	struct sk_buff_head queue;
-+	wait_queue_head_t readq;
-+};
-+
-+static int qrtr_tun_send(struct qrtr_endpoint *ep, struct sk_buff *skb)
-+{
-+	struct qrtr_tun *tun = container_of(ep, struct qrtr_tun, ep);
-+
-+	skb_queue_tail(&tun->queue, skb);
-+
-+	/* wake up any blocking processes, waiting for new data */
-+	wake_up_interruptible(&tun->readq);
-+
-+	return 0;
-+}
-+
-+static int qrtr_tun_open(struct inode *inode, struct file *filp)
-+{
-+	struct qrtr_tun *tun;
-+
-+	tun = kzalloc(sizeof(*tun), GFP_KERNEL);
-+	if (!tun)
-+		return -ENOMEM;
-+
-+	skb_queue_head_init(&tun->queue);
-+	init_waitqueue_head(&tun->readq);
-+
-+	tun->ep.xmit = qrtr_tun_send;
-+
-+	filp->private_data = tun;
-+
-+	return qrtr_endpoint_register(&tun->ep, QRTR_EP_NID_AUTO);
-+}
-+
-+static ssize_t qrtr_tun_read_iter(struct kiocb *iocb, struct iov_iter *to)
-+{
-+	struct file *filp = iocb->ki_filp;
-+	struct qrtr_tun *tun = filp->private_data;
-+	struct sk_buff *skb;
-+	int count;
-+
-+	while (!(skb = skb_dequeue(&tun->queue))) {
-+		if (filp->f_flags & O_NONBLOCK)
-+			return -EAGAIN;
-+
-+		/* Wait until we get data or the endpoint goes away */
-+		if (wait_event_interruptible(tun->readq,
-+					     !skb_queue_empty(&tun->queue)))
-+			return -ERESTARTSYS;
-+	}
-+
-+	count = min_t(size_t, iov_iter_count(to), skb->len);
-+	if (copy_to_iter(skb->data, count, to) != count)
-+		count = -EFAULT;
-+
-+	kfree_skb(skb);
-+
-+	return count;
-+}
-+
-+static ssize_t qrtr_tun_write_iter(struct kiocb *iocb, struct iov_iter *from)
-+{
-+	struct file *filp = iocb->ki_filp;
-+	struct qrtr_tun *tun = filp->private_data;
-+	size_t len = iov_iter_count(from);
-+	ssize_t ret;
-+	void *kbuf;
-+
-+	kbuf = kzalloc(len, GFP_KERNEL);
-+	if (!kbuf)
-+		return -ENOMEM;
-+
-+	if (!copy_from_iter_full(kbuf, len, from))
-+		return -EFAULT;
-+
-+	ret = qrtr_endpoint_post(&tun->ep, kbuf, len);
-+
-+	return ret < 0 ? ret : len;
-+}
-+
-+static __poll_t qrtr_tun_poll(struct file *filp, poll_table *wait)
-+{
-+	struct qrtr_tun *tun = filp->private_data;
-+	__poll_t mask = 0;
-+
-+	poll_wait(filp, &tun->readq, wait);
-+
-+	if (!skb_queue_empty(&tun->queue))
-+		mask |= EPOLLIN | EPOLLRDNORM;
-+
-+	return mask;
-+}
-+
-+static int qrtr_tun_release(struct inode *inode, struct file *filp)
-+{
-+	struct qrtr_tun *tun = filp->private_data;
-+	struct sk_buff *skb;
-+
-+	qrtr_endpoint_unregister(&tun->ep);
-+
-+	/* Discard all SKBs */
-+	while (!skb_queue_empty(&tun->queue)) {
-+		skb = skb_dequeue(&tun->queue);
-+		kfree_skb(skb);
-+	}
-+
-+	kfree(tun);
-+
-+	return 0;
-+}
-+
-+static const struct file_operations qrtr_tun_ops = {
-+	.owner = THIS_MODULE,
-+	.open = qrtr_tun_open,
-+	.poll = qrtr_tun_poll,
-+	.read_iter = qrtr_tun_read_iter,
-+	.write_iter = qrtr_tun_write_iter,
-+	.release = qrtr_tun_release,
-+};
-+
-+static struct miscdevice qrtr_tun_miscdev = {
-+	MISC_DYNAMIC_MINOR,
-+	"qrtr-tun",
-+	&qrtr_tun_ops,
-+};
-+
-+static int __init qrtr_tun_init(void)
-+{
-+	int ret;
-+
-+	ret = misc_register(&qrtr_tun_miscdev);
-+	if (ret)
-+		pr_err("failed to register Qualcomm IPC Router tun device\n");
-+
-+	return ret;
-+}
-+
-+static void __exit qrtr_tun_exit(void)
-+{
-+	misc_deregister(&qrtr_tun_miscdev);
-+}
-+
-+module_init(qrtr_tun_init);
-+module_exit(qrtr_tun_exit);
-+
-+MODULE_DESCRIPTION("Qualcomm IPC Router TUN device");
-+MODULE_LICENSE("GPL v2");
--- 
-2.16.2
+ /**
+  * hlist_del_rcu - deletes entry from hash list without re-initialization
+  * @n: the element to delete from the hash list.
+=2D-=20
+2.14.0.rc0.dirty
+
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlritSAACgkQOeye3VZi
+gbmVABAAuQllng/FqKKiGmVgo765puwDfSvOOxjDHM34NsJBv7JRN3m8xbQL7YOs
+UUPJ0T1SA2u+JfWI3mu1Jule5azvaknS6Kek59m+Rw5/LrjiRhDr4s+uyIBg2OHJ
+fyGrmvjitM7OQ1aocPIPTuP4H1GJ45ZEEuASX+tlzKgELI9J0I8/f/3ywIEQ2ESl
+XIOWk54dU52xl/mgh9abRN0+FCgIhZbZGjzlZDKH/NXDgU6Ja/7zJcrib2RA0pvb
+WHgbjmB25P6DW5EbHZQasd/WjpK4TC+9h1jhYp/D8adLxOZm2V/CTqlBphzrg2hm
+2qfV9AqX6238HaY05w1uvEIbIL/jIMDUL6TbU1Byo41lubzhFg1ffJ5MgkXOfOgU
+2HiY2pQJgkk3UCEHgyMeSPGN8IytNfPC839VG8PIL1wZ6Q+HCv1muyJai9TKkhY0
+FDHB7z476J6XiYZ3JbBbm0D0tJSl4Y8GnMHWK4fGckkqGOUQHqy56fo7ccv1vbhK
+9LQYqH6ewJfffRbhyH+hOo6+BAX5zeAyRmS6c7B2FPTTDAcJEVE4kc1IyYxXPlVo
+tSyMfJWU68JBC0PYIPaQDglZ6LK1odSkLzPG4N+dN6rkswfQ4xhCoMBdI80fTKjB
+lGQSb6fcFbqGRLPeO6gYtHTsRD7xSBiLin5gyJOvdwC1636C6C4=
+=/YRi
+-----END PGP SIGNATURE-----
+--=-=-=--
