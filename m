@@ -1,63 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1759064AbeD0TqB (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 15:46:01 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:33778 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758703AbeD0Tp7 (ORCPT
+        id S1759091AbeD0TqH (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 15:46:07 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:33798 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758703AbeD0TqB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 15:45:59 -0400
-X-Google-Smtp-Source: AB8JxZqRVyNZSKDs4wKsDwjUJpbAG++N+y9M4lRkHeZ75Qc84LuFGGX6Uhx0W4IUAZA9ZupEHxHjBLor+4dc7p83m64=
+        Fri, 27 Apr 2018 15:46:01 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C7F466034E
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date: Fri, 27 Apr 2018 13:45:59 -0600
+From: Lina Iyer <ilina@codeaurora.org>
+To: Matthias Kaehlcke <mka@chromium.org>
+Cc: andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, sboyd@kernel.org, evgreen@chromium.org,
+        dianders@chromium.org
+Subject: Re: [PATCH v6 05/10] drivers: qcom: rpmh-rsc: write sleep/wake
+ requests to TCS
+Message-ID: <20180427194559.GE6380@codeaurora.org>
+References: <20180419221635.17849-1-ilina@codeaurora.org>
+ <20180419221635.17849-6-ilina@codeaurora.org>
+ <20180425214111.GC243180@google.com>
+ <20180427173943.GD6380@codeaurora.org>
+ <20180427184017.GI243180@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20180427193204.GD23874@flask>
-References: <20180423080512.1614520-1-arnd@arndb.de> <20180427193204.GD23874@flask>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Fri, 27 Apr 2018 21:45:58 +0200
-X-Google-Sender-Auth: bnTQnsrJCeZMCLl0uij_nf8GL_w
-Message-ID: <CAK8P3a0exO_uFUhhOL1FVgToe7_FEbYrCOvyAXSgZRfVqY4M+w@mail.gmail.com>
-Subject: Re: [PATCH] [RESEND] KVM: x86: use timespec64 for KVM_HC_CLOCK_PAIRING
-To: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>, kvm@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20180427184017.GI243180@google.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3RJk75u015182
 
-On Fri, Apr 27, 2018 at 9:32 PM, Radim Krčmář <rkrcmar@redhat.com> wrote:
-> 2018-04-23 10:04+0200, Arnd Bergmann:
->> The hypercall was added using a struct timespec based implementation,
->> but we should not use timespec in new code.
+On Fri, Apr 27 2018 at 12:40 -0600, Matthias Kaehlcke wrote:
+>On Fri, Apr 27, 2018 at 11:39:43AM -0600, Lina Iyer wrote:
+>> On Wed, Apr 25 2018 at 15:41 -0600, Matthias Kaehlcke wrote:
+>> > On Thu, Apr 19, 2018 at 04:16:30PM -0600, Lina Iyer wrote:
+>> > > Sleep and wake requests are sent when the application processor
+>> > > subsystem of the SoC is entering deep sleep states like in suspend.
+>> > > These requests help lower the system power requirements when the
+>> > > resources are not in use.
+>> > >
+>> > > Sleep and wake requests are written to the TCS slots but are not
+>> > > triggered at the time of writing. The TCS are triggered by the firmware
+>> > > after the last of the CPUs has executed its WFI. Since these requests
+>> > > may come in different batches of requests, it is the job of this
+>> > > controller driver to find and arrange the requests into the available
+>> > > TCSes.
+>> > >
+>> > > Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+>> > > Reviewed-by: Evan Green <evgreen@chromium.org>
+>> > > ---
+>> > >  drivers/soc/qcom/rpmh-internal.h |   8 +++
+>> > >  drivers/soc/qcom/rpmh-rsc.c      | 120 +++++++++++++++++++++++++++++++
+>> > >  2 files changed, 128 insertions(+)
+>> > >
+>> > > diff --git a/drivers/soc/qcom/rpmh-internal.h b/drivers/soc/qcom/rpmh-internal.h
+>> > > index d9a21726e568..6e19fe458c31 100644
+>> > > --- a/drivers/soc/qcom/rpmh-internal.h
+>> > > +++ b/drivers/soc/qcom/rpmh-internal.h
+>> >
+>> > <snip>
+>> >
+>> > > +static int find_match(const struct tcs_group *tcs, const struct tcs_cmd *cmd,
+>> > > +		      int len)
+>> > > +{
+>> > > +	int i, j;
+>> > > +
+>> > > +	/* Check for already cached commands */
+>> > > +	for_each_set_bit(i, tcs->slots, MAX_TCS_SLOTS) {
+>> > > +		for (j = 0; j < len; j++) {
+>> > > +			if (tcs->cmd_cache[i] != cmd[0].addr) {
+>> >
+>> > Shouldn't the condition be 'tcs->cmd_cache[i + j] != cmd[j].addr'?
+>> >
+>> Here, we are trying to find the first address from the request and its
+>> position 'i' in the cmd_cache.
 >>
->> This changes it to timespec64. There is no functional change
->> here since the implementation is only used in 64-bit kernels
->> that use the same definition for timespec and timespec64.
+>> > Otherwise the code below the following if branch will never be
+>> > executed. Either the 'tcs->cmd_cache[i] != cmd[0].addr' branch isn't
+>> > entered because the addresses match, or the addresses don't match
+>> > and the inner loop is aborted after the first iteration.
+>> >
+>> > > +				if (j == 0)
+>> > > +					break;
+>> > > +				WARN(tcs->cmd_cache[i + j] != cmd[j].addr,
+>> > > +				     "Message does not match previous sequence.\n");
+>> We now check for the sequence using the iterator 'j' only after we have
+>> found 'i' (the beginning of our request).
 >>
->> Fixes: 55dd00a73a51 ("KVM: x86: add KVM_HC_CLOCK_PAIRING hypercall")
+>> I hope that helps clear the concern.
 >
-> (Removed the "Fixes:" tag as it doesn't really change behavior.)
+>It doesn't, maybe I'm just confused, the driver has a certain
+>complexity and I don't claim to have a comprehensive understanding :)
 >
->> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->> ---
->> I originally sent this in October, but got no reply. The patch
->> is still required for the overall cleanup of 'timespec' uses
->> in the kernel, please apply.
+>If I understand correctly find_match() is used to find a sequence of
+>commands of length 'len' in the command cache. If that is correct I
+>would expect it to do the following:
 >
-> Queued now, thanks!
+>1. iterate through the commands in the command cache and find a
+>command that matches the first command in the sequence
 >
-> Anything we need to do for the x86_platform_ops switch?
+>2. verify that the (len - 1) subsequent commands match those in the
+>sequence, otherwise bail out
+>
+>If I'm not mistaken the current version of find_match() only checks
+>that the first command exists. After that it happily increases the
+>command index, but doesn't perform any checks (after finding the first
+>command 'tcs->cmd_cache[i] != cmd[0].addr' remains false for the
+>subsequent values of j). When j reaches (len - 1) the function
+>returns the index of the first command in the cache, regardless of
+>whether the other commands match or not.
+>
+Did you miss the check inside the WARN?
+WARN(tcs->cmd_cache[i + j] != cmd[j].addr,
 
-I think it's on me to resend what I have. That patch is one of the few
-remaining ones in my backlog for y2038 after having sent out
-some 50 other patches (some new, some old).
-
-It has been in my testing tree since October though and not shown
-any regressions for a while (I had to do one modification after
-Jailhouse got merged), so I'll just send it out now.
-
-       Arnd
+--Lina
