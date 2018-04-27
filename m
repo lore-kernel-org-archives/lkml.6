@@ -1,79 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757882AbeD0Jor (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 05:44:47 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:45775 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757842AbeD0Jon (ORCPT
+        id S932649AbeD0Joz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 05:44:55 -0400
+Received: from www62.your-server.de ([213.133.104.62]:47577 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757353AbeD0Jox (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 05:44:43 -0400
-Date: Fri, 27 Apr 2018 02:44:20 -0700
-From: tip-bot for Will Deacon <tipbot@zytor.com>
-Message-ID: <tip-baa8c6ddf7be33f2b0ddeb68906d668caf646baa@git.kernel.org>
-Cc: will.deacon@arm.com, longman@redhat.com, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, mingo@kernel.org,
-        torvalds@linux-foundation.org, peterz@infradead.org,
-        tglx@linutronix.de
-Reply-To: linux-kernel@vger.kernel.org, mingo@kernel.org, tglx@linutronix.de,
-        peterz@infradead.org, torvalds@linux-foundation.org, hpa@zytor.com,
-        longman@redhat.com, will.deacon@arm.com
-In-Reply-To: <1524738868-31318-15-git-send-email-will.deacon@arm.com>
-References: <1524738868-31318-15-git-send-email-will.deacon@arm.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] MAINTAINERS: Add myself as a co-maintainer for
- the locking subsystem
-Git-Commit-ID: baa8c6ddf7be33f2b0ddeb68906d668caf646baa
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Fri, 27 Apr 2018 05:44:53 -0400
+Subject: Re: [PATCH bpf-next] bpf, doc: Update bpf_jit_enable limitation for
+ CONFIG_BPF_JIT_ALWAYS_ON
+To: Leo Yan <leo.yan@linaro.org>, Alexei Starovoitov <ast@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jonathan Corbet <corbet@lwn.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+References: <1524709611-29437-1-git-send-email-leo.yan@linaro.org>
+From: Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <275e03a2-b74e-8f60-4ffe-26c9a79fae9d@iogearbox.net>
+Date: Fri, 27 Apr 2018 11:44:44 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <1524709611-29437-1-git-send-email-leo.yan@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  baa8c6ddf7be33f2b0ddeb68906d668caf646baa
-Gitweb:     https://git.kernel.org/tip/baa8c6ddf7be33f2b0ddeb68906d668caf646baa
-Author:     Will Deacon <will.deacon@arm.com>
-AuthorDate: Thu, 26 Apr 2018 11:34:28 +0100
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Fri, 27 Apr 2018 09:48:54 +0200
+On 04/26/2018 04:26 AM, Leo Yan wrote:
+> When CONFIG_BPF_JIT_ALWAYS_ON is enabled, kernel has limitation for
+> bpf_jit_enable, so it has fixed value 1 and we cannot set it to 2
+> for JIT opcode dumping; this patch is to update the doc for it.
+> 
+> Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> ---
+>  Documentation/networking/filter.txt | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/Documentation/networking/filter.txt b/Documentation/networking/filter.txt
+> index fd55c7d..feddab9 100644
+> --- a/Documentation/networking/filter.txt
+> +++ b/Documentation/networking/filter.txt
+> @@ -483,6 +483,12 @@ Example output from dmesg:
+>  [ 3389.935851] JIT code: 00000030: 00 e8 28 94 ff e0 83 f8 01 75 07 b8 ff ff 00 00
+>  [ 3389.935852] JIT code: 00000040: eb 02 31 c0 c9 c3
+>  
+> +When CONFIG_BPF_JIT_ALWAYS_ON is enabled, bpf_jit_enable is set to 1 by default
+> +and it returns failure if change to any other value from proc node; this is
+> +for security consideration to avoid leaking info to unprivileged users. In this
+> +case, we can't directly dump JIT opcode image from kernel log, alternatively we
+> +need to use bpf tool for the dumping.
+> +
 
-MAINTAINERS: Add myself as a co-maintainer for the locking subsystem
+Could you change this doc text a bit, I think it's slightly misleading. From the first
+sentence one could also interpret that value 0 would leaking info to unprivileged users
+whereas here we're only talking about the case of value 2. Maybe something roughly like
+this to make it more clear:
 
-I've been heavily involved with concurrency and memory ordering stuff
-(see ATOMIC INFRASTRUCTURE and LINUX KERNEL MEMORY CONSISTENCY MODEL)
-and with arm64 now using qrwlock with a view to using qspinlock in the
-near future, I'm going to continue being involved with the core locking
-primitives. Reflect this by adding myself as a co-maintainer alongside
-Ingo and Peter.
+  When CONFIG_BPF_JIT_ALWAYS_ON is enabled, bpf_jit_enable is permanently set to 1 and
+  setting any other value than that will return in failure. This is even the case for
+  setting bpf_jit_enable to 2, since dumping the final JIT image into the kernel log
+  is discouraged and introspection through bpftool (under tools/bpf/bpftool/) is the
+  generally recommended approach instead.
 
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Waiman Long <longman@redhat.com>
-Cc: boqun.feng@gmail.com
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: paulmck@linux.vnet.ibm.com
-Link: http://lkml.kernel.org/r/1524738868-31318-15-git-send-email-will.deacon@arm.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index dd66ae9a847e..e4585e33862c 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8328,6 +8328,7 @@ F:	Documentation/admin-guide/LSM/LoadPin.rst
- LOCKING PRIMITIVES
- M:	Peter Zijlstra <peterz@infradead.org>
- M:	Ingo Molnar <mingo@redhat.com>
-+M:	Will Deacon <will.deacon@arm.com>
- L:	linux-kernel@vger.kernel.org
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking/core
- S:	Maintained
+Thanks,
+Daniel
