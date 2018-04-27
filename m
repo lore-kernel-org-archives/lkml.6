@@ -1,48 +1,41 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpeeCM7ked7DdJJfO3GqWgIEmn8KuZI0s2j6eZEQzVIOCe+zl3ErEzawBusXYRzi7uBe7oc
-ARC-Seal: i=1; a=rsa-sha256; t=1524837625; cv=none;
+X-Google-Smtp-Source: AB8JxZp3D2Y2txDg6EWQ4eLYa9prgcOFy+LNFhbtvTSS0LLj9fIwYw4qPppESox4EoNaYBF8WwTi
+ARC-Seal: i=1; a=rsa-sha256; t=1524837620; cv=none;
         d=google.com; s=arc-20160816;
-        b=E17pzLMiMXrA3Y7KN3pOc6V1cYZshOfuAqOqVsMg2aFGuTkcExAm5ATzp1HyqnWh7H
-         I3hLamr0Ndp6Co7ADz02PPxAfhyB8wney3QWPZx7bw/J5Cb/o2a9bOtuciIcNWdrnw0Q
-         RCQ7bJ3df0M1v9bKvj7tQjbUjnQAti30VQHaViH8KooV2HOKjWgrZ3pj5uwNFeRdTDPF
-         gtbSnJb1zpKaWj9G3CqkGTs35DwfPcaf/VO5pcrl5OhC1AzPo7pHQkqL/01XEGDFVqe4
-         CT4MZV23lmrOzA747+BgQHqL8vmrPzsTOO0KHnFOW3MdI7gVLgLpq9eVDcE1nz2Qrtqk
-         OmLA==
+        b=n7pThMQ6UodP2B/VRiVOOoRCxNs9JCkSZpHer6aRKZCJFu1Xcwu2xnZQlg6p54Rpzm
+         Ls5oGQe1aWabLAcmchVkzSsRDf1bP/lk+ZD4vTU9mvNge4jvRpNOWYnDa7gXCml5B5LD
+         eZz7W1S/ktfpSRCH1TjY6+5e+LgyfCiEmrQQalVRgPTI/x7vjLkTDxJ+7Smh80zNVsD4
+         O4oBJyXd5PeD+2k2dngpr/XM2G1Ca6jfiE3jozTH3ABzbtuOFL5bgAlsC9JNEtVCPELZ
+         FRUmhuvVxjF2zBTF1zy4ky1IyBhjSUtxq+H7L1bCfbF84suw/DEC3wYBXCaret1L1ew5
+         dYDA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=Siw/NgQ4fbD0m9vHon+xuWAIgyoNXXsGng9iBtR3wSk=;
-        b=LlVfgDi8ybdmRmqYT3mvkkYwpJJXoy3TbR/c2nCAy58fMbofyesFMSVm3QYNyMU6VX
-         NcyUME7eMsdiahkU6iaA5/Kku6vFkZReIcKXbU8Axgce3bJY2W/FpMqXgfdMZ3NpgBbN
-         BTeBTQK3/bqt2y1iwxkrt8llTYqRx4s5ROz0+jRD/FZ3s3l+vY63x3DaTImycpBThCTL
-         W7V1Kf2xz1MRTtG4aLTEZKydTKPjT/8kwR+a16G0Qfvp/mRD9DpPFF/aYfhrg1ITdmQ8
-         LRMcaJTciH13LbTq8rVl4rHa50shhPGdlBw0ASJZ1RealV6qtWya9CQaZR/xlMm+eI1i
-         IZEg==
+        bh=/hBdTwQFFq92tpDTBR59Kh6LVMX5yCRpSOtI7ZWzqpg=;
+        b=Heb0oa+FhHzPKrRPJ/koVGsiAxciOUicZMfw02BTrZ9zv6RVSoDFDGR6wTEAHbtemX
+         zXihU3NQurJGdTt1iVYB5FVVn9GYSqv5lBJv8DjxhtlqAiFczyFpPYksIujxPtzZNB35
+         T2UmaEMdxHAdfmBnu5KnYjAcGbGiWVII1wYd/GK8qWbowqs9gCd5T/TP5jtMt3ltKlII
+         U4hrWNWgi0lwXs+3ZMv3C4XFyLTPxo0NfQOqUgswniBUfk1Qi0BDdgpmnyzDehYSq3a3
+         oC2Q57urQMQ+SxxOSzdIicHwVmnwArTKHHYzDIeck9AP0Cj1AwCSvWrToGslvXkS2b8U
+         P+ow==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 885412185A
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FFCE21894
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jiri Olsa <jolsa@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Andi Kleen <andi@firstfloor.org>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Stephane Eranian <eranian@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	syzkaller-bugs@googlegroups.com,
-	x86@kernel.org,
-	Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 3.18 06/24] perf: Return proper values for user stack errors
-Date: Fri, 27 Apr 2018 15:57:41 +0200
-Message-Id: <20180427135631.850559784@linuxfoundation.org>
+	wangguang <wangguang03@zte.com>,
+	Theodore Tso <tytso@mit.edu>,
+	Nathan Chancellor <natechancellor@gmail.com>,
+	Harsh Shandilya <harsh@prjkt.io>
+Subject: [PATCH 3.18 04/24] ext4: bugfix for mmaped pages in mpage_release_unused_pages()
+Date: Fri, 27 Apr 2018 15:57:39 +0200
+Message-Id: <20180427135631.764487030@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135631.584839868@linuxfoundation.org>
 References: <20180427135631.584839868@linuxfoundation.org>
@@ -52,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908138120907757?=
-X-GMAIL-MSGID: =?utf-8?q?1598908138120907757?=
+X-GMAIL-THRID: =?utf-8?q?1598908132982127189?=
+X-GMAIL-MSGID: =?utf-8?q?1598908132982127189?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -61,44 +54,67 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jiri Olsa <jolsa@kernel.org>
+From: wangguang <wang.guang55@zte.com.cn>
 
-commit 78b562fbfa2cf0a9fcb23c3154756b690f4905c1 upstream.
+commit 4e800c0359d9a53e6bf0ab216954971b2515247f upstream.
 
-Return immediately when we find issue in the user stack checks. The
-error value could get overwritten by following check for
-PERF_SAMPLE_REGS_INTR.
+Pages clear buffers after ext4 delayed block allocation failed,
+However, it does not clean its pte_dirty flag.
+if the pages unmap ,in cording to the pte_dirty ,
+unmap_page_range may try to call __set_page_dirty,
 
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <andi@firstfloor.org>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: syzkaller-bugs@googlegroups.com
-Cc: x86@kernel.org
-Fixes: 60e2364e60e8 ("perf: Add ability to sample machine state on interrupt")
-Link: http://lkml.kernel.org/r/20180415092352.12403-1-jolsa@kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+which may lead to the bugon at
+mpage_prepare_extent_to_map:head = page_buffers(page);.
+
+This patch just call clear_page_dirty_for_io to clean pte_dirty
+at mpage_release_unused_pages for pages mmaped.
+
+Steps to reproduce the bug:
+
+（1） mmap a file in ext4
+	addr = (char *)mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_SHARED,
+	       	            fd, 0);
+	memset(addr, 'i', 4096);
+
+（2） return EIO at
+
+	ext4_writepages->mpage_map_and_submit_extent->mpage_map_one_extent
+
+which causes this log message to be print:
+
+                ext4_msg(sb, KERN_CRIT,
+                        "Delayed block allocation failed for "
+                        "inode %lu at logical offset %llu with"
+                        " max blocks %u with error %d",
+                        inode->i_ino,
+                        (unsigned long long)map->m_lblk,
+                        (unsigned)map->m_len, -err);
+
+(3）Unmap the addr cause warning at
+
+	__set_page_dirty:WARN_ON_ONCE(warn && !PageUptodate(page));
+
+(4) wait for a minute,then bugon happen.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: wangguang <wangguang03@zte.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+[nathanchance: Resolved conflict from lack of 09cbfeaf1a5a6]
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Harsh Shandilya <harsh@prjkt.io>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- kernel/events/core.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/ext4/inode.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -7348,9 +7348,9 @@ static int perf_copy_attr(struct perf_ev
- 		 * __u16 sample size limit.
- 		 */
- 		if (attr->sample_stack_user >= USHRT_MAX)
--			ret = -EINVAL;
-+			return -EINVAL;
- 		else if (!IS_ALIGNED(attr->sample_stack_user, sizeof(u64)))
--			ret = -EINVAL;
-+			return -EINVAL;
- 	}
- 
- out:
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -1338,6 +1338,8 @@ static void mpage_release_unused_pages(s
+ 			BUG_ON(!PageLocked(page));
+ 			BUG_ON(PageWriteback(page));
+ 			if (invalidate) {
++				if (page_mapped(page))
++					clear_page_dirty_for_io(page);
+ 				block_invalidatepage(page, 0, PAGE_CACHE_SIZE);
+ 				ClearPageUptodate(page);
+ 			}
