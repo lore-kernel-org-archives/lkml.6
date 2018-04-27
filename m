@@ -1,67 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933007AbeD0PkK (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 11:40:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48138 "EHLO mail.kernel.org"
+        id S1758498AbeD0Plt (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 11:41:49 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:47796 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932803AbeD0PkJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 11:40:09 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBC1F2184B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Fri, 27 Apr 2018 11:40:05 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Joel Fernandes <joelaf@google.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Boqun Feng <boqun.feng@gmail.com>, fweisbec <fweisbec@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        kbuild test robot <fengguang.wu@intel.com>,
-        baohong liu <baohong.liu@intel.com>,
-        vedang patel <vedang.patel@intel.com>, kernel-team@android.com
-Subject: Re: [PATCH RFC] tracepoint: Introduce tracepoint callbacks
- executing with preempt on
-Message-ID: <20180427114005.31d1e8ab@gandalf.local.home>
-In-Reply-To: <20180427153826.GK26088@linux.vnet.ibm.com>
-References: <20180427042656.190746-1-joelaf@google.com>
-        <1169911546.5820.1524839189395.JavaMail.zimbra@efficios.com>
-        <20180427104747.2d965925@gandalf.local.home>
-        <20180427153826.GK26088@linux.vnet.ibm.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1752471AbeD0Pls (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 11:41:48 -0400
+Date: Fri, 27 Apr 2018 17:41:15 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: tony.luck@intel.com, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>, linux-edac@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: stack out-of-bounds write in mce-inject.c
+Message-ID: <20180427154115.GF15229@pd.tnic>
+References: <CACT4Y+Ys9bKFNaBm7YuCvk04jcZ2SnLiDSxgCojZMwtb2PKVBg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CACT4Y+Ys9bKFNaBm7YuCvk04jcZ2SnLiDSxgCojZMwtb2PKVBg@mail.gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 27 Apr 2018 08:38:26 -0700
-"Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
-
-> On Fri, Apr 27, 2018 at 10:47:47AM -0400, Steven Rostedt wrote:
-> > On Fri, 27 Apr 2018 10:26:29 -0400 (EDT)
-> > Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
-> >   
-> > > The general approach and the implementation look fine, except for
-> > > one small detail: I would be tempted to explicitly disable preemption
-> > > around the call to the tracepoint callback for the rcuidle variant,
-> > > unless we plan to audit every tracer right away to remove any assumption
-> > > that preemption is disabled in the callback implementation.  
-> > 
-> > I'm thinking that we do that audit. There shouldn't be many instances
-> > of it. I like the idea that a tracepoint callback gets called with
-> > preemption enabled.  
+On Fri, Apr 27, 2018 at 05:24:24PM +0200, Dmitry Vyukov wrote:
+> Hi,
 > 
-> Are you really sure you want to increase your state space that much?
+> Opening /sys/kernel/debug/mce-inject/flags overwrites stack:
+> 
+> ==================================================================
+> BUG: KASAN: stack-out-of-bounds in vsnprintf+0x1b23/0x1b40 lib/vsprintf.c:2365
+> Write of size 1 at addr ffff8800627b7abb by task egrep/4309
 
-Why not? The code I have in callbacks already deals with all sorts of
-context - normal, softirq, irq, NMI, preemption disabled, irq
-disabled.
+How do you trigger this exactly?
 
--- Steve
+You grep it for something apparently...
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
