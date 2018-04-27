@@ -1,187 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757961AbeD0KWx (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 06:22:53 -0400
-Received: from mail-pf0-f182.google.com ([209.85.192.182]:35983 "EHLO
-        mail-pf0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757609AbeD0KWv (ORCPT
+        id S1757948AbeD0KYQ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 06:24:16 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:54105 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757811AbeD0KYO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 06:22:51 -0400
-X-Google-Smtp-Source: AB8JxZpChJva8xAot0dP1+IByLEav3tfC/6TtQUtxnEh5FA3rOwL/jq+lP/w+kulYC7YlA5n02WrPg==
-Date: Fri, 27 Apr 2018 19:22:45 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>, akpm@linux-foundation.org,
-        linux-mm@kvack.org, Peter Zijlstra <peterz@infradead.org>,
-        Jan Kara <jack@suse.cz>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [PATCH] printk: Ratelimit messages printed by console drivers
-Message-ID: <20180427102245.GA591@jagdpanzerIV>
-References: <20180420080428.622a8e7f@gandalf.local.home>
- <20180420140157.2nx5nkojj7l2y7if@pathway.suse.cz>
- <20180420101751.6c1c70e8@gandalf.local.home>
- <20180420145720.hb7bbyd5xbm5je32@pathway.suse.cz>
- <20180420111307.44008fc7@gandalf.local.home>
- <20180423103232.k23yulv2e7fah42r@pathway.suse.cz>
- <20180423073603.6b3294ba@gandalf.local.home>
- <20180423124502.423fb57thvbf3zet@pathway.suse.cz>
- <20180425053146.GA25288@jagdpanzerIV>
- <20180426094211.okftwdzgfn72rik3@pathway.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180426094211.okftwdzgfn72rik3@pathway.suse.cz>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        Fri, 27 Apr 2018 06:24:14 -0400
+Message-ID: <1524824650.17614.4.camel@pengutronix.de>
+Subject: Re: [PATCH v4 1/5] dt-bindings: reset: Add AOSS reset bindings for
+ SDM845 SoCs
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Sibi Sankar <sibis@codeaurora.org>, bjorn.andersson@linaro.org,
+        robh+dt@kernel.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, georgi.djakov@linaro.org,
+        jassisinghbrar@gmail.com, ohad@wizery.com, mark.rutland@arm.com,
+        kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
+Date: Fri, 27 Apr 2018 12:24:10 +0200
+In-Reply-To: <20180425150843.26657-2-sibis@codeaurora.org>
+References: <20180425150843.26657-1-sibis@codeaurora.org>
+         <20180425150843.26657-2-sibis@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (04/26/18 11:42), Petr Mladek wrote:
-[..]
+Hi Sibi,
+
+On Wed, 2018-04-25 at 20:38 +0530, Sibi Sankar wrote:
+> Add SDM845 AOSS (always on subsystem) reset controller binding
 > 
-> Believe me, I could perfectly understand the desire to create perfect
-> defensive solutions that would never break anything. It is not easy
-> to decide when the best-effort solutions are worth the risk.
-
-Yes, but my point is - I don't think we clearly understand the root
-cause of the problem. See below [you can jump over the next section].
-
-[..]
-> Honestly, I do not believe that console drivers are like Scheherazade.
-> They are not able to make up long interesting stories. Let's say that
-> lockdep splat has more than 100 lines but it can happen only once.
-> Let's say that WARNs have about 40 lines. I somehow doubt that we
-> could ever see 10 different WARN calls from one con->write() call.
-
-The problem here is that it takes a human being with IQ to tell what's
-repetitive, what's useless and what's not.
-
-	vprintk(...)
-	{
-		if (!__ratelimit())
-			return;
-	}
-
-has zero IQ to make such decisions. Sorry, the numbers don't work for me.
-"Console drivers added 100 lines in 1 hour" does not tell me that we had
-"an infinite console_unlock() loop".
-Dunno. Quite likely I'm wrong. Wouldn't be the first time ever. But it's
-unclear to me why we are out of options, without even looking at
-logs, but... May be.
-
-
-> > But we first need a real reason. Right now it looks to me like
-> > we have "a solution" to a problem which we have never witnessed.
+> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+> ---
+>  .../bindings/reset/qcom,aoss-reset.txt        | 52 +++++++++++++++++++
+>  include/dt-bindings/reset/qcom,sdm845-aoss.h  | 17 ++++++
+>  2 files changed, 69 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt
+>  create mode 100644 include/dt-bindings/reset/qcom,sdm845-aoss.h
 > 
-> I am trying to find a "simple" and generic solution for the problem
-> reported by Tejun:
-[..]
-> 1. Console is IPMI emulated serial console.  Super slow.  Also
->    netconsole is in use.
-> 2. System runs out of memory, OOM triggers.
-> 3. OOM handler is printing out OOM debug info.
-> 4. While trying to emit the messages for netconsole, the network stack
->    / driver tries to allocate memory and then fail, which in turn
->    triggers allocation failure or other warning messages.  printk was
->    already flushing, so the messages are queued on the ring.
-> 5. OOM handler keeps flushing but 4 repeats and the queue is never
->    shrinking.  Because OOM handler is trapped in printk flushing, it
->    never manages to free memory and no one else can enter OOM path
->    either, so the system is trapped in this state.
-> </paste>
+> diff --git a/Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt b/Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt
+> new file mode 100644
+> index 000000000000..e5201de9a314
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt
+> @@ -0,0 +1,52 @@
+> +Qualcomm AOSS Reset Controller
+> +======================================
+> +
+> +This binding describes a reset-controller found on AOSS (always on subsystem)
+> +for Qualcomm SDM845 SoCs.
+> +
+> +Required properties:
+> +- compatible:
+> +	Usage: required
+> +	Value type: <string>
+> +	Definition: must be:
+> +		    "qcom,sdm845-aoss-reset"
+> +
+> +- reg:
+> +	Usage: required
+> +	Value type: <prop-encoded-array>
+> +	Definition: must specify the base address and size of the register
+> +	            space.
+> +
+> +- #reset-cells:
+> +	Usage: required
+> +	Value type: <uint>
+> +	Definition: must be 1; cell entry represents the reset index.
+> +
+> +Example:
+> +
+> +aoss_reset: qcom,reset-controller@b2e0100 {
 
-Yes, and that's why I want to take a look at the logs/backtraces.
+The node name should be "reset-controller", not "qcom,reset-controller"
 
-I had a very-very quick look at netconsole code, and some parts of net
-code [skb allocation, etc]. And I didn't manage to find that "every
-console driver call adds new messages to the logbuf".
+> +	compatible = "qcom,sdm845-aoss-reset";
+> +	reg = <0xc2b0000 0x21000>;
 
-OK, suppose that at some point netcon or net stack does kmalloc(GFP_ATOMIC)
-or alloc_pages(GFP_ATOMIC). So if it was kmalloc() and we need to
-cache_grow_begin()->kmem_getpages() or ___slab_alloc()->new_slab(),
-then:
+The address here should match the address part of the node name above.
 
-- kmem_getpages() can slab_out_of_memory().
-  But slab_out_of_memory():
+Apart from those two nitpicks, the binding looks good to me.
 
- a) ratelimited to DEFAULT_RATELIMIT_INTERVAL / DEFAULT_RATELIMIT_BURST
- b) enabled only `#if DEBUG' [probably out of consideration]
-
-- So we end up in __alloc_pages_slowpath():
-
-  alloc_pages() -> __alloc_pages_slowpath()
-or
-  kmem_getpages()->__alloc_pages_slowpath()
-or
-  ___slab_alloc()->new_slab()->__alloc_pages_slowpath()
-
-__alloc_pages_slowpath() can call warn_alloc(), yes.
-
-But warn_alloc() is also ratelimted to DEFAULT_RATELIMIT_INTERVAL and
-DEFAULT_RATELIMIT_BURST.
-
-
-That "triggers allocation failure or other warning messages" part is
-questionable.
-
-
-1) Does the bug report actually say that - DEFAULT_RATELIMIT_INTERVAL
-and DEFAULT_RATELIMIT_BURST in MM are not good enough? If so, then why do
-we "fix" printk()? Can we just tweak the rate limiting in MM code?
-
-2) If the bug report is saying that MM code has non-ratelimited
-warnings/printouts in allocation path - then we need to rate limit
-those; the same way it's done in slab_out_of_memory() / warn_alloc().
-
-
-OK...
-
-So DEFAULT_RATELIMIT_INTERVAL / DEFAULT_RATELIMIT_BURST allows
-up to 10 warn_alloc()-s in 5 seconds. Let's assume that allocation
-failure backtrace is around 50 lines [including registers print out].
-Along with backtrace we have Mem-info print out. Let's assume that it's
-around 30 lines. So a single warn_alloc() can be around 80 lines.
-Mem-info lines are very long, so it would be reasonable to count the
-number of characters here, but let's just use lines. So we can have around
-800 lines in just 10 seconds.
-
-Now, I think "Console is IPMI emulated serial console.  Super slow."
-is a critically important bit of information. [And that's why we better
-count the number of characters in OOM report, not the lines].
-
-We print to the consoles sequentially, hence netconsole becomes as "fast"
-as that super slow IPMI console. MM ratelimit, meanwhile, does not care.
-The slower IPMI is, the "sooner" netconsole gets its chance to add 10 more
-kmalloc()->warn_alloc() to the logbuf - another ~800 lines, or may be
-significantly more than that. Because of slow IPMI we don't call
-netconsole frequent enough to get advantage of the rate limiting in
-warn_alloc().
-
-[And notice how "100/1000 lines per hour" is a bad news in this regard].
-
-
-If this is the case, and if my assumptions are valid, then we really
-should not rate limit console_drivers()->printk(). Mem-info print outs
-don't seem to be "a repetitive garbage" that we can easily discard.
-Those are important bits of information, which show the OOM/reclaimer
-progress, and so on.
-
-
-So, Petr, let's slow down for a second. There are things that are
-not completely clear.
-
-Opinions?
-
-[..]
-> For me it is hard to believe that all these possible errors will be
-> cured just by offloading. Not to say that offloading is not trivial
-> and there is some resistance against it.
-
-Well, I didn't say this. All I said was that I really like that "the patch
-does not pretend to be smart and does not drop random printk() messages"
-part.
-
-	-ss
+regards
+Philipp
