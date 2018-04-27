@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-298528-1524839629-2-1247819357571193775
+X-Cyrus-Session-Id: sloti22d1t05-298528-1524839576-2-2467347804022596695
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524839629; b=Mg++3SS/9IL8fKlnLGNXIZWwu0JY4mqZE2SuZGudeWIse760zi
-    7j2uS2zIXAefKv5ukNx8f10K8p9HXyktaXVlR4/TFTVB0hhiEjJeG4+FfhVwPago
-    oRVVOaYEuWIvCeK6dJtjS2iUUcj6d2gAm4ZNAQQKNlKtZPBeIEXFCr5CyUN6XpDm
-    BiTUDkD12sypVa3C9KTngehX+uFDCBqaDg/zBXF7dhMIczwsqCOQKOqgZyiqnNmQ
-    4VXYxwwgsAFKnxH+CLEtU8p7IWWXWIFdXuUGjlSk8LyLhqdPwR9GFs3UPJCvRVC6
-    NRblSxWvCAoWmhQdY+n5gbYx4rw7kgtSVxYg==
+    1524839575; b=B6d6SC0Hd0hmHXn1kLM2CznP9NP8FwYCGFcNVol8LvqnZ8PMEg
+    l+c2E2un3sMTJD/Ece3jxJnpu6DJa3U/I5bu7o4DG1xJfY5MQHmXd6UsT1URen8Y
+    HEFDzvyEUCmiKDZcE7zUuovtNNCXGWlivI5eKqXJavqsk21Kb7pm5Z7wvcgG518l
+    a7BZexBKRRaC4EEfFqeR8xvtL80GJncU7AdS9GncFmkp2vaEv/bnd5oM57R5zmjC
+    5J/EpT7mCcN48mg6AYhJGwxAjRAgfkVv3ysD/fZArQIDVh9hOBr7bCfZcT4a82kG
+    SN0ynvDGvwFWxLnQKEmBm2LL9JKeUF1f731g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524839629; bh=lNCj2c8jBm457/JXSx7UlKaAh/EotA
-    n2L1cw54wYZ88=; b=jPSCkDAewDskPxMF+9n8HdivWTgfvbsm41T3mWl/56AHoZ
-    9Uh6HkgGt8pOcSswvB2Mph3FyRVoGxwDOuQJlhy4ZTBx8+mTnrv+2w3aYLV+ovHj
-    BRjK7xVsyd53IeC7TkPg1AAe0ECV87YrNQjLQg1k4AvtFQkOXp8fQGaWIDySW9Es
-    2T4KZx8THGCK8Xo9T8/VAmmugsSNLWmb8OonCY1sfPeUJnXyI9LWB/j50Xyl7IP0
-    TY3wkbZhmyLKwizcRgkICoXnAne1SGe/b5dFpjxXmpc6wDlomQii7x6jgkCPhmuY
-    EF1j07VkgYQT4Dzzpei+gG69TbWeypiPDpMkRbZQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1524839575; bh=M4N+2g/TXezdpdcv4/bn4OggYvT6p5
+    UtnjK72TxzRsA=; b=A6hzeE48G3KISLkEbw3XyR8dSA8nXSmtB1RGIEy+sHNby3
+    ydCkl9/yrNn/n/atqygMLFPpF8m68j5SkmemmErYkn35LesOjZ5zXuG8hq8Ukgoe
+    q5SUB7OMFX1o4xJFjEqZqonIse9Y4H17XRk45xxK64TIjEty9QcVUC2Xt2m3qiHG
+    lCqNvQpQRRl8gZEgFjj5y+aCRwDIcL1eALPVSF43r82M20jvkIF/q8Y0nTpWJL0B
+    B/3IZXhMJCEja6ykfXhPDBLnxKAd3keEcPkmz2JFdZEcSNOkAtZ/AqJe0bTttxJu
+    8psN3tjH/d3Malta1cPetjGerDxauz2Qo52p9Yog==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,35 +51,34 @@ Authentication-Results: mx5.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfF1l/mr/vs32hJi3GbPBigh0B2Wyl/fOMEz7qcKOgkIdmpTgQCafZfj8sn9e25Kor4CqMUzHBjrHT5Z4t1Vpo6DC9s5hSJk2u7Ls7KnwSgEu/G4b/mAi
-    3a2LIILUBA9+CjJNj49mlleF9rAQklyEnW9ZogSnG3onJbS4IeLxaJUUZ/DIBF76a1rX9sB7jE3sfvHPvffk2hae6WBONqtMq1HBrioC3Y6zmK7yo6DFgCjY
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfHwoSHSwLvDjK9/Fn2s86DId9u6XD9qDOQsRLmopg3wFrWdfBebVK0XV3Q2eNl937V+AC8wGZcWJlM0BaILpC+F5bcexhCW8Hczdc1pReZOJa+DHG/Kl
+    UT8O+chV0TjwaGMH5xu9fDhu76bNgXHSjPNxaxbdq1cyZ3ZPCroRvoS0UI4dIaD6uYm2xhgVY0T2ecGotlGc4gMAzHa5wo/ggvILLf5aFnUkfyYCUjBNOuZ2
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=yPCof4ZbAAAA:8 a=20KFwNOVAAAA:8 a=AeCkNC4mAAAA:8 a=J1Y8HTJGAAAA:8
-    a=ag1SF4gXAAAA:8 a=sDnBjJAm2pfqMEeON2cA:9 a=QEXdDO2ut3YA:10
-    a=3H0rhiSm_XezoJcgKFaR:22 a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=FOH2dFAWAAAA:8 a=VwQbUJbxAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
+    a=MJgOeA_HzhOYzjRToYoA:9 a=QEXdDO2ut3YA:10 a=i3VuKzQdj-NEYjvDI-p3:22
+    a=AjGcO6oz07-iQ99wixmX:22 a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934356AbeD0Odc (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 27 Apr 2018 10:33:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55420 "EHLO mail.kernel.org"
+        id S934874AbeD0Ocv (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 27 Apr 2018 10:32:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55488 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934811AbeD0OKQ (ORCPT <rfc822;stable@vger.kernel.org>);
-        Fri, 27 Apr 2018 10:10:16 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A26021864
+        id S934823AbeD0OKV (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 27 Apr 2018 10:10:21 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3483721895
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Laura Abbott <labbott@redhat.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Sabrina Dubroca <sd@queasysnail.net>,
+        stable@vger.kernel.org, Tejun Heo <tj@kernel.org>,
+        Doron Roberts-Kedes <doronrk@fb.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 23/81] Revert "macsec: missing dev_put() on error in macsec_newlink()"
-Date: Fri, 27 Apr 2018 15:58:25 +0200
-Message-Id: <20180427135744.539038833@linuxfoundation.org>
+Subject: [PATCH 4.16 25/81] strparser: Do not call mod_delayed_work with a timeout of LONG_MAX
+Date: Fri, 27 Apr 2018 15:58:27 +0200
+Message-Id: <20180427135744.623761258@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135743.216853156@linuxfoundation.org>
 References: <20180427135743.216853156@linuxfoundation.org>
@@ -97,45 +96,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Doron Roberts-Kedes <doronrk@fb.com>
 
 
-[ Upstream commit bd28899dd34f9283c567f7eeb31bb546f10820b5 ]
+[ Upstream commit 7c5aba211dd61f41d737a2c51729eb9fdcd3edf4 ]
 
-This patch is just wrong, sorry.  I was trying to fix a static checker
-warning and misread the code.  The reference taken in macsec_newlink()
-is released in macsec_free_netdev() when the netdevice is destroyed.
+struct sock's sk_rcvtimeo is initialized to
+LONG_MAX/MAX_SCHEDULE_TIMEOUT in sock_init_data. Calling
+mod_delayed_work with a timeout of LONG_MAX causes spurious execution of
+the work function. timer->expires is set equal to jiffies + LONG_MAX.
+When timer_base->clk falls behind the current value of jiffies,
+the delta between timer_base->clk and jiffies + LONG_MAX causes the
+expiration to be in the past. Returning early from strp_start_timer if
+timeo == LONG_MAX solves this problem.
 
-This reverts commit 5dcd8400884cc4a043a6d4617e042489e5d566a9.
+Found while testing net/tls_sw recv path.
 
-Reported-by: Laura Abbott <labbott@redhat.com>
-Fixes: 5dcd8400884c ("macsec: missing dev_put() on error in macsec_newlink()")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Sabrina Dubroca <sd@queasysnail.net>
+Fixes: 43a0c6751a322847 ("strparser: Stream parser for messages")
+Reviewed-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Doron Roberts-Kedes <doronrk@fb.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/macsec.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ net/strparser/strparser.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/macsec.c
-+++ b/drivers/net/macsec.c
-@@ -3277,7 +3277,7 @@ static int macsec_newlink(struct net *ne
+--- a/net/strparser/strparser.c
++++ b/net/strparser/strparser.c
+@@ -67,7 +67,7 @@ static void strp_abort_strp(struct strpa
  
- 	err = netdev_upper_dev_link(real_dev, dev, extack);
- 	if (err < 0)
--		goto put_dev;
-+		goto unregister;
- 
- 	/* need to be already registered so that ->init has run and
- 	 * the MAC addr is set
-@@ -3316,8 +3316,7 @@ del_dev:
- 	macsec_del_dev(macsec);
- unlink:
- 	netdev_upper_dev_unlink(real_dev, dev);
--put_dev:
--	dev_put(real_dev);
-+unregister:
- 	unregister_netdevice(dev);
- 	return err;
+ static void strp_start_timer(struct strparser *strp, long timeo)
+ {
+-	if (timeo)
++	if (timeo && timeo != LONG_MAX)
+ 		mod_delayed_work(strp_wq, &strp->msg_timer_work, timeo);
  }
+ 
