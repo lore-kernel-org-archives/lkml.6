@@ -1,41 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758414AbeD0Nde (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 09:33:34 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:36381 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757614AbeD0Ndd (ORCPT
+        id S1758396AbeD0Nhb (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 09:37:31 -0400
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:41449 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757452AbeD0Nh3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 09:33:33 -0400
-X-Google-Smtp-Source: AB8JxZosSbcNL7wCBgFYveZlqXI1af9o4cl+RJFqrn70GzaAI11HT6WeuOpZfxK+w7Q48FPMnqU2AoP2MWxjUsk8HIE=
+        Fri, 27 Apr 2018 09:37:29 -0400
+X-Google-Smtp-Source: AB8JxZpiyGIbnB0FCJYmfPDdZqZjDlHV6tQYhS9n/MFT7eGJhCyfsT/O4Idjl5mn0L+5I1b6P8EWEQ==
+Date: Fri, 27 Apr 2018 08:37:27 -0500
+From: Rob Herring <robh@kernel.org>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, Ohad Ben-Cohen <ohad@wizery.com>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org,
+        Nicolas Dechesne <nicolas.dechesne@linaro.org>
+Subject: Re: [PATCH v3] rpmsg: qcom_smd: Access APCS through mailbox framework
+Message-ID: <20180427133727.gr5turvdfycgmbzm@rob-hp-laptop>
+References: <20180420011757.22389-1-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20180417170824.18670-1-yixun.lan@amlogic.com>
-References: <20180417170824.18670-1-yixun.lan@amlogic.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 27 Apr 2018 15:33:32 +0200
-Message-ID: <CACRpkdaRvKs=ekpxxW_NuxP=d5ijUafOHbpSk8igMUckbDWwyw@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: meson-axg: fix the range of aobus bank
-To: Yixun Lan <yixun.lan@amlogic.com>
-Cc: Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>,
-        Xingyu Chen <xingyu.chen@amlogic.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180420011757.22389-1-bjorn.andersson@linaro.org>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 17, 2018 at 7:08 PM, Yixun Lan <yixun.lan@amlogic.com> wrote:
+On Thu, Apr 19, 2018 at 06:17:57PM -0700, Bjorn Andersson wrote:
+> Attempt to acquire the APCS IPC through the mailbox framework and fall
+> back to the old syscon based approach, to allow us to move away from
+> using the syscon.
+> 
+> Reviewed-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+> 
+> Changes since v2:
+> - Added comment about mbox_send_message() return value.
+> 
+>  .../devicetree/bindings/soc/qcom/qcom,smd.txt      |  8 ++-
+>  drivers/rpmsg/Kconfig                              |  1 +
+>  drivers/rpmsg/qcom_smd.c                           | 67 ++++++++++++++++------
+>  3 files changed, 56 insertions(+), 20 deletions(-)
 
-> The GPIOAO bank is range from GPIOAO_0 to GPIOAO_13.
->
-> Fixes: 83c566806a68 ("pinctrl: meson-axg: Add new pinctrl driver for Meson AXG SoC")
-> Reported-by: Xingyu Chen <xingyu.chen@amlogic.com>
-> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
-
-Patch applied with Kevin's ACK.
-
-Yours,
-Linus Walleij
+Reviewed-by: Rob Herring <robh@kernel.org>
