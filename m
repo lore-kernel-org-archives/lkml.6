@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758140AbeD0Lu2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 07:50:28 -0400
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:48819 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758062AbeD0Lrx (ORCPT
+        id S1758060AbeD0Lrv (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 07:47:51 -0400
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:61722 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757940AbeD0Lrp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 07:47:53 -0400
+        Fri, 27 Apr 2018 07:47:45 -0400
 From: Kishon Vijay Abraham I <kishon@ti.com>
 To: Ulf Hansson <ulf.hansson@linaro.org>,
         Adrian Hunter <adrian.hunter@intel.com>
@@ -14,9 +14,9 @@ CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
         <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
         <kishon@ti.com>
-Subject: [PATCH v5 06/14] mmc: sdhci: Add quirk to disable HW timeout
-Date: Fri, 27 Apr 2018 17:17:15 +0530
-Message-ID: <20180427114723.2687-7-kishon@ti.com>
+Subject: [PATCH v5 02/14] mmc: sdhci-omap: Remove setting ADMA capability in driver
+Date: Fri, 27 Apr 2018 17:17:11 +0530
+Message-ID: <20180427114723.2687-3-kishon@ti.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427114723.2687-1-kishon@ti.com>
 References: <20180427114723.2687-1-kishon@ti.com>
@@ -27,120 +27,31 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Adrian Hunter <adrian.hunter@intel.com>
+sdhci can directly get ADMA capability from MMCHS_CAPA register.
+Remove explicitly setting ADMA here as some instances might not have
+ADMA enabled. (sdhci_read_caps() is also removed from here since
+sdhci_setup_host() invokes it).
 
-Add quirk to disable HW timeout if the requested timeout is more than the
-maximum obtainable timeout.
-
-Also, if the quirk is set and ->get_max_timeout_count() is not implemented,
-max_busy_timeout is set to zero.
-
-Based-on-patch-by: Kishon Vijay Abraham I <kishon@ti.com>
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Acked-by: Tony Lindgren <tony@atomide.com>
 ---
- drivers/mmc/host/sdhci.c | 38 ++++++++++++++++++++++++++++++++++----
- drivers/mmc/host/sdhci.h |  5 +++++
- 2 files changed, 39 insertions(+), 4 deletions(-)
+ drivers/mmc/host/sdhci-omap.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index 0f3cdca3e769..8da118d0d2c4 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -709,12 +709,15 @@ static u32 sdhci_sdma_address(struct sdhci_host *host)
- 		return sg_dma_address(host->data->sg);
- }
+diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
+index e7e43f2ae224..78f3ceea570e 100644
+--- a/drivers/mmc/host/sdhci-omap.c
++++ b/drivers/mmc/host/sdhci-omap.c
+@@ -923,9 +923,6 @@ static int sdhci_omap_probe(struct platform_device *pdev)
+ 	host->mmc_host_ops.card_busy = sdhci_omap_card_busy;
+ 	host->mmc_host_ops.execute_tuning = sdhci_omap_execute_tuning;
  
--static u8 sdhci_calc_timeout(struct sdhci_host *host, struct mmc_command *cmd)
-+static u8 sdhci_calc_timeout(struct sdhci_host *host, struct mmc_command *cmd,
-+			     bool *too_big)
- {
- 	u8 count;
- 	struct mmc_data *data = cmd->data;
- 	unsigned target_timeout, current_timeout;
- 
-+	*too_big = true;
-+
- 	/*
- 	 * If the host controller provides us with an incorrect timeout
- 	 * value, just skip the check and use 0xE.  The hardware may take
-@@ -768,9 +771,12 @@ static u8 sdhci_calc_timeout(struct sdhci_host *host, struct mmc_command *cmd)
- 	}
- 
- 	if (count >= 0xF) {
--		DBG("Too large timeout 0x%x requested for CMD%d!\n",
--		    count, cmd->opcode);
-+		if (!(host->quirks2 & SDHCI_QUIRK2_DISABLE_HW_TIMEOUT))
-+			DBG("Too large timeout 0x%x requested for CMD%d!\n",
-+			    count, cmd->opcode);
- 		count = 0xE;
-+	} else {
-+		*too_big = false;
- 	}
- 
- 	return count;
-@@ -790,6 +796,16 @@ static void sdhci_set_transfer_irqs(struct sdhci_host *host)
- 	sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
- }
- 
-+static void sdhci_set_data_timeout_irq(struct sdhci_host *host, bool enable)
-+{
-+	if (enable)
-+		host->ier |= SDHCI_INT_DATA_TIMEOUT;
-+	else
-+		host->ier &= ~SDHCI_INT_DATA_TIMEOUT;
-+	sdhci_writel(host, host->ier, SDHCI_INT_ENABLE);
-+	sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
-+}
-+
- static void sdhci_set_timeout(struct sdhci_host *host, struct mmc_command *cmd)
- {
- 	u8 count;
-@@ -797,7 +813,17 @@ static void sdhci_set_timeout(struct sdhci_host *host, struct mmc_command *cmd)
- 	if (host->ops->set_timeout) {
- 		host->ops->set_timeout(host, cmd);
- 	} else {
--		count = sdhci_calc_timeout(host, cmd);
-+		bool too_big = false;
-+
-+		count = sdhci_calc_timeout(host, cmd, &too_big);
-+
-+		if (too_big &&
-+		    host->quirks2 & SDHCI_QUIRK2_DISABLE_HW_TIMEOUT) {
-+			sdhci_set_data_timeout_irq(host, false);
-+		} else if (!(host->ier & SDHCI_INT_DATA_TIMEOUT)) {
-+			sdhci_set_data_timeout_irq(host, true);
-+		}
-+
- 		sdhci_writeb(host, count, SDHCI_TIMEOUT_CONTROL);
- 	}
- }
-@@ -3616,6 +3642,10 @@ int sdhci_setup_host(struct sdhci_host *host)
- 		mmc->max_busy_timeout /= host->timeout_clk;
- 	}
- 
-+	if (host->quirks2 & SDHCI_QUIRK2_DISABLE_HW_TIMEOUT &&
-+	    !host->ops->get_max_timeout_count)
-+		mmc->max_busy_timeout = 0;
-+
- 	mmc->caps |= MMC_CAP_SDIO_IRQ | MMC_CAP_ERASE | MMC_CAP_CMD23;
- 	mmc->caps2 |= MMC_CAP2_SDIO_IRQ_NOTHREAD;
- 
-diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-index c95b0a4a7594..f6555c0f4ad3 100644
---- a/drivers/mmc/host/sdhci.h
-+++ b/drivers/mmc/host/sdhci.h
-@@ -437,6 +437,11 @@ struct sdhci_host {
- #define SDHCI_QUIRK2_CLOCK_DIV_ZERO_BROKEN		(1<<15)
- /* Controller has CRC in 136 bit Command Response */
- #define SDHCI_QUIRK2_RSP_136_HAS_CRC			(1<<16)
-+/*
-+ * Disable HW timeout if the requested timeout is more than the maximum
-+ * obtainable timeout.
-+ */
-+#define SDHCI_QUIRK2_DISABLE_HW_TIMEOUT			(1<<17)
- 
- 	int irq;		/* Device IRQ */
- 	void __iomem *ioaddr;	/* Mapped address */
+-	sdhci_read_caps(host);
+-	host->caps |= SDHCI_CAN_DO_ADMA2;
+-
+ 	ret = sdhci_setup_host(host);
+ 	if (ret)
+ 		goto err_put_sync;
 -- 
 2.17.0
