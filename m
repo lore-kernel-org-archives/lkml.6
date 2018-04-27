@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1759410AbeD0VfT (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 17:35:19 -0400
+        id S1759430AbeD0Vft (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 17:35:49 -0400
 Received: from mail-cys01nam02on0085.outbound.protection.outlook.com ([104.47.37.85]:62624
         "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1759379AbeD0VfJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 17:35:09 -0400
+        id S1759082AbeD0VfH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 17:35:07 -0400
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=Suravee.Suthikulpanit@amd.com;
 From: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
 To: linux-kernel@vger.kernel.org, x86@kernel.org
 Cc: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, bp@suse.de,
         Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Subject: [PATCH v2 4/4] x86/CPU/AMD: Calculate LLC ID from number of sharing threads
-Date: Fri, 27 Apr 2018 16:34:37 -0500
-Message-Id: <1524864877-111962-5-git-send-email-suravee.suthikulpanit@amd.com>
+Subject: [PATCH v2 3/4] x86/CPU: Rename intel_cacheinfo.c to cacheinfo.c
+Date: Fri, 27 Apr 2018 16:34:36 -0500
+Message-Id: <1524864877-111962-4-git-send-email-suravee.suthikulpanit@amd.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1524864877-111962-1-git-send-email-suravee.suthikulpanit@amd.com>
 References: <1524864877-111962-1-git-send-email-suravee.suthikulpanit@amd.com>
@@ -28,45 +28,45 @@ X-ClientProxiedBy: MWHPR15CA0030.namprd15.prod.outlook.com
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
 X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:SN1PR12MB0141;
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB0141;3:5iUthrQP0fppIDZuEIHwxrHqeaX/oSErLPrvdnzecimirUc8AbBz/ta3MjtaXyQBPBFPoqLtfk1RAzH8muLuxZ9wvtJ+owCiILEOlRK4jydhQtOE8AkyVzZtreg8s4wSiV+L+RYAVAa1lGTV3BYwxs7oddGFILWwyp21Ul0jNN20ge+B4afdB5iu2uK9GALL5pbnQcZLOxPbasUSBpiU1ZVY+AUk9DOEzoqQyptDqBwtltpS70z3DVV+xoqIM7mv;25:8kVrkhRRhUY0FJJrzoVKD8Z7GmZMyzfIwVIQFTSOipohbhcKTxwy8vzRyfC4dQkUrJ0dQtQd3ExYpZ7CnkIXp+44+su9/G7t1QJnobCDFGmEAE0krIaeZME8TQ5FuZGB9JFLbuc8p2sy1y/3mDgs6ii7VQwYqjttvQ6gjct5pTEcO3AhfyIB2MkVTZJRS5n+pb7Zko+M+OGXZ3vufDizRBtcw3M2Y46gVh/sE64mq/l01Cj+ul+pk0NrmZbZVY2y8Xrqc0jP4c+fQHmExOEz+tn1c04y4Fka2XkzD+e4HULreDriEUfXMtwMbCUckpw/VGJwYQSUJHuUnwP+dSBFqQ==;31:WIFKcEzUSLYoSzN+b2MhFrH+2uF6NxOIzfs8sJPv9ggTHkn31oTgOMbNDg+UzjVaX59eEkur5JA6c9+qMmlBRfjE/wTNIPK7VUUcX544apZCkYBVlfUdpXr3+IQnOvmGVxynD9F/ZjB3ZYSinhwoRHnKM4I7ZcWQyzNB7NtJW+Z0hCce+ZF4YrT6lo2MxG8ObgGr6sY4/ddQjORwLyP0rFKqBrU/mW5xMQbA+syE2Ms=
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB0141;3:OxdRBeyQS5qBFvqi7krfxkojX0NjErw+p6Qny2n5Jdw52BGtPP04MFCKkyCPh+7IjTiNiU4d7id64OaOQTCp3H4rVebsC3SLt16aQBgFV1QsA+VmjEw2/hw2wjC7xFtZ0vxMfLix3YzL8QsEhvoFuDadCyfOUBi98QRAD97Uh3xaiQmqdPxyWq5gHTcPzkFhqyiJenHR/ttzOa27sO/faN9Y4bI4gzR7dyln7zxAMPYukI4zqT/iVOMvUVKcGdCE;25:4SxR8afaJ6uHgGjL1/+TsS7jqRtKW5Z4diqkBpNlxaXhS39KR7WBtJEmlnA17CCI6sXWFbnXNvG5mIruR1WrctusHqbLS8o2IRC0ERRm1CvVcqw5mwecU4CKRnCwqbl0BKj6T9Pn48wFCqCICmwMWpRBX7MqbGww3lejMasbiC0oNO7T62N19Uu8tXDNtJb398sno1oiSOPPAswdjmTdaI0AhYfYKgjA2dQ7AP6bIVI73hAPasYkNRn7CELVAw3kHlxpRsiy2d4agCaWMBFNAT1p/EkNxh5cOKcxS7Y1jEYmkioL4GY0jvYKnLk69FFpIb5PTMjAUbTy9SUhATIYqg==;31:e7dFWnUJV5M7FecXZ5Oq0fbWWuby5u0fqaor+HfpzCCSZXqrUkH/nCXgtkLQG+a/iGgNZCZM/BD/8nEjUKy38ohLQZRyGJg84yqlmTZzVzVe3Kix3To+ODT7GxLVxOR8qKpGtZpuhb0PVigrqmGQooNlMmCS+S+yBFdN8WpFenMCaaAbTQbv4SjF7LiNBcTyT6yk1PV6uTno26Jk8nSwRkSWK+3Xi/NtFqMVWBdVUQI=
 X-MS-TrafficTypeDiagnostic: SN1PR12MB0141:
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB0141;20:vq0NmJ1jRwSlCAT+oflRJgMIUI1b2qvStQ7g1XPbXFAqsGcZ/PtxJf+Da0Li7Y5jFnZXTAEESyABdQ0sNfqysGwJBHcSsFypnLqpgLx4hqxV1qdWQZd9s5eIywerMyvhytCh3eCPBkdONWlMMwt3F/YXXwJS2CNUPv7gOylUw0nHiYsqw2mCOzYuOko7GGqAPK4zwmXhpnEdUj5wSovemglfDM59wUNo647szPvlKOwC8iTcEtEegbrZACGTHIUa2u/lNNv06Lj9/7VwyRVlttfKYmOSFEq9gV4gYZhxxa0RHFTERxqQnYY3eZSc25yp2F1kcXc1/mYuljKHciojtHsmaayIRhX6BzZONmN1FN7/lIsr5WJCwVwkoS4JhHTYUJzXpHe4cmCLUAgLUDhAlmpYtWa/mUA49+vYYbCMKwU8wJ+GHB/q2eWx8dJXzbxeUDbdz8fGdWzJQh78NOFrK7tayWn79YAF7U3iIw7iKAjFZaog04CaU7gjbaVGx/7V;4:1zlajoB3IR7lB5+/drT8yJQa51EG9yO10fhPKSJQAM/Yb+gT/od5yP0vNteqQTK3Pw7x7o/H0Z75RbPiQWZc5tT1SipM8SHIYR/Mhsb+BmUui5MijpX4WOiaowGswUh4F+PbyJImYuNujom0a64VM5ZNcFcoITZCVQ/rFrSePUZ9I8N+Ll7IXMCrGDSuSh7vuBsBmncj0O6ccn8xm8X6QYVkIMturEoDV7i0JThK+mMhhSvbxTVK9peqkx+Pc7IhnoExIQibmZjFfbLlAYD0ZM0fzjFganUw8jZVs6dVqtcwLwlys5nzg/0Ch1lIcvwu
-X-Microsoft-Antispam-PRVS: <SN1PR12MB0141B96740152F9CBC47A984F38D0@SN1PR12MB0141.namprd12.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB0141;20:6u6FgWGbg8SPF9S/6nI59eC6GoN3URac80jBn7/9GXGCJe7tIkUNlLwlVIilvVjeka3Dq7pdJ/JNcjuTKQXvHrb36r6Bb19tn0XddRxKisMy9Ci/RngMf+90qr7KH/ecEgTFxdovvIUFPUoClpnmI/Y8zseLm5OwZv/qpcGqQDjtnCt+Ngy0CnWXFV7SdIQFuzG8VIEaT3KHQifIXdKx3QGJJ+uynM+dRMTEa5XXi6FfmXA3X1/23zu4t7XkaTfRchhSkONUDVaYiS9NmWO5q4ZHtwtbGkzBaXnAO9ZZn5432c1+IAVZQPHgyLpDXWDyUggspBK8NjtuRxUQgEfrgRMDOHwXEK8tTtSnXGfcr0HMvT7lP28GuDa+6Cz3R8VW7w9u8w3IHHu6evOy2xeZqhJ5/e9SuUrSlo1+GI6VcxXa2OkIjwe2k5MaOSSkCRiXMw5jYtbyV23DmrNu98S5HYvg3eSrvoObOguhpPbs/uZN+LBGGplyOlTbQfqSLde9;4:Yh10UUnl3JtJ9+0Szd/T2JI/yRDqEBJJYCDa3daulJL6Adp9OKzo5m+8AwK26hRQlxEu7fBHKPLcU5VxTZ98qp08fly+169lKjAEnesGXbynRnUGVvU/gFmvPJ4+Y3fJpuW/2yhLVcmpFqNjHs5V4NH94B76aWCa0CSdqn6lSdr7r97f9oWtCpqBFiFlW7BhSaOhKtVFnNph3KCt4grvOXoDTwRXQEzEdMPrMXZtEcNoG8Uj3y26yJMEAdcFXQx3kCYU62hysQU77qHF1zRfpB1fiwzHHz0cKj0t/WIX+M/zTY8qaTgiUrK4VpPGXgS7
+X-Microsoft-Antispam-PRVS: <SN1PR12MB0141DA6588A99DC7298C7A05F38D0@SN1PR12MB0141.namprd12.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(767451399110);
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231232)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123560045)(20161123558120)(6072148)(201708071742011);SRVR:SN1PR12MB0141;BCL:0;PCL:0;RULEID:;SRVR:SN1PR12MB0141;
 X-Forefront-PRVS: 0655F9F006
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(376002)(396003)(39860400002)(346002)(39380400002)(189003)(199004)(478600001)(956004)(72206003)(446003)(44832011)(2616005)(486006)(11346002)(59450400001)(6666003)(76176011)(97736004)(2906002)(52116002)(50466002)(26005)(3846002)(6116002)(51416003)(7696005)(53936002)(476003)(48376002)(6486002)(186003)(50226002)(68736007)(81156014)(105586002)(86362001)(66066001)(305945005)(16526019)(316002)(81166006)(7736002)(53416004)(386003)(5660300001)(575784001)(8676002)(16586007)(4326008)(25786009)(106356001)(8936002)(36756003)(47776003);DIR:OUT;SFP:1101;SCL:1;SRVR:SN1PR12MB0141;H:ssuthiku-ubuntu-b2.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN1PR12MB0141;23:rUh5/4T3epleIP05e1OAqKkvTcZ6VNkl1e0rbVD7R?=
- =?us-ascii?Q?KvsG6FK+P8jH9urC3hFlLuBIsgaF6oQMolwNDx0ulT2XMgFHaNkD8qSr95Qt?=
- =?us-ascii?Q?j1GIkTqypRa2vhbwF3Uz3uClgnEArshO3kVVHL6+T0zg7ByE1GnggK5Ripkj?=
- =?us-ascii?Q?Fl76nSkdKIHbihDnR2R/ymQdf2AuV9lnwBKs6EkHapRjg+hiQ6CVNS3ZNR9r?=
- =?us-ascii?Q?Fw7GZWxOg8AX12KaTD+rox5arR+hD0LX2yeDHKSN2t0faTinuozGZ/gM0xE0?=
- =?us-ascii?Q?HBO0oYDZYKwSmTv9XqVFea8S5fDeCUJ73GyaFBXXvHNzdWGZbViEFhPQLC2Z?=
- =?us-ascii?Q?stomDfxsukfieUkIeZ1leLznZQLBfVkOPsM08IY4s0p8qA380fgZb0DAxBKk?=
- =?us-ascii?Q?yStUPak3meM0f5+slOWSMyLNzjw/GOKbHx4GNd+njgOWWmwvKPFo3x92RGMx?=
- =?us-ascii?Q?oTG+ctLNC7wnU4HCvtGNybdigungmGJQmhckaXrb4NdyRCMoCql6lOk4vdDm?=
- =?us-ascii?Q?KT67GFWuK+VLyKeUocM7mlNPIlbsjZZK3+uZAMAKhJDdoMm0JCNBLDjU/iVM?=
- =?us-ascii?Q?ZoDv1IDyW+5oNxVgK7e2nv6BEzxmmYZSby7pZo7U4Ires+aYqtNSR8EmP5Fz?=
- =?us-ascii?Q?0lJ+ZXACqRCWxjkvauWwkx78h9MdYBglzECpamsJ8/de6aA2OOKlY4RPG/vE?=
- =?us-ascii?Q?CHHZv+VzcVnkdiuZLz6jhF0tK1WUrybA6hC9YPdz5xCfS8hlr3yhwR/YbdHU?=
- =?us-ascii?Q?hPJ/Rxa5eRLJrIvwlerT94ihpZqJr0F0VOa1qFp1Va0/7zkdug78z0VN0veS?=
- =?us-ascii?Q?J3j5QdpxTjGKaUV9ULRMAew5hjV6noHKxgUFHEhT3LVHj8c5xjE8cQYEv5JV?=
- =?us-ascii?Q?xvOQwi6fjIhRCUNa84fvLaVXQYwsmmnzNFKYPJzuG/nM0mwHIt9BXT06Eaje?=
- =?us-ascii?Q?nkdnSZAklu95Ng0AeFDHwImw52bb7kFVEEz3hcbOADCt0sV7ugR+tRyILI5n?=
- =?us-ascii?Q?AZ2etlPg0rjPnWrHsBEV6kuvsp8M8R9aAnIZxxEtVGbL1WSRpsQdus3vBAd5?=
- =?us-ascii?Q?R7HdfGcHTI/P3hAULVz18jhRBOJuTszv3GBO1VPp3VJhWq7xHRjdV75gl3cN?=
- =?us-ascii?Q?xqF4sBfxof9RtDyiNUEfSB9gUCcOemqhVctB2qDjAgvDt39e7QMQlo6eQo0N?=
- =?us-ascii?Q?LZShPMrNqtRWueO3lJIoe0mswED89WWGovoPi9oErjwkvIK9Syg6f9MXsafH?=
- =?us-ascii?Q?dUnG327oMn4awSWwSo=3D?=
-X-Microsoft-Antispam-Message-Info: RUwd3Sks8WMInDA9uN63Fo40vdvIRePJKVbqDOSS6VKaWbPaPEd/Glf4MuJGzlW/yXtrONc4B2E7OYSh2cKc7vlNI9tvTOufoziKauHGqaPi9ZywtweRHvKACZ/pqADmy/vJqF7FI9jOrM5Rl5nQLsQ32BklythKC+pOxpHU+bbTL/TfZtbyDdHMmzNmISWc
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB0141;6:qz5EXcUl88VIdB2/t+qYW05bVM5B4rsy8lTgU2E71CAYLCMpWn5RRl7AB6YTuae8bLm/OxUEdmadGj5VNruHB78wmKAZ1n+OIZVV9PRVSRxs/kyW322OZLFGv+ARbtZtgPBQYu+WsC8/ITm9ghszoxdN7AYeJ/LvUuB7Drgmk+szxVu3LqI721iyLVrIflgrMmsts6fK2TTufzZllKB8F+RzMLj5QDTcFX5xCz4irHRTT3l0/UhPgUs00iLEGZh9xLU2JOO6dphQ5PIE0hFPVqsI2u7kk9CTQuvCA34r+DY5DfhC0nxSJ0im8vq9/cwjhnbqaCDC/NGNyb9Ifq+CcbZm5tOQgqvIFTdrMVw7e684+o+pRk9fCUfytcBGagcVi9jXkJd6cavMCg+EnPruIxCoxYq4rek39bfYttaEQOwmm3BQtmhyCmqJAShjKI+UEVpaUWhrDlVw0TvZuzs6xg==;5:kGXWMFUqgcsnjq/NFnZEioaM41CVZQJsKXBAg7RyBM9Y/2K6fjhcQOsVDxdlOKiyV8PaEVWVoOCSXiicSX4w6M07XDS5UqXE0Fkokq6p4rMb8B4u1Il+SPRWG/DlXWF3ythGOMeXOfZFSMo/5Wbqkkj+MYvvfktTc+K+jQTijlQ=;24:L/tsxKp7f2m6GB7SUxTk3C30ZlGWsE4xSEzmsc+Jr7CdgH2KjL5XoKezj/hOEdxu9kvfW9QJsLdHE+gnGbjUXXgdAsTR5Gqairf7UH8RqGI=
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(376002)(396003)(39860400002)(346002)(39380400002)(189003)(199004)(478600001)(956004)(72206003)(446003)(44832011)(2616005)(486006)(11346002)(59450400001)(6666003)(76176011)(97736004)(2906002)(52116002)(50466002)(26005)(3846002)(6116002)(51416003)(7696005)(53936002)(476003)(48376002)(6486002)(186003)(50226002)(68736007)(81156014)(105586002)(86362001)(66066001)(305945005)(16526019)(316002)(81166006)(7736002)(53416004)(386003)(5660300001)(8676002)(16586007)(4326008)(25786009)(106356001)(8936002)(36756003)(47776003);DIR:OUT;SFP:1101;SCL:1;SRVR:SN1PR12MB0141;H:ssuthiku-ubuntu-b2.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN1PR12MB0141;23:Su0UF6wIs/BxT3J9XUHwCZfJo0h+7C6eBn3O3HPxT?=
+ =?us-ascii?Q?hqIZUaXCxqdEL/dMzY2HV1bROOF4h4EGY0QpuWGf1nvnhHx/eGN6mo9U1LWf?=
+ =?us-ascii?Q?tZiJU1hZl/93QJttLEd3cAw01AxM6LIZal/jEGtoSTcZxOiVAciBIEuwO/6w?=
+ =?us-ascii?Q?Za08Zsm6zBbROhR/u5L180ApqLNOKBdgB82TEyzkky8wwFVYAs3IMZcNT3AB?=
+ =?us-ascii?Q?ZQ7+D2wwK/o9JHnhg1HJtRFVyaHD8nqsJWFO8Lb/qi32CuB9rBDn1KCuEVmP?=
+ =?us-ascii?Q?GesdJWBKyY+kM3wlfQLAf8qxSZfqiObWw8b6D0ghgs0fxlQF2qPiaYERf8iM?=
+ =?us-ascii?Q?Q6ShPJn8EEQ5ofh50Sg498iIssiEhdqwzffxWh0iYbN9coK1K9BaOlnU+pIL?=
+ =?us-ascii?Q?k+dlSqTSvLaO9ddBL44QZdkMIVpCBrWgDw+lYla0yycqE8v9Bav0Z/8dAyd0?=
+ =?us-ascii?Q?wE1xHW1eW7g98CZ9+52N4SoKT23QGstxyfnZHsS2SWvfcpcHVwZX64fw2Wov?=
+ =?us-ascii?Q?90QP47ExGiEFly0vCGFpgGAZhvlI3Wb+cK0Wdg+xidKj8qafnNzUPlj2udff?=
+ =?us-ascii?Q?vb3kgVS39ABYskG7UtVFIjRvA5msycvarTExfuH0oiRIwEafSznvU4RaH61g?=
+ =?us-ascii?Q?qOaq0ypgc+U0YdynjPsauJ/scg43GutBShqQiI/sBCTChLUYdIVbAcBcDcet?=
+ =?us-ascii?Q?44N3tNmAcjxtPTzO68IEAVA9OZ0C/wo4rvmKRhIjNuLUqy3Ubkn5HlnNChWp?=
+ =?us-ascii?Q?t1n3i9INXMTaK+5H+n//dZt0IiqRf8ryC8l4MsawUqAs9DeHl2fHqHq33GSy?=
+ =?us-ascii?Q?JLfzLlvKWEDE9XQxHD+tkP3764HPiDN0N6+W6SDmrjm1mnED9ejQGhysTCj0?=
+ =?us-ascii?Q?UPML/kFtcjRWTE91ftVmgjT1DzUvAKk5gzJZCDLtQFSZiRhxiBEg/5t9J00r?=
+ =?us-ascii?Q?81vcmOjxHeHwZPDArA4//BdiXlKgnYIXXs1/8kgxegle6WLnHHzqoV3C9va9?=
+ =?us-ascii?Q?YE6eEdQHFTbzjWXK0MslHnekKbcCZfrDfl4Dvh28uZWWinMtQw+Yug+u/luh?=
+ =?us-ascii?Q?HKnLUfM0Xa0D0wRvNin+SvKVrClGuAh9nDL/YyVVt3AjqtBIR8Ta39MPeqKm?=
+ =?us-ascii?Q?1xVdTH9QSL0VqaE/yrrvydSgyYmqJZpWr6CQEk3RoBeKfrAzMZmbQtk9M9Tk?=
+ =?us-ascii?Q?9xjKUTqelRkbi4gUXQXwh/TK1gvimNgZmaBDJ1Z5lcByG040CeLRQMowA=3D?=
+ =?us-ascii?Q?=3D?=
+X-Microsoft-Antispam-Message-Info: dmFo4MneG+ICtVVebfxt+iiHIgrPIsMVQh7BYo987QaT9IL3FjykHcCjJeuR1SZ3SXkL7Ww1owBF2CED/NB6Fp6LS4krPkWlG73sSpTHXw0Viurv1FgWeAdQInnyHsA/iiGngNdpD8oTpHnI5DDZVAjnQIFk+GDw8Ran44Zg47QnY8spdRm6EOrqE4cn6HGL
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB0141;6:4lPq7P0rsFAlncOYtk8SSwSe6sSBppdcz2mXHyzEzsnfxGV6MQezftGklcth486MYojhiRthPeG8IsD9tbTXVnJnLRNwaClV750EEqBM6GI/M6ECDPvToWKXuI3U1ptzbjxQJJfwANJ7UzfJGLXj3B1n2MeJ3h95Y0R6s0SrhJQErokM0cL0YKQ3Vx0PwpBY1Kt1lxeK/BFFWncR2gp24FgnT2ZI+OiPvj626oef8pKfdPEVwchLywYDxqWCCbDPQF6qTx6AyHOgH0/LTrUtjqq7HFTCKqRBTNktNOTfG4fYjOTL6B2G8YXyh03JBMumZQjooKXaSHrKBhgFBPvJQZlGr2+kTQ+xRsPquRNowZWdOyCTfaAmJTmhGxGSmrx1Zw1Wy0WNUUysvYRNqFez0aMwfvET2WHfP50C/4ykaylb2XqYIzlSalrObobtMs4RtF2R92MMjrfJLvQmON1sSA==;5:H9/QFpii9b4RRB4jfQEhU2opPB9EwqcsA2DvV+cGEzZxxd00PHTlJp1B/5n2zzmm1kaYUfgpqqQw64yL+L6XsHO3er//58YBxvW1ZdLhz09DZfPxzOpj0NpBmP52OAnGYJa1YqW6ESuqRwrmNWMvUxdGhcFJdTSeShKTTGHHQHo=;24:gbMlThyluM6xuvQZi7ER2ulWuSuDLavtkkIWVbsYsXSETA2FT5nNYRcAFwnJCASkmSmzvvtU6D6jYGHWMkMWYPTL+9wka6K9ZOSvhfEoBx4=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB0141;7:T/klXaPJKToK2SW6SkQmTAXFul7dhKvqwiiShgxikKAl1+bbiRixO01fQ+NM9e3makIWgXF0XNqbrKromx2C2NMynw4JtGcLD4RFZuBRYCrsze687gWouCKpSZRpOPT9PlkDjTGE5qacieXKPWJN/VIxh+cwV2XrRSaSycKa3xyYOM+Z3aaTB8l8Lsdke0rqIS46oS41hH5e0tLaXozD7UZN1h/BCvNSvHPkAuM4DunbYmB+Ga/uP7NrVyqjbCMp;20:bQQoczUEPLk6/1xWL685RB2uqYZCl8HjDIEkkCuaqIc9Lnqw8WlM7+r3d4VOwqf3afg4S2pXS/kT3fTnQOU+QpqaJEi4xRWfskwRzG73ZQqGqfS361D6h3M0zg8olOrr393uJYIyCFwLJ/tO8fgJWjAH8sMBjwCiOXUlZBjL7R5BxoYhd/W/6eWkah2Ijbcz7hHQCPl9W1u1rSm6xt7eoZOUSgept/6DtVpGl09KGVcX/gHSC+jWLoLiCAEV/5wj
-X-MS-Office365-Filtering-Correlation-Id: 5c103f8b-6b82-4bbc-ac81-08d5ac86be0f
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB0141;7:ZTKeG8Lk/1yXU68HhiT+psL35pwauZkXhxcdKHK/yTr1EBrsLr0aYDY0R8OQxyPzsuIj2TiiJSHYaiMkIUG4PjCXjVgt9pllvvVLPR9mXuSXd43bD9C7Pr4d0HEpYWzC7n7oL80PkU0oLpQON5+YlqbXS3r7VEG7/maGoiy0MfjyR67XgjZeEM74OY+YgX3BGSyFUeaeFnsL6A00ZbE4kIysCCMhVpFQH1p8Tu30BQ58qzWXOmNoE9l8MK46BPpr;20:nZqJtu2F2oEGKmxZLShhBn9EQfLz0GgnZjlazG1rN2wF6YTPf4sAyn1BLNVUTER0pyfmIFZ8akmf4pkWyo6X3sb/3XIQZoh78sZ+/3uvO1xqjRW4wYteOhQ76qSSlfNlgtcsJQYe/NESTnRDii3OX32z7CBKzKI1mSyXp9ubph/fhCre+teZ/868HLbT8Hv6EKau44GD6X99i8/LZOBkdypY8vJtmpVGGyQ5RHSwubs5RZw7fIyfw+LCOghqKgoR
+X-MS-Office365-Filtering-Correlation-Id: 63fbfafb-938a-43f4-6892-08d5ac86bd09
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Apr 2018 21:35:04.5836 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5c103f8b-6b82-4bbc-ac81-08d5ac86be0f
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Apr 2018 21:35:02.8648 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 63fbfafb-938a-43f4-6892-08d5ac86bd09
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR12MB0141
@@ -74,117 +74,35 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Last-Level-Cache ID can be calculated from the number of threads sharing
-the cache, which is available from CPUID Fn0x8000001D (Cache Properties).
-This is used to left-shift the APIC ID to derive LLC ID.
+From: Borislav Petkov <bp@suse.de>
 
-Therefore, default to this method unless the APIC ID enumeration does not
-follow the scheme.
+Since this file contains general cache-related information for x86,
+rename the file to a more appropriate name.
 
+Signed-off-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
 ---
- arch/x86/include/asm/cacheinfo.h |  7 +++++++
- arch/x86/kernel/cpu/amd.c        | 19 +++----------------
- arch/x86/kernel/cpu/cacheinfo.c  | 36 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 46 insertions(+), 16 deletions(-)
- create mode 100644 arch/x86/include/asm/cacheinfo.h
+ arch/x86/kernel/cpu/Makefile                           | 2 +-
+ arch/x86/kernel/cpu/{intel_cacheinfo.c => cacheinfo.c} | 0
+ 2 files changed, 1 insertion(+), 1 deletion(-)
+ rename arch/x86/kernel/cpu/{intel_cacheinfo.c => cacheinfo.c} (100%)
 
-diff --git a/arch/x86/include/asm/cacheinfo.h b/arch/x86/include/asm/cacheinfo.h
-new file mode 100644
-index 0000000..e958e28
---- /dev/null
-+++ b/arch/x86/include/asm/cacheinfo.h
-@@ -0,0 +1,7 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _ASM_X86_CACHEINFO_H
-+#define _ASM_X86_CACHEINFO_H
-+
-+void cacheinfo_amd_init_llc_id(struct cpuinfo_x86 *c, int cpu, u8 node_id);
-+
-+#endif /* _ASM_X86_CACHEINFO_H */
-diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
-index 922f43c..2c1a9f2 100644
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -9,6 +9,7 @@
- #include <linux/random.h>
- #include <asm/processor.h>
- #include <asm/apic.h>
-+#include <asm/cacheinfo.h>
- #include <asm/cpu.h>
- #include <asm/smp.h>
- #include <asm/pci-direct.h>
-@@ -343,22 +344,8 @@ static void amd_get_topology(struct cpuinfo_x86 *c)
- 				c->x86_max_cores /= smp_num_siblings;
- 		}
+diff --git a/arch/x86/kernel/cpu/Makefile b/arch/x86/kernel/cpu/Makefile
+index 570e8bb..32591f2 100644
+--- a/arch/x86/kernel/cpu/Makefile
++++ b/arch/x86/kernel/cpu/Makefile
+@@ -17,7 +17,7 @@ KCOV_INSTRUMENT_perf_event.o := n
+ nostackp := $(call cc-option, -fno-stack-protector)
+ CFLAGS_common.o		:= $(nostackp)
  
--		/*
--		 * We may have multiple LLCs if L3 caches exist, so check if we
--		 * have an L3 cache by looking at the L3 cache CPUID leaf.
--		 */
--		if (cpuid_edx(0x80000006)) {
--			if (c->x86 == 0x17) {
--				/*
--				 * LLC is at the core complex level.
--				 * Core complex id is ApicId[3].
--				 */
--				per_cpu(cpu_llc_id, cpu) = c->apicid >> 3;
--			} else {
--				/* LLC is at the node level. */
--				per_cpu(cpu_llc_id, cpu) = node_id;
--			}
--		}
-+		cacheinfo_amd_init_llc_id(c, cpu, node_id);
-+
- 	} else if (cpu_has(c, X86_FEATURE_NODEID_MSR)) {
- 		u64 value;
- 
-diff --git a/arch/x86/kernel/cpu/cacheinfo.c b/arch/x86/kernel/cpu/cacheinfo.c
-index 54d04d5..17f232a 100644
---- a/arch/x86/kernel/cpu/cacheinfo.c
-+++ b/arch/x86/kernel/cpu/cacheinfo.c
-@@ -637,6 +637,42 @@ static int find_num_cache_leaves(struct cpuinfo_x86 *c)
- 	return i;
- }
- 
-+void cacheinfo_amd_init_llc_id(struct cpuinfo_x86 *c, int cpu, u8 node_id)
-+{
-+	/*
-+	 * We may have multiple LLCs if L3 caches exist, so check if we
-+	 * have an L3 cache by looking at the L3 cache CPUID leaf.
-+	 */
-+	if (!cpuid_edx(0x80000006))
-+		return;
-+
-+	if (c->x86 < 0x17) {
-+		/* LLC is at the node level. */
-+		per_cpu(cpu_llc_id, cpu) = node_id;
-+	} else if (c->x86 == 0x17 &&
-+		   c->x86_model >= 0 && c->x86_model <= 0x1F) {
-+		/*
-+		 * LLC is at the core complex level.
-+		 * Core complex id is ApicId[3] for these processors.
-+		 */
-+		per_cpu(cpu_llc_id, cpu) = c->apicid >> 3;
-+	} else {
-+		/* LLC ID is calculated from the number of thread sharing. */
-+		u32 eax, ebx, ecx, edx, num_sharing_cache = 0;
-+		u32 llc_index = find_num_cache_leaves(c) - 1;
-+
-+		cpuid_count(0x8000001d, llc_index, &eax, &ebx, &ecx, &edx);
-+		if (eax)
-+			num_sharing_cache = ((eax >> 14) & 0xfff) + 1;
-+
-+		if (num_sharing_cache) {
-+			int bits = get_count_order(num_sharing_cache) - 1;
-+
-+			per_cpu(cpu_llc_id, cpu) = c->apicid >> bits;
-+		}
-+	}
-+}
-+
- void init_amd_cacheinfo(struct cpuinfo_x86 *c)
- {
- 
+-obj-y			:= intel_cacheinfo.o scattered.o topology.o
++obj-y			:= cacheinfo.o scattered.o topology.o
+ obj-y			+= common.o
+ obj-y			+= rdrand.o
+ obj-y			+= match.o
+diff --git a/arch/x86/kernel/cpu/intel_cacheinfo.c b/arch/x86/kernel/cpu/cacheinfo.c
+similarity index 100%
+rename from arch/x86/kernel/cpu/intel_cacheinfo.c
+rename to arch/x86/kernel/cpu/cacheinfo.c
 -- 
 2.7.4
