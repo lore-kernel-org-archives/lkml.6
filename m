@@ -1,341 +1,152 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758146AbeD0MCd (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 08:02:33 -0400
-Received: from smtprelay6.synopsys.com ([198.182.37.59]:36055 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753079AbeD0MAN (ORCPT
+        id S1757856AbeD0MEZ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 08:04:25 -0400
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:35414 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757530AbeD0MEX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 08:00:13 -0400
-From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-To: bhelgaas@google.com, lorenzo.pieralisi@arm.com,
-        Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, gustavo.pimentel@synopsys.com
-Subject: [PATCH v8 2/9] PCI: dwc: Add support for EP mode
-Date: Fri, 27 Apr 2018 12:59:57 +0100
-Message-Id: <bebc2671912f1a98c8525091da90ed46ccea7384.1524829928.git.gustavo.pimentel@synopsys.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1524829928.git.gustavo.pimentel@synopsys.com>
-References: <cover.1524829928.git.gustavo.pimentel@synopsys.com>
-In-Reply-To: <cover.1524829928.git.gustavo.pimentel@synopsys.com>
-References: <cover.1524829928.git.gustavo.pimentel@synopsys.com>
+        Fri, 27 Apr 2018 08:04:23 -0400
+X-Google-Smtp-Source: AB8JxZrVsOfJAebneBgYTQtLpoBgQmaO7kgtI7xfKNU19qVg9m5kqmSexJgM6u+Un6MdOBxbPtZ5yapxOZ0Zs6kFYJg=
+MIME-Version: 1.0
+In-Reply-To: <20180427001745.4116-1-david@lechnology.com>
+References: <20180427001745.4116-1-david@lechnology.com>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date: Fri, 27 Apr 2018 14:04:19 +0200
+Message-ID: <CAMpxmJUCOHqds-zVz736fma7EDZ_o6PpbHMwtFF8wRXJMHCqzA@mail.gmail.com>
+Subject: =?UTF-8?Q?Re=3A_=5BPATCH_v9_00=2F27=5D_ARM=3A_davinci=3A_convert_to_common?=
+        =?UTF-8?Q?_clock_framework=E2=80=8B?=
+To: Sekhar Nori <nsekhar@ti.com>, David Lechner <david@lechnology.com>
+Cc: linux-clk@vger.kernel.org,
+        linux-devicetree <devicetree@vger.kernel.org>,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
+        Adam Ford <aford173@gmail.com>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The PCIe controller dual mode is capable of operating in RC mode as well
-as EP mode by configuration option. Till now only RC mode was supported,
-with this patch is add EP support to the DesignWare driver.
+2018-04-27 2:17 GMT+02:00 David Lechner <david@lechnology.com>:
+> This series converts mach-davinci to use the common clock framework.
+>
+> The series works like this, the first 3 patches fix some issues with the clock
+> drivers that have already been accepted into the mainline kernel.
+>
+> Then, starting with "ARM: davinci: pass clock as parameter to
+> davinci_timer_init()", we get the mach code ready for the switch by adding the
+> code needed for the new clock drivers and adding #ifndef CONFIG_COMMON_CLK
+> around the legacy clocks so that we can switch easily between the old and the
+> new.
+>
+> "ARM: davinci: switch to common clock framework" actually flips the switch
+> to start using the new clock drivers. Then the next 8 patches remove all
+> of the old clock code.
+>
+> The final four patches add device tree clock support to the one SoC that
+> supports it.
+>
+> This series has been tested on TI OMAP-L138 LCDK (both device tree and legacy
+> board file).
+>
+>
+> Changes:
+>
+> v9 changes (also see individual patches for details):
+> - Rebased on linux-davnci/master (f5e3203bb775)
+> - Dropped drivers/clk patches that landed in v4.17
+> - New drivers/clk patches for early boot special case
+> - New patch for ti,davinci-timer device tree bindings
+> - Updated mach/davinci patches to register clocks in early boot when needed
+>
+> v8 changes (also see individual patches for details):
+> - Rebased on linux-davinci/master
+> - Dropped use of __init and __initconst attributes in clk drivers
+> - Add clkdev lookups for PLL SYSCLKs
+> - Fix genpd clock reference counting issue
+> - Fix PSC clock driver loading order issue
+> - Fix typo in device tree and add more power-domains properties
+>
+> v7 changes (also see individual patches for details):
+> - Rebased on linux-davinci/master (v4.16-rc)
+> - Convert clock drivers to platform devices
+> - New patch "ARM: davinci: pass clock as parameter to davinci_timer_init()"
+> - Fix issues with lcdk and aemif clock lookups and power domains
+> - Fixed other minor issues brought up in v6 review
+>
+> v6 changes (also see individual patches for details):
+> - All of the device tree bindings are changed
+> - All of the clock drivers are changed significantly
+> - Fixed issues brought up during review of v5
+> - "ARM: davinci: move davinci_clk_init() to init_time" is removed from this
+>   series and submitted separately
+>
+> v5 changes:
+> - Basically, this is an entirely new series
+> - Patches are broken up into bite-sized pieces
+> - Converted PSC clock driver to use regmap
+> - Restored "force" flag for certain DA850 clocks
+> - Added device tree bindings
+> - Moved more of the clock init to drivers/clk
+> - Fixed frequency scaling (maybe*)
+>
+> * I have frequency scaling using cpufreq-dt, so I know the clocks are doing
+>   what they need to do to make this work, but I haven't figured out how to
+>   test davinci-cpufreq driver yet. (Patches to make cpufreq-dt work will be
+>   sent separately after this series has landed.)
+>
+>
+> Dependencies:
+>
+> Only one dependency didn't land in v4.17. It is just a runtime dependency for
+> the LCDK board to make the display work.
+>
+> - "drm/tilcdc: Fix setting clock divider for omap-l138"[1]
+>
+> [1]: https://patchwork.freedesktop.org/patch/210696/
+>
+> You can find a working branch with everything included (plus a few extras, like
+> cpufreq-dt) in the "common-clk-v8" branch of https://github.com/dlech/ev3dev-kernel.git.
+>
+>
+> Testing/debugging for the uninitiated:
+>
+> I only have one device to test with, which is based on da850, so I will
+> have to rely on others to do some testing here. Since we are dealing with
+> clocks, if something isn't working, you most likely won't see output on
+> the serial port. To figure out what is going on, you need to enable...
+>
+>         CONFIG_DEBUG_LL=y
+>         CONFIG_EARLY_PRINTK=y
+>
+> and add "earlyprintk clk_ignore_unused" to the kernel command line options.
+> You may need to select a different UART for this depending on your board. I
+> think UART1 is the default in the kernel configuration.
+>
+> On da850 devices comment out the lines:
+>
+>         else
+>                 clk_set_parent(clk, parent->clk);
+>
+> in da850.c or, if using device tree, comment out the lines:
+>
+>         assigned-clocks = <&async3_clk>;
+>         assigned-clock-parents = <&pll1_sysclk 2>;
+>
+> in da850.dtsi when doing earlyprintk, otherwise the UART1 and UART2 clock
+> source will change during boot and cause garbled output after a point.
+>
+>
 
-Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
----
-Change v1->v2:
- - Removed dw_plat_pcie_stop_link empty function.
- - Implemented Kishon's suggestions about dw-pcie-rc and dw-pcie strings.
-compatibility.
- - Added second entry on pci_epf_test_ids structure.
-Changes v2->v3:
- - Reverted additions in dw_pcie_ep_linkup function.
- - Replaced devm_ioremap by devm_ioremap_resource function.
- - Moved second entry in pci_epf_test_ids structure into a new patch file.
-Changes v3->v4:
- - Reverted "snps,dw-pcie-rc" compatible string requested by Rob Herring.
-Changes v4->v5:
- - Nothing changed, just to follow the patch set version.
-Changes v5->v6:
- - Removed PCIE_DW_PLAT entry helps and description in order to be hidden.
-Changes v6->v7:
- - Nothing changed, just to follow the patch set version.
-Changes v7->v8:
- - Patch description rework for an imperative verbal mode.
+Hi David, Sekhar,
 
- drivers/pci/dwc/Kconfig                |  41 ++++++---
- drivers/pci/dwc/pcie-designware-plat.c | 149 ++++++++++++++++++++++++++++++---
- 2 files changed, 169 insertions(+), 21 deletions(-)
+Patches 3-5 from the reset series[1] should go in before this series
+or we'll be getting WARN's from the common clock framework core about
+unprepared clocks on boards using the remoteproc driver.
 
-diff --git a/drivers/pci/dwc/Kconfig b/drivers/pci/dwc/Kconfig
-index 2f3f5c5..62f7cdf 100644
---- a/drivers/pci/dwc/Kconfig
-+++ b/drivers/pci/dwc/Kconfig
-@@ -7,8 +7,7 @@ config PCIE_DW
- 
- config PCIE_DW_HOST
-         bool
--	depends on PCI
--	depends on PCI_MSI_IRQ_DOMAIN
-+	depends on PCI && PCI_MSI_IRQ_DOMAIN
-         select PCIE_DW
- 
- config PCIE_DW_EP
-@@ -51,17 +50,37 @@ config PCI_DRA7XX_EP
- 	  This uses the DesignWare core.
- 
- config PCIE_DW_PLAT
--	bool "Platform bus based DesignWare PCIe Controller"
--	depends on PCI
--	depends on PCI_MSI_IRQ_DOMAIN
--	select PCIE_DW_HOST
--	---help---
--	 This selects the DesignWare PCIe controller support. Select this if
--	 you have a PCIe controller on Platform bus.
-+	bool
- 
--	 If you have a controller with this interface, say Y or M here.
-+config PCIE_DW_PLAT_HOST
-+	bool "Platform bus based DesignWare PCIe Controller - Host mode"
-+	depends on PCI && PCI_MSI_IRQ_DOMAIN
-+	select PCIE_DW_HOST
-+	select PCIE_DW_PLAT
-+	default y
-+	help
-+	  Enables support for the PCIe controller in the Designware IP to
-+	  work in host mode. There are two instances of PCIe controller in
-+	  Designware IP.
-+	  This controller can work either as EP or RC. In order to enable
-+	  host-specific features PCIE_DW_PLAT_HOST must be selected and in
-+	  order to enable device-specific features PCI_DW_PLAT_EP must be
-+	  selected.
- 
--	 If unsure, say N.
-+config PCIE_DW_PLAT_EP
-+	bool "Platform bus based DesignWare PCIe Controller - Endpoint mode"
-+	depends on PCI && PCI_MSI_IRQ_DOMAIN
-+	depends on PCI_ENDPOINT
-+	select PCIE_DW_EP
-+	select PCIE_DW_PLAT
-+	help
-+	  Enables support for the PCIe controller in the Designware IP to
-+	  work in endpoint mode. There are two instances of PCIe controller
-+	  in Designware IP.
-+	  This controller can work either as EP or RC. In order to enable
-+	  host-specific features PCIE_DW_PLAT_HOST must be selected and in
-+	  order to enable device-specific features PCI_DW_PLAT_EP must be
-+	  selected.
- 
- config PCI_EXYNOS
- 	bool "Samsung Exynos PCIe controller"
-diff --git a/drivers/pci/dwc/pcie-designware-plat.c b/drivers/pci/dwc/pcie-designware-plat.c
-index 5416aa8..efc315c 100644
---- a/drivers/pci/dwc/pcie-designware-plat.c
-+++ b/drivers/pci/dwc/pcie-designware-plat.c
-@@ -12,19 +12,29 @@
- #include <linux/interrupt.h>
- #include <linux/kernel.h>
- #include <linux/init.h>
-+#include <linux/of_device.h>
- #include <linux/of_gpio.h>
- #include <linux/pci.h>
- #include <linux/platform_device.h>
- #include <linux/resource.h>
- #include <linux/signal.h>
- #include <linux/types.h>
-+#include <linux/regmap.h>
- 
- #include "pcie-designware.h"
- 
- struct dw_plat_pcie {
--	struct dw_pcie		*pci;
-+	struct dw_pcie			*pci;
-+	struct regmap			*regmap;
-+	enum dw_pcie_device_mode	mode;
- };
- 
-+struct dw_plat_pcie_of_data {
-+	enum dw_pcie_device_mode	mode;
-+};
-+
-+static const struct of_device_id dw_plat_pcie_of_match[];
-+
- static int dw_plat_pcie_host_init(struct pcie_port *pp)
- {
- 	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-@@ -42,9 +52,53 @@ static const struct dw_pcie_host_ops dw_plat_pcie_host_ops = {
- 	.host_init = dw_plat_pcie_host_init,
- };
- 
--static int dw_plat_add_pcie_port(struct pcie_port *pp,
-+static int dw_plat_pcie_establish_link(struct dw_pcie *pci)
-+{
-+	return 0;
-+}
-+
-+static const struct dw_pcie_ops dw_pcie_ops = {
-+	.start_link = dw_plat_pcie_establish_link,
-+};
-+
-+static void dw_plat_pcie_ep_init(struct dw_pcie_ep *ep)
-+{
-+	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-+	enum pci_barno bar;
-+
-+	for (bar = BAR_0; bar <= BAR_5; bar++)
-+		dw_pcie_ep_reset_bar(pci, bar);
-+}
-+
-+static int dw_plat_pcie_ep_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
-+				     enum pci_epc_irq_type type,
-+				     u8 interrupt_num)
-+{
-+	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-+
-+	switch (type) {
-+	case PCI_EPC_IRQ_LEGACY:
-+		dev_err(pci->dev, "EP cannot trigger legacy IRQs\n");
-+		return -EINVAL;
-+	case PCI_EPC_IRQ_MSI:
-+		return dw_pcie_ep_raise_msi_irq(ep, func_no, interrupt_num);
-+	default:
-+		dev_err(pci->dev, "UNKNOWN IRQ type\n");
-+	}
-+
-+	return 0;
-+}
-+
-+static struct dw_pcie_ep_ops pcie_ep_ops = {
-+	.ep_init = dw_plat_pcie_ep_init,
-+	.raise_irq = dw_plat_pcie_ep_raise_irq,
-+};
-+
-+static int dw_plat_add_pcie_port(struct dw_plat_pcie *dw_plat_pcie,
- 				 struct platform_device *pdev)
- {
-+	struct dw_pcie *pci = dw_plat_pcie->pci;
-+	struct pcie_port *pp = &pci->pp;
- 	struct device *dev = &pdev->dev;
- 	int ret;
- 
-@@ -63,15 +117,44 @@ static int dw_plat_add_pcie_port(struct pcie_port *pp,
- 
- 	ret = dw_pcie_host_init(pp);
- 	if (ret) {
--		dev_err(dev, "failed to initialize host\n");
-+		dev_err(dev, "Failed to initialize host\n");
- 		return ret;
- 	}
- 
- 	return 0;
- }
- 
--static const struct dw_pcie_ops dw_pcie_ops = {
--};
-+static int dw_plat_add_pcie_ep(struct dw_plat_pcie *dw_plat_pcie,
-+			       struct platform_device *pdev)
-+{
-+	int ret;
-+	struct dw_pcie_ep *ep;
-+	struct resource *res;
-+	struct device *dev = &pdev->dev;
-+	struct dw_pcie *pci = dw_plat_pcie->pci;
-+
-+	ep = &pci->ep;
-+	ep->ops = &pcie_ep_ops;
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dbi2");
-+	pci->dbi_base2 = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(pci->dbi_base2))
-+		return PTR_ERR(pci->dbi_base2);
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "addr_space");
-+	if (!res)
-+		return -EINVAL;
-+
-+	ep->phys_base = res->start;
-+	ep->addr_size = resource_size(res);
-+
-+	ret = dw_pcie_ep_init(ep);
-+	if (ret) {
-+		dev_err(dev, "Failed to initialize endpoint\n");
-+		return ret;
-+	}
-+	return 0;
-+}
- 
- static int dw_plat_pcie_probe(struct platform_device *pdev)
- {
-@@ -80,6 +163,16 @@ static int dw_plat_pcie_probe(struct platform_device *pdev)
- 	struct dw_pcie *pci;
- 	struct resource *res;  /* Resource from DT */
- 	int ret;
-+	const struct of_device_id *match;
-+	const struct dw_plat_pcie_of_data *data;
-+	enum dw_pcie_device_mode mode;
-+
-+	match = of_match_device(dw_plat_pcie_of_match, dev);
-+	if (!match)
-+		return -EINVAL;
-+
-+	data = (struct dw_plat_pcie_of_data *)match->data;
-+	mode = (enum dw_pcie_device_mode)data->mode;
- 
- 	dw_plat_pcie = devm_kzalloc(dev, sizeof(*dw_plat_pcie), GFP_KERNEL);
- 	if (!dw_plat_pcie)
-@@ -93,23 +186,59 @@ static int dw_plat_pcie_probe(struct platform_device *pdev)
- 	pci->ops = &dw_pcie_ops;
- 
- 	dw_plat_pcie->pci = pci;
-+	dw_plat_pcie->mode = mode;
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dbi");
-+	if (!res)
-+		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	pci->dbi_base = devm_ioremap_resource(dev, res);
- 	if (IS_ERR(pci->dbi_base))
- 		return PTR_ERR(pci->dbi_base);
- 
- 	platform_set_drvdata(pdev, dw_plat_pcie);
- 
--	ret = dw_plat_add_pcie_port(&pci->pp, pdev);
--	if (ret < 0)
--		return ret;
-+	switch (dw_plat_pcie->mode) {
-+	case DW_PCIE_RC_TYPE:
-+		if (!IS_ENABLED(CONFIG_PCIE_DW_PLAT_HOST))
-+			return -ENODEV;
-+
-+		ret = dw_plat_add_pcie_port(dw_plat_pcie, pdev);
-+		if (ret < 0)
-+			return ret;
-+		break;
-+	case DW_PCIE_EP_TYPE:
-+		if (!IS_ENABLED(CONFIG_PCIE_DW_PLAT_EP))
-+			return -ENODEV;
-+
-+		ret = dw_plat_add_pcie_ep(dw_plat_pcie, pdev);
-+		if (ret < 0)
-+			return ret;
-+		break;
-+	default:
-+		dev_err(dev, "INVALID device type %d\n", dw_plat_pcie->mode);
-+	}
- 
- 	return 0;
- }
- 
-+static const struct dw_plat_pcie_of_data dw_plat_pcie_rc_of_data = {
-+	.mode = DW_PCIE_RC_TYPE,
-+};
-+
-+static const struct dw_plat_pcie_of_data dw_plat_pcie_ep_of_data = {
-+	.mode = DW_PCIE_EP_TYPE,
-+};
-+
- static const struct of_device_id dw_plat_pcie_of_match[] = {
--	{ .compatible = "snps,dw-pcie", },
-+	{
-+		.compatible = "snps,dw-pcie",
-+		.data = &dw_plat_pcie_rc_of_data,
-+	},
-+	{
-+		.compatible = "snps,dw-pcie-ep",
-+		.data = &dw_plat_pcie_ep_of_data,
-+	},
- 	{},
- };
- 
--- 
-2.7.4
+Thanks,
+Bartosz
+
+[1] https://lkml.org/lkml/2018/4/17/1000
