@@ -1,84 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933020AbeD0Q7g (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 12:59:36 -0400
-Received: from smtprelay.synopsys.com ([198.182.37.59]:37147 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758921AbeD0Q57 (ORCPT
+        id S933048AbeD0Q7m (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 12:59:42 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40944 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933023AbeD0Q7i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 12:57:59 -0400
-From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-To: bhelgaas@google.com, lorenzo.pieralisi@arm.com,
-        Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
-        adouglas@cadence.com, jesper.nilsson@axis.com
-Cc: linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, gustavo.pimentel@synopsys.com
-Subject: [PATCH 10/10] misc: pci_endpoint_test: Use pci_irq_vector function
-Date: Fri, 27 Apr 2018 17:57:47 +0100
-Message-Id: <d817b639ca484665a085df9a5cdefbcd7a062e31.1524845816.git.gustavo.pimentel@synopsys.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1524845816.git.gustavo.pimentel@synopsys.com>
-References: <cover.1524845816.git.gustavo.pimentel@synopsys.com>
-In-Reply-To: <cover.1524845816.git.gustavo.pimentel@synopsys.com>
-References: <cover.1524845816.git.gustavo.pimentel@synopsys.com>
+        Fri, 27 Apr 2018 12:59:38 -0400
+Date: Fri, 27 Apr 2018 10:00:48 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Joel Fernandes <joelaf@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zilstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Fenguang Wu <fengguang.wu@intel.com>,
+        Baohong Liu <baohong.liu@intel.com>,
+        Vedang Patel <vedang.patel@intel.com>,
+        "Cc: Android Kernel" <kernel-team@android.com>
+Subject: Re: [PATCH RFC] tracepoint: Introduce tracepoint callbacks executing
+ with preempt on
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180427042656.190746-1-joelaf@google.com>
+ <20180427155701.GL26088@linux.vnet.ibm.com>
+ <CAJWu+or9GJwkDK9+842YbobG3=xVW-PgqS=uE5P2xFbDhmqxEQ@mail.gmail.com>
+ <20180427122201.75abc313@gandalf.local.home>
+ <20180427164554.GO26088@linux.vnet.ibm.com>
+ <20180427124641.7b991c57@gandalf.local.home>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180427124641.7b991c57@gandalf.local.home>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18042716-2213-0000-0000-0000029A417E
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008933; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000257; SDB=6.01024096; UDB=6.00522857; IPR=6.00803327;
+ MB=3.00020809; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-27 16:59:36
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18042716-2214-0000-0000-000059EA4096
+Message-Id: <20180427170048.GP26088@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-27_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804270162
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace "pdev->irq + index" operation by the pci_irq_vector() call,
-that converts from device vector to Linux IRQ.
-(suggestion made by Alan Douglas).
+On Fri, Apr 27, 2018 at 12:46:41PM -0400, Steven Rostedt wrote:
+> On Fri, 27 Apr 2018 09:45:54 -0700
+> "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
+> 
+> > > > That shouldn't be needed. For the rcu_read_lock_sched case, there is a
+> > > > preempt_disable which needs to be a notrace, but for the srcu one,
+> > > > since we don't do that, I think it should be fine.  
+> > > 
+> > > Actually, I think I may agree here too. Because the _notrace is for
+> > > function tracing, and it shouldn't affect it. If people don't want it
+> > > traced, they could add those functions to the list in the notrace file.  
+> > 
+> > OK, feel free to ignore my notrace srcu_read_lock() patch, then.  ;-)
+> 
+> Of course I wasn't thinking about the lockdep tracepoints that Joel
+> mentioned, which happens to be the reason for all this discussion in
+> the first place :-)  Now I think we do need it. (OK, I can keep
+> changing my mind, can't I?).
 
-Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
----
- drivers/misc/pci_endpoint_test.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+You can, but at some point I start applying heavy-duty hysteresis.  ;-)
 
-diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
-index c9b6e26..cbdd0c6 100644
---- a/drivers/misc/pci_endpoint_test.c
-+++ b/drivers/misc/pci_endpoint_test.c
-@@ -220,7 +220,7 @@ static bool pci_endpoint_test_msi_irq(struct pci_endpoint_test *test,
- 	if (!val)
- 		return false;
- 
--	if (test->last_irq - pdev->irq == msi_num - 1)
-+	if (pci_irq_vector(pdev, irq_num - 1) == test->last_irq)
- 		return true;
- 
- 	return false;
-@@ -565,12 +565,12 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
- 	}
- 
- 	for (i = 1; i < irq; i++) {
--		err = devm_request_irq(dev, pdev->irq + i,
-+		err = devm_request_irq(dev, pci_irq_vector(pdev, i),
- 				       pci_endpoint_test_irqhandler,
- 				       IRQF_SHARED, DRV_MODULE_NAME, test);
- 		if (err)
- 			dev_err(dev, "Failed to request IRQ %d for MSI%s %d\n",
--				pdev->irq + i,
-+				pci_irq_vector(pdev, i),
- 				irq_type == IRQ_TYPE_MSIX ? "-X" : "", i + 1);
- 	}
- 
-@@ -633,7 +633,7 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
- 	}
- 
- 	for (i = 0; i < irq; i++)
--		devm_free_irq(dev, pdev->irq + i, test);
-+		devm_free_irq(&pdev->dev, pci_irq_vector(pdev, i), test);
- 
- err_disable_msi:
- 	pci_disable_msi(pdev);
-@@ -667,7 +667,7 @@ static void pci_endpoint_test_remove(struct pci_dev *pdev)
- 			pci_iounmap(pdev, test->bar[bar]);
- 	}
- 	for (i = 0; i < test->num_irqs; i++)
--		devm_free_irq(&pdev->dev, pdev->irq + i, test);
-+		devm_free_irq(&pdev->dev, pci_irq_vector(pdev, i), test);
- 	pci_disable_msi(pdev);
- 	pci_disable_msix(pdev);
- 	pci_release_regions(pdev);
--- 
-2.7.4
+So the current thought (as of your having sent the above email) is that
+we need notrace versions of srcu_read_lock() and srcu_read_unlock(),
+but not for __srcu_read_lock() and __srcu_read_unlock(), correct?
+
+							Thanx, Paul
