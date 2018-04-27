@@ -1,41 +1,48 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqns/24LDQXVCV8bFIVpHTuyHtMQ2X2Lwo52erzvn035pK7o2PyWNhuyb8POBH2t2Baxu8c
-ARC-Seal: i=1; a=rsa-sha256; t=1524837643; cv=none;
+X-Google-Smtp-Source: AB8JxZoPRVyoqbCKaqD0S4TTbXNLBqzgpoTiHKIRvanOvVrwGG55PGU4mWPaDRo0Ur7aqdosq/27
+ARC-Seal: i=1; a=rsa-sha256; t=1524837641; cv=none;
         d=google.com; s=arc-20160816;
-        b=JvodBBQenalPKGOED+RV1DsBOKjy4Z275FS0ScvtmSOI28yPMlcam0BM1t7l7y+zG0
-         DbHiv7yCkTIJQIepHRne1CqZYfVfWitmjbOdsVXS+dJAP2e2nIS0amhaS7vFWR6ctNmR
-         26kxhQ/kVcVxdtNl9x6kevl5WBEdQSQj5MBUfSRBX5mcGqEnqRFSdfyo/XVdt5E1hvjb
-         rciNixpBiwLmVi87pj6jL/W3pTCOwbHVqWvNu6tDwB4aMgWd7CCzFM0IPDPrX9Gq4mY2
-         Sphdu9lf80AT6BaDBXXx5TXGyskTcDXLlwau7hol9lbDt9yP9MCwNT4uLHHJTHWuv2EJ
-         KPkw==
+        b=RW03c2oP2NpWylmmH0RVpIt1/vj6Beii9EDnOZALwM3whTRcPyeUBmG9WtP36qjSZF
+         s8MVfaB0iIsmgwr5QuWbibLc/TzANeL9nwdReMkIHpjEaijpxWypagTZYZc0P1BY9Jik
+         JecWagrziBNjub2g2bKoGFBKSskaaMAb2DO1/Mzfnoj3vQkP5D2bZhQVly0qMdJwKP32
+         NCaP8ygQBUvp6uslcIfPv3kFOP6oWljHJhztKi4Yk6RXEEXBq17j7kstmI/RD9FgMPew
+         b23Ch6qe1vPPvZjYBvPj3KwAc3u6Yms4wyQN7O+eb3tQv0CIuGa5hOQEzqc5KUZtMj61
+         BMXw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=8OuOqsvVnhl1jAUC7UQiK4zCCuqoxJ95257DoZxvGKY=;
-        b=dqh+K89C8VdJb0Cs+dXNt5TEWnHkdETl78WKrDAoE73bHI4m7h0HPOnS+hMZBDIPXp
-         ZUA2DupBCEsgtX+U8RtO2ZVvS/OzOiIxgDSLupOmSZCQVk88BRxFbZNvA0xP68Bim6i1
-         u5cGk86yBI1WL/uTvvWP7WjB+HkgB+p0T/Dm8QkUtSAjYaZI4NvuqFN9udHh1RNP5w3o
-         rR08do55IWxT6DEFr+g/gK4c8NO6US9mto8+FOwE4GKJTUCHBVL+3lTfhKynR3c0gTGj
-         27v65pA6oYKY91EGkFEkHW950/1g85TOUsQVMJtXK/9Ed8aDcv6YiuZe6j0fh/+mMCrs
-         VpKA==
+        bh=6OALhr3DT6rQ0bTknnDjaM3JNb6XmOY8ILq7BSHfiUo=;
+        b=FE4IwmwdO0Q/fclPw+OG4w9TeYn2O4/wPhKtJRauulAtDSiD9C+v9jQCe9QMgu/IKA
+         dnrDf3Hu1JxLPAjVaKtZBd8zdOP9T3a5TqTBaB7lrXeupA3yXu1BFVYCZRGWwzuRQwGS
+         XoFOzDRjpFpFa9F283J1QqcrLRfs85fMBWIFVd3Y30SF4web79fqgMyCQr8ojZbqwnTF
+         q85trHmicn8azl+j+jUv6kgI69yyi5Saszc81zhn7/zrWnvIbHJUqh1TJXXb8/n59dHx
+         p42QGtxozEChiYqSookg98vVFx3GBH7GZVkINjqsw+gLaU9QnAvLVOrW1smKfrigSvgK
+         +iqQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD20F21895
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB85A2189D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Chen Feng <puck.chen@hisilicon.com>,
-	Lu bing <albert.lubing@hisilicon.com>,
-	Laura Abbott <labbott@redhat.com>,
-	Greg Hackmann <ghackmann@google.com>
-Subject: [PATCH 4.4 04/50] staging: ion : Donnot wakeup kswapd in ion system alloc
-Date: Fri, 27 Apr 2018 15:58:06 +0200
-Message-Id: <20180427135655.905352203@linuxfoundation.org>
+	Jiri Olsa <jolsa@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Andi Kleen <andi@firstfloor.org>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Stephane Eranian <eranian@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	syzkaller-bugs@googlegroups.com,
+	x86@kernel.org,
+	Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 4.4 03/50] perf: Return proper values for user stack errors
+Date: Fri, 27 Apr 2018 15:58:05 +0200
+Message-Id: <20180427135655.846786908@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135655.623669681@linuxfoundation.org>
 References: <20180427135655.623669681@linuxfoundation.org>
@@ -45,8 +52,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908156901734645?=
-X-GMAIL-MSGID: =?utf-8?q?1598908156901734645?=
+X-GMAIL-THRID: =?utf-8?q?1598908138120907757?=
+X-GMAIL-MSGID: =?utf-8?q?1598908154306753331?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,43 +61,44 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Chen Feng <puck.chen@hisilicon.com>
+From: Jiri Olsa <jolsa@kernel.org>
 
-commit 2ef230531ee171a475fc3ddad5516dd7e09a8a77 upstream.
+commit 78b562fbfa2cf0a9fcb23c3154756b690f4905c1 upstream.
 
-Since ion alloc can be called by userspace,eg gralloc.
-When it is called frequently, the efficiency of kswapd is
-to low. And the reclaimed memory is too lower. In this way,
-the kswapd can use to much cpu resources.
+Return immediately when we find issue in the user stack checks. The
+error value could get overwritten by following check for
+PERF_SAMPLE_REGS_INTR.
 
-With 3.5GB DMA Zone and 0.5 Normal Zone.
-
-pgsteal_kswapd_dma 9364140
-pgsteal_kswapd_normal 7071043
-pgscan_kswapd_dma 10428250
-pgscan_kswapd_normal 37840094
-
-With this change the reclaim ratio has greatly improved
-18.9% -> 72.5%
-
-Signed-off-by: Chen Feng <puck.chen@hisilicon.com>
-Signed-off-by: Lu bing <albert.lubing@hisilicon.com>
-Reviewed-by: Laura Abbott <labbott@redhat.com>
-Cc: Greg Hackmann <ghackmann@google.com>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <andi@firstfloor.org>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: syzkaller-bugs@googlegroups.com
+Cc: x86@kernel.org
+Fixes: 60e2364e60e8 ("perf: Add ability to sample machine state on interrupt")
+Link: http://lkml.kernel.org/r/20180415092352.12403-1-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/android/ion/ion_system_heap.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/events/core.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/staging/android/ion/ion_system_heap.c
-+++ b/drivers/staging/android/ion/ion_system_heap.c
-@@ -27,7 +27,7 @@
- #include "ion_priv.h"
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -8133,9 +8133,9 @@ static int perf_copy_attr(struct perf_ev
+ 		 * __u16 sample size limit.
+ 		 */
+ 		if (attr->sample_stack_user >= USHRT_MAX)
+-			ret = -EINVAL;
++			return -EINVAL;
+ 		else if (!IS_ALIGNED(attr->sample_stack_user, sizeof(u64)))
+-			ret = -EINVAL;
++			return -EINVAL;
+ 	}
  
- static gfp_t high_order_gfp_flags = (GFP_HIGHUSER | __GFP_ZERO | __GFP_NOWARN |
--				     __GFP_NORETRY) & ~__GFP_DIRECT_RECLAIM;
-+				     __GFP_NORETRY) & ~__GFP_RECLAIM;
- static gfp_t low_order_gfp_flags  = (GFP_HIGHUSER | __GFP_ZERO | __GFP_NOWARN);
- static const unsigned int orders[] = {8, 4, 0};
- static const int num_orders = ARRAY_SIZE(orders);
+ 	if (attr->sample_type & PERF_SAMPLE_REGS_INTR)
