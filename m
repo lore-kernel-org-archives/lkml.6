@@ -1,40 +1,38 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqKYK2VLKy83cDiByY2dpN0LhPXTgQArmOfApOmohjusNCCqZvf2dibReQ5yGbCb7naS97S
-ARC-Seal: i=1; a=rsa-sha256; t=1524837680; cv=none;
+X-Google-Smtp-Source: AB8JxZrae5iMTkSNG6c5T1kHZWVSzEtZEeZ4ce6bunCGR2BvF9gnJUsIyTslCW32zMC3radG/iaD
+ARC-Seal: i=1; a=rsa-sha256; t=1524837677; cv=none;
         d=google.com; s=arc-20160816;
-        b=xZMxM7e1HBqFQU6VRN5hY2+Lc9oTZmmk3fjVy6ge6P1/RifrhNwWWn9EoYer+ZbkG5
-         kBL36g3Pg7zE8/18o/RrSO7d503eAlNQAaEP7dgYXtJeXmQSBx1PJ2He3Y5+zCjpFZTR
-         MdFnqZJpgPvAXWCPBBKn9pXVRFoJ4n+UsAK54xkNStv2EdcV9AuwIdWanAFKgnFRyAsd
-         cvyKIqnkNpTaiwmiogtHJTpt2O2ACJScWFNtSs85zuXXLVqDHLFy2lTPQqwMTmOJf2xw
-         LeOw9ufhz00YwlpBqnnhhpmZuaO2u+ciBqK0BdOsU7/sNtO1hDjGjvMigJDybRP7xOTY
-         Sq3Q==
+        b=VVzTK2ot4NoEW48sXkF9XvrfQJgUDTzvjDGP6xYAJMMa+1EJkPN0tDTDKQ2Jmygf98
+         5RMT1Xkj2y9pyWg/gLHMs8wJy1MFBJ7inCXlneTmH15lRGO+S36Pcy8sosmFhIegznMo
+         Q1Br+4m3ZCHWZcDV+AzqSBAIWjuAnrX5nclwGPGBihsI/dJfaodroeHTAT9PVHfKH3ZG
+         vPV75pCNN/rynaF8sIxY9Y0HPDBkCEoN+v0v7zCIlUbLZOTjdKLeC3b9bbth7C1Wx+iH
+         5gc1F3jsFI85G6UNB+7e9mVj0PaxAFrqU5piDsP3FFfUWypOJMDuz850XgyMRQfgJhZX
+         kreA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=JRW4E0IpULUTD6C0+La0K3rMFD7VD3iNgJcmDmZMRrY=;
-        b=Wdf9VZwdiWyhHrRmIpIEbVtkBg6oGg3o+bVhWOGY3yIiD5AWniPj0eIQdI7ohhHL8D
-         bR3waNzzMdZ2we1B10gzKKn8q4cRObGcI/H83TKWpVG/dUPppVRjDCS3U7d2YvAJmvgA
-         CvIFK0OE23cJPAPMXFzih+NjRl/AqVRjrSUPBtrm1ckVwSvMqmpMN/+kQ81wLVQooH6f
-         bhglEXU1Iu9U5PdMiYUk6VkjZBJxLdlum0GoypoZyLk/a4mY9VDlRtwjwveiLes+NveO
-         h87HRRlbbE+HUaKNRRrm81r4Rrq97DpitO/YuJhBsrnMYwmgg7uU9UAp0C6HPO1lObMw
-         kJXg==
+        bh=nmw+1LB6lUVxdhEvHUHuwAWWEcU1+nskEvEc95nYkks=;
+        b=YkzKUpFnGGmazuu+6vtqtDe0NnxE5BFQJ103rpu1+CJa5v9wfolHX4y8dn7vvQjI5Q
+         nqi2rn6t6BAUPsUZ9TZDjANi05iVKkFFPrJ/aP2mz+5RbBHmhvB9dKMycAQLHykdMAPA
+         AgD6d38YYR3+qxiBpLdiLiw/rOcK8LX68osfSokLUZh6s6c5PvnoxtBHR+2RSbaY6G6R
+         +gKZotZupfU6GfLUbZUXhOhWQFCwMGbNBrePyF0V53uccZ3qL1ffvKOQLDYH20j3UIk+
+         daNIG2tcFEiR56iIJzd0E1DUmL8vDjKbsIGpR1rd6RtdVoKuirLxyFDIgtMUMbCkJzOV
+         TkKg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09BA1218A6
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67F1A2189D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Sahitya Tummala <stummala@codeaurora.org>,
-	Theodore Tso <tytso@mit.edu>,
-	Amit Pundir <amit.pundir@linaro.org>
-Subject: [PATCH 4.4 08/50] jbd2: fix use after free in kjournald2()
-Date: Fri, 27 Apr 2018 15:58:10 +0200
-Message-Id: <20180427135656.135152291@linuxfoundation.org>
+	Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: [PATCH 4.4 25/50] s390: add sysfs attributes for spectre
+Date: Fri, 27 Apr 2018 15:58:27 +0200
+Message-Id: <20180427135657.196294626@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135655.623669681@linuxfoundation.org>
 References: <20180427135655.623669681@linuxfoundation.org>
@@ -44,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908143233351701?=
-X-GMAIL-MSGID: =?utf-8?q?1598908194867671652?=
+X-GMAIL-THRID: =?utf-8?q?1598908192442314071?=
+X-GMAIL-MSGID: =?utf-8?q?1598908192442314071?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,68 +51,63 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sahitya Tummala <stummala@codeaurora.org>
+From: Martin Schwidefsky <schwidefsky@de.ibm.com>
 
-commit dbfcef6b0f4012c57bc0b6e0e660d5ed12a5eaed upstream.
 
-Below is the synchronization issue between unmount and kjournald2
-contexts, which results into use after free issue in kjournald2().
-Fix this issue by using journal->j_state_lock to synchronize the
-wait_event() done in journal_kill_thread() and the wake_up() done
-in kjournald2().
+[ Upstream commit d424986f1d6b16079b3231db0314923f4f8deed1 ]
 
-TASK 1:
-umount cmd:
-   |--jbd2_journal_destroy() {
-       |--journal_kill_thread() {
-            write_lock(&journal->j_state_lock);
-	    journal->j_flags |= JBD2_UNMOUNT;
-	    ...
-	    write_unlock(&journal->j_state_lock);
-	    wake_up(&journal->j_wait_commit);	   TASK 2 wakes up here:
-	    					   kjournald2() {
-						     ...
-						     checks JBD2_UNMOUNT flag and calls goto end-loop;
-						     ...
-						     end_loop:
-						       write_unlock(&journal->j_state_lock);
-						       journal->j_task = NULL; --> If this thread gets
-						       pre-empted here, then TASK 1 wait_event will
-						       exit even before this thread is completely
-						       done.
-	    wait_event(journal->j_wait_done_commit, journal->j_task == NULL);
-	    ...
-	    write_lock(&journal->j_state_lock);
-	    write_unlock(&journal->j_state_lock);
-	  }
-       |--kfree(journal);
-     }
-}
-						       wake_up(&journal->j_wait_done_commit); --> this step
-						       now results into use after free issue.
-						   }
+Set CONFIG_GENERIC_CPU_VULNERABILITIES and provide the two functions
+cpu_show_spectre_v1 and cpu_show_spectre_v2 to report the spectre
+mitigations.
 
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: Amit Pundir <amit.pundir@linaro.org>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/jbd2/journal.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/s390/Kconfig                |    1 +
+ arch/s390/kernel/nospec-branch.c |   19 +++++++++++++++++++
+ 2 files changed, 20 insertions(+)
 
---- a/fs/jbd2/journal.c
-+++ b/fs/jbd2/journal.c
-@@ -275,11 +275,11 @@ loop:
- 	goto loop;
+--- a/arch/s390/Kconfig
++++ b/arch/s390/Kconfig
+@@ -111,6 +111,7 @@ config S390
+ 	select GENERIC_CLOCKEVENTS
+ 	select GENERIC_CPU_AUTOPROBE
+ 	select GENERIC_CPU_DEVICES if !SMP
++	select GENERIC_CPU_VULNERABILITIES
+ 	select GENERIC_FIND_FIRST_BIT
+ 	select GENERIC_SMP_IDLE_THREAD
+ 	select GENERIC_TIME_VSYSCALL
+--- a/arch/s390/kernel/nospec-branch.c
++++ b/arch/s390/kernel/nospec-branch.c
+@@ -1,5 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include <linux/module.h>
++#include <linux/device.h>
+ #include <asm/facility.h>
+ #include <asm/nospec-branch.h>
  
- end_loop:
--	write_unlock(&journal->j_state_lock);
- 	del_timer_sync(&journal->j_commit_timer);
- 	journal->j_task = NULL;
- 	wake_up(&journal->j_wait_done_commit);
- 	jbd_debug(1, "Journal thread exiting.\n");
-+	write_unlock(&journal->j_state_lock);
- 	return 0;
+@@ -43,6 +44,24 @@ static int __init nospec_report(void)
  }
+ arch_initcall(nospec_report);
  
++#ifdef CONFIG_SYSFS
++ssize_t cpu_show_spectre_v1(struct device *dev,
++			    struct device_attribute *attr, char *buf)
++{
++	return sprintf(buf, "Mitigation: __user pointer sanitization\n");
++}
++
++ssize_t cpu_show_spectre_v2(struct device *dev,
++			    struct device_attribute *attr, char *buf)
++{
++	if (IS_ENABLED(CC_USING_EXPOLINE) && !nospec_disable)
++		return sprintf(buf, "Mitigation: execute trampolines\n");
++	if (__test_facility(82, S390_lowcore.alt_stfle_fac_list))
++		return sprintf(buf, "Mitigation: limited branch prediction.\n");
++	return sprintf(buf, "Vulnerable\n");
++}
++#endif
++
+ #ifdef CONFIG_EXPOLINE
+ 
+ int nospec_disable = IS_ENABLED(CONFIG_EXPOLINE_OFF);
