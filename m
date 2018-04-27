@@ -1,40 +1,40 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZp7YYU1nokc/rYqdfnjBmXYgA3zEKz0Z18jt1/wWy67+TABBCooDrtNleO3GKT5gssDvGs4
-ARC-Seal: i=1; a=rsa-sha256; t=1524837967; cv=none;
+X-Google-Smtp-Source: AB8JxZp+LJl89U8DlQcQ/kjX8G2py/e2R4znXHvuJZZKXipp0Pr9g/MMyvGqXnXamex8DHd1Wjzz
+ARC-Seal: i=1; a=rsa-sha256; t=1524837964; cv=none;
         d=google.com; s=arc-20160816;
-        b=LoeopsF1g2OgHUzPMFG1heGiTJr+xZvE3xSqCyZ+LJz3wdUeZ5hn1c/9EUO4Ylod8M
-         0r7awctUmOKFqJ1xD1u8vVL96YluXOBSuTcyKnfZ/Ze2bFMnsclwbNYKiDO70tOwQJWy
-         T386QRnIvjMPpOhCd5zs4eDZYJbFIikB6FgY5rMrArnvRafr4bfCHysPLivCbyUsZ2lJ
-         ntdyPthZW8e5z0inVZI3PCOrgWsn7QusuWzxtp/0SV2iTZpxaF++eZCFtdVn9wsRu7Dd
-         P4SAHRzrbwu9vZlnMsjBiQ7eiIhZTw7xuaOdoloVAI/GDWpfiB7MNzRn0210v1iW5g0u
-         dNbw==
+        b=l9lUirpKyshUcifw2jcKwbz1FacXHK87UO9Egofl+UDPdxw0mJIP48e65y+TmH3k+I
+         c9mZlhDV1ApDHyRTXAg6tjC6YYQRdYJxs076Q4DDiQ9OA5KIcunc3FsVUuGK0hbNDX0E
+         ydLrnnMDHfk58yKMDyMAiuRcG1q0oxFH6RbdXp8Ov2V7+LpiQlXQkB63QPvLCSnvtszc
+         pCyS7Ej1F6J/a0VEsT7yJqstFjjk9lwtcsAZz3YvERTjxsPGv0m0LXSCOMqguId0gmid
+         ycBakbeepaqs6ejkre9pITovdcqlV1jsgPuiBsCxInGbMOwVL07EyAsGxx/GA+YJO78Y
+         XzPw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=EkwJsIEAvVUA2YoxZ1QQHbAKyt5jDe9lT4PTlhfPAmY=;
-        b=HgORCHWWleMXczHdpsvdb32geL0+fUjNzDlgrydqyhLwB+PmZ+JRqh6lh7a6PLs786
-         NGv8r2CtKdZe1OHiPlXgI7QtmMRd8iRsAH3F9AjuLyCbSv0+hHtPtKZd+prjcCwIFXYL
-         r2otV8GzWLNRLcmDv4Ufe/0nc+8PNfGShBJ+R6+aXDt9o9gG2BT3ro/uApZsRfI8ioMX
-         BW9dmT3+fdIRniEfuHNETU3ooFe/BJ2s54LlcfyCj763bG9fhnzJMfD9GnXo4Gh0d932
-         EF4P9uzfiVSG2lXB/Zdyr5Y9qXjw7EIfsnqSnq3qj/mOSfuCsNjw3Zq3YFqpg7s6e2qF
-         p1ng==
+        bh=6P1S0Xlb0nJndZCSJqzVHojRHcdXq6hqlOFnGqa3Ij8=;
+        b=OXHADfKZmP2T+ssfTTXWoAp4ZfFpS/WAu0Zbirb04p2SurYcxEy4udCCIfmSR8FDdN
+         Jj6rkJj2pCylSWgfpgng6d1/Ak4/2fS0EH1Lp7HtZVIPaJ8XpV1BvPMRJCr/ADyXSK91
+         qEZRan96ySfcLxjKibdjZciSW0De3RdLx3c7v7Fuy1YC42mHZL3NPRhPBZX3wGOdojbq
+         frIJO/gOCicoj1942pW1NzEij6kFxziiUeqDoIY429r6GR5JXfvpcyuRqcr3cKx38VSO
+         CRQHf67XBCCcFI1op+kc/alFe6rlhG2q5Oxbih/YNs64oDNgSxEQWnHe3rC8/6b8b1BJ
+         RfgQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBF9C21890
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38A3C21864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mark Rutland <mark.rutland@arm.com>,
-	Eric Biggers <ebiggers@google.com>,
+	Ahmed Abdelsalam <amsalam20@gmail.com>,
+	David Lebrun <dlebrun@google.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 11/80] KEYS: DNS: limit the length of option strings
-Date: Fri, 27 Apr 2018 15:58:04 +0200
-Message-Id: <20180427135733.515538966@linuxfoundation.org>
+Subject: [PATCH 4.14 10/80] ipv6: sr: fix NULL pointer dereference in seg6_do_srh_encap()- v4 pkts
+Date: Fri, 27 Apr 2018 15:58:03 +0200
+Message-Id: <20180427135733.461608394@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135732.928644313@linuxfoundation.org>
 References: <20180427135732.928644313@linuxfoundation.org>
@@ -44,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908006478347957?=
-X-GMAIL-MSGID: =?utf-8?q?1598908496233283829?=
+X-GMAIL-THRID: =?utf-8?q?1598908493233488012?=
+X-GMAIL-MSGID: =?utf-8?q?1598908493233488012?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,74 +53,93 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Biggers <ebiggers@google.com>
+From: Ahmed Abdelsalam <amsalam20@gmail.com>
 
 
-[ Upstream commit 9c438d7a3a52dcc2b9ed095cb87d3a5e83cf7e60 ]
+[ Upstream commit a957fa190aa9d9168b33d460a5241a6d088c6265 ]
 
-Adding a dns_resolver key whose payload contains a very long option name
-resulted in that string being printed in full.  This hit the WARN_ONCE()
-in set_precision() during the printk(), because printk() only supports a
-precision of up to 32767 bytes:
+In case of seg6 in encap mode, seg6_do_srh_encap() calls set_tun_src()
+in order to set the src addr of outer IPv6 header.
 
-    precision 1000000 too large
-    WARNING: CPU: 0 PID: 752 at lib/vsprintf.c:2189 vsnprintf+0x4bc/0x5b0
+The net_device is required for set_tun_src(). However calling ip6_dst_idev()
+on dst_entry in case of IPv4 traffic results on the following bug.
 
-Fix it by limiting option strings (combined name + value) to a much more
-reasonable 128 bytes.  The exact limit is arbitrary, but currently the
-only recognized option is formatted as "dnserror=%lu" which fits well
-within this limit.
+Using just dst->dev should fix this BUG.
 
-Also ratelimit the printks.
+[  196.242461] BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
+[  196.242975] PGD 800000010f076067 P4D 800000010f076067 PUD 10f060067 PMD 0
+[  196.243329] Oops: 0000 [#1] SMP PTI
+[  196.243468] Modules linked in: nfsd auth_rpcgss nfs_acl nfs lockd grace fscache sunrpc crct10dif_pclmul crc32_pclmul ghash_clmulni_intel pcbc aesni_intel aes_x86_64 crypto_simd cryptd input_leds glue_helper led_class pcspkr serio_raw mac_hid video autofs4 hid_generic usbhid hid e1000 i2c_piix4 ahci pata_acpi libahci
+[  196.244362] CPU: 2 PID: 1089 Comm: ping Not tainted 4.16.0+ #1
+[  196.244606] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
+[  196.244968] RIP: 0010:seg6_do_srh_encap+0x1ac/0x300
+[  196.245236] RSP: 0018:ffffb2ce00b23a60 EFLAGS: 00010202
+[  196.245464] RAX: 0000000000000000 RBX: ffff8c7f53eea300 RCX: 0000000000000000
+[  196.245742] RDX: 0000f10000000000 RSI: ffff8c7f52085a6c RDI: ffff8c7f41166850
+[  196.246018] RBP: ffffb2ce00b23aa8 R08: 00000000000261e0 R09: ffff8c7f41166800
+[  196.246294] R10: ffffdce5040ac780 R11: ffff8c7f41166828 R12: ffff8c7f41166808
+[  196.246570] R13: ffff8c7f52085a44 R14: ffffffffb73211c0 R15: ffff8c7e69e44200
+[  196.246846] FS:  00007fc448789700(0000) GS:ffff8c7f59d00000(0000) knlGS:0000000000000000
+[  196.247286] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  196.247526] CR2: 0000000000000000 CR3: 000000010f05a000 CR4: 00000000000406e0
+[  196.247804] Call Trace:
+[  196.247972]  seg6_do_srh+0x15b/0x1c0
+[  196.248156]  seg6_output+0x3c/0x220
+[  196.248341]  ? prandom_u32+0x14/0x20
+[  196.248526]  ? ip_idents_reserve+0x6c/0x80
+[  196.248723]  ? __ip_select_ident+0x90/0x100
+[  196.248923]  ? ip_append_data.part.50+0x6c/0xd0
+[  196.249133]  lwtunnel_output+0x44/0x70
+[  196.249328]  ip_send_skb+0x15/0x40
+[  196.249515]  raw_sendmsg+0x8c3/0xac0
+[  196.249701]  ? _copy_from_user+0x2e/0x60
+[  196.249897]  ? rw_copy_check_uvector+0x53/0x110
+[  196.250106]  ? _copy_from_user+0x2e/0x60
+[  196.250299]  ? copy_msghdr_from_user+0xce/0x140
+[  196.250508]  sock_sendmsg+0x36/0x40
+[  196.250690]  ___sys_sendmsg+0x292/0x2a0
+[  196.250881]  ? _cond_resched+0x15/0x30
+[  196.251074]  ? copy_termios+0x1e/0x70
+[  196.251261]  ? _copy_to_user+0x22/0x30
+[  196.251575]  ? tty_mode_ioctl+0x1c3/0x4e0
+[  196.251782]  ? _cond_resched+0x15/0x30
+[  196.251972]  ? mutex_lock+0xe/0x30
+[  196.252152]  ? vvar_fault+0xd2/0x110
+[  196.252337]  ? __do_fault+0x1f/0xc0
+[  196.252521]  ? __handle_mm_fault+0xc1f/0x12d0
+[  196.252727]  ? __sys_sendmsg+0x63/0xa0
+[  196.252919]  __sys_sendmsg+0x63/0xa0
+[  196.253107]  do_syscall_64+0x72/0x200
+[  196.253305]  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+[  196.253530] RIP: 0033:0x7fc4480b0690
+[  196.253715] RSP: 002b:00007ffde9f252f8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+[  196.254053] RAX: ffffffffffffffda RBX: 0000000000000040 RCX: 00007fc4480b0690
+[  196.254331] RDX: 0000000000000000 RSI: 000000000060a360 RDI: 0000000000000003
+[  196.254608] RBP: 00007ffde9f253f0 R08: 00000000002d1e81 R09: 0000000000000002
+[  196.254884] R10: 00007ffde9f250c0 R11: 0000000000000246 R12: 0000000000b22070
+[  196.255205] R13: 20c49ba5e353f7cf R14: 431bde82d7b634db R15: 00007ffde9f278fe
+[  196.255484] Code: a5 0f b6 45 c0 41 88 41 28 41 0f b6 41 2c 48 c1 e0 04 49 8b 54 01 38 49 8b 44 01 30 49 89 51 20 49 89 41 18 48 8b 83 b0 00 00 00 <48> 8b 30 49 8b 86 08 0b 00 00 48 8b 40 20 48 8b 50 08 48 0b 10
+[  196.256190] RIP: seg6_do_srh_encap+0x1ac/0x300 RSP: ffffb2ce00b23a60
+[  196.256445] CR2: 0000000000000000
+[  196.256676] ---[ end trace 71af7d093603885c ]---
 
-Reproducer:
-
-    perl -e 'print "#", "A" x 1000000, "\x00"' | keyctl padd dns_resolver desc @s
-
-This bug was found using syzkaller.
-
-Reported-by: Mark Rutland <mark.rutland@arm.com>
-Fixes: 4a2d789267e0 ("DNS: If the DNS server returns an error, allow that to be cached [ver #2]")
-Signed-off-by: Eric Biggers <ebiggers@google.com>
+Fixes: 8936ef7604c11 ("ipv6: sr: fix NULL pointer dereference when setting encap source address")
+Signed-off-by: Ahmed Abdelsalam <amsalam20@gmail.com>
+Acked-by: David Lebrun <dlebrun@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/dns_resolver/dns_key.c |   13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ net/ipv6/seg6_iptunnel.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/dns_resolver/dns_key.c
-+++ b/net/dns_resolver/dns_key.c
-@@ -25,6 +25,7 @@
- #include <linux/moduleparam.h>
- #include <linux/slab.h>
- #include <linux/string.h>
-+#include <linux/ratelimit.h>
- #include <linux/kernel.h>
- #include <linux/keyctl.h>
- #include <linux/err.h>
-@@ -91,9 +92,9 @@ dns_resolver_preparse(struct key_prepars
+--- a/net/ipv6/seg6_iptunnel.c
++++ b/net/ipv6/seg6_iptunnel.c
+@@ -136,7 +136,7 @@ int seg6_do_srh_encap(struct sk_buff *sk
+ 	isrh->nexthdr = proto;
  
- 			next_opt = memchr(opt, '#', end - opt) ?: end;
- 			opt_len = next_opt - opt;
--			if (!opt_len) {
--				printk(KERN_WARNING
--				       "Empty option to dns_resolver key\n");
-+			if (opt_len <= 0 || opt_len > 128) {
-+				pr_warn_ratelimited("Invalid option length (%d) for dns_resolver key\n",
-+						    opt_len);
- 				return -EINVAL;
- 			}
+ 	hdr->daddr = isrh->segments[isrh->first_segment];
+-	set_tun_src(net, ip6_dst_idev(dst)->dev, &hdr->daddr, &hdr->saddr);
++	set_tun_src(net, dst->dev, &hdr->daddr, &hdr->saddr);
  
-@@ -127,10 +128,8 @@ dns_resolver_preparse(struct key_prepars
- 			}
- 
- 		bad_option_value:
--			printk(KERN_WARNING
--			       "Option '%*.*s' to dns_resolver key:"
--			       " bad/missing value\n",
--			       opt_nlen, opt_nlen, opt);
-+			pr_warn_ratelimited("Option '%*.*s' to dns_resolver key: bad/missing value\n",
-+					    opt_nlen, opt_nlen, opt);
- 			return -EINVAL;
- 		} while (opt = next_opt + 1, opt < end);
- 	}
+ #ifdef CONFIG_IPV6_SEG6_HMAC
+ 	if (sr_has_hmac(isrh)) {
