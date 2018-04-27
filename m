@@ -1,156 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932781AbeD0TRd (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 15:17:33 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:33632 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932574AbeD0TRa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 15:17:30 -0400
-From: Tyler Hicks <tyhicks@canonical.com>
-To: linux-kernel@vger.kernel.org
-Cc: Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>,
-        Paul Moore <paul@paul-moore.com>, Eric Paris <eparis@redhat.com>,
-        Steve Grubb <sgrubb@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
-        linux-audit@redhat.com, linux-security-module@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Subject: [PATCH 3/3] seccomp: Don't special case audited processes when logging
-Date: Fri, 27 Apr 2018 19:16:02 +0000
-Message-Id: <1524856562-22566-4-git-send-email-tyhicks@canonical.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1524856562-22566-1-git-send-email-tyhicks@canonical.com>
-References: <1524856562-22566-1-git-send-email-tyhicks@canonical.com>
+        id S932874AbeD0TSE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 15:18:04 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45476 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932793AbeD0TSB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 15:18:01 -0400
+Date: Fri, 27 Apr 2018 21:17:58 +0200
+From: Christoffer Dall <christoffer.dall@arm.com>
+To: Eric Auger <eric.auger@redhat.com>
+Cc: eric.auger.pro@gmail.com, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
+        marc.zyngier@arm.com, peter.maydell@linaro.org, andre.przywara@arm.com
+Subject: Re: [PATCH v4 11/12] KVM: arm/arm64: Implement
+ KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
+Message-ID: <20180427191758.GQ13249@C02W217FHV2R.local>
+References: <1524838505-3823-1-git-send-email-eric.auger@redhat.com>
+ <1524838505-3823-12-git-send-email-eric.auger@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1524838505-3823-12-git-send-email-eric.auger@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Seccomp logging for "handled" actions such as RET_TRAP, RET_TRACE, or
-RET_ERRNO can be very noisy for processes that are being audited. This
-patch modifies the seccomp logging behavior to treat processes that are
-being inspected via the audit subsystem the same as processes that
-aren't under inspection. Handled actions will no longer be logged just
-because the process is being inspected. Since v4.14, applications have
-the ability to request logging of handled actions by using the
-SECCOMP_FILTER_FLAG_LOG flag when loading seccomp filters.
+Hi Eric,
 
-With this patch, the logic for deciding if an action will be logged is:
+On Fri, Apr 27, 2018 at 04:15:04PM +0200, Eric Auger wrote:
+> Now all the internals are ready to handle multiple redistributor
+> regions, let's allow the userspace to register them.
+> 
+> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+> 
+> ---
+> v3 -> v4:
+> - vgic_v3_rdist_region_from_index is introduced in this patch
+> 
+> v2 -> v3:
+> - early exit if vgic_v3_rdist_region_from_index() fails
+> ---
+>  virt/kvm/arm/vgic/vgic-kvm-device.c | 42 +++++++++++++++++++++++++++++++++++--
+>  virt/kvm/arm/vgic/vgic-mmio-v3.c    |  4 ++--
+>  virt/kvm/arm/vgic/vgic-v3.c         | 14 +++++++++++++
+>  virt/kvm/arm/vgic/vgic.h            | 13 +++++++++++-
+>  4 files changed, 68 insertions(+), 5 deletions(-)
+> 
+> diff --git a/virt/kvm/arm/vgic/vgic-kvm-device.c b/virt/kvm/arm/vgic/vgic-kvm-device.c
+> index e7b5a86..00e03d3 100644
+> --- a/virt/kvm/arm/vgic/vgic-kvm-device.c
+> +++ b/virt/kvm/arm/vgic/vgic-kvm-device.c
+> @@ -65,7 +65,8 @@ int kvm_vgic_addr(struct kvm *kvm, unsigned long type, u64 *addr, bool write)
+>  {
+>  	int r = 0;
+>  	struct vgic_dist *vgic = &kvm->arch.vgic;
+> -	phys_addr_t *addr_ptr, alignment;
+> +	phys_addr_t *addr_ptr = NULL;
+> +	phys_addr_t alignment;
+>  	uint64_t undef_value = VGIC_ADDR_UNDEF;
+>  
+>  	mutex_lock(&kvm->lock);
+> @@ -92,7 +93,7 @@ int kvm_vgic_addr(struct kvm *kvm, unsigned long type, u64 *addr, bool write)
+>  		if (r)
+>  			break;
+>  		if (write) {
+> -			r = vgic_v3_set_redist_base(kvm, *addr);
+> +			r = vgic_v3_set_redist_base(kvm, 0, *addr, 0);
+>  			goto out;
+>  		}
+>  		rdreg = list_first_entry(&vgic->rd_regions,
+> @@ -103,6 +104,42 @@ int kvm_vgic_addr(struct kvm *kvm, unsigned long type, u64 *addr, bool write)
+>  			addr_ptr = &rdreg->base;
+>  		break;
+>  	}
+> +	case KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION:
+> +	{
+> +		struct vgic_redist_region *rdreg;
+> +		uint8_t index;
+> +
+> +		r = vgic_check_type(kvm, KVM_DEV_TYPE_ARM_VGIC_V3);
+> +		if (r)
+> +			break;
+> +
+> +		index = *addr & KVM_VGIC_V3_RDIST_INDEX_MASK;
+> +
+> +		if (write) {
+> +			gpa_t base = *addr & KVM_VGIC_V3_RDIST_BASE_MASK;
+> +			uint32_t count = (*addr & KVM_VGIC_V3_RDIST_COUNT_MASK)
+> +					>> KVM_VGIC_V3_RDIST_COUNT_SHIFT;
+> +			uint8_t flags = (*addr & KVM_VGIC_V3_RDIST_FLAGS_MASK)
+> +					>> KVM_VGIC_V3_RDIST_FLAGS_SHIFT;
+> +
+> +			if (!count || flags)
+> +				r = -EINVAL;
+> +			else
+> +				r = vgic_v3_set_redist_base(kvm, index,
+> +							    base, count);
+> +			goto out;
+> +		}
+> +
+> +		rdreg = vgic_v3_rdist_region_from_index(kvm, index);
+> +		if (!rdreg) {
+> +			r = -ENODEV;
+> +			goto out;
+> +		}
+> +
+> +		*addr_ptr = rdreg->base & index &
+> +			(uint64_t)rdreg->count << KVM_VGIC_V3_RDIST_COUNT_SHIFT;
 
-  if action == RET_ALLOW:
-    do not log
-  else if action not in actions_logged:
-    do not log
-  else if action == RET_KILL:
-    log
-  else if action == RET_LOG:
-    log
-  else if filter-requests-logging:
-    log
-  else:
-    do not log
+This still looks wrong, please see my reply to v3.
 
-Reported-by: Steve Grubb <sgrubb@redhat.com>
-Signed-off-by: Tyler Hicks <tyhicks@canonical.com>
----
- Documentation/userspace-api/seccomp_filter.rst |  7 -------
- include/linux/audit.h                          | 10 +---------
- kernel/auditsc.c                               |  2 +-
- kernel/seccomp.c                               | 15 +++++----------
- 4 files changed, 7 insertions(+), 27 deletions(-)
-
-diff --git a/Documentation/userspace-api/seccomp_filter.rst b/Documentation/userspace-api/seccomp_filter.rst
-index 099c412..82a468b 100644
---- a/Documentation/userspace-api/seccomp_filter.rst
-+++ b/Documentation/userspace-api/seccomp_filter.rst
-@@ -207,13 +207,6 @@ directory. Here's a description of each file in that directory:
- 	to the file do not need to be in ordered form but reads from the file
- 	will be ordered in the same way as the actions_avail sysctl.
- 
--	It is important to note that the value of ``actions_logged`` does not
--	prevent certain actions from being logged when the audit subsystem is
--	configured to audit a task. If the action is not found in
--	``actions_logged`` list, the final decision on whether to audit the
--	action for that task is ultimately left up to the audit subsystem to
--	decide for all seccomp return values other than ``SECCOMP_RET_ALLOW``.
--
- 	The ``allow`` string is not accepted in the ``actions_logged`` sysctl
- 	as it is not possible to log ``SECCOMP_RET_ALLOW`` actions. Attempting
- 	to write ``allow`` to the sysctl will result in an EINVAL being
-diff --git a/include/linux/audit.h b/include/linux/audit.h
-index b311d7d..1964fbd 100644
---- a/include/linux/audit.h
-+++ b/include/linux/audit.h
-@@ -232,7 +232,7 @@ extern void __audit_file(const struct file *);
- extern void __audit_inode_child(struct inode *parent,
- 				const struct dentry *dentry,
- 				const unsigned char type);
--extern void __audit_seccomp(unsigned long syscall, long signr, int code);
-+extern void audit_seccomp(unsigned long syscall, long signr, int code);
- extern void audit_seccomp_actions_logged(const char *names, int res);
- extern void __audit_ptrace(struct task_struct *t);
- 
-@@ -303,12 +303,6 @@ static inline void audit_inode_child(struct inode *parent,
- }
- void audit_core_dumps(long signr);
- 
--static inline void audit_seccomp(unsigned long syscall, long signr, int code)
--{
--	if (audit_enabled && unlikely(!audit_dummy_context()))
--		__audit_seccomp(syscall, signr, code);
--}
--
- static inline void audit_ptrace(struct task_struct *t)
- {
- 	if (unlikely(!audit_dummy_context()))
-@@ -499,8 +493,6 @@ static inline void audit_inode_child(struct inode *parent,
- { }
- static inline void audit_core_dumps(long signr)
- { }
--static inline void __audit_seccomp(unsigned long syscall, long signr, int code)
--{ }
- static inline void audit_seccomp(unsigned long syscall, long signr, int code)
- { }
- static inline void audit_seccomp_actions_logged(const char *names, int res)
-diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index 3496238..1e64b91 100644
---- a/kernel/auditsc.c
-+++ b/kernel/auditsc.c
-@@ -2464,7 +2464,7 @@ void audit_core_dumps(long signr)
- 	audit_log_end(ab);
- }
- 
--void __audit_seccomp(unsigned long syscall, long signr, int code)
-+void audit_seccomp(unsigned long syscall, long signr, int code)
- {
- 	struct audit_buffer *ab;
- 
-diff --git a/kernel/seccomp.c b/kernel/seccomp.c
-index e28ddcc..947cc0f 100644
---- a/kernel/seccomp.c
-+++ b/kernel/seccomp.c
-@@ -584,18 +584,13 @@ static inline void seccomp_log(unsigned long syscall, long signr, u32 action,
- 	}
- 
- 	/*
--	 * Force an audit message to be emitted when the action is RET_KILL_*,
--	 * RET_LOG, or the FILTER_FLAG_LOG bit was set and the action is
--	 * allowed to be logged by the admin.
-+	 * Emit an audit message when the action is RET_KILL_*, RET_LOG, or the
-+	 * FILTER_FLAG_LOG bit was set. The admin has the ability to silence
-+	 * any action from being logged by removing the action name from the
-+	 * seccomp_actions_logged sysctl.
- 	 */
- 	if (log)
--		return __audit_seccomp(syscall, signr, action);
--
--	/*
--	 * Let the audit subsystem decide if the action should be audited based
--	 * on whether the current task itself is being audited.
--	 */
--	return audit_seccomp(syscall, signr, action);
-+		audit_seccomp(syscall, signr, action);
- }
- 
- /*
--- 
-2.7.4
+Thanks,
+-Christoffer
