@@ -1,68 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757623AbeD0Hiu (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 03:38:50 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:50510 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757530AbeD0Hir (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 03:38:47 -0400
-X-Google-Smtp-Source: AB8JxZpFszM4d1ZemA4ktsF3gQe6TqGHFz98Gq5X0FNymxxhuNVd1EdpnS7IrBDI05QHKvIDTqZpsg==
-Date: Fri, 27 Apr 2018 08:38:43 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Javier Arteaga <javier@emutex.com>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, "Dan O'Donovan" <dan@emutex.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH RESEND 2/3] leds: upboard: Add LED support
-Message-ID: <20180427073843.ljeswd5tn6z3z4wc@dell>
-References: <20180421085009.28773-1-javier@emutex.com>
- <20180421085009.28773-3-javier@emutex.com>
- <20180426073314.g2ccjjkx6vgbknhm@dell>
- <20180426130354.4kidtdwcsxtn5f2g@localhost>
+        id S1757579AbeD0HlC (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 03:41:02 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:50030 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1757444AbeD0HlB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 03:41:01 -0400
+Date: Fri, 27 Apr 2018 09:40:58 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: "David S . Miller" <davem@davemloft.net>,
+        Allan Nielsen <Allan.Nielsen@microsemi.com>, razvan.stefanescu@nxp.com,
+        po.liu@nxp.com, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mips@linux-mips.org, James Hogan <jhogan@kernel.org>
+Subject: Re: [PATCH net-next v2 5/7] MIPS: mscc: Add switch to ocelot
+Message-ID: <20180427074058.GW4813@piout.net>
+References: <20180426195931.5393-1-alexandre.belloni@bootlin.com>
+ <20180426195931.5393-6-alexandre.belloni@bootlin.com>
+ <20180426205113.GD23481@lunn.ch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180426130354.4kidtdwcsxtn5f2g@localhost>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180426205113.GD23481@lunn.ch>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 26 Apr 2018, Javier Arteaga wrote:
-
-[...]
-
-> > >  static const struct regmap_range upboard_up2_readable_ranges[] = {
-> > > @@ -116,7 +124,18 @@ static const struct regmap_config upboard_up2_regmap_config = {
-> > >  	.wr_table = &upboard_up2_writable_table,
-> > >  };
-> > >  
-> > > +static struct upboard_led_data upboard_up2_led_data[] = {
-> > > +	{ .id = 0, .color = "blue" },
-> > > +	{ .id = 1, .color = "yellow" },
-> > > +	{ .id = 2, .color = "green" },
-> > > +	{ .id = 3, .color = "red" },
-> > > +};
-> > 
-> > How is this data used?
-> > 
-> > Does it ever change, from board to board?
+On 26/04/2018 22:51:13+0200, Andrew Lunn wrote:
+> > +
+> > +		mdio0: mdio@107009c {
+> > +			#address-cells = <1>;
+> > +			#size-cells = <0>;
+> > +			compatible = "mscc,ocelot-miim";
+> > +			reg = <0x107009c 0x36>, <0x10700f0 0x8>;
+> > +			interrupts = <14>;
+> > +			status = "disabled";
+> > +
+> > +			phy0: ethernet-phy@0 {
+> > +				reg = <0>;
+> > +			};
+> > +			phy1: ethernet-phy@1 {
+> > +				reg = <1>;
+> > +			};
+> > +			phy2: ethernet-phy@2 {
+> > +				reg = <2>;
+> > +			};
+> > +			phy3: ethernet-phy@3 {
+> > +				reg = <3>;
+> > +			};
 > 
-> This provides indexes into the LED control register, so the leds driver
-> knows which regmap bits to flip, and maps them to color names, so it can
-> name the led devices accordingly. The mapping does change for each board
-> (UP1 has 3 LEDs, UP Core depends on the carrier board).
+> Hi Alexandre
+> 
+> These are internal PHYs? Is there an option to use external PHYs for
+> the ports which have internal PHYs?
+> 
+> I'm just wondering if they should be linked together by default. Or a
+> comment added to the commit message about why they are not linked
+> together here.
+> 
 
-I think this information should live in the driver which consumes it.
+They are dual media ports so they are not necessarily using the
+integrated PHY but can use SerDEs1G lanes.
+
+I'll add that to the commit message.
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
