@@ -1,153 +1,331 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757350AbeD0C4D (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 22:56:03 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:43907 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757291AbeD0C4A (ORCPT
+        id S1757363AbeD0C5c (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 22:57:32 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:41866 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757046AbeD0C5b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 22:56:00 -0400
-X-Google-Smtp-Source: AB8JxZpfpti6pQoaAYEcFD5K74jakg9qIyK4gDn94XdY/WpKdmV3k5feGutEF7OHEgbR85kJzi8WFQ==
-From: Joel Stanley <joel@jms.id.au>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc: Andrew Jeffery <andrew@aj.id.au>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, Ryan Chen <ryan_chen@aspeedtech.com>,
-        Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Subject: [PATCH v2] clk: aspeed: Support second reset register
-Date: Fri, 27 Apr 2018 12:25:47 +0930
-Message-Id: <20180427025547.14115-1-joel@jms.id.au>
-X-Mailer: git-send-email 2.17.0
+        Thu, 26 Apr 2018 22:57:31 -0400
+X-Google-Smtp-Source: AB8JxZpty39qfZFbBmox2cGtjgOWDAS/w0Apl9elmKPmhy3yArVf6szswzeaCfbvfQVgtP3ZL8cfmA==
+Date: Thu, 26 Apr 2018 19:57:28 -0700
+From: Kees Cook <keescook@chromium.org>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Gilad Ben-Yossef <gilad@benyossef.com>, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] crypto: tcrypt: Remove VLA usage
+Message-ID: <20180427025728.GA38607@beast>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ast2500 has an additional reset register that contains resets not
-present in the ast2400. This enables support for this register, and adds
-the one reset line that is controlled by it.
+In the quest to remove all stack VLA usage from the kernel[1], this
+allocates the return code buffers before starting jiffie timers, rather
+than using stack space for the array. Additionally cleans up some exit
+paths and make sure that the num_mb module_param() is used only once
+per execution to avoid possible races in the value changing.
 
-Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
-Signed-off-by: Joel Stanley <joel@jms.id.au>
+[1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+
+Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
-v2:
- This commit fixes a bug in aspeed_reset_assert() which determines
- the second reset register using condition.
+ crypto/tcrypt.c | 118 +++++++++++++++++++++++++++++++++++++-------------------
+ 1 file changed, 79 insertions(+), 39 deletions(-)
 
- drivers/clk/clk-aspeed.c                 | 44 +++++++++++++++++++-----
- include/dt-bindings/clock/aspeed-clock.h |  1 +
- 2 files changed, 37 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
-index c7cb1f2b6f8a..1fbf45738535 100644
---- a/drivers/clk/clk-aspeed.c
-+++ b/drivers/clk/clk-aspeed.c
-@@ -16,6 +16,8 @@
- 
- #define ASPEED_NUM_CLKS		35
- 
-+#define ASPEED_RESET2_OFFSET	32
-+
- #define ASPEED_RESET_CTRL	0x04
- #define ASPEED_CLK_SELECTION	0x08
- #define ASPEED_CLK_STOP_CTRL	0x0c
-@@ -30,6 +32,7 @@
- #define  CLKIN_25MHZ_EN		BIT(23)
- #define  AST2400_CLK_SOURCE_SEL	BIT(18)
- #define ASPEED_CLK_SELECTION_2	0xd8
-+#define ASPEED_RESET_CTRL2	0xd4
- 
- /* Globally visible clocks */
- static DEFINE_SPINLOCK(aspeed_clk_lock);
-@@ -291,6 +294,7 @@ struct aspeed_reset {
- #define to_aspeed_reset(p) container_of((p), struct aspeed_reset, rcdev)
- 
- static const u8 aspeed_resets[] = {
-+	/* SCU04 resets */
- 	[ASPEED_RESET_XDMA]	= 25,
- 	[ASPEED_RESET_MCTP]	= 24,
- 	[ASPEED_RESET_ADC]	= 23,
-@@ -300,38 +304,62 @@ static const u8 aspeed_resets[] = {
- 	[ASPEED_RESET_PCIVGA]	=  8,
- 	[ASPEED_RESET_I2C]	=  2,
- 	[ASPEED_RESET_AHB]	=  1,
-+
-+	/*
-+	 * SCUD4 resets start at an offset to separate them from
-+	 * the SCU04 resets.
-+	 */
-+	[ASPEED_RESET_CRT1]	= ASPEED_RESET2_OFFSET + 5,
+diff --git a/crypto/tcrypt.c b/crypto/tcrypt.c
+index 51fe7c8744ae..e721faab6fc8 100644
+--- a/crypto/tcrypt.c
++++ b/crypto/tcrypt.c
+@@ -158,9 +158,9 @@ struct test_mb_aead_data {
  };
  
- static int aspeed_reset_deassert(struct reset_controller_dev *rcdev,
- 				 unsigned long id)
+ static int do_mult_aead_op(struct test_mb_aead_data *data, int enc,
+-				u32 num_mb)
++				u32 num_mb, int *rc)
  {
- 	struct aspeed_reset *ar = to_aspeed_reset(rcdev);
--	u32 rst = BIT(aspeed_resets[id]);
-+	u32 reg = ASPEED_RESET_CTRL;
-+	u32 bit = aspeed_resets[id];
-+
-+	if (bit >= ASPEED_RESET2_OFFSET) {
-+		bit -= ASPEED_RESET2_OFFSET;
-+		reg = ASPEED_RESET_CTRL2;
-+	}
+-	int i, rc[num_mb], err = 0;
++	int i, err = 0;
  
--	return regmap_update_bits(ar->map, ASPEED_RESET_CTRL, rst, 0);
-+	return regmap_update_bits(ar->map, reg, BIT(bit), 0);
- }
- 
- static int aspeed_reset_assert(struct reset_controller_dev *rcdev,
- 			       unsigned long id)
+ 	/* Fire up a bunch of concurrent requests */
+ 	for (i = 0; i < num_mb; i++) {
+@@ -188,18 +188,26 @@ static int test_mb_aead_jiffies(struct test_mb_aead_data *data, int enc,
  {
- 	struct aspeed_reset *ar = to_aspeed_reset(rcdev);
--	u32 rst = BIT(aspeed_resets[id]);
-+	u32 reg = ASPEED_RESET_CTRL;
-+	u32 bit = aspeed_resets[id];
- 
--	return regmap_update_bits(ar->map, ASPEED_RESET_CTRL, rst, rst);
-+	if (bit >= ASPEED_RESET2_OFFSET) {
-+		bit -= ASPEED_RESET2_OFFSET;
-+		reg = ASPEED_RESET_CTRL2;
-+	}
-+
-+	return regmap_update_bits(ar->map, reg, BIT(bit), BIT(bit));
- }
- 
- static int aspeed_reset_status(struct reset_controller_dev *rcdev,
- 			       unsigned long id)
- {
- 	struct aspeed_reset *ar = to_aspeed_reset(rcdev);
--	u32 val, rst = BIT(aspeed_resets[id]);
+ 	unsigned long start, end;
+ 	int bcount;
 -	int ret;
-+	u32 reg = ASPEED_RESET_CTRL;
-+	u32 bit = aspeed_resets[id];
-+	int ret, val;
++	int ret = 0;
++	int *rc;
 +
-+	if (bit >= ASPEED_RESET2_OFFSET) {
-+		bit -= ASPEED_RESET2_OFFSET;
-+		reg = ASPEED_RESET_CTRL2;
-+	}
++	rc = kcalloc(num_mb, sizeof(*rc), GFP_KERNEL);
++	if (!rc)
++		return -ENOMEM;
  
--	ret = regmap_read(ar->map, ASPEED_RESET_CTRL, &val);
-+	ret = regmap_read(ar->map, reg, &val);
- 	if (ret)
- 		return ret;
+ 	for (start = jiffies, end = start + secs * HZ, bcount = 0;
+ 	     time_before(jiffies, end); bcount++) {
+-		ret = do_mult_aead_op(data, enc, num_mb);
++		ret = do_mult_aead_op(data, enc, num_mb, rc);
+ 		if (ret)
+-			return ret;
++			goto out;
+ 	}
  
--	return !!(val & rst);
-+	return !!(val & BIT(bit));
+ 	pr_cont("%d operations in %d seconds (%ld bytes)\n",
+ 		bcount * num_mb, secs, (long)bcount * blen * num_mb);
+-	return 0;
++
++out:
++	kfree(rc);
++	return ret;
  }
  
- static const struct reset_control_ops aspeed_reset_ops = {
-diff --git a/include/dt-bindings/clock/aspeed-clock.h b/include/dt-bindings/clock/aspeed-clock.h
-index d3558d897a4d..513c1b4af7a8 100644
---- a/include/dt-bindings/clock/aspeed-clock.h
-+++ b/include/dt-bindings/clock/aspeed-clock.h
-@@ -48,5 +48,6 @@
- #define ASPEED_RESET_PCIVGA		6
- #define ASPEED_RESET_I2C		7
- #define ASPEED_RESET_AHB		8
-+#define ASPEED_RESET_CRT1		9
+ static int test_mb_aead_cycles(struct test_mb_aead_data *data, int enc,
+@@ -208,10 +216,15 @@ static int test_mb_aead_cycles(struct test_mb_aead_data *data, int enc,
+ 	unsigned long cycles = 0;
+ 	int ret = 0;
+ 	int i;
++	int *rc;
++
++	rc = kcalloc(num_mb, sizeof(*rc), GFP_KERNEL);
++	if (!rc)
++		return -ENOMEM;
  
- #endif
+ 	/* Warm-up run. */
+ 	for (i = 0; i < 4; i++) {
+-		ret = do_mult_aead_op(data, enc, num_mb);
++		ret = do_mult_aead_op(data, enc, num_mb, rc);
+ 		if (ret)
+ 			goto out;
+ 	}
+@@ -221,7 +234,7 @@ static int test_mb_aead_cycles(struct test_mb_aead_data *data, int enc,
+ 		cycles_t start, end;
+ 
+ 		start = get_cycles();
+-		ret = do_mult_aead_op(data, enc, num_mb);
++		ret = do_mult_aead_op(data, enc, num_mb, rc);
+ 		end = get_cycles();
+ 
+ 		if (ret)
+@@ -230,11 +243,11 @@ static int test_mb_aead_cycles(struct test_mb_aead_data *data, int enc,
+ 		cycles += end - start;
+ 	}
+ 
+-out:
+-	if (ret == 0)
+-		pr_cont("1 operation in %lu cycles (%d bytes)\n",
+-			(cycles + 4) / (8 * num_mb), blen);
++	pr_cont("1 operation in %lu cycles (%d bytes)\n",
++		(cycles + 4) / (8 * num_mb), blen);
+ 
++out:
++	kfree(rc);
+ 	return ret;
+ }
+ 
+@@ -705,9 +718,10 @@ struct test_mb_ahash_data {
+ 	char *xbuf[XBUFSIZE];
+ };
+ 
+-static inline int do_mult_ahash_op(struct test_mb_ahash_data *data, u32 num_mb)
++static inline int do_mult_ahash_op(struct test_mb_ahash_data *data, u32 num_mb,
++				   int *rc)
+ {
+-	int i, rc[num_mb], err = 0;
++	int i, err = 0;
+ 
+ 	/* Fire up a bunch of concurrent requests */
+ 	for (i = 0; i < num_mb; i++)
+@@ -731,18 +745,26 @@ static int test_mb_ahash_jiffies(struct test_mb_ahash_data *data, int blen,
+ {
+ 	unsigned long start, end;
+ 	int bcount;
+-	int ret;
++	int ret = 0;
++	int *rc;
++
++	rc = kcalloc(num_mb, sizeof(*rc), GFP_KERNEL);
++	if (!rc)
++		return -ENOMEM;
+ 
+ 	for (start = jiffies, end = start + secs * HZ, bcount = 0;
+ 	     time_before(jiffies, end); bcount++) {
+-		ret = do_mult_ahash_op(data, num_mb);
++		ret = do_mult_ahash_op(data, num_mb, rc);
+ 		if (ret)
+-			return ret;
++			goto out;
+ 	}
+ 
+ 	pr_cont("%d operations in %d seconds (%ld bytes)\n",
+ 		bcount * num_mb, secs, (long)bcount * blen * num_mb);
+-	return 0;
++
++out:
++	kfree(rc);
++	return ret;
+ }
+ 
+ static int test_mb_ahash_cycles(struct test_mb_ahash_data *data, int blen,
+@@ -751,10 +773,15 @@ static int test_mb_ahash_cycles(struct test_mb_ahash_data *data, int blen,
+ 	unsigned long cycles = 0;
+ 	int ret = 0;
+ 	int i;
++	int *rc;
++
++	rc = kcalloc(num_mb, sizeof(*rc), GFP_KERNEL);
++	if (!rc)
++		return -ENOMEM;
+ 
+ 	/* Warm-up run. */
+ 	for (i = 0; i < 4; i++) {
+-		ret = do_mult_ahash_op(data, num_mb);
++		ret = do_mult_ahash_op(data, num_mb, rc);
+ 		if (ret)
+ 			goto out;
+ 	}
+@@ -764,7 +791,7 @@ static int test_mb_ahash_cycles(struct test_mb_ahash_data *data, int blen,
+ 		cycles_t start, end;
+ 
+ 		start = get_cycles();
+-		ret = do_mult_ahash_op(data, num_mb);
++		ret = do_mult_ahash_op(data, num_mb, rc);
+ 		end = get_cycles();
+ 
+ 		if (ret)
+@@ -773,11 +800,11 @@ static int test_mb_ahash_cycles(struct test_mb_ahash_data *data, int blen,
+ 		cycles += end - start;
+ 	}
+ 
+-out:
+-	if (ret == 0)
+-		pr_cont("1 operation in %lu cycles (%d bytes)\n",
+-			(cycles + 4) / (8 * num_mb), blen);
++	pr_cont("1 operation in %lu cycles (%d bytes)\n",
++		(cycles + 4) / (8 * num_mb), blen);
+ 
++out:
++	kfree(rc);
+ 	return ret;
+ }
+ 
+@@ -1118,9 +1145,9 @@ struct test_mb_skcipher_data {
+ };
+ 
+ static int do_mult_acipher_op(struct test_mb_skcipher_data *data, int enc,
+-				u32 num_mb)
++				u32 num_mb, int *rc)
+ {
+-	int i, rc[num_mb], err = 0;
++	int i, err = 0;
+ 
+ 	/* Fire up a bunch of concurrent requests */
+ 	for (i = 0; i < num_mb; i++) {
+@@ -1148,18 +1175,26 @@ static int test_mb_acipher_jiffies(struct test_mb_skcipher_data *data, int enc,
+ {
+ 	unsigned long start, end;
+ 	int bcount;
+-	int ret;
++	int ret = 0;
++	int *rc;
++
++	rc = kcalloc(num_mb, sizeof(*rc), GFP_KERNEL);
++	if (!rc)
++		return -ENOMEM;
+ 
+ 	for (start = jiffies, end = start + secs * HZ, bcount = 0;
+ 	     time_before(jiffies, end); bcount++) {
+-		ret = do_mult_acipher_op(data, enc, num_mb);
++		ret = do_mult_acipher_op(data, enc, num_mb, rc);
+ 		if (ret)
+-			return ret;
++			goto out;
+ 	}
+ 
+ 	pr_cont("%d operations in %d seconds (%ld bytes)\n",
+ 		bcount * num_mb, secs, (long)bcount * blen * num_mb);
+-	return 0;
++
++out:
++	kfree(rc);
++	return ret;
+ }
+ 
+ static int test_mb_acipher_cycles(struct test_mb_skcipher_data *data, int enc,
+@@ -1168,10 +1203,15 @@ static int test_mb_acipher_cycles(struct test_mb_skcipher_data *data, int enc,
+ 	unsigned long cycles = 0;
+ 	int ret = 0;
+ 	int i;
++	int *rc;
++
++	rc = kcalloc(num_mb, sizeof(*rc), GFP_KERNEL);
++	if (!rc)
++		return -ENOMEM;
+ 
+ 	/* Warm-up run. */
+ 	for (i = 0; i < 4; i++) {
+-		ret = do_mult_acipher_op(data, enc, num_mb);
++		ret = do_mult_acipher_op(data, enc, num_mb, rc);
+ 		if (ret)
+ 			goto out;
+ 	}
+@@ -1181,7 +1221,7 @@ static int test_mb_acipher_cycles(struct test_mb_skcipher_data *data, int enc,
+ 		cycles_t start, end;
+ 
+ 		start = get_cycles();
+-		ret = do_mult_acipher_op(data, enc, num_mb);
++		ret = do_mult_acipher_op(data, enc, num_mb, rc);
+ 		end = get_cycles();
+ 
+ 		if (ret)
+@@ -1190,11 +1230,11 @@ static int test_mb_acipher_cycles(struct test_mb_skcipher_data *data, int enc,
+ 		cycles += end - start;
+ 	}
+ 
+-out:
+-	if (ret == 0)
+-		pr_cont("1 operation in %lu cycles (%d bytes)\n",
+-			(cycles + 4) / (8 * num_mb), blen);
++	pr_cont("1 operation in %lu cycles (%d bytes)\n",
++		(cycles + 4) / (8 * num_mb), blen);
+ 
++out:
++	kfree(rc);
+ 	return ret;
+ }
+ 
+@@ -1606,7 +1646,7 @@ static inline int tcrypt_test(const char *alg)
+ 	return ret;
+ }
+ 
+-static int do_test(const char *alg, u32 type, u32 mask, int m)
++static int do_test(const char *alg, u32 type, u32 mask, int m, u32 num_mb)
+ {
+ 	int i;
+ 	int ret = 0;
+@@ -1621,7 +1661,7 @@ static int do_test(const char *alg, u32 type, u32 mask, int m)
+ 		}
+ 
+ 		for (i = 1; i < 200; i++)
+-			ret += do_test(NULL, 0, 0, i);
++			ret += do_test(NULL, 0, 0, i, num_mb);
+ 		break;
+ 
+ 	case 1:
+@@ -2903,7 +2943,7 @@ static int __init tcrypt_mod_init(void)
+ 			goto err_free_tv;
+ 	}
+ 
+-	err = do_test(alg, type, mask, mode);
++	err = do_test(alg, type, mask, mode, num_mb);
+ 
+ 	if (err) {
+ 		printk(KERN_ERR "tcrypt: one or more tests failed!\n");
 -- 
-2.17.0
+2.7.4
+
+
+-- 
+Kees Cook
+Pixel Security
