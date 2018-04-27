@@ -1,41 +1,40 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqiQZ3n2LfXSamfZPpJt79pHki+G+fcC3TxEDe3ZDEnYhBJoz21OV0JrpJ9gKNGi0aDLDyw
-ARC-Seal: i=1; a=rsa-sha256; t=1524837894; cv=none;
+X-Google-Smtp-Source: AB8JxZo+pA2Ec12rgxOZ+rG+3TWQAxvVBDB0FGZ7hDw+Ra3UZFIQYqEH/loDkkE+c1F/IdDWmHGu
+ARC-Seal: i=1; a=rsa-sha256; t=1524837892; cv=none;
         d=google.com; s=arc-20160816;
-        b=OwXekrqNVsrbRtMXBQFOEtdX8QYLlrzWgvgWc8TSq9u8eT8urdwqLadr0ej2AygrVe
-         lgrQ8Q/SMc35bMZuOa2XyZR03KIKYWvEOb/yo5j1dV/SrFcCVEX8Y/wPHpKi/QAXEb3W
-         LAYSELUbIH4EU+qbKfOyp1X3HdBpMx2AEigjeQeeQlc6UxlDrQlq7F3gTAACquE5kMXB
-         2B3lSd7Mb9FYxoFA86vMJj/3Q5+SXNs3Hzp8ScDtmBnEPRJ3IeB9VoeMJLkXTud7Ss4+
-         Cq/265qCB7SbIpiZMCtH8rV17KRImYwvKpRvfeJ0zS/ZwsOCKIidyOzZjOpVlK3M1Hy3
-         mYxg==
+        b=ggCai0Sn6m/XEuG4wEAXatvy6WMSnJSXR+0xvzebCoNXIV/dqpU97Q7S7j7qGFWR2R
+         6J+StUfj8qiJyRHZgSfjsr5S7bhN8eox7D8p/F37C/5o+WkYD9215XbCd1VrOoZ/nC3o
+         CyBg3LIg5sLu8oArXnC780q2iL69YW3l249kGLlTncrgqNyC8cMc7cuHvo06+65JBht2
+         ndjI982d5KECz2htYRsKBON20uZkH9nZqSt9MVjV8XhNKDhwRNProBrcw/MrOygjAHjg
+         ZmGNZ9GdSn1hkGZjTN1fiEcAoA0xVgn7C3O8kerlo2zcPculA+H3m7cbzd/BheE7xpeZ
+         PTWQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=wZAigk9DALifAsk7maNyEbNqvF0nBk7XrYJOKNvhT9s=;
-        b=AuUEJAQgm3eIZ7OAwGbvE8P7X0YkAO/fOCASDy9ao8GD2VX+iopcw77E1+Tl4JoQAU
-         IKCVtpqwYX2L1xoZnDN690ysfQNI3qspK+sm7+xhZiWV6lpQCbx+jdwbs7fCMTrXD2y0
-         TNRtRGsV90XXh6/163Uwk6wv/W95WcEtU2ITTy0gZCqn2RCFTpUdmuCBUBeyoEUU9Yk4
-         1p1KobubYybkmVgWMKo010P7E04wI9vGj0C7vUiaNxa9i2R6IymuFX1unOQetZreWkZe
-         WfXqmV/qqO3eIyUv+s3gmmjYAiARfg2lwjAki9Ji2dQlj+Uc6TjtAnkQTMwoEA8Bkl6X
-         fVog==
+        bh=c5gqnVEjyPX8LcGx5pmNxkxElc/BvxtC1andBLMKLHA=;
+        b=uminhR1Z3f+HN68My2tb4O2jyPqovRuzi0DDt0j0OUr33+ghUYPTe7Auyy8jIU98nU
+         v/xVzYhaeKKw1BbQ620APUF3N8EDxQP5ffFdOnhw610JtCTa8pBaDyW9WxJWDge1lb/y
+         70X8yTDZ7knW1WHGuJazkf0Rb8sswNAo6q+kypHD5X4AFSBURBwFdXGYcjyyIuKGSrnB
+         XCE4IIQ3LPCZhs0dV2aHqvcsq1gyykXWZd7fcAOhyTAGfPUwiTuNSCXDzj2DGn/K3glZ
+         P4Cb5z95mLkKzrLl58YwDVqaTEV4to19DGzpC4y/kBLHyXkT9bvIFQiEcmNiLYxB1nm3
+         52pQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D913221864
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58E08218A3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>,
-	David Ahern <dsa@cumulusnetworks.com>,
-	syzbot <syzkaller@googlegroups.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 50/74] net: validate attribute sizes in neigh_dump_table()
-Date: Fri, 27 Apr 2018 15:58:40 +0200
-Message-Id: <20180427135712.005886026@linuxfoundation.org>
+	Dan Murphy <dmurphy@ti.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Amit Pundir <amit.pundir@linaro.org>
+Subject: [PATCH 4.9 12/74] Input: drv260x - fix initializing overdrive voltage
+Date: Fri, 27 Apr 2018 15:58:02 +0200
+Message-Id: <20180427135710.404946572@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135709.899303463@linuxfoundation.org>
 References: <20180427135709.899303463@linuxfoundation.org>
@@ -45,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908211126878257?=
-X-GMAIL-MSGID: =?utf-8?q?1598908420565847403?=
+X-GMAIL-THRID: =?utf-8?q?1598908262562310694?=
+X-GMAIL-MSGID: =?utf-8?q?1598908417716823029?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,107 +53,30 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
+commit 74c82dae6c474933f2be401976e1530b5f623221 upstream.
 
-[ Upstream commit 7dd07c143a4b54d050e748bee4b4b9e94a7b1744 ]
+We were accidentally initializing haptics->rated_voltage twice, and did not
+initialize overdrive voltage.
 
-Since neigh_dump_table() calls nlmsg_parse() without giving policy
-constraints, attributes can have arbirary size that we must validate
-
-Reported by syzbot/KMSAN :
-
-BUG: KMSAN: uninit-value in neigh_master_filtered net/core/neighbour.c:2292 [inline]
-BUG: KMSAN: uninit-value in neigh_dump_table net/core/neighbour.c:2348 [inline]
-BUG: KMSAN: uninit-value in neigh_dump_info+0x1af0/0x2250 net/core/neighbour.c:2438
-CPU: 1 PID: 3575 Comm: syzkaller268891 Not tainted 4.16.0+ #83
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:17 [inline]
- dump_stack+0x185/0x1d0 lib/dump_stack.c:53
- kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
- __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:676
- neigh_master_filtered net/core/neighbour.c:2292 [inline]
- neigh_dump_table net/core/neighbour.c:2348 [inline]
- neigh_dump_info+0x1af0/0x2250 net/core/neighbour.c:2438
- netlink_dump+0x9ad/0x1540 net/netlink/af_netlink.c:2225
- __netlink_dump_start+0x1167/0x12a0 net/netlink/af_netlink.c:2322
- netlink_dump_start include/linux/netlink.h:214 [inline]
- rtnetlink_rcv_msg+0x1435/0x1560 net/core/rtnetlink.c:4598
- netlink_rcv_skb+0x355/0x5f0 net/netlink/af_netlink.c:2447
- rtnetlink_rcv+0x50/0x60 net/core/rtnetlink.c:4653
- netlink_unicast_kernel net/netlink/af_netlink.c:1311 [inline]
- netlink_unicast+0x1672/0x1750 net/netlink/af_netlink.c:1337
- netlink_sendmsg+0x1048/0x1310 net/netlink/af_netlink.c:1900
- sock_sendmsg_nosec net/socket.c:630 [inline]
- sock_sendmsg net/socket.c:640 [inline]
- ___sys_sendmsg+0xec0/0x1310 net/socket.c:2046
- __sys_sendmsg net/socket.c:2080 [inline]
- SYSC_sendmsg+0x2a3/0x3d0 net/socket.c:2091
- SyS_sendmsg+0x54/0x80 net/socket.c:2087
- do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-RIP: 0033:0x43fed9
-RSP: 002b:00007ffddbee2798 EFLAGS: 00000213 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fed9
-RDX: 0000000000000000 RSI: 0000000020005000 RDI: 0000000000000003
-RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
-R10: 00000000004002c8 R11: 0000000000000213 R12: 0000000000401800
-R13: 0000000000401890 R14: 0000000000000000 R15: 0000000000000000
-
-Uninit was created at:
- kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
- kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:188
- kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:314
- kmsan_slab_alloc+0x11/0x20 mm/kmsan/kmsan.c:321
- slab_post_alloc_hook mm/slab.h:445 [inline]
- slab_alloc_node mm/slub.c:2737 [inline]
- __kmalloc_node_track_caller+0xaed/0x11c0 mm/slub.c:4369
- __kmalloc_reserve net/core/skbuff.c:138 [inline]
- __alloc_skb+0x2cf/0x9f0 net/core/skbuff.c:206
- alloc_skb include/linux/skbuff.h:984 [inline]
- netlink_alloc_large_skb net/netlink/af_netlink.c:1183 [inline]
- netlink_sendmsg+0x9a6/0x1310 net/netlink/af_netlink.c:1875
- sock_sendmsg_nosec net/socket.c:630 [inline]
- sock_sendmsg net/socket.c:640 [inline]
- ___sys_sendmsg+0xec0/0x1310 net/socket.c:2046
- __sys_sendmsg net/socket.c:2080 [inline]
- SYSC_sendmsg+0x2a3/0x3d0 net/socket.c:2091
- SyS_sendmsg+0x54/0x80 net/socket.c:2087
- do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-
-Fixes: 21fdd092acc7 ("net: Add support for filtering neigh dump by master device")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: David Ahern <dsa@cumulusnetworks.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Acked-by: David Ahern <dsa@cumulusnetworks.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Acked-by: Dan Murphy <dmurphy@ti.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Amit Pundir <amit.pundir@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/core/neighbour.c |   12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
 
---- a/net/core/neighbour.c
-+++ b/net/core/neighbour.c
-@@ -2279,12 +2279,16 @@ static int neigh_dump_table(struct neigh
+---
+ drivers/input/misc/drv260x.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/input/misc/drv260x.c
++++ b/drivers/input/misc/drv260x.c
+@@ -521,7 +521,7 @@ static int drv260x_probe(struct i2c_clie
+ 	if (!haptics)
+ 		return -ENOMEM;
  
- 	err = nlmsg_parse(nlh, sizeof(struct ndmsg), tb, NDA_MAX, NULL);
- 	if (!err) {
--		if (tb[NDA_IFINDEX])
-+		if (tb[NDA_IFINDEX]) {
-+			if (nla_len(tb[NDA_IFINDEX]) != sizeof(u32))
-+				return -EINVAL;
- 			filter_idx = nla_get_u32(tb[NDA_IFINDEX]);
--
--		if (tb[NDA_MASTER])
-+		}
-+		if (tb[NDA_MASTER]) {
-+			if (nla_len(tb[NDA_MASTER]) != sizeof(u32))
-+				return -EINVAL;
- 			filter_master_idx = nla_get_u32(tb[NDA_MASTER]);
--
-+		}
- 		if (filter_idx || filter_master_idx)
- 			flags |= NLM_F_DUMP_FILTERED;
- 	}
+-	haptics->rated_voltage = DRV260X_DEF_OD_CLAMP_VOLT;
++	haptics->overdrive_voltage = DRV260X_DEF_OD_CLAMP_VOLT;
+ 	haptics->rated_voltage = DRV260X_DEF_RATED_VOLT;
+ 
+ 	if (pdata) {
