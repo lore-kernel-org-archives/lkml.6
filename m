@@ -1,41 +1,41 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZo0BhObx7vAjoSJu74BpduGZAHZEHuY5rlU7LbITFf54m1kzVhdQFM1scEFtsQd3iC0o4Pe
-ARC-Seal: i=1; a=rsa-sha256; t=1524837775; cv=none;
+X-Google-Smtp-Source: AB8JxZrkm3DI1S8VvnifHrrx9FfGYrNQ8/RQmQQVZj6Ma4JJbB0cjDfE0yjqoXj50nDmgAU0JU9I
+ARC-Seal: i=1; a=rsa-sha256; t=1524837772; cv=none;
         d=google.com; s=arc-20160816;
-        b=hBGhtsPUSASMQoLnDbLvEpaSnaYbHLaVtk9KfveBZvi1ezc38YFnNXP+KVkMvPlnKn
-         ii3p05ocz7D+hbCjj/9Xdo8ElQlaDgc23dJR7olLIbBqg5DLXYIMyZTQlMBucG+dB2tu
-         k1q/8zZS0x56lnz7muN+dFvbJYkO3oLRW4Lr159nSxGSRI41ZIw5BXhUscsUL7w0WCDV
-         4V4cB+ntm0BrdMbozmeCOYifwB9nUhnk2wxUx+HRqEIGj4/ZThO+Bid8X6D7uNaeYGCI
-         AUInpbKG9xv0ynR6I80BnNPiz8skBHtvSiO/FOVzumpdA5AgZOyaSeNX94FELwhr8SCK
-         d+AA==
+        b=EEc+WlHj9LLJ7KZOQQNK3ZW7/7+oEWB/9de5k1VnuZD2RTQVYMX4hZpTZ8gS0BUVUD
+         PZ4RYa9m2h5akvDP0zugs2pDN3ELEJlBaWEc1oVt76kFNp2OONlGJ3DNDdkc/X92dIsQ
+         Vv2z7hreIge79vCUrrq1OisfFbCi/lWPX/wnnOcTQf1xcbu+1ZcB4lkv7tnlPllV0aD8
+         XXqXdzcDRNBDLD9Omo6rGSN1teWp2M68rg1Fwec9280wtLdzvo97ZPkqABFmy40cnyY/
+         +nEEFAlzIr4kp9ZEk4FrpRBM8FPQ7Uzz5fdY2XBcP/lWiQOqhCVJ2ObMEmK4jogb2q9e
+         PYHA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=ad8nTsbqwGkO3Ch7zisS4x0sAeXBnY8UuHfhXGhPCmM=;
-        b=d3n0CpODxLY4GoTgKyHUEJZczd8h0YUMSUM3mDHi1Rtm5nJPtMXEbDSv/KeZQx1kFo
-         32pun6db9ZJXBaKt4rZ3c3G18GnkWh6gnsO2rdsW83igykob5UtG7+pnhbLQ3ps8mPM9
-         YhYBgnCFrlyFY2+Yxiix7IahV5L/1FdO3benW1Kv95gwJ/EIQogC2xACb1N++xtf/8hl
-         1NX3R3DpnyytUpBJqKLpsBpiVKgst8NfsF4oSflmb5TeZJIC/QtnfQrRr0CZJci3DPwP
-         0KMfbnMZwp4sYQK5n9jzWv9YHFyroBRxIYj5UrDlSFcXJ/czUnClVgcAqWOW7I9DLikA
-         9N9w==
+        bh=mhPhGuMLYSkf/I8529BTfaf16je6idTn9+aXHyiMWOI=;
+        b=hMvw0pTXaK+H7y6foNQjt9B40CM+ejKB4qGJrYMsKx/QDQnjG1oXrbsFQL25QgAp/d
+         bm9LWVrqzcXEEvSo3cV2dZlqCRnyQ+lIJ5zEhrXGr+6E7yI6F27Xpdkn00h0mBMcb+TO
+         +IHmKk0avRmW7aA0+UYKMNMcMM7oqrZBAxqDLvuCIwGjp5bLuJLTpHv80hN1wQ4F46bN
+         SuS0Bnf2GCrDxXqGoZAXdkr8o1OR8SUidDE3ekmHu2IVNemIXj/GV5JO4inVDqhp3kxY
+         z+1I+hPS/XvfhFkk+eeDD3zNOMQ1w4ra6YtY+ARJFcQIqdoW+icNLhk5iQPGaZnnbLvH
+         GE9g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85B86218A0
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E013A2189D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Xiaoming Gao <newtongao@tencent.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	peterz@infradead.org,
-	hpa@zytor.com
-Subject: [PATCH 4.9 02/74] x86/tsc: Prevent 32bit truncation in calc_hpet_ref()
-Date: Fri, 27 Apr 2018 15:57:52 +0200
-Message-Id: <20180427135709.998099721@linuxfoundation.org>
+	Matt Redfearn <matt.redfearn@imgtec.com>,
+	linux-mips@linux-mips.org,
+	Ralf Baechle <ralf@linux-mips.org>,
+	Amit Pundir <amit.pundir@linaro.org>
+Subject: [PATCH 4.9 11/74] MIPS: Generic: Fix big endian CPUs on generic machine
+Date: Fri, 27 Apr 2018 15:58:01 +0200
+Message-Id: <20180427135710.365986182@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135709.899303463@linuxfoundation.org>
 References: <20180427135709.899303463@linuxfoundation.org>
@@ -45,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908113837378273?=
-X-GMAIL-MSGID: =?utf-8?q?1598908295371872983?=
+X-GMAIL-THRID: =?utf-8?q?1598908292965249714?=
+X-GMAIL-MSGID: =?utf-8?q?1598908292965249714?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,52 +54,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Xiaoming Gao <gxm.linux.kernel@gmail.com>
+From: Matt Redfearn <matt.redfearn@imgtec.com>
 
-commit d3878e164dcd3925a237a20e879432400e369172 upstream.
+commit a3078e593b74fe196e69f122f03ff0b32f652c53 upstream.
 
-The TSC calibration code uses HPET as reference. The conversion normalizes
-the delta of two HPET timestamps:
+Big endian CPUs require SWAP_IO_SPACE enabled to swap accesses to little
+endian peripherals.
 
-    hpetref = ((tshpet1 - tshpet2) * HPET_PERIOD) / 1e6
+Without this patch, big endian kernels fail to communicate with little
+endian periperals, such as PCI devices, on QEMU and FPGA based
+platforms.
 
-and then divides the normalized delta of the corresponding TSC timestamps
-by the result to calulate the TSC frequency.
-
-    tscfreq = ((tstsc1 - tstsc2 ) * 1e6) / hpetref
-
-This uses do_div() which takes an u32 as the divisor, which worked so far
-because the HPET frequency was low enough that 'hpetref' never exceeded
-32bit.
-
-On Skylake machines the HPET frequency increased so 'hpetref' can exceed
-32bit. do_div() truncates the divisor, which causes the calibration to
-fail.
-
-Use div64_u64() to avoid the problem.
-
-[ tglx: Fixes whitespace mangled patch and rewrote changelog ]
-
-Signed-off-by: Xiaoming Gao <newtongao@tencent.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: stable@vger.kernel.org
-Cc: peterz@infradead.org
-Cc: hpa@zytor.com
-Link: https://lkml.kernel.org/r/38894564-4fc9-b8ec-353f-de702839e44e@gmail.com
+Signed-off-by: Matt Redfearn <matt.redfearn@imgtec.com>
+Fixes: eed0eabd12ef ("MIPS: generic: Introduce generic DT-based board support")
+Cc: linux-mips@linux-mips.org
+Cc: linux-kernel@vger.kernel.org
+Patchwork: https://patchwork.linux-mips.org/patch/15105/
+Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
+Cc: Amit Pundir <amit.pundir@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/tsc.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/mips/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/x86/kernel/tsc.c
-+++ b/arch/x86/kernel/tsc.c
-@@ -409,7 +409,7 @@ static unsigned long calc_hpet_ref(u64 d
- 	hpet2 -= hpet1;
- 	tmp = ((u64)hpet2 * hpet_readl(HPET_PERIOD));
- 	do_div(tmp, 1000000);
--	do_div(deltatsc, tmp);
-+	deltatsc = div64_u64(deltatsc, tmp);
- 
- 	return (unsigned long) deltatsc;
- }
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -95,6 +95,7 @@ config MIPS_GENERIC
+ 	select PCI_DRIVERS_GENERIC
+ 	select PINCTRL
+ 	select SMP_UP if SMP
++	select SWAP_IO_SPACE
+ 	select SYS_HAS_CPU_MIPS32_R1
+ 	select SYS_HAS_CPU_MIPS32_R2
+ 	select SYS_HAS_CPU_MIPS32_R6
