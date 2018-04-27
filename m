@@ -1,78 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758000AbeD0MHC (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 08:07:02 -0400
-Received: from sauhun.de ([88.99.104.3]:48740 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1757805AbeD0MHB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 08:07:01 -0400
-Date: Fri, 27 Apr 2018 14:06:58 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Alexander Popov <alex.popov@linux.com>
-Cc: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?=
-        <u.kleine-koenig@pengutronix.de>,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        sil2review@lists.osadl.org, Dmitry Vyukov <dvyukov@google.com>,
-        syzkaller@googlegroups.com
-Subject: Re: [v2 1/1] i2c: dev: prevent ZERO_SIZE_PTR deref in
- i2cdev_ioctl_rdwr()
-Message-ID: <20180427120658.wi32f7margtfazzp@ninjato>
-References: <1524140962-25639-1-git-send-email-alex.popov@linux.com>
+        id S1757943AbeD0MJX (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 08:09:23 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:49420 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752808AbeD0MJV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 08:09:21 -0400
+From: Kishon Vijay Abraham I <kishon@ti.com>
+To: Tony Lindgren <tony@atomide.com>
+CC: Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <kishon@ti.com>
+Subject: [PATCH v4 00/14] dra7: mmc: Update mmc dt node to use sdhci-omap
+Date: Fri, 27 Apr 2018 17:38:51 +0530
+Message-ID: <20180427120905.3665-1-kishon@ti.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="cil4o76td5xr644s"
-Content-Disposition: inline
-In-Reply-To: <1524140962-25639-1-git-send-email-alex.popov@linux.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Changes from v3:
+*) Added dra7-mmc-iodelay.dtsi to add a new pinctrl group for clk line
+   without pullup to be used for dra71-evm and am57xx-idk.
+*) Rename wlcore node name to wifi
 
---cil4o76td5xr644s
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This series should be merged only after [1].
+[1] -> https://marc.info/?l=linux-omap&m=152482966225758&w=2
 
-On Thu, Apr 19, 2018 at 03:29:22PM +0300, Alexander Popov wrote:
-> i2cdev_ioctl_rdwr() allocates i2c_msg.buf using memdup_user(), which
-> returns ZERO_SIZE_PTR if i2c_msg.len is zero.
->=20
-> Currently i2cdev_ioctl_rdwr() always dereferences the buf pointer in case
-> of I2C_M_RD | I2C_M_RECV_LEN transfer. That causes a kernel oops in
-> case of zero len.
->=20
-> Let's check the len against zero before dereferencing buf pointer.
->=20
-> This issue was triggered by syzkaller.
->=20
-> Signed-off-by: Alexander Popov <alex.popov@linux.com>
+This series:
+ *) Adds wilink wlan support (Now all MMC instances in DRA7 will use
+    sdhci-omap)
+ *) Add a new pinctrl group for clk line without pullup required for
+    UHS cards to work reliably.
+ *) Update README to make sure users update .config file from 4.18
+    kernel.
+ *) Use sdhci-omap programming model.
 
-Applied to for-current with the arithmetic expression changed to '< 1'
-to keep in sync with the previous one. Will push out soon, so you can
-double check if you are interested.
+In the "Use sdhci-omap programming model" patch, "ti,omap4-hsmmc"
+compatible is removed. This is because if both "ti,dra7-sdhci" and
+"ti,omap4-hsmmc" is added and if there is probe deferral in sdhci_omap
+driver, the device is binding to omap_hsmmc driver.
 
-Thanks for the debugging, Alexander!
+Once omap_hsmmc and sdhci_omap driver are feature identical,
+sdhci_omap driver will be made to support omap_hsmmc binding
+(including "ti,omap4-hsmmc" compatible) and omap_hsmmc driver will
+be removed. Till then dt nodes with "ti,omap4-hsmmc" compatible
+will use omap_hsmmc driver and "ti,dra7-sdhci" compatible will
+use sdhci_omap driver.
 
+Hari Nagalla (2):
+  ARM: dts: dra72-evm-common: Add wilink8 wlan support
+  ARM: dts: dra7-evm: Add wilink8 wlan support
 
---cil4o76td5xr644s
-Content-Type: application/pgp-signature; name="signature.asc"
+Kishon Vijay Abraham I (10):
+  ARM: dts: dra72-evm-common: Remove mmc specific pinmux
+  ARM: dts: dra71-evm: Add "vqmmc-supply" property for mmc2
+  ARM: dts: dra7-mmc-iodelay: Add a new pinctrl group for clk line
+    without pullup
+  ARM: dts: am57xx-idk: Use pinctrl group from dra7-mmc-iodelay.dtsi to
+    select pulldown
+  ARM: dts: dra71-evm: Use pinctrl group from dra7-mmc-iodelay.dtsi to
+    select pulldown
+  ARM: dts: am57xx-beagle-x15/am57xx-idk: Fix pinctrl-names
+  ARM: dts: dra7-evm: Model EVM_3V6 regulator
+  ARM: dts: dra7: Use sdhci-omap programming model
+  ARM: dts: dra7: Add high speed modes capability to MMC1/MMC2 dt node
+  Documentation: ARM: Add new MMC requirements for DRA7/K2G
 
------BEGIN PGP SIGNATURE-----
+Sekhar Nori (1):
+  ARM: dts: am574x-idk: Add pinmux configuration for MMC
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlrjEl4ACgkQFA3kzBSg
-KbY65w/7BYlvSUKh16QpzYUCT6TSbRLnsqURdqNSN8iDZ1RdyBdDC6rsYnN5uYOk
-QgB9bFQs1rMcVX1DLV/+mdI06jnqJsmqQfQq6y7PFwn24qrAOR2/uAFX9t1LFuzg
-xFPGn6oq1CEZUZP6/J851SEPbAKvA8J2HiC7Qf3UL2662FEz4Q1Ev0bMKwJ9CKMi
-9lUybfB2HhPYxBV+FAhicESq8lRwYdpYQ+xE+xe0tMRE6yJ4XblXylgxfXJfA3hR
-xUJCM6N3Xz/LICAzzF2GkCuRxFoRqpJVOxticwZG//ja0on0c6y1WJK86AatTVai
-rxBU9p4mTTudoyyVENWp60FCSCVoOmh0QUpMEtWddz0LOSUaT3208fjnXTZbAliC
-K2nkg3pkndU9S6ABRvkq/gHmpNV6qlSklnTMT3jhWZ/Ie4RiVUIHsAJvZO/vP3q8
-XbgZf65pIffGJppRcJFkBuJRmzCOfnvl7rsMykQjxVUCO828ww38Du/B31kfJ8w8
-mL5QXXPaSeTsbhhQjIl+WIu9Dl0qmUkrdVMSuigJG2t6aZ5HgQhrwoqr5P2GThNP
-q6m1IL7tA9NgfiydvdL0Ku7Dz6gQTSMpuuv6rFqe4p2OS1/8GPj6yXy6W6KIUXI8
-hse8kHpoQHccQ6ZrK74823PWYcF+SA9UWEqZF+s5eSZKTQ2bgBM=
-=4HXa
------END PGP SIGNATURE-----
+Vishal Mahaveer (1):
+  ARM: dts: dra76-evm: Add wilink8 wlan support
 
---cil4o76td5xr644s--
+ Documentation/arm/OMAP/README                 |  4 ++
+ arch/arm/boot/dts/am571x-idk.dts              |  5 +-
+ arch/arm/boot/dts/am572x-idk.dts              |  5 +-
+ arch/arm/boot/dts/am574x-idk.dts              | 20 ++++++
+ .../boot/dts/am57xx-beagle-x15-common.dtsi    |  4 +-
+ arch/arm/boot/dts/am57xx-beagle-x15.dts       |  3 +-
+ arch/arm/boot/dts/am57xx-idk-common.dtsi      | 14 +---
+ arch/arm/boot/dts/dra7-evm-common.dtsi        | 15 ++++
+ arch/arm/boot/dts/dra7-evm.dts                | 68 ++++++++++++++++++
+ arch/arm/boot/dts/dra7-mmc-iodelay.dtsi       | 19 +++++
+ arch/arm/boot/dts/dra7.dtsi                   | 32 ++++-----
+ arch/arm/boot/dts/dra71-evm.dts               | 17 +----
+ arch/arm/boot/dts/dra72-evm-common.dtsi       | 71 +++++++++++--------
+ arch/arm/boot/dts/dra72x-mmc-iodelay.dtsi     | 11 +++
+ arch/arm/boot/dts/dra76-evm.dts               | 34 ++++++++-
+ 15 files changed, 243 insertions(+), 79 deletions(-)
+ create mode 100644 arch/arm/boot/dts/dra7-mmc-iodelay.dtsi
+
+-- 
+2.17.0
