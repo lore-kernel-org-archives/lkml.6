@@ -1,81 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757620AbeD0H5A (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 03:57:00 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:50454 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1757518AbeD0H46 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 03:56:58 -0400
-Date: Fri, 27 Apr 2018 09:56:45 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Marek Vasut <marex@denx.de>, David Woodhouse <dwmw2@infradead.org>,
-        Richard Weinberger <richard@nod.at>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] mtd: Fixes for 4.17-rc3
-Message-ID: <20180427095645.5e583c24@bbrezillon>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1757586AbeD0IBJ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 04:01:09 -0400
+Received: from mondschein.lichtvoll.de ([194.150.191.11]:60739 "EHLO
+        mail.lichtvoll.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757544AbeD0IBH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 04:01:07 -0400
+Authentication-Results: auth=pass smtp.auth=martin smtp.mailfrom=martin@lichtvoll.de
+From: Martin Steigerwald <martin@lichtvoll.de>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Matthew Wilcox <willy@infradead.org>, David Sterba <dsterba@suse.cz>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, linux-m68k <linux-m68k@vger.kernel.org>,
+        Joanne Dow <jdow@earthlink.net>
+Subject: Re: moving affs + RDB partition support to staging? (was: Re: Moving unmaintained filesystems to staging)
+Date: Fri, 27 Apr 2018 10:01:04 +0200
+Message-ID: <4119984.9IAShGbTL3@merkaba>
+In-Reply-To: <CAMuHMdXt11A-3wZ2uhxF9WE-3+=VV-AbQhpXrkxnV_nwa+E4tA@mail.gmail.com>
+References: <20180425154602.GA8546@bombadil.infradead.org> <1613268.lKBQxPXt8J@merkaba> <CAMuHMdXt11A-3wZ2uhxF9WE-3+=VV-AbQhpXrkxnV_nwa+E4tA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Linus,
+Geert Uytterhoeven - 26.04.18, 13:08:
+> On Thu, Apr 26, 2018 at 12:28 PM, Martin Steigerwald
+> 
+> <martin@lichtvoll.de> wrote:
+> > You probably put your stick into a cave with ancient sleeping
+> > dragons 
+> > 
+> > Added in linux-m68k mailing list, as they likely have an opinion on
+> > how to treat affs + RDB partition support. Also added in Jens Axboe
+> > about patching that RDB support broken with 2 TB or larger
+> > harddisks issue which had been in Linux kernel for 6 years while a
+> > patch exists that to my testing back then solves the issue.
+[…]
+> If there are bugs in the RDB parser that people run into, they should
+> be fixed.
+> If there are limitations in the RDB format on large disks, that's
+> still not a reason to move it to staging (hi msdos partitioning!).
 
-Here is the MTD fixes PR for 4.17-rc3.
+What I ran into was *not* a limitation in the RDB format, but a bug in 
+the Linux implementation on it. After Joanne Dow´s change the 2 TB disk 
+was detected and handled properly by Linux. Also AmigaOS 4.x handles 
+those disks just well and I think also AmigaOS 3.1/3.5/3.9 supported 
+them, but I am not sure on the details on that, it has been a long time 
+since I last booted one of my Amiga systems.
 
-Regards,
+Many classic Amiga users may not deal with such large disks, but AmigaOS 
+4 users probably still, and some of them may run Linux on their PowerPC 
+motherboards as well.
 
-Boris
+So I think the issue is worth fixing and am looking into submitting the 
+fix, which looks pretty straight-forward to me upstream unless someone 
+bets me to it.
 
-The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
-
-  Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
-
-are available in the git repository at:
-
-  git://git.infradead.org/linux-mtd.git tags/mtd/fixes-for-4.17-rc3
-
-for you to fetch changes up to f6997bec6af43396ff530caee79e178d32774a49:
-
-  mtd: rawnand: marvell: fix the chip-select DT parsing logic (2018-04-26 19:06:42 +0200)
-
-----------------------------------------------------------------
-* Fix nanddev_mtd_erase() function to match the changes done in
-  e7bfb3fdbde3 ("mtd: Stop updating erase_info->state and calling
-  mtd_erase_callback()")
-* Fix a memory leak in the Tango NAND controller driver
-* Fix read/write to a suspended erase block in the CFI driver
-* Fix the DT parsing logic in the Marvell NAND controller driver
-
-----------------------------------------------------------------
-Boris Brezillon (1):
-      mtd: nand: Fix nanddev_mtd_erase()
-
-Joakim Tjernlund (3):
-      mtd: cfi: cmdset_0001: Do not allow read/write to suspend erase block.
-      mtd: cfi: cmdset_0001: Workaround Micron Erase suspend bug.
-      mtd: cfi: cmdset_0002: Do not allow read/write to suspend erase block.
-
-Marc Gonzalez (1):
-      mtd: rawnand: tango: Fix struct clk memory leak
-
-Miquel Raynal (1):
-      mtd: rawnand: marvell: fix the chip-select DT parsing logic
-
-Thor Thayer (1):
-      mtd: spi-nor: cadence-quadspi: Fix page fault kernel panic
-
- drivers/mtd/chips/cfi_cmdset_0001.c   | 33 ++++++++++++++++++++++++++++-----
- drivers/mtd/chips/cfi_cmdset_0002.c   |  9 ++++++---
- drivers/mtd/nand/core.c               |  3 ---
- drivers/mtd/nand/raw/marvell_nand.c   | 25 ++++++++-----------------
- drivers/mtd/nand/raw/tango_nand.c     |  2 +-
- drivers/mtd/spi-nor/cadence-quadspi.c | 19 +++++++++++++++++--
- include/linux/mtd/flashchip.h         |  1 +
- 7 files changed, 61 insertions(+), 31 deletions(-)
+Thanks,
+-- 
+Martin
