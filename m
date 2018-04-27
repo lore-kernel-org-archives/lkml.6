@@ -1,106 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758662AbeD0QF2 (ORCPT <rfc822;w@1wt.eu>);
+        id S1758686AbeD0QFc (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 12:05:32 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:34900 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758654AbeD0QF2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 27 Apr 2018 12:05:28 -0400
-Received: from muru.com ([72.249.23.125]:39002 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1758603AbeD0QFZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 12:05:25 -0400
-Date: Fri, 27 Apr 2018 09:05:22 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: kbuild test robot <lkp@intel.com>
-Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org,
-        Kishon Vijay Abraham I <kishon@ti.com>, Rob Herring <robh@kernel.org>
-Subject: Re: drivers/phy/motorola/phy-mapphone-mdm6600.c:188:16: warning:  is
- used uninitialized in this function
-Message-ID: <20180427160522.GC5671@atomide.com>
-References: <201804190133.menhK9Gu%fengguang.wu@intel.com>
+X-Google-Smtp-Source: AB8JxZpPjrjXVhLa7Deajq8l7lAFU3YGLQ5aG+/fG2JTsdkH/i4khqbNmulNWuiVCgFHP7L64ORSoQ==
+From: =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+To: lgirdwood@gmail.com, broonie@kernel.org, sre@kernel.org,
+        lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH 4/4] dt-bindings: mfd: max8998: Add charger subnode binding
+Date: Fri, 27 Apr 2018 18:03:02 +0200
+Message-Id: <1524844982-4714-5-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1524844982-4714-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+References: <1524844982-4714-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201804190133.menhK9Gu%fengguang.wu@intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This patch adds devicetree bindings documentation for
+battery charging controller as the subnode of MAX8998 PMIC.
+It's based on current behavior of driver.
 
-* kbuild test robot <lkp@intel.com> [180418 17:48]:
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> head:   a27fc14219f2e3c4a46ba9177b04d9b52c875532
-> commit: 5d1ebbda0318b1ba55eaa1fae3fd867af17b0774 phy: mapphone-mdm6600: Add USB PHY driver for MDM6600 on Droid 4
-> date:   5 weeks ago
-> config: x86_64-randconfig-a0-04190121 (attached as .config)
-> compiler: gcc-7 (Debian 7.3.0-16) 7.3.0
-> reproduce:
->         git checkout 5d1ebbda0318b1ba55eaa1fae3fd867af17b0774
->         # save the attached .config to linux build tree
->         make ARCH=x86_64 
-> 
-> All warnings (new ones prefixed by >>):
-> 
->    #'target_mem_ref' not supported by expression#'drivers/phy/motorola/phy-mapphone-mdm6600.c: In function 'phy_mdm6600_status':
-> >> drivers/phy/motorola/phy-mapphone-mdm6600.c:188:16: warning:  is used uninitialized in this function [-Wuninitialized]
->       val |= values[i] << i;
->              ~~~~~~^~~
-
-Thanks for the report and sorry for the delay in responding. Looks
-like gpiod_get_array_value_cansleep initializes values. But we do
-have wrong defines here, see the patch belwo.
-
-Not sure if that is enough to fix the warning here though? I'm not
-seeing the warning here with gcc-7.3.0 binutils-2.30.
-
-Regards,
-
-Tony
-
-8< ---------------------
->From tony Mon Sep 17 00:00:00 2001
-From: Tony Lindgren <tony@atomide.com>
-Date: Wed, 25 Apr 2018 07:47:57 -0700
-Subject: [PATCH] phy: mapphone-mdm6600: Fix wrong enum used for status
- lines
-
-Kbuilt test robot reported:
-
-drivers/phy/motorola/phy-mapphone-mdm6600.c:188:16: warning:  is used
-uninitialized in this function [-Wuninitialized]
-        val |= values[i] << i;
-               ~~~~~~^~~
-
-Looking at the phy_mdm6600_status() values does get initialized by
-gpiod_get_array_value_cansleep(), but we are using wrong enum
-in that function. Let's fix the use, both end up being three though
-so urgent rush on this one AFAIK.
-
-Fixes: 5d1ebbda0318 ("phy: mapphone-mdm6600: Add USB PHY driver for
-MDM6600 on Droid 4")
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Fixes: ee999fb3f17f ("mfd: max8998: Add support for Device Tree")
+Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
 ---
- drivers/phy/motorola/phy-mapphone-mdm6600.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/mfd/max8998.txt | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/drivers/phy/motorola/phy-mapphone-mdm6600.c b/drivers/phy/motorola/phy-mapphone-mdm6600.c
---- a/drivers/phy/motorola/phy-mapphone-mdm6600.c
-+++ b/drivers/phy/motorola/phy-mapphone-mdm6600.c
-@@ -178,13 +178,13 @@ static void phy_mdm6600_status(struct work_struct *work)
- 	ddata = container_of(work, struct phy_mdm6600, status_work.work);
- 	dev = ddata->dev;
+diff --git a/Documentation/devicetree/bindings/mfd/max8998.txt b/Documentation/devicetree/bindings/mfd/max8998.txt
+index 23a3650ff2a2..f95610afb57f 100644
+--- a/Documentation/devicetree/bindings/mfd/max8998.txt
++++ b/Documentation/devicetree/bindings/mfd/max8998.txt
+@@ -50,6 +50,21 @@ Additional properties required if max8998,pmic-buck2-dvs-gpio is defined:
+ - max8998,pmic-buck2-dvs-voltage: An array of 2 voltage values in microvolts
+   for buck2 regulator that can be selected using dvs gpio.
  
--	error = gpiod_get_array_value_cansleep(PHY_MDM6600_NR_CMD_LINES,
-+	error = gpiod_get_array_value_cansleep(PHY_MDM6600_NR_STATUS_LINES,
- 					       ddata->status_gpios->desc,
- 					       values);
- 	if (error)
- 		return;
++Charger: Configuration for battery charging controller should be added
++inside a child node named 'charger'.
++  Required properties:
++  - max8998,charge-eoc: Setup "End of Charge". If value equals 0,
++    remain value set from bootloader or default value will be used.
++    Valid values: 0, 10 - 45
++
++  - max8998,charge-restart: Setup "Charge Restart Level". If value equals 0,
++    remain value set from bootloader or default value will be used.
++    Valid values: -1, 0, 100, 150, 200
++
++  - max8998,charge-timeout: Setup "Charge Full Timeout". If value equals 0,
++    remain value set from bootloader or default value will be used.
++    Valid values: -1, 0, 5, 6, 7
++
+ Regulators: All the regulators of MAX8998 to be instantiated shall be
+ listed in a child node named 'regulators'. Each regulator is represented
+ by a child node of the 'regulators' node.
+@@ -99,6 +114,13 @@ Example:
+ 		max8998,pmic-buck2-dvs-gpio = <&gpx0 0 3 0 0>; /* SET3 */
+ 		max8998,pmic-buck2-dvs-voltage = <1350000>, <1300000>;
  
--	for (i = 0; i < PHY_MDM6600_NR_CMD_LINES; i++) {
-+	for (i = 0; i < PHY_MDM6600_NR_STATUS_LINES; i++) {
- 		val |= values[i] << i;
- 		dev_dbg(ddata->dev, "XXX %s: i: %i values[i]: %i val: %i\n",
- 			__func__, i, values[i], val);
++		/* Charger configuration */
++		charger {
++			max8998,charge-eoc = <0>;
++			max8998,charge-restart = <(-1)>;
++			max8998,charge-timeout = <7>;
++		};
++
+ 		/* Regulators to instantiate */
+ 		regulators {
+ 			ldo2_reg: LDO2 {
 -- 
-2.17.0
+2.7.4
