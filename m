@@ -1,39 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758929AbeD0TXD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 15:23:03 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:44967 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758848AbeD0TW7 (ORCPT
+        id S1758936AbeD0TYh (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 15:24:37 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:33761 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757523AbeD0TYf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 15:22:59 -0400
-X-Google-Smtp-Source: AB8JxZrTrT0BEnIav7/OgJ1a24cBWcn2BLSEej3qs94NRwpxb7x1s/8lx+0QGE51EuwBc9tDKiQX9Q==
-From: Kevin Hilman <khilman@baylibre.com>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Carlo Caione <carlo@caione.org>, devicetree@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM64: dts: meson: add MMC resets
-Organization: BayLibre
-References: <20180426104119.13659-1-jbrunet@baylibre.com>
-Date: Fri, 27 Apr 2018 12:22:56 -0700
-In-Reply-To: <20180426104119.13659-1-jbrunet@baylibre.com> (Jerome Brunet's
-        message of "Thu, 26 Apr 2018 12:41:19 +0200")
-Message-ID: <7hpo2kzc6n.fsf@baylibre.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Fri, 27 Apr 2018 15:24:35 -0400
+From: Colin King <colin.king@canonical.com>
+To: Dan Williams <dan.j.williams@intel.com>,
+        Vinod Koul <vinod.koul@intel.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>, dmaengine@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] dmaengine: stm32-mdma: fix spelling mistake: "avalaible" -> "available"
+Date: Fri, 27 Apr 2018 20:24:31 +0100
+Message-Id: <20180427192431.17793-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jerome Brunet <jbrunet@baylibre.com> writes:
+From: Colin Ian King <colin.king@canonical.com>
 
-> Add reset lines to the mmc controllers of the meson gx and axg SoCs
->
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Trivial fix to spelling mistake in dev_err error message text
 
-Applied to v4.18/dt64,
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/dma/stm32-mdma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-
-Kevin
+diff --git a/drivers/dma/stm32-mdma.c b/drivers/dma/stm32-mdma.c
+index 1ac775f93d9e..90d9f6bd905b 100644
+--- a/drivers/dma/stm32-mdma.c
++++ b/drivers/dma/stm32-mdma.c
+@@ -1521,7 +1521,7 @@ static struct dma_chan *stm32_mdma_of_xlate(struct of_phandle_args *dma_spec,
+ 
+ 	c = dma_get_any_slave_channel(&dmadev->ddev);
+ 	if (!c) {
+-		dev_err(mdma2dev(dmadev), "No more channel avalaible\n");
++		dev_err(mdma2dev(dmadev), "No more channel available\n");
+ 		return NULL;
+ 	}
+ 
+-- 
+2.17.0
