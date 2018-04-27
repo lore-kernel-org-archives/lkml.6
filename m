@@ -1,74 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757251AbeD0BFc (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 21:05:32 -0400
-Received: from mga01.intel.com ([192.55.52.88]:41699 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755801AbeD0BFa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 21:05:30 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,333,1520924400";
-   d="scan'208";a="40939562"
-From: Tom Zanussi <tom.zanussi@linux.intel.com>
-To: rostedt@goodmis.org
-Cc: tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
-        vedang.patel@intel.com, bigeasy@linutronix.de, joel.opensrc@gmail.com,
-        joelaf@google.com, mathieu.desnoyers@efficios.com,
-        baohong.liu@intel.com, rajvi.jingar@intel.com, julia@ni.com,
-        fengguang.wu@intel.com, linux-kernel@vger.kernel.org,
-        linux-rt-users@vger.kernel.org,
-        Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: [PATCH 3/3] tracing: Add field modifier parsing hist error for hist triggers
-Date: Thu, 26 Apr 2018 20:04:49 -0500
-Message-Id: <b043c59fa79acd06a5f14a1d44dee9e5a3cd1248.1524790601.git.tom.zanussi@linux.intel.com>
-X-Mailer: git-send-email 1.9.3
-In-Reply-To: <cover.1524790601.git.tom.zanussi@linux.intel.com>
-References: <cover.1524790601.git.tom.zanussi@linux.intel.com>
-In-Reply-To: <cover.1524790601.git.tom.zanussi@linux.intel.com>
-References: <cover.1524790601.git.tom.zanussi@linux.intel.com>
+        id S1757152AbeD0BJd (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 21:09:33 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:37920 "EHLO
+        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751279AbeD0BJc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 21:09:32 -0400
+Message-ID: <1524791357.13490.1.camel@surriel.com>
+Subject: Re: [Lsf-pc] [LSF/MM TOPIC NOTES] x86 ZONE_DMA love
+From: Rik van Riel <riel@surriel.com>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>, linux-mm@kvack.org
+Cc: "lsf-pc@lists.linux-foundation.org"
+        <lsf-pc@lists.linux-foundation.org>,
+        Jan Kara <jack@suse.cz>, linux-scsi@vger.kernel.org,
+        martin.petersen@oracle.com, matthew@wil.cx, x86@kernel.org,
+        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        luto@amacapital.net, broonie@kernel.org, jthumshirn@suse.de,
+        cl@linux.com, mhocko@kernel.org
+Date: Thu, 26 Apr 2018 21:09:17 -0400
+In-Reply-To: <20180426215406.GB27853@wotan.suse.de>
+References: <20180426215406.GB27853@wotan.suse.de>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-bYFiuVr7tqybapqy96A6"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the user specifies an invalid field modifier for a hist trigger,
-the current code correctly flags that as an error, but doesn't tell
-the user what happened.
 
-Fix this by invoking hist_err() with an appropriate message when
-invalid modifiers are specified.
+--=-bYFiuVr7tqybapqy96A6
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Before:
+On Thu, 2018-04-26 at 21:54 +0000, Luis R. Rodriguez wrote:
+> Below are my notes on the ZONE_DMA discussion at LSF/MM 2018. There
+> were some
+> earlier discussion prior to my arrival to the session about moving
+> around
+> ZOME_DMA around, if someone has notes on that please share too :)
 
-  # echo 'hist:keys=pid:ts0=common_timestamp.junkusecs' >> /sys/kernel/debug/tracing/events/sched/sched_wakeup/trigger
-  -su: echo: write error: Invalid argument
-  # cat /sys/kernel/debug/tracing/events/sched/sched_wakeup/hist
+We took notes during LSF/MM 2018. Not a whole lot
+on your topic, but most of the MM and plenary
+topics have some notes.
 
-After:
+https://etherpad.wikimedia.org/p/LSFMM2018
 
-  # echo 'hist:keys=pid:ts0=common_timestamp.junkusecs' >> /sys/kernel/debug/tracing/events/sched/sched_wakeup/trigger
-  -su: echo: write error: Invalid argument
-  # cat /sys/kernel/debug/tracing/events/sched/sched_wakeup/hist
-  ERROR: Invalid field modifier: junkusecs
-    Last command: keys=pid:ts0=common_timestamp.junkusecs
+--=20
+All Rights Reversed.
+--=-bYFiuVr7tqybapqy96A6
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
-Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
----
- kernel/trace/trace_events_hist.c | 1 +
- 1 file changed, 1 insertion(+)
+-----BEGIN PGP SIGNATURE-----
 
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index f231fa2..b9061ed 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -2466,6 +2466,7 @@ static struct hist_field *parse_var_ref(struct hist_trigger_data *hist_data,
- 		else if (strcmp(modifier, "usecs") == 0)
- 			*flags |= HIST_FIELD_FL_TIMESTAMP_USECS;
- 		else {
-+			hist_err("Invalid field modifier: ", modifier);
- 			field = ERR_PTR(-EINVAL);
- 			goto out;
- 		}
--- 
-1.9.3
+iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAlrieD0ACgkQznnekoTE
+3oPs2wf/e3cU+yw6P/o7RotemUv9dEUwBO9xZB7WTlPx9oXdvNGIbfZ/9dnVphKw
+R4nnCpwrqDFCz3RWyGcd9pLExcz8wqYzMVFcVJfAzrsVc55SGPXPaN9/Q6qJIyim
+4RpsEKrlrpVTJ4eJ/mXs5ExyTPJxQb7LzQHVNLNc0lCzMTf7ScS8s5UTA6rdFFJ6
+u+Syxa9HXvf3oaFCogRFfe2gupp7to8+uOS+VqWCfgfiB+1QrgHEyHXFefrA/ZCv
+N+Et3YTI+AMLY1Z+HpKgVvze9QvjjyPIEOUp0UaM+y6kHRwhrBX0nimEpMvYWWm8
+2kNZ0cQMddPc+h8rH8cQK0maaERb5w==
+=CNgl
+-----END PGP SIGNATURE-----
+
+--=-bYFiuVr7tqybapqy96A6--
