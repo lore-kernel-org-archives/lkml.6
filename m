@@ -1,42 +1,45 @@
-Return-Path: <bgolaszewski@baylibre.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1524837940; cv=none;
+Return-Path: <arndbergmann@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1524840481; cv=none;
         d=google.com; s=arc-20160816;
-        b=RS9r76osrq8rhE6a30r9+/EdOM3aamHfVkhSru/7UNsxMXdYpmv6/WVwdLLTFsW2Bp
-         8nvZZGpSSO1pxoSkxLfJezSMdzzSnnAmL2FJpTPK/izLRGMcJzjRsjxlUg49jRnz52X7
-         0Uecnmjl3Y5gBLxJXkvKb7SLeyTHZzIFojknkfz56QLUlmwqVsDiZIpiI/p413KNVCt2
-         AOeNTP6tZ4R+Sah94ogImYlimwma6XgRKbubJ9Y4nU1Cs6/2EYF/BvSIWGVBKx73/Exy
-         5hBUmwChMqAAN4p/Lr24JX3lXjaPhJ/TGCT04jXrkBOqRPLM8Pfc9QZBB88zDnx55j0B
-         rwEg==
+        b=mGoeXj3zXT05MMLTOydvSBSNWfryoEholCeuI/l1aKnhOj/p9IWLu29u/cKAEvGzCZ
+         LHmiMlBLFUi+Xyev93SQP8ITEU0xwHzSQRpHbC6dF9q6J1/EFGeKp8U2QuMzR/acCpYl
+         JpOhB972DJxrPsFHr6h3tGaByBq8qs4RM575JB1ipWn9XOuj7JHxOBe6iibDhk279oHe
+         Bc0Ds6FY3MVJGrjD1YuxVwvJOghXEjGKIrYWNqrMVMSce4B5PgQTFkKldSsJi9MhfgwK
+         5UA5hUjwjqyteaBNFCBG7cI34tsUXh9xPkPWF4jPEsonvhM8yjTdh2+WP2RFMxBTNThR
+         F0Tw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
+        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
          :mime-version:dkim-signature:arc-authentication-results;
-        bh=BFV6PpldPWAZdnkvAhcr1RZvxABEwkU/8vbkhzSzrnc=;
-        b=0XIyOQ0okT/PJQ/RREev9lNvKnKAbKJVJb2h9i3OhH/kH3MWZMLjYMlP0HUnPqjv6p
-         B0q6xlKnI2/8Jgro4fFNmEdUcRmEvqkaqBiADj7afCppqK5bHjl7/EzsEta+LHocp0/z
-         TLuI6bfAgZTAlkRVeSq1a7M0mumNeEhkTYgKZPIWuxVx1vOOgkziZOmOOn+nU6CucNAL
-         +UTANlXDnt9L5s871fvfAIfxT1F3e8Tx2fdE5eL3kocvtVc3Csyvz/DXgwQnjeYSDRzI
-         7QrV1cuTkt95HTjM079QM7IIlsv/fT1iuOT1t2Ply9Sh0paaOZpGGmw/AchbdydnGk+P
-         8VYA==
+        bh=bu1uwr+o9/+PiAcZTDmirstuYOvrnXsyB5CJBiu+m0E=;
+        b=TBBcuor1EG2iDrlfRfFEyJ7OZwOJYQLUOdE2H2NACO7Zh6/1UCtdb1y8E9gkSTBPsM
+         bfaDoN++fRFwhMwqZJEFMOquTrtfndAoLSoGgmFvQA2UUGzLopo7P04Tn1X2/mOlrKVI
+         TzbR5J4XBh8jOnf7bAec99m43425g2Kmi67bIgqwLeqC+JyntTUdh1afqI+BzgdPcFYX
+         DiG0nLUDLgxhUMcPSq1OHKNvn4bb+GtqnX1ci4JGyHmiE/V9AC3lq0+cx7MvUMsIr86b
+         xUCjE4VWDn/T8qYzOiryI/1mDzVT/XqsF2jpaM9CNtjeO/migp2SNBDGvp++HaLxD1rA
+         FYDQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@baylibre-com.20150623.gappssmtp.com header.s=20150623 header.b=ahzBfWCq;
-       spf=softfail (google.com: domain of transitioning bgolaszewski@baylibre.com does not designate 209.85.220.65 as permitted sender) smtp.mailfrom=bgolaszewski@baylibre.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=uKPuRFB2;
+       spf=pass (google.com: domain of arndbergmann@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=arndbergmann@gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@baylibre-com.20150623.gappssmtp.com header.s=20150623 header.b=ahzBfWCq;
-       spf=softfail (google.com: domain of transitioning bgolaszewski@baylibre.com does not designate 209.85.220.65 as permitted sender) smtp.mailfrom=bgolaszewski@baylibre.com
-X-Google-Smtp-Source: AB8JxZrjB38alz4MwMbZzXGJKIibd0z8zl3bNgZ6z6/6GGCC1HQ0BDXn1R87V9o+waPGuv8HzMCl0zYtoDZUaFInwaQ=
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=uKPuRFB2;
+       spf=pass (google.com: domain of arndbergmann@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=arndbergmann@gmail.com
+X-Google-Smtp-Source: AB8JxZoa8LhCkADp7SQH/FmeU+zSNz1+QhyVrSUwlWobzIhuNPdMJTUPVg2xOXIFk5vG7qwXZZcohU7F71Rl2QunCLc=
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a0tMp2QURp-9WuHehqE0b6-BO1wJ38siTdxhxgwCb-ERw@mail.gmail.com>
+Sender: arndbergmann@gmail.com
+In-Reply-To: <CAMpxmJVkRDLkpcgzhMb41z=Tp6zvszLd0vqfdTtZBNGT6Trtqw@mail.gmail.com>
 References: <20180426152920.21569-1-brgl@bgdev.pl> <20180426173151.GJ3094@brightrain.aerifal.cx>
  <6d1f9114-f1d1-961f-4f36-74adff059dc3@lechnology.com> <CAK8P3a0oCH7zyBs8nQd4p+xLrFwDQiJsaKKCF1m04nyXsZxk=g@mail.gmail.com>
  <CAMpxmJUR+31axmAe2TNq00aUg40bnC=5k=2cVX019Vncr7cRkw@mail.gmail.com>
  <CAK8P3a2xtTLx-VHVWok-b19=o1z5FbTNcaWq7Y_HSdaH6pWnZg@mail.gmail.com>
- <CAMRc=MdomjLCq-bJyktaToH00kNQAuTLgkSFRrY9Jmre8McT3A@mail.gmail.com> <CAK8P3a0tMp2QURp-9WuHehqE0b6-BO1wJ38siTdxhxgwCb-ERw@mail.gmail.com>
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date: Fri, 27 Apr 2018 16:05:39 +0200
-Message-ID: <CAMpxmJVkRDLkpcgzhMb41z=Tp6zvszLd0vqfdTtZBNGT6Trtqw@mail.gmail.com>
+ <CAMRc=MdomjLCq-bJyktaToH00kNQAuTLgkSFRrY9Jmre8McT3A@mail.gmail.com>
+ <CAK8P3a0tMp2QURp-9WuHehqE0b6-BO1wJ38siTdxhxgwCb-ERw@mail.gmail.com> <CAMpxmJVkRDLkpcgzhMb41z=Tp6zvszLd0vqfdTtZBNGT6Trtqw@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Fri, 27 Apr 2018 16:48:00 +0200
+X-Google-Sender-Auth: hacJzFUg1MCjUh5SkB5TPgccazw
+Message-ID: <CAK8P3a22DKpqMGdjYoBzKfNHc2GvAbvaZowZpz=SFeQHVSWjsg@mail.gmail.com>
 Subject: Re: [PATCH RFC PoC 0/2] platform: different approach to early
  platform drivers
-To: Arnd Bergmann <arnd@arndb.de>
+To: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Cc: Bartosz Golaszewski <brgl@bgdev.pl>, David Lechner <david@lechnology.com>, Rich Felker <dalias@libc.org>,
 	Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
@@ -53,107 +56,82 @@ Cc: Bartosz Golaszewski <brgl@bgdev.pl>, David Lechner <david@lechnology.com>, R
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1598823149958129846?=
-X-GMAIL-MSGID: =?utf-8?q?1598908468361000722?=
+X-GMAIL-MSGID: =?utf-8?q?1598911133061119567?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-2018-04-27 14:40 GMT+02:00 Arnd Bergmann <arnd@arndb.de>:
-> On Fri, Apr 27, 2018 at 1:53 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->> 2018-04-27 12:18 GMT+02:00 Arnd Bergmann <arnd@arndb.de>:
->>> On Fri, Apr 27, 2018 at 10:57 AM, Bartosz Golaszewski
->>> <bgolaszewski@baylibre.com> wrote:
->>>> 2018-04-27 9:52 GMT+02:00 Arnd Bergmann <arnd@arndb.de>:
->>>>> On Fri, Apr 27, 2018 at 4:28 AM, David Lechner <david@lechnology.com> wrote:
->>>> My patch tries to address exactly the use cases we're facing - for
->>>> example by providing means to probe devices twice (early and late) and
->>>> to check the state we're at in order for users to be able to just do
->>>> the critical initialization early on and then continue with regular
->>>> stuff later.
->>>
->>> Maybe the problem is reusing the name and some of the code from
->>> an existing functionality that we've been trying to get rid of.
->>>
+On Fri, Apr 27, 2018 at 4:05 PM, Bartosz Golaszewski
+<bgolaszewski@baylibre.com> wrote:
+> 2018-04-27 14:40 GMT+02:00 Arnd Bergmann <arnd@arndb.de>:
+
+>> For timer-ti-dm, it seems like a leftover from old times that can
+>> be removed. The other four are shared between arch/sh and
+>> arch/arm/mach-shmobile and already have some #ifdef
+>> to handle those two cases.
 >>
->> I'm not reusing the name - in fact I set the prefix to earlydev_
->> exactly in order to not confuse anyone. I'm also not reusing any code
->> in the second series.
 >
-> Ok.
->
->>> If what you want to do is completely different from the existing
->>> early_platform implementation, how about starting by moving that
->>> out of drivers/base/platform.c into something under arch/sh/
->>> and renaming it to something with an sh_ prefix.
->>>
+> I'm also seeing that we also call early_platform_cleanup() from
+> platform_bus_init(). Any ideas for this one?
+
+My first idea would be to call it immediately after registering all
+devices and drivers. It looks like it's only needed to make all
+devm_ allocations persistent by removing them from the list,
+so we have to call early_platform_cleanup() before getting
+to the real platform code, but it could be done much earlier
+if we want to, at least after both setup_arch() and sh_late_time_init()
+are complete.
+
+>> I'd rather keep those separate and would prefer not to have
+>> that many different ways of getting there instead. DT and
+>> board files can already share most of the code through the
+>> use of platform_device, especially when you start using
+>> device properties instead of platform_data, and the other
+>> two are rare corner cases and ideally left that way.
 >>
->> Yes, this is a good idea, but what about the sh-specific drivers that
->> rely on it? Is including headers from arch/ in driver code still an
->> accepted practice?
->
-> I think it's fine here, since we're just move it out of the way and
-> there are only very few drivers using it:
->
-> drivers/clocksource/sh_cmt.c:early_platform_init("earlytimer",
-> &sh_cmt_device_driver);
-> drivers/clocksource/sh_mtu2.c:early_platform_init("earlytimer",
-> &sh_mtu2_device_driver);
-> drivers/clocksource/sh_tmu.c:early_platform_init("earlytimer",
-> &sh_tmu_device_driver);
-> drivers/clocksource/timer-ti-dm.c:early_platform_init("earlytimer",
-> &omap_dm_timer_driver);
-> drivers/tty/serial/sh-sci.c:early_platform_init_buffer("earlyprintk",
-> &sci_driver,
->
-> For timer-ti-dm, it seems like a leftover from old times that can
-> be removed. The other four are shared between arch/sh and
-> arch/arm/mach-shmobile and already have some #ifdef
-> to handle those two cases.
->
-
-I'm also seeing that we also call early_platform_cleanup() from
-platform_bus_init(). Any ideas for this one?
-
->>> Let's just leave the non-DT part out of it by making it sh specific.
->>> Then we can come up with improvements to the current
->>> platform_device handling for DT based platforms that you can
->>> use on DT-based davinci to replace what currently happens on
->>> board-file based davinci systems, without mixing up those
->>> two code paths too much in the base driver support.
+>> The early boot code is always special and instead of making
+>> it easier to use, we should focus on using it as little as
+>> possible: every line of code that we call before even
+>> initializing timers and consoles means it gets harder to
+>> debug when something goes wrong.
 >>
->> I don't see why we wouldn't want to unify these two cases. The best
->> solution to me seems having only one entry point into the driver code
->> - the probe() function stored in platform_driver - whether we're
->> probing it from DT, platform data, ACPI or early boot code.
 >
-> I'd rather keep those separate and would prefer not to have
-> that many different ways of getting there instead. DT and
-> board files can already share most of the code through the
-> use of platform_device, especially when you start using
-> device properties instead of platform_data, and the other
-> two are rare corner cases and ideally left that way.
+> I'm afraid I don't quite understand your reasoning. I fully agree that
+> devices that need to be initialized that early are a rare corner case.
+> We should limit any such uses to the absolute minimum. But when we do
+> need to go this way, we should do it right. Having a unified mechanism
+> for early devices will allow maintainers to enforce good practices
+> (using resources for register mapping, devres, reusing driver code for
+> reading/writing to registers). Having initialization code in machine
+> code will make everybody use different APIs and duplicate solutions. I
+> normally assume that code consolidation is always good.
 >
-> The early boot code is always special and instead of making
-> it easier to use, we should focus on using it as little as
-> possible: every line of code that we call before even
-> initializing timers and consoles means it gets harder to
-> debug when something goes wrong.
->
+> If we add a way for DT-based platform devices to be probed early - it
+> would be based on platform device/driver structures anyway. Why would
+> we even want to not convert the board code into a simple call to
+> early_platform_device_register() if we'll already offer this API for
+> device tree?
 
-I'm afraid I don't quite understand your reasoning. I fully agree that
-devices that need to be initialized that early are a rare corner case.
-We should limit any such uses to the absolute minimum. But when we do
-need to go this way, we should do it right. Having a unified mechanism
-for early devices will allow maintainers to enforce good practices
-(using resources for register mapping, devres, reusing driver code for
-reading/writing to registers). Having initialization code in machine
-code will make everybody use different APIs and duplicate solutions. I
-normally assume that code consolidation is always good.
+I think we first need to define what we really want to achieve here.
+It sounds like you still want to recreate a lot of what early_platform
+devices do, but it seems more important to me to add the missing
+functionality to the OF_DECLARE infrastructure. The most
+important pieces that seem to be missing are solved by finding
+a way to provide a platform_device pointer with the following
+properties:
 
-If we add a way for DT-based platform devices to be probed early - it
-would be based on platform device/driver structures anyway. Why would
-we even want to not convert the board code into a simple call to
-early_platform_device_register() if we'll already offer this API for
-device tree?
+- allow being passed into dev_print()
+- allow using the pointer as a token for devres unwinding
+- access to device_private data that remains persistent
+  until real a platform_driver gets loaded
 
-Best regards,
-Bartosz Golaszewski
+That can probably be done as an extension to the current
+infrastructure.
+
+However, I'd be very cautious about the resource portion:
+filling the platform resources (registers, irqs, ...) the way
+we do for regular devices is much harder and can introduce
+additional (or circular) dependencies on other devices.
+OTOH, not using those resources means you have a hard
+time passing information from board files.
+
+          Arnd
