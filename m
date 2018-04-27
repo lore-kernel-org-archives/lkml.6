@@ -1,39 +1,40 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqHqPYtNo3bOdBI3F5tpEPE+iLQt1uiy0ONT+wYceUWQkCvodqBIcnlBQG1PAwjcqmCjM+8
-ARC-Seal: i=1; a=rsa-sha256; t=1524837814; cv=none;
+X-Google-Smtp-Source: AB8JxZpgZi+t8ZxQe71O3XIXXJgr1SF0ko5t+ZRwErW4s49P1y2Y7xiYrLzgI0Dpc29H6vpgG3As
+ARC-Seal: i=1; a=rsa-sha256; t=1524837812; cv=none;
         d=google.com; s=arc-20160816;
-        b=DESD05nHZdMHSzliL+WiZtrmgqdjMcwLhHSaxlAu8TtxO+G5sZA6ypw83ylbfgLyk9
-         tP9dBgQhuF9ahLW37jtTZmbB7asWGsIH/910klb2YRwuxkm72iu86XEUo8snbH9ZIUiL
-         nF3I66FlDahHPp0wtEKij+d686u+hq4R3JeDNAWMMLcCQyMLyRHvrYPDo9RZoJRwl6ZC
-         RlWme885NM1EIVel2LRC4BnVkBF06ddfMyEsmwQLl+bhgvNVturv9h68c5JiM+2YYYjo
-         dDeur4geN5a/Seg6LnVpZALmG/5T6mBka/oxfSU/RU6jnyx49LY5qxEzorCJ3KaECyap
-         9VmA==
+        b=o6cW5nteCWRjVCuQ2YLa9gwaE14D4R8bkYTa7cPAU+2C9sOnbujCWUhocEiHlGQotL
+         a8kCQSDJyBawBv45tJH0r1rbh9S4INd8vDmmlgHyPO0BUkikndb/pNcrfNVPyL7FENkR
+         GnsDPrfWgo+S9WLc8LefORc5UlaqNkOMQdtseWGNTRFviI2kbjF76oNcuf99e58/kJ7c
+         uajAfFSXgXdr2Q33Lz1jHByzZbPUBMOYduyihYdmpDStR3hs1FjCPP4Xcj94LpTYcOE5
+         KMKiB0qtoa5VcJrCX778PzwxQd+dmG0XuXlxkJnrdj7QS+/ScujkIBSGp7fgbg5RqG99
+         9Yyw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=+mLZmTKX8Tn/J3c52ChCclAqElOaraHE6p+22Lc19d0=;
-        b=G7dT03RlUPFnPJ1qbPVFBKeuLax/jPkZHp7s10IQyV+LHe7pUxPpZBo8iQBZg6WR9q
-         pzX2t4bror0xrXY/sbCU/5mr6u33Rrd3iI7yKxd5/WB4lgoVqYlHQ3yPXSSWE4lpIo4s
-         NT7moH6pGsbvQaMtCmS5BJuTHEn2URFnjCq4CyTXM2aCTBISDIN1+/PtaQQY39prSgsF
-         MDvqgUu31P3w6yWv5pMDXQ5VCQh5xT2KLou2Tfo6j83ZbMSXMtnLRaXzpBu7tO7PcYr1
-         H4DwwHeDjj4X8+onUr9K5AQSh4oi23DP01r1ICLdSwJPYbe4Kfos8I27gCXRfJsqZPDR
-         tkew==
+        bh=EDpAkeGbRyypQwW7P8GUFSa2yeD0RndsF6lQen7vP5I=;
+        b=tqjEpv4rd/KiP0SXfUvC5FUOZJLgS9ur4IlPLMcBHinUtJbuOHE9/lcyVXUIR3pWpi
+         Qs1+wxAvwAMdQAeBAb6qYsPQSBJwqmBC4FW8TnqTeazwhOKdimKFF96/v5NAvv4jTt1H
+         L2/qihlCr9UaApUxCfWMFzAD82IydXiy7gJ+uGS2O7DDUbJbFHxly3vZ0sUSz511ABsb
+         wrTIemCcfJciBnIxi9m2JT8xyn9PW4d0m5TRJmiGD/aSyPiyDmZP3FBKpX5i+lWx7IfV
+         tymo5hdXuBAIeGKzDOr4p6uUAGShleF9jrtYUNUMXyMX8Nj7mK7BITuf1D9pw7lXUN4M
+         S+hA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A742621890
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 194F92189D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Sinan Kaya <okaya@codeaurora.org>,
-	Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH 4.9 27/74] PCI: Wait up to 60 seconds for device to become ready after FLR
-Date: Fri, 27 Apr 2018 15:58:17 +0200
-Message-Id: <20180427135711.058892150@linuxfoundation.org>
+	Karthikeyan Periyasamy <periyasa@codeaurora.org>,
+	Kalle Valo <kvalo@codeaurora.org>,
+	Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.9 26/74] Revert "ath10k: send (re)assoc peer command when NSS changed"
+Date: Fri, 27 Apr 2018 15:58:16 +0200
+Message-Id: <20180427135711.006935824@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135709.899303463@linuxfoundation.org>
 References: <20180427135709.899303463@linuxfoundation.org>
@@ -43,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908336248664416?=
-X-GMAIL-MSGID: =?utf-8?q?1598908336248664416?=
+X-GMAIL-THRID: =?utf-8?q?1598908224486989129?=
+X-GMAIL-MSGID: =?utf-8?q?1598908333471895075?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,104 +53,152 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sinan Kaya <okaya@codeaurora.org>
+From: Karthikeyan Periyasamy <periyasa@codeaurora.org>
 
-commit 821cdad5c46cae94ce65b9a98614c70a6ff021f8 upstream.
+commit 55cc11da69895a680940c1733caabc37be685f5e upstream.
 
-Sporadic reset issues have been observed with an Intel 750 NVMe drive while
-assigning the physical function to the guest machine.  The sequence of
-events observed is as follows:
+This reverts commit 55884c045d31a29cf69db8332d1064a1b61dd159.
 
-  - perform a Function Level Reset (FLR)
-  - sleep up to 1000ms total
-  - read ~0 from PCI_COMMAND (CRS completion for config read)
-  - warn that the device didn't return from FLR
-  - touch the device before it's ready
-  - device drops config writes when we restore register settings (there's
-    no mechanism for software to learn about CRS completions for writes)
-  - incomplete register restore leaves device in inconsistent state
-  - device probe fails because device is in inconsistent state
+When Ath10k is in AP mode and an unassociated STA sends a VHT action frame
+(Operating Mode Notification for the NSS change) periodically to AP this causes
+ath10k to call ath10k_station_assoc() which sends WMI_PEER_ASSOC_CMDID during
+NSS update. Over the time (with a certain client it can happen within 15 mins
+when there are over 500 of these VHT action frames) continuous calls of
+WMI_PEER_ASSOC_CMDID cause firmware to assert due to resource exhaust.
 
-After reset, an endpoint may respond to config requests with Configuration
-Request Retry Status (CRS) to indicate that it is not ready to accept new
-requests. See PCIe r3.1, sec 2.3.1 and 6.6.2.
+To my knowledge setting WMI_PEER_NSS peer param itself enough to handle NSS
+updates and no need to call ath10k_station_assoc(). So revert the original
+commit from 2014 as it's unclear why the change was really needed.
+Now the firmware assert doesn't happen anymore.
 
-Increase the timeout value from 1 second to 60 seconds to cover the period
-where device responds with CRS and also report polling progress.
+Issue observed in QCA9984 platform with firmware version:10.4-3.5.3-00053.
+This Change tested in QCA9984 with firmware version: 10.4-3.5.3-00053 and
+QCA988x platform with firmware version: 10.2.4-1.0-00036.
 
-Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
-[bhelgaas: include the mandatory 100ms in the delays we print]
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Firmware Assert log:
+
+ath10k_pci 0002:01:00.0: firmware crashed! (guid e61f1274-9acd-4c5b-bcca-e032ea6e723c)
+ath10k_pci 0002:01:00.0: qca9984/qca9994 hw1.0 target 0x01000000 chip_id 0x00000000 sub 168c:cafe
+ath10k_pci 0002:01:00.0: kconfig debug 1 debugfs 1 tracing 0 dfs 1 testmode 1
+ath10k_pci 0002:01:00.0: firmware ver 10.4-3.5.3-00053 api 5 features no-p2p,mfp,peer-flow-ctrl,btcoex-param,allows-mesh-bcast crc32 4c56a386
+ath10k_pci 0002:01:00.0: board_file api 2 bmi_id 0:4 crc32 c2271344
+ath10k_pci 0002:01:00.0: htt-ver 2.2 wmi-op 6 htt-op 4 cal otp max-sta 512 raw 0 hwcrypto 1
+ath10k_pci 0002:01:00.0: firmware register dump:
+ath10k_pci 0002:01:00.0: [00]: 0x0000000A 0x000015B3 0x00981E5F 0x00975B31
+ath10k_pci 0002:01:00.0: [04]: 0x00981E5F 0x00060530 0x00000011 0x00446C60
+ath10k_pci 0002:01:00.0: [08]: 0x0042F1FC 0x00458080 0x00000017 0x00000000
+ath10k_pci 0002:01:00.0: [12]: 0x00000009 0x00000000 0x00973ABC 0x00973AD2
+ath10k_pci 0002:01:00.0: [16]: 0x00973AB0 0x00960E62 0x009606CA 0x00000000
+ath10k_pci 0002:01:00.0: [20]: 0x40981E5F 0x004066DC 0x00400000 0x00981E34
+ath10k_pci 0002:01:00.0: [24]: 0x80983B48 0x0040673C 0x000000C0 0xC0981E5F
+ath10k_pci 0002:01:00.0: [28]: 0x80993DEB 0x0040676C 0x00431AB8 0x0045D0C4
+ath10k_pci 0002:01:00.0: [32]: 0x80993E5C 0x004067AC 0x004303C0 0x0045D0C4
+ath10k_pci 0002:01:00.0: [36]: 0x80994AAB 0x004067DC 0x00000000 0x0045D0C4
+ath10k_pci 0002:01:00.0: [40]: 0x809971A0 0x0040681C 0x004303C0 0x00441B00
+ath10k_pci 0002:01:00.0: [44]: 0x80991904 0x0040688C 0x004303C0 0x0045D0C4
+ath10k_pci 0002:01:00.0: [48]: 0x80963AD3 0x00406A7C 0x004303C0 0x009918FC
+ath10k_pci 0002:01:00.0: [52]: 0x80960E80 0x00406A9C 0x0000001F 0x00400000
+ath10k_pci 0002:01:00.0: [56]: 0x80960E51 0x00406ACC 0x00400000 0x00000000
+ath10k_pci 0002:01:00.0: Copy Engine register dump:
+ath10k_pci 0002:01:00.0: index: addr: sr_wr_idx: sr_r_idx: dst_wr_idx: dst_r_idx:
+ath10k_pci 0002:01:00.0: [00]: 0x0004a000 15 15 3 3
+ath10k_pci 0002:01:00.0: [01]: 0x0004a400 17 17 212 213
+ath10k_pci 0002:01:00.0: [02]: 0x0004a800 21 21 20 21
+ath10k_pci 0002:01:00.0: [03]: 0x0004ac00 25 25 27 25
+ath10k_pci 0002:01:00.0: [04]: 0x0004b000 515 515 144 104
+ath10k_pci 0002:01:00.0: [05]: 0x0004b400 28 28 155 156
+ath10k_pci 0002:01:00.0: [06]: 0x0004b800 12 12 12 12
+ath10k_pci 0002:01:00.0: [07]: 0x0004bc00 1 1 1 1
+ath10k_pci 0002:01:00.0: [08]: 0x0004c000 0 0 127 0
+ath10k_pci 0002:01:00.0: [09]: 0x0004c400 1 1 1 1
+ath10k_pci 0002:01:00.0: [10]: 0x0004c800 0 0 0 0
+ath10k_pci 0002:01:00.0: [11]: 0x0004cc00 0 0 0 0
+ath10k_pci 0002:01:00.0: CE[1] write_index 212 sw_index 213 hw_index 0 nentries_mask 0x000001ff
+ath10k_pci 0002:01:00.0: CE[2] write_index 20 sw_index 21 hw_index 0 nentries_mask 0x0000007f
+ath10k_pci 0002:01:00.0: CE[5] write_index 155 sw_index 156 hw_index 0 nentries_mask 0x000001ff
+ath10k_pci 0002:01:00.0: DMA addr: nbytes: meta data: byte swap: gather:
+ath10k_pci 0002:01:00.0: [455]: 0x580c0042 0 0 0 0
+ath10k_pci 0002:01:00.0: [456]: 0x594a0010 0 0 0 1
+ath10k_pci 0002:01:00.0: [457]: 0x580c0042 0 0 0 0
+ath10k_pci 0002:01:00.0: [458]: 0x594a0038 0 0 0 1
+ath10k_pci 0002:01:00.0: [459]: 0x580c0a42 0 0 0 0
+ath10k_pci 0002:01:00.0: [460]: 0x594a0060 0 0 0 1
+ath10k_pci 0002:01:00.0: [461]: 0x580c0c42 0 0 0 0
+ath10k_pci 0002:01:00.0: [462]: 0x594a0010 0 0 0 1
+ath10k_pci 0002:01:00.0: [463]: 0x580c0c42 0 0 0 0
+ath10k_pci 0002:01:00.0: [464]: 0x594a0038 0 0 0 1
+ath10k_pci 0002:01:00.0: [465]: 0x580c0a42 0 0 0 0
+ath10k_pci 0002:01:00.0: [466]: 0x594a0060 0 0 0 1
+ath10k_pci 0002:01:00.0: [467]: 0x580c0042 0 0 0 0
+ath10k_pci 0002:01:00.0: [468]: 0x594a0010 0 0 0 1
+ath10k_pci 0002:01:00.0: [469]: 0x580c1c42 0 0 0 0
+ath10k_pci 0002:01:00.0: [470]: 0x594a0010 0 0 0 1
+ath10k_pci 0002:01:00.0: [471]: 0x580c1c42 0 0 0 0
+ath10k_pci 0002:01:00.0: [472]: 0x594a0010 0 0 0 1
+ath10k_pci 0002:01:00.0: [473]: 0x580c1c42 0 0 0 0
+ath10k_pci 0002:01:00.0: [474]: 0x594a0010 0 0 0 1
+ath10k_pci 0002:01:00.0: [475]: 0x580c0642 0 0 0 0
+ath10k_pci 0002:01:00.0: [476]: 0x594a0038 0 0 0 1
+ath10k_pci 0002:01:00.0: [477]: 0x580c0842 0 0 0 0
+ath10k_pci 0002:01:00.0: [478]: 0x594a0060 0 0 0 1
+ath10k_pci 0002:01:00.0: [479]: 0x580c0042 0 0 0 0
+ath10k_pci 0002:01:00.0: [480]: 0x594a0010 0 0 0 1
+ath10k_pci 0002:01:00.0: [481]: 0x580c0042 0 0 0 0
+ath10k_pci 0002:01:00.0: [482]: 0x594a0038 0 0 0 1
+ath10k_pci 0002:01:00.0: [483]: 0x580c0842 0 0 0 0
+ath10k_pci 0002:01:00.0: [484]: 0x594a0060 0 0 0 1
+ath10k_pci 0002:01:00.0: [485]: 0x580c0642 0 0 0 0
+ath10k_pci 0002:01:00.0: [486]: 0x594a0010 0 0 0 1
+ath10k_pci 0002:01:00.0: [487]: 0x580c0642 0 0 0 0
+ath10k_pci 0002:01:00.0: [488]: 0x594a0038 0 0 0 1
+ath10k_pci 0002:01:00.0: [489]: 0x580c0842 0 0 0 0
+ath10k_pci 0002:01:00.0: [490]: 0x594a0060 0 0 0 1
+ath10k_pci 0002:01:00.0: [491]: 0x580c0042 0 0 0 0
+ath10k_pci 0002:01:00.0: [492]: 0x58174040 0 1 0 0
+ath10k_pci 0002:01:00.0: [493]: 0x5a946040 0 1 0 0
+ath10k_pci 0002:01:00.0: [494]: 0x59909040 0 1 0 0
+ath10k_pci 0002:01:00.0: [495]: 0x5ae5a040 0 1 0 0
+ath10k_pci 0002:01:00.0: [496]: 0x58096040 0 1 0 0
+ath10k_pci 0002:01:00.0: [497]: 0x594a0010 0 0 0 1
+ath10k_pci 0002:01:00.0: [498]: 0x580c0642 0 0 0 0
+ath10k_pci 0002:01:00.0: [499]: 0x5c1e0040 0 1 0 0
+ath10k_pci 0002:01:00.0: [500]: 0x58153040 0 1 0 0
+ath10k_pci 0002:01:00.0: [501]: 0x58129040 0 1 0 0
+ath10k_pci 0002:01:00.0: [502]: 0x5952f040 0 1 0 0
+ath10k_pci 0002:01:00.0: [503]: 0x59535040 0 1 0 0
+ath10k_pci 0002:01:00.0: [504]: 0x594a0010 0 0 0 1
+ath10k_pci 0002:01:00.0: [505]: 0x580c0042 0 0 0 0
+ath10k_pci 0002:01:00.0: [506]: 0x594a0010 0 0 0 1
+ath10k_pci 0002:01:00.0: [507]: 0x580c0042 0 0 0 0
+ath10k_pci 0002:01:00.0: [508]: 0x594a0010 0 0 0 1
+ath10k_pci 0002:01:00.0: [509]: 0x580c0042 0 0 0 0
+ath10k_pci 0002:01:00.0: [510]: 0x594a0010 0 0 0 1
+ath10k_pci 0002:01:00.0: [511]: 0x580c0042 0 0 0 0
+ath10k_pci 0002:01:00.0: [512]: 0x5adcc040 0 1 0 0
+ath10k_pci 0002:01:00.0: [513]: 0x5cf3d040 0 1 0 0
+ath10k_pci 0002:01:00.0: [514]: 0x5c1e9040 64 1 0 0
+ath10k_pci 0002:01:00.0: [515]: 0x00000000 0 0 0 0
+
+Signed-off-by: Karthikeyan Periyasamy <periyasa@codeaurora.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Cc: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/pci.c |   52 +++++++++++++++++++++++++++++++++++++---------------
- 1 file changed, 37 insertions(+), 15 deletions(-)
+ drivers/net/wireless/ath/ath10k/mac.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -3756,27 +3756,49 @@ int pci_wait_for_pending_transaction(str
- }
- EXPORT_SYMBOL(pci_wait_for_pending_transaction);
+--- a/drivers/net/wireless/ath/ath10k/mac.c
++++ b/drivers/net/wireless/ath/ath10k/mac.c
+@@ -5819,9 +5819,8 @@ static void ath10k_sta_rc_update_wk(stru
+ 				    sta->addr, smps, err);
+ 	}
  
--/*
-- * We should only need to wait 100ms after FLR, but some devices take longer.
-- * Wait for up to 1000ms for config space to return something other than -1.
-- * Intel IGD requires this when an LCD panel is attached.  We read the 2nd
-- * dword because VFs don't implement the 1st dword.
-- */
- static void pci_flr_wait(struct pci_dev *dev)
- {
--	int i = 0;
-+	int delay = 1, timeout = 60000;
- 	u32 id;
+-	if (changed & IEEE80211_RC_SUPP_RATES_CHANGED ||
+-	    changed & IEEE80211_RC_NSS_CHANGED) {
+-		ath10k_dbg(ar, ATH10K_DBG_MAC, "mac update sta %pM supp rates/nss\n",
++	if (changed & IEEE80211_RC_SUPP_RATES_CHANGED) {
++		ath10k_dbg(ar, ATH10K_DBG_MAC, "mac update sta %pM supp rates\n",
+ 			   sta->addr);
  
--	do {
--		msleep(100);
-+	/*
-+	 * Per PCIe r3.1, sec 6.6.2, a device must complete an FLR within
-+	 * 100ms, but may silently discard requests while the FLR is in
-+	 * progress.  Wait 100ms before trying to access the device.
-+	 */
-+	msleep(100);
-+
-+	/*
-+	 * After 100ms, the device should not silently discard config
-+	 * requests, but it may still indicate that it needs more time by
-+	 * responding to them with CRS completions.  The Root Port will
-+	 * generally synthesize ~0 data to complete the read (except when
-+	 * CRS SV is enabled and the read was for the Vendor ID; in that
-+	 * case it synthesizes 0x0001 data).
-+	 *
-+	 * Wait for the device to return a non-CRS completion.  Read the
-+	 * Command register instead of Vendor ID so we don't have to
-+	 * contend with the CRS SV value.
-+	 */
-+	pci_read_config_dword(dev, PCI_COMMAND, &id);
-+	while (id == ~0) {
-+		if (delay > timeout) {
-+			dev_warn(&dev->dev, "not ready %dms after FLR; giving up\n",
-+				 100 + delay - 1);
-+			return;
-+		}
-+
-+		if (delay > 1000)
-+			dev_info(&dev->dev, "not ready %dms after FLR; waiting\n",
-+				 100 + delay - 1);
-+
-+		msleep(delay);
-+		delay *= 2;
- 		pci_read_config_dword(dev, PCI_COMMAND, &id);
--	} while (i++ < 10 && id == ~0);
-+	}
- 
--	if (id == ~0)
--		dev_warn(&dev->dev, "Failed to return from FLR\n");
--	else if (i > 1)
--		dev_info(&dev->dev, "Required additional %dms to return from FLR\n",
--			 (i - 1) * 100);
-+	if (delay > 1000)
-+		dev_info(&dev->dev, "ready %dms after FLR\n", 100 + delay - 1);
- }
- 
- static int pcie_flr(struct pci_dev *dev, int probe)
+ 		err = ath10k_station_assoc(ar, arvif->vif, sta, true);
