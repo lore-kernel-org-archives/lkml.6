@@ -1,130 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757732AbeD0IZp convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 04:25:45 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:51311 "EHLO mail.bootlin.com"
+        id S932300AbeD0I0A (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 04:26:00 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40946 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1757587AbeD0IZl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 04:25:41 -0400
-Date: Fri, 27 Apr 2018 10:25:28 +0200
-From: =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@bootlin.com>
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: linux@armlinux.org.uk, wens@csie.org, marc.zyngier@arm.com,
-        mark.rutland@arm.com, robh+dt@kernel.org, horms@verge.net.au,
-        geert@linux-m68k.org, magnus.damm@gmail.com,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
-        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 06/11] ARM: sunxi: Add initialization of CNTVOFF
-Message-ID: <20180427102528.04b8e5c1@dell-desktop.home>
-In-Reply-To: <20180423081609.dirsitco3aeaqztx@flea>
-References: <20180420211022.11759-1-mylene.josserand@bootlin.com>
-        <20180420211022.11759-7-mylene.josserand@bootlin.com>
-        <20180423081609.dirsitco3aeaqztx@flea>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1757758AbeD0IZ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 04:25:58 -0400
+Date: Fri, 27 Apr 2018 10:25:55 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Mikulas Patocka <mpatocka@redhat.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, John Stoffel <john@stoffel.org>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Michal@stoffel.org, eric.dumazet@gmail.com, netdev@vger.kernel.org,
+        jasowang@redhat.com, Randy Dunlap <rdunlap@infradead.org>,
+        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
+        linux-mm@kvack.org, dm-devel@redhat.com,
+        Vlastimil Babka <vbabka@suse.cz>, Andrew@stoffel.org,
+        David Rientjes <rientjes@google.com>,
+        Morton <akpm@linux-foundation.org>,
+        virtualization@lists.linux-foundation.org,
+        David Miller <davem@davemloft.net>, edumazet@google.com
+Subject: Re: [dm-devel] [PATCH v5] fault-injection: introduce kvmalloc
+ fallback options
+Message-ID: <20180427082555.GC17484@dhcp22.suse.cz>
+References: <alpine.LRH.2.02.1804251656300.9428@file01.intranet.prod.int.rdu2.redhat.com>
+ <alpine.DEB.2.21.1804251417470.166306@chino.kir.corp.google.com>
+ <alpine.LRH.2.02.1804251720090.9428@file01.intranet.prod.int.rdu2.redhat.com>
+ <1524694663.4100.21.camel@HansenPartnership.com>
+ <alpine.LRH.2.02.1804251857070.31135@file01.intranet.prod.int.rdu2.redhat.com>
+ <1524697697.4100.23.camel@HansenPartnership.com>
+ <23266.8532.619051.784274@quad.stoffel.home>
+ <alpine.LRH.2.02.1804261726540.13401@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180427005213-mutt-send-email-mst@kernel.org>
+ <alpine.LRH.2.02.1804261829190.30599@file01.intranet.prod.int.rdu2.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LRH.2.02.1804261829190.30599@file01.intranet.prod.int.rdu2.redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Maxime,
-
-Thanks for your review.
-
-On Mon, 23 Apr 2018 10:16:09 +0200
-Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-
-> On Fri, Apr 20, 2018 at 11:10:17PM +0200, Mylène Josserand wrote:
-> > Add the initialization of CNTVOFF for sun8i-a83t.
-> > 
-> > For boot CPU, create a new machine that handles this
-> > function's call in an "init_early" callback. We need to initialize
-> > CNTVOFF before the arch timer's initialization otherwise, it will
-> > not be taken into account and fails to boot correctly.
-> > Because of that, this function can't be called in SMP's early_initcall
-> > function which is called after timer's init.
-> > 
-> > For secondary CPUs, add this function into secondary_startup
-> > assembly entry.
-> > 
-> > Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
-> > ---
-> >  arch/arm/mach-sunxi/headsmp.S |  1 +
-> >  arch/arm/mach-sunxi/sunxi.c   | 20 +++++++++++++++++++-
-> >  2 files changed, 20 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/arch/arm/mach-sunxi/headsmp.S b/arch/arm/mach-sunxi/headsmp.S
-> > index 37dc772701f3..32d76be98541 100644
-> > --- a/arch/arm/mach-sunxi/headsmp.S
-> > +++ b/arch/arm/mach-sunxi/headsmp.S
-> > @@ -71,6 +71,7 @@ ENDPROC(sunxi_mc_smp_cluster_cache_enable)
-> >  
-> >  ENTRY(sunxi_mc_smp_secondary_startup)
-> >  	bl	sunxi_mc_smp_cluster_cache_enable
-> > +	bl	secure_cntvoff_init
-> >  	b	secondary_startup
-> >  ENDPROC(sunxi_mc_smp_secondary_startup)
-> >  
-> > diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
-> > index 5e9602ce1573..ddc439f6269b 100644
-> > --- a/arch/arm/mach-sunxi/sunxi.c
-> > +++ b/arch/arm/mach-sunxi/sunxi.c
-> > @@ -16,6 +16,7 @@
-> >  #include <linux/platform_device.h>
-> >  
-> >  #include <asm/mach/arch.h>
-> > +#include <asm/secure_cntvoff.h>
-> >  
-> >  static const char * const sunxi_board_dt_compat[] = {
-> >  	"allwinner,sun4i-a10",
-> > @@ -62,7 +63,6 @@ MACHINE_END
-> >  static const char * const sun8i_board_dt_compat[] = {
-> >  	"allwinner,sun8i-a23",
-> >  	"allwinner,sun8i-a33",
-> > -	"allwinner,sun8i-a83t",
-> >  	"allwinner,sun8i-h2-plus",
-> >  	"allwinner,sun8i-h3",
-> >  	"allwinner,sun8i-r40",
-> > @@ -75,6 +75,24 @@ DT_MACHINE_START(SUN8I_DT, "Allwinner sun8i Family")
-> >  	.dt_compat	= sun8i_board_dt_compat,
-> >  MACHINE_END
-> >  
-> > +void __init sun8i_cntvoff_init(void)
-> > +{
-> > +#ifdef CONFIG_SMP
-> > +	secure_cntvoff_init();
-> > +#endif
-> > +}
-> > +
-> > +static const char * const sun8i_cntvoff_board_dt_compat[] = {
-> > +	"allwinner,sun8i-a83t",
-> > +	NULL,
-> > +};
-> > +
-> > +DT_MACHINE_START(SUN8I_CNTVOFF_DT, "Allwinner sun8i-a83t board")  
+On Thu 26-04-18 18:52:05, Mikulas Patocka wrote:
 > 
-> This name still doesn't really make much sense. It's an A83t, that's
-> it.
-
-True, I forgot this one, sorry.
-
 > 
-> Apart from the other minor comment I had, and once that name has been
-> fixed:
-> Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> On Fri, 27 Apr 2018, Michael S. Tsirkin wrote:
+[...]
+> >    But assuming it's important to control this kind of
+> >    fault injection to be controlled from
+> >    a dedicated menuconfig option, why not the rest of
+> >    faults?
 > 
-> Maxime
-> 
+> The injected faults cause damage to the user, so there's no point to 
+> enable them by default. vmalloc fallback should not cause any damage 
+> (assuming that the code is correctly written).
 
-Thank you!
-
-Best regards,
-
+But you want to find those bugs which would BUG_ON easier, so there is a
+risk of harm IIUC and this is not much different than other fault
+injecting paths.
 -- 
-Mylène Josserand, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+Michal Hocko
+SUSE Labs
