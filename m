@@ -1,39 +1,38 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqnJDao6GzhgukkNCG+sA9OjM4WdskW7U+QAPqiGxHk+pYVUlop/pwcSB+ol0C95Nbz70Ce
-ARC-Seal: i=1; a=rsa-sha256; t=1524837871; cv=none;
+X-Google-Smtp-Source: AB8JxZofrN1uIhLvsyGNmLb7nrNLsAkcmnYb7Nu/cZLR0VY5LbCG9GNX/8q2FVNcxDzjRla2C+rs
+ARC-Seal: i=1; a=rsa-sha256; t=1524837869; cv=none;
         d=google.com; s=arc-20160816;
-        b=xwNdeIuzgBjGMOPxs++gh8uuukIxUjvGPJfz+NMeiUth/Zzzd5G7O4fF05JWcUG5iL
-         UXtjTkJWx2Lxj7bOPT/PbBaTuY1FOFed9NVes6APUM/lvCMX3HKhljUo3TLEHeHjLTBj
-         7mqEP78/JmYTP73qOk8EEgBl2LSv1Bqfrk4wAJX3BF+JVAYncpLK3Ba64QGWD60PMzoI
-         mwmuS5jznA1Bx8iAWwwhzVeKk6JyKBYdnOkef61Z/P/WtyYWdkvBImkYFix3ZQghHOf6
-         8SBCz5SoP0c77tb0RHK9Xv0YIysubXemykybg5BMnImVKse+sCLYk5zQH5d0ihY7AraT
-         4VsA==
+        b=f7ZLjGZQZzz8nZaQESg+Y8KbJaPU6XzfU1ZcZsqjsm18JvKgQCU+xeRgtlmqCH6/20
+         +i5wkyGAf/BQPZFOEL33FQ3OQ9j+jc/e+bNnn92A10uRe0zeLgNeyAlEgeNxHcj+l2Wp
+         9BEjTbjkmHWTrciufb9OxXtHs9wJ1korfMgK145qIWwpqYBT0Yu6s8QWBN9nJyYr84vE
+         m0znrfWxCsoVdiF976oEhbxWYO+PHrgx06puyYIZ1IO7UNZxbCJQRo31ZuyonQTl4skj
+         fMfHz6+Nej3UJjoHr7V1OVlsWfnFj3O0+9x7sXnpgTDPzgo/xemV/Mfete1csD98nN78
+         +Ndw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=Tpia8S4uxEvecXVZ43Rf4lQYHHPN+LAi7lT5yU0MYEs=;
-        b=OWR78Qa6XSGb8E7097O4c9tlmbZ4Ol1Bw+GW+i57n6gaqx//shU/Vewcog0plVZbTE
-         Wohzxy0bON/nvfERfo+HkH8Zb77fyRiNIIFU2XAYFrF3HYcVxrnmv/nHWnUMfiniImZk
-         +xPKKaMp/f8LBgbFnJfBjGltrxRR5tVLwHbpfP3S3xr0cxGaKjx051Wn8d4dGDzfcfmR
-         dVDMsizy0D9+uQC0uFgFdNJb+1Efa7HdNQVSva/7SVO9k980S0Ofbq2v+y05ESKwzbQm
-         sWl9IveL3xSzCwvo5Tn496ZhozcD5is34O6aKpy1lTMILcl6zSehz2Udetrg3v9j7eTU
-         kbzw==
+        bh=fAjquTd8M09qYGrcyWVm6p2mCNMyrNozt+LwnyRUMTM=;
+        b=0rjlQOTAz/aN6P0TC6TRHRitVj2uYbINv0VKUcj5nAeSuEK9dOB2tMow+WWI7U+5M2
+         RgNs1SSzG4KIkBWQkDMlj7XP6fDTWxAiCnvlZHQalcm6lv5KnqnZA8LDFxU3y2cF/b+K
+         gwiPvS/vl0YeGNF70109yKbIJ1DuNXni/wN7O2gOCpBncMGuD9/K8xN8+hTnef3yQ8dG
+         rOVyCOelqW09ZWZ/rur/TRQebxycbtgMqikm7GgDAzObFd4OCrfz48ysYW117ucuyduJ
+         8/hdMSUBf6VXeTYuOQo4gMyC6wzN7VnZVAinxSVcY+s/5nfFQEpBZyZqVsLdMATy1hq3
+         n9Ag==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF35621890
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20FB821890
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Xin Long <lucien.xin@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 47/74] bonding: do not set slave_dev npinfo before slave_enable_netpoll in bond_enslave
-Date: Fri, 27 Apr 2018 15:58:37 +0200
-Message-Id: <20180427135711.876315795@linuxfoundation.org>
+	Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: [PATCH 4.9 46/74] s390: correct module section names for expoline code revert
+Date: Fri, 27 Apr 2018 15:58:36 +0200
+Message-Id: <20180427135711.834437440@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135709.899303463@linuxfoundation.org>
 References: <20180427135709.899303463@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908146234977294?=
-X-GMAIL-MSGID: =?utf-8?q?1598908396416416360?=
+X-GMAIL-THRID: =?utf-8?q?1598908200609195840?=
+X-GMAIL-MSGID: =?utf-8?q?1598908393276368015?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,53 +51,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Martin Schwidefsky <schwidefsky@de.ibm.com>
 
 
-[ Upstream commit ddea788c63094f7c483783265563dd5b50052e28 ]
+[ Upstream commit 6cf09958f32b9667bb3ebadf74367c791112771b ]
 
-After Commit 8a8efa22f51b ("bonding: sync netpoll code with bridge"), it
-would set slave_dev npinfo in slave_enable_netpoll when enslaving a dev
-if bond->dev->npinfo was set.
+The main linker script vmlinux.lds.S for the kernel image merges
+the expoline code patch tables into two section ".nospec_call_table"
+and ".nospec_return_table". This is *not* done for the modules,
+there the sections retain their original names as generated by gcc:
+".s390_indirect_call", ".s390_return_mem" and ".s390_return_reg".
 
-However now slave_dev npinfo is set with bond->dev->npinfo before calling
-slave_enable_netpoll. With slave_dev npinfo set, __netpoll_setup called
-in slave_enable_netpoll will not call slave dev's .ndo_netpoll_setup().
-It causes that the lower dev of this slave dev can't set its npinfo.
+The module_finalize code has to check for the compiler generated
+section names, otherwise no code patching is done. This slows down
+the module code in case of "spectre_v2=off".
 
-One way to reproduce it:
-
-  # modprobe bonding
-  # brctl addbr br0
-  # brctl addif br0 eth1
-  # ifconfig bond0 192.168.122.1/24 up
-  # ifenslave bond0 eth2
-  # systemctl restart netconsole
-  # ifenslave bond0 br0
-  # ifconfig eth2 down
-  # systemctl restart netconsole
-
-The netpoll won't really work.
-
-This patch is to remove that slave_dev npinfo setting in bond_enslave().
-
-Fixes: 8a8efa22f51b ("bonding: sync netpoll code with bridge")
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: stable@vger.kernel.org # 4.16
+Fixes: f19fbd5ed6 ("s390: introduce execute-trampolines for branches")
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/bonding/bond_main.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/s390/kernel/module.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/bonding/bond_main.c
-+++ b/drivers/net/bonding/bond_main.c
-@@ -1654,8 +1654,7 @@ int bond_enslave(struct net_device *bond
- 	} /* switch(bond_mode) */
+--- a/arch/s390/kernel/module.c
++++ b/arch/s390/kernel/module.c
+@@ -477,11 +477,11 @@ int module_finalize(const Elf_Ehdr *hdr,
+ 			apply_alternatives(aseg, aseg + s->sh_size);
  
- #ifdef CONFIG_NET_POLL_CONTROLLER
--	slave_dev->npinfo = bond->dev->npinfo;
--	if (slave_dev->npinfo) {
-+	if (bond->dev->npinfo) {
- 		if (slave_enable_netpoll(new_slave)) {
- 			netdev_info(bond_dev, "master_dev is using netpoll, but new slave device does not support netpoll\n");
- 			res = -EBUSY;
+ 		if (IS_ENABLED(CONFIG_EXPOLINE) &&
+-		    (!strcmp(".nospec_call_table", secname)))
++		    (!strncmp(".s390_indirect", secname, 14)))
+ 			nospec_revert(aseg, aseg + s->sh_size);
+ 
+ 		if (IS_ENABLED(CONFIG_EXPOLINE) &&
+-		    (!strcmp(".nospec_return_table", secname)))
++		    (!strncmp(".s390_return", secname, 12)))
+ 			nospec_revert(aseg, aseg + s->sh_size);
+ 	}
+ 
