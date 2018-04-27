@@ -1,28 +1,28 @@
 Return-Path: <matthias.bgg@kernel.org>
-X-Google-Smtp-Source: AB8JxZoDDRgRP1V18CXNv230foOjj8hU6VjtOU/sEeqxNjtxKY/NjkOaewcDc5t9hQIYL0p2rXt0
-ARC-Seal: i=1; a=rsa-sha256; t=1524821061; cv=none;
+X-Google-Smtp-Source: AB8JxZrtaJ91veD+D/Yr1qyW4dN1bOAKmJR0wOONdLk3hC59T2aUC7mNDfxmqV5Do/REc0e+yHUj
+ARC-Seal: i=1; a=rsa-sha256; t=1524821103; cv=none;
         d=google.com; s=arc-20160816;
-        b=sj/fIpgnPVQ7Nms3rLqI/z4brKENFKSwIiEe2tKCWrYVfhju/JdU7u/IN6lsFt+tkq
-         RtARgZKdtY3mlW8F10+vfDchNTuRJyTIRugmjx3ECeEqTpRcUK2uh3S+fbjq9e5vrBTW
-         nuqShOrMj42B4EyZniKwRmeWtdoHsGwaph69HWCsWq4zchEOXDN4IwpgXD920Q5hrFzJ
-         IJ9kJgKSKIIcM1Ep7JKd611oB6NQxd6LxmHqX8FoZwyDOCwfTV9Awfy8fgBbb0WsvCKY
-         JyFVdeO7JLLZ9ujmSdJkJkjjEPy9Xq+CURh90FNZbmvG9UnzmcZN5QYI2YTNlXuNmsFU
-         bggA==
+        b=c38y52evrl4v+i0b8G/ZnERGEuB7bRdCBtkk1RUcHE+TTv/ABFuTYDetDGlby94nQg
+         7sH4u/sssdAo7XRa/Py7h+KCKQruulRXxApkz8iCkZSaXrbhGBVRL0FT6RS/6bhLZehW
+         KuVVUlAj4LwlgdGvzuRZJEonxFWlvZ4ZOILERWUutuM+VeuwDQuDI6I9vZVK3oAhiPQz
+         WejlnbBKeqpEVp7/oB5oEKX0sZ86gVyYZM1v+4HOqVPDVNgQtQw2cLdok79bOy6WhLc8
+         RaIU1cw3RBmN4L4uOETS8OUaduxPyx8PGwfiGaxmtmXHmjv0bMXWO/rcpjv0xUlR8bhN
+         344w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:dmarc-filter
-         :arc-authentication-results;
-        bh=5a5O0+Lkd56EHQ35aJhKdgawOA58XKyiJ2GGnthWoak=;
-        b=ntvt68bZFyNvSt5P1u4vo1A3jeN63qgIVopYqQzrTi+15dAJtgfx1LdNOw7edNuSHB
-         /ISK5YxJDCAwlqJ/hCafKxjGqde4o1S1Voh3cSlj9QvHoDrPmFFZ3ZRf9R0uu/npbVvo
-         gHLeM0pSp0/0N6Znz7oo9VmiBTSHQGj8HklsJ8A5/E5TMboxqHHoqBpqKLm4KpgFElfA
-         Udjjw0rjGSqCZtJ3HuMWP6Kk53YK1lu06giqa202Ls9OQRar4bsytdCgK0X0qGo48ufG
-         1yvAHJcvTP2OZGmgjgroAaRHIFSJA4WwGGd2RqIo3NEiToSgxFid5zdpV44Utr/HHIPq
-         V+pg==
+        h=references:in-reply-to:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dmarc-filter:arc-authentication-results;
+        bh=dmeCkJ7AvKJtcBLqEPUe9SmlWlckwxvG0vcODkRP51E=;
+        b=XF9eyBL8iQFatEBPwnMccKgKZ8rg+kZtoHqvQ3QoDN5y9jc6WUz5iaEjOrTxfTG+rX
+         Z2aOdUKnja3ueywhf0YiQhfx4HAmWSXwdSc/E03i/PmuXrVyAsrCXdF51mz+0hHfBRsa
+         B2nH5fnNM8fl2yUAOODk50Dqwr70CDPbUMW/amFnaxejQ43KAqWeo5u+mRsFEdOqCiY6
+         v5IBzT8us31ShJsy7HEd5kYlnaeWhmyZgT6VjdjftaqOTPg5UXQzNK3w2h5xAjCbTLg7
+         DmRLmxWpyLTB/HcyoVLRVRJQTM66iokw/WPHeOx3Ra+SOUMcIFm8bL2UMwhY0aAsILKf
+         nLaA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of matthias.bgg@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=matthias.bgg@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of matthias.bgg@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=matthias.bgg@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 901DB2185C
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6542A20779
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=matthias.bgg@kernel.org
 From: matthias.bgg@kernel.org
@@ -49,73 +49,45 @@ Cc: davem@davemloft.net,
 	linux-arm-kernel@lists.infradead.org,
 	linux-mediatek@lists.infradead.org,
 	Matthias Brugger <mbrugger@suse.com>
-Subject: [v3 00/10] arm/arm64: mediatek: Fix mmsys device probing
-Date: Fri, 27 Apr 2018 11:23:52 +0200
-Message-Id: <cover.1524820923.git.mbrugger@suse.com>
+Subject: [v3 09/10] drm: mediatek: Omit warning on probe defers
+Date: Fri, 27 Apr 2018 11:24:01 +0200
+Message-Id: <9d514a4ab45f0700663fa756d5aa3913922b6fb7.1524820923.git.mbrugger@suse.com>
 X-Mailer: git-send-email 2.16.3
+In-Reply-To: <cover.1524820923.git.mbrugger@suse.com>
+References: <cover.1524820923.git.mbrugger@suse.com>
+In-Reply-To: <cover.1524820923.git.mbrugger@suse.com>
+References: <cover.1524820923.git.mbrugger@suse.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598890769311881802?=
-X-GMAIL-MSGID: =?utf-8?q?1598890769311881802?=
+X-GMAIL-THRID: =?utf-8?q?1598890812954762218?=
+X-GMAIL-MSGID: =?utf-8?q?1598890812954762218?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Matthias Brugger <mbrugger@suse.com>
 
-Changes since v2:
-- fix kconfig typo (shame on me)
-- delete __initconst from mm_clocks as converted to a platform driver
+When probe through the MFD, it can happen that the
+clock drivers wasn't probed before the ddp driver gets
+invoked. The driver used to omit a warning that the driver
+failed to get the clocks. Omit this error on the defered probe path.
 
-Changes since v1:
-- add binding documentation
-- ddp: use regmap_update_bits
-- ddp: ignore EPROBE_DEFER on clock probing
-- mfd: delete mmsys_private
-- add Reviewed-by and Acked-by tags
-
+Signed-off-by: Matthias Brugger <mbrugger@suse.com>
 ---
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-MMSYS in Mediatek SoCs has some registers to control clock gates (which is 
-used in the clk driver) and some registers to set the routing and enable
-the differnet blocks of the display subsystem.
-
-Up to now both drivers, clock and drm are probed with the same device tree
-compatible. But only the first driver get probed, which in effect breaks
-graphics on mt8173 and mt2701.
-
-This patch set introduces a new mfd device, which binds against the mmsys
-compatible and takes care of probing the needed devices. It was tested on the
-bananapi-r2 and the Acer R13 Chromebook.
-
-
-Matthias Brugger (10):
-  dt-bindings: mediatek: mmsys: Add support for mfd
-  drm/mediatek: Use regmap for register access
-  mfd: mtk-mmsys: Add mmsys driver
-  drm/mediatek: mt2701: switch to mfd probing.
-  clk: mediatek: mt2701-mm: switch to mfd device
-  mfd: mtk-mmsys: Add mt8173 nodes
-  drm/mediatek: Add mfd support for mt8173
-  clk: mediatek: mt8173-mm: switch to mfd device
-  drm: mediatek: Omit warning on probe defers
-  MAINTAINERS: update Mediatek Soc entry
-
- .../bindings/arm/mediatek/mediatek,mmsys.txt       |  2 -
- .../bindings/display/mediatek/mediatek,disp.txt    |  2 +-
- .../devicetree/bindings/mfd/mediatek,mmsys.txt     | 27 +++++++
- MAINTAINERS                                        |  2 +
- drivers/clk/mediatek/clk-mt2701-mm.c               | 10 +--
- drivers/clk/mediatek/clk-mt8173.c                  | 19 ++++-
- drivers/gpu/drm/mediatek/mtk_drm_crtc.c            |  4 +-
- drivers/gpu/drm/mediatek/mtk_drm_ddp.c             | 41 ++++------
- drivers/gpu/drm/mediatek/mtk_drm_ddp.h             |  4 +-
- drivers/gpu/drm/mediatek/mtk_drm_drv.c             | 33 ++++----
- drivers/gpu/drm/mediatek/mtk_drm_drv.h             |  2 +-
- drivers/mfd/Kconfig                                |  9 +++
- drivers/mfd/Makefile                               |  2 +
- drivers/mfd/mtk-mmsys.c                            | 93 ++++++++++++++++++++++
- 14 files changed, 190 insertions(+), 60 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt
- create mode 100644 drivers/mfd/mtk-mmsys.c
-
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+index bafc5c77c4fb..6b399348a2dc 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+@@ -374,7 +374,8 @@ static int mtk_ddp_probe(struct platform_device *pdev)
+ 
+ 	ddp->clk = devm_clk_get(dev, NULL);
+ 	if (IS_ERR(ddp->clk)) {
+-		dev_err(dev, "Failed to get clock\n");
++		if (PTR_ERR(ddp->clk) != -EPROBE_DEFER)
++			dev_err(dev, "Failed to get clock\n");
+ 		return PTR_ERR(ddp->clk);
+ 	}
+ 
 -- 
 2.16.3
