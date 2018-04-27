@@ -1,64 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757195AbeD0AkS (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 20:40:18 -0400
-Received: from mx.socionext.com ([202.248.49.38]:11203 "EHLO mx.socionext.com"
+        id S1757131AbeD0Al1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 20:41:27 -0400
+Received: from mx.socionext.com ([202.248.49.38]:11225 "EHLO mx.socionext.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752030AbeD0AkQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 20:40:16 -0400
+        id S1752030AbeD0Al0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 20:41:26 -0400
 From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
+To: Philipp Zabel <p.zabel@pengutronix.de>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+        linux-arm-kernel@lists.infradead.org
 Cc: Masami Hiramatsu <masami.hiramatsu@linaro.org>,
         Jassi Brar <jaswinder.singh@linaro.org>, linux-kernel@vger.kernel.org,
         Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Subject: [PATCH] clk: uniphier: add LD11/LD20 stream demux system clock
-Date: Fri, 27 Apr 2018 09:40:13 +0900
-Message-Id: <20180427004013.4006-1-suzuki.katsuhiro@socionext.com>
+Subject: [PATCH] reset: uniphier: add LD11/LD20 stream demux system reset control
+Date: Fri, 27 Apr 2018 09:41:21 +0900
+Message-Id: <20180427004121.4143-1-suzuki.katsuhiro@socionext.com>
 X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add clock for MPEG2 transport stream I/O and demux system (HSC) on
-UniPhier LD11/LD20 SoCs.
+Add reset lines for MPEG2 transport stream I/O and demux system (HSC)
+on UniPhier LD11/LD20 SoCs.
 
 Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
 ---
- drivers/clk/uniphier/clk-uniphier-sys.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/reset/reset-uniphier.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/uniphier/clk-uniphier-sys.c b/drivers/clk/uniphier/clk-uniphier-sys.c
-index ebc78ab2df05..4f5ff9fa11fd 100644
---- a/drivers/clk/uniphier/clk-uniphier-sys.c
-+++ b/drivers/clk/uniphier/clk-uniphier-sys.c
-@@ -51,6 +51,9 @@
- #define UNIPHIER_LD11_SYS_CLK_STDMAC(idx)				\
- 	UNIPHIER_CLK_GATE("stdmac", (idx), NULL, 0x210c, 8)
- 
-+#define UNIPHIER_LD11_SYS_CLK_HSC(idx)					\
-+	UNIPHIER_CLK_GATE("hsc", (idx), NULL, 0x210c, 9)
-+
- #define UNIPHIER_PRO4_SYS_CLK_GIO(idx)					\
- 	UNIPHIER_CLK_GATE("gio", (idx), NULL, 0x2104, 6)
- 
-@@ -182,6 +185,7 @@ const struct uniphier_clk_data uniphier_ld11_sys_clk_data[] = {
- 	/* Index 5 reserved for eMMC PHY */
- 	UNIPHIER_LD11_SYS_CLK_ETHER(6),
- 	UNIPHIER_LD11_SYS_CLK_STDMAC(8),			/* HSC, MIO */
-+	UNIPHIER_LD11_SYS_CLK_HSC(9),
- 	UNIPHIER_CLK_FACTOR("usb2", -1, "ref", 24, 25),
- 	UNIPHIER_LD11_SYS_CLK_AIO(40),
- 	UNIPHIER_LD11_SYS_CLK_EVEA(41),
-@@ -215,6 +219,7 @@ const struct uniphier_clk_data uniphier_ld20_sys_clk_data[] = {
- 	UNIPHIER_LD20_SYS_CLK_SD,
- 	UNIPHIER_LD11_SYS_CLK_ETHER(6),
- 	UNIPHIER_LD11_SYS_CLK_STDMAC(8),			/* HSC */
-+	UNIPHIER_LD11_SYS_CLK_HSC(9),
- 	/* GIO is always clock-enabled: no function for 0x210c bit5 */
- 	/*
- 	 * clock for USB Link is enabled by the logic "OR" of bit 14 and bit 15.
+diff --git a/drivers/reset/reset-uniphier.c b/drivers/reset/reset-uniphier.c
+index 360e06b20c53..7a3a449c4900 100644
+--- a/drivers/reset/reset-uniphier.c
++++ b/drivers/reset/reset-uniphier.c
+@@ -99,6 +99,7 @@ static const struct uniphier_reset_data uniphier_ld11_sys_reset_data[] = {
+ 	UNIPHIER_RESETX(4, 0x200c, 2),		/* eMMC */
+ 	UNIPHIER_RESETX(6, 0x200c, 6),		/* Ether */
+ 	UNIPHIER_RESETX(8, 0x200c, 8),		/* STDMAC (HSC, MIO) */
++	UNIPHIER_RESETX(9, 0x200c, 9),		/* HSC */
+ 	UNIPHIER_RESETX(40, 0x2008, 0),		/* AIO */
+ 	UNIPHIER_RESETX(41, 0x2008, 1),		/* EVEA */
+ 	UNIPHIER_RESETX(42, 0x2010, 2),		/* EXIV */
+@@ -110,6 +111,7 @@ static const struct uniphier_reset_data uniphier_ld20_sys_reset_data[] = {
+ 	UNIPHIER_RESETX(4, 0x200c, 2),		/* eMMC */
+ 	UNIPHIER_RESETX(6, 0x200c, 6),		/* Ether */
+ 	UNIPHIER_RESETX(8, 0x200c, 8),		/* STDMAC (HSC) */
++	UNIPHIER_RESETX(9, 0x200c, 9),		/* HSC */
+ 	UNIPHIER_RESETX(12, 0x200c, 5),		/* GIO (PCIe, USB3) */
+ 	UNIPHIER_RESETX(16, 0x200c, 12),	/* USB30-PHY0 */
+ 	UNIPHIER_RESETX(17, 0x200c, 13),	/* USB30-PHY1 */
 -- 
 2.17.0
