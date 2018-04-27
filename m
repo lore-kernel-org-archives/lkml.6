@@ -1,104 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934813AbeD0OmM (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 10:42:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37542 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934579AbeD0OmH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 10:42:07 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FB00218D9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
-Date: Fri, 27 Apr 2018 16:41:57 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc: linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Char/Misc driver fixes for 4.17-rc3
-Message-ID: <20180427144157.GA9341@kroah.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        id S934566AbeD0OIu (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 10:08:50 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:44752 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934550AbeD0OIo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 10:08:44 -0400
+X-Google-Smtp-Source: AB8JxZpPB38Jr6db4vz+Fg9+OhKtRd8uLNdzunYF4OTvhHchg+G0IYc1oiKulK38kjVneEF3AMKKHg==
+From: Alex Elder <elder@linaro.org>
+To: andy.gross@linaro.org, david.brown@linaro.org
+Cc: linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] soc: qcom: qmi: fix a buffer sizing bug
+Date: Fri, 27 Apr 2018 09:08:17 -0500
+Message-Id: <20180427140817.10871-1-elder@linaro.org>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 6d08b06e67cd117f6992c46611dfb4ce267cd71e:
+In qmi_handle_init(), a buffer is allocated for to hold messages
+received through the handle's socket.  Any "normal" messages
+(expected by the caller) will have a header prepended, so the
+buffer size is adjusted to accomodate that.
 
-  Linux 4.17-rc2 (2018-04-22 19:20:09 -0700)
+The buffer must also be of sufficient size to receive control
+messages, so the size is increased if necessary to ensure these
+will fit.
 
-are available in the Git repository at:
+Unfortunately the calculation is done wrong, making it possible
+for the calculated buffer size to be too small to hold a "normal"
+message.  Specifically, if:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git/ tags/char-misc-4.17-rc3
+  recv_buf_size > sizeof(struct qrtr_ctrl_pkt) - sizeof(struct qmi_header)
+		AND
+  recv_buf_size < sizeof(struct qrtr_ctrl_pkt)
 
-for you to fetch changes up to 6a7228d90d42bcacfe38786756ba62762b91c20a:
+the current logic will use sizeof(struct qrtr_ctrl_pkt) as the
+receive buffer size, which is not enough to hold the maximum
+"normal" message plus its header.  Currently this problem occurs
+for (13 < recv_buf_size < 20).
 
-  ARM: amba: Fix race condition with driver_override (2018-04-26 10:35:04 +0200)
+This patch corrects this.
 
-----------------------------------------------------------------
-Char/Misc driver fixes for 4.17-rc3
+Signed-off-by: Alex Elder <elder@linaro.org>
+---
+ drivers/soc/qcom/qmi_interface.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Here are some small char and misc driver fixes for 4.17-rc3
-
-A variety of small things that have fallen out after 4.17-rc1 was out.
-Some vboxguest fixes for systems with lots of memory, amba bus fixes,
-some MAINTAINERS updates, uio_hv_generic driver fixes, and a few other
-minor things that resolve problems that people reported.
-
-The amba bus fixes took twice to get right, the first time I messed up
-applying the patches in the wrong order, hence the revert and later
-addition again with the correct fix, sorry about that.
-
-All of these have been in linux-next with no reported issues.
-
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-----------------------------------------------------------------
-Anatolij Gustschin (1):
-      fpga-manager: altera-ps-spi: preserve nCONFIG state
-
-Bernat, Yehezkel (1):
-      MAINTAINERS: update my email address
-
-Daniel Vetter (1):
-      MAINTAINERS: add dri-devel&linaro-mm for Android ION
-
-Geert Uytterhoeven (5):
-      slimbus: Fix out-of-bounds access in slim_slicesize()
-      ARM: amba: Fix race condition with driver_override
-      ARM: amba: Don't read past the end of sysfs "driver_override" buffer
-      ARM: amba: Make driver_override output consistent with other buses
-      ARM: amba: Fix race condition with driver_override
-
-Greg Kroah-Hartman (1):
-      Revert "ARM: amba: Fix race condition with driver_override"
-
-Hans de Goede (4):
-      virt: vbox: Move declarations of vboxguest private functions to private header
-      virt: vbox: Add vbg_req_free() helper function
-      virt: vbox: Use __get_free_pages instead of kmalloc for DMA32 memory
-      virt: vbox: Log an error when we fail to get the host version
-
-Martijn Coenen (1):
-      ANDROID: binder: prevent transactions into own process.
-
-Stephen Hemminger (4):
-      uio_hv_generic: set size of ring buffer attribute
-      uio_hv_generic: make ring buffer attribute for primary channel
-      uio_hv_generic: use correct channel in isr
-      uio_hv_generic: fix subchannel ring mmap
-
- MAINTAINERS                              |  6 ++-
- drivers/amba/bus.c                       | 17 +++++---
- drivers/android/binder.c                 |  8 ++++
- drivers/fpga/altera-ps-spi.c             |  2 +-
- drivers/slimbus/messaging.c              |  2 +-
- drivers/uio/uio_hv_generic.c             | 72 ++++++++++----------------------
- drivers/virt/vboxguest/vboxguest_core.c  | 70 +++++++++++++++++--------------
- drivers/virt/vboxguest/vboxguest_core.h  |  9 ++++
- drivers/virt/vboxguest/vboxguest_linux.c | 19 +++++++--
- drivers/virt/vboxguest/vboxguest_utils.c | 17 ++++++--
- include/linux/vbox_utils.h               | 23 ----------
- 11 files changed, 124 insertions(+), 121 deletions(-)
+diff --git a/drivers/soc/qcom/qmi_interface.c b/drivers/soc/qcom/qmi_interface.c
+index 321982277697..938ca41c56cd 100644
+--- a/drivers/soc/qcom/qmi_interface.c
++++ b/drivers/soc/qcom/qmi_interface.c
+@@ -639,10 +639,11 @@ int qmi_handle_init(struct qmi_handle *qmi, size_t recv_buf_size,
+ 	if (ops)
+ 		qmi->ops = *ops;
+ 
++	/* Make room for the header */
++	recv_buf_size += sizeof(struct qmi_header);
++	/* Must also be sufficient to hold a control packet */
+ 	if (recv_buf_size < sizeof(struct qrtr_ctrl_pkt))
+ 		recv_buf_size = sizeof(struct qrtr_ctrl_pkt);
+-	else
+-		recv_buf_size += sizeof(struct qmi_header);
+ 
+ 	qmi->recv_buf_size = recv_buf_size;
+ 	qmi->recv_buf = kzalloc(recv_buf_size, GFP_KERNEL);
+-- 
+2.14.1
