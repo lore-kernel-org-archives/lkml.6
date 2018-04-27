@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757799AbeD0Llc (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 07:41:32 -0400
-Received: from ns.mm-sol.com ([37.157.136.199]:58139 "EHLO extserv.mm-sol.com"
+        id S1757970AbeD0LmB (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 07:42:01 -0400
+Received: from ns.mm-sol.com ([37.157.136.199]:58144 "EHLO extserv.mm-sol.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751566AbeD0Lla (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 07:41:30 -0400
+        id S1757437AbeD0Llb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 07:41:31 -0400
 From: Todor Tomov <todor.tomov@linaro.org>
 To: mchehab@kernel.org, hverkuil@xs4all.nl, sakari.ailus@iki.fi,
         laurent.pinchart@ideasonboard.com, linux-media@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc: Todor Tomov <todor.tomov@linaro.org>
-Subject: [PATCH 1/2] media: v4l: Add new 2X8 10-bit grayscale media bus code
-Date: Fri, 27 Apr 2018 14:40:38 +0300
-Message-Id: <1524829239-4664-2-git-send-email-todor.tomov@linaro.org>
+Subject: [PATCH 2/2] media: v4l: Add new 10-bit packed grayscale format
+Date: Fri, 27 Apr 2018 14:40:39 +0300
+Message-Id: <1524829239-4664-3-git-send-email-todor.tomov@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1524829239-4664-1-git-send-email-todor.tomov@linaro.org>
 References: <1524829239-4664-1-git-send-email-todor.tomov@linaro.org>
@@ -21,120 +21,91 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The code will be called MEDIA_BUS_FMT_Y10_2X8_PADHI_LE.
-It is similar to MEDIA_BUS_FMT_SBGGR10_2X8_PADHI_LE
-but MEDIA_BUS_FMT_Y10_2X8_PADHI_LE describes grayscale
-data.
+The new format will be called V4L2_PIX_FMT_Y10P.
+It is similar to the V4L2_PIX_FMT_SBGGR10P family formats
+but V4L2_PIX_FMT_Y10P is a grayscale format.
 
 Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
 ---
- Documentation/media/uapi/v4l/subdev-formats.rst | 72 +++++++++++++++++++++++++
- include/uapi/linux/media-bus-format.h           |  3 +-
- 2 files changed, 74 insertions(+), 1 deletion(-)
+ Documentation/media/uapi/v4l/pixfmt-y10p.rst | 31 ++++++++++++++++++++++++++++
+ Documentation/media/uapi/v4l/yuv-formats.rst |  1 +
+ drivers/media/v4l2-core/v4l2-ioctl.c         |  1 +
+ include/uapi/linux/videodev2.h               |  1 +
+ 4 files changed, 34 insertions(+)
+ create mode 100644 Documentation/media/uapi/v4l/pixfmt-y10p.rst
 
-diff --git a/Documentation/media/uapi/v4l/subdev-formats.rst b/Documentation/media/uapi/v4l/subdev-formats.rst
-index 9fcabe7..c4fb0bf 100644
---- a/Documentation/media/uapi/v4l/subdev-formats.rst
-+++ b/Documentation/media/uapi/v4l/subdev-formats.rst
-@@ -4315,6 +4315,78 @@ the following codes.
-       - y\ :sub:`2`
-       - y\ :sub:`1`
-       - y\ :sub:`0`
-+    * .. _MEDIA-BUS-FMT-Y10-2X8-PADHI_LE:
+diff --git a/Documentation/media/uapi/v4l/pixfmt-y10p.rst b/Documentation/media/uapi/v4l/pixfmt-y10p.rst
+new file mode 100644
+index 0000000..0018fe7
+--- /dev/null
++++ b/Documentation/media/uapi/v4l/pixfmt-y10p.rst
+@@ -0,0 +1,31 @@
++.. -*- coding: utf-8; mode: rst -*-
 +
-+      - MEDIA_BUS_FMT_Y10_2X8_PADHI_LE
-+      - 0x202c
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      - y\ :sub:`7`
-+      - y\ :sub:`6`
-+      - y\ :sub:`5`
-+      - y\ :sub:`4`
-+      - y\ :sub:`3`
-+      - y\ :sub:`2`
-+      - y\ :sub:`1`
-+      - y\ :sub:`0`
-+    * -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      -
-+      - 0
-+      - 0
-+      - 0
-+      - 0
-+      - 0
-+      - 0
-+      - y\ :sub:`9`
-+      - y\ :sub:`8`
-     * .. _MEDIA-BUS-FMT-UYVY10-2X10:
++.. _V4L2-PIX-FMT-Y10P:
++
++******************************
++V4L2_PIX_FMT_Y10P ('Y10P')
++******************************
++
++Grey-scale image as a MIPI RAW10 packed array
++
++
++Description
++===========
++
++This is a packed grey-scale image format with a depth of 10 bits per
++pixel. Every four consecutive pixels are packed into 5 bytes. Each of
++the first 4 bytes contain the 8 high order bits of the pixels, and
++the 5th byte contains the 2 least significants bits of each pixel,
++in the same order.
++
++**Bit-packed representation.**
++
++.. flat-table::
++    :header-rows:  0
++    :stub-columns: 0
++
++    * - Y'\ :sub:`00[9:2]`
++      - Y'\ :sub:`01[9:2]`
++      - Y'\ :sub:`02[9:2]`
++      - Y'\ :sub:`03[9:2]`
++      - Y'\ :sub:`03[1:0]`\ Y'\ :sub:`02[1:0]`\ Y'\ :sub:`01[1:0]`\ Y'\ :sub:`00[1:0]`
+diff --git a/Documentation/media/uapi/v4l/yuv-formats.rst b/Documentation/media/uapi/v4l/yuv-formats.rst
+index 3334ea4..9ab0592 100644
+--- a/Documentation/media/uapi/v4l/yuv-formats.rst
++++ b/Documentation/media/uapi/v4l/yuv-formats.rst
+@@ -29,6 +29,7 @@ to brightness information.
+     pixfmt-y10
+     pixfmt-y12
+     pixfmt-y10b
++    pixfmt-y10p
+     pixfmt-y16
+     pixfmt-y16-be
+     pixfmt-y8i
+diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+index f48c505..bdf2399 100644
+--- a/drivers/media/v4l2-core/v4l2-ioctl.c
++++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+@@ -1147,6 +1147,7 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
+ 	case V4L2_PIX_FMT_Y16:		descr = "16-bit Greyscale"; break;
+ 	case V4L2_PIX_FMT_Y16_BE:	descr = "16-bit Greyscale BE"; break;
+ 	case V4L2_PIX_FMT_Y10BPACK:	descr = "10-bit Greyscale (Packed)"; break;
++	case V4L2_PIX_FMT_Y10P:		descr = "10-bit Greyscale (MIPI Packed)"; break;
+ 	case V4L2_PIX_FMT_Y8I:		descr = "Interleaved 8-bit Greyscale"; break;
+ 	case V4L2_PIX_FMT_Y12I:		descr = "Interleaved 12-bit Greyscale"; break;
+ 	case V4L2_PIX_FMT_Z16:		descr = "16-bit Depth"; break;
+diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+index 600877b..b24ab720 100644
+--- a/include/uapi/linux/videodev2.h
++++ b/include/uapi/linux/videodev2.h
+@@ -522,6 +522,7 @@ struct v4l2_pix_format {
  
-       - MEDIA_BUS_FMT_UYVY10_2X10
-diff --git a/include/uapi/linux/media-bus-format.h b/include/uapi/linux/media-bus-format.h
-index 9e35117..d6a5a3b 100644
---- a/include/uapi/linux/media-bus-format.h
-+++ b/include/uapi/linux/media-bus-format.h
-@@ -62,7 +62,7 @@
- #define MEDIA_BUS_FMT_RGB121212_1X36		0x1019
- #define MEDIA_BUS_FMT_RGB161616_1X48		0x101a
+ /* Grey bit-packed formats */
+ #define V4L2_PIX_FMT_Y10BPACK    v4l2_fourcc('Y', '1', '0', 'B') /* 10  Greyscale bit-packed */
++#define V4L2_PIX_FMT_Y10P    v4l2_fourcc('Y', '1', '0', 'P') /* 10  Greyscale, MIPI RAW10 packed */
  
--/* YUV (including grey) - next is	0x202c */
-+/* YUV (including grey) - next is	0x202d */
- #define MEDIA_BUS_FMT_Y8_1X8			0x2001
- #define MEDIA_BUS_FMT_UV8_1X8			0x2015
- #define MEDIA_BUS_FMT_UYVY8_1_5X8		0x2002
-@@ -74,6 +74,7 @@
- #define MEDIA_BUS_FMT_YUYV8_2X8			0x2008
- #define MEDIA_BUS_FMT_YVYU8_2X8			0x2009
- #define MEDIA_BUS_FMT_Y10_1X10			0x200a
-+#define MEDIA_BUS_FMT_Y10_2X8_PADHI_LE		0x202c
- #define MEDIA_BUS_FMT_UYVY10_2X10		0x2018
- #define MEDIA_BUS_FMT_VYUY10_2X10		0x2019
- #define MEDIA_BUS_FMT_YUYV10_2X10		0x200b
+ /* Palette formats */
+ #define V4L2_PIX_FMT_PAL8    v4l2_fourcc('P', 'A', 'L', '8') /*  8  8-bit palette */
 -- 
 2.7.4
