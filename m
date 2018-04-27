@@ -1,42 +1,86 @@
-Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZowwR2nOLmBZdN2Qz7MJ3+HSwsFvLbfdFSu6A5/td2zhaqu59b9+l0GqXNvYEP0ykz2GXmL
-ARC-Seal: i=1; a=rsa-sha256; t=1524838313; cv=none;
-        d=google.com; s=arc-20160816;
-        b=Neato1PSvDPEVijika2T4rYYVKD2a1EPE2AT82swWj3XqipZxcIgbDO+2LYn8hLj7q
-         fO9QpCw8V9ZcxXMnERUxpNPZ4UAlwikeQ5PgRzBGJj2xObqPotxBHC9ae3TQTXjaaB9B
-         cJrr47Rrg7BzFWGr5oq+GAypN4FNTonGcIspapA7iih2XFDnLThoUWamgRva2vO4RGWm
-         79dluhEQ0xQC7womjl0tkUrJU94Vfx/T/9dHl6nck+uNlbTG0U3T3B07vi8ss9PiTdK5
-         tnKe1e3mazZshOygPwSlwN3HRB6RMzdfC0wuKIRieKT/9Nb5JJef8O6IGxi6EqUpfjRf
-         7zpA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=/bJRV0AsMq3nE9CW3J7FQnRkVNaw6uV9KgIcYyXxlkQ=;
-        b=NFxCjRpftwod/pXF7XmPsBoaJ0dJqTirrO6p8HtkD4u9fMrVvd02yJiX4uByeaKWPU
-         /yyfgXb3M//bb7/4FJABqPh/w/cuWo7SkTab7bWwHn0rbZ/l000zdobkW//Jt3s0FvxO
-         Agok1odtwwCA7T4Z0a2tZKKf5eAc64WXtO9b1dA4dCG15tn5cFF4P+HxY7PLnuZmON+X
-         MB2QORevgznrde/+DqjxgMIV5QhRTu6DVLKsJGEeGGhiDVNsrlirXSK0P666Af+O7XfR
-         iBiFJB0QR/K1deCd7Ty8kDaD1lq9dvxXoDNQ9ouF/r5hohairC7ZJS3MqJnkXFCqIpXI
-         Q4yg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04AA62189E
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-298528-1524838310-2-12136344276230404339
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524838309; b=Xlm81ucXFXCtifcOlvOPj5Z+z7jzenNxRNDNEaD2dPGQOIa6+n
+    gjQbuPFw7sLANiUKjqSXPAcv6AEJfnCwNHxLgmLttpcux2vY6aYUneZqTYKBjzPt
+    bPnTSccwRD5x5JSYStn7cbu9PzgqKDytq+tTivk0tpxe0GOWEndAnad8AZKzysps
+    V6fUH/RBIgA23vlgD5pamsyefvvL50mybsABCDS2d123u9LaXYYdQtopqjygzYPG
+    S116e7kLljSbx9EGHVYNrZqp2QVMaIdrsQVMQDvrbe8gIo9G1nNvxhwLGL9PWCE4
+    Sw+37RTv8Bsqj8MiiE0cERp4XTd4jwxRdlXw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1524838309; bh=1ablwz0uUQBs35rspVMYaLhOP3Nmni
+    58OEpmelRf8Y8=; b=W1hIZtJHNcHNCq1rvYHY1+cuqYONEnDWBuyKNIDrgJFu1a
+    EYi4TlM3uDC+aKVhmymMz+qbcrQul9ZTZZiA4/u9RCd07cvDCOzcz7fUoQzYNxU3
+    ZUSW81xZsAE0VMikgMjcJ1O1OKANYl1MWtVicIxNESlGt67IqhaLLWovEdb6K4Pi
+    pxo1Qa+giEfwz5JVTjHki7eh+S/DVJ300cMM4uoOWVglsqEbIZBPe399H7JGJzXx
+    knsbWj17g9QdrEnPYvnkstZ5kyN+PJYEFWplXqydG3b9CCpyQFmqYdT8oFx9+Zcw
+    6JoRk1h5R/ykskuB819vGXNRTKDLg86nWVd97C2w==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfNZvAdXz8Q6PLDVHFySd9D8cJpYjFiNhhPoKqCDsfE+ju4XF8cQ+Obht8Tkq+c8k7EtqPxj73gLE/rykZDJJ+R/Qhn+a8UYDzRdyrqlmf/37hdeMf3QK
+    a4LIJz1FaRTjBe1n+ei+tM/5oOnpXKnNUOpIF1r7xZPUAuEMI0M9EmNXGRD6EFzxt1rGlZrePjwy84Rj8BrNfJSFGaSxtvx2heJF/oXf0VImqGCcm7URgQ2I
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=20KFwNOVAAAA:8 a=hWMQpYRtAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
+    a=0pm2IfRHqH4KOsd3xggA:9 a=O7wS3sNDcQHtxC9h:21 a=08H95I4FNwZwT5KQ:21
+    a=QEXdDO2ut3YA:10 a=KCsI-UfzjElwHeZNREa_:22 a=y1Q9-5lHfBjTkpIzbSAN:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S935071AbeD0OLo (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 27 Apr 2018 10:11:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56392 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934628AbeD0OLj (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 27 Apr 2018 10:11:39 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72D0721895
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Mikulas Patocka <mpatocka@redhat.com>,
-	Eric Dumazet <eric.dumazet@gmail.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 58/81] virtio_net: split out ctrl buffer
-Date: Fri, 27 Apr 2018 15:59:00 +0200
-Message-Id: <20180427135746.782095480@linuxfoundation.org>
+        stable@vger.kernel.org, Kimitoshi Takahashi <ktaka@nii.ac.jp>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jason Wang <jasowang@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.16 53/81] virtio-net: add missing virtqueue kick when flushing packets
+Date: Fri, 27 Apr 2018 15:58:55 +0200
+Message-Id: <20180427135746.321343844@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135743.216853156@linuxfoundation.org>
 References: <20180427135743.216853156@linuxfoundation.org>
@@ -44,10 +88,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908670301526268?=
-X-GMAIL-MSGID: =?utf-8?q?1598908859563846825?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,204 +98,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Michael S. Tsirkin" <mst@redhat.com>
+From: Jason Wang <jasowang@redhat.com>
 
 
-[ Upstream commit 12e571693837d6164bda61e316b1944972ee0d97 ]
+[ Upstream commit 9267c430c6b6f4c0120e3c6bb847313d633f02a6 ]
 
-When sending control commands, virtio net sets up several buffers for
-DMA. The buffers are all part of the net device which means it's
-actually allocated by kvmalloc so it's in theory (on extreme memory
-pressure) possible to get a vmalloc'ed buffer which on some platforms
-means we can't DMA there.
+We tends to batch submitting packets during XDP_TX. This requires to
+kick virtqueue after a batch, we tried to do it through
+xdp_do_flush_map() which only makes sense for devmap not XDP_TX. So
+explicitly kick the virtqueue in this case.
 
-Fix up by moving the DMA buffers into a separate structure.
-
-Reported-by: Mikulas Patocka <mpatocka@redhat.com>
-Suggested-by: Eric Dumazet <eric.dumazet@gmail.com>
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-Acked-by: Jason Wang <jasowang@redhat.com>
+Reported-by: Kimitoshi Takahashi <ktaka@nii.ac.jp>
+Tested-by: Kimitoshi Takahashi <ktaka@nii.ac.jp>
+Cc: Daniel Borkmann <daniel@iogearbox.net>
+Fixes: 186b3c998c50 ("virtio-net: support XDP_REDIRECT")
+Signed-off-by: Jason Wang <jasowang@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/virtio_net.c |   68 ++++++++++++++++++++++++++---------------------
- 1 file changed, 39 insertions(+), 29 deletions(-)
+ drivers/net/virtio_net.c |   11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
 --- a/drivers/net/virtio_net.c
 +++ b/drivers/net/virtio_net.c
-@@ -147,6 +147,17 @@ struct receive_queue {
- 	struct xdp_rxq_info xdp_rxq;
- };
- 
-+/* Control VQ buffers: protected by the rtnl lock */
-+struct control_buf {
-+	struct virtio_net_ctrl_hdr hdr;
-+	virtio_net_ctrl_ack status;
-+	struct virtio_net_ctrl_mq mq;
-+	u8 promisc;
-+	u8 allmulti;
-+	u16 vid;
-+	u64 offloads;
-+};
-+
- struct virtnet_info {
- 	struct virtio_device *vdev;
- 	struct virtqueue *cvq;
-@@ -192,14 +203,7 @@ struct virtnet_info {
- 	struct hlist_node node;
- 	struct hlist_node node_dead;
- 
--	/* Control VQ buffers: protected by the rtnl lock */
--	struct virtio_net_ctrl_hdr ctrl_hdr;
--	virtio_net_ctrl_ack ctrl_status;
--	struct virtio_net_ctrl_mq ctrl_mq;
--	u8 ctrl_promisc;
--	u8 ctrl_allmulti;
--	u16 ctrl_vid;
--	u64 ctrl_offloads;
-+	struct control_buf *ctrl;
- 
- 	/* Ethtool settings */
- 	u8 duplex;
-@@ -1461,25 +1465,25 @@ static bool virtnet_send_command(struct
- 	/* Caller should know better */
- 	BUG_ON(!virtio_has_feature(vi->vdev, VIRTIO_NET_F_CTRL_VQ));
- 
--	vi->ctrl_status = ~0;
--	vi->ctrl_hdr.class = class;
--	vi->ctrl_hdr.cmd = cmd;
-+	vi->ctrl->status = ~0;
-+	vi->ctrl->hdr.class = class;
-+	vi->ctrl->hdr.cmd = cmd;
- 	/* Add header */
--	sg_init_one(&hdr, &vi->ctrl_hdr, sizeof(vi->ctrl_hdr));
-+	sg_init_one(&hdr, &vi->ctrl->hdr, sizeof(vi->ctrl->hdr));
- 	sgs[out_num++] = &hdr;
- 
- 	if (out)
- 		sgs[out_num++] = out;
- 
- 	/* Add return status. */
--	sg_init_one(&stat, &vi->ctrl_status, sizeof(vi->ctrl_status));
-+	sg_init_one(&stat, &vi->ctrl->status, sizeof(vi->ctrl->status));
- 	sgs[out_num] = &stat;
- 
- 	BUG_ON(out_num + 1 > ARRAY_SIZE(sgs));
- 	virtqueue_add_sgs(vi->cvq, sgs, out_num, 1, vi, GFP_ATOMIC);
- 
- 	if (unlikely(!virtqueue_kick(vi->cvq)))
--		return vi->ctrl_status == VIRTIO_NET_OK;
-+		return vi->ctrl->status == VIRTIO_NET_OK;
- 
- 	/* Spin for a response, the kick causes an ioport write, trapping
- 	 * into the hypervisor, so the request should be handled immediately.
-@@ -1488,7 +1492,7 @@ static bool virtnet_send_command(struct
- 	       !virtqueue_is_broken(vi->cvq))
- 		cpu_relax();
- 
--	return vi->ctrl_status == VIRTIO_NET_OK;
-+	return vi->ctrl->status == VIRTIO_NET_OK;
- }
- 
- static int virtnet_set_mac_address(struct net_device *dev, void *p)
-@@ -1600,8 +1604,8 @@ static int _virtnet_set_queues(struct vi
- 	if (!vi->has_cvq || !virtio_has_feature(vi->vdev, VIRTIO_NET_F_MQ))
- 		return 0;
- 
--	vi->ctrl_mq.virtqueue_pairs = cpu_to_virtio16(vi->vdev, queue_pairs);
--	sg_init_one(&sg, &vi->ctrl_mq, sizeof(vi->ctrl_mq));
-+	vi->ctrl->mq.virtqueue_pairs = cpu_to_virtio16(vi->vdev, queue_pairs);
-+	sg_init_one(&sg, &vi->ctrl->mq, sizeof(vi->ctrl->mq));
- 
- 	if (!virtnet_send_command(vi, VIRTIO_NET_CTRL_MQ,
- 				  VIRTIO_NET_CTRL_MQ_VQ_PAIRS_SET, &sg)) {
-@@ -1660,22 +1664,22 @@ static void virtnet_set_rx_mode(struct n
- 	if (!virtio_has_feature(vi->vdev, VIRTIO_NET_F_CTRL_RX))
- 		return;
- 
--	vi->ctrl_promisc = ((dev->flags & IFF_PROMISC) != 0);
--	vi->ctrl_allmulti = ((dev->flags & IFF_ALLMULTI) != 0);
-+	vi->ctrl->promisc = ((dev->flags & IFF_PROMISC) != 0);
-+	vi->ctrl->allmulti = ((dev->flags & IFF_ALLMULTI) != 0);
- 
--	sg_init_one(sg, &vi->ctrl_promisc, sizeof(vi->ctrl_promisc));
-+	sg_init_one(sg, &vi->ctrl->promisc, sizeof(vi->ctrl->promisc));
- 
- 	if (!virtnet_send_command(vi, VIRTIO_NET_CTRL_RX,
- 				  VIRTIO_NET_CTRL_RX_PROMISC, sg))
- 		dev_warn(&dev->dev, "Failed to %sable promisc mode.\n",
--			 vi->ctrl_promisc ? "en" : "dis");
-+			 vi->ctrl->promisc ? "en" : "dis");
- 
--	sg_init_one(sg, &vi->ctrl_allmulti, sizeof(vi->ctrl_allmulti));
-+	sg_init_one(sg, &vi->ctrl->allmulti, sizeof(vi->ctrl->allmulti));
- 
- 	if (!virtnet_send_command(vi, VIRTIO_NET_CTRL_RX,
- 				  VIRTIO_NET_CTRL_RX_ALLMULTI, sg))
- 		dev_warn(&dev->dev, "Failed to %sable allmulti mode.\n",
--			 vi->ctrl_allmulti ? "en" : "dis");
-+			 vi->ctrl->allmulti ? "en" : "dis");
- 
- 	uc_count = netdev_uc_count(dev);
- 	mc_count = netdev_mc_count(dev);
-@@ -1721,8 +1725,8 @@ static int virtnet_vlan_rx_add_vid(struc
- 	struct virtnet_info *vi = netdev_priv(dev);
- 	struct scatterlist sg;
- 
--	vi->ctrl_vid = vid;
--	sg_init_one(&sg, &vi->ctrl_vid, sizeof(vi->ctrl_vid));
-+	vi->ctrl->vid = vid;
-+	sg_init_one(&sg, &vi->ctrl->vid, sizeof(vi->ctrl->vid));
- 
- 	if (!virtnet_send_command(vi, VIRTIO_NET_CTRL_VLAN,
- 				  VIRTIO_NET_CTRL_VLAN_ADD, &sg))
-@@ -1736,8 +1740,8 @@ static int virtnet_vlan_rx_kill_vid(stru
- 	struct virtnet_info *vi = netdev_priv(dev);
- 	struct scatterlist sg;
- 
--	vi->ctrl_vid = vid;
--	sg_init_one(&sg, &vi->ctrl_vid, sizeof(vi->ctrl_vid));
-+	vi->ctrl->vid = vid;
-+	sg_init_one(&sg, &vi->ctrl->vid, sizeof(vi->ctrl->vid));
- 
- 	if (!virtnet_send_command(vi, VIRTIO_NET_CTRL_VLAN,
- 				  VIRTIO_NET_CTRL_VLAN_DEL, &sg))
-@@ -2133,9 +2137,9 @@ static int virtnet_restore_up(struct vir
- static int virtnet_set_guest_offloads(struct virtnet_info *vi, u64 offloads)
+@@ -1269,7 +1269,9 @@ static int virtnet_poll(struct napi_stru
  {
- 	struct scatterlist sg;
--	vi->ctrl_offloads = cpu_to_virtio64(vi->vdev, offloads);
-+	vi->ctrl->offloads = cpu_to_virtio64(vi->vdev, offloads);
+ 	struct receive_queue *rq =
+ 		container_of(napi, struct receive_queue, napi);
+-	unsigned int received;
++	struct virtnet_info *vi = rq->vq->vdev->priv;
++	struct send_queue *sq;
++	unsigned int received, qp;
+ 	bool xdp_xmit = false;
  
--	sg_init_one(&sg, &vi->ctrl_offloads, sizeof(vi->ctrl_offloads));
-+	sg_init_one(&sg, &vi->ctrl->offloads, sizeof(vi->ctrl->offloads));
+ 	virtnet_poll_cleantx(rq);
+@@ -1280,8 +1282,13 @@ static int virtnet_poll(struct napi_stru
+ 	if (received < budget)
+ 		virtqueue_napi_complete(napi, rq->vq, received);
  
- 	if (!virtnet_send_command(vi, VIRTIO_NET_CTRL_GUEST_OFFLOADS,
- 				  VIRTIO_NET_CTRL_GUEST_OFFLOADS_SET, &sg)) {
-@@ -2358,6 +2362,7 @@ static void virtnet_free_queues(struct v
+-	if (xdp_xmit)
++	if (xdp_xmit) {
++		qp = vi->curr_queue_pairs - vi->xdp_queue_pairs +
++		     smp_processor_id();
++		sq = &vi->sq[qp];
++		virtqueue_kick(sq->vq);
+ 		xdp_do_flush_map();
++	}
  
- 	kfree(vi->rq);
- 	kfree(vi->sq);
-+	kfree(vi->ctrl);
+ 	return received;
  }
- 
- static void _free_receive_bufs(struct virtnet_info *vi)
-@@ -2550,6 +2555,9 @@ static int virtnet_alloc_queues(struct v
- {
- 	int i;
- 
-+	vi->ctrl = kzalloc(sizeof(*vi->ctrl), GFP_KERNEL);
-+	if (!vi->ctrl)
-+		goto err_ctrl;
- 	vi->sq = kzalloc(sizeof(*vi->sq) * vi->max_queue_pairs, GFP_KERNEL);
- 	if (!vi->sq)
- 		goto err_sq;
-@@ -2578,6 +2586,8 @@ static int virtnet_alloc_queues(struct v
- err_rq:
- 	kfree(vi->sq);
- err_sq:
-+	kfree(vi->ctrl);
-+err_ctrl:
- 	return -ENOMEM;
- }
- 
