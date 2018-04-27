@@ -1,46 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932790AbeD0N5N (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 09:57:13 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:43012 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932666AbeD0N5L (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 09:57:11 -0400
-X-Google-Smtp-Source: AB8JxZpjYuZyn7E9bqGF7l+kIwXS0GbuN327PNlhtD5kZ+GAvvqbvzL5WMdfeNh3QefX/98AsxmhRw==
-From: Niklas Cassel <niklas.cassel@linaro.org>
-To: andy.gross@linaro.org, david.brown@linaro.org
-Cc: linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Niklas Cassel <niklas.cassel@linaro.org>
-Subject: [PATCH] MAINTAINERS: Update pattern for qcom_scm
-Date: Fri, 27 Apr 2018 15:55:41 +0200
-Message-Id: <20180427135541.11961-1-niklas.cassel@linaro.org>
-X-Mailer: git-send-email 2.14.3
+        id S934931AbeD0OLC (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 10:11:02 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52451 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934799AbeD0OLA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 10:11:00 -0400
+Date: Fri, 27 Apr 2018 16:10:57 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.cz>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 00/11] vsprintf: Prevent silent crashes and
+ consolidate error handling
+Message-ID: <20180427141057.bzyw4qsnm7qfqqdd@pathway.suse.cz>
+References: <20180425111251.13246-1-pmladek@suse.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180425111251.13246-1-pmladek@suse.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update pattern for qcom_scm, so that get_maintainer.pl will show the
-correct maintainers + lists, not only for qcom_scm.c, but also for
-the files: qcom_scm-32.c, qcom_scm-64.c, qcom_scm.h.
+On Wed 2018-04-25 13:12:40, Petr Mladek wrote:
+> Crash in vsprintf() might be silent when it happens under logbuf_lock
+> in vprintk_emit(). This patch set prevents most of the crashes by probing
+> the address. The check is done only by %s and some %p* specifiers that need
+> to dereference the address.
+> 
+> Only the first byte of the address is checked to keep it simple. It should
+> be enough to catch most problems.
+> 
+> The check is explicitly done in each function that does the dereference.
+> It helps to avoid the questionable strchr() of affected specifiers. This
+> change motivated me to do some preparation patches that consolidated
+> the error handling and cleaned the code a bit.
+> 
+> I did my best to address the feedback. Note that there is still the
+> (efault) error message. But it is accompanied with WARN() when
+> panic_on_warn is not enabled. I hope that it makes it more acceptable.
+> 
+> 
+> Changes against v4:
+> 
+> 	+ rebased on top of
+> git://git.kernel.org/pub/scm/linux/kernel/git/pmladek/printk.git for-4.18
+> 	+ Added missing conts into ptr_to_ind() in a separate patch
+> 	+ Renamed __string to valid_string()
+> 	+ Avoid WARN() for invalid poimter specifiers
+> 	+ Removed noinline_for_stack where it was not really useful
+> 	+ WARN() when accessing invalid non-NULL address
 
-Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks a lot everyone for feedback. I'll incorporate it into v6. It
+might take some time.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 834cd3b1d79d..da60870527e9 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1817,7 +1817,7 @@ F:	drivers/spi/spi-qup.c
- F:	drivers/tty/serial/msm_serial.c
- F:	drivers/*/pm8???-*
- F:	drivers/mfd/ssbi.c
--F:	drivers/firmware/qcom_scm.c
-+F:	drivers/firmware/qcom_scm*
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/agross/linux.git
- 
- ARM/RADISYS ENP2611 MACHINE SUPPORT
--- 
-2.14.3
+BTW: I also got report from 0day robot about that the size of vmlinux
+increased by 545 bytes in i386-tinyconfig. I guess that it is mainly
+because all the copies of
+
+	if (!valid_pointer_access(&buf, end, bdev, spec))
+		return buf;
+
+got inlined. I guess that I would need to address it somehow
+as well.
+
+Best Regards,
+Petr
