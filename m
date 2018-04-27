@@ -1,48 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757197AbeD0LoX (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 07:44:23 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:42767 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751416AbeD0LoT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 07:44:19 -0400
-X-Google-Smtp-Source: AB8JxZqdR3/SLVFlljWz6LkTxLWANFqqR/UVTmho+He+WzurmBbJZmN3+jvtZcxRs9m93ie5vJddjg==
-From: Arvind Yadav <arvind.yadav.cs@gmail.com>
-To: mchehab@kernel.org, hans.verkuil@cisco.com, viro@zeniv.linux.org.uk
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
-Subject: [PATCH 1/2] [media] platform: Use gpio_is_valid()
-Date: Fri, 27 Apr 2018 17:14:00 +0530
-Message-Id: <93444a65ca7853d27c724aeb50d16c5afd59fa08.1524828993.git.arvind.yadav.cs@gmail.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <cover.1524828993.git.arvind.yadav.cs@gmail.com>
-References: <cover.1524828993.git.arvind.yadav.cs@gmail.com>
-In-Reply-To: <cover.1524828993.git.arvind.yadav.cs@gmail.com>
-References: <cover.1524828993.git.arvind.yadav.cs@gmail.com>
+        id S1757960AbeD0LqH (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 07:46:07 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60102 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1757787AbeD0LqF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 07:46:05 -0400
+Date: Fri, 27 Apr 2018 13:46:03 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Wang Long <wanglong19@meituan.com>
+Cc: hannes@cmpxchg.org, vdavydov.dev@gmail.com, aryabinin@virtuozzo.com,
+        akpm@linux-foundation.org, khlebnikov@yandex-team.ru, xboe@kernel.dk,
+        jack@suse.cz, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        gthelen@google.com, tj@kernel.org
+Subject: Re: [PATCH v2] memcg: writeback: use memcg->cgwb_list directly
+Message-ID: <20180427114603.GG17484@dhcp22.suse.cz>
+References: <1524406173-212182-1-git-send-email-wanglong19@meituan.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1524406173-212182-1-git-send-email-wanglong19@meituan.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace the manual validity checks for the GPIO with the
-gpio_is_valid().
+On Sun 22-04-18 22:09:33, Wang Long wrote:
+> mem_cgroup_cgwb_list is a very simple wrapper and it will
+> never be used outside of code under CONFIG_CGROUP_WRITEBACK.
+> so use memcg->cgwb_list directly.
 
-Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
----
- drivers/media/platform/via-camera.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/media/platform/via-camera.c b/drivers/media/platform/via-camera.c
-index e9a0263..f01c3e8 100644
---- a/drivers/media/platform/via-camera.c
-+++ b/drivers/media/platform/via-camera.c
-@@ -178,7 +178,7 @@ static int via_sensor_power_setup(struct via_camera *cam)
+Thanks for adding the changelog
  
- 	cam->power_gpio = viafb_gpio_lookup("VGPIO3");
- 	cam->reset_gpio = viafb_gpio_lookup("VGPIO2");
--	if (cam->power_gpio < 0 || cam->reset_gpio < 0) {
-+	if (!gpio_is_valid(cam->power_gpio) || !gpio_is_valid(cam->reset_gpio)) {
- 		dev_err(&cam->platdev->dev, "Unable to find GPIO lines\n");
- 		return -EINVAL;
- 	}
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> Signed-off-by: Wang Long <wanglong19@meituan.com>
+
+Acked-by: Michal Hocko <mhocko@suse.com>
+
+> ---
+>  include/linux/memcontrol.h | 1 -
+>  mm/backing-dev.c           | 4 ++--
+>  mm/memcontrol.c            | 5 -----
+>  3 files changed, 2 insertions(+), 8 deletions(-)
+> 
+> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> index d99b71b..c0056e0 100644
+> --- a/include/linux/memcontrol.h
+> +++ b/include/linux/memcontrol.h
+> @@ -1093,7 +1093,6 @@ static inline void dec_lruvec_page_state(struct page *page,
+>  
+>  #ifdef CONFIG_CGROUP_WRITEBACK
+>  
+> -struct list_head *mem_cgroup_cgwb_list(struct mem_cgroup *memcg);
+>  struct wb_domain *mem_cgroup_wb_domain(struct bdi_writeback *wb);
+>  void mem_cgroup_wb_stats(struct bdi_writeback *wb, unsigned long *pfilepages,
+>  			 unsigned long *pheadroom, unsigned long *pdirty,
+> diff --git a/mm/backing-dev.c b/mm/backing-dev.c
+> index 023190c..0a48e05 100644
+> --- a/mm/backing-dev.c
+> +++ b/mm/backing-dev.c
+> @@ -555,7 +555,7 @@ static int cgwb_create(struct backing_dev_info *bdi,
+>  	memcg = mem_cgroup_from_css(memcg_css);
+>  	blkcg_css = cgroup_get_e_css(memcg_css->cgroup, &io_cgrp_subsys);
+>  	blkcg = css_to_blkcg(blkcg_css);
+> -	memcg_cgwb_list = mem_cgroup_cgwb_list(memcg);
+> +	memcg_cgwb_list = &memcg->cgwb_list;
+>  	blkcg_cgwb_list = &blkcg->cgwb_list;
+>  
+>  	/* look up again under lock and discard on blkcg mismatch */
+> @@ -734,7 +734,7 @@ static void cgwb_bdi_unregister(struct backing_dev_info *bdi)
+>   */
+>  void wb_memcg_offline(struct mem_cgroup *memcg)
+>  {
+> -	struct list_head *memcg_cgwb_list = mem_cgroup_cgwb_list(memcg);
+> +	struct list_head *memcg_cgwb_list = &memcg->cgwb_list;
+>  	struct bdi_writeback *wb, *next;
+>  
+>  	spin_lock_irq(&cgwb_lock);
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index e074f7c..d1adb9c 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -3562,11 +3562,6 @@ static int mem_cgroup_oom_control_write(struct cgroup_subsys_state *css,
+>  
+>  #ifdef CONFIG_CGROUP_WRITEBACK
+>  
+> -struct list_head *mem_cgroup_cgwb_list(struct mem_cgroup *memcg)
+> -{
+> -	return &memcg->cgwb_list;
+> -}
+> -
+>  static int memcg_wb_domain_init(struct mem_cgroup *memcg, gfp_t gfp)
+>  {
+>  	return wb_domain_init(&memcg->cgwb_domain, gfp);
+> -- 
+> 1.8.3.1
+
 -- 
-1.9.1
+Michal Hocko
+SUSE Labs
