@@ -1,65 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758725AbeD0Qqq (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 12:46:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54102 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1758554AbeD0Qqp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 12:46:45 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CDCC2188E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Fri, 27 Apr 2018 12:46:41 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Joel Fernandes <joelaf@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zilstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Glexiner <tglx@linutronix.de>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Fenguang Wu <fengguang.wu@intel.com>,
-        Baohong Liu <baohong.liu@intel.com>,
-        Vedang Patel <vedang.patel@intel.com>,
-        "Cc: Android Kernel" <kernel-team@android.com>
-Subject: Re: [PATCH RFC] tracepoint: Introduce tracepoint callbacks
- executing with preempt on
-Message-ID: <20180427124641.7b991c57@gandalf.local.home>
-In-Reply-To: <20180427164554.GO26088@linux.vnet.ibm.com>
-References: <20180427042656.190746-1-joelaf@google.com>
-        <20180427155701.GL26088@linux.vnet.ibm.com>
-        <CAJWu+or9GJwkDK9+842YbobG3=xVW-PgqS=uE5P2xFbDhmqxEQ@mail.gmail.com>
-        <20180427122201.75abc313@gandalf.local.home>
-        <20180427164554.GO26088@linux.vnet.ibm.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1758683AbeD0QyN (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 12:54:13 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:40750 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758550AbeD0QyL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 12:54:11 -0400
+X-Google-Smtp-Source: AB8JxZqY/AD8bC8kNEiT+09IBBPbD/OEVLvulKWrzN2ZuTp66f0Cyisk0AaPlVtuBoY3nMrGrQSzWg==
+Date: Fri, 27 Apr 2018 09:54:09 -0700
+From: Matthias Kaehlcke <mka@chromium.org>
+To: Lina Iyer <ilina@codeaurora.org>
+Cc: andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, sboyd@kernel.org, evgreen@chromium.org,
+        dianders@chromium.org
+Subject: Re: [PATCH v6 06/10] drivers: qcom: rpmh-rsc: allow invalidation of
+ sleep/wake TCS
+Message-ID: <20180427165409.GH243180@google.com>
+References: <20180419221635.17849-1-ilina@codeaurora.org>
+ <20180419221635.17849-7-ilina@codeaurora.org>
+ <20180425221123.GD243180@google.com>
+ <20180427164421.GB6380@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180427164421.GB6380@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 27 Apr 2018 09:45:54 -0700
-"Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
-
-> > > That shouldn't be needed. For the rcu_read_lock_sched case, there is a
-> > > preempt_disable which needs to be a notrace, but for the srcu one,
-> > > since we don't do that, I think it should be fine.  
+On Fri, Apr 27, 2018 at 10:44:21AM -0600, Lina Iyer wrote:
+> On Wed, Apr 25 2018 at 16:11 -0600, Matthias Kaehlcke wrote:
+> > On Thu, Apr 19, 2018 at 04:16:31PM -0600, Lina Iyer wrote:
+> > > Allow sleep and wake commands to be cleared from the respective TCSes,
+> > > so that they can be re-populated.
+> > > 
+> > > Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+> > > ---
+> > > 
+> > > Changes in v6:
+> > > 	- remove unnecessary locks around __tcs_invalidate
+> > > 	- rename function to tcs_invaldiate
+> > > 
+> > > Changes in v4:
+> > > 	- refactored the rphm_rsc_invalidate()
+> > > ---
+> > >  drivers/soc/qcom/rpmh-rsc.c | 45 +++++++++++++++++++++++++++++++++++++
+> > >  1 file changed, 45 insertions(+)
+> > > 
+> > > diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
+> > > index d169f7da5422..170d4a10275d 100644
+> > > --- a/drivers/soc/qcom/rpmh-rsc.c
+> > > +++ b/drivers/soc/qcom/rpmh-rsc.c
+> > > @@ -101,6 +101,51 @@ static struct tcs_group *get_tcs_of_type(struct rsc_drv *drv, int type)
+> > >  	return &drv->tcs[type];
+> > >  }
+> > > 
+> > > +static int tcs_invalidate(struct rsc_drv *drv, int type)
+> > > +{
+> > > +	int m;
+> > > +	struct tcs_group *tcs;
+> > > +
+> > > +	tcs = get_tcs_of_type(drv, type);
+> > > +	if (IS_ERR(tcs))
+> > > +		return PTR_ERR(tcs);
+> > > +
+> > > +	spin_lock(&tcs->lock);
+> > > +	if (bitmap_empty(tcs->slots, MAX_TCS_SLOTS)) {
+> > > +		spin_unlock(&tcs->lock);
+> > > +		return 0;
+> > > +	}
+> > > +
+> > > +	for (m = tcs->offset; m < tcs->offset + tcs->num_tcs; m++) {
+> > > +		if (!tcs_is_free(drv, m)) {
+> > > +			spin_unlock(&tcs->lock);
+> > > +			return -EAGAIN;
+> > > +		}
+> > > +		write_tcs_reg_sync(drv, RSC_DRV_CMD_ENABLE, m, 0);
+> > > +		bitmap_zero(tcs->slots, MAX_TCS_SLOTS);
 > > 
-> > Actually, I think I may agree here too. Because the _notrace is for
-> > function tracing, and it shouldn't affect it. If people don't want it
-> > traced, they could add those functions to the list in the notrace file.  
-> 
-> OK, feel free to ignore my notrace srcu_read_lock() patch, then.  ;-)
+> > Shouldn't this only clear the slots corresponding to 'm'?
+> > 
+> > If resetting the entire bitmap is really intended it could be done
+> > once after the loop, though the bitmap might be left in an
+> > inconsistent state if a TCS is still in use.
+> The TCS will not be in use, the check tcs_is_free() will ensure that. I
+> will move the bitmap_zero() outside the for().
 
-Of course I wasn't thinking about the lockdep tracepoints that Joel
-mentioned, which happens to be the reason for all this discussion in
-the first place :-)  Now I think we do need it. (OK, I can keep
-changing my mind, can't I?).
-
--- Steve
+Sure, but it could occur that one or more TCSes are disabled, then
+tcs_is_free() returns false for the next TCS and the function returns
+without having updated tcs->slots for the TCSes that have been
+disabled.
