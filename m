@@ -1,40 +1,39 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpe8pXn/A5kJFs2Ks1ifJrJvTyJyDQAA3oCuUKzgCZKn9Y0lGTJq/Pd/fBE6NnsNfJwMRUa
-ARC-Seal: i=1; a=rsa-sha256; t=1524837928; cv=none;
+X-Google-Smtp-Source: AB8JxZpu9ADwuTxNCakt01g2xVIMvpmZo/a5q8114kz0YoaTStpfH6/qQiIrfUCwhTuMGfkPs62M
+ARC-Seal: i=1; a=rsa-sha256; t=1524837925; cv=none;
         d=google.com; s=arc-20160816;
-        b=h4k1/t/DvwZ6dvoBTXizlHLsYbpPGC0YSwibYcq5vNQ1A8UzZ1IQm0ucZHl9LDlwk/
-         R5WIh+E31dSqLn7Nnmg3vNF8ba3fZwRIi9NkFaEdH7Pnbq9zCGR/a3Lflav1Flr7/WOO
-         dKYyohrgNYlDjXWbh4+FEGpVp4Nrisb9Tn9EdWd8wOqcbC9AIBUVj1aNqjznePT2T0+j
-         W3vPXI6W0vaTiBWfGmqXgiqySHHZwU/v43s/cBnIaGkhCiH4LazDwnQngRm9WkkvZT2j
-         DR0NOY0zkJq4UTkEWmnowmPaCsW1OINprWmyLVLWay5CmN4ThWElz/9rCvZHDI1iAYgO
-         Q+PA==
+        b=VoeCpuEItom7LixYGAR2CqJKHmWXOOXNCSbLBZIBpvsXA3FnFMgL+pWwgRZY2FnYDj
+         mrLbD6q77FaA2V+kudOQ8vOX1L/rt4xUXT2lm3jh3y0b9ZilZJJToRKAo/QdOiC3oXPG
+         Ckby1RrX62hl/95FR/5cyeKIb4AsFeoEuONS4peGaLq+EsdYtdnOJrSGhMeU0K5zdg1Z
+         v2Efgx13kT0nfxbgjBXuIYdQs+oiV/xieS8ExySUQeNGUF17W1zNEguD7WbwyXYVCGsL
+         S0kqL5RGKEuqbyo7SZvHzGGIRnR2hm8mcM0q5ImBKvIuXO9pzsXFoFK6DHrRpHxUUrGU
+         WF7Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=b0t+nXZiKM1WqbuCAEzYLyd+xiciSzqP8JsFqP+NJxQ=;
-        b=oa1lyiSxYFaztHCPUGtySk9j1sAmvXHoiC1wu7ZifHDL2UDoESVpIiTrdvVDxysvZ+
-         /2EP9IRX1vTAEywypU06awVrCX/9D8e0Bhq4WG0Hjfs6CV8J/+XesLrTH9+MiU1KZQa7
-         F46zkcZy4q1FQWnKbqvMoc/PNyQJJhmpn6zXw9VV0mEoS9sFHQtyXxHWfLJZV9ygoX/M
-         jvbkmDRnmsrZd+sOduBVc0m2gZw3gtfWr1WI6evi6QFpf1IUigasT1J6Sbf+d4viGbej
-         O0IvkTvyifvURQ9c04rIH0OiJ889MzVcVxtj/L9J1lRSt4PraO/j7SKBXC2XnHt1O3E9
-         6IlA==
+        bh=p9JPHIvKKjOoagMA97FhwPcSRko42ohfns/u0zZFYi0=;
+        b=AoSSMqzWPtWd+fldpyBln2dX+9gvlTWLKIzg7mCbOCP2XkqsW5ATcFmD5v/ZdYl/uj
+         QUt/k6a/QnC/CXD3y+q0vhvEXhofd2QKfuhfM0AGX7Bur2bFGt6jl6EBeLmapbQt+4Rz
+         YRfYh9+y80CTH87s+F+Ywpzuh6vCSqjIIdBl+m0k9ja6mRu+FW5VlPktAkNUBsv3N1Ou
+         ZzMSfhRmw0ga7rh+yXaClFahxLZ+JaZXFvtoOl1PGqVg/+EOYSganfVtD41KRtkiQhuH
+         kF0RyEPVOu0s23+BNi+uFadq7KpOqwPuBKwR4iHMQa4XqWWdrwbbICI+7TooiQTQffPU
+         6NhQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 596462189D
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0E1C21890
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Christoph Hellwig <hch@lst.de>,
-	Dan Carpenter <dan.carpenter@oracle.com>,
-	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.9 70/74] cdrom: information leak in cdrom_ioctl_media_changed()
-Date: Fri, 27 Apr 2018 15:59:00 +0200
-Message-Id: <20180427135712.842677560@linuxfoundation.org>
+	Nikola Ciprich <nikola.ciprich@linuxbox.cz>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.9 69/74] scsi: mptsas: Disable WRITE SAME
+Date: Fri, 27 Apr 2018 15:58:59 +0200
+Message-Id: <20180427135712.807955900@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135709.899303463@linuxfoundation.org>
 References: <20180427135709.899303463@linuxfoundation.org>
@@ -44,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908127480472300?=
-X-GMAIL-MSGID: =?utf-8?q?1598908455410849445?=
+X-GMAIL-THRID: =?utf-8?q?1598908124902978465?=
+X-GMAIL-MSGID: =?utf-8?q?1598908453327222432?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,34 +52,29 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Martin K. Petersen <martin.petersen@oracle.com>
 
-commit 9de4ee40547fd315d4a0ed1dd15a2fa3559ad707 upstream.
+commit 94e5395d2403c8bc2504a7cbe4c4caaacb7b8b84 upstream.
 
-This cast is wrong.  "cdi->capacity" is an int and "arg" is an unsigned
-long.  The way the check is written now, if one of the high 32 bits is
-set then we could read outside the info->slots[] array.
+First generation MPT Fusion controllers can not translate WRITE SAME
+when the attached device is a SATA drive. Disable WRITE SAME support.
 
-This bug is pretty old and it predates git.
-
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Cc: stable@vger.kernel.org
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Reported-by: Nikola Ciprich <nikola.ciprich@linuxbox.cz>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/cdrom/cdrom.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/message/fusion/mptsas.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/cdrom/cdrom.c
-+++ b/drivers/cdrom/cdrom.c
-@@ -2368,7 +2368,7 @@ static int cdrom_ioctl_media_changed(str
- 	if (!CDROM_CAN(CDC_SELECT_DISC) || arg == CDSL_CURRENT)
- 		return media_changed(cdi, 1);
+--- a/drivers/message/fusion/mptsas.c
++++ b/drivers/message/fusion/mptsas.c
+@@ -1994,6 +1994,7 @@ static struct scsi_host_template mptsas_
+ 	.cmd_per_lun			= 7,
+ 	.use_clustering			= ENABLE_CLUSTERING,
+ 	.shost_attrs			= mptscsih_host_attrs,
++	.no_write_same			= 1,
+ };
  
--	if ((unsigned int)arg >= cdi->capacity)
-+	if (arg >= cdi->capacity)
- 		return -EINVAL;
- 
- 	info = kmalloc(sizeof(*info), GFP_KERNEL);
+ static int mptsas_get_linkerrors(struct sas_phy *phy)
