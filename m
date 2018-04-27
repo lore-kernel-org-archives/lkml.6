@@ -1,206 +1,240 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757209AbeD0F1o (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 01:27:44 -0400
-Received: from mx.socionext.com ([202.248.49.38]:16114 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751464AbeD0F1n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 01:27:43 -0400
-From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-To: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org
-Cc: Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Subject: [PATCH] ASoC: uniphier: remove boilerplate from lisence comment
-Date: Fri, 27 Apr 2018 14:27:34 +0900
-Message-Id: <20180427052734.3506-1-suzuki.katsuhiro@socionext.com>
-X-Mailer: git-send-email 2.17.0
+        id S1757340AbeD0F2z (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 01:28:55 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:45505 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751988AbeD0F2x (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 01:28:53 -0400
+X-Google-Smtp-Source: AB8JxZowp0dY6iB5wM1Jx/g756XvJX7CLHA/zgWfukXzx2ePz46MGPU5sjihbfZNw8OsuaNJ8VJ8Eg==
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: "David S. Miller" <davem@davemloft.net>,
+        Chris Lew <clew@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Subject: [PATCH v3] net: qrtr: Expose tunneling endpoint to user space
+Date: Thu, 26 Apr 2018 22:28:49 -0700
+Message-Id: <20180427052849.24899-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch removes boilerplate of GPLv2, use only SPDX identifier as
-same as other recently ASoC DAI drivers.
+This implements a misc character device named "qrtr-tun" for the purpose
+of allowing user space applications to implement endpoints in the qrtr
+network.
 
-Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+This allows more advanced (and dynamic) testing of the qrtr code as well
+as opens up the ability of tunneling qrtr over a network or USB link.
+
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- sound/soc/uniphier/aio-compress.c | 13 -------------
- sound/soc/uniphier/aio-core.c     | 13 -------------
- sound/soc/uniphier/aio-cpu.c      | 13 -------------
- sound/soc/uniphier/aio-dma.c      | 13 -------------
- sound/soc/uniphier/aio-ld11.c     | 13 -------------
- sound/soc/uniphier/aio-reg.h      | 13 -------------
- sound/soc/uniphier/aio.h          | 13 -------------
- 7 files changed, 91 deletions(-)
 
-diff --git a/sound/soc/uniphier/aio-compress.c b/sound/soc/uniphier/aio-compress.c
-index 4c1027aa615e..17f773ac5ca1 100644
---- a/sound/soc/uniphier/aio-compress.c
-+++ b/sound/soc/uniphier/aio-compress.c
-@@ -3,19 +3,6 @@
- // Socionext UniPhier AIO Compress Audio driver.
- //
- // Copyright (c) 2017-2018 Socionext Inc.
--//
--// This program is free software; you can redistribute it and/or
--// modify it under the terms of the GNU General Public License
--// as published by the Free Software Foundation; version 2
--// of the License.
--//
--// This program is distributed in the hope that it will be useful,
--// but WITHOUT ANY WARRANTY; without even the implied warranty of
--// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
--// GNU General Public License for more details.
--//
--// You should have received a copy of the GNU General Public License
--// along with this program; if not, see <http://www.gnu.org/licenses/>.
+Changes since v2:
+- Add support for read poll
+
+Changes since v1:
+- Dropped queue lock
+
+ net/qrtr/Kconfig  |   7 +++
+ net/qrtr/Makefile |   2 +
+ net/qrtr/tun.c    | 161 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 170 insertions(+)
+ create mode 100644 net/qrtr/tun.c
+
+diff --git a/net/qrtr/Kconfig b/net/qrtr/Kconfig
+index 326fd97444f5..1944834d225c 100644
+--- a/net/qrtr/Kconfig
++++ b/net/qrtr/Kconfig
+@@ -21,4 +21,11 @@ config QRTR_SMD
+ 	  Say Y here to support SMD based ipcrouter channels.  SMD is the
+ 	  most common transport for IPC Router.
  
- #include <linux/bitfield.h>
- #include <linux/circ_buf.h>
-diff --git a/sound/soc/uniphier/aio-core.c b/sound/soc/uniphier/aio-core.c
-index 4a218ec90e68..638cb3fc5f7b 100644
---- a/sound/soc/uniphier/aio-core.c
-+++ b/sound/soc/uniphier/aio-core.c
-@@ -3,19 +3,6 @@
- // Socionext UniPhier AIO ALSA common driver.
- //
- // Copyright (c) 2016-2018 Socionext Inc.
--//
--// This program is free software; you can redistribute it and/or
--// modify it under the terms of the GNU General Public License
--// as published by the Free Software Foundation; version 2
--// of the License.
--//
--// This program is distributed in the hope that it will be useful,
--// but WITHOUT ANY WARRANTY; without even the implied warranty of
--// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
--// GNU General Public License for more details.
--//
--// You should have received a copy of the GNU General Public License
--// along with this program; if not, see <http://www.gnu.org/licenses/>.
++config QRTR_TUN
++	tristate "TUN device for Qualcomm IPC Router"
++	---help---
++	  Say Y here to expose a character device that allows user space to
++	  implement endpoints of QRTR, for purpose of tunneling data to other
++	  hosts or testing purposes.
++
+ endif # QRTR
+diff --git a/net/qrtr/Makefile b/net/qrtr/Makefile
+index ab09e40f7c74..be012bfd3e52 100644
+--- a/net/qrtr/Makefile
++++ b/net/qrtr/Makefile
+@@ -2,3 +2,5 @@ obj-$(CONFIG_QRTR) := qrtr.o
  
- #include <linux/bitfield.h>
- #include <linux/errno.h>
-diff --git a/sound/soc/uniphier/aio-cpu.c b/sound/soc/uniphier/aio-cpu.c
-index 2dc27e40c192..80daec17be25 100644
---- a/sound/soc/uniphier/aio-cpu.c
-+++ b/sound/soc/uniphier/aio-cpu.c
-@@ -3,19 +3,6 @@
- // Socionext UniPhier AIO ALSA CPU DAI driver.
- //
- // Copyright (c) 2016-2018 Socionext Inc.
--//
--// This program is free software; you can redistribute it and/or
--// modify it under the terms of the GNU General Public License
--// as published by the Free Software Foundation; version 2
--// of the License.
--//
--// This program is distributed in the hope that it will be useful,
--// but WITHOUT ANY WARRANTY; without even the implied warranty of
--// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
--// GNU General Public License for more details.
--//
--// You should have received a copy of the GNU General Public License
--// along with this program; if not, see <http://www.gnu.org/licenses/>.
- 
- #include <linux/clk.h>
- #include <linux/errno.h>
-diff --git a/sound/soc/uniphier/aio-dma.c b/sound/soc/uniphier/aio-dma.c
-index ef7bafa8e171..4ec6b65bfb44 100644
---- a/sound/soc/uniphier/aio-dma.c
-+++ b/sound/soc/uniphier/aio-dma.c
-@@ -3,19 +3,6 @@
- // Socionext UniPhier AIO DMA driver.
- //
- // Copyright (c) 2016-2018 Socionext Inc.
--//
--// This program is free software; you can redistribute it and/or
--// modify it under the terms of the GNU General Public License
--// as published by the Free Software Foundation; version 2
--// of the License.
--//
--// This program is distributed in the hope that it will be useful,
--// but WITHOUT ANY WARRANTY; without even the implied warranty of
--// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
--// GNU General Public License for more details.
--//
--// You should have received a copy of the GNU General Public License
--// along with this program; if not, see <http://www.gnu.org/licenses/>.
- 
- #include <linux/dma-mapping.h>
- #include <linux/errno.h>
-diff --git a/sound/soc/uniphier/aio-ld11.c b/sound/soc/uniphier/aio-ld11.c
-index 4c4dd3dd4dee..ab04d3331be9 100644
---- a/sound/soc/uniphier/aio-ld11.c
-+++ b/sound/soc/uniphier/aio-ld11.c
-@@ -3,19 +3,6 @@
- // Socionext UniPhier AIO ALSA driver for LD11/LD20.
- //
- // Copyright (c) 2016-2018 Socionext Inc.
--//
--// This program is free software; you can redistribute it and/or
--// modify it under the terms of the GNU General Public License
--// as published by the Free Software Foundation; version 2
--// of the License.
--//
--// This program is distributed in the hope that it will be useful,
--// but WITHOUT ANY WARRANTY; without even the implied warranty of
--// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
--// GNU General Public License for more details.
--//
--// You should have received a copy of the GNU General Public License
--// along with this program; if not, see <http://www.gnu.org/licenses/>.
- 
- #include <linux/module.h>
- 
-diff --git a/sound/soc/uniphier/aio-reg.h b/sound/soc/uniphier/aio-reg.h
-index d5ffe436fd8d..45fdc6ae358a 100644
---- a/sound/soc/uniphier/aio-reg.h
-+++ b/sound/soc/uniphier/aio-reg.h
-@@ -3,19 +3,6 @@
-  * Socionext UniPhier AIO ALSA driver.
-  *
-  * Copyright (c) 2016-2018 Socionext Inc.
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License
-- * as published by the Free Software Foundation; version 2
-- * of the License.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, see <http://www.gnu.org/licenses/>.
-  */
- 
- #ifndef SND_UNIPHIER_AIO_REG_H__
-diff --git a/sound/soc/uniphier/aio.h b/sound/soc/uniphier/aio.h
-index f029816052f7..aa89c2f6fa24 100644
---- a/sound/soc/uniphier/aio.h
-+++ b/sound/soc/uniphier/aio.h
-@@ -3,19 +3,6 @@
-  * Socionext UniPhier AIO ALSA driver.
-  *
-  * Copyright (c) 2016-2018 Socionext Inc.
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License
-- * as published by the Free Software Foundation; version 2
-- * of the License.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, see <http://www.gnu.org/licenses/>.
-  */
- 
- #ifndef SND_UNIPHIER_AIO_H__
+ obj-$(CONFIG_QRTR_SMD) += qrtr-smd.o
+ qrtr-smd-y	:= smd.o
++obj-$(CONFIG_QRTR_TUN) += qrtr-tun.o
++qrtr-tun-y	:= tun.o
+diff --git a/net/qrtr/tun.c b/net/qrtr/tun.c
+new file mode 100644
+index 000000000000..ccff1e544c21
+--- /dev/null
++++ b/net/qrtr/tun.c
+@@ -0,0 +1,161 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Copyright (c) 2018, Linaro Ltd */
++
++#include <linux/miscdevice.h>
++#include <linux/module.h>
++#include <linux/poll.h>
++#include <linux/skbuff.h>
++#include <linux/uaccess.h>
++
++#include "qrtr.h"
++
++struct qrtr_tun {
++	struct qrtr_endpoint ep;
++
++	struct sk_buff_head queue;
++	wait_queue_head_t readq;
++};
++
++static int qrtr_tun_send(struct qrtr_endpoint *ep, struct sk_buff *skb)
++{
++	struct qrtr_tun *tun = container_of(ep, struct qrtr_tun, ep);
++
++	skb_queue_tail(&tun->queue, skb);
++
++	/* wake up any blocking processes, waiting for new data */
++	wake_up_interruptible(&tun->readq);
++
++	return 0;
++}
++
++static int qrtr_tun_open(struct inode *inode, struct file *filp)
++{
++	struct qrtr_tun *tun;
++
++	tun = kzalloc(sizeof(*tun), GFP_KERNEL);
++	if (!tun)
++		return -ENOMEM;
++
++	skb_queue_head_init(&tun->queue);
++	init_waitqueue_head(&tun->readq);
++
++	tun->ep.xmit = qrtr_tun_send;
++
++	filp->private_data = tun;
++
++	return qrtr_endpoint_register(&tun->ep, QRTR_EP_NID_AUTO);
++}
++
++static ssize_t qrtr_tun_read_iter(struct kiocb *iocb, struct iov_iter *to)
++{
++	struct file *filp = iocb->ki_filp;
++	struct qrtr_tun *tun = filp->private_data;
++	struct sk_buff *skb;
++	int count;
++
++	while (!(skb = skb_dequeue(&tun->queue))) {
++		if (filp->f_flags & O_NONBLOCK)
++			return -EAGAIN;
++
++		/* Wait until we get data or the endpoint goes away */
++		if (wait_event_interruptible(tun->readq,
++					     !skb_queue_empty(&tun->queue)))
++			return -ERESTARTSYS;
++	}
++
++	count = min_t(size_t, iov_iter_count(to), skb->len);
++	if (copy_to_iter(skb->data, count, to) != count)
++		count = -EFAULT;
++
++	kfree_skb(skb);
++
++	return count;
++}
++
++static ssize_t qrtr_tun_write_iter(struct kiocb *iocb, struct iov_iter *from)
++{
++	struct file *filp = iocb->ki_filp;
++	struct qrtr_tun *tun = filp->private_data;
++	size_t len = iov_iter_count(from);
++	ssize_t ret;
++	void *kbuf;
++
++	kbuf = kzalloc(len, GFP_KERNEL);
++	if (!kbuf)
++		return -ENOMEM;
++
++	if (!copy_from_iter_full(kbuf, len, from))
++		return -EFAULT;
++
++	ret = qrtr_endpoint_post(&tun->ep, kbuf, len);
++
++	return ret < 0 ? ret : len;
++}
++
++static __poll_t qrtr_tun_poll(struct file *filp, poll_table *wait)
++{
++	struct qrtr_tun *tun = filp->private_data;
++	__poll_t mask = 0;
++
++	poll_wait(filp, &tun->readq, wait);
++
++	if (!skb_queue_empty(&tun->queue))
++		mask |= EPOLLIN | EPOLLRDNORM;
++
++	return mask;
++}
++
++static int qrtr_tun_release(struct inode *inode, struct file *filp)
++{
++	struct qrtr_tun *tun = filp->private_data;
++	struct sk_buff *skb;
++
++	qrtr_endpoint_unregister(&tun->ep);
++
++	/* Discard all SKBs */
++	while (!skb_queue_empty(&tun->queue)) {
++		skb = skb_dequeue(&tun->queue);
++		kfree_skb(skb);
++	}
++
++	kfree(tun);
++
++	return 0;
++}
++
++static const struct file_operations qrtr_tun_ops = {
++	.owner = THIS_MODULE,
++	.open = qrtr_tun_open,
++	.poll = qrtr_tun_poll,
++	.read_iter = qrtr_tun_read_iter,
++	.write_iter = qrtr_tun_write_iter,
++	.release = qrtr_tun_release,
++};
++
++static struct miscdevice qrtr_tun_miscdev = {
++	MISC_DYNAMIC_MINOR,
++	"qrtr-tun",
++	&qrtr_tun_ops,
++};
++
++static int __init qrtr_tun_init(void)
++{
++	int ret;
++
++	ret = misc_register(&qrtr_tun_miscdev);
++	if (ret)
++		pr_err("failed to register Qualcomm IPC Router tun device\n");
++
++	return ret;
++}
++
++static void __exit qrtr_tun_exit(void)
++{
++	misc_deregister(&qrtr_tun_miscdev);
++}
++
++module_init(qrtr_tun_init);
++module_exit(qrtr_tun_exit);
++
++MODULE_DESCRIPTION("Qualcomm IPC Router TUN device");
++MODULE_LICENSE("GPL v2");
 -- 
-2.17.0
+2.16.2
