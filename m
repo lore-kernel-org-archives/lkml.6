@@ -1,61 +1,139 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752553AbeD0E2V (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 00:28:21 -0400
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:53433 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750759AbeD0E2T (ORCPT
+        id S1751706AbeD0EuC (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 00:50:02 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:38731 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750982AbeD0EuA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 00:28:19 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com w3R4SGNn010643
-X-Nifty-SrcIP: [209.85.213.53]
-X-Google-Smtp-Source: AB8JxZoqi7hvR5l4DLFfnPkfqcc2ZlnSy0+5YvIlUQRnsSGlNDsDsfWOMoUbnaG2fFn8YBToRxgUKHudhTTHcjPoOCM=
+        Fri, 27 Apr 2018 00:50:00 -0400
+X-Google-Smtp-Source: AB8JxZrow633CUs4FZZ4GtEBiH8hNgs6Q0+SSyfxEQUX9A9WTDwKsu3wsgW//lrQzHc7Vaf3Nw8E/OiWXqBDgJgL5QU=
 MIME-Version: 1.0
-In-Reply-To: <1524803118-32570-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1524803118-32570-1-git-send-email-yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Fri, 27 Apr 2018 13:27:35 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAS6gc1CwvzQTUu+eC9vPO4R1tKtoEzOT-1anHAPEt=cmg@mail.gmail.com>
-Message-ID: <CAK7LNAS6gc1CwvzQTUu+eC9vPO4R1tKtoEzOT-1anHAPEt=cmg@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: uniphier: stabilize ethernet of LD20
- reference boar
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+In-Reply-To: <7c8ff675-2b27-8e7b-f046-513b73f1ae5f@infradead.org>
+References: <20180425090047.6485-1-ganapatrao.kulkarni@cavium.com>
+ <20180425090047.6485-2-ganapatrao.kulkarni@cavium.com> <7c8ff675-2b27-8e7b-f046-513b73f1ae5f@infradead.org>
+From: Ganapatrao Kulkarni <gklkml16@gmail.com>
+Date: Fri, 27 Apr 2018 10:19:59 +0530
+Message-ID: <CAKTKpr4MgCRNgsna+BnJ89F8S6Ur1e6hG-R+GHvn-OVQLhswuQ@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] perf: uncore: Adding documentation for ThunderX2
+ pmu uncore driver
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Will Deacon <Will.Deacon@arm.com>, mark.rutland@arm.com,
+        jnair@caviumnetworks.com, Robert Richter <Robert.Richter@cavium.com>,
+        Vadim.Lomovtsev@cavium.com, Jan.Glauber@cavium.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-04-27 13:25 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
-> Currently, the ethernet RGMII mode on the LD20 reference board is
-> unstable.
+On Fri, Apr 27, 2018 at 2:25 AM, Randy Dunlap <rdunlap@infradead.org> wrote:
+> Hi,
 >
-> The default drive-strength of ethernet TX pins is too strong because
-> there is no dumping resistor on the TX lines on the board.
+> Just a few typo corrections...
 >
-> Weaken the drive-strength to make the ethernet more stable.
+> On 04/25/2018 02:00 AM, Ganapatrao Kulkarni wrote:
+>> Documentation for the UNCORE PMUs on Cavium's ThunderX2 SoC.
+>> The SoC has PMU support in its L3 cache controller (L3C) and in the
+>> DDR4 Memory Controller (DMC).
+>>
+>> Signed-off-by: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
+>> ---
+>>  Documentation/perf/thunderx2-pmu.txt | 66 ++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 66 insertions(+)
+>>  create mode 100644 Documentation/perf/thunderx2-pmu.txt
+>>
+>> diff --git a/Documentation/perf/thunderx2-pmu.txt b/Documentation/perf/thunderx2-pmu.txt
+>> new file mode 100644
+>> index 0000000..9e9f535
+>> --- /dev/null
+>> +++ b/Documentation/perf/thunderx2-pmu.txt
+>> @@ -0,0 +1,66 @@
+>> +
+>> +Cavium ThunderX2 SoC Performance Monitoring Unit (PMU UNCORE)
+>> +==========================================================================
+>> +
+>> +ThunderX2 SoC PMU consists of independent system wide per Socket PMUs such
+>> +as Level 3 Cache(L3C) and DDR4 Memory Controller(DMC).
+>> +
+>> +It has 8 independent DMC PMUs to capture performance events corresponding
+>> +to 8 channels of DDR4 Memory Controller. There are 16 independent L3C PMUs
+>> +to capture events corresponding to 16 tiles of L3 cache. Each PMU supports
+>> +up to 4 counters.
+>> +
+>> +Counters are independent programmable and can be started and stopped
 >
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
+>                 independently
 
+thanks, will update.
+>
+>> +individually. Each counter can be set to sample specific perf events.
+>> +Counters are 32 bit and does not support overflow interrupt, they are
+>
+>                            do not                    interrupt; they are
+>
+>
+>> +sampled at every 2 seconds. The Counters register access are multiplexed
+>> +across channels of DMC and L3C. The muxing(select channel) is done through
+>> +write to a Secure register using smcc calls.
+>> +
+>> +PMU UNCORE (perf) driver:
+>> +
+>> +The thunderx2-pmu driver registers several perf PMUs for DMC and L3C devices.
+>> +Each of the PMU provides description of its available events
+>
+>         of the PMUs
+>
+>> +and configuration options in sysfs.
+>> +     see /sys/devices/uncore_<l3c_S_X/dmc_S_X/>
+>> +
+>> +S is socket id and X represents channel number.
+>> +Each PMU can be used to sample up to 4 events simultaneously.
+>> +
+>> +The "format" directory describes format of the config (event ID).
+>> +The "events" directory provides configuration templates for all
+>> +supported event types that can be used with perf tool.
+>> +
+>> +For example, "uncore_dmc_0_0/cnt_cycles/" is an
+>> +equivalent of "uncore_dmc_0_0/config=0x1/".
+>> +
+>> +Each perf driver also provides a "cpumask" sysfs attribute, which contains a
+>> +single CPU ID of the processor which is likely to be used to handle all the
+>> +PMU events. It will be the first online CPU from the NUMA node of PMU device.
+>> +
+>> +Example for perf tool use:
+>> +
+>> +perf stat -a -e \
+>> +uncore_dmc_0_0/cnt_cycles/,\
+>> +uncore_dmc_0_1/cnt_cycles/,\
+>> +uncore_dmc_0_2/cnt_cycles/,\
+>> +uncore_dmc_0_3/cnt_cycles/,\
+>> +uncore_dmc_0_4/cnt_cycles/,\
+>> +uncore_dmc_0_5/cnt_cycles/,\
+>> +uncore_dmc_0_6/cnt_cycles/,\
+>> +uncore_dmc_0_7/cnt_cycles/ sleep 1
+>> +
+>> +perf stat -a -e \
+>> +uncore_dmc_0_0/cancelled_read_txns/,\
+>> +uncore_dmc_0_0/cnt_cycles/,\
+>> +uncore_dmc_0_0/consumed_read_txns/,\
+>> +uncore_dmc_0_0/data_transfers/ sleep 1
+>> +
+>> +perf stat -a -e \
+>> +uncore_l3c_0_0/l3_retry/,\
+>> +uncore_l3c_0_0/read_hit/,\
+>> +uncore_l3c_0_0/read_request/,\
+>> +uncore_l3c_0_0/inv_request/ sleep 1
+>> +
+>> +The driver does not support sampling, therefore "perf record" will
+>> +not work. Per-task (without "-a") perf sessions are not supported.
+>>
+>
+>
+> --
+> ~Randy
 
-To myself:
-
-Fix the typo in the subject
-
-  boar  ->  board
-
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+thanks
+Ganapat
