@@ -1,39 +1,41 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqb490aINBchcoycly0BU9FFso6UxNRsKyUK9zB5+dIElLKQZCUAgVA+BzgrUke1R6YyqmQ
-ARC-Seal: i=1; a=rsa-sha256; t=1524838013; cv=none;
+X-Google-Smtp-Source: AB8JxZoBOvuMtE2u4Fe+77SsDrq37QrziF2L0+JP1y7sOTXL/QXUEa34RC39r3Bl2BjKGzt7ryqi
+ARC-Seal: i=1; a=rsa-sha256; t=1524838010; cv=none;
         d=google.com; s=arc-20160816;
-        b=Vn/xI3v0dnzvE6yBC2591BRRparKBnhp5kQQ7dV8W91TP6bNA0B/goZ0usq29o97bq
-         B689HxVgsXUVEXFEsvpcck5pXvrqqI/oiGNcTEu22JKRX8bHPJ4QHHbxd5Bja17qsyzM
-         crs04C6JwbNWmoEkqSrnpzSEuyEr18YCQWbn/9Efjtz1UdPWp0Gy53yhgqvi2lHGxMNo
-         vvxlwoq7Xaxpj5Iz1y42lgNtLIu5IJQ+lPpny8sS+lQxTk+r97pbAzOdGE6Lr5Ke20iG
-         c1gs+O+Bqkdh6DhFJA232XP599Q1w2VfFdECIgQEyOeYkrkh/uoYGQPTtVzk/vHcrySH
-         B6rg==
+        b=McqY7Iq1ggh3jO3/SENWz59kr+39zskYSdatFk6e3ZzqN2KwGoNgvGOeAyGKo/2lMz
+         e138YdhT5e/MBOd1TWwfWpCEF8JzwMlCxeyGHBDC+et6HSGwqNRXWt48Qpv7EYwVp3TR
+         GQQj34pgVCjCchcPlpaK4jhR/0F5PyCZxrazqC4d/fNYNh7f9W7jSrSITe9Ee5UWurgU
+         Ytt4K/SlAgg8KZYub+OK5VTEYqwAs7mT7+KavlPF6iqEbY9roFHRL4QCglo/N1wnGyhy
+         4MjGAKFWNKlZC/hkndrB/o5fLtRUK0T3WbRgrhPTpH1grkcl712U2jSd+qsrbxRjUC3w
+         K7CA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=moF1CgmnLCyOMsEwYEqa10wlIW+zLolBjVvepKvw9pY=;
-        b=u91lX/mR9L6dO8AlqgCTf+17XHhazRWhQLMSO4x0ruI73NVgLcinFbzopgiF9nVLYw
-         WLad4wMz4VTT+Pv8K7MyrIR8tpjQCuRwWg6cd/ZNtUfwXnqCXcw5j//ttSNvI+SWpFpa
-         krQLqrgYHz9IkNG6L6DZq9b8pYn3oW3ZXU9AGvVR6UiJbtVvgkaYaYGRsFu3sbDDcCzL
-         EbnEJ6rIikD4Gyum+nLQTLuNYsSYP+p0TWpjIxfuZcC2jYIAc0InlLYMTAFN/hLSBu+v
-         j3TLAhiMwHkOsGkzLCJmaI2fsfU7UFJZZ4QJ9cGqwoY7oxO8isZQ2h8t13uCvePZ39Ay
-         DAlw==
+        bh=H4wehaFRALdQTIHpLjAUcXtYqdXwSiX6/LvomDTQLyE=;
+        b=cMcrwxR9mv5MzCVXqgvpurAM7uD5t/MqszbmJcipCDBnlEnaozHRB6KaNXAqm9t66z
+         MBwxTJJY3BQdRqZlXrMMxmI1j1T9+IiATb5jJHPPA00bgmg6dxEbmVM6HlNJ5qDpDoMZ
+         0hkUDA4PbgnQM0G318EnZ+48D4sqHTM9yp50UB/pyMCVdjjcNffyZbCvs1EPfmfOnBoS
+         ZL92noFV7P64U2xa5RQlrlxgL4jW26T0U/DYKVszjHETAmPDSbfcW5AM4rjnPR/ssUKS
+         HBBFGZH+RG/lgA5U7+Y6wmh06ud7Sl+P7hm/d90ZRFFxLuEHDj+LB6HSJwHmsKMt9jYo
+         lKAw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27ACF218BC
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97A3221892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Tom Lendacky <thomas.lendacky@amd.com>,
+	Jianwen Ji <jiji@redhat.com>,
+	Xin Long <lucien.xin@gmail.com>,
+	Neil Horman <nhorman@tuxdriver.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 28/80] amd-xgbe: Improve KR auto-negotiation and training
-Date: Fri, 27 Apr 2018 15:58:21 +0200
-Message-Id: <20180427135734.389355950@linuxfoundation.org>
+Subject: [PATCH 4.14 27/80] sctp: do not check port in sctp_inet6_cmp_addr
+Date: Fri, 27 Apr 2018 15:58:20 +0200
+Message-Id: <20180427135734.337062858@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135732.928644313@linuxfoundation.org>
 References: <20180427135732.928644313@linuxfoundation.org>
@@ -43,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908544447714944?=
-X-GMAIL-MSGID: =?utf-8?q?1598908544447714944?=
+X-GMAIL-THRID: =?utf-8?q?1598908235270410091?=
+X-GMAIL-MSGID: =?utf-8?q?1598908541855190419?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,346 +54,134 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tom Lendacky <thomas.lendacky@amd.com>
+From: Xin Long <lucien.xin@gmail.com>
 
 
-[ Upstream commit 96f4d430c507ed4856048c2dc9c1a2ea5b5e74e4 ]
+[ Upstream commit 1071ec9d453a38023579714b64a951a2fb982071 ]
 
-Update xgbe-phy-v2.c to make use of the auto-negotiation (AN) phy hooks
-to improve the ability to successfully complete Clause 73 AN when running
-at 10gbps.  Hardware can sometimes have issues with CDR lock when the
-AN DME page exchange is being performed.
+pf->cmp_addr() is called before binding a v6 address to the sock. It
+should not check ports, like in sctp_inet_cmp_addr.
 
-The AN and KR training hooks are used as follows:
-- The pre AN hook is used to disable CDR tracking in the PHY so that the
-  DME page exchange can be successfully and consistently completed.
-- The post KR training hook is used to re-enable the CDR tracking so that
-  KR training can successfully complete.
-- The post AN hook is used to check for an unsuccessful AN which will
-  increase a CDR tracking enablement delay (up to a maximum value).
+But sctp_inet6_cmp_addr checks the addr by invoking af(6)->cmp_addr,
+sctp_v6_cmp_addr where it also compares the ports.
 
-Add two debugfs entries to allow control over use of the CDR tracking
-workaround.  The debugfs entries allow the CDR tracking workaround to
-be disabled and determine whether to re-enable CDR tracking before or
-after link training has been initiated.
+This would cause that setsockopt(SCTP_SOCKOPT_BINDX_ADD) could bind
+multiple duplicated IPv6 addresses after Commit 40b4f0fd74e4 ("sctp:
+lack the check for ports in sctp_v6_cmp_addr").
 
-Also, with these changes the receiver reset cycle that is performed during
-the link status check can be performed less often.
+This patch is to remove af->cmp_addr called in sctp_inet6_cmp_addr,
+but do the proper check for both v6 addrs and v4mapped addrs.
 
-Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
+v1->v2:
+  - define __sctp_v6_cmp_addr to do the common address comparison
+    used for both pf and af v6 cmp_addr.
+
+Fixes: 40b4f0fd74e4 ("sctp: lack the check for ports in sctp_v6_cmp_addr")
+Reported-by: Jianwen Ji <jiji@redhat.com>
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Acked-by: Neil Horman <nhorman@tuxdriver.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/amd/xgbe/xgbe-common.h  |    8 +
- drivers/net/ethernet/amd/xgbe/xgbe-debugfs.c |   16 +++
- drivers/net/ethernet/amd/xgbe/xgbe-main.c    |    1 
- drivers/net/ethernet/amd/xgbe/xgbe-mdio.c    |    8 +
- drivers/net/ethernet/amd/xgbe/xgbe-pci.c     |    2 
- drivers/net/ethernet/amd/xgbe/xgbe-phy-v2.c  |  125 ++++++++++++++++++++++++++-
- drivers/net/ethernet/amd/xgbe/xgbe.h         |    4 
- 7 files changed, 160 insertions(+), 4 deletions(-)
+ net/sctp/ipv6.c |   60 ++++++++++++++++++++++++++++----------------------------
+ 1 file changed, 30 insertions(+), 30 deletions(-)
 
---- a/drivers/net/ethernet/amd/xgbe/xgbe-common.h
-+++ b/drivers/net/ethernet/amd/xgbe/xgbe-common.h
-@@ -1321,6 +1321,10 @@
- #define MDIO_VEND2_AN_STAT		0x8002
- #endif
- 
-+#ifndef MDIO_VEND2_PMA_CDR_CONTROL
-+#define MDIO_VEND2_PMA_CDR_CONTROL	0x8056
-+#endif
-+
- #ifndef MDIO_CTRL1_SPEED1G
- #define MDIO_CTRL1_SPEED1G		(MDIO_CTRL1_SPEED10G & ~BMCR_SPEED100)
- #endif
-@@ -1369,6 +1373,10 @@
- #define XGBE_AN_CL37_TX_CONFIG_MASK	0x08
- #define XGBE_AN_CL37_MII_CTRL_8BIT	0x0100
- 
-+#define XGBE_PMA_CDR_TRACK_EN_MASK	0x01
-+#define XGBE_PMA_CDR_TRACK_EN_OFF	0x00
-+#define XGBE_PMA_CDR_TRACK_EN_ON	0x01
-+
- /* Bit setting and getting macros
-  *  The get macro will extract the current bit field value from within
-  *  the variable
---- a/drivers/net/ethernet/amd/xgbe/xgbe-debugfs.c
-+++ b/drivers/net/ethernet/amd/xgbe/xgbe-debugfs.c
-@@ -519,6 +519,22 @@ void xgbe_debugfs_init(struct xgbe_prv_d
- 				   "debugfs_create_file failed\n");
- 	}
- 
-+	if (pdata->vdata->an_cdr_workaround) {
-+		pfile = debugfs_create_bool("an_cdr_workaround", 0600,
-+					    pdata->xgbe_debugfs,
-+					    &pdata->debugfs_an_cdr_workaround);
-+		if (!pfile)
-+			netdev_err(pdata->netdev,
-+				   "debugfs_create_bool failed\n");
-+
-+		pfile = debugfs_create_bool("an_cdr_track_early", 0600,
-+					    pdata->xgbe_debugfs,
-+					    &pdata->debugfs_an_cdr_track_early);
-+		if (!pfile)
-+			netdev_err(pdata->netdev,
-+				   "debugfs_create_bool failed\n");
-+	}
-+
- 	kfree(buf);
+--- a/net/sctp/ipv6.c
++++ b/net/sctp/ipv6.c
+@@ -521,46 +521,49 @@ static void sctp_v6_to_addr(union sctp_a
+ 	addr->v6.sin6_scope_id = 0;
  }
  
---- a/drivers/net/ethernet/amd/xgbe/xgbe-main.c
-+++ b/drivers/net/ethernet/amd/xgbe/xgbe-main.c
-@@ -349,6 +349,7 @@ int xgbe_config_netdev(struct xgbe_prv_d
- 	XGMAC_SET_BITS(pdata->rss_options, MAC_RSSCR, UDP4TE, 1);
- 
- 	/* Call MDIO/PHY initialization routine */
-+	pdata->debugfs_an_cdr_workaround = pdata->vdata->an_cdr_workaround;
- 	ret = pdata->phy_if.phy_init(pdata);
- 	if (ret)
- 		return ret;
---- a/drivers/net/ethernet/amd/xgbe/xgbe-mdio.c
-+++ b/drivers/net/ethernet/amd/xgbe/xgbe-mdio.c
-@@ -432,6 +432,8 @@ static void xgbe_an73_disable(struct xgb
- 	xgbe_an73_set(pdata, false, false);
- 	xgbe_an73_disable_interrupts(pdata);
- 
-+	pdata->an_start = 0;
+-/* Compare addresses exactly.
+- * v4-mapped-v6 is also in consideration.
+- */
+-static int sctp_v6_cmp_addr(const union sctp_addr *addr1,
+-			    const union sctp_addr *addr2)
++static int __sctp_v6_cmp_addr(const union sctp_addr *addr1,
++			      const union sctp_addr *addr2)
+ {
+ 	if (addr1->sa.sa_family != addr2->sa.sa_family) {
+ 		if (addr1->sa.sa_family == AF_INET &&
+ 		    addr2->sa.sa_family == AF_INET6 &&
+-		    ipv6_addr_v4mapped(&addr2->v6.sin6_addr)) {
+-			if (addr2->v6.sin6_port == addr1->v4.sin_port &&
+-			    addr2->v6.sin6_addr.s6_addr32[3] ==
+-			    addr1->v4.sin_addr.s_addr)
+-				return 1;
+-		}
++		    ipv6_addr_v4mapped(&addr2->v6.sin6_addr) &&
++		    addr2->v6.sin6_addr.s6_addr32[3] ==
++		    addr1->v4.sin_addr.s_addr)
++			return 1;
 +
- 	netif_dbg(pdata, link, pdata->netdev, "CL73 AN disabled\n");
+ 		if (addr2->sa.sa_family == AF_INET &&
+ 		    addr1->sa.sa_family == AF_INET6 &&
+-		    ipv6_addr_v4mapped(&addr1->v6.sin6_addr)) {
+-			if (addr1->v6.sin6_port == addr2->v4.sin_port &&
+-			    addr1->v6.sin6_addr.s6_addr32[3] ==
+-			    addr2->v4.sin_addr.s_addr)
+-				return 1;
+-		}
++		    ipv6_addr_v4mapped(&addr1->v6.sin6_addr) &&
++		    addr1->v6.sin6_addr.s6_addr32[3] ==
++		    addr2->v4.sin_addr.s_addr)
++			return 1;
++
+ 		return 0;
+ 	}
+-	if (addr1->v6.sin6_port != addr2->v6.sin6_port)
+-		return 0;
++
+ 	if (!ipv6_addr_equal(&addr1->v6.sin6_addr, &addr2->v6.sin6_addr))
+ 		return 0;
++
+ 	/* If this is a linklocal address, compare the scope_id. */
+-	if (ipv6_addr_type(&addr1->v6.sin6_addr) & IPV6_ADDR_LINKLOCAL) {
+-		if (addr1->v6.sin6_scope_id && addr2->v6.sin6_scope_id &&
+-		    (addr1->v6.sin6_scope_id != addr2->v6.sin6_scope_id)) {
+-			return 0;
+-		}
+-	}
++	if ((ipv6_addr_type(&addr1->v6.sin6_addr) & IPV6_ADDR_LINKLOCAL) &&
++	    addr1->v6.sin6_scope_id && addr2->v6.sin6_scope_id &&
++	    addr1->v6.sin6_scope_id != addr2->v6.sin6_scope_id)
++		return 0;
+ 
+ 	return 1;
  }
  
-@@ -511,11 +513,11 @@ static enum xgbe_an xgbe_an73_tx_trainin
- 		XMDIO_WRITE(pdata, MDIO_MMD_PMAPMD, MDIO_PMA_10GBR_PMD_CTRL,
- 			    reg);
- 
--		if (pdata->phy_if.phy_impl.kr_training_post)
--			pdata->phy_if.phy_impl.kr_training_post(pdata);
--
- 		netif_dbg(pdata, link, pdata->netdev,
- 			  "KR training initiated\n");
++/* Compare addresses exactly.
++ * v4-mapped-v6 is also in consideration.
++ */
++static int sctp_v6_cmp_addr(const union sctp_addr *addr1,
++			    const union sctp_addr *addr2)
++{
++	return __sctp_v6_cmp_addr(addr1, addr2) &&
++	       addr1->v6.sin6_port == addr2->v6.sin6_port;
++}
 +
-+		if (pdata->phy_if.phy_impl.kr_training_post)
-+			pdata->phy_if.phy_impl.kr_training_post(pdata);
- 	}
+ /* Initialize addr struct to INADDR_ANY. */
+ static void sctp_v6_inaddr_any(union sctp_addr *addr, __be16 port)
+ {
+@@ -845,8 +848,8 @@ static int sctp_inet6_cmp_addr(const uni
+ 			       const union sctp_addr *addr2,
+ 			       struct sctp_sock *opt)
+ {
+-	struct sctp_af *af1, *af2;
+ 	struct sock *sk = sctp_opt2sk(opt);
++	struct sctp_af *af1, *af2;
  
- 	return XGBE_AN_PAGE_RECEIVED;
---- a/drivers/net/ethernet/amd/xgbe/xgbe-pci.c
-+++ b/drivers/net/ethernet/amd/xgbe/xgbe-pci.c
-@@ -456,6 +456,7 @@ static const struct xgbe_version_data xg
- 	.irq_reissue_support		= 1,
- 	.tx_desc_prefetch		= 5,
- 	.rx_desc_prefetch		= 5,
-+	.an_cdr_workaround		= 1,
- };
- 
- static const struct xgbe_version_data xgbe_v2b = {
-@@ -470,6 +471,7 @@ static const struct xgbe_version_data xg
- 	.irq_reissue_support		= 1,
- 	.tx_desc_prefetch		= 5,
- 	.rx_desc_prefetch		= 5,
-+	.an_cdr_workaround		= 1,
- };
- 
- static const struct pci_device_id xgbe_pci_table[] = {
---- a/drivers/net/ethernet/amd/xgbe/xgbe-phy-v2.c
-+++ b/drivers/net/ethernet/amd/xgbe/xgbe-phy-v2.c
-@@ -147,6 +147,14 @@
- /* Rate-change complete wait/retry count */
- #define XGBE_RATECHANGE_COUNT		500
- 
-+/* CDR delay values for KR support (in usec) */
-+#define XGBE_CDR_DELAY_INIT		10000
-+#define XGBE_CDR_DELAY_INC		10000
-+#define XGBE_CDR_DELAY_MAX		100000
-+
-+/* RRC frequency during link status check */
-+#define XGBE_RRC_FREQUENCY		10
-+
- enum xgbe_port_mode {
- 	XGBE_PORT_MODE_RSVD = 0,
- 	XGBE_PORT_MODE_BACKPLANE,
-@@ -355,6 +363,10 @@ struct xgbe_phy_data {
- 	unsigned int redrv_addr;
- 	unsigned int redrv_lane;
- 	unsigned int redrv_model;
-+
-+	/* KR AN support */
-+	unsigned int phy_cdr_notrack;
-+	unsigned int phy_cdr_delay;
- };
- 
- /* I2C, MDIO and GPIO lines are muxed, so only one device at a time */
-@@ -2361,7 +2373,7 @@ static int xgbe_phy_link_status(struct x
+ 	af1 = sctp_get_af_specific(addr1->sa.sa_family);
+ 	af2 = sctp_get_af_specific(addr2->sa.sa_family);
+@@ -862,10 +865,7 @@ static int sctp_inet6_cmp_addr(const uni
+ 	if (sctp_is_any(sk, addr1) || sctp_is_any(sk, addr2))
  		return 1;
  
- 	/* No link, attempt a receiver reset cycle */
--	if (phy_data->rrc_count++) {
-+	if (phy_data->rrc_count++ > XGBE_RRC_FREQUENCY) {
- 		phy_data->rrc_count = 0;
- 		xgbe_phy_rrc(pdata);
- 	}
-@@ -2669,6 +2681,103 @@ static bool xgbe_phy_port_enabled(struct
- 	return true;
+-	if (addr1->sa.sa_family != addr2->sa.sa_family)
+-		return 0;
+-
+-	return af1->cmp_addr(addr1, addr2);
++	return __sctp_v6_cmp_addr(addr1, addr2);
  }
  
-+static void xgbe_phy_cdr_track(struct xgbe_prv_data *pdata)
-+{
-+	struct xgbe_phy_data *phy_data = pdata->phy_data;
-+
-+	if (!pdata->debugfs_an_cdr_workaround)
-+		return;
-+
-+	if (!phy_data->phy_cdr_notrack)
-+		return;
-+
-+	usleep_range(phy_data->phy_cdr_delay,
-+		     phy_data->phy_cdr_delay + 500);
-+
-+	XMDIO_WRITE_BITS(pdata, MDIO_MMD_PMAPMD, MDIO_VEND2_PMA_CDR_CONTROL,
-+			 XGBE_PMA_CDR_TRACK_EN_MASK,
-+			 XGBE_PMA_CDR_TRACK_EN_ON);
-+
-+	phy_data->phy_cdr_notrack = 0;
-+}
-+
-+static void xgbe_phy_cdr_notrack(struct xgbe_prv_data *pdata)
-+{
-+	struct xgbe_phy_data *phy_data = pdata->phy_data;
-+
-+	if (!pdata->debugfs_an_cdr_workaround)
-+		return;
-+
-+	if (phy_data->phy_cdr_notrack)
-+		return;
-+
-+	XMDIO_WRITE_BITS(pdata, MDIO_MMD_PMAPMD, MDIO_VEND2_PMA_CDR_CONTROL,
-+			 XGBE_PMA_CDR_TRACK_EN_MASK,
-+			 XGBE_PMA_CDR_TRACK_EN_OFF);
-+
-+	xgbe_phy_rrc(pdata);
-+
-+	phy_data->phy_cdr_notrack = 1;
-+}
-+
-+static void xgbe_phy_kr_training_post(struct xgbe_prv_data *pdata)
-+{
-+	if (!pdata->debugfs_an_cdr_track_early)
-+		xgbe_phy_cdr_track(pdata);
-+}
-+
-+static void xgbe_phy_kr_training_pre(struct xgbe_prv_data *pdata)
-+{
-+	if (pdata->debugfs_an_cdr_track_early)
-+		xgbe_phy_cdr_track(pdata);
-+}
-+
-+static void xgbe_phy_an_post(struct xgbe_prv_data *pdata)
-+{
-+	struct xgbe_phy_data *phy_data = pdata->phy_data;
-+
-+	switch (pdata->an_mode) {
-+	case XGBE_AN_MODE_CL73:
-+	case XGBE_AN_MODE_CL73_REDRV:
-+		if (phy_data->cur_mode != XGBE_MODE_KR)
-+			break;
-+
-+		xgbe_phy_cdr_track(pdata);
-+
-+		switch (pdata->an_result) {
-+		case XGBE_AN_READY:
-+		case XGBE_AN_COMPLETE:
-+			break;
-+		default:
-+			if (phy_data->phy_cdr_delay < XGBE_CDR_DELAY_MAX)
-+				phy_data->phy_cdr_delay += XGBE_CDR_DELAY_INC;
-+			else
-+				phy_data->phy_cdr_delay = XGBE_CDR_DELAY_INIT;
-+			break;
-+		}
-+		break;
-+	default:
-+		break;
-+	}
-+}
-+
-+static void xgbe_phy_an_pre(struct xgbe_prv_data *pdata)
-+{
-+	struct xgbe_phy_data *phy_data = pdata->phy_data;
-+
-+	switch (pdata->an_mode) {
-+	case XGBE_AN_MODE_CL73:
-+	case XGBE_AN_MODE_CL73_REDRV:
-+		if (phy_data->cur_mode != XGBE_MODE_KR)
-+			break;
-+
-+		xgbe_phy_cdr_notrack(pdata);
-+		break;
-+	default:
-+		break;
-+	}
-+}
-+
- static void xgbe_phy_stop(struct xgbe_prv_data *pdata)
- {
- 	struct xgbe_phy_data *phy_data = pdata->phy_data;
-@@ -2680,6 +2789,9 @@ static void xgbe_phy_stop(struct xgbe_pr
- 	xgbe_phy_sfp_reset(phy_data);
- 	xgbe_phy_sfp_mod_absent(pdata);
- 
-+	/* Reset CDR support */
-+	xgbe_phy_cdr_track(pdata);
-+
- 	/* Power off the PHY */
- 	xgbe_phy_power_off(pdata);
- 
-@@ -2712,6 +2824,9 @@ static int xgbe_phy_start(struct xgbe_pr
- 	/* Start in highest supported mode */
- 	xgbe_phy_set_mode(pdata, phy_data->start_mode);
- 
-+	/* Reset CDR support */
-+	xgbe_phy_cdr_track(pdata);
-+
- 	/* After starting the I2C controller, we can check for an SFP */
- 	switch (phy_data->port_mode) {
- 	case XGBE_PORT_MODE_SFP:
-@@ -3019,6 +3134,8 @@ static int xgbe_phy_init(struct xgbe_prv
- 		}
- 	}
- 
-+	phy_data->phy_cdr_delay = XGBE_CDR_DELAY_INIT;
-+
- 	/* Register for driving external PHYs */
- 	mii = devm_mdiobus_alloc(pdata->dev);
- 	if (!mii) {
-@@ -3071,4 +3188,10 @@ void xgbe_init_function_ptrs_phy_v2(stru
- 	phy_impl->an_advertising	= xgbe_phy_an_advertising;
- 
- 	phy_impl->an_outcome		= xgbe_phy_an_outcome;
-+
-+	phy_impl->an_pre		= xgbe_phy_an_pre;
-+	phy_impl->an_post		= xgbe_phy_an_post;
-+
-+	phy_impl->kr_training_pre	= xgbe_phy_kr_training_pre;
-+	phy_impl->kr_training_post	= xgbe_phy_kr_training_post;
- }
---- a/drivers/net/ethernet/amd/xgbe/xgbe.h
-+++ b/drivers/net/ethernet/amd/xgbe/xgbe.h
-@@ -994,6 +994,7 @@ struct xgbe_version_data {
- 	unsigned int irq_reissue_support;
- 	unsigned int tx_desc_prefetch;
- 	unsigned int rx_desc_prefetch;
-+	unsigned int an_cdr_workaround;
- };
- 
- struct xgbe_vxlan_data {
-@@ -1262,6 +1263,9 @@ struct xgbe_prv_data {
- 	unsigned int debugfs_xprop_reg;
- 
- 	unsigned int debugfs_xi2c_reg;
-+
-+	bool debugfs_an_cdr_workaround;
-+	bool debugfs_an_cdr_track_early;
- };
- 
- /* Function prototypes*/
+ /* Verify that the provided sockaddr looks bindable.   Common verification,
