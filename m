@@ -1,40 +1,40 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqIU1r4lSfLZ3oDSMu9a1YO+n5biOSt7mBfGXkyd3tqNQ8/PaMveB3LgDazcVp+n/Eno57S
-ARC-Seal: i=1; a=rsa-sha256; t=1524837759; cv=none;
+X-Google-Smtp-Source: AB8JxZrGlt9fCdL8syVBeIkiE+NpfRSPqfF+OdI2wnFaGYVA8/+fc3EyfPFieC0ZyCTEafxjuaZ9
+ARC-Seal: i=1; a=rsa-sha256; t=1524837757; cv=none;
         d=google.com; s=arc-20160816;
-        b=ajoIV9cz2XLLqHT6+aCmchX4Vv5iKstZlx4YxLnLeBHBmUoV6VSE0O6BGyuuDTC+nh
-         +04V3NGGNhU5ZEfuOwyKqBJTXlCu0x8d8Mcs6j/iNG5opf3Y3IcqxhqMQTbY9BIfFZAm
-         3Ree11vCHQKZSwq6uKPetpbsDaf0akIcnBfCei04rDcdF3jkP5yRisopzHem/ALYzrxb
-         l6pk7Pt8DMFGXONuq10Ce4X9xOph38yQ3qStv9ocdOLxPFNUt6h5nZt0J6Hnl0FWTUOq
-         L39S65Ae34lcYVlCN02MmF9uRmKZy1zaXGoaAYyC3RCpwv9frOq7hKUrs96xf+RS+zZX
-         VQ8g==
+        b=itj/q+PaG1+AStCJ+X54zxQYwRT8UgFBfapsybtpU5eRoMDi4FYmyQnXwoWOOdSXcA
+         57x2CC2uYhI+fwTY1k6pXn7InRbscnf1KJyXBBkfEgREKx6WXNtiMiczwTqH51oIktUK
+         B+nn4BLsuF0RGwDOcY4fI9Z5E+89CfNORqCTzQNP5T0yDTuFHEZX0P3vWUvMg561JQRM
+         VH/koY3rNYjlX0vWVaEB6bzZqB0Bpb6tjPYRWSSyz1hQyHKw/G+7NKo3uIvOsHhN3nG1
+         PtaYZlFjhDEXUWS5khbwJNH6KLERQ8IMq8jDq4vZB3Hw6NH1ttrE8iPscp0Yzg8geQ9Y
+         fkMA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=DhnfcmE0mBUE1ZGvJFClK/CgR0gk3CBmrSx718Moz3k=;
-        b=EBZ/qlppZ+lh9zfWfJVxj2SWSXFETLL427VlTmUOkDEK+LHSID6PLsgqGv6UCofQqp
-         CQ7kn1MvH214ljeOzB6z3AIm9AwP700PB4EsAegv+60s+N5iEMBVupWej/6kEqOhh6O/
-         HyfKRSAEuHq/9oMSEqr975Hi9zCUhPRJsgxtgI+VgV26CuP/XIIGcGKJbc94z7E2jVR4
-         /gPiXiIq9NKvSrhmtICRtzJAqEniv4qauo44sCh8ijeihZLYmYXCtH9E1cZHB0inyYAL
-         895zeLIVFzj5Ub8yjKBznzt+/SIadAPdbozme0dSRIojFqaV8Q8lppdBz7YeXpDHe1Tp
-         9tiA==
+        bh=8h2WZmkFy3UmyoZbiIw9CiXKO5LDgUcItS4UBd3z0/c=;
+        b=mQ/NMPaXinSu4Z6oiJgs2Eva0KRk0dA/JMUP4rHHGqg3Mb/yqotpeKTMWu0RdhZMWh
+         OJKnzW2Zi2XQK93tYwOtBOktabZAyMGBNAW7VdPzkvHAVk502gP8hOTdnVfZNMygpiFT
+         un92CtyuLyPyTNPYJUnEOXhZ/oP+ozbBKtdQ/6VCMqXGhD10XaLvYPBh34qAZuVDQ3kR
+         aj/jojubpE7/yURbKLXYLfoBhGyk0DFcnUopbmBRjQ0hMUl/KF7nfv3BNmoOE3JtQwpC
+         NtCGktzbDygm4iDD7juULpxvc8yVyDBQ7vJ889mb+p3jsVIzRohkrP3cOlqRp7oTgHCU
+         ATUg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CAAB21897
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BBA72189D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Sebastian Ott <sebott@linux.ibm.com>,
-	Peter Oberparleiter <oberpar@linux.ibm.com>,
-	Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4.4 49/50] s390/cio: update chpid descriptor after resource accessibility event
-Date: Fri, 27 Apr 2018 15:58:51 +0200
-Message-Id: <20180427135658.563557072@linuxfoundation.org>
+	Christoph Hellwig <hch@lst.de>,
+	Dan Carpenter <dan.carpenter@oracle.com>,
+	Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.4 48/50] cdrom: information leak in cdrom_ioctl_media_changed()
+Date: Fri, 27 Apr 2018 15:58:50 +0200
+Message-Id: <20180427135658.509947332@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135655.623669681@linuxfoundation.org>
 References: <20180427135655.623669681@linuxfoundation.org>
@@ -44,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908278822416225?=
-X-GMAIL-MSGID: =?utf-8?q?1598908278822416225?=
+X-GMAIL-THRID: =?utf-8?q?1598908127480472300?=
+X-GMAIL-MSGID: =?utf-8?q?1598908276772975084?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,54 +53,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sebastian Ott <sebott@linux.ibm.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit af2e460ade0b0180d0f3812ca4f4f59cc9597f3e upstream.
+commit 9de4ee40547fd315d4a0ed1dd15a2fa3559ad707 upstream.
 
-Channel path descriptors have been seen as something stable (as
-long as the chpid is configured). Recent tests have shown that the
-descriptor can also be altered when the link state of a channel path
-changes. Thus it is necessary to update the descriptor during
-handling of resource accessibility events.
+This cast is wrong.  "cdi->capacity" is an int and "arg" is an unsigned
+long.  The way the check is written now, if one of the high 32 bits is
+set then we could read outside the info->slots[] array.
 
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Sebastian Ott <sebott@linux.ibm.com>
-Reviewed-by: Peter Oberparleiter <oberpar@linux.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+This bug is pretty old and it predates git.
+
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Cc: stable@vger.kernel.org
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/s390/cio/chsc.c |   14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+ drivers/cdrom/cdrom.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/s390/cio/chsc.c
-+++ b/drivers/s390/cio/chsc.c
-@@ -451,6 +451,7 @@ static void chsc_process_sei_link_incide
+--- a/drivers/cdrom/cdrom.c
++++ b/drivers/cdrom/cdrom.c
+@@ -2358,7 +2358,7 @@ static int cdrom_ioctl_media_changed(str
+ 	if (!CDROM_CAN(CDC_SELECT_DISC) || arg == CDSL_CURRENT)
+ 		return media_changed(cdi, 1);
  
- static void chsc_process_sei_res_acc(struct chsc_sei_nt0_area *sei_area)
- {
-+	struct channel_path *chp;
- 	struct chp_link link;
- 	struct chp_id chpid;
- 	int status;
-@@ -463,10 +464,17 @@ static void chsc_process_sei_res_acc(str
- 	chpid.id = sei_area->rsid;
- 	/* allocate a new channel path structure, if needed */
- 	status = chp_get_status(chpid);
--	if (status < 0)
--		chp_new(chpid);
--	else if (!status)
-+	if (!status)
- 		return;
-+
-+	if (status < 0) {
-+		chp_new(chpid);
-+	} else {
-+		chp = chpid_to_chp(chpid);
-+		mutex_lock(&chp->lock);
-+		chp_update_desc(chp);
-+		mutex_unlock(&chp->lock);
-+	}
- 	memset(&link, 0, sizeof(struct chp_link));
- 	link.chpid = chpid;
- 	if ((sei_area->vf & 0xc0) != 0) {
+-	if ((unsigned int)arg >= cdi->capacity)
++	if (arg >= cdi->capacity)
+ 		return -EINVAL;
+ 
+ 	info = kmalloc(sizeof(*info), GFP_KERNEL);
