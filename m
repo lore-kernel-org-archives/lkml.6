@@ -1,103 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758632AbeD0QPE (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 12:15:04 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44319 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1757985AbeD0QO6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 12:14:58 -0400
-Date: Fri, 27 Apr 2018 16:14:56 +0000
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>, linux-mm@kvack.org,
-        mhocko@kernel.org, cl@linux.com, Jan Kara <jack@suse.cz>,
-        matthew@wil.cx, x86@kernel.org, luto@amacapital.net,
-        martin.petersen@oracle.com, jthumshirn@suse.de, broonie@kernel.org,
-        Juergen Gross <jgross@suse.com>, linux-spi@vger.kernel.org,
-        Joerg Roedel <joro@8bytes.org>, linux-scsi@vger.kernel.org,
-        Dan Carpenter <dan.carpenter@oracle.com>, linux-kernel@vger.kernel.org,
-        "lsf-pc@lists.linux-foundation.org"
-        <lsf-pc@lists.linux-foundation.org>
-Subject: Re: [LSF/MM TOPIC NOTES] x86 ZONE_DMA love
-Message-ID: <20180427161456.GD27853@wotan.suse.de>
-References: <20180426215406.GB27853@wotan.suse.de>
- <20180427053556.GB11339@infradead.org>
+        id S932781AbeD0QPc (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 12:15:32 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36562 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1758645AbeD0QPb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 12:15:31 -0400
+Date: Fri, 27 Apr 2018 19:15:30 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: Kevin Easton <kevin@guarana.org>, Jason Wang <jasowang@redhat.com>,
+        KVM list <kvm@vger.kernel.org>,
+        virtualization@lists.linux-foundation.org,
+        netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Subject: Re: [PATCH net] vhost: Use kzalloc() to allocate vhost_msg_node
+Message-ID: <20180427191430-mutt-send-email-mst@kernel.org>
+References: <000000000000a5b2b1056a86e98c@google.com>
+ <20180427154502.GA22544@la.guarana.org>
+ <20180427185501-mutt-send-email-mst@kernel.org>
+ <CACT4Y+b4fEOw=GjTsZMHVyQPOZmuqPWj6AJJshpS-UGRx=bhXA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180427053556.GB11339@infradead.org>
-User-Agent: Mutt/1.6.0 (2016-04-01)
+In-Reply-To: <CACT4Y+b4fEOw=GjTsZMHVyQPOZmuqPWj6AJJshpS-UGRx=bhXA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 26, 2018 at 10:35:56PM -0700, Christoph Hellwig wrote:
-> On Thu, Apr 26, 2018 at 09:54:06PM +0000, Luis R. Rodriguez wrote:
-> > In practice if you don't have a floppy device on x86, you don't need ZONE_DMA,
+On Fri, Apr 27, 2018 at 06:11:31PM +0200, Dmitry Vyukov wrote:
+> On Fri, Apr 27, 2018 at 6:05 PM, Michael S. Tsirkin <mst@redhat.com> wrote:
+> > On Fri, Apr 27, 2018 at 11:45:02AM -0400, Kevin Easton wrote:
+> >> The struct vhost_msg within struct vhost_msg_node is copied to userspace,
+> >> so it should be allocated with kzalloc() to ensure all structure padding
+> >> is zeroed.
+> >>
+> >> Signed-off-by: Kevin Easton <kevin@guarana.org>
+> >> Reported-by: syzbot+87cfa083e727a224754b@syzkaller.appspotmail.com
+> >
+> > Does it help if a patch naming the padding is applied,
+> > and then we init just the relevant field?
+> > Just curious.
 > 
-> I call BS on that, 
+> Yes, it would help.
 
-I did not explain though that it was not me who claimed this though.
-The list displayed below is the result of trying to confirm/deny this,
-and what could be done, and also evaluating if there is *any* gain
-about doing something about it.
+I think it's slightly better that way then. node has a lot of internal
+stuff we don't care to init. Would you mind taking my patch and building
+on top of that then?
 
-But curious, on a standard qemu x86_x64 KVM guest, which of the
-drivers do we know for certain *are* being used from the ones
-listed?
-
-What about Xen guests, I wonder?
-
-> and you actually explain later why it it BS due
-> to some drivers using it more explicitly.
-
-Or implicitly. The list I showed is the work to show that the users
-of GFP_DMA on x86 is *much* more wide spread than expected from the
-above claim.
-
-I however did not also answer the above qemu x86_64 question, but
-would be good to know. Note I stated that the claim was *in practice*.
-
-> But even more importantly
-> we have plenty driver using it through dma_alloc_* and a small DMA
-> mask, and they are in use 
-
-Do we have a list of users for x86 with a small DMA mask?
-Or, given that I'm not aware of a tool to be able to look
-for this in an easy way, would it be good to find out which
-x86 drivers do have a small mask?
-
-> - we actually had a 4.16 regression due to them.
-
-Ah what commit was the culprit? Is that fixed already? If so what
-commit?
-
-> > SCSI is *severely* affected:
-> 
-> Not really.  We have unchecked_isa_dma to support about 4 drivers,
-
-Ah very neat:
-
-  * CONFIG_CHR_DEV_OSST - "SCSI OnStream SC-x0 tape support"
-  * CONFIG_SCSI_ADVANSYS - "AdvanSys SCSI support"
-  * CONFIG_SCSI_AHA1542 - "Adaptec AHA1542 support"
-  * CONFIG_SCSI_ESAS2R - "ATTO Technology's ExpressSAS RAID adapter driver"
-
-> and less than a hand ful of drivers doing stupid things, which can
-> be fixed easily, and just need a volunteer.
-
-Care to list what needs to be done? Can an eager beaver student do it?
-
-> > That's the end of the review of all current explicit callers on x86.
-> > 
-> > # dma_alloc_coherent_gfp_flags() and dma_generic_alloc_coherent()
-> > 
-> > dma_alloc_coherent_gfp_flags() and dma_generic_alloc_coherent() set
-> > GFP_DMA if if (dma_mask <= DMA_BIT_MASK(24))
-> 
-> All that code is long gone and replaced with dma-direct.  Which still
-> uses GFP_DMA based on the dma mask, though - see above.
-
-And that's mostly IOMMU code, on the alloc() dma_map_ops.
-
-  Luis
+> >> ---
+> >>  drivers/vhost/vhost.c | 2 +-
+> >>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+> >> index f3bd8e9..1b84dcff 100644
+> >> --- a/drivers/vhost/vhost.c
+> >> +++ b/drivers/vhost/vhost.c
+> >> @@ -2339,7 +2339,7 @@ EXPORT_SYMBOL_GPL(vhost_disable_notify);
+> >>  /* Create a new message. */
+> >>  struct vhost_msg_node *vhost_new_msg(struct vhost_virtqueue *vq, int type)
+> >>  {
+> >> -     struct vhost_msg_node *node = kmalloc(sizeof *node, GFP_KERNEL);
+> >> +     struct vhost_msg_node *node = kzalloc(sizeof *node, GFP_KERNEL);
+> >>       if (!node)
+> >>               return NULL;
+> >>       node->vq = vq;
+> >> --
+> >> 2.8.1
+> >
+> > --
+> > You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> > To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> > To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/20180427185501-mutt-send-email-mst%40kernel.org.
+> > For more options, visit https://groups.google.com/d/optout.
