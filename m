@@ -1,39 +1,39 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqrwAJESaGbH2ySpPZ2zZW6G2l1m8LzYCy4TBY52sPexbUBe7VfhRsYBqkmJ4UFoqJsly0D
-ARC-Seal: i=1; a=rsa-sha256; t=1524837989; cv=none;
+X-Google-Smtp-Source: AB8JxZqZUDNtwt29vNxT/SXQ2puGj+1QIqKatAShos8m7der5UzdDFGKW6icUQPKNz+3Ul+lGk7p
+ARC-Seal: i=1; a=rsa-sha256; t=1524837987; cv=none;
         d=google.com; s=arc-20160816;
-        b=PonRhFWGedyAmEKUlC2cv15gfgedv5Bc7lDSWzjOPBOOcL7gm3c7drESCu0xLQD6NQ
-         /B6oV610PTL/5TK98s8bLu9AuRZruweNvp2diEuTnEkSAABkol+b8AJ173u+vvEsT8X6
-         wYWTmdF+6SeSNAO0riVO2yQs3d0GD8FA69UpA21be1b5L6K1ltHDCU+yzzwnug6Im5fe
-         VSXN/EVFIsvm2QtxqL8f5DZwRRsofMuXiPp6JkkxuqoUu2FRTL6iVk5FAixo/JjnH2BH
-         IEotTHukPRrnOwbRCpf7EvOQmBsvCYZFDUM168NogqWkG3R7YJtQULllQiYkrnOCZj70
-         d+Xg==
+        b=twhnddwrawVXfSabNDBEGvBGPlCz96TkYrtugE7pIBddS5kqrwo+VWUnJc5EFHLVu1
+         d0AesZeiB5S3AKgmGBdBy+8u/NbX8I9S+4boAmYaQqHJ1H63Klf3DnOyf3+cXCaLhHoc
+         BvST8JzqkLMRPBVVLz+WKd0w2yYeZUk8jO95brJ02TNZa0IPdj//K7din1mL/S/fcFDu
+         Fpn5oW76UKKU/tavcaPlTnAn8Tf7mV+AH7GOmVFw+vhw/guUVsV7wOE3uxYeLf8aFwzp
+         KDA74P1Be79ym62BfjYmmbSvs8OEcn02LbgxGRmBCBbmas4eQAXI6RnWueErjMDSJ+9D
+         zVsg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=sgWwtVhgxX/juCjoXcUg1tFjF4CdonN4CiJNdoaDl60=;
-        b=S/VMFz/G7S9ZfIvjbG8Jic4+2qKjf8Zoq8QaILIw70isP7JZr4vgx8c3CmPMSdLi/P
-         XV/6b4CZEh0BHAJyVJU26H/I5BbaqR93gCXA68aRAiOOLz0wy95VlJp2StWBPdy0vjht
-         qTa8v5UE7j4BHPCxxMd3b7xGrnNC8YzznfvalfgzOkCYOIJKuLwWLRcSXXPNPwq4oedA
-         3zAaf+6YgVu9GcunzdiU2H7YLn5uHikYEJLzTO3L949N47PIOFdFnAxWZvIlt2PzIC+J
-         4uELgjrnPtjpD0TOizJYjNlZA4cTHlMwp68svi+OCQ7PbDmjZSacJPJn4pKToMVBLkp3
-         3LSg==
+        bh=HqjwL6nAGEAxYB/i6pMnl0YufOEdHXcHGGDGTuaovPo=;
+        b=A1mdorjVI2FvCLNVetB6Ryp3Rw9b1aLETuxRhdOPoeg0HyvrrQsIISOUGnTM4qH4US
+         aJtmfYZs1X115ryi0MmY0yyuAM5DR19gZ6YCIjkeszXSPF1AzwWeZljKzoVHL7NB79je
+         TO5bJC5zNZSNYAzQ0dcgUGlRW98RPx0AbKKxPTbgEKFJ5eBtcX9gVSkPWBFP2vpsW80w
+         b7eHae/D2bmIAXU6ZbPhiO+9mncKtP5SNmnYfU3tzvQB8awsjoHNGsFwstYE+nBdJEpr
+         CbgDXxPFjx4NNPj5YIAbqFbxbl+MNyi4d0QkFTkh0gtSzThgKxHiqGejbo/1IgcpXuGp
+         oZCw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECD3121890
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6701921864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Archit Taneja <architt@codeaurora.org>,
-	Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH 4.14 02/80] drm: bridge: dw-hdmi: Fix overflow workaround for Amlogic Meson GX SoCs
-Date: Fri, 27 Apr 2018 15:57:55 +0200
-Message-Id: <20180427135733.038377575@linuxfoundation.org>
+	Paolo Abeni <pabeni@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 19/80] team: avoid adding twice the same option to the event list
+Date: Fri, 27 Apr 2018 15:58:12 +0200
+Message-Id: <20180427135733.887299401@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135732.928644313@linuxfoundation.org>
 References: <20180427135732.928644313@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908520118172007?=
-X-GMAIL-MSGID: =?utf-8?q?1598908520118172007?=
+X-GMAIL-THRID: =?utf-8?q?1598908014850313788?=
+X-GMAIL-MSGID: =?utf-8?q?1598908517778009732?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,43 +52,116 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Neil Armstrong <narmstrong@baylibre.com>
+From: Paolo Abeni <pabeni@redhat.com>
 
-commit 9c305eb442f3b371fc722ade827bbf673514123e upstream.
 
-The Amlogic Meson GX SoCs, embedded the v2.01a controller, has been also
-identified needing this workaround.
-This patch adds the corresponding version to enable a single iteration for
-this specific version.
+[ Upstream commit 4fb0534fb7bbc2346ba7d3a072b538007f4135a5 ]
 
-Fixes: be41fc55f1aa ("drm: bridge: dw-hdmi: Handle overflow workaround based on device version")
-Acked-by: Archit Taneja <architt@codeaurora.org>
-[narmstrong: s/identifies/identified and rebased against Jernej's change]
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/1519386277-25902-1-git-send-email-narmstrong@baylibre.com
-[narmstrong: v4.14 to v4.16 backport]
-Cc: <stable@vger.kernel.org> # 4.14.x
+When parsing the options provided by the user space,
+team_nl_cmd_options_set() insert them in a temporary list to send
+multiple events with a single message.
+While each option's attribute is correctly validated, the code does
+not check for duplicate entries before inserting into the event
+list.
+
+Exploiting the above, the syzbot was able to trigger the following
+splat:
+
+kernel BUG at lib/list_debug.c:31!
+invalid opcode: 0000 [#1] SMP KASAN
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Modules linked in:
+CPU: 0 PID: 4466 Comm: syzkaller556835 Not tainted 4.16.0+ #17
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+Google 01/01/2011
+RIP: 0010:__list_add_valid+0xaa/0xb0 lib/list_debug.c:29
+RSP: 0018:ffff8801b04bf248 EFLAGS: 00010286
+RAX: 0000000000000058 RBX: ffff8801c8fc7a90 RCX: 0000000000000000
+RDX: 0000000000000058 RSI: ffffffff815fbf41 RDI: ffffed0036097e3f
+RBP: ffff8801b04bf260 R08: ffff8801b0b2a700 R09: ffffed003b604f90
+R10: ffffed003b604f90 R11: ffff8801db027c87 R12: ffff8801c8fc7a90
+R13: ffff8801c8fc7a90 R14: dffffc0000000000 R15: 0000000000000000
+FS:  0000000000b98880(0000) GS:ffff8801db000000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000000043fc30 CR3: 00000001afe8e000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  __list_add include/linux/list.h:60 [inline]
+  list_add include/linux/list.h:79 [inline]
+  team_nl_cmd_options_set+0x9ff/0x12b0 drivers/net/team/team.c:2571
+  genl_family_rcv_msg+0x889/0x1120 net/netlink/genetlink.c:599
+  genl_rcv_msg+0xc6/0x170 net/netlink/genetlink.c:624
+  netlink_rcv_skb+0x172/0x440 net/netlink/af_netlink.c:2448
+  genl_rcv+0x28/0x40 net/netlink/genetlink.c:635
+  netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
+  netlink_unicast+0x58b/0x740 net/netlink/af_netlink.c:1336
+  netlink_sendmsg+0x9f0/0xfa0 net/netlink/af_netlink.c:1901
+  sock_sendmsg_nosec net/socket.c:629 [inline]
+  sock_sendmsg+0xd5/0x120 net/socket.c:639
+  ___sys_sendmsg+0x805/0x940 net/socket.c:2117
+  __sys_sendmsg+0x115/0x270 net/socket.c:2155
+  SYSC_sendmsg net/socket.c:2164 [inline]
+  SyS_sendmsg+0x29/0x30 net/socket.c:2162
+  do_syscall_64+0x29e/0x9d0 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x4458b9
+RSP: 002b:00007ffd1d4a7278 EFLAGS: 00000213 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 000000000000001b RCX: 00000000004458b9
+RDX: 0000000000000010 RSI: 0000000020000d00 RDI: 0000000000000004
+RBP: 00000000004a74ed R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000213 R12: 00007ffd1d4a7348
+R13: 0000000000402a60 R14: 0000000000000000 R15: 0000000000000000
+Code: 75 e8 eb a9 48 89 f7 48 89 75 e8 e8 d1 85 7b fe 48 8b 75 e8 eb bb 48
+89 f2 48 89 d9 4c 89 e6 48 c7 c7 a0 84 d8 87 e8 ea 67 28 fe <0f> 0b 0f 1f
+40 00 48 b8 00 00 00 00 00 fc ff df 55 48 89 e5 41
+RIP: __list_add_valid+0xaa/0xb0 lib/list_debug.c:29 RSP: ffff8801b04bf248
+
+This changeset addresses the avoiding list_add() if the current
+option is already present in the event list.
+
+Reported-and-tested-by: syzbot+4d4af685432dc0e56c91@syzkaller.appspotmail.com
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Fixes: 2fcdb2c9e659 ("team: allow to send multiple set events in one message")
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/bridge/synopsys/dw-hdmi.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/team/team.c |   19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
---- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-@@ -1634,6 +1634,8 @@ static void dw_hdmi_clear_overflow(struc
- 	 * (and possibly on the platform). So far only i.MX6Q (v1.30a) and
- 	 * i.MX6DL (v1.31a) have been identified as needing the workaround, with
- 	 * 4 and 1 iterations respectively.
-+	 * The Amlogic Meson GX SoCs (v2.01a) have been identified as needing
-+	 * the workaround with a single iteration.
- 	 */
+--- a/drivers/net/team/team.c
++++ b/drivers/net/team/team.c
+@@ -261,6 +261,17 @@ static void __team_option_inst_mark_remo
+ 	}
+ }
  
- 	switch (hdmi->version) {
-@@ -1641,6 +1643,7 @@ static void dw_hdmi_clear_overflow(struc
- 		count = 4;
- 		break;
- 	case 0x131a:
-+	case 0x201a:
- 		count = 1;
- 		break;
- 	default:
++static bool __team_option_inst_tmp_find(const struct list_head *opts,
++					const struct team_option_inst *needle)
++{
++	struct team_option_inst *opt_inst;
++
++	list_for_each_entry(opt_inst, opts, tmp_list)
++		if (opt_inst == needle)
++			return true;
++	return false;
++}
++
+ static int __team_options_register(struct team *team,
+ 				   const struct team_option *option,
+ 				   size_t option_count)
+@@ -2561,6 +2572,14 @@ static int team_nl_cmd_options_set(struc
+ 			if (err)
+ 				goto team_put;
+ 			opt_inst->changed = true;
++
++			/* dumb/evil user-space can send us duplicate opt,
++			 * keep only the last one
++			 */
++			if (__team_option_inst_tmp_find(&opt_inst_list,
++							opt_inst))
++				continue;
++
+ 			list_add(&opt_inst->tmp_list, &opt_inst_list);
+ 		}
+ 		if (!opt_found) {
