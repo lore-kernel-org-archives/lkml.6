@@ -1,166 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932495AbeD0NkB (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 09:40:01 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:51791 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758357AbeD0Nj7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 09:39:59 -0400
-X-Google-Smtp-Source: AB8JxZoqidc4QMSg+wV7b27gjeIr0oebos3i9GNiq7wM2iNX+EjL1MZTAnWPuxOlKH0gkIKwwFl4nQ==
-X-ME-Sender: <xms:KSjjWmwIju3v5zIJgzcd3mubHOaH2jmn1FtRPUYlId-Rh7ArBFRkBA>
-Date: Fri, 27 Apr 2018 21:44:14 +0800
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Kirill Tkhai <ktkhai@virtuozzo.com>, jlayton@kernel.org,
-        bfields@fieldses.org, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        longman@redhat.com, peterz@infradead.org, mingo@redhat.com,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH] fasync: Fix deadlock between task-context and
- interrupt-context kill_fasync()
-Message-ID: <20180427134414.wxq3h24vhzeoeyul@tardis>
-References: <152292939368.19745.13784475656016424647.stgit@localhost.localdomain>
- <20180417140110.GB21954@bombadil.infradead.org>
+        id S932610AbeD0NkI (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 09:40:08 -0400
+Received: from mga07.intel.com ([134.134.136.100]:19723 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932322AbeD0NkA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 09:40:00 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,335,1520924400";
+   d="scan'208";a="45070747"
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-perf-users@vger.kernel.org
+From: Alexey Budankov <alexey.budankov@linux.intel.com>
+Subject: [PATCH v2]: perf/x86: expose user space frame-pointer value on a
+ sample
+Message-ID: <7ae4d82d-bc9f-0273-f779-0ffd19353958@linux.intel.com>
+Date: Fri, 27 Apr 2018 16:39:55 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="3zpf46irlveq7scd"
-Content-Disposition: inline
-In-Reply-To: <20180417140110.GB21954@bombadil.infradead.org>
-User-Agent: NeoMutt/20171215
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---3zpf46irlveq7scd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Store user space frame-pointer value (BP register) into Perf trace 
+on a sample for a process so the value becomes available when 
+unwinding call stacks for functions gaining event samples.
 
-On Tue, Apr 17, 2018 at 07:01:10AM -0700, Matthew Wilcox wrote:
-> On Thu, Apr 05, 2018 at 02:58:06PM +0300, Kirill Tkhai wrote:
-> > I observed the following deadlock between them:
-> >=20
-> > [task 1]                          [task 2]                         [tas=
-k 3]
-> > kill_fasync()                     mm_update_next_owner()           copy=
-_process()
-> >  spin_lock_irqsave(&fa->fa_lock)   read_lock(&tasklist_lock)        wri=
-te_lock_irq(&tasklist_lock)
-> >   send_sigio()                    <IRQ>                             ...
-> >    read_lock(&fown->lock)         kill_fasync()                     ...
-> >     read_lock(&tasklist_lock)      spin_lock_irqsave(&fa->fa_lock)  ...
-> >=20
-> > Task 1 can't acquire read locked tasklist_lock, since there is
-> > already task 3 expressed its wish to take the lock exclusive.
-> > Task 2 holds the read locked lock, but it can't take the spin lock.
->=20
-> I think the important question is to Peter ... why didn't lockdep catch t=
-his?
->=20
+Test executable for the example below was compiled with frame pointer 
+support enabled:
 
-I think the following will help lockdep to catch this:
+g++ -o futex-fp -fpermissive --no-omit-frame-pointer futex.c
 
+and profiled using:
 
-@@ -570,7 +588,14 @@ static inline void print_irqtrace_events(struct task_s=
-truct *curr)
- #define spin_release(l, n, i)			lock_release(l, n, i)
-=20
- #define rwlock_acquire(l, s, t, i)		lock_acquire_exclusive(l, s, t, NULL, =
-i)
--#define rwlock_acquire_read(l, s, t, i)		lock_acquire_shared_recursive(l, =
-s, t, NULL, i)
-+#define rwlock_acquire_read(l, s, t, i)				\
-+do {									\
-+	if (!IS_ENABLED(CONFIG_QUEUED_RWLOCKS) || in_interrupt())	\
-+		lock_acquire_shared_recursive(l, s, t, NULL, i);	\
-+	else								\
-+		lock_acquire_shared(l, s, t, NULL, i);			\
-+} while (0)
-+
+tools/perf/perf record --user-regs=IP,SP,BP \
+	-g --call-graph=dwarf,1024 -e cycles -- ./futex-fp
 
-However, this will break several self tests in lib/locking-selftest.c,
-because we used to treat read_lock() as recursive read locks for all
-callsites from lockdep's viewpoint.
+Output of
 
-Besides, the above change will bring an interesting challenge for the
-recursive read lock deadlock detection work that I'm doing:
+tools/perf/perf report -i perf.data --stdio 
 
-	https://marc.info/?l=3Dlinux-kernel&m=3D152345444100825
+demonstrates the effect of the patch change so before saving BP 
+value on a sample we have several frames missing above main 
+function frame:
 
-I will explain that in the thread of that patchset and add you and
-others Cced in case that you're interested.
+# Samples: 138K of event 'cpu-cycles'
+# Event count (approx.): 92713835335
+#
+# Children      Self  Command   Shared Object     Symbol                                        
+# ........  ........  ........  ................  ..........................
+#
+    96.15%     0.72%  futex-fp  futex-fp          [.] main
+            |          
+            |--95.43%--main
+            |          |          
+            |          |--71.56%--syscall
+            |          |          |          
+            |          |          |--57.28%--entry_SYSCALL_64_after_hwframe
+            |          |          |          |          
+            |          |          |           --56.95%--do_syscall_64
+            |          |          |                     |          
+            |          |          |                      --55.77%--sys_futex
 
-Regards,
-Boqun
+and after saving BP value on a sample we have expected 
 
-> > -		spin_lock_irq(&fa->fa_lock);
-> > +		write_lock_irq(&fa->fa_lock);
-> >  		fa->fa_file =3D NULL;
-> > -		spin_unlock_irq(&fa->fa_lock);
-> > +		write_unlock_irq(&fa->fa_lock);
-> ...
-> > -		spin_lock_irq(&fa->fa_lock);
-> > +		write_lock_irq(&fa->fa_lock);
-> >  		fa->fa_fd =3D fd;
-> > -		spin_unlock_irq(&fa->fa_lock);
-> > +		write_unlock_irq(&fa->fa_lock);
->=20
-> Do we really need a lock here?  If we convert each of these into WRITE_ON=
-CE,
-> then=20
->=20
-> ...
-> > -		spin_lock_irqsave(&fa->fa_lock, flags);
-> > +		read_lock(&fa->fa_lock);
-> >  		if (fa->fa_file) {
->=20
-> file =3D READ_ONCE(fa->fa_file)
->=20
-> then we're not opening any new races, are we?
->=20
-> >  			fown =3D &fa->fa_file->f_owner;
-> >  			/* Don't send SIGURG to processes which have not set a
-> > @@ -997,7 +996,7 @@ static void kill_fasync_rcu(struct fasync_struct *f=
-a, int sig, int band)
-> >  			if (!(sig =3D=3D SIGURG && fown->signum =3D=3D 0))
-> >  				send_sigio(fown, fa->fa_fd, band);
-> >  		}
-> > -		spin_unlock_irqrestore(&fa->fa_lock, flags);
-> > +		read_unlock(&fa->fa_lock);
-> >  		fa =3D rcu_dereference(fa->fa_next);
-> >  	}
-> >  }
-> > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > index c6baf767619e..297e2dcd9dd2 100644
-> > --- a/include/linux/fs.h
-> > +++ b/include/linux/fs.h
-> > @@ -1250,7 +1250,7 @@ static inline int locks_lock_file_wait(struct fil=
-e *filp, struct file_lock *fl)
-> >  }
-> > =20
-> >  struct fasync_struct {
-> > -	spinlock_t		fa_lock;
-> > +	rwlock_t		fa_lock;
-> >  	int			magic;
-> >  	int			fa_fd;
-> >  	struct fasync_struct	*fa_next; /* singly linked list */
-> >=20
+	_start
+	__libc_start_main 
 
---3zpf46irlveq7scd
-Content-Type: application/pgp-signature; name="signature.asc"
+frames unwound:
 
------BEGIN PGP SIGNATURE-----
+# Samples: 128K of event 'cpu-cycles'
+# Event count (approx.): 85349981034
+#
+# Children      Self  Command   Shared Object     Symbol                                        
+# ........  ........  ........  ................  ..................
+#
+    95.83%     0.00%  futex-fp  futex-fp          [.] _start
+            |
+==>         ---_start
+==>            __libc_start_main
+               main
+               |          
+               |--71.28%--syscall
+               |          |          
+               |          |--55.67%--entry_SYSCALL_64
+               |          |          |          
+               |          |           --55.40%--do_syscall_64
+               |          |                     |          
+               |          |                      --54.21%--sys_futex
 
-iQEzBAABCAAdFiEEj5IosQTPz8XU1wRHSXnow7UH+rgFAlrjKSoACgkQSXnow7UH
-+ri+1QgAiZYOJzkWmlfFOYqSA/QP8sOKdfW52Naa3ZePpoTjh18Sm7pAIs6+VP1H
-UuSJQDKVhIRRpFWw0Cha8A/+kmcvDgXiRm2xHL2v8GN9Seys/weaf05SNof3tUeu
-DES20A3IrEaN8t+7ax2XFr1viIJ43CPzqYTfMGeIMgf9bfqNc/cP2iY30nONot3y
-MzjM7N/BQ/u0nuNjljJERpiJc0q4KbWjQfvGkwnuA4eh6eTbebu25hUwspmrpNbe
-ivNR+Wwf3qWH/dnR/dFvW0rbvXlmri8h4uPVDnCFvpnDHk31crtQzfOjNmxWhjvD
-CMfsAQnSDaHYRDg32JJZhmNYpFIZoQ==
-=CSbS
------END PGP SIGNATURE-----
+Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+---
+Changes in v2:
+- lifted restriction on frame pointer architecture so it's value is provided
+  as for i386 as for x86_64 processes
 
---3zpf46irlveq7scd--
+MAINTAINERS file lacks references to appropriate folks for reviewing 
+  changes at arch/x86/kernel/perf_regs.c so probably it makes sense to 
+  update the file as well in this respect. 
+---
+ arch/x86/kernel/perf_regs.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/perf_regs.c b/arch/x86/kernel/perf_regs.c
+index e47b2dbbdef3..8d68658eff7f 100644
+--- a/arch/x86/kernel/perf_regs.c
++++ b/arch/x86/kernel/perf_regs.c
+@@ -156,7 +156,13 @@ void perf_get_regs_user(struct perf_regs *regs_user,
+ 	 * Most system calls don't save these registers, don't report them.
+ 	 */
+ 	regs_user_copy->bx = -1;
+-	regs_user_copy->bp = -1;
++	/*
++	 * Store user space frame-pointer value on sample
++	 * to facilitate stack unwinding for cases when
++	 * user space executable code has such support
++	 * enabled at compile time;
++	 */
++	regs_user_copy->bp = user_regs->bp;
+ 	regs_user_copy->r12 = -1;
+ 	regs_user_copy->r13 = -1;
+ 	regs_user_copy->r14 = -1;
