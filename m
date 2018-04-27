@@ -1,40 +1,40 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqRCfAs3AH/av70/8I0jTuvO/kwTWWsCPdba0rQpT582uzqtTm2KZaBt3jcndddrhHmBBSq
-ARC-Seal: i=1; a=rsa-sha256; t=1524837879; cv=none;
+X-Google-Smtp-Source: AB8JxZoBs9X/68kvnc+aB2od/FJJ0i9OEiPY4Af4Z8+omUN8nNqcsaXkJ5N/Tx+IkOYrT+0S3q+o
+ARC-Seal: i=1; a=rsa-sha256; t=1524837876; cv=none;
         d=google.com; s=arc-20160816;
-        b=rvzqZixLKsEfkKwNzhIQ4I7E3pQLji6/F4KFQtqOVS39NHYt9LdDGvjeTb46v8shJh
-         6nWdKUIf0hhZgfIFlbkbPfE06/7TT6Zv1rs7PlNjgeOxmoAVb1A56my6xSR/aAEgaB9b
-         u2EE9938oF6T9J+HnBkUFvi+QSafa9CSvDO87PKGxIYJbds8PMevgTdcHkL2h4akNaGu
-         kJLMe1HHaKBwSKnoloe0tu4bYYwAbmJnLkJ0nJaCQYEtD7lhfyNZuffzhYt1aS3ZXVx8
-         YhKOb71Tm+nWY0HBcAcuv8siribiaPgIatKtHPerhvjrLUduBMQ7SHBg2VI4yW5INkg7
-         I9zw==
+        b=lnGFZq/4L5fQ/mKDKMQDb5bAu1nJKw+fEQCtp5EtbW5jxfyfjUSBb86kA9Yvjp2LZZ
+         vcLnd9gjB2YN6p090gYzgObWSkkF+8sMRAURHIk8inQR6KNHCZt4gtWxGbUmph2flaMR
+         u3X+rSKHrAE1lwGggT2CN1WlWjtIdg0WIBAarlPjXe6anmWU1majbMrO3QhoLgFtPR9d
+         yLJXzZBTw7cVhkdql2xQ1vujLghwU0vQpZ3J008ie47DOa3bjcU2wrbSZK5LmUXYPM40
+         Z6GmgdcOKac86LbXWVnekfAVZ2ObvnpAQXpsPxZRNbefTIEVyq1KhvpoTjF0AJXKB9Zn
+         iJXA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=EEue0m76upYZ6907Fu+N4ScTwbuJBRln68CRF/jRY9g=;
-        b=f+hrgiRDf2n2pWop5YA0qs9+CC+flI+w8sBIb32SvgfsHsQ9vhzpjkVaH2WAYdq6UL
-         VceqO6lqFe0JdQjKLsyvfpgDpAMrBo06smjal7k/krWCj7ARUsGaOxfFLLojdBeZfqlI
-         zwz4Sf6TzTLcYnZwl8RTkP1K74a1sKqgiTG5NG2eOJGaVHDp2w6N+2lNto1uG/WKh7w2
-         m5qwNf8Q75XKcBhChmLoGS36cdjio0M9gzn4Abjio5C11X/Q11wKcDJzu8z6ku39mtsc
-         M6rtLEA4Edy0P7kBYGrin9Qdlf2gqlQzJI1zF7xGhgCbiJlVX0rTRrO8Fsp5SKgcFFB8
-         1F7g==
+        bh=xsUX7GprwjK1XEaAf4Ju7uYUmeS8tvhpz53kquaymwk=;
+        b=XUWkYU02ZwTRLzcgudMftL5QDiVbgHLh+ZF1+59ZxGEtnqRFZjZ+iuZOSjYJUAHZOl
+         vkeDTWXu2MPYb4rha9cPD0wLF0Co+jsg5VYvQs/R3RfHadBRX3AdJOHxtECAVFEgrD/A
+         MNcxQJiTUMiJqdmggQH4sB+O89+l09CohZx/GKYmsdSrkLjpIdzs9VSdvrwZCuevvFTS
+         jiGio+SsPGiYtTG+b7tP3Sm51lLhNc3EWDDamq28widW9rgGQSDpYMOx6qnOxHWcnKhh
+         44bE/k4escD6t1pZi6EO3+eBkkwjsDmoZ4eT2ey10bEJjjylFXWGA4bWiXIHKp1DQUFn
+         RGpw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7081421890
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E02772189D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Sahitya Tummala <stummala@codeaurora.org>,
-	Theodore Tso <tytso@mit.edu>,
+	Felix Fietkau <nbd@nbd.name>,
+	Kalle Valo <kvalo@qca.qualcomm.com>,
 	Amit Pundir <amit.pundir@linaro.org>
-Subject: [PATCH 4.9 17/74] jbd2: fix use after free in kjournald2()
-Date: Fri, 27 Apr 2018 15:58:07 +0200
-Message-Id: <20180427135710.616430102@linuxfoundation.org>
+Subject: [PATCH 4.9 16/74] ath9k_hw: check if the chip failed to wake up
+Date: Fri, 27 Apr 2018 15:58:06 +0200
+Message-Id: <20180427135710.573193299@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135709.899303463@linuxfoundation.org>
 References: <20180427135709.899303463@linuxfoundation.org>
@@ -44,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908143233351701?=
-X-GMAIL-MSGID: =?utf-8?q?1598908404143544165?=
+X-GMAIL-THRID: =?utf-8?q?1598908165445884565?=
+X-GMAIL-MSGID: =?utf-8?q?1598908401671310660?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,68 +53,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sahitya Tummala <stummala@codeaurora.org>
+From: Felix Fietkau <nbd@nbd.name>
 
-commit dbfcef6b0f4012c57bc0b6e0e660d5ed12a5eaed upstream.
+commit a34d0a0da1abae46a5f6ebd06fb0ec484ca099d9 upstream.
 
-Below is the synchronization issue between unmount and kjournald2
-contexts, which results into use after free issue in kjournald2().
-Fix this issue by using journal->j_state_lock to synchronize the
-wait_event() done in journal_kill_thread() and the wake_up() done
-in kjournald2().
+In an RFC patch, Sven Eckelmann and Simon Wunderlich reported:
 
-TASK 1:
-umount cmd:
-   |--jbd2_journal_destroy() {
-       |--journal_kill_thread() {
-            write_lock(&journal->j_state_lock);
-	    journal->j_flags |= JBD2_UNMOUNT;
-	    ...
-	    write_unlock(&journal->j_state_lock);
-	    wake_up(&journal->j_wait_commit);	   TASK 2 wakes up here:
-	    					   kjournald2() {
-						     ...
-						     checks JBD2_UNMOUNT flag and calls goto end-loop;
-						     ...
-						     end_loop:
-						       write_unlock(&journal->j_state_lock);
-						       journal->j_task = NULL; --> If this thread gets
-						       pre-empted here, then TASK 1 wait_event will
-						       exit even before this thread is completely
-						       done.
-	    wait_event(journal->j_wait_done_commit, journal->j_task == NULL);
-	    ...
-	    write_lock(&journal->j_state_lock);
-	    write_unlock(&journal->j_state_lock);
-	  }
-       |--kfree(journal);
-     }
-}
-						       wake_up(&journal->j_wait_done_commit); --> this step
-						       now results into use after free issue.
-						   }
+"QCA 802.11n chips (especially AR9330/AR9340) sometimes end up in a
+state in which a read of AR_CFG always returns 0xdeadbeef.
+This should not happen when when the power_mode of the device is
+ATH9K_PM_AWAKE."
 
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Include the check for the default register state in the existing MAC
+hang check.
+
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+Signed-off-by: Kalle Valo <kvalo@qca.qualcomm.com>
 Cc: Amit Pundir <amit.pundir@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/jbd2/journal.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/ath/ath9k/hw.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/fs/jbd2/journal.c
-+++ b/fs/jbd2/journal.c
-@@ -276,11 +276,11 @@ loop:
- 	goto loop;
+--- a/drivers/net/wireless/ath/ath9k/hw.c
++++ b/drivers/net/wireless/ath/ath9k/hw.c
+@@ -1603,6 +1603,10 @@ bool ath9k_hw_check_alive(struct ath_hw
+ 	int count = 50;
+ 	u32 reg, last_val;
  
- end_loop:
--	write_unlock(&journal->j_state_lock);
- 	del_timer_sync(&journal->j_commit_timer);
- 	journal->j_task = NULL;
- 	wake_up(&journal->j_wait_done_commit);
- 	jbd_debug(1, "Journal thread exiting.\n");
-+	write_unlock(&journal->j_state_lock);
- 	return 0;
- }
++	/* Check if chip failed to wake up */
++	if (REG_READ(ah, AR_CFG) == 0xdeadbeef)
++		return false;
++
+ 	if (AR_SREV_9300(ah))
+ 		return !ath9k_hw_detect_mac_hang(ah);
  
