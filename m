@@ -1,165 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933656AbeD0PTE (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 11:19:04 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41956 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932850AbeD0PTB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 11:19:01 -0400
-Subject: Re: [PATCH v2 05/17] arm64: Helper for parange to PASize
-To: Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc: ard.biesheuvel@linaro.org, kvm@vger.kernel.org, marc.zyngier@arm.com,
-        catalin.marinas@arm.com, punit.agrawal@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, kristina.martsenko@arm.com,
-        pbonzini@redhat.com, kvmarm@lists.cs.columbia.edu
-References: <1522156531-28348-1-git-send-email-suzuki.poulose@arm.com>
- <1522156531-28348-6-git-send-email-suzuki.poulose@arm.com>
- <2910d406-315f-6f0f-7456-df9d80a08087@arm.com>
- <f9d91231-2a8f-ae3e-9600-8087a0b9460c@arm.com>
-From: Julien Grall <julien.grall@arm.com>
-Message-ID: <b9c37ca6-7a4e-ad64-ba89-a02b3edefbd1@arm.com>
-Date: Fri, 27 Apr 2018 16:18:57 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S933679AbeD0PTR (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 11:19:17 -0400
+Received: from mail-oi0-f45.google.com ([209.85.218.45]:38188 "EHLO
+        mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933456AbeD0PTO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 11:19:14 -0400
+X-Google-Smtp-Source: AB8JxZqCgIIhqaJDtXGCOYo58EJX86rYl3uCXk0HP8QgltfS8eddzkhkGgzLm7YVYUfMqkTbXviKYJRiiBGpySy09Q0=
 MIME-Version: 1.0
-In-Reply-To: <f9d91231-2a8f-ae3e-9600-8087a0b9460c@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <f8875546-da53-fc36-d3da-5b5ff089ccc0@redhat.com>
+References: <1523545958-28059-1-git-send-email-karahmed@amazon.de>
+ <1523545958-28059-2-git-send-email-karahmed@amazon.de> <CALMp9eSS4nL1-1i1Df=vyPFT1FZVprPB0Yx-JX0auknNc09Gtg@mail.gmail.com>
+ <1523898937.22952.13.camel@amazon.de> <CALMp9eS6D4pfbGEfcz7MpRncTte5weUJE9g-C_qMVxnaGd+RtQ@mail.gmail.com>
+ <f8875546-da53-fc36-d3da-5b5ff089ccc0@redhat.com>
+From: Jim Mattson <jmattson@google.com>
+Date: Fri, 27 Apr 2018 08:19:13 -0700
+Message-ID: <CALMp9eSG-nAuJEyavJoBp7QS1_VuYpuNSjKNUoK6MMEeywypeQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] kvm: nVMX: Introduce KVM_CAP_STATE
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: "Raslan, KarimAllah" <karahmed@amazon.de>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 27/04/18 16:18, Suzuki K Poulose wrote:
-> On 26/04/18 11:58, Julien Grall wrote:
->> Hi Suzuki,
+On Fri, Apr 27, 2018 at 3:03 AM, Paolo Bonzini <pbonzini@redhat.com> wrote:
+> On 27/04/2018 00:28, Jim Mattson wrote:
+>> The other thing that comes to mind is that there are some new fields
+>> in the VMCS12 since I first implemented this. One potentially
+>> troublesome field is the VMX preemption timer. If the current timer
+>> value is not saved on VM-exit, then it won't be stashed in the shadow
+>> VMCS12 by sync_vmcs12. Post-migration, the timer will be reset to its
+>> original value.
 >>
->> On 27/03/18 14:15, Suzuki K Poulose wrote:
->>> Add a helper to convert ID_AA64MMFR0_EL1:PARange to they physical
->>> size shift. Limit the size to the maximum supported by the kernel.
->>> We are about to move the user of this code and this helps to
->>> keep the changes cleaner.
->>
->> It is probably worth to mention that you are also adding 52-bit 
->> support in the patch.
-> 
-> Sure, will do. Can I take that as a Reviewed-by with the fixed
-> commit description ?
+>> Do we care? Is this any different from what happens on real hardware
+>> when there's an SMI? According to the SDM, this appears to be exacty
+>> what happens when the dual-monitor treatment of SMIs and SMM is
+>> active, but it's not clear what happens with the default treatment of
+>> SMIs and SMM.
+>
+> I think it should be the same, because the preemption timer countdown is
+> not part of the VMX-critical state.
+>
+> Paolo
 
-Yes. Here we go:
+Section 25.5.1 of the SDM says:
 
-Reviewed-by: Julien Grall <julien.grall@arm.com>
+If the default treatment of SMIs and SMM (see Section 34.14) is
+active, the VMX-preemption timer counts across an SMI to VMX non-root
+operation, subsequent execution in SMM, and the return from SMM via
+the RSM instruction. However, the timer can cause a VM exit only from
+VMX non-root operation. If the timer expires during SMI, in SMM, or
+during RSM, a timer-induced VM exit occurs immediately after RSM with
+its normal priority unless it is blocked based on activity state
+(Section 25.2).
 
-Cheers,
+So, there's no loophole here that allows us to reset the VMX
+preemption timer when restoring nested state.
 
-> 
-> Cheers
-> Suzuki
-> 
->>
->> Cheers,
->>
->>>
->>> Cc: Mark Rutland <mark.rutland@arm.com>
->>> Cc: Catalin Marinas <catalin.marinas@arm.com>
->>> Cc: Will Deacon <will.deacon@arm.com>
->>> Cc: Marc Zyngier <marc.zyngier@arm.com>
->>> Cc: Christoffer Dall <cdall@kernel.org>
->>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->>> ---
->>>   arch/arm64/include/asm/cpufeature.h | 16 ++++++++++++++++
->>>   arch/arm64/kvm/hyp/s2-setup.c       | 28 +++++-----------------------
->>>   2 files changed, 21 insertions(+), 23 deletions(-)
->>>
->>> diff --git a/arch/arm64/include/asm/cpufeature.h 
->>> b/arch/arm64/include/asm/cpufeature.h
->>> index fbf0aab..1f2a5dd 100644
->>> --- a/arch/arm64/include/asm/cpufeature.h
->>> +++ b/arch/arm64/include/asm/cpufeature.h
->>> @@ -311,6 +311,22 @@ static inline u64 read_zcr_features(void)
->>>       return zcr;
->>>   }
->>> +static inline u32 id_aa64mmfr0_parange_to_phys_shift(int parange)
->>> +{
->>> +    switch (parange) {
->>> +    case 0: return 32;
->>> +    case 1: return 36;
->>> +    case 2: return 40;
->>> +    case 3: return 42;
->>> +    case 4: return 44;
->>> +    /* Report 48 bit if the kernel doesn't support 52bit */
->>> +    default:
->>> +    case 5: return 48;
->>> +#ifdef CONFIG_ARM64_PA_BITS_52
->>> +    case 6: return 52;
->>> +#endif
->>> +    }
->>> +}
->>>   #endif /* __ASSEMBLY__ */
->>>   #endif
->>> diff --git a/arch/arm64/kvm/hyp/s2-setup.c 
->>> b/arch/arm64/kvm/hyp/s2-setup.c
->>> index 603e1ee..b1129c8 100644
->>> --- a/arch/arm64/kvm/hyp/s2-setup.c
->>> +++ b/arch/arm64/kvm/hyp/s2-setup.c
->>> @@ -19,11 +19,13 @@
->>>   #include <asm/kvm_arm.h>
->>>   #include <asm/kvm_asm.h>
->>>   #include <asm/kvm_hyp.h>
->>> +#include <asm/cpufeature.h>
->>>   u32 __hyp_text __init_stage2_translation(void)
->>>   {
->>>       u64 val = VTCR_EL2_FLAGS;
->>>       u64 parange;
->>> +    u32 phys_shift;
->>>       u64 tmp;
->>>       /*
->>> @@ -37,27 +39,7 @@ u32 __hyp_text __init_stage2_translation(void)
->>>       val |= parange << 16;
->>>       /* Compute the actual PARange... */
->>> -    switch (parange) {
->>> -    case 0:
->>> -        parange = 32;
->>> -        break;
->>> -    case 1:
->>> -        parange = 36;
->>> -        break;
->>> -    case 2:
->>> -        parange = 40;
->>> -        break;
->>> -    case 3:
->>> -        parange = 42;
->>> -        break;
->>> -    case 4:
->>> -        parange = 44;
->>> -        break;
->>> -    case 5:
->>> -    default:
->>> -        parange = 48;
->>> -        break;
->>> -    }
->>> +    phys_shift = id_aa64mmfr0_parange_to_phys_shift(parange);
->>>       /*
->>>        * ... and clamp it to 40 bits, unless we have some braindead
->>> @@ -65,7 +47,7 @@ u32 __hyp_text __init_stage2_translation(void)
->>>        * return that value for the rest of the kernel to decide what
->>>        * to do.
->>>        */
->>> -    val |= 64 - (parange > 40 ? 40 : parange);
->>> +    val |= 64 - (phys_shift > 40 ? 40 : phys_shift);
->>>       /*
->>>        * Check the availability of Hardware Access Flag / Dirty Bit
->>> @@ -86,5 +68,5 @@ u32 __hyp_text __init_stage2_translation(void)
->>>       write_sysreg(val, vtcr_el2);
->>> -    return parange;
->>> +    return phys_shift;
->>>   }
->>>
->>
-> 
-
--- 
-Julien Grall
+As a follow-on change, we should probably fix this.
