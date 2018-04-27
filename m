@@ -1,111 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932438AbeD0NDT (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 09:03:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34256 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932322AbeD0NDR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 09:03:17 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B34292184D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh+dt@kernel.org
-X-Google-Smtp-Source: AB8JxZqj8DRAgzoEzNuWLd6icWHmCp/TR/+23guDMJgt4U2tZsU5juVrIkPKkLPCENJtncHP5tYGSU0E/iM9YhrIRv4=
+        id S932552AbeD0ND2 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 09:03:28 -0400
+Received: from mail-wm0-f45.google.com ([74.125.82.45]:35789 "EHLO
+        mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932455AbeD0NDY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 09:03:24 -0400
+X-Google-Smtp-Source: AB8JxZqm4tiFTvMhm8E9G+VApzJBUB3tnyRefNi0HxfJE1KzpfKolVh0rBjDUuEGx6kjDAy9KfdPKOfWMy29tZvvEIc=
 MIME-Version: 1.0
-In-Reply-To: <ba081812-f532-5ebd-b052-cdeb1f02bff1@xilinx.com>
-References: <cover.1524751696.git.michal.simek@xilinx.com> <6045807691c310ccdd57ab16524b7525f26a1dc1.1524751696.git.michal.simek@xilinx.com>
- <CAL_Jsq+69p1GstFua1-27LGv9MKT8dtbd1ytcq+GuvQ=VcEHKg@mail.gmail.com> <ba081812-f532-5ebd-b052-cdeb1f02bff1@xilinx.com>
-From: Rob Herring <robh+dt@kernel.org>
-Date: Fri, 27 Apr 2018 08:02:55 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+3WnGNM0ip_v75s8f5-Wq_9ht19-T-MHyhKjzcU6jtdg@mail.gmail.com>
-Message-ID: <CAL_Jsq+3WnGNM0ip_v75s8f5-Wq_9ht19-T-MHyhKjzcU6jtdg@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/3] of: base: Introduce of_alias_check_id() to check
- alias IDs
-To: Michal Simek <michal.simek@xilinx.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Michal Simek <monstr@monstr.eu>,
-        One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>,
-        Alexander Graf <agraf@suse.de>, devicetree@vger.kernel.org,
-        Frank Rowand <frowand.list@gmail.com>
+References: <20180425214307.159264-2-edumazet@google.com> <201804271455.cJQuTeDc%fengguang.wu@intel.com>
+In-Reply-To: <201804271455.cJQuTeDc%fengguang.wu@intel.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Fri, 27 Apr 2018 13:03:11 +0000
+Message-ID: <CANn89i+gKvxN1qZSrM8oG_jz-HYXt8iMRt_mpf6Rcx4-u0=WfA@mail.gmail.com>
+Subject: Re: [PATCH v2 net-next 1/2] tcp: add TCP_ZEROCOPY_RECEIVE support for
+ zerocopy receive
+To: kbuild test robot <lkp@intel.com>
+Cc: kbuild-all@01.org, David Miller <davem@davemloft.net>,
+        netdev <netdev@vger.kernel.org>, Andy Lutomirski <luto@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Soheil Hassas Yeganeh <soheil@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 27, 2018 at 1:10 AM, Michal Simek <michal.simek@xilinx.com> wrote:
-> On 27.4.2018 04:39, Rob Herring wrote:
->> On Thu, Apr 26, 2018 at 9:08 AM, Michal Simek <michal.simek@xilinx.com> wrote:
->>> The function travers the lookup table to check if the request alias
->>> id is compatible with the device driver match structure.
->>> This function will be used by serial drivers to check if requested alias
->>> is allocated or free to use.
->>>
->>> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
->>> ---
->>>
->>>  drivers/of/base.c  | 49 ++++++++++++++++++++++++++++++++++++++++++++++
->>>  include/linux/of.h |  2 ++
->>>  2 files changed, 51 insertions(+)
->>>
->>> diff --git a/drivers/of/base.c b/drivers/of/base.c
->>> index 848f549164cd..382de01acc72 100644
->>> --- a/drivers/of/base.c
->>> +++ b/drivers/of/base.c
->>> @@ -1892,6 +1892,55 @@ int of_alias_get_id(struct device_node *np, const char *stem)
->>>  }
->>>  EXPORT_SYMBOL_GPL(of_alias_get_id);
->>>
->>> +/**
->>> + * of_alias_check_id - Check alias id for the give compatibility
->>> + * @matches:   Array of of device match structures to search in
->>> + * @stem:      Alias stem of the given device_node
->>> + * @id:                Alias ID for checking
->>> + *
->>> + * The function travers the lookup table to check if the request alias id
->>> + * is compatible with the device driver match structure
->>> + *
->>> + * Return true if ID is allocated, return false if not
->>> + */
->>> +bool of_alias_check_id(const struct of_device_id *matches, const char *stem,
->>> +                      int id)
->>
->> Wouldn't it be simpler to just return a bitmap of all allocated ids
->> that match rather than trying to build that up 1 bit at a time?
->
-> Is alias list stable or can dt overlay change it?
+On Fri, Apr 27, 2018 at 1:45 AM kbuild test robot <lkp@intel.com> wrote:
 
-Stable. If you use an id and then an overlay adds that id as an alias,
-what should the kernel do? The only choice is ignore the suggestion.
+> Hi Eric,
 
-> What should be the expected flow? Find out maximum number of aliases of
-> the same kind and allocate bitmap and return it with length.
+> Thank you for the patch! Yet something to improve:
 
-I think we can assume <32 so just return a bitmap in a unsigned long
-or u32. Use that to initialize a bitmap in the driver. For un-aliased
-devices, find the first unset bit, use that id and set the bit.
+> [auto build test ERROR on net-next/master]
 
-> Anyway if you look at that patches I sent then I call in the driver
-> of_alias_get_highest_id("serial") which doesn't take care if alias match
-> with actual driver. It means having information about max alias ID which
-> match actual driver that would be helpful but I am not quite sure what
-> should be the flow.
+> url:
+https://github.com/0day-ci/linux/commits/Eric-Dumazet/tcp-add-TCP_ZEROCOPY_RECEIVE-support-for-zerocopy-receive/20180427-122234
+> config: sh-rsk7269_defconfig (attached as .config)
+> compiler: sh4-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
+> reproduce:
+>          wget
+https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O
+~/bin/make.cross
+>          chmod +x ~/bin/make.cross
+>          # save the attached .config to linux build tree
+>          make.cross ARCH=sh
 
-I'm a bit confused as to why you use of_alias_get_highest_id and
-of_alias_check_id. of_alias_get_highest_id is really intended if  you
-want to start dynamic allocations above all the alias ids.
+> All errors (new ones prefixed by >>):
 
-I guess the need to match devices is based on each serial driver
-having it's own major and /dev name. IMO, we should get rid of those
-and every serial driver use ttySn (with the exception of things like
-USB serial). Then you'd just need to find all serial aliases. But you
-can support both with this function. Just return a bitmap of all
-aliases if match is NULL.
+>     net/ipv4/tcp.o: In function `tcp_setsockopt':
+> >> tcp.c:(.text+0x3f80): undefined reference to `zap_page_range'
 
-> Any link to similar function would be good to understand how the flow is
-> supposed to work.
+I guess this tcp zerocopy stuff depends on CONFIG_MMU
 
-I don't think there's a good model. The pl011 code looks broken to me.
-The warning about devices with and without aliases should be fixed.
-That is perfectly valid and should be supported. You should really
-only need an alias for your console.
-
-Rob
+Thanks.
