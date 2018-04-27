@@ -1,42 +1,41 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZp6xdLprFc3aml+ts3eVIEgQpzt04zqEZTbj3qbi55S181leBhmDGcC9PvbXZlvkptW0BOH
-ARC-Seal: i=1; a=rsa-sha256; t=1524838054; cv=none;
+X-Google-Smtp-Source: AB8JxZpja6ET0h0NHz411pbCwBs8WwpgxYYqKINWjz7runmv3OgKGEQ+dfkWXBK3HQU87w3JBMMw
+ARC-Seal: i=1; a=rsa-sha256; t=1524838046; cv=none;
         d=google.com; s=arc-20160816;
-        b=Xg9YqhBjdcMuvKS6tQDS8UldlKn9v2XwY2Ml7jToIlYW0bxX019M9BL7jJh7M0ct8z
-         ynFYKOV2CkoUh6LbGSPBECnBvCiDGFozHVrS77hCHy3YPVkqu5GnzVEFgTAzXYQGaMfG
-         TogxC63w27/YEt6+vvI+xuIS2mv8Fh19TFEaQJUu/bcsVUUGMWr4CNjcxFMeXEtbLjkR
-         JyC5XB7uFVsW46RYVh5mj4q4DK6AvXzMaIk70pBqHwkzj1tZOUaA7L/R7lHdgmTSYU8w
-         z9Z8pWpwPyaDLzKgrSGdmCsomEgYVrsPYotDBWLmqp/Sahe91cF1MRTqRVz2Q2h15AOY
-         fSBw==
+        b=opORuCkLgxocR3hy7NsnD9PCakHX4SpJk1QX973bpBryEMncxBDVKzH2yOauGQ6yr8
+         +l6kJtD30VHisSTswY26VipEPIlFmZUKXBKkQ7Hx5yF03rEuC7GO1krGBGNPTmxdeHXc
+         Xa6s1h3XHPnFseDfZKbdYaPKNyV4QN6RQStnylFcaA7QZvakcQgpsYKf74rW9ZFSi711
+         3/0dIeP6iGatARq8K62oMdb/pLaOfnXcRScwR0XgywhFy+PBhX1e74mHYh/+hLsF3PRf
+         T4PVYzzGN73+PgvzAFZ5PbiaROPjU6fdRQeYbDWSAQM1ABBkDh8hCPTkK6B/gkP/kW0b
+         kAmA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=ceD8Sx5Wa3aouPEc/Qy9zLNT/sSUDVzsvzU0Ah5tICI=;
-        b=pY63vrhH34FK2yB//BfjjGMnk5IIxBr/VComYvRrcSGCEEBiJWTX7QsG1+H0ayA1nR
-         55WRzwWW5AtiKGmr6hElbBd7m2ZhMYP/FHCXFmUwX0WxOXM2ygz8JF1wKJ81dwZYvEOg
-         kWR/647EPVh4tGmoCs+BK+Dvf4X/k+218/FRfP4QAwuG9TcG1U/go1BM/985GhW/7DBB
-         goDXE8Z4csLWxt4mU3v2Qjz7htG58ah/5Cp7ubdI1OEhl618ZCNWuzxiQNTGtHa+Ij1W
-         ITqmin2MlytPFGUOC15C9rg6BwUfAMVXte7CSdPGXbENg47yMEL3iNMmbs+dDs513ZTd
-         nAAQ==
+        bh=PfZO5/kB52EWxITM/aW/CuCzVSZM93fvXrr3v29B4A0=;
+        b=ukfYlmuebkF9ZYZqdl4z8gT02noE9Rbnwb6IsswqeRP8jiFstaIRkFn6gBU2wYV5K0
+         M/R1BoLT7YfVOBbp/6wfV3//9q2f2E9V5exj6F4AQyNXUjGNdZVNuZnCcYfbpk6wLT87
+         +0Wv+gISIvLpw27+uOAeaRKZBhunz31jBcA+WD2HF0Jtlgc5SP1lK18Y8mli0YEc5n9b
+         zyWT2FBxxMiAp0V5okpeMQQpv74YbzFQ5woSQ8AoBZonZ9kxigP/HR+KCw4m1S+ZWxaQ
+         vMAxDb2cWamstzwxTNpteFpaG722AhvHBUkHmApRHZqXl3gyV/BFvM9SPHpptt0VVHJ6
+         Jggw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B05A218C5
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5310A218C5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Martin Schwidefsky <schwidefsky@de.ibm.com>,
-	Christian Borntraeger <borntraeger@de.ibm.com>,
-	David Hildenbrand <david@redhat.com>,
-	Cornelia Huck <cohuck@redhat.com>,
-	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
-Subject: [PATCH 4.14 44/80] KVM: s390: wire up bpb feature
-Date: Fri, 27 Apr 2018 15:58:37 +0200
-Message-Id: <20180427135735.188588078@linuxfoundation.org>
+	Eric Dumazet <edumazet@google.com>,
+	syzbot <syzkaller@googlegroups.com>,
+	David Ahern <dsahern@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 09/80] ipv6: add RTA_TABLE and RTA_PREFSRC to rtm_ipv6_policy
+Date: Fri, 27 Apr 2018 15:58:02 +0200
+Message-Id: <20180427135733.408783956@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135732.928644313@linuxfoundation.org>
 References: <20180427135732.928644313@linuxfoundation.org>
@@ -46,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908252112326742?=
-X-GMAIL-MSGID: =?utf-8?q?1598908587325299365?=
+X-GMAIL-THRID: =?utf-8?q?1598908121828703202?=
+X-GMAIL-MSGID: =?utf-8?q?1598908579157234418?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,155 +54,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+From: Eric Dumazet <edumazet@google.com>
 
 
-From: Christian Borntraeger <borntraeger@de.ibm.com>
+[ Upstream commit aa8f8778493c85fff480cdf8b349b1e1dcb5f243 ]
 
-[ Upstream commit 35b3fde6203b932b2b1a5b53b3d8808abc9c4f60 ]
+KMSAN reported use of uninit-value that I tracked to lack
+of proper size check on RTA_TABLE attribute.
 
-The new firmware interfaces for branch prediction behaviour changes
-are transparently available for the guest. Nevertheless, there is
-new state attached that should be migrated and properly resetted.
-Provide a mechanism for handling reset, migration and VSIE.
+I also believe RTA_PREFSRC lacks a similar check.
 
-Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
-Reviewed-by: David Hildenbrand <david@redhat.com>
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
-[Changed capability number to 152. - Radim]
-Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Fixes: 86872cb57925 ("[IPv6] route: FIB6 configuration using struct fib6_config")
+Fixes: c3968a857a6b ("ipv6: RTA_PREFSRC support for ipv6 route source address selection")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Acked-by: David Ahern <dsahern@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/s390/include/asm/kvm_host.h |    3 ++-
- arch/s390/include/uapi/asm/kvm.h |    5 ++++-
- arch/s390/kvm/kvm-s390.c         |   12 ++++++++++++
- arch/s390/kvm/vsie.c             |   10 ++++++++++
- include/uapi/linux/kvm.h         |    1 +
- 5 files changed, 29 insertions(+), 2 deletions(-)
+ net/ipv6/route.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/arch/s390/include/asm/kvm_host.h
-+++ b/arch/s390/include/asm/kvm_host.h
-@@ -210,7 +210,8 @@ struct kvm_s390_sie_block {
- 	__u16	ipa;			/* 0x0056 */
- 	__u32	ipb;			/* 0x0058 */
- 	__u32	scaoh;			/* 0x005c */
--	__u8	reserved60;		/* 0x0060 */
-+#define FPF_BPBC 	0x20
-+	__u8	fpf;			/* 0x0060 */
- #define ECB_GS		0x40
- #define ECB_TE		0x10
- #define ECB_SRSI	0x04
---- a/arch/s390/include/uapi/asm/kvm.h
-+++ b/arch/s390/include/uapi/asm/kvm.h
-@@ -228,6 +228,7 @@ struct kvm_guest_debug_arch {
- #define KVM_SYNC_RICCB  (1UL << 7)
- #define KVM_SYNC_FPRS   (1UL << 8)
- #define KVM_SYNC_GSCB   (1UL << 9)
-+#define KVM_SYNC_BPBC   (1UL << 10)
- /* length and alignment of the sdnx as a power of two */
- #define SDNXC 8
- #define SDNXL (1UL << SDNXC)
-@@ -251,7 +252,9 @@ struct kvm_sync_regs {
- 	};
- 	__u8  reserved[512];	/* for future vector expansion */
- 	__u32 fpc;		/* valid on KVM_SYNC_VRS or KVM_SYNC_FPRS */
--	__u8 padding1[52];	/* riccb needs to be 64byte aligned */
-+	__u8 bpbc : 1;		/* bp mode */
-+	__u8 reserved2 : 7;
-+	__u8 padding1[51];	/* riccb needs to be 64byte aligned */
- 	__u8 riccb[64];		/* runtime instrumentation controls block */
- 	__u8 padding2[192];	/* sdnx needs to be 256byte aligned */
- 	union {
---- a/arch/s390/kvm/kvm-s390.c
-+++ b/arch/s390/kvm/kvm-s390.c
-@@ -449,6 +449,9 @@ int kvm_vm_ioctl_check_extension(struct
- 	case KVM_CAP_S390_GS:
- 		r = test_facility(133);
- 		break;
-+	case KVM_CAP_S390_BPB:
-+		r = test_facility(82);
-+		break;
- 	default:
- 		r = 0;
- 	}
-@@ -2231,6 +2234,8 @@ int kvm_arch_vcpu_init(struct kvm_vcpu *
- 	kvm_s390_set_prefix(vcpu, 0);
- 	if (test_kvm_facility(vcpu->kvm, 64))
- 		vcpu->run->kvm_valid_regs |= KVM_SYNC_RICCB;
-+	if (test_kvm_facility(vcpu->kvm, 82))
-+		vcpu->run->kvm_valid_regs |= KVM_SYNC_BPBC;
- 	if (test_kvm_facility(vcpu->kvm, 133))
- 		vcpu->run->kvm_valid_regs |= KVM_SYNC_GSCB;
- 	/* fprs can be synchronized via vrs, even if the guest has no vx. With
-@@ -2372,6 +2377,7 @@ static void kvm_s390_vcpu_initial_reset(
- 	current->thread.fpu.fpc = 0;
- 	vcpu->arch.sie_block->gbea = 1;
- 	vcpu->arch.sie_block->pp = 0;
-+	vcpu->arch.sie_block->fpf &= ~FPF_BPBC;
- 	vcpu->arch.pfault_token = KVM_S390_PFAULT_TOKEN_INVALID;
- 	kvm_clear_async_pf_completion_queue(vcpu);
- 	if (!kvm_s390_user_cpu_state_ctrl(vcpu->kvm))
-@@ -3318,6 +3324,11 @@ static void sync_regs(struct kvm_vcpu *v
- 		vcpu->arch.sie_block->ecd |= ECD_HOSTREGMGMT;
- 		vcpu->arch.gs_enabled = 1;
- 	}
-+	if ((kvm_run->kvm_dirty_regs & KVM_SYNC_BPBC) &&
-+	    test_kvm_facility(vcpu->kvm, 82)) {
-+		vcpu->arch.sie_block->fpf &= ~FPF_BPBC;
-+		vcpu->arch.sie_block->fpf |= kvm_run->s.regs.bpbc ? FPF_BPBC : 0;
-+	}
- 	save_access_regs(vcpu->arch.host_acrs);
- 	restore_access_regs(vcpu->run->s.regs.acrs);
- 	/* save host (userspace) fprs/vrs */
-@@ -3364,6 +3375,7 @@ static void store_regs(struct kvm_vcpu *
- 	kvm_run->s.regs.pft = vcpu->arch.pfault_token;
- 	kvm_run->s.regs.pfs = vcpu->arch.pfault_select;
- 	kvm_run->s.regs.pfc = vcpu->arch.pfault_compare;
-+	kvm_run->s.regs.bpbc = (vcpu->arch.sie_block->fpf & FPF_BPBC) == FPF_BPBC;
- 	save_access_regs(vcpu->run->s.regs.acrs);
- 	restore_access_regs(vcpu->arch.host_acrs);
- 	/* Save guest register state */
---- a/arch/s390/kvm/vsie.c
-+++ b/arch/s390/kvm/vsie.c
-@@ -234,6 +234,12 @@ static void unshadow_scb(struct kvm_vcpu
- 	memcpy(scb_o->gcr, scb_s->gcr, 128);
- 	scb_o->pp = scb_s->pp;
+--- a/net/ipv6/route.c
++++ b/net/ipv6/route.c
+@@ -2959,6 +2959,7 @@ void rt6_mtu_change(struct net_device *d
  
-+	/* branch prediction */
-+	if (test_kvm_facility(vcpu->kvm, 82)) {
-+		scb_o->fpf &= ~FPF_BPBC;
-+		scb_o->fpf |= scb_s->fpf & FPF_BPBC;
-+	}
-+
- 	/* interrupt intercept */
- 	switch (scb_s->icptcode) {
- 	case ICPT_PROGI:
-@@ -280,6 +286,7 @@ static int shadow_scb(struct kvm_vcpu *v
- 	scb_s->ecb3 = 0;
- 	scb_s->ecd = 0;
- 	scb_s->fac = 0;
-+	scb_s->fpf = 0;
+ static const struct nla_policy rtm_ipv6_policy[RTA_MAX+1] = {
+ 	[RTA_GATEWAY]           = { .len = sizeof(struct in6_addr) },
++	[RTA_PREFSRC]		= { .len = sizeof(struct in6_addr) },
+ 	[RTA_OIF]               = { .type = NLA_U32 },
+ 	[RTA_IIF]		= { .type = NLA_U32 },
+ 	[RTA_PRIORITY]          = { .type = NLA_U32 },
+@@ -2970,6 +2971,7 @@ static const struct nla_policy rtm_ipv6_
+ 	[RTA_EXPIRES]		= { .type = NLA_U32 },
+ 	[RTA_UID]		= { .type = NLA_U32 },
+ 	[RTA_MARK]		= { .type = NLA_U32 },
++	[RTA_TABLE]		= { .type = NLA_U32 },
+ };
  
- 	rc = prepare_cpuflags(vcpu, vsie_page);
- 	if (rc)
-@@ -339,6 +346,9 @@ static int shadow_scb(struct kvm_vcpu *v
- 			prefix_unmapped(vsie_page);
- 		scb_s->ecb |= ECB_TE;
- 	}
-+	/* branch prediction */
-+	if (test_kvm_facility(vcpu->kvm, 82))
-+		scb_s->fpf |= scb_o->fpf & FPF_BPBC;
- 	/* SIMD */
- 	if (test_kvm_facility(vcpu->kvm, 129)) {
- 		scb_s->eca |= scb_o->eca & ECA_VX;
---- a/include/uapi/linux/kvm.h
-+++ b/include/uapi/linux/kvm.h
-@@ -931,6 +931,7 @@ struct kvm_ppc_resize_hpt {
- #define KVM_CAP_PPC_SMT_POSSIBLE 147
- #define KVM_CAP_HYPERV_SYNIC2 148
- #define KVM_CAP_HYPERV_VP_INDEX 149
-+#define KVM_CAP_S390_BPB 152
- 
- #ifdef KVM_CAP_IRQ_ROUTING
- 
+ static int rtm_to_fib6_config(struct sk_buff *skb, struct nlmsghdr *nlh,
