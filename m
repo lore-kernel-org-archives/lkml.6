@@ -1,42 +1,40 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrTHUthZ0U2Ld77dwIBo4UNtcYsZWvFQIVkDKcieCcZdtd+CccETTrQqGCEU3/CwJ52C4uh
-ARC-Seal: i=1; a=rsa-sha256; t=1524838112; cv=none;
+X-Google-Smtp-Source: AB8JxZqrRp1vNKLX29G1cBzuLuduUcwSXaUnnPeUOjG2zQ9jFVyNofRNnXlUUuYIaajT5PRitx7N
+ARC-Seal: i=1; a=rsa-sha256; t=1524838109; cv=none;
         d=google.com; s=arc-20160816;
-        b=bIBLtkkqdpez7Ia2qq4QAqq2X4utMu//OqmxoKHKIuOUoabsqd40y74mgnOBUh6JbD
-         354JR93x5l2mfkpPEWWtKTIV5mUDo/PrKJ3FQhGg21B7S91WAATKC4QBCqWyLckg7Dkb
-         pzHGvuS6DJhfK3dOx596RX5SN1gYu6tSP7t2qgG3OOnuEqDXfLmNPG2TfT1EiNKKpy/9
-         iNjxWVjcWexNvcnC6oF5y76Ma+Ylip/kLSR6LIU/YjOiCHXvI5OzkYUXaocMBZxE4Php
-         f/+W6nNNnc7XJTMbMiWh8RigbCfTlgiwlXz9oH5YcWXZDdO+9ZpA1OMkEMRzHRJbv7Kx
-         yrBg==
+        b=Dh8po9eNUYT4L1QE/dE0Md3aiTMEbpvceGCF02VjBVg0VSVGx9+L6A895uVCkTMd6+
+         44GuNBarREQMlgbE7tpYBcuTwmiUDtlOCOPcyw92fSjYbpTfWwnlpUwFdfoc7woWL4Im
+         c+VdKu8aQCMcmTCY8z1mcpAltsogHo6qw+bxfrXGhB5WvWmsoTj5X/FSfdlDVvtKF7/e
+         F8g53AFHhIDyJUS7/nva8tp6bMJTwldV1fJonqoqO3BrQPEfhtNY7Qmh+C6tu5oeLIRh
+         3zwhCEvOw+sh4eamQb+kMg7HEtT9IhFykQiQAKFfLWmJGdI1ASl4TO3ZQOhqQdXLHNIM
+         vmaA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=j9MWW2fvEwlyN/5iVL9sQhV7sBR80PlMXvjbt27kVRU=;
-        b=yjWmU/Z4nRM/u1dmfnM9shZJeNnGDx1Tbmxo1lfnsu7T1uUHa0KGwFmEwRlPH/uN9I
-         Ck6HHk2/yLwsa0IfoNSJ+Ydh12vng7zu0EWN6KcL27ZryVw++OuBILQKv8H3dzZlruLY
-         mLWdNtWCqABAZ00jFmuW5fnnjNco7Lk1djqR19nOjdqwd9aMepzgzw1GgnMbdubKVokI
-         ZhxFzq0cNDE6hgFgeTEx2j+Bnd9Nwy7vKiUyWRCtlw3m3CZ/dzpVEscV69WEFIG9OM00
-         WlHKLo8nPCu8xOkbMSnAYeK/C/hmKx/h32IkUSNZTN7sooOpuBMuMMmMHKkWpFZO46sx
-         FWHg==
+        bh=uyyS9GPBdiuHsgzECIK2tHI6EHk23WukbG5QwETCCX8=;
+        b=Iu7absLWFdvrvHWpSD/1VfwG3nZ2kFieVENqSxCZLPk95Zji61u2sMbDuQggxFLX36
+         oZ0a4rSfTNrRShqiZBoUX5tAejPT1ukv7lQzGyBDS8T6TyqaB+NYHOqm8Xa17DhxtYzn
+         d5Yj4/nYYxnLigixDGTSYJ4sx7ABvAyLQNeQIdKjhHzRMDaXcy2LotnW7iPrCLHMD5y/
+         oIncbDMo/cfk3mDyHgpNW4iemPICamqvw1IdBiJHQcHqmM/BIPU48wJvj2SBkE85GeBj
+         b/osMGeoY1VrALmkih3WJCFwoGGiTtxkC3llp6CPkIwV2yin33ScpcOUFlSa7mAuo0zl
+         KnNg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F066218D1
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5E3E21892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-	syzbot <syzbot+9369930ca44f29e60e2d@syzkaller.appspotmail.com>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	James Morris <james.morris@microsoft.com>,
-	"Eric W. Biederman" <ebiederm@xmission.com>
-Subject: [PATCH 4.14 64/80] commoncap: Handle memory allocation failure.
-Date: Fri, 27 Apr 2018 15:58:57 +0200
-Message-Id: <20180427135736.214606832@linuxfoundation.org>
+	kernel test robot <lkp@intel.com>,
+	Cong Wang <xiyou.wangcong@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 37/80] llc: fix NULL pointer deref for SOCK_ZAPPED
+Date: Fri, 27 Apr 2018 15:58:30 +0200
+Message-Id: <20180427135734.835304023@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135732.928644313@linuxfoundation.org>
 References: <20180427135732.928644313@linuxfoundation.org>
@@ -46,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908648105259176?=
-X-GMAIL-MSGID: =?utf-8?q?1598908648105259176?=
+X-GMAIL-THRID: =?utf-8?q?1598908105270702201?=
+X-GMAIL-MSGID: =?utf-8?q?1598908645686529474?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,37 +53,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-commit 1f5781725dcbb026438e77091c91a94f678c3522 upstream.
 
-syzbot is reporting NULL pointer dereference at xattr_getsecurity() [1],
-for cap_inode_getsecurity() is returning sizeof(struct vfs_cap_data) when
-memory allocation failed. Return -ENOMEM if memory allocation failed.
+[ Upstream commit 3a04ce7130a7e5dad4e78d45d50313747f8c830f ]
 
-[1] https://syzkaller.appspot.com/bug?id=a55ba438506fe68649a5f50d2d82d56b365e0107
+For SOCK_ZAPPED socket, we don't need to care about llc->sap,
+so we should just skip these refcount functions in this case.
 
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Fixes: 8db6c34f1dbc8e06 ("Introduce v3 namespaced file capabilities")
-Reported-by: syzbot <syzbot+9369930ca44f29e60e2d@syzkaller.appspotmail.com>
-Cc: stable <stable@vger.kernel.org> # 4.14+
-Acked-by: Serge E. Hallyn <serge@hallyn.com>
-Acked-by: James Morris <james.morris@microsoft.com>
-Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
+Fixes: f7e43672683b ("llc: hold llc_sap before release_sock()")
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- security/commoncap.c |    2 ++
- 1 file changed, 2 insertions(+)
+ net/llc/af_llc.c |   21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
 
---- a/security/commoncap.c
-+++ b/security/commoncap.c
-@@ -449,6 +449,8 @@ int cap_inode_getsecurity(struct inode *
- 				magic |= VFS_CAP_FLAGS_EFFECTIVE;
- 			memcpy(&cap->data, &nscap->data, sizeof(__le32) * 2 * VFS_CAP_U32);
- 			cap->magic_etc = cpu_to_le32(magic);
-+		} else {
-+			size = -ENOMEM;
- 		}
- 	}
- 	kfree(tmpbuf);
+--- a/net/llc/af_llc.c
++++ b/net/llc/af_llc.c
+@@ -189,7 +189,6 @@ static int llc_ui_release(struct socket
+ {
+ 	struct sock *sk = sock->sk;
+ 	struct llc_sock *llc;
+-	struct llc_sap *sap;
+ 
+ 	if (unlikely(sk == NULL))
+ 		goto out;
+@@ -200,15 +199,19 @@ static int llc_ui_release(struct socket
+ 		llc->laddr.lsap, llc->daddr.lsap);
+ 	if (!llc_send_disc(sk))
+ 		llc_ui_wait_for_disc(sk, sk->sk_rcvtimeo);
+-	sap = llc->sap;
+-	/* Hold this for release_sock(), so that llc_backlog_rcv() could still
+-	 * use it.
+-	 */
+-	llc_sap_hold(sap);
+-	if (!sock_flag(sk, SOCK_ZAPPED))
++	if (!sock_flag(sk, SOCK_ZAPPED)) {
++		struct llc_sap *sap = llc->sap;
++
++		/* Hold this for release_sock(), so that llc_backlog_rcv()
++		 * could still use it.
++		 */
++		llc_sap_hold(sap);
+ 		llc_sap_remove_socket(llc->sap, sk);
+-	release_sock(sk);
+-	llc_sap_put(sap);
++		release_sock(sk);
++		llc_sap_put(sap);
++	} else {
++		release_sock(sk);
++	}
+ 	if (llc->dev)
+ 		dev_put(llc->dev);
+ 	sock_put(sk);
