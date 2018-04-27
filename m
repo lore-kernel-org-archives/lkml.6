@@ -1,52 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934344AbeD0OwJ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 10:52:09 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:41769 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934268AbeD0OwF (ORCPT
+        id S934460AbeD0OxK (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 10:53:10 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:53404 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934199AbeD0OxI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 10:52:05 -0400
-X-Google-Smtp-Source: AB8JxZpqvvYop3+/ci567ibBcAUQNOCBiGV4yL3hk8ILh+PW0GzOTuQrYY+cvTfvzmvfqq6641DQ/Q==
-From: Ilya Dryomov <idryomov@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Ceph fixes for 4.17-rc3
-Date: Fri, 27 Apr 2018 16:51:32 +0200
-Message-Id: <1524840692-30949-1-git-send-email-idryomov@gmail.com>
-X-Mailer: git-send-email 2.4.3
+        Fri, 27 Apr 2018 10:53:08 -0400
+From: Pavel Tatashin <pasha.tatashin@oracle.com>
+To: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
+        akpm@linux-foundation.org, kirill.shutemov@linux.intel.com,
+        linux-kernel@vger.kernel.org, mhocko@suse.com, linux-mm@kvack.org
+Subject: [PATCH v2] mm: sections are not offlined during memory hotremove
+Date: Fri, 27 Apr 2018 10:52:57 -0400
+Message-Id: <20180427145257.15222-1-pasha.tatashin@oracle.com>
+X-Mailer: git-send-email 2.17.0
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8875 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=815
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804270143
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Memory hotplug, and hotremove operate with per-block granularity. If
+machine has large amount of memory (more than 64G), the size of memory
+block can span multiple sections. By mistake, during hotremove we set
+only the first section to offline state.
 
-The following changes since commit 6d08b06e67cd117f6992c46611dfb4ce267cd71e:
+The bug was discovered because kernel selftest started to fail:
+https://lkml.kernel.org/r/20180423011247.GK5563@yexl-desktop
 
-  Linux 4.17-rc2 (2018-04-22 19:20:09 -0700)
+After commit, "mm/memory_hotplug: optimize probe routine". But, the bug is
+older than this commit. In this optimization we also added a check for
+sections to be in a proper state during hotplug operation.
 
-are available in the git repository at:
+Fixes: 2d070eab2e82 ("mm: consider zone which is not fully populated to have holes")
 
-  https://github.com/ceph/ceph-client.git tags/ceph-for-4.17-rc3
+Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Cc: stable@vger.kernel.org
 
-for you to fetch changes up to 9c55ad1c214d9f8c4594ac2c3fa392c1c32431a7:
+---
+ mm/sparse.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-  libceph: validate con->state at the top of try_write() (2018-04-26 17:39:08 +0200)
-
-----------------------------------------------------------------
-A CephFS quota follow-up and fixes for two older issues in the
-messenger layer, marked for stable.
-
-----------------------------------------------------------------
-Ilya Dryomov (3):
-      libceph: un-backoff on tick when we have a authenticated session
-      libceph: reschedule a tick in finish_hunting()
-      libceph: validate con->state at the top of try_write()
-
-Yan, Zheng (1):
-      ceph: check if mds create snaprealm when setting quota
-
- fs/ceph/xattr.c       | 28 +++++++++++++++++++++++++---
- net/ceph/messenger.c  |  7 +++++++
- net/ceph/mon_client.c | 14 +++++++++++---
- 3 files changed, 43 insertions(+), 6 deletions(-)
+diff --git a/mm/sparse.c b/mm/sparse.c
+index 62eef264a7bd..73dc2fcc0eab 100644
+--- a/mm/sparse.c
++++ b/mm/sparse.c
+@@ -629,7 +629,7 @@ void offline_mem_sections(unsigned long start_pfn, unsigned long end_pfn)
+ 	unsigned long pfn;
+ 
+ 	for (pfn = start_pfn; pfn < end_pfn; pfn += PAGES_PER_SECTION) {
+-		unsigned long section_nr = pfn_to_section_nr(start_pfn);
++		unsigned long section_nr = pfn_to_section_nr(pfn);
+ 		struct mem_section *ms;
+ 
+ 		/*
+-- 
+2.17.0
