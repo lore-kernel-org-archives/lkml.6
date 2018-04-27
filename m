@@ -1,97 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1759160AbeD0Tyh (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 15:54:37 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:36467 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758787AbeD0Tyf (ORCPT
+        id S1759136AbeD0Tzx (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 15:55:53 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:40169 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758979AbeD0Tzv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 15:54:35 -0400
-X-Google-Smtp-Source: AB8JxZo0NlCEBuuVPOCklQ6C2UIbZ7RRtKrsvjTtrhwjVTC0aPU6swv9L566zhcYbJcStiL9+iZ4mQ==
-From: Sami Tolvanen <samitolvanen@google.com>
-To: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Cc: Kees Cook <keescook@chromium.org>, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Sami Tolvanen <samitolvanen@google.com>
-Subject: [PATCH] media: media-device: fix ioctl function types
-Date: Fri, 27 Apr 2018 12:54:30 -0700
-Message-Id: <20180427195430.237342-1-samitolvanen@google.com>
-X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
+        Fri, 27 Apr 2018 15:55:51 -0400
+X-Google-Smtp-Source: AB8JxZqaMSeXodpHH+i9qIa7f6F/UFiNvp5GMpNwAbzIlX3pwlsPMteeMixzE7PW5oMoXd4Nq3/l5Q==
+Date: Fri, 27 Apr 2018 14:55:49 -0500
+From: Rob Herring <robh@kernel.org>
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
+        devicetree@vger.kernel.org, ulf.hansson@linaro.org, heiko@sntech.de,
+        linux-pm@vger.kernel.org, dbasehore@chromium.org,
+        linux-kernel@vger.kernel.org, dianders@google.com, groeck@chromium.org,
+        kernel@collabora.com, hl@rock-chips.com,
+        Nick Milner <nick.milner@collabora.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v2 1/5] dt-bindings: devfreq: rk3399_dmc: improve binding
+ documentation.
+Message-ID: <20180427195549.mk7zklh4nfli3qj2@rob-hp-laptop>
+References: <20180424083742.14042-1-enric.balletbo@collabora.com>
+ <20180424083742.14042-2-enric.balletbo@collabora.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180424083742.14042-2-enric.balletbo@collabora.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This change fixes function types for media device ioctls to avoid
-indirect call mismatches with Control-Flow Integrity checking.
+On Tue, Apr 24, 2018 at 10:37:38AM +0200, Enric Balletbo i Serra wrote:
+> From: Nick Milner <nick.milner@collabora.com>
+> 
+> There are several typos, references to non existent files, grammar and
+> punctuation mistakes in the rk3399_dmc.txt binding. This patch tries
+> to improve the binding documentation and fix these mistakes.
+> 
+> Signed-off-by: Nick Milner <nick.milner@collabora.com>
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+> ---
+> 
+> Changes in v2:
+> - [1/6] Add Acked-by MyungJoo Ham.
+> - [6/6] Removed this patch from this series.
+> 
+>  .../bindings/devfreq/rk3399_dmc.txt           | 207 +++++++++---------
+>  1 file changed, 105 insertions(+), 102 deletions(-)
 
-Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
----
- drivers/media/media-device.c | 21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/media/media-device.c b/drivers/media/media-device.c
-index 35e81f7c0d2f..bc5c024906e6 100644
---- a/drivers/media/media-device.c
-+++ b/drivers/media/media-device.c
-@@ -54,9 +54,10 @@ static int media_device_close(struct file *filp)
- 	return 0;
- }
- 
--static int media_device_get_info(struct media_device *dev,
--				 struct media_device_info *info)
-+static long media_device_get_info(struct media_device *dev, void *arg)
- {
-+	struct media_device_info *info = (struct media_device_info *)arg;
-+
- 	memset(info, 0, sizeof(*info));
- 
- 	if (dev->driver_name[0])
-@@ -93,9 +94,9 @@ static struct media_entity *find_entity(struct media_device *mdev, u32 id)
- 	return NULL;
- }
- 
--static long media_device_enum_entities(struct media_device *mdev,
--				       struct media_entity_desc *entd)
-+static long media_device_enum_entities(struct media_device *mdev, void *arg)
- {
-+	struct media_entity_desc *entd = (struct media_entity_desc *)arg;
- 	struct media_entity *ent;
- 
- 	ent = find_entity(mdev, entd->id);
-@@ -146,9 +147,9 @@ static void media_device_kpad_to_upad(const struct media_pad *kpad,
- 	upad->flags = kpad->flags;
- }
- 
--static long media_device_enum_links(struct media_device *mdev,
--				    struct media_links_enum *links)
-+static long media_device_enum_links(struct media_device *mdev, void *arg)
- {
-+	struct media_links_enum *links = (struct media_links_enum *)arg;
- 	struct media_entity *entity;
- 
- 	entity = find_entity(mdev, links->entity);
-@@ -195,9 +196,9 @@ static long media_device_enum_links(struct media_device *mdev,
- 	return 0;
- }
- 
--static long media_device_setup_link(struct media_device *mdev,
--				    struct media_link_desc *linkd)
-+static long media_device_setup_link(struct media_device *mdev, void *arg)
- {
-+	struct media_link_desc *linkd = (struct media_link_desc *)arg;
- 	struct media_link *link = NULL;
- 	struct media_entity *source;
- 	struct media_entity *sink;
-@@ -225,9 +226,9 @@ static long media_device_setup_link(struct media_device *mdev,
- 	return __media_entity_setup_link(link, linkd->flags);
- }
- 
--static long media_device_get_topology(struct media_device *mdev,
--				      struct media_v2_topology *topo)
-+static long media_device_get_topology(struct media_device *mdev, void *arg)
- {
-+	struct media_v2_topology *topo = (struct media_v2_topology *)arg;
- 	struct media_entity *entity;
- 	struct media_interface *intf;
- 	struct media_pad *pad;
--- 
-2.17.0.441.gb46fe60e1d-goog
+Reviewed-by: Rob Herring <robh@kernel.org>
