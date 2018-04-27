@@ -1,189 +1,200 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758169AbeD0Mdt (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 08:33:49 -0400
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:43808 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757569AbeD0Mdp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 08:33:45 -0400
-Subject: Re: [PATCH v7 0/7] clk: meson-axg: Add AO Cloclk and Reset driver
-To: Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
-References: <20180426084437.192394-1-yixun.lan@amlogic.com>
- <1524820841.4026.112.camel@baylibre.com>
- <fbd24a73-6793-76be-3ca5-04cbac5db198@amlogic.com>
- <1524823154.4026.123.camel@baylibre.com>
-CC: <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-From: Yixun Lan <yixun.lan@amlogic.com>
-Message-ID: <ab754711-f727-133c-7bc3-a9f3243c2278@amlogic.com>
-Date: Fri, 27 Apr 2018 20:33:42 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.5.1
+        id S1758189AbeD0Mgg (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 08:36:36 -0400
+Received: from foss.arm.com ([217.140.101.70]:39554 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1758014AbeD0Mgd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 08:36:33 -0400
+Subject: Re: [PATCH v1 4/4] iommu/tegra: gart: Optimize map/unmap
+To: Thierry Reding <thierry.reding@gmail.com>,
+        Dmitry Osipenko <digetx@gmail.com>, Joerg Roedel <joro@8bytes.org>
+Cc: linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>
+References: <cover.1523304324.git.digetx@gmail.com>
+ <f21a7b6a8f141b87f75687904a76f3728ea639a8.1523304324.git.digetx@gmail.com>
+ <20180427100202.GO30388@ulmo>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <716edf58-38a7-21e5-1668-b866bf392e34@arm.com>
+Date: Fri, 27 Apr 2018 13:36:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <1524823154.4026.123.camel@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20180427100202.GO30388@ulmo>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [61.173.0.49]
-X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
- (10.18.11.6)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jerome:
+Hi Thierry,
 
-
-On 04/27/2018 05:59 PM, Jerome Brunet wrote:
-> On Fri, 2018-04-27 at 17:31 +0800, Yixun Lan wrote:
->> hi Jerome:
+On 27/04/18 11:02, Thierry Reding wrote:
+> On Mon, Apr 09, 2018 at 11:07:22PM +0300, Dmitry Osipenko wrote:
+>> Currently GART writes one page entry at a time. More optimal would be to
+>> aggregate the writes and flush BUS buffer in the end, this gives map/unmap
+>> 10-40% (depending on size of mapping) performance boost compared to a
+>> flushing after each entry update.
 >>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>   drivers/iommu/tegra-gart.c | 63 +++++++++++++++++++++++++++++++++++-----------
+>>   1 file changed, 48 insertions(+), 15 deletions(-)
 >>
->> On 04/27/18 17:20, Jerome Brunet wrote:
->>> On Thu, 2018-04-26 at 16:44 +0800, Yixun Lan wrote:
->>>>   This patch try to add AO clock and Reset driver for Amlogic's
->>>> Meson-AXG SoC.
->>>>   Please note that patch 7 need to wait for the DTS changes[3] merged
->>>> into mainline first, otherwise it will break the serial console.
->>>>
->>>>  patch 2: factor the common code into a dedicated file
->>>>  patch 3-5: add the aoclk driver for AXG SoC
->>>>  patch 6-7: drop unnecessary clock flags
->>>>
->>>> changes since v6 at [7]: 
->>>>  - fix over 80 chars chechpatch error
->>>>  - add Philip's Ack on patch 5
->>>>  - drop extra end of newline
->>>>
->>>> changes since v5 at [6]: 
->>>>  - drop unnecessary header files
->>>>  - add 'axg_aoclk' prefix to clk driver, make them more consistent
->>>>  - add missing end new line..
->>>>
->>>> changes since v4 at [5]: 
->>>>  - fix return err
->>>>  - introduce CONFIG_COMMON_CLK_MESON_AO
->>>>  - format/style minor fix
->>>>
->>>> changes since v3 at [4]: 
->>>>  - add 'const' contraint to the read-only data
->>>>  - switch to devm_of_clk_add_hw_provider API
->>>>  - check return value of devm_reset_controller_register
->>>>
->>>> changes since v2 at [2]: 
->>>>  - rework meson_aoclkc_probe() which leverage the of_match_data
->>>>  - merge patch 5-6 into this series
->>>>  - seperate DTS patch, will send to Kevin Hilman independently
->>>>  
->>>> changes since v1 at [0]: 
->>>>  - rebase to clk-meson's branch 'next/drivers' [1]
->>>>  - fix license, update to BSD-3-Clause
->>>>  - drop un-used include header file
->>>>
->>>> [0] https://lkml.kernel.org/r/20180209070026.193879-1-yixun.lan@amlogic.com
->>>> [1] git://github.com/BayLibre/clk-meson.git branch: next-drivers
->>>> [2] https://lkml.kernel.org/r/20180323143816.200573-1-yixun.lan@amlogic.com
->>>> [3] https://lkml.kernel.org/r/20180326081809.49493-4-yixun.lan@amlogic.com
->>>> [4] https://lkml.kernel.org/r/20180328025050.221585-1-yixun.lan@amlogic.com
->>>> [5] https://lkml.kernel.org/r/20180408031938.153474-1-yixun.lan@amlogic.com
->>>> [6] https://lkml.kernel.org/r/20180409143749.71197-1-yixun.lan@amlogic.com
->>>> [7] https://lkml.kernel.org/r/20180419135426.155794-1-yixun.lan@amlogic.com
->>>
->>> Yixun,
->>>
->>> Your series looks mostly Ok to me, apart from the problem reported by Philipp.
->>>
->>> However, once applied, if the clkc ao controller is enabled, both gxl and axg
->>> fail to complete the boot. Could you please explain how this was tested ??
->>>
->>
->> isn't this caused by the patch 7?
->>  [PATCH v7 7/7] clk: meson: drop CLK_IGNORE_UNUSED flag
->>
->>
->> you need to also apply this DT patch which I've sent[1]:
->>  [PATCH v3 3/3] ARM64: dts: meson: fix clock source of the pclk for UART_AO
->>
->> could you exclude the patch 7 for now until Kevin merged the DT part?
->>
->> [1] https://lkml.kernel.org/r/20180328030130.240336-4-yixun.lan@amlogic.com
+>> diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
+>> index 4a0607669d34..9f59f5f17661 100644
+>> --- a/drivers/iommu/tegra-gart.c
+>> +++ b/drivers/iommu/tegra-gart.c
+>> @@ -36,7 +36,7 @@
+>>   #define GART_APERTURE_SIZE	SZ_32M
+>>   
+>>   /* bitmap of the page sizes currently supported */
+>> -#define GART_IOMMU_PGSIZES	(SZ_4K)
+>> +#define GART_IOMMU_PGSIZES	GENMASK(24, 12)
 > 
-> Looks to be the problem indeed. But it is still an issue with how your patchset
-> in organized.
+> That doesn't look right. The GART really only supports 4 KiB pages. You
+> seem to be "emulating" more page sizes here in order to improve mapping
+> performance. That seems wrong to me. I'm wondering if this couldn't be
+> improved by a similar factor by simply moving the flushing into an
+> implementation of ->iotlb_sync().
 > 
-> I can't merge this until Kevin merges the patch above, which he can't merge
-> until there is the clkc_ao support in axg, which is given by this series.
+> That said, it seems like ->iotlb_sync() is only used for unmapping, but
+> I don't see a reason why iommu_map() wouldn't need to call it as well
+> after going through several calls to ->map(). It seems to me like a
+> driver that implements ->iotlb_sync() would want to use it to optimize
+> for both the mapping and unmapping cases.
 > 
-> 1# You should remove the axg part of the patch above. Kevin will be able to
-> merge it w/o any dependencies. (BTW, the patch is broken for axg because 1) you
-> did not include the dt-binding header for the clkc_ao in axg and 2) the clkc_ao
-> does not exist at this stage)
-> 2# I can then safely merge this series - w/o breaking gxbb and gxl.
-> 3# Finally you'll have to make a DT change for the axg, enabling the clkc_ao and
-> changes the uart clocks at the same time.
+> Joerg, I've gone over the git log and header files and I see no mention
+> of why the TLB flush interface isn't used for mapping. Do you recall any
+> special reasons why the same shouldn't be applied for mapping? Would you
+> accept any patches doing this?
+
+In general, requiring TLB maintenance when transitioning from an invalid 
+entry to a valid one tends to be the exception rather than the norm, and 
+I think we ended up at the consensus that it wasn't worth the 
+complication of trying to cater for this in the generic iotlb API.
+
+To be fair, on simple hardware which doesn't implement multiple page 
+sizes with associated walk depth/TLB pressure benefits for larger ones, 
+there's no need for the IOMMU API (and/or the owner of the domain) to 
+try harder to use them, so handling "compound" page sizes within the 
+driver is a more reasonable thing to do. There is already some precedent 
+for this in other drivers (e.g. mtk_iommu_v1).
+
+Robin.
+
 > 
-
-  I didn't make myself clear in previous email
-
-  I mean, could you merge patch 1-6, just exclude the patch 7
-then kevin can merge the DT part (there are three patches) [1]
-after the DT patches merged, then you can take this patch 7
-This way, it won't break gxl or any other SoCs
-
-  I'm sending patch 7 along with this series, it would be better if I
-give a warning about it.
-
-[1] https://lkml.kernel.org/r20180328030130.240336-1-yixun.lan@amlogic.com
-
+> Thierry
+> 
+>>   
+>>   #define GART_REG_BASE		0x24
+>>   #define GART_CONFIG		(0x24 - GART_REG_BASE)
+>> @@ -269,25 +269,21 @@ static void gart_iommu_domain_free(struct iommu_domain *domain)
+>>   	kfree(gart_domain);
+>>   }
+>>   
+>> -static int gart_iommu_map(struct iommu_domain *domain, unsigned long iova,
+>> -			  phys_addr_t pa, size_t bytes, int prot)
+>> +static int gart_iommu_map_page(struct gart_device *gart,
+>> +			       unsigned long iova,
+>> +			       phys_addr_t pa)
+>>   {
+>> -	struct gart_domain *gart_domain = to_gart_domain(domain);
+>> -	struct gart_device *gart = gart_domain->gart;
+>>   	unsigned long flags;
+>>   	unsigned long pfn;
+>>   	unsigned long pte;
+>>   
+>> -	if (!gart_iova_range_valid(gart, iova, bytes))
+>> -		return -EINVAL;
+>> -
+>> -	spin_lock_irqsave(&gart->pte_lock, flags);
+>>   	pfn = __phys_to_pfn(pa);
+>>   	if (!pfn_valid(pfn)) {
+>>   		dev_err(gart->dev, "Invalid page: %pa\n", &pa);
+>> -		spin_unlock_irqrestore(&gart->pte_lock, flags);
+>>   		return -EINVAL;
+>>   	}
+>> +
+>> +	spin_lock_irqsave(&gart->pte_lock, flags);
+>>   	if (gart_debug) {
+>>   		pte = gart_read_pte(gart, iova);
+>>   		if (pte & GART_ENTRY_PHYS_ADDR_VALID) {
+>> @@ -297,8 +293,41 @@ static int gart_iommu_map(struct iommu_domain *domain, unsigned long iova,
+>>   		}
+>>   	}
+>>   	gart_set_pte(gart, iova, GART_PTE(pfn));
+>> +	spin_unlock_irqrestore(&gart->pte_lock, flags);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int gart_iommu_map(struct iommu_domain *domain, unsigned long iova,
+>> +			  phys_addr_t pa, size_t bytes, int prot)
+>> +{
+>> +	struct gart_domain *gart_domain = to_gart_domain(domain);
+>> +	struct gart_device *gart = gart_domain->gart;
+>> +	size_t mapped;
+>> +	int ret = -1;
+>> +
+>> +	if (!gart_iova_range_valid(gart, iova, bytes))
+>> +		return -EINVAL;
+>> +
+>> +	for (mapped = 0; mapped < bytes; mapped += GART_PAGE_SIZE) {
+>> +		ret = gart_iommu_map_page(gart, iova + mapped, pa + mapped);
+>> +		if (ret)
+>> +			break;
+>> +	}
+>> +
+>>   	FLUSH_GART_REGS(gart);
+>> +	return ret;
+>> +}
+>> +
+>> +static int gart_iommu_unmap_page(struct gart_device *gart,
+>> +				 unsigned long iova)
+>> +{
+>> +	unsigned long flags;
+>> +
+>> +	spin_lock_irqsave(&gart->pte_lock, flags);
+>> +	gart_set_pte(gart, iova, 0);
+>>   	spin_unlock_irqrestore(&gart->pte_lock, flags);
+>> +
+>>   	return 0;
+>>   }
+>>   
+>> @@ -307,16 +336,20 @@ static size_t gart_iommu_unmap(struct iommu_domain *domain, unsigned long iova,
+>>   {
+>>   	struct gart_domain *gart_domain = to_gart_domain(domain);
+>>   	struct gart_device *gart = gart_domain->gart;
+>> -	unsigned long flags;
+>> +	size_t unmapped;
+>> +	int ret;
+>>   
+>>   	if (!gart_iova_range_valid(gart, iova, bytes))
+>>   		return 0;
+>>   
+>> -	spin_lock_irqsave(&gart->pte_lock, flags);
+>> -	gart_set_pte(gart, iova, 0);
+>> +	for (unmapped = 0; unmapped < bytes; unmapped += GART_PAGE_SIZE) {
+>> +		ret = gart_iommu_unmap_page(gart, iova + unmapped);
+>> +		if (ret)
+>> +			break;
+>> +	}
+>> +
+>>   	FLUSH_GART_REGS(gart);
+>> -	spin_unlock_irqrestore(&gart->pte_lock, flags);
+>> -	return bytes;
+>> +	return unmapped;
+>>   }
+>>   
+>>   static phys_addr_t gart_iommu_iova_to_phys(struct iommu_domain *domain,
+>> -- 
+>> 2.16.3
 >>
 >>
->>> Not merging it until we get to the bottom of this.
->>>
->>>>
->>>>
->>>> Qiufang Dai (1):
->>>>   clk: meson-axg: Add AO Clock and Reset controller driver
->>>>
->>>> Yixun Lan (6):
->>>>   clk: meson: migrate to devm_of_clk_add_hw_provider API
->>>>   clk: meson: aoclk: refactor common code into dedicated file
->>>>   dt-bindings: clock: axg-aoclkc: New binding for Meson-AXG SoC
->>>>   dt-bindings: clock: reset: Add AXG AO Clock and Reset Bindings
->>>>   clk: meson: drop CLK_SET_RATE_PARENT flag
->>>>   clk: meson: drop CLK_IGNORE_UNUSED flag
->>>>
->>>>  .../bindings/clock/amlogic,gxbb-aoclkc.txt    |   1 +
->>>>  drivers/clk/meson/Kconfig                     |   8 +
->>>>  drivers/clk/meson/Makefile                    |   3 +-
->>>>  drivers/clk/meson/axg-aoclk.c                 | 163 ++++++++++++++++++
->>>>  drivers/clk/meson/axg-aoclk.h                 |  29 ++++
->>>>  drivers/clk/meson/gxbb-aoclk.c                |  95 ++++------
->>>>  drivers/clk/meson/gxbb-aoclk.h                |   5 +
->>>>  drivers/clk/meson/meson-aoclk.c               |  81 +++++++++
->>>>  drivers/clk/meson/meson-aoclk.h               |  34 ++++
->>>>  include/dt-bindings/clock/axg-aoclkc.h        |  26 +++
->>>>  include/dt-bindings/reset/axg-aoclkc.h        |  20 +++
->>>>  11 files changed, 401 insertions(+), 64 deletions(-)
->>>>  create mode 100644 drivers/clk/meson/axg-aoclk.c
->>>>  create mode 100644 drivers/clk/meson/axg-aoclk.h
->>>>  create mode 100644 drivers/clk/meson/meson-aoclk.c
->>>>  create mode 100644 drivers/clk/meson/meson-aoclk.h
->>>>  create mode 100644 include/dt-bindings/clock/axg-aoclkc.h
->>>>  create mode 100644 include/dt-bindings/reset/axg-aoclkc.h
->>>>
->>>
->>> .
->>>
 >>
->>
-> 
-> .
-> 
+>> _______________________________________________
+>> iommu mailing list
+>> iommu@lists.linux-foundation.org
+>> https://lists.linuxfoundation.org/mailman/listinfo/iommu
