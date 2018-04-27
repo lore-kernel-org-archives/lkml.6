@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-298528-1524839874-2-12014448521481030326
+X-Cyrus-Session-Id: sloti22d1t05-333748-1524839870-2-13009563756263366737
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524839874; b=PVhKh1gwOz/hVsDqNyBT6EHCpicRUjTm7I/TTKhFDOUMz3aeZJ
-    s9YEcweEFi2lDYDGj2seppaS3J4yMka25KSIkstIHZJEvn0yQzczU9L+XgOd0J5d
-    UchBPvDMxTiiC7Mbom3QXMUcq266DbyAhag70nt8XO+2q1ENL86jghFWtG/puh7p
-    6gCmxA+F8YmGO1phh9Z80GCr3XN5ZO7sxsDEee8N8Q4md6cAtw3y1eIJqe4tky9F
-    UO3BIQiYIDGik8e+04EpUR11t3WNI5SJWDXl25s31Z+LD5HFM+dC6fmpKJ4n51Ez
-    QMdgdwIFl4MLE3RzOiqJbqdkfMIsonQNgSWQ==
+    1524839869; b=G7xBCaa9bGfrlrMLk7QfEMwQZc6pRRrexF5BB83v4aba8wiD0a
+    Hvzx/D4kDeGRZGKjbKhAtG/EJiFBUIQto0p/TP0fnLZsEU0POp+9WWOIfwTqLw6t
+    zdopcr/41icOQvp/OACmredBL0ig+NeJEOjYHht7P2yfonoRxQv2T+Tb976xQrvn
+    bPgtD0Xmssg0rFCa1XQ5xxlXyzy9zWJoP3BMPUnP0O0YF+ynuro0/s61Gnx7px97
+    jxhPYjdo/v6a4yNIg0tGw3U3QkfIYYdHtGzGPpI6f93sgPkd4ptIWQxd6iGV9gER
+    JyqQgUKBDD6fH4qSo8cWzbbFBoD2RdbhOByA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524839874; bh=sBDo3btuUOxf4wZG/Rqiu/Ang8loVQ
-    wliyUoiSQi5/I=; b=NIZbOocneaVeu6B/gdGCMzD1bZG/yODMgOnzZ3MCImbh/Y
-    hC0i0I9BqdZU8L6Xe2efJNGJeUn2U9e+75/r4ZAbJSaRox7vYb89XnfL1ML+ynSZ
-    GwdiWk49Cjb8ZGVWV0Tn3wjhXaj9rBssMlUhE7mI+KmJdwbeeJAFh4GTa5a+enjV
-    wxz7b8PfMNnT0UfQ0smKvcq5wbhtdj3fBetqyaNydYk5RrLaTmuHu/gJriX+3j+V
-    4S25AqPqNWinfvAXwvNu+n6lkvmUUGqX+Ca/OF5i8njSaSXshI0mg0JKZs9M0PWj
-    qf/lMxoa2WN+dKnAtjo1eS7+Jjjtyi0PRrsXIrvA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1524839869; bh=0tA0nM7QZkMlvjqC6uhMGnPvlsdm/v
+    sDTsq5/8lxcrI=; b=aJaLyvCyu4BZg0FTIg5H32XZ/ije52wS82bYr/Vj8/6lE5
+    VYLWO/ZzAgiyqs3uv9+ZCcXKAWk6pN1KN+CYsOw5vFvOobbjM4Re/SEp6Yls9K2v
+    HPfYRrzY4TG1ou1wUbwZG88ten4Zt/hOUlMAM3bHyxp9rwON09WvvxG37t4q2H3W
+    U3Y5noGVMklAXu9bjkDlHP0IkKIOKOO8BYMyQC4aWJSK2at1PdrR+mDM9W9dEIh/
+    9+CZ4S51UeqNETNSRA3CpJES5DMF/rkISnCUY91yfmo/86q34PdZsGf8awXjDln/
+    wP6mvaXjeBuJvO15EUU2R2iqFMORuQbFMh2tyhkA==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,33 +51,33 @@ Authentication-Results: mx1.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJ6eEy2bGnB7C2/j2SW+6d/NNgxFWW9Q2nGwqt+qju21kBhHmv3UFiT2fBiuPX7jaw1a2GuR9BtNHrrQARZfa5lX4V4JK1lK3d1JIjM++SOhtuNWd6ph
-    07++ONaGw9rM3LKVjXzHzBGp/oyMqDgbPRhQTOfpVFRkjRLFxHvc8+OZrU05q0KoXz40Cxxhy6NAOsgYxEiF56eVggzMHMNZcmm5sc/BoN+p3E0DTezDD/61
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfKb5hThmB210a1DN5Y0Wl3sJErFUcwfaR4hZDPo0PokeuPKun/bzI2+p8Yj5+cZTFAsj8Iq8dEqmO25fgAorqwWnyYcY6EAv02jmMMvOkMHKh8fGVgV7
+    8ttOAEqVBftQyOkG5Qv2EUGipENY55oYld4N1NQbQdHlIOSuo7Kf/U9/N4LtDxLOHlK4B9JxNlHAPHiShlMVhIK8+0Fh/24StiOkuGcUCBC+kUj40MGQf+fm
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=sc6aKZH_jA7jYgAn10IA:9
+    a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=kFCnFo_P6FiZIUNO428A:9
     a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934301AbeD0OJX (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 27 Apr 2018 10:09:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54714 "EHLO mail.kernel.org"
+        id S934480AbeD0Ohf (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 27 Apr 2018 10:37:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54732 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934654AbeD0OJV (ORCPT <rfc822;stable@vger.kernel.org>);
-        Fri, 27 Apr 2018 10:09:21 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E832E21864
+        id S934621AbeD0OJX (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 27 Apr 2018 10:09:23 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B50121892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sebastian Ott <sebott@linux.ibm.com>,
-        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        stable@vger.kernel.org, Jan Hoeppner <hoeppner@linux.ibm.com>,
+        Stefan Haberland <sth@linux.vnet.ibm.com>,
         Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4.14 77/80] s390/cio: update chpid descriptor after resource accessibility event
-Date: Fri, 27 Apr 2018 15:59:10 +0200
-Message-Id: <20180427135736.924594134@linuxfoundation.org>
+Subject: [PATCH 4.14 78/80] s390/dasd: fix IO error for newly defined devices
+Date: Fri, 27 Apr 2018 15:59:11 +0200
+Message-Id: <20180427135736.992339863@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135732.928644313@linuxfoundation.org>
 References: <20180427135732.928644313@linuxfoundation.org>
@@ -95,54 +95,79 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sebastian Ott <sebott@linux.ibm.com>
+From: Stefan Haberland <sth@linux.vnet.ibm.com>
 
-commit af2e460ade0b0180d0f3812ca4f4f59cc9597f3e upstream.
+commit 5d27a2bf6e14f5c7d1033ad1e993fcd0eba43e83 upstream.
 
-Channel path descriptors have been seen as something stable (as
-long as the chpid is configured). Recent tests have shown that the
-descriptor can also be altered when the link state of a channel path
-changes. Thus it is necessary to update the descriptor during
-handling of resource accessibility events.
+When a new CKD storage volume is defined at the storage server, Linux
+may be relying on outdated information about that volume, which leads to
+the following errors:
 
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Sebastian Ott <sebott@linux.ibm.com>
-Reviewed-by: Peter Oberparleiter <oberpar@linux.ibm.com>
+1. Command Reject Errors for minidisk on z/VM:
+
+dasd-eckd.b3193d: 0.0.XXXX: An error occurred in the DASD device driver,
+		  reason=09
+dasd(eckd): I/O status report for device 0.0.XXXX:
+dasd(eckd): in req: 00000000XXXXXXXX CC:00 FC:04 AC:00 SC:17 DS:02 CS:00
+	    RC:0
+dasd(eckd): device 0.0.2046: Failing CCW: 00000000XXXXXXXX
+dasd(eckd): Sense(hex)  0- 7: 80 00 00 00 00 00 00 00
+dasd(eckd): Sense(hex)  8-15: 00 00 00 00 00 00 00 00
+dasd(eckd): Sense(hex) 16-23: 00 00 00 00 e1 00 0f 00
+dasd(eckd): Sense(hex) 24-31: 00 00 40 e2 00 00 00 00
+dasd(eckd): 24 Byte: 0 MSG 0, no MSGb to SYSOP
+
+2. Equipment Check errors on LPAR or for dedicated devices on z/VM:
+
+dasd(eckd): I/O status report for device 0.0.XXXX:
+dasd(eckd): in req: 00000000XXXXXXXX CC:00 FC:04 AC:00 SC:17 DS:0E CS:40
+	    fcxs:01 schxs:00 RC:0
+dasd(eckd): device 0.0.9713: Failing TCW: 00000000XXXXXXXX
+dasd(eckd): Sense(hex)  0- 7: 10 00 00 00 13 58 4d 0f
+dasd(eckd): Sense(hex)  8-15: 67 00 00 00 00 00 00 04
+dasd(eckd): Sense(hex) 16-23: e5 18 05 33 97 01 0f 0f
+dasd(eckd): Sense(hex) 24-31: 00 00 40 e2 00 04 58 0d
+dasd(eckd): 24 Byte: 0 MSG f, no MSGb to SYSOP
+
+Fix this problem by using the up-to-date information provided during
+online processing via the device specific SNEQ to detect the case of
+outdated LCU data. If there is a difference, perform a re-read of that
+data.
+
+Cc: stable@vger.kernel.org
+Reviewed-by: Jan Hoeppner <hoeppner@linux.ibm.com>
+Signed-off-by: Stefan Haberland <sth@linux.vnet.ibm.com>
 Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/s390/cio/chsc.c |   14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+ drivers/s390/block/dasd_alias.c |   13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
---- a/drivers/s390/cio/chsc.c
-+++ b/drivers/s390/cio/chsc.c
-@@ -451,6 +451,7 @@ static void chsc_process_sei_link_incide
- 
- static void chsc_process_sei_res_acc(struct chsc_sei_nt0_area *sei_area)
+--- a/drivers/s390/block/dasd_alias.c
++++ b/drivers/s390/block/dasd_alias.c
+@@ -592,13 +592,22 @@ static int _schedule_lcu_update(struct a
+ int dasd_alias_add_device(struct dasd_device *device)
  {
-+	struct channel_path *chp;
- 	struct chp_link link;
- 	struct chp_id chpid;
- 	int status;
-@@ -463,10 +464,17 @@ static void chsc_process_sei_res_acc(str
- 	chpid.id = sei_area->rsid;
- 	/* allocate a new channel path structure, if needed */
- 	status = chp_get_status(chpid);
--	if (status < 0)
--		chp_new(chpid);
--	else if (!status)
-+	if (!status)
- 		return;
-+
-+	if (status < 0) {
-+		chp_new(chpid);
-+	} else {
-+		chp = chpid_to_chp(chpid);
-+		mutex_lock(&chp->lock);
-+		chp_update_desc(chp);
-+		mutex_unlock(&chp->lock);
+ 	struct dasd_eckd_private *private = device->private;
+-	struct alias_lcu *lcu;
++	__u8 uaddr = private->uid.real_unit_addr;
++	struct alias_lcu *lcu = private->lcu;
+ 	unsigned long flags;
+ 	int rc;
+ 
+-	lcu = private->lcu;
+ 	rc = 0;
+ 	spin_lock_irqsave(&lcu->lock, flags);
++	/*
++	 * Check if device and lcu type differ. If so, the uac data may be
++	 * outdated and needs to be updated.
++	 */
++	if (private->uid.type !=  lcu->uac->unit[uaddr].ua_type) {
++		lcu->flags |= UPDATE_PENDING;
++		DBF_DEV_EVENT(DBF_WARNING, device, "%s",
++			      "uid type mismatch - trigger rescan");
 +	}
- 	memset(&link, 0, sizeof(struct chp_link));
- 	link.chpid = chpid;
- 	if ((sei_area->vf & 0xc0) != 0) {
+ 	if (!(lcu->flags & UPDATE_PENDING)) {
+ 		rc = _add_device_to_lcu(lcu, device, device);
+ 		if (rc)
