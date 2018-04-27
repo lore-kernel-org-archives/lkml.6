@@ -1,85 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932588AbeD0JnY (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 05:43:24 -0400
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:21350 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932460AbeD0JnW (ORCPT
+        id S932604AbeD0Jnd (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 05:43:33 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:51333 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932460AbeD0Jn3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 05:43:22 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com w3R9h86N027065
-X-Nifty-SrcIP: [209.85.213.49]
-X-Google-Smtp-Source: AB8JxZq67aHV8xDtTMVHrCQ2HhlvHYLXRlzKxMygmc8t5h1kY063Ud2wHWKkzgMu2YwWpLJ8M6CJREFgioz+pEE+omQ=
+        Fri, 27 Apr 2018 05:43:29 -0400
+X-Google-Smtp-Source: AB8JxZoLok/nTNLuQtmVl59HJ1tCTVsWny+dffySK2TlqP+x5GIFfixbDNsXMeVeBhPvWRjXPWAyJg==
+Date: Fri, 27 Apr 2018 11:43:26 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, Joerg Roedel <joro@8bytes.org>,
+        iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/4] iommu/tegra: gart: Fix gart_iommu_unmap()
+Message-ID: <20180427094326.GL30388@ulmo>
+References: <cover.1523304324.git.digetx@gmail.com>
+ <dd25a9ff7bad7c92b345c0c0ce2bf235c4c3b6e8.1523304324.git.digetx@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1523499370-17757-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1523499370-17757-1-git-send-email-yamada.masahiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Fri, 27 Apr 2018 18:42:27 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQKVD3aKTo_z=zkOdoL--RogoFm0bt-dCBsWFN8BEPpSg@mail.gmail.com>
-Message-ID: <CAK7LNAQKVD3aKTo_z=zkOdoL--RogoFm0bt-dCBsWFN8BEPpSg@mail.gmail.com>
-Subject: Re: [PATCH] reset: uniphier: fix USB clock line for LD20
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="DN8g+DOX2TxGxleI"
+Content-Disposition: inline
+In-Reply-To: <dd25a9ff7bad7c92b345c0c0ce2bf235c4c3b6e8.1523304324.git.digetx@gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Philipp,
 
-2018-04-12 11:16 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
-> For LD20, the bit 5 of the offset 0x200c turned out to be a USB3
-> reset.  The hardware document says it is the GIO reset despite LD20
-> has no GIO bus, confusingly.
->
-> Also, fix confusing comments for PXs3.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+--DN8g+DOX2TxGxleI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Apr 09, 2018 at 11:07:20PM +0300, Dmitry Osipenko wrote:
+> It must return the number of unmapped bytes on success, returning 0 means
+> that unmapping failed and in result only one page is unmapped.
+>=20
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
+>  drivers/iommu/tegra-gart.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Can you take a look at this, please?
+Reviewed-by: Thierry Reding <treding@nvidia.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
 
+--DN8g+DOX2TxGxleI
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlri8L0ACgkQ3SOs138+
+s6F/EQ//XwtuK53IT2hLJ632ZguS9Dbp77vbd7S36ww8dcafYkeJ+PsaKpetk9BU
+whOnWe/elWUTkOtL6wHMerSHa1RoMpNR46cHkjqppPaNaWn5kJfdYIgvZj+GVBjG
+7n5tYsZLsbjWlsXZoQu0cb0gcwybZzhrzXAu+tLYzI0p9WJO/dxz/VH1mEMxA6Bj
+ykDHT5bSTzukiOlLbMYy+cwajd1lr6fe9UAJMQ8rAb6Zej/MTFpRuS18DeeGRkva
++CLvhX9DGi1Bc+Jt101EJ/SO9Edsg/poZ0ZpT+rYTLQgExJw6vEd4XZWyhiBR2QK
+EzglVE+3mZ13mz7QmdWy2xJSn77lGrsA3pbMwv6rNTQ/VsXD0Tf0ljdc8xvL9B2H
+UCRfXPICCw/8o8SNrLpZapq+Z12o/3a7a0yAHZFVNEyMB6I0Y6Rs8L+zUf8aY3dm
+e1ruuoU23ryISE9de7LwpNAZIyb6y3tie+3XqlhAe8M4PFVDR6uWtXryo60d/6aS
+ngEnv2oTqqmA3uE+yJHpHSNIrhNGnpkX02srWeHCIXZBW5HzwnzhlxPbK1jboyQB
+qr1a+6rWqJfuSZXK3wT4uCP0YFdDW6Y2tolxxWDdnNKNKJpikgsLWJbg/9h7AquI
+ACSNJ/dYE2OpdRGmcK2ymiwRQ/Ge4B94iIRGxB7k8LrgI8AbrAE=
+=MkpY
+-----END PGP SIGNATURE-----
 
->  drivers/reset/reset-uniphier.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/reset/reset-uniphier.c b/drivers/reset/reset-uniphier.c
-> index 360e06b..ac18f2f 100644
-> --- a/drivers/reset/reset-uniphier.c
-> +++ b/drivers/reset/reset-uniphier.c
-> @@ -110,7 +110,7 @@ static const struct uniphier_reset_data uniphier_ld20_sys_reset_data[] = {
->         UNIPHIER_RESETX(4, 0x200c, 2),          /* eMMC */
->         UNIPHIER_RESETX(6, 0x200c, 6),          /* Ether */
->         UNIPHIER_RESETX(8, 0x200c, 8),          /* STDMAC (HSC) */
-> -       UNIPHIER_RESETX(12, 0x200c, 5),         /* GIO (PCIe, USB3) */
-> +       UNIPHIER_RESETX(14, 0x200c, 5),         /* USB30 */
->         UNIPHIER_RESETX(16, 0x200c, 12),        /* USB30-PHY0 */
->         UNIPHIER_RESETX(17, 0x200c, 13),        /* USB30-PHY1 */
->         UNIPHIER_RESETX(18, 0x200c, 14),        /* USB30-PHY2 */
-> @@ -127,8 +127,8 @@ static const struct uniphier_reset_data uniphier_pxs3_sys_reset_data[] = {
->         UNIPHIER_RESETX(6, 0x200c, 9),          /* Ether0 */
->         UNIPHIER_RESETX(7, 0x200c, 10),         /* Ether1 */
->         UNIPHIER_RESETX(8, 0x200c, 12),         /* STDMAC */
-> -       UNIPHIER_RESETX(12, 0x200c, 4),         /* USB30 link (GIO0) */
-> -       UNIPHIER_RESETX(13, 0x200c, 5),         /* USB31 link (GIO1) */
-> +       UNIPHIER_RESETX(12, 0x200c, 4),         /* USB30 link */
-> +       UNIPHIER_RESETX(13, 0x200c, 5),         /* USB31 link */
->         UNIPHIER_RESETX(16, 0x200c, 16),        /* USB30-PHY0 */
->         UNIPHIER_RESETX(17, 0x200c, 18),        /* USB30-PHY1 */
->         UNIPHIER_RESETX(18, 0x200c, 20),        /* USB30-PHY2 */
-> --
-> 2.7.4
->
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+--DN8g+DOX2TxGxleI--
