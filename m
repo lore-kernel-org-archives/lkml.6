@@ -1,25 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758023AbeD0Mjx (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 08:39:53 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:41541 "EHLO
+        id S1758154AbeD0MkU (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 08:40:20 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:33627 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757373AbeD0Mjv (ORCPT
+        with ESMTP id S1757373AbeD0MkT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 08:39:51 -0400
-Date: Fri, 27 Apr 2018 05:39:45 -0700
-From: tip-bot for Sebastian Andrzej Siewior <tipbot@zytor.com>
-Message-ID: <tip-02acc80d19edb0d5684c997b2004ad19f9f5236e@git.kernel.org>
-Cc: hpa@zytor.com, mingo@kernel.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, bigeasy@linutronix.de, bsingharora@gmail.com
-Reply-To: mingo@kernel.org, hpa@zytor.com, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, bigeasy@linutronix.de,
-        bsingharora@gmail.com
-In-Reply-To: <20180423161024.6710-1-bigeasy@linutronix.de>
-References: <20180423161024.6710-1-bigeasy@linutronix.de>
+        Fri, 27 Apr 2018 08:40:19 -0400
+Date: Fri, 27 Apr 2018 05:40:14 -0700
+From: tip-bot for Thomas Gleixner <tipbot@zytor.com>
+Message-ID: <tip-de5b55c1d4e30740009864eb35ce4ed856aac01d@git.kernel.org>
+Cc: mingo@kernel.org, tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        bigeasy@linutronix.de, hpa@zytor.com
+Reply-To: bigeasy@linutronix.de, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, mingo@kernel.org
+In-Reply-To: <20180423191635.6014-1-bigeasy@linutronix.de>
+References: <20180423191635.6014-1-bigeasy@linutronix.de>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] delayacct: Use raw_spinlocks
-Git-Commit-ID: 02acc80d19edb0d5684c997b2004ad19f9f5236e
+Subject: [tip:locking/core] stop_machine: Use raw spinlocks
+Git-Commit-ID: de5b55c1d4e30740009864eb35ce4ed856aac01d
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -32,107 +31,113 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  02acc80d19edb0d5684c997b2004ad19f9f5236e
-Gitweb:     https://git.kernel.org/tip/02acc80d19edb0d5684c997b2004ad19f9f5236e
-Author:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-AuthorDate: Mon, 23 Apr 2018 18:10:23 +0200
+Commit-ID:  de5b55c1d4e30740009864eb35ce4ed856aac01d
+Gitweb:     https://git.kernel.org/tip/de5b55c1d4e30740009864eb35ce4ed856aac01d
+Author:     Thomas Gleixner <tglx@linutronix.de>
+AuthorDate: Mon, 23 Apr 2018 21:16:35 +0200
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Fri, 27 Apr 2018 14:34:51 +0200
 
-delayacct: Use raw_spinlocks
+stop_machine: Use raw spinlocks
 
-try_to_wake_up() might invoke delayacct_blkio_end() while holding the
-pi_lock (which is a raw_spinlock_t). delayacct_blkio_end() acquires
-task_delay_info.lock which is a spinlock_t. This causes a might sleep splat
-on -RT where non raw spinlocks are converted to 'sleeping' spinlocks.
+Use raw-locks in stop_machine() to allow locking in irq-off and
+preempt-disabled regions on -RT. This also documents the possible locking
+context in general.
 
-task_delay_info.lock is only held for a short amount of time so it's not a
-problem latency wise to make convert it to a raw spinlock.
-
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+[bigeasy: update patch description.]
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Balbir Singh <bsingharora@gmail.com>
-Link: https://lkml.kernel.org/r/20180423161024.6710-1-bigeasy@linutronix.de
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Link: https://lkml.kernel.org/r/20180423191635.6014-1-bigeasy@linutronix.de
 
 ---
- include/linux/delayacct.h |  2 +-
- kernel/delayacct.c        | 17 +++++++++--------
- 2 files changed, 10 insertions(+), 9 deletions(-)
+ kernel/stop_machine.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/include/linux/delayacct.h b/include/linux/delayacct.h
-index 5e335b6203f4..e6c0448ebcc7 100644
---- a/include/linux/delayacct.h
-+++ b/include/linux/delayacct.h
-@@ -29,7 +29,7 @@
+diff --git a/kernel/stop_machine.c b/kernel/stop_machine.c
+index b7591261652d..c25ba18274fb 100644
+--- a/kernel/stop_machine.c
++++ b/kernel/stop_machine.c
+@@ -36,7 +36,7 @@ struct cpu_stop_done {
+ struct cpu_stopper {
+ 	struct task_struct	*thread;
  
- #ifdef CONFIG_TASK_DELAY_ACCT
- struct task_delay_info {
--	spinlock_t	lock;
-+	raw_spinlock_t	lock;
- 	unsigned int	flags;	/* Private per-task flags */
+-	spinlock_t		lock;
++	raw_spinlock_t		lock;
+ 	bool			enabled;	/* is this stopper enabled? */
+ 	struct list_head	works;		/* list of pending works */
  
- 	/* For each stat XXX, add following, aligned appropriately
-diff --git a/kernel/delayacct.c b/kernel/delayacct.c
-index e2764d767f18..ca8ac2824f0b 100644
---- a/kernel/delayacct.c
-+++ b/kernel/delayacct.c
-@@ -44,23 +44,24 @@ void __delayacct_tsk_init(struct task_struct *tsk)
- {
- 	tsk->delays = kmem_cache_zalloc(delayacct_cache, GFP_KERNEL);
- 	if (tsk->delays)
--		spin_lock_init(&tsk->delays->lock);
-+		raw_spin_lock_init(&tsk->delays->lock);
+@@ -78,13 +78,13 @@ static bool cpu_stop_queue_work(unsigned int cpu, struct cpu_stop_work *work)
+ 	unsigned long flags;
+ 	bool enabled;
+ 
+-	spin_lock_irqsave(&stopper->lock, flags);
++	raw_spin_lock_irqsave(&stopper->lock, flags);
+ 	enabled = stopper->enabled;
+ 	if (enabled)
+ 		__cpu_stop_queue_work(stopper, work);
+ 	else if (work->done)
+ 		cpu_stop_signal_done(work->done);
+-	spin_unlock_irqrestore(&stopper->lock, flags);
++	raw_spin_unlock_irqrestore(&stopper->lock, flags);
+ 
+ 	return enabled;
+ }
+@@ -231,8 +231,8 @@ static int cpu_stop_queue_two_works(int cpu1, struct cpu_stop_work *work1,
+ 	struct cpu_stopper *stopper2 = per_cpu_ptr(&cpu_stopper, cpu2);
+ 	int err;
+ retry:
+-	spin_lock_irq(&stopper1->lock);
+-	spin_lock_nested(&stopper2->lock, SINGLE_DEPTH_NESTING);
++	raw_spin_lock_irq(&stopper1->lock);
++	raw_spin_lock_nested(&stopper2->lock, SINGLE_DEPTH_NESTING);
+ 
+ 	err = -ENOENT;
+ 	if (!stopper1->enabled || !stopper2->enabled)
+@@ -255,8 +255,8 @@ retry:
+ 	__cpu_stop_queue_work(stopper1, work1);
+ 	__cpu_stop_queue_work(stopper2, work2);
+ unlock:
+-	spin_unlock(&stopper2->lock);
+-	spin_unlock_irq(&stopper1->lock);
++	raw_spin_unlock(&stopper2->lock);
++	raw_spin_unlock_irq(&stopper1->lock);
+ 
+ 	if (unlikely(err == -EDEADLK)) {
+ 		while (stop_cpus_in_progress)
+@@ -448,9 +448,9 @@ static int cpu_stop_should_run(unsigned int cpu)
+ 	unsigned long flags;
+ 	int run;
+ 
+-	spin_lock_irqsave(&stopper->lock, flags);
++	raw_spin_lock_irqsave(&stopper->lock, flags);
+ 	run = !list_empty(&stopper->works);
+-	spin_unlock_irqrestore(&stopper->lock, flags);
++	raw_spin_unlock_irqrestore(&stopper->lock, flags);
+ 	return run;
  }
  
- /*
-  * Finish delay accounting for a statistic using its timestamps (@start),
-  * accumalator (@total) and @count
-  */
--static void delayacct_end(spinlock_t *lock, u64 *start, u64 *total, u32 *count)
-+static void delayacct_end(raw_spinlock_t *lock, u64 *start, u64 *total,
-+			  u32 *count)
- {
- 	s64 ns = ktime_get_ns() - *start;
- 	unsigned long flags;
+@@ -461,13 +461,13 @@ static void cpu_stopper_thread(unsigned int cpu)
  
- 	if (ns > 0) {
--		spin_lock_irqsave(lock, flags);
-+		raw_spin_lock_irqsave(lock, flags);
- 		*total += ns;
- 		(*count)++;
--		spin_unlock_irqrestore(lock, flags);
-+		raw_spin_unlock_irqrestore(lock, flags);
+ repeat:
+ 	work = NULL;
+-	spin_lock_irq(&stopper->lock);
++	raw_spin_lock_irq(&stopper->lock);
+ 	if (!list_empty(&stopper->works)) {
+ 		work = list_first_entry(&stopper->works,
+ 					struct cpu_stop_work, list);
+ 		list_del_init(&work->list);
  	}
- }
+-	spin_unlock_irq(&stopper->lock);
++	raw_spin_unlock_irq(&stopper->lock);
  
-@@ -127,7 +128,7 @@ int __delayacct_add_tsk(struct taskstats *d, struct task_struct *tsk)
+ 	if (work) {
+ 		cpu_stop_fn_t fn = work->fn;
+@@ -541,7 +541,7 @@ static int __init cpu_stop_init(void)
+ 	for_each_possible_cpu(cpu) {
+ 		struct cpu_stopper *stopper = &per_cpu(cpu_stopper, cpu);
  
- 	/* zero XXX_total, non-zero XXX_count implies XXX stat overflowed */
- 
--	spin_lock_irqsave(&tsk->delays->lock, flags);
-+	raw_spin_lock_irqsave(&tsk->delays->lock, flags);
- 	tmp = d->blkio_delay_total + tsk->delays->blkio_delay;
- 	d->blkio_delay_total = (tmp < d->blkio_delay_total) ? 0 : tmp;
- 	tmp = d->swapin_delay_total + tsk->delays->swapin_delay;
-@@ -137,7 +138,7 @@ int __delayacct_add_tsk(struct taskstats *d, struct task_struct *tsk)
- 	d->blkio_count += tsk->delays->blkio_count;
- 	d->swapin_count += tsk->delays->swapin_count;
- 	d->freepages_count += tsk->delays->freepages_count;
--	spin_unlock_irqrestore(&tsk->delays->lock, flags);
-+	raw_spin_unlock_irqrestore(&tsk->delays->lock, flags);
- 
- 	return 0;
- }
-@@ -147,10 +148,10 @@ __u64 __delayacct_blkio_ticks(struct task_struct *tsk)
- 	__u64 ret;
- 	unsigned long flags;
- 
--	spin_lock_irqsave(&tsk->delays->lock, flags);
-+	raw_spin_lock_irqsave(&tsk->delays->lock, flags);
- 	ret = nsec_to_clock_t(tsk->delays->blkio_delay +
- 				tsk->delays->swapin_delay);
--	spin_unlock_irqrestore(&tsk->delays->lock, flags);
-+	raw_spin_unlock_irqrestore(&tsk->delays->lock, flags);
- 	return ret;
- }
+-		spin_lock_init(&stopper->lock);
++		raw_spin_lock_init(&stopper->lock);
+ 		INIT_LIST_HEAD(&stopper->works);
+ 	}
  
