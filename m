@@ -1,84 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758366AbeD0TGp convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 15:06:45 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57004 "EHLO mx1.redhat.com"
+        id S932552AbeD0TIj (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 15:08:39 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43534 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1758043AbeD0TGn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 15:06:43 -0400
-Date: Fri, 27 Apr 2018 13:06:41 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
+        id S1758457AbeD0TIi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 15:08:38 -0400
+Message-ID: <1524856116.11756.85.camel@redhat.com>
+Subject: Re: [PATCH] IB/core: Make ib_mad_client_id atomic
+From: Doug Ledford <dledford@redhat.com>
+To: =?ISO-8859-1?Q?H=E5kon?= Bugge <haakon.bugge@oracle.com>
+Cc: jackm <jackm@dev.mellanox.co.il>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Don Hiatt <don.hiatt@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+        Sean Hefty <sean.hefty@intel.com>,
+        OFED mailing list <linux-rdma@vger.kernel.org>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: Add Intel 7th & 8th Gen mobile to ACS quirks
-Message-ID: <20180427130641.2e464dfa@w520.home>
-In-Reply-To: <20180427180956.GD8199@bhelgaas-glaptop.roam.corp.google.com>
-References: <152468799766.12449.11245066753252100117.stgit@w520.home>
-        <20180427180956.GD8199@bhelgaas-glaptop.roam.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Date: Fri, 27 Apr 2018 15:08:36 -0400
+In-Reply-To: <A58D5192-06E7-46A3-869C-273E9A2BC128@oracle.com>
+References: <20180418142450.15581-1-Haakon.Bugge@oracle.com>
+         <1524196555.11756.30.camel@redhat.com> <20180420153451.GF30433@ziepe.ca>
+         <50E3FE4A-2C6E-4493-92E1-383C349FAE3A@oracle.com>
+         <20180423221618.0000795d@dev.mellanox.co.il>
+         <C546E163-297B-438E-AF76-CC04247ABFBA@oracle.com>
+         <20180426213250.0000515d@dev.mellanox.co.il>
+         <9fdd3ec4-ee91-5442-e753-25d2ecd27ea9@xsintricity.com>
+         <A58D5192-06E7-46A3-869C-273E9A2BC128@oracle.com>
+Organization: Red Hat, Inc.
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-smZmVzuNnteiOZITtEn4"
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 27 Apr 2018 13:09:56 -0500
-Bjorn Helgaas <helgaas@kernel.org> wrote:
 
-> On Wed, Apr 25, 2018 at 02:27:37PM -0600, Alex Williamson wrote:
-> > The specification update indicates these have the same errate for
-> > implementing non-standard ACS capabilities.
-> > 
-> > Signed-off-by: Alex Williamson <alex.williamson@redhat.com>  
-> 
-> Applied to pci/virtualization for v4.18, thanks!
-> 
-> I'm guessing a stable tag would make sense here?
+--=-smZmVzuNnteiOZITtEn4
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Yeah, why not.  Thanks,
+On Thu, 2018-04-26 at 20:51 +0200, H=C3=A5kon Bugge wrote:
+> > Jason is out this week.  I'll end up processing this one (probably late=
+r
+> > today).  But I=E2=80=99ll fix up the commit message to suit my tastes w=
+hen I do.
+>=20
+> Thank you, Doug and Jack,
 
-Alex
+I reworded the commit message, let me know if you think I worded it
+wrong:
 
-> > ---
-> >  drivers/pci/quirks.c |   14 ++++++++++++++
-> >  1 file changed, 14 insertions(+)
-> > 
-> > diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-> > index 2990ad1e7c99..6d0dee40dbe5 100644
-> > --- a/drivers/pci/quirks.c
-> > +++ b/drivers/pci/quirks.c
-> > @@ -4230,11 +4230,24 @@ static int pci_quirk_qcom_rp_acs(struct pci_dev *dev, u16 acs_flags)
-> >   * 0xa290-0xa29f PCI Express Root port #{0-16}
-> >   * 0xa2e7-0xa2ee PCI Express Root port #{17-24}
-> >   *
-> > + * Mobile chipsets are also affected, 7th & 8th Generation
-> > + * Specification update confirms ACS errata 22, status no fix: (7th Generation
-> > + * Intel Processor Family I/O for U/Y Platforms and 8th Generation Intel
-> > + * Processor Family I/O for U Quad Core Platforms Specification Update,
-> > + * August 2017, Revision 002, Document#: 334660-002)[6]
-> > + * Device IDs from I/O datasheet: (7th Generation Intel Processor Family I/O
-> > + * for U/Y Platforms and 8th Generation Intel ® Processor Family I/O for U
-> > + * Quad Core Platforms, Vol 1 of 2, August 2017, Document#: 334658-003)[7]
-> > + *
-> > + * 0x9d10-0x9d1b PCI Express Root port #{1-12}
-> > + *
-> >   * [1] http://www.intel.com/content/www/us/en/chipsets/100-series-chipset-datasheet-vol-2.html
-> >   * [2] http://www.intel.com/content/www/us/en/chipsets/100-series-chipset-datasheet-vol-1.html
-> >   * [3] http://www.intel.com/content/www/us/en/chipsets/100-series-chipset-spec-update.html
-> >   * [4] http://www.intel.com/content/www/us/en/chipsets/200-series-chipset-pch-spec-update.html
-> >   * [5] http://www.intel.com/content/www/us/en/chipsets/200-series-chipset-pch-datasheet-vol-1.html
-> > + * [6] https://www.intel.com/content/www/us/en/processors/core/7th-gen-core-family-mobile-u-y-processor-lines-i-o-spec-update.html
-> > + * [7] https://www.intel.com/content/www/us/en/processors/core/7th-gen-core-family-mobile-u-y-processor-lines-i-o-datasheet-vol-1.html
-> >   */
-> >  static bool pci_quirk_intel_spt_pch_acs_match(struct pci_dev *dev)
-> >  {
-> > @@ -4244,6 +4257,7 @@ static bool pci_quirk_intel_spt_pch_acs_match(struct pci_dev *dev)
-> >  	switch (dev->device) {
-> >  	case 0xa110 ... 0xa11f: case 0xa167 ... 0xa16a: /* Sunrise Point */
-> >  	case 0xa290 ... 0xa29f: case 0xa2e7 ... 0xa2ee: /* Union Point */
-> > +	case 0x9d10 ... 0x9d1b: /* 7th & 8th Gen Mobile */
-> >  		return true;
-> >  	}
-> >  
-> >   
+commit 69f01b81539c62f3dd96f9f02138ad7b839a0c70 (HEAD -> k.o/wip/dl-for-rc)
+Author: H=C3=A5kon Bugge <haakon.bugge@oracle.com>
+Date:   Wed Apr 18 16:24:50 2018 +0200
+
+    IB/core: Make ib_mad_client_id atomic
+   =20
+    Currently, kernel protects access to the agent ID allocator on a per
+    port basis using a spinlock, so it is impossible for two apps/threads o=
+n
+    the same port to get the same TID, but it is entirely possible for two
+    threads on different ports to end up with the same TID.  As this can be
+    confusing (regardless of it being legal according to the IB Spec 1.3,
+    C13-18.1.1, in section 13.4.6.4 - TransactionID usage: "Then initiating
+    a new operation, MADHeader:TransactionID shall be set to such a value
+    that within that MAD the combination of TIG, SGID, and MgmtClass is
+    different from that of any other currently executing operation. If the
+    MAD does not have a GRH, its SLID is used in the combination in place o=
+f
+    an SGID." which guarantees we are legal because our different ports wil=
+l
+    have different SGID/SLID creating a unique tuple even if the TIDs are
+    identical), and as we might want to open the TID allocator up to more
+    parallel usage later, make the TID an atomic type so that no two
+    allocations, regardless of port number, will be the same.
+   =20
+    Signed-off-by: H=C3=A5kon Bugge <haakon.bugge@oracle.com>
+    Reviewed-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
+    Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+    Reviewed-by: Zhu Yanjun <yanjun.zhu@oracle.com>
+    Signed-off-by: Doug Ledford <dledford@redhat.com>
+
+--=20
+Doug Ledford <dledford@redhat.com>
+    GPG KeyID: B826A3330E572FDD
+    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
+--=-smZmVzuNnteiOZITtEn4
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAlrjdTQACgkQuCajMw5X
+L93Kmg//d6H/DWtVRSGXTNqMeyPkvVFvCND7YP4U5ocs9EWtsa3JW43l/yXZ7IS/
+ivZQeMtIdNK325+AgoGXlyIoCDqw+zjHC+5HCCRisuLNzF0Ni/gQMqnIwkMC2kOw
+u5qhKEMZRxqs4WQU9VZBrWbyhDVx/QuYbrevcO/Q4bZDfUaqb6kmdTnwYMLK3R9g
+WX1Xwl1sIAl9mRYI9U88VwQHHL5wPbV6gQqOB2iEELWntkuyO79ClE0ciN50sfcl
+yHKV5eME/9NvctvKm8+bdviwUec3Zwla/SBrY3KPXVo6vPNsP5YcSCNYiGfNhYza
+GMOwKSBREzKcAw+wKxGbDjY+tfMFT+3c7Fc7pWYxl1NzoWWb9tfgaHzgi4Hr/BJ2
+/P5UPmX/i2NQyIN2HuM9N1gdB9FXlGu/RCNzUMITFU9fHMP7S/aozP4ZDkwGe4nq
+VC+Uuhj00q0M1CI69HF5PcdghdpkHtErYmYDpy+zDLXk46nO2xDbyI6kNPJj7zTJ
+kMLKXk91a+OwRhJwYNesvtlV3c4cKEWKE06j+n4a/QB4a10A0m3Joq/jeSOLbcyw
+R4A7ZXspEVkMr+8Gkm331AtIKewu/qjGMFhsmJElHOP/ISaS7ouvh/bprzl3GFuQ
+Lo+GvnPmxaVHKOEhkeEV01l3wJl1D+QzeWiGG1nw+MNiKz9rwr8=
+=O4dY
+-----END PGP SIGNATURE-----
+
+--=-smZmVzuNnteiOZITtEn4--
