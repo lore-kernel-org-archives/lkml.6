@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-348652-1524840394-2-2448037602177505211
+X-Cyrus-Session-Id: sloti22d1t05-348652-1524840387-2-7739019782462923619
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524840393; b=Dcg+/syukmlx3zQdOHA2bXZORsCrK7Ci76TSf8cmVJ6wJG6FdJ
-    vDaItTJqWN/ssDL5fqhcXtDfOlUfOZWEzBfxUv1emf6Fg9mHW8ZrAK5P6cXIcvbQ
-    GiS5mTMiME1jCnxSumKorrEeFFVUL4cgMLwUx94iXOJokggfZx31mgtPWo6SSVWS
-    JF3ETpeJfWOb7lT/LxB4Ie7+WeDRG7NKvVwS5MfpQj20Jjojb/sxNARNXxp5h9yM
-    tYPTi8UE3X3K0DvEfbhBvNv+hDGmICG0N2ydRQZAiuGAovmpcKiR+N8lQEs6V4A+
-    5lDlgaOeJbNvVGFlATLhc6rXWdmQuSJfXgTg==
+    1524840386; b=VYm/Hhg6FjFRuXKTEMJJcgNnzhctywmetQHYIl8pSplMkXJGiL
+    mPcNJcIn0JjpUm9xKxRpPb264KHHUd8ibQw4FKoNPu/zrA0Lm+11ucV28nTr44HH
+    kBvoELWedYFWnSdO+B0c7UJsy4LEWTYcjyyOyvDgrTSvlIrANmEoiCAjlHTUUgvl
+    aOEQTxUlAVF61XJ4b6zrr+QlFvStah4FVkQBIQLpRLTTQhKa9eJ8q9i2ucKyVPqq
+    h80WqQiavoZtD9EvQH+wWkUFrrnA2qzAzPLJ3ZhgSeaAI6NyYEPbOl7SEfBWjlxc
+    QBLY9Y+8GZqP9hHLjEidMCM28bCb9A1cbqkg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524840393; bh=Peu7w3ukaqAAJgRwT4smkl6heC/9le
-    GRtvCK8Juft80=; b=APxJMsO+M2D3G9/8z6mSQDN8d9BEFR1R1sTjrZI/7VVN8B
-    Ykc0t9+LEbMFfdpuf58NrTZxPUA54wUsAukNz0TDDxIcLFEf9X+YrRR4V1a+Pfx6
-    OUxIO+6k1iuDZ3auyj6DfOG81A7X9IipW4e4tI946Gfw1sf9/D6pKH4JYXeAJOP2
-    nukiqo14cflPm6inoZSnJHduxMSnGAgEMn6i71OWmHxJpbM7B67/2pVM5kqi/rvE
-    pI9FYaMgphHbYn2dX052W1Me/cZIavVvA9WPDTLt1qEh4EHPk7M9VE3bamZKjoJ1
-    L6sJ800qSvc0biqsa7ZxHH8duaDW3RsCGRaMCe0g==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1524840386; bh=QENMuo+tkAU/bX5rIzeEuVSiTHrQaq
+    BlGv9YWRVh6uY=; b=PhY0whlsNCZE2x2Cn4kaFdBs9zgWcM1oBy/Py5DMDCYPTl
+    Tp5ObcYEd50szb5cXVNSLJqg62VApXOhDZT9mOvvTzsj3eCYwFVtFhu2839k+gqS
+    3iM6yTN+dtirN/9WmRlUquzhNdynJfMGPH9EPuPK4z/Gsu/020wDNILTv5aar5hV
+    E+Vw1BB1SdAbhgBVrJ4fKs2H4VDnMipZJr/Cj+3xkOtzkY7veL+MyLJHNkPIeDnr
+    PXtBn553PIoFYf2ZeI9y7MontjN6zKUY6PKYb80A+xSAJcHGwM76Q2tXDWvyJeT0
+    EwYQQV2ccaueL5rv17FeZDlu8NG+oRTwKq5eE8pw==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,36 +51,31 @@ Authentication-Results: mx3.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFkH+gr4sqGGystN+0NtzKyUg0guvVF8mQPM+1RRzTfLwFCEUYSdNO3/7WJV1Cbuzk3J81IMp88okea5zNk1SUBGJsh5io5Rd48/YWmlef1LxRlTHwGu
-    IC7W1qWdU3tdtBeD4vXEDUlZaUAf/FBIwCJzEN79QcWmn0Y73/VRllxK34HraJzZUYwWeikbhIju9TXHJLaWzumDdkwz3lw7FFIef9o9NBSZbs3c75Xr7hEl
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfMh4uD4QFG4GZX8wdJvqyfMIx2dKcm3nCdRiBb4JuSzZq+y+t5K9vt2q5YPDdp/BFVnFA5A4u0nkG7WW7Bq/afaoyojF2QRddZX+950villGwfWD2dv1
+    3ZmpAQ2XB7vkyiuNnR25R1oVzl3p2FxVcHthxiSkC8wtm7iaHTUKZTA+LmhetKnWj9e+bhwQHWFrRIsZ9CkAkCEpe1jY9Ipy09YhzQz3I9HxpgfphjHD8gvi
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=pGLkceISAAAA:8 a=hSkVLCK3AAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
-    a=NTWU-WrgUAwH667mvEEA:9 a=KPUi8KrGJKGjQd1Z:21 a=M_CQfGMQezH4gP-7:21
-    a=QEXdDO2ut3YA:10 a=cQPPKAXgyycSBL8etih5:22 a=y1Q9-5lHfBjTkpIzbSAN:22
+    a=VnNF1IyMAAAA:8 a=ag1SF4gXAAAA:8 a=Xq-SzLe9qOIIhLYwjLEA:9 a=QEXdDO2ut3YA:10
     a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934411AbeD0OIC (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 27 Apr 2018 10:08:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53720 "EHLO mail.kernel.org"
+        id S934116AbeD0OqK (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 27 Apr 2018 10:46:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53778 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934104AbeD0OIB (ORCPT <rfc822;stable@vger.kernel.org>);
-        Fri, 27 Apr 2018 10:08:01 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C57E21864
+        id S933960AbeD0OIG (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 27 Apr 2018 10:08:06 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 878A721892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+6e181fc95081c2cf9051@syzkaller.appspotmail.com,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 36/80] llc: hold llc_sap before release_sock()
-Date: Fri, 27 Apr 2018 15:58:29 +0200
-Message-Id: <20180427135734.793915209@linuxfoundation.org>
+        stable@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: [PATCH 4.14 55/80] s390: move nobp parameter functions to nospec-branch.c
+Date: Fri, 27 Apr 2018 15:58:48 +0200
+Message-Id: <20180427135735.731178755@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135732.928644313@linuxfoundation.org>
 References: <20180427135732.928644313@linuxfoundation.org>
@@ -98,66 +93,107 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Martin Schwidefsky <schwidefsky@de.ibm.com>
 
 
-[ Upstream commit f7e43672683b097bb074a8fe7af9bc600a23f231 ]
+[ Upstream commit b2e2f43a01bace1a25bdbae04c9f9846882b727a ]
 
-syzbot reported we still access llc->sap in llc_backlog_rcv()
-after it is freed in llc_sap_remove_socket():
+Keep the code for the nobp parameter handling with the code for
+expolines. Both are related to the spectre v2 mitigation.
 
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x1b9/0x294 lib/dump_stack.c:113
- print_address_description+0x6c/0x20b mm/kasan/report.c:256
- kasan_report_error mm/kasan/report.c:354 [inline]
- kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
- __asan_report_load1_noabort+0x14/0x20 mm/kasan/report.c:430
- llc_conn_ac_send_sabme_cmd_p_set_x+0x3a8/0x460 net/llc/llc_c_ac.c:785
- llc_exec_conn_trans_actions net/llc/llc_conn.c:475 [inline]
- llc_conn_service net/llc/llc_conn.c:400 [inline]
- llc_conn_state_process+0x4e1/0x13a0 net/llc/llc_conn.c:75
- llc_backlog_rcv+0x195/0x1e0 net/llc/llc_conn.c:891
- sk_backlog_rcv include/net/sock.h:909 [inline]
- __release_sock+0x12f/0x3a0 net/core/sock.c:2335
- release_sock+0xa4/0x2b0 net/core/sock.c:2850
- llc_ui_release+0xc8/0x220 net/llc/af_llc.c:204
-
-llc->sap is refcount'ed and llc_sap_remove_socket() is paired
-with llc_sap_add_socket(). This can be amended by holding its refcount
-before llc_sap_remove_socket() and releasing it after release_sock().
-
-Reported-by: <syzbot+6e181fc95081c2cf9051@syzkaller.appspotmail.com>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/llc/af_llc.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/s390/kernel/Makefile        |    4 ++--
+ arch/s390/kernel/alternative.c   |   23 -----------------------
+ arch/s390/kernel/nospec-branch.c |   27 +++++++++++++++++++++++++++
+ 3 files changed, 29 insertions(+), 25 deletions(-)
 
---- a/net/llc/af_llc.c
-+++ b/net/llc/af_llc.c
-@@ -189,6 +189,7 @@ static int llc_ui_release(struct socket
- {
- 	struct sock *sk = sock->sk;
- 	struct llc_sock *llc;
-+	struct llc_sap *sap;
+--- a/arch/s390/kernel/Makefile
++++ b/arch/s390/kernel/Makefile
+@@ -59,11 +59,11 @@ obj-y	+= debug.o irq.o ipl.o dis.o diag.
+ obj-y	+= sysinfo.o jump_label.o lgr.o os_info.o machine_kexec.o pgm_check.o
+ obj-y	+= runtime_instr.o cache.o fpu.o dumpstack.o guarded_storage.o
+ obj-y	+= entry.o reipl.o relocate_kernel.o kdebugfs.o alternative.o
++obj-y	+= nospec-branch.o
  
- 	if (unlikely(sk == NULL))
- 		goto out;
-@@ -199,9 +200,15 @@ static int llc_ui_release(struct socket
- 		llc->laddr.lsap, llc->daddr.lsap);
- 	if (!llc_send_disc(sk))
- 		llc_ui_wait_for_disc(sk, sk->sk_rcvtimeo);
-+	sap = llc->sap;
-+	/* Hold this for release_sock(), so that llc_backlog_rcv() could still
-+	 * use it.
-+	 */
-+	llc_sap_hold(sap);
- 	if (!sock_flag(sk, SOCK_ZAPPED))
- 		llc_sap_remove_socket(llc->sap, sk);
- 	release_sock(sk);
-+	llc_sap_put(sap);
- 	if (llc->dev)
- 		dev_put(llc->dev);
- 	sock_put(sk);
+ extra-y				+= head.o head64.o vmlinux.lds
+ 
+-obj-$(CONFIG_EXPOLINE)		+= nospec-branch.o
+-CFLAGS_REMOVE_expoline.o	+= $(CC_FLAGS_EXPOLINE)
++CFLAGS_REMOVE_nospec-branch.o	+= $(CC_FLAGS_EXPOLINE)
+ 
+ obj-$(CONFIG_MODULES)		+= module.o
+ obj-$(CONFIG_SMP)		+= smp.o
+--- a/arch/s390/kernel/alternative.c
++++ b/arch/s390/kernel/alternative.c
+@@ -14,29 +14,6 @@ static int __init disable_alternative_in
+ 
+ early_param("noaltinstr", disable_alternative_instructions);
+ 
+-static int __init nobp_setup_early(char *str)
+-{
+-	bool enabled;
+-	int rc;
+-
+-	rc = kstrtobool(str, &enabled);
+-	if (rc)
+-		return rc;
+-	if (enabled && test_facility(82))
+-		__set_facility(82, S390_lowcore.alt_stfle_fac_list);
+-	else
+-		__clear_facility(82, S390_lowcore.alt_stfle_fac_list);
+-	return 0;
+-}
+-early_param("nobp", nobp_setup_early);
+-
+-static int __init nospec_setup_early(char *str)
+-{
+-	__clear_facility(82, S390_lowcore.alt_stfle_fac_list);
+-	return 0;
+-}
+-early_param("nospec", nospec_setup_early);
+-
+ struct brcl_insn {
+ 	u16 opc;
+ 	s32 disp;
+--- a/arch/s390/kernel/nospec-branch.c
++++ b/arch/s390/kernel/nospec-branch.c
+@@ -3,6 +3,31 @@
+ #include <asm/facility.h>
+ #include <asm/nospec-branch.h>
+ 
++static int __init nobp_setup_early(char *str)
++{
++	bool enabled;
++	int rc;
++
++	rc = kstrtobool(str, &enabled);
++	if (rc)
++		return rc;
++	if (enabled && test_facility(82))
++		__set_facility(82, S390_lowcore.alt_stfle_fac_list);
++	else
++		__clear_facility(82, S390_lowcore.alt_stfle_fac_list);
++	return 0;
++}
++early_param("nobp", nobp_setup_early);
++
++static int __init nospec_setup_early(char *str)
++{
++	__clear_facility(82, S390_lowcore.alt_stfle_fac_list);
++	return 0;
++}
++early_param("nospec", nospec_setup_early);
++
++#ifdef CONFIG_EXPOLINE
++
+ int nospec_call_disable = IS_ENABLED(CONFIG_EXPOLINE_OFF);
+ int nospec_return_disable = !IS_ENABLED(CONFIG_EXPOLINE_FULL);
+ 
+@@ -99,3 +124,5 @@ void __init nospec_init_branches(void)
+ 	nospec_call_revert(__nospec_call_start, __nospec_call_end);
+ 	nospec_return_revert(__nospec_return_start, __nospec_return_end);
+ }
++
++#endif /* CONFIG_EXPOLINE */
