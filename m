@@ -1,339 +1,181 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-380590-1524843166-2-8481181428014051731
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: 
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524843165; b=k/NTN0/7y8eTYJgLlWz5BqX4HX8/ILT35cdvsZ+Ou4Kzo+Rqbr
-    oi0K27ac+Us5G3LXaBu6sVFTvzycdg3IvFpj/FHr6fDqTo+6vDmpoPIHnrn1zDNt
-    w1yh0wxPnD4Cg6uTPZc/DAIM+cmZ+Fj9Cj7RQmNP1zGdUWcwrYAM//X3gayGgysg
-    SZ0II+8kNrNE/6qTzX+goPoX0AcRAXrB7T/BHCguLhM/5hDqgckyo88EfZUH5yqV
-    2HDoIOGvu/qjHdn5i8MVKlh0uwyfxv+EmFOgeiXVu/+aGNwbAtqnCzgbsaptcZ0H
-    j/RMb5/bpO4JIZ9JY9FTdkaLpVg+G766W66Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=fm2; t=1524843165; bh=SQ4OBW6bcR3kuoQkHnSaRqUuMzD6r1
-    n1n5093KcMcmE=; b=LL664+A7FkQMcRk27c2tEEzBcUFFSWZid8CWcoPvPnVZKJ
-    76fnzoDSxdfmCO1RKkKspGIJ1B4H7SFozN8g3eK9mcWXytnKXHf4ctb2f/btfjkr
-    Ccm4yJ7VJXN0vchneZgjePeJLrxWTpLyqiP36UEJGN0lACPS+4eyDmGFICBYifbP
-    KnJHUpin3cirYOvSbAKraslzF8fr+txJoS1KgbHey4A4jHCAfi/QhP0X37A/++vc
-    WjZHUg3h6gvoN7EzzaZqZnY500lHDDvXwHufK4tqWlTGcXxCI4DAdbDyG/qXMJyJ
-    DJpnKCC7UUetNJmohfyDskFc+OCziRG6V7PTvFEQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfHIrPXzVLC+k3jSSxlBukL1Gm9OxcPkeA+YFaIioWa1RK2nkPjzaDyYT/KBNviprU0K5H71WSlex54cYYfI5uZ3eyLHTuxwyWYHc7dH8PYc8Z3v5F+uF
-    qe9PdJ9QznDMB8kfK4gQwUo/1mlXIkFqI53BTVcgWcgpOu0eVBlhpuXv/MuapxDnylMjsXoqvXbbH5We1QJij4k59261Y0mZNm0GPQVFQDxfqzKpmZ0e7IS2
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=oZq4rTz8mb0A:10 a=Kd1tUaAdevIA:10
-    a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=VnNF1IyMAAAA:8 a=yPCof4ZbAAAA:8
-    a=1XWaLZrsAAAA:8 a=Qm8iP6mkAAAA:8 a=pGLkceISAAAA:8 a=20KFwNOVAAAA:8
-    a=LpQP-O61AAAA:8 a=cm27Pg_UAAAA:8 a=BTeA3XvPAAAA:8 a=khqpX0FKZ4hUKErDn4MA:9
-    a=pZOnptWE6EXd7igr:21 a=RgH05FzTk1lIHaeK:21 a=E2q1x9kB5HEA:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22 a=kDhhxE42lZnxL3pOKqYK:22
-    a=pioyyrs4ZptJ924tMmac:22 a=xmb-EsYY8bH0VWELuYED:22 a=tafbbOV3vt1XuEhzTjGK:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933041AbeD0Pc2 (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 27 Apr 2018 11:32:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47952 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932888AbeD0OAt (ORCPT <rfc822;stable@vger.kernel.org>);
-        Fri, 27 Apr 2018 10:00:49 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F25AA2185A
+Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
+X-Google-Smtp-Source: AB8JxZpB+wagzOEpL25cNaEX2qN1XIbH/jSwLlUvw5THS3u7+AwIGuYiDypdzhAE0s6b+5zYlc6I
+ARC-Seal: i=1; a=rsa-sha256; t=1524837734; cv=none;
+        d=google.com; s=arc-20160816;
+        b=Xses7DPDvlZ0hOzukGOiwgUg4v0BfTUYgxPD+Or3LBOKdNdPYpV2MLMVHZiU3ZEYZ1
+         jTlBF5y3GOjMZjH+uqtaXhh0r6zo8qOzsuFw0OBHoGxYb9HTzWVN+/ygsNqfFxXR1Th5
+         SUSyfrNUaEwACimPcfjZMzaooJiysD1lQjKaGS4b1biknLqtkBfeH9dDbD1Fcua8lBsp
+         jXmC6aRnhDa/UESFLmbG9MPueRO2aYzOdp6om7cxudEdpHBR3AXmVKkBoIoqfYKJLCpS
+         Z4CQrfSEHE+r0sg5OTDajzHXHpG/tU298EEK2eHsugO4ebVeBzYmo6eBH1FmMs9OU/mT
+         YNew==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dmarc-filter:arc-authentication-results;
+        bh=zHU7y6d1EG+iprEL0sPJ+smrnc4oFcC+G0ZE6MMb1B0=;
+        b=vdogHR0apMh6bi5XZUjnPh2VBWlE9u85OIuBhTsxAweJKzw/8K43ZAEhg9fl/SzlvH
+         yoKY28Zmk+k5nQLNSYyn1vudYgeOr0uZQ608nbC8sqUzYwt2EsTzfJbfaOWEZMnIRGsv
+         861CYQleCAgPX0a48I/pZRuJExYOMN5A394/B1PGLeBajQX32gQtDMxjeNh2/OQRvAJb
+         8TO+CGC5BCoF8awFaJrX9rFJvYOip1zFE4skT2rPVNb3+5Mv70PkK9EAqudPGssgVHtd
+         jfoUqQV2/5LYyxDJN5+bsCXPZpKjD3aiJGzbkp06gxg4ySiHj/RgTk10Nv7DUT/1xzy6
+         7+ug==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E478521897
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: [PATCH 4.4 00/50] 4.4.130-stable review
-Date: Fri, 27 Apr 2018 15:58:02 +0200
-Message-Id: <20180427135655.623669681@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Martin Schwidefsky <schwidefsky@de.ibm.com>,
+	Christian Borntraeger <borntraeger@de.ibm.com>,
+	David Hildenbrand <david@redhat.com>,
+	Cornelia Huck <cohuck@redhat.com>,
+	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
+Subject: [PATCH 4.4 12/50] KVM: s390: wire up bpb feature
+Date: Fri, 27 Apr 2018 15:58:14 +0200
+Message-Id: <20180427135656.428437126@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180427135655.623669681@linuxfoundation.org>
+References: <20180427135655.623669681@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.130-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-4.4.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 4.4.130-rc1
-X-KernelTest-Deadline: 2018-04-29T13:56+00:00
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1598908252112326742?=
+X-GMAIL-MSGID: =?utf-8?q?1598908252112326742?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This is the start of the stable review cycle for the 4.4.130 release.
-There are 50 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-Responses should be made by Sun Apr 29 13:56:42 UTC 2018.
-Anything received after that time might be too late.
+------------------
 
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.130-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
-and the diffstat can be found below.
-
-thanks,
-
-greg k-h
-
--------------
-Pseudo-Shortlog of commits:
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 4.4.130-rc1
-
-Heiko Carstens <heiko.carstens@de.ibm.com>
-    s390/uprobes: implement arch_uretprobe_is_alive()
-
-Sebastian Ott <sebott@linux.ibm.com>
-    s390/cio: update chpid descriptor after resource accessibility event
-
-Dan Carpenter <dan.carpenter@oracle.com>
-    cdrom: information leak in cdrom_ioctl_media_changed()
-
-Martin K. Petersen <martin.petersen@oracle.com>
-    scsi: mptsas: Disable WRITE SAME
-
-Eric Dumazet <edumazet@google.com>
-    ipv6: add RTA_TABLE and RTA_PREFSRC to rtm_ipv6_policy
-
-Eric Dumazet <edumazet@google.com>
-    net: af_packet: fix race in PACKET_{R|T}X_RING
-
-Eric Dumazet <edumazet@google.com>
-    tcp: md5: reject TCP_MD5SIG or TCP_MD5SIG_EXT on established sockets
-
-Wolfgang Bumiller <w.bumiller@proxmox.com>
-    net: fix deadlock while clearing neighbor proxy table
-
-Eric Dumazet <edumazet@google.com>
-    tipc: add policy for TIPC_NLA_NET_ADDR
-
-Cong Wang <xiyou.wangcong@gmail.com>
-    llc: fix NULL pointer deref for SOCK_ZAPPED
-
-Cong Wang <xiyou.wangcong@gmail.com>
-    llc: hold llc_sap before release_sock()
-
-Xin Long <lucien.xin@gmail.com>
-    sctp: do not check port in sctp_inet6_cmp_addr
-
-Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
-    vlan: Fix reading memory beyond skb->tail in skb_vlan_tagged_multi
-
-Guillaume Nault <g.nault@alphalink.fr>
-    pppoe: check sockaddr length in pppoe_connect()
-
-Willem de Bruijn <willemb@google.com>
-    packet: fix bitfield update race
-
-Xin Long <lucien.xin@gmail.com>
-    team: fix netconsole setup over team
-
-Paolo Abeni <pabeni@redhat.com>
-    team: avoid adding twice the same option to the event list
-
-Jann Horn <jannh@google.com>
-    tcp: don't read out-of-bounds opsize
-
-Cong Wang <xiyou.wangcong@gmail.com>
-    llc: delete timers synchronously in llc_sk_free()
-
-Eric Dumazet <edumazet@google.com>
-    net: validate attribute sizes in neigh_dump_table()
-
-Guillaume Nault <g.nault@alphalink.fr>
-    l2tp: check sockaddr length in pppol2tp_connect()
-
-Eric Biggers <ebiggers@google.com>
-    KEYS: DNS: limit the length of option strings
-
-Xin Long <lucien.xin@gmail.com>
-    bonding: do not set slave_dev npinfo before slave_enable_netpoll in bond_enslave
-
-Martin Schwidefsky <schwidefsky@de.ibm.com>
-    s390: correct module section names for expoline code revert
-
-Martin Schwidefsky <schwidefsky@de.ibm.com>
-    s390: correct nospec auto detection init order
-
-Martin Schwidefsky <schwidefsky@de.ibm.com>
-    s390: add sysfs attributes for spectre
-
-Martin Schwidefsky <schwidefsky@de.ibm.com>
-    s390: report spectre mitigation via syslog
-
-Martin Schwidefsky <schwidefsky@de.ibm.com>
-    s390: add automatic detection of the spectre defense
-
-Martin Schwidefsky <schwidefsky@de.ibm.com>
-    s390: move nobp parameter functions to nospec-branch.c
-
-Martin Schwidefsky <schwidefsky@de.ibm.com>
-    s390/entry.S: fix spurious zeroing of r0
-
-Martin Schwidefsky <schwidefsky@de.ibm.com>
-    s390: do not bypass BPENTER for interrupt system calls
-
-Martin Schwidefsky <schwidefsky@de.ibm.com>
-    s390: Replace IS_ENABLED(EXPOLINE_*) with IS_ENABLED(CONFIG_EXPOLINE_*)
-
-Martin Schwidefsky <schwidefsky@de.ibm.com>
-    s390: introduce execute-trampolines for branches
-
-Martin Schwidefsky <schwidefsky@de.ibm.com>
-    s390: run user space and KVM guests with modified branch prediction
-
-Martin Schwidefsky <schwidefsky@de.ibm.com>
-    s390: add options to change branch prediction behaviour for the kernel
-
-Martin Schwidefsky <schwidefsky@de.ibm.com>
-    s390/alternative: use a copy of the facility bit mask
-
-Martin Schwidefsky <schwidefsky@de.ibm.com>
-    s390: add optimized array_index_mask_nospec
-
-Martin Schwidefsky <schwidefsky@de.ibm.com>
-    s390: scrub registers on kernel entry and KVM exit
-
-Martin Schwidefsky <schwidefsky@de.ibm.com>
-    KVM: s390: wire up bpb feature
-
-Martin Schwidefsky <schwidefsky@de.ibm.com>
-    s390: enable CPU alternatives unconditionally
-
-Martin Schwidefsky <schwidefsky@de.ibm.com>
-    s390: introduce CPU alternatives
-
-Karthikeyan Periyasamy <periyasa@codeaurora.org>
-    Revert "ath10k: send (re)assoc peer command when NSS changed"
-
-Sahitya Tummala <stummala@codeaurora.org>
-    jbd2: fix use after free in kjournald2()
-
-Felix Fietkau <nbd@nbd.name>
-    ath9k_hw: check if the chip failed to wake up
-
-Dmitry Torokhov <dmitry.torokhov@gmail.com>
-    Input: drv260x - fix initializing overdrive voltage
-
-Grant Grundler <grundler@chromium.org>
-    r8152: add Linksys USB3GIGV1 id
-
-Chen Feng <puck.chen@hisilicon.com>
-    staging: ion : Donnot wakeup kswapd in ion system alloc
-
-Jiri Olsa <jolsa@kernel.org>
-    perf: Return proper values for user stack errors
-
-Xiaoming Gao <gxm.linux.kernel@gmail.com>
-    x86/tsc: Prevent 32bit truncation in calc_hpet_ref()
-
-Steve French <smfrench@gmail.com>
-    cifs: do not allow creating sockets except with SMB1 posix exensions
+From: Martin Schwidefsky <schwidefsky@de.ibm.com>
 
 
--------------
+From: Christian Borntraeger <borntraeger@de.ibm.com>
 
-Diffstat:
+[ Upstream commit 35b3fde6203b932b2b1a5b53b3d8808abc9c4f60 ]
 
- Documentation/kernel-parameters.txt           |   3 +
- Makefile                                      |   4 +-
- arch/s390/Kconfig                             |  47 +++++
- arch/s390/Makefile                            |  10 ++
- arch/s390/include/asm/alternative.h           | 149 +++++++++++++++
- arch/s390/include/asm/barrier.h               |  24 +++
- arch/s390/include/asm/facility.h              |  18 ++
- arch/s390/include/asm/kvm_host.h              |   3 +-
- arch/s390/include/asm/lowcore.h               |   7 +-
- arch/s390/include/asm/nospec-branch.h         |  17 ++
- arch/s390/include/asm/processor.h             |   4 +
- arch/s390/include/asm/thread_info.h           |   4 +
- arch/s390/include/uapi/asm/kvm.h              |   3 +
- arch/s390/kernel/Makefile                     |   5 +-
- arch/s390/kernel/alternative.c                | 112 ++++++++++++
- arch/s390/kernel/early.c                      |   5 +
- arch/s390/kernel/entry.S                      | 250 +++++++++++++++++++++++---
- arch/s390/kernel/ipl.c                        |   1 +
- arch/s390/kernel/module.c                     |  65 ++++++-
- arch/s390/kernel/nospec-branch.c              | 169 +++++++++++++++++
- arch/s390/kernel/processor.c                  |  18 ++
- arch/s390/kernel/setup.c                      |  14 +-
- arch/s390/kernel/smp.c                        |   7 +-
- arch/s390/kernel/uprobes.c                    |   9 +
- arch/s390/kernel/vmlinux.lds.S                |  37 ++++
- arch/s390/kvm/kvm-s390.c                      |  13 +-
- arch/x86/kernel/tsc.c                         |   2 +-
- drivers/cdrom/cdrom.c                         |   2 +-
- drivers/input/misc/drv260x.c                  |   2 +-
- drivers/message/fusion/mptsas.c               |   1 +
- drivers/net/bonding/bond_main.c               |   3 +-
- drivers/net/ppp/pppoe.c                       |   4 +
- drivers/net/team/team.c                       |  38 +++-
- drivers/net/usb/cdc_ether.c                   |  10 ++
- drivers/net/usb/r8152.c                       |   2 +
- drivers/net/wireless/ath/ath10k/mac.c         |   5 +-
- drivers/net/wireless/ath/ath9k/hw.c           |   4 +
- drivers/s390/char/Makefile                    |   2 +
- drivers/s390/cio/chsc.c                       |  14 +-
- drivers/staging/android/ion/ion_system_heap.c |   2 +-
- fs/cifs/dir.c                                 |   9 +-
- fs/jbd2/journal.c                             |   2 +-
- include/linux/if_vlan.h                       |   7 +-
- include/net/llc_conn.h                        |   1 +
- include/uapi/linux/kvm.h                      |   1 +
- kernel/events/core.c                          |   4 +-
- net/core/dev.c                                |   2 +-
- net/core/neighbour.c                          |  40 +++--
- net/dns_resolver/dns_key.c                    |  13 +-
- net/ipv4/tcp.c                                |   6 +-
- net/ipv4/tcp_input.c                          |   7 +-
- net/ipv6/route.c                              |   2 +
- net/l2tp/l2tp_ppp.c                           |   7 +
- net/llc/af_llc.c                              |  14 +-
- net/llc/llc_c_ac.c                            |   9 +-
- net/llc/llc_conn.c                            |  22 ++-
- net/packet/af_packet.c                        |  88 ++++++---
- net/packet/internal.h                         |  10 +-
- net/sctp/ipv6.c                               |  60 +++----
- net/tipc/net.c                                |   3 +-
- 60 files changed, 1228 insertions(+), 168 deletions(-)
+The new firmware interfaces for branch prediction behaviour changes
+are transparently available for the guest. Nevertheless, there is
+new state attached that should be migrated and properly resetted.
+Provide a mechanism for handling reset, migration and VSIE.
+
+Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Reviewed-by: David Hildenbrand <david@redhat.com>
+Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+[Changed capability number to 152. - Radim]
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ arch/s390/include/asm/kvm_host.h |    3 ++-
+ arch/s390/include/uapi/asm/kvm.h |    3 +++
+ arch/s390/kvm/kvm-s390.c         |   13 ++++++++++++-
+ include/uapi/linux/kvm.h         |    1 +
+ 4 files changed, 18 insertions(+), 2 deletions(-)
+
+--- a/arch/s390/include/asm/kvm_host.h
++++ b/arch/s390/include/asm/kvm_host.h
+@@ -136,7 +136,8 @@ struct kvm_s390_sie_block {
+ 	__u16	ipa;			/* 0x0056 */
+ 	__u32	ipb;			/* 0x0058 */
+ 	__u32	scaoh;			/* 0x005c */
+-	__u8	reserved60;		/* 0x0060 */
++#define FPF_BPBC 	0x20
++	__u8	fpf;			/* 0x0060 */
+ 	__u8	ecb;			/* 0x0061 */
+ 	__u8    ecb2;                   /* 0x0062 */
+ #define ECB3_AES 0x04
+--- a/arch/s390/include/uapi/asm/kvm.h
++++ b/arch/s390/include/uapi/asm/kvm.h
+@@ -151,6 +151,7 @@ struct kvm_guest_debug_arch {
+ #define KVM_SYNC_ARCH0  (1UL << 4)
+ #define KVM_SYNC_PFAULT (1UL << 5)
+ #define KVM_SYNC_VRS    (1UL << 6)
++#define KVM_SYNC_BPBC	(1UL << 10)
+ /* definition of registers in kvm_run */
+ struct kvm_sync_regs {
+ 	__u64 prefix;	/* prefix register */
+@@ -168,6 +169,8 @@ struct kvm_sync_regs {
+ 	__u64 vrs[32][2];	/* vector registers */
+ 	__u8  reserved[512];	/* for future vector expansion */
+ 	__u32 fpc;	/* only valid with vector registers */
++	__u8 bpbc : 1;		/* bp mode */
++	__u8 reserved2 : 7;
+ };
+ 
+ #define KVM_REG_S390_TODPR	(KVM_REG_S390 | KVM_REG_SIZE_U32 | 0x1)
+--- a/arch/s390/kvm/kvm-s390.c
++++ b/arch/s390/kvm/kvm-s390.c
+@@ -257,6 +257,9 @@ int kvm_vm_ioctl_check_extension(struct
+ 	case KVM_CAP_S390_VECTOR_REGISTERS:
+ 		r = MACHINE_HAS_VX;
+ 		break;
++	case KVM_CAP_S390_BPB:
++		r = test_facility(82);
++		break;
+ 	default:
+ 		r = 0;
+ 	}
+@@ -1262,6 +1265,8 @@ int kvm_arch_vcpu_init(struct kvm_vcpu *
+ 				    KVM_SYNC_CRS |
+ 				    KVM_SYNC_ARCH0 |
+ 				    KVM_SYNC_PFAULT;
++	if (test_kvm_facility(vcpu->kvm, 82))
++		vcpu->run->kvm_valid_regs |= KVM_SYNC_BPBC;
+ 	if (test_kvm_facility(vcpu->kvm, 129))
+ 		vcpu->run->kvm_valid_regs |= KVM_SYNC_VRS;
+ 
+@@ -1286,7 +1291,6 @@ void kvm_arch_vcpu_load(struct kvm_vcpu
+ 	if (test_fp_ctl(current->thread.fpu.fpc))
+ 		/* User space provided an invalid FPC, let's clear it */
+ 		current->thread.fpu.fpc = 0;
+-
+ 	save_access_regs(vcpu->arch.host_acrs);
+ 	restore_access_regs(vcpu->run->s.regs.acrs);
+ 	gmap_enable(vcpu->arch.gmap);
+@@ -1327,6 +1331,7 @@ static void kvm_s390_vcpu_initial_reset(
+ 	current->thread.fpu.fpc = 0;
+ 	vcpu->arch.sie_block->gbea = 1;
+ 	vcpu->arch.sie_block->pp = 0;
++	vcpu->arch.sie_block->fpf &= ~FPF_BPBC;
+ 	vcpu->arch.pfault_token = KVM_S390_PFAULT_TOKEN_INVALID;
+ 	kvm_clear_async_pf_completion_queue(vcpu);
+ 	if (!kvm_s390_user_cpu_state_ctrl(vcpu->kvm))
+@@ -2162,6 +2167,7 @@ static void store_regs(struct kvm_vcpu *
+ 	kvm_run->s.regs.pft = vcpu->arch.pfault_token;
+ 	kvm_run->s.regs.pfs = vcpu->arch.pfault_select;
+ 	kvm_run->s.regs.pfc = vcpu->arch.pfault_compare;
++	kvm_run->s.regs.bpbc = (vcpu->arch.sie_block->fpf & FPF_BPBC) == FPF_BPBC;
+ }
+ 
+ int kvm_arch_vcpu_ioctl_run(struct kvm_vcpu *vcpu, struct kvm_run *kvm_run)
+@@ -2194,6 +2200,11 @@ int kvm_arch_vcpu_ioctl_run(struct kvm_v
+ 		kvm_run->exit_reason = KVM_EXIT_INTR;
+ 		rc = -EINTR;
+ 	}
++	if ((kvm_run->kvm_dirty_regs & KVM_SYNC_BPBC) &&
++	    test_kvm_facility(vcpu->kvm, 82)) {
++		vcpu->arch.sie_block->fpf &= ~FPF_BPBC;
++		vcpu->arch.sie_block->fpf |= kvm_run->s.regs.bpbc ? FPF_BPBC : 0;
++	}
+ 
+ 	if (guestdbg_exit_pending(vcpu) && !rc)  {
+ 		kvm_s390_prepare_debug_exit(vcpu);
+--- a/include/uapi/linux/kvm.h
++++ b/include/uapi/linux/kvm.h
+@@ -831,6 +831,7 @@ struct kvm_ppc_smmu_info {
+ #define KVM_CAP_GUEST_DEBUG_HW_WPS 120
+ #define KVM_CAP_SPLIT_IRQCHIP 121
+ #define KVM_CAP_IOEVENTFD_ANY_LENGTH 122
++#define KVM_CAP_S390_BPB 152
+ 
+ #ifdef KVM_CAP_IRQ_ROUTING
+ 
