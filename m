@@ -1,231 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757381AbeD0DKJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 23:10:09 -0400
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:39138 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757046AbeD0DKH (ORCPT
+        id S1757357AbeD0DLx (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 23:11:53 -0400
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:37708 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757046AbeD0DLw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 23:10:07 -0400
-Subject: Re: [PATCH 2/2] net: stmmac: dwmac-meson: extend phy mode setting
-To: Jerome Brunet <jbrunet@baylibre.com>,
-        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>
-References: <20180426160508.29380-1-yixun.lan@amlogic.com>
- <20180426160508.29380-3-yixun.lan@amlogic.com>
- <1524732426.4026.84.camel@baylibre.com>
-CC: <yixun.lan@amlogic.com>, Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-From: Yixun Lan <yixun.lan@amlogic.com>
-Message-ID: <daa6e325-ce4d-7b6b-dc43-2a884d485139@amlogic.com>
-Date: Fri, 27 Apr 2018 11:09:59 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
+        Thu, 26 Apr 2018 23:11:52 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w3R3BktN023950
+X-Nifty-SrcIP: [209.85.213.42]
+X-Google-Smtp-Source: AB8JxZqvuVS/FsCVat1JgE6aFWFjX1GCpJudUCOQkOdMmRxxyruZ6j0KmjvJXoh4ZSh3e1HfAXYxR5NsCk2b6r3vtC8=
 MIME-Version: 1.0
-In-Reply-To: <1524732426.4026.84.camel@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.18.20.235]
-X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
- (10.18.11.6)
+In-Reply-To: <20180427014905.19520-2-suzuki.katsuhiro@socionext.com>
+References: <20180427014905.19520-1-suzuki.katsuhiro@socionext.com> <20180427014905.19520-2-suzuki.katsuhiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Fri, 27 Apr 2018 12:11:05 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASaoMmRtwbvjj1v9bbvKQZ_2AH2uGvmZO5U53vSW-WKbA@mail.gmail.com>
+Message-ID: <CAK7LNASaoMmRtwbvjj1v9bbvKQZ_2AH2uGvmZO5U53vSW-WKbA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] pinctrl: uniphier: add LD11 MPEG2-TS I/O pin-mux settings
+To: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jerome
-On 04/26/18 16:47, Jerome Brunet wrote:
-> On Thu, 2018-04-26 at 16:05 +0000, Yixun Lan wrote:
->>   In the Meson-AXG SoC, the phy mode setting of PRG_ETH0 in the glue layer
->> is extended from bit[0] to bit[2:0].
->>   There is no problem if we configure it to the RGMII 1000M PHY mode,
->> since the register setting is coincidentally compatible with previous one,
->> but for the RMII 100M PHY mode, the configuration need to be changed to
->> value - b100.
->>   This patch was verified with a RTL8201F 100M ethernet PHY.
->>
->> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
->> ---
->>  .../ethernet/stmicro/stmmac/dwmac-meson8b.c   | 95 ++++++++++++++++---
->>  1 file changed, 84 insertions(+), 11 deletions(-)
->>
->> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
->> index 7cb794094a70..e3688b6dd87c 100644
->> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
->> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
->> @@ -18,6 +18,7 @@
->>  #include <linux/io.h>
->>  #include <linux/ioport.h>
->>  #include <linux/module.h>
->> +#include <linux/of_device.h>
->>  #include <linux/of_net.h>
->>  #include <linux/mfd/syscon.h>
->>  #include <linux/platform_device.h>
->> @@ -29,6 +30,10 @@
->>  
->>  #define PRG_ETH0_RGMII_MODE		BIT(0)
->>  
->> +#define PRG_ETH0_EXT_PHY_MODE_MASK	GENMASK(2, 0)
->> +#define PRG_ETH0_EXT_RGMII_MODE		1
->> +#define PRG_ETH0_EXT_RMII_MODE		4
->> +
->>  /* mux to choose between fclk_div2 (bit unset) and mpll2 (bit set) */
->>  #define PRG_ETH0_CLK_M250_SEL_SHIFT	4
->>  #define PRG_ETH0_CLK_M250_SEL_MASK	GENMASK(4, 4)
->> @@ -46,10 +51,16 @@
->>  #define PRG_ETH0_TX_AND_PHY_REF_CLK	BIT(12)
->>  
->>  #define MUX_CLK_NUM_PARENTS		2
->> +struct meson8b_dwmac_data {
->> +	bool ext_phy_mode;
->> +};
->>  
->>  struct meson8b_dwmac {
->>  	struct device		*dev;
->>  	void __iomem		*regs;
->> +
->> +	const struct meson8b_dwmac_data *data;
->> +
->>  	phy_interface_t		phy_mode;
->>  	struct clk		*rgmii_tx_clk;
->>  	u32			tx_delay_ns;
->> @@ -171,6 +182,46 @@ static int meson8b_init_rgmii_tx_clk(struct meson8b_dwmac *dwmac)
->>  	return 0;
->>  }
->>  
->> +static int meson8b_init_set_mode(struct meson8b_dwmac *dwmac)
->> +{
->> +	bool ext_phy_mode = dwmac->data->ext_phy_mode;
->> +
->> +	switch (dwmac->phy_mode) {
->> +	case PHY_INTERFACE_MODE_RGMII:
->> +	case PHY_INTERFACE_MODE_RGMII_RXID:
->> +	case PHY_INTERFACE_MODE_RGMII_ID:
->> +	case PHY_INTERFACE_MODE_RGMII_TXID:
->> +		/* enable RGMII mode */
->> +		if (ext_phy_mode)
-> 
-> Looks weird to have this if target at a specific SoC withing a function named
-> after another SoC
-> 
-> Couldn't you make one function per soc type, and pass that function pointer in
-> the match data ?
-> 
-sounds good, I can do this
+2018-04-27 10:49 GMT+09:00 Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>:
+> The MPEG2-TS input/output core both accepts serial TS and parallel TS.
+>
+> The serial TS interface uses following pins:
+>   hscin0_s : HS0DOUT[0-3]
+>   hscin1_s : HS0DOUT[4-7]
+>   hscin2_s : HS1BCLKIN, HS1SYNCIN, HS1VALIN, HS1DIN0
+>   hscout0_s: HS0DOUT[0-3]
+>   hscout1_s: HS0DOUT[4-7]
+>
+> And the parallel TS interface uses following pins:
+>   hscin0_p : HS0BCLKIN, HS0SYNCIN, HS0VALIN, HS0DIN[0-7]
+>   hscin1_p : HS1BCLKIN, HS1SYNCIN, HS1VALIN, HS1DIN[0-7]
+>   hscout0_p: HS0BCLKOUT, HS0SYNCOUT, HS0VALOUT, HS0DOUT[0-7]
+>
+> Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+>
+> ---
+>
+> Changes in v2:
+>
+>   - Fix indent
+>   - Sort alphabetically
+>   - Fix wrong grouping
+>     - Fix hsc'out'0_ci -> hsc'in'0_ci of hscin0 group
+>     - Fix hscin'0'_s -> hscin'1'_s of hscin1 group
 
->> +			meson8b_dwmac_mask_bits(dwmac, PRG_ETH0,
->> +						PRG_ETH0_EXT_PHY_MODE_MASK,
->> +						PRG_ETH0_EXT_RGMII_MODE);
->> +		else
->> +			meson8b_dwmac_mask_bits(dwmac, PRG_ETH0,
->> +						PRG_ETH0_RGMII_MODE,
->> +						PRG_ETH0_RGMII_MODE);
->> +
->> +		break;
->> +	case PHY_INTERFACE_MODE_RMII:
->> +		/* disable RGMII mode -> enables RMII mode */
->> +		if (ext_phy_mode)
->> +			meson8b_dwmac_mask_bits(dwmac, PRG_ETH0,
->> +						PRG_ETH0_EXT_PHY_MODE_MASK,
->> +						PRG_ETH0_EXT_RMII_MODE);
->> +		else
->> +			meson8b_dwmac_mask_bits(dwmac, PRG_ETH0,
->> +						PRG_ETH0_RGMII_MODE, 0);
->> +
->> +		break;
->> +	default:
->> +		dev_err(dwmac->dev, "fail to set phy-mode %s\n",
->> +			phy_modes(dwmac->phy_mode));
->> +		return -EINVAL;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->>  static int meson8b_init_prg_eth(struct meson8b_dwmac *dwmac)
->>  {
->>  	int ret;
->> @@ -188,10 +239,6 @@ static int meson8b_init_prg_eth(struct meson8b_dwmac *dwmac)
->>  
->>  	case PHY_INTERFACE_MODE_RGMII_ID:
->>  	case PHY_INTERFACE_MODE_RGMII_TXID:
->> -		/* enable RGMII mode */
->> -		meson8b_dwmac_mask_bits(dwmac, PRG_ETH0, PRG_ETH0_RGMII_MODE,
->> -					PRG_ETH0_RGMII_MODE);
->> -
->>  		/* only relevant for RMII mode -> disable in RGMII mode */
->>  		meson8b_dwmac_mask_bits(dwmac, PRG_ETH0,
->>  					PRG_ETH0_INVERTED_RMII_CLK, 0);
->> @@ -224,10 +271,6 @@ static int meson8b_init_prg_eth(struct meson8b_dwmac *dwmac)
->>  		break;
->>  
->>  	case PHY_INTERFACE_MODE_RMII:
->> -		/* disable RGMII mode -> enables RMII mode */
->> -		meson8b_dwmac_mask_bits(dwmac, PRG_ETH0, PRG_ETH0_RGMII_MODE,
->> -					0);
->> -
->>  		/* invert internal clk_rmii_i to generate 25/2.5 tx_rx_clk */
->>  		meson8b_dwmac_mask_bits(dwmac, PRG_ETH0,
->>  					PRG_ETH0_INVERTED_RMII_CLK,
->> @@ -274,6 +317,11 @@ static int meson8b_dwmac_probe(struct platform_device *pdev)
->>  		goto err_remove_config_dt;
->>  	}
->>  
->> +	dwmac->data = (const struct meson8b_dwmac_data *)
->> +		of_device_get_match_data(&pdev->dev);
->> +	if (!dwmac->data)
->> +		return -EINVAL;
->> +
->>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
->>  	dwmac->regs = devm_ioremap_resource(&pdev->dev, res);
->>  	if (IS_ERR(dwmac->regs)) {
->> @@ -298,6 +346,10 @@ static int meson8b_dwmac_probe(struct platform_device *pdev)
->>  	if (ret)
->>  		goto err_remove_config_dt;
->>  
->> +	ret = meson8b_init_set_mode(dwmac);
->> +	if (ret)
->> +		goto err_remove_config_dt;
->> +
->>  	ret = meson8b_init_prg_eth(dwmac);
->>  	if (ret)
->>  		goto err_remove_config_dt;
->> @@ -316,10 +368,31 @@ static int meson8b_dwmac_probe(struct platform_device *pdev)
->>  	return ret;
->>  }
->>  
->> +static const struct meson8b_dwmac_data meson8b_dwmac_data = {
->> +	.ext_phy_mode = false,
->> +};
->> +
->> +static const struct meson8b_dwmac_data meson_axg_dwmac_data = {
->> +	.ext_phy_mode = true,
->> +};
->> +
->>  static const struct of_device_id meson8b_dwmac_match[] = {
->> -	{ .compatible = "amlogic,meson8b-dwmac" },
->> -	{ .compatible = "amlogic,meson8m2-dwmac" },
->> -	{ .compatible = "amlogic,meson-gxbb-dwmac" },
->> +	{
->> +		.compatible = "amlogic,meson8b-dwmac",
->> +		.data = &meson8b_dwmac_data,
->> +	},
->> +	{
->> +		.compatible = "amlogic,meson8m2-dwmac",
->> +		.data = &meson8b_dwmac_data,
->> +	},
->> +	{
->> +		.compatible = "amlogic,meson-gxbb-dwmac",
->> +		.data = &meson8b_dwmac_data,
->> +	},
->> +	{
->> +		.compatible = "amlogic,meson-axg-dwmac",
->> +		.data = &meson_axg_dwmac_data,
->> +	},
->>  	{ }
->>  };
->>  MODULE_DEVICE_TABLE(of, meson8b_dwmac_match);
-> 
-> .
-> 
+
+This version looks good to me.
+
+Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
