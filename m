@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1759334AbeD0VA5 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 17:00:57 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45694 "EHLO mx1.redhat.com"
+        id S1759346AbeD0VA6 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 17:00:58 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60716 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1759084AbeD0VAw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 17:00:52 -0400
+        id S1759114AbeD0VAz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 17:00:55 -0400
 From: Waiman Long <longman@redhat.com>
 To: "Luis R. Rodriguez" <mcgrof@kernel.org>,
         Kees Cook <keescook@chromium.org>,
@@ -16,110 +16,146 @@ Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Matthew Wilcox <willy@infradead.org>,
         "Eric W. Biederman" <ebiederm@xmission.com>,
         Waiman Long <longman@redhat.com>
-Subject: [PATCH v6 2/8] proc/sysctl: Provide additional ctl_table.flags checks
-Date: Fri, 27 Apr 2018 17:00:32 -0400
-Message-Id: <1524862838-8247-3-git-send-email-longman@redhat.com>
+Subject: [PATCH v6 8/8] ipc: Conserve sequence numbers in extended IPCMNI mode
+Date: Fri, 27 Apr 2018 17:00:38 -0400
+Message-Id: <1524862838-8247-9-git-send-email-longman@redhat.com>
 In-Reply-To: <1524862838-8247-1-git-send-email-longman@redhat.com>
 References: <1524862838-8247-1-git-send-email-longman@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Checking code is added to provide the following additional
-ctl_table.flags checks:
+The mixing in of a sequence number into the IPC IDs is probably to
+avoid ID reuse in userspace as much as possible. With extended IPCMNI
+mode, the number of usable sequence numbers is greatly reduced leading
+to higher chance of ID reuse.
 
- 1) No unknown flag is allowed.
- 2) Minimum of a range cannot be larger than the maximum value.
- 3) The signed and unsigned flags are mutually exclusive.
- 4) The proc_handler should be consistent with the signed or unsigned
-    flags.
-
-The separation of signed and unsigned flags helps to provide more
-comprehensive checking than it would have been if there is only one
-flag available.
+To address this issue, we need to conserve the sequence number space
+as much as possible. Right now, the sequence number is incremented
+for every new ID created. In reality, we only need to increment the
+sequence number when one or more IDs have been removed previously to
+make sure that those IDs will not be reused when a new one is built.
+This is being done in the extended IPCMNI mode,
 
 Signed-off-by: Waiman Long <longman@redhat.com>
 ---
- fs/proc/proc_sysctl.c | 60 +++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
+ include/linux/ipc_namespace.h |  1 +
+ ipc/ipc_sysctl.c              |  2 ++
+ ipc/util.c                    | 29 ++++++++++++++++++++++-------
+ ipc/util.h                    |  1 +
+ 4 files changed, 26 insertions(+), 7 deletions(-)
 
-diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-index 8989936..fb09454 100644
---- a/fs/proc/proc_sysctl.c
-+++ b/fs/proc/proc_sysctl.c
-@@ -1092,6 +1092,64 @@ static int sysctl_check_table_array(const char *path, struct ctl_table *table)
- 	return err;
+diff --git a/include/linux/ipc_namespace.h b/include/linux/ipc_namespace.h
+index b5630c8..9c86fd9 100644
+--- a/include/linux/ipc_namespace.h
++++ b/include/linux/ipc_namespace.h
+@@ -16,6 +16,7 @@
+ struct ipc_ids {
+ 	int in_use;
+ 	unsigned short seq;
++	unsigned short deleted;
+ 	bool tables_initialized;
+ 	struct rw_semaphore rwsem;
+ 	struct idr ipcs_idr;
+diff --git a/ipc/ipc_sysctl.c b/ipc/ipc_sysctl.c
+index 4e2cb6d..b7fb38c 100644
+--- a/ipc/ipc_sysctl.c
++++ b/ipc/ipc_sysctl.c
+@@ -111,6 +111,7 @@ static int proc_ipc_sem_dointvec(struct ctl_table *table, int write,
+ static int int_max = INT_MAX;
+ int ipc_mni __read_mostly = IPCMNI;
+ int ipc_mni_shift __read_mostly = IPCMNI_SHIFT;
++bool ipc_mni_extended __read_mostly;
+ 
+ static struct ctl_table ipc_kern_table[] = {
+ 	{
+@@ -243,6 +244,7 @@ static int __init ipc_mni_extend(char *str)
+ {
+ 	ipc_mni = IPCMNI_EXTEND;
+ 	ipc_mni_shift = IPCMNI_EXTEND_SHIFT;
++	ipc_mni_extended = true;
+ 	pr_info("IPCMNI extended to %d.\n", ipc_mni);
+ 	return 0;
+ }
+diff --git a/ipc/util.c b/ipc/util.c
+index 782a8d0..7c8e733 100644
+--- a/ipc/util.c
++++ b/ipc/util.c
+@@ -119,7 +119,8 @@ int ipc_init_ids(struct ipc_ids *ids)
+ {
+ 	int err;
+ 	ids->in_use = 0;
+-	ids->seq = 0;
++	ids->deleted = false;
++	ids->seq = ipc_mni_extended ? 0 : -1; /* seq # is pre-incremented */
+ 	init_rwsem(&ids->rwsem);
+ 	err = rhashtable_init(&ids->key_ht, &ipc_kht_params);
+ 	if (err)
+@@ -193,6 +194,11 @@ static struct kern_ipc_perm *ipc_findkey(struct ipc_ids *ids, key_t key)
+ 	return NULL;
  }
  
 +/*
-+ * This code assumes that only one integer value is allowed in an integer
-+ * sysctl when one of the clamping flags is used. If that assumption is no
-+ * longer true, we may need to add another flag to indicate the entry size.
++ * To conserve sequence number space with extended ipc_mni when new ID
++ * is built, the sequence number is incremented only when one or more
++ * IDs have been removed previously.
 + */
-+static int sysctl_check_flags(const char *path, struct ctl_table *table)
-+{
-+	int err = 0;
-+
-+	if ((table->flags & ~CTL_TABLE_FLAGS_ALL) ||
-+	   ((table->flags & CTL_FLAGS_CLAMP_RANGE) == CTL_FLAGS_CLAMP_RANGE))
-+		err = sysctl_err(path, table, "invalid flags");
-+
-+	if (table->flags & CTL_FLAGS_CLAMP_RANGE) {
-+		int range_err = 0;
-+		bool is_int = (table->maxlen == sizeof(int));
-+
-+		if (!is_int && (table->maxlen != sizeof(long))) {
-+			range_err++;
-+		} else if (!table->extra1 || !table->extra2) {
-+			/* No min > max checking needed */
-+		} else if (table->flags & CTL_FLAGS_CLAMP_UNSIGNED_RANGE) {
-+			unsigned long min, max;
-+
-+			min = is_int ? *(unsigned int *)table->extra1
-+				     : *(unsigned long *)table->extra1;
-+			max = is_int ? *(unsigned int *)table->extra2
-+				     : *(unsigned long *)table->extra2;
-+			range_err += (min > max);
-+		} else { /* table->flags & CTL_FLAGS_CLAMP_SIGNED_RANGE */
-+
-+			long min, max;
-+
-+			min = is_int ? *(int *)table->extra1
-+				     : *(long *)table->extra1;
-+			max = is_int ? *(int *)table->extra2
-+				     : *(long *)table->extra2;
-+			range_err += (min > max);
-+		}
-+
-+		/*
-+		 * proc_handler and flag consistency check.
-+		 */
-+		if (((table->proc_handler == proc_douintvec_minmax)   ||
-+		     (table->proc_handler == proc_doulongvec_minmax)) &&
-+		    !(table->flags & CTL_FLAGS_CLAMP_UNSIGNED_RANGE))
-+			range_err++;
-+
-+		if ((table->proc_handler == proc_dointvec_minmax) &&
-+		   !(table->flags & CTL_FLAGS_CLAMP_SIGNED_RANGE))
-+			range_err++;
-+
-+		if (range_err)
-+			err |= sysctl_err(path, table, "Invalid range");
-+	}
-+	return err;
-+}
-+
- static int sysctl_check_table(const char *path, struct ctl_table *table)
+ #ifdef CONFIG_CHECKPOINT_RESTORE
+ /*
+  * Specify desired id for next allocated IPC object.
+@@ -206,9 +212,13 @@ static inline int ipc_buildid(int id, struct ipc_ids *ids,
+ 			      struct kern_ipc_perm *new)
  {
- 	int err = 0;
-@@ -1111,6 +1169,8 @@ static int sysctl_check_table(const char *path, struct ctl_table *table)
- 		    (table->proc_handler == proc_doulongvec_ms_jiffies_minmax)) {
- 			if (!table->data)
- 				err |= sysctl_err(path, table, "No data");
-+			if (table->flags)
-+				err |= sysctl_check_flags(path, table);
- 			if (!table->maxlen)
- 				err |= sysctl_err(path, table, "No maxlen");
- 			else
+ 	if (ids->next_id < 0) { /* default, behave as !CHECKPOINT_RESTORE */
+-		new->seq = ids->seq++;
+-		if (ids->seq > IPCID_SEQ_MAX)
+-			ids->seq = 0;
++		if (!ipc_mni_extended || ids->deleted) {
++			ids->seq++;
++			if (ids->seq > IPCID_SEQ_MAX)
++				ids->seq = 0;
++			ids->deleted = false;
++		}
++		new->seq = ids->seq;
+ 	} else {
+ 		new->seq = ipcid_to_seqx(ids->next_id);
+ 		ids->next_id = -1;
+@@ -224,9 +234,13 @@ static inline int ipc_buildid(int id, struct ipc_ids *ids,
+ static inline int ipc_buildid(int id, struct ipc_ids *ids,
+ 			      struct kern_ipc_perm *new)
+ {
+-	new->seq = ids->seq++;
+-	if (ids->seq > IPCID_SEQ_MAX)
+-		ids->seq = 0;
++	if (!ipc_mni_extended || ids->deleted) {
++		ids->seq++;
++		if (ids->seq > IPCID_SEQ_MAX)
++			ids->seq = 0;
++		ids->deleted = false;
++	}
++	new->seq = ids->seq;
+ 
+ 	return (new->seq << SEQ_SHIFT) + id;
+ }
+@@ -436,6 +450,7 @@ void ipc_rmid(struct ipc_ids *ids, struct kern_ipc_perm *ipcp)
+ 	idr_remove(&ids->ipcs_idr, lid);
+ 	ipc_kht_remove(ids, ipcp);
+ 	ids->in_use--;
++	ids->deleted = true;
+ 	ipcp->deleted = true;
+ 
+ 	if (unlikely(lid == ids->max_id)) {
+diff --git a/ipc/util.h b/ipc/util.h
+index e4d14b6..54a86fc 100644
+--- a/ipc/util.h
++++ b/ipc/util.h
+@@ -28,6 +28,7 @@
+ 
+ extern int ipc_mni;
+ extern int ipc_mni_shift;
++extern bool ipc_mni_extended;
+ 
+ #define SEQ_SHIFT	ipc_mni_shift
+ #define SEQ_MASK	((1 << ipc_mni_shift) - 1)
 -- 
 1.8.3.1
