@@ -1,168 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935413AbeD0OV3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 10:21:29 -0400
-Received: from foss.arm.com ([217.140.101.70]:40890 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934990AbeD0OV0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 10:21:26 -0400
-From: Punit Agrawal <punit.agrawal@arm.com>
-To: Christoffer Dall <christoffer.dall@arm.com>
-Cc: kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org,
-        marc.zyngier@arm.com, linux-kernel@vger.kernel.org,
-        suzuki.poulose@arm.com
-Subject: Re: [PATCH 1/4] KVM: arm/arm64: Share common code in user_mem_abort()
-References: <20180420145409.24485-1-punit.agrawal@arm.com>
-        <20180420145409.24485-2-punit.agrawal@arm.com>
-        <20180427111429.GL13249@C02W217FHV2R.local>
-Date: Fri, 27 Apr 2018 15:21:23 +0100
-In-Reply-To: <20180427111429.GL13249@C02W217FHV2R.local> (Christoffer Dall's
-        message of "Fri, 27 Apr 2018 13:14:29 +0200")
-Message-ID: <87bme4zq58.fsf@e105922-lin.cambridge.arm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        id S935273AbeD0OWH (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 10:22:07 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:34382 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934990AbeD0OVq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 10:21:46 -0400
+X-Google-Smtp-Source: AB8JxZoKh6+Kxd5YbCOubPvkpvnGgnWBdumbZNT7FydhEI6Ki/P2ikepvtXOMrgHonQu7CwK2Slz/w==
+Date: Fri, 27 Apr 2018 09:21:44 -0500
+From: Rob Herring <robh@kernel.org>
+To: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm@lists.infradead.org,
+        linux-kernel@vger.kernel.org, tsoni@codeaurora.org,
+        kyan@codeaurora.org, ckadabi@codeaurora.org, evgreen@chromium.org
+Subject: Re: [PATCH v5 1/2] dt-bindings: Documentation for qcom, llcc
+Message-ID: <20180427142144.tvy5xamuwz6jnxk5@rob-hp-laptop>
+References: <1524524972-12014-1-git-send-email-rishabhb@codeaurora.org>
+ <1524524972-12014-2-git-send-email-rishabhb@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1524524972-12014-2-git-send-email-rishabhb@codeaurora.org>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christoffer Dall <christoffer.dall@arm.com> writes:
+On Mon, Apr 23, 2018 at 04:09:31PM -0700, Rishabh Bhatnagar wrote:
+> Documentation for last level cache controller device tree bindings,
+> client bindings usage examples.
+> 
+> Signed-off-by: Channagoud Kadabi <ckadabi@codeaurora.org>
+> Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+> ---
+>  .../devicetree/bindings/arm/msm/qcom,llcc.txt      | 60 ++++++++++++++++++++++
+>  1 file changed, 60 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,llcc.txt
 
-> On Fri, Apr 20, 2018 at 03:54:06PM +0100, Punit Agrawal wrote:
->> The code for operations such as marking the pfn as dirty, and
->> dcache/icache maintenance during stage 2 fault handling is duplicated
->> between normal pages and PMD hugepages.
->> 
->> Instead of creating another copy of the operations when we introduce
->> PUD hugepages, let's share them across the different pagesizes.
->> 
->> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
->> Cc: Christoffer Dall <christoffer.dall@arm.com>
->> Cc: Marc Zyngier <marc.zyngier@arm.com>
->> ---
->>  virt/kvm/arm/mmu.c | 36 +++++++++++++++++++++---------------
->>  1 file changed, 21 insertions(+), 15 deletions(-)
->> 
->> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
->> index 7f6a944db23d..db382c7c7cd7 100644
->> --- a/virt/kvm/arm/mmu.c
->> +++ b/virt/kvm/arm/mmu.c
->> @@ -1428,7 +1428,7 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->>  	kvm_pfn_t pfn;
->>  	pgprot_t mem_type = PAGE_S2;
->>  	bool logging_active = memslot_is_logging(memslot);
->> -	unsigned long flags = 0;
->> +	unsigned long vma_pagesize, flags = 0;
->>  
->>  	write_fault = kvm_is_write_fault(vcpu);
->>  	exec_fault = kvm_vcpu_trap_is_iabt(vcpu);
->> @@ -1448,7 +1448,8 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->>  		return -EFAULT;
->>  	}
->>  
->> -	if (vma_kernel_pagesize(vma) == PMD_SIZE && !logging_active) {
->> +	vma_pagesize = vma_kernel_pagesize(vma);
->> +	if (vma_pagesize == PMD_SIZE && !logging_active) {
->>  		hugetlb = true;
->>  		gfn = (fault_ipa & PMD_MASK) >> PAGE_SHIFT;
->>  	} else {
->> @@ -1517,23 +1518,33 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->>  	if (mmu_notifier_retry(kvm, mmu_seq))
->>  		goto out_unlock;
->>  
->> -	if (!hugetlb && !force_pte)
->> +	if (!hugetlb && !force_pte) {
->> +		/*
->> +		 * Only PMD_SIZE transparent hugepages(THP) are
->> +		 * currently supported. This code will need to be
->> +		 * updated if other THP sizes are supported.
->> +		 */
->>  		hugetlb = transparent_hugepage_adjust(&pfn, &fault_ipa);
->> +		vma_pagesize = PMD_SIZE;
->> +	}
->> +
->> +	if (writable)
->> +		kvm_set_pfn_dirty(pfn);
->> +
->> +	if (fault_status != FSC_PERM)
->> +		clean_dcache_guest_page(pfn, vma_pagesize);
->> +
->> +	if (exec_fault)
->> +		invalidate_icache_guest_page(pfn, vma_pagesize);
->>  
->>  	if (hugetlb) {
->>  		pmd_t new_pmd = pfn_pmd(pfn, mem_type);
->>  		new_pmd = pmd_mkhuge(new_pmd);
->> -		if (writable) {
->> +		if (writable)
->>  			new_pmd = kvm_s2pmd_mkwrite(new_pmd);
->> -			kvm_set_pfn_dirty(pfn);
->> -		}
->> -
->> -		if (fault_status != FSC_PERM)
->> -			clean_dcache_guest_page(pfn, PMD_SIZE);
->>  
->>  		if (exec_fault) {
->>  			new_pmd = kvm_s2pmd_mkexec(new_pmd);
->> -			invalidate_icache_guest_page(pfn, PMD_SIZE);
->>  		} else if (fault_status == FSC_PERM) {
->
-> This could now be rewritten to:
->
-> 		if (exec_fault ||
-> 		    (fault_status == FSC_PERM && stage2_is_exec(kvm, fault_ipa)))
-> 			new_pmd = kvm_s2pmd_mkexec(new_pmd);
->
-> which we could even consider making
->
-> static bool stage2_should_exec(struct kvm *kvm, phys_addr_t addr,
-> 			       bool exec_fault, unsigned long fault_status)
-> {
-> 	/*
-> 	 * If we took an execution fault we will have made the
-> 	 * icache/dcache coherent and should now let the s2 mapping be
-> 	 * executable.
-> 	 *
-> 	 * Write faults (!exec_fault && FSC_PERM) are orthogonal to
-> 	 * execute permissions, and we preserve whatever we have.
-> 	 */
-> 	return exec_fault ||
-> 	       (fault_status == FSC_PERM && stage2_is_exec(kvm, fault_ipa));
-> }
->
-> The benefit would be to have this documentation in a single place and
-> slightly simply both the hugetlb and !hugetlb blocks.
+My comments on v4 still apply.
 
-Makes sense. And saves another copy when we introduce PUD handling in a
-latter patch. I've rolled this in with minor changes.
->
->
->>  			/* Preserve execute if XN was already cleared */
->>  			if (stage2_is_exec(kvm, fault_ipa))
->> @@ -1546,16 +1557,11 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->>  
->>  		if (writable) {
->>  			new_pte = kvm_s2pte_mkwrite(new_pte);
->> -			kvm_set_pfn_dirty(pfn);
->>  			mark_page_dirty(kvm, gfn);
->>  		}
->>  
->> -		if (fault_status != FSC_PERM)
->> -			clean_dcache_guest_page(pfn, PAGE_SIZE);
->> -
->>  		if (exec_fault) {
->>  			new_pte = kvm_s2pte_mkexec(new_pte);
->> -			invalidate_icache_guest_page(pfn, PAGE_SIZE);
->>  		} else if (fault_status == FSC_PERM) {
->>  			/* Preserve execute if XN was already cleared */
->>  			if (stage2_is_exec(kvm, fault_ipa))
->> -- 
->> 2.17.0
->> 
->
-> Notwithstanding my suggestion above:
->
-> Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
-
-Thanks,
-Punit
+Rob
