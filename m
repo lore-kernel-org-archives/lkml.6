@@ -1,77 +1,84 @@
 Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-889516-1524669692-2-16884733824009880480
+X-Cyrus-Session-Id: sloti22d1t05-422737-1524846079-2-3502968801291705959
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, MAILING_LIST_MULTI -1, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
-  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524669692; b=R9n6dRiC1MNxn4ASAr9run1h1giJt2RfjxicM03P5hktj7ZZ6O
-    nkwCBeU4P4i0fy8tNqIykpZElwTF3ca5u50dOaTSX/0ylUBDptskRxkuNfg1gFtK
-    8Rs9ouBMkJn0tZTBj6euYXzH+nfuX1x2y/TFwRV0Zs2LWCilIReZxL/0M9DYX6ek
-    juKAMJ2SCotWd4pXxNWbI3YiLI3/b3sno/5byoJpibSXHF0av/Y5yPGtD+SA0zEQ
-    OL2jqG7m9e8nwpDllgEz14llaOxTwS3uSgpP+rTeuZ49QeQB937Ij8UftovnaGBj
-    9k6VKgAitwfjjpovYpE4g1UM0raRkYLrhagQ==
+    1524846078; b=KR19OR0NDowrCsLHaG3VWDSrp32S+euu1eIbPpaK8ko9Wuk4mD
+    ClY0leuKqXpkKimd8dkzYYAOXw08F+TX9FHQinIGLGC6B87lcSTpjcQCUGPTVpOm
+    dyn5qeadbvkgc8FXXAXWiPl+I/j4QknFlDt4RYy9PmmLhHzka+ElNesrzP4HX0rk
+    TAhqkft6cUtEoXmzUPj4upJ9hTnz8VwlHs3LMjSvPkv8CP07Nrg2mWs2wgFZnuUI
+    owkb73BTLD+KhAqG3T6aRl8xy/uYaojqGhWq7VEn/RX4+7otLt3rOMh0IkYY+Ek+
+    jAJgpQy5+oCNG78wOjahaE/AlWowkdhFWJtQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1524669692; bh=8/irA957Q7TJmNgguxGk2Z6kJUljp1
-    9zrMKmcuXz68s=; b=XQjxntoxgERc4+lvfyy5HM97pUbwnFhKeqy2Jv3JObXBTK
-    TFiImM/qc+ue8J8u4CSssVZCjfNxtZqlH3o842gzdddr/B54kS5WyItisKP7js9l
-    rxeBTZ7gNiCZGzo+nOPB5wKMcSDqeQi42l66KvjCanw22vl1VAak8KQS0OCjqDwN
-    wU6rg2k5ocEA0uL7EGzN6pmrpGuYLt3GYhODy1B7oN/EmI2s9+LODlwW6yCo3R93
-    h/sl8en7ieQL/F/OfZva8nRc8EPkVRXCgdBmveI86j2CLeHR6U/SJ3Fm+nX9tKC+
-    3hbJHPoDlTQ8TvshPWrZBFbx30cxTciCoop3ufDg==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
+    fm2; t=1524846078; bh=4ld4OO4owwLjPhJeq8ODtdOeKaMy71drqaGp1EEj00
+    g=; b=OXrWOBiByppTru7jbZPSXn9AY1gMGRkRjn3uRCXv1TS2+pd13Qny7itAPC
+    kxxog9YUWswoPeVmFmAyFrGC4iBH0DqRu2hlAHNetdxI9v6f5O6PYCPvxRRfC4P2
+    fUejLHm9FlxyVHShdKB1f1gvX72J/He7BbRfjZnq70zeuYyWUvqUwYFyx2TXdB2J
+    pQowOGGDFMdFNbfIYb604Q4DhrVEBkuECcfQxcdWDhPvEhpP0RGnig72z7kuZYGl
+    sLut559W1roQGRBjT00Fs32p95g0++fDiHD3FXLa4TS1thzFfnZIR5+XeY5FKZEX
+    bjWdMVYyjFqi2tDFZ71FONpBCiQw==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=nifty.com header.i=@nifty.com header.b=quiff4Ln x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=dec2015msa;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=socionext.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
+    x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=OMbSvwgS;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=socionext.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=nifty.com header.i=@nifty.com header.b=quiff4Ln x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=dec2015msa;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=socionext.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
+    x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=OMbSvwgS;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=socionext.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfI0Xf/d2UvYsQAeTHOn4GwRTKX4GcQfqcvelQZkD3iV4kZ/POBF+QJoDCKCUfSRPHQ7t+zFCpR3Z6ymmf/f8LiH48I3BcVNPKaf/85rxL1vEDvwN6f5g
-    WUP/bjMaoRjCfTJatamqUu+nMTu2LI0L8KT7q4igDgbwksEVS70jNBZSvTIO3JJM16dSXcBp7yt99foYBq7wmtj5eKRV9pBJxgmSJ9IaRdowLVkBevmnRJ9o
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=VwQbUJbxAAAA:8 a=c-n4J4-pAAAA:8 a=xUfyd3I0D5ksHvuB-YkA:9
-    a=h7AUlWNVWMQwfqkR:21 a=Obx2vUfTvJWNk1Mm:21 a=CjuIK1q_8ugA:10
-    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22 a=L0NDqeB7ZLmQzAogN4cw:22
+X-CM-Envelope: MS4wfDnNidBqeOKgkqCZgzT4ak9N8s9xvtoxEYtB1Crvu7V5v828zs6zVZgenOBdJh1f5Fcp1hwdvgd43yKaNit1B+jXF3WwOP4TWCtvXF511Wd5uAggMdt7
+    HSeDk5PoHfw1rlwcHmbwLk5cVdAPFb4zzfbiQCWh0U51NzjoPt+rZeB86AwPMCSaGoQwkFPUOvKX01bUdHyDzAMNj57tUHxtksZbSOIhwuPAc2TOKJ0Q68gd
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=VwQbUJbxAAAA:8 a=XBv5Wb9mfa7rX1cFcNwA:9 a=82xB01K8pL-hV8jj:21
+    a=1DLqBwdC2KHm-huO:21 a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754570AbeDYPVS (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 25 Apr 2018 11:21:18 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:34284 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753508AbeDYPVQ (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Wed, 25 Apr 2018 11:21:16 -0400
-X-Google-Smtp-Source: AIpwx4+mT1sqTbnlNJ+u3aFHC1/IWsLOP+uPE9fCoL85GVkJXg+g/JEwzw6cbS/2dA+mQP9VuZAuYg==
-Date: Wed, 25 Apr 2018 10:21:14 -0500
-From: Rob Herring <robh@kernel.org>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
+        id S932862AbeD0QVD (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 27 Apr 2018 12:21:03 -0400
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:32099 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932851AbeD0QVC (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Fri, 27 Apr 2018 12:21:02 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w3RGKrQJ024142
+X-Nifty-SrcIP: [209.85.213.45]
+X-Google-Smtp-Source: AB8JxZoT6GoVuOfxM8GWw6RGwDuPrqS/J30spWU1UZ1fuenOyt9R5WQ+suHPCfaAZAMMb4UBqobdiUEQ3OjqYCeWoek=
+MIME-Version: 1.0
+In-Reply-To: <20180425152114.pzklc5uqva3nil5v@rob-hp-laptop>
+References: <1524135818-14825-1-git-send-email-yamada.masahiro@socionext.com>
+ <1524135818-14825-3-git-send-email-yamada.masahiro@socionext.com> <20180425152114.pzklc5uqva3nil5v@rob-hp-laptop>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Sat, 28 Apr 2018 01:20:12 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATtOxUjfoqmgAu-X_OYihKkMMRVLaYimEY0bRogOoHRZQ@mail.gmail.com>
+Message-ID: <CAK7LNATtOxUjfoqmgAu-X_OYihKkMMRVLaYimEY0bRogOoHRZQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] usb: dwc3: support clocks and resets for DWC3 core
+To: Rob Herring <robh@kernel.org>
 Cc: linux-usb@vger.kernel.org,
         Felipe Balbi <felipe.balbi@linux.intel.com>,
         Roger Quadros <rogerq@ti.com>,
@@ -79,107 +86,68 @@ Cc: linux-usb@vger.kernel.org,
         Masami Hiramatsu <mhiramat@kernel.org>,
         Jassi Brar <jaswinder.singh@linaro.org>,
         Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        devicetree@vger.kernel.org, Felipe Balbi <balbi@kernel.org>,
-        linux-kernel@vger.kernel.org,
+        DTML <devicetree@vger.kernel.org>,
+        Felipe Balbi <balbi@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v2 2/2] usb: dwc3: support clocks and resets for DWC3 core
-Message-ID: <20180425152114.pzklc5uqva3nil5v@rob-hp-laptop>
-References: <1524135818-14825-1-git-send-email-yamada.masahiro@socionext.com>
- <1524135818-14825-3-git-send-email-yamada.masahiro@socionext.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1524135818-14825-3-git-send-email-yamada.masahiro@socionext.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-usb-owner@vger.kernel.org
 X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Apr 19, 2018 at 08:03:38PM +0900, Masahiro Yamada wrote:
-> Historically, the clocks and resets are handled on the glue layer
-> side instead of the DWC3 core.  For simple cases, dwc3-of-simple.c
-> takes care of arbitrary number of clocks and resets.  The DT node
-> structure typically looks like as follows:
-> 
->   dwc3-glue {
->           compatible = "foo,dwc3";
->           clocks = ...;
->           resets = ...;
->           ...
-> 
->           dwc3 {
->                   compatible = "snps,dwc3";
->                   ...
->           };
->   }
-> 
-> By supporting the clocks and the reset in the dwc3/core.c, it will
-> be turned into a single node:
-> 
->   dwc3 {
->           compatible = "foo,dwc3", "snps,dwc3";
->           clocks = ...;
->           resets = ...;
->           ...
->   }
-> 
-> This commit adds the binding of clocks and resets specific to this IP.
-> The number of clocks should generally be the same across SoCs, it is
-> just some SoCs either tie clocks together or do not provide software
-> control of some of the clocks.
-> 
-> I took the clock names from the Synopsys datasheet: "ref" (ref_clk),
-> "bus_early" (bus_clk_early), and "suspend" (suspend_clk).
-> 
-> I found only one reset line in the datasheet, hence the reset-names
-> property is omitted.
-> 
-> Supporting those clocks and resets is the requirement for new platforms.
-> Enforcing the new binding breaks existing platforms since they specify
-> clocks and resets in their glue layer node, but nothing in the core
-> node.  I listed such exceptional cases in the DT binding.  The driver
-> code is loosened up to accept no clock/reset.  This change is based
-> on the discussion [1].
-> 
-> I inserted reset_control_deassert() and clk_bulk_enable() before the
-> first register access, i.e. dwc3_cache_hwparams().
-> 
-> [1] https://patchwork.kernel.org/patch/10284265/
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
-> 
-> Changes in v2:
->   - Make clocks specific to this IP based on Synopsys datasheet
->   - Use clk_bulk API
->   - Add description to struct header
-> 
->  Documentation/devicetree/bindings/usb/dwc3.txt | 21 ++++++
->  drivers/usb/dwc3/core.c                        | 89 +++++++++++++++++++++++++-
->  drivers/usb/dwc3/core.h                        |  8 +++
->  3 files changed, 116 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/usb/dwc3.txt b/Documentation/devicetree/bindings/usb/dwc3.txt
-> index 0dbd308..feb1cc33 100644
-> --- a/Documentation/devicetree/bindings/usb/dwc3.txt
-> +++ b/Documentation/devicetree/bindings/usb/dwc3.txt
-> @@ -7,6 +7,27 @@ Required properties:
->   - compatible: must be "snps,dwc3"
->   - reg : Address and length of the register set for the device
->   - interrupts: Interrupts used by the dwc3 controller.
-> + - clock-names: should contain "ref", "bus_early", "suspend"
-> + - clocks: list of phandle and clock specifier pairs corresponding to
-> +           entries in the clock-names property.
-> + - resets: a single pair of phandle and reset specifier
+Hi Rob,
 
-This should be optional as some SoCs don't have separate, s/w controlled 
-resets of modules.
 
-Otherise, for the DT binding:
+2018-04-26 0:21 GMT+09:00 Rob Herring <robh@kernel.org>:
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+>> diff --git a/Documentation/devicetree/bindings/usb/dwc3.txt b/Documentation/devicetree/bindings/usb/dwc3.txt
+>> index 0dbd308..feb1cc33 100644
+>> --- a/Documentation/devicetree/bindings/usb/dwc3.txt
+>> +++ b/Documentation/devicetree/bindings/usb/dwc3.txt
+>> @@ -7,6 +7,27 @@ Required properties:
+>>   - compatible: must be "snps,dwc3"
+>>   - reg : Address and length of the register set for the device
+>>   - interrupts: Interrupts used by the dwc3 controller.
+>> + - clock-names: should contain "ref", "bus_early", "suspend"
+>> + - clocks: list of phandle and clock specifier pairs corresponding to
+>> +           entries in the clock-names property.
+>> + - resets: a single pair of phandle and reset specifier
+>
+> This should be optional as some SoCs don't have separate, s/w controlled
+> resets of modules.
 
-Rob
+OK.  I will move resets to optional property.
+
+
+Please let ask a question.
+
+
+The number of clocks should be the same across SoCs.
+(Even if there is no s/w control for clocks,
+we should input something such as clk-fixed-rate.)
+
+On the other hand, the number of resets can be different
+across SoCs.  If there is no s/w control for resets,
+we can make it optional.   (optional = 1 or 0 reset)
+
+Is this what you mean?
+
+If we had something like reset-nop (or reset-dummy)
+in case no s/w control, we would be able to input something.
+I am not sure if this is the right thing, though.
+
+
+
+
+> Otherise, for the DT binding:
+>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+>
+
+
+-- 
+Best Regards
+Masahiro Yamada
