@@ -1,78 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757899AbeD0SX5 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 14:23:57 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54232 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1757225AbeD0SXz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 14:23:55 -0400
-Message-ID: <1524853433.11756.72.camel@redhat.com>
-Subject: Re: [PATCH] IB/rxe: add RXE_START_MASK for rxe_opcode
- IB_OPCODE_RC_SEND_ONLY_INV
-From: Doug Ledford <dledford@redhat.com>
-To: Yanjun Zhu <yanjun.zhu@oracle.com>,
-        Jianchao Wang <jianchao.w.wang@oracle.com>, monis@mellanox.com,
-        jgg@ziepe.ca
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Fri, 27 Apr 2018 14:23:53 -0400
-In-Reply-To: <f2df9d02-8693-60e6-e4fd-24c81817b898@oracle.com>
-References: <1524714759-14654-1-git-send-email-jianchao.w.wang@oracle.com>
-         <f2df9d02-8693-60e6-e4fd-24c81817b898@oracle.com>
-Organization: Red Hat, Inc.
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-2dDtBQVpbCgD/xtK7qaX"
-Mime-Version: 1.0
+        id S1758029AbeD0SY3 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 14:24:29 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45276 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757954AbeD0SY0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 14:24:26 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Jean-Jacques Hiblot <jjhiblot@ti.com>
+Cc: Mark Brown <broonie@kernel.org>, broonie@kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, perex@perex.cz,
+        tiwai@suse.com, devicetree@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, afd@ti.com,
+        dannenberg@ti.com, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: tas6424: Add support for the standby pin" to the asoc tree
+In-Reply-To: <1524837349-16350-2-git-send-email-jjhiblot@ti.com>
+Message-Id: <E1fC82d-0004JA-E2@debutante>
+Date: Fri, 27 Apr 2018 19:24:19 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The patch
 
---=-2dDtBQVpbCgD/xtK7qaX
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+   ASoC: tas6424: Add support for the standby pin
 
-On Thu, 2018-04-26 at 12:02 +0800, Yanjun Zhu wrote:
-> On 2018/4/26 11:52, Jianchao Wang wrote:
-> > w/o RXE_START_MASK, the last_psn of IB_OPCODE_RC_SEND_ONLY_INV
-> > will not be updated in update_wqe_psn, and the corresponding
-> > wqe will not be acked in rxe_completer due to its last_psn is
-> > zero. Finally, the other wqe will also not be able to be acked,
-> > because the wqe of IB_OPCODE_RC_SEND_ONLY_INV with last_psn 0
-> > is still there. This causes large amount of io timeout when
-> > nvmeof is over rxe.
-> >=20
-> > Add RXE_START_MASK for IB_OPCODE_RC_SEND_ONLY_INV to fix this.
-> >=20
-> > Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
->=20
-> Reviewed-by: Zhu Yanjun <yanjun.zhu@oracle.com>
+has been applied to the asoc tree at
 
-Thanks, applied to for-rc.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
---=20
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
---=-2dDtBQVpbCgD/xtK7qaX
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
------BEGIN PGP SIGNATURE-----
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAlrjarkACgkQuCajMw5X
-L93d0xAAj+9kI9dpd+n3qjn4rOjfqG0V820I+WwQOEdFx19Be+UmbKN7nhifAuYS
-O/MtDE7j5gng5DNhl0QAcWUNgypEdeb4gonVIhqrUuEvpXz70cQcIcvoZ4kF+7A0
-Fp3cPTxG4h0wo8VLIh6AbZZT+Kr/umWJX6gAMiZEcVdsX5i//pV1/MJvvTydzYQm
-cv/XC5rRj2FlV8LpIKUsG0x3INLqh9nTM4biGdx8AvB7Sm3cQbxZ3c4MHOhGyJWD
-b8OKVlVAAtz2+uvqGfd2/+sgQeEWNfeUtETsfGOSPTx/08JV/HPS4C/rRmU2HuJH
-ZwKXmDyi5LaYGrDdKSX4MLdVH1e9zRfcueJnbNKdJFen4g1MpthHQa7sxm1KlQcI
-sj4rhHMVeuDWAJwmc5pHZnNKbRnbBPUdq92cSM2u2s5JVQlXgiN4yrzXPobZNWir
-r9aJ2XPf1jmCz6f5LbtMkqWR4BEvW5i7BBzX7WNCeHUxLXIiX7lJeVz6RoHYJDiP
-8Xxrlwe0iLTe83dJm8vhm6rfUWRxehWoqnDo7RU8L6JzXQLzDhjcquC7HC2kpheT
-0CZod266e95iMQfBIHNBIIzyWNNVUuP3Z1qW9rS3dXDaU5UZpM/SJOMusu9cuFc/
-rSFTg+qwOTwS6yohm47k57oGEVIcyHxiEiFaNubJMsAdIhTszD8=
-=+zIT
------END PGP SIGNATURE-----
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
---=-2dDtBQVpbCgD/xtK7qaX--
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From e3976aa6fb409aea3cea812f6a0beebb545e5996 Mon Sep 17 00:00:00 2001
+From: Jean-Jacques Hiblot <jjhiblot@ti.com>
+Date: Fri, 27 Apr 2018 15:55:47 +0200
+Subject: [PATCH] ASoC: tas6424: Add support for the standby pin
+
+The standby pin can be connected to a GPIO. In that case we have to drive
+it to the correct values for the TAS6424 to operate properly.
+
+Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ .../devicetree/bindings/sound/ti,tas6424.txt  |  1 +
+ sound/soc/codecs/tas6424.c                    | 22 +++++++++++++++++++
+ 2 files changed, 23 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/sound/ti,tas6424.txt b/Documentation/devicetree/bindings/sound/ti,tas6424.txt
+index 1c4ada0eef4e..df71e414dc5b 100644
+--- a/Documentation/devicetree/bindings/sound/ti,tas6424.txt
++++ b/Documentation/devicetree/bindings/sound/ti,tas6424.txt
+@@ -6,6 +6,7 @@ Required properties:
+ 	- compatible: "ti,tas6424" - TAS6424
+ 	- reg: I2C slave address
+ 	- sound-dai-cells: must be equal to 0
++	- standby-gpios: GPIO used to shut the TAS6424 down.
+ 
+ Example:
+ 
+diff --git a/sound/soc/codecs/tas6424.c b/sound/soc/codecs/tas6424.c
+index 4f3a16c520a2..5abb17f8d3dd 100644
+--- a/sound/soc/codecs/tas6424.c
++++ b/sound/soc/codecs/tas6424.c
+@@ -16,6 +16,7 @@
+ #include <linux/slab.h>
+ #include <linux/regulator/consumer.h>
+ #include <linux/delay.h>
++#include <linux/gpio/consumer.h>
+ 
+ #include <sound/pcm.h>
+ #include <sound/pcm_params.h>
+@@ -43,6 +44,7 @@ struct tas6424_data {
+ 	unsigned int last_fault1;
+ 	unsigned int last_fault2;
+ 	unsigned int last_warn;
++	struct gpio_desc *standby_gpio;
+ };
+ 
+ /*
+@@ -627,6 +629,22 @@ static int tas6424_i2c_probe(struct i2c_client *client,
+ 		return ret;
+ 	}
+ 
++	/*
++	 * Get control of the standby pin and set it LOW to take the codec
++	 * out of the stand-by mode.
++	 * Note: The actual pin polarity is taken care of in the GPIO lib
++	 * according the polarity specified in the DTS.
++	 */
++	tas6424->standby_gpio = devm_gpiod_get_optional(dev, "standby",
++						      GPIOD_OUT_LOW);
++	if (IS_ERR(tas6424->standby_gpio)) {
++		if (PTR_ERR(tas6424->standby_gpio) == -EPROBE_DEFER)
++			return -EPROBE_DEFER;
++		dev_info(dev, "failed to get standby GPIO: %ld\n",
++			PTR_ERR(tas6424->standby_gpio));
++		tas6424->standby_gpio = NULL;
++	}
++
+ 	for (i = 0; i < ARRAY_SIZE(tas6424->supplies); i++)
+ 		tas6424->supplies[i].supply = tas6424_supply_names[i];
+ 	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(tas6424->supplies),
+@@ -671,6 +689,10 @@ static int tas6424_i2c_remove(struct i2c_client *client)
+ 
+ 	cancel_delayed_work_sync(&tas6424->fault_check_work);
+ 
++	/* put the codec in stand-by */
++	if (tas6424->standby_gpio)
++		gpiod_set_value_cansleep(tas6424->standby_gpio, 1);
++
+ 	ret = regulator_bulk_disable(ARRAY_SIZE(tas6424->supplies),
+ 				     tas6424->supplies);
+ 	if (ret < 0) {
+-- 
+2.17.0
