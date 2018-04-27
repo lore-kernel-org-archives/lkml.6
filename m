@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-356304-1524842090-2-2832498328839606458
+X-Cyrus-Session-Id: sloti22d1t05-380590-1524842074-2-11003342337158736496
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524842089; b=TM7v0aPyq4oopuXjoEkfUu51Z/FbhT3MJKupYaVV1ESLQdjic0
-    jhIeFm+mNY51Ptnj3H8fEJYA7nmrtycQGkxCOOvDdiKLFcE69I7OhiBw4JNbhZfK
-    pVo70Ofs93OC7oDP+9EIjcvkYk5pyWultduIo+3Au45WzH4/cdymxN1jimB7inPF
-    4mSdgjUTU2hx/vkAsTzZDvVtgkNI3I8Jr8FZpR5Tnk6gxakayK+VM5zdIceIK7xc
-    udnTJeWKH4xJAEk7YQzfmoU/kaOifci5eqAULtYInsQ0HJiHSNAJuH3K1pa8MO6J
-    rlKZldQjazcaDddjZvKWoKQqDh8JTLdlpwyQ==
+    1524842073; b=biElakq62QAdvVQml1zVIlw/irhiQXrgGej9/Vodpwp51Rq30H
+    Hm8+6Fs9Am9wRja0awWVkSFJ4UtgtYnURqELlr7critYGrNtftse1roDvtsZNLFD
+    eR7i07fyJaNlQG+jjRt1vugD8fXuGaBgsRknwTyJnOHLU5Oom3fioLs9I3+O7wSY
+    fES/Kvim0XCvN+obzUyXdzkhudgsK01Ya+xLiA8OdDBQloxhnPpznUtyPahCdI8/
+    U8f7QtDw8vSPwLMgVnf9+OG3scwWnfukY3E0fkZA/rdX87IvG9ZJlF28ptnsR36p
+    PQmY2H4vmQmW4vt8JYJNOvKkQCGBMNU+qHoQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524842089; bh=9Pn4TWeOt2Y5lwcQeZbRf2LxCYkLZG
-    7NdVMeQMVVDAI=; b=V0FCA+Urj10XHDgpYvKCHd1wdr9U4kJVAOJBDrvmO3N3gZ
-    IOx05MuKK4dOp4iGgtMSoVrnCFuxC9Gmap0x7dz1eEfR/3nzsdDKUvfbCWGv4hK2
-    KqhCRfLEwv9qjjaACsTdg4nmA2M4otGNKoxPnIpimXx/tLIxIM1Lnhz7R7NyJN5d
-    EVNCEH8e9yDDmij0aBQsJ6btvs//OJh0RcqVqo6KIi5J9DW90ShsJW+qsB5ACVFm
-    W/N3VGU/JmboN6mpaTP0qGG2iimALj+OvcyUMFFfkBzT28U+G+IqSHU+r2HZ2QQl
-    d6JoTvxppKl0iOScdZMDnpBUnWL1WmA7QnY313LA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1524842073; bh=IR/uUjWld5nN2o/P5IFi7h8V0iGDV1
+    KCFkJ4nLhDHHc=; b=ji6n7BTfJy+sLnYbgBpB7LjXJq5iAf9tcZMxbHXpCJ7BBO
+    NyIDMMDQ0GOtXXXDQvfH3FIreIiJCzTPuxLHDtYWWF2RbY9wOdcTPCKMJllJ1INb
+    yaNpZNsn8nnHmtl+RszzCcA2U0Wd8tsSiJKfxL6xLKcYEYv4Ut1c+H29n4I/h8+r
+    0U1sj82b5mGFAvq7P2CMiIvUQCRKQx+hN1HQGcGW2+QpVz5rrojMk1vhA0W4DKkq
+    D1+KwhJyKqNzaDQtwhq/JEMCnyCEnvquIiv5D3dudTfqktUYcsSoJ45GWxt/1e64
+    uP5q6NTTFrXg3Q8kfTzakcP5ANElNuvF60FS1tTg==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,34 +51,31 @@ Authentication-Results: mx1.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfGxtSHzdpBJ4p9QfSqDIJFivm5RoZwYQxKTah9dszqTkmxveURgrSHG1gJmajPsJr6vyE6wElrBXQG0+6gDW4O8Z4wysRIeRhYysoXhBKsljKd8DYvGd
-    xrA/teyYuIK675MSB3tJGXiXo1sqpwf2aq2YUWBDUYhDzYnXcAOVO0b8UBRw+rl3v9osNqedayIwR6DHrMAQOAq/4hAKt9Po+iVdZPVXzqsVO/LjyOQsE4Rc
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfGeujL5pdb+h7VTKFWWiC7505iltBSdCuHovgXoszEc7ALwlUJquzZ2HbikwsmQzbOOCDnkppKos5D8lfMtywddk6wDidwDz04v45hJr7i7Z8UwoJcO+
+    apoosXECrW8K2I3ILZuLdp0EewEKPEE0ioS4LFFN+ry2lBhOKg+YJeYOBBWFLIrBljfFemepn7S8hH9Go7T54YjU5Ailrj5fNI6uPofsZqwiQpaoz8DeEQt+
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=yPCof4ZbAAAA:8 a=vQBBkBfzAAAA:8 a=KKAkSRfTAAAA:8 a=ag1SF4gXAAAA:8
-    a=kgX1SPd-Y8VvySS0JRsA:9 a=QEXdDO2ut3YA:10 a=jIce5Xh-_3wA:10
-    a=NGXS0kB0m_rannUenejW:22 a=cvBusfyB2V15izCimMoJ:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=VnNF1IyMAAAA:8 a=ag1SF4gXAAAA:8 a=_TN53eZWIOXTJY2F9Q0A:9 a=QEXdDO2ut3YA:10
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933637AbeD0POk (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 27 Apr 2018 11:14:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50262 "EHLO mail.kernel.org"
+        id S933587AbeD0ODv (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 27 Apr 2018 10:03:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50290 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932835AbeD0ODs (ORCPT <rfc822;stable@vger.kernel.org>);
-        Fri, 27 Apr 2018 10:03:48 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A309621890
+        id S933188AbeD0ODu (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 27 Apr 2018 10:03:50 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38DED2189D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-        Amit Pundir <amit.pundir@linaro.org>
-Subject: [PATCH 4.9 14/74] [media] stk-webcam: fix an endian bug in stk_camera_read_reg()
-Date: Fri, 27 Apr 2018 15:58:04 +0200
-Message-Id: <20180427135710.494001755@linuxfoundation.org>
+        stable@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: [PATCH 4.9 32/74] s390: add optimized array_index_mask_nospec
+Date: Fri, 27 Apr 2018 15:58:22 +0200
+Message-Id: <20180427135711.259829079@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135709.899303463@linuxfoundation.org>
 References: <20180427135709.899303463@linuxfoundation.org>
@@ -96,104 +93,50 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Martin Schwidefsky <schwidefsky@de.ibm.com>
 
-commit d08876f524a605d64c7ca32cb8e9f5be3839e82e upstream.
 
-We pass an int pointer to stk_camera_read_reg() but only write to the
-highest byte.  It's a bug on big endian systems and generally a nasty
-thing to do and doesn't match the write function either.
+[ Upstream commit e2dd833389cc4069a96b57bdd24227b5f52288f5 ]
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Cc: Amit Pundir <amit.pundir@linaro.org>
+Add an optimized version of the array_index_mask_nospec function for
+s390 based on a compare and a subtract with borrow.
+
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/media/usb/stkwebcam/stk-sensor.c |    6 +++---
- drivers/media/usb/stkwebcam/stk-webcam.c |   11 ++++++-----
- drivers/media/usb/stkwebcam/stk-webcam.h |    2 +-
- 3 files changed, 10 insertions(+), 9 deletions(-)
+ arch/s390/include/asm/barrier.h |   24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
---- a/drivers/media/usb/stkwebcam/stk-sensor.c
-+++ b/drivers/media/usb/stkwebcam/stk-sensor.c
-@@ -228,7 +228,7 @@
- static int stk_sensor_outb(struct stk_camera *dev, u8 reg, u8 val)
- {
- 	int i = 0;
--	int tmpval = 0;
-+	u8 tmpval = 0;
+--- a/arch/s390/include/asm/barrier.h
++++ b/arch/s390/include/asm/barrier.h
+@@ -48,6 +48,30 @@ do {									\
+ #define __smp_mb__before_atomic()	barrier()
+ #define __smp_mb__after_atomic()	barrier()
  
- 	if (stk_camera_write_reg(dev, STK_IIC_TX_INDEX, reg))
- 		return 1;
-@@ -253,7 +253,7 @@ static int stk_sensor_outb(struct stk_ca
- static int stk_sensor_inb(struct stk_camera *dev, u8 reg, u8 *val)
- {
- 	int i = 0;
--	int tmpval = 0;
-+	u8 tmpval = 0;
- 
- 	if (stk_camera_write_reg(dev, STK_IIC_RX_INDEX, reg))
- 		return 1;
-@@ -274,7 +274,7 @@ static int stk_sensor_inb(struct stk_cam
- 	if (stk_camera_read_reg(dev, STK_IIC_RX_VALUE, &tmpval))
- 		return 1;
- 
--	*val = (u8) tmpval;
-+	*val = tmpval;
- 	return 0;
- }
- 
---- a/drivers/media/usb/stkwebcam/stk-webcam.c
-+++ b/drivers/media/usb/stkwebcam/stk-webcam.c
-@@ -144,7 +144,7 @@ int stk_camera_write_reg(struct stk_came
- 		return 0;
- }
- 
--int stk_camera_read_reg(struct stk_camera *dev, u16 index, int *value)
-+int stk_camera_read_reg(struct stk_camera *dev, u16 index, u8 *value)
- {
- 	struct usb_device *udev = dev->udev;
- 	unsigned char *buf;
-@@ -163,7 +163,7 @@ int stk_camera_read_reg(struct stk_camer
- 			sizeof(u8),
- 			500);
- 	if (ret >= 0)
--		memcpy(value, buf, sizeof(u8));
-+		*value = *buf;
- 
- 	kfree(buf);
- 	return ret;
-@@ -171,9 +171,10 @@ int stk_camera_read_reg(struct stk_camer
- 
- static int stk_start_stream(struct stk_camera *dev)
- {
--	int value;
-+	u8 value;
- 	int i, ret;
--	int value_116, value_117;
-+	u8 value_116, value_117;
++/**
++ * array_index_mask_nospec - generate a mask for array_idx() that is
++ * ~0UL when the bounds check succeeds and 0 otherwise
++ * @index: array element index
++ * @size: number of elements in array
++ */
++#define array_index_mask_nospec array_index_mask_nospec
++static inline unsigned long array_index_mask_nospec(unsigned long index,
++						    unsigned long size)
++{
++	unsigned long mask;
 +
++	if (__builtin_constant_p(size) && size > 0) {
++		asm("	clgr	%2,%1\n"
++		    "	slbgr	%0,%0\n"
++		    :"=d" (mask) : "d" (size-1), "d" (index) :"cc");
++		return mask;
++	}
++	asm("	clgr	%1,%2\n"
++	    "	slbgr	%0,%0\n"
++	    :"=d" (mask) : "d" (size), "d" (index) :"cc");
++	return ~mask;
++}
++
+ #include <asm-generic/barrier.h>
  
- 	if (!is_present(dev))
- 		return -ENODEV;
-@@ -213,7 +214,7 @@ static int stk_start_stream(struct stk_c
- 
- static int stk_stop_stream(struct stk_camera *dev)
- {
--	int value;
-+	u8 value;
- 	int i;
- 	if (is_present(dev)) {
- 		stk_camera_read_reg(dev, 0x0100, &value);
---- a/drivers/media/usb/stkwebcam/stk-webcam.h
-+++ b/drivers/media/usb/stkwebcam/stk-webcam.h
-@@ -129,7 +129,7 @@ struct stk_camera {
- #define vdev_to_camera(d) container_of(d, struct stk_camera, vdev)
- 
- int stk_camera_write_reg(struct stk_camera *, u16, u8);
--int stk_camera_read_reg(struct stk_camera *, u16, int *);
-+int stk_camera_read_reg(struct stk_camera *, u16, u8 *);
- 
- int stk_sensor_init(struct stk_camera *);
- int stk_sensor_configure(struct stk_camera *);
+ #endif /* __ASM_BARRIER_H */
