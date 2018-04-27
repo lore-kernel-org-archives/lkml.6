@@ -1,41 +1,41 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZoBOvuMtE2u4Fe+77SsDrq37QrziF2L0+JP1y7sOTXL/QXUEa34RC39r3Bl2BjKGzt7ryqi
-ARC-Seal: i=1; a=rsa-sha256; t=1524838010; cv=none;
+X-Google-Smtp-Source: AB8JxZpWHndwBoCWeUAR4NAGnNXX/nYG9JoN0Xe23S6OnOSbfj61qm77cMpbPNQzzRM3Iwe3zktn
+ARC-Seal: i=1; a=rsa-sha256; t=1524838000; cv=none;
         d=google.com; s=arc-20160816;
-        b=McqY7Iq1ggh3jO3/SENWz59kr+39zskYSdatFk6e3ZzqN2KwGoNgvGOeAyGKo/2lMz
-         e138YdhT5e/MBOd1TWwfWpCEF8JzwMlCxeyGHBDC+et6HSGwqNRXWt48Qpv7EYwVp3TR
-         GQQj34pgVCjCchcPlpaK4jhR/0F5PyCZxrazqC4d/fNYNh7f9W7jSrSITe9Ee5UWurgU
-         Ytt4K/SlAgg8KZYub+OK5VTEYqwAs7mT7+KavlPF6iqEbY9roFHRL4QCglo/N1wnGyhy
-         4MjGAKFWNKlZC/hkndrB/o5fLtRUK0T3WbRgrhPTpH1grkcl712U2jSd+qsrbxRjUC3w
-         K7CA==
+        b=bflXTG64zBY30HameSMtXUZnFQ0C7Vq0gKE1v2WcupKA2MGWMu0PfMze7JeMKn0iZ2
+         XkDJkjlReb3jcKVal+sOzQtEDwEaS9cbWdBgKEESYPk5IT/sgd0iCJ/Ym4J2qIYkrEBr
+         PscbY1ywggiyBrc6UXwVnmJcK60H7EbDR60EUfUekE4G5+q5GRHwyJ3t02rqdZbr87AU
+         ZkoC4czFPozWh/2uDYbgv+ygiWNxErqK3ZJjVAg49MRE1gwJPd7MJtw2PspNlCUJqrYy
+         Zejz2hTJ/Zd+oPDZrCHYK89IJPmDqCDt5WX+nioF5wyIz+1IuX3eWKhrTK1LPRKWbu0Z
+         DyCw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=H4wehaFRALdQTIHpLjAUcXtYqdXwSiX6/LvomDTQLyE=;
-        b=cMcrwxR9mv5MzCVXqgvpurAM7uD5t/MqszbmJcipCDBnlEnaozHRB6KaNXAqm9t66z
-         MBwxTJJY3BQdRqZlXrMMxmI1j1T9+IiATb5jJHPPA00bgmg6dxEbmVM6HlNJ5qDpDoMZ
-         0hkUDA4PbgnQM0G318EnZ+48D4sqHTM9yp50UB/pyMCVdjjcNffyZbCvs1EPfmfOnBoS
-         ZL92noFV7P64U2xa5RQlrlxgL4jW26T0U/DYKVszjHETAmPDSbfcW5AM4rjnPR/ssUKS
-         HBBFGZH+RG/lgA5U7+Y6wmh06ud7Sl+P7hm/d90ZRFFxLuEHDj+LB6HSJwHmsKMt9jYo
-         lKAw==
+        bh=Cf+Pm9LfhKmqFtvRY8sxYbMjxt4ZGLWNBJbsdgICVcA=;
+        b=HD38hZu/lqyjU3qYHckLOholve6siuxWK8V2qKNegLGaCYTcx3IjuZl3Aznun6NkNb
+         VyxoiJtBMUDmSf670BfHziEXOhedZ2GbeW95ahsdNryMAsZzD40fqHDHoGj66d8RhjDF
+         E4Bac1Tcg3Ft07wz6VkxNagLdOtQ5KlC4tUoC4MDqPNWEw7utDU4d1WZz1byaheU7NuV
+         W+mCo7lkwvIrImentX35uG949PEi4pnI5knB2RjCFjVeP03G+xkTjg/utyU5S5q4kPa9
+         0+hsAuk8Y/xGNSV0mFDtxZULZdrq1BVAg01E9pV8GgCzLrFBIq+jSYfdQDPRSpPCCSK/
+         0Ufg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97A3221892
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E3E121890
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jianwen Ji <jiji@redhat.com>,
-	Xin Long <lucien.xin@gmail.com>,
-	Neil Horman <nhorman@tuxdriver.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jon Maloy <jon.maloy@ericsson.com>,
+	Ying Xue <ying.xue@windriver.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 27/80] sctp: do not check port in sctp_inet6_cmp_addr
-Date: Fri, 27 Apr 2018 15:58:20 +0200
-Message-Id: <20180427135734.337062858@linuxfoundation.org>
+Subject: [PATCH 4.14 23/80] tipc: add policy for TIPC_NLA_NET_ADDR
+Date: Fri, 27 Apr 2018 15:58:16 +0200
+Message-Id: <20180427135734.128970961@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135732.928644313@linuxfoundation.org>
 References: <20180427135732.928644313@linuxfoundation.org>
@@ -45,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908235270410091?=
-X-GMAIL-MSGID: =?utf-8?q?1598908541855190419?=
+X-GMAIL-THRID: =?utf-8?q?1598908243113314844?=
+X-GMAIL-MSGID: =?utf-8?q?1598908531244480323?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,134 +54,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Eric Dumazet <edumazet@google.com>
 
 
-[ Upstream commit 1071ec9d453a38023579714b64a951a2fb982071 ]
+[ Upstream commit ec518f21cb1a1b1f8a516499ea05c60299e04963 ]
 
-pf->cmp_addr() is called before binding a v6 address to the sock. It
-should not check ports, like in sctp_inet_cmp_addr.
+Before syzbot/KMSAN bites, add the missing policy for TIPC_NLA_NET_ADDR
 
-But sctp_inet6_cmp_addr checks the addr by invoking af(6)->cmp_addr,
-sctp_v6_cmp_addr where it also compares the ports.
-
-This would cause that setsockopt(SCTP_SOCKOPT_BINDX_ADD) could bind
-multiple duplicated IPv6 addresses after Commit 40b4f0fd74e4 ("sctp:
-lack the check for ports in sctp_v6_cmp_addr").
-
-This patch is to remove af->cmp_addr called in sctp_inet6_cmp_addr,
-but do the proper check for both v6 addrs and v4mapped addrs.
-
-v1->v2:
-  - define __sctp_v6_cmp_addr to do the common address comparison
-    used for both pf and af v6 cmp_addr.
-
-Fixes: 40b4f0fd74e4 ("sctp: lack the check for ports in sctp_v6_cmp_addr")
-Reported-by: Jianwen Ji <jiji@redhat.com>
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Acked-by: Neil Horman <nhorman@tuxdriver.com>
+Fixes: 27c21416727a ("tipc: add net set to new netlink api")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: Jon Maloy <jon.maloy@ericsson.com>
+Cc: Ying Xue <ying.xue@windriver.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sctp/ipv6.c |   60 ++++++++++++++++++++++++++++----------------------------
- 1 file changed, 30 insertions(+), 30 deletions(-)
+ net/tipc/netlink.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/net/sctp/ipv6.c
-+++ b/net/sctp/ipv6.c
-@@ -521,46 +521,49 @@ static void sctp_v6_to_addr(union sctp_a
- 	addr->v6.sin6_scope_id = 0;
- }
+--- a/net/tipc/netlink.c
++++ b/net/tipc/netlink.c
+@@ -79,7 +79,8 @@ const struct nla_policy tipc_nl_sock_pol
  
--/* Compare addresses exactly.
-- * v4-mapped-v6 is also in consideration.
-- */
--static int sctp_v6_cmp_addr(const union sctp_addr *addr1,
--			    const union sctp_addr *addr2)
-+static int __sctp_v6_cmp_addr(const union sctp_addr *addr1,
-+			      const union sctp_addr *addr2)
- {
- 	if (addr1->sa.sa_family != addr2->sa.sa_family) {
- 		if (addr1->sa.sa_family == AF_INET &&
- 		    addr2->sa.sa_family == AF_INET6 &&
--		    ipv6_addr_v4mapped(&addr2->v6.sin6_addr)) {
--			if (addr2->v6.sin6_port == addr1->v4.sin_port &&
--			    addr2->v6.sin6_addr.s6_addr32[3] ==
--			    addr1->v4.sin_addr.s_addr)
--				return 1;
--		}
-+		    ipv6_addr_v4mapped(&addr2->v6.sin6_addr) &&
-+		    addr2->v6.sin6_addr.s6_addr32[3] ==
-+		    addr1->v4.sin_addr.s_addr)
-+			return 1;
-+
- 		if (addr2->sa.sa_family == AF_INET &&
- 		    addr1->sa.sa_family == AF_INET6 &&
--		    ipv6_addr_v4mapped(&addr1->v6.sin6_addr)) {
--			if (addr1->v6.sin6_port == addr2->v4.sin_port &&
--			    addr1->v6.sin6_addr.s6_addr32[3] ==
--			    addr2->v4.sin_addr.s_addr)
--				return 1;
--		}
-+		    ipv6_addr_v4mapped(&addr1->v6.sin6_addr) &&
-+		    addr1->v6.sin6_addr.s6_addr32[3] ==
-+		    addr2->v4.sin_addr.s_addr)
-+			return 1;
-+
- 		return 0;
- 	}
--	if (addr1->v6.sin6_port != addr2->v6.sin6_port)
--		return 0;
-+
- 	if (!ipv6_addr_equal(&addr1->v6.sin6_addr, &addr2->v6.sin6_addr))
- 		return 0;
-+
- 	/* If this is a linklocal address, compare the scope_id. */
--	if (ipv6_addr_type(&addr1->v6.sin6_addr) & IPV6_ADDR_LINKLOCAL) {
--		if (addr1->v6.sin6_scope_id && addr2->v6.sin6_scope_id &&
--		    (addr1->v6.sin6_scope_id != addr2->v6.sin6_scope_id)) {
--			return 0;
--		}
--	}
-+	if ((ipv6_addr_type(&addr1->v6.sin6_addr) & IPV6_ADDR_LINKLOCAL) &&
-+	    addr1->v6.sin6_scope_id && addr2->v6.sin6_scope_id &&
-+	    addr1->v6.sin6_scope_id != addr2->v6.sin6_scope_id)
-+		return 0;
+ const struct nla_policy tipc_nl_net_policy[TIPC_NLA_NET_MAX + 1] = {
+ 	[TIPC_NLA_NET_UNSPEC]		= { .type = NLA_UNSPEC },
+-	[TIPC_NLA_NET_ID]		= { .type = NLA_U32 }
++	[TIPC_NLA_NET_ID]		= { .type = NLA_U32 },
++	[TIPC_NLA_NET_ADDR]		= { .type = NLA_U32 },
+ };
  
- 	return 1;
- }
- 
-+/* Compare addresses exactly.
-+ * v4-mapped-v6 is also in consideration.
-+ */
-+static int sctp_v6_cmp_addr(const union sctp_addr *addr1,
-+			    const union sctp_addr *addr2)
-+{
-+	return __sctp_v6_cmp_addr(addr1, addr2) &&
-+	       addr1->v6.sin6_port == addr2->v6.sin6_port;
-+}
-+
- /* Initialize addr struct to INADDR_ANY. */
- static void sctp_v6_inaddr_any(union sctp_addr *addr, __be16 port)
- {
-@@ -845,8 +848,8 @@ static int sctp_inet6_cmp_addr(const uni
- 			       const union sctp_addr *addr2,
- 			       struct sctp_sock *opt)
- {
--	struct sctp_af *af1, *af2;
- 	struct sock *sk = sctp_opt2sk(opt);
-+	struct sctp_af *af1, *af2;
- 
- 	af1 = sctp_get_af_specific(addr1->sa.sa_family);
- 	af2 = sctp_get_af_specific(addr2->sa.sa_family);
-@@ -862,10 +865,7 @@ static int sctp_inet6_cmp_addr(const uni
- 	if (sctp_is_any(sk, addr1) || sctp_is_any(sk, addr2))
- 		return 1;
- 
--	if (addr1->sa.sa_family != addr2->sa.sa_family)
--		return 0;
--
--	return af1->cmp_addr(addr1, addr2);
-+	return __sctp_v6_cmp_addr(addr1, addr2);
- }
- 
- /* Verify that the provided sockaddr looks bindable.   Common verification,
+ const struct nla_policy tipc_nl_link_policy[TIPC_NLA_LINK_MAX + 1] = {
