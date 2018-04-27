@@ -1,66 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934738AbeD0OhD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 10:37:03 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41198 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932733AbeD0OhA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 10:37:00 -0400
-Date: Fri, 27 Apr 2018 15:37:20 +0100
-From: Will Deacon <will.deacon@arm.com>
-To: Kim Phillips <kim.phillips@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, jnair@caviumnetworks.com,
-        Robert.Richter@cavium.com, Vadim.Lomovtsev@cavium.com,
-        Jan.Glauber@cavium.com, gklkml16@gmail.com
-Subject: Re: [PATCH v4 2/2] ThunderX2: Add Cavium ThunderX2 SoC UNCORE PMU
- driver
-Message-ID: <20180427143719.GA5093@arm.com>
-References: <20180425090047.6485-1-ganapatrao.kulkarni@cavium.com>
- <20180425090047.6485-3-ganapatrao.kulkarni@cavium.com>
- <20180426170624.bfcba885431d57d0de2a3ddd@arm.com>
- <20180427093027.ngtuoezyh6mtz26p@lakrids.cambridge.arm.com>
- <20180427081525.f9dcc756678baf3bb6e6e473@arm.com>
+        id S934706AbeD0OjE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 10:39:04 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60732 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934230AbeD0OjA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 10:39:00 -0400
+Date: Fri, 27 Apr 2018 10:38:59 -0400
+From: Mike Snitzer <snitzer@redhat.com>
+To: Kees Cook <keescook@chromium.org>
+Cc: Alasdair Kergon <agk@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
+        dm-devel@redhat.com, Tycho Andersen <tycho@tycho.ws>,
+        Heinz Mauelshagen <heinzm@redhat.com>
+Subject: Re: dm/raid1: Remove VLA usage
+Message-ID: <20180427143859.GA26647@redhat.com>
+References: <20180411044315.GA46144@beast>
+ <CAGXu5jLUTF0c3DLGjFFnSwJ3FJmiOMYRu3vqTqNVEBQehyn4KA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180427081525.f9dcc756678baf3bb6e6e473@arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <CAGXu5jLUTF0c3DLGjFFnSwJ3FJmiOMYRu3vqTqNVEBQehyn4KA@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 27, 2018 at 08:15:25AM -0500, Kim Phillips wrote:
-> On Fri, 27 Apr 2018 10:30:27 +0100
-> Mark Rutland <mark.rutland@arm.com> wrote:
-> > On Thu, Apr 26, 2018 at 05:06:24PM -0500, Kim Phillips wrote:
-> > > On Wed, 25 Apr 2018 14:30:47 +0530
-> > > Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com> wrote:
-> > > 
-> > > > +static int thunderx2_uncore_event_init(struct perf_event *event)
-> > 
-> > > This PMU driver can be made more user-friendly by not just silently
-> > > returning an error code such as -EINVAL, but by emitting a useful
-> > > message describing the specific error via dmesg.
-> > 
-> > As has previously been discussed on several occasions, patches which log
-> > to dmesg in a pmu::event_init() path at any level above pr_debug() are
-> > not acceptable -- dmesg is not intended as a mechanism to inform users
-> > of driver-specific constraints.
-> 
-> I disagree - drivers do it all the time, using dev_err(), dev_warn(), etc.
-> 
-> > I would appreciate if in future you could qualify your suggestion with
-> > the requirement that pr_debug() is used.
-> 
-> It shouldn't - the driver isn't being debugged, it's in regular use.
+On Thu, Apr 26 2018 at  7:31pm -0400,
+Kees Cook <keescook@chromium.org> wrote:
 
-For anything under drivers/perf/, I'd prefer not to have these prints
-and instead see efforts to improve error reporting via the perf system
-call interface.
+> On Tue, Apr 10, 2018 at 9:43 PM, Kees Cook <keescook@chromium.org> wrote:
+> > On the quest to remove all VLAs from the kernel[1], this avoids VLAs
+> > in dm-raid1.c by just using the maximum size for the stack arrays.
+> > The nr_mirrors value was already capped at 9, so this makes it a trivial
+> > adjustment to the array sizes.
+> >
+> > [1] https://lkml.org/lkml/2018/3/7/621
+> >
+> > Signed-off-by: Kees Cook <keescook@chromium.org>
+> 
+> Friendly ping... can someone take this, or should this go via another tree?
 
-Anyway, I think this driver has bigger problems that need addressing.
+It needs further review but it is on my radar.
 
-Will
+But please consider it claimed and proceeding upstream for 4.18 via
+linux-dm.git
+
+Thanks,
+Mike
