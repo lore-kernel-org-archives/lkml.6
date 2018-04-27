@@ -1,28 +1,28 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZob04QsPxcOXamwUyesdQ+ry1KOR35hkMa4F6gbXcQvLwo6dfqNk7L7+7RfFLU04LBlPtzB
-ARC-Seal: i=1; a=rsa-sha256; t=1524838340; cv=none;
+X-Google-Smtp-Source: AB8JxZofDoNc3EZlP8FMP7f/SVxPPaB+YiOHp2gOT4MQx12OJDPKJxVXZilcAPuZFye6ZdgWWz3o
+ARC-Seal: i=1; a=rsa-sha256; t=1524838335; cv=none;
         d=google.com; s=arc-20160816;
-        b=GbqSPXSa7j2IkzmUMLgMpHLve1Msn5NWxHwSrFdTAu2DPuk9dUxgVmC8qgzAUAi1k2
-         GMBZbIfMHddKOQ/uWrlWhYmYX3fofeDvyF8k/tnWdTJO0ICrbwSGxykeFy5uTYIxundq
-         evL2geFZCdB6rMkGlo20esgpFIqjEzLYxA2ZvzGk11pnLx9P0+sy+fi/qf47lYevYpvq
-         C83tyZ0OlRDER+6ElzVgjpbX/rWbsTMq2wTHXgKGvrB1yPqSi1Ufcw/unCTNUZ2NKvlG
-         7WHJl28V7BO5/NqR3DAxwe0nNdYllw3m6BqoOOztxVHU8TnbtAIbJkk94GK3mDm6Z/bp
-         9sdQ==
+        b=U0b/4eSA89RAjbaTxwXxbXwHSSV4ho4JRBTSXOUipIasuqp35cGGHKAS8SkdiDGl0U
+         bdj3M/UeT4NoaIoYTm43+J1aBsCjJs+cle3jBhyUqmEmlEJ/nqYJCaXdHP7h5WLvqHhq
+         RbzxuUk+rEOEeCKPXNP80mAjpH3pOzSRi9OYDRBO7EaLn64aCtef7FT2j+6DofccLNN5
+         XmFVYYBmvTmeJZjwXaM2dFj0IGbMLMuDmXybqRMtDAxVhz1JE7LT0MTFVw4Z2mYMAU0K
+         v1NaOdZhOovIZQ58fWucmjv2hApQpuFMRx13VRlnnXhfOud5jPTMlguo+ncekUEhOJAU
+         eKpQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=4tOoQJMUstGnZStWZBU7mbJhIP80Dwqc3rHA2wch6O0=;
-        b=jJoW9qYtEtblHe8W91UwYSgzPaLmIIT/zdZrl+n1oBf+bdk+pDqQ/LYqL+v/xT39Qz
-         YDBzu/nwUPDkGWa77p4SupJkmyzN9X+FRc0undExIcBB9C89jUe9zDD6TzTjbv0W6WXg
-         44emD02koCnZ2At4TIB1buUDF43RW2TpkVxdbHse2aHNSj+rUY4WQfSrObda8S0SXq5e
-         lQLI9K4lygeQck34M78UubERDbFG7phOvSuI1MBX5/pI1OEw3IEMV41SoxRbEDVamEg8
-         ps08BM5MP6MofJ6BY3Qw2alSxWHnBZWI/cwi2x5jhnYJpRXD0FMPC3T2j/rIputBDBJ7
-         oskw==
+        bh=ohZy06iHKDnVA7O+wTTYeETjzfaWdCJ5XIuvV9HQSH0=;
+        b=gLjNAbc0tAOelEWzuWPXZAYbgnxvFrO6BAi0REa0zSjluJ/vkfFwIQb6m4VxnxfdWd
+         uV3v1Js4d1QAoV/Yl9blCkpz4k110ea/5m21z6bDi7o2eQWy+mTRWUkobIZgHKtOf9ox
+         8piH3/vqAU8YqzT5YageEnHlbgdinm7zkFNHMsMYa2Z3oC0u3EPQuj8HYYDAktqaJRIi
+         9aZEcsOkuE3QvBaxlWCjmjODwSYdqYhbrPFSv+qrmXdqU2BacENF5PHeVMR7OrH6oPjR
+         jfbbbC0QEYKiQNgOslN/OqCFwLc8XeGuw7K60hJpTnIurBkk0tK1CcdzSJFrJ3Negswc
+         DKBg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C14121864
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A5FD21864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
@@ -30,13 +30,12 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Laurent Vivier <lvivier@redhat.com>,
-	Jens Axboe <axboe@kernel.dk>,
 	Stan Johnson <userm57@yahoo.com>,
 	Finn Thain <fthain@telegraphics.com.au>,
-	Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH 4.16 67/81] block/swim: Dont log an error message for an invalid ioctl
-Date: Fri, 27 Apr 2018 15:59:09 +0200
-Message-Id: <20180427135747.198744729@linuxfoundation.org>
+	Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.16 65/81] m68k/mac: Dont remap SWIM MMIO region
+Date: Fri, 27 Apr 2018 15:59:07 +0200
+Message-Id: <20180427135747.101529690@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135743.216853156@linuxfoundation.org>
 References: <20180427135743.216853156@linuxfoundation.org>
@@ -46,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908664259086459?=
-X-GMAIL-MSGID: =?utf-8?q?1598908887733699761?=
+X-GMAIL-THRID: =?utf-8?q?1598908658841542656?=
+X-GMAIL-MSGID: =?utf-8?q?1598908882266999676?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -57,49 +56,153 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Finn Thain <fthain@telegraphics.com.au>
 
-commit 8e2ab5a4efaac77fb93e5b5b109d0b3976fdd3a0 upstream.
+commit b64576cbf36afa5fabf3b31f62a1994c429ef855 upstream.
 
-The 'eject' shell command may send various different ioctl commands.
-This leads to error messages on the console even though the FDEJECT
-ioctl succeeds.
+For reasons I don't understand, calling ioremap() then iounmap() on
+the SWIM MMIO region causes a hang on 68030 (but not on 68040).
 
-~# eject floppy
-SWIM floppy_ioctl: unknown cmd 21257
-SWIM floppy_ioctl: unknown cmd 1
+~# modprobe swim_mod
+SWIM floppy driver Version 0.2 (2008-10-30)
+SWIM device not found !
+watchdog: BUG: soft lockup - CPU#0 stuck for 23s! [modprobe:285]
+Modules linked in: swim_mod(+)
+Format 00  Vector: 0064  PC: 000075aa  Status: 2000    Not tainted
+ORIG_D0: ffffffff  D0: d00c0000  A2: 007c2370  A1: 003f810c
+A0: 00040000  D5: d0096800  D4: d0097e00
+D3: 00000001  D2: 00000003  D1: 00000000
+Non-Maskable Interrupt
+Modules linked in: swim_mod(+)
+PC: [<000075ba>] __iounmap+0x24/0x10e
+SR: 2000  SP: 007abc48  a2: 007c2370
+d0: d00c0000    d1: 000001a0    d2: 00000019    d3: 00000001
+d4: d0097e00    d5: d0096800    a0: 00040000    a1: 003f810c
+Process modprobe (pid: 285, task=007c2370)
+Frame format=0
+Stack from 007abc7c:
+        ffffffed 00000000 006a4060 004712e0 007abca0 000076ea d0080000 00080000
+        010bb4b8 007abcd8 010ba542 d0096000 00000000 00000000 00000001 010bb59c
+        00000000 007abf30 010bb4b8 0047760a 0047763c 00477612 00616540 007abcec
+        0020a91a 00477600 0047760a 010bb4cc 007abd18 002092f2 0047760a 00333b06
+        007abd5c 00000000 0047760a 010bb4cc 00404f90 004776b8 00000001 007abd38
+        00209446 010bb4cc 0047760a 010bb4cc 0020938e 0031f8be 00616540 007abd64
+Call Trace: [<000076ea>] iounmap+0x46/0x5a
+ [<00080000>] shrink_page_list+0x7f6/0xe06
+ [<010ba542>] swim_probe+0xe4/0x496 [swim_mod]
+ [<0020a91a>] platform_drv_probe+0x20/0x5e
+ [<002092f2>] driver_probe_device+0x21c/0x2b8
+ [<00333b06>] mutex_lock+0x0/0x2e
+ [<00209446>] __driver_attach+0xb8/0xce
+ [<0020938e>] __driver_attach+0x0/0xce
+ [<0031f8be>] klist_next+0x0/0xa0
+ [<00207562>] bus_for_each_dev+0x74/0xba
+ [<000344c0>] blocking_notifier_call_chain+0x0/0x20
+ [<00333b06>] mutex_lock+0x0/0x2e
+ [<00208e44>] driver_attach+0x1a/0x1e
+ [<0020938e>] __driver_attach+0x0/0xce
+ [<00207e26>] bus_add_driver+0x188/0x234
+ [<000344c0>] blocking_notifier_call_chain+0x0/0x20
+ [<00209894>] driver_register+0x58/0x104
+ [<000344c0>] blocking_notifier_call_chain+0x0/0x20
+ [<010bd000>] swim_init+0x0/0x2c [swim_mod]
+ [<0020a7be>] __platform_driver_register+0x38/0x3c
+ [<010bd028>] swim_init+0x28/0x2c [swim_mod]
+ [<000020dc>] do_one_initcall+0x38/0x196
+ [<000344c0>] blocking_notifier_call_chain+0x0/0x20
+ [<003331cc>] mutex_unlock+0x0/0x3e
+ [<00333b06>] mutex_lock+0x0/0x2e
+ [<003331cc>] mutex_unlock+0x0/0x3e
+ [<00333b06>] mutex_lock+0x0/0x2e
+ [<003331cc>] mutex_unlock+0x0/0x3e
+ [<00333b06>] mutex_lock+0x0/0x2e
+ [<003331cc>] mutex_unlock+0x0/0x3e
+ [<00333b06>] mutex_lock+0x0/0x2e
+ [<00075008>] __free_pages+0x0/0x38
+ [<000045c0>] mangle_kernel_stack+0x30/0xda
+ [<000344c0>] blocking_notifier_call_chain+0x0/0x20
+ [<003331cc>] mutex_unlock+0x0/0x3e
+ [<00333b06>] mutex_lock+0x0/0x2e
+ [<0005ced4>] do_init_module+0x42/0x266
+ [<010bd000>] swim_init+0x0/0x2c [swim_mod]
+ [<000344c0>] blocking_notifier_call_chain+0x0/0x20
+ [<0005eda0>] load_module+0x1a30/0x1e70
+ [<0000465d>] mangle_kernel_stack+0xcd/0xda
+ [<00331c64>] __generic_copy_from_user+0x0/0x46
+ [<0033256e>] _cond_resched+0x0/0x32
+ [<00331b9c>] memset+0x0/0x98
+ [<0033256e>] _cond_resched+0x0/0x32
+ [<0005f25c>] SyS_init_module+0x7c/0x112
+ [<00002000>] _start+0x0/0x8
+ [<00002000>] _start+0x0/0x8
+ [<00331c82>] __generic_copy_from_user+0x1e/0x46
+ [<0005f2b2>] SyS_init_module+0xd2/0x112
+ [<0000465d>] mangle_kernel_stack+0xcd/0xda
+ [<00002b40>] syscall+0x8/0xc
+ [<0000465d>] mangle_kernel_stack+0xcd/0xda
+ [<0008c00c>] pcpu_balance_workfn+0xb2/0x40e
+Code: 2200 7419 e4a9 e589 2841 d9fc 0000 1000 <2414> 7203 c282 7602 b681 6600 0096 0242 fe00 0482 0000 0000 e9c0 11c3 ed89 2642
 
-Don't log an error message for an invalid ioctl, just do as the
-swim3 driver does and return -ENOTTY.
+There's no need to call ioremap() for the SWIM address range, as it lies
+within the usual IO device region at 0x5000 0000, which has already been
+mapped by head.S.
+
+Remove the redundant ioremap() and iounmap() calls to fix the hang.
 
 Cc: Laurent Vivier <lvivier@redhat.com>
-Cc: Jens Axboe <axboe@kernel.dk>
 Cc: stable@vger.kernel.org # v4.14+
 Tested-by: Stan Johnson <userm57@yahoo.com>
 Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
 Acked-by: Laurent Vivier <lvivier@redhat.com>
-Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/block/swim.c |    9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+ drivers/block/swim.c |   10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
 --- a/drivers/block/swim.c
 +++ b/drivers/block/swim.c
-@@ -727,14 +727,9 @@ static int floppy_ioctl(struct block_dev
- 		if (copy_to_user((void __user *) param, (void *) &floppy_type,
- 				 sizeof(struct floppy_struct)))
- 			return -EFAULT;
--		break;
--
--	default:
--		printk(KERN_DEBUG "SWIM floppy_ioctl: unknown cmd %d\n",
--		       cmd);
--		return -ENOSYS;
-+		return 0;
+@@ -911,7 +911,7 @@ static int swim_probe(struct platform_de
+ 		goto out;
  	}
--	return 0;
-+	return -ENOTTY;
- }
  
- static int floppy_getgeo(struct block_device *bdev, struct hd_geometry *geo)
+-	swim_base = ioremap(res->start, resource_size(res));
++	swim_base = (struct swim __iomem *)res->start;
+ 	if (!swim_base) {
+ 		ret = -ENOMEM;
+ 		goto out_release_io;
+@@ -923,7 +923,7 @@ static int swim_probe(struct platform_de
+ 	if (!get_swim_mode(swim_base)) {
+ 		printk(KERN_INFO "SWIM device not found !\n");
+ 		ret = -ENODEV;
+-		goto out_iounmap;
++		goto out_release_io;
+ 	}
+ 
+ 	/* set platform driver data */
+@@ -931,7 +931,7 @@ static int swim_probe(struct platform_de
+ 	swd = kzalloc(sizeof(struct swim_priv), GFP_KERNEL);
+ 	if (!swd) {
+ 		ret = -ENOMEM;
+-		goto out_iounmap;
++		goto out_release_io;
+ 	}
+ 	platform_set_drvdata(dev, swd);
+ 
+@@ -945,8 +945,6 @@ static int swim_probe(struct platform_de
+ 
+ out_kfree:
+ 	kfree(swd);
+-out_iounmap:
+-	iounmap(swim_base);
+ out_release_io:
+ 	release_mem_region(res->start, resource_size(res));
+ out:
+@@ -974,8 +972,6 @@ static int swim_remove(struct platform_d
+ 	for (drive = 0; drive < swd->floppy_count; drive++)
+ 		floppy_eject(&swd->unit[drive]);
+ 
+-	iounmap(swd->base);
+-
+ 	res = platform_get_resource(dev, IORESOURCE_MEM, 0);
+ 	if (res)
+ 		release_mem_region(res->start, resource_size(res));
