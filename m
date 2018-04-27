@@ -1,79 +1,150 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757248AbeD0BeZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 21:34:25 -0400
-Received: from icp-osb-irony-out4.external.iinet.net.au ([203.59.1.220]:4048
-        "EHLO icp-osb-irony-out4.external.iinet.net.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752358AbeD0BeX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 21:34:23 -0400
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2DTAADRfOJa/zXSMGcNThoBAQEBAQIBA?=
- =?us-ascii?q?QEBCAEBAQGFRoNrlU2BI4EPlQuEd4JrNxUBAgEBAQEBAQKGOAEnBFIbDQEKAgI?=
- =?us-ascii?q?mAl8NBgIBAYR+qA1tgWkzGoQ+g2yCRYEJhGSDMIEHgTKCOi6BQQGCeoM3glQCm?=
- =?us-ascii?q?AkHAY5Ch2eEdJFgMoF0MxoIKAiCfpBgXY5ugkYBAQ?=
-X-IPAS-Result: =?us-ascii?q?A2DTAADRfOJa/zXSMGcNThoBAQEBAQIBAQEBCAEBAQGFRoN?=
- =?us-ascii?q?rlU2BI4EPlQuEd4JrNxUBAgEBAQEBAQKGOAEnBFIbDQEKAgImAl8NBgIBAYR+q?=
- =?us-ascii?q?A1tgWkzGoQ+g2yCRYEJhGSDMIEHgTKCOi6BQQGCeoM3glQCmAkHAY5Ch2eEdJF?=
- =?us-ascii?q?gMoF0MxoIKAiCfpBgXY5ugkYBAQ?=
-X-IronPort-AV: E=Sophos;i="5.49,333,1520870400";
-   d="scan'208";a="69097786"
-Subject: Re: [PATCH] m68k: Fix calendar month regression on M68328
-To: Finn Thain <fthain@telegraphics.com.au>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, linux-m68k@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-From: Greg Ungerer <gerg@linux-m68k.org>
-Message-ID: <d59432ee-15a3-495b-29db-2d2eb51be97d@linux-m68k.org>
-Date: Fri, 27 Apr 2018 11:33:12 +1000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+        id S1757153AbeD0Bh1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 21:37:27 -0400
+Received: from mail-eopbgr50051.outbound.protection.outlook.com ([40.107.5.51]:10976
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751279AbeD0BhY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 21:37:24 -0400
+From: Anson Huang <anson.huang@nxp.com>
+To: Fabio Estevam <festevam@gmail.com>
+CC: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Andy Duan <fugang.duan@nxp.com>
+Subject: RE: [PATCH 4/5] ARM: dts: imx6sx-sabreauto: add fec support
+Thread-Topic: [PATCH 4/5] ARM: dts: imx6sx-sabreauto: add fec support
+Thread-Index: AQHT2vNvaoueJMByHUOpWSeGxuLWrqQPLInggACrfgCAAPxtMIAAHqHggACOugCAAOhKwIAA6AKAgACHWyA=
+Date: Fri, 27 Apr 2018 01:37:19 +0000
+Message-ID: <AM3PR04MB1315F80C9B5190F4E26DC723F58D0@AM3PR04MB1315.eurprd04.prod.outlook.com>
+References: <1524455219-6736-1-git-send-email-Anson.Huang@nxp.com>
+ <1524455219-6736-4-git-send-email-Anson.Huang@nxp.com>
+ <CAOMZO5CDAQtw7Q6NgSzKP4ogaqRaGSE0A+st1iqZ=cQsK49moQ@mail.gmail.com>
+ <AM3PR04MB131566E1C8033D256686F192F5880@AM3PR04MB1315.eurprd04.prod.outlook.com>
+ <CAOMZO5Dm=MFRoh=y54Qf2RrncWfQPTUJ2ZNfvYnUD=idp8RPNA@mail.gmail.com>
+ <AM3PR04MB1315ED599A20F67BB9FEFEE1F58F0@AM3PR04MB1315.eurprd04.prod.outlook.com>
+ <AM3PR04MB1315B04BE46755E3EB82E04CF58F0@AM3PR04MB1315.eurprd04.prod.outlook.com>
+ <CAOMZO5AS=aH8p1+tmgJ4ooeqExNqOALh7vbPAsQdqdky8CkXyQ@mail.gmail.com>
+ <DB5PR04MB132072FEDCAFEDF6592C6A32F58E0@DB5PR04MB1320.eurprd04.prod.outlook.com>
+ <CAOMZO5Df__UpcLXVUrW0sT24g=Kmu2132QeQSBE9aZrjcyqsCw@mail.gmail.com>
+In-Reply-To: <CAOMZO5Df__UpcLXVUrW0sT24g=Kmu2132QeQSBE9aZrjcyqsCw@mail.gmail.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com;
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM3PR04MB436;7:mTexD4BdZKkEKBIQvbmqvDf1EakxVLcd4DN+71Qe//Vm387F6OfWIQQY6PJy5kbaKjaV9xjd1l0hn13PhcnFpZ6sEMT+UZKkV7UDvTiHeDOUDGi7wXqH650jSszuPx9/8pHFNikZ2Zt1wYyivmSu1RtCw25h/xUh91le4D4p8KE24XtSA31cB4Ma6ZLcPkjNipszuAbxtzAAzCzZynPqFhCNLBZf1R0wxWljhtm3ZwYC30eH/4EJ++oBacqb1rlR
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:AM3PR04MB436;
+x-ms-traffictypediagnostic: AM3PR04MB436:
+x-microsoft-antispam-prvs: <AM3PR04MB436D00A17F09F54D7F3D634F58D0@AM3PR04MB436.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(185117386973197)(85827821059158)(258649278758335);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231232)(944501410)(52105095)(93006095)(93001095)(6055026)(6041310)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:AM3PR04MB436;BCL:0;PCL:0;RULEID:;SRVR:AM3PR04MB436;
+x-forefront-prvs: 0655F9F006
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(346002)(366004)(39380400002)(376002)(396003)(51914003)(13464003)(199004)(189003)(81166006)(81156014)(6116002)(305945005)(2900100001)(3846002)(8676002)(8936002)(229853002)(316002)(54906003)(5660300001)(11346002)(53546011)(446003)(102836004)(7696005)(5250100002)(6506007)(76176011)(186003)(476003)(26005)(7736002)(1411001)(44832011)(93886005)(59450400001)(6436002)(74316002)(86362001)(99286004)(486006)(3280700002)(66066001)(6246003)(55016002)(9686003)(4326008)(2906002)(33656002)(68736007)(39060400002)(97736004)(6916009)(106356001)(478600001)(14454004)(3660700001)(53936002)(105586002)(25786009)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM3PR04MB436;H:AM3PR04MB1315.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: K2t6dx75WOQDl2p8jxafRFbNlnfLXkQ4QjSgCxfQ6ZRXbmt7byKw4FFW+QJCddDyX1mTj6UfpCdfMV0/g7KWvd/i3ugenNm/glGmUsOnzHdoX8esc1z3HzsNTs6W6DhEnQTqwZpXjyHDWNPwnZ59UbpDDyMIJ+DMUxyXBhKGcJGAM62M57YlNW55MWpuJi3O
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+X-MS-Office365-Filtering-Correlation-Id: 599b0875-6bb9-491d-963a-08d5abdf6acf
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 599b0875-6bb9-491d-963a-08d5abdf6acf
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Apr 2018 01:37:20.0138
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM3PR04MB436
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3R1bXFI018219
 
-Hi Finn,
 
-On 27/04/18 11:12, Finn Thain wrote:
-> My earlier fix for read_persistent_clock() neglected to cover
-> m68328_hwclk(). Correct this oversight.
+
+Anson Huang
+Best Regards!
+
+
+> -----Original Message-----
+> From: Fabio Estevam [mailto:festevam@gmail.com]
+> Sent: Friday, April 27, 2018 1:29 AM
+> To: Anson Huang <anson.huang@nxp.com>
+> Cc: Shawn Guo <shawnguo@kernel.org>; Sascha Hauer
+> <kernel@pengutronix.de>; Fabio Estevam <fabio.estevam@nxp.com>; Rob
+> Herring <robh+dt@kernel.org>; Mark Rutland <mark.rutland@arm.com>;
+> dl-linux-imx <linux-imx@nxp.com>; moderated list:ARM/FREESCALE IMX / MXC
+> ARM ARCHITECTURE <linux-arm-kernel@lists.infradead.org>; open list:OPEN
+> FIRMWARE AND FLATTENED DEVICE TREE BINDINGS
+> <devicetree@vger.kernel.org>; linux-kernel <linux-kernel@vger.kernel.org>;
+> Andy Duan <fugang.duan@nxp.com>
+> Subject: Re: [PATCH 4/5] ARM: dts: imx6sx-sabreauto: add fec support
 > 
-> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-> Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-> ---
-> Greg, the read_persistent_clock() change has already been queued
-> by Geert. Should this patch be pushed together with that one
-> (presuming your ack)? Sorry for the inconvenience.
-
-If Geert is happy to add it to his tree that would seem to make sense.
-Otherwise I can take it via the m68knommu tree. Either way:
-
-  Acked-by: Greg Ungerer <gerg@linux-m68k.org>
-
-Regards
-Greg
-
-
-> ---
->  arch/m68k/68000/timers.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+> On Thu, Apr 26, 2018 at 3:57 AM, Anson Huang <anson.huang@nxp.com>
+> wrote:
 > 
-> diff --git a/arch/m68k/68000/timers.c b/arch/m68k/68000/timers.c
-> index 252455bce144..71ddb4c98726 100644
-> --- a/arch/m68k/68000/timers.c
-> +++ b/arch/m68k/68000/timers.c
-> @@ -125,7 +125,9 @@ int m68328_hwclk(int set, struct rtc_time *t)
->  {
->  	if (!set) {
->  		long now = RTCTIME;
-> -		t->tm_year = t->tm_mon = t->tm_mday = 1;
-> +		t->tm_year = 1;
-> +		t->tm_mon = 0;
-> +		t->tm_mday = 1;
->  		t->tm_hour = (now >> 24) % 24;
->  		t->tm_min = (now >> 16) % 60;
->  		t->tm_sec = now % 60;
+> > The 'phy-supply' is for enabling/disabling phy regulator, but here the
+> > MAX7322 IO0 is NOT for enabling/disabling PHY regulator, it is for IO
+> > voltage switch between 1.5V and 1.8V, our ENET IO can work with both 1.5V
+> and 1.8V, so any config is OK for ENET function.
 > 
+> Thanks for the clarification.
+> 
+> > The 1.5V/1.8V selection is a one time setting thing, that means we
+> > only need to config it once during boot up, most of i.MX platforms
+> > does NOT provide such voltage switch function for ENET IO, on this 6SX
+> > sabre auto board, it is more like a backup or validation purpose. With default
+> settings, ENET's function is NOT impacted at all.
+> >
+> > I think we can add a gpio regulator for it and let the regulator
+> > initialization set the GPIO Level for fec, such below, with "
+> > enable-active-high " present, GPIO will be at LOW and voltage is 1.5V, without
+> this property, GPIO will be HIGH and voltage will be 1.8V.
+> > +               reg_fec: fec_io_supply {
+> > +                       compatible = "regulator-gpio";
+> > +                       regulator-name = "1.8V_1.5V_FEC";
+> > +                       regulator-min-microvolt = <1500000>;
+> > +                       regulator-max-microvolt = <1800000>;
+> > +                       states = <1500000 0x0 1800000 0x1>;
+> > +                       enable-gpio = <&max7322 0
+> GPIO_ACTIVE_HIGH>;
+> > +                       vin-supply = <&sw2_reg>;
+> > +                       enable-active-high;
+> 
+> If there is no consumer for this regulator, the regulator API will disable it.
+> 
+> It seems you need a 'regulator-always-on;'.
+
+GPIO regulator is slight different when regulator framework try to disable
+those unused regulator in late phase, in _regulator_do_disable, the GPIO
+regulator only got disabled when it is explicitly enabled before (ena_gpio_state
+is set when regulator is enabled), but this reg_fec is NOT getting enabled, since
+it only has voltage switch function. But I agree that we can anyway add 'regulator-always-on'
+to avoid any confusion, will send out new patch, thanks!
+ 
+         if (rdev->ena_pin) {
+                 if (rdev->ena_gpio_state) {
+                         ret = regulator_ena_gpio_ctrl(rdev, false);
+
+
+Anson.
+
+> 
+> 
+> > +               };
+> > +
+> >
+> > Anson.
+> >
