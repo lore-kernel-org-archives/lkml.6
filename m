@@ -1,39 +1,42 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZojl6xnIZED6mvV8Sy0LeDcXZ2chs43G737Jfysh4oJ1PP1YDd6khLfNFQC0Zob9yyM9OaU
-ARC-Seal: i=1; a=rsa-sha256; t=1524838114; cv=none;
+X-Google-Smtp-Source: AB8JxZrTHUthZ0U2Ld77dwIBo4UNtcYsZWvFQIVkDKcieCcZdtd+CccETTrQqGCEU3/CwJ52C4uh
+ARC-Seal: i=1; a=rsa-sha256; t=1524838112; cv=none;
         d=google.com; s=arc-20160816;
-        b=NTcrqVsB/rfdGekkXSrK1vWyahprWfmHMDkwmSXSrQ66K0tp06TTa0xn5BWOS/LtOu
-         lyOPRk8mknc81uuqq2AJjZLi9NwsQv6DkC4oSHtui3MS3RqlfeNDCFWelZ/K7EFMdeYb
-         WbePJ/DxZ8IkI4mmCcSHMZb2E0+8+eYQ9eRdK1DQyus76xBvdiSbFOsoFppSbnAK0G7n
-         oAVwYAPHhlrwh0s1Mmm6S7AXo5Qxh5ck4c4PX58OD/Ycj8o+Zy/guMJsFi3EBB+axtpG
-         LqjA3HrCj45S2rWiyVc8Hml3IPAkY/ES98E7kxSYG1qOJIuSqqLYhJxY6X6TilRLiZXY
-         CewA==
+        b=bIBLtkkqdpez7Ia2qq4QAqq2X4utMu//OqmxoKHKIuOUoabsqd40y74mgnOBUh6JbD
+         354JR93x5l2mfkpPEWWtKTIV5mUDo/PrKJ3FQhGg21B7S91WAATKC4QBCqWyLckg7Dkb
+         pzHGvuS6DJhfK3dOx596RX5SN1gYu6tSP7t2qgG3OOnuEqDXfLmNPG2TfT1EiNKKpy/9
+         iNjxWVjcWexNvcnC6oF5y76Ma+Ylip/kLSR6LIU/YjOiCHXvI5OzkYUXaocMBZxE4Php
+         f/+W6nNNnc7XJTMbMiWh8RigbCfTlgiwlXz9oH5YcWXZDdO+9ZpA1OMkEMRzHRJbv7Kx
+         yrBg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=/L24NZm9YjJJkqLn9Uo6XvPtm8Rov1Qv9AXFEco39AQ=;
-        b=VWZLhNVj11C7uTqjLopnSVqk1krKRj+pU/p44U5PFjmTSSxKHhoLyd6s1XYbTLZUtU
-         PR3Tb0Oe+JMh49RG03UWPFxCnNjXp+Y3BlOTjfjT0IdefzHDIUEDubjznMBeiw4hCxSJ
-         k/NWimaSpdPLwACE6VpcVL3AI5BYt2isD73LmTrTkdgsWCu4seXonr+YK75BX5Cc9NWu
-         UD2ZLk+Jl71n/qcv0cidmdNDgJ01WVLWEBuo7lRcIxoENim6mHgl2TLs+OWkz8LkrOt7
-         4ubdCR9toEpIQlTlHQu41Dkqp4No1nLUFEwOKeO/B8zCL8g3FzFLXK5+HQJd4PzPrvhm
-         q3vA==
+        bh=j9MWW2fvEwlyN/5iVL9sQhV7sBR80PlMXvjbt27kVRU=;
+        b=yjWmU/Z4nRM/u1dmfnM9shZJeNnGDx1Tbmxo1lfnsu7T1uUHa0KGwFmEwRlPH/uN9I
+         Ck6HHk2/yLwsa0IfoNSJ+Ydh12vng7zu0EWN6KcL27ZryVw++OuBILQKv8H3dzZlruLY
+         mLWdNtWCqABAZ00jFmuW5fnnjNco7Lk1djqR19nOjdqwd9aMepzgzw1GgnMbdubKVokI
+         ZhxFzq0cNDE6hgFgeTEx2j+Bnd9Nwy7vKiUyWRCtlw3m3CZ/dzpVEscV69WEFIG9OM00
+         WlHKLo8nPCu8xOkbMSnAYeK/C/hmKx/h32IkUSNZTN7sooOpuBMuMMmMHKkWpFZO46sx
+         FWHg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDBF021892
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F066218D1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Nikola Ciprich <nikola.ciprich@linuxbox.cz>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.14 65/80] scsi: mptsas: Disable WRITE SAME
-Date: Fri, 27 Apr 2018 15:58:58 +0200
-Message-Id: <20180427135736.257821684@linuxfoundation.org>
+	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+	syzbot <syzbot+9369930ca44f29e60e2d@syzkaller.appspotmail.com>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	James Morris <james.morris@microsoft.com>,
+	"Eric W. Biederman" <ebiederm@xmission.com>
+Subject: [PATCH 4.14 64/80] commoncap: Handle memory allocation failure.
+Date: Fri, 27 Apr 2018 15:58:57 +0200
+Message-Id: <20180427135736.214606832@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135732.928644313@linuxfoundation.org>
 References: <20180427135732.928644313@linuxfoundation.org>
@@ -43,8 +46,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908124902978465?=
-X-GMAIL-MSGID: =?utf-8?q?1598908650720070594?=
+X-GMAIL-THRID: =?utf-8?q?1598908648105259176?=
+X-GMAIL-MSGID: =?utf-8?q?1598908648105259176?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,29 +55,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Martin K. Petersen <martin.petersen@oracle.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-commit 94e5395d2403c8bc2504a7cbe4c4caaacb7b8b84 upstream.
+commit 1f5781725dcbb026438e77091c91a94f678c3522 upstream.
 
-First generation MPT Fusion controllers can not translate WRITE SAME
-when the attached device is a SATA drive. Disable WRITE SAME support.
+syzbot is reporting NULL pointer dereference at xattr_getsecurity() [1],
+for cap_inode_getsecurity() is returning sizeof(struct vfs_cap_data) when
+memory allocation failed. Return -ENOMEM if memory allocation failed.
 
-Reported-by: Nikola Ciprich <nikola.ciprich@linuxbox.cz>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+[1] https://syzkaller.appspot.com/bug?id=a55ba438506fe68649a5f50d2d82d56b365e0107
+
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Fixes: 8db6c34f1dbc8e06 ("Introduce v3 namespaced file capabilities")
+Reported-by: syzbot <syzbot+9369930ca44f29e60e2d@syzkaller.appspotmail.com>
+Cc: stable <stable@vger.kernel.org> # 4.14+
+Acked-by: Serge E. Hallyn <serge@hallyn.com>
+Acked-by: James Morris <james.morris@microsoft.com>
+Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/message/fusion/mptsas.c |    1 +
- 1 file changed, 1 insertion(+)
+ security/commoncap.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/message/fusion/mptsas.c
-+++ b/drivers/message/fusion/mptsas.c
-@@ -1995,6 +1995,7 @@ static struct scsi_host_template mptsas_
- 	.cmd_per_lun			= 7,
- 	.use_clustering			= ENABLE_CLUSTERING,
- 	.shost_attrs			= mptscsih_host_attrs,
-+	.no_write_same			= 1,
- };
- 
- static int mptsas_get_linkerrors(struct sas_phy *phy)
+--- a/security/commoncap.c
++++ b/security/commoncap.c
+@@ -449,6 +449,8 @@ int cap_inode_getsecurity(struct inode *
+ 				magic |= VFS_CAP_FLAGS_EFFECTIVE;
+ 			memcpy(&cap->data, &nscap->data, sizeof(__le32) * 2 * VFS_CAP_U32);
+ 			cap->magic_etc = cpu_to_le32(magic);
++		} else {
++			size = -ENOMEM;
+ 		}
+ 	}
+ 	kfree(tmpbuf);
