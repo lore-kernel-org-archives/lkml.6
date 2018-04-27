@@ -1,89 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758984AbeD0Rgg (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 13:36:36 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46572 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1758943AbeD0Rge (ORCPT
+        id S1758852AbeD0Rjs (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 13:39:48 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:53338 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751727AbeD0Rjp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 13:36:34 -0400
-Date: Fri, 27 Apr 2018 19:36:19 +0200
-From: Gerald Schaefer <gerald.schaefer@de.ibm.com>
-To: Zi Yan <zi.yan@sent.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Zi Yan <zi.yan@cs.rutgers.edu>, Vineet Gupta <vgupta@synopsys.com>,
-        linux-snps-arc@lists.infradead.org,
-        Russell King <linux@armlinux.org.uk>,
-        Christoffer Dall <christoffer.dall@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Steve Capper <steve.capper@arm.com>,
-        Kristina Martsenko <kristina.martsenko@arm.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, x86@kernel.org,
-        Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>,
-        Michal Hocko <mhocko@suse.com>, linux-mips@linux-mips.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Ram Pai <linuxram@us.ibm.com>, Balbir Singh <bsingharora@gmail.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        linuxppc-dev@lists.ozlabs.org,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Janosch Frank <frankja@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>, sparclinux@vger.kernel.org,
-        "Huang, Ying" <ying.huang@intel.com>
-Subject: Re: [RFC PATCH 0/9] Enable THP migration for all possible
- architectures
-In-Reply-To: <20180426142804.180152-1-zi.yan@sent.com>
-References: <20180426142804.180152-1-zi.yan@sent.com>
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        Fri, 27 Apr 2018 13:39:45 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D75086019F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date: Fri, 27 Apr 2018 11:39:43 -0600
+From: Lina Iyer <ilina@codeaurora.org>
+To: Matthias Kaehlcke <mka@chromium.org>
+Cc: andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, sboyd@kernel.org, evgreen@chromium.org,
+        dianders@chromium.org
+Subject: Re: [PATCH v6 05/10] drivers: qcom: rpmh-rsc: write sleep/wake
+ requests to TCS
+Message-ID: <20180427173943.GD6380@codeaurora.org>
+References: <20180419221635.17849-1-ilina@codeaurora.org>
+ <20180419221635.17849-6-ilina@codeaurora.org>
+ <20180425214111.GC243180@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18042717-0020-0000-0000-00000416CD49
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18042717-0021-0000-0000-000042ABDB51
-Message-Id: <20180427193619.435eb53a@thinkpad>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-27_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804270167
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20180425214111.GC243180@google.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 26 Apr 2018 10:27:55 -0400
-Zi Yan <zi.yan@sent.com> wrote:
+On Wed, Apr 25 2018 at 15:41 -0600, Matthias Kaehlcke wrote:
+>On Thu, Apr 19, 2018 at 04:16:30PM -0600, Lina Iyer wrote:
+>> Sleep and wake requests are sent when the application processor
+>> subsystem of the SoC is entering deep sleep states like in suspend.
+>> These requests help lower the system power requirements when the
+>> resources are not in use.
+>>
+>> Sleep and wake requests are written to the TCS slots but are not
+>> triggered at the time of writing. The TCS are triggered by the firmware
+>> after the last of the CPUs has executed its WFI. Since these requests
+>> may come in different batches of requests, it is the job of this
+>> controller driver to find and arrange the requests into the available
+>> TCSes.
+>>
+>> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+>> Reviewed-by: Evan Green <evgreen@chromium.org>
+>> ---
+>>  drivers/soc/qcom/rpmh-internal.h |   8 +++
+>>  drivers/soc/qcom/rpmh-rsc.c      | 120 +++++++++++++++++++++++++++++++
+>>  2 files changed, 128 insertions(+)
+>>
+>> diff --git a/drivers/soc/qcom/rpmh-internal.h b/drivers/soc/qcom/rpmh-internal.h
+>> index d9a21726e568..6e19fe458c31 100644
+>> --- a/drivers/soc/qcom/rpmh-internal.h
+>> +++ b/drivers/soc/qcom/rpmh-internal.h
+>
+><snip>
+>
+>> +static int find_match(const struct tcs_group *tcs, const struct tcs_cmd *cmd,
+>> +		      int len)
+>> +{
+>> +	int i, j;
+>> +
+>> +	/* Check for already cached commands */
+>> +	for_each_set_bit(i, tcs->slots, MAX_TCS_SLOTS) {
+>> +		for (j = 0; j < len; j++) {
+>> +			if (tcs->cmd_cache[i] != cmd[0].addr) {
+>
+>Shouldn't the condition be 'tcs->cmd_cache[i + j] != cmd[j].addr'?
+>
+Here, we are trying to find the first address from the request and its
+position 'i' in the cmd_cache.
 
-> From: Zi Yan <zi.yan@cs.rutgers.edu>
-> 
-> Hi all,
-> 
-> THP migration is only enabled on x86_64 with a special
-> ARCH_ENABLE_THP_MIGRATION macro. This patchset enables THP migration for
-> all architectures that uses transparent hugepage, so that special macro can
-> be dropped. Instead, THP migration is enabled/disabled via
-> /sys/kernel/mm/transparent_hugepage/enable_thp_migration.
-> 
-> I grepped for TRANSPARENT_HUGEPAGE in arch folder and got 9 architectures that
-> are supporting transparent hugepage. I mechanically add __pmd_to_swp_entry() and
-> __swp_entry_to_pmd() based on existing __pte_to_swp_entry() and
-> __swp_entry_to_pte() for all these architectures, except tile which is going to
-> be dropped.
+>Otherwise the code below the following if branch will never be
+>executed. Either the 'tcs->cmd_cache[i] != cmd[0].addr' branch isn't
+>entered because the addresses match, or the addresses don't match
+>and the inner loop is aborted after the first iteration.
+>
+>> +				if (j == 0)
+>> +					break;
+>> +				WARN(tcs->cmd_cache[i + j] != cmd[j].addr,
+>> +				     "Message does not match previous sequence.\n");
+We now check for the sequence using the iterator 'j' only after we have
+found 'i' (the beginning of our request).
 
-This will not work on s390, the pmd layout is very different from the pte
-layout. Using __swp_entry/type/offset() on a pmd will go horribly wrong.
-I currently don't see a chance to make this work for us, so please make/keep
-this configurable, and do not configure it for s390.
+I hope that helps clear the concern.
 
-Regards,
-Gerald
+-- Lina
+
+>> +				return -EINVAL;
+>> +			} else if (j == len - 1) {
+>> +				return i;
+>> +			}
+>> +		}
+>> +	}
+>> +
+>> +	return -ENODATA;
+>> +}
