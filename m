@@ -1,39 +1,40 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqX3p5bN4aQqUGPT59O6d8vVab3CUQSNYJZ6KAITLYQLcW6208Fyb8TyUqKHWbLRWHVYZ/x
-ARC-Seal: i=1; a=rsa-sha256; t=1524837977; cv=none;
+X-Google-Smtp-Source: AB8JxZqciAnqCpGkedQ7kkECdjzsE0MmeVZcVUvRd+3CD8PVLwN/j1Z8Fq+aW878GDjcDevA4H/W
+ARC-Seal: i=1; a=rsa-sha256; t=1524837980; cv=none;
         d=google.com; s=arc-20160816;
-        b=sgX7c/qynPyINgE6Ttakp5HVHDsvKNg/28PnnhNRKIYRX4irkwg4dMHbexvZvoSQt3
-         R2HxyOK7ptISQKgP7/VmJitUnGaE2528i7vbi8aGvtzq4pF6BDOGnjj3uF9ov7OfW1Vc
-         RMXrovmruBOmjrrhJOQWkPGX7ycDGEnVAQ5Ny70mwIYjwJ005EYX1TVqRGk4S+lbYcnZ
-         Gf15CwJuIc6I2qt8I2nEO7FS4/tbBU9f879ZVnR09WxzWKx6ROM4fM9mUJWtkip60Anb
-         UqihmuWPnAurQLJFFPo4+0+VPzG4fzUCtkqaWBOwKESXiAXlg4j/BNCnxsX1xqSQDc0D
-         N0+w==
+        b=nmxw8TApHJhn3JxzybbqIbH6HAAvrFAp7RQhWt4u6FqU9LzXVimpMSQFLWY9A5gRcx
+         msnSy/idM9q6KHbsAK5C/5Tv0Nw6v0ecoih6UJxDJlPByj+fsbe4w5JaW41FVjxWxG+j
+         8kW5SlmHFluHH0BUwy0mAtuGa20Sk2FQ4rXgEeryv1+HxKOAgthYH+jRFAE251y6nbah
+         u4Gw7i5QGw+auS947Aj7xGETOjzfpJKI1gfk44HGTnwniTRurKccEl77qVkqQ853auiG
+         LrgrSywgKZEqUFYo/T4JSK7GaCu2BquYlIF3eb1ReTn3LoDM9V16VbGd+ngKfJKxTqjV
+         Txug==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=eVvuatlWn8lK2exM5C1RuBTdny/GenNNjRpqxEarAJc=;
-        b=YUN9BV/hLLgNSX7wCHdehEy9Uw8ZrT9ufvemcPvnqv9EzaUcuEq+S426QjPWUlWIgG
-         X5MBdfIs+pcNN5tP/dj2nktgQ67WfdxqEmSiMy9e4zkaOQvpHGQnO3GHOgOkstYhFDvu
-         mbN7d0e/FZVkGVY7I47BwI0nrp9ssUSzmZyPBXGrqVJMsF13pAbHI+RdVg976tRLVgFY
-         ZABeCvRiDUovBX7aCARKvUboH0/Tiykzk76XhwxM7ffJiTsdetJU/fT0o6aEZ/eh+S3H
-         och+nYp0yqEYLiBT2lvJ1YFjaFcnW4ndb+ZJKYixT3Ic8HQDD+7hv+NEwiEPP4atKV5W
-         m/GA==
+        bh=vhHp8It0VyVcG2jqMyEjknyxU3Kf2gZGbAWA7e2M45g=;
+        b=LZuvHg8/HEunqnfB9U9HGptFlBdOoTy7AeVgdFEQFNdiu1Hl9nDqfg5j2Jg0aVsYYs
+         XR78P/wNYRkwHXYj9CfSUiCZSfANbjx80ZZYFIR8HeWrFyN/emtzmx86rN9v/e+qAYTl
+         E+iybnYj8APvFbxybwbRlgUsK9GxGIFTL+0ZSBMCNENf+vF+dDmw9o/cNJKqVu+E+EI9
+         U73u2uhFQQS2Kpa5Nx+84fAMuq5X75WJnygc860Ye04HIMsIzAj7XYvgUCfsHrZQd9dX
+         8Tpymw25GFtWFb67L/Pw5rA8r94LrC3Ilf2wvuPI6qXF3igHwsgQT2o8Y5/Ypfctsuux
+         jnQA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04E0221864
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F71521864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jann Horn <jannh@google.com>,
+	Eric Dumazet <edumazet@google.com>,
+	syzbot <syzkaller@googlegroups.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 15/80] tcp: dont read out-of-bounds opsize
-Date: Fri, 27 Apr 2018 15:58:08 +0200
-Message-Id: <20180427135733.696691048@linuxfoundation.org>
+Subject: [PATCH 4.14 16/80] net: af_packet: fix race in PACKET_{R|T}X_RING
+Date: Fri, 27 Apr 2018 15:58:09 +0200
+Message-Id: <20180427135733.747105119@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135732.928644313@linuxfoundation.org>
 References: <20180427135732.928644313@linuxfoundation.org>
@@ -43,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908011900849864?=
-X-GMAIL-MSGID: =?utf-8?q?1598908506775888262?=
+X-GMAIL-THRID: =?utf-8?q?1598908116836629664?=
+X-GMAIL-MSGID: =?utf-8?q?1598908509432141134?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,179 +53,119 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jann Horn <jannh@google.com>
+From: Eric Dumazet <edumazet@google.com>
 
 
-[ Upstream commit 7e5a206ab686f098367b61aca989f5cdfa8114a3 ]
+[ Upstream commit 5171b37d959641bbc619781caf62e61f7b940871 ]
 
-The old code reads the "opsize" variable from out-of-bounds memory (first
-byte behind the segment) if a broken TCP segment ends directly after an
-opcode that is neither EOL nor NOP.
+In order to remove the race caught by syzbot [1], we need
+to lock the socket before using po->tp_version as this could
+change under us otherwise.
 
-The result of the read isn't used for anything, so the worst thing that
-could theoretically happen is a pagefault; and since the physmap is usually
-mostly contiguous, even that seems pretty unlikely.
+This means lock_sock() and release_sock() must be done by
+packet_set_ring() callers.
 
-The following C reproducer triggers the uninitialized read - however, you
-can't actually see anything happen unless you put something like a
-pr_warn() in tcp_parse_md5sig_option() to print the opsize.
+[1] :
+BUG: KMSAN: uninit-value in packet_set_ring+0x1254/0x3870 net/packet/af_packet.c:4249
+CPU: 0 PID: 20195 Comm: syzkaller707632 Not tainted 4.16.0+ #83
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:17 [inline]
+ dump_stack+0x185/0x1d0 lib/dump_stack.c:53
+ kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
+ __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:676
+ packet_set_ring+0x1254/0x3870 net/packet/af_packet.c:4249
+ packet_setsockopt+0x12c6/0x5a90 net/packet/af_packet.c:3662
+ SYSC_setsockopt+0x4b8/0x570 net/socket.c:1849
+ SyS_setsockopt+0x76/0xa0 net/socket.c:1828
+ do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+RIP: 0033:0x449099
+RSP: 002b:00007f42b5307ce8 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
+RAX: ffffffffffffffda RBX: 000000000070003c RCX: 0000000000449099
+RDX: 0000000000000005 RSI: 0000000000000107 RDI: 0000000000000003
+RBP: 0000000000700038 R08: 000000000000001c R09: 0000000000000000
+R10: 00000000200000c0 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000080eecf R14: 00007f42b53089c0 R15: 0000000000000001
 
-====================================
-#define _GNU_SOURCE
-#include <arpa/inet.h>
-#include <stdlib.h>
-#include <errno.h>
-#include <stdarg.h>
-#include <net/if.h>
-#include <linux/if.h>
-#include <linux/ip.h>
-#include <linux/tcp.h>
-#include <linux/in.h>
-#include <linux/if_tun.h>
-#include <err.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <string.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <sys/ioctl.h>
-#include <assert.h>
+Local variable description: ----req_u@packet_setsockopt
+Variable was created at:
+ packet_setsockopt+0x13f/0x5a90 net/packet/af_packet.c:3612
+ SYSC_setsockopt+0x4b8/0x570 net/socket.c:1849
 
-void systemf(const char *command, ...) {
-  char *full_command;
-  va_list ap;
-  va_start(ap, command);
-  if (vasprintf(&full_command, command, ap) == -1)
-    err(1, "vasprintf");
-  va_end(ap);
-  printf("systemf: <<<%s>>>\n", full_command);
-  system(full_command);
-}
-
-char *devname;
-
-int tun_alloc(char *name) {
-  int fd = open("/dev/net/tun", O_RDWR);
-  if (fd == -1)
-    err(1, "open tun dev");
-  static struct ifreq req = { .ifr_flags = IFF_TUN|IFF_NO_PI };
-  strcpy(req.ifr_name, name);
-  if (ioctl(fd, TUNSETIFF, &req))
-    err(1, "TUNSETIFF");
-  devname = req.ifr_name;
-  printf("device name: %s\n", devname);
-  return fd;
-}
-
-#define IPADDR(a,b,c,d) (((a)<<0)+((b)<<8)+((c)<<16)+((d)<<24))
-
-void sum_accumulate(unsigned int *sum, void *data, int len) {
-  assert((len&2)==0);
-  for (int i=0; i<len/2; i++) {
-    *sum += ntohs(((unsigned short *)data)[i]);
-  }
-}
-
-unsigned short sum_final(unsigned int sum) {
-  sum = (sum >> 16) + (sum & 0xffff);
-  sum = (sum >> 16) + (sum & 0xffff);
-  return htons(~sum);
-}
-
-void fix_ip_sum(struct iphdr *ip) {
-  unsigned int sum = 0;
-  sum_accumulate(&sum, ip, sizeof(*ip));
-  ip->check = sum_final(sum);
-}
-
-void fix_tcp_sum(struct iphdr *ip, struct tcphdr *tcp) {
-  unsigned int sum = 0;
-  struct {
-    unsigned int saddr;
-    unsigned int daddr;
-    unsigned char pad;
-    unsigned char proto_num;
-    unsigned short tcp_len;
-  } fakehdr = {
-    .saddr = ip->saddr,
-    .daddr = ip->daddr,
-    .proto_num = ip->protocol,
-    .tcp_len = htons(ntohs(ip->tot_len) - ip->ihl*4)
-  };
-  sum_accumulate(&sum, &fakehdr, sizeof(fakehdr));
-  sum_accumulate(&sum, tcp, tcp->doff*4);
-  tcp->check = sum_final(sum);
-}
-
-int main(void) {
-  int tun_fd = tun_alloc("inject_dev%d");
-  systemf("ip link set %s up", devname);
-  systemf("ip addr add 192.168.42.1/24 dev %s", devname);
-
-  struct {
-    struct iphdr ip;
-    struct tcphdr tcp;
-    unsigned char tcp_opts[20];
-  } __attribute__((packed)) syn_packet = {
-    .ip = {
-      .ihl = sizeof(struct iphdr)/4,
-      .version = 4,
-      .tot_len = htons(sizeof(syn_packet)),
-      .ttl = 30,
-      .protocol = IPPROTO_TCP,
-      /* FIXUP check */
-      .saddr = IPADDR(192,168,42,2),
-      .daddr = IPADDR(192,168,42,1)
-    },
-    .tcp = {
-      .source = htons(1),
-      .dest = htons(1337),
-      .seq = 0x12345678,
-      .doff = (sizeof(syn_packet.tcp)+sizeof(syn_packet.tcp_opts))/4,
-      .syn = 1,
-      .window = htons(64),
-      .check = 0 /*FIXUP*/
-    },
-    .tcp_opts = {
-      /* INVALID: trailing MD5SIG opcode after NOPs */
-      1, 1, 1, 1, 1,
-      1, 1, 1, 1, 1,
-      1, 1, 1, 1, 1,
-      1, 1, 1, 1, 19
-    }
-  };
-  fix_ip_sum(&syn_packet.ip);
-  fix_tcp_sum(&syn_packet.ip, &syn_packet.tcp);
-  while (1) {
-    int write_res = write(tun_fd, &syn_packet, sizeof(syn_packet));
-    if (write_res != sizeof(syn_packet))
-      err(1, "packet write failed");
-  }
-}
-====================================
-
-Fixes: cfb6eeb4c860 ("[TCP]: MD5 Signature Option (RFC2385) support.")
-Signed-off-by: Jann Horn <jannh@google.com>
+Fixes: f6fb8f100b80 ("af-packet: TPACKET_V3 flexible buffer implementation.")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/tcp_input.c |    7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ net/packet/af_packet.c |   23 ++++++++++++++---------
+ 1 file changed, 14 insertions(+), 9 deletions(-)
 
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -3892,11 +3892,8 @@ const u8 *tcp_parse_md5sig_option(const
- 	int length = (th->doff << 2) - sizeof(*th);
- 	const u8 *ptr = (const u8 *)(th + 1);
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -3017,6 +3017,7 @@ static int packet_release(struct socket
  
--	/* If the TCP option is too short, we can short cut */
--	if (length < TCPOLEN_MD5SIG)
--		return NULL;
+ 	packet_flush_mclist(sk);
+ 
++	lock_sock(sk);
+ 	if (po->rx_ring.pg_vec) {
+ 		memset(&req_u, 0, sizeof(req_u));
+ 		packet_set_ring(sk, &req_u, 1, 0);
+@@ -3026,6 +3027,7 @@ static int packet_release(struct socket
+ 		memset(&req_u, 0, sizeof(req_u));
+ 		packet_set_ring(sk, &req_u, 1, 1);
+ 	}
++	release_sock(sk);
+ 
+ 	f = fanout_release(sk);
+ 
+@@ -3654,6 +3656,7 @@ packet_setsockopt(struct socket *sock, i
+ 		union tpacket_req_u req_u;
+ 		int len;
+ 
++		lock_sock(sk);
+ 		switch (po->tp_version) {
+ 		case TPACKET_V1:
+ 		case TPACKET_V2:
+@@ -3664,12 +3667,17 @@ packet_setsockopt(struct socket *sock, i
+ 			len = sizeof(req_u.req3);
+ 			break;
+ 		}
+-		if (optlen < len)
+-			return -EINVAL;
+-		if (copy_from_user(&req_u.req, optval, len))
+-			return -EFAULT;
+-		return packet_set_ring(sk, &req_u, 0,
+-			optname == PACKET_TX_RING);
++		if (optlen < len) {
++			ret = -EINVAL;
++		} else {
++			if (copy_from_user(&req_u.req, optval, len))
++				ret = -EFAULT;
++			else
++				ret = packet_set_ring(sk, &req_u, 0,
++						    optname == PACKET_TX_RING);
++		}
++		release_sock(sk);
++		return ret;
+ 	}
+ 	case PACKET_COPY_THRESH:
+ 	{
+@@ -4219,8 +4227,6 @@ static int packet_set_ring(struct sock *
+ 	/* Added to avoid minimal code churn */
+ 	struct tpacket_req *req = &req_u->req;
+ 
+-	lock_sock(sk);
 -
--	while (length > 0) {
-+	/* If not enough data remaining, we can short cut */
-+	while (length >= TCPOLEN_MD5SIG) {
- 		int opcode = *ptr++;
- 		int opsize;
+ 	rb = tx_ring ? &po->tx_ring : &po->rx_ring;
+ 	rb_queue = tx_ring ? &sk->sk_write_queue : &sk->sk_receive_queue;
+ 
+@@ -4358,7 +4364,6 @@ static int packet_set_ring(struct sock *
+ 	if (pg_vec)
+ 		free_pg_vec(pg_vec, order, req->tp_block_nr);
+ out:
+-	release_sock(sk);
+ 	return err;
+ }
  
