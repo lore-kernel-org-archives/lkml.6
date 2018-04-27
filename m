@@ -1,60 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758488AbeD0NxF (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 09:53:05 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:44923 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758364AbeD0NxE (ORCPT
+        id S1758483AbeD0N4P (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 09:56:15 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:52889 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758105AbeD0N4M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 09:53:04 -0400
-X-Google-Smtp-Source: AB8JxZocTJSNEsXop6+5SriwdoONPHypi511AvbCT2cg4aVXq+oLrPTkfSsAQ/lvLQfWW8eBvj2PiP9IB2J0y7bicCA=
+        Fri, 27 Apr 2018 09:56:12 -0400
+From: Jean-Jacques Hiblot <jjhiblot@ti.com>
+To: <broonie@kernel.org>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <perex@perex.cz>, <tiwai@suse.com>
+CC: <dannenberg@ti.com>, <afd@ti.com>, <alsa-devel@alsa-project.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Jean-Jacques Hiblot <jjhiblot@ti.com>
+Subject: [PATCH v2 2/3] ASoC: tas6424: Add support for the mute pin
+Date: Fri, 27 Apr 2018 15:55:48 +0200
+Message-ID: <1524837349-16350-3-git-send-email-jjhiblot@ti.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1524837349-16350-1-git-send-email-jjhiblot@ti.com>
+References: <1524837349-16350-1-git-send-email-jjhiblot@ti.com>
 MIME-Version: 1.0
-From: Etienne Carriere <etienne.carriere@linaro.org>
-Date: Fri, 27 Apr 2018 15:53:02 +0200
-Message-ID: <CAN5uoS_GfCgWCc7QLPhtYkRzXfV+5Xy-TJobC7-NopQe5MGwMw@mail.gmail.com>
-Subject: [PATCH] tee: check shm references are consistent in offset/size
-To: linux-kernel@vger.kernel.org,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Alexandre Jutras <alexandre.jutras@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This change prevents userland from referencing TEE shared memory
-outside the area initially allocated by its owner. Prior this change an
-application could not reference or access memory it did not own but
-it could reference memory not explicitly allocated by owner.
+mute can be connected to GPIO. In that case we have to drive it to the
+correct value
 
-Reported-by: Alexandre Jutras <alexandre.jutras@nxp.com>
-Signed-off-by: Etienne Carriere <etienne.carriere@linaro.org>
-
+Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
 ---
- drivers/tee/tee_core.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ .../devicetree/bindings/sound/ti,tas6424.txt       |  1 +
+ sound/soc/codecs/tas6424.c                         | 37 +++++++++++++++++++++-
+ 2 files changed, 37 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/tee/tee_core.c b/drivers/tee/tee_core.c
-index 0124a91..dd46b75 100644
---- a/drivers/tee/tee_core.c
-+++ b/drivers/tee/tee_core.c
-@@ -238,6 +238,17 @@ static int params_from_user(struct tee_context
-*ctx, struct tee_param *params,
-             if (IS_ERR(shm))
-                 return PTR_ERR(shm);
-
-+            /*
-+             * Ensure offset + size does not overflow offset
-+             * and does not overflow the size of the referred
-+             * shared memory object.
-+             */
-+            if ((ip.a + ip.b) < ip.a ||
-+                (ip.a + ip.b) > shm->size) {
-+                tee_shm_put(shm);
-+                return -EINVAL;
-+            }
+diff --git a/Documentation/devicetree/bindings/sound/ti,tas6424.txt b/Documentation/devicetree/bindings/sound/ti,tas6424.txt
+index df71e41..eacb54f 100644
+--- a/Documentation/devicetree/bindings/sound/ti,tas6424.txt
++++ b/Documentation/devicetree/bindings/sound/ti,tas6424.txt
+@@ -7,6 +7,7 @@ Required properties:
+ 	- reg: I2C slave address
+ 	- sound-dai-cells: must be equal to 0
+ 	- standby-gpios: GPIO used to shut the TAS6424 down.
++	- mute-gpios: GPIO used to mute all the outputs
+ 
+ Example:
+ 
+diff --git a/sound/soc/codecs/tas6424.c b/sound/soc/codecs/tas6424.c
+index 5abb17f..89fd0c1 100644
+--- a/sound/soc/codecs/tas6424.c
++++ b/sound/soc/codecs/tas6424.c
+@@ -45,6 +45,7 @@ struct tas6424_data {
+ 	unsigned int last_fault2;
+ 	unsigned int last_warn;
+ 	struct gpio_desc *standby_gpio;
++	struct gpio_desc *mute_gpio;
+ };
+ 
+ /*
+@@ -251,10 +252,16 @@ static int tas6424_set_dai_tdm_slot(struct snd_soc_dai *dai,
+ static int tas6424_mute(struct snd_soc_dai *dai, int mute)
+ {
+ 	struct snd_soc_component *component = dai->component;
++	struct tas6424_data *tas6424 = snd_soc_component_get_drvdata(component);
+ 	unsigned int val;
+ 
+ 	dev_dbg(component->dev, "%s() mute=%d\n", __func__, mute);
+ 
++	if (tas6424->mute_gpio) {
++		gpiod_set_value_cansleep(tas6424->mute_gpio, mute);
++		return 0;
++	}
 +
-             params[n].u.memref.shm_offs = ip.a;
-             params[n].u.memref.size = ip.b;
-             params[n].u.memref.shm = shm;
+ 	if (mute)
+ 		val = TAS6424_ALL_STATE_MUTE;
+ 	else
+@@ -289,6 +296,7 @@ static int tas6424_power_on(struct snd_soc_component *component)
+ {
+ 	struct tas6424_data *tas6424 = snd_soc_component_get_drvdata(component);
+ 	int ret;
++	u8 chan_states;
+ 
+ 	ret = regulator_bulk_enable(ARRAY_SIZE(tas6424->supplies),
+ 				    tas6424->supplies);
+@@ -305,7 +313,18 @@ static int tas6424_power_on(struct snd_soc_component *component)
+ 		return ret;
+ 	}
+ 
+-	snd_soc_component_write(component, TAS6424_CH_STATE_CTRL, TAS6424_ALL_STATE_MUTE);
++	if (tas6424->mute_gpio) {
++		gpiod_set_value_cansleep(tas6424->mute_gpio, 0);
++		/*
++		 * channels are muted via the mute pin.  Don't also mute
++		 * them via the registers so that subsequent register
++		 * access is not necessary to un-mute the channels
++		 */
++		chan_states = TAS6424_ALL_STATE_PLAY;
++	} else {
++		chan_states = TAS6424_ALL_STATE_MUTE;
++	}
++	snd_soc_component_write(component, TAS6424_CH_STATE_CTRL, chan_states);
+ 
+ 	/* any time we come out of HIZ, the output channels automatically run DC
+ 	 * load diagnostics, wait here until this completes
+@@ -645,6 +664,22 @@ static int tas6424_i2c_probe(struct i2c_client *client,
+ 		tas6424->standby_gpio = NULL;
+ 	}
+ 
++	/*
++	 * Get control of the mute pin and set it HIGH in order to start with
++	 * all the output muted.
++	 * Note: The actual pin polarity is taken care of in the GPIO lib
++	 * according the polarity specified in the DTS.
++	 */
++	tas6424->mute_gpio = devm_gpiod_get_optional(dev, "mute",
++						      GPIOD_OUT_HIGH);
++	if (IS_ERR(tas6424->mute_gpio)) {
++		if (PTR_ERR(tas6424->mute_gpio) == -EPROBE_DEFER)
++			return -EPROBE_DEFER;
++		dev_info(dev, "failed to get nmute GPIO: %ld\n",
++			PTR_ERR(tas6424->mute_gpio));
++		tas6424->mute_gpio = NULL;
++	}
++
+ 	for (i = 0; i < ARRAY_SIZE(tas6424->supplies); i++)
+ 		tas6424->supplies[i].supply = tas6424_supply_names[i];
+ 	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(tas6424->supplies),
 -- 
-1.9.1
+2.7.4
