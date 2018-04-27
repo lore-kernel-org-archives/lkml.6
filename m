@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-356304-1524840764-2-13912616988214090969
+X-Cyrus-Session-Id: sloti22d1t05-3869068-1524811372-2-6929752426207252183
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -7,29 +7,29 @@ X-Spam-hits: BAYES_00 -1.9, MAILING_LIST_MULTI -1, ME_NOAUTH 0.01, RCVD_IN_DNSWL
   LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='US-ASCII'
+X-Spam-charsets: plain='utf-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524840763; b=JoFjLEDfHzSvqmxghFVu4MPL6b+T2WN3VzCCcoP6iu5tIuKocR
-    jcgQ+U4mM+M403xGKX0509/lV8dk+E99r8QmmGgrrPM6Plh30POD99OyXuNRr+dw
-    PcN9ihUZtAmnMOgdW+PqJsCmyJV4YOC1Bai7/C0LkRj9cjvixldWJI2/lv8Z24Av
-    rpSAYz/aARsTWMsDa8zWuZAoe3qNR2kmjNMf6jT++F9OYJqAnF1J+WStjpy1o0L5
-    vOqv3GkhiHXVhQF3gT7Ei4Tkntdy0WQC0p1+tKjW3m6A7Yb+8FsrOAy7y+WgG4Eh
-    0+MWobSThrtnb1KJfVwZG8EamurtHtglSaKQ==
+    1524811371; b=bnGfC3JEkm3GZL/CZKW0P1tGBNuqaSJGmU1wyj8lbP5vPsQT3s
+    eeGB7JUysWO5/SRE6zYno02pObtbKuV97lV6WcO7wRTcltbD9Dv7FHUc0oB9iFT8
+    D/VgiCX6+f3QpFg10/qcW9CXtwR5IgBHJYraSugfVZ+G2gJfyOCORwvY3ooFq5p3
+    wToQwCHed2rUqln1s9A44qBprV5sYUCeMSgLES6iNbOFbwp86013eVo615aTfVNl
+    q1iFSlBSI3qHFjbCbfJN8k/BKsbW9NsG7OEgJCGRd9arZiGemYaUXIJZtUIsSFIy
+    c9LaxmY5IDxSyWxfPwQRrtGugvTbctK6n9JA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
+    messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1524840763;
-    bh=x2ZE62Mvc11/v3pJACwyie1mXrcXzlo9RId/F31e0Jw=; b=dGY9DyauotG+
-    S5MSm8W6/LI4G48laQ78KI8RKNj2rchAfoVZ1tA52nh8Sf74xRHICSnCUYHOdpGL
-    4ne0XJUcRZmdpUa6f6FADqrZoydpdvohMnBdcFTvClIUJFqpxemyREULkqHLYjDN
-    EmOwwAEt7/jcSi4DmqDnKYLCGPgW+BTzBmhxpVgEhekEDNrES1VWr2oAqjSoAVbw
-    uZulvRgOraZexa7T7iV3pCjPqAAi94234sfvOeEFPwrYEjdxeG4C5EcrMG/oQ40C
-    RVIFViFLTyP71C8jeUWMMSCR0919N2ChQ1TkExqGIb/dSn6RYc9E9u13q8z0SND6
-    i+FS1LYyVg==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1524811371;
+    bh=YWYSj8CD91Ox70Yoz5vekg5WpYtrEYwLigLw0RaT1CI=; b=HOHmGbVnNZzX
+    bAwKo6VfJzRk5nNqDc4j5M1Nb5NzMyop6gFMwfUUm7yGJKd+FEur+mdvZccqHWr8
+    sTH7xhj9CYUHj/6ZNgYMVYokYk1EaBvW/B0t2hjRUZ504pE5YpUTb+KqSmw5eXEo
+    JO96Q/hAcp5DzAftj4M18B7aKzWcgvDWVDOipTExj7M+ZxndWx24awYQRFuw50ap
+    SPFgs+JtG5xseS7iy0zHjsWq+dT2n035GrSFdGKCS/9rOFTWMqqt9jAToAfdP5yY
+    VCZB3lfkq7LGlJGgaa69Yf0XhbrC5bhmHmmWv9UoofW460+QTRuYPe4k1oek/iJg
+    xZIycm3Yjg==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
@@ -51,31 +51,28 @@ Authentication-Results: mx6.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfPyxSTKvZZEtieKCIb/cV3EtcwiQtKboa0ULjhRDPJ9nRurk04SGx5kK8av2N/ZTYF239vsb68nDa73xZtXBjD9NlCc+C0lo4d1KrhwyivYeWuCzJYjv
-    zvc1QHtB+2Apag7IQyZGPrCtGUXzVnsdkSlngVav1GptcqCARJ1FMzfMe363TBtnBaEFHdBNKhEHQ9QXwk2IjK815fN5bf7uoBuJRWFe9zb3fyCwndrF4pWL
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=ag1SF4gXAAAA:8 a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=EknxJscgKnilBMqQVKAA:9
-    a=CjuIK1q_8ugA:10 a=1R1Xb7_w0-cA:10 a=OREKyDgYLcYA:10
-    a=Yupwre4RP9_Eg_Bd0iYG:22 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfP8D04Wp5TGKTbd+5jwZYmJuGKCdSFufe7IBMcJCKP9rRSq5hnn7nitK+i+S+R26Tqe7bCpUS2eIkW5mG5iHJQ09/Oz9X5qQ3TX6oC8YHaEos8J9JA3t
+    zBJsN/Aur1+sCvrjhBbRmwXOyi4ZR2XTN+2wrRezkgy80qiwZMQ4RIqAs9FwAkStH/76oL0KAtplJbJOAfB34UpWJsZpsb4sWQ1Fvm+RKqFgnksfin2UlG/s
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=VwQbUJbxAAAA:8 a=Q4zXA6fk_zm2YvbgkZYA:9 a=QEXdDO2ut3YA:10
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934312AbeD0Ow0 (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 27 Apr 2018 10:52:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39218 "EHLO mail.kernel.org"
+        id S1757428AbeD0Gmh (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 27 Apr 2018 02:42:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55996 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934268AbeD0OwY (ORCPT <rfc822;stable@vger.kernel.org>);
-        Fri, 27 Apr 2018 10:52:24 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7080C2188D
+        id S1751140AbeD0Gmg (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 27 Apr 2018 02:42:36 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 158BA2168C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
-Date: Fri, 27 Apr 2018 23:52:18 +0900
 From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+To: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
+Cc: Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
+        x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
         Ananth N Mavinakayanahalli <ananth@in.ibm.com>,
         Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
         "David S . Miller" <davem@davemloft.net>,
@@ -90,15 +87,15 @@ Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
         akpm@linux-foundation.org, acme@kernel.org, rostedt@goodmis.org,
         brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
         stable@vger.kernel.org
-Subject: Re: [PATCH v3 1/7] kprobes: Make blacklist root user read only
-Message-Id: <20180427235218.60aec544b20f7abc5362482d@kernel.org>
-In-Reply-To: <20180427065611.GA4361@kroah.com>
+Subject: [PATCH v3 5/7] kprobes/x86: Fix %p uses in error messages
+Date: Fri, 27 Apr 2018 15:42:11 +0900
+Message-Id: <152481133105.22588.10668983189195179761.stgit@devbox>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <152481117776.22588.1210388093668905564.stgit@devbox>
 References: <152481117776.22588.1210388093668905564.stgit@devbox>
-        <152481120919.22588.16126591608892708741.stgit@devbox>
-        <20180427065611.GA4361@kroah.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: StGit/0.17.1-dirty
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
@@ -106,36 +103,55 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, 27 Apr 2018 08:56:11 +0200
-Greg KH <gregkh@linuxfoundation.org> wrote:
+Fix %p uses in error messages in kprobes/x86.
+- Some %p uses are not needed. Just remove it (or remove message).
+- One %p use seems important to show some address
+  so replaced with %pS.
 
-> On Fri, Apr 27, 2018 at 03:40:09PM +0900, Masami Hiramatsu wrote:
-> > Since the blacklist file indicates a sensitive address
-> > information to reader, it should be restricted to the
-> > root user.
-> > 
-> > Suggested-by: Thomas Richter <tmricht@linux.ibm.com>
-> > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> > ---
-> >  kernel/kprobes.c |    2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> <formletter>
-> 
-> This is not the correct way to submit patches for inclusion in the
-> stable kernel tree.  Please read:
->     https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
-> for how to do this properly.
-> 
-> </formletter>
-> 
-> If you want these to go to the stable tree(s), that is great, but please
-> mark them properly.  As you did it here for this series, it will not
-> work.
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+---
+ Changes in v3:
+  - Do not use %px.
+---
+ arch/x86/kernel/kprobes/core.c |   12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-Sorry Greg. I'll mark it properly for next version.
-
-Thanks,
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
+index 0715f827607c..d2c9d5c8e4ce 100644
+--- a/arch/x86/kernel/kprobes/core.c
++++ b/arch/x86/kernel/kprobes/core.c
+@@ -391,8 +391,6 @@ int __copy_instruction(u8 *dest, u8 *src, u8 *real, struct insn *insn)
+ 			  - (u8 *) real;
+ 		if ((s64) (s32) newdisp != newdisp) {
+ 			pr_err("Kprobes error: new displacement does not fit into s32 (%llx)\n", newdisp);
+-			pr_err("\tSrc: %p, Dest: %p, old disp: %x\n",
+-				src, real, insn->displacement.value);
+ 			return 0;
+ 		}
+ 		disp = (u8 *) dest + insn_offset_displacement(insn);
+@@ -636,8 +634,7 @@ static int reenter_kprobe(struct kprobe *p, struct pt_regs *regs,
+ 		 * Raise a BUG or we'll continue in an endless reentering loop
+ 		 * and eventually a stack overflow.
+ 		 */
+-		printk(KERN_WARNING "Unrecoverable kprobe detected at %p.\n",
+-		       p->addr);
++		pr_err("Unrecoverable kprobe detected.\n");
+ 		dump_kprobe(p);
+ 		BUG();
+ 	default:
+@@ -1146,12 +1143,11 @@ int longjmp_break_handler(struct kprobe *p, struct pt_regs *regs)
+ 	    (addr < (u8 *) jprobe_return_end)) {
+ 		if (stack_addr(regs) != saved_sp) {
+ 			struct pt_regs *saved_regs = &kcb->jprobe_saved_regs;
+-			printk(KERN_ERR
+-			       "current sp %p does not match saved sp %p\n",
++			pr_err("current sp %pS does not match saved sp %pS\n",
+ 			       stack_addr(regs), saved_sp);
+-			printk(KERN_ERR "Saved registers for jprobe %p\n", jp);
++			pr_err("Saved registers for jprobe\n");
+ 			show_regs(saved_regs);
+-			printk(KERN_ERR "Current registers\n");
++			pr_err("Current registers\n");
+ 			show_regs(regs);
+ 			BUG();
+ 		}
