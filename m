@@ -1,73 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1759027AbeD0RBA (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 13:01:00 -0400
-Received: from smtprelay.synopsys.com ([198.182.37.59]:37141 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758739AbeD0Q56 (ORCPT
+        id S1759060AbeD0RBW (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 13:01:22 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:53190 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758887AbeD0Q5j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 12:57:58 -0400
-From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-To: bhelgaas@google.com, lorenzo.pieralisi@arm.com,
-        Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
-        adouglas@cadence.com, jesper.nilsson@axis.com
-Cc: linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, gustavo.pimentel@synopsys.com
-Subject: [PATCH 00/10] Add MSI-X support on pcitest tool
-Date: Fri, 27 Apr 2018 17:57:37 +0100
-Message-Id: <cover.1524845816.git.gustavo.pimentel@synopsys.com>
-X-Mailer: git-send-email 2.7.4
+        Fri, 27 Apr 2018 12:57:39 -0400
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org
+Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS),
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM64 PORT
+        (AARCH64 ARCHITECTURE)),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2 10/11] arm64: dts: r8a77965-salvator-x: Enable DU external clocks and HDMI
+Date: Fri, 27 Apr 2018 17:57:21 +0100
+Message-Id: <20180427165722.19445-11-kieran.bingham+renesas@ideasonboard.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180427165722.19445-1-kieran.bingham+renesas@ideasonboard.com>
+References: <20180427165722.19445-1-kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Depends of the following serie [1].
+The DU1 external dot clock is provided by the fixed frequency clock
+generator X21, while the DU0 and DU3 clocks are provided by the
+programmable Versaclock5 clock generator.
 
-Add MSI-X support on pcitest tool.
+Enable the clocks, and the HDMI encoder for the M3-N Salvator-X board
+and hook it up to the HDMI connector.
 
-Add new callbacks methods and handlers to trigger the MSI-X interrupts
-on the EP DesignWare IP driver.
+Based on patches from Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Allow to set/get MSI-X EP maximum capability number.
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Rework on set/get and triggering MSI methods on EP DesignWare IP driver.
+---
+v2:
+ - Remove LVDS clocks from DU node
+ - Merge DU Clocks and HDMI enablement
+---
+ .../boot/dts/renesas/r8a77965-salvator-x.dts  | 28 +++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-Add a new input parameter (msix) to pcitest tool to test MSI-X feature.
-
-Update the pcitest.sh script to support MSI-X feature tests.
-
-[1] -> https://lkml.org/lkml/2018/4/27/342
-
-Gustavo Pimentel (10):
-  PCI: endpoint: Add MSI-X interfaces
-  PCI: dwc: Add MSI-X callbacks handler
-  PCI: cadence: Update cdns_pcie_ep_raise_irq function signature
-  PCI: dwc: Rework MSI callbacks handler
-  PCI: dwc: Add legacy interrupt callback handler
-  misc: pci_endpoint_test: Add MSI-X support
-  misc: pci_endpoint_test: Replace lower into upper case characters
-  PCI: endpoint: functions/pci-epf-test: Replace lower into upper case
-    characters
-  tools: PCI: Add MSI-X support
-  misc: pci_endpoint_test: Use pci_irq_vector function
-
- Documentation/misc-devices/pci-endpoint-test.txt |   3 +
- drivers/misc/pci_endpoint_test.c                 | 147 +++++++++++------
- drivers/pci/cadence/pcie-cadence-ep.c            |   2 +-
- drivers/pci/dwc/pci-dra7xx.c                     |   2 +-
- drivers/pci/dwc/pcie-artpec6.c                   |   2 +-
- drivers/pci/dwc/pcie-designware-ep.c             | 202 +++++++++++++++++++++--
- drivers/pci/dwc/pcie-designware-plat.c           |   7 +-
- drivers/pci/dwc/pcie-designware.h                |  31 ++--
- drivers/pci/endpoint/functions/pci-epf-test.c    | 104 ++++++++----
- drivers/pci/endpoint/pci-ep-cfs.c                |  24 +++
- drivers/pci/endpoint/pci-epc-core.c              |  60 ++++++-
- include/linux/pci-epc.h                          |  11 +-
- include/linux/pci-epf.h                          |   1 +
- include/uapi/linux/pcitest.h                     |   1 +
- tools/pci/pcitest.c                              |  18 +-
- tools/pci/pcitest.sh                             |  25 +++
- 16 files changed, 517 insertions(+), 123 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
+index 75d890d91df9..340a3c72b65a 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
+@@ -19,3 +19,31 @@
+ 		reg = <0x0 0x48000000 0x0 0x78000000>;
+ 	};
+ };
++
++&du {
++	clocks = <&cpg CPG_MOD 724>,
++		 <&cpg CPG_MOD 723>,
++		 <&cpg CPG_MOD 721>,
++		 <&versaclock5 1>,
++		 <&x21_clk>,
++		 <&versaclock5 2>;
++	clock-names = "du.0", "du.1", "du.3",
++		      "dclkin.0", "dclkin.1", "dclkin.3";
++};
++
++&hdmi0 {
++	status = "okay";
++
++	ports {
++		port@1 {
++			reg = <1>;
++			rcar_dw_hdmi0_out: endpoint {
++				remote-endpoint = <&hdmi0_con>;
++			};
++		};
++	};
++};
++
++&hdmi0_con {
++	remote-endpoint = <&rcar_dw_hdmi0_out>;
++};
 -- 
-2.7.4
+2.17.0
