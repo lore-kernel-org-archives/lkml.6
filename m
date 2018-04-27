@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1759060AbeD0RBW (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 13:01:22 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:53190 "EHLO
+        id S1759046AbeD0RBV (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 13:01:21 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:53204 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758887AbeD0Q5j (ORCPT
+        with ESMTP id S1758888AbeD0Q5j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 27 Apr 2018 12:57:39 -0400
 From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
@@ -21,9 +21,9 @@ Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
         linux-arm-kernel@lists.infradead.org (moderated list:ARM64 PORT
         (AARCH64 ARCHITECTURE)),
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 10/11] arm64: dts: r8a77965-salvator-x: Enable DU external clocks and HDMI
-Date: Fri, 27 Apr 2018 17:57:21 +0100
-Message-Id: <20180427165722.19445-11-kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v2 11/11] arm64: dts: r8a77965-salvator-xs: Enable DU external clocks and HDMI
+Date: Fri, 27 Apr 2018 17:57:22 +0100
+Message-Id: <20180427165722.19445-12-kieran.bingham+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427165722.19445-1-kieran.bingham+renesas@ideasonboard.com>
 References: <20180427165722.19445-1-kieran.bingham+renesas@ideasonboard.com>
@@ -33,28 +33,23 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The DU1 external dot clock is provided by the fixed frequency clock
 generator X21, while the DU0 and DU3 clocks are provided by the
-programmable Versaclock5 clock generator.
+programmable Versaclock6 clock generator.
 
-Enable the clocks, and the HDMI encoder for the M3-N Salvator-X board
-and hook it up to the HDMI connector.
+Enable the clocks, and the HDMI encoder for the M3-N Salvator-XS, and
+hook it up to the HDMI connector
 
 Based on patches from Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
 Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
 ---
-v2:
- - Remove LVDS clocks from DU node
- - Merge DU Clocks and HDMI enablement
----
- .../boot/dts/renesas/r8a77965-salvator-x.dts  | 28 +++++++++++++++++++
- 1 file changed, 28 insertions(+)
+ .../boot/dts/renesas/r8a77965-salvator-xs.dts | 29 +++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
-index 75d890d91df9..340a3c72b65a 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
-@@ -19,3 +19,31 @@
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts
+index a83a00deed9e..dcf1849f1a67 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts
+@@ -19,3 +19,32 @@
  		reg = <0x0 0x48000000 0x0 0x78000000>;
  	};
  };
@@ -63,10 +58,11 @@ index 75d890d91df9..340a3c72b65a 100644
 +	clocks = <&cpg CPG_MOD 724>,
 +		 <&cpg CPG_MOD 723>,
 +		 <&cpg CPG_MOD 721>,
-+		 <&versaclock5 1>,
++		 <&cpg CPG_MOD 727>,
++		 <&versaclock6 1>,
 +		 <&x21_clk>,
-+		 <&versaclock5 2>;
-+	clock-names = "du.0", "du.1", "du.3",
++		 <&versaclock6 2>;
++	clock-names = "du.0", "du.1", "du.3", "lvds.0",
 +		      "dclkin.0", "dclkin.1", "dclkin.3";
 +};
 +
