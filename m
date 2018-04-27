@@ -1,40 +1,45 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpbu07vvgHBXy9+IZUJd/Vuz7xntGpovW02sKEVb3rBx0BKKZTkc0ewLpEBfacpFFRVMb+Z
-ARC-Seal: i=1; a=rsa-sha256; t=1524837630; cv=none;
+X-Google-Smtp-Source: AB8JxZpd/YEo4l2bCdBrBtAN2pGhMdCqinS47CxTACQ9Ul9BkOCR/qY/OpA0tKqqUqajKjMPxmPC
+ARC-Seal: i=1; a=rsa-sha256; t=1524837628; cv=none;
         d=google.com; s=arc-20160816;
-        b=FNRZeYGFzgZgKFo6lDBhhoQO5T9WTLIdA7j2OlytD0MjKp1+ahuqwHnEhsYvN6Qu0X
-         tNpkTqrvopckl2S0vEHKu3Yd+K3OX4Cg5URBoQjGhK2D3PP84quTffEDS2uSwOsJRFNn
-         e9VkWqDah7oBVnU3EK26z34eoYXtS24GEYDlnG6aJDtDGTBHOtxX8/FBSrN7quds3L9Z
-         CpVOa8yHaum9hXof25iX3s2YwCaezToYTIllPTrbvHNHOzhpY1FcTI5cCfJokXJF4oYZ
-         SUuoOANxFvV9Y/dT8XbnSpV97CGg0BfwC5EaFYRDL0w8f24cyj+ZIXSTqz5hrtnPfJvl
-         GTZQ==
+        b=OVjAfHk8G396E133ahmYoFddT2+kIgRqFLDK1fqvku4zZ24c02tv9wpd2SJfi6+kqz
+         UdyWCDsFxruX6fC7fMz7/EO/ZUWBSdzUlI54IqATC3PRmHG5g1W2gzQkgssMIB+hR2O3
+         Gqesgxrinx8zTnGdZGxU2aaupFK6k+qoXEQvRtHJEGJzLQXObfk6So6IXS6yw75xjhdG
+         GodU/e2JhSfzJ4a0s7jgDQxHyqAhQglUVuTwCVMvyxRRjj9zRUTOqDdlJoPkLAtztQoU
+         cCDbLpaFaErw/tvRKMBVW+/+gwfSiY31PtPAMTEWhrql9lWO96gjhT/tCR9Z+Pq8Yabf
+         MfZw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=SHfZa0x6rPVzbNmIfdwqxK87gt7FarzSdCHyq/xVrQM=;
-        b=OnsKW6YHDDMG+MRxqhV6Dr2XdM/doiDZhPYAHOzAcoG74/eMJ+1kjEoB7iAE0+I0pW
-         eVvZBKtToPrc6n6yzn3u+U8w66Gabk7T7t1FNqesYl27u0EfLEWUsd0Hje+JNQ8tm0Q7
-         CEJFPNtKHZmSQhuEYic65s982ghFQWfRj1MliPtDlGQQg4Jj5qdcb91sT+dXgIrxQLsK
-         rQ4+DhxEqI+PoTJSkARZRSIIV3sAyM21rObBh0cOR8VYs/GDFYTOcytoKpQ3GqCdOECx
-         lZUm+Fh2im30dp9qkHB6foMh68/6hWTeQJE3C3cMl8BwbKc4pmPhcuTlDTKesMjhM9H3
-         pr2A==
+        bh=a3+wEcvVwfJelENA4l3Y5fMOuPYoyIkdo+9WrJ9lUT0=;
+        b=HCLSQqw8McYs7mWS5YFCpfyBmelFx+K94mHbbgVXD/xX6ediFx2wS6jkfnEJk2HbYt
+         VYz+68b73M21u3ZhqPRnIJaNdI8FqfpLxmMEu3lAidrboSgcYgK6uEqkU6+qNlzY/lvy
+         LtGJtkDo/FyU6GSSWyGKgVYaLforLZsgsXGAUfdrtOacitFQzs3Y7urMQAUqjwnlpB5g
+         wbifTGawh/C7xXyAx/TY4YXx0peqQTlkYPA421f7Ry7ezLCgOvNmvtTG0yX9zA/AL2gj
+         Pc/uSnb+JFWIUUt+DjUdM6/PbdS1MGwIAy8PqxJNq7T0Ywvoyl3szkKa5LePVrnG06ew
+         Cw1Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE4162189D
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DE0821897
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Sahitya Tummala <stummala@codeaurora.org>,
-	Theodore Tso <tytso@mit.edu>,
-	Amit Pundir <amit.pundir@linaro.org>
-Subject: [PATCH 3.18 08/24] jbd2: fix use after free in kjournald2()
-Date: Fri, 27 Apr 2018 15:57:43 +0200
-Message-Id: <20180427135631.927496107@linuxfoundation.org>
+	Matthew Wilcox <mawilcox@microsoft.com>,
+	Chris Fries <cfries@google.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@suse.com>,
+	Jan Kara <jack@suse.cz>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Harsh Shandilya <harsh@prjkt.io>
+Subject: [PATCH 3.18 07/24] mm/filemap.c: fix NULL pointer in page_cache_tree_insert()
+Date: Fri, 27 Apr 2018 15:57:42 +0200
+Message-Id: <20180427135631.888933204@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135631.584839868@linuxfoundation.org>
 References: <20180427135631.584839868@linuxfoundation.org>
@@ -44,8 +49,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908143233351701?=
-X-GMAIL-MSGID: =?utf-8?q?1598908143233351701?=
+X-GMAIL-THRID: =?utf-8?q?1598908140702629825?=
+X-GMAIL-MSGID: =?utf-8?q?1598908140702629825?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,68 +58,59 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sahitya Tummala <stummala@codeaurora.org>
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-commit dbfcef6b0f4012c57bc0b6e0e660d5ed12a5eaed upstream.
+commit abc1be13fd113ddef5e2d807a466286b864caed3 upstream.
 
-Below is the synchronization issue between unmount and kjournald2
-contexts, which results into use after free issue in kjournald2().
-Fix this issue by using journal->j_state_lock to synchronize the
-wait_event() done in journal_kill_thread() and the wake_up() done
-in kjournald2().
+f2fs specifies the __GFP_ZERO flag for allocating some of its pages.
+Unfortunately, the page cache also uses the mapping's GFP flags for
+allocating radix tree nodes.  It always masked off the __GFP_HIGHMEM
+flag, and masks off __GFP_ZERO in some paths, but not all.  That causes
+radix tree nodes to be allocated with a NULL list_head, which causes
+backtraces like:
 
-TASK 1:
-umount cmd:
-   |--jbd2_journal_destroy() {
-       |--journal_kill_thread() {
-            write_lock(&journal->j_state_lock);
-	    journal->j_flags |= JBD2_UNMOUNT;
-	    ...
-	    write_unlock(&journal->j_state_lock);
-	    wake_up(&journal->j_wait_commit);	   TASK 2 wakes up here:
-	    					   kjournald2() {
-						     ...
-						     checks JBD2_UNMOUNT flag and calls goto end-loop;
-						     ...
-						     end_loop:
-						       write_unlock(&journal->j_state_lock);
-						       journal->j_task = NULL; --> If this thread gets
-						       pre-empted here, then TASK 1 wait_event will
-						       exit even before this thread is completely
-						       done.
-	    wait_event(journal->j_wait_done_commit, journal->j_task == NULL);
-	    ...
-	    write_lock(&journal->j_state_lock);
-	    write_unlock(&journal->j_state_lock);
-	  }
-       |--kfree(journal);
-     }
-}
-						       wake_up(&journal->j_wait_done_commit); --> this step
-						       now results into use after free issue.
-						   }
+  __list_del_entry+0x30/0xd0
+  list_lru_del+0xac/0x1ac
+  page_cache_tree_insert+0xd8/0x110
 
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: Amit Pundir <amit.pundir@linaro.org>
+The __GFP_DMA and __GFP_DMA32 flags would also be able to sneak through
+if they are ever used.  Fix them all by using GFP_RECLAIM_MASK at the
+innermost location, and remove it from earlier in the callchain.
+
+Link: http://lkml.kernel.org/r/20180411060320.14458-2-willy@infradead.org
+Fixes: 449dd6984d0e ("mm: keep page cache radix tree nodes in check")
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+Reported-by: Chris Fries <cfries@google.com>
+Debugged-by: Minchan Kim <minchan@kernel.org>
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Harsh Shandilya <harsh@prjkt.io>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/jbd2/journal.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ mm/filemap.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/fs/jbd2/journal.c
-+++ b/fs/jbd2/journal.c
-@@ -275,11 +275,11 @@ loop:
- 	goto loop;
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -468,7 +468,7 @@ int replace_page_cache_page(struct page
+ 	VM_BUG_ON_PAGE(!PageLocked(new), new);
+ 	VM_BUG_ON_PAGE(new->mapping, new);
  
- end_loop:
--	write_unlock(&journal->j_state_lock);
- 	del_timer_sync(&journal->j_commit_timer);
- 	journal->j_task = NULL;
- 	wake_up(&journal->j_wait_done_commit);
- 	jbd_debug(1, "Journal thread exiting.\n");
-+	write_unlock(&journal->j_state_lock);
- 	return 0;
- }
+-	error = radix_tree_preload(gfp_mask & ~__GFP_HIGHMEM);
++	error = radix_tree_preload(gfp_mask & GFP_RECLAIM_MASK);
+ 	if (!error) {
+ 		struct address_space *mapping = old->mapping;
+ 		void (*freepage)(struct page *);
+@@ -561,7 +561,7 @@ static int __add_to_page_cache_locked(st
+ 			return error;
+ 	}
  
+-	error = radix_tree_maybe_preload(gfp_mask & ~__GFP_HIGHMEM);
++	error = radix_tree_maybe_preload(gfp_mask & GFP_RECLAIM_MASK);
+ 	if (error) {
+ 		if (!huge)
+ 			mem_cgroup_cancel_charge(page, memcg);
