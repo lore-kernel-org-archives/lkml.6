@@ -1,83 +1,39 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-284719-1524837958-2-2976773552897646945
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524837957; b=TuMhF1tfRlZpC2AO8dqp6c54i+pr3rqqIdtrblrpBXeChgIWFc
-    MEqLF1oI807niA6pykk43/6mDtlK/4LYfzMshGwoTgkgmhg32UP6w/hxjkwkfkW+
-    Z1TRajn1XrqyjeRS4oi82XkbFoSwFZT90hhTiMcoAjhcDq35E98kqn1WH2GtEbkt
-    SdY8KnP4uYu6rvYPaouqzjnfYoSF5zay8UGdVihSl6UU435vlM1hXB5d8dgYkKck
-    NkCwH9Zq2uJi5/s9HPOpwBxIdP63Fl23XPsn0WWwgt3XE88YiAfx8yfBrGk/dyIl
-    Xkz7Z7+g8ei7LM5cB0C72488j46CzDxIpBCA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524837957; bh=D/eOtKK/0eQdi+Agx8I4/N/RIYcEe2
-    NuUzyc+Sn71A0=; b=BszpNYnxRQAd16OSIY2+H48ICbz4OXH9S2k4DGG4GXvszV
-    7/PGsZlRxSjirRp8EO5ZX7g/Vmsg+FXinixSI7LGP9jZ2edyH74L7a2BMc+qY3y2
-    DtbfYXuDIlR3zZcuKU/C99yJK9nUdyg4EecvNxivLlyRHw9TpdzgG8cFRqceF70k
-    T2z6bR/MzHxIHeh6/mD4vBnY28ahXwbwbBQkqQA/aG8SDVkaMJ1ljHm38CmWJ3rU
-    5rB8q6nD/cnDl5hiJyiKE5ZvU+pvnz9b4eNUBybxu8uroNbjn/zzXbWbqw4WmBNe
-    olE4Qen5wK0A6ejwMBXsYcE3/I7Fzb82sPAEuALg==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfI7QhbBAcCAe4Nd7yfRAdoIUc4UH6buhXLhDwRHB7YNUlF/90FEcbUoTzFYGMK3Zk1+xwksA3aqKTxWonm5mLRg5V1Ayrbg3TLZ6VElf4CfuMz45YlW5
-    5/WjDpmC6pwXhPko7FfXVRZUR4xcoqWYkjxhQO6v0UMm4QV2mcplo/mP1WKoJMFeaTEAuUWApREB++aiPm4GWQRaoZDNv/Xo4jOXsAs6yQgB8dnDQiBgkBra
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=20KFwNOVAAAA:8 a=hSkVLCK3AAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
-    a=ZgEYA8WsG4xE_VKs9oQA:9 a=QEXdDO2ut3YA:10 a=cQPPKAXgyycSBL8etih5:22
-    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933967AbeD0OFq (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 27 Apr 2018 10:05:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51908 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933699AbeD0OFn (ORCPT <rfc822;stable@vger.kernel.org>);
-        Fri, 27 Apr 2018 10:05:43 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A83E921890
+Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
+X-Google-Smtp-Source: AB8JxZqyUsLuiIOX/0OaMYUWb4C8eR6O6oPtv6xmOe7nDHUd9b0ZtJyQ+x42Ze/1xEz2GvOTZfv4
+ARC-Seal: i=1; a=rsa-sha256; t=1524837956; cv=none;
+        d=google.com; s=arc-20160816;
+        b=ra02Qc395NoAOuWrq9HHPfPaMCTitJmJrFLigcfgFw2RwXmKZP7RE6fkKQrzB67SFS
+         wITwnOJVQTmVkjN/R8xY3cvxTEO/LUFs1pvpkVh2GNh+SUEi12YYLx0Lxtbgc0fPh0yu
+         NkkhcI1TIVmkTITnrVwRpGMbs9f85Elq0gBp7OrL8Lw/ZNv3ZMJACsEyW4dhbohGmWAe
+         meTV/UE0TzKdUACR62H/A7ikd/dD6lkrH0dpNinkZvTKYaX9IzVBh2nIShJMgSWlOldt
+         d+Jt5gJ2j6MQcEmnvU4yQTg+3n1eyF7bPU3RuIHSAyoN0LxJRWlU0lttfKizLoELMoOz
+         TA9Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dmarc-filter:arc-authentication-results;
+        bh=UBUbjZRCdKRFRMmORA5+s2inJ7oQ/Dj2Vb4GyXYtcMc=;
+        b=ChFG47ld85PgZTlfVCwk3isIBJ5uauObcnT1MJwKSoxD3akJjUt6bxUxS3lNZmWIfd
+         1bIG+Dxyph1a3cNHHrJM1SGsvxx+IXbVfVHAhdfnVzbiWmZpG9stZdXkE6Yd+xB7CAXR
+         +Rxe/VO1YEfREif6dxxpY6pVdmGjLMBA5X5+B7kparhN0Y40ix4lYpfEBe0oPgNy86Mz
+         ra2df+EnGdL28fdLv/qDTQoao2fqJm0OuKGKnnBXPUJ245CO7oeYFjDTQMWFoNvvUD5O
+         V0fjNMKhMWxrwgvlaxsg6NlZWSARrKCUsSt6RCtlaZBLtB3JabZX+wfpzxhiHwW9fxlu
+         O0UA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B23F021890
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 53/74] team: avoid adding twice the same option to the event list
-Date: Fri, 27 Apr 2018 15:58:43 +0200
-Message-Id: <20180427135712.137854708@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 58/74] vlan: Fix reading memory beyond skb->tail in skb_vlan_tagged_multi
+Date: Fri, 27 Apr 2018 15:58:48 +0200
+Message-Id: <20180427135712.335304276@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135709.899303463@linuxfoundation.org>
 References: <20180427135709.899303463@linuxfoundation.org>
@@ -85,9 +41,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1598908232509203798?=
+X-GMAIL-MSGID: =?utf-8?q?1598908485652464617?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -95,116 +52,133 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Paolo Abeni <pabeni@redhat.com>
+From: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
 
 
-[ Upstream commit 4fb0534fb7bbc2346ba7d3a072b538007f4135a5 ]
+[ Upstream commit 7ce2367254e84753bceb07327aaf5c953cfce117 ]
 
-When parsing the options provided by the user space,
-team_nl_cmd_options_set() insert them in a temporary list to send
-multiple events with a single message.
-While each option's attribute is correctly validated, the code does
-not check for duplicate entries before inserting into the event
-list.
+Syzkaller spotted an old bug which leads to reading skb beyond tail by 4
+bytes on vlan tagged packets.
+This is caused because skb_vlan_tagged_multi() did not check
+skb_headlen.
 
-Exploiting the above, the syzbot was able to trigger the following
-splat:
-
-kernel BUG at lib/list_debug.c:31!
-invalid opcode: 0000 [#1] SMP KASAN
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Modules linked in:
-CPU: 0 PID: 4466 Comm: syzkaller556835 Not tainted 4.16.0+ #17
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-Google 01/01/2011
-RIP: 0010:__list_add_valid+0xaa/0xb0 lib/list_debug.c:29
-RSP: 0018:ffff8801b04bf248 EFLAGS: 00010286
-RAX: 0000000000000058 RBX: ffff8801c8fc7a90 RCX: 0000000000000000
-RDX: 0000000000000058 RSI: ffffffff815fbf41 RDI: ffffed0036097e3f
-RBP: ffff8801b04bf260 R08: ffff8801b0b2a700 R09: ffffed003b604f90
-R10: ffffed003b604f90 R11: ffff8801db027c87 R12: ffff8801c8fc7a90
-R13: ffff8801c8fc7a90 R14: dffffc0000000000 R15: 0000000000000000
-FS:  0000000000b98880(0000) GS:ffff8801db000000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000000043fc30 CR3: 00000001afe8e000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+BUG: KMSAN: uninit-value in eth_type_vlan include/linux/if_vlan.h:283 [inline]
+BUG: KMSAN: uninit-value in skb_vlan_tagged_multi include/linux/if_vlan.h:656 [inline]
+BUG: KMSAN: uninit-value in vlan_features_check include/linux/if_vlan.h:672 [inline]
+BUG: KMSAN: uninit-value in dflt_features_check net/core/dev.c:2949 [inline]
+BUG: KMSAN: uninit-value in netif_skb_features+0xd1b/0xdc0 net/core/dev.c:3009
+CPU: 1 PID: 3582 Comm: syzkaller435149 Not tainted 4.16.0+ #82
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
 Call Trace:
-  __list_add include/linux/list.h:60 [inline]
-  list_add include/linux/list.h:79 [inline]
-  team_nl_cmd_options_set+0x9ff/0x12b0 drivers/net/team/team.c:2571
-  genl_family_rcv_msg+0x889/0x1120 net/netlink/genetlink.c:599
-  genl_rcv_msg+0xc6/0x170 net/netlink/genetlink.c:624
-  netlink_rcv_skb+0x172/0x440 net/netlink/af_netlink.c:2448
-  genl_rcv+0x28/0x40 net/netlink/genetlink.c:635
-  netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
-  netlink_unicast+0x58b/0x740 net/netlink/af_netlink.c:1336
-  netlink_sendmsg+0x9f0/0xfa0 net/netlink/af_netlink.c:1901
-  sock_sendmsg_nosec net/socket.c:629 [inline]
-  sock_sendmsg+0xd5/0x120 net/socket.c:639
-  ___sys_sendmsg+0x805/0x940 net/socket.c:2117
-  __sys_sendmsg+0x115/0x270 net/socket.c:2155
-  SYSC_sendmsg net/socket.c:2164 [inline]
-  SyS_sendmsg+0x29/0x30 net/socket.c:2162
-  do_syscall_64+0x29e/0x9d0 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x4458b9
-RSP: 002b:00007ffd1d4a7278 EFLAGS: 00000213 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 000000000000001b RCX: 00000000004458b9
-RDX: 0000000000000010 RSI: 0000000020000d00 RDI: 0000000000000004
-RBP: 00000000004a74ed R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000213 R12: 00007ffd1d4a7348
-R13: 0000000000402a60 R14: 0000000000000000 R15: 0000000000000000
-Code: 75 e8 eb a9 48 89 f7 48 89 75 e8 e8 d1 85 7b fe 48 8b 75 e8 eb bb 48
-89 f2 48 89 d9 4c 89 e6 48 c7 c7 a0 84 d8 87 e8 ea 67 28 fe <0f> 0b 0f 1f
-40 00 48 b8 00 00 00 00 00 fc ff df 55 48 89 e5 41
-RIP: __list_add_valid+0xaa/0xb0 lib/list_debug.c:29 RSP: ffff8801b04bf248
+  __dump_stack lib/dump_stack.c:17 [inline]
+  dump_stack+0x185/0x1d0 lib/dump_stack.c:53
+  kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
+  __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:676
+  eth_type_vlan include/linux/if_vlan.h:283 [inline]
+  skb_vlan_tagged_multi include/linux/if_vlan.h:656 [inline]
+  vlan_features_check include/linux/if_vlan.h:672 [inline]
+  dflt_features_check net/core/dev.c:2949 [inline]
+  netif_skb_features+0xd1b/0xdc0 net/core/dev.c:3009
+  validate_xmit_skb+0x89/0x1320 net/core/dev.c:3084
+  __dev_queue_xmit+0x1cb2/0x2b60 net/core/dev.c:3549
+  dev_queue_xmit+0x4b/0x60 net/core/dev.c:3590
+  packet_snd net/packet/af_packet.c:2944 [inline]
+  packet_sendmsg+0x7c57/0x8a10 net/packet/af_packet.c:2969
+  sock_sendmsg_nosec net/socket.c:630 [inline]
+  sock_sendmsg net/socket.c:640 [inline]
+  sock_write_iter+0x3b9/0x470 net/socket.c:909
+  do_iter_readv_writev+0x7bb/0x970 include/linux/fs.h:1776
+  do_iter_write+0x30d/0xd40 fs/read_write.c:932
+  vfs_writev fs/read_write.c:977 [inline]
+  do_writev+0x3c9/0x830 fs/read_write.c:1012
+  SYSC_writev+0x9b/0xb0 fs/read_write.c:1085
+  SyS_writev+0x56/0x80 fs/read_write.c:1082
+  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+RIP: 0033:0x43ffa9
+RSP: 002b:00007fff2cff3948 EFLAGS: 00000217 ORIG_RAX: 0000000000000014
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043ffa9
+RDX: 0000000000000001 RSI: 0000000020000080 RDI: 0000000000000003
+RBP: 00000000006cb018 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000217 R12: 00000000004018d0
+R13: 0000000000401960 R14: 0000000000000000 R15: 0000000000000000
 
-This changeset addresses the avoiding list_add() if the current
-option is already present in the event list.
+Uninit was created at:
+  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
+  kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:188
+  kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:314
+  kmsan_slab_alloc+0x11/0x20 mm/kmsan/kmsan.c:321
+  slab_post_alloc_hook mm/slab.h:445 [inline]
+  slab_alloc_node mm/slub.c:2737 [inline]
+  __kmalloc_node_track_caller+0xaed/0x11c0 mm/slub.c:4369
+  __kmalloc_reserve net/core/skbuff.c:138 [inline]
+  __alloc_skb+0x2cf/0x9f0 net/core/skbuff.c:206
+  alloc_skb include/linux/skbuff.h:984 [inline]
+  alloc_skb_with_frags+0x1d4/0xb20 net/core/skbuff.c:5234
+  sock_alloc_send_pskb+0xb56/0x1190 net/core/sock.c:2085
+  packet_alloc_skb net/packet/af_packet.c:2803 [inline]
+  packet_snd net/packet/af_packet.c:2894 [inline]
+  packet_sendmsg+0x6444/0x8a10 net/packet/af_packet.c:2969
+  sock_sendmsg_nosec net/socket.c:630 [inline]
+  sock_sendmsg net/socket.c:640 [inline]
+  sock_write_iter+0x3b9/0x470 net/socket.c:909
+  do_iter_readv_writev+0x7bb/0x970 include/linux/fs.h:1776
+  do_iter_write+0x30d/0xd40 fs/read_write.c:932
+  vfs_writev fs/read_write.c:977 [inline]
+  do_writev+0x3c9/0x830 fs/read_write.c:1012
+  SYSC_writev+0x9b/0xb0 fs/read_write.c:1085
+  SyS_writev+0x56/0x80 fs/read_write.c:1082
+  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
 
-Reported-and-tested-by: syzbot+4d4af685432dc0e56c91@syzkaller.appspotmail.com
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-Fixes: 2fcdb2c9e659 ("team: allow to send multiple set events in one message")
+Fixes: 58e998c6d239 ("offloading: Force software GSO for multiple vlan tags.")
+Reported-and-tested-by: syzbot+0bbe42c764feafa82c5a@syzkaller.appspotmail.com
+Signed-off-by: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/team/team.c |   19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ include/linux/if_vlan.h |    7 +++++--
+ net/core/dev.c          |    2 +-
+ 2 files changed, 6 insertions(+), 3 deletions(-)
 
---- a/drivers/net/team/team.c
-+++ b/drivers/net/team/team.c
-@@ -261,6 +261,17 @@ static void __team_option_inst_mark_remo
- 	}
- }
+--- a/include/linux/if_vlan.h
++++ b/include/linux/if_vlan.h
+@@ -600,7 +600,7 @@ static inline bool skb_vlan_tagged(const
+  * Returns true if the skb is tagged with multiple vlan headers, regardless
+  * of whether it is hardware accelerated or not.
+  */
+-static inline bool skb_vlan_tagged_multi(const struct sk_buff *skb)
++static inline bool skb_vlan_tagged_multi(struct sk_buff *skb)
+ {
+ 	__be16 protocol = skb->protocol;
  
-+static bool __team_option_inst_tmp_find(const struct list_head *opts,
-+					const struct team_option_inst *needle)
-+{
-+	struct team_option_inst *opt_inst;
+@@ -610,6 +610,9 @@ static inline bool skb_vlan_tagged_multi
+ 		if (likely(!eth_type_vlan(protocol)))
+ 			return false;
+ 
++		if (unlikely(!pskb_may_pull(skb, VLAN_ETH_HLEN)))
++			return false;
 +
-+	list_for_each_entry(opt_inst, opts, tmp_list)
-+		if (opt_inst == needle)
-+			return true;
-+	return false;
-+}
-+
- static int __team_options_register(struct team *team,
- 				   const struct team_option *option,
- 				   size_t option_count)
-@@ -2569,6 +2580,14 @@ static int team_nl_cmd_options_set(struc
- 			if (err)
- 				goto team_put;
- 			opt_inst->changed = true;
-+
-+			/* dumb/evil user-space can send us duplicate opt,
-+			 * keep only the last one
-+			 */
-+			if (__team_option_inst_tmp_find(&opt_inst_list,
-+							opt_inst))
-+				continue;
-+
- 			list_add(&opt_inst->tmp_list, &opt_inst_list);
- 		}
- 		if (!opt_found) {
+ 		veh = (struct vlan_ethhdr *)skb->data;
+ 		protocol = veh->h_vlan_encapsulated_proto;
+ 	}
+@@ -627,7 +630,7 @@ static inline bool skb_vlan_tagged_multi
+  *
+  * Returns features without unsafe ones if the skb has multiple tags.
+  */
+-static inline netdev_features_t vlan_features_check(const struct sk_buff *skb,
++static inline netdev_features_t vlan_features_check(struct sk_buff *skb,
+ 						    netdev_features_t features)
+ {
+ 	if (skb_vlan_tagged_multi(skb)) {
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -2871,7 +2871,7 @@ netdev_features_t passthru_features_chec
+ }
+ EXPORT_SYMBOL(passthru_features_check);
+ 
+-static netdev_features_t dflt_features_check(const struct sk_buff *skb,
++static netdev_features_t dflt_features_check(struct sk_buff *skb,
+ 					     struct net_device *dev,
+ 					     netdev_features_t features)
+ {
