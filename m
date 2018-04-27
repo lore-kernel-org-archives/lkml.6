@@ -1,71 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757577AbeD0L6i (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 07:58:38 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:51361 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751608AbeD0L6h (ORCPT
+        id S1758012AbeD0MAT (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 08:00:19 -0400
+Received: from smtprelay.synopsys.com ([198.182.37.59]:36054 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751608AbeD0MAM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 07:58:37 -0400
-X-Google-Smtp-Source: AB8JxZqd5gQ5XfXCbq7tiOdvj0wP1rmH2KP96G8llShYMTeXwS9yKdyeHD5HXGpJqtPDYi+RsHehEg==
-Date: Fri, 27 Apr 2018 13:58:33 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        x86@kernel.org, Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] x86/PCI: Make pci=earlydump output neat
-Message-ID: <20180427115833.sv5pykbeojlivc7s@gmail.com>
-References: <20180425101507.51531-1-andriy.shevchenko@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180425101507.51531-1-andriy.shevchenko@linux.intel.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+        Fri, 27 Apr 2018 08:00:12 -0400
+From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+To: bhelgaas@google.com, lorenzo.pieralisi@arm.com,
+        Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, gustavo.pimentel@synopsys.com
+Subject: [PATCH v8 3/9] PCI: endpoint: functions/pci-epf-test: Add second entry
+Date: Fri, 27 Apr 2018 12:59:58 +0100
+Message-Id: <c2b6cb8de2502e1b5352be3b6d687b1cb4b7033a.1524829928.git.gustavo.pimentel@synopsys.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1524829928.git.gustavo.pimentel@synopsys.com>
+References: <cover.1524829928.git.gustavo.pimentel@synopsys.com>
+In-Reply-To: <cover.1524829928.git.gustavo.pimentel@synopsys.com>
+References: <cover.1524829928.git.gustavo.pimentel@synopsys.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Add a seconds entry on the pci_epf_test_ids structure that disables the
+linkup_notifier parameter on driver for the DesignWare EP.
 
-* Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+Allow DesignWare EPs that doesn't have linkup notification signal to work
+with pcitest.
 
-> Currently the early dump of PCI configuration space looks quite unhelpful, e.g.
-> 
-> [    0.000000]   60:
-> [    0.000000]  00
-> [    0.000000]  00
-> [    0.000000]  00
-> [    0.000000]  00
-> [    0.000000]  00
-> [    0.000000]  00
-> [    0.000000]  00
-> [    0.000000]  00
-> [    0.000000]  00
-> [    0.000000]  00
-> [    0.000000]  00
-> [    0.000000]  00
-> [    0.000000]  00
-> [    0.000000]  00
-> [    0.000000]  00
-> [    0.000000]  00
-> [    0.000000]
-> 
-> which makes really hard to get anything out of this. Convert the function to
-> use print_hex_dump() to make output neat.
-> 
-> In the result we will have
-> 
-> [    0.000000] 00000060: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> 
-> which is much, much better.
-> 
-> Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Update the binding documentation accordingly.
 
-Acked-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+---
+Change v2->v3:
+ - Added second entry in pci_epf_test_ids structure.
+ - Remove test_reg_bar field assignment on second entry.
+Changes v3->v4:
+ - Nothing changed, just to follow the patch set version.
+Changes v4->v5:
+ - Changed pci_epf_test_cfg2 to pci_epf_test_designware.
+Changes v5->v6:
+ - Changed name field from pci_epf_test_designware to pci_epf_test_dw.
+Changes v6->v7:
+ - Changed variable name from data_cfg2 to data_linkup_notifier_disabled.
+Changes v7->v8:
+ - Patch description rework for an imperative verbal mode.
 
-Thanks,
+ Documentation/PCI/endpoint/function/binding/pci-test.txt | 2 ++
+ drivers/pci/endpoint/functions/pci-epf-test.c            | 8 ++++++++
+ 2 files changed, 10 insertions(+)
 
-	Ingo
+diff --git a/Documentation/PCI/endpoint/function/binding/pci-test.txt b/Documentation/PCI/endpoint/function/binding/pci-test.txt
+index 3b68b95..dc39f47 100644
+--- a/Documentation/PCI/endpoint/function/binding/pci-test.txt
++++ b/Documentation/PCI/endpoint/function/binding/pci-test.txt
+@@ -1,6 +1,8 @@
+ PCI TEST ENDPOINT FUNCTION
+ 
+ name: Should be "pci_epf_test" to bind to the pci_epf_test driver.
++name: Should be "pci_epf_test_dw" to bind to the pci_epf_test driver
++      with a custom configuration for the designware EP.
+ 
+ Configurable Fields:
+ vendorid	 : should be 0x104c
+diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
+index 7cef851..4ab463b 100644
+--- a/drivers/pci/endpoint/functions/pci-epf-test.c
++++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+@@ -459,10 +459,18 @@ static int pci_epf_test_bind(struct pci_epf *epf)
+ 	return 0;
+ }
+ 
++static const struct pci_epf_test_data data_linkup_notifier_disabled = {
++	.linkup_notifier = false
++};
++
+ static const struct pci_epf_device_id pci_epf_test_ids[] = {
+ 	{
+ 		.name = "pci_epf_test",
+ 	},
++	{
++		.name = "pci_epf_test_dw",
++		.driver_data = (kernel_ulong_t)&data_linkup_notifier_disabled,
++	},
+ 	{},
+ };
+ 
+-- 
+2.7.4
