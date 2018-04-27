@@ -1,125 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757568AbeD0JUr (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 05:20:47 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:40099 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751988AbeD0JUo (ORCPT
+        id S1757815AbeD0JXK (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 05:23:10 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:36367 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757241AbeD0JXI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 05:20:44 -0400
-X-Google-Smtp-Source: AB8JxZpWh1i5flAeAQx5JYj+LNrA3tdrLH/0X3X1KILY+k35KJLX7I2efWGfdlTvm/ZoLSo2ufT23A==
-Message-ID: <1524820841.4026.112.camel@baylibre.com>
-Subject: Re: [PATCH v7 0/7] clk: meson-axg: Add AO Cloclk and Reset driver
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Yixun Lan <yixun.lan@amlogic.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
-Cc: Rob Herring <robh@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Date: Fri, 27 Apr 2018 11:20:41 +0200
-In-Reply-To: <20180426084437.192394-1-yixun.lan@amlogic.com>
-References: <20180426084437.192394-1-yixun.lan@amlogic.com>
+        Fri, 27 Apr 2018 05:23:08 -0400
+Message-ID: <1524820982.17614.0.camel@pengutronix.de>
+Subject: Re: [PATCH] reset: uniphier: add LD11/LD20 stream demux system
+ reset control
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date: Fri, 27 Apr 2018 11:23:02 +0200
+In-Reply-To: <CAK7LNATuxGb9Yp6sQBySR75fAcVV5fcZn7GBQ1dAXsW3Xd8hAA@mail.gmail.com>
+References: <20180427004121.4143-1-suzuki.katsuhiro@socionext.com>
+         <CAK7LNATuxGb9Yp6sQBySR75fAcVV5fcZn7GBQ1dAXsW3Xd8hAA@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+X-Mailer: Evolution 3.22.6-1+deb9u1 
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-04-26 at 16:44 +0800, Yixun Lan wrote:
->   This patch try to add AO clock and Reset driver for Amlogic's
-> Meson-AXG SoC.
->   Please note that patch 7 need to wait for the DTS changes[3] merged
-> into mainline first, otherwise it will break the serial console.
-> 
->  patch 2: factor the common code into a dedicated file
->  patch 3-5: add the aoclk driver for AXG SoC
->  patch 6-7: drop unnecessary clock flags
-> 
-> changes since v6 at [7]: 
->  - fix over 80 chars chechpatch error
->  - add Philip's Ack on patch 5
->  - drop extra end of newline
-> 
-> changes since v5 at [6]: 
->  - drop unnecessary header files
->  - add 'axg_aoclk' prefix to clk driver, make them more consistent
->  - add missing end new line..
-> 
-> changes since v4 at [5]: 
->  - fix return err
->  - introduce CONFIG_COMMON_CLK_MESON_AO
->  - format/style minor fix
-> 
-> changes since v3 at [4]: 
->  - add 'const' contraint to the read-only data
->  - switch to devm_of_clk_add_hw_provider API
->  - check return value of devm_reset_controller_register
-> 
-> changes since v2 at [2]: 
->  - rework meson_aoclkc_probe() which leverage the of_match_data
->  - merge patch 5-6 into this series
->  - seperate DTS patch, will send to Kevin Hilman independently
->  
-> changes since v1 at [0]: 
->  - rebase to clk-meson's branch 'next/drivers' [1]
->  - fix license, update to BSD-3-Clause
->  - drop un-used include header file
-> 
-> [0] https://lkml.kernel.org/r/20180209070026.193879-1-yixun.lan@amlogic.com
-> [1] git://github.com/BayLibre/clk-meson.git branch: next-drivers
-> [2] https://lkml.kernel.org/r/20180323143816.200573-1-yixun.lan@amlogic.com
-> [3] https://lkml.kernel.org/r/20180326081809.49493-4-yixun.lan@amlogic.com
-> [4] https://lkml.kernel.org/r/20180328025050.221585-1-yixun.lan@amlogic.com
-> [5] https://lkml.kernel.org/r/20180408031938.153474-1-yixun.lan@amlogic.com
-> [6] https://lkml.kernel.org/r/20180409143749.71197-1-yixun.lan@amlogic.com
-> [7] https://lkml.kernel.org/r/20180419135426.155794-1-yixun.lan@amlogic.com
+On Fri, 2018-04-27 at 12:13 +0900, Masahiro Yamada wrote:
+> 2018-04-27 9:41 GMT+09:00 Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>:
+> > Add reset lines for MPEG2 transport stream I/O and demux system (HSC)
+> > on UniPhier LD11/LD20 SoCs.
+> > 
+> > Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+> Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Yixun,
+Thank you, applied to reset/next.
 
-Your series looks mostly Ok to me, apart from the problem reported by Philipp.
-
-However, once applied, if the clkc ao controller is enabled, both gxl and axg
-fail to complete the boot. Could you please explain how this was tested ??
-
-Not merging it until we get to the bottom of this.
-
-> 
-> 
-> Qiufang Dai (1):
->   clk: meson-axg: Add AO Clock and Reset controller driver
-> 
-> Yixun Lan (6):
->   clk: meson: migrate to devm_of_clk_add_hw_provider API
->   clk: meson: aoclk: refactor common code into dedicated file
->   dt-bindings: clock: axg-aoclkc: New binding for Meson-AXG SoC
->   dt-bindings: clock: reset: Add AXG AO Clock and Reset Bindings
->   clk: meson: drop CLK_SET_RATE_PARENT flag
->   clk: meson: drop CLK_IGNORE_UNUSED flag
-> 
->  .../bindings/clock/amlogic,gxbb-aoclkc.txt    |   1 +
->  drivers/clk/meson/Kconfig                     |   8 +
->  drivers/clk/meson/Makefile                    |   3 +-
->  drivers/clk/meson/axg-aoclk.c                 | 163 ++++++++++++++++++
->  drivers/clk/meson/axg-aoclk.h                 |  29 ++++
->  drivers/clk/meson/gxbb-aoclk.c                |  95 ++++------
->  drivers/clk/meson/gxbb-aoclk.h                |   5 +
->  drivers/clk/meson/meson-aoclk.c               |  81 +++++++++
->  drivers/clk/meson/meson-aoclk.h               |  34 ++++
->  include/dt-bindings/clock/axg-aoclkc.h        |  26 +++
->  include/dt-bindings/reset/axg-aoclkc.h        |  20 +++
->  11 files changed, 401 insertions(+), 64 deletions(-)
->  create mode 100644 drivers/clk/meson/axg-aoclk.c
->  create mode 100644 drivers/clk/meson/axg-aoclk.h
->  create mode 100644 drivers/clk/meson/meson-aoclk.c
->  create mode 100644 drivers/clk/meson/meson-aoclk.h
->  create mode 100644 include/dt-bindings/clock/axg-aoclkc.h
->  create mode 100644 include/dt-bindings/reset/axg-aoclkc.h
-> 
+regards
+Philipp
