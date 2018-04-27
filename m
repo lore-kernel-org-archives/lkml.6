@@ -1,77 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756854AbeD0Az5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 20:55:57 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:46090 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752358AbeD0Azz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 20:55:55 -0400
-X-Google-Smtp-Source: AB8JxZoxXx2oXowQ2yJ7KpR2xmKQcBSQrPo78ZLOgelaqJoWaAaIL2xKpFQ33capI24Sse+U7PSTtA==
-From: Wanpeng Li <kernellwp@gmail.com>
-X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
-To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Tonny Lu <tonnylu@tencent.com>
-Subject: [PATCH v3] KVM: Extend MAX_IRQ_ROUTES to 4096 for all archs
-Date: Thu, 26 Apr 2018 17:55:03 -0700
-Message-Id: <1524790503-3267-1-git-send-email-wanpengli@tencent.com>
-X-Mailer: git-send-email 2.7.4
+        id S1757026AbeD0BA3 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 21:00:29 -0400
+Received: from mga14.intel.com ([192.55.52.115]:57650 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752030AbeD0BA2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 21:00:28 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,333,1520924400";
+   d="scan'208";a="34968117"
+From: "Li, Philip" <philip.li@intel.com>
+To: "Wu, Fengguang" <fengguang.wu@intel.com>,
+        Arnd Bergmann <arnd@arndb.de>
+CC: lkp <lkp@intel.com>, "kbuild-all@01.org" <kbuild-all@01.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        "Hao, Shun" <shun.hao@intel.com>
+Subject: RE: Makefile:636: arch/score/Makefile: No such file or directory
+Thread-Topic: Makefile:636: arch/score/Makefile: No such file or directory
+Thread-Index: AQHT3TBCNJzSxNFxX0KPZLeNWlwBrKQTy0/A
+Date: Fri, 27 Apr 2018 01:00:25 +0000
+Message-ID: <831EE4E5E37DCC428EB295A351E662494CAE8B50@shsmsx102.ccr.corp.intel.com>
+References: <201804261013.6YZ6XwpM%fengguang.wu@intel.com>
+ <CAK8P3a0tpU7RFasJUuG7V2ZYUoR-iYDzjO13neF08ToAdnLX+w@mail.gmail.com>
+ <20180426072846.pa72ohtstnyjsa42@wfg-t540p.sh.intel.com>
+In-Reply-To: <20180426072846.pa72ohtstnyjsa42@wfg-t540p.sh.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZTk1OWQ1NTQtZWE4My00ZWQ2LWFjZWMtZjk1NWQ4MTJiZGQ2IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiJYQ1lTV2ZzMlBxYnlMT2hqdXEzYVo0bGRNa0JVMTBcL0NoVzE1U1E0czZKaEdXM3BXSSs0VlBhWWpyWXFoUE9yeCJ9
+x-ctpclassification: CTP_NT
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wanpeng Li <wanpengli@tencent.com>
 
-Our virtual machines make use of device assignment by configuring
-12 NVMe disks for high I/O performance. Each NVMe device has 129 
-MSI-X Table entries:
-Capabilities: [50] MSI-X: Enable+ Count=129 Masked-Vector table: BAR=0 offset=00002000
-The windows virtual machines fail to boot since they will map the number of 
-MSI-table entries that the NVMe hardware reported to the bus to msi routing 
-table, this will exceed the 1024. This patch extends MAX_IRQ_ROUTES to 4096
-for all archs, in the future this might be extended again if needed.
+> >Please stop trying to build the removed architectures: tile, blackfin,
+> >metag, m32r, frv, mn10300, cris and score.
+> >
+> >https://lwn.net/Articles/748074/ has details about why this broke.
+> 
+> Sorry about that!  It looks the architectures removal is not thorough
+> enough. Hao, would you help take a look?
+sure, we will handle this.
 
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: Cornelia Huck <cohuck@redhat.com>
-Cc: Christian Borntraeger <borntraeger@de.ibm.com>
-Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-Signed-off-by: Tonny Lu <tonnylu@tencent.com>
----
-v2 -> v3:
- * update comments in the code
-v1 -> v2:
- * extend MAX_IRQ_ROUTES to 4096 for all archs 
+> 
+> >Note that we do have a few new architectures that you may want
+> >to add if you haven't done this already: nds32 and riscv were added
+> >this year, and a couple of older architectures that didn't have upstream
+> >gcc releases now have those, and I uploaded gcc binaries to
+> >https://cdn.kernel.org/pub/tools/crosstool/.
+> >
+> >This should allow building everything we have in the kernel now.
+> >Unfortunately the nds32 toolchain I uploaded is a little incomplete,
+> >but I have a gcc-6.4 build that (mostly) works and gcc-8 should
+> >be fine as well once it gets released.
+> 
+> OK, thanks for the tips! Philip may help plan add the 2 new archs
+> nds32 and riscv.
+thanks for info, we will add new archs support in near future.
 
- include/linux/kvm_host.h | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
-
-diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index 6930c63..6d6e79c 100644
---- a/include/linux/kvm_host.h
-+++ b/include/linux/kvm_host.h
-@@ -1045,13 +1045,7 @@ static inline int mmu_notifier_retry(struct kvm *kvm, unsigned long mmu_seq)
- 
- #ifdef CONFIG_HAVE_KVM_IRQ_ROUTING
- 
--#ifdef CONFIG_S390
--#define KVM_MAX_IRQ_ROUTES 4096 //FIXME: we can have more than that...
--#elif defined(CONFIG_ARM64)
--#define KVM_MAX_IRQ_ROUTES 4096
--#else
--#define KVM_MAX_IRQ_ROUTES 1024
--#endif
-+#define KVM_MAX_IRQ_ROUTES 4096 /* might need extension/rework in the future */
- 
- bool kvm_arch_can_set_irq_routing(struct kvm *kvm);
- int kvm_set_irq_routing(struct kvm *kvm,
--- 
-2.7.4
+> 
+> Thanks,
+> Fengguang
