@@ -1,225 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757353AbeD0F3R (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 01:29:17 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54783 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751291AbeD0F3Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 01:29:16 -0400
-X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "Cc"
-From: NeilBrown <neilb@suse.com>
-To: Trond Myklebust <trond.myklebust@primarydata.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Date: Fri, 27 Apr 2018 15:29:03 +1000
-Cc: Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>
-Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] NFS: Avoid quadratic search when freeing delegations.
-Message-ID: <87h8nxkyjk.fsf@notabene.neil.brown.name>
+        id S1757409AbeD0FaG (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 01:30:06 -0400
+Received: from mail-io0-f198.google.com ([209.85.223.198]:33417 "EHLO
+        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757241AbeD0FaD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 01:30:03 -0400
+X-Google-Smtp-Source: AB8JxZoIlnNz7FaAUrE18csAFHcDL2hXAMLB4k9Js1BgStBeKaiM1lwvQGoThTg3stgiSIhln3vLgmIB6+gxQA6aTtHUkBu9pXzk
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Date: Thu, 26 Apr 2018 22:30:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c1d8f1056acdcbfa@google.com>
+Subject: BUG: unable to handle kernel paging request in process_preds
+From: syzbot <syzbot+b76562b749bb67fca79f@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, mingo@redhat.com, rostedt@goodmis.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Hello,
+
+syzbot hit the following crash on bpf-next commit
+0c90f2243ec67eeacf9624ae52ab43c734fe0e93 (Wed Apr 18 02:46:34 2018 +0000)
+tools: bpftool: make it easier to feed hex bytes to bpftool
+syzbot dashboard link:  
+https://syzkaller.appspot.com/bug?extid=b76562b749bb67fca79f
+
+Unfortunately, I don't have any reproducer for this crash yet.
+Raw console output:  
+https://syzkaller.appspot.com/x/log.txt?id=5319914659250176
+Kernel config:  
+https://syzkaller.appspot.com/x/.config?id=-5947642240294114534
+compiler: gcc (GCC) 8.0.1 20180413 (experimental)
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+b76562b749bb67fca79f@syzkaller.appspotmail.com
+It will help syzbot understand when the bug is fixed. See footer for  
+details.
+If you forward the report, please keep this part and the footer.
+
+BUG: unable to handle kernel paging request at ffff87f9dbf70994
+PGD 0 P4D 0
+Oops: 0000 [#1] SMP KASAN
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Modules linked in:
+CPU: 1 PID: 7133 Comm: syz-executor4 Not tainted 4.16.0+ #4
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:predicate_parse kernel/trace/trace_events_filter.c:563 [inline]
+RIP: 0010:process_preds+0x146c/0x19b0  
+kernel/trace/trace_events_filter.c:1505
+RSP: 0018:ffff880197cc7438 EFLAGS: 00010246
+RAX: 0000000000000007 RBX: ffff87f9dbf70990 RCX: 0000000000000000
+RDX: 00000000ffffffff RSI: ffffffff817f1ee9 RDI: ffff87f9dbf70994
+RBP: ffff880197cc7540 R08: ffff8801b2146540 R09: ffffed003b6246c2
+R10: ffffed003b6246c2 R11: ffff8801db123613 R12: dffffc0000000000
+R13: ffff8801c1f04fe0 R14: 00000000fffffffe R15: dffffc0000000000
+FS:  00007fedc5480700(0000) GS:ffff8801db100000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffff87f9dbf70994 CR3: 00000001a0041000 CR4: 00000000001406e0
+DR0: 0000000020000000 DR1: 0000000020000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000600
+Call Trace:
+  create_filter+0x1a8/0x370 kernel/trace/trace_events_filter.c:1714
+  ftrace_profile_set_filter+0x109/0x2b0  
+kernel/trace/trace_events_filter.c:2042
+  perf_event_set_filter+0x248/0x1230 kernel/events/core.c:9064
+  _perf_ioctl+0x84c/0x15e0 kernel/events/core.c:5056
+  perf_ioctl+0x59/0x80 kernel/events/core.c:5107
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:500 [inline]
+  do_vfs_ioctl+0x1cf/0x16a0 fs/ioctl.c:684
+  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:701
+  SYSC_ioctl fs/ioctl.c:708 [inline]
+  SyS_ioctl+0x24/0x30 fs/ioctl.c:706
+  do_syscall_64+0x29e/0x9d0 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x455329
+RSP: 002b:00007fedc547fc68 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007fedc54806d4 RCX: 0000000000455329
+RDX: 0000000020000100 RSI: 0000000040082406 RDI: 0000000000000014
+RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 0000000000000291 R14: 00000000006f6e38 R15: 0000000000000000
+Code: ff ff 41 8b 55 04 48 8d 7b 04 48 89 f8 48 c1 e8 03 42 0f b6 0c 20 48  
+89 f8 83 e0 07 83 c0 03 38 c8 7c 08 84 c9 0f 85 08 05 00 00 <44> 8b 7b 04  
+89 d7 89 95 68 ff ff ff 44 89 fe e8 80 0a f8 ff 8b
+RIP: predicate_parse kernel/trace/trace_events_filter.c:563 [inline] RSP:  
+ffff880197cc7438
+RIP: process_preds+0x146c/0x19b0 kernel/trace/trace_events_filter.c:1505  
+RSP: ffff880197cc7438
+CR2: ffff87f9dbf70994
+---[ end trace 9971f5aefc423124 ]---
 
 
-If an NFS client has 10,000 delegations which are between 90 and 180 second=
-s old,
-and 10,000 which are between 180 and 270 seconds old, with none of them sti=
-ll
-in use, it is likely that the old ones are at the end of the list.
-The first 10,000 will not be marked to be returned, the last 10,000 will.
+---
+This bug is generated by a dumb bot. It may contain errors.
+See https://goo.gl/tpsmEJ for details.
+Direct all questions to syzkaller@googlegroups.com.
 
-To return these, the code starts at the front of the list and finds the
-first delegation needing to be returned (testing 10,000 on the way).
-Then it drops rcu_readlock(), returns the delegation and starts again,
-and does this 10,000 times.
-
-As delegation return is async, it may never block, so these 10,000
-delegation will be returned without stopping for a breath.  The soft-lock
-detector will notice and complain.
-
-This patch makes 3 changes.
-
-1/ cond_resched() is added so that the soft-lockup detector doesn't notice.
-2/ A place-holder (an inode) is kept when locks are dropped, so that
-   the place can usually be found again after taking rcu_readlock().
-   This means we don't need to skip over 10,000 entries 10,000 times,
-   100 million pointless operations - which could eaisly be a larger
-   number.
-3/ If nfs_sb_active() fails, break out of the loop - there is no point
-   in continuing.
-
-The patch also add list_for_each_entry_from_rcu() to rculist.h in
-order to achieve 2/.
-
-Signed-off-by: NeilBrown <neilb@suse.com>
-=2D--
-
-Hi,
- I'm hoping one of the RCU reviewers will provide an Acked-by for the
- rculist.h change.
-
- If you'ld like 3 patches instead of just one, please let me know.  But
- they all see to fit well together.
-
-thanks,
-NeilBrown
-
-
- fs/nfs/delegation.c     | 57 ++++++++++++++++++++++++++++++++++++++++++++-=
-----
- include/linux/rculist.h | 10 +++++++++
- 2 files changed, 62 insertions(+), 5 deletions(-)
-
-diff --git a/fs/nfs/delegation.c b/fs/nfs/delegation.c
-index 1819d0d0ba4b..c3d9e21ab440 100644
-=2D-- a/fs/nfs/delegation.c
-+++ b/fs/nfs/delegation.c
-@@ -483,19 +483,56 @@ static bool nfs_delegation_need_return(struct nfs_del=
-egation *delegation)
- int nfs_client_return_marked_delegations(struct nfs_client *clp)
- {
- 	struct nfs_delegation *delegation;
-+	struct nfs_delegation *prev;
- 	struct nfs_server *server;
- 	struct inode *inode;
-+	struct inode *place_holder =3D NULL;
- 	int err =3D 0;
-=20
- restart:
-+	/*
-+	 * To avoid quadratic looping we hold an reference
-+	 * to an inode place_holder.  Each time we restart, we
-+	 * list nfs_servers from the server of that inode, and
-+	 * delegation in the server from the delegations of that
-+	 * inode.
-+	 * prev is an RCU-protected pointer to a delegation which
-+	 * wasn't marked for return and might be a good choice for
-+	 * the next place_holder.
-+	 */
- 	rcu_read_lock();
-=2D	list_for_each_entry_rcu(server, &clp->cl_superblocks, client_link) {
-=2D		list_for_each_entry_rcu(delegation, &server->delegations,
-=2D								super_list) {
-=2D			if (!nfs_delegation_need_return(delegation))
-+	prev =3D NULL;
-+	if (place_holder)
-+		server =3D NFS_SERVER(place_holder);
-+	else
-+		server =3D list_entry_rcu(clp->cl_superblocks.next,
-+					struct nfs_server, client_link);
-+	list_for_each_entry_from_rcu(server, &clp->cl_superblocks, client_link) {
-+		delegation =3D NULL;
-+		if (place_holder && server =3D=3D NFS_SERVER(place_holder))
-+			delegation =3D rcu_dereference(NFS_I(place_holder)->delegation);
-+		if (!delegation)
-+			delegation =3D list_entry_rcu(server->delegations.next,
-+						    struct nfs_delegation, super_list);
-+		list_for_each_entry_from_rcu(delegation, &server->delegations, super_lis=
-t) {
-+			struct inode *to_put =3D NULL;
-+
-+			if (!nfs_delegation_need_return(delegation)) {
-+				prev =3D delegation;
- 				continue;
-+			}
- 			if (!nfs_sb_active(server->super))
-=2D				continue;
-+				break;
-+
-+			if (prev) {
-+				struct inode *tmp;
-+				tmp =3D nfs_delegation_grab_inode(prev);
-+				if (tmp) {
-+					to_put =3D place_holder;
-+					place_holder =3D tmp;
-+				}
-+			}
-+
- 			inode =3D nfs_delegation_grab_inode(delegation);
- 			if (inode =3D=3D NULL) {
- 				rcu_read_unlock();
-@@ -505,16 +542,26 @@ int nfs_client_return_marked_delegations(struct nfs_c=
-lient *clp)
- 			delegation =3D nfs_start_delegation_return_locked(NFS_I(inode));
- 			rcu_read_unlock();
-=20
-+			if (to_put) {
-+				iput(to_put);
-+				to_put =3D NULL;
-+			}
-+
- 			err =3D nfs_end_delegation_return(inode, delegation, 0);
- 			iput(inode);
- 			nfs_sb_deactive(server->super);
-+			cond_resched();
- 			if (!err)
- 				goto restart;
- 			set_bit(NFS4CLNT_DELEGRETURN, &clp->cl_state);
-+			if (place_holder)
-+				iput(place_holder);
- 			return err;
- 		}
- 	}
- 	rcu_read_unlock();
-+	if (place_holder)
-+		iput(place_holder);
- 	return 0;
- }
-=20
-diff --git a/include/linux/rculist.h b/include/linux/rculist.h
-index 127f534fec94..2d86f9869842 100644
-=2D-- a/include/linux/rculist.h
-+++ b/include/linux/rculist.h
-@@ -403,6 +403,16 @@ static inline void list_splice_tail_init_rcu(struct li=
-st_head *list,
- 	     &pos->member !=3D (head);	\
- 	     pos =3D list_entry_rcu(pos->member.next, typeof(*pos), member))
-=20
-+/**
-+ * list_for_each_entry_from_rcu - iterate over a list continuing from curr=
-ent point
-+ * @pos:	the type * to use as a loop cursor.
-+ * @head:	the head for your list.
-+ * @member:	the name of the list_node within the struct.
-+ */
-+#define list_for_each_entry_from_rcu(pos, head, member)			\
-+	for (; &(pos)->member !=3D (head);					\
-+		pos =3D list_entry_rcu(pos->member.next, typeof(*(pos)), member))
-+
- /**
-  * hlist_del_rcu - deletes entry from hash list without re-initialization
-  * @n: the element to delete from the hash list.
-=2D-=20
-2.14.0.rc0.dirty
-
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlritSAACgkQOeye3VZi
-gbmVABAAuQllng/FqKKiGmVgo765puwDfSvOOxjDHM34NsJBv7JRN3m8xbQL7YOs
-UUPJ0T1SA2u+JfWI3mu1Jule5azvaknS6Kek59m+Rw5/LrjiRhDr4s+uyIBg2OHJ
-fyGrmvjitM7OQ1aocPIPTuP4H1GJ45ZEEuASX+tlzKgELI9J0I8/f/3ywIEQ2ESl
-XIOWk54dU52xl/mgh9abRN0+FCgIhZbZGjzlZDKH/NXDgU6Ja/7zJcrib2RA0pvb
-WHgbjmB25P6DW5EbHZQasd/WjpK4TC+9h1jhYp/D8adLxOZm2V/CTqlBphzrg2hm
-2qfV9AqX6238HaY05w1uvEIbIL/jIMDUL6TbU1Byo41lubzhFg1ffJ5MgkXOfOgU
-2HiY2pQJgkk3UCEHgyMeSPGN8IytNfPC839VG8PIL1wZ6Q+HCv1muyJai9TKkhY0
-FDHB7z476J6XiYZ3JbBbm0D0tJSl4Y8GnMHWK4fGckkqGOUQHqy56fo7ccv1vbhK
-9LQYqH6ewJfffRbhyH+hOo6+BAX5zeAyRmS6c7B2FPTTDAcJEVE4kc1IyYxXPlVo
-tSyMfJWU68JBC0PYIPaQDglZ6LK1odSkLzPG4N+dN6rkswfQ4xhCoMBdI80fTKjB
-lGQSb6fcFbqGRLPeO6gYtHTsRD7xSBiLin5gyJOvdwC1636C6C4=
-=/YRi
------END PGP SIGNATURE-----
---=-=-=--
+syzbot will keep track of this bug report.
+If you forgot to add the Reported-by tag, once the fix for this bug is  
+merged
+into any tree, please reply to this email with:
+#syz fix: exact-commit-title
+To mark this as a duplicate of another syzbot report, please reply with:
+#syz dup: exact-subject-of-another-report
+If it's a one-off invalid bug report, please reply with:
+#syz invalid
+Note: if the crash happens again, it will cause creation of a new bug  
+report.
+Note: all commands must start from beginning of the line in the email body.
