@@ -1,146 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935520AbeD0ORa (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 10:17:30 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59222 "EHLO mx1.redhat.com"
+        id S935424AbeD0OPW (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 10:15:22 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43676 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S935318AbeD0OP0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 10:15:26 -0400
+        id S935250AbeD0OPS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 10:15:18 -0400
 From: Eric Auger <eric.auger@redhat.com>
 To: eric.auger.pro@gmail.com, eric.auger@redhat.com,
         linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
         kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com, cdall@kernel.org,
         peter.maydell@linaro.org
 Cc: andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
-Subject: [PATCH v4 06/12] KVM: arm/arm64: Adapt vgic_v3_check_base to multiple rdist regions
-Date: Fri, 27 Apr 2018 16:14:59 +0200
-Message-Id: <1524838505-3823-7-git-send-email-eric.auger@redhat.com>
+Subject: [PATCH v4 02/12] KVM: arm/arm64: Document KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
+Date: Fri, 27 Apr 2018 16:14:55 +0200
+Message-Id: <1524838505-3823-3-git-send-email-eric.auger@redhat.com>
 In-Reply-To: <1524838505-3823-1-git-send-email-eric.auger@redhat.com>
 References: <1524838505-3823-1-git-send-email-eric.auger@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-vgic_v3_check_base() currently only handles the case of a unique
-legacy redistributor region whose size is not explicitly set but
-infered, instead, from the number of online vcpus.
+We introduce a new KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION attribute in
+KVM_DEV_ARM_VGIC_GRP_ADDR group. It allows userspace to provide the
+base address and size of a redistributor region
 
-We adapt it to handle the case of multiple redistributor regions
-with explicitly defined size. We rely on two new helpers:
-- vgic_v3_rdist_overlap() is used to detect overlap with the dist
-  region if defined
-- vgic_v3_rd_region_size computes the size of the redist region,
-  would it be a legacy unique region or a new explicitly sized
-  region.
+Compared to KVM_VGIC_V3_ADDR_TYPE_REDIST, this new attribute allows
+to declare several separate redistributor regions.
+
+So the whole redist space does not need to be contiguous anymore.
 
 Signed-off-by: Eric Auger <eric.auger@redhat.com>
+Reviewed-by: Peter Maydell <peter.maydell@linaro.org>
 
 ---
-
 v3 -> v4:
-- squash vgic_v3_check_base adaptation and vgic_v3_rdist_overlap
-  + vgic_v3_rd_region_size introduction  and put this patch
-  before v3 patch 6
+- Added Peter's R-b
 ---
- virt/kvm/arm/vgic/vgic-v3.c | 49 +++++++++++++++++++++++++++++----------------
- virt/kvm/arm/vgic/vgic.h    | 10 +++++++++
- 2 files changed, 42 insertions(+), 17 deletions(-)
+ Documentation/virtual/kvm/devices/arm-vgic-v3.txt | 25 ++++++++++++++++++++++-
+ 1 file changed, 24 insertions(+), 1 deletion(-)
 
-diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-v3.c
-index f81a63a..c4a2a46 100644
---- a/virt/kvm/arm/vgic/vgic-v3.c
-+++ b/virt/kvm/arm/vgic/vgic-v3.c
-@@ -410,6 +410,29 @@ int vgic_v3_save_pending_tables(struct kvm *kvm)
- 	return 0;
- }
- 
-+/**
-+ * vgic_v3_rdist_overlap - check if a region overlaps with any
-+ * existing redistributor region
-+ *
-+ * @kvm: kvm handle
-+ * @base: base of the region
-+ * @size: size of region
-+ *
-+ * Return: true if there is an overlap
-+ */
-+bool vgic_v3_rdist_overlap(struct kvm *kvm, gpa_t base, size_t size)
-+{
-+	struct vgic_dist *d = &kvm->arch.vgic;
-+	struct vgic_redist_region *rdreg;
+diff --git a/Documentation/virtual/kvm/devices/arm-vgic-v3.txt b/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
+index 9293b45..cbc4328 100644
+--- a/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
++++ b/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
+@@ -27,9 +27,32 @@ Groups:
+       VCPU and all of the redistributor pages are contiguous.
+       Only valid for KVM_DEV_TYPE_ARM_VGIC_V3.
+       This address needs to be 64K aligned.
 +
-+	list_for_each_entry(rdreg, &d->rd_regions, list) {
-+		if ((base + size > rdreg->base) &&
-+			(base < rdreg->base + vgic_v3_rd_region_size(kvm, rdreg)))
-+			return true;
-+	}
-+	return false;
-+}
++    KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION (rw, 64-bit)
++      The attr field of kvm_device_attr encodes 3 values:
++      bits:     | 63   ....  52  |  51   ....   16 | 15 - 12  |11 - 0
++      values:   |     count      |       base      |  flags   | index
++      - index encodes the unique redistributor region index
++      - flags: reserved for future use, currently 0
++      - base field encodes bits [51:16] of the guest physical base address
++        of the first redistributor in the region.
++      - count encodes the number of redistributors in the region. Must be
++        greater than 0.
++      There are two 64K pages for each redistributor in the region and
++      redistributors are laid out contiguously within the region. Regions
++      are filled with redistributors in the index order. The sum of all
++      region count fields must be greater than or equal to the number of
++      VCPUs. Redistributor regions must be registered in the incremental
++      index order, starting from index 0.
++      Only valid for KVM_DEV_TYPE_ARM_VGIC_V3.
 +
- /*
-  * Check for overlapping regions and for regions crossing the end of memory
-  * for base addresses which have already been set.
-@@ -417,31 +440,23 @@ int vgic_v3_save_pending_tables(struct kvm *kvm)
- bool vgic_v3_check_base(struct kvm *kvm)
- {
- 	struct vgic_dist *d = &kvm->arch.vgic;
--	gpa_t redist_size = KVM_VGIC_V3_REDIST_SIZE;
--	struct vgic_redist_region *rdreg =
--		list_first_entry(&d->rd_regions,
--				 struct vgic_redist_region, list);
--
--	redist_size *= atomic_read(&kvm->online_vcpus);
-+	struct vgic_redist_region *rdreg;
- 
- 	if (!IS_VGIC_ADDR_UNDEF(d->vgic_dist_base) &&
- 	    d->vgic_dist_base + KVM_VGIC_V3_DIST_SIZE < d->vgic_dist_base)
- 		return false;
- 
--	if (rdreg && (rdreg->base + redist_size < rdreg->base))
--		return false;
-+	list_for_each_entry(rdreg, &d->rd_regions, list) {
-+		if (rdreg->base + vgic_v3_rd_region_size(kvm, rdreg) <
-+			rdreg->base)
-+			return false;
-+	}
- 
--	/* Both base addresses must be set to check if they overlap */
--	if (IS_VGIC_ADDR_UNDEF(d->vgic_dist_base) || !rdreg)
-+	if (IS_VGIC_ADDR_UNDEF(d->vgic_dist_base))
- 		return true;
- 
--	if (d->vgic_dist_base + KVM_VGIC_V3_DIST_SIZE <= rdreg->base)
--		return true;
--
--	if (rdreg->base + redist_size <= d->vgic_dist_base)
--		return true;
--
--	return false;
-+	return !vgic_v3_rdist_overlap(kvm, d->vgic_dist_base,
-+				      KVM_VGIC_V3_DIST_SIZE);
- }
- 
- /**
-diff --git a/virt/kvm/arm/vgic/vgic.h b/virt/kvm/arm/vgic/vgic.h
-index fea32cb..e6e3ae9 100644
---- a/virt/kvm/arm/vgic/vgic.h
-+++ b/virt/kvm/arm/vgic/vgic.h
-@@ -262,6 +262,16 @@ vgic_v3_redist_region_full(struct vgic_redist_region *region)
- 
- struct vgic_redist_region *vgic_v3_rdist_free_slot(struct list_head *rdregs);
- 
-+static inline size_t
-+vgic_v3_rd_region_size(struct kvm *kvm, struct vgic_redist_region *rdreg)
-+{
-+	if (!rdreg->count)
-+		return atomic_read(&kvm->online_vcpus) * KVM_VGIC_V3_REDIST_SIZE;
-+	else
-+		return rdreg->count * KVM_VGIC_V3_REDIST_SIZE;
-+}
-+bool vgic_v3_rdist_overlap(struct kvm *kvm, gpa_t base, size_t size);
++  It is invalid to mix calls with KVM_VGIC_V3_ADDR_TYPE_REDIST and
++  KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION attributes.
 +
- int vgic_its_resolve_lpi(struct kvm *kvm, struct vgic_its *its,
- 			 u32 devid, u32 eventid, struct vgic_irq **irq);
- struct vgic_its *vgic_msi_to_its(struct kvm *kvm, struct kvm_msi *msi);
+   Errors:
+     -E2BIG:  Address outside of addressable IPA range
+-    -EINVAL: Incorrectly aligned address
++    -EINVAL: Incorrectly aligned address, bad redistributor region
++             count/index, mixed redistributor region attribute usage
+     -EEXIST: Address already configured
+     -ENXIO:  The group or attribute is unknown/unsupported for this device
+              or hardware support is missing.
 -- 
 2.5.5
