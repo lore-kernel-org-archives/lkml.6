@@ -1,41 +1,40 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrKIP/Y+076b/Tdd1sWVsjN76RwkfQLfOXcgbmroHlbr3BrF3PsbY+xuNQKHYk0cbUaqKqv
-ARC-Seal: i=1; a=rsa-sha256; t=1524837806; cv=none;
+X-Google-Smtp-Source: AB8JxZpofvO6z6gHt9PxXKmHTGyyd7d1qPChJLPbExiXlzBpfLS4SdSxp1pYd55B3hfOVfj+ehs9
+ARC-Seal: i=1; a=rsa-sha256; t=1524837804; cv=none;
         d=google.com; s=arc-20160816;
-        b=Zo3d6JVtxd6/yD+9ORRfWTYVaq4HSXtYuKEhqH4L8fDix8QC9q/uL1axaAWuFsovLU
-         19A2UmBIA7yZwcI/0HTZo4agCz96fLvuhxzD14Hgat1EXAf6838So2972S4MqyfGjpnE
-         EhPSaOZkQT29cNjm1qnaNLi24qbhdw2+Y5jKEyI5SgjIabSJB3hiMlz3EzXxxCvtrKkq
-         rZBc4VloDJQc9uGY4QkVTYWHiFaCwi2LxeIrR3DWwQWlwe6W+401ew3frkyIrPY2CAPB
-         E00xM1gSNtfNEfYlM5tZCS0RZi8LO++kmW1m44j1j/d5q3gF7XTtbx8H8SMbXcu8SDs0
-         qMYw==
+        b=ArfJbNUyKYxDr+08De5D/biHdq+aFE5vpyxm1EwQlqEPJYgg08oW2OvvAlRwghVe4r
+         3kk1/SeGuasLmQIh9tpXuiYVCS0Jow1RnkfMgs9OAo83dp10zJrgJlYujmfn4SMtaFuB
+         spxfVu8AfibqhsANhH7EnUQEUUlfOg3LQRhFWK3pB3vx31pL6ehizNX7QMxPNnvGFZQ5
+         Ss3bBkKG8sTXycNpoGVr29DldJE7z43CD4M92J+AjX8h1v+Y1AjCHMT0JO8JOVIAhA8M
+         u0sVdKfyd7UcoM7R2NXKR4n6CSRZYuPrsNU+tMaxCH49S5mERbS5hPoxISZ6LLj7yhC/
+         36NQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=NiLlxWyPJ/i98STzbG7DcXiPbXyYoEzqlpG00cnY44o=;
-        b=J58f7NBDY+wRkkCuHuRegwmJii6t2lw0i3c+Gmvh+i0hcdyuQzPVeMa+SQb+tQ1P0y
-         15a2ce4G9uiv1ZHb+zV8L/5zdlueY9XgLrc4uoKGjsGrFI0eYu0IrytzsKWcM9UQvkOH
-         d77wbvVxKznpKxCWYO8ODpCYTgZxBgvbdhmosS4ocJe8q1BHHQsWIAwP/K7i9lDRZRD3
-         eoZZWFTIipO28bEd9aAfjHoLyKgG36lST6OLKvtL9Q/drWgy+W7ZtrXtP2IRr7qhaoA0
-         npQiLju27FDOMmKVw1TpuSPAQVnNsXpKQsbegIuBTzMwozPs6OKC/U0qTMlYEpAGeaXY
-         uULg==
+        bh=EFf20u+oJLp7fhIzgy77S/b6Vu2PP9ki365FnlyfW/s=;
+        b=zjjuyyIk1F1BjIBpyp21kOzsi9MLtsMkizWXPiECx20a5K2Q+FmOhPke1NN/+ILWdB
+         WF8Xim75PI7LIt6M5+UuNv1HMy877DWa1pJBP8cO6xplgBRKh/7gzDjcyKWCSzGIj9zB
+         izgfiJVKlHLqR+YE8Ly143laB7RIRWC81neZOrUzkhOPYH2V1NTt6RosbediE/Ix6Ifs
+         m1oDAIB6rs34HbeqVo/shlF0pr6caqNTUKofLeZ86qJ17dPSByMTMx7/7ZIbChqFLH5d
+         qorg+pLmFyWNipMyZtxJWXj8cvzDFGryEJ/tliyjq4FLgNQfR83KgDwNN0oOobMr9jJR
+         TGvg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B817F2189F
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32451218A5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Grant Grundler <grundler@chromium.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 4.9 24/74] r8152: add Linksys USB3GIGV1 id
-Date: Fri, 27 Apr 2018 15:58:14 +0200
-Message-Id: <20180427135710.901094132@linuxfoundation.org>
+	syzbot+70ce058e01259de7bb1d@syzkaller.appspotmail.com,
+	Benjamin Beichler <benjamin.beichler@uni-rostock.de>,
+	Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 4.9 23/74] mac80211_hwsim: fix use-after-free bug in hwsim_exit_net
+Date: Fri, 27 Apr 2018 15:58:13 +0200
+Message-Id: <20180427135710.854308792@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135709.899303463@linuxfoundation.org>
 References: <20180427135709.899303463@linuxfoundation.org>
@@ -45,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908159806034716?=
-X-GMAIL-MSGID: =?utf-8?q?1598908328223538023?=
+X-GMAIL-THRID: =?utf-8?q?1598908325584981965?=
+X-GMAIL-MSGID: =?utf-8?q?1598908325584981965?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,66 +53,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Grant Grundler <grundler@chromium.org>
+From: Benjamin Beichler <benjamin.beichler@uni-rostock.de>
 
-commit 90841047a01b452cc8c3f9b990698b264143334a upstream.
+commit 8cfd36a0b53aeb4ec21d81eb79706697b84dfc3d upstream.
 
-This linksys dongle by default comes up in cdc_ether mode.
-This patch allows r8152 to claim the device:
-   Bus 002 Device 002: ID 13b1:0041 Linksys
+When destroying a net namespace, all hwsim interfaces, which are not
+created in default namespace are deleted. But the async deletion of the
+interfaces could last longer than the actual destruction of the
+namespace, which results to an use after free bug. Therefore use
+synchronous deletion in this case.
 
-Signed-off-by: Grant Grundler <grundler@chromium.org>
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-[krzk: Rebase on v4.4]
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Fixes: 100cb9ff40e0 ("mac80211_hwsim: Allow managing radios from non-initial namespaces")
+Reported-by: syzbot+70ce058e01259de7bb1d@syzkaller.appspotmail.com
+Signed-off-by: Benjamin Beichler <benjamin.beichler@uni-rostock.de>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/usb/cdc_ether.c |   10 ++++++++++
- drivers/net/usb/r8152.c     |    2 ++
- 2 files changed, 12 insertions(+)
 
---- a/drivers/net/usb/cdc_ether.c
-+++ b/drivers/net/usb/cdc_ether.c
-@@ -530,6 +530,7 @@ static const struct driver_info wwan_inf
- #define REALTEK_VENDOR_ID	0x0bda
- #define SAMSUNG_VENDOR_ID	0x04e8
- #define LENOVO_VENDOR_ID	0x17ef
-+#define LINKSYS_VENDOR_ID	0x13b1
- #define NVIDIA_VENDOR_ID	0x0955
- #define HP_VENDOR_ID		0x03f0
+---
+ drivers/net/wireless/mac80211_hwsim.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+--- a/drivers/net/wireless/mac80211_hwsim.c
++++ b/drivers/net/wireless/mac80211_hwsim.c
+@@ -3346,8 +3346,11 @@ static void __net_exit hwsim_exit_net(st
+ 			continue;
  
-@@ -719,6 +720,15 @@ static const struct usb_device_id	produc
- 	.driver_info = 0,
- },
- 
-+#if IS_ENABLED(CONFIG_USB_RTL8152)
-+/* Linksys USB3GIGV1 Ethernet Adapter */
-+{
-+	USB_DEVICE_AND_INTERFACE_INFO(LINKSYS_VENDOR_ID, 0x0041, USB_CLASS_COMM,
-+			USB_CDC_SUBCLASS_ETHERNET, USB_CDC_PROTO_NONE),
-+	.driver_info = 0,
-+},
-+#endif
+ 		list_del(&data->list);
+-		INIT_WORK(&data->destroy_work, destroy_radio);
+-		schedule_work(&data->destroy_work);
++		spin_unlock_bh(&hwsim_radio_lock);
++		mac80211_hwsim_del_radio(data, wiphy_name(data->hw->wiphy),
++					 NULL);
++		spin_lock_bh(&hwsim_radio_lock);
 +
- /* Lenovo Thinkpad USB 3.0 Ethernet Adapters (based on Realtek RTL8153) */
- {
- 	USB_DEVICE_AND_INTERFACE_INFO(LENOVO_VENDOR_ID, 0x7205, USB_CLASS_COMM,
---- a/drivers/net/usb/r8152.c
-+++ b/drivers/net/usb/r8152.c
-@@ -519,6 +519,7 @@ enum rtl8152_flags {
- #define VENDOR_ID_REALTEK		0x0bda
- #define VENDOR_ID_SAMSUNG		0x04e8
- #define VENDOR_ID_LENOVO		0x17ef
-+#define VENDOR_ID_LINKSYS		0x13b1
- #define VENDOR_ID_NVIDIA		0x0955
- 
- #define MCU_TYPE_PLA			0x0100
-@@ -4506,6 +4507,7 @@ static struct usb_device_id rtl8152_tabl
- 	{REALTEK_USB_DEVICE(VENDOR_ID_SAMSUNG, 0xa101)},
- 	{REALTEK_USB_DEVICE(VENDOR_ID_LENOVO,  0x7205)},
- 	{REALTEK_USB_DEVICE(VENDOR_ID_LENOVO,  0x304f)},
-+	{REALTEK_USB_DEVICE(VENDOR_ID_LINKSYS, 0x0041)},
- 	{REALTEK_USB_DEVICE(VENDOR_ID_NVIDIA,  0x09ff)},
- 	{}
- };
+ 	}
+ 	spin_unlock_bh(&hwsim_radio_lock);
+ }
