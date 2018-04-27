@@ -1,39 +1,40 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqyUsLuiIOX/0OaMYUWb4C8eR6O6oPtv6xmOe7nDHUd9b0ZtJyQ+x42Ze/1xEz2GvOTZfv4
-ARC-Seal: i=1; a=rsa-sha256; t=1524837956; cv=none;
+X-Google-Smtp-Source: AB8JxZrpEeK4yvZO9tfopKLjOytLcpqMYg0hotaqRUQZU/VFUMjPdAbNSMz09YPAv2y8Ba++DNNY
+ARC-Seal: i=1; a=rsa-sha256; t=1524837954; cv=none;
         d=google.com; s=arc-20160816;
-        b=ra02Qc395NoAOuWrq9HHPfPaMCTitJmJrFLigcfgFw2RwXmKZP7RE6fkKQrzB67SFS
-         wITwnOJVQTmVkjN/R8xY3cvxTEO/LUFs1pvpkVh2GNh+SUEi12YYLx0Lxtbgc0fPh0yu
-         NkkhcI1TIVmkTITnrVwRpGMbs9f85Elq0gBp7OrL8Lw/ZNv3ZMJACsEyW4dhbohGmWAe
-         meTV/UE0TzKdUACR62H/A7ikd/dD6lkrH0dpNinkZvTKYaX9IzVBh2nIShJMgSWlOldt
-         d+Jt5gJ2j6MQcEmnvU4yQTg+3n1eyF7bPU3RuIHSAyoN0LxJRWlU0lttfKizLoELMoOz
-         TA9Q==
+        b=KXpDydPKkqbpCSDMe3oRRZQrSOAoqKbp8C+zLhpPaT9B1o8mN1VAFVJjqfZ2mh1M66
+         NPWrsqstAQ1B/7B1Z7aOiBZznaBlfJOGi369ERAMVHsX052m5ehW+egA6RYN7mxxzCe8
+         Ub2F7XpjesaOGTIL0eVJZW5u+sNsp1sllSroLF7xUVN//s++Fmp8tN+IpQ4ydBccQ1QW
+         uWuDclykzmv8Cx6Gc4pfAaT0mNbjXuyAugEjX+0LqH1P5sPVQZidR10hk5iYCYfFjMC9
+         IouGwBSnRskPjCihjB1bimTYe0MilGa8qmyUUCBI1TKuM4vqXIhiv9ihiRWeZi8w+0gc
+         eFKg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=UBUbjZRCdKRFRMmORA5+s2inJ7oQ/Dj2Vb4GyXYtcMc=;
-        b=ChFG47ld85PgZTlfVCwk3isIBJ5uauObcnT1MJwKSoxD3akJjUt6bxUxS3lNZmWIfd
-         1bIG+Dxyph1a3cNHHrJM1SGsvxx+IXbVfVHAhdfnVzbiWmZpG9stZdXkE6Yd+xB7CAXR
-         +Rxe/VO1YEfREif6dxxpY6pVdmGjLMBA5X5+B7kparhN0Y40ix4lYpfEBe0oPgNy86Mz
-         ra2df+EnGdL28fdLv/qDTQoao2fqJm0OuKGKnnBXPUJ245CO7oeYFjDTQMWFoNvvUD5O
-         V0fjNMKhMWxrwgvlaxsg6NlZWSARrKCUsSt6RCtlaZBLtB3JabZX+wfpzxhiHwW9fxlu
-         O0UA==
+        bh=eQ2Y17DFAYL/Rm0eZCs1QSvYgJV7Cu5fF4n6cb3EYgI=;
+        b=SNzD7U366T0aHi0BpMDUIeZYXDwl8TVmp3h8iIXf9bQGcDo92f8Fo7fkozRv7vjUTz
+         /9iBmdSqW9vEMTXMouHuXbpFsyC5EBXM1EpiLUrpvL2961FrKtSwEW226Gz2JBXxAPF6
+         qankNNDf/58llOBkvNjz7l9C0XmtXmUaKojq6NzdVVCKuYjDnboXlIpqXeRT8Wj0FmoJ
+         Svuc1etAGFDaB2hhyhLFR4BgT01Bl4ApcP8bB8ldHhAyCfaNpzvx3LfSqNi174qfw2ab
+         r20OmS6Iwu1NZdHsK5Kt384eo2K6PpY7P8WEtaTLGK8nTr7nU13FBa/yb9O+3RuAOViE
+         sP8A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B23F021890
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2593721892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>,
+	syzbot+4f03bdf92fdf9ef5ddab@syzkaller.appspotmail.com,
+	Guillaume Nault <g.nault@alphalink.fr>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 58/74] vlan: Fix reading memory beyond skb->tail in skb_vlan_tagged_multi
-Date: Fri, 27 Apr 2018 15:58:48 +0200
-Message-Id: <20180427135712.335304276@linuxfoundation.org>
+Subject: [PATCH 4.9 57/74] pppoe: check sockaddr length in pppoe_connect()
+Date: Fri, 27 Apr 2018 15:58:47 +0200
+Message-Id: <20180427135712.294877621@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135709.899303463@linuxfoundation.org>
 References: <20180427135709.899303463@linuxfoundation.org>
@@ -43,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908232509203798?=
-X-GMAIL-MSGID: =?utf-8?q?1598908485652464617?=
+X-GMAIL-THRID: =?utf-8?q?1598908020087873199?=
+X-GMAIL-MSGID: =?utf-8?q?1598908483164825298?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,133 +53,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
+From: Guillaume Nault <g.nault@alphalink.fr>
 
 
-[ Upstream commit 7ce2367254e84753bceb07327aaf5c953cfce117 ]
+[ Upstream commit a49e2f5d5fb141884452ddb428f551b123d436b5 ]
 
-Syzkaller spotted an old bug which leads to reading skb beyond tail by 4
-bytes on vlan tagged packets.
-This is caused because skb_vlan_tagged_multi() did not check
-skb_headlen.
+We must validate sockaddr_len, otherwise userspace can pass fewer data
+than we expect and we end up accessing invalid data.
 
-BUG: KMSAN: uninit-value in eth_type_vlan include/linux/if_vlan.h:283 [inline]
-BUG: KMSAN: uninit-value in skb_vlan_tagged_multi include/linux/if_vlan.h:656 [inline]
-BUG: KMSAN: uninit-value in vlan_features_check include/linux/if_vlan.h:672 [inline]
-BUG: KMSAN: uninit-value in dflt_features_check net/core/dev.c:2949 [inline]
-BUG: KMSAN: uninit-value in netif_skb_features+0xd1b/0xdc0 net/core/dev.c:3009
-CPU: 1 PID: 3582 Comm: syzkaller435149 Not tainted 4.16.0+ #82
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:17 [inline]
-  dump_stack+0x185/0x1d0 lib/dump_stack.c:53
-  kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
-  __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:676
-  eth_type_vlan include/linux/if_vlan.h:283 [inline]
-  skb_vlan_tagged_multi include/linux/if_vlan.h:656 [inline]
-  vlan_features_check include/linux/if_vlan.h:672 [inline]
-  dflt_features_check net/core/dev.c:2949 [inline]
-  netif_skb_features+0xd1b/0xdc0 net/core/dev.c:3009
-  validate_xmit_skb+0x89/0x1320 net/core/dev.c:3084
-  __dev_queue_xmit+0x1cb2/0x2b60 net/core/dev.c:3549
-  dev_queue_xmit+0x4b/0x60 net/core/dev.c:3590
-  packet_snd net/packet/af_packet.c:2944 [inline]
-  packet_sendmsg+0x7c57/0x8a10 net/packet/af_packet.c:2969
-  sock_sendmsg_nosec net/socket.c:630 [inline]
-  sock_sendmsg net/socket.c:640 [inline]
-  sock_write_iter+0x3b9/0x470 net/socket.c:909
-  do_iter_readv_writev+0x7bb/0x970 include/linux/fs.h:1776
-  do_iter_write+0x30d/0xd40 fs/read_write.c:932
-  vfs_writev fs/read_write.c:977 [inline]
-  do_writev+0x3c9/0x830 fs/read_write.c:1012
-  SYSC_writev+0x9b/0xb0 fs/read_write.c:1085
-  SyS_writev+0x56/0x80 fs/read_write.c:1082
-  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-RIP: 0033:0x43ffa9
-RSP: 002b:00007fff2cff3948 EFLAGS: 00000217 ORIG_RAX: 0000000000000014
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043ffa9
-RDX: 0000000000000001 RSI: 0000000020000080 RDI: 0000000000000003
-RBP: 00000000006cb018 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000217 R12: 00000000004018d0
-R13: 0000000000401960 R14: 0000000000000000 R15: 0000000000000000
-
-Uninit was created at:
-  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
-  kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:188
-  kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:314
-  kmsan_slab_alloc+0x11/0x20 mm/kmsan/kmsan.c:321
-  slab_post_alloc_hook mm/slab.h:445 [inline]
-  slab_alloc_node mm/slub.c:2737 [inline]
-  __kmalloc_node_track_caller+0xaed/0x11c0 mm/slub.c:4369
-  __kmalloc_reserve net/core/skbuff.c:138 [inline]
-  __alloc_skb+0x2cf/0x9f0 net/core/skbuff.c:206
-  alloc_skb include/linux/skbuff.h:984 [inline]
-  alloc_skb_with_frags+0x1d4/0xb20 net/core/skbuff.c:5234
-  sock_alloc_send_pskb+0xb56/0x1190 net/core/sock.c:2085
-  packet_alloc_skb net/packet/af_packet.c:2803 [inline]
-  packet_snd net/packet/af_packet.c:2894 [inline]
-  packet_sendmsg+0x6444/0x8a10 net/packet/af_packet.c:2969
-  sock_sendmsg_nosec net/socket.c:630 [inline]
-  sock_sendmsg net/socket.c:640 [inline]
-  sock_write_iter+0x3b9/0x470 net/socket.c:909
-  do_iter_readv_writev+0x7bb/0x970 include/linux/fs.h:1776
-  do_iter_write+0x30d/0xd40 fs/read_write.c:932
-  vfs_writev fs/read_write.c:977 [inline]
-  do_writev+0x3c9/0x830 fs/read_write.c:1012
-  SYSC_writev+0x9b/0xb0 fs/read_write.c:1085
-  SyS_writev+0x56/0x80 fs/read_write.c:1082
-  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-
-Fixes: 58e998c6d239 ("offloading: Force software GSO for multiple vlan tags.")
-Reported-and-tested-by: syzbot+0bbe42c764feafa82c5a@syzkaller.appspotmail.com
-Signed-off-by: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
+Fixes: 224cf5ad14c0 ("ppp: Move the PPP drivers")
+Reported-by: syzbot+4f03bdf92fdf9ef5ddab@syzkaller.appspotmail.com
+Signed-off-by: Guillaume Nault <g.nault@alphalink.fr>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/if_vlan.h |    7 +++++--
- net/core/dev.c          |    2 +-
- 2 files changed, 6 insertions(+), 3 deletions(-)
+ drivers/net/ppp/pppoe.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/include/linux/if_vlan.h
-+++ b/include/linux/if_vlan.h
-@@ -600,7 +600,7 @@ static inline bool skb_vlan_tagged(const
-  * Returns true if the skb is tagged with multiple vlan headers, regardless
-  * of whether it is hardware accelerated or not.
-  */
--static inline bool skb_vlan_tagged_multi(const struct sk_buff *skb)
-+static inline bool skb_vlan_tagged_multi(struct sk_buff *skb)
- {
- 	__be16 protocol = skb->protocol;
+--- a/drivers/net/ppp/pppoe.c
++++ b/drivers/net/ppp/pppoe.c
+@@ -620,6 +620,10 @@ static int pppoe_connect(struct socket *
+ 	lock_sock(sk);
  
-@@ -610,6 +610,9 @@ static inline bool skb_vlan_tagged_multi
- 		if (likely(!eth_type_vlan(protocol)))
- 			return false;
- 
-+		if (unlikely(!pskb_may_pull(skb, VLAN_ETH_HLEN)))
-+			return false;
+ 	error = -EINVAL;
 +
- 		veh = (struct vlan_ethhdr *)skb->data;
- 		protocol = veh->h_vlan_encapsulated_proto;
- 	}
-@@ -627,7 +630,7 @@ static inline bool skb_vlan_tagged_multi
-  *
-  * Returns features without unsafe ones if the skb has multiple tags.
-  */
--static inline netdev_features_t vlan_features_check(const struct sk_buff *skb,
-+static inline netdev_features_t vlan_features_check(struct sk_buff *skb,
- 						    netdev_features_t features)
- {
- 	if (skb_vlan_tagged_multi(skb)) {
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -2871,7 +2871,7 @@ netdev_features_t passthru_features_chec
- }
- EXPORT_SYMBOL(passthru_features_check);
++	if (sockaddr_len != sizeof(struct sockaddr_pppox))
++		goto end;
++
+ 	if (sp->sa_protocol != PX_PROTO_OE)
+ 		goto end;
  
--static netdev_features_t dflt_features_check(const struct sk_buff *skb,
-+static netdev_features_t dflt_features_check(struct sk_buff *skb,
- 					     struct net_device *dev,
- 					     netdev_features_t features)
- {
