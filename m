@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758282AbeD0NAE (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 09:00:04 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:15058 "EHLO
+        id S1758305AbeD0NAQ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 09:00:16 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:15105 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1757846AbeD0NAC (ORCPT
+        by vger.kernel.org with ESMTP id S1758290AbeD0NAO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 09:00:02 -0400
+        Fri, 27 Apr 2018 09:00:14 -0400
 From: Philippe CORNU <philippe.cornu@st.com>
 To: Yannick FERTRE <yannick.fertre@st.com>,
         Benjamin Gaignard <benjamin.gaignard@linaro.org>,
@@ -15,14 +15,14 @@ To: Yannick FERTRE <yannick.fertre@st.com>,
         "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 CC: Alexandre TORGUE <alexandre.torgue@st.com>
-Subject: Re: [PATCH] drm/stm: ltdc: add mode_valid()
-Thread-Topic: [PATCH] drm/stm: ltdc: add mode_valid()
-Thread-Index: AQHT1kDms4rb0CcO1UuIGz3k5PZYoKQQ+5eAgAOFoAA=
-Date: Fri, 27 Apr 2018 12:59:50 +0000
-Message-ID: <e1f4db2b-a409-3557-5ebd-494fb08a95d1@st.com>
-References: <20180417114026.8709-1-philippe.cornu@st.com>
- <c3470496-e7ff-18e6-633a-fc899ee15e17@st.com>
-In-Reply-To: <c3470496-e7ff-18e6-633a-fc899ee15e17@st.com>
+Subject: Re: [PATCH] drm/stm: ltdc: fix warnings in ltdc_plane_create()
+Thread-Topic: [PATCH] drm/stm: ltdc: fix warnings in ltdc_plane_create()
+Thread-Index: AQHT1+JFaeZhbelLh0aN3VDy/9r5FqQQ+JMAgAOFcYA=
+Date: Fri, 27 Apr 2018 13:00:04 +0000
+Message-ID: <a45a726c-495e-8783-0bd8-495fbc996957@st.com>
+References: <20180419132804.8317-1-philippe.cornu@st.com>
+ <1dd09038-3d92-ffd3-bc6e-660f363190d4@st.com>
+In-Reply-To: <1dd09038-3d92-ffd3-bc6e-660f363190d4@st.com>
 Accept-Language: fr-FR, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -33,7 +33,7 @@ x-ms-exchange-messagesentrepresentingtype: 1
 x-ms-exchange-transport-fromentityheader: Hosted
 x-originating-ip: [10.75.127.44]
 Content-Type: text/plain; charset="utf-8"
-Content-ID: <5120818970EE494DB19ECB3C35F86CBA@st.com>
+Content-ID: <95CC48389A09414BB9F92E30EB7BBD30@st.com>
 MIME-Version: 1.0
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-27_03:,,
  signatures=0
@@ -41,11 +41,11 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3RD0AhH015387
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3RD0MOM015391
 
 
 
-On 04/25/2018 09:12 AM, Yannick FERTRE wrote:
+On 04/25/2018 09:13 AM, Yannick FERTRE wrote:
 > Hi Philippe,
 > 
 > Reviewed-by: Yannick Fertré <yannick.fertre@st.com>
@@ -55,76 +55,34 @@ Applied on drm-misc-next.
 Many thanks,
 Philippe :-)
 
-> On 04/17/2018 01:40 PM, Philippe Cornu wrote:
->> Add mode_valid() function to filter modes according to available
->> pll clock values and "preferred" modes. It is particularly
->> useful for hdmi modes that require precise pixel clocks.
->>
->> Note that "preferred" modes are always accepted:
->> - this is important for panels because panel clock tolerances are
->>     bigger than hdmi ones and there is no reason to not accept them
->>     (the fps may vary a little but it is not a problem).
->> - the hdmi preferred mode will be accepted too, but userland will
->>     be able to use others hdmi "valid" modes if necessary.
+> 
+> On 04/19/2018 03:28 PM, Philippe Cornu wrote:
+>> "make C=1" returns 2 warnings in ltdc_plane_create()
+>> ("Using plain integer as NULL pointer"). This patch
+>> fixes them.
 >>
 >> Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
 >> ---
->>    drivers/gpu/drm/stm/ltdc.c | 38 ++++++++++++++++++++++++++++++++++++++
->>    1 file changed, 38 insertions(+)
+>>    drivers/gpu/drm/stm/ltdc.c | 4 ++--
+>>    1 file changed, 2 insertions(+), 2 deletions(-)
 >>
 >> diff --git a/drivers/gpu/drm/stm/ltdc.c b/drivers/gpu/drm/stm/ltdc.c
->> index 014cef8cef37..616191fe98ae 100644
+>> index 616191fe98ae..d997a6014d6c 100644
 >> --- a/drivers/gpu/drm/stm/ltdc.c
 >> +++ b/drivers/gpu/drm/stm/ltdc.c
->> @@ -445,6 +445,43 @@ static void ltdc_crtc_atomic_disable(struct drm_crtc *crtc,
->>    	reg_set(ldev->regs, LTDC_SRCR, SRCR_IMR);
->>    }
+>> @@ -860,13 +860,13 @@ static struct drm_plane *ltdc_plane_create(struct drm_device *ddev,
 >>    
->> +#define CLK_TOLERANCE_HZ 50
->> +
->> +static enum drm_mode_status
->> +ltdc_crtc_mode_valid(struct drm_crtc *crtc,
->> +		     const struct drm_display_mode *mode)
->> +{
->> +	struct ltdc_device *ldev = crtc_to_ltdc(crtc);
->> +	int target = mode->clock * 1000;
->> +	int target_min = target - CLK_TOLERANCE_HZ;
->> +	int target_max = target + CLK_TOLERANCE_HZ;
->> +	int result;
->> +
->> +	/*
->> +	 * Accept all "preferred" modes:
->> +	 * - this is important for panels because panel clock tolerances are
->> +	 *   bigger than hdmi ones and there is no reason to not accept them
->> +	 *   (the fps may vary a little but it is not a problem).
->> +	 * - the hdmi preferred mode will be accepted too, but userland will
->> +	 *   be able to use others hdmi "valid" modes if necessary.
->> +	 */
->> +	if (mode->type & DRM_MODE_TYPE_PREFERRED)
->> +		return MODE_OK;
->> +
->> +	result = clk_round_rate(ldev->pixel_clk, target);
->> +
->> +	DRM_DEBUG_DRIVER("clk rate target %d, available %d\n", target, result);
->> +
->> +	/*
->> +	 * Filter modes according to the clock value, particularly useful for
->> +	 * hdmi modes that require precise pixel clocks.
->> +	 */
->> +	if (result < target_min || result > target_max)
->> +		return MODE_CLOCK_RANGE;
->> +
->> +	return MODE_OK;
->> +}
->> +
->>    static bool ltdc_crtc_mode_fixup(struct drm_crtc *crtc,
->>    				 const struct drm_display_mode *mode,
->>    				 struct drm_display_mode *adjusted_mode)
->> @@ -559,6 +596,7 @@ static void ltdc_crtc_atomic_flush(struct drm_crtc *crtc,
->>    }
+>>    	plane = devm_kzalloc(dev, sizeof(*plane), GFP_KERNEL);
+>>    	if (!plane)
+>> -		return 0;
+>> +		return NULL;
 >>    
->>    static const struct drm_crtc_helper_funcs ltdc_crtc_helper_funcs = {
->> +	.mode_valid = ltdc_crtc_mode_valid,
->>    	.mode_fixup = ltdc_crtc_mode_fixup,
->>    	.mode_set_nofb = ltdc_crtc_mode_set_nofb,
->>    	.atomic_flush = ltdc_crtc_atomic_flush,
+>>    	ret = drm_universal_plane_init(ddev, plane, possible_crtcs,
+>>    				       &ltdc_plane_funcs, formats, nb_fmt,
+>>    				       NULL, type, NULL);
+>>    	if (ret < 0)
+>> -		return 0;
+>> +		return NULL;
+>>    
+>>    	drm_plane_helper_add(plane, &ltdc_plane_helper_funcs);
+>>    
