@@ -1,40 +1,39 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrrrLgQ/Td1zG96M+dVdzQehTht16Ff1xKuNLd5OAGJs5R4bjjIUhXR00rl3N1n43vohoMi
-ARC-Seal: i=1; a=rsa-sha256; t=1524837874; cv=none;
+X-Google-Smtp-Source: AB8JxZqnJDao6GzhgukkNCG+sA9OjM4WdskW7U+QAPqiGxHk+pYVUlop/pwcSB+ol0C95Nbz70Ce
+ARC-Seal: i=1; a=rsa-sha256; t=1524837871; cv=none;
         d=google.com; s=arc-20160816;
-        b=OnXzjALkRqmOMGn7mlAAYHQOSWhDWELSFvfzk1M9wXJes4Sr731NR6o5mZiB7F/v5s
-         E3XbW+oz+CRbAYgLbtD9fQcDXAzcK6OADcgF1T5ye2956uA9h1s2UXUSKeO+chK7j61i
-         vA0btULlHreu3cZS9IX5Eyht5g7aMBoKK9pXP1vSHpDtSKQH9wUQ2YvjUuJExxbAddOh
-         FTrME746mQCASAobNcdD71LsxkntutRvaBpT0pECgyU8Xwt9Rd1gj3gVDJCUEwNM3CIh
-         3ZMuewEWHWMYfG2/Gy1dZjB/qz/Cd3wWSkLKuBUIvovOkc8NMdWWPnmddBKXU/iZwB4l
-         hTdQ==
+        b=xwNdeIuzgBjGMOPxs++gh8uuukIxUjvGPJfz+NMeiUth/Zzzd5G7O4fF05JWcUG5iL
+         UXtjTkJWx2Lxj7bOPT/PbBaTuY1FOFed9NVes6APUM/lvCMX3HKhljUo3TLEHeHjLTBj
+         7mqEP78/JmYTP73qOk8EEgBl2LSv1Bqfrk4wAJX3BF+JVAYncpLK3Ba64QGWD60PMzoI
+         mwmuS5jznA1Bx8iAWwwhzVeKk6JyKBYdnOkef61Z/P/WtyYWdkvBImkYFix3ZQghHOf6
+         8SBCz5SoP0c77tb0RHK9Xv0YIysubXemykybg5BMnImVKse+sCLYk5zQH5d0ihY7AraT
+         4VsA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=HuG8mDBDMqEAOhOP/0CvUfSh9uQ3kiPDc8scBgpZGxo=;
-        b=WMHPx/6eHLw6Qkkf7OnjtM5tchEgLz4tCjZj2MLXZQ4Gk5YVqu3ux08OOfZeuaiiqV
-         Ko0eurwxvBa/b5fR48escLvWMPA6bOwQbrYWyv03hLaXwojgJjSuubCnu8ft4IBTg4aG
-         tL+0yUQkY4VpJQA1/rbBsoCbKS35fllsY7N3YlA3rXH7zbEPpAi6MO7bfJooi5NV+avo
-         XmsoT4x+bGzI9s4Wb59guEjFv5Wl/okQitCpmO5GOdE/v2j8IIWtKBGDjIiDGI6Hl3UC
-         K0dVvD1YlcWGiYyRs3MM9K7xhZk3Y48bIobJWXcrwukVDYqHoGXGxjLPo4lqKZQ+lD/H
-         ZlXw==
+        bh=Tpia8S4uxEvecXVZ43Rf4lQYHHPN+LAi7lT5yU0MYEs=;
+        b=OWR78Qa6XSGb8E7097O4c9tlmbZ4Ol1Bw+GW+i57n6gaqx//shU/Vewcog0plVZbTE
+         Wohzxy0bON/nvfERfo+HkH8Zb77fyRiNIIFU2XAYFrF3HYcVxrnmv/nHWnUMfiniImZk
+         +xPKKaMp/f8LBgbFnJfBjGltrxRR5tVLwHbpfP3S3xr0cxGaKjx051Wn8d4dGDzfcfmR
+         dVDMsizy0D9+uQC0uFgFdNJb+1Efa7HdNQVSva/7SVO9k980S0Ofbq2v+y05ESKwzbQm
+         sWl9IveL3xSzCwvo5Tn496ZhozcD5is34O6aKpy1lTMILcl6zSehz2Udetrg3v9j7eTU
+         kbzw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DDD421890
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF35621890
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mark Rutland <mark.rutland@arm.com>,
-	Eric Biggers <ebiggers@google.com>,
+	Xin Long <lucien.xin@gmail.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 48/74] KEYS: DNS: limit the length of option strings
-Date: Fri, 27 Apr 2018 15:58:38 +0200
-Message-Id: <20180427135711.922951437@linuxfoundation.org>
+Subject: [PATCH 4.9 47/74] bonding: do not set slave_dev npinfo before slave_enable_netpoll in bond_enslave
+Date: Fri, 27 Apr 2018 15:58:37 +0200
+Message-Id: <20180427135711.876315795@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135709.899303463@linuxfoundation.org>
 References: <20180427135709.899303463@linuxfoundation.org>
@@ -44,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908006478347957?=
-X-GMAIL-MSGID: =?utf-8?q?1598908398930606447?=
+X-GMAIL-THRID: =?utf-8?q?1598908146234977294?=
+X-GMAIL-MSGID: =?utf-8?q?1598908396416416360?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,74 +52,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Biggers <ebiggers@google.com>
+From: Xin Long <lucien.xin@gmail.com>
 
 
-[ Upstream commit 9c438d7a3a52dcc2b9ed095cb87d3a5e83cf7e60 ]
+[ Upstream commit ddea788c63094f7c483783265563dd5b50052e28 ]
 
-Adding a dns_resolver key whose payload contains a very long option name
-resulted in that string being printed in full.  This hit the WARN_ONCE()
-in set_precision() during the printk(), because printk() only supports a
-precision of up to 32767 bytes:
+After Commit 8a8efa22f51b ("bonding: sync netpoll code with bridge"), it
+would set slave_dev npinfo in slave_enable_netpoll when enslaving a dev
+if bond->dev->npinfo was set.
 
-    precision 1000000 too large
-    WARNING: CPU: 0 PID: 752 at lib/vsprintf.c:2189 vsnprintf+0x4bc/0x5b0
+However now slave_dev npinfo is set with bond->dev->npinfo before calling
+slave_enable_netpoll. With slave_dev npinfo set, __netpoll_setup called
+in slave_enable_netpoll will not call slave dev's .ndo_netpoll_setup().
+It causes that the lower dev of this slave dev can't set its npinfo.
 
-Fix it by limiting option strings (combined name + value) to a much more
-reasonable 128 bytes.  The exact limit is arbitrary, but currently the
-only recognized option is formatted as "dnserror=%lu" which fits well
-within this limit.
+One way to reproduce it:
 
-Also ratelimit the printks.
+  # modprobe bonding
+  # brctl addbr br0
+  # brctl addif br0 eth1
+  # ifconfig bond0 192.168.122.1/24 up
+  # ifenslave bond0 eth2
+  # systemctl restart netconsole
+  # ifenslave bond0 br0
+  # ifconfig eth2 down
+  # systemctl restart netconsole
 
-Reproducer:
+The netpoll won't really work.
 
-    perl -e 'print "#", "A" x 1000000, "\x00"' | keyctl padd dns_resolver desc @s
+This patch is to remove that slave_dev npinfo setting in bond_enslave().
 
-This bug was found using syzkaller.
-
-Reported-by: Mark Rutland <mark.rutland@arm.com>
-Fixes: 4a2d789267e0 ("DNS: If the DNS server returns an error, allow that to be cached [ver #2]")
-Signed-off-by: Eric Biggers <ebiggers@google.com>
+Fixes: 8a8efa22f51b ("bonding: sync netpoll code with bridge")
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/dns_resolver/dns_key.c |   13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ drivers/net/bonding/bond_main.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/net/dns_resolver/dns_key.c
-+++ b/net/dns_resolver/dns_key.c
-@@ -25,6 +25,7 @@
- #include <linux/moduleparam.h>
- #include <linux/slab.h>
- #include <linux/string.h>
-+#include <linux/ratelimit.h>
- #include <linux/kernel.h>
- #include <linux/keyctl.h>
- #include <linux/err.h>
-@@ -91,9 +92,9 @@ dns_resolver_preparse(struct key_prepars
+--- a/drivers/net/bonding/bond_main.c
++++ b/drivers/net/bonding/bond_main.c
+@@ -1654,8 +1654,7 @@ int bond_enslave(struct net_device *bond
+ 	} /* switch(bond_mode) */
  
- 			next_opt = memchr(opt, '#', end - opt) ?: end;
- 			opt_len = next_opt - opt;
--			if (!opt_len) {
--				printk(KERN_WARNING
--				       "Empty option to dns_resolver key\n");
-+			if (opt_len <= 0 || opt_len > 128) {
-+				pr_warn_ratelimited("Invalid option length (%d) for dns_resolver key\n",
-+						    opt_len);
- 				return -EINVAL;
- 			}
- 
-@@ -127,10 +128,8 @@ dns_resolver_preparse(struct key_prepars
- 			}
- 
- 		bad_option_value:
--			printk(KERN_WARNING
--			       "Option '%*.*s' to dns_resolver key:"
--			       " bad/missing value\n",
--			       opt_nlen, opt_nlen, opt);
-+			pr_warn_ratelimited("Option '%*.*s' to dns_resolver key: bad/missing value\n",
-+					    opt_nlen, opt_nlen, opt);
- 			return -EINVAL;
- 		} while (opt = next_opt + 1, opt < end);
- 	}
+ #ifdef CONFIG_NET_POLL_CONTROLLER
+-	slave_dev->npinfo = bond->dev->npinfo;
+-	if (slave_dev->npinfo) {
++	if (bond->dev->npinfo) {
+ 		if (slave_enable_netpoll(new_slave)) {
+ 			netdev_info(bond_dev, "master_dev is using netpoll, but new slave device does not support netpoll\n");
+ 			res = -EBUSY;
