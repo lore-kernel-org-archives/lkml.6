@@ -1,102 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932473AbeD0JLy (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 05:11:54 -0400
-Received: from mga01.intel.com ([192.55.52.88]:61521 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932430AbeD0JLu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 05:11:50 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,334,1520924400";
-   d="scan'208";a="194829847"
-Date: Fri, 27 Apr 2018 17:12:34 +0800
-From: Tiwei Bie <tiwei.bie@intel.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org, wexu@redhat.com,
-        jfreimann@redhat.com
-Subject: Re: [RFC v3 0/5] virtio: support packed ring
-Message-ID: <20180427091234.n6vr3wcnbnqxd3so@debian>
-References: <20180425051550.24342-1-tiwei.bie@intel.com>
- <5ad1ca01-1e5c-7105-f303-7e8d42f6a068@redhat.com>
- <20180427071725-mutt-send-email-mst@kernel.org>
- <5c712aa2-f00e-b472-cdfc-48175aea790d@redhat.com>
+        id S932463AbeD0JNa (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 05:13:30 -0400
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:53750 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932370AbeD0JN2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 05:13:28 -0400
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=rf@opensource.cirrus.com
+Subject: Re: [REGRESSION][BISECTED] i.MX6 pinctrl hogs stopped working
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
+To: =?UTF-8?Q?Mika_Penttil=c3=a4?= <mika.penttila@nextfour.com>,
+        <linus.walleij@linaro.org>
+CC: LKML <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <patches@opensource.cirrus.com>
+References: <8b07e30a-7dd1-7923-dc50-b84f0e43e9e9@nextfour.com>
+ <1d3c6099-3b33-d5dd-e12b-903586dc79f3@opensource.cirrus.com>
+ <950ec4db-4121-2faf-b6fd-5fcabef91e90@nextfour.com>
+ <88a3855d-db5f-9086-2901-2360d0cd26ec@opensource.cirrus.com>
+Message-ID: <87088f1f-9d2e-1966-ddd5-eb2780a3d2dd@opensource.cirrus.com>
+Date: Fri, 27 Apr 2018 10:13:21 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <88a3855d-db5f-9086-2901-2360d0cd26ec@opensource.cirrus.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <5c712aa2-f00e-b472-cdfc-48175aea790d@redhat.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1711220000
+ definitions=main-1804270092
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 27, 2018 at 02:17:51PM +0800, Jason Wang wrote:
-> On 2018年04月27日 12:18, Michael S. Tsirkin wrote:
-> > On Fri, Apr 27, 2018 at 11:56:05AM +0800, Jason Wang wrote:
-> > > On 2018年04月25日 13:15, Tiwei Bie wrote:
-> > > > Hello everyone,
-> > > > 
-> > > > This RFC implements packed ring support in virtio driver.
-> > > > 
-> > > > Some simple functional tests have been done with Jason's
-> > > > packed ring implementation in vhost:
-> > > > 
-> > > > https://lkml.org/lkml/2018/4/23/12
-> > > > 
-> > > > Both of ping and netperf worked as expected (with EVENT_IDX
-> > > > disabled). But there are below known issues:
-> > > > 
-> > > > 1. Reloading the guest driver will break the Tx/Rx;
-> > > Will have a look at this issue.
-> > > 
-> > > > 2. Zeroing the flags when detaching a used desc will
-> > > >      break the guest -> host path.
-> > > I still think zeroing flags is unnecessary or even a bug. At host, I track
-> > > last observed avail wrap counter and detect avail like (what is suggested in
-> > > the example code in the spec):
-> > > 
-> > > static bool desc_is_avail(struct vhost_virtqueue *vq, __virtio16 flags)
-> > > {
-> > >         bool avail = flags & cpu_to_vhost16(vq, DESC_AVAIL);
-> > > 
-> > >         return avail == vq->avail_wrap_counter;
-> > > }
-> > > 
-> > > So zeroing wrap can not work with this obviously.
-> > > 
-> > > Thanks
-> > I agree. I think what one should do is flip the available bit.
-> > 
+On 17/04/18 09:50, Richard Fitzgerald wrote:
+> On 10/04/18 19:33, Mika Penttilä wrote:
+>>
+>>
+>> On 10.04.2018 13:21, Richard Fitzgerald wrote:
+>>> On 04/04/18 06:33, Mika Penttilä wrote:
+>>>> Hi!
+>>>>
+>>>> Reverting this made the hogs on a i.MX6 board work again. :
+>>>>
+>>>>
+>>>> commit b89405b6102fcc3746f43697b826028caa94c823
+>>>> Author: Richard Fitzgerald <rf@opensource.cirrus.com>
+>>>> Date:   Wed Feb 28 15:53:06 2018 +0000
+>>>>
+>>>>       pinctrl: devicetree: Fix dt_to_map_one_config handling of hogs
+>>>>
+>>>>
+>>>>
+>>>> --Mika
+>>>>
+>>>
+>>> I think you should check whether the bug is with the i.MX6 driver
+>>> relying on the previous buggy behaviour of pinctrl. I haven't got
+>>> i.MX6 hardware to test myself.
+>>>
+>>> The bug I fixed in that patch was that when pinctrl is probing a
+>>> pinctrl driver it would try to apply all the pinctrl settings
+>>> listed in a dt node to the pinctrl driver it is probing instead
+>>> of the pinctrl drivers they actually refer to. This was a bug
+>>> introduced by an earlier patch (which unfortunately I forgot to
+>>> include a fixes line reference to)
+>>>
+>>>    pinctrl: core: Use delayed work for hogs
+>>>
+>>> So if a pinctrl driver "A" had a dependency on another pinctrl
+>>> driver "B" those dependencies wouldn't be properly created because
+>>> all the "B" pinctrl DT entries would be attempted against "A"
+>>> instead of "B". This caused failures if a pinctrl driver had a
+>>> dependency on another pinctrl driver, of if creating a pinctrl
+>>> driver that is a child of an MFD and that MFD has dependencies
+>>> on another pinctrl driver.
+>>>
+>>
+>> Hard to say, but the kernel/dts has worked ok for 3+ years, from 3.17 
+>> until 4.17-rc. Nothing fancy, just normal hogs, in two groups.
+>> Can send you relevant pieces of DT if interested.
+>>
+>> --Mika
+>>
 > 
-> But is this flipping a must?
-> 
-> Thanks
+> Tell me where in the kernel tree the the dts files and the source for
+> the pinctrl driver that uses them and which dts node, and I will look
+> at what the driver is doing.
 
-Yeah, that's my question too. It seems to be a requirement
-for driver that, the only change to the desc status that a
-driver can do during running is to mark the desc as avail,
-and any other changes to the desc status are not allowed.
-Similarly, the device can only mark the desc as used, and
-any other changes to the desc status are also not allowed.
-So the question is, are there such requirements?
+Hi,
 
-Based on below contents in the spec:
-
-"""
-Thus VIRTQ_DESC_F_AVAIL and VIRTQ_DESC_F_USED bits are different
-for an available descriptor and equal for a used descriptor.
-
-Note that this observation is mostly useful for sanity-checking
-as these are necessary but not sufficient conditions
-"""
-
-It seems that, it's necessary for devices to check whether
-the AVAIL bit and USED bit are different.
-
-Best regards,
-Tiwei Bie
+Sorry, I have been very busy and haven't had time to look at the i.MX6
+driver yet.
