@@ -1,169 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1759046AbeD0TxR (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 15:53:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43834 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1758725AbeD0TxP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 15:53:15 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7350218D0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Fri, 27 Apr 2018 14:53:13 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Vidya Sagar <vidyas@nvidia.com>, Rajat Jain <rajatja@google.com>,
-        linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: Bug? pcie_aspm=off cause less power consumption as default
-Message-ID: <20180427195313.GH8199@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180422171647.7v65zrlwhya5mq7v@pali>
+        id S1759103AbeD0TxY (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 15:53:24 -0400
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:41716 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759055AbeD0TxU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 15:53:20 -0400
+X-Google-Smtp-Source: AB8JxZp7k20GsjtwnShR4+asRMvmG6FE599Ef4lARZv2JIQMDa2lJyc+WmQmR+zJVP/kGkcJPvKo7w==
+Date: Fri, 27 Apr 2018 14:53:19 -0500
+From: Rob Herring <robh@kernel.org>
+To: Eric Anholt <eric@anholt.net>
+Cc: dri-devel@lists.freedesktop.org, Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] dt-bindings: Add a new binding for Broadcom V3D
+ 3.x and newer GPUs.
+Message-ID: <20180427195318.s5bzwplylk3uwou4@rob-hp-laptop>
+References: <20180424004610.4637-1-eric@anholt.net>
+ <20180424004610.4637-3-eric@anholt.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180422171647.7v65zrlwhya5mq7v@pali>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180424004610.4637-3-eric@anholt.net>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Pali,
+On Mon, Apr 23, 2018 at 05:46:09PM -0700, Eric Anholt wrote:
+> These OpenGL ES GPUs are present in the 7268 and 7278 set top box
+> chips.
+> 
+> Signed-off-by: Eric Anholt <eric@anholt.net>
+> ---
+>  .../bindings/display/brcm,bcm-v3d.txt         | 28 +++++++++++++++++++
 
-On Sun, Apr 22, 2018 at 07:16:47PM +0200, Pali Rohár wrote:
-> Hi!
-> 
-> To increase runtime on battery of my Dell Latitude E6440 laptop I tried
-> different tweaks and settings. And I come up to the conclusion that
-> adding pcie_aspm=off to the kernel command line decrease power
-> consumption by approx. 2 Watts as opposite to adding pcie_aspm=force or
-> nothing (letting ASPM in default state).
-> 
-> I suspect that this is a clear kernel bug as I cannot understand how
-> turning off powersave feature ASPM could lead to decrease of power
-> consumption. Turning powersave off should either not impact or increase
-> power consumption.
-> 
-> Moreover one I put laptop into ACPI S3 sleep and resume it, then power
-> consumption increase. The only way to decrease it is to power it off and
-> power on again. Very impractical, specially as ACPI sleep is there to
-> prevent power off and on.
-> 
-> Tests:
-> 
-> Laptop on battery with pcie_aspm=off has average 8.50 Watts in idle.
-> After suspend+resume it has 11.20 Watts (power off + on is needed to get
-> back for 8.50 Watts).
-> 
-> Laptop on battery with pcie_aspm=force and with powersave aspm policy
-> it has average 11.20 Watts in idle. After suspend+resume it is 11.30
-> Watts in idle. With default policy it has 11.15 Watts and with
-> performance policy it has 11.70 Watts.
-> 
-> When pcie_aspm is not specified at all, then average power consumption
-> in idle is 8.90 Watts. And after suspend+resume it is 9.30 Watts.
-> 
-> So what is happening there? Such results are really strange and
-> apparently I'm not alone, see discussion in kernel bugzilla:
-> https://bugzilla.kernel.org/show_bug.cgi?id=62181#c23
-> 
-> I'm using Debian Stretch with its default kernel. But I remember that
-> power consumption with defaults or with pcie_aspm=force was around 10-11
-> Watts even with older kernel versions.
-> 
-> Debian Stretch has currently this kernel:
-> 4.9.0-6-amd64 #1 SMP Debian 4.9.82-1+deb9u3 (2018-03-02) x86_64 GNU/Linux
-> 
-> with this configuration:
-> 
-> $ grep ASPM /boot/config-4.9.0-6-amd64
-> CONFIG_PCIEASPM=y
-> # CONFIG_PCIEASPM_DEBUG is not set
-> CONFIG_PCIEASPM_DEFAULT=y
-> # CONFIG_PCIEASPM_POWERSAVE is not set
-> # CONFIG_PCIEASPM_PERFORMANCE is not set
-> 
-> In dmesg are these ASPM strings:
-> 
-> $ dmesg | grep ASPM
-> 
-> pcie_aspm=off
-> [    0.000000] PCIe ASPM is disabled
-> [    0.119127] ACPI FADT declares the system doesn't support PCIe ASPM, so disable it
-> [    0.163351] acpi PNP0A08:00: _OSC: not requesting OS control; OS requires [ExtendedConfig ASPM ClockPM MSI]
-> 
-> pcie_aspm=force
-> [    0.000000] PCIe ASPM is forcibly enabled
-> [    0.118985] ACPI FADT declares the system doesn't support PCIe ASPM, so disable it
-> [    0.162322] acpi PNP0A08:00: _OSC: OS supports [ExtendedConfig ASPM ClockPM Segments MSI]
-> [    0.162621] acpi PNP0A08:00: FADT indicates ASPM is unsupported, using BIOS configuration
-> 
-> (none)
-> [    0.120064] ACPI FADT declares the system doesn't support PCIe ASPM, so disable it
-> [    0.163424] acpi PNP0A08:00: _OSC: OS supports [ExtendedConfig ASPM ClockPM Segments MSI]
-> [    0.163724] acpi PNP0A08:00: FADT indicates ASPM is unsupported, using BIOS configuration
-> [    3.294357] iwlwifi 0000:03:00.0: can't disable ASPM; OS doesn't have ASPM control
-> 
-> In attachments I'm sending output from lspci -vv -nn, maybe it could
-> contain some useful information.
-> 
-> Another strange thing which I spotted in lspci output is that Root Host
-> bridge at 00:00.0 pci address totally disappeared after suspend+resume.
-> I hope such thing is not normal.
-> 
-> So I see there at 3 bugs:
-> 
-> 1) Power consumption increase after suspend+resume when pcie_aspm=off or
-> default
-> 
-> 2) Power consumption is higher in pcie_aspm=force or default mode as in
-> pcie_aspm=off
-> 
-> 3) PCI host bridge disappear after suspend+resume.
-> 
-> Do you have any idea what is happening here?
+Does this have display h/w? If not bindings/gpu/ would be more 
+appropriate.
 
-No, but I agree it looks totally nonsensical.  I tried to pull out the
-hardware ASPM settings from all your lspci info (thanks very much for
-collecting all that).  Here's what I got.  The same/disabled comments
-are relative to the "default" baseline:
+>  1 file changed, 28 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/brcm,bcm-v3d.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/display/brcm,bcm-v3d.txt b/Documentation/devicetree/bindings/display/brcm,bcm-v3d.txt
+> new file mode 100644
+> index 000000000000..1c814714de0e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/brcm,bcm-v3d.txt
+> @@ -0,0 +1,28 @@
+> +Broadcom V3D GPU
+> +
+> +Only the Broadcom V3D 3.x and newer GPUs are covered by this binding.
+> +For V3D 2.x, see brcm,bcm-vc4.txt.
+> +
+> +Required properties:
+> +- compatible:	Should be "brcm,7268-v3d" or "brcm,7278-v3d"
+> +- reg:		Physical base addresses and lengths of the register areas
+> +- reg-names:	Names for the register areas.  The "hub", "bridge", and "core0"
+> +		  register areas are always required.  The "gca" register area
+> +		  is required if the GCA cache controller is present.
+> +- interrupts:	The interrupt numbers.  The first interrupt is for the hub,
+> +		  while the following inerrupts are for the cores.
 
-                                default,      force       force             force     default      pcie_aspm=off  force pwrsave
-                              pcie_aspm=off   default   performance        powersave  after resume  after resume  after resume
-  notes                                                                               [1,2,3]       [1,2,3,5]     [1,2,3,4,5]
-  power usage                8.90W, 8.50(off) 11.15W    11.70W             11.20W     9.30W         11.20W        11.30W
-  00:01.0 RP [bus 01] GPU    L0s L1 ClockPM-  same      disabled           same       same          same          same
-  00:1c.0 RP [bus 02] empty  L0s L1 ClockPM-  same      same               same       same          same          same
-  00:1c.2 RP [bus 03] NIC    L1     ClockPM-  disabled  disabled           disabled   same          same          disabled
-  00:1c.4 RP [bus 04] empty  L0s L1 ClockPM-  same      same               same       same          same          same
-  00:1c.5 RP [bus 05] empty  L0s L1 ClockPM-  same      same               same       same          same          same
-  00:1c.7 RP [bus 06] SD/MMC L1     ClockPM-  same      disabled           same       same          same          L0s L1
-  01:00.0 Radeon GPU         ? [6]            ?         ?                  ?          ?             ?             ?
-  03:00.0 Centrino NIC       L1     ClockPM-  disabled  disabled           disabled   same          same          disabled
-  06:00.0 SD/MMC card        L1     ClockPM+  same      disabled ClockPM-  L0s L1     same          same          L0s L1
+typo
 
-  [1] 00:00.0 device absent
-  [2] 00:01.0 LnkCtl AutWidDis+, SltSta PresDet+
-  [3] 00:1c.2 SecStatus <MAbort-, SltSta LinkState+
-      00:1c.7 SecStatus <MAbort-, SltSta LinkState+
-      03:00.0 DevSta CorrErr-, UnsuppReq-
-  [4] 00:1c.2 LnkCtl ASPM Disabled
-      00:1c.7 LnkCtl L0s L1 Enabled
-      03:00.0 LnkCtl ASPM Disabled
-      06:00.0 LnkCtl ASPM L0s L1 Enabled
-  [5] 06:00.0 LTR max snoop 71680ns -> 566ns
-  [6] 01:00.0 seems completely powered off, probably because you're
-      using integrated video
-
-I haven't made sense out of any of this yet, except that the "force
-performance" column seems plausible: if we want performance, we should
-disable ASPM across the board.
-
-I don't really know where to start here.  Maybe we can focus on
-understanding one tiny piece.  Can you apply the following patch and
-try just the "force powersave" situation?  Please collect the entire
-dmesg log and "lspci -vv" output.
-
-Bjorn
+> +		  See bindings/interrupt-controller/interrupts.txt
+> +
+> +Optional properties:
+> +- clocks:	The core clock the unit runs on
+> +
+> +v3d {
+> +	compatible = "brcm,7268-v3d";
+> +	reg = <0xf1204000 0x100>,
+> +	      <0xf1200000 0x4000>,
+> +	      <0xf1208000 0x4000>,
+> +	      <0xf1204100 0x100>;
+> +	reg-names = "bridge", "hub", "core0", "gca";
+> +	interrupts = <0 78 4>,
+> +		     <0 77 4>;
+> +};
+> -- 
+> 2.17.0
+> 
