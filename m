@@ -1,76 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932480AbeD0I5C (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 04:57:02 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:33789 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932434AbeD0I4d (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 04:56:33 -0400
-X-Google-Smtp-Source: AB8JxZrSFWQoEMyeRHfHAUnCQpGnaeVLYz/YByNAX7dolKqK1HL1JlGye9C68kbxd3lCh4HgCSpv5Q==
-From: Arvind Yadav <arvind.yadav.cs@gmail.com>
-To: jikos@kernel.org, benjamin.tissoires@redhat.com, jkosina@suse.cz
-Cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Subject: [PATCH 2/3] ASoC: tpa6130a2: Use gpio_is_valid()
-Date: Fri, 27 Apr 2018 14:26:10 +0530
-Message-Id: <195792a282b569037357ca17e4baad19893f0609.1524819052.git.arvind.yadav.cs@gmail.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <cover.1524819051.git.arvind.yadav.cs@gmail.com>
-References: <cover.1524819051.git.arvind.yadav.cs@gmail.com>
-In-Reply-To: <cover.1524819051.git.arvind.yadav.cs@gmail.com>
-References: <cover.1524819051.git.arvind.yadav.cs@gmail.com>
+        id S932453AbeD0I7D (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 04:59:03 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47478 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932370AbeD0I7B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 04:59:01 -0400
+Date: Fri, 27 Apr 2018 10:58:59 +0200
+From: Jiri Olsa <jolsa@redhat.com>
+To: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Jakub Kicinski <kubakici@wp.pl>, Jiri Olsa <jolsa@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
+        Quentin Monnet <quentin.monnet@netronome.com>
+Subject: Re: [PATCHv3 3/3] tools bpftool: Display license GPL compatible in
+ prog show/list
+Message-ID: <20180427085859.GD22874@krava>
+References: <20180425174108.6586-1-jolsa@kernel.org>
+ <20180425174108.6586-4-jolsa@kernel.org>
+ <20180425140346.3e0f3ba7@cakuba.netronome.com>
+ <0e84fe67-59c9-a419-5ff7-05be2aa1991e@iogearbox.net>
+ <20180426073905.GI3396@krava>
+ <639b2b78-af9e-4605-2b33-9bd1af8e760a@iogearbox.net>
+ <20180426081801.GK3396@krava>
+ <dbc91e08-4c99-e01f-eab5-ac235812cee7@iogearbox.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dbc91e08-4c99-e01f-eab5-ac235812cee7@iogearbox.net>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace the manual validity checks for the GPIO with the
-gpio_is_valid().
+On Thu, Apr 26, 2018 at 10:49:25PM +0200, Daniel Borkmann wrote:
+> On 04/26/2018 10:18 AM, Jiri Olsa wrote:
+> [...]
+> > v3 of the last patch attached, the branch is also updated
+> > 
+> > thanks,
+> > jirka
+> > 
+> > 
+> > ---
+> > Display the license "gpl" string in bpftool prog command, like:
+> > 
+> >   # bpftool prog list
+> >   5: tracepoint  name func  tag 57cd311f2e27366b  gpl
+> >           loaded_at Apr 26/09:37  uid 0
+> >           xlated 16B  not jited  memlock 4096B
+> > 
+> >   # bpftool --json --pretty prog show
+> >   [{
+> >           "id": 5,
+> >           "type": "tracepoint",
+> >           "name": "func",
+> >           "tag": "57cd311f2e27366b",
+> >           "gpl_compatible": true,
+> >           "loaded_at": "Apr 26/09:37",
+> >           "uid": 0,
+> >           "bytes_xlated": 16,
+> >           "jited": false,
+> >           "bytes_memlock": 4096
+> >       }
+> >   ]
+> > 
+> > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> 
+> Ok, v2 from prior two patches and v3 of this one applied to bpf-next. Please
+> next time always submit a fresh new series at once, thanks Jiri.
 
-Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
----
- sound/soc/codecs/tpa6130a2.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+noted, thanks a lot
 
-diff --git a/sound/soc/codecs/tpa6130a2.c b/sound/soc/codecs/tpa6130a2.c
-index 616cd4b..18f32b9 100644
---- a/sound/soc/codecs/tpa6130a2.c
-+++ b/sound/soc/codecs/tpa6130a2.c
-@@ -62,7 +62,7 @@ static int tpa6130a2_power(struct tpa6130a2_data *data, bool enable)
- 			return ret;
- 		}
- 		/* Power on */
--		if (data->power_gpio >= 0)
-+		if (gpio_is_valid(data->power_gpio))
- 			gpio_set_value(data->power_gpio, 1);
- 
- 		/* Sync registers */
-@@ -72,7 +72,7 @@ static int tpa6130a2_power(struct tpa6130a2_data *data, bool enable)
- 			dev_err(data->dev,
- 				"Failed to sync registers: %d\n", ret);
- 			regcache_cache_only(data->regmap, true);
--			if (data->power_gpio >= 0)
-+			if (gpio_is_valid(data->power_gpio))
- 				gpio_set_value(data->power_gpio, 0);
- 			ret2 = regulator_disable(data->supply);
- 			if (ret2 != 0)
-@@ -89,7 +89,7 @@ static int tpa6130a2_power(struct tpa6130a2_data *data, bool enable)
- 		regcache_cache_only(data->regmap, true);
- 
- 		/* Power off */
--		if (data->power_gpio >= 0)
-+		if (gpio_is_valid(data->power_gpio))
- 			gpio_set_value(data->power_gpio, 0);
- 
- 		ret = regulator_disable(data->supply);
-@@ -259,7 +259,7 @@ static int tpa6130a2_probe(struct i2c_client *client,
- 
- 	data->id = id->driver_data;
- 
--	if (data->power_gpio >= 0) {
-+	if (gpio_is_valid(data->power_gpio)) {
- 		ret = devm_gpio_request(dev, data->power_gpio,
- 					"tpa6130a2 enable");
- 		if (ret < 0) {
--- 
-1.9.1
+jirka
