@@ -1,101 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757960AbeD0LqH (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 07:46:07 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60102 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1757787AbeD0LqF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 07:46:05 -0400
-Date: Fri, 27 Apr 2018 13:46:03 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Wang Long <wanglong19@meituan.com>
-Cc: hannes@cmpxchg.org, vdavydov.dev@gmail.com, aryabinin@virtuozzo.com,
-        akpm@linux-foundation.org, khlebnikov@yandex-team.ru, xboe@kernel.dk,
-        jack@suse.cz, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        gthelen@google.com, tj@kernel.org
-Subject: Re: [PATCH v2] memcg: writeback: use memcg->cgwb_list directly
-Message-ID: <20180427114603.GG17484@dhcp22.suse.cz>
-References: <1524406173-212182-1-git-send-email-wanglong19@meituan.com>
+        id S1758031AbeD0Lrm (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 07:47:42 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:48799 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758002AbeD0Lrk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 07:47:40 -0400
+From: Kishon Vijay Abraham I <kishon@ti.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>
+CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <kishon@ti.com>
+Subject: [PATCH v5 01/14] mmc: sdhci-omap: Fix when capabilities are obtained from SDHCI_CAPABILITIES reg
+Date: Fri, 27 Apr 2018 17:17:10 +0530
+Message-ID: <20180427114723.2687-2-kishon@ti.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180427114723.2687-1-kishon@ti.com>
+References: <20180427114723.2687-1-kishon@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1524406173-212182-1-git-send-email-wanglong19@meituan.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun 22-04-18 22:09:33, Wang Long wrote:
-> mem_cgroup_cgwb_list is a very simple wrapper and it will
-> never be used outside of code under CONFIG_CGROUP_WRITEBACK.
-> so use memcg->cgwb_list directly.
+sdhci_omap_config_iodelay_pinctrl_state() requires caps and caps2 to be
+initialized (speed mode capabilities like UHS/HS200) before it is
+invoked. While mmc_of_parse() initializes caps/caps2 if capabilities is
+populated in device tree, it will remain uninitialized for capabilities
+obtained from SDHCI_CAPABILITIES register.
+Fix sdhci_omap_config_iodelay_pinctrl_state() to be used even while
+getting the capabilities from SDHCI_CAPABILITIES register by invoking
+sdhci_setup_host() before sdhci_omap_config_iodelay_pinctrl_state().
 
-Thanks for adding the changelog
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Acked-by: Tony Lindgren <tony@atomide.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+---
+ drivers/mmc/host/sdhci-omap.c | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
+index 1456abd5eeb9..e7e43f2ae224 100644
+--- a/drivers/mmc/host/sdhci-omap.c
++++ b/drivers/mmc/host/sdhci-omap.c
+@@ -916,10 +916,6 @@ static int sdhci_omap_probe(struct platform_device *pdev)
+ 		goto err_put_sync;
+ 	}
  
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> Signed-off-by: Wang Long <wanglong19@meituan.com>
-
-Acked-by: Michal Hocko <mhocko@suse.com>
-
-> ---
->  include/linux/memcontrol.h | 1 -
->  mm/backing-dev.c           | 4 ++--
->  mm/memcontrol.c            | 5 -----
->  3 files changed, 2 insertions(+), 8 deletions(-)
-> 
-> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> index d99b71b..c0056e0 100644
-> --- a/include/linux/memcontrol.h
-> +++ b/include/linux/memcontrol.h
-> @@ -1093,7 +1093,6 @@ static inline void dec_lruvec_page_state(struct page *page,
->  
->  #ifdef CONFIG_CGROUP_WRITEBACK
->  
-> -struct list_head *mem_cgroup_cgwb_list(struct mem_cgroup *memcg);
->  struct wb_domain *mem_cgroup_wb_domain(struct bdi_writeback *wb);
->  void mem_cgroup_wb_stats(struct bdi_writeback *wb, unsigned long *pfilepages,
->  			 unsigned long *pheadroom, unsigned long *pdirty,
-> diff --git a/mm/backing-dev.c b/mm/backing-dev.c
-> index 023190c..0a48e05 100644
-> --- a/mm/backing-dev.c
-> +++ b/mm/backing-dev.c
-> @@ -555,7 +555,7 @@ static int cgwb_create(struct backing_dev_info *bdi,
->  	memcg = mem_cgroup_from_css(memcg_css);
->  	blkcg_css = cgroup_get_e_css(memcg_css->cgroup, &io_cgrp_subsys);
->  	blkcg = css_to_blkcg(blkcg_css);
-> -	memcg_cgwb_list = mem_cgroup_cgwb_list(memcg);
-> +	memcg_cgwb_list = &memcg->cgwb_list;
->  	blkcg_cgwb_list = &blkcg->cgwb_list;
->  
->  	/* look up again under lock and discard on blkcg mismatch */
-> @@ -734,7 +734,7 @@ static void cgwb_bdi_unregister(struct backing_dev_info *bdi)
->   */
->  void wb_memcg_offline(struct mem_cgroup *memcg)
->  {
-> -	struct list_head *memcg_cgwb_list = mem_cgroup_cgwb_list(memcg);
-> +	struct list_head *memcg_cgwb_list = &memcg->cgwb_list;
->  	struct bdi_writeback *wb, *next;
->  
->  	spin_lock_irq(&cgwb_lock);
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index e074f7c..d1adb9c 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -3562,11 +3562,6 @@ static int mem_cgroup_oom_control_write(struct cgroup_subsys_state *css,
->  
->  #ifdef CONFIG_CGROUP_WRITEBACK
->  
-> -struct list_head *mem_cgroup_cgwb_list(struct mem_cgroup *memcg)
-> -{
-> -	return &memcg->cgwb_list;
-> -}
-> -
->  static int memcg_wb_domain_init(struct mem_cgroup *memcg, gfp_t gfp)
->  {
->  	return wb_domain_init(&memcg->cgwb_domain, gfp);
-> -- 
-> 1.8.3.1
-
+-	ret = sdhci_omap_config_iodelay_pinctrl_state(omap_host);
+-	if (ret)
+-		goto err_put_sync;
+-
+ 	host->mmc_host_ops.get_ro = mmc_gpio_get_ro;
+ 	host->mmc_host_ops.start_signal_voltage_switch =
+ 					sdhci_omap_start_signal_voltage_switch;
+@@ -930,12 +926,23 @@ static int sdhci_omap_probe(struct platform_device *pdev)
+ 	sdhci_read_caps(host);
+ 	host->caps |= SDHCI_CAN_DO_ADMA2;
+ 
+-	ret = sdhci_add_host(host);
++	ret = sdhci_setup_host(host);
+ 	if (ret)
+ 		goto err_put_sync;
+ 
++	ret = sdhci_omap_config_iodelay_pinctrl_state(omap_host);
++	if (ret)
++		goto err_cleanup_host;
++
++	ret = __sdhci_add_host(host);
++	if (ret)
++		goto err_cleanup_host;
++
+ 	return 0;
+ 
++err_cleanup_host:
++	sdhci_cleanup_host(host);
++
+ err_put_sync:
+ 	pm_runtime_put_sync(dev);
+ 
 -- 
-Michal Hocko
-SUSE Labs
+2.17.0
