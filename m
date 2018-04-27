@@ -1,103 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753137AbeD0LZs (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 07:25:48 -0400
-Received: from foss.arm.com ([217.140.101.70]:38804 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752061AbeD0LZq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 07:25:46 -0400
-Date: Fri, 27 Apr 2018 12:25:43 +0100
-From: Quentin Perret <quentin.perret@arm.com>
-To: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] sched/fair: Avoid calling sync_entity_load_avg()
- unnecessarily
-Message-ID: <20180427112543.GB27072@e108498-lin.cambridge.arm.com>
-References: <20831b8d237bf3a20e4e328286f678b425ff04c9.1524738578.git.viresh.kumar@linaro.org>
- <cd019d1753824c81130eae7b43e2bbcec47cc1ad.1524738578.git.viresh.kumar@linaro.org>
- <c1dba90d-d464-9286-94e3-e399f0b71281@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c1dba90d-d464-9286-94e3-e399f0b71281@arm.com>
-User-Agent: Mutt/1.8.3 (2017-05-23)
+        id S1757509AbeD0LcE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 07:32:04 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:54950 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750863AbeD0LcD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 07:32:03 -0400
+X-Google-Smtp-Source: AB8JxZpB0+6Pq75vz7kM/H935azIjXNKJiEfhqgGWUKPeUNGW/kIxrTw9mnibzZK71+MEHNtPCq8Hg==
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, Mark Greer <mgreer@baylibre.com>
+Subject: [PATCH] ASoC: dai playback and capture active  may be greater than 1
+Date: Fri, 27 Apr 2018 13:31:51 +0200
+Message-Id: <20180427113151.19299-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dietmar,
+At the moment playback_active and capture_active are using only 1 bit so
+the maximum active count is 1.
 
-On Friday 27 Apr 2018 at 10:30:39 (+0200), Dietmar Eggemann wrote:
-> Hi Viresh,
-> 
-> On 04/26/2018 12:30 PM, Viresh Kumar wrote:
-> > Call sync_entity_load_avg() directly from find_idlest_cpu() instead of
-> > select_task_rq_fair(), as that's where we need to use task's utilization
-> > value. And call sync_entity_load_avg() only after making sure sched
-> > domain spans over one of the allowed CPUs for the task.
-> > 
-> > Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> 
-> The patch looks correct to me but we want to have the waking task synced
-> against its previous rq also for EAS, i.e. for find_energy_efficient_cpu()
-> which will sit next to find_idlest_cpu().
-> 
-> https://marc.info/?l=linux-kernel&m=152302907327168&w=2
-> 
-> The comment on top of the if condition would have to be changed though.
-> 
-> I would suggest we leave the call to sync_entity_load_avg() in the slow path
-> of strf() so that we're not forced to call it in
-> find_energy_efficient_cpu().
+However, snd_soc_runtime_activate() may be called several time on the
+same dai. This happens when a dai is part of several dai_links. It is
+often the case for "snd-soc-dummy-dai".
 
-With the new implementation of the overutilization mechanism agreed at
-OSPM, I don't think we'll be able to avoid calling sync_entity_load_avg()
-from find_energy_efficient_cpu(). The EAS integration within strf()
-will have to be reworked, so I'm happy if the sync_entity_load_avg()
-call moves from strf() to find_idlest_cpu() in the meantime.
+This is a problem if snd_soc_runtime_activate() is called an even number
+of times on a dai. In this case the active count overflow back to 0. As
+consequence, ASoC functions, such as soc_dpcm_runtime_update(), won't run
+correctly.
 
-Thanks,
-Quentin
+Storing these usage counts on plain 'unsigned int' solves the problem.
 
-> 
-> > ---
-> >   kernel/sched/fair.c | 16 +++++++---------
-> >   1 file changed, 7 insertions(+), 9 deletions(-)
-> > 
-> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > index 84fc74ddbd4b..5b1b4f91f132 100644
-> > --- a/kernel/sched/fair.c
-> > +++ b/kernel/sched/fair.c
-> > @@ -6199,6 +6199,13 @@ static inline int find_idlest_cpu(struct sched_domain *sd, struct task_struct *p
-> >   	if (!cpumask_intersects(sched_domain_span(sd), &p->cpus_allowed))
-> >   		return prev_cpu;
-> > +	/*
-> > +	 * We need task's util for capacity_spare_wake, sync it up to prev_cpu's
-> > +	 * last_update_time.
-> > +	 */
-> > +	if (!(sd_flag & SD_BALANCE_FORK))
-> > +		sync_entity_load_avg(&p->se);
-> > +
-> >   	while (sd) {
-> >   		struct sched_group *group;
-> >   		struct sched_domain *tmp;
-> > @@ -6651,15 +6658,6 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int sd_flag, int wake_f
-> >   	if (unlikely(sd)) {
-> >   		/* Slow path */
-> > -
-> > -		/*
-> > -		 * We're going to need the task's util for capacity_spare_wake
-> > -		 * in find_idlest_group. Sync it up to prev_cpu's
-> > -		 * last_update_time.
-> > -		 */
-> > -		if (!(sd_flag & SD_BALANCE_FORK))
-> > -			sync_entity_load_avg(&p->se);
-> > -
-> >   		new_cpu = find_idlest_cpu(sd, p, cpu, prev_cpu, sd_flag);
-> >   	} else if (sd_flag & SD_BALANCE_WAKE) { /* XXX always ? */
-> >   		/* Fast path */
-> > 
-> 
+Fixes: f0fba2ad1b6b ("ASoC: multi-component - ASoC Multi-Component Support")
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+
+Hi,
+
+I found this problem while working on ASoC support for a new platform.
+During a playback, using DPCM, if I changed the backend dai, nothing
+happened, old backend path is not pruned, new backend path is not added.
+
+Here is how it goes:
+1 FE and 2 BE, all 3 using snd-soc-dummy-dai for the codec_dai (ATM).
+
+On playback start:
+ - BE #1 activates and increments snd-soc-dummy-dai's playback_active
+ - FE activates and increments snd-soc-dummy-dai's playback_active
+
+The playback works but snd-soc-dummy-dai's playback_active value is now 0.
+
+Through a mux kcontrol, change BE client of FE, from BE #1 to BE #2.
+ -> trigger soc_dpcm_runtime_update().
+    -> checks fe's codec_dai playback_active which is zero so playback
+    path processing is skipped, keeping the old invalid path.
+
+ * No change since initial RFC [0], just droppped the RFC prefix.
+
+[0]: https://lkml.kernel.org/r/20180419140612.11049-1-jbrunet@baylibre.com
+
+ include/sound/soc-dai.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/include/sound/soc-dai.h b/include/sound/soc-dai.h
+index 8ad11669e4d8..35ebb0be5114 100644
+--- a/include/sound/soc-dai.h
++++ b/include/sound/soc-dai.h
+@@ -294,8 +294,8 @@ struct snd_soc_dai {
+ 	struct snd_soc_dai_driver *driver;
+ 
+ 	/* DAI runtime info */
+-	unsigned int capture_active:1;		/* stream is in use */
+-	unsigned int playback_active:1;		/* stream is in use */
++	unsigned int capture_active;		/* stream usage count */
++	unsigned int playback_active;		/* stream usage count */
+ 	unsigned int probed:1;
+ 
+ 	unsigned int active;
+-- 
+2.14.3
