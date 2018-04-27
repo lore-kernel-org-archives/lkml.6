@@ -1,227 +1,199 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932332AbeD0H00 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 03:26:26 -0400
-Received: from mail-co1nam03on0084.outbound.protection.outlook.com ([104.47.40.84]:43472
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        id S1757552AbeD0H2L (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 03:28:11 -0400
+Received: from mail-eopbgr00107.outbound.protection.outlook.com ([40.107.0.107]:22085
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1757469AbeD0H0Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 03:26:24 -0400
+        id S1757451AbeD0H2I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 03:28:08 -0400
 Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Jisheng.Zhang@synaptics.com;
-Date: Fri, 27 Apr 2018 15:25:55 +0800
-From: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-To: Bhadram Varka <vbhadram@nvidia.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Jingju Hou <Jingju.Hou@synaptics.com>
-Subject: Re: [PATCH] net: phy: marvell: clear wol event before setting it
-Message-ID: <20180427152555.5e8efb9c@xhacker.debian>
-In-Reply-To: <73e21c83-f78a-8b22-a421-f179ef6adef1@nvidia.com>
-References: <20180419160232.519d15be@xhacker.debian>
-        <20180419121801.GC17888@lunn.ch>
-        <4273f766-a017-b336-7d14-a28901d274b9@nvidia.com>
-        <20180426141508.6660a633@xhacker.debian>
-        <be2addb5-b3fd-13cb-ad33-f0527931a0d2@nvidia.com>
-        <73e21c83-f78a-8b22-a421-f179ef6adef1@nvidia.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+ smtp.mailfrom=peda@axentia.se;
+Subject: Re: [PATCH 00/24] device link, bridge supplier <-> drm device
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-kernel@vger.kernel.org, Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>, David Airlie <airlied@linux.ie>,
+        Peter Senna Tschudin <peter.senna@collabora.com>,
+        Martin Donnelly <martin.donnelly@ge.com>,
+        Martyn Welch <martyn.welch@collabora.co.uk>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>, Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+        CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Vincent Abriou <vincent.abriou@st.com>, Jyri Sarha <jsarha@ti.com>,
+        dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org
+References: <20180426223139.16740-1-peda@axentia.se>
+ <1881012.XPHlTWYXH6@avalon> <8a9fcd8c-962d-1acc-c2ba-74a3d8f59590@axentia.se>
+ <3483427.EaMxDYJt8U@avalon>
+From: Peter Rosin <peda@axentia.se>
+Organization: Axentia Technologies AB
+Message-ID: <11768d9a-91cb-55e3-a026-3663241bffe5@axentia.se>
+Date: Fri, 27 Apr 2018 09:27:58 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Originating-IP: [124.74.246.114]
-X-ClientProxiedBy: KAWPR01CA0096.jpnprd01.prod.outlook.com
- (2603:1096:402:c::32) To DM5PR03MB2633.namprd03.prod.outlook.com
- (2603:10b6:3:43::7)
+In-Reply-To: <3483427.EaMxDYJt8U@avalon>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [85.226.244.23]
+X-ClientProxiedBy: HE1P190CA0003.EURP190.PROD.OUTLOOK.COM (2603:10a6:3:bc::13)
+ To VI1PR0202MB2784.eurprd02.prod.outlook.com (2603:10a6:800:db::9)
 X-MS-PublicTrafficType: Email
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DM5PR03MB2633;
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR03MB2633;3:2jJAmyx+ZUGoEyI1IveW+p2Jccqw8CWkAuWDw3cnw6uvX685wi7XvojyOUtRLSib5fKIHAeHtYwCvn8IjS6MC1gB32MI+vNRnOE5VgxnD/JFKPktXzO/7WZXlBPFHbQ37UIgtmuL5FRQjWOIuwrIuVPz5qz0bQ6SZ2m/fwv/LzX1A5nZxu8nJ3CwP0O0Hgw0GoiSIHDzxFnJFEqpX/4N+yrTaR5oOjKBCdfSrahNUclNgceYgCZpaOxsxYYxTqnx;25:ZXzBOAmLcmZB1Tm2ITn7idXml8/HfbBO0KqLz2Npk9kBvlBMBfAt6PvhtLM5oMcABFkWZh3pxXryUAOaLihqlo+bIVgP2iMK4fP+bUbpH/09Ft64NYUabzP12QQRRovCGFm2E19XbTlPR2WPeqvGimp5o9ip8Ve82Gp4ZD/NMwAcoUILAth97iUqUECcR5xdsdKdCrj0gqKuN3MJQGfeehIx1Z7nV2URYYJ6fUGkfy+FVixPhnmjoNeHgaKrgXXw4RAuS4m4aDGw2oJb1NcDKPDQbPOCjdEftMsHOdqA67/lp0uqRc84xXti1uPbvhcwjKgVQ7KNehgfHXNafngSEA==;31:nsJVlHCw7zckRFJrrNyEvhdDzJcnwaHiAk9Jkmm+Gwka/NXGxCsL32z3DK2pxLJXVj60M55SLLHcQQB682osXcy9ncaH0zc0GHbgQ8hQiKLXgByf9ANwvA0Em/Kj7pHJ9LfZ4Tlg1RNNwrPiOuuMEmMgbQwEFPmZavy7xJ0BO/dX0Fs4y6mMYMB2IEtBgX5iehVFoq2t/AamxDmRNE/8bzBj4PoefTD2faVWo4GldZE=
-X-MS-TrafficTypeDiagnostic: DM5PR03MB2633:
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR03MB2633;20:L2BRB93BSJNMTSl6UlvOU+k1mnc824cTCwhQVR/QByOjVYGgZWVUhZdKatqITEYbz+iLrRVvXyKEIknagGvriWFVeJwTzvT4wPGdaw7yw9oRipqmZ9yBdI6rGkdxKjgild7Uy1LdcW8KMETPJO12FZusgw/HShb4xGotYloaC/BwUZCFUxCX0VR1lzPj9ZjjZTF0T9Qckm0g2v0PlGV+u81u6yAqESVNTwH6u1eqOHYxAZcTluwiStkLfqqYP05I58kCr6mibuvtyGpY1yFScD36q2AYau3zdBpbIIn+8pIPlUZbDCAC4Uhi4sCPFv8i6ONtSn37WxwUxDxapxbzkMNj/tML67NK+QFeDuQs/RdyhYYWZS1fNLPLrLdS7O6zS3qeAk4R+rUkLN30tA5lwsqU+ilepACgy4fv2MRvDN8CHckEBEoLDjEthVXvDtbdmYsUHrM30d9PT1VDt6qoCzxO4qcpid9be+0ed6cmVd9OAYpTKvg+qJosP6C7WfDd;4:ICZhlul1r2NmQ3UQ0J+0+aBgNbjb28PnSWG0LtdoV71YZgp8IaHsak3xjZItvLn7GNVp8ngg7YE5i6TrLXr6kAcLZtECwwcywiIimAQOWQ1prEQSwpVt9Y/zVuz+wfv8+YvKW688mGCDMe+Sn6q6M8Sd1DK6czxH2iru/WogXxAbN23thdw46PgJ+FpRVFUjCnoEId/QsXZP61Plt4PvNNv5qpXM29dGlo3Fs1310z3p8qU5yI9eb50cbBtDj4XWPjNyJBkIfah4vl99m0+zAA==
-X-Microsoft-Antispam-PRVS: <DM5PR03MB2633EC69F97E2B3C9CA9511BED8D0@DM5PR03MB2633.namprd03.prod.outlook.com>
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(5600026)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:VI1PR0202MB2784;
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0202MB2784;3:V9MZQo1A4BVegWamV4ghiUJoatLY20yA76Ef2Yj825yjPHE72TjYcKBD49+pBMtzby37ocNT+9Sk5DKNBG/JJh3ouKri7AONdeGVyOJgKIFRu2+bzhJf0MoQ5GZd1WpsT3v+WNuLCgOlGWPRQtQi5DlfOcpKgd92wOljF2L3S2QhqQR+uLGn22TsA4JOlotwfqLMkx41YHuQdC4QdpvzjdnAvEyYeZmDSGqUhNIf7PN/HQ03TFD5WlQiNHNR/e45;25:u2O3p7/2CjY+en3E0f6feCDla59nZPC9T7YUuTlfJPchGCq+rbyfuw50wouE+JAevaxEk7TOEbbL+VZlF9EL2uD0hFZDR/3ZiE0WY1W0UnZIKZhg3l66X3dDgoYKX1jEjo1r+f98qDrZZ8Ka1GwQyyMyOkgFxmf+jg52R6WW8Llkogg5WQzh5oSLKZzG1keT7rTwUvZkawm6ZHsvezEBBrX8r6gekIFK1x2XoibHnu/xVUjFGtwvOZ3uTk8LtT+UAeAyLiZb/ycnZT7soT5c6wR82zpvEqf1GLGM4Bt8obGqiKsE+6SGjIzaub/OdTZkdBUK0n8mXgqgT/oL6KRAyg==;31:366zcOw/+cHwoxTcLDJewOp4Axn0rgYrxD96DVM9Ib5WQSOWOB+wi48pVUuhIjA3JTGPIw9lcSQUZys+f2vpE+dds45Ed+W3xzaGgid+RwY/H7W+vMba3U/bldvRnbtPA26GS6bWgQGQRMuXz7eGscV2tjoeSkHpp6Rcbr9tNUx9QxAD1+BlUt9WARvM2p1bhCWjK094kyR92ICEeusAc8ZWrmN6sIA1w0dXQlT8ja0=
+X-MS-TrafficTypeDiagnostic: VI1PR0202MB2784:
+X-Microsoft-Antispam-PRVS: <VI1PR0202MB2784D5FBA6E4027CA09283BCBC8D0@VI1PR0202MB2784.eurprd02.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:;
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231232)(944501410)(52105095)(93006095)(93001095)(3002001)(10201501046)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(6072148)(201708071742011);SRVR:DM5PR03MB2633;BCL:0;PCL:0;RULEID:;SRVR:DM5PR03MB2633;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231232)(944501410)(52105095)(10201501046)(3002001)(6041310)(2016111802025)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(6043046)(6072148)(201708071742011);SRVR:VI1PR0202MB2784;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0202MB2784;
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0202MB2784;4:1ZAS4NkEYj1HU128rfqdG2jktyvFB6qYdZe9GcQOvKan8OiJACaILi/44st1+XBF9Jor3cALlKs5Si6b2I2N/GJd0FcsErx5uP0hODnJ7PBWa4T5fL6yBc5UypxPA8l1gZJywpkbrwV8T4rW0SdlrougjkcHbl1FL3zMQR5VEfFc3ik6Ia2qmmJ1kIme4NDy5pYvJZ6bYWIsnO0/MK6EFrlmtUh3KiBLpbw0u+Asp0ZmolIvJsj3daKsgg4fybAvIzo8JJafYO9SF0lQkXdn/w==
 X-Forefront-PRVS: 0655F9F006
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(39380400002)(396003)(376002)(39860400002)(346002)(366004)(199004)(189003)(3846002)(6116002)(47776003)(86362001)(93886005)(1076002)(186003)(16526019)(66066001)(68736007)(97736004)(50466002)(476003)(105586002)(39060400002)(6246003)(956004)(107886003)(11346002)(486006)(53936002)(446003)(229853002)(25786009)(305945005)(5660300001)(50226002)(4326008)(72206003)(2906002)(55016002)(9686003)(6916009)(6666003)(7736002)(76176011)(6506007)(386003)(316002)(7696005)(52116002)(33896004)(26005)(23676004)(8676002)(81166006)(81156014)(478600001)(8746002)(8936002)(54906003)(106356001)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR03MB2633;H:xhacker.debian;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtETTVQUjAzTUIyNjMzOzIzOjdTM0Z0Q1gvakpZc2RXazFaSHlsblBCcjVG?=
- =?utf-8?B?a2NUNjM1a0F0eFVTWGlLcUZjY0ZSZFphdmJrR1p1ZXJ2cEJjWnJmYWk4TTVq?=
- =?utf-8?B?cXl2K3YyL0xhN2FTRHJVMy9SY2Z6OHRpaG0wL3ZEMTJ6UnRJTjQ5Q3JvMTJL?=
- =?utf-8?B?d1EyY3lQdEpaeFh0TEJIME1ucitVNmp2K3FzSnBpSGVIdHlnSXlPK3YzSTJ4?=
- =?utf-8?B?VUZ0V0NIUVFaZjRRWldXeTIweVlLL2dMMHZXejlXUndWNmZ1cEJKVENlbmJ5?=
- =?utf-8?B?RjNmdWxOeUpLR1NoK1N4aFJ6QU9GbXBCdHJWS1FEZU5wdFl0RU1SVkVpNlFu?=
- =?utf-8?B?a0NKSzh4QzhQTUF2alRmcWl6ZFpxZDMrQzdUOVBBajBNdVNIS3dwUmU1bExK?=
- =?utf-8?B?VEZVdE5RN09RM1daNVJ4TkZYYjVmZGMrdHVxS2RhSHBvNU84NExlR2J6ZERY?=
- =?utf-8?B?NDgzRS8vMzJxVVRZRUQ4TnFxY0V1NEJTMWM2OGd6a09haTJLdFQzWWZZQUJK?=
- =?utf-8?B?MjBjb3NqKzdjZ3EyRkdOSFk1Y09ManBRKzhYU0YzZW9MeWluVTQ4YzM5ZlZM?=
- =?utf-8?B?TWY0NmZ1ZSsyVzI5M2RXeURFZHpIa1JYQUI3MHIyZmpiRFgwSGRUMkg5ZDFq?=
- =?utf-8?B?a2htQldodEdqdW0xNmJUS2g4Y1gwYWN1RmNGMldjNjJIcXFqQUVNUW5yMTJ5?=
- =?utf-8?B?WGtGYk1oUkZ3UHhxWjIwMWpUWHpmbEJyVUljVkZTUmNyMXhLU2pTZTVZcXZs?=
- =?utf-8?B?REV3YlB1c1FvUjVMcmVIcTZuU2d0eURtYmRPL1hNdG1XWHU3UThlZU03aXQ3?=
- =?utf-8?B?NXZxYkY4RUNRT1BDQzgxaUJuZUU3ZGtGOW9mcVVBSWE1TWtleVJnd2tPK0Zh?=
- =?utf-8?B?VEN4aDVvK0JwcTZ1MHFhbUdRaS92V3ZaeTlIUkJyMkVYM0N5emRKV3VKTytM?=
- =?utf-8?B?c29NU1BzaTA4RFRHb1k2Tys5eXFWRWR3ZldveWxuZ0dscDJXSHBKYjlVc0F5?=
- =?utf-8?B?OUFUaUN4dzRzUEZoM3BGZVVPRzF1MHhza0xxd2UyWFRmeHBCZnRLL28zY3ZD?=
- =?utf-8?B?QTF6dWcybjJMYWoyYU52MkJaUGw5L3krY2ViVlpuREh2eTZvVG1qbXNYR0I1?=
- =?utf-8?B?Y3lmS3hncUYrbFdadzRvSU9ydFFwV0l0TThqbEd1bDdhaDJudkxnRHZ4bWR5?=
- =?utf-8?B?ZXhJZ1FqQ3ZQSERINzd2VkJ3ay9XRENTdUNNVFgvcVpZNEI5VDQ0MFF6RFhq?=
- =?utf-8?B?Mkw0ZWxyVzJxYko1d3JydGQ3M051Yk04QXVnMFN0MUU5R2pWR0NOVmgvQ2ZC?=
- =?utf-8?B?ZWNtSTczb0g0MGUxdWZTTnVQcForSXBuTTE0djkyUHhxNDRiUDZUaDRHeVRj?=
- =?utf-8?B?eDEzem9GWkMwcXlIYjdXSElhVEJpOWpaMXBOOG56R05Fb0xNR2lIZjFjbTk5?=
- =?utf-8?B?ZXI3blVDemo1T2tMZVEzYTNkZnhEVUhoWWJNbThLTytQMzN5bzVyUHhaMGNw?=
- =?utf-8?B?cnlheEZCQkR5TmdoN2FsS3pkV1A0TnBhMDVDU003aWJRaFBlUml0aHNWbTVP?=
- =?utf-8?B?WTh1dCtRQUNrK28wR2J5Q2FHM3F0bUY3b0h5dVp6UXVDN2NlT241MGJldzg3?=
- =?utf-8?B?ZXREQzQ2bjVReHNKSi9LdVd5QTNLSFVib05oMFhkSG9lZWF0SkFQclZvMHA5?=
- =?utf-8?B?QUd2UHVuS2RZNHhpb2w4Y1lCNkh5T0xEaXBzT25JQ0VTS1hFY1J2Yzk1L09B?=
- =?utf-8?B?NWNKYVQ2K29rTklXNVQ0Mkc0OHNtRDMyNGZESGFaOWlVM0NaV0xkZ2R3eElw?=
- =?utf-8?B?VnZJellvZmFHUllnTlc0QUdMZmRUZnRLeW9DR283b2hWamc9PQ==?=
-X-Microsoft-Antispam-Message-Info: PNYA/0xC6zUzCchvhRuq7hN+FpVOTS5BOMk0mHCG25P0eQ6CntHRIEILHMoFK9hGaG7vk+VYHa2OKl7hU7utHDfMoo2y8FNBYXVJP1grakVar1B8LMGrrwiGD/KHZDL1WEqIJ2F67dD6M8/zGp3XA67WJ0+cUmv/zq68aQXhfrMxBnpuc6zDhwx/0h89D84S
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR03MB2633;6:pI5y4Xf3hxHagzUFmYn2XhM4CakU2f1YfCAJ+6AEEKafdSKtdvEM/wvM+EPMHq93SkphGzX2s6jdZN7nMYA4CqyIlUwZ23OGNM1O5mkJpLvBpJft6rdCuTsa3BphMHFFWPwgcfQmwJc8Rg/b8/Kj71YF/R9nWrEHAz6j2S7M6gY8qu32DajcnnMWxn9eHnLJpy5lg1yJDqwVQFLE+SOr5u6Fuw06VY6QGynZBl5SOTLcPDFTNdedgs00r2BpLh1XUQMi2ZEjRp90PuG2eZER+WltmDkykk22ls13juzaIBD+JBVV5S72Z1TneuhCc94RnaSGkdHQV9/AjLLJFmm9Dk+ZH0cboY9j8uv4+noZqdsHWD5WUd/f8O5/m890ofxbq/WX4CiKGOxJZk3vL+QZrQGvzTcFIkYm808CUr/5l2eLOV17HKcCcF6SRjyZALtuWjhZiOAV7Rnu9wYGb9raCQ==;5:18LPqr0DXkAluWtrJQOfWsgbyWlpnzlbkglqTfBBcnQyhMSYqejPMTcy9wViHBsSEkv+aKW34NKYZfHpS1ncOjFAlNlKgUGTHjlB+i5O77Q7VBtsvwvQNFCm7FQfzAdlZXTtpxni7fYPEdvcWPHXAvvU/nax7OJpx8GpR2Etbs8=;24:WKYPlQ8IEaPRoT2ytfCjvfkuRilLUzY5ipHDont2BEJbOd5EBDfeOCpnggAiidUMu1WhgMV/k8a1QzIiBT5clq6drke+/FQ6qFNXSpoQJn4=
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6049001)(366004)(396003)(39830400003)(39380400002)(346002)(376002)(189003)(377424004)(199004)(6486002)(105586002)(36916002)(52146003)(52116002)(23676004)(386003)(486006)(68736007)(76176011)(8936002)(2906002)(2486003)(97736004)(31686004)(7736002)(64126003)(53546011)(65956001)(7416002)(5890100001)(65806001)(5660300001)(36756003)(7406005)(50466002)(81166006)(65826007)(8676002)(81156014)(956004)(74482002)(39060400002)(47776003)(31696002)(446003)(11346002)(476003)(2616005)(4326008)(3846002)(6116002)(305945005)(6246003)(230700001)(106356001)(16526019)(186003)(478600001)(25786009)(3260700006)(58126008)(229853002)(316002)(117156002)(66066001)(16576012)(86362001)(26005)(53936002)(6666003)(77096007)(93886005)(54906003)(6916009)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0202MB2784;H:[192.168.13.3];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtWSTFQUjAyMDJNQjI3ODQ7MjM6Wngrc1BRYWZwOGhYUjA4MGw2aTBZK1VB?=
+ =?utf-8?B?TENIT29HRlFsZUNRSUpoZ1BBU3NJcFdoZlVwbTdFV3RKSjhSYVNGQisvYWNi?=
+ =?utf-8?B?ODBrT21mM1NqcDJkUHhjTDVpWWlhS003OWc0cmNzRUlieGcxNWE0dHhZSnA5?=
+ =?utf-8?B?SEJkK2lDY2x3cGI2OUkwOCt1SmRLQ1BtbVJjZnRmYnJ3NWtRUmJCMlU3V3Y4?=
+ =?utf-8?B?aWhjZ2gwNk5RZ2tGUDQzTW5VUEdSQXNOdjB4NlhCQ0pOMjVvWHpEem11TTFp?=
+ =?utf-8?B?RVhlM1dvK3cxc0dvTWxZeS9RcXpTTk9aY3lJaUdkWE1kRDdTTll6N05kL1Er?=
+ =?utf-8?B?WVB5SlJXKzV2eGIzV0FuSVNyY2J5aDNNRC9DZWpiNDR4cmdoN2xmSzBCQVZp?=
+ =?utf-8?B?NGJvMk9vUER3NmNMdWg3UEYwa3BrcG8wNGlXYmFiSFFIQk1QdTZBQmZuRmN3?=
+ =?utf-8?B?ZU5PTng3aGZnSnBTakRkR2ZGb0hMMzUzZ1NVczZIKzFiT2QxMFB3bUgzNXlK?=
+ =?utf-8?B?cFRJQjRRY0o2K0k4VHV1ZjlUbWY2YWJFNW53V2JyQlhEYVZLdXpDdUVOb00y?=
+ =?utf-8?B?YVpwVGMzS1ZRekc5YTdaZkg3U3RDbmpwOGM0RW1LL0dYS0gzMWhjRkVIeHBV?=
+ =?utf-8?B?YmM4elJEQWFpcXNiZmYvUjAzeHhhUDdwdW9FV3Y4YTJqZU1ub1JGZkorOGNo?=
+ =?utf-8?B?bFpEdSszckYrbHNvRC9hMi9BYUNCMkRPc2gzSVpZaHZQKzlHTjN5cEtQdXV0?=
+ =?utf-8?B?aTRZMzBJR1pVQXlnbEZZdTdxUXZsZk1vVkZnVXZ4OUFFS1BvVDFuM0ZKUTNQ?=
+ =?utf-8?B?ZUdNSS9acUJnRUFoUzg5VkkyWGRjVi81czdoQk1aa3AvTy9NN1Rzamo4T3hy?=
+ =?utf-8?B?Vmp0UTVidEJPTDZibmlGLzR0Viszem1HSHFOdXE2ZjRPeXpqVXhzUFNoLzdk?=
+ =?utf-8?B?UDFoSkgzcmNCMXRIaDFQT2FoTk9Rc1hQaU5wd3ViSlVjTnRzV2JqeUFwRkVs?=
+ =?utf-8?B?UWw2bXdnNkFTREpqQ3NzNk5hQVJoSExwdEloOGx6NmxIODE2U3pkR0pUcmI1?=
+ =?utf-8?B?QjBSYlN1TmZFWUZQNmZ3Qk9TL3Vzb3JqNDJpRFZZd0dXbTNIUnEzUStHb2ZT?=
+ =?utf-8?B?aFRmVExmaW5DcXpMdjgyajNCSGFUSTNBQVBYNVk1eGZ1aFh3bWwzN1Fsd24z?=
+ =?utf-8?B?dmY2QnI1MS9GSlFmV0ZYbUg5UGF4anZaN0hheDM2aTdpZVRKYlhUK2NZcU1P?=
+ =?utf-8?B?enlsL2ZsOGdpb0VhOG5OS09vWC9RQ0VBdENvZ3RCc1BZSnNwSkNDczQrNWN1?=
+ =?utf-8?B?VW42UWlSS2xkVTZYV0RRWDZFZm80bzd0UGtmZk1ieU9FaGdJa1JlKzJnenJz?=
+ =?utf-8?B?T2NjOEVhd1czUG9NcXFKS0o1eXpLMEJNMitmNk5Yb2p2ZDRoSFYwRmpSSjZ4?=
+ =?utf-8?B?TDlJcjNiN1U2QVk4M21lUEdLbkkzTzBsRVcrNXpUT1dYOVRBcVVMZ0hLcmww?=
+ =?utf-8?B?ZHpPeUVXdENZemhQT2lKamMzYndWZ2lGbUpJdDd4RTBlaFNBeVJ2RUsxQmd1?=
+ =?utf-8?B?dzFPaXNuQStneXQ3ZFlKSFJrTTdlNDA1NUJzVHkxMnMxQVV5Ym9BeE5ZTXI5?=
+ =?utf-8?B?MTRqMVhQVUxmamlSRE52Zy9lNDI1WitRb0RBSldiMVFhWGRvVzBmODV3RUVF?=
+ =?utf-8?B?cTNKZ0lOV2kwbTRiS0lNb29NR2ZmWTVkSEQxZ2VpZy8wN0Y3V3R5eUlWa2Jj?=
+ =?utf-8?B?bGYvNzh3cmxtWk85T285UzNSYkh3RmF3eXVySjQ4YlVvWE93dURSWXNoOWhD?=
+ =?utf-8?B?SkJxaEpYZi9DM1JhRy9sQ0lIRlhDQUMyWXQzbm1lZi95QTd5UzB2WFFBZ3dr?=
+ =?utf-8?B?djBXNHJramJkdlptUmhMM01peXBwOWhBQUtQczlrNXl3UkRCa1JSVUc5V3BD?=
+ =?utf-8?B?RWhxcjdoYklGWm1JN25YVS9RVjJEenQ3bnBwaTlTTDUrbVA4MUlxZEhUNmhz?=
+ =?utf-8?B?Uitta0F5TUVQdENWdVJySEloUTlJQ2EySlFPNVNoNTVZVG5sS3BjbDg3VXZn?=
+ =?utf-8?B?TGcxQ1MxWi9ZVjJUc2pGKzd2bDlSckJwZmhTam5wOGZ3WnlRQnljbUpRMFVk?=
+ =?utf-8?B?cnZ1VmhSL1pPMVRwVU5QM0c0cjV5Wkp0cC84a3VyQ25aQzlTYnFiWkJjN2Nq?=
+ =?utf-8?B?U1NHQ0dWVHlON2hhTFQxMlpEUUkzMGtxck9INzBFbFkrckJTNWcyTGJNSjY1?=
+ =?utf-8?B?ZWg2Wno4cUdubi9obVpqaTUvYnpiTU51eTVRV09DSFk4TWlmVXBoZ3N3PT0=?=
+X-Microsoft-Antispam-Message-Info: miB6ET7MxTKRXH29qsBRvxBAek4hm6d+bNJa5s2lDEGEkqkQnM1AO+hdelDQPqgP6WrL93UNjiPpXV5d42cJbO2tf9R27DhC2hZaeE2HtKkg/4bUzF7nXcuVob8reVuZob8OtYaLdstAfbs7i726rMyV8oBnleSKabea7x0TDuotb7JofuA7SwjfG5Vy1tRE
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0202MB2784;6:w3n1t+i2kjhky6iJxy0nEN/FQ5hhc+T4xDJFP2yiPmian6BRNiq6pocsvbW0nY9+md/QuQbZAoUBkAkli+3NavhZDW6aQl1LW+9gFm2wxYNTfE8wwikoNsh6KbOQy11woHLh4DlgRjEtUvKgf3T2VuKB1BaXgmYNR+wga+24tBCWpYDufoJ7I6bVfUNIvm7yeDIhs92FntVBQqrYMc7rm8x18iZl7R3wanGME9gTal2YA0Uw6Ha/JeqJMjpiCFgkr6lCxjsojspt/MP8+J9N25GTLPzG26I3btxR0dd8C8HJQlYAjooCYfxMYLxKLfUWAU5VhluGsEjRgmE8+rHYrd+44/1bmf89/WKRLCHHs9ewIhqSPC4liKkFpHBGhz29/Pdd3oYFm14kt1oJnoDN/uneH3v2eJAeD4KQcJkb7EvXys4stWUGaX/ULPFV2xOlDosiOAMYlPoRYnN4H2K2QA==;5:I5pVR05YMHt1wJSqeoLFAbttM/3tAVQU4HsTwJU0wmnvf1zoPjms1wi4nupxGGrv8ErOWuPOVS4j+wnIlTjujNWf+uzSJIUqIaq1VtHB+ed5moUWLBY4TSf8Djf7vFlPA17IkVboID0yCtOTsBGk8NBcM/kHaoT4SnUuTlLGfos=;24:XN2SsxfM6ffpqG8FgMO/2sJgvr4Ws/lLm1QRrogD5l2ImUT2an+GEcC06gXgobBnmomwQeDD2wAbeyrJpYvtFLwmOpHAekmwyTvnwgZg4iY=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR03MB2633;7:idx3jAUNmWXSnCFTsgvO7RQOJq1q70i6ugpc6HCEyRENm3N00DAJAWvW1fE1jG+UAQ4/Msr3HYzTk5DNrMw/AsLWabcIC0rDw4uN5kz0OUjd/OcVlFTiuElawLOjDw63Y388cok9zdJep3udD88W/8Hvkai6DcGW+6WXkUsazZuv/ruaLugQ9FHUV9b/6GSt/VMON81Xrq2iDdvQZaFzFjJ1uEJPZf9wPULq0fraTJ1cyj21Ek7pdYXZN7dbyp6d
-X-MS-Office365-Filtering-Correlation-Id: 9554471e-032f-437a-1085-08d5ac102d7a
-X-OriginatorOrg: synaptics.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Apr 2018 07:26:20.5534 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9554471e-032f-437a-1085-08d5ac102d7a
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0202MB2784;7:Vw78vi2YZwVCh119V+UKibe0sn528zzhBgOIq78eQ9jmJWEc39pzTNwljUcOpf9TQKrt/uM6bcZQ5IBWMbHyckI/E6goHc2ksMI47Bm5E/uEHr+5D0xstUZ1Uvbes/FRp/leotulNn23rkLTGXVhOzryqVBL9eSwHmsnD+dwZFd0vxnl6/CMrY43Huu5yiw41aY7vmkY9ZaBLOjEEW/9fJjdhY3RmJeXxr0x3RmJMWpXnYQZLlt4ZcHJ23W1OkbY
+X-MS-Office365-Filtering-Correlation-Id: 6c90d225-a8b1-4448-04d4-08d5ac10696a
+X-OriginatorOrg: axentia.se
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Apr 2018 07:28:01.0021 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6c90d225-a8b1-4448-04d4-08d5ac10696a
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 335d1fbc-2124-4173-9863-17e7051a2a0e
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR03MB2633
+X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0202MB2784
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3R7QYek024941
 
-On Thu, 26 Apr 2018 12:39:59 +0530 Bhadram Varka wrote:
+On 2018-04-27 01:18, Laurent Pinchart wrote:
+> Hi Peter,
+> 
+> On Friday, 27 April 2018 02:09:14 EEST Peter Rosin wrote:
+>> On 2018-04-27 00:40, Laurent Pinchart wrote:
+>>> On Friday, 27 April 2018 01:31:15 EEST Peter Rosin wrote:
+>>>> Hi!
+>>>>
+>>>> It was noted by Russel King [1] that bridges (not using components)
+>>>> might disappear unexpectedly if the owner of the bridge was unbound.
+>>>> Jyri Sarha had previously noted the same thing with panels [2]. Jyri
+>>>> came up with using device links to resolve the panel issue, which
+>>>> was also my (independent) reaction to the note from Russel.
+>>>>
+>>>> This series builds up to the addition of that link in the last
+>>>> patch, but in my opinion the other 23 patches do have merit on their
+>>>> own.
+>>>>
+>>>> The last patch needs testing, while the others look trivial. That
+>>>> said, I might have missed some subtlety.
+>>>
+>>> I don't think this is the way to go. We have a real lifetime management
+>>> problem with bridges, and device links are just trying to hide the problem
+>>> under the carpet. They will further corner us by making a real fix much
+>>> more difficult to implement. I'll try to comment further in the next few
+>>> days on what I think a better solution would be, but in a nutshell I
+>>> believe that drm_bridge objects need to be refcounted, with a .release()
+>>> operation to free the bridge resources when the reference count drops to
+>>> zero. This shouldn't be difficult to implement and I'm willing to help.
+>>
+>> Ok, sp 24/24 is dead, and maybe 23/24 too.
+> 
+> Not necessarily, maybe I'll get proven wrong :-) Let's discuss, but I first 
+> need some sleep.
 
-> >>>>>
-> >>>>> diff --git a/drivers/net/phy/marvell.c b/drivers/net/phy/marvell.c
-> >>>>> index c22e8e383247..b6abe1cbc84b 100644
-> >>>>> --- a/drivers/net/phy/marvell.c
-> >>>>> +++ b/drivers/net/phy/marvell.c
-> >>>>> @@ -115,6 +115,9 @@
-> >>>>>    /* WOL Event Interrupt Enable */
-> >>>>>    #define MII_88E1318S_PHY_CSIER_WOL_EIE BIT(7)
-> >>>>>    +/* Copper Specific Interrupt Status Register */
-> >>>>> +#define MII_88E1318S_PHY_CSISR                0x13
-> >>>>> +
-> >>>>>    /* LED Timer Control Register */
-> >>>>>    #define MII_88E1318S_PHY_LED_TCR            0x12
-> >>>>>    #define MII_88E1318S_PHY_LED_TCR_FORCE_INT BIT(15)
-> >>>>> @@ -1393,6 +1396,12 @@ static int m88e1318_set_wol(struct 
-> >>>>> phy_device *phydev,
-> >>>>>            if (err < 0)
-> >>>>>                goto error;
-> >>>>>    +        /* If WOL event happened once, the LED[2] interrupt pin
-> >>>>> +         * will not be cleared unless reading the CSISR register.
-> >>>>> +         * So clear the WOL event first before enabling it.
-> >>>>> +         */
-> >>>>> +        phy_read(phydev, MII_88E1318S_PHY_CSISR);
-> >>>>> +  
-> >>>> Hi Jisheng
-> >>>>
-> >>>> The problem with this is, you could be clearing a real interrupt, link
-> >>>> down/up etc. If interrupts are in use, i think the normal interrupt
-> >>>> handling will clear the WOL interrupt? So can you make this read
-> >>>> conditional on !phy_interrupt_is_valid()?  
-> >>> So this will clear WoL interrupt bit from Copper Interrupt status 
-> >>> register.
-> >>>
-> >>> How about clearing WoL status (Page 17, register 17) for every WOL 
-> >>> event ?
-> >>>  
-> >> This is already properly done by setting 
-> >> MII_88E1318S_PHY_WOL_CTRL_CLEAR_WOL_STATUS
-> >> in m88e1318_set_wol()  
-> > This part of the code executes only when we enable WOL through ethtool 
-> > (ethtool -s eth0 wol g)
-> >
-> > Lets say once WOL enabled through magic packet - HW generates WOL 
-> > interrupt once magic packet received.
-> > The problem that I see here is that for the next immediate magic 
-> > packet I don't see WOL interrupt generated by the HW.
-> > I need to explicitly clear WOL status for HW to generate WOL interrupt.  
-> 
-> With the below patch I see WOL event interrupt for every magic packet 
-> that HW receives...
-> 
-> diff --git a/drivers/net/phy/marvell.c b/drivers/net/phy/marvell.c
-> index ed8a67d..5d3d138 100644
-> --- a/drivers/net/phy/marvell.c
-> +++ b/drivers/net/phy/marvell.c
-> @@ -55,6 +55,7 @@
-> 
->   #define MII_M1011_IEVENT               0x13
->   #define MII_M1011_IEVENT_CLEAR         0x0000
-> +#define MII_M1011_IEVENT_WOL_EVENT     BIT(7)
-> 
->   #define MII_M1011_IMASK                        0x12
-> - #define MII_M1011_IMASK_INIT           0x6400
-> + #define MII_M1011_IMASK_INIT           0x6480
-> 
-> @@ -195,13 +196,40 @@ struct marvell_priv {
->          bool copper;
->   };
-> 
-> +static int marvell_clear_wol_status(struct phy_device *phydev)
-> +{
-> +       int err, temp, oldpage;
-> +
-> +       oldpage = phy_read(phydev, MII_MARVELL_PHY_PAGE);
-> +       if (oldpage < 0)
-> +               return oldpage;
-> +
-> +       err = phy_write(phydev, MII_MARVELL_PHY_PAGE,
-> +                        MII_88E1318S_PHY_WOL_PAGE);
-> +       if (err < 0)
-> +               return err;
-> +
-> +       /*
-> +        * Clear WOL status so that for next WOL event
-> +        * interrupt will be generated by HW
-> +        */
-> +       temp = phy_read(phydev, MII_88E1318S_PHY_WOL_CTRL);
-> +       temp |= MII_88E1318S_PHY_WOL_CTRL_CLEAR_WOL_STATUS;
-> +       err = phy_write(phydev, MII_88E1318S_PHY_WOL_CTRL, temp);
+Ok, I'll add my view...
 
-is it better to reuse __phy_write()?
+I don't see how a refcount is going to resolve anything. Let's take some
+device that allocs a bridge that is later attached to some encoder. In doing
+so it adds hooks to some of the drm_bridge_funcs. If you add a refcount to
+the bridge itself then yes, the bridge object might remain but the code
+backing the hook functions will go away the moment the owner device goes
+away. So, you'd have to refcount the owner device itself to prevent it
+from going away. But, you can't stop a device from going away IIUC, you can
+only bring other stuff down with it in an orderly fashion.
 
-> +       if (err < 0)
-> +               return err;
-> +
-> +
-> +       phy_write(phydev, MII_MARVELL_PHY_PAGE, oldpage);
-> +
-> +       return 0;
-> +}
-> +
->   static int marvell_ack_interrupt(struct phy_device *phydev)
->   {
->          int err;
+Components, that some bridges use, takes care of bringing the whole cluster
+down *before* any device goes away, so that is obviously a solution. But
+that solution is not in place everywhere.
+
+Now, my device-link is pretty light-weight. And it should only matter if
+the owner goes away before the consuming drm device has brought down the
+encoder properly. If that ever happens, we're in trouble. So, the link can
+at worst only substitute one problem with another, and at best it prevents
+the fireworks.
+
+Sure, there's the reprobe problem if the bridge's owner device shows up
+again, but that's pretty minor compared to a hard crash. And there was a
+patch for that, so in the end that may be a non-issue.
+
+If some other solution is found, removing the device-link is trivial. It is
+localized to bridge attach/detach and nothing else is affected (in terms of
+code).
+
+Cheers,
+Peter
+
+>> But how do you feel about dropping .of_node in favour of .owner? That gets
+>> rid of ugly #ifdefs...
 > 
->          /* Clear the interrupts by reading the reg */
->          err = phy_read(phydev, MII_M1011_IEVENT);
-> -
->          if (err < 0)
->                  return err;
+> I'll review that part and reply, I have nothing against it on principle at the 
+> moment. The more generic the code is, the better in my opinion. We just need 
+> to make sure that the OF node we're interested in will always be .owner-
+>> of_node in all cases.
 > 
-> @@ -1454,12 +1482,18 @@ static int marvell_aneg_done(struct phy_device 
-> *phydev)
+>> I also have the nagging feeling that .driver_private serves very little real
+>> purpose if there is a .owner so that you can do
+>>
+>> 	dev_get_drvdata(bridge->owner)
+>>
+>> for the cases where the container_of macro is not appropriate.
 > 
->   static int m88e1121_did_interrupt(struct phy_device *phydev)
->   {
-> -       int imask;
-> +       int imask, err;
+> I'll review that too, it's a good point.
 > 
->          imask = phy_read(phydev, MII_M1011_IEVENT);
-> 
-> -       if (imask & MII_M1011_IMASK_INIT)
-> +       if (imask & MII_M1011_IMASK_INIT) {
-> +               if (imask & MII_M1011_IEVENT_WOL_EVENT) {
-> +                       err = marvell_clear_wol_status(phydev);
-> +                       if (err < 0)
-> +                               return 0;
-> +               }
->                  return 1;
-> +       }
-> 
->          return 0;
->   }
