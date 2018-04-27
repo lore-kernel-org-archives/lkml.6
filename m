@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757642AbeD0LWl (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 07:22:41 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:28505 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752553AbeD0LWf (ORCPT
+        id S1757720AbeD0LWv (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 07:22:51 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:21310 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757649AbeD0LWp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 07:22:35 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180427112233epoutp03bf69c02adbd8176beb3ae321a3a115f6~pRyBh7hlM0700507005epoutp03L
-X-AuditID: b6c32a37-4f9ff70000001030-c5-5ae307f8953c
+        Fri, 27 Apr 2018 07:22:45 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20180427112243epoutp04f523966b170dbe2e4104ce8fcbea909b~pRyKyFabb0157301573epoutp04M
+X-AuditID: b6c32a37-4f9ff70000001030-db-5ae308021e1d
 From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 To: Simon Horman <horms+renesas@verge.net.au>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>
@@ -16,42 +16,42 @@ Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
         linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         b.zolnierkie@samsung.com
-Subject: [PATCH 2/3] drm: shmobile: remove unused MERAM support
-Date: Fri, 27 Apr 2018 13:21:44 +0200
-Message-id: <1524828105-26585-3-git-send-email-b.zolnierkie@samsung.com>
+Subject: [PATCH 3/3] video: fbdev: remove unused sh_mobile_meram driver
+Date: Fri, 27 Apr 2018 13:21:45 +0200
+Message-id: <1524828105-26585-4-git-send-email-b.zolnierkie@samsung.com>
 X-Mailer: git-send-email 1.9.1
 In-reply-to: <1524828105-26585-1-git-send-email-b.zolnierkie@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrHIsWRmVeSWpSXmKPExsWy7bCmru4P9sdRBg/+clpsnLGe1eLK1/ds
-        FnNnT2K0uPD2A5tF58Ql7BYn+j6wWlzeNYfNYuvLd0wOHB4Tz+p6zO6Yyepxv/s4k0ffllWM
-        HnN+fmPx+LxJLoAtissmJTUnsyy1SN8ugStj5ozFLAULXCsW3Z7K1sD4y6KLkZNDQsBEYtr+
-        R8xdjFwcQgI7GCV62mawQzjfGSUOHPjGDlO16eEUFojEBkaJ9zemMUE4vxglrp54wQRSxSZg
-        JTGxfRUjiC0ikCrRtvMsWAezwHlGiY1Td7CCJIQF7CUWHGkGs1kEVCX6dvxhA7F5BTwknjSc
-        ZoJYJydx8thksBpOAU+J+30vwQ6UEJjDJnH16SIWiCIXiRV/L0DdJyzx6vgWIJsDyJaWuHTU
-        FqK+mVHi2449zBA1Exgl9qwXgrCtJQ4fvwi2gFmAT+Ld1x5WiF5eiY42qBIPiXv/PkONd5RY
-        emgpI8THcxglWla0sE1glFrAyLCKUSy1oDg3PbXYsMBYrzgxt7g0L10vOT93EyM4VrXMdzBu
-        OOdziFGAg1GJh1fh3cMoIdbEsuLK3EOMEhzMSiK8O24DhXhTEiurUovy44tKc1KLDzFKc7Ao
-        ifM+9TkTJSSQnliSmp2aWpBaBJNl4uCUamCMunxt9w8X7oyIXxcMnY+4H0q5Y3fiyfns6s4O
-        T9Hzn3f6i4UzyPXaVF30Vf00R1b+3odbWwI9z2q1/u+tWZ1W8ejTJy9VbnsH3Tu3jnx0nvVy
-        XY933NOg2hOz1UtlszLZv6SVLTI7K77gQ2k128rZGRsC2tx9lGbsc5s94YTJke2r3VYe5v6r
-        xFKckWioxVxUnAgA+n6jMtECAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprGLMWRmVeSWpSXmKPExsVy+t9jQd3v7I+jDLbf0rDYOGM9q8WVr+/Z
-        LObOnsRoceHtBzaLzolL2C1O9H1gtbi8aw6bxdaX75gcODwmntX1mN0xk9XjfvdxJo++LasY
-        Peb8/Mbi8XmTXABbFJdNSmpOZllqkb5dAlfGzBmLWQoWuFYsuj2VrYHxl0UXIyeHhICJxKaH
-        U1i6GLk4hATWMUp82XqVCcL5xSjR82gPI0gVm4CVxMT2VWC2iECqxJw9fewgRcwCZxklbl67
-        wAKSEBawl1hwpJkVxGYRUJXo2/GHDcTmFfCQeNJwmglinZzEyWOTwWo4BTwl7ve9ZAaxhYBq
-        pna2MU1g5FnAyLCKUTK1oDg3PbfYqMAwL7Vcrzgxt7g0L10vOT93EyMwtLYd1urbwXh/Sfwh
-        RgEORiUeXoV3D6OEWBPLiitzDzFKcDArifDuuA0U4k1JrKxKLcqPLyrNSS0+xCjNwaIkzns7
-        71ikkEB6YklqdmpqQWoRTJaJg1OqgdH9s+6UR/YH3SvWRs7J3p+gX3LlAffa5yp8e+9lt608
-        7lA+NSpoxZ3gt89mFp0pPWeZsTdabcGSoNnb5zl4fM9stqm49TZOxTz2zAb9nQ659QH64neO
-        Ss4+/yjt9tFj3+TarjQdFg1YZSl56FMny2ozzdMXUkwTvrNkVdvFLqxn7Fp9WXSWyAElluKM
-        REMt5qLiRACjcjZ5KQIAAA==
-X-CMS-MailID: 20180427112231epcas1p4cd63e2bf9216d7e8810f49e57bcf50c6
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrAIsWRmVeSWpSXmKPExsWy7bCmvi4Tx+Mog9eH9Cw2zljPanHl63s2
+        i7mzJzFaXHj7gc2ic+ISdosTfR9YLS7vmsNmsfXlOyYHDo+JZ3U9ZnfMZPW4332cyaNvyypG
+        jzk/v7F4fN4kF8AWxWWTkpqTWZZapG+XwJVxpvcEY8GJq4wVly8+Ympg3L+esYuRk0NCwETi
+        1bH5zF2MXBxCAjsYJV59mMEC4XxnlLg/9QwrTNX0ha/YIRIbGCWu/14J1fKLUeLsm7lgs9gE
+        rCQmtq8Cs0UEUiXadp4FG8UscJ5RYuPUHWCjhAXcJRrObGYBsVkEVCXaj5xlArF5BTwkfpx/
+        ywKxTk7i5LHJYPWcAp4S9/tegm2TEJjDJvFjwWMmiCIXiWvvZ0LZwhKvjm8Buo8DyJaWuHTU
+        FqK+mVHi2449zBA1Exgl9qwXgrCtJQ4fvwi2gFmAT+Ld1x5WiF5eiY42qBIPiam/X0K1Okps
+        fH4SGi5zGCU+nVjDMoFRagEjwypGsdSC4tz01GLDAmO94sTc4tK8dL3k/NxNjOB41TLfwbjh
+        nM8hRgEORiUeXoV3D6OEWBPLiitzDzFKcDArifDuuA0U4k1JrKxKLcqPLyrNSS0+xCjNwaIk
+        zvvU50yUkEB6YklqdmpqQWoRTJaJg1OqgdFL7OTJl7ccZ0VwLnvxqO7GHdeQbaElK3/cF5io
+        UWH3rKWlUeN8+pKb7x58jPS9w6PTd/fOF86jSk+dZ99Lmby167HawdeRd5i+XJFnri6rYxOx
+        9bDJtY+9qd3/1srZMMaykm27FrMjfyCT00/bvZLHZvR7Pjk7Z0Wa9WrucM/4LdusPnzsZVdi
+        Kc5INNRiLipOBAAmDnQT0wIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBLMWRmVeSWpSXmKPExsVy+t9jQV1GjsdRBo1HRSw2zljPanHl63s2
+        i7mzJzFaXHj7gc2ic+ISdosTfR9YLS7vmsNmsfXlOyYHDo+JZ3U9ZnfMZPW4332cyaNvyypG
+        jzk/v7F4fN4kF8AWxWWTkpqTWZZapG+XwJVxpvcEY8GJq4wVly8+Ympg3L+esYuRk0NCwERi
+        +sJX7F2MXBxCAusYJdrb21kgnF+MEr1TX7ODVLEJWElMbF8F1iEikCoxZ08fWAezwFlGiZvX
+        LrCAJIQF3CUazmwGs1kEVCXaj5xlArF5BTwkfpx/ywKxTk7i5LHJrCA2p4CnxP2+l8wgthBQ
+        zdTONqYJjDwLGBlWMUqmFhTnpucWGxUY5qWW6xUn5haX5qXrJefnbmIEhte2w1p9OxjvL4k/
+        xCjAwajEw6vw7mGUEGtiWXFl7iFGCQ5mJRHeHbeBQrwpiZVVqUX58UWlOanFhxilOViUxHlv
+        5x2LFBJITyxJzU5NLUgtgskycXBKNTCGmS9sEdxfuu5R9sOTXrNcUovPhGomc19xd4q5+fdd
+        CKtl+zcBoRrBjqgZ+7z/Hdp3rE9AdP50p0M5CtM2z7traZZYurxdbpXgrLPTEndFdetcP6ui
+        PXfOp7l9b+2nHE77pbhmzX7eC++V5TafEbl5Udgp4d08BbcCtzrXxx/6mwMl8znvTBRVYinO
+        SDTUYi4qTgQAWJ4bKCsCAAA=
+X-CMS-MailID: 20180427112241epcas1p423b20f397d034a444ec018f39241d82b
 X-Msg-Generator: CA
 CMS-TYPE: 101P
-X-CMS-RootMailID: 20180427112231epcas1p4cd63e2bf9216d7e8810f49e57bcf50c6
-X-RootMTR: 20180427112231epcas1p4cd63e2bf9216d7e8810f49e57bcf50c6
+X-CMS-RootMailID: 20180427112241epcas1p423b20f397d034a444ec018f39241d82b
+X-RootMTR: 20180427112241epcas1p423b20f397d034a444ec018f39241d82b
 References: <1524828105-26585-1-git-send-email-b.zolnierkie@samsung.com>
-        <CGME20180427112231epcas1p4cd63e2bf9216d7e8810f49e57bcf50c6@epcas1p4.samsung.com>
+        <CGME20180427112241epcas1p423b20f397d034a444ec018f39241d82b@epcas1p4.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -64,277 +64,909 @@ Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
- drivers/gpu/drm/shmobile/Kconfig           |  1 -
- drivers/gpu/drm/shmobile/shmob_drm_crtc.c  | 42 ------------------------------
- drivers/gpu/drm/shmobile/shmob_drm_crtc.h  |  1 -
- drivers/gpu/drm/shmobile/shmob_drm_drv.h   |  2 --
- drivers/gpu/drm/shmobile/shmob_drm_kms.c   | 11 --------
- drivers/gpu/drm/shmobile/shmob_drm_kms.h   |  1 -
- drivers/gpu/drm/shmobile/shmob_drm_plane.c |  2 --
- include/linux/platform_data/shmob_drm.h    |  4 ---
- 8 files changed, 64 deletions(-)
+ drivers/video/fbdev/Kconfig           |  12 -
+ drivers/video/fbdev/Makefile          |   1 -
+ drivers/video/fbdev/sh_mobile_meram.c | 754 ----------------------------------
+ include/video/sh_mobile_meram.h       |  95 -----
+ 4 files changed, 862 deletions(-)
+ delete mode 100644 drivers/video/fbdev/sh_mobile_meram.c
+ delete mode 100644 include/video/sh_mobile_meram.h
 
-diff --git a/drivers/gpu/drm/shmobile/Kconfig b/drivers/gpu/drm/shmobile/Kconfig
-index c987c82..0426d66 100644
---- a/drivers/gpu/drm/shmobile/Kconfig
-+++ b/drivers/gpu/drm/shmobile/Kconfig
-@@ -2,7 +2,6 @@ config DRM_SHMOBILE
- 	tristate "DRM Support for SH Mobile"
- 	depends on DRM && ARM
- 	depends on ARCH_SHMOBILE || COMPILE_TEST
--	depends on FB_SH_MOBILE_MERAM || !FB_SH_MOBILE_MERAM
- 	select BACKLIGHT_CLASS_DEVICE
- 	select BACKLIGHT_LCD_SUPPORT
- 	select DRM_KMS_HELPER
-diff --git a/drivers/gpu/drm/shmobile/shmob_drm_crtc.c b/drivers/gpu/drm/shmobile/shmob_drm_crtc.c
-index e773893..40df888 100644
---- a/drivers/gpu/drm/shmobile/shmob_drm_crtc.c
-+++ b/drivers/gpu/drm/shmobile/shmob_drm_crtc.c
-@@ -21,8 +21,6 @@
- #include <drm/drm_gem_cma_helper.h>
- #include <drm/drm_plane_helper.h>
+diff --git a/drivers/video/fbdev/Kconfig b/drivers/video/fbdev/Kconfig
+index 1e0b9515..9150ca5 100644
+--- a/drivers/video/fbdev/Kconfig
++++ b/drivers/video/fbdev/Kconfig
+@@ -2345,18 +2345,6 @@ source "drivers/video/fbdev/omap/Kconfig"
+ source "drivers/video/fbdev/omap2/Kconfig"
+ source "drivers/video/fbdev/mmp/Kconfig"
  
+-config FB_SH_MOBILE_MERAM
+-	tristate "SuperH Mobile MERAM read ahead support"
+-	depends on ARCH_SHMOBILE
+-	select GENERIC_ALLOCATOR
+-	---help---
+-	  Enable MERAM support for the SuperH controller.
+-
+-	  This will allow for caching of the framebuffer to provide more
+-	  reliable access under heavy main memory bus traffic situations.
+-	  Up to 4 memory channels can be configured, allowing 4 RGB or
+-	  2 YCbCr framebuffers to be configured.
+-
+ config FB_SSD1307
+ 	tristate "Solomon SSD1307 framebuffer support"
+ 	depends on FB && I2C
+diff --git a/drivers/video/fbdev/Makefile b/drivers/video/fbdev/Makefile
+index 55282a2..0582ea6 100644
+--- a/drivers/video/fbdev/Makefile
++++ b/drivers/video/fbdev/Makefile
+@@ -116,7 +116,6 @@ obj-$(CONFIG_FB_SM501)            += sm501fb.o
+ obj-$(CONFIG_FB_UDL)		  += udlfb.o
+ obj-$(CONFIG_FB_SMSCUFX)	  += smscufx.o
+ obj-$(CONFIG_FB_XILINX)           += xilinxfb.o
+-obj-$(CONFIG_FB_SH_MOBILE_MERAM)  += sh_mobile_meram.o
+ obj-$(CONFIG_FB_SH_MOBILE_LCDC)	  += sh_mobile_lcdcfb.o
+ obj-$(CONFIG_FB_OMAP)             += omap/
+ obj-y                             += omap2/
+diff --git a/drivers/video/fbdev/sh_mobile_meram.c b/drivers/video/fbdev/sh_mobile_meram.c
+deleted file mode 100644
+index da9df12..0000000
+--- a/drivers/video/fbdev/sh_mobile_meram.c
++++ /dev/null
+@@ -1,754 +0,0 @@
+-/*
+- * SuperH Mobile MERAM Driver for SuperH Mobile LCDC Driver
+- *
+- * Copyright (c) 2011	Damian Hobson-Garcia <dhobsong@igel.co.jp>
+- *                      Takanari Hayama <taki@igel.co.jp>
+- *
+- * This file is subject to the terms and conditions of the GNU General Public
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+- */
+-
+-#include <linux/device.h>
+-#include <linux/err.h>
+-#include <linux/export.h>
+-#include <linux/genalloc.h>
+-#include <linux/io.h>
+-#include <linux/kernel.h>
+-#include <linux/module.h>
+-#include <linux/platform_device.h>
+-#include <linux/pm_runtime.h>
+-#include <linux/slab.h>
+-
 -#include <video/sh_mobile_meram.h>
 -
- #include "shmob_drm_backlight.h"
- #include "shmob_drm_crtc.h"
- #include "shmob_drm_drv.h"
-@@ -47,20 +45,12 @@ static int shmob_drm_clk_on(struct shmob_drm_device *sdev)
- 		if (ret < 0)
- 			return ret;
- 	}
--#if 0
--	if (sdev->meram_dev && sdev->meram_dev->pdev)
--		pm_runtime_get_sync(&sdev->meram_dev->pdev->dev);
--#endif
- 
- 	return 0;
- }
- 
- static void shmob_drm_clk_off(struct shmob_drm_device *sdev)
- {
--#if 0
--	if (sdev->meram_dev && sdev->meram_dev->pdev)
--		pm_runtime_put_sync(&sdev->meram_dev->pdev->dev);
--#endif
- 	if (sdev->clock)
- 		clk_disable_unprepare(sdev->clock);
- }
-@@ -269,12 +259,6 @@ static void shmob_drm_crtc_stop(struct shmob_drm_crtc *scrtc)
- 	if (!scrtc->started)
- 		return;
- 
--	/* Disable the MERAM cache. */
--	if (scrtc->cache) {
--		sh_mobile_meram_cache_free(sdev->meram, scrtc->cache);
--		scrtc->cache = NULL;
+-/* -----------------------------------------------------------------------------
+- * MERAM registers
+- */
+-
+-#define MEVCR1			0x4
+-#define MEVCR1_RST		(1 << 31)
+-#define MEVCR1_WD		(1 << 30)
+-#define MEVCR1_AMD1		(1 << 29)
+-#define MEVCR1_AMD0		(1 << 28)
+-#define MEQSEL1			0x40
+-#define MEQSEL2			0x44
+-
+-#define MExxCTL			0x400
+-#define MExxCTL_BV		(1 << 31)
+-#define MExxCTL_BSZ_SHIFT	28
+-#define MExxCTL_MSAR_MASK	(0x7ff << MExxCTL_MSAR_SHIFT)
+-#define MExxCTL_MSAR_SHIFT	16
+-#define MExxCTL_NXT_MASK	(0x1f << MExxCTL_NXT_SHIFT)
+-#define MExxCTL_NXT_SHIFT	11
+-#define MExxCTL_WD1		(1 << 10)
+-#define MExxCTL_WD0		(1 << 9)
+-#define MExxCTL_WS		(1 << 8)
+-#define MExxCTL_CB		(1 << 7)
+-#define MExxCTL_WBF		(1 << 6)
+-#define MExxCTL_WF		(1 << 5)
+-#define MExxCTL_RF		(1 << 4)
+-#define MExxCTL_CM		(1 << 3)
+-#define MExxCTL_MD_READ		(1 << 0)
+-#define MExxCTL_MD_WRITE	(2 << 0)
+-#define MExxCTL_MD_ICB_WB	(3 << 0)
+-#define MExxCTL_MD_ICB		(4 << 0)
+-#define MExxCTL_MD_FB		(7 << 0)
+-#define MExxCTL_MD_MASK		(7 << 0)
+-#define MExxBSIZE		0x404
+-#define MExxBSIZE_RCNT_SHIFT	28
+-#define MExxBSIZE_YSZM1_SHIFT	16
+-#define MExxBSIZE_XSZM1_SHIFT	0
+-#define MExxMNCF		0x408
+-#define MExxMNCF_KWBNM_SHIFT	28
+-#define MExxMNCF_KRBNM_SHIFT	24
+-#define MExxMNCF_BNM_SHIFT	16
+-#define MExxMNCF_XBV		(1 << 15)
+-#define MExxMNCF_CPL_YCBCR444	(1 << 12)
+-#define MExxMNCF_CPL_YCBCR420	(2 << 12)
+-#define MExxMNCF_CPL_YCBCR422	(3 << 12)
+-#define MExxMNCF_CPL_MSK	(3 << 12)
+-#define MExxMNCF_BL		(1 << 2)
+-#define MExxMNCF_LNM_SHIFT	0
+-#define MExxSARA		0x410
+-#define MExxSARB		0x414
+-#define MExxSBSIZE		0x418
+-#define MExxSBSIZE_HDV		(1 << 31)
+-#define MExxSBSIZE_HSZ16	(0 << 28)
+-#define MExxSBSIZE_HSZ32	(1 << 28)
+-#define MExxSBSIZE_HSZ64	(2 << 28)
+-#define MExxSBSIZE_HSZ128	(3 << 28)
+-#define MExxSBSIZE_SBSIZZ_SHIFT	0
+-
+-#define MERAM_MExxCTL_VAL(next, addr)	\
+-	((((next) << MExxCTL_NXT_SHIFT) & MExxCTL_NXT_MASK) | \
+-	 (((addr) << MExxCTL_MSAR_SHIFT) & MExxCTL_MSAR_MASK))
+-#define	MERAM_MExxBSIZE_VAL(rcnt, yszm1, xszm1) \
+-	(((rcnt) << MExxBSIZE_RCNT_SHIFT) | \
+-	 ((yszm1) << MExxBSIZE_YSZM1_SHIFT) | \
+-	 ((xszm1) << MExxBSIZE_XSZM1_SHIFT))
+-
+-static const unsigned long common_regs[] = {
+-	MEVCR1,
+-	MEQSEL1,
+-	MEQSEL2,
+-};
+-#define MERAM_REGS_SIZE ARRAY_SIZE(common_regs)
+-
+-static const unsigned long icb_regs[] = {
+-	MExxCTL,
+-	MExxBSIZE,
+-	MExxMNCF,
+-	MExxSARA,
+-	MExxSARB,
+-	MExxSBSIZE,
+-};
+-#define ICB_REGS_SIZE ARRAY_SIZE(icb_regs)
+-
+-/*
+- * sh_mobile_meram_icb - MERAM ICB information
+- * @regs: Registers cache
+- * @index: ICB index
+- * @offset: MERAM block offset
+- * @size: MERAM block size in KiB
+- * @cache_unit: Bytes to cache per ICB
+- * @pixelformat: Video pixel format of the data stored in the ICB
+- * @current_reg: Which of Start Address Register A (0) or B (1) is in use
+- */
+-struct sh_mobile_meram_icb {
+-	unsigned long regs[ICB_REGS_SIZE];
+-	unsigned int index;
+-	unsigned long offset;
+-	unsigned int size;
+-
+-	unsigned int cache_unit;
+-	unsigned int pixelformat;
+-	unsigned int current_reg;
+-};
+-
+-#define MERAM_ICB_NUM			32
+-
+-struct sh_mobile_meram_fb_plane {
+-	struct sh_mobile_meram_icb *marker;
+-	struct sh_mobile_meram_icb *cache;
+-};
+-
+-struct sh_mobile_meram_fb_cache {
+-	unsigned int nplanes;
+-	struct sh_mobile_meram_fb_plane planes[2];
+-};
+-
+-/*
+- * sh_mobile_meram_priv - MERAM device
+- * @base: Registers base address
+- * @meram: MERAM physical address
+- * @regs: Registers cache
+- * @lock: Protects used_icb and icbs
+- * @used_icb: Bitmask of used ICBs
+- * @icbs: ICBs
+- * @pool: Allocation pool to manage the MERAM
+- */
+-struct sh_mobile_meram_priv {
+-	void __iomem *base;
+-	unsigned long meram;
+-	unsigned long regs[MERAM_REGS_SIZE];
+-
+-	struct mutex lock;
+-	unsigned long used_icb;
+-	struct sh_mobile_meram_icb icbs[MERAM_ICB_NUM];
+-
+-	struct gen_pool *pool;
+-};
+-
+-/* settings */
+-#define MERAM_GRANULARITY		1024
+-#define MERAM_SEC_LINE			15
+-#define MERAM_LINE_WIDTH		2048
+-
+-/* -----------------------------------------------------------------------------
+- * Registers access
+- */
+-
+-#define MERAM_ICB_OFFSET(base, idx, off)	((base) + (off) + (idx) * 0x20)
+-
+-static inline void meram_write_icb(void __iomem *base, unsigned int idx,
+-				   unsigned int off, unsigned long val)
+-{
+-	iowrite32(val, MERAM_ICB_OFFSET(base, idx, off));
+-}
+-
+-static inline unsigned long meram_read_icb(void __iomem *base, unsigned int idx,
+-					   unsigned int off)
+-{
+-	return ioread32(MERAM_ICB_OFFSET(base, idx, off));
+-}
+-
+-static inline void meram_write_reg(void __iomem *base, unsigned int off,
+-				   unsigned long val)
+-{
+-	iowrite32(val, base + off);
+-}
+-
+-static inline unsigned long meram_read_reg(void __iomem *base, unsigned int off)
+-{
+-	return ioread32(base + off);
+-}
+-
+-/* -----------------------------------------------------------------------------
+- * MERAM allocation and free
+- */
+-
+-static unsigned long meram_alloc(struct sh_mobile_meram_priv *priv, size_t size)
+-{
+-	return gen_pool_alloc(priv->pool, size);
+-}
+-
+-static void meram_free(struct sh_mobile_meram_priv *priv, unsigned long mem,
+-		       size_t size)
+-{
+-	gen_pool_free(priv->pool, mem, size);
+-}
+-
+-/* -----------------------------------------------------------------------------
+- * LCDC cache planes allocation, init, cleanup and free
+- */
+-
+-/* Allocate ICBs and MERAM for a plane. */
+-static int meram_plane_alloc(struct sh_mobile_meram_priv *priv,
+-			     struct sh_mobile_meram_fb_plane *plane,
+-			     size_t size)
+-{
+-	unsigned long mem;
+-	unsigned long idx;
+-
+-	idx = find_first_zero_bit(&priv->used_icb, 28);
+-	if (idx == 28)
+-		return -ENOMEM;
+-	plane->cache = &priv->icbs[idx];
+-
+-	idx = find_next_zero_bit(&priv->used_icb, 32, 28);
+-	if (idx == 32)
+-		return -ENOMEM;
+-	plane->marker = &priv->icbs[idx];
+-
+-	mem = meram_alloc(priv, size * 1024);
+-	if (mem == 0)
+-		return -ENOMEM;
+-
+-	__set_bit(plane->marker->index, &priv->used_icb);
+-	__set_bit(plane->cache->index, &priv->used_icb);
+-
+-	plane->marker->offset = mem - priv->meram;
+-	plane->marker->size = size;
+-
+-	return 0;
+-}
+-
+-/* Free ICBs and MERAM for a plane. */
+-static void meram_plane_free(struct sh_mobile_meram_priv *priv,
+-			     struct sh_mobile_meram_fb_plane *plane)
+-{
+-	meram_free(priv, priv->meram + plane->marker->offset,
+-		   plane->marker->size * 1024);
+-
+-	__clear_bit(plane->marker->index, &priv->used_icb);
+-	__clear_bit(plane->cache->index, &priv->used_icb);
+-}
+-
+-/* Is this a YCbCr(NV12, NV16 or NV24) colorspace? */
+-static int is_nvcolor(int cspace)
+-{
+-	if (cspace == SH_MOBILE_MERAM_PF_NV ||
+-	    cspace == SH_MOBILE_MERAM_PF_NV24)
+-		return 1;
+-	return 0;
+-}
+-
+-/* Set the next address to fetch. */
+-static void meram_set_next_addr(struct sh_mobile_meram_priv *priv,
+-				struct sh_mobile_meram_fb_cache *cache,
+-				unsigned long base_addr_y,
+-				unsigned long base_addr_c)
+-{
+-	struct sh_mobile_meram_icb *icb = cache->planes[0].marker;
+-	unsigned long target;
+-
+-	icb->current_reg ^= 1;
+-	target = icb->current_reg ? MExxSARB : MExxSARA;
+-
+-	/* set the next address to fetch */
+-	meram_write_icb(priv->base, cache->planes[0].cache->index, target,
+-			base_addr_y);
+-	meram_write_icb(priv->base, cache->planes[0].marker->index, target,
+-			base_addr_y + cache->planes[0].marker->cache_unit);
+-
+-	if (cache->nplanes == 2) {
+-		meram_write_icb(priv->base, cache->planes[1].cache->index,
+-				target, base_addr_c);
+-		meram_write_icb(priv->base, cache->planes[1].marker->index,
+-				target, base_addr_c +
+-				cache->planes[1].marker->cache_unit);
+-	}
+-}
+-
+-/* Get the next ICB address. */
+-static void
+-meram_get_next_icb_addr(struct sh_mobile_meram_info *pdata,
+-			struct sh_mobile_meram_fb_cache *cache,
+-			unsigned long *icb_addr_y, unsigned long *icb_addr_c)
+-{
+-	struct sh_mobile_meram_icb *icb = cache->planes[0].marker;
+-	unsigned long icb_offset;
+-
+-	if (pdata->addr_mode == SH_MOBILE_MERAM_MODE0)
+-		icb_offset = 0x80000000 | (icb->current_reg << 29);
+-	else
+-		icb_offset = 0xc0000000 | (icb->current_reg << 23);
+-
+-	*icb_addr_y = icb_offset | (cache->planes[0].marker->index << 24);
+-	if (cache->nplanes == 2)
+-		*icb_addr_c = icb_offset
+-			    | (cache->planes[1].marker->index << 24);
+-}
+-
+-#define MERAM_CALC_BYTECOUNT(x, y) \
+-	(((x) * (y) + (MERAM_LINE_WIDTH - 1)) & ~(MERAM_LINE_WIDTH - 1))
+-
+-/* Initialize MERAM. */
+-static int meram_plane_init(struct sh_mobile_meram_priv *priv,
+-			    struct sh_mobile_meram_fb_plane *plane,
+-			    unsigned int xres, unsigned int yres,
+-			    unsigned int *out_pitch)
+-{
+-	struct sh_mobile_meram_icb *marker = plane->marker;
+-	unsigned long total_byte_count = MERAM_CALC_BYTECOUNT(xres, yres);
+-	unsigned long bnm;
+-	unsigned int lcdc_pitch;
+-	unsigned int xpitch;
+-	unsigned int line_cnt;
+-	unsigned int save_lines;
+-
+-	/* adjust pitch to 1024, 2048, 4096 or 8192 */
+-	lcdc_pitch = (xres - 1) | 1023;
+-	lcdc_pitch = lcdc_pitch | (lcdc_pitch >> 1);
+-	lcdc_pitch = lcdc_pitch | (lcdc_pitch >> 2);
+-	lcdc_pitch += 1;
+-
+-	/* derive settings */
+-	if (lcdc_pitch == 8192 && yres >= 1024) {
+-		lcdc_pitch = xpitch = MERAM_LINE_WIDTH;
+-		line_cnt = total_byte_count >> 11;
+-		*out_pitch = xres;
+-		save_lines = plane->marker->size / 16 / MERAM_SEC_LINE;
+-		save_lines *= MERAM_SEC_LINE;
+-	} else {
+-		xpitch = xres;
+-		line_cnt = yres;
+-		*out_pitch = lcdc_pitch;
+-		save_lines = plane->marker->size / (lcdc_pitch >> 10) / 2;
+-		save_lines &= 0xff;
+-	}
+-	bnm = (save_lines - 1) << 16;
+-
+-	/* TODO: we better to check if we have enough MERAM buffer size */
+-
+-	/* set up ICB */
+-	meram_write_icb(priv->base, plane->cache->index,  MExxBSIZE,
+-			MERAM_MExxBSIZE_VAL(0x0, line_cnt - 1, xpitch - 1));
+-	meram_write_icb(priv->base, plane->marker->index, MExxBSIZE,
+-			MERAM_MExxBSIZE_VAL(0xf, line_cnt - 1, xpitch - 1));
+-
+-	meram_write_icb(priv->base, plane->cache->index,  MExxMNCF, bnm);
+-	meram_write_icb(priv->base, plane->marker->index, MExxMNCF, bnm);
+-
+-	meram_write_icb(priv->base, plane->cache->index,  MExxSBSIZE, xpitch);
+-	meram_write_icb(priv->base, plane->marker->index, MExxSBSIZE, xpitch);
+-
+-	/* save a cache unit size */
+-	plane->cache->cache_unit = xres * save_lines;
+-	plane->marker->cache_unit = xres * save_lines;
+-
+-	/*
+-	 * Set MERAM for framebuffer
+-	 *
+-	 * we also chain the cache_icb and the marker_icb.
+-	 * we also split the allocated MERAM buffer between two ICBs.
+-	 */
+-	meram_write_icb(priv->base, plane->cache->index, MExxCTL,
+-			MERAM_MExxCTL_VAL(plane->marker->index, marker->offset)
+-			| MExxCTL_WD1 | MExxCTL_WD0 | MExxCTL_WS | MExxCTL_CM |
+-			MExxCTL_MD_FB);
+-	meram_write_icb(priv->base, plane->marker->index, MExxCTL,
+-			MERAM_MExxCTL_VAL(plane->cache->index, marker->offset +
+-					  plane->marker->size / 2) |
+-			MExxCTL_WD1 | MExxCTL_WD0 | MExxCTL_WS | MExxCTL_CM |
+-			MExxCTL_MD_FB);
+-
+-	return 0;
+-}
+-
+-static void meram_plane_cleanup(struct sh_mobile_meram_priv *priv,
+-				struct sh_mobile_meram_fb_plane *plane)
+-{
+-	/* disable ICB */
+-	meram_write_icb(priv->base, plane->cache->index,  MExxCTL,
+-			MExxCTL_WBF | MExxCTL_WF | MExxCTL_RF);
+-	meram_write_icb(priv->base, plane->marker->index, MExxCTL,
+-			MExxCTL_WBF | MExxCTL_WF | MExxCTL_RF);
+-
+-	plane->cache->cache_unit = 0;
+-	plane->marker->cache_unit = 0;
+-}
+-
+-/* -----------------------------------------------------------------------------
+- * MERAM operations
+- */
+-
+-unsigned long sh_mobile_meram_alloc(struct sh_mobile_meram_info *pdata,
+-				    size_t size)
+-{
+-	struct sh_mobile_meram_priv *priv = pdata->priv;
+-
+-	return meram_alloc(priv, size);
+-}
+-EXPORT_SYMBOL_GPL(sh_mobile_meram_alloc);
+-
+-void sh_mobile_meram_free(struct sh_mobile_meram_info *pdata, unsigned long mem,
+-			  size_t size)
+-{
+-	struct sh_mobile_meram_priv *priv = pdata->priv;
+-
+-	meram_free(priv, mem, size);
+-}
+-EXPORT_SYMBOL_GPL(sh_mobile_meram_free);
+-
+-/* Allocate memory for the ICBs and mark them as used. */
+-static struct sh_mobile_meram_fb_cache *
+-meram_cache_alloc(struct sh_mobile_meram_priv *priv,
+-		  const struct sh_mobile_meram_cfg *cfg,
+-		  int pixelformat)
+-{
+-	unsigned int nplanes = is_nvcolor(pixelformat) ? 2 : 1;
+-	struct sh_mobile_meram_fb_cache *cache;
+-	int ret;
+-
+-	cache = kzalloc(sizeof(*cache), GFP_KERNEL);
+-	if (cache == NULL)
+-		return ERR_PTR(-ENOMEM);
+-
+-	cache->nplanes = nplanes;
+-
+-	ret = meram_plane_alloc(priv, &cache->planes[0],
+-				cfg->icb[0].meram_size);
+-	if (ret < 0)
+-		goto error;
+-
+-	cache->planes[0].marker->current_reg = 1;
+-	cache->planes[0].marker->pixelformat = pixelformat;
+-
+-	if (cache->nplanes == 1)
+-		return cache;
+-
+-	ret = meram_plane_alloc(priv, &cache->planes[1],
+-				cfg->icb[1].meram_size);
+-	if (ret < 0) {
+-		meram_plane_free(priv, &cache->planes[0]);
+-		goto error;
 -	}
 -
- 	/* Stop the LCDC. */
- 	shmob_drm_crtc_start_stop(scrtc, false);
- 
-@@ -305,7 +289,6 @@ static void shmob_drm_crtc_compute_base(struct shmob_drm_crtc *scrtc,
- {
- 	struct drm_crtc *crtc = &scrtc->crtc;
- 	struct drm_framebuffer *fb = crtc->primary->fb;
--	struct shmob_drm_device *sdev = crtc->dev->dev_private;
- 	struct drm_gem_cma_object *gem;
- 	unsigned int bpp;
- 
-@@ -321,11 +304,6 @@ static void shmob_drm_crtc_compute_base(struct shmob_drm_crtc *scrtc,
- 			      + y / (bpp == 4 ? 2 : 1) * fb->pitches[1]
- 			      + x * (bpp == 16 ? 2 : 1);
- 	}
+-	return cache;
 -
--	if (scrtc->cache)
--		sh_mobile_meram_cache_update(sdev->meram, scrtc->cache,
--					     scrtc->dma[0], scrtc->dma[1],
--					     &scrtc->dma[0], &scrtc->dma[1]);
- }
- 
- static void shmob_drm_crtc_update_base(struct shmob_drm_crtc *scrtc)
-@@ -372,9 +350,7 @@ static int shmob_drm_crtc_mode_set(struct drm_crtc *crtc,
- {
- 	struct shmob_drm_crtc *scrtc = to_shmob_crtc(crtc);
- 	struct shmob_drm_device *sdev = crtc->dev->dev_private;
--	const struct sh_mobile_meram_cfg *mdata = sdev->pdata->meram;
- 	const struct shmob_drm_format_info *format;
--	void *cache;
- 
- 	format = shmob_drm_format_info(crtc->primary->fb->format->format);
- 	if (format == NULL) {
-@@ -386,24 +362,6 @@ static int shmob_drm_crtc_mode_set(struct drm_crtc *crtc,
- 	scrtc->format = format;
- 	scrtc->line_size = crtc->primary->fb->pitches[0];
- 
--	if (sdev->meram) {
--		/* Enable MERAM cache if configured. We need to de-init
--		 * configured ICBs before we can re-initialize them.
--		 */
--		if (scrtc->cache) {
--			sh_mobile_meram_cache_free(sdev->meram, scrtc->cache);
--			scrtc->cache = NULL;
+-error:
+-	kfree(cache);
+-	return ERR_PTR(-ENOMEM);
+-}
+-
+-void *sh_mobile_meram_cache_alloc(struct sh_mobile_meram_info *pdata,
+-				  const struct sh_mobile_meram_cfg *cfg,
+-				  unsigned int xres, unsigned int yres,
+-				  unsigned int pixelformat, unsigned int *pitch)
+-{
+-	struct sh_mobile_meram_fb_cache *cache;
+-	struct sh_mobile_meram_priv *priv = pdata->priv;
+-	struct platform_device *pdev = pdata->pdev;
+-	unsigned int nplanes = is_nvcolor(pixelformat) ? 2 : 1;
+-	unsigned int out_pitch;
+-
+-	if (priv == NULL)
+-		return ERR_PTR(-ENODEV);
+-
+-	if (pixelformat != SH_MOBILE_MERAM_PF_NV &&
+-	    pixelformat != SH_MOBILE_MERAM_PF_NV24 &&
+-	    pixelformat != SH_MOBILE_MERAM_PF_RGB)
+-		return ERR_PTR(-EINVAL);
+-
+-	dev_dbg(&pdev->dev, "registering %dx%d (%s)", xres, yres,
+-		!pixelformat ? "yuv" : "rgb");
+-
+-	/* we can't handle wider than 8192px */
+-	if (xres > 8192) {
+-		dev_err(&pdev->dev, "width exceeding the limit (> 8192).");
+-		return ERR_PTR(-EINVAL);
+-	}
+-
+-	if (cfg->icb[0].meram_size == 0)
+-		return ERR_PTR(-EINVAL);
+-
+-	if (nplanes == 2 && cfg->icb[1].meram_size == 0)
+-		return ERR_PTR(-EINVAL);
+-
+-	mutex_lock(&priv->lock);
+-
+-	/* We now register the ICBs and allocate the MERAM regions. */
+-	cache = meram_cache_alloc(priv, cfg, pixelformat);
+-	if (IS_ERR(cache)) {
+-		dev_err(&pdev->dev, "MERAM allocation failed (%ld).",
+-			PTR_ERR(cache));
+-		goto err;
+-	}
+-
+-	/* initialize MERAM */
+-	meram_plane_init(priv, &cache->planes[0], xres, yres, &out_pitch);
+-	*pitch = out_pitch;
+-	if (pixelformat == SH_MOBILE_MERAM_PF_NV)
+-		meram_plane_init(priv, &cache->planes[1],
+-				 xres, (yres + 1) / 2, &out_pitch);
+-	else if (pixelformat == SH_MOBILE_MERAM_PF_NV24)
+-		meram_plane_init(priv, &cache->planes[1],
+-				 2 * xres, (yres + 1) / 2, &out_pitch);
+-
+-err:
+-	mutex_unlock(&priv->lock);
+-	return cache;
+-}
+-EXPORT_SYMBOL_GPL(sh_mobile_meram_cache_alloc);
+-
+-void
+-sh_mobile_meram_cache_free(struct sh_mobile_meram_info *pdata, void *data)
+-{
+-	struct sh_mobile_meram_fb_cache *cache = data;
+-	struct sh_mobile_meram_priv *priv = pdata->priv;
+-
+-	mutex_lock(&priv->lock);
+-
+-	/* Cleanup and free. */
+-	meram_plane_cleanup(priv, &cache->planes[0]);
+-	meram_plane_free(priv, &cache->planes[0]);
+-
+-	if (cache->nplanes == 2) {
+-		meram_plane_cleanup(priv, &cache->planes[1]);
+-		meram_plane_free(priv, &cache->planes[1]);
+-	}
+-
+-	kfree(cache);
+-
+-	mutex_unlock(&priv->lock);
+-}
+-EXPORT_SYMBOL_GPL(sh_mobile_meram_cache_free);
+-
+-void
+-sh_mobile_meram_cache_update(struct sh_mobile_meram_info *pdata, void *data,
+-			     unsigned long base_addr_y,
+-			     unsigned long base_addr_c,
+-			     unsigned long *icb_addr_y,
+-			     unsigned long *icb_addr_c)
+-{
+-	struct sh_mobile_meram_fb_cache *cache = data;
+-	struct sh_mobile_meram_priv *priv = pdata->priv;
+-
+-	mutex_lock(&priv->lock);
+-
+-	meram_set_next_addr(priv, cache, base_addr_y, base_addr_c);
+-	meram_get_next_icb_addr(pdata, cache, icb_addr_y, icb_addr_c);
+-
+-	mutex_unlock(&priv->lock);
+-}
+-EXPORT_SYMBOL_GPL(sh_mobile_meram_cache_update);
+-
+-/* -----------------------------------------------------------------------------
+- * Power management
+- */
+-
+-#ifdef CONFIG_PM
+-static int sh_mobile_meram_suspend(struct device *dev)
+-{
+-	struct sh_mobile_meram_priv *priv = dev_get_drvdata(dev);
+-	unsigned int i, j;
+-
+-	for (i = 0; i < MERAM_REGS_SIZE; i++)
+-		priv->regs[i] = meram_read_reg(priv->base, common_regs[i]);
+-
+-	for (i = 0; i < 32; i++) {
+-		if (!test_bit(i, &priv->used_icb))
+-			continue;
+-		for (j = 0; j < ICB_REGS_SIZE; j++) {
+-			priv->icbs[i].regs[j] =
+-				meram_read_icb(priv->base, i, icb_regs[j]);
+-			/* Reset ICB on resume */
+-			if (icb_regs[j] == MExxCTL)
+-				priv->icbs[i].regs[j] |=
+-					MExxCTL_WBF | MExxCTL_WF | MExxCTL_RF;
 -		}
+-	}
+-	return 0;
+-}
 -
--		cache = sh_mobile_meram_cache_alloc(sdev->meram, mdata,
--						    crtc->primary->fb->pitches[0],
--						    adjusted_mode->vdisplay,
--						    format->meram,
--						    &scrtc->line_size);
--		if (!IS_ERR(cache))
--			scrtc->cache = cache;
+-static int sh_mobile_meram_resume(struct device *dev)
+-{
+-	struct sh_mobile_meram_priv *priv = dev_get_drvdata(dev);
+-	unsigned int i, j;
+-
+-	for (i = 0; i < 32; i++) {
+-		if (!test_bit(i, &priv->used_icb))
+-			continue;
+-		for (j = 0; j < ICB_REGS_SIZE; j++)
+-			meram_write_icb(priv->base, i, icb_regs[j],
+-					priv->icbs[i].regs[j]);
 -	}
 -
- 	shmob_drm_crtc_compute_base(scrtc, x, y);
- 
- 	return 0;
-diff --git a/drivers/gpu/drm/shmobile/shmob_drm_crtc.h b/drivers/gpu/drm/shmobile/shmob_drm_crtc.h
-index f152973..c11f421 100644
---- a/drivers/gpu/drm/shmobile/shmob_drm_crtc.h
-+++ b/drivers/gpu/drm/shmobile/shmob_drm_crtc.h
-@@ -28,7 +28,6 @@ struct shmob_drm_crtc {
- 	int dpms;
- 
- 	const struct shmob_drm_format_info *format;
--	void *cache;
- 	unsigned long dma[2];
- 	unsigned int line_size;
- 	bool started;
-diff --git a/drivers/gpu/drm/shmobile/shmob_drm_drv.h b/drivers/gpu/drm/shmobile/shmob_drm_drv.h
-index 02ea315..088a6e55 100644
---- a/drivers/gpu/drm/shmobile/shmob_drm_drv.h
-+++ b/drivers/gpu/drm/shmobile/shmob_drm_drv.h
-@@ -23,7 +23,6 @@
- struct clk;
- struct device;
- struct drm_device;
--struct sh_mobile_meram_info;
- 
- struct shmob_drm_device {
- 	struct device *dev;
-@@ -31,7 +30,6 @@ struct shmob_drm_device {
- 
- 	void __iomem *mmio;
- 	struct clk *clock;
--	struct sh_mobile_meram_info *meram;
- 	u32 lddckr;
- 	u32 ldmt1r;
- 
-diff --git a/drivers/gpu/drm/shmobile/shmob_drm_kms.c b/drivers/gpu/drm/shmobile/shmob_drm_kms.c
-index d36919b..4476385 100644
---- a/drivers/gpu/drm/shmobile/shmob_drm_kms.c
-+++ b/drivers/gpu/drm/shmobile/shmob_drm_kms.c
-@@ -18,8 +18,6 @@
- #include <drm/drm_gem_cma_helper.h>
- #include <drm/drm_gem_framebuffer_helper.h>
- 
--#include <video/sh_mobile_meram.h>
+-	for (i = 0; i < MERAM_REGS_SIZE; i++)
+-		meram_write_reg(priv->base, common_regs[i], priv->regs[i]);
+-	return 0;
+-}
+-#endif /* CONFIG_PM */
 -
- #include "shmob_drm_crtc.h"
- #include "shmob_drm_drv.h"
- #include "shmob_drm_kms.h"
-@@ -35,55 +33,46 @@
- 		.bpp = 16,
- 		.yuv = false,
- 		.lddfr = LDDFR_PKF_RGB16,
--		.meram = SH_MOBILE_MERAM_PF_RGB,
- 	}, {
- 		.fourcc = DRM_FORMAT_RGB888,
- 		.bpp = 24,
- 		.yuv = false,
- 		.lddfr = LDDFR_PKF_RGB24,
--		.meram = SH_MOBILE_MERAM_PF_RGB,
- 	}, {
- 		.fourcc = DRM_FORMAT_ARGB8888,
- 		.bpp = 32,
- 		.yuv = false,
- 		.lddfr = LDDFR_PKF_ARGB32,
--		.meram = SH_MOBILE_MERAM_PF_RGB,
- 	}, {
- 		.fourcc = DRM_FORMAT_NV12,
- 		.bpp = 12,
- 		.yuv = true,
- 		.lddfr = LDDFR_CC | LDDFR_YF_420,
--		.meram = SH_MOBILE_MERAM_PF_NV,
- 	}, {
- 		.fourcc = DRM_FORMAT_NV21,
- 		.bpp = 12,
- 		.yuv = true,
- 		.lddfr = LDDFR_CC | LDDFR_YF_420,
--		.meram = SH_MOBILE_MERAM_PF_NV,
- 	}, {
- 		.fourcc = DRM_FORMAT_NV16,
- 		.bpp = 16,
- 		.yuv = true,
- 		.lddfr = LDDFR_CC | LDDFR_YF_422,
--		.meram = SH_MOBILE_MERAM_PF_NV,
- 	}, {
- 		.fourcc = DRM_FORMAT_NV61,
- 		.bpp = 16,
- 		.yuv = true,
- 		.lddfr = LDDFR_CC | LDDFR_YF_422,
--		.meram = SH_MOBILE_MERAM_PF_NV,
- 	}, {
- 		.fourcc = DRM_FORMAT_NV24,
- 		.bpp = 24,
- 		.yuv = true,
- 		.lddfr = LDDFR_CC | LDDFR_YF_444,
--		.meram = SH_MOBILE_MERAM_PF_NV24,
- 	}, {
- 		.fourcc = DRM_FORMAT_NV42,
- 		.bpp = 24,
- 		.yuv = true,
- 		.lddfr = LDDFR_CC | LDDFR_YF_444,
--		.meram = SH_MOBILE_MERAM_PF_NV24,
- 	},
- };
- 
-diff --git a/drivers/gpu/drm/shmobile/shmob_drm_kms.h b/drivers/gpu/drm/shmobile/shmob_drm_kms.h
-index 06d5b7c..753e281 100644
---- a/drivers/gpu/drm/shmobile/shmob_drm_kms.h
-+++ b/drivers/gpu/drm/shmobile/shmob_drm_kms.h
-@@ -24,7 +24,6 @@ struct shmob_drm_format_info {
- 	unsigned int bpp;
- 	bool yuv;
- 	u32 lddfr;
--	unsigned int meram;
- };
- 
- const struct shmob_drm_format_info *shmob_drm_format_info(u32 fourcc);
-diff --git a/drivers/gpu/drm/shmobile/shmob_drm_plane.c b/drivers/gpu/drm/shmobile/shmob_drm_plane.c
-index 97f6e4a..1d0359f 100644
---- a/drivers/gpu/drm/shmobile/shmob_drm_plane.c
-+++ b/drivers/gpu/drm/shmobile/shmob_drm_plane.c
-@@ -17,8 +17,6 @@
- #include <drm/drm_fb_cma_helper.h>
- #include <drm/drm_gem_cma_helper.h>
- 
--#include <video/sh_mobile_meram.h>
+-static UNIVERSAL_DEV_PM_OPS(sh_mobile_meram_dev_pm_ops,
+-			    sh_mobile_meram_suspend,
+-			    sh_mobile_meram_resume, NULL);
 -
- #include "shmob_drm_drv.h"
- #include "shmob_drm_kms.h"
- #include "shmob_drm_plane.h"
-diff --git a/include/linux/platform_data/shmob_drm.h b/include/linux/platform_data/shmob_drm.h
-index 7c686d3..ee495d7 100644
---- a/include/linux/platform_data/shmob_drm.h
-+++ b/include/linux/platform_data/shmob_drm.h
-@@ -18,9 +18,6 @@
- 
- #include <drm/drm_mode.h>
- 
--struct sh_mobile_meram_cfg;
--struct sh_mobile_meram_info;
+-/* -----------------------------------------------------------------------------
+- * Probe/remove and driver init/exit
+- */
 -
- enum shmob_drm_clk_source {
- 	SHMOB_DRM_CLK_BUS,
- 	SHMOB_DRM_CLK_PERIPHERAL,
-@@ -93,7 +90,6 @@ struct shmob_drm_platform_data {
- 	struct shmob_drm_interface_data iface;
- 	struct shmob_drm_panel_data panel;
- 	struct shmob_drm_backlight_data backlight;
--	const struct sh_mobile_meram_cfg *meram;
- };
- 
- #endif /* __SHMOB_DRM_H__ */
+-static int sh_mobile_meram_probe(struct platform_device *pdev)
+-{
+-	struct sh_mobile_meram_priv *priv;
+-	struct sh_mobile_meram_info *pdata = pdev->dev.platform_data;
+-	struct resource *regs;
+-	struct resource *meram;
+-	unsigned int i;
+-	int error;
+-
+-	if (!pdata) {
+-		dev_err(&pdev->dev, "no platform data defined\n");
+-		return -EINVAL;
+-	}
+-
+-	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	meram = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+-	if (regs == NULL || meram == NULL) {
+-		dev_err(&pdev->dev, "cannot get platform resources\n");
+-		return -ENOENT;
+-	}
+-
+-	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
+-	if (!priv)
+-		return -ENOMEM;
+-
+-	/* Initialize private data. */
+-	mutex_init(&priv->lock);
+-	priv->used_icb = pdata->reserved_icbs;
+-
+-	for (i = 0; i < MERAM_ICB_NUM; ++i)
+-		priv->icbs[i].index = i;
+-
+-	pdata->priv = priv;
+-	pdata->pdev = pdev;
+-
+-	/* Request memory regions and remap the registers. */
+-	if (!request_mem_region(regs->start, resource_size(regs), pdev->name)) {
+-		dev_err(&pdev->dev, "MERAM registers region already claimed\n");
+-		error = -EBUSY;
+-		goto err_req_regs;
+-	}
+-
+-	if (!request_mem_region(meram->start, resource_size(meram),
+-				pdev->name)) {
+-		dev_err(&pdev->dev, "MERAM memory region already claimed\n");
+-		error = -EBUSY;
+-		goto err_req_meram;
+-	}
+-
+-	priv->base = ioremap_nocache(regs->start, resource_size(regs));
+-	if (!priv->base) {
+-		dev_err(&pdev->dev, "ioremap failed\n");
+-		error = -EFAULT;
+-		goto err_ioremap;
+-	}
+-
+-	priv->meram = meram->start;
+-
+-	/* Create and initialize the MERAM memory pool. */
+-	priv->pool = gen_pool_create(ilog2(MERAM_GRANULARITY), -1);
+-	if (priv->pool == NULL) {
+-		error = -ENOMEM;
+-		goto err_genpool;
+-	}
+-
+-	error = gen_pool_add(priv->pool, meram->start, resource_size(meram),
+-			     -1);
+-	if (error < 0)
+-		goto err_genpool;
+-
+-	/* initialize ICB addressing mode */
+-	if (pdata->addr_mode == SH_MOBILE_MERAM_MODE1)
+-		meram_write_reg(priv->base, MEVCR1, MEVCR1_AMD1);
+-
+-	platform_set_drvdata(pdev, priv);
+-	pm_runtime_enable(&pdev->dev);
+-
+-	dev_info(&pdev->dev, "sh_mobile_meram initialized.");
+-
+-	return 0;
+-
+-err_genpool:
+-	if (priv->pool)
+-		gen_pool_destroy(priv->pool);
+-	iounmap(priv->base);
+-err_ioremap:
+-	release_mem_region(meram->start, resource_size(meram));
+-err_req_meram:
+-	release_mem_region(regs->start, resource_size(regs));
+-err_req_regs:
+-	mutex_destroy(&priv->lock);
+-	kfree(priv);
+-
+-	return error;
+-}
+-
+-
+-static int sh_mobile_meram_remove(struct platform_device *pdev)
+-{
+-	struct sh_mobile_meram_priv *priv = platform_get_drvdata(pdev);
+-	struct resource *regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	struct resource *meram = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+-
+-	pm_runtime_disable(&pdev->dev);
+-
+-	gen_pool_destroy(priv->pool);
+-
+-	iounmap(priv->base);
+-	release_mem_region(meram->start, resource_size(meram));
+-	release_mem_region(regs->start, resource_size(regs));
+-
+-	mutex_destroy(&priv->lock);
+-
+-	kfree(priv);
+-
+-	return 0;
+-}
+-
+-static struct platform_driver sh_mobile_meram_driver = {
+-	.driver	= {
+-		.name		= "sh_mobile_meram",
+-		.pm		= &sh_mobile_meram_dev_pm_ops,
+-	},
+-	.probe		= sh_mobile_meram_probe,
+-	.remove		= sh_mobile_meram_remove,
+-};
+-
+-module_platform_driver(sh_mobile_meram_driver);
+-
+-MODULE_DESCRIPTION("SuperH Mobile MERAM driver");
+-MODULE_AUTHOR("Damian Hobson-Garcia / Takanari Hayama");
+-MODULE_LICENSE("GPL v2");
+diff --git a/include/video/sh_mobile_meram.h b/include/video/sh_mobile_meram.h
+deleted file mode 100644
+index f4efc21..0000000
+--- a/include/video/sh_mobile_meram.h
++++ /dev/null
+@@ -1,95 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
+-#ifndef __VIDEO_SH_MOBILE_MERAM_H__
+-#define __VIDEO_SH_MOBILE_MERAM_H__
+-
+-/* For sh_mobile_meram_info.addr_mode */
+-enum {
+-	SH_MOBILE_MERAM_MODE0 = 0,
+-	SH_MOBILE_MERAM_MODE1
+-};
+-
+-enum {
+-	SH_MOBILE_MERAM_PF_NV = 0,
+-	SH_MOBILE_MERAM_PF_RGB,
+-	SH_MOBILE_MERAM_PF_NV24
+-};
+-
+-
+-struct sh_mobile_meram_priv;
+-
+-/*
+- * struct sh_mobile_meram_info - MERAM platform data
+- * @reserved_icbs: Bitmask of reserved ICBs (for instance used through UIO)
+- */
+-struct sh_mobile_meram_info {
+-	int				addr_mode;
+-	u32				reserved_icbs;
+-	struct sh_mobile_meram_priv	*priv;
+-	struct platform_device		*pdev;
+-};
+-
+-/* icb config */
+-struct sh_mobile_meram_icb_cfg {
+-	unsigned int meram_size;	/* MERAM Buffer Size to use */
+-};
+-
+-struct sh_mobile_meram_cfg {
+-	struct sh_mobile_meram_icb_cfg icb[2];
+-};
+-
+-#if defined(CONFIG_FB_SH_MOBILE_MERAM) || \
+-    defined(CONFIG_FB_SH_MOBILE_MERAM_MODULE)
+-unsigned long sh_mobile_meram_alloc(struct sh_mobile_meram_info *meram_dev,
+-				    size_t size);
+-void sh_mobile_meram_free(struct sh_mobile_meram_info *meram_dev,
+-			  unsigned long mem, size_t size);
+-void *sh_mobile_meram_cache_alloc(struct sh_mobile_meram_info *dev,
+-				  const struct sh_mobile_meram_cfg *cfg,
+-				  unsigned int xres, unsigned int yres,
+-				  unsigned int pixelformat,
+-				  unsigned int *pitch);
+-void sh_mobile_meram_cache_free(struct sh_mobile_meram_info *dev, void *data);
+-void sh_mobile_meram_cache_update(struct sh_mobile_meram_info *dev, void *data,
+-				  unsigned long base_addr_y,
+-				  unsigned long base_addr_c,
+-				  unsigned long *icb_addr_y,
+-				  unsigned long *icb_addr_c);
+-#else
+-static inline unsigned long
+-sh_mobile_meram_alloc(struct sh_mobile_meram_info *meram_dev, size_t size)
+-{
+-	return 0;
+-}
+-
+-static inline void
+-sh_mobile_meram_free(struct sh_mobile_meram_info *meram_dev,
+-		     unsigned long mem, size_t size)
+-{
+-}
+-
+-static inline void *
+-sh_mobile_meram_cache_alloc(struct sh_mobile_meram_info *dev,
+-			    const struct sh_mobile_meram_cfg *cfg,
+-			    unsigned int xres, unsigned int yres,
+-			    unsigned int pixelformat,
+-			    unsigned int *pitch)
+-{
+-	return ERR_PTR(-ENODEV);
+-}
+-
+-static inline void
+-sh_mobile_meram_cache_free(struct sh_mobile_meram_info *dev, void *data)
+-{
+-}
+-
+-static inline void
+-sh_mobile_meram_cache_update(struct sh_mobile_meram_info *dev, void *data,
+-			     unsigned long base_addr_y,
+-			     unsigned long base_addr_c,
+-			     unsigned long *icb_addr_y,
+-			     unsigned long *icb_addr_c)
+-{
+-}
+-#endif
+-
+-#endif /* __VIDEO_SH_MOBILE_MERAM_H__  */
 -- 
 1.9.1
