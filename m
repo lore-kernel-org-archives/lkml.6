@@ -1,51 +1,158 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933020AbeD0XRP (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 19:17:15 -0400
-Received: from ms.lwn.net ([45.79.88.28]:55440 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932342AbeD0XRO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 19:17:14 -0400
-Date: Fri, 27 Apr 2018 17:17:12 -0600
-From: Jonathan Corbet <corbet@lwn.net>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] documentation: core-api: rearrange a few kernel-api
- chapters and sections
-Message-ID: <20180427171712.4e09233a@lwn.net>
-In-Reply-To: <f05c8785-e9e1-0a5e-b362-50669b75d80b@infradead.org>
-References: <f05c8785-e9e1-0a5e-b362-50669b75d80b@infradead.org>
-Organization: LWN.net
+        id S933048AbeD0XUM (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 19:20:12 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49784 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932342AbeD0XUK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 19:20:10 -0400
+Date: Fri, 27 Apr 2018 19:20:07 -0400 (EDT)
+From: Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To: "Michael S. Tsirkin" <mst@redhat.com>
+cc: John Stoffel <john@stoffel.org>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Michal@stoffel.org, eric.dumazet@gmail.com, netdev@vger.kernel.org,
+        jasowang@redhat.com, Randy Dunlap <rdunlap@infradead.org>,
+        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
+        Hocko <mhocko@kernel.org>, linux-mm@kvack.org, dm-devel@redhat.com,
+        Vlastimil Babka <vbabka@suse.cz>, Andrew@stoffel.org,
+        David Rientjes <rientjes@google.com>,
+        Morton <akpm@linux-foundation.org>,
+        virtualization@lists.linux-foundation.org,
+        David Miller <davem@davemloft.net>, edumazet@google.com
+Subject: Re: [dm-devel] [PATCH v5] fault-injection: introduce kvmalloc fallback
+ options
+In-Reply-To: <20180427005213-mutt-send-email-mst@kernel.org>
+Message-ID: <alpine.LRH.2.02.1804271914200.4345@file01.intranet.prod.int.rdu2.redhat.com>
+References: <alpine.LRH.2.02.1804251556060.30569@file01.intranet.prod.int.rdu2.redhat.com> <1114eda5-9b1f-4db8-2090-556b4a37c532@infradead.org> <alpine.LRH.2.02.1804251656300.9428@file01.intranet.prod.int.rdu2.redhat.com> <alpine.DEB.2.21.1804251417470.166306@chino.kir.corp.google.com>
+ <alpine.LRH.2.02.1804251720090.9428@file01.intranet.prod.int.rdu2.redhat.com> <1524694663.4100.21.camel@HansenPartnership.com> <alpine.LRH.2.02.1804251857070.31135@file01.intranet.prod.int.rdu2.redhat.com> <1524697697.4100.23.camel@HansenPartnership.com>
+ <23266.8532.619051.784274@quad.stoffel.home> <alpine.LRH.2.02.1804261726540.13401@file01.intranet.prod.int.rdu2.redhat.com> <20180427005213-mutt-send-email-mst@kernel.org>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 26 Apr 2018 18:11:02 -0700
-Randy Dunlap <rdunlap@infradead.org> wrote:
 
-> Rearrange some kernel-api chapters and sections to group them
-> together better.
-> 
-> - move Bit Operations from Basic C Library Functions to Basic
->   Kernel Library Functions (now adjacent to Bitmap Operations since
->   they are not typical C library functions)
-> 
-> - move Sorting from Math Functions to Basic Kernel Library Functions
->   since sort functions are more Basic than Math Functions
-> 
-> - move Text Searching from Math Functions to Basic Kernel Library
->   Functions (keep Sorting and Searching close to each other)
-> 
-> - combine CRC and Math functions together into the (newly named)
->   CRC and Math Functions chapter
 
-The changes look good.  But ... grr... some of the stuff you are moving
-around was introduced in -rc2 via the networking tree.  That kind of thing
-makes life harder than it needs to be.  I've sorted it out and applied the
-patch, thanks.
+On Fri, 27 Apr 2018, Michael S. Tsirkin wrote:
 
-jon
+> 2. Ability to control this from a separate config
+>    option.
+> 
+>    It's still not that clear to me why is this such a
+>    hard requirement.  If a distro wants to force specific
+>    boot time options, why isn't CONFIG_CMDLINE sufficient?
+
+So, try this and turn it on with CONFIG_CMDLINE. But I'm not a 
+blogger and I will not write a blog post about it as James Bottomley 
+suggests :-)
+- so very few users will use it. 
+
+
+fault-injection: introduce kvmalloc fallback options
+
+This patch introduces a fault-injection option "kvmalloc_fallback". This
+option makes kvmalloc randomly fall back to vmalloc.
+
+Unfortunately, some kernel code has bugs - it uses kvmalloc and then
+uses DMA-API on the returned memory or frees it with kfree. Such bugs were
+found in the virtio-net driver, dm-integrity or RHEL7 powerpc-specific
+code. This options helps to test for these bugs.
+
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+
+---
+ Documentation/fault-injection/fault-injection.txt |    7 +++++
+ mm/util.c                                         |   30 ++++++++++++++++++++++
+ 2 files changed, 37 insertions(+)
+
+Index: linux-2.6/Documentation/fault-injection/fault-injection.txt
+===================================================================
+--- linux-2.6.orig/Documentation/fault-injection/fault-injection.txt	2018-04-28 01:01:25.000000000 +0200
++++ linux-2.6/Documentation/fault-injection/fault-injection.txt	2018-04-28 01:01:25.000000000 +0200
+@@ -15,6 +15,12 @@ o fail_page_alloc
+ 
+   injects page allocation failures. (alloc_pages(), get_free_pages(), ...)
+ 
++o kvmalloc_fallback
++
++  makes the function kvmalloc randomly fall back to vmalloc. This could be used
++  to detects bugs such as using DMA-API on the result of kvmalloc or freeing
++  the result of kvmalloc with free.
++
+ o fail_futex
+ 
+   injects futex deadlock and uaddr fault errors.
+@@ -167,6 +173,7 @@ use the boot option:
+ 
+ 	failslab=
+ 	fail_page_alloc=
++	kvmalloc_fallback=
+ 	fail_make_request=
+ 	fail_futex=
+ 	mmc_core.fail_request=<interval>,<probability>,<space>,<times>
+Index: linux-2.6/mm/util.c
+===================================================================
+--- linux-2.6.orig/mm/util.c	2018-04-28 01:01:25.000000000 +0200
++++ linux-2.6/mm/util.c	2018-04-28 01:03:25.000000000 +0200
+@@ -14,6 +14,7 @@
+ #include <linux/hugetlb.h>
+ #include <linux/vmalloc.h>
+ #include <linux/userfaultfd_k.h>
++#include <linux/fault-inject.h>
+ 
+ #include <asm/sections.h>
+ #include <linux/uaccess.h>
+@@ -377,6 +378,29 @@ unsigned long vm_mmap(struct file *file,
+ }
+ EXPORT_SYMBOL(vm_mmap);
+ 
++#ifdef CONFIG_FAULT_INJECTION
++
++static DECLARE_FAULT_ATTR(kvmalloc_fallback);
++
++static int __init setup_kvmalloc_fallback(char *str)
++{
++	kvmalloc_fallback.verbose = 0;
++	return setup_fault_attr(&kvmalloc_fallback, str);
++}
++
++__setup("kvmalloc_fallback=", setup_kvmalloc_fallback);
++
++#ifdef CONFIG_FAULT_INJECTION_DEBUG_FS
++static int __init kvmalloc_fallback_debugfs_init(void)
++{
++	fault_create_debugfs_attr("kvmalloc_fallback", NULL, &kvmalloc_fallback);
++	return 0;
++}
++late_initcall(kvmalloc_fallback_debugfs_init);
++#endif
++
++#endif
++
+ /**
+  * kvmalloc_node - attempt to allocate physically contiguous memory, but upon
+  * failure, fall back to non-contiguous (vmalloc) allocation.
+@@ -404,6 +428,11 @@ void *kvmalloc_node(size_t size, gfp_t f
+ 	 */
+ 	WARN_ON_ONCE((flags & GFP_KERNEL) != GFP_KERNEL);
+ 
++#ifdef CONFIG_FAULT_INJECTION
++	if (should_fail(&kvmalloc_fallback, size))
++		goto do_vmalloc;
++#endif
++
+ 	/*
+ 	 * We want to attempt a large physically contiguous block first because
+ 	 * it is less likely to fragment multiple larger blocks and therefore
+@@ -427,6 +456,7 @@ void *kvmalloc_node(size_t size, gfp_t f
+ 	if (ret || size <= PAGE_SIZE)
+ 		return ret;
+ 
++do_vmalloc: __maybe_unused
+ 	return __vmalloc_node_flags_caller(size, node, flags,
+ 			__builtin_return_address(0));
+ }
