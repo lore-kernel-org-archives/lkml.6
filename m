@@ -1,39 +1,40 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZou1FxZU0GJNaL06JILhb3R58UAiOfm+UohNidTKxm9b3KGok9FzucoraTXfQEg90Az6O5a
-ARC-Seal: i=1; a=rsa-sha256; t=1524837728; cv=none;
+X-Google-Smtp-Source: AB8JxZoFacjN6FGLPzi3kzfX6JRG7R5pWtq6IEVftWi3zuW9jXAvSyFqhyshHW6jS03Bh/TTqB2t
+ARC-Seal: i=1; a=rsa-sha256; t=1524837723; cv=none;
         d=google.com; s=arc-20160816;
-        b=TQv6TQtDTXXEhXnvqTFCLRNXYrDZaAEXY99G9bDHkbdLgUQ1wDRdUsUMK/zTlnTqqp
-         oYIejozXB9OXzJaVQKkWkf1a0O4d+6AdC7Xe14wu0YKnuFnqnol4g9dVT3YoyTDA/9tL
-         w0cCk//rXX5d+eTUjTy+H/H8vCaq9XhLlduOximZva+A328GxISpRBzKxrsWYH01L0FL
-         hLyPysm1GqW8R9HF4FFktU/jIkUkDV2puixjmoEN6AyUBQ0Z1g2VSQAkO/iM7h4jvtBX
-         VtB6JTNgQUWKRAXJHTBhRYiMg3CTuNL+Hr5aL4QA5E0EWdw35RHTOnea632XRIRGzV22
-         9kZw==
+        b=wGOWem3+R/5J76gTUkx+FlzAT932y1XCOtxREJESrLJ6PStmNDuH79rPF+XKGq3J00
+         D8skZtjgp0SywDeohEMXcCb1PhwsLoKW8DZQVYP8qwgtsIgVAEuekCYS7Ti3g1TQeElx
+         yNL7ejmkLWu9Y1F3lnApfwptsbrSnbptXh8tWLoHky1/XA2OqycXpZkbnhFuPCOnvFwU
+         waald2NCenqQVdpOMM/BKNAxYQEYM82d06V9wQaXtENKaABukq71pXalr+RmV2Uh9PLm
+         XHrIAjNmi5ewt+5F53wn9PbOKEfB6KJlkPX3zTQoW43z4oO1Q94dIeimY/SmLzBd6ShU
+         LKag==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=qNf+7z6JWIecT//Cf10vBXywSV6j6e4ArH12PNiYrkE=;
-        b=BZqREnAYLIT8nkiBq75ZaYZeP0KtZ6q9dft4N6+7sgrd3MUCw+U5dWH9u2s1BdKrJb
-         bgxxzS/SrXNkb3YWUaaMWCYgQ5cP4m8MSe6C05XrdDelFGigN8Y2MUN0d9HV6pLaEoAq
-         YRoTVfaks9PWD7YruIAjCTTCHWtbtRK1zqk3qYR1/J74TkPNI1VCUG5LiYn7tulyYLJo
-         JHraUL/gBRuwwYcdW74dawITga6meYict+Zry503Q5I2GF9YVzmgBYYpq/6OIrIHUrex
-         KBzBj7WgIgVLNd/sfuKqolBym9lD7MPz2vzTVxIb/8Pw2iXTIpuTZ7qBLU3Pb52Fgk/W
-         ayNg==
+        bh=bwU20L7cU2rT0PPhpky0feVP+lm9lKkKL7Q2RJup1kI=;
+        b=nkjYHDWpQqnxiWnWbWt1IgOIWMBafKya5KZRK1hQjvWJqbuo2VY07Oqai37ID9aDEa
+         RaYRhGb4/XL+tZM6Jo+HoohNMcPxOA7vm0zNywRKu/IJFtxFOpN/TuifixsFzlJreu4/
+         YL5BlR1cJpr3Q9o3izo/FBCLrZA89dzDvbFHsHO6jSG6szcMNRMhPc+qziCzX4QNaAPj
+         153geMx7tCLoKvwhRpf6xKcDbABJlJqYkv27BqXNfrAWFf9qsGvub8P4+HjtQLtvmmn6
+         3waxeeG7jhaQQsSBYM8F8PKCN6mmPYRi/De+xx8Xhp6MZkorBqaNJn713fRcVT5d7r6U
+         ROyw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C46492189D
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAA1721897
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Martin Schwidefsky <schwidefsky@de.ibm.com>,
-	Vasily Gorbik <gor@linux.vnet.ibm.com>
-Subject: [PATCH 4.4 10/50] s390: introduce CPU alternatives
-Date: Fri, 27 Apr 2018 15:58:12 +0200
-Message-Id: <20180427135656.324641428@linuxfoundation.org>
+	kernel test robot <lkp@intel.com>,
+	Cong Wang <xiyou.wangcong@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 41/50] llc: fix NULL pointer deref for SOCK_ZAPPED
+Date: Fri, 27 Apr 2018 15:58:43 +0200
+Message-Id: <20180427135658.104287309@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135655.623669681@linuxfoundation.org>
 References: <20180427135655.623669681@linuxfoundation.org>
@@ -43,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908245803685060?=
-X-GMAIL-MSGID: =?utf-8?q?1598908245803685060?=
+X-GMAIL-THRID: =?utf-8?q?1598908105270702201?=
+X-GMAIL-MSGID: =?utf-8?q?1598908240716339775?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,465 +53,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
 
-From: Vasily Gorbik <gor@linux.vnet.ibm.com>
+[ Upstream commit 3a04ce7130a7e5dad4e78d45d50313747f8c830f ]
 
-[ Upstream commit 686140a1a9c41d85a4212a1c26d671139b76404b ]
+For SOCK_ZAPPED socket, we don't need to care about llc->sap,
+so we should just skip these refcount functions in this case.
 
-Implement CPU alternatives, which allows to optionally patch newer
-instructions at runtime, based on CPU facilities availability.
-
-A new kernel boot parameter "noaltinstr" disables patching.
-
-Current implementation is derived from x86 alternatives. Although
-ideal instructions padding (when altinstr is longer then oldinstr)
-is added at compile time, and no oldinstr nops optimization has to be
-done at runtime. Also couple of compile time sanity checks are done:
-1. oldinstr and altinstr must be <= 254 bytes long,
-2. oldinstr and altinstr must not have an odd length.
-
-alternative(oldinstr, altinstr, facility);
-alternative_2(oldinstr, altinstr1, facility1, altinstr2, facility2);
-
-Both compile time and runtime padding consists of either 6/4/2 bytes nop
-or a jump (brcl) + 2 bytes nop filler if padding is longer then 6 bytes.
-
-.altinstructions and .altinstr_replacement sections are part of
-__init_begin : __init_end region and are freed after initialization.
-
-Signed-off-by: Vasily Gorbik <gor@linux.vnet.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Fixes: f7e43672683b ("llc: hold llc_sap before release_sock()")
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- Documentation/kernel-parameters.txt |    3 
- arch/s390/Kconfig                   |   17 +++
- arch/s390/include/asm/alternative.h |  163 ++++++++++++++++++++++++++++++++++++
- arch/s390/kernel/Makefile           |    1 
- arch/s390/kernel/alternative.c      |  110 ++++++++++++++++++++++++
- arch/s390/kernel/module.c           |   17 +++
- arch/s390/kernel/setup.c            |    3 
- arch/s390/kernel/vmlinux.lds.S      |   23 +++++
- 8 files changed, 337 insertions(+)
- create mode 100644 arch/s390/include/asm/alternative.h
- create mode 100644 arch/s390/kernel/alternative.c
+ net/llc/af_llc.c |   21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
 
---- a/Documentation/kernel-parameters.txt
-+++ b/Documentation/kernel-parameters.txt
-@@ -2402,6 +2402,9 @@ bytes respectively. Such letter suffixes
- 
- 	noalign		[KNL,ARM]
- 
-+	noaltinstr	[S390] Disables alternative instructions patching
-+			(CPU alternatives feature).
-+
- 	noapic		[SMP,APIC] Tells the kernel to not make use of any
- 			IOAPICs that may be present in the system.
- 
---- a/arch/s390/Kconfig
-+++ b/arch/s390/Kconfig
-@@ -705,6 +705,22 @@ config SECCOMP
- 
- 	  If unsure, say Y.
- 
-+config ALTERNATIVES
-+	def_bool y
-+	prompt "Patch optimized instructions for running CPU type"
-+	help
-+	  When enabled the kernel code is compiled with additional
-+	  alternative instructions blocks optimized for newer CPU types.
-+	  These alternative instructions blocks are patched at kernel boot
-+	  time when running CPU supports them. This mechanism is used to
-+	  optimize some critical code paths (i.e. spinlocks) for newer CPUs
-+	  even if kernel is build to support older machine generations.
-+
-+	  This mechanism could be disabled by appending "noaltinstr"
-+	  option to the kernel command line.
-+
-+	  If unsure, say Y.
-+
- endmenu
- 
- menu "Power Management"
-@@ -754,6 +770,7 @@ config PFAULT
- config SHARED_KERNEL
- 	bool "VM shared kernel support"
- 	depends on !JUMP_LABEL
-+	depends on !ALTERNATIVES
- 	help
- 	  Select this option, if you want to share the text segment of the
- 	  Linux kernel between different VM guests. This reduces memory
---- /dev/null
-+++ b/arch/s390/include/asm/alternative.h
-@@ -0,0 +1,163 @@
-+#ifndef _ASM_S390_ALTERNATIVE_H
-+#define _ASM_S390_ALTERNATIVE_H
-+
-+#ifndef __ASSEMBLY__
-+
-+#include <linux/types.h>
-+#include <linux/stddef.h>
-+#include <linux/stringify.h>
-+
-+struct alt_instr {
-+	s32 instr_offset;	/* original instruction */
-+	s32 repl_offset;	/* offset to replacement instruction */
-+	u16 facility;		/* facility bit set for replacement */
-+	u8  instrlen;		/* length of original instruction */
-+	u8  replacementlen;	/* length of new instruction */
-+} __packed;
-+
-+#ifdef CONFIG_ALTERNATIVES
-+extern void apply_alternative_instructions(void);
-+extern void apply_alternatives(struct alt_instr *start, struct alt_instr *end);
-+#else
-+static inline void apply_alternative_instructions(void) {};
-+static inline void apply_alternatives(struct alt_instr *start,
-+				      struct alt_instr *end) {};
-+#endif
-+/*
-+ * |661:       |662:	  |6620      |663:
-+ * +-----------+---------------------+
-+ * | oldinstr  | oldinstr_padding    |
-+ * |	       +----------+----------+
-+ * |	       |	  |	     |
-+ * |	       | >6 bytes |6/4/2 nops|
-+ * |	       |6 bytes jg----------->
-+ * +-----------+---------------------+
-+ *		 ^^ static padding ^^
-+ *
-+ * .altinstr_replacement section
-+ * +---------------------+-----------+
-+ * |6641:			     |6651:
-+ * | alternative instr 1	     |
-+ * +-----------+---------+- - - - - -+
-+ * |6642:		 |6652:      |
-+ * | alternative instr 2 | padding
-+ * +---------------------+- - - - - -+
-+ *			  ^ runtime ^
-+ *
-+ * .altinstructions section
-+ * +---------------------------------+
-+ * | alt_instr entries for each      |
-+ * | alternative instr		     |
-+ * +---------------------------------+
-+ */
-+
-+#define b_altinstr(num)	"664"#num
-+#define e_altinstr(num)	"665"#num
-+
-+#define e_oldinstr_pad_end	"663"
-+#define oldinstr_len		"662b-661b"
-+#define oldinstr_total_len	e_oldinstr_pad_end"b-661b"
-+#define altinstr_len(num)	e_altinstr(num)"b-"b_altinstr(num)"b"
-+#define oldinstr_pad_len(num) \
-+	"-(((" altinstr_len(num) ")-(" oldinstr_len ")) > 0) * " \
-+	"((" altinstr_len(num) ")-(" oldinstr_len "))"
-+
-+#define INSTR_LEN_SANITY_CHECK(len)					\
-+	".if " len " > 254\n"						\
-+	"\t.error \"cpu alternatives does not support instructions "	\
-+		"blocks > 254 bytes\"\n"				\
-+	".endif\n"							\
-+	".if (" len ") %% 2\n"						\
-+	"\t.error \"cpu alternatives instructions length is odd\"\n"	\
-+	".endif\n"
-+
-+#define OLDINSTR_PADDING(oldinstr, num)					\
-+	".if " oldinstr_pad_len(num) " > 6\n"				\
-+	"\tjg " e_oldinstr_pad_end "f\n"				\
-+	"6620:\n"							\
-+	"\t.fill (" oldinstr_pad_len(num) " - (6620b-662b)) / 2, 2, 0x0700\n" \
-+	".else\n"							\
-+	"\t.fill " oldinstr_pad_len(num) " / 6, 6, 0xc0040000\n"	\
-+	"\t.fill " oldinstr_pad_len(num) " %% 6 / 4, 4, 0x47000000\n"	\
-+	"\t.fill " oldinstr_pad_len(num) " %% 6 %% 4 / 2, 2, 0x0700\n"	\
-+	".endif\n"
-+
-+#define OLDINSTR(oldinstr, num)						\
-+	"661:\n\t" oldinstr "\n662:\n"					\
-+	OLDINSTR_PADDING(oldinstr, num)					\
-+	e_oldinstr_pad_end ":\n"					\
-+	INSTR_LEN_SANITY_CHECK(oldinstr_len)
-+
-+#define OLDINSTR_2(oldinstr, num1, num2)				\
-+	"661:\n\t" oldinstr "\n662:\n"					\
-+	".if " altinstr_len(num1) " < " altinstr_len(num2) "\n"		\
-+	OLDINSTR_PADDING(oldinstr, num2)				\
-+	".else\n"							\
-+	OLDINSTR_PADDING(oldinstr, num1)				\
-+	".endif\n"							\
-+	e_oldinstr_pad_end ":\n"					\
-+	INSTR_LEN_SANITY_CHECK(oldinstr_len)
-+
-+#define ALTINSTR_ENTRY(facility, num)					\
-+	"\t.long 661b - .\n"			/* old instruction */	\
-+	"\t.long " b_altinstr(num)"b - .\n"	/* alt instruction */	\
-+	"\t.word " __stringify(facility) "\n"	/* facility bit    */	\
-+	"\t.byte " oldinstr_total_len "\n"	/* source len	   */	\
-+	"\t.byte " altinstr_len(num) "\n"	/* alt instruction len */
-+
-+#define ALTINSTR_REPLACEMENT(altinstr, num)	/* replacement */	\
-+	b_altinstr(num)":\n\t" altinstr "\n" e_altinstr(num) ":\n"	\
-+	INSTR_LEN_SANITY_CHECK(altinstr_len(num))
-+
-+#ifdef CONFIG_ALTERNATIVES
-+/* alternative assembly primitive: */
-+#define ALTERNATIVE(oldinstr, altinstr, facility) \
-+	".pushsection .altinstr_replacement, \"ax\"\n"			\
-+	ALTINSTR_REPLACEMENT(altinstr, 1)				\
-+	".popsection\n"							\
-+	OLDINSTR(oldinstr, 1)						\
-+	".pushsection .altinstructions,\"a\"\n"				\
-+	ALTINSTR_ENTRY(facility, 1)					\
-+	".popsection\n"
-+
-+#define ALTERNATIVE_2(oldinstr, altinstr1, facility1, altinstr2, facility2)\
-+	".pushsection .altinstr_replacement, \"ax\"\n"			\
-+	ALTINSTR_REPLACEMENT(altinstr1, 1)				\
-+	ALTINSTR_REPLACEMENT(altinstr2, 2)				\
-+	".popsection\n"							\
-+	OLDINSTR_2(oldinstr, 1, 2)					\
-+	".pushsection .altinstructions,\"a\"\n"				\
-+	ALTINSTR_ENTRY(facility1, 1)					\
-+	ALTINSTR_ENTRY(facility2, 2)					\
-+	".popsection\n"
-+#else
-+/* Alternative instructions are disabled, let's put just oldinstr in */
-+#define ALTERNATIVE(oldinstr, altinstr, facility) \
-+	oldinstr "\n"
-+
-+#define ALTERNATIVE_2(oldinstr, altinstr1, facility1, altinstr2, facility2) \
-+	oldinstr "\n"
-+#endif
-+
-+/*
-+ * Alternative instructions for different CPU types or capabilities.
-+ *
-+ * This allows to use optimized instructions even on generic binary
-+ * kernels.
-+ *
-+ * oldinstr is padded with jump and nops at compile time if altinstr is
-+ * longer. altinstr is padded with jump and nops at run-time during patching.
-+ *
-+ * For non barrier like inlines please define new variants
-+ * without volatile and memory clobber.
-+ */
-+#define alternative(oldinstr, altinstr, facility)			\
-+	asm volatile(ALTERNATIVE(oldinstr, altinstr, facility) : : : "memory")
-+
-+#define alternative_2(oldinstr, altinstr1, facility1, altinstr2, facility2) \
-+	asm volatile(ALTERNATIVE_2(oldinstr, altinstr1, facility1,	    \
-+				   altinstr2, facility2) ::: "memory")
-+
-+#endif /* __ASSEMBLY__ */
-+
-+#endif /* _ASM_S390_ALTERNATIVE_H */
---- a/arch/s390/kernel/Makefile
-+++ b/arch/s390/kernel/Makefile
-@@ -62,6 +62,7 @@ obj-$(CONFIG_KPROBES)		+= kprobes.o
- obj-$(CONFIG_FUNCTION_TRACER)	+= mcount.o ftrace.o
- obj-$(CONFIG_CRASH_DUMP)	+= crash_dump.o
- obj-$(CONFIG_UPROBES)		+= uprobes.o
-+obj-$(CONFIG_ALTERNATIVES)	+= alternative.o
- 
- obj-$(CONFIG_PERF_EVENTS)	+= perf_event.o perf_cpum_cf.o perf_cpum_sf.o
- obj-$(CONFIG_PERF_EVENTS)	+= perf_cpum_cf_events.o
---- /dev/null
-+++ b/arch/s390/kernel/alternative.c
-@@ -0,0 +1,110 @@
-+#include <linux/module.h>
-+#include <asm/alternative.h>
-+#include <asm/facility.h>
-+
-+#define MAX_PATCH_LEN (255 - 1)
-+
-+static int __initdata_or_module alt_instr_disabled;
-+
-+static int __init disable_alternative_instructions(char *str)
-+{
-+	alt_instr_disabled = 1;
-+	return 0;
-+}
-+
-+early_param("noaltinstr", disable_alternative_instructions);
-+
-+struct brcl_insn {
-+	u16 opc;
-+	s32 disp;
-+} __packed;
-+
-+static u16 __initdata_or_module nop16 = 0x0700;
-+static u32 __initdata_or_module nop32 = 0x47000000;
-+static struct brcl_insn __initdata_or_module nop48 = {
-+	0xc004, 0
-+};
-+
-+static const void *nops[] __initdata_or_module = {
-+	&nop16,
-+	&nop32,
-+	&nop48
-+};
-+
-+static void __init_or_module add_jump_padding(void *insns, unsigned int len)
-+{
-+	struct brcl_insn brcl = {
-+		0xc0f4,
-+		len / 2
-+	};
-+
-+	memcpy(insns, &brcl, sizeof(brcl));
-+	insns += sizeof(brcl);
-+	len -= sizeof(brcl);
-+
-+	while (len > 0) {
-+		memcpy(insns, &nop16, 2);
-+		insns += 2;
-+		len -= 2;
-+	}
-+}
-+
-+static void __init_or_module add_padding(void *insns, unsigned int len)
-+{
-+	if (len > 6)
-+		add_jump_padding(insns, len);
-+	else if (len >= 2)
-+		memcpy(insns, nops[len / 2 - 1], len);
-+}
-+
-+static void __init_or_module __apply_alternatives(struct alt_instr *start,
-+						  struct alt_instr *end)
-+{
-+	struct alt_instr *a;
-+	u8 *instr, *replacement;
-+	u8 insnbuf[MAX_PATCH_LEN];
-+
-+	/*
-+	 * The scan order should be from start to end. A later scanned
-+	 * alternative code can overwrite previously scanned alternative code.
-+	 */
-+	for (a = start; a < end; a++) {
-+		int insnbuf_sz = 0;
-+
-+		instr = (u8 *)&a->instr_offset + a->instr_offset;
-+		replacement = (u8 *)&a->repl_offset + a->repl_offset;
-+
-+		if (!test_facility(a->facility))
-+			continue;
-+
-+		if (unlikely(a->instrlen % 2 || a->replacementlen % 2)) {
-+			WARN_ONCE(1, "cpu alternatives instructions length is "
-+				     "odd, skipping patching\n");
-+			continue;
-+		}
-+
-+		memcpy(insnbuf, replacement, a->replacementlen);
-+		insnbuf_sz = a->replacementlen;
-+
-+		if (a->instrlen > a->replacementlen) {
-+			add_padding(insnbuf + a->replacementlen,
-+				    a->instrlen - a->replacementlen);
-+			insnbuf_sz += a->instrlen - a->replacementlen;
-+		}
-+
-+		s390_kernel_write(instr, insnbuf, insnbuf_sz);
-+	}
-+}
-+
-+void __init_or_module apply_alternatives(struct alt_instr *start,
-+					 struct alt_instr *end)
-+{
-+	if (!alt_instr_disabled)
-+		__apply_alternatives(start, end);
-+}
-+
-+extern struct alt_instr __alt_instructions[], __alt_instructions_end[];
-+void __init apply_alternative_instructions(void)
-+{
-+	apply_alternatives(__alt_instructions, __alt_instructions_end);
-+}
---- a/arch/s390/kernel/module.c
-+++ b/arch/s390/kernel/module.c
-@@ -31,6 +31,7 @@
- #include <linux/kernel.h>
- #include <linux/moduleloader.h>
- #include <linux/bug.h>
-+#include <asm/alternative.h>
- 
- #if 0
- #define DEBUGP printk
-@@ -424,6 +425,22 @@ int module_finalize(const Elf_Ehdr *hdr,
- 		    const Elf_Shdr *sechdrs,
- 		    struct module *me)
+--- a/net/llc/af_llc.c
++++ b/net/llc/af_llc.c
+@@ -187,7 +187,6 @@ static int llc_ui_release(struct socket
  {
-+	const Elf_Shdr *s;
-+	char *secstrings;
+ 	struct sock *sk = sock->sk;
+ 	struct llc_sock *llc;
+-	struct llc_sap *sap;
+ 
+ 	if (unlikely(sk == NULL))
+ 		goto out;
+@@ -198,15 +197,19 @@ static int llc_ui_release(struct socket
+ 		llc->laddr.lsap, llc->daddr.lsap);
+ 	if (!llc_send_disc(sk))
+ 		llc_ui_wait_for_disc(sk, sk->sk_rcvtimeo);
+-	sap = llc->sap;
+-	/* Hold this for release_sock(), so that llc_backlog_rcv() could still
+-	 * use it.
+-	 */
+-	llc_sap_hold(sap);
+-	if (!sock_flag(sk, SOCK_ZAPPED))
++	if (!sock_flag(sk, SOCK_ZAPPED)) {
++		struct llc_sap *sap = llc->sap;
 +
-+	if (IS_ENABLED(CONFIG_ALTERNATIVES)) {
-+		secstrings = (void *)hdr + sechdrs[hdr->e_shstrndx].sh_offset;
-+		for (s = sechdrs; s < sechdrs + hdr->e_shnum; s++) {
-+			if (!strcmp(".altinstructions",
-+				    secstrings + s->sh_name)) {
-+				/* patch .altinstructions */
-+				void *aseg = (void *)s->sh_addr;
-+
-+				apply_alternatives(aseg, aseg + s->sh_size);
-+			}
-+		}
++		/* Hold this for release_sock(), so that llc_backlog_rcv()
++		 * could still use it.
++		 */
++		llc_sap_hold(sap);
+ 		llc_sap_remove_socket(llc->sap, sk);
+-	release_sock(sk);
+-	llc_sap_put(sap);
++		release_sock(sk);
++		llc_sap_put(sap);
++	} else {
++		release_sock(sk);
 +	}
-+
- 	jump_label_apply_nops(me);
- 	vfree(me->arch.syminfo);
- 	me->arch.syminfo = NULL;
---- a/arch/s390/kernel/setup.c
-+++ b/arch/s390/kernel/setup.c
-@@ -63,6 +63,7 @@
- #include <asm/sclp.h>
- #include <asm/sysinfo.h>
- #include <asm/numa.h>
-+#include <asm/alternative.h>
- #include "entry.h"
- 
- /*
-@@ -893,6 +894,8 @@ void __init setup_arch(char **cmdline_p)
- 	conmode_default();
- 	set_preferred_console();
- 
-+	apply_alternative_instructions();
-+
- 	/* Setup zfcpdump support */
- 	setup_zfcpdump();
- 
---- a/arch/s390/kernel/vmlinux.lds.S
-+++ b/arch/s390/kernel/vmlinux.lds.S
-@@ -78,6 +78,29 @@ SECTIONS
- 		EXIT_DATA
- 	}
- 
-+	/*
-+	 * struct alt_inst entries. From the header (alternative.h):
-+	 * "Alternative instructions for different CPU types or capabilities"
-+	 * Think locking instructions on spinlocks.
-+	 * Note, that it is a part of __init region.
-+	 */
-+	. = ALIGN(8);
-+	.altinstructions : {
-+		__alt_instructions = .;
-+		*(.altinstructions)
-+		__alt_instructions_end = .;
-+	}
-+
-+	/*
-+	 * And here are the replacement instructions. The linker sticks
-+	 * them as binary blobs. The .altinstructions has enough data to
-+	 * get the address and the length of them to patch the kernel safely.
-+	 * Note, that it is a part of __init region.
-+	 */
-+	.altinstr_replacement : {
-+		*(.altinstr_replacement)
-+	}
-+
- 	/* early.c uses stsi, which requires page aligned data. */
- 	. = ALIGN(PAGE_SIZE);
- 	INIT_DATA_SECTION(0x100)
+ 	if (llc->dev)
+ 		dev_put(llc->dev);
+ 	sock_put(sk);
