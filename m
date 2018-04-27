@@ -1,70 +1,170 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757243AbeD0DMt (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 23:12:49 -0400
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:38656 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753312AbeD0DMs (ORCPT
+        id S1757417AbeD0DNQ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 23:13:16 -0400
+Received: from bh-25.webhostbox.net ([208.91.199.152]:34101 "EHLO
+        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757354AbeD0DNM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 23:12:48 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w3R3CViB022773
-X-Nifty-SrcIP: [209.85.217.173]
-X-Google-Smtp-Source: AB8JxZrsW/9YclkQuIqU0nADhtyN6HjZD5AtuZyh5bptgFzKCqHeN+V3cGU42avZTukT7/1CvAC3G5eleT0sdXNLIDY=
-MIME-Version: 1.0
-In-Reply-To: <20180427014905.19520-1-suzuki.katsuhiro@socionext.com>
-References: <20180427014905.19520-1-suzuki.katsuhiro@socionext.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Fri, 27 Apr 2018 12:11:50 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARSB3q6aheYNjzC4BAP6C+SZE+arDbqbpaK8F31iR82aQ@mail.gmail.com>
-Message-ID: <CAK7LNARSB3q6aheYNjzC4BAP6C+SZE+arDbqbpaK8F31iR82aQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] pinctrl: uniphier: add LD20 MPEG2-TS I/O pin-mux settings
-To: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 26 Apr 2018 23:13:12 -0400
+From: Guenter Roeck <linux@roeck-us.net>
+To: Clemens Ladisch <clemens@ladisch.de>
+Cc: Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Brian Woods <brian.woods@amd.com>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 2/2] hwmon: (k10temp) Display both Tctl and Tdie
+Date: Thu, 26 Apr 2018 20:13:09 -0700
+Message-Id: <1524798789-2239-2-git-send-email-linux@roeck-us.net>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1524798789-2239-1-git-send-email-linux@roeck-us.net>
+References: <1524798789-2239-1-git-send-email-linux@roeck-us.net>
+X-Authenticated_sender: guenter@roeck-us.net
+X-OutGoing-Spam-Status: No, score=-1.0
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - roeck-us.net
+X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
+X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-04-27 10:49 GMT+09:00 Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>:
-> The MPEG2-TS input/output core both accepts serial TS and parallel TS.
->
-> The serial TS interface uses following pins:
->   hscin0_s : HS0DOUT[0-3]
->   hscin1_s : HS0DOUT[4-7]
->   hscin2_s : HS1BCLKIN, HS1SYNCIN, HS1VALIN, HS1DIN0
->   hscin3_s : HS1DIN[2-5]
->   hscout0_s: HS0DOUT[0-3]
->   hscout1_s: HS0DOUT[4-7]
->
-> And the parallel TS interface uses following pins:
->   hscin0_p : HS0BCLKIN, HS0SYNCIN, HS0VALIN, HS0DIN[0-7]
->   hscin1_p : HS1BCLKIN, HS1SYNCIN, HS1VALIN, HS1DIN[0-7]
->   hscout0_p: HS0BCLKOUT, HS0SYNCOUT, HS0VALOUT, HS0DOUT[0-7]
->
-> Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
->
-> ---
->
-> Changes in v2:
->
->   - Fix indent
->   - Sort alphabetically
->   - Fix wrong grouping
->     - Fix hsc'out'0_ci -> hsc'in'0_ci of hscin0 group
->     - Fix hscin'0'_s -> hscin'1'_s of hscin1 group
+On some AMD CPUs, there is a different between the die temperature
+(Tdie) and the reported temperature (Tctl). Tdie is the real measured
+temperature, and Tctl is used for fan control. Lets report both for
+affected CPUs.
 
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+---
+ drivers/hwmon/k10temp.c | 55 ++++++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 48 insertions(+), 7 deletions(-)
 
-This version looks good to me.
-
-Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-
-
-
-
+diff --git a/drivers/hwmon/k10temp.c b/drivers/hwmon/k10temp.c
+index b06bb1f90853..1135b8f1ad0f 100644
+--- a/drivers/hwmon/k10temp.c
++++ b/drivers/hwmon/k10temp.c
+@@ -80,6 +80,7 @@ struct k10temp_data {
+ 	void (*read_tempreg)(struct pci_dev *pdev, u32 *regval);
+ 	int temp_offset;
+ 	u32 temp_adjust_mask;
++	bool show_tdie;
+ };
+ 
+ struct tctl_offset {
+@@ -140,17 +141,24 @@ static void read_tempreg_nb_f17(struct pci_dev *pdev, u32 *regval)
+ 			  F17H_M01H_REPORTED_TEMP_CTRL_OFFSET, regval);
+ }
+ 
+-static ssize_t temp1_input_show(struct device *dev,
+-				struct device_attribute *attr, char *buf)
++unsigned int get_raw_temp(struct k10temp_data *data)
+ {
+-	struct k10temp_data *data = dev_get_drvdata(dev);
+-	u32 regval;
+ 	unsigned int temp;
++	u32 regval;
+ 
+ 	data->read_tempreg(data->pdev, &regval);
+ 	temp = (regval >> 21) * 125;
+ 	if (regval & data->temp_adjust_mask)
+ 		temp -= 49000;
++	return temp;
++}
++
++static ssize_t temp1_input_show(struct device *dev,
++				struct device_attribute *attr, char *buf)
++{
++	struct k10temp_data *data = dev_get_drvdata(dev);
++	unsigned int temp = get_raw_temp(data);
++
+ 	if (temp > data->temp_offset)
+ 		temp -= data->temp_offset;
+ 	else
+@@ -159,6 +167,23 @@ static ssize_t temp1_input_show(struct device *dev,
+ 	return sprintf(buf, "%u\n", temp);
+ }
+ 
++static ssize_t temp2_input_show(struct device *dev,
++				struct device_attribute *devattr, char *buf)
++{
++	struct k10temp_data *data = dev_get_drvdata(dev);
++	unsigned int temp = get_raw_temp(data);
++
++	return sprintf(buf, "%u\n", temp);
++}
++
++static ssize_t temp_label_show(struct device *dev,
++			       struct device_attribute *devattr, char *buf)
++{
++	struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
++
++	return sprintf(buf, "%s\n", attr->index ? "Tctl" : "Tdie");
++}
++
+ static ssize_t temp1_max_show(struct device *dev,
+ 			      struct device_attribute *attr, char *buf)
+ {
+@@ -187,16 +212,23 @@ static DEVICE_ATTR_RO(temp1_max);
+ static SENSOR_DEVICE_ATTR(temp1_crit, S_IRUGO, show_temp_crit, NULL, 0);
+ static SENSOR_DEVICE_ATTR(temp1_crit_hyst, S_IRUGO, show_temp_crit, NULL, 1);
+ 
++static SENSOR_DEVICE_ATTR(temp1_label, 0444, temp_label_show, NULL, 0);
++static DEVICE_ATTR_RO(temp2_input);
++static SENSOR_DEVICE_ATTR(temp2_label, 0444, temp_label_show, NULL, 1);
++
+ static umode_t k10temp_is_visible(struct kobject *kobj,
+ 				  struct attribute *attr, int index)
+ {
+ 	struct device *dev = container_of(kobj, struct device, kobj);
+ 	struct k10temp_data *data = dev_get_drvdata(dev);
+ 	struct pci_dev *pdev = data->pdev;
++	u32 reg;
+ 
+-	if (index >= 2) {
+-		u32 reg;
+-
++	switch (index) {
++	case 0 ... 1:	/* temp1_input, temp1_max */
++	default:
++		break;
++	case 2 ... 3:	/* temp1_crit, temp1_crit_hyst */
+ 		if (!data->read_htcreg)
+ 			return 0;
+ 
+@@ -208,6 +240,11 @@ static umode_t k10temp_is_visible(struct kobject *kobj,
+ 		data->read_htcreg(data->pdev, &reg);
+ 		if (!(reg & HTC_ENABLE))
+ 			return 0;
++		break;
++	case 4 ... 6:	/* temp1_label, temp2_input, temp2_label */
++		if (!data->show_tdie)
++			return 0;
++		break;
+ 	}
+ 	return attr->mode;
+ }
+@@ -217,6 +254,9 @@ static struct attribute *k10temp_attrs[] = {
+ 	&dev_attr_temp1_max.attr,
+ 	&sensor_dev_attr_temp1_crit.dev_attr.attr,
+ 	&sensor_dev_attr_temp1_crit_hyst.dev_attr.attr,
++	&sensor_dev_attr_temp1_label.dev_attr.attr,
++	&dev_attr_temp2_input.attr,
++	&sensor_dev_attr_temp2_label.dev_attr.attr,
+ 	NULL
+ };
+ 
+@@ -292,6 +332,7 @@ static int k10temp_probe(struct pci_dev *pdev,
+ 	} else if (boot_cpu_data.x86 == 0x17) {
+ 		data->temp_adjust_mask = 0x80000;
+ 		data->read_tempreg = read_tempreg_nb_f17;
++		data->show_tdie = true;
+ 	} else {
+ 		data->read_htcreg = read_htcreg_pci;
+ 		data->read_tempreg = read_tempreg_pci;
 -- 
-Best Regards
-Masahiro Yamada
+2.7.4
