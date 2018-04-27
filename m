@@ -1,278 +1,339 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1788828-1525113752-2-4793645366093531520
+X-Cyrus-Session-Id: sloti22d1t05-380590-1524843166-2-8481181428014051731
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
   ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525113751; b=Dwq+1W82YdBzCt9H1/mYo9EXgZwi/weZBHqgOWOa8eD57G2D8w
-    YvAfyhRWaKF8YY2jmm3+fdeMUj9gAfWBfN6ZWcRtqQJ2Wrp8emFE7Y/xd9zRBpLm
-    rkKW+VfmxIZEjGr6DcNkSVmXVcHuXqnjba5XpyhfTZ9IG13o2eKrYE8kGOByb2Sz
-    EnCEZU9ixvK2n1e0Rnx02n3XQjo66wMMWdIIDjYknNh067VIQZKymnuf9obS3rr/
-    gBnnPMqZIiSZrO80x5zkrBfq+BjERvS6eCcn1viv1a18ashcaCT+ZTF3+BDFnRpX
-    6ymbXUzHBK4orqvoY7I6joprsD6uAUBcFcPg==
+    1524843165; b=k/NTN0/7y8eTYJgLlWz5BqX4HX8/ILT35cdvsZ+Ou4Kzo+Rqbr
+    oi0K27ac+Us5G3LXaBu6sVFTvzycdg3IvFpj/FHr6fDqTo+6vDmpoPIHnrn1zDNt
+    w1yh0wxPnD4Cg6uTPZc/DAIM+cmZ+Fj9Cj7RQmNP1zGdUWcwrYAM//X3gayGgysg
+    SZ0II+8kNrNE/6qTzX+goPoX0AcRAXrB7T/BHCguLhM/5hDqgckyo88EfZUH5yqV
+    2HDoIOGvu/qjHdn5i8MVKlh0uwyfxv+EmFOgeiXVu/+aGNwbAtqnCzgbsaptcZ0H
+    j/RMb5/bpO4JIZ9JY9FTdkaLpVg+G766W66Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=reply-to:subject:to:cc:references:from
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:message-id:sender:list-id; s=fm2; t=
-    1525113751; bh=8OvqQlIhVn2EVeHdCCcHvgjImFvgORdFmKfyBeGXbGA=; b=i
-    86gMZ25lDNpRhUQslNarrz0rpEyTG5vaFNjDqm7ZrNHhDi93pJOHjcCx4olNUgvn
-    wf6ZYGjxVSm0v7pdzFamXvkTaPKlc7JT5lxQ9CA73PW/j4Ocuyl7EGiL9LPtNrm1
-    UCoQYUlmztW3jsmY8yeEsQ6hPTG2eN/FBqNgmAM89+hqy4Bz4gAw5X3sr/jc7920
-    sjO8Aw9alxx53G1WdRRQeDM5UTjNuSfEmSojUadhPCupjHuU1B0CKELPkHW5/HlG
-    5QibNmMHNRVLvIuGT0WoL1vEsVIoRWquBrQbnVvQ/ETCzGOpNnyR5/aY7HC8qWaP
-    Rcnk9ACYB7FTPSbVyiu7w==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1524843165; bh=SQ4OBW6bcR3kuoQkHnSaRqUuMzD6r1
+    n1n5093KcMcmE=; b=LL664+A7FkQMcRk27c2tEEzBcUFFSWZid8CWcoPvPnVZKJ
+    76fnzoDSxdfmCO1RKkKspGIJ1B4H7SFozN8g3eK9mcWXytnKXHf4ctb2f/btfjkr
+    Ccm4yJ7VJXN0vchneZgjePeJLrxWTpLyqiP36UEJGN0lACPS+4eyDmGFICBYifbP
+    KnJHUpin3cirYOvSbAKraslzF8fr+txJoS1KgbHey4A4jHCAfi/QhP0X37A/++vc
+    WjZHUg3h6gvoN7EzzaZqZnY500lHDDvXwHufK4tqWlTGcXxCI4DAdbDyG/qXMJyJ
+    DJpnKCC7UUetNJmohfyDskFc+OCziRG6V7PTvFEQ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=linux.ibm.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.ibm.com header.result=pass header_org.domain=ibm.com header_org.result=pass header_is_org_domain=no;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=linux.ibm.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.ibm.com header.result=pass header_org.domain=ibm.com header_org.result=pass header_is_org_domain=no;
-    x-vs=clean score=-100 state=0
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfLZotYxi5/EoRoHlYOUAFIqdGxgEx9/u06wKLwdV/e4SEJUl/50SI3Js0+pZLw58WlbbqYn8xfO+1JN5afFPtYVESHtdv1k/1YYot9NbeJUCC6GobMh2
-    0pQrZvCdPCdJRs10Mh9XbSS3ibsrN8QHehD23c7dAOQeukQrq6T/dgWBRpFaEfok4DeM9nm6w9IxjD1jYtDt4udeHu97MjalP8ZyqVAjFwD8tBIIVMORN2Sk
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=VwQbUJbxAAAA:8 a=20KFwNOVAAAA:8 a=BlP6yNvZOLzwPO152XkA:9 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfHIrPXzVLC+k3jSSxlBukL1Gm9OxcPkeA+YFaIioWa1RK2nkPjzaDyYT/KBNviprU0K5H71WSlex54cYYfI5uZ3eyLHTuxwyWYHc7dH8PYc8Z3v5F+uF
+    qe9PdJ9QznDMB8kfK4gQwUo/1mlXIkFqI53BTVcgWcgpOu0eVBlhpuXv/MuapxDnylMjsXoqvXbbH5We1QJij4k59261Y0mZNm0GPQVFQDxfqzKpmZ0e7IS2
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=oZq4rTz8mb0A:10 a=Kd1tUaAdevIA:10
+    a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=VnNF1IyMAAAA:8 a=yPCof4ZbAAAA:8
+    a=1XWaLZrsAAAA:8 a=Qm8iP6mkAAAA:8 a=pGLkceISAAAA:8 a=20KFwNOVAAAA:8
+    a=LpQP-O61AAAA:8 a=cm27Pg_UAAAA:8 a=BTeA3XvPAAAA:8 a=khqpX0FKZ4hUKErDn4MA:9
+    a=pZOnptWE6EXd7igr:21 a=RgH05FzTk1lIHaeK:21 a=E2q1x9kB5HEA:10
+    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22 a=kDhhxE42lZnxL3pOKqYK:22
+    a=pioyyrs4ZptJ924tMmac:22 a=xmb-EsYY8bH0VWELuYED:22 a=tafbbOV3vt1XuEhzTjGK:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754628AbeD3Sm3 (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 30 Apr 2018 14:42:29 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53006 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754625AbeD3Sm2 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 30 Apr 2018 14:42:28 -0400
-Reply-To: muriloo@linux.ibm.com
-Subject: Re: [PATCH] perf session: Fix undeclared 'oe'
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        David Carrillo-Cisneros <davidcc@google.com>,
-        He Kuang <hekuang@huawei.com>, Ingo Molnar <mingo@redhat.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Paul Turner <pjt@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sasha Levin <alexander.levin@microsoft.com>,
-        Simon Que <sque@chromium.org>,
-        Stephane Eranian <eranian@google.com>,
-        Wang Nan <wangnan0@huawei.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>
-References: <20180411184135.27664-1-muriloo@linux.ibm.com>
- <20180411193353.GA5656@kroah.com>
- <82d8f577-bbbb-0419-bf41-057522eb3f30@linux.ibm.com>
- <81025fb9-bab8-58ff-8f82-b1da9a1202ec@linux.ibm.com>
- <20180430172008.GA4266@kroah.com> <20180430174934.GB10052@kroah.com>
-From: Murilo Opsfelder Araujo <muriloo@linux.ibm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=muriloo@linux.ibm.com; prefer-encrypt=mutual; keydata=
- xsBNBFC2LJYBCADMXZCh0JjMe5T/r1QaUHwCCCvyVaMVniJyTBaqUXPujCaddOKJF+Qhnpnp
- 0QJfOr/mnpeXe/HXHw1ICEBlMLfgR+VzQKvb7PHCtrKLEhCKeQOhmII4sxvpUfV/zjZBqp9z
- 1ljZ+QJLr2j7mkKwdc1tZ2fyhev1OkbeeRgs3vAN1YMzN4BA1qRvID6BJBVE0SaMM0V4TxOH
- kjmA91n+B9rC3PQk03gN+7UAbrat3DQEAhLvrRyL3ncOWO6uayN7a5LvxxtrJrHJpaNcWdGD
- aUWXEfLsD4wD3xzldReOejqgxn2NOhvWa1P7MptwgXNYgPNLZ5nEVQLtD/CP37lS5KibABEB
- AAHNLk11cmlsbyBPcHNmZWxkZXIgQXJhdWpvIDxtdXJpbG9Ab3BzZmVsZGVyLmNvbT7CwHsE
- EwECACUCGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJQti/pAhkBAAoJEJThzGhIzw44
- IaAIALToGEGjp1E4Cvr6BoznLPDoWMmfiGeyekZihS/SsANM4hAV9982x4BXRjde4wICSMEt
- sBy+t0FUKr4gbNGzAb10P1OifLfqwlPfpHkolvd71hCBS3CDvnwoADDKcIttKqSy6EsSFPX7
- 5qqX/G2gVBjmZTxfj54EjQ7QE2EQdkqX1Rj/BBaiUyDtWjpIzieRdnkAkjKY0iOU7jX9Z8aD
- LcIijXgD6x594peuhORXMeBMmcdKOylKeS7JzRln37xHs5HYzSr2BMFm9Cvh7L4n4zL2UuJ9
- 7HhcXbAyhlU/slRjeBNnn0X4JRZmmgpYoxOcrP/3iZvlXDf+qMzoxd4H0I3OwE0EULYslgEI
- AJpuIIHFGV4l3aneSjMLRRX94w+n9HmOQWG3pcqVyv0rnhr9qnov7HTNQ+kPw6eXFWTxHXJD
- 4++eGizTHdtptcw73G8bzBs8hj9N85DTYon3doIEtQwRQdvd3I/oLL8PyKvRGmrJ17Aecprf
- 69OIqp43SIuH5rQ9u7uIS2dKxql+3v0VE5IcARyF82k8Ys7Jf0OtIFoIZRIF8sQkGFGJHlfa
- w0dMdfkvm9+ASUYJyCi1ggyyd46l4XTjAPs1wQwyLRmJ4aleL5FiXdTNNQ8SmYGDy17werKL
- fWcgqOZC/Z3cEK1LvYUzcqGrf8/3bsP2QMfvFmPEV4W2Co0DqPDxg1UAEQEAAcLAXwQYAQIA
- CQUCULYslgIbDAAKCRCU4cxoSM8OOJPBB/4ld3N0LoT57XIZj2ZCJ0C9VdknlE9QTEG2huD0
- mVAL2Em3ZydgJz/TWXEKAMO50OHDvHiRFutFGZtHZuhCDgENQCaRvyI/xfi/UUA29J8Ahg2l
- zaICSEXwAuFZnecurvgTX2ioZNPrri2rgjKqEB+uJhkYXAziMCFSq1m+blREfjipiPKnTcLB
- EYizy8CewE2qHW2whXiYO7E+UPg186pF86bXiNYpEJSWB9z7ZlFsHE+ABngUjqrrCAmoteTK
- URTzrqPMFaiUrColsoulJamkbEn7amM9pN285U3CFREnsRv5m7TmSnPhZbBzAbEeHEaeqwO3
- xFlpAuK/RlKTJ/9D
-Organization: IBM
-Date: Mon, 30 Apr 2018 15:41:32 -0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180430174934.GB10052@kroah.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18043018-0052-0000-0000-000002E666F9
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008952; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000257; SDB=6.01025569; UDB=6.00523721; IPR=6.00804800;
- MB=3.00020867; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-30 18:41:43
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18043018-0053-0000-0000-00005C83B95D
-Message-Id: <8a9a895b-6647-d3b1-ef78-31f0ec34192b@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-30_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804300179
+        id S933041AbeD0Pc2 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 27 Apr 2018 11:32:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47952 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932888AbeD0OAt (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 27 Apr 2018 10:00:49 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F25AA2185A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: [PATCH 4.4 00/50] 4.4.130-stable review
+Date: Fri, 27 Apr 2018 15:58:02 +0200
+Message-Id: <20180427135655.623669681@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
+User-Agent: quilt/0.65
+X-stable: review
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.130-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-4.4.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 4.4.130-rc1
+X-KernelTest-Deadline: 2018-04-29T13:56+00:00
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 04/30/2018 02:49 PM, Greg Kroah-Hartman wrote:
-> On Mon, Apr 30, 2018 at 10:20:08AM -0700, Greg Kroah-Hartman wrote:
->> On Mon, Apr 30, 2018 at 02:11:55PM -0300, Murilo Opsfelder Araujo wrote:
->>> On 04/11/2018 05:21 PM, Murilo Opsfelder Araújo wrote:
->>>> On 04/11/2018 04:33 PM, Greg Kroah-Hartman wrote:
->>>>> On Wed, Apr 11, 2018 at 03:41:35PM -0300, Murilo Opsfelder Araujo wrote:
->>>>>> Using linux-3.18.y branch, perf build fails with the following:
->>>>>>
->>>>>>     $ make -s -j16 -C tools/perf V=1 WERROR=0 NO_LIBUNWIND=1 HAVE_CPLUS_DEMANGLE=1 NO_GTK2=1 NO_LIBNUMA=1 NO_STRLCPY=1 NO_BIONIC=1 prefix=/usr DESTDIR=/tmp/builddir/build all
->>>>>>     [...]
->>>>>>     util/session.c: In function ‘__perf_session__process_pipe_events’:
->>>>>>     util/session.c:1093:36: error: ‘oe’ undeclared (first use in this function)
->>>>>>       ordered_events__set_copy_on_queue(oe, true);
->>>>>>                                         ^
->>>>>>     util/session.c:1093:36: note: each undeclared identifier is reported only once for each function it appears in
->>>>>>
->>>>>> This patch fixes it for linux-3.18.y branch.
->>>>>
->>>>> Why is this failing now?  Has it always been broken?  Is there an
->>>>> upstream patch that fixed this instead?
->>>>>
->>>>
->>>> Hi, Greg.
->>>>
->>>> We've caught this build issue this week. I'm not sure since when it's
->>>> failing.
->>>>
->>>> The upstream patch that fixes this is:
->>>>
->>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=fa713a4eb9cebe5dec71b1bd11429603e17d841d
->>>>
->>>> commit fa713a4eb9cebe5dec71b1bd11429603e17d841d
->>>> Author: Arnaldo Carvalho de Melo <acme@redhat.com>
->>>> Date:   Tue Mar 3 11:48:12 2015 -0300
->>>>
->>>>     perf ordered_events: Untangle from perf_session
->>>>
->>>> But it doesn't apply straightforwardly.  At
->>>> fa713a4eb9cebe5dec71b1bd11429603e17d841d, perf API and perf_evlist
->>>> struct are slightly different from linux-3.18.y.
->>>>
->>>> A list of upstream patches for a clean backport (I think) would be:
->>>>
->>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=54245fdc357613633954bfd38cffb71cb9def067
->>>>
->>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=75be989a7a18e9666efd92b846ee48bed79e8086
->>>>
->>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=313e53b08e99b1dacf9ea2b0fbe97890db1ea95f
->>>>
->>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=9fa8727aa4d98d35ca50ef9cd8a50c6468af921d
->>>>
->>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=fa713a4eb9cebe5dec71b1bd11429603e17d841d
->>>>
->>>> Do you prefer all above patches backported to linux-3.18.y or just the
->>>> one-line fix I sent?
->>>>
->>>>>> Fixes: 95b33b99cdd6 ("perf inject: Copy events when reordering events in pipe mode")
->>>>>
->>>>> Was this just a bad backport?
->>>>
->>>> Some patches were left behind, I guess.
->>>>
->>>>>
->>>>> thanks,
->>>>>
->>>>> greg k-h
->>>
->>> Hi, Greg.
->>>
->>> I've realized that perf build on v3.18.107 is still broken, actually, it
->>> got a bit worse than v3.18.104.
->>>
->>> After applying my patch to fix the undeclared 'oe', perf build fails
->>> with the following errors:
->>>
->>> $ make -s -j16 -C tools/perf V=1 WERROR=0 NO_LIBUNWIND=1
->>> HAVE_CPLUS_DEMANGLE=1 NO_GTK2=1 NO_LIBNUMA=1 NO_STRLCPY=1 NO_BIONIC=1
->>> prefix=/usr DESTDIR=/tmp/builddir/build all
->>> [...]
->>> tests/code-reading.c: In function ‘read_object_code’:
->>> tests/code-reading.c:145:19: error: ‘KMOD_DECOMP_LEN’ undeclared (first
->>> use in this function)
->>>   char decomp_name[KMOD_DECOMP_LEN];
->>>                    ^
->>> tests/code-reading.c:145:19: note: each undeclared identifier is
->>> reported only once for each function it appears in
->>> tests/code-reading.c:208:2: warning: implicit declaration of function
->>> ‘dso__needs_decompress’ [-Wimplicit-function-declaration]
->>>   if (dso__needs_decompress(al.map->dso)) {
->>>   ^
->>> tests/code-reading.c:208:2: warning: nested extern declaration of
->>> ‘dso__needs_decompress’ [-Wnested-externs]
->>> tests/code-reading.c:209:3: warning: implicit declaration of function
->>> ‘dso__decompress_kmodule_path’ [-Wimplicit-function-declaration]
->>>    if (dso__decompress_kmodule_path(al.map->dso, objdump_name,
->>>    ^
->>> tests/code-reading.c:209:3: warning: nested extern declaration of
->>> ‘dso__decompress_kmodule_path’ [-Wnested-externs]
->>> tests/code-reading.c:145:7: warning: unused variable ‘decomp_name’
->>> [-Wunused-variable]
->>>   char decomp_name[KMOD_DECOMP_LEN];
->>>        ^
->>>
->>> Apparently, this was introduced by commit
->>> 091b3b4ba55daf8b28f40794aefdaa0bdb5af7a1:
->>>
->>> commit 091b3b4ba55daf8b28f40794aefdaa0bdb5af7a1
->>> Author: Namhyung Kim <namhyung@kernel.org>
->>> Date:   Thu Jun 8 16:31:07 2017 +0900
->>>
->>>     perf tests: Decompress kernel module before objdump
->>>
->>>
->>> Namhyung, are you fixing this?
->>
->> Ugh, I can fix this, I just did so on 4.4.y...
-> 
-> Nope, this is a mess.  When did perf last build on 3.18.y?  It really
-> looks like no one cares about it...
+This is the start of the stable review cycle for the 4.4.130 release.
+There are 50 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-perf build is broken since v3.18.101.
+Responses should be made by Sun Apr 29 13:56:42 UTC 2018.
+Anything received after that time might be too late.
 
-v3.18.100 works just fine.
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.130-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+and the diffstat can be found below.
 
-Cheers
-Murilo
+thanks,
+
+greg k-h
+
+-------------
+Pseudo-Shortlog of commits:
+
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 4.4.130-rc1
+
+Heiko Carstens <heiko.carstens@de.ibm.com>
+    s390/uprobes: implement arch_uretprobe_is_alive()
+
+Sebastian Ott <sebott@linux.ibm.com>
+    s390/cio: update chpid descriptor after resource accessibility event
+
+Dan Carpenter <dan.carpenter@oracle.com>
+    cdrom: information leak in cdrom_ioctl_media_changed()
+
+Martin K. Petersen <martin.petersen@oracle.com>
+    scsi: mptsas: Disable WRITE SAME
+
+Eric Dumazet <edumazet@google.com>
+    ipv6: add RTA_TABLE and RTA_PREFSRC to rtm_ipv6_policy
+
+Eric Dumazet <edumazet@google.com>
+    net: af_packet: fix race in PACKET_{R|T}X_RING
+
+Eric Dumazet <edumazet@google.com>
+    tcp: md5: reject TCP_MD5SIG or TCP_MD5SIG_EXT on established sockets
+
+Wolfgang Bumiller <w.bumiller@proxmox.com>
+    net: fix deadlock while clearing neighbor proxy table
+
+Eric Dumazet <edumazet@google.com>
+    tipc: add policy for TIPC_NLA_NET_ADDR
+
+Cong Wang <xiyou.wangcong@gmail.com>
+    llc: fix NULL pointer deref for SOCK_ZAPPED
+
+Cong Wang <xiyou.wangcong@gmail.com>
+    llc: hold llc_sap before release_sock()
+
+Xin Long <lucien.xin@gmail.com>
+    sctp: do not check port in sctp_inet6_cmp_addr
+
+Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
+    vlan: Fix reading memory beyond skb->tail in skb_vlan_tagged_multi
+
+Guillaume Nault <g.nault@alphalink.fr>
+    pppoe: check sockaddr length in pppoe_connect()
+
+Willem de Bruijn <willemb@google.com>
+    packet: fix bitfield update race
+
+Xin Long <lucien.xin@gmail.com>
+    team: fix netconsole setup over team
+
+Paolo Abeni <pabeni@redhat.com>
+    team: avoid adding twice the same option to the event list
+
+Jann Horn <jannh@google.com>
+    tcp: don't read out-of-bounds opsize
+
+Cong Wang <xiyou.wangcong@gmail.com>
+    llc: delete timers synchronously in llc_sk_free()
+
+Eric Dumazet <edumazet@google.com>
+    net: validate attribute sizes in neigh_dump_table()
+
+Guillaume Nault <g.nault@alphalink.fr>
+    l2tp: check sockaddr length in pppol2tp_connect()
+
+Eric Biggers <ebiggers@google.com>
+    KEYS: DNS: limit the length of option strings
+
+Xin Long <lucien.xin@gmail.com>
+    bonding: do not set slave_dev npinfo before slave_enable_netpoll in bond_enslave
+
+Martin Schwidefsky <schwidefsky@de.ibm.com>
+    s390: correct module section names for expoline code revert
+
+Martin Schwidefsky <schwidefsky@de.ibm.com>
+    s390: correct nospec auto detection init order
+
+Martin Schwidefsky <schwidefsky@de.ibm.com>
+    s390: add sysfs attributes for spectre
+
+Martin Schwidefsky <schwidefsky@de.ibm.com>
+    s390: report spectre mitigation via syslog
+
+Martin Schwidefsky <schwidefsky@de.ibm.com>
+    s390: add automatic detection of the spectre defense
+
+Martin Schwidefsky <schwidefsky@de.ibm.com>
+    s390: move nobp parameter functions to nospec-branch.c
+
+Martin Schwidefsky <schwidefsky@de.ibm.com>
+    s390/entry.S: fix spurious zeroing of r0
+
+Martin Schwidefsky <schwidefsky@de.ibm.com>
+    s390: do not bypass BPENTER for interrupt system calls
+
+Martin Schwidefsky <schwidefsky@de.ibm.com>
+    s390: Replace IS_ENABLED(EXPOLINE_*) with IS_ENABLED(CONFIG_EXPOLINE_*)
+
+Martin Schwidefsky <schwidefsky@de.ibm.com>
+    s390: introduce execute-trampolines for branches
+
+Martin Schwidefsky <schwidefsky@de.ibm.com>
+    s390: run user space and KVM guests with modified branch prediction
+
+Martin Schwidefsky <schwidefsky@de.ibm.com>
+    s390: add options to change branch prediction behaviour for the kernel
+
+Martin Schwidefsky <schwidefsky@de.ibm.com>
+    s390/alternative: use a copy of the facility bit mask
+
+Martin Schwidefsky <schwidefsky@de.ibm.com>
+    s390: add optimized array_index_mask_nospec
+
+Martin Schwidefsky <schwidefsky@de.ibm.com>
+    s390: scrub registers on kernel entry and KVM exit
+
+Martin Schwidefsky <schwidefsky@de.ibm.com>
+    KVM: s390: wire up bpb feature
+
+Martin Schwidefsky <schwidefsky@de.ibm.com>
+    s390: enable CPU alternatives unconditionally
+
+Martin Schwidefsky <schwidefsky@de.ibm.com>
+    s390: introduce CPU alternatives
+
+Karthikeyan Periyasamy <periyasa@codeaurora.org>
+    Revert "ath10k: send (re)assoc peer command when NSS changed"
+
+Sahitya Tummala <stummala@codeaurora.org>
+    jbd2: fix use after free in kjournald2()
+
+Felix Fietkau <nbd@nbd.name>
+    ath9k_hw: check if the chip failed to wake up
+
+Dmitry Torokhov <dmitry.torokhov@gmail.com>
+    Input: drv260x - fix initializing overdrive voltage
+
+Grant Grundler <grundler@chromium.org>
+    r8152: add Linksys USB3GIGV1 id
+
+Chen Feng <puck.chen@hisilicon.com>
+    staging: ion : Donnot wakeup kswapd in ion system alloc
+
+Jiri Olsa <jolsa@kernel.org>
+    perf: Return proper values for user stack errors
+
+Xiaoming Gao <gxm.linux.kernel@gmail.com>
+    x86/tsc: Prevent 32bit truncation in calc_hpet_ref()
+
+Steve French <smfrench@gmail.com>
+    cifs: do not allow creating sockets except with SMB1 posix exensions
+
+
+-------------
+
+Diffstat:
+
+ Documentation/kernel-parameters.txt           |   3 +
+ Makefile                                      |   4 +-
+ arch/s390/Kconfig                             |  47 +++++
+ arch/s390/Makefile                            |  10 ++
+ arch/s390/include/asm/alternative.h           | 149 +++++++++++++++
+ arch/s390/include/asm/barrier.h               |  24 +++
+ arch/s390/include/asm/facility.h              |  18 ++
+ arch/s390/include/asm/kvm_host.h              |   3 +-
+ arch/s390/include/asm/lowcore.h               |   7 +-
+ arch/s390/include/asm/nospec-branch.h         |  17 ++
+ arch/s390/include/asm/processor.h             |   4 +
+ arch/s390/include/asm/thread_info.h           |   4 +
+ arch/s390/include/uapi/asm/kvm.h              |   3 +
+ arch/s390/kernel/Makefile                     |   5 +-
+ arch/s390/kernel/alternative.c                | 112 ++++++++++++
+ arch/s390/kernel/early.c                      |   5 +
+ arch/s390/kernel/entry.S                      | 250 +++++++++++++++++++++++---
+ arch/s390/kernel/ipl.c                        |   1 +
+ arch/s390/kernel/module.c                     |  65 ++++++-
+ arch/s390/kernel/nospec-branch.c              | 169 +++++++++++++++++
+ arch/s390/kernel/processor.c                  |  18 ++
+ arch/s390/kernel/setup.c                      |  14 +-
+ arch/s390/kernel/smp.c                        |   7 +-
+ arch/s390/kernel/uprobes.c                    |   9 +
+ arch/s390/kernel/vmlinux.lds.S                |  37 ++++
+ arch/s390/kvm/kvm-s390.c                      |  13 +-
+ arch/x86/kernel/tsc.c                         |   2 +-
+ drivers/cdrom/cdrom.c                         |   2 +-
+ drivers/input/misc/drv260x.c                  |   2 +-
+ drivers/message/fusion/mptsas.c               |   1 +
+ drivers/net/bonding/bond_main.c               |   3 +-
+ drivers/net/ppp/pppoe.c                       |   4 +
+ drivers/net/team/team.c                       |  38 +++-
+ drivers/net/usb/cdc_ether.c                   |  10 ++
+ drivers/net/usb/r8152.c                       |   2 +
+ drivers/net/wireless/ath/ath10k/mac.c         |   5 +-
+ drivers/net/wireless/ath/ath9k/hw.c           |   4 +
+ drivers/s390/char/Makefile                    |   2 +
+ drivers/s390/cio/chsc.c                       |  14 +-
+ drivers/staging/android/ion/ion_system_heap.c |   2 +-
+ fs/cifs/dir.c                                 |   9 +-
+ fs/jbd2/journal.c                             |   2 +-
+ include/linux/if_vlan.h                       |   7 +-
+ include/net/llc_conn.h                        |   1 +
+ include/uapi/linux/kvm.h                      |   1 +
+ kernel/events/core.c                          |   4 +-
+ net/core/dev.c                                |   2 +-
+ net/core/neighbour.c                          |  40 +++--
+ net/dns_resolver/dns_key.c                    |  13 +-
+ net/ipv4/tcp.c                                |   6 +-
+ net/ipv4/tcp_input.c                          |   7 +-
+ net/ipv6/route.c                              |   2 +
+ net/l2tp/l2tp_ppp.c                           |   7 +
+ net/llc/af_llc.c                              |  14 +-
+ net/llc/llc_c_ac.c                            |   9 +-
+ net/llc/llc_conn.c                            |  22 ++-
+ net/packet/af_packet.c                        |  88 ++++++---
+ net/packet/internal.h                         |  10 +-
+ net/sctp/ipv6.c                               |  60 +++----
+ net/tipc/net.c                                |   3 +-
+ 60 files changed, 1228 insertions(+), 168 deletions(-)
