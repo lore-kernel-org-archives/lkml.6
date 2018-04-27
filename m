@@ -1,198 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932639AbeD0Jxx (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 05:53:53 -0400
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:34019 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932519AbeD0Jxs (ORCPT
+        id S932630AbeD0J7X (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 05:59:23 -0400
+Received: from www62.your-server.de ([213.133.104.62]:48816 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932491AbeD0J7S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 05:53:48 -0400
-X-Google-Smtp-Source: AB8JxZoIY3ZqkkApnWfeAaWYimXsfIUv5WqCD+NfwH9h5fx7DRRGCVE3irM7zx5kPkZxINxNWnxy9Z66pcNYHF5kjs8=
+        Fri, 27 Apr 2018 05:59:18 -0400
+Subject: Re: [PATCH bpf-next] bpf, doc: Update bpf_jit_enable limitation for
+ CONFIG_BPF_JIT_ALWAYS_ON
+To: Leo Yan <leo.yan@linaro.org>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jonathan Corbet <corbet@lwn.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+References: <1524709611-29437-1-git-send-email-leo.yan@linaro.org>
+ <275e03a2-b74e-8f60-4ffe-26c9a79fae9d@iogearbox.net>
+ <20180427094910.GA31015@leoy-ThinkPad-X240s>
+From: Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <cf3700a3-3d92-ee43-62f3-481d00baf330@iogearbox.net>
+Date: Fri, 27 Apr 2018 11:59:13 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-In-Reply-To: <20180427001745.4116-27-david@lechnology.com>
-References: <20180427001745.4116-1-david@lechnology.com> <20180427001745.4116-27-david@lechnology.com>
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date: Fri, 27 Apr 2018 11:53:47 +0200
-Message-ID: <CAMpxmJXNSagsNMgftQPQ8Fyt2mbsq3xTHU9u30ggoorgEQD1iw@mail.gmail.com>
-Subject: Re: [PATCH v9 26/27] ARM: davinci: da8xx-dt: switch to device tree clocks
-To: David Lechner <david@lechnology.com>
-Cc: linux-clk@vger.kernel.org,
-        linux-devicetree <devicetree@vger.kernel.org>,
-        arm-soc <linux-arm-kernel@lists.infradead.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>, Adam Ford <aford173@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180427094910.GA31015@leoy-ThinkPad-X240s>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-04-27 2:17 GMT+02:00 David Lechner <david@lechnology.com>:
-> This removes all of the clock init code from da8xx-dt.c. This includes
-> all of the OF_DEV_AUXDATA that was just used for looking up clocks.
->
-> Signed-off-by: David Lechner <david@lechnology.com>
-> ---
->
-> v9 changes:
-> - changes to arch/arm/mach-davinci/time.c accidentally got squashed into this
->   commit. will drop this later.
->
-> v8 changes:
-> - none
->
-> v7 changes:
-> - rebased
-> - drop of_platform_default_populate(NULL, NULL, NULL)
-> - add change in pm_domain.c
->
-> v6 changes:
-> - removed misleading statement from commit message
->
->
->  arch/arm/mach-davinci/da8xx-dt.c  | 58 -------------------------------
->  arch/arm/mach-davinci/pm_domain.c |  5 +++
->  arch/arm/mach-davinci/time.c      |  9 ++---
->  3 files changed, 10 insertions(+), 62 deletions(-)
->
-> diff --git a/arch/arm/mach-davinci/da8xx-dt.c b/arch/arm/mach-davinci/da8xx-dt.c
-> index 088bc5c0318b..23ac4108f812 100644
-> --- a/arch/arm/mach-davinci/da8xx-dt.c
-> +++ b/arch/arm/mach-davinci/da8xx-dt.c
-> @@ -19,67 +19,10 @@
->  #include "cp_intc.h"
->  #include <mach/da8xx.h>
->
-> -static struct of_dev_auxdata da850_aemif_auxdata_lookup[] = {
-> -       OF_DEV_AUXDATA("ti,davinci-nand", 0x62000000, "davinci-nand.0", NULL),
-> -       {}
-> -};
-> -
-> -static struct aemif_platform_data aemif_data = {
-> -       .dev_lookup = da850_aemif_auxdata_lookup,
-> -};
-> -
-> -static struct of_dev_auxdata da850_auxdata_lookup[] __initdata = {
-> -       OF_DEV_AUXDATA("ti,davinci-i2c", 0x01c22000, "i2c_davinci.1", NULL),
-> -       OF_DEV_AUXDATA("ti,davinci-i2c", 0x01e28000, "i2c_davinci.2", NULL),
-> -       OF_DEV_AUXDATA("ti,davinci-wdt", 0x01c21000, "davinci-wdt", NULL),
-> -       OF_DEV_AUXDATA("ti,da830-mmc", 0x01c40000, "da830-mmc.0", NULL),
-> -       OF_DEV_AUXDATA("ti,da850-ehrpwm", 0x01f00000, "ehrpwm.0", NULL),
-> -       OF_DEV_AUXDATA("ti,da850-ehrpwm", 0x01f02000, "ehrpwm.1", NULL),
-> -       OF_DEV_AUXDATA("ti,da850-ecap", 0x01f06000, "ecap.0", NULL),
-> -       OF_DEV_AUXDATA("ti,da850-ecap", 0x01f07000, "ecap.1", NULL),
-> -       OF_DEV_AUXDATA("ti,da850-ecap", 0x01f08000, "ecap.2", NULL),
-> -       OF_DEV_AUXDATA("ti,da830-spi", 0x01c41000, "spi_davinci.0", NULL),
-> -       OF_DEV_AUXDATA("ti,da830-spi", 0x01f0e000, "spi_davinci.1", NULL),
-> -       OF_DEV_AUXDATA("ns16550a", 0x01c42000, "serial8250.0", NULL),
-> -       OF_DEV_AUXDATA("ns16550a", 0x01d0c000, "serial8250.1", NULL),
-> -       OF_DEV_AUXDATA("ns16550a", 0x01d0d000, "serial8250.2", NULL),
-> -       OF_DEV_AUXDATA("ti,davinci_mdio", 0x01e24000, "davinci_mdio.0", NULL),
-> -       OF_DEV_AUXDATA("ti,davinci-dm6467-emac", 0x01e20000, "davinci_emac.1",
-> -                      NULL),
-> -       OF_DEV_AUXDATA("ti,da830-mcasp-audio", 0x01d00000, "davinci-mcasp.0", NULL),
-> -       OF_DEV_AUXDATA("ti,da850-aemif", 0x68000000, "ti-aemif", &aemif_data),
-> -       OF_DEV_AUXDATA("ti,da850-tilcdc", 0x01e13000, "da8xx_lcdc.0", NULL),
-> -       OF_DEV_AUXDATA("ti,da830-ohci", 0x01e25000, "ohci-da8xx", NULL),
-> -       OF_DEV_AUXDATA("ti,da830-musb", 0x01e00000, "musb-da8xx", NULL),
-> -       OF_DEV_AUXDATA("ti,da830-usb-phy", 0x01c1417c, "da8xx-usb-phy", NULL),
-> -       OF_DEV_AUXDATA("ti,da850-ahci", 0x01e18000, "ahci_da850", NULL),
-> -       OF_DEV_AUXDATA("ti,da850-vpif", 0x01e17000, "vpif", NULL),
-> -       OF_DEV_AUXDATA("ti,da850-dsp", 0x11800000, "davinci-rproc.0", NULL),
-> -       {}
-> -};
-> -
->  #ifdef CONFIG_ARCH_DAVINCI_DA850
->
->  static void __init da850_init_machine(void)
->  {
-> -       /* All existing boards use 100MHz SATA refclkpn */
-> -       static const unsigned long sata_refclkpn = 100 * 1000 * 1000;
-> -
-> -       int ret;
-> -
-> -       da850_register_clocks();
-> -
-> -       ret = da8xx_register_usb_phy_clocks();
-> -       if (ret)
-> -               pr_warn("%s: USB PHY CLK registration failed: %d\n",
-> -                       __func__, ret);
-> -
-> -       ret = da850_register_sata_refclk(sata_refclkpn);
-> -       if (ret)
-> -               pr_warn("%s: registering SATA REFCLK failed: %d",
-> -                       __func__, ret);
-> -
-> -       of_platform_default_populate(NULL, da850_auxdata_lookup, NULL);
->         davinci_pm_init();
->         pdata_quirks_init();
->  }
-> @@ -94,7 +37,6 @@ static const char *const da850_boards_compat[] __initconst = {
->
->  DT_MACHINE_START(DA850_DT, "Generic DA850/OMAP-L138/AM18x")
->         .map_io         = da850_init,
-> -       .init_time      = da850_init_time,
->         .init_machine   = da850_init_machine,
->         .dt_compat      = da850_boards_compat,
->         .init_late      = davinci_init_late,
-> diff --git a/arch/arm/mach-davinci/pm_domain.c b/arch/arm/mach-davinci/pm_domain.c
-> index 78eac2c0c146..e251fd593bfd 100644
-> --- a/arch/arm/mach-davinci/pm_domain.c
-> +++ b/arch/arm/mach-davinci/pm_domain.c
-> @@ -13,6 +13,7 @@
->  #include <linux/pm_runtime.h>
->  #include <linux/pm_clock.h>
->  #include <linux/platform_device.h>
-> +#include <linux/of.h>
->
->  static struct dev_pm_domain davinci_pm_domain = {
->         .ops = {
-> @@ -28,6 +29,10 @@ static struct pm_clk_notifier_block platform_bus_notifier = {
->
->  static int __init davinci_pm_runtime_init(void)
->  {
-> +       if (of_have_populated_dt())
-> +               return 0;
-> +
-> +       /* Use pm_clk as fallback if we're not using genpd. */
->         pm_clk_add_notifier(&platform_bus_type, &platform_bus_notifier);
->
->         return 0;
-> diff --git a/arch/arm/mach-davinci/time.c b/arch/arm/mach-davinci/time.c
-> index 7a8c6fada644..77ad95913dfa 100644
-> --- a/arch/arm/mach-davinci/time.c
-> +++ b/arch/arm/mach-davinci/time.c
-> @@ -409,11 +409,12 @@ static int __init of_davinci_timer_init(struct device_node *np)
->
->                 /*
->                  * Fall back to using ref_clk if the actual clock is not
-> -                * available. This currently always happens because platform
-> -                * clocks (i.e PLLs and PSCs) are registered as platform
-> -                * devices and therefore are not available at this point in
-> -                * the boot process.
-> +                * available. There will be problems later if the real clock
-> +                * source is disabled.
->                  */
-> +
-> +               pr_warn("%s: falling back to ref_clk\n", __func__);
-> +
->                 clkspec.np = of_find_node_by_name(NULL, "ref_clk");
->                 if (IS_ERR(clkspec.np)) {
->                         pr_err("%s: No clock available for timer!\n", __func__);
-> --
-> 2.17.0
->
+On 04/27/2018 11:49 AM, Leo Yan wrote:
+> On Fri, Apr 27, 2018 at 11:44:44AM +0200, Daniel Borkmann wrote:
+>> On 04/26/2018 04:26 AM, Leo Yan wrote:
+>>> When CONFIG_BPF_JIT_ALWAYS_ON is enabled, kernel has limitation for
+>>> bpf_jit_enable, so it has fixed value 1 and we cannot set it to 2
+>>> for JIT opcode dumping; this patch is to update the doc for it.
+>>>
+>>> Signed-off-by: Leo Yan <leo.yan@linaro.org>
+>>> ---
+>>>  Documentation/networking/filter.txt | 6 ++++++
+>>>  1 file changed, 6 insertions(+)
+>>>
+>>> diff --git a/Documentation/networking/filter.txt b/Documentation/networking/filter.txt
+>>> index fd55c7d..feddab9 100644
+>>> --- a/Documentation/networking/filter.txt
+>>> +++ b/Documentation/networking/filter.txt
+>>> @@ -483,6 +483,12 @@ Example output from dmesg:
+>>>  [ 3389.935851] JIT code: 00000030: 00 e8 28 94 ff e0 83 f8 01 75 07 b8 ff ff 00 00
+>>>  [ 3389.935852] JIT code: 00000040: eb 02 31 c0 c9 c3
+>>>  
+>>> +When CONFIG_BPF_JIT_ALWAYS_ON is enabled, bpf_jit_enable is set to 1 by default
+>>> +and it returns failure if change to any other value from proc node; this is
+>>> +for security consideration to avoid leaking info to unprivileged users. In this
+>>> +case, we can't directly dump JIT opcode image from kernel log, alternatively we
+>>> +need to use bpf tool for the dumping.
+>>> +
+>>
+>> Could you change this doc text a bit, I think it's slightly misleading. From the first
+>> sentence one could also interpret that value 0 would leaking info to unprivileged users
+>> whereas here we're only talking about the case of value 2. Maybe something roughly like
+>> this to make it more clear:
+>>
+>>   When CONFIG_BPF_JIT_ALWAYS_ON is enabled, bpf_jit_enable is permanently set to 1 and
+>>   setting any other value than that will return in failure. This is even the case for
+>>   setting bpf_jit_enable to 2, since dumping the final JIT image into the kernel log
+>>   is discouraged and introspection through bpftool (under tools/bpf/bpftool/) is the
+>>   generally recommended approach instead.
+> 
+> Yeah, your rephrasing is more clear and better.  Will do this and send
+> new patch soon.  Thanks for your helping.
 
-The following headers can be removed:
-
--#include <linux/io.h>
--#include <linux/of_irq.h>
--#include <linux/of_platform.h>
--#include <linux/irqdomain.h>
--#include <linux/platform_data/ti-aemif.h>
--#include "cp_intc.h"
-
-Thanks,
-Bart
+Awesome, thank you!
