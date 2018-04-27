@@ -1,91 +1,140 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758720AbeD0Qlv (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 12:41:51 -0400
-Received: from resqmta-ch2-11v.sys.comcast.net ([69.252.207.43]:48498 "EHLO
-        resqmta-ch2-11v.sys.comcast.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1757569AbeD0Qlu (ORCPT
+        id S1758790AbeD0QnJ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 12:43:09 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45654 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1758562AbeD0QnG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 12:41:50 -0400
-Date: Fri, 27 Apr 2018 11:41:48 -0500 (CDT)
-From: Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
-To: Mikulas Patocka <mpatocka@redhat.com>
-cc: Mike Snitzer <snitzer@redhat.com>, Vlastimil Babka <vbabka@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pekka Enberg <penberg@kernel.org>, linux-mm@kvack.org,
-        dm-devel@redhat.com, David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND] slab: introduce the flag SLAB_MINIMIZE_WASTE
-In-Reply-To: <alpine.LRH.2.02.1804261508430.26980@file01.intranet.prod.int.rdu2.redhat.com>
-Message-ID: <alpine.DEB.2.20.1804271136390.11686@nuc-kabylake>
-References: <alpine.LRH.2.02.1803201740280.21066@file01.intranet.prod.int.rdu2.redhat.com> <20c58a03-90a8-7e75-5fc7-856facfb6c8a@suse.cz> <20180413151019.GA5660@redhat.com> <ee8807ff-d650-0064-70bf-e1d77fa61f5c@suse.cz> <20180416142703.GA22422@redhat.com>
- <alpine.LRH.2.02.1804161031300.24222@file01.intranet.prod.int.rdu2.redhat.com> <20180416144638.GA22484@redhat.com> <alpine.LRH.2.02.1804161530360.19492@file01.intranet.prod.int.rdu2.redhat.com> <alpine.DEB.2.20.1804170940340.17557@nuc-kabylake>
- <alpine.LRH.2.02.1804171454020.26973@file01.intranet.prod.int.rdu2.redhat.com> <alpine.DEB.2.20.1804180952580.1334@nuc-kabylake> <alpine.LRH.2.02.1804251702250.9428@file01.intranet.prod.int.rdu2.redhat.com> <alpine.LRH.2.02.1804251917460.2429@file01.intranet.prod.int.rdu2.redhat.com>
- <alpine.DEB.2.20.1804261354230.6674@nuc-kabylake> <alpine.LRH.2.02.1804261508430.26980@file01.intranet.prod.int.rdu2.redhat.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Fri, 27 Apr 2018 12:43:06 -0400
+Date: Fri, 27 Apr 2018 09:44:16 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Joel Fernandes <joelaf@google.com>, linux-kernel@vger.kernel.org,
+        Peter Zilstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Fenguang Wu <fengguang.wu@intel.com>,
+        Baohong Liu <baohong.liu@intel.com>,
+        Vedang Patel <vedang.patel@intel.com>, kernel-team@android.com
+Subject: Re: [PATCH RFC] tracepoint: Introduce tracepoint callbacks executing
+ with preempt on
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180427042656.190746-1-joelaf@google.com>
+ <20180427155701.GL26088@linux.vnet.ibm.com>
+ <20180427121330.40b7ef15@gandalf.local.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-CMAE-Envelope: MS4wfKRd0xxBHiYG40oJPrc/urVxdNRBR2q1ftF+CpTOFADAnP3G9v8Fs1bp6ldks2HkwS19ocdQQ21oEBiJ2WA8kn9QlLOHaKCxI4oxhcGJjmSOQeq804PC
- s1KNGzW3wDaAtFRzWiqgoKcYE3DLSkPwMGVV737LGqYsT+jlmfajXJ/7ULM6KqbDAhciRs9RUvS24SboETlf2HGCJAO6rPXsc5Alu5doY+pPaCm53G3fe440
- Xxzeglr8uyElq5RQZm7zOZDRJvcTSsTNUyfH0kHKD/hTl/wN9eVwC16Dppqd8+CImYuapnFqVHEGO5APlpkjwqVgGHHFSXtTKHtWs16hUY8PsUWhNVI2opQt
- dxXuSDMC5ak3YdwhQOE0C+y3PwOXnxUIwfC5YtlcX7lRcounEkiWKcIp2bew8PBszAL2+HDSlIoI8ryhtZXP4/n2bleGqeldHzG382f2yYR3gp4EhkW9j/G/
- g9OBXOXMnkTaYZgY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180427121330.40b7ef15@gandalf.local.home>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18042716-0040-0000-0000-000004233FF9
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008932; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000257; SDB=6.01024091; UDB=6.00522853; IPR=6.00803321;
+ MB=3.00020809; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-27 16:43:04
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18042716-0041-0000-0000-000008294210
+Message-Id: <20180427164416.GN26088@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-27_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804270160
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 26 Apr 2018, Mikulas Patocka wrote:
+On Fri, Apr 27, 2018 at 12:13:30PM -0400, Steven Rostedt wrote:
+> On Fri, 27 Apr 2018 08:57:01 -0700
+> "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
+> 
+> > > +		if (preempt_on) {					\
+> > > +			WARN_ON_ONCE(in_nmi()); /* no srcu from nmi */	\  
+> > 
+> > Very good on this check, thank you!
+> 
+> I think you need to return and not call the read lock.
 
-> > Hmmm... order 4 for these caches may cause some concern. These should stay
-> > under costly order I think. Otherwise allocations are no longer
-> > guaranteed.
->
-> You said that slub has fallback to smaller order allocations.
+Works for me either way, at least assuming that the splat actually gets
+printed.  ;-)
 
-Yes it does...
+> 			if (WARN_ON_ONCE(in_nmi()))
+> 				return;
+> 
+> > 
+> > > +			idx = srcu_read_lock(&tracepoint_srcu);         \  
+> > 
+> > Hmmm...  Do I need to create a _notrace variant of srcu_read_lock()
+> > and srcu_read_unlock()?
+> 
+> I think so.
 
-> The whole purpose of this "minimize waste" approach is to use higher-order
-> allocations to use memory more efficiently, so it is just doing its job.
-> (for these 3 caches, order-4 really wastes less memory than order-3 - on
-> my system TCPv6 and sighand_cache have size 2112, task_struct 2752).
+OK, please see the (untested) patch below.  Of course,
+srcu_read_lock_notrace() invokes __srcu_read_lock(), which looks as
+follows:
 
-Hmmm... Ok if the others are fine with this as well. I got some pushback
-there in the past.
+	int __srcu_read_lock(struct srcu_struct *sp)
+	{
+		int idx;
 
-> We could improve the fallback code, so that if order-4 allocation fails,
-> it tries order-3 allocation, and then falls back to order-0. But I think
-> that these failures are rare enough that it is not a problem.
+		idx = READ_ONCE(sp->srcu_idx) & 0x1;
+		this_cpu_inc(sp->sda->srcu_lock_count[idx]);
+		smp_mb(); /* B */  /* Avoid leaking the critical section. */
+		return idx;
+	}
 
-I also think that would be too many fallbacks.
+Do I also need to make a notrace version of __srcu_read_lock()?
+Same question for __srcu_read_unlock(), which is similar.  If so,
+assuming that there is no need for a notrace variant of this_cpu_inc()
+and smp_mb(), I suppose I could simply macro-ize the internals in both
+cases, but perhaps you have a better approach.
 
-> > > +		/* Increase order even more, but only if it reduces waste */
-> > > +		if (test_order_obj <= 32 &&
-> >
-> > Where does the 32 come from?
->
-> It is to avoid extremely high order for extremely small slabs.
->
-> For example, see kmalloc-96.
-> 10922 96-byte objects would fit into 1MiB
-> 21845 96-byte objects would fit into 2MiB
+								Thanx, Paul
 
-That is the result of considering absolute byte wastage..
+------------------------------------------------------------------------
 
-> The algorithm would recognize this one more object that fits into 2MiB
-> slab as "waste reduction" and increase the order to 2MiB - and we don't
-> want this.
->
-> So, the general reasoning is - if we have 32 objects in a slab, then it is
-> already considered that wasted space is reasonably low and we don't want
-> to increase the order more.
->
-> Currently, kmalloc-96 uses order-0 - that is reasonable (we already have
-> 42 objects in 4k page, so we don't need to use higher order, even if it
-> wastes one-less object).
-
-
-The old code uses the concept of a "fraction" to calculate overhead. The
-code here uses absolute counts of bytes. Fraction looks better to me.
+diff --git a/include/linux/srcu.h b/include/linux/srcu.h
+index 91494d7e8e41..e2e2cf05a6eb 100644
+--- a/include/linux/srcu.h
++++ b/include/linux/srcu.h
+@@ -195,6 +195,16 @@ static inline int srcu_read_lock(struct srcu_struct *sp) __acquires(sp)
+ 	return retval;
+ }
+ 
++/* Used by tracing, cannot be traced and cannot invoke lockdep. */
++static inline notrace int
++srcu_read_lock_notrace(struct srcu_struct *sp) __acquires(sp)
++{
++	int retval;
++
++	retval = __srcu_read_lock(sp);
++	return retval;
++}
++
+ /**
+  * srcu_read_unlock - unregister a old reader from an SRCU-protected structure.
+  * @sp: srcu_struct in which to unregister the old reader.
+@@ -205,6 +215,13 @@ static inline int srcu_read_lock(struct srcu_struct *sp) __acquires(sp)
+ static inline void srcu_read_unlock(struct srcu_struct *sp, int idx)
+ 	__releases(sp)
+ {
++	__srcu_read_unlock(sp, idx);
++}
++
++/* Used by tracing, cannot be traced and cannot call lockdep. */
++static inline notrace void
++srcu_read_unlock_notrace(struct srcu_struct *sp, int idx) __releases(sp)
++{
+ 	rcu_lock_release(&(sp)->dep_map);
+ 	__srcu_read_unlock(sp, idx);
+ }
