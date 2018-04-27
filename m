@@ -1,78 +1,81 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2209064-1524730254-2-10676966616013129135
+X-Cyrus-Session-Id: sloti22d1t05-3435361-1524791639-2-4914171313913763171
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, MAILING_LIST_MULTI -1, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
-  LANGUAGES enro, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
+X-Spam-charsets: plain='US-ASCII'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524730254; b=SN8VFoJi6J3P1G2PyS458VVdH/w5CysmAwXrPW1+Jhc9UO9QwT
-    aXiBSL3KkAtI9Y4fWqL6SvHTGRTsRcCvemmBOkC+E/8zfSHPRyRinDLsXL0k0HGn
-    M/aRs8hkc08L/4hvOfr2w23zy2xjxFBw/TCPyF63fR8yVVMfMAUbp3PqBDQQIcxO
-    MUjCSxK2r5sbyomw8NVxN37qy2m0LmjXnuYGBrJwPEHfezX4MdtGWgEa/xjj0Z0y
-    w4XxIvF4a3oWqnjKk4ugVKpPgFLMC6OwTCp8gzLUwXKUfMfmvksG7cmhRua8t4P+
-    k3+Ou2+yOCDAxeGfRmUvS/EqNRoLe0CQ+MUQ==
+    1524791639; b=ivFQ/Wzx556D/qUePIRwEszp+kJcH8truU9aMZnG3JplXmYP6f
+    Fxg8fM6cGCa24nLUckpFeDnNpVukas6UDBP7Bz1EDK4oVYd2w8LRHc/JjYlj+f18
+    4f+9Hs0UrVsuozNmaXBMwGdS3G/lGpM63VvRvhXoJaoWVFazfE9x7S4tqrTUQ7e5
+    9d9he6nD3CXQ9OB6c3vBnfzB7OUpu06ix2cAbxdpPP9rzl9nTjLXqJsNToV5eqvP
+    XVe2+OXNjkv0G5kohPzjsp+lX9RwPbbhyv+YSLhTOrEHX1UHOBSpm2mDM4o02eS7
+    046OZpGWYFTYdAPcNkltN0HdqE3ENdlSrNDg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
+    messagingengine.com; h=date:from:to:cc:subject:message-id
     :in-reply-to:references:mime-version:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1524730254;
-    bh=wKAt1TiIo1d1VLDm8YYxzpbKwYOMtNkfjnUnlvfD6C4=; b=PIpnTov630gH
-    A4r10F7bDxevDbW/PubyiONM0eeHq4Z0QF94X6S6iwH8+a1r5GWna1tgGnQbej9k
-    zpmNF9YlCgANLzvHzfdF4yiV5Bm06sLUfvvUaWI09cMMtGMtFY51PsrLwC5ZThNZ
-    yJsKjZhAhLGIQdcU5I6IdxaarSVEIl0nqUfNhOLKCKl8FinF4H19VKQfd1YrVztH
-    3UIaKUMhraatOUGdXT91M6Ez8MzLnWZhiHJj/6ADY/sxb/9K0GYHPWvghvhylCZE
-    nXttZc5fSBM8acWonIF7FYc3OTE1TkvCfYLZjLI6pIyJpWENCu/AsZhieFfIGtPE
-    cEAa0IlhXw==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1524791639;
+    bh=EaMExUYl/eYn6qW3AFsd3Ah117V5UZ8qKjhxc3CYNEI=; b=Nxrbc6dYiHas
+    3jw2SV4pwtSO7UjGHNEd6hfRbR/WYKv8KuHKMEHXucadjvgCEVEDsKeHMMaHspZP
+    5q394+l19sYlsmg/FCL8lxQEybvSCxu+mVpQ4TCR147rVVZchbB2gfVr+n1+Im1W
+    C3Vr3WAJpoAT3EQtGSJ8kPBsAC47VT1ecVTh9Hs6GKWLUDvtXNPC/W0+U+9wcBar
+    sBjn3kW2aseoyrcxN0DgluHYgZjGicADqm4LfHZ9vn5HmBo5WT71TzFu+DvI9Js6
+    YzhSuh0PLHPvTi/jbHUrCMsU7JngfpnSjSIXpoLB0jyvSHh+f/yV4qVLJUS1O8gq
+    AR7tWmcgsQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=goodmis.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
+    x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=goodmis.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=goodmis.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
+    x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=goodmis.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMNgJYBHK3V9tdcIBqs5Ek/Bh8bIGZCjzJUfJxmZ3f+uLbMUFDnlh5zHWj9IHqk0skvTIUIXHFDP5m4q8OFvQW8JPHg+9N1pUyW1EzDSRS9cVludSAWJ
-    Kr0cgpwM04eq66SqpDA9eeC15uHt0OKfBM88CKC2oH8Cu5hfthBhBvws+FxCarxYDPMRqOh+wx5yU6bCsk6/fBRhGk2rn/5gLGN21EOLN4VY68l1jpro11B4
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=VwQbUJbxAAAA:8 a=eTFDDVV5-x8s3ZdA51sA:9 a=QEXdDO2ut3YA:10
+X-CM-Envelope: MS4wfOGfBiPALqKznfdjW4UQE8HExhN8zn5USxwDx6Ycl3mJ4KTEmv9CPKciMNbfBzDX0x3gspn9vWXTfJuz6iuL7dMqbG8k/caHH62ao35elPmvM3mDhKNM
+    A3w0+LEZI/tbWQryWUOTyqhrwXosNhM9aL+f03A6RI2c3yfule43irprTWbuSybiHYOHg8yXbpruKlomo/RWFMhg5KtglP3KLHFMvHjqfSBcDp180DQJEXkR
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
+    a=VwQbUJbxAAAA:8 a=i5IZh5tSkWVHgG_UL-sA:9 a=CjuIK1q_8ugA:10
     a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754523AbeDZIKt (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 26 Apr 2018 04:10:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35064 "EHLO mail.kernel.org"
+        id S1757261AbeD0BN5 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 26 Apr 2018 21:13:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48858 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752419AbeDZIK3 (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 26 Apr 2018 04:10:29 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE62821781
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
-Cc: Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
-        x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+        id S1755199AbeD0BN4 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 26 Apr 2018 21:13:56 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3F392184F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Thu, 26 Apr 2018 21:13:51 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
         Ananth N Mavinakayanahalli <ananth@in.ibm.com>,
         Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
         "David S . Miller" <davem@davemloft.net>,
@@ -84,18 +87,18 @@ Cc: Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
         "Tobin C . Harding" <me@tobin.cc>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Thomas Richter <tmricht@linux.ibm.com>,
-        akpm@linux-foundation.org, acme@kernel.org, rostedt@goodmis.org,
+        akpm@linux-foundation.org, acme@kernel.org,
         brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
         stable@vger.kernel.org
-Subject: [PATCH -tip v2 4/7] kprobes: Replace %p with other pointer types
-Date: Thu, 26 Apr 2018 17:10:03 +0900
-Message-Id: <152473020349.8819.11597612324633031612.stgit@devbox>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <152473007907.8819.10449983839199591406.stgit@devbox>
+Subject: Re: [PATCH -tip v2 4/7] kprobes: Replace %p with other pointer
+ types
+Message-ID: <20180426211351.419d3502@vmware.local.home>
+In-Reply-To: <152473020349.8819.11597612324633031612.stgit@devbox>
 References: <152473007907.8819.10449983839199591406.stgit@devbox>
-User-Agent: StGit/0.17.1-dirty
+        <152473020349.8819.11597612324633031612.stgit@devbox>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
@@ -103,76 +106,15 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Replace %p with appropriate pointer types (or just remove it)
- - Use %pS if possible
- - Use %px only for the function right before BUG().
- - Remove unneeded error message.
+On Thu, 26 Apr 2018 17:10:03 +0900
+Masami Hiramatsu <mhiramat@kernel.org> wrote:
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
----
- Changes in v2:
-  - Rebased on linux-next
----
- kernel/kprobes.c |   18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+> Replace %p with appropriate pointer types (or just remove it)
+>  - Use %pS if possible
+>  - Use %px only for the function right before BUG().
+>  - Remove unneeded error message.
 
-diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-index 94af7c99cf81..58f9e313cf08 100644
---- a/kernel/kprobes.c
-+++ b/kernel/kprobes.c
-@@ -712,7 +712,7 @@ static void reuse_unused_kprobe(struct kprobe *ap)
- 	op = container_of(ap, struct optimized_kprobe, kp);
- 	if (unlikely(list_empty(&op->list)))
- 		printk(KERN_WARNING "Warning: found a stray unused "
--			"aggrprobe@%p\n", ap->addr);
-+			"aggrprobe@%pS\n", ap->addr);
- 	/* Enable the probe again */
- 	ap->flags &= ~KPROBE_FLAG_DISABLED;
- 	/* Optimize it again (remove from op->list) */
-@@ -985,7 +985,8 @@ static int arm_kprobe_ftrace(struct kprobe *p)
- 	ret = ftrace_set_filter_ip(&kprobe_ftrace_ops,
- 				   (unsigned long)p->addr, 0, 0);
- 	if (ret) {
--		pr_debug("Failed to arm kprobe-ftrace at %p (%d)\n", p->addr, ret);
-+		pr_debug("Failed to arm kprobe-ftrace at %pS (%d)\n",
-+			 p->addr, ret);
- 		return ret;
- 	}
- 
-@@ -1025,7 +1026,8 @@ static int disarm_kprobe_ftrace(struct kprobe *p)
- 
- 	ret = ftrace_set_filter_ip(&kprobe_ftrace_ops,
- 			   (unsigned long)p->addr, 1, 0);
--	WARN(ret < 0, "Failed to disarm kprobe-ftrace at %p (%d)\n", p->addr, ret);
-+	WARN(ret < 0, "Failed to disarm kprobe-ftrace at %pS (%d)\n",
-+	     p->addr, ret);
- 	return ret;
- }
- #else	/* !CONFIG_KPROBES_ON_FTRACE */
-@@ -2169,10 +2171,11 @@ int enable_kprobe(struct kprobe *kp)
- }
- EXPORT_SYMBOL_GPL(enable_kprobe);
- 
-+/* Caller must NOT call this in usual path. This is only for critical case */
- void dump_kprobe(struct kprobe *kp)
- {
--	printk(KERN_WARNING "Dumping kprobe:\n");
--	printk(KERN_WARNING "Name: %s\nAddress: %p\nOffset: %x\n",
-+	pr_err("Dumping kprobe:\n");
-+	pr_err("Name: %s\nAddress: %px\nOffset: %x\n",
- 	       kp->symbol_name, kp->addr, kp->offset);
- }
- NOKPROBE_SYMBOL(dump_kprobe);
-@@ -2196,11 +2199,8 @@ static int __init populate_kprobe_blacklist(unsigned long *start,
- 		entry = arch_deref_entry_point((void *)*iter);
- 
- 		if (!kernel_text_address(entry) ||
--		    !kallsyms_lookup_size_offset(entry, &size, &offset)) {
--			pr_err("Failed to find blacklist at %p\n",
--				(void *)entry);
-+		    !kallsyms_lookup_size_offset(entry, &size, &offset))
- 			continue;
--		}
- 
- 		ent = kmalloc(sizeof(*ent), GFP_KERNEL);
- 		if (!ent)
+I'm not sure "right before BUG()" is legitimate for using %px. Why not
+still use %pS?
+
+-- Steve
