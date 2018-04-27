@@ -1,132 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933099AbeD0XdT (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 19:33:19 -0400
-Received: from www62.your-server.de ([213.133.104.62]:48071 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932444AbeD0XdS (ORCPT
+        id S933103AbeD0XiL (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 19:38:11 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:47378 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932700AbeD0XiJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 19:33:18 -0400
-Subject: Re: [PATCH] bpf: fix misaligned access for BPF_PROG_TYPE_PERF_EVENT
- program type on x86_32 platform
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Wang YanQing <udknight@gmail.com>, ast@kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180426095749.GA29207@udknight>
- <20180427224854.2g7ximim7nwkgdpd@ast-mbp>
-From: Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <c62438dd-2e2e-8c70-aa19-37d5173d76d1@iogearbox.net>
-Date: Sat, 28 Apr 2018 01:33:15 +0200
+        Fri, 27 Apr 2018 19:38:09 -0400
+Subject: Re: PROBLEM: error due to conflicting types during build of
+ kselftests
+To: Jeffrin Thalakkottoor <jeffrin@rajagiritech.edu.in>,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <CAG=yYwnMXFxHxCnYNWCb-HhpAb21kc5_e_6q-N_DRGhMVurPMQ@mail.gmail.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <bd125268-a685-ba6e-efc4-130a0621855f@infradead.org>
+Date: Fri, 27 Apr 2018 16:38:02 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180427224854.2g7ximim7nwkgdpd@ast-mbp>
+In-Reply-To: <CAG=yYwnMXFxHxCnYNWCb-HhpAb21kc5_e_6q-N_DRGhMVurPMQ@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/28/2018 12:48 AM, Alexei Starovoitov wrote:
-> On Thu, Apr 26, 2018 at 05:57:49PM +0800, Wang YanQing wrote:
->> All the testcases for BPF_PROG_TYPE_PERF_EVENT program type in
->> test_verifier(kselftest) report below errors on x86_32:
->> "
->> 172/p unpriv: spill/fill of different pointers ldx FAIL
->> Unexpected error message!
->> 0: (bf) r6 = r10
->> 1: (07) r6 += -8
->> 2: (15) if r1 == 0x0 goto pc+3
->> R1=ctx(id=0,off=0,imm=0) R6=fp-8,call_-1 R10=fp0,call_-1
->> 3: (bf) r2 = r10
->> 4: (07) r2 += -76
->> 5: (7b) *(u64 *)(r6 +0) = r2
->> 6: (55) if r1 != 0x0 goto pc+1
->> R1=ctx(id=0,off=0,imm=0) R2=fp-76,call_-1 R6=fp-8,call_-1 R10=fp0,call_-1 fp-8=fp
->> 7: (7b) *(u64 *)(r6 +0) = r1
->> 8: (79) r1 = *(u64 *)(r6 +0)
->> 9: (79) r1 = *(u64 *)(r1 +68)
->> invalid bpf_context access off=68 size=8
->>
->> 378/p check bpf_perf_event_data->sample_period byte load permitted FAIL
->> Failed to load prog 'Permission denied'!
->> 0: (b7) r0 = 0
->> 1: (71) r0 = *(u8 *)(r1 +68)
->> invalid bpf_context access off=68 size=1
->>
->> 379/p check bpf_perf_event_data->sample_period half load permitted FAIL
->> Failed to load prog 'Permission denied'!
->> 0: (b7) r0 = 0
->> 1: (69) r0 = *(u16 *)(r1 +68)
->> invalid bpf_context access off=68 size=2
->>
->> 380/p check bpf_perf_event_data->sample_period word load permitted FAIL
->> Failed to load prog 'Permission denied'!
->> 0: (b7) r0 = 0
->> 1: (61) r0 = *(u32 *)(r1 +68)
->> invalid bpf_context access off=68 size=4
->>
->> 381/p check bpf_perf_event_data->sample_period dword load permitted FAIL
->> Failed to load prog 'Permission denied'!
->> 0: (b7) r0 = 0
->> 1: (79) r0 = *(u64 *)(r1 +68)
->> invalid bpf_context access off=68 size=8
->> "
->>
->> This patch fix it, the fix isn't only necessary for x86_32, it will fix the
->> same problem for other platforms too, if their size of bpf_user_pt_regs_t
->> can't divide exactly into 8.
->>
->> Signed-off-by: Wang YanQing <udknight@gmail.com>
->> ---
->>  Hi all!
->>  After mainline accept this patch, then we need to submit a sync patch
->>  to update the tools/include/uapi/linux/bpf_perf_event.h.
->>
->>  Thanks.
->>
->>  include/uapi/linux/bpf_perf_event.h | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/include/uapi/linux/bpf_perf_event.h b/include/uapi/linux/bpf_perf_event.h
->> index eb1b9d2..ff4c092 100644
->> --- a/include/uapi/linux/bpf_perf_event.h
->> +++ b/include/uapi/linux/bpf_perf_event.h
->> @@ -12,7 +12,7 @@
->>  
->>  struct bpf_perf_event_data {
->>  	bpf_user_pt_regs_t regs;
->> -	__u64 sample_period;
->> +	__u64 sample_period __attribute__((aligned(8)));
+On 04/20/2018 11:03 AM, Jeffrin Thalakkottoor wrote:
+> hello,
 > 
-> I don't think this necessary.
-> imo it's a bug in pe_prog_is_valid_access
-> that should have allowed 8-byte access to 4-byte aligned sample_period.
-> The access rewritten by pe_prog_convert_ctx_access anyway,
-> no alignment issues as far as I can see.
+> the following is the error found...
+> -----------------------------------------------------------------------------------
+> protection_keys.c:421:5: error: conflicting types for ‘pkey_set’
+>  int pkey_set(int pkey, unsigned long rights, unsigned long flags)
+>      ^~~~~~~~
+> ------------------------------------------------------------------------------------
+> 
+> to reproduce this error...
+> make -C tools/testing/selftests
 
-Right, good point. Wang, could you give the below a test run:
+Hi,
 
-diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-index 56ba0f2..95b9142 100644
---- a/kernel/trace/bpf_trace.c
-+++ b/kernel/trace/bpf_trace.c
-@@ -833,8 +833,14 @@ static bool pe_prog_is_valid_access(int off, int size, enum bpf_access_type type
- 		return false;
- 	if (type != BPF_READ)
- 		return false;
--	if (off % size != 0)
--		return false;
-+	if (off % size != 0) {
-+		if (sizeof(long) != 4)
-+			return false;
-+		if (size != 8)
-+			return false;
-+		if (off % size != 4)
-+			return false;
-+	}
+I can't reproduce this problem.  What is your gcc --version?
 
- 	switch (off) {
- 	case bpf_ctx_range(struct bpf_perf_event_data, sample_period):
+Thanks.
+
+> Details about software:
+> 
+> Linux debian 4.17.0-rc1+ #1 SMP Thu Apr 19 18:59:45 IST 2018 x86_64 GNU/Linux
+> 
+> GNU Make             4.2.1
+> Binutils             2.30
+> Util-linux           2.31.1
+> Mount                2.31.1
+> Linux C Library      2.27
+> Dynamic linker (ldd) 2.27
+> readlink: missing operand
+> Try 'readlink --help' for more information.
+> Procps               3.3.14
+> Kbd                  2.0.4
+> Console-tools        2.0.4
+> Sh-utils             8.28
+> Udev                 238
+> 
+
+
+-- 
+~Randy
