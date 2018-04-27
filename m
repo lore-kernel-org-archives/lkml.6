@@ -1,82 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757979AbeD0SIc (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 14:08:32 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40878 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1757289AbeD0SI3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 14:08:29 -0400
-Message-ID: <1524852507.11756.69.camel@redhat.com>
-Subject: Re: [PATCH] IB/ipoib: fix ipoib_start_xmit()'s return type
-From: Doug Ledford <dledford@redhat.com>
-To: Leon Romanovsky <leon@kernel.org>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Jason Gunthorpe <jgg@ziepe.ca>,
-        Alex Vesker <valex@mellanox.com>, Yuval Shaia <yuval.shaia@oracle.com>,
-        Erez Shitrit <erezsh@mellanox.com>,
-        Dasaratharaman Chandramouli
-        <dasaratharaman.chandramouli@intel.com>,
-        Feras Daoud <ferasda@mellanox.com>, linux-rdma@vger.kernel.org
-Date: Fri, 27 Apr 2018 14:08:27 -0400
-In-Reply-To: <20180425153532.GM24820@mtr-leonro.local>
-References: <20180424131549.2859-1-luc.vanoostenryck@gmail.com>
-         <20180425153532.GM24820@mtr-leonro.local>
-Organization: Red Hat, Inc.
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-bG1LVjLBjd3Y/MM/shNy"
-Mime-Version: 1.0
+        id S1757793AbeD0SJ7 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 14:09:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60830 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751753AbeD0SJ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 14:09:58 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0E1321892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Date: Fri, 27 Apr 2018 13:09:56 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Alex Williamson <alex.williamson@redhat.com>
+Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: Add Intel 7th & 8th Gen mobile to ACS quirks
+Message-ID: <20180427180956.GD8199@bhelgaas-glaptop.roam.corp.google.com>
+References: <152468799766.12449.11245066753252100117.stgit@w520.home>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <152468799766.12449.11245066753252100117.stgit@w520.home>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Apr 25, 2018 at 02:27:37PM -0600, Alex Williamson wrote:
+> The specification update indicates these have the same errate for
+> implementing non-standard ACS capabilities.
+> 
+> Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
 
---=-bG1LVjLBjd3Y/MM/shNy
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Applied to pci/virtualization for v4.18, thanks!
 
-On Wed, 2018-04-25 at 18:35 +0300, Leon Romanovsky wrote:
-> On Tue, Apr 24, 2018 at 03:15:47PM +0200, Luc Van Oostenryck wrote:
-> > The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
-> > which is a typedef for an enum type, but the implementation in this
-> > driver returns an 'int'.
-> >=20
-> > Fix this by returning 'netdev_tx_t' in this driver too.
-> >=20
-> > Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-> > ---
-> >  drivers/infiniband/ulp/ipoib/ipoib_main.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >=20
->=20
-> Thanks,
-> Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+I'm guessing a stable tag would make sense here?
 
-Thanks, applied to for-rc.
-
---=20
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
---=-bG1LVjLBjd3Y/MM/shNy
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAlrjZxsACgkQuCajMw5X
-L90tww//S79P5V5HEX7illwIe/FJMZzD9ZFWWkm57b+59kkowgeGiVdbPcHXqvvA
-Z/998m8pLZJdg+emudTYKcL9RY9PzNnrnjTV5rzfvngqGLkevdAVcAwQI4YfbHHI
-Q4+nWz9SuuVbxRGUzHcWtwY0dcPfmzoyy24YjJyLJnPHceqbsBMYQUEG0zw34GOB
-rwNNjTffQm1m+/ju8R+72j06w8bB7RhalVdYIs3Wy7ooPAa9DGhHXIhgtuJzjH7r
-VhkEj4sSeH6rCl7SnSnRba/UTPSNCavoW8WL7CcRNHgXoD1LflWNRT3AGyeFo2w5
-aT2gOlJEgQ/UJusQTGN+fefiMGMRhAPZaDNPHWvWCTWqjQUK3Obso/bAF80IKA4P
-PIWkTUHmbNY+spQQNzTSFryqXA3MDmQMa9KH7Zjlp+MqL7VM0B0zz8Pe73ZqjC4i
-KW0KmHiUHpnVPB6nwdz5wFE3ar1e8qyN+mr6TFl1j3x6ZfzWXDwe8B6XhLQCOJxE
-GnvGeoobZkt1rQ1culFY8+ROsqGOKvHBai3CDQ+9pMklIsTsz7zDM/gbhpi5/9fG
-jbOJzK76D/XJkwvfcRI3n1eQh2XgXFmySod5r/lGJPhyo8iCOXnl1p0gEtlP36xV
-dGaoEesniOCYmIZB6gjI6sJxpQJCgdGLYHZPvJ9pvi3477ZdT84=
-=rtig
------END PGP SIGNATURE-----
-
---=-bG1LVjLBjd3Y/MM/shNy--
+> ---
+>  drivers/pci/quirks.c |   14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+> 
+> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+> index 2990ad1e7c99..6d0dee40dbe5 100644
+> --- a/drivers/pci/quirks.c
+> +++ b/drivers/pci/quirks.c
+> @@ -4230,11 +4230,24 @@ static int pci_quirk_qcom_rp_acs(struct pci_dev *dev, u16 acs_flags)
+>   * 0xa290-0xa29f PCI Express Root port #{0-16}
+>   * 0xa2e7-0xa2ee PCI Express Root port #{17-24}
+>   *
+> + * Mobile chipsets are also affected, 7th & 8th Generation
+> + * Specification update confirms ACS errata 22, status no fix: (7th Generation
+> + * Intel Processor Family I/O for U/Y Platforms and 8th Generation Intel
+> + * Processor Family I/O for U Quad Core Platforms Specification Update,
+> + * August 2017, Revision 002, Document#: 334660-002)[6]
+> + * Device IDs from I/O datasheet: (7th Generation Intel Processor Family I/O
+> + * for U/Y Platforms and 8th Generation Intel ® Processor Family I/O for U
+> + * Quad Core Platforms, Vol 1 of 2, August 2017, Document#: 334658-003)[7]
+> + *
+> + * 0x9d10-0x9d1b PCI Express Root port #{1-12}
+> + *
+>   * [1] http://www.intel.com/content/www/us/en/chipsets/100-series-chipset-datasheet-vol-2.html
+>   * [2] http://www.intel.com/content/www/us/en/chipsets/100-series-chipset-datasheet-vol-1.html
+>   * [3] http://www.intel.com/content/www/us/en/chipsets/100-series-chipset-spec-update.html
+>   * [4] http://www.intel.com/content/www/us/en/chipsets/200-series-chipset-pch-spec-update.html
+>   * [5] http://www.intel.com/content/www/us/en/chipsets/200-series-chipset-pch-datasheet-vol-1.html
+> + * [6] https://www.intel.com/content/www/us/en/processors/core/7th-gen-core-family-mobile-u-y-processor-lines-i-o-spec-update.html
+> + * [7] https://www.intel.com/content/www/us/en/processors/core/7th-gen-core-family-mobile-u-y-processor-lines-i-o-datasheet-vol-1.html
+>   */
+>  static bool pci_quirk_intel_spt_pch_acs_match(struct pci_dev *dev)
+>  {
+> @@ -4244,6 +4257,7 @@ static bool pci_quirk_intel_spt_pch_acs_match(struct pci_dev *dev)
+>  	switch (dev->device) {
+>  	case 0xa110 ... 0xa11f: case 0xa167 ... 0xa16a: /* Sunrise Point */
+>  	case 0xa290 ... 0xa29f: case 0xa2e7 ... 0xa2ee: /* Union Point */
+> +	case 0x9d10 ... 0x9d1b: /* 7th & 8th Gen Mobile */
+>  		return true;
+>  	}
+>  
+> 
