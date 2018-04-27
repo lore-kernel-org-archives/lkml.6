@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753079AbeD0MJ1 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 08:09:27 -0400
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:49426 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757820AbeD0MJX (ORCPT
+        id S1758056AbeD0MJd (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 08:09:33 -0400
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:47282 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752808AbeD0MJ3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 08:09:23 -0400
+        Fri, 27 Apr 2018 08:09:29 -0400
 From: Kishon Vijay Abraham I <kishon@ti.com>
 To: Tony Lindgren <tony@atomide.com>
 CC: Jonathan Corbet <corbet@lwn.net>,
@@ -15,9 +15,9 @@ CC: Jonathan Corbet <corbet@lwn.net>,
         <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
         <kishon@ti.com>
-Subject: [PATCH v4 01/14] ARM: dts: dra72-evm-common: Remove mmc specific pinmux
-Date: Fri, 27 Apr 2018 17:38:52 +0530
-Message-ID: <20180427120905.3665-2-kishon@ti.com>
+Subject: [PATCH v4 02/14] ARM: dts: dra71-evm: Add "vqmmc-supply" property for mmc2
+Date: Fri, 27 Apr 2018 17:38:53 +0530
+Message-ID: <20180427120905.3665-3-kishon@ti.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427120905.3665-1-kishon@ti.com>
 References: <20180427120905.3665-1-kishon@ti.com>
@@ -28,51 +28,25 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-mmc specific pinmux is selected from dra72x-mmc-iodelay.dtsi, so remove
-it from dra72-evm-common.dtsi.
+Add "vqmmc-supply" property for mmc2 to indicate the supply connected
+to the IO lines.
 
 Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 ---
- arch/arm/boot/dts/dra72-evm-common.dtsi | 27 -------------------------
- 1 file changed, 27 deletions(-)
+ arch/arm/boot/dts/dra71-evm.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/dra72-evm-common.dtsi b/arch/arm/boot/dts/dra72-evm-common.dtsi
-index e85f560a2f78..8e3b185d864b 100644
---- a/arch/arm/boot/dts/dra72-evm-common.dtsi
-+++ b/arch/arm/boot/dts/dra72-evm-common.dtsi
-@@ -174,33 +174,6 @@
+diff --git a/arch/arm/boot/dts/dra71-evm.dts b/arch/arm/boot/dts/dra71-evm.dts
+index ebc4bbae981e..64c57d87ca2f 100644
+--- a/arch/arm/boot/dts/dra71-evm.dts
++++ b/arch/arm/boot/dts/dra71-evm.dts
+@@ -204,6 +204,7 @@
+ 	pinctrl-2 = <&mmc2_pins_ddr_rev20 &mmc2_iodelay_ddr_conf>;
+ 	pinctrl-3 = <&mmc2_pins_hs200 &mmc2_iodelay_hs200_rev20_conf>;
+ 	vmmc-supply = <&evm_1v8_sw>;
++	vqmmc-supply = <&evm_1v8_sw>;
  };
  
- &dra7_pmx_core {
--	mmc1_pins_default: mmc1_pins_default {
--		pinctrl-single,pins = <
--			DRA7XX_CORE_IOPAD(0x376c, PIN_INPUT | MUX_MODE14)	/* mmc1sdcd.gpio219 */
--			DRA7XX_CORE_IOPAD(0x3754, PIN_INPUT_PULLUP | MUX_MODE0) /* mmc1_clk.clk */
--			DRA7XX_CORE_IOPAD(0x3758, PIN_INPUT_PULLUP | MUX_MODE0) /* mmc1_cmd.cmd */
--			DRA7XX_CORE_IOPAD(0x375c, PIN_INPUT_PULLUP | MUX_MODE0) /* mmc1_dat0.dat0 */
--			DRA7XX_CORE_IOPAD(0x3760, PIN_INPUT_PULLUP | MUX_MODE0) /* mmc1_dat1.dat1 */
--			DRA7XX_CORE_IOPAD(0x3764, PIN_INPUT_PULLUP | MUX_MODE0) /* mmc1_dat2.dat2 */
--			DRA7XX_CORE_IOPAD(0x3768, PIN_INPUT_PULLUP | MUX_MODE0) /* mmc1_dat3.dat3 */
--		>;
--	};
--
--	mmc2_pins_default: mmc2_pins_default {
--		pinctrl-single,pins = <
--			DRA7XX_CORE_IOPAD(0x349c, PIN_INPUT_PULLUP | MUX_MODE1) /* gpmc_a23.mmc2_clk */
--			DRA7XX_CORE_IOPAD(0x34b0, PIN_INPUT_PULLUP | MUX_MODE1) /* gpmc_cs1.mmc2_cmd */
--			DRA7XX_CORE_IOPAD(0x34a0, PIN_INPUT_PULLUP | MUX_MODE1) /* gpmc_a24.mmc2_dat0 */
--			DRA7XX_CORE_IOPAD(0x34a4, PIN_INPUT_PULLUP | MUX_MODE1) /* gpmc_a25.mmc2_dat1 */
--			DRA7XX_CORE_IOPAD(0x34a8, PIN_INPUT_PULLUP | MUX_MODE1) /* gpmc_a26.mmc2_dat2 */
--			DRA7XX_CORE_IOPAD(0x34ac, PIN_INPUT_PULLUP | MUX_MODE1) /* gpmc_a27.mmc2_dat3 */
--			DRA7XX_CORE_IOPAD(0x348c, PIN_INPUT_PULLUP | MUX_MODE1) /* gpmc_a19.mmc2_dat4 */
--			DRA7XX_CORE_IOPAD(0x3490, PIN_INPUT_PULLUP | MUX_MODE1) /* gpmc_a20.mmc2_dat5 */
--			DRA7XX_CORE_IOPAD(0x3494, PIN_INPUT_PULLUP | MUX_MODE1) /* gpmc_a21.mmc2_dat6 */
--			DRA7XX_CORE_IOPAD(0x3498, PIN_INPUT_PULLUP | MUX_MODE1) /* gpmc_a22.mmc2_dat7 */
--		>;
--	};
--
- 	dcan1_pins_default: dcan1_pins_default {
- 		pinctrl-single,pins = <
- 			DRA7XX_CORE_IOPAD(0x37d0, PIN_OUTPUT_PULLUP | MUX_MODE0) /* dcan1_tx */
+ &mac {
 -- 
 2.17.0
