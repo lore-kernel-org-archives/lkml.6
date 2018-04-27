@@ -1,84 +1,193 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757509AbeD0LcE (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 07:32:04 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:54950 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750863AbeD0LcD (ORCPT
+        id S1757428AbeD0LfF (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 07:35:05 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:37576 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751348AbeD0LfE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 07:32:03 -0400
-X-Google-Smtp-Source: AB8JxZpB0+6Pq75vz7kM/H935azIjXNKJiEfhqgGWUKPeUNGW/kIxrTw9mnibzZK71+MEHNtPCq8Hg==
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, Mark Greer <mgreer@baylibre.com>
-Subject: [PATCH] ASoC: dai playback and capture active  may be greater than 1
-Date: Fri, 27 Apr 2018 13:31:51 +0200
-Message-Id: <20180427113151.19299-1-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.14.3
+        Fri, 27 Apr 2018 07:35:04 -0400
+Date: Fri, 27 Apr 2018 04:34:26 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Souptick Joarder <jrdr.linux@gmail.com>
+Cc: Ross Zwisler <ross.zwisler@linux.intel.com>, Jan Kara <jack@suse.cz>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Michal Hocko <mhocko@suse.com>, kirill.shutemov@linux.intel.com,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6] fs: dax: Adding new return type vm_fault_t
+Message-ID: <20180427113426.GA8161@bombadil.infradead.org>
+References: <20180424164751.GA18923@jordon-HP-15-Notebook-PC>
+ <20180426195831.GA27127@linux.intel.com>
+ <CAFqt6zZti0oY7C-pU0LhsHtctqeWBkikH6Pb0wfBZSigHNMUwA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFqt6zZti0oY7C-pU0LhsHtctqeWBkikH6Pb0wfBZSigHNMUwA@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-At the moment playback_active and capture_active are using only 1 bit so
-the maximum active count is 1.
+On Fri, Apr 27, 2018 at 10:54:53AM +0530, Souptick Joarder wrote:
+> > I noticed that we have the following status translation now in 4 places in 2
+> > files:
+> >
+> >         if (err == -ENOMEM)
+> >                 return VM_FAULT_OOM;
+> >         if (err < 0 && err != -EBUSY)
+> >                 return VM_FAULT_SIGBUS;
+> >         return VM_FAULT_NOPAGE;
+> >
+> >
+> > This happens in vmf_insert_mixed_mkwrite(), vmf_insert_page(),
+> > vmf_insert_mixed() and vmf_insert_pfn().
+> >
+> > I think it'd be a good idea to consolidate this translation into an inline
+> > helper, in the spirit of dax_fault_return().  This will ensure that if/when we
+> > start changing this status translation, we won't accidentally miss some of the
+> > places which would make them get out of sync.  No need to fold this into this
+> > patch - it should be a separate change.
+> 
+> Sure, I will send this as a separate patch.
 
-However, snd_soc_runtime_activate() may be called several time on the
-same dai. This happens when a dai is part of several dai_links. It is
-often the case for "snd-soc-dummy-dai".
+No, this will entirely go away when vm_insert_foo() is removed.  Here's what
+it'll look like instead:
 
-This is a problem if snd_soc_runtime_activate() is called an even number
-of times on a dai. In this case the active count overflow back to 0. As
-consequence, ASoC functions, such as soc_dpcm_runtime_update(), won't run
-correctly.
-
-Storing these usage counts on plain 'unsigned int' solves the problem.
-
-Fixes: f0fba2ad1b6b ("ASoC: multi-component - ASoC Multi-Component Support")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
-
-Hi,
-
-I found this problem while working on ASoC support for a new platform.
-During a playback, using DPCM, if I changed the backend dai, nothing
-happened, old backend path is not pruned, new backend path is not added.
-
-Here is how it goes:
-1 FE and 2 BE, all 3 using snd-soc-dummy-dai for the codec_dai (ATM).
-
-On playback start:
- - BE #1 activates and increments snd-soc-dummy-dai's playback_active
- - FE activates and increments snd-soc-dummy-dai's playback_active
-
-The playback works but snd-soc-dummy-dai's playback_active value is now 0.
-
-Through a mux kcontrol, change BE client of FE, from BE #1 to BE #2.
- -> trigger soc_dpcm_runtime_update().
-    -> checks fe's codec_dai playback_active which is zero so playback
-    path processing is skipped, keeping the old invalid path.
-
- * No change since initial RFC [0], just droppped the RFC prefix.
-
-[0]: https://lkml.kernel.org/r/20180419140612.11049-1-jbrunet@baylibre.com
-
- include/sound/soc-dai.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/include/sound/soc-dai.h b/include/sound/soc-dai.h
-index 8ad11669e4d8..35ebb0be5114 100644
---- a/include/sound/soc-dai.h
-+++ b/include/sound/soc-dai.h
-@@ -294,8 +294,8 @@ struct snd_soc_dai {
- 	struct snd_soc_dai_driver *driver;
+@@ -1703,23 +1703,23 @@ pte_t *__get_locked_pte(struct mm_struct *mm, unsigned long addr,
+  * old drivers should use this, and they needed to mark their
+  * pages reserved for the old functions anyway.
+  */
+-static int insert_page(struct vm_area_struct *vma, unsigned long addr,
++static vm_fault_t insert_page(struct vm_area_struct *vma, unsigned long addr,
+                        struct page *page, pgprot_t prot)
+ {
+        struct mm_struct *mm = vma->vm_mm;
+-       int retval;
++       vm_fault_t ret;
+        pte_t *pte;
+        spinlock_t *ptl;
  
- 	/* DAI runtime info */
--	unsigned int capture_active:1;		/* stream is in use */
--	unsigned int playback_active:1;		/* stream is in use */
-+	unsigned int capture_active;		/* stream usage count */
-+	unsigned int playback_active;		/* stream usage count */
- 	unsigned int probed:1;
+-       retval = -EINVAL;
++       ret = VM_FAULT_SIGBUS;
+        if (PageAnon(page))
+                goto out;
+-       retval = -ENOMEM;
++       ret = VM_FAULT_OOM;
+        flush_dcache_page(page);
+        pte = get_locked_pte(mm, addr, &ptl);
+        if (!pte)
+                goto out;
+-       retval = -EBUSY;
++       ret = 0;
+        if (!pte_none(*pte))
+                goto out_unlock;
  
- 	unsigned int active;
--- 
-2.14.3
+@@ -1729,17 +1729,14 @@ static int insert_page(struct vm_area_struct *vma, unsigned long addr,
+        page_add_file_rmap(page, false);
+        set_pte_at(mm, addr, pte, mk_pte(page, prot));
+ 
+-       retval = 0;
+-       pte_unmap_unlock(pte, ptl);
+-       return retval;
+ out_unlock:
+        pte_unmap_unlock(pte, ptl);
+ out:
+-       return retval;
++       return ret;
+ }
+ 
+ /**
+- * vm_insert_page - insert single page into user vma
++ * vmf_insert_page - insert single page into user vma
+  * @vma: user vma to map to
+  * @addr: target user address of this page
+  * @page: source kernel page
+@@ -1765,13 +1762,13 @@ static int insert_page(struct vm_area_struct *vma, unsigned long addr,
+  * Caller must set VM_MIXEDMAP on vma if it wants to call this
+  * function from other places, for example from page-fault handler.
+  */
+-int vm_insert_page(struct vm_area_struct *vma, unsigned long addr,
++vm_fault_t vmf_insert_page(struct vm_area_struct *vma, unsigned long addr,
+                        struct page *page)
+ {
+        if (addr < vma->vm_start || addr >= vma->vm_end)
+-               return -EFAULT;
++               return VM_FAULT_SIGBUS;
+        if (!page_count(page))
+-               return -EINVAL;
++               return VM_FAULT_SIGBUS;
+        if (!(vma->vm_flags & VM_MIXEDMAP)) {
+                BUG_ON(down_read_trylock(&vma->vm_mm->mmap_sem));
+                BUG_ON(vma->vm_flags & VM_PFNMAP);
+@@ -1779,21 +1776,21 @@ int vm_insert_page(struct vm_area_struct *vma, unsigned long addr,
+        }
+        return insert_page(vma, addr, page, vma->vm_page_prot);
+ }
+-EXPORT_SYMBOL(vm_insert_page);
++EXPORT_SYMBOL(vmf_insert_page);
+ 
+-static int insert_pfn(struct vm_area_struct *vma, unsigned long addr,
++static vm_fault_t insert_pfn(struct vm_area_struct *vma, unsigned long addr,
+                        pfn_t pfn, pgprot_t prot, bool mkwrite)
+ {
+        struct mm_struct *mm = vma->vm_mm;
+-       int retval;
++       vm_fault_t ret;
+        pte_t *pte, entry;
+        spinlock_t *ptl;
+ 
+-       retval = -ENOMEM;
++       ret = VM_FAULT_OOM;
+        pte = get_locked_pte(mm, addr, &ptl);
+        if (!pte)
+                goto out;
+-       retval = -EBUSY;
++       ret = VM_FAULT_SIGBUS;
+        if (!pte_none(*pte)) {
+                if (mkwrite) {
+                        /*
+@@ -1826,20 +1823,20 @@ static int insert_pfn(struct vm_area_struct *vma, unsigned long addr,
+        set_pte_at(mm, addr, pte, entry);
+        update_mmu_cache(vma, addr, pte); /* XXX: why not for insert_page? */
+ 
+-       retval = 0;
++       ret = 0;
+ out_unlock:
+        pte_unmap_unlock(pte, ptl);
+ out:
+-       return retval;
++       return ret;
+ }
+ 
+ /**
+- * vm_insert_pfn - insert single pfn into user vma
++ * vmf_insert_pfn - insert single pfn into user vma
+  * @vma: user vma to map to
+  * @addr: target user address of this page
+  * @pfn: source kernel pfn
+  *
+- * Similar to vm_insert_page, this allows drivers to insert individual pages
++ * Similar to vmf_insert_page(), this allows drivers to insert individual pages
+  * they've allocated into a user vma. Same comments apply.
+  *
+  * This function should only be called from a vm_ops->fault handler, and
+@@ -1850,21 +1847,21 @@ static int insert_pfn(struct vm_area_struct *vma, unsigned long addr,
+  * As this is called only for pages that do not currently exist, we
+  * do not need to flush old virtual caches or the TLB.
+  */
+-int vm_insert_pfn(struct vm_area_struct *vma, unsigned long addr,
++vm_fault_t vmf_insert_pfn(struct vm_area_struct *vma, unsigned long addr,
+                        unsigned long pfn)
+ {
+-       return vm_insert_pfn_prot(vma, addr, pfn, vma->vm_page_prot);
++       return vmf_insert_pfn_prot(vma, addr, pfn, vma->vm_page_prot);
+ }
+-EXPORT_SYMBOL(vm_insert_pfn);
++EXPORT_SYMBOL(vmf_insert_pfn);
+
+... etc ...
+
+But first, we have to finish removing all the calls to vm_insert_foo().
