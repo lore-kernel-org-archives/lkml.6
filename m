@@ -1,17 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932405AbeD0IuG (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 04:50:06 -0400
+        id S932423AbeD0IuV (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 04:50:21 -0400
 Received: from elasmtp-dupuy.atl.sa.earthlink.net ([209.86.89.62]:44810 "EHLO
         elasmtp-dupuy.atl.sa.earthlink.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932366AbeD0IuD (ORCPT
+        by vger.kernel.org with ESMTP id S932373AbeD0IuE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 04:50:03 -0400
+        Fri, 27 Apr 2018 04:50:04 -0400
 Subject: Re: moving affs + RDB partition support to staging?
-To: Finn Thain <fthain@telegraphics.com.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Martin Steigerwald <martin@lichtvoll.de>,
-        Matthew Wilcox <willy@infradead.org>, David Sterba <dsterba@suse.cz>,
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Martin Steigerwald <martin@lichtvoll.de>
+Cc: Matthew Wilcox <willy@infradead.org>, David Sterba <dsterba@suse.cz>,
         Linux FS Devel <linux-fsdevel@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Jens Axboe <axboe@kernel.dk>, linux-m68k <linux-m68k@vger.kernel.org>
@@ -19,82 +18,275 @@ References: <20180425154602.GA8546@bombadil.infradead.org>
  <20180425203029.GQ21272@twin.jikos.cz>
  <20180426025717.GA32430@bombadil.infradead.org> <1613268.lKBQxPXt8J@merkaba>
  <CAMuHMdXt11A-3wZ2uhxF9WE-3+=VV-AbQhpXrkxnV_nwa+E4tA@mail.gmail.com>
- <alpine.LNX.2.21.1804270939470.8@nippy.intranet>
 From: jdow <jdow@earthlink.net>
-Message-ID: <0d06450e-b589-a794-9f5f-ee1c511e668c@earthlink.net>
-Date: Thu, 26 Apr 2018 18:43:45 -0700
+Message-ID: <7a997bb7-7f1c-e8b4-667c-3993f1d82e7c@earthlink.net>
+Date: Thu, 26 Apr 2018 18:26:19 -0700
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <alpine.LNX.2.21.1804270939470.8@nippy.intranet>
+In-Reply-To: <CAMuHMdXt11A-3wZ2uhxF9WE-3+=VV-AbQhpXrkxnV_nwa+E4tA@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ELNK-Trace: bb89ecdb26a8f9f24d2b10475b57112003f01058fceb61e7e311c192ab679a963f4ab28b94bf857b350badd9bab72f9c350badd9bab72f9c350badd9bab72f9c
+Content-Transfer-Encoding: 8bit
+X-ELNK-Trace: bb89ecdb26a8f9f24d2b10475b57112003f01058fceb61e7bdae78e1c524a4f807d479b8a0dee81b350badd9bab72f9c350badd9bab72f9c350badd9bab72f9c
 X-Originating-IP: 68.183.100.23
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20180426 16:56, Finn Thain wrote:
-> On Thu, 26 Apr 2018, Geert Uytterhoeven wrote:
+OK guys, I am working from th ememory of a 74 year old with a severe head cold. 
+The filesystems were always limited to 2 TB since the seek command was signed 32 
+bit integer number of BYTEs. So block size has nothing to do with this 2TB 
+issue. That's something else in the descriptions.
+
+The RDBs grew a block size and sector size concept in describing partitions. One 
+had to be a power of two multiple of the other, as I recall. The relationship 
+worked two ways. If you had a Fujitsu Magneto Optical drive with 2k physical 
+sectors you could still allocate space in virtual sectors, block sizes, of 512 
+bytes. Or you could use much larger blocks than sector size to cut down on the 
+unallocated blocks list. Of course, all OSs do that these days. With a single 
+unsigned 16 bit integer your address space would fill up a 32 GB with 512 byte 
+blocks. We could see this would blow out so we decribed block size and disk size 
+in blocks with 32 bit integers giving 4 TB of 1 BYTE blocks. Supposing the file 
+sizes stored are such as to support an 8k block size that means describing a 
+very large disk should be very easy, even if block size was a 16 bit unsigned 
+integer.
+
+To carry this forward more accurately I'll have to dig up some old archival data 
+and see what it actually says. This isn't going to happen when I sit here 
+sniffling. Maybe in a few days I can dredge up the actual numbers. I seem to 
+remember at the time that without a 64 bit OS the disk addressing limit was 2 
+TB, since seeks were signed integers. The disk descriptions could be 
+considerably larger.
+
+And before I forget there are two features of the RDBs that I heartily recommend 
+never implementing on Linux. They were good ideas at the time; but, times 
+changed. The RDBs are capable of storing a filesystem driver and some drive init 
+code for the plugin disk driver card. That is giving malware authors entirely 
+goo easy a shot at owning a machine. Martin S., I would strongly suggest that 
+going forward those two capabilities be removed from the RDB readers in AmigaOS 
+as well as Linux OS.
+
+I also note that at one time the RDB parsing facility in Linux benefitted from 
+my hands on the code and handled the block size/sector size issues very nicely. 
+I had an 18 GB disk I wanted to be able to read on Linux. I seem to remember 
+somebody at one time had a "this doesn't make any real world sense" event and 
+had to be reminded that the real world was wider than he envisioned. I don't 
+know what has happened since then.
+
+{^_^}   Joanne Dow
+
+On 20180426 04:08, Geert Uytterhoeven wrote:
+> Hi Martin,
 > 
+> CC jdow
+> 
+> On Thu, Apr 26, 2018 at 12:28 PM, Martin Steigerwald
+> <martin@lichtvoll.de> wrote:
+>> You probably put your stick into a cave with ancient sleeping dragons :)
 >>
->> While non-native Linux filesystem support (e.g. affs/isofs/...) could be
->> handled by FUSE
+>> Added in linux-m68k mailing list, as they likely have an opinion on how
+>> to treat affs + RDB partition support. Also added in Jens Axboe about
+>> patching that RDB support broken with 2 TB or larger harddisks issue
+>> which had been in Linux kernel for 6 years while a patch exists that to
+>> my testing back then solves the issue.
 > 
-> Moving to FUSE is a great divide-and-conquer strategy for those who just
-> want the code to die and don't care about any of the data in that format.
+> While non-native Linux filesystem support (e.g. affs/isofs/...) could be
+> handled by FUSE, moving RDB partition support to staging is not an option,
+> as it is the only partitioning scheme that Amigas can boot from.
 > 
-> If there is a maintainence burden that can be shared then it should be
-> shared -- until it can be established that there is no data of value in
-> that format.
+> If there are bugs in the RDB parser that people run into, they should
+> be fixed.
+> If there are limitations in the RDB format on large disks, that's still not
+> a reason to move it to staging (hi msdos partitioning!).
 > 
->> moving RDB partition support to staging is not an option, as it is the
->> only partitioning scheme that Amigas can boot from.
+>> Matthew Wilcox - 26.04.18, 04:57:
+>>> On Wed, Apr 25, 2018 at 10:30:29PM +0200, David Sterba wrote:
+>>>> I had similar toughts some time ago while browsing the fs/
+>>>> directory.
+>>>> Access to the filesystem images can be reimplemented in FUSE, but
+>>>> other than that, I don't think the in-kernel code would be missed.
+>>>>
+>>>> It's hard to know how many users are there. I was curious eg. about
+>>>> bfs, befs, coda or feevxfs, looked at the last commits and searched
+>>>> around web if there are any mentions or user community. But as long
+>>>> as there's somebody listed in MAINTAINERS, the above are not
+>>>> candidates for moving to staging or deletion.
+>>>
+>>> Yeah, it's pretty sad how few commits some of these filesystems have
+>>> had in recent years.  One can argue that they're stable and don't need
+>>> to be fixed because they aren't broken, but I find it hard to believe
+>>> that any of them were better-implemented than ext2 which still sees
+>>> regular bugfixes.
 >>
-> 
-> Whether or not the original hardware is in use is mostly irrelevant.
-> 
-> As long as the old format is accessible using current hardware, the data
-> in that format remains accessible (to archivists, to curators, to your
-> decendents, etc).
-> 
->> If there are bugs in the RDB parser that people run into, they should be
->> fixed. If there are limitations in the RDB format on large disks, that's
->> still not a reason to move it to staging (hi msdos partitioning!).
+>> Regarding affs there is a severe issue which is not in affs itself but
+>> in the handling of Rigid Disk Block (RDB) partitions, the Amiga
+>> partitioning standard, which is far more advanced than MBR: It overruns
+>> for 2 TB or larger drives and then wraps over to the beginning of the
+>> drive – I bet you can imagine what happens if you write to an area
+>> larger than 2 TB. I learned this with an external 2TB RDB partitioned
+>> harddisk back then, which I used for Sam440ep (a kind of successor for
+>> old, classic Amiga hardware) backup + some Linux related stuff in
+>> another partition.
 >>
-
-This intrepid cyberunit is inclined to suggest that understanding the RDBs can 
-go a long way towards defining if there is a bug somewhere and whether it is in 
-the RDB description or its misuse.
-
-There are some things RDBs can do that REALLY REALLY don't make sense until you 
-run across the situation which called for it creation. There are two variables 
-that suggest some blocks at the beginning and the end, respectively, of a 
-partition are not accessible by the OS. I have used these facilities to 
-"interleave" partitions and RDBs. I have built a disk which reserved about 128 
-512 byte blocks for RDBs plus filesystem code (which probably should be 
-abandoned) which embedded the RDBs describing the partition within the 
-partition. Then I reserved space at the end of the partition and embedded a 
-second partition in that space. As absurd as it sounds this had at one time a 
-decent use case. Disk space was an expensive premium in those days so wasting 
-space to get nice integer numbers in the disk description, which was phony for a 
-hard disk in any case, we allowed any numbers and if that went past the end of 
-the disk we reserved the necessary space so that it would never be used. The 
-space at the beginning of a partition was needed in any case because a one block 
-partition signature needed space at the start of the partition. It held the 
-filesystem's signature, OFS, AFS, SFS, etc.
-
-There is also a good reason for allowing the anchor for the RDBs to start in any 
-of the first 16 blocks with a recommendation not to use block 0 as other FSs 
-used that. And we wanted to accommodate at least two different partition 
-description technologies to work on the disk. My code always placed the RDBs at 
-block 3.
-
-I hope passing along some of this history will mitigate some fo the feelings 
-that RDBs are inherently flawed or full of bugs or whatnot. (Full pf security 
-holes is another story. DriveInit code and filesystem code have worried me from 
-day one.)
-
-{^_^}   Joanne
+>> Joanne Dow, a developer who developed hdwrench.library which HDToolBox
+>> uses for partitioning in AmigaOS 3.5/3.9, provided a patch back then,
+>> but never officially put it officially through upstreaming as I offered
+>> to make a good description and upstream it through Jens Axboe.
+>>
+>> I may take this as a reason to… actually follow through this time,
+>> hopefully remembering all the details in order to provide a meaningful
+>> patch description – but I think mostly I can do just careful copy and
+>> paste. Even tough I believe Joanne Dow´s fix only fixed my bug report
+>> 43511, but not 43511 which is more about a safeguarding issue in case of
+>> future overflows, I still think it would be good to go in in case affs +
+>> RDB stays in their current places.
+>>
+>> However, in case you move affs to staging, I may be less motivated to do
+>> so, but then I suggest you also move RDB partitioning support to
+>> staging, cause this is the one that is known to be dangerously badly for
+>> 2 TB or larger disks. And yeah, I admit I did not follow through with
+>> having that patch upstreamed. Probably I did not want to be responsible
+>> in case my description would not have been absolutely accurate or the
+>> patch breaks something else. I do not have that 2 TB drive anymore and
+>> don´t feel like setting one up in a suitable way in order to go about
+>> this patch, but my testing back then was quite elaborate and I still
+>> feel pretty confident about it.
+>>
+>> I totally get your motivation, but I would find it somewhat sad to see
+>> the filesystems you mentioned go into staging. However, as I just shown
+>> clearly, for the user it may be better, cause there may be unfixed
+>> dangerous bugs. FUSE might be an interesting approach, but I bet it will
+>> not solve the maintenance issue. If there is no one maintaining it in
+>> the kernel, I think its unlikely to find someone adapting it to be a
+>> FUSE filesystem and maintaining it. And then I am not aware of FUSE
+>> based partitioning support. (And I think think ideally we´d had a
+>> microkernel and run all filesystems in userspace processes with a
+>> defined set of privileges, but that is simply not Linux as it is.)
+>>
+>> Partitions: Amiga RDB partition on 2 TB disk way too big, while OK in
+>> AmigaOS 4.1
+>> https://lkml.org/lkml/2012/6/17/6
+>>
+>> Bug 43521 - Amiga RDB partitions: truncates miscalculated partition size
+>> instead of refusing to use it
+>> https://bugzilla.kernel.org/show_bug.cgi?id=43521
+>>
+>> Bug 43511 - Partitions: Amiga RDB partition on 2 TB disk way too big,
+>> while OK in AmigaOS 4.1
+>> https://bugzilla.kernel.org/show_bug.cgi?id=43511
+>>
+>> I forward the relevant mail of Joanne, in
+>>
+>> https://bugzilla.kernel.org/show_bug.cgi?id=43511#c7
+>>
+>> I even have the patch in diff format. And I just checked, the issue is
+>> still unpatched as of 4.16.3.
+>>
+>> ----------  Weitergeleitete Nachricht  ----------
+>>
+>> Betreff: Re: Partitions: Amiga RDB partition on 2 TB disk way too big,
+>> while OK in AmigaOS 4.1
+>> Datum: Montag, 18. Juni 2012, 03:28:48 CEST
+>> Von: jdow <jdow@earthlink.net>
+>> An: Martin Steigerwald <Martin@lichtvoll.de>
+>> Kopie: Geert Uytterhoeven <geert@linux-m68k.org>, linux-
+>> kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, linux-
+>> m68k@vger.kernel.org
+>>
+>> On 2012/06/17 14:20, Martin Steigerwald wrote:
+>>> Am Sonntag, 17. Juni 2012 schrieb jdow:
+>>>> On 2012/06/17 09:36, Geert Uytterhoeven wrote:
+>>>>> On Sun, Jun 17, 2012 at 2:58 PM, Martin Steigerwald
+>>> <Martin@lichtvoll.de> wrote:
+>>>>>> Am Sonntag, 17. Juni 2012 schrieb jdow:
+>>>>>> | JXFS 64 bit file system
+>>>>>> |
+>>>>>> | With AmigaOS 4.x a new file system has been introduced called
+>>>>>> | JXFS. It is a totally new 64 bit file system that supports
+>>>>>> | partitions up to 16 TB in size. It is a modern journalling file
+>>>>>> | system, which means that it reduces data loss if data writes to
+>>>>>> | the disk are interrupted. It is the fastest and most reliable
+>>>>>> | file system ever created for AmigaOS.
+>>>>>>
+>>>>>> http://www.amigaos.net/content/1/features
+>>>>>>
+>>>>>> Well I asked AmigaOS 4 developers about this issue as well. Lets
+>> see
+>>>>>> what they say about 2 TB limits.
+>>>>>
+>>>>> 16 TB = 2 TB * 8. Perhaps they increased the block size from 512 to
+>>>>> 4096?
+>>>>>
+>>>>> block/partitions/amiga.c reads the block size from
+>>>>> RigidDiskBlock.rdb_BlockBytes,
+>>>>> but after conversion to 512-byte blocks, all further calculations
+>> are
+>>>>> done on "int", so it will overflow for disks larger than 2 TiB.
+>>>>>
+>>>>> Note that in your profile-binary.img, the field is 0x200, i.e. 512
+>>>>> bytes per block,
+>>>>> so I'll have to get a deeper look into your RDB first...
+>>> […]
+>>>> Note that the work I did on the Linux RDB code eons ago took full
+>>>> cognizance of the physical and virtual block sizes.
+>>> […]
+>>>> I've asked Martin for a digital copy of his RDBs and what he thinks
+>> the
+>>>> partition(s) should look like. I should also be told whether the disk
+>>>> is supposed to be solely Amiga OSs or not. I gather it's not.
+>>>
+>>> Its all in the bug report. profile-binary.img should be it.
+>>>
+>>> Its small so I attach it.
+>>>
+>>> Meanwhile I try to get the currently supported maximum disk size out
+>> from
+>>> the OS 4 developers. Maybe JXFS is playing tricks that other
+>> filesystems do
+>>> not play or simply has a different implementation.
+>>>
+>>> Thanks,
+>>
+>> I've sent Jens a proposed fix changing these lines in amiga.c.
+>> ===8<--- was
+>>           struct PartitionBlock *pb;
+>>           int start_sect, nr_sects, blk, part, res = 0;
+>>           int blksize = 1;        /* Multiplier for disk block size */
+>> ===8<--- becomes changing line 338 into lines 338-339
+>>           struct PartitionBlock *pb;
+>>           sector_t start_sect, nr_sects;
+>>           int blk, part, res = 0;
+>>           int blksize = 1;        /* Multiplier for disk block size */
+>> ===8<---
+>>
+>> (I'm working without proper tools at the moment or I'd make a real diff.
+>> Sorry.)
+>>
+>> This fix may not be complete. The RDBs contain provisions for describing
+>> the physical disk block size and how many physical blocks are used in a
+>> file system's logical blocks. This MAY not work quite right large
+>> physical
+>> block sizes.
+>>
+>> {^_^}   Joanne Dow
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-m68k" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>
+>> -------------------------------------------------------------
+>> […]
+>>
+>>> As long as there's someone who can be pestered with bugs, I don't see
+>>> the need to push their baby out of the tree.  I'm a bit more nervous
+>>> about hfsplus; if it has users and no maintainer, those users are at
+>>> risk.
+>>>
+>>> Perhaps we could advertise on Craigslist or something ... maintainer
+>>> wanted for LTR.
+> 
+> Gr{oetje,eeting}s,
+> 
+>                          Geert
+> 
