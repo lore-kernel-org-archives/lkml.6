@@ -1,23 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757357AbeD0DLx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 23:11:53 -0400
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:37708 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757046AbeD0DLw (ORCPT
+        id S1757243AbeD0DMt (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 23:12:49 -0400
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:38656 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753312AbeD0DMs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 23:11:52 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w3R3BktN023950
-X-Nifty-SrcIP: [209.85.213.42]
-X-Google-Smtp-Source: AB8JxZqvuVS/FsCVat1JgE6aFWFjX1GCpJudUCOQkOdMmRxxyruZ6j0KmjvJXoh4ZSh3e1HfAXYxR5NsCk2b6r3vtC8=
+        Thu, 26 Apr 2018 23:12:48 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w3R3CViB022773
+X-Nifty-SrcIP: [209.85.217.173]
+X-Google-Smtp-Source: AB8JxZrsW/9YclkQuIqU0nADhtyN6HjZD5AtuZyh5bptgFzKCqHeN+V3cGU42avZTukT7/1CvAC3G5eleT0sdXNLIDY=
 MIME-Version: 1.0
-In-Reply-To: <20180427014905.19520-2-suzuki.katsuhiro@socionext.com>
-References: <20180427014905.19520-1-suzuki.katsuhiro@socionext.com> <20180427014905.19520-2-suzuki.katsuhiro@socionext.com>
+In-Reply-To: <20180427014905.19520-1-suzuki.katsuhiro@socionext.com>
+References: <20180427014905.19520-1-suzuki.katsuhiro@socionext.com>
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Fri, 27 Apr 2018 12:11:05 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASaoMmRtwbvjj1v9bbvKQZ_2AH2uGvmZO5U53vSW-WKbA@mail.gmail.com>
-Message-ID: <CAK7LNASaoMmRtwbvjj1v9bbvKQZ_2AH2uGvmZO5U53vSW-WKbA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] pinctrl: uniphier: add LD11 MPEG2-TS I/O pin-mux settings
+Date: Fri, 27 Apr 2018 12:11:50 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARSB3q6aheYNjzC4BAP6C+SZE+arDbqbpaK8F31iR82aQ@mail.gmail.com>
+Message-ID: <CAK7LNARSB3q6aheYNjzC4BAP6C+SZE+arDbqbpaK8F31iR82aQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] pinctrl: uniphier: add LD20 MPEG2-TS I/O pin-mux settings
 To: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
 Cc: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
         linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
@@ -36,6 +36,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 >   hscin0_s : HS0DOUT[0-3]
 >   hscin1_s : HS0DOUT[4-7]
 >   hscin2_s : HS1BCLKIN, HS1SYNCIN, HS1VALIN, HS1DIN0
+>   hscin3_s : HS1DIN[2-5]
 >   hscout0_s: HS0DOUT[0-3]
 >   hscout1_s: HS0DOUT[4-7]
 >
@@ -60,6 +61,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 This version looks good to me.
 
 Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+
 
 
 
