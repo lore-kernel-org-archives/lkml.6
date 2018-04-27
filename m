@@ -1,54 +1,40 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757869AbeD0KEJ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 06:04:09 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:54739 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757828AbeD0KEI (ORCPT
+        id S932684AbeD0KKb (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 06:10:31 -0400
+Received: from www62.your-server.de ([213.133.104.62]:49689 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757807AbeD0KK3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 06:04:08 -0400
-Message-ID: <1524823442.17614.2.camel@pengutronix.de>
-Subject: Re: [PATCH] reset: uniphier: fix USB clock line for LD20
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date: Fri, 27 Apr 2018 12:04:02 +0200
-In-Reply-To: <CAK7LNAQKVD3aKTo_z=zkOdoL--RogoFm0bt-dCBsWFN8BEPpSg@mail.gmail.com>
-References: <1523499370-17757-1-git-send-email-yamada.masahiro@socionext.com>
-         <CAK7LNAQKVD3aKTo_z=zkOdoL--RogoFm0bt-dCBsWFN8BEPpSg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
+        Fri, 27 Apr 2018 06:10:29 -0400
+Subject: Re: [PATCH bpf-next v2] bpf, doc: Update bpf_jit_enable limitation
+ for CONFIG_BPF_JIT_ALWAYS_ON
+To: Leo Yan <leo.yan@linaro.org>, Alexei Starovoitov <ast@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jonathan Corbet <corbet@lwn.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+References: <1524823374-6174-1-git-send-email-leo.yan@linaro.org>
+From: Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <fc7b77ee-e1b1-f3cd-2729-617b1830b736@iogearbox.net>
+Date: Fri, 27 Apr 2018 12:10:22 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
+MIME-Version: 1.0
+In-Reply-To: <1524823374-6174-1-git-send-email-leo.yan@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-Authenticated-Sender: daniel@iogearbox.net
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-04-27 at 18:42 +0900, Masahiro Yamada wrote:
-> Philipp,
+On 04/27/2018 12:02 PM, Leo Yan wrote:
+> When CONFIG_BPF_JIT_ALWAYS_ON is enabled, kernel has limitation for
+> bpf_jit_enable, so it has fixed value 1 and we cannot set it to 2
+> for JIT opcode dumping; this patch is to update the doc for it.
 > 
-> 2018-04-12 11:16 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
-> > For LD20, the bit 5 of the offset 0x200c turned out to be a USB3
-> > reset.  The hardware document says it is the GIO reset despite LD20
-> > has no GIO bus, confusingly.
-> > 
-> > Also, fix confusing comments for PXs3.
-> > 
-> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> > ---
-> 
-> Can you take a look at this, please?
+> Suggested-by: Daniel Borkmann <daniel@iogearbox.net>
+> Signed-off-by: Leo Yan <leo.yan@linaro.org>
 
-Thank you for the reminder, I've applied it to reset/fixes and rebased
-reset/next on top to include it.
-
-regards
-Philipp
+Applied to bpf-next, thanks Leo!
