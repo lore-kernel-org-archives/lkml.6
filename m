@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757976AbeD0Lo0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 07:44:26 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:34045 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751416AbeD0LoX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1757197AbeD0LoX (ORCPT <rfc822;w@1wt.eu>);
         Fri, 27 Apr 2018 07:44:23 -0400
-X-Google-Smtp-Source: AB8JxZo7cViaILXbKOG/L41gUh45n/wbfrmpPMPHauu5DA42NSB/fm21VzBwYoZzOM/fhyEAKwfkPw==
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:42767 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751416AbeD0LoT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 07:44:19 -0400
+X-Google-Smtp-Source: AB8JxZqdR3/SLVFlljWz6LkTxLWANFqqR/UVTmho+He+WzurmBbJZmN3+jvtZcxRs9m93ie5vJddjg==
 From: Arvind Yadav <arvind.yadav.cs@gmail.com>
 To: mchehab@kernel.org, hans.verkuil@cisco.com, viro@zeniv.linux.org.uk
 Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
-Subject: [PATCH 2/2] [media] sta2x11: Use gpio_is_valid() and remove unnecessary check
-Date: Fri, 27 Apr 2018 17:14:01 +0530
-Message-Id: <a87a9598074db4eaa439e433af38e274d32870bd.1524828993.git.arvind.yadav.cs@gmail.com>
+Subject: [PATCH 1/2] [media] platform: Use gpio_is_valid()
+Date: Fri, 27 Apr 2018 17:14:00 +0530
+Message-Id: <93444a65ca7853d27c724aeb50d16c5afd59fa08.1524828993.git.arvind.yadav.cs@gmail.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <cover.1524828993.git.arvind.yadav.cs@gmail.com>
 References: <cover.1524828993.git.arvind.yadav.cs@gmail.com>
@@ -26,81 +26,23 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Replace the manual validity checks for the GPIO with the
 gpio_is_valid().
 
-In vip_gpio_reserve(), Error checking for gpio pin is not correct.
-If pwr_pin = -1, It will return 0. This should be return an error.
-
-In sta2x11_vip_init_one(), Error checking for gpio 'reset_pin'
-is unnecessary. Because vip_gpio_reserve() is also checking for
-valid gpio pin. So removed extra error checking for gpio 'reset_pin'.
-
 Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
 ---
- drivers/media/pci/sta2x11/sta2x11_vip.c | 31 +++++++++++++++----------------
- 1 file changed, 15 insertions(+), 16 deletions(-)
+ drivers/media/platform/via-camera.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/pci/sta2x11/sta2x11_vip.c b/drivers/media/pci/sta2x11/sta2x11_vip.c
-index dd199bf..069c4a8 100644
---- a/drivers/media/pci/sta2x11/sta2x11_vip.c
-+++ b/drivers/media/pci/sta2x11/sta2x11_vip.c
-@@ -908,10 +908,10 @@ static int sta2x11_vip_init_controls(struct sta2x11_vip *vip)
- static int vip_gpio_reserve(struct device *dev, int pin, int dir,
- 			    const char *name)
- {
--	int ret;
-+	int ret = -ENODEV;
+diff --git a/drivers/media/platform/via-camera.c b/drivers/media/platform/via-camera.c
+index e9a0263..f01c3e8 100644
+--- a/drivers/media/platform/via-camera.c
++++ b/drivers/media/platform/via-camera.c
+@@ -178,7 +178,7 @@ static int via_sensor_power_setup(struct via_camera *cam)
  
--	if (pin == -1)
--		return 0;
-+	if (!gpio_is_valid(pin))
-+		return ret;
- 
- 	ret = gpio_request(pin, name);
- 	if (ret) {
-@@ -946,7 +946,7 @@ static int vip_gpio_reserve(struct device *dev, int pin, int dir,
-  */
- static void vip_gpio_release(struct device *dev, int pin, const char *name)
- {
--	if (pin != -1) {
-+	if (gpio_is_valid(pin)) {
- 		dev_dbg(dev, "releasing pin %d (%s)\n",	pin, name);
- 		gpio_unexport(pin);
- 		gpio_free(pin);
-@@ -1003,25 +1003,24 @@ static int sta2x11_vip_init_one(struct pci_dev *pdev,
- 	if (ret)
- 		goto disable;
- 
--	if (config->reset_pin >= 0) {
--		ret = vip_gpio_reserve(&pdev->dev, config->reset_pin, 0,
--				       config->reset_name);
--		if (ret) {
--			vip_gpio_release(&pdev->dev, config->pwr_pin,
--					 config->pwr_name);
--			goto disable;
--		}
-+	ret = vip_gpio_reserve(&pdev->dev, config->reset_pin, 0,
-+			       config->reset_name);
-+	if (ret) {
-+		vip_gpio_release(&pdev->dev, config->pwr_pin,
-+				 config->pwr_name);
-+		goto disable;
+ 	cam->power_gpio = viafb_gpio_lookup("VGPIO3");
+ 	cam->reset_gpio = viafb_gpio_lookup("VGPIO2");
+-	if (cam->power_gpio < 0 || cam->reset_gpio < 0) {
++	if (!gpio_is_valid(cam->power_gpio) || !gpio_is_valid(cam->reset_gpio)) {
+ 		dev_err(&cam->platdev->dev, "Unable to find GPIO lines\n");
+ 		return -EINVAL;
  	}
--	if (config->pwr_pin != -1) {
-+
-+	if (gpio_is_valid(config->pwr_pin)) {
- 		/* Datasheet says 5ms between PWR and RST */
- 		usleep_range(5000, 25000);
--		ret = gpio_direction_output(config->pwr_pin, 1);
-+		gpio_direction_output(config->pwr_pin, 1);
- 	}
- 
--	if (config->reset_pin != -1) {
-+	if (gpio_is_valid(config->reset_pin)) {
- 		/* Datasheet says 5ms between PWR and RST */
- 		usleep_range(5000, 25000);
--		ret = gpio_direction_output(config->reset_pin, 1);
-+		gpio_direction_output(config->reset_pin, 1);
- 	}
- 	usleep_range(5000, 25000);
- 
 -- 
 1.9.1
