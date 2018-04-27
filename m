@@ -1,158 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758629AbeD0QOe (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 12:14:34 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:34031 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758515AbeD0QOc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 12:14:32 -0400
-X-Google-Smtp-Source: AB8JxZoP8aJJ9kppJWbBNR3OSSvX17/yfRt1SYxLVbdHO8pH6z/U0+mZEp8FtxKeYLPw4G0RIR8iN1M8nl2tC2KmmX8=
+        id S1758632AbeD0QPE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 12:15:04 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44319 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1757985AbeD0QO6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 12:14:58 -0400
+Date: Fri, 27 Apr 2018 16:14:56 +0000
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>, linux-mm@kvack.org,
+        mhocko@kernel.org, cl@linux.com, Jan Kara <jack@suse.cz>,
+        matthew@wil.cx, x86@kernel.org, luto@amacapital.net,
+        martin.petersen@oracle.com, jthumshirn@suse.de, broonie@kernel.org,
+        Juergen Gross <jgross@suse.com>, linux-spi@vger.kernel.org,
+        Joerg Roedel <joro@8bytes.org>, linux-scsi@vger.kernel.org,
+        Dan Carpenter <dan.carpenter@oracle.com>, linux-kernel@vger.kernel.org,
+        "lsf-pc@lists.linux-foundation.org"
+        <lsf-pc@lists.linux-foundation.org>
+Subject: Re: [LSF/MM TOPIC NOTES] x86 ZONE_DMA love
+Message-ID: <20180427161456.GD27853@wotan.suse.de>
+References: <20180426215406.GB27853@wotan.suse.de>
+ <20180427053556.GB11339@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20180427155701.GL26088@linux.vnet.ibm.com>
-References: <20180427042656.190746-1-joelaf@google.com> <20180427155701.GL26088@linux.vnet.ibm.com>
-From: Joel Fernandes <joelaf@google.com>
-Date: Fri, 27 Apr 2018 09:14:30 -0700
-Message-ID: <CAJWu+or9GJwkDK9+842YbobG3=xVW-PgqS=uE5P2xFbDhmqxEQ@mail.gmail.com>
-Subject: Re: [PATCH RFC] tracepoint: Introduce tracepoint callbacks executing
- with preempt on
-To: Paul McKenney <paulmck@linux.vnet.ibm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zilstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Glexiner <tglx@linutronix.de>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Fenguang Wu <fengguang.wu@intel.com>,
-        Baohong Liu <baohong.liu@intel.com>,
-        Vedang Patel <vedang.patel@intel.com>,
-        "Cc: Android Kernel" <kernel-team@android.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180427053556.GB11339@infradead.org>
+User-Agent: Mutt/1.6.0 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paul,
+On Thu, Apr 26, 2018 at 10:35:56PM -0700, Christoph Hellwig wrote:
+> On Thu, Apr 26, 2018 at 09:54:06PM +0000, Luis R. Rodriguez wrote:
+> > In practice if you don't have a floppy device on x86, you don't need ZONE_DMA,
+> 
+> I call BS on that, 
 
-On Fri, Apr 27, 2018 at 8:57 AM, Paul E. McKenney
-<paulmck@linux.vnet.ibm.com> wrote:
-> On Thu, Apr 26, 2018 at 09:26:56PM -0700, Joel Fernandes wrote:
->> In recent tests with IRQ on/off tracepoints, a large performance
->> overhead ~10% is noticed when running hackbench. This is root caused to
->> calls to rcu_irq_enter_irqson and rcu_irq_exit_irqson from the
->> tracepoint code. Following a long discussion on the list [1] about this,
->> we concluded that srcu is a better alternative for use during rcu idle.
->> Although it does involve extra barriers, its lighter than the sched-rcu
->> version which has to do additional RCU calls to notify RCU idle about
->> entry into RCU sections.
->>
->> In this patch, we change the underlying implementation of the
->> trace_*_rcuidle API to use SRCU. This has shown to improve performance
->> alot for the high frequency irq enable/disable tracepoints.
->>
->> In the future, we can add a new may_sleep API which can use this
->> infrastructure for callbacks that actually can sleep which will support
->> Mathieu's usecase of blocking probes.
->>
->> Test: Tested idle and preempt/irq tracepoints.
->
-> Looks good overall!  One question and a few comments below.
->
->                                                         Thanx, Paul
->
->> [1] https://patchwork.kernel.org/patch/10344297/
->>
->> Cc: Steven Rostedt <rostedt@goodmis.org>
->> Cc: Peter Zilstra <peterz@infradead.org>
->> Cc: Ingo Molnar <mingo@redhat.com>
->> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
->> Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
->> Cc: Namhyung Kim <namhyung@kernel.org>
->> Cc: Thomas Glexiner <tglx@linutronix.de>
->> Cc: Boqun Feng <boqun.feng@gmail.com>
->> Cc: Paul McKenney <paulmck@linux.vnet.ibm.com>
->> Cc: Frederic Weisbecker <fweisbec@gmail.com>
->> Cc: Randy Dunlap <rdunlap@infradead.org>
->> Cc: Masami Hiramatsu <mhiramat@kernel.org>
->> Cc: Fenguang Wu <fengguang.wu@intel.com>
->> Cc: Baohong Liu <baohong.liu@intel.com>
->> Cc: Vedang Patel <vedang.patel@intel.com>
->> Cc: kernel-team@android.com
->> Signed-off-by: Joel Fernandes <joelaf@google.com>
->> ---
->>  include/linux/tracepoint.h | 37 +++++++++++++++++++++++++++++--------
->>  kernel/tracepoint.c        | 10 +++++++++-
->>  2 files changed, 38 insertions(+), 9 deletions(-)
->>
->> diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
->> index c94f466d57ef..a1c1987de423 100644
->> --- a/include/linux/tracepoint.h
->> +++ b/include/linux/tracepoint.h
->> @@ -15,6 +15,7 @@
->>   */
->>
->>  #include <linux/smp.h>
->> +#include <linux/srcu.h>
->>  #include <linux/errno.h>
->>  #include <linux/types.h>
->>  #include <linux/cpumask.h>
->> @@ -33,6 +34,8 @@ struct trace_eval_map {
->>
->>  #define TRACEPOINT_DEFAULT_PRIO      10
->>
->> +extern struct srcu_struct tracepoint_srcu;
->> +
->>  extern int
->>  tracepoint_probe_register(struct tracepoint *tp, void *probe, void *data);
->>  extern int
->> @@ -77,6 +80,7 @@ int unregister_tracepoint_module_notifier(struct notifier_block *nb)
->>   */
->>  static inline void tracepoint_synchronize_unregister(void)
->>  {
->> +     synchronize_srcu(&tracepoint_srcu);
->>       synchronize_sched();
->>  }
->>
->> @@ -129,18 +133,26 @@ extern void syscall_unregfunc(void);
->>   * as "(void *, void)". The DECLARE_TRACE_NOARGS() will pass in just
->>   * "void *data", where as the DECLARE_TRACE() will pass in "void *data, proto".
->>   */
->> -#define __DO_TRACE(tp, proto, args, cond, rcucheck)                  \
->> +#define __DO_TRACE(tp, proto, args, cond, preempt_on)                        \
->>       do {                                                            \
->>               struct tracepoint_func *it_func_ptr;                    \
->>               void *it_func;                                          \
->>               void *__data;                                           \
->> +             int __maybe_unused idx = 0;                             \
->>                                                                       \
->>               if (!(cond))                                            \
->>                       return;                                         \
->> -             if (rcucheck)                                           \
->> -                     rcu_irq_enter_irqson();                         \
->> -             rcu_read_lock_sched_notrace();                          \
->> -             it_func_ptr = rcu_dereference_sched((tp)->funcs);       \
->> +             if (preempt_on) {                                       \
->> +                     WARN_ON_ONCE(in_nmi()); /* no srcu from nmi */  \
->
-> Very good on this check, thank you!
+I did not explain though that it was not me who claimed this though.
+The list displayed below is the result of trying to confirm/deny this,
+and what could be done, and also evaluating if there is *any* gain
+about doing something about it.
 
-Sure thing :-)
+But curious, on a standard qemu x86_x64 KVM guest, which of the
+drivers do we know for certain *are* being used from the ones
+listed?
 
->
->> +                     idx = srcu_read_lock(&tracepoint_srcu);         \
->
-> Hmmm...  Do I need to create a _notrace variant of srcu_read_lock()
-> and srcu_read_unlock()?
+What about Xen guests, I wonder?
 
-That shouldn't be needed. For the rcu_read_lock_sched case, there is a
-preempt_disable which needs to be a notrace, but for the srcu one,
-since we don't do that, I think it should be fine.
+> and you actually explain later why it it BS due
+> to some drivers using it more explicitly.
 
-Thanks!
+Or implicitly. The list I showed is the work to show that the users
+of GFP_DMA on x86 is *much* more wide spread than expected from the
+above claim.
 
-- Joel
+I however did not also answer the above qemu x86_64 question, but
+would be good to know. Note I stated that the claim was *in practice*.
+
+> But even more importantly
+> we have plenty driver using it through dma_alloc_* and a small DMA
+> mask, and they are in use 
+
+Do we have a list of users for x86 with a small DMA mask?
+Or, given that I'm not aware of a tool to be able to look
+for this in an easy way, would it be good to find out which
+x86 drivers do have a small mask?
+
+> - we actually had a 4.16 regression due to them.
+
+Ah what commit was the culprit? Is that fixed already? If so what
+commit?
+
+> > SCSI is *severely* affected:
+> 
+> Not really.  We have unchecked_isa_dma to support about 4 drivers,
+
+Ah very neat:
+
+  * CONFIG_CHR_DEV_OSST - "SCSI OnStream SC-x0 tape support"
+  * CONFIG_SCSI_ADVANSYS - "AdvanSys SCSI support"
+  * CONFIG_SCSI_AHA1542 - "Adaptec AHA1542 support"
+  * CONFIG_SCSI_ESAS2R - "ATTO Technology's ExpressSAS RAID adapter driver"
+
+> and less than a hand ful of drivers doing stupid things, which can
+> be fixed easily, and just need a volunteer.
+
+Care to list what needs to be done? Can an eager beaver student do it?
+
+> > That's the end of the review of all current explicit callers on x86.
+> > 
+> > # dma_alloc_coherent_gfp_flags() and dma_generic_alloc_coherent()
+> > 
+> > dma_alloc_coherent_gfp_flags() and dma_generic_alloc_coherent() set
+> > GFP_DMA if if (dma_mask <= DMA_BIT_MASK(24))
+> 
+> All that code is long gone and replaced with dma-direct.  Which still
+> uses GFP_DMA based on the dma mask, though - see above.
+
+And that's mostly IOMMU code, on the alloc() dma_map_ops.
+
+  Luis
