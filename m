@@ -1,39 +1,38 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpUHqjX1EdbJvK+7vw3yhQuj7umZf9OlFbki0LXNHcSZWFTRLF47NIQsCUn/YArXvjvuEM2
-ARC-Seal: i=1; a=rsa-sha256; t=1524838392; cv=none;
+X-Google-Smtp-Source: AB8JxZrbO2NWvXWhlnOLfp1UHYmtVBUkoEmsxao3HcXJwdeSfnBgviJZzYvEZaAURf/oaD+mR5/t
+ARC-Seal: i=1; a=rsa-sha256; t=1524838389; cv=none;
         d=google.com; s=arc-20160816;
-        b=XGcv8LQ/aKDZ0qbIzQmo/9Re6zBA4LsNpzCUucBz0Ie0X1ZF8h5Jq4kMmubrJO8Gkb
-         lfcRZv/MKnBTBsYbg5bSLKCbLc13Mm/cBAU05gW6AJwMIeOu3HqjXeM+VNYejPHGCMq9
-         RExUkxn3yFVQWY7xQ3znNn1vVcVMnuMOWTZU7IQ/dEyD77AhscbSUfuDZCQASxDPz4J4
-         /t3egfHQHsFEcmZH31slEk0/9Ma4Z2lUMCXpcoBTbxKMWJD4fv7FmVMJe72da/Fbo/un
-         jqmypiMykZUqK6M3gEDmCLeziVqJzdHKcOPZRoKDS+MYuU7zSmNo4oBwzjwJ/kRX1JXG
-         GKPw==
+        b=UClGP38m3uYymwRWCbMn8Kp3vj76lAHXsRTgUNyrHQf4uA/7tIoz0mAfG98vGfs20g
+         7XfXNRAF2pk7Xf2Gl0JZjsl6As1hWJgMWZ1gpydhvNX1jvinvCgssQ98ZEOxuXDAgNFM
+         DGkCgFPe6FmHTZn0vCFAhxs1C3eBKSAA3qV0L3uRy4FLwFwMMQF1XhXZnor/cAEgvKf9
+         U3hU7jo18tDcW3t++UbAwFAx4ZLjHNHDQ8/7yjqu5aZu8P0Ts2Oc8tE4Jr65BT1t3yI1
+         sG0L4jTdcbXWfhD2kLQiB1mykqn7gvBdZKaou1+zAvWknOUwQPQNTRwEGuNRbCaGkZhO
+         7ioA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=gZOJ20C0vHgF4WpZY1IYK5KCUQkkXFrMii4TxLZ5Do4=;
-        b=ypcqxSCMKGwH1GXpdxOaIo22TwQsZYUYKsaTX65aAznZ591uf1zVIT1FbO7Ugzq62X
-         I/SICEJIaYXj6M4ifmOVO92Pnh8MGe+15rxxSY2VO+QV9hJIY+lP0YId55snpAij/0/o
-         ZGKGJFnc55i45TtpFRPVB7q695B1eyHVbZ2nJXGQOKKY9YDJwx5B27BlqRuxXzg6seXW
-         4dtCIsoP+YqC2xDWUvIVo2LzQA+t3OnDh/DpWOsTWNEBiWAMqLcfACSohxBZS+D//H1K
-         EJRlJdCLEoXG/QwNg7pjpvrNWMTxAopAmSdtJxjOrCmZsAztgbOX0muS0dol7jnrqNCN
-         +C6A==
+        bh=xUflj9CjFArosWRmZ8RBufa+4cZUFzqY/sDF7w3hHSU=;
+        b=jTf5DKPN3RXsnjC7LX1Y1EQt8wVUAoKDuBgoo1pntjmIKYAapdj5tj0e/snvIz42jX
+         txBW4R4VnXWVquIEU+qahD7LxumywFp/df+COHRbsME+4RD2svvFileERVCALnRf6Mqj
+         jd++eAkSC1t3mHFSJCbpUo9EH2kI51WK0jc3Ex4NSBZiG3LqpqRpcSgYp2lBEoiTjTOe
+         Z0KNFt6VXy6ZPBBv3A+oldGQO1BWs129htyTRo46jjbfN5pSvu7HbYvd+M8u4G70hejy
+         oM/XkSCXlark1bmDLCq7rdIUepV0PpeWQtqnex3Rqd5DuXiEY5y31v4eWJB/tPwgCbLD
+         Z3mw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94794218D1
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1358E218CA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	=?UTF-8?q?Ren=C3=A9=20Rebe?= <rene@exactcode.de>,
 	Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.16 75/81] hwmon: (k10temp) Add support for AMD Ryzen w/ Vega graphics
-Date: Fri, 27 Apr 2018 15:59:17 +0200
-Message-Id: <20180427135747.622914704@linuxfoundation.org>
+Subject: [PATCH 4.16 74/81] hwmon: (k10temp) Add temperature offset for Ryzen 2700X
+Date: Fri, 27 Apr 2018 15:59:16 +0200
+Message-Id: <20180427135747.577868131@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135743.216853156@linuxfoundation.org>
 References: <20180427135743.216853156@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908942236940259?=
-X-GMAIL-MSGID: =?utf-8?q?1598908942236940259?=
+X-GMAIL-THRID: =?utf-8?q?1598908939398468698?=
+X-GMAIL-MSGID: =?utf-8?q?1598908939398468698?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,40 +53,62 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Guenter Roeck <linux@roeck-us.net>
 
-commit 877d8948d0aa402fbbede138fc73432bb335b65f upstream.
+commit 1b59788979acd230b9627276c76f6e6ba2c4709c upstream.
 
-Enable k10temp for AMD Ryzen APUs w/ Vega Mobile Gfx.
-
-Based on patch from René Rebe <rene@exactcode.de>. Dropped temperature
-offsets since those are not supposed to apply for the affected CPUs.
+Ryzen 2700X has a temperature offset of 10 degrees C. If bit 19 of the
+Temperature Control register is set, there is an additional offset of
+49 degrees C. Take this into account as well.
 
 Cc: stable@vger.kernel.org # v4.16+
-Cc: René Rebe <rene@exactcode.de>
 Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hwmon/k10temp.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/hwmon/k10temp.c |   12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
 --- a/drivers/hwmon/k10temp.c
 +++ b/drivers/hwmon/k10temp.c
-@@ -40,6 +40,10 @@ static DEFINE_MUTEX(nb_smu_ind_mutex);
- #define PCI_DEVICE_ID_AMD_17H_DF_F3	0x1463
- #endif
- 
-+#ifndef PCI_DEVICE_ID_AMD_17H_RR_NB
-+#define PCI_DEVICE_ID_AMD_17H_RR_NB	0x15d0
-+#endif
-+
- /* CPUID function 0x80000001, ebx */
- #define CPUID_PKGTYPE_MASK	0xf0000000
- #define CPUID_PKGTYPE_F		0x00000000
-@@ -298,6 +302,7 @@ static const struct pci_device_id k10tem
- 	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_16H_NB_F3) },
- 	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_16H_M30H_NB_F3) },
- 	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_17H_DF_F3) },
-+	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_17H_RR_NB) },
- 	{}
+@@ -72,6 +72,7 @@ struct k10temp_data {
+ 	struct pci_dev *pdev;
+ 	void (*read_tempreg)(struct pci_dev *pdev, u32 *regval);
+ 	int temp_offset;
++	u32 temp_adjust_mask;
  };
- MODULE_DEVICE_TABLE(pci, k10temp_id_table);
+ 
+ struct tctl_offset {
+@@ -84,6 +85,7 @@ static const struct tctl_offset tctl_off
+ 	{ 0x17, "AMD Ryzen 5 1600X", 20000 },
+ 	{ 0x17, "AMD Ryzen 7 1700X", 20000 },
+ 	{ 0x17, "AMD Ryzen 7 1800X", 20000 },
++	{ 0x17, "AMD Ryzen 7 2700X", 10000 },
+ 	{ 0x17, "AMD Ryzen Threadripper 1950X", 27000 },
+ 	{ 0x17, "AMD Ryzen Threadripper 1920X", 27000 },
+ 	{ 0x17, "AMD Ryzen Threadripper 1900X", 27000 },
+@@ -129,6 +131,8 @@ static ssize_t temp1_input_show(struct d
+ 
+ 	data->read_tempreg(data->pdev, &regval);
+ 	temp = (regval >> 21) * 125;
++	if (regval & data->temp_adjust_mask)
++		temp -= 49000;
+ 	if (temp > data->temp_offset)
+ 		temp -= data->temp_offset;
+ 	else
+@@ -259,12 +263,14 @@ static int k10temp_probe(struct pci_dev
+ 	data->pdev = pdev;
+ 
+ 	if (boot_cpu_data.x86 == 0x15 && (boot_cpu_data.x86_model == 0x60 ||
+-					  boot_cpu_data.x86_model == 0x70))
++					  boot_cpu_data.x86_model == 0x70)) {
+ 		data->read_tempreg = read_tempreg_nb_f15;
+-	else if (boot_cpu_data.x86 == 0x17)
++	} else if (boot_cpu_data.x86 == 0x17) {
++		data->temp_adjust_mask = 0x80000;
+ 		data->read_tempreg = read_tempreg_nb_f17;
+-	else
++	} else {
+ 		data->read_tempreg = read_tempreg_pci;
++	}
+ 
+ 	for (i = 0; i < ARRAY_SIZE(tctl_offset_table); i++) {
+ 		const struct tctl_offset *entry = &tctl_offset_table[i];
