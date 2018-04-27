@@ -1,183 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757338AbeD0FmR (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 01:42:17 -0400
-Received: from mail-lf0-f45.google.com ([209.85.215.45]:34519 "EHLO
-        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751458AbeD0FmP (ORCPT
+        id S1757430AbeD0FtN (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 01:49:13 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:43609 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751458AbeD0FtL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 01:42:15 -0400
-X-Google-Smtp-Source: AB8JxZrg3wcCAgV4rWud7brNoMVyDXr5PF/yNS0b4EWSPXQnsAmvdw68X86bfx05hKfeJceqqjQfSZetcXFFw34I9O4=
+        Fri, 27 Apr 2018 01:49:11 -0400
+X-Google-Smtp-Source: AB8JxZpjECgmt36O2FlLvF9EmM0pczGqgLPiXycvwD4/k1QYDmGAcspLS7/jekJW34i3G8YMKDCsaQE3zzaZH7XBn90=
 MIME-Version: 1.0
-From: Dave Airlie <airlied@gmail.com>
-Date: Fri, 27 Apr 2018 15:42:13 +1000
-Message-ID: <CAPM=9twVzYRZ=G++LKV8gd+1DOAPf+zKJaL7aYj-OhevHCDfLA@mail.gmail.com>
-Subject: [git pull] drm fixes for v4.17-rc3
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: dri-devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <alpine.DEB.2.21.1804250006120.51102@chino.kir.corp.google.com>
+References: <20180425044326.GA21504@jordon-HP-15-Notebook-PC> <alpine.DEB.2.21.1804250006120.51102@chino.kir.corp.google.com>
+From: Souptick Joarder <jrdr.linux@gmail.com>
+Date: Fri, 27 Apr 2018 11:19:09 +0530
+Message-ID: <CAFqt6zb0cHJLeqaOUvfD38xbA5QOE7yq5Fyd27kCwbXKBGs54A@mail.gmail.com>
+Subject: Re: [PATCH v2] mm: huge_memory: Change return type to vm_fault_t
+To: David Rientjes <rientjes@google.com>,
+        Matthew Wilcox <willy@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, zi.yan@cs.rutgers.edu,
+        Dan Williams <dan.j.williams@intel.com>,
+        kirill.shutemov@linux.intel.com,
+        Ross Zwisler <ross.zwisler@linux.intel.com>, n-horiguchi@ah.jp.nec.com,
+        Michal Hocko <mhocko@suse.com>, shli@fb.com,
+        linux-kernel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3R5gNr8014930
 
-Hi Linus,
+On Wed, Apr 25, 2018 at 12:39 PM, David Rientjes <rientjes@google.com> wrote:
+> On Wed, 25 Apr 2018, Souptick Joarder wrote:
+>
+>> Use new return type vm_fault_t for fault handler. For
+>> now, this is just documenting that the function returns
+>> a VM_FAULT value rather than an errno. Once all instances
+>> are converted, vm_fault_t will become a distinct type.
+>>
+>> Commit 1c8f422059ae ("mm: change return type to vm_fault_t")
+>>
+>> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+>> Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
+>> ---
+>> v2: Updated the change log
+>>
+>>  include/linux/huge_mm.h | 5 +++--
+>>  mm/huge_memory.c        | 4 ++--
+>>  2 files changed, 5 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+>> index a8a1262..d3bbf6b 100644
+>> --- a/include/linux/huge_mm.h
+>> +++ b/include/linux/huge_mm.h
+>> @@ -3,6 +3,7 @@
+>>  #define _LINUX_HUGE_MM_H
+>>
+>>  #include <linux/sched/coredump.h>
+>> +#include <linux/mm_types.h>
+>>
+>>  #include <linux/fs.h> /* only for vma_is_dax() */
+>>
+>> @@ -46,9 +47,9 @@ extern bool move_huge_pmd(struct vm_area_struct *vma, unsigned long old_addr,
+>>  extern int change_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
+>>                       unsigned long addr, pgprot_t newprot,
+>>                       int prot_numa);
+>> -int vmf_insert_pfn_pmd(struct vm_area_struct *vma, unsigned long addr,
+>> +vm_fault_t vmf_insert_pfn_pmd(struct vm_area_struct *vma, unsigned long addr,
+>>                       pmd_t *pmd, pfn_t pfn, bool write);
+>> -int vmf_insert_pfn_pud(struct vm_area_struct *vma, unsigned long addr,
+>> +vm_fault_t vmf_insert_pfn_pud(struct vm_area_struct *vma, unsigned long addr,
+>>                       pud_t *pud, pfn_t pfn, bool write);
+>>  enum transparent_hugepage_flag {
+>>       TRANSPARENT_HUGEPAGE_FLAG,
+>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>> index 87ab9b8..1fe4705 100644
+>> --- a/mm/huge_memory.c
+>> +++ b/mm/huge_memory.c
+>> @@ -755,7 +755,7 @@ static void insert_pfn_pmd(struct vm_area_struct *vma, unsigned long addr,
+>>       spin_unlock(ptl);
+>>  }
+>>
+>> -int vmf_insert_pfn_pmd(struct vm_area_struct *vma, unsigned long addr,
+>> +vm_fault_t vmf_insert_pfn_pmd(struct vm_area_struct *vma, unsigned long addr,
+>>                       pmd_t *pmd, pfn_t pfn, bool write)
+>>  {
+>>       pgprot_t pgprot = vma->vm_page_prot;
+>> @@ -815,7 +815,7 @@ static void insert_pfn_pud(struct vm_area_struct *vma, unsigned long addr,
+>>       spin_unlock(ptl);
+>>  }
+>>
+>> -int vmf_insert_pfn_pud(struct vm_area_struct *vma, unsigned long addr,
+>> +vm_fault_t vmf_insert_pfn_pud(struct vm_area_struct *vma, unsigned long addr,
+>>                       pud_t *pud, pfn_t pfn, bool write)
+>>  {
+>>       pgprot_t pgprot = vma->vm_page_prot;
+>
+> This isn't very useful unless functions that return the return value of
+> these functions, __dev_dax_{pmd,pud}_fault(), recast it as an int.
+> __dev_dax_pte_fault() would do the same thing, so it should logically also
+> be vm_fault_t, so then you would convert dev_dax_huge_fault() and
+> dev_dax_fault() as well in the same patch.
 
-Pretty run of the mill for this stage in the cycle.
-
-i915:
-- Black screen fixes
-- Display w/a fix
-- HDA codec interop fix
-sun4i:
-- tbsa711 tablet regression fix
-qxl:
-- Regression fixes due to changes in TTM
-virtio:
-- Fix wait event condition
-msm:
-- DSI display fixes
-amdgpu:
-- fix hang on Carrizo
-- DP MST hang fixes
-- irq handling deadlock in DC.
-amdkfd:
-- Fix Kconfig issue
-- Clock retrieval fix
-- Sparse fixes
-
-Regards,
-Dave.
-
-
-The following changes since commit 6d08b06e67cd117f6992c46611dfb4ce267cd71e:
-
-  Linux 4.17-rc2 (2018-04-22 19:20:09 -0700)
-
-are available in the Git repository at:
-
-  git://people.freedesktop.org/~airlied/linux tags/drm-fixes-for-v4.17-rc3
-
-for you to fetch changes up to 24d9092c8b7de0a0f630adbe3504bef8d3a618af:
-
-  Merge tag 'drm-intel-fixes-2018-04-26' of
-git://anongit.freedesktop.org/drm/drm-intel into drm-fixes (2018-04-27
-14:08:47 +1000)
-
-----------------------------------------------------------------
-msm, i915, amdgpu, qxl, virtio-gpu, sun4i fixes
-
-----------------------------------------------------------------
-Abhay Kumar (1):
-      drm/i915/audio: set minimum CD clock to twice the BCLK
-
-Abhinav Kumar (3):
-      drm/msm/dsi: check return value for video done waits
-      drm/msm/dsi: check video mode engine status before waiting
-      drm/msm/dsi: implement auto PHY timing calculator for 10nm PHY
-
-Andres Rodriguez (1):
-      drm/amdkfd: fix clock counter retrieval for node without GPU
-
-Ben Hutchings (1):
-      drm/msm: Fix possible null dereference on failure of get_pages()
-
-Dave Airlie (5):
-      Merge tag 'drm-amdkfd-fixes-2018-04-24' of
-git://people.freedesktop.org/~gabbayo/linux into drm-fixes
-      Merge branch 'drm-fixes-4.17' of
-git://people.freedesktop.org/~agd5f/linux into drm-fixes
-      Merge tag 'drm-msm-fixes-2018-04-25' of
-git://people.freedesktop.org/~robclark/linux into drm-fixes
-      Merge tag 'drm-misc-fixes-2018-04-25' of
-git://anongit.freedesktop.org/drm/drm-misc into drm-fixes
-      Merge tag 'drm-intel-fixes-2018-04-26' of
-git://anongit.freedesktop.org/drm/drm-intel into drm-fixes
-
-Emil Velikov (1):
-      drm/msm: don't deref error pointer in the msm_fbdev_create error path
-
-Gerd Hoffmann (3):
-      qxl: fix qxl_release_{map,unmap}
-      qxl: keep separate release_bo pointer
-      drm/virtio: fix vq wait_event condition
-
-Harry Wentland (2):
-      drm/amd/display: Disallow enabling CRTC without primary plane with FB
-      drm/amd/display: Don't read EDID in atomic_check
-
-Imre Deak (1):
-      drm/i915: Enable display WA#1183 from its correct spot
-
-Jerry (Fangzhi) Zuo (2):
-      drm/amd/display: Update MST edid property every time
-      drm/amd/display: Check dc_sink every time in MST hotplug
-
-Jeykumar Sankaran (1):
-      drm/msm: Add modifier to mdp_get_format arguments
-
-José Roberto de Souza (1):
-      drm/i915/fbdev: Enable late fbdev initial configuration
-
-Mika Kuoppala (1):
-      drm/i915: Use ktime on wait_for
-
-Mikita Lipski (1):
-      drm/amd/display: Fix deadlock when flushing irq
-
-Nicolai Hähnle (1):
-      drm/amdgpu: set COMPUTE_PGM_RSRC1 for SGPR/VGPR clearing shaders
-
-Ondrej Jirman (1):
-      Revert "drm/sun4i: add lvds mode_valid function"
-
-Randy Dunlap (1):
-      drm/amdkfd: fix build, select MMU_NOTIFIER
-
-Sean Paul (1):
-      drm/msm: Mark the crtc->state->event consumed
-
-Stefan Agner (1):
-      drm/msm/dsi: use correct enum in dsi_get_cmd_fmt
-
-Ville Syrjälä (1):
-      drm/edid: Reset more of the display info
-
-Wei Yongjun (1):
-      drm/amdkfd: Fix the error return code in kfd_ioctl_unmap_memory_from_gpu()
-
-kbuild test robot (1):
-      drm/amdkfd: kfd_dev_is_large_bar() can be static
-
- drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c              |   7 +-
- drivers/gpu/drm/amd/amdkfd/Kconfig                 |   1 +
- drivers/gpu/drm/amd/amdkfd/kfd_chardev.c           |  17 ++--
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  |  10 +-
- .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_irq.c  |   5 +-
- .../amd/display/amdgpu_dm/amdgpu_dm_mst_types.c    |  54 +++++-----
- drivers/gpu/drm/drm_edid.c                         |  11 +--
- drivers/gpu/drm/i915/intel_cdclk.c                 |  16 ++-
- drivers/gpu/drm/i915/intel_drv.h                   |   4 +-
- drivers/gpu/drm/i915/intel_fbdev.c                 |   2 +-
- drivers/gpu/drm/i915/intel_runtime_pm.c            |  11 +--
- drivers/gpu/drm/msm/disp/mdp4/mdp4_crtc.c          |   1 +
- drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c          |   1 +
- drivers/gpu/drm/msm/disp/mdp_format.c              |   3 +-
- drivers/gpu/drm/msm/disp/mdp_kms.h                 |   2 +-
- drivers/gpu/drm/msm/dsi/dsi_host.c                 |  16 ++-
- drivers/gpu/drm/msm/dsi/phy/dsi_phy.c              | 109 +++++++++++++++++++++
- drivers/gpu/drm/msm/dsi/phy/dsi_phy.h              |   2 +
- drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c         |  28 ------
- drivers/gpu/drm/msm/msm_fb.c                       |   3 +-
- drivers/gpu/drm/msm/msm_fbdev.c                    |  11 +--
- drivers/gpu/drm/msm/msm_gem.c                      |  20 ++--
- drivers/gpu/drm/msm/msm_kms.h                      |   5 +-
- drivers/gpu/drm/qxl/qxl_cmd.c                      |   6 +-
- drivers/gpu/drm/qxl/qxl_drv.h                      |   1 +
- drivers/gpu/drm/qxl/qxl_ioctl.c                    |   4 +-
- drivers/gpu/drm/qxl/qxl_release.c                  |  18 ++--
- drivers/gpu/drm/sun4i/sun4i_lvds.c                 |  55 -----------
- drivers/gpu/drm/virtio/virtgpu_vq.c                |   4 +-
- 29 files changed, 237 insertions(+), 190 deletions(-)
+yes, the return value of _dev_dax_{pmd,pud,pte}_fault(), dev_dax_huge_fault(),
+dev_dax_fault() is already changed in a separate patch which was reviewed
+by Matthew and Ross. Other patch was posted in linux-nvdimm mailing list.
