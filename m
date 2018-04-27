@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932512AbeD0MLq (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 08:11:46 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:15916 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758133AbeD0MJv (ORCPT
+        id S1758246AbeD0MMJ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 08:12:09 -0400
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:62419 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758094AbeD0MJn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 08:09:51 -0400
+        Fri, 27 Apr 2018 08:09:43 -0400
 From: Kishon Vijay Abraham I <kishon@ti.com>
 To: Tony Lindgren <tony@atomide.com>
 CC: Jonathan Corbet <corbet@lwn.net>,
@@ -15,9 +15,9 @@ CC: Jonathan Corbet <corbet@lwn.net>,
         <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
         <kishon@ti.com>
-Subject: [PATCH v4 09/14] ARM: dts: dra7-evm: Model EVM_3V6 regulator
-Date: Fri, 27 Apr 2018 17:39:00 +0530
-Message-ID: <20180427120905.3665-10-kishon@ti.com>
+Subject: [PATCH v4 07/14] ARM: dts: am57xx-beagle-x15/am57xx-idk: Fix pinctrl-names
+Date: Fri, 27 Apr 2018 17:38:58 +0530
+Message-ID: <20180427120905.3665-8-kishon@ti.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427120905.3665-1-kishon@ti.com>
 References: <20180427120905.3665-1-kishon@ti.com>
@@ -28,74 +28,69 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On TI's DRA74x EVM, EVM_3V6 is connected is connected to the VBAT line
-of the wilink card. Model it here so that it can be used while adding
-wilink8 WLAN support.
+The IO lines of MMC2 in am57xx-beagle-x15/am57xx-idk is connected to
+3.3v. Use "ddr_3_3v" instead of "ddr_1_8v" to indicate DDR mode
+works in 3.3v on these boards.
 
 Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 ---
- arch/arm/boot/dts/dra7-evm.dts | 42 ++++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+ arch/arm/boot/dts/am571x-idk.dts        | 2 +-
+ arch/arm/boot/dts/am572x-idk.dts        | 2 +-
+ arch/arm/boot/dts/am574x-idk.dts        | 2 +-
+ arch/arm/boot/dts/am57xx-beagle-x15.dts | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/dra7-evm.dts b/arch/arm/boot/dts/dra7-evm.dts
-index f1425b0f3a54..181289a28ca1 100644
---- a/arch/arm/boot/dts/dra7-evm.dts
-+++ b/arch/arm/boot/dts/dra7-evm.dts
-@@ -20,6 +20,16 @@
- 		reg = <0x0 0x80000000 0x0 0x60000000>; /* 1536 MB */
- 	};
+diff --git a/arch/arm/boot/dts/am571x-idk.dts b/arch/arm/boot/dts/am571x-idk.dts
+index f7de03eb4377..5bb9d68d6e90 100644
+--- a/arch/arm/boot/dts/am571x-idk.dts
++++ b/arch/arm/boot/dts/am571x-idk.dts
+@@ -113,7 +113,7 @@
+ };
  
-+	evm_12v0: fixedregulator-evm_12v0 {
-+		/* main supply */
-+		compatible = "regulator-fixed";
-+		regulator-name = "evm_12v0";
-+		regulator-min-microvolt = <12000000>;
-+		regulator-max-microvolt = <12000000>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+
- 	evm_1v8_sw: fixedregulator-evm_1v8 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "evm_1v8";
-@@ -54,6 +64,38 @@
- 		regulator-max-microvolt = <1800000>;
- 	};
+ &mmc2 {
+-	pinctrl-names = "default", "hs", "ddr_1_8v";
++	pinctrl-names = "default", "hs", "ddr_3_3v";
+ 	pinctrl-0 = <&mmc2_pins_default>;
+ 	pinctrl-1 = <&mmc2_pins_hs>;
+ 	pinctrl-2 = <&mmc2_pins_ddr_rev20 &mmc2_iodelay_ddr_conf>;
+diff --git a/arch/arm/boot/dts/am572x-idk.dts b/arch/arm/boot/dts/am572x-idk.dts
+index 98b42ef33c46..3ef9111d0e8b 100644
+--- a/arch/arm/boot/dts/am572x-idk.dts
++++ b/arch/arm/boot/dts/am572x-idk.dts
+@@ -31,7 +31,7 @@
+ };
  
-+	evm_3v3: fixedregulator-evm3v3 {
-+		/* Output of Cntlr A of TPS43351-Q1 on dra7-evm */
-+		compatible = "regulator-fixed";
-+		regulator-name = "evm_3v3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		vin-supply = <&evm_12v0>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+
-+	evm_5v0: fixedregulator-evm_5v0 {
-+		/* Output of Cntlr B of TPS43351-Q1 on dra7-evm */
-+		compatible = "regulator-fixed";
-+		regulator-name = "evm_5v0";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		vin-supply = <&evm_12v0>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+
-+	evm_3v6: fixedregulator-evm_3v6 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "evm_3v6";
-+		regulator-min-microvolt = <3600000>;
-+		regulator-max-microvolt = <3600000>;
-+		vin-supply = <&evm_5v0>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+
- 	extcon_usb2: extcon_usb2 {
- 		compatible = "linux,extcon-usb-gpio";
- 		id-gpio = <&pcf_gpio_21 2 GPIO_ACTIVE_HIGH>;
+ &mmc2 {
+-	pinctrl-names = "default", "hs", "ddr_1_8v";
++	pinctrl-names = "default", "hs", "ddr_3_3v";
+ 	pinctrl-0 = <&mmc2_pins_default>;
+ 	pinctrl-1 = <&mmc2_pins_hs>;
+ 	pinctrl-2 = <&mmc2_pins_ddr_rev20>;
+diff --git a/arch/arm/boot/dts/am574x-idk.dts b/arch/arm/boot/dts/am574x-idk.dts
+index c7718b2d9fdf..378dfa780ac1 100644
+--- a/arch/arm/boot/dts/am574x-idk.dts
++++ b/arch/arm/boot/dts/am574x-idk.dts
+@@ -35,7 +35,7 @@
+ };
+ 
+ &mmc2 {
+-	pinctrl-names = "default", "hs", "ddr_1_8v";
++	pinctrl-names = "default", "hs", "ddr_3_3v";
+ 	pinctrl-0 = <&mmc2_pins_default>;
+ 	pinctrl-1 = <&mmc2_pins_default>;
+ 	pinctrl-2 = <&mmc2_pins_default>;
+diff --git a/arch/arm/boot/dts/am57xx-beagle-x15.dts b/arch/arm/boot/dts/am57xx-beagle-x15.dts
+index d6689106d2a8..c76ea6579a81 100644
+--- a/arch/arm/boot/dts/am57xx-beagle-x15.dts
++++ b/arch/arm/boot/dts/am57xx-beagle-x15.dts
+@@ -28,7 +28,7 @@
+ };
+ 
+ &mmc2 {
+-	pinctrl-names = "default", "hs", "ddr_1_8v";
++	pinctrl-names = "default", "hs", "ddr_3_3v";
+ 	pinctrl-0 = <&mmc2_pins_default>;
+ 	pinctrl-1 = <&mmc2_pins_hs>;
+ 	pinctrl-2 = <&mmc2_pins_ddr_3_3v_rev11 &mmc2_iodelay_ddr_3_3v_rev11_conf>;
 -- 
 2.17.0
