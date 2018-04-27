@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932489AbeD0MK2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 08:10:28 -0400
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:47355 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758196AbeD0MKI (ORCPT
+        id S1758226AbeD0MLQ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 08:11:16 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:49474 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758167AbeD0MJz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 08:10:08 -0400
+        Fri, 27 Apr 2018 08:09:55 -0400
 From: Kishon Vijay Abraham I <kishon@ti.com>
 To: Tony Lindgren <tony@atomide.com>
 CC: Jonathan Corbet <corbet@lwn.net>,
@@ -14,10 +14,12 @@ CC: Jonathan Corbet <corbet@lwn.net>,
         Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
         <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <kishon@ti.com>
-Subject: [PATCH v4 14/14] Documentation: ARM: Add new MMC requirements for DRA7/K2G
-Date: Fri, 27 Apr 2018 17:39:05 +0530
-Message-ID: <20180427120905.3665-15-kishon@ti.com>
+        <kishon@ti.com>, Hari Nagalla <hnagalla@ti.com>,
+        Ido Yariv <ido@wizery.com>, Eyal Reizer <eyalr@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>
+Subject: [PATCH v4 10/14] ARM: dts: dra7-evm: Add wilink8 wlan support
+Date: Fri, 27 Apr 2018 17:39:01 +0530
+Message-ID: <20180427120905.3665-11-kishon@ti.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427120905.3665-1-kishon@ti.com>
 References: <20180427120905.3665-1-kishon@ti.com>
@@ -28,27 +30,95 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->From 4.18 kernel, all the MMC controller instances in DRA7
-are programmed using sdhci based driver (sdhci-omap.c). Document
-this new requirement here. Both omap2plus_defconfig and
-multi_v7_defconfig has CONFIG_MMC_SDHCI_OMAP enabled.
+From: Hari Nagalla <hnagalla@ti.com>
 
+The wilink module is a combo wireless connectivity sdio
+card based on Texas Instrument's wl18xx solution. It is a
+4-wire, 1.8V, embedded sdio wlan device with an external
+irq line and is power-controlled by a gpio-based fixed
+regulator.
+
+Add pinmux configuration and IODelay values for MMC4.
+On dra7-evm, MMC4 is used for connecting to wilink module.
+
+IODelay data credits to :  Vishal Mahaveer <vishalm@ti.com>
+and Sekhar Nori <nsekhar@ti.com>
+
+Signed-off-by: Ido Yariv <ido@wizery.com>
+Signed-off-by: Eyal Reizer <eyalr@ti.com>
+Signed-off-by: Hari Nagalla <hnagalla@ti.com>
+Signed-off-by: Sekhar Nori <nsekhar@ti.com>
 Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 ---
- Documentation/arm/OMAP/README | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm/boot/dts/dra7-evm-common.dtsi | 15 +++++++++++++++
+ arch/arm/boot/dts/dra7-evm.dts         | 25 +++++++++++++++++++++++++
+ 2 files changed, 40 insertions(+)
 
-diff --git a/Documentation/arm/OMAP/README b/Documentation/arm/OMAP/README
-index 75645c45d14a..90c6c57d61e8 100644
---- a/Documentation/arm/OMAP/README
-+++ b/Documentation/arm/OMAP/README
-@@ -5,3 +5,7 @@ KERNEL		NEW DEPENDENCIES
- v4.3+		Update is needed for custom .config files to make sure
- 		CONFIG_REGULATOR_PBIAS is enabled for MMC1 to work
- 		properly.
+diff --git a/arch/arm/boot/dts/dra7-evm-common.dtsi b/arch/arm/boot/dts/dra7-evm-common.dtsi
+index 05a7b1a01bc3..33230c8b2951 100644
+--- a/arch/arm/boot/dts/dra7-evm-common.dtsi
++++ b/arch/arm/boot/dts/dra7-evm-common.dtsi
+@@ -260,3 +260,18 @@
+ &pcie1_rc {
+ 	status = "okay";
+ };
 +
-+v4.18+		Update is needed for custom .config files to make sure
-+		CONFIG_MMC_SDHCI_OMAP is enabled for all MMC instances
-+		to work in DRA7 and K2G based boards.
++&mmc4 {
++	bus-width = <4>;
++	cap-power-off-card;
++	keep-power-in-suspend;
++	non-removable;
++	#address-cells = <1>;
++	#size-cells = <0>;
++	wifi@2 {
++		compatible = "ti,wl1835";
++		reg = <2>;
++		interrupt-parent = <&gpio5>;
++		interrupts = <7 IRQ_TYPE_EDGE_RISING>;
++	};
++};
+diff --git a/arch/arm/boot/dts/dra7-evm.dts b/arch/arm/boot/dts/dra7-evm.dts
+index 181289a28ca1..704947cbef48 100644
+--- a/arch/arm/boot/dts/dra7-evm.dts
++++ b/arch/arm/boot/dts/dra7-evm.dts
+@@ -96,6 +96,16 @@
+ 		regulator-boot-on;
+ 	};
+ 
++	vmmcwl_fixed: fixedregulator-mmcwl {
++		compatible = "regulator-fixed";
++		regulator-name = "vmmcwl_fixed";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		gpio = <&gpio5 8 0>;
++		startup-delay-us = <70000>;
++		enable-active-high;
++	};
++
+ 	extcon_usb2: extcon_usb2 {
+ 		compatible = "linux,extcon-usb-gpio";
+ 		id-gpio = <&pcf_gpio_21 2 GPIO_ACTIVE_HIGH>;
+@@ -376,6 +386,21 @@
+ 	pinctrl-5 = <&mmc2_pins_hs200 &mmc2_iodelay_hs200_rev20_conf>;
+ };
+ 
++&mmc4 {
++	status = "okay";
++	vmmc-supply = <&evm_3v6>;
++	vqmmc-supply = <&vmmcwl_fixed>;
++	pinctrl-names = "default-rev11", "default", "hs-rev11", "hs", "sdr12-rev11", "sdr12", "sdr25-rev11", "sdr25";
++	pinctrl-0 = <&mmc4_pins_default &mmc4_iodelay_ds_rev11_conf>;
++	pinctrl-1 = <&mmc4_pins_default &mmc4_iodelay_ds_rev20_conf>;
++	pinctrl-2 = <&mmc4_pins_hs &mmc4_iodelay_sdr12_hs_sdr25_rev11_conf>;
++	pinctrl-3 = <&mmc4_pins_hs &mmc4_iodelay_sdr12_hs_sdr25_rev20_conf>;
++	pinctrl-4 = <&mmc4_pins_sdr12 &mmc4_iodelay_sdr12_hs_sdr25_rev11_conf>;
++	pinctrl-5 = <&mmc4_pins_sdr12 &mmc4_iodelay_sdr12_hs_sdr25_rev20_conf>;
++	pinctrl-6 = <&mmc4_pins_sdr25 &mmc4_iodelay_sdr12_hs_sdr25_rev11_conf>;
++	pinctrl-7 = <&mmc4_pins_sdr25 &mmc4_iodelay_sdr12_hs_sdr25_rev20_conf>;
++};
++
+ &cpu0 {
+ 	vdd-supply = <&smps123_reg>;
+ };
 -- 
 2.17.0
