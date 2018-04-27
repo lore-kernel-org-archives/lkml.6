@@ -1,114 +1,108 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1322948-1524891747-2-16882355112475226104
+X-Cyrus-Session-Id: sloti22d1t05-717497-1524858104-2-5651084400372977492
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
+  FromHeader='edu', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524891746; b=ExS/MloE1dNjfq+YV7vy5JFke/JKICK8o4rulgVuUfJr0xbDxW
-    ngIwwcqKnY51fmEbRvC/abRX9JM3veU19tkRfu5Oq8C7tzM11LFbaHOjo6+3BgY9
-    BOhCqzhGhD4QXEhUQ8LArmu+LbGCXN1FgPHp4VaTd8M1Dnz3dcNCOSN/br9OpRmU
-    LdwrZKXpGg5BY6CYE5Agik5hu9cO8eiS7obcu61SNiLVWxYjyWT2Jb6g2M0GCEXa
-    HGA8HDiFjzMjU+v3WviSFtg5b9EMmGXO/aM/XozzNyycQHHJLzKnUq09hopa6982
-    YIzwslazdPl0DKzVjxaRiRRoQRghyqsrexzg==
+    1524858103; b=JgSTchjcQDckRst/PQoB4A6DgcxU2Qg8oVEpYduIE6xKzvGZjU
+    OSIQStAXwEJjrzi1GpcmpUKXJ/j5Jegb9SZuPqaoptTWpGo4oKN+woNxGmQXiH/K
+    F7yV+HrMwmY2qybTZ7jpQY1gyL5WVl9ZzrhJb9JuTZsKo8edieTlcA8XgWTKaGR7
+    mLZ7AZ98eLJGTBQ2i5H365zv86EkhYHvzkcfnw7gfHGB5VtZqFnCs7GgOlcbgjF4
+    r4NXvO5mP8kiGo4t/FpWbT7C0md/3173u/38Y6fKuKHiyqY+rvdt7rDAul6hHpHe
+    SRwSzzyJD9FJ7d/VHEOyTbCWw18kM+tYRCZA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:cc:subject:message-id
     :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1524891746; bh=gfLkFyi/f2e7+UB9uAKMKZN4zxNP8y
-    XcNi3krrSOkOU=; b=J/N9nzXjCRSdsvFo2+dTE23V1aICp0/fn3avIriKsx8v5A
-    wMxzSDuMWeQDBqwsBO+tFnva3VnZgDYOEZE6ZFTkexU4OK+NWZcGVFAtMIGS8fc2
-    mkz0ot28niPRpTip4MYkdjRmdssNhCfloii2ZNUFOKZ+33E8b6xn8Zf99/5x/Ooh
-    gpZqgXmieMnoZNem5omCLp/50/WsS0yHXKisiRWQR6Ezax6fgzi46qyplZnd/yTr
-    r4Z7YqVyzPwIpZnY8Iq9jMfGPrYP3AWwSNE/fNF72y7jVMvZERFciWgTTK8CiI9g
-    YKHCdaI1fWg49namC7y/ZhC4OU1U1ki4DQcjSjzw==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    :list-id; s=fm2; t=1524858103; bh=kCE2nxjdmTUcb+Yai/TBvCsTHUHTWc
+    HhWEdCaWKGMyk=; b=AEOdAaAUiiixBcB/QtfQaPNnztzWyvU5lWtgL21QcKOInm
+    k8f6RWaKI3Q8F7ycaxH2RktinvyuthsAtMCX/Yx6uoylMMIAJuUC/aOrESzVcDOm
+    sHg+HZbVGQCmrH8dv40BLc2mIpyFOJCSzSe8A0DFv+juU3f892iU2N5QnEeIlzgk
+    A0oDu29+NOfJb2uW6Kji98FBbfm3EntBLMXGdm/LpI3GJJeWSwZ3htwNOOLrf2Ic
+    UQkYPkdnRMNXnI0Lv1w739Dg7312F9ch3KryOJh+cS13pv5Lz10kvz4yjIVJREPj
+    nIU5eB89ehKkJvTPUX+Rvi8sLMKoLYYvV/tAVWzw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=thunk.org header.i=@thunk.org header.b=LiCQHbCT x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=ef5046eb;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=mit.edu;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=mit.edu header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=thunk.org header.i=@thunk.org header.b=LiCQHbCT x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=ef5046eb;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=mit.edu;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=mit.edu header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfM3CRMt//k9gR09FfQopff8aR9TgK8gWxuHVX90TGsh3V22QWPAIZfhwAslcSuZmvB4IYEUqkRrEGWkh9bTGLxooIeVFvc46Na+i7K0LEAkCFDstOv3O
-    YyOS1s1Xrj3Pi3/kbx/COTUvEt4ZNlMRqSe7sldsskqJCcf4cGTRPMTjs2aBa18NtIy0nPLIwbU680tCvo4VgvBOIKjGxMtlJxG+bob9yoQZwy49OJB4sN6z
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=28HZq395EAYA:10
-    a=Kd1tUaAdevIA:10 a=ag1SF4gXAAAA:8 a=VwQbUJbxAAAA:8 a=9pUbHOeFcNDuGlTo-ngA:9
-    a=CjuIK1q_8ugA:10 a=Yupwre4RP9_Eg_Bd0iYG:22 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfDkUTm2hH551v8tE7VI3xMXGTCa6zNdi4YcL58keRy9xIFTv4c7Hj4Qag/f06/euptFzVddcMIBldtLaO4dfsqfI5INFCBgYg98XsBgBUlpl0evLf4oz
+    rNoz4B2f2xEqLWFyewpkaV71fN8SUfAH+uaRBgeJtqv+ez+h7BFcAbxf8Z50yOOrl7CQzSNsz5pn5qVnkikuOWHgLoobg7WA/tQ/WDzSr0U+XcNzcB7Th5sS
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=x7bEGLp0ZPQA:10
+    a=28HZq395EAYA:10 a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8 a=AMWwri6qENbl8ABgyeEA:9
+    a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751874AbeD1FCZ (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 28 Apr 2018 01:02:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42210 "EHLO mail.kernel.org"
+        id S1759038AbeD0Tlk (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 27 Apr 2018 15:41:40 -0400
+Received: from imap.thunk.org ([74.207.234.97]:40186 "EHLO imap.thunk.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751682AbeD1FCY (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sat, 28 Apr 2018 01:02:24 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CD9F21938
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
-Date: Sat, 28 Apr 2018 07:02:14 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Harsh Shandilya <harsh@prjkt.io>
+        id S1758167AbeD0Tlj (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 27 Apr 2018 15:41:39 -0400
+Date: Fri, 27 Apr 2018 15:41:28 -0400
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
         akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
         patches@kernelci.org, ben.hutchings@codethink.co.uk,
         lkft-triage@lists.linaro.org, stable@vger.kernel.org
 Subject: Re: [PATCH 3.18 00/24] 3.18.107-stable review
-Message-ID: <20180428050214.GD29422@kroah.com>
+Message-ID: <20180427194128.GK5965@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
 References: <20180427135631.584839868@linuxfoundation.org>
- <651C4935-B2B0-4281-BEE1-DC18DB3ECF57@prjkt.io>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <651C4935-B2B0-4281-BEE1-DC18DB3ECF57@prjkt.io>
+In-Reply-To: <20180427135631.584839868@linuxfoundation.org>
 User-Agent: Mutt/1.9.5 (2018-04-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sat, Apr 28, 2018 at 03:03:04AM +0530, Harsh Shandilya wrote:
-> On 27 April 2018 7:27:35 PM IST, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-> >This is the start of the stable review cycle for the 3.18.107 release.
-> >There are 24 patches in this series, all will be posted as a response
-> >to this one.  If anyone has any issues with these being applied, please
-> >let me know.
-> >
-> >Responses should be made by Sun Apr 29 13:56:20 UTC 2018.
-> >Anything received after that time might be too late.
-> >
-> >The whole patch series can be found in one patch at:
-> >	https://www.kernel.org/pub/linux/kernel/v3.x/stable-review/patch-3.18.107-rc1.gz
-> >or in the git tree and branch at:
-> >	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-> >linux-3.18.y
-> >and the diffstat can be found below.
-> No issues on the OnePlus 3, usage seems fine so far. Thanks!
+On Fri, Apr 27, 2018 at 03:57:35PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 3.18.107 release.
 
-Wonderful, thanks for testing and letting me know.
+The kernel.org page currently lists 3.18 as EOL.  I assume we released
+an update for Spectre/Meltdown after we declared it end of life, but I
+was surprised to see that there was going to be a 3.18.107.
 
-greg k-h
+Should we change how 3.18 is listed on kernel.org?  Or should we just
+keep peeople wondering whether will be updates after 3.18.107?  :-)
+
+     	     	       	       	    - Ted
