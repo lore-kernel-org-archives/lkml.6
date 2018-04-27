@@ -1,53 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757867AbeD0Ja3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 05:30:29 -0400
-Received: from mail-pg0-f47.google.com ([74.125.83.47]:43842 "EHLO
-        mail-pg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751608AbeD0Ja2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 05:30:28 -0400
-X-Google-Smtp-Source: AB8JxZrcTXWsrK2za6uPazNr9fb2/4Jm/DQH/jLEfmHZIkp0cFYCova4HpWwaGybjKUMXPF+XHgoaQ==
-Date: Fri, 27 Apr 2018 15:00:25 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] sched/fair: Avoid calling sync_entity_load_avg()
- unnecessarily
-Message-ID: <20180427093025.q4e6nb4kttgrg6nt@vireshk-i7>
-References: <20831b8d237bf3a20e4e328286f678b425ff04c9.1524738578.git.viresh.kumar@linaro.org>
- <cd019d1753824c81130eae7b43e2bbcec47cc1ad.1524738578.git.viresh.kumar@linaro.org>
- <c1dba90d-d464-9286-94e3-e399f0b71281@arm.com>
+        id S1757879AbeD0Jah (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 05:30:37 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37170 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751608AbeD0Jac (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 05:30:32 -0400
+Date: Fri, 27 Apr 2018 10:30:27 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Kim Phillips <kim.phillips@arm.com>
+Cc: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, Will.Deacon@arm.com,
+        jnair@caviumnetworks.com, Robert.Richter@cavium.com,
+        Vadim.Lomovtsev@cavium.com, Jan.Glauber@cavium.com, gklkml16@gmail.com
+Subject: Re: [PATCH v4 2/2] ThunderX2: Add Cavium ThunderX2 SoC UNCORE PMU
+ driver
+Message-ID: <20180427093027.ngtuoezyh6mtz26p@lakrids.cambridge.arm.com>
+References: <20180425090047.6485-1-ganapatrao.kulkarni@cavium.com>
+ <20180425090047.6485-3-ganapatrao.kulkarni@cavium.com>
+ <20180426170624.bfcba885431d57d0de2a3ddd@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c1dba90d-d464-9286-94e3-e399f0b71281@arm.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+In-Reply-To: <20180426170624.bfcba885431d57d0de2a3ddd@arm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dietmar,
+Hi Kim,
 
-On 27-04-18, 10:30, Dietmar Eggemann wrote:
-> I would suggest we leave the call to sync_entity_load_avg() in the slow path
-> of strf() so that we're not forced to call it in
-> find_energy_efficient_cpu().
+On Thu, Apr 26, 2018 at 05:06:24PM -0500, Kim Phillips wrote:
+> On Wed, 25 Apr 2018 14:30:47 +0530
+> Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com> wrote:
+> 
+> > +static int thunderx2_uncore_event_init(struct perf_event *event)
 
-Well, that's what I did in the very first attempt:
+> This PMU driver can be made more user-friendly by not just silently
+> returning an error code such as -EINVAL, but by emitting a useful
+> message describing the specific error via dmesg.
 
-https://lkml.kernel.org/r/20180425051509.aohopadqw7q5urbd@vireshk-i7
+As has previously been discussed on several occasions, patches which log
+to dmesg in a pmu::event_init() path at any level above pr_debug() are
+not acceptable -- dmesg is not intended as a mechanism to inform users
+of driver-specific constraints.
 
-But then I realized that based on the current state of code, its
-better to move it to find_idlest_cpu() instead.
+I would appreciate if in future you could qualify your suggestion with
+the requirement that pr_debug() is used.
 
-I would be fine with sending the above patch instead (if Peter
-agrees). Though it should be trivial to move it back to strq() in the
-patch where you are adding call to find_energy_efficient_cpu().
-
-I am fine with both the options though.
-
--- 
-viresh
+Thanks,
+Mark.
