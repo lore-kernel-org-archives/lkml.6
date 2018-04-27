@@ -1,55 +1,144 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934492AbeD0Orx (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 10:47:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38412 "EHLO mail.kernel.org"
+        id S934477AbeD0Ouv (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 10:50:51 -0400
+Received: from foss.arm.com ([217.140.101.70]:41452 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934021AbeD0Orv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 10:47:51 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41757218D9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Fri, 27 Apr 2018 10:47:47 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Joel Fernandes <joelaf@google.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        fweisbec <fweisbec@gmail.com>, Randy Dunlap <rdunlap@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        kbuild test robot <fengguang.wu@intel.com>,
-        baohong liu <baohong.liu@intel.com>,
-        vedang patel <vedang.patel@intel.com>, kernel-team@android.com
-Subject: Re: [PATCH RFC] tracepoint: Introduce tracepoint callbacks
- executing with preempt on
-Message-ID: <20180427104747.2d965925@gandalf.local.home>
-In-Reply-To: <1169911546.5820.1524839189395.JavaMail.zimbra@efficios.com>
-References: <20180427042656.190746-1-joelaf@google.com>
-        <1169911546.5820.1524839189395.JavaMail.zimbra@efficios.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S934254AbeD0Our (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 10:50:47 -0400
+From: Punit Agrawal <punit.agrawal@arm.com>
+To: Christoffer Dall <christoffer.dall@arm.com>
+Cc: marc.zyngier@arm.com, Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 4/4] KVM: arm64: Add support for PUD hugepages at stage 2
+References: <20180420145409.24485-1-punit.agrawal@arm.com>
+        <20180420145409.24485-5-punit.agrawal@arm.com>
+        <20180427111422.GK13249@C02W217FHV2R.local>
+Date: Fri, 27 Apr 2018 15:50:44 +0100
+In-Reply-To: <20180427111422.GK13249@C02W217FHV2R.local> (Christoffer Dall's
+        message of "Fri, 27 Apr 2018 13:14:22 +0200")
+Message-ID: <877eoszosb.fsf@e105922-lin.cambridge.arm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 27 Apr 2018 10:26:29 -0400 (EDT)
-Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+Christoffer Dall <christoffer.dall@arm.com> writes:
 
-> The general approach and the implementation look fine, except for
-> one small detail: I would be tempted to explicitly disable preemption
-> around the call to the tracepoint callback for the rcuidle variant,
-> unless we plan to audit every tracer right away to remove any assumption
-> that preemption is disabled in the callback implementation.
+> On Fri, Apr 20, 2018 at 03:54:09PM +0100, Punit Agrawal wrote:
+>> KVM only supports PMD hugepages at stage 2. Extend the stage 2 fault
+>> handling to add support for PUD hugepages.
+>> 
+>> Addition of pud hugepage support enables additional hugepage
+>> sizes (e.g., 1G with 4K granule) which can be useful on cores that
+>> support mapping larger block sizes in the TLB entries.
+>> 
+>> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
+>> Cc: Christoffer Dall <christoffer.dall@arm.com>
+>> Cc: Marc Zyngier <marc.zyngier@arm.com>
+>> Cc: Russell King <linux@armlinux.org.uk>
+>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>> Cc: Will Deacon <will.deacon@arm.com>
+>> ---
+>>  arch/arm/include/asm/kvm_mmu.h         | 19 +++++++++
+>>  arch/arm64/include/asm/kvm_mmu.h       | 15 +++++++
+>>  arch/arm64/include/asm/pgtable-hwdef.h |  4 ++
+>>  arch/arm64/include/asm/pgtable.h       |  2 +
+>>  virt/kvm/arm/mmu.c                     | 54 ++++++++++++++++++++------
+>>  5 files changed, 83 insertions(+), 11 deletions(-)
+>> 
 
-I'm thinking that we do that audit. There shouldn't be many instances
-of it. I like the idea that a tracepoint callback gets called with
-preemption enabled.
+[...]
 
--- Steve
+>> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+
+[...]
+
+>> @@ -1452,9 +1472,12 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+>>  	}
+>>  
+>>  	vma_pagesize = vma_kernel_pagesize(vma);
+>> -	if (vma_pagesize == PMD_SIZE && !logging_active) {
+>> +	if ((vma_pagesize == PMD_SIZE || vma_pagesize == PUD_SIZE) &&
+>> +	    !logging_active) {
+>> +		struct hstate *h = hstate_vma(vma);
+>> +
+>>  		hugetlb = true;
+>> -		gfn = (fault_ipa & PMD_MASK) >> PAGE_SHIFT;
+>> +		gfn = (fault_ipa & huge_page_mask(h)) >> PAGE_SHIFT;
+>>  	} else {
+>>  		/*
+>>  		 * Pages belonging to memslots that don't have the same
+>> @@ -1521,15 +1544,8 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+>>  	if (mmu_notifier_retry(kvm, mmu_seq))
+>>  		goto out_unlock;
+>>  
+>> -	if (!hugetlb && !force_pte) {
+>> -		/*
+>> -		 * Only PMD_SIZE transparent hugepages(THP) are
+>> -		 * currently supported. This code will need to be
+>> -		 * updated if other THP sizes are supported.
+>> -		 */
+>> +	if (!hugetlb && !force_pte)
+>>  		hugetlb = transparent_hugepage_adjust(&pfn, &fault_ipa);
+>> -		vma_pagesize = PMD_SIZE;
+>
+> Why this change?  Won't you end up trying to map THPs as individual
+> pages now?
+
+Argh - that's a rebase gone awry. Thanks for spotting.
+
+There's another issue with this hunk - hugetlb can be false after the
+call to transparent_hugepage_adjust(). I've fixed that up for the next
+update.
+
+>
+>> -	}
+>>  
+>>  	if (writable)
+>>  		kvm_set_pfn_dirty(pfn);
+>> @@ -1540,7 +1556,23 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+>>  	if (exec_fault)
+>>  		invalidate_icache_guest_page(pfn, vma_pagesize);
+>>  
+>> -	if (hugetlb) {
+>> +	if (vma_pagesize == PUD_SIZE) {
+>> +		pud_t new_pud = kvm_pfn_pud(pfn, mem_type);
+>> +
+>> +		new_pud = kvm_pud_mkhuge(new_pud);
+>> +		if (writable)
+>> +			new_pud = kvm_s2pud_mkwrite(new_pud);
+>> +
+>> +		if (exec_fault) {
+>> +			new_pud = kvm_s2pud_mkexec(new_pud);
+>> +		} else if (fault_status == FSC_PERM) {
+>> +			/* Preserve execute if XN was already cleared */
+>> +			if (stage2_is_exec(kvm, fault_ipa))
+>> +				new_pud = kvm_s2pud_mkexec(new_pud);
+>> +		}
+>
+> aha, another reason for my suggestion in the other patch.
+
+Ack! Already fixed locally.
+
+>
+>> +
+>> +		ret = stage2_set_pud_huge(kvm, memcache, fault_ipa, &new_pud);
+>> +	} else if (vma_pagesize == PMD_SIZE) {
+>>  		pmd_t new_pmd = kvm_pfn_pmd(pfn, mem_type);
+>>  
+>>  		new_pmd = kvm_pmd_mkhuge(new_pmd);
+>> -- 
+>> 2.17.0
+>> 
+>
+> Otherwise, this patch looks fine.
+
+Thanks a lot for reviewing the patches. I'll send out an update
+incorporating your suggestions.
+
+Punit
