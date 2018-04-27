@@ -1,39 +1,39 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpiDQpAOs1zcgvYGWfPkkg5nlmB0I5q7stmHw4E6lPyI1X8yTf8ZC+uZnfs1d60+8VO1bh0
-ARC-Seal: i=1; a=rsa-sha256; t=1524838025; cv=none;
+X-Google-Smtp-Source: AB8JxZpr/XMi+h/z8oELWoICZR57udj4rD6taIhP49/fgAU9fcAowoYH4YXg4+dL2Rmce8AumPKN
+ARC-Seal: i=1; a=rsa-sha256; t=1524838023; cv=none;
         d=google.com; s=arc-20160816;
-        b=ekduHALFUhMMDsOWaxvL6FFLklcSGUTd8fOHSC0nr7iVUwFCZLcDY8DbIiZSes8U6G
-         juIPnARnUlxMjz48U0qXWnIuP+3ODzchLhtxVnypX4eJDPLHO/jPbh0q4iPMJuWD0ZA7
-         OlwvkYkNs8zsIqyWTVQPAbDi4DszaBEYEP1B1paYRv8fuqLUwxmzlAEtaQHfK4x61qSL
-         hngEIROdhRUsHsX12ItHeohUR75HkvX6cqpeGOiw5o/kuXyECntRfzsJJLtiz3n5idS5
-         oHV1/9EDPOCSt07DdLV35aZ4sumaBYjOBrJJAd55ghh1f2nNrZ0zGm7k6b/b9cCc16bi
-         t3nQ==
+        b=xbG7HMDeg1CIsfQFvYqnBmbxvGTLNemhvNcFA2LmgnZbpni5dx6Ae1n7F6AOBQc/qv
+         dpntaa0kCXSObETS+1uZCQgiyk0PUBuPAxS147kLL6MNDRq1EzHdJuEI3WOoxxB6zX/g
+         66kYxz9F2itY7VurQQcMBPYlcWALEWKhqaNLgrWAymxeD2TBwsmt088RQOvNvMK3DF5R
+         Yh2hVKanpkITK/+zP/09jxtaACqlRCJHu1pXqTosWzWzCDEsVVNkL6aKKR7lzsMcGKIf
+         Aca1upiwduMaSqcY6wxsbvUUTdb6qHVYtOgo9aMH2wb5isvqlOrpYWtQs/Sb55lfl6oK
+         Mwhg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=UmNL3NsVCLNksA/Z2Q60H+1HzSQZ+ZxsCjwWaUkCb98=;
-        b=pWdTRStRBG4wTirH9dNsy8E56ZLeiuGLZpxFAc4qjBNM85z1aVDe6crecYTJSvSuPw
-         3VHHR4FFwPOxIVhNWyF1bBYOeLM9u1yboSqdBu5nmfuFGpTQGMrgPv+aFQNiB1D+3fV9
-         2aSVzoeizLHI+PpGEuyyv0ALZFUBkXxkpJdHHRBuCkEH6843tnj9GbnfO5X1tE5dZYTB
-         s/FAxJiTvVDBGH6rcNsRCiF458ff6Cq0LLiI/v2x1wbHWPFA4tVR5fOPCfjw9NA/ouQ8
-         BeAxD+HxO6qf7U9maGubmxF6gZISFHIJxw2kF8nFfZ6GAkY/1pAlBGGsTWZcYgvY8fFT
-         QttA==
+        bh=5aIlWnMvfgjB6Pm61ovgei4dFhliwLn+3L48KDzL0U0=;
+        b=lHpat10xkFavr+zR/PiMYC64jrxe8UJdJYVrHAS0HOTgfaY7oWysxUgmtyOMBN3p+Q
+         Xp0+7JQ2tfqt5iPn9AFn3h29oMXd413bCHv0QS4yi2ttjwKLQm4gEINBme/jKM8wI7tI
+         +MmjBEG1k1gqaHrWe1OcHGBOTUaWDs7KagUxq+XnYBnuqXuKsyAz9p3/NbaQKSnuJ2FB
+         JpxNXr2XOYy5wVoa/ZyXrAtneSSzpUCQxWYfHI6rjfrOa1F/hSxeDThsiWy2fZV9CYtt
+         //pzCDl1yGvg++MrujGgEFVmRmSqPKKWgBRW3G1emryWPcLZvauxGZ/bqNUezWvZ7PBb
+         EZHw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6C8C218BC
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D31321864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Doron Roberts-Kedes <doronrk@fb.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 31/80] strparser: Fix incorrect strp->need_bytes value.
-Date: Fri, 27 Apr 2018 15:58:24 +0200
-Message-Id: <20180427135734.560740670@linuxfoundation.org>
+Subject: [PATCH 4.14 30/80] amd-xgbe: Only use the SFP supported transceiver signals
+Date: Fri, 27 Apr 2018 15:58:23 +0200
+Message-Id: <20180427135734.517998240@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135732.928644313@linuxfoundation.org>
 References: <20180427135732.928644313@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908447487343688?=
-X-GMAIL-MSGID: =?utf-8?q?1598908557206090876?=
+X-GMAIL-THRID: =?utf-8?q?1598908554692559135?=
+X-GMAIL-MSGID: =?utf-8?q?1598908554692559135?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,68 +52,135 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Doron Roberts-Kedes <doronrk@fb.com>
+From: Tom Lendacky <thomas.lendacky@amd.com>
 
 
-[ Upstream commit 9d0c75bf6e03d9bf80c55b0f677dc9b982958fd5 ]
+[ Upstream commit 117df655f8ed51adb6e6b163812a06ebeae9f453 ]
 
-strp_data_ready resets strp->need_bytes to 0 if strp_peek_len indicates
-that the remainder of the message has been received. However,
-do_strp_work does not reset strp->need_bytes to 0. If do_strp_work
-completes a partial message, the value of strp->need_bytes will continue
-to reflect the needed bytes of the previous message, causing
-future invocations of strp_data_ready to return early if
-strp->need_bytes is less than strp_peek_len. Resetting strp->need_bytes
-to 0 in __strp_recv on handing a full message to the upper layer solves
-this problem.
+The SFP eeprom indicates the transceiver signals (Rx LOS, Tx Fault, etc.)
+that it supports.  Update the driver to include checking the eeprom data
+when deciding whether to use a transceiver signal.
 
-__strp_recv also calculates strp->need_bytes using stm->accum_len before
-stm->accum_len has been incremented by cand_len. This can cause
-strp->need_bytes to be equal to the full length of the message instead
-of the full length minus the accumulated length. This, in turn, causes
-strp_data_ready to return early, even when there is sufficient data to
-complete the partial message. Incrementing stm->accum_len before using
-it to calculate strp->need_bytes solves this problem.
-
-Found while testing net/tls_sw recv path.
-
-Fixes: 43a0c6751a322847 ("strparser: Stream parser for messages")
-Signed-off-by: Doron Roberts-Kedes <doronrk@fb.com>
+Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/strparser/strparser.c |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/amd/xgbe/xgbe-phy-v2.c |   71 +++++++++++++++++++++-------
+ 1 file changed, 54 insertions(+), 17 deletions(-)
 
---- a/net/strparser/strparser.c
-+++ b/net/strparser/strparser.c
-@@ -296,9 +296,9 @@ static int __strp_recv(read_descriptor_t
- 					strp_start_timer(strp, timeo);
- 				}
+--- a/drivers/net/ethernet/amd/xgbe/xgbe-phy-v2.c
++++ b/drivers/net/ethernet/amd/xgbe/xgbe-phy-v2.c
+@@ -253,6 +253,10 @@ enum xgbe_sfp_speed {
+ #define XGBE_SFP_BASE_VENDOR_SN			4
+ #define XGBE_SFP_BASE_VENDOR_SN_LEN		16
  
-+				stm->accum_len += cand_len;
- 				strp->need_bytes = stm->strp.full_len -
- 						       stm->accum_len;
--				stm->accum_len += cand_len;
- 				stm->early_eaten = cand_len;
- 				STRP_STATS_ADD(strp->stats.bytes, cand_len);
- 				desc->count = 0; /* Stop reading socket */
-@@ -321,6 +321,7 @@ static int __strp_recv(read_descriptor_t
- 		/* Hurray, we have a new message! */
- 		cancel_delayed_work(&strp->msg_timer_work);
- 		strp->skb_head = NULL;
-+		strp->need_bytes = 0;
- 		STRP_STATS_INCR(strp->stats.msgs);
++#define XGBE_SFP_EXTD_OPT1			1
++#define XGBE_SFP_EXTD_OPT1_RX_LOS		BIT(1)
++#define XGBE_SFP_EXTD_OPT1_TX_FAULT		BIT(3)
++
+ #define XGBE_SFP_EXTD_DIAG			28
+ #define XGBE_SFP_EXTD_DIAG_ADDR_CHANGE		BIT(2)
  
- 		/* Give skb to upper layer */
-@@ -410,9 +411,7 @@ void strp_data_ready(struct strparser *s
+@@ -332,6 +336,7 @@ struct xgbe_phy_data {
+ 
+ 	unsigned int sfp_gpio_address;
+ 	unsigned int sfp_gpio_mask;
++	unsigned int sfp_gpio_inputs;
+ 	unsigned int sfp_gpio_rx_los;
+ 	unsigned int sfp_gpio_tx_fault;
+ 	unsigned int sfp_gpio_mod_absent;
+@@ -986,6 +991,49 @@ static void xgbe_phy_sfp_external_phy(st
+ 	phy_data->sfp_phy_avail = 1;
+ }
+ 
++static bool xgbe_phy_check_sfp_rx_los(struct xgbe_phy_data *phy_data)
++{
++	u8 *sfp_extd = phy_data->sfp_eeprom.extd;
++
++	if (!(sfp_extd[XGBE_SFP_EXTD_OPT1] & XGBE_SFP_EXTD_OPT1_RX_LOS))
++		return false;
++
++	if (phy_data->sfp_gpio_mask & XGBE_GPIO_NO_RX_LOS)
++		return false;
++
++	if (phy_data->sfp_gpio_inputs & (1 << phy_data->sfp_gpio_rx_los))
++		return true;
++
++	return false;
++}
++
++static bool xgbe_phy_check_sfp_tx_fault(struct xgbe_phy_data *phy_data)
++{
++	u8 *sfp_extd = phy_data->sfp_eeprom.extd;
++
++	if (!(sfp_extd[XGBE_SFP_EXTD_OPT1] & XGBE_SFP_EXTD_OPT1_TX_FAULT))
++		return false;
++
++	if (phy_data->sfp_gpio_mask & XGBE_GPIO_NO_TX_FAULT)
++		return false;
++
++	if (phy_data->sfp_gpio_inputs & (1 << phy_data->sfp_gpio_tx_fault))
++		return true;
++
++	return false;
++}
++
++static bool xgbe_phy_check_sfp_mod_absent(struct xgbe_phy_data *phy_data)
++{
++	if (phy_data->sfp_gpio_mask & XGBE_GPIO_NO_MOD_ABSENT)
++		return false;
++
++	if (phy_data->sfp_gpio_inputs & (1 << phy_data->sfp_gpio_mod_absent))
++		return true;
++
++	return false;
++}
++
+ static bool xgbe_phy_belfuse_parse_quirks(struct xgbe_prv_data *pdata)
+ {
+ 	struct xgbe_phy_data *phy_data = pdata->phy_data;
+@@ -1031,6 +1079,10 @@ static void xgbe_phy_sfp_parse_eeprom(st
+ 	if (sfp_base[XGBE_SFP_BASE_EXT_ID] != XGBE_SFP_EXT_ID_SFP)
  		return;
  
- 	if (strp->need_bytes) {
--		if (strp_peek_len(strp) >= strp->need_bytes)
--			strp->need_bytes = 0;
--		else
-+		if (strp_peek_len(strp) < strp->need_bytes)
- 			return;
++	/* Update transceiver signals (eeprom extd/options) */
++	phy_data->sfp_tx_fault = xgbe_phy_check_sfp_tx_fault(phy_data);
++	phy_data->sfp_rx_los = xgbe_phy_check_sfp_rx_los(phy_data);
++
+ 	if (xgbe_phy_sfp_parse_quirks(pdata))
+ 		return;
+ 
+@@ -1196,7 +1248,6 @@ put:
+ static void xgbe_phy_sfp_signals(struct xgbe_prv_data *pdata)
+ {
+ 	struct xgbe_phy_data *phy_data = pdata->phy_data;
+-	unsigned int gpio_input;
+ 	u8 gpio_reg, gpio_ports[2];
+ 	int ret;
+ 
+@@ -1211,23 +1262,9 @@ static void xgbe_phy_sfp_signals(struct
+ 		return;
  	}
  
+-	gpio_input = (gpio_ports[1] << 8) | gpio_ports[0];
+-
+-	if (phy_data->sfp_gpio_mask & XGBE_GPIO_NO_MOD_ABSENT) {
+-		/* No GPIO, just assume the module is present for now */
+-		phy_data->sfp_mod_absent = 0;
+-	} else {
+-		if (!(gpio_input & (1 << phy_data->sfp_gpio_mod_absent)))
+-			phy_data->sfp_mod_absent = 0;
+-	}
+-
+-	if (!(phy_data->sfp_gpio_mask & XGBE_GPIO_NO_RX_LOS) &&
+-	    (gpio_input & (1 << phy_data->sfp_gpio_rx_los)))
+-		phy_data->sfp_rx_los = 1;
++	phy_data->sfp_gpio_inputs = (gpio_ports[1] << 8) | gpio_ports[0];
+ 
+-	if (!(phy_data->sfp_gpio_mask & XGBE_GPIO_NO_TX_FAULT) &&
+-	    (gpio_input & (1 << phy_data->sfp_gpio_tx_fault)))
+-		phy_data->sfp_tx_fault = 1;
++	phy_data->sfp_mod_absent = xgbe_phy_check_sfp_mod_absent(phy_data);
+ }
+ 
+ static void xgbe_phy_sfp_mod_absent(struct xgbe_prv_data *pdata)
