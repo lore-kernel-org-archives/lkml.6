@@ -1,69 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758749AbeD0QL4 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 12:11:56 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:41740 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758565AbeD0QLx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 12:11:53 -0400
-X-Google-Smtp-Source: AB8JxZp+ZXgCR79Xm+4jFQa+/3I49204F949pnNxIlHghRiRTCmYNZsZkkN1iXlS+DPtXiFtA4pjUs13wcTmI4vbsyw=
+        id S1758522AbeD0QNf (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 12:13:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51710 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1758236AbeD0QNe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 12:13:34 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1397921893
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Fri, 27 Apr 2018 12:13:30 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Joel Fernandes <joelaf@google.com>, linux-kernel@vger.kernel.org,
+        Peter Zilstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Fenguang Wu <fengguang.wu@intel.com>,
+        Baohong Liu <baohong.liu@intel.com>,
+        Vedang Patel <vedang.patel@intel.com>, kernel-team@android.com
+Subject: Re: [PATCH RFC] tracepoint: Introduce tracepoint callbacks
+ executing with preempt on
+Message-ID: <20180427121330.40b7ef15@gandalf.local.home>
+In-Reply-To: <20180427155701.GL26088@linux.vnet.ibm.com>
+References: <20180427042656.190746-1-joelaf@google.com>
+        <20180427155701.GL26088@linux.vnet.ibm.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180427185501-mutt-send-email-mst@kernel.org>
-References: <000000000000a5b2b1056a86e98c@google.com> <20180427154502.GA22544@la.guarana.org>
- <20180427185501-mutt-send-email-mst@kernel.org>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Fri, 27 Apr 2018 18:11:31 +0200
-Message-ID: <CACT4Y+b4fEOw=GjTsZMHVyQPOZmuqPWj6AJJshpS-UGRx=bhXA@mail.gmail.com>
-Subject: Re: [PATCH net] vhost: Use kzalloc() to allocate vhost_msg_node
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Kevin Easton <kevin@guarana.org>, Jason Wang <jasowang@redhat.com>,
-        KVM list <kvm@vger.kernel.org>,
-        virtualization@lists.linux-foundation.org,
-        netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 27, 2018 at 6:05 PM, Michael S. Tsirkin <mst@redhat.com> wrote:
-> On Fri, Apr 27, 2018 at 11:45:02AM -0400, Kevin Easton wrote:
->> The struct vhost_msg within struct vhost_msg_node is copied to userspace,
->> so it should be allocated with kzalloc() to ensure all structure padding
->> is zeroed.
->>
->> Signed-off-by: Kevin Easton <kevin@guarana.org>
->> Reported-by: syzbot+87cfa083e727a224754b@syzkaller.appspotmail.com
->
-> Does it help if a patch naming the padding is applied,
-> and then we init just the relevant field?
-> Just curious.
+On Fri, 27 Apr 2018 08:57:01 -0700
+"Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
 
-Yes, it would help.
+> > +		if (preempt_on) {					\
+> > +			WARN_ON_ONCE(in_nmi()); /* no srcu from nmi */	\  
+> 
+> Very good on this check, thank you!
 
->> ---
->>  drivers/vhost/vhost.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
->> index f3bd8e9..1b84dcff 100644
->> --- a/drivers/vhost/vhost.c
->> +++ b/drivers/vhost/vhost.c
->> @@ -2339,7 +2339,7 @@ EXPORT_SYMBOL_GPL(vhost_disable_notify);
->>  /* Create a new message. */
->>  struct vhost_msg_node *vhost_new_msg(struct vhost_virtqueue *vq, int type)
->>  {
->> -     struct vhost_msg_node *node = kmalloc(sizeof *node, GFP_KERNEL);
->> +     struct vhost_msg_node *node = kzalloc(sizeof *node, GFP_KERNEL);
->>       if (!node)
->>               return NULL;
->>       node->vq = vq;
->> --
->> 2.8.1
->
-> --
-> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/20180427185501-mutt-send-email-mst%40kernel.org.
-> For more options, visit https://groups.google.com/d/optout.
+I think you need to return and not call the read lock.
+
+			if (WARN_ON_ONCE(in_nmi()))
+				return;
+
+> 
+> > +			idx = srcu_read_lock(&tracepoint_srcu);         \  
+> 
+> Hmmm...  Do I need to create a _notrace variant of srcu_read_lock()
+> and srcu_read_unlock()?
+
+I think so.
+
+-- Steve
+
+> 
+> > +			it_func_ptr = srcu_dereference((tp)->funcs,	\
+> > +						&tracepoint_srcu);	\
+> > +		} else {						\
+> > +			rcu_read_lock_sched_notrace();			\
+> > +			it_func_ptr =					\
+> > +				rcu_dereference_sched((tp)->funcs);	\
+> > +		}							\
+> > +									\
