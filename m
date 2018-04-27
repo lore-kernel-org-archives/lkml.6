@@ -1,40 +1,39 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpiRhfxpswhvNerBNueIUi1Xckh2BdiYK6ffpMvS70V7hML7ya/c3BexC0z0/x+Vto/ZpRI
-ARC-Seal: i=1; a=rsa-sha256; t=1524838306; cv=none;
+X-Google-Smtp-Source: AB8JxZqARRZugNMwQ7zeCzyOIiLEMXRDWHJXxEqUNpooHx/hdW/KP/TVHqnrHwOunIjSI7x6ih65
+ARC-Seal: i=1; a=rsa-sha256; t=1524838304; cv=none;
         d=google.com; s=arc-20160816;
-        b=wqc1aWBkQtjOc3OnxBGnga7HI8ZCN/WbUc6Pl2oQpLrnZndElqSinBDIA/0BOALz6l
-         CM3O4ISOjHbJdrUxY20f/jLVoMrmpMKBXg0htBK6ofF2iggbRJ4boo5eRyZcFHNJcr05
-         GWCqH6UTSN0K7aHY1RnpoQi7tVodYWz7V+BcKHZC3wa8hxT+AiE4QOLL027TnU0bYFvg
-         ogOe87F697N62nuNZTevOdKxFVFJKZYFJw2Of/0ajJq/G7+tAHUVbZhUBptxfmbeK79V
-         vbagH7P/l0xQboZEpOEF4KyNk7kNW0XoA3+oro3wbbyZCxROGkg57D+tylbmPAf6kaAx
-         8L0Q==
+        b=mtW45/o//VwMxUONeiSIoFCQ/BWJBliDuFmVjt+cC8YbdOecZx9qpBHxPcJsBSJf0p
+         +tIgQYtcERochxszcNWfu40jpedOt2VblpusrE98y9xg44FOQzt+6LG1GAd34jQ1RE72
+         eZ0HNtCRbRK1pN4FU30NknZCgbcGwz9n4qNmn/E4XsuvMJSfkn3tsjhvtUE7BEGyORbi
+         NX09RB+d3i9sF4h63qKpW46N1gBkoRfJxQzN/KoahXUc+/+OCnh/eMtZ4QsJYkcOj6hY
+         JxbcokKtxWoxDz4ljTTspMRSJr59PNNEEhvXr0Mi4e2hzAYt1BJh8pvz4KD7TrKtr0PN
+         s2WQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=+n0/QmuS4Flv0caZC0Vdr3GzUChIK5y1tjTwaIMpEJg=;
-        b=H4k5DKtqwMXrApIUIIJkSwMpm7+fblpiwwePPVEVHZst9H60s837az7Ui2SO81VmAS
-         GPUxjdHkn2bvSMaARqrmatjY8hdrARInXqG04pVBtaG0onDKCy06cQ8c4WJZntj7OFXV
-         5oiLENMMk6ld3Bfyr2v7cMMJwxegCBasEFdWxFKrgpyzKuuLrrTIOhEsw8Qr8vdAxhgw
-         Y4Uc6/rXZaJ9APOgHUn6qJkgcQzyNVKqyvnCvOPpSoJqfDKXDkIikXR4C3FYOnnTxpyS
-         LVGHZ6Ci0SOgZsn5hNe9h0PODn83S0c+XM6I4r7ElUu3XpuMqS2xVVh+ZxGcKonU30Mi
-         c4DQ==
+        bh=mLZ0taQNOkblipXKj8kng6OuV61jxMkYTvvMaq/Sd2k=;
+        b=HQ5czspqBZKFObilzpV1T9n4qDFlBpwPwt3q0F+oZnGih4IPlvSOiyHGAUswzsBr6q
+         FvNGR1tJNKMQmtuRApmVNqnZ1UTj6khbcw/keqgb756ITH8NNix0mVt4UPuIshd+B2Qg
+         ZWosWeD9cDH/yEgWz6KIaQkUPv21TBrUa1t43++V1msiFLjkgo8ykKrerIeKkhhA1wRH
+         6YOSE/3mPXJWCZh45Ok/06JHvVZAgKy3+eUvEgifq8kXZ8xCM8qUXxsu/CghtqEcAsx0
+         5eESwgk9aNqXexNaF+DyYJafJdkdNLTvqq8w5QmSnhtQjVRLnrmEHwFQRFio+Jhk5rve
+         QhrQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02F3421892
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94C122189E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jason Wang <jasowang@redhat.com>,
-	=?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>,
+	Igor Russkikh <igor.russkikh@aquantia.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 56/81] tun: fix vlan packet truncation
-Date: Fri, 27 Apr 2018 15:58:58 +0200
-Message-Id: <20180427135746.547013427@linuxfoundation.org>
+Subject: [PATCH 4.16 55/81] net: aquantia: Regression on reset with 1.x firmware
+Date: Fri, 27 Apr 2018 15:58:57 +0200
+Message-Id: <20180427135746.500749185@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135743.216853156@linuxfoundation.org>
 References: <20180427135743.216853156@linuxfoundation.org>
@@ -44,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908852055639941?=
-X-GMAIL-MSGID: =?utf-8?q?1598908852055639941?=
+X-GMAIL-THRID: =?utf-8?q?1598908849814273358?=
+X-GMAIL-MSGID: =?utf-8?q?1598908849814273358?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,66 +52,68 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Bjørn Mork" <bjorn@mork.no>
+From: Igor Russkikh <igor.russkikh@aquantia.com>
 
 
-[ Upstream commit 81c895072d29cd70eea5be1a8587cd6461c3715a ]
+[ Upstream commit cce96d1883dae4b79f44890e5118243d806da286 ]
 
-Bogus trimming in tun_net_xmit() causes truncated vlan packets.
+On ASUS XG-C100C with 1.5.44 firmware a special mode called "dirty wake"
+is active. With this mode when motherboard gets powered (but no poweron
+happens yet), NIC automatically enables powersave link and watches
+for WOL packet.
+This normally allows to powerup the PC after AC power failures.
 
-skb->len is correct whether or not skb_vlan_tag_present() is true. There
-is no more reason to adjust the skb length on xmit in this driver than
-any other driver. tun_put_user() adds 4 bytes to the total for tagged
-packets because it transmits the tag inline to userspace.  This is
-similar to a nic transmitting the tag inline on the wire.
+Not all motherboards or bios settings gives power to PCI slots,
+so this mode is not enabled on all the hardware.
 
-Reproducing the bug by sending any tagged packet through back-to-back
-connected tap interfaces:
+4.16 linux driver introduced full hardware reset sequence
+This is required since before that we had no NIC hardware
+reset implemented and there were side effects of "not clean start".
 
- socat TUN,tun-type=tap,iff-up,tun-name=in TUN,tun-type=tap,iff-up,tun-name=out &
- ip link add link in name in.20 type vlan id 20
- ip addr add 10.9.9.9/24 dev in.20
- ip link set in.20 up
- tshark -nxxi in -f arp -c1 2>/dev/null &
- tshark -nxxi out -f arp -c1 2>/dev/null &
- ping -c 1 10.9.9.5 >/dev/null 2>&1
+But this full reset is incompatible with "dirty wake" WOL feature
+it keeps the PHY link in a special mode forever. As a consequence,
+driver sees no link and no traffic.
 
-The output from the 'in' and 'out' interfaces are different when the
-bug is present:
+To fix this we forcibly change FW state to idle state before doing
+the full reset. This makes FW to restore link state.
 
- Capturing on 'in'
- 0000  ff ff ff ff ff ff 76 cf 76 37 d5 0a 81 00 00 14   ......v.v7......
- 0010  08 06 00 01 08 00 06 04 00 01 76 cf 76 37 d5 0a   ..........v.v7..
- 0020  0a 09 09 09 00 00 00 00 00 00 0a 09 09 05         ..............
-
- Capturing on 'out'
- 0000  ff ff ff ff ff ff 76 cf 76 37 d5 0a 81 00 00 14   ......v.v7......
- 0010  08 06 00 01 08 00 06 04 00 01 76 cf 76 37 d5 0a   ..........v.v7..
- 0020  0a 09 09 09 00 00 00 00 00 00                     ..........
-
-Fixes: aff3d70a07ff ("tun: allow to attach ebpf socket filter")
-Cc: Jason Wang <jasowang@redhat.com>
-Signed-off-by: BjÃ¸rn Mork <bjorn@mork.no>
-Acked-by: Jason Wang <jasowang@redhat.com>
+Fixes: c8c82eb net: aquantia: Introduce global AQC hardware reset sequence
+Signed-off-by: Igor Russkikh <igor.russkikh@aquantia.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/tun.c |    7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.c |   16 +++++++++++
+ 1 file changed, 16 insertions(+)
 
---- a/drivers/net/tun.c
-+++ b/drivers/net/tun.c
-@@ -1094,12 +1094,7 @@ static netdev_tx_t tun_net_xmit(struct s
- 		goto drop;
+--- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.c
++++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.c
+@@ -48,6 +48,8 @@
+ #define FORCE_FLASHLESS 0
  
- 	len = run_ebpf_filter(tun, skb, len);
--
--	/* Trim extra bytes since we may insert vlan proto & TCI
--	 * in tun_put_user().
--	 */
--	len -= skb_vlan_tag_present(skb) ? sizeof(struct veth) : 0;
--	if (len <= 0 || pskb_trim(skb, len))
-+	if (len == 0 || pskb_trim(skb, len))
- 		goto drop;
+ static int hw_atl_utils_ver_match(u32 ver_expected, u32 ver_actual);
++static int hw_atl_utils_mpi_set_state(struct aq_hw_s *self,
++				      enum hal_atl_utils_fw_state_e state);
  
- 	if (unlikely(skb_orphan_frags_rx(skb, GFP_ATOMIC)))
+ int hw_atl_utils_initfw(struct aq_hw_s *self, const struct aq_fw_ops **fw_ops)
+ {
+@@ -247,6 +249,20 @@ int hw_atl_utils_soft_reset(struct aq_hw
+ 
+ 	self->rbl_enabled = (boot_exit_code != 0);
+ 
++	/* FW 1.x may bootup in an invalid POWER state (WOL feature).
++	 * We should work around this by forcing its state back to DEINIT
++	 */
++	if (!hw_atl_utils_ver_match(HW_ATL_FW_VER_1X,
++				    aq_hw_read_reg(self,
++						   HW_ATL_MPI_FW_VERSION))) {
++		int err = 0;
++
++		hw_atl_utils_mpi_set_state(self, MPI_DEINIT);
++		AQ_HW_WAIT_FOR((aq_hw_read_reg(self, HW_ATL_MPI_STATE_ADR) &
++			       HW_ATL_MPI_STATE_MSK) == MPI_DEINIT,
++			       10, 1000U);
++	}
++
+ 	if (self->rbl_enabled)
+ 		return hw_atl_utils_soft_reset_rbl(self);
+ 	else
