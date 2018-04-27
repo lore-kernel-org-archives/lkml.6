@@ -1,48 +1,37 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758426AbeD0TCx (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 15:02:53 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:33384 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758043AbeD0TCw (ORCPT
+        id S1758643AbeD0TD0 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 15:03:26 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:56436 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758203AbeD0TDZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 15:02:52 -0400
-From: Colin King <colin.king@canonical.com>
-To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ALSA: cs46xx: fix spelling mistake: "amplifer" -> "amplifier"
-Date: Fri, 27 Apr 2018 20:02:45 +0100
-Message-Id: <20180427190245.16861-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Fri, 27 Apr 2018 15:03:25 -0400
+Date: Fri, 27 Apr 2018 15:03:23 -0400 (EDT)
+Message-Id: <20180427.150323.1018656244013606101.davem@davemloft.net>
+To: vivien.didelot@savoirfairelinux.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, joe@perches.com
+Subject: Re: [RFC PATCH] MAINTAINERS: add davem in NETWORKING DRIVERS
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180426234735.30112-1-vivien.didelot@savoirfairelinux.com>
+References: <20180426234735.30112-1-vivien.didelot@savoirfairelinux.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Vivien Didelot <vivien.didelot@savoirfairelinux.com>
+Date: Thu, 26 Apr 2018 19:47:35 -0400
 
-Trivial fix to spelling mistake in module parameter description text
+> "./scripts/get_maintainer.pl -f" does not actually show us David as the
+> maintainer of drivers/net directories such as team, bonding, phy or dsa.
+> Adding him in an M: entry of NETWORKING DRIVERS fixes this.
+> 
+> Signed-off-by: Vivien Didelot <vivien.didelot@savoirfairelinux.com>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- sound/pci/cs46xx/cs46xx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Yeah, might as well.
 
-diff --git a/sound/pci/cs46xx/cs46xx.c b/sound/pci/cs46xx/cs46xx.c
-index 655fbea1692c..4910d3f46d4b 100644
---- a/sound/pci/cs46xx/cs46xx.c
-+++ b/sound/pci/cs46xx/cs46xx.c
-@@ -58,7 +58,7 @@ MODULE_PARM_DESC(id, "ID string for the CS46xx soundcard.");
- module_param_array(enable, bool, NULL, 0444);
- MODULE_PARM_DESC(enable, "Enable CS46xx soundcard.");
- module_param_array(external_amp, bool, NULL, 0444);
--MODULE_PARM_DESC(external_amp, "Force to enable external amplifer.");
-+MODULE_PARM_DESC(external_amp, "Force to enable external amplifier.");
- module_param_array(thinkpad, bool, NULL, 0444);
- MODULE_PARM_DESC(thinkpad, "Force to enable Thinkpad's CLKRUN control.");
- module_param_array(mmap_valid, bool, NULL, 0444);
--- 
-2.17.0
+Applied, th anks.
