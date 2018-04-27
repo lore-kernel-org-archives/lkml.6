@@ -1,58 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757893AbeD0SMu (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 14:12:50 -0400
-Received: from emh04.mail.saunalahti.fi ([62.142.5.110]:60082 "EHLO
-        emh04.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757794AbeD0SMq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 14:12:46 -0400
-Date: Fri, 27 Apr 2018 21:12:43 +0300
-From: Aaro Koskinen <aaro.koskinen@iki.fi>
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH] video: fbdev: omap2: remove rfbi
-Message-ID: <20180427181243.o7ro63l6z7yatey7@darkstar.musicnaut.iki.fi>
-References: <CGME20180427150914eucas1p14dd8df4a215014ddac990b0ccdb1805c@eucas1p1.samsung.com>
- <2238944.jilJcacc6d@amdc3058>
- <20180427174714.bdvvlljk3txwu2bo@darkstar.musicnaut.iki.fi>
- <2055912.iuafLNK0IC@amdc3058>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2055912.iuafLNK0IC@amdc3058>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S932397AbeD0SXg (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 14:23:36 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49928 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1757153AbeD0SXf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 14:23:35 -0400
+Message-ID: <1524853413.11756.71.camel@redhat.com>
+Subject: Re: [PATCH] RDMA/iwpm: fix memory leak on map_info
+From: Doug Ledford <dledford@redhat.com>
+To: Colin King <colin.king@canonical.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Leon Romanovsky <leon@kernel.org>, linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Fri, 27 Apr 2018 14:23:33 -0400
+In-Reply-To: <20180425162404.28625-1-colin.king@canonical.com>
+References: <20180425162404.28625-1-colin.king@canonical.com>
+Organization: Red Hat, Inc.
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-2v4Z2yp12xzBYoiqvhCn"
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On Fri, Apr 27, 2018 at 07:58:28PM +0200, Bartlomiej Zolnierkiewicz wrote:
-> On Friday, April 27, 2018 08:47:14 PM Aaro Koskinen wrote:
-> > On Fri, Apr 27, 2018 at 05:09:14PM +0200, Bartlomiej Zolnierkiewicz wrote:
-> > > omapfb equivalent of drm's commit aa61321d4c08 ("drm/omap: remove rfbi"):
-> > > 
-> > > The RFBI driver has not worked nor compiled for many years. There are
-> > > very few boards out there that use RFBI, and no one has stepped up to
-> > > fix it.
-> > >
-> > > So let's remove the RFBI code that doesn't even compile.
-> > 
-> > NACK. I'm just about to start fixing this and hoping to get display
-> > working on N8x0 boards.
-> > 
-> > See the other thread: https://marc.info/?l=linux-omap&m=152469100217934&w=2
-> 
-> You should be targeting omapdrm driver instead, fbdev subsystem is closed
-> for the new hardware support.
+--=-2v4Z2yp12xzBYoiqvhCn
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-AFAIK, based on N950 display support discussion, it's impossible to get
-anything new into omapdrm for a long time. And based on Tomi's comments,
-restoring RFBI support with omapfb should be a minor thing.
+On Wed, 2018-04-25 at 17:24 +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>=20
+> In the cases where iwpm_hash_bucket is NULL and where function
+> get_mapinfo_hash_bucket returns NULL then the map_info is never added
+> to hash_bucket_head and hence there is a leak of map_info. Fix this
+> by nullifying hash_bucket_head and if that is null we know that
+> that map_info was not added to hash_bucket_head and hence map_info
+> should be free'd.
+>=20
+> Detected by CoverityScan, CID#1222481 ("Resource Leak")
+>=20
+> Fixes: 30dc5e63d6a5 ("RDMA/core: Add support for iWARP Port Mapper user s=
+pace service")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-A.
+Thanks, applied to for-rc.
+
+--=20
+Doug Ledford <dledford@redhat.com>
+    GPG KeyID: B826A3330E572FDD
+    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
+--=-2v4Z2yp12xzBYoiqvhCn
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAlrjaqUACgkQuCajMw5X
+L93FUg/+K2La2SGLcWy0/0smPST/DIwfhF9jqpZ9yYrgGzBtZD7ZtQR1XPvRQxrC
+9pR5YOf6MwdEpTUKI9xb6utIQ53jG/fE7X0LvgpHFPQWNxm5KwVQ9eG7nfOBxFGr
+74UvZoK76eBGnWTPCDxdNHFSh8NZ+071TFXvSrZcTGsOTacp5/az8Z5c1GYqKyXL
+Jvz3eork1eS5vHa2YBQ3+3ynrnHqjRFU664KIXUyBXlJZEaCM+KTLRqyeqonPKPn
+UREHFtzEjD5CX3IEunE5+BinI8fv/dCfzD+pKLrzELapcMr2BQA+1hVHQuPHm2t6
+fECcHGVh0Qo2wNmQhJ+yGY01snkEO6pkNDSny1UJf+Wjt9zOp/PfV5RSTVnaqkXT
+Va8uYhwx6e5TZC851YpC1D5sLdxqcadTzUTolGH81RC3a04Vlvpx7jJOrWBT4yZa
+cYfeh/a/MPn/6uA520JqAjfdv7P37RXAmaHN6M+Hq+9NDUzY1e6mmwqTKj80BKJR
+ardIfFBVjfpWRVUSocwul6zRllGuA+c+DxVeH3ezp/b87V92UVedCYa1SvpKqLYO
+rozn76Py1cxNj0kOqocRKMDo9K8Zh7A519xr27bIR2xgPgfDlKb/fTc0pAdaG5Za
++d/WIfQSPhtNbtWHWlRoR2o3/hFWKld1xulDF+JrkG8fkrOHfLE=
+=+d5T
+-----END PGP SIGNATURE-----
+
+--=-2v4Z2yp12xzBYoiqvhCn--
