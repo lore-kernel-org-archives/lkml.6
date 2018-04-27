@@ -1,68 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933083AbeD0Xb0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 19:31:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48946 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932444AbeD0XbY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 19:31:24 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABD5721920
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=atull@kernel.org
-X-Google-Smtp-Source: AB8JxZpEkmuGyjgZE7DaM2yr/UihXB0NcKF+QMDkqLzdyG052QVesC926bJN27miKPAs5wf8ZvoWso4JqiH2RqWHAGg=
+        id S933099AbeD0XdT (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 19:33:19 -0400
+Received: from www62.your-server.de ([213.133.104.62]:48071 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932444AbeD0XdS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 19:33:18 -0400
+Subject: Re: [PATCH] bpf: fix misaligned access for BPF_PROG_TYPE_PERF_EVENT
+ program type on x86_32 platform
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Wang YanQing <udknight@gmail.com>, ast@kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180426095749.GA29207@udknight>
+ <20180427224854.2g7ximim7nwkgdpd@ast-mbp>
+From: Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <c62438dd-2e2e-8c70-aa19-37d5173d76d1@iogearbox.net>
+Date: Sat, 28 Apr 2018 01:33:15 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-In-Reply-To: <152cb232-ea4d-292b-8b60-8bdc1732dc23@gmail.com>
-References: <20180427012605.28981-1-mdf@kernel.org> <20180427012605.28981-3-mdf@kernel.org>
- <152cb232-ea4d-292b-8b60-8bdc1732dc23@gmail.com>
-From: Alan Tull <atull@kernel.org>
-Date: Fri, 27 Apr 2018 18:30:42 -0500
-X-Gmail-Original-Message-ID: <CANk1AXTZhCA78eX9j5dg1VeNyg8G4+hsiSgG_CYpZObjJw+wfw@mail.gmail.com>
-Message-ID: <CANk1AXTZhCA78eX9j5dg1VeNyg8G4+hsiSgG_CYpZObjJw+wfw@mail.gmail.com>
-Subject: Re: [PATCH 2/4] fpga: manager: change api, don't use drvdata
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Moritz Fischer <mdf@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-fpga@vger.kernel.org,
-        linux-doc@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180427224854.2g7ximim7nwkgdpd@ast-mbp>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 27, 2018 at 1:26 PM, Florian Fainelli <f.fainelli@gmail.com> wrote:
-> On 04/26/2018 06:26 PM, Moritz Fischer wrote:
->> From: Alan Tull <atull@kernel.org>
+On 04/28/2018 12:48 AM, Alexei Starovoitov wrote:
+> On Thu, Apr 26, 2018 at 05:57:49PM +0800, Wang YanQing wrote:
+>> All the testcases for BPF_PROG_TYPE_PERF_EVENT program type in
+>> test_verifier(kselftest) report below errors on x86_32:
+>> "
+>> 172/p unpriv: spill/fill of different pointers ldx FAIL
+>> Unexpected error message!
+>> 0: (bf) r6 = r10
+>> 1: (07) r6 += -8
+>> 2: (15) if r1 == 0x0 goto pc+3
+>> R1=ctx(id=0,off=0,imm=0) R6=fp-8,call_-1 R10=fp0,call_-1
+>> 3: (bf) r2 = r10
+>> 4: (07) r2 += -76
+>> 5: (7b) *(u64 *)(r6 +0) = r2
+>> 6: (55) if r1 != 0x0 goto pc+1
+>> R1=ctx(id=0,off=0,imm=0) R2=fp-76,call_-1 R6=fp-8,call_-1 R10=fp0,call_-1 fp-8=fp
+>> 7: (7b) *(u64 *)(r6 +0) = r1
+>> 8: (79) r1 = *(u64 *)(r6 +0)
+>> 9: (79) r1 = *(u64 *)(r1 +68)
+>> invalid bpf_context access off=68 size=8
 >>
->> Change fpga_mgr_register to not set or use drvdata.  This supports
->> the case where a PCIe device has more than one manager.
+>> 378/p check bpf_perf_event_data->sample_period byte load permitted FAIL
+>> Failed to load prog 'Permission denied'!
+>> 0: (b7) r0 = 0
+>> 1: (71) r0 = *(u8 *)(r1 +68)
+>> invalid bpf_context access off=68 size=1
 >>
->> Add fpga_mgr_create/free functions.  Change fpga_mgr_register and
->> fpga_mgr_unregister functions to take the mgr struct as their only
->> parameter.
+>> 379/p check bpf_perf_event_data->sample_period half load permitted FAIL
+>> Failed to load prog 'Permission denied'!
+>> 0: (b7) r0 = 0
+>> 1: (69) r0 = *(u16 *)(r1 +68)
+>> invalid bpf_context access off=68 size=2
 >>
->>   struct fpga_manager *fpga_mgr_create(struct device *dev,
->>                 const char *name,
->>                 const struct fpga_manager_ops *mops,
->>                 void *priv);
->>   void fpga_mgr_free(struct fpga_manager *mgr);
->>   int fpga_mgr_register(struct fpga_manager *mgr);
->>   void fpga_mgr_unregister(struct fpga_manager *mgr);
+>> 380/p check bpf_perf_event_data->sample_period word load permitted FAIL
+>> Failed to load prog 'Permission denied'!
+>> 0: (b7) r0 = 0
+>> 1: (61) r0 = *(u32 *)(r1 +68)
+>> invalid bpf_context access off=68 size=4
 >>
->> Update the drivers that call fpga_mgr_register with the new API.
->
-> Apologies for chiming in so late, this commit does not make it clear
-> that fpga_mgr_unregister() now also free the 'mgr' argument by calling
-> fpga_mgr_free(), this is kind of detail, but an API should make that
-> clear IMHO.
+>> 381/p check bpf_perf_event_data->sample_period dword load permitted FAIL
+>> Failed to load prog 'Permission denied'!
+>> 0: (b7) r0 = 0
+>> 1: (79) r0 = *(u64 *)(r1 +68)
+>> invalid bpf_context access off=68 size=8
+>> "
+>>
+>> This patch fix it, the fix isn't only necessary for x86_32, it will fix the
+>> same problem for other platforms too, if their size of bpf_user_pt_regs_t
+>> can't divide exactly into 8.
+>>
+>> Signed-off-by: Wang YanQing <udknight@gmail.com>
+>> ---
+>>  Hi all!
+>>  After mainline accept this patch, then we need to submit a sync patch
+>>  to update the tools/include/uapi/linux/bpf_perf_event.h.
+>>
+>>  Thanks.
+>>
+>>  include/uapi/linux/bpf_perf_event.h | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/include/uapi/linux/bpf_perf_event.h b/include/uapi/linux/bpf_perf_event.h
+>> index eb1b9d2..ff4c092 100644
+>> --- a/include/uapi/linux/bpf_perf_event.h
+>> +++ b/include/uapi/linux/bpf_perf_event.h
+>> @@ -12,7 +12,7 @@
+>>  
+>>  struct bpf_perf_event_data {
+>>  	bpf_user_pt_regs_t regs;
+>> -	__u64 sample_period;
+>> +	__u64 sample_period __attribute__((aligned(8)));
+> 
+> I don't think this necessary.
+> imo it's a bug in pe_prog_is_valid_access
+> that should have allowed 8-byte access to 4-byte aligned sample_period.
+> The access rewritten by pe_prog_convert_ctx_access anyway,
+> no alignment issues as far as I can see.
 
-If people follow the usage information, in
-Documentation/fpga/fpga-mgr.txt, they'll do the right thing.  But I
-can add a patch that clarifies the description of fpga_mgr_unregister
-in fpga-mgr.c that it "unregisters and frees" the manager.
+Right, good point. Wang, could you give the below a test run:
 
->
-> Thanks
-> --
-> Florian
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index 56ba0f2..95b9142 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -833,8 +833,14 @@ static bool pe_prog_is_valid_access(int off, int size, enum bpf_access_type type
+ 		return false;
+ 	if (type != BPF_READ)
+ 		return false;
+-	if (off % size != 0)
+-		return false;
++	if (off % size != 0) {
++		if (sizeof(long) != 4)
++			return false;
++		if (size != 8)
++			return false;
++		if (off % size != 4)
++			return false;
++	}
+
+ 	switch (off) {
+ 	case bpf_ctx_range(struct bpf_perf_event_data, sample_period):
