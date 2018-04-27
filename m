@@ -1,71 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934566AbeD0OIu (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 10:08:50 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:44752 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934550AbeD0OIo (ORCPT
+        id S934626AbeD0Opj (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 10:45:39 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:39233 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934495AbeD0Opf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 10:08:44 -0400
-X-Google-Smtp-Source: AB8JxZpPB38Jr6db4vz+Fg9+OhKtRd8uLNdzunYF4OTvhHchg+G0IYc1oiKulK38kjVneEF3AMKKHg==
-From: Alex Elder <elder@linaro.org>
-To: andy.gross@linaro.org, david.brown@linaro.org
-Cc: linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] soc: qcom: qmi: fix a buffer sizing bug
-Date: Fri, 27 Apr 2018 09:08:17 -0500
-Message-Id: <20180427140817.10871-1-elder@linaro.org>
-X-Mailer: git-send-email 2.14.1
+        Fri, 27 Apr 2018 10:45:35 -0400
+X-Google-Smtp-Source: AB8JxZpT/0EihCPosGAQFqjkLrHsC3ZTUSSmvWZTXeCbBGAr4N1sxIGiZkk2l3DCDtX68MR1DKDtIw==
+Date: Fri, 27 Apr 2018 09:45:33 -0500
+From: Rob Herring <robh@kernel.org>
+To: jan.tuerk@emtrion.com
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4 5/7] dt-bindings: arm: Document emtrion emCON-MX6
+ bindings
+Message-ID: <20180427144533.5amxarufzc2borzh@rob-hp-laptop>
+References: <20180420125108.14197-1-jan.tuerk@emtrion.com>
+ <20180427132445.3458-1-jan.tuerk@emtrion.com>
+ <20180427132445.3458-6-jan.tuerk@emtrion.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180427132445.3458-6-jan.tuerk@emtrion.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In qmi_handle_init(), a buffer is allocated for to hold messages
-received through the handle's socket.  Any "normal" messages
-(expected by the caller) will have a header prepended, so the
-buffer size is adjusted to accomodate that.
+On Fri, Apr 27, 2018 at 03:24:40PM +0200, jan.tuerk@emtrion.com wrote:
+> From: Jan Tuerk <jan.tuerk@emtrion.com>
+> 
+> Document the compatible strings for emtrion emCON-MX6 SoM's.
+> 
+> Signed-off-by: Jan Tuerk <jan.tuerk@emtrion.com>
+> ---
+> For v4:
+>  - separate patch for the emtrion emCON-MX6 DT-bindings
+> 
+>  Documentation/devicetree/bindings/arm/emtrion.txt | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/emtrion.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/emtrion.txt b/Documentation/devicetree/bindings/arm/emtrion.txt
+> new file mode 100644
+> index 000000000000..3ff6c6c2034d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/emtrion.txt
+> @@ -0,0 +1,13 @@
+> +Emtrion Devicetree Bindings
+> +===========================
+> +
+> +emCON Series:
+> +-------------
+> +
+> +Required root node properties
+> +	- compatible:
+> +	- "emtrion,emcon-mx6", "fsl,imx6q", "fsl,imx6dl"; : emCON-MX6 Generic SoM
 
-The buffer must also be of sufficient size to receive control
-messages, so the size is increased if necessary to ensure these
-will fit.
+You can't have both a 6Q and 6DL present and I don't think 6Q is a 
+perfect superset of 6DL.
 
-Unfortunately the calculation is done wrong, making it possible
-for the calculated buffer size to be too small to hold a "normal"
-message.  Specifically, if:
-
-  recv_buf_size > sizeof(struct qrtr_ctrl_pkt) - sizeof(struct qmi_header)
-		AND
-  recv_buf_size < sizeof(struct qrtr_ctrl_pkt)
-
-the current logic will use sizeof(struct qrtr_ctrl_pkt) as the
-receive buffer size, which is not enough to hold the maximum
-"normal" message plus its header.  Currently this problem occurs
-for (13 < recv_buf_size < 20).
-
-This patch corrects this.
-
-Signed-off-by: Alex Elder <elder@linaro.org>
----
- drivers/soc/qcom/qmi_interface.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/soc/qcom/qmi_interface.c b/drivers/soc/qcom/qmi_interface.c
-index 321982277697..938ca41c56cd 100644
---- a/drivers/soc/qcom/qmi_interface.c
-+++ b/drivers/soc/qcom/qmi_interface.c
-@@ -639,10 +639,11 @@ int qmi_handle_init(struct qmi_handle *qmi, size_t recv_buf_size,
- 	if (ops)
- 		qmi->ops = *ops;
- 
-+	/* Make room for the header */
-+	recv_buf_size += sizeof(struct qmi_header);
-+	/* Must also be sufficient to hold a control packet */
- 	if (recv_buf_size < sizeof(struct qrtr_ctrl_pkt))
- 		recv_buf_size = sizeof(struct qrtr_ctrl_pkt);
--	else
--		recv_buf_size += sizeof(struct qmi_header);
- 
- 	qmi->recv_buf_size = recv_buf_size;
- 	qmi->recv_buf = kzalloc(recv_buf_size, GFP_KERNEL);
--- 
-2.14.1
+> +	- "emtrion,emcon-mx6", "fsl,imx6q"; 		: emCON-MX6D or emCON-MX6Q SoM
+> +	- "emtrion,emcon-mx6-avari", "fsl,imx6q";	: emCON-MX6D or emCON-MX6Q SoM on Avari Base
+> +	- "emtrion,emcon-mx6", "fsl,imx6dl"; 		: emCON-MX6S or emCON-MX6DL SoM
+> +	- "emtrion,emcon-mx6-avari", "fsl,imx6dl";	: emCON-MX6S or emCON-MX6DL SoM on Avari Base
+> -- 
+> 2.11.0
+> 
