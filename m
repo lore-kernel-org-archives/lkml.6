@@ -1,143 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932576AbeD0JnC (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 05:43:02 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:49803 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757708AbeD0JnA (ORCPT
+        id S932588AbeD0JnY (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 05:43:24 -0400
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:21350 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932460AbeD0JnW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 05:43:00 -0400
-Date: Fri, 27 Apr 2018 02:42:36 -0700
-From: tip-bot for Will Deacon <tipbot@zytor.com>
-Message-ID: <tip-9d4646d14d51d62b967a12452c30ea7edf8dd8fa@git.kernel.org>
-Cc: will.deacon@arm.com, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, peterz@infradead.org, mingo@kernel.org,
-        tglx@linutronix.de, hpa@zytor.com, longman@redhat.com
-Reply-To: peterz@infradead.org, tglx@linutronix.de, mingo@kernel.org,
-        longman@redhat.com, hpa@zytor.com, will.deacon@arm.com,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org
-In-Reply-To: <1524738868-31318-12-git-send-email-will.deacon@arm.com>
-References: <1524738868-31318-12-git-send-email-will.deacon@arm.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] locking/qspinlock: Elide back-to-back RELEASE
- operations with smp_wmb()
-Git-Commit-ID: 9d4646d14d51d62b967a12452c30ea7edf8dd8fa
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Fri, 27 Apr 2018 05:43:22 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com w3R9h86N027065
+X-Nifty-SrcIP: [209.85.213.49]
+X-Google-Smtp-Source: AB8JxZq67aHV8xDtTMVHrCQ2HhlvHYLXRlzKxMygmc8t5h1kY063Ud2wHWKkzgMu2YwWpLJ8M6CJREFgioz+pEE+omQ=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <1523499370-17757-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1523499370-17757-1-git-send-email-yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Fri, 27 Apr 2018 18:42:27 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQKVD3aKTo_z=zkOdoL--RogoFm0bt-dCBsWFN8BEPpSg@mail.gmail.com>
+Message-ID: <CAK7LNAQKVD3aKTo_z=zkOdoL--RogoFm0bt-dCBsWFN8BEPpSg@mail.gmail.com>
+Subject: Re: [PATCH] reset: uniphier: fix USB clock line for LD20
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  9d4646d14d51d62b967a12452c30ea7edf8dd8fa
-Gitweb:     https://git.kernel.org/tip/9d4646d14d51d62b967a12452c30ea7edf8dd8fa
-Author:     Will Deacon <will.deacon@arm.com>
-AuthorDate: Thu, 26 Apr 2018 11:34:25 +0100
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Fri, 27 Apr 2018 09:48:52 +0200
+Philipp,
 
-locking/qspinlock: Elide back-to-back RELEASE operations with smp_wmb()
+2018-04-12 11:16 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
+> For LD20, the bit 5 of the offset 0x200c turned out to be a USB3
+> reset.  The hardware document says it is the GIO reset despite LD20
+> has no GIO bus, confusingly.
+>
+> Also, fix confusing comments for PXs3.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
 
-The qspinlock slowpath must ensure that the MCS node is fully initialised
-before it can be reached by another other CPU. This is currently enforced
-by using a RELEASE operation when updating the tail and also when linking
-the node into the waitqueue, since the control dependency off xchg_tail
-is insufficient to enforce sufficient ordering, see:
+Can you take a look at this, please?
 
-  95bcade33a8a ("locking/qspinlock: Ensure node is initialised before updating prev->next")
 
-Back-to-back RELEASE operations may be expensive on some architectures,
-particularly those that implement them using fences under the hood. We
-can replace the two RELEASE operations with a single smp_wmb() fence and
-use RELAXED operations for the subsequent publishing of the node.
 
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Waiman Long <longman@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: boqun.feng@gmail.com
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: paulmck@linux.vnet.ibm.com
-Link: http://lkml.kernel.org/r/1524738868-31318-12-git-send-email-will.deacon@arm.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- kernel/locking/qspinlock.c | 33 +++++++++++++++++----------------
- 1 file changed, 17 insertions(+), 16 deletions(-)
 
-diff --git a/kernel/locking/qspinlock.c b/kernel/locking/qspinlock.c
-index d6c3b029bd93..956a12983bd0 100644
---- a/kernel/locking/qspinlock.c
-+++ b/kernel/locking/qspinlock.c
-@@ -164,10 +164,10 @@ static __always_inline void clear_pending_set_locked(struct qspinlock *lock)
- static __always_inline u32 xchg_tail(struct qspinlock *lock, u32 tail)
- {
- 	/*
--	 * Use release semantics to make sure that the MCS node is properly
--	 * initialized before changing the tail code.
-+	 * We can use relaxed semantics since the caller ensures that the
-+	 * MCS node is properly initialized before updating the tail.
- 	 */
--	return (u32)xchg_release(&lock->tail,
-+	return (u32)xchg_relaxed(&lock->tail,
- 				 tail >> _Q_TAIL_OFFSET) << _Q_TAIL_OFFSET;
- }
- 
-@@ -212,10 +212,11 @@ static __always_inline u32 xchg_tail(struct qspinlock *lock, u32 tail)
- 	for (;;) {
- 		new = (val & _Q_LOCKED_PENDING_MASK) | tail;
- 		/*
--		 * Use release semantics to make sure that the MCS node is
--		 * properly initialized before changing the tail code.
-+		 * We can use relaxed semantics since the caller ensures that
-+		 * the MCS node is properly initialized before updating the
-+		 * tail.
- 		 */
--		old = atomic_cmpxchg_release(&lock->val, val, new);
-+		old = atomic_cmpxchg_relaxed(&lock->val, val, new);
- 		if (old == val)
- 			break;
- 
-@@ -388,12 +389,18 @@ queue:
- 		goto release;
- 
- 	/*
-+	 * Ensure that the initialisation of @node is complete before we
-+	 * publish the updated tail via xchg_tail() and potentially link
-+	 * @node into the waitqueue via WRITE_ONCE(prev->next, node) below.
-+	 */
-+	smp_wmb();
-+
-+	/*
-+	 * Publish the updated tail.
- 	 * We have already touched the queueing cacheline; don't bother with
- 	 * pending stuff.
- 	 *
- 	 * p,*,* -> n,*,*
--	 *
--	 * RELEASE, such that the stores to @node must be complete.
- 	 */
- 	old = xchg_tail(lock, tail);
- 	next = NULL;
-@@ -405,14 +412,8 @@ queue:
- 	if (old & _Q_TAIL_MASK) {
- 		prev = decode_tail(old);
- 
--		/*
--		 * We must ensure that the stores to @node are observed before
--		 * the write to prev->next. The address dependency from
--		 * xchg_tail is not sufficient to ensure this because the read
--		 * component of xchg_tail is unordered with respect to the
--		 * initialisation of @node.
--		 */
--		smp_store_release(&prev->next, node);
-+		/* Link @node into the waitqueue. */
-+		WRITE_ONCE(prev->next, node);
- 
- 		pv_wait_node(node, prev);
- 		arch_mcs_spin_lock_contended(&node->locked);
+>  drivers/reset/reset-uniphier.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/reset/reset-uniphier.c b/drivers/reset/reset-uniphier.c
+> index 360e06b..ac18f2f 100644
+> --- a/drivers/reset/reset-uniphier.c
+> +++ b/drivers/reset/reset-uniphier.c
+> @@ -110,7 +110,7 @@ static const struct uniphier_reset_data uniphier_ld20_sys_reset_data[] = {
+>         UNIPHIER_RESETX(4, 0x200c, 2),          /* eMMC */
+>         UNIPHIER_RESETX(6, 0x200c, 6),          /* Ether */
+>         UNIPHIER_RESETX(8, 0x200c, 8),          /* STDMAC (HSC) */
+> -       UNIPHIER_RESETX(12, 0x200c, 5),         /* GIO (PCIe, USB3) */
+> +       UNIPHIER_RESETX(14, 0x200c, 5),         /* USB30 */
+>         UNIPHIER_RESETX(16, 0x200c, 12),        /* USB30-PHY0 */
+>         UNIPHIER_RESETX(17, 0x200c, 13),        /* USB30-PHY1 */
+>         UNIPHIER_RESETX(18, 0x200c, 14),        /* USB30-PHY2 */
+> @@ -127,8 +127,8 @@ static const struct uniphier_reset_data uniphier_pxs3_sys_reset_data[] = {
+>         UNIPHIER_RESETX(6, 0x200c, 9),          /* Ether0 */
+>         UNIPHIER_RESETX(7, 0x200c, 10),         /* Ether1 */
+>         UNIPHIER_RESETX(8, 0x200c, 12),         /* STDMAC */
+> -       UNIPHIER_RESETX(12, 0x200c, 4),         /* USB30 link (GIO0) */
+> -       UNIPHIER_RESETX(13, 0x200c, 5),         /* USB31 link (GIO1) */
+> +       UNIPHIER_RESETX(12, 0x200c, 4),         /* USB30 link */
+> +       UNIPHIER_RESETX(13, 0x200c, 5),         /* USB31 link */
+>         UNIPHIER_RESETX(16, 0x200c, 16),        /* USB30-PHY0 */
+>         UNIPHIER_RESETX(17, 0x200c, 18),        /* USB30-PHY1 */
+>         UNIPHIER_RESETX(18, 0x200c, 20),        /* USB30-PHY2 */
+> --
+> 2.7.4
+>
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
