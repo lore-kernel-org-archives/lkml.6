@@ -1,76 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757859AbeD0Lg0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 07:36:26 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:50318 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757817AbeD0LgX (ORCPT
+        id S1757594AbeD0LjN (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 07:39:13 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:54514 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751416AbeD0LjL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 07:36:23 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] fbdev/drm: sh_mobile: remove unused MERAM support
-Date: Fri, 27 Apr 2018 14:36:35 +0300
-Message-ID: <2561366.LzYTbHeMbO@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <1524828105-26585-1-git-send-email-b.zolnierkie@samsung.com>
-References: <CGME20180427112213epcas2p3ed6890af75e679b537121f2655aa91d8@epcas2p3.samsung.com> <1524828105-26585-1-git-send-email-b.zolnierkie@samsung.com>
+        Fri, 27 Apr 2018 07:39:11 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5A18960452
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [next] ath10k: fix spelling mistake: "servive" -> "service"
+From: Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20180426091244.9160-1-colin.king@canonical.com>
+References: <20180426091244.9160-1-colin.king@canonical.com>
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Kalle Valo <kvalo@qca.qualcomm.com>, ath10k@lists.infradead.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20180427113911.1640460213@smtp.codeaurora.org>
+Date: Fri, 27 Apr 2018 11:39:11 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bartlomiej,
+Colin Ian King <colin.king@canonical.com> wrote:
 
-On Friday, 27 April 2018 14:21:42 EEST Bartlomiej Zolnierkiewicz wrote:
-> Hi,
+> Trivial fix to spelling mistake in ath10k_warn warning message text
 > 
-> This patchset removes unused MERAM support (last user was removed
-> 3 years ago) from shmobile fbdev & drm drivers and then removes
-> MERAM driver itself.
-> 
-> If it is okay to merge this patches I would like patch #1 to go
-> through fbdev tree and patch #2 to go through drm tree. Once they
-> are both upstream (v4.18) I will apply patch #3 to fbdev tree.
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-Or you could merge everything through the fbdev tree in one go, the shmobile 
-driver hardly sees any activity these days.
+Patch applied to ath-next branch of ath.git, thanks.
 
-For the whole series,
-
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> Bartlomiej Zolnierkiewicz (3):
->   video: fbdev: sh_mobile_lcdcfb: remove unused MERAM support
->   drm: shmobile: remove unused MERAM support
->   video: fbdev: remove unused sh_mobile_meram driver
-> 
->  drivers/gpu/drm/shmobile/Kconfig           |   1 -
->  drivers/gpu/drm/shmobile/shmob_drm_crtc.c  |  42 --
->  drivers/gpu/drm/shmobile/shmob_drm_crtc.h  |   1 -
->  drivers/gpu/drm/shmobile/shmob_drm_drv.h   |   2 -
->  drivers/gpu/drm/shmobile/shmob_drm_kms.c   |  11 -
->  drivers/gpu/drm/shmobile/shmob_drm_kms.h   |   1 -
->  drivers/gpu/drm/shmobile/shmob_drm_plane.c |   2 -
->  drivers/video/fbdev/Kconfig                |  13 -
->  drivers/video/fbdev/Makefile               |   1 -
->  drivers/video/fbdev/sh_mobile_lcdcfb.c     |  63 +--
->  drivers/video/fbdev/sh_mobile_lcdcfb.h     |   1 -
->  drivers/video/fbdev/sh_mobile_meram.c      | 754 --------------------------
->  include/linux/platform_data/shmob_drm.h    |   4 -
->  include/video/sh_mobile_lcdc.h             |   3 -
->  include/video/sh_mobile_meram.h            |  95 ----
->  15 files changed, 1 insertion(+), 993 deletions(-)
->  delete mode 100644 drivers/video/fbdev/sh_mobile_meram.c
->  delete mode 100644 include/video/sh_mobile_meram.h
+785281342d0c ath10k: fix spelling mistake: "servive" -> "service"
 
 -- 
-Regards,
+https://patchwork.kernel.org/patch/10365081/
 
-Laurent Pinchart
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
