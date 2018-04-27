@@ -1,410 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757436AbeD0AU7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 20:20:59 -0400
-Received: from vern.gendns.com ([206.190.152.46]:46386 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754728AbeD0ASw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 20:18:52 -0400
-From: David Lechner <david@lechnology.com>
-To: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org,
-        David Lechner <david@lechnology.com>
-Subject: [PATCH v9 20/27] ARM: davinci: dm644x: Remove legacy clock init
-Date: Thu, 26 Apr 2018 19:17:38 -0500
-Message-Id: <20180427001745.4116-21-david@lechnology.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180427001745.4116-1-david@lechnology.com>
-References: <20180427001745.4116-1-david@lechnology.com>
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+        id S1757456AbeD0AV0 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 20:21:26 -0400
+Received: from mail-he1eur01on0114.outbound.protection.outlook.com ([104.47.0.114]:26448
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1757181AbeD0AVX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 20:21:23 -0400
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=jane.wan@nokia.com;
+From: Jane Wan <Jane.Wan@nokia.com>
+To: dwmw2@infradead.org, computersforpeace@gmail.com
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        ties.bos@nokia.com, Jane Wan <Jane.Wan@nokia.com>
+Subject: [PATCH 0/2] Fix fsl_ifc_nand reading ONFI parameters to meet ONFI spec
+Date: Thu, 26 Apr 2018 17:19:54 -0700
+Message-Id: <1524788396-32380-1-git-send-email-Jane.Wan@nokia.com>
+X-Mailer: git-send-email 1.7.9.5
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [131.228.32.160]
+X-ClientProxiedBy: HE1PR09CA0086.eurprd09.prod.outlook.com
+ (2603:10a6:7:3d::30) To DB5PR07MB1608.eurprd07.prod.outlook.com
+ (2603:10a6:0:11::19)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DB5PR07MB1608;
+X-Microsoft-Exchange-Diagnostics: 1;DB5PR07MB1608;3:MikY4oiVvv1O2FzGBm+YaE/cBXFy+0HoX84RaF2Mcejv4Pg3Txnc64vYQmvYZZLbVGgsZ1NgwnefwrIOrOGu1iCCdF2mmSFErmgYa76nq8+2bknXFS+TfdW8RNSxpv6CJg1O1IMqXVd476nYJ3nfH6cjDfqSA4ApHA0nEui61rde5TYRhRDl0pCVTNY12lU5zeSHDRFmwS3+hF4FxGeC0vXqjJUZNwlusczvi18/Rkg/NHSkOM8zlXqG/uu+Zcnc;25:wOtQW05KmUBADYexEYCPJaI45keCmnqYIrff7FGgOxze8wRSpP2+b3fPcp4/F7ocBJsiGL9RYlrWB3/Z3QtfINvd+XAVyDo89Ng0XthT9WIqAPsPowQqFishJeFBborqdkWswGuVdBXbEOdYrWYYqOzkniToWXAK7Ahx6S9rf9Q5CmTa3NzFchUB4mnXB7kWboedjHmfHHMZ0/YDhYikz5HNEBjaZIu4PPCVl64HXppdrnSu7CFpgzryi0k+ift7rP2HBwyYhgBLgryn6gqOrHPGJi71NGC5nOxNIxFF+R77xoyYOF+zXtD/S7zAAXBJ2m96rjUDZ7MvtKs/Ko6BBw==;31:JjlNomDA3spI1U5Wsx+kAR2BvbUR/3LnawbCTWqBUJsHY/2x/uKwCIN8V4F53FjrCYKiOd/XdWSfX/iV9I68AMxWsab8I5aihXpxAEetrP74d3shbzg0Xt2yjE4iPc1dJtrmkxsk4XDlFq8BztapMzhFTPCmCLOBp3YeUxyt/WUPZ2WOTSzMqZ65MQkeTtJlkzeIUhdshLq5gOxZ02EDJ8zJPZdxQzHBcTNEFm4W0oU=
+X-MS-TrafficTypeDiagnostic: DB5PR07MB1608:
+X-Microsoft-Exchange-Diagnostics: 1;DB5PR07MB1608;20:Ga86U+6qzjdtINIwgX1fzJpPKvauUBh2LkuJ6DUtmEk4zQJJW0VwfJNOgSQ5GeufLXa8xVREXVFc1ugdHET0A1lMdrbUuRUm6c0VvNEVDJ39u6KJz1L9Ng4M0jyGvfxq4e1cTBtSii9gVVh9YI3JS1bInQSA53ADqPPTUB2vVt6J+kheYR8YASIpgdlqNNaZfGpK6nBr7IBa8xhvRq8mM6nKtIXhFAZRpINHFfaqtvXrj4A0vN9+nUk6KMgpaDNCF0KjAv888TymDboIlelDo2EDdZCmxlLoGeWrnK6LNsaoSqQD7VhzfDdqKyvtH2cfDwFJYse6oHNr2pPa2jx6OPDj6+WTvMxbbG3ojLDO3Zf233vFV51cUK/U1Ye7jf2ApmvtY6alVoY6Wvz3tyTuOLNIN8x01pi7bfAD+BFjgMuM1Y3V2W5h3Myl5ssPzULi1JVbMu4acSV9lCdSvTPkdnRt9XKVPkVmUonsarjs08IwhKd+YlbJSb4t1Hrr9yQq;4:VL4bKKcKt+96tRntf1Vr/EHL9gNRHDUffHjiqr2alJjDhGUipGuEdfcby473I3evxRarpypDyEegdg18sBLVXGpADVNPY6dQAwLrMuKffXHdwiUBbfcWsnhxBmEiY4NMnpN9eRibbnX7PkXintTOxtBpEtpG6NBl5G4/CFt12L6hNvIfZcBqArAY881I3+6WN+J9aSLoIdtkDuqFaKXrg/2m7Uar2LpASlBl0YqPs8izc4qpW49s9qbYJo5AjqC7WfLbnqdN9E+Bm7BIwi5rWw==
+X-Microsoft-Antispam-PRVS: <DB5PR07MB16083540ACEDE4A1269BA679818D0@DB5PR07MB1608.eurprd07.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3231232)(11241501184)(806099)(944501410)(52105095)(10201501046)(3002001)(93006095)(93001095)(6055026)(6041310)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(6072148)(201708071742011);SRVR:DB5PR07MB1608;BCL:0;PCL:0;RULEID:;SRVR:DB5PR07MB1608;
+X-Forefront-PRVS: 0655F9F006
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(366004)(376002)(396003)(346002)(39380400002)(39860400002)(199004)(189003)(8936002)(316002)(16586007)(956004)(6512007)(476003)(106356001)(105586002)(2616005)(48376002)(50466002)(39060400002)(107886003)(16526019)(6506007)(86362001)(26005)(186003)(486006)(52116002)(51416003)(5660300001)(478600001)(25786009)(386003)(68736007)(81166006)(8676002)(66066001)(47776003)(7736002)(4326008)(81156014)(97736004)(305945005)(2906002)(50226002)(36756003)(6666003)(6116002)(6486002)(3846002)(4720700003)(53936002);DIR:OUT;SFP:1102;SCL:1;SRVR:DB5PR07MB1608;H:cobuntu-jwan.gainspeed.nsn-rdnet.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DB5PR07MB1608;23:Zs1tbGtMMFmf8Zznex4lhM9dxxZEzSSpbH35yUJNI?=
+ =?us-ascii?Q?YU9BZEOb0O6sILkzhmBotvP0hsh3CpxH1MH5jbQKBhYeI+PrmAPZ/OqXK7SC?=
+ =?us-ascii?Q?RtS+OLLXXbBJN7xZZonRkTQmRYfigX9CJYmFe3u6JgbvIvl1VKAg4F1JZcrL?=
+ =?us-ascii?Q?Ks/RDnEOaj7n4zjk1irC/TFbyNKCvCW3/hqo0oOICKMLiWr673KeBHoVRjVT?=
+ =?us-ascii?Q?U5gzFaR7XRCkKDZOUzF7vjqVXAIMi44rweF8U5deq/H/ZniEvNGPce6hrb0D?=
+ =?us-ascii?Q?foRi4QZza7uRLNlhaG9ns1uuBRPIGiMszelJMxILwbIksemvYLep0H2CofmW?=
+ =?us-ascii?Q?ilenv2clg37rgcg9DkYIXfRh74AQjYuI5IaNpN8c6jI4ObLWpZcT6tdLCvUc?=
+ =?us-ascii?Q?/BM99wS8BvlSD9ZCHqAwA1oIO6Pr7IEL2kXeGG9O2WWcDouYoO4MyOnSIq27?=
+ =?us-ascii?Q?8Fl9Ds63Hsm1/m8ekmIlD2ZslI16iOJNqDXTwcOVAkU7quHf6fstd0ViKHrc?=
+ =?us-ascii?Q?A3RDZSIPAW8hFfZStuxd+qF8068DENL0AGeNDk/k3MTk16Fapbbkvo4QiuiX?=
+ =?us-ascii?Q?3yfcuKz1WyVhLA78YqSS4/fNxLuUml+CFF/BMxuPcgTegm8mbwyaJeiBoSQU?=
+ =?us-ascii?Q?6SkskyT2DAzqfOIhZ6Nn+Z8dyG4VQLuUgCQyGJ62DibvQ1fsW+x7b7MoizCK?=
+ =?us-ascii?Q?hl3YMJ7hiGbPa1aAMe3PuPCWgC/mr8ZsV9y42kObRvqOtjYrVPjd5zUnV6De?=
+ =?us-ascii?Q?UO4yEmjA9CWr3bY41ScXGpkfcunhv4o90Jeu+jOUAZwJS/z5eKb4J0k6vZWW?=
+ =?us-ascii?Q?Qkej597+LCMyaPXD0KOKoCNYQoOB0kfq8b2m7DNbbvEJmSUJEVJWB5XLe3Jc?=
+ =?us-ascii?Q?oQDom/KwmRuORfTyCvwwYNkKRqDMbn8Ur3YJqhK4pNcEQ97du+cqZtJNuFBH?=
+ =?us-ascii?Q?81M7l+D10aB2NLoIz34NWKRyaqHxgJHwH+jIICnus9mO6j5ceP4kZPPd1b3v?=
+ =?us-ascii?Q?SHOfiYqDaN1kd5QkgYNdawedK/9wgliOVtvzSSJusfL0Mw/M3saLWYpmLJnO?=
+ =?us-ascii?Q?/1jVaWwMSwZmjyaumW/Xc9wwgKvScCO+cpBQuBqE1qbIk2vjxz8m/zuuC09X?=
+ =?us-ascii?Q?bIWQkWe/D1WG0T3gsCP8jl4LH0WBGR5gzjSWt0W3EgpNY3l0jvOKvUpghyx7?=
+ =?us-ascii?Q?lvkDaSkayQh8G0=3D?=
+X-Microsoft-Antispam-Message-Info: F8AtqN2cZ+gOlvlEJstGlI5DBjF1H2bQ3YJtRF+Ld78DENw12CIqJyQXGlvjfiZ6A4qkkfS37A9cbEoyRN0l645rZACtieSUqWayitvjujT5DHjyEYh6R7x2kFXIaGKjpMY8ZM9k+lhSE4vQbfqLFTk70Qa4tYlqx6J5t3PWlsTAd7wDy3Ft457WNJY/B39QbRx2btpuNDbcSc5nfNYv4WIbE5TAV/b8eLLkjzNV/6Y=
+X-Microsoft-Exchange-Diagnostics: 1;DB5PR07MB1608;6:Ztc7pvOaUGmb4hHYyDsJEBKBCQfYpNlanmcoXm0JQfvs/2iT0GELexP8eBiHJVnpXIROoHo4dlf2XbPKQ5Do7R8IjD4idVdHgnzA/wUBgibDFaTk0R2NeDrT25Jq7qightGT45Q5ToS1oQTamsuZQGgLjvIDJJ4V1ub4uHGXUiqkG5n5fdr59Hgn8nfaNYVrfe0uzHIg94MHBV8gubF7BXna3LsC18tovNoU6ftpORO6JBepklrkxny0c804PGwHW5u77bGSxI7wv6aZLDaeYDFc+HEiW58fQIJNuFKbffm9oCvlmaEIXSJwgQsefSJfJzlWR2daaXtpz48bBf4RdNz2pruk82ftqfyaVeYmnP9EJTtR3P8T3nEsoIPBkzYkfr/sQnyvVnQLb2bFjk3RJd+qTRKOU4zt3er0YlpDh5ieJZ1gSUnd1toSJ/o5ibaPlB2B0TVvbcQ4gCxEIBx7iA==;5:XhnRhcIQygDPDqZDViQDcQoaZYNv5257TZfQ60airyvKArlxMnzxPrvP/UFGmLXkeJsx2IqBElVcGF8V76Oh4oVatiYeysVleKdmyOHKAAU2e/zbhdPfsrt+c/NGS+ESGaSJr2qE+TJF20sT5FqGfswbSsM56/vQX+N0wUfokBs=;24:eGLFyynBjARnApXxkOFTW5n/1snQ2+AZBdRvUyDaYfK2AgYRsO6pKv43ImVHB+2+8J1MKvww4D1mqQEjejBdQK9efmP9BFz6Fai5U7LYtoY=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;DB5PR07MB1608;7:uGoZ+hdjeyk29KMzafli6R63UI9SgiQIwJUHPkDNvZErr46CRv8XA9JcxjBmXR/a8sky6Dslj1wNvppUjqKR9ODnCms8HLWD5GC5CjhKjUL/+DOWDuVqaOPk+HueQkeghr5FJkvlt+NvikA/yXjZUki6I5LbYatzc8xYvtkGmLmlzwxRKID87VqwM55RBCu1aS6aARz/N2QgibzmErezFS+GXkBNYyy302xUA7eH2ze+/gKyb2Hj4gtwywrn/DbH
+X-MS-Office365-Filtering-Correlation-Id: 412e4722-20cc-433b-1401-08d5abd4ccd7
+X-OriginatorOrg: nokia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Apr 2018 00:21:18.1481 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 412e4722-20cc-433b-1401-08d5abd4ccd7
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 5d471751-9675-428d-917b-70f44f9630b0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB5PR07MB1608
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This removes the unused legacy clock init code from
-arch/arm/mach-davinci/dm644x.c.
+Per ONFI specification (Rev. 4.0), if the CRC of the first parameter page
+read is not valid, the host should read redundant parameter page copies
+until it finds a valid copy.  If all three parameter pages have invalid
+CRC values, the bit-wise majority may be used to recover the contents of
+the parameter pages from the parameter page copies present.
 
-Signed-off-by: David Lechner <david@lechnology.com>
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
----
+The FSL NAND driver only reads the first page.  The first patch fixes the
+driver to read all three parameter pages.  The second patch is the change
+for using bit-wise majority to recover the contents of ONFI parameter.
 
-v9 changes:
-- rebased
+Jane Wan (2):
+  Fix FSL NAND driver to read all ONFI parameter pages
+  Use bit-wise majority to recover the contents of ONFI parameter
 
-v8 changes:
-- none
+ drivers/mtd/nand/fsl_ifc_nand.c |   10 ++++++----
+ drivers/mtd/nand/nand_base.c    |   35 +++++++++++++++++++++++++++++++----
+ 2 files changed, 37 insertions(+), 8 deletions(-)
 
-v7 changes:
-- rebased
-- add davinci prefix to commit message
-
-v6 changes:
-- rebased
-
-
- arch/arm/mach-davinci/dm644x.c | 300 ---------------------------------
- 1 file changed, 300 deletions(-)
-
-diff --git a/arch/arm/mach-davinci/dm644x.c b/arch/arm/mach-davinci/dm644x.c
-index b359f9a68134..cf7b9b80816d 100644
---- a/arch/arm/mach-davinci/dm644x.c
-+++ b/arch/arm/mach-davinci/dm644x.c
-@@ -32,11 +32,6 @@
- #include "davinci.h"
- #include "mux.h"
- 
--#ifndef CONFIG_COMMON_CLK
--#include "clock.h"
--#include "psc.h"
--#endif
--
- /*
-  * Device specific clocks
-  */
-@@ -49,292 +44,6 @@
- #define DM644X_EMAC_CNTRL_RAM_OFFSET	0x2000
- #define DM644X_EMAC_CNTRL_RAM_SIZE	0x2000
- 
--#ifndef CONFIG_COMMON_CLK
--static struct pll_data pll1_data = {
--	.num       = 1,
--	.phys_base = DAVINCI_PLL1_BASE,
--};
--
--static struct pll_data pll2_data = {
--	.num       = 2,
--	.phys_base = DAVINCI_PLL2_BASE,
--};
--
--static struct clk ref_clk = {
--	.name = "ref_clk",
--	.rate = DM644X_REF_FREQ,
--};
--
--static struct clk pll1_clk = {
--	.name = "pll1",
--	.parent = &ref_clk,
--	.pll_data = &pll1_data,
--	.flags = CLK_PLL,
--};
--
--static struct clk pll1_sysclk1 = {
--	.name = "pll1_sysclk1",
--	.parent = &pll1_clk,
--	.flags = CLK_PLL,
--	.div_reg = PLLDIV1,
--};
--
--static struct clk pll1_sysclk2 = {
--	.name = "pll1_sysclk2",
--	.parent = &pll1_clk,
--	.flags = CLK_PLL,
--	.div_reg = PLLDIV2,
--};
--
--static struct clk pll1_sysclk3 = {
--	.name = "pll1_sysclk3",
--	.parent = &pll1_clk,
--	.flags = CLK_PLL,
--	.div_reg = PLLDIV3,
--};
--
--static struct clk pll1_sysclk5 = {
--	.name = "pll1_sysclk5",
--	.parent = &pll1_clk,
--	.flags = CLK_PLL,
--	.div_reg = PLLDIV5,
--};
--
--static struct clk pll1_aux_clk = {
--	.name = "pll1_aux_clk",
--	.parent = &pll1_clk,
--	.flags = CLK_PLL | PRE_PLL,
--};
--
--static struct clk pll1_sysclkbp = {
--	.name = "pll1_sysclkbp",
--	.parent = &pll1_clk,
--	.flags = CLK_PLL | PRE_PLL,
--	.div_reg = BPDIV
--};
--
--static struct clk pll2_clk = {
--	.name = "pll2",
--	.parent = &ref_clk,
--	.pll_data = &pll2_data,
--	.flags = CLK_PLL,
--};
--
--static struct clk pll2_sysclk1 = {
--	.name = "pll2_sysclk1",
--	.parent = &pll2_clk,
--	.flags = CLK_PLL,
--	.div_reg = PLLDIV1,
--};
--
--static struct clk pll2_sysclk2 = {
--	.name = "pll2_sysclk2",
--	.parent = &pll2_clk,
--	.flags = CLK_PLL,
--	.div_reg = PLLDIV2,
--};
--
--static struct clk pll2_sysclkbp = {
--	.name = "pll2_sysclkbp",
--	.parent = &pll2_clk,
--	.flags = CLK_PLL | PRE_PLL,
--	.div_reg = BPDIV
--};
--
--static struct clk dsp_clk = {
--	.name = "dsp",
--	.parent = &pll1_sysclk1,
--	.lpsc = DAVINCI_LPSC_GEM,
--	.domain = DAVINCI_GPSC_DSPDOMAIN,
--	.usecount = 1,			/* REVISIT how to disable? */
--};
--
--static struct clk arm_clk = {
--	.name = "arm",
--	.parent = &pll1_sysclk2,
--	.lpsc = DAVINCI_LPSC_ARM,
--	.flags = ALWAYS_ENABLED,
--};
--
--static struct clk vicp_clk = {
--	.name = "vicp",
--	.parent = &pll1_sysclk2,
--	.lpsc = DAVINCI_LPSC_IMCOP,
--	.domain = DAVINCI_GPSC_DSPDOMAIN,
--	.usecount = 1,			/* REVISIT how to disable? */
--};
--
--static struct clk vpss_master_clk = {
--	.name = "vpss_master",
--	.parent = &pll1_sysclk3,
--	.lpsc = DAVINCI_LPSC_VPSSMSTR,
--	.flags = CLK_PSC,
--};
--
--static struct clk vpss_slave_clk = {
--	.name = "vpss_slave",
--	.parent = &pll1_sysclk3,
--	.lpsc = DAVINCI_LPSC_VPSSSLV,
--};
--
--static struct clk uart0_clk = {
--	.name = "uart0",
--	.parent = &pll1_aux_clk,
--	.lpsc = DAVINCI_LPSC_UART0,
--};
--
--static struct clk uart1_clk = {
--	.name = "uart1",
--	.parent = &pll1_aux_clk,
--	.lpsc = DAVINCI_LPSC_UART1,
--};
--
--static struct clk uart2_clk = {
--	.name = "uart2",
--	.parent = &pll1_aux_clk,
--	.lpsc = DAVINCI_LPSC_UART2,
--};
--
--static struct clk emac_clk = {
--	.name = "emac",
--	.parent = &pll1_sysclk5,
--	.lpsc = DAVINCI_LPSC_EMAC_WRAPPER,
--};
--
--static struct clk i2c_clk = {
--	.name = "i2c",
--	.parent = &pll1_aux_clk,
--	.lpsc = DAVINCI_LPSC_I2C,
--};
--
--static struct clk ide_clk = {
--	.name = "ide",
--	.parent = &pll1_sysclk5,
--	.lpsc = DAVINCI_LPSC_ATA,
--};
--
--static struct clk asp_clk = {
--	.name = "asp0",
--	.parent = &pll1_sysclk5,
--	.lpsc = DAVINCI_LPSC_McBSP,
--};
--
--static struct clk mmcsd_clk = {
--	.name = "mmcsd",
--	.parent = &pll1_sysclk5,
--	.lpsc = DAVINCI_LPSC_MMC_SD,
--};
--
--static struct clk spi_clk = {
--	.name = "spi",
--	.parent = &pll1_sysclk5,
--	.lpsc = DAVINCI_LPSC_SPI,
--};
--
--static struct clk gpio_clk = {
--	.name = "gpio",
--	.parent = &pll1_sysclk5,
--	.lpsc = DAVINCI_LPSC_GPIO,
--};
--
--static struct clk usb_clk = {
--	.name = "usb",
--	.parent = &pll1_sysclk5,
--	.lpsc = DAVINCI_LPSC_USB,
--};
--
--static struct clk vlynq_clk = {
--	.name = "vlynq",
--	.parent = &pll1_sysclk5,
--	.lpsc = DAVINCI_LPSC_VLYNQ,
--};
--
--static struct clk aemif_clk = {
--	.name = "aemif",
--	.parent = &pll1_sysclk5,
--	.lpsc = DAVINCI_LPSC_AEMIF,
--};
--
--static struct clk pwm0_clk = {
--	.name = "pwm0",
--	.parent = &pll1_aux_clk,
--	.lpsc = DAVINCI_LPSC_PWM0,
--};
--
--static struct clk pwm1_clk = {
--	.name = "pwm1",
--	.parent = &pll1_aux_clk,
--	.lpsc = DAVINCI_LPSC_PWM1,
--};
--
--static struct clk pwm2_clk = {
--	.name = "pwm2",
--	.parent = &pll1_aux_clk,
--	.lpsc = DAVINCI_LPSC_PWM2,
--};
--
--static struct clk timer0_clk = {
--	.name = "timer0",
--	.parent = &pll1_aux_clk,
--	.lpsc = DAVINCI_LPSC_TIMER0,
--};
--
--static struct clk timer1_clk = {
--	.name = "timer1",
--	.parent = &pll1_aux_clk,
--	.lpsc = DAVINCI_LPSC_TIMER1,
--};
--
--static struct clk timer2_clk = {
--	.name = "timer2",
--	.parent = &pll1_aux_clk,
--	.lpsc = DAVINCI_LPSC_TIMER2,
--	.usecount = 1,              /* REVISIT: why can't this be disabled? */
--};
--
--static struct clk_lookup dm644x_clks[] = {
--	CLK(NULL, "ref", &ref_clk),
--	CLK(NULL, "pll1", &pll1_clk),
--	CLK(NULL, "pll1_sysclk1", &pll1_sysclk1),
--	CLK(NULL, "pll1_sysclk2", &pll1_sysclk2),
--	CLK(NULL, "pll1_sysclk3", &pll1_sysclk3),
--	CLK(NULL, "pll1_sysclk5", &pll1_sysclk5),
--	CLK(NULL, "pll1_aux", &pll1_aux_clk),
--	CLK(NULL, "pll1_sysclkbp", &pll1_sysclkbp),
--	CLK(NULL, "pll2", &pll2_clk),
--	CLK(NULL, "pll2_sysclk1", &pll2_sysclk1),
--	CLK(NULL, "pll2_sysclk2", &pll2_sysclk2),
--	CLK(NULL, "pll2_sysclkbp", &pll2_sysclkbp),
--	CLK(NULL, "dsp", &dsp_clk),
--	CLK(NULL, "arm", &arm_clk),
--	CLK(NULL, "vicp", &vicp_clk),
--	CLK("vpss", "master", &vpss_master_clk),
--	CLK("vpss", "slave", &vpss_slave_clk),
--	CLK(NULL, "arm", &arm_clk),
--	CLK("serial8250.0", NULL, &uart0_clk),
--	CLK("serial8250.1", NULL, &uart1_clk),
--	CLK("serial8250.2", NULL, &uart2_clk),
--	CLK("davinci_emac.1", NULL, &emac_clk),
--	CLK("davinci_mdio.0", "fck", &emac_clk),
--	CLK("i2c_davinci.1", NULL, &i2c_clk),
--	CLK("palm_bk3710", NULL, &ide_clk),
--	CLK("davinci-mcbsp", NULL, &asp_clk),
--	CLK("dm6441-mmc.0", NULL, &mmcsd_clk),
--	CLK(NULL, "spi", &spi_clk),
--	CLK(NULL, "gpio", &gpio_clk),
--	CLK(NULL, "usb", &usb_clk),
--	CLK(NULL, "vlynq", &vlynq_clk),
--	CLK(NULL, "aemif", &aemif_clk),
--	CLK(NULL, "pwm0", &pwm0_clk),
--	CLK(NULL, "pwm1", &pwm1_clk),
--	CLK(NULL, "pwm2", &pwm2_clk),
--	CLK(NULL, "timer0", &timer0_clk),
--	CLK(NULL, "timer1", &timer1_clk),
--	CLK("davinci-wdt", NULL, &timer2_clk),
--	CLK(NULL, NULL, NULL),
--};
--#endif
--
- static struct emac_platform_data dm644x_emac_pdata = {
- 	.ctrl_reg_offset	= DM644X_EMAC_CNTRL_OFFSET,
- 	.ctrl_mod_reg_offset	= DM644X_EMAC_CNTRL_MOD_OFFSET,
-@@ -827,8 +536,6 @@ static struct davinci_id dm644x_ids[] = {
- 	},
- };
- 
--static u32 dm644x_psc_bases[] = { DAVINCI_PWR_SLEEP_CNTRL_BASE };
--
- /*
-  * T0_BOT: Timer 0, bottom:  clockevent source for hrtimers
-  * T0_TOP: Timer 0, top   :  clocksource for generic timekeeping
-@@ -913,8 +620,6 @@ static const struct davinci_soc_info davinci_soc_info_dm644x = {
- 	.jtag_id_reg		= 0x01c40028,
- 	.ids			= dm644x_ids,
- 	.ids_num		= ARRAY_SIZE(dm644x_ids),
--	.psc_bases		= dm644x_psc_bases,
--	.psc_bases_num		= ARRAY_SIZE(dm644x_psc_bases),
- 	.pinmux_base		= DAVINCI_SYSTEM_MODULE_BASE,
- 	.pinmux_pins		= dm644x_pins,
- 	.pinmux_pins_num	= ARRAY_SIZE(dm644x_pins),
-@@ -942,7 +647,6 @@ void __init dm644x_init(void)
- 
- void __init dm644x_init_time(void)
- {
--#ifdef CONFIG_COMMON_CLK
- 	void __iomem *pll1, *psc;
- 	struct clk *clk;
- 
-@@ -957,10 +661,6 @@ void __init dm644x_init_time(void)
- 	clk = clk_get(NULL, "timer0");
- 
- 	davinci_timer_init(clk);
--#else
--	davinci_clk_init(dm644x_clks);
--	davinci_timer_init(&timer0_clk);
--#endif
- }
- 
- static struct resource dm644x_pll2_resources[] = {
 -- 
-2.17.0
+1.7.9.5
