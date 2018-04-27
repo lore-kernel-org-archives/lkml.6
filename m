@@ -1,61 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934886AbeD0Ofz (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 10:35:55 -0400
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:41981 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932882AbeD0Ofw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 10:35:52 -0400
-X-Google-Smtp-Source: AB8JxZqNQpkhgoeEPeMxI85p4NRLM5ZXn9xrnmwhEHfWZsnO41jD0N2bb2hO8W/1hBc28ECVUkQdmg==
-Date: Fri, 27 Apr 2018 09:35:50 -0500
-From: Rob Herring <robh@kernel.org>
-To: jan.tuerk@emtrion.com
+        id S934738AbeD0OhD (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 10:37:03 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41198 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932733AbeD0OhA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 10:37:00 -0400
+Date: Fri, 27 Apr 2018 15:37:20 +0100
+From: Will Deacon <will.deacon@arm.com>
+To: Kim Phillips <kim.phillips@arm.com>
 Cc: Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 1/7] dt-bindings: display: Document the EDT et*
- displays in one file.
-Message-ID: <20180427143550.yzc3rnunjeudevhi@rob-hp-laptop>
-References: <20180420125108.14197-1-jan.tuerk@emtrion.com>
- <20180427132445.3458-1-jan.tuerk@emtrion.com>
- <20180427132445.3458-2-jan.tuerk@emtrion.com>
+        Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, jnair@caviumnetworks.com,
+        Robert.Richter@cavium.com, Vadim.Lomovtsev@cavium.com,
+        Jan.Glauber@cavium.com, gklkml16@gmail.com
+Subject: Re: [PATCH v4 2/2] ThunderX2: Add Cavium ThunderX2 SoC UNCORE PMU
+ driver
+Message-ID: <20180427143719.GA5093@arm.com>
+References: <20180425090047.6485-1-ganapatrao.kulkarni@cavium.com>
+ <20180425090047.6485-3-ganapatrao.kulkarni@cavium.com>
+ <20180426170624.bfcba885431d57d0de2a3ddd@arm.com>
+ <20180427093027.ngtuoezyh6mtz26p@lakrids.cambridge.arm.com>
+ <20180427081525.f9dcc756678baf3bb6e6e473@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180427132445.3458-2-jan.tuerk@emtrion.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180427081525.f9dcc756678baf3bb6e6e473@arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 27, 2018 at 03:24:36PM +0200, jan.tuerk@emtrion.com wrote:
-> From: Jan Tuerk <jan.tuerk@emtrion.com>
+On Fri, Apr 27, 2018 at 08:15:25AM -0500, Kim Phillips wrote:
+> On Fri, 27 Apr 2018 10:30:27 +0100
+> Mark Rutland <mark.rutland@arm.com> wrote:
+> > On Thu, Apr 26, 2018 at 05:06:24PM -0500, Kim Phillips wrote:
+> > > On Wed, 25 Apr 2018 14:30:47 +0530
+> > > Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com> wrote:
+> > > 
+> > > > +static int thunderx2_uncore_event_init(struct perf_event *event)
+> > 
+> > > This PMU driver can be made more user-friendly by not just silently
+> > > returning an error code such as -EINVAL, but by emitting a useful
+> > > message describing the specific error via dmesg.
+> > 
+> > As has previously been discussed on several occasions, patches which log
+> > to dmesg in a pmu::event_init() path at any level above pr_debug() are
+> > not acceptable -- dmesg is not intended as a mechanism to inform users
+> > of driver-specific constraints.
 > 
-> Document the Emerging Display Technology Corp. (EDT) using the
-> simple-panel binding in one single file.
+> I disagree - drivers do it all the time, using dev_err(), dev_warn(), etc.
 > 
-> Signed-off-by: Jan Tuerk <jan.tuerk@emtrion.com>
-> ---
-> Changes for v4:
->   - re-arrange the Patch-series to match the DT-submitting-patches
->   - Additional patch for the Documentation of the new DT-bindings
->   - no change (re-arranged 3/6 => 1/7)
+> > I would appreciate if in future you could qualify your suggestion with
+> > the requirement that pr_debug() is used.
 > 
->  .../bindings/display/panel/edt,et-series.txt       | 39 ++++++++++++++++++++++
->  .../bindings/display/panel/edt,et057090dhu.txt     |  7 ----
->  .../bindings/display/panel/edt,et070080dh6.txt     | 10 ------
->  .../bindings/display/panel/edt,etm0700g0dh6.txt    | 10 ------
->  4 files changed, 39 insertions(+), 27 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/display/panel/edt,et-series.txt
->  delete mode 100644 Documentation/devicetree/bindings/display/panel/edt,et057090dhu.txt
->  delete mode 100644 Documentation/devicetree/bindings/display/panel/edt,et070080dh6.txt
->  delete mode 100644 Documentation/devicetree/bindings/display/panel/edt,etm0700g0dh6.txt
+> It shouldn't - the driver isn't being debugged, it's in regular use.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+For anything under drivers/perf/, I'd prefer not to have these prints
+and instead see efforts to improve error reporting via the perf system
+call interface.
+
+Anyway, I think this driver has bigger problems that need addressing.
+
+Will
