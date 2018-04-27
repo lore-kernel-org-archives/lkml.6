@@ -1,241 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932745AbeD0Kxr (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 06:53:47 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51270 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932415AbeD0Kxp (ORCPT
+        id S932778AbeD0K5E (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 06:57:04 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:43074 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932415AbeD0K5A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 06:53:45 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        alsa-devel@alsa-project.org, Jassi Brar <jaswinder.singh@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: uniphier: remove boilerplate from lisence comment" to the asoc tree
-In-Reply-To: <20180427052734.3506-1-suzuki.katsuhiro@socionext.com>
-Message-Id: <E1fC10U-0003Q0-5e@debutante>
-Date: Fri, 27 Apr 2018 11:53:38 +0100
+        Fri, 27 Apr 2018 06:57:00 -0400
+X-Google-Smtp-Source: AB8JxZqvIffGEsQ9YIB0LguVFkMtL5wz0wQkjgM5MdMcJp2PFmzqaVQvynFQiYWTBH1Ly6wj5HkG5Q==
+Subject: Re: [PATCH v4 09/15] memory: tegra: Squash tegra20-mc into common
+ tegra-mc driver
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1523301400.git.digetx@gmail.com>
+ <675f74f82378b5f7d8f61d35e929614a0e156141.1523301400.git.digetx@gmail.com>
+ <20180427093435.GB30388@ulmo>
+ <882f14b8-78c8-95bb-326e-3917c9736faf@gmail.com>
+ <20180427102456.GA17137@ulmo>
+From: Dmitry Osipenko <digetx@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=digetx@gmail.com; prefer-encrypt=mutual; keydata=
+ xsBNBFpX5TwBCADQhg+lBnTunWSPbP5I+rM9q6EKPm5fu2RbqyVAh/W3fRvLyghdb58Yrmjm
+ KpDYUhBIZvAQoFLEL1IPAgJBtmPvemO1XUGPxfYNh/3BlcDFBAgERrI3BfA/6pk7SAFn8u84
+ p+J1TW4rrPYcusfs44abJrn8CH0GZKt2AZIsGbGQ79O2HHXKHr9V95ZEPWH5AR0UtL6wxg6o
+ O56UNG3rIzSL5getRDQW3yCtjcqM44mz6GPhSE2sxNgqureAbnzvr4/93ndOHtQUXPzzTrYB
+ z/WqLGhPdx5Ouzn0Q0kSVCQiqeExlcQ7i7aKRRrELz/5/IXbCo2O+53twlX8xOps9iMfABEB
+ AAHNIkRtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT7CwJQEEwEIAD4WIQSczHcO
+ 3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbAwUJA8JnAAULCQgHAgYVCgkICwIEFgIDAQIeAQIX
+ gAAKCRDTNNaPsNRzvFjTCACqAh1M9/YPq73/ai5h2ExDquTgJnjegL8KL2yHL3G+XINwzN5E
+ nPI7esoYm+zVWDJbv3UuRqylpookLNSRA01yyvkaMcipB/B128UnqmUiGRqezj9QE20yIauo
+ uHRuwHPE2q+UkfUhRX9iuOaEyQtZDiCa0myMjmRkJ+Z8ZetclEPG8dYZu47w04phuMlu1QAt
+ a0gkZOaMKvXgj21ushALS6nYnvm7HiIPQXfnEXThartatRvFdmbG4PCn0IoICkQBizwJtXrL
+ HEjELIFap0M8krVJlUoZTFaZnaZkGpUDWikeFtAuie2KuIxmVBYPM4X7pM3eP3AVvIPGS7EE
+ UUFuzsBNBFpX5TwBCADFNDou220thijaLLGaQsebWjzc/gPRxMixIpk856MRyRaQin+IbGD6
+ YskMb5ZSD3nS88LIKNfY4MMH0LwfYztI++ICG2vdFLkbBt78E+LqEa+kZ9072l4W5KO3mWQo
+ +jMfxXbpgGlc7iuEReDgl8iyZ27r51kSW665CYvvu2YJhLqgdj6QM1lN2D1UnhEhkkU+pRAj
+ 1rJVOxdfJaQNQS4+204p3TrURovzNGkN/brqakpNIcqGOAGQqb8F0tuwwuP7ERq/BzDNkbdr
+ qJOrVC/wkHRq1jfabQczWKf8MwYOvivR3HY8d3CpSQxmUXDtdOWfg0XGm1dxYnVfqPjuJaZt
+ ABEBAAHCwHwEGAEIACYWIQSczHcO3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbDAUJA8JnAAAK
+ CRDTNNaPsNRzvJzuB/9d+sxcwHbO8ZDcgaLX9N+bXFqN9fIRVmBUyWa+qqTSREA4uVAtYcRT
+ lfPE2OQ7aMFxaYPwo+/z5SLpu8HcEhN/FG9uIkfYwK0mdCO0vgvlfvBJm4VHe7C6vyAeEPJQ
+ DKbBvdgeqFqO+PsLkk2sawF/9sontMJ5iFfjNDj4UeAo4VsdlduTBZv5hHFvIbv/p7jKH6OT
+ 90FsgUSVbShh7SH5OzAcgqSy4kxuS1AHizWo6P3f9vei987LZWTyhuEuhJsOfivDsjKIq7qQ
+ c5eR+JJtyLEA0Jt4cQGhpzHtWB0yB3XxXzHVa4QUp00BNVWyiJ/t9JHT4S5mdyLfcKm7ddc9
+Message-ID: <103e449b-8ac9-c70b-4d85-638ba4a4a73a@gmail.com>
+Date: Fri, 27 Apr 2018 13:56:55 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180427102456.GA17137@ulmo>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On 27.04.2018 13:24, Thierry Reding wrote:
+> On Fri, Apr 27, 2018 at 01:13:47PM +0300, Dmitry Osipenko wrote:
+>> On 27.04.2018 12:34, Thierry Reding wrote:
+>>> On Mon, Apr 09, 2018 at 10:28:31PM +0300, Dmitry Osipenko wrote:
+>>> [...]
+>>>> diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
+>>> [...]
+>>>> +#define MC_GART_ERROR_REQ		0x30
+>>>> +#define MC_DECERR_EMEM_OTHERS_STATUS	0x58
+>>>> +#define MC_SECURITY_VIOLATION_STATUS	0x74
+>>> [...]
+>>>> diff --git a/drivers/memory/tegra/mc.h b/drivers/memory/tegra/mc.h
+>>> [...]
+>>>> @@ -21,19 +21,30 @@
+>>>>  #define MC_INT_INVALID_SMMU_PAGE (1 << 10)
+>>>>  #define MC_INT_ARBITRATION_EMEM (1 << 9)
+>>>>  #define MC_INT_SECURITY_VIOLATION (1 << 8)
+>>>> +#define MC_INT_INVALID_GART_PAGE (1 << 7)
+>>>>  #define MC_INT_DECERR_EMEM (1 << 6)
+>>>>  
+>>>>  static inline u32 mc_readl(struct tegra_mc *mc, unsigned long offset)
+>>>>  {
+>>>> +	if (mc->regs2 && offset >= 0x24)
+>>>> +		return readl(mc->regs2 + offset - 0x3c);
+>>>
+>>> I'm still not sure how this is supposed to work. If we pass in
+>>> MC_GART_ERROR_REQ as offset into mc_readl(), then the condition above
+>>> will be true (0x30 >= 0x24) but then the new offset will be computed
+>>> and we end up with:
+>>>
+>>> 	return readl(mc->regs2 + 0x30 - 0x3c);
+>>>
+>>> which means we'll be adding a negative offset (or rather a very large
+>>> offset because it will wrap around).
+>>
+>> Indeed! Thank you for pointing at it again, now I see the issue. It probably
+>> works because actual registers mapping is aligned to page(?) size and adding the
+>> large offset with wraparound is equal to subtraction.
+>>
+>> That register belongs to the GART and we can't simply move interrupt handling to
+>> the GART driver because status register is within the MC in device tree. We can
+>> omit reading of MC_GART_ERROR_REQ and simply report GART page fault for the
+>> starter and then reorganize drivers by making MC driver MFD and GART its
+>> sub-device, what do you think?
+> 
+> Sounds like a good idea. Can you send a fix on top of this that I can
+> squash into this when applying?
 
-   ASoC: uniphier: remove boilerplate from lisence comment
+Sure.
 
-has been applied to the asoc tree at
+> As for integrating GART with MC, I'd prefer something that doesn't use
+> MFD but rather does something similar to what we have for the SMMU. I
+> think that's simpler to do and has less boilerplate. I think it's also
+> warranted because the MC and GART are very tightly coupled, so an MFD
+> would be slightly over-engineered, in my opinion.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From e19f77ee0e8ade56564dad07f904b75dd5c37e31 Mon Sep 17 00:00:00 2001
-From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Date: Fri, 27 Apr 2018 14:27:34 +0900
-Subject: [PATCH] ASoC: uniphier: remove boilerplate from lisence comment
-
-This patch removes boilerplate of GPLv2, use only SPDX identifier as
-same as other recently ASoC DAI drivers.
-
-Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/uniphier/aio-compress.c | 13 -------------
- sound/soc/uniphier/aio-core.c     | 13 -------------
- sound/soc/uniphier/aio-cpu.c      | 13 -------------
- sound/soc/uniphier/aio-dma.c      | 13 -------------
- sound/soc/uniphier/aio-ld11.c     | 13 -------------
- sound/soc/uniphier/aio-reg.h      | 13 -------------
- sound/soc/uniphier/aio.h          | 13 -------------
- 7 files changed, 91 deletions(-)
-
-diff --git a/sound/soc/uniphier/aio-compress.c b/sound/soc/uniphier/aio-compress.c
-index 4c1027aa615e..17f773ac5ca1 100644
---- a/sound/soc/uniphier/aio-compress.c
-+++ b/sound/soc/uniphier/aio-compress.c
-@@ -3,19 +3,6 @@
- // Socionext UniPhier AIO Compress Audio driver.
- //
- // Copyright (c) 2017-2018 Socionext Inc.
--//
--// This program is free software; you can redistribute it and/or
--// modify it under the terms of the GNU General Public License
--// as published by the Free Software Foundation; version 2
--// of the License.
--//
--// This program is distributed in the hope that it will be useful,
--// but WITHOUT ANY WARRANTY; without even the implied warranty of
--// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
--// GNU General Public License for more details.
--//
--// You should have received a copy of the GNU General Public License
--// along with this program; if not, see <http://www.gnu.org/licenses/>.
- 
- #include <linux/bitfield.h>
- #include <linux/circ_buf.h>
-diff --git a/sound/soc/uniphier/aio-core.c b/sound/soc/uniphier/aio-core.c
-index 6d50042a4571..e37b80921abb 100644
---- a/sound/soc/uniphier/aio-core.c
-+++ b/sound/soc/uniphier/aio-core.c
-@@ -3,19 +3,6 @@
- // Socionext UniPhier AIO ALSA common driver.
- //
- // Copyright (c) 2016-2018 Socionext Inc.
--//
--// This program is free software; you can redistribute it and/or
--// modify it under the terms of the GNU General Public License
--// as published by the Free Software Foundation; version 2
--// of the License.
--//
--// This program is distributed in the hope that it will be useful,
--// but WITHOUT ANY WARRANTY; without even the implied warranty of
--// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
--// GNU General Public License for more details.
--//
--// You should have received a copy of the GNU General Public License
--// along with this program; if not, see <http://www.gnu.org/licenses/>.
- 
- #include <linux/bitfield.h>
- #include <linux/errno.h>
-diff --git a/sound/soc/uniphier/aio-cpu.c b/sound/soc/uniphier/aio-cpu.c
-index 1e5eb8e6f8c7..00b6441bf195 100644
---- a/sound/soc/uniphier/aio-cpu.c
-+++ b/sound/soc/uniphier/aio-cpu.c
-@@ -3,19 +3,6 @@
- // Socionext UniPhier AIO ALSA CPU DAI driver.
- //
- // Copyright (c) 2016-2018 Socionext Inc.
--//
--// This program is free software; you can redistribute it and/or
--// modify it under the terms of the GNU General Public License
--// as published by the Free Software Foundation; version 2
--// of the License.
--//
--// This program is distributed in the hope that it will be useful,
--// but WITHOUT ANY WARRANTY; without even the implied warranty of
--// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
--// GNU General Public License for more details.
--//
--// You should have received a copy of the GNU General Public License
--// along with this program; if not, see <http://www.gnu.org/licenses/>.
- 
- #include <linux/clk.h>
- #include <linux/errno.h>
-diff --git a/sound/soc/uniphier/aio-dma.c b/sound/soc/uniphier/aio-dma.c
-index ef7bafa8e171..4ec6b65bfb44 100644
---- a/sound/soc/uniphier/aio-dma.c
-+++ b/sound/soc/uniphier/aio-dma.c
-@@ -3,19 +3,6 @@
- // Socionext UniPhier AIO DMA driver.
- //
- // Copyright (c) 2016-2018 Socionext Inc.
--//
--// This program is free software; you can redistribute it and/or
--// modify it under the terms of the GNU General Public License
--// as published by the Free Software Foundation; version 2
--// of the License.
--//
--// This program is distributed in the hope that it will be useful,
--// but WITHOUT ANY WARRANTY; without even the implied warranty of
--// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
--// GNU General Public License for more details.
--//
--// You should have received a copy of the GNU General Public License
--// along with this program; if not, see <http://www.gnu.org/licenses/>.
- 
- #include <linux/dma-mapping.h>
- #include <linux/errno.h>
-diff --git a/sound/soc/uniphier/aio-ld11.c b/sound/soc/uniphier/aio-ld11.c
-index 4c4dd3dd4dee..ab04d3331be9 100644
---- a/sound/soc/uniphier/aio-ld11.c
-+++ b/sound/soc/uniphier/aio-ld11.c
-@@ -3,19 +3,6 @@
- // Socionext UniPhier AIO ALSA driver for LD11/LD20.
- //
- // Copyright (c) 2016-2018 Socionext Inc.
--//
--// This program is free software; you can redistribute it and/or
--// modify it under the terms of the GNU General Public License
--// as published by the Free Software Foundation; version 2
--// of the License.
--//
--// This program is distributed in the hope that it will be useful,
--// but WITHOUT ANY WARRANTY; without even the implied warranty of
--// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
--// GNU General Public License for more details.
--//
--// You should have received a copy of the GNU General Public License
--// along with this program; if not, see <http://www.gnu.org/licenses/>.
- 
- #include <linux/module.h>
- 
-diff --git a/sound/soc/uniphier/aio-reg.h b/sound/soc/uniphier/aio-reg.h
-index 136d3563cf44..511ea3c01847 100644
---- a/sound/soc/uniphier/aio-reg.h
-+++ b/sound/soc/uniphier/aio-reg.h
-@@ -3,19 +3,6 @@
-  * Socionext UniPhier AIO ALSA driver.
-  *
-  * Copyright (c) 2016-2018 Socionext Inc.
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License
-- * as published by the Free Software Foundation; version 2
-- * of the License.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, see <http://www.gnu.org/licenses/>.
-  */
- 
- #ifndef SND_UNIPHIER_AIO_REG_H__
-diff --git a/sound/soc/uniphier/aio.h b/sound/soc/uniphier/aio.h
-index 8cab4a553a97..52670126084f 100644
---- a/sound/soc/uniphier/aio.h
-+++ b/sound/soc/uniphier/aio.h
-@@ -3,19 +3,6 @@
-  * Socionext UniPhier AIO ALSA driver.
-  *
-  * Copyright (c) 2016-2018 Socionext Inc.
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License
-- * as published by the Free Software Foundation; version 2
-- * of the License.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, see <http://www.gnu.org/licenses/>.
-  */
- 
- #ifndef SND_UNIPHIER_AIO_H__
--- 
-2.17.0
+Okay, I'll recap how SMMU is integrated with MC and then come up with something.
