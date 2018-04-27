@@ -1,28 +1,28 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqf/OG+n3e7bPGnfWMgkJZ+O/d+Eyj4L3b8cxpgEQngL4ARf2dCtxO10GXKB/t2HS5WakAo
-ARC-Seal: i=1; a=rsa-sha256; t=1524838284; cv=none;
+X-Google-Smtp-Source: AB8JxZrLObJP42cpARRK8XND+h3Cds1d/mXClAnISd3mROWnp3SUomqvUTQgwJikd9AsiNCW+WBA
+ARC-Seal: i=1; a=rsa-sha256; t=1524838281; cv=none;
         d=google.com; s=arc-20160816;
-        b=LcBVboXMxfe3wYtNpm6jkLjA0qG6i1+lG2DPRkoFTUA7VGA/ckFn5PboUiLXcisEq2
-         mqpFLJT9d27zNhdhKFFFywKZi1FaGxTg7nzs8AKqduJDLHUB25A16ePt4Ybyr1jtyMAf
-         MX5fvXgVETHhwes39Kghz26MHuiuoDoMe2rb3Gcit4lLKJ35AAsZ7k/rh2Mvwj42jOE9
-         XrGh3NxsSrv545rZfgvNp0p1AXMcxhxRrZIPXwg4WAkCAHJxlt63hevRutsOP8J1vnRh
-         P63bnw3NZMJXuBrMp5RJ0ceq8n/nIlAzTTn+tulvufwuO7LTwLXd4LPhNbyguETCHM8F
-         OFsA==
+        b=KVTrwqmCysELx0eACT8ww0ZL91EYOroeBxrwgrMjTcFdNlT3oBGcdcNdyA79L4mXb5
+         GNlAMA751Jvpmv9P5VfInH49fdDHm00X/v+vAUux1M/0wmXCYAQwxuttWfmI6mKzxRSI
+         MdAfm7elPWwwMaTgA/b5XH77EybEhqtsRKdaNMEv3jeabrbg/t8SF9zNZ2ek27aKeSiM
+         oY2Qn9I4bxdTUm1x9vpFf+WwPOrHNOZ+eRzvtsB/5GV/Vmb09J6dOoMzXWeBwgwU66mC
+         P8o+bUi7lQRKJUXMyPd7e8ypzSRZF3Fq1FlDBmqv/XNQvRAfpZa/gf6KKtvs89WOryau
+         C3fg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=1qlKvrwbQWPuNKJkY+xSlcw8RoPYMdpvggG0nR7Nyek=;
-        b=PhoJBpj77pDB6NsinX15B4KIe/rYQtadqGnobs3ILXcaa7doacGC28kZn7du/3jm4V
-         Zm6joVzy8KBeb+rYqnUGVZquuMp+cGHqHA3yYe3X+MKtNJ73gp+KjHQoj9U0oiWP6QJ/
-         bkaTvYHspq+gWz8c7VHAqvmxV6YUXagRD6MslshQ2aXAiv0C3ION2k9v9kywddJb0Ast
-         mkDSt99DlCEKfsthJKRmP3UszjsFbMy7OHsQPu/SQqNp9vjed0TBw+AaemjUa7b80e9k
-         RAmwkhHk3DsZShxHSOvvEJGACZLe0TnOEokawZEv95jEYOJ8V1aeKq0ZvHBdEG8svUF1
-         oSaw==
+        bh=HN9MliDuuSJr8daMEVM7x98Ozk1mkaKMiNLdOouuFCk=;
+        b=YUv1eDpjxzabpetAIxd4w+jKLeh/sMLI2m+psyUwWTLZFZRyDDQaCwqaIupDXset0S
+         vwr177G9yN0pouGKtRaGKtHhbFlQwRSctNprpwJ0Bp1bmvpDSoyRt91iQCfAR+q1wu9Z
+         rvU/fHcIApa4iX1xM8kRoPYu0cy3Ju3q/jWPv7pvrZ2UlYvqo27qoE+B4TUZK+mkiK7I
+         U6AVfWEgXvcJQ4fm1dNVqrA/6kH89nmWJIZZJHbf7ltSCyq239c6VyUcoGg9R1cEyN+Q
+         AOl+K+Kx7jN5Eg2BavaYgu4feVQPUMY/AZoIHl6tZy4kHZapaGP9dc8FvaBL9oKO7cCa
+         QdiA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 445FD21895
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7C1121892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
@@ -31,9 +31,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Julian Wiedmann <jwi@linux.vnet.ibm.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 48/81] s390/qeth: avoid control IO completion stalls
-Date: Fri, 27 Apr 2018 15:58:50 +0200
-Message-Id: <20180427135745.960188443@linuxfoundation.org>
+Subject: [PATCH 4.16 47/81] s390/qeth: fix error handling in adapter command callbacks
+Date: Fri, 27 Apr 2018 15:58:49 +0200
+Message-Id: <20180427135745.916829305@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135743.216853156@linuxfoundation.org>
 References: <20180427135743.216853156@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908829090556921?=
-X-GMAIL-MSGID: =?utf-8?q?1598908829090556921?=
+X-GMAIL-THRID: =?utf-8?q?1598908825978408515?=
+X-GMAIL-MSGID: =?utf-8?q?1598908825978408515?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,118 +55,212 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Julian Wiedmann <jwi@linux.vnet.ibm.com>
 
 
-[ Upstream commit 901e3f49facbd31b2b3d1786637b4a35e1022e9b ]
+[ Upstream commit 686c97ee29c886ee07d17987d0059874c5c3b5af ]
 
-For control IO, qeth currently tracks the index of the buffer that it
-expects to complete the next IO on each qeth_channel. If the channel
-presents an IRQ while this buffer has not yet completed, no completion
-processing for _any_ completed buffer takes place.
-So if the 'next buffer' is skipped for any sort of reason* (eg. when it
-is released due to error conditions, before the IO is started), the
-buffer obviously won't switch to PROCESSED until it is eventually
-allocated for a _different_ IO and completes.
-Until this happens, all completion processing on that channel stalls
-and pending requests possibly time out.
+Make sure to check both return code fields before(!) processing the
+command response. Otherwise we risk operating on invalid data.
 
-As a fix, remove the whole 'next buffer' logic and simply process any
-IO buffer right when it completes. A channel will never have more than
-one IO pending, so there's no risk of processing out-of-sequence.
-
-*Note: currently just one location in the code really handles this problem,
-       by advancing the 'next' index manually.
+This matches an earlier fix for SETASSPARMS commands, see
+commit ad3cbf613329 ("s390/qeth: fix error handling in checksum cmd callback").
 
 Signed-off-by: Julian Wiedmann <jwi@linux.vnet.ibm.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/s390/net/qeth_core.h      |    2 --
- drivers/s390/net/qeth_core_main.c |   22 +++++-----------------
- 2 files changed, 5 insertions(+), 19 deletions(-)
+ drivers/s390/net/qeth_core_main.c |   85 ++++++++++++++++----------------------
+ 1 file changed, 37 insertions(+), 48 deletions(-)
 
---- a/drivers/s390/net/qeth_core.h
-+++ b/drivers/s390/net/qeth_core.h
-@@ -565,7 +565,6 @@ enum qeth_ip_types {
- enum qeth_cmd_buffer_state {
- 	BUF_STATE_FREE,
- 	BUF_STATE_LOCKED,
--	BUF_STATE_PROCESSED,
- };
- 
- enum qeth_cq {
-@@ -609,7 +608,6 @@ struct qeth_channel {
- 	struct qeth_cmd_buffer iob[QETH_CMD_BUFFER_NO];
- 	atomic_t irq_pending;
- 	int io_buf_no;
--	int buf_no;
- };
- 
- /**
 --- a/drivers/s390/net/qeth_core_main.c
 +++ b/drivers/s390/net/qeth_core_main.c
-@@ -821,7 +821,6 @@ void qeth_clear_cmd_buffers(struct qeth_
- 
- 	for (cnt = 0; cnt < QETH_CMD_BUFFER_NO; cnt++)
- 		qeth_release_buffer(channel, &channel->iob[cnt]);
--	channel->buf_no = 0;
- 	channel->io_buf_no = 0;
- }
- EXPORT_SYMBOL_GPL(qeth_clear_cmd_buffers);
-@@ -927,7 +926,6 @@ static int qeth_setup_channel(struct qet
- 			kfree(channel->iob[cnt].data);
- 		return -ENOMEM;
- 	}
--	channel->buf_no = 0;
- 	channel->io_buf_no = 0;
- 	atomic_set(&channel->irq_pending, 0);
- 	spin_lock_init(&channel->iob_lock);
-@@ -1103,11 +1101,9 @@ static void qeth_irq(struct ccw_device *
- {
- 	int rc;
- 	int cstat, dstat;
--	struct qeth_cmd_buffer *buffer;
- 	struct qeth_channel *channel;
- 	struct qeth_card *card;
- 	struct qeth_cmd_buffer *iob;
--	__u8 index;
- 
- 	if (__qeth_check_irb_error(cdev, intparm, irb))
- 		return;
-@@ -1185,25 +1181,18 @@ static void qeth_irq(struct ccw_device *
- 		channel->state = CH_STATE_RCD_DONE;
- 		goto out;
- 	}
--	if (intparm) {
--		buffer = (struct qeth_cmd_buffer *) __va((addr_t)intparm);
--		buffer->state = BUF_STATE_PROCESSED;
--	}
- 	if (channel == &card->data)
- 		return;
- 	if (channel == &card->read &&
- 	    channel->state == CH_STATE_UP)
- 		__qeth_issue_next_read(card);
- 
--	iob = channel->iob;
--	index = channel->buf_no;
--	while (iob[index].state == BUF_STATE_PROCESSED) {
--		if (iob[index].callback != NULL)
--			iob[index].callback(channel, iob + index);
--
--		index = (index + 1) % QETH_CMD_BUFFER_NO;
-+	if (intparm) {
-+		iob = (struct qeth_cmd_buffer *) __va((addr_t)intparm);
-+		if (iob->callback)
-+			iob->callback(iob->channel, iob);
- 	}
--	channel->buf_no = index;
-+
- out:
- 	wake_up(&card->wait_q);
- 	return;
-@@ -2217,7 +2206,6 @@ time_err:
- error:
- 	atomic_set(&card->write.irq_pending, 0);
- 	qeth_release_buffer(iob->channel, iob);
--	card->write.buf_no = (card->write.buf_no + 1) % QETH_CMD_BUFFER_NO;
- 	rc = reply->rc;
- 	qeth_put_reply(reply);
+@@ -3037,28 +3037,23 @@ static int qeth_send_startlan(struct qet
  	return rc;
+ }
+ 
+-static int qeth_default_setadapterparms_cb(struct qeth_card *card,
+-		struct qeth_reply *reply, unsigned long data)
++static int qeth_setadpparms_inspect_rc(struct qeth_ipa_cmd *cmd)
+ {
+-	struct qeth_ipa_cmd *cmd;
+-
+-	QETH_CARD_TEXT(card, 4, "defadpcb");
+-
+-	cmd = (struct qeth_ipa_cmd *) data;
+-	if (cmd->hdr.return_code == 0)
++	if (!cmd->hdr.return_code)
+ 		cmd->hdr.return_code =
+ 			cmd->data.setadapterparms.hdr.return_code;
+-	return 0;
++	return cmd->hdr.return_code;
+ }
+ 
+ static int qeth_query_setadapterparms_cb(struct qeth_card *card,
+ 		struct qeth_reply *reply, unsigned long data)
+ {
+-	struct qeth_ipa_cmd *cmd;
++	struct qeth_ipa_cmd *cmd = (struct qeth_ipa_cmd *) data;
+ 
+ 	QETH_CARD_TEXT(card, 3, "quyadpcb");
++	if (qeth_setadpparms_inspect_rc(cmd))
++		return 0;
+ 
+-	cmd = (struct qeth_ipa_cmd *) data;
+ 	if (cmd->data.setadapterparms.data.query_cmds_supp.lan_type & 0x7f) {
+ 		card->info.link_type =
+ 		      cmd->data.setadapterparms.data.query_cmds_supp.lan_type;
+@@ -3066,7 +3061,7 @@ static int qeth_query_setadapterparms_cb
+ 	}
+ 	card->options.adp.supported_funcs =
+ 		cmd->data.setadapterparms.data.query_cmds_supp.supported_cmds;
+-	return qeth_default_setadapterparms_cb(card, reply, (unsigned long)cmd);
++	return 0;
+ }
+ 
+ static struct qeth_cmd_buffer *qeth_get_adapter_cmd(struct qeth_card *card,
+@@ -3158,22 +3153,20 @@ EXPORT_SYMBOL_GPL(qeth_query_ipassists);
+ static int qeth_query_switch_attributes_cb(struct qeth_card *card,
+ 				struct qeth_reply *reply, unsigned long data)
+ {
+-	struct qeth_ipa_cmd *cmd;
+-	struct qeth_switch_info *sw_info;
++	struct qeth_ipa_cmd *cmd = (struct qeth_ipa_cmd *) data;
+ 	struct qeth_query_switch_attributes *attrs;
++	struct qeth_switch_info *sw_info;
+ 
+ 	QETH_CARD_TEXT(card, 2, "qswiatcb");
+-	cmd = (struct qeth_ipa_cmd *) data;
+-	sw_info = (struct qeth_switch_info *)reply->param;
+-	if (cmd->data.setadapterparms.hdr.return_code == 0) {
+-		attrs = &cmd->data.setadapterparms.data.query_switch_attributes;
+-		sw_info->capabilities = attrs->capabilities;
+-		sw_info->settings = attrs->settings;
+-		QETH_CARD_TEXT_(card, 2, "%04x%04x", sw_info->capabilities,
+-							sw_info->settings);
+-	}
+-	qeth_default_setadapterparms_cb(card, reply, (unsigned long) cmd);
++	if (qeth_setadpparms_inspect_rc(cmd))
++		return 0;
+ 
++	sw_info = (struct qeth_switch_info *)reply->param;
++	attrs = &cmd->data.setadapterparms.data.query_switch_attributes;
++	sw_info->capabilities = attrs->capabilities;
++	sw_info->settings = attrs->settings;
++	QETH_CARD_TEXT_(card, 2, "%04x%04x", sw_info->capabilities,
++			sw_info->settings);
+ 	return 0;
+ }
+ 
+@@ -4211,16 +4204,13 @@ EXPORT_SYMBOL_GPL(qeth_do_send_packet);
+ static int qeth_setadp_promisc_mode_cb(struct qeth_card *card,
+ 		struct qeth_reply *reply, unsigned long data)
+ {
+-	struct qeth_ipa_cmd *cmd;
++	struct qeth_ipa_cmd *cmd = (struct qeth_ipa_cmd *) data;
+ 	struct qeth_ipacmd_setadpparms *setparms;
+ 
+ 	QETH_CARD_TEXT(card, 4, "prmadpcb");
+ 
+-	cmd = (struct qeth_ipa_cmd *) data;
+ 	setparms = &(cmd->data.setadapterparms);
+-
+-	qeth_default_setadapterparms_cb(card, reply, (unsigned long)cmd);
+-	if (cmd->hdr.return_code) {
++	if (qeth_setadpparms_inspect_rc(cmd)) {
+ 		QETH_CARD_TEXT_(card, 4, "prmrc%x", cmd->hdr.return_code);
+ 		setparms->data.mode = SET_PROMISC_MODE_OFF;
+ 	}
+@@ -4290,18 +4280,18 @@ EXPORT_SYMBOL_GPL(qeth_get_stats);
+ static int qeth_setadpparms_change_macaddr_cb(struct qeth_card *card,
+ 		struct qeth_reply *reply, unsigned long data)
+ {
+-	struct qeth_ipa_cmd *cmd;
++	struct qeth_ipa_cmd *cmd = (struct qeth_ipa_cmd *) data;
+ 
+ 	QETH_CARD_TEXT(card, 4, "chgmaccb");
++	if (qeth_setadpparms_inspect_rc(cmd))
++		return 0;
+ 
+-	cmd = (struct qeth_ipa_cmd *) data;
+ 	if (!card->options.layer2 ||
+ 	    !(card->info.mac_bits & QETH_LAYER2_MAC_READ)) {
+ 		ether_addr_copy(card->dev->dev_addr,
+ 				cmd->data.setadapterparms.data.change_addr.addr);
+ 		card->info.mac_bits |= QETH_LAYER2_MAC_READ;
+ 	}
+-	qeth_default_setadapterparms_cb(card, reply, (unsigned long) cmd);
+ 	return 0;
+ }
+ 
+@@ -4332,13 +4322,15 @@ EXPORT_SYMBOL_GPL(qeth_setadpparms_chang
+ static int qeth_setadpparms_set_access_ctrl_cb(struct qeth_card *card,
+ 		struct qeth_reply *reply, unsigned long data)
+ {
+-	struct qeth_ipa_cmd *cmd;
++	struct qeth_ipa_cmd *cmd = (struct qeth_ipa_cmd *) data;
+ 	struct qeth_set_access_ctrl *access_ctrl_req;
+ 	int fallback = *(int *)reply->param;
+ 
+ 	QETH_CARD_TEXT(card, 4, "setaccb");
++	if (cmd->hdr.return_code)
++		return 0;
++	qeth_setadpparms_inspect_rc(cmd);
+ 
+-	cmd = (struct qeth_ipa_cmd *) data;
+ 	access_ctrl_req = &cmd->data.setadapterparms.data.set_access_ctrl;
+ 	QETH_DBF_TEXT_(SETUP, 2, "setaccb");
+ 	QETH_DBF_TEXT_(SETUP, 2, "%s", card->gdev->dev.kobj.name);
+@@ -4411,7 +4403,6 @@ static int qeth_setadpparms_set_access_c
+ 			card->options.isolation = card->options.prev_isolation;
+ 		break;
+ 	}
+-	qeth_default_setadapterparms_cb(card, reply, (unsigned long) cmd);
+ 	return 0;
+ }
+ 
+@@ -4699,14 +4690,15 @@ out:
+ static int qeth_setadpparms_query_oat_cb(struct qeth_card *card,
+ 		struct qeth_reply *reply, unsigned long data)
+ {
+-	struct qeth_ipa_cmd *cmd;
++	struct qeth_ipa_cmd *cmd = (struct qeth_ipa_cmd *)data;
+ 	struct qeth_qoat_priv *priv;
+ 	char *resdata;
+ 	int resdatalen;
+ 
+ 	QETH_CARD_TEXT(card, 3, "qoatcb");
++	if (qeth_setadpparms_inspect_rc(cmd))
++		return 0;
+ 
+-	cmd = (struct qeth_ipa_cmd *)data;
+ 	priv = (struct qeth_qoat_priv *)reply->param;
+ 	resdatalen = cmd->data.setadapterparms.hdr.cmdlength;
+ 	resdata = (char *)data + 28;
+@@ -4800,21 +4792,18 @@ out:
+ static int qeth_query_card_info_cb(struct qeth_card *card,
+ 				   struct qeth_reply *reply, unsigned long data)
+ {
+-	struct qeth_ipa_cmd *cmd;
++	struct carrier_info *carrier_info = (struct carrier_info *)reply->param;
++	struct qeth_ipa_cmd *cmd = (struct qeth_ipa_cmd *)data;
+ 	struct qeth_query_card_info *card_info;
+-	struct carrier_info *carrier_info;
+ 
+ 	QETH_CARD_TEXT(card, 2, "qcrdincb");
+-	carrier_info = (struct carrier_info *)reply->param;
+-	cmd = (struct qeth_ipa_cmd *)data;
+-	card_info = &cmd->data.setadapterparms.data.card_info;
+-	if (cmd->data.setadapterparms.hdr.return_code == 0) {
+-		carrier_info->card_type = card_info->card_type;
+-		carrier_info->port_mode = card_info->port_mode;
+-		carrier_info->port_speed = card_info->port_speed;
+-	}
++	if (qeth_setadpparms_inspect_rc(cmd))
++		return 0;
+ 
+-	qeth_default_setadapterparms_cb(card, reply, (unsigned long) cmd);
++	card_info = &cmd->data.setadapterparms.data.card_info;
++	carrier_info->card_type = card_info->card_type;
++	carrier_info->port_mode = card_info->port_mode;
++	carrier_info->port_speed = card_info->port_speed;
+ 	return 0;
+ }
+ 
