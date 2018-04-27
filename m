@@ -1,206 +1,110 @@
-Return-Path: <srinivas.kandagatla@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1524736174; cv=none;
+Return-Path: <robherring2@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1524838404; cv=none;
         d=google.com; s=arc-20160816;
-        b=PPHuFs68OBfdNr4jZpJqtKw33ZBnUqTuJ+73xjfKgiSyg56OdHH5HbiFlEfzJjzVsz
-         66pVVTFgOy2+BR9kBbTe/sy+J+TeW8wxzXKpHARXU8p9pCpza0s4E48uIlnkRTGaEAqi
-         FXieptDs0a4fx/lb7qiPiue3IzQ5kemd3gc2+9WfH5CqqzXlI+36Ao0sIrzsFx0WKNAF
-         gMvC1e1VPU1xKgg18DtKUrDUJg3EDlOicNydCw13WtDLN562yxXhuU6VRmIangy6SvyH
-         yyCydPoWq9m99gF1UaeKCFHYrLttjpeJe5OgJ5JmPVjrx7I9slWEFEbyHKmSlSGhTCe6
-         cv2A==
+        b=TWc9j8Pw912FeFJmj6BA7ucKp/Irp/kWfBB9Sh4ml1IQbjsU8EerIeWWoGS1plsKNl
+         eKH6LGjNSnmtIHV9ThBghfZv/oc7xH9f4pLq07c0aOuJy7Si3kZ9+2bqDIjfqNUjWjjd
+         h2w2spZ8Wy6mHb6g/ivMcYFMinnr4uqpNjso2WlzWLQM7KHWApYWMreRgQFTFjwhm0j6
+         BUxWkrmfG1ZGbL7modUYWV/CLhZaR4TM7lpoFDseB0Prqg90ItJ5/O9UH/I/yy/UZCg8
+         6ou8GDPkcl1iDXqDUEwmEykK0LBeU9QttbRVXFjTgUYFd3IJoOYl3x9eZb0MEV+BzajW
+         a8cw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=RftNHazO+oJuV+QbDpSvKUFtUjVQnvDW7snf2gfnja8=;
-        b=W6BUdbbWDs5wtEa68tCLGdwsC+JWRuSzbRJSmMoYZwygnLH0Da1nEr08AlZ4f90IWK
-         bUpPO44DkrTfL8GW54r4nZwbma+Kl633QQn7pkppgOra6MzCBRdWM74Q4kV78LNufWaT
-         Dj9R7bnbMUqxISzgChf1Nj5kX+aK5W2WtRfKe8cV/DbSuNjrwe9YRLYFoChowR7B64uT
-         yQs2ylTH6GdKloz2USPcmU8/m2Uuz6LCOyREY8YGVoF6WADxv58zSBoxR1BplkOj+nDc
-         4vLb5nG4HmT0g2UxjosFIk1MVRfb21ZjNNT1A8hOUt1Gw/XuuemQxEpP5qj84uESYZUP
-         Qu8g==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=19RmBtSU2AO6P1hA8lhvLI9D3+Y5jOv1bxl993gmx4Y=;
+        b=MBaW/hQMovWAjh5RzfJhIxN/pFT+zooq6Gf35WjPXyWU7W127+CvTHy8c3y61Ijb8t
+         Kh4mCOUE+ZzdZZCmXZ8alu1z0fW2WZaoSjuWLvfG1h6PRtAwcctPx6RVaBziO+BRR+WC
+         oo+ad6OXgUZ1rsHDrn8HQ7sLDIoVGzlXdLpO9ewMWdJPgYJntTTU4jpiZAqoIbjFvc5o
+         fKmOTd9xPjq8JOKRwesPjikL3VMNe2xDLZM5LX8OewrFTvr9rK7RAeqvI23Ny9m25UdN
+         J3BLjVOLy63/A8zk5TVoUTMUNvWDX8Zw60yRP003BHhHwIPLWnxkRkdUpWg5iQE+8EjD
+         gwIQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=jTGzn8T+;
-       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+       spf=pass (google.com: domain of robherring2@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=robherring2@gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=jTGzn8T+;
-       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AIpwx48LTYOaEho77YAgB1HcCGCvXa/mrngmTWfcnJP7gCaWW6Sjh/cJezg259lvulURWz9YxjUcqA==
-From: srinivas.kandagatla@linaro.org
-To: andy.gross@linaro.org,
-	broonie@kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	robh+dt@kernel.org,
-	bgoswami@codeaurora.org
-Cc: gregkh@linuxfoundation.org,
-	david.brown@linaro.org,
-	mark.rutland@arm.com,
-	lgirdwood@gmail.com,
-	plai@codeaurora.org,
-	tiwai@suse.com,
-	perex@perex.cz,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	rohkumar@qti.qualcomm.com,
-	spatakok@qti.qualcomm.com,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v6 04/24] ASoC: qdsp6: dt-bindings: Add q6afe dt bindings
-Date: Thu, 26 Apr 2018 10:45:46 +0100
-Message-Id: <20180426094606.4775-5-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180426094606.4775-1-srinivas.kandagatla@linaro.org>
+       spf=pass (google.com: domain of robherring2@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=robherring2@gmail.com
+X-Google-Smtp-Source: AB8JxZr+/GEVT+MsuoRmsZ0yd04PjgcIwxAVHs2pUbIlo80yDN3sjrMddPEfOIjBJRU0DDSLQB1SvQ==
+Date: Fri, 27 Apr 2018 09:13:23 -0500
+From: Rob Herring <robh@kernel.org>
+To: srinivas.kandagatla@linaro.org
+Cc: andy.gross@linaro.org, broonie@kernel.org,
+	linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org,
+	bgoswami@codeaurora.org, gregkh@linuxfoundation.org,
+	david.brown@linaro.org, mark.rutland@arm.com, lgirdwood@gmail.com,
+	plai@codeaurora.org, tiwai@suse.com, perex@perex.cz,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, rohkumar@qti.qualcomm.com,
+	spatakok@qti.qualcomm.com
+Subject: Re: [PATCH v6 04/24] ASoC: qdsp6: dt-bindings: Add q6afe dt bindings
+Message-ID: <20180427141323.2ykh676xpdf7b6bl@rob-hp-laptop>
 References: <20180426094606.4775-1-srinivas.kandagatla@linaro.org>
+ <20180426094606.4775-5-srinivas.kandagatla@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180426094606.4775-5-srinivas.kandagatla@linaro.org>
+User-Agent: NeoMutt/20170609 (1.8.3)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1598801759184316258?=
-X-GMAIL-MSGID: =?utf-8?q?1598801759184316258?=
+X-GMAIL-MSGID: =?utf-8?q?1598908955471844373?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+On Thu, Apr 26, 2018 at 10:45:46AM +0100, srinivas.kandagatla@linaro.org wrote:
+> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> 
+> This patch add DT bindings for AFE (Audio Frontend) DSP module.
+> 
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> Reviewed-and-tested-by: Rohit kumar <rohitkr@codeaurora.org>
+> ---
+>  .../devicetree/bindings/sound/qcom,q6afe.txt       | 88 ++++++++++++++++++++++
+>  include/dt-bindings/sound/qcom,q6afe.h             | 31 ++++++++
+>  2 files changed, 119 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/sound/qcom,q6afe.txt
+>  create mode 100644 include/dt-bindings/sound/qcom,q6afe.h
+> 
+> diff --git a/Documentation/devicetree/bindings/sound/qcom,q6afe.txt b/Documentation/devicetree/bindings/sound/qcom,q6afe.txt
+> new file mode 100644
+> index 000000000000..05208a63dd3c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/qcom,q6afe.txt
+> @@ -0,0 +1,88 @@
+> +Qualcomm Audio Front End (Q6AFE) binding
+> +
+> +AFE is one of the APR audio service on Q6DSP
+> +Please refer to qcom,apr.txt for details of the common apr service bindings
+> +used by all apr services.
+> +
+> +- but must contain the following property:
+> +
+> +- compatible:
+> +	Usage: required
+> +	Value type: <stringlist>
+> +	Definition: must be "qcom,q6afe-v<MAJOR-NUMBER>.<MINOR-NUMBER>"
+> +		  Or "qcom,q6afe" where the version number can be queried
+> +		  from DSP.
+> +		  example "qcom,q6afe"
 
-This patch add DT bindings for AFE (Audio Frontend) DSP module.
+reg too.
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Reviewed-and-tested-by: Rohit kumar <rohitkr@codeaurora.org>
----
- .../devicetree/bindings/sound/qcom,q6afe.txt       | 88 ++++++++++++++++++++++
- include/dt-bindings/sound/qcom,q6afe.h             | 31 ++++++++
- 2 files changed, 119 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sound/qcom,q6afe.txt
- create mode 100644 include/dt-bindings/sound/qcom,q6afe.h
+> +
+> += AFE DAIs (Digial Audio Interface)
+> +"dais" subnode of the AFE node represents dai specific configuration
+> +
+> +- #sound-dai-cells
+> +	Usage: required
+> +	Value type: <u32>
+> +	Definition: Must be 1
+> +
+> +- reg
 
-diff --git a/Documentation/devicetree/bindings/sound/qcom,q6afe.txt b/Documentation/devicetree/bindings/sound/qcom,q6afe.txt
-new file mode 100644
-index 000000000000..05208a63dd3c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/qcom,q6afe.txt
-@@ -0,0 +1,88 @@
-+Qualcomm Audio Front End (Q6AFE) binding
-+
-+AFE is one of the APR audio service on Q6DSP
-+Please refer to qcom,apr.txt for details of the common apr service bindings
-+used by all apr services.
-+
-+- but must contain the following property:
-+
-+- compatible:
-+	Usage: required
-+	Value type: <stringlist>
-+	Definition: must be "qcom,q6afe-v<MAJOR-NUMBER>.<MINOR-NUMBER>"
-+		  Or "qcom,q6afe" where the version number can be queried
-+		  from DSP.
-+		  example "qcom,q6afe"
-+
-+= AFE DAIs (Digial Audio Interface)
-+"dais" subnode of the AFE node represents dai specific configuration
-+
-+- #sound-dai-cells
-+	Usage: required
-+	Value type: <u32>
-+	Definition: Must be 1
-+
-+- reg
-+	Usage: required
-+	Value type: <u32>
-+	Definition: Must be dai id
-+
-+- qcom,sd-lines
-+	Usage: required for mi2s interface
-+	Value type: <prop-encoded-array>
-+	Definition: Must be list of serial data lines used by this dai.
-+	should be one or more of the 1-4 sd lines.
-+
-+= EXAMPLE
-+
-+q6afe@4 {
-+	compatible = "qcom,q6afe";
-+	reg = <APR_SVC_AFE>;
-+
-+	dais {
-+		#sound-dai-cells = <1>;
-+		hdmi@1 {
-+			reg = <1>;
-+		};
-+
-+		prim-mi2s-rx@16 {
-+			reg = <16>;
-+			qcom,sd-lines = <1 3>;
-+		};
-+
-+		prim-mi2s-tx@17 {
-+			reg = <17>;
-+			qcom,sd-lines = <2>;
-+		};
-+
-+		sec-mi2s-rx@18 {
-+			reg = <18>;
-+			qcom,sd-lines = <1 4>;
-+		};
-+
-+		sec-mi2s-tx@19 {
-+			reg = <19>;
-+			qcom,sd-lines = <2>;
-+		};
-+
-+		tert-mi2s-rx@20 {
-+			reg = <20>;
-+			qcom,sd-lines = <2 4>;
-+		};
-+
-+		tert-mi2s-tx@21 {
-+			reg = <21>;
-+			qcom,sd-lines = <1>;
-+		};
-+
-+		quat-mi2s-rx@22 {
-+			reg = <22>;
-+			qcom,sd-lines = <1>;
-+		};
-+
-+		quat-mi2s-tx@23 {
-+			reg = <23>;
-+			qcom,sd-lines = <2>;
-+		};
-+	};
-+};
-diff --git a/include/dt-bindings/sound/qcom,q6afe.h b/include/dt-bindings/sound/qcom,q6afe.h
-new file mode 100644
-index 000000000000..e162045f5dc9
---- /dev/null
-+++ b/include/dt-bindings/sound/qcom,q6afe.h
-@@ -0,0 +1,31 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __DT_BINDINGS_Q6_AFE_H__
-+#define __DT_BINDINGS_Q6_AFE_H__
-+
-+/* Audio Front End (AFE) virtual ports IDs */
-+#define HDMI_RX		1
-+#define SLIMBUS_0_RX    2
-+#define SLIMBUS_0_TX    3
-+#define SLIMBUS_1_RX    4
-+#define SLIMBUS_1_TX    5
-+#define SLIMBUS_2_RX    6
-+#define SLIMBUS_2_TX    7
-+#define SLIMBUS_3_RX    8
-+#define SLIMBUS_3_TX    9
-+#define SLIMBUS_4_RX    10
-+#define SLIMBUS_4_TX    11
-+#define SLIMBUS_5_RX    12
-+#define SLIMBUS_5_TX    13
-+#define SLIMBUS_6_RX    14
-+#define SLIMBUS_6_TX    15
-+#define PRIMARY_MI2S_RX		16
-+#define PRIMARY_MI2S_TX		17
-+#define SECONDARY_MI2S_RX	18
-+#define SECONDARY_MI2S_TX	19
-+#define TERTIARY_MI2S_RX	20
-+#define TERTIARY_MI2S_TX	21
-+#define QUATERNARY_MI2S_RX	22
-+#define QUATERNARY_MI2S_TX	23
-+
-+#endif /* __DT_BINDINGS_Q6_AFE_H__ */
-+
--- 
-2.16.2
+It's not clear here these are in a grandchild node.
+
+> +	Usage: required
+> +	Value type: <u32>
+> +	Definition: Must be dai id
+> +
+> +- qcom,sd-lines
+> +	Usage: required for mi2s interface
+> +	Value type: <prop-encoded-array>
+> +	Definition: Must be list of serial data lines used by this dai.
+> +	should be one or more of the 1-4 sd lines.
