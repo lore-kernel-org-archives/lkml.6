@@ -1,173 +1,1287 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758974AbeD0RkI (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 13:40:08 -0400
-Received: from mail-bl2nam02on0084.outbound.protection.outlook.com ([104.47.38.84]:50784
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1757590AbeD0RkG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 13:40:06 -0400
-Subject: Re: [PATCH] drm/vmwgfx: Fix scatterlist unmapping
-To: Robin Murphy <robin.murphy@arm.com>,
-        linux-graphics-maintainer@vmware.com, syeh@vmware.com
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <3a08f0343cb4e7a767601c59a381884121f9b751.1523632202.git.robin.murphy@arm.com>
- <85d48f28-5df7-8c7e-d175-ce651838db53@vmware.com>
- <8850b346-453f-e555-550d-7079b4f9d00d@arm.com>
-From: Thomas Hellstrom <thellstrom@vmware.com>
-Message-ID: <9c6981bc-5b86-29d6-d58e-c8988031c706@vmware.com>
-Date: Fri, 27 Apr 2018 19:39:57 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1757533AbeD0RrT (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 13:47:19 -0400
+Received: from emh03.mail.saunalahti.fi ([62.142.5.109]:48832 "EHLO
+        emh03.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751456AbeD0RrR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 13:47:17 -0400
+Date: Fri, 27 Apr 2018 20:47:14 +0300
+From: Aaro Koskinen <aaro.koskinen@iki.fi>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] video: fbdev: omap2: remove rfbi
+Message-ID: <20180427174714.bdvvlljk3txwu2bo@darkstar.musicnaut.iki.fi>
+References: <CGME20180427150914eucas1p14dd8df4a215014ddac990b0ccdb1805c@eucas1p1.samsung.com>
+ <2238944.jilJcacc6d@amdc3058>
 MIME-Version: 1.0
-In-Reply-To: <8850b346-453f-e555-550d-7079b4f9d00d@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Originating-IP: [155.4.205.56]
-X-ClientProxiedBy: CY4PR13CA0001.namprd13.prod.outlook.com
- (2603:10b6:903:32::11) To BN7PR05MB4580.namprd05.prod.outlook.com
- (2603:10b6:406:f2::14)
-X-MS-PublicTrafficType: Email
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:BN7PR05MB4580;
-X-Microsoft-Exchange-Diagnostics: 1;BN7PR05MB4580;3:b9wYrlFPGv8jN/cGefuXNOttBFOSli/LY8Pdtow/ONq3bU/aYV/+qP2JoRSN9E6DWnk9yEjmnUWLjwd0MysJZc5DJyQLEyHM7MzqlQnR1qHTwJMAG4qmSvyXslQ/+F+MqxNbNYWVu/7a98NYdM9GzQFtJbVuDLuA9K0MSFvjRd/HJnPblDjLIFU+NgubGsY+mUvaW3JTFu5ovCtQCfbiC8/m+0dCO3jJ2kPhB4x9p1MY4KSYZLM6w/9bIGpFR0G9;25:aeACSUPyPIoNahSpLEVv9SWjVuadnYhKsKL848uKKV+g2+3JCOUqa8DRirTnzO1jeH9rhuFS7Ou+uTyayT0CtV4UIMsDAe5t6+JEUIkEtw7wdS2mLBskGXD/nJDvBXCgxf1wCsfUG0KPnuXO7cJZIFl+BJjoxRmaTGz9BL+SuHl0SQ7YLAG0oHB77n9KU+REh1b+kRoW96SiCSLNyx2GllRTnc0dZ25+pqJK5COvgpf2+HHFlmk/9EiPb4i9QUGAiZ4IKn+xPB5eVqQDzEsjZPLColbTJJLPP7aJpUYTj4y1yRBUlwriCYKCQuC+7I+2bhg5SqbbE1k409AYEBEqAA==;31:b3QrXiMdprCV/2j2Qq0iP97r89aGTi66SUNl+SWDVkOL4XJ4x4h1LK8zkOZHM4lWPaVhpAfhX2cV9UmjJOqBzjPCdUPw3Y2pQgoPbbMj2sATNxjfEvh/er0y9ixH3I2krtL7751HdbgQekG0XFMn1QDLtLcihmtRCScGj5ZXP8nnh6rWbZaUeUj5wvbW1fxydDy4trGcjGqwdif64VSXP9spUuYKW9sOehQhpbfCcTE=
-X-MS-TrafficTypeDiagnostic: BN7PR05MB4580:
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=thellstrom@vmware.com;
-X-Microsoft-Exchange-Diagnostics: 1;BN7PR05MB4580;20:dJ/bIcOM33hAgTmmokK4ga+ChNug+EFm+0NeXd9S64fZ6A0DUydIxJuzhydrRaHtWtn3R98yZs+qXSwbrjnR44aA+k2npa3nMeRzEgvnr62L5pbSW3+u/EcOmj1ygqSepiHLo+ot4MTRznmczMUPV8DCKu/Ihvh7gIvXtXHL1tarwhabbOvkKrfUttPQdtupik6LjBNK2J3/5LTvG+eMwcZaXLQC+Dd53HJZ7Eu8dtSVuM7usrj8uGoEsyKxKsDUYZsirvdHI1HmaiWcOLNp7itx4ROOLMN3nYpoGGit6yRwSk+arVI55qGBTKWy/WvQrTg5paQYchRK09hEK0S6zris/H6xfcbgDNq7zzHxlr6vp2ENmaOp0K1HsE1acpJleicGL2z7klEf2BVAwTF5AptABerRPCB9Gnv+g9VG5arqUySzQOzREF46beT6QKFEyDDhoSefr5ke2g82QetyUH/S6zyzUggRnVvqj0yjcnIS7qoMid5i2/MNR0kBNxyk;4:kG4twFb85SHQbjK622VBPyxajMvFRsJGkNEhQfe/xNRZINSIOro2Y05mv92+nXm3GIiPsr9/TVT3bjmRtWStdxURpDVFNY8LzKK2bkQ9lbW5F7W6pW2gYAP0xV6eXhwYcXiK6SJjXoQZoV4z8kaZaNarsziAsHnAsvM6yxLrWEUsKM1GN+4ckik+UM4cI/KhyYppow6lF9sxX57ckgwI6vweKk6BPIAwJ2Djf0Z1tp9gyCLC2fQixE24U8memAVz33Mglt4ElWM/PWKJ9ARlDifNvWNRmlp/J+4Y8sbonka+OTWPe1W7AxLgxW4ji7eAhC/ikzYi5zuzI9JDAOIR+Dupu/wBAyYdflqAvoHReWs=
-X-Microsoft-Antispam-PRVS: <BN7PR05MB4580D1C307A86F90FEB4DB8FA18D0@BN7PR05MB4580.namprd05.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(180628864354917)(10436049006162);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3231232)(944501410)(52105095)(3002001)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123562045)(6072148)(201708071742011);SRVR:BN7PR05MB4580;BCL:0;PCL:0;RULEID:;SRVR:BN7PR05MB4580;
-X-Forefront-PRVS: 0655F9F006
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6069001)(376002)(39380400002)(366004)(39860400002)(346002)(396003)(189003)(199004)(51914003)(81166006)(966005)(52146003)(106356001)(6306002)(229853002)(6666003)(25786009)(6636002)(53936002)(6512007)(36756003)(6246003)(68736007)(105586002)(316002)(81156014)(3846002)(8936002)(97736004)(8676002)(478600001)(58126008)(6506007)(31696002)(11346002)(66066001)(53546011)(26005)(52116002)(386003)(476003)(67846002)(956004)(64126003)(2486003)(2870700001)(2906002)(65956001)(76176011)(23676004)(31686004)(86362001)(2616005)(5660300001)(186003)(486006)(59450400001)(575784001)(16526019)(65826007)(7736002)(6486002)(446003)(4326008)(65806001)(50466002)(6116002)(305945005)(47776003);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR05MB4580;H:localhost.localdomain;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtCTjdQUjA1TUI0NTgwOzIzOnBtamprUmxSK1ZVY3hoTUQxaWszWllsY1ph?=
- =?utf-8?B?dG5zOWRXL1VGdW1zbjJaRXJFL3BNc3BSaWtUOWd4YUY1Qm1sdnVESzhITVFv?=
- =?utf-8?B?bSttTUxHenpYRUFiSEs3THBQTVBoODZ1c3BMWk1TSEkwZEZyQ05yR0JoTFdz?=
- =?utf-8?B?MEU2UHlMM0FwQUtiOEdzN00zcEluNU5kYzlHdFVmR2wvZ3hNSlNITXRWTzha?=
- =?utf-8?B?RmpHTTRJUTVLUXp2VkdLKzNKMmp6Qi93R3dPemw2SWdEZGZ3cVJQcGV5WkhY?=
- =?utf-8?B?b1BKT1V4SFVaMGtjQnIvYi9FV085NVovbVB2eUFGUnl5c1pWVnE4YVNhR3Jk?=
- =?utf-8?B?M1lrejdGZzkxbVRQazRCeEVscUN4bjhTaStGTGhEMkJkZDVKemdicTZWZFY4?=
- =?utf-8?B?RW5xdmxjZmdpcFZWdm9kbCtzVURpdWRwcFhIRk9wUExrci95cFB5bCtPdERT?=
- =?utf-8?B?dUd2ZjR5SldldFhTNFdPQVJxeWpiUVZiZXRDSHFjM3poc1JHTmtEdWNOZmtk?=
- =?utf-8?B?SG1VcERKaFZ5MHVJUTlWQlFoZkNTbE5tVnM2TEdEOExsWXFzNWRsZng2SVYv?=
- =?utf-8?B?WStVSWhuaXZCQWZ2Ym82YTNhN3IzWXJyZnQ0eVIwcUh5Q3NSVGpWVFAzeU9R?=
- =?utf-8?B?aG9YV3o3amR2Lzk1Wno0U3ZidVF0WnQyQkhIYXpKelcreTlUbW8rVDJxQmIv?=
- =?utf-8?B?Q3dOazJmQ0JmRDhUZ2RRU3dDYVo1ZzUyWlFrVDZlSzJLMWQybjN3eHpxekEr?=
- =?utf-8?B?RExzQjRzaTJXb0o1aDZSK1pvUlpvd1pmK0FkbXRVcXhhVjBsZVAyemJxNmp5?=
- =?utf-8?B?NU5pcVdOeHhHeHB0aFdUVS9kS2Mwa3dycmM1dFQ1QVowUkNrclc1RWVoSFhV?=
- =?utf-8?B?MFl4TG0wNFBIdTFieDhORTR1RkhOV1NKRG5uK0g3R2c1VTY1My9pdXRrYkxB?=
- =?utf-8?B?TXg2dVE1VWFmTDlkM0Q3VmpmMFlBNjEvd3pLcmFKMExMSGxwY1hsdTdyMDZ6?=
- =?utf-8?B?WCtEZ0NrT2hvVTQyZVltMzRTWXlZVTNGaytvRE1OZXJteEhBVGxvODVsRE8x?=
- =?utf-8?B?Y0lnZVA5bG9KcnBCYUtrWSt1QTFFOFZsWXQzMTlXVHBjc3lYS2V6QnJKMElI?=
- =?utf-8?B?OWU3K3J4eGdrOEZ5ZXgxZzh6Q3lCQzhnbEp1V282Wmx4VlFqM0dIVG16cy9h?=
- =?utf-8?B?Z0ZoYjJ5K2JnVXAwa0lyQUhxcVpDSjhWdjhSdEJQeDhBdDhzbVBoSGxFeC9S?=
- =?utf-8?B?eFVndDlMeFBKQTJFZjg5SmJmTjZGZzBPc0dwZW5zUkszWktQS2Q4RE1OK2Nl?=
- =?utf-8?B?bXVNYXdOOER5NzNWY3RyczVvUzBIR0xlZGgxWVMxRDQvM0dVVTVWa2JZNXB5?=
- =?utf-8?B?Mk9qbGZ5K0VzUEQvelE1WEgwUUFQejRubkdZY0lMMDAyYXlrMHc5SmxUY3hV?=
- =?utf-8?B?NFpMSUc1UEMraUF2YkVOeUh3cEZpMXhzODFsaDV5My8yTnk0ZlBMOGJZYjJw?=
- =?utf-8?B?VkthOUorWlpmTnBORVpRamt6OWhtMjROVHExWW01VmdzS0VqMitHaWxTL2F2?=
- =?utf-8?B?eDRFeFU2QjhNQzVYWG5ldkcwT21LSWdsZkplMnBvNWswZFh0RUdzUE5qdTZN?=
- =?utf-8?B?ek56aHFhclRNU2dFZzBJZ3hqL3UzSVJOT2xSYTEza0lTRTlBYlViRVNpaERv?=
- =?utf-8?B?ejdObHBGeXg0K3ZGbWZLTGExa1B3cUo4dVFmZmxKd2c1MlkxOURXZmc3L3Vi?=
- =?utf-8?B?ajRTd05OVi9BR3pjU1hHWjUzb25UVkM0WnMvZHo4bTRQNlUzWU5CVHhnUVNa?=
- =?utf-8?B?d05FTlRHMGhheUlyNDVkejhvQ3RKYVFnbXJIbmVXTmw1eUhwZHRub0taWHVB?=
- =?utf-8?B?NWFZT0tOdjA0ejJ0a0JIZHRTRHhhVUlha0IyMHlrbWdRejFMcnBmR2g1NmJ4?=
- =?utf-8?B?RU9iamVXeTg4ZGZ5VjFJM0NiS0RZYktjUCs2Tit6UENiN2JpcytSWW9DZ0ls?=
- =?utf-8?B?bHpGSWpNQjdvUkhTVG5VWWU0QWRtUlBkcWlhNkE2Q1Joem5rRitjYmd0dk1L?=
- =?utf-8?B?WStGaWMrZmJvYkJGUTJkVEt2VlVTMlIzeVlia3lRSmJBS2xzSmlSVTlBZ0J4?=
- =?utf-8?B?cmc9PQ==?=
-X-Microsoft-Antispam-Message-Info: BCzABfxXNEaTCTdLUNPw16vkIiF9a+jODl6iGDSe0OcsLiE7YIcXXQA18/NzqjRoPgaWRzcuAmStJwXpVOJp6kpDxxCuQOoazYAY8PMlIEct2w0el7iy5UfpQOf18DxDxClUxrLCaYKSvUvsRbXO2+nXOPo3JaE0ysV2oYRNtgaTe7gK8sAJZQm9VFQnLTdP
-X-Microsoft-Exchange-Diagnostics: 1;BN7PR05MB4580;6:ydIvxG9bqQnmexRg2k2j4FR5zEjZGC4QbsQu+uMHvGo1vjg02zNlCha1LvQr/HwoFi590FSJcS8/tAJegfTFWBAGyQEs+P6IJITKPx7hVpdAr0Q26qfPuxQ3tGAVYl/fVTQA7CI0dt9kV+u349W7Ze0ON/hTWveyvBGzzVVPx7QPmqCJHYB9cMUbibzJfauOipyAdIzefz8PbmIhx1gYoZ5r1vvLRB/KsCXOnXH4sVC3RdbqaqSE6peTVHgoBBOnTkhCBT5ZTI96/U1DHKDAGHKaMfct3HpLybnnCAdBqndZ8JM7ON2epmO5XRgAa/pGyr0q8DI7DxruPMkbDi7VaKlapQsbvAc2vL3RX5tXPo2e7yhAVF8XFNwGqeZTPUa/lAxoPceNWC4L+CIBzjqjeoqMc9PgxNtbaJEPNYkkHFD6/L/IsmO2GA6AHxDPaIImo65tUcxRBarnGzx7chKxvg==;5:hmDkF4Bg/+shJFJswQNet7KtwhPXa1igWTzLPjUOb25D0eWp5WVyPlZTOcrcPtTdEore2zPgaSB0KwJsVdHD7BUzrljCC25bbKF1DCnoEcEb3d815jxw1GChVjvBdinnGzhdKexoBEZXelln3Yx7p+MiDiPupXLVU4d9Lu/Ls1s=;24:FzvxWYHUMcLxF2EJzrY5pM/CzLj+VXR4U5sxI1VKS5xrWf5Tznnb7MHXC7FL+wfW5lEza06EE57hcylXQP5gZzydvOM7eBZJAWAymhyfw24=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;BN7PR05MB4580;7:85vY21/3SdwjdFMz2/VS4J0Nr2jtqHlgWh6x9OhinmzmyPdLT9cof4qGQpVmSMtnJaUl1zA4kWlJJHU2HxeJJAz7pKv00YsidCIHCV4J0ABwqCP3OmPsB4q46WQsmnY0lwO6tDq+1pK3Gyd/pShAU03En51j7vxRdC1IMzPfjTAh/j5t4sbjIM8/au8YUFKPIhorniJ7FYM7nObWnUHiYGnAp6ZT8kc3vdrnlCpzMmSfs9Ry2YXUIuk8A5FwdloR;20:SKzWvfxoX+DT9i5DqRhp9t3sQ1dN0R5HsxHdDymDn//EmfHe5opPK1iFeq0hzvHCfmQdnBTiGRTUWyPeIJtILUMLY6Dd4qgYMTpBCp2KjGtbDxkD7YGEbPWwoU5PKHCGUsccUNNJ7xWAxphih+q91a6SPd5V85kXGFw9pBxxm2U=
-X-MS-Office365-Filtering-Correlation-Id: 86ac1b25-1cc1-4ec9-32d9-08d5ac65e946
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Apr 2018 17:40:03.3829 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 86ac1b25-1cc1-4ec9-32d9-08d5ac65e946
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR05MB4580
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2238944.jilJcacc6d@amdc3058>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/27/2018 06:56 PM, Robin Murphy wrote:
-> Hi Thomas,
->
-> On 25/04/18 14:21, Thomas Hellstrom wrote:
->> Hi, Robin,
->>
->> Thanks for the patch. It was some time since I put together that 
->> code, but I remember hitting something similar to
->>
->> https://urldefense.proofpoint.com/v2/url?u=https-3A__www.linuxquestions.org_questions_linux-2Dkernel-2D70_-2527nents-2527-2Dargument-2Dof-2Ddma-5Funmap-5Fsg-2D4175621964_&d=DwIDaQ&c=uilaK90D4TOVoH58JNXRgQ&r=wnSlgOCqfpNS4d02vP68_E9q2BNMCwfD2OZ_6dCFVQQ&m=UACKfhMfw9wac0BNUWXnAiivjaBgY_jAEupre0zXoOQ&s=8NQNd-XBCViYHJH4fHk-RluFYd9CDjbYzXl_BWhC0ig&e= 
->>
->>
->> Even if it's clear from the documentation that orig_nents should be 
->> used.
->
-> Hmmm, it's odd that you would see issues - it's always been something 
-> that CONFIG_DMA_API_DEBUG would have screamed about, and as far as I'm 
-> aware for x86, nents and orig_nents should always end up equal anyway. 
-> I would definitely be interested to see the specific fault details if 
-> it can be reproduced. I suppose one possibility is that there's some 
-> path where you inadvertently unmap something which was never mapped, 
-> but passing nents=0 means you manage to get away with it without the 
-> DMA API backend trying to interpret any bogus DMA addresses/lengths.
->
-> FWIW, the rationale is that sync_sg/unmap_sg operate on sg->page 
-> (which can always be translated back to a meaningful CPU address for 
-> cache/write buffer maintenance), not sg->dma_address (which sometimes 
-> cannot), therefore passing a truncated list will have the effect of 
-> just not syncing the tail end of the buffer, which is clearly bad.
->
-> Robin.
->
-I agree. I browsed the current software- and hardware iommu dma backends 
-and all of them seem to set nents == orig_nents.
-Still, according to the docs sg_map() is free to erase any sg->page - 
-related information and given that, it would be more natural if all 
-operations after sg_map() would operate on sg->dma_address. I mean if 
-sg_map would truncate the sg list length to 1, and erase all other 
-information (which it clearly is free to do according to the docs), it 
-would be pretty meaningless to supply orig_nents for the unmapping 
-operation?
+Hi,
 
+On Fri, Apr 27, 2018 at 05:09:14PM +0200, Bartlomiej Zolnierkiewicz wrote:
+> omapfb equivalent of drm's commit aa61321d4c08 ("drm/omap: remove rfbi"):
+> 
+> The RFBI driver has not worked nor compiled for many years. There are
+> very few boards out there that use RFBI, and no one has stepped up to
+> fix it.
+>
+> So let's remove the RFBI code that doesn't even compile.
 
-/Thomas
->> On 04/13/2018 05:14 PM, Robin Murphy wrote:
->>> dma_unmap_sg() should be called with the same number of entries
->>> originally passed to dma_map_sg(), not the number it returned, which 
->>> may
->>> be fewer. Admittedly this driver probably never runs on non-coherent
->>> architectures where getting that wrong could lead to data loss, but 
->>> it's
->>> always good to be correct, and it's trivially easy to fix by just
->>> restoring the SG table state before the call instead of afterwards.
->>>
->>> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
->>> ---
->>>
->>> Found by inspection while poking around TTM users.
->>>
->>>   drivers/gpu/drm/vmwgfx/vmwgfx_buffer.c | 2 +-
->>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_buffer.c 
->>> b/drivers/gpu/drm/vmwgfx/vmwgfx_buffer.c
->>> index 21111fd091f9..971223d39469 100644
->>> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_buffer.c
->>> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_buffer.c
->>> @@ -369,9 +369,9 @@ static void vmw_ttm_unmap_from_dma(struct 
->>> vmw_ttm_tt *vmw_tt)
->>>   {
->>>       struct device *dev = vmw_tt->dev_priv->dev->dev;
->>> +    vmw_tt->sgt.nents = vmw_tt->sgt.orig_nents;
->>>       dma_unmap_sg(dev, vmw_tt->sgt.sgl, vmw_tt->sgt.nents,
->>>           DMA_BIDIRECTIONAL);
->>> -    vmw_tt->sgt.nents = vmw_tt->sgt.orig_nents;
->>>   }
->>>   /**
->>
->>
+NACK. I'm just about to start fixing this and hoping to get display
+working on N8x0 boards.
+
+See the other thread: https://marc.info/?l=linux-omap&m=152469100217934&w=2
+
+A.
+
+> Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+>  drivers/video/fbdev/omap2/omapfb/dss/Kconfig  |   13 
+>  drivers/video/fbdev/omap2/omapfb/dss/Makefile |    1 
+>  drivers/video/fbdev/omap2/omapfb/dss/core.c   |    6 
+>  drivers/video/fbdev/omap2/omapfb/dss/dss.h    |    4 
+>  drivers/video/fbdev/omap2/omapfb/dss/rfbi.c   | 1078 --------------------------
+>  include/video/omapfb_dss.h                    |   32 
+>  6 files changed, 1134 deletions(-)
+>  delete mode 100644 drivers/video/fbdev/omap2/omapfb/dss/rfbi.c
+> 
+> Index: b/drivers/video/fbdev/omap2/omapfb/dss/Kconfig
+> ===================================================================
+> --- a/drivers/video/fbdev/omap2/omapfb/dss/Kconfig	2018-04-27 16:24:48.171632007 +0200
+> +++ b/drivers/video/fbdev/omap2/omapfb/dss/Kconfig	2018-04-27 16:25:31.067633088 +0200
+> @@ -42,19 +42,6 @@ config FB_OMAP2_DSS_DPI
+>  	help
+>  	  DPI Interface. This is the Parallel Display Interface.
+>  
+> -config FB_OMAP2_DSS_RFBI
+> -	bool "RFBI support"
+> -	depends on BROKEN
+> -        default n
+> -	help
+> -	  MIPI DBI support (RFBI, Remote Framebuffer Interface, in Texas
+> -	  Instrument's terminology).
+> -
+> -	  DBI is a bus between the host processor and a peripheral,
+> -	  such as a display or a framebuffer chip.
+> -
+> -	  See http://www.mipi.org/ for DBI specifications.
+> -
+>  config FB_OMAP2_DSS_VENC
+>  	bool "VENC support"
+>          default y
+> Index: b/drivers/video/fbdev/omap2/omapfb/dss/Makefile
+> ===================================================================
+> --- a/drivers/video/fbdev/omap2/omapfb/dss/Makefile	2018-04-27 16:24:48.171632007 +0200
+> +++ b/drivers/video/fbdev/omap2/omapfb/dss/Makefile	2018-04-27 16:26:20.511634333 +0200
+> @@ -8,7 +8,6 @@ omapdss-y := core.o dss.o dss_features.o
+>  omapdss-y += manager.o manager-sysfs.o overlay.o overlay-sysfs.o apply.o \
+>  	dispc-compat.o display-sysfs.o
+>  omapdss-$(CONFIG_FB_OMAP2_DSS_DPI) += dpi.o
+> -omapdss-$(CONFIG_FB_OMAP2_DSS_RFBI) += rfbi.o
+>  omapdss-$(CONFIG_FB_OMAP2_DSS_VENC) += venc.o
+>  omapdss-$(CONFIG_FB_OMAP2_DSS_SDI) += sdi.o
+>  omapdss-$(CONFIG_FB_OMAP2_DSS_DSI) += dsi.o
+> Index: b/drivers/video/fbdev/omap2/omapfb/dss/core.c
+> ===================================================================
+> --- a/drivers/video/fbdev/omap2/omapfb/dss/core.c	2018-04-27 16:24:48.171632007 +0200
+> +++ b/drivers/video/fbdev/omap2/omapfb/dss/core.c	2018-04-27 16:26:00.675633833 +0200
+> @@ -251,9 +251,6 @@ static int (*dss_output_drv_reg_funcs[])
+>  #ifdef CONFIG_FB_OMAP2_DSS_SDI
+>  	sdi_init_platform_driver,
+>  #endif
+> -#ifdef CONFIG_FB_OMAP2_DSS_RFBI
+> -	rfbi_init_platform_driver,
+> -#endif
+>  #ifdef CONFIG_FB_OMAP2_DSS_VENC
+>  	venc_init_platform_driver,
+>  #endif
+> @@ -275,9 +272,6 @@ static void (*dss_output_drv_unreg_funcs
+>  #ifdef CONFIG_FB_OMAP2_DSS_VENC
+>  	venc_uninit_platform_driver,
+>  #endif
+> -#ifdef CONFIG_FB_OMAP2_DSS_RFBI
+> -	rfbi_uninit_platform_driver,
+> -#endif
+>  #ifdef CONFIG_FB_OMAP2_DSS_SDI
+>  	sdi_uninit_platform_driver,
+>  #endif
+> Index: b/drivers/video/fbdev/omap2/omapfb/dss/dss.h
+> ===================================================================
+> --- a/drivers/video/fbdev/omap2/omapfb/dss/dss.h	2018-04-27 16:24:48.171632007 +0200
+> +++ b/drivers/video/fbdev/omap2/omapfb/dss/dss.h	2018-04-27 16:24:48.171632007 +0200
+> @@ -472,10 +472,6 @@ void hdmi4_uninit_platform_driver(void);
+>  int hdmi5_init_platform_driver(void) __init;
+>  void hdmi5_uninit_platform_driver(void);
+>  
+> -/* RFBI */
+> -int rfbi_init_platform_driver(void) __init;
+> -void rfbi_uninit_platform_driver(void);
+> -
+>  
+>  #ifdef CONFIG_FB_OMAP2_DSS_COLLECT_IRQ_STATS
+>  static inline void dss_collect_irq_stats(u32 irqstatus, unsigned *irq_arr)
+> Index: b/drivers/video/fbdev/omap2/omapfb/dss/rfbi.c
+> ===================================================================
+> --- a/drivers/video/fbdev/omap2/omapfb/dss/rfbi.c	2018-04-27 16:24:42.223631857 +0200
+> +++ /dev/null	1970-01-01 00:00:00.000000000 +0000
+> @@ -1,1078 +0,0 @@
+> -/*
+> - * linux/drivers/video/omap2/dss/rfbi.c
+> - *
+> - * Copyright (C) 2009 Nokia Corporation
+> - * Author: Tomi Valkeinen <tomi.valkeinen@nokia.com>
+> - *
+> - * Some code and ideas taken from drivers/video/omap/ driver
+> - * by Imre Deak.
+> - *
+> - * This program is free software; you can redistribute it and/or modify it
+> - * under the terms of the GNU General Public License version 2 as published by
+> - * the Free Software Foundation.
+> - *
+> - * This program is distributed in the hope that it will be useful, but WITHOUT
+> - * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> - * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+> - * more details.
+> - *
+> - * You should have received a copy of the GNU General Public License along with
+> - * this program.  If not, see <http://www.gnu.org/licenses/>.
+> - */
+> -
+> -#define DSS_SUBSYS_NAME "RFBI"
+> -
+> -#include <linux/kernel.h>
+> -#include <linux/dma-mapping.h>
+> -#include <linux/export.h>
+> -#include <linux/vmalloc.h>
+> -#include <linux/clk.h>
+> -#include <linux/io.h>
+> -#include <linux/delay.h>
+> -#include <linux/kfifo.h>
+> -#include <linux/ktime.h>
+> -#include <linux/hrtimer.h>
+> -#include <linux/seq_file.h>
+> -#include <linux/semaphore.h>
+> -#include <linux/platform_device.h>
+> -#include <linux/pm_runtime.h>
+> -#include <linux/component.h>
+> -
+> -#include <video/omapfb_dss.h>
+> -#include "dss.h"
+> -
+> -struct rfbi_reg { u16 idx; };
+> -
+> -#define RFBI_REG(idx)		((const struct rfbi_reg) { idx })
+> -
+> -#define RFBI_REVISION		RFBI_REG(0x0000)
+> -#define RFBI_SYSCONFIG		RFBI_REG(0x0010)
+> -#define RFBI_SYSSTATUS		RFBI_REG(0x0014)
+> -#define RFBI_CONTROL		RFBI_REG(0x0040)
+> -#define RFBI_PIXEL_CNT		RFBI_REG(0x0044)
+> -#define RFBI_LINE_NUMBER	RFBI_REG(0x0048)
+> -#define RFBI_CMD		RFBI_REG(0x004c)
+> -#define RFBI_PARAM		RFBI_REG(0x0050)
+> -#define RFBI_DATA		RFBI_REG(0x0054)
+> -#define RFBI_READ		RFBI_REG(0x0058)
+> -#define RFBI_STATUS		RFBI_REG(0x005c)
+> -
+> -#define RFBI_CONFIG(n)		RFBI_REG(0x0060 + (n)*0x18)
+> -#define RFBI_ONOFF_TIME(n)	RFBI_REG(0x0064 + (n)*0x18)
+> -#define RFBI_CYCLE_TIME(n)	RFBI_REG(0x0068 + (n)*0x18)
+> -#define RFBI_DATA_CYCLE1(n)	RFBI_REG(0x006c + (n)*0x18)
+> -#define RFBI_DATA_CYCLE2(n)	RFBI_REG(0x0070 + (n)*0x18)
+> -#define RFBI_DATA_CYCLE3(n)	RFBI_REG(0x0074 + (n)*0x18)
+> -
+> -#define RFBI_VSYNC_WIDTH	RFBI_REG(0x0090)
+> -#define RFBI_HSYNC_WIDTH	RFBI_REG(0x0094)
+> -
+> -#define REG_FLD_MOD(idx, val, start, end) \
+> -	rfbi_write_reg(idx, FLD_MOD(rfbi_read_reg(idx), val, start, end))
+> -
+> -enum omap_rfbi_cycleformat {
+> -	OMAP_DSS_RFBI_CYCLEFORMAT_1_1 = 0,
+> -	OMAP_DSS_RFBI_CYCLEFORMAT_2_1 = 1,
+> -	OMAP_DSS_RFBI_CYCLEFORMAT_3_1 = 2,
+> -	OMAP_DSS_RFBI_CYCLEFORMAT_3_2 = 3,
+> -};
+> -
+> -enum omap_rfbi_datatype {
+> -	OMAP_DSS_RFBI_DATATYPE_12 = 0,
+> -	OMAP_DSS_RFBI_DATATYPE_16 = 1,
+> -	OMAP_DSS_RFBI_DATATYPE_18 = 2,
+> -	OMAP_DSS_RFBI_DATATYPE_24 = 3,
+> -};
+> -
+> -enum omap_rfbi_parallelmode {
+> -	OMAP_DSS_RFBI_PARALLELMODE_8 = 0,
+> -	OMAP_DSS_RFBI_PARALLELMODE_9 = 1,
+> -	OMAP_DSS_RFBI_PARALLELMODE_12 = 2,
+> -	OMAP_DSS_RFBI_PARALLELMODE_16 = 3,
+> -};
+> -
+> -static int rfbi_convert_timings(struct rfbi_timings *t);
+> -static void rfbi_get_clk_info(u32 *clk_period, u32 *max_clk_div);
+> -
+> -static struct {
+> -	struct platform_device *pdev;
+> -	void __iomem	*base;
+> -
+> -	unsigned long	l4_khz;
+> -
+> -	enum omap_rfbi_datatype datatype;
+> -	enum omap_rfbi_parallelmode parallelmode;
+> -
+> -	enum omap_rfbi_te_mode te_mode;
+> -	int te_enabled;
+> -
+> -	void (*framedone_callback)(void *data);
+> -	void *framedone_callback_data;
+> -
+> -	struct omap_dss_device *dssdev[2];
+> -
+> -	struct semaphore bus_lock;
+> -
+> -	struct omap_video_timings timings;
+> -	int pixel_size;
+> -	int data_lines;
+> -	struct rfbi_timings intf_timings;
+> -
+> -	struct omap_dss_device output;
+> -} rfbi;
+> -
+> -static inline void rfbi_write_reg(const struct rfbi_reg idx, u32 val)
+> -{
+> -	__raw_writel(val, rfbi.base + idx.idx);
+> -}
+> -
+> -static inline u32 rfbi_read_reg(const struct rfbi_reg idx)
+> -{
+> -	return __raw_readl(rfbi.base + idx.idx);
+> -}
+> -
+> -static int rfbi_runtime_get(void)
+> -{
+> -	int r;
+> -
+> -	DSSDBG("rfbi_runtime_get\n");
+> -
+> -	r = pm_runtime_get_sync(&rfbi.pdev->dev);
+> -	WARN_ON(r < 0);
+> -	return r < 0 ? r : 0;
+> -}
+> -
+> -static void rfbi_runtime_put(void)
+> -{
+> -	int r;
+> -
+> -	DSSDBG("rfbi_runtime_put\n");
+> -
+> -	r = pm_runtime_put_sync(&rfbi.pdev->dev);
+> -	WARN_ON(r < 0 && r != -ENOSYS);
+> -}
+> -
+> -static void rfbi_bus_lock(void)
+> -{
+> -	down(&rfbi.bus_lock);
+> -}
+> -
+> -static void rfbi_bus_unlock(void)
+> -{
+> -	up(&rfbi.bus_lock);
+> -}
+> -
+> -static void rfbi_write_command(const void *buf, u32 len)
+> -{
+> -	switch (rfbi.parallelmode) {
+> -	case OMAP_DSS_RFBI_PARALLELMODE_8:
+> -	{
+> -		const u8 *b = buf;
+> -		for (; len; len--)
+> -			rfbi_write_reg(RFBI_CMD, *b++);
+> -		break;
+> -	}
+> -
+> -	case OMAP_DSS_RFBI_PARALLELMODE_16:
+> -	{
+> -		const u16 *w = buf;
+> -		BUG_ON(len & 1);
+> -		for (; len; len -= 2)
+> -			rfbi_write_reg(RFBI_CMD, *w++);
+> -		break;
+> -	}
+> -
+> -	case OMAP_DSS_RFBI_PARALLELMODE_9:
+> -	case OMAP_DSS_RFBI_PARALLELMODE_12:
+> -	default:
+> -		BUG();
+> -	}
+> -}
+> -
+> -static void rfbi_read_data(void *buf, u32 len)
+> -{
+> -	switch (rfbi.parallelmode) {
+> -	case OMAP_DSS_RFBI_PARALLELMODE_8:
+> -	{
+> -		u8 *b = buf;
+> -		for (; len; len--) {
+> -			rfbi_write_reg(RFBI_READ, 0);
+> -			*b++ = rfbi_read_reg(RFBI_READ);
+> -		}
+> -		break;
+> -	}
+> -
+> -	case OMAP_DSS_RFBI_PARALLELMODE_16:
+> -	{
+> -		u16 *w = buf;
+> -		BUG_ON(len & ~1);
+> -		for (; len; len -= 2) {
+> -			rfbi_write_reg(RFBI_READ, 0);
+> -			*w++ = rfbi_read_reg(RFBI_READ);
+> -		}
+> -		break;
+> -	}
+> -
+> -	case OMAP_DSS_RFBI_PARALLELMODE_9:
+> -	case OMAP_DSS_RFBI_PARALLELMODE_12:
+> -	default:
+> -		BUG();
+> -	}
+> -}
+> -
+> -static void rfbi_write_data(const void *buf, u32 len)
+> -{
+> -	switch (rfbi.parallelmode) {
+> -	case OMAP_DSS_RFBI_PARALLELMODE_8:
+> -	{
+> -		const u8 *b = buf;
+> -		for (; len; len--)
+> -			rfbi_write_reg(RFBI_PARAM, *b++);
+> -		break;
+> -	}
+> -
+> -	case OMAP_DSS_RFBI_PARALLELMODE_16:
+> -	{
+> -		const u16 *w = buf;
+> -		BUG_ON(len & 1);
+> -		for (; len; len -= 2)
+> -			rfbi_write_reg(RFBI_PARAM, *w++);
+> -		break;
+> -	}
+> -
+> -	case OMAP_DSS_RFBI_PARALLELMODE_9:
+> -	case OMAP_DSS_RFBI_PARALLELMODE_12:
+> -	default:
+> -		BUG();
+> -
+> -	}
+> -}
+> -
+> -static void rfbi_write_pixels(const void __iomem *buf, int scr_width,
+> -		u16 x, u16 y,
+> -		u16 w, u16 h)
+> -{
+> -	int start_offset = scr_width * y + x;
+> -	int horiz_offset = scr_width - w;
+> -	int i;
+> -
+> -	if (rfbi.datatype == OMAP_DSS_RFBI_DATATYPE_16 &&
+> -	   rfbi.parallelmode == OMAP_DSS_RFBI_PARALLELMODE_8) {
+> -		const u16 __iomem *pd = buf;
+> -		pd += start_offset;
+> -
+> -		for (; h; --h) {
+> -			for (i = 0; i < w; ++i) {
+> -				const u8 __iomem *b = (const u8 __iomem *)pd;
+> -				rfbi_write_reg(RFBI_PARAM, __raw_readb(b+1));
+> -				rfbi_write_reg(RFBI_PARAM, __raw_readb(b+0));
+> -				++pd;
+> -			}
+> -			pd += horiz_offset;
+> -		}
+> -	} else if (rfbi.datatype == OMAP_DSS_RFBI_DATATYPE_24 &&
+> -	   rfbi.parallelmode == OMAP_DSS_RFBI_PARALLELMODE_8) {
+> -		const u32 __iomem *pd = buf;
+> -		pd += start_offset;
+> -
+> -		for (; h; --h) {
+> -			for (i = 0; i < w; ++i) {
+> -				const u8 __iomem *b = (const u8 __iomem *)pd;
+> -				rfbi_write_reg(RFBI_PARAM, __raw_readb(b+2));
+> -				rfbi_write_reg(RFBI_PARAM, __raw_readb(b+1));
+> -				rfbi_write_reg(RFBI_PARAM, __raw_readb(b+0));
+> -				++pd;
+> -			}
+> -			pd += horiz_offset;
+> -		}
+> -	} else if (rfbi.datatype == OMAP_DSS_RFBI_DATATYPE_16 &&
+> -	   rfbi.parallelmode == OMAP_DSS_RFBI_PARALLELMODE_16) {
+> -		const u16 __iomem *pd = buf;
+> -		pd += start_offset;
+> -
+> -		for (; h; --h) {
+> -			for (i = 0; i < w; ++i) {
+> -				rfbi_write_reg(RFBI_PARAM, __raw_readw(pd));
+> -				++pd;
+> -			}
+> -			pd += horiz_offset;
+> -		}
+> -	} else {
+> -		BUG();
+> -	}
+> -}
+> -
+> -static int rfbi_transfer_area(struct omap_dss_device *dssdev,
+> -		void (*callback)(void *data), void *data)
+> -{
+> -	u32 l;
+> -	int r;
+> -	struct omap_overlay_manager *mgr = rfbi.output.manager;
+> -	u16 width = rfbi.timings.x_res;
+> -	u16 height = rfbi.timings.y_res;
+> -
+> -	/*BUG_ON(callback == 0);*/
+> -	BUG_ON(rfbi.framedone_callback != NULL);
+> -
+> -	DSSDBG("rfbi_transfer_area %dx%d\n", width, height);
+> -
+> -	dss_mgr_set_timings(mgr, &rfbi.timings);
+> -
+> -	r = dss_mgr_enable(mgr);
+> -	if (r)
+> -		return r;
+> -
+> -	rfbi.framedone_callback = callback;
+> -	rfbi.framedone_callback_data = data;
+> -
+> -	rfbi_write_reg(RFBI_PIXEL_CNT, width * height);
+> -
+> -	l = rfbi_read_reg(RFBI_CONTROL);
+> -	l = FLD_MOD(l, 1, 0, 0); /* enable */
+> -	if (!rfbi.te_enabled)
+> -		l = FLD_MOD(l, 1, 4, 4); /* ITE */
+> -
+> -	rfbi_write_reg(RFBI_CONTROL, l);
+> -
+> -	return 0;
+> -}
+> -
+> -static void framedone_callback(void *data)
+> -{
+> -	void (*callback)(void *data);
+> -
+> -	DSSDBG("FRAMEDONE\n");
+> -
+> -	REG_FLD_MOD(RFBI_CONTROL, 0, 0, 0);
+> -
+> -	callback = rfbi.framedone_callback;
+> -	rfbi.framedone_callback = NULL;
+> -
+> -	if (callback != NULL)
+> -		callback(rfbi.framedone_callback_data);
+> -}
+> -
+> -#if 1 /* VERBOSE */
+> -static void rfbi_print_timings(void)
+> -{
+> -	u32 l;
+> -	u32 time;
+> -
+> -	l = rfbi_read_reg(RFBI_CONFIG(0));
+> -	time = 1000000000 / rfbi.l4_khz;
+> -	if (l & (1 << 4))
+> -		time *= 2;
+> -
+> -	DSSDBG("Tick time %u ps\n", time);
+> -	l = rfbi_read_reg(RFBI_ONOFF_TIME(0));
+> -	DSSDBG("CSONTIME %d, CSOFFTIME %d, WEONTIME %d, WEOFFTIME %d, "
+> -		"REONTIME %d, REOFFTIME %d\n",
+> -		l & 0x0f, (l >> 4) & 0x3f, (l >> 10) & 0x0f, (l >> 14) & 0x3f,
+> -		(l >> 20) & 0x0f, (l >> 24) & 0x3f);
+> -
+> -	l = rfbi_read_reg(RFBI_CYCLE_TIME(0));
+> -	DSSDBG("WECYCLETIME %d, RECYCLETIME %d, CSPULSEWIDTH %d, "
+> -		"ACCESSTIME %d\n",
+> -		(l & 0x3f), (l >> 6) & 0x3f, (l >> 12) & 0x3f,
+> -		(l >> 22) & 0x3f);
+> -}
+> -#else
+> -static void rfbi_print_timings(void) {}
+> -#endif
+> -
+> -
+> -
+> -
+> -static u32 extif_clk_period;
+> -
+> -static inline unsigned long round_to_extif_ticks(unsigned long ps, int div)
+> -{
+> -	int bus_tick = extif_clk_period * div;
+> -	return (ps + bus_tick - 1) / bus_tick * bus_tick;
+> -}
+> -
+> -static int calc_reg_timing(struct rfbi_timings *t, int div)
+> -{
+> -	t->clk_div = div;
+> -
+> -	t->cs_on_time = round_to_extif_ticks(t->cs_on_time, div);
+> -
+> -	t->we_on_time = round_to_extif_ticks(t->we_on_time, div);
+> -	t->we_off_time = round_to_extif_ticks(t->we_off_time, div);
+> -	t->we_cycle_time = round_to_extif_ticks(t->we_cycle_time, div);
+> -
+> -	t->re_on_time = round_to_extif_ticks(t->re_on_time, div);
+> -	t->re_off_time = round_to_extif_ticks(t->re_off_time, div);
+> -	t->re_cycle_time = round_to_extif_ticks(t->re_cycle_time, div);
+> -
+> -	t->access_time = round_to_extif_ticks(t->access_time, div);
+> -	t->cs_off_time = round_to_extif_ticks(t->cs_off_time, div);
+> -	t->cs_pulse_width = round_to_extif_ticks(t->cs_pulse_width, div);
+> -
+> -	DSSDBG("[reg]cson %d csoff %d reon %d reoff %d\n",
+> -	       t->cs_on_time, t->cs_off_time, t->re_on_time, t->re_off_time);
+> -	DSSDBG("[reg]weon %d weoff %d recyc %d wecyc %d\n",
+> -	       t->we_on_time, t->we_off_time, t->re_cycle_time,
+> -	       t->we_cycle_time);
+> -	DSSDBG("[reg]rdaccess %d cspulse %d\n",
+> -	       t->access_time, t->cs_pulse_width);
+> -
+> -	return rfbi_convert_timings(t);
+> -}
+> -
+> -static int calc_extif_timings(struct rfbi_timings *t)
+> -{
+> -	u32 max_clk_div;
+> -	int div;
+> -
+> -	rfbi_get_clk_info(&extif_clk_period, &max_clk_div);
+> -	for (div = 1; div <= max_clk_div; div++) {
+> -		if (calc_reg_timing(t, div) == 0)
+> -			break;
+> -	}
+> -
+> -	if (div <= max_clk_div)
+> -		return 0;
+> -
+> -	DSSERR("can't setup timings\n");
+> -	return -1;
+> -}
+> -
+> -
+> -static void rfbi_set_timings(int rfbi_module, struct rfbi_timings *t)
+> -{
+> -	int r;
+> -
+> -	if (!t->converted) {
+> -		r = calc_extif_timings(t);
+> -		if (r < 0)
+> -			DSSERR("Failed to calc timings\n");
+> -	}
+> -
+> -	BUG_ON(!t->converted);
+> -
+> -	rfbi_write_reg(RFBI_ONOFF_TIME(rfbi_module), t->tim[0]);
+> -	rfbi_write_reg(RFBI_CYCLE_TIME(rfbi_module), t->tim[1]);
+> -
+> -	/* TIMEGRANULARITY */
+> -	REG_FLD_MOD(RFBI_CONFIG(rfbi_module),
+> -		    (t->tim[2] ? 1 : 0), 4, 4);
+> -
+> -	rfbi_print_timings();
+> -}
+> -
+> -static int ps_to_rfbi_ticks(int time, int div)
+> -{
+> -	unsigned long tick_ps;
+> -	int ret;
+> -
+> -	/* Calculate in picosecs to yield more exact results */
+> -	tick_ps = 1000000000 / (rfbi.l4_khz) * div;
+> -
+> -	ret = (time + tick_ps - 1) / tick_ps;
+> -
+> -	return ret;
+> -}
+> -
+> -static void rfbi_get_clk_info(u32 *clk_period, u32 *max_clk_div)
+> -{
+> -	*clk_period = 1000000000 / rfbi.l4_khz;
+> -	*max_clk_div = 2;
+> -}
+> -
+> -static int rfbi_convert_timings(struct rfbi_timings *t)
+> -{
+> -	u32 l;
+> -	int reon, reoff, weon, weoff, cson, csoff, cs_pulse;
+> -	int actim, recyc, wecyc;
+> -	int div = t->clk_div;
+> -
+> -	if (div <= 0 || div > 2)
+> -		return -1;
+> -
+> -	/* Make sure that after conversion it still holds that:
+> -	 * weoff > weon, reoff > reon, recyc >= reoff, wecyc >= weoff,
+> -	 * csoff > cson, csoff >= max(weoff, reoff), actim > reon
+> -	 */
+> -	weon = ps_to_rfbi_ticks(t->we_on_time, div);
+> -	weoff = ps_to_rfbi_ticks(t->we_off_time, div);
+> -	if (weoff <= weon)
+> -		weoff = weon + 1;
+> -	if (weon > 0x0f)
+> -		return -1;
+> -	if (weoff > 0x3f)
+> -		return -1;
+> -
+> -	reon = ps_to_rfbi_ticks(t->re_on_time, div);
+> -	reoff = ps_to_rfbi_ticks(t->re_off_time, div);
+> -	if (reoff <= reon)
+> -		reoff = reon + 1;
+> -	if (reon > 0x0f)
+> -		return -1;
+> -	if (reoff > 0x3f)
+> -		return -1;
+> -
+> -	cson = ps_to_rfbi_ticks(t->cs_on_time, div);
+> -	csoff = ps_to_rfbi_ticks(t->cs_off_time, div);
+> -	if (csoff <= cson)
+> -		csoff = cson + 1;
+> -	if (csoff < max(weoff, reoff))
+> -		csoff = max(weoff, reoff);
+> -	if (cson > 0x0f)
+> -		return -1;
+> -	if (csoff > 0x3f)
+> -		return -1;
+> -
+> -	l =  cson;
+> -	l |= csoff << 4;
+> -	l |= weon  << 10;
+> -	l |= weoff << 14;
+> -	l |= reon  << 20;
+> -	l |= reoff << 24;
+> -
+> -	t->tim[0] = l;
+> -
+> -	actim = ps_to_rfbi_ticks(t->access_time, div);
+> -	if (actim <= reon)
+> -		actim = reon + 1;
+> -	if (actim > 0x3f)
+> -		return -1;
+> -
+> -	wecyc = ps_to_rfbi_ticks(t->we_cycle_time, div);
+> -	if (wecyc < weoff)
+> -		wecyc = weoff;
+> -	if (wecyc > 0x3f)
+> -		return -1;
+> -
+> -	recyc = ps_to_rfbi_ticks(t->re_cycle_time, div);
+> -	if (recyc < reoff)
+> -		recyc = reoff;
+> -	if (recyc > 0x3f)
+> -		return -1;
+> -
+> -	cs_pulse = ps_to_rfbi_ticks(t->cs_pulse_width, div);
+> -	if (cs_pulse > 0x3f)
+> -		return -1;
+> -
+> -	l =  wecyc;
+> -	l |= recyc    << 6;
+> -	l |= cs_pulse << 12;
+> -	l |= actim    << 22;
+> -
+> -	t->tim[1] = l;
+> -
+> -	t->tim[2] = div - 1;
+> -
+> -	t->converted = 1;
+> -
+> -	return 0;
+> -}
+> -
+> -/* xxx FIX module selection missing */
+> -static int rfbi_setup_te(enum omap_rfbi_te_mode mode,
+> -			     unsigned hs_pulse_time, unsigned vs_pulse_time,
+> -			     int hs_pol_inv, int vs_pol_inv, int extif_div)
+> -{
+> -	int hs, vs;
+> -	int min;
+> -	u32 l;
+> -
+> -	hs = ps_to_rfbi_ticks(hs_pulse_time, 1);
+> -	vs = ps_to_rfbi_ticks(vs_pulse_time, 1);
+> -	if (hs < 2)
+> -		return -EDOM;
+> -	if (mode == OMAP_DSS_RFBI_TE_MODE_2)
+> -		min = 2;
+> -	else /* OMAP_DSS_RFBI_TE_MODE_1 */
+> -		min = 4;
+> -	if (vs < min)
+> -		return -EDOM;
+> -	if (vs == hs)
+> -		return -EINVAL;
+> -	rfbi.te_mode = mode;
+> -	DSSDBG("setup_te: mode %d hs %d vs %d hs_inv %d vs_inv %d\n",
+> -		mode, hs, vs, hs_pol_inv, vs_pol_inv);
+> -
+> -	rfbi_write_reg(RFBI_HSYNC_WIDTH, hs);
+> -	rfbi_write_reg(RFBI_VSYNC_WIDTH, vs);
+> -
+> -	l = rfbi_read_reg(RFBI_CONFIG(0));
+> -	if (hs_pol_inv)
+> -		l &= ~(1 << 21);
+> -	else
+> -		l |= 1 << 21;
+> -	if (vs_pol_inv)
+> -		l &= ~(1 << 20);
+> -	else
+> -		l |= 1 << 20;
+> -
+> -	return 0;
+> -}
+> -
+> -/* xxx FIX module selection missing */
+> -static int rfbi_enable_te(bool enable, unsigned line)
+> -{
+> -	u32 l;
+> -
+> -	DSSDBG("te %d line %d mode %d\n", enable, line, rfbi.te_mode);
+> -	if (line > (1 << 11) - 1)
+> -		return -EINVAL;
+> -
+> -	l = rfbi_read_reg(RFBI_CONFIG(0));
+> -	l &= ~(0x3 << 2);
+> -	if (enable) {
+> -		rfbi.te_enabled = 1;
+> -		l |= rfbi.te_mode << 2;
+> -	} else
+> -		rfbi.te_enabled = 0;
+> -	rfbi_write_reg(RFBI_CONFIG(0), l);
+> -	rfbi_write_reg(RFBI_LINE_NUMBER, line);
+> -
+> -	return 0;
+> -}
+> -
+> -static int rfbi_configure_bus(int rfbi_module, int bpp, int lines)
+> -{
+> -	u32 l;
+> -	int cycle1 = 0, cycle2 = 0, cycle3 = 0;
+> -	enum omap_rfbi_cycleformat cycleformat;
+> -	enum omap_rfbi_datatype datatype;
+> -	enum omap_rfbi_parallelmode parallelmode;
+> -
+> -	switch (bpp) {
+> -	case 12:
+> -		datatype = OMAP_DSS_RFBI_DATATYPE_12;
+> -		break;
+> -	case 16:
+> -		datatype = OMAP_DSS_RFBI_DATATYPE_16;
+> -		break;
+> -	case 18:
+> -		datatype = OMAP_DSS_RFBI_DATATYPE_18;
+> -		break;
+> -	case 24:
+> -		datatype = OMAP_DSS_RFBI_DATATYPE_24;
+> -		break;
+> -	default:
+> -		BUG();
+> -		return 1;
+> -	}
+> -	rfbi.datatype = datatype;
+> -
+> -	switch (lines) {
+> -	case 8:
+> -		parallelmode = OMAP_DSS_RFBI_PARALLELMODE_8;
+> -		break;
+> -	case 9:
+> -		parallelmode = OMAP_DSS_RFBI_PARALLELMODE_9;
+> -		break;
+> -	case 12:
+> -		parallelmode = OMAP_DSS_RFBI_PARALLELMODE_12;
+> -		break;
+> -	case 16:
+> -		parallelmode = OMAP_DSS_RFBI_PARALLELMODE_16;
+> -		break;
+> -	default:
+> -		BUG();
+> -		return 1;
+> -	}
+> -	rfbi.parallelmode = parallelmode;
+> -
+> -	if ((bpp % lines) == 0) {
+> -		switch (bpp / lines) {
+> -		case 1:
+> -			cycleformat = OMAP_DSS_RFBI_CYCLEFORMAT_1_1;
+> -			break;
+> -		case 2:
+> -			cycleformat = OMAP_DSS_RFBI_CYCLEFORMAT_2_1;
+> -			break;
+> -		case 3:
+> -			cycleformat = OMAP_DSS_RFBI_CYCLEFORMAT_3_1;
+> -			break;
+> -		default:
+> -			BUG();
+> -			return 1;
+> -		}
+> -	} else if ((2 * bpp % lines) == 0) {
+> -		if ((2 * bpp / lines) == 3)
+> -			cycleformat = OMAP_DSS_RFBI_CYCLEFORMAT_3_2;
+> -		else {
+> -			BUG();
+> -			return 1;
+> -		}
+> -	} else {
+> -		BUG();
+> -		return 1;
+> -	}
+> -
+> -	switch (cycleformat) {
+> -	case OMAP_DSS_RFBI_CYCLEFORMAT_1_1:
+> -		cycle1 = lines;
+> -		break;
+> -
+> -	case OMAP_DSS_RFBI_CYCLEFORMAT_2_1:
+> -		cycle1 = lines;
+> -		cycle2 = lines;
+> -		break;
+> -
+> -	case OMAP_DSS_RFBI_CYCLEFORMAT_3_1:
+> -		cycle1 = lines;
+> -		cycle2 = lines;
+> -		cycle3 = lines;
+> -		break;
+> -
+> -	case OMAP_DSS_RFBI_CYCLEFORMAT_3_2:
+> -		cycle1 = lines;
+> -		cycle2 = (lines / 2) | ((lines / 2) << 16);
+> -		cycle3 = (lines << 16);
+> -		break;
+> -	}
+> -
+> -	REG_FLD_MOD(RFBI_CONTROL, 0, 3, 2); /* clear CS */
+> -
+> -	l = 0;
+> -	l |= FLD_VAL(parallelmode, 1, 0);
+> -	l |= FLD_VAL(0, 3, 2);		/* TRIGGERMODE: ITE */
+> -	l |= FLD_VAL(0, 4, 4);		/* TIMEGRANULARITY */
+> -	l |= FLD_VAL(datatype, 6, 5);
+> -	/* l |= FLD_VAL(2, 8, 7); */	/* L4FORMAT, 2pix/L4 */
+> -	l |= FLD_VAL(0, 8, 7);	/* L4FORMAT, 1pix/L4 */
+> -	l |= FLD_VAL(cycleformat, 10, 9);
+> -	l |= FLD_VAL(0, 12, 11);	/* UNUSEDBITS */
+> -	l |= FLD_VAL(0, 16, 16);	/* A0POLARITY */
+> -	l |= FLD_VAL(0, 17, 17);	/* REPOLARITY */
+> -	l |= FLD_VAL(0, 18, 18);	/* WEPOLARITY */
+> -	l |= FLD_VAL(0, 19, 19);	/* CSPOLARITY */
+> -	l |= FLD_VAL(1, 20, 20);	/* TE_VSYNC_POLARITY */
+> -	l |= FLD_VAL(1, 21, 21);	/* HSYNCPOLARITY */
+> -	rfbi_write_reg(RFBI_CONFIG(rfbi_module), l);
+> -
+> -	rfbi_write_reg(RFBI_DATA_CYCLE1(rfbi_module), cycle1);
+> -	rfbi_write_reg(RFBI_DATA_CYCLE2(rfbi_module), cycle2);
+> -	rfbi_write_reg(RFBI_DATA_CYCLE3(rfbi_module), cycle3);
+> -
+> -
+> -	l = rfbi_read_reg(RFBI_CONTROL);
+> -	l = FLD_MOD(l, rfbi_module+1, 3, 2); /* Select CSx */
+> -	l = FLD_MOD(l, 0, 1, 1); /* clear bypass */
+> -	rfbi_write_reg(RFBI_CONTROL, l);
+> -
+> -
+> -	DSSDBG("RFBI config: bpp %d, lines %d, cycles: 0x%x 0x%x 0x%x\n",
+> -	       bpp, lines, cycle1, cycle2, cycle3);
+> -
+> -	return 0;
+> -}
+> -
+> -static int rfbi_configure(struct omap_dss_device *dssdev)
+> -{
+> -	return rfbi_configure_bus(dssdev->phy.rfbi.channel, rfbi.pixel_size,
+> -			rfbi.data_lines);
+> -}
+> -
+> -static int rfbi_update(struct omap_dss_device *dssdev, void (*callback)(void *),
+> -		void *data)
+> -{
+> -	return rfbi_transfer_area(dssdev, callback, data);
+> -}
+> -
+> -static void rfbi_set_size(struct omap_dss_device *dssdev, u16 w, u16 h)
+> -{
+> -	rfbi.timings.x_res = w;
+> -	rfbi.timings.y_res = h;
+> -}
+> -
+> -static void rfbi_set_pixel_size(struct omap_dss_device *dssdev, int pixel_size)
+> -{
+> -	rfbi.pixel_size = pixel_size;
+> -}
+> -
+> -static void rfbi_set_data_lines(struct omap_dss_device *dssdev, int data_lines)
+> -{
+> -	rfbi.data_lines = data_lines;
+> -}
+> -
+> -static void rfbi_set_interface_timings(struct omap_dss_device *dssdev,
+> -		struct rfbi_timings *timings)
+> -{
+> -	rfbi.intf_timings = *timings;
+> -}
+> -
+> -static void rfbi_dump_regs(struct seq_file *s)
+> -{
+> -#define DUMPREG(r) seq_printf(s, "%-35s %08x\n", #r, rfbi_read_reg(r))
+> -
+> -	if (rfbi_runtime_get())
+> -		return;
+> -
+> -	DUMPREG(RFBI_REVISION);
+> -	DUMPREG(RFBI_SYSCONFIG);
+> -	DUMPREG(RFBI_SYSSTATUS);
+> -	DUMPREG(RFBI_CONTROL);
+> -	DUMPREG(RFBI_PIXEL_CNT);
+> -	DUMPREG(RFBI_LINE_NUMBER);
+> -	DUMPREG(RFBI_CMD);
+> -	DUMPREG(RFBI_PARAM);
+> -	DUMPREG(RFBI_DATA);
+> -	DUMPREG(RFBI_READ);
+> -	DUMPREG(RFBI_STATUS);
+> -
+> -	DUMPREG(RFBI_CONFIG(0));
+> -	DUMPREG(RFBI_ONOFF_TIME(0));
+> -	DUMPREG(RFBI_CYCLE_TIME(0));
+> -	DUMPREG(RFBI_DATA_CYCLE1(0));
+> -	DUMPREG(RFBI_DATA_CYCLE2(0));
+> -	DUMPREG(RFBI_DATA_CYCLE3(0));
+> -
+> -	DUMPREG(RFBI_CONFIG(1));
+> -	DUMPREG(RFBI_ONOFF_TIME(1));
+> -	DUMPREG(RFBI_CYCLE_TIME(1));
+> -	DUMPREG(RFBI_DATA_CYCLE1(1));
+> -	DUMPREG(RFBI_DATA_CYCLE2(1));
+> -	DUMPREG(RFBI_DATA_CYCLE3(1));
+> -
+> -	DUMPREG(RFBI_VSYNC_WIDTH);
+> -	DUMPREG(RFBI_HSYNC_WIDTH);
+> -
+> -	rfbi_runtime_put();
+> -#undef DUMPREG
+> -}
+> -
+> -static void rfbi_config_lcd_manager(struct omap_dss_device *dssdev)
+> -{
+> -	struct omap_overlay_manager *mgr = rfbi.output.manager;
+> -	struct dss_lcd_mgr_config mgr_config;
+> -
+> -	mgr_config.io_pad_mode = DSS_IO_PAD_MODE_RFBI;
+> -
+> -	mgr_config.stallmode = true;
+> -	/* Do we need fifohandcheck for RFBI? */
+> -	mgr_config.fifohandcheck = false;
+> -
+> -	mgr_config.video_port_width = rfbi.pixel_size;
+> -	mgr_config.lcden_sig_polarity = 0;
+> -
+> -	dss_mgr_set_lcd_config(mgr, &mgr_config);
+> -
+> -	/*
+> -	 * Set rfbi.timings with default values, the x_res and y_res fields
+> -	 * are expected to be already configured by the panel driver via
+> -	 * omapdss_rfbi_set_size()
+> -	 */
+> -	rfbi.timings.hsw = 1;
+> -	rfbi.timings.hfp = 1;
+> -	rfbi.timings.hbp = 1;
+> -	rfbi.timings.vsw = 1;
+> -	rfbi.timings.vfp = 0;
+> -	rfbi.timings.vbp = 0;
+> -
+> -	rfbi.timings.interlace = false;
+> -	rfbi.timings.hsync_level = OMAPDSS_SIG_ACTIVE_HIGH;
+> -	rfbi.timings.vsync_level = OMAPDSS_SIG_ACTIVE_HIGH;
+> -	rfbi.timings.data_pclk_edge = OMAPDSS_DRIVE_SIG_RISING_EDGE;
+> -	rfbi.timings.de_level = OMAPDSS_SIG_ACTIVE_HIGH;
+> -	rfbi.timings.sync_pclk_edge = OMAPDSS_DRIVE_SIG_FALLING_EDGE;
+> -
+> -	dss_mgr_set_timings(mgr, &rfbi.timings);
+> -}
+> -
+> -static int rfbi_display_enable(struct omap_dss_device *dssdev)
+> -{
+> -	struct omap_dss_device *out = &rfbi.output;
+> -	int r;
+> -
+> -	if (out->manager == NULL) {
+> -		DSSERR("failed to enable display: no output/manager\n");
+> -		return -ENODEV;
+> -	}
+> -
+> -	r = rfbi_runtime_get();
+> -	if (r)
+> -		return r;
+> -
+> -	r = dss_mgr_register_framedone_handler(out->manager,
+> -			framedone_callback, NULL);
+> -	if (r) {
+> -		DSSERR("can't get FRAMEDONE irq\n");
+> -		goto err1;
+> -	}
+> -
+> -	rfbi_config_lcd_manager(dssdev);
+> -
+> -	rfbi_configure_bus(dssdev->phy.rfbi.channel, rfbi.pixel_size,
+> -			rfbi.data_lines);
+> -
+> -	rfbi_set_timings(dssdev->phy.rfbi.channel, &rfbi.intf_timings);
+> -
+> -	return 0;
+> -err1:
+> -	rfbi_runtime_put();
+> -	return r;
+> -}
+> -
+> -static void rfbi_display_disable(struct omap_dss_device *dssdev)
+> -{
+> -	struct omap_dss_device *out = &rfbi.output;
+> -
+> -	dss_mgr_unregister_framedone_handler(out->manager,
+> -			framedone_callback, NULL);
+> -
+> -	rfbi_runtime_put();
+> -}
+> -
+> -static int rfbi_init_display(struct omap_dss_device *dssdev)
+> -{
+> -	rfbi.dssdev[dssdev->phy.rfbi.channel] = dssdev;
+> -	return 0;
+> -}
+> -
+> -static void rfbi_init_output(struct platform_device *pdev)
+> -{
+> -	struct omap_dss_device *out = &rfbi.output;
+> -
+> -	out->dev = &pdev->dev;
+> -	out->id = OMAP_DSS_OUTPUT_DBI;
+> -	out->output_type = OMAP_DISPLAY_TYPE_DBI;
+> -	out->name = "rfbi.0";
+> -	out->dispc_channel = OMAP_DSS_CHANNEL_LCD;
+> -	out->owner = THIS_MODULE;
+> -
+> -	omapdss_register_output(out);
+> -}
+> -
+> -static void rfbi_uninit_output(struct platform_device *pdev)
+> -{
+> -	struct omap_dss_device *out = &rfbi.output;
+> -
+> -	omapdss_unregister_output(out);
+> -}
+> -
+> -/* RFBI HW IP initialisation */
+> -static int rfbi_bind(struct device *dev, struct device *master, void *data)
+> -{
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	u32 rev;
+> -	struct resource *rfbi_mem;
+> -	struct clk *clk;
+> -	int r;
+> -
+> -	rfbi.pdev = pdev;
+> -
+> -	sema_init(&rfbi.bus_lock, 1);
+> -
+> -	rfbi_mem = platform_get_resource(rfbi.pdev, IORESOURCE_MEM, 0);
+> -	if (!rfbi_mem) {
+> -		DSSERR("can't get IORESOURCE_MEM RFBI\n");
+> -		return -EINVAL;
+> -	}
+> -
+> -	rfbi.base = devm_ioremap(&pdev->dev, rfbi_mem->start,
+> -				 resource_size(rfbi_mem));
+> -	if (!rfbi.base) {
+> -		DSSERR("can't ioremap RFBI\n");
+> -		return -ENOMEM;
+> -	}
+> -
+> -	clk = clk_get(&pdev->dev, "ick");
+> -	if (IS_ERR(clk)) {
+> -		DSSERR("can't get ick\n");
+> -		return PTR_ERR(clk);
+> -	}
+> -
+> -	rfbi.l4_khz = clk_get_rate(clk) / 1000;
+> -
+> -	clk_put(clk);
+> -
+> -	pm_runtime_enable(&pdev->dev);
+> -
+> -	r = rfbi_runtime_get();
+> -	if (r)
+> -		goto err_runtime_get;
+> -
+> -	msleep(10);
+> -
+> -	rev = rfbi_read_reg(RFBI_REVISION);
+> -	dev_dbg(&pdev->dev, "OMAP RFBI rev %d.%d\n",
+> -	       FLD_GET(rev, 7, 4), FLD_GET(rev, 3, 0));
+> -
+> -	rfbi_runtime_put();
+> -
+> -	dss_debugfs_create_file("rfbi", rfbi_dump_regs);
+> -
+> -	rfbi_init_output(pdev);
+> -
+> -	return 0;
+> -
+> -err_runtime_get:
+> -	pm_runtime_disable(&pdev->dev);
+> -	return r;
+> -}
+> -
+> -static void rfbi_unbind(struct device *dev, struct device *master, void *data)
+> -{
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -
+> -	rfbi_uninit_output(pdev);
+> -
+> -	pm_runtime_disable(&pdev->dev);
+> -
+> -	return 0;
+> -}
+> -
+> -static const struct component_ops rfbi_component_ops = {
+> -	.bind	= rfbi_bind,
+> -	.unbind	= rfbi_unbind,
+> -};
+> -
+> -static int rfbi_probe(struct platform_device *pdev)
+> -{
+> -	return component_add(&pdev->dev, &rfbi_component_ops);
+> -}
+> -
+> -static int rfbi_remove(struct platform_device *pdev)
+> -{
+> -	component_del(&pdev->dev, &rfbi_component_ops);
+> -	return 0;
+> -}
+> -
+> -static int rfbi_runtime_suspend(struct device *dev)
+> -{
+> -	dispc_runtime_put();
+> -
+> -	return 0;
+> -}
+> -
+> -static int rfbi_runtime_resume(struct device *dev)
+> -{
+> -	int r;
+> -
+> -	r = dispc_runtime_get();
+> -	if (r < 0)
+> -		return r;
+> -
+> -	return 0;
+> -}
+> -
+> -static const struct dev_pm_ops rfbi_pm_ops = {
+> -	.runtime_suspend = rfbi_runtime_suspend,
+> -	.runtime_resume = rfbi_runtime_resume,
+> -};
+> -
+> -static struct platform_driver omap_rfbihw_driver = {
+> -	.probe		= rfbi_probe,
+> -	.remove         = rfbi_remove,
+> -	.driver         = {
+> -		.name   = "omapdss_rfbi",
+> -		.pm	= &rfbi_pm_ops,
+> -		.suppress_bind_attrs = true,
+> -	},
+> -};
+> -
+> -int __init rfbi_init_platform_driver(void)
+> -{
+> -	return platform_driver_register(&omap_rfbihw_driver);
+> -}
+> -
+> -void rfbi_uninit_platform_driver(void)
+> -{
+> -	platform_driver_unregister(&omap_rfbihw_driver);
+> -}
+> Index: b/include/video/omapfb_dss.h
+> ===================================================================
+> --- a/include/video/omapfb_dss.h	2018-04-27 16:24:48.171632007 +0200
+> +++ b/include/video/omapfb_dss.h	2018-04-27 16:26:58.563635291 +0200
+> @@ -118,11 +118,6 @@ enum omap_dss_trans_key_type {
+>  	OMAP_DSS_COLOR_KEY_VID_SRC = 1,
+>  };
+>  
+> -enum omap_rfbi_te_mode {
+> -	OMAP_DSS_RFBI_TE_MODE_1 = 1,
+> -	OMAP_DSS_RFBI_TE_MODE_2 = 2,
+> -};
+> -
+>  enum omap_dss_signal_level {
+>  	OMAPDSS_SIG_ACTIVE_LOW,
+>  	OMAPDSS_SIG_ACTIVE_HIGH,
+> @@ -193,27 +188,6 @@ enum omap_dss_output_id {
+>  	OMAP_DSS_OUTPUT_HDMI	= 1 << 6,
+>  };
+>  
+> -/* RFBI */
+> -
+> -struct rfbi_timings {
+> -	int cs_on_time;
+> -	int cs_off_time;
+> -	int we_on_time;
+> -	int we_off_time;
+> -	int re_on_time;
+> -	int re_off_time;
+> -	int we_cycle_time;
+> -	int re_cycle_time;
+> -	int cs_pulse_width;
+> -	int access_time;
+> -
+> -	int clk_div;
+> -
+> -	u32 tim[5];             /* set by rfbi_convert_timings() */
+> -
+> -	int converted;
+> -};
+> -
+>  /* DSI */
+>  
+>  enum omap_dss_dsi_trans_mode {
+> @@ -645,11 +619,6 @@ struct omap_dss_device {
+>  		} dpi;
+>  
+>  		struct {
+> -			u8 channel;
+> -			u8 data_lines;
+> -		} rfbi;
+> -
+> -		struct {
+>  			u8 datapairs;
+>  		} sdi;
+>  
+> @@ -672,7 +641,6 @@ struct omap_dss_device {
+>  
+>  	struct {
+>  		u8 pixel_size;
+> -		struct rfbi_timings rfbi_timings;
+>  	} ctrl;
+>  
+>  	const char *name;
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-omap" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
