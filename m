@@ -1,41 +1,40 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpHXRmVy9U3uY3Ec6Y0Vq6V12fwz0EMwAKGBWiBwJiN+2xPlQYe6aYW7kmeoLmwjhk4UNWn
-ARC-Seal: i=1; a=rsa-sha256; t=1524837785; cv=none;
+X-Google-Smtp-Source: AB8JxZpPPWUv4CgegRrKOpej7RU3RVwr6cSX6ZN9LupG9RYPQHdf2NA/UDkBQzlIBffZWiPitKjL
+ARC-Seal: i=1; a=rsa-sha256; t=1524837783; cv=none;
         d=google.com; s=arc-20160816;
-        b=ASky28llfYUGhAWCb7/tUoF6Sv2092BfAAkhxOmWIfTCursEB8xQZg/u4FIZeLxSvs
-         57KH0J9+ywBX/w6M+kD5MsEacttDXr63Xnu8hsDk2qdxktkTPQFhf+qsIXIiN/2TN0S7
-         tS9B2ob485aK4f84HGtWBoPwTl4+Jl0WHkWOkQFzH0nnE+c/LwiO4GrZ/FYXnlYVVj80
-         YuLbIz1fVtSCTkupHKPt1l/HSrsclw4GYddjE+oTqhBdNstxnMlJGxPjzyWEd2FovfK1
-         Y1xkEX4Wl3LnWfy+LntV9DMQ8XcfrZ38n0VN6zXV/u1v+AlN/fjlXG1NyjDoDoicQCUd
-         7PJw==
+        b=iOTyNxbagIFxTGEImgL0hzFTmRRO3aMlF2GiMc8ZM/PWeaNoLM5kMZidrq6NE3mC6H
+         OlFhN4y2eLtOCPrJ4xEIE+YaW9laZNFL1kwGPFWPYhz4Z1hKf7CpjJJSON7RkzIPAt99
+         ByAVDjb24bMH4cx1lYSm2obmJosTEK6hSpVBROljpyUSCBFAPi2KCsDWnx66xdoczOEE
+         LqYSsx/zkW2Mqto12E36d2smoxYLs2DKSqt8Gd/hYpek+O0Lu3B8JRFqGLlEJF2WYkPr
+         XU4dVrpeq3d8r8lwdD8xazId8BsMh0yumM8BH/bicMaer0eTXhFfC55/yKh69q3u7IsK
+         Xbig==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=Dt+TvaoN/FvIC2XLnCz+0QzthkqDck3M8A88boPrsmo=;
-        b=htIFyBLpSGeQ5AHhO+SykSR1tcFYZYZrIU4fReLsJhrx5GOVt9QAOxszL7HvmLk3rp
-         9pY6hhTEAmnTKZQRVo8p5Q9iL2AHayEzXwOMz0VKqeEmrtqFA4AZpxl6XHQQ8GZHIW7E
-         HXS0tn32BOR3oaaqSlKCyTLVO1FTLnJupga7xGHdViY94wJLVVNAnHEVPZ/ivEo8olrO
-         qP6XXofxNgmcIwSk9OD9xsNVi6m/j4O0KrN2md7mrrVVPr4dAHjrlJWsbEhPsbePar5n
-         3XXI1TEmjFIAeNZV9ojh1ZMic8kHl9oz+sjRMULhguH4W6Ci2rtS4rzv5dU+vVbXjZbT
-         tY1w==
+        bh=QpAIJzE0aqrPaptJ0ydabaTVOOccPhlc0NdlESawe7c=;
+        b=oVUCsdM0X4EEVhF76v3esOOvzRtIk/aDe0x6M0SYuQIrzFHotAuLZt5v9Aeyx53Jm7
+         3y1kgBXwYaXO/XSPHLyP8NQGx60AbCyrsz/9sk0eWEfFlr8lA8RJwN8lHaihkOuFQuS+
+         8VXUhQExLUfUt1WkBuyJVrxX+oBB4ncQZ7kkJR+lZKpXKtHKb8Ighsksn/rFSw/Q/OLC
+         1sGS8K5RVGBqlgLWEMLq9k6MkOvq0TuVz+ddRpBaubaFRWLlOnhgB/1E0ft5pb5o+yWs
+         vbDuAchCKeAN+XEFKuRq+T66Z6vKFNXCf8GyPNFi5wNGoF5OfVOunhk6IsEukssugXU1
+         N9pQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBB4B218A2
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52B01218A3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jean Delvare <jdelvare@suse.de>,
 	Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-	Jason Andryuk <jandryuk@gmail.com>,
-	Wolfram Sang <wsa@the-dreams.de>
-Subject: [PATCH 4.9 06/74] i2c: i801: Save register SMBSLVCMD value only once
-Date: Fri, 27 Apr 2018 15:57:56 +0200
-Message-Id: <20180427135710.160649821@linuxfoundation.org>
+	Wolfram Sang <wsa@the-dreams.de>,
+	Jean Delvare <jdelvare@suse.de>
+Subject: [PATCH 4.9 05/74] i2c: i801: store and restore the SLVCMD register at load and unload
+Date: Fri, 27 Apr 2018 15:57:55 +0200
+Message-Id: <20180427135710.123455520@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135709.899303463@linuxfoundation.org>
 References: <20180427135709.899303463@linuxfoundation.org>
@@ -45,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908305930801008?=
-X-GMAIL-MSGID: =?utf-8?q?1598908305930801008?=
+X-GMAIL-THRID: =?utf-8?q?1598908303391011194?=
+X-GMAIL-MSGID: =?utf-8?q?1598908303391011194?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,47 +53,64 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jean Delvare <jdelvare@suse.de>
+From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 
-commit a086bb8317303dd74725dca933b9b29575159382 upstream.
+commit 22e94bd6779e1140350c0792e85c79552ec43673 upstream.
 
-Saving the original value of register SMBSLVCMD in
-i801_enable_host_notify() doesn't work, because this function is
-called not only at probe time but also at resume time. Do it in
-i801_probe() instead, so that the saved value is not overwritten at
-resume time.
+Also do not override any other configuration in this register.
 
-Signed-off-by: Jean Delvare <jdelvare@suse.de>
-Fixes: 22e94bd6779e ("i2c: i801: store and restore the SLVCMD register at load and unload")
-Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Tested-by: Jason Andryuk <jandryuk@gmail.com>
+Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-Cc: stable@vger.kernel.org	# v4.10+
+Cc: Jean Delvare <jdelvare@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/i2c/busses/i2c-i801.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/i2c/busses/i2c-i801.c |   17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
 
 --- a/drivers/i2c/busses/i2c-i801.c
 +++ b/drivers/i2c/busses/i2c-i801.c
-@@ -963,8 +963,6 @@ static int i801_enable_host_notify(struc
+@@ -243,6 +243,7 @@ struct i801_priv {
+ 	struct i2c_adapter adapter;
+ 	unsigned long smba;
+ 	unsigned char original_hstcfg;
++	unsigned char original_slvcmd;
+ 	struct pci_dev *pci_dev;
+ 	unsigned int features;
+ 
+@@ -962,13 +963,26 @@ static int i801_enable_host_notify(struc
  	if (!priv->host_notify)
  		return -ENOMEM;
  
--	priv->original_slvcmd = inb_p(SMBSLVCMD(priv));
--
- 	if (!(SMBSLVCMD_HST_NTFY_INTREN & priv->original_slvcmd))
- 		outb_p(SMBSLVCMD_HST_NTFY_INTREN | priv->original_slvcmd,
- 		       SMBSLVCMD(priv));
-@@ -1603,6 +1601,10 @@ static int i801_probe(struct pci_dev *de
- 		outb_p(inb_p(SMBAUXCTL(priv)) &
- 		       ~(SMBAUXCTL_CRC | SMBAUXCTL_E32B), SMBAUXCTL(priv));
- 
-+	/* Remember original Host Notify setting */
-+	if (priv->features & FEATURE_HOST_NOTIFY)
-+		priv->original_slvcmd = inb_p(SMBSLVCMD(priv));
+-	outb_p(SMBSLVCMD_HST_NTFY_INTREN, SMBSLVCMD(priv));
++	priv->original_slvcmd = inb_p(SMBSLVCMD(priv));
 +
- 	/* Default timeout in interrupt mode: 200 ms */
- 	priv->adapter.timeout = HZ / 5;
++	if (!(SMBSLVCMD_HST_NTFY_INTREN & priv->original_slvcmd))
++		outb_p(SMBSLVCMD_HST_NTFY_INTREN | priv->original_slvcmd,
++		       SMBSLVCMD(priv));
++
+ 	/* clear Host Notify bit to allow a new notification */
+ 	outb_p(SMBSLVSTS_HST_NTFY_STS, SMBSLVSTS(priv));
  
+ 	return 0;
+ }
+ 
++static void i801_disable_host_notify(struct i801_priv *priv)
++{
++	if (!(priv->features & FEATURE_HOST_NOTIFY))
++		return;
++
++	outb_p(priv->original_slvcmd, SMBSLVCMD(priv));
++}
++
+ static const struct i2c_algorithm smbus_algorithm = {
+ 	.smbus_xfer	= i801_access,
+ 	.functionality	= i801_func,
+@@ -1666,6 +1680,7 @@ static void i801_remove(struct pci_dev *
+ 	pm_runtime_forbid(&dev->dev);
+ 	pm_runtime_get_noresume(&dev->dev);
+ 
++	i801_disable_host_notify(priv);
+ 	i801_del_mux(priv);
+ 	i2c_del_adapter(&priv->adapter);
+ 	i801_acpi_remove(priv);
