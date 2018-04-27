@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757360AbeD0AXl (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 20:23:41 -0400
-Received: from vern.gendns.com ([206.190.152.46]:46330 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1757278AbeD0ASn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1757283AbeD0ASn (ORCPT <rfc822;w@1wt.eu>);
         Thu, 26 Apr 2018 20:18:43 -0400
+Received: from vern.gendns.com ([206.190.152.46]:46303 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1757234AbeD0ASj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 20:18:39 -0400
 From: David Lechner <david@lechnology.com>
 To: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
@@ -16,9 +16,9 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org,
         David Lechner <david@lechnology.com>
-Subject: [PATCH v9 14/27] ARM: davinci_all_defconfig: remove CONFIG_DAVINCI_RESET_CLOCKS
-Date: Thu, 26 Apr 2018 19:17:32 -0500
-Message-Id: <20180427001745.4116-15-david@lechnology.com>
+Subject: [PATCH v9 11/27] ARM: davinci: da8xx: add new USB PHY clock init using common clock framework
+Date: Thu, 26 Apr 2018 19:17:29 -0500
+Message-Id: <20180427001745.4116-12-david@lechnology.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427001745.4116-1-david@lechnology.com>
 References: <20180427001745.4116-1-david@lechnology.com>
@@ -36,40 +36,200 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This removes CONFIG_DAVINCI_RESET_CLOCKS. The option has been removed from
-the kernel.
+This adds the new USB PHY clock init in mach-davinci/usb-da8xx.c using
+the new common clock framework drivers.
+
+The #ifdefs are needed to prevent compile errors until the entire
+ARCH_DAVINCI is converted.
 
 Signed-off-by: David Lechner <david@lechnology.com>
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
 ---
 
 v9 changes:
 - none
 
 v8 changes:
-- none
+- rebased on "ARM: davinci: DA8XX: fix oops in USB PHY driver due to stack
+  allocated platform platform_data"
 
 v7 changes:
-- none
+- register platform device instead of registering clocks directly
+- USB PHY clocks now treated as single device instead of registering them
+  separately
 
 v6 changes:
-- none
+- rename stuff to match changes in "clk: davinci: New driver for TI DA8XX USB
+  PHY clocks"
+- take advantage of syscon lookup changes in "mfd: syscon: Add syscon_register()
+  function"
 
 
- arch/arm/configs/davinci_all_defconfig | 1 -
- 1 file changed, 1 deletion(-)
+ arch/arm/mach-davinci/board-da830-evm.c     |  8 ++++++-
+ arch/arm/mach-davinci/board-omapl138-hawk.c |  9 +++++--
+ arch/arm/mach-davinci/da8xx-dt.c            |  8 ++++++-
+ arch/arm/mach-davinci/include/mach/da8xx.h  |  1 +
+ arch/arm/mach-davinci/usb-da8xx.c           | 26 +++++++++++++++++++--
+ 5 files changed, 46 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/configs/davinci_all_defconfig b/arch/arm/configs/davinci_all_defconfig
-index 21b2d7791df4..f83ea4131df2 100644
---- a/arch/arm/configs/davinci_all_defconfig
-+++ b/arch/arm/configs/davinci_all_defconfig
-@@ -31,7 +31,6 @@ CONFIG_MACH_MITYOMAPL138=y
- CONFIG_MACH_OMAPL138_HAWKBOARD=y
- CONFIG_DAVINCI_MUX_DEBUG=y
- CONFIG_DAVINCI_MUX_WARNINGS=y
--CONFIG_DAVINCI_RESET_CLOCKS=y
- CONFIG_PREEMPT=y
- CONFIG_AEABI=y
- CONFIG_CMA=y
+diff --git a/arch/arm/mach-davinci/board-da830-evm.c b/arch/arm/mach-davinci/board-da830-evm.c
+index 3973124e5f1d..6e77c458ec8e 100644
+--- a/arch/arm/mach-davinci/board-da830-evm.c
++++ b/arch/arm/mach-davinci/board-da830-evm.c
+@@ -110,6 +110,12 @@ static __init void da830_evm_usb_init(void)
+ {
+ 	int ret;
+ 
++#ifdef CONFIG_COMMON_CLK
++	ret = da8xx_register_usb_phy_clocks();
++	if (ret)
++		pr_warn("%s: USB PHY CLK registration failed: %d\n",
++			__func__, ret);
++#else
+ 	/* USB_REFCLKIN is not used. */
+ 	ret = da8xx_register_usb20_phy_clk(false);
+ 	if (ret)
+@@ -120,7 +126,7 @@ static __init void da830_evm_usb_init(void)
+ 	if (ret)
+ 		pr_warn("%s: USB 1.1 PHY CLK registration failed: %d\n",
+ 			__func__, ret);
+-
++#endif
+ 	ret = da8xx_register_usb_phy();
+ 	if (ret)
+ 		pr_warn("%s: USB PHY registration failed: %d\n",
+diff --git a/arch/arm/mach-davinci/board-omapl138-hawk.c b/arch/arm/mach-davinci/board-omapl138-hawk.c
+index eb09e333b6cd..6a866d29b114 100644
+--- a/arch/arm/mach-davinci/board-omapl138-hawk.c
++++ b/arch/arm/mach-davinci/board-omapl138-hawk.c
+@@ -231,7 +231,12 @@ static __init void omapl138_hawk_usb_init(void)
+ 		pr_warn("%s: USB 1.1 PinMux setup failed: %d\n", __func__, ret);
+ 		return;
+ 	}
+-
++#ifdef CONFIG_COMMON_CLK
++	ret = da8xx_register_usb_phy_clocks();
++	if (ret)
++		pr_warn("%s: USB PHY CLK registration failed: %d\n",
++			__func__, ret);
++#else
+ 	ret = da8xx_register_usb20_phy_clk(false);
+ 	if (ret)
+ 		pr_warn("%s: USB 2.0 PHY CLK registration failed: %d\n",
+@@ -241,7 +246,7 @@ static __init void omapl138_hawk_usb_init(void)
+ 	if (ret)
+ 		pr_warn("%s: USB 1.1 PHY CLK registration failed: %d\n",
+ 			__func__, ret);
+-
++#endif
+ 	ret = da8xx_register_usb_phy();
+ 	if (ret)
+ 		pr_warn("%s: USB PHY registration failed: %d\n",
+diff --git a/arch/arm/mach-davinci/da8xx-dt.c b/arch/arm/mach-davinci/da8xx-dt.c
+index 91dd9cb6d113..c4edf051ef9b 100644
+--- a/arch/arm/mach-davinci/da8xx-dt.c
++++ b/arch/arm/mach-davinci/da8xx-dt.c
+@@ -69,6 +69,12 @@ static void __init da850_init_machine(void)
+ 
+ 	da850_register_clocks();
+ 
++#ifdef CONFIG_COMMON_CLK
++	ret = da8xx_register_usb_phy_clocks();
++	if (ret)
++		pr_warn("%s: USB PHY CLK registration failed: %d\n",
++			__func__, ret);
++#else
+ 	ret = da8xx_register_usb20_phy_clk(false);
+ 	if (ret)
+ 		pr_warn("%s: registering USB 2.0 PHY clock failed: %d",
+@@ -77,7 +83,7 @@ static void __init da850_init_machine(void)
+ 	if (ret)
+ 		pr_warn("%s: registering USB 1.1 PHY clock failed: %d",
+ 			__func__, ret);
+-
++#endif
+ 	ret = da850_register_sata_refclk(sata_refclkpn);
+ 	if (ret)
+ 		pr_warn("%s: registering SATA REFCLK failed: %d",
+diff --git a/arch/arm/mach-davinci/include/mach/da8xx.h b/arch/arm/mach-davinci/include/mach/da8xx.h
+index 612e45437cec..5d7b1de9aa7e 100644
+--- a/arch/arm/mach-davinci/include/mach/da8xx.h
++++ b/arch/arm/mach-davinci/include/mach/da8xx.h
+@@ -106,6 +106,7 @@ int da8xx_register_usb11(struct da8xx_ohci_root_hub *pdata);
+ int da8xx_register_usb_refclkin(int rate);
+ int da8xx_register_usb20_phy_clk(bool use_usb_refclkin);
+ int da8xx_register_usb11_phy_clk(bool use_usb_refclkin);
++int da8xx_register_usb_phy_clocks(void);
+ int da850_register_sata_refclk(int rate);
+ int da8xx_register_emac(void);
+ int da8xx_register_uio_pruss(void);
+diff --git a/arch/arm/mach-davinci/usb-da8xx.c b/arch/arm/mach-davinci/usb-da8xx.c
+index 50445f0e98de..c8d2f3075e69 100644
+--- a/arch/arm/mach-davinci/usb-da8xx.c
++++ b/arch/arm/mach-davinci/usb-da8xx.c
+@@ -2,29 +2,35 @@
+ /*
+  * DA8xx USB
+  */
+-#include <linux/clk.h>
++#include <linux/clk-provider.h>
+ #include <linux/delay.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/init.h>
+ #include <linux/mfd/da8xx-cfgchip.h>
++#include <linux/mfd/syscon.h>
+ #include <linux/phy/phy.h>
++#include <linux/platform_data/clk-da8xx-cfgchip.h>
+ #include <linux/platform_data/phy-da8xx-usb.h>
+ #include <linux/platform_data/usb-davinci.h>
+ #include <linux/platform_device.h>
+ #include <linux/usb/musb.h>
+ 
+-#include <mach/clock.h>
+ #include <mach/common.h>
+ #include <mach/cputype.h>
+ #include <mach/da8xx.h>
+ #include <mach/irqs.h>
+ 
++#ifndef CONFIG_COMMON_CLK
++#include <mach/clock.h>
+ #include "clock.h"
++#endif
+ 
+ #define DA8XX_USB0_BASE		0x01e00000
+ #define DA8XX_USB1_BASE		0x01e25000
+ 
++#ifndef CONFIG_COMMON_CLK
+ static struct clk *usb20_clk;
++#endif
+ 
+ static struct da8xx_usb_phy_platform_data da8xx_usb_phy_pdata;
+ 
+@@ -134,6 +140,7 @@ int __init da8xx_register_usb11(struct da8xx_ohci_root_hub *pdata)
+ 	return platform_device_register(&da8xx_usb11_device);
+ }
+ 
++#ifndef CONFIG_COMMON_CLK
+ static struct clk usb_refclkin = {
+ 	.name		= "usb_refclkin",
+ 	.set_rate	= davinci_simple_set_rate,
+@@ -360,3 +367,18 @@ int __init da8xx_register_usb11_phy_clk(bool use_usb_refclkin)
+ 
+ 	return ret;
+ }
++#endif
++static struct platform_device da8xx_usb_phy_clks_device = {
++	.name		= "da830-usb-phy-clks",
++	.id		= -1,
++};
++
++int __init da8xx_register_usb_phy_clocks(void)
++{
++	struct da8xx_cfgchip_clk_platform_data pdata;
++
++	pdata.cfgchip = da8xx_get_cfgchip();
++	da8xx_usb_phy_clks_device.dev.platform_data = &pdata;
++
++	return platform_device_register(&da8xx_usb_phy_clks_device);
++}
 -- 
 2.17.0
