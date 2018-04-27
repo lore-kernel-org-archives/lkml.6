@@ -1,78 +1,186 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932481AbeD0Jev (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 05:34:51 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:17784 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932420AbeD0Jes (ORCPT
+        id S932507AbeD0Jfa (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 05:35:30 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:51888 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932488AbeD0Jf1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 05:34:48 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20180427093445epoutp0206f60ec5dc8a4a83cf9b52f65ae9f92c~pQT6YpLwh1823918239epoutp02h
-X-AuditID: b6c32a45-8dbff70000001020-3b-5ae2eeb55778
-Subject: Re: [PATCH 3/3] ASoC: samsung: Use gpio_is_valid()
-To: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Cc: jikos@kernel.org, benjamin.tissoires@redhat.com, jkosina@suse.cz,
-        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
-        alsa-devel@alsa-project.org
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <5f7a27fc-27ae-c1ed-73cc-497f46d2668b@samsung.com>
-Date: Fri, 27 Apr 2018 11:34:40 +0200
+        Fri, 27 Apr 2018 05:35:27 -0400
+X-Google-Smtp-Source: AB8JxZrC06aJaFQrXgzySfj/ZRgA/0njYLTWIRVnGa864/Gnbk1vrKHjQPR92mtTLkzoVbtOK8dzuw==
+Subject: Re: [PATCH v2 2/2] soc: mediatek: reuse regmap_read_poll_timeout
+ helpers
+To: sean.wang@mediatek.com, rjw@rjwysocki.net, khilman@baylibre.com
+Cc: ulf.hansson@linaro.org, linux-mediatek@lists.infradead.org,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Weiyi Lu <weiyi.lu@mediatek.com>
+References: <ccea364eeb830b2092987d271c8308b97fe59d8f.1524465345.git.sean.wang@mediatek.com>
+ <ed866d3345a27b2c87b570562d9ad9132bca6062.1524465345.git.sean.wang@mediatek.com>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ UXI+r2JwH1CJjrHWeQEI2ucSKsNa8FllDmG/fQ==
+Message-ID: <4274d8f7-dc1f-b0f9-026f-1a6196dcb730@gmail.com>
+Date: Fri, 27 Apr 2018 11:35:23 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
-        Thunderbird/52.7.0
-MIME-version: 1.0
-In-reply-to: <f7e9ff7d5d7c559967e9d63f3caff478e05017e8.1524819053.git.arvind.yadav.cs@gmail.com>
-Content-type: text/plain; charset="utf-8"
-Content-language: en-GB
-Content-transfer-encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNKsWRmVeSWpSXmKPExsWy7bCmme7Wd4+iDE6cVrW4cvEQk8W13oXM
-        FtenbGa1uHW8ldFi95zFLBY3P31jtbi8aw6bA7vHhs9NbB47Z91l99i0qpPN4/2+q2weZxYc
-        Yff4vEkugC2KyyYlNSezLLVI3y6BK2PX6jXsBZeYKs4svMXcwNjN1MXIySEhYCIxu6+PtYuR
-        i0NIYAejxNWHR9khnO+MEpPXTmGHqZqxcDczRGIDo8SKnhNQzn1GiS0X7zGDVAkLWEv0N19l
-        BLFFBHQkNs38zQhSxCywgFFi1e4lbCAJNgFDid6jfWBFvAJ2EufO/mYFsVkEVCV2dN4CGyQq
-        ECHR9PwnO0SNoMSPyfdYQGxOgSSJWT+XgtUzC2hKvPgyiQXCFpc4dv8mI4QtL7F5zVuw6yQE
-        brNJfDk3ixniBxeJn2cWM0LYwhKvjm+B+k1a4tmqjVDxaonOti52iOYWRok/0y6xQSSsJQ4f
-        vwi1mU+i4/BfoCIOoDivREebEESJh8TFp1eh5jhKvLx5igkSRM8YJT4dfMk4gVFuFpKHZiF5
-        YhaSJ2YheWIBI8sqRrHUguLc9NRiowJDveLE3OLSvHS95PzcTYzgJKPluoNxxjmfQ4wCHIxK
-        PLwK7x5GCbEmlhVX5h5ilOBgVhLh3XEbKMSbklhZlVqUH19UmpNafIhRmoNFSZy3wfdMlJBA
-        emJJanZqakFqEUyWiYNTqoGR9Za/plKnY93ehcvypu5Ibr7JdNKIN+z9rTePoi68vlV9XulU
-        sMm9200+rGtnutUyBjZoijE1accWrpf/Wax8Ldt2pqTvq+ZVc72TK1suv9G3e/ZN8IGBDvuW
-        iaIy+hXx8ax1CwOibub+1prTGCspKpj/LSNqw8+k76w8r96+2ybrdLh4/nQlluKMREMt5qLi
-        RAB0nDMkLgMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrILMWRmVeSWpSXmKPExsVy+t9jQd0t7x5FGbzZYGZx5eIhJotrvQuZ
-        La5P2cxqcet4K6PF7jmLWSxufvrGanF51xw2B3aPDZ+b2Dx2zrrL7rFpVSebx/t9V9k8ziw4
-        wu7xeZNcAFsUl01Kak5mWWqRvl0CV8au1WvYCy4xVZxZeIu5gbGbqYuRk0NCwERixsLdzF2M
-        XBxCAusYJT52f2KBcB4ySizruMYMUiUsYC3R33yVEcQWEdCR2DTzNyNIEbPAAkaJL8/a2CA6
-        JjFK/No3jR2kik3AUKL3aB9YB6+AncS5s79ZQWwWAVWJHZ23wKaKCkRI3Dv/iQ2iRlDix+R7
-        LCA2p0CSxOE/T4Du4wDaoC4xZUouSJhZQFzi2P2bjBC2vMTmNW+ZJzAKzELSPQuhYxaSjllI
-        OhYwsqxilEwtKM5Nzy02KjDKSy3XK07MLS7NS9dLzs/dxAiMiG2Htfp3MD5eEn+IUYCDUYmH
-        V+Hdwygh1sSy4srcQ4wSHMxKIrw7bgOFeFMSK6tSi/Lji0pzUosPMUpzsCiJ8/LnH4sUEkhP
-        LEnNTk0tSC2CyTJxcEo1MCZtqO6uqIzc+svJ4GbQ2vykqumGz9dvPJt0T/ume/ub+dWnNpcm
-        WbnEKjVlSj9uUH44zVn2hPrBgv92D46sO7f7/1QuBfWlNacCi7Mrb29cMDH3T+cyoH/bBSru
-        VegUBvx4e+p75b2z7X8ZRWZpXrk2t7y3/q3DrXMLYvU4Z7Sx8d7Y8NRkphJLcUaioRZzUXEi
-        AF7uxMWEAgAA
-X-CMS-MailID: 20180427093444epcas2p185dbba85e2d37bde95ce3929a57c1f01
-X-Msg-Generator: CA
-CMS-TYPE: 102P
-X-CMS-RootMailID: 20180427093444epcas2p185dbba85e2d37bde95ce3929a57c1f01
-X-RootMTR: 20180427093444epcas2p185dbba85e2d37bde95ce3929a57c1f01
-References: <cover.1524819051.git.arvind.yadav.cs@gmail.com>
-        <f7e9ff7d5d7c559967e9d63f3caff478e05017e8.1524819053.git.arvind.yadav.cs@gmail.com>
-        <CGME20180427093444epcas2p185dbba85e2d37bde95ce3929a57c1f01@epcas2p1.samsung.com>
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <ed866d3345a27b2c87b570562d9ad9132bca6062.1524465345.git.sean.wang@mediatek.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arvind,
 
-On 04/27/2018 10:56 AM, Arvind Yadav wrote:
-> Replace the manual validity checks for the GPIO with the
-> gpio_is_valid().
+
+On 04/23/2018 08:42 AM, sean.wang@mediatek.com wrote:
+> From: Sean Wang <sean.wang@mediatek.com>
 > 
-> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+> Reuse the common helpers regmap_read_poll_timeout provided by Linux core
+> instead of an open-coded handling.
+> 
+> v1 -> v2:
+>  - use macro definitions MTK_POLL_DELAY_US and MTK_POLL_TIMEOUT for
+>    arguments sleep_us and timeout_us passing in regmap_read_poll_timeout.
+>  - remove unnecessary linux/iopoll.h being included in.
+> 
+> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> Cc: Matthias Brugger <matthias.bgg@gmail.com>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Cc: Weiyi Lu <weiyi.lu@mediatek.com>
+> ---
+>  drivers/soc/mediatek/mtk-infracfg.c | 46 ++++++++++---------------------------
+>  1 file changed, 12 insertions(+), 34 deletions(-)
+> 
 
-The patch looks good to me but you need to send it directly
-to the ASoC maintainers to have it applied.
+pushed to v4.17-next/soc
 
--- 
-Regards,
-Sylwester
+> diff --git a/drivers/soc/mediatek/mtk-infracfg.c b/drivers/soc/mediatek/mtk-infracfg.c
+> index 8c310de..958861c 100644
+> --- a/drivers/soc/mediatek/mtk-infracfg.c
+> +++ b/drivers/soc/mediatek/mtk-infracfg.c
+> @@ -17,6 +17,9 @@
+>  #include <linux/soc/mediatek/infracfg.h>
+>  #include <asm/processor.h>
+>  
+> +#define MTK_POLL_DELAY_US   10
+> +#define MTK_POLL_TIMEOUT    (jiffies_to_usecs(HZ))
+> +
+>  #define INFRA_TOPAXI_PROTECTEN		0x0220
+>  #define INFRA_TOPAXI_PROTECTSTA1	0x0228
+>  #define INFRA_TOPAXI_PROTECTEN_SET	0x0260
+> @@ -37,7 +40,6 @@
+>  int mtk_infracfg_set_bus_protection(struct regmap *infracfg, u32 mask,
+>  		bool reg_update)
+>  {
+> -	unsigned long expired;
+>  	u32 val;
+>  	int ret;
+>  
+> @@ -47,22 +49,11 @@ int mtk_infracfg_set_bus_protection(struct regmap *infracfg, u32 mask,
+>  	else
+>  		regmap_write(infracfg, INFRA_TOPAXI_PROTECTEN_SET, mask);
+>  
+> -	expired = jiffies + HZ;
+> -
+> -	while (1) {
+> -		ret = regmap_read(infracfg, INFRA_TOPAXI_PROTECTSTA1, &val);
+> -		if (ret)
+> -			return ret;
+> -
+> -		if ((val & mask) == mask)
+> -			break;
+> +	ret = regmap_read_poll_timeout(infracfg, INFRA_TOPAXI_PROTECTSTA1,
+> +				       val, (val & mask) == mask,
+> +				       MTK_POLL_DELAY_US, MTK_POLL_TIMEOUT);
+>  
+> -		cpu_relax();
+> -		if (time_after(jiffies, expired))
+> -			return -EIO;
+> -	}
+> -
+> -	return 0;
+> +	return ret;
+>  }
+>  
+>  /**
+> @@ -80,30 +71,17 @@ int mtk_infracfg_set_bus_protection(struct regmap *infracfg, u32 mask,
+>  int mtk_infracfg_clear_bus_protection(struct regmap *infracfg, u32 mask,
+>  		bool reg_update)
+>  {
+> -	unsigned long expired;
+>  	int ret;
+> +	u32 val;
+>  
+>  	if (reg_update)
+>  		regmap_update_bits(infracfg, INFRA_TOPAXI_PROTECTEN, mask, 0);
+>  	else
+>  		regmap_write(infracfg, INFRA_TOPAXI_PROTECTEN_CLR, mask);
+>  
+> -	expired = jiffies + HZ;
+> -
+> -	while (1) {
+> -		u32 val;
+> -
+> -		ret = regmap_read(infracfg, INFRA_TOPAXI_PROTECTSTA1, &val);
+> -		if (ret)
+> -			return ret;
+> -
+> -		if (!(val & mask))
+> -			break;
+> -
+> -		cpu_relax();
+> -		if (time_after(jiffies, expired))
+> -			return -EIO;
+> -	}
+> +	ret = regmap_read_poll_timeout(infracfg, INFRA_TOPAXI_PROTECTSTA1,
+> +				       val, !(val & mask),
+> +				       MTK_POLL_DELAY_US, MTK_POLL_TIMEOUT);
+>  
+> -	return 0;
+> +	return ret;
+>  }
+> 
