@@ -1,110 +1,163 @@
-Return-Path: <airman.price@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1525122150; cv=none;
+Return-Path: <nipun.gupta@nxp.com>
+X-Google-Smtp-Source: AB8JxZrm9/+eWVFVErp/Vh+XzvI17HgVijzb/FfxNzuojV4RNpmOPrt+cj70XDIhxwh4g2Pdy+7n
+ARC-Seal: i=1; a=rsa-sha256; t=1524824867; cv=none;
         d=google.com; s=arc-20160816;
-        b=phSgtUkaJJ75uukWCvPfal6mU6NPTC0ghZwD1vrzC7Wp6Sqd1ndOqmVBkk7H1dDhRb
-         7HxAdMPPBla/vR7RqxCqVba6lQTZSxn1KLw3iN7y92i0ate60NUSr2l5M2SCMk+T8LQ8
-         4KcRGk+ivsiUBIMo/w+zV9QLftyx1cVt/QEG6L8zmEGeL17iw63lV1SO1VVQ8x/C/P40
-         vM16nLzI0NBURwK2Xoy5ssVWXGivsv+ACtMD41gFkn/B5q3dZ0ZO6m4S0Iz7RBfVwdVk
-         rz1Uldiffxs9IxHnrF2/7c9YaNaKI6FqMuaU5+LHUiY1+qx9tu6fF165MgK+QNNYO1NU
-         wBgg==
+        b=mdI+EQPtRslTHf9kVfvZGkMSR1BuOeZafdYm2o+0M9KSkRfz7Z9ERbu+XLlJYHpauv
+         I/3E033WTQVA7osRi2U03bTjT31Z1+4W3EEMEK7lA/oifGMLyBbJ2nevGhlDlhWGoW+F
+         DSW+f4isLRLsr+KinhofGZ8K2GvRvA9s2LnSCsBCZbuQWuAaTIAJXLtrfuMF2AxnVW0M
+         HSyV/ZeIlh8ezHAbHaXx/iQBwMTLUwhvGR702Y7uNjCRFtxvK3F6YAGT5GNFf+rlWVtA
+         qF9Dpiu57CYJru2DAWkoNbkickD8qMr/QADQJ3g2/hbqxYlmJJuww2EMVS2cX1u7lhmk
+         EeiQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=k26vyxh1s+XoxrfIsRAlRA9n3x441tR8947GwTfqHXU=;
-        b=tdN/jcHk46aYpT3Zudw64SOQV1CI/btMacdP8xI+ipXJ9dMjtepe53Gm5PfXuMmdTN
-         6xunkhskAeliOrqgWrU2ENcqWWFiSORGUJZc0jaY7mEO0f9bB+B/zQrmwPodRzdd0eBG
-         fhcandlq0tSde/UgkOXRdBD5e7Q3J+QcT3WnMRXtO77rMHOc9WvkXaKFAC6tksQic5qE
-         fKOeTDd+4qxPXnrSZK8/qhU7ax5QNYze9/QFRoxpDL2kgaFI5aMpLrXSIPPqCDySqtTI
-         28mmQBdjInR1V/OWDzPLn73HEPVPOywdNwfUYuwted4i2V1O2Wz6wwiMY3qzV9oQuKe9
-         eEoA==
+        h=spamdiagnosticmetadata:spamdiagnosticoutput:mime-version:message-id
+         :date:subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=6EV0q5YdB080foWruFu1UxDLKD4mGzkz5sqoiev8qW0=;
+        b=mUey+2+/AuKxU5zQLpbmAjE5xWDyLVMQmQRVJxuXeAQ9D+JBub6Y3HcFklfLa1ZyHD
+         2cS2pejNi1tJD7/U25o1gH6OQm0mi9Pl3n2O2cdEEoWplGWE5nnqSKjxQwXqK8+Ax3lP
+         qTfWiLcW5eFOARGriJTxvEibDMU3GEX4IiL3JUHwNnPfksnEkJAAWK/IrAX2NHGBwI4B
+         0+n+IzYJXKaNeoFI2l1x5t5dfDWNyTnj4kQxd2+cOsfHgl9FFmyP4Hz98YwxV1BYP/fY
+         1kN4vNRfkioSsTDJt0uv5w6Wrw9HTl33JN5A7ZXBvkEGsM8ODEII20iNimyEVpDyuPmF
+         aPtw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=RsR7syqF;
-       spf=pass (google.com: domain of airman.price@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=airman.price@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       dkim=pass header.i=@nxp.com header.s=selector1 header.b=S7ctEoiF;
+       spf=pass (google.com: domain of nipun.gupta@nxp.com designates 104.47.0.41 as permitted sender) smtp.mailfrom=nipun.gupta@nxp.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nxp.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=RsR7syqF;
-       spf=pass (google.com: domain of airman.price@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=airman.price@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AB8JxZpLC+83khH8b0ZDQmzJAWqOXn6CaLaC0BqJpqNgjPNQL4XfmcvPLWN3zGWQy4+E7+WrY68CTqRiN5s4YxdovZE=
+       dkim=pass header.i=@nxp.com header.s=selector1 header.b=S7ctEoiF;
+       spf=pass (google.com: domain of nipun.gupta@nxp.com designates 104.47.0.41 as permitted sender) smtp.mailfrom=nipun.gupta@nxp.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nxp.com
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=nipun.gupta@nxp.com;
+From: Nipun Gupta <nipun.gupta@nxp.com>
+To: robin.murphy@arm.com,
+	will.deacon@arm.com,
+	mark.rutland@arm.com,
+	catalin.marinas@arm.com
+Cc: hch@lst.de,
+	gregkh@linuxfoundation.org,
+	joro@8bytes.org,
+	robh+dt@kernel.org,
+	m.szyprowski@samsung.com,
+	shawnguo@kernel.org,
+	frowand.list@gmail.com,
+	bhelgaas@google.com,
+	iommu@lists.linux-foundation.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-pci@vger.kernel.org,
+	bharat.bhushan@nxp.com,
+	stuyoder@gmail.com,
+	laurentiu.tudor@nxp.com,
+	leoyang.li@nxp.com,
+	Nipun Gupta <nipun.gupta@nxp.com>
+Subject: [PATCH 0/6 v3] Support for fsl-mc bus and its devices in SMMU
+Date: Fri, 27 Apr 2018 15:57:00 +0530
+Message-Id: <1524824826-29473-1-git-send-email-nipun.gupta@nxp.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180429155924.GA28565@kroah.com>
-References: <CAMB+E4gS=F8kXMNTtKdLr9y-C_+NaSPQm3M1m9xC0Sbhn+hjYw@mail.gmail.com>
- <20180429155924.GA28565@kroah.com>
-From: Gregory Panic <airman.price@gmail.com>
-Date: Mon, 30 Apr 2018 17:02:01 -0400
-Message-ID: <CAMB+E4g629=uUnT9DToSxTs0SH+toQbbYRwOsSsFsY9vYxDOrw@mail.gmail.com>
-Subject: Re: RW GDT replaced by Read-Only GDT and a GPL Interface
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [14.142.187.166]
+X-ClientProxiedBy: BM1PR01CA0096.INDPRD01.PROD.OUTLOOK.COM (2603:1096:b00::12)
+ To DB6PR0401MB2422.eurprd04.prod.outlook.com (2603:10a6:4:4a::25)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(48565401081)(2017052603328)(7153060)(7193020);SRVR:DB6PR0401MB2422;
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0401MB2422;3:tcUUP9cgxT1+0naXYEGZEBhS2xbnMyeK9AM2adwb/wE7jX9hNjz8g3mieMqMxoLp9rxkTYCr0G9lET56gmHoPjVy3lR363Od60hOsLunZABk9w5juEB4hIHctr9vMmGGyGXcjlG+NWoGNwKsp43b/aOnIns0iQjJyegf88yVVu0xUGB/LBRKFBzjhoAA5uT+xvahc53wASmyPJbHVv1PrhUH2vMDO1VK3HPrSAFyjrh99d2hgXbZkKEJAdYjp3sR;25:tRdXBlQupteqm32o0Ak/RL06mpcR7povb6UEeAU+2CsbyPzFiSzKQ9L2SP9Hi6EN81uTwtQjvQG5EKSbmCNf2yBEIcOKj0UiTkgkimhHET4nbD04+cQdFcaRW0HgjWbPuztMr5uGQre1soMbZz2hzsvlJPMeiZ6ondlvZRWR2uSPv1PoyMLQRAM3/csy8CYER2r5ogVXKeOGIX5GwxBcEE3z5Pc1bk7z5lzJqAu9BCyL8Y4iQjiRm/wl/5XZVBphdAx2ytK9GHTMZESoSTNZEHIEd2N89vxsSLTb5jge1bvVebVmWTVT6CR3JINmqNAeI0GiyMZd+NemYOjRGybcZg==;31:xn44Te0hptfaVCdQYA5dMSF6a98+6uvrqcTY6cFFfNbdfcR4B+9sc6+fXDU6eeoENmL/N5Alyhw1+LZYdPhI1apVxm8UuDE2PqN3V0je0tg37rSw4D4iYHgnJmkkdVkt5KPNKn2UBUTYzCEmDVfUM8jVZKxhBsxmX/fCosHtUs43Z5IeXB03FCICreuBffSlUlyPaQmbXcxQxoE6WIfYWGnUXfU6/pFCey3ssAmLaMU=
+X-MS-TrafficTypeDiagnostic: DB6PR0401MB2422:
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0401MB2422;20:c0JZCccp9qLQPp7lkiO9adlG25EXJ39eeGr+2ZureMeebd/C3mQj2fa7LbiuuJk5kz6BymU1VCSh+SopvdIowLNhSSD5TlbUXjcJmv9CdMU4pz0MWDc4mHA1gWEszu/UNGGmqj2Q4svrY4bAvp1wIOJUDJvTk3O9andwFAgMLn9Y/hCpk3SiZADnYc0yMxQBF/pzVdZTt3jWmL08gw5a7LE8PT/h4Ce3M7C/hpBmYtA254gk/fSmCGFI4gLtYJqit8j9vBRLaHEmdhzxNLfDFqctxBh8MNNN+909zd4oBl/vhb9MyXUfzjIc8beSWJT87DW+SCyrdnXcTBPToTgyZimokeMdvP6Nq8XmkPNkkuUl7O0R2kKiebDbXb8OTYQE1NW9lxb0l5R++5W9QwyQkOPPc8wDbXplGQFftCwCpPsfmhad4+UmT/Hn5eG6AzNgr/6D7Bn9aZC0DdpyOcnqWNFZGOyv3ax3Q5HNTAuyUHvN63xFw+uN/OLzCX6+EFfc;4:W60GzqMw99buMUpqaTPFnvxscRW1fvN/c6gaCxw8CFbabnr1usOBG/LkILegVRIxTx48w7V5x+TcTiV7TRioTtDZ5wSYqYMbNu+byxfkFO30DH1ALWAqQPlbcyVvE2IEGItTXJeywtg1L1+WF4jTRExG9A5ucXaElilOrBaj1b1TaJyEZdH76+QAJz4aVK+Qgwo3CRTkLZSV253qyHsGwiaP+kB1tVWnVIoqwJoFP4M5m42wRu/yJqbX2c0UOnMnOGWUyLnmV4yo5WAZ4VRBjQ==
+X-Microsoft-Antispam-PRVS: <DB6PR0401MB24229E5CB6B92DBBEB69D2F7E68D0@DB6PR0401MB2422.eurprd04.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231232)(944501410)(52105095)(10201501046)(3002001)(93006095)(93001095)(6055026)(6041310)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(6072148)(201708071742011);SRVR:DB6PR0401MB2422;BCL:0;PCL:0;RULEID:;SRVR:DB6PR0401MB2422;
+X-Forefront-PRVS: 0655F9F006
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(396003)(346002)(39860400002)(39380400002)(376002)(189003)(199004)(2906002)(86362001)(8936002)(6116002)(3846002)(53936002)(25786009)(5009440100003)(6306002)(305945005)(48376002)(6512007)(6666003)(6486002)(4326008)(39060400002)(966005)(16526019)(186003)(478600001)(52116002)(7416002)(44832011)(26005)(105586002)(2616005)(36756003)(8676002)(81156014)(16586007)(486006)(66066001)(50466002)(51416003)(956004)(97736004)(106356001)(386003)(68736007)(81166006)(5660300001)(47776003)(55236004)(476003)(50226002)(6506007)(7736002)(316002)(110426005);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR0401MB2422;H:b27504-OptiPlex-790.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DB6PR0401MB2422;23:XS2hGCXblMqFQHDDd6EyEaQJOVbzr81/u5HsRXC?=
+ =?us-ascii?Q?mFWCoN1ozdO0v1W48xHRQ5trxJridH9AYzvab7b+r8LILc19cJ58Ua6tNhOg?=
+ =?us-ascii?Q?BVsSmgVjfH0Y2m3Gq5XeFttfwnZF2ZCzbp5svixVvr8UEiEs4qdl2pQzE0lb?=
+ =?us-ascii?Q?EUw9iGnJ6eAblNCaY82DQrV98DIrX8yP9QECe26FJ+mdjeoTMv4v16FLwM9l?=
+ =?us-ascii?Q?RAppZth5+YWlg3W5BluognatA6I6SovQDIRpIi4ew2mQhgOl1j8D6HcIKPdW?=
+ =?us-ascii?Q?rnQGIF5XGGGr/8mDpUdC/4AyLWBgzhde7FRKsnG1+LykgN8TPEHCSpWEhcWg?=
+ =?us-ascii?Q?fcpoFAbrUW77cNUe0LzZ3zm7UQcsr/OgsAHsS+BYIODWpG0SHMcN4PwT79xp?=
+ =?us-ascii?Q?Ty4poJ5PjZJvxgVKvKano33yhcdd/v/jm0wzYk2vXQ9ZU4NBf5bPrifZ6XoK?=
+ =?us-ascii?Q?zsqlQOy4CAeW0aKD0bFM8Q34r04hc2Hx7O24zk7RaeJkAdytHUK9gzrZ5dLR?=
+ =?us-ascii?Q?ya2hrKK+TT9rrBj/2ShOWP65iHHpVsbxnlh/gITVHpWK+OK1zf6joqjqgidD?=
+ =?us-ascii?Q?u7tfJXwNcX0VBJMWRC4VxPcuXwmQO4CiyusmH4Rr7zBpM5lLzCJnvkXWM/lc?=
+ =?us-ascii?Q?Hx+vvovwT0rOBg8iOlELgQkHJ0MIbrSTXDS9OZ0Ac3mtvANhW1kxTf/JPBZh?=
+ =?us-ascii?Q?URUEmEO3Lk/1UiVqQU1wTIXmsFhsOFeOn2zLahl/NaHcZUZwmsczsF/w8xqu?=
+ =?us-ascii?Q?12eZY2DKPCGvbBGrPaPEX29Ng8+W6L+ovRYrqYjHoApwio/ZbD9P5k2DC26P?=
+ =?us-ascii?Q?hA5jjMuyAD1+0thRj9j6WlJ2pcZJVXYwjaXoz4NfHZT/tzPKZcRB4of2UTOM?=
+ =?us-ascii?Q?xngDXfzES+ozJjWJc7/Qm/igY6nV8M/FqUOtbJW1NHPyckvCIyjnkY43WeiR?=
+ =?us-ascii?Q?tSDvW5DyTw7qcP4ul9U7ZKmBsX5snpF2LKXq96HAb+6pX9xMJcWLLHucFtgT?=
+ =?us-ascii?Q?4KvCvFvFqtuWQGEImtQ8Tv2ENziN5vFWKRaas6DSsgU4cJP4+dDxgttfezeg?=
+ =?us-ascii?Q?Ob7c6drWFB0uLBu5H5HRiUbBedOGbp0kj1vsGA1P2Pfq7FUJNhCuaMZXa6FA?=
+ =?us-ascii?Q?Gkr0rrcTiIzi//UdaGn/dQZKfYh1CqgWode3hQqezoF8o7yCYbIASB1Sl26W?=
+ =?us-ascii?Q?0EPd9G1tqxaZytL9KbCOGHkUW0Hrheeq6aVrMZKs+VHpsL0ZbZp73pb2vqd5?=
+ =?us-ascii?Q?svuGLxLRTZMdwcIcCLHbj0C4FYdbx3D2f5BL1WbznXnG6sZX/SJ+O1pEV0GH?=
+ =?us-ascii?Q?JyQ=3D=3D?=
+X-Microsoft-Antispam-Message-Info: pS4nONvp5s8XCyai3YCsnzofpvj4YuvrOu2W+mc4woORO1eVr1PrSvOiU/14/y/l3/4v35pj+jVd3Duc5dr/oCxD6BaIMhQTP3MSMMpAs69JjctiO39hlNt6ZxwtGeoIqYN2Q26f8RxLA99ppFAOw8Cw4Ib98M68FFzUtDm1kX3kNQN0ghpNnLgN2pdpU7Js
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0401MB2422;6:rsOyIK0wWbeiKHS3WoM/bqBlXnX5Yk1y4v9ziqZr1qcZB5sjHtSzWDad81hdGtwi8YXDjWcrnteevORKBozTL0mS358AuAZamJOZCk0xd62xHVP4hKlmdeJE4QfuGR30wgNAn4FBGp8tsJF/12X6io6qwRd3m2rMU+xsxi3TPAOE7XxpEvAxRpyxvCgS34BuI+zjejI5r1Bs+RWGDa/y/aeBuMF/zb7ODF6tcc9YIYJb2PSLL8/XLWZmmI0IogmERDl2KU7UFax9zRcmejRlab3F6yihftnh7DUT6ZC7rNtwNgM3wGIb7Da2/sK39RKS8h4Mm2FYoeM09N7iabeCc1FZnVNqJdOY1aG1Sfxev1XFVqhUvjgBG72n8hEAv/Kw3KY+OySOq3Yd7bPfrbls4ndpMBybEsII7qkgwysXV5jqxvoyI5ue87YMj9EKw5T4zQskfirzXq55wWRXii7orw==;5:rffdc7KFvvvuyn/guY9+PYjYe7yHxjwAzG6bWESPm+IyUPtIGOeMsExqcTiTh1YleKXzxMksLcRwVF4JYmLhFzi1nfdFZgWaNrVIZxKTf1AZeXS02XEnCYPKaTRAJyhk4cl6lwX2jddaBorSuZN5xDeX1q9a848YHqo0ELUdg90=;24:jSYtfZm85fl9hzutUvjBzfuYcULrPB69Vi8Pvl6cT/QFn/sk8chRkcprudipCL5rcAMSdCpXp6+lh8hw3WzXn52CjCTG4rPt9kmtKdpADwA=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0401MB2422;7:diuWw6Hq/QT+jcd3SyHEOEgp8fKaHjYkfocFnlG8Lrzh4eSEM+NcTEjdcvEXJlCttGjpd6eNa+hp0/ZAdvJpNepQRW6KOEPdLzFSOUlrFQsvPt5bdP72Yr/ZkEWRDvMo3dh5u4968biydJnUQAiRoS+qh2qpYI4v21Xjn3j2WfWuIoQYHNWS5VLrhzfhPZXELsUvfp8xYZaQmxOvxxLYJRdc2SWODh6/VxKLrLTJOlBdikxabyWLKNt6UMb/b1tG
+X-MS-Office365-Filtering-Correlation-Id: fd5233cd-c174-4aa2-de9e-08d5ac298310
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Apr 2018 10:27:39.7537
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: fd5233cd-c174-4aa2-de9e-08d5ac298310
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0401MB2422
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcSW1wb3J0YW50Ig==?=
-X-GMAIL-THRID: =?utf-8?q?1599206483626612187?=
-X-GMAIL-MSGID: =?utf-8?q?1599206483626612187?=
+X-GMAIL-THRID: =?utf-8?q?1598894760308217340?=
+X-GMAIL-MSGID: =?utf-8?q?1598894760308217340?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sun, Apr 29, 2018 at 11:59 AM, Greg KH <gregkh@linuxfoundation.org> wrote:
-> On Tue, Apr 17, 2018 at 05:33:25PM -0400, Gregory Panic wrote:
->> Hi,
->>
->> I have been working on a VMX driver for a custom hypervisor which
->> depends on features that KVM is not built for.  Up until recently
->> (4.12.x), our module has been working just fine.  When we started to
->> build support for Ubuntu 18.04 (4.15.x+), we ran into an issue.
->>
->> Unfortunately the following commits broke functionality, causing
->> kernel segfaults, due to a placing the GDT in the FIXMAP area, and
->> setting that mapping to Read-Only.
->> #69218e47994da614e7af600bf06887750ab6657a
->> and
->> #45fc8757d1d2128e342b4e7ef39adedf7752faac
->>
->> Up until now, the GDT has been Read-Write, which allowed for resetting
->> the TSS to available, and then Reloading it after a VMExit.  The KVM
->> and Xen work-arounds for this were implemented by creating a GPL'd
->> interface to remap the GDT to the original Read/Write mapping and then
->> back.
->>
->> Up to this point we've been able to maintain independence from GPL,
->
-> As has been stated numberous times, the lack of EXPORT_SYMBOL_GPL() does
-> NOT mean that the interface you are using is not covered under the GPL
-> license of the kernel.
->
-> Please consult with an IP lawyer for the details if you are interested.
->
-> Best of luck with your driver!
->
-> greg k-h
+This patchset defines IOMMU DT binding for fsl-mc bus and adds
+support in SMMU for fsl-mc bus.
 
+This patch series is dependent on patset:
+https://patchwork.kernel.org/patch/10317337/
 
-I concede that the lack of EXPORT_SYMBOL_GPL may not imply lack of
-coverage by the GPL.
+These patches
+  - Define property 'iommu-map' for fsl-mc bus (patch 1)
+  - Integrates the fsl-mc bus with the SMMU using this
+    IOMMU binding (patch 2,3,4)
+  - Adds the dma configuration support for fsl-mc bus (patch 5)
+  - Updates the fsl-mc device node with iommu/dma related changes (patch6)
 
-However, let me clarify my issue with these patches.
+Changes in v2:
+  - use iommu-map property for fsl-mc bus
+  - rebase over patchset https://patchwork.kernel.org/patch/10317337/
+    and make corresponding changes for dma configuration of devices on
+    fsl-mc bus
 
-These patches explicitly REMOVE a previously working (architecture-level)
-functionality and seemingly PURPOSEFULLY breaks proprietary modules.
+Changes in v3:
+  - move of_map_rid in drivers/of/address.c
 
-There is no middle-ground as a result of this patch.  For VMX drivers under
-Linux you must now either GPL your code or subvert the security of the kernel.
-This is not a good place to be.
+Nipun Gupta (6):
+  Docs: dt: add fsl-mc iommu-map device-tree binding
+  iommu: of: make of_pci_map_rid() available for other devices too
+  iommu: support iommu configuration for fsl-mc devices
+  iommu: arm-smmu: Add support for the fsl-mc bus
+  bus: fsl-mc: supoprt dma configure for devices on fsl-mc bus
+  arm64: dts: ls208xa: comply with the iommu map binding for fsl_mc
 
-
-The operation in particular is the clearing of the TSS busy bit.  This
-is a primitive
-operation that is well defined in the intel developers manual, and one that must
-be done upon a VMExit so that the TR can be reloaded.  This can no longer be
-accomplished by proprietary drivers under Linux due to its R/O GDT - except by
-using an explicitly GPL'd interface.
-
-
-A colleague suggested an alternative patch would be to implement a primitive
-interface to clear the TSS busy bit that does not result in derivative works.
-
-// returns previous value, or -1 if no TSS there
-int change_tss_busy(uint16_t selector, bool busy);
+ .../devicetree/bindings/misc/fsl,qoriq-mc.txt      |  39 ++++++++
+ arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi     |   6 +-
+ drivers/bus/fsl-mc/fsl-mc-bus.c                    |  16 +++-
+ drivers/iommu/arm-smmu.c                           |   7 ++
+ drivers/iommu/iommu.c                              |  21 +++++
+ drivers/iommu/of_iommu.c                           |  26 +++++-
+ drivers/of/address.c                               | 102 +++++++++++++++++++++
+ drivers/of/irq.c                                   |   7 +-
+ drivers/pci/of.c                                   | 101 --------------------
+ include/linux/fsl/mc.h                             |   8 ++
+ include/linux/iommu.h                              |   2 +
+ include/linux/of_address.h                         |  11 +++
+ include/linux/of_pci.h                             |  10 --
+ 13 files changed, 234 insertions(+), 122 deletions(-)
 
 -- 
-Gregory
+1.9.1
