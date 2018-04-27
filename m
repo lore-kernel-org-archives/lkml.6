@@ -1,60 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757899AbeD0MAP (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 08:00:15 -0400
-Received: from smtprelay.synopsys.com ([198.182.37.59]:36052 "EHLO
+        id S1758083AbeD0MBZ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 08:01:25 -0400
+Received: from smtprelay6.synopsys.com ([198.182.37.59]:36060 "EHLO
         smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751464AbeD0MAM (ORCPT
+        with ESMTP id S1757681AbeD0MAP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 08:00:12 -0400
+        Fri, 27 Apr 2018 08:00:15 -0400
 From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
 To: bhelgaas@google.com, lorenzo.pieralisi@arm.com,
         Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
         robh+dt@kernel.org, mark.rutland@arm.com
 Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, gustavo.pimentel@synopsys.com
-Subject: [PATCH v8 0/9] DesignWare EP support and code clean up
-Date: Fri, 27 Apr 2018 12:59:55 +0100
-Message-Id: <cover.1524829928.git.gustavo.pimentel@synopsys.com>
+Subject: [PATCH v8 6/9] PCI: dwc: Define maximum number of vectors
+Date: Fri, 27 Apr 2018 13:00:01 +0100
+Message-Id: <66e6e2a103c576a9e7f65a416b452e9c3e782de3.1524829928.git.gustavo.pimentel@synopsys.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1524829928.git.gustavo.pimentel@synopsys.com>
+References: <cover.1524829928.git.gustavo.pimentel@synopsys.com>
+In-Reply-To: <cover.1524829928.git.gustavo.pimentel@synopsys.com>
+References: <cover.1524829928.git.gustavo.pimentel@synopsys.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add DesignWare EP support.
+Add a callback to define the maximum number of vectors used by the RC.
 
-Increase maximum number of interrupts allow for DesignWare IP controller.
+Since this is a parameter associated to each SoC IP setting, makes sense
+to be configurable and easily visible to future modifications.
 
-Does a code cleanup on DesignWare driver, which involves:
- - Replacement of magic numbers by a self-explained define to ease human
-comprehension.
- - Replacement a division by 2 operation for a right shift rotation of 1
-bit.
- - Replacement of all initial lowercase character in comments and debug
-messages to uppercase to maintain coherence.
+Set DesignWare driver vectors number maximum to 256.
 
-Gustavo Pimentel (9):
-  bindings: PCI: designware: Example update
-  PCI: dwc: Add support for EP mode
-  PCI: endpoint: functions/pci-epf-test: Add second entry
-  bindings: PCI: designware: Add support for EP in DesignWare driver
-  misc: pci_endpoint_test: Add DesignWare EP entry
-  PCI: dwc: Define maximum number of vectors
-  PCI: dwc: Replace lower into upper case characters
-  PCI: dwc: Small computation improvement
-  PCI: dwc: Replace magic number by defines
+Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Acked-by: Joao Pinto <jpinto@synopsys.com>
+Acked-by: Jingoo Han <jingoohan1@gmail.com>
+---
+Change v1->v2:
+ - Nothing changed, just to follow the patch set version.
+Change v2->v3:
+ - Nothing changed, just to follow the patch set version.
+Changes v3->v4:
+ - Nothing changed, just to follow the patch set version.
+Changes v4->v5:
+ - Nothing changed, just to follow the patch set version.
+Changes v5->v6:
+ - Nothing changed, just to follow the patch set version.
+Changes v6->v7:
+ - Nothing changed, just to follow the patch set version.
+Changes v7->v8:
+ - Patch description rework for an imperative verbal mode.
 
- .../PCI/endpoint/function/binding/pci-test.txt     |   2 +
- .../devicetree/bindings/pci/designware-pcie.txt    |  24 +++-
- drivers/misc/pci_endpoint_test.c                   |   1 +
- drivers/pci/dwc/Kconfig                            |  41 ++++--
- drivers/pci/dwc/pcie-designware-ep.c               |  16 +--
- drivers/pci/dwc/pcie-designware-host.c             |  77 +++++-----
- drivers/pci/dwc/pcie-designware-plat.c             | 155 +++++++++++++++++++--
- drivers/pci/dwc/pcie-designware.c                  |  22 +--
- drivers/pci/dwc/pcie-designware.h                  |   1 +
- drivers/pci/endpoint/functions/pci-epf-test.c      |   8 ++
- 10 files changed, 267 insertions(+), 80 deletions(-)
+ drivers/pci/dwc/pcie-designware-plat.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
+diff --git a/drivers/pci/dwc/pcie-designware-plat.c b/drivers/pci/dwc/pcie-designware-plat.c
+index efc315c..5937fed 100644
+--- a/drivers/pci/dwc/pcie-designware-plat.c
++++ b/drivers/pci/dwc/pcie-designware-plat.c
+@@ -48,8 +48,14 @@ static int dw_plat_pcie_host_init(struct pcie_port *pp)
+ 	return 0;
+ }
+ 
++static void dw_plat_set_num_vectors(struct pcie_port *pp)
++{
++	pp->num_vectors = MAX_MSI_IRQS;
++}
++
+ static const struct dw_pcie_host_ops dw_plat_pcie_host_ops = {
+ 	.host_init = dw_plat_pcie_host_init,
++	.set_num_vectors = dw_plat_set_num_vectors,
+ };
+ 
+ static int dw_plat_pcie_establish_link(struct dw_pcie *pci)
 -- 
 2.7.4
