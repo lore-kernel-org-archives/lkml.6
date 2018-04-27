@@ -1,100 +1,63 @@
-Return-Path: <srinivas.kandagatla@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1524736173; cv=none;
+Return-Path: <robherring2@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1524838236; cv=none;
         d=google.com; s=arc-20160816;
-        b=e9n5etO7y8R1zB9cOq5q6R+kSdJJ7Ugv/AwcvFFQxmuUyNOFNT8n4SmIN08n5r0jG/
-         JGnVqErokRlYwzsVeZvL7pXk9yBZAmoIOXT1ecWJyACfrYuAvlN1f5QG35ltb4h1lTev
-         t8+ot3TgbKME07aOeRi2OfzP2A0ghTTDijgs1Qn+cwc+7AJWbS/bP7fjn5wq5MgwjoX7
-         fobKod2/Rq1Q73r1xVLvspnkVMrFELqXLpEnoWuRWo8c+KG4eP4oiKrUozvsfShtjMhT
-         yTjOmCxO64IZwN+V849RzAAsCgFYvkPceskiqGt86WA3qt6WXoIuZcOWbUE+AElF1d7g
-         0kjQ==
+        b=NYbyDf0E1n8Fb4O6UbaxxQq7VwPCvM6BOjbumzbFcBH3SR3AmAfNvPtmqcByR+zsyt
+         OM0TZapzceKfDg9v3zFFEvNNxbdQE5b2iTT3OO5sKAQWDDAgDB7LYDR9xDLRZsKH/hJc
+         RlArh5ZHnliSAR5vR+HcyARvcilnWN+5b24EipNyqj38fSXzODd6vqgkJVdtquV74tYy
+         5hG9sER9aYVgaFh9xZFo6qweCdqy92WAr18X4jssM94pc+2gRS3zurgGUM8W141W1Ei5
+         i+0ff38VhYjrykkAVNh9ew2mFfpcnBUmT33nb9Rc6tSbDHXQuqVnXU+zN0Flk0dLKZjJ
+         j4TA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=W7skse7fw+3bX6Qx0P+a8B8guzYohzn3Es2McL3471E=;
-        b=TndIkZ6Zb0gd7vrWnUPrZGeU8KrmsP+x431F+w9olPE2QQmxRS6hxc1EG0GA7RR9LM
-         Puut2wVsW0EknPRylOVVSS6pbLKWeirmxUeDqoYd71XYzNYsGHbMpiiWFKaBwPduau9d
-         77A7byR4LbE/CLO0l/GZEaPeA6Vb8Gp3xHJOzp9QZi3OnCrvy/1swYVbDVX7/2/LP6ct
-         bdbr1Hplj2VOKQFQQBdtv8hgc83G+anWDJbMGpnzCtxqke0JjK0NM5+13QFHEk/xMCFV
-         LJlcZPFSg5124IO8NGXvoKyq89o2YvaCJJX7Q0F9xEhpPWRAZBzrdl1y970amRQQKqEq
-         qvaQ==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=Nc42OmmObRbFP6u3Q4siHCxT8wxoUfx0y8jczzah0+8=;
+        b=MWw9bjrA2wle0EFBNRMJrOlgZYBMjTG+gq2TGigOF8g3jKpxte4Brfmk32dQqmKjr8
+         C2XumeZNShq63AMjD5K+sZO5/qOt9s1LIIRdj1h2aLip4uP3P8gra0eByZwczSk2l5/G
+         qaQRGG4ytXclBqjiczV+F347Or/J0PqYMmtshSdBnA4Em7htWBAxC+DbWvbtBPmwp2Gz
+         c5vjFBXujH2YqaivBURfPSgL+6QOH8xwBV3ZVM85nT4QfOFQpDDlgKRQAUAy8dFmUdeh
+         hDe8yRdZdyhFvXi1d0/FRii0p7FJvVrxGGT6UfXNqVHVRMBklyiXS3//+R9nFdY0PFMY
+         sQfg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=bzdndPpD;
-       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+       spf=pass (google.com: domain of robherring2@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=robherring2@gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=bzdndPpD;
-       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AIpwx4/t4a3+3Cku5u7B5giRJIsqQMUqSC+KUipqu7v7s6Z6tOKg/EykRUxBGBvVSGyZc3kdCdPY+w==
-From: srinivas.kandagatla@linaro.org
-To: andy.gross@linaro.org,
-	broonie@kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	robh+dt@kernel.org,
-	bgoswami@codeaurora.org
-Cc: gregkh@linuxfoundation.org,
-	david.brown@linaro.org,
-	mark.rutland@arm.com,
-	lgirdwood@gmail.com,
-	plai@codeaurora.org,
-	tiwai@suse.com,
-	perex@perex.cz,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	rohkumar@qti.qualcomm.com,
-	spatakok@qti.qualcomm.com,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v6 03/24] ASoC: qdsp6: dt-bindings: Add q6core dt bindings
-Date: Thu, 26 Apr 2018 10:45:45 +0100
-Message-Id: <20180426094606.4775-4-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180426094606.4775-1-srinivas.kandagatla@linaro.org>
+       spf=pass (google.com: domain of robherring2@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=robherring2@gmail.com
+X-Google-Smtp-Source: AB8JxZqFRnBJkowGb6nosM5CdfxEpyo6Yz3NIwBtoG0EeKp+Uz6H+cUPW2y0MUwmCm2342QX/iIARw==
+Date: Fri, 27 Apr 2018 09:10:34 -0500
+From: Rob Herring <robh@kernel.org>
+To: srinivas.kandagatla@linaro.org
+Cc: andy.gross@linaro.org, broonie@kernel.org,
+	linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org,
+	bgoswami@codeaurora.org, gregkh@linuxfoundation.org,
+	david.brown@linaro.org, mark.rutland@arm.com, lgirdwood@gmail.com,
+	plai@codeaurora.org, tiwai@suse.com, perex@perex.cz,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, rohkumar@qti.qualcomm.com,
+	spatakok@qti.qualcomm.com
+Subject: Re: [PATCH v6 03/24] ASoC: qdsp6: dt-bindings: Add q6core dt bindings
+Message-ID: <20180427141034.qsk5o2erd5x6cm2f@rob-hp-laptop>
 References: <20180426094606.4775-1-srinivas.kandagatla@linaro.org>
+ <20180426094606.4775-4-srinivas.kandagatla@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180426094606.4775-4-srinivas.kandagatla@linaro.org>
+User-Agent: NeoMutt/20170609 (1.8.3)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1598801758328613350?=
-X-GMAIL-MSGID: =?utf-8?q?1598801758328613350?=
+X-GMAIL-MSGID: =?utf-8?q?1598908778844279835?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+On Thu, Apr 26, 2018 at 10:45:45AM +0100, srinivas.kandagatla@linaro.org wrote:
+> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> 
+> This patch add DT bindings for Q6CORE DSP module.
+> 
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> Reviewed-and-tested-by: Rohit kumar <rohitkr@codeaurora.org>
+> ---
+>  .../devicetree/bindings/sound/qcom,q6core.txt       | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/sound/qcom,q6core.txt
 
-This patch add DT bindings for Q6CORE DSP module.
-
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Reviewed-and-tested-by: Rohit kumar <rohitkr@codeaurora.org>
----
- .../devicetree/bindings/sound/qcom,q6core.txt       | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sound/qcom,q6core.txt
-
-diff --git a/Documentation/devicetree/bindings/sound/qcom,q6core.txt b/Documentation/devicetree/bindings/sound/qcom,q6core.txt
-new file mode 100644
-index 000000000000..bd14e9a93490
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/qcom,q6core.txt
-@@ -0,0 +1,21 @@
-+Qualcomm ADSP Core service binding
-+
-+Q6CORE is one of the APR audio service on Q6DSP.
-+Please refer to qcom,apr.txt for details of the coommon apr service bindings
-+used by the apr service device.
-+
-+- but must contain the following property:
-+
-+- compatible:
-+	Usage: required
-+	Value type: <stringlist>
-+	Definition: must be "qcom,q6core-v<MAJOR-NUMBER>.<MINOR-NUMBER>".
-+		   Or "qcom,q6core" where the version number can be queried
-+		   from DSP.
-+		   example "qcom,q6core-v2.0"
-+
-+= EXAMPLE
-+q6core@3 {
-+	compatible = "qcom,q6core";
-+	reg = <APR_SVC_ADSP_CORE>;
-+};
--- 
-2.16.2
+Reviewed-by: Rob Herring <robh@kernel.org>
