@@ -1,122 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932990AbeD0Q7e (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 12:59:34 -0400
-Received: from smtprelay6.synopsys.com ([198.182.37.59]:37148 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758920AbeD0Q57 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 12:57:59 -0400
-From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-To: bhelgaas@google.com, lorenzo.pieralisi@arm.com,
-        Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
-        adouglas@cadence.com, jesper.nilsson@axis.com
-Cc: linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, gustavo.pimentel@synopsys.com
-Subject: [PATCH 07/10] misc: pci_endpoint_test: Replace lower into upper case characters
-Date: Fri, 27 Apr 2018 17:57:44 +0100
-Message-Id: <17224b32eaf73ac071975c4b6cda526472f11d15.1524845816.git.gustavo.pimentel@synopsys.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1524845816.git.gustavo.pimentel@synopsys.com>
-References: <cover.1524845816.git.gustavo.pimentel@synopsys.com>
-In-Reply-To: <cover.1524845816.git.gustavo.pimentel@synopsys.com>
-References: <cover.1524845816.git.gustavo.pimentel@synopsys.com>
+        id S1758949AbeD0RAO (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 13:00:14 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:50982 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1758851AbeD0RAM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 13:00:12 -0400
+Date: Fri, 27 Apr 2018 18:59:39 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Luck, Tony" <tony.luck@intel.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>, linux-edac@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] x86, mce: Fix stack out-of-bounds write in
+ mce-inject.c:flags_read()
+Message-ID: <20180427165939.GG15229@pd.tnic>
+References: <CACT4Y+Ys9bKFNaBm7YuCvk04jcZ2SnLiDSxgCojZMwtb2PKVBg@mail.gmail.com>
+ <20180427154115.GF15229@pd.tnic>
+ <CACT4Y+bptixoADW1cLtJzbJcHfmEAuLyBSnK9txb6u69fZ3n6w@mail.gmail.com>
+ <20180427163707.ktaiysvbk3yhk4wm@agluck-desk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180427163707.ktaiysvbk3yhk4wm@agluck-desk>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace all initial lower case character into upper case in comments
-and debug printks.
+On Fri, Apr 27, 2018 at 09:37:08AM -0700, Luck, Tony wrote:
+> Each of the strings that we want to put into the buf[MAX_FLAG_OPT_SIZE]
+> in flags_read() is two characters. But the sprintf() adds a trailing newline
+> and will add a terminating NUL byte. So MAX_FLAG_OPT_SIZE needs to be 4.
 
-Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
----
- drivers/misc/pci_endpoint_test.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+... and I dumped the n here:
 
-diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
-index b003079..c9b6e26 100644
---- a/drivers/misc/pci_endpoint_test.c
-+++ b/drivers/misc/pci_endpoint_test.c
-@@ -250,7 +250,7 @@ static bool pci_endpoint_test_copy(struct pci_endpoint_test *test, size_t size)
- 	orig_src_addr = dma_alloc_coherent(dev, size + alignment,
- 					   &orig_src_phys_addr, GFP_KERNEL);
- 	if (!orig_src_addr) {
--		dev_err(dev, "failed to allocate source buffer\n");
-+		dev_err(dev, "Failed to allocate source buffer\n");
- 		ret = false;
- 		goto err;
- 	}
-@@ -276,7 +276,7 @@ static bool pci_endpoint_test_copy(struct pci_endpoint_test *test, size_t size)
- 	orig_dst_addr = dma_alloc_coherent(dev, size + alignment,
- 					   &orig_dst_phys_addr, GFP_KERNEL);
- 	if (!orig_dst_addr) {
--		dev_err(dev, "failed to allocate destination address\n");
-+		dev_err(dev, "Failed to allocate destination address\n");
- 		ret = false;
- 		goto err_orig_src_addr;
- 	}
-@@ -340,7 +340,7 @@ static bool pci_endpoint_test_write(struct pci_endpoint_test *test, size_t size)
- 	orig_addr = dma_alloc_coherent(dev, size + alignment, &orig_phys_addr,
- 				       GFP_KERNEL);
- 	if (!orig_addr) {
--		dev_err(dev, "failed to allocate address\n");
-+		dev_err(dev, "Failed to allocate address\n");
- 		ret = false;
- 		goto err;
- 	}
-@@ -403,7 +403,7 @@ static bool pci_endpoint_test_read(struct pci_endpoint_test *test, size_t size)
- 	orig_addr = dma_alloc_coherent(dev, size + alignment, &orig_phys_addr,
- 				       GFP_KERNEL);
- 	if (!orig_addr) {
--		dev_err(dev, "failed to allocate destination address\n");
-+		dev_err(dev, "Failed to allocate destination address\n");
- 		ret = false;
- 		goto err;
- 	}
-@@ -543,7 +543,7 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
- 	case IRQ_TYPE_MSI:
- 		irq = pci_alloc_irq_vectors(pdev, 1, 32, PCI_IRQ_MSI);
- 		if (irq < 0)
--			dev_err(dev, "failed to get MSI interrupts\n");
-+			dev_err(dev, "Failed to get MSI interrupts\n");
- 		test->num_irqs = irq;
- 		break;
- 	case IRQ_TYPE_MSIX:
-@@ -560,7 +560,7 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
- 	err = devm_request_irq(dev, pdev->irq, pci_endpoint_test_irqhandler,
- 			       IRQF_SHARED, DRV_MODULE_NAME, test);
- 	if (err) {
--		dev_err(dev, "failed to request IRQ %d\n", pdev->irq);
-+		dev_err(dev, "Failed to request IRQ %d\n", pdev->irq);
- 		goto err_disable_msi;
- 	}
- 
-@@ -578,7 +578,7 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
- 		if (pci_resource_flags(pdev, bar) & IORESOURCE_MEM) {
- 			base = pci_ioremap_bar(pdev, bar);
- 			if (!base) {
--				dev_err(dev, "failed to read BAR%d\n", bar);
-+				dev_err(dev, "Failed to read BAR%d\n", bar);
- 				WARN_ON(bar == test_reg_bar);
- 			}
- 			test->bar[bar] = base;
-@@ -598,7 +598,7 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
- 	id = ida_simple_get(&pci_endpoint_test_ida, 0, 0, GFP_KERNEL);
- 	if (id < 0) {
- 		err = id;
--		dev_err(dev, "unable to get id\n");
-+		dev_err(dev, "Unable to get id\n");
- 		goto err_iounmap;
- 	}
- 
-@@ -614,7 +614,7 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
- 
- 	err = misc_register(misc_device);
- 	if (err) {
--		dev_err(dev, "failed to register device\n");
-+		dev_err(dev, "Failed to register device\n");
- 		goto err_kfree_name;
- 	}
- 
+	n = sprintf(buf, "%s\n", flags_options[inj_type])
+
+and it was 3 but sprintf() calls vsnprintf() and *that* does return:
+
+" * The return value is the number of characters which would
+ * be generated for the given input, excluding the trailing
+ * '\0', as per ISO C99."
+
+So I'll extend the commit message with that and apply it.
+
+Thanks.
+
 -- 
-2.7.4
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
