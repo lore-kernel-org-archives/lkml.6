@@ -1,83 +1,39 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-284719-1524838259-2-6225313835413197853
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524838258; b=jEVU7eJ2Gwg8YAoNq4vNXWYJ8bpbyZyP+CU2dVdhFdSqjRBPvb
-    KPKiGJZO4rbbNKnor1jlDm44v5fN2QznapnyX6YwSCCxMJosH5KdA451uu4L3LmA
-    YPMi9XLZRhaQIxZswa6Ec/g+C24xcTLBegwGJe+E63ue+pmiu7V0iEs18hVUR0AQ
-    5QbNsgXhU2luMH/2IrBoNyLgHyyjviaF0KXcsaBak6fWFCLyAApesxP3snNbtiDg
-    tCKBge9o5yzzNF0/PCf9uoRSWqZUtt2O1xDq/5Lhyopca9lgSGyeTI7E7DjXfpdn
-    jp09S2xf/sjaPuO2qOmBdKgy8BLKMLH4y9Cg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524838258; bh=V0yy72tyCOldDZigSYawlcIPFgPody
-    m2L6d3cUAZKac=; b=hmuZQKP+D82PGylR3qcsg7bk7hXP40DDJHyJUQMnbNVcQn
-    W5Oei8vIj/4va3tlFLWyLxzv9OpPe3m/BjvBPwCkjc6PaQBTlqGn5xmP87Zg7ECR
-    zyBRMHEjThx8TO4r2rAZpJ3wgV8yrH13+qU6+ilkcwSrq3HVu4aQaUELYucRiCSk
-    ETFd81sbBZ4lQSYXkSP98JxzRiShx6hrmO+OHGDCSfnF1xx73OI/EMHlLMFRUsCu
-    5GtPTvB6WL/L0+pdvr28gbThfhKBEndLqyQFz7AG8hEOjUkfRiNaptPpSMVF3pQC
-    +91Jna6/FArde8EnJtPucOjIsXo1rok9U0Tm1MKQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfPxZHhMKennjw+LqsF/CbWnHAnN8xvGP3Ber/6qrZPsnn9ej7RY2IJteA22M7dU6xOGPy33+07/xGNWG977RHowq3llsPDQLLrA24mx2Nv7cDvmj8tmI
-    JaqbcC2DmznfZ/WhOj7tHX4CrwY/lxCg9x6MVcud/cuceX34SrBt3nSYWb+/W6V92IQOSs9zc8c1oKby1Mgo34zrO0e2N334TjIdLF1d7Ua5+GX9Q/8bzPua
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=QyXUC8HyAAAA:8 a=ag1SF4gXAAAA:8 a=tC2MrDdwHJ9IJMfzDlQA:9
-    a=a8bObCe3Ve64oaBK:21 a=t5fh2m3Rl7sWGoQv:21 a=QEXdDO2ut3YA:10
-    a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934905AbeD0OKw (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 27 Apr 2018 10:10:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55840 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934799AbeD0OKu (ORCPT <rfc822;stable@vger.kernel.org>);
-        Fri, 27 Apr 2018 10:10:50 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FDC421864
+Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
+X-Google-Smtp-Source: AB8JxZo3XlOAcAaPxjC7d1lp5eganpNwuly4dnAe9HKfGvbjAYBKENAkgMNGQOdjtMLI47WoQhde
+ARC-Seal: i=1; a=rsa-sha256; t=1524838253; cv=none;
+        d=google.com; s=arc-20160816;
+        b=rYRDgL95r9gETUH5MJnxF9h92fPQbr+twNzjGOvhQLeyyK+FYNJEfCt7do8vb9ZPT6
+         51zhRwaBp0wvMPe95a1fXGlc6/KrMVyjiEMqYY1Br3JYEtDC0o7xUOuLL4cDvSWq21UJ
+         ukB+h/8AXtmMM8de9lybZgaEkrPngyJtX7IKbZgoDZCXxDSWERgf1G8ZDYikekRGCEbu
+         RlgXTpLSVVQxvzX9/106RvYrTkAyiDbCl4V++w/c5+dC/mjSfG8a89J1ruIVbiCwam5N
+         fmGCPSGQX9mvnF4DHbVabx+VyQFSO7LDP4BNUqrvlJu4tby7S3YK3opbiin+IaLL5RTm
+         EjpQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dmarc-filter:arc-authentication-results;
+        bh=v330I6AoCtuc4xQLZvQRwTrXpC3evAQMuOoJErx6AgM=;
+        b=P1a/0XdLafaYU55HUaHKXGLBcpn7UQtR7FzrIgfWhOH1+DT2DKy803gf9axLCrjrWe
+         VyvhsZrGru37+7ho00Prlq/me37rBMLgO9nXim8RKFHK+J+jm5Fc5IBUswG3KWCQM1kX
+         zKxg8JiArZ0rsN9lrN8klzBWIhSJq+T/Iz2CkOR7/ECTwtuL3FAiuaKdD1SQNL+2l4EY
+         xBlA9OnOKYt6cf0Kdc9bqWlhv05/WnaJ4OOwdiBEx9lXs63EOnNdHHk++YikcEX8k6QP
+         MIDT1/2SAHRTTWk9LuJ8dyaJnfqJ89Ylz+TTcM3Id7sGevmm58Gkg9iQmLH9Un3DHFki
+         QHoA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0629B2189E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tomas Winkler <tomas.winkler@intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: [PATCH 4.16 05/81] tpm: tpm-interface: fix tpm_transmit/_cmd kdoc
-Date: Fri, 27 Apr 2018 15:58:07 +0200
-Message-Id: <20180427135743.580494936@linuxfoundation.org>
+	stable@vger.kernel.org,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH 4.16 06/81] tpm: add retry logic
+Date: Fri, 27 Apr 2018 15:58:08 +0200
+Message-Id: <20180427135743.625154551@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135743.216853156@linuxfoundation.org>
 References: <20180427135743.216853156@linuxfoundation.org>
@@ -85,9 +41,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1598908571168840888?=
+X-GMAIL-MSGID: =?utf-8?q?1598908796562125030?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -95,46 +52,139 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Winkler, Tomas <tomas.winkler@intel.com>
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
 
-commit 65520d46a4adbf7f23bbb6d9b1773513f7bc7821 upstream.
+commit e2fb992d82c626c43ed0566e07c410e56a087af3 upstream.
 
-Fix tmp_ -> tpm_ typo and add reference to 'space' parameter
-in kdoc for tpm_transmit and tpm_transmit_cmd functions.
+TPM2 can return TPM2_RC_RETRY to any command and when it does we get
+unexpected failures inside the kernel that surprise users (this is
+mostly observed in the trusted key handling code).  The UEFI 2.6 spec
+has advice on how to handle this:
 
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+    The firmware SHALL not return TPM2_RC_RETRY prior to the completion
+    of the call to ExitBootServices().
+
+    Implementer’s Note: the implementation of this function should check
+    the return value in the TPM response and, if it is TPM2_RC_RETRY,
+    resend the command. The implementation may abort if a sufficient
+    number of retries has been done.
+
+So we follow that advice in our tpm_transmit() code using
+TPM2_DURATION_SHORT as the initial wait duration and
+TPM2_DURATION_LONG as the maximum wait time.  This should fix all the
+in-kernel use cases and also means that user space TSS implementations
+don't have to have their own retry handling.
+
+Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: stable@vger.kernel.org
 Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/tpm/tpm-interface.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/char/tpm/tpm-interface.c |   75 +++++++++++++++++++++++++++++++--------
+ drivers/char/tpm/tpm.h           |    1 
+ 2 files changed, 61 insertions(+), 15 deletions(-)
 
 --- a/drivers/char/tpm/tpm-interface.c
 +++ b/drivers/char/tpm/tpm-interface.c
-@@ -400,9 +400,10 @@ static void tpm_relinquish_locality(stru
+@@ -399,21 +399,10 @@ static void tpm_relinquish_locality(stru
+ 	chip->locality = -1;
+ }
+ 
+-/**
+- * tpm_transmit - Internal kernel interface to transmit TPM commands.
+- *
+- * @chip: TPM chip to use
+- * @space: tpm space
+- * @buf: TPM command buffer
+- * @bufsiz: length of the TPM command buffer
+- * @flags: tpm transmit flags - bitmap
+- *
+- * Return:
+- *     0 when the operation is successful.
+- *     A negative number for system errors (errno).
+- */
+-ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+-		     u8 *buf, size_t bufsiz, unsigned int flags)
++static ssize_t tpm_try_transmit(struct tpm_chip *chip,
++				struct tpm_space *space,
++				u8 *buf, size_t bufsiz,
++				unsigned int flags)
+ {
+ 	struct tpm_output_header *header = (void *)buf;
+ 	int rc;
+@@ -545,6 +534,62 @@ out_no_locality:
  }
  
  /**
-- * tmp_transmit - Internal kernel interface to transmit TPM commands.
 + * tpm_transmit - Internal kernel interface to transmit TPM commands.
-  *
-  * @chip: TPM chip to use
++ *
++ * @chip: TPM chip to use
 + * @space: tpm space
-  * @buf: TPM command buffer
-  * @bufsiz: length of the TPM command buffer
-  * @flags: tpm transmit flags - bitmap
-@@ -544,10 +545,11 @@ out_no_locality:
- }
- 
- /**
-- * tmp_transmit_cmd - send a tpm command to the device
-+ * tpm_transmit_cmd - send a tpm command to the device
++ * @buf: TPM command buffer
++ * @bufsiz: length of the TPM command buffer
++ * @flags: tpm transmit flags - bitmap
++ *
++ * A wrapper around tpm_try_transmit that handles TPM2_RC_RETRY
++ * returns from the TPM and retransmits the command after a delay up
++ * to a maximum wait of TPM2_DURATION_LONG.
++ *
++ * Note: TPM1 never returns TPM2_RC_RETRY so the retry logic is TPM2
++ * only
++ *
++ * Return:
++ *     the length of the return when the operation is successful.
++ *     A negative number for system errors (errno).
++ */
++ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
++		     u8 *buf, size_t bufsiz, unsigned int flags)
++{
++	struct tpm_output_header *header = (struct tpm_output_header *)buf;
++	/* space for header and handles */
++	u8 save[TPM_HEADER_SIZE + 3*sizeof(u32)];
++	unsigned int delay_msec = TPM2_DURATION_SHORT;
++	u32 rc = 0;
++	ssize_t ret;
++	const size_t save_size = min(space ? sizeof(save) : TPM_HEADER_SIZE,
++				     bufsiz);
++
++	/*
++	 * Subtlety here: if we have a space, the handles will be
++	 * transformed, so when we restore the header we also have to
++	 * restore the handles.
++	 */
++	memcpy(save, buf, save_size);
++
++	for (;;) {
++		ret = tpm_try_transmit(chip, space, buf, bufsiz, flags);
++		if (ret < 0)
++			break;
++		rc = be32_to_cpu(header->return_code);
++		if (rc != TPM2_RC_RETRY)
++			break;
++		delay_msec *= 2;
++		if (delay_msec > TPM2_DURATION_LONG) {
++			dev_err(&chip->dev, "TPM is in retry loop\n");
++			break;
++		}
++		tpm_msleep(delay_msec);
++		memcpy(buf, save, save_size);
++	}
++	return ret;
++}
++/**
+  * tpm_transmit_cmd - send a tpm command to the device
   *    The function extracts tpm out header return code
   *
-  * @chip: TPM chip to use
-+ * @space: tpm space
-  * @buf: TPM command buffer
-  * @bufsiz: length of the buffer
-  * @min_rsp_body_length: minimum expected length of response body
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -108,6 +108,7 @@ enum tpm2_return_codes {
+ 	TPM2_RC_COMMAND_CODE    = 0x0143,
+ 	TPM2_RC_TESTING		= 0x090A, /* RC_WARN */
+ 	TPM2_RC_REFERENCE_H0	= 0x0910,
++	TPM2_RC_RETRY		= 0x0922,
+ };
+ 
+ enum tpm2_algorithms {
