@@ -1,42 +1,47 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZoGgkZNtozw5RG9IJHy7lJFbI4GhsVltLjbrm6vaPPLoDa3TkiOas+OxvDM82nkRW1ZMbie
-ARC-Seal: i=1; a=rsa-sha256; t=1524838321; cv=none;
+X-Google-Smtp-Source: AB8JxZr4jkNudYTWOqQIN9XVOV4qF5cXCmCnijTY+4ok+Te9zu+rAJn41LN0+BxH7dKwMCENsZP8
+ARC-Seal: i=1; a=rsa-sha256; t=1524838319; cv=none;
         d=google.com; s=arc-20160816;
-        b=kkmxWkMigOeMa6WTB9wZVi1dHL0F4pmOIDG+GhqVkWeCrLyUr4rtZodVAxvkp+1FX4
-         1pIDhQ2GR0bdiyAXI1wk9U67N6CF+jGy57lQsiJaOV/rYpX8wP+h6GeIFnQUppg9SiMP
-         kLIxkIIYrXxIyTw7YObR6AhoRW9XK1SEpTLvWUC/VDIwR4RB1R+QVtnYR0zWNGqLbe4k
-         FMB9yJUVLQ3QT43nhL8o5wMwAXFrA8LqtZ4/r4oBitrup8SBsjl7wd4NhdMEdS/BQYw4
-         ftRuFAkGk6uJNDHZLFGwJWuQcTDxINQSA3/KF3iA8LfA01xXuEi+Bmwx91Ha3cHGpix1
-         jWZQ==
+        b=Emqcrkj96XCob6F7R9Ds72JFonjENRKF08ioq+XSeje6Lg3OzKdtEySnJBCyitFO1Y
+         l6g58PNKHtON1ayfZVFlXr/s+ed3AzDicoQvAkdu6qsNQ731POfqwrm26eSt72WC7h10
+         XjdcCiCeVADR6eHmE6m0Znh+N68QzCXV3p7huAnvIuxANTlB2mpfoAULiv0hVqdJkBv3
+         czrLHbyMKcCuY08sbRytPmUr4J6aOQhAvrZ3bflaEVDyps3Bs/ATLGiW4/N18WKMADQe
+         cVu7u1MGZQUQ1IEjLOcoCFoveDiYEpvji7x5iTVCCIV7Wa0j7CxK9Mv/Z6/Gs0iliWXI
+         H+OQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=zjHRU3U62LIvrWGVV8ihEUcuxBZt+GY5SII+aYKzDzE=;
-        b=dLf0oyYqorwb5681PxqGXMvvUGGEDzWKhUJNbjgmMbn0pVL4AQ12vGe62GyMwpZ7Wv
-         QnPhIpK56KUkaHqgP3baAVjVgrgdvbqYb9XvBxxaPrzj2TVizRbHPDJ7ZZhK5iHWM/SV
-         HJx+1YvDQi+BDrKIEQCj0BqAHZMBmAavzrvSuQq98Fj056yEDl/elwWDTY8xlRm3vMie
-         M/QbYGELHdToQgdGPNT03Hh9lToOjZITgDDzMjLV30Fy744Cj9cbLbbluL/TyeOJ4ZUg
-         M98SEKi+VJGwL2L/+etj3p8qCHD3elXgTZ/foNoGjWPwLD3lNxATr5e5jGdpmkQI5wzS
-         61xg==
+        bh=aBszZKiSpYzOg0zn6WMjJOVn0n4rDvtAxftJN0FlWf0=;
+        b=apHerWS4L0wxvpKLSVbaT63Smn1y8zNXBsxDDSi6ut0+Y+4KjpIq1Z7djaMbhrMy78
+         TmzeoDV4hN2zrMx2Pf9Q1vU/ClEzKTKZLr9w82GaJXe20MAey/y2FpdOsw1BuOW+Hva3
+         MDer9XcVkCUHN9cDGNfQN1w4TCUSHXYrmoScW9yVWaDxBGEbcATHg5P3tyDaj6gIjwzC
+         dFx2zFj3P76zoyQOrQIMshlh5sbeaQ6PTCbdyUGkF1iVXmts52PZR5boqt+uhx1JiLov
+         FaJWdbldro21eHzfXpUwFWJt95u1vnTaUsHY2j6faZe0n8hflySjsgmmaDSdDWW+9tqI
+         M9ug==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA77D21892
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06CA621864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-	syzbot <syzbot+9369930ca44f29e60e2d@syzkaller.appspotmail.com>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	James Morris <james.morris@microsoft.com>,
-	"Eric W. Biederman" <ebiederm@xmission.com>
-Subject: [PATCH 4.16 61/81] commoncap: Handle memory allocation failure.
-Date: Fri, 27 Apr 2018 15:59:03 +0200
-Message-Id: <20180427135746.913943828@linuxfoundation.org>
+	Randy Dunlap <rdunlap@infradead.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	=?UTF-8?q?=D0=9C=D0=B8=D1=85=D0=B0=D0=B8=D0=BB=20=D0=9D=D0=BE=D1=81=D0=BE=D0=B2?= <drdeimosnn@gmail.com>,
+	=?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+	Balbir Singh <bsingharora@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Ralph Campbell <rcampbell@nvidia.com>,
+	John Hubbard <jhubbard@nvidia.com>,
+	Evgeny Baskakov <ebaskakov@nvidia.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.16 60/81] Revert "mm/hmm: fix header file if/else/endif maze"
+Date: Fri, 27 Apr 2018 15:59:02 +0200
+Message-Id: <20180427135746.867987823@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135743.216853156@linuxfoundation.org>
 References: <20180427135743.216853156@linuxfoundation.org>
@@ -46,8 +51,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908648105259176?=
-X-GMAIL-MSGID: =?utf-8?q?1598908867688754751?=
+X-GMAIL-THRID: =?utf-8?q?1598908642933021781?=
+X-GMAIL-MSGID: =?utf-8?q?1598908865719198475?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,37 +60,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit 1f5781725dcbb026438e77091c91a94f678c3522 upstream.
+This reverts commit 25df8b83e867dcfb660123e9589ebf6f094fcdd3 which is
+commit b28b08de436a638c82d0cf3dcdbdbad055baf1fc upstream.
 
-syzbot is reporting NULL pointer dereference at xattr_getsecurity() [1],
-for cap_inode_getsecurity() is returning sizeof(struct vfs_cap_data) when
-memory allocation failed. Return -ENOMEM if memory allocation failed.
+There are still build errors with this patch applied, and the upstream
+patches do not seem to apply anymore, so reverting this patch seems like
+the best thing to do at this point in time.
 
-[1] https://syzkaller.appspot.com/bug?id=a55ba438506fe68649a5f50d2d82d56b365e0107
-
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Fixes: 8db6c34f1dbc8e06 ("Introduce v3 namespaced file capabilities")
-Reported-by: syzbot <syzbot+9369930ca44f29e60e2d@syzkaller.appspotmail.com>
-Cc: stable <stable@vger.kernel.org> # 4.14+
-Acked-by: Serge E. Hallyn <serge@hallyn.com>
-Acked-by: James Morris <james.morris@microsoft.com>
-Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Михаил Носов <drdeimosnn@gmail.com>
+Cc: Jérôme Glisse <jglisse@redhat.com>
+Cc: Balbir Singh <bsingharora@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Ralph Campbell <rcampbell@nvidia.com>
+Cc: John Hubbard <jhubbard@nvidia.com>
+Cc: Evgeny Baskakov <ebaskakov@nvidia.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- security/commoncap.c |    2 ++
- 1 file changed, 2 insertions(+)
+ include/linux/hmm.h |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/security/commoncap.c
-+++ b/security/commoncap.c
-@@ -449,6 +449,8 @@ int cap_inode_getsecurity(struct inode *
- 				magic |= VFS_CAP_FLAGS_EFFECTIVE;
- 			memcpy(&cap->data, &nscap->data, sizeof(__le32) * 2 * VFS_CAP_U32);
- 			cap->magic_etc = cpu_to_le32(magic);
-+		} else {
-+			size = -ENOMEM;
- 		}
- 	}
- 	kfree(tmpbuf);
+--- a/include/linux/hmm.h
++++ b/include/linux/hmm.h
+@@ -498,16 +498,23 @@ struct hmm_device {
+ struct hmm_device *hmm_device_new(void *drvdata);
+ void hmm_device_put(struct hmm_device *hmm_device);
+ #endif /* CONFIG_DEVICE_PRIVATE || CONFIG_DEVICE_PUBLIC */
++#endif /* IS_ENABLED(CONFIG_HMM) */
+ 
+ /* Below are for HMM internal use only! Not to be used by device driver! */
++#if IS_ENABLED(CONFIG_HMM_MIRROR)
+ void hmm_mm_destroy(struct mm_struct *mm);
+ 
+ static inline void hmm_mm_init(struct mm_struct *mm)
+ {
+ 	mm->hmm = NULL;
+ }
++#else /* IS_ENABLED(CONFIG_HMM_MIRROR) */
++static inline void hmm_mm_destroy(struct mm_struct *mm) {}
++static inline void hmm_mm_init(struct mm_struct *mm) {}
++#endif /* IS_ENABLED(CONFIG_HMM_MIRROR) */
++
++
+ #else /* IS_ENABLED(CONFIG_HMM) */
+ static inline void hmm_mm_destroy(struct mm_struct *mm) {}
+ static inline void hmm_mm_init(struct mm_struct *mm) {}
+-#endif /* IS_ENABLED(CONFIG_HMM) */
+ #endif /* LINUX_HMM_H */
