@@ -1,76 +1,165 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932630AbeD0J7X (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 05:59:23 -0400
-Received: from www62.your-server.de ([213.133.104.62]:48816 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932491AbeD0J7S (ORCPT
+        id S932592AbeD0J7W (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 05:59:22 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:37348 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932488AbeD0J7R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 05:59:18 -0400
-Subject: Re: [PATCH bpf-next] bpf, doc: Update bpf_jit_enable limitation for
- CONFIG_BPF_JIT_ALWAYS_ON
-To: Leo Yan <leo.yan@linaro.org>
-Cc: Alexei Starovoitov <ast@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jonathan Corbet <corbet@lwn.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-References: <1524709611-29437-1-git-send-email-leo.yan@linaro.org>
- <275e03a2-b74e-8f60-4ffe-26c9a79fae9d@iogearbox.net>
- <20180427094910.GA31015@leoy-ThinkPad-X240s>
-From: Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <cf3700a3-3d92-ee43-62f3-481d00baf330@iogearbox.net>
-Date: Fri, 27 Apr 2018 11:59:13 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
-MIME-Version: 1.0
-In-Reply-To: <20180427094910.GA31015@leoy-ThinkPad-X240s>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Fri, 27 Apr 2018 05:59:17 -0400
+X-Google-Smtp-Source: AB8JxZrN+WG5zotmoSTukMGrbwnAko1mHWJRnaoz7Ar4h9sblcJ/XptTYM5WwG2tVy2K/pgr5SSIFg==
+Message-ID: <1524823154.4026.123.camel@baylibre.com>
+Subject: Re: [PATCH v7 0/7] clk: meson-axg: Add AO Cloclk and Reset driver
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Yixun Lan <yixun.lan@amlogic.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
+Cc: Rob Herring <robh@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Date: Fri, 27 Apr 2018 11:59:14 +0200
+In-Reply-To: <fbd24a73-6793-76be-3ca5-04cbac5db198@amlogic.com>
+References: <20180426084437.192394-1-yixun.lan@amlogic.com>
+         <1524820841.4026.112.camel@baylibre.com>
+         <fbd24a73-6793-76be-3ca5-04cbac5db198@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/27/2018 11:49 AM, Leo Yan wrote:
-> On Fri, Apr 27, 2018 at 11:44:44AM +0200, Daniel Borkmann wrote:
->> On 04/26/2018 04:26 AM, Leo Yan wrote:
->>> When CONFIG_BPF_JIT_ALWAYS_ON is enabled, kernel has limitation for
->>> bpf_jit_enable, so it has fixed value 1 and we cannot set it to 2
->>> for JIT opcode dumping; this patch is to update the doc for it.
->>>
->>> Signed-off-by: Leo Yan <leo.yan@linaro.org>
->>> ---
->>>  Documentation/networking/filter.txt | 6 ++++++
->>>  1 file changed, 6 insertions(+)
->>>
->>> diff --git a/Documentation/networking/filter.txt b/Documentation/networking/filter.txt
->>> index fd55c7d..feddab9 100644
->>> --- a/Documentation/networking/filter.txt
->>> +++ b/Documentation/networking/filter.txt
->>> @@ -483,6 +483,12 @@ Example output from dmesg:
->>>  [ 3389.935851] JIT code: 00000030: 00 e8 28 94 ff e0 83 f8 01 75 07 b8 ff ff 00 00
->>>  [ 3389.935852] JIT code: 00000040: eb 02 31 c0 c9 c3
->>>  
->>> +When CONFIG_BPF_JIT_ALWAYS_ON is enabled, bpf_jit_enable is set to 1 by default
->>> +and it returns failure if change to any other value from proc node; this is
->>> +for security consideration to avoid leaking info to unprivileged users. In this
->>> +case, we can't directly dump JIT opcode image from kernel log, alternatively we
->>> +need to use bpf tool for the dumping.
->>> +
->>
->> Could you change this doc text a bit, I think it's slightly misleading. From the first
->> sentence one could also interpret that value 0 would leaking info to unprivileged users
->> whereas here we're only talking about the case of value 2. Maybe something roughly like
->> this to make it more clear:
->>
->>   When CONFIG_BPF_JIT_ALWAYS_ON is enabled, bpf_jit_enable is permanently set to 1 and
->>   setting any other value than that will return in failure. This is even the case for
->>   setting bpf_jit_enable to 2, since dumping the final JIT image into the kernel log
->>   is discouraged and introspection through bpftool (under tools/bpf/bpftool/) is the
->>   generally recommended approach instead.
+On Fri, 2018-04-27 at 17:31 +0800, Yixun Lan wrote:
+> hi Jerome:
 > 
-> Yeah, your rephrasing is more clear and better.  Will do this and send
-> new patch soon.  Thanks for your helping.
+> 
+> On 04/27/18 17:20, Jerome Brunet wrote:
+> > On Thu, 2018-04-26 at 16:44 +0800, Yixun Lan wrote:
+> > >   This patch try to add AO clock and Reset driver for Amlogic's
+> > > Meson-AXG SoC.
+> > >   Please note that patch 7 need to wait for the DTS changes[3] merged
+> > > into mainline first, otherwise it will break the serial console.
+> > > 
+> > >  patch 2: factor the common code into a dedicated file
+> > >  patch 3-5: add the aoclk driver for AXG SoC
+> > >  patch 6-7: drop unnecessary clock flags
+> > > 
+> > > changes since v6 at [7]: 
+> > >  - fix over 80 chars chechpatch error
+> > >  - add Philip's Ack on patch 5
+> > >  - drop extra end of newline
+> > > 
+> > > changes since v5 at [6]: 
+> > >  - drop unnecessary header files
+> > >  - add 'axg_aoclk' prefix to clk driver, make them more consistent
+> > >  - add missing end new line..
+> > > 
+> > > changes since v4 at [5]: 
+> > >  - fix return err
+> > >  - introduce CONFIG_COMMON_CLK_MESON_AO
+> > >  - format/style minor fix
+> > > 
+> > > changes since v3 at [4]: 
+> > >  - add 'const' contraint to the read-only data
+> > >  - switch to devm_of_clk_add_hw_provider API
+> > >  - check return value of devm_reset_controller_register
+> > > 
+> > > changes since v2 at [2]: 
+> > >  - rework meson_aoclkc_probe() which leverage the of_match_data
+> > >  - merge patch 5-6 into this series
+> > >  - seperate DTS patch, will send to Kevin Hilman independently
+> > >  
+> > > changes since v1 at [0]: 
+> > >  - rebase to clk-meson's branch 'next/drivers' [1]
+> > >  - fix license, update to BSD-3-Clause
+> > >  - drop un-used include header file
+> > > 
+> > > [0] https://lkml.kernel.org/r/20180209070026.193879-1-yixun.lan@amlogic.com
+> > > [1] git://github.com/BayLibre/clk-meson.git branch: next-drivers
+> > > [2] https://lkml.kernel.org/r/20180323143816.200573-1-yixun.lan@amlogic.com
+> > > [3] https://lkml.kernel.org/r/20180326081809.49493-4-yixun.lan@amlogic.com
+> > > [4] https://lkml.kernel.org/r/20180328025050.221585-1-yixun.lan@amlogic.com
+> > > [5] https://lkml.kernel.org/r/20180408031938.153474-1-yixun.lan@amlogic.com
+> > > [6] https://lkml.kernel.org/r/20180409143749.71197-1-yixun.lan@amlogic.com
+> > > [7] https://lkml.kernel.org/r/20180419135426.155794-1-yixun.lan@amlogic.com
+> > 
+> > Yixun,
+> > 
+> > Your series looks mostly Ok to me, apart from the problem reported by Philipp.
+> > 
+> > However, once applied, if the clkc ao controller is enabled, both gxl and axg
+> > fail to complete the boot. Could you please explain how this was tested ??
+> > 
+> 
+> isn't this caused by the patch 7?
+>  [PATCH v7 7/7] clk: meson: drop CLK_IGNORE_UNUSED flag
+> 
+> 
+> you need to also apply this DT patch which I've sent[1]:
+>  [PATCH v3 3/3] ARM64: dts: meson: fix clock source of the pclk for UART_AO
+> 
+> could you exclude the patch 7 for now until Kevin merged the DT part?
+> 
+> [1] https://lkml.kernel.org/r/20180328030130.240336-4-yixun.lan@amlogic.com
 
-Awesome, thank you!
+Looks to be the problem indeed. But it is still an issue with how your patchset
+in organized.
+
+I can't merge this until Kevin merges the patch above, which he can't merge
+until there is the clkc_ao support in axg, which is given by this series.
+
+1# You should remove the axg part of the patch above. Kevin will be able to
+merge it w/o any dependencies. (BTW, the patch is broken for axg because 1) you
+did not include the dt-binding header for the clkc_ao in axg and 2) the clkc_ao
+does not exist at this stage)
+2# I can then safely merge this series - w/o breaking gxbb and gxl.
+3# Finally you'll have to make a DT change for the axg, enabling the clkc_ao and
+changes the uart clocks at the same time.
+
+> 
+> 
+> > Not merging it until we get to the bottom of this.
+> > 
+> > > 
+> > > 
+> > > Qiufang Dai (1):
+> > >   clk: meson-axg: Add AO Clock and Reset controller driver
+> > > 
+> > > Yixun Lan (6):
+> > >   clk: meson: migrate to devm_of_clk_add_hw_provider API
+> > >   clk: meson: aoclk: refactor common code into dedicated file
+> > >   dt-bindings: clock: axg-aoclkc: New binding for Meson-AXG SoC
+> > >   dt-bindings: clock: reset: Add AXG AO Clock and Reset Bindings
+> > >   clk: meson: drop CLK_SET_RATE_PARENT flag
+> > >   clk: meson: drop CLK_IGNORE_UNUSED flag
+> > > 
+> > >  .../bindings/clock/amlogic,gxbb-aoclkc.txt    |   1 +
+> > >  drivers/clk/meson/Kconfig                     |   8 +
+> > >  drivers/clk/meson/Makefile                    |   3 +-
+> > >  drivers/clk/meson/axg-aoclk.c                 | 163 ++++++++++++++++++
+> > >  drivers/clk/meson/axg-aoclk.h                 |  29 ++++
+> > >  drivers/clk/meson/gxbb-aoclk.c                |  95 ++++------
+> > >  drivers/clk/meson/gxbb-aoclk.h                |   5 +
+> > >  drivers/clk/meson/meson-aoclk.c               |  81 +++++++++
+> > >  drivers/clk/meson/meson-aoclk.h               |  34 ++++
+> > >  include/dt-bindings/clock/axg-aoclkc.h        |  26 +++
+> > >  include/dt-bindings/reset/axg-aoclkc.h        |  20 +++
+> > >  11 files changed, 401 insertions(+), 64 deletions(-)
+> > >  create mode 100644 drivers/clk/meson/axg-aoclk.c
+> > >  create mode 100644 drivers/clk/meson/axg-aoclk.h
+> > >  create mode 100644 drivers/clk/meson/meson-aoclk.c
+> > >  create mode 100644 drivers/clk/meson/meson-aoclk.h
+> > >  create mode 100644 include/dt-bindings/clock/axg-aoclkc.h
+> > >  create mode 100644 include/dt-bindings/reset/axg-aoclkc.h
+> > > 
+> > 
+> > .
+> > 
+> 
+> 
