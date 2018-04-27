@@ -1,55 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933059AbeD0X2u (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 19:28:50 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49996 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932444AbeD0X2t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 19:28:49 -0400
-Date: Sat, 28 Apr 2018 07:28:43 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Dave Young <dyoung@redhat.com>
-Cc: kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-        akpm@linux-foundation.org, yinghai@kernel.org, vgoyal@redhat.com
-Subject: Re: [PATCH 1/2] kdump/x86: crashkernel=X try to reserve below 896M
- first then below 4G and MAXMEM
-Message-ID: <20180427232843.GA30581@MiWiFi-R3L-srv>
-References: <20180427090045.532014306@redhat.com>
- <20180427091410.GA25338@dhcp-128-65.nay.redhat.com>
+        id S933083AbeD0Xb0 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 19:31:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48946 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932444AbeD0XbY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 19:31:24 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABD5721920
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=atull@kernel.org
+X-Google-Smtp-Source: AB8JxZpEkmuGyjgZE7DaM2yr/UihXB0NcKF+QMDkqLzdyG052QVesC926bJN27miKPAs5wf8ZvoWso4JqiH2RqWHAGg=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180427091410.GA25338@dhcp-128-65.nay.redhat.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <152cb232-ea4d-292b-8b60-8bdc1732dc23@gmail.com>
+References: <20180427012605.28981-1-mdf@kernel.org> <20180427012605.28981-3-mdf@kernel.org>
+ <152cb232-ea4d-292b-8b60-8bdc1732dc23@gmail.com>
+From: Alan Tull <atull@kernel.org>
+Date: Fri, 27 Apr 2018 18:30:42 -0500
+X-Gmail-Original-Message-ID: <CANk1AXTZhCA78eX9j5dg1VeNyg8G4+hsiSgG_CYpZObjJw+wfw@mail.gmail.com>
+Message-ID: <CANk1AXTZhCA78eX9j5dg1VeNyg8G4+hsiSgG_CYpZObjJw+wfw@mail.gmail.com>
+Subject: Re: [PATCH 2/4] fpga: manager: change api, don't use drvdata
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Moritz Fischer <mdf@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-fpga@vger.kernel.org,
+        linux-doc@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/27/18 at 05:14pm, Dave Young wrote:
-> Hi,
->  
-> This is a resend of below patches:
-> http://lists.infradead.org/pipermail/kexec/2017-October/019569.html
->  
-> I dropped the original patch 1 since Baoquan is not happy with it.
-> For patch 2 (the 1st patch in this series), there is some improvement
-> comment from Baoquan to create some generic memblock iteration function.
-> But nobody has time to work on it for the time being.  According to
-> offline discussion with him.  That can be done in the future if someone
-> is interested.  We can go with the current kdump only fixes.
->  
-> Other than above,  the patches are just same.
+On Fri, Apr 27, 2018 at 1:26 PM, Florian Fainelli <f.fainelli@gmail.com> wrote:
+> On 04/26/2018 06:26 PM, Moritz Fischer wrote:
+>> From: Alan Tull <atull@kernel.org>
+>>
+>> Change fpga_mgr_register to not set or use drvdata.  This supports
+>> the case where a PCIe device has more than one manager.
+>>
+>> Add fpga_mgr_create/free functions.  Change fpga_mgr_register and
+>> fpga_mgr_unregister functions to take the mgr struct as their only
+>> parameter.
+>>
+>>   struct fpga_manager *fpga_mgr_create(struct device *dev,
+>>                 const char *name,
+>>                 const struct fpga_manager_ops *mops,
+>>                 void *priv);
+>>   void fpga_mgr_free(struct fpga_manager *mgr);
+>>   int fpga_mgr_register(struct fpga_manager *mgr);
+>>   void fpga_mgr_unregister(struct fpga_manager *mgr);
+>>
+>> Update the drivers that call fpga_mgr_register with the new API.
+>
+> Apologies for chiming in so late, this commit does not make it clear
+> that fpga_mgr_unregister() now also free the 'mgr' argument by calling
+> fpga_mgr_free(), this is kind of detail, but an API should make that
+> clear IMHO.
 
-Thanks to work on this. Looks good to me.
+If people follow the usage information, in
+Documentation/fpga/fpga-mgr.txt, they'll do the right thing.  But I
+can add a patch that clarifies the description of fpga_mgr_unregister
+in fpga-mgr.c that it "unregisters and frees" the manager.
 
-ACK
-
-Acked-by: Baoquan He <bhe@redhat.com>
-
-Thanks
-Baoquan
-
-> _______________________________________________
-> kexec mailing list
-> kexec@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/kexec
+>
+> Thanks
+> --
+> Florian
