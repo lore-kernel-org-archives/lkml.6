@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752831AbeD0ATA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 20:19:00 -0400
-Received: from vern.gendns.com ([206.190.152.46]:46403 "EHLO vern.gendns.com"
+        id S1757402AbeD0ATJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 20:19:09 -0400
+Received: from vern.gendns.com ([206.190.152.46]:46453 "EHLO vern.gendns.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1757334AbeD0ASz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 20:18:55 -0400
+        id S1757334AbeD0ATC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 20:19:02 -0400
 From: David Lechner <david@lechnology.com>
 To: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
@@ -16,9 +16,9 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org,
         David Lechner <david@lechnology.com>
-Subject: [PATCH v9 22/27] ARM: davinci: da8xx: Remove legacy USB and SATA clock init
-Date: Thu, 26 Apr 2018 19:17:40 -0500
-Message-Id: <20180427001745.4116-23-david@lechnology.com>
+Subject: [PATCH v9 26/27] ARM: davinci: da8xx-dt: switch to device tree clocks
+Date: Thu, 26 Apr 2018 19:17:44 -0500
+Message-Id: <20180427001745.4116-27-david@lechnology.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427001745.4116-1-david@lechnology.com>
 References: <20180427001745.4116-1-david@lechnology.com>
@@ -36,362 +36,156 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This removes the unused legacy USB and SATA clock init code from
-arch/arm/mach-davinci/{devices,usb}-da8xx}.c.
+This removes all of the clock init code from da8xx-dt.c. This includes
+all of the OF_DEV_AUXDATA that was just used for looking up clocks.
 
 Signed-off-by: David Lechner <david@lechnology.com>
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
 ---
 
 v9 changes:
-- none
+- changes to arch/arm/mach-davinci/time.c accidentally got squashed into this
+  commit. will drop this later.
 
 v8 changes:
 - none
 
 v7 changes:
 - rebased
-- add davinci prefix to commit message
+- drop of_platform_default_populate(NULL, NULL, NULL)
+- add change in pm_domain.c
 
 v6 changes:
-- rebased
+- removed misleading statement from commit message
 
 
- arch/arm/mach-davinci/devices-da8xx.c      |  29 ---
- arch/arm/mach-davinci/include/mach/da8xx.h |   3 -
- arch/arm/mach-davinci/usb-da8xx.c          | 238 ---------------------
- 3 files changed, 270 deletions(-)
+ arch/arm/mach-davinci/da8xx-dt.c  | 58 -------------------------------
+ arch/arm/mach-davinci/pm_domain.c |  5 +++
+ arch/arm/mach-davinci/time.c      |  9 ++---
+ 3 files changed, 10 insertions(+), 62 deletions(-)
 
-diff --git a/arch/arm/mach-davinci/devices-da8xx.c b/arch/arm/mach-davinci/devices-da8xx.c
-index 73de449bbc68..1fd3619f6a09 100644
---- a/arch/arm/mach-davinci/devices-da8xx.c
-+++ b/arch/arm/mach-davinci/devices-da8xx.c
-@@ -30,11 +30,6 @@
- #include "cpuidle.h"
- #include "sram.h"
- 
--#ifndef CONFIG_COMMON_CLK
--#include <mach/clock.h>
--#include "clock.h"
--#endif
--
- #define DA8XX_TPCC_BASE			0x01c00000
- #define DA8XX_TPTC0_BASE		0x01c08000
- #define DA8XX_TPTC1_BASE		0x01c08400
-@@ -1045,29 +1040,6 @@ int __init da8xx_register_spi_bus(int instance, unsigned num_chipselect)
- }
- 
- #ifdef CONFIG_ARCH_DAVINCI_DA850
--#ifndef CONFIG_COMMON_CLK
--static struct clk sata_refclk = {
--	.name		= "sata_refclk",
--	.set_rate	= davinci_simple_set_rate,
--};
--
--static struct clk_lookup sata_refclk_lookup =
--		CLK("ahci_da850", "refclk", &sata_refclk);
--
--int __init da850_register_sata_refclk(int rate)
--{
--	int ret;
--
--	sata_refclk.rate = rate;
--	ret = clk_register(&sata_refclk);
--	if (ret)
--		return ret;
--
--	clkdev_add(&sata_refclk_lookup);
--
--	return 0;
--}
--#else
- int __init da850_register_sata_refclk(int rate)
- {
- 	struct clk *clk;
-@@ -1078,7 +1050,6 @@ int __init da850_register_sata_refclk(int rate)
- 
- 	return clk_register_clkdev(clk, "refclk", "ahci_da850");
- }
--#endif
- 
- static struct resource da850_sata_resources[] = {
- 	{
-diff --git a/arch/arm/mach-davinci/include/mach/da8xx.h b/arch/arm/mach-davinci/include/mach/da8xx.h
-index 5d7b1de9aa7e..ab4a57f433f4 100644
---- a/arch/arm/mach-davinci/include/mach/da8xx.h
-+++ b/arch/arm/mach-davinci/include/mach/da8xx.h
-@@ -103,9 +103,6 @@ int da8xx_register_watchdog(void);
- int da8xx_register_usb_phy(void);
- int da8xx_register_usb20(unsigned mA, unsigned potpgt);
- int da8xx_register_usb11(struct da8xx_ohci_root_hub *pdata);
--int da8xx_register_usb_refclkin(int rate);
--int da8xx_register_usb20_phy_clk(bool use_usb_refclkin);
--int da8xx_register_usb11_phy_clk(bool use_usb_refclkin);
- int da8xx_register_usb_phy_clocks(void);
- int da850_register_sata_refclk(int rate);
- int da8xx_register_emac(void);
-diff --git a/arch/arm/mach-davinci/usb-da8xx.c b/arch/arm/mach-davinci/usb-da8xx.c
-index c8d2f3075e69..c17ce66a3d95 100644
---- a/arch/arm/mach-davinci/usb-da8xx.c
-+++ b/arch/arm/mach-davinci/usb-da8xx.c
-@@ -20,11 +20,6 @@
+diff --git a/arch/arm/mach-davinci/da8xx-dt.c b/arch/arm/mach-davinci/da8xx-dt.c
+index 088bc5c0318b..23ac4108f812 100644
+--- a/arch/arm/mach-davinci/da8xx-dt.c
++++ b/arch/arm/mach-davinci/da8xx-dt.c
+@@ -19,67 +19,10 @@
+ #include "cp_intc.h"
  #include <mach/da8xx.h>
- #include <mach/irqs.h>
  
--#ifndef CONFIG_COMMON_CLK
--#include <mach/clock.h>
--#include "clock.h"
--#endif
+-static struct of_dev_auxdata da850_aemif_auxdata_lookup[] = {
+-	OF_DEV_AUXDATA("ti,davinci-nand", 0x62000000, "davinci-nand.0", NULL),
+-	{}
+-};
 -
- #define DA8XX_USB0_BASE		0x01e00000
- #define DA8XX_USB1_BASE		0x01e25000
+-static struct aemif_platform_data aemif_data = {
+-	.dev_lookup = da850_aemif_auxdata_lookup,
+-};
+-
+-static struct of_dev_auxdata da850_auxdata_lookup[] __initdata = {
+-	OF_DEV_AUXDATA("ti,davinci-i2c", 0x01c22000, "i2c_davinci.1", NULL),
+-	OF_DEV_AUXDATA("ti,davinci-i2c", 0x01e28000, "i2c_davinci.2", NULL),
+-	OF_DEV_AUXDATA("ti,davinci-wdt", 0x01c21000, "davinci-wdt", NULL),
+-	OF_DEV_AUXDATA("ti,da830-mmc", 0x01c40000, "da830-mmc.0", NULL),
+-	OF_DEV_AUXDATA("ti,da850-ehrpwm", 0x01f00000, "ehrpwm.0", NULL),
+-	OF_DEV_AUXDATA("ti,da850-ehrpwm", 0x01f02000, "ehrpwm.1", NULL),
+-	OF_DEV_AUXDATA("ti,da850-ecap", 0x01f06000, "ecap.0", NULL),
+-	OF_DEV_AUXDATA("ti,da850-ecap", 0x01f07000, "ecap.1", NULL),
+-	OF_DEV_AUXDATA("ti,da850-ecap", 0x01f08000, "ecap.2", NULL),
+-	OF_DEV_AUXDATA("ti,da830-spi", 0x01c41000, "spi_davinci.0", NULL),
+-	OF_DEV_AUXDATA("ti,da830-spi", 0x01f0e000, "spi_davinci.1", NULL),
+-	OF_DEV_AUXDATA("ns16550a", 0x01c42000, "serial8250.0", NULL),
+-	OF_DEV_AUXDATA("ns16550a", 0x01d0c000, "serial8250.1", NULL),
+-	OF_DEV_AUXDATA("ns16550a", 0x01d0d000, "serial8250.2", NULL),
+-	OF_DEV_AUXDATA("ti,davinci_mdio", 0x01e24000, "davinci_mdio.0", NULL),
+-	OF_DEV_AUXDATA("ti,davinci-dm6467-emac", 0x01e20000, "davinci_emac.1",
+-		       NULL),
+-	OF_DEV_AUXDATA("ti,da830-mcasp-audio", 0x01d00000, "davinci-mcasp.0", NULL),
+-	OF_DEV_AUXDATA("ti,da850-aemif", 0x68000000, "ti-aemif", &aemif_data),
+-	OF_DEV_AUXDATA("ti,da850-tilcdc", 0x01e13000, "da8xx_lcdc.0", NULL),
+-	OF_DEV_AUXDATA("ti,da830-ohci", 0x01e25000, "ohci-da8xx", NULL),
+-	OF_DEV_AUXDATA("ti,da830-musb", 0x01e00000, "musb-da8xx", NULL),
+-	OF_DEV_AUXDATA("ti,da830-usb-phy", 0x01c1417c, "da8xx-usb-phy", NULL),
+-	OF_DEV_AUXDATA("ti,da850-ahci", 0x01e18000, "ahci_da850", NULL),
+-	OF_DEV_AUXDATA("ti,da850-vpif", 0x01e17000, "vpif", NULL),
+-	OF_DEV_AUXDATA("ti,da850-dsp", 0x11800000, "davinci-rproc.0", NULL),
+-	{}
+-};
+-
+ #ifdef CONFIG_ARCH_DAVINCI_DA850
  
-@@ -87,11 +82,6 @@ static struct platform_device da8xx_usb20_dev = {
- 	.name		= "musb-da8xx",
- 	.id             = -1,
- 	.dev = {
--		/*
--		 * Setting init_name so that clock lookup will work in
--		 * usb20_phy_clk_enable() even if this device is not registered.
--		 */
--		.init_name		= "musb-da8xx",
- 		.platform_data		= &usb_data,
- 		.dma_mask		= &usb_dmamask,
- 		.coherent_dma_mask      = DMA_BIT_MASK(32),
-@@ -140,234 +130,6 @@ int __init da8xx_register_usb11(struct da8xx_ohci_root_hub *pdata)
- 	return platform_device_register(&da8xx_usb11_device);
+ static void __init da850_init_machine(void)
+ {
+-	/* All existing boards use 100MHz SATA refclkpn */
+-	static const unsigned long sata_refclkpn = 100 * 1000 * 1000;
+-
+-	int ret;
+-
+-	da850_register_clocks();
+-
+-	ret = da8xx_register_usb_phy_clocks();
+-	if (ret)
+-		pr_warn("%s: USB PHY CLK registration failed: %d\n",
+-			__func__, ret);
+-
+-	ret = da850_register_sata_refclk(sata_refclkpn);
+-	if (ret)
+-		pr_warn("%s: registering SATA REFCLK failed: %d",
+-			__func__, ret);
+-
+-	of_platform_default_populate(NULL, da850_auxdata_lookup, NULL);
+ 	davinci_pm_init();
+ 	pdata_quirks_init();
  }
+@@ -94,7 +37,6 @@ static const char *const da850_boards_compat[] __initconst = {
  
--#ifndef CONFIG_COMMON_CLK
--static struct clk usb_refclkin = {
--	.name		= "usb_refclkin",
--	.set_rate	= davinci_simple_set_rate,
--};
--
--static struct clk_lookup usb_refclkin_lookup =
--	CLK(NULL, "usb_refclkin", &usb_refclkin);
--
--/**
-- * da8xx_register_usb_refclkin - register USB_REFCLKIN clock
-- *
-- * @rate: The clock rate in Hz
-- *
-- * This clock is only needed if the board provides an external USB_REFCLKIN
-- * signal, in which case it will be used as the parent of usb20_phy_clk and/or
-- * usb11_phy_clk.
-- */
--int __init da8xx_register_usb_refclkin(int rate)
--{
--	int ret;
--
--	usb_refclkin.rate = rate;
--	ret = clk_register(&usb_refclkin);
--	if (ret)
--		return ret;
--
--	clkdev_add(&usb_refclkin_lookup);
--
--	return 0;
--}
--
--static void usb20_phy_clk_enable(struct clk *clk)
--{
--	u32 val;
--	u32 timeout = 500000; /* 500 msec */
--
--	val = readl(DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP2_REG));
--
--	/* The USB 2.O PLL requires that the USB 2.O PSC is enabled as well. */
--	davinci_clk_enable(usb20_clk);
--
--	/*
--	 * Turn on the USB 2.0 PHY, but just the PLL, and not OTG. The USB 1.1
--	 * host may use the PLL clock without USB 2.0 OTG being used.
--	 */
--	val &= ~(CFGCHIP2_RESET | CFGCHIP2_PHYPWRDN);
--	val |= CFGCHIP2_PHY_PLLON;
--
--	writel(val, DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP2_REG));
--
--	while (--timeout) {
--		val = readl(DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP2_REG));
--		if (val & CFGCHIP2_PHYCLKGD)
--			goto done;
--		udelay(1);
--	}
--
--	pr_err("Timeout waiting for USB 2.0 PHY clock good\n");
--done:
--	davinci_clk_disable(usb20_clk);
--}
--
--static void usb20_phy_clk_disable(struct clk *clk)
--{
--	u32 val;
--
--	val = readl(DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP2_REG));
--	val |= CFGCHIP2_PHYPWRDN;
--	writel(val, DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP2_REG));
--}
--
--static int usb20_phy_clk_set_parent(struct clk *clk, struct clk *parent)
--{
--	u32 val;
--
--	val = readl(DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP2_REG));
--
--	/* Set the mux depending on the parent clock. */
--	if (parent == &usb_refclkin) {
--		val &= ~CFGCHIP2_USB2PHYCLKMUX;
--	} else if (strcmp(parent->name, "pll0_aux_clk") == 0) {
--		val |= CFGCHIP2_USB2PHYCLKMUX;
--	} else {
--		pr_err("Bad parent on USB 2.0 PHY clock\n");
--		return -EINVAL;
--	}
--
--	/* reference frequency also comes from parent clock */
--	val &= ~CFGCHIP2_REFFREQ_MASK;
--	switch (clk_get_rate(parent)) {
--	case 12000000:
--		val |= CFGCHIP2_REFFREQ_12MHZ;
--		break;
--	case 13000000:
--		val |= CFGCHIP2_REFFREQ_13MHZ;
--		break;
--	case 19200000:
--		val |= CFGCHIP2_REFFREQ_19_2MHZ;
--		break;
--	case 20000000:
--		val |= CFGCHIP2_REFFREQ_20MHZ;
--		break;
--	case 24000000:
--		val |= CFGCHIP2_REFFREQ_24MHZ;
--		break;
--	case 26000000:
--		val |= CFGCHIP2_REFFREQ_26MHZ;
--		break;
--	case 38400000:
--		val |= CFGCHIP2_REFFREQ_38_4MHZ;
--		break;
--	case 40000000:
--		val |= CFGCHIP2_REFFREQ_40MHZ;
--		break;
--	case 48000000:
--		val |= CFGCHIP2_REFFREQ_48MHZ;
--		break;
--	default:
--		pr_err("Bad parent clock rate on USB 2.0 PHY clock\n");
--		return -EINVAL;
--	}
--
--	writel(val, DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP2_REG));
--
--	return 0;
--}
--
--static struct clk usb20_phy_clk = {
--	.name		= "usb0_clk48",
--	.clk_enable	= usb20_phy_clk_enable,
--	.clk_disable	= usb20_phy_clk_disable,
--	.set_parent	= usb20_phy_clk_set_parent,
--};
--
--static struct clk_lookup usb20_phy_clk_lookup =
--	CLK("da8xx-usb-phy", "usb0_clk48", &usb20_phy_clk);
--
--/**
-- * da8xx_register_usb20_phy_clk - register USB0PHYCLKMUX clock
-- *
-- * @use_usb_refclkin: Selects the parent clock - either "usb_refclkin" if true
-- *	or "pll0_aux" if false.
-- */
--int __init da8xx_register_usb20_phy_clk(bool use_usb_refclkin)
--{
--	struct clk *parent;
--	int ret;
--
--	usb20_clk = clk_get(&da8xx_usb20_dev.dev, "usb20");
--	ret = PTR_ERR_OR_ZERO(usb20_clk);
--	if (ret)
--		return ret;
--
--	parent = clk_get(NULL, use_usb_refclkin ? "usb_refclkin" : "pll0_aux");
--	ret = PTR_ERR_OR_ZERO(parent);
--	if (ret) {
--		clk_put(usb20_clk);
--		return ret;
--	}
--
--	usb20_phy_clk.parent = parent;
--	ret = clk_register(&usb20_phy_clk);
--	if (!ret)
--		clkdev_add(&usb20_phy_clk_lookup);
--
--	clk_put(parent);
--
--	return ret;
--}
--
--static int usb11_phy_clk_set_parent(struct clk *clk, struct clk *parent)
--{
--	u32 val;
--
--	val = readl(DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP2_REG));
--
--	/* Set the USB 1.1 PHY clock mux based on the parent clock. */
--	if (parent == &usb20_phy_clk) {
--		val &= ~CFGCHIP2_USB1PHYCLKMUX;
--	} else if (parent == &usb_refclkin) {
--		val |= CFGCHIP2_USB1PHYCLKMUX;
--	} else {
--		pr_err("Bad parent on USB 1.1 PHY clock\n");
--		return -EINVAL;
--	}
--
--	writel(val, DA8XX_SYSCFG0_VIRT(DA8XX_CFGCHIP2_REG));
--
--	return 0;
--}
--
--static struct clk usb11_phy_clk = {
--	.name		= "usb1_clk48",
--	.set_parent	= usb11_phy_clk_set_parent,
--};
--
--static struct clk_lookup usb11_phy_clk_lookup =
--	CLK("da8xx-usb-phy", "usb1_clk48", &usb11_phy_clk);
--
--/**
-- * da8xx_register_usb11_phy_clk - register USB1PHYCLKMUX clock
-- *
-- * @use_usb_refclkin: Selects the parent clock - either "usb_refclkin" if true
-- *	or "usb0_clk48" if false.
-- */
--int __init da8xx_register_usb11_phy_clk(bool use_usb_refclkin)
--{
--	struct clk *parent;
--	int ret = 0;
--
--	if (use_usb_refclkin)
--		parent = clk_get(NULL, "usb_refclkin");
--	else
--		parent = clk_get(&da8xx_usb_phy.dev, "usb0_clk48");
--	if (IS_ERR(parent))
--		return PTR_ERR(parent);
--
--	usb11_phy_clk.parent = parent;
--	ret = clk_register(&usb11_phy_clk);
--	if (!ret)
--		clkdev_add(&usb11_phy_clk_lookup);
--
--	clk_put(parent);
--
--	return ret;
--}
--#endif
- static struct platform_device da8xx_usb_phy_clks_device = {
- 	.name		= "da830-usb-phy-clks",
- 	.id		= -1,
+ DT_MACHINE_START(DA850_DT, "Generic DA850/OMAP-L138/AM18x")
+ 	.map_io		= da850_init,
+-	.init_time	= da850_init_time,
+ 	.init_machine	= da850_init_machine,
+ 	.dt_compat	= da850_boards_compat,
+ 	.init_late	= davinci_init_late,
+diff --git a/arch/arm/mach-davinci/pm_domain.c b/arch/arm/mach-davinci/pm_domain.c
+index 78eac2c0c146..e251fd593bfd 100644
+--- a/arch/arm/mach-davinci/pm_domain.c
++++ b/arch/arm/mach-davinci/pm_domain.c
+@@ -13,6 +13,7 @@
+ #include <linux/pm_runtime.h>
+ #include <linux/pm_clock.h>
+ #include <linux/platform_device.h>
++#include <linux/of.h>
+ 
+ static struct dev_pm_domain davinci_pm_domain = {
+ 	.ops = {
+@@ -28,6 +29,10 @@ static struct pm_clk_notifier_block platform_bus_notifier = {
+ 
+ static int __init davinci_pm_runtime_init(void)
+ {
++	if (of_have_populated_dt())
++		return 0;
++
++	/* Use pm_clk as fallback if we're not using genpd. */
+ 	pm_clk_add_notifier(&platform_bus_type, &platform_bus_notifier);
+ 
+ 	return 0;
+diff --git a/arch/arm/mach-davinci/time.c b/arch/arm/mach-davinci/time.c
+index 7a8c6fada644..77ad95913dfa 100644
+--- a/arch/arm/mach-davinci/time.c
++++ b/arch/arm/mach-davinci/time.c
+@@ -409,11 +409,12 @@ static int __init of_davinci_timer_init(struct device_node *np)
+ 
+ 		/*
+ 		 * Fall back to using ref_clk if the actual clock is not
+-		 * available. This currently always happens because platform
+-		 * clocks (i.e PLLs and PSCs) are registered as platform
+-		 * devices and therefore are not available at this point in
+-		 * the boot process.
++		 * available. There will be problems later if the real clock
++		 * source is disabled.
+ 		 */
++
++		pr_warn("%s: falling back to ref_clk\n", __func__);
++
+ 		clkspec.np = of_find_node_by_name(NULL, "ref_clk");
+ 		if (IS_ERR(clkspec.np)) {
+ 			pr_err("%s: No clock available for timer!\n", __func__);
 -- 
 2.17.0
