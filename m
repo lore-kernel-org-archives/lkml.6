@@ -1,142 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758162AbeD0MJy (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 08:09:54 -0400
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:62428 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758067AbeD0MJu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 08:09:50 -0400
-From: Kishon Vijay Abraham I <kishon@ti.com>
-To: Tony Lindgren <tony@atomide.com>
-CC: Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <kishon@ti.com>, Hari Nagalla <hnagalla@ti.com>,
-        Eyal Reizer <eyalr@ti.com>, Sekhar Nori <nsekhar@ti.com>
-Subject: [PATCH v4 08/14] ARM: dts: dra72-evm-common: Add wilink8 wlan support
-Date: Fri, 27 Apr 2018 17:38:59 +0530
-Message-ID: <20180427120905.3665-9-kishon@ti.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180427120905.3665-1-kishon@ti.com>
-References: <20180427120905.3665-1-kishon@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        id S1758185AbeD0MJ4 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 08:09:56 -0400
+Received: from prv1-mh.provo.novell.com ([137.65.248.33]:47698 "EHLO
+        prv1-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758103AbeD0MJo (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:3:1>);
+        Fri, 27 Apr 2018 08:09:44 -0400
+Message-Id: <5AE3130702000078001BF180@prv1-mh.provo.novell.com>
+X-Mailer: Novell GroupWise Internet Agent 18.0.0 
+Date: Fri, 27 Apr 2018 06:09:43 -0600
+From: "Jan Beulich" <JBeulich@suse.com>
+To: <douly.fnst@cn.fujitsu.com>
+Cc: <tglx@linutronix.de>, <linux-kernel@vger.kernel.org>
+Subject: Re: recent patch "x86/acpi: Prevent X2APIC id 0xffffffff from
+ being accounted"
+References: <5AE2CF8802000078001BF017@prv1-mh.provo.novell.com>
+ <12fd36d0-1678-ed57-fec3-c94b430bd23f@cn.fujitsu.com>
+In-Reply-To: <12fd36d0-1678-ed57-fec3-c94b430bd23f@cn.fujitsu.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hari Nagalla <hnagalla@ti.com>
+>>> On 27.04.18 at 10:32, <douly.fnst@cn.fujitsu.com> wrote:
+> At 04/27/2018 03:21 PM, Jan Beulich wrote:
+>> I've just stumbled across this commit, and I'm wondering if that's actually
+>> correct (I too have at least one system where such IDs are reported in
+>> MADT): For offline/absent CPUs, the firmware may not know the APIC IDs
+> 
+> The MADT table is not reasonable, the Local APIC entries(xAPIC/x2APIC)
+> in MADT is not always correct as OS want. So, we should do this sanity
+> check.
 
-Wilink8 module is a combo wireless connectivity card based
-on Texas Instrument's wl18xx solution.
+Of course, sanity checking is necessary.
 
-Add support for the wlan capabilities of this module by muxing
-the relevant mmc lines, and setting the required device-tree
-data.
+>> at the point MADT is built, so I think it is quite reasonable to put ~0 in
+>> there. The ACPID spec specifically calls out that the IDs must not change
+>> across sleep states, which implies to me that they may change across an
+>> offline period of a CPU. IOW I think such entries still need to contribute to
+>> the count of disabled CPUs.
+> 
+> Aha, there are no CPU devices which will map it's physical ID to the
+> illegal number 0xffffffff, So it will never be used.
 
-Signed-off-by: Eyal Reizer <eyalr@ti.com>
-Signed-off-by: Hari Nagalla <hnagalla@ti.com>
-[nsekhar@ti.com: drop WLAN_EN pinmux. It should be done by bootloader.
-                 Also, some commit message adjustments]
-Signed-off-by: Sekhar Nori <nsekhar@ti.com>
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
----
- arch/arm/boot/dts/dra72-evm-common.dtsi   | 42 +++++++++++++++++++++++
- arch/arm/boot/dts/dra72x-mmc-iodelay.dtsi | 11 ++++++
- 2 files changed, 53 insertions(+)
+The ID will never be used, yes, but the CPU may be (after firmware has
+assigned it a valid ID).
 
-diff --git a/arch/arm/boot/dts/dra72-evm-common.dtsi b/arch/arm/boot/dts/dra72-evm-common.dtsi
-index 8e3b185d864b..b81214051a89 100644
---- a/arch/arm/boot/dts/dra72-evm-common.dtsi
-+++ b/arch/arm/boot/dts/dra72-evm-common.dtsi
-@@ -44,6 +44,16 @@
- 		regulator-boot-on;
- 	};
- 
-+	evm_3v6: fixedregulator-evm_3v6 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "evm_3v6";
-+		regulator-min-microvolt = <3600000>;
-+		regulator-max-microvolt = <3600000>;
-+		vin-supply = <&evm_5v0>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+
- 	vsys_3v3: fixedregulator-vsys3v3 {
- 		/* Output 2 of TPS43351QDAPRQ1 on dra72-evm */
- 		/* Output 2 of LM5140QRWGTQ1 on dra71-evm */
-@@ -171,6 +181,15 @@
- 			clocks = <&atl_clkin2_ck>;
- 		};
- 	};
-+
-+	vmmcwl_fixed: fixedregulator-mmcwl {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vmmcwl_fixed";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		gpio = <&gpio5 8 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
- };
- 
- &dra7_pmx_core {
-@@ -398,6 +417,29 @@
- 	max-frequency = <192000000>;
- };
- 
-+&mmc4 {
-+	status = "okay";
-+	vmmc-supply = <&evm_3v6>;
-+	vqmmc-supply = <&vmmcwl_fixed>;
-+	bus-width = <4>;
-+	cap-power-off-card;
-+	keep-power-in-suspend;
-+	non-removable;
-+	pinctrl-names = "default", "hs", "sdr12", "sdr25";
-+	pinctrl-0 = <&mmc4_pins_default>;
-+	pinctrl-1 = <&mmc4_pins_default>;
-+	pinctrl-2 = <&mmc4_pins_default>;
-+	pinctrl-3 = <&mmc4_pins_default>;
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	wifi@2 {
-+		compatible = "ti,wl1835";
-+		reg = <2>;
-+		interrupt-parent = <&gpio5>;
-+		interrupts = <7 IRQ_TYPE_EDGE_RISING>;
-+	};
-+};
-+
- &mac {
- 	status = "okay";
- };
-diff --git a/arch/arm/boot/dts/dra72x-mmc-iodelay.dtsi b/arch/arm/boot/dts/dra72x-mmc-iodelay.dtsi
-index 088013c6dc6e..edad87c4292c 100644
---- a/arch/arm/boot/dts/dra72x-mmc-iodelay.dtsi
-+++ b/arch/arm/boot/dts/dra72x-mmc-iodelay.dtsi
-@@ -202,6 +202,17 @@
- 			DRA7XX_CORE_IOPAD(0x3498, PIN_INPUT_PULLUP | MODE_SELECT | MUX_MODE1) /* gpmc_a22.mmc2_dat7 */
- 		>;
- 	};
-+
-+	mmc4_pins_default: mmc4_pins_default {
-+		pinctrl-single,pins = <
-+			DRA7XX_CORE_IOPAD(0x37e8, PIN_INPUT_PULLUP | MUX_MODE3) /* uart1_ctsn.mmc4_clk */
-+			DRA7XX_CORE_IOPAD(0x37ec, PIN_INPUT_PULLUP | MUX_MODE3) /* uart1_rtsn.mmc4_cmd */
-+			DRA7XX_CORE_IOPAD(0x37f0, PIN_INPUT_PULLUP | MUX_MODE3) /* uart2_rxd.mmc4_dat0 */
-+			DRA7XX_CORE_IOPAD(0x37f4, PIN_INPUT_PULLUP | MUX_MODE3) /* uart2_txd.mmc4_dat1 */
-+			DRA7XX_CORE_IOPAD(0x37f8, PIN_INPUT_PULLUP | MUX_MODE3) /* uart2_ctsn.mmc4_dat2 */
-+			DRA7XX_CORE_IOPAD(0x37fc, PIN_INPUT_PULLUP | MUX_MODE3) /* uart2_rtsn.mmc4_dat3 */
-+		>;
-+	};
- };
- 
- &dra7_iodelay_core {
--- 
-2.17.0
+> BTW, Limiting the number of the disabled CPUs is also a goal.
+
+I'm afraid I don't understand: Limiting the number of disabled CPUs is
+certainly desirable when those can never be used, but why would you
+want to do this when they might later get hotplugged? I'm not aware
+of a way to tell, by just looking at the MADT, which of the two cases
+apply.
+
+Jan
