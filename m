@@ -1,28 +1,28 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZoJnZjOjypxOPpqTDzc/muYkOe90BXBe0RQfp1WsaFJ8sD5Q4N5mboHQmEnBSCNlYSM4ZKq
-ARC-Seal: i=1; a=rsa-sha256; t=1524837788; cv=none;
+X-Google-Smtp-Source: AB8JxZpHXRmVy9U3uY3Ec6Y0Vq6V12fwz0EMwAKGBWiBwJiN+2xPlQYe6aYW7kmeoLmwjhk4UNWn
+ARC-Seal: i=1; a=rsa-sha256; t=1524837785; cv=none;
         d=google.com; s=arc-20160816;
-        b=u+jftwt60fTs1pWj080YAGj6RMzpXO7RfLpOqMZH0zMKUsG6VRO5HVr+Di3UzSIUSY
-         2Qn5+v7WxT36tVQwuHNMnrKdjqAPapuCk6BAQmecgq+EOVFmX5nql9lHSdGtJpPzKXAt
-         DPoj1SftpvCmAVH+Bp2Kyyh/L5Uj+/LkbH9gk48a6/+6/d1B1SXAb/mgS6y9CkE19AIa
-         bYpnoazsCKaun+6tdMPlQu8aiX/ma+5zHn34UVmrVdN/HA8wE/4+f+vgJqzjDYhRLJXm
-         5sDo66T07wJ4w7/zj3xay2KSq40Aoti1UpByEBUDG9PeljAEx6CfJyxGQHrxq3cvSj6A
-         NgUg==
+        b=ASky28llfYUGhAWCb7/tUoF6Sv2092BfAAkhxOmWIfTCursEB8xQZg/u4FIZeLxSvs
+         57KH0J9+ywBX/w6M+kD5MsEacttDXr63Xnu8hsDk2qdxktkTPQFhf+qsIXIiN/2TN0S7
+         tS9B2ob485aK4f84HGtWBoPwTl4+Jl0WHkWOkQFzH0nnE+c/LwiO4GrZ/FYXnlYVVj80
+         YuLbIz1fVtSCTkupHKPt1l/HSrsclw4GYddjE+oTqhBdNstxnMlJGxPjzyWEd2FovfK1
+         Y1xkEX4Wl3LnWfy+LntV9DMQ8XcfrZ38n0VN6zXV/u1v+AlN/fjlXG1NyjDoDoicQCUd
+         7PJw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=xqyIOYdG/ITJ3FSz8tj8dfHUkCi+YwJMqYHyGCmhSaU=;
-        b=zOp3tOD8y0mbw2fRNvEk0hmSbyTBieNYryNdVn3baaCuabCLx3mRyJoSPSwgix9E8u
-         87B3ZS3vE3u+0oeQ4fJ0kjvUyk0q6a9g00Exz0Yy9nh31zZzeHTlWbmtO9TSHCoNw09a
-         CoOj0WH4uhoUabdXlUoKpZGlVXk7nAThEVCZ26LsjaHgMDG/tVAmWT29J9aZeHnvedt1
-         ac74ekPndblEqFOPNY5ELqgcxts45AjWusf10Zl9plzlbqadap8mnSXiRrIwMBMzJNLN
-         n4OEdwtK2gk0770oasz6TSzfW+zLK+KuR0xd01G92kb7lTj7w17RNlVfNOHMh3yWbTWG
-         8m2w==
+        bh=Dt+TvaoN/FvIC2XLnCz+0QzthkqDck3M8A88boPrsmo=;
+        b=htIFyBLpSGeQ5AHhO+SykSR1tcFYZYZrIU4fReLsJhrx5GOVt9QAOxszL7HvmLk3rp
+         9pY6hhTEAmnTKZQRVo8p5Q9iL2AHayEzXwOMz0VKqeEmrtqFA4AZpxl6XHQQ8GZHIW7E
+         HXS0tn32BOR3oaaqSlKCyTLVO1FTLnJupga7xGHdViY94wJLVVNAnHEVPZ/ivEo8olrO
+         qP6XXofxNgmcIwSk9OD9xsNVi6m/j4O0KrN2md7mrrVVPr4dAHjrlJWsbEhPsbePar5n
+         3XXI1TEmjFIAeNZV9ojh1ZMic8kHl9oz+sjRMULhguH4W6Ci2rtS4rzv5dU+vVbXjZbT
+         tY1w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73F2F218A2
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBB4B218A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
@@ -30,11 +30,12 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Jean Delvare <jdelvare@suse.de>,
+	Benjamin Tissoires <benjamin.tissoires@redhat.com>,
 	Jason Andryuk <jandryuk@gmail.com>,
 	Wolfram Sang <wsa@the-dreams.de>
-Subject: [PATCH 4.9 07/74] i2c: i801: Restore configuration at shutdown
-Date: Fri, 27 Apr 2018 15:57:57 +0200
-Message-Id: <20180427135710.201572728@linuxfoundation.org>
+Subject: [PATCH 4.9 06/74] i2c: i801: Save register SMBSLVCMD value only once
+Date: Fri, 27 Apr 2018 15:57:56 +0200
+Message-Id: <20180427135710.160649821@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135709.899303463@linuxfoundation.org>
 References: <20180427135709.899303463@linuxfoundation.org>
@@ -44,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908308826008681?=
-X-GMAIL-MSGID: =?utf-8?q?1598908308826008681?=
+X-GMAIL-THRID: =?utf-8?q?1598908305930801008?=
+X-GMAIL-MSGID: =?utf-8?q?1598908305930801008?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,46 +56,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Jean Delvare <jdelvare@suse.de>
 
-commit f7f6d915a10f7f2bce17e3b1b7d3376562395a28 upstream.
+commit a086bb8317303dd74725dca933b9b29575159382 upstream.
 
-On some systems, the BIOS expects certain SMBus register values to
-match the hardware defaults. Restore these configuration registers at
-shutdown time to avoid confusing the BIOS. This avoids hard-locking
-such systems upon reboot.
+Saving the original value of register SMBSLVCMD in
+i801_enable_host_notify() doesn't work, because this function is
+called not only at probe time but also at resume time. Do it in
+i801_probe() instead, so that the saved value is not overwritten at
+resume time.
 
 Signed-off-by: Jean Delvare <jdelvare@suse.de>
+Fixes: 22e94bd6779e ("i2c: i801: store and restore the SLVCMD register at load and unload")
+Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 Tested-by: Jason Andryuk <jandryuk@gmail.com>
 Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-Cc: stable@vger.kernel.org
+Cc: stable@vger.kernel.org	# v4.10+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/i2c/busses/i2c-i801.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/i2c/busses/i2c-i801.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 --- a/drivers/i2c/busses/i2c-i801.c
 +++ b/drivers/i2c/busses/i2c-i801.c
-@@ -1696,6 +1696,15 @@ static void i801_remove(struct pci_dev *
- 	 */
- }
+@@ -963,8 +963,6 @@ static int i801_enable_host_notify(struc
+ 	if (!priv->host_notify)
+ 		return -ENOMEM;
  
-+static void i801_shutdown(struct pci_dev *dev)
-+{
-+	struct i801_priv *priv = pci_get_drvdata(dev);
+-	priv->original_slvcmd = inb_p(SMBSLVCMD(priv));
+-
+ 	if (!(SMBSLVCMD_HST_NTFY_INTREN & priv->original_slvcmd))
+ 		outb_p(SMBSLVCMD_HST_NTFY_INTREN | priv->original_slvcmd,
+ 		       SMBSLVCMD(priv));
+@@ -1603,6 +1601,10 @@ static int i801_probe(struct pci_dev *de
+ 		outb_p(inb_p(SMBAUXCTL(priv)) &
+ 		       ~(SMBAUXCTL_CRC | SMBAUXCTL_E32B), SMBAUXCTL(priv));
+ 
++	/* Remember original Host Notify setting */
++	if (priv->features & FEATURE_HOST_NOTIFY)
++		priv->original_slvcmd = inb_p(SMBSLVCMD(priv));
 +
-+	/* Restore config registers to avoid hard hang on some systems */
-+	i801_disable_host_notify(priv);
-+	pci_write_config_byte(dev, SMBHSTCFG, priv->original_hstcfg);
-+}
-+
- #ifdef CONFIG_PM
- static int i801_suspend(struct device *dev)
- {
-@@ -1728,6 +1737,7 @@ static struct pci_driver i801_driver = {
- 	.id_table	= i801_ids,
- 	.probe		= i801_probe,
- 	.remove		= i801_remove,
-+	.shutdown	= i801_shutdown,
- 	.driver		= {
- 		.pm	= &i801_pm_ops,
- 	},
+ 	/* Default timeout in interrupt mode: 200 ms */
+ 	priv->adapter.timeout = HZ / 5;
+ 
