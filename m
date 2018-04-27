@@ -1,102 +1,107 @@
-Return-Path: <bgolaszewski@baylibre.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1524819556; cv=none;
+Return-Path: <dalias@aerifal.cx>
+X-Google-Smtp-Source: AB8JxZo2++J7l0UZJEZzpCwFQwHwwhyfgQaCC7xkPklvE8XsbgGCnekDc51OTtN78xPl1KvaeWEg
+ARC-Seal: i=1; a=rsa-sha256; t=1524797720; cv=none;
         d=google.com; s=arc-20160816;
-        b=tsdWNSE12Xb/dvlklQf97xwQQBJoHJRfM8ag+DaIbzyWtyzYCk6qbSCo73Fli4WyUd
-         wsLf/yXZBCRofnWgujkLduhAkOwoLF/RcMVMr4IG/GW6zSiN+3y6b5X9VAnyaLP4sUJA
-         QzUhaupHaVm43m/OpeAur7odZ1161uf4JQqdY5DbiCD+BRttjDYfITvVOFBwbhRYaH0s
-         TSGiEQyXhCgIsCAb0lPmhEG80GLCql9yMOPvvZiGtE1jbuByeQwiaVieExOUtBVsiEOJ
-         fYdaBzxzbfgIrySO/KWLHETs6aR013RME/1Lx5FDgNuqHx0lNHvI/DkwW8+sp5h5WAVq
-         X/Iw==
+        b=Xy5pWZrX5Ko2b/JW/ON6XJEOk7vCwEt/dkJDlZst0cXrPk6LYPfjv6abr3t07XwRHX
+         xPchQnUZfc7GevE/YEtJaaM+kjXIyo8PbmQE0Oy+OLWjp/F6od21GY5kwWTs0bNQq6Sr
+         ASUtAANjWiL2KUnVPN+5zzXGONulLlVm3fNFQmFRHdP+0tD+YPbad4n1j5uL8FIiVUAd
+         +hBvCGK8jyjiFSgKqhfF9DKgIZCjYndJhoYdJ4DNr8gfW9Bjy6m7ubjl6HjhDmdXt+Ef
+         Jmxk90Xw4hiyqgWkeU+tMRGmXW8Fl47XcnjmmfZDOwsLlxFvKeP7yLtEBU5GSah8wcF3
+         6QdQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=KPAqiKvUcSVJcpp51do0IzBxcrNb/hQmSf3QZYX0XZU=;
-        b=ZMW+XcB2KREPJnYkm0eqSpM8HqgeXbHZXJMWuU1x6JwMQKd6GlNXokYZcohRsgHBXX
-         j/lUegiiOXQcdmBqPqqMK/myinLhUT0AEy44cSDa5py6e5vTrnUQij901bmLVW/nsQQ+
-         2jZ5zEJJtInPBvggiloJHov9kh9bztPvi5F3nf7Mid/KxpWqles8STl02Ph6CIVAWka0
-         98m60uRd8n102847dyCJXIeoVIGJDaM2mAaui20x9z8oUMJqCn7VyDvopf8a/6O6Dnav
-         xi5K0u78yx3zauHj4BKHImZOjkeW2mJx89De7yey3aUXnW7wZuNNuud2FQxWNlYI6YMJ
-         pbPg==
+        h=sender:user-agent:in-reply-to:content-disposition:mime-version
+         :references:message-id:subject:cc:to:from:date
+         :arc-authentication-results;
+        bh=ytvHSxg0+ns0SvxR5QxP/XWcf+ZmMPnA7NpX1oaUeZk=;
+        b=IAeSqFFDwWSzViw+S2A0R+uPHOS4UxM5+oHSc/gQRxbJHfo58FrYqKMx8UlcOhG67M
+         yqYe+2eOGoUq+uEyPP/tL8YIYhgtUDaVeAyS8+bBJAetjnLTeakjQg8xKuHYBjojYHyQ
+         cSEuZnW+Kn9/9y8AP/pvx/zMfYW4/M5iNBUSqCqKQYJ5k1oVZPYON6MEl8Y2/fdK3QzQ
+         f93Y7YqV3XynMAER5VvfyHCSrBecykgtn9ARjObLvXiOtyHuBLM62S9ZI3dQ/D+bvJVZ
+         KqNABuh8glJIbC9A4ZtUCv9WyBGM0d8Ads2WYTqq0WR7WFotGiUewlicd2ESG61AzyOI
+         CpVw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@baylibre-com.20150623.gappssmtp.com header.s=20150623 header.b=FqtQrl3Q;
-       spf=softfail (google.com: domain of transitioning bgolaszewski@baylibre.com does not designate 209.85.220.65 as permitted sender) smtp.mailfrom=bgolaszewski@baylibre.com
+       spf=neutral (google.com: 216.12.86.13 is neither permitted nor denied by best guess record for domain of dalias@aerifal.cx) smtp.mailfrom=dalias@aerifal.cx
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@baylibre-com.20150623.gappssmtp.com header.s=20150623 header.b=FqtQrl3Q;
-       spf=softfail (google.com: domain of transitioning bgolaszewski@baylibre.com does not designate 209.85.220.65 as permitted sender) smtp.mailfrom=bgolaszewski@baylibre.com
-X-Google-Smtp-Source: AB8JxZqbw2GCNnyDCVXnBuAK+0h6IyvmxgH+fUyPASpEmwoejDpkk1Ci+PcMMNi1i0gsBDPvL8zPLB/mv1vyky4YuEA=
-MIME-Version: 1.0
-In-Reply-To: <CAK8P3a394ig-OSzZLj+50gnBw1x_c41EicuM7mF_ubswweQoSg@mail.gmail.com>
-References: <20180426152920.21569-1-brgl@bgdev.pl> <20180426173151.GJ3094@brightrain.aerifal.cx>
- <6d1f9114-f1d1-961f-4f36-74adff059dc3@lechnology.com> <CAK8P3a0oCH7zyBs8nQd4p+xLrFwDQiJsaKKCF1m04nyXsZxk=g@mail.gmail.com>
- <6194511c-b649-8c02-7db0-3514bfb292f5@ti.com> <CAK8P3a394ig-OSzZLj+50gnBw1x_c41EicuM7mF_ubswweQoSg@mail.gmail.com>
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date: Fri, 27 Apr 2018 10:59:15 +0200
-Message-ID: <CAMpxmJVtq0joL1r9WJUC2BNX4mQdy0kMvmpfSv7hNZn8a3Lxxg@mail.gmail.com>
+       spf=neutral (google.com: 216.12.86.13 is neither permitted nor denied by best guess record for domain of dalias@aerifal.cx) smtp.mailfrom=dalias@aerifal.cx
+Date: Thu, 26 Apr 2018 22:54:21 -0400
+From: Rich Felker <dalias@libc.org>
+To: David Lechner <david@lechnology.com>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Frank Rowand <frowand.list@gmail.com>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Arend van Spriel <aspriel@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Michal Suchanek <msuchanek@suse.de>,
+	Jan Kiszka <jan.kiszka@siemens.com>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Marc Zyngier <marc.zyngier@arm.com>, Peter Rosin <peda@axentia.se>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Subject: Re: [PATCH RFC PoC 0/2] platform: different approach to early
  platform drivers
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Sekhar Nori <nsekhar@ti.com>, David Lechner <david@lechnology.com>, Rich Felker <dalias@libc.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Kevin Hilman <khilman@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Yoshinori Sato <ysato@users.sourceforge.jp>,
-	Frank Rowand <frowand.list@gmail.com>, "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Arend van Spriel <aspriel@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Michal Suchanek <msuchanek@suse.de>,
-	Jan Kiszka <jan.kiszka@siemens.com>, Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Marc Zyngier <marc.zyngier@arm.com>, Peter Rosin <peda@axentia.se>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DTML <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <20180427025421.GN3094@brightrain.aerifal.cx>
+References: <20180426152920.21569-1-brgl@bgdev.pl>
+ <20180426173151.GJ3094@brightrain.aerifal.cx>
+ <6d1f9114-f1d1-961f-4f36-74adff059dc3@lechnology.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6d1f9114-f1d1-961f-4f36-74adff059dc3@lechnology.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+Sender: Rich Felker <dalias@aerifal.cx>
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1598823149958129846?=
-X-GMAIL-MSGID: =?utf-8?q?1598889190764013195?=
+X-GMAIL-MSGID: =?utf-8?q?1598866294874275938?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-2018-04-27 10:55 GMT+02:00 Arnd Bergmann <arnd@arndb.de>:
-> On Fri, Apr 27, 2018 at 10:29 AM, Sekhar Nori <nsekhar@ti.com> wrote:
->> On Friday 27 April 2018 01:22 PM, Arnd Bergmann wrote:
->>> On Fri, Apr 27, 2018 at 4:28 AM, David Lechner <david@lechnology.com> wrote:
->>>> On 04/26/2018 12:31 PM, Rich Felker wrote:
->
->>>
->>> I haven't seen the discussion about your clock drivers, but I know that
->>> usually only a very small subset of the clocks on an SoC are needed
->>> that 'early', and you should use a regular platform driver for the rest.
->>
->> Its true that the subset is small, but they are either PLL bypass clocks
->> or clocks derived out of the main clock gate controller on the Soc
->> (DaVinci PSC). So we need some non-platform-device based initialization
->> support in the two main clock drivers used on mach-davinci anyway.
->>
->>> Can you elaborate on which devices need to access your clocks before
->>> you are able to initialize the clk driver through the regular platform_driver
->>> framework? Do any of these need complex interactions with the clk
->>> subsystem, or do you just need to ensure they are turned on?
->>
->> Its just the timer IP. There is no complex interaction, just need to
->> ensure that the clock is registered with the framework and also switched
->> on when there is a gate clock.
->>
->> The latest attempt by David for this was posted last night here:
->>
->> https://lkml.org/lkml/2018/4/26/1093
->
-> Ok, so the workaround in that series is to set up the timer clk manually
-> in the SoC specific code (dm365_init_time etc) and register it to the
-> clk subsystem, right?
->
-> That seems to be a much more appropriate workaround than adding
-> back early_platform devices. We can always try to do something better
-> later, but for now I'm happy with that as a workaround.
->
+On Thu, Apr 26, 2018 at 09:28:39PM -0500, David Lechner wrote:
+> On 04/26/2018 12:31 PM, Rich Felker wrote:
+> >On Thu, Apr 26, 2018 at 05:29:18PM +0200, Bartosz Golaszewski wrote:
+> >>From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> >>
+> >>This is a follow to my series[1] the aim of which was to introduce device tree
+> >>support for early platform devices.
+> >>
+> >>It was received rather negatively. Aside from using device tree to pass
+> >>implementation specific details to the system, two important concerns were
+> >>raised: no probe deferral support and the fact that currently the early devices
+> >>never get converted to actual platform drivers. This series is a
+> >>proof-of-concept that's trying to address those issues.
+> >>
+> >>The only user of the current version of early platform drivers is the SuperH
+> >>architecture. If this series eventually gets merged, we could simply replace
+> >>the other solution.
+> >
+> >Looking at a quick output of:
+> >
+> >	grep -r -A10 early_devices[[] arch/sh/kernel/
+> >
+> >it looks like all of the existing early platform devices are serial
+> >ports, clocks, and clocksources. The switch to device tree should pick
+> >them all up from CLK_OF_DECLARE, TIMER_OF_DECLARE, and
+> >EARLYCON_DECLARE. Until that's complete, the existing code works
+> >as-is. I don't see what problem you're trying to solve.
+> 
+> The problem for us is that clk maintainers don't want new drivers to use
+> CLK_OF_DECLARE and instead use platform devices. I have just written such
+> a new driver that is shared by 6 different SoCs. For some combinations of
+> SoCs and clocks, using a platform device is fine but on others we need to
+> register early, so the drivers now have to handle both cases, which is
+> kind of messy and fragile. If there is a generic way to register platform
+> devices early, then the code is simplified because we only have to handle
+> one method of registering the clocks instead of two.
 
-Just to clarify: this is not bringing back the hacky early platform
-devices from before. It's a new approach that actually uses the linux
-platform driver model (unlike the current mechanism which only uses
-the same data structures).
+Can you get them to explain why? This sounds wrong.
 
-Thanks,
-Bart
+Rich
