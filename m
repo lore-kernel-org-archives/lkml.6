@@ -1,116 +1,186 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-599407-1524852967-2-17061104784186392732
+X-Cyrus-Session-Id: sloti22d1t05-298528-1524839806-2-3982818428930083117
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, MAILING_LIST_MULTI -1, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
-  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
+X-Spam-charsets: plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524852966; b=Snbm/oiMFvAFiZ1j/NXNgbZfew/IhBh0RVDq6apGAt+RQNtBBW
-    Ekk1O8h1ziT8pZ0/4lXdN/IDIA6xH4r+j6Bc8vgthTjhpLna7f1JMoyQJJ2EY120
-    Z19ldFyHdllzHcxmBdb5DhFvxmwl3m3jvDTa3gTUu87ffBUvfdyG2kpfbt3MAzDT
-    cLAJiRCMi6es3gVVj62eYNhQqQgzka2iL63mzVbT5hQqgbOPlU8fRvRewZF1N7RR
-    /HxuOQsJ4VBm7ZX6nAUnTuRJqJW4d573jLt5bv6SM+x6LQ4yTycDgvlT2a79JYMb
-    GXYQPuXJDerehkOVzn5Qh23wCGbHL4WRc8ug==
+    1524839806; b=GyFV0kzIiRCHDpBc1nO+9IR/p1aNHyb0bDwt5mIX0KeLoJWqzv
+    hIwHNS01f+5dKS1JUOayey6H4BiDnPtytSNZz/a7ccSsjcb2LU4NJhFJ0bYmKDVY
+    YtQWGwuq5/RUbLLZNamSe69MpB8fx7OfgQEhCsjm+nVncpFRrxlbBv9q3LYqEsBq
+    a3Yuh7dm1tkP7lPKJ9hf6X10MwkQQVahsTbDHRIN91xuMqeYy8VlLSMoGRhepcq/
+    pQJRhvf8Sgl+iw/JfrSWNZRKV0viEV4J+4chbebZm7jrQPemxE2knIk/vNGVVWgZ
+    J4hEBENCvTqMP+yL4jn7lVSYbJ/39Af7jleg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1524852966;
-    bh=P49JHLVJEjXD0xrbnngo2qhvMdcDk1PemoPksBaosBM=; b=CwnmVjOwuRge
-    bdkDHjwqR8ghJXkQUI1znZdbz0zqP+uxgD1c1oNn4tnQkWvc7FZdhcOsQ4F9Kgye
-    5tgMdlp2Q0AVpjGdWWtGFwdbX3gLFqDcinIGY5nZkoj7fzVlKRgsNFVd/J1N1PdQ
-    m4Umb37YtPEAZfLhTI177HhTfQveAo4JnB5yNrBOx5cUKriX+D167HGw+TU4eOuA
-    z/+ujpYVUhUpb4pWQrR0w/XBHkKOCCB/TaysQ4EeCsUA3kd/tPQNqgQiLYX9Dy88
-    lbBbZySZbClBDF/LkqrEtW5stDT8qtHkIAUReLkkWbYYCVs9ziw7RQmNlxIMJgRR
-    4rKpQtPeuA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1524839806; bh=E5lFw9mrdiKOwRwWw+HnY1AnUmHFzQ
+    50K9hWLxRYECY=; b=WwgVHgjqHRU6OWj9Jg+05/sZHJWw/W4GUg91wXj/wgb1MY
+    +nozsou1Oab3hEdStYUUQyibEA12fcNj+dQark+Ar9ZoHrCiFlXvCovx08N0+z/d
+    jVmfQl0NDFvaN/907RPj/ZBUWaKUdRjQ2+Bfy4TsVFMO4wZpp3JEjqVNSfOdy7De
+    C/RGkMZbcxaNsRuA2kRhOGpMYnnUPlWWsWC1KUwblsBQvNY/EHs8odBfu1QKlkHJ
+    VHr7KgHAm2IINZDlW3zsAwnHuBqXPVPyQw81+o5h925psnB9fEOZWSgkT5hBiiGZ
+    49jlH+UqdF8fHoU2hMgy8GFGMnhvEi5YWpAijExA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
+    x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
+    x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfK1eAMoYT1LT+5vNRifT2us/66gPGg/51U6fU8kXz6dP+9f6syU7NP/KLl0Kas5t/aNVSCoaGMamH4CYF4DpLTWksGNXOTdtOW5oDz0ZKTGATLLkTZov
-    Yy8qPvjdtYDGaf2/z/oWMJ9ZdEGGbPd8h8Rrc7lQAizI+YJ8fAz4SbEYADI/qg4+ltFa/pCWIrq8s9WaPJtqSUFXi+IrnyEZpv9tKLuC7GPEc/ltcjkj5LF1
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=9hA1FEcAjjIA:10
-    a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8 a=8-vRK6DNSD7UNujOA5sA:9 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfIep1jyJgUijZpAxSCeFSV2SDAkxU3yyCv8s8sDPzJiUTwaIZj7x+HlqcmQ4JBjcw2H5DLHjNJ+jnkO9bLf/xrACDLxiboyP88gdquarq/Pj/sYT+Hup
+    TMiw1uAKcol4xhkK902cRkwqqw/0ivFdVyyrzaV8nkXttyigLfXYdAJ43uJgumj124h4vqNuG78d0oUGtmSUs823CNJiA6rGE5lkfaSKRX7znLaV2Nefv0cX
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=ag1SF4gXAAAA:8 a=20KFwNOVAAAA:8 a=QyXUC8HyAAAA:8 a=EqdPLkY1AAAA:8
+    a=KKAkSRfTAAAA:8 a=iABzjTZjk7s6rj3bFy0A:9 a=QEXdDO2ut3YA:10
+    a=Yupwre4RP9_Eg_Bd0iYG:22 a=dfeKg4RqpEhWThG6bP4-:22 a=cvBusfyB2V15izCimMoJ:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757920AbeD0SQF (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 27 Apr 2018 14:16:05 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:46479 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757856AbeD0SQE (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 27 Apr 2018 14:16:04 -0400
-Subject: Re: [PATCH 4.16 00/81] 4.16.6-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, Shuah Khan <shuah@kernel.org>
-References: <20180427135743.216853156@linuxfoundation.org>
-From: Shuah Khan <shuah@kernel.org>
-Message-ID: <5d8a3b5c-7617-d11d-13af-d285dd47e275@kernel.org>
-Date: Fri, 27 Apr 2018 12:15:50 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
+        id S934741AbeD0Ogn (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 27 Apr 2018 10:36:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54870 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934692AbeD0OJd (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 27 Apr 2018 10:09:33 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83629218BC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Daniel Drake <drake@endlessm.com>,
+        Chris Chiu <chiu@endlessm.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 4.16 01/81] Revert "pinctrl: intel: Initialize GPIO properly when used through irqchip"
+Date: Fri, 27 Apr 2018 15:58:03 +0200
+Message-Id: <20180427135743.403354096@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135743.216853156@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180427135743.216853156@linuxfoundation.org>
+User-Agent: quilt/0.65
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 04/27/2018 07:58 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.16.6 release.
-> There are 81 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sun Apr 29 13:57:21 UTC 2018.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.16.6-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.16.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
-Compiled and booted on my test system. No dmesg regressions.
+------------------
 
-thanks,
--- Shuah
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+This reverts commit f5a26acf0162477af6ee4c11b4fb9cffe5d3e257
+
+Mike writes:
+	It seems that commit f5a26acf0162 ("pinctrl: intel: Initialize GPIO
+	properly when used through irqchip") can cause problems on some Skylake
+	systems with Sunrisepoint PCH-H. Namely on certain systems it may turn
+	the backlight PWM pin from native mode to GPIO which makes the screen
+	blank during boot.
+
+	There is more information here:
+
+	  https://bugzilla.redhat.com/show_bug.cgi?id=1543769
+
+	The actual reason is that GPIO numbering used in BIOS is using "Windows"
+	numbers meaning that they don't match the hardware 1:1 and because of
+	this a wrong pin (backlight PWM) is picked and switched to GPIO mode.
+
+	There is a proper fix for this but since it has quite many dependencies
+	on commits that cannot be considered stable material, I suggest we
+	revert commit f5a26acf0162 from stable trees 4.9, 4.14 and 4.15 to
+	prevent the backlight issue.
+
+Reported-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Fixes: f5a26acf0162 ("pinctrl: intel: Initialize GPIO properly when used through irqchip")
+Cc: Daniel Drake <drake@endlessm.com>
+Cc: Chris Chiu <chiu@endlessm.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/pinctrl/intel/pinctrl-intel.c |   23 ++++++++---------------
+ 1 file changed, 8 insertions(+), 15 deletions(-)
+
+--- a/drivers/pinctrl/intel/pinctrl-intel.c
++++ b/drivers/pinctrl/intel/pinctrl-intel.c
+@@ -425,18 +425,6 @@ static void __intel_gpio_set_direction(v
+ 	writel(value, padcfg0);
+ }
+ 
+-static void intel_gpio_set_gpio_mode(void __iomem *padcfg0)
+-{
+-	u32 value;
+-
+-	/* Put the pad into GPIO mode */
+-	value = readl(padcfg0) & ~PADCFG0_PMODE_MASK;
+-	/* Disable SCI/SMI/NMI generation */
+-	value &= ~(PADCFG0_GPIROUTIOXAPIC | PADCFG0_GPIROUTSCI);
+-	value &= ~(PADCFG0_GPIROUTSMI | PADCFG0_GPIROUTNMI);
+-	writel(value, padcfg0);
+-}
+-
+ static int intel_gpio_request_enable(struct pinctrl_dev *pctldev,
+ 				     struct pinctrl_gpio_range *range,
+ 				     unsigned pin)
+@@ -444,6 +432,7 @@ static int intel_gpio_request_enable(str
+ 	struct intel_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
+ 	void __iomem *padcfg0;
+ 	unsigned long flags;
++	u32 value;
+ 
+ 	raw_spin_lock_irqsave(&pctrl->lock, flags);
+ 
+@@ -453,7 +442,13 @@ static int intel_gpio_request_enable(str
+ 	}
+ 
+ 	padcfg0 = intel_get_padcfg(pctrl, pin, PADCFG0);
+-	intel_gpio_set_gpio_mode(padcfg0);
++	/* Put the pad into GPIO mode */
++	value = readl(padcfg0) & ~PADCFG0_PMODE_MASK;
++	/* Disable SCI/SMI/NMI generation */
++	value &= ~(PADCFG0_GPIROUTIOXAPIC | PADCFG0_GPIROUTSCI);
++	value &= ~(PADCFG0_GPIROUTSMI | PADCFG0_GPIROUTNMI);
++	writel(value, padcfg0);
++
+ 	/* Disable TX buffer and enable RX (this will be input) */
+ 	__intel_gpio_set_direction(padcfg0, true);
+ 
+@@ -973,8 +968,6 @@ static int intel_gpio_irq_type(struct ir
+ 
+ 	raw_spin_lock_irqsave(&pctrl->lock, flags);
+ 
+-	intel_gpio_set_gpio_mode(reg);
+-
+ 	value = readl(reg);
+ 
+ 	value &= ~(PADCFG0_RXEVCFG_MASK | PADCFG0_RXINV);
