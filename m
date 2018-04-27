@@ -1,86 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758574AbeD0P5h (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 11:57:37 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36724 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1758290AbeD0P5f (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 11:57:35 -0400
-Date: Fri, 27 Apr 2018 08:58:46 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Joel Fernandes <joelaf@google.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Boqun Feng <boqun.feng@gmail.com>, fweisbec <fweisbec@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        kbuild test robot <fengguang.wu@intel.com>,
-        baohong liu <baohong.liu@intel.com>,
-        vedang patel <vedang.patel@intel.com>, kernel-team@android.com
-Subject: Re: [PATCH RFC] tracepoint: Introduce tracepoint callbacks executing
- with preempt on
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180427042656.190746-1-joelaf@google.com>
- <1169911546.5820.1524839189395.JavaMail.zimbra@efficios.com>
- <20180427104747.2d965925@gandalf.local.home>
- <20180427153826.GK26088@linux.vnet.ibm.com>
- <20180427114005.31d1e8ab@gandalf.local.home>
+        id S1758589AbeD0P6S (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 11:58:18 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43110 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1758236AbeD0P6R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 11:58:17 -0400
+Subject: Re: [PATCH v2 08/17] kvm: arm/arm64: Prepare for VM specific stage2
+ translations
+From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+To: Julien Grall <julien.grall@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc: ard.biesheuvel@linaro.org, kvm@vger.kernel.org, marc.zyngier@arm.com,
+        catalin.marinas@arm.com, punit.agrawal@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, kristina.martsenko@arm.com,
+        pbonzini@redhat.com, kvmarm@lists.cs.columbia.edu
+References: <1522156531-28348-1-git-send-email-suzuki.poulose@arm.com>
+ <1522156531-28348-9-git-send-email-suzuki.poulose@arm.com>
+ <7f67fca2-b936-25d9-0fe8-aece1fadafdc@arm.com>
+ <59fc0fe3-2c7e-b5ae-702b-0c21f0051c6b@arm.com>
+Message-ID: <c12f7bb9-2a9f-ae30-4d69-f3e229e04f7c@arm.com>
+Date: Fri, 27 Apr 2018 16:58:13 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180427114005.31d1e8ab@gandalf.local.home>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18042715-0040-0000-0000-000004233B0D
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008932; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000257; SDB=6.01024075; UDB=6.00522844; IPR=6.00803306;
- MB=3.00020808; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-27 15:57:33
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18042715-0041-0000-0000-000008293D14
-Message-Id: <20180427155846.GM26088@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-27_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804270153
+In-Reply-To: <59fc0fe3-2c7e-b5ae-702b-0c21f0051c6b@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 27, 2018 at 11:40:05AM -0400, Steven Rostedt wrote:
-> On Fri, 27 Apr 2018 08:38:26 -0700
-> "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
+On 27/04/18 16:22, Suzuki K Poulose wrote:
+> On 26/04/18 14:35, Julien Grall wrote:
+>> Hi Suzuki,
+>>
+>> On 27/03/18 14:15, Suzuki K Poulose wrote:
+>>> Right now the stage2 page table for a VM is hard coded, assuming
+>>> an IPA of 40bits. As we are about to add support for per VM IPA,
+>>> prepare the stage2 page table helpers to accept the kvm instance
+>>> to make the right decision for the VM. No functional changes.
 > 
-> > On Fri, Apr 27, 2018 at 10:47:47AM -0400, Steven Rostedt wrote:
-> > > On Fri, 27 Apr 2018 10:26:29 -0400 (EDT)
-> > > Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
-> > >   
-> > > > The general approach and the implementation look fine, except for
-> > > > one small detail: I would be tempted to explicitly disable preemption
-> > > > around the call to the tracepoint callback for the rcuidle variant,
-> > > > unless we plan to audit every tracer right away to remove any assumption
-> > > > that preemption is disabled in the callback implementation.  
-> > > 
-> > > I'm thinking that we do that audit. There shouldn't be many instances
-> > > of it. I like the idea that a tracepoint callback gets called with
-> > > preemption enabled.  
-> > 
-> > Are you really sure you want to increase your state space that much?
 > 
-> Why not? The code I have in callbacks already deals with all sorts of
-> context - normal, softirq, irq, NMI, preemption disabled, irq
-> disabled.
+>>> diff --git a/arch/arm/include/asm/kvm_arm.h b/arch/arm/include/asm/kvm_arm.h
+>>> index 3ab8b37..c3f1f9b 100644
+>>> --- a/arch/arm/include/asm/kvm_arm.h
+>>> +++ b/arch/arm/include/asm/kvm_arm.h
+>>> @@ -133,8 +133,7 @@
+>>>    * space.
+>>>    */
+>>>   #define KVM_PHYS_SHIFT    (40)
+>>> -#define KVM_PHYS_SIZE    (_AC(1, ULL) << KVM_PHYS_SHIFT)
+>>> -#define KVM_PHYS_MASK    (KVM_PHYS_SIZE - _AC(1, ULL))
+>>
+>> I assume you are moving them to kvm_mmu.h in order to match the arm64 side, right? If so, would not it make sense to make KVM_PHYS_SHIFT with it?
+>>
+>> [...]
+> 
+> I am moving all the macros that depend on the "kvm" instance to kvm_mmu.h.
+> I will see if I can move the KVM_PHYS_SHIFT without much trouble.
 
-But why?  Do people really expect good real-time response on systems
-instrumented with lots of tracing?
+It looks like we can't do that easily. KVM_PHYS_SHIFT is used for KVM_T0SZ
+on arm, even though that can be simply hard coded to avoid the dependency on
+KVM_PHYS_SHIFT (like we did for arm64, T0SZ is defined to 24). I would leave it
+as it is to avoid the noise.
 
-								Thanx, Paul
+Cheers
+Suzuki
