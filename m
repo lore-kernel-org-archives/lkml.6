@@ -1,52 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758056AbeD0MJd (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 08:09:33 -0400
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:47282 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752808AbeD0MJ3 (ORCPT
+        id S1758090AbeD0MJi (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 08:09:38 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:55228 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758067AbeD0MJd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 08:09:29 -0400
-From: Kishon Vijay Abraham I <kishon@ti.com>
-To: Tony Lindgren <tony@atomide.com>
-CC: Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <kishon@ti.com>
-Subject: [PATCH v4 02/14] ARM: dts: dra71-evm: Add "vqmmc-supply" property for mmc2
-Date: Fri, 27 Apr 2018 17:38:53 +0530
-Message-ID: <20180427120905.3665-3-kishon@ti.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180427120905.3665-1-kishon@ti.com>
-References: <20180427120905.3665-1-kishon@ti.com>
+        Fri, 27 Apr 2018 08:09:33 -0400
+X-Google-Smtp-Source: AB8JxZpKJfJN8gl9405m1BhTsqgo78rKEpGR0uczw2TeW/plIVmxGghEEQCOfG1nnzMt4DiIWMsejXlF9hXGigceVNw=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Originating-IP: [2a02:168:5635:0:39d2:f87e:2033:9f6]
+In-Reply-To: <2561366.LzYTbHeMbO@avalon>
+References: <CGME20180427112213epcas2p3ed6890af75e679b537121f2655aa91d8@epcas2p3.samsung.com>
+ <1524828105-26585-1-git-send-email-b.zolnierkie@samsung.com> <2561366.LzYTbHeMbO@avalon>
+From: Daniel Vetter <daniel@ffwll.ch>
+Date: Fri, 27 Apr 2018 14:09:31 +0200
+X-Google-Sender-Auth: xZc-SoyAVg-Zy3hpuxofZINpExU
+Message-ID: <CAKMK7uEJYcxpwJbhvQBF87VOo+zFA73Ro-guGkh4FtOFtr1Ehw@mail.gmail.com>
+Subject: Re: [PATCH 0/3] fbdev/drm: sh_mobile: remove unused MERAM support
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        "open list:DRM DRIVERS FOR RENESAS"
+        <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add "vqmmc-supply" property for mmc2 to indicate the supply connected
-to the IO lines.
+On Fri, Apr 27, 2018 at 1:36 PM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> Hi Bartlomiej,
+>
+> On Friday, 27 April 2018 14:21:42 EEST Bartlomiej Zolnierkiewicz wrote:
+>> Hi,
+>>
+>> This patchset removes unused MERAM support (last user was removed
+>> 3 years ago) from shmobile fbdev & drm drivers and then removes
+>> MERAM driver itself.
+>>
+>> If it is okay to merge this patches I would like patch #1 to go
+>> through fbdev tree and patch #2 to go through drm tree. Once they
+>> are both upstream (v4.18) I will apply patch #3 to fbdev tree.
+>
+> Or you could merge everything through the fbdev tree in one go, the shmobile
+> driver hardly sees any activity these days.
+>
+> For the whole series,
+>
+> Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
----
- arch/arm/boot/dts/dra71-evm.dts | 1 +
- 1 file changed, 1 insertion(+)
+Yeah merging all through fbdev is probably simplest, shmobile is not a
+driver that's actively changed a lot. Ack from me too.
+-Daniel
 
-diff --git a/arch/arm/boot/dts/dra71-evm.dts b/arch/arm/boot/dts/dra71-evm.dts
-index ebc4bbae981e..64c57d87ca2f 100644
---- a/arch/arm/boot/dts/dra71-evm.dts
-+++ b/arch/arm/boot/dts/dra71-evm.dts
-@@ -204,6 +204,7 @@
- 	pinctrl-2 = <&mmc2_pins_ddr_rev20 &mmc2_iodelay_ddr_conf>;
- 	pinctrl-3 = <&mmc2_pins_hs200 &mmc2_iodelay_hs200_rev20_conf>;
- 	vmmc-supply = <&evm_1v8_sw>;
-+	vqmmc-supply = <&evm_1v8_sw>;
- };
- 
- &mac {
+>
+>> Bartlomiej Zolnierkiewicz (3):
+>>   video: fbdev: sh_mobile_lcdcfb: remove unused MERAM support
+>>   drm: shmobile: remove unused MERAM support
+>>   video: fbdev: remove unused sh_mobile_meram driver
+>>
+>>  drivers/gpu/drm/shmobile/Kconfig           |   1 -
+>>  drivers/gpu/drm/shmobile/shmob_drm_crtc.c  |  42 --
+>>  drivers/gpu/drm/shmobile/shmob_drm_crtc.h  |   1 -
+>>  drivers/gpu/drm/shmobile/shmob_drm_drv.h   |   2 -
+>>  drivers/gpu/drm/shmobile/shmob_drm_kms.c   |  11 -
+>>  drivers/gpu/drm/shmobile/shmob_drm_kms.h   |   1 -
+>>  drivers/gpu/drm/shmobile/shmob_drm_plane.c |   2 -
+>>  drivers/video/fbdev/Kconfig                |  13 -
+>>  drivers/video/fbdev/Makefile               |   1 -
+>>  drivers/video/fbdev/sh_mobile_lcdcfb.c     |  63 +--
+>>  drivers/video/fbdev/sh_mobile_lcdcfb.h     |   1 -
+>>  drivers/video/fbdev/sh_mobile_meram.c      | 754 --------------------------
+>>  include/linux/platform_data/shmob_drm.h    |   4 -
+>>  include/video/sh_mobile_lcdc.h             |   3 -
+>>  include/video/sh_mobile_meram.h            |  95 ----
+>>  15 files changed, 1 insertion(+), 993 deletions(-)
+>>  delete mode 100644 drivers/video/fbdev/sh_mobile_meram.c
+>>  delete mode 100644 include/video/sh_mobile_meram.h
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
+>
+>
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+
+
 -- 
-2.17.0
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
