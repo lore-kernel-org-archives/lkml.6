@@ -1,39 +1,82 @@
-Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrLObJP42cpARRK8XND+h3Cds1d/mXClAnISd3mROWnp3SUomqvUTQgwJikd9AsiNCW+WBA
-ARC-Seal: i=1; a=rsa-sha256; t=1524838281; cv=none;
-        d=google.com; s=arc-20160816;
-        b=KVTrwqmCysELx0eACT8ww0ZL91EYOroeBxrwgrMjTcFdNlT3oBGcdcNdyA79L4mXb5
-         GNlAMA751Jvpmv9P5VfInH49fdDHm00X/v+vAUux1M/0wmXCYAQwxuttWfmI6mKzxRSI
-         MdAfm7elPWwwMaTgA/b5XH77EybEhqtsRKdaNMEv3jeabrbg/t8SF9zNZ2ek27aKeSiM
-         oY2Qn9I4bxdTUm1x9vpFf+WwPOrHNOZ+eRzvtsB/5GV/Vmb09J6dOoMzXWeBwgwU66mC
-         P8o+bUi7lQRKJUXMyPd7e8ypzSRZF3Fq1FlDBmqv/XNQvRAfpZa/gf6KKtvs89WOryau
-         C3fg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=HN9MliDuuSJr8daMEVM7x98Ozk1mkaKMiNLdOouuFCk=;
-        b=YUv1eDpjxzabpetAIxd4w+jKLeh/sMLI2m+psyUwWTLZFZRyDDQaCwqaIupDXset0S
-         vwr177G9yN0pouGKtRaGKtHhbFlQwRSctNprpwJ0Bp1bmvpDSoyRt91iQCfAR+q1wu9Z
-         rvU/fHcIApa4iX1xM8kRoPYu0cy3Ju3q/jWPv7pvrZ2UlYvqo27qoE+B4TUZK+mkiK7I
-         U6AVfWEgXvcJQ4fm1dNVqrA/6kH89nmWJIZZJHbf7ltSCyq239c6VyUcoGg9R1cEyN+Q
-         AOl+K+Kx7jN5Eg2BavaYgu4feVQPUMY/AZoIHl6tZy4kHZapaGP9dc8FvaBL9oKO7cCa
-         QdiA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7C1121892
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-298528-1524838280-2-10866630135388516829
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524838279; b=IPi/WnNpqahpL3TduR3x2vYfUrVpFhsaLKrW86KRhc3j99u2KO
+    1YtZAKn1nB1ChNc7jfSGEIwi/Dj6+/lrzCzqFT9G+7mtdYuAzH3cWBUY80dBFThX
+    ACIASZ9yGrthxLlvWdj8/ynG93JM1QSHdVc90yBpr5NkU6RYPXu69p1bdmx74PZt
+    TJDxQhTPIG5fyGxrc03FXrDUyuYwH5hRkMJvyqqferho2iQCrzIRzCJgxzmGdwjp
+    p2KOf3lg84wzqcPezhQGAfrezcrxfpX2gtiUuPTAGJUaZ4eDAbEgXtXevXFJr88I
+    gv0e6XfivbSVLpM7dpi8e3qP9ylbWH7UVXXw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1524838279; bh=OxMBjHu5PtTyJG2FhMlc/snRm1go3D
+    H61B2RYo5uuXU=; b=VcHq3s6fDFlUIkwgi/YN3nywuq6pyi/FRtuXwAFCmCpvaW
+    e5WOHDTKaz+53Hi0VVfRMLNgxuqsE0yChLylQT3SfWDif79NkOByJ8yOV4pE5lGx
+    PJAUpDKvvT9DJMtLCtre5i+M96LH+zakfw5VjMLsN8gHnoqLhk0SHkAL18EoF0/c
+    JfWIms4VqfJ419Drw9vrC5KqTrUQ+YrghAR1Mb8bRuBbSQS6MEjpdfOZ2uX8HE0I
+    HaccxcxSYqO9KjHk+OueQR3qrweS85qlDIvcTe/RI44gNws/bTwEm9NVK3waMSux
+    QLKPS75nSpTOKJ977FPHF7t3FHjAT9HsDySDDOWQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfM3YpszwtkHvLEoBQ28SR5km2lZx+NlkZKGeMOIeRRY8sUCaTUFdqN+ldNkxdTDHuDU+t42fNyuBSahrN80NP9k06usUqunw0chaoVyqTOgxZD4amD2r
+    Rg2Ch6nr40KsIQOwBp/98fJBXhhpHdUi/zsamrRAPxJdL2Hdz0fv4TSgLmqWxRlz4VUfDW83CgNfL+wx9pYwn6nSFZg1iVhBpCwQpbfOfiTOVY53QQ2wuVzR
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=CqTAwb2zOcPDmA0dTnEA:9 a=QEXdDO2ut3YA:10
+    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S934750AbeD0OLN (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 27 Apr 2018 10:11:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56070 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934949AbeD0OLL (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 27 Apr 2018 10:11:11 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A703218C9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Julian Wiedmann <jwi@linux.vnet.ibm.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 47/81] s390/qeth: fix error handling in adapter command callbacks
-Date: Fri, 27 Apr 2018 15:58:49 +0200
-Message-Id: <20180427135745.916829305@linuxfoundation.org>
+        stable@vger.kernel.org, Guillaume Nault <g.nault@alphalink.fr>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.16 43/81] l2tp: hold reference on tunnels printed in l2tp/tunnels debugfs file
+Date: Fri, 27 Apr 2018 15:58:45 +0200
+Message-Id: <20180427135745.648420918@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135743.216853156@linuxfoundation.org>
 References: <20180427135743.216853156@linuxfoundation.org>
@@ -41,10 +84,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908825978408515?=
-X-GMAIL-MSGID: =?utf-8?q?1598908825978408515?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,215 +94,98 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Julian Wiedmann <jwi@linux.vnet.ibm.com>
+From: Guillaume Nault <g.nault@alphalink.fr>
 
 
-[ Upstream commit 686c97ee29c886ee07d17987d0059874c5c3b5af ]
+[ Upstream commit f726214d9b23e5fce8c11937577a289a3202498f ]
 
-Make sure to check both return code fields before(!) processing the
-command response. Otherwise we risk operating on invalid data.
+Use l2tp_tunnel_get_nth() instead of l2tp_tunnel_find_nth(), to be safe
+against concurrent tunnel deletion.
 
-This matches an earlier fix for SETASSPARMS commands, see
-commit ad3cbf613329 ("s390/qeth: fix error handling in checksum cmd callback").
+Use the same mechanism as in l2tp_ppp.c for dropping the reference
+taken by l2tp_tunnel_get_nth(). That is, drop the reference just
+before looking up the next tunnel. In case of error, drop the last
+accessed tunnel in l2tp_dfs_seq_stop().
 
-Signed-off-by: Julian Wiedmann <jwi@linux.vnet.ibm.com>
+That was the last use of l2tp_tunnel_find_nth().
+
+Fixes: 0ad6614048cf ("l2tp: Add debugfs files for dumping l2tp debug info")
+Signed-off-by: Guillaume Nault <g.nault@alphalink.fr>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/s390/net/qeth_core_main.c |   85 ++++++++++++++++----------------------
- 1 file changed, 37 insertions(+), 48 deletions(-)
+ net/l2tp/l2tp_core.c    |   20 --------------------
+ net/l2tp/l2tp_core.h    |    1 -
+ net/l2tp/l2tp_debugfs.c |   15 +++++++++++++--
+ 3 files changed, 13 insertions(+), 23 deletions(-)
 
---- a/drivers/s390/net/qeth_core_main.c
-+++ b/drivers/s390/net/qeth_core_main.c
-@@ -3037,28 +3037,23 @@ static int qeth_send_startlan(struct qet
- 	return rc;
+--- a/net/l2tp/l2tp_core.c
++++ b/net/l2tp/l2tp_core.c
+@@ -355,26 +355,6 @@ err_tlock:
  }
+ EXPORT_SYMBOL_GPL(l2tp_session_register);
  
--static int qeth_default_setadapterparms_cb(struct qeth_card *card,
--		struct qeth_reply *reply, unsigned long data)
-+static int qeth_setadpparms_inspect_rc(struct qeth_ipa_cmd *cmd)
- {
--	struct qeth_ipa_cmd *cmd;
+-struct l2tp_tunnel *l2tp_tunnel_find_nth(const struct net *net, int nth)
+-{
+-	struct l2tp_net *pn = l2tp_pernet(net);
+-	struct l2tp_tunnel *tunnel;
+-	int count = 0;
 -
--	QETH_CARD_TEXT(card, 4, "defadpcb");
--
--	cmd = (struct qeth_ipa_cmd *) data;
--	if (cmd->hdr.return_code == 0)
-+	if (!cmd->hdr.return_code)
- 		cmd->hdr.return_code =
- 			cmd->data.setadapterparms.hdr.return_code;
--	return 0;
-+	return cmd->hdr.return_code;
- }
- 
- static int qeth_query_setadapterparms_cb(struct qeth_card *card,
- 		struct qeth_reply *reply, unsigned long data)
- {
--	struct qeth_ipa_cmd *cmd;
-+	struct qeth_ipa_cmd *cmd = (struct qeth_ipa_cmd *) data;
- 
- 	QETH_CARD_TEXT(card, 3, "quyadpcb");
-+	if (qeth_setadpparms_inspect_rc(cmd))
-+		return 0;
- 
--	cmd = (struct qeth_ipa_cmd *) data;
- 	if (cmd->data.setadapterparms.data.query_cmds_supp.lan_type & 0x7f) {
- 		card->info.link_type =
- 		      cmd->data.setadapterparms.data.query_cmds_supp.lan_type;
-@@ -3066,7 +3061,7 @@ static int qeth_query_setadapterparms_cb
- 	}
- 	card->options.adp.supported_funcs =
- 		cmd->data.setadapterparms.data.query_cmds_supp.supported_cmds;
--	return qeth_default_setadapterparms_cb(card, reply, (unsigned long)cmd);
-+	return 0;
- }
- 
- static struct qeth_cmd_buffer *qeth_get_adapter_cmd(struct qeth_card *card,
-@@ -3158,22 +3153,20 @@ EXPORT_SYMBOL_GPL(qeth_query_ipassists);
- static int qeth_query_switch_attributes_cb(struct qeth_card *card,
- 				struct qeth_reply *reply, unsigned long data)
- {
--	struct qeth_ipa_cmd *cmd;
--	struct qeth_switch_info *sw_info;
-+	struct qeth_ipa_cmd *cmd = (struct qeth_ipa_cmd *) data;
- 	struct qeth_query_switch_attributes *attrs;
-+	struct qeth_switch_info *sw_info;
- 
- 	QETH_CARD_TEXT(card, 2, "qswiatcb");
--	cmd = (struct qeth_ipa_cmd *) data;
--	sw_info = (struct qeth_switch_info *)reply->param;
--	if (cmd->data.setadapterparms.hdr.return_code == 0) {
--		attrs = &cmd->data.setadapterparms.data.query_switch_attributes;
--		sw_info->capabilities = attrs->capabilities;
--		sw_info->settings = attrs->settings;
--		QETH_CARD_TEXT_(card, 2, "%04x%04x", sw_info->capabilities,
--							sw_info->settings);
+-	rcu_read_lock_bh();
+-	list_for_each_entry_rcu(tunnel, &pn->l2tp_tunnel_list, list) {
+-		if (++count > nth) {
+-			rcu_read_unlock_bh();
+-			return tunnel;
+-		}
 -	}
--	qeth_default_setadapterparms_cb(card, reply, (unsigned long) cmd);
-+	if (qeth_setadpparms_inspect_rc(cmd))
-+		return 0;
- 
-+	sw_info = (struct qeth_switch_info *)reply->param;
-+	attrs = &cmd->data.setadapterparms.data.query_switch_attributes;
-+	sw_info->capabilities = attrs->capabilities;
-+	sw_info->settings = attrs->settings;
-+	QETH_CARD_TEXT_(card, 2, "%04x%04x", sw_info->capabilities,
-+			sw_info->settings);
- 	return 0;
- }
- 
-@@ -4211,16 +4204,13 @@ EXPORT_SYMBOL_GPL(qeth_do_send_packet);
- static int qeth_setadp_promisc_mode_cb(struct qeth_card *card,
- 		struct qeth_reply *reply, unsigned long data)
- {
--	struct qeth_ipa_cmd *cmd;
-+	struct qeth_ipa_cmd *cmd = (struct qeth_ipa_cmd *) data;
- 	struct qeth_ipacmd_setadpparms *setparms;
- 
- 	QETH_CARD_TEXT(card, 4, "prmadpcb");
- 
--	cmd = (struct qeth_ipa_cmd *) data;
- 	setparms = &(cmd->data.setadapterparms);
 -
--	qeth_default_setadapterparms_cb(card, reply, (unsigned long)cmd);
--	if (cmd->hdr.return_code) {
-+	if (qeth_setadpparms_inspect_rc(cmd)) {
- 		QETH_CARD_TEXT_(card, 4, "prmrc%x", cmd->hdr.return_code);
- 		setparms->data.mode = SET_PROMISC_MODE_OFF;
- 	}
-@@ -4290,18 +4280,18 @@ EXPORT_SYMBOL_GPL(qeth_get_stats);
- static int qeth_setadpparms_change_macaddr_cb(struct qeth_card *card,
- 		struct qeth_reply *reply, unsigned long data)
+-	rcu_read_unlock_bh();
+-
+-	return NULL;
+-}
+-EXPORT_SYMBOL_GPL(l2tp_tunnel_find_nth);
+-
+ /*****************************************************************************
+  * Receive data handling
+  *****************************************************************************/
+--- a/net/l2tp/l2tp_core.h
++++ b/net/l2tp/l2tp_core.h
+@@ -222,7 +222,6 @@ struct l2tp_session *l2tp_session_get(co
+ struct l2tp_session *l2tp_session_get_nth(struct l2tp_tunnel *tunnel, int nth);
+ struct l2tp_session *l2tp_session_get_by_ifname(const struct net *net,
+ 						const char *ifname);
+-struct l2tp_tunnel *l2tp_tunnel_find_nth(const struct net *net, int nth);
+ 
+ int l2tp_tunnel_create(struct net *net, int fd, int version, u32 tunnel_id,
+ 		       u32 peer_tunnel_id, struct l2tp_tunnel_cfg *cfg,
+--- a/net/l2tp/l2tp_debugfs.c
++++ b/net/l2tp/l2tp_debugfs.c
+@@ -47,7 +47,11 @@ struct l2tp_dfs_seq_data {
+ 
+ static void l2tp_dfs_next_tunnel(struct l2tp_dfs_seq_data *pd)
  {
--	struct qeth_ipa_cmd *cmd;
-+	struct qeth_ipa_cmd *cmd = (struct qeth_ipa_cmd *) data;
- 
- 	QETH_CARD_TEXT(card, 4, "chgmaccb");
-+	if (qeth_setadpparms_inspect_rc(cmd))
-+		return 0;
- 
--	cmd = (struct qeth_ipa_cmd *) data;
- 	if (!card->options.layer2 ||
- 	    !(card->info.mac_bits & QETH_LAYER2_MAC_READ)) {
- 		ether_addr_copy(card->dev->dev_addr,
- 				cmd->data.setadapterparms.data.change_addr.addr);
- 		card->info.mac_bits |= QETH_LAYER2_MAC_READ;
- 	}
--	qeth_default_setadapterparms_cb(card, reply, (unsigned long) cmd);
- 	return 0;
+-	pd->tunnel = l2tp_tunnel_find_nth(pd->net, pd->tunnel_idx);
++	/* Drop reference taken during previous invocation */
++	if (pd->tunnel)
++		l2tp_tunnel_dec_refcount(pd->tunnel);
++
++	pd->tunnel = l2tp_tunnel_get_nth(pd->net, pd->tunnel_idx);
+ 	pd->tunnel_idx++;
  }
  
-@@ -4332,13 +4322,15 @@ EXPORT_SYMBOL_GPL(qeth_setadpparms_chang
- static int qeth_setadpparms_set_access_ctrl_cb(struct qeth_card *card,
- 		struct qeth_reply *reply, unsigned long data)
+@@ -96,7 +100,14 @@ static void *l2tp_dfs_seq_next(struct se
+ 
+ static void l2tp_dfs_seq_stop(struct seq_file *p, void *v)
  {
--	struct qeth_ipa_cmd *cmd;
-+	struct qeth_ipa_cmd *cmd = (struct qeth_ipa_cmd *) data;
- 	struct qeth_set_access_ctrl *access_ctrl_req;
- 	int fallback = *(int *)reply->param;
- 
- 	QETH_CARD_TEXT(card, 4, "setaccb");
-+	if (cmd->hdr.return_code)
-+		return 0;
-+	qeth_setadpparms_inspect_rc(cmd);
- 
--	cmd = (struct qeth_ipa_cmd *) data;
- 	access_ctrl_req = &cmd->data.setadapterparms.data.set_access_ctrl;
- 	QETH_DBF_TEXT_(SETUP, 2, "setaccb");
- 	QETH_DBF_TEXT_(SETUP, 2, "%s", card->gdev->dev.kobj.name);
-@@ -4411,7 +4403,6 @@ static int qeth_setadpparms_set_access_c
- 			card->options.isolation = card->options.prev_isolation;
- 		break;
- 	}
--	qeth_default_setadapterparms_cb(card, reply, (unsigned long) cmd);
- 	return 0;
+-	/* nothing to do */
++	struct l2tp_dfs_seq_data *pd = v;
++
++	if (!pd || pd == SEQ_START_TOKEN)
++		return;
++
++	/* Drop reference taken by last invocation of l2tp_dfs_next_tunnel() */
++	if (pd->tunnel)
++		l2tp_tunnel_dec_refcount(pd->tunnel);
  }
  
-@@ -4699,14 +4690,15 @@ out:
- static int qeth_setadpparms_query_oat_cb(struct qeth_card *card,
- 		struct qeth_reply *reply, unsigned long data)
- {
--	struct qeth_ipa_cmd *cmd;
-+	struct qeth_ipa_cmd *cmd = (struct qeth_ipa_cmd *)data;
- 	struct qeth_qoat_priv *priv;
- 	char *resdata;
- 	int resdatalen;
- 
- 	QETH_CARD_TEXT(card, 3, "qoatcb");
-+	if (qeth_setadpparms_inspect_rc(cmd))
-+		return 0;
- 
--	cmd = (struct qeth_ipa_cmd *)data;
- 	priv = (struct qeth_qoat_priv *)reply->param;
- 	resdatalen = cmd->data.setadapterparms.hdr.cmdlength;
- 	resdata = (char *)data + 28;
-@@ -4800,21 +4792,18 @@ out:
- static int qeth_query_card_info_cb(struct qeth_card *card,
- 				   struct qeth_reply *reply, unsigned long data)
- {
--	struct qeth_ipa_cmd *cmd;
-+	struct carrier_info *carrier_info = (struct carrier_info *)reply->param;
-+	struct qeth_ipa_cmd *cmd = (struct qeth_ipa_cmd *)data;
- 	struct qeth_query_card_info *card_info;
--	struct carrier_info *carrier_info;
- 
- 	QETH_CARD_TEXT(card, 2, "qcrdincb");
--	carrier_info = (struct carrier_info *)reply->param;
--	cmd = (struct qeth_ipa_cmd *)data;
--	card_info = &cmd->data.setadapterparms.data.card_info;
--	if (cmd->data.setadapterparms.hdr.return_code == 0) {
--		carrier_info->card_type = card_info->card_type;
--		carrier_info->port_mode = card_info->port_mode;
--		carrier_info->port_speed = card_info->port_speed;
--	}
-+	if (qeth_setadpparms_inspect_rc(cmd))
-+		return 0;
- 
--	qeth_default_setadapterparms_cb(card, reply, (unsigned long) cmd);
-+	card_info = &cmd->data.setadapterparms.data.card_info;
-+	carrier_info->card_type = card_info->card_type;
-+	carrier_info->port_mode = card_info->port_mode;
-+	carrier_info->port_speed = card_info->port_speed;
- 	return 0;
- }
- 
+ static void l2tp_dfs_seq_tunnel_show(struct seq_file *m, void *v)
