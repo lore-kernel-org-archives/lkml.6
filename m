@@ -1,40 +1,40 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZo652wnINinzvjQiz1cPtSlU25dnkpFcAIw02G+t+faZdQylG+RId6KJO+Rjzz8leiiF2JT
-ARC-Seal: i=1; a=rsa-sha256; t=1524837790; cv=none;
+X-Google-Smtp-Source: AB8JxZoJnZjOjypxOPpqTDzc/muYkOe90BXBe0RQfp1WsaFJ8sD5Q4N5mboHQmEnBSCNlYSM4ZKq
+ARC-Seal: i=1; a=rsa-sha256; t=1524837788; cv=none;
         d=google.com; s=arc-20160816;
-        b=yDB95MfAIDJ9d/4mTqiWno3/uSujuNz76X2YVwacU8x+htiyVDip3RWRTSWrDdvHWl
-         RDWQHSLDZUy2O9k+jEp0duEMze4J19FZoZ3ONPLPyirHn5TPq3WzORJ4IOxuqkFvdZaO
-         AIt9BTBy+JR8qFrKyBPQAnZ1hkuu+O9eEAJMKdfhNFi8K22aromZ6iuV42o01XI59D3A
-         K6NCyFjIqdFIqupSDCO+YSb79+EBJmtjRgj8wyJWvSqPagjjMCwRotYLgqI3L4rMVed5
-         SdKb9hdgtVY5DzE3AQstPiU/oEoQvN+8Pa0KTNlDIQ2aZjkX9EWpFtJAyAFo5EHoNZXj
-         G56A==
+        b=u+jftwt60fTs1pWj080YAGj6RMzpXO7RfLpOqMZH0zMKUsG6VRO5HVr+Di3UzSIUSY
+         2Qn5+v7WxT36tVQwuHNMnrKdjqAPapuCk6BAQmecgq+EOVFmX5nql9lHSdGtJpPzKXAt
+         DPoj1SftpvCmAVH+Bp2Kyyh/L5Uj+/LkbH9gk48a6/+6/d1B1SXAb/mgS6y9CkE19AIa
+         bYpnoazsCKaun+6tdMPlQu8aiX/ma+5zHn34UVmrVdN/HA8wE/4+f+vgJqzjDYhRLJXm
+         5sDo66T07wJ4w7/zj3xay2KSq40Aoti1UpByEBUDG9PeljAEx6CfJyxGQHrxq3cvSj6A
+         NgUg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=uCINWFRzQSNWm+pvQVYs6LBbwuullYXeu0rlp1kVvoQ=;
-        b=JaxBQbp2ceJBO03eTbVokJGut8oAp4kbW97XM3OmTo0SEALssrVDzmZYaQTS3t6Vr+
-         BCApabEwGiOI1HV1GDwTYf0eq306adq/RFYgybvPni2j3OrejI5YjXlrLBQp+Ov5WqUo
-         NlwghfMC9by6OVn7a0Rm1UhyaPUVZJ7PuSNDPIGtQCusS/CwsJFwBI1U/QYj0HX643Ut
-         A7dh2njfLEZp90ShAXrC7bDKeGuWVKXLdFqUyjPm4NyW8Vm+Qn0FgpfGxLGus9sjom+i
-         lTUx17nO6PV2mIPiVOHmya+goRHsHXdlmSZdNtLRecSgblHJ5Dtb2D5Xq5NQwv/ewj4h
-         Wv8A==
+        bh=xqyIOYdG/ITJ3FSz8tj8dfHUkCi+YwJMqYHyGCmhSaU=;
+        b=zOp3tOD8y0mbw2fRNvEk0hmSbyTBieNYryNdVn3baaCuabCLx3mRyJoSPSwgix9E8u
+         87B3ZS3vE3u+0oeQ4fJ0kjvUyk0q6a9g00Exz0Yy9nh31zZzeHTlWbmtO9TSHCoNw09a
+         CoOj0WH4uhoUabdXlUoKpZGlVXk7nAThEVCZ26LsjaHgMDG/tVAmWT29J9aZeHnvedt1
+         ac74ekPndblEqFOPNY5ELqgcxts45AjWusf10Zl9plzlbqadap8mnSXiRrIwMBMzJNLN
+         n4OEdwtK2gk0770oasz6TSzfW+zLK+KuR0xd01G92kb7lTj7w17RNlVfNOHMh3yWbTWG
+         8m2w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 101FE218A2
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73F2F218A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Andreas Kemnade <andreas@kemnade.info>,
-	Tony Lindgren <tony@atomide.com>,
-	Bin Liu <b-liu@ti.com>
-Subject: [PATCH 4.9 08/74] usb: musb: fix enumeration after resume
-Date: Fri, 27 Apr 2018 15:57:58 +0200
-Message-Id: <20180427135710.242461260@linuxfoundation.org>
+	Jean Delvare <jdelvare@suse.de>,
+	Jason Andryuk <jandryuk@gmail.com>,
+	Wolfram Sang <wsa@the-dreams.de>
+Subject: [PATCH 4.9 07/74] i2c: i801: Restore configuration at shutdown
+Date: Fri, 27 Apr 2018 15:57:57 +0200
+Message-Id: <20180427135710.201572728@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135709.899303463@linuxfoundation.org>
 References: <20180427135709.899303463@linuxfoundation.org>
@@ -44,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908311697008283?=
-X-GMAIL-MSGID: =?utf-8?q?1598908311697008283?=
+X-GMAIL-THRID: =?utf-8?q?1598908308826008681?=
+X-GMAIL-MSGID: =?utf-8?q?1598908308826008681?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,46 +53,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Andreas Kemnade <andreas@kemnade.info>
+From: Jean Delvare <jdelvare@suse.de>
 
-commit 17539f2f4f0b7fa906b508765c8ada07a1e45f52 upstream.
+commit f7f6d915a10f7f2bce17e3b1b7d3376562395a28 upstream.
 
-On dm3730 there are enumeration problems after resume.
-Investigation led to the cause that the MUSB_POWER_SOFTCONN
-bit is not set. If it was set before suspend (because it
-was enabled via musb_pullup()), it is set in
-musb_restore_context() so the pullup is enabled. But then
-musb_start() is called which overwrites MUSB_POWER and
-therefore disables MUSB_POWER_SOFTCONN, so no pullup is
-enabled and the device is not enumerated.
+On some systems, the BIOS expects certain SMBus register values to
+match the hardware defaults. Restore these configuration registers at
+shutdown time to avoid confusing the BIOS. This avoids hard-locking
+such systems upon reboot.
 
-So let's do a subset of what musb_start() does
-in the same way as musb_suspend() does it. Platform-specific
-stuff it still called as there might be some phy-related stuff
-which needs to be enabled.
-Also interrupts are enabled, as it was the original idea
-of calling musb_start() in musb_resume() according to
-Commit 6fc6f4b87cb3 ("usb: musb: Disable interrupts on suspend,
-enable them on resume")
-
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-Tested-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Bin Liu <b-liu@ti.com>
+Signed-off-by: Jean Delvare <jdelvare@suse.de>
+Tested-by: Jason Andryuk <jandryuk@gmail.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/musb/musb_core.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/i2c/busses/i2c-i801.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
---- a/drivers/usb/musb/musb_core.c
-+++ b/drivers/usb/musb/musb_core.c
-@@ -2710,7 +2710,8 @@ static int musb_resume(struct device *de
- 	if ((devctl & mask) != (musb->context.devctl & mask))
- 		musb->port1_status = 0;
+--- a/drivers/i2c/busses/i2c-i801.c
++++ b/drivers/i2c/busses/i2c-i801.c
+@@ -1696,6 +1696,15 @@ static void i801_remove(struct pci_dev *
+ 	 */
+ }
  
--	musb_start(musb);
-+	musb_enable_interrupts(musb);
-+	musb_platform_enable(musb);
- 
- 	spin_lock_irqsave(&musb->lock, flags);
- 	error = musb_run_resume_work(musb);
++static void i801_shutdown(struct pci_dev *dev)
++{
++	struct i801_priv *priv = pci_get_drvdata(dev);
++
++	/* Restore config registers to avoid hard hang on some systems */
++	i801_disable_host_notify(priv);
++	pci_write_config_byte(dev, SMBHSTCFG, priv->original_hstcfg);
++}
++
+ #ifdef CONFIG_PM
+ static int i801_suspend(struct device *dev)
+ {
+@@ -1728,6 +1737,7 @@ static struct pci_driver i801_driver = {
+ 	.id_table	= i801_ids,
+ 	.probe		= i801_probe,
+ 	.remove		= i801_remove,
++	.shutdown	= i801_shutdown,
+ 	.driver		= {
+ 		.pm	= &i801_pm_ops,
+ 	},
