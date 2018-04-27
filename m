@@ -1,35 +1,33 @@
-Return-Path: <andy.gross@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1524777465; cv=none;
+Return-Path: <broonie@sirena.org.uk>
+X-Google-Smtp-Source: AB8JxZq+wexchAHVcgHscLgKpcHrI/0ZEj2rUXA1eYjm5pbk8upS7iB3sJ2eWQrpAB8Bs4eu7F/X
+ARC-Seal: i=1; a=rsa-sha256; t=1524827186; cv=none;
         d=google.com; s=arc-20160816;
-        b=NaLdzWDfY8dcWt6c8su3YycXRSItAu1HJ/C5jyYOw1sxZT2DD5vciqIIEtSNoeXgfJ
-         7H9KXUeHrs5/NKSp4sR655MfPpWdqPiM5lLZ+k5zAeH4aEwn3PmVBH9NwRfxyUQcuDKz
-         F58Nl7AxhTconbLgei/uyPDJOgBYNwN0mbPYb8zf5KCsDLYtxtTEWu6p6R5Xb5h9O4MH
-         Bt1T9OI5lLMCVL7K4OIJtVYNpUC1/EtIp/pin3/JMTYz9FzcZ8mBS4O2I9fY/BxIdiZA
-         kw3deQRnIxBnWzZ/N3frmyainVwOV1lwrFHBpit8ukokIRV/XNwbK7v5fBlXVr2r2oQT
-         I9kQ==
+        b=QGIrahHfnOxKHKv8+WVNZmV1YKV25iDX1CNU38llI+Q4Pu8veLQ2dVaqWEw6hczSte
+         /fsaBND0mwSOPy+CTRhts3hETY46BDXUylwjWikLvjSoxLAKUMWMBBKKlghxsci8KHOM
+         WN+44ELFXLPyz1+hOdvdVnQZ8z/mdVe2VKQ9393BU7EpYosCpg3NB3S9zWqNjhl3J4zh
+         wtvKD+zP828QMt9srFDyvdXRDAshqOHYmxpcNgaHxJwmoQ6eEWqBrgiGgLjGSuRJ4bRP
+         GUTsEMguME3hbdj5GFDnjS8iwzlFTSBu/wwOD4dcKhL8gXapmxsnFGBPDZkn1iMxyHiW
+         IJyw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:dkim-signature
          :arc-authentication-results;
-        bh=d7sgkDSeRoTfi06dTL9NMRnGN5FHme+USrOm6nGHPJU=;
-        b=Dc6noUXg2zysddDRN7J+skS8Q2ygBLCdDmytApDh+6sug/6APCKFn/5SawSoNf7jO7
-         KxwA+TBXHF8tAtMrXxOkO88j/Dkd23M+OhaE5ua6aQVW1dUI2fanJin6xnyM+5H+CYOH
-         pyL/YyK8gI8fLg+lpkqXkg9X7JSDMpeI8ALUdeqTg1XH6aioQDI7MrIZSK2PMTcIl35i
-         CibGP0fNVOUVyFmJp8vY3gIYs1FKcPMx+ym2Es5PogDWkfN2jRqh8WiZPG/OSYt1B+wx
-         jOwsK6dzQ5QWvSxYd7Z1WXGBVUUeGsmn3hcU9vpyfeTOcoow3Jg0q8eJBQvqAKblOdYN
-         99RA==
+        bh=Zk0VDvAdT7Y+p+KFtXAzxC0k31nVdvG2ZxOsCYAdZTw=;
+        b=zTloRhIjKAJj7wJLFlHnW11wXpGOQjlROCfKdOcMvt51hd2/uLmnv/7wJEgXaafJ7S
+         GgPyIc0Huk/1ZivKyt6Qtqi5kVGQttMINzy5sUJRvsM23fWKBB3/nsHyYf7px4TotqiW
+         6zXIe4PISFYTX2AP9KjmGza9EKeOqEYYda8Olx9cFveB9KVw5VLQp9ESHuDdbATVLyIz
+         r6HJLtA/IVwJqlGMh2wBsCHRp611HJ4a2U+mDI1s0+dfxQEmO4zoXdwD5PJQKW13QFvl
+         0poS7cT5LDOvE+509bUvVVRimAGq5HblefbqURWbNDVew0m6TnXDzwvxvAHL0kU8iYZX
+         QH4A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=Zw7IJCo8;
-       spf=pass (google.com: domain of andy.gross@linaro.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=andy.gross@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=Fe+TJWqv;
+       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=Zw7IJCo8;
-       spf=pass (google.com: domain of andy.gross@linaro.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=andy.gross@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AB8JxZpqI48TRLMPBMDhJhfZaNLsqDkJy4pqdJPcfBxChTYVviaP78Zq23kxdc/IhHrPQZO1DAm0VQ==
-Date: Thu, 26 Apr 2018 16:17:40 -0500
-From: Andy Gross <andy.gross@linaro.org>
-To: Mark Brown <broonie@kernel.org>
+       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=Fe+TJWqv;
+       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk
+Date: Fri, 27 Apr 2018 12:06:12 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Andy Gross <andy.gross@linaro.org>
 Cc: srinivas.kandagatla@linaro.org, mark.rutland@arm.com,
 	devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
 	bgoswami@codeaurora.org, rohkumar@qti.qualcomm.com,
@@ -39,39 +37,52 @@ Cc: srinivas.kandagatla@linaro.org, mark.rutland@arm.com,
 	linux-arm-kernel@lists.infradead.org, gregkh@linuxfoundation.org,
 	perex@perex.cz, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH v6 02/24] soc: qcom: Add APR bus driver
-Message-ID: <20180426211740.GC25699@hector.attlocal.net>
+Message-ID: <20180427110612.GD6872@sirena.org.uk>
 References: <20180426094606.4775-1-srinivas.kandagatla@linaro.org>
  <20180426094606.4775-3-srinivas.kandagatla@linaro.org>
  <20180426113911.GA21755@sirena.org.uk>
+ <20180426211740.GC25699@hector.attlocal.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="fXStkuK2IQBfcDe+"
 Content-Disposition: inline
-In-Reply-To: <20180426113911.GA21755@sirena.org.uk>
-User-Agent: Mutt/1.5.23.1 (2014-03-12)
+In-Reply-To: <20180426211740.GC25699@hector.attlocal.net>
+X-Cookie: Honk if you love peace and quiet.
+User-Agent: Mutt/1.9.4 (2018-02-28)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1598801756443527719?=
-X-GMAIL-MSGID: =?utf-8?q?1598845055305052468?=
+X-GMAIL-MSGID: =?utf-8?q?1598897191822552211?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Apr 26, 2018 at 12:39:11PM +0100, Mark Brown wrote:
-> On Thu, Apr 26, 2018 at 10:45:44AM +0100, srinivas.kandagatla@linaro.org wrote:
-> > From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> > 
-> > This patch adds support toi APR bus (Asynchronous Packet Router) driver.
-> > ARP driver is made as a bus driver so that the apr devices can added removed
-> 
-> What is the plan for getting this patch merged?  I think the only review
-> I've seen from maintainers thus far has been from Rob on the DT binding.
-> It's obviously going to be a dependency for everything else.
-> 
-> Also just saw ARP->APR there.
 
-Mark,
+--fXStkuK2IQBfcDe+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I just acked this, so it'd be great if you took it along with the others.  If
-you don't want to do that, I can just pull it in with my pull requests.
+On Thu, Apr 26, 2018 at 04:17:40PM -0500, Andy Gross wrote:
 
-Up to you,
+> I just acked this, so it'd be great if you took it along with the others.  If
+> you don't want to do that, I can just pull it in with my pull requests.
 
-Andy
+> Up to you,
+
+That's fine, I'm happy to take it - I just wanted to work out what was
+going on.
+
+--fXStkuK2IQBfcDe+
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrjBCMACgkQJNaLcl1U
+h9AaSgf9F1GOLrMf39dFFBWFnDM7HginCwTVyqz9rxLCJbOd1cU/32DztQembUnH
+haj5X7AC14see7qqLNMfL3t0UAjFkqYVIyapxHTfWTSCyjWUDqWbwSF1Nn+7SkYN
+giikT0zMJugfrvEUdRnY35AObZLKpEjQM4XlJ8Wf710pMoQ2/voosVXwZUhvyWa7
+Z80OzB/kaHPLlXoMWaKLBj+kHkkhWsgsP38Ppby6KawEUJWExVuDmCvwmJoVrDWC
+kYEjpSEeR2mfT0eMkBWvhtAkOtXTMM324EfUbbIFo7DSUASLgUFRP74b//SWjHJP
+B1BY7wyfwZ9Ma0mFkkHDTWL4NzY0Pg==
+=aRHi
+-----END PGP SIGNATURE-----
+
+--fXStkuK2IQBfcDe+--
