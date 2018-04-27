@@ -1,218 +1,160 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758550AbeD0TTg (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 15:19:36 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53034 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1758069AbeD0TTf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 15:19:35 -0400
-Date: Fri, 27 Apr 2018 15:19:31 -0400 (EDT)
-From: Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To: Christopher Lameter <cl@linux.com>
-cc: Mike Snitzer <snitzer@redhat.com>, Vlastimil Babka <vbabka@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pekka Enberg <penberg@kernel.org>, linux-mm@kvack.org,
-        dm-devel@redhat.com, David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND] slab: introduce the flag SLAB_MINIMIZE_WASTE
-In-Reply-To: <alpine.DEB.2.20.1804271136390.11686@nuc-kabylake>
-Message-ID: <alpine.LRH.2.02.1804271513320.16558@file01.intranet.prod.int.rdu2.redhat.com>
-References: <alpine.LRH.2.02.1803201740280.21066@file01.intranet.prod.int.rdu2.redhat.com> <20c58a03-90a8-7e75-5fc7-856facfb6c8a@suse.cz> <20180413151019.GA5660@redhat.com> <ee8807ff-d650-0064-70bf-e1d77fa61f5c@suse.cz> <20180416142703.GA22422@redhat.com>
- <alpine.LRH.2.02.1804161031300.24222@file01.intranet.prod.int.rdu2.redhat.com> <20180416144638.GA22484@redhat.com> <alpine.LRH.2.02.1804161530360.19492@file01.intranet.prod.int.rdu2.redhat.com> <alpine.DEB.2.20.1804170940340.17557@nuc-kabylake>
- <alpine.LRH.2.02.1804171454020.26973@file01.intranet.prod.int.rdu2.redhat.com> <alpine.DEB.2.20.1804180952580.1334@nuc-kabylake> <alpine.LRH.2.02.1804251702250.9428@file01.intranet.prod.int.rdu2.redhat.com> <alpine.LRH.2.02.1804251917460.2429@file01.intranet.prod.int.rdu2.redhat.com>
- <alpine.DEB.2.20.1804261354230.6674@nuc-kabylake> <alpine.LRH.2.02.1804261508430.26980@file01.intranet.prod.int.rdu2.redhat.com> <alpine.DEB.2.20.1804271136390.11686@nuc-kabylake>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        id S1758611AbeD0TWL (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 15:22:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41402 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1758069AbeD0TWJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 15:22:09 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9F58218C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Date: Fri, 27 Apr 2018 14:22:07 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Paul Menzel <pmenzel+linux-pci@molgen.mpg.de>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
+        Sinan Kaya <okaya@codeaurora.org>
+Subject: Re: pciehp 0000:00:1c.0:pcie004: Timeout on hotplug command 0x1038
+ (issued 65284 msec ago)
+Message-ID: <20180427192207.GG8199@bhelgaas-glaptop.roam.corp.google.com>
+References: <8770820b-85a0-172b-7230-3a44524e6c9f@molgen.mpg.de>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8770820b-85a0-172b-7230-3a44524e6c9f@molgen.mpg.de>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+[+cc Lukas, Sinan]
 
+Hi Paul,
 
-On Fri, 27 Apr 2018, Christopher Lameter wrote:
+Thanks for the report!
 
-> On Thu, 26 Apr 2018, Mikulas Patocka wrote:
+On Thu, Apr 26, 2018 at 12:17:53PM +0200, Paul Menzel wrote:
+> Dear Linux folks,
 > 
-> > > Hmmm... order 4 for these caches may cause some concern. These should stay
-> > > under costly order I think. Otherwise allocations are no longer
-> > > guaranteed.
-> >
-> > You said that slub has fallback to smaller order allocations.
 > 
-> Yes it does...
+> On the Lenovo X60t, during resume from ACPI suspend and during shutdown, the
+> message below is shown in the logs.
 > 
-> > The whole purpose of this "minimize waste" approach is to use higher-order
-> > allocations to use memory more efficiently, so it is just doing its job.
-> > (for these 3 caches, order-4 really wastes less memory than order-3 - on
-> > my system TCPv6 and sighand_cache have size 2112, task_struct 2752).
-> 
-> Hmmm... Ok if the others are fine with this as well. I got some pushback
-> there in the past.
-> 
-> > We could improve the fallback code, so that if order-4 allocation fails,
-> > it tries order-3 allocation, and then falls back to order-0. But I think
-> > that these failures are rare enough that it is not a problem.
-> 
-> I also think that would be too many fallbacks.
+>     pciehp 0000:00:1c.0:pcie004: Timeout on hotplug command 0x1038 (issued
+> 65284 msec ago)
 
-You are right - it's better to fallback to the minimum possible size, so 
-that the allocation is faster.
+This is an Intel root port:
 
-> The old code uses the concept of a "fraction" to calculate overhead. The
-> code here uses absolute counts of bytes. Fraction looks better to me.
+  00:1c.0 PCI bridge: Intel Corporation NM10/ICH7 Family PCI Express Port 1 (rev 02) (prog-if 00 [Normal decode])
 
-OK - I reworked the patch using the same "fraction" calculation as before.  
-The existing logic targets 1/16 wasted space, so I used this target in 
-this patch too.
+and probably has the CF118 erratum (see
+http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=3461a068661c
+for details).  I bet if you changed "msecs" in pcie_wait_cmd() to 30000
+you'd see a 30 second delay during shutdown because we write a command to
+tell the port not to generate any more hotplug interrupts, and we wait for
+that command to complete, but the port never tells us it has completed.
 
-This patch increases only the order of task_struct (from 3 to 4), all the 
-other caches have the same order as before.
+Lukas reported a similar issue in
+https://lkml.kernel.org/r/20180112104929.GA10599@wunner.de, which we sort
+of worked around by assuming that Thunderbolt controllers never support
+that "command complete" interrupt (see
+http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=493fb50e958c)
 
-Mikulas
+Sinan mooted the idea of using a "no-wait" path of sending the "don't
+generate hotplug interrupts" command.  I think we should work on this
+idea a little more.  If we're shutting down the whole system, I can't
+believe there's much value in *anything* we do in the pciehp_remove()
+path.
+
+Maybe we should just get rid of pciehp_remove() (and probably
+pcie_port_remove_service() and the other service driver remove methods)
+completely.  That dates from when the service drivers could be modules that
+could be potentially unloaded, but unloading them hasn't been possible for
+years.
+
+As far as the resume path, my guess is that in pciehp_resume(), we
+write a command to enable interrupts, then it looks like we get a
+PCI_EXP_SLTSTA_DLLSC "Link Up" interrupt, and apparently we issue
+another command.  Not sure exactly what's going on here.
+
+Could you try the following patch?  The idea is to (1) do nothing on
+shutdown, so you should see no message and no delay, and (2) collect
+more information about the resume path.
 
 
-
-From: Mikulas Patocka <mpatocka@redhat.com>
-Subject: [PATCH] slub: use higher order to reduce wasted space
-
-If we create a slub cache with large object size (larger than
-slub_max_order), the slub subsystem currently rounds up the object size to
-the next power of two.
-
-This is inefficient, because it wastes too much space. We use the slab
-cache as a buffer cache in dm-bufio, in order to use the memory
-efficiently, we need to reduce wasted space.
-
-This patch reworks the slub order calculation algorithm, so that it uses
-higher order allocations if it would reduce wasted space. The slub
-subsystem has fallback if the higher-order allocations fails, so using
-order higher than PAGE_ALLOC_COSTLY_ORDER is ok.
-
-The new algorithm first calculates the minimum order that can be used for
-a give object size and then increases the order according to these
-conditions:
-* if we would overshoot MAX_OBJS_PER_PAGE, don't increase
-* if we are below slub_min_order, increase
-* if we are below slub_max_order and below min_objects, increase
-* we increase above slub_max_order only if it reduces wasted space and if
-  we alrady waste at least 1/16 of the compound page
-
-The new algorithm gives very similar results to the old one, all the
-caches on my system have the same order as before, only the order of
-task_struct (size 2752) is increased from 3 to 4.
-
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-
----
- mm/slub.c |   82 +++++++++++++++++++++++---------------------------------------
- 1 file changed, 31 insertions(+), 51 deletions(-)
-
-Index: linux-2.6/mm/slub.c
-===================================================================
---- linux-2.6.orig/mm/slub.c	2018-04-27 19:30:34.000000000 +0200
-+++ linux-2.6/mm/slub.c	2018-04-27 21:05:53.000000000 +0200
-@@ -3224,34 +3224,10 @@ static unsigned int slub_min_objects;
-  * requested a higher mininum order then we start with that one instead of
-  * the smallest order which will fit the object.
-  */
--static inline unsigned int slab_order(unsigned int size,
--		unsigned int min_objects, unsigned int max_order,
--		unsigned int fract_leftover, unsigned int reserved)
-+static int calculate_order(unsigned int size, unsigned int reserved)
- {
--	unsigned int min_order = slub_min_order;
--	unsigned int order;
--
--	if (order_objects(min_order, size, reserved) > MAX_OBJS_PER_PAGE)
--		return get_order(size * MAX_OBJS_PER_PAGE) - 1;
--
--	for (order = max(min_order, (unsigned int)get_order(min_objects * size + reserved));
--			order <= max_order; order++) {
--
--		unsigned int slab_size = (unsigned int)PAGE_SIZE << order;
--		unsigned int rem;
--
--		rem = (slab_size - reserved) % size;
--
--		if (rem <= slab_size / fract_leftover)
--			break;
--	}
--
--	return order;
--}
--
--static inline int calculate_order(unsigned int size, unsigned int reserved)
--{
--	unsigned int order;
-+	unsigned int best_order;
-+	unsigned int test_order;
- 	unsigned int min_objects;
- 	unsigned int max_objects;
- 
-@@ -3269,34 +3245,38 @@ static inline int calculate_order(unsign
- 	max_objects = order_objects(slub_max_order, size, reserved);
- 	min_objects = min(min_objects, max_objects);
- 
--	while (min_objects > 1) {
--		unsigned int fraction;
-+	/* Get the minimum acceptable order for one object */
-+	best_order = get_order(size + reserved);
-+
-+	for (test_order = best_order + 1; test_order < MAX_ORDER; test_order++) {
-+		unsigned best_order_obj = order_objects(best_order, size, reserved);
-+		unsigned test_order_obj = order_objects(test_order, size, reserved);
-+
-+		unsigned best_order_slab_size = (unsigned int)PAGE_SIZE << best_order;
-+		unsigned best_order_rem = (best_order_slab_size - reserved) % size;
-+
-+		/* If there would be too many objects, stop searching */
-+		if (test_order_obj > MAX_OBJS_PER_PAGE)
-+			break;
- 
--		fraction = 16;
--		while (fraction >= 4) {
--			order = slab_order(size, min_objects,
--					slub_max_order, fraction, reserved);
--			if (order <= slub_max_order)
--				return order;
--			fraction /= 2;
--		}
--		min_objects--;
-+		/* Always increase up to slub_min_order */
-+		if (test_order <= slub_min_order)
-+			best_order = test_order;
-+
-+		/* If we are below min_objects and slub_max_order, increase the order */
-+		if (best_order_obj < min_objects && test_order <= slub_max_order)
-+			best_order = test_order;
-+
-+		/* Increase the order even more, but only if it reduces waste */
-+		/* If we already waste less than 1/16, don't increase it */
-+		if (best_order_rem >= (best_order_slab_size / 16) &&
-+		    test_order_obj > (best_order_obj << (test_order - best_order)))
-+			best_order = test_order;
- 	}
- 
--	/*
--	 * We were unable to place multiple objects in a slab. Now
--	 * lets see if we can place a single object there.
--	 */
--	order = slab_order(size, 1, slub_max_order, 1, reserved);
--	if (order <= slub_max_order)
--		return order;
-+	if (best_order < MAX_ORDER)
-+		return best_order;
- 
--	/*
--	 * Doh this slab cannot be placed using slub_max_order.
--	 */
--	order = slab_order(size, 1, MAX_ORDER, 1, reserved);
--	if (order < MAX_ORDER)
--		return order;
- 	return -ENOSYS;
+diff --git a/drivers/pci/hotplug/pciehp_core.c b/drivers/pci/hotplug/pciehp_core.c
+index 332b723ff9e6..99751cc52968 100644
+--- a/drivers/pci/hotplug/pciehp_core.c
++++ b/drivers/pci/hotplug/pciehp_core.c
+@@ -260,14 +260,6 @@ static int pciehp_probe(struct pcie_device *dev)
+ 	return -ENODEV;
  }
  
+-static void pciehp_remove(struct pcie_device *dev)
+-{
+-	struct controller *ctrl = get_service_data(dev);
+-
+-	cleanup_slot(ctrl);
+-	pciehp_release_ctrl(ctrl);
+-}
+-
+ #ifdef CONFIG_PM
+ static int pciehp_suspend(struct pcie_device *dev)
+ {
+@@ -305,7 +297,6 @@ static struct pcie_port_service_driver hpdriver_portdrv = {
+ 	.service	= PCIE_PORT_SERVICE_HP,
+ 
+ 	.probe		= pciehp_probe,
+-	.remove		= pciehp_remove,
+ 
+ #ifdef	CONFIG_PM
+ 	.suspend	= pciehp_suspend,
+diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
+index 18a42f8f5dc5..c3a9c47ed061 100644
+--- a/drivers/pci/hotplug/pciehp_hpc.c
++++ b/drivers/pci/hotplug/pciehp_hpc.c
+@@ -113,7 +113,7 @@ static int pcie_poll_cmd(struct controller *ctrl, int timeout)
+ 	return 0;	/* timeout */
+ }
+ 
+-static void pcie_wait_cmd(struct controller *ctrl)
++static void pcie_wait_cmd(struct controller *ctrl, u16 cmd, u16 mask)
+ {
+ 	unsigned int msecs = pciehp_poll_mode ? 2500 : 1000;
+ 	unsigned long duration = msecs_to_jiffies(msecs);
+@@ -155,10 +155,13 @@ static void pcie_wait_cmd(struct controller *ctrl)
+ 	 * don't change those bits, e.g., commands that merely enable
+ 	 * interrupts.
+ 	 */
+-	if (!rc)
+-		ctrl_info(ctrl, "Timeout on hotplug command %#06x (issued %u msec ago)\n",
++	if (!rc) {
++		ctrl_info(ctrl, "Timeout on hotplug command %#06x (issued %u msec ago), new command %#06x/mask %#06x\n",
+ 			  ctrl->slot_ctrl,
+-			  jiffies_to_msecs(jiffies - ctrl->cmd_started));
++			  jiffies_to_msecs(jiffies - ctrl->cmd_started),
++			  cmd, mask);
++		dump_stack();
++	}
+ }
+ 
+ static void pcie_do_write_cmd(struct controller *ctrl, u16 cmd,
+@@ -172,7 +175,7 @@ static void pcie_do_write_cmd(struct controller *ctrl, u16 cmd,
+ 	/*
+ 	 * Always wait for any previous command that might still be in progress
+ 	 */
+-	pcie_wait_cmd(ctrl);
++	pcie_wait_cmd(ctrl, cmd, mask);
+ 
+ 	pcie_capability_read_word(pdev, PCI_EXP_SLTCTL, &slot_ctrl);
+ 	if (slot_ctrl == (u16) ~0) {
+@@ -193,7 +196,7 @@ static void pcie_do_write_cmd(struct controller *ctrl, u16 cmd,
+ 	 * indicating completion of the above issued command.
+ 	 */
+ 	if (wait)
+-		pcie_wait_cmd(ctrl);
++		pcie_wait_cmd(ctrl, cmd, mask);
+ 
+ out:
+ 	mutex_unlock(&ctrl->ctrl_lock);
