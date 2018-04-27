@@ -1,83 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1759103AbeD0TxY (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 15:53:24 -0400
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:41716 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759055AbeD0TxU (ORCPT
+        id S1759160AbeD0Tyh (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 15:54:37 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:36467 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758787AbeD0Tyf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 15:53:20 -0400
-X-Google-Smtp-Source: AB8JxZp7k20GsjtwnShR4+asRMvmG6FE599Ef4lARZv2JIQMDa2lJyc+WmQmR+zJVP/kGkcJPvKo7w==
-Date: Fri, 27 Apr 2018 14:53:19 -0500
-From: Rob Herring <robh@kernel.org>
-To: Eric Anholt <eric@anholt.net>
-Cc: dri-devel@lists.freedesktop.org, Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] dt-bindings: Add a new binding for Broadcom V3D
- 3.x and newer GPUs.
-Message-ID: <20180427195318.s5bzwplylk3uwou4@rob-hp-laptop>
-References: <20180424004610.4637-1-eric@anholt.net>
- <20180424004610.4637-3-eric@anholt.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180424004610.4637-3-eric@anholt.net>
-User-Agent: NeoMutt/20170609 (1.8.3)
+        Fri, 27 Apr 2018 15:54:35 -0400
+X-Google-Smtp-Source: AB8JxZo0NlCEBuuVPOCklQ6C2UIbZ7RRtKrsvjTtrhwjVTC0aPU6swv9L566zhcYbJcStiL9+iZ4mQ==
+From: Sami Tolvanen <samitolvanen@google.com>
+To: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Cc: Kees Cook <keescook@chromium.org>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Sami Tolvanen <samitolvanen@google.com>
+Subject: [PATCH] media: media-device: fix ioctl function types
+Date: Fri, 27 Apr 2018 12:54:30 -0700
+Message-Id: <20180427195430.237342-1-samitolvanen@google.com>
+X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 23, 2018 at 05:46:09PM -0700, Eric Anholt wrote:
-> These OpenGL ES GPUs are present in the 7268 and 7278 set top box
-> chips.
-> 
-> Signed-off-by: Eric Anholt <eric@anholt.net>
-> ---
->  .../bindings/display/brcm,bcm-v3d.txt         | 28 +++++++++++++++++++
+This change fixes function types for media device ioctls to avoid
+indirect call mismatches with Control-Flow Integrity checking.
 
-Does this have display h/w? If not bindings/gpu/ would be more 
-appropriate.
+Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+---
+ drivers/media/media-device.c | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
->  1 file changed, 28 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/brcm,bcm-v3d.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/display/brcm,bcm-v3d.txt b/Documentation/devicetree/bindings/display/brcm,bcm-v3d.txt
-> new file mode 100644
-> index 000000000000..1c814714de0e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/brcm,bcm-v3d.txt
-> @@ -0,0 +1,28 @@
-> +Broadcom V3D GPU
-> +
-> +Only the Broadcom V3D 3.x and newer GPUs are covered by this binding.
-> +For V3D 2.x, see brcm,bcm-vc4.txt.
-> +
-> +Required properties:
-> +- compatible:	Should be "brcm,7268-v3d" or "brcm,7278-v3d"
-> +- reg:		Physical base addresses and lengths of the register areas
-> +- reg-names:	Names for the register areas.  The "hub", "bridge", and "core0"
-> +		  register areas are always required.  The "gca" register area
-> +		  is required if the GCA cache controller is present.
-> +- interrupts:	The interrupt numbers.  The first interrupt is for the hub,
-> +		  while the following inerrupts are for the cores.
-
-typo
-
-> +		  See bindings/interrupt-controller/interrupts.txt
-> +
-> +Optional properties:
-> +- clocks:	The core clock the unit runs on
-> +
-> +v3d {
-> +	compatible = "brcm,7268-v3d";
-> +	reg = <0xf1204000 0x100>,
-> +	      <0xf1200000 0x4000>,
-> +	      <0xf1208000 0x4000>,
-> +	      <0xf1204100 0x100>;
-> +	reg-names = "bridge", "hub", "core0", "gca";
-> +	interrupts = <0 78 4>,
-> +		     <0 77 4>;
-> +};
-> -- 
-> 2.17.0
-> 
+diff --git a/drivers/media/media-device.c b/drivers/media/media-device.c
+index 35e81f7c0d2f..bc5c024906e6 100644
+--- a/drivers/media/media-device.c
++++ b/drivers/media/media-device.c
+@@ -54,9 +54,10 @@ static int media_device_close(struct file *filp)
+ 	return 0;
+ }
+ 
+-static int media_device_get_info(struct media_device *dev,
+-				 struct media_device_info *info)
++static long media_device_get_info(struct media_device *dev, void *arg)
+ {
++	struct media_device_info *info = (struct media_device_info *)arg;
++
+ 	memset(info, 0, sizeof(*info));
+ 
+ 	if (dev->driver_name[0])
+@@ -93,9 +94,9 @@ static struct media_entity *find_entity(struct media_device *mdev, u32 id)
+ 	return NULL;
+ }
+ 
+-static long media_device_enum_entities(struct media_device *mdev,
+-				       struct media_entity_desc *entd)
++static long media_device_enum_entities(struct media_device *mdev, void *arg)
+ {
++	struct media_entity_desc *entd = (struct media_entity_desc *)arg;
+ 	struct media_entity *ent;
+ 
+ 	ent = find_entity(mdev, entd->id);
+@@ -146,9 +147,9 @@ static void media_device_kpad_to_upad(const struct media_pad *kpad,
+ 	upad->flags = kpad->flags;
+ }
+ 
+-static long media_device_enum_links(struct media_device *mdev,
+-				    struct media_links_enum *links)
++static long media_device_enum_links(struct media_device *mdev, void *arg)
+ {
++	struct media_links_enum *links = (struct media_links_enum *)arg;
+ 	struct media_entity *entity;
+ 
+ 	entity = find_entity(mdev, links->entity);
+@@ -195,9 +196,9 @@ static long media_device_enum_links(struct media_device *mdev,
+ 	return 0;
+ }
+ 
+-static long media_device_setup_link(struct media_device *mdev,
+-				    struct media_link_desc *linkd)
++static long media_device_setup_link(struct media_device *mdev, void *arg)
+ {
++	struct media_link_desc *linkd = (struct media_link_desc *)arg;
+ 	struct media_link *link = NULL;
+ 	struct media_entity *source;
+ 	struct media_entity *sink;
+@@ -225,9 +226,9 @@ static long media_device_setup_link(struct media_device *mdev,
+ 	return __media_entity_setup_link(link, linkd->flags);
+ }
+ 
+-static long media_device_get_topology(struct media_device *mdev,
+-				      struct media_v2_topology *topo)
++static long media_device_get_topology(struct media_device *mdev, void *arg)
+ {
++	struct media_v2_topology *topo = (struct media_v2_topology *)arg;
+ 	struct media_entity *entity;
+ 	struct media_interface *intf;
+ 	struct media_pad *pad;
+-- 
+2.17.0.441.gb46fe60e1d-goog
