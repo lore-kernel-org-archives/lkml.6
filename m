@@ -1,90 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932444AbeD0JJ5 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 05:09:57 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52978 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932282AbeD0JJy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 05:09:54 -0400
-X-Mailbox-Line: From dyoung@redhat.com Fri Apr 27 17:00:45 2018
-Message-Id: <20180427090045.583830252@redhat.com>
-User-Agent: quilt/0.65
-Date: Fri, 27 Apr 2018 17:00:38 +0800
-From: dyoung@redhat.com
-To: kexec@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: bhe@redhat.com, yinghai@kernel.org, akpm@linux-foundation.org,
-        dyoung@redhat.com, vgoyal@redhat.com
-Subject: [PATCH 2/2] kdump: round up the total memory size to 128M for crashkernel reservation
+        id S932473AbeD0JLy (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 05:11:54 -0400
+Received: from mga01.intel.com ([192.55.52.88]:61521 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932430AbeD0JLu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 05:11:50 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,334,1520924400";
+   d="scan'208";a="194829847"
+Date: Fri, 27 Apr 2018 17:12:34 +0800
+From: Tiwei Bie <tiwei.bie@intel.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org, wexu@redhat.com,
+        jfreimann@redhat.com
+Subject: Re: [RFC v3 0/5] virtio: support packed ring
+Message-ID: <20180427091234.n6vr3wcnbnqxd3so@debian>
+References: <20180425051550.24342-1-tiwei.bie@intel.com>
+ <5ad1ca01-1e5c-7105-f303-7e8d42f6a068@redhat.com>
+ <20180427071725-mutt-send-email-mst@kernel.org>
+ <5c712aa2-f00e-b472-cdfc-48175aea790d@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline; filename=kdump-crashkernel-roundup-total-mem.patch
-In-Reply-To: <20180427090045.532014306@redhat.com> 
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5c712aa2-f00e-b472-cdfc-48175aea790d@redhat.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The total memory size we get in kernel is usually slightly less than 2G with a
-2G memory module machine. The main reason is bios/firmware reserve some area
-it will not export all memory as usable to Linux.
+On Fri, Apr 27, 2018 at 02:17:51PM +0800, Jason Wang wrote:
+> On 2018年04月27日 12:18, Michael S. Tsirkin wrote:
+> > On Fri, Apr 27, 2018 at 11:56:05AM +0800, Jason Wang wrote:
+> > > On 2018年04月25日 13:15, Tiwei Bie wrote:
+> > > > Hello everyone,
+> > > > 
+> > > > This RFC implements packed ring support in virtio driver.
+> > > > 
+> > > > Some simple functional tests have been done with Jason's
+> > > > packed ring implementation in vhost:
+> > > > 
+> > > > https://lkml.org/lkml/2018/4/23/12
+> > > > 
+> > > > Both of ping and netperf worked as expected (with EVENT_IDX
+> > > > disabled). But there are below known issues:
+> > > > 
+> > > > 1. Reloading the guest driver will break the Tx/Rx;
+> > > Will have a look at this issue.
+> > > 
+> > > > 2. Zeroing the flags when detaching a used desc will
+> > > >      break the guest -> host path.
+> > > I still think zeroing flags is unnecessary or even a bug. At host, I track
+> > > last observed avail wrap counter and detect avail like (what is suggested in
+> > > the example code in the spec):
+> > > 
+> > > static bool desc_is_avail(struct vhost_virtqueue *vq, __virtio16 flags)
+> > > {
+> > >         bool avail = flags & cpu_to_vhost16(vq, DESC_AVAIL);
+> > > 
+> > >         return avail == vq->avail_wrap_counter;
+> > > }
+> > > 
+> > > So zeroing wrap can not work with this obviously.
+> > > 
+> > > Thanks
+> > I agree. I think what one should do is flip the available bit.
+> > 
+> 
+> But is this flipping a must?
+> 
+> Thanks
 
-2G memory X86 kvm guest test result of the total_mem value:
-UEFI boot with ovmf: 0x7ef10000
-Legacy boot kvm guest: 0x7ff7cc00
-This is also a problem on arm64 UEFI booted system according to my test.
+Yeah, that's my question too. It seems to be a requirement
+for driver that, the only change to the desc status that a
+driver can do during running is to mark the desc as avail,
+and any other changes to the desc status are not allowed.
+Similarly, the device can only mark the desc as used, and
+any other changes to the desc status are also not allowed.
+So the question is, are there such requirements?
 
-Thus for example crashkernel=1G-2G:128M,  if we have a 1G memory
-machine, we get total size 1023M from firmware then it will not fall
-into 1G-2G thus no memory reserved.  User will never know that, it is
-hard to let user to know the exact total value we get in kernel
+Based on below contents in the spec:
 
-An option is to use dmi/smbios to get physical memory size, but it's not
-reliable as well. According to Prarit hardware vendors sometimes screw this up.
-Thus round up total size to 128M to workaround this problem.
+"""
+Thus VIRTQ_DESC_F_AVAIL and VIRTQ_DESC_F_USED bits are different
+for an available descriptor and equal for a used descriptor.
 
-Signed-off-by: Dave Young <dyoung@redhat.com>
----
- kernel/crash_core.c |   14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+Note that this observation is mostly useful for sanity-checking
+as these are necessary but not sufficient conditions
+"""
 
---- linux-x86.orig/kernel/crash_core.c
-+++ linux-x86/kernel/crash_core.c
-@@ -9,6 +9,7 @@
- #include <linux/crash_core.h>
- #include <linux/utsname.h>
- #include <linux/vmalloc.h>
-+#include <linux/sizes.h>
- 
- #include <asm/page.h>
- #include <asm/sections.h>
-@@ -41,6 +42,15 @@ static int __init parse_crashkernel_mem(
- 					unsigned long long *crash_base)
- {
- 	char *cur = cmdline, *tmp;
-+	unsigned long long total_mem = system_ram;
-+
-+	/*
-+	 * Firmware sometimes reserves some memory regions for it's own use.
-+	 * so we get less than actual system memory size.
-+	 * Workaround this by round up the total size to 128M which is
-+	 * enough for most test cases.
-+	 */
-+	total_mem = roundup(total_mem, SZ_128M);
- 
- 	/* for each entry of the comma-separated list */
- 	do {
-@@ -85,13 +95,13 @@ static int __init parse_crashkernel_mem(
- 			return -EINVAL;
- 		}
- 		cur = tmp;
--		if (size >= system_ram) {
-+		if (size >= total_mem) {
- 			pr_warn("crashkernel: invalid size\n");
- 			return -EINVAL;
- 		}
- 
- 		/* match ? */
--		if (system_ram >= start && system_ram < end) {
-+		if (total_mem >= start && total_mem < end) {
- 			*crash_size = size;
- 			break;
- 		}
+It seems that, it's necessary for devices to check whether
+the AVAIL bit and USED bit are different.
+
+Best regards,
+Tiwei Bie
