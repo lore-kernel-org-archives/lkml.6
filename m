@@ -1,121 +1,227 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932295AbeD0HZW (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 03:25:22 -0400
-Received: from mail-ve1eur01on0064.outbound.protection.outlook.com ([104.47.1.64]:24544
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        id S932332AbeD0H00 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 03:26:26 -0400
+Received: from mail-co1nam03on0084.outbound.protection.outlook.com ([104.47.40.84]:43472
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1757469AbeD0HZU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 03:25:20 -0400
+        id S1757469AbeD0H0Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 03:26:24 -0400
 Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com;
-From: Anson Huang <Anson.Huang@nxp.com>
-To: shawnguo@kernel.org, kernel@pengutronix.de, fabio.estevam@nxp.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, haibo.chen@nxp.com
-Cc: Linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: dts: imx6sx-sabreauto: add egalax touch screen support
-Date: Fri, 27 Apr 2018 15:20:50 +0800
-Message-Id: <1524813650-19241-1-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
+ smtp.mailfrom=Jisheng.Zhang@synaptics.com;
+Date: Fri, 27 Apr 2018 15:25:55 +0800
+From: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+To: Bhadram Varka <vbhadram@nvidia.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Jingju Hou <Jingju.Hou@synaptics.com>
+Subject: Re: [PATCH] net: phy: marvell: clear wol event before setting it
+Message-ID: <20180427152555.5e8efb9c@xhacker.debian>
+In-Reply-To: <73e21c83-f78a-8b22-a421-f179ef6adef1@nvidia.com>
+References: <20180419160232.519d15be@xhacker.debian>
+        <20180419121801.GC17888@lunn.ch>
+        <4273f766-a017-b336-7d14-a28901d274b9@nvidia.com>
+        <20180426141508.6660a633@xhacker.debian>
+        <be2addb5-b3fd-13cb-ad33-f0527931a0d2@nvidia.com>
+        <73e21c83-f78a-8b22-a421-f179ef6adef1@nvidia.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [119.31.174.66]
-X-ClientProxiedBy: TYAPR01CA0045.jpnprd01.prod.outlook.com
- (2603:1096:404:28::33) To HE1PR04MB1324.eurprd04.prod.outlook.com
- (2a01:111:e400:588a::11)
+Content-Type: text/plain; charset=UTF-8
+X-Originating-IP: [124.74.246.114]
+X-ClientProxiedBy: KAWPR01CA0096.jpnprd01.prod.outlook.com
+ (2603:1096:402:c::32) To DM5PR03MB2633.namprd03.prod.outlook.com
+ (2603:10b6:3:43::7)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(48565401081)(2017052603328)(7153060)(7193020);SRVR:HE1PR04MB1324;
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR04MB1324;3:0vPDyi5lrTzqieZRCjogusREvHclGWqWhERqr5+Wji12P18umLc8pQaPIZ/yQRl7OdTPaTzw9/KyexglKd10bgp3yicjTUOttRwPjLTJd02XQW6Xh/AaEeqYaR9OvQnNGvOwmqb/klfT+xox89eSvwTejBLkU8w9P3GrWa7MPYA4P0RyFvGHdU09Co2SqoeyzdygBpViw/yo3HjDMOeiUEwwzVmvB1F1EfCbzcTEG4ywCv74skfN7g+Bg2fL4S93;25:PBzFQEoIRG4edDy0QlcJsPtg2g0FDlSoNrVU/s2bguHh637v8EHCEK6Un3qxcH/MzYaIeQV/CZGHtJbk0eLIZR2HfbJVHF4sc/x2IMQeVNwLtt7IUBuZOFspR4TCDmkHLO/MrxX75IwmajnLMvjTRpQsncfpvnt3JC52i4uPM2gKzDGFoznT92Vt4SkegwjTZkrP78IRVnMETUd0pDWCR+7c8yoziSwJzLocAYrMvVRgAOYO7Fgr9W4FiKKSqutZI5F9NqHmFa9fZ06nFvz4ZCmmOwgVRJgljnd0ynv3AHKrg96taa1QQf6Rg57bDUgzcfjBuqOa2+pchKb2JNLmGg==;31:BuUzQYIhkrkrFCpZLo1GMfIpaoUgDB/JqmLnDh/ElcMZdSJJKkQoi8e21xz4ULNG5uq3VGCD5klMjyG6JQFkhweeqdd/nMmDm1HZki+RoMRI6RyUvrByo2O9enty/ufglLjcvqDS1QPSYiS890Hcp0dqeW8FQW7FncXNKXzcvQD/H+ED6iKZ2nXpaRXXqqq2XGM3zidRHLrJGvzAwpVLW19rBYjHsmGoD6mmDFjCGAI=
-X-MS-TrafficTypeDiagnostic: HE1PR04MB1324:
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR04MB1324;20:XDqWo4I2K5H4eFWP+Z8FSJ+d8qnyp8C/zfN78KGmWiPDdwZ36JS72nk7ygR0MmWVK/mmrKLbZuwtvBPMO7THD44FQuF1xBLcJffJ3xJqwQzrGzeo6I2d8zGSoN3eEclWQn7UFoExhuLlzGnZnDlWvTicC6cRFXN0ikUoIF2sF3D2VbvbB7rbHe+1PI0L9Xvf52fn8rctIvTxYOUXr7xk+8gB+d0sJrB9y0UgVv6nIBFyGHpgh1KCMJMKxzjiaZM+9XxlKG/I6wKbnA3I+vQMMc58Z1PmQASiZBdZ6h4C26EFbrdEdmjR2jKyuNSiHygkHTTD5ZQvwiGrhrA6W3WjmOOboqNHfOzSgkTqNLul/uiEXZjojsK5ZgZ/9e08QbNVwP7zaOFPGdGjoXalk+NE/HuW2XRtxh7VP4iAf0h4DPco82leHsWNSA6ANX9VXuXgewEhWWJL2gLHUD3b3hAd7jzWlSzeLZcF6VbAptUf1hJtFQWlr0UYCRSaq2CUqpkA;4:E+B62wQgUoeSA4K03+9voeDlmjSw44dXC43z0ME4lF1RvLaJspEmEKJVPrKPs0GOsUGZQg/+bzDac8ecCkU9XhbL8uKFum3BFn90Oeh1sxE8bymE1kybrY2DOPjwucP7qm12G8dhPA6g0nmaJ2eQNJ4TxZvsn1XcOEyh6d6pXgegXbe2wZ86qL1AnIvP5tPSApR3Xpg1bYIaxFlsxzQWYkoAHbsBiiiyDa1rgqhwU76o4DHr9j49RX6hOQL3QmmJ9wL1judsyzw7tgqiGU5FLz4SdngVwU9vBbo8cohfkBlujg/o5BHZwFpbFxF9yWAJB305xIvrz9ugGRFsFE6CmlaMKYgnQu14dMn7Y3Wr4E4=
-X-Microsoft-Antispam-PRVS: <HE1PR04MB132404F92112ED2F5A82E602F58D0@HE1PR04MB1324.eurprd04.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(185117386973197)(101931422205132);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3231232)(944501410)(52105095)(3002001)(93006095)(93001095)(6055026)(6041310)(20161123558120)(20161123562045)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:HE1PR04MB1324;BCL:0;PCL:0;RULEID:;SRVR:HE1PR04MB1324;
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DM5PR03MB2633;
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR03MB2633;3:2jJAmyx+ZUGoEyI1IveW+p2Jccqw8CWkAuWDw3cnw6uvX685wi7XvojyOUtRLSib5fKIHAeHtYwCvn8IjS6MC1gB32MI+vNRnOE5VgxnD/JFKPktXzO/7WZXlBPFHbQ37UIgtmuL5FRQjWOIuwrIuVPz5qz0bQ6SZ2m/fwv/LzX1A5nZxu8nJ3CwP0O0Hgw0GoiSIHDzxFnJFEqpX/4N+yrTaR5oOjKBCdfSrahNUclNgceYgCZpaOxsxYYxTqnx;25:ZXzBOAmLcmZB1Tm2ITn7idXml8/HfbBO0KqLz2Npk9kBvlBMBfAt6PvhtLM5oMcABFkWZh3pxXryUAOaLihqlo+bIVgP2iMK4fP+bUbpH/09Ft64NYUabzP12QQRRovCGFm2E19XbTlPR2WPeqvGimp5o9ip8Ve82Gp4ZD/NMwAcoUILAth97iUqUECcR5xdsdKdCrj0gqKuN3MJQGfeehIx1Z7nV2URYYJ6fUGkfy+FVixPhnmjoNeHgaKrgXXw4RAuS4m4aDGw2oJb1NcDKPDQbPOCjdEftMsHOdqA67/lp0uqRc84xXti1uPbvhcwjKgVQ7KNehgfHXNafngSEA==;31:nsJVlHCw7zckRFJrrNyEvhdDzJcnwaHiAk9Jkmm+Gwka/NXGxCsL32z3DK2pxLJXVj60M55SLLHcQQB682osXcy9ncaH0zc0GHbgQ8hQiKLXgByf9ANwvA0Em/Kj7pHJ9LfZ4Tlg1RNNwrPiOuuMEmMgbQwEFPmZavy7xJ0BO/dX0Fs4y6mMYMB2IEtBgX5iehVFoq2t/AamxDmRNE/8bzBj4PoefTD2faVWo4GldZE=
+X-MS-TrafficTypeDiagnostic: DM5PR03MB2633:
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR03MB2633;20:L2BRB93BSJNMTSl6UlvOU+k1mnc824cTCwhQVR/QByOjVYGgZWVUhZdKatqITEYbz+iLrRVvXyKEIknagGvriWFVeJwTzvT4wPGdaw7yw9oRipqmZ9yBdI6rGkdxKjgild7Uy1LdcW8KMETPJO12FZusgw/HShb4xGotYloaC/BwUZCFUxCX0VR1lzPj9ZjjZTF0T9Qckm0g2v0PlGV+u81u6yAqESVNTwH6u1eqOHYxAZcTluwiStkLfqqYP05I58kCr6mibuvtyGpY1yFScD36q2AYau3zdBpbIIn+8pIPlUZbDCAC4Uhi4sCPFv8i6ONtSn37WxwUxDxapxbzkMNj/tML67NK+QFeDuQs/RdyhYYWZS1fNLPLrLdS7O6zS3qeAk4R+rUkLN30tA5lwsqU+ilepACgy4fv2MRvDN8CHckEBEoLDjEthVXvDtbdmYsUHrM30d9PT1VDt6qoCzxO4qcpid9be+0ed6cmVd9OAYpTKvg+qJosP6C7WfDd;4:ICZhlul1r2NmQ3UQ0J+0+aBgNbjb28PnSWG0LtdoV71YZgp8IaHsak3xjZItvLn7GNVp8ngg7YE5i6TrLXr6kAcLZtECwwcywiIimAQOWQ1prEQSwpVt9Y/zVuz+wfv8+YvKW688mGCDMe+Sn6q6M8Sd1DK6czxH2iru/WogXxAbN23thdw46PgJ+FpRVFUjCnoEId/QsXZP61Plt4PvNNv5qpXM29dGlo3Fs1310z3p8qU5yI9eb50cbBtDj4XWPjNyJBkIfah4vl99m0+zAA==
+X-Microsoft-Antispam-PRVS: <DM5PR03MB2633EC69F97E2B3C9CA9511BED8D0@DM5PR03MB2633.namprd03.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231232)(944501410)(52105095)(93006095)(93001095)(3002001)(10201501046)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(6072148)(201708071742011);SRVR:DM5PR03MB2633;BCL:0;PCL:0;RULEID:;SRVR:DM5PR03MB2633;
 X-Forefront-PRVS: 0655F9F006
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(376002)(39380400002)(346002)(39860400002)(396003)(199004)(189003)(305945005)(6512007)(6666003)(4326008)(53936002)(16526019)(6506007)(2906002)(386003)(3846002)(6116002)(7736002)(6636002)(26005)(86362001)(50466002)(68736007)(186003)(36756003)(47776003)(81166006)(81156014)(51416003)(8676002)(52116002)(97736004)(66066001)(16586007)(8936002)(1857600001)(316002)(48376002)(2616005)(486006)(6486002)(956004)(476003)(105586002)(5660300001)(106356001)(50226002)(25786009)(478600001)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR04MB1324;H:anson-OptiPlex-790.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;HE1PR04MB1324;23:UJfdUDh/wZXl9dPoYpteLjmPWnYkG2Wi2xjWwiqGv?=
- =?us-ascii?Q?eGOo1CJSb4xZX08DZ5I00WCdeAasgDJpp0VTUwjGz1Yyrm+X1hD4dxrO7D51?=
- =?us-ascii?Q?qqCVTN7ion82jArv6lE3ZTYqhaOFpcZ2vsvSmGkzAEJVU5O7pE9NNBWp4AsD?=
- =?us-ascii?Q?2UxsEVINNg5aKKG+EWvxujxD2ct6ZG8yCCJqDNXqZ8/QD74m7ducApb6OwOg?=
- =?us-ascii?Q?8/aTitXQF45eskatBWl6o1Ks+U2wC9OyxBsy3eA8bQFlme2rZeZAseJDjL+Q?=
- =?us-ascii?Q?RZdMvBdAzwdgU/xbpdgHyK4DOsxGfe0GP58prXXKjXjTpSWj7gBjv04op6+t?=
- =?us-ascii?Q?lxPYFpnsFnhTRMId2j9elOdCq5Nxcf2cbcTtekuKEW4MTgzQmvQ0gWDOsm6L?=
- =?us-ascii?Q?e0gLJBEJOjd32buXoEr6bLT5CYvL1tOpQzIE7E8LauOHR7JUtPgz8qNIqix6?=
- =?us-ascii?Q?9yh/mcFyCbPluqNvQhJyfbGJ0SXSiJupxWV64zV8SbuHuAygx4CkBpJRjgKT?=
- =?us-ascii?Q?z7balpqdTmCjQ7mBnsMYMVuzNbWGxIzEeDFSsv8z10kp4h6i+kh7KS8spZA3?=
- =?us-ascii?Q?MsjT2t8vxxPcrpRa6CB4VrcMLF1e5++Z0jzPEw0B3oH8/S1LjScRBdOQS/Lr?=
- =?us-ascii?Q?bTzwiVmsUARCXG4enLNu+aoIQYcl6xzfjkO9Sn7VeoVu5ALwZJWxsd9ETLrl?=
- =?us-ascii?Q?XRmnyIVJ+sZRTyoMQkYD6oraqoS5yT4PIqO9w5lh3gP0wUcY8SiOmnBF6/LY?=
- =?us-ascii?Q?sQ5fbCBFfcsdu/xEe3oHf5xLLP9/t4/QlPpa1XhLbxdCBsGtg+cNyo9fEqD0?=
- =?us-ascii?Q?dEoAwLHTdG7exOIKcPmFkdnGgt2GseYp1TedcSOj7ab6Ude2kcKDWmChgBXV?=
- =?us-ascii?Q?RS+s6isV3uIkkCOAn+RuSynMDmqa1Pl1rU+4CxWXeKRWAJlkAfcPYzdLNmat?=
- =?us-ascii?Q?B8NAj/fgSigKcE2JdgsnxfOT4dAiTRGXljWWwTv0JU/3yBGDPnRMKP3E+nZm?=
- =?us-ascii?Q?hpBFwQE6j8ceY5rdHPlsCpwC7nK3ePPFt9o6ts7L19pYk8DvnnorCsjDn2Wj?=
- =?us-ascii?Q?FvLu7vmr2AuMS8jLnsqNvcnI6j+zR1WNxUfacm9SIDXZrlWUvnGJbhNmmIbv?=
- =?us-ascii?Q?ya+vfw2jnz1Q5AAz+YC+qMYw4ps2t6dOYrBBUNd0+O3EA0EDYzwmQ=3D=3D?=
-X-Microsoft-Antispam-Message-Info: u5mPc6YU6Z7AVXahQ368kbVfeVHd+xkhxUM0cUfeClZ35/vDguKpUqT8aZ8QTclhbuNEFBs0SQi+QbURnw1QS3P5C/yi5oQBgwhOOuD3G3vkIckUOnHJO/yA/kUWFPiioP2qJYqy3gjBRzGzRxIJtZ4aMKfZ8fAVjTnzq17S/lOgelqAtuLxc8zzV2G/49fb
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR04MB1324;6:e1j3P4qCgOK4crw0nPFPLghNC+dvGLbxPrb4cJcc22gLH6z1jLYzudTgNkjZPO3vTenKtkbhOKcqbv7o09BSnxVZqqz795ck9QLu4zp1SP3VxkcT2cNczOVtrc9X/l7s7dRpPfp79rXCz0Tlu8UBbMRLets/YNdJpZ07BAn65WIBUnSjIMxgmR8/U7mCofFjM5AnIzsAq2pqJ9EOXHmcbTQVk7NabePGB3pMrG0H2z+dicbq6YpUTKSk0fW3WRwMZVkd9sazIyTv6B+LFPD6lFnV0A03re5v6J1tKIgWu+zONp97z949SvFWyYE54k4vu6hpoCFxj2iaQiNa/jtOm8bHPaM5nktokI5VW8M85FmhX9C25H1yoLwig7ot/zZ1Gr+PrFoI7RZcBB3kLH3V5IwCL1jMdikqeuiva6uJSk+y2Tih1Q6dnjqmbKam0IXkVr0GrrOL8v4jLZWbHzfE9g==;5:Xs3XwPUpaAKyKLzdzmSmvyB1nN6bqlS/PkAY1uG7GFT+WH3n6w9fIYztR4qKGFmxhv1VGm5kDrl04CFgRopk0e9WHRnDAzRD8nr3a4ZBWkvHnyhucRHCHnpec0Q1OE8V1TUP5ClW9vCBECEumyz4vzKjILMZu+Pv4hKsDWfd960=;24:eamI+W7VdbrJQgSEPTomg4VqYaLH5F+q1slhyH00Dy9rkpcZhqby2li9KHQnj9JUmbTQjC0e1rii1uWZQBqmzzDgPx098EjhayPHCz/88+Q=
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(39380400002)(396003)(376002)(39860400002)(346002)(366004)(199004)(189003)(3846002)(6116002)(47776003)(86362001)(93886005)(1076002)(186003)(16526019)(66066001)(68736007)(97736004)(50466002)(476003)(105586002)(39060400002)(6246003)(956004)(107886003)(11346002)(486006)(53936002)(446003)(229853002)(25786009)(305945005)(5660300001)(50226002)(4326008)(72206003)(2906002)(55016002)(9686003)(6916009)(6666003)(7736002)(76176011)(6506007)(386003)(316002)(7696005)(52116002)(33896004)(26005)(23676004)(8676002)(81166006)(81156014)(478600001)(8746002)(8936002)(54906003)(106356001)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR03MB2633;H:xhacker.debian;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtETTVQUjAzTUIyNjMzOzIzOjdTM0Z0Q1gvakpZc2RXazFaSHlsblBCcjVG?=
+ =?utf-8?B?a2NUNjM1a0F0eFVTWGlLcUZjY0ZSZFphdmJrR1p1ZXJ2cEJjWnJmYWk4TTVq?=
+ =?utf-8?B?cXl2K3YyL0xhN2FTRHJVMy9SY2Z6OHRpaG0wL3ZEMTJ6UnRJTjQ5Q3JvMTJL?=
+ =?utf-8?B?d1EyY3lQdEpaeFh0TEJIME1ucitVNmp2K3FzSnBpSGVIdHlnSXlPK3YzSTJ4?=
+ =?utf-8?B?VUZ0V0NIUVFaZjRRWldXeTIweVlLL2dMMHZXejlXUndWNmZ1cEJKVENlbmJ5?=
+ =?utf-8?B?RjNmdWxOeUpLR1NoK1N4aFJ6QU9GbXBCdHJWS1FEZU5wdFl0RU1SVkVpNlFu?=
+ =?utf-8?B?a0NKSzh4QzhQTUF2alRmcWl6ZFpxZDMrQzdUOVBBajBNdVNIS3dwUmU1bExK?=
+ =?utf-8?B?VEZVdE5RN09RM1daNVJ4TkZYYjVmZGMrdHVxS2RhSHBvNU84NExlR2J6ZERY?=
+ =?utf-8?B?NDgzRS8vMzJxVVRZRUQ4TnFxY0V1NEJTMWM2OGd6a09haTJLdFQzWWZZQUJK?=
+ =?utf-8?B?MjBjb3NqKzdjZ3EyRkdOSFk1Y09ManBRKzhYU0YzZW9MeWluVTQ4YzM5ZlZM?=
+ =?utf-8?B?TWY0NmZ1ZSsyVzI5M2RXeURFZHpIa1JYQUI3MHIyZmpiRFgwSGRUMkg5ZDFq?=
+ =?utf-8?B?a2htQldodEdqdW0xNmJUS2g4Y1gwYWN1RmNGMldjNjJIcXFqQUVNUW5yMTJ5?=
+ =?utf-8?B?WGtGYk1oUkZ3UHhxWjIwMWpUWHpmbEJyVUljVkZTUmNyMXhLU2pTZTVZcXZs?=
+ =?utf-8?B?REV3YlB1c1FvUjVMcmVIcTZuU2d0eURtYmRPL1hNdG1XWHU3UThlZU03aXQ3?=
+ =?utf-8?B?NXZxYkY4RUNRT1BDQzgxaUJuZUU3ZGtGOW9mcVVBSWE1TWtleVJnd2tPK0Zh?=
+ =?utf-8?B?VEN4aDVvK0JwcTZ1MHFhbUdRaS92V3ZaeTlIUkJyMkVYM0N5emRKV3VKTytM?=
+ =?utf-8?B?c29NU1BzaTA4RFRHb1k2Tys5eXFWRWR3ZldveWxuZ0dscDJXSHBKYjlVc0F5?=
+ =?utf-8?B?OUFUaUN4dzRzUEZoM3BGZVVPRzF1MHhza0xxd2UyWFRmeHBCZnRLL28zY3ZD?=
+ =?utf-8?B?QTF6dWcybjJMYWoyYU52MkJaUGw5L3krY2ViVlpuREh2eTZvVG1qbXNYR0I1?=
+ =?utf-8?B?Y3lmS3hncUYrbFdadzRvSU9ydFFwV0l0TThqbEd1bDdhaDJudkxnRHZ4bWR5?=
+ =?utf-8?B?ZXhJZ1FqQ3ZQSERINzd2VkJ3ay9XRENTdUNNVFgvcVpZNEI5VDQ0MFF6RFhq?=
+ =?utf-8?B?Mkw0ZWxyVzJxYko1d3JydGQ3M051Yk04QXVnMFN0MUU5R2pWR0NOVmgvQ2ZC?=
+ =?utf-8?B?ZWNtSTczb0g0MGUxdWZTTnVQcForSXBuTTE0djkyUHhxNDRiUDZUaDRHeVRj?=
+ =?utf-8?B?eDEzem9GWkMwcXlIYjdXSElhVEJpOWpaMXBOOG56R05Fb0xNR2lIZjFjbTk5?=
+ =?utf-8?B?ZXI3blVDemo1T2tMZVEzYTNkZnhEVUhoWWJNbThLTytQMzN5bzVyUHhaMGNw?=
+ =?utf-8?B?cnlheEZCQkR5TmdoN2FsS3pkV1A0TnBhMDVDU003aWJRaFBlUml0aHNWbTVP?=
+ =?utf-8?B?WTh1dCtRQUNrK28wR2J5Q2FHM3F0bUY3b0h5dVp6UXVDN2NlT241MGJldzg3?=
+ =?utf-8?B?ZXREQzQ2bjVReHNKSi9LdVd5QTNLSFVib05oMFhkSG9lZWF0SkFQclZvMHA5?=
+ =?utf-8?B?QUd2UHVuS2RZNHhpb2w4Y1lCNkh5T0xEaXBzT25JQ0VTS1hFY1J2Yzk1L09B?=
+ =?utf-8?B?NWNKYVQ2K29rTklXNVQ0Mkc0OHNtRDMyNGZESGFaOWlVM0NaV0xkZ2R3eElw?=
+ =?utf-8?B?VnZJellvZmFHUllnTlc0QUdMZmRUZnRLeW9DR283b2hWamc9PQ==?=
+X-Microsoft-Antispam-Message-Info: PNYA/0xC6zUzCchvhRuq7hN+FpVOTS5BOMk0mHCG25P0eQ6CntHRIEILHMoFK9hGaG7vk+VYHa2OKl7hU7utHDfMoo2y8FNBYXVJP1grakVar1B8LMGrrwiGD/KHZDL1WEqIJ2F67dD6M8/zGp3XA67WJ0+cUmv/zq68aQXhfrMxBnpuc6zDhwx/0h89D84S
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR03MB2633;6:pI5y4Xf3hxHagzUFmYn2XhM4CakU2f1YfCAJ+6AEEKafdSKtdvEM/wvM+EPMHq93SkphGzX2s6jdZN7nMYA4CqyIlUwZ23OGNM1O5mkJpLvBpJft6rdCuTsa3BphMHFFWPwgcfQmwJc8Rg/b8/Kj71YF/R9nWrEHAz6j2S7M6gY8qu32DajcnnMWxn9eHnLJpy5lg1yJDqwVQFLE+SOr5u6Fuw06VY6QGynZBl5SOTLcPDFTNdedgs00r2BpLh1XUQMi2ZEjRp90PuG2eZER+WltmDkykk22ls13juzaIBD+JBVV5S72Z1TneuhCc94RnaSGkdHQV9/AjLLJFmm9Dk+ZH0cboY9j8uv4+noZqdsHWD5WUd/f8O5/m890ofxbq/WX4CiKGOxJZk3vL+QZrQGvzTcFIkYm808CUr/5l2eLOV17HKcCcF6SRjyZALtuWjhZiOAV7Rnu9wYGb9raCQ==;5:18LPqr0DXkAluWtrJQOfWsgbyWlpnzlbkglqTfBBcnQyhMSYqejPMTcy9wViHBsSEkv+aKW34NKYZfHpS1ncOjFAlNlKgUGTHjlB+i5O77Q7VBtsvwvQNFCm7FQfzAdlZXTtpxni7fYPEdvcWPHXAvvU/nax7OJpx8GpR2Etbs8=;24:WKYPlQ8IEaPRoT2ytfCjvfkuRilLUzY5ipHDont2BEJbOd5EBDfeOCpnggAiidUMu1WhgMV/k8a1QzIiBT5clq6drke+/FQ6qFNXSpoQJn4=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR04MB1324;7:b8Z9vWgXR4eehgMlXVIJaH1wMviNCDaCcFbXFZbGVU94l4mGsc+BfuxHrCD0xs+gd6lMDPQUj38ckUEbhvGposTH1+fLuWBE4FHWe/xPARRghaE+6LJqzd8f6iP2mzZ3DDlfiVvQBsvNL/UHaZD2ZFYVGUsAdSXcHoKwiFvhYSFNN/GMEwt/m1zGWz1bnFnk8t+ltqBCnk717HYqK4zU8dPLh1rFd/0hAh4rWIuZ7Cz5C4Xx1unfaoJkYh3n8K0g
-X-MS-Office365-Filtering-Correlation-Id: 340c5168-6e5c-4f09-96df-08d5ac1005ca
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Apr 2018 07:25:11.4877
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 340c5168-6e5c-4f09-96df-08d5ac1005ca
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR03MB2633;7:idx3jAUNmWXSnCFTsgvO7RQOJq1q70i6ugpc6HCEyRENm3N00DAJAWvW1fE1jG+UAQ4/Msr3HYzTk5DNrMw/AsLWabcIC0rDw4uN5kz0OUjd/OcVlFTiuElawLOjDw63Y388cok9zdJep3udD88W/8Hvkai6DcGW+6WXkUsazZuv/ruaLugQ9FHUV9b/6GSt/VMON81Xrq2iDdvQZaFzFjJ1uEJPZf9wPULq0fraTJ1cyj21Ek7pdYXZN7dbyp6d
+X-MS-Office365-Filtering-Correlation-Id: 9554471e-032f-437a-1085-08d5ac102d7a
+X-OriginatorOrg: synaptics.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Apr 2018 07:26:20.5534 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9554471e-032f-437a-1085-08d5ac102d7a
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR04MB1324
+X-MS-Exchange-CrossTenant-Id: 335d1fbc-2124-4173-9863-17e7051a2a0e
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR03MB2633
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3R7QYek024941
 
-From: Haibo Chen <haibo.chen@nxp.com>
+On Thu, 26 Apr 2018 12:39:59 +0530 Bhadram Varka wrote:
 
-Add egalax touch screen support on i2c2 bus.
+> >>>>>
+> >>>>> diff --git a/drivers/net/phy/marvell.c b/drivers/net/phy/marvell.c
+> >>>>> index c22e8e383247..b6abe1cbc84b 100644
+> >>>>> --- a/drivers/net/phy/marvell.c
+> >>>>> +++ b/drivers/net/phy/marvell.c
+> >>>>> @@ -115,6 +115,9 @@
+> >>>>>    /* WOL Event Interrupt Enable */
+> >>>>>    #define MII_88E1318S_PHY_CSIER_WOL_EIE BIT(7)
+> >>>>>    +/* Copper Specific Interrupt Status Register */
+> >>>>> +#define MII_88E1318S_PHY_CSISR                0x13
+> >>>>> +
+> >>>>>    /* LED Timer Control Register */
+> >>>>>    #define MII_88E1318S_PHY_LED_TCR            0x12
+> >>>>>    #define MII_88E1318S_PHY_LED_TCR_FORCE_INT BIT(15)
+> >>>>> @@ -1393,6 +1396,12 @@ static int m88e1318_set_wol(struct 
+> >>>>> phy_device *phydev,
+> >>>>>            if (err < 0)
+> >>>>>                goto error;
+> >>>>>    +        /* If WOL event happened once, the LED[2] interrupt pin
+> >>>>> +         * will not be cleared unless reading the CSISR register.
+> >>>>> +         * So clear the WOL event first before enabling it.
+> >>>>> +         */
+> >>>>> +        phy_read(phydev, MII_88E1318S_PHY_CSISR);
+> >>>>> +  
+> >>>> Hi Jisheng
+> >>>>
+> >>>> The problem with this is, you could be clearing a real interrupt, link
+> >>>> down/up etc. If interrupts are in use, i think the normal interrupt
+> >>>> handling will clear the WOL interrupt? So can you make this read
+> >>>> conditional on !phy_interrupt_is_valid()?  
+> >>> So this will clear WoL interrupt bit from Copper Interrupt status 
+> >>> register.
+> >>>
+> >>> How about clearing WoL status (Page 17, register 17) for every WOL 
+> >>> event ?
+> >>>  
+> >> This is already properly done by setting 
+> >> MII_88E1318S_PHY_WOL_CTRL_CLEAR_WOL_STATUS
+> >> in m88e1318_set_wol()  
+> > This part of the code executes only when we enable WOL through ethtool 
+> > (ethtool -s eth0 wol g)
+> >
+> > Lets say once WOL enabled through magic packet - HW generates WOL 
+> > interrupt once magic packet received.
+> > The problem that I see here is that for the next immediate magic 
+> > packet I don't see WOL interrupt generated by the HW.
+> > I need to explicitly clear WOL status for HW to generate WOL interrupt.  
+> 
+> With the below patch I see WOL event interrupt for every magic packet 
+> that HW receives...
+> 
+> diff --git a/drivers/net/phy/marvell.c b/drivers/net/phy/marvell.c
+> index ed8a67d..5d3d138 100644
+> --- a/drivers/net/phy/marvell.c
+> +++ b/drivers/net/phy/marvell.c
+> @@ -55,6 +55,7 @@
+> 
+>   #define MII_M1011_IEVENT               0x13
+>   #define MII_M1011_IEVENT_CLEAR         0x0000
+> +#define MII_M1011_IEVENT_WOL_EVENT     BIT(7)
+> 
+>   #define MII_M1011_IMASK                        0x12
+> - #define MII_M1011_IMASK_INIT           0x6400
+> + #define MII_M1011_IMASK_INIT           0x6480
+> 
+> @@ -195,13 +196,40 @@ struct marvell_priv {
+>          bool copper;
+>   };
+> 
+> +static int marvell_clear_wol_status(struct phy_device *phydev)
+> +{
+> +       int err, temp, oldpage;
+> +
+> +       oldpage = phy_read(phydev, MII_MARVELL_PHY_PAGE);
+> +       if (oldpage < 0)
+> +               return oldpage;
+> +
+> +       err = phy_write(phydev, MII_MARVELL_PHY_PAGE,
+> +                        MII_88E1318S_PHY_WOL_PAGE);
+> +       if (err < 0)
+> +               return err;
+> +
+> +       /*
+> +        * Clear WOL status so that for next WOL event
+> +        * interrupt will be generated by HW
+> +        */
+> +       temp = phy_read(phydev, MII_88E1318S_PHY_WOL_CTRL);
+> +       temp |= MII_88E1318S_PHY_WOL_CTRL_CLEAR_WOL_STATUS;
+> +       err = phy_write(phydev, MII_88E1318S_PHY_WOL_CTRL, temp);
 
-Signed-off-by: Haibo Chen <haibo.chen@freescale.com>
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
-this patch is based on patch (ARM: dts: imx6sx-sabreauto: add debug LED support) I sent out for review.
- arch/arm/boot/dts/imx6sx-sabreauto.dts | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+is it better to reuse __phy_write()?
 
-diff --git a/arch/arm/boot/dts/imx6sx-sabreauto.dts b/arch/arm/boot/dts/imx6sx-sabreauto.dts
-index 6b94f24..2f6e474 100644
---- a/arch/arm/boot/dts/imx6sx-sabreauto.dts
-+++ b/arch/arm/boot/dts/imx6sx-sabreauto.dts
-@@ -131,6 +131,12 @@
- &iomuxc {
- 	imx6x-sabreauto {
- 
-+		pinctrl_egalax_int: egalax_intgrp {
-+			fsl,pins = <
-+				MX6SX_PAD_SD4_RESET_B__GPIO6_IO_22      0x80000000
-+			>;
-+		};
-+
- 		pinctrl_led: ledgrp {
- 			fsl,pins = <
- 				MX6SX_PAD_CSI_PIXCLK__GPIO1_IO_24 0x17059
-@@ -274,6 +280,16 @@
- 	pinctrl-0 = <&pinctrl_i2c2_1>;
- 	status = "okay";
- 
-+	egalax_ts@04 {
-+		compatible = "eeti,egalax_ts";
-+		reg = <0x04>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_egalax_int>;
-+		interrupt-parent = <&gpio6>;
-+		interrupts = <22 IRQ_TYPE_EDGE_FALLING>;
-+		wakeup-gpios = <&gpio6 22 GPIO_ACTIVE_HIGH>;
-+	};
-+
- 	max7322: gpio@68 {
- 		compatible = "maxim,max7322";
- 		reg = <0x68>;
--- 
-2.7.4
+> +       if (err < 0)
+> +               return err;
+> +
+> +
+> +       phy_write(phydev, MII_MARVELL_PHY_PAGE, oldpage);
+> +
+> +       return 0;
+> +}
+> +
+>   static int marvell_ack_interrupt(struct phy_device *phydev)
+>   {
+>          int err;
+> 
+>          /* Clear the interrupts by reading the reg */
+>          err = phy_read(phydev, MII_M1011_IEVENT);
+> -
+>          if (err < 0)
+>                  return err;
+> 
+> @@ -1454,12 +1482,18 @@ static int marvell_aneg_done(struct phy_device 
+> *phydev)
+> 
+>   static int m88e1121_did_interrupt(struct phy_device *phydev)
+>   {
+> -       int imask;
+> +       int imask, err;
+> 
+>          imask = phy_read(phydev, MII_M1011_IEVENT);
+> 
+> -       if (imask & MII_M1011_IMASK_INIT)
+> +       if (imask & MII_M1011_IMASK_INIT) {
+> +               if (imask & MII_M1011_IEVENT_WOL_EVENT) {
+> +                       err = marvell_clear_wol_status(phydev);
+> +                       if (err < 0)
+> +                               return 0;
+> +               }
+>                  return 1;
+> +       }
+> 
+>          return 0;
+>   }
