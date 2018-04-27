@@ -1,71 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757026AbeD0BA3 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 21:00:29 -0400
-Received: from mga14.intel.com ([192.55.52.115]:57650 "EHLO mga14.intel.com"
+        id S1757183AbeD0BBt (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 21:01:49 -0400
+Received: from imap.thunk.org ([74.207.234.97]:36386 "EHLO imap.thunk.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752030AbeD0BA2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 21:00:28 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,333,1520924400";
-   d="scan'208";a="34968117"
-From: "Li, Philip" <philip.li@intel.com>
-To: "Wu, Fengguang" <fengguang.wu@intel.com>,
-        Arnd Bergmann <arnd@arndb.de>
-CC: lkp <lkp@intel.com>, "kbuild-all@01.org" <kbuild-all@01.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        "Hao, Shun" <shun.hao@intel.com>
-Subject: RE: Makefile:636: arch/score/Makefile: No such file or directory
-Thread-Topic: Makefile:636: arch/score/Makefile: No such file or directory
-Thread-Index: AQHT3TBCNJzSxNFxX0KPZLeNWlwBrKQTy0/A
-Date: Fri, 27 Apr 2018 01:00:25 +0000
-Message-ID: <831EE4E5E37DCC428EB295A351E662494CAE8B50@shsmsx102.ccr.corp.intel.com>
-References: <201804261013.6YZ6XwpM%fengguang.wu@intel.com>
- <CAK8P3a0tpU7RFasJUuG7V2ZYUoR-iYDzjO13neF08ToAdnLX+w@mail.gmail.com>
- <20180426072846.pa72ohtstnyjsa42@wfg-t540p.sh.intel.com>
-In-Reply-To: <20180426072846.pa72ohtstnyjsa42@wfg-t540p.sh.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZTk1OWQ1NTQtZWE4My00ZWQ2LWFjZWMtZjk1NWQ4MTJiZGQ2IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiJYQ1lTV2ZzMlBxYnlMT2hqdXEzYVo0bGRNa0JVMTBcL0NoVzE1U1E0czZKaEdXM3BXSSs0VlBhWWpyWXFoUE9yeCJ9
-x-ctpclassification: CTP_NT
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1754298AbeD0BBs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 21:01:48 -0400
+Date: Thu, 26 Apr 2018 21:01:24 -0400
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+To: Shuah Khan <shuah@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: Linux 4.17.0-rc2 - WARNING: inconsistent lock state
+Message-ID: <20180427010124.GI5965@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Shuah Khan <shuah@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+References: <2f2bd4d8-f143-913f-af5c-2767d4e35149@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2f2bd4d8-f143-913f-af5c-2767d4e35149@kernel.org>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Apr 25, 2018 at 08:44:04AM -0600, Shuah Khan wrote:
+> I am seeing the following on my system with 4.17-rc2. Probably in 4.17-rc1
+> as well.
+> 
+> Something to be concerned about. Is this related to
+> Commit: a45403b51582a87872927a3e0fc0a389c26867f1
+> ext4: always initialize the crc32c checksum driver?
 
-> >Please stop trying to build the removed architectures: tile, blackfin,
-> >metag, m32r, frv, mn10300, cris and score.
-> >
-> >https://lwn.net/Articles/748074/ has details about why this broke.
-> 
-> Sorry about that!  It looks the architectures removal is not thorough
-> enough. Hao, would you help take a look?
-sure, we will handle this.
+It should be fixed by 6c1e851c4ed: random: fix possible sleeping
+allocation from irq context.
 
-> 
-> >Note that we do have a few new architectures that you may want
-> >to add if you haven't done this already: nds32 and riscv were added
-> >this year, and a couple of older architectures that didn't have upstream
-> >gcc releases now have those, and I uploaded gcc binaries to
-> >https://cdn.kernel.org/pub/tools/crosstool/.
-> >
-> >This should allow building everything we have in the kernel now.
-> >Unfortunately the nds32 toolchain I uploaded is a little incomplete,
-> >but I have a gcc-6.4 build that (mostly) works and gcc-8 should
-> >be fine as well once it gets released.
-> 
-> OK, thanks for the tips! Philip may help plan add the 2 new archs
-> nds32 and riscv.
-thanks for info, we will add new archs support in near future.
-
-> 
-> Thanks,
-> Fengguang
+				- Ted
