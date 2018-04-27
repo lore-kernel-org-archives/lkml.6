@@ -1,41 +1,40 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZprGK2ggsxJv+EiTuDq8dIc7S1r0Xp2/JuXYWPD350aKfw6kbMYw6HqXBo8JbCDbiFELLH2
-ARC-Seal: i=1; a=rsa-sha256; t=1524837798; cv=none;
+X-Google-Smtp-Source: AB8JxZo652wnINinzvjQiz1cPtSlU25dnkpFcAIw02G+t+faZdQylG+RId6KJO+Rjzz8leiiF2JT
+ARC-Seal: i=1; a=rsa-sha256; t=1524837790; cv=none;
         d=google.com; s=arc-20160816;
-        b=FOi0v8oRDv9iLPVcRwLyS2Q+kEDVy27UVKq/XclGWkmAb499t3FwV8Gvh7EuXXDhj0
-         LPZUKrHmOZ7Dm+SqA/9+tY6sUcKZGrOs7E3tQy/dh4rW0WqVJ86cZqh18jlOCj0zi4IB
-         anivjBvRZBNjbWOWg8TQbfYZPPC6iJF/ByWUrSNdKXhpVpAerHK7V6J7Kwz/HeMhcqR2
-         qd8fGJK3obYYvVv7XhjI7F7BukfptOcFSumVE2LoH3FMglWNRzutafWINLsAAWS0TztK
-         5J19eSXAXOQ4CDrlOY56lFSu9tN+2XTv16wwENvgyoOkSi9VwkmVIq2SdDcdYNwgaHm4
-         b/Ig==
+        b=yDB95MfAIDJ9d/4mTqiWno3/uSujuNz76X2YVwacU8x+htiyVDip3RWRTSWrDdvHWl
+         RDWQHSLDZUy2O9k+jEp0duEMze4J19FZoZ3ONPLPyirHn5TPq3WzORJ4IOxuqkFvdZaO
+         AIt9BTBy+JR8qFrKyBPQAnZ1hkuu+O9eEAJMKdfhNFi8K22aromZ6iuV42o01XI59D3A
+         K6NCyFjIqdFIqupSDCO+YSb79+EBJmtjRgj8wyJWvSqPagjjMCwRotYLgqI3L4rMVed5
+         SdKb9hdgtVY5DzE3AQstPiU/oEoQvN+8Pa0KTNlDIQ2aZjkX9EWpFtJAyAFo5EHoNZXj
+         G56A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=XNrt0cgQ56ZMZ6C6CjGZpMcfonGH+ynh1UxL4rrXxgs=;
-        b=ihrtIc0y6JUBOx06vxFai0iaEO9Jr1rDOowh37NptznXoF76zC8QIFD0/SwEJBP+2v
-         KpHvC7e3FEJfPr0bEv6/wh06zDLHLDiDqOmrcYJ8Fq4Dl3TaDwYfI0FQtQyJYJUJVg+Q
-         BaFWNA2ktMPMo8+lmaUn1gT5bJONSAFrbTChNac6iybBHPxQyvTcU8K0xtAM5DlVJ+ZM
-         kvhvaoAGsshLoyYTxC9qJJNwuaReFchYVswpS6kfstX0aF70r5YylJ71VbpW2Bpahe9z
-         hPgDR5CA7VHNdZmbvZwxOnubCVA5s8WFvFOMJ9CTBhZ+skV+ZBjHrRzzawbPdbufCPg4
-         7I5w==
+        bh=uCINWFRzQSNWm+pvQVYs6LBbwuullYXeu0rlp1kVvoQ=;
+        b=JaxBQbp2ceJBO03eTbVokJGut8oAp4kbW97XM3OmTo0SEALssrVDzmZYaQTS3t6Vr+
+         BCApabEwGiOI1HV1GDwTYf0eq306adq/RFYgybvPni2j3OrejI5YjXlrLBQp+Ov5WqUo
+         NlwghfMC9by6OVn7a0Rm1UhyaPUVZJ7PuSNDPIGtQCusS/CwsJFwBI1U/QYj0HX643Ut
+         A7dh2njfLEZp90ShAXrC7bDKeGuWVKXLdFqUyjPm4NyW8Vm+Qn0FgpfGxLGus9sjom+i
+         lTUx17nO6PV2mIPiVOHmya+goRHsHXdlmSZdNtLRecSgblHJ5Dtb2D5Xq5NQwv/ewj4h
+         Wv8A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA5AE218A0
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 101FE218A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Colin Ian King <colin.king@canonical.com>,
-	=?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>,
-	Sebastian Reichel <sre@kernel.org>,
-	Amit Pundir <amit.pundir@linaro.org>
-Subject: [PATCH 4.9 13/74] power: supply: bq2415x: check for NULL acpi_id to avoid null pointer dereference
-Date: Fri, 27 Apr 2018 15:58:03 +0200
-Message-Id: <20180427135710.445685323@linuxfoundation.org>
+	Andreas Kemnade <andreas@kemnade.info>,
+	Tony Lindgren <tony@atomide.com>,
+	Bin Liu <b-liu@ti.com>
+Subject: [PATCH 4.9 08/74] usb: musb: fix enumeration after resume
+Date: Fri, 27 Apr 2018 15:57:58 +0200
+Message-Id: <20180427135710.242461260@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135709.899303463@linuxfoundation.org>
 References: <20180427135709.899303463@linuxfoundation.org>
@@ -45,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908319639239239?=
-X-GMAIL-MSGID: =?utf-8?q?1598908319639239239?=
+X-GMAIL-THRID: =?utf-8?q?1598908311697008283?=
+X-GMAIL-MSGID: =?utf-8?q?1598908311697008283?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,35 +53,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Andreas Kemnade <andreas@kemnade.info>
 
-commit a1b94355ea3fde5e13db7ff37c0272fcde4e29b2 upstream.
+commit 17539f2f4f0b7fa906b508765c8ada07a1e45f52 upstream.
 
-acpi_match_device can potentially return NULL, so it is prudent to
-check if acpi_id is null before it is dereferenced.  Add a check
-and an error message to indicate the failure.
+On dm3730 there are enumeration problems after resume.
+Investigation led to the cause that the MUSB_POWER_SOFTCONN
+bit is not set. If it was set before suspend (because it
+was enabled via musb_pullup()), it is set in
+musb_restore_context() so the pullup is enabled. But then
+musb_start() is called which overwrites MUSB_POWER and
+therefore disables MUSB_POWER_SOFTCONN, so no pullup is
+enabled and the device is not enumerated.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Reviewed-by: Pali Rohár <pali.rohar@gmail.com>
-Signed-off-by: Sebastian Reichel <sre@kernel.org>
-Cc: Amit Pundir <amit.pundir@linaro.org>
+So let's do a subset of what musb_start() does
+in the same way as musb_suspend() does it. Platform-specific
+stuff it still called as there might be some phy-related stuff
+which needs to be enabled.
+Also interrupts are enabled, as it was the original idea
+of calling musb_start() in musb_resume() according to
+Commit 6fc6f4b87cb3 ("usb: musb: Disable interrupts on suspend,
+enable them on resume")
+
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+Tested-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Bin Liu <b-liu@ti.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/power/supply/bq2415x_charger.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/usb/musb/musb_core.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/power/supply/bq2415x_charger.c
-+++ b/drivers/power/supply/bq2415x_charger.c
-@@ -1569,6 +1569,11 @@ static int bq2415x_probe(struct i2c_clie
- 		acpi_id =
- 			acpi_match_device(client->dev.driver->acpi_match_table,
- 					  &client->dev);
-+		if (!acpi_id) {
-+			dev_err(&client->dev, "failed to match device name\n");
-+			ret = -ENODEV;
-+			goto error_1;
-+		}
- 		name = kasprintf(GFP_KERNEL, "%s-%d", acpi_id->id, num);
- 	}
- 	if (!name) {
+--- a/drivers/usb/musb/musb_core.c
++++ b/drivers/usb/musb/musb_core.c
+@@ -2710,7 +2710,8 @@ static int musb_resume(struct device *de
+ 	if ((devctl & mask) != (musb->context.devctl & mask))
+ 		musb->port1_status = 0;
+ 
+-	musb_start(musb);
++	musb_enable_interrupts(musb);
++	musb_platform_enable(musb);
+ 
+ 	spin_lock_irqsave(&musb->lock, flags);
+ 	error = musb_run_resume_work(musb);
