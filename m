@@ -1,41 +1,39 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZofDoNc3EZlP8FMP7f/SVxPPaB+YiOHp2gOT4MQx12OJDPKJxVXZilcAPuZFye6ZdgWWz3o
-ARC-Seal: i=1; a=rsa-sha256; t=1524838335; cv=none;
+X-Google-Smtp-Source: AB8JxZqLYdAmzp6ZGk4eS3SJuB3kHpdAXiT1AG1REx5wkGLoeAiX+gKKzYA8zRDErdVfHubcU1vA
+ARC-Seal: i=1; a=rsa-sha256; t=1524838332; cv=none;
         d=google.com; s=arc-20160816;
-        b=U0b/4eSA89RAjbaTxwXxbXwHSSV4ho4JRBTSXOUipIasuqp35cGGHKAS8SkdiDGl0U
-         bdj3M/UeT4NoaIoYTm43+J1aBsCjJs+cle3jBhyUqmEmlEJ/nqYJCaXdHP7h5WLvqHhq
-         RbzxuUk+rEOEeCKPXNP80mAjpH3pOzSRi9OYDRBO7EaLn64aCtef7FT2j+6DofccLNN5
-         XmFVYYBmvTmeJZjwXaM2dFj0IGbMLMuDmXybqRMtDAxVhz1JE7LT0MTFVw4Z2mYMAU0K
-         v1NaOdZhOovIZQ58fWucmjv2hApQpuFMRx13VRlnnXhfOud5jPTMlguo+ncekUEhOJAU
-         eKpQ==
+        b=UxFXzRM4OP4BYj70HW+tcZ5bpPlBbHLzIskFByyJcRx3Fclzcd2mPe3IWq26GsTbxN
+         cTD4OS9NNvf8EwQWj0AnwQ7NPnkhGyooXKXOUIeWshRExvcOHk9yQrCY9fyCPehCZn7A
+         jTxMj0bzg85/v0lPsSdZSdtMDKgRFKgK79qSJlBmxHv5sBudvfoWq/nVkLFodk8xbJiJ
+         Bti0xwePY6dDyrCfLqweP6FTceW/gDRaOo/cxMCUoxAoyd3ukOLnFdZzte69pRZ4m79F
+         Og6cI1IHpjID8zxuyJAVXp+jnGl9Uad1HGMjLW+p0u9A7kwVaPt4kvMPAzgrGs6ywfW3
+         VBDQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=ohZy06iHKDnVA7O+wTTYeETjzfaWdCJ5XIuvV9HQSH0=;
-        b=gLjNAbc0tAOelEWzuWPXZAYbgnxvFrO6BAi0REa0zSjluJ/vkfFwIQb6m4VxnxfdWd
-         uV3v1Js4d1QAoV/Yl9blCkpz4k110ea/5m21z6bDi7o2eQWy+mTRWUkobIZgHKtOf9ox
-         8piH3/vqAU8YqzT5YageEnHlbgdinm7zkFNHMsMYa2Z3oC0u3EPQuj8HYYDAktqaJRIi
-         9aZEcsOkuE3QvBaxlWCjmjODwSYdqYhbrPFSv+qrmXdqU2BacENF5PHeVMR7OrH6oPjR
-         jfbbbC0QEYKiQNgOslN/OqCFwLc8XeGuw7K60hJpTnIurBkk0tK1CcdzSJFrJ3Negswc
-         DKBg==
+        bh=cYPHppv2z+eAv9HOGZLXHF8mamvH7snDbcKjvWdRvlw=;
+        b=nRewrC/8IISHJ+iuDNR9PCvocvIuEhNlbNIWETuqqJBwtUAztiv96DaOk7z3+vF/yv
+         ZGgwMONwU3YV9WbGuZaNd9W0Bx4KV4rOtm9IXYIAm2o6fFB+xEc5i9QnPcFPjCfHr3zS
+         KEwbX0PbJ/+HBZ1vukj9sq+Br0l0O+LuSrNQpgrLillsU24KgO3d8BBHlo/akjEd+RdN
+         9rcYHRppE2LqaDthCMauR9JZB0GK6O/75kvxLd2UUwrN45vJ+8JrTgO16Zr9rlEIhTw4
+         SkAdJhSNL68B4l6Wu/s4Dg+h+86symSnRf6Q1oGUmtMx/VZaG9jqag9hcEAJSuo+aHsO
+         GVHg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A5FD21864
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93864218A1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Laurent Vivier <lvivier@redhat.com>,
-	Stan Johnson <userm57@yahoo.com>,
-	Finn Thain <fthain@telegraphics.com.au>,
-	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.16 65/81] m68k/mac: Dont remap SWIM MMIO region
-Date: Fri, 27 Apr 2018 15:59:07 +0200
-Message-Id: <20180427135747.101529690@linuxfoundation.org>
+	Robert Kolchmeyer <rkolchmeyer@google.com>,
+	Jan Kara <jack@suse.cz>
+Subject: [PATCH 4.16 64/81] fsnotify: Fix fsnotify_mark_connector race
+Date: Fri, 27 Apr 2018 15:59:06 +0200
+Message-Id: <20180427135747.053318680@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135743.216853156@linuxfoundation.org>
 References: <20180427135743.216853156@linuxfoundation.org>
@@ -45,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908658841542656?=
-X-GMAIL-MSGID: =?utf-8?q?1598908882266999676?=
+X-GMAIL-THRID: =?utf-8?q?1598908656302888331?=
+X-GMAIL-MSGID: =?utf-8?q?1598908879528853476?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,155 +52,65 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Finn Thain <fthain@telegraphics.com.au>
+From: Robert Kolchmeyer <rkolchmeyer@google.com>
 
-commit b64576cbf36afa5fabf3b31f62a1994c429ef855 upstream.
+commit d90a10e2444ba5a351fa695917258ff4c5709fa5 upstream.
 
-For reasons I don't understand, calling ioremap() then iounmap() on
-the SWIM MMIO region causes a hang on 68030 (but not on 68040).
+fsnotify() acquires a reference to a fsnotify_mark_connector through
+the SRCU-protected pointer to_tell->i_fsnotify_marks. However, it
+appears that no precautions are taken in fsnotify_put_mark() to
+ensure that fsnotify() drops its reference to this
+fsnotify_mark_connector before assigning a value to its 'destroy_next'
+field. This can result in fsnotify_put_mark() assigning a value
+to a connector's 'destroy_next' field right before fsnotify() tries to
+traverse the linked list referenced by the connector's 'list' field.
+Since these two fields are members of the same union, this behavior
+results in a kernel panic.
 
-~# modprobe swim_mod
-SWIM floppy driver Version 0.2 (2008-10-30)
-SWIM device not found !
-watchdog: BUG: soft lockup - CPU#0 stuck for 23s! [modprobe:285]
-Modules linked in: swim_mod(+)
-Format 00  Vector: 0064  PC: 000075aa  Status: 2000    Not tainted
-ORIG_D0: ffffffff  D0: d00c0000  A2: 007c2370  A1: 003f810c
-A0: 00040000  D5: d0096800  D4: d0097e00
-D3: 00000001  D2: 00000003  D1: 00000000
-Non-Maskable Interrupt
-Modules linked in: swim_mod(+)
-PC: [<000075ba>] __iounmap+0x24/0x10e
-SR: 2000  SP: 007abc48  a2: 007c2370
-d0: d00c0000    d1: 000001a0    d2: 00000019    d3: 00000001
-d4: d0097e00    d5: d0096800    a0: 00040000    a1: 003f810c
-Process modprobe (pid: 285, task=007c2370)
-Frame format=0
-Stack from 007abc7c:
-        ffffffed 00000000 006a4060 004712e0 007abca0 000076ea d0080000 00080000
-        010bb4b8 007abcd8 010ba542 d0096000 00000000 00000000 00000001 010bb59c
-        00000000 007abf30 010bb4b8 0047760a 0047763c 00477612 00616540 007abcec
-        0020a91a 00477600 0047760a 010bb4cc 007abd18 002092f2 0047760a 00333b06
-        007abd5c 00000000 0047760a 010bb4cc 00404f90 004776b8 00000001 007abd38
-        00209446 010bb4cc 0047760a 010bb4cc 0020938e 0031f8be 00616540 007abd64
-Call Trace: [<000076ea>] iounmap+0x46/0x5a
- [<00080000>] shrink_page_list+0x7f6/0xe06
- [<010ba542>] swim_probe+0xe4/0x496 [swim_mod]
- [<0020a91a>] platform_drv_probe+0x20/0x5e
- [<002092f2>] driver_probe_device+0x21c/0x2b8
- [<00333b06>] mutex_lock+0x0/0x2e
- [<00209446>] __driver_attach+0xb8/0xce
- [<0020938e>] __driver_attach+0x0/0xce
- [<0031f8be>] klist_next+0x0/0xa0
- [<00207562>] bus_for_each_dev+0x74/0xba
- [<000344c0>] blocking_notifier_call_chain+0x0/0x20
- [<00333b06>] mutex_lock+0x0/0x2e
- [<00208e44>] driver_attach+0x1a/0x1e
- [<0020938e>] __driver_attach+0x0/0xce
- [<00207e26>] bus_add_driver+0x188/0x234
- [<000344c0>] blocking_notifier_call_chain+0x0/0x20
- [<00209894>] driver_register+0x58/0x104
- [<000344c0>] blocking_notifier_call_chain+0x0/0x20
- [<010bd000>] swim_init+0x0/0x2c [swim_mod]
- [<0020a7be>] __platform_driver_register+0x38/0x3c
- [<010bd028>] swim_init+0x28/0x2c [swim_mod]
- [<000020dc>] do_one_initcall+0x38/0x196
- [<000344c0>] blocking_notifier_call_chain+0x0/0x20
- [<003331cc>] mutex_unlock+0x0/0x3e
- [<00333b06>] mutex_lock+0x0/0x2e
- [<003331cc>] mutex_unlock+0x0/0x3e
- [<00333b06>] mutex_lock+0x0/0x2e
- [<003331cc>] mutex_unlock+0x0/0x3e
- [<00333b06>] mutex_lock+0x0/0x2e
- [<003331cc>] mutex_unlock+0x0/0x3e
- [<00333b06>] mutex_lock+0x0/0x2e
- [<00075008>] __free_pages+0x0/0x38
- [<000045c0>] mangle_kernel_stack+0x30/0xda
- [<000344c0>] blocking_notifier_call_chain+0x0/0x20
- [<003331cc>] mutex_unlock+0x0/0x3e
- [<00333b06>] mutex_lock+0x0/0x2e
- [<0005ced4>] do_init_module+0x42/0x266
- [<010bd000>] swim_init+0x0/0x2c [swim_mod]
- [<000344c0>] blocking_notifier_call_chain+0x0/0x20
- [<0005eda0>] load_module+0x1a30/0x1e70
- [<0000465d>] mangle_kernel_stack+0xcd/0xda
- [<00331c64>] __generic_copy_from_user+0x0/0x46
- [<0033256e>] _cond_resched+0x0/0x32
- [<00331b9c>] memset+0x0/0x98
- [<0033256e>] _cond_resched+0x0/0x32
- [<0005f25c>] SyS_init_module+0x7c/0x112
- [<00002000>] _start+0x0/0x8
- [<00002000>] _start+0x0/0x8
- [<00331c82>] __generic_copy_from_user+0x1e/0x46
- [<0005f2b2>] SyS_init_module+0xd2/0x112
- [<0000465d>] mangle_kernel_stack+0xcd/0xda
- [<00002b40>] syscall+0x8/0xc
- [<0000465d>] mangle_kernel_stack+0xcd/0xda
- [<0008c00c>] pcpu_balance_workfn+0xb2/0x40e
-Code: 2200 7419 e4a9 e589 2841 d9fc 0000 1000 <2414> 7203 c282 7602 b681 6600 0096 0242 fe00 0482 0000 0000 e9c0 11c3 ed89 2642
+This issue is resolved by moving the connector's 'destroy_next' field
+into the object pointer union. This should work since the object pointer
+access is protected by both a spinlock and the value of the 'flags'
+field, and the 'flags' field is cleared while holding the spinlock in
+fsnotify_put_mark() before 'destroy_next' is updated. It shouldn't be
+possible for another thread to accidentally read from the object pointer
+after the 'destroy_next' field is updated.
 
-There's no need to call ioremap() for the SWIM address range, as it lies
-within the usual IO device region at 0x5000 0000, which has already been
-mapped by head.S.
+The offending behavior here is extremely unlikely; since
+fsnotify_put_mark() removes references to a connector (specifically,
+it ensures that the connector is unreachable from the inode it was
+formerly attached to) before updating its 'destroy_next' field, a
+sizeable chunk of code in fsnotify_put_mark() has to execute in the
+short window between when fsnotify() acquires the connector reference
+and saves the value of its 'list' field. On the HEAD kernel, I've only
+been able to reproduce this by inserting a udelay(1) in fsnotify().
+However, I've been able to reproduce this issue without inserting a
+udelay(1) anywhere on older unmodified release kernels, so I believe
+it's worth fixing at HEAD.
 
-Remove the redundant ioremap() and iounmap() calls to fix the hang.
-
-Cc: Laurent Vivier <lvivier@redhat.com>
-Cc: stable@vger.kernel.org # v4.14+
-Tested-by: Stan Johnson <userm57@yahoo.com>
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-Acked-by: Laurent Vivier <lvivier@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+References: https://bugzilla.kernel.org/show_bug.cgi?id=199437
+Fixes: 08991e83b7286635167bab40927665a90fb00d81
+CC: stable@vger.kernel.org
+Signed-off-by: Robert Kolchmeyer <rkolchmeyer@google.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/block/swim.c |   10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ include/linux/fsnotify_backend.h |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/drivers/block/swim.c
-+++ b/drivers/block/swim.c
-@@ -911,7 +911,7 @@ static int swim_probe(struct platform_de
- 		goto out;
- 	}
+--- a/include/linux/fsnotify_backend.h
++++ b/include/linux/fsnotify_backend.h
+@@ -217,12 +217,10 @@ struct fsnotify_mark_connector {
+ 	union {	/* Object pointer [lock] */
+ 		struct inode *inode;
+ 		struct vfsmount *mnt;
+-	};
+-	union {
+-		struct hlist_head list;
+ 		/* Used listing heads to free after srcu period expires */
+ 		struct fsnotify_mark_connector *destroy_next;
+ 	};
++	struct hlist_head list;
+ };
  
--	swim_base = ioremap(res->start, resource_size(res));
-+	swim_base = (struct swim __iomem *)res->start;
- 	if (!swim_base) {
- 		ret = -ENOMEM;
- 		goto out_release_io;
-@@ -923,7 +923,7 @@ static int swim_probe(struct platform_de
- 	if (!get_swim_mode(swim_base)) {
- 		printk(KERN_INFO "SWIM device not found !\n");
- 		ret = -ENODEV;
--		goto out_iounmap;
-+		goto out_release_io;
- 	}
- 
- 	/* set platform driver data */
-@@ -931,7 +931,7 @@ static int swim_probe(struct platform_de
- 	swd = kzalloc(sizeof(struct swim_priv), GFP_KERNEL);
- 	if (!swd) {
- 		ret = -ENOMEM;
--		goto out_iounmap;
-+		goto out_release_io;
- 	}
- 	platform_set_drvdata(dev, swd);
- 
-@@ -945,8 +945,6 @@ static int swim_probe(struct platform_de
- 
- out_kfree:
- 	kfree(swd);
--out_iounmap:
--	iounmap(swim_base);
- out_release_io:
- 	release_mem_region(res->start, resource_size(res));
- out:
-@@ -974,8 +972,6 @@ static int swim_remove(struct platform_d
- 	for (drive = 0; drive < swd->floppy_count; drive++)
- 		floppy_eject(&swd->unit[drive]);
- 
--	iounmap(swd->base);
--
- 	res = platform_get_resource(dev, IORESOURCE_MEM, 0);
- 	if (res)
- 		release_mem_region(res->start, resource_size(res));
+ /*
