@@ -1,86 +1,40 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-288473-1524837706-2-2190007585989856047
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES unknown,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524837706; b=jW4f0uAubqSUet78a+1jb0gT6HhsxktniHk1uo0ZzZCxgrkdxg
-    eRw4+cIp8MK+9PDJZbVti48+LqmrD2ztJd7KWsewqw++B4TbHqt5KzZiW+GXzA5F
-    +Wpsk+PaXVN8eORUK2AIJhGj6mugtrzqL5g6uAIGLPG3kpkK8tgtRAy447Cn94no
-    ISmUMNpkr2YFt3ZsGD+h5s/nnrLBPzsgzVRGn2elFwvHVmrKbwy2UXOnKi4Fnner
-    k23/rAwNAbKy3RKTELTQHac/j1ouZ5rPZRiAOc/Pb1YFE3gi9Y5udgvXZ94mz6Dr
-    wFyL1aOmq1UQIRtxLdddC7K0AZODDUny/Jsg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524837706; bh=npBbk0XxG5Ew3r67A1M4MULoRrjzOG
-    7U/P6M9auACxc=; b=hBGTtmbhHuEC8ZpR219F7G7dRkxwoskGtsErf+xfyj0wSj
-    nyl1XBzsg0XOlV/sE1w/I11g3QkC0MM/FeqZuH1M4myGwQTDFnRlWHwlfi/MQTI6
-    zKG4Bw9XmJ0ooYmIOIWZimzRXySEH2doxEv2L6J9gmWlWrsQaWY9SiDUjHQY1ZjK
-    SiQS5ivdbxF85c2OcqwW8NYwoeCdUB1D0U4J1VHiUDArziSfm8yEu39uoAXwo7pR
-    w3Gqofqzfjx4HTlsNNT7yYo85/h1STXeUIKCPu716phgbXeIkIWUfbmTUUi1yyaD
-    VDycjsPdiuVgJzlF5Yr8qBzr2eaeUc8bz9toKEpQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfKYgHQRVLKGM6OJZRTUmS/w+3RHCnKWvJSy2nrLi7YHjna5yHtdvBBzoRt7XsM44hwgQ1k4crP/N0IfPyJA7qAXT3dNrvs9lkmU7X87O41E28OjoF9CM
-    sA4OVi+foZMKjv0h3RWs64lSOrPA5d5H8hEbQIWBBqhO61rJcT7hpEtFL3PBBaHPY0rk4tFBP9uPhirUB9OTfrZvBMGRFSvlhMfkc98+ofw5hgi7DBmpa0RF
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=pGLkceISAAAA:8 a=hSkVLCK3AAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
-    a=wPsBQ40odNOwqZ2001YA:9 a=TIOgUnMNOxmp_s_p:21 a=obED7St9Fajfpnfo:21
-    a=QEXdDO2ut3YA:10 a=cQPPKAXgyycSBL8etih5:22 a=y1Q9-5lHfBjTkpIzbSAN:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932851AbeD0OBk (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 27 Apr 2018 10:01:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48550 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933171AbeD0OBi (ORCPT <rfc822;stable@vger.kernel.org>);
-        Fri, 27 Apr 2018 10:01:38 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E99982185A
+Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
+X-Google-Smtp-Source: AB8JxZrsHgtfkHqPvmTEODa0JdQsyQ5EeZnTZHtmSXWOlY50E03tBdKnOBa31arP5uHVHydhC9zs
+ARC-Seal: i=1; a=rsa-sha256; t=1524837705; cv=none;
+        d=google.com; s=arc-20160816;
+        b=cbuCuIaV0xNYdrSTsAN/S4RUtzgW3MeEmIFNn6FKVDgdrSNeaMBe6NtRi+PZSq37EJ
+         qJlkZFk9i4k1q0B57Qpnr1WuEkbzq7njRkO3Aq2CGWHytbu1dfIfxzVUZILCjXzTpm+Z
+         k3b+gkW+7IzoceMqTPk7ZUFPk9CJYtZDbE05op0svWRFHjgIqB98wCnFSsax4BD+geqW
+         tAzc3GY4ugqyvbvB8aBiwG9/2Wp/LHyeB2u1yIZvSD6i1zy7JidYFdq/K9dqBBQtuFU2
+         2cBixUOynI6jY85KfOBSaJW0Ecz2x+m9Snx5FMnXUuuj2d1kHE3BNFeM19yl+2PCk6PL
+         flng==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dmarc-filter:arc-authentication-results;
+        bh=ZqtoS5ByaEFCrwmCbbNuaETKZqejS12BXH1/vAhnMQU=;
+        b=lWdJFwioD5SHeN+Dygr/b4bOLln+h33VisEt3bRO4G7URlvkvg3u39QgC/I7NQmyGF
+         9UDEWodV5KZWtcMGKV5Nzr/cyYFh/9YhfPKsnhljYmaLKvbmYKrPlqwW6VZ3vYPEwgDj
+         gvV7hKgct9G463euk/25Qs99Lhi4PwUML8WXcDcieIzFq4Bv+fUZ9wS8tP9uxKcatvhY
+         cKGYQ4tyqqdq0/hDpBB2jigb3vEhCdpcX9UmrkewgUE3TiEQB39ZapPQwrlcNYT9GqbL
+         +6/fpSWGE7eIXb7vj6Jtl8UW1XKQRbrQ87HHZKdIXfWJFLJzVOS2p08v+nOjjFJAor6t
+         5Y5Q==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 921252185A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+f922284c18ea23a8e457@syzkaller.appspotmail.com,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 32/50] llc: delete timers synchronously in llc_sk_free()
-Date: Fri, 27 Apr 2018 15:58:34 +0200
-Message-Id: <20180427135657.584983982@linuxfoundation.org>
+	stable@vger.kernel.org,
+	=?UTF-8?q?Jo=C3=A3o=20Avelino=20Bellomo=20Filho?= <jbellomo@redhat.com>,
+	Xin Long <lucien.xin@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 35/50] team: fix netconsole setup over team
+Date: Fri, 27 Apr 2018 15:58:37 +0200
+Message-Id: <20180427135657.753338237@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135655.623669681@linuxfoundation.org>
 References: <20180427135655.623669681@linuxfoundation.org>
@@ -88,9 +42,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1598908221945898093?=
+X-GMAIL-MSGID: =?utf-8?q?1598908221945898093?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -98,96 +53,86 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Xin Long <lucien.xin@gmail.com>
 
 
-[ Upstream commit b905ef9ab90115d001c1658259af4b1c65088779 ]
+[ Upstream commit 9cf2f437ca5b39828984064fad213e68fc17ef11 ]
 
-The connection timers of an llc sock could be still flying
-after we delete them in llc_sk_free(), and even possibly
-after we free the sock. We could just wait synchronously
-here in case of troubles.
+The same fix in Commit dbe173079ab5 ("bridge: fix netconsole
+setup over bridge") is also needed for team driver.
 
-Note, I leave other call paths as they are, since they may
-not have to wait, at least we can change them to synchronously
-when needed.
+While at it, remove the unnecessary parameter *team from
+team_port_enable_netpoll().
 
-Also, move the code to net/llc/llc_conn.c, which is apparently
-a better place.
+v1->v2:
+  - fix it in a better way, as does bridge.
 
-Reported-by: <syzbot+f922284c18ea23a8e457@syzkaller.appspotmail.com>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Fixes: 0fb52a27a04a ("team: cleanup netpoll clode")
+Reported-by: João Avelino Bellomo Filho <jbellomo@redhat.com>
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/net/llc_conn.h |    1 +
- net/llc/llc_c_ac.c     |    9 +--------
- net/llc/llc_conn.c     |   22 +++++++++++++++++++++-
- 3 files changed, 23 insertions(+), 9 deletions(-)
+ drivers/net/team/team.c |   19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
 
---- a/include/net/llc_conn.h
-+++ b/include/net/llc_conn.h
-@@ -97,6 +97,7 @@ static __inline__ char llc_backlog_type(
+--- a/drivers/net/team/team.c
++++ b/drivers/net/team/team.c
+@@ -1050,14 +1050,11 @@ static void team_port_leave(struct team
+ }
  
- struct sock *llc_sk_alloc(struct net *net, int family, gfp_t priority,
- 			  struct proto *prot, int kern);
-+void llc_sk_stop_all_timers(struct sock *sk, bool sync);
- void llc_sk_free(struct sock *sk);
- 
- void llc_sk_reset(struct sock *sk);
---- a/net/llc/llc_c_ac.c
-+++ b/net/llc/llc_c_ac.c
-@@ -1096,14 +1096,7 @@ int llc_conn_ac_inc_tx_win_size(struct s
- 
- int llc_conn_ac_stop_all_timers(struct sock *sk, struct sk_buff *skb)
+ #ifdef CONFIG_NET_POLL_CONTROLLER
+-static int team_port_enable_netpoll(struct team *team, struct team_port *port)
++static int __team_port_enable_netpoll(struct team_port *port)
  {
--	struct llc_sock *llc = llc_sk(sk);
+ 	struct netpoll *np;
+ 	int err;
+ 
+-	if (!team->dev->npinfo)
+-		return 0;
 -
--	del_timer(&llc->pf_cycle_timer.timer);
--	del_timer(&llc->ack_timer.timer);
--	del_timer(&llc->rej_sent_timer.timer);
--	del_timer(&llc->busy_state_timer.timer);
--	llc->ack_must_be_send = 0;
--	llc->ack_pf = 0;
-+	llc_sk_stop_all_timers(sk, false);
- 	return 0;
+ 	np = kzalloc(sizeof(*np), GFP_KERNEL);
+ 	if (!np)
+ 		return -ENOMEM;
+@@ -1071,6 +1068,14 @@ static int team_port_enable_netpoll(stru
+ 	return err;
  }
  
---- a/net/llc/llc_conn.c
-+++ b/net/llc/llc_conn.c
-@@ -951,6 +951,26 @@ out:
- 	return sk;
- }
- 
-+void llc_sk_stop_all_timers(struct sock *sk, bool sync)
++static int team_port_enable_netpoll(struct team_port *port)
 +{
-+	struct llc_sock *llc = llc_sk(sk);
++	if (!port->team->dev->npinfo)
++		return 0;
 +
-+	if (sync) {
-+		del_timer_sync(&llc->pf_cycle_timer.timer);
-+		del_timer_sync(&llc->ack_timer.timer);
-+		del_timer_sync(&llc->rej_sent_timer.timer);
-+		del_timer_sync(&llc->busy_state_timer.timer);
-+	} else {
-+		del_timer(&llc->pf_cycle_timer.timer);
-+		del_timer(&llc->ack_timer.timer);
-+		del_timer(&llc->rej_sent_timer.timer);
-+		del_timer(&llc->busy_state_timer.timer);
-+	}
-+
-+	llc->ack_must_be_send = 0;
-+	llc->ack_pf = 0;
++	return __team_port_enable_netpoll(port);
 +}
 +
- /**
-  *	llc_sk_free - Frees a LLC socket
-  *	@sk - socket to free
-@@ -963,7 +983,7 @@ void llc_sk_free(struct sock *sk)
+ static void team_port_disable_netpoll(struct team_port *port)
+ {
+ 	struct netpoll *np = port->np;
+@@ -1085,7 +1090,7 @@ static void team_port_disable_netpoll(st
+ 	kfree(np);
+ }
+ #else
+-static int team_port_enable_netpoll(struct team *team, struct team_port *port)
++static int team_port_enable_netpoll(struct team_port *port)
+ {
+ 	return 0;
+ }
+@@ -1192,7 +1197,7 @@ static int team_port_add(struct team *te
+ 		goto err_vids_add;
+ 	}
  
- 	llc->state = LLC_CONN_OUT_OF_SVC;
- 	/* Stop all (possibly) running timers */
--	llc_conn_ac_stop_all_timers(sk, NULL);
-+	llc_sk_stop_all_timers(sk, true);
- #ifdef DEBUG_LLC_CONN_ALLOC
- 	printk(KERN_INFO "%s: unackq=%d, txq=%d\n", __func__,
- 		skb_queue_len(&llc->pdu_unack_q),
+-	err = team_port_enable_netpoll(team, port);
++	err = team_port_enable_netpoll(port);
+ 	if (err) {
+ 		netdev_err(dev, "Failed to enable netpoll on device %s\n",
+ 			   portname);
+@@ -1900,7 +1905,7 @@ static int team_netpoll_setup(struct net
+ 
+ 	mutex_lock(&team->lock);
+ 	list_for_each_entry(port, &team->port_list, list) {
+-		err = team_port_enable_netpoll(team, port);
++		err = __team_port_enable_netpoll(port);
+ 		if (err) {
+ 			__team_netpoll_cleanup(team);
+ 			break;
