@@ -1,588 +1,690 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756991AbeD0ALh (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 20:11:37 -0400
-Received: from mga09.intel.com ([134.134.136.24]:65244 "EHLO mga09.intel.com"
+        id S1757142AbeD0AS2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 20:18:28 -0400
+Received: from vern.gendns.com ([206.190.152.46]:46211 "EHLO vern.gendns.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754166AbeD0ALf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 20:11:35 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,332,1520924400";
-   d="gz'50?scan'50,208,50";a="223712028"
-Date: Fri, 27 Apr 2018 08:10:36 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Chris Lew <clew@codeaurora.org>
-Cc: kbuild-all@01.org, bjorn.andersson@linaro.org, andy.gross@linaro.org,
-        david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        aneela@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        clew@codeaurora.org
-Subject: Re: [PATCH v2 6/6] rpmsg: glink: Expose rpmsg name attr for glink
-Message-ID: <201804270559.7SVoojrI%fengguang.wu@intel.com>
-References: <1524708472-18263-7-git-send-email-clew@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="UugvWAfsgieZRqgk"
-Content-Disposition: inline
-In-Reply-To: <1524708472-18263-7-git-send-email-clew@codeaurora.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+        id S1752525AbeD0ASZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 20:18:25 -0400
+From: David Lechner <david@lechnology.com>
+To: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org,
+        David Lechner <david@lechnology.com>
+Subject: [PATCH v9 01/27] clk: davinci: pll: allow dev == NULL
+Date: Thu, 26 Apr 2018 19:17:19 -0500
+Message-Id: <20180427001745.4116-2-david@lechnology.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180427001745.4116-1-david@lechnology.com>
+References: <20180427001745.4116-1-david@lechnology.com>
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This modifies the TI DaVinci PLL clock driver to allow for the case
+when dev == NULL. On some (most) SoCs that use this driver, the PLL
+clock needs to be registered during early boot because it is used
+for clocksource/clockevent and there will be no platform device available.
 
---UugvWAfsgieZRqgk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-Hi Chris,
-
-Thank you for the patch! Perhaps something to improve:
-
-[auto build test WARNING on robh/for-next]
-[also build test WARNING on v4.17-rc2 next-20180426]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Chris-Lew/Add-chrdev-and-name-query-support-for-GLINK/20180427-023202
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-config: i386-randconfig-b0-04270034 (attached as .config)
-compiler: gcc-4.9 (Debian 4.9.4-2) 4.9.4
-reproduce:
-        # save the attached .config to linux build tree
-        make ARCH=i386 
-
-All warnings (new ones prefixed by >>):
-
-   In file included from include/linux/kobject.h:20:0,
-                    from include/linux/irqdesc.h:6,
-                    from include/linux/irq.h:517,
-                    from arch/x86/include/asm/hardirq.h:6,
-                    from include/linux/hardirq.h:9,
-                    from include/linux/interrupt.h:11,
-                    from drivers/rpmsg/qcom_glink_native.c:15:
->> include/linux/sysfs.h:153:21: warning: initialization from incompatible pointer type
-    static const struct attribute_group _name##_group = {  \
-                        ^
->> drivers/rpmsg/qcom_glink_native.c:1569:1: note: in expansion of macro 'ATTRIBUTE_GROUPS'
-    ATTRIBUTE_GROUPS(qcom_glink);
-    ^
-   include/linux/sysfs.h:153:21: warning: (near initialization for 'qcom_glink_group.attrs')
-    static const struct attribute_group _name##_group = {  \
-                        ^
->> drivers/rpmsg/qcom_glink_native.c:1569:1: note: in expansion of macro 'ATTRIBUTE_GROUPS'
-    ATTRIBUTE_GROUPS(qcom_glink);
-    ^
---
-   In file included from include/linux/kobject.h:20:0,
-                    from include/linux/irqdesc.h:6,
-                    from include/linux/irq.h:517,
-                    from arch/x86/include/asm/hardirq.h:6,
-                    from include/linux/hardirq.h:9,
-                    from include/linux/interrupt.h:11,
-                    from drivers//rpmsg/qcom_glink_native.c:15:
->> include/linux/sysfs.h:153:21: warning: initialization from incompatible pointer type
-    static const struct attribute_group _name##_group = {  \
-                        ^
-   drivers//rpmsg/qcom_glink_native.c:1569:1: note: in expansion of macro 'ATTRIBUTE_GROUPS'
-    ATTRIBUTE_GROUPS(qcom_glink);
-    ^
-   include/linux/sysfs.h:153:21: warning: (near initialization for 'qcom_glink_group.attrs')
-    static const struct attribute_group _name##_group = {  \
-                        ^
-   drivers//rpmsg/qcom_glink_native.c:1569:1: note: in expansion of macro 'ATTRIBUTE_GROUPS'
-    ATTRIBUTE_GROUPS(qcom_glink);
-    ^
-
-vim +/ATTRIBUTE_GROUPS +1569 drivers/rpmsg/qcom_glink_native.c
-
-  1564	
-  1565	static const struct attribute *qcom_glink_attrs[] = {
-  1566		&dev_attr_rpmsg_name.attr,
-  1567		NULL
-  1568	};
-> 1569	ATTRIBUTE_GROUPS(qcom_glink);
-  1570	
-
+Signed-off-by: David Lechner <david@lechnology.com>
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 
---UugvWAfsgieZRqgk
-Content-Type: application/gzip
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
+v9 changes:
+- new patch in v9
 
-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
 
---UugvWAfsgieZRqgk--
+ drivers/clk/davinci/pll-da830.c  |   4 +-
+ drivers/clk/davinci/pll-da850.c  |  21 ++---
+ drivers/clk/davinci/pll-dm355.c  |   8 +-
+ drivers/clk/davinci/pll-dm365.c  |   8 +-
+ drivers/clk/davinci/pll-dm644x.c |   8 +-
+ drivers/clk/davinci/pll-dm646x.c |   8 +-
+ drivers/clk/davinci/pll.c        | 130 +++++++++++++++++++------------
+ drivers/clk/davinci/pll.h        |  35 +++++----
+ include/linux/clk/davinci.h      |  24 ++++++
+ 9 files changed, 153 insertions(+), 93 deletions(-)
+ create mode 100644 include/linux/clk/davinci.h
+
+diff --git a/drivers/clk/davinci/pll-da830.c b/drivers/clk/davinci/pll-da830.c
+index 929a3d3a9adb..76f62f2e5ccb 100644
+--- a/drivers/clk/davinci/pll-da830.c
++++ b/drivers/clk/davinci/pll-da830.c
+@@ -36,11 +36,11 @@ SYSCLK(5, pll0_sysclk5, pll0_pllen, 5, 0);
+ SYSCLK(6, pll0_sysclk6, pll0_pllen, 5, SYSCLK_FIXED_DIV);
+ SYSCLK(7, pll0_sysclk7, pll0_pllen, 5, 0);
+ 
+-int da830_pll_init(struct device *dev, void __iomem *base)
++int da830_pll_init(struct device *dev, void __iomem *base, struct regmap *cfgchip)
+ {
+ 	struct clk *clk;
+ 
+-	davinci_pll_clk_register(dev, &da830_pll_info, "ref_clk", base);
++	davinci_pll_clk_register(dev, &da830_pll_info, "ref_clk", base, cfgchip);
+ 
+ 	clk = davinci_pll_sysclk_register(dev, &pll0_sysclk2, base);
+ 	clk_register_clkdev(clk, "pll0_sysclk2", "da830-psc0");
+diff --git a/drivers/clk/davinci/pll-da850.c b/drivers/clk/davinci/pll-da850.c
+index 2a038b7908cc..00a6ece7b524 100644
+--- a/drivers/clk/davinci/pll-da850.c
++++ b/drivers/clk/davinci/pll-da850.c
+@@ -8,6 +8,7 @@
+ #include <linux/bitops.h>
+ #include <linux/clk-provider.h>
+ #include <linux/clkdev.h>
++#include <linux/device.h>
+ #include <linux/init.h>
+ #include <linux/kernel.h>
+ #include <linux/mfd/da8xx-cfgchip.h>
+@@ -81,11 +82,11 @@ static const struct davinci_pll_obsclk_info da850_pll0_obsclk_info = {
+ 	.ocsrc_mask = GENMASK(4, 0),
+ };
+ 
+-int da850_pll0_init(struct device *dev, void __iomem *base)
++int da850_pll0_init(struct device *dev, void __iomem *base, struct regmap *cfgchip)
+ {
+ 	struct clk *clk;
+ 
+-	davinci_pll_clk_register(dev, &da850_pll0_info, "ref_clk", base);
++	davinci_pll_clk_register(dev, &da850_pll0_info, "ref_clk", base, cfgchip);
+ 
+ 	clk = davinci_pll_sysclk_register(dev, &pll0_sysclk1, base);
+ 	clk_register_clkdev(clk, "pll0_sysclk1", "da850-psc0");
+@@ -134,11 +135,11 @@ static const struct davinci_pll_sysclk_info *da850_pll0_sysclk_info[] = {
+ 	NULL
+ };
+ 
+-int of_da850_pll0_init(struct device *dev, void __iomem *base)
++int of_da850_pll0_init(struct device *dev, void __iomem *base, struct regmap *cfgchip)
+ {
+-	return of_davinci_pll_init(dev, &da850_pll0_info,
++	return of_davinci_pll_init(dev, dev->of_node, &da850_pll0_info,
+ 				   &da850_pll0_obsclk_info,
+-				   da850_pll0_sysclk_info, 7, base);
++				   da850_pll0_sysclk_info, 7, base, cfgchip);
+ }
+ 
+ static const struct davinci_pll_clk_info da850_pll1_info = {
+@@ -179,11 +180,11 @@ static const struct davinci_pll_obsclk_info da850_pll1_obsclk_info = {
+ 	.ocsrc_mask = GENMASK(4, 0),
+ };
+ 
+-int da850_pll1_init(struct device *dev, void __iomem *base)
++int da850_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip)
+ {
+ 	struct clk *clk;
+ 
+-	davinci_pll_clk_register(dev, &da850_pll1_info, "oscin", base);
++	davinci_pll_clk_register(dev, &da850_pll1_info, "oscin", base, cfgchip);
+ 
+ 	davinci_pll_sysclk_register(dev, &pll1_sysclk1, base);
+ 
+@@ -204,9 +205,9 @@ static const struct davinci_pll_sysclk_info *da850_pll1_sysclk_info[] = {
+ 	NULL
+ };
+ 
+-int of_da850_pll1_init(struct device *dev, void __iomem *base)
++int of_da850_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip)
+ {
+-	return of_davinci_pll_init(dev, &da850_pll1_info,
++	return of_davinci_pll_init(dev, dev->of_node, &da850_pll1_info,
+ 				   &da850_pll1_obsclk_info,
+-				   da850_pll1_sysclk_info, 3, base);
++				   da850_pll1_sysclk_info, 3, base, cfgchip);
+ }
+diff --git a/drivers/clk/davinci/pll-dm355.c b/drivers/clk/davinci/pll-dm355.c
+index 5345f8286c50..a0cff4212ac3 100644
+--- a/drivers/clk/davinci/pll-dm355.c
++++ b/drivers/clk/davinci/pll-dm355.c
+@@ -27,11 +27,11 @@ SYSCLK(2, pll1_sysclk2, pll1, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
+ SYSCLK(3, pll1_sysclk3, pll1, 5, SYSCLK_ALWAYS_ENABLED);
+ SYSCLK(4, pll1_sysclk4, pll1, 5, SYSCLK_ALWAYS_ENABLED);
+ 
+-int dm355_pll1_init(struct device *dev, void __iomem *base)
++int dm355_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip)
+ {
+ 	struct clk *clk;
+ 
+-	davinci_pll_clk_register(dev, &dm355_pll1_info, "ref_clk", base);
++	davinci_pll_clk_register(dev, &dm355_pll1_info, "ref_clk", base, cfgchip);
+ 
+ 	clk = davinci_pll_sysclk_register(dev, &pll1_sysclk1, base);
+ 	clk_register_clkdev(clk, "pll1_sysclk1", "dm355-psc");
+@@ -65,9 +65,9 @@ static const struct davinci_pll_clk_info dm355_pll2_info = {
+ SYSCLK(1, pll2_sysclk1, pll2, 5, SYSCLK_FIXED_DIV);
+ SYSCLK(2, pll2_sysclk2, pll2, 5, SYSCLK_FIXED_DIV | SYSCLK_ALWAYS_ENABLED);
+ 
+-int dm355_pll2_init(struct device *dev, void __iomem *base)
++int dm355_pll2_init(struct device *dev, void __iomem *base, struct regmap *cfgchip)
+ {
+-	davinci_pll_clk_register(dev, &dm355_pll2_info, "oscin", base);
++	davinci_pll_clk_register(dev, &dm355_pll2_info, "oscin", base, cfgchip);
+ 
+ 	davinci_pll_sysclk_register(dev, &pll2_sysclk1, base);
+ 
+diff --git a/drivers/clk/davinci/pll-dm365.c b/drivers/clk/davinci/pll-dm365.c
+index 5f8d9f42d0f3..e0bf37ad78fc 100644
+--- a/drivers/clk/davinci/pll-dm365.c
++++ b/drivers/clk/davinci/pll-dm365.c
+@@ -56,11 +56,11 @@ static const struct davinci_pll_obsclk_info dm365_pll1_obsclk_info = {
+ 	.ocsrc_mask = BIT(4),
+ };
+ 
+-int dm365_pll1_init(struct device *dev, void __iomem *base)
++int dm365_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip)
+ {
+ 	struct clk *clk;
+ 
+-	davinci_pll_clk_register(dev, &dm365_pll1_info, "ref_clk", base);
++	davinci_pll_clk_register(dev, &dm365_pll1_info, "ref_clk", base, cfgchip);
+ 
+ 	clk = davinci_pll_sysclk_register(dev, &pll1_sysclk1, base);
+ 	clk_register_clkdev(clk, "pll1_sysclk1", "dm365-psc");
+@@ -119,11 +119,11 @@ static const struct davinci_pll_obsclk_info dm365_pll2_obsclk_info = {
+ 	.ocsrc_mask = BIT(4),
+ };
+ 
+-int dm365_pll2_init(struct device *dev, void __iomem *base)
++int dm365_pll2_init(struct device *dev, void __iomem *base, struct regmap *cfgchip)
+ {
+ 	struct clk *clk;
+ 
+-	davinci_pll_clk_register(dev, &dm365_pll2_info, "oscin", base);
++	davinci_pll_clk_register(dev, &dm365_pll2_info, "oscin", base, cfgchip);
+ 
+ 	davinci_pll_sysclk_register(dev, &pll2_sysclk1, base);
+ 
+diff --git a/drivers/clk/davinci/pll-dm644x.c b/drivers/clk/davinci/pll-dm644x.c
+index 69bf785377cf..0d39fb07a510 100644
+--- a/drivers/clk/davinci/pll-dm644x.c
++++ b/drivers/clk/davinci/pll-dm644x.c
+@@ -27,11 +27,11 @@ SYSCLK(2, pll1_sysclk2, pll1_pllen, 4, SYSCLK_FIXED_DIV);
+ SYSCLK(3, pll1_sysclk3, pll1_pllen, 4, SYSCLK_FIXED_DIV);
+ SYSCLK(5, pll1_sysclk5, pll1_pllen, 4, SYSCLK_FIXED_DIV);
+ 
+-int dm644x_pll1_init(struct device *dev, void __iomem *base)
++int dm644x_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip)
+ {
+ 	struct clk *clk;
+ 
+-	davinci_pll_clk_register(dev, &dm644x_pll1_info, "ref_clk", base);
++	davinci_pll_clk_register(dev, &dm644x_pll1_info, "ref_clk", base, cfgchip);
+ 
+ 	clk = davinci_pll_sysclk_register(dev, &pll1_sysclk1, base);
+ 	clk_register_clkdev(clk, "pll1_sysclk1", "dm644x-psc");
+@@ -66,9 +66,9 @@ static const struct davinci_pll_clk_info dm644x_pll2_info = {
+ SYSCLK(1, pll2_sysclk1, pll2_pllen, 4, 0);
+ SYSCLK(2, pll2_sysclk2, pll2_pllen, 4, 0);
+ 
+-int dm644x_pll2_init(struct device *dev, void __iomem *base)
++int dm644x_pll2_init(struct device *dev, void __iomem *base, struct regmap *cfgchip)
+ {
+-	davinci_pll_clk_register(dev, &dm644x_pll2_info, "oscin", base);
++	davinci_pll_clk_register(dev, &dm644x_pll2_info, "oscin", base, cfgchip);
+ 
+ 	davinci_pll_sysclk_register(dev, &pll2_sysclk1, base);
+ 
+diff --git a/drivers/clk/davinci/pll-dm646x.c b/drivers/clk/davinci/pll-dm646x.c
+index a61cc3256418..eb96dd72b6b7 100644
+--- a/drivers/clk/davinci/pll-dm646x.c
++++ b/drivers/clk/davinci/pll-dm646x.c
+@@ -29,11 +29,11 @@ SYSCLK(6, pll1_sysclk6, pll1_pllen, 4, 0);
+ SYSCLK(8, pll1_sysclk8, pll1_pllen, 4, 0);
+ SYSCLK(9, pll1_sysclk9, pll1_pllen, 4, 0);
+ 
+-int dm646x_pll1_init(struct device *dev, void __iomem *base)
++int dm646x_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip)
+ {
+ 	struct clk *clk;
+ 
+-	davinci_pll_clk_register(dev, &dm646x_pll1_info, "ref_clk", base);
++	davinci_pll_clk_register(dev, &dm646x_pll1_info, "ref_clk", base, cfgchip);
+ 
+ 	clk = davinci_pll_sysclk_register(dev, &pll1_sysclk1, base);
+ 	clk_register_clkdev(clk, "pll1_sysclk1", "dm646x-psc");
+@@ -74,9 +74,9 @@ static const struct davinci_pll_clk_info dm646x_pll2_info = {
+ 
+ SYSCLK(1, pll2_sysclk1, pll2_pllen, 4, 0);
+ 
+-int dm646x_pll2_init(struct device *dev, void __iomem *base)
++int dm646x_pll2_init(struct device *dev, void __iomem *base, struct regmap *cfgchip)
+ {
+-	davinci_pll_clk_register(dev, &dm646x_pll2_info, "oscin", base);
++	davinci_pll_clk_register(dev, &dm646x_pll2_info, "oscin", base, cfgchip);
+ 
+ 	davinci_pll_sysclk_register(dev, &pll2_sysclk1, base);
+ 
+diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
+index 23a24c944f1d..7c4d808b8fdb 100644
+--- a/drivers/clk/davinci/pll.c
++++ b/drivers/clk/davinci/pll.c
+@@ -111,6 +111,31 @@ struct davinci_pll_clk {
+ #define to_davinci_pll_clk(_hw) \
+ 	container_of((_hw), struct davinci_pll_clk, hw)
+ 
++static inline void *_devm_kzalloc(struct device *dev, size_t size, gfp_t flags)
++{
++	if (dev)
++		return devm_kzalloc(dev, size, flags);
++
++	return kzalloc(size, flags);
++}
++
++static inline void *_devm_kmalloc_array(struct device *dev, size_t n,
++					size_t size, gfp_t flags)
++{
++	if (dev)
++		return devm_kmalloc_array(dev, n, size, flags);
++
++	return kmalloc_array(n, size, flags);
++}
++
++static inline struct clk *_devm_clk_register(struct device *dev, struct clk_hw *hw)
++{
++	if (dev)
++		return devm_clk_register(dev, hw);
++
++	return clk_register(NULL, hw);
++}
++
+ static unsigned long davinci_pll_recalc_rate(struct clk_hw *hw,
+ 					     unsigned long parent_rate)
+ {
+@@ -223,6 +248,7 @@ static const struct clk_ops dm365_pll_ops = {
+ 
+ /**
+  * davinci_pll_div_register - common *DIV clock implementation
++ * @dev: the clock's device node or NULL
+  * @name: the clock name
+  * @parent_name: the parent clock name
+  * @reg: the *DIV register
+@@ -241,14 +267,14 @@ static struct clk *davinci_pll_div_register(struct device *dev,
+ 	struct clk_gate *gate;
+ 	struct clk_divider *divider;
+ 
+-	gate = devm_kzalloc(dev, sizeof(*gate), GFP_KERNEL);
++	gate = _devm_kzalloc(dev, sizeof(*gate), GFP_KERNEL);
+ 	if (!gate)
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	gate->reg = reg;
+ 	gate->bit_idx = DIV_ENABLE_SHIFT;
+ 
+-	divider = devm_kzalloc(dev, sizeof(*divider), GFP_KERNEL);
++	divider = _devm_kzalloc(dev, sizeof(*divider), GFP_KERNEL);
+ 	if (!divider)
+ 		return ERR_PTR(-ENOMEM);
+ 
+@@ -321,36 +347,17 @@ static int davinci_pllen_rate_change(struct notifier_block *nb,
+ 	return NOTIFY_OK;
+ }
+ 
+-static struct davinci_pll_platform_data *davinci_pll_get_pdata(struct device *dev)
+-{
+-	struct davinci_pll_platform_data *pdata = dev_get_platdata(dev);
+-
+-	/*
+-	 * Platform data is optional, so allocate a new struct if one was not
+-	 * provided. For device tree, this will always be the case.
+-	 */
+-	if (!pdata)
+-		pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
+-	if (!pdata)
+-		return NULL;
+-
+-	/* for device tree, we need to fill in the struct */
+-	if (dev->of_node)
+-		pdata->cfgchip =
+-			syscon_regmap_lookup_by_compatible("ti,da830-cfgchip");
+-
+-	return pdata;
+-}
+-
+ static struct notifier_block davinci_pllen_notifier = {
+ 	.notifier_call = davinci_pllen_rate_change,
+ };
+ 
+ /**
+  * davinci_pll_clk_register - Register a PLL clock
++ * @dev: The clock's device node or NULL
+  * @info: The device-specific clock info
+  * @parent_name: The parent clock name
+  * @base: The PLL's memory region
++ * @cfgchip: CFGCHIP syscon regmap for info->unlock_reg or NULL
+  *
+  * This creates a series of clocks that represent the PLL.
+  *
+@@ -366,9 +373,9 @@ static struct notifier_block davinci_pllen_notifier = {
+ struct clk *davinci_pll_clk_register(struct device *dev,
+ 				     const struct davinci_pll_clk_info *info,
+ 				     const char *parent_name,
+-				     void __iomem *base)
++				     void __iomem *base,
++				     struct regmap *cfgchip)
+ {
+-	struct davinci_pll_platform_data *pdata;
+ 	char prediv_name[MAX_NAME_SIZE];
+ 	char pllout_name[MAX_NAME_SIZE];
+ 	char postdiv_name[MAX_NAME_SIZE];
+@@ -378,10 +385,6 @@ struct clk *davinci_pll_clk_register(struct device *dev,
+ 	struct davinci_pllen_clk *pllen;
+ 	struct clk *pllout_clk, *clk;
+ 
+-	pdata = davinci_pll_get_pdata(dev);
+-	if (!pdata)
+-		return ERR_PTR(-ENOMEM);
+-
+ 	if (info->flags & PLL_HAS_CLKMODE) {
+ 		/*
+ 		 * If a PLL has PLLCTL[CLKMODE], then it is the primary PLL.
+@@ -424,15 +427,15 @@ struct clk *davinci_pll_clk_register(struct device *dev,
+ 
+ 	/* Unlock writing to PLL registers */
+ 	if (info->unlock_reg) {
+-		if (IS_ERR_OR_NULL(pdata->cfgchip))
++		if (IS_ERR_OR_NULL(cfgchip))
+ 			dev_warn(dev, "Failed to get CFGCHIP (%ld)\n",
+-				 PTR_ERR(pdata->cfgchip));
++				 PTR_ERR(cfgchip));
+ 		else
+-			regmap_write_bits(pdata->cfgchip, info->unlock_reg,
++			regmap_write_bits(cfgchip, info->unlock_reg,
+ 					  info->unlock_mask, 0);
+ 	}
+ 
+-	pllout = devm_kzalloc(dev, sizeof(*pllout), GFP_KERNEL);
++	pllout = _devm_kzalloc(dev, sizeof(*pllout), GFP_KERNEL);
+ 	if (!pllout)
+ 		return ERR_PTR(-ENOMEM);
+ 
+@@ -456,7 +459,7 @@ struct clk *davinci_pll_clk_register(struct device *dev,
+ 	pllout->pllm_min = info->pllm_min;
+ 	pllout->pllm_max = info->pllm_max;
+ 
+-	pllout_clk = devm_clk_register(dev, &pllout->hw);
++	pllout_clk = _devm_clk_register(dev, &pllout->hw);
+ 	if (IS_ERR(pllout_clk))
+ 		return pllout_clk;
+ 
+@@ -482,7 +485,7 @@ struct clk *davinci_pll_clk_register(struct device *dev,
+ 		parent_name = postdiv_name;
+ 	}
+ 
+-	pllen = devm_kzalloc(dev, sizeof(*pllout), GFP_KERNEL);
++	pllen = _devm_kzalloc(dev, sizeof(*pllout), GFP_KERNEL);
+ 	if (!pllen)
+ 		return ERR_PTR(-ENOMEM);
+ 
+@@ -497,7 +500,7 @@ struct clk *davinci_pll_clk_register(struct device *dev,
+ 	pllen->hw.init = &init;
+ 	pllen->base = base;
+ 
+-	clk = devm_clk_register(dev, &pllen->hw);
++	clk = _devm_clk_register(dev, &pllen->hw);
+ 	if (IS_ERR(clk))
+ 		return clk;
+ 
+@@ -548,7 +551,7 @@ davinci_pll_obsclk_register(struct device *dev,
+ 	struct clk_divider *divider;
+ 	u32 oscdiv;
+ 
+-	mux = devm_kzalloc(dev, sizeof(*mux), GFP_KERNEL);
++	mux = _devm_kzalloc(dev, sizeof(*mux), GFP_KERNEL);
+ 	if (!mux)
+ 		return ERR_PTR(-ENOMEM);
+ 
+@@ -556,14 +559,14 @@ davinci_pll_obsclk_register(struct device *dev,
+ 	mux->table = info->table;
+ 	mux->mask = info->ocsrc_mask;
+ 
+-	gate = devm_kzalloc(dev, sizeof(*gate), GFP_KERNEL);
++	gate = _devm_kzalloc(dev, sizeof(*gate), GFP_KERNEL);
+ 	if (!gate)
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	gate->reg = base + CKEN;
+ 	gate->bit_idx = CKEN_OBSCLK_SHIFT;
+ 
+-	divider = devm_kzalloc(dev, sizeof(*divider), GFP_KERNEL);
++	divider = _devm_kzalloc(dev, sizeof(*divider), GFP_KERNEL);
+ 	if (!divider)
+ 		return ERR_PTR(-ENOMEM);
+ 
+@@ -637,14 +640,14 @@ davinci_pll_sysclk_register(struct device *dev,
+ 	else
+ 		reg = PLLDIV4 + 4 * (info->id - 4);
+ 
+-	gate = devm_kzalloc(dev, sizeof(*gate), GFP_KERNEL);
++	gate = _devm_kzalloc(dev, sizeof(*gate), GFP_KERNEL);
+ 	if (!gate)
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	gate->reg = base + reg;
+ 	gate->bit_idx = DIV_ENABLE_SHIFT;
+ 
+-	divider = devm_kzalloc(dev, sizeof(*divider), GFP_KERNEL);
++	divider = _devm_kzalloc(dev, sizeof(*divider), GFP_KERNEL);
+ 	if (!divider)
+ 		return ERR_PTR(-ENOMEM);
+ 
+@@ -676,14 +679,14 @@ davinci_pll_sysclk_register(struct device *dev,
+ 	return clk;
+ }
+ 
+-int of_davinci_pll_init(struct device *dev,
++int of_davinci_pll_init(struct device *dev, struct device_node *node,
+ 			const struct davinci_pll_clk_info *info,
+ 			const struct davinci_pll_obsclk_info *obsclk_info,
+ 			const struct davinci_pll_sysclk_info **div_info,
+ 			u8 max_sysclk_id,
+-			void __iomem *base)
++			void __iomem *base,
++			struct regmap *cfgchip)
+ {
+-	struct device_node *node = dev->of_node;
+ 	struct device_node *child;
+ 	const char *parent_name;
+ 	struct clk *clk;
+@@ -693,7 +696,7 @@ int of_davinci_pll_init(struct device *dev,
+ 	else
+ 		parent_name = OSCIN_CLK_NAME;
+ 
+-	clk = davinci_pll_clk_register(dev, info, parent_name, base);
++	clk = davinci_pll_clk_register(dev, info, parent_name, base, cfgchip);
+ 	if (IS_ERR(clk)) {
+ 		dev_err(dev, "failed to register %s\n", info->name);
+ 		return PTR_ERR(clk);
+@@ -711,11 +714,11 @@ int of_davinci_pll_init(struct device *dev,
+ 		int n_clks =  max_sysclk_id + 1;
+ 		int i;
+ 
+-		clk_data = devm_kzalloc(dev, sizeof(*clk_data), GFP_KERNEL);
++		clk_data = _devm_kzalloc(dev, sizeof(*clk_data), GFP_KERNEL);
+ 		if (!clk_data)
+ 			return -ENOMEM;
+ 
+-		clks = devm_kmalloc_array(dev, n_clks, sizeof(*clks), GFP_KERNEL);
++		clks = _devm_kmalloc_array(dev, n_clks, sizeof(*clks), GFP_KERNEL);
+ 		if (!clks)
+ 			return -ENOMEM;
+ 
+@@ -770,6 +773,27 @@ int of_davinci_pll_init(struct device *dev,
+ 	return 0;
+ }
+ 
++static struct davinci_pll_platform_data *davinci_pll_get_pdata(struct device *dev)
++{
++	struct davinci_pll_platform_data *pdata = dev_get_platdata(dev);
++
++	/*
++	 * Platform data is optional, so allocate a new struct if one was not
++	 * provided. For device tree, this will always be the case.
++	 */
++	if (!pdata)
++		pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
++	if (!pdata)
++		return NULL;
++
++	/* for device tree, we need to fill in the struct */
++	if (dev->of_node)
++		pdata->cfgchip =
++			syscon_regmap_lookup_by_compatible("ti,da830-cfgchip");
++
++	return pdata;
++}
++
+ static const struct of_device_id davinci_pll_of_match[] = {
+ 	{ .compatible = "ti,da850-pll0", .data = of_da850_pll0_init },
+ 	{ .compatible = "ti,da850-pll1", .data = of_da850_pll1_init },
+@@ -791,11 +815,13 @@ static const struct platform_device_id davinci_pll_id_table[] = {
+ 	{ }
+ };
+ 
+-typedef int (*davinci_pll_init)(struct device *dev, void __iomem *base);
++typedef int (*davinci_pll_init)(struct device *dev, void __iomem *base,
++				struct regmap *cfgchip);
+ 
+ static int davinci_pll_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
++	struct davinci_pll_platform_data *pdata;
+ 	const struct of_device_id *of_id;
+ 	davinci_pll_init pll_init = NULL;
+ 	struct resource *res;
+@@ -812,12 +838,18 @@ static int davinci_pll_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 
++	pdata = davinci_pll_get_pdata(dev);
++	if (!pdata) {
++		dev_err(dev, "missing platform data\n");
++		return -EINVAL;
++	}
++
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	base = devm_ioremap_resource(dev, res);
+ 	if (IS_ERR(base))
+ 		return PTR_ERR(base);
+ 
+-	return pll_init(dev, base);
++	return pll_init(dev, base, pdata->cfgchip);
+ }
+ 
+ static struct platform_driver davinci_pll_driver = {
+diff --git a/drivers/clk/davinci/pll.h b/drivers/clk/davinci/pll.h
+index b1b6fb23f972..92a0978a7d29 100644
+--- a/drivers/clk/davinci/pll.h
++++ b/drivers/clk/davinci/pll.h
+@@ -11,6 +11,7 @@
+ #include <linux/bitops.h>
+ #include <linux/clk-provider.h>
+ #include <linux/of.h>
++#include <linux/regmap.h>
+ #include <linux/types.h>
+ 
+ #define PLL_HAS_CLKMODE			BIT(0) /* PLL has PLLCTL[CLKMODE] */
+@@ -94,7 +95,8 @@ struct davinci_pll_obsclk_info {
+ struct clk *davinci_pll_clk_register(struct device *dev,
+ 				     const struct davinci_pll_clk_info *info,
+ 				     const char *parent_name,
+-				     void __iomem *base);
++				     void __iomem *base,
++				     struct regmap *cfgchip);
+ struct clk *davinci_pll_auxclk_register(struct device *dev,
+ 					const char *name,
+ 					void __iomem *base);
+@@ -110,32 +112,33 @@ davinci_pll_sysclk_register(struct device *dev,
+ 			    const struct davinci_pll_sysclk_info *info,
+ 			    void __iomem *base);
+ 
+-int of_davinci_pll_init(struct device *dev,
++int of_davinci_pll_init(struct device *dev, struct device_node *node,
+ 			const struct davinci_pll_clk_info *info,
+ 			const struct davinci_pll_obsclk_info *obsclk_info,
+ 			const struct davinci_pll_sysclk_info **div_info,
+ 			u8 max_sysclk_id,
+-			void __iomem *base);
++			void __iomem *base,
++			struct regmap *cfgchip);
+ 
+ /* Platform-specific callbacks */
+ 
+-int da830_pll_init(struct device *dev, void __iomem *base);
++int da830_pll_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
+ 
+-int da850_pll0_init(struct device *dev, void __iomem *base);
+-int da850_pll1_init(struct device *dev, void __iomem *base);
+-int of_da850_pll0_init(struct device *dev, void __iomem *base);
+-int of_da850_pll1_init(struct device *dev, void __iomem *base);
++int da850_pll0_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
++int da850_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
++int of_da850_pll0_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
++int of_da850_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
+ 
+-int dm355_pll1_init(struct device *dev, void __iomem *base);
+-int dm355_pll2_init(struct device *dev, void __iomem *base);
++int dm355_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
++int dm355_pll2_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
+ 
+-int dm365_pll1_init(struct device *dev, void __iomem *base);
+-int dm365_pll2_init(struct device *dev, void __iomem *base);
++int dm365_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
++int dm365_pll2_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
+ 
+-int dm644x_pll1_init(struct device *dev, void __iomem *base);
+-int dm644x_pll2_init(struct device *dev, void __iomem *base);
++int dm644x_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
++int dm644x_pll2_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
+ 
+-int dm646x_pll1_init(struct device *dev, void __iomem *base);
+-int dm646x_pll2_init(struct device *dev, void __iomem *base);
++int dm646x_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
++int dm646x_pll2_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
+ 
+ #endif /* __CLK_DAVINCI_PLL_H___ */
+diff --git a/include/linux/clk/davinci.h b/include/linux/clk/davinci.h
+new file mode 100644
+index 000000000000..1298cca509ac
+--- /dev/null
++++ b/include/linux/clk/davinci.h
+@@ -0,0 +1,24 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Clock driver for TI Davinci PSC controllers
++ *
++ * Copyright (C) 2018 David Lechner <david@lechnology.com>
++ */
++
++#ifndef __LINUX_CLK_DAVINCI_PLL_H___
++#define __LINUX_CLK_DAVINCI_PLL_H___
++
++#include <linux/device.h>
++#include <linux/regmap.h>
++
++/* function for registering clocks in early boot */
++
++int da830_pll_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
++int da850_pll0_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
++int dm355_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
++int dm365_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
++int dm365_pll2_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
++int dm644x_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
++int dm646x_pll1_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
++
++#endif /* __LINUX_CLK_DAVINCI_PLL_H___ */
+-- 
+2.17.0
