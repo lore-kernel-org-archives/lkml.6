@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757748AbeD0IP1 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 04:15:27 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:3421 "EHLO
+        id S1757734AbeD0IPZ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 04:15:25 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:42143 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1757657AbeD0IPD (ORCPT
+        with ESMTP id S1757689AbeD0IPE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 04:15:03 -0400
-X-UUID: 6c65b0ac91f24d11a149c092b9440379-20180427
+        Fri, 27 Apr 2018 04:15:04 -0400
+X-UUID: 02e43fe195514bf88caeb50468fe727a-20180427
 From: <sean.wang@mediatek.com>
 To: <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
         <robh+dt@kernel.org>, <matthias.bgg@gmail.com>, <mark.rutland@arm.com>,
@@ -15,9 +15,9 @@ To: <sboyd@codeaurora.org>, <mturquette@baylibre.com>,
 CC: <devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
         <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>
-Subject: [PATCH v2 5/6] clk: mediatek: add g3dsys support for MT2701 and MT7623
-Date: Fri, 27 Apr 2018 16:14:46 +0800
-Message-ID: <caf1cbbd0758cbb9c25c081f4d8fdb9f64769a44.1524816502.git.sean.wang@mediatek.com>
+Subject: [PATCH v2 3/6] dt-bindings: clock: mediatek: add entry for Mali-450 node to refer
+Date: Fri, 27 Apr 2018 16:14:44 +0800
+Message-ID: <082c3040e2be27d30e0642943f6df35ff4de5666.1524816502.git.sean.wang@mediatek.com>
 X-Mailer: git-send-email 1.7.9.5
 In-Reply-To: <cover.1524816502.git.sean.wang@mediatek.com>
 References: <cover.1524816502.git.sean.wang@mediatek.com>
@@ -30,146 +30,29 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sean Wang <sean.wang@mediatek.com>
 
-Add clock driver support for g3dsys on MT2701 and MT7623, which is
-providing essential clock gate and reset controller to Mali-450.
+Just add binding for a required clock referenced by Mali-450 on MT7623
+or MT2701 SoC.
 
+Cc: devicetree@vger.kernel.org
 Signed-off-by: Sean Wang <sean.wang@mediatek.com>
 ---
- drivers/clk/mediatek/Kconfig          |  6 +++
- drivers/clk/mediatek/Makefile         |  1 +
- drivers/clk/mediatek/clk-mt2701-g3d.c | 95 +++++++++++++++++++++++++++++++++++
- 3 files changed, 102 insertions(+)
- create mode 100644 drivers/clk/mediatek/clk-mt2701-g3d.c
+ include/dt-bindings/clock/mt2701-clk.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-index 92afe59..3dd1dab 100644
---- a/drivers/clk/mediatek/Kconfig
-+++ b/drivers/clk/mediatek/Kconfig
-@@ -60,6 +60,12 @@ config COMMON_CLK_MT2701_AUDSYS
- 	---help---
- 	  This driver supports Mediatek MT2701 audsys clocks.
+diff --git a/include/dt-bindings/clock/mt2701-clk.h b/include/dt-bindings/clock/mt2701-clk.h
+index 24e93df..2ac62a6 100644
+--- a/include/dt-bindings/clock/mt2701-clk.h
++++ b/include/dt-bindings/clock/mt2701-clk.h
+@@ -431,6 +431,10 @@
+ #define CLK_ETHSYS_CRYPTO			8
+ #define CLK_ETHSYS_NR				9
  
-+config COMMON_CLK_MT2701_G3DSYS
-+	bool "Clock driver for MediaTek MT2701 g3dsys"
-+	depends on COMMON_CLK_MT2701
-+	---help---
-+	  This driver supports MediaTek MT2701 g3dsys clocks.
++/* G3DSYS */
++#define CLK_G3DSYS_CORE				1
++#define CLK_G3DSYS_NR				2
 +
- config COMMON_CLK_MT2712
- 	bool "Clock driver for MediaTek MT2712"
- 	depends on (ARCH_MEDIATEK && ARM64) || COMPILE_TEST
-diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-index b80eff2..844b55d 100644
---- a/drivers/clk/mediatek/Makefile
-+++ b/drivers/clk/mediatek/Makefile
-@@ -9,6 +9,7 @@ obj-$(CONFIG_COMMON_CLK_MT2701) += clk-mt2701.o
- obj-$(CONFIG_COMMON_CLK_MT2701_AUDSYS) += clk-mt2701-aud.o
- obj-$(CONFIG_COMMON_CLK_MT2701_BDPSYS) += clk-mt2701-bdp.o
- obj-$(CONFIG_COMMON_CLK_MT2701_ETHSYS) += clk-mt2701-eth.o
-+obj-$(CONFIG_COMMON_CLK_MT2701_G3DSYS) += clk-mt2701-g3d.o
- obj-$(CONFIG_COMMON_CLK_MT2701_HIFSYS) += clk-mt2701-hif.o
- obj-$(CONFIG_COMMON_CLK_MT2701_IMGSYS) += clk-mt2701-img.o
- obj-$(CONFIG_COMMON_CLK_MT2701_MMSYS) += clk-mt2701-mm.o
-diff --git a/drivers/clk/mediatek/clk-mt2701-g3d.c b/drivers/clk/mediatek/clk-mt2701-g3d.c
-new file mode 100644
-index 0000000..1328c11
---- /dev/null
-+++ b/drivers/clk/mediatek/clk-mt2701-g3d.c
-@@ -0,0 +1,95 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2018 MediaTek Inc.
-+ * Author: Sean Wang <sean.wang@mediatek.com>
-+ *
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+
-+#include "clk-mtk.h"
-+#include "clk-gate.h"
-+
-+#include <dt-bindings/clock/mt2701-clk.h>
-+
-+#define GATE_G3D(_id, _name, _parent, _shift) {	\
-+		.id = _id,				\
-+		.name = _name,				\
-+		.parent_name = _parent,			\
-+		.regs = &g3d_cg_regs,			\
-+		.shift = _shift,			\
-+		.ops = &mtk_clk_gate_ops_setclr,	\
-+	}
-+
-+static const struct mtk_gate_regs g3d_cg_regs = {
-+	.sta_ofs = 0x0,
-+	.set_ofs = 0x4,
-+	.clr_ofs = 0x8,
-+};
-+
-+static const struct mtk_gate g3d_clks[] = {
-+	GATE_G3D(CLK_G3DSYS_CORE, "g3d_core", "mfg_sel", 0),
-+};
-+
-+static int clk_mt2701_g3dsys_init(struct platform_device *pdev)
-+{
-+	struct clk_onecell_data *clk_data;
-+	struct device_node *node = pdev->dev.of_node;
-+	int r;
-+
-+	clk_data = mtk_alloc_clk_data(CLK_G3DSYS_NR);
-+
-+	mtk_clk_register_gates(node, g3d_clks, ARRAY_SIZE(g3d_clks),
-+			       clk_data);
-+
-+	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-+	if (r)
-+		dev_err(&pdev->dev,
-+			"could not register clock provider: %s: %d\n",
-+			pdev->name, r);
-+
-+	mtk_register_reset_controller(node, 1, 0xc);
-+
-+	return r;
-+}
-+
-+static const struct of_device_id of_match_clk_mt2701_g3d[] = {
-+	{
-+		.compatible = "mediatek,mt2701-g3dsys",
-+		.data = clk_mt2701_g3dsys_init,
-+	}, {
-+		/* sentinel */
-+	}
-+};
-+
-+static int clk_mt2701_g3d_probe(struct platform_device *pdev)
-+{
-+	int (*clk_init)(struct platform_device *);
-+	int r;
-+
-+	clk_init = of_device_get_match_data(&pdev->dev);
-+	if (!clk_init)
-+		return -EINVAL;
-+
-+	r = clk_init(pdev);
-+	if (r)
-+		dev_err(&pdev->dev,
-+			"could not register clock provider: %s: %d\n",
-+			pdev->name, r);
-+
-+	return r;
-+}
-+
-+static struct platform_driver clk_mt2701_g3d_drv = {
-+	.probe = clk_mt2701_g3d_probe,
-+	.driver = {
-+		.name = "clk-mt2701-g3d",
-+		.of_match_table = of_match_clk_mt2701_g3d,
-+	},
-+};
-+
-+builtin_platform_driver(clk_mt2701_g3d_drv);
+ /* BDP */
+ 
+ #define CLK_BDP_BRG_BA				1
 -- 
 2.7.4
