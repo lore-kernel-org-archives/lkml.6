@@ -1,41 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758349AbeD0Nak (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 09:30:40 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:34404 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751456AbeD0Naj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 09:30:39 -0400
-X-Google-Smtp-Source: AB8JxZqr3J8zxSN6Xv9AvuzzbZa4CGGuwMREKnk4b+lrSk/R7BNYmO2eec1aAS9p4b16FUVxW9Kk+nvopOd/YzZjILw=
+        id S1758383AbeD0NcI (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 09:32:08 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57592 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1758277AbeD0NcH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 09:32:07 -0400
+Date: Fri, 27 Apr 2018 14:31:46 +0100
+From: Stefan Hajnoczi <stefanha@redhat.com>
+To: Pankaj Gupta <pagupta@redhat.com>
+Cc: Stefan Hajnoczi <stefanha@gmail.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, qemu-devel@nongnu.org, linux-nvdimm@ml01.01.org,
+        linux-mm@kvack.org, kwolf@redhat.com,
+        haozhong zhang <haozhong.zhang@intel.com>, jack@suse.cz,
+        xiaoguangrong eric <xiaoguangrong.eric@gmail.com>, riel@surriel.com,
+        niteshnarayanlal@hotmail.com, david@redhat.com,
+        ross zwisler <ross.zwisler@intel.com>, lcapitulino@redhat.com,
+        hch@infradead.org, mst@redhat.com, imammedo@redhat.com,
+        marcel@redhat.com, pbonzini@redhat.com,
+        dan j williams <dan.j.williams@intel.com>, nilal@redhat.com
+Subject: Re: [Qemu-devel] [RFC v2 1/2] virtio: add pmem driver
+Message-ID: <20180427133146.GB11150@stefanha-x1.localdomain>
+References: <20180425112415.12327-1-pagupta@redhat.com>
+ <20180425112415.12327-2-pagupta@redhat.com>
+ <20180426131236.GA30991@stefanha-x1.localdomain>
+ <197910974.22984070.1524757499459.JavaMail.zimbra@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180419140641.27926-4-wsa+renesas@sang-engineering.com>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com> <20180419140641.27926-4-wsa+renesas@sang-engineering.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 27 Apr 2018 15:30:37 +0200
-Message-ID: <CACRpkdbZC8-V4fOmyCSzgvXoxFg35vN1VdNq_VbKTK3QXo2Btg@mail.gmail.com>
-Subject: Re: [PATCH 03/61] auxdisplay: simplify getting .drvdata
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="ZoaI/ZTpAVc4A5k6"
+Content-Disposition: inline
+In-Reply-To: <197910974.22984070.1524757499459.JavaMail.zimbra@redhat.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 19, 2018 at 4:05 PM, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
 
-> We should get drvdata from struct device directly. Going via
-> platform_device is an unneeded step back and forth.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+--ZoaI/ZTpAVc4A5k6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+On Thu, Apr 26, 2018 at 11:44:59AM -0400, Pankaj Gupta wrote:
+> > > +	int err;
+> > > +
+> > > +	sg_init_one(&sg, buf, sizeof(buf));
+> > > +
+> > > +	err =3D virtqueue_add_outbuf(vpmem->req_vq, &sg, 1, buf, GFP_KERNEL=
+);
+> > > +
+> > > +	if (err) {
+> > > +		dev_err(&vdev->dev, "failed to send command to virtio pmem device\=
+n");
+> > > +		return;
+> > > +	}
+> > > +
+> > > +	virtqueue_kick(vpmem->req_vq);
+> >=20
+> > Is any locking necessary?  Two CPUs must not invoke virtio_pmem_flush()
+> > at the same time.  Not sure if anything guarantees this, maybe you're
+> > relying on libnvdimm but I haven't checked.
+>=20
+> I thought about it to some extent, and wanted to go ahead with simple ver=
+sion first:
+>=20
+> - I think file 'inode -> locking' sill is there for request on single fil=
+e.
+> - For multiple files, our aim is to just flush the backend block image.
+> - Even there is collision for virt queue read/write entry it should just =
+trigger a Qemu fsync.=20
+>   We just want most recent flush to assure guest writes are synced proper=
+ly.
+>=20
+> Important point here: We are doing entire block fsync for guest virtual d=
+isk.
 
-Sorry for slow reply.
+I don't understand your answer.  Is locking necessary or not?
 
-Yours,
-Linus Walleij
+=46rom the virtqueue_add_outbuf() documentation:
+
+ * Caller must ensure we don't call this with other virtqueue operations
+ * at the same time (except where noted).
+
+Stefan
+
+--ZoaI/ZTpAVc4A5k6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEcBAEBAgAGBQJa4yZCAAoJEJykq7OBq3PIfAEH/3CKVcVGxsuzmV7lgfXlV3nb
+96loKX3VPv78+trdSImeDZ+PYUzATi5humWaCgcbM/QHrpDhsmKxh/Cu+a2ynVeI
+5QQ2E2tvlqBC7MO2NTy1Qty2UEPy3p5x7Qqz/SsCs4k1j6c2i0eBTC4LxJNmtgQI
+Ipy0wz76skwaGeo3yrcRGha8CxbHZDQQIELuvroOo9RMifqUWyY66s7VGHA9CDLd
+/URZJGr4qS4RlK1Xk2fyFQWLZTijCEcWvZGSP9rWcuZtWzTHeOEm7SjY3jZghlbg
+CLKTy6+fxRirY8yEsQKI9rpfGUNTJ0ny/vvg8nsSPXtz0EmmRd85aDOtY+5Cb4E=
+=fxXv
+-----END PGP SIGNATURE-----
+
+--ZoaI/ZTpAVc4A5k6--
