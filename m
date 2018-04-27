@@ -1,41 +1,40 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZp0RNqq0bAcZmFZxMoApNLlG7O4dNQ78yK14RgIOhxUr6fYmaZabmHur/34nvemJ8Y2N3dh
-ARC-Seal: i=1; a=rsa-sha256; t=1524837949; cv=none;
+X-Google-Smtp-Source: AB8JxZq0d4wa61yJWucCooze0yOY1I1GzJ+OAxl3e0Dc9oQkncHrh+8wS3TGP3cm0sXvtXZxj1Kh
+ARC-Seal: i=1; a=rsa-sha256; t=1524837947; cv=none;
         d=google.com; s=arc-20160816;
-        b=i7EUJFw0WfO5z4D775TtR4s/utGz4lWZiXH+Bmrl8PKJFQBmVLk+NEs/JiwO+bonMc
-         lQqv/NVnCF6JR0pTeFNRYWVm8Ja6BNfaiWyv99u1/uKzwHqSLp7a+J/IRW1itISDUbU0
-         DkCCcRRlTNqSezuLpDMSSRX9KpbKk+4GXICVrkDx6nFw7N+8QkgX1BLEPDWeHj/to1KB
-         TyBos9VyyWexgf3p70er34Awp/HvmZ9Q4tmm9YdzcavuZoftjIDGEn/4N6IJKcGOJxXe
-         G87wpeHu7CwodhIEGYIX4D/EkWEYiLrD2WuC6U27drcUmEhJDEwZNPGGmTef0deScIvb
-         vcBQ==
+        b=a97YGLltBHckJoAWZHzwhC/pblFKd47IMcJGPxWu2rf+p6P4VRupR8pUI+CXH5UrPK
+         0HNmgIYzUW/jncjoHflJxj67aa3eMjaBMWsP0ckBsUTqvVd+CEVLVCUbD94R5WtxHO/l
+         YJYlE02pPfxvzGEb2HzEi2OYCiuRia0OlzQCuPMzCf7LTH5gAURrkSgRpCybjatpfO/R
+         3zK5l2aXdt4pg95lvvDi4dmgSP7kikmjkbfbd0LgxcpHjz74QrK27kBcLOsafHpQCfBq
+         29E8lrbuvvGbclZO7M69fxrxKPoipaTFlDr6LHk2aZItcp2+cEnidZ/4LC0Pg2JGyn7e
+         Fszg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=Zj3mBJTN4b9ryLEMOd+A8hmYNcG0UU00TRXx9KWrPHY=;
-        b=lDXsW/UEoHvrCpC0Hc7jKSQ6+S7jfXj1b2dOhBA7KuJoLQfoD6YIi/fV9yzH8pyXnJ
-         SKa66pn5L/PP+2X3vkJwKbnxMc8IZDvhT8U1MKS3KG0r4zHruJ14SgGxMzqGG4i5okvg
-         d0NOn+UTZ0fNNZN5ofgDrPloBW3QVPQGPcvc11e4X1DWw5MfsKxLG+cipCujH/CXWL5Q
-         Etwa3nVOcSKjlMChKTzYvA/Fe15dzH0bt9vobthBkApwHAb5Yq+f3pQiN9RE098ub2TI
-         gyEpFYXTiho7H03SyFYhQt9aPovgj2LCbereQtD7PfmCKt8IkNtLll/WbPDBmxp9++So
-         ZIGA==
+        bh=qRQXpNmi0pSa/uRkojmf0SB5z9ckUuGPz5i5cxRXwDM=;
+        b=SQtGypBLhtXLPWK4fDHhLH2a+xcf2Jqwem8XXHSa47AeWqAA/joLO21dmRo+NmbSg/
+         A9mPZ2O/Yj1wKM5l4PuOaL6sEmBhSyqysF8h4c8mUPcHMGrdsgbjJ2yy3RHaBS8QYHHi
+         N9jtAsjltISt8EeuYgSYV8ia5VfFj7RIZ4HJWtg9QajwsiiBa9wRSV3K8WIwk/Rwnjfj
+         LrxXyeJXUNN5H7prvNjoJ9zDOgB9LXSk9xJQWJ/0YWN4sf40772SG16xW4OiocQkdGew
+         xAudPAwNeFQ8pnIdYF9l8Z/DAbAVRqeL/ntLYL+iR3aiXy8miw0WGKghnekftC60fsgu
+         WIZA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C556B21890
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4000221890
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	DaeRyong Jeong <threeearcat@gmail.com>,
-	Byoungyoung Lee <byoungyoung@purdue.edu>,
-	Willem de Bruijn <willemb@google.com>,
+	=?UTF-8?q?Jo=C3=A3o=20Avelino=20Bellomo=20Filho?= <jbellomo@redhat.com>,
+	Xin Long <lucien.xin@gmail.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 55/74] packet: fix bitfield update race
-Date: Fri, 27 Apr 2018 15:58:45 +0200
-Message-Id: <20180427135712.213928627@linuxfoundation.org>
+Subject: [PATCH 4.9 54/74] team: fix netconsole setup over team
+Date: Fri, 27 Apr 2018 15:58:44 +0200
+Message-Id: <20180427135712.174970063@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135709.899303463@linuxfoundation.org>
 References: <20180427135709.899303463@linuxfoundation.org>
@@ -45,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908108463523673?=
-X-GMAIL-MSGID: =?utf-8?q?1598908478023327432?=
+X-GMAIL-THRID: =?utf-8?q?1598908221945898093?=
+X-GMAIL-MSGID: =?utf-8?q?1598908474993550515?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,196 +53,86 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Willem de Bruijn <willemb@google.com>
+From: Xin Long <lucien.xin@gmail.com>
 
 
-[ Upstream commit a6361f0ca4b25460f2cdf3235ebe8115f622901e ]
+[ Upstream commit 9cf2f437ca5b39828984064fad213e68fc17ef11 ]
 
-Updates to the bitfields in struct packet_sock are not atomic.
-Serialize these read-modify-write cycles.
+The same fix in Commit dbe173079ab5 ("bridge: fix netconsole
+setup over bridge") is also needed for team driver.
 
-Move po->running into a separate variable. Its writes are protected by
-po->bind_lock (except for one startup case at packet_create). Also
-replace a textual precondition warning with lockdep annotation.
+While at it, remove the unnecessary parameter *team from
+team_port_enable_netpoll().
 
-All others are set only in packet_setsockopt. Serialize these
-updates by holding the socket lock. Analogous to other field updates,
-also hold the lock when testing whether a ring is active (pg_vec).
+v1->v2:
+  - fix it in a better way, as does bridge.
 
-Fixes: 8dc419447415 ("[PACKET]: Add optional checksum computation for recvmsg")
-Reported-by: DaeRyong Jeong <threeearcat@gmail.com>
-Reported-by: Byoungyoung Lee <byoungyoung@purdue.edu>
-Signed-off-by: Willem de Bruijn <willemb@google.com>
+Fixes: 0fb52a27a04a ("team: cleanup netpoll clode")
+Reported-by: João Avelino Bellomo Filho <jbellomo@redhat.com>
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/packet/af_packet.c |   60 +++++++++++++++++++++++++++++++++++--------------
- net/packet/internal.h  |   10 ++++----
- 2 files changed, 49 insertions(+), 21 deletions(-)
+ drivers/net/team/team.c |   19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
 
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -333,11 +333,11 @@ static void packet_pick_tx_queue(struct
- 	skb_set_queue_mapping(skb, queue_index);
+--- a/drivers/net/team/team.c
++++ b/drivers/net/team/team.c
+@@ -1078,14 +1078,11 @@ static void team_port_leave(struct team
  }
  
--/* register_prot_hook must be invoked with the po->bind_lock held,
-+/* __register_prot_hook must be invoked through register_prot_hook
-  * or from a context in which asynchronous accesses to the packet
-  * socket is not possible (packet_create()).
-  */
--static void register_prot_hook(struct sock *sk)
-+static void __register_prot_hook(struct sock *sk)
+ #ifdef CONFIG_NET_POLL_CONTROLLER
+-static int team_port_enable_netpoll(struct team *team, struct team_port *port)
++static int __team_port_enable_netpoll(struct team_port *port)
  {
- 	struct packet_sock *po = pkt_sk(sk);
+ 	struct netpoll *np;
+ 	int err;
  
-@@ -352,8 +352,13 @@ static void register_prot_hook(struct so
- 	}
+-	if (!team->dev->npinfo)
+-		return 0;
+-
+ 	np = kzalloc(sizeof(*np), GFP_KERNEL);
+ 	if (!np)
+ 		return -ENOMEM;
+@@ -1099,6 +1096,14 @@ static int team_port_enable_netpoll(stru
+ 	return err;
  }
  
--/* {,__}unregister_prot_hook() must be invoked with the po->bind_lock
-- * held.   If the sync parameter is true, we will temporarily drop
-+static void register_prot_hook(struct sock *sk)
++static int team_port_enable_netpoll(struct team_port *port)
 +{
-+	lockdep_assert_held_once(&pkt_sk(sk)->bind_lock);
-+	__register_prot_hook(sk);
++	if (!port->team->dev->npinfo)
++		return 0;
++
++	return __team_port_enable_netpoll(port);
 +}
 +
-+/* If the sync parameter is true, we will temporarily drop
-  * the po->bind_lock and do a synchronize_net to make sure no
-  * asynchronous packet processing paths still refer to the elements
-  * of po->prot_hook.  If the sync parameter is false, it is the
-@@ -363,6 +368,8 @@ static void __unregister_prot_hook(struc
+ static void team_port_disable_netpoll(struct team_port *port)
  {
- 	struct packet_sock *po = pkt_sk(sk);
- 
-+	lockdep_assert_held_once(&po->bind_lock);
-+
- 	po->running = 0;
- 
- 	if (po->fanout)
-@@ -3259,7 +3266,7 @@ static int packet_create(struct net *net
- 
- 	if (proto) {
- 		po->prot_hook.type = proto;
--		register_prot_hook(sk);
-+		__register_prot_hook(sk);
+ 	struct netpoll *np = port->np;
+@@ -1113,7 +1118,7 @@ static void team_port_disable_netpoll(st
+ 	kfree(np);
+ }
+ #else
+-static int team_port_enable_netpoll(struct team *team, struct team_port *port)
++static int team_port_enable_netpoll(struct team_port *port)
+ {
+ 	return 0;
+ }
+@@ -1221,7 +1226,7 @@ static int team_port_add(struct team *te
+ 		goto err_vids_add;
  	}
  
- 	mutex_lock(&net->packet.sklist_lock);
-@@ -3735,12 +3742,18 @@ packet_setsockopt(struct socket *sock, i
+-	err = team_port_enable_netpoll(team, port);
++	err = team_port_enable_netpoll(port);
+ 	if (err) {
+ 		netdev_err(dev, "Failed to enable netpoll on device %s\n",
+ 			   portname);
+@@ -1919,7 +1924,7 @@ static int team_netpoll_setup(struct net
  
- 		if (optlen != sizeof(val))
- 			return -EINVAL;
--		if (po->rx_ring.pg_vec || po->tx_ring.pg_vec)
--			return -EBUSY;
- 		if (copy_from_user(&val, optval, sizeof(val)))
- 			return -EFAULT;
--		po->tp_loss = !!val;
--		return 0;
-+
-+		lock_sock(sk);
-+		if (po->rx_ring.pg_vec || po->tx_ring.pg_vec) {
-+			ret = -EBUSY;
-+		} else {
-+			po->tp_loss = !!val;
-+			ret = 0;
-+		}
-+		release_sock(sk);
-+		return ret;
- 	}
- 	case PACKET_AUXDATA:
- 	{
-@@ -3751,7 +3764,9 @@ packet_setsockopt(struct socket *sock, i
- 		if (copy_from_user(&val, optval, sizeof(val)))
- 			return -EFAULT;
- 
-+		lock_sock(sk);
- 		po->auxdata = !!val;
-+		release_sock(sk);
- 		return 0;
- 	}
- 	case PACKET_ORIGDEV:
-@@ -3763,7 +3778,9 @@ packet_setsockopt(struct socket *sock, i
- 		if (copy_from_user(&val, optval, sizeof(val)))
- 			return -EFAULT;
- 
-+		lock_sock(sk);
- 		po->origdev = !!val;
-+		release_sock(sk);
- 		return 0;
- 	}
- 	case PACKET_VNET_HDR:
-@@ -3772,15 +3789,20 @@ packet_setsockopt(struct socket *sock, i
- 
- 		if (sock->type != SOCK_RAW)
- 			return -EINVAL;
--		if (po->rx_ring.pg_vec || po->tx_ring.pg_vec)
--			return -EBUSY;
- 		if (optlen < sizeof(val))
- 			return -EINVAL;
- 		if (copy_from_user(&val, optval, sizeof(val)))
- 			return -EFAULT;
- 
--		po->has_vnet_hdr = !!val;
--		return 0;
-+		lock_sock(sk);
-+		if (po->rx_ring.pg_vec || po->tx_ring.pg_vec) {
-+			ret = -EBUSY;
-+		} else {
-+			po->has_vnet_hdr = !!val;
-+			ret = 0;
-+		}
-+		release_sock(sk);
-+		return ret;
- 	}
- 	case PACKET_TIMESTAMP:
- 	{
-@@ -3818,11 +3840,17 @@ packet_setsockopt(struct socket *sock, i
- 
- 		if (optlen != sizeof(val))
- 			return -EINVAL;
--		if (po->rx_ring.pg_vec || po->tx_ring.pg_vec)
--			return -EBUSY;
- 		if (copy_from_user(&val, optval, sizeof(val)))
- 			return -EFAULT;
--		po->tp_tx_has_off = !!val;
-+
-+		lock_sock(sk);
-+		if (po->rx_ring.pg_vec || po->tx_ring.pg_vec) {
-+			ret = -EBUSY;
-+		} else {
-+			po->tp_tx_has_off = !!val;
-+			ret = 0;
-+		}
-+		release_sock(sk);
- 		return 0;
- 	}
- 	case PACKET_QDISC_BYPASS:
---- a/net/packet/internal.h
-+++ b/net/packet/internal.h
-@@ -109,10 +109,12 @@ struct packet_sock {
- 	int			copy_thresh;
- 	spinlock_t		bind_lock;
- 	struct mutex		pg_vec_lock;
--	unsigned int		running:1,	/* prot_hook is attached*/
--				auxdata:1,
-+	unsigned int		running;	/* bind_lock must be held */
-+	unsigned int		auxdata:1,	/* writer must hold sock lock */
- 				origdev:1,
--				has_vnet_hdr:1;
-+				has_vnet_hdr:1,
-+				tp_loss:1,
-+				tp_tx_has_off:1;
- 	int			pressure;
- 	int			ifindex;	/* bound device		*/
- 	__be16			num;
-@@ -122,8 +124,6 @@ struct packet_sock {
- 	enum tpacket_versions	tp_version;
- 	unsigned int		tp_hdrlen;
- 	unsigned int		tp_reserve;
--	unsigned int		tp_loss:1;
--	unsigned int		tp_tx_has_off:1;
- 	unsigned int		tp_tstamp;
- 	struct net_device __rcu	*cached_dev;
- 	int			(*xmit)(struct sk_buff *skb);
+ 	mutex_lock(&team->lock);
+ 	list_for_each_entry(port, &team->port_list, list) {
+-		err = team_port_enable_netpoll(team, port);
++		err = __team_port_enable_netpoll(port);
+ 		if (err) {
+ 			__team_netpoll_cleanup(team);
+ 			break;
