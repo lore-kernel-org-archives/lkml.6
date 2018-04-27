@@ -1,38 +1,39 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpHz5m/3yJ8sRmc4G8ikgpgqOyVGKVD9s5QYRlIgH565CwUGhDKrxdGbj/vHHNBaDwaCxfj
-ARC-Seal: i=1; a=rsa-sha256; t=1524837838; cv=none;
+X-Google-Smtp-Source: AB8JxZoBvcHzUeP+zCH74uvjlH6Qmse0+95oAtQV/3vEf7Md0skSJa217NcLXoT/Sx8UJLMxooAO
+ARC-Seal: i=1; a=rsa-sha256; t=1524837819; cv=none;
         d=google.com; s=arc-20160816;
-        b=kcG+FxglvhpHP9eZG2Ih3rXT6aKf5rUMX+49bHgW6Mizu/I6bseO1cXwziORQyMvMf
-         ZxF5ysNv52wmMoq+Lo6hkKzzmhC01I2iKG30WwOa89dR5z3XlMxC45tErxrbaPX8lBXo
-         KuB9oabePLNpCFF0tswzgk/t9nFRRBityVboNG5zsXL0ZVy17UgHA4Hb0bWlk2uT6AKO
-         TsY44mI+WDrvxbh6qPYUN8dugOAg+wLNoJlOdudx1C7vqPsCKvY1Ylb/jdWGsHXCDWLl
-         KY0g2hY12lQnmyJcPUHwVFQSrASAeTLcJEzpj+aLQFAlwmtGQOVE5PayDNGo2N+hN+Ci
-         RJeQ==
+        b=TZqzfLQS0bn2elvJmZBiU0ofYBszj6jcBP81fRse1eRl0ZDLki0eTP0Apo9M0WWJsQ
+         pDM9vNqZCrHH/2uq+Ajxmmu1D0HXB/Qvxe8DDQ0Nw3gnUUt0TWNkB1ACZY3rrr35f4Tj
+         ola7hwJBRvhwi3oOpCxGo4wim34W9RbUPVJIztKrh9APFl0qHw4FBTT2gbSafwzYhV08
+         Ux27j1HEwZM4XMDv87eU2m5+ewSo15JSk1yaHVerfDNUL+uYs3v1okIgB7m5mbZX0ntT
+         b2Xm5l0PDT5Xh1gXaCuOZUtsjXi7Sz4V3KiIZsRD5hMTg5mwQ7BDKjlm0wdAwdET2MKP
+         g+og==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=+DNR6rbFoDphqPidzfydCx3jwKUyL5lQzkrFbH/jyks=;
-        b=FdvAZzkK0sJon5vkiqWc/Je8iUnCWd3SL0apq4yk66ZtgLF6pHkreoqOfbo/Jo6Lc5
-         gtfJwR7DtIff6m+8kc4yVzAr0TlhGYtS5yS5tSaBD7U8MCczDeODcoJDS+anInQTk/T7
-         vWiASePnzPmeEVlcT6JAsd/7cpMND7rgqm6RFlUMaKXseBtPJ81pZdgzzp6n0QFKUCZW
-         u7VEdklKTG+yaMRBl09jeQSIUOweH6xOSP5ErtMn4kS19q9rmq5ZHRP8nBzSrwuIeEgi
-         fyhk1yQsOVILT81kWtf7QpYlDkEb5M5FmAUzNgfDZJHhWLCXC2rlDLe7ru6nRcHnCdEc
-         L90g==
+        bh=nekgFTa7ctKdKrCOsI257F70zWMCtB+XstWRAm1sNQI=;
+        b=kCccIYdeaMwuZby+HjZBlFhWsJJnAo8E6VGPNxRGAIOeLANf8JquAVmFLB7qwYN+VW
+         tTIEaNH58R8V/bb2/RNv5Ru2JIG0jpqUVYf5rGa7vERnDAiTAsx1n1cp6KB+Li5E7GHC
+         nK9l8hgqpQ44UiSuWxyqQRzZx6ahfyZ3Rvk6cjtxVIiBYoe9N5XD7r2mH3KOcNyEZk+m
+         /ajfHekffi117Rz7QErGqauLlNAILiHmXkCOa9jcUlPpyujWfAmdvnITw1wDbLzD1Pmg
+         IGgE2MO8J9WP3TfQm5z3uf+b1nJrVioHirs6PNEeKpB/CF4OCIeX5Mjh0XCI28pWfGrR
+         6pIQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09C252189D
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C737321890
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4.9 35/74] s390: run user space and KVM guests with modified branch prediction
-Date: Fri, 27 Apr 2018 15:58:25 +0200
-Message-Id: <20180427135711.387795148@linuxfoundation.org>
+	Martin Schwidefsky <schwidefsky@de.ibm.com>,
+	Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: [PATCH 4.9 29/74] s390: enable CPU alternatives unconditionally
+Date: Fri, 27 Apr 2018 15:58:19 +0200
+Message-Id: <20180427135711.142503645@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135709.899303463@linuxfoundation.org>
 References: <20180427135709.899303463@linuxfoundation.org>
@@ -42,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908170867977038?=
-X-GMAIL-MSGID: =?utf-8?q?1598908361064439129?=
+X-GMAIL-THRID: =?utf-8?q?1598908248930767762?=
+X-GMAIL-MSGID: =?utf-8?q?1598908341482754222?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,206 +55,137 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Martin Schwidefsky <schwidefsky@de.ibm.com>
 
 
-[ Upstream commit 6b73044b2b0081ee3dd1cd6eaab7dee552601efb ]
+From: Heiko Carstens <heiko.carstens@de.ibm.com>
 
-Define TIF_ISOLATE_BP and TIF_ISOLATE_BP_GUEST and add the necessary
-plumbing in entry.S to be able to run user space and KVM guests with
-limited branch prediction.
+[ Upstream commit 049a2c2d486e8cc82c5cd79fa479c5b105b109e9 ]
 
-To switch a user space process to limited branch prediction the
-s390_isolate_bp() function has to be call, and to run a vCPU of a KVM
-guest associated with the current task with limited branch prediction
-call s390_isolate_bp_guest().
+Remove the CPU_ALTERNATIVES config option and enable the code
+unconditionally. The config option was only added to avoid a conflict
+with the named saved segment support. Since that code is gone there is
+no reason to keep the CPU_ALTERNATIVES config option.
 
+Just enable it unconditionally to also reduce the number of config
+options and make it less likely that something breaks.
+
+Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
 Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/s390/include/asm/processor.h   |    3 ++
- arch/s390/include/asm/thread_info.h |    4 ++
- arch/s390/kernel/entry.S            |   49 +++++++++++++++++++++++++++++++++---
- arch/s390/kernel/processor.c        |   18 +++++++++++++
- 4 files changed, 70 insertions(+), 4 deletions(-)
+ arch/s390/Kconfig                   |   16 ----------------
+ arch/s390/include/asm/alternative.h |   20 +++-----------------
+ arch/s390/kernel/Makefile           |    3 +--
+ arch/s390/kernel/module.c           |   15 ++++++---------
+ 4 files changed, 10 insertions(+), 44 deletions(-)
 
---- a/arch/s390/include/asm/processor.h
-+++ b/arch/s390/include/asm/processor.h
-@@ -360,6 +360,9 @@ extern void memcpy_absolute(void *, void
- 	memcpy_absolute(&(dest), &__tmp, sizeof(__tmp));	\
- }
+--- a/arch/s390/Kconfig
++++ b/arch/s390/Kconfig
+@@ -704,22 +704,6 @@ config SECCOMP
  
-+extern int s390_isolate_bp(void);
-+extern int s390_isolate_bp_guest(void);
-+
- #endif /* __ASSEMBLY__ */
+ 	  If unsure, say Y.
  
- #endif /* __ASM_S390_PROCESSOR_H */
---- a/arch/s390/include/asm/thread_info.h
-+++ b/arch/s390/include/asm/thread_info.h
-@@ -79,6 +79,8 @@ int arch_dup_task_struct(struct task_str
- #define TIF_SECCOMP		5	/* secure computing */
- #define TIF_SYSCALL_TRACEPOINT	6	/* syscall tracepoint instrumentation */
- #define TIF_UPROBE		7	/* breakpointed or single-stepping */
-+#define TIF_ISOLATE_BP		8	/* Run process with isolated BP */
-+#define TIF_ISOLATE_BP_GUEST	9	/* Run KVM guests with isolated BP */
- #define TIF_31BIT		16	/* 32bit process */
- #define TIF_MEMDIE		17	/* is terminating due to OOM killer */
- #define TIF_RESTORE_SIGMASK	18	/* restore signal mask in do_signal() */
-@@ -94,6 +96,8 @@ int arch_dup_task_struct(struct task_str
- #define _TIF_SECCOMP		_BITUL(TIF_SECCOMP)
- #define _TIF_SYSCALL_TRACEPOINT	_BITUL(TIF_SYSCALL_TRACEPOINT)
- #define _TIF_UPROBE		_BITUL(TIF_UPROBE)
-+#define _TIF_ISOLATE_BP		_BITUL(TIF_ISOLATE_BP)
-+#define _TIF_ISOLATE_BP_GUEST	_BITUL(TIF_ISOLATE_BP_GUEST)
- #define _TIF_31BIT		_BITUL(TIF_31BIT)
- #define _TIF_SINGLE_STEP	_BITUL(TIF_SINGLE_STEP)
+-config ALTERNATIVES
+-	def_bool y
+-	prompt "Patch optimized instructions for running CPU type"
+-	help
+-	  When enabled the kernel code is compiled with additional
+-	  alternative instructions blocks optimized for newer CPU types.
+-	  These alternative instructions blocks are patched at kernel boot
+-	  time when running CPU supports them. This mechanism is used to
+-	  optimize some critical code paths (i.e. spinlocks) for newer CPUs
+-	  even if kernel is build to support older machine generations.
+-
+-	  This mechanism could be disabled by appending "noaltinstr"
+-	  option to the kernel command line.
+-
+-	  If unsure, say Y.
+-
+ endmenu
  
---- a/arch/s390/kernel/entry.S
-+++ b/arch/s390/kernel/entry.S
-@@ -105,6 +105,7 @@ _PIF_WORK	= (_PIF_PER_TRAP)
- 	j	3f
- 1:	LAST_BREAK %r14
- 	UPDATE_VTIME %r14,%r15,\timer
-+	BPENTER __TI_flags(%r12),_TIF_ISOLATE_BP
- 2:	lg	%r15,__LC_ASYNC_STACK	# load async stack
- 3:	la	%r11,STACK_FRAME_OVERHEAD(%r15)
- 	.endm
-@@ -191,6 +192,40 @@ _PIF_WORK	= (_PIF_PER_TRAP)
- 	.popsection
- 	.endm
+ menu "Power Management"
+--- a/arch/s390/include/asm/alternative.h
++++ b/arch/s390/include/asm/alternative.h
+@@ -15,14 +15,9 @@ struct alt_instr {
+ 	u8  replacementlen;	/* length of new instruction */
+ } __packed;
  
-+	.macro BPENTER tif_ptr,tif_mask
-+	.pushsection .altinstr_replacement, "ax"
-+662:	.word	0xc004, 0x0000, 0x0000	# 6 byte nop
-+	.word	0xc004, 0x0000, 0x0000	# 6 byte nop
-+	.popsection
-+664:	TSTMSK	\tif_ptr,\tif_mask
-+	jz	. + 8
-+	.long	0xb2e8d000
-+	.pushsection .altinstructions, "a"
-+	.long 664b - .
-+	.long 662b - .
-+	.word 82
-+	.byte 12
-+	.byte 12
-+	.popsection
-+	.endm
+-#ifdef CONFIG_ALTERNATIVES
+-extern void apply_alternative_instructions(void);
+-extern void apply_alternatives(struct alt_instr *start, struct alt_instr *end);
+-#else
+-static inline void apply_alternative_instructions(void) {};
+-static inline void apply_alternatives(struct alt_instr *start,
+-				      struct alt_instr *end) {};
+-#endif
++void apply_alternative_instructions(void);
++void apply_alternatives(struct alt_instr *start, struct alt_instr *end);
 +
-+	.macro BPEXIT tif_ptr,tif_mask
-+	TSTMSK	\tif_ptr,\tif_mask
-+	.pushsection .altinstr_replacement, "ax"
-+662:	jnz	. + 8
-+	.long	0xb2e8d000
-+	.popsection
-+664:	jz	. + 8
-+	.long	0xb2e8c000
-+	.pushsection .altinstructions, "a"
-+	.long 664b - .
-+	.long 662b - .
-+	.word 82
-+	.byte 8
-+	.byte 8
-+	.popsection
-+	.endm
-+
- 	.section .kprobes.text, "ax"
- .Ldummy:
- 	/*
-@@ -248,9 +283,11 @@ ENTRY(__switch_to)
-  */
- ENTRY(sie64a)
- 	stmg	%r6,%r14,__SF_GPRS(%r15)	# save kernel registers
-+	lg	%r12,__LC_CURRENT
- 	stg	%r2,__SF_EMPTY(%r15)		# save control block pointer
- 	stg	%r3,__SF_EMPTY+8(%r15)		# save guest register save area
- 	xc	__SF_EMPTY+16(8,%r15),__SF_EMPTY+16(%r15) # reason code = 0
-+	mvc	__SF_EMPTY+24(8,%r15),__TI_flags(%r12) # copy thread flags
- 	TSTMSK	__LC_CPU_FLAGS,_CIF_FPU		# load guest fp/vx registers ?
- 	jno	.Lsie_load_guest_gprs
- 	brasl	%r14,load_fpu_regs		# load guest fp/vx regs
-@@ -267,10 +304,11 @@ ENTRY(sie64a)
- 	jnz	.Lsie_skip
- 	TSTMSK	__LC_CPU_FLAGS,_CIF_FPU
- 	jo	.Lsie_skip			# exit if fp/vx regs changed
--	BPON
-+	BPEXIT	__SF_EMPTY+24(%r15),(_TIF_ISOLATE_BP|_TIF_ISOLATE_BP_GUEST)
- 	sie	0(%r14)
- .Lsie_exit:
- 	BPOFF
-+	BPENTER	__SF_EMPTY+24(%r15),(_TIF_ISOLATE_BP|_TIF_ISOLATE_BP_GUEST)
- .Lsie_skip:
- 	ni	__SIE_PROG0C+3(%r14),0xfe	# no longer in SIE
- 	lctlg	%c1,%c1,__LC_USER_ASCE		# load primary asce
-@@ -332,6 +370,7 @@ ENTRY(system_call)
- 	LAST_BREAK %r13
- .Lsysc_vtime:
- 	UPDATE_VTIME %r10,%r13,__LC_SYNC_ENTER_TIMER
-+	BPENTER __TI_flags(%r12),_TIF_ISOLATE_BP
- 	stmg	%r0,%r7,__PT_R0(%r11)
- 	# clear user controlled register to prevent speculative use
- 	xgr	%r0,%r0
-@@ -369,7 +408,7 @@ ENTRY(system_call)
- 	jnz	.Lsysc_work			# check for work
- 	TSTMSK	__LC_CPU_FLAGS,_CIF_WORK
- 	jnz	.Lsysc_work
--	BPON
-+	BPEXIT	__TI_flags(%r12),_TIF_ISOLATE_BP
- .Lsysc_restore:
- 	lg	%r14,__LC_VDSO_PER_CPU
- 	lmg	%r0,%r10,__PT_R0(%r11)
-@@ -555,6 +594,7 @@ ENTRY(pgm_check_handler)
- 	j	3f
- 2:	LAST_BREAK %r14
- 	UPDATE_VTIME %r14,%r15,__LC_SYNC_ENTER_TIMER
-+	BPENTER __TI_flags(%r12),_TIF_ISOLATE_BP
- 	lg	%r15,__LC_KERNEL_STACK
- 	lg	%r14,__TI_task(%r12)
- 	aghi	%r14,__TASK_thread	# pointer to thread_struct
-@@ -683,7 +723,7 @@ ENTRY(io_int_handler)
- 	mvc	__LC_RETURN_PSW(16),__PT_PSW(%r11)
- 	tm	__PT_PSW+1(%r11),0x01	# returning to user ?
- 	jno	.Lio_exit_kernel
--	BPON
-+	BPEXIT	__TI_flags(%r12),_TIF_ISOLATE_BP
- .Lio_exit_timer:
- 	stpt	__LC_EXIT_TIMER
- 	mvc	__VDSO_ECTG_BASE(16,%r14),__LC_EXIT_TIMER
-@@ -1044,7 +1084,7 @@ ENTRY(mcck_int_handler)
- 	mvc	__LC_RETURN_MCCK_PSW(16),__PT_PSW(%r11) # move return PSW
- 	tm	__LC_RETURN_MCCK_PSW+1,0x01 # returning to user ?
- 	jno	0f
--	BPON
-+	BPEXIT	__TI_flags(%r12),_TIF_ISOLATE_BP
- 	stpt	__LC_EXIT_TIMER
- 	mvc	__VDSO_ECTG_BASE(16,%r14),__LC_EXIT_TIMER
- 0:	lmg	%r11,%r15,__PT_R11(%r11)
-@@ -1165,6 +1205,7 @@ cleanup_critical:
- 	.quad	.Lsie_done
+ /*
+  * |661:       |662:	  |6620      |663:
+  * +-----------+---------------------+
+@@ -109,7 +104,6 @@ static inline void apply_alternatives(st
+ 	b_altinstr(num)":\n\t" altinstr "\n" e_altinstr(num) ":\n"	\
+ 	INSTR_LEN_SANITY_CHECK(altinstr_len(num))
  
- .Lcleanup_sie:
-+	BPENTER __SF_EMPTY+24(%r15),(_TIF_ISOLATE_BP|_TIF_ISOLATE_BP_GUEST)
- 	lg	%r9,__SF_EMPTY(%r15)		# get control block pointer
- 	ni	__SIE_PROG0C+3(%r9),0xfe	# no longer in SIE
- 	lctlg	%c1,%c1,__LC_USER_ASCE		# load primary asce
---- a/arch/s390/kernel/processor.c
-+++ b/arch/s390/kernel/processor.c
-@@ -179,3 +179,21 @@ const struct seq_operations cpuinfo_op =
- 	.stop	= c_stop,
- 	.show	= show_cpuinfo,
- };
-+
-+int s390_isolate_bp(void)
-+{
-+	if (!test_facility(82))
-+		return -EOPNOTSUPP;
-+	set_thread_flag(TIF_ISOLATE_BP);
-+	return 0;
-+}
-+EXPORT_SYMBOL(s390_isolate_bp);
-+
-+int s390_isolate_bp_guest(void)
-+{
-+	if (!test_facility(82))
-+		return -EOPNOTSUPP;
-+	set_thread_flag(TIF_ISOLATE_BP_GUEST);
-+	return 0;
-+}
-+EXPORT_SYMBOL(s390_isolate_bp_guest);
+-#ifdef CONFIG_ALTERNATIVES
+ /* alternative assembly primitive: */
+ #define ALTERNATIVE(oldinstr, altinstr, facility) \
+ 	".pushsection .altinstr_replacement, \"ax\"\n"			\
+@@ -130,14 +124,6 @@ static inline void apply_alternatives(st
+ 	ALTINSTR_ENTRY(facility1, 1)					\
+ 	ALTINSTR_ENTRY(facility2, 2)					\
+ 	".popsection\n"
+-#else
+-/* Alternative instructions are disabled, let's put just oldinstr in */
+-#define ALTERNATIVE(oldinstr, altinstr, facility) \
+-	oldinstr "\n"
+-
+-#define ALTERNATIVE_2(oldinstr, altinstr1, facility1, altinstr2, facility2) \
+-	oldinstr "\n"
+-#endif
+ 
+ /*
+  * Alternative instructions for different CPU types or capabilities.
+--- a/arch/s390/kernel/Makefile
++++ b/arch/s390/kernel/Makefile
+@@ -57,7 +57,7 @@ obj-y	+= processor.o sys_s390.o ptrace.o
+ obj-y	+= debug.o irq.o ipl.o dis.o diag.o sclp.o vdso.o als.o
+ obj-y	+= sysinfo.o jump_label.o lgr.o os_info.o machine_kexec.o pgm_check.o
+ obj-y	+= runtime_instr.o cache.o fpu.o dumpstack.o
+-obj-y	+= entry.o reipl.o relocate_kernel.o
++obj-y	+= entry.o reipl.o relocate_kernel.o alternative.o
+ 
+ extra-y				+= head.o head64.o vmlinux.lds
+ 
+@@ -75,7 +75,6 @@ obj-$(CONFIG_KPROBES)		+= kprobes.o
+ obj-$(CONFIG_FUNCTION_TRACER)	+= mcount.o ftrace.o
+ obj-$(CONFIG_CRASH_DUMP)	+= crash_dump.o
+ obj-$(CONFIG_UPROBES)		+= uprobes.o
+-obj-$(CONFIG_ALTERNATIVES)	+= alternative.o
+ 
+ obj-$(CONFIG_PERF_EVENTS)	+= perf_event.o perf_cpum_cf.o perf_cpum_sf.o
+ obj-$(CONFIG_PERF_EVENTS)	+= perf_cpum_cf_events.o
+--- a/arch/s390/kernel/module.c
++++ b/arch/s390/kernel/module.c
+@@ -432,16 +432,13 @@ int module_finalize(const Elf_Ehdr *hdr,
+ 	const Elf_Shdr *s;
+ 	char *secstrings;
+ 
+-	if (IS_ENABLED(CONFIG_ALTERNATIVES)) {
+-		secstrings = (void *)hdr + sechdrs[hdr->e_shstrndx].sh_offset;
+-		for (s = sechdrs; s < sechdrs + hdr->e_shnum; s++) {
+-			if (!strcmp(".altinstructions",
+-				    secstrings + s->sh_name)) {
+-				/* patch .altinstructions */
+-				void *aseg = (void *)s->sh_addr;
++	secstrings = (void *)hdr + sechdrs[hdr->e_shstrndx].sh_offset;
++	for (s = sechdrs; s < sechdrs + hdr->e_shnum; s++) {
++		if (!strcmp(".altinstructions", secstrings + s->sh_name)) {
++			/* patch .altinstructions */
++			void *aseg = (void *)s->sh_addr;
+ 
+-				apply_alternatives(aseg, aseg + s->sh_size);
+-			}
++			apply_alternatives(aseg, aseg + s->sh_size);
+ 		}
+ 	}
+ 
