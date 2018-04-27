@@ -1,27 +1,31 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933904AbeD0PKb (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 11:10:31 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:59429 "EHLO
+        id S933906AbeD0PMa (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 11:12:30 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:53515 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933711AbeD0PK2 (ORCPT
+        with ESMTP id S933750AbeD0PMQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 11:10:28 -0400
-Date: Fri, 27 Apr 2018 08:10:17 -0700
-From: tip-bot for Arnd Bergmann <tipbot@zytor.com>
-Message-ID: <tip-1a512c0882bd311c5b5561840fcfbe4c25b8f319@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de,
-        mingo@kernel.org, noloader@gmail.com, arnd@arndb.de,
-        hjl.tools@gmail.com
-Reply-To: tglx@linutronix.de, noloader@gmail.com, mingo@kernel.org,
-        hjl.tools@gmail.com, arnd@arndb.de, linux-kernel@vger.kernel.org,
-        hpa@zytor.com
-In-Reply-To: <20180424212013.3967461-1-arnd@arndb.de>
-References: <20180424212013.3967461-1-arnd@arndb.de>
+        Fri, 27 Apr 2018 11:12:16 -0400
+Date: Fri, 27 Apr 2018 08:09:44 -0700
+From: tip-bot for Petr Tesarik <tipbot@zytor.com>
+Message-ID: <tip-3db3eb285259ac129f7aec6b814b3e9f6c1b372b@git.kernel.org>
+Cc: ptesarik@suse.cz, thomas.lendacky@amd.com, boris.ostrovsky@oracle.com,
+        mpatocka@redhat.com, tglx@linutronix.de, jgross@suse.com,
+        luto@kernel.org, ptesarik@suse.com, linux-kernel@vger.kernel.org,
+        douly.fnst@cn.fujitsu.com, mingo@kernel.org, jdelvare@suse.de,
+        hpa@zytor.com, bp@suse.de
+Reply-To: ptesarik@suse.com, linux-kernel@vger.kernel.org,
+        douly.fnst@cn.fujitsu.com, mingo@kernel.org, jdelvare@suse.de,
+        hpa@zytor.com, bp@suse.de, thomas.lendacky@amd.com, ptesarik@suse.cz,
+        boris.ostrovsky@oracle.com, mpatocka@redhat.com, tglx@linutronix.de,
+        jgross@suse.com, luto@kernel.org
+In-Reply-To: <20180425120835.23cef60c@ezekiel.suse.cz>
+References: <20180425120835.23cef60c@ezekiel.suse.cz>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/ipc: Fix x32 version of shmid64_ds and
- msqid64_ds
-Git-Commit-ID: 1a512c0882bd311c5b5561840fcfbe4c25b8f319
+Subject: [tip:x86/urgent] x86/setup: Do not reserve a crash kernel region if
+ booted on Xen PV
+Git-Commit-ID: 3db3eb285259ac129f7aec6b814b3e9f6c1b372b
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -34,134 +38,65 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  1a512c0882bd311c5b5561840fcfbe4c25b8f319
-Gitweb:     https://git.kernel.org/tip/1a512c0882bd311c5b5561840fcfbe4c25b8f319
-Author:     Arnd Bergmann <arnd@arndb.de>
-AuthorDate: Tue, 24 Apr 2018 23:19:51 +0200
+Commit-ID:  3db3eb285259ac129f7aec6b814b3e9f6c1b372b
+Gitweb:     https://git.kernel.org/tip/3db3eb285259ac129f7aec6b814b3e9f6c1b372b
+Author:     Petr Tesarik <ptesarik@suse.cz>
+AuthorDate: Wed, 25 Apr 2018 12:08:35 +0200
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Fri, 27 Apr 2018 17:06:29 +0200
+CommitDate: Fri, 27 Apr 2018 17:06:28 +0200
 
-x86/ipc: Fix x32 version of shmid64_ds and msqid64_ds
+x86/setup: Do not reserve a crash kernel region if booted on Xen PV
 
-A bugfix broke the x32 shmid64_ds and msqid64_ds data structure layout
-(as seen from user space)  a few years ago: Originally, __BITS_PER_LONG
-was defined as 64 on x32, so we did not have padding after the 64-bit
-__kernel_time_t fields, After __BITS_PER_LONG got changed to 32,
-applications would observe extra padding.
+Xen PV domains cannot shut down and start a crash kernel. Instead,
+the crashing kernel makes a SCHEDOP_shutdown hypercall with the
+reason code SHUTDOWN_crash, cf. xen_crash_shutdown() machine op in
+arch/x86/xen/enlighten_pv.c.
 
-In other parts of the uapi headers we seem to have a mix of those
-expecting either 32 or 64 on x32 applications, so we can't easily revert
-the path that broke these two structures.
+A crash kernel reservation is merely a waste of RAM in this case. It
+may also confuse users of kexec_load(2) and/or kexec_file_load(2).
+When flags include KEXEC_ON_CRASH or KEXEC_FILE_ON_CRASH,
+respectively, these syscalls return success, which is technically
+correct, but the crash kexec image will never be actually used.
 
-Instead, this patch decouples x32 from the other architectures and moves
-it back into arch specific headers, partially reverting the even older
-commit 73a2d096fdf2 ("x86: remove all now-duplicate header files").
-
-It's not clear whether this ever made any difference, since at least
-glibc carries its own (correct) copy of both of these header files,
-so possibly no application has ever observed the definitions here.
-
-Based on a suggestion from H.J. Lu, I tried out the tool from
-https://github.com/hjl-tools/linux-header to find other such
-bugs, which pointed out the same bug in statfs(), which also has
-a separate (correct) copy in glibc.
-
-Fixes: f4b4aae18288 ("x86/headers/uapi: Fix __BITS_PER_LONG value for x32 builds")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Petr Tesarik <ptesarik@suse.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: "H . J . Lu" <hjl.tools@gmail.com>
-Cc: Jeffrey Walton <noloader@gmail.com>
-Cc: stable@vger.kernel.org
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Dou Liyang <douly.fnst@cn.fujitsu.com>
+Cc: Mikulas Patocka <mpatocka@redhat.com>
+Cc: Andy Lutomirski <luto@kernel.org>
 Cc: "H. Peter Anvin" <hpa@zytor.com>
-Link: https://lkml.kernel.org/r/20180424212013.3967461-1-arnd@arndb.de
+Cc: xen-devel@lists.xenproject.org
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: Jean Delvare <jdelvare@suse.de>
+Link: https://lkml.kernel.org/r/20180425120835.23cef60c@ezekiel.suse.cz
 
 ---
- arch/x86/include/uapi/asm/msgbuf.h | 31 ++++++++++++++++++++++++++++
- arch/x86/include/uapi/asm/shmbuf.h | 42 ++++++++++++++++++++++++++++++++++++++
- 2 files changed, 73 insertions(+)
+ arch/x86/kernel/setup.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/x86/include/uapi/asm/msgbuf.h b/arch/x86/include/uapi/asm/msgbuf.h
-index 809134c644a6..90ab9a795b49 100644
---- a/arch/x86/include/uapi/asm/msgbuf.h
-+++ b/arch/x86/include/uapi/asm/msgbuf.h
-@@ -1 +1,32 @@
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-+#ifndef __ASM_X64_MSGBUF_H
-+#define __ASM_X64_MSGBUF_H
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index 6285697b6e56..5c623dfe39d1 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -50,6 +50,7 @@
+ #include <linux/init_ohci1394_dma.h>
+ #include <linux/kvm_para.h>
+ #include <linux/dma-contiguous.h>
++#include <xen/xen.h>
+ 
+ #include <linux/errno.h>
+ #include <linux/kernel.h>
+@@ -534,6 +535,11 @@ static void __init reserve_crashkernel(void)
+ 		high = true;
+ 	}
+ 
++	if (xen_pv_domain()) {
++		pr_info("Ignoring crashkernel for a Xen PV domain\n");
++		return;
++	}
 +
-+#if !defined(__x86_64__) || !defined(__ILP32__)
- #include <asm-generic/msgbuf.h>
-+#else
-+/*
-+ * The msqid64_ds structure for x86 architecture with x32 ABI.
-+ *
-+ * On x86-32 and x86-64 we can just use the generic definition, but
-+ * x32 uses the same binary layout as x86_64, which is differnet
-+ * from other 32-bit architectures.
-+ */
-+
-+struct msqid64_ds {
-+	struct ipc64_perm msg_perm;
-+	__kernel_time_t msg_stime;	/* last msgsnd time */
-+	__kernel_time_t msg_rtime;	/* last msgrcv time */
-+	__kernel_time_t msg_ctime;	/* last change time */
-+	__kernel_ulong_t msg_cbytes;	/* current number of bytes on queue */
-+	__kernel_ulong_t msg_qnum;	/* number of messages in queue */
-+	__kernel_ulong_t msg_qbytes;	/* max number of bytes on queue */
-+	__kernel_pid_t msg_lspid;	/* pid of last msgsnd */
-+	__kernel_pid_t msg_lrpid;	/* last receive pid */
-+	__kernel_ulong_t __unused4;
-+	__kernel_ulong_t __unused5;
-+};
-+
-+#endif
-+
-+#endif /* __ASM_GENERIC_MSGBUF_H */
-diff --git a/arch/x86/include/uapi/asm/shmbuf.h b/arch/x86/include/uapi/asm/shmbuf.h
-index 83c05fc2de38..644421f3823b 100644
---- a/arch/x86/include/uapi/asm/shmbuf.h
-+++ b/arch/x86/include/uapi/asm/shmbuf.h
-@@ -1 +1,43 @@
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-+#ifndef __ASM_X86_SHMBUF_H
-+#define __ASM_X86_SHMBUF_H
-+
-+#if !defined(__x86_64__) || !defined(__ILP32__)
- #include <asm-generic/shmbuf.h>
-+#else
-+/*
-+ * The shmid64_ds structure for x86 architecture with x32 ABI.
-+ *
-+ * On x86-32 and x86-64 we can just use the generic definition, but
-+ * x32 uses the same binary layout as x86_64, which is differnet
-+ * from other 32-bit architectures.
-+ */
-+
-+struct shmid64_ds {
-+	struct ipc64_perm	shm_perm;	/* operation perms */
-+	size_t			shm_segsz;	/* size of segment (bytes) */
-+	__kernel_time_t		shm_atime;	/* last attach time */
-+	__kernel_time_t		shm_dtime;	/* last detach time */
-+	__kernel_time_t		shm_ctime;	/* last change time */
-+	__kernel_pid_t		shm_cpid;	/* pid of creator */
-+	__kernel_pid_t		shm_lpid;	/* pid of last operator */
-+	__kernel_ulong_t	shm_nattch;	/* no. of current attaches */
-+	__kernel_ulong_t	__unused4;
-+	__kernel_ulong_t	__unused5;
-+};
-+
-+struct shminfo64 {
-+	__kernel_ulong_t	shmmax;
-+	__kernel_ulong_t	shmmin;
-+	__kernel_ulong_t	shmmni;
-+	__kernel_ulong_t	shmseg;
-+	__kernel_ulong_t	shmall;
-+	__kernel_ulong_t	__unused1;
-+	__kernel_ulong_t	__unused2;
-+	__kernel_ulong_t	__unused3;
-+	__kernel_ulong_t	__unused4;
-+};
-+
-+#endif
-+
-+#endif /* __ASM_X86_SHMBUF_H */
+ 	/* 0 means: find the address automatically */
+ 	if (crash_base <= 0) {
+ 		/*
