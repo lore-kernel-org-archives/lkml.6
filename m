@@ -1,137 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757283AbeD0Czx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 22:55:53 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:58704 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752030AbeD0Czv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 22:55:51 -0400
-Subject: Re: [PATCH 2/2] Revert "f2fs: add ovp valid_blocks check for bg gc
- victim to fg_gc"
-To: <jaegeuk@kernel.org>
-CC: <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>
-References: <20180426090551.92364-1-yuchao0@huawei.com>
- <20180426090551.92364-2-yuchao0@huawei.com>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <8989c3fe-2218-b368-6f8d-e6ba36189236@huawei.com>
-Date: Fri, 27 Apr 2018 10:55:46 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
-MIME-Version: 1.0
-In-Reply-To: <20180426090551.92364-2-yuchao0@huawei.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+        id S1757350AbeD0C4D (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 22:56:03 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:43907 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757291AbeD0C4A (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 22:56:00 -0400
+X-Google-Smtp-Source: AB8JxZpfpti6pQoaAYEcFD5K74jakg9qIyK4gDn94XdY/WpKdmV3k5feGutEF7OHEgbR85kJzi8WFQ==
+From: Joel Stanley <joel@jms.id.au>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: Andrew Jeffery <andrew@aj.id.au>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, Ryan Chen <ryan_chen@aspeedtech.com>,
+        Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Subject: [PATCH v2] clk: aspeed: Support second reset register
+Date: Fri, 27 Apr 2018 12:25:47 +0930
+Message-Id: <20180427025547.14115-1-joel@jms.id.au>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jaegeuk,
+The ast2500 has an additional reset register that contains resets not
+present in the ast2400. This enables support for this register, and adds
+the one reset line that is controlled by it.
 
-Missed this patch, or any problem in it?
+Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
+Signed-off-by: Joel Stanley <joel@jms.id.au>
+---
+v2:
+ This commit fixes a bug in aspeed_reset_assert() which determines
+ the second reset register using condition.
 
-Thanks,
+ drivers/clk/clk-aspeed.c                 | 44 +++++++++++++++++++-----
+ include/dt-bindings/clock/aspeed-clock.h |  1 +
+ 2 files changed, 37 insertions(+), 8 deletions(-)
 
-On 2018/4/26 17:05, Chao Yu wrote:
-> For extreme case:
-> 10 section, op = 10%, no_fggc_threshold = 90%
-> All section usage: 85% 85% 85% 85% 90% 90% 95% 95% 95% 95%
-> 
-> During foreground GC, if we skip select dirty section whose usage
-> is larger than no_fggc_threshold, we can only recycle 80% invalid
-> space from four 85% usage sections and two 90% usage sections,
-> result in encountering out-of-space issue.
-> 
-> This reverts commit e93b9865251a0503d83fd570e7d5a7c8bc351715 to
-> fix this issue, besides, we keep the logic that we scan all dirty
-> section when searching a victim, so that GC can select victim with
-> least valid blocks.
-> 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
->  fs/f2fs/f2fs.h    |  3 ---
->  fs/f2fs/gc.c      | 16 ----------------
->  fs/f2fs/segment.h |  9 ---------
->  3 files changed, 28 deletions(-)
-> 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 64e3677998d8..9f8b327272df 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -1192,9 +1192,6 @@ struct f2fs_sb_info {
->  	struct f2fs_gc_kthread	*gc_thread;	/* GC thread */
->  	unsigned int cur_victim_sec;		/* current victim section num */
->  
-> -	/* threshold for converting bg victims for fg */
-> -	u64 fggc_threshold;
-> -
->  	/* threshold for gc trials on pinned files */
->  	u64 gc_pin_file_threshold;
->  
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index 3134dd781252..62eba4a71123 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -263,10 +263,6 @@ static unsigned int check_bg_victims(struct f2fs_sb_info *sbi)
->  	for_each_set_bit(secno, dirty_i->victim_secmap, MAIN_SECS(sbi)) {
->  		if (sec_usage_check(sbi, secno))
->  			continue;
-> -
-> -		if (no_fggc_candidate(sbi, secno))
-> -			continue;
-> -
->  		clear_bit(secno, dirty_i->victim_secmap);
->  		return GET_SEG_FROM_SEC(sbi, secno);
->  	}
-> @@ -406,9 +402,6 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
->  			goto next;
->  		if (gc_type == BG_GC && test_bit(secno, dirty_i->victim_secmap))
->  			goto next;
-> -		if (gc_type == FG_GC && p.alloc_mode == LFS &&
-> -					no_fggc_candidate(sbi, secno))
-> -			goto next;
->  
->  		cost = get_gc_cost(sbi, segno, &p);
->  
-> @@ -1152,17 +1145,8 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
->  
->  void build_gc_manager(struct f2fs_sb_info *sbi)
->  {
-> -	u64 main_count, resv_count, ovp_count;
-> -
->  	DIRTY_I(sbi)->v_ops = &default_v_ops;
->  
-> -	/* threshold of # of valid blocks in a section for victims of FG_GC */
-> -	main_count = SM_I(sbi)->main_segments << sbi->log_blocks_per_seg;
-> -	resv_count = SM_I(sbi)->reserved_segments << sbi->log_blocks_per_seg;
-> -	ovp_count = SM_I(sbi)->ovp_segments << sbi->log_blocks_per_seg;
-> -
-> -	sbi->fggc_threshold = div64_u64((main_count - ovp_count) *
-> -				BLKS_PER_SEC(sbi), (main_count - resv_count));
->  	sbi->gc_pin_file_threshold = DEF_GC_FAILED_PINNED_FILES;
->  
->  	/* give warm/cold data area from slower device */
-> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-> index 7702b054689c..c385daabcb67 100644
-> --- a/fs/f2fs/segment.h
-> +++ b/fs/f2fs/segment.h
-> @@ -774,15 +774,6 @@ static inline block_t sum_blk_addr(struct f2fs_sb_info *sbi, int base, int type)
->  				- (base + 1) + type;
->  }
->  
-> -static inline bool no_fggc_candidate(struct f2fs_sb_info *sbi,
-> -						unsigned int secno)
-> -{
-> -	if (get_valid_blocks(sbi, GET_SEG_FROM_SEC(sbi, secno), true) >
-> -						sbi->fggc_threshold)
-> -		return true;
-> -	return false;
-> -}
-> -
->  static inline bool sec_usage_check(struct f2fs_sb_info *sbi, unsigned int secno)
->  {
->  	if (IS_CURSEC(sbi, secno) || (sbi->cur_victim_sec == secno))
-> 
+diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
+index c7cb1f2b6f8a..1fbf45738535 100644
+--- a/drivers/clk/clk-aspeed.c
++++ b/drivers/clk/clk-aspeed.c
+@@ -16,6 +16,8 @@
+ 
+ #define ASPEED_NUM_CLKS		35
+ 
++#define ASPEED_RESET2_OFFSET	32
++
+ #define ASPEED_RESET_CTRL	0x04
+ #define ASPEED_CLK_SELECTION	0x08
+ #define ASPEED_CLK_STOP_CTRL	0x0c
+@@ -30,6 +32,7 @@
+ #define  CLKIN_25MHZ_EN		BIT(23)
+ #define  AST2400_CLK_SOURCE_SEL	BIT(18)
+ #define ASPEED_CLK_SELECTION_2	0xd8
++#define ASPEED_RESET_CTRL2	0xd4
+ 
+ /* Globally visible clocks */
+ static DEFINE_SPINLOCK(aspeed_clk_lock);
+@@ -291,6 +294,7 @@ struct aspeed_reset {
+ #define to_aspeed_reset(p) container_of((p), struct aspeed_reset, rcdev)
+ 
+ static const u8 aspeed_resets[] = {
++	/* SCU04 resets */
+ 	[ASPEED_RESET_XDMA]	= 25,
+ 	[ASPEED_RESET_MCTP]	= 24,
+ 	[ASPEED_RESET_ADC]	= 23,
+@@ -300,38 +304,62 @@ static const u8 aspeed_resets[] = {
+ 	[ASPEED_RESET_PCIVGA]	=  8,
+ 	[ASPEED_RESET_I2C]	=  2,
+ 	[ASPEED_RESET_AHB]	=  1,
++
++	/*
++	 * SCUD4 resets start at an offset to separate them from
++	 * the SCU04 resets.
++	 */
++	[ASPEED_RESET_CRT1]	= ASPEED_RESET2_OFFSET + 5,
+ };
+ 
+ static int aspeed_reset_deassert(struct reset_controller_dev *rcdev,
+ 				 unsigned long id)
+ {
+ 	struct aspeed_reset *ar = to_aspeed_reset(rcdev);
+-	u32 rst = BIT(aspeed_resets[id]);
++	u32 reg = ASPEED_RESET_CTRL;
++	u32 bit = aspeed_resets[id];
++
++	if (bit >= ASPEED_RESET2_OFFSET) {
++		bit -= ASPEED_RESET2_OFFSET;
++		reg = ASPEED_RESET_CTRL2;
++	}
+ 
+-	return regmap_update_bits(ar->map, ASPEED_RESET_CTRL, rst, 0);
++	return regmap_update_bits(ar->map, reg, BIT(bit), 0);
+ }
+ 
+ static int aspeed_reset_assert(struct reset_controller_dev *rcdev,
+ 			       unsigned long id)
+ {
+ 	struct aspeed_reset *ar = to_aspeed_reset(rcdev);
+-	u32 rst = BIT(aspeed_resets[id]);
++	u32 reg = ASPEED_RESET_CTRL;
++	u32 bit = aspeed_resets[id];
+ 
+-	return regmap_update_bits(ar->map, ASPEED_RESET_CTRL, rst, rst);
++	if (bit >= ASPEED_RESET2_OFFSET) {
++		bit -= ASPEED_RESET2_OFFSET;
++		reg = ASPEED_RESET_CTRL2;
++	}
++
++	return regmap_update_bits(ar->map, reg, BIT(bit), BIT(bit));
+ }
+ 
+ static int aspeed_reset_status(struct reset_controller_dev *rcdev,
+ 			       unsigned long id)
+ {
+ 	struct aspeed_reset *ar = to_aspeed_reset(rcdev);
+-	u32 val, rst = BIT(aspeed_resets[id]);
+-	int ret;
++	u32 reg = ASPEED_RESET_CTRL;
++	u32 bit = aspeed_resets[id];
++	int ret, val;
++
++	if (bit >= ASPEED_RESET2_OFFSET) {
++		bit -= ASPEED_RESET2_OFFSET;
++		reg = ASPEED_RESET_CTRL2;
++	}
+ 
+-	ret = regmap_read(ar->map, ASPEED_RESET_CTRL, &val);
++	ret = regmap_read(ar->map, reg, &val);
+ 	if (ret)
+ 		return ret;
+ 
+-	return !!(val & rst);
++	return !!(val & BIT(bit));
+ }
+ 
+ static const struct reset_control_ops aspeed_reset_ops = {
+diff --git a/include/dt-bindings/clock/aspeed-clock.h b/include/dt-bindings/clock/aspeed-clock.h
+index d3558d897a4d..513c1b4af7a8 100644
+--- a/include/dt-bindings/clock/aspeed-clock.h
++++ b/include/dt-bindings/clock/aspeed-clock.h
+@@ -48,5 +48,6 @@
+ #define ASPEED_RESET_PCIVGA		6
+ #define ASPEED_RESET_I2C		7
+ #define ASPEED_RESET_AHB		8
++#define ASPEED_RESET_CRT1		9
+ 
+ #endif
+-- 
+2.17.0
