@@ -1,65 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758869AbeD0Tee (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 15:34:34 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:58808 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757590AbeD0Ted (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 15:34:33 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5B512600C9
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: pciehp 0000:00:1c.0:pcie004: Timeout on hotplug command 0x1038
- (issued 65284 msec ago)
-To: Bjorn Helgaas <helgaas@kernel.org>,
-        Paul Menzel <pmenzel+linux-pci@molgen.mpg.de>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Lukas Wunner <lukas@wunner.de>
-References: <8770820b-85a0-172b-7230-3a44524e6c9f@molgen.mpg.de>
- <20180427192207.GG8199@bhelgaas-glaptop.roam.corp.google.com>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <b62c2a8e-fe14-6d7d-147c-0ce3b0c0ab2f@codeaurora.org>
-Date: Fri, 27 Apr 2018 15:34:30 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1758912AbeD0Tgx (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 15:36:53 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44926 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1757590AbeD0Tgv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 15:36:51 -0400
+Date: Fri, 27 Apr 2018 22:36:49 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: Kevin Easton <kevin@guarana.org>, Jason Wang <jasowang@redhat.com>,
+        KVM list <kvm@vger.kernel.org>,
+        virtualization@lists.linux-foundation.org,
+        netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Subject: Re: [PATCH net] vhost: Use kzalloc() to allocate vhost_msg_node
+Message-ID: <20180427223636-mutt-send-email-mst@kernel.org>
+References: <000000000000a5b2b1056a86e98c@google.com>
+ <20180427154502.GA22544@la.guarana.org>
+ <20180427185501-mutt-send-email-mst@kernel.org>
+ <CACT4Y+b4fEOw=GjTsZMHVyQPOZmuqPWj6AJJshpS-UGRx=bhXA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180427192207.GG8199@bhelgaas-glaptop.roam.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACT4Y+b4fEOw=GjTsZMHVyQPOZmuqPWj6AJJshpS-UGRx=bhXA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
-
-Thanks for adding me.
-
-On 4/27/2018 3:22 PM, Bjorn Helgaas wrote:
-> Sinan mooted the idea of using a "no-wait" path of sending the "don't
-> generate hotplug interrupts" command.  I think we should work on this
-> idea a little more.  If we're shutting down the whole system, I can't
-> believe there's much value in *anything* we do in the pciehp_remove()
-> path.
+On Fri, Apr 27, 2018 at 06:11:31PM +0200, Dmitry Vyukov wrote:
+> On Fri, Apr 27, 2018 at 6:05 PM, Michael S. Tsirkin <mst@redhat.com> wrote:
+> > On Fri, Apr 27, 2018 at 11:45:02AM -0400, Kevin Easton wrote:
+> >> The struct vhost_msg within struct vhost_msg_node is copied to userspace,
+> >> so it should be allocated with kzalloc() to ensure all structure padding
+> >> is zeroed.
+> >>
+> >> Signed-off-by: Kevin Easton <kevin@guarana.org>
+> >> Reported-by: syzbot+87cfa083e727a224754b@syzkaller.appspotmail.com
+> >
+> > Does it help if a patch naming the padding is applied,
+> > and then we init just the relevant field?
+> > Just curious.
 > 
-> Maybe we should just get rid of pciehp_remove() (and probably
-> pcie_port_remove_service() and the other service driver remove methods)
-> completely.  That dates from when the service drivers could be modules that
-> could be potentially unloaded, but unloading them hasn't been possible for
-> years.
+> Yes, it would help.
 
-Shutdown path is also used for kexec. Leaving hotplug interrupts pending is
-dangerous for the newly loaded kernel as it leaves spurious interrupts
-during the new kernel boot.
+How about a Tested-by tag then?
 
-I think we should always disable the hotplug interrupt on shutdown. We might
-think of not waiting for command-completion as a middle-ground or go to polling
-path instead of interrupts all the time.
-
-Sinan
-
--- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+> >> ---
+> >>  drivers/vhost/vhost.c | 2 +-
+> >>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+> >> index f3bd8e9..1b84dcff 100644
+> >> --- a/drivers/vhost/vhost.c
+> >> +++ b/drivers/vhost/vhost.c
+> >> @@ -2339,7 +2339,7 @@ EXPORT_SYMBOL_GPL(vhost_disable_notify);
+> >>  /* Create a new message. */
+> >>  struct vhost_msg_node *vhost_new_msg(struct vhost_virtqueue *vq, int type)
+> >>  {
+> >> -     struct vhost_msg_node *node = kmalloc(sizeof *node, GFP_KERNEL);
+> >> +     struct vhost_msg_node *node = kzalloc(sizeof *node, GFP_KERNEL);
+> >>       if (!node)
+> >>               return NULL;
+> >>       node->vq = vq;
+> >> --
+> >> 2.8.1
+> >
+> > --
+> > You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> > To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> > To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/20180427185501-mutt-send-email-mst%40kernel.org.
+> > For more options, visit https://groups.google.com/d/optout.
