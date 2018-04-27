@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-333748-1524840313-2-9074049781552006753
+X-Cyrus-Session-Id: sloti22d1t05-333748-1524839970-2-2899372467958211432
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES enroda, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524840312; b=mcn2UPBvAlUxQQUq588m3B9bFdIOOqVhXx2VMhvkooiv49jH5T
-    NGtr6gqdic3Ch6pINZnI4Fm0YLXWp6pS5PXHgcjKF7JUt/laEMJ6bh+bHI7mjQVf
-    jq+TVlGparSQNRBWiPwCKB1rYM50RkyIYBkt4zJS7Y3xPog0ASod6arnV6x8MY4Z
-    llqrNINgn6A3owTKXaIyn9k/PNbZ4W2dWqig3FGZRPksolKH+l0pSQJD7nELgW3m
-    HHz+2h6sqpPy+ahULk+unn3hKBJlykYfKRMvLQKfOX+yzpBgmfzueuikksxe7a3T
-    eBM9IwFdLt91eQyKAVDj9HV56S6t7mlFVNtg==
+    1524839970; b=Y+E6TqFSut0T2mTCHakPT9fq1JUENENM7k2VB2O/GwLPW2sjuM
+    irXUcYZrJ/uexp0hfqxoeArcecYfxMZLW5M4ssEkD4jHzlj6zhuukMUc/Tb8aNT8
+    Ioc9pXIUjVZ+u2KOgaGvn7icXORR+3HZgimKOvn2EPBAcPm7dNXNkkmOKVUEZTJr
+    ++85+3cL31Ux3svulvrlMvCtSxkiEiF7bpPB150cwSFVZMI9nEocUbW/00JPOxLH
+    g0Z+wYNkSox7T0YQFj7i+xuUQ6fMnpCpdShOpDqGXBz+Dl3T7C/5W89mNSv97MHp
+    hz07HLV8+D9nfj/YTkFSXGt3b167iA04D+uA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524840312; bh=GsD5YlgNHyJRn24PVCCx9dThXWhr1a
-    Y8HR8NdsmLwKw=; b=LcYTLGsmG21J5czWE8Rp9IvKgRg1hRXelf9xBUVTrQfETp
-    JV0KoKfredUy8Gu33u9R++Jzq2Cz0iix2SGi45pto0MLxp/2CsRSTcJxo5WgbuL4
-    MFllvowz7EA7pQ7GVb7XCNXLWFnbtPUhgTxJD4zP4hXdnfY70HEHbb+OeSo5kbep
-    4iqL+BqpBR78F9A3OKnBrDs9FD5oFoRSC5ysFxwG3T/EsjH8NhsuVxX6tuKA6B5F
-    v2xNAxwek22ArEtlHvdTlyGFwKgVXVQe5Ffm4DYaEoT3nDJySGwY29EDLogPjst1
-    arf8rnAyOKQL9apLOyHSOQcR4ptzlM9HTsuWXT3w==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1524839970; bh=vioIWAzm5tRF+B4KNS/NGVs78XuX1n
+    6qe0Z52nRLcP4=; b=CEi98s83By9rsb9QFgv7aY2dsyQidI3tUCAO1DYiDU4Gzo
+    qLWn/OrbtnEWuUJWUglOgRyjtZ60FWIXdUEDhKaYSPwFgFRM9R5n2HMUDgmlxPtZ
+    ujT4/j4hjTws4W75Muz+ng9rrBAeAoAC+MPtEisWiQ2jDmEM0wr0OzYpLzhu4DF1
+    GIOJST6apBk3xCLVf8RtFlDOAACrApiYriEytCuoZs5ecnZZZ6wSXdV37S/S9dDc
+    MSxsgATxyA36splcUDhvcvQSJ3/KyEqUX1U67fVnbz6FouOMpUsJ4KlMwR/goIh+
+    yoT8ULjd4IqsbWKz+pF9TEEgB8ZJi1VK+s03BdEw==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,31 +51,36 @@ Authentication-Results: mx4.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfKcpSTD3bemkqNhjPo92hboooQ9WmAugim1rFKsIfOjIUaowkUGxDHSbLOVWiT9TUskYxoJ7+/NVboJTWpHLsSgpzEgEwaIjeKyG0XjVB20qtKxDXNpS
-    GQojPFZjA/oSfHnZjTCJYjbZZqBnn0M+PkSM3i1uAJUbPk1OcEtox7Xn2UpXLesNqKKortSur2bQjCrjDW/eOXmR0gf2PDQDaMcNKGRF4CS+hbcbm95mpUTH
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfIlwyYhg4Ujk9qeN1ohLe2BJKI4mYivjGy+ht0XJzMnvmaO89wDtUOx9nkrZkUgUWdb8Y69tZnbNB6oucIY3ny46PHlKJuIP76lZpw42ACrRhRPsHdDW
+    m4VfHXUPxht26dVoUy6VlYnAo3PexsKg2is1WK87RyRIpfn0HigXyzGyNGxOeCiSY2tu70Mwfu58TYSVogk1tzEyIuNnfDccwwAPS3IfXv+XJQ9V9IOjuZCT
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=VnNF1IyMAAAA:8 a=ag1SF4gXAAAA:8 a=ZorGynhXn63rTCUqaxEA:9 a=QEXdDO2ut3YA:10
+    a=A7XncKjpAAAA:8 a=pGLkceISAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
+    a=HgRWMwyma_7RdmeyeYYA:9 a=qKJGtR8alvylRcXI:21 a=FI88rCbzh_qPL0bP:21
+    a=QEXdDO2ut3YA:10 a=R9rPLQDAdC6-Ub70kJmZ:22 a=y1Q9-5lHfBjTkpIzbSAN:22
     a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934473AbeD0Oo6 (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 27 Apr 2018 10:44:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53908 "EHLO mail.kernel.org"
+        id S934663AbeD0OjD (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 27 Apr 2018 10:39:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54522 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934457AbeD0OIR (ORCPT <rfc822;stable@vger.kernel.org>);
-        Fri, 27 Apr 2018 10:08:17 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3AE921864
+        id S934337AbeD0OJF (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 27 Apr 2018 10:09:05 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A701E21892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4.14 59/80] s390: correct nospec auto detection init order
-Date: Fri, 27 Apr 2018 15:58:52 +0200
-Message-Id: <20180427135735.948729998@linuxfoundation.org>
+        stable@vger.kernel.org, Alexander Aring <aring@mojatatu.com>,
+        Yotam Gigi <yotam.gi@gmail.com>,
+        Jamal Hadi Salim <jhs@mojatatu.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 34/80] net: sched: ife: handle malformed tlv length
+Date: Fri, 27 Apr 2018 15:58:27 +0200
+Message-Id: <20180427135734.704177687@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135732.928644313@linuxfoundation.org>
 References: <20180427135732.928644313@linuxfoundation.org>
@@ -93,82 +98,99 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+From: Alexander Aring <aring@mojatatu.com>
 
 
-[ Upstream commit 6a3d1e81a434fc311f224b8be77258bafc18ccc6 ]
+[ Upstream commit cc74eddd0ff325d57373cea99f642b787d7f76f5 ]
 
-With CONFIG_EXPOLINE_AUTO=y the call of spectre_v2_auto_early() via
-early_initcall is done *after* the early_param functions. This
-overwrites any settings done with the nobp/no_spectre_v2/spectre_v2
-parameters. The code patching for the kernel is done after the
-evaluation of the early parameters but before the early_initcall
-is done. The end result is a kernel image that is patched correctly
-but the kernel modules are not.
+There is currently no handling to check on a invalid tlv length. This
+patch adds such handling to avoid killing the kernel with a malformed
+ife packet.
 
-Make sure that the nospec auto detection function is called before the
-early parameters are evaluated and before the code patching is done.
-
-Fixes: 6e179d64126b ("s390: add automatic detection of the spectre defense")
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Signed-off-by: Alexander Aring <aring@mojatatu.com>
+Reviewed-by: Yotam Gigi <yotam.gi@gmail.com>
+Acked-by: Jamal Hadi Salim <jhs@mojatatu.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/s390/include/asm/nospec-branch.h |    1 +
- arch/s390/kernel/nospec-branch.c      |    8 ++------
- arch/s390/kernel/setup.c              |    3 +++
- 3 files changed, 6 insertions(+), 6 deletions(-)
+ include/net/ife.h   |    3 ++-
+ net/ife/ife.c       |   35 +++++++++++++++++++++++++++++++++--
+ net/sched/act_ife.c |    7 ++++++-
+ 3 files changed, 41 insertions(+), 4 deletions(-)
 
---- a/arch/s390/include/asm/nospec-branch.h
-+++ b/arch/s390/include/asm/nospec-branch.h
-@@ -9,6 +9,7 @@
- extern int nospec_disable;
+--- a/include/net/ife.h
++++ b/include/net/ife.h
+@@ -12,7 +12,8 @@
+ void *ife_encode(struct sk_buff *skb, u16 metalen);
+ void *ife_decode(struct sk_buff *skb, u16 *metalen);
  
- void nospec_init_branches(void);
-+void nospec_auto_detect(void);
- void nospec_revert(s32 *start, s32 *end);
+-void *ife_tlv_meta_decode(void *skbdata, u16 *attrtype, u16 *dlen, u16 *totlen);
++void *ife_tlv_meta_decode(void *skbdata, const void *ifehdr_end, u16 *attrtype,
++			  u16 *dlen, u16 *totlen);
+ int ife_tlv_meta_encode(void *skbdata, u16 attrtype, u16 dlen,
+ 			const void *dval);
  
- #endif /* __ASSEMBLY__ */
---- a/arch/s390/kernel/nospec-branch.c
-+++ b/arch/s390/kernel/nospec-branch.c
-@@ -73,7 +73,7 @@ static int __init nospectre_v2_setup_ear
- }
- early_param("nospectre_v2", nospectre_v2_setup_early);
+--- a/net/ife/ife.c
++++ b/net/ife/ife.c
+@@ -92,12 +92,43 @@ struct meta_tlvhdr {
+ 	__be16 len;
+ };
  
--static int __init spectre_v2_auto_early(void)
-+void __init nospec_auto_detect(void)
- {
- 	if (IS_ENABLED(CC_USING_EXPOLINE)) {
- 		/*
-@@ -88,11 +88,7 @@ static int __init spectre_v2_auto_early(
- 	 * nobp setting decides what is done, this depends on the
- 	 * CONFIG_KERNEL_NP option and the nobp/nospec parameters.
- 	 */
--	return 0;
- }
--#ifdef CONFIG_EXPOLINE_AUTO
--early_initcall(spectre_v2_auto_early);
--#endif
- 
- static int __init spectre_v2_setup_early(char *str)
- {
-@@ -103,7 +99,7 @@ static int __init spectre_v2_setup_early
- 	if (str && !strncmp(str, "off", 3))
- 		nospec_disable = 1;
- 	if (str && !strncmp(str, "auto", 4))
--		spectre_v2_auto_early();
-+		nospec_auto_detect();
- 	return 0;
- }
- early_param("spectre_v2", spectre_v2_setup_early);
---- a/arch/s390/kernel/setup.c
-+++ b/arch/s390/kernel/setup.c
-@@ -897,6 +897,9 @@ void __init setup_arch(char **cmdline_p)
- 	init_mm.end_data = (unsigned long) &_edata;
- 	init_mm.brk = (unsigned long) &_end;
- 
-+	if (IS_ENABLED(CONFIG_EXPOLINE_AUTO))
-+		nospec_auto_detect();
++static bool __ife_tlv_meta_valid(const unsigned char *skbdata,
++				 const unsigned char *ifehdr_end)
++{
++	const struct meta_tlvhdr *tlv;
++	u16 tlvlen;
 +
- 	parse_early_param();
- #ifdef CONFIG_CRASH_DUMP
- 	/* Deactivate elfcorehdr= kernel parameter */
++	if (unlikely(skbdata + sizeof(*tlv) > ifehdr_end))
++		return false;
++
++	tlv = (const struct meta_tlvhdr *)skbdata;
++	tlvlen = ntohs(tlv->len);
++
++	/* tlv length field is inc header, check on minimum */
++	if (tlvlen < NLA_HDRLEN)
++		return false;
++
++	/* overflow by NLA_ALIGN check */
++	if (NLA_ALIGN(tlvlen) < tlvlen)
++		return false;
++
++	if (unlikely(skbdata + NLA_ALIGN(tlvlen) > ifehdr_end))
++		return false;
++
++	return true;
++}
++
+ /* Caller takes care of presenting data in network order
+  */
+-void *ife_tlv_meta_decode(void *skbdata, u16 *attrtype, u16 *dlen, u16 *totlen)
++void *ife_tlv_meta_decode(void *skbdata, const void *ifehdr_end, u16 *attrtype,
++			  u16 *dlen, u16 *totlen)
+ {
+-	struct meta_tlvhdr *tlv = (struct meta_tlvhdr *) skbdata;
++	struct meta_tlvhdr *tlv;
++
++	if (!__ife_tlv_meta_valid(skbdata, ifehdr_end))
++		return NULL;
+ 
++	tlv = (struct meta_tlvhdr *)skbdata;
+ 	*dlen = ntohs(tlv->len) - NLA_HDRLEN;
+ 	*attrtype = ntohs(tlv->type);
+ 
+--- a/net/sched/act_ife.c
++++ b/net/sched/act_ife.c
+@@ -639,7 +639,12 @@ static int tcf_ife_decode(struct sk_buff
+ 		u16 mtype;
+ 		u16 dlen;
+ 
+-		curr_data = ife_tlv_meta_decode(tlv_data, &mtype, &dlen, NULL);
++		curr_data = ife_tlv_meta_decode(tlv_data, ifehdr_end, &mtype,
++						&dlen, NULL);
++		if (!curr_data) {
++			qstats_drop_inc(this_cpu_ptr(ife->common.cpu_qstats));
++			return TC_ACT_SHOT;
++		}
+ 
+ 		if (find_decode_metaid(skb, ife, mtype, dlen, curr_data)) {
+ 			/* abuse overlimits to count when we receive metadata
