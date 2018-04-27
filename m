@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757324AbeD0BtR (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 21:49:17 -0400
-Received: from mx.socionext.com ([202.248.49.38]:12345 "EHLO mx.socionext.com"
+        id S1757299AbeD0BtQ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 21:49:16 -0400
+Received: from mx.socionext.com ([202.248.49.38]:12343 "EHLO mx.socionext.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1757264AbeD0BtN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1757266AbeD0BtN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 26 Apr 2018 21:49:13 -0400
 From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
 To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
@@ -13,12 +13,10 @@ To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
 Cc: Masami Hiramatsu <masami.hiramatsu@linaro.org>,
         Jassi Brar <jaswinder.singh@linaro.org>, linux-kernel@vger.kernel.org,
         Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Subject: [PATCH v2 2/2] pinctrl: uniphier: add LD11 MPEG2-TS I/O pin-mux settings
-Date: Fri, 27 Apr 2018 10:49:05 +0900
-Message-Id: <20180427014905.19520-2-suzuki.katsuhiro@socionext.com>
+Subject: [PATCH v2 1/2] pinctrl: uniphier: add LD20 MPEG2-TS I/O pin-mux settings
+Date: Fri, 27 Apr 2018 10:49:04 +0900
+Message-Id: <20180427014905.19520-1-suzuki.katsuhiro@socionext.com>
 X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180427014905.19520-1-suzuki.katsuhiro@socionext.com>
-References: <20180427014905.19520-1-suzuki.katsuhiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -29,6 +27,7 @@ The serial TS interface uses following pins:
   hscin0_s : HS0DOUT[0-3]
   hscin1_s : HS0DOUT[4-7]
   hscin2_s : HS1BCLKIN, HS1SYNCIN, HS1VALIN, HS1DIN0
+  hscin3_s : HS1DIN[2-5]
   hscout0_s: HS0DOUT[0-3]
   hscout1_s: HS0DOUT[4-7]
 
@@ -49,17 +48,17 @@ Changes in v2:
     - Fix hsc'out'0_ci -> hsc'in'0_ci of hscin0 group
     - Fix hscin'0'_s -> hscin'1'_s of hscin1 group
 ---
- .../pinctrl/uniphier/pinctrl-uniphier-ld11.c  | 49 +++++++++++++++++++
- 1 file changed, 49 insertions(+)
+ .../pinctrl/uniphier/pinctrl-uniphier-ld20.c  | 54 +++++++++++++++++++
+ 1 file changed, 54 insertions(+)
 
-diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
-index 0976fbfecd50..58825f68b58b 100644
---- a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
-+++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
-@@ -481,6 +481,31 @@ static const int emmc_dat8_muxvals[] = {0, 0, 0, 0};
- static const unsigned ether_rmii_pins[] = {6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
- 					   16, 17};
- static const int ether_rmii_muxvals[] = {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4};
+diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c
+index bf8f0c3bea5e..9f449b35e300 100644
+--- a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c
++++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c
+@@ -566,6 +566,33 @@ static const int ether_rgmii_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+ static const unsigned ether_rmii_pins[] = {30, 31, 32, 33, 34, 35, 36, 37, 39,
+ 					   41, 42, 45};
+ static const int ether_rmii_muxvals[] = {0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1};
 +static const unsigned hscin0_ci_pins[] = {102, 103, 104, 105, 106, 107, 108,
 +					  109, 110, 111, 112};
 +static const int hscin0_ci_muxvals[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
@@ -75,6 +74,8 @@ index 0976fbfecd50..58825f68b58b 100644
 +static const int hscin1_s_muxvals[] = {3, 3, 3, 3};
 +static const unsigned hscin2_s_pins[] = {124, 125, 126, 127};
 +static const int hscin2_s_muxvals[] = {3, 3, 3, 3};
++static const unsigned hscin3_s_pins[] = {129, 130, 131, 132};
++static const int hscin3_s_muxvals[] = {3, 3, 3, 3};
 +static const unsigned hscout0_ci_pins[] = {113, 114, 115, 116, 117, 118, 119,
 +					   120, 121, 122, 123};
 +static const int hscout0_ci_muxvals[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
@@ -88,9 +89,9 @@ index 0976fbfecd50..58825f68b58b 100644
  static const unsigned i2c0_pins[] = {63, 64};
  static const int i2c0_muxvals[] = {0, 0};
  static const unsigned i2c1_pins[] = {65, 66};
-@@ -556,6 +581,16 @@ static const struct uniphier_pinctrl_group uniphier_ld11_groups[] = {
- 	UNIPHIER_PINCTRL_GROUP(emmc),
+@@ -641,6 +668,17 @@ static const struct uniphier_pinctrl_group uniphier_ld20_groups[] = {
  	UNIPHIER_PINCTRL_GROUP(emmc_dat8),
+ 	UNIPHIER_PINCTRL_GROUP(ether_rgmii),
  	UNIPHIER_PINCTRL_GROUP(ether_rmii),
 +	UNIPHIER_PINCTRL_GROUP(hscin0_ci),
 +	UNIPHIER_PINCTRL_GROUP(hscin0_p),
@@ -98,6 +99,7 @@ index 0976fbfecd50..58825f68b58b 100644
 +	UNIPHIER_PINCTRL_GROUP(hscin1_p),
 +	UNIPHIER_PINCTRL_GROUP(hscin1_s),
 +	UNIPHIER_PINCTRL_GROUP(hscin2_s),
++	UNIPHIER_PINCTRL_GROUP(hscin3_s),
 +	UNIPHIER_PINCTRL_GROUP(hscout0_ci),
 +	UNIPHIER_PINCTRL_GROUP(hscout0_p),
 +	UNIPHIER_PINCTRL_GROUP(hscout0_s),
@@ -105,15 +107,16 @@ index 0976fbfecd50..58825f68b58b 100644
  	UNIPHIER_PINCTRL_GROUP(i2c0),
  	UNIPHIER_PINCTRL_GROUP(i2c1),
  	UNIPHIER_PINCTRL_GROUP(i2c3),
-@@ -583,6 +618,15 @@ static const char * const aout1_groups[] = {"aout1"};
- static const char * const aoutiec1_groups[] = {"aoutiec1"};
+@@ -668,6 +706,16 @@ static const char * const aoutiec1_groups[] = {"aoutiec1"};
  static const char * const emmc_groups[] = {"emmc", "emmc_dat8"};
+ static const char * const ether_rgmii_groups[] = {"ether_rgmii"};
  static const char * const ether_rmii_groups[] = {"ether_rmii"};
 +static const char * const hscin0_groups[] = {"hscin0_ci",
 +					     "hscin0_p",
 +					     "hscin0_s"};
 +static const char * const hscin1_groups[] = {"hscin1_p", "hscin1_s"};
 +static const char * const hscin2_groups[] = {"hscin2_s"};
++static const char * const hscin3_groups[] = {"hscin3_s"};
 +static const char * const hscout0_groups[] = {"hscout0_ci",
 +					      "hscout0_p",
 +					      "hscout0_s"};
@@ -121,13 +124,14 @@ index 0976fbfecd50..58825f68b58b 100644
  static const char * const i2c0_groups[] = {"i2c0"};
  static const char * const i2c1_groups[] = {"i2c1"};
  static const char * const i2c3_groups[] = {"i2c3"};
-@@ -603,6 +647,11 @@ static const struct uniphier_pinmux_function uniphier_ld11_functions[] = {
- 	UNIPHIER_PINMUX_FUNCTION(aoutiec1),
+@@ -691,6 +739,12 @@ static const struct uniphier_pinmux_function uniphier_ld20_functions[] = {
  	UNIPHIER_PINMUX_FUNCTION(emmc),
+ 	UNIPHIER_PINMUX_FUNCTION(ether_rgmii),
  	UNIPHIER_PINMUX_FUNCTION(ether_rmii),
 +	UNIPHIER_PINMUX_FUNCTION(hscin0),
 +	UNIPHIER_PINMUX_FUNCTION(hscin1),
 +	UNIPHIER_PINMUX_FUNCTION(hscin2),
++	UNIPHIER_PINMUX_FUNCTION(hscin3),
 +	UNIPHIER_PINMUX_FUNCTION(hscout0),
 +	UNIPHIER_PINMUX_FUNCTION(hscout1),
  	UNIPHIER_PINMUX_FUNCTION(i2c0),
