@@ -1,39 +1,86 @@
-Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZocPafGgh30mbXWChr6X+ZpyROpL5kuoSUycqeOdOu2fwOWIXwpNkUoTS6p4e/Kbl4NZEKV
-ARC-Seal: i=1; a=rsa-sha256; t=1524837736; cv=none;
-        d=google.com; s=arc-20160816;
-        b=VhxRNBteEDNcsyH3ems5z49WujDmg8J0QipFKGtey2kQafZq3aVFpfKrr1tcrfXfHU
-         U0o9pCi7ibeVT2mPu48KEL57DrywsYOnnKPhX0JYokbv6mWcaKsJqgROISqxE52tVaGI
-         vQHIDruNksd2Av/JiKgZWhuUu+xdu0yE0og9PlSqwLmG7WMCnYkQMxt7Fxz7nku1B9LE
-         V1CYPh+oA5T/abvmTH5MYdISaVJSJuqjxI0E7DJv8KZl/Gvoy1iJW01BTNLH21HkizEe
-         SEkpL3dMP989Z29hSgDje8ZjyBpp16EiWpNVDBdW29HhBIh5GtjjsWezY7NpEPaGHD1R
-         6V1w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=sN8swHaD3eUQ+u36t5S/lhE1mzE90P3rUoQMeYGq3RM=;
-        b=KmICM5ZqWtQOg4AywrlN1xKEfUeK7bZdpBg5eHYIAo5286af+BIlOK3vHeKLWVAmB4
-         TjMMQI5UoWKkJoz9SL8hYT1sv3+CT39frTWdD8fUcwMLE22cd+6ebmUlwdZl7PAEBy4c
-         5aKXvZUQg23yLBHmwV6tSIoyI2xBB2I9ViYjvRWHViEajb26TaNlAv5jFJ5QhTVHRFGl
-         6lX7cDg4d0faytr2b8+kjDHWRr8XdaBNZAQBRZC3BOS+hMDhhPVGI97wNBrD9rumyDaF
-         AG5cZ6XlKZiO8hal5c6dTBNxpAaUIy9GP2FDFxnhrtajni9DQvZ4z/2n3PXtFYHECbEu
-         OdtQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC3782189F
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-288473-1524837735-2-8136646396104940787
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES enro, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524837734; b=gj4VeYFBjOKuCHAUOoyo6loaJRp+kYKcKF+2lb8RR93zie0W/a
+    EI8DMiOJX4+0oR7oXtIDMXl/VQp7qPQF/siMUaNfOxUtyidAgt4O0CvD7b5zORFY
+    +pHyx3fQF7X9WbDOva1V+Ds7a6A7dexXH08O6EWttguOQlw+s+S/ehVu9JnEpE0a
+    bvq5ApkgeREpq4WL59+9jS94cfaOMt8v20TnD4U5Yn8MoBsuPRUdRp+C2cWLEC7m
+    9Y/wCQMXuwsVL9yfAZc7GF4+90gEVNtW9KJd+xMkHKO3RFjtItDOgPOKeMuz9Gxu
+    tdLt5rjG7aJqc+cKg/P00DsvibOusFdJ4azg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1524837734; bh=o/G6jrhxtDKQLxf0mRz6jbVe134+Iy
+    AcV4wcYRsgOhk=; b=DHCuCqj12+Dum3TBPSdqHh9N1jUaLR5/VY1wgaW57hwDBf
+    CLbMC/4L9MDypJCTdqL1Imlo0rDJEww90OWJtO7a+N4h8vxifWdPWFN5Pp41KFkG
+    +Jazy7Qvaml/LRYLtoXH3HJyMGTe6z/TXBMZ628Cx7chUXiRwNXhRSkeH2HfU8fS
+    pBbFNlnkXug9ceak4PWs764N+FzSoEYK4OgXfOWoO647AKXaNmF1Ve16zUwlfUIr
+    PJH8bTX6LVzxs2DJGQ2Q43WJUxardm3lqRnpoFlyY6TxWkTmE5AG1/5FwEWzzk/M
+    hsI9uvKwZeDVElJIZylNxUsPM47OBrI/d6VHXzDQ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfNfgUqzFq7rLjMWLqAWN2eHL7T4mWaLbTmRIRQ/lfEmiXxy4JNFu/lZAlmVzotoRPjIAl+LgS+imbTs0xpkiG2Mqns3IF/nZZRFPUim7Zb2J34ZHdukE
+    qkqeBYtvb7vw6wIm08Uv7jLJnv3dAGlIBDRa/LRnmRJu4fC/vT75qjMx5KnbDQ4oaBLWVBQ8i8Ty8pTKkTTkWpH8fPAv/jNwWI7evVYP6YQ4StQS99N2u65e
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=1XWaLZrsAAAA:8 a=0FD05c-RAAAA:8 a=t7CeM3EgAAAA:8 a=J1Y8HTJGAAAA:8
+    a=ag1SF4gXAAAA:8 a=kKS-bE2akbXBnjzK24sA:9 a=QEXdDO2ut3YA:10
+    a=l1rpMCqCXRGZwUSuRcM3:22 a=FdTzh2GWekK77mhwV6Dw:22 a=y1Q9-5lHfBjTkpIzbSAN:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S932994AbeD0OCI (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 27 Apr 2018 10:02:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48906 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932892AbeD0OCG (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 27 Apr 2018 10:02:06 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 398E321897
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Martin Schwidefsky <schwidefsky@de.ibm.com>,
-	Christian Borntraeger <borntraeger@de.ibm.com>
-Subject: [PATCH 4.4 13/50] s390: scrub registers on kernel entry and KVM exit
-Date: Fri, 27 Apr 2018 15:58:15 +0200
-Message-Id: <20180427135656.501299808@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Jon Maloy <jon.maloy@ericsson.com>,
+        Ying Xue <ying.xue@windriver.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 42/50] tipc: add policy for TIPC_NLA_NET_ADDR
+Date: Fri, 27 Apr 2018 15:58:44 +0200
+Message-Id: <20180427135658.158521318@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135655.623669681@linuxfoundation.org>
 References: <20180427135655.623669681@linuxfoundation.org>
@@ -41,10 +88,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908254418187128?=
-X-GMAIL-MSGID: =?utf-8?q?1598908254418187128?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,110 +98,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+From: Eric Dumazet <edumazet@google.com>
 
 
-[ Upstream commit 7041d28115e91f2144f811ffe8a195c696b1e1d0 ]
+[ Upstream commit ec518f21cb1a1b1f8a516499ea05c60299e04963 ]
 
-Clear all user space registers on entry to the kernel and all KVM guest
-registers on KVM guest exit if the register does not contain either a
-parameter or a result value.
+Before syzbot/KMSAN bites, add the missing policy for TIPC_NLA_NET_ADDR
 
-Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Fixes: 27c21416727a ("tipc: add net set to new netlink api")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: Jon Maloy <jon.maloy@ericsson.com>
+Cc: Ying Xue <ying.xue@windriver.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/s390/kernel/entry.S |   47 +++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 47 insertions(+)
+ net/tipc/net.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/s390/kernel/entry.S
-+++ b/arch/s390/kernel/entry.S
-@@ -244,6 +244,12 @@ ENTRY(sie64a)
- sie_exit:
- 	lg	%r14,__SF_EMPTY+8(%r15)		# load guest register save area
- 	stmg	%r0,%r13,0(%r14)		# save guest gprs 0-13
-+	xgr	%r0,%r0				# clear guest registers to
-+	xgr	%r1,%r1				# prevent speculative use
-+	xgr	%r2,%r2
-+	xgr	%r3,%r3
-+	xgr	%r4,%r4
-+	xgr	%r5,%r5
- 	lmg	%r6,%r14,__SF_GPRS(%r15)	# restore kernel registers
- 	lg	%r2,__SF_EMPTY+16(%r15)		# return exit reason code
- 	br	%r14
-@@ -277,6 +283,8 @@ ENTRY(system_call)
- .Lsysc_vtime:
- 	UPDATE_VTIME %r10,%r13,__LC_SYNC_ENTER_TIMER
- 	stmg	%r0,%r7,__PT_R0(%r11)
-+	# clear user controlled register to prevent speculative use
-+	xgr	%r0,%r0
- 	mvc	__PT_R8(64,%r11),__LC_SAVE_AREA_SYNC
- 	mvc	__PT_PSW(16,%r11),__LC_SVC_OLD_PSW
- 	mvc	__PT_INT_CODE(4,%r11),__LC_SVC_ILC
-@@ -504,6 +512,15 @@ ENTRY(pgm_check_handler)
- 	mvc	__THREAD_trap_tdb(256,%r14),0(%r13)
- 3:	la	%r11,STACK_FRAME_OVERHEAD(%r15)
- 	stmg	%r0,%r7,__PT_R0(%r11)
-+	# clear user controlled registers to prevent speculative use
-+	xgr	%r0,%r0
-+	xgr	%r1,%r1
-+	xgr	%r2,%r2
-+	xgr	%r3,%r3
-+	xgr	%r4,%r4
-+	xgr	%r5,%r5
-+	xgr	%r6,%r6
-+	xgr	%r7,%r7
- 	mvc	__PT_R8(64,%r11),__LC_SAVE_AREA_SYNC
- 	stmg	%r8,%r9,__PT_PSW(%r11)
- 	mvc	__PT_INT_CODE(4,%r11),__LC_PGM_ILC
-@@ -567,6 +584,16 @@ ENTRY(io_int_handler)
- 	lmg	%r8,%r9,__LC_IO_OLD_PSW
- 	SWITCH_ASYNC __LC_SAVE_AREA_ASYNC,__LC_ASYNC_ENTER_TIMER
- 	stmg	%r0,%r7,__PT_R0(%r11)
-+	# clear user controlled registers to prevent speculative use
-+	xgr	%r0,%r0
-+	xgr	%r1,%r1
-+	xgr	%r2,%r2
-+	xgr	%r3,%r3
-+	xgr	%r4,%r4
-+	xgr	%r5,%r5
-+	xgr	%r6,%r6
-+	xgr	%r7,%r7
-+	xgr	%r10,%r10
- 	mvc	__PT_R8(64,%r11),__LC_SAVE_AREA_ASYNC
- 	stmg	%r8,%r9,__PT_PSW(%r11)
- 	mvc	__PT_INT_CODE(12,%r11),__LC_SUBCHANNEL_ID
-@@ -742,6 +769,16 @@ ENTRY(ext_int_handler)
- 	lmg	%r8,%r9,__LC_EXT_OLD_PSW
- 	SWITCH_ASYNC __LC_SAVE_AREA_ASYNC,__LC_ASYNC_ENTER_TIMER
- 	stmg	%r0,%r7,__PT_R0(%r11)
-+	# clear user controlled registers to prevent speculative use
-+	xgr	%r0,%r0
-+	xgr	%r1,%r1
-+	xgr	%r2,%r2
-+	xgr	%r3,%r3
-+	xgr	%r4,%r4
-+	xgr	%r5,%r5
-+	xgr	%r6,%r6
-+	xgr	%r7,%r7
-+	xgr	%r10,%r10
- 	mvc	__PT_R8(64,%r11),__LC_SAVE_AREA_ASYNC
- 	stmg	%r8,%r9,__PT_PSW(%r11)
- 	lghi	%r1,__LC_EXT_PARAMS2
-@@ -908,6 +945,16 @@ ENTRY(mcck_int_handler)
- .Lmcck_skip:
- 	lghi	%r14,__LC_GPREGS_SAVE_AREA+64
- 	stmg	%r0,%r7,__PT_R0(%r11)
-+	# clear user controlled registers to prevent speculative use
-+	xgr	%r0,%r0
-+	xgr	%r1,%r1
-+	xgr	%r2,%r2
-+	xgr	%r3,%r3
-+	xgr	%r4,%r4
-+	xgr	%r5,%r5
-+	xgr	%r6,%r6
-+	xgr	%r7,%r7
-+	xgr	%r10,%r10
- 	mvc	__PT_R8(64,%r11),0(%r14)
- 	stmg	%r8,%r9,__PT_PSW(%r11)
- 	xc	__PT_FLAGS(8,%r11),__PT_FLAGS(%r11)
+--- a/net/tipc/net.c
++++ b/net/tipc/net.c
+@@ -44,7 +44,8 @@
+ 
+ static const struct nla_policy tipc_nl_net_policy[TIPC_NLA_NET_MAX + 1] = {
+ 	[TIPC_NLA_NET_UNSPEC]	= { .type = NLA_UNSPEC },
+-	[TIPC_NLA_NET_ID]	= { .type = NLA_U32 }
++	[TIPC_NLA_NET_ID]	= { .type = NLA_U32 },
++	[TIPC_NLA_NET_ADDR]	= { .type = NLA_U32 },
+ };
+ 
+ /*
