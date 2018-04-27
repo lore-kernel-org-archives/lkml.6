@@ -1,65 +1,152 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757548AbeD0Hg4 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 03:36:56 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:46850 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1757153AbeD0Hgz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 03:36:55 -0400
-From: YueHaibing <yuehaibing@huawei.com>
-To: <richardcochran@gmail.com>, <davem@davemloft.net>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH] ptp_pch: use helpers function for converting between ns and timespec
-Date: Fri, 27 Apr 2018 15:36:18 +0800
-Message-ID: <20180427073618.12036-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1757604AbeD0Hhf (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 03:37:35 -0400
+Received: from outbound-smtp25.blacknight.com ([81.17.249.193]:48919 "EHLO
+        outbound-smtp25.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1757171AbeD0Hhd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 03:37:33 -0400
+Date: Fri, 27 Apr 2018 08:30:21 +0100
+From: Mel Gorman <mgorman@techsingularity.net>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Mike Galbraith <efault@gmx.de>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] sched/numa: Stagger NUMA balancing scan periods for new
+ threads
+Message-ID: <20180427073021.76egd5j3tyj4kp7d@techsingularity.net>
+References: <20180426104830.b3v7kixdnqlrtujb@techsingularity.net>
+ <20180427065057.5l24znpbsb3bdkur@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <20180427065057.5l24znpbsb3bdkur@gmail.com>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-use ns_to_timespec64() and timespec64_to_ns() instead of open coding
+On Fri, Apr 27, 2018 at 08:50:57AM +0200, Ingo Molnar wrote:
+> >                             4.17.0-rc1             4.17.0-rc1
+> >                                vanilla           stagger-v1r1
+> > sys-time-bt.D         48.78 (   0.00%)       48.22 (   1.15%)
+> > sys-time-cg.D         25.31 (   0.00%)       26.63 (  -5.22%)
+> > sys-time-ep.D          1.65 (   0.00%)        0.62 (  62.42%)
+> > sys-time-is.D         40.05 (   0.00%)       24.45 (  38.95%)
+> > sys-time-lu.D         37.55 (   0.00%)       29.02 (  22.72%)
+> > sys-time-mg.D         47.52 (   0.00%)       34.92 (  26.52%)
+> > sys-time-sp.D        119.01 (   0.00%)      109.05 (   8.37%)
+> > sys-time-ua.D         51.52 (   0.00%)       45.13 (  12.40%)
+> > 
+> > NUMA scan activity is reduced as well as other balancing activity.
+> > 
+> > NUMA alloc local               1042828     1342670
+> > NUMA base PTE updates        140481138    93577468
+> > NUMA huge PMD updates           272171      180766
+> > NUMA page range updates      279832690   186129660
+> > NUMA hint faults               1395972     1193897
+> > NUMA hint local faults          877925      855053
+> > NUMA hint local percent             62          71
+> > NUMA pages migrated           12057909     9158023
+> 
+> Looks like a nice reduction in scanning overhead - which was always the main worry 
+> with the fault based active NUMA balancing technique.
+> 
+> I have a couple of minor code cleanliness nit:
+> 
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/ptp/ptp_pch.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+No problem.
 
-diff --git a/drivers/ptp/ptp_pch.c b/drivers/ptp/ptp_pch.c
-index b328517..78ccf93 100644
---- a/drivers/ptp/ptp_pch.c
-+++ b/drivers/ptp/ptp_pch.c
-@@ -452,7 +452,6 @@ static int ptp_pch_adjtime(struct ptp_clock_info *ptp, s64 delta)
- static int ptp_pch_gettime(struct ptp_clock_info *ptp, struct timespec64 *ts)
- {
- 	u64 ns;
--	u32 remainder;
- 	unsigned long flags;
- 	struct pch_dev *pch_dev = container_of(ptp, struct pch_dev, caps);
- 	struct pch_ts_regs __iomem *regs = pch_dev->regs;
-@@ -461,8 +460,7 @@ static int ptp_pch_gettime(struct ptp_clock_info *ptp, struct timespec64 *ts)
- 	ns = pch_systime_read(regs);
- 	spin_unlock_irqrestore(&pch_dev->register_lock, flags);
- 
--	ts->tv_sec = div_u64_rem(ns, 1000000000, &remainder);
--	ts->tv_nsec = remainder;
-+	*ts = ns_to_timespec64(ns);
- 	return 0;
- }
- 
-@@ -474,8 +472,7 @@ static int ptp_pch_settime(struct ptp_clock_info *ptp,
- 	struct pch_dev *pch_dev = container_of(ptp, struct pch_dev, caps);
- 	struct pch_ts_regs __iomem *regs = pch_dev->regs;
- 
--	ns = ts->tv_sec * 1000000000ULL;
--	ns += ts->tv_nsec;
-+	ns = timespec64_to_ns(ts);
- 
- 	spin_lock_irqsave(&pch_dev->register_lock, flags);
- 	pch_systime_write(regs, ns);
+> > +void init_numa_balancing(unsigned long clone_flags, struct task_struct *p)
+> > +{
+> > +	int mm_users = 0;
+> > +
+> > +	if (p->mm) {
+> > +		mm_users = atomic_read(&p->mm->mm_users);
+> > +		if (mm_users == 1) {
+> > +			p->mm->numa_next_scan = jiffies + msecs_to_jiffies(sysctl_numa_balancing_scan_delay);
+> > +			p->mm->numa_scan_seq = 0;
+> > +		}
+> > +	}
+> > +	p->node_stamp = 0ULL;
+> > +	p->numa_scan_seq = p->mm ? p->mm->numa_scan_seq : 0;
+> > +	p->numa_scan_period = sysctl_numa_balancing_scan_delay;
+> > +	p->numa_work.next = &p->numa_work;
+> > +	p->numa_faults = NULL;
+> > +	p->last_task_numa_placement = 0;
+> > +	p->last_sum_exec_runtime = 0;
+> > +	p->numa_group = NULL;
+> 
+> While this is pre-existing code that you moved, could we please use a bit more 
+> organization to make this more readable:
+> 
+> 	p->node_stamp			= 0ULL;
+> 	p->numa_scan_seq		= p->mm ? p->mm->numa_scan_seq : 0;
+> 	p->numa_scan_period		= sysctl_numa_balancing_scan_delay;
+> 	p->numa_work.next		= &p->numa_work;
+> 	p->numa_faults			= NULL;
+> 	p->last_task_numa_placement	= 0;
+> 	p->last_sum_exec_runtime	= 0;
+> 	p->numa_group			= NULL;
+> 
+> ?
+> 
+> This form made me notice a detail: the 0ULL asymmetry looks weird, this integer 
+> literal type specification is entirely superfluous here, we can just write '0'.
+> 
+
+Can do. I'll revise it and should send a new version on Monday. You're
+right that the type is superfluous, this was simply a code movement so I
+kept the structure.
+
+> > +	/* New address space */
+> > +	if (!(clone_flags & CLONE_VM)) {
+> > +		p->numa_preferred_nid = -1;
+> > +		return;
+> > +	}
+> > +
+> > +	/* New thread, use existing preferred nid but stagger scans */
+> > +	if (p->mm) {
+> > +		unsigned int delay;
+> > +
+> > +		delay = min_t(unsigned int, task_scan_max(current),
+> > +			current->numa_scan_period * mm_users * NSEC_PER_MSEC);
+> > +		delay += 2 * TICK_NSEC;
+> > +		p->numa_preferred_nid = current->numa_preferred_nid;
+> > +		p->node_stamp = delay;
+> > +	}
+> 
+> So this is a fork time function, shouldn't p->numa_preferred_nid be equal to 
+> current->numa_preferred_nid already?
+> 
+
+It should but I see no harm in being explicit.
+
+> This is what happens in the !p->mm && CLONE_VM case anyway, right?
+> 
+
+!p->mm should never have changed numa_preferred_nid and it's useless
+information anyway. Kernel threads do not have a user address space to
+sample and migrate.
+
+> So we could leave out the superfluous assignment and make it clear in a comment 
+> that we inherit the parent's ->numa_preferred_nid intentionally.
+> 
+
+I can do that.
+
+> Also, there's a lot of p->mm use, could we add this helper local variable to 
+> simplify the code some more:
+> 
+> 	struct mm_struct *mm = p->mm;
+> 
+> ?
+
+That should be harmless.
+
+Thanks!
+
 -- 
-2.7.0
+Mel Gorman
+SUSE Labs
