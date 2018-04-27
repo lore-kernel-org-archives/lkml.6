@@ -1,72 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758744AbeD0QIB (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 12:08:01 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49040 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1758556AbeD0QH6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 12:07:58 -0400
-Message-ID: <1524845272.11756.51.camel@redhat.com>
-Subject: Re: [PATCH 0/6] IB: make INFINIBAND_ADDR_TRANS configurable
-From: Doug Ledford <dledford@redhat.com>
-To: Greg Thelen <gthelen@google.com>, Bart.VanAssche@wdc.com, hch@lst.de,
-        jgg@ziepe.ca, axboe@fb.com, keith.busch@intel.com, sagi@grimberg.me,
-        sfrench@samba.org, linux-rdma@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-cifs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date: Fri, 27 Apr 2018 12:07:52 -0400
-In-Reply-To: <20180426181935.32977-1-gthelen@google.com>
-References: <20180426181935.32977-1-gthelen@google.com>
-Organization: Red Hat, Inc.
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-ArJuE/oCyHuv67w/co53"
-Mime-Version: 1.0
+        id S1758703AbeD0QI5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 12:08:57 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43290 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1758276AbeD0QIz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 12:08:55 -0400
+Date: Fri, 27 Apr 2018 17:09:14 +0100
+From: Will Deacon <will.deacon@arm.com>
+To: Kim Phillips <kim.phillips@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, jnair@caviumnetworks.com,
+        Robert.Richter@cavium.com, Vadim.Lomovtsev@cavium.com,
+        Jan.Glauber@cavium.com, gklkml16@gmail.com
+Subject: Re: [PATCH v4 2/2] ThunderX2: Add Cavium ThunderX2 SoC UNCORE PMU
+ driver
+Message-ID: <20180427160914.GA5286@arm.com>
+References: <20180425090047.6485-1-ganapatrao.kulkarni@cavium.com>
+ <20180425090047.6485-3-ganapatrao.kulkarni@cavium.com>
+ <20180426170624.bfcba885431d57d0de2a3ddd@arm.com>
+ <20180427093027.ngtuoezyh6mtz26p@lakrids.cambridge.arm.com>
+ <20180427081525.f9dcc756678baf3bb6e6e473@arm.com>
+ <20180427143719.GA5093@arm.com>
+ <20180427104629.2bff4b4b683a93ddf39f8df5@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180427104629.2bff4b4b683a93ddf39f8df5@arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Kim,
 
---=-ArJuE/oCyHuv67w/co53
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+[Ganapat: please don't let this discussion disrupt your PMU driver
+ development. You can safely ignore it for now :)]
 
-On Thu, 2018-04-26 at 11:19 -0700, Greg Thelen wrote:
-> This series allows for CONFIG_INFINIBAND without
-> CONFIG_INFINIBAND_ADDR_TRANS (aka RDMA communication manager).
-> Fuzzing has been finding fair number of CM bugs.
-> So provide an option to disable it in systems which don't need it.
->=20
-> Changes since last posting (https://lkml.org/lkml/2018/4/25/1266):
-> - added ("ib_srp: depend on INFINIBAND_ADDR_TRANS") patch
+On Fri, Apr 27, 2018 at 10:46:29AM -0500, Kim Phillips wrote:
+> On Fri, 27 Apr 2018 15:37:20 +0100
+> Will Deacon <will.deacon@arm.com> wrote:
+> 
+> > On Fri, Apr 27, 2018 at 08:15:25AM -0500, Kim Phillips wrote:
+> > > On Fri, 27 Apr 2018 10:30:27 +0100
+> > > Mark Rutland <mark.rutland@arm.com> wrote:
+> > > > On Thu, Apr 26, 2018 at 05:06:24PM -0500, Kim Phillips wrote:
+> > > > > On Wed, 25 Apr 2018 14:30:47 +0530
+> > > > > Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com> wrote:
+> > > > > 
+> > > > > > +static int thunderx2_uncore_event_init(struct perf_event *event)
+> > > > 
+> > > > > This PMU driver can be made more user-friendly by not just silently
+> > > > > returning an error code such as -EINVAL, but by emitting a useful
+> > > > > message describing the specific error via dmesg.
+> > > > 
+> > > > As has previously been discussed on several occasions, patches which log
+> > > > to dmesg in a pmu::event_init() path at any level above pr_debug() are
+> > > > not acceptable -- dmesg is not intended as a mechanism to inform users
+> > > > of driver-specific constraints.
+> > > 
+> > > I disagree - drivers do it all the time, using dev_err(), dev_warn(), etc.
+> > > 
+> > > > I would appreciate if in future you could qualify your suggestion with
+> > > > the requirement that pr_debug() is used.
+> > > 
+> > > It shouldn't - the driver isn't being debugged, it's in regular use.
+> > 
+> > For anything under drivers/perf/, I'd prefer not to have these prints
+> > and instead see efforts to improve error reporting via the perf system
+> > call interface.
+> 
+> We'd all prefer that, and for all PMU drivers, why should ones under
+> drivers/perf be treated differently?
 
-[ snip explanation of series ]
+Because they're the ones I maintain...
 
-Thanks for taking the time to research this out.  Series applied.
+> As you are already aware, I've personally tried to fix this problem -
+> that has existed since before the introduction of the perf tool (I
+> consider it a syscall-independent enhanced error interface), multiple
+> times, and failed.
 
---=20
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
---=-ArJuE/oCyHuv67w/co53
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+Why is that my problem? Try harder?
 
------BEGIN PGP SIGNATURE-----
+> So until someone comes up with a solution that works for everyone
+> up to and including Linus Torvalds (who hasn't put up a problem
+> pulling PMU drivers emitting things to dmesg so far, by the way), this
+> keep PMU drivers' errors silent preference of yours is unnecessarily
+> impeding people trying to measure system performance on Arm based
+> machines - all other archs' maintainers are fine with PMU drivers using
+> dmesg.
 
-iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAlrjStgACgkQuCajMw5X
-L90xJg//a3hFT2eczO/FPDKXHnrDksGkdNTHpQkUoL9zQOhTbWVG8CwPYtVB7Ozg
-DXDn2k0PgA0YHt40EX6t2WTwwKUcmcebCfVH9erg4AOW6FYfNZShCOQz/W3bvzgl
-19UUE7/7zGFELRmNPu/ZAy6FgZACrKpOP+DS/HkIaLQrJ8MvM9YSyoIhGlvrP8QX
-Qn2eGEKIP7qNYNTVPex51Y45SDqjP9CZFzYOvaUk26E6AHv4iJ2SFfKcin/qBWNG
-Rj2abtevDOsmrNXvskAF92yIIXGTZFX83dDrAS+B2vSJkFeVUfylIyVU4CylXT2a
-BwAj/Xwb2fYKzSy8AVclUy8I83gqKt+6IvqsxVdh0HmqKYvYDPLNgdnRe6PNb0uz
-xTmJHQRyF5rGSYVavqhIHP+5c2DkGZioOSlnpqD08PEqHaNnqLvWghInpKSl9qB8
-cMp2o2oVmMAEgs3RfCuGTAtiYW9uRAIHaaaoGUJEXXqNpGVXJbXmw21rUhVzxPQg
-s15x7dQfsfQKHrrhtr390WN8GJJZw/c26KxieJF8O3NNIlgXWmxDGoFeAvgFusQ/
-OBB2F0pfrE1faoXJ56ntqzSnnc+KFXfNluNrxYrFcd4rZqYCVyrvr9WgquvPb/EK
-whQoEIINKvsq+btKVZIJgj2eeak4Kau9k7+XdWURYZFQu8Uavwk=
-=MJmw
------END PGP SIGNATURE-----
+Good for them, although I'm pretty sure that at least the x86 folks are
+against this crap too.
 
---=-ArJuE/oCyHuv67w/co53--
+> > Anyway, I think this driver has bigger problems that need addressing.
+> 
+> To me it represents yet another PMU driver submission - as the years go
+> by - that is lacking in the user messaging area.  Which reminds me, can
+> you take another look at applying this?:
+
+As I said before, I'm not going to take anything that logs above pr_debug
+for things that are directly triggerable from userspace. Spin a version
+using pr_debug and I'll queue it.
+
+Have a good weekend,
+
+Will
