@@ -1,70 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758589AbeD0P6S (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 11:58:18 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43110 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1758236AbeD0P6R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 11:58:17 -0400
-Subject: Re: [PATCH v2 08/17] kvm: arm/arm64: Prepare for VM specific stage2
- translations
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-To: Julien Grall <julien.grall@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc: ard.biesheuvel@linaro.org, kvm@vger.kernel.org, marc.zyngier@arm.com,
-        catalin.marinas@arm.com, punit.agrawal@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, kristina.martsenko@arm.com,
-        pbonzini@redhat.com, kvmarm@lists.cs.columbia.edu
-References: <1522156531-28348-1-git-send-email-suzuki.poulose@arm.com>
- <1522156531-28348-9-git-send-email-suzuki.poulose@arm.com>
- <7f67fca2-b936-25d9-0fe8-aece1fadafdc@arm.com>
- <59fc0fe3-2c7e-b5ae-702b-0c21f0051c6b@arm.com>
-Message-ID: <c12f7bb9-2a9f-ae30-4d69-f3e229e04f7c@arm.com>
-Date: Fri, 27 Apr 2018 16:58:13 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <59fc0fe3-2c7e-b5ae-702b-0c21f0051c6b@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1758611AbeD0P6X (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 11:58:23 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:46453 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758236AbeD0P6T (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 11:58:19 -0400
+X-Google-Smtp-Source: AB8JxZpiIN0khhMSZmBHAPnbZoCInE8RkBhyyk5Zac93VSCYsQF8jOXj/IRMYG26l2MaOBYDBh/+Vw==
+From: Eric Dumazet <edumazet@google.com>
+To: "David S . Miller" <davem@davemloft.net>
+Cc: netdev <netdev@vger.kernel.org>, Andy Lutomirski <luto@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Ka-Cheong Poon <ka-cheong.poon@oracle.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>
+Subject: [PATCH v4 net-next 0/2] tcp: mmap: rework zerocopy receive
+Date: Fri, 27 Apr 2018 08:58:07 -0700
+Message-Id: <20180427155809.79094-1-edumazet@google.com>
+X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27/04/18 16:22, Suzuki K Poulose wrote:
-> On 26/04/18 14:35, Julien Grall wrote:
->> Hi Suzuki,
->>
->> On 27/03/18 14:15, Suzuki K Poulose wrote:
->>> Right now the stage2 page table for a VM is hard coded, assuming
->>> an IPA of 40bits. As we are about to add support for per VM IPA,
->>> prepare the stage2 page table helpers to accept the kvm instance
->>> to make the right decision for the VM. No functional changes.
-> 
-> 
->>> diff --git a/arch/arm/include/asm/kvm_arm.h b/arch/arm/include/asm/kvm_arm.h
->>> index 3ab8b37..c3f1f9b 100644
->>> --- a/arch/arm/include/asm/kvm_arm.h
->>> +++ b/arch/arm/include/asm/kvm_arm.h
->>> @@ -133,8 +133,7 @@
->>>    * space.
->>>    */
->>>   #define KVM_PHYS_SHIFT    (40)
->>> -#define KVM_PHYS_SIZE    (_AC(1, ULL) << KVM_PHYS_SHIFT)
->>> -#define KVM_PHYS_MASK    (KVM_PHYS_SIZE - _AC(1, ULL))
->>
->> I assume you are moving them to kvm_mmu.h in order to match the arm64 side, right? If so, would not it make sense to make KVM_PHYS_SHIFT with it?
->>
->> [...]
-> 
-> I am moving all the macros that depend on the "kvm" instance to kvm_mmu.h.
-> I will see if I can move the KVM_PHYS_SHIFT without much trouble.
+syzbot reported a lockdep issue caused by tcp mmap() support.
 
-It looks like we can't do that easily. KVM_PHYS_SHIFT is used for KVM_T0SZ
-on arm, even though that can be simply hard coded to avoid the dependency on
-KVM_PHYS_SHIFT (like we did for arm64, T0SZ is defined to 24). I would leave it
-as it is to avoid the noise.
+I implemented Andy Lutomirski nice suggestions to resolve the
+issue and increase scalability as well.
 
-Cheers
-Suzuki
+First patch is adding a new getsockopt() operation and changes mmap()
+behavior.
+
+Second patch changes tcp_mmap reference program.
+
+v4: tcp mmap() support depends on CONFIG_MMU, as kbuild bot told us.
+
+v3: change TCP_ZEROCOPY_RECEIVE to be a getsockopt() option
+    instead of setsockopt(), feedback from Ka-Cheon Poon
+
+v2: Added a missing page align of zc->length in tcp_zerocopy_receive()
+    Properly clear zc->recv_skip_hint in case user request was completed.
+
+Eric Dumazet (2):
+  tcp: add TCP_ZEROCOPY_RECEIVE support for zerocopy receive
+  selftests: net: tcp_mmap must use TCP_ZEROCOPY_RECEIVE
+
+ include/uapi/linux/tcp.h               |   8 +
+ net/ipv4/af_inet.c                     |   2 +
+ net/ipv4/tcp.c                         | 196 +++++++++++++------------
+ net/ipv6/af_inet6.c                    |   2 +
+ tools/testing/selftests/net/tcp_mmap.c |  64 ++++----
+ 5 files changed, 154 insertions(+), 118 deletions(-)
+
+-- 
+2.17.0.441.gb46fe60e1d-goog
