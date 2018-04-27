@@ -1,77 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934626AbeD0Opj (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 10:45:39 -0400
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:39233 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934495AbeD0Opf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 10:45:35 -0400
-X-Google-Smtp-Source: AB8JxZpT/0EihCPosGAQFqjkLrHsC3ZTUSSmvWZTXeCbBGAr4N1sxIGiZkk2l3DCDtX68MR1DKDtIw==
-Date: Fri, 27 Apr 2018 09:45:33 -0500
-From: Rob Herring <robh@kernel.org>
-To: jan.tuerk@emtrion.com
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 5/7] dt-bindings: arm: Document emtrion emCON-MX6
- bindings
-Message-ID: <20180427144533.5amxarufzc2borzh@rob-hp-laptop>
-References: <20180420125108.14197-1-jan.tuerk@emtrion.com>
- <20180427132445.3458-1-jan.tuerk@emtrion.com>
- <20180427132445.3458-6-jan.tuerk@emtrion.com>
+        id S934492AbeD0Orx (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 10:47:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38412 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934021AbeD0Orv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 10:47:51 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41757218D9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Fri, 27 Apr 2018 10:47:47 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Joel Fernandes <joelaf@google.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        fweisbec <fweisbec@gmail.com>, Randy Dunlap <rdunlap@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        kbuild test robot <fengguang.wu@intel.com>,
+        baohong liu <baohong.liu@intel.com>,
+        vedang patel <vedang.patel@intel.com>, kernel-team@android.com
+Subject: Re: [PATCH RFC] tracepoint: Introduce tracepoint callbacks
+ executing with preempt on
+Message-ID: <20180427104747.2d965925@gandalf.local.home>
+In-Reply-To: <1169911546.5820.1524839189395.JavaMail.zimbra@efficios.com>
+References: <20180427042656.190746-1-joelaf@google.com>
+        <1169911546.5820.1524839189395.JavaMail.zimbra@efficios.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180427132445.3458-6-jan.tuerk@emtrion.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 27, 2018 at 03:24:40PM +0200, jan.tuerk@emtrion.com wrote:
-> From: Jan Tuerk <jan.tuerk@emtrion.com>
-> 
-> Document the compatible strings for emtrion emCON-MX6 SoM's.
-> 
-> Signed-off-by: Jan Tuerk <jan.tuerk@emtrion.com>
-> ---
-> For v4:
->  - separate patch for the emtrion emCON-MX6 DT-bindings
-> 
->  Documentation/devicetree/bindings/arm/emtrion.txt | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/emtrion.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/emtrion.txt b/Documentation/devicetree/bindings/arm/emtrion.txt
-> new file mode 100644
-> index 000000000000..3ff6c6c2034d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/emtrion.txt
-> @@ -0,0 +1,13 @@
-> +Emtrion Devicetree Bindings
-> +===========================
-> +
-> +emCON Series:
-> +-------------
-> +
-> +Required root node properties
-> +	- compatible:
-> +	- "emtrion,emcon-mx6", "fsl,imx6q", "fsl,imx6dl"; : emCON-MX6 Generic SoM
+On Fri, 27 Apr 2018 10:26:29 -0400 (EDT)
+Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
 
-You can't have both a 6Q and 6DL present and I don't think 6Q is a 
-perfect superset of 6DL.
+> The general approach and the implementation look fine, except for
+> one small detail: I would be tempted to explicitly disable preemption
+> around the call to the tracepoint callback for the rcuidle variant,
+> unless we plan to audit every tracer right away to remove any assumption
+> that preemption is disabled in the callback implementation.
 
-> +	- "emtrion,emcon-mx6", "fsl,imx6q"; 		: emCON-MX6D or emCON-MX6Q SoM
-> +	- "emtrion,emcon-mx6-avari", "fsl,imx6q";	: emCON-MX6D or emCON-MX6Q SoM on Avari Base
-> +	- "emtrion,emcon-mx6", "fsl,imx6dl"; 		: emCON-MX6S or emCON-MX6DL SoM
-> +	- "emtrion,emcon-mx6-avari", "fsl,imx6dl";	: emCON-MX6S or emCON-MX6DL SoM on Avari Base
-> -- 
-> 2.11.0
-> 
+I'm thinking that we do that audit. There shouldn't be many instances
+of it. I like the idea that a tracepoint callback gets called with
+preemption enabled.
+
+-- Steve
