@@ -1,105 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757430AbeD0FtN (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 01:49:13 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:43609 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751458AbeD0FtL (ORCPT
+        id S1757272AbeD0GFV (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 02:05:21 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:45116 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751348AbeD0GFT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 01:49:11 -0400
-X-Google-Smtp-Source: AB8JxZpjECgmt36O2FlLvF9EmM0pczGqgLPiXycvwD4/k1QYDmGAcspLS7/jekJW34i3G8YMKDCsaQE3zzaZH7XBn90=
+        Fri, 27 Apr 2018 02:05:19 -0400
+X-Google-Smtp-Source: AB8JxZpyU2IBmroYvyZ7tUU9TlEvUGDQWET4hvhV54GniaH5WMRaiyweO7XTTpC9ljCJHbnfGzkESN9ka6xnd1Q9uO8=
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1804250006120.51102@chino.kir.corp.google.com>
-References: <20180425044326.GA21504@jordon-HP-15-Notebook-PC> <alpine.DEB.2.21.1804250006120.51102@chino.kir.corp.google.com>
-From: Souptick Joarder <jrdr.linux@gmail.com>
-Date: Fri, 27 Apr 2018 11:19:09 +0530
-Message-ID: <CAFqt6zb0cHJLeqaOUvfD38xbA5QOE7yq5Fyd27kCwbXKBGs54A@mail.gmail.com>
-Subject: Re: [PATCH v2] mm: huge_memory: Change return type to vm_fault_t
-To: David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, zi.yan@cs.rutgers.edu,
-        Dan Williams <dan.j.williams@intel.com>,
-        kirill.shutemov@linux.intel.com,
-        Ross Zwisler <ross.zwisler@linux.intel.com>, n-horiguchi@ah.jp.nec.com,
-        Michal Hocko <mhocko@suse.com>, shli@fb.com,
-        linux-kernel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>
+In-Reply-To: <20180416150507.2wm4s7opgr242v6a@rob-hp-laptop>
+References: <20180411015948.19562-1-andrew.smirnov@gmail.com>
+ <20180411015948.19562-2-andrew.smirnov@gmail.com> <20180416150507.2wm4s7opgr242v6a@rob-hp-laptop>
+From: Andrey Smirnov <andrew.smirnov@gmail.com>
+Date: Thu, 26 Apr 2018 23:05:18 -0700
+Message-ID: <CAHQ1cqFep9Xs3_hsz1EiDwu8mcDDzbFs4H-kLnKkj=iokX=fCg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: nvmem: Add binding for RAVE SP EEPROM driver
+To: Rob Herring <robh@kernel.org>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Chris Healy <cphealy@gmail.com>, Lucas Stach <l.stach@pengutronix.de>,
+        Aleksander Morgado <aleksander@aleksander.es>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 25, 2018 at 12:39 PM, David Rientjes <rientjes@google.com> wrote:
-> On Wed, 25 Apr 2018, Souptick Joarder wrote:
->
->> Use new return type vm_fault_t for fault handler. For
->> now, this is just documenting that the function returns
->> a VM_FAULT value rather than an errno. Once all instances
->> are converted, vm_fault_t will become a distinct type.
+On Mon, Apr 16, 2018 at 8:05 AM, Rob Herring <robh@kernel.org> wrote:
+> On Tue, Apr 10, 2018 at 06:59:47PM -0700, Andrey Smirnov wrote:
+>> Add Device Tree bindings for RAVE SP EEPROM driver - an MFD cell of
+>> parent RAVE SP driver (documented in
+>> Documentation/devicetree/bindings/mfd/zii,rave-sp.txt).
 >>
->> Commit 1c8f422059ae ("mm: change return type to vm_fault_t")
->>
->> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
->> Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
+>> Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+>> Cc: linux-kernel@vger.kernel.org
+>> Cc: Chris Healy <cphealy@gmail.com>
+>> Cc: Lucas Stach <l.stach@pengutronix.de>
+>> Cc: Aleksander Morgado <aleksander@aleksander.es>
+>> Cc: Rob Herring <robh+dt@kernel.org>
+>> Cc: Mark Rutland <mark.rutland@arm.com>
+>> Cc: devicetree@vger.kernel.org
+>> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 >> ---
->> v2: Updated the change log
+>>  .../bindings/nvmem/zii,rave-sp-eeprom.txt          | 29 ++++++++++++++++++++++
+>>  1 file changed, 29 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.txt
 >>
->>  include/linux/huge_mm.h | 5 +++--
->>  mm/huge_memory.c        | 4 ++--
->>  2 files changed, 5 insertions(+), 4 deletions(-)
->>
->> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
->> index a8a1262..d3bbf6b 100644
->> --- a/include/linux/huge_mm.h
->> +++ b/include/linux/huge_mm.h
->> @@ -3,6 +3,7 @@
->>  #define _LINUX_HUGE_MM_H
->>
->>  #include <linux/sched/coredump.h>
->> +#include <linux/mm_types.h>
->>
->>  #include <linux/fs.h> /* only for vma_is_dax() */
->>
->> @@ -46,9 +47,9 @@ extern bool move_huge_pmd(struct vm_area_struct *vma, unsigned long old_addr,
->>  extern int change_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
->>                       unsigned long addr, pgprot_t newprot,
->>                       int prot_numa);
->> -int vmf_insert_pfn_pmd(struct vm_area_struct *vma, unsigned long addr,
->> +vm_fault_t vmf_insert_pfn_pmd(struct vm_area_struct *vma, unsigned long addr,
->>                       pmd_t *pmd, pfn_t pfn, bool write);
->> -int vmf_insert_pfn_pud(struct vm_area_struct *vma, unsigned long addr,
->> +vm_fault_t vmf_insert_pfn_pud(struct vm_area_struct *vma, unsigned long addr,
->>                       pud_t *pud, pfn_t pfn, bool write);
->>  enum transparent_hugepage_flag {
->>       TRANSPARENT_HUGEPAGE_FLAG,
->> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->> index 87ab9b8..1fe4705 100644
->> --- a/mm/huge_memory.c
->> +++ b/mm/huge_memory.c
->> @@ -755,7 +755,7 @@ static void insert_pfn_pmd(struct vm_area_struct *vma, unsigned long addr,
->>       spin_unlock(ptl);
->>  }
->>
->> -int vmf_insert_pfn_pmd(struct vm_area_struct *vma, unsigned long addr,
->> +vm_fault_t vmf_insert_pfn_pmd(struct vm_area_struct *vma, unsigned long addr,
->>                       pmd_t *pmd, pfn_t pfn, bool write)
->>  {
->>       pgprot_t pgprot = vma->vm_page_prot;
->> @@ -815,7 +815,7 @@ static void insert_pfn_pud(struct vm_area_struct *vma, unsigned long addr,
->>       spin_unlock(ptl);
->>  }
->>
->> -int vmf_insert_pfn_pud(struct vm_area_struct *vma, unsigned long addr,
->> +vm_fault_t vmf_insert_pfn_pud(struct vm_area_struct *vma, unsigned long addr,
->>                       pud_t *pud, pfn_t pfn, bool write)
->>  {
->>       pgprot_t pgprot = vma->vm_page_prot;
+>> diff --git a/Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.txt b/Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.txt
+>> new file mode 100644
+>> index 000000000000..a4e838c30b67
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.txt
+>> @@ -0,0 +1,29 @@
+>> +Zodiac Inflight Innovations RAVE EEPROM Bindings
+>> +
+>> +RAVE SP EEPROM device is a "MFD cell" device exposing physical EEPROM
+>> +attached to RAVE Supervisory Processor. It is expected that its Device
+>> +Tree node is specified as a child of the node corresponding to the
+>> +parent RAVE SP device (as documented in
+>> +Documentation/devicetree/bindings/mfd/zii,rave-sp.txt)
+>> +
+>> +Required properties:
+>> +
+>> +- compatible: Should be "zii,rave-sp-eeprom"
 >
-> This isn't very useful unless functions that return the return value of
-> these functions, __dev_dax_{pmd,pud}_fault(), recast it as an int.
-> __dev_dax_pte_fault() would do the same thing, so it should logically also
-> be vm_fault_t, so then you would convert dev_dax_huge_fault() and
-> dev_dax_fault() as well in the same patch.
+> Need to state somewhere this follows the bindings/nvmem/nvmem.txt
+> binding.
+>
 
-yes, the return value of _dev_dax_{pmd,pud,pte}_fault(), dev_dax_huge_fault(),
-dev_dax_fault() is already changed in a separate patch which was reviewed
-by Matthew and Ross. Other patch was posted in linux-nvdimm mailing list.
+OK, will fix in v3.
+
+>> +
+>> +Example:
+>> +
+>> +     rave-sp {
+>> +             compatible = "zii,rave-sp-rdu1";
+>> +             current-speed = <38400>;
+>> +
+>> +             main-eeprom {
+>
+> eeprom@a4
+
+Any chance I can keep it as is? I am asking because this node name is
+used by the driver as device name which is how it also appears in
+sysfs. Reason for that being that "main-eeprom" and "dds-eeprom"
+(second EEPROM in the system) are easier to rembmer and tell apart
+than "eeprom@a4" and "eeprom@a5". Granted, I can divorce naming scheme
+in the driver from device node name, but then I'd have to keep a
+"address -> deivce name" lookup table which I was hoping to avoid.
+
+>
+>> +                     compatible = "zii,rave-sp-eeprom";
+>> +                     reg = <0xA4 0x4000>;
+>
+> lowercase hex please.
+
+OK, will do in v3.
+
+Thanks,
+Andrey Smirnov
