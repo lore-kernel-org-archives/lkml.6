@@ -1,138 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757495AbeD0HNR convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 03:13:17 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:42394 "EHLO hermes.aosc.io"
+        id S1757493AbeD0HSr (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 03:18:47 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33389 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753079AbeD0HNP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 03:13:15 -0400
-Date: Fri, 27 Apr 2018 15:12:42 +0800
-In-Reply-To: <03cc2e8c-4a35-3fb4-b408-fd8d4ba3e407@arm.com>
-References: <20180426140728.43155-1-icenowy@aosc.io> <20180426140728.43155-4-icenowy@aosc.io> <03cc2e8c-4a35-3fb4-b408-fd8d4ba3e407@arm.com>
+        id S1753079AbeD0HSq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 03:18:46 -0400
+Date: Fri, 27 Apr 2018 09:18:43 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>, linux-mm@kvack.org,
+        cl@linux.com, Jan Kara <jack@suse.cz>, matthew@wil.cx, x86@kernel.org,
+        luto@amacapital.net, martin.petersen@oracle.com, jthumshirn@suse.de,
+        broonie@kernel.org, linux-spi@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "lsf-pc@lists.linux-foundation.org"
+        <lsf-pc@lists.linux-foundation.org>
+Subject: Re: [LSF/MM TOPIC NOTES] x86 ZONE_DMA love
+Message-ID: <20180427071843.GB17484@dhcp22.suse.cz>
+References: <20180426215406.GB27853@wotan.suse.de>
+ <20180427053556.GB11339@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [linux-sunxi] [PATCH 3/3] arm64: allwinner: h6: enable MMC0/2 on Pine H64
-To: Andre Przywara <andre.przywara@arm.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>
-CC: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-From: Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <83EDF187-5EB2-4FEB-99BC-9D5B728D3A45@aosc.io>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180427053556.GB11339@infradead.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu 26-04-18 22:35:56, Christoph Hellwig wrote:
+> On Thu, Apr 26, 2018 at 09:54:06PM +0000, Luis R. Rodriguez wrote:
+> > In practice if you don't have a floppy device on x86, you don't need ZONE_DMA,
+> 
+> I call BS on that, and you actually explain later why it it BS due
+> to some drivers using it more explicitly.  But even more importantly
+> we have plenty driver using it through dma_alloc_* and a small DMA
+> mask, and they are in use - we actually had a 4.16 regression due to
+> them.
 
-
-于 2018年4月27日 GMT+08:00 上午12:46:26, Andre Przywara <andre.przywara@arm.com> 写到:
->Hi,
->
->On 26/04/18 15:07, Icenowy Zheng wrote:
->> The Pine H64 board have a MicroSD slot connected to MMC0 controller
->of
->> the H6 SoC and a eMMC slot connected to MMC2.
->> 
->> Enable them in the device tree.
->> 
->> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->> ---
->>  .../boot/dts/allwinner/sun50i-h6-pine-h64.dts      | 32
->++++++++++++++++++++++
->>  1 file changed, 32 insertions(+)
->> 
->> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
->b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
->> index d36de5eb81f3..78b1cd54687c 100644
->> --- a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
->> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
->> @@ -20,6 +20,38 @@
->>  	chosen {
->>  		stdout-path = "serial0:115200n8";
->>  	};
->> +
->> +	reg_vcc3v3: vcc3v3 {
->> +		compatible = "regulator-fixed";
->> +		regulator-name = "vcc3v3";
->> +		regulator-min-microvolt = <3300000>;
->> +		regulator-max-microvolt = <3300000>;
->> +	};
->> +
->> +	reg_vcc1v8: vcc1v8 {
->> +		compatible = "regulator-fixed";
->> +		regulator-name = "vcc1v8";
->> +		regulator-min-microvolt = <1800000>;
->> +		regulator-max-microvolt = <1800000>;
->> +	};
->> +};
->> +
->> +&mmc0 {
->> +	pinctrl-names = "default";
->> +	pinctrl-0 = <&mmc0_pins>;
->> +	vmmc-supply = <&reg_vcc3v3>;
->
->So this is actually CLDO1 on the AXP, correct?
-
-I remember it's coupled between two LDOs, to provide enough power.
-
->
->
->> +	cd-gpios = <&pio 5 6 GPIO_ACTIVE_LOW>;
->> +	status = "okay";
->> +};
->> +
->> +&mmc2 {
->> +	pinctrl-names = "default";
->> +	pinctrl-0 = <&mmc2_pins>;
->> +	vmmc-supply = <&reg_vcc3v3>;
->> +	vqmmc-supply = <&reg_vcc1v8>;
->
->And this is BLDO2?
-
-Yes.
-
->
->I am just asking because I want to avoid running into the same problem
->as with the A64 before: that future DTs become incompatible with older
->kernels, because we change the power supply to point to the AXP
->regulators, which this kernel does not support yet.
-
-The answer is just not to keep this compatibility, as it's not
-supported option to update DT without updating kernel.
-
-P.S. I think the DT will update twice on the kernel side, the
-first time keep reg_vcc3v3 (as it's coupled) but use real
-regulator for reg_vcc1v8, the second time use the real
-coupled regulator for reg_vcc3v3.
-
->
->It looks like there are more users of those power rails, so we could
->keep those supplies connected to these fixed regulators here, even with
->AXP-805 support in the kernel.
-
-It's not a good choice.
-
->
->Or we keep this back until we get proper AXP support in the kernel? I
->guess it's quite close to the existing PMICs, so it might be more a
->copy&paste exercise to support the AXP-805?
-
-It's not a reason to keep it back.
-
->
->But apart from this this looks correct to me.
->
->Cheers,
->Andre.
->
->> +	non-removable;
->> +	cap-mmc-hw-reset;
->> +	status = "okay";
->>  };
->>  
->>  &uart0 {
->> 
+Well, but do we need a zone for that purpose? The idea was to actually
+replace the zone by a CMA pool (at least on x86). With the current
+implementation of the CMA we would move the range [0-16M] pfn range into 
+zone_movable so it can be used and we would get rid of all of the
+overhead each zone brings (a bit in page flags, kmalloc caches and who
+knows what else)
+-- 
+Michal Hocko
+SUSE Labs
