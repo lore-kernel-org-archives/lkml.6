@@ -1,49 +1,121 @@
-Date: Mon, 30 Apr 2018 03:59:57 -0700
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>,
-	thomas.petazzoni@free-electrons.com,
-	DRI Development <dri-devel@lists.freedesktop.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Daniel Thompson <daniel.thompson@linaro.org>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Daniel Vetter <daniel.vetter@intel.com>
-Subject: Re: [PATCH 4/6] staging/fbtft: Stop using BL_CORE_DRIVER1
-Message-ID: <20180430105957.GA15339@kroah.com>
-References: <20180425174253.4616-1-daniel.vetter@ffwll.ch>
- <20180425174253.4616-4-daniel.vetter@ffwll.ch>
- <20180430095415.GB5147@dell>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180430095415.GB5147@dell>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Return-Path: <matthias.bgg@kernel.org>
+X-Google-Smtp-Source: AB8JxZoDDRgRP1V18CXNv230foOjj8hU6VjtOU/sEeqxNjtxKY/NjkOaewcDc5t9hQIYL0p2rXt0
+ARC-Seal: i=1; a=rsa-sha256; t=1524821061; cv=none;
+        d=google.com; s=arc-20160816;
+        b=sj/fIpgnPVQ7Nms3rLqI/z4brKENFKSwIiEe2tKCWrYVfhju/JdU7u/IN6lsFt+tkq
+         RtARgZKdtY3mlW8F10+vfDchNTuRJyTIRugmjx3ECeEqTpRcUK2uh3S+fbjq9e5vrBTW
+         nuqShOrMj42B4EyZniKwRmeWtdoHsGwaph69HWCsWq4zchEOXDN4IwpgXD920Q5hrFzJ
+         IJ9kJgKSKIIcM1Ep7JKd611oB6NQxd6LxmHqX8FoZwyDOCwfTV9Awfy8fgBbb0WsvCKY
+         JyFVdeO7JLLZ9ujmSdJkJkjjEPy9Xq+CURh90FNZbmvG9UnzmcZN5QYI2YTNlXuNmsFU
+         bggA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:dmarc-filter
+         :arc-authentication-results;
+        bh=5a5O0+Lkd56EHQ35aJhKdgawOA58XKyiJ2GGnthWoak=;
+        b=ntvt68bZFyNvSt5P1u4vo1A3jeN63qgIVopYqQzrTi+15dAJtgfx1LdNOw7edNuSHB
+         /ISK5YxJDCAwlqJ/hCafKxjGqde4o1S1Voh3cSlj9QvHoDrPmFFZ3ZRf9R0uu/npbVvo
+         gHLeM0pSp0/0N6Znz7oo9VmiBTSHQGj8HklsJ8A5/E5TMboxqHHoqBpqKLm4KpgFElfA
+         Udjjw0rjGSqCZtJ3HuMWP6Kk53YK1lu06giqa202Ls9OQRar4bsytdCgK0X0qGo48ufG
+         1yvAHJcvTP2OZGmgjgroAaRHIFSJA4WwGGd2RqIo3NEiToSgxFid5zdpV44Utr/HHIPq
+         V+pg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: best guess record for domain of matthias.bgg@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=matthias.bgg@kernel.org
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: best guess record for domain of matthias.bgg@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=matthias.bgg@kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 901DB2185C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=matthias.bgg@kernel.org
+From: matthias.bgg@kernel.org
+To: ulrich.hecht+renesas@gmail.com,
+	laurent.pinchart@ideasonboard.com,
+	ck.hu@mediatek.com,
+	p.zabel@pengutronix.de,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	lee.jones@linaro.org
+Cc: davem@davemloft.net,
+	gregkh@linuxfoundation.org,
+	mchehab@kernel.org,
+	rdunlap@infradead.org,
+	sean.wang@mediatek.com,
+	linux-clk@vger.kernel.org,
+	linux@armlinux.org.uk,
+	matthias.bgg@gmail.com,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Matthias Brugger <mbrugger@suse.com>
+Subject: [v3 00/10] arm/arm64: mediatek: Fix mmsys device probing
+Date: Fri, 27 Apr 2018 11:23:52 +0200
+Message-Id: <cover.1524820923.git.mbrugger@suse.com>
+X-Mailer: git-send-email 2.16.3
+X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1598890769311881802?=
+X-GMAIL-MSGID: =?utf-8?q?1598890769311881802?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Apr 30, 2018 at 10:54:15AM +0100, Lee Jones wrote:
-> Greg, Thomas,
-> 
-> On Wed, 25 Apr 2018, Daniel Vetter wrote:
-> > Leaking driver internal tracking into the already massively confusing
-> > backlight power tracking is really confusing.
-> > 
-> > Luckily we have already a drvdata structure, so fixing this is really
-> > easy.
-> > 
-> > Cc: Lee Jones <lee.jones@linaro.org>
-> > Cc: Daniel Thompson <daniel.thompson@linaro.org>
-> > Cc: Jingoo Han <jingoohan1@gmail.com>
-> > Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-> > Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
-> > Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-> > ---
-> >  drivers/staging/fbtft/fbtft-core.c | 4 ++--
-> >  drivers/staging/fbtft/fbtft.h      | 1 +
-> >  2 files changed, 3 insertions(+), 2 deletions(-)
-> 
-> Do you want a pull-request for this patch or can I just take it?
+From: Matthias Brugger <mbrugger@suse.com>
 
-Please take it if you need to take the whole series.
+Changes since v2:
+- fix kconfig typo (shame on me)
+- delete __initconst from mm_clocks as converted to a platform driver
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Changes since v1:
+- add binding documentation
+- ddp: use regmap_update_bits
+- ddp: ignore EPROBE_DEFER on clock probing
+- mfd: delete mmsys_private
+- add Reviewed-by and Acked-by tags
+
+---
+
+MMSYS in Mediatek SoCs has some registers to control clock gates (which is 
+used in the clk driver) and some registers to set the routing and enable
+the differnet blocks of the display subsystem.
+
+Up to now both drivers, clock and drm are probed with the same device tree
+compatible. But only the first driver get probed, which in effect breaks
+graphics on mt8173 and mt2701.
+
+This patch set introduces a new mfd device, which binds against the mmsys
+compatible and takes care of probing the needed devices. It was tested on the
+bananapi-r2 and the Acer R13 Chromebook.
+
+
+Matthias Brugger (10):
+  dt-bindings: mediatek: mmsys: Add support for mfd
+  drm/mediatek: Use regmap for register access
+  mfd: mtk-mmsys: Add mmsys driver
+  drm/mediatek: mt2701: switch to mfd probing.
+  clk: mediatek: mt2701-mm: switch to mfd device
+  mfd: mtk-mmsys: Add mt8173 nodes
+  drm/mediatek: Add mfd support for mt8173
+  clk: mediatek: mt8173-mm: switch to mfd device
+  drm: mediatek: Omit warning on probe defers
+  MAINTAINERS: update Mediatek Soc entry
+
+ .../bindings/arm/mediatek/mediatek,mmsys.txt       |  2 -
+ .../bindings/display/mediatek/mediatek,disp.txt    |  2 +-
+ .../devicetree/bindings/mfd/mediatek,mmsys.txt     | 27 +++++++
+ MAINTAINERS                                        |  2 +
+ drivers/clk/mediatek/clk-mt2701-mm.c               | 10 +--
+ drivers/clk/mediatek/clk-mt8173.c                  | 19 ++++-
+ drivers/gpu/drm/mediatek/mtk_drm_crtc.c            |  4 +-
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.c             | 41 ++++------
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.h             |  4 +-
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c             | 33 ++++----
+ drivers/gpu/drm/mediatek/mtk_drm_drv.h             |  2 +-
+ drivers/mfd/Kconfig                                |  9 +++
+ drivers/mfd/Makefile                               |  2 +
+ drivers/mfd/mtk-mmsys.c                            | 93 ++++++++++++++++++++++
+ 14 files changed, 190 insertions(+), 60 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt
+ create mode 100644 drivers/mfd/mtk-mmsys.c
+
+-- 
+2.16.3
