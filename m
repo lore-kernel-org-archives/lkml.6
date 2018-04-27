@@ -1,51 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758185AbeD0SZl (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 14:25:41 -0400
-Received: from emh07.mail.saunalahti.fi ([62.142.5.117]:58972 "EHLO
-        emh07.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757272AbeD0SZj (ORCPT
+        id S1758291AbeD0SZr (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 14:25:47 -0400
+Received: from mail-pg0-f49.google.com ([74.125.83.49]:33347 "EHLO
+        mail-pg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757272AbeD0SZm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 14:25:39 -0400
-Date: Fri, 27 Apr 2018 21:25:37 +0300
-From: Aaro Koskinen <aaro.koskinen@iki.fi>
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] video: fbdev: omap2: remove rfbi
-Message-ID: <20180427182536.skryxiih5lekqoze@darkstar.musicnaut.iki.fi>
-References: <CGME20180427150914eucas1p14dd8df4a215014ddac990b0ccdb1805c@eucas1p1.samsung.com>
- <2238944.jilJcacc6d@amdc3058>
+        Fri, 27 Apr 2018 14:25:42 -0400
+X-Google-Smtp-Source: AB8JxZpRgV9CMh+WgxUyLB4G5MAsKplQeAE7f1KzHfQ4bUQJ5hB/cc9TV/uILKHAIY/82FuRhFFPMqzJw6RnX5Lredo=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2238944.jilJcacc6d@amdc3058>
-User-Agent: NeoMutt/20170113 (1.7.2)
+From: Steve French <smfrench@gmail.com>
+Date: Fri, 27 Apr 2018 11:25:20 -0700
+Message-ID: <CAH2r5mtRF-yS6stThuVzem+WFmxDqpGLwFvUPviYcmh9dXXwkA@mail.gmail.com>
+Subject: copy_file_range and user space tools to do copy fastest
+To: linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Cc: samba-technical <samba-technical@lists.samba.org>,
+        CIFS <linux-cifs@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Are there any user space tools (other than our test tools and xfs_io
+etc.) that support copy_file_range?  Looks like at least cp and rsync
+and dd don't.  That syscall which now has been around a couple years,
+and was reminded about at the LSF/MM summit a few days ago, presumably
+is the 'best' way to copy a file fast since it tries all the
+mechanisms (reflink etc.) in order.
 
-On Fri, Apr 27, 2018 at 05:09:14PM +0200, Bartlomiej Zolnierkiewicz wrote:
-> omapfb equivalent of drm's commit aa61321d4c08 ("drm/omap: remove rfbi"):
-> 
-> The RFBI driver has not worked nor compiled for many years. There are
+Since copy_file_range syscall can be 100x or more faster for network
+file systems than the alternative, was surprised when I noticed that
+cp and rsync didn't support it.  It doesn't look like rsync even
+supports reflink either(although presumably if you call
+copy_file_range you don't have to worry about that), and reads/writes
+are 8K. See copy_file() in rsync/util.c
 
-What is the build failure you are seeing?
+In the cp command it looks like it can call the FICLONE IOCTL (see
+clone_file() in coreutils/src/copy.c) but doesn't call the expected
+"copy_file_range" syscall.
 
-When removing the "BROKEN", it seems to compile fine, only some sparse
-warnings:
+In the dd command it doesn't call either - see dd_copy in corutils/src/dd.c
 
-  CHECK   /home/aaro/git/devel/linux/drivers/video/fbdev/omap2/omapfb/dss/rfbi.c
-/home/aaro/git/devel/linux/drivers/video/fbdev/omap2/omapfb/dss/rfbi.c:519:21: warning: expression using sizeof(void)
-/home/aaro/git/devel/linux/drivers/video/fbdev/omap2/omapfb/dss/rfbi.c:519:21: warning: expression using sizeof(void)
-/home/aaro/git/devel/linux/drivers/video/fbdev/omap2/omapfb/dss/rfbi.c:520:25: warning: expression using sizeof(void)
-/home/aaro/git/devel/linux/drivers/video/fbdev/omap2/omapfb/dss/rfbi.c:520:25: warning: expression using sizeof(void)
-/home/aaro/git/devel/linux/drivers/video/fbdev/omap2/omapfb/dss/rfbi.c:1018:16: error: return expression in void function
-  CC [M]  drivers/video/fbdev/omap2/omapfb/dss/rfbi.o
-  CC [M]  drivers/video/fbdev/omap2/omapfb/dss/hdmi_common.o
+Since it can be 100x or more faster in some cases to call
+copy_file_range than do reads/writes back and forth to do a copy
+(especially if network or clustered backend or cloud), what tools are
+the best to recommend?
 
-A.
+Would rsync or cp be likely to take patches to call the standard
+"copy_file_range" syscall
+(http://man7.org/linux/man-pages/man2/copy_file_range.2.html)?
+Presumably not if it has been two+ years ... but would be interested
+what copy tools to recommend to use instead.
+
+These are not uncommon cases (all Windows, Macs, Samba etc. and even
+some NFS servers) ... but copies over local file systems can benefit
+too (as copy_file_range tries various mechanisms).
+-- 
+Thanks,
+
+Steve
