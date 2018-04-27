@@ -1,57 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758481AbeD0QSS (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 12:18:18 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:33108 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757513AbeD0QSR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 12:18:17 -0400
-Date: Fri, 27 Apr 2018 09:18:13 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Christopher Lameter <cl@linux.com>
-Cc: Michal Hocko <mhocko@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>, linux-mm@kvack.org,
-        Jan Kara <jack@suse.cz>, matthew@wil.cx, x86@kernel.org,
-        luto@amacapital.net, martin.petersen@oracle.com, jthumshirn@suse.de,
-        broonie@kernel.org, linux-spi@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "lsf-pc@lists.linux-foundation.org"
-        <lsf-pc@lists.linux-foundation.org>
-Subject: Re: [LSF/MM TOPIC NOTES] x86 ZONE_DMA love
-Message-ID: <20180427161813.GD8161@bombadil.infradead.org>
-References: <20180426215406.GB27853@wotan.suse.de>
- <20180427053556.GB11339@infradead.org>
- <20180427071843.GB17484@dhcp22.suse.cz>
- <alpine.DEB.2.20.1804271103160.11686@nuc-kabylake>
+        id S932935AbeD0QWG (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 12:22:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52334 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932802AbeD0QWF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 12:22:05 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3B8D218C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Fri, 27 Apr 2018 12:22:01 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Joel Fernandes <joelaf@google.com>
+Cc: Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zilstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Fenguang Wu <fengguang.wu@intel.com>,
+        Baohong Liu <baohong.liu@intel.com>,
+        Vedang Patel <vedang.patel@intel.com>,
+        "Cc: Android Kernel" <kernel-team@android.com>
+Subject: Re: [PATCH RFC] tracepoint: Introduce tracepoint callbacks
+ executing with preempt on
+Message-ID: <20180427122201.75abc313@gandalf.local.home>
+In-Reply-To: <CAJWu+or9GJwkDK9+842YbobG3=xVW-PgqS=uE5P2xFbDhmqxEQ@mail.gmail.com>
+References: <20180427042656.190746-1-joelaf@google.com>
+        <20180427155701.GL26088@linux.vnet.ibm.com>
+        <CAJWu+or9GJwkDK9+842YbobG3=xVW-PgqS=uE5P2xFbDhmqxEQ@mail.gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.20.1804271103160.11686@nuc-kabylake>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 27, 2018 at 11:07:07AM -0500, Christopher Lameter wrote:
-> Well it looks like what we are using it for is to force allocation from
-> low physical memory if we fail to obtain proper memory through a normal
-> channel.  The use of ZONE_DMA is only there for emergency purposes.
-> I think we could subsitute ZONE_DMA32 on x87 without a problem.
-> 
-> Which means that ZONE_DMA has no purpose anymore.
-> 
-> Can we make ZONE_DMA on x86 refer to the low 32 bit physical addresses
-> instead and remove ZONE_DMA32?
-> 
-> That would actually improve the fallback because you have more memory for
-> the old devices.
+On Fri, 27 Apr 2018 09:14:30 -0700
+Joel Fernandes <joelaf@google.com> wrote:
 
-Some devices have incredibly bogus hardware like 28 bit addressing
-or 39 bit addressing.  We don't have a good way to allocate memory by
-physical address other than than saying "GFP_DMA for anything less than
-32, GFP_DMA32 (or GFP_KERNEL on 32-bit) for anything less than 64 bit".
+> > Hmmm...  Do I need to create a _notrace variant of srcu_read_lock()
+> > and srcu_read_unlock()?  
+> 
+> That shouldn't be needed. For the rcu_read_lock_sched case, there is a
+> preempt_disable which needs to be a notrace, but for the srcu one,
+> since we don't do that, I think it should be fine.
 
-Even CMA doesn't have a "cma_alloc_phys()".  Maybe that's the right place
-to put such an allocation API.
+Actually, I think I may agree here too. Because the _notrace is for
+function tracing, and it shouldn't affect it. If people don't want it
+traced, they could add those functions to the list in the notrace file.
+
+-- Steve
