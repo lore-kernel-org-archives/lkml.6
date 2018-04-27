@@ -1,41 +1,41 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZq6IreFYHMAlfcaL6HCShAJhCy1rjJNfQXs01YCxktC5SQC9pfn9qFatlq9zGQWtMTDCfxl
-ARC-Seal: i=1; a=rsa-sha256; t=1524837897; cv=none;
+X-Google-Smtp-Source: AB8JxZqiQZ3n2LfXSamfZPpJt79pHki+G+fcC3TxEDe3ZDEnYhBJoz21OV0JrpJ9gKNGi0aDLDyw
+ARC-Seal: i=1; a=rsa-sha256; t=1524837894; cv=none;
         d=google.com; s=arc-20160816;
-        b=Ft0pP6kjOCXdlMPiGk1x+dK/wSztx95UR+pb0hrAuhhzrQ9ynI2i4IsWpzbyNg3kUr
-         jUsj1WwI7usa5SFVc7+bA2kcPHpoGSvwq5Px32ceCxUvRGCoBwRamhfb/mnibXRIED1r
-         iYCcagqzwFrcwCjTRdCgVq7WLRvutiSKu/QrpwuPAhZXytAusF/EySaqbC62B6k4zeOe
-         qNgYoLvaCACvYGjnjzerLjfxCfN+f2aCJ1EhfZbNMkizelnf3LITXJCycT4UNVJiCcjd
-         AdGfjJTe6etzq5I3xb07KuEdU0OCLFw13GTn/i5l/WKhchd3cmffAZU/ToVgTQBJ7SA+
-         uNLg==
+        b=OwXekrqNVsrbRtMXBQFOEtdX8QYLlrzWgvgWc8TSq9u8eT8urdwqLadr0ej2AygrVe
+         lgrQ8Q/SMc35bMZuOa2XyZR03KIKYWvEOb/yo5j1dV/SrFcCVEX8Y/wPHpKi/QAXEb3W
+         LAYSELUbIH4EU+qbKfOyp1X3HdBpMx2AEigjeQeeQlc6UxlDrQlq7F3gTAACquE5kMXB
+         2B3lSd7Mb9FYxoFA86vMJj/3Q5+SXNs3Hzp8ScDtmBnEPRJ3IeB9VoeMJLkXTud7Ss4+
+         Cq/265qCB7SbIpiZMCtH8rV17KRImYwvKpRvfeJ0zS/ZwsOCKIidyOzZjOpVlK3M1Hy3
+         mYxg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=4ZDW+/VPBm6RrF/Ch0d6CpXS+n0eggWN8LKeTTeTZwI=;
-        b=vu6d0Mk8p+D9fCsC3DiB9n1oBXFf8rotwpGo9Z0wt6O5N5CbyxoTmq609/MTweMvUI
-         IJ1v15VnNF4vExQLfQT58f/GFxcTtaXDZNJCU+2OT5P9GNjm6LltYNCyWizvjpdHjmG5
-         Bx07lcMcmh6YMshudkfkyMEw9qD9ou4pk6qEbI3nEcBafnMN7+1J3qPtoxfWhvayzF3d
-         YyRXVyr/gzmc3kJ1TOpJUfkv74PV6BejvUJ1zvWRrRzN3gSUjPX9hBsebxYFGfmTT9CB
-         S9Cv8zXOV8UHFfBBNA6onNFdhwCO/u4hdyii71buEaJh0tSS05yHbaYKmOAWKRc1ka9p
-         W+iA==
+        bh=wZAigk9DALifAsk7maNyEbNqvF0nBk7XrYJOKNvhT9s=;
+        b=AuUEJAQgm3eIZ7OAwGbvE8P7X0YkAO/fOCASDy9ao8GD2VX+iopcw77E1+Tl4JoQAU
+         IKCVtpqwYX2L1xoZnDN690ysfQNI3qspK+sm7+xhZiWV6lpQCbx+jdwbs7fCMTrXD2y0
+         TNRtRGsV90XXh6/163Uwk6wv/W95WcEtU2ITTy0gZCqn2RCFTpUdmuCBUBeyoEUU9Yk4
+         1p1KobubYybkmVgWMKo010P7E04wI9vGj0C7vUiaNxa9i2R6IymuFX1unOQetZreWkZe
+         WfXqmV/qqO3eIyUv+s3gmmjYAiARfg2lwjAki9Ji2dQlj+Uc6TjtAnkQTMwoEA8Bkl6X
+         fVog==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C9BD21864
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D913221864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jianwen Ji <jiji@redhat.com>,
-	Xin Long <lucien.xin@gmail.com>,
-	Neil Horman <nhorman@tuxdriver.com>,
+	Eric Dumazet <edumazet@google.com>,
+	David Ahern <dsa@cumulusnetworks.com>,
+	syzbot <syzkaller@googlegroups.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 59/74] sctp: do not check port in sctp_inet6_cmp_addr
-Date: Fri, 27 Apr 2018 15:58:49 +0200
-Message-Id: <20180427135712.376671269@linuxfoundation.org>
+Subject: [PATCH 4.9 50/74] net: validate attribute sizes in neigh_dump_table()
+Date: Fri, 27 Apr 2018 15:58:40 +0200
+Message-Id: <20180427135712.005886026@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135709.899303463@linuxfoundation.org>
 References: <20180427135709.899303463@linuxfoundation.org>
@@ -45,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908235270410091?=
-X-GMAIL-MSGID: =?utf-8?q?1598908423140309557?=
+X-GMAIL-THRID: =?utf-8?q?1598908211126878257?=
+X-GMAIL-MSGID: =?utf-8?q?1598908420565847403?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,134 +54,107 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Eric Dumazet <edumazet@google.com>
 
 
-[ Upstream commit 1071ec9d453a38023579714b64a951a2fb982071 ]
+[ Upstream commit 7dd07c143a4b54d050e748bee4b4b9e94a7b1744 ]
 
-pf->cmp_addr() is called before binding a v6 address to the sock. It
-should not check ports, like in sctp_inet_cmp_addr.
+Since neigh_dump_table() calls nlmsg_parse() without giving policy
+constraints, attributes can have arbirary size that we must validate
 
-But sctp_inet6_cmp_addr checks the addr by invoking af(6)->cmp_addr,
-sctp_v6_cmp_addr where it also compares the ports.
+Reported by syzbot/KMSAN :
 
-This would cause that setsockopt(SCTP_SOCKOPT_BINDX_ADD) could bind
-multiple duplicated IPv6 addresses after Commit 40b4f0fd74e4 ("sctp:
-lack the check for ports in sctp_v6_cmp_addr").
+BUG: KMSAN: uninit-value in neigh_master_filtered net/core/neighbour.c:2292 [inline]
+BUG: KMSAN: uninit-value in neigh_dump_table net/core/neighbour.c:2348 [inline]
+BUG: KMSAN: uninit-value in neigh_dump_info+0x1af0/0x2250 net/core/neighbour.c:2438
+CPU: 1 PID: 3575 Comm: syzkaller268891 Not tainted 4.16.0+ #83
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:17 [inline]
+ dump_stack+0x185/0x1d0 lib/dump_stack.c:53
+ kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
+ __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:676
+ neigh_master_filtered net/core/neighbour.c:2292 [inline]
+ neigh_dump_table net/core/neighbour.c:2348 [inline]
+ neigh_dump_info+0x1af0/0x2250 net/core/neighbour.c:2438
+ netlink_dump+0x9ad/0x1540 net/netlink/af_netlink.c:2225
+ __netlink_dump_start+0x1167/0x12a0 net/netlink/af_netlink.c:2322
+ netlink_dump_start include/linux/netlink.h:214 [inline]
+ rtnetlink_rcv_msg+0x1435/0x1560 net/core/rtnetlink.c:4598
+ netlink_rcv_skb+0x355/0x5f0 net/netlink/af_netlink.c:2447
+ rtnetlink_rcv+0x50/0x60 net/core/rtnetlink.c:4653
+ netlink_unicast_kernel net/netlink/af_netlink.c:1311 [inline]
+ netlink_unicast+0x1672/0x1750 net/netlink/af_netlink.c:1337
+ netlink_sendmsg+0x1048/0x1310 net/netlink/af_netlink.c:1900
+ sock_sendmsg_nosec net/socket.c:630 [inline]
+ sock_sendmsg net/socket.c:640 [inline]
+ ___sys_sendmsg+0xec0/0x1310 net/socket.c:2046
+ __sys_sendmsg net/socket.c:2080 [inline]
+ SYSC_sendmsg+0x2a3/0x3d0 net/socket.c:2091
+ SyS_sendmsg+0x54/0x80 net/socket.c:2087
+ do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+RIP: 0033:0x43fed9
+RSP: 002b:00007ffddbee2798 EFLAGS: 00000213 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fed9
+RDX: 0000000000000000 RSI: 0000000020005000 RDI: 0000000000000003
+RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
+R10: 00000000004002c8 R11: 0000000000000213 R12: 0000000000401800
+R13: 0000000000401890 R14: 0000000000000000 R15: 0000000000000000
 
-This patch is to remove af->cmp_addr called in sctp_inet6_cmp_addr,
-but do the proper check for both v6 addrs and v4mapped addrs.
+Uninit was created at:
+ kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
+ kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:188
+ kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:314
+ kmsan_slab_alloc+0x11/0x20 mm/kmsan/kmsan.c:321
+ slab_post_alloc_hook mm/slab.h:445 [inline]
+ slab_alloc_node mm/slub.c:2737 [inline]
+ __kmalloc_node_track_caller+0xaed/0x11c0 mm/slub.c:4369
+ __kmalloc_reserve net/core/skbuff.c:138 [inline]
+ __alloc_skb+0x2cf/0x9f0 net/core/skbuff.c:206
+ alloc_skb include/linux/skbuff.h:984 [inline]
+ netlink_alloc_large_skb net/netlink/af_netlink.c:1183 [inline]
+ netlink_sendmsg+0x9a6/0x1310 net/netlink/af_netlink.c:1875
+ sock_sendmsg_nosec net/socket.c:630 [inline]
+ sock_sendmsg net/socket.c:640 [inline]
+ ___sys_sendmsg+0xec0/0x1310 net/socket.c:2046
+ __sys_sendmsg net/socket.c:2080 [inline]
+ SYSC_sendmsg+0x2a3/0x3d0 net/socket.c:2091
+ SyS_sendmsg+0x54/0x80 net/socket.c:2087
+ do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x3d/0xa2
 
-v1->v2:
-  - define __sctp_v6_cmp_addr to do the common address comparison
-    used for both pf and af v6 cmp_addr.
-
-Fixes: 40b4f0fd74e4 ("sctp: lack the check for ports in sctp_v6_cmp_addr")
-Reported-by: Jianwen Ji <jiji@redhat.com>
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Acked-by: Neil Horman <nhorman@tuxdriver.com>
+Fixes: 21fdd092acc7 ("net: Add support for filtering neigh dump by master device")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: David Ahern <dsa@cumulusnetworks.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Acked-by: David Ahern <dsa@cumulusnetworks.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sctp/ipv6.c |   60 ++++++++++++++++++++++++++++----------------------------
- 1 file changed, 30 insertions(+), 30 deletions(-)
+ net/core/neighbour.c |   12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
---- a/net/sctp/ipv6.c
-+++ b/net/sctp/ipv6.c
-@@ -521,46 +521,49 @@ static void sctp_v6_to_addr(union sctp_a
- 	addr->v6.sin6_scope_id = 0;
- }
+--- a/net/core/neighbour.c
++++ b/net/core/neighbour.c
+@@ -2279,12 +2279,16 @@ static int neigh_dump_table(struct neigh
  
--/* Compare addresses exactly.
-- * v4-mapped-v6 is also in consideration.
-- */
--static int sctp_v6_cmp_addr(const union sctp_addr *addr1,
--			    const union sctp_addr *addr2)
-+static int __sctp_v6_cmp_addr(const union sctp_addr *addr1,
-+			      const union sctp_addr *addr2)
- {
- 	if (addr1->sa.sa_family != addr2->sa.sa_family) {
- 		if (addr1->sa.sa_family == AF_INET &&
- 		    addr2->sa.sa_family == AF_INET6 &&
--		    ipv6_addr_v4mapped(&addr2->v6.sin6_addr)) {
--			if (addr2->v6.sin6_port == addr1->v4.sin_port &&
--			    addr2->v6.sin6_addr.s6_addr32[3] ==
--			    addr1->v4.sin_addr.s_addr)
--				return 1;
--		}
-+		    ipv6_addr_v4mapped(&addr2->v6.sin6_addr) &&
-+		    addr2->v6.sin6_addr.s6_addr32[3] ==
-+		    addr1->v4.sin_addr.s_addr)
-+			return 1;
-+
- 		if (addr2->sa.sa_family == AF_INET &&
- 		    addr1->sa.sa_family == AF_INET6 &&
--		    ipv6_addr_v4mapped(&addr1->v6.sin6_addr)) {
--			if (addr1->v6.sin6_port == addr2->v4.sin_port &&
--			    addr1->v6.sin6_addr.s6_addr32[3] ==
--			    addr2->v4.sin_addr.s_addr)
--				return 1;
--		}
-+		    ipv6_addr_v4mapped(&addr1->v6.sin6_addr) &&
-+		    addr1->v6.sin6_addr.s6_addr32[3] ==
-+		    addr2->v4.sin_addr.s_addr)
-+			return 1;
-+
- 		return 0;
- 	}
--	if (addr1->v6.sin6_port != addr2->v6.sin6_port)
--		return 0;
-+
- 	if (!ipv6_addr_equal(&addr1->v6.sin6_addr, &addr2->v6.sin6_addr))
- 		return 0;
-+
- 	/* If this is a linklocal address, compare the scope_id. */
--	if (ipv6_addr_type(&addr1->v6.sin6_addr) & IPV6_ADDR_LINKLOCAL) {
--		if (addr1->v6.sin6_scope_id && addr2->v6.sin6_scope_id &&
--		    (addr1->v6.sin6_scope_id != addr2->v6.sin6_scope_id)) {
--			return 0;
--		}
--	}
-+	if ((ipv6_addr_type(&addr1->v6.sin6_addr) & IPV6_ADDR_LINKLOCAL) &&
-+	    addr1->v6.sin6_scope_id && addr2->v6.sin6_scope_id &&
-+	    addr1->v6.sin6_scope_id != addr2->v6.sin6_scope_id)
-+		return 0;
- 
- 	return 1;
- }
- 
-+/* Compare addresses exactly.
-+ * v4-mapped-v6 is also in consideration.
-+ */
-+static int sctp_v6_cmp_addr(const union sctp_addr *addr1,
-+			    const union sctp_addr *addr2)
-+{
-+	return __sctp_v6_cmp_addr(addr1, addr2) &&
-+	       addr1->v6.sin6_port == addr2->v6.sin6_port;
-+}
-+
- /* Initialize addr struct to INADDR_ANY. */
- static void sctp_v6_inaddr_any(union sctp_addr *addr, __be16 port)
- {
-@@ -844,8 +847,8 @@ static int sctp_inet6_cmp_addr(const uni
- 			       const union sctp_addr *addr2,
- 			       struct sctp_sock *opt)
- {
--	struct sctp_af *af1, *af2;
- 	struct sock *sk = sctp_opt2sk(opt);
-+	struct sctp_af *af1, *af2;
- 
- 	af1 = sctp_get_af_specific(addr1->sa.sa_family);
- 	af2 = sctp_get_af_specific(addr2->sa.sa_family);
-@@ -861,10 +864,7 @@ static int sctp_inet6_cmp_addr(const uni
- 	if (sctp_is_any(sk, addr1) || sctp_is_any(sk, addr2))
- 		return 1;
- 
--	if (addr1->sa.sa_family != addr2->sa.sa_family)
--		return 0;
+ 	err = nlmsg_parse(nlh, sizeof(struct ndmsg), tb, NDA_MAX, NULL);
+ 	if (!err) {
+-		if (tb[NDA_IFINDEX])
++		if (tb[NDA_IFINDEX]) {
++			if (nla_len(tb[NDA_IFINDEX]) != sizeof(u32))
++				return -EINVAL;
+ 			filter_idx = nla_get_u32(tb[NDA_IFINDEX]);
 -
--	return af1->cmp_addr(addr1, addr2);
-+	return __sctp_v6_cmp_addr(addr1, addr2);
- }
- 
- /* Verify that the provided sockaddr looks bindable.   Common verification,
+-		if (tb[NDA_MASTER])
++		}
++		if (tb[NDA_MASTER]) {
++			if (nla_len(tb[NDA_MASTER]) != sizeof(u32))
++				return -EINVAL;
+ 			filter_master_idx = nla_get_u32(tb[NDA_MASTER]);
+-
++		}
+ 		if (filter_idx || filter_master_idx)
+ 			flags |= NLM_F_DUMP_FILTERED;
+ 	}
