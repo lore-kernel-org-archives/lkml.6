@@ -1,59 +1,147 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933750AbeD0PPh (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 11:15:37 -0400
-Received: from mail-qt0-f173.google.com ([209.85.216.173]:42805 "EHLO
-        mail-qt0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933223AbeD0PPd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 11:15:33 -0400
-X-Google-Smtp-Source: AB8JxZqy79WX/YIayGvG2SA/O641PWz3VHSb3rI/6DH42SEiJhbcpnPAZ//aegF8QUv8tq90jXIKpCY+no9WEt7iiv0=
+        id S933550AbeD0PSO (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 11:18:14 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41926 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932845AbeD0PSM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 11:18:12 -0400
+Subject: Re: [PATCH v2 05/17] arm64: Helper for parange to PASize
+To: Julien Grall <julien.grall@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc: ard.biesheuvel@linaro.org, kvm@vger.kernel.org, marc.zyngier@arm.com,
+        catalin.marinas@arm.com, punit.agrawal@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, kristina.martsenko@arm.com,
+        pbonzini@redhat.com, kvmarm@lists.cs.columbia.edu
+References: <1522156531-28348-1-git-send-email-suzuki.poulose@arm.com>
+ <1522156531-28348-6-git-send-email-suzuki.poulose@arm.com>
+ <2910d406-315f-6f0f-7456-df9d80a08087@arm.com>
+From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Message-ID: <f9d91231-2a8f-ae3e-9600-8087a0b9460c@arm.com>
+Date: Fri, 27 Apr 2018 16:18:06 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180427070830.GC6014@localhost>
-References: <20180426174000.12008-1-mdf@kernel.org> <20180427051115.GX6014@localhost>
- <748ffc14-de12-c11e-eb12-65c599fe5f4e@metafoo.de> <20180427070830.GC6014@localhost>
-From: Moritz Fischer <moritz.fischer.private@gmail.com>
-Date: Fri, 27 Apr 2018 08:15:32 -0700
-Message-ID: <CAJYdmeO=k06MJi1L8++BC_zPqeb-BkrT=a7GOOCUE17Tk093NA@mail.gmail.com>
-Subject: Re: [PATCH v2] dmaengine: axi-dmac: Request IRQ with IRQF_SHARED
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dmaengine@vger.kernel.org, dan.j.williams@intel.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <2910d406-315f-6f0f-7456-df9d80a08087@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vinod,
+On 26/04/18 11:58, Julien Grall wrote:
+> Hi Suzuki,
+> 
+> On 27/03/18 14:15, Suzuki K Poulose wrote:
+>> Add a helper to convert ID_AA64MMFR0_EL1:PARange to they physical
+>> size shift. Limit the size to the maximum supported by the kernel.
+>> We are about to move the user of this code and this helps to
+>> keep the changes cleaner.
+> 
+> It is probably worth to mention that you are also adding 52-bit support in the patch.
 
-On Fri, Apr 27, 2018 at 12:08 AM, Vinod Koul <vinod.koul@intel.com> wrote:
-> On Fri, Apr 27, 2018 at 08:53:39AM +0200, Lars-Peter Clausen wrote:
->> On 04/27/2018 07:11 AM, Vinod Koul wrote:
->> > On Thu, Apr 26, 2018 at 10:40:00AM -0700, Moritz Fischer wrote:
->> >> Request IRQ with IRQF_SHARED flag. This works since the interrupt
->> >> handler already checks if there is an actual IRQ pending and returns
->> >> IRQ_NONE otherwise.
->> >
->> > hmmm what are we trying to fix here? Is your device on a shared line or not?
+Sure, will do. Can I take that as a Reviewed-by with the fixed
+commit description ?
+
+Cheers
+Suzuki
+
+> 
+> Cheers,
+> 
 >>
->> IRQF_SHARED does not mean that the IRQ is on a shared line. It means that
->> the driver can handle it if the IRQ is on a shared line. Since the driver
->> can handle it setting the flag is a good idea since this enables usecases
->> where the line is shared.
->
-> Yes that is correct indeed, but what is the motivation for the change.
->
-> If you never expect this to be in shared environment why to do this?
-> Sorry but "it works" is not a good enough reason for this change, to enable
-> usecases where the line is shared is a good reason :)
-
-Remember, this is an FPGA soft core. I happen to have a design [1] where it
-is hooked up with multiple of them on one IRQ line, so to make this work,
-I need this change.
-
-Thanks,
-
-Moritz
-
-[1] https://www.ettus.com/product/details/USRP-N310
+>> Cc: Mark Rutland <mark.rutland@arm.com>
+>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>> Cc: Will Deacon <will.deacon@arm.com>
+>> Cc: Marc Zyngier <marc.zyngier@arm.com>
+>> Cc: Christoffer Dall <cdall@kernel.org>
+>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>> ---
+>>   arch/arm64/include/asm/cpufeature.h | 16 ++++++++++++++++
+>>   arch/arm64/kvm/hyp/s2-setup.c       | 28 +++++-----------------------
+>>   2 files changed, 21 insertions(+), 23 deletions(-)
+>>
+>> diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
+>> index fbf0aab..1f2a5dd 100644
+>> --- a/arch/arm64/include/asm/cpufeature.h
+>> +++ b/arch/arm64/include/asm/cpufeature.h
+>> @@ -311,6 +311,22 @@ static inline u64 read_zcr_features(void)
+>>       return zcr;
+>>   }
+>> +static inline u32 id_aa64mmfr0_parange_to_phys_shift(int parange)
+>> +{
+>> +    switch (parange) {
+>> +    case 0: return 32;
+>> +    case 1: return 36;
+>> +    case 2: return 40;
+>> +    case 3: return 42;
+>> +    case 4: return 44;
+>> +    /* Report 48 bit if the kernel doesn't support 52bit */
+>> +    default:
+>> +    case 5: return 48;
+>> +#ifdef CONFIG_ARM64_PA_BITS_52
+>> +    case 6: return 52;
+>> +#endif
+>> +    }
+>> +}
+>>   #endif /* __ASSEMBLY__ */
+>>   #endif
+>> diff --git a/arch/arm64/kvm/hyp/s2-setup.c b/arch/arm64/kvm/hyp/s2-setup.c
+>> index 603e1ee..b1129c8 100644
+>> --- a/arch/arm64/kvm/hyp/s2-setup.c
+>> +++ b/arch/arm64/kvm/hyp/s2-setup.c
+>> @@ -19,11 +19,13 @@
+>>   #include <asm/kvm_arm.h>
+>>   #include <asm/kvm_asm.h>
+>>   #include <asm/kvm_hyp.h>
+>> +#include <asm/cpufeature.h>
+>>   u32 __hyp_text __init_stage2_translation(void)
+>>   {
+>>       u64 val = VTCR_EL2_FLAGS;
+>>       u64 parange;
+>> +    u32 phys_shift;
+>>       u64 tmp;
+>>       /*
+>> @@ -37,27 +39,7 @@ u32 __hyp_text __init_stage2_translation(void)
+>>       val |= parange << 16;
+>>       /* Compute the actual PARange... */
+>> -    switch (parange) {
+>> -    case 0:
+>> -        parange = 32;
+>> -        break;
+>> -    case 1:
+>> -        parange = 36;
+>> -        break;
+>> -    case 2:
+>> -        parange = 40;
+>> -        break;
+>> -    case 3:
+>> -        parange = 42;
+>> -        break;
+>> -    case 4:
+>> -        parange = 44;
+>> -        break;
+>> -    case 5:
+>> -    default:
+>> -        parange = 48;
+>> -        break;
+>> -    }
+>> +    phys_shift = id_aa64mmfr0_parange_to_phys_shift(parange);
+>>       /*
+>>        * ... and clamp it to 40 bits, unless we have some braindead
+>> @@ -65,7 +47,7 @@ u32 __hyp_text __init_stage2_translation(void)
+>>        * return that value for the rest of the kernel to decide what
+>>        * to do.
+>>        */
+>> -    val |= 64 - (parange > 40 ? 40 : parange);
+>> +    val |= 64 - (phys_shift > 40 ? 40 : phys_shift);
+>>       /*
+>>        * Check the availability of Hardware Access Flag / Dirty Bit
+>> @@ -86,5 +68,5 @@ u32 __hyp_text __init_stage2_translation(void)
+>>       write_sysreg(val, vtcr_el2);
+>> -    return parange;
+>> +    return phys_shift;
+>>   }
+>>
+> 
