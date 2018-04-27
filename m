@@ -1,48 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758995AbeD0Thf (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 15:37:35 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:56174 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758565AbeD0Thd (ORCPT
+        id S1759052AbeD0TiN (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 15:38:13 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:34052 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759034AbeD0TiL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 15:37:33 -0400
-Date: Fri, 27 Apr 2018 21:37:30 +0200 (CEST)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: LKML <linux-kernel@vger.kernel.org>
-cc: Dave Hansen <dave.hansen@linux.intel.com>,
-        Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>
-Subject: [RFD] x86: The future of MPX
-Message-ID: <alpine.DEB.2.21.1804272122390.1596@nanos.tec.linutronix.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 27 Apr 2018 15:38:11 -0400
+X-Google-Smtp-Source: AB8JxZr2Gz5bXuChfeEezef1v5NfIQ56Qj85YUeoiCtjYMmO/nLec9c1Diq9YgBOrX0B0rgSaEp+y52s6UxxaRO0q20=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <CAL_JsqLWmF-xrf5vDALuG3Geq-XHB2-W5Z6XWvHs=PeZ==Bm+w@mail.gmail.com>
+References: <20180411015948.19562-1-andrew.smirnov@gmail.com>
+ <20180411015948.19562-2-andrew.smirnov@gmail.com> <20180416150507.2wm4s7opgr242v6a@rob-hp-laptop>
+ <CAHQ1cqFep9Xs3_hsz1EiDwu8mcDDzbFs4H-kLnKkj=iokX=fCg@mail.gmail.com> <CAL_JsqLWmF-xrf5vDALuG3Geq-XHB2-W5Z6XWvHs=PeZ==Bm+w@mail.gmail.com>
+From: Andrey Smirnov <andrew.smirnov@gmail.com>
+Date: Fri, 27 Apr 2018 12:38:09 -0700
+Message-ID: <CAHQ1cqER1JWAEYydH5xWGwGiPOrM9sz_6EghxW34jgq5vzRzUQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: nvmem: Add binding for RAVE SP EEPROM driver
+To: Rob Herring <robh@kernel.org>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Chris Healy <cphealy@gmail.com>, Lucas Stach <l.stach@pengutronix.de>,
+        Aleksander Morgado <aleksander@aleksander.es>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dave,
+On Fri, Apr 27, 2018 at 11:43 AM, Rob Herring <robh@kernel.org> wrote:
+> On Fri, Apr 27, 2018 at 1:05 AM, Andrey Smirnov
+> <andrew.smirnov@gmail.com> wrote:
+>> On Mon, Apr 16, 2018 at 8:05 AM, Rob Herring <robh@kernel.org> wrote:
+>>> On Tue, Apr 10, 2018 at 06:59:47PM -0700, Andrey Smirnov wrote:
+>>>> Add Device Tree bindings for RAVE SP EEPROM driver - an MFD cell of
+>>>> parent RAVE SP driver (documented in
+>>>> Documentation/devicetree/bindings/mfd/zii,rave-sp.txt).
+>>>>
+>>>> Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+>>>> Cc: linux-kernel@vger.kernel.org
+>>>> Cc: Chris Healy <cphealy@gmail.com>
+>>>> Cc: Lucas Stach <l.stach@pengutronix.de>
+>>>> Cc: Aleksander Morgado <aleksander@aleksander.es>
+>>>> Cc: Rob Herring <robh+dt@kernel.org>
+>>>> Cc: Mark Rutland <mark.rutland@arm.com>
+>>>> Cc: devicetree@vger.kernel.org
+>>>> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+>>>> ---
+>>>>  .../bindings/nvmem/zii,rave-sp-eeprom.txt          | 29 ++++++++++++++++++++++
+>>>>  1 file changed, 29 insertions(+)
+>>>>  create mode 100644 Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.txt
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.txt b/Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.txt
+>>>> new file mode 100644
+>>>> index 000000000000..a4e838c30b67
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.txt
+>>>> @@ -0,0 +1,29 @@
+>>>> +Zodiac Inflight Innovations RAVE EEPROM Bindings
+>>>> +
+>>>> +RAVE SP EEPROM device is a "MFD cell" device exposing physical EEPROM
+>>>> +attached to RAVE Supervisory Processor. It is expected that its Device
+>>>> +Tree node is specified as a child of the node corresponding to the
+>>>> +parent RAVE SP device (as documented in
+>>>> +Documentation/devicetree/bindings/mfd/zii,rave-sp.txt)
+>>>> +
+>>>> +Required properties:
+>>>> +
+>>>> +- compatible: Should be "zii,rave-sp-eeprom"
+>>>
+>>> Need to state somewhere this follows the bindings/nvmem/nvmem.txt
+>>> binding.
+>>>
+>>
+>> OK, will fix in v3.
+>>
+>>>> +
+>>>> +Example:
+>>>> +
+>>>> +     rave-sp {
+>>>> +             compatible = "zii,rave-sp-rdu1";
+>>>> +             current-speed = <38400>;
+>>>> +
+>>>> +             main-eeprom {
+>>>
+>>> eeprom@a4
+>>
+>> Any chance I can keep it as is? I am asking because this node name is
+>> used by the driver as device name which is how it also appears in
+>> sysfs. Reason for that being that "main-eeprom" and "dds-eeprom"
+>> (second EEPROM in the system) are easier to rembmer and tell apart
+>> than "eeprom@a4" and "eeprom@a5". Granted, I can divorce naming scheme
+>> in the driver from device node name, but then I'd have to keep a
+>> "address -> deivce name" lookup table which I was hoping to avoid.
+>
+> It generates a dtc warning if you don't fix it.
+>
 
-I've got the following MPX related information:
-
- .... But they [Intel] certainly haven't maintained the whole MPX support
- in GCC at all since two or three years (e.g. bootstrap with MPX was broken
- since forever), so now it's gone from GCC. ....
-
-and I know that GCC is discussing MPX removal since May last year at least.
-To the best of my knowledge clang does not support it either.
-
-So what's the state of this stuff? If we don't have a compiler supporting
-it how on earth is that useful or even testable for anyone who does not
-have access to some magic Intel internal compiler version?
-
-If that's the sad state of affairs, then we just should move the whole
-stuff into staging or simply queue it for removal in 4.18.
+Understood. Will fix in v3.
 
 Thanks,
-
-	tglx
+Andrey Smirnov
