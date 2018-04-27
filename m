@@ -1,28 +1,28 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrindpgkjWVhcJS16kAZeSA0FWNO9GSzubaauQdywn8j6k8FV7KBC5pNDz5KxWp07B7AmbU
-ARC-Seal: i=1; a=rsa-sha256; t=1524837864; cv=none;
+X-Google-Smtp-Source: AB8JxZqmNcNBLcImvcqDFF+IOywafVBIatKmvpmD5MRhUiD+P+po3ER1/a48Aq9svRXyxQxG/74t
+ARC-Seal: i=1; a=rsa-sha256; t=1524837861; cv=none;
         d=google.com; s=arc-20160816;
-        b=Khw5kxXPPstNf4yu1ODZcS6pE2rx1E2hhjfLgTCh0BT2n4cUrgISqubA6o6BzQX/kZ
-         RWbK8yFn9nDwmB3xB+9zKS8iAJRTpMmW+0Qkq/nH4i1qg0k8vt88dxudlIOfWOCh7Se0
-         hvBX2u/NrH/WAj7lVGG6X3jcFQvsk2ZJBCzFqOTx1KXWcyOvSwsCiui6AsNITDHMaAXb
-         mXCBL9k0lgTkx1tx8V6aJteIY1dbIRVMizAH1Cr28sQ10sj7/y0UWB0ywqNjJW0JY1Ws
-         g/ihE4J5oErkL1exaxj3LhQzR1Z8cIJ3JOccrS8Ohg5RKsNcADryRKT/ov7FG3q8D4OH
-         GS5Q==
+        b=0oqkWWu6W6Aq4OwkorKlJt02Yd5TN00AOnnbECm9L3VmKm6HLRMnkDPtXxnyyLaevx
+         XglaWsv0BJFwEnf6K6EpJDgRDyR6Ietrw4WfzP4HZSlAxSvCT/NRD1YhviBMWcUptHnm
+         PBhYGbwssXES9VUqcWrreTOD7u5JFhpKugJQ9JVQfYGIWDNcjg8OpYKOh2QqGYIZldX6
+         XUlHmKmRY8tvAusQ2TmdTtXf/Ro4XFRfhwuMM7XTxdtNzViNHQ/3Vl2aVrm9cdgHoc13
+         54lwFI3bH0Wa4Ew43bXyPyaIA0Catc4/Tl9tCd/hP9p9ROISnN1OUFEtzhAidkm1J+vc
+         9/TA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=YWP5TC4hPzNbgvsjUHGz3fZWR9mENsIjRLe1yseZaa0=;
-        b=e0eG9EbY+p2Z/LpypfCjW9dn8fQ0e8FmNNkbRw73S1ucNudbAGRgFJ9Z/6+M3vAqqA
-         +ztInzP3LexQW+2mG84skFdLAOXvcKYPs/CKJ9iLVAJtGDHbHT5SIL4b0p72vwNEq36x
-         ZGU7Of9GV9FaLPooU2LwxRO3bApc1ydZ8qlVEF4dF8VU7iZOVyUNsAAKg+fiOIHGFmSp
-         BZVmanCFda/8ymFe9UOPlRZFxts2DN+NrDzU36AiR/b+8fEux54Y4WJFtTNlqYHofDDp
-         fZLE9ctq2cUoDh+55l0Laf8xXEI/+N8cSM5gEPSX55cUKO+nPbH1ZjAnBSZtcyix/DFE
-         weGg==
+        bh=6gIbnU/oaLQUWjfc2pn+JEWwJl0KEFif0bwpUAEzsO8=;
+        b=DaHR2Zf7267mTUBu/AOlsqMI2bsf+78sbH3rbB9KMGhzzOaJ6th4FEgG1M4oDg3dI8
+         ic4CBzwG2u6ihIGhzuHgIRwc+Aan/XUbW3VSv4fKW/DIR1lL+d8tApG9u3FRTwULpgBd
+         ByF6PkwKfm+stGMszeKbcV62UHB3y3e5ncrk0mKWpQ3UlUzgOx6uLbzIytxt3B4bGEG0
+         K2vdphp/+oFW2apOWTqHpPWGeqeDkulmNxVy3ZB8mByrVYFhZt7NQDNuS/m+TwpvQV16
+         Rgs+D7ZJeigRiBUw+SrsCs1dqeaMHk2/bjUuk6JR7KcMT+2ag0gvkq6e734bLh/UsypS
+         tZaw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 084912189D
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78D2D2189D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
@@ -30,9 +30,9 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4.9 44/74] s390: add sysfs attributes for spectre
-Date: Fri, 27 Apr 2018 15:58:34 +0200
-Message-Id: <20180427135711.750084883@linuxfoundation.org>
+Subject: [PATCH 4.9 43/74] s390: report spectre mitigation via syslog
+Date: Fri, 27 Apr 2018 15:58:33 +0200
+Message-Id: <20180427135711.710333929@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135709.899303463@linuxfoundation.org>
 References: <20180427135709.899303463@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908192442314071?=
-X-GMAIL-MSGID: =?utf-8?q?1598908388134230304?=
+X-GMAIL-THRID: =?utf-8?q?1598908189377552235?=
+X-GMAIL-MSGID: =?utf-8?q?1598908385376567031?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,59 +54,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Martin Schwidefsky <schwidefsky@de.ibm.com>
 
 
-[ Upstream commit d424986f1d6b16079b3231db0314923f4f8deed1 ]
+[ Upstream commit bc035599718412cfba9249aa713f90ef13f13ee9 ]
 
-Set CONFIG_GENERIC_CPU_VULNERABILITIES and provide the two functions
-cpu_show_spectre_v1 and cpu_show_spectre_v2 to report the spectre
-mitigations.
+Add a boot message if either of the spectre defenses is active.
+The message is
+    "Spectre V2 mitigation: execute trampolines."
+or  "Spectre V2 mitigation: limited branch prediction."
 
 Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/s390/Kconfig                |    1 +
- arch/s390/kernel/nospec-branch.c |   19 +++++++++++++++++++
- 2 files changed, 20 insertions(+)
+ arch/s390/kernel/nospec-branch.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
---- a/arch/s390/Kconfig
-+++ b/arch/s390/Kconfig
-@@ -118,6 +118,7 @@ config S390
- 	select GENERIC_CLOCKEVENTS
- 	select GENERIC_CPU_AUTOPROBE
- 	select GENERIC_CPU_DEVICES if !SMP
-+	select GENERIC_CPU_VULNERABILITIES
- 	select GENERIC_FIND_FIRST_BIT
- 	select GENERIC_SMP_IDLE_THREAD
- 	select GENERIC_TIME_VSYSCALL
 --- a/arch/s390/kernel/nospec-branch.c
 +++ b/arch/s390/kernel/nospec-branch.c
-@@ -1,5 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- #include <linux/module.h>
-+#include <linux/device.h>
- #include <asm/facility.h>
- #include <asm/nospec-branch.h>
- 
-@@ -43,6 +44,24 @@ static int __init nospec_report(void)
+@@ -33,6 +33,16 @@ static int __init nospec_setup_early(cha
  }
- arch_initcall(nospec_report);
+ early_param("nospec", nospec_setup_early);
  
-+#ifdef CONFIG_SYSFS
-+ssize_t cpu_show_spectre_v1(struct device *dev,
-+			    struct device_attribute *attr, char *buf)
-+{
-+	return sprintf(buf, "Mitigation: __user pointer sanitization\n");
-+}
-+
-+ssize_t cpu_show_spectre_v2(struct device *dev,
-+			    struct device_attribute *attr, char *buf)
++static int __init nospec_report(void)
 +{
 +	if (IS_ENABLED(CC_USING_EXPOLINE) && !nospec_disable)
-+		return sprintf(buf, "Mitigation: execute trampolines\n");
++		pr_info("Spectre V2 mitigation: execute trampolines.\n");
 +	if (__test_facility(82, S390_lowcore.alt_stfle_fac_list))
-+		return sprintf(buf, "Mitigation: limited branch prediction.\n");
-+	return sprintf(buf, "Vulnerable\n");
++		pr_info("Spectre V2 mitigation: limited branch prediction.\n");
++	return 0;
 +}
-+#endif
++arch_initcall(nospec_report);
 +
  #ifdef CONFIG_EXPOLINE
  
