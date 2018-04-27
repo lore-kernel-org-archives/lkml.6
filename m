@@ -1,196 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1759144AbeD0RDQ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 13:03:16 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:53190 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758554AbeD0Q53 (ORCPT
+        id S1758897AbeD0REJ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 13:04:09 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53470 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1757569AbeD0REH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 12:57:29 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org
-Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org (open list:PIN CONTROL SUBSYSTEM),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 02/11] pinctrl: sh-pfc: r8a77965: Add DU RGB output pins, groups and functions
-Date: Fri, 27 Apr 2018 17:57:13 +0100
-Message-Id: <20180427165722.19445-3-kieran.bingham+renesas@ideasonboard.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180427165722.19445-1-kieran.bingham+renesas@ideasonboard.com>
-References: <20180427165722.19445-1-kieran.bingham+renesas@ideasonboard.com>
+        Fri, 27 Apr 2018 13:04:07 -0400
+Date: Fri, 27 Apr 2018 10:05:17 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Joel Fernandes <joelaf@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zilstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Fenguang Wu <fengguang.wu@intel.com>,
+        Baohong Liu <baohong.liu@intel.com>,
+        Vedang Patel <vedang.patel@intel.com>,
+        "Cc: Android Kernel" <kernel-team@android.com>
+Subject: Re: [PATCH RFC] tracepoint: Introduce tracepoint callbacks executing
+ with preempt on
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180427042656.190746-1-joelaf@google.com>
+ <20180427155701.GL26088@linux.vnet.ibm.com>
+ <CAJWu+or9GJwkDK9+842YbobG3=xVW-PgqS=uE5P2xFbDhmqxEQ@mail.gmail.com>
+ <20180427122201.75abc313@gandalf.local.home>
+ <20180427164554.GO26088@linux.vnet.ibm.com>
+ <20180427124641.7b991c57@gandalf.local.home>
+ <20180427170048.GP26088@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180427170048.GP26088@linux.vnet.ibm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18042717-0036-0000-0000-000002EB4F10
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008933; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000257; SDB=6.01024098; UDB=6.00522858; IPR=6.00803328;
+ MB=3.00020809; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-27 17:04:05
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18042717-0037-0000-0000-000044236A1B
+Message-Id: <20180427170517.GA799@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-27_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804270164
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds pins, groups and functions for parallel RGB output
-signals from DU. The HDMI and TCON pins are added to separate groups.
+On Fri, Apr 27, 2018 at 10:00:48AM -0700, Paul E. McKenney wrote:
+> On Fri, Apr 27, 2018 at 12:46:41PM -0400, Steven Rostedt wrote:
+> > On Fri, 27 Apr 2018 09:45:54 -0700
+> > "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
+> > 
+> > > > > That shouldn't be needed. For the rcu_read_lock_sched case, there is a
+> > > > > preempt_disable which needs to be a notrace, but for the srcu one,
+> > > > > since we don't do that, I think it should be fine.  
+> > > > 
+> > > > Actually, I think I may agree here too. Because the _notrace is for
+> > > > function tracing, and it shouldn't affect it. If people don't want it
+> > > > traced, they could add those functions to the list in the notrace file.  
+> > > 
+> > > OK, feel free to ignore my notrace srcu_read_lock() patch, then.  ;-)
+> > 
+> > Of course I wasn't thinking about the lockdep tracepoints that Joel
+> > mentioned, which happens to be the reason for all this discussion in
+> > the first place :-)  Now I think we do need it. (OK, I can keep
+> > changing my mind, can't I?).
+> 
+> You can, but at some point I start applying heavy-duty hysteresis.  ;-)
+> 
+> So the current thought (as of your having sent the above email) is that
+> we need notrace versions of srcu_read_lock() and srcu_read_unlock(),
+> but not for __srcu_read_lock() and __srcu_read_unlock(), correct?
 
-Based on a similar patch of the R8A7796 PFC driver by Niklas Söderlund
-<niklas.soderlund+renesas@ragnatech.se>.
+And Joel noted offline that I messed up srcu_read_unlock_notrace(),
+so here is an updated patch with that fixed.
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[Kieran: Rebase on top of tree]
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- drivers/pinctrl/sh-pfc/pfc-r8a77965.c | 116 ++++++++++++++++++++++++++
- 1 file changed, 116 insertions(+)
+							Thanx, Paul
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-index 3771b2d10f39..f5a37d3ea753 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-@@ -1662,6 +1662,102 @@ static const unsigned int avb_avtp_capture_b_mux[] = {
- 	AVB_AVTP_CAPTURE_B_MARK,
- };
+------------------------------------------------------------------------
+
+diff --git a/include/linux/srcu.h b/include/linux/srcu.h
+index 91494d7e8e41..3e72a291c401 100644
+--- a/include/linux/srcu.h
++++ b/include/linux/srcu.h
+@@ -195,6 +195,16 @@ static inline int srcu_read_lock(struct srcu_struct *sp) __acquires(sp)
+ 	return retval;
+ }
  
-+/* - DU --------------------------------------------------------------------- */
-+static const unsigned int du_rgb666_pins[] = {
-+	/* R[7:2], G[7:2], B[7:2] */
-+	RCAR_GP_PIN(0, 15), RCAR_GP_PIN(0, 14), RCAR_GP_PIN(0, 13),
-+	RCAR_GP_PIN(0, 12), RCAR_GP_PIN(0, 11), RCAR_GP_PIN(0, 10),
-+	RCAR_GP_PIN(1, 15), RCAR_GP_PIN(1, 14), RCAR_GP_PIN(1, 13),
-+	RCAR_GP_PIN(1, 12), RCAR_GP_PIN(1, 19), RCAR_GP_PIN(1, 18),
-+	RCAR_GP_PIN(1, 7),  RCAR_GP_PIN(1, 6),  RCAR_GP_PIN(1, 5),
-+	RCAR_GP_PIN(1, 4),  RCAR_GP_PIN(1, 3),  RCAR_GP_PIN(1, 2),
-+};
++/* Used by tracing, cannot be traced and cannot invoke lockdep. */
++static inline notrace int
++srcu_read_lock_notrace(struct srcu_struct *sp) __acquires(sp)
++{
++	int retval;
 +
-+static const unsigned int du_rgb666_mux[] = {
-+	DU_DR7_MARK, DU_DR6_MARK, DU_DR5_MARK, DU_DR4_MARK,
-+	DU_DR3_MARK, DU_DR2_MARK,
-+	DU_DG7_MARK, DU_DG6_MARK, DU_DG5_MARK, DU_DG4_MARK,
-+	DU_DG3_MARK, DU_DG2_MARK,
-+	DU_DB7_MARK, DU_DB6_MARK, DU_DB5_MARK, DU_DB4_MARK,
-+	DU_DB3_MARK, DU_DB2_MARK,
-+};
++	retval = __srcu_read_lock(sp);
++	return retval;
++}
 +
-+static const unsigned int du_rgb888_pins[] = {
-+	/* R[7:0], G[7:0], B[7:0] */
-+	RCAR_GP_PIN(0, 15), RCAR_GP_PIN(0, 14), RCAR_GP_PIN(0, 13),
-+	RCAR_GP_PIN(0, 12), RCAR_GP_PIN(0, 11), RCAR_GP_PIN(0, 10),
-+	RCAR_GP_PIN(0, 9),  RCAR_GP_PIN(0, 8),
-+	RCAR_GP_PIN(1, 15), RCAR_GP_PIN(1, 14), RCAR_GP_PIN(1, 13),
-+	RCAR_GP_PIN(1, 12), RCAR_GP_PIN(1, 19), RCAR_GP_PIN(1, 18),
-+	RCAR_GP_PIN(1, 17), RCAR_GP_PIN(1, 16),
-+	RCAR_GP_PIN(1, 7),  RCAR_GP_PIN(1, 6),  RCAR_GP_PIN(1, 5),
-+	RCAR_GP_PIN(1, 4),  RCAR_GP_PIN(1, 3),  RCAR_GP_PIN(1, 2),
-+	RCAR_GP_PIN(1, 1),  RCAR_GP_PIN(1, 0),
-+};
-+
-+static const unsigned int du_rgb888_mux[] = {
-+	DU_DR7_MARK, DU_DR6_MARK, DU_DR5_MARK, DU_DR4_MARK,
-+	DU_DR3_MARK, DU_DR2_MARK, DU_DR1_MARK, DU_DR0_MARK,
-+	DU_DG7_MARK, DU_DG6_MARK, DU_DG5_MARK, DU_DG4_MARK,
-+	DU_DG3_MARK, DU_DG2_MARK, DU_DG1_MARK, DU_DG0_MARK,
-+	DU_DB7_MARK, DU_DB6_MARK, DU_DB5_MARK, DU_DB4_MARK,
-+	DU_DB3_MARK, DU_DB2_MARK, DU_DB1_MARK, DU_DB0_MARK,
-+};
-+
-+static const unsigned int du_clk_out_0_pins[] = {
-+	/* CLKOUT */
-+	RCAR_GP_PIN(1, 27),
-+};
-+
-+static const unsigned int du_clk_out_0_mux[] = {
-+	DU_DOTCLKOUT0_MARK
-+};
-+
-+static const unsigned int du_clk_out_1_pins[] = {
-+	/* CLKOUT */
-+	RCAR_GP_PIN(2, 3),
-+};
-+
-+static const unsigned int du_clk_out_1_mux[] = {
-+	DU_DOTCLKOUT1_MARK
-+};
-+
-+static const unsigned int du_sync_pins[] = {
-+	/* EXVSYNC/VSYNC, EXHSYNC/HSYNC */
-+	RCAR_GP_PIN(2, 5), RCAR_GP_PIN(2, 4),
-+};
-+
-+static const unsigned int du_sync_mux[] = {
-+	DU_EXVSYNC_DU_VSYNC_MARK, DU_EXHSYNC_DU_HSYNC_MARK
-+};
-+
-+static const unsigned int du_oddf_pins[] = {
-+	/* EXDISP/EXODDF/EXCDE */
-+	RCAR_GP_PIN(2, 2),
-+};
-+
-+static const unsigned int du_oddf_mux[] = {
-+	DU_EXODDF_DU_ODDF_DISP_CDE_MARK,
-+};
-+
-+static const unsigned int du_cde_pins[] = {
-+	/* CDE */
-+	RCAR_GP_PIN(2, 0),
-+};
-+
-+static const unsigned int du_cde_mux[] = {
-+	DU_CDE_MARK,
-+};
-+
-+static const unsigned int du_disp_pins[] = {
-+	/* DISP */
-+	RCAR_GP_PIN(2, 1),
-+};
-+
-+static const unsigned int du_disp_mux[] = {
-+	DU_DISP_MARK,
-+};
-+
- /* - INTC-EX ---------------------------------------------------------------- */
- static const unsigned int intc_ex_irq0_pins[] = {
- 	/* IRQ0 */
-@@ -2756,6 +2852,14 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(avb_avtp_capture_a),
- 	SH_PFC_PIN_GROUP(avb_avtp_match_b),
- 	SH_PFC_PIN_GROUP(avb_avtp_capture_b),
-+	SH_PFC_PIN_GROUP(du_rgb666),
-+	SH_PFC_PIN_GROUP(du_rgb888),
-+	SH_PFC_PIN_GROUP(du_clk_out_0),
-+	SH_PFC_PIN_GROUP(du_clk_out_1),
-+	SH_PFC_PIN_GROUP(du_sync),
-+	SH_PFC_PIN_GROUP(du_oddf),
-+	SH_PFC_PIN_GROUP(du_cde),
-+	SH_PFC_PIN_GROUP(du_disp),
- 	SH_PFC_PIN_GROUP(intc_ex_irq0),
- 	SH_PFC_PIN_GROUP(intc_ex_irq1),
- 	SH_PFC_PIN_GROUP(intc_ex_irq2),
-@@ -2922,6 +3026,17 @@ static const char * const avb_groups[] = {
- 	"avb_avtp_capture_b",
- };
+ /**
+  * srcu_read_unlock - unregister a old reader from an SRCU-protected structure.
+  * @sp: srcu_struct in which to unregister the old reader.
+@@ -209,6 +219,13 @@ static inline void srcu_read_unlock(struct srcu_struct *sp, int idx)
+ 	__srcu_read_unlock(sp, idx);
+ }
  
-+static const char * const du_groups[] = {
-+	"du_rgb666",
-+	"du_rgb888",
-+	"du_clk_out_0",
-+	"du_clk_out_1",
-+	"du_sync",
-+	"du_oddf",
-+	"du_cde",
-+	"du_disp",
-+};
++/* Used by tracing, cannot be traced and cannot call lockdep. */
++static inline notrace void
++srcu_read_unlock_notrace(struct srcu_struct *sp, int idx) __releases(sp)
++{
++	__srcu_read_unlock(sp, idx);
++}
 +
- static const char * const intc_ex_groups[] = {
- 	"intc_ex_irq0",
- 	"intc_ex_irq1",
-@@ -3139,6 +3254,7 @@ static const char * const usb30_groups[] = {
- 
- static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(avb),
-+	SH_PFC_FUNCTION(du),
- 	SH_PFC_FUNCTION(intc_ex),
- 	SH_PFC_FUNCTION(msiof0),
- 	SH_PFC_FUNCTION(msiof1),
--- 
-2.17.0
+ /**
+  * smp_mb__after_srcu_read_unlock - ensure full ordering after srcu_read_unlock
+  *
