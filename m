@@ -1,40 +1,39 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZr2clINI+wJGaVyoTQlZZeziwBjOROMOtW4lavOOPR9j16tbp3q/oN9YQIcXKEGooUPD+qi
-ARC-Seal: i=1; a=rsa-sha256; t=1524838017; cv=none;
+X-Google-Smtp-Source: AB8JxZqb490aINBchcoycly0BU9FFso6UxNRsKyUK9zB5+dIElLKQZCUAgVA+BzgrUke1R6YyqmQ
+ARC-Seal: i=1; a=rsa-sha256; t=1524838013; cv=none;
         d=google.com; s=arc-20160816;
-        b=uQ+TtJXcxairqXywXZbUBDfs3nIf2N5/f57/O1p+VgNT77pnzFME+QSHqeCyX7mBS1
-         hrqV6WXCqbrBSILyEFPk2s6qKv7yv+hlCufU9XdGs42A1p1N6c2+Vah2e9ErCS4TM3+z
-         8lfpVxCPDiZU62wEFhXG5fw72cs3DGYBJdrSmHiU1bBvHfcvKTzAQccC/7RGldKapdX6
-         Uz9yJShV+s1o46KAqnbthj9Egs+0vsqozCyf//KwEty+LsLwaTORLTweEBvxx6uuk8co
-         VrNGiaFJFNl5IpdaA8jxruZsotY/gyOE/ul7r2ct7MR2wA0AuFBpwgQxDIOv0liRfXGS
-         VIqA==
+        b=Vn/xI3v0dnzvE6yBC2591BRRparKBnhp5kQQ7dV8W91TP6bNA0B/goZ0usq29o97bq
+         B689HxVgsXUVEXFEsvpcck5pXvrqqI/oiGNcTEu22JKRX8bHPJ4QHHbxd5Bja17qsyzM
+         crs04C6JwbNWmoEkqSrnpzSEuyEr18YCQWbn/9Efjtz1UdPWp0Gy53yhgqvi2lHGxMNo
+         vvxlwoq7Xaxpj5Iz1y42lgNtLIu5IJQ+lPpny8sS+lQxTk+r97pbAzOdGE6Lr5Ke20iG
+         c1gs+O+Bqkdh6DhFJA232XP599Q1w2VfFdECIgQEyOeYkrkh/uoYGQPTtVzk/vHcrySH
+         B6rg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=KbDKNOcIJFTw1bGGf1e0U26OK9ghhTVoNPE2E2qBXiA=;
-        b=AibqiBY6E1BkOLQrtsiMrEdiQlWT+f/SdHXZ6Ue7DCg6V7IRZoC+7kN1VFSgw/4pLb
-         yQ98JTnU8g56d51UtkMYRIbJZkS6isMAH/Wce72pbriGTY9BNjKV4sM9TqVfamVh8UNS
-         GPW1NVWhVLkGwxNFhHjMUer1mrnrbsvQdrE91RD5r81CJ5y7rXoAhLxRGizlNLesuqKq
-         9wjP+31X1jsWzra53w5v4igmCkfxlGeu4Mo8SBplbdQWfNPpX4sj1EjUBC6cAKay6tfX
-         FQnUUlq/PjIxrR9wVCrgAWGqbjq2Zjynm21zhtS74+qIu/3whp9PKVpr4t4VfXemdxf+
-         nkTw==
+        bh=moF1CgmnLCyOMsEwYEqa10wlIW+zLolBjVvepKvw9pY=;
+        b=u91lX/mR9L6dO8AlqgCTf+17XHhazRWhQLMSO4x0ruI73NVgLcinFbzopgiF9nVLYw
+         WLad4wMz4VTT+Pv8K7MyrIR8tpjQCuRwWg6cd/ZNtUfwXnqCXcw5j//ttSNvI+SWpFpa
+         krQLqrgYHz9IkNG6L6DZq9b8pYn3oW3ZXU9AGvVR6UiJbtVvgkaYaYGRsFu3sbDDcCzL
+         EbnEJ6rIikD4Gyum+nLQTLuNYsSYP+p0TWpjIxfuZcC2jYIAc0InlLYMTAFN/hLSBu+v
+         j3TLAhiMwHkOsGkzLCJmaI2fsfU7UFJZZ4QJ9cGqwoY7oxO8isZQ2h8t13uCvePZ39Ay
+         DAlw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFD1C218BC
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27ACF218BC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Tejun Heo <tj@kernel.org>,
-	Doron Roberts-Kedes <doronrk@fb.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 29/80] strparser: Do not call mod_delayed_work with a timeout of LONG_MAX
-Date: Fri, 27 Apr 2018 15:58:22 +0200
-Message-Id: <20180427135734.449660017@linuxfoundation.org>
+Subject: [PATCH 4.14 28/80] amd-xgbe: Improve KR auto-negotiation and training
+Date: Fri, 27 Apr 2018 15:58:21 +0200
+Message-Id: <20180427135734.389355950@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135732.928644313@linuxfoundation.org>
 References: <20180427135732.928644313@linuxfoundation.org>
@@ -44,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908548917467784?=
-X-GMAIL-MSGID: =?utf-8?q?1598908548917467784?=
+X-GMAIL-THRID: =?utf-8?q?1598908544447714944?=
+X-GMAIL-MSGID: =?utf-8?q?1598908544447714944?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,39 +52,346 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Doron Roberts-Kedes <doronrk@fb.com>
+From: Tom Lendacky <thomas.lendacky@amd.com>
 
 
-[ Upstream commit 7c5aba211dd61f41d737a2c51729eb9fdcd3edf4 ]
+[ Upstream commit 96f4d430c507ed4856048c2dc9c1a2ea5b5e74e4 ]
 
-struct sock's sk_rcvtimeo is initialized to
-LONG_MAX/MAX_SCHEDULE_TIMEOUT in sock_init_data. Calling
-mod_delayed_work with a timeout of LONG_MAX causes spurious execution of
-the work function. timer->expires is set equal to jiffies + LONG_MAX.
-When timer_base->clk falls behind the current value of jiffies,
-the delta between timer_base->clk and jiffies + LONG_MAX causes the
-expiration to be in the past. Returning early from strp_start_timer if
-timeo == LONG_MAX solves this problem.
+Update xgbe-phy-v2.c to make use of the auto-negotiation (AN) phy hooks
+to improve the ability to successfully complete Clause 73 AN when running
+at 10gbps.  Hardware can sometimes have issues with CDR lock when the
+AN DME page exchange is being performed.
 
-Found while testing net/tls_sw recv path.
+The AN and KR training hooks are used as follows:
+- The pre AN hook is used to disable CDR tracking in the PHY so that the
+  DME page exchange can be successfully and consistently completed.
+- The post KR training hook is used to re-enable the CDR tracking so that
+  KR training can successfully complete.
+- The post AN hook is used to check for an unsuccessful AN which will
+  increase a CDR tracking enablement delay (up to a maximum value).
 
-Fixes: 43a0c6751a322847 ("strparser: Stream parser for messages")
-Reviewed-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Doron Roberts-Kedes <doronrk@fb.com>
+Add two debugfs entries to allow control over use of the CDR tracking
+workaround.  The debugfs entries allow the CDR tracking workaround to
+be disabled and determine whether to re-enable CDR tracking before or
+after link training has been initiated.
+
+Also, with these changes the receiver reset cycle that is performed during
+the link status check can be performed less often.
+
+Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/strparser/strparser.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/amd/xgbe/xgbe-common.h  |    8 +
+ drivers/net/ethernet/amd/xgbe/xgbe-debugfs.c |   16 +++
+ drivers/net/ethernet/amd/xgbe/xgbe-main.c    |    1 
+ drivers/net/ethernet/amd/xgbe/xgbe-mdio.c    |    8 +
+ drivers/net/ethernet/amd/xgbe/xgbe-pci.c     |    2 
+ drivers/net/ethernet/amd/xgbe/xgbe-phy-v2.c  |  125 ++++++++++++++++++++++++++-
+ drivers/net/ethernet/amd/xgbe/xgbe.h         |    4 
+ 7 files changed, 160 insertions(+), 4 deletions(-)
 
---- a/net/strparser/strparser.c
-+++ b/net/strparser/strparser.c
-@@ -67,7 +67,7 @@ static void strp_abort_strp(struct strpa
+--- a/drivers/net/ethernet/amd/xgbe/xgbe-common.h
++++ b/drivers/net/ethernet/amd/xgbe/xgbe-common.h
+@@ -1321,6 +1321,10 @@
+ #define MDIO_VEND2_AN_STAT		0x8002
+ #endif
  
- static void strp_start_timer(struct strparser *strp, long timeo)
- {
--	if (timeo)
-+	if (timeo && timeo != LONG_MAX)
- 		mod_delayed_work(strp_wq, &strp->msg_timer_work, timeo);
++#ifndef MDIO_VEND2_PMA_CDR_CONTROL
++#define MDIO_VEND2_PMA_CDR_CONTROL	0x8056
++#endif
++
+ #ifndef MDIO_CTRL1_SPEED1G
+ #define MDIO_CTRL1_SPEED1G		(MDIO_CTRL1_SPEED10G & ~BMCR_SPEED100)
+ #endif
+@@ -1369,6 +1373,10 @@
+ #define XGBE_AN_CL37_TX_CONFIG_MASK	0x08
+ #define XGBE_AN_CL37_MII_CTRL_8BIT	0x0100
+ 
++#define XGBE_PMA_CDR_TRACK_EN_MASK	0x01
++#define XGBE_PMA_CDR_TRACK_EN_OFF	0x00
++#define XGBE_PMA_CDR_TRACK_EN_ON	0x01
++
+ /* Bit setting and getting macros
+  *  The get macro will extract the current bit field value from within
+  *  the variable
+--- a/drivers/net/ethernet/amd/xgbe/xgbe-debugfs.c
++++ b/drivers/net/ethernet/amd/xgbe/xgbe-debugfs.c
+@@ -519,6 +519,22 @@ void xgbe_debugfs_init(struct xgbe_prv_d
+ 				   "debugfs_create_file failed\n");
+ 	}
+ 
++	if (pdata->vdata->an_cdr_workaround) {
++		pfile = debugfs_create_bool("an_cdr_workaround", 0600,
++					    pdata->xgbe_debugfs,
++					    &pdata->debugfs_an_cdr_workaround);
++		if (!pfile)
++			netdev_err(pdata->netdev,
++				   "debugfs_create_bool failed\n");
++
++		pfile = debugfs_create_bool("an_cdr_track_early", 0600,
++					    pdata->xgbe_debugfs,
++					    &pdata->debugfs_an_cdr_track_early);
++		if (!pfile)
++			netdev_err(pdata->netdev,
++				   "debugfs_create_bool failed\n");
++	}
++
+ 	kfree(buf);
  }
  
+--- a/drivers/net/ethernet/amd/xgbe/xgbe-main.c
++++ b/drivers/net/ethernet/amd/xgbe/xgbe-main.c
+@@ -349,6 +349,7 @@ int xgbe_config_netdev(struct xgbe_prv_d
+ 	XGMAC_SET_BITS(pdata->rss_options, MAC_RSSCR, UDP4TE, 1);
+ 
+ 	/* Call MDIO/PHY initialization routine */
++	pdata->debugfs_an_cdr_workaround = pdata->vdata->an_cdr_workaround;
+ 	ret = pdata->phy_if.phy_init(pdata);
+ 	if (ret)
+ 		return ret;
+--- a/drivers/net/ethernet/amd/xgbe/xgbe-mdio.c
++++ b/drivers/net/ethernet/amd/xgbe/xgbe-mdio.c
+@@ -432,6 +432,8 @@ static void xgbe_an73_disable(struct xgb
+ 	xgbe_an73_set(pdata, false, false);
+ 	xgbe_an73_disable_interrupts(pdata);
+ 
++	pdata->an_start = 0;
++
+ 	netif_dbg(pdata, link, pdata->netdev, "CL73 AN disabled\n");
+ }
+ 
+@@ -511,11 +513,11 @@ static enum xgbe_an xgbe_an73_tx_trainin
+ 		XMDIO_WRITE(pdata, MDIO_MMD_PMAPMD, MDIO_PMA_10GBR_PMD_CTRL,
+ 			    reg);
+ 
+-		if (pdata->phy_if.phy_impl.kr_training_post)
+-			pdata->phy_if.phy_impl.kr_training_post(pdata);
+-
+ 		netif_dbg(pdata, link, pdata->netdev,
+ 			  "KR training initiated\n");
++
++		if (pdata->phy_if.phy_impl.kr_training_post)
++			pdata->phy_if.phy_impl.kr_training_post(pdata);
+ 	}
+ 
+ 	return XGBE_AN_PAGE_RECEIVED;
+--- a/drivers/net/ethernet/amd/xgbe/xgbe-pci.c
++++ b/drivers/net/ethernet/amd/xgbe/xgbe-pci.c
+@@ -456,6 +456,7 @@ static const struct xgbe_version_data xg
+ 	.irq_reissue_support		= 1,
+ 	.tx_desc_prefetch		= 5,
+ 	.rx_desc_prefetch		= 5,
++	.an_cdr_workaround		= 1,
+ };
+ 
+ static const struct xgbe_version_data xgbe_v2b = {
+@@ -470,6 +471,7 @@ static const struct xgbe_version_data xg
+ 	.irq_reissue_support		= 1,
+ 	.tx_desc_prefetch		= 5,
+ 	.rx_desc_prefetch		= 5,
++	.an_cdr_workaround		= 1,
+ };
+ 
+ static const struct pci_device_id xgbe_pci_table[] = {
+--- a/drivers/net/ethernet/amd/xgbe/xgbe-phy-v2.c
++++ b/drivers/net/ethernet/amd/xgbe/xgbe-phy-v2.c
+@@ -147,6 +147,14 @@
+ /* Rate-change complete wait/retry count */
+ #define XGBE_RATECHANGE_COUNT		500
+ 
++/* CDR delay values for KR support (in usec) */
++#define XGBE_CDR_DELAY_INIT		10000
++#define XGBE_CDR_DELAY_INC		10000
++#define XGBE_CDR_DELAY_MAX		100000
++
++/* RRC frequency during link status check */
++#define XGBE_RRC_FREQUENCY		10
++
+ enum xgbe_port_mode {
+ 	XGBE_PORT_MODE_RSVD = 0,
+ 	XGBE_PORT_MODE_BACKPLANE,
+@@ -355,6 +363,10 @@ struct xgbe_phy_data {
+ 	unsigned int redrv_addr;
+ 	unsigned int redrv_lane;
+ 	unsigned int redrv_model;
++
++	/* KR AN support */
++	unsigned int phy_cdr_notrack;
++	unsigned int phy_cdr_delay;
+ };
+ 
+ /* I2C, MDIO and GPIO lines are muxed, so only one device at a time */
+@@ -2361,7 +2373,7 @@ static int xgbe_phy_link_status(struct x
+ 		return 1;
+ 
+ 	/* No link, attempt a receiver reset cycle */
+-	if (phy_data->rrc_count++) {
++	if (phy_data->rrc_count++ > XGBE_RRC_FREQUENCY) {
+ 		phy_data->rrc_count = 0;
+ 		xgbe_phy_rrc(pdata);
+ 	}
+@@ -2669,6 +2681,103 @@ static bool xgbe_phy_port_enabled(struct
+ 	return true;
+ }
+ 
++static void xgbe_phy_cdr_track(struct xgbe_prv_data *pdata)
++{
++	struct xgbe_phy_data *phy_data = pdata->phy_data;
++
++	if (!pdata->debugfs_an_cdr_workaround)
++		return;
++
++	if (!phy_data->phy_cdr_notrack)
++		return;
++
++	usleep_range(phy_data->phy_cdr_delay,
++		     phy_data->phy_cdr_delay + 500);
++
++	XMDIO_WRITE_BITS(pdata, MDIO_MMD_PMAPMD, MDIO_VEND2_PMA_CDR_CONTROL,
++			 XGBE_PMA_CDR_TRACK_EN_MASK,
++			 XGBE_PMA_CDR_TRACK_EN_ON);
++
++	phy_data->phy_cdr_notrack = 0;
++}
++
++static void xgbe_phy_cdr_notrack(struct xgbe_prv_data *pdata)
++{
++	struct xgbe_phy_data *phy_data = pdata->phy_data;
++
++	if (!pdata->debugfs_an_cdr_workaround)
++		return;
++
++	if (phy_data->phy_cdr_notrack)
++		return;
++
++	XMDIO_WRITE_BITS(pdata, MDIO_MMD_PMAPMD, MDIO_VEND2_PMA_CDR_CONTROL,
++			 XGBE_PMA_CDR_TRACK_EN_MASK,
++			 XGBE_PMA_CDR_TRACK_EN_OFF);
++
++	xgbe_phy_rrc(pdata);
++
++	phy_data->phy_cdr_notrack = 1;
++}
++
++static void xgbe_phy_kr_training_post(struct xgbe_prv_data *pdata)
++{
++	if (!pdata->debugfs_an_cdr_track_early)
++		xgbe_phy_cdr_track(pdata);
++}
++
++static void xgbe_phy_kr_training_pre(struct xgbe_prv_data *pdata)
++{
++	if (pdata->debugfs_an_cdr_track_early)
++		xgbe_phy_cdr_track(pdata);
++}
++
++static void xgbe_phy_an_post(struct xgbe_prv_data *pdata)
++{
++	struct xgbe_phy_data *phy_data = pdata->phy_data;
++
++	switch (pdata->an_mode) {
++	case XGBE_AN_MODE_CL73:
++	case XGBE_AN_MODE_CL73_REDRV:
++		if (phy_data->cur_mode != XGBE_MODE_KR)
++			break;
++
++		xgbe_phy_cdr_track(pdata);
++
++		switch (pdata->an_result) {
++		case XGBE_AN_READY:
++		case XGBE_AN_COMPLETE:
++			break;
++		default:
++			if (phy_data->phy_cdr_delay < XGBE_CDR_DELAY_MAX)
++				phy_data->phy_cdr_delay += XGBE_CDR_DELAY_INC;
++			else
++				phy_data->phy_cdr_delay = XGBE_CDR_DELAY_INIT;
++			break;
++		}
++		break;
++	default:
++		break;
++	}
++}
++
++static void xgbe_phy_an_pre(struct xgbe_prv_data *pdata)
++{
++	struct xgbe_phy_data *phy_data = pdata->phy_data;
++
++	switch (pdata->an_mode) {
++	case XGBE_AN_MODE_CL73:
++	case XGBE_AN_MODE_CL73_REDRV:
++		if (phy_data->cur_mode != XGBE_MODE_KR)
++			break;
++
++		xgbe_phy_cdr_notrack(pdata);
++		break;
++	default:
++		break;
++	}
++}
++
+ static void xgbe_phy_stop(struct xgbe_prv_data *pdata)
+ {
+ 	struct xgbe_phy_data *phy_data = pdata->phy_data;
+@@ -2680,6 +2789,9 @@ static void xgbe_phy_stop(struct xgbe_pr
+ 	xgbe_phy_sfp_reset(phy_data);
+ 	xgbe_phy_sfp_mod_absent(pdata);
+ 
++	/* Reset CDR support */
++	xgbe_phy_cdr_track(pdata);
++
+ 	/* Power off the PHY */
+ 	xgbe_phy_power_off(pdata);
+ 
+@@ -2712,6 +2824,9 @@ static int xgbe_phy_start(struct xgbe_pr
+ 	/* Start in highest supported mode */
+ 	xgbe_phy_set_mode(pdata, phy_data->start_mode);
+ 
++	/* Reset CDR support */
++	xgbe_phy_cdr_track(pdata);
++
+ 	/* After starting the I2C controller, we can check for an SFP */
+ 	switch (phy_data->port_mode) {
+ 	case XGBE_PORT_MODE_SFP:
+@@ -3019,6 +3134,8 @@ static int xgbe_phy_init(struct xgbe_prv
+ 		}
+ 	}
+ 
++	phy_data->phy_cdr_delay = XGBE_CDR_DELAY_INIT;
++
+ 	/* Register for driving external PHYs */
+ 	mii = devm_mdiobus_alloc(pdata->dev);
+ 	if (!mii) {
+@@ -3071,4 +3188,10 @@ void xgbe_init_function_ptrs_phy_v2(stru
+ 	phy_impl->an_advertising	= xgbe_phy_an_advertising;
+ 
+ 	phy_impl->an_outcome		= xgbe_phy_an_outcome;
++
++	phy_impl->an_pre		= xgbe_phy_an_pre;
++	phy_impl->an_post		= xgbe_phy_an_post;
++
++	phy_impl->kr_training_pre	= xgbe_phy_kr_training_pre;
++	phy_impl->kr_training_post	= xgbe_phy_kr_training_post;
+ }
+--- a/drivers/net/ethernet/amd/xgbe/xgbe.h
++++ b/drivers/net/ethernet/amd/xgbe/xgbe.h
+@@ -994,6 +994,7 @@ struct xgbe_version_data {
+ 	unsigned int irq_reissue_support;
+ 	unsigned int tx_desc_prefetch;
+ 	unsigned int rx_desc_prefetch;
++	unsigned int an_cdr_workaround;
+ };
+ 
+ struct xgbe_vxlan_data {
+@@ -1262,6 +1263,9 @@ struct xgbe_prv_data {
+ 	unsigned int debugfs_xprop_reg;
+ 
+ 	unsigned int debugfs_xi2c_reg;
++
++	bool debugfs_an_cdr_workaround;
++	bool debugfs_an_cdr_track_early;
+ };
+ 
+ /* Function prototypes*/
