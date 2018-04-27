@@ -1,54 +1,231 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757371AbeD0DGq (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 23:06:46 -0400
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:34469 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757046AbeD0DGp (ORCPT
+        id S1757381AbeD0DKJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 23:10:09 -0400
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:39138 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757046AbeD0DKH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 23:06:45 -0400
-X-Google-Smtp-Source: AB8JxZplnV4HKolM04kC2dy3JmuV69nWqAMR8NvCvaLSVh7BR0VU3JP5lvG/hnfPG+b4+BTHv53pww==
-Date: Thu, 26 Apr 2018 22:06:43 -0500
-From: Rob Herring <robh@kernel.org>
-To: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Pawel Osciak <pawel@osciak.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>, Arnd Bergmann <arnd@arndb.de>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Tomasz Figa <tfiga@chromium.org>
-Subject: Re: [PATCH v2 08/10] dt-bindings: media: Document bindings for the
- Sunxi-Cedrus VPU driver
-Message-ID: <20180427030643.wyvawlj6aqhjuadz@rob-hp-laptop>
-References: <20180419154124.17512-1-paul.kocialkowski@bootlin.com>
- <20180419154536.17846-4-paul.kocialkowski@bootlin.com>
+        Thu, 26 Apr 2018 23:10:07 -0400
+Subject: Re: [PATCH 2/2] net: stmmac: dwmac-meson: extend phy mode setting
+To: Jerome Brunet <jbrunet@baylibre.com>,
+        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>
+References: <20180426160508.29380-1-yixun.lan@amlogic.com>
+ <20180426160508.29380-3-yixun.lan@amlogic.com>
+ <1524732426.4026.84.camel@baylibre.com>
+CC: <yixun.lan@amlogic.com>, Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+From: Yixun Lan <yixun.lan@amlogic.com>
+Message-ID: <daa6e325-ce4d-7b6b-dc43-2a884d485139@amlogic.com>
+Date: Fri, 27 Apr 2018 11:09:59 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180419154536.17846-4-paul.kocialkowski@bootlin.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <1524732426.4026.84.camel@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.18.20.235]
+X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
+ (10.18.11.6)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 19, 2018 at 05:45:34PM +0200, Paul Kocialkowski wrote:
-> This adds a device-tree binding document that specifies the properties
-> used by the Sunxi-Cedurs VPU driver, as well as examples.
+Hi Jerome
+On 04/26/18 16:47, Jerome Brunet wrote:
+> On Thu, 2018-04-26 at 16:05 +0000, Yixun Lan wrote:
+>>   In the Meson-AXG SoC, the phy mode setting of PRG_ETH0 in the glue layer
+>> is extended from bit[0] to bit[2:0].
+>>   There is no problem if we configure it to the RGMII 1000M PHY mode,
+>> since the register setting is coincidentally compatible with previous one,
+>> but for the RMII 100M PHY mode, the configuration need to be changed to
+>> value - b100.
+>>   This patch was verified with a RTL8201F 100M ethernet PHY.
+>>
+>> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+>> ---
+>>  .../ethernet/stmicro/stmmac/dwmac-meson8b.c   | 95 ++++++++++++++++---
+>>  1 file changed, 84 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
+>> index 7cb794094a70..e3688b6dd87c 100644
+>> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
+>> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
+>> @@ -18,6 +18,7 @@
+>>  #include <linux/io.h>
+>>  #include <linux/ioport.h>
+>>  #include <linux/module.h>
+>> +#include <linux/of_device.h>
+>>  #include <linux/of_net.h>
+>>  #include <linux/mfd/syscon.h>
+>>  #include <linux/platform_device.h>
+>> @@ -29,6 +30,10 @@
+>>  
+>>  #define PRG_ETH0_RGMII_MODE		BIT(0)
+>>  
+>> +#define PRG_ETH0_EXT_PHY_MODE_MASK	GENMASK(2, 0)
+>> +#define PRG_ETH0_EXT_RGMII_MODE		1
+>> +#define PRG_ETH0_EXT_RMII_MODE		4
+>> +
+>>  /* mux to choose between fclk_div2 (bit unset) and mpll2 (bit set) */
+>>  #define PRG_ETH0_CLK_M250_SEL_SHIFT	4
+>>  #define PRG_ETH0_CLK_M250_SEL_MASK	GENMASK(4, 4)
+>> @@ -46,10 +51,16 @@
+>>  #define PRG_ETH0_TX_AND_PHY_REF_CLK	BIT(12)
+>>  
+>>  #define MUX_CLK_NUM_PARENTS		2
+>> +struct meson8b_dwmac_data {
+>> +	bool ext_phy_mode;
+>> +};
+>>  
+>>  struct meson8b_dwmac {
+>>  	struct device		*dev;
+>>  	void __iomem		*regs;
+>> +
+>> +	const struct meson8b_dwmac_data *data;
+>> +
+>>  	phy_interface_t		phy_mode;
+>>  	struct clk		*rgmii_tx_clk;
+>>  	u32			tx_delay_ns;
+>> @@ -171,6 +182,46 @@ static int meson8b_init_rgmii_tx_clk(struct meson8b_dwmac *dwmac)
+>>  	return 0;
+>>  }
+>>  
+>> +static int meson8b_init_set_mode(struct meson8b_dwmac *dwmac)
+>> +{
+>> +	bool ext_phy_mode = dwmac->data->ext_phy_mode;
+>> +
+>> +	switch (dwmac->phy_mode) {
+>> +	case PHY_INTERFACE_MODE_RGMII:
+>> +	case PHY_INTERFACE_MODE_RGMII_RXID:
+>> +	case PHY_INTERFACE_MODE_RGMII_ID:
+>> +	case PHY_INTERFACE_MODE_RGMII_TXID:
+>> +		/* enable RGMII mode */
+>> +		if (ext_phy_mode)
 > 
-> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> ---
->  .../devicetree/bindings/media/sunxi-cedrus.txt     | 50 ++++++++++++++++++++++
->  1 file changed, 50 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/sunxi-cedrus.txt
+> Looks weird to have this if target at a specific SoC withing a function named
+> after another SoC
+> 
+> Couldn't you make one function per soc type, and pass that function pointer in
+> the match data ?
+> 
+sounds good, I can do this
 
-Other than the one nit about the node name,
-
-Reviewed-by: Rob Herring <robh@kernel.org>
+>> +			meson8b_dwmac_mask_bits(dwmac, PRG_ETH0,
+>> +						PRG_ETH0_EXT_PHY_MODE_MASK,
+>> +						PRG_ETH0_EXT_RGMII_MODE);
+>> +		else
+>> +			meson8b_dwmac_mask_bits(dwmac, PRG_ETH0,
+>> +						PRG_ETH0_RGMII_MODE,
+>> +						PRG_ETH0_RGMII_MODE);
+>> +
+>> +		break;
+>> +	case PHY_INTERFACE_MODE_RMII:
+>> +		/* disable RGMII mode -> enables RMII mode */
+>> +		if (ext_phy_mode)
+>> +			meson8b_dwmac_mask_bits(dwmac, PRG_ETH0,
+>> +						PRG_ETH0_EXT_PHY_MODE_MASK,
+>> +						PRG_ETH0_EXT_RMII_MODE);
+>> +		else
+>> +			meson8b_dwmac_mask_bits(dwmac, PRG_ETH0,
+>> +						PRG_ETH0_RGMII_MODE, 0);
+>> +
+>> +		break;
+>> +	default:
+>> +		dev_err(dwmac->dev, "fail to set phy-mode %s\n",
+>> +			phy_modes(dwmac->phy_mode));
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>  static int meson8b_init_prg_eth(struct meson8b_dwmac *dwmac)
+>>  {
+>>  	int ret;
+>> @@ -188,10 +239,6 @@ static int meson8b_init_prg_eth(struct meson8b_dwmac *dwmac)
+>>  
+>>  	case PHY_INTERFACE_MODE_RGMII_ID:
+>>  	case PHY_INTERFACE_MODE_RGMII_TXID:
+>> -		/* enable RGMII mode */
+>> -		meson8b_dwmac_mask_bits(dwmac, PRG_ETH0, PRG_ETH0_RGMII_MODE,
+>> -					PRG_ETH0_RGMII_MODE);
+>> -
+>>  		/* only relevant for RMII mode -> disable in RGMII mode */
+>>  		meson8b_dwmac_mask_bits(dwmac, PRG_ETH0,
+>>  					PRG_ETH0_INVERTED_RMII_CLK, 0);
+>> @@ -224,10 +271,6 @@ static int meson8b_init_prg_eth(struct meson8b_dwmac *dwmac)
+>>  		break;
+>>  
+>>  	case PHY_INTERFACE_MODE_RMII:
+>> -		/* disable RGMII mode -> enables RMII mode */
+>> -		meson8b_dwmac_mask_bits(dwmac, PRG_ETH0, PRG_ETH0_RGMII_MODE,
+>> -					0);
+>> -
+>>  		/* invert internal clk_rmii_i to generate 25/2.5 tx_rx_clk */
+>>  		meson8b_dwmac_mask_bits(dwmac, PRG_ETH0,
+>>  					PRG_ETH0_INVERTED_RMII_CLK,
+>> @@ -274,6 +317,11 @@ static int meson8b_dwmac_probe(struct platform_device *pdev)
+>>  		goto err_remove_config_dt;
+>>  	}
+>>  
+>> +	dwmac->data = (const struct meson8b_dwmac_data *)
+>> +		of_device_get_match_data(&pdev->dev);
+>> +	if (!dwmac->data)
+>> +		return -EINVAL;
+>> +
+>>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+>>  	dwmac->regs = devm_ioremap_resource(&pdev->dev, res);
+>>  	if (IS_ERR(dwmac->regs)) {
+>> @@ -298,6 +346,10 @@ static int meson8b_dwmac_probe(struct platform_device *pdev)
+>>  	if (ret)
+>>  		goto err_remove_config_dt;
+>>  
+>> +	ret = meson8b_init_set_mode(dwmac);
+>> +	if (ret)
+>> +		goto err_remove_config_dt;
+>> +
+>>  	ret = meson8b_init_prg_eth(dwmac);
+>>  	if (ret)
+>>  		goto err_remove_config_dt;
+>> @@ -316,10 +368,31 @@ static int meson8b_dwmac_probe(struct platform_device *pdev)
+>>  	return ret;
+>>  }
+>>  
+>> +static const struct meson8b_dwmac_data meson8b_dwmac_data = {
+>> +	.ext_phy_mode = false,
+>> +};
+>> +
+>> +static const struct meson8b_dwmac_data meson_axg_dwmac_data = {
+>> +	.ext_phy_mode = true,
+>> +};
+>> +
+>>  static const struct of_device_id meson8b_dwmac_match[] = {
+>> -	{ .compatible = "amlogic,meson8b-dwmac" },
+>> -	{ .compatible = "amlogic,meson8m2-dwmac" },
+>> -	{ .compatible = "amlogic,meson-gxbb-dwmac" },
+>> +	{
+>> +		.compatible = "amlogic,meson8b-dwmac",
+>> +		.data = &meson8b_dwmac_data,
+>> +	},
+>> +	{
+>> +		.compatible = "amlogic,meson8m2-dwmac",
+>> +		.data = &meson8b_dwmac_data,
+>> +	},
+>> +	{
+>> +		.compatible = "amlogic,meson-gxbb-dwmac",
+>> +		.data = &meson8b_dwmac_data,
+>> +	},
+>> +	{
+>> +		.compatible = "amlogic,meson-axg-dwmac",
+>> +		.data = &meson_axg_dwmac_data,
+>> +	},
+>>  	{ }
+>>  };
+>>  MODULE_DEVICE_TABLE(of, meson8b_dwmac_match);
+> 
+> .
+> 
