@@ -1,97 +1,96 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-599407-1524855459-2-11665938001077598137
+X-Cyrus-Session-Id: sloti22d1t05-599759-1524852926-2-17125162851749909010
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, MAILING_LIST_MULTI -1, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
+  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524855458; b=ZoT8Xo4Kwy+JNA3wKOOtzkeWvvTKHqqlbprnpGER1GvhirzUCX
-    40OVpNWyWXJKbCeBedMjn67jEVJoeHB4nzSP4HrxoNBPzRnE1yeTgkO4QqOVhfB5
-    VN1VO+WQv+sdzq93T7mfUGW9RbI64B/5PEexEwA4Rng0LZUfPgCFdAzlUJB3SEDO
-    spO7hZVax0m141oW1vOyjkcYO4tvDRe3zIsSWtrMsHWT3mUE+AUC/8DnpUXpaqHG
-    4KUhtvt1nkPx5K97m4W9XdP0BvyWrzsxt1pspB3sprYYVu+gBGbxF7ZLpMV1MsKs
-    bQuUT3E/guQST78ElI931XwA5R53czg1ftYw==
+    1524852925; b=kijQOggHn1I56Pnj0MAmmdNLSBTqWWu4S5IKzJdTS/KIOWAEeH
+    4Y1j+v6Mbj4W/Lg8PpTPVxKeOEzGHQUHY2pbLao1pTR65ea97m4vXbZZSY+pgq/t
+    RA2r25zEn5LRGaLzJ1Bluz0LGKKiNicUsop4DbS04vjAk2k2m6ALP0RmaYztKxVO
+    aW58k6pQCv109EBze6CnEnnMUdqfy0gzFVCV4J86H0T0aci0uNROG6xpeNvAQP4C
+    Qqk3mmSdAKSZlf2AUgZyJqBw3F+RrvrKWFSQnvwcO23zznDrNhU5EFuY4gWLtc39
+    dI4yJ5oRj0MQ2Ic889yGCq9XXabEQ4SzBgUw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1524855458; bh=2SSE7xhUzd++BpVxIit2LmORy0I/jw
-    JAV6Y2xBW/6eo=; b=mrIiqMtU5TK6ZjXlg9qzl1dVz9k4R7otUweqspH4He3mou
-    UspRtDwen6Tgu8mrojTkKm0av5W7hI86ruFn93czYvdC+0BjW3v5viazCQd0YshW
-    e14L4xvITdnZh+X8ANKhdgCWw1M8y8WbgDTMq+3+n2fxeI+UFLRvqRcye5CwZjzI
-    DPu9PjvnkQc9T8jlpRPGssLPBZkS+c8/aNMVtviadorV8g14TrZXHprdqh8d1ow1
-    OK9IKsTUpoA8g1CwHnG3U9xzac9yJ0eoEVwUn9jTZ7/wvLLe1jzRYVsPUUTef1ly
-    ztgNUzue3+RRYJCkDhXzcrkQHD0J6HbcRmnCZJCA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=cqZ4rSAM x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    messagingengine.com; h=subject:to:cc:references:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1524852925;
+    bh=4QhLh4VVz2HnajJO7fhcgMX/C1BGqKE+5wzw0zCMXMA=; b=lUFEmdc1gpYn
+    OPMiikkvJGTcHLCLg7JhEAJcaPhQTTmUxYhO0FzL9Cx+VH1FZ8TKMYf/xsBFPIyF
+    UjTINXk9O2fbpEuuo2TkGvFx0KhPix2zTnbLYx36foCHwdOzYciEMUrMZQJo2X+4
+    4bcVPT/FLpjZqseOCAN5n7bxbtiMqZX82oV8NLLzWuLS72hcFa5u7bcv3D/4wDK2
+    Uwe6YlcJZH9/nNaKnNK5pKE7YS9YiYjcAbRgdaaPDz2kq06cSSinhnH4XIYonmd7
+    EAjW/c/sGnqDThwk4jHRB06Ow+rWpyUg9iaXIG7WUYENMQr9FrVf+1eXj98YU6jF
+    DwCOAUJztg==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
+    x-aligned-from=orgdomain_pass (Domain org match);
     x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=OrdWbtNW;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=cqZ4rSAM x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
+    x-aligned-from=orgdomain_pass (Domain org match);
     x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=OrdWbtNW;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfLjuHgHOZ7OqZhaqWTTUkC3NJXI/bfv5GP8rO1pWIuIGB3T0lidgCPgYBRETMcgSR6W2B/PzgcCoUkcu1C0PxJKKDsaMuVSk/lQKqI46W9VpvcZsEODu
-    VsuoUtywoYRSLbLWc+bi4S9VoQ8Zr0MHpQpk65+EQPaFmXlRJ5sugMYVicE649e/tUwcFAr1Qwoe4/MdBcB+mK9xcSB7ox8wj4vKTf5GwHhgR53miuStINlp
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=TpujumX0jH7REod0KhDaHZOp9kI=:19
-    a=kj9zAlcOel0A:10 a=x7bEGLp0ZPQA:10 a=vY_346TuTMEA:10 a=oZq4rTz8mb0A:10
-    a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8 a=bvbG7kd8bnrNiX9ypvAA:9
-    a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfM9RXZfsOHGoJezbNXVEdrN7heMM/VLoxN6btzQSff0/SdE4Losci2zWmxr5PIPr/JJleRUqNmqopzD0tjNFQRkQI2sKJ+7eFl4Se8ZknPTbJumvqyUF
+    g+EU/ew4SbbSQgIoN02xXl33z2u8cU3zdblCWoVZCtZRuGVbwPvj7nfQ+5PkVx+gJ1+29B09jvZUN1le/VA/Vr0Q2WtuTPNzqwV6PQox8HEFdg8YHoWRu1FP
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=oZq4rTz8mb0A:10
+    a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8 a=8-vRK6DNSD7UNujOA5sA:9 a=QEXdDO2ut3YA:10
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758606AbeD0S5h (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 27 Apr 2018 14:57:37 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:39910 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758043AbeD0S5g (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 27 Apr 2018 14:57:36 -0400
-X-Google-Smtp-Source: AB8JxZq62Vj7vXV5TlORVjhnt5WCYDj3qsqgCe9qijnuGeK6T5rgFUlkGJBigUcPjnY77zHnb1tWpw==
-Date: Fri, 27 Apr 2018 11:57:41 -0700
-From: Nathan Chancellor <natechancellor@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+        id S1757936AbeD0SPX (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 27 Apr 2018 14:15:23 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:46434 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757920AbeD0SPW (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 27 Apr 2018 14:15:22 -0400
 Subject: Re: [PATCH 4.4 00/50] 4.4.130-stable review
-Message-ID: <20180427185741.GA31397@flashbox>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, Shuah Khan <shuah@kernel.org>
 References: <20180427135655.623669681@linuxfoundation.org>
+From: Shuah Khan <shuah@kernel.org>
+Message-ID: <b97cbb0b-544b-cf8d-4616-db41b64bd11d@kernel.org>
+Date: Fri, 27 Apr 2018 12:15:08 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <20180427135655.623669681@linuxfoundation.org>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Apr 27, 2018 at 03:58:02PM +0200, Greg Kroah-Hartman wrote:
+On 04/27/2018 07:58 AM, Greg Kroah-Hartman wrote:
 > This is the start of the stable review cycle for the 4.4.130 release.
 > There are 50 patches in this series, all will be posted as a response
 > to this one.  If anyone has any issues with these being applied, please
@@ -111,9 +110,7 @@ On Fri, Apr 27, 2018 at 03:58:02PM +0200, Greg Kroah-Hartman wrote:
 > greg k-h
 > 
 
-Merged, compiled, and installed onto my Pixel 2 XL and OnePlus 5.
+Compiled and booted on my test system. No dmesg regressions.
 
-No initial issues noticed in either dmesg or general usage.
-
-Thanks!
-Nathan
+thanks,
+-- Shuah
