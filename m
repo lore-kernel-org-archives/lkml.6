@@ -1,186 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932507AbeD0Jfa (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 05:35:30 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:51888 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932488AbeD0Jf1 (ORCPT
+        id S932533AbeD0Jfi (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 05:35:38 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:53014 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932509AbeD0Jfc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 05:35:27 -0400
-X-Google-Smtp-Source: AB8JxZrC06aJaFQrXgzySfj/ZRgA/0njYLTWIRVnGa864/Gnbk1vrKHjQPR92mtTLkzoVbtOK8dzuw==
-Subject: Re: [PATCH v2 2/2] soc: mediatek: reuse regmap_read_poll_timeout
- helpers
-To: sean.wang@mediatek.com, rjw@rjwysocki.net, khilman@baylibre.com
-Cc: ulf.hansson@linaro.org, linux-mediatek@lists.infradead.org,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Weiyi Lu <weiyi.lu@mediatek.com>
-References: <ccea364eeb830b2092987d271c8308b97fe59d8f.1524465345.git.sean.wang@mediatek.com>
- <ed866d3345a27b2c87b570562d9ad9132bca6062.1524465345.git.sean.wang@mediatek.com>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- UXI+r2JwH1CJjrHWeQEI2ucSKsNa8FllDmG/fQ==
-Message-ID: <4274d8f7-dc1f-b0f9-026f-1a6196dcb730@gmail.com>
-Date: Fri, 27 Apr 2018 11:35:23 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Fri, 27 Apr 2018 05:35:32 -0400
+X-Google-Smtp-Source: AB8JxZqvf6bcmCn4MpnH1ZH8tciX/AxdXJl8HPbdSttMNEBuCU0CuDfdfFLOi+ObVrX9tgrUbBUPjQ==
+Date: Fri, 27 Apr 2018 11:35:29 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 01/15] dt-bindings: arm: tegra: Remove duplicated
+ Tegra30+ MC binding
+Message-ID: <20180427093529.GC30388@ulmo>
+References: <cover.1523301400.git.digetx@gmail.com>
+ <1ac41372c213e96871df1e02cada2e1899f03a7b.1523301400.git.digetx@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <ed866d3345a27b2c87b570562d9ad9132bca6062.1524465345.git.sean.wang@mediatek.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="uXxzq0nDebZQVNAZ"
+Content-Disposition: inline
+In-Reply-To: <1ac41372c213e96871df1e02cada2e1899f03a7b.1523301400.git.digetx@gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--uXxzq0nDebZQVNAZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 04/23/2018 08:42 AM, sean.wang@mediatek.com wrote:
-> From: Sean Wang <sean.wang@mediatek.com>
-> 
-> Reuse the common helpers regmap_read_poll_timeout provided by Linux core
-> instead of an open-coded handling.
-> 
-> v1 -> v2:
->  - use macro definitions MTK_POLL_DELAY_US and MTK_POLL_TIMEOUT for
->    arguments sleep_us and timeout_us passing in regmap_read_poll_timeout.
->  - remove unnecessary linux/iopoll.h being included in.
-> 
-> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> Cc: Matthias Brugger <matthias.bgg@gmail.com>
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> Cc: Weiyi Lu <weiyi.lu@mediatek.com>
+On Mon, Apr 09, 2018 at 10:28:23PM +0300, Dmitry Osipenko wrote:
+> There are two bindings for the same Memory Controller. One of the bindings
+> became obsolete long time ago and probably was left unnoticed, remove it
+> for consistency.
+>=20
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 > ---
->  drivers/soc/mediatek/mtk-infracfg.c | 46 ++++++++++---------------------------
->  1 file changed, 12 insertions(+), 34 deletions(-)
-> 
+>  .../bindings/arm/tegra/nvidia,tegra30-mc.txt           | 18 ------------=
+------
+>  1 file changed, 18 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,te=
+gra30-mc.txt
 
-pushed to v4.17-next/soc
+Applied, thanks.
 
-> diff --git a/drivers/soc/mediatek/mtk-infracfg.c b/drivers/soc/mediatek/mtk-infracfg.c
-> index 8c310de..958861c 100644
-> --- a/drivers/soc/mediatek/mtk-infracfg.c
-> +++ b/drivers/soc/mediatek/mtk-infracfg.c
-> @@ -17,6 +17,9 @@
->  #include <linux/soc/mediatek/infracfg.h>
->  #include <asm/processor.h>
->  
-> +#define MTK_POLL_DELAY_US   10
-> +#define MTK_POLL_TIMEOUT    (jiffies_to_usecs(HZ))
-> +
->  #define INFRA_TOPAXI_PROTECTEN		0x0220
->  #define INFRA_TOPAXI_PROTECTSTA1	0x0228
->  #define INFRA_TOPAXI_PROTECTEN_SET	0x0260
-> @@ -37,7 +40,6 @@
->  int mtk_infracfg_set_bus_protection(struct regmap *infracfg, u32 mask,
->  		bool reg_update)
->  {
-> -	unsigned long expired;
->  	u32 val;
->  	int ret;
->  
-> @@ -47,22 +49,11 @@ int mtk_infracfg_set_bus_protection(struct regmap *infracfg, u32 mask,
->  	else
->  		regmap_write(infracfg, INFRA_TOPAXI_PROTECTEN_SET, mask);
->  
-> -	expired = jiffies + HZ;
-> -
-> -	while (1) {
-> -		ret = regmap_read(infracfg, INFRA_TOPAXI_PROTECTSTA1, &val);
-> -		if (ret)
-> -			return ret;
-> -
-> -		if ((val & mask) == mask)
-> -			break;
-> +	ret = regmap_read_poll_timeout(infracfg, INFRA_TOPAXI_PROTECTSTA1,
-> +				       val, (val & mask) == mask,
-> +				       MTK_POLL_DELAY_US, MTK_POLL_TIMEOUT);
->  
-> -		cpu_relax();
-> -		if (time_after(jiffies, expired))
-> -			return -EIO;
-> -	}
-> -
-> -	return 0;
-> +	return ret;
->  }
->  
->  /**
-> @@ -80,30 +71,17 @@ int mtk_infracfg_set_bus_protection(struct regmap *infracfg, u32 mask,
->  int mtk_infracfg_clear_bus_protection(struct regmap *infracfg, u32 mask,
->  		bool reg_update)
->  {
-> -	unsigned long expired;
->  	int ret;
-> +	u32 val;
->  
->  	if (reg_update)
->  		regmap_update_bits(infracfg, INFRA_TOPAXI_PROTECTEN, mask, 0);
->  	else
->  		regmap_write(infracfg, INFRA_TOPAXI_PROTECTEN_CLR, mask);
->  
-> -	expired = jiffies + HZ;
-> -
-> -	while (1) {
-> -		u32 val;
-> -
-> -		ret = regmap_read(infracfg, INFRA_TOPAXI_PROTECTSTA1, &val);
-> -		if (ret)
-> -			return ret;
-> -
-> -		if (!(val & mask))
-> -			break;
-> -
-> -		cpu_relax();
-> -		if (time_after(jiffies, expired))
-> -			return -EIO;
-> -	}
-> +	ret = regmap_read_poll_timeout(infracfg, INFRA_TOPAXI_PROTECTSTA1,
-> +				       val, !(val & mask),
-> +				       MTK_POLL_DELAY_US, MTK_POLL_TIMEOUT);
->  
-> -	return 0;
-> +	return ret;
->  }
-> 
+Thierry
+
+--uXxzq0nDebZQVNAZ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlri7uEACgkQ3SOs138+
+s6EO4BAAq8j7hAxQ9InPsy3sOeg8IvvzcLMr0FMqcu9djpq/LAfrbJFTPWx7oKZw
+yYFYmpvwN2BZLuFH85SQkaeC8Xy+WpKyWQpsigLa1kdUMBpa/y6a7ttaersgp01T
+T8kpmxMxRHB0rHTvlXj7wLf6KP91xqI9QDjelgl65VqWAYVE0AjWP4ir21Rv4iLK
+XfPdBimRy1bTRNxTtXKltS6lGdoIvsBNIDiPvluyuPo+2k35r4ad28J30fvRdBUc
+Jtphka90MpHcY6OJr/+Zdl7/cJzZcHNCvcyG6spLsQ3l7K82NRBJnUAPHI2Yp6w2
+DkfxPh1LQjdECCZPFRmskzqorhEvd0oVFFR/wZlqr31qDAB3KXM2tJDH0VvXX/ds
+mCQ7DO3oPeMRcjr6NiiyRkVJnfhpQB6utrTf1PROEDynrqrj0QWp+gpY8BqwZHCg
+QvCamz2O1fOjeyJqXFFsacPUmzTXydKbn+XpRlV4o7gFV1TtTnGaG3gw4lIT46JO
+osYcDfJfZ+5Dbd+scfeamzOwYrV2XAmrlQ4vWjsoDZNHl4ycSGfK1vDteunfaiWI
+azRBD9JdBEOaCQCPZUQGmIA1tv4vSViYVHP5WdLbZJpQ5SRyEFX03aqJpw98ZEPa
+zWgva52D0El8pyn4Jo8w3ZU390GQ5infPuGzxruCNvQ84DpoiOg=
+=avVn
+-----END PGP SIGNATURE-----
+
+--uXxzq0nDebZQVNAZ--
