@@ -1,51 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758888AbeD0TPn (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 15:15:43 -0400
-Received: from mail-pg0-f54.google.com ([74.125.83.54]:36475 "EHLO
-        mail-pg0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758707AbeD0TPl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 15:15:41 -0400
-X-Google-Smtp-Source: AB8JxZpuOVeR+ZMICBXAybqtEQEqacnb1kvKF5mdU5IMD81y0qyvGJz3gK87y3mQmHko08rqlz/kcg==
-From: Kevin Hilman <khilman@baylibre.com>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Carlo Caione <carlo@caione.org>, devicetree@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM64: dts: meson: disable sd-uhs modes on the libretech-cc
-Organization: BayLibre
-References: <20180426105046.14817-1-jbrunet@baylibre.com>
-Date: Fri, 27 Apr 2018 12:15:39 -0700
-In-Reply-To: <20180426105046.14817-1-jbrunet@baylibre.com> (Jerome Brunet's
-        message of "Thu, 26 Apr 2018 12:50:46 +0200")
-Message-ID: <7hvacczcis.fsf@baylibre.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        id S1758955AbeD0TPv (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 15:15:51 -0400
+Received: from foss.arm.com ([217.140.101.70]:45408 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1758707AbeD0TPs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 15:15:48 -0400
+Date: Fri, 27 Apr 2018 21:15:44 +0200
+From: Christoffer Dall <christoffer.dall@arm.com>
+To: Eric Auger <eric.auger@redhat.com>
+Cc: eric.auger.pro@gmail.com, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
+        marc.zyngier@arm.com, peter.maydell@linaro.org, andre.przywara@arm.com
+Subject: Re: [PATCH v4 02/12] KVM: arm/arm64: Document
+ KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
+Message-ID: <20180427191544.GP13249@C02W217FHV2R.local>
+References: <1524838505-3823-1-git-send-email-eric.auger@redhat.com>
+ <1524838505-3823-3-git-send-email-eric.auger@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1524838505-3823-3-git-send-email-eric.auger@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jerome Brunet <jbrunet@baylibre.com> writes:
+On Fri, Apr 27, 2018 at 04:14:55PM +0200, Eric Auger wrote:
+> We introduce a new KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION attribute in
+> KVM_DEV_ARM_VGIC_GRP_ADDR group. It allows userspace to provide the
+> base address and size of a redistributor region
+> 
+> Compared to KVM_VGIC_V3_ADDR_TYPE_REDIST, this new attribute allows
+> to declare several separate redistributor regions.
+> 
+> So the whole redist space does not need to be contiguous anymore.
+> 
+> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+> Reviewed-by: Peter Maydell <peter.maydell@linaro.org>
 
-> There is a problem with the sd-uhs mode when doing a soft reboot.
-> Switching back from 1.8v to 3.3v messes with the card, which no longer
-> respond (timeout errors). According to the specification, we should
-> perform a card reset (power cycling the card) but this is something we
-> cannot control on this design.
->
-> Then the only solution to restore the communication with the card is an
-> "unplug-plug" which is not acceptable
->
-> Until we find a solution, if any, disable the sd-uhs modes on this design.
-> For the people using uhs at the moment, there will a performance drop as
-> a result.
->
-> Fixes: 3cde63ebc85c ("ARM64: dts: meson-gxl: libretech-cc: enable high speed modes")
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Acked-by: Christoffer Dall <christoffer.dall@arm.com>
 
-Applied to v4.17/fixes, and adding a Cc to stable.
-
-Thanks,
-
-Kevin
+> 
+> ---
+> v3 -> v4:
+> - Added Peter's R-b
+> ---
+>  Documentation/virtual/kvm/devices/arm-vgic-v3.txt | 25 ++++++++++++++++++++++-
+>  1 file changed, 24 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/virtual/kvm/devices/arm-vgic-v3.txt b/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
+> index 9293b45..cbc4328 100644
+> --- a/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
+> +++ b/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
+> @@ -27,9 +27,32 @@ Groups:
+>        VCPU and all of the redistributor pages are contiguous.
+>        Only valid for KVM_DEV_TYPE_ARM_VGIC_V3.
+>        This address needs to be 64K aligned.
+> +
+> +    KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION (rw, 64-bit)
+> +      The attr field of kvm_device_attr encodes 3 values:
+> +      bits:     | 63   ....  52  |  51   ....   16 | 15 - 12  |11 - 0
+> +      values:   |     count      |       base      |  flags   | index
+> +      - index encodes the unique redistributor region index
+> +      - flags: reserved for future use, currently 0
+> +      - base field encodes bits [51:16] of the guest physical base address
+> +        of the first redistributor in the region.
+> +      - count encodes the number of redistributors in the region. Must be
+> +        greater than 0.
+> +      There are two 64K pages for each redistributor in the region and
+> +      redistributors are laid out contiguously within the region. Regions
+> +      are filled with redistributors in the index order. The sum of all
+> +      region count fields must be greater than or equal to the number of
+> +      VCPUs. Redistributor regions must be registered in the incremental
+> +      index order, starting from index 0.
+> +      Only valid for KVM_DEV_TYPE_ARM_VGIC_V3.
+> +
+> +  It is invalid to mix calls with KVM_VGIC_V3_ADDR_TYPE_REDIST and
+> +  KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION attributes.
+> +
+>    Errors:
+>      -E2BIG:  Address outside of addressable IPA range
+> -    -EINVAL: Incorrectly aligned address
+> +    -EINVAL: Incorrectly aligned address, bad redistributor region
+> +             count/index, mixed redistributor region attribute usage
+>      -EEXIST: Address already configured
+>      -ENXIO:  The group or attribute is unknown/unsupported for this device
+>               or hardware support is missing.
+> -- 
+> 2.5.5
+> 
+> _______________________________________________
+> kvmarm mailing list
+> kvmarm@lists.cs.columbia.edu
+> https://lists.cs.columbia.edu/mailman/listinfo/kvmarm
