@@ -1,71 +1,147 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757633AbeD0Icl (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 04:32:41 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:41404 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1757536AbeD0Icj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 04:32:39 -0400
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
-   d="scan'208";a="39370077"
-Subject: Re: recent patch "x86/acpi: Prevent X2APIC id 0xffffffff from being
- accounted"
-To: Jan Beulich <JBeulich@suse.com>, <tglx@linutronix.de>
-CC: <linux-kernel@vger.kernel.org>
-References: <5AE2CF8802000078001BF017@prv1-mh.provo.novell.com>
-From: Dou Liyang <douly.fnst@cn.fujitsu.com>
-Message-ID: <12fd36d0-1678-ed57-fec3-c94b430bd23f@cn.fujitsu.com>
-Date: Fri, 27 Apr 2018 16:32:31 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1757678AbeD0Ig6 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 04:36:58 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:44548 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1757538AbeD0Ig4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 04:36:56 -0400
+Date: Fri, 27 Apr 2018 16:36:26 +0800
+In-Reply-To: <9571735d-929f-a2ef-ed97-dc9193420b73@arm.com>
+References: <20180426140728.43155-1-icenowy@aosc.io> <20180426140728.43155-3-icenowy@aosc.io> <9571735d-929f-a2ef-ed97-dc9193420b73@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <5AE2CF8802000078001BF017@prv1-mh.provo.novell.com>
-Content-Type: text/plain; charset="gbk"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.167.226.106]
-X-yoursite-MailScanner-ID: 9B04348AE929.A8F3E
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: douly.fnst@cn.fujitsu.com
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Subject: Re: [linux-sunxi] [PATCH 2/3] arm64: allwinner: h6: add device tree nodes for MMC controllers
+To: Andre Przywara <andre.przywara@arm.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+CC: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+From: Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <77DF7884-8DA8-4ED5-BB51-941CFDE4A123@aosc.io>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jan,
 
-At 04/27/2018 03:21 PM, Jan Beulich wrote:
-> Hello,
-> 
-> I've just stumbled across this commit, and I'm wondering if that's actually
-> correct (I too have at least one system where such IDs are reported in
-> MADT): For offline/absent CPUs, the firmware may not know the APIC IDs
 
-The MADT table is not reasonable, the Local APIC entries(xAPIC/x2APIC)
-in MADT is not always correct as OS want. So, we should do this sanity
-check.
+于 2018年4月27日 GMT+08:00 上午12:45:38, Andre Przywara <andre.przywara@arm.com> 写到:
+>Hi,
+>
+>On 26/04/18 15:07, Icenowy Zheng wrote:
+>> The Allwinner H6 SoC have 3 MMC controllers.
+>> 
+>> Add device tree nodes for them.
+>> 
+>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>> ---
+>>  arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 56
+>++++++++++++++++++++++++++++
+>>  1 file changed, 56 insertions(+)
+>> 
+>> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+>b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+>> index 4debc3962830..3cbfc035c979 100644
+>> --- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+>> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+>> @@ -124,12 +124,68 @@
+>>  			interrupt-controller;
+>>  			#interrupt-cells = <3>;
+>>  
+>> +			mmc0_pins: mmc0-pins {
+>> +				pins = "PF0", "PF1", "PF2", "PF3",
+>> +				       "PF4", "PF5";
+>> +				function = "mmc0";
+>> +				drive-strength = <30>;
+>> +				bias-pull-up;
+>> +			};
+>> +
+>> +			mmc2_pins: mmc2-pins {
+>> +				pins = "PC1", "PC4", "PC5", "PC6",
+>> +				       "PC7", "PC8", "PC9", "PC10",
+>> +				       "PC11", "PC12", "PC13", "PC14";
+>> +				function = "mmc2";
+>> +				drive-strength = <30>;
+>> +				bias-pull-up;
+>> +			};
+>> +
+>>  			uart0_ph_pins: uart0-ph {
+>>  				pins = "PH0", "PH1";
+>>  				function = "uart0";
+>>  			};
+>>  		};
+>>  
+>> +		mmc0: mmc@4020000 {
+>> +			compatible = "allwinner,sun50i-h6-mmc";
+>
+>This should be:
+>			compatible = "allwinner,sun50i-h6-mmc",
+>				     "allwinner,sun50i-a64-mmc";
 
-> at the point MADT is built, so I think it is quite reasonable to put ~0 in
-> there. The ACPID spec specifically calls out that the IDs must not change
-> across sleep states, which implies to me that they may change across an
-> offline period of a CPU. IOW I think such entries still need to contribute to
-> the count of disabled CPUs.
-> 
+I'm intended to not add A64 compatible, as
+H6 is a quite new design
+(new process) and there might be different behavior, even on mmc0/1.
 
-Aha, there are no CPU devices which will map it's physical ID to the
-illegal number 0xffffffff, So it will never be used.
+>
+>> +			reg = <0x04020000 0x1000>;
+>> +			clocks = <&ccu CLK_BUS_MMC0>, <&ccu CLK_MMC0>;
+>> +			clock-names = "ahb", "mmc";
+>> +			resets = <&ccu RST_BUS_MMC0>;
+>> +			reset-names = "ahb";
+>> +			interrupts = <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
+>> +			status = "disabled";
+>> +			#address-cells = <1>;
+>> +			#size-cells = <0>;
+>> +		};
+>> +
+>> +		mmc1: mmc@4021000 {
+>> +			compatible = "allwinner,sun50i-h6-mmc";
+>
+>same here
+>
+>> +			reg = <0x04021000 0x1000>;
+>> +			clocks = <&ccu CLK_BUS_MMC1>, <&ccu CLK_MMC1>;
+>> +			clock-names = "ahb", "mmc";
+>> +			resets = <&ccu RST_BUS_MMC1>;
+>> +			reset-names = "ahb";
+>> +			interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
+>> +			status = "disabled";
+>> +			#address-cells = <1>;
+>> +			#size-cells = <0>;
+>> +		};
+>> +
+>> +		mmc2: mmc@4022000 {
+>> +			compatible = "allwinner,sun50i-h6-emmc";
+>
+>and here:
+>			compatible = "allwinner,sun50i-h6-emmc",
+>				     "allwinner,sun50i-a64-emmc";
 
-BTW, Limiting the number of the disabled CPUs is also a goal.
+MMC2 on H6 has EMCE capability, so surely there should
+only be H6 compatible, and no A64 one.
 
-Thanks,
-	dou
-
-> I notice a similar change has been done for the xAPIC case a while ago
-> by you, Thomas.
-> 
-> Jan
-> 
-> 
-> 
-> 
-> 
+>
+>The rest looks correct to me.
+>
+>Cheers,
+>Andre.
+>
+>> +			reg = <0x04022000 0x1000>;
+>> +			clocks = <&ccu CLK_BUS_MMC2>, <&ccu CLK_MMC2>;
+>> +			clock-names = "ahb", "mmc";
+>> +			resets = <&ccu RST_BUS_MMC2>;
+>> +			reset-names = "ahb";
+>> +			interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
+>> +			status = "disabled";
+>> +			#address-cells = <1>;
+>> +			#size-cells = <0>;
+>> +		};
+>> +
+>>  		uart0: serial@5000000 {
+>>  			compatible = "snps,dw-apb-uart";
+>>  			reg = <0x05000000 0x400>;
+>> 
