@@ -1,113 +1,96 @@
-Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AB8JxZrC356QnzVU4w1P9v3lT06wIChnA+KpS1r5iAXd5h0PFEpXw6ZUKn04jXO3JrF+J18AiEAB
-ARC-Seal: i=1; a=rsa-sha256; t=1524890302; cv=none;
+Return-Path: <arvind.yadav.cs@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1524826391; cv=none;
         d=google.com; s=arc-20160816;
-        b=ip9T3nA9fetnnFXvE5YE5ETsxWmOUu5RcP6kMDBhTup9mNLYbGP4psBOx52KT77v1o
-         JoqPrPib76ja43tB+Ji9euvGLvrQ4kYUPxR8d+LYEgvoeH1Rri7oCQRjazOrSFeyQAAM
-         UjysHPFXHR3TX4RaYaYQ69pCh+zUlPNdUyAmLT4f5aQjrYW33JyOfYwsEvzB4ZQS841e
-         at22LstzT5LjyEQ1Y6Rx8X/tcxpETTwnMZMonXIWsCnKrS+lUJBtyMTBTmU15mvPQuMk
-         +dXsSvTeRMsCGqSJG6vsKwfunFUmJ3tnJnQgjc9iV1lhxMu9Myv3ujcTkBuGdfBa4bqF
-         hdJQ==
+        b=F4EhskYqitM12DqSaCeX4WCS12WnV06OKBxaPPkn7Ov8XYf4CuS2jsgyr6VPHl3vjz
+         Qy/7gjWjDyoJq4SrPRcass8mdWFfo6gQsLG4pBFu4hsMwqWXCFEc/wcAUu0o/o7TDY5H
+         GnF8YYIA2QEDjy+pEoWAA5WB3x0PY6KYJ8Jd+Dw1UIClm9iOYsNLPQEQSwCCWKJ5ZP7u
+         G9P/G89zvRli6RC72gRkmsbqOMam0UVUK46Zsn+YDDS31dxCK7naBNQBfz9MEtmBgeQO
+         TPZhw0ogiFuO74jywKv4OMcE17Tj5dla7O+A1WY+ZsLI2iGVuOCK59hSzBvhD3J6fuTO
+         7AYQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:content-transfer-encoding
-         :content-language:mime-version:user-agent:date:message-id:subject
-         :from:cc:to:dkim-signature:arc-authentication-results;
-        bh=Zlrue7AO/szVMQVG0fHMWj9qa7QNgAbbJF76Eobw0jE=;
-        b=rpP4/tlpN6J36f22Lbae0aNn6rOCw8ifYbxvmq4hEeMr9fqRhLSl1WJK1C8iUSxVy2
-         YOUndkblGTVNw5RFViq8IjkzToyRAF5oiZghq+8zQAu+yXAfYG+5oHTOwk5JXzQeJe8T
-         pPmbPodjTXrLK+NK+WG77X0SKUagNU8+2/SzyIIsv0V58mCN3bFj1ykhSntu9XyR1Yif
-         4x5cgu89VCoTZ9XvtyxTnXdmC7D3uS/ntcagFWkcPYZjgKCWwz+M23ZgDa5jVsjU+QOt
-         6aaSCfM9T1Q6Hus1CBkoK4Oqa+M6XcfpKrzRALVd+NC7slfk+f7+kdHbzwQbHjJjmn6U
-         olMg==
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=m8kMNTWazIgFpYyTtxU8bSGOCA7o9Az1vVcs81uWcRc=;
+        b=mMlsabQ+6JXzo44U8sYFEmr7jwSi67yiKvUW//HWoYnTMWzC7q6U/0b6gfxkMNiajE
+         sjwQf0Ny/X5tvtlDGUO0Bm5zsCuEXZPKIw9e/6md5KYlaHJR0ZzfmLGKCFCbIwwTuznw
+         cCNUtBoLzeNlkE2iTISXrJqorO4Jkk6kpRJGhdBoxxlrLaE/bI9uRBNyu+zapdXY3Vfq
+         kmfyqmi3DKis+/uEa2MINvjjnu3Ht30MIqQSlgz57ZrFdnYZCrCIgbBIlSJDZcoxLyq9
+         NeB4/M11T4ftbM/r3waxBu3Oo/h5vqHnt4VZn80Hz26dmy0PYHcR+kNc9CyF7SxjrLa5
+         QDNg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=neutral (body hash did not verify) header.i=@infradead.org header.s=merlin.20170209 header.b=AWyio4TB;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=jy1Sb5Vz;
+       spf=pass (google.com: domain of arvind.yadav.cs@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=arvind.yadav.cs@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=neutral (body hash did not verify) header.i=@infradead.org header.s=merlin.20170209 header.b=AWyio4TB;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751303AbeD1EiV (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Sat, 28 Apr 2018 00:38:21 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:48524 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751294AbeD1EiU (ORCPT
-        <rfc822;linux-kselftest@vger.kernel.org>);
-        Sat, 28 Apr 2018 00:38:20 -0400
-To: linux-kselftest@vger.kernel.org,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        Shuah Khan <shuah@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH] kselftests: fix grammar and non-ASCII space
-Message-ID: <b1c47352-9389-0117-2a6b-ef552f6b82e5@infradead.org>
-Date: Fri, 27 Apr 2018 21:38:17 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-Sender: linux-kselftest-owner@vger.kernel.org
-X-Mailing-List: linux-kselftest@vger.kernel.org
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=jy1Sb5Vz;
+       spf=pass (google.com: domain of arvind.yadav.cs@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=arvind.yadav.cs@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AB8JxZq3UyLTrS5Ls5oeKBt+brE1Y08JLpbrlVkJHebkeKMWvQ96Z043fy6mk5XPC2JMtpmsx5j2tg==
+From: Arvind Yadav <arvind.yadav.cs@gmail.com>
+To: hvaibhav.linux@gmail.com,
+	johan@kernel.org,
+	elder@kernel.org,
+	gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org,
+	greybus-dev@lists.linaro.org,
+	devel@driverdev.osuosl.org
+Subject: [PATCH] staging: greybus: Use gpio_is_valid()
+Date: Fri, 27 Apr 2018 16:22:56 +0530
+Message-Id: <785eda4d65f396b353393e9538eba21095ce876e.1524825902.git.arvind.yadav.cs@gmail.com>
+X-Mailer: git-send-email 1.9.1
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598963373734287318?=
-X-GMAIL-MSGID: =?utf-8?q?1598963373734287318?=
+X-GMAIL-THRID: =?utf-8?q?1598896358310387815?=
+X-GMAIL-MSGID: =?utf-8?q?1598896358310387815?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Randy Dunlap <rdunlap@infradead.org>
+Replace the manual validity checks for the GPIO with the
+gpio_is_valid().
 
-This is a small cleanup to kselftest.rst:
-
-- Fix some language typos in the usage instructions.
-- Change one non-ASCII space to an ASCII space.
-
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
 ---
- Documentation/dev-tools/kselftest.rst |   12 ++++++------
+ drivers/staging/greybus/arche-platform.c | 12 ++++++------
  1 file changed, 6 insertions(+), 6 deletions(-)
 
---- linux-next-20180426.orig/Documentation/dev-tools/kselftest.rst
-+++ linux-next-20180426/Documentation/dev-tools/kselftest.rst
-@@ -9,7 +9,7 @@ and booting a kernel.
- 
- On some systems, hot-plug tests could hang forever waiting for cpu and
- memory to be ready to be offlined. A special hot-plug target is created
--to run full range of hot-plug tests. In default mode, hot-plug tests run
-+to run the full range of hot-plug tests. In default mode, hot-plug tests run
- in safe mode with a limited scope. In limited mode, cpu-hotplug test is
- run on a single cpu as opposed to all hotplug capable cpus, and memory
- hotplug test is run on 2% of hotplug capable memory instead of 10%.
-@@ -89,9 +89,9 @@ Note that some tests will require root p
- Install selftests
- =================
- 
--You can use kselftest_install.sh tool installs selftests in default
--location which is tools/testing/selftests/kselftest or a user specified
--location.
-+You can use the kselftest_install.sh tool to install selftests in the
-+default location, which is tools/testing/selftests/kselftest, or in a
-+user specified location.
- 
- To install selftests in default location::
- 
-@@ -109,7 +109,7 @@ Running installed selftests
- Kselftest install as well as the Kselftest tarball provide a script
- named "run_kselftest.sh" to run the tests.
- 
--You can simply do the following to run the installed Kselftests.Â Please
-+You can simply do the following to run the installed Kselftests. Please
- note some tests will require root privileges::
- 
-    $ cd kselftest
-@@ -139,7 +139,7 @@ Contributing new tests (details)
-    default.
- 
-    TEST_CUSTOM_PROGS should be used by tests that require custom build
--   rule and prevent common build rule use.
-+   rules and prevent common build rule use.
- 
-    TEST_PROGS are for test shell scripts. Please ensure shell script has
-    its exec bit set. Otherwise, lib.mk run_tests will generate a warning.
-
-
+diff --git a/drivers/staging/greybus/arche-platform.c b/drivers/staging/greybus/arche-platform.c
+index 83254a7..fc6bf60 100644
+--- a/drivers/staging/greybus/arche-platform.c
++++ b/drivers/staging/greybus/arche-platform.c
+@@ -448,9 +448,9 @@ static int arche_platform_probe(struct platform_device *pdev)
+ 	arche_pdata->svc_reset_gpio = of_get_named_gpio(np,
+ 							"svc,reset-gpio",
+ 							0);
+-	if (arche_pdata->svc_reset_gpio < 0) {
++	if (!gpio_is_valid(arche_pdata->svc_reset_gpio)) {
+ 		dev_err(dev, "failed to get reset-gpio\n");
+-		return arche_pdata->svc_reset_gpio;
++		return -ENODEV;
+ 	}
+ 	ret = devm_gpio_request(dev, arche_pdata->svc_reset_gpio, "svc-reset");
+ 	if (ret) {
+@@ -468,9 +468,9 @@ static int arche_platform_probe(struct platform_device *pdev)
+ 	arche_pdata->svc_sysboot_gpio = of_get_named_gpio(np,
+ 							  "svc,sysboot-gpio",
+ 							  0);
+-	if (arche_pdata->svc_sysboot_gpio < 0) {
++	if (!gpio_is_valid(arche_pdata->svc_sysboot_gpio)) {
+ 		dev_err(dev, "failed to get sysboot gpio\n");
+-		return arche_pdata->svc_sysboot_gpio;
++		return -ENODEV;
+ 	}
+ 	ret = devm_gpio_request(dev, arche_pdata->svc_sysboot_gpio, "sysboot0");
+ 	if (ret) {
+@@ -487,9 +487,9 @@ static int arche_platform_probe(struct platform_device *pdev)
+ 	arche_pdata->svc_refclk_req = of_get_named_gpio(np,
+ 							"svc,refclk-req-gpio",
+ 							0);
+-	if (arche_pdata->svc_refclk_req < 0) {
++	if (!gpio_is_valid(arche_pdata->svc_refclk_req)) {
+ 		dev_err(dev, "failed to get svc clock-req gpio\n");
+-		return arche_pdata->svc_refclk_req;
++		return -ENODEV;
+ 	}
+ 	ret = devm_gpio_request(dev, arche_pdata->svc_refclk_req,
+ 				"svc-clk-req");
+-- 
+1.9.1
