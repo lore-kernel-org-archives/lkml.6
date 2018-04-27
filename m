@@ -1,74 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757347AbeD0CN6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 22:13:58 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:35540 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757197AbeD0CN4 (ORCPT
+        id S1757223AbeD0CTg (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 22:19:36 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:36396 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751626AbeD0CTe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 22:13:56 -0400
-X-Google-Smtp-Source: AB8JxZrHLu+XFqmztzgUmKMpisESCUT4BOK2PDqxMQXt3NcSYeWTIZCclo3XAldfrimNeGcKMog5BQ==
-Date: Thu, 26 Apr 2018 19:13:53 -0700
-From: Eduardo Valentin <edubezval@gmail.com>
-To: Jia-Ju Bai <baijiaju1990@gmail.com>
-Cc: rui.zhang@intel.com, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] thermal: armada_thermal: Replace mdelay with
- usleep_range in armada380_init_sensor
-Message-ID: <20180427021352.GC30803@localhost.localdomain>
-References: <1523348008-29461-1-git-send-email-baijiaju1990@gmail.com>
+        Thu, 26 Apr 2018 22:19:34 -0400
+X-Google-Smtp-Source: AB8JxZpycOyayHxm0d7kopRAzWrXUaT6Ctzrh/TNmPzQvJChR54A+pxF5LIWZP801AkJHB50vFDMUw==
+Date: Thu, 26 Apr 2018 21:19:33 -0500
+From: Rob Herring <robh@kernel.org>
+To: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alan Tull <atull@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v2] of: overlay: Stop leaking resources on overlay removal
+Message-ID: <20180427021933.vkdmzid4ated6whe@rob-hp-laptop>
+References: <e8704374-857c-d80e-e91c-89d59e1cffbe@siemens.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1523348008-29461-1-git-send-email-baijiaju1990@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <e8704374-857c-d80e-e91c-89d59e1cffbe@siemens.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 10, 2018 at 04:13:28PM +0800, Jia-Ju Bai wrote:
-> armada380_init_sensor() is never called in atomic context.
+On Thu, Apr 26, 2018 at 01:00:30PM +0200, Jan Kiszka wrote:
+> Only the overlay notifier callbacks have a chance to potentially get
+> hold of references to those two resources, but they are not supposed to
+> store them beyond OF_OVERLAY_POST_REMOVE.
 > 
-> armada380_init_sensor() is set as ".init_sensor" in
-> struct armada_thermal_data.
-> ".init_sensor" is called armada_thermal_probe().
-> armada_thermal_probe() is set as ".probe" in struct platform_driver.
-> This function is not called in atomic context.
+> Document the overlay notifier API, its constraint regarding pointer
+> lifetime, and then remove intentional leaks of ovcs->overlay_tree and
+> ovcs->fdt from free_overlay_changeset.
 > 
-> Despite never getting called from atomic context, armada380_init_sensor()
-> calls mdelay() to busily wait.
-> This is not necessary and can be replaced with usleep_range() to
-> avoid busy waiting.
+> See also https://lkml.org/lkml/2018/4/23/1063 and following.
 > 
-> This is found by a static analysis tool named DCNS written by myself.
-> And I also manually check it.
-> 
-> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 > ---
->  drivers/thermal/armada_thermal.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/thermal/armada_thermal.c b/drivers/thermal/armada_thermal.c
-> index ae75328..c289ae4 100644
-> --- a/drivers/thermal/armada_thermal.c
-> +++ b/drivers/thermal/armada_thermal.c
-> @@ -143,7 +143,7 @@ static void armada380_init_sensor(struct platform_device *pdev,
->  	if (!(reg & A380_HW_RESET)) {
->  		reg |= A380_HW_RESET;
->  		writel(reg, priv->control);
-> -		mdelay(10);
-> +		usleep_range(10000, 11000);
+>  Documentation/devicetree/overlay-notes.txt |  8 ++++++++
+>  drivers/of/overlay.c                       | 30 +++++++++++++++++++++---------
+>  2 files changed, 29 insertions(+), 9 deletions(-)
 
-This does not apply:
-checking file drivers/thermal/armada_thermal.c
-Hunk #1 FAILED at 143.
-1 out of 1 hunk FAILED
+Applied, thanks.
 
-That mdelay() is not existing anymore.
-
->  	}
->  }
->  
-> -- 
-> 1.9.1
-> 
+Rob
