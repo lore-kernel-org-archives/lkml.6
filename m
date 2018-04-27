@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758525AbeD0N4Y (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 09:56:24 -0400
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:9851 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758379AbeD0N4O (ORCPT
+        id S1758511AbeD0N4W (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 09:56:22 -0400
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:51113 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758450AbeD0N4O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 27 Apr 2018 09:56:14 -0400
 From: Jean-Jacques Hiblot <jjhiblot@ti.com>
@@ -13,12 +13,10 @@ To: <broonie@kernel.org>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
 CC: <dannenberg@ti.com>, <afd@ti.com>, <alsa-devel@alsa-project.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Jean-Jacques Hiblot <jjhiblot@ti.com>
-Subject: [PATCH v2 3/3] ASoC: tas6424: Allow disabling auto diagnostics for faster power-on
-Date: Fri, 27 Apr 2018 15:55:49 +0200
-Message-ID: <1524837349-16350-4-git-send-email-jjhiblot@ti.com>
+Subject: [PATCH v2 0/3] ASoc: TAS6424: Add support for mute, standby, and faster power on
+Date: Fri, 27 Apr 2018 15:55:46 +0200
+Message-ID: <1524837349-16350-1-git-send-email-jjhiblot@ti.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1524837349-16350-1-git-send-email-jjhiblot@ti.com>
-References: <1524837349-16350-1-git-send-email-jjhiblot@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
@@ -26,86 +24,37 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The TAS6424 incorporates both DC-load and AC-load diagnostics which are
-used to determine the status of the load. The DC diagnostics runs when any
-channel is directed to leave the Hi-Z state and enter the MUTE or PLAY
-state.
-The DC diagnostics are turned on by default but, if a fast startup without
-diagnostics is required, the diagnostics can be disabled using a dedicated
-ALSA control.
+mute and standby pins are available on the codec. If they are connected, they
+should be managed by the driver, instead of relying on gpio hogs or on the
+initial state of the GPIOs.
 
-Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
----
- sound/soc/codecs/tas6424.c | 19 +++++++++++++++++--
- sound/soc/codecs/tas6424.h |  4 ++++
- 2 files changed, 21 insertions(+), 2 deletions(-)
+This series also includes a patch to improve the start-up time of the channels
+by disabling built-in DC diagnostics. Those diagnosdtics basically serve to
+detect :
+- wires shorted together
+- wire shorted to ground or vbat
+- wire disconnected
+This is not useful for all platforms and the addition to the startup time is
+quite noticeable (230ms). The diagnostics can be enabled/disabled using a
+dedicated ALSA control.
 
-diff --git a/sound/soc/codecs/tas6424.c b/sound/soc/codecs/tas6424.c
-index 89fd0c1..8eb4842 100644
---- a/sound/soc/codecs/tas6424.c
-+++ b/sound/soc/codecs/tas6424.c
-@@ -55,6 +55,13 @@ struct tas6424_data {
-  */
- static DECLARE_TLV_DB_SCALE(dac_tlv, -10350, 50, 0);
- 
-+
-+static const char * const diags_enum_texts[] = {"OFF", "ON"};
-+static unsigned int diags_enum_values[] = {1, 0};
-+SOC_VALUE_ENUM_SINGLE_DECL(diags_enum, TAS6424_DC_DIAG_CTRL1,
-+			   TAS6424_LDGBYPASS_SHIFT, TAS6424_LDGBYPASS_MASK,
-+			   diags_enum_texts, diags_enum_values);
-+
- static const struct snd_kcontrol_new tas6424_snd_controls[] = {
- 	SOC_SINGLE_TLV("Speaker Driver CH1 Playback Volume",
- 		       TAS6424_CH1_VOL_CTRL, 0, 0xff, 0, dac_tlv),
-@@ -64,6 +71,7 @@ static const struct snd_kcontrol_new tas6424_snd_controls[] = {
- 		       TAS6424_CH3_VOL_CTRL, 0, 0xff, 0, dac_tlv),
- 	SOC_SINGLE_TLV("Speaker Driver CH4 Playback Volume",
- 		       TAS6424_CH4_VOL_CTRL, 0, 0xff, 0, dac_tlv),
-+	SOC_ENUM("Auto Diagnostics", diags_enum),
- };
- 
- static int tas6424_dac_event(struct snd_soc_dapm_widget *w,
-@@ -297,6 +305,11 @@ static int tas6424_power_on(struct snd_soc_component *component)
- 	struct tas6424_data *tas6424 = snd_soc_component_get_drvdata(component);
- 	int ret;
- 	u8 chan_states;
-+	int no_auto_diags = 0;
-+	unsigned int reg_val;
-+
-+	if (!regmap_read(tas6424->regmap, TAS6424_DC_DIAG_CTRL1, &reg_val))
-+		no_auto_diags = reg_val & TAS6424_LDGBYPASS_MASK;
- 
- 	ret = regulator_bulk_enable(ARRAY_SIZE(tas6424->supplies),
- 				    tas6424->supplies);
-@@ -327,9 +340,11 @@ static int tas6424_power_on(struct snd_soc_component *component)
- 	snd_soc_component_write(component, TAS6424_CH_STATE_CTRL, chan_states);
- 
- 	/* any time we come out of HIZ, the output channels automatically run DC
--	 * load diagnostics, wait here until this completes
-+	 * load diagnostics if autodiagnotics are enabled. wait here until this
-+	 * completes.
- 	 */
--	msleep(230);
-+	if (!no_auto_diags)
-+		msleep(230);
- 
- 	return 0;
- }
-diff --git a/sound/soc/codecs/tas6424.h b/sound/soc/codecs/tas6424.h
-index 4305883..b5958c4 100644
---- a/sound/soc/codecs/tas6424.h
-+++ b/sound/soc/codecs/tas6424.h
-@@ -111,6 +111,10 @@
- 					 TAS6424_CH3_STATE_DIAG | \
- 					 TAS6424_CH4_STATE_DIAG)
- 
-+/* TAS6424_DC_DIAG_CTRL1 */
-+#define TAS6424_LDGBYPASS_SHIFT		0
-+#define TAS6424_LDGBYPASS_MASK		BIT(TAS6424_LDGBYPASS_SHIFT)
-+
- /* TAS6424_GLOB_FAULT1_REG */
- #define TAS6424_FAULT_CLOCK		BIT(4)
- #define TAS6424_FAULT_PVDD_OV		BIT(3)
+
+Changes in v2:
+- use a ALSA control to enable/disable the auto diagnostics instead of
+  relying on a DTS property.
+- fixed typos
+- use gpios (plural) instead of gpio in the documentation of the bindings
+
+
+Jean-Jacques Hiblot (3):
+  ASoC: tas6424: Add support for the standby pin
+  ASoC: tas6424: Add support for the mute pin
+  ASoC: tas6424: Allow disabling auto diagnostics for faster power-on
+
+ .../devicetree/bindings/sound/ti,tas6424.txt       |  2 +
+ sound/soc/codecs/tas6424.c                         | 78 +++++++++++++++++++++-
+ sound/soc/codecs/tas6424.h                         |  4 ++
+ 3 files changed, 81 insertions(+), 3 deletions(-)
+
 -- 
 2.7.4
