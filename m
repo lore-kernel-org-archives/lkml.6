@@ -1,123 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757404AbeD0GKj (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 02:10:39 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:39066 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757371AbeD0GKf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 02:10:35 -0400
-X-Google-Smtp-Source: AB8JxZrpIcV4dJQgHWI+JQd9zq5jXB1nkjRV9dtBvlECrtVYroqsqmgH9jZ4zGdporcG7RfjhrIhUw==
-From: Thierry Escande <thierry.escande@linaro.org>
-To: Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>, Rob Herring <robh+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: dts: msm8996: fix gic_irq_domain_translate warnings
-Date: Fri, 27 Apr 2018 08:10:28 +0200
-Message-Id: <20180427061028.13192-1-thierry.escande@linaro.org>
-X-Mailer: git-send-email 2.14.1
+        id S1757409AbeD0GSE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 02:18:04 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43994 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1757286AbeD0GSD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 02:18:03 -0400
+Subject: Re: [RFC v3 0/5] virtio: support packed ring
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Tiwei Bie <tiwei.bie@intel.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org, wexu@redhat.com,
+        jfreimann@redhat.com
+References: <20180425051550.24342-1-tiwei.bie@intel.com>
+ <5ad1ca01-1e5c-7105-f303-7e8d42f6a068@redhat.com>
+ <20180427071725-mutt-send-email-mst@kernel.org>
+From: Jason Wang <jasowang@redhat.com>
+Message-ID: <5c712aa2-f00e-b472-cdfc-48175aea790d@redhat.com>
+Date: Fri, 27 Apr 2018 14:17:51 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset = "utf-8"
-Content-Transfert-Encoding: 8bit
+In-Reply-To: <20180427071725-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove the usage of IRQ_TYPE_NONE to fix loud warnings from
-patch (83a86fbb5b56b "irqchip/gic: Loudly complain about
-the use of IRQ_TYPE_NONE").
 
-Signed-off-by: Thierry Escande <thierry.escande@linaro.org>
----
- arch/arm64/boot/dts/qcom/msm8996.dtsi | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-index 410ae787ebb4..1aaf1fa2604e 100644
---- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-@@ -437,7 +437,7 @@
- 		blsp2_i2c0: i2c@75b5000 {
- 			compatible = "qcom,i2c-qup-v2.2.1";
- 			reg = <0x075b5000 0x1000>;
--			interrupts = <GIC_SPI 101 0>;
-+			interrupts = <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&gcc GCC_BLSP2_AHB_CLK>,
- 				<&gcc GCC_BLSP2_QUP1_I2C_APPS_CLK>;
- 			clock-names = "iface", "core";
-@@ -468,7 +468,7 @@
- 		blsp2_i2c1: i2c@75b6000 {
- 			compatible = "qcom,i2c-qup-v2.2.1";
- 			reg = <0x075b6000 0x1000>;
--			interrupts = <GIC_SPI 102 0>;
-+			interrupts = <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&gcc GCC_BLSP2_AHB_CLK>,
- 				<&gcc GCC_BLSP2_QUP2_I2C_APPS_CLK>;
- 			clock-names = "iface", "core";
-@@ -493,7 +493,7 @@
- 		blsp1_i2c2: i2c@7577000 {
- 			compatible = "qcom,i2c-qup-v2.2.1";
- 			reg = <0x07577000 0x1000>;
--			interrupts = <GIC_SPI 97 0>;
-+			interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&gcc GCC_BLSP1_AHB_CLK>,
- 				<&gcc GCC_BLSP1_QUP3_I2C_APPS_CLK>;
- 			clock-names = "iface", "core";
-@@ -526,7 +526,8 @@
- 			 reg = <0x74a4900 0x314>, <0x74a4000 0x800>;
- 			 reg-names = "hc_mem", "core_mem";
- 
--			 interrupts = <0 125 0>, <0 221 0>;
-+			 interrupts = <0 125 IRQ_TYPE_LEVEL_HIGH>,
-+				      <0 221 IRQ_TYPE_LEVEL_HIGH>;
- 			 interrupt-names = "hc_irq", "pwr_irq";
- 
- 			 clock-names = "iface", "core", "xo";
-@@ -809,7 +810,7 @@
- 			dwc3@7600000 {
- 				compatible = "snps,dwc3";
- 				reg = <0x7600000 0xcc00>;
--				interrupts = <0 138 0>;
-+				interrupts = <0 138 IRQ_TYPE_LEVEL_HIGH>;
- 				phys = <&hsusb_phy2>;
- 				phy-names = "usb2-phy";
- 			};
-@@ -838,7 +839,7 @@
- 			dwc3@6a00000 {
- 				compatible = "snps,dwc3";
- 				reg = <0x6a00000 0xcc00>;
--				interrupts = <0 131 0>;
-+				interrupts = <0 131 IRQ_TYPE_LEVEL_HIGH>;
- 				phys = <&hsusb_phy1>, <&ssusb_phy_0>;
- 				phy-names = "usb2-phy", "usb3-phy";
- 			};
-@@ -872,7 +873,7 @@
- 				ranges = <0x01000000 0x0 0x0c200000 0x0c200000 0x0 0x100000>,
- 					<0x02000000 0x0 0x0c300000 0x0c300000 0x0 0xd00000>;
- 
--				interrupts = <GIC_SPI 405 IRQ_TYPE_NONE>;
-+				interrupts = <GIC_SPI 405 IRQ_TYPE_LEVEL_HIGH>;
- 				interrupt-names = "msi";
- 				#interrupt-cells = <1>;
- 				interrupt-map-mask = <0 0 0 0x7>;
-@@ -927,7 +928,7 @@
- 				ranges = <0x01000000 0x0 0x0d200000 0x0d200000 0x0 0x100000>,
- 					<0x02000000 0x0 0x0d300000 0x0d300000 0x0 0xd00000>;
- 
--				interrupts = <GIC_SPI 413 IRQ_TYPE_NONE>;
-+				interrupts = <GIC_SPI 413 IRQ_TYPE_LEVEL_HIGH>;
- 				interrupt-names = "msi";
- 				#interrupt-cells = <1>;
- 				interrupt-map-mask = <0 0 0 0x7>;
-@@ -980,7 +981,7 @@
- 
- 				device_type = "pci";
- 
--				interrupts = <GIC_SPI 421 IRQ_TYPE_NONE>;
-+				interrupts = <GIC_SPI 421 IRQ_TYPE_LEVEL_HIGH>;
- 				interrupt-names = "msi";
- 				#interrupt-cells = <1>;
- 				interrupt-map-mask = <0 0 0 0x7>;
--- 
-2.14.1
+On 2018年04月27日 12:18, Michael S. Tsirkin wrote:
+> On Fri, Apr 27, 2018 at 11:56:05AM +0800, Jason Wang wrote:
+>> On 2018年04月25日 13:15, Tiwei Bie wrote:
+>>> Hello everyone,
+>>>
+>>> This RFC implements packed ring support in virtio driver.
+>>>
+>>> Some simple functional tests have been done with Jason's
+>>> packed ring implementation in vhost:
+>>>
+>>> https://lkml.org/lkml/2018/4/23/12
+>>>
+>>> Both of ping and netperf worked as expected (with EVENT_IDX
+>>> disabled). But there are below known issues:
+>>>
+>>> 1. Reloading the guest driver will break the Tx/Rx;
+>> Will have a look at this issue.
+>>
+>>> 2. Zeroing the flags when detaching a used desc will
+>>>      break the guest -> host path.
+>> I still think zeroing flags is unnecessary or even a bug. At host, I track
+>> last observed avail wrap counter and detect avail like (what is suggested in
+>> the example code in the spec):
+>>
+>> static bool desc_is_avail(struct vhost_virtqueue *vq, __virtio16 flags)
+>> {
+>>         bool avail = flags & cpu_to_vhost16(vq, DESC_AVAIL);
+>>
+>>         return avail == vq->avail_wrap_counter;
+>> }
+>>
+>> So zeroing wrap can not work with this obviously.
+>>
+>> Thanks
+> I agree. I think what one should do is flip the available bit.
+>
+
+But is this flipping a must?
+
+Thanks
