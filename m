@@ -1,69 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932604AbeD0Jnd (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 05:43:33 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:51333 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932460AbeD0Jn3 (ORCPT
+        id S932621AbeD0Jnj (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 05:43:39 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:59771 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932460AbeD0Jne (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 05:43:29 -0400
-X-Google-Smtp-Source: AB8JxZoLok/nTNLuQtmVl59HJ1tCTVsWny+dffySK2TlqP+x5GIFfixbDNsXMeVeBhPvWRjXPWAyJg==
-Date: Fri, 27 Apr 2018 11:43:26 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, Joerg Roedel <joro@8bytes.org>,
-        iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/4] iommu/tegra: gart: Fix gart_iommu_unmap()
-Message-ID: <20180427094326.GL30388@ulmo>
-References: <cover.1523304324.git.digetx@gmail.com>
- <dd25a9ff7bad7c92b345c0c0ce2bf235c4c3b6e8.1523304324.git.digetx@gmail.com>
+        Fri, 27 Apr 2018 05:43:34 -0400
+Date: Fri, 27 Apr 2018 02:43:09 -0700
+From: tip-bot for Will Deacon <tipbot@zytor.com>
+Message-ID: <tip-ae75d9089ff7095d1d1a12c3cd86b21d3eaf3b15@git.kernel.org>
+Cc: torvalds@linux-foundation.org, will.deacon@arm.com, tglx@linutronix.de,
+        mingo@kernel.org, peterz@infradead.org, longman@redhat.com,
+        hpa@zytor.com, linux-kernel@vger.kernel.org
+Reply-To: linux-kernel@vger.kernel.org, hpa@zytor.com, longman@redhat.com,
+        peterz@infradead.org, mingo@kernel.org, torvalds@linux-foundation.org,
+        will.deacon@arm.com, tglx@linutronix.de
+In-Reply-To: <1524738868-31318-13-git-send-email-will.deacon@arm.com>
+References: <1524738868-31318-13-git-send-email-will.deacon@arm.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:locking/core] locking/qspinlock: Use try_cmpxchg() instead of
+ cmpxchg() when locking
+Git-Commit-ID: ae75d9089ff7095d1d1a12c3cd86b21d3eaf3b15
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="DN8g+DOX2TxGxleI"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <dd25a9ff7bad7c92b345c0c0ce2bf235c4c3b6e8.1523304324.git.digetx@gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  ae75d9089ff7095d1d1a12c3cd86b21d3eaf3b15
+Gitweb:     https://git.kernel.org/tip/ae75d9089ff7095d1d1a12c3cd86b21d3eaf3b15
+Author:     Will Deacon <will.deacon@arm.com>
+AuthorDate: Thu, 26 Apr 2018 11:34:26 +0100
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Fri, 27 Apr 2018 09:48:52 +0200
 
---DN8g+DOX2TxGxleI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+locking/qspinlock: Use try_cmpxchg() instead of cmpxchg() when locking
 
-On Mon, Apr 09, 2018 at 11:07:20PM +0300, Dmitry Osipenko wrote:
-> It must return the number of unmapped bytes on success, returning 0 means
-> that unmapping failed and in result only one page is unmapped.
->=20
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/iommu/tegra-gart.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+When reaching the head of an uncontended queue on the qspinlock slow-path,
+using a try_cmpxchg() instead of a cmpxchg() operation to transition the
+lock work to _Q_LOCKED_VAL generates slightly better code for x86 and
+pretty much identical code for arm64.
 
-Reviewed-by: Thierry Reding <treding@nvidia.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
+Reported-by: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Waiman Long <longman@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: boqun.feng@gmail.com
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: paulmck@linux.vnet.ibm.com
+Link: http://lkml.kernel.org/r/1524738868-31318-13-git-send-email-will.deacon@arm.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ kernel/locking/qspinlock.c | 19 +++++++++----------
+ 1 file changed, 9 insertions(+), 10 deletions(-)
 
---DN8g+DOX2TxGxleI
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlri8L0ACgkQ3SOs138+
-s6F/EQ//XwtuK53IT2hLJ632ZguS9Dbp77vbd7S36ww8dcafYkeJ+PsaKpetk9BU
-whOnWe/elWUTkOtL6wHMerSHa1RoMpNR46cHkjqppPaNaWn5kJfdYIgvZj+GVBjG
-7n5tYsZLsbjWlsXZoQu0cb0gcwybZzhrzXAu+tLYzI0p9WJO/dxz/VH1mEMxA6Bj
-ykDHT5bSTzukiOlLbMYy+cwajd1lr6fe9UAJMQ8rAb6Zej/MTFpRuS18DeeGRkva
-+CLvhX9DGi1Bc+Jt101EJ/SO9Edsg/poZ0ZpT+rYTLQgExJw6vEd4XZWyhiBR2QK
-EzglVE+3mZ13mz7QmdWy2xJSn77lGrsA3pbMwv6rNTQ/VsXD0Tf0ljdc8xvL9B2H
-UCRfXPICCw/8o8SNrLpZapq+Z12o/3a7a0yAHZFVNEyMB6I0Y6Rs8L+zUf8aY3dm
-e1ruuoU23ryISE9de7LwpNAZIyb6y3tie+3XqlhAe8M4PFVDR6uWtXryo60d/6aS
-ngEnv2oTqqmA3uE+yJHpHSNIrhNGnpkX02srWeHCIXZBW5HzwnzhlxPbK1jboyQB
-qr1a+6rWqJfuSZXK3wT4uCP0YFdDW6Y2tolxxWDdnNKNKJpikgsLWJbg/9h7AquI
-ACSNJ/dYE2OpdRGmcK2ymiwRQ/Ge4B94iIRGxB7k8LrgI8AbrAE=
-=MkpY
------END PGP SIGNATURE-----
-
---DN8g+DOX2TxGxleI--
+diff --git a/kernel/locking/qspinlock.c b/kernel/locking/qspinlock.c
+index 956a12983bd0..46813185957b 100644
+--- a/kernel/locking/qspinlock.c
++++ b/kernel/locking/qspinlock.c
+@@ -467,16 +467,15 @@ locked:
+ 	 * Otherwise, we only need to grab the lock.
+ 	 */
+ 
+-	/* In the PV case we might already have _Q_LOCKED_VAL set */
+-	if ((val & _Q_TAIL_MASK) == tail) {
+-		/*
+-		 * The atomic_cond_read_acquire() call above has provided the
+-		 * necessary acquire semantics required for locking.
+-		 */
+-		old = atomic_cmpxchg_relaxed(&lock->val, val, _Q_LOCKED_VAL);
+-		if (old == val)
+-			goto release; /* No contention */
+-	}
++	/*
++	 * In the PV case we might already have _Q_LOCKED_VAL set.
++	 *
++	 * The atomic_cond_read_acquire() call above has provided the
++	 * necessary acquire semantics required for locking.
++	 */
++	if (((val & _Q_TAIL_MASK) == tail) &&
++	    atomic_try_cmpxchg_relaxed(&lock->val, &val, _Q_LOCKED_VAL))
++		goto release; /* No contention */
+ 
+ 	/* Either somebody is queued behind us or _Q_PENDING_VAL is set */
+ 	set_locked(lock);
