@@ -1,38 +1,39 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZret0yknupqd2tMDmCb/Ew0oEkm9M4+7lV6QYEaPxK59DjWYxpvxjWKnzf57Pa2olgv/yT8
-ARC-Seal: i=1; a=rsa-sha256; t=1524837848; cv=none;
+X-Google-Smtp-Source: AB8JxZp07bDjTi+6KMlMzMbi8BrA1TDTINkmL+ZIArh62p3EZyMw7iKXtvsczO1dVmx5Q4V/KskT
+ARC-Seal: i=1; a=rsa-sha256; t=1524837846; cv=none;
         d=google.com; s=arc-20160816;
-        b=A6fq245+5tqBbSA+r354EW0Ere2YfJKNLzZZJEJi4vaC/ANHDFKZXVkZYDwEURu36i
-         6hhojaIuAInkj4kruJTVw/fT+qIQwptK+oQP/ruvLM1PGjozyYogX5u0RzQZ+TsI+98m
-         RUBhfzrEuC+khKlgqSp1f6W69KZunwLdUQxYlX0Yge0NP1ctK1tQv0VksJZP7fSH6jFj
-         sTZdEUjqnRRxEeiib5aQL/2UBJQRahjF+N3l6JNLIBU6wz4F33XfzZ4RoJlGbu+p/Ox2
-         KuDjrywtarvYlF7OiQpceEPbDNaymQyy5q9yQsn7owPtHMxXbWlgq4h7SI8tKzicc6p7
-         zYKg==
+        b=OjLFlPjcpDJD94VLez+MamtGt6hCmkGzizo4+ULJk4RTisRLJN0xbHSort6KeRhBi7
+         Mn0rjUFdYE3lkmav6EgSKyTfw5FQDcj/Qm1v5ErOVywZSe86ItAQzb+QxCZyLE7x+HAx
+         kpECkmNOJm2BQpPI3ri63XQ10V/Qrg21tQm2LWl+jtlYy30CI9HbScAVtGgMfDlMoI7a
+         dwVuVc9uZwLM2HFLQlOkoB+ZnfUlBUT4cPb5oMe1U+pLPRm/mTEmrzeaeONH3oDZw+8V
+         mtXf4RHJQ2IqnEOpWT9OxSnjzl42A6cXm6XxEczbhgTft8v4RAZYqRr8+IhaVm4doZk6
+         6jqA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=4iVmRO6Aq5mi3UYQJ43xmeeLBAdEDpgw1/dtQ45aXBQ=;
-        b=UGeomLCYKBiHR0R2Lvstx+yghNxlEFDlwOb11dvar3nE3gW6p4GZ/emwrnkMwKlgnr
-         BzhtzCaV5IvVtHeV1z1O6+QqxLLZJu0lL/l1qC7sKMPYsq5WLaol41DhkDlWL1bnBB/I
-         q+viCxHXAPfjVgDP03FCpb9loSBeQPWifNa4CDzEVsbNEGTZt7Ctw63lEUzON0vWjMfM
-         k71/PrNwi0zJ9yIv+H6fCOYA8H3Uw0RAgMi3v7mwbtLvN4BkrKWrVLOiV76tLwwyx4my
-         sCn03yZtS6oAHmTBV8/dp306WOXBL92RTzkN7/SgPbW7uaqZwjjy2adQ6GwAueSXHFBX
-         tacw==
+        bh=owVIk2/j3C9K7tip0eoqDTwZJXFlCPHy5+LyMSIIr20=;
+        b=hVe+Bdu+tubSMiJmaoLR8SZ3TCs6KWIoBRCxK9A+i0fMK6pLtxuiV3BC9SrwTwQe//
+         NP1op793e829bVRgY/1Jw6vir/qMf2fz8dNDUOQ7USy+hOZZol1jG0HSARYR9t2iTabS
+         691VaMkO/qm1S9wmvidOuzEm1fmRlfZZX4djB6jvtr0zuL6KYntrMytbLD6nAR/lzrbz
+         CCdr87LzszpqgrHO0L2bmeMzBxAA3gftAxuRbKlFznIb9MLtywS0UOeRGynyImqzkSTC
+         I2K+p2wTFsuxf1gXEz5I4ywJ4+vNC2pWhRrfSH+BQwWi4V82uXSmIaUacyxsD5fuvSee
+         QZcQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AE9F21890
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFED721890
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4.9 39/74] s390: do not bypass BPENTER for interrupt system calls
-Date: Fri, 27 Apr 2018 15:58:29 +0200
-Message-Id: <20180427135711.547413426@linuxfoundation.org>
+	Martin Schwidefsky <schwidefsky@de.ibm.com>,
+	Eugeniu Rosca <erosca@de.adit-jv.com>
+Subject: [PATCH 4.9 38/74] s390: Replace IS_ENABLED(EXPOLINE_*) with IS_ENABLED(CONFIG_EXPOLINE_*)
+Date: Fri, 27 Apr 2018 15:58:28 +0200
+Message-Id: <20180427135711.508604985@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135709.899303463@linuxfoundation.org>
 References: <20180427135709.899303463@linuxfoundation.org>
@@ -42,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908178667353015?=
-X-GMAIL-MSGID: =?utf-8?q?1598908371871061958?=
+X-GMAIL-THRID: =?utf-8?q?1598908176269129901?=
+X-GMAIL-MSGID: =?utf-8?q?1598908369473616707?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,30 +55,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Martin Schwidefsky <schwidefsky@de.ibm.com>
 
 
-[ Upstream commit d5feec04fe578c8dbd9e2e1439afc2f0af761ed4 ]
+From: Eugeniu Rosca <erosca@de.adit-jv.com>
 
-The system call path can be interrupted before the switch back to the
-standard branch prediction with BPENTER has been done. The critical
-section cleanup code skips forward to .Lsysc_do_svc and bypasses the
-BPENTER. In this case the kernel and all subsequent code will run with
-the limited branch prediction.
+[ Upstream commit 2cb370d615e9fbed9e95ed222c2c8f337181aa90 ]
 
-Fixes: eacf67eb9b32 ("s390: run user space and KVM guests with modified branch prediction")
+I've accidentally stumbled upon the IS_ENABLED(EXPOLINE_*) lines, which
+obviously always evaluate to false. Fix this.
+
+Fixes: f19fbd5ed642 ("s390: introduce execute-trampolines for branches")
+Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
 Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/s390/kernel/entry.S |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/s390/kernel/nospec-branch.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/s390/kernel/entry.S
-+++ b/arch/s390/kernel/entry.S
-@@ -1316,7 +1316,8 @@ cleanup_critical:
- 	srag	%r9,%r9,23
- 	jz	0f
- 	mvc	__TI_last_break(8,%r12),16(%r11)
--0:	# set up saved register r11
-+0:	BPENTER __TI_flags(%r12),_TIF_ISOLATE_BP
-+	# set up saved register r11
- 	lg	%r15,__LC_KERNEL_STACK
- 	la	%r9,STACK_FRAME_OVERHEAD(%r15)
- 	stg	%r9,24(%r11)		# r11 pt_regs pointer
+--- a/arch/s390/kernel/nospec-branch.c
++++ b/arch/s390/kernel/nospec-branch.c
+@@ -3,8 +3,8 @@
+ #include <asm/facility.h>
+ #include <asm/nospec-branch.h>
+ 
+-int nospec_call_disable = IS_ENABLED(EXPOLINE_OFF);
+-int nospec_return_disable = !IS_ENABLED(EXPOLINE_FULL);
++int nospec_call_disable = IS_ENABLED(CONFIG_EXPOLINE_OFF);
++int nospec_return_disable = !IS_ENABLED(CONFIG_EXPOLINE_FULL);
+ 
+ static int __init nospectre_v2_setup_early(char *str)
+ {
