@@ -1,158 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933048AbeD0XUM (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 19:20:12 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49784 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932342AbeD0XUK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 19:20:10 -0400
-Date: Fri, 27 Apr 2018 19:20:07 -0400 (EDT)
-From: Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To: "Michael S. Tsirkin" <mst@redhat.com>
-cc: John Stoffel <john@stoffel.org>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Michal@stoffel.org, eric.dumazet@gmail.com, netdev@vger.kernel.org,
-        jasowang@redhat.com, Randy Dunlap <rdunlap@infradead.org>,
-        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
-        Hocko <mhocko@kernel.org>, linux-mm@kvack.org, dm-devel@redhat.com,
-        Vlastimil Babka <vbabka@suse.cz>, Andrew@stoffel.org,
-        David Rientjes <rientjes@google.com>,
-        Morton <akpm@linux-foundation.org>,
-        virtualization@lists.linux-foundation.org,
-        David Miller <davem@davemloft.net>, edumazet@google.com
-Subject: Re: [dm-devel] [PATCH v5] fault-injection: introduce kvmalloc fallback
- options
-In-Reply-To: <20180427005213-mutt-send-email-mst@kernel.org>
-Message-ID: <alpine.LRH.2.02.1804271914200.4345@file01.intranet.prod.int.rdu2.redhat.com>
-References: <alpine.LRH.2.02.1804251556060.30569@file01.intranet.prod.int.rdu2.redhat.com> <1114eda5-9b1f-4db8-2090-556b4a37c532@infradead.org> <alpine.LRH.2.02.1804251656300.9428@file01.intranet.prod.int.rdu2.redhat.com> <alpine.DEB.2.21.1804251417470.166306@chino.kir.corp.google.com>
- <alpine.LRH.2.02.1804251720090.9428@file01.intranet.prod.int.rdu2.redhat.com> <1524694663.4100.21.camel@HansenPartnership.com> <alpine.LRH.2.02.1804251857070.31135@file01.intranet.prod.int.rdu2.redhat.com> <1524697697.4100.23.camel@HansenPartnership.com>
- <23266.8532.619051.784274@quad.stoffel.home> <alpine.LRH.2.02.1804261726540.13401@file01.intranet.prod.int.rdu2.redhat.com> <20180427005213-mutt-send-email-mst@kernel.org>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        id S933073AbeD0XYP (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 19:24:15 -0400
+Received: from mail-vk0-f48.google.com ([209.85.213.48]:35815 "EHLO
+        mail-vk0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932342AbeD0XYM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 19:24:12 -0400
+X-Google-Smtp-Source: AB8JxZqoFXXeA2ygksTNkCUZI3dbxuIBukGTL2mctakylwzVWWPol1mtk101RPZtyL3O53xn6NPqThZRvGrOu2hbQtY=
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+In-Reply-To: <20180427215449.GA133494@google.com>
+References: <20180419221635.17849-1-ilina@codeaurora.org> <20180419221635.17849-6-ilina@codeaurora.org>
+ <20180425214111.GC243180@google.com> <20180427173943.GD6380@codeaurora.org>
+ <20180427184017.GI243180@google.com> <20180427194559.GE6380@codeaurora.org>
+ <20180427200605.GJ243180@google.com> <20180427213201.GA23157@codeaurora.org> <20180427215449.GA133494@google.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Fri, 27 Apr 2018 16:24:10 -0700
+X-Google-Sender-Auth: XQV7HsJrGQGNCXimyF1DhJ-b1g0
+Message-ID: <CAD=FV=Wan0G_GG29Q-atBbQS+_7nnbqTndE+yyi_G=scOdGMFA@mail.gmail.com>
+Subject: Re: [PATCH v6 05/10] drivers: qcom: rpmh-rsc: write sleep/wake
+ requests to TCS
+To: Matthias Kaehlcke <mka@chromium.org>
+Cc: Lina Iyer <ilina@codeaurora.org>, Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>, linux-arm-msm@vger.kernel.org,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Evan Green <evgreen@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
+On Fri, Apr 27, 2018 at 2:54 PM, Matthias Kaehlcke <mka@chromium.org> wrote:
+>> > Am I getting something wrong here?
+>>
+>> The for_each_set_bit() should increment the 'i' and we would attempt to
+>> compare the first address in the request with the next command in the
+>> TCS cache. If they don't match we repeat the process again. If it does,
+>> then we loop through 'j' to find if the sequence matches.
+>>
+>> Did I miss something?
+>
+> One of us is clearly in need of more caffeine or ready for the
+> weekend, it might be me :) Maybe another pair of eyeballs could help
+> to resolve this deadlock ...
+>
+> My single stepping above assumes that tcs->cmd_cache[i] matches
+> cmd[0].addr, i.e. we either found the start of the sequence we are
+> looking for or another sequence that starts with the same address. My
+> claim is that the code returns i in either case, whether the
+> subsequent addresses match or not.
 
-On Fri, 27 Apr 2018, Michael S. Tsirkin wrote:
+I haven't reviewed this patch in detail, but I attempted to be another
+pair of eyes here.  Something is definitely wrong with the "for (j =
+0; j < len; j++)" loop.  I believe the code that's written right now
+is equivalent to this much shorter function:
 
-> 2. Ability to control this from a separate config
->    option.
-> 
->    It's still not that clear to me why is this such a
->    hard requirement.  If a distro wants to force specific
->    boot time options, why isn't CONFIG_CMDLINE sufficient?
-
-So, try this and turn it on with CONFIG_CMDLINE. But I'm not a 
-blogger and I will not write a blog post about it as James Bottomley 
-suggests :-)
-- so very few users will use it. 
-
-
-fault-injection: introduce kvmalloc fallback options
-
-This patch introduces a fault-injection option "kvmalloc_fallback". This
-option makes kvmalloc randomly fall back to vmalloc.
-
-Unfortunately, some kernel code has bugs - it uses kvmalloc and then
-uses DMA-API on the returned memory or frees it with kfree. Such bugs were
-found in the virtio-net driver, dm-integrity or RHEL7 powerpc-specific
-code. This options helps to test for these bugs.
-
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-
----
- Documentation/fault-injection/fault-injection.txt |    7 +++++
- mm/util.c                                         |   30 ++++++++++++++++++++++
- 2 files changed, 37 insertions(+)
-
-Index: linux-2.6/Documentation/fault-injection/fault-injection.txt
-===================================================================
---- linux-2.6.orig/Documentation/fault-injection/fault-injection.txt	2018-04-28 01:01:25.000000000 +0200
-+++ linux-2.6/Documentation/fault-injection/fault-injection.txt	2018-04-28 01:01:25.000000000 +0200
-@@ -15,6 +15,12 @@ o fail_page_alloc
- 
-   injects page allocation failures. (alloc_pages(), get_free_pages(), ...)
- 
-+o kvmalloc_fallback
-+
-+  makes the function kvmalloc randomly fall back to vmalloc. This could be used
-+  to detects bugs such as using DMA-API on the result of kvmalloc or freeing
-+  the result of kvmalloc with free.
-+
- o fail_futex
- 
-   injects futex deadlock and uaddr fault errors.
-@@ -167,6 +173,7 @@ use the boot option:
- 
- 	failslab=
- 	fail_page_alloc=
-+	kvmalloc_fallback=
- 	fail_make_request=
- 	fail_futex=
- 	mmc_core.fail_request=<interval>,<probability>,<space>,<times>
-Index: linux-2.6/mm/util.c
-===================================================================
---- linux-2.6.orig/mm/util.c	2018-04-28 01:01:25.000000000 +0200
-+++ linux-2.6/mm/util.c	2018-04-28 01:03:25.000000000 +0200
-@@ -14,6 +14,7 @@
- #include <linux/hugetlb.h>
- #include <linux/vmalloc.h>
- #include <linux/userfaultfd_k.h>
-+#include <linux/fault-inject.h>
- 
- #include <asm/sections.h>
- #include <linux/uaccess.h>
-@@ -377,6 +378,29 @@ unsigned long vm_mmap(struct file *file,
- }
- EXPORT_SYMBOL(vm_mmap);
- 
-+#ifdef CONFIG_FAULT_INJECTION
-+
-+static DECLARE_FAULT_ATTR(kvmalloc_fallback);
-+
-+static int __init setup_kvmalloc_fallback(char *str)
++static int find_match(const struct tcs_group *tcs, const struct tcs_cmd *cmd,
++                     int len)
 +{
-+	kvmalloc_fallback.verbose = 0;
-+	return setup_fault_attr(&kvmalloc_fallback, str);
++       int i, j;
++
++       /* Check for already cached commands */
++       for_each_set_bit(i, tcs->slots, MAX_TCS_SLOTS) {
++               if (tcs->cmd_cache[i] == cmd[0].addr)
++                       return i;
++       }
++
++       return -ENODATA;
 +}
-+
-+__setup("kvmalloc_fallback=", setup_kvmalloc_fallback);
-+
-+#ifdef CONFIG_FAULT_INJECTION_DEBUG_FS
-+static int __init kvmalloc_fallback_debugfs_init(void)
-+{
-+	fault_create_debugfs_attr("kvmalloc_fallback", NULL, &kvmalloc_fallback);
-+	return 0;
-+}
-+late_initcall(kvmalloc_fallback_debugfs_init);
-+#endif
-+
-+#endif
-+
- /**
-  * kvmalloc_node - attempt to allocate physically contiguous memory, but upon
-  * failure, fall back to non-contiguous (vmalloc) allocation.
-@@ -404,6 +428,11 @@ void *kvmalloc_node(size_t size, gfp_t f
- 	 */
- 	WARN_ON_ONCE((flags & GFP_KERNEL) != GFP_KERNEL);
- 
-+#ifdef CONFIG_FAULT_INJECTION
-+	if (should_fail(&kvmalloc_fallback, size))
-+		goto do_vmalloc;
-+#endif
-+
- 	/*
- 	 * We want to attempt a large physically contiguous block first because
- 	 * it is less likely to fragment multiple larger blocks and therefore
-@@ -427,6 +456,7 @@ void *kvmalloc_node(size_t size, gfp_t f
- 	if (ret || size <= PAGE_SIZE)
- 		return ret;
- 
-+do_vmalloc: __maybe_unused
- 	return __vmalloc_node_flags_caller(size, node, flags,
- 			__builtin_return_address(0));
- }
+
+Specifically the test "if (tcs->cmd_cache[i] != cmd[0].addr)" does not
+take "j" into account.  Thus if it was false when "j == 0" it will
+continue to be false for "j == 1", "j == 2", etc.  Eventually you'll
+hit the "else if (j == len - 1)" and return.
+
+I believe that's what Matthias has been saying.  I personally haven't
+looked at the rest of the patch to see how things out to be fixed, but
+I'm quite convinced that the function either has a bug or should be
+written as the shorter version I've written above.
+
+-Doug
