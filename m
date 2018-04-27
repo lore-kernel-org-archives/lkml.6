@@ -1,41 +1,41 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZocng2oUpjoqj5hi4pOJuq+BlMvive/M5acHtUUJm/H9vJORQDjMl9zF71HFecbFz/wFUei
-ARC-Seal: i=1; a=rsa-sha256; t=1524837951; cv=none;
+X-Google-Smtp-Source: AB8JxZp0RNqq0bAcZmFZxMoApNLlG7O4dNQ78yK14RgIOhxUr6fYmaZabmHur/34nvemJ8Y2N3dh
+ARC-Seal: i=1; a=rsa-sha256; t=1524837949; cv=none;
         d=google.com; s=arc-20160816;
-        b=FncPzWJgra+QELuNXRWynRJnnleMhj+2H6ESj9jTBXbp+xtu+BUGbSRrifTVNX7r3V
-         SI4qkPJNHeb9VQUN7xFHpWSQ2nQzSnkmduydK0Oz2ibPQe+rtKumQ4XsFcfluCC9y099
-         rfYuzBaE5COOOP/fheq/sWsrGBMzKuiZdlHp1+IKLK76/L0vT0s3fbWIlH6jLf9GHvEV
-         bxdJe88OoB6MkEr43zbPfHsKYmjW9FxvF12zCKgYHYzK7VheOzQ/FLeBCg3MQNAmvKbd
-         NtBdZXu9r3/6WQDO04mQiwh5w1EHP88axI1FTso+GbkjjZkNXFpCt14+ayJM+lYP7kn8
-         Lk5A==
+        b=i7EUJFw0WfO5z4D775TtR4s/utGz4lWZiXH+Bmrl8PKJFQBmVLk+NEs/JiwO+bonMc
+         lQqv/NVnCF6JR0pTeFNRYWVm8Ja6BNfaiWyv99u1/uKzwHqSLp7a+J/IRW1itISDUbU0
+         DkCCcRRlTNqSezuLpDMSSRX9KpbKk+4GXICVrkDx6nFw7N+8QkgX1BLEPDWeHj/to1KB
+         TyBos9VyyWexgf3p70er34Awp/HvmZ9Q4tmm9YdzcavuZoftjIDGEn/4N6IJKcGOJxXe
+         G87wpeHu7CwodhIEGYIX4D/EkWEYiLrD2WuC6U27drcUmEhJDEwZNPGGmTef0deScIvb
+         vcBQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=mgjFfhGTzJud4lpMFjB+fXSN+3rxt/u8oNwKyAdvOqI=;
-        b=NUH/DF3w1XMUMc7ijDGhonh0XE/XgIqU54sb9pLIFuW316UkloQDzJlf7i+hu5jRWU
-         cTBVNl6CQJULDt9amrAEUDceUJhpaqOMXsvGcIqw+dHi9OsRyRTdLHVxD5MKheVQEkjq
-         qxkXU1LoTaGYXkn2j/wvMIP6S8Iw54fvCvMCwdkQwY6wENW4Vy5wWo2tnb9DwsNoHXtw
-         87wP6z1ZYrqw6PVSu9IHIHC966E7kiF5ui4QLwtrAySgIljJ9lJFrY2VtlrkQn1yIp1I
-         0ulvDlN9zMF4OfFyFKzattb/VxM3Nn/QM8t4WIKQGHbQ5ol7kYP4mT7saoIxXEtYDlbx
-         1lbw==
+        bh=Zj3mBJTN4b9ryLEMOd+A8hmYNcG0UU00TRXx9KWrPHY=;
+        b=lDXsW/UEoHvrCpC0Hc7jKSQ6+S7jfXj1b2dOhBA7KuJoLQfoD6YIi/fV9yzH8pyXnJ
+         SKa66pn5L/PP+2X3vkJwKbnxMc8IZDvhT8U1MKS3KG0r4zHruJ14SgGxMzqGG4i5okvg
+         d0NOn+UTZ0fNNZN5ofgDrPloBW3QVPQGPcvc11e4X1DWw5MfsKxLG+cipCujH/CXWL5Q
+         Etwa3nVOcSKjlMChKTzYvA/Fe15dzH0bt9vobthBkApwHAb5Yq+f3pQiN9RE098ub2TI
+         gyEpFYXTiho7H03SyFYhQt9aPovgj2LCbereQtD7PfmCKt8IkNtLll/WbPDBmxp9++So
+         ZIGA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BB2E21890
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C556B21890
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>,
-	Jon Maloy <jon.maloy@ericsson.com>,
-	Ying Xue <ying.xue@windriver.com>,
+	DaeRyong Jeong <threeearcat@gmail.com>,
+	Byoungyoung Lee <byoungyoung@purdue.edu>,
+	Willem de Bruijn <willemb@google.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 56/74] tipc: add policy for TIPC_NLA_NET_ADDR
-Date: Fri, 27 Apr 2018 15:58:46 +0200
-Message-Id: <20180427135712.254938417@linuxfoundation.org>
+Subject: [PATCH 4.9 55/74] packet: fix bitfield update race
+Date: Fri, 27 Apr 2018 15:58:45 +0200
+Message-Id: <20180427135712.213928627@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135709.899303463@linuxfoundation.org>
 References: <20180427135709.899303463@linuxfoundation.org>
@@ -45,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908243113314844?=
-X-GMAIL-MSGID: =?utf-8?q?1598908480273591343?=
+X-GMAIL-THRID: =?utf-8?q?1598908108463523673?=
+X-GMAIL-MSGID: =?utf-8?q?1598908478023327432?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,32 +54,196 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Willem de Bruijn <willemb@google.com>
 
 
-[ Upstream commit ec518f21cb1a1b1f8a516499ea05c60299e04963 ]
+[ Upstream commit a6361f0ca4b25460f2cdf3235ebe8115f622901e ]
 
-Before syzbot/KMSAN bites, add the missing policy for TIPC_NLA_NET_ADDR
+Updates to the bitfields in struct packet_sock are not atomic.
+Serialize these read-modify-write cycles.
 
-Fixes: 27c21416727a ("tipc: add net set to new netlink api")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Jon Maloy <jon.maloy@ericsson.com>
-Cc: Ying Xue <ying.xue@windriver.com>
+Move po->running into a separate variable. Its writes are protected by
+po->bind_lock (except for one startup case at packet_create). Also
+replace a textual precondition warning with lockdep annotation.
+
+All others are set only in packet_setsockopt. Serialize these
+updates by holding the socket lock. Analogous to other field updates,
+also hold the lock when testing whether a ring is active (pg_vec).
+
+Fixes: 8dc419447415 ("[PACKET]: Add optional checksum computation for recvmsg")
+Reported-by: DaeRyong Jeong <threeearcat@gmail.com>
+Reported-by: Byoungyoung Lee <byoungyoung@purdue.edu>
+Signed-off-by: Willem de Bruijn <willemb@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/tipc/netlink.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ net/packet/af_packet.c |   60 +++++++++++++++++++++++++++++++++++--------------
+ net/packet/internal.h  |   10 ++++----
+ 2 files changed, 49 insertions(+), 21 deletions(-)
 
---- a/net/tipc/netlink.c
-+++ b/net/tipc/netlink.c
-@@ -79,7 +79,8 @@ const struct nla_policy tipc_nl_sock_pol
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -333,11 +333,11 @@ static void packet_pick_tx_queue(struct
+ 	skb_set_queue_mapping(skb, queue_index);
+ }
  
- const struct nla_policy tipc_nl_net_policy[TIPC_NLA_NET_MAX + 1] = {
- 	[TIPC_NLA_NET_UNSPEC]		= { .type = NLA_UNSPEC },
--	[TIPC_NLA_NET_ID]		= { .type = NLA_U32 }
-+	[TIPC_NLA_NET_ID]		= { .type = NLA_U32 },
-+	[TIPC_NLA_NET_ADDR]		= { .type = NLA_U32 },
- };
+-/* register_prot_hook must be invoked with the po->bind_lock held,
++/* __register_prot_hook must be invoked through register_prot_hook
+  * or from a context in which asynchronous accesses to the packet
+  * socket is not possible (packet_create()).
+  */
+-static void register_prot_hook(struct sock *sk)
++static void __register_prot_hook(struct sock *sk)
+ {
+ 	struct packet_sock *po = pkt_sk(sk);
  
- const struct nla_policy tipc_nl_link_policy[TIPC_NLA_LINK_MAX + 1] = {
+@@ -352,8 +352,13 @@ static void register_prot_hook(struct so
+ 	}
+ }
+ 
+-/* {,__}unregister_prot_hook() must be invoked with the po->bind_lock
+- * held.   If the sync parameter is true, we will temporarily drop
++static void register_prot_hook(struct sock *sk)
++{
++	lockdep_assert_held_once(&pkt_sk(sk)->bind_lock);
++	__register_prot_hook(sk);
++}
++
++/* If the sync parameter is true, we will temporarily drop
+  * the po->bind_lock and do a synchronize_net to make sure no
+  * asynchronous packet processing paths still refer to the elements
+  * of po->prot_hook.  If the sync parameter is false, it is the
+@@ -363,6 +368,8 @@ static void __unregister_prot_hook(struc
+ {
+ 	struct packet_sock *po = pkt_sk(sk);
+ 
++	lockdep_assert_held_once(&po->bind_lock);
++
+ 	po->running = 0;
+ 
+ 	if (po->fanout)
+@@ -3259,7 +3266,7 @@ static int packet_create(struct net *net
+ 
+ 	if (proto) {
+ 		po->prot_hook.type = proto;
+-		register_prot_hook(sk);
++		__register_prot_hook(sk);
+ 	}
+ 
+ 	mutex_lock(&net->packet.sklist_lock);
+@@ -3735,12 +3742,18 @@ packet_setsockopt(struct socket *sock, i
+ 
+ 		if (optlen != sizeof(val))
+ 			return -EINVAL;
+-		if (po->rx_ring.pg_vec || po->tx_ring.pg_vec)
+-			return -EBUSY;
+ 		if (copy_from_user(&val, optval, sizeof(val)))
+ 			return -EFAULT;
+-		po->tp_loss = !!val;
+-		return 0;
++
++		lock_sock(sk);
++		if (po->rx_ring.pg_vec || po->tx_ring.pg_vec) {
++			ret = -EBUSY;
++		} else {
++			po->tp_loss = !!val;
++			ret = 0;
++		}
++		release_sock(sk);
++		return ret;
+ 	}
+ 	case PACKET_AUXDATA:
+ 	{
+@@ -3751,7 +3764,9 @@ packet_setsockopt(struct socket *sock, i
+ 		if (copy_from_user(&val, optval, sizeof(val)))
+ 			return -EFAULT;
+ 
++		lock_sock(sk);
+ 		po->auxdata = !!val;
++		release_sock(sk);
+ 		return 0;
+ 	}
+ 	case PACKET_ORIGDEV:
+@@ -3763,7 +3778,9 @@ packet_setsockopt(struct socket *sock, i
+ 		if (copy_from_user(&val, optval, sizeof(val)))
+ 			return -EFAULT;
+ 
++		lock_sock(sk);
+ 		po->origdev = !!val;
++		release_sock(sk);
+ 		return 0;
+ 	}
+ 	case PACKET_VNET_HDR:
+@@ -3772,15 +3789,20 @@ packet_setsockopt(struct socket *sock, i
+ 
+ 		if (sock->type != SOCK_RAW)
+ 			return -EINVAL;
+-		if (po->rx_ring.pg_vec || po->tx_ring.pg_vec)
+-			return -EBUSY;
+ 		if (optlen < sizeof(val))
+ 			return -EINVAL;
+ 		if (copy_from_user(&val, optval, sizeof(val)))
+ 			return -EFAULT;
+ 
+-		po->has_vnet_hdr = !!val;
+-		return 0;
++		lock_sock(sk);
++		if (po->rx_ring.pg_vec || po->tx_ring.pg_vec) {
++			ret = -EBUSY;
++		} else {
++			po->has_vnet_hdr = !!val;
++			ret = 0;
++		}
++		release_sock(sk);
++		return ret;
+ 	}
+ 	case PACKET_TIMESTAMP:
+ 	{
+@@ -3818,11 +3840,17 @@ packet_setsockopt(struct socket *sock, i
+ 
+ 		if (optlen != sizeof(val))
+ 			return -EINVAL;
+-		if (po->rx_ring.pg_vec || po->tx_ring.pg_vec)
+-			return -EBUSY;
+ 		if (copy_from_user(&val, optval, sizeof(val)))
+ 			return -EFAULT;
+-		po->tp_tx_has_off = !!val;
++
++		lock_sock(sk);
++		if (po->rx_ring.pg_vec || po->tx_ring.pg_vec) {
++			ret = -EBUSY;
++		} else {
++			po->tp_tx_has_off = !!val;
++			ret = 0;
++		}
++		release_sock(sk);
+ 		return 0;
+ 	}
+ 	case PACKET_QDISC_BYPASS:
+--- a/net/packet/internal.h
++++ b/net/packet/internal.h
+@@ -109,10 +109,12 @@ struct packet_sock {
+ 	int			copy_thresh;
+ 	spinlock_t		bind_lock;
+ 	struct mutex		pg_vec_lock;
+-	unsigned int		running:1,	/* prot_hook is attached*/
+-				auxdata:1,
++	unsigned int		running;	/* bind_lock must be held */
++	unsigned int		auxdata:1,	/* writer must hold sock lock */
+ 				origdev:1,
+-				has_vnet_hdr:1;
++				has_vnet_hdr:1,
++				tp_loss:1,
++				tp_tx_has_off:1;
+ 	int			pressure;
+ 	int			ifindex;	/* bound device		*/
+ 	__be16			num;
+@@ -122,8 +124,6 @@ struct packet_sock {
+ 	enum tpacket_versions	tp_version;
+ 	unsigned int		tp_hdrlen;
+ 	unsigned int		tp_reserve;
+-	unsigned int		tp_loss:1;
+-	unsigned int		tp_tx_has_off:1;
+ 	unsigned int		tp_tstamp;
+ 	struct net_device __rcu	*cached_dev;
+ 	int			(*xmit)(struct sk_buff *skb);
