@@ -1,28 +1,28 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZp9kH3Nej6tHrRHRz0PMSeOj1c7vF3EBMDvgmD2qLntrnCLfPi+LNKTg+L5+zdq/miX1Hc6
-ARC-Seal: i=1; a=rsa-sha256; t=1524838357; cv=none;
+X-Google-Smtp-Source: AB8JxZp0ArU8ut9USHUMdb+qNZM92qX50GMapBg5FZ/aZDaKw0n7xCK2EuMX4Aw3iSR5e66vnQf9
+ARC-Seal: i=1; a=rsa-sha256; t=1524838354; cv=none;
         d=google.com; s=arc-20160816;
-        b=pH1DE+tBt88WsjRnvq0F1HDwfTCCaYR9lqwtxwi4lkABDG8+Vak5l2QZG7EPhASeV8
-         slOpfDj/d/Ev8qGn9EYV/lmu5YaE5Uc1OnYy9RiKn4bm4S1kkst4XQr3EhP4M6sjgjsE
-         T8g52Q9h/UNr0rZXK+vgvhJWWTYqBMpyUS7w+5nlvLsGHJwGrJwrqwoMWdi3DuKTOkK0
-         WsQTVcyZUHIn9NQByOR3kXqGwDy9tICUDnC+zs05msI5AAKpjkz6ftOjUkWS4CEGJK3R
-         3Ja3SPmSZ253z8CiJGHhgY3GOiH+j624526gZXENiTFu8rHFKQjVP+DsNdwzsJVfSnpy
-         ELlA==
+        b=Zd+vENBaXdxS+dS27sv7k80pbIi9jDXjXATubB2SMC8hg5iCgM7mIe4S6d1Hm0IwTH
+         WtbDvpMzavwUw3BnujIdoV0yPWjXZCB1ma48cwW7hUNqGZLGIdLPfkDfMpTKp/zpoQqd
+         scz2mMnjGHLHJ2uwS7WA4qhF91AYB6w5CBX+jjWxN/uApT+EhJk2AUNK6HoF3/w8iLJz
+         2hAwES+zL3CDmY15X8+lQNSA2zdREl1GNeuiMQ/zPDC+IyQ/TgIdfNQcTaShuxsoU2+o
+         co3qAoIhzyp7WXKUGBvcXATwaVjfZz0PtAzkjUZq3ENFoH515qUH70vAv4Mr/L1dYkXM
+         Ks9Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=7BVEN3zhcKcPCblJKUlLEIbqfQzYU5KdwuR3zB04X14=;
-        b=pp+WlM9bRuk3mX+JyDU40L8mxHbVns90siLUY7Fp3us5p9zTpmSEpnifh3Sp+cmJ/N
-         GGuDECt/mxHhX3YAHnp3V5b/wkjmb4LcUJVFE2x95BXYUuIoYRhCNPGY3MoVY6t4eaXL
-         OaQl+rJMGywxHN2OLarQVTcZJPO8TIK4AqEwLpgjyZ/G/0urrOYUMh+P9aCNkGVts4W0
-         lP9L50H6Tz9qwxHEF06tM3UuNUYQ2FeWt4SMLqNYjxWeYk2hWFziQEoyNGV0lxH5HVHH
-         mBE6LazqmFN0QqCxSfsD5IyHAGJI8d4//Dlm8TskfcUXu8b/uqMiS5LzOpcHsiIZmfdd
-         Rq7w==
+        bh=P/6hFPj0kzIN7kVOgPz376n9hpal8sy9wcmxcnivhzc=;
+        b=FJPZyZ18urcOwquAXi5/oEUeUiioj2if+F+QX0SxlxCShe9/Zrw5UoE3I5TMx1unPm
+         qYfrLYyxUqRegDcc0hV68CoACuswax2l6Mzt8YVjjt5SfrRnJdzWO5yqrZnwgoqv/SpG
+         sckAQ/k7C0fAABp1GD6+Z6HYUne0yYPphS5/PYvO5LuV3tiMuztvwK/xejviD1x1lxRx
+         JNwTJas+GPPw4sxwnmrrNKNiUmC8jFOJ6PVGDWqtrDDVt/aUC381+ZFyDhLm4823jHkP
+         eTBOeWxXNXw5fe8Xdgq0ykGJkP5cTBqucqPeE9OlonyELBxqVMJBlQl/14eGOqvedmJ5
+         zauQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9400B21895
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D98F721895
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
@@ -31,9 +31,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Guillaume Nault <g.nault@alphalink.fr>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 42/81] l2tp: hold reference on tunnels printed in pppol2tp proc file
-Date: Fri, 27 Apr 2018 15:58:44 +0200
-Message-Id: <20180427135745.586803394@linuxfoundation.org>
+Subject: [PATCH 4.16 41/81] l2tp: hold reference on tunnels in netlink dumps
+Date: Fri, 27 Apr 2018 15:58:43 +0200
+Message-Id: <20180427135745.475083315@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135743.216853156@linuxfoundation.org>
 References: <20180427135743.216853156@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908905488571906?=
-X-GMAIL-MSGID: =?utf-8?q?1598908905488571906?=
+X-GMAIL-THRID: =?utf-8?q?1598908902820698317?=
+X-GMAIL-MSGID: =?utf-8?q?1598908902820698317?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,72 +55,111 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Guillaume Nault <g.nault@alphalink.fr>
 
 
-[ Upstream commit 0e0c3fee3a59a387aeecc4fca6f3a2e9615a5443 ]
+[ Upstream commit 5846c131c39b6d0add36ec19dc8650700690f930 ]
 
-Use l2tp_tunnel_get_nth() instead of l2tp_tunnel_find_nth(), to be safe
-against concurrent tunnel deletion.
+l2tp_tunnel_find_nth() is unsafe: no reference is held on the returned
+tunnel, therefore it can be freed whenever the caller uses it.
+This patch defines l2tp_tunnel_get_nth() which works similarly, but
+also takes a reference on the returned tunnel. The caller then has to
+drop it after it stops using the tunnel.
 
-Unlike sessions, we can't drop the reference held on tunnels in
-pppol2tp_seq_show(). Tunnels are reused across several calls to
-pppol2tp_seq_start() when iterating over sessions. These iterations
-need the tunnel for accessing the next session. Therefore the only safe
-moment for dropping the reference is just before searching for the next
-tunnel.
+Convert netlink dumps to make them safe against concurrent tunnel
+deletion.
 
-Normally, the last invocation of pppol2tp_next_tunnel() doesn't find
-any new tunnel, so it drops the last tunnel without taking any new
-reference. However, in case of error, pppol2tp_seq_stop() is called
-directly, so we have to drop the reference there.
-
-Fixes: fd558d186df2 ("l2tp: Split pppol2tp patch into separate l2tp and ppp parts")
+Fixes: 309795f4bec2 ("l2tp: Add netlink control API for L2TP")
 Signed-off-by: Guillaume Nault <g.nault@alphalink.fr>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/l2tp/l2tp_ppp.c |   24 +++++++++++++++++-------
- 1 file changed, 17 insertions(+), 7 deletions(-)
+ net/l2tp/l2tp_core.c    |   20 ++++++++++++++++++++
+ net/l2tp/l2tp_core.h    |    2 ++
+ net/l2tp/l2tp_netlink.c |   11 ++++++++---
+ 3 files changed, 30 insertions(+), 3 deletions(-)
 
---- a/net/l2tp/l2tp_ppp.c
-+++ b/net/l2tp/l2tp_ppp.c
-@@ -1559,16 +1559,19 @@ struct pppol2tp_seq_data {
+--- a/net/l2tp/l2tp_core.c
++++ b/net/l2tp/l2tp_core.c
+@@ -183,6 +183,26 @@ struct l2tp_tunnel *l2tp_tunnel_get(cons
+ }
+ EXPORT_SYMBOL_GPL(l2tp_tunnel_get);
  
- static void pppol2tp_next_tunnel(struct net *net, struct pppol2tp_seq_data *pd)
- {
-+	/* Drop reference taken during previous invocation */
-+	if (pd->tunnel)
-+		l2tp_tunnel_dec_refcount(pd->tunnel);
++struct l2tp_tunnel *l2tp_tunnel_get_nth(const struct net *net, int nth)
++{
++	const struct l2tp_net *pn = l2tp_pernet(net);
++	struct l2tp_tunnel *tunnel;
++	int count = 0;
 +
++	rcu_read_lock_bh();
++	list_for_each_entry_rcu(tunnel, &pn->l2tp_tunnel_list, list) {
++		if (++count > nth) {
++			l2tp_tunnel_inc_refcount(tunnel);
++			rcu_read_unlock_bh();
++			return tunnel;
++		}
++	}
++	rcu_read_unlock_bh();
++
++	return NULL;
++}
++EXPORT_SYMBOL_GPL(l2tp_tunnel_get_nth);
++
+ /* Lookup a session. A new reference is held on the returned session. */
+ struct l2tp_session *l2tp_session_get(const struct net *net,
+ 				      struct l2tp_tunnel *tunnel,
+--- a/net/l2tp/l2tp_core.h
++++ b/net/l2tp/l2tp_core.h
+@@ -212,6 +212,8 @@ static inline void *l2tp_session_priv(st
+ }
+ 
+ struct l2tp_tunnel *l2tp_tunnel_get(const struct net *net, u32 tunnel_id);
++struct l2tp_tunnel *l2tp_tunnel_get_nth(const struct net *net, int nth);
++
+ void l2tp_tunnel_free(struct l2tp_tunnel *tunnel);
+ 
+ struct l2tp_session *l2tp_session_get(const struct net *net,
+--- a/net/l2tp/l2tp_netlink.c
++++ b/net/l2tp/l2tp_netlink.c
+@@ -487,14 +487,17 @@ static int l2tp_nl_cmd_tunnel_dump(struc
+ 	struct net *net = sock_net(skb->sk);
+ 
  	for (;;) {
--		pd->tunnel = l2tp_tunnel_find_nth(net, pd->tunnel_idx);
-+		pd->tunnel = l2tp_tunnel_get_nth(net, pd->tunnel_idx);
- 		pd->tunnel_idx++;
+-		tunnel = l2tp_tunnel_find_nth(net, ti);
++		tunnel = l2tp_tunnel_get_nth(net, ti);
+ 		if (tunnel == NULL)
+ 			goto out;
  
--		if (pd->tunnel == NULL)
--			break;
-+		/* Only accept L2TPv2 tunnels */
-+		if (!pd->tunnel || pd->tunnel->version == 2)
-+			return;
+ 		if (l2tp_nl_tunnel_send(skb, NETLINK_CB(cb->skb).portid,
+ 					cb->nlh->nlmsg_seq, NLM_F_MULTI,
+-					tunnel, L2TP_CMD_TUNNEL_GET) < 0)
++					tunnel, L2TP_CMD_TUNNEL_GET) < 0) {
++			l2tp_tunnel_dec_refcount(tunnel);
+ 			goto out;
++		}
++		l2tp_tunnel_dec_refcount(tunnel);
  
--		/* Ignore L2TPv3 tunnels */
--		if (pd->tunnel->version < 3)
--			break;
-+		l2tp_tunnel_dec_refcount(pd->tunnel);
+ 		ti++;
  	}
- }
+@@ -848,7 +851,7 @@ static int l2tp_nl_cmd_session_dump(stru
  
-@@ -1617,7 +1620,14 @@ static void *pppol2tp_seq_next(struct se
- 
- static void pppol2tp_seq_stop(struct seq_file *p, void *v)
- {
--	/* nothing to do */
-+	struct pppol2tp_seq_data *pd = v;
-+
-+	if (!pd || pd == SEQ_START_TOKEN)
-+		return;
-+
-+	/* Drop reference taken by last invocation of pppol2tp_next_tunnel() */
-+	if (pd->tunnel)
-+		l2tp_tunnel_dec_refcount(pd->tunnel);
- }
- 
- static void pppol2tp_seq_tunnel_show(struct seq_file *m, void *v)
+ 	for (;;) {
+ 		if (tunnel == NULL) {
+-			tunnel = l2tp_tunnel_find_nth(net, ti);
++			tunnel = l2tp_tunnel_get_nth(net, ti);
+ 			if (tunnel == NULL)
+ 				goto out;
+ 		}
+@@ -856,6 +859,7 @@ static int l2tp_nl_cmd_session_dump(stru
+ 		session = l2tp_session_get_nth(tunnel, si);
+ 		if (session == NULL) {
+ 			ti++;
++			l2tp_tunnel_dec_refcount(tunnel);
+ 			tunnel = NULL;
+ 			si = 0;
+ 			continue;
+@@ -865,6 +869,7 @@ static int l2tp_nl_cmd_session_dump(stru
+ 					 cb->nlh->nlmsg_seq, NLM_F_MULTI,
+ 					 session, L2TP_CMD_SESSION_GET) < 0) {
+ 			l2tp_session_dec_refcount(session);
++			l2tp_tunnel_dec_refcount(tunnel);
+ 			break;
+ 		}
+ 		l2tp_session_dec_refcount(session);
