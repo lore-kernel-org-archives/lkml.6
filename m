@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932466AbeD0I4j (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 04:56:39 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:45578 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932282AbeD0I4g (ORCPT
+        id S932451AbeD0I4e (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 04:56:34 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:33780 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932282AbeD0I43 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 04:56:36 -0400
-X-Google-Smtp-Source: AB8JxZq8QNLG6QUAQ1vOlQRpIRHgrzrEA0wllc6YrqY4qe0pvn1nI/hVfn3rgIL2dc8er3MtnDcofw==
+        Fri, 27 Apr 2018 04:56:29 -0400
+X-Google-Smtp-Source: AB8JxZqSAv+HOsSh5J3UgCCvKKM7ETtZj/1Os4YGdkTXbMgxZ/P6ByDI7wT8Y7xCwmqQuZ1SLSZRYA==
 From: Arvind Yadav <arvind.yadav.cs@gmail.com>
 To: jikos@kernel.org, benjamin.tissoires@redhat.com, jkosina@suse.cz
 Cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
         alsa-devel@alsa-project.org
-Subject: [PATCH 3/3] ASoC: samsung: Use gpio_is_valid()
-Date: Fri, 27 Apr 2018 14:26:11 +0530
-Message-Id: <f7e9ff7d5d7c559967e9d63f3caff478e05017e8.1524819053.git.arvind.yadav.cs@gmail.com>
+Subject: [PATCH 1/3] ASoC: tlv320dac33: Use gpio_is_valid()
+Date: Fri, 27 Apr 2018 14:26:09 +0530
+Message-Id: <b61f3ee038bc0f577e60256c71a68bea783d0a13.1524819052.git.arvind.yadav.cs@gmail.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <cover.1524819051.git.arvind.yadav.cs@gmail.com>
 References: <cover.1524819051.git.arvind.yadav.cs@gmail.com>
@@ -29,54 +29,55 @@ gpio_is_valid().
 
 Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
 ---
- sound/soc/samsung/s3c24xx_simtec.c | 10 +++++-----
+ sound/soc/codecs/tlv320dac33.c | 10 +++++-----
  1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/sound/soc/samsung/s3c24xx_simtec.c b/sound/soc/samsung/s3c24xx_simtec.c
-index 6de63f3..23e8ef9d 100644
---- a/sound/soc/samsung/s3c24xx_simtec.c
-+++ b/sound/soc/samsung/s3c24xx_simtec.c
-@@ -229,7 +229,7 @@ static int attach_gpio_amp(struct device *dev,
- 	int ret;
+diff --git a/sound/soc/codecs/tlv320dac33.c b/sound/soc/codecs/tlv320dac33.c
+index a957eae..c23b9db 100644
+--- a/sound/soc/codecs/tlv320dac33.c
++++ b/sound/soc/codecs/tlv320dac33.c
+@@ -397,13 +397,13 @@ static int dac33_hard_power(struct snd_soc_component *component, int power)
+ 				goto exit;
+ 		}
  
- 	/* attach gpio amp gain (if any) */
--	if (pdata->amp_gain[0] > 0) {
-+	if (gpio_is_valid(pdata->amp_gain[0])) {
- 		ret = gpio_request(pd->amp_gain[0], "gpio-amp-gain0");
- 		if (ret) {
- 			dev_err(dev, "cannot get amp gpio gain0\n");
-@@ -248,7 +248,7 @@ static int attach_gpio_amp(struct device *dev,
- 	}
+-		if (dac33->power_gpio >= 0)
++		if (gpio_is_valid(dac33->power_gpio))
+ 			gpio_set_value(dac33->power_gpio, 1);
  
- 	/* note, currently we assume GPA0 isn't valid amp */
--	if (pdata->amp_gpio > 0) {
-+	if (gpio_is_valid(pdata->amp_gpio)) {
- 		ret = gpio_request(pd->amp_gpio, "gpio-amp");
- 		if (ret) {
- 			dev_err(dev, "cannot get amp gpio %d (%d)\n",
-@@ -263,7 +263,7 @@ static int attach_gpio_amp(struct device *dev,
+ 		dac33->chip_power = 1;
+ 	} else {
+ 		dac33_soft_power(component, 0);
+-		if (dac33->power_gpio >= 0)
++		if (gpio_is_valid(dac33->power_gpio))
+ 			gpio_set_value(dac33->power_gpio, 0);
+ 
+ 		ret = regulator_bulk_disable(ARRAY_SIZE(dac33->supplies),
+@@ -1519,7 +1519,7 @@ static int dac33_i2c_probe(struct i2c_client *client,
+ 	dac33->fifo_mode = DAC33_FIFO_BYPASS;
+ 
+ 	/* Check if the reset GPIO number is valid and request it */
+-	if (dac33->power_gpio >= 0) {
++	if (gpio_is_valid(dac33->power_gpio)) {
+ 		ret = gpio_request(dac33->power_gpio, "tlv320dac33 reset");
+ 		if (ret < 0) {
+ 			dev_err(&client->dev,
+@@ -1548,7 +1548,7 @@ static int dac33_i2c_probe(struct i2c_client *client,
+ 
+ 	return ret;
+ err_get:
+-	if (dac33->power_gpio >= 0)
++	if (gpio_is_valid(dac33->power_gpio))
+ 		gpio_free(dac33->power_gpio);
+ err_gpio:
+ 	return ret;
+@@ -1561,7 +1561,7 @@ static int dac33_i2c_remove(struct i2c_client *client)
+ 	if (unlikely(dac33->chip_power))
+ 		dac33_hard_power(dac33->component, 0);
+ 
+-	if (dac33->power_gpio >= 0)
++	if (gpio_is_valid(dac33->power_gpio))
+ 		gpio_free(dac33->power_gpio);
+ 
  	return 0;
- 
- err_amp:
--	if (pd->amp_gain[0] > 0) {
-+	if (gpio_is_valid(pd->amp_gain[0])) {
- 		gpio_free(pd->amp_gain[0]);
- 		gpio_free(pd->amp_gain[1]);
- 	}
-@@ -273,12 +273,12 @@ static int attach_gpio_amp(struct device *dev,
- 
- static void detach_gpio_amp(struct s3c24xx_audio_simtec_pdata *pd)
- {
--	if (pd->amp_gain[0] > 0) {
-+	if (gpio_is_valid(pd->amp_gain[0])) {
- 		gpio_free(pd->amp_gain[0]);
- 		gpio_free(pd->amp_gain[1]);
- 	}
- 
--	if (pd->amp_gpio > 0)
-+	if (gpio_is_valid(pd->amp_gpio))
- 		gpio_free(pd->amp_gpio);
- }
- 
 -- 
 1.9.1
