@@ -1,87 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933589AbeD0PWT (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 11:22:19 -0400
-Received: from foss.arm.com ([217.140.101.70]:42042 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933497AbeD0PWQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 11:22:16 -0400
-Subject: Re: [PATCH v2 08/17] kvm: arm/arm64: Prepare for VM specific stage2
- translations
-To: Julien Grall <julien.grall@arm.com>,
+        id S933609AbeD0PXl (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 11:23:41 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:53372 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932879AbeD0PXY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 11:23:24 -0400
+Date: Fri, 27 Apr 2018 11:23:21 -0400 (EDT)
+Message-Id: <20180427.112321.1722845947622725407.davem@davemloft.net>
+To: maxime.chevallier@bootlin.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        antoine.tenart@bootlin.com, thomas.petazzoni@bootlin.com,
+        gregory.clement@bootlin.com, miquel.raynal@bootlin.com,
+        nadavh@marvell.com, stefanc@marvell.com, ymarkman@marvell.com,
+        mw@semihalf.com, linux@armlinux.org.uk,
         linux-arm-kernel@lists.infradead.org
-Cc: ard.biesheuvel@linaro.org, kvm@vger.kernel.org, marc.zyngier@arm.com,
-        catalin.marinas@arm.com, punit.agrawal@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, kristina.martsenko@arm.com,
-        pbonzini@redhat.com, kvmarm@lists.cs.columbia.edu
-References: <1522156531-28348-1-git-send-email-suzuki.poulose@arm.com>
- <1522156531-28348-9-git-send-email-suzuki.poulose@arm.com>
- <7f67fca2-b936-25d9-0fe8-aece1fadafdc@arm.com>
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <59fc0fe3-2c7e-b5ae-702b-0c21f0051c6b@arm.com>
-Date: Fri, 27 Apr 2018 16:22:12 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <7f67fca2-b936-25d9-0fe8-aece1fadafdc@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net v2 0/2] net: mvpp2: Fix hangs when starting some
+ interfaces on 7k/8k
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180425182117.28826-1-maxime.chevallier@bootlin.com>
+References: <20180425182117.28826-1-maxime.chevallier@bootlin.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26/04/18 14:35, Julien Grall wrote:
-> Hi Suzuki,
-> 
-> On 27/03/18 14:15, Suzuki K Poulose wrote:
->> Right now the stage2 page table for a VM is hard coded, assuming
->> an IPA of 40bits. As we are about to add support for per VM IPA,
->> prepare the stage2 page table helpers to accept the kvm instance
->> to make the right decision for the VM. No functional changes.
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Date: Wed, 25 Apr 2018 20:21:15 +0200
 
+> Armada 7K / 8K clock management has recently been reworked, see :
+> 
+> commit c7e92def1ef4 ("clk: mvebu: cp110: Fix clock tree representation")
+> 
+> I have been experiencing overall system hangs on MacchiatoBin when starting
+> the eth1 interface since then. It turns out some clocks dependencies were
+> missing in the PPv2 and xmdio driver, the clock rework made this visible.
+> 
+> This is the V2 series, that adds support for the missing 'MG Core clock' in
+> mvpp2, and fixes an issue with the error path for the axi_clk.
+> 
+> Thanks to Gregory Clement for finding the root cause of this bug.
+> 
+> V2 : Remove all DT patches from this series, they will be merged through
+>      the mvebu tree.
 
->> diff --git a/arch/arm/include/asm/kvm_arm.h b/arch/arm/include/asm/kvm_arm.h
->> index 3ab8b37..c3f1f9b 100644
->> --- a/arch/arm/include/asm/kvm_arm.h
->> +++ b/arch/arm/include/asm/kvm_arm.h
->> @@ -133,8 +133,7 @@
->>    * space.
->>    */
->>   #define KVM_PHYS_SHIFT    (40)
->> -#define KVM_PHYS_SIZE    (_AC(1, ULL) << KVM_PHYS_SHIFT)
->> -#define KVM_PHYS_MASK    (KVM_PHYS_SIZE - _AC(1, ULL))
-> 
-> I assume you are moving them to kvm_mmu.h in order to match the arm64 side, right? If so, would not it make sense to make KVM_PHYS_SHIFT with it?
-> 
-> [...]
-
-I am moving all the macros that depend on the "kvm" instance to kvm_mmu.h.
-I will see if I can move the KVM_PHYS_SHIFT without much trouble.
-
-> 
->> diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
->> index 7faed6e..594c4e6 100644
->> --- a/arch/arm64/include/asm/kvm_mmu.h
->> +++ b/arch/arm64/include/asm/kvm_mmu.h
->> @@ -134,8 +134,11 @@ static inline unsigned long __kern_hyp_va(unsigned long v)
->>    * We currently only support a 40bit IPA.
->>    */
->>   #define KVM_PHYS_SHIFT    (40)
->> -#define KVM_PHYS_SIZE    (1UL << KVM_PHYS_SHIFT)
->> -#define KVM_PHYS_MASK    (KVM_PHYS_SIZE - 1UL)
->> +
->> +#define kvm_phys_shift(kvm)        KVM_PHYS_SHIFT
->> +#define kvm_phys_size(kvm)        (_AC(1, ULL) << kvm_phys_shift(kvm))
-> 
-> NIT: is the _AC(...) necessary? It does not look like this function is going to be usable in assembly.
-> 
->> +#define kvm_phys_mask(kvm)        (kvm_phys_size(kvm) - _AC(1, ULL))
-> 
-> Same here.
-> 
-
-Ok, will drop them.
-
-Cheers
-Suzuki
+Series applied, thank you.
