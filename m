@@ -1,88 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934096AbeD0PDB (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 11:03:01 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:38918 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933840AbeD0OFZ (ORCPT
+        id S933815AbeD0OE5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 10:04:57 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:42866 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933783AbeD0OEv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 10:05:25 -0400
-X-Google-Smtp-Source: AB8JxZr16jYCfQ+YBtNPv4WNCJYRiafI/isBjKVCjEuhyhO94zCMxzweA+o5Dz+ljmzFeX6wGJxF5A==
-Date: Fri, 27 Apr 2018 09:05:22 -0500
-From: Rob Herring <robh@kernel.org>
-To: David Lechner <david@lechnology.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Mark Rutland <mark.rutland@arm.com>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 24/27] dt-bindings: timer: new bindings for TI DaVinci
- timer
-Message-ID: <20180427140522.npmhjamhwxgp7y73@rob-hp-laptop>
-References: <20180427001745.4116-1-david@lechnology.com>
- <20180427001745.4116-25-david@lechnology.com>
+        Fri, 27 Apr 2018 10:04:51 -0400
+Date: Fri, 27 Apr 2018 17:04:09 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: Alexei Starovoitov <ast@kernel.org>, Martin KaFai Lau <kafai@fb.com>
+Cc: Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH 1/2] bpf: btf: silence uninitialize variable warnings
+Message-ID: <20180427140409.GA19583@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180427001745.4116-25-david@lechnology.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+X-Mailer: git-send-email haha only kidding
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8875 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=773
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804270135
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 26, 2018 at 07:17:42PM -0500, David Lechner wrote:
-> This adds new device tree bindings for the timer IP block of TI
-> DaVinci-like SoCs.
-> 
-> Signed-off-by: David Lechner <david@lechnology.com>
-> ---
-> 
-> v9 changes:
-> - new patch in v9
-> 
-> 
->  .../bindings/timer/ti,davinci-timer.txt       | 24 +++++++++++++++++++
->  1 file changed, 24 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/timer/ti,davinci-timer.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/timer/ti,davinci-timer.txt b/Documentation/devicetree/bindings/timer/ti,davinci-timer.txt
-> new file mode 100644
-> index 000000000000..2091eca46981
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/timer/ti,davinci-timer.txt
-> @@ -0,0 +1,24 @@
-> +* Device tree bindings for Texas Instruments DaVinci timer
-> +
-> +This document provides bindings for the 64-bit timer in the DaVinci
-> +architecture devices. The timer can be configured as a general-purpose 64-bit
-> +timer, dual general-purpose 32-bit timers. When configured as dual 32-bit
-> +timers, each half can operate in conjunction (chain mode) or independently
-> +(unchained mode) of each other.
-> +
-> +It is global timer is a free running up-counter and can generate interrupt
+Smatch complains that size can be uninitialized if btf_type_id_size()
+returns NULL.  It seems reasonable enough to check for that.
 
-Doesn't make sense, too many 'is'.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This goes to the BPF tree (linux-next).
 
-There's no interrupt property listed.
-
-> +when the counter reaches preset counter values.
-> +
-> +Required properties:
-> +
-> +- compatible : should be "ti,davinci-timer".
-> +- reg : specifies base physical address and count of the registers.
-> +- clocks : the clock feeding the timer clock.
-> +
-> +Example:
-> +
-> +	clocksource: timer@20000 {
-> +		compatible = "ti,davinci-timer";
-> +		reg = <0x20000 0x1000>;
-> +		clocks = <&pll0_auxclk>;
-> +	};
-> -- 
-> 2.17.0
-> 
+diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
+index 22e1046a1a86..e631b6fd60d3 100644
+--- a/kernel/bpf/btf.c
++++ b/kernel/bpf/btf.c
+@@ -1229,7 +1229,8 @@ static int btf_array_check_member(struct btf_verifier_env *env,
+ 	}
+ 
+ 	array_type_id = member->type;
+-	btf_type_id_size(btf, &array_type_id, &array_size);
++	if (!btf_type_id_size(btf, &array_type_id, &array_size))
++		return -EINVAL;
+ 	struct_size = struct_type->size;
+ 	bytes_offset = BITS_ROUNDDOWN_BYTES(struct_bits_off);
+ 	if (struct_size - bytes_offset < array_size) {
+@@ -1351,6 +1352,8 @@ static void btf_array_seq_show(const struct btf *btf, const struct btf_type *t,
+ 
+ 	elem_type_id = array->type;
+ 	elem_type = btf_type_id_size(btf, &elem_type_id, &elem_size);
++	if (!elem_type)
++		return;
+ 	elem_ops = btf_type_ops(elem_type);
+ 	seq_puts(m, "[");
+ 	for (i = 0; i < array->nelems; i++) {
