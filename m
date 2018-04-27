@@ -1,61 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758185AbeD0MJ4 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 08:09:56 -0400
-Received: from prv1-mh.provo.novell.com ([137.65.248.33]:47698 "EHLO
-        prv1-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758103AbeD0MJo (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:3:1>);
-        Fri, 27 Apr 2018 08:09:44 -0400
-Message-Id: <5AE3130702000078001BF180@prv1-mh.provo.novell.com>
-X-Mailer: Novell GroupWise Internet Agent 18.0.0 
-Date: Fri, 27 Apr 2018 06:09:43 -0600
-From: "Jan Beulich" <JBeulich@suse.com>
-To: <douly.fnst@cn.fujitsu.com>
-Cc: <tglx@linutronix.de>, <linux-kernel@vger.kernel.org>
-Subject: Re: recent patch "x86/acpi: Prevent X2APIC id 0xffffffff from
- being accounted"
-References: <5AE2CF8802000078001BF017@prv1-mh.provo.novell.com>
- <12fd36d0-1678-ed57-fec3-c94b430bd23f@cn.fujitsu.com>
-In-Reply-To: <12fd36d0-1678-ed57-fec3-c94b430bd23f@cn.fujitsu.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
-Content-Disposition: inline
+        id S932342AbeD0MKD (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 08:10:03 -0400
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:47331 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758188AbeD0MJ6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 08:09:58 -0400
+From: Kishon Vijay Abraham I <kishon@ti.com>
+To: Tony Lindgren <tony@atomide.com>
+CC: Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <kishon@ti.com>, Vishal Mahaveer <vishalm@ti.com>
+Subject: [PATCH v4 11/14] ARM: dts: dra76-evm: Add wilink8 wlan support
+Date: Fri, 27 Apr 2018 17:39:02 +0530
+Message-ID: <20180427120905.3665-12-kishon@ti.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180427120905.3665-1-kishon@ti.com>
+References: <20180427120905.3665-1-kishon@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->>> On 27.04.18 at 10:32, <douly.fnst@cn.fujitsu.com> wrote:
-> At 04/27/2018 03:21 PM, Jan Beulich wrote:
->> I've just stumbled across this commit, and I'm wondering if that's actually
->> correct (I too have at least one system where such IDs are reported in
->> MADT): For offline/absent CPUs, the firmware may not know the APIC IDs
-> 
-> The MADT table is not reasonable, the Local APIC entries(xAPIC/x2APIC)
-> in MADT is not always correct as OS want. So, we should do this sanity
-> check.
+From: Vishal Mahaveer <vishalm@ti.com>
 
-Of course, sanity checking is necessary.
+Add support for WLAN using wilink8 module. On dra76-evm, MMC4 is
+used for connecting to wilink8 module.
 
->> at the point MADT is built, so I think it is quite reasonable to put ~0 in
->> there. The ACPID spec specifically calls out that the IDs must not change
->> across sleep states, which implies to me that they may change across an
->> offline period of a CPU. IOW I think such entries still need to contribute to
->> the count of disabled CPUs.
-> 
-> Aha, there are no CPU devices which will map it's physical ID to the
-> illegal number 0xffffffff, So it will never be used.
+Signed-off-by: Vishal Mahaveer <vishalm@ti.com>
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+---
+ arch/arm/boot/dts/dra76-evm.dts | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
-The ID will never be used, yes, but the CPU may be (after firmware has
-assigned it a valid ID).
-
-> BTW, Limiting the number of the disabled CPUs is also a goal.
-
-I'm afraid I don't understand: Limiting the number of disabled CPUs is
-certainly desirable when those can never be used, but why would you
-want to do this when they might later get hotplugged? I'm not aware
-of a way to tell, by just looking at the MADT, which of the two cases
-apply.
-
-Jan
+diff --git a/arch/arm/boot/dts/dra76-evm.dts b/arch/arm/boot/dts/dra76-evm.dts
+index 2deb96405d06..ad154c7b0632 100644
+--- a/arch/arm/boot/dts/dra76-evm.dts
++++ b/arch/arm/boot/dts/dra76-evm.dts
+@@ -42,6 +42,16 @@
+ 		regulator-boot-on;
+ 	};
+ 
++	vio_3v6: fixedregulator-vio_3v6 {
++		compatible = "regulator-fixed";
++		regulator-name = "vio_3v6";
++		regulator-min-microvolt = <3600000>;
++		regulator-max-microvolt = <3600000>;
++		vin-supply = <&vsys_5v0>;
++		regulator-always-on;
++		regulator-boot-on;
++	};
++
+ 	vsys_3v3: fixedregulator-vsys3v3 {
+ 		/* Output of Cntlr A of TPS43351-Q1 on dra76-evm */
+ 		compatible = "regulator-fixed";
+@@ -81,6 +91,16 @@
+ 		vin-supply = <&smps5_reg>;
+ 	};
+ 
++	vmmcwl_fixed: fixedregulator-mmcwl {
++		compatible = "regulator-fixed";
++		regulator-name = "vmmcwl_fixed";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		gpio = <&gpio5 8 0>;	/* gpio5_8 */
++		startup-delay-us = <70000>;
++		enable-active-high;
++	};
++
+ 	vtt_fixed: fixedregulator-vtt {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vtt_fixed";
+@@ -331,6 +351,17 @@
+ 	pinctrl-3 = <&mmc2_pins_hs200 &mmc2_iodelay_hs200_conf>;
+ };
+ 
++&mmc4 {
++	status = "okay";
++	vmmc-supply = <&vio_3v6>;
++	vqmmc-supply = <&vmmcwl_fixed>;
++	pinctrl-names = "default", "hs", "sdr12", "sdr25";
++	pinctrl-0 = <&mmc4_pins_hs &mmc4_iodelay_default_conf>;
++	pinctrl-1 = <&mmc4_pins_hs &mmc4_iodelay_manual1_conf>;
++	pinctrl-2 = <&mmc4_pins_hs &mmc4_iodelay_manual1_conf>;
++	pinctrl-3 = <&mmc4_pins_hs &mmc4_iodelay_manual1_conf>;
++};
++
+ /* No RTC on this device */
+ &rtc {
+ 	status = "disabled";
+-- 
+2.17.0
