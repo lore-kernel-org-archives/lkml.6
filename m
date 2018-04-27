@@ -1,27 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932549AbeD0JmZ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 05:42:25 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:57267 "EHLO
+        id S932576AbeD0JnC (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 05:43:02 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:49803 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932282AbeD0JmX (ORCPT
+        with ESMTP id S1757708AbeD0JnA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 05:42:23 -0400
-Date: Fri, 27 Apr 2018 02:42:00 -0700
+        Fri, 27 Apr 2018 05:43:00 -0400
+Date: Fri, 27 Apr 2018 02:42:36 -0700
 From: tip-bot for Will Deacon <tipbot@zytor.com>
-Message-ID: <tip-626e5fbc14358901ddaa90ce510e0fbeab310432@git.kernel.org>
-Cc: will.deacon@arm.com, torvalds@linux-foundation.org, tglx@linutronix.de,
-        peterz@infradead.org, longman@redhat.com, hpa@zytor.com,
-        mingo@kernel.org, linux-kernel@vger.kernel.org
-Reply-To: torvalds@linux-foundation.org, will.deacon@arm.com,
-        longman@redhat.com, tglx@linutronix.de, peterz@infradead.org,
-        hpa@zytor.com, linux-kernel@vger.kernel.org, mingo@kernel.org
-In-Reply-To: <1524738868-31318-11-git-send-email-will.deacon@arm.com>
-References: <1524738868-31318-11-git-send-email-will.deacon@arm.com>
+Message-ID: <tip-9d4646d14d51d62b967a12452c30ea7edf8dd8fa@git.kernel.org>
+Cc: will.deacon@arm.com, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, peterz@infradead.org, mingo@kernel.org,
+        tglx@linutronix.de, hpa@zytor.com, longman@redhat.com
+Reply-To: peterz@infradead.org, tglx@linutronix.de, mingo@kernel.org,
+        longman@redhat.com, hpa@zytor.com, will.deacon@arm.com,
+        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org
+In-Reply-To: <1524738868-31318-12-git-send-email-will.deacon@arm.com>
+References: <1524738868-31318-12-git-send-email-will.deacon@arm.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] locking/qspinlock: Use smp_store_release() in
- queued_spin_unlock()
-Git-Commit-ID: 626e5fbc14358901ddaa90ce510e0fbeab310432
+Subject: [tip:locking/core] locking/qspinlock: Elide back-to-back RELEASE
+ operations with smp_wmb()
+Git-Commit-ID: 9d4646d14d51d62b967a12452c30ea7edf8dd8fa
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -34,18 +34,27 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  626e5fbc14358901ddaa90ce510e0fbeab310432
-Gitweb:     https://git.kernel.org/tip/626e5fbc14358901ddaa90ce510e0fbeab310432
+Commit-ID:  9d4646d14d51d62b967a12452c30ea7edf8dd8fa
+Gitweb:     https://git.kernel.org/tip/9d4646d14d51d62b967a12452c30ea7edf8dd8fa
 Author:     Will Deacon <will.deacon@arm.com>
-AuthorDate: Thu, 26 Apr 2018 11:34:24 +0100
+AuthorDate: Thu, 26 Apr 2018 11:34:25 +0100
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Fri, 27 Apr 2018 09:48:51 +0200
+CommitDate: Fri, 27 Apr 2018 09:48:52 +0200
 
-locking/qspinlock: Use smp_store_release() in queued_spin_unlock()
+locking/qspinlock: Elide back-to-back RELEASE operations with smp_wmb()
 
-A qspinlock can be unlocked simply by writing zero to the locked byte.
-This can be implemented in the generic code, so do that and remove the
-arch-specific override for x86 in the !PV case.
+The qspinlock slowpath must ensure that the MCS node is fully initialised
+before it can be reached by another other CPU. This is currently enforced
+by using a RELEASE operation when updating the tail and also when linking
+the node into the waitqueue, since the control dependency off xchg_tail
+is insufficient to enforce sufficient ordering, see:
+
+  95bcade33a8a ("locking/qspinlock: Ensure node is initialised before updating prev->next")
+
+Back-to-back RELEASE operations may be expensive on some architectures,
+particularly those that implement them using fences under the hood. We
+can replace the two RELEASE operations with a single smp_wmb() fence and
+use RELAXED operations for the subsequent publishing of the node.
 
 Signed-off-by: Will Deacon <will.deacon@arm.com>
 Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
@@ -55,65 +64,80 @@ Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: boqun.feng@gmail.com
 Cc: linux-arm-kernel@lists.infradead.org
 Cc: paulmck@linux.vnet.ibm.com
-Link: http://lkml.kernel.org/r/1524738868-31318-11-git-send-email-will.deacon@arm.com
+Link: http://lkml.kernel.org/r/1524738868-31318-12-git-send-email-will.deacon@arm.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/include/asm/qspinlock.h | 17 ++++++-----------
- include/asm-generic/qspinlock.h  |  2 +-
- 2 files changed, 7 insertions(+), 12 deletions(-)
+ kernel/locking/qspinlock.c | 33 +++++++++++++++++----------------
+ 1 file changed, 17 insertions(+), 16 deletions(-)
 
-diff --git a/arch/x86/include/asm/qspinlock.h b/arch/x86/include/asm/qspinlock.h
-index da1370ad206d..3e70bed8a978 100644
---- a/arch/x86/include/asm/qspinlock.h
-+++ b/arch/x86/include/asm/qspinlock.h
-@@ -9,6 +9,12 @@
- 
- #define _Q_PENDING_LOOPS	(1 << 9)
- 
-+#ifdef CONFIG_PARAVIRT_SPINLOCKS
-+extern void native_queued_spin_lock_slowpath(struct qspinlock *lock, u32 val);
-+extern void __pv_init_lock_hash(void);
-+extern void __pv_queued_spin_lock_slowpath(struct qspinlock *lock, u32 val);
-+extern void __raw_callee_save___pv_queued_spin_unlock(struct qspinlock *lock);
-+
- #define	queued_spin_unlock queued_spin_unlock
- /**
-  * queued_spin_unlock - release a queued spinlock
-@@ -21,12 +27,6 @@ static inline void native_queued_spin_unlock(struct qspinlock *lock)
- 	smp_store_release(&lock->locked, 0);
- }
- 
--#ifdef CONFIG_PARAVIRT_SPINLOCKS
--extern void native_queued_spin_lock_slowpath(struct qspinlock *lock, u32 val);
--extern void __pv_init_lock_hash(void);
--extern void __pv_queued_spin_lock_slowpath(struct qspinlock *lock, u32 val);
--extern void __raw_callee_save___pv_queued_spin_unlock(struct qspinlock *lock);
--
- static inline void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
+diff --git a/kernel/locking/qspinlock.c b/kernel/locking/qspinlock.c
+index d6c3b029bd93..956a12983bd0 100644
+--- a/kernel/locking/qspinlock.c
++++ b/kernel/locking/qspinlock.c
+@@ -164,10 +164,10 @@ static __always_inline void clear_pending_set_locked(struct qspinlock *lock)
+ static __always_inline u32 xchg_tail(struct qspinlock *lock, u32 tail)
  {
- 	pv_queued_spin_lock_slowpath(lock, val);
-@@ -42,11 +42,6 @@ static inline bool vcpu_is_preempted(long cpu)
- {
- 	return pv_vcpu_is_preempted(cpu);
- }
--#else
--static inline void queued_spin_unlock(struct qspinlock *lock)
--{
--	native_queued_spin_unlock(lock);
--}
- #endif
- 
- #ifdef CONFIG_PARAVIRT
-diff --git a/include/asm-generic/qspinlock.h b/include/asm-generic/qspinlock.h
-index b37b4ad7eb94..a8ed0a352d75 100644
---- a/include/asm-generic/qspinlock.h
-+++ b/include/asm-generic/qspinlock.h
-@@ -100,7 +100,7 @@ static __always_inline void queued_spin_unlock(struct qspinlock *lock)
  	/*
- 	 * unlock() needs release semantics:
+-	 * Use release semantics to make sure that the MCS node is properly
+-	 * initialized before changing the tail code.
++	 * We can use relaxed semantics since the caller ensures that the
++	 * MCS node is properly initialized before updating the tail.
  	 */
--	(void)atomic_sub_return_release(_Q_LOCKED_VAL, &lock->val);
-+	smp_store_release(&lock->locked, 0);
+-	return (u32)xchg_release(&lock->tail,
++	return (u32)xchg_relaxed(&lock->tail,
+ 				 tail >> _Q_TAIL_OFFSET) << _Q_TAIL_OFFSET;
  }
- #endif
  
+@@ -212,10 +212,11 @@ static __always_inline u32 xchg_tail(struct qspinlock *lock, u32 tail)
+ 	for (;;) {
+ 		new = (val & _Q_LOCKED_PENDING_MASK) | tail;
+ 		/*
+-		 * Use release semantics to make sure that the MCS node is
+-		 * properly initialized before changing the tail code.
++		 * We can use relaxed semantics since the caller ensures that
++		 * the MCS node is properly initialized before updating the
++		 * tail.
+ 		 */
+-		old = atomic_cmpxchg_release(&lock->val, val, new);
++		old = atomic_cmpxchg_relaxed(&lock->val, val, new);
+ 		if (old == val)
+ 			break;
+ 
+@@ -388,12 +389,18 @@ queue:
+ 		goto release;
+ 
+ 	/*
++	 * Ensure that the initialisation of @node is complete before we
++	 * publish the updated tail via xchg_tail() and potentially link
++	 * @node into the waitqueue via WRITE_ONCE(prev->next, node) below.
++	 */
++	smp_wmb();
++
++	/*
++	 * Publish the updated tail.
+ 	 * We have already touched the queueing cacheline; don't bother with
+ 	 * pending stuff.
+ 	 *
+ 	 * p,*,* -> n,*,*
+-	 *
+-	 * RELEASE, such that the stores to @node must be complete.
+ 	 */
+ 	old = xchg_tail(lock, tail);
+ 	next = NULL;
+@@ -405,14 +412,8 @@ queue:
+ 	if (old & _Q_TAIL_MASK) {
+ 		prev = decode_tail(old);
+ 
+-		/*
+-		 * We must ensure that the stores to @node are observed before
+-		 * the write to prev->next. The address dependency from
+-		 * xchg_tail is not sufficient to ensure this because the read
+-		 * component of xchg_tail is unordered with respect to the
+-		 * initialisation of @node.
+-		 */
+-		smp_store_release(&prev->next, node);
++		/* Link @node into the waitqueue. */
++		WRITE_ONCE(prev->next, node);
+ 
+ 		pv_wait_node(node, prev);
+ 		arch_mcs_spin_lock_contended(&node->locked);
