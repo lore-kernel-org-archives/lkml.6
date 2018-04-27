@@ -1,251 +1,140 @@
-Return-Path: <maier@linux.ibm.com>
-X-Google-Smtp-Source: AB8JxZpUD5SmgVJItIoVGhr5Sb6kC4NcGlaJ8HVWqTsYRNR1peqZ79DVGnn1xoWwUM4nDRFJALnw
-ARC-Seal: i=1; a=rsa-sha256; t=1524581413; cv=none;
+Return-Path: <prvs=6487dbab9=Bart.VanAssche@wdc.com>
+X-Google-Smtp-Source: AB8JxZo6anA5njf5fBPqW1IIGaFZNwx2dr9/LGaN1D90igR0adpxZXjPgTt7IH1asomt97YFPyBZ
+ARC-Seal: i=1; a=rsa-sha256; t=1524847119; cv=none;
         d=google.com; s=arc-20160816;
-        b=bK1au1R1xzMYzwGtDYrghNpFKnOKlvYPUJ8SuDaMwYuwq1RNEYZBJPPoHwZX+hu3sv
-         QI07CBO23BrYsdhkm7CvN7ZHNWoK2nwBxpcHWyx4J17ri3rTRfM4Xc7d+2jr84PqEFK6
-         X9xxoOdjj+aedF2V7j2CUyXe5Vo3BHVbOebWqQ3jtpMxp97MmkcNDa+E2aav6z/4jY9T
-         WesrLHJTPuOzz1mGQPvpgAKYoj8CT7IGpmo5HlXL23poZiM+xfbOTnweRHCiVWZLNy1I
-         9R9DrfY3JKJKliBQZi8QOG2HNBfLwkhjUP/d+sUVJZIlQ1QzjIBhuWiHSzWs7zPqLktf
-         KYlg==
+        b=bGfibab5g1PfKLw3N50gDgGl5ieF6Ubi/tiN/3Ssd5irY8Tkg2HQQyA54/xQBF26IY
+         ZtRFYyNIuxDtYxQWCT56d/hY6xhVm7ryK8E5oo3z2ve4o8fv77D4eEPwWNalb4wflaZq
+         F8U+X7Im6t76qJHHiCxmxp4icxGhGYsDrtd8+znN6NIRS3kuGIgg0kXFEguX/1OJ5neC
+         +og0ij2B94m2+LtregjPoQkmKIHh1R1UT/Ec8aIoNOGw9wIaCLPK/uVsUVYXnfRJiOhx
+         oCv2cVmL96KPtLuB9SlZ4lp8aJNt/HSdL6XIfg7/R2fOlBJttxV/yjmN3VgGYNaPLS7l
+         FKUA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:content-transfer-encoding:content-language:in-reply-to
-         :mime-version:user-agent:date:references:cc:to:subject:from
-         :arc-authentication-results;
-        bh=y2e9TFDHdYDeqJnljTD9dGnKu8j3rOuo6sdGkQOD27I=;
-        b=kIEG83wTXBYvrO6pOMjweETCn2jOb6oeYsYud9zKvTmno4N5Vz8x4Z5RqeDOJ5mxZG
-         1HNdGqf/PGxvQBYwa8mueAQ5Ez4zFBh/3u4z86jcg2skPBZbHTR0GoN86dfwyz7b9F26
-         xmXqTt5ugs0TU4mcYNlmekZwIZ1byZu4AuNF6BgVyKG5gFNZQmJqZPnu75DF+UM9V/U7
-         913InuMQKKPMt3FDiADeMpilORsXdhMSOFr81Cqh4PXi99ZNntAZA+yJUMmKjj/bycyd
-         Yq4uq0eIU25pb8YVjhlLVRwJgTvdkTkETX/90K7uWb1HM7YujWzHcXMeqAmAaAdK8spd
-         VIQg==
+        h=mime-version:content-transfer-encoding:content-id
+         :spamdiagnosticmetadata:spamdiagnosticoutput:wdcipoutbound
+         :content-language:accept-language:in-reply-to:references:message-id
+         :date:thread-index:thread-topic:subject:cc:to:from:dkim-signature
+         :dkim-signature:arc-authentication-results;
+        bh=a/QPjilt720sorQPsU+T6n1Opb8x2HyYPzcXhObzT8I=;
+        b=uL6Jf7BH7OZYF+pYcLpoEYkqnVAKMji2pVAds5xiqlvAOMKJQrlGGY58EQVs2UlQog
+         eWgN4j0t12TF1HDilLF2Ctw+Qck1cXgrpVaXgQvkRBItbfatVWgeEkCn9UMYcJrsnMhB
+         QayetDh9mGenTtEcqiHeESXELT7ScOmu2191HBk9URA4/C+QSNbGElkOg1LKaSkvIktp
+         ExA10TGR3EGU6EqGWRYY6pd7gksz1C9TBfY967PMUydbee+P1W73Su/HCXoCUJ+Kk32k
+         6LEhVtI9rHMmdJ6nU0vjYtI55vSYznWFV5hUCJxI3e/EYzZDCbkgWySvJbBL/+SG5aj+
+         blnA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of maier@linux.ibm.com designates 148.163.156.1 as permitted sender) smtp.mailfrom=maier@linux.ibm.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=ibm.com
+       dkim=pass header.i=@wdc.com header.s=dkim.wdc.com header.b=OaYgjwYe;
+       dkim=pass header.i=@sharedspace.onmicrosoft.com header.s=selector1-wdc-com header.b=ntJPKlp3;
+       spf=pass (google.com: domain of prvs=6487dbab9=bart.vanassche@wdc.com designates 216.71.154.45 as permitted sender) smtp.mailfrom=prvs=6487dbab9=Bart.VanAssche@wdc.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of maier@linux.ibm.com designates 148.163.156.1 as permitted sender) smtp.mailfrom=maier@linux.ibm.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=ibm.com
-From: Steffen Maier <maier@linux.ibm.com>
+       dkim=pass header.i=@wdc.com header.s=dkim.wdc.com header.b=OaYgjwYe;
+       dkim=pass header.i=@sharedspace.onmicrosoft.com header.s=selector1-wdc-com header.b=ntJPKlp3;
+       spf=pass (google.com: domain of prvs=6487dbab9=bart.vanassche@wdc.com designates 216.71.154.45 as permitted sender) smtp.mailfrom=prvs=6487dbab9=Bart.VanAssche@wdc.com
+X-IronPort-AV: E=Sophos;i="5.49,335,1520870400";
+   d="scan'208";a="77580201"
+From: Bart Van Assche <Bart.VanAssche@wdc.com>
+To: "maier@linux.ibm.com" <maier@linux.ibm.com>, "osandov@osandov.com"
+	<osandov@osandov.com>
+CC: "lizefan@huawei.com" <lizefan@huawei.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-block@vger.kernel.org"
+	<linux-block@vger.kernel.org>, "rostedt@goodmis.org" <rostedt@goodmis.org>,
+	"mingo@redhat.com" <mingo@redhat.com>, "axboe@kernel.dk" <axboe@kernel.dk>,
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
 Subject: Re: [PATCH 2/2] tracing/events: block: dev_t via driver core for plug
  and unplug events
-To: Bart Van Assche <Bart.VanAssche@wdc.com>,
-        "osandov@osandov.com" <osandov@osandov.com>
-Cc: "lizefan@huawei.com" <lizefan@huawei.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "rostedt@goodmis.org" <rostedt@goodmis.org>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+Thread-Topic: [PATCH 2/2] tracing/events: block: dev_t via driver core for
+ plug and unplug events
+Thread-Index: AQHT0yiPxIrlV00jKkaZpH/PINtV0KQBghkAgAIY4ICABObUgIAAGbwAgAd1LoCABNUwgA==
+Date: Fri, 27 Apr 2018 16:38:05 +0000
+Message-ID: <9b5e43db06f6516f7c0e9cc379e0c2964000d4e1.camel@wdc.com>
 References: <20180413130719.22921-1-maier@linux.ibm.com>
- <20180413130719.22921-3-maier@linux.ibm.com>
- <20180415083154.GA12254@kroah.com>
- <59186bf6-abf1-87b0-914d-eed1b40ef4a8@linux.ibm.com>
- <20180419192341.GC20941@vader>
- <8624e2bec853f0bb195966ab54bc42bf15eda0ec.camel@wdc.com>
-Date: Tue, 24 Apr 2018 16:49:59 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <8624e2bec853f0bb195966ab54bc42bf15eda0ec.camel@wdc.com>
-Content-Type: text/plain; charset=utf-8
+	 <20180413130719.22921-3-maier@linux.ibm.com>
+	 <20180415083154.GA12254@kroah.com>
+	 <59186bf6-abf1-87b0-914d-eed1b40ef4a8@linux.ibm.com>
+	 <20180419192341.GC20941@vader>
+	 <8624e2bec853f0bb195966ab54bc42bf15eda0ec.camel@wdc.com>
+	 <056d8ee9-5e1d-8219-c24c-9130d6c1dcbf@linux.ibm.com>
+In-Reply-To: <056d8ee9-5e1d-8219-c24c-9130d6c1dcbf@linux.ibm.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-TM-AS-GCONF: 00
-x-cbid: 18042414-0040-0000-0000-00000450F0B1
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18042414-0041-0000-0000-000020F5621C
-Message-Id: <056d8ee9-5e1d-8219-c24c-9130d6c1dcbf@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-24_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804240142
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Bart.VanAssche@wdc.com;
+x-originating-ip: [199.255.44.173]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR04MB1262;7:lffUdnha3u3qXVxpcT42E78rMS4no9dFJXsOROhoyx84U+MdB041y4lYDQ8nAmtN/c5+EaBWUxHUmrOHjRoSGLH0AQS7hYUiDVmVPLSk0qiSVGGP43XM3Ie84lE5n4erXqC8wvhWZgbU07/WQ6/FDl3Bq6jjMtCALgTqQ9Z5gMDsLKCtaSSaz8p/9w1ILaKKN/8JywepheEhFCFxmSFK+p4vu3KoRcwMOTv6EZ5FASbd7ooEwiV+6fpEssmN5pXF;20:knAHqJ3nGHsVczP96X4vWF27Q2+e6Smhdko/cL+LvxALxWZQ2U6wbaPKW81hnjjDH8uSsoPneoB7fJk3lBN/6SrAaysHHQRNBDO+xjOhsgq+hYy7mzTujSI4x9HQz2xmwiR4E5BMnxMc9eqeqYkXzBBgdtvy78wuZkQ3XL9yjuE=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB1262;
+x-ms-traffictypediagnostic: MWHPR04MB1262:
+wdcipoutbound: EOP-TRUE
+x-microsoft-antispam-prvs: <MWHPR04MB1262ADC3F42513710CF44D57988D0@MWHPR04MB1262.namprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231232)(944501410)(52105095)(3002001)(10201501046)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123562045)(20161123558120)(6072148)(201708071742011);SRVR:MWHPR04MB1262;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB1262;
+x-forefront-prvs: 0655F9F006
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39380400002)(376002)(396003)(366004)(39860400002)(189003)(199004)(377424004)(51444003)(72206003)(76176011)(6512007)(99286004)(93886005)(5660300001)(486006)(110136005)(54906003)(53936002)(106356001)(476003)(305945005)(66066001)(316002)(2616005)(11346002)(4326008)(229853002)(2501003)(86362001)(59450400001)(6436002)(6506007)(102836004)(186003)(6246003)(68736007)(26005)(2900100001)(5250100002)(6486002)(3846002)(25786009)(3660700001)(2906002)(8936002)(7736002)(97736004)(105586002)(3280700002)(81166006)(118296001)(6116002)(14454004)(36756003)(478600001)(81156014)(8676002)(446003);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB1262;H:MWHPR04MB1198.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: NViUP3wzhCihFobQY5fNsIoMhBpD0c4dxPvxXS7AbL6uAvvKoBXGdsj4g59fLwLjYGWCapNOcswleUhmYDl0wmmKEW1QHJYMP3065S4dV+nm4s8CCPYqpgi7HzW8TxqHu1LsHb3eKP8hJdu80QFYBJykqXokg/Xu53mC7jHaiFod7/jShYW81TjPhFuaxBsZ
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <7773AC4C73C4404D97501A4F0727663E@namprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-MS-Office365-Filtering-Correlation-Id: d45a9e47-6a0f-4fe3-35f3-08d5ac5d4047
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d45a9e47-6a0f-4fe3-35f3-08d5ac5d4047
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Apr 2018 16:38:05.0950
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB1262
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597636500726736984?=
-X-GMAIL-MSGID: =?utf-8?q?1598639479998442900?=
+X-GMAIL-MSGID: =?utf-8?q?1598918093962095302?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-
-On 04/19/2018 10:56 PM, Bart Van Assche wrote:
-> On Thu, 2018-04-19 at 12:24 -0700, Omar Sandoval wrote:
->> We quiesce and freeze the queue before tearing it down, so it won't be=
-
->> NULL while we're still doing I/O. Cc'ing Bart in case I'm lying to you=
-,
->> though ;)
->=20
-> blk_cleanup_queue() waits until all I/O requests have finished. Since t=
-he
-> block layer tracing code is triggered from inside the code that process=
-es a
-> request it is safe to access the request pointer from inside the tracin=
-g code.
-> But I think the question was about the parent of the request queue kobj=
-
-> instead of about the request queue pointer, the device structure that i=
-s
-> embedded in struct gendisk? I think that parent can disappear at any ti=
-me.
-> Most block drivers call del_gendisk() before they call blk_cleanup_queu=
-e().
-> Unless I'm overlooking something I think the request queue will need to=
-
-> obtain a reference to the gendisk device from inside blk_register_queue=
-()
-> and drop that reference from inside blk_cleanup_queue() to make it safe=
-for
-> the tracing code to access struct gendisk.
-
-Got it, thanks, makes sense.
-
-I did some research, tried the refcount approach, and failed.
-
-Experiment Preparation:
-Stopped any udevd and lvm services to avoid additional I/O.
-Used the following debug/tracing setup:
-modprobe sd_mod
-echo -n 'module core +pt; module kobject +pt' > /sys/kernel/debug/dynamic=
-_debug/control
-trace-cmd start -e block -f "(dev >=3D 0x800000 && dev <=3D 0x80000f) || =
-dev =3D=3D 0" -e scsi -p function -l "*_gendisk" -l blk_alloc_queue -l bl=
-k_register_queue -l blk_unregister_queue -l blk_cleanup_queue
-echo "blk_alloc_queue_node:stacktrace" >> /sys/kernel/debug/tracing/set_f=
-trace_filter
-echo "scsi_execute:stacktrace" >> /sys/kernel/debug/tracing/set_ftrace_fi=
-lter
-echo "blk_register_queue:stacktrace" >> /sys/kernel/debug/tracing/set_ftr=
-ace_filter
-echo "blk_unregister_queue:stacktrace" >> /sys/kernel/debug/tracing/set_f=
-trace_filter
-echo "blk_cleanup_queue:stacktrace" >> /sys/kernel/debug/tracing/set_ftra=
-ce_filter
-
-Experiment:
-modprobe scsi_debug num_parts=3D1
-sleep 3
-echo "HOTUNPLUG" > /sys/kernel/debug/tracing/trace_marker
-echo 1 > /sys/class/scsi_device/0:0:0:0/device/delete
-echo 0 > /sys/kernel/debug/tracing/tracing_on
-
-Also tried a similar sequence but hotplugged & hotunplugged
-a DASD disk (non-SCSI) incl. mq for comparison.
-
-The object life cycle seems to be:
-
-(1) blk_alloc_queue() also creates gendisk kobj
-(1a) SCSI does LUN probing I/O
-     most of that is blktrace RWBS field value 'N' i.e. non-R/W with dev_=
-t=3D=3D0
-      since q->kobj.parent is still NULL we cannot get gendisk and thus d=
-ev_t
-     near the end is the first regular read block I/O with dev_t!=3D0
-      as bio!=3DNULL and bi_disk or rq_disk are non-NULL
-(2) blk_register_queue() also creates queue kobj with gendisk parent
-    now we can follow q->kobj.parent to gendisk to get dev_t,
-    e.g. for RWBS 'N' such as implicit SCSI test unit ready on blk dev cl=
-ose
-(3) optionally "regular" I/O
-(4) blk_unregister_queue() called by del_gendisk()
-    does kobject_del(&q->kobj) which NULLifies q->kobj.parent again
-    the last put of gendisk reference releases gendisk kobj
-(5) blk_cleanup_queue()
-    the last put of queue (/mq) reference releases queue (/mq) kobj
-
-The patch set would have made dev_t meaningful between and incl. (2) and =
-(3)
-for (un)plug and even for other block events with RWBS 'N'.
-I noticed that I missed one more spot in block_rq_complete [PATCH 3/3],
-which explains why I had missed some rq_completions while filtering
-block trace events for specific (non-zero) dev_t.
-It still wouldn't have been perfect as (1a) events still are dev_t=3D=3D0=
-
-even though the gendisk exists since (1).
-
-I tried the same but increased scsi_debug/delay to a huge value
-and made one I/O request pending with "dd" before the hotunplug
-to see how flushing would work. For SCSI, at least,
-all flushing including a full (and unsuccessful due to eh TUR tmo)
-scsi_eh escalation for several minutes happened between
-'block' kobj release during (4) and gendisk release during (5),
-i.e. before the gendisk was gone but q->kobj.parent was already NULL.
-The 'queue' kobj was released last finally.
-
-Since I cannot prove it's always like this, I followed Bart's suggestion
-and added another refcount get at (2) blk_register_queue().
-However, when I want to put that additional refcount at (5) blk_cleanup_q=
-ueue(),
-we only get a queue pointer argument as context
-and q->kobj.parent=3D=3DNULL since (4),
-so I don't know how to get to the gendisk object for the refcount put.
-Probably the additional refcount would not help either as (4) has the
-unconditional kobject_del(&q->kobj) NULLifying q->kobj.parent anyway...
-I guess I came full circle.
-
-
-
-Side notes:
-The existing code holds a reference on gendisk, but between (2) and (4).
-
-Apparently block trace events can easily observe parts such as (1a)
-which are difficult for traditional blktrace to be started via blk dev io=
-ctl
-(or for ftrace 'blk' tracer which can be enabled between (2) and (4)).
-
-
-
-Independently, I started to wonder if there is a refcount leak in the ear=
-ly error out if kobject_add() failed:
-
-> int blk_register_queue(struct gendisk *disk)
->         struct device *dev =3D disk_to_dev(disk);
->         struct request_queue *q =3D disk->queue;
->         ret =3D kobject_add(&q->kobj, kobject_get(&dev->kobj), "%s", "q=
-ueue");
->                                     ^^^ref+1
-> 	if (ret < 0) {
-> 		blk_trace_remove_sysfs(dev);
-
-Above kobject_get already did its side-effect to provide the second argum=
-ent when calling kobject_add. Even if kobject_add failed, we still have t=
-he refcount on the gendisk but don't put it?
-
-> 		goto unlock;
-> 	}
-
-> 	if (q->request_fn || (q->mq_ops && q->elevator)) {
-> 		ret =3D elv_register_queue(q);
-> 		if (ret) {
-> 			mutex_unlock(&q->sysfs_lock);
-> 			kobject_uevent(&q->kobj, KOBJ_REMOVE);
-> 			kobject_del(&q->kobj);
-> 			blk_trace_remove_sysfs(dev);
-> 			kobject_put(&dev->kobj);
-
-In contrast, this early return seems to do the pairwise put.
-
-> 			return ret;
-> 		}
-> 	}
-
-> unlock:
-> 	mutex_unlock(&q->sysfs_lock);
-> 	return ret;
-> }
-
-
-
---=20
-Mit freundlichen Gr=C3=BC=C3=9Fen / Kind regards
-Steffen Maier
-
-Linux on z Systems Development
-
-IBM Deutschland Research & Development GmbH
-Vorsitzende des Aufsichtsrats: Martina Koederitz
-Geschaeftsfuehrung: Dirk Wittkopp
-Sitz der Gesellschaft: Boeblingen
-Registergericht: Amtsgericht Stuttgart, HRB 243294
+T24gVHVlLCAyMDE4LTA0LTI0IGF0IDE2OjQ5ICswMjAwLCBTdGVmZmVuIE1haWVyIHdyb3RlOg0K
+PiBUaGUgb2JqZWN0IGxpZmUgY3ljbGUgc2VlbXMgdG8gYmU6DQo+IA0KPiAoMSkgYmxrX2FsbG9j
+X3F1ZXVlKCkgYWxzbyBjcmVhdGVzIGdlbmRpc2sga29iag0KDQpJIHRoaW5rIHRoaXMgaXMgYSBt
+aXNpbnRlcnByZXRhdGlvbi4gYmxrX2FsbG9jX3F1ZXVlX25vZGUoKSBpbml0aWFsaXplcyB0aGUN
+CnJlcXVlc3QgcXVldWUga29iaiBhcyBmb2xsb3dzOg0KDQoJa29iamVjdF9pbml0KCZxLT5rb2Jq
+LCAmYmxrX3F1ZXVlX2t0eXBlKTsNCg0KcmVnaXN0ZXJfZGlzaygpIGNyZWF0ZXMgdGhlIC9zeXMv
+Y2xhc3MvYmxvY2svPGRpc2s+IG5vZGUgYW5kIC9zeXMvYmxvY2svPGRpc2s+DQpsaW5rIGFzIGZv
+bGxvd3M6DQoNCglpZiAoZGV2aWNlX2FkZChkZGV2KSkNCgkJcmV0dXJuOw0KCWlmICghc3lzZnNf
+ZGVwcmVjYXRlZCkgew0KCQllcnIgPSBzeXNmc19jcmVhdGVfbGluayhibG9ja19kZXByLCAmZGRl
+di0+a29iaiwNCgkJCQkJa29iamVjdF9uYW1lKCZkZGV2LT5rb2JqKSk7DQoJCWlmIChlcnIpIHsN
+CgkJCWRldmljZV9kZWwoZGRldik7DQoJCQlyZXR1cm47DQoJCX0NCgl9DQoNCj4gKDFhKSBTQ1NJ
+IGRvZXMgTFVOIHByb2JpbmcgSS9PDQo+ICAgICAgbW9zdCBvZiB0aGF0IGlzIGJsa3RyYWNlIFJX
+QlMgZmllbGQgdmFsdWUgJ04nIGkuZS4gbm9uLVIvVyB3aXRoIGRldl90PT0wDQo+ICAgICAgIHNp
+bmNlIHEtPmtvYmoucGFyZW50IGlzIHN0aWxsIE5VTEwgd2UgY2Fubm90IGdldCBnZW5kaXNrIGFu
+ZCB0aHVzIGRldl90DQo+ICAgICAgbmVhciB0aGUgZW5kIGlzIHRoZSBmaXJzdCByZWd1bGFyIHJl
+YWQgYmxvY2sgSS9PIHdpdGggZGV2X3QhPTANCj4gICAgICAgYXMgYmlvIT1OVUxMIGFuZCBiaV9k
+aXNrIG9yIHJxX2Rpc2sgYXJlIG5vbi1OVUxMDQo+ICgyKSBibGtfcmVnaXN0ZXJfcXVldWUoKSBh
+bHNvIGNyZWF0ZXMgcXVldWUga29iaiB3aXRoIGdlbmRpc2sgcGFyZW50DQo+ICAgICBub3cgd2Ug
+Y2FuIGZvbGxvdyBxLT5rb2JqLnBhcmVudCB0byBnZW5kaXNrIHRvIGdldCBkZXZfdCwNCj4gICAg
+IGUuZy4gZm9yIFJXQlMgJ04nIHN1Y2ggYXMgaW1wbGljaXQgU0NTSSB0ZXN0IHVuaXQgcmVhZHkg
+b24gYmxrIGRldiBjbG9zZQ0KDQpQbGVhc2UgaGF2ZSBhIGxvb2sgYXQgdGhlIGRldmljZV9hZGRf
+ZGlzaygpIGNhbGwgaW4gc2RfcHJvYmVfYXN5bmMoKS4gSSB0aGluaw0KdGhhdCBmdW5jdGlvbiB0
+cmlnZ2VycyBhIGNhbGwgb2YgYmxrX3JlZ2lzdGVyX3F1ZXVlKCkuIFRoYXQgbGFzdCBmdW5jdGlv
+bg0KYXNzb2NpYXRlcyB0aGUgcmVxdWVzdCBxdWV1ZSB3aXRoIHRoZSBnZW5kaXNrIGFzIGZvbGxv
+d3M6DQoNCglyZXQgPSBrb2JqZWN0X2FkZCgmcS0+a29iaiwga29iamVjdF9nZXQoJmRldi0+a29i
+aiksICIlcyIsICJxdWV1ZSIpOw0KDQo+ICgzKSBvcHRpb25hbGx5ICJyZWd1bGFyIiBJL08NCj4g
+KDQpIGJsa191bnJlZ2lzdGVyX3F1ZXVlKCkgY2FsbGVkIGJ5IGRlbF9nZW5kaXNrKCkNCj4gICAg
+IGRvZXMga29iamVjdF9kZWwoJnEtPmtvYmopIHdoaWNoIE5VTExpZmllcyBxLT5rb2JqLnBhcmVu
+dCBhZ2Fpbg0KPiAgICAgdGhlIGxhc3QgcHV0IG9mIGdlbmRpc2sgcmVmZXJlbmNlIHJlbGVhc2Vz
+IGdlbmRpc2sga29iag0KPiAoNSkgYmxrX2NsZWFudXBfcXVldWUoKQ0KPiAgICAgdGhlIGxhc3Qg
+cHV0IG9mIHF1ZXVlICgvbXEpIHJlZmVyZW5jZSByZWxlYXNlcyBxdWV1ZSAoL21xKSBrb2JqDQoN
+ClRoZSAvbXEgZGlyZWN0b3J5IGNvcnJlc3BvbmRzIHRvIHEtPm1xX2tvYmouIFRoZSBibG9jayBs
+YXllciBjb3JlIGRyb3BzIGl0cw0KcmVmZXJlbmNlIHRvIHRoZSBxdWV1ZSBrb2JqZWN0IChxLT5r
+b2JqKSBieSBjYWxsaW5nIGJsa19wdXRfcXVldWUoKSBhdCB0aGUNCmVuZCBvZiBibGtfY2xlYW51
+cF9xdWV1ZSgpLg0KDQo+IFNpbmNlIEkgY2Fubm90IHByb3ZlIGl0J3MgYWx3YXlzIGxpa2UgdGhp
+cywgSSBmb2xsb3dlZCBCYXJ0J3Mgc3VnZ2VzdGlvbg0KPiBhbmQgYWRkZWQgYW5vdGhlciByZWZj
+b3VudCBnZXQgYXQgKDIpIGJsa19yZWdpc3Rlcl9xdWV1ZSgpLg0KPiBIb3dldmVyLCB3aGVuIEkg
+d2FudCB0byBwdXQgdGhhdCBhZGRpdGlvbmFsIHJlZmNvdW50IGF0ICg1KSBibGtfY2xlYW51cF9x
+dWV1ZSgpLA0KPiB3ZSBvbmx5IGdldCBhIHF1ZXVlIHBvaW50ZXIgYXJndW1lbnQgYXMgY29udGV4
+dA0KPiBhbmQgcS0+a29iai5wYXJlbnQ9PU5VTEwgc2luY2UgKDQpLA0KPiBzbyBJIGRvbid0IGtu
+b3cgaG93IHRvIGdldCB0byB0aGUgZ2VuZGlzayBvYmplY3QgZm9yIHRoZSByZWZjb3VudCBwdXQu
+DQoNCkhhdmUgeW91IHRyaWVkIHRvIG1vZGlmeSBibGtfcmVnaXN0ZXJfcXVldWUoKSBzdWNoIHRo
+YXQgaXQgc3RvcmVzIHRoZSBkaXNrDQpwb2ludGVyIGluIGEgbmV3IHN0cnVjdCByZXF1ZXN0X3F1
+ZXVlIG1lbWJlcj8NCg0KVGhhbmtzLA0KDQpCYXJ0Lg0KDQoNCg0KDQoNCg0K
