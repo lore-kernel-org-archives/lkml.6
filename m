@@ -1,116 +1,146 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-599759-1524852926-2-17125162851749909010
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, MAILING_LIST_MULTI -1, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
-  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524852925; b=kijQOggHn1I56Pnj0MAmmdNLSBTqWWu4S5IKzJdTS/KIOWAEeH
-    4Y1j+v6Mbj4W/Lg8PpTPVxKeOEzGHQUHY2pbLao1pTR65ea97m4vXbZZSY+pgq/t
-    RA2r25zEn5LRGaLzJ1Bluz0LGKKiNicUsop4DbS04vjAk2k2m6ALP0RmaYztKxVO
-    aW58k6pQCv109EBze6CnEnnMUdqfy0gzFVCV4J86H0T0aci0uNROG6xpeNvAQP4C
-    Qqk3mmSdAKSZlf2AUgZyJqBw3F+RrvrKWFSQnvwcO23zznDrNhU5EFuY4gWLtc39
-    dI4yJ5oRj0MQ2Ic889yGCq9XXabEQ4SzBgUw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1524852925;
-    bh=4QhLh4VVz2HnajJO7fhcgMX/C1BGqKE+5wzw0zCMXMA=; b=lUFEmdc1gpYn
-    OPMiikkvJGTcHLCLg7JhEAJcaPhQTTmUxYhO0FzL9Cx+VH1FZ8TKMYf/xsBFPIyF
-    UjTINXk9O2fbpEuuo2TkGvFx0KhPix2zTnbLYx36foCHwdOzYciEMUrMZQJo2X+4
-    4bcVPT/FLpjZqseOCAN5n7bxbtiMqZX82oV8NLLzWuLS72hcFa5u7bcv3D/4wDK2
-    Uwe6YlcJZH9/nNaKnNK5pKE7YS9YiYjcAbRgdaaPDz2kq06cSSinhnH4XIYonmd7
-    EAjW/c/sGnqDThwk4jHRB06Ow+rWpyUg9iaXIG7WUYENMQr9FrVf+1eXj98YU6jF
-    DwCOAUJztg==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfM9RXZfsOHGoJezbNXVEdrN7heMM/VLoxN6btzQSff0/SdE4Losci2zWmxr5PIPr/JJleRUqNmqopzD0tjNFQRkQI2sKJ+7eFl4Se8ZknPTbJumvqyUF
-    g+EU/ew4SbbSQgIoN02xXl33z2u8cU3zdblCWoVZCtZRuGVbwPvj7nfQ+5PkVx+gJ1+29B09jvZUN1le/VA/Vr0Q2WtuTPNzqwV6PQox8HEFdg8YHoWRu1FP
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=oZq4rTz8mb0A:10
-    a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8 a=8-vRK6DNSD7UNujOA5sA:9 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757936AbeD0SPX (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 27 Apr 2018 14:15:23 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:46434 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757920AbeD0SPW (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 27 Apr 2018 14:15:22 -0400
-Subject: Re: [PATCH 4.4 00/50] 4.4.130-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, Shuah Khan <shuah@kernel.org>
-References: <20180427135655.623669681@linuxfoundation.org>
-From: Shuah Khan <shuah@kernel.org>
-Message-ID: <b97cbb0b-544b-cf8d-4616-db41b64bd11d@kernel.org>
-Date: Fri, 27 Apr 2018 12:15:08 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
+Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
+X-Google-Smtp-Source: AB8JxZqDoVfJM66p/pa5B8gO1ZT/BOpowJyS6999AzxVvjtZwg33uD5wEY283Abfsmm/7RhdC3sl
+ARC-Seal: i=1; a=rsa-sha256; t=1524837765; cv=none;
+        d=google.com; s=arc-20160816;
+        b=SCblDTLT8t/kT9m2vBZec56oTdrcyrPlSXkdzqAmFjaTgS6vwtuTC7Yjb3TisA+wxQ
+         J0vW/+eOro01o37df6RmHAfkfAgjozvjS9zfmpvkF+KOmyzMt2EQYEfFco1btM+m3oDH
+         WGII0GMN8aRgfTtvxNxaE9A+VOBtWM51b9RFRL45iyjzH3oW3ecyxyyxZJISaPq5nDqg
+         PF+ZzKTgS82R54OCE3CUrV0xbDkQaA6EGWUNRBlH/4o/+bWsDvMPXjuDWwB6moUEbckw
+         FbaFji1nyQsBIvlF1YS089uIWqsRMaDvyM5nfQYAMpwp9GrapEMnmfBY9Zi5VvmKUknm
+         0S+Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dmarc-filter:arc-authentication-results;
+        bh=ohGEVbrJC5gly2paiR2mpcvpuRSmolNg2aaulnR64xI=;
+        b=Nj/ZOix/N0JDO9lhyRe+B+Y1H8B89D+xIp3PIqlqFsfRzxyFhX8DVDcQM0mF8TIkuC
+         L+D/opf8wLZeI9Lx2BE3f5XHkF88nn4uIyxudePbAPIfpNaDM5ZZFgh/MbLsqhea9ui6
+         s0GdRxoISCxlNYUuWdqUIY9VA3SqeB6niIa8SnCe//jRmudHeP7CwB5FlV82STVdVuBn
+         g8k6Izm8QozcR2ba50hCE8tH9ykFXdZtIWtjUeDxRl5W3KxEBAyCyuneZRI4kKiexKCS
+         AJzBZHaCl7IUr7Ykd5OsQsfnZBCGZ3yhwOPyPZeZcnUtWSJ8JOSrvUJj/d/bvECk/TQF
+         CF7w==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B4A52189D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org,
+	Wolfgang Bumiller <w.bumiller@proxmox.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 43/50] net: fix deadlock while clearing neighbor proxy table
+Date: Fri, 27 Apr 2018 15:58:45 +0200
+Message-Id: <20180427135658.215376750@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135655.623669681@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+References: <20180427135655.623669681@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1598908284337908803?=
+X-GMAIL-MSGID: =?utf-8?q?1598908284337908803?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 04/27/2018 07:58 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.4.130 release.
-> There are 50 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sun Apr 29 13:56:42 UTC 2018.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.130-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-Compiled and booted on my test system. No dmesg regressions.
+------------------
 
-thanks,
--- Shuah
+From: Wolfgang Bumiller <w.bumiller@proxmox.com>
+
+
+[ Upstream commit 53b76cdf7e8fecec1d09e38aad2f8579882591a8 ]
+
+When coming from ndisc_netdev_event() in net/ipv6/ndisc.c,
+neigh_ifdown() is called with &nd_tbl, locking this while
+clearing the proxy neighbor entries when eg. deleting an
+interface. Calling the table's pndisc_destructor() with the
+lock still held, however, can cause a deadlock: When a
+multicast listener is available an IGMP packet of type
+ICMPV6_MGM_REDUCTION may be sent out. When reaching
+ip6_finish_output2(), if no neighbor entry for the target
+address is found, __neigh_create() is called with &nd_tbl,
+which it'll want to lock.
+
+Move the elements into their own list, then unlock the table
+and perform the destruction.
+
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=199289
+Fixes: 6fd6ce2056de ("ipv6: Do not depend on rt->n in ip6_finish_output2().")
+Signed-off-by: Wolfgang Bumiller <w.bumiller@proxmox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ net/core/neighbour.c |   28 ++++++++++++++++++----------
+ 1 file changed, 18 insertions(+), 10 deletions(-)
+
+--- a/net/core/neighbour.c
++++ b/net/core/neighbour.c
+@@ -54,7 +54,8 @@ do {						\
+ static void neigh_timer_handler(unsigned long arg);
+ static void __neigh_notify(struct neighbour *n, int type, int flags);
+ static void neigh_update_notify(struct neighbour *neigh);
+-static int pneigh_ifdown(struct neigh_table *tbl, struct net_device *dev);
++static int pneigh_ifdown_and_unlock(struct neigh_table *tbl,
++				    struct net_device *dev);
+ 
+ #ifdef CONFIG_PROC_FS
+ static const struct file_operations neigh_stat_seq_fops;
+@@ -254,8 +255,7 @@ int neigh_ifdown(struct neigh_table *tbl
+ {
+ 	write_lock_bh(&tbl->lock);
+ 	neigh_flush_dev(tbl, dev);
+-	pneigh_ifdown(tbl, dev);
+-	write_unlock_bh(&tbl->lock);
++	pneigh_ifdown_and_unlock(tbl, dev);
+ 
+ 	del_timer_sync(&tbl->proxy_timer);
+ 	pneigh_queue_purge(&tbl->proxy_queue);
+@@ -645,9 +645,10 @@ int pneigh_delete(struct neigh_table *tb
+ 	return -ENOENT;
+ }
+ 
+-static int pneigh_ifdown(struct neigh_table *tbl, struct net_device *dev)
++static int pneigh_ifdown_and_unlock(struct neigh_table *tbl,
++				    struct net_device *dev)
+ {
+-	struct pneigh_entry *n, **np;
++	struct pneigh_entry *n, **np, *freelist = NULL;
+ 	u32 h;
+ 
+ 	for (h = 0; h <= PNEIGH_HASHMASK; h++) {
+@@ -655,16 +656,23 @@ static int pneigh_ifdown(struct neigh_ta
+ 		while ((n = *np) != NULL) {
+ 			if (!dev || n->dev == dev) {
+ 				*np = n->next;
+-				if (tbl->pdestructor)
+-					tbl->pdestructor(n);
+-				if (n->dev)
+-					dev_put(n->dev);
+-				kfree(n);
++				n->next = freelist;
++				freelist = n;
+ 				continue;
+ 			}
+ 			np = &n->next;
+ 		}
+ 	}
++	write_unlock_bh(&tbl->lock);
++	while ((n = freelist)) {
++		freelist = n->next;
++		n->next = NULL;
++		if (tbl->pdestructor)
++			tbl->pdestructor(n);
++		if (n->dev)
++			dev_put(n->dev);
++		kfree(n);
++	}
+ 	return -ENOENT;
+ }
+ 
