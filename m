@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758125AbeD0LsM (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 07:48:12 -0400
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:46591 "EHLO
+        id S1758159AbeD0LsV (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 07:48:21 -0400
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:46598 "EHLO
         fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757530AbeD0LsJ (ORCPT
+        with ESMTP id S1758127AbeD0LsP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 07:48:09 -0400
+        Fri, 27 Apr 2018 07:48:15 -0400
 From: Kishon Vijay Abraham I <kishon@ti.com>
 To: Ulf Hansson <ulf.hansson@linaro.org>,
         Adrian Hunter <adrian.hunter@intel.com>
@@ -14,9 +14,9 @@ CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
         <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
         <kishon@ti.com>
-Subject: [PATCH v5 11/14] mmc: sdhci-omap: Add support for MMC/SD controller in k2g SoC
-Date: Fri, 27 Apr 2018 17:17:20 +0530
-Message-ID: <20180427114723.2687-12-kishon@ti.com>
+Subject: [PATCH v5 13/14] dt-bindings: sdhci-omap: Add pinctrl bindings
+Date: Fri, 27 Apr 2018 17:17:22 +0530
+Message-ID: <20180427114723.2687-14-kishon@ti.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427114723.2687-1-kishon@ti.com>
 References: <20180427114723.2687-1-kishon@ti.com>
@@ -27,38 +27,29 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for the new compatible added specifically to support
-k2g's MMC/SD controller.
+Add pinctrl binding rquired to get the mux mode and IODelay
+values from devicetree.
 
 Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Acked-by: Tony Lindgren <tony@atomide.com>
 ---
- drivers/mmc/host/sdhci-omap.c | 5 +++++
+ Documentation/devicetree/bindings/mmc/sdhci-omap.txt | 5 +++++
  1 file changed, 5 insertions(+)
 
-diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
-index 2232a9974b21..b11c846dd8a1 100644
---- a/drivers/mmc/host/sdhci-omap.c
-+++ b/drivers/mmc/host/sdhci-omap.c
-@@ -720,6 +720,10 @@ static const struct sdhci_pltfm_data sdhci_omap_pdata = {
- 	.ops = &sdhci_omap_ops,
- };
+diff --git a/Documentation/devicetree/bindings/mmc/sdhci-omap.txt b/Documentation/devicetree/bindings/mmc/sdhci-omap.txt
+index 8d09b837e350..393848c2138e 100644
+--- a/Documentation/devicetree/bindings/mmc/sdhci-omap.txt
++++ b/Documentation/devicetree/bindings/mmc/sdhci-omap.txt
+@@ -7,6 +7,11 @@ Required properties:
+ 	      Should be "ti,k2g-sdhci" for K2G
+ - ti,hwmods: Must be "mmc<n>", <n> is controller instance starting 1
+ 	     (Not required for K2G).
++- pinctrl-names: Should be subset of "default", "hs", "sdr12", "sdr25", "sdr50",
++		 "ddr50-rev11", "sdr104-rev11", "ddr50", "sdr104",
++		 "ddr_1_8v-rev11", "ddr_1_8v" or "ddr_3_3v", "hs200_1_8v-rev11",
++		 "hs200_1_8v",
++- pinctrl-<n> : Pinctrl states as described in bindings/pinctrl/pinctrl-bindings.txt
  
-+static const struct sdhci_omap_data k2g_data = {
-+	.offset = 0x200,
-+};
-+
- static const struct sdhci_omap_data dra7_data = {
- 	.offset = 0x200,
- 	.flags	= SDHCI_OMAP_REQUIRE_IODELAY,
-@@ -727,6 +731,7 @@ static const struct sdhci_omap_data dra7_data = {
- 
- static const struct of_device_id omap_sdhci_match[] = {
- 	{ .compatible = "ti,dra7-sdhci", .data = &dra7_data },
-+	{ .compatible = "ti,k2g-sdhci", .data = &k2g_data },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, omap_sdhci_match);
+ Example:
+ 	mmc1: mmc@4809c000 {
 -- 
 2.17.0
