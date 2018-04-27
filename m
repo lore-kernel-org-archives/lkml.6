@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-298528-1524839421-5-8470145005035893626
+X-Cyrus-Session-Id: sloti22d1t05-298528-1524839416-5-9637968449555213134
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524839420; b=N4PeTEZCsJV9gnsjI4Ydg13Z/BTU5WRN0mpe0ByoJ27C4Y/y1M
-    F8ziTBbw3sZ5KH4rh9vLDK1PD9lDH/GReBUqq1fXtztIPtD6EywhEO+b4QvV69hj
-    met8cXaQF0tKtIoWDrBsQn0PjnH/3ysGQKpEEgFxCCvieouamR5rftGK9/2J3BZf
-    W4KhgxTShziwsOF/ZVFhrhl+h8Tslsk0+Zl1rNUx0Auu+zkC7f4nTv/BnEycA6WA
-    uhOR1V8wPRj0B9S1IZcCTimsbX2L7fRRbB1vWgNNUnytfWhNVndTxHCFaio4CJYr
-    l+JgxB69KNi0VwwypYdSP1GYlwnZ2JfwKADg==
+    1524839416; b=YpJ0iJE9m65Uq3oDEnr3sJVfVbTUCa6mFTmZYs0XTSKKlCH8LP
+    w2cDDHcGGbYFnFTT+hVYNwACbSDqToJWbS3/7fZdvkX3yD1xLabTuaweoH9cSll5
+    MPy/JSayGYUOjuUXIpmKn1cifvz7ohDRY8jnvyD4NXZaLijqBZikIGm81qecMh18
+    WPj1nBjwfYhLjQXkX0Bq60RSScmIgSDe+44lPgBu7kZB5z6mwEye1RhdDc857XoQ
+    +GYZm9JDXiOMgOlutaOYODkVvyMSm6DKJTkJ1aapTasJnTB40IMTcpxeFxaSPCCY
+    6A66rx3Ezt1/Ww0HsGnQVmBCec0Xc/8IfEYg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524839420; bh=n2M92GojQUNu7Ub1THESpSnuXW/ByY
-    pRKPDvTzyVsV4=; b=Csb1HByjuawygs7v2obHan0I4xr+G6gGoTyEQM0nvO0ZNS
-    EAes1GlW3sKe+USgm+lLFbBfu9B1K83seotsYoU7nGc539HsJ5E9uJh8DZ34Jly8
-    QlVTbfYnHoWAMCXr8joLhWFtDNrJVRRscsb8VUwwEdicdXo+QhLzOqgB7R9ttdY/
-    PZbrBZlibSPy7rb1NLzmCKLgi/EpsTIaURg3Qk5D4wDngc/Bej1zNXLkqLrb4aWp
-    V0V/HlsboBO5SqqSjAH/UIQ+W/wDCgMHzVue7HszVaFPmVQPSPljWwJ/zqe4A/zB
-    2fLJ9x362jYrskEkxZX9M9ReCXxMtSZ1rAE8w+XQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1524839416; bh=MnklLWmgRFfGfE/4Wol0Z6w7UFTHzE
+    qYzYcZq3KXo+0=; b=kswFCFHoAqcbhUj/kC7BDGhcVhk0NaRswA8l/lndbjCXoi
+    uMCitBsgZremaLXcqG3lzx2pxi0iPz9XfJjGCSpD0z9z4lKjTaTAgBWRLPX9S8EC
+    FzofzSQ2qHj4F8jWUhAypM3zREj7Q0b5ojMUW7M1poHZ3zPWXzsEAKF7u3ngkqM3
+    wAS0xyFWYEKj3FzH+ja9IKlL+JMENavPptjsII9t4p0VNJmwQ9wQMHCM9b+zoEr7
+    nwxj0jw8lI7+VpScCzB1nyb7qQQnd6VlkVtYTivwPgWHeRN6WDfi6Gb7LwQgAi3h
+    nfwn05yZLEIZvNiq0rb/mdA28c3QuBx0HmfBXUKw==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,33 +51,33 @@ Authentication-Results: mx4.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfNeCqVgE5opAYqWgDM1+lxyqFSQRrH+UfWzkuAZEuPysbEfVP7oqCYhF7ymfKkKX63+hVCcgKHGrNjRfXyFoJNd9ge46AyZkfOzyobqdSOtgk6n6SxSV
-    r8bzdi+hmDHJTrbw2Ik0jQ+aqKaglLSdsSKFUIWPPt46KxtLoLM64jN/O7YfwvvLIw6jdMhhrUygwfS48BjiS6AxUo6+f/zKxWGVD0MzmuCGzmCyqN55pp73
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfHUu24I3QukggVgjIUo24jch961XzD7zvvjE+lhPFmwn0BbcUaPhz15tNiGa60APWVfTGud+sNESzc/F13txpr+ccQ6RVfG1SXKde2N9DwYcf9sUoHlG
+    IjoSci9nRE5cs6UEuywSoisEtrsqPePuuIwXHHHTWAjTZwnzksGyBtWEq0jIpeVjk4sCPCBA3gaYK4Zr3eVIpA/BiwOeCaM5sfOugj6CeexAt5Dfytg9/FCF
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=LpQP-O61AAAA:8 a=ag1SF4gXAAAA:8 a=dK09jAgzlzuUulAh3SYA:9 a=QEXdDO2ut3YA:10
-    a=pioyyrs4ZptJ924tMmac:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=s69QxFRhAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=572aw6MZ-aO4NtqmRjgA:9
+    a=vuQKtNYfoVCEpe09:21 a=y6uC6XJbNsGZyPhR:21 a=QEXdDO2ut3YA:10
+    a=FzsZaHqyxIPyk0jfoVVe:22 a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934923AbeD0OLC (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 27 Apr 2018 10:11:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55930 "EHLO mail.kernel.org"
+        id S934768AbeD0O34 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 27 Apr 2018 10:29:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55972 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934437AbeD0OK7 (ORCPT <rfc822;stable@vger.kernel.org>);
-        Fri, 27 Apr 2018 10:10:59 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94F5D2189E
+        id S934799AbeD0OLD (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 27 Apr 2018 10:11:03 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E2832189E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Karthikeyan Periyasamy <periyasa@codeaurora.org>,
-        Kalle Valo <kvalo@codeaurora.org>, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.16 07/81] Revert "ath10k: send (re)assoc peer command when NSS changed"
-Date: Fri, 27 Apr 2018 15:58:09 +0200
-Message-Id: <20180427135743.661799090@linuxfoundation.org>
+        stable@vger.kernel.org, Olivier Gayot <olivier.gayot@sigexec.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.16 09/81] docs: ip-sysctl.txt: fix name of some ipv6 variables
+Date: Fri, 27 Apr 2018 15:58:11 +0200
+Message-Id: <20180427135743.747605475@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135743.216853156@linuxfoundation.org>
 References: <20180427135743.216853156@linuxfoundation.org>
@@ -95,152 +95,59 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Karthikeyan Periyasamy <periyasa@codeaurora.org>
+From: Olivier Gayot <olivier.gayot@sigexec.com>
 
-commit 55cc11da69895a680940c1733caabc37be685f5e upstream.
 
-This reverts commit 55884c045d31a29cf69db8332d1064a1b61dd159.
+[ Upstream commit ab913455dd59b81204b6a0d387a44697b0e0bd85 ]
 
-When Ath10k is in AP mode and an unassociated STA sends a VHT action frame
-(Operating Mode Notification for the NSS change) periodically to AP this causes
-ath10k to call ath10k_station_assoc() which sends WMI_PEER_ASSOC_CMDID during
-NSS update. Over the time (with a certain client it can happen within 15 mins
-when there are over 500 of these VHT action frames) continuous calls of
-WMI_PEER_ASSOC_CMDID cause firmware to assert due to resource exhaust.
+The name of the following proc/sysctl entries were incorrectly
+documented:
 
-To my knowledge setting WMI_PEER_NSS peer param itself enough to handle NSS
-updates and no need to call ath10k_station_assoc(). So revert the original
-commit from 2014 as it's unclear why the change was really needed.
-Now the firmware assert doesn't happen anymore.
+    /proc/sys/net/ipv6/conf/<interface>/max_dst_opts_number
+    /proc/sys/net/ipv6/conf/<interface>/max_hbt_opts_number
+    /proc/sys/net/ipv6/conf/<interface>/max_dst_opts_length
+    /proc/sys/net/ipv6/conf/<interface>/max_hbt_length
 
-Issue observed in QCA9984 platform with firmware version:10.4-3.5.3-00053.
-This Change tested in QCA9984 with firmware version: 10.4-3.5.3-00053 and
-QCA988x platform with firmware version: 10.2.4-1.0-00036.
+Their name was set to the name of the symbol in the .data field of the
+control table instead of their .proc name.
 
-Firmware Assert log:
-
-ath10k_pci 0002:01:00.0: firmware crashed! (guid e61f1274-9acd-4c5b-bcca-e032ea6e723c)
-ath10k_pci 0002:01:00.0: qca9984/qca9994 hw1.0 target 0x01000000 chip_id 0x00000000 sub 168c:cafe
-ath10k_pci 0002:01:00.0: kconfig debug 1 debugfs 1 tracing 0 dfs 1 testmode 1
-ath10k_pci 0002:01:00.0: firmware ver 10.4-3.5.3-00053 api 5 features no-p2p,mfp,peer-flow-ctrl,btcoex-param,allows-mesh-bcast crc32 4c56a386
-ath10k_pci 0002:01:00.0: board_file api 2 bmi_id 0:4 crc32 c2271344
-ath10k_pci 0002:01:00.0: htt-ver 2.2 wmi-op 6 htt-op 4 cal otp max-sta 512 raw 0 hwcrypto 1
-ath10k_pci 0002:01:00.0: firmware register dump:
-ath10k_pci 0002:01:00.0: [00]: 0x0000000A 0x000015B3 0x00981E5F 0x00975B31
-ath10k_pci 0002:01:00.0: [04]: 0x00981E5F 0x00060530 0x00000011 0x00446C60
-ath10k_pci 0002:01:00.0: [08]: 0x0042F1FC 0x00458080 0x00000017 0x00000000
-ath10k_pci 0002:01:00.0: [12]: 0x00000009 0x00000000 0x00973ABC 0x00973AD2
-ath10k_pci 0002:01:00.0: [16]: 0x00973AB0 0x00960E62 0x009606CA 0x00000000
-ath10k_pci 0002:01:00.0: [20]: 0x40981E5F 0x004066DC 0x00400000 0x00981E34
-ath10k_pci 0002:01:00.0: [24]: 0x80983B48 0x0040673C 0x000000C0 0xC0981E5F
-ath10k_pci 0002:01:00.0: [28]: 0x80993DEB 0x0040676C 0x00431AB8 0x0045D0C4
-ath10k_pci 0002:01:00.0: [32]: 0x80993E5C 0x004067AC 0x004303C0 0x0045D0C4
-ath10k_pci 0002:01:00.0: [36]: 0x80994AAB 0x004067DC 0x00000000 0x0045D0C4
-ath10k_pci 0002:01:00.0: [40]: 0x809971A0 0x0040681C 0x004303C0 0x00441B00
-ath10k_pci 0002:01:00.0: [44]: 0x80991904 0x0040688C 0x004303C0 0x0045D0C4
-ath10k_pci 0002:01:00.0: [48]: 0x80963AD3 0x00406A7C 0x004303C0 0x009918FC
-ath10k_pci 0002:01:00.0: [52]: 0x80960E80 0x00406A9C 0x0000001F 0x00400000
-ath10k_pci 0002:01:00.0: [56]: 0x80960E51 0x00406ACC 0x00400000 0x00000000
-ath10k_pci 0002:01:00.0: Copy Engine register dump:
-ath10k_pci 0002:01:00.0: index: addr: sr_wr_idx: sr_r_idx: dst_wr_idx: dst_r_idx:
-ath10k_pci 0002:01:00.0: [00]: 0x0004a000 15 15 3 3
-ath10k_pci 0002:01:00.0: [01]: 0x0004a400 17 17 212 213
-ath10k_pci 0002:01:00.0: [02]: 0x0004a800 21 21 20 21
-ath10k_pci 0002:01:00.0: [03]: 0x0004ac00 25 25 27 25
-ath10k_pci 0002:01:00.0: [04]: 0x0004b000 515 515 144 104
-ath10k_pci 0002:01:00.0: [05]: 0x0004b400 28 28 155 156
-ath10k_pci 0002:01:00.0: [06]: 0x0004b800 12 12 12 12
-ath10k_pci 0002:01:00.0: [07]: 0x0004bc00 1 1 1 1
-ath10k_pci 0002:01:00.0: [08]: 0x0004c000 0 0 127 0
-ath10k_pci 0002:01:00.0: [09]: 0x0004c400 1 1 1 1
-ath10k_pci 0002:01:00.0: [10]: 0x0004c800 0 0 0 0
-ath10k_pci 0002:01:00.0: [11]: 0x0004cc00 0 0 0 0
-ath10k_pci 0002:01:00.0: CE[1] write_index 212 sw_index 213 hw_index 0 nentries_mask 0x000001ff
-ath10k_pci 0002:01:00.0: CE[2] write_index 20 sw_index 21 hw_index 0 nentries_mask 0x0000007f
-ath10k_pci 0002:01:00.0: CE[5] write_index 155 sw_index 156 hw_index 0 nentries_mask 0x000001ff
-ath10k_pci 0002:01:00.0: DMA addr: nbytes: meta data: byte swap: gather:
-ath10k_pci 0002:01:00.0: [455]: 0x580c0042 0 0 0 0
-ath10k_pci 0002:01:00.0: [456]: 0x594a0010 0 0 0 1
-ath10k_pci 0002:01:00.0: [457]: 0x580c0042 0 0 0 0
-ath10k_pci 0002:01:00.0: [458]: 0x594a0038 0 0 0 1
-ath10k_pci 0002:01:00.0: [459]: 0x580c0a42 0 0 0 0
-ath10k_pci 0002:01:00.0: [460]: 0x594a0060 0 0 0 1
-ath10k_pci 0002:01:00.0: [461]: 0x580c0c42 0 0 0 0
-ath10k_pci 0002:01:00.0: [462]: 0x594a0010 0 0 0 1
-ath10k_pci 0002:01:00.0: [463]: 0x580c0c42 0 0 0 0
-ath10k_pci 0002:01:00.0: [464]: 0x594a0038 0 0 0 1
-ath10k_pci 0002:01:00.0: [465]: 0x580c0a42 0 0 0 0
-ath10k_pci 0002:01:00.0: [466]: 0x594a0060 0 0 0 1
-ath10k_pci 0002:01:00.0: [467]: 0x580c0042 0 0 0 0
-ath10k_pci 0002:01:00.0: [468]: 0x594a0010 0 0 0 1
-ath10k_pci 0002:01:00.0: [469]: 0x580c1c42 0 0 0 0
-ath10k_pci 0002:01:00.0: [470]: 0x594a0010 0 0 0 1
-ath10k_pci 0002:01:00.0: [471]: 0x580c1c42 0 0 0 0
-ath10k_pci 0002:01:00.0: [472]: 0x594a0010 0 0 0 1
-ath10k_pci 0002:01:00.0: [473]: 0x580c1c42 0 0 0 0
-ath10k_pci 0002:01:00.0: [474]: 0x594a0010 0 0 0 1
-ath10k_pci 0002:01:00.0: [475]: 0x580c0642 0 0 0 0
-ath10k_pci 0002:01:00.0: [476]: 0x594a0038 0 0 0 1
-ath10k_pci 0002:01:00.0: [477]: 0x580c0842 0 0 0 0
-ath10k_pci 0002:01:00.0: [478]: 0x594a0060 0 0 0 1
-ath10k_pci 0002:01:00.0: [479]: 0x580c0042 0 0 0 0
-ath10k_pci 0002:01:00.0: [480]: 0x594a0010 0 0 0 1
-ath10k_pci 0002:01:00.0: [481]: 0x580c0042 0 0 0 0
-ath10k_pci 0002:01:00.0: [482]: 0x594a0038 0 0 0 1
-ath10k_pci 0002:01:00.0: [483]: 0x580c0842 0 0 0 0
-ath10k_pci 0002:01:00.0: [484]: 0x594a0060 0 0 0 1
-ath10k_pci 0002:01:00.0: [485]: 0x580c0642 0 0 0 0
-ath10k_pci 0002:01:00.0: [486]: 0x594a0010 0 0 0 1
-ath10k_pci 0002:01:00.0: [487]: 0x580c0642 0 0 0 0
-ath10k_pci 0002:01:00.0: [488]: 0x594a0038 0 0 0 1
-ath10k_pci 0002:01:00.0: [489]: 0x580c0842 0 0 0 0
-ath10k_pci 0002:01:00.0: [490]: 0x594a0060 0 0 0 1
-ath10k_pci 0002:01:00.0: [491]: 0x580c0042 0 0 0 0
-ath10k_pci 0002:01:00.0: [492]: 0x58174040 0 1 0 0
-ath10k_pci 0002:01:00.0: [493]: 0x5a946040 0 1 0 0
-ath10k_pci 0002:01:00.0: [494]: 0x59909040 0 1 0 0
-ath10k_pci 0002:01:00.0: [495]: 0x5ae5a040 0 1 0 0
-ath10k_pci 0002:01:00.0: [496]: 0x58096040 0 1 0 0
-ath10k_pci 0002:01:00.0: [497]: 0x594a0010 0 0 0 1
-ath10k_pci 0002:01:00.0: [498]: 0x580c0642 0 0 0 0
-ath10k_pci 0002:01:00.0: [499]: 0x5c1e0040 0 1 0 0
-ath10k_pci 0002:01:00.0: [500]: 0x58153040 0 1 0 0
-ath10k_pci 0002:01:00.0: [501]: 0x58129040 0 1 0 0
-ath10k_pci 0002:01:00.0: [502]: 0x5952f040 0 1 0 0
-ath10k_pci 0002:01:00.0: [503]: 0x59535040 0 1 0 0
-ath10k_pci 0002:01:00.0: [504]: 0x594a0010 0 0 0 1
-ath10k_pci 0002:01:00.0: [505]: 0x580c0042 0 0 0 0
-ath10k_pci 0002:01:00.0: [506]: 0x594a0010 0 0 0 1
-ath10k_pci 0002:01:00.0: [507]: 0x580c0042 0 0 0 0
-ath10k_pci 0002:01:00.0: [508]: 0x594a0010 0 0 0 1
-ath10k_pci 0002:01:00.0: [509]: 0x580c0042 0 0 0 0
-ath10k_pci 0002:01:00.0: [510]: 0x594a0010 0 0 0 1
-ath10k_pci 0002:01:00.0: [511]: 0x580c0042 0 0 0 0
-ath10k_pci 0002:01:00.0: [512]: 0x5adcc040 0 1 0 0
-ath10k_pci 0002:01:00.0: [513]: 0x5cf3d040 0 1 0 0
-ath10k_pci 0002:01:00.0: [514]: 0x5c1e9040 64 1 0 0
-ath10k_pci 0002:01:00.0: [515]: 0x00000000 0 0 0 0
-
-Signed-off-by: Karthikeyan Periyasamy <periyasa@codeaurora.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-Cc: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Olivier Gayot <olivier.gayot@sigexec.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/net/wireless/ath/ath10k/mac.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ Documentation/networking/ip-sysctl.txt |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/net/wireless/ath/ath10k/mac.c
-+++ b/drivers/net/wireless/ath/ath10k/mac.c
-@@ -6028,9 +6028,8 @@ static void ath10k_sta_rc_update_wk(stru
- 				    sta->addr, smps, err);
- 	}
+--- a/Documentation/networking/ip-sysctl.txt
++++ b/Documentation/networking/ip-sysctl.txt
+@@ -1386,26 +1386,26 @@ mld_qrv - INTEGER
+ 	Default: 2 (as specified by RFC3810 9.1)
+ 	Minimum: 1 (as specified by RFC6636 4.5)
  
--	if (changed & IEEE80211_RC_SUPP_RATES_CHANGED ||
--	    changed & IEEE80211_RC_NSS_CHANGED) {
--		ath10k_dbg(ar, ATH10K_DBG_MAC, "mac update sta %pM supp rates/nss\n",
-+	if (changed & IEEE80211_RC_SUPP_RATES_CHANGED) {
-+		ath10k_dbg(ar, ATH10K_DBG_MAC, "mac update sta %pM supp rates\n",
- 			   sta->addr);
+-max_dst_opts_cnt - INTEGER
++max_dst_opts_number - INTEGER
+ 	Maximum number of non-padding TLVs allowed in a Destination
+ 	options extension header. If this value is less than zero
+ 	then unknown options are disallowed and the number of known
+ 	TLVs allowed is the absolute value of this number.
+ 	Default: 8
  
- 		err = ath10k_station_assoc(ar, arvif->vif, sta, true);
+-max_hbh_opts_cnt - INTEGER
++max_hbh_opts_number - INTEGER
+ 	Maximum number of non-padding TLVs allowed in a Hop-by-Hop
+ 	options extension header. If this value is less than zero
+ 	then unknown options are disallowed and the number of known
+ 	TLVs allowed is the absolute value of this number.
+ 	Default: 8
+ 
+-max dst_opts_len - INTEGER
++max_dst_opts_length - INTEGER
+ 	Maximum length allowed for a Destination options extension
+ 	header.
+ 	Default: INT_MAX (unlimited)
+ 
+-max hbh_opts_len - INTEGER
++max_hbh_length - INTEGER
+ 	Maximum length allowed for a Hop-by-Hop options extension
+ 	header.
+ 	Default: INT_MAX (unlimited)
