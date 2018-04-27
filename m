@@ -1,146 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1759265AbeD0U43 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 16:56:29 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58302 "EHLO mx1.redhat.com"
+        id S1759334AbeD0VA5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 17:00:57 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45694 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1758944AbeD0U42 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 16:56:28 -0400
-Date: Fri, 27 Apr 2018 22:56:22 +0200
-From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>, y2038@lists.linaro.org,
-        Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        x86@kernel.org, Jan Kiszka <jan.kiszka@siemens.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Joao Martins <joao.m.martins@oracle.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Borislav Petkov <bp@suse.de>, Andy Lutomirski <luto@kernel.org>,
-        John Stultz <john.stultz@linaro.org>, linux-kernel@vger.kernel.org,
-        jailhouse-dev@googlegroups.com, kvm@vger.kernel.org,
-        xen-devel@lists.xenproject.org
-Subject: Re: [PATCH] [v3] x86: Convert x86_platform_ops to timespec64
-Message-ID: <20180427205621.GE23874@flask>
-References: <20180427201435.3194219-1-arnd@arndb.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180427201435.3194219-1-arnd@arndb.de>
+        id S1759084AbeD0VAw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 17:00:52 -0400
+From: Waiman Long <longman@redhat.com>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-doc@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Waiman Long <longman@redhat.com>
+Subject: [PATCH v6 2/8] proc/sysctl: Provide additional ctl_table.flags checks
+Date: Fri, 27 Apr 2018 17:00:32 -0400
+Message-Id: <1524862838-8247-3-git-send-email-longman@redhat.com>
+In-Reply-To: <1524862838-8247-1-git-send-email-longman@redhat.com>
+References: <1524862838-8247-1-git-send-email-longman@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-04-27 22:13+0200, Arnd Bergmann:
-> The x86 platform operations are fairly isolated, so we can
-> change them from using timespec to timespec64. I checked that
-> All the users and callers are safe, and there is only one
-> critical function that is broken beyond 2106:
-> 
-> pvclock_read_wallclock() uses a 32-bit number of seconds since
-> the epoch to communicate the boot time between host and guest
-> in a virtual environment. This will work until 2106, but we
-> should ideally find a replacement anyway. I've added a comment
-> about it there.
-> 
-> Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-> v2 changes:
-> - move comment block (Boris)
-> - remove unnecessary type cast (Boris)
-> - fix format string (0day bot)
-> - fix include order (0day bot)
-> 
-> v3 changes:
-> - add jailhouse specific change
-> - avoid include file header by relying on another
->   patch ("timekeeping: Remove timespec64 hack")
-> 
-> Not sure how we want to merge this (assuming the last modification
-> worked, this has seen little testing). The "timekeeping: Remove
-> timespec64 hack" patch should go through the timekeeping branch
-> in tip, while this one is for x86. I assume the linux-tip maintainers
-> can come up with a plan.
-> ---
-> diff --git a/arch/x86/include/asm/pvclock.h b/arch/x86/include/asm/pvclock.h
-> @@ -12,7 +12,7 @@ void pvclock_set_flags(u8 flags);
->  unsigned long pvclock_tsc_khz(struct pvclock_vcpu_time_info *src);
->  void pvclock_read_wallclock(struct pvclock_wall_clock *wall,
->  			    struct pvclock_vcpu_time_info *vcpu,
-> -			    struct timespec *ts);
-> +			    struct timespec64 *ts);
->  void pvclock_resume(void);
->  
->  void pvclock_touch_watchdogs(void);
-> diff --git a/arch/x86/kernel/kvmclock.c b/arch/x86/kernel/kvmclock.c
-> @@ -53,7 +53,7 @@ static struct pvclock_wall_clock *wall_clock;
->   * have elapsed since the hypervisor wrote the data. So we try to account for
->   * that with system time
->   */
-> -static void kvm_get_wallclock(struct timespec *now)
-> +static void kvm_get_wallclock(struct timespec64 *now)
->  {
->  	struct pvclock_vcpu_time_info *vcpu_time;
->  	int low, high;
-> @@ -72,7 +72,7 @@ static void kvm_get_wallclock(struct timespec *now)
->  	put_cpu();
->  }
->  
-> -static int kvm_set_wallclock(const struct timespec *now)
-> +static int kvm_set_wallclock(const struct timespec64 *now)
->  {
->  	return -ENODEV;
->  }
-> diff --git a/arch/x86/kernel/pvclock.c b/arch/x86/kernel/pvclock.c
-> @@ -123,28 +123,35 @@ u64 pvclock_clocksource_read(struct pvclock_vcpu_time_info *src)
->  
->  void pvclock_read_wallclock(struct pvclock_wall_clock *wall_clock,
->  			    struct pvclock_vcpu_time_info *vcpu_time,
-> -			    struct timespec *ts)
-> +			    struct timespec64 *ts)
->  {
->  	u32 version;
->  	u64 delta;
-> -	struct timespec now;
-> +	struct timespec64 now;
->  
->  	/* get wallclock at system boot */
->  	do {
->  		version = wall_clock->version;
->  		rmb();		/* fetch version before time */
-> +		/*
-> +		 * Note: wall_clock->sec is a u32 value, so it can
-> +		 * only store dates between 1970 and 2106. To allow
-> +		 * times beyond that, we need to create a new hypercall
-> +		 * interface with an extended pvclock_wall_clock structure
-> +		 * like ARM has.
-> +		 */
+Checking code is added to provide the following additional
+ctl_table.flags checks:
 
-(Modern TSC extensions stripped pvclock of all advantages, so we'll
- likely abandon pvclock by then.)
+ 1) No unknown flag is allowed.
+ 2) Minimum of a range cannot be larger than the maximum value.
+ 3) The signed and unsigned flags are mutually exclusive.
+ 4) The proc_handler should be consistent with the signed or unsigned
+    flags.
 
->  		now.tv_sec  = wall_clock->sec;
->  		now.tv_nsec = wall_clock->nsec;
->  		rmb();		/* fetch time before checking version */
->  	} while ((wall_clock->version & 1) || (version != wall_clock->version));
->  
->  	delta = pvclock_clocksource_read(vcpu_time);	/* time since system boot */
-> -	delta += now.tv_sec * (u64)NSEC_PER_SEC + now.tv_nsec;
-> +	delta += now.tv_sec * NSEC_PER_SEC + now.tv_nsec;
->  
->  	now.tv_nsec = do_div(delta, NSEC_PER_SEC);
->  	now.tv_sec = delta;
->  
-> -	set_normalized_timespec(ts, now.tv_sec, now.tv_nsec);
-> +	set_normalized_timespec64(ts, now.tv_sec, now.tv_nsec);
->  }
->  
->  void pvclock_set_pvti_cpu0_va(struct pvclock_vsyscall_time_info *pvti)
+The separation of signed and unsigned flags helps to provide more
+comprehensive checking than it would have been if there is only one
+flag available.
 
-kvmclock and pvclock changes
+Signed-off-by: Waiman Long <longman@redhat.com>
+---
+ fs/proc/proc_sysctl.c | 60 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
 
-Acked-by: Radim Krčmář <rkrcmar@redhat.com>
+diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+index 8989936..fb09454 100644
+--- a/fs/proc/proc_sysctl.c
++++ b/fs/proc/proc_sysctl.c
+@@ -1092,6 +1092,64 @@ static int sysctl_check_table_array(const char *path, struct ctl_table *table)
+ 	return err;
+ }
+ 
++/*
++ * This code assumes that only one integer value is allowed in an integer
++ * sysctl when one of the clamping flags is used. If that assumption is no
++ * longer true, we may need to add another flag to indicate the entry size.
++ */
++static int sysctl_check_flags(const char *path, struct ctl_table *table)
++{
++	int err = 0;
++
++	if ((table->flags & ~CTL_TABLE_FLAGS_ALL) ||
++	   ((table->flags & CTL_FLAGS_CLAMP_RANGE) == CTL_FLAGS_CLAMP_RANGE))
++		err = sysctl_err(path, table, "invalid flags");
++
++	if (table->flags & CTL_FLAGS_CLAMP_RANGE) {
++		int range_err = 0;
++		bool is_int = (table->maxlen == sizeof(int));
++
++		if (!is_int && (table->maxlen != sizeof(long))) {
++			range_err++;
++		} else if (!table->extra1 || !table->extra2) {
++			/* No min > max checking needed */
++		} else if (table->flags & CTL_FLAGS_CLAMP_UNSIGNED_RANGE) {
++			unsigned long min, max;
++
++			min = is_int ? *(unsigned int *)table->extra1
++				     : *(unsigned long *)table->extra1;
++			max = is_int ? *(unsigned int *)table->extra2
++				     : *(unsigned long *)table->extra2;
++			range_err += (min > max);
++		} else { /* table->flags & CTL_FLAGS_CLAMP_SIGNED_RANGE */
++
++			long min, max;
++
++			min = is_int ? *(int *)table->extra1
++				     : *(long *)table->extra1;
++			max = is_int ? *(int *)table->extra2
++				     : *(long *)table->extra2;
++			range_err += (min > max);
++		}
++
++		/*
++		 * proc_handler and flag consistency check.
++		 */
++		if (((table->proc_handler == proc_douintvec_minmax)   ||
++		     (table->proc_handler == proc_doulongvec_minmax)) &&
++		    !(table->flags & CTL_FLAGS_CLAMP_UNSIGNED_RANGE))
++			range_err++;
++
++		if ((table->proc_handler == proc_dointvec_minmax) &&
++		   !(table->flags & CTL_FLAGS_CLAMP_SIGNED_RANGE))
++			range_err++;
++
++		if (range_err)
++			err |= sysctl_err(path, table, "Invalid range");
++	}
++	return err;
++}
++
+ static int sysctl_check_table(const char *path, struct ctl_table *table)
+ {
+ 	int err = 0;
+@@ -1111,6 +1169,8 @@ static int sysctl_check_table(const char *path, struct ctl_table *table)
+ 		    (table->proc_handler == proc_doulongvec_ms_jiffies_minmax)) {
+ 			if (!table->data)
+ 				err |= sysctl_err(path, table, "No data");
++			if (table->flags)
++				err |= sysctl_check_flags(path, table);
+ 			if (!table->maxlen)
+ 				err |= sysctl_err(path, table, "No maxlen");
+ 			else
+-- 
+1.8.3.1
