@@ -1,150 +1,119 @@
-Return-Path: <bot@kernelci.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1524858241; cv=none;
-        d=google.com; s=arc-20160816;
-        b=nDp6yjO6nQiVt+aPD+TpMeoAIVwxfoNYspCjS5a3WhUw1/oTJkExwjUAi6/l1o9HNn
-         csKjdiLGrLTezi6zo/Ykwchz0ttf/4heQSZKaIljaYZRZ5izR37ZwB7sfnVraSz3xm+8
-         KnH4CzOnDYGEfmU9KU4f4JWqmVuy7ld5hkH+iKf2GnG19gdYBI+QiWwJ1d/2PeV17mhs
-         xjt9XaueN9pcfBwjooP734s7fztAmsiNjOF79n0sv1R4L8SYGIP6zRYJkkcv7rifIi1G
-         LgsRF+D5ArpM1Z6ERInX6K48ZhFir0qvFcRuk16lXC/YykCL6gBen+CSnDSgSC3kWPsa
-         wnOA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:from:to:subject:references:in-reply-to:content-transfer-encoding
-         :mime-version:date:message-id:arc-authentication-results;
-        bh=DlPohf3NFTEJUqj99SqUWKyRr4gd4Xs1C6LgZ9z1Lbc=;
-        b=RisR0dHQXILKPgx6RFISighnIdVTZRjYtni0IDyRj50HQjtqAtJHjWdwEhxJdo7/M3
-         lfz+a4WW9pRis5QRcwCzEWMpIoNZnZJ+PtmmZUvgPYhKLcHYg4euWVHHijbIBoFUFSSv
-         /f+e4NG7CsgDEqFxQZC8z0JJKVawjspRWqrlryIdwSsvQrawKa1Yqg0JW7bQ3ZhhqAbx
-         tc3spdMO8XQdrhOmqklJvHgRbhtrgtoNod/l6plbbtN4kNElMZIzYLvHa0fZigj6BXlU
-         aVxgUg9Rz/C6FEgjgUXqCNvlsfOG+DXPdOy6mYCGefdaj4zMIXQmxGyQZArbNIcFE4Lo
-         xmiQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
-X-Google-Smtp-Source: AB8JxZqIxWHPYoqgA1CIoJ1PoNmYQpzLDlUCiXZwFdO//1KXgO2zkQpDQ/r3lAqv56h8WDtWJSpBjA==
-Message-ID: <5ae37d7f.1c69fb81.3f68c.c77f@mx.google.com>
-Date: Fri, 27 Apr 2018 12:43:59 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: linux-4.4.y
-X-Kernelci-Tree: stable-rc
-X-Kernelci-Report-Type: boot
-X-Kernelci-Kernel: v4.4.129-51-gaedfcc63a1a9
-In-Reply-To: <20180427135655.623669681@linuxfoundation.org>
-References: <20180427135655.623669681@linuxfoundation.org>
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-599407-1524855459-2-11665938001077598137
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524855458; b=ZoT8Xo4Kwy+JNA3wKOOtzkeWvvTKHqqlbprnpGER1GvhirzUCX
+    40OVpNWyWXJKbCeBedMjn67jEVJoeHB4nzSP4HrxoNBPzRnE1yeTgkO4QqOVhfB5
+    VN1VO+WQv+sdzq93T7mfUGW9RbI64B/5PEexEwA4Rng0LZUfPgCFdAzlUJB3SEDO
+    spO7hZVax0m141oW1vOyjkcYO4tvDRe3zIsSWtrMsHWT3mUE+AUC/8DnpUXpaqHG
+    4KUhtvt1nkPx5K97m4W9XdP0BvyWrzsxt1pspB3sprYYVu+gBGbxF7ZLpMV1MsKs
+    bQuUT3E/guQST78ElI931XwA5R53czg1ftYw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=fm2; t=1524855458; bh=2SSE7xhUzd++BpVxIit2LmORy0I/jw
+    JAV6Y2xBW/6eo=; b=mrIiqMtU5TK6ZjXlg9qzl1dVz9k4R7otUweqspH4He3mou
+    UspRtDwen6Tgu8mrojTkKm0av5W7hI86ruFn93czYvdC+0BjW3v5viazCQd0YshW
+    e14L4xvITdnZh+X8ANKhdgCWw1M8y8WbgDTMq+3+n2fxeI+UFLRvqRcye5CwZjzI
+    DPu9PjvnkQc9T8jlpRPGssLPBZkS+c8/aNMVtviadorV8g14TrZXHprdqh8d1ow1
+    OK9IKsTUpoA8g1CwHnG3U9xzac9yJ0eoEVwUn9jTZ7/wvLLe1jzRYVsPUUTef1ly
+    ztgNUzue3+RRYJCkDhXzcrkQHD0J6HbcRmnCZJCA==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=cqZ4rSAM x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=OrdWbtNW;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=cqZ4rSAM x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=OrdWbtNW;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfLjuHgHOZ7OqZhaqWTTUkC3NJXI/bfv5GP8rO1pWIuIGB3T0lidgCPgYBRETMcgSR6W2B/PzgcCoUkcu1C0PxJKKDsaMuVSk/lQKqI46W9VpvcZsEODu
+    VsuoUtywoYRSLbLWc+bi4S9VoQ8Zr0MHpQpk65+EQPaFmXlRJ5sugMYVicE649e/tUwcFAr1Qwoe4/MdBcB+mK9xcSB7ox8wj4vKTf5GwHhgR53miuStINlp
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=TpujumX0jH7REod0KhDaHZOp9kI=:19
+    a=kj9zAlcOel0A:10 a=x7bEGLp0ZPQA:10 a=vY_346TuTMEA:10 a=oZq4rTz8mb0A:10
+    a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8 a=bvbG7kd8bnrNiX9ypvAA:9
+    a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1758606AbeD0S5h (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 27 Apr 2018 14:57:37 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:39910 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758043AbeD0S5g (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 27 Apr 2018 14:57:36 -0400
+X-Google-Smtp-Source: AB8JxZq62Vj7vXV5TlORVjhnt5WCYDj3qsqgCe9qijnuGeK6T5rgFUlkGJBigUcPjnY77zHnb1tWpw==
+Date: Fri, 27 Apr 2018 11:57:41 -0700
+From: Nathan Chancellor <natechancellor@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
 Subject: Re: [PATCH 4.4 00/50] 4.4.130-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org
-From: kernelci.org bot <bot@kernelci.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net,
- shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk,
- lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Message-ID: <20180427185741.GA31397@flashbox>
+References: <20180427135655.623669681@linuxfoundation.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180427135655.623669681@linuxfoundation.org>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598908162748669149?=
-X-GMAIL-MSGID: =?utf-8?q?1598929755410492767?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-stable-rc/linux-4.4.y boot: 119 boots: 0 failed, 64 passed with 53 offline,=
- 2 untried/unknown (v4.4.129-51-gaedfcc63a1a9)
+On Fri, Apr 27, 2018 at 03:58:02PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.130 release.
+> There are 50 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sun Apr 29 13:56:42 UTC 2018.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.130-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.4.y/kernel/v4.4.129-51-gaedfcc63a1a9/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.4.y=
-/kernel/v4.4.129-51-gaedfcc63a1a9/
+Merged, compiled, and installed onto my Pixel 2 XL and OnePlus 5.
 
-Tree: stable-rc
-Branch: linux-4.4.y
-Git Describe: v4.4.129-51-gaedfcc63a1a9
-Git Commit: aedfcc63a1a9aca5a263e7733131589117195778
-Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git
-Tested: 57 unique boards, 21 SoC families, 16 builds out of 177
+No initial issues noticed in either dmesg or general usage.
 
-Offline Platforms:
-
-arm:
-
-    sunxi_defconfig:
-        sun4i-a10-cubieboard: 1 offline lab
-        sun7i-a20-bananapi: 1 offline lab
-        sun7i-a20-cubietruck: 1 offline lab
-
-    bcm2835_defconfig:
-        bcm2835-rpi-b: 1 offline lab
-
-    sama5_defconfig:
-        at91-sama5d4_xplained: 1 offline lab
-
-    multi_v7_defconfig:
-        alpine-db: 1 offline lab
-        am335x-boneblack: 1 offline lab
-        armada-xp-openblocks-ax3-4: 1 offline lab
-        at91-sama5d4_xplained: 1 offline lab
-        bcm4708-smartrg-sr400ac: 1 offline lab
-        bcm72521-bcm97252sffe: 1 offline lab
-        bcm7445-bcm97445c: 1 offline lab
-        exynos5250-arndale: 1 offline lab
-        exynos5420-arndale-octa: 1 offline lab
-        exynos5422-odroidxu3: 1 offline lab
-        exynos5800-peach-pi: 1 offline lab
-        imx6dl-wandboard_dual: 1 offline lab
-        imx6dl-wandboard_solo: 1 offline lab
-        meson8b-odroidc1: 1 offline lab
-        omap3-beagle: 1 offline lab
-        omap3-beagle-xm: 1 offline lab
-        omap4-panda: 1 offline lab
-        qcom-apq8064-cm-qs600: 1 offline lab
-        qcom-apq8064-ifc6410: 1 offline lab
-        socfpga_cyclone5_de0_sockit: 1 offline lab
-        stih410-b2120: 1 offline lab
-        sun4i-a10-cubieboard: 1 offline lab
-        sun7i-a20-bananapi: 1 offline lab
-        sun7i-a20-cubietruck: 1 offline lab
-        tegra124-jetson-tk1: 1 offline lab
-        tegra20-iris-512: 1 offline lab
-        tegra30-beaver: 1 offline lab
-        vf610-colibri-eval-v3: 1 offline lab
-        zynq-zc702: 1 offline lab
-
-    tegra_defconfig:
-        tegra124-jetson-tk1: 1 offline lab
-        tegra20-iris-512: 1 offline lab
-        tegra30-beaver: 1 offline lab
-
-    imx_v6_v7_defconfig:
-        imx6dl-wandboard_dual: 1 offline lab
-        imx6dl-wandboard_solo: 1 offline lab
-        vf610-colibri-eval-v3: 1 offline lab
-
-    exynos_defconfig:
-        exynos5250-arndale: 1 offline lab
-        exynos5420-arndale-octa: 1 offline lab
-        exynos5422-odroidxu3: 1 offline lab
-        exynos5800-peach-pi: 1 offline lab
-
-    qcom_defconfig:
-        qcom-apq8064-cm-qs600: 1 offline lab
-        qcom-apq8064-ifc6410: 1 offline lab
-
-    omap2plus_defconfig:
-        am335x-boneblack: 1 offline lab
-        omap3-beagle: 1 offline lab
-        omap3-beagle-xm: 1 offline lab
-        omap4-panda: 1 offline lab
-
-    davinci_all_defconfig:
-        dm365evm,legacy: 1 offline lab
-
-    mvebu_v7_defconfig:
-        armada-xp-openblocks-ax3-4: 1 offline lab
-
-arm64:
-
-    defconfig:
-        apq8016-sbc: 1 offline lab
-
----
-For more info write to <info@kernelci.org>
+Thanks!
+Nathan
