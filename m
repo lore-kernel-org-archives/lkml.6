@@ -1,28 +1,28 @@
 Return-Path: <matthias.bgg@kernel.org>
-X-Google-Smtp-Source: AB8JxZqSEblIxv6kLQQHZq689oHkC5NuQoDQ44Arj/RHNOrrwnLRIGJ4lw9wg1gBPmHoD1ZidZ5h
-ARC-Seal: i=1; a=rsa-sha256; t=1524821089; cv=none;
+X-Google-Smtp-Source: AB8JxZrT3qHKAHsprxZ2Apv1v5aHQVIiR0iY1WPQ52g1oLaiTV372n3uIEw0PiLBHyA1UBkP8lja
+ARC-Seal: i=1; a=rsa-sha256; t=1524821084; cv=none;
         d=google.com; s=arc-20160816;
-        b=b/Pge2FtAvm0/w6/Gq1row4CnRgutztAy97OVffsWDJHz+ARvr1xT98obbSnFKVhb3
-         kzbj+qRzBzXyoN0yqoxyDWH+45w0vbTdIoHYzWribsPy4LDsLAKpggK9JfIqW92/zm2+
-         8NlVvWoGj61Yr+QwItmIafiD01fhgvQeCWXcROg/FM7an9QvnWHkNy1C0qWxC5Q2a2ve
-         NbFkKmLq3IfxaxxaztQ6+BgdYfFgPb43vN2TJ3/GZTDcaYXcv0Kxv6qZGoTl5PxtRWOt
-         DAH1rLW7qo1i47/lsvzmaMPXi3GHfixoYTgsu+ExwD+dIJfRKJfvV2+mErWT8ARtgNu1
-         mi5Q==
+        b=pBVGlILBJ6Sr1l7rtrkzvPqCZgKwUnc2VzhkclzFeP3gyDRZPCmtVRBLlxRdwKaaS3
+         ldCgQDDKdPLeqSqXF3xVLkxJjA+HKsgyXw7PPx2Oy99wuqr3W04AjUfzVVQ3hxWiK5yM
+         ijY0xnZ83c6+HPdPbDIPVGPZMjs9RpjjTNSGa+JgoyfuWVWboU9eE0vUIrcldwvLZdrs
+         GBPMvI6xh+eEEDbxikerpFscuSEay+2TV+UoqzgADH7MFsTd1NWrdGmzTib+EDv7Ahaq
+         5mTd9XmCVkLJqSlHrOwyZM46lFsddW3b5z0qoJUFwBG5fLZkHuPjr1jqHKlZTHoh7yA0
+         yf7Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=gR9MueLNwOrHH5adxCq6LzW22DgpViivBA+EzFwjB+I=;
-        b=cnmqHtqJvYHl3Ny+FyNMq1RIWlQ6VI34h0hanH2HBvzutIfH9R/ATgx++u1lMkfHve
-         YYb8EhwN+a7LCiC1C18Z3aGWiV4Qa0v7y21xi1rh4XFGN0erNNEH9oHm6WgPLCORhD5k
-         LQTqF2rEPrP0piKE+H5Ag8AxiiTFH6Y5L01+d+NIKzpNsrCIRFbBBnB2+ETqyVfaDNHx
-         HTLYjYqZBfMM6sVIY4OtxYY9tZE3XOXtmY5bydndx3if0Wqvzot0cWll12/QAn1fvP0/
-         Oy9R46gCDlu9x0DZL2engBy7VFt+gd2Or8EOVkPgN/raKDGln9MHtdgNmvXfMdxALs2f
-         JMmg==
+        bh=ljcDt4AGcEGzdtLHP9hRibjfu7gzvxrS4Sr3Hhz006k=;
+        b=UNgFYA3Yz0Rm/FAl3V+edDkFKpumfAUJs3qtBQHhQVAZ/gw1t1Kmz+owMMNh9J9Sct
+         JS28MQdKUumRahjOKaJQgtXE/gIwbhBX3j0Q8qDDeinKBSLg1wOgSoIFG0zpWWCjs6Ba
+         zeAGjWW+gLNnemRhsrOifzpWmLM2aF2xtGNy/W1ukoUBuK9wWZvNaAClx6kxP4g7mo4M
+         BaWpte/S2TignF0UXDgr3huGuAffiFndM2mw5J0uYSF0KJhqb78kVYWNvLm+p92FUb8S
+         ulkq/0774CxDuynLoOuNAMvuVwCXox4BFEAwRiJGgarCK+PnIrFUuEtLm7yzFYBoA80s
+         aE4A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of matthias.bgg@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=matthias.bgg@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of matthias.bgg@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=matthias.bgg@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 760BC21878
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC3EB21880
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=matthias.bgg@kernel.org
 From: matthias.bgg@kernel.org
@@ -49,74 +49,61 @@ Cc: davem@davemloft.net,
 	linux-arm-kernel@lists.infradead.org,
 	linux-mediatek@lists.infradead.org,
 	Matthias Brugger <mbrugger@suse.com>
-Subject: [v3 06/10] mfd: mtk-mmsys: Add mt8173 nodes
-Date: Fri, 27 Apr 2018 11:23:58 +0200
-Message-Id: <fb942cf83613f75299cff6df1791c63ad7b02e3a.1524820923.git.mbrugger@suse.com>
+Subject: [v3 05/10] clk: mediatek: mt2701-mm: switch to mfd device
+Date: Fri, 27 Apr 2018 11:23:57 +0200
+Message-Id: <3230840517e3e5f3fcb4ea65482e5d86d3342f54.1524820923.git.mbrugger@suse.com>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <cover.1524820923.git.mbrugger@suse.com>
 References: <cover.1524820923.git.mbrugger@suse.com>
 In-Reply-To: <cover.1524820923.git.mbrugger@suse.com>
 References: <cover.1524820923.git.mbrugger@suse.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598890798111070049?=
-X-GMAIL-MSGID: =?utf-8?q?1598890798111070049?=
+X-GMAIL-THRID: =?utf-8?q?1598890793312103722?=
+X-GMAIL-MSGID: =?utf-8?q?1598890793312103722?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Matthias Brugger <mbrugger@suse.com>
 
-Add devices for the mt8173 SoC.
+As the new mfd device is in place, switch probing
+for the MMSYS to support invocation from the mfd device.
 
 Signed-off-by: Matthias Brugger <mbrugger@suse.com>
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+Acked-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
- drivers/mfd/mtk-mmsys.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/clk/mediatek/clk-mt2701-mm.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/mfd/mtk-mmsys.c b/drivers/mfd/mtk-mmsys.c
-index c802343fb1c6..5585a561a02f 100644
---- a/drivers/mfd/mtk-mmsys.c
-+++ b/drivers/mfd/mtk-mmsys.c
-@@ -19,6 +19,7 @@
- 
- enum {
- 	MMSYS_MT2701 = 1,
-+	MMSYS_MT8173,
+diff --git a/drivers/clk/mediatek/clk-mt2701-mm.c b/drivers/clk/mediatek/clk-mt2701-mm.c
+index fe1f85072fc5..4517525887dd 100644
+--- a/drivers/clk/mediatek/clk-mt2701-mm.c
++++ b/drivers/clk/mediatek/clk-mt2701-mm.c
+@@ -87,16 +87,13 @@ static const struct mtk_gate mm_clks[] = {
+ 	GATE_DISP1(CLK_MM_TVE_FMM, "mm_tve_fmm", "mm_sel", 14),
  };
  
- static const struct mfd_cell mmsys_mt2701_devs[] = {
-@@ -26,6 +27,12 @@ static const struct mfd_cell mmsys_mt2701_devs[] = {
- 	{ .name = "drm-mt2701-mm", },
- };
- 
-+static const struct mfd_cell mmsys_mt8173_devs[] = {
-+	{ .name = "clk-mt8173-mm", },
-+	{ .name = "drm-mt8173-mm", },
-+};
-+
-+
- static int mmsys_probe(struct platform_device *pdev)
+-static const struct of_device_id of_match_clk_mt2701_mm[] = {
+-	{ .compatible = "mediatek,mt2701-mmsys", },
+-	{}
+-};
+-
+ static int clk_mt2701_mm_probe(struct platform_device *pdev)
  {
- 	const struct mfd_cell *mmsys_cells;
-@@ -44,6 +51,10 @@ static int mmsys_probe(struct platform_device *pdev)
- 		mmsys_cells = mmsys_mt2701_devs;
- 		nr_cells = ARRAY_SIZE(mmsys_mt2701_devs);
- 		break;
-+	case MMSYS_MT8173:
-+		mmsys_cells = mmsys_mt8173_devs;
-+		nr_cells = ARRAY_SIZE(mmsys_mt8173_devs);
-+		break;
- 	default:
- 		return -ENODEV;
- 	}
-@@ -62,6 +73,9 @@ static const struct of_device_id of_match_mmsys[] = {
- 	{ .compatible = "mediatek,mt2701-mmsys",
- 	  .data = (void *) MMSYS_MT2701,
+ 	struct clk_onecell_data *clk_data;
+ 	int r;
+-	struct device_node *node = pdev->dev.of_node;
++	struct device_node *node;
++
++	node = pdev->dev.parent->of_node;
+ 
+ 	clk_data = mtk_alloc_clk_data(CLK_MM_NR);
+ 
+@@ -116,7 +113,6 @@ static struct platform_driver clk_mt2701_mm_drv = {
+ 	.probe = clk_mt2701_mm_probe,
+ 	.driver = {
+ 		.name = "clk-mt2701-mm",
+-		.of_match_table = of_match_clk_mt2701_mm,
  	},
-+	{ .compatible = "mediatek,mt8173-mmsys",
-+	  .data = (void *) MMSYS_MT8173,
-+	},
- 	{ /* sentinel */ },
  };
  
 -- 
