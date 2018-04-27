@@ -1,105 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1759052AbeD0TiN (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 15:38:13 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:34052 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759034AbeD0TiL (ORCPT
+        id S1759014AbeD0Tkf (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 15:40:35 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:42624 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757592AbeD0Tkd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 15:38:11 -0400
-X-Google-Smtp-Source: AB8JxZr2Gz5bXuChfeEezef1v5NfIQ56Qj85YUeoiCtjYMmO/nLec9c1Diq9YgBOrX0B0rgSaEp+y52s6UxxaRO0q20=
+        Fri, 27 Apr 2018 15:40:33 -0400
+Date: Fri, 27 Apr 2018 22:39:59 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: Martin KaFai Lau <kafai@fb.com>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 2/2] bpf: btf: remove a couple conditions
+Message-ID: <20180427193959.3nebosalgl3ch4mv@mwanda>
+References: <20180427140459.GB19583@mwanda>
+ <20180427172023.6japncdd3nbqauzn@kafai-mbp>
+ <20180427175544.vydqf4iufopcyv6d@kafai-mbp>
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqLWmF-xrf5vDALuG3Geq-XHB2-W5Z6XWvHs=PeZ==Bm+w@mail.gmail.com>
-References: <20180411015948.19562-1-andrew.smirnov@gmail.com>
- <20180411015948.19562-2-andrew.smirnov@gmail.com> <20180416150507.2wm4s7opgr242v6a@rob-hp-laptop>
- <CAHQ1cqFep9Xs3_hsz1EiDwu8mcDDzbFs4H-kLnKkj=iokX=fCg@mail.gmail.com> <CAL_JsqLWmF-xrf5vDALuG3Geq-XHB2-W5Z6XWvHs=PeZ==Bm+w@mail.gmail.com>
-From: Andrey Smirnov <andrew.smirnov@gmail.com>
-Date: Fri, 27 Apr 2018 12:38:09 -0700
-Message-ID: <CAHQ1cqER1JWAEYydH5xWGwGiPOrM9sz_6EghxW34jgq5vzRzUQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: nvmem: Add binding for RAVE SP EEPROM driver
-To: Rob Herring <robh@kernel.org>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Chris Healy <cphealy@gmail.com>, Lucas Stach <l.stach@pengutronix.de>,
-        Aleksander Morgado <aleksander@aleksander.es>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180427175544.vydqf4iufopcyv6d@kafai-mbp>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8876 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=554
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804270186
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 27, 2018 at 11:43 AM, Rob Herring <robh@kernel.org> wrote:
-> On Fri, Apr 27, 2018 at 1:05 AM, Andrey Smirnov
-> <andrew.smirnov@gmail.com> wrote:
->> On Mon, Apr 16, 2018 at 8:05 AM, Rob Herring <robh@kernel.org> wrote:
->>> On Tue, Apr 10, 2018 at 06:59:47PM -0700, Andrey Smirnov wrote:
->>>> Add Device Tree bindings for RAVE SP EEPROM driver - an MFD cell of
->>>> parent RAVE SP driver (documented in
->>>> Documentation/devicetree/bindings/mfd/zii,rave-sp.txt).
->>>>
->>>> Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->>>> Cc: linux-kernel@vger.kernel.org
->>>> Cc: Chris Healy <cphealy@gmail.com>
->>>> Cc: Lucas Stach <l.stach@pengutronix.de>
->>>> Cc: Aleksander Morgado <aleksander@aleksander.es>
->>>> Cc: Rob Herring <robh+dt@kernel.org>
->>>> Cc: Mark Rutland <mark.rutland@arm.com>
->>>> Cc: devicetree@vger.kernel.org
->>>> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
->>>> ---
->>>>  .../bindings/nvmem/zii,rave-sp-eeprom.txt          | 29 ++++++++++++++++++++++
->>>>  1 file changed, 29 insertions(+)
->>>>  create mode 100644 Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.txt
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.txt b/Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.txt
->>>> new file mode 100644
->>>> index 000000000000..a4e838c30b67
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.txt
->>>> @@ -0,0 +1,29 @@
->>>> +Zodiac Inflight Innovations RAVE EEPROM Bindings
->>>> +
->>>> +RAVE SP EEPROM device is a "MFD cell" device exposing physical EEPROM
->>>> +attached to RAVE Supervisory Processor. It is expected that its Device
->>>> +Tree node is specified as a child of the node corresponding to the
->>>> +parent RAVE SP device (as documented in
->>>> +Documentation/devicetree/bindings/mfd/zii,rave-sp.txt)
->>>> +
->>>> +Required properties:
->>>> +
->>>> +- compatible: Should be "zii,rave-sp-eeprom"
->>>
->>> Need to state somewhere this follows the bindings/nvmem/nvmem.txt
->>> binding.
->>>
->>
->> OK, will fix in v3.
->>
->>>> +
->>>> +Example:
->>>> +
->>>> +     rave-sp {
->>>> +             compatible = "zii,rave-sp-rdu1";
->>>> +             current-speed = <38400>;
->>>> +
->>>> +             main-eeprom {
->>>
->>> eeprom@a4
->>
->> Any chance I can keep it as is? I am asking because this node name is
->> used by the driver as device name which is how it also appears in
->> sysfs. Reason for that being that "main-eeprom" and "dds-eeprom"
->> (second EEPROM in the system) are easier to rembmer and tell apart
->> than "eeprom@a4" and "eeprom@a5". Granted, I can divorce naming scheme
->> in the driver from device node name, but then I'd have to keep a
->> "address -> deivce name" lookup table which I was hoping to avoid.
->
-> It generates a dtc warning if you don't fix it.
+On Fri, Apr 27, 2018 at 10:55:46AM -0700, Martin KaFai Lau wrote:
+> On Fri, Apr 27, 2018 at 10:20:25AM -0700, Martin KaFai Lau wrote:
+> > On Fri, Apr 27, 2018 at 05:04:59PM +0300, Dan Carpenter wrote:
+> > > We know "err" is zero so we can remove these and pull the code in one
+> > > indent level.
+> > > 
+> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > Thanks for the simplification!
+> > 
+> > Acked-by: Martin KaFai Lau <kafai@fb.com>
+> btw, it should be for bpf-next.  Please tag the subject with bpf-next when
+> you respin. Thanks!
 >
 
-Understood. Will fix in v3.
+I'm working against linux-next.  For networking, I have a separate tree
+which I use to figure out if it's in net or net-next.  It's kind of a
+headache (but obviously networking is the largest subtree so it's
+required).
 
-Thanks,
-Andrey Smirnov
+Is there an automated way to tie a Fixes tag from linux-next to a
+subtree?
+
+regards,
+dan carpenter
