@@ -1,145 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757685AbeD0JOf (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 05:14:35 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:64458 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751557AbeD0JOc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 05:14:32 -0400
-X-UUID: 4492efed9df9431ba4bb76e7778f9e04-20180427
-Message-ID: <1524820468.12322.205.camel@mtkswgap22>
-Subject: Re: [PATCH v1 6/7] Bluetooth: hci_mediatek: Add protocol support
- for MediaTek serial devices
-From: Sean Wang <sean.wang@mediatek.com>
-To: Marcel Holtmann <marcel@holtmann.org>
-CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        BlueZ development <linux-bluetooth@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Date: Fri, 27 Apr 2018 17:14:28 +0800
-In-Reply-To: <BBFEF77F-BE5D-4092-BB2B-8844C10CC34E@holtmann.org>
-References: <cover.1522736996.git.sean.wang@mediatek.com>
-         <f0e0a0b7f1dc3845dc6eafb4ccd60284d1675f8d.1522736996.git.sean.wang@mediatek.com>
-         <A7391E5D-2945-415B-8AB1-8DFBF2E65878@holtmann.org>
-         <1524728068.12322.125.camel@mtkswgap22>
-         <0DB4E6C1-28AD-41B7-8623-10046809A686@holtmann.org>
-         <1524802381.12322.164.camel@mtkswgap22>
-         <BBFEF77F-BE5D-4092-BB2B-8844C10CC34E@holtmann.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 8bit
+        id S1757602AbeD0JSK (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 05:18:10 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:41303 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1757361AbeD0JSH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 05:18:07 -0400
+Subject: Re: [RFC PATCH 1/2] ACPI / PNP: Don't add "enumeration_by_parent"
+ devices
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+References: <1524218846-169934-1-git-send-email-john.garry@huawei.com>
+ <1524218846-169934-2-git-send-email-john.garry@huawei.com>
+ <20180420130727.GV2173@lahna.fi.intel.com>
+ <27c3f84e-4d53-4b6b-7382-04908082ed01@huawei.com>
+ <20180420135222.GY2173@lahna.fi.intel.com>
+ <75eae3ac-228f-d6a4-bb0e-4bd27e35c55d@huawei.com>
+ <09e3aa95-86ae-ca30-7bb5-a9704d296b43@huawei.com>
+ <20180426140808.GK2173@lahna.fi.intel.com>
+ <15443a87-2622-01ee-f7f2-426a51ca0f11@huawei.com>
+CC: <andriy.shevchenko@linux.intel.com>, <rjw@rjwysocki.net>,
+        <linux-acpi@vger.kernel.org>, <lenb@kernel.org>,
+        <lorenzo.pieralisi@arm.com>, <linux-kernel@vger.kernel.org>,
+        <arnd@arndb.de>, <graeme.gregory@linaro.org>, <helgaas@kernel.org>,
+        <linuxarm@huawei.com>, <z.liuxinliang@hisilicon.com>,
+        "Liguozhu (Kenneth)" <liguozhu@hisilicon.com>, <lee.jones@linaro.org>
+From: John Garry <john.garry@huawei.com>
+Message-ID: <44e047a2-93e1-9eff-45b8-d538a7ae9092@huawei.com>
+Date: Fri, 27 Apr 2018 10:17:45 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-X-MTK: N
+In-Reply-To: <15443a87-2622-01ee-f7f2-426a51ca0f11@huawei.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.227.238]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-04-27 at 07:25 +0200, Marcel Holtmann wrote:
-> Hi Sean,
-> 
-> >>>>> This adds a driver for the MediaTek serial protocol based on H4 protocol,
-> >>>>> which can enable the built-in Bluetooth device inside MT7622 SoC.
-> >>>>> 
-> >>>>> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> >>>>> ---
-> > 
+On 26/04/2018 15:23, John Garry wrote:
 
- [... snip ...]
++
 
-> > 
-> > where could I find the newest btuart.c (which seems cannot be found in
-> > 4.17 rc2)? It seems a time to rewrite the driver based on btuart.c
-> 
-> It is not merged yet. I posted RFC patches to the mailing list.
-> 
+> On 26/04/2018 15:08, Mika Westerberg wrote:
+>> On Thu, Apr 26, 2018 at 02:49:49PM +0100, John Garry wrote:
+>>> diff --git a/drivers/bus/hisi_lpc.c b/drivers/bus/hisi_lpc.c
+>>> index 2d4611e..b04425b 100644
+>>> --- a/drivers/bus/hisi_lpc.c
+>>> +++ b/drivers/bus/hisi_lpc.c
+>>> @@ -18,6 +18,8 @@
+>>>  #include <linux/of_platform.h>
+>>>  #include <linux/pci.h>
+>>>  #include <linux/slab.h>
+>>> +#include <linux/serial_8250.h>
+>>> +#include "../tty/serial/8250/8250.h"
+>>>
+>>>  #define DRV_NAME "hisi-lpc"
+>>>
+>>> @@ -345,6 +347,7 @@ static void hisi_lpc_comm_outs(void *hostdata,
+>>> unsigned
+>>> long pio,
+>>>  #define MFD_CHILD_NAME_LEN (ACPI_ID_LEN +
+>>> sizeof(MFD_CHILD_NAME_PREFIX) -
+>>> 1)
+>>>
+>>>  struct hisi_lpc_mfd_cell {
+>>> +    struct plat_serial8250_port serial8250_port;
+>>>      struct mfd_cell_acpi_match acpi_match;
+>>>      char name[MFD_CHILD_NAME_LEN];
+>>>      char pnpid[ACPI_ID_LEN];
+>>> @@ -513,10 +516,31 @@ static int hisi_lpc_acpi_probe(struct device
+>>> *hostdev)
+>>>          dev_warn(&child->dev, "set resource fail (%d)\n", ret);
+>>>              return ret;
+>>>          }
+>>> +    if (!strcmp(acpi_device_hid(child), "HISI1031")) {
+>>
+>
+> Hi Mika,
+>
+>> Hmm, there is a way in struct mfd_cell to match child devices using _HID
+>> so is there something preventing you from using that?
+>
+> Not that I know about. Can you describe this method? I guess I also
+> don't need to set the mfd_cell pnpid either for this special case device.
+>
 
-got it.
+So we using the mfd_cell to match child devices using _HID. At a glance, 
+I don't actually see other drivers to use mfd_cell_acpi_match.pnpid .
 
-> > 
-> > the Bluetooth device can't survive in a power/down cycle and
-> > 
-> > * power on should be including
-> >  - enable clk and power domain
-> >  - download firmware through specific ACL command
-> >  - send specific commands to configure bluetooth (Required to note that
-> > the steps should be after downloading firmware because the behavior for
-> > the command might be changed by the firmware)
-> 
-> Then this sounds like you need a quirk that runs setup() after every open() and not just after the first open(). You would be the first hardware that looses their firmware, but that is fine, I almost expect that at some point someone comes along and requires this. So just create a new HCI_QUIRK_NON_PERSISTENT_SETUP.
-> 
+Anyway we don't use static tables as we need to update the resources of 
+the cell dynamically. However I do look at a driver like 
+intel_quark_i2c_gpio.c, and this dynamically modifies the value of 
+global mfd_cell array here:
+https://elixir.bootlin.com/linux/latest/source/drivers/mfd/intel_quark_i2c_gpio.c#L266
 
-Yes, it should be good to have an option HCI_QUIRK_NON_PERSISTENT_SETUP
-to allow us to run setup() for every open(). 
+I know the cell array is only used at probe time, but this did not look 
+to be good standard practice to me.
 
-When users are feeling unexpected thing happening on its device, they
-always have a habit trying to restart device from UI.
+Thanks,
+John
 
-If close() -> open() can completely power reset a bluetooth device and
-then it can recover from any fatal error to the initial state as at
-boot. It's good for these problems specially hard to be reproduced and
-required to reboot the whole machine to save.
-
-However, it would take a little longer time on open() since it takes
-extra time to make firmware download and reconfiguration.
-
-> > * power off should be including
-> >  - send specific commands, such as to disable bluetooth
-> 
-> So try to put these in shutdown()
-> 
-
-got it.
-
-> >  - disable power domain and clk
-> 
-> And do this in close().
-> 
-
-got it.
-
-
-> > 
-> >>> 
-> >>>>> +
-> >>>>> +	return err;
-
-
-[ ... snip ....]
-
->       .open           = mtk_open,
-> >> 
-> 
-> Go with a brand new btmtkuart.c driver. I really sounds you don’t want the hci_ldisc.c framework in your way. You want direct control over the core callbacks.
-> 
-
-1)
-
-In fact. the device is working via a internal serial bus, rather than
-via uart for mt7622. so could i call it btmtkserial.c ?
-
-Becasue mediatek indeed also have bluetooth over uart, if i called it
-btmtkserialc, the same code logic I think can be fit to all other
-devices using either uart or internal serial bus.
-
-2)
-
-Yes, i don't want hci_ldisc. so far i thought serdev version is enough,
-and i preferred that bluetotoh device don't depend on any utility on
-user space to launch.
-
-
-3) 
-
-last question
-
-if i have bluetooth over usb, the usb version bluetooth can reuse
-btmtkserial.c code?
-
-
-> Regards
-> 
-> Marcel
-> 
+> Thanks,
+> John
+>
+>
+>>
+>> .
+>>
+>
