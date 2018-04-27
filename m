@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1759322AbeD0VA4 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 17:00:56 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58474 "EHLO mx1.redhat.com"
+        id S1759363AbeD0VBg (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 17:01:36 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60700 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1759081AbeD0VAw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 17:00:52 -0400
+        id S1759303AbeD0VAz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 17:00:55 -0400
 From: Waiman Long <longman@redhat.com>
 To: "Luis R. Rodriguez" <mcgrof@kernel.org>,
         Kees Cook <keescook@chromium.org>,
@@ -16,286 +16,188 @@ Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Matthew Wilcox <willy@infradead.org>,
         "Eric W. Biederman" <ebiederm@xmission.com>,
         Waiman Long <longman@redhat.com>
-Subject: [PATCH v6 1/8] sysctl: Add flags to support min/max range clamping
-Date: Fri, 27 Apr 2018 17:00:31 -0400
-Message-Id: <1524862838-8247-2-git-send-email-longman@redhat.com>
+Subject: [PATCH v6 7/8] ipc: Allow boot time extension of IPCMNI from 32k to 2M
+Date: Fri, 27 Apr 2018 17:00:37 -0400
+Message-Id: <1524862838-8247-8-git-send-email-longman@redhat.com>
 In-Reply-To: <1524862838-8247-1-git-send-email-longman@redhat.com>
 References: <1524862838-8247-1-git-send-email-longman@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When minimum/maximum values are specified for a sysctl parameter in
-the ctl_table structure with proc_dointvec_minmax() handler, update
-to that parameter will fail with error if the given value is outside
-of the required range.
+The maximum number of unique System V IPC identifiers was limited to
+32k.  That limit should be big enough for most use cases.
 
-There are use cases where it may be better to clamp the value of
-the sysctl parameter to the given range without failing the update,
-especially if the users are not aware of the actual range limits.
-Reading the value back after the update will now be a good practice
-to see if the provided value exceeds the range limits.
+However, there are some users out there requesting for more. To satisfy
+the need of those users, a new boot time kernel option "ipcmni_extend"
+is added to extend the IPCMNI value to 2M. This is a 64X increase which
+hopefully is big enough for them.
 
-To provide this less restrictive form of range checking, a new flags
-field is added to the ctl_table structure. The new field is a 16-bit
-value that just fits into the hole left by the 16-bit umode_t field
-without increasing the size of the structure.
-
-When either the CTL_FLAGS_CLAMP_SIGNED_RANGE or the
-CTL_FLAGS_CLAMP_UNSIGNED_RANGE flag is set in the ctl_table entry, any
-update from the userspace will be clamped to the given range without
-error if either the proc_dointvec_minmax() or the proc_douintvec_minmax()
-handlers is used respectively.
-
-In the case of proc_doulongvec_minmax(), the out-of-range input value
-is either ignored or clamped if the CTL_FLAGS_CLAMP_UNSIGNED_RANGE flag
-is set.
-
-The clamped value is either the maximum or minimum value that is
-closest to the input value provided by the user.
-
-This patch, by itself, does not require the use of separate signed
-and unsigned flags.  However, the use of separate flags allows us to
-perform more comprehensive checking in a later patch.
-
-Extra braces are also used in this patch to make a latter patch easier
-to read.
+This new option does have the side effect of reducing the maximum
+number of unique sequence numbers from 64k down to 1k. So it is
+a trade-off.
 
 Signed-off-by: Waiman Long <longman@redhat.com>
 ---
- include/linux/sysctl.h | 32 ++++++++++++++++++++++
- kernel/sysctl.c        | 74 ++++++++++++++++++++++++++++++++++++++++++--------
- 2 files changed, 94 insertions(+), 12 deletions(-)
+ Documentation/admin-guide/kernel-parameters.txt |  3 +++
+ ipc/ipc_sysctl.c                                | 12 +++++++++-
+ ipc/util.c                                      | 12 +++++-----
+ ipc/util.h                                      | 30 ++++++++++++++++++-------
+ 4 files changed, 42 insertions(+), 15 deletions(-)
 
-diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
-index b769ecf..3a628cf 100644
---- a/include/linux/sysctl.h
-+++ b/include/linux/sysctl.h
-@@ -116,6 +116,7 @@ struct ctl_table
- 	void *data;
- 	int maxlen;
- 	umode_t mode;
-+	uint16_t flags;
- 	struct ctl_table *child;	/* Deprecated */
- 	proc_handler *proc_handler;	/* Callback for text formatting */
- 	struct ctl_table_poll *poll;
-@@ -123,6 +124,37 @@ struct ctl_table
- 	void *extra2;
- } __randomize_layout;
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 11fc28e..00bc0cb 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -1735,6 +1735,9 @@
+ 	ip=		[IP_PNP]
+ 			See Documentation/filesystems/nfs/nfsroot.txt.
  
-+/**
-+ * enum ctl_table_flags - flags for the ctl table (struct ctl_table.flags)
-+ *
-+ * @CTL_FLAGS_CLAMP_SIGNED_RANGE: Set to indicate that the entry holds a
-+ *	signed value and should be flexibly clamped to the provided
-+ *	min/max signed value in case the user provided a value outside
-+ *	of the given range.  The clamped value is either the provided
-+ *	minimum or maximum value that is closest to the input value.
-+ *	No lower bound or upper bound checking will be done if the
-+ *	corresponding minimum or maximum value isn't provided.
-+ *
-+ * @CTL_FLAGS_CLAMP_UNSIGNED_RANGE: Set to indicate that the entry holds
-+ *	an unsigned value and should be flexibly clamped to the provided
-+ *	min/max unsigned value in case the user provided a value outside
-+ *	of the given range.  The clamped value is either the provided
-+ *	minimum or maximum value that is closest to the input value.
-+ *	No lower bound or upper bound checking will be done if the
-+ *	corresponding minimum or maximum value isn't provided.
-+ *
-+ * At most 16 different flags are currently allowed.
++	ipcmni_extend	[KNL] Extend the maximum number of unique System V
++			IPC identifiers from 32768 to 2097152.
++
+ 	irqaffinity=	[SMP] Set the default irq affinity mask
+ 			The argument is a cpu list, as described above.
+ 
+diff --git a/ipc/ipc_sysctl.c b/ipc/ipc_sysctl.c
+index 478e634..4e2cb6d 100644
+--- a/ipc/ipc_sysctl.c
++++ b/ipc/ipc_sysctl.c
+@@ -109,7 +109,8 @@ static int proc_ipc_sem_dointvec(struct ctl_table *table, int write,
+ static int zero;
+ static int one = 1;
+ static int int_max = INT_MAX;
+-static int ipc_mni = IPCMNI;
++int ipc_mni __read_mostly = IPCMNI;
++int ipc_mni_shift __read_mostly = IPCMNI_SHIFT;
+ 
+ static struct ctl_table ipc_kern_table[] = {
+ 	{
+@@ -237,3 +238,12 @@ static int __init ipc_sysctl_init(void)
+ }
+ 
+ device_initcall(ipc_sysctl_init);
++
++static int __init ipc_mni_extend(char *str)
++{
++	ipc_mni = IPCMNI_EXTEND;
++	ipc_mni_shift = IPCMNI_EXTEND_SHIFT;
++	pr_info("IPCMNI extended to %d.\n", ipc_mni);
++	return 0;
++}
++early_param("ipcmni_extend", ipc_mni_extend);
+diff --git a/ipc/util.c b/ipc/util.c
+index 4e81182..782a8d0 100644
+--- a/ipc/util.c
++++ b/ipc/util.c
+@@ -113,7 +113,7 @@ static int __init ipc_init(void)
+  * @ids: ipc identifier set
+  *
+  * Set up the sequence range to use for the ipc identifier range (limited
+- * below IPCMNI) then initialise the keys hashtable and ids idr.
++ * below ipc_mni) then initialise the keys hashtable and ids idr.
+  */
+ int ipc_init_ids(struct ipc_ids *ids)
+ {
+@@ -214,7 +214,7 @@ static inline int ipc_buildid(int id, struct ipc_ids *ids,
+ 		ids->next_id = -1;
+ 	}
+ 
+-	return SEQ_MULTIPLIER * new->seq + id;
++	return (new->seq << SEQ_SHIFT) + id;
+ }
+ 
+ #else
+@@ -228,7 +228,7 @@ static inline int ipc_buildid(int id, struct ipc_ids *ids,
+ 	if (ids->seq > IPCID_SEQ_MAX)
+ 		ids->seq = 0;
+ 
+-	return SEQ_MULTIPLIER * new->seq + id;
++	return (new->seq << SEQ_SHIFT) + id;
+ }
+ 
+ #endif /* CONFIG_CHECKPOINT_RESTORE */
+@@ -252,8 +252,8 @@ int ipc_addid(struct ipc_ids *ids, struct kern_ipc_perm *new, int limit)
+ 	kgid_t egid;
+ 	int id, err;
+ 
+-	if (limit > IPCMNI)
+-		limit = IPCMNI;
++	if (limit > ipc_mni)
++		limit = ipc_mni;
+ 
+ 	if (!ids->tables_initialized || ids->in_use >= limit)
+ 		return -ENOSPC;
+@@ -777,7 +777,7 @@ static struct kern_ipc_perm *sysvipc_find_ipc(struct ipc_ids *ids, loff_t pos,
+ 	if (total >= ids->in_use)
+ 		return NULL;
+ 
+-	for (; pos < IPCMNI; pos++) {
++	for (; pos < ipc_mni; pos++) {
+ 		ipc = idr_find(&ids->ipcs_idr, pos);
+ 		if (ipc != NULL) {
+ 			*new_pos = pos + 1;
+diff --git a/ipc/util.h b/ipc/util.h
+index 7c20871..e4d14b6 100644
+--- a/ipc/util.h
++++ b/ipc/util.h
+@@ -15,8 +15,22 @@
+ #include <linux/err.h>
+ #include <linux/ipc_namespace.h>
+ 
+-#define IPCMNI 32768  /* <= MAX_INT limit for ipc arrays (including sysctl changes) */
+-#define SEQ_MULTIPLIER	(IPCMNI)
++/*
++ * By default, the ipc arrays can have up to 32k (15 bits) entries.
++ * When IPCMNI extension mode is turned on, the ipc arrays can have up
++ * to 2M (21 bits) entries. However, the space for sequence number will
++ * be shrunk from 16 bits to 10 bits.
 + */
-+enum ctl_table_flags {
-+	CTL_FLAGS_CLAMP_SIGNED_RANGE	= BIT(0),
-+	CTL_FLAGS_CLAMP_UNSIGNED_RANGE	= BIT(1),
-+	__CTL_FLAGS_MAX			= BIT(2),
-+};
++#define IPCMNI_SHIFT		15
++#define IPCMNI_EXTEND_SHIFT	21
++#define IPCMNI			(1 << IPCMNI_SHIFT)
++#define IPCMNI_EXTEND		(1 << IPCMNI_EXTEND_SHIFT)
 +
-+#define CTL_FLAGS_CLAMP_RANGE	(CTL_FLAGS_CLAMP_SIGNED_RANGE|\
-+				 CTL_FLAGS_CLAMP_UNSIGNED_RANGE)
-+#define CTL_TABLE_FLAGS_ALL	(__CTL_FLAGS_MAX - 1)
++extern int ipc_mni;
++extern int ipc_mni_shift;
 +
- struct ctl_node {
- 	struct rb_node node;
- 	struct ctl_table_header *header;
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 6a78cf7..5b84c1d 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -2515,6 +2515,7 @@ static int proc_dointvec_minmax_sysadmin(struct ctl_table *table, int write,
-  * struct do_proc_dointvec_minmax_conv_param - proc_dointvec_minmax() range checking structure
-  * @min: pointer to minimum allowable value
-  * @max: pointer to maximum allowable value
-+ * @flags: pointer to flags
-  *
-  * The do_proc_dointvec_minmax_conv_param structure provides the
-  * minimum and maximum values for doing range checking for those sysctl
-@@ -2523,6 +2524,7 @@ static int proc_dointvec_minmax_sysadmin(struct ctl_table *table, int write,
- struct do_proc_dointvec_minmax_conv_param {
- 	int *min;
- 	int *max;
-+	uint16_t *flags;
- };
++#define SEQ_SHIFT	ipc_mni_shift
++#define SEQ_MASK	((1 << ipc_mni_shift) - 1)
  
- static int do_proc_dointvec_minmax_conv(bool *negp, unsigned long *lvalp,
-@@ -2532,9 +2534,23 @@ static int do_proc_dointvec_minmax_conv(bool *negp, unsigned long *lvalp,
- 	struct do_proc_dointvec_minmax_conv_param *param = data;
- 	if (write) {
- 		int val = *negp ? -*lvalp : *lvalp;
--		if ((param->min && *param->min > val) ||
--		    (param->max && *param->max < val))
--			return -EINVAL;
-+		bool clamp = param->flags &&
-+			   (*param->flags & CTL_FLAGS_CLAMP_SIGNED_RANGE);
-+
-+		if (param->min && *param->min > val) {
-+			if (clamp) {
-+				val = *param->min;
-+			} else {
-+				return -EINVAL;
-+			}
-+		}
-+		if (param->max && *param->max < val) {
-+			if (clamp) {
-+				val = *param->max;
-+			} else {
-+				return -EINVAL;
-+			}
-+		}
- 		*valp = val;
- 	} else {
- 		int val = *valp;
-@@ -2563,7 +2579,8 @@ static int do_proc_dointvec_minmax_conv(bool *negp, unsigned long *lvalp,
-  * This routine will ensure the values are within the range specified by
-  * table->extra1 (min) and table->extra2 (max).
-  *
-- * Returns 0 on success or -EINVAL on write when the range check fails.
-+ * Returns 0 on success or -EINVAL on write when the range check fails
-+ * without the CTL_FLAGS_CLAMP_SIGNED_RANGE flag.
-  */
- int proc_dointvec_minmax(struct ctl_table *table, int write,
- 		  void __user *buffer, size_t *lenp, loff_t *ppos)
-@@ -2571,6 +2588,7 @@ int proc_dointvec_minmax(struct ctl_table *table, int write,
- 	struct do_proc_dointvec_minmax_conv_param param = {
- 		.min = (int *) table->extra1,
- 		.max = (int *) table->extra2,
-+		.flags = &table->flags,
- 	};
- 	return do_proc_dointvec(table, write, buffer, lenp, ppos,
- 				do_proc_dointvec_minmax_conv, &param);
-@@ -2580,6 +2598,7 @@ int proc_dointvec_minmax(struct ctl_table *table, int write,
-  * struct do_proc_douintvec_minmax_conv_param - proc_douintvec_minmax() range checking structure
-  * @min: pointer to minimum allowable value
-  * @max: pointer to maximum allowable value
-+ * @flags: pointer to flags
-  *
-  * The do_proc_douintvec_minmax_conv_param structure provides the
-  * minimum and maximum values for doing range checking for those sysctl
-@@ -2588,6 +2607,7 @@ int proc_dointvec_minmax(struct ctl_table *table, int write,
- struct do_proc_douintvec_minmax_conv_param {
- 	unsigned int *min;
- 	unsigned int *max;
-+	uint16_t *flags;
- };
+ int sem_init(void);
+ int msg_init(void);
+@@ -96,9 +110,9 @@ void __init ipc_init_proc_interface(const char *path, const char *header,
+ #define IPC_MSG_IDS	1
+ #define IPC_SHM_IDS	2
  
- static int do_proc_douintvec_minmax_conv(unsigned long *lvalp,
-@@ -2598,14 +2618,26 @@ static int do_proc_douintvec_minmax_conv(unsigned long *lvalp,
+-#define ipcid_to_idx(id) ((id) % SEQ_MULTIPLIER)
+-#define ipcid_to_seqx(id) ((id) / SEQ_MULTIPLIER)
+-#define IPCID_SEQ_MAX min_t(int, INT_MAX/SEQ_MULTIPLIER, USHRT_MAX)
++#define ipcid_to_idx(id)  ((id) & SEQ_MASK)
++#define ipcid_to_seqx(id) ((id) >> SEQ_SHIFT)
++#define IPCID_SEQ_MAX	  (INT_MAX >> SEQ_SHIFT)
  
- 	if (write) {
- 		unsigned int val = *lvalp;
-+		bool clamp = param->flags &&
-+			   (*param->flags & CTL_FLAGS_CLAMP_UNSIGNED_RANGE);
+ /* must be called with ids->rwsem acquired for writing */
+ int ipc_addid(struct ipc_ids *, struct kern_ipc_perm *, int);
+@@ -123,8 +137,8 @@ static inline int ipc_get_maxid(struct ipc_ids *ids)
+ 	if (ids->in_use == 0)
+ 		return -1;
  
- 		if (*lvalp > UINT_MAX)
- 			return -EINVAL;
+-	if (ids->in_use == IPCMNI)
+-		return IPCMNI - 1;
++	if (ids->in_use == ipc_mni)
++		return ipc_mni - 1;
  
--		if ((param->min && *param->min > val) ||
--		    (param->max && *param->max < val))
--			return -ERANGE;
--
-+		if (param->min && *param->min > val) {
-+			if (clamp) {
-+				val = *param->min;
-+			} else {
-+				return -ERANGE;
-+			}
-+		}
-+		if (param->max && *param->max < val) {
-+			if (clamp) {
-+				val = *param->max;
-+			} else {
-+				return -ERANGE;
-+			}
-+		}
- 		*valp = val;
- 	} else {
- 		unsigned int val = *valp;
-@@ -2632,7 +2664,8 @@ static int do_proc_douintvec_minmax_conv(unsigned long *lvalp,
-  * check for UINT_MAX to avoid having to support wrap around uses from
-  * userspace.
-  *
-- * Returns 0 on success or -ERANGE on write when the range check fails.
-+ * Returns 0 on success or -ERANGE on write when the range check fails
-+ * without the CTL_FLAGS_CLAMP_UNSIGNED_RANGE flag.
-  */
- int proc_douintvec_minmax(struct ctl_table *table, int write,
- 			  void __user *buffer, size_t *lenp, loff_t *ppos)
-@@ -2640,6 +2673,7 @@ int proc_douintvec_minmax(struct ctl_table *table, int write,
- 	struct do_proc_douintvec_minmax_conv_param param = {
- 		.min = (unsigned int *) table->extra1,
- 		.max = (unsigned int *) table->extra2,
-+		.flags = &table->flags,
- 	};
- 	return do_proc_douintvec(table, write, buffer, lenp, ppos,
- 				 do_proc_douintvec_minmax_conv, &param);
-@@ -2716,6 +2750,7 @@ static int __do_proc_doulongvec_minmax(void *data, struct ctl_table *table, int
- 	int vleft, first = 1, err = 0;
- 	size_t left;
- 	char *kbuf = NULL, *p;
-+	uint16_t flags;
+ 	return ids->max_id;
+ }
+@@ -175,7 +189,7 @@ static inline void ipc_update_pid(struct pid **pos, struct pid *pid)
  
- 	if (!data || !table->maxlen || !*lenp || (*ppos && !write)) {
- 		*lenp = 0;
-@@ -2725,6 +2760,7 @@ static int __do_proc_doulongvec_minmax(void *data, struct ctl_table *table, int
- 	i = (unsigned long *) data;
- 	min = (unsigned long *) table->extra1;
- 	max = (unsigned long *) table->extra2;
-+	flags = table->flags;
- 	vleft = table->maxlen / sizeof(unsigned long);
- 	left = *lenp;
+ static inline int ipc_checkid(struct kern_ipc_perm *ipcp, int uid)
+ {
+-	return uid / SEQ_MULTIPLIER != ipcp->seq;
++	return (uid >> SEQ_SHIFT) != ipcp->seq;
+ }
  
-@@ -2755,8 +2791,20 @@ static int __do_proc_doulongvec_minmax(void *data, struct ctl_table *table, int
- 			if (neg)
- 				continue;
- 			val = convmul * val / convdiv;
--			if ((min && val < *min) || (max && val > *max))
--				continue;
-+			if (min && val < *min) {
-+				if (flags & CTL_FLAGS_CLAMP_UNSIGNED_RANGE) {
-+					val = *min;
-+				} else {
-+					continue;
-+				}
-+			}
-+			if (max && val > *max) {
-+				if (flags & CTL_FLAGS_CLAMP_UNSIGNED_RANGE) {
-+					val = *max;
-+				} else {
-+					continue;
-+				}
-+			}
- 			*i = val;
- 		} else {
- 			val = convdiv * (*i) / convmul;
-@@ -2808,7 +2856,9 @@ static int do_proc_doulongvec_minmax(struct ctl_table *table, int write,
-  * values from/to the user buffer, treated as an ASCII string.
-  *
-  * This routine will ensure the values are within the range specified by
-- * table->extra1 (min) and table->extra2 (max).
-+ * table->extra1 (min) and table->extra2 (max).  Values outside the range
-+ * will be ignored or clamped to the given range if the
-+ * CTL_FLAGS_CLAMP_UNSIGNED_RANGE flag is specified.
-  *
-  * Returns 0 on success.
-  */
+ static inline void ipc_lock_object(struct kern_ipc_perm *perm)
 -- 
 1.8.3.1
