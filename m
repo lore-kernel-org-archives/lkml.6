@@ -1,88 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758305AbeD0NAQ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 09:00:16 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:15105 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1758290AbeD0NAO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 09:00:14 -0400
-From: Philippe CORNU <philippe.cornu@st.com>
-To: Yannick FERTRE <yannick.fertre@st.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Vincent ABRIOU <vincent.abriou@st.com>,
-        "David Airlie" <airlied@linux.ie>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Alexandre TORGUE <alexandre.torgue@st.com>
-Subject: Re: [PATCH] drm/stm: ltdc: fix warnings in ltdc_plane_create()
-Thread-Topic: [PATCH] drm/stm: ltdc: fix warnings in ltdc_plane_create()
-Thread-Index: AQHT1+JFaeZhbelLh0aN3VDy/9r5FqQQ+JMAgAOFcYA=
-Date: Fri, 27 Apr 2018 13:00:04 +0000
-Message-ID: <a45a726c-495e-8783-0bd8-495fbc996957@st.com>
-References: <20180419132804.8317-1-philippe.cornu@st.com>
- <1dd09038-3d92-ffd3-bc6e-660f363190d4@st.com>
-In-Reply-To: <1dd09038-3d92-ffd3-bc6e-660f363190d4@st.com>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.44]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <95CC48389A09414BB9F92E30EB7BBD30@st.com>
-MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-27_03:,,
- signatures=0
+        id S1758337AbeD0NAj (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 09:00:39 -0400
+Received: from mout.perfora.net ([74.208.4.196]:35085 "EHLO mout.perfora.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1758319AbeD0NAh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 09:00:37 -0400
+Message-ID: <1524834018.6979.13.camel@ziswiler.com>
+Subject: Re: [PATCH v1 1/4] clk: tegra20: Add DEV1/DEV2 OSC dividers
+From: Marcel Ziswiler <marcel@ziswiler.com>
+To: Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Marc Dietrich <marvin24@gmx.de>
+Cc: linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Fri, 27 Apr 2018 15:00:18 +0200
+In-Reply-To: <a8fc30b9-42ce-b29a-abc6-2867ebf4a9ac@gmail.com>
+References: <20180426235818.10018-1-digetx@gmail.com>
+         <20180426235818.10018-2-digetx@gmail.com>
+         <1524832404.6979.9.camel@ziswiler.com>
+         <a8fc30b9-42ce-b29a-abc6-2867ebf4a9ac@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:iSN0AVMYOyPBdmu2FOw6rArF5oR0y0fBqkooqC14KgBsXCZdXV8
+ D+WnlI0tLTEpUSRVHZa7MYkD+PvVxLZKtTdALIGbWE05dWBerQ4H7D73ng+M5+gV6AFFQDa
+ wedfGN9y0IPnwEal6l2DJfegsBsUGpkNW0atqVW28p9FNH0VyhBNT5QDik1iAxVYyVb7IpO
+ MdafAyHDquVzTlqB+sBaQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:BJO0lyfDcg0=:wQamaItjY3iFAMXvInCism
+ laU74IH9DWjwZR2V9D/pIcFAe5Nb0AFcYBulUfdyz+uSZan5Wut67JRRBo03R/DuPbIx0YvEB
+ QkO5JPplU4XQn0phLsSFRXX9bOXBYR6s+35M41Q94DRdbDht5+kBPgi8cqU7obOvtf7vACnjR
+ 0bV4lRlTIdGcAfLNgvQ5ZJyMfUwhbY4d8DCIpl0tG3kXgNRCPWcsn588ZEUiCwZc68a5/R0oJ
+ tNQ6U+UuJfliyPNVxMA6Vzx2Di6SG1Txqi7M9bYOYavj8RQX4L+H4jEx2elqixn05EmcXFuFp
+ 9v+0FRcFZxMz3sg+rdFCntfoUi3lXYfQoYfOfYFxSGp0QaKf6Pun1B62PlXCaMgg/i/m7cBap
+ Gy9pyvNM6tU16Q+fGr0fFwngIcqbxexoW4t3GU5FQ1m38cp4VQSPpncDSB9gBlmy7AHa6lWEm
+ mDf6i9mVVda7lprppEAACXdHayGcFqY2UlGqEoPHAC/y4ahkUoDTt/ZTRWNSzbORyrDPP1XCv
+ bIpifSNei56xX1AWLBdkVPru7qDk7vkIlfstS0UJueLRrk/PFrC4l+oK0K86+/SMRoUaCoMoB
+ Fn6QPrdz0eV44S7K196SOf1J0iO0dpn44q5ILKt1+qUuYh6yykpPW1CaNBxI/E/S1dHaaHtHy
+ 7RE+6eZHc7MGEMHPsDqM/D+zW+r7v7Ws5PAyrQ+Nax7cK2CZpPAFSBhdYrKPpem2D4VukyEfP
+ OsmDZhIOkUZ/yMdF
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3RD0MOM015391
 
-
-
-On 04/25/2018 09:13 AM, Yannick FERTRE wrote:
-> Hi Philippe,
+On Fri, 2018-04-27 at 15:54 +0300, Dmitry Osipenko wrote:
+> Hi Marcel,
 > 
-> Reviewed-by: Yannick Fertré <yannick.fertre@st.com>
+> On 27.04.2018 15:33,  Ziswiler wrote:
+> > Hi Dmitry
+> > 
+> > Isn't the CLK_RST_CONTROLLER_MISC_CLK_ENB_0 the other way around
+> > e.g.
+> > DEV1_OSC_DIV_SEL at bit 23:22 and DEV2_OSC_DIV_SEL at 21:20?
+> > 
+> > On Fri, 2018-04-27 at 02:58 +0300, Dmitry Osipenko wrote:
+> > > CDEV1/CDEV2 clocks could have corresponding oscillator clock
+> > > divider
+> > > as
+> > > a parent. Add these dividers in order to be able to provide that
+> > > parent
+> > > option.
+> > > 
+> > > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> > > ---
+> > >  drivers/clk/tegra/clk-tegra20.c | 12 ++++++++++++
+> > >  1 file changed, 12 insertions(+)
+> > > 
+> > > diff --git a/drivers/clk/tegra/clk-tegra20.c
+> > > b/drivers/clk/tegra/clk-
+> > > tegra20.c
+> > > index 0ee56dd04cec..16cf4108f2ff 100644
+> > > --- a/drivers/clk/tegra/clk-tegra20.c
+> > > +++ b/drivers/clk/tegra/clk-tegra20.c
+> > > @@ -26,6 +26,8 @@
+> > >  #include "clk.h"
+> > >  #include "clk-id.h"
+> > >  
+> > > +#define MISC_CLK_ENB 0x48
+> > > +
+> > >  #define OSC_CTRL 0x50
+> > >  #define OSC_CTRL_OSC_FREQ_MASK (3<<30)
+> > >  #define OSC_CTRL_OSC_FREQ_13MHZ (0<<30)
+> > > @@ -831,6 +833,16 @@ static void __init
+> > > tegra20_periph_clk_init(void)
+> > >  				    periph_clk_enb_refcnt);
+> > >  	clks[TEGRA20_CLK_PEX] = clk;
+> > >  
+> > > +	/* cdev1 OSC divider */
+> > > +	clk_register_divider(NULL, "cdev1_osc_div", "clk_m",
+> > > +			     0, clk_base + MISC_CLK_ENB, 20, 2,
+> > 
+> > So it would be:
+> > 
+> > +			     0, clk_base + MISC_CLK_ENB, 22, 2,
+> > 
+> > > +			     CLK_DIVIDER_POWER_OF_TWO, NULL);
+> > > +
+> > > +	/* cdev2 OSC divider */
+> > > +	clk_register_divider(NULL, "cdev2_osc_div", "clk_m",
+> > > +			     0, clk_base + MISC_CLK_ENB, 22, 2,
+> > 
+> > And:
+> > 
+> > +			     0, clk_base + MISC_CLK_ENB, 20, 2,
+> > 
+> > > +			     CLK_DIVIDER_POWER_OF_TWO, NULL);
+> > > +
+> > >  	/* cdev1 */
+> > >  	clk = clk_register_fixed_rate(NULL, "cdev1_fixed", NULL,
+> > > 0,
+> > > 26000000);
+> > >  	clk = tegra_clk_register_periph_gate("cdev1",
+> > > "cdev1_fixed",
+> > > 0,
 > 
+> Indeed, good catch! I'll wait for more comments and then re-spin
+> patchset with
+> the fix. Thank you.
 
-Applied on drm-misc-next.
-Many thanks,
-Philippe :-)
+You are very welcome. Thank you!
 
-> 
-> On 04/19/2018 03:28 PM, Philippe Cornu wrote:
->> "make C=1" returns 2 warnings in ltdc_plane_create()
->> ("Using plain integer as NULL pointer"). This patch
->> fixes them.
->>
->> Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
->> ---
->>    drivers/gpu/drm/stm/ltdc.c | 4 ++--
->>    1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/stm/ltdc.c b/drivers/gpu/drm/stm/ltdc.c
->> index 616191fe98ae..d997a6014d6c 100644
->> --- a/drivers/gpu/drm/stm/ltdc.c
->> +++ b/drivers/gpu/drm/stm/ltdc.c
->> @@ -860,13 +860,13 @@ static struct drm_plane *ltdc_plane_create(struct drm_device *ddev,
->>    
->>    	plane = devm_kzalloc(dev, sizeof(*plane), GFP_KERNEL);
->>    	if (!plane)
->> -		return 0;
->> +		return NULL;
->>    
->>    	ret = drm_universal_plane_init(ddev, plane, possible_crtcs,
->>    				       &ltdc_plane_funcs, formats, nb_fmt,
->>    				       NULL, type, NULL);
->>    	if (ret < 0)
->> -		return 0;
->> +		return NULL;
->>    
->>    	drm_plane_helper_add(plane, &ltdc_plane_helper_funcs);
->>    
+Other than that it all looks proper and works fine at least in the
+configuration we use on Colibri T20. So you may add my reviewed and
+tested bys to the whole series:
+
+Reviewed-by: Marcel Ziswiler <marcel@ziswiler.com>
+Tested-by: Marcel Ziswiler <marcel@ziswiler.com>
