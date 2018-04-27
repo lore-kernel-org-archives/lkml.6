@@ -1,144 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934477AbeD0Ouv (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 10:50:51 -0400
-Received: from foss.arm.com ([217.140.101.70]:41452 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934254AbeD0Our (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 10:50:47 -0400
-From: Punit Agrawal <punit.agrawal@arm.com>
-To: Christoffer Dall <christoffer.dall@arm.com>
-Cc: marc.zyngier@arm.com, Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 4/4] KVM: arm64: Add support for PUD hugepages at stage 2
-References: <20180420145409.24485-1-punit.agrawal@arm.com>
-        <20180420145409.24485-5-punit.agrawal@arm.com>
-        <20180427111422.GK13249@C02W217FHV2R.local>
-Date: Fri, 27 Apr 2018 15:50:44 +0100
-In-Reply-To: <20180427111422.GK13249@C02W217FHV2R.local> (Christoffer Dall's
-        message of "Fri, 27 Apr 2018 13:14:22 +0200")
-Message-ID: <877eoszosb.fsf@e105922-lin.cambridge.arm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S934522AbeD0OvX (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 10:51:23 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35842 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934247AbeD0OHK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 10:07:10 -0400
+From: Eric Auger <eric.auger@redhat.com>
+To: eric.auger.pro@gmail.com, eric.auger@redhat.com,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com, cdall@kernel.org,
+        peter.maydell@linaro.org
+Cc: andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
+Subject: [PATCH v4 00/12] KVM: arm/arm64: Allow multiple GICv3 redistributor regions
+Date: Fri, 27 Apr 2018 16:06:21 +0200
+Message-Id: <1524837993-23396-1-git-send-email-eric.auger@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christoffer Dall <christoffer.dall@arm.com> writes:
+At the moment the KVM VGICv3 only supports a single redistributor
+region (whose base address is set through the GICv3 kvm device
+KVM_DEV_ARM_VGIC_GRP_ADDR/KVM_VGIC_V3_ADDR_TYPE_REDIST). There,
+all the redistributors are laid out contiguously. The size of this
+single redistributor region is not set explicitly but instead
+induced at a late stage by the number of online vcpus.
 
-> On Fri, Apr 20, 2018 at 03:54:09PM +0100, Punit Agrawal wrote:
->> KVM only supports PMD hugepages at stage 2. Extend the stage 2 fault
->> handling to add support for PUD hugepages.
->> 
->> Addition of pud hugepage support enables additional hugepage
->> sizes (e.g., 1G with 4K granule) which can be useful on cores that
->> support mapping larger block sizes in the TLB entries.
->> 
->> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
->> Cc: Christoffer Dall <christoffer.dall@arm.com>
->> Cc: Marc Zyngier <marc.zyngier@arm.com>
->> Cc: Russell King <linux@armlinux.org.uk>
->> Cc: Catalin Marinas <catalin.marinas@arm.com>
->> Cc: Will Deacon <will.deacon@arm.com>
->> ---
->>  arch/arm/include/asm/kvm_mmu.h         | 19 +++++++++
->>  arch/arm64/include/asm/kvm_mmu.h       | 15 +++++++
->>  arch/arm64/include/asm/pgtable-hwdef.h |  4 ++
->>  arch/arm64/include/asm/pgtable.h       |  2 +
->>  virt/kvm/arm/mmu.c                     | 54 ++++++++++++++++++++------
->>  5 files changed, 83 insertions(+), 11 deletions(-)
->> 
+The GIC specification does not mandate all redistributors to be
+contiguous. Moreover DT and ACPI were specified so that multiple
+redistributors regions can be defined.
 
-[...]
+The current interface brings a limitation on QEMU where ARM
+virt machine available GPA holes only allowed to assign a
+redistributor region fitting a max of 123 vcpus. Overcoming this
+limitation would force either to create a new machine or relocate
+the single rdist region or allow the allocation of multiple rdist
+regions.
 
->> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+This series enables this last alternative. A new GICv3 KVM device
+KVM_DEV_ARM_VGIC_GRP_ADDR/KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION allows
+to register individual redistributor regions whose size is defined
+explicitly. Those rdist regions then are filled by vcpu rdist frames
+according to the need. The vgic init and related base address checks
+are impacted.
 
-[...]
+Best Regards
 
->> @@ -1452,9 +1472,12 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->>  	}
->>  
->>  	vma_pagesize = vma_kernel_pagesize(vma);
->> -	if (vma_pagesize == PMD_SIZE && !logging_active) {
->> +	if ((vma_pagesize == PMD_SIZE || vma_pagesize == PUD_SIZE) &&
->> +	    !logging_active) {
->> +		struct hstate *h = hstate_vma(vma);
->> +
->>  		hugetlb = true;
->> -		gfn = (fault_ipa & PMD_MASK) >> PAGE_SHIFT;
->> +		gfn = (fault_ipa & huge_page_mask(h)) >> PAGE_SHIFT;
->>  	} else {
->>  		/*
->>  		 * Pages belonging to memslots that don't have the same
->> @@ -1521,15 +1544,8 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->>  	if (mmu_notifier_retry(kvm, mmu_seq))
->>  		goto out_unlock;
->>  
->> -	if (!hugetlb && !force_pte) {
->> -		/*
->> -		 * Only PMD_SIZE transparent hugepages(THP) are
->> -		 * currently supported. This code will need to be
->> -		 * updated if other THP sizes are supported.
->> -		 */
->> +	if (!hugetlb && !force_pte)
->>  		hugetlb = transparent_hugepage_adjust(&pfn, &fault_ipa);
->> -		vma_pagesize = PMD_SIZE;
->
-> Why this change?  Won't you end up trying to map THPs as individual
-> pages now?
+Eric
 
-Argh - that's a rebase gone awry. Thanks for spotting.
+Git: complete series available at
+https://github.com/eauger/linux/tree/v4.17-rc2-rdist-regions-v4
+Previous version:
+https://github.com/eauger/linux/tree/v4.16-rdist-regions-v3
 
-There's another issue with this hunk - hugetlb can be false after the
-call to transparent_hugepage_adjust(). I've fixed that up for the next
-update.
+History:
 
->
->> -	}
->>  
->>  	if (writable)
->>  		kvm_set_pfn_dirty(pfn);
->> @@ -1540,7 +1556,23 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->>  	if (exec_fault)
->>  		invalidate_icache_guest_page(pfn, vma_pagesize);
->>  
->> -	if (hugetlb) {
->> +	if (vma_pagesize == PUD_SIZE) {
->> +		pud_t new_pud = kvm_pfn_pud(pfn, mem_type);
->> +
->> +		new_pud = kvm_pud_mkhuge(new_pud);
->> +		if (writable)
->> +			new_pud = kvm_s2pud_mkwrite(new_pud);
->> +
->> +		if (exec_fault) {
->> +			new_pud = kvm_s2pud_mkexec(new_pud);
->> +		} else if (fault_status == FSC_PERM) {
->> +			/* Preserve execute if XN was already cleared */
->> +			if (stage2_is_exec(kvm, fault_ipa))
->> +				new_pud = kvm_s2pud_mkexec(new_pud);
->> +		}
->
-> aha, another reason for my suggestion in the other patch.
+v3 -> v4:
+- Collected Christoffer's R-b
+- reworked vgic_v3_rdist_overlap and introduced vgic_dist_overlap
+- vgic_v3_insert_redist_region cleanup
+- inverse order for patches 6 and 7
 
-Ack! Already fixed locally.
+v2 -> v3:
+- Add details to the user API documentation
+- early exit if vgic_v3_rdist_region_from_index() fails
+- return -EINVAL if legacy and new redist region API are mixed
 
->
->> +
->> +		ret = stage2_set_pud_huge(kvm, memcache, fault_ipa, &new_pud);
->> +	} else if (vma_pagesize == PMD_SIZE) {
->>  		pmd_t new_pmd = kvm_pfn_pmd(pfn, mem_type);
->>  
->>  		new_pmd = kvm_pmd_mkhuge(new_pmd);
->> -- 
->> 2.17.0
->> 
->
-> Otherwise, this patch looks fine.
+v1 -> v2:
+- Rework the uapi. Only bits [51:16] of the redist region are
+  exposed. Also a new flags field was introduced
+- Do not store the last bit in the vgic_cpu struct anymore
+- remove dist->spis check in 1st patch
+- add last patch to bump VGIC_V3_MAX_CPUS to 512
+- advertise the new attribute
 
-Thanks a lot for reviewing the patches. I'll send out an update
-incorporating your suggestions.
+Eric Auger (12):
+  KVM: arm/arm64: Set dist->spis to NULL after kfree
+  KVM: arm/arm64: Document KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
+  KVM: arm/arm64: Replace the single rdist region by a list
+  KVM: arm/arm64: Helper to locate free rdist index
+  KVM: arm/arm64: Revisit Redistributor TYPER last bit computation
+  KVM: arm/arm64: Adapt vgic_v3_check_base to multiple rdist regions
+  KVM: arm/arm64: Helper to register a new redistributor region
+  KVM: arm/arm64: Check vcpu redist base before registering an iodev
+  KVM: arm/arm64: Check all vcpu redistributors are set on map_resources
+  KVM: arm/arm64: Add KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
+  KVM: arm/arm64: Implement KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
+  KVM: arm/arm64: Bump VGIC_V3_MAX_CPUS to 512
 
-Punit
+ Documentation/virtual/kvm/devices/arm-vgic-v3.txt |  25 ++++-
+ arch/arm/include/uapi/asm/kvm.h                   |   1 +
+ arch/arm64/include/uapi/asm/kvm.h                 |   1 +
+ include/kvm/arm_vgic.h                            |  16 ++-
+ virt/kvm/arm/vgic/vgic-init.c                     |  20 +++-
+ virt/kvm/arm/vgic/vgic-kvm-device.c               |  55 ++++++++++-
+ virt/kvm/arm/vgic/vgic-mmio-v3.c                  | 114 +++++++++++++++++++---
+ virt/kvm/arm/vgic/vgic-v3.c                       | 101 +++++++++++++++----
+ virt/kvm/arm/vgic/vgic.h                          |  42 +++++++-
+ 9 files changed, 330 insertions(+), 45 deletions(-)
+
+-- 
+2.5.5
