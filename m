@@ -1,231 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758007AbeD0MFM (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 08:05:12 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:43377 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757946AbeD0MFJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 08:05:09 -0400
-X-Google-Smtp-Source: AB8JxZpKeQw3lOlCoAbCWyhOtw2+QmfouwEkPIev95rvJd8OC1jkrMPfsGdDVxnDIBoZd64zjOvbCMHWkcs22/SKquI=
+        id S1758000AbeD0MHC (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 08:07:02 -0400
+Received: from sauhun.de ([88.99.104.3]:48740 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1757805AbeD0MHB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 08:07:01 -0400
+Date: Fri, 27 Apr 2018 14:06:58 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Alexander Popov <alex.popov@linux.com>
+Cc: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?=
+        <u.kleine-koenig@pengutronix.de>,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        sil2review@lists.osadl.org, Dmitry Vyukov <dvyukov@google.com>,
+        syzkaller@googlegroups.com
+Subject: Re: [v2 1/1] i2c: dev: prevent ZERO_SIZE_PTR deref in
+ i2cdev_ioctl_rdwr()
+Message-ID: <20180427120658.wi32f7margtfazzp@ninjato>
+References: <1524140962-25639-1-git-send-email-alex.popov@linux.com>
 MIME-Version: 1.0
-In-Reply-To: <1524640743-11732-2-git-send-email-chaotian.jing@mediatek.com>
-References: <1524640743-11732-1-git-send-email-chaotian.jing@mediatek.com> <1524640743-11732-2-git-send-email-chaotian.jing@mediatek.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 27 Apr 2018 14:05:08 +0200
-Message-ID: <CAPDyKFocJrbH2AGER3mwdCyzOnRfNC6peG_ZeHrKUA_voxM=dQ@mail.gmail.com>
-Subject: Re: [PATCH v2] mmc: mediatek: add 64G DRAM DMA support
-To: Chaotian Jing <chaotian.jing@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, Phong LE <ple@baylibre.com>,
-        Julia Lawall <Julia.Lawall@lip6.fr>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Ryder Lee <ryder.lee@mediatek.com>, yong mao <yong.mao@mediatek.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-mediatek@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        srv_heupstream <srv_heupstream@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="cil4o76td5xr644s"
+Content-Disposition: inline
+In-Reply-To: <1524140962-25639-1-git-send-email-alex.popov@linux.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25 April 2018 at 09:19, Chaotian Jing <chaotian.jing@mediatek.com> wrote:
-> MT2712 MSDC supports 64G DRAM DMA access, it needs update
-> gpd/bd structure.
->
-> Signed-off-by: Chaotian Jing <chaotian.jing@mediatek.com>
 
-Thanks, applied for next!
+--cil4o76td5xr644s
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Kind regards
-Uffe
+On Thu, Apr 19, 2018 at 03:29:22PM +0300, Alexander Popov wrote:
+> i2cdev_ioctl_rdwr() allocates i2c_msg.buf using memdup_user(), which
+> returns ZERO_SIZE_PTR if i2c_msg.len is zero.
+>=20
+> Currently i2cdev_ioctl_rdwr() always dereferences the buf pointer in case
+> of I2C_M_RD | I2C_M_RECV_LEN transfer. That causes a kernel oops in
+> case of zero len.
+>=20
+> Let's check the len against zero before dereferencing buf pointer.
+>=20
+> This issue was triggered by syzkaller.
+>=20
+> Signed-off-by: Alexander Popov <alex.popov@linux.com>
 
-> ---
->  drivers/mmc/host/mtk-sd.c | 56 +++++++++++++++++++++++++++++++++++++++++------
->  1 file changed, 49 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
-> index d642e11..0484138 100644
-> --- a/drivers/mmc/host/mtk-sd.c
-> +++ b/drivers/mmc/host/mtk-sd.c
-> @@ -71,6 +71,7 @@
->  #define SDC_ADV_CFG0     0x64
->  #define EMMC_IOCON       0x7c
->  #define SDC_ACMD_RESP    0x80
-> +#define DMA_SA_H4BIT     0x8c
->  #define MSDC_DMA_SA      0x90
->  #define MSDC_DMA_CTRL    0x98
->  #define MSDC_DMA_CFG     0x9c
-> @@ -195,6 +196,9 @@
->  /* SDC_ADV_CFG0 mask */
->  #define SDC_RX_ENHANCE_EN      (0x1 << 20)     /* RW */
->
-> +/* DMA_SA_H4BIT mask */
-> +#define DMA_ADDR_HIGH_4BIT      (0xf << 0)      /* RW */
-> +
->  /* MSDC_DMA_CTRL mask */
->  #define MSDC_DMA_CTRL_START     (0x1 << 0)     /* W */
->  #define MSDC_DMA_CTRL_STOP      (0x1 << 1)     /* W */
-> @@ -228,6 +232,7 @@
->
->  #define MSDC_PATCH_BIT2_CFGRESP   (0x1 << 15)   /* RW */
->  #define MSDC_PATCH_BIT2_CFGCRCSTS (0x1 << 28)   /* RW */
-> +#define MSDC_PB2_SUPPORT_64G      (0x1 << 1)    /* RW */
->  #define MSDC_PB2_RESPWAIT         (0x3 << 2)    /* RW */
->  #define MSDC_PB2_RESPSTSENSEL     (0x7 << 16)   /* RW */
->  #define MSDC_PB2_CRCSTSENSEL      (0x7 << 29)   /* RW */
-> @@ -281,6 +286,8 @@ struct mt_gpdma_desc {
->  #define GPDMA_DESC_BDP         (0x1 << 1)
->  #define GPDMA_DESC_CHECKSUM    (0xff << 8) /* bit8 ~ bit15 */
->  #define GPDMA_DESC_INT         (0x1 << 16)
-> +#define GPDMA_DESC_NEXT_H4     (0xf << 24)
-> +#define GPDMA_DESC_PTR_H4      (0xf << 28)
->         u32 next;
->         u32 ptr;
->         u32 gpd_data_len;
-> @@ -297,6 +304,8 @@ struct mt_bdma_desc {
->  #define BDMA_DESC_CHECKSUM     (0xff << 8) /* bit8 ~ bit15 */
->  #define BDMA_DESC_BLKPAD       (0x1 << 17)
->  #define BDMA_DESC_DWPAD                (0x1 << 18)
-> +#define BDMA_DESC_NEXT_H4      (0xf << 24)
-> +#define BDMA_DESC_PTR_H4       (0xf << 28)
->         u32 next;
->         u32 ptr;
->         u32 bd_data_len;
-> @@ -335,6 +344,7 @@ struct mtk_mmc_compatible {
->         bool busy_check;
->         bool stop_clk_fix;
->         bool enhance_rx;
-> +       bool support_64g;
->  };
->
->  struct msdc_tune_para {
-> @@ -404,6 +414,7 @@ struct msdc_host {
->         .busy_check = false,
->         .stop_clk_fix = false,
->         .enhance_rx = false,
-> +       .support_64g = false,
->  };
->
->  static const struct mtk_mmc_compatible mt8173_compat = {
-> @@ -415,6 +426,7 @@ struct msdc_host {
->         .busy_check = false,
->         .stop_clk_fix = false,
->         .enhance_rx = false,
-> +       .support_64g = false,
->  };
->
->  static const struct mtk_mmc_compatible mt2701_compat = {
-> @@ -426,6 +438,7 @@ struct msdc_host {
->         .busy_check = false,
->         .stop_clk_fix = false,
->         .enhance_rx = false,
-> +       .support_64g = false,
->  };
->
->  static const struct mtk_mmc_compatible mt2712_compat = {
-> @@ -437,6 +450,7 @@ struct msdc_host {
->         .busy_check = true,
->         .stop_clk_fix = true,
->         .enhance_rx = true,
-> +       .support_64g = true,
->  };
->
->  static const struct mtk_mmc_compatible mt7622_compat = {
-> @@ -448,6 +462,7 @@ struct msdc_host {
->         .busy_check = true,
->         .stop_clk_fix = true,
->         .enhance_rx = true,
-> +       .support_64g = false,
->  };
->
->  static const struct of_device_id msdc_of_ids[] = {
-> @@ -557,7 +572,12 @@ static inline void msdc_dma_setup(struct msdc_host *host, struct msdc_dma *dma,
->                 /* init bd */
->                 bd[j].bd_info &= ~BDMA_DESC_BLKPAD;
->                 bd[j].bd_info &= ~BDMA_DESC_DWPAD;
-> -               bd[j].ptr = (u32)dma_address;
-> +               bd[j].ptr = lower_32_bits(dma_address);
-> +               if (host->dev_comp->support_64g) {
-> +                       bd[j].bd_info &= ~BDMA_DESC_PTR_H4;
-> +                       bd[j].bd_info |= (upper_32_bits(dma_address) & 0xf)
-> +                                        << 28;
-> +               }
->                 bd[j].bd_data_len &= ~BDMA_DESC_BUFLEN;
->                 bd[j].bd_data_len |= (dma_len & BDMA_DESC_BUFLEN);
->
-> @@ -576,7 +596,10 @@ static inline void msdc_dma_setup(struct msdc_host *host, struct msdc_dma *dma,
->         dma_ctrl &= ~(MSDC_DMA_CTRL_BRUSTSZ | MSDC_DMA_CTRL_MODE);
->         dma_ctrl |= (MSDC_BURST_64B << 12 | 1 << 8);
->         writel_relaxed(dma_ctrl, host->base + MSDC_DMA_CTRL);
-> -       writel((u32)dma->gpd_addr, host->base + MSDC_DMA_SA);
-> +       if (host->dev_comp->support_64g)
-> +               sdr_set_field(host->base + DMA_SA_H4BIT, DMA_ADDR_HIGH_4BIT,
-> +                             upper_32_bits(dma->gpd_addr) & 0xf);
-> +       writel(lower_32_bits(dma->gpd_addr), host->base + MSDC_DMA_SA);
->  }
->
->  static void msdc_prepare_data(struct msdc_host *host, struct mmc_request *mrq)
-> @@ -1367,6 +1390,9 @@ static void msdc_init_hw(struct msdc_host *host)
->                              MSDC_PATCH_BIT2_CFGCRCSTS);
->         }
->
-> +       if (host->dev_comp->support_64g)
-> +               sdr_set_bits(host->base + MSDC_PATCH_BIT2,
-> +                            MSDC_PB2_SUPPORT_64G);
->         if (host->dev_comp->data_tune) {
->                 sdr_set_bits(host->base + tune_reg,
->                              MSDC_PAD_TUNE_RD_SEL | MSDC_PAD_TUNE_CMD_SEL);
-> @@ -1408,19 +1434,32 @@ static void msdc_init_gpd_bd(struct msdc_host *host, struct msdc_dma *dma)
->  {
->         struct mt_gpdma_desc *gpd = dma->gpd;
->         struct mt_bdma_desc *bd = dma->bd;
-> +       dma_addr_t dma_addr;
->         int i;
->
->         memset(gpd, 0, sizeof(struct mt_gpdma_desc) * 2);
->
-> +       dma_addr = dma->gpd_addr + sizeof(struct mt_gpdma_desc);
->         gpd->gpd_info = GPDMA_DESC_BDP; /* hwo, cs, bd pointer */
-> -       gpd->ptr = (u32)dma->bd_addr; /* physical address */
->         /* gpd->next is must set for desc DMA
->          * That's why must alloc 2 gpd structure.
->          */
-> -       gpd->next = (u32)dma->gpd_addr + sizeof(struct mt_gpdma_desc);
-> +       gpd->next = lower_32_bits(dma_addr);
-> +       if (host->dev_comp->support_64g)
-> +               gpd->gpd_info |= (upper_32_bits(dma_addr) & 0xf) << 24;
-> +
-> +       dma_addr = dma->bd_addr;
-> +       gpd->ptr = lower_32_bits(dma->bd_addr); /* physical address */
-> +       if (host->dev_comp->support_64g)
-> +               gpd->gpd_info |= (upper_32_bits(dma_addr) & 0xf) << 28;
-> +
->         memset(bd, 0, sizeof(struct mt_bdma_desc) * MAX_BD_NUM);
-> -       for (i = 0; i < (MAX_BD_NUM - 1); i++)
-> -               bd[i].next = (u32)dma->bd_addr + sizeof(*bd) * (i + 1);
-> +       for (i = 0; i < (MAX_BD_NUM - 1); i++) {
-> +               dma_addr = dma->bd_addr + sizeof(*bd) * (i + 1);
-> +               bd[i].next = lower_32_bits(dma_addr);
-> +               if (host->dev_comp->support_64g)
-> +                       bd[i].bd_info |= (upper_32_bits(dma_addr) & 0xf) << 24;
-> +       }
->  }
->
->  static void msdc_ops_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
-> @@ -1913,7 +1952,10 @@ static int msdc_drv_probe(struct platform_device *pdev)
->         mmc->max_blk_size = 2048;
->         mmc->max_req_size = 512 * 1024;
->         mmc->max_blk_count = mmc->max_req_size / 512;
-> -       host->dma_mask = DMA_BIT_MASK(32);
-> +       if (host->dev_comp->support_64g)
-> +               host->dma_mask = DMA_BIT_MASK(36);
-> +       else
-> +               host->dma_mask = DMA_BIT_MASK(32);
->         mmc_dev(mmc)->dma_mask = &host->dma_mask;
->
->         host->timeout_clks = 3 * 1048576;
-> --
-> 1.8.1.1.dirty
->
+Applied to for-current with the arithmetic expression changed to '< 1'
+to keep in sync with the previous one. Will push out soon, so you can
+double check if you are interested.
+
+Thanks for the debugging, Alexander!
+
+
+--cil4o76td5xr644s
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlrjEl4ACgkQFA3kzBSg
+KbY65w/7BYlvSUKh16QpzYUCT6TSbRLnsqURdqNSN8iDZ1RdyBdDC6rsYnN5uYOk
+QgB9bFQs1rMcVX1DLV/+mdI06jnqJsmqQfQq6y7PFwn24qrAOR2/uAFX9t1LFuzg
+xFPGn6oq1CEZUZP6/J851SEPbAKvA8J2HiC7Qf3UL2662FEz4Q1Ev0bMKwJ9CKMi
+9lUybfB2HhPYxBV+FAhicESq8lRwYdpYQ+xE+xe0tMRE6yJ4XblXylgxfXJfA3hR
+xUJCM6N3Xz/LICAzzF2GkCuRxFoRqpJVOxticwZG//ja0on0c6y1WJK86AatTVai
+rxBU9p4mTTudoyyVENWp60FCSCVoOmh0QUpMEtWddz0LOSUaT3208fjnXTZbAliC
+K2nkg3pkndU9S6ABRvkq/gHmpNV6qlSklnTMT3jhWZ/Ie4RiVUIHsAJvZO/vP3q8
+XbgZf65pIffGJppRcJFkBuJRmzCOfnvl7rsMykQjxVUCO828ww38Du/B31kfJ8w8
+mL5QXXPaSeTsbhhQjIl+WIu9Dl0qmUkrdVMSuigJG2t6aZ5HgQhrwoqr5P2GThNP
+q6m1IL7tA9NgfiydvdL0Ku7Dz6gQTSMpuuv6rFqe4p2OS1/8GPj6yXy6W6KIUXI8
+hse8kHpoQHccQ6ZrK74823PWYcF+SA9UWEqZF+s5eSZKTQ2bgBM=
+=4HXa
+-----END PGP SIGNATURE-----
+
+--cil4o76td5xr644s--
