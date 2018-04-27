@@ -1,199 +1,116 @@
-Return-Path: <bot@kernelci.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1524861841; cv=none;
-        d=google.com; s=arc-20160816;
-        b=jIuoux8n8nb3PXJJPICbe9UIuhZDW9Ien/k3zBDIqBm9iBdvCeY2Bb9Q5ATU2owLAN
-         2HRCYjn8UXR2giMQ8Mdd2Cb6O64N4iYVwTI3dARSl047wgYNuCfZNCtg30Rs9U6b+lcm
-         4PZzBGW8/Ys7l4CpZmic5g/GaGSyyd+aT+kO0XjZP5q+2rp4slmzTBW4GKoiS7sMPDhu
-         CZfcHHygFt45xTSXEC5cQbfHjIRdWBrjyc8sxGmzRlyWT3bHDDxJu/5jc13F8k8Kh7xr
-         TPCMIbISPK0snjb/hd5d9jB3GvNOUsRxfNN8+q2UQvUbdmvOyCAiudSan54ItirsWdWA
-         WNwg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:from:to:subject:references:in-reply-to:content-transfer-encoding
-         :mime-version:date:message-id:arc-authentication-results;
-        bh=dZoE/Zmf2+dg9GmC5UiUgZUE2/Iyxt2AaquZl53nNG8=;
-        b=UsjVmycFKq7qcaRLmEw9Lt1lSF0de9oRlcKC0Hla54JpOBz7MRN0OtWft8zUN3EUL2
-         cy/bHEnON9JUK0q5mjTUBogVznb4uCTLRGRkkIcRTZsYl2djRWlcadH9hffHN7cifBgW
-         dbN0auNA/8XuCoM/tTkuE0tQ9TIN+7iKNez7bfFWrjQvTbNLt5SgOxqiaNhAMDZ3WYIP
-         gIc20SPpP5RYY7mDcKuQsrPiJXFZahK/7jdfBURIhn8EBRQgwaubQxtow1kKR2j7IZ0i
-         ilz+1wfZqpMRxLT/nSOzybguKzwrwSFMFkQBS8wf0+4zxS30VjFMXl4cdF7s3yhdJGXP
-         VdVA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=bot@kernelci.org
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=bot@kernelci.org
-X-Google-Smtp-Source: AB8JxZrTCZY3RfjLg8F1QCzslML+XzbanzaVscfmdTvhXBoJJ5jEQW5y09dVTvkO0iR4fYYiyEEVDw==
-Message-ID: <5ae38b90.82811c0a.c4c3d.cf85@mx.google.com>
-Date: Fri, 27 Apr 2018 13:44:00 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: linux-4.16.y
-X-Kernelci-Tree: stable-rc
-X-Kernelci-Report-Type: boot
-X-Kernelci-Kernel: v4.16.5-82-gd804f93aa2d9
-In-Reply-To: <20180427135743.216853156@linuxfoundation.org>
-References: <20180427135743.216853156@linuxfoundation.org>
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-599407-1524852967-2-17061104784186392732
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, MAILING_LIST_MULTI -1, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
+  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524852966; b=Snbm/oiMFvAFiZ1j/NXNgbZfew/IhBh0RVDq6apGAt+RQNtBBW
+    Ekk1O8h1ziT8pZ0/4lXdN/IDIA6xH4r+j6Bc8vgthTjhpLna7f1JMoyQJJ2EY120
+    Z19ldFyHdllzHcxmBdb5DhFvxmwl3m3jvDTa3gTUu87ffBUvfdyG2kpfbt3MAzDT
+    cLAJiRCMi6es3gVVj62eYNhQqQgzka2iL63mzVbT5hQqgbOPlU8fRvRewZF1N7RR
+    /HxuOQsJ4VBm7ZX6nAUnTuRJqJW4d573jLt5bv6SM+x6LQ4yTycDgvlT2a79JYMb
+    GXYQPuXJDerehkOVzn5Qh23wCGbHL4WRc8ug==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=subject:to:cc:references:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1524852966;
+    bh=P49JHLVJEjXD0xrbnngo2qhvMdcDk1PemoPksBaosBM=; b=CwnmVjOwuRge
+    bdkDHjwqR8ghJXkQUI1znZdbz0zqP+uxgD1c1oNn4tnQkWvc7FZdhcOsQ4F9Kgye
+    5tgMdlp2Q0AVpjGdWWtGFwdbX3gLFqDcinIGY5nZkoj7fzVlKRgsNFVd/J1N1PdQ
+    m4Umb37YtPEAZfLhTI177HhTfQveAo4JnB5yNrBOx5cUKriX+D167HGw+TU4eOuA
+    z/+ujpYVUhUpb4pWQrR0w/XBHkKOCCB/TaysQ4EeCsUA3kd/tPQNqgQiLYX9Dy88
+    lbBbZySZbClBDF/LkqrEtW5stDT8qtHkIAUReLkkWbYYCVs9ziw7RQmNlxIMJgRR
+    4rKpQtPeuA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=orgdomain_pass (Domain org match);
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=orgdomain_pass (Domain org match);
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfK1eAMoYT1LT+5vNRifT2us/66gPGg/51U6fU8kXz6dP+9f6syU7NP/KLl0Kas5t/aNVSCoaGMamH4CYF4DpLTWksGNXOTdtOW5oDz0ZKTGATLLkTZov
+    Yy8qPvjdtYDGaf2/z/oWMJ9ZdEGGbPd8h8Rrc7lQAizI+YJ8fAz4SbEYADI/qg4+ltFa/pCWIrq8s9WaPJtqSUFXi+IrnyEZpv9tKLuC7GPEc/ltcjkj5LF1
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=9hA1FEcAjjIA:10
+    a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8 a=8-vRK6DNSD7UNujOA5sA:9 a=QEXdDO2ut3YA:10
+    a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1757920AbeD0SQF (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 27 Apr 2018 14:16:05 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:46479 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757856AbeD0SQE (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 27 Apr 2018 14:16:04 -0400
 Subject: Re: [PATCH 4.16 00/81] 4.16.6-stable review
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org
-From: kernelci.org bot <bot@kernelci.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net,
- shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk,
- lkft-triage@lists.linaro.org, stable@vger.kernel.org
+        linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, Shuah Khan <shuah@kernel.org>
+References: <20180427135743.216853156@linuxfoundation.org>
+From: Shuah Khan <shuah@kernel.org>
+Message-ID: <5d8a3b5c-7617-d11d-13af-d285dd47e275@kernel.org>
+Date: Fri, 27 Apr 2018 12:15:50 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180427135743.216853156@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598908809599960279?=
-X-GMAIL-MSGID: =?utf-8?q?1598933529849923735?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-stable-rc/linux-4.16.y boot: 150 boots: 2 failed, 83 passed with 64 offline=
-, 1 conflict (v4.16.5-82-gd804f93aa2d9)
+On 04/27/2018 07:58 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.16.6 release.
+> There are 81 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sun Apr 29 13:57:21 UTC 2018.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.16.6-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.16.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.16.y/kernel/v4.16.5-82-gd804f93aa2d9/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.16.=
-y/kernel/v4.16.5-82-gd804f93aa2d9/
+Compiled and booted on my test system. No dmesg regressions.
 
-Tree: stable-rc
-Branch: linux-4.16.y
-Git Describe: v4.16.5-82-gd804f93aa2d9
-Git Commit: d804f93aa2d92746fe97707a51352689786ee98a
-Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git
-Tested: 79 unique boards, 24 SoC families, 17 builds out of 186
-
-Boot Regressions Detected:
-
-arm:
-
-    bcm2835_defconfig:
-        bcm2837-rpi-3-b:
-            lab-baylibre: new failure (last pass: v4.16.5)
-
-arm64:
-
-    defconfig:
-        bcm2837-rpi-3-b:
-            lab-baylibre: new failure (last pass: v4.16.5)
-        r8a7795-salvator-x:
-            lab-baylibre: new failure (last pass: v4.16.5)
-
-Boot Failures Detected:
-
-arm:
-
-    bcm2835_defconfig
-        bcm2837-rpi-3-b: 1 failed lab
-
-arm64:
-
-    defconfig
-        r8a7795-salvator-x: 1 failed lab
-
-Offline Platforms:
-
-arm:
-
-    sunxi_defconfig:
-        sun4i-a10-cubieboard: 1 offline lab
-        sun7i-a20-bananapi: 1 offline lab
-        sun7i-a20-cubietruck: 1 offline lab
-
-    bcm2835_defconfig:
-        bcm2835-rpi-b: 1 offline lab
-
-    sama5_defconfig:
-        at91-sama5d4_xplained: 1 offline lab
-
-    multi_v7_defconfig:
-        alpine-db: 1 offline lab
-        am335x-boneblack: 1 offline lab
-        armada-xp-openblocks-ax3-4: 1 offline lab
-        at91-sama5d4_xplained: 1 offline lab
-        exynos5250-arndale: 1 offline lab
-        exynos5420-arndale-octa: 1 offline lab
-        exynos5422-odroidxu3: 1 offline lab
-        exynos5800-peach-pi: 1 offline lab
-        imx6dl-wandboard_dual: 1 offline lab
-        imx6dl-wandboard_solo: 1 offline lab
-        imx7s-warp: 1 offline lab
-        meson8b-odroidc1: 1 offline lab
-        mt7623n-bananapi-bpi-r2: 1 offline lab
-        omap3-beagle: 1 offline lab
-        omap3-beagle-xm: 1 offline lab
-        omap4-panda: 1 offline lab
-        qcom-apq8064-cm-qs600: 1 offline lab
-        qcom-apq8064-ifc6410: 1 offline lab
-        socfpga_cyclone5_de0_sockit: 1 offline lab
-        stih410-b2120: 1 offline lab
-        sun4i-a10-cubieboard: 1 offline lab
-        sun7i-a20-bananapi: 1 offline lab
-        sun7i-a20-cubietruck: 1 offline lab
-        tegra124-jetson-tk1: 1 offline lab
-        tegra20-iris-512: 1 offline lab
-        tegra30-beaver: 1 offline lab
-        vf610-colibri-eval-v3: 1 offline lab
-        zynq-zc702: 1 offline lab
-
-    tegra_defconfig:
-        tegra124-jetson-tk1: 1 offline lab
-        tegra20-iris-512: 1 offline lab
-        tegra30-beaver: 1 offline lab
-
-    imx_v6_v7_defconfig:
-        imx6dl-wandboard_dual: 1 offline lab
-        imx6dl-wandboard_solo: 1 offline lab
-        imx7s-warp: 1 offline lab
-        vf610-colibri-eval-v3: 1 offline lab
-
-    exynos_defconfig:
-        exynos5250-arndale: 1 offline lab
-        exynos5420-arndale-octa: 1 offline lab
-        exynos5422-odroidxu3: 1 offline lab
-        exynos5800-peach-pi: 1 offline lab
-
-    qcom_defconfig:
-        qcom-apq8064-cm-qs600: 1 offline lab
-        qcom-apq8064-ifc6410: 1 offline lab
-
-    omap2plus_defconfig:
-        am335x-boneblack: 1 offline lab
-        omap3-beagle: 1 offline lab
-        omap3-beagle-xm: 1 offline lab
-        omap4-panda: 1 offline lab
-
-    davinci_all_defconfig:
-        da850-lcdk: 1 offline lab
-        dm365evm,legacy: 1 offline lab
-
-    mvebu_v7_defconfig:
-        armada-xp-openblocks-ax3-4: 1 offline lab
-
-arm64:
-
-    defconfig:
-        apq8016-sbc: 1 offline lab
-        juno-r2: 1 offline lab
-        meson-gxbb-odroidc2: 1 offline lab
-        meson-gxbb-p200: 1 offline lab
-        meson-gxl-s905d-p230: 1 offline lab
-        meson-gxl-s905x-khadas-vim: 1 offline lab
-        meson-gxl-s905x-nexbox-a95x: 1 offline lab
-        meson-gxl-s905x-p212: 1 offline lab
-        mt7622-rfb1: 1 offline lab
-        rk3399-firefly: 1 offline lab
-        sun50i-a64-pine64-plus: 1 offline lab
-
-Conflicting Boot Failure Detected: (These likely are not failures as other =
-labs are reporting PASS. Needs review.)
-
-arm64:
-
-    defconfig:
-        bcm2837-rpi-3-b:
-            lab-mhart: PASS
-            lab-baylibre: FAIL
-
----
-For more info write to <info@kernelci.org>
+thanks,
+-- Shuah
