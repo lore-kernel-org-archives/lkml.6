@@ -1,39 +1,85 @@
-Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrwGnSlVDqNNs+b/qBvhvtJF87ZNK1tALuAU8T+XRuM+nfKkyIqg6yILX9daug7ofFTPCYt
-ARC-Seal: i=1; a=rsa-sha256; t=1524838360; cv=none;
-        d=google.com; s=arc-20160816;
-        b=PmHWTe7tYnhqtGYvgBTJ6ScxQqdeV2YpL5yHZzuKtRFUA/U7HijaP0mJ8prOxBUsJT
-         ZLF8LFT7ILa0EhpXIdYxWxkI90lZy95YskIDYBN58FsdVO9agYnTBoXI/fbZVcll9guW
-         qZ6c4CiYS2PPUEN5TJ8I+AffxhzjHJJTqOLsau+UdCZDHtslYbmvvNlc88sHg1xcnW9m
-         BMEPM2lA0SRlavQzGPyKLm1fc/U/prR/cV/GuatlbOgDOYPJ18/9MhQiTWfKSsUhMLaQ
-         XheQdqgbPo+BPtoKMV4nUp1Ffw6XKb4ccB8HDXUxx4NgiqqK+vi50Fk8PEueoIMGquI+
-         lojA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=WadiLSpOg02NTFk0hDOHoXa4uYgLOakAzgqoY92ZIec=;
-        b=dfkuPATZPjJyhfLTXeGvi78HJGdLlcsc7LARv7TwxJEFAtbxq2ZgdXLDDSVbT6Ti0e
-         vKBOvdtPbYb1mWwhNwEmClbbRC5z5uy+tpj9k8Jnhx1IRhAmBFbwilvIje4k6ZkrZqfa
-         1p7La49fRPTRfin1WU3eV/wa81U541uYIrAkkM9hfC4mYIOW7bTqDtEo4S6zmER/ncIO
-         fw0voJP+x6LM+NcLkVu9TI+j3vSq1iIEwvqjWl26MO4SFFOGHtbGo6C4qQj+putm3iki
-         YO6uuWf+EUCG6Est8GCp8eXAmt5cjqNejKyUuj6eMCpLWH62qjQbWqsP/GrXuJjTStJg
-         9F0Q==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BA6A21895
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-284719-1524838359-2-10368316946844008700
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524838358; b=nOcsa1v/orD25NivHdrNv/nEDY79WMqFXInQeV45OhUOPsfB68
+    pm4QqPHzE4dxPWJEle7VL1eOfGWPzq0NOjytHKp2izUyW3KGs21frqdbBkt3iNjz
+    01vedqJUpj0TNg6iNBRiUUEBeMxyz9YoYwISgiCBXaerXLg9uI3o2z4hRJTAkS7x
+    0xluCbYseFCYUSDeISCkex+dLUoK6PP1YwUqNVJoKBZY3ntp8J5Z0wMJqKsgrJyQ
+    hVsk5BpicszaqMtMAi0OaYIOH1nmkR2Newsx0Rx8ueV868nGaxZHFwNQTAy3zIQi
+    tpiMyMKg3dZMYHoCPLVHY4M44bmBeWVfxfvw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1524838358; bh=v9fUlXJzyHqbiz7ZlWk0uw7gAZVDiY
+    MFUlfF2tJkoPY=; b=ZmaM5NIP0H0Ed0C0s2IRvWL02MORyBG1FwlQ9b7dejQmwj
+    e3nzNbJB/PCqhetQIAJFh2QliW8JBDrSOGD5kbSmOZO+LtJEdloNlxzCp5tS/9yY
+    RgOxV0CZNiTXYlPyWt1yoYvaKliuYOshcjvFSYoS9SoUgDnKcSMvdxyM8eRtZMOn
+    SIdn0bpcNUayRbsf2THEhBsdgWnGQ2olFCNthXeFRAswCpo2XohvJZ93JYq3R1KK
+    vtbO23RP1+ZYQ0tbDAbgruJFfv+y1in94FBWB08egj5YUDOtabHZmVNmbfG+DNRc
+    fAflrkUo/zc4PlYkTK5Gdjq5in4SiR/pBbPkN71Q==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfCx1H976rU1FK0CINoZ7ApTOr38rt8l0xsqYGsBbqxmwp30WthSn+fCnv7n09sR7geeLNMQEExaS+xI4dLqb4LPTVHTkqnpUYM1yZ959FYnZFGAGW8gE
+    jgbHKlv9HoXU6pM1cPPFrxUrSovrAAbNRrI/PYO9N6aCuNyDyi5N2s3sc6DQv8nVqyfF5L8dlOn3Y0IRpM7OZNFpzl8QYgN8lHWCnODqBJxCyKbgDqQo9GoR
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=A7XncKjpAAAA:8 a=pGLkceISAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
+    a=_JJVY9lb1vR7N1RJ9kQA:9 a=QEXdDO2ut3YA:10 a=R9rPLQDAdC6-Ub70kJmZ:22
+    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S934776AbeD0OM2 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 27 Apr 2018 10:12:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56978 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935130AbeD0OM1 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 27 Apr 2018 10:12:27 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69F9E21895
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 33/81] vlan: Fix reading memory beyond skb->tail in skb_vlan_tagged_multi
-Date: Fri, 27 Apr 2018 15:58:35 +0200
-Message-Id: <20180427135744.941363276@linuxfoundation.org>
+        stable@vger.kernel.org, Alexander Aring <aring@mojatatu.com>,
+        Yotam Gigi <yotam.gi@gmail.com>,
+        Jamal Hadi Salim <jhs@mojatatu.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.16 38/81] net: sched: ife: signal not finding metaid
+Date: Fri, 27 Apr 2018 15:58:40 +0200
+Message-Id: <20180427135745.321130132@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135743.216853156@linuxfoundation.org>
 References: <20180427135743.216853156@linuxfoundation.org>
@@ -41,10 +87,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908232509203798?=
-X-GMAIL-MSGID: =?utf-8?q?1598908907961626423?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,133 +97,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
+From: Alexander Aring <aring@mojatatu.com>
 
 
-[ Upstream commit 7ce2367254e84753bceb07327aaf5c953cfce117 ]
+[ Upstream commit f6cd14537ff9919081be19b9c53b9b19c0d3ea97 ]
 
-Syzkaller spotted an old bug which leads to reading skb beyond tail by 4
-bytes on vlan tagged packets.
-This is caused because skb_vlan_tagged_multi() did not check
-skb_headlen.
+We need to record stats for received metadata that we dont know how
+to process. Have find_decode_metaid() return -ENOENT to capture this.
 
-BUG: KMSAN: uninit-value in eth_type_vlan include/linux/if_vlan.h:283 [inline]
-BUG: KMSAN: uninit-value in skb_vlan_tagged_multi include/linux/if_vlan.h:656 [inline]
-BUG: KMSAN: uninit-value in vlan_features_check include/linux/if_vlan.h:672 [inline]
-BUG: KMSAN: uninit-value in dflt_features_check net/core/dev.c:2949 [inline]
-BUG: KMSAN: uninit-value in netif_skb_features+0xd1b/0xdc0 net/core/dev.c:3009
-CPU: 1 PID: 3582 Comm: syzkaller435149 Not tainted 4.16.0+ #82
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:17 [inline]
-  dump_stack+0x185/0x1d0 lib/dump_stack.c:53
-  kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
-  __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:676
-  eth_type_vlan include/linux/if_vlan.h:283 [inline]
-  skb_vlan_tagged_multi include/linux/if_vlan.h:656 [inline]
-  vlan_features_check include/linux/if_vlan.h:672 [inline]
-  dflt_features_check net/core/dev.c:2949 [inline]
-  netif_skb_features+0xd1b/0xdc0 net/core/dev.c:3009
-  validate_xmit_skb+0x89/0x1320 net/core/dev.c:3084
-  __dev_queue_xmit+0x1cb2/0x2b60 net/core/dev.c:3549
-  dev_queue_xmit+0x4b/0x60 net/core/dev.c:3590
-  packet_snd net/packet/af_packet.c:2944 [inline]
-  packet_sendmsg+0x7c57/0x8a10 net/packet/af_packet.c:2969
-  sock_sendmsg_nosec net/socket.c:630 [inline]
-  sock_sendmsg net/socket.c:640 [inline]
-  sock_write_iter+0x3b9/0x470 net/socket.c:909
-  do_iter_readv_writev+0x7bb/0x970 include/linux/fs.h:1776
-  do_iter_write+0x30d/0xd40 fs/read_write.c:932
-  vfs_writev fs/read_write.c:977 [inline]
-  do_writev+0x3c9/0x830 fs/read_write.c:1012
-  SYSC_writev+0x9b/0xb0 fs/read_write.c:1085
-  SyS_writev+0x56/0x80 fs/read_write.c:1082
-  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-RIP: 0033:0x43ffa9
-RSP: 002b:00007fff2cff3948 EFLAGS: 00000217 ORIG_RAX: 0000000000000014
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043ffa9
-RDX: 0000000000000001 RSI: 0000000020000080 RDI: 0000000000000003
-RBP: 00000000006cb018 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000217 R12: 00000000004018d0
-R13: 0000000000401960 R14: 0000000000000000 R15: 0000000000000000
-
-Uninit was created at:
-  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
-  kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:188
-  kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:314
-  kmsan_slab_alloc+0x11/0x20 mm/kmsan/kmsan.c:321
-  slab_post_alloc_hook mm/slab.h:445 [inline]
-  slab_alloc_node mm/slub.c:2737 [inline]
-  __kmalloc_node_track_caller+0xaed/0x11c0 mm/slub.c:4369
-  __kmalloc_reserve net/core/skbuff.c:138 [inline]
-  __alloc_skb+0x2cf/0x9f0 net/core/skbuff.c:206
-  alloc_skb include/linux/skbuff.h:984 [inline]
-  alloc_skb_with_frags+0x1d4/0xb20 net/core/skbuff.c:5234
-  sock_alloc_send_pskb+0xb56/0x1190 net/core/sock.c:2085
-  packet_alloc_skb net/packet/af_packet.c:2803 [inline]
-  packet_snd net/packet/af_packet.c:2894 [inline]
-  packet_sendmsg+0x6444/0x8a10 net/packet/af_packet.c:2969
-  sock_sendmsg_nosec net/socket.c:630 [inline]
-  sock_sendmsg net/socket.c:640 [inline]
-  sock_write_iter+0x3b9/0x470 net/socket.c:909
-  do_iter_readv_writev+0x7bb/0x970 include/linux/fs.h:1776
-  do_iter_write+0x30d/0xd40 fs/read_write.c:932
-  vfs_writev fs/read_write.c:977 [inline]
-  do_writev+0x3c9/0x830 fs/read_write.c:1012
-  SYSC_writev+0x9b/0xb0 fs/read_write.c:1085
-  SyS_writev+0x56/0x80 fs/read_write.c:1082
-  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-
-Fixes: 58e998c6d239 ("offloading: Force software GSO for multiple vlan tags.")
-Reported-and-tested-by: syzbot+0bbe42c764feafa82c5a@syzkaller.appspotmail.com
-Signed-off-by: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
+Signed-off-by: Alexander Aring <aring@mojatatu.com>
+Reviewed-by: Yotam Gigi <yotam.gi@gmail.com>
+Acked-by: Jamal Hadi Salim <jhs@mojatatu.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/if_vlan.h |    7 +++++--
- net/core/dev.c          |    2 +-
- 2 files changed, 6 insertions(+), 3 deletions(-)
+ net/sched/act_ife.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/include/linux/if_vlan.h
-+++ b/include/linux/if_vlan.h
-@@ -639,7 +639,7 @@ static inline bool skb_vlan_tagged(const
-  * Returns true if the skb is tagged with multiple vlan headers, regardless
-  * of whether it is hardware accelerated or not.
-  */
--static inline bool skb_vlan_tagged_multi(const struct sk_buff *skb)
-+static inline bool skb_vlan_tagged_multi(struct sk_buff *skb)
- {
- 	__be16 protocol = skb->protocol;
- 
-@@ -649,6 +649,9 @@ static inline bool skb_vlan_tagged_multi
- 		if (likely(!eth_type_vlan(protocol)))
- 			return false;
- 
-+		if (unlikely(!pskb_may_pull(skb, VLAN_ETH_HLEN)))
-+			return false;
-+
- 		veh = (struct vlan_ethhdr *)skb->data;
- 		protocol = veh->h_vlan_encapsulated_proto;
+--- a/net/sched/act_ife.c
++++ b/net/sched/act_ife.c
+@@ -652,7 +652,7 @@ static int find_decode_metaid(struct sk_
+ 		}
  	}
-@@ -666,7 +669,7 @@ static inline bool skb_vlan_tagged_multi
-  *
-  * Returns features without unsafe ones if the skb has multiple tags.
-  */
--static inline netdev_features_t vlan_features_check(const struct sk_buff *skb,
-+static inline netdev_features_t vlan_features_check(struct sk_buff *skb,
- 						    netdev_features_t features)
- {
- 	if (skb_vlan_tagged_multi(skb)) {
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -2942,7 +2942,7 @@ netdev_features_t passthru_features_chec
- }
- EXPORT_SYMBOL(passthru_features_check);
  
--static netdev_features_t dflt_features_check(const struct sk_buff *skb,
-+static netdev_features_t dflt_features_check(struct sk_buff *skb,
- 					     struct net_device *dev,
- 					     netdev_features_t features)
- {
+-	return 0;
++	return -ENOENT;
+ }
+ 
+ static int tcf_ife_decode(struct sk_buff *skb, const struct tc_action *a,
