@@ -1,22 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758885AbeD0Q5g (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 12:57:36 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:53204 "EHLO
+        id S1758917AbeD0Q5l (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 12:57:41 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:53190 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758871AbeD0Q5d (ORCPT
+        with ESMTP id S1758761AbeD0Q5h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 12:57:33 -0400
+        Fri, 27 Apr 2018 12:57:37 -0400
 From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 To: linux-renesas-soc@vger.kernel.org,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         dri-devel@lists.freedesktop.org
-Cc: David Airlie <airlied@linux.ie>,
+Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS),
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM64 PORT
+        (AARCH64 ARCHITECTURE)),
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 05/11] drm: rcar-du: Add R8A77965 support
-Date: Fri, 27 Apr 2018 17:57:16 +0100
-Message-Id: <20180427165722.19445-6-kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v2 08/11] arm64: dts: r8a77965: Populate the DU instance placeholder
+Date: Fri, 27 Apr 2018 17:57:19 +0100
+Message-Id: <20180427165722.19445-9-kieran.bingham+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427165722.19445-1-kieran.bingham+renesas@ideasonboard.com>
 References: <20180427165722.19445-1-kieran.bingham+renesas@ideasonboard.com>
@@ -24,66 +31,45 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The R8A77965 (M3-N) SoC provides RGB, HDMI and LVDS output.
-
-This platform is unusual in that the RGB is connected to DU3 leaving DU2
-unpopulated. This is reflected by the channels_mask accordingly.
+The DU entity node has been previously added but only as a placeholder.
+Populate the node with the properties to use the device.
 
 Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
---
-v2:
- - Corrected bit ordering to be LE
----
- drivers/gpu/drm/rcar-du/rcar_du_drv.c | 29 +++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-index 0062186d7df8..56f947240375 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-@@ -246,6 +246,34 @@ static const struct rcar_du_device_info rcar_du_r8a7796_info = {
- 	.dpll_ch =  BIT(1),
- };
+---
+v2:
+ - Remove LVDS references from DU
+---
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+index 362eddc6b3d1..a35ea2f32da2 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+@@ -1106,9 +1106,19 @@
+ 		};
  
-+static const struct rcar_du_device_info rcar_du_r8a77965_info = {
-+	.gen = 3,
-+	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
-+		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
-+		  | RCAR_DU_FEATURE_VSP1_SOURCE,
-+	.channels_mask = BIT(3) | BIT(1) | BIT(0),
-+	.routes = {
-+		/*
-+		 * R8A77965 has one RGB output, one LVDS output and one HDMI
-+		 * output.
-+		 */
-+		[RCAR_DU_OUTPUT_DPAD0] = {
-+			.possible_crtcs = BIT(2),
-+			.port = 0,
-+		},
-+		[RCAR_DU_OUTPUT_HDMI0] = {
-+			.possible_crtcs = BIT(1),
-+			.port = 1,
-+		},
-+		[RCAR_DU_OUTPUT_LVDS0] = {
-+			.possible_crtcs = BIT(0),
-+			.port = 2,
-+		},
-+	},
-+	.num_lvds = 1,
-+	.dpll_ch =  BIT(1),
-+};
+ 		du: display@feb00000 {
+-			reg = <0 0xfeb00000 0 0x80000>,
+-			      <0 0xfeb90000 0 0x14>;
+-			/* placeholder */
++			compatible = "renesas,du-r8a77965";
++			reg = <0 0xfeb00000 0 0x80000>;
++			reg-names = "du";
++			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 270 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 724>,
++				 <&cpg CPG_MOD 723>,
++				 <&cpg CPG_MOD 721>;
++			clock-names = "du.0", "du.1", "du.3";
++			status = "disabled";
 +
- static const struct rcar_du_device_info rcar_du_r8a77970_info = {
- 	.gen = 3,
- 	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
-@@ -277,6 +305,7 @@ static const struct of_device_id rcar_du_of_table[] = {
- 	{ .compatible = "renesas,du-r8a7794", .data = &rcar_du_r8a7794_info },
- 	{ .compatible = "renesas,du-r8a7795", .data = &rcar_du_r8a7795_info },
- 	{ .compatible = "renesas,du-r8a7796", .data = &rcar_du_r8a7796_info },
-+	{ .compatible = "renesas,du-r8a77965", .data = &rcar_du_r8a77965_info },
- 	{ .compatible = "renesas,du-r8a77970", .data = &rcar_du_r8a77970_info },
- 	{ }
- };
++			vsps = <&vspd0 0 &vspd1 0 &vspd0 1>;
+ 
+ 			ports {
+ 				#address-cells = <1>;
 -- 
 2.17.0
