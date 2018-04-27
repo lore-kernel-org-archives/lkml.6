@@ -1,130 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757252AbeD0BtI (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 21:49:08 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:34642 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756854AbeD0BtH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 21:49:07 -0400
-X-Google-Smtp-Source: AB8JxZoJTJ/5QstcZpi2X+jprlCZyjn88szGDtCHqCJCPj2x4x+CcyJkxl0hNZz5N/0aPvP2KypamA==
-Date: Fri, 27 Apr 2018 10:48:59 +0900
-From: DaeRyong Jeong <threeearcat@gmail.com>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: perex@perex.cz, alsa-devel@alsa-project.org, kt0755@gmail.com,
-        bammanag@purdue.edu, byoungyoung@purdue.edu,
-        linux-kernel@vger.kernel.org
-Subject: Re: Unable to handle kernel paging request in snd_seq_oss_readq_puts
-Message-ID: <20180427014858.GA23026@dragonet.kaist.ac.kr>
-References: <20180426045223.GA15307@dragonet.kaist.ac.kr>
- <s5h1sf2v3l2.wl-tiwai@suse.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <s5h1sf2v3l2.wl-tiwai@suse.de>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1757324AbeD0BtR (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 21:49:17 -0400
+Received: from mx.socionext.com ([202.248.49.38]:12345 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1757264AbeD0BtN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 21:49:13 -0400
+From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+To: linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc: Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>, linux-kernel@vger.kernel.org,
+        Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Subject: [PATCH v2 2/2] pinctrl: uniphier: add LD11 MPEG2-TS I/O pin-mux settings
+Date: Fri, 27 Apr 2018 10:49:05 +0900
+Message-Id: <20180427014905.19520-2-suzuki.katsuhiro@socionext.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180427014905.19520-1-suzuki.katsuhiro@socionext.com>
+References: <20180427014905.19520-1-suzuki.katsuhiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 26, 2018 at 09:17:45AM +0200, Takashi Iwai wrote:
-> On Thu, 26 Apr 2018 06:52:27 +0200,
-> DaeRyong Jeong wrote:
-> > 
-> > We report the crash:
-> > unable to handle kernel paging request in snd_seq_oss_readq_puts
-> > 
-> > This crash has been found in v4.16 using RaceFuzzer (a modified
-> > version of Syzkaller), which we describe more at the end of this
-> > report. Our analysis shows that the race occurs when invoking two
-> > syscalls concurrently, write$eventfd and write$sndseq.
-> > 
-> > Analysis:
-> > We think the concurrent execution of snd_virmidi_output_trigger() and
-> > snd_midi_event_encode_byte() causes the crash. Since the first call site
-> > of snd_seq_kernel_client_dispatch() in snd_virmidi_output_trigger() is not
-> > protected by substream->runtime->lock, it is possible that
-> > snd_seq_oss_readq_puts() and snd_midi_event_encode_byte() are executed
-> > concurrently in the call sequences as below, and snd_seq_oss_readq_puts()
-> > accesses ev->data.ex.ptr before it is initialized.
-> 
-> Thanks for the bug report and analysis.
-> 
-> I guess that it's not about initialization but rather other way
-> round.  The first task sends the pending event with SYSEX that
-> contains the buffer pointer in the event packet.  Meanwhile, the
-> second task now starts processing the MIDI stream and overwrites this
-> event packet.  So the data address that is being processed is
-> overwritten, and it leads to the crash.
-> 
-> Below is the fix patch.  It's totally untested, and I'd love to hear
-> if this really works.  Could you give it a try?
-> 
-> 
-> thanks,
-> 
-> Takashi
-> 
-> -- 8< --
-> From: Takashi Iwai <tiwai@suse.de>
-> Subject: [PATCH] ALSA: seq: Fix races at MIDI encoding in
->  snd_virmidi_output_trigger()
-> 
-> The sequencer virmidi code has an open race at its output trigger
-> callback: namely, virmidi keeps only one event packet for processing
-> while it doesn't protect for concurrent output trigger calls.
-> 
-> snd_virmidi_output_trigger() tries to process the previously
-> unfinished event before starting encoding the given MIDI stream, but
-> this is done without any lock.  Meanwhile, if another rawmidi stream
-> starts the output trigger, this proceeds further, and overwrites the
-> event package that is being processed in another thread.  This
-> eventually corrupts and may lead to the invalid memory access if the
-> event type is like SYSEX.
-> 
-> The fix is just to move the spinlock to cover both the pending event
-> and the new stream.
-> 
-> The bug was spotted by a new fuzzer, RaceFuzzer.
-> 
-> BugLink: http://lkml.kernel.org/r/20180426045223.GA15307@dragonet.kaist.ac.kr
-> Reported-by: DaeRyong Jeong <threeearcat@gmail.com>
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Takashi Iwai <tiwai@suse.de>
-> ---
->  sound/core/seq/seq_virmidi.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/sound/core/seq/seq_virmidi.c b/sound/core/seq/seq_virmidi.c
-> index f48a4cd24ffc..289ae6bb81d9 100644
-> --- a/sound/core/seq/seq_virmidi.c
-> +++ b/sound/core/seq/seq_virmidi.c
-> @@ -174,12 +174,12 @@ static void snd_virmidi_output_trigger(struct snd_rawmidi_substream *substream,
->  			}
->  			return;
->  		}
-> +		spin_lock_irqsave(&substream->runtime->lock, flags);
->  		if (vmidi->event.type != SNDRV_SEQ_EVENT_NONE) {
->  			if (snd_seq_kernel_client_dispatch(vmidi->client, &vmidi->event, in_atomic(), 0) < 0)
-> -				return;
-> +				goto out;
->  			vmidi->event.type = SNDRV_SEQ_EVENT_NONE;
->  		}
-> -		spin_lock_irqsave(&substream->runtime->lock, flags);
->  		while (1) {
->  			count = __snd_rawmidi_transmit_peek(substream, buf, sizeof(buf));
->  			if (count <= 0)
-> -- 
-> 2.16.3
-> 
+The MPEG2-TS input/output core both accepts serial TS and parallel TS.
 
-I'm really sorry to say this. Since we are implementing our fuzzer and 
-our reproducer is not complete, we don't have a reproducer for this bug.
-We manually analyzed the crash using the crash log to spot where the race
-occurs.
-The patch looks good for me who don't understand the ALSA subsystem, but
-we can't test the patch.
+The serial TS interface uses following pins:
+  hscin0_s : HS0DOUT[0-3]
+  hscin1_s : HS0DOUT[4-7]
+  hscin2_s : HS1BCLKIN, HS1SYNCIN, HS1VALIN, HS1DIN0
+  hscout0_s: HS0DOUT[0-3]
+  hscout1_s: HS0DOUT[4-7]
 
-I'm sorry.
+And the parallel TS interface uses following pins:
+  hscin0_p : HS0BCLKIN, HS0SYNCIN, HS0VALIN, HS0DIN[0-7]
+  hscin1_p : HS1BCLKIN, HS1SYNCIN, HS1VALIN, HS1DIN[0-7]
+  hscout0_p: HS0BCLKOUT, HS0SYNCOUT, HS0VALOUT, HS0DOUT[0-7]
 
-Daeryong Jeong
+Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+
+---
+
+Changes in v2:
+
+  - Fix indent
+  - Sort alphabetically
+  - Fix wrong grouping
+    - Fix hsc'out'0_ci -> hsc'in'0_ci of hscin0 group
+    - Fix hscin'0'_s -> hscin'1'_s of hscin1 group
+---
+ .../pinctrl/uniphier/pinctrl-uniphier-ld11.c  | 49 +++++++++++++++++++
+ 1 file changed, 49 insertions(+)
+
+diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
+index 0976fbfecd50..58825f68b58b 100644
+--- a/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
++++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c
+@@ -481,6 +481,31 @@ static const int emmc_dat8_muxvals[] = {0, 0, 0, 0};
+ static const unsigned ether_rmii_pins[] = {6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+ 					   16, 17};
+ static const int ether_rmii_muxvals[] = {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4};
++static const unsigned hscin0_ci_pins[] = {102, 103, 104, 105, 106, 107, 108,
++					  109, 110, 111, 112};
++static const int hscin0_ci_muxvals[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
++static const unsigned hscin0_p_pins[] = {102, 103, 104, 105, 106, 107, 108, 109,
++					 110, 111, 112};
++static const int hscin0_p_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
++static const unsigned hscin0_s_pins[] = {116, 117, 118, 119};
++static const int hscin0_s_muxvals[] = {3, 3, 3, 3};
++static const unsigned hscin1_p_pins[] = {124, 125, 126, 127, 128, 129, 130, 131,
++					 132, 133, 134};
++static const int hscin1_p_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
++static const unsigned hscin1_s_pins[] = {120, 121, 122, 123};
++static const int hscin1_s_muxvals[] = {3, 3, 3, 3};
++static const unsigned hscin2_s_pins[] = {124, 125, 126, 127};
++static const int hscin2_s_muxvals[] = {3, 3, 3, 3};
++static const unsigned hscout0_ci_pins[] = {113, 114, 115, 116, 117, 118, 119,
++					   120, 121, 122, 123};
++static const int hscout0_ci_muxvals[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
++static const unsigned hscout0_p_pins[] = {113, 114, 115, 116, 117, 118, 119,
++					  120, 121, 122, 123};
++static const int hscout0_p_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
++static const unsigned hscout0_s_pins[] = {116, 117, 118, 119};
++static const int hscout0_s_muxvals[] = {4, 4, 4, 4};
++static const unsigned hscout1_s_pins[] = {120, 121, 122, 123};
++static const int hscout1_s_muxvals[] = {4, 4, 4, 4};
+ static const unsigned i2c0_pins[] = {63, 64};
+ static const int i2c0_muxvals[] = {0, 0};
+ static const unsigned i2c1_pins[] = {65, 66};
+@@ -556,6 +581,16 @@ static const struct uniphier_pinctrl_group uniphier_ld11_groups[] = {
+ 	UNIPHIER_PINCTRL_GROUP(emmc),
+ 	UNIPHIER_PINCTRL_GROUP(emmc_dat8),
+ 	UNIPHIER_PINCTRL_GROUP(ether_rmii),
++	UNIPHIER_PINCTRL_GROUP(hscin0_ci),
++	UNIPHIER_PINCTRL_GROUP(hscin0_p),
++	UNIPHIER_PINCTRL_GROUP(hscin0_s),
++	UNIPHIER_PINCTRL_GROUP(hscin1_p),
++	UNIPHIER_PINCTRL_GROUP(hscin1_s),
++	UNIPHIER_PINCTRL_GROUP(hscin2_s),
++	UNIPHIER_PINCTRL_GROUP(hscout0_ci),
++	UNIPHIER_PINCTRL_GROUP(hscout0_p),
++	UNIPHIER_PINCTRL_GROUP(hscout0_s),
++	UNIPHIER_PINCTRL_GROUP(hscout1_s),
+ 	UNIPHIER_PINCTRL_GROUP(i2c0),
+ 	UNIPHIER_PINCTRL_GROUP(i2c1),
+ 	UNIPHIER_PINCTRL_GROUP(i2c3),
+@@ -583,6 +618,15 @@ static const char * const aout1_groups[] = {"aout1"};
+ static const char * const aoutiec1_groups[] = {"aoutiec1"};
+ static const char * const emmc_groups[] = {"emmc", "emmc_dat8"};
+ static const char * const ether_rmii_groups[] = {"ether_rmii"};
++static const char * const hscin0_groups[] = {"hscin0_ci",
++					     "hscin0_p",
++					     "hscin0_s"};
++static const char * const hscin1_groups[] = {"hscin1_p", "hscin1_s"};
++static const char * const hscin2_groups[] = {"hscin2_s"};
++static const char * const hscout0_groups[] = {"hscout0_ci",
++					      "hscout0_p",
++					      "hscout0_s"};
++static const char * const hscout1_groups[] = {"hscout1_s"};
+ static const char * const i2c0_groups[] = {"i2c0"};
+ static const char * const i2c1_groups[] = {"i2c1"};
+ static const char * const i2c3_groups[] = {"i2c3"};
+@@ -603,6 +647,11 @@ static const struct uniphier_pinmux_function uniphier_ld11_functions[] = {
+ 	UNIPHIER_PINMUX_FUNCTION(aoutiec1),
+ 	UNIPHIER_PINMUX_FUNCTION(emmc),
+ 	UNIPHIER_PINMUX_FUNCTION(ether_rmii),
++	UNIPHIER_PINMUX_FUNCTION(hscin0),
++	UNIPHIER_PINMUX_FUNCTION(hscin1),
++	UNIPHIER_PINMUX_FUNCTION(hscin2),
++	UNIPHIER_PINMUX_FUNCTION(hscout0),
++	UNIPHIER_PINMUX_FUNCTION(hscout1),
+ 	UNIPHIER_PINMUX_FUNCTION(i2c0),
+ 	UNIPHIER_PINMUX_FUNCTION(i2c1),
+ 	UNIPHIER_PINMUX_FUNCTION(i2c3),
+-- 
+2.17.0
