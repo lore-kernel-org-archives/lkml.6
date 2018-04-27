@@ -1,73 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932503AbeD0JtT (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 05:49:19 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:37872 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757361AbeD0JtR (ORCPT
+        id S932547AbeD0Jt6 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 05:49:58 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:40746 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757800AbeD0Jt4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 05:49:17 -0400
-X-Google-Smtp-Source: AB8JxZpk1GLAZ04HIGGjlsqCj/AyA/mAWFRtrpU3yX11sOYmRvADo5xvhBCALXTAmXXpyLU/5PZt+A==
-Date: Fri, 27 Apr 2018 17:49:10 +0800
-From: Leo Yan <leo.yan@linaro.org>
-To: Daniel Borkmann <daniel@iogearbox.net>
-Cc: Alexei Starovoitov <ast@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jonathan Corbet <corbet@lwn.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH bpf-next] bpf, doc: Update bpf_jit_enable limitation for
- CONFIG_BPF_JIT_ALWAYS_ON
-Message-ID: <20180427094910.GA31015@leoy-ThinkPad-X240s>
-References: <1524709611-29437-1-git-send-email-leo.yan@linaro.org>
- <275e03a2-b74e-8f60-4ffe-26c9a79fae9d@iogearbox.net>
+        Fri, 27 Apr 2018 05:49:56 -0400
+X-Google-Smtp-Source: AB8JxZrxtC9XsLJ6/WVm3m5h3jOHSLgWnHtAt2/nJ2xYWpFrDRBsmV15r//5hHEylNe5p9CwpJV1pw==
+Date: Fri, 27 Apr 2018 11:49:53 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, Joerg Roedel <joro@8bytes.org>,
+        iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 3/4] iommu/tegra: gart: Constify number of GART pages
+Message-ID: <20180427094953.GN30388@ulmo>
+References: <cover.1523304324.git.digetx@gmail.com>
+ <954659be6760130f6ffd5e733db2ad58cbb8e6e4.1523304324.git.digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="qYrsQHciA3Wqs7Iv"
 Content-Disposition: inline
-In-Reply-To: <275e03a2-b74e-8f60-4ffe-26c9a79fae9d@iogearbox.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <954659be6760130f6ffd5e733db2ad58cbb8e6e4.1523304324.git.digetx@gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 27, 2018 at 11:44:44AM +0200, Daniel Borkmann wrote:
-> On 04/26/2018 04:26 AM, Leo Yan wrote:
-> > When CONFIG_BPF_JIT_ALWAYS_ON is enabled, kernel has limitation for
-> > bpf_jit_enable, so it has fixed value 1 and we cannot set it to 2
-> > for JIT opcode dumping; this patch is to update the doc for it.
-> > 
-> > Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> > ---
-> >  Documentation/networking/filter.txt | 6 ++++++
-> >  1 file changed, 6 insertions(+)
-> > 
-> > diff --git a/Documentation/networking/filter.txt b/Documentation/networking/filter.txt
-> > index fd55c7d..feddab9 100644
-> > --- a/Documentation/networking/filter.txt
-> > +++ b/Documentation/networking/filter.txt
-> > @@ -483,6 +483,12 @@ Example output from dmesg:
-> >  [ 3389.935851] JIT code: 00000030: 00 e8 28 94 ff e0 83 f8 01 75 07 b8 ff ff 00 00
-> >  [ 3389.935852] JIT code: 00000040: eb 02 31 c0 c9 c3
-> >  
-> > +When CONFIG_BPF_JIT_ALWAYS_ON is enabled, bpf_jit_enable is set to 1 by default
-> > +and it returns failure if change to any other value from proc node; this is
-> > +for security consideration to avoid leaking info to unprivileged users. In this
-> > +case, we can't directly dump JIT opcode image from kernel log, alternatively we
-> > +need to use bpf tool for the dumping.
-> > +
-> 
-> Could you change this doc text a bit, I think it's slightly misleading. From the first
-> sentence one could also interpret that value 0 would leaking info to unprivileged users
-> whereas here we're only talking about the case of value 2. Maybe something roughly like
-> this to make it more clear:
-> 
->   When CONFIG_BPF_JIT_ALWAYS_ON is enabled, bpf_jit_enable is permanently set to 1 and
->   setting any other value than that will return in failure. This is even the case for
->   setting bpf_jit_enable to 2, since dumping the final JIT image into the kernel log
->   is discouraged and introspection through bpftool (under tools/bpf/bpftool/) is the
->   generally recommended approach instead.
 
-Yeah, your rephrasing is more clear and better.  Will do this and send
-new patch soon.  Thanks for your helping.
+--qYrsQHciA3Wqs7Iv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Thanks,
-> Daniel
+On Mon, Apr 09, 2018 at 11:07:21PM +0300, Dmitry Osipenko wrote:
+> GART has a fixed aperture size, hence the number of pages is constant.
+>=20
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/iommu/tegra-gart.c | 14 ++++++++------
+>  1 file changed, 8 insertions(+), 6 deletions(-)
+
+This doesn't really give a good explanation of why you want to do this.
+While it is certainly true that the aperture is fixed in size, I can
+imagine cases where somebody would want to restrict the aperture size
+(perhaps there's a fixed mapping somewhere near the end of the mapping
+that Linux shouldn't touch, or the GART aperture could be reduced to
+simulate out of IOVA memory situations).
+
+Without a good explanation why this is necessary I don't see why the
+current code should be changed.
+
+Thierry
+
+--qYrsQHciA3Wqs7Iv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlri8kEACgkQ3SOs138+
+s6FctRAAoUkhihlrmgwWCXP1zK7QT3+qpmdYyr1JNLF4i+0x73Qb0/wPoGu89JNV
+EcjSkaOIm7SQN+pvvPQnbKVuIJYM1PDKIdC+XNEtOTkDmfx2vhWL/X4sXnth+cia
+aabuCK0Q5epsaUIS7cvpKgChuOwmNeKADI3WSWZEpI2etqeCo6xIQ3FB+3rsoQCQ
+/eOzmk6eKsaySKFRLLWq8SmOjw8e3HFgU8OgHU1jk2vzACgn2kN8p4r7voV20MrF
+Y6xdlySnVLaKkXNNtpjCZ51eOQkD34T4T3YaIf6aNwvv5TT3tiEvPk4zoHNq0/aB
+o9vFOYc8F5IApoLAx4N1KKItk2F9HuvpK2DSqlQRH6VJqUw4PL1qu+8Rq6wWhofC
+p4IR0iEcCa9NpHZrF3jAJdNhrOo/3vA2aFyOJwg7UYCFZIGd4gCNa24TZxlhp2Z7
+6XDnqijmQHuQcl2wtvpwdRnpBXNQ5E2dvKpbNvRUsoPeD/1G25CaDySt2ol1mx3i
+ebOtpYSJ+oH/qNz+Da6qjH/agVtBYYjvpT6kA9fAr5MnF6/d/vCmt5TbdYpb4tio
+Y5mrcD488qIAifg6a1r/O2xq6v+q3h9NnyN4MNbibfuwRXaT+csBb5wYL9jlFC2P
+okwV9TwsbaVbh1lOZlALGKKt2HGhJYED4qKxgLd4pfUlPiCMN8w=
+=x0GZ
+-----END PGP SIGNATURE-----
+
+--qYrsQHciA3Wqs7Iv--
