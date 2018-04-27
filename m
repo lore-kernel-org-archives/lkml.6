@@ -1,47 +1,40 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZp6evQe9wxBpHJ9UK5TlzHBevBnNxvbqAAPnY6XzMiQcZpTccsB8KachNp41/GyB67rcNiY
-ARC-Seal: i=1; a=rsa-sha256; t=1524838107; cv=none;
+X-Google-Smtp-Source: AB8JxZpJbmHD2Q6dwI5v6p1l8lxi3tsLH1CVQWi/SQY+hMc8LF+HgnXNyzfHABY3P/+mZeWzvEZo
+ARC-Seal: i=1; a=rsa-sha256; t=1524838104; cv=none;
         d=google.com; s=arc-20160816;
-        b=kNgBVXD+MSbRHNmegPiWNy/YiGxVzR8DV0XxDGML3oHbPVzwXE7gO4uAEt1d23EkJA
-         RZN/oNsn0Ba+DCb7kKGtTcyZozkPQNdsFBhkBJXxIKfZE4HB/gv+lFQwoBdEw4EefQHZ
-         8kLYUEANWmtpa6qKcAr7hXrPJP58ZkMnw4dWz/uryGkrXXGo0KwRdSU7XrvsK8mgsWlA
-         lgjRegECM/KbHeCPqgOGHJWIFiKaNHyuGoNHe4GqZobR5SrAXSLQffInOMEKWUG42MtM
-         Yu4i74i35NGCmks5N9wF2I9+RUhpSU1ty7gbWKiAUpFK5d5cNq15IjbYPwbVKao2kisj
-         skPA==
+        b=ruQWfQ/DvGsLhbzba4PaV7ik3bfjDWOA+HXsRdhEAVraHmaDs20JdzFIldBTZe7YzO
+         fTAwccWyeXhIEHwXWM5QvrAb9SebCLSujf73rJ0hBARFt1At9/wlKhg1OaidOf7Ec65L
+         s984n3pWcPxtXZGF6nAMbKyO6zllCDrqpTzdue241ebLdjXwtex+ysrrXWYFE8QtjX3l
+         5D3dRDR3XOFDEUwjoa3KW2/V6X5Kqh/0AGydaTwOYcjAsq1dcpDc3bwLDHBS0hyRZvul
+         eJu6EphEjodEBCozhQCoqaBmP/WQmHmVpLJjXBThx3wXuLblVyCJ/MDtfQhmzqDQA2ZJ
+         VddA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=sNSoEt4rW74wIO6UEem0r0MCmXzS7ZmAOGilYutwXDg=;
-        b=Gg9T6GPsL1vS25CRGZCuoBom4n7+8HBfSdiY4NJnscwUdQ2+kYsOkc9czKHrKsHkjg
-         nqXKQvYD7M4lQk4tR0UkBy+e3gqV7gtErXXEsaGWHJpLIdzjWEWgMxGjfe8sCU9QSO+1
-         yrDMQtrViIDX6D2emQBX6fgFh1BQtyPf845SGY7tXo6Juk1rT95A2U30it2HNnp0GnLA
-         EldU1YeCEx+S5mU59t/COlVdvyQB1irxjFZGh/AOVopKHZjoJMPLehaSPOQgeZ1gLUzj
-         Ip9iUPSHku347gh1zjAgiOvmZjMOlgepiwzmKzx/2kRJYMzbp2olDZPmiepQMEHgDh8h
-         BYWg==
+        bh=ZVrJgzyVz9cCzB4OKtEoz7AZIcKaw1F5qwn/21a/zyA=;
+        b=0hj+XKE2jOWLtfpmGjpz25JGKaUIzyjr6rZVwq8fL+EUxbSuD0zUPl5yA/KN1usqtW
+         zgKTbLW2ih/xAI5VhFWTuwFbqPptNYtp4FeMDLuoGVkGGqcVxCO0VLK+T6mZs4Tmy5hC
+         ru8idi3+rdAFFvZNxOFpxxdkFsJFnkYCzN1pWwtQKTErHXeENx5e+ZZuT6QJcq7LkQYx
+         fDxOd1HEY07n+wRxzKkodFjChgyDdOEcBbzBbOMihOA/RHdfvdAxg2aFZTF/2qYtSuGl
+         W+V0i/gqNCVxcMYEW7auyM5GjySa95Mpx8O1rFC1bOKZQT3vhwYTwOd8b8w/y58ZEGuO
+         1BJA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AFFC21864
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A83F2218BC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	=?UTF-8?q?=D0=9C=D0=B8=D1=85=D0=B0=D0=B8=D0=BB=20=D0=9D=D0=BE=D1=81=D0=BE=D0=B2?= <drdeimosnn@gmail.com>,
-	=?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-	Balbir Singh <bsingharora@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Ralph Campbell <rcampbell@nvidia.com>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Evgeny Baskakov <ebaskakov@nvidia.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 63/80] Revert "mm/hmm: fix header file if/else/endif maze"
-Date: Fri, 27 Apr 2018 15:58:56 +0200
-Message-Id: <20180427135736.159082523@linuxfoundation.org>
+	Klaus Goger <klaus.goger@theobroma-systems.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>
+Subject: [PATCH 4.14 62/80] arm64: dts: rockchip: remove vdd_log from rk3399-puma
+Date: Fri, 27 Apr 2018 15:58:55 +0200
+Message-Id: <20180427135736.104615801@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135732.928644313@linuxfoundation.org>
 References: <20180427135732.928644313@linuxfoundation.org>
@@ -51,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908642933021781?=
-X-GMAIL-MSGID: =?utf-8?q?1598908642933021781?=
+X-GMAIL-THRID: =?utf-8?q?1598908639969070648?=
+X-GMAIL-MSGID: =?utf-8?q?1598908639969070648?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -60,55 +53,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Klaus Goger <klaus.goger@theobroma-systems.com>
 
-This reverts commit 25df8b83e867dcfb660123e9589ebf6f094fcdd3 which is
-commit b28b08de436a638c82d0cf3dcdbdbad055baf1fc upstream.
+commit 87eba0716011e528f7841026f2cc65683219d0ad upstream.
 
-There are still build errors with this patch applied, and the upstream
-patches do not seem to apply anymore, so reverting this patch seems like
-the best thing to do at this point in time.
+vdd_log has no consumer and therefore will not be set to a specific
+voltage. Still the PWM output pin gets configured and thence the vdd_log
+output voltage will changed from it's default. Depending on the idle
+state of the PWM this will slightly over or undervoltage the logic supply
+of the RK3399 and cause instability with GbE (undervoltage) and PCIe
+(overvoltage). Since the default value set by a voltage divider is the
+correct supply voltage and we don't need to change it during runtime we
+remove the rail from the devicetree completely so the PWM pin will not
+be configured.
 
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Михаил Носов <drdeimosnn@gmail.com>
-Cc: Jérôme Glisse <jglisse@redhat.com>
-Cc: Balbir Singh <bsingharora@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Ralph Campbell <rcampbell@nvidia.com>
-Cc: John Hubbard <jhubbard@nvidia.com>
-Cc: Evgeny Baskakov <ebaskakov@nvidia.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Klaus Goger <klaus.goger@theobroma-systems.com>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Cc: Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- include/linux/hmm.h |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/include/linux/hmm.h
-+++ b/include/linux/hmm.h
-@@ -498,16 +498,23 @@ struct hmm_device {
- struct hmm_device *hmm_device_new(void *drvdata);
- void hmm_device_put(struct hmm_device *hmm_device);
- #endif /* CONFIG_DEVICE_PRIVATE || CONFIG_DEVICE_PUBLIC */
-+#endif /* IS_ENABLED(CONFIG_HMM) */
+---
+ arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi |   11 -----------
+ 1 file changed, 11 deletions(-)
+
+--- a/arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi
+@@ -155,17 +155,6 @@
+ 		regulator-min-microvolt = <5000000>;
+ 		regulator-max-microvolt = <5000000>;
+ 	};
+-
+-	vdd_log: vdd-log {
+-		compatible = "pwm-regulator";
+-		pwms = <&pwm2 0 25000 0>;
+-		regulator-name = "vdd_log";
+-		regulator-min-microvolt = <800000>;
+-		regulator-max-microvolt = <1400000>;
+-		regulator-always-on;
+-		regulator-boot-on;
+-		status = "okay";
+-	};
+ };
  
- /* Below are for HMM internal use only! Not to be used by device driver! */
-+#if IS_ENABLED(CONFIG_HMM_MIRROR)
- void hmm_mm_destroy(struct mm_struct *mm);
- 
- static inline void hmm_mm_init(struct mm_struct *mm)
- {
- 	mm->hmm = NULL;
- }
-+#else /* IS_ENABLED(CONFIG_HMM_MIRROR) */
-+static inline void hmm_mm_destroy(struct mm_struct *mm) {}
-+static inline void hmm_mm_init(struct mm_struct *mm) {}
-+#endif /* IS_ENABLED(CONFIG_HMM_MIRROR) */
-+
-+
- #else /* IS_ENABLED(CONFIG_HMM) */
- static inline void hmm_mm_destroy(struct mm_struct *mm) {}
- static inline void hmm_mm_init(struct mm_struct *mm) {}
--#endif /* IS_ENABLED(CONFIG_HMM) */
- #endif /* LINUX_HMM_H */
+ &cpu_b0 {
