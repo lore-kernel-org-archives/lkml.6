@@ -1,51 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757223AbeD0CTg (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 22:19:36 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:36396 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751626AbeD0CTe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 22:19:34 -0400
-X-Google-Smtp-Source: AB8JxZpycOyayHxm0d7kopRAzWrXUaT6Ctzrh/TNmPzQvJChR54A+pxF5LIWZP801AkJHB50vFDMUw==
-Date: Thu, 26 Apr 2018 21:19:33 -0500
-From: Rob Herring <robh@kernel.org>
-To: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alan Tull <atull@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v2] of: overlay: Stop leaking resources on overlay removal
-Message-ID: <20180427021933.vkdmzid4ated6whe@rob-hp-laptop>
-References: <e8704374-857c-d80e-e91c-89d59e1cffbe@siemens.com>
+        id S1757225AbeD0Chd (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 22:37:33 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:35520 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753312AbeD0Chc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 22:37:32 -0400
+Subject: Re: [PATCH] f2fs: fix to wait IO writeback in __revoke_inmem_pages()
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+References: <20180426083247.86337-1-yuchao0@huawei.com>
+ <20180426154817.GF68594@jaegeuk-macbookpro.roam.corp.google.com>
+ <7810a3a3-70f3-9b37-e64a-f26dba72b0f9@kernel.org>
+ <20180426163651.GL68594@jaegeuk-macbookpro.roam.corp.google.com>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <3cae6be6-365d-8e48-b1db-8b04f96634e4@huawei.com>
+Date: Fri, 27 Apr 2018 10:37:27 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e8704374-857c-d80e-e91c-89d59e1cffbe@siemens.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180426163651.GL68594@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 26, 2018 at 01:00:30PM +0200, Jan Kiszka wrote:
-> Only the overlay notifier callbacks have a chance to potentially get
-> hold of references to those two resources, but they are not supposed to
-> store them beyond OF_OVERLAY_POST_REMOVE.
+On 2018/4/27 0:36, Jaegeuk Kim wrote:
+> On 04/26, Chao Yu wrote:
+>> On 2018/4/26 23:48, Jaegeuk Kim wrote:
+>>> On 04/26, Chao Yu wrote:
+>>>> Thread A				Thread B
+>>>> - f2fs_ioc_commit_atomic_write
+>>>>  - commit_inmem_pages
+>>>>   - f2fs_submit_merged_write_cond
+>>>>   : write data
+>>>> 					- write_checkpoint
+>>>> 					 - do_checkpoint
+>>>> 					 : commit all node within CP
+>>>> 					 -> SPO
+>>>>   - f2fs_do_sync_file
+>>>>    - file_write_and_wait_range
+>>>>    : wait data writeback
+>>>>
+>>>> In above race condition, data/node can be flushed in reversed order when
+>>>> coming a checkpoint before f2fs_do_sync_file, after SPOR, it results in
+>>>> atomic written data being corrupted.
+>>>
+>>> Wait, what is the problem here? Thread B could succeed checkpoint, there is
+>>> no problem. If it fails, there is no fsync mark where we can recover it, so
+>>
+>> Node is flushed by checkpoint before data, with reversed order, that's the problem.
 > 
-> Document the overlay notifier API, its constraint regarding pointer
-> lifetime, and then remove intentional leaks of ovcs->overlay_tree and
-> ovcs->fdt from free_overlay_changeset.
-> 
-> See also https://lkml.org/lkml/2018/4/23/1063 and following.
-> 
-> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-> ---
->  Documentation/devicetree/overlay-notes.txt |  8 ++++++++
->  drivers/of/overlay.c                       | 30 +++++++++++++++++++++---------
->  2 files changed, 29 insertions(+), 9 deletions(-)
+> What do you mean? Data should be in disk, in order to proceed checkpoint.
 
-Applied, thanks.
+1. thread A: commit_inmem_pages submit data into block layer, but haven't waited
+it writeback.
+2. thread A: commit_inmem_pages update related node.
+3. thread B: do checkpoint, flush all nodes to disk
+4. SPOR
 
-Rob
+Then, atomic file becomes corrupted since nodes is flushed before data.
+
+Thanks,
+
+> 
+>>
+>> Thanks,
+>>
+>>> we can just ignore the last written data as nothing.
+>>>
+>>>>
+>>>> This patch adds f2fs_wait_on_page_writeback in __revoke_inmem_pages() to
+>>>> keep data and node of atomic file being flushed orderly.
+>>>>
+>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>>>> ---
+>>>>  fs/f2fs/file.c    | 4 ++++
+>>>>  fs/f2fs/segment.c | 3 +++
+>>>>  2 files changed, 7 insertions(+)
+>>>>
+>>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+>>>> index be7578774a47..a352804af244 100644
+>>>> --- a/fs/f2fs/file.c
+>>>> +++ b/fs/f2fs/file.c
+>>>> @@ -217,6 +217,9 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+>>>>  
+>>>>  	trace_f2fs_sync_file_enter(inode);
+>>>>  
+>>>> +	if (atomic)
+>>>> +		goto write_done;
+>>>> +
+>>>>  	/* if fdatasync is triggered, let's do in-place-update */
+>>>>  	if (datasync || get_dirty_pages(inode) <= SM_I(sbi)->min_fsync_blocks)
+>>>>  		set_inode_flag(inode, FI_NEED_IPU);
+>>>> @@ -228,6 +231,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+>>>>  		return ret;
+>>>>  	}
+>>>>  
+>>>> +write_done:
+>>>>  	/* if the inode is dirty, let's recover all the time */
+>>>>  	if (!f2fs_skip_inode_update(inode, datasync)) {
+>>>>  		f2fs_write_inode(inode, NULL);
+>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>>>> index 584483426584..9ca3d0a43d93 100644
+>>>> --- a/fs/f2fs/segment.c
+>>>> +++ b/fs/f2fs/segment.c
+>>>> @@ -230,6 +230,8 @@ static int __revoke_inmem_pages(struct inode *inode,
+>>>>  
+>>>>  		lock_page(page);
+>>>>  
+>>>> +		f2fs_wait_on_page_writeback(page, DATA, true);
+>>>> +
+>>>>  		if (recover) {
+>>>>  			struct dnode_of_data dn;
+>>>>  			struct node_info ni;
+>>>> @@ -415,6 +417,7 @@ static int __commit_inmem_pages(struct inode *inode)
+>>>>  		/* drop all uncommitted pages */
+>>>>  		__revoke_inmem_pages(inode, &fi->inmem_pages, true, false);
+>>>>  	} else {
+>>>> +		/* wait all committed IOs writeback and release them from list */
+>>>>  		__revoke_inmem_pages(inode, &revoke_list, false, false);
+>>>>  	}
+>>>>  
+>>>> -- 
+>>>> 2.15.0.55.gc2ece9dc4de6
+> 
+> .
+> 
