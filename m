@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757400AbeD0AZB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 20:25:01 -0400
-Received: from vern.gendns.com ([206.190.152.46]:46272 "EHLO vern.gendns.com"
+        id S1757422AbeD0AZT (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 20:25:19 -0400
+Received: from vern.gendns.com ([206.190.152.46]:46265 "EHLO vern.gendns.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752525AbeD0ASf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 20:18:35 -0400
+        id S1757204AbeD0ASd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 20:18:33 -0400
 From: David Lechner <david@lechnology.com>
 To: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
@@ -16,9 +16,9 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org,
         David Lechner <david@lechnology.com>
-Subject: [PATCH v9 08/27] ARM: davinci: dm365: add new clock init using common clock framework
-Date: Thu, 26 Apr 2018 19:17:26 -0500
-Message-Id: <20180427001745.4116-9-david@lechnology.com>
+Subject: [PATCH v9 07/27] ARM: davinci: dm355: add new clock init using common clock framework
+Date: Thu, 26 Apr 2018 19:17:25 -0500
+Message-Id: <20180427001745.4116-8-david@lechnology.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427001745.4116-1-david@lechnology.com>
 References: <20180427001745.4116-1-david@lechnology.com>
@@ -36,7 +36,7 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds the new board-specific clock init in mach-davinci/dm365.c
+This adds the new board-specific clock init in mach-davinci/dm355.c
 using the new common clock framework drivers.
 
 The #ifdefs are needed to prevent compile errors until the entire
@@ -48,7 +48,7 @@ Signed-off-by: David Lechner <david@lechnology.com>
 ---
 
 v9 changes:
-- register PLL1 and PSC in dm365_init_time() instead of as platform device so
+- register PLL1 and PSC in dm355_init_time() instead of as platform device so
   that we get the correct timer0 clock for davinci_timer_init()
 - Fixed size of PLL memory block
 
@@ -64,43 +64,57 @@ v6 changes:
 - add blank lines between function calls
 
 
- arch/arm/mach-davinci/board-dm365-evm.c |  2 +
- arch/arm/mach-davinci/davinci.h         |  1 +
- arch/arm/mach-davinci/dm365.c           | 56 +++++++++++++++++++------
- 3 files changed, 47 insertions(+), 12 deletions(-)
+ arch/arm/mach-davinci/board-dm355-evm.c     |  2 +
+ arch/arm/mach-davinci/board-dm355-leopard.c |  2 +
+ arch/arm/mach-davinci/davinci.h             |  1 +
+ arch/arm/mach-davinci/dm355.c               | 69 +++++++++++++++++----
+ 4 files changed, 62 insertions(+), 12 deletions(-)
 
-diff --git a/arch/arm/mach-davinci/board-dm365-evm.c b/arch/arm/mach-davinci/board-dm365-evm.c
-index 0ac085b58a2b..36b69a131cfa 100644
---- a/arch/arm/mach-davinci/board-dm365-evm.c
-+++ b/arch/arm/mach-davinci/board-dm365-evm.c
-@@ -741,6 +741,8 @@ static __init void dm365_evm_init(void)
- {
+diff --git a/arch/arm/mach-davinci/board-dm355-evm.c b/arch/arm/mach-davinci/board-dm355-evm.c
+index cb30637d9eaf..ea03ddcd35f5 100644
+--- a/arch/arm/mach-davinci/board-dm355-evm.c
++++ b/arch/arm/mach-davinci/board-dm355-evm.c
+@@ -384,6 +384,8 @@ static __init void dm355_evm_init(void)
+ 	struct clk *aemif;
  	int ret;
  
-+	dm365_register_clocks();
++	dm355_register_clocks();
 +
- 	ret = dm365_gpio_register();
+ 	ret = dm355_gpio_register();
+ 	if (ret)
+ 		pr_warn("%s: GPIO init failed: %d\n", __func__, ret);
+diff --git a/arch/arm/mach-davinci/board-dm355-leopard.c b/arch/arm/mach-davinci/board-dm355-leopard.c
+index 59743bd76793..09f82160bbed 100644
+--- a/arch/arm/mach-davinci/board-dm355-leopard.c
++++ b/arch/arm/mach-davinci/board-dm355-leopard.c
+@@ -233,6 +233,8 @@ static __init void dm355_leopard_init(void)
+ 	struct clk *aemif;
+ 	int ret;
+ 
++	dm355_register_clocks();
++
+ 	ret = dm355_gpio_register();
  	if (ret)
  		pr_warn("%s: GPIO init failed: %d\n", __func__, ret);
 diff --git a/arch/arm/mach-davinci/davinci.h b/arch/arm/mach-davinci/davinci.h
-index c2c634b6578e..a799b5266d4b 100644
+index 376cdd51ce9d..c2c634b6578e 100644
 --- a/arch/arm/mach-davinci/davinci.h
 +++ b/arch/arm/mach-davinci/davinci.h
-@@ -94,6 +94,7 @@ int dm355_gpio_register(void);
- /* DM365 function declarations */
- void dm365_init(void);
- void dm365_init_time(void);
-+void dm365_register_clocks(void);
- void dm365_init_asp(void);
- void dm365_init_vc(void);
- void dm365_init_ks(struct davinci_ks_platform_data *pdata);
-diff --git a/arch/arm/mach-davinci/dm365.c b/arch/arm/mach-davinci/dm365.c
-index 871372a59da8..76de426a0e41 100644
---- a/arch/arm/mach-davinci/dm365.c
-+++ b/arch/arm/mach-davinci/dm365.c
-@@ -12,32 +12,38 @@
-  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  * GNU General Public License for more details.
+@@ -84,6 +84,7 @@ int davinci_init_wdt(void);
+ /* DM355 function declarations */
+ void dm355_init(void);
+ void dm355_init_time(void);
++void dm355_register_clocks(void);
+ void dm355_init_spi0(unsigned chipselect_mask,
+ 		const struct spi_board_info *info, unsigned len);
+ void dm355_init_asp1(u32 evt_enable);
+diff --git a/arch/arm/mach-davinci/dm355.c b/arch/arm/mach-davinci/dm355.c
+index 0da7516018ca..14014b942e8a 100644
+--- a/arch/arm/mach-davinci/dm355.c
++++ b/arch/arm/mach-davinci/dm355.c
+@@ -8,31 +8,37 @@
+  * is licensed "as is" without any warranty of any kind, whether express
+  * or implied.
   */
 -#include <linux/init.h>
 -#include <linux/clk.h>
@@ -116,7 +130,6 @@ index 871372a59da8..76de426a0e41 100644
 +#include <linux/init.h>
  #include <linux/platform_data/edma.h>
  #include <linux/platform_data/gpio-davinci.h>
- #include <linux/platform_data/keyscan-davinci.h>
  #include <linux/platform_data/spi-davinci.h>
 +#include <linux/platform_device.h>
 +#include <linux/serial_8250.h>
@@ -146,58 +159,71 @@ index 871372a59da8..76de426a0e41 100644
 +#include "psc.h"
 +#endif
  
- #define DM365_REF_FREQ		24000000	/* 24 MHz on the DM365 EVM */
- #define DM365_RTC_BASE			0x01c69000
-@@ -54,6 +60,7 @@
- #define DM365_EMAC_CNTRL_RAM_OFFSET	0x1000
- #define DM365_EMAC_CNTRL_RAM_SIZE	0x2000
+ #define DM355_UART2_BASE	(IO_PHYS + 0x206000)
+ #define DM355_OSD_BASE		(IO_PHYS + 0x70200)
+@@ -43,6 +49,7 @@
+  */
+ #define DM355_REF_FREQ		24000000	/* 24 or 36 MHz */
  
 +#ifndef CONFIG_COMMON_CLK
  static struct pll_data pll1_data = {
- 	.num		= 1,
- 	.phys_base	= DAVINCI_PLL1_BASE,
-@@ -485,7 +492,7 @@ static struct clk_lookup dm365_clks[] = {
- 	CLK(NULL, "mjcp", &mjcp_clk),
+ 	.num       = 1,
+ 	.phys_base = DAVINCI_PLL1_BASE,
+@@ -382,7 +389,7 @@ static struct clk_lookup dm355_clks[] = {
+ 	CLK(NULL, "usb", &usb_clk),
  	CLK(NULL, NULL, NULL),
  };
 -
 +#endif
  /*----------------------------------------------------------------------*/
  
- #define INTMUX		0x18
-@@ -1171,8 +1178,33 @@ void __init dm365_init(void)
+ static u64 dm355_spi0_dma_mask = DMA_BIT_MASK(32);
+@@ -1046,8 +1053,46 @@ void __init dm355_init(void)
  
- void __init dm365_init_time(void)
+ void __init dm355_init_time(void)
  {
 +#ifdef CONFIG_COMMON_CLK
-+	void __iomem *pll1, *pll2, *psc;
++	void __iomem *pll1, *psc;
 +	struct clk *clk;
 +
-+	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DM365_REF_FREQ);
++	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DM355_REF_FREQ);
 +
 +	pll1 = ioremap(DAVINCI_PLL1_BASE, SZ_1K);
-+	dm365_pll1_init(NULL, pll1, NULL);
-+
-+	pll2 = ioremap(DAVINCI_PLL2_BASE, SZ_1K);
-+	dm365_pll2_init(NULL, pll2, NULL);
++	dm355_pll1_init(NULL, pll1, NULL);
 +
 +	psc = ioremap(DAVINCI_PWR_SLEEP_CNTRL_BASE, SZ_4K);
-+	dm365_psc_init(NULL, psc);
++	dm355_psc_init(NULL, psc);
 +
 +	clk = clk_get(NULL, "timer0");
 +
 +	davinci_timer_init(clk);
 +#else
- 	davinci_clk_init(dm365_clks);
+ 	davinci_clk_init(dm355_clks);
  	davinci_timer_init(&timer0_clk);
 +#endif
 +}
 +
-+void __init dm365_register_clocks(void)
++static struct resource dm355_pll2_resources[] = {
++	{
++		.start	= DAVINCI_PLL2_BASE,
++		.end	= DAVINCI_PLL2_BASE + SZ_1K - 1,
++		.flags	= IORESOURCE_MEM,
++	},
++};
++
++static struct platform_device dm355_pll2_device = {
++	.name		= "dm355-pll2",
++	.id		= -1,
++	.resource	= dm355_pll2_resources,
++	.num_resources	= ARRAY_SIZE(dm355_pll2_resources),
++};
++
++void __init dm355_register_clocks(void)
 +{
-+	/* all clocks are currently registered in dm365_init_time() */
++	/* PLL1 and PSC are registered in dm355_init_time() */
++	platform_device_register(&dm355_pll2_device);
  }
  
- static struct resource dm365_vpss_resources[] = {
+ int __init dm355_init_video(struct vpfe_config *vpfe_cfg,
 -- 
 2.17.0
