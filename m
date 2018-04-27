@@ -1,54 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932953AbeD0Pi7 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 11:38:59 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:42891 "EHLO frisell.zx2c4.com"
+        id S933007AbeD0PkK (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 11:40:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48138 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932455AbeD0Pi5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 11:38:57 -0400
-X-Google-Smtp-Source: AB8JxZqkeBXBpe1GsarEkeINS3odtNhjQAlONahZXazNsei3Fectg7HoiMwwgJfVn/FSHjKhYND/WZrKF6D4PxgJF/k=
+        id S932803AbeD0PkJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 11:40:09 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBC1F2184B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Fri, 27 Apr 2018 11:40:05 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Joel Fernandes <joelaf@google.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Boqun Feng <boqun.feng@gmail.com>, fweisbec <fweisbec@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        kbuild test robot <fengguang.wu@intel.com>,
+        baohong liu <baohong.liu@intel.com>,
+        vedang patel <vedang.patel@intel.com>, kernel-team@android.com
+Subject: Re: [PATCH RFC] tracepoint: Introduce tracepoint callbacks
+ executing with preempt on
+Message-ID: <20180427114005.31d1e8ab@gandalf.local.home>
+In-Reply-To: <20180427153826.GK26088@linux.vnet.ibm.com>
+References: <20180427042656.190746-1-joelaf@google.com>
+        <1169911546.5820.1524839189395.JavaMail.zimbra@efficios.com>
+        <20180427104747.2d965925@gandalf.local.home>
+        <20180427153826.GK26088@linux.vnet.ibm.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180427000013.GH5965@thunk.org>
-References: <d92d049a-8810-a765-d57a-2a7a805fadaf@gmail.com>
- <20180426050056.GF18803@thunk.org> <b902d9f5-300e-2611-289d-f6d49dd43f11@gmail.com>
- <20180426073255.GH18803@thunk.org> <b6aa3fac-a768-e27d-3070-00d929ebc245@gmail.com>
- <20180426192524.GD5965@thunk.org> <2add15cb-2113-0504-a732-81255ea61bf5@gmail.com>
- <20180426204748.GA7540@gmail.com> <20180427000013.GH5965@thunk.org>
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date: Fri, 27 Apr 2018 17:38:52 +0200
-X-Gmail-Original-Message-ID: <CAHmME9oVRULStf1ff+OUJLyf7GMxUTPrJebF5pxxLO7Sn2tzow@mail.gmail.com>
-Message-ID: <CAHmME9oVRULStf1ff+OUJLyf7GMxUTPrJebF5pxxLO7Sn2tzow@mail.gmail.com>
-Subject: Re: Linux messages full of `random: get_random_u32 called from`
-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Christian Brauner <christian.brauner@canonical.com>,
-        Sultan Alsawaf <sultanxda@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, Jann Horn <jannh@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ted,
+On Fri, 27 Apr 2018 08:38:26 -0700
+"Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
 
-Please correct me if I'm wrong, but my present understanding of this
-is that crng readiness used to be broken, meaning people would have a
-seeded rng without it actually being seeded. You fixed this bug, and
-now people are discovering that they don't have crng readiness during
-a late stage of their init, which is breaking all sorts of entirely
-reasonable and widely deployed userspaces.
+> On Fri, Apr 27, 2018 at 10:47:47AM -0400, Steven Rostedt wrote:
+> > On Fri, 27 Apr 2018 10:26:29 -0400 (EDT)
+> > Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+> >   
+> > > The general approach and the implementation look fine, except for
+> > > one small detail: I would be tempted to explicitly disable preemption
+> > > around the call to the tracepoint callback for the rcuidle variant,
+> > > unless we plan to audit every tracer right away to remove any assumption
+> > > that preemption is disabled in the callback implementation.  
+> > 
+> > I'm thinking that we do that audit. There shouldn't be many instances
+> > of it. I like the idea that a tracepoint callback gets called with
+> > preemption enabled.  
+> 
+> Are you really sure you want to increase your state space that much?
 
-You could argue that those userspaces were "only designed for machines
-that have enough [by what measure?] boot time entropy", but obviously
-they didn't have that in mind. And now here we have an example of an
-ordinary x86 machine -- not some weird embedded device -- hitting
-these issues. I'd suspect that the problem here isn't one that we can
-exclusively punt onto userspace.
+Why not? The code I have in callbacks already deals with all sorts of
+context - normal, softirq, irq, NMI, preemption disabled, irq
+disabled.
 
-Sultan mentioned that his machine actually does trigger large
-quantities of interrupts. Is it possible that the entropy gathering
-algorithm has some issues, and Sultan's report points to a real bug
-here? Considering the crng readiness state hasn't been working until
-your recent fix, I suspect the actual entropy gathering code probably
-hasn't prompted too many bug reports, until now that is.
-
-Jason
+-- Steve
