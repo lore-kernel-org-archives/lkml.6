@@ -1,31 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933906AbeD0PMa (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 11:12:30 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:53515 "EHLO
+        id S933440AbeD0PNX (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 11:13:23 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:34757 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933750AbeD0PMQ (ORCPT
+        with ESMTP id S933624AbeD0PNU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 11:12:16 -0400
-Date: Fri, 27 Apr 2018 08:09:44 -0700
-From: tip-bot for Petr Tesarik <tipbot@zytor.com>
-Message-ID: <tip-3db3eb285259ac129f7aec6b814b3e9f6c1b372b@git.kernel.org>
-Cc: ptesarik@suse.cz, thomas.lendacky@amd.com, boris.ostrovsky@oracle.com,
-        mpatocka@redhat.com, tglx@linutronix.de, jgross@suse.com,
-        luto@kernel.org, ptesarik@suse.com, linux-kernel@vger.kernel.org,
-        douly.fnst@cn.fujitsu.com, mingo@kernel.org, jdelvare@suse.de,
-        hpa@zytor.com, bp@suse.de
-Reply-To: ptesarik@suse.com, linux-kernel@vger.kernel.org,
-        douly.fnst@cn.fujitsu.com, mingo@kernel.org, jdelvare@suse.de,
-        hpa@zytor.com, bp@suse.de, thomas.lendacky@amd.com, ptesarik@suse.cz,
-        boris.ostrovsky@oracle.com, mpatocka@redhat.com, tglx@linutronix.de,
-        jgross@suse.com, luto@kernel.org
-In-Reply-To: <20180425120835.23cef60c@ezekiel.suse.cz>
-References: <20180425120835.23cef60c@ezekiel.suse.cz>
+        Fri, 27 Apr 2018 11:13:20 -0400
+Date: Fri, 27 Apr 2018 08:12:47 -0700
+From: tip-bot for Andy Lutomirski <tipbot@zytor.com>
+Message-ID: <tip-8bb2610bc4967f19672444a7b0407367f1540028@git.kernel.org>
+Cc: mingo@kernel.org, luto@kernel.org, hpa@zytor.com, bp@alien8.de,
+        linux-kernel@vger.kernel.org, dvlasenk@redhat.com,
+        linux@dominikbrodowski.net, tglx@linutronix.de
+Reply-To: bp@alien8.de, hpa@zytor.com, luto@kernel.org, mingo@kernel.org,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        linux@dominikbrodowski.net, dvlasenk@redhat.com
+In-Reply-To: <d4c4d9985fbe64f8c9e19291886453914b48caee.1523975710.git.luto@kernel.org>
+References: <d4c4d9985fbe64f8c9e19291886453914b48caee.1523975710.git.luto@kernel.org>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/setup: Do not reserve a crash kernel region if
- booted on Xen PV
-Git-Commit-ID: 3db3eb285259ac129f7aec6b814b3e9f6c1b372b
+Subject: [tip:x86/pti] x86/entry/64/compat: Preserve r8-r11 in int $0x80
+Git-Commit-ID: 8bb2610bc4967f19672444a7b0407367f1540028
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -38,65 +33,137 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  3db3eb285259ac129f7aec6b814b3e9f6c1b372b
-Gitweb:     https://git.kernel.org/tip/3db3eb285259ac129f7aec6b814b3e9f6c1b372b
-Author:     Petr Tesarik <ptesarik@suse.cz>
-AuthorDate: Wed, 25 Apr 2018 12:08:35 +0200
+Commit-ID:  8bb2610bc4967f19672444a7b0407367f1540028
+Gitweb:     https://git.kernel.org/tip/8bb2610bc4967f19672444a7b0407367f1540028
+Author:     Andy Lutomirski <luto@kernel.org>
+AuthorDate: Tue, 17 Apr 2018 07:36:36 -0700
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Fri, 27 Apr 2018 17:06:28 +0200
+CommitDate: Fri, 27 Apr 2018 17:07:58 +0200
 
-x86/setup: Do not reserve a crash kernel region if booted on Xen PV
+x86/entry/64/compat: Preserve r8-r11 in int $0x80
 
-Xen PV domains cannot shut down and start a crash kernel. Instead,
-the crashing kernel makes a SCHEDOP_shutdown hypercall with the
-reason code SHUTDOWN_crash, cf. xen_crash_shutdown() machine op in
-arch/x86/xen/enlighten_pv.c.
+32-bit user code that uses int $80 doesn't care about r8-r11.  There is,
+however, some 64-bit user code that intentionally uses int $0x80 to invoke
+32-bit system calls.  From what I've seen, basically all such code assumes
+that r8-r15 are all preserved, but the kernel clobbers r8-r11.  Since I
+doubt that there's any code that depends on int $0x80 zeroing r8-r11,
+change the kernel to preserve them.
 
-A crash kernel reservation is merely a waste of RAM in this case. It
-may also confuse users of kexec_load(2) and/or kexec_file_load(2).
-When flags include KEXEC_ON_CRASH or KEXEC_FILE_ON_CRASH,
-respectively, these syscalls return success, which is technically
-correct, but the crash kexec image will never be actually used.
+I suspect that very little user code is broken by the old clobber, since
+r8-r11 are only rarely allocated by gcc, and they're clobbered by function
+calls, so they only way we'd see a problem is if the same function that
+invokes int $0x80 also spills something important to one of these
+registers.
 
-Signed-off-by: Petr Tesarik <ptesarik@suse.com>
+The current behavior seems to date back to the historical commit
+"[PATCH] x86-64 merge for 2.6.4".  Before that, all regs were
+preserved.  I can't find any explanation of why this change was made.
+
+Update the test_syscall_vdso_32 testcase as well to verify the new
+behavior, and it strengthens the test to make sure that the kernel doesn't
+accidentally permute r8..r15.
+
+Suggested-by: Denys Vlasenko <dvlasenk@redhat.com>
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Dou Liyang <douly.fnst@cn.fujitsu.com>
-Cc: Mikulas Patocka <mpatocka@redhat.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: xen-devel@lists.xenproject.org
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: Jean Delvare <jdelvare@suse.de>
-Link: https://lkml.kernel.org/r/20180425120835.23cef60c@ezekiel.suse.cz
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dominik Brodowski <linux@dominikbrodowski.net>
+Link: https://lkml.kernel.org/r/d4c4d9985fbe64f8c9e19291886453914b48caee.1523975710.git.luto@kernel.org
 
 ---
- arch/x86/kernel/setup.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/x86/entry/entry_64_compat.S                |  8 +++---
+ tools/testing/selftests/x86/test_syscall_vdso.c | 35 +++++++++++++++----------
+ 2 files changed, 25 insertions(+), 18 deletions(-)
 
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index 6285697b6e56..5c623dfe39d1 100644
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -50,6 +50,7 @@
- #include <linux/init_ohci1394_dma.h>
- #include <linux/kvm_para.h>
- #include <linux/dma-contiguous.h>
-+#include <xen/xen.h>
+diff --git a/arch/x86/entry/entry_64_compat.S b/arch/x86/entry/entry_64_compat.S
+index 9af927e59d49..9de7f1e1dede 100644
+--- a/arch/x86/entry/entry_64_compat.S
++++ b/arch/x86/entry/entry_64_compat.S
+@@ -84,13 +84,13 @@ ENTRY(entry_SYSENTER_compat)
+ 	pushq	%rdx			/* pt_regs->dx */
+ 	pushq	%rcx			/* pt_regs->cx */
+ 	pushq	$-ENOSYS		/* pt_regs->ax */
+-	pushq   $0			/* pt_regs->r8  = 0 */
++	pushq   %r8			/* pt_regs->r8 */
+ 	xorl	%r8d, %r8d		/* nospec   r8 */
+-	pushq   $0			/* pt_regs->r9  = 0 */
++	pushq   %r9			/* pt_regs->r9 */
+ 	xorl	%r9d, %r9d		/* nospec   r9 */
+-	pushq   $0			/* pt_regs->r10 = 0 */
++	pushq   %r10			/* pt_regs->r10 */
+ 	xorl	%r10d, %r10d		/* nospec   r10 */
+-	pushq   $0			/* pt_regs->r11 = 0 */
++	pushq   %r11			/* pt_regs->r11 */
+ 	xorl	%r11d, %r11d		/* nospec   r11 */
+ 	pushq   %rbx                    /* pt_regs->rbx */
+ 	xorl	%ebx, %ebx		/* nospec   rbx */
+diff --git a/tools/testing/selftests/x86/test_syscall_vdso.c b/tools/testing/selftests/x86/test_syscall_vdso.c
+index 40370354d4c1..c9c3281077bc 100644
+--- a/tools/testing/selftests/x86/test_syscall_vdso.c
++++ b/tools/testing/selftests/x86/test_syscall_vdso.c
+@@ -100,12 +100,19 @@ asm (
+ 	"	shl	$32, %r8\n"
+ 	"	orq	$0x7f7f7f7f, %r8\n"
+ 	"	movq	%r8, %r9\n"
+-	"	movq	%r8, %r10\n"
+-	"	movq	%r8, %r11\n"
+-	"	movq	%r8, %r12\n"
+-	"	movq	%r8, %r13\n"
+-	"	movq	%r8, %r14\n"
+-	"	movq	%r8, %r15\n"
++	"	incq	%r9\n"
++	"	movq	%r9, %r10\n"
++	"	incq	%r10\n"
++	"	movq	%r10, %r11\n"
++	"	incq	%r11\n"
++	"	movq	%r11, %r12\n"
++	"	incq	%r12\n"
++	"	movq	%r12, %r13\n"
++	"	incq	%r13\n"
++	"	movq	%r13, %r14\n"
++	"	incq	%r14\n"
++	"	movq	%r14, %r15\n"
++	"	incq	%r15\n"
+ 	"	ret\n"
+ 	"	.code32\n"
+ 	"	.popsection\n"
+@@ -128,12 +135,13 @@ int check_regs64(void)
+ 	int err = 0;
+ 	int num = 8;
+ 	uint64_t *r64 = &regs64.r8;
++	uint64_t expected = 0x7f7f7f7f7f7f7f7fULL;
  
- #include <linux/errno.h>
- #include <linux/kernel.h>
-@@ -534,6 +535,11 @@ static void __init reserve_crashkernel(void)
- 		high = true;
- 	}
+ 	if (!kernel_is_64bit)
+ 		return 0;
  
-+	if (xen_pv_domain()) {
-+		pr_info("Ignoring crashkernel for a Xen PV domain\n");
-+		return;
-+	}
-+
- 	/* 0 means: find the address automatically */
- 	if (crash_base <= 0) {
- 		/*
+ 	do {
+-		if (*r64 == 0x7f7f7f7f7f7f7f7fULL)
++		if (*r64 == expected++)
+ 			continue; /* register did not change */
+ 		if (syscall_addr != (long)&int80) {
+ 			/*
+@@ -147,18 +155,17 @@ int check_regs64(void)
+ 				continue;
+ 			}
+ 		} else {
+-			/* INT80 syscall entrypoint can be used by
++			/*
++			 * INT80 syscall entrypoint can be used by
+ 			 * 64-bit programs too, unlike SYSCALL/SYSENTER.
+ 			 * Therefore it must preserve R12+
+ 			 * (they are callee-saved registers in 64-bit C ABI).
+ 			 *
+-			 * This was probably historically not intended,
+-			 * but R8..11 are clobbered (cleared to 0).
+-			 * IOW: they are the only registers which aren't
+-			 * preserved across INT80 syscall.
++			 * Starting in Linux 4.17 (and any kernel that
++			 * backports the change), R8..11 are preserved.
++			 * Historically (and probably unintentionally), they
++			 * were clobbered or zeroed.
+ 			 */
+-			if (*r64 == 0 && num <= 11)
+-				continue;
+ 		}
+ 		printf("[FAIL]\tR%d has changed:%016llx\n", num, *r64);
+ 		err++;
