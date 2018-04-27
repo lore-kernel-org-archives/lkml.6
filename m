@@ -1,60 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933815AbeD0OE5 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 10:04:57 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:42866 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933783AbeD0OEv (ORCPT
+        id S933942AbeD0PH0 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 11:07:26 -0400
+Received: from relay1.mentorg.com ([192.94.38.131]:40930 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933738AbeD0OEj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 10:04:51 -0400
-Date: Fri, 27 Apr 2018 17:04:09 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Alexei Starovoitov <ast@kernel.org>, Martin KaFai Lau <kafai@fb.com>
-Cc: Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH 1/2] bpf: btf: silence uninitialize variable warnings
-Message-ID: <20180427140409.GA19583@mwanda>
+        Fri, 27 Apr 2018 10:04:39 -0400
+From: Jiada Wang <jiada_wang@mentor.com>
+To: <morten.rasmussen@arm.com>
+CC: <valentin.schneider@arm.com>, <dietmar.eggemann@arm.com>,
+        <vincent.guittot@linaro.org>, <gaku.inami.xh@renesas.com>,
+        <linux-kernel@vger.kernel.org>, <jiada_wang@mentor.com>
+Subject: Re: [PATCHv2,1/7] sched: Add static_key for asymmetric cpu capacity optimizations
+Date: Fri, 27 Apr 2018 23:04:38 +0900
+Message-ID: <20180427140438.7433-1-jiada_wang@mentor.com>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <1521125224-15434-2-git-send-email-morten.rasmussen@arm.com>
+References: <1521125224-15434-2-git-send-email-morten.rasmussen@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8875 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=773
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804270135
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Smatch complains that size can be uninitialized if btf_type_id_size()
-returns NULL.  It seems reasonable enough to check for that.
+Hi
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-This goes to the BPF tree (linux-next).
+with this patch, if enable CONFIG_DEBUG_ATOMIC_SLEEP=y,
+then I am getting following BUG report during early startup
 
-diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-index 22e1046a1a86..e631b6fd60d3 100644
---- a/kernel/bpf/btf.c
-+++ b/kernel/bpf/btf.c
-@@ -1229,7 +1229,8 @@ static int btf_array_check_member(struct btf_verifier_env *env,
- 	}
- 
- 	array_type_id = member->type;
--	btf_type_id_size(btf, &array_type_id, &array_size);
-+	if (!btf_type_id_size(btf, &array_type_id, &array_size))
-+		return -EINVAL;
- 	struct_size = struct_type->size;
- 	bytes_offset = BITS_ROUNDDOWN_BYTES(struct_bits_off);
- 	if (struct_size - bytes_offset < array_size) {
-@@ -1351,6 +1352,8 @@ static void btf_array_seq_show(const struct btf *btf, const struct btf_type *t,
- 
- 	elem_type_id = array->type;
- 	elem_type = btf_type_id_size(btf, &elem_type_id, &elem_size);
-+	if (!elem_type)
-+		return;
- 	elem_ops = btf_type_ops(elem_type);
- 	seq_puts(m, "[");
- 	for (i = 0; i < array->nelems; i++) {
+Backtrace caused by [1] during early kernel startup:
+[ 5.325288] CPU: All CPU(s) started at EL2
+[ 5.325700] alternatives: patching kernel code
+[ 5.329255] BUG: sleeping function called from invalid context at ./include/linux/percpu-rwsem.h:34
+[ 5.329525] in_atomic(): 0, irqs_disabled(): 0, pid: 1, name: swapper/0
+[ 5.329657] 2 locks held by swapper/0/1:
+[ 5.329744] #0: (sched_domains_mutex){+.+.}, at: [<ffff20000957f244>] sched_init_smp+0x88/0x158
+[ 5.329993] #1: (rcu_read_lock){....}, at: [<ffff200008159794>] build_sched_domains+0x9cc/0x2f08
+[ 5.330233] Preemption disabled at:
+[ 5.330256] [<ffff200008157b5c>] rq_attach_root+0x28/0x1d8
+[ 5.330511] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.14.17+ #123
+[ 5.330635] Hardware name: Renesas Salvator-X board based on r8a7795 ES2.0+ (DT)
+[ 5.330779] Call trace:
+[ 5.330853] [<ffff20000808fe88>] dump_backtrace+0x0/0x364
+[ 5.330968] [<ffff200008090200>] show_stack+0x14/0x1c
+[ 5.331080] [<ffff200008f365d8>] dump_stack+0x108/0x174
+[ 5.331194] [<ffff200008113170>] ___might_sleep+0x43c/0x44c
+[ 5.331310] [<ffff2000081132e4>] __might_sleep+0x164/0x178
+[ 5.331429] [<ffff2000080b2338>] cpus_read_lock+0x38/0x12c
+[ 5.331547] [<ffff2000082d5860>] static_key_enable+0x14/0x2c
+[ 5.331665] [<ffff20000815bcac>] build_sched_domains+0x2ee4/0x2f08
+[ 5.331789] [<ffff20000815cc9c>] sched_init_domains+0xcc/0xe8
+[ 5.331908] [<ffff20000957f250>] sched_init_smp+0x94/0x158
+[ 5.332026] [<ffff200009571560>] kernel_init_freeable+0x1ec/0x4c4
+[ 5.332153] [<ffff200008f593a8>] kernel_init+0x10/0x128
+[ 5.332264] [<ffff2000080865d4>] ret_from_fork+0x10/0x18
+[ 5.343400] devtmpfs: initialized
+
+Thanks,
+Jiada
