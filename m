@@ -1,64 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932300AbeD0I0A (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 04:26:00 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40946 "EHLO mx2.suse.de"
+        id S932365AbeD0I0r convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 04:26:47 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:51356 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1757758AbeD0IZ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 04:25:58 -0400
-Date: Fri, 27 Apr 2018 10:25:55 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Mikulas Patocka <mpatocka@redhat.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, John Stoffel <john@stoffel.org>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Michal@stoffel.org, eric.dumazet@gmail.com, netdev@vger.kernel.org,
-        jasowang@redhat.com, Randy Dunlap <rdunlap@infradead.org>,
-        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
-        linux-mm@kvack.org, dm-devel@redhat.com,
-        Vlastimil Babka <vbabka@suse.cz>, Andrew@stoffel.org,
-        David Rientjes <rientjes@google.com>,
-        Morton <akpm@linux-foundation.org>,
-        virtualization@lists.linux-foundation.org,
-        David Miller <davem@davemloft.net>, edumazet@google.com
-Subject: Re: [dm-devel] [PATCH v5] fault-injection: introduce kvmalloc
- fallback options
-Message-ID: <20180427082555.GC17484@dhcp22.suse.cz>
-References: <alpine.LRH.2.02.1804251656300.9428@file01.intranet.prod.int.rdu2.redhat.com>
- <alpine.DEB.2.21.1804251417470.166306@chino.kir.corp.google.com>
- <alpine.LRH.2.02.1804251720090.9428@file01.intranet.prod.int.rdu2.redhat.com>
- <1524694663.4100.21.camel@HansenPartnership.com>
- <alpine.LRH.2.02.1804251857070.31135@file01.intranet.prod.int.rdu2.redhat.com>
- <1524697697.4100.23.camel@HansenPartnership.com>
- <23266.8532.619051.784274@quad.stoffel.home>
- <alpine.LRH.2.02.1804261726540.13401@file01.intranet.prod.int.rdu2.redhat.com>
- <20180427005213-mutt-send-email-mst@kernel.org>
- <alpine.LRH.2.02.1804261829190.30599@file01.intranet.prod.int.rdu2.redhat.com>
+        id S932323AbeD0I0p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 04:26:45 -0400
+Date: Fri, 27 Apr 2018 10:26:14 +0200
+From: =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@bootlin.com>
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: linux@armlinux.org.uk, wens@csie.org, marc.zyngier@arm.com,
+        mark.rutland@arm.com, robh+dt@kernel.org, horms@verge.net.au,
+        geert@linux-m68k.org, magnus.damm@gmail.com,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
+        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 08/11] ARM: sun9i: smp: Add is_a83t field
+Message-ID: <20180427102614.1558a1ae@dell-desktop.home>
+In-Reply-To: <20180423081423.h7b35sobagypokpe@flea>
+References: <20180420211022.11759-1-mylene.josserand@bootlin.com>
+        <20180420211022.11759-9-mylene.josserand@bootlin.com>
+        <20180423081423.h7b35sobagypokpe@flea>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.LRH.2.02.1804261829190.30599@file01.intranet.prod.int.rdu2.redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 26-04-18 18:52:05, Mikulas Patocka wrote:
-> 
-> 
-> On Fri, 27 Apr 2018, Michael S. Tsirkin wrote:
-[...]
-> >    But assuming it's important to control this kind of
-> >    fault injection to be controlled from
-> >    a dedicated menuconfig option, why not the rest of
-> >    faults?
-> 
-> The injected faults cause damage to the user, so there's no point to 
-> enable them by default. vmalloc fallback should not cause any damage 
-> (assuming that the code is correctly written).
+Hello,
 
-But you want to find those bugs which would BUG_ON easier, so there is a
-risk of harm IIUC and this is not much different than other fault
-injecting paths.
+On Mon, 23 Apr 2018 10:14:23 +0200
+Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+
+> On Fri, Apr 20, 2018 at 11:10:19PM +0200, Mylène Josserand wrote:
+> > To prepare the support of sun8i-a83t, add a field in the smp_data
+> > structure to know if we are on sun9i-a80 or sun8i-a83t.
+> > 
+> > Add also a global variable to retrieve which architecture we are
+> > having.
+> > 
+> > Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
+> > ---
+> >  arch/arm/mach-sunxi/mc_smp.c | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> > 
+> > diff --git a/arch/arm/mach-sunxi/mc_smp.c b/arch/arm/mach-sunxi/mc_smp.c
+> > index 03f021d0c73e..48e5f4db64b6 100644
+> > --- a/arch/arm/mach-sunxi/mc_smp.c
+> > +++ b/arch/arm/mach-sunxi/mc_smp.c
+> > @@ -74,6 +74,7 @@ static void __iomem *sram_b_smp_base;
+> >  
+> >  extern void sunxi_mc_smp_secondary_startup(void);
+> >  extern void sunxi_mc_smp_resume(void);
+> > +static int is_a83t;
+> >  
+> >  static bool sunxi_core_is_cortex_a15(unsigned int core, unsigned int cluster)
+> >  {
+> > @@ -624,6 +625,7 @@ struct sunxi_mc_smp_nodes {
+> >  struct sunxi_mc_smp_data {
+> >  	const char *enable_method;
+> >  	int (*get_smp_nodes)(struct sunxi_mc_smp_nodes *nodes);
+> > +	int is_a83t;  
+> 
+> This can be made a boolean.
+> 
+> Maxime
+> 
+
+ACK. It will be fixed in next version.
+
+Best regards,
+
 -- 
-Michal Hocko
-SUSE Labs
+Mylène Josserand, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
