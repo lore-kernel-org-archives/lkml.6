@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757996AbeD0MAR (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 08:00:17 -0400
-Received: from smtprelay6.synopsys.com ([198.182.37.59]:36053 "EHLO
+        id S1758062AbeD0MAt (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 08:00:49 -0400
+Received: from smtprelay.synopsys.com ([198.182.37.59]:36059 "EHLO
         smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751566AbeD0MAM (ORCPT
+        with ESMTP id S1757680AbeD0MAP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 08:00:12 -0400
+        Fri, 27 Apr 2018 08:00:15 -0400
 From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
 To: bhelgaas@google.com, lorenzo.pieralisi@arm.com,
         Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
         robh+dt@kernel.org, mark.rutland@arm.com
 Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, gustavo.pimentel@synopsys.com
-Subject: [PATCH v8 1/9] bindings: PCI: designware: Example update
-Date: Fri, 27 Apr 2018 12:59:56 +0100
-Message-Id: <daccd2d9da8f4467680649b4226be7be711f32e8.1524829928.git.gustavo.pimentel@synopsys.com>
+Subject: [PATCH v8 9/9] PCI: dwc: Replace magic number by defines
+Date: Fri, 27 Apr 2018 13:00:04 +0100
+Message-Id: <af70c4987f3938d1a2f6c8329691050a5efb3b9b.1524829928.git.gustavo.pimentel@synopsys.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1524829928.git.gustavo.pimentel@synopsys.com>
 References: <cover.1524829928.git.gustavo.pimentel@synopsys.com>
@@ -25,22 +25,18 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace "ctrlreg" reg-name by "dbi" to be coherent with similar drivers,
-however it still be compatible with any previous DT that uses the old
-reg-name.
-
-Replace the PCIe base address example by a real PCIe base address in use.
+Replace magic numbers by a self-explained define to ease human
+comprehension.
 
 Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Jingoo Han <jingoohan1@gmail.com>
 ---
-Changes v1->v2:
- - Removed any iATU reference or changes to avoid confusion.
- - Add "snps,dw-pcie" compatible string following Kishon's suggestion.
-Changes v2->v3:
+Change v1->v2:
+ - Nothing changed, just to follow the patch set version.
+Change v2->v3:
  - Nothing changed, just to follow the patch set version.
 Changes v3->v4:
- - Reverted "snps,dw-pcie-rc" compatible string requested by Rob Herring.
+ - Nothing changed, just to follow the patch set version.
 Changes v4->v5:
  - Nothing changed, just to follow the patch set version.
 Changes v5->v6:
@@ -50,44 +46,93 @@ Changes v6->v7:
 Changes v7->v8:
  - Patch description rework for an imperative verbal mode.
 
- Documentation/devicetree/bindings/pci/designware-pcie.txt | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/pci/dwc/pcie-designware-host.c | 34 ++++++++++++++++++++--------------
+ drivers/pci/dwc/pcie-designware.h      |  1 +
+ 2 files changed, 21 insertions(+), 14 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pci/designware-pcie.txt b/Documentation/devicetree/bindings/pci/designware-pcie.txt
-index 1da7ade..7f9804d 100644
---- a/Documentation/devicetree/bindings/pci/designware-pcie.txt
-+++ b/Documentation/devicetree/bindings/pci/designware-pcie.txt
-@@ -1,7 +1,8 @@
- * Synopsys DesignWare PCIe interface
+diff --git a/drivers/pci/dwc/pcie-designware-host.c b/drivers/pci/dwc/pcie-designware-host.c
+index fc55fde..a7657ab 100644
+--- a/drivers/pci/dwc/pcie-designware-host.c
++++ b/drivers/pci/dwc/pcie-designware-host.c
+@@ -83,18 +83,23 @@ irqreturn_t dw_handle_msi_irq(struct pcie_port *pp)
+ 	num_ctrls = pp->num_vectors / MAX_MSI_IRQS_PER_CTRL;
  
- Required properties:
--- compatible: should contain "snps,dw-pcie" to identify the core.
-+- compatible:
-+	"snps,dw-pcie" for RC mode;
- - reg: Should contain the configuration address space.
- - reg-names: Must be "config" for the PCIe configuration space.
-     (The old way of getting the configuration address space from "ranges"
-@@ -41,11 +42,11 @@ EP mode:
+ 	for (i = 0; i < num_ctrls; i++) {
+-		dw_pcie_rd_own_conf(pp, PCIE_MSI_INTR0_STATUS + i * 12, 4,
+-				    &val);
++		dw_pcie_rd_own_conf(pp, PCIE_MSI_INTR0_STATUS +
++					(i * MSI_REG_CTRL_BLOCK_SIZE),
++				    4, &val);
+ 		if (!val)
+ 			continue;
  
- Example configuration:
+ 		ret = IRQ_HANDLED;
+ 		pos = 0;
+-		while ((pos = find_next_bit((unsigned long *) &val, 32,
+-					    pos)) != 32) {
+-			irq = irq_find_mapping(pp->irq_domain, i * 32 + pos);
++		while ((pos = find_next_bit((unsigned long *) &val,
++					    MAX_MSI_IRQS_PER_CTRL,
++					    pos)) != MAX_MSI_IRQS_PER_CTRL) {
++			irq = irq_find_mapping(pp->irq_domain,
++					       (i * MAX_MSI_IRQS_PER_CTRL) +
++					       pos);
+ 			generic_handle_irq(irq);
+-			dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_STATUS + i * 12,
++			dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_STATUS +
++						(i * MSI_REG_CTRL_BLOCK_SIZE),
+ 					    4, 1 << pos);
+ 			pos++;
+ 		}
+@@ -157,9 +162,9 @@ static void dw_pci_bottom_mask(struct irq_data *data)
+ 	if (pp->ops->msi_clear_irq) {
+ 		pp->ops->msi_clear_irq(pp, data->hwirq);
+ 	} else {
+-		ctrl = data->hwirq / 32;
+-		res = ctrl * 12;
+-		bit = data->hwirq % 32;
++		ctrl = data->hwirq / MAX_MSI_IRQS_PER_CTRL;
++		res = ctrl * MSI_REG_CTRL_BLOCK_SIZE;
++		bit = data->hwirq % MAX_MSI_IRQS_PER_CTRL;
  
--	pcie: pcie@dffff000 {
-+	pcie: pcie@dfc00000 {
- 		compatible = "snps,dw-pcie";
--		reg = <0xdffff000 0x1000>, /* Controller registers */
--		      <0xd0000000 0x2000>; /* PCI config space */
--		reg-names = "ctrlreg", "config";
-+		reg = <0xdfc00000 0x0001000>, /* IP registers */
-+		      <0xd0000000 0x0002000>; /* Configuration space */
-+		reg-names = "dbi", "config";
- 		#address-cells = <3>;
- 		#size-cells = <2>;
- 		device_type = "pci";
-@@ -54,5 +55,4 @@ Example configuration:
- 		interrupts = <25>, <24>;
- 		#interrupt-cells = <1>;
- 		num-lanes = <1>;
--		num-viewport = <3>;
- 	};
+ 		pp->irq_status[ctrl] &= ~(1 << bit);
+ 		dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_ENABLE + res, 4,
+@@ -180,9 +185,9 @@ static void dw_pci_bottom_unmask(struct irq_data *data)
+ 	if (pp->ops->msi_set_irq) {
+ 		pp->ops->msi_set_irq(pp, data->hwirq);
+ 	} else {
+-		ctrl = data->hwirq / 32;
+-		res = ctrl * 12;
+-		bit = data->hwirq % 32;
++		ctrl = data->hwirq / MAX_MSI_IRQS_PER_CTRL;
++		res = ctrl * MSI_REG_CTRL_BLOCK_SIZE;
++		bit = data->hwirq % MAX_MSI_IRQS_PER_CTRL;
+ 
+ 		pp->irq_status[ctrl] |= 1 << bit;
+ 		dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_ENABLE + res, 4,
+@@ -652,8 +657,9 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
+ 
+ 	/* Initialize IRQ Status array */
+ 	for (ctrl = 0; ctrl < num_ctrls; ctrl++)
+-		dw_pcie_rd_own_conf(pp, PCIE_MSI_INTR0_ENABLE + (ctrl * 12), 4,
+-				    &pp->irq_status[ctrl]);
++		dw_pcie_rd_own_conf(pp, PCIE_MSI_INTR0_ENABLE +
++					(ctrl * MSI_REG_CTRL_BLOCK_SIZE),
++				    4, &pp->irq_status[ctrl]);
+ 
+ 	/* Setup RC BARs */
+ 	dw_pcie_writel_dbi(pci, PCI_BASE_ADDRESS_0, 0x00000004);
+diff --git a/drivers/pci/dwc/pcie-designware.h b/drivers/pci/dwc/pcie-designware.h
+index fe811db..bee4e25 100644
+--- a/drivers/pci/dwc/pcie-designware.h
++++ b/drivers/pci/dwc/pcie-designware.h
+@@ -110,6 +110,7 @@
+ #define MAX_MSI_IRQS			256
+ #define MAX_MSI_IRQS_PER_CTRL		32
+ #define MAX_MSI_CTRLS			(MAX_MSI_IRQS / MAX_MSI_IRQS_PER_CTRL)
++#define MSI_REG_CTRL_BLOCK_SIZE		12
+ #define MSI_DEF_NUM_VECTORS		32
+ 
+ /* Maximum number of inbound/outbound iATUs */
 -- 
 2.7.4
