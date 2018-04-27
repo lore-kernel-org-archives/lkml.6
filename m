@@ -1,94 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758812AbeD0Qo0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 12:44:26 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:38076 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758562AbeD0QoX (ORCPT
+        id S932863AbeD0Qov (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 12:44:51 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34410 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1758562AbeD0Qot (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 12:44:23 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E383F60310
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-Date: Fri, 27 Apr 2018 10:44:21 -0600
-From: Lina Iyer <ilina@codeaurora.org>
-To: Matthias Kaehlcke <mka@chromium.org>
-Cc: andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        rnayak@codeaurora.org, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org, sboyd@kernel.org, evgreen@chromium.org,
-        dianders@chromium.org
-Subject: Re: [PATCH v6 06/10] drivers: qcom: rpmh-rsc: allow invalidation of
- sleep/wake TCS
-Message-ID: <20180427164421.GB6380@codeaurora.org>
-References: <20180419221635.17849-1-ilina@codeaurora.org>
- <20180419221635.17849-7-ilina@codeaurora.org>
- <20180425221123.GD243180@google.com>
+        Fri, 27 Apr 2018 12:44:49 -0400
+Date: Fri, 27 Apr 2018 09:45:54 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Joel Fernandes <joelaf@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zilstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Fenguang Wu <fengguang.wu@intel.com>,
+        Baohong Liu <baohong.liu@intel.com>,
+        Vedang Patel <vedang.patel@intel.com>,
+        "Cc: Android Kernel" <kernel-team@android.com>
+Subject: Re: [PATCH RFC] tracepoint: Introduce tracepoint callbacks executing
+ with preempt on
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180427042656.190746-1-joelaf@google.com>
+ <20180427155701.GL26088@linux.vnet.ibm.com>
+ <CAJWu+or9GJwkDK9+842YbobG3=xVW-PgqS=uE5P2xFbDhmqxEQ@mail.gmail.com>
+ <20180427122201.75abc313@gandalf.local.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180425221123.GD243180@google.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180427122201.75abc313@gandalf.local.home>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18042716-0044-0000-0000-0000040C3FD9
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008932; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000257; SDB=6.01024091; UDB=6.00522853; IPR=6.00803321;
+ MB=3.00020809; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-27 16:44:42
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18042716-0045-0000-0000-0000083E4234
+Message-Id: <20180427164554.GO26088@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-27_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804270161
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 25 2018 at 16:11 -0600, Matthias Kaehlcke wrote:
->On Thu, Apr 19, 2018 at 04:16:31PM -0600, Lina Iyer wrote:
->> Allow sleep and wake commands to be cleared from the respective TCSes,
->> so that they can be re-populated.
->>
->> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
->> ---
->>
->> Changes in v6:
->> 	- remove unnecessary locks around __tcs_invalidate
->> 	- rename function to tcs_invaldiate
->>
->> Changes in v4:
->> 	- refactored the rphm_rsc_invalidate()
->> ---
->>  drivers/soc/qcom/rpmh-rsc.c | 45 +++++++++++++++++++++++++++++++++++++
->>  1 file changed, 45 insertions(+)
->>
->> diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
->> index d169f7da5422..170d4a10275d 100644
->> --- a/drivers/soc/qcom/rpmh-rsc.c
->> +++ b/drivers/soc/qcom/rpmh-rsc.c
->> @@ -101,6 +101,51 @@ static struct tcs_group *get_tcs_of_type(struct rsc_drv *drv, int type)
->>  	return &drv->tcs[type];
->>  }
->>
->> +static int tcs_invalidate(struct rsc_drv *drv, int type)
->> +{
->> +	int m;
->> +	struct tcs_group *tcs;
->> +
->> +	tcs = get_tcs_of_type(drv, type);
->> +	if (IS_ERR(tcs))
->> +		return PTR_ERR(tcs);
->> +
->> +	spin_lock(&tcs->lock);
->> +	if (bitmap_empty(tcs->slots, MAX_TCS_SLOTS)) {
->> +		spin_unlock(&tcs->lock);
->> +		return 0;
->> +	}
->> +
->> +	for (m = tcs->offset; m < tcs->offset + tcs->num_tcs; m++) {
->> +		if (!tcs_is_free(drv, m)) {
->> +			spin_unlock(&tcs->lock);
->> +			return -EAGAIN;
->> +		}
->> +		write_tcs_reg_sync(drv, RSC_DRV_CMD_ENABLE, m, 0);
->> +		bitmap_zero(tcs->slots, MAX_TCS_SLOTS);
->
->Shouldn't this only clear the slots corresponding to 'm'?
->
->If resetting the entire bitmap is really intended it could be done
->once after the loop, though the bitmap might be left in an
->inconsistent state if a TCS is still in use.
-The TCS will not be in use, the check tcs_is_free() will ensure that. I
-will move the bitmap_zero() outside the for().
+On Fri, Apr 27, 2018 at 12:22:01PM -0400, Steven Rostedt wrote:
+> On Fri, 27 Apr 2018 09:14:30 -0700
+> Joel Fernandes <joelaf@google.com> wrote:
+> 
+> > > Hmmm...  Do I need to create a _notrace variant of srcu_read_lock()
+> > > and srcu_read_unlock()?  
+> > 
+> > That shouldn't be needed. For the rcu_read_lock_sched case, there is a
+> > preempt_disable which needs to be a notrace, but for the srcu one,
+> > since we don't do that, I think it should be fine.
+> 
+> Actually, I think I may agree here too. Because the _notrace is for
+> function tracing, and it shouldn't affect it. If people don't want it
+> traced, they could add those functions to the list in the notrace file.
 
-Thanks,
-Lina
+OK, feel free to ignore my notrace srcu_read_lock() patch, then.  ;-)
+
+							Thanx, Paul
