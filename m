@@ -1,144 +1,118 @@
-Return-Path: <borntraeger@de.ibm.com>
-X-Google-Smtp-Source: AB8JxZoPa/tMgNGzIXDRFvzo0T0t3aH7y9rqnoyR6uHugc5Zj/2UhYM/AInQ/GCcEeyIUDe5dYcq
-ARC-Seal: i=1; a=rsa-sha256; t=1524841812; cv=none;
-        d=google.com; s=arc-20160816;
-        b=hYIAykS4AwW3xMxzQc/O2iVOD/P3hPC0jQpzpVlE2Dl6eTEuiNcBz7zWmuwD95VgHl
-         1QrY+4H7828V3li5jdH60jIn3By8X44M3U/jeFsuzRn5KUy5uypRr70wfImb5fQtquFh
-         +WG9Lc6q51CqXhOC1h68U7zWj2Lut8igFwVa3GXl+bm+uNb+vvkbI7fWdC3gxxYtWxFl
-         Q9HISqnetcZsqw0G1klN+N6q9iByipt0YwBP+K54tSoaqDsKF9/nJPgxrfGBUVo9mQpL
-         KCNxC5QBrYpyCqoQj8vj7uG6vLukAzZFERqqhaeBEsPrwQsiLi/03AV+FSpgKQWyNpNF
-         dJHA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:content-transfer-encoding:content-language:in-reply-to
-         :mime-version:user-agent:date:openpgp:from:references:cc:to:subject
-         :arc-authentication-results;
-        bh=GhuM+DiOn4EWWPdXjF763JQScHnYSE/wA3BRWu3v7ro=;
-        b=RrZrnvs3FSAzOen21uTiE+uxO/c5/ZF9t5jUDaqIh9/Np5ZPT817ee1KJZKdmW6Wh9
-         dPgUtVeKz9XM2oxm/VNZIpouxs+WxPaWQPkXwfNOWeiXWWAhnxquDcFBfIecFNq9Xuvq
-         KkKvaEDoqQc860XlpAWRJhebfyxqYzR/9/vrc2zTbaMhk2dv9QQZI2usoATLkBEbLyp4
-         uuKSG1Tu4yKbJN5BXrKTwKPjYPwXFOciH+GpyN4mqGyNv3qQi62UMeCStsGIz/Mxo6/l
-         /t8l1ARQl24juFPEeSwTc0RbGP6xDpzeS3iZ+flQYSSLacNYxj9rvi6hzbW7Y6uAEk7V
-         Z/cw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of borntraeger@de.ibm.com designates 148.163.156.1 as permitted sender) smtp.mailfrom=borntraeger@de.ibm.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=ibm.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of borntraeger@de.ibm.com designates 148.163.156.1 as permitted sender) smtp.mailfrom=borntraeger@de.ibm.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=ibm.com
-Subject: Re: [PATCH 4.4 12/50] KVM: s390: wire up bpb feature
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>,
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-380590-1524842263-2-16450639132023335511
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: cc='utf-8', plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524842262; b=fI37YkB9re4E+EHxmSdT9QONf7LEXmdqJw9J+1AalGhw05BYdh
+    fOTUKD3mdcdQiLDynaX8b/W9IfbUyU6mLWmAseUFEN+XohN0qroycHXwgCqrzFd9
+    dMIEVjOPtTiZEWLY3A05LxAkJZAMpwVS1e6IpyDtiStcte48v75y/yK1joP0ULo2
+    U6jdyDQN313cKH89FDu6cfXB12DpP2RwlST6rIcrTDGn/UMevFjkT05JsAiCwmrj
+    i4i74kQsNGtB33s0G3dra6Vs0JQ2YYBrPrwJR0B9AGCtLP9MHPIrBqeTlg7tV8ko
+    2MGDTEIeh2y5QBIe9hj5c/QCCWXbrRDdAJug==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=fm2; t=1524842262; bh=K3auNlLRFXR9bCpHkYZeL1FgAVYcZT
+    doEYGUw8TzrrE=; b=gHt9LSfpU3Iq50cu4EtrXUN3LXzCEOnJzrYriR4Z0W5fHZ
+    53GI7CzxRMQ+J9OihZFRTaKXcDpfxmd4sZsMFsJcxTERL+s/DBzbOKKsLyIVfNkM
+    YhyXsntu2woNnQuWxYcvxqjytLN38DpftsgQLEy8UVAkef36fxlk+8LaMJIKXROl
+    PWQbmQPMIcK0I17Z/1ZswLSABMueCJM7KtoP/4EovvzCUxO/gqx92jlTc0n6Plxw
+    Z24vJ46u5c9XmB+H0jKl1PTNy6LcTTOmsiJ+JHdduXtAMDJBq9cnC7VE/QV3ySKU
+    RgEkLMXgFLLSK9fKOZI25BFATfg6BHQleDEkzsWA==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfH1tw0ImYh59U5JCSKjlApBm9N/Y3It44ETWgawysqdDoyj2sRZHY2WdeFR+DLmwzuqDHlLWYZm66iDSm+0kfyHRdP/e4qe+YG4YdDVsnbRxdxr6pCs7
+    +VFl8IlrwqJTX4PuvT3QXbeSy/uMqRNwV1Ij4FszvwXgw9s6F6CVsZVBXf3ntWmkyHxF7fRRtACHRF8JFJMUN/BH5kewbqTv97lzVpKrsyr+JPAGFstspref
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
+    a=VnNF1IyMAAAA:8 a=V_n-OgjjiNrixysVJeoA:9 a=CjuIK1q_8ugA:10
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S933539AbeD0PR0 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 27 Apr 2018 11:17:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45248 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933143AbeD0PRY (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 27 Apr 2018 11:17:24 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B80532188E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
+Date: Fri, 27 Apr 2018 17:17:15 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Christian Borntraeger <borntraeger@de.ibm.com>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
         David Hildenbrand <david@redhat.com>,
         Cornelia Huck <cohuck@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Subject: Re: [PATCH 4.4 12/50] KVM: s390: wire up bpb feature
+Message-ID: <20180427151715.GA3876@kroah.com>
 References: <20180427135655.623669681@linuxfoundation.org>
  <20180427135656.428437126@linuxfoundation.org>
-From: Christian Borntraeger <borntraeger@de.ibm.com>
-Openpgp: preference=signencrypt
-Date: Fri, 27 Apr 2018 17:10:04 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+ <2764478b-8acb-653b-779f-1fb51d9a5931@de.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180427135656.428437126@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18042715-0040-0000-0000-00000452C5EE
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18042715-0041-0000-0000-000020F6D406
-Message-Id: <2764478b-8acb-653b-779f-1fb51d9a5931@de.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-27_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804270145
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2764478b-8acb-653b-779f-1fb51d9a5931@de.ibm.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598908252112326742?=
-X-GMAIL-MSGID: =?utf-8?q?1598912527950807208?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-
-
-On 04/27/2018 03:58 PM, Greg Kroah-Hartman wrote:
-> 4.4-stable review patch.  If anyone has any objections, please let me know.
-> 
-> ------------------
-> 
-> From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+On Fri, Apr 27, 2018 at 05:10:04PM +0200, Christian Borntraeger wrote:
 > 
 > 
-> From: Christian Borntraeger <borntraeger@de.ibm.com>
-> 
-> [ Upstream commit 35b3fde6203b932b2b1a5b53b3d8808abc9c4f60 ]
-> 
-> The new firmware interfaces for branch prediction behaviour changes
-> are transparently available for the guest. Nevertheless, there is
-> new state attached that should be migrated and properly resetted.
-> Provide a mechanism for handling reset, migration and VSIE.
-> 
-> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
-> Reviewed-by: David Hildenbrand <david@redhat.com>
-> Reviewed-by: Cornelia Huck <cohuck@redhat.com>
-> [Changed capability number to 152. - Radim]
-> Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
-> Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> On 04/27/2018 03:58 PM, Greg Kroah-Hartman wrote:
+> > 4.4-stable review patch.  If anyone has any objections, please let me know.
+> > 
+> > ------------------
+> > 
+> > From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+> > 
+> > 
+> > From: Christian Borntraeger <borntraeger@de.ibm.com>
 
+Ick, that is wrong right there, my scripts messed up, this should not
+have 2 author lines :(
 
-Something went wrong during the backport of this to 4.4
+I'll go look at all of these, odds are it made the same error
+everywhere...
 
-[...]
-> ---
->  arch/s390/include/asm/kvm_host.h |    3 ++-
->  arch/s390/include/uapi/asm/kvm.h |    3 +++
->  arch/s390/kvm/kvm-s390.c         |   13 ++++++++++++-
->  include/uapi/linux/kvm.h         |    1 +
->  4 files changed, 18 insertions(+), 2 deletions(-)
-> 
-> --- a/arch/s390/include/asm/kvm_host.h
-> +++ b/arch/s390/include/asm/kvm_host.h
-> @@ -1286,7 +1291,6 @@ void kvm_arch_vcpu_load(struct kvm_vcpu
->  	if (test_fp_ctl(current->thread.fpu.fpc))
->  		/* User space provided an invalid FPC, let's clear it */
->  		current->thread.fpu.fpc = 0;
-> -
+As for the backport issues, I'll let Martin deal with those :)
 
-unrelated whitespace change
+thanks,
 
->  	save_access_regs(vcpu->arch.host_acrs);
->  	restore_access_regs(vcpu->run->s.regs.acrs);
->  	gmap_enable(vcpu->arch.gmap);
-> @@ -1327,6 +1331,7 @@ static void kvm_s390_vcpu_initial_reset(
->  	current->thread.fpu.fpc = 0;
->  	vcpu->arch.sie_block->gbea = 1;
->  	vcpu->arch.sie_block->pp = 0;
-> +	vcpu->arch.sie_block->fpf &= ~FPF_BPBC;
->  	vcpu->arch.pfault_token = KVM_S390_PFAULT_TOKEN_INVALID;
->  	kvm_clear_async_pf_completion_queue(vcpu);
->  	if (!kvm_s390_user_cpu_state_ctrl(vcpu->kvm))
-> @@ -2162,6 +2167,7 @@ static void store_regs(struct kvm_vcpu *
->  	kvm_run->s.regs.pft = vcpu->arch.pfault_token;
->  	kvm_run->s.regs.pfs = vcpu->arch.pfault_select;
->  	kvm_run->s.regs.pfc = vcpu->arch.pfault_compare;
-> +	kvm_run->s.regs.bpbc = (vcpu->arch.sie_block->fpf & FPF_BPBC) == FPF_BPBC;
->  }
->  
->  int kvm_arch_vcpu_ioctl_run(struct kvm_vcpu *vcpu, struct kvm_run *kvm_run)
-> @@ -2194,6 +2200,11 @@ int kvm_arch_vcpu_ioctl_run(struct kvm_v
->  		kvm_run->exit_reason = KVM_EXIT_INTR;
->  		rc = -EINTR;
->  	}
-> +	if ((kvm_run->kvm_dirty_regs & KVM_SYNC_BPBC) &&
-> +	    test_kvm_facility(vcpu->kvm, 82)) {
-> +		vcpu->arch.sie_block->fpf &= ~FPF_BPBC;
-> +		vcpu->arch.sie_block->fpf |= kvm_run->s.regs.bpbc ? FPF_BPBC : 0;
-> +	}
->  
-
-
-This looks misplaced and should go into the sync_regs function.
+greg k-h
