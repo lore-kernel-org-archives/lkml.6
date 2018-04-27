@@ -1,67 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758400AbeD0NJY (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 09:09:24 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60602 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1758119AbeD0NJW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 09:09:22 -0400
-Subject: Re: [PATCH v3 05/14] locking/qspinlock: Remove unbounded cmpxchg loop
- from locking slowpath
-To: Will Deacon <will.deacon@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        peterz@infradead.org, mingo@kernel.org, boqun.feng@gmail.com,
-        paulmck@linux.vnet.ibm.com
-References: <1524738868-31318-1-git-send-email-will.deacon@arm.com>
- <1524738868-31318-6-git-send-email-will.deacon@arm.com>
- <1adce90b-7627-ed71-fd34-bb33388790d5@redhat.com>
- <20180427101619.GB21705@arm.com>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <d9b1cc76-7878-43d2-bda9-b3bf074b5c9e@redhat.com>
-Date: Fri, 27 Apr 2018 09:09:21 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
-MIME-Version: 1.0
-In-Reply-To: <20180427101619.GB21705@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        id S1758298AbeD0NLG (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 09:11:06 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:34291 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758119AbeD0NLD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 09:11:03 -0400
+X-Google-Smtp-Source: AB8JxZoyxAvfrC3hAf+Bx5BsyhNdxvPliXBe7MuJ0uP/Q3jw6XvgfPTYoFFWL6m4z/gbhxcArIV07Q==
+From: Jagan Teki <jagan@amarulasolutions.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
+        Shawn Guo <shawnguo@kernel.org>, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Fabio maggi <fabio.mauri@bticino.it>, lamiaposta71@gmail.com,
+        Andrea CORTESE <andrea.cortese@bticino.it>,
+        "davide . bonfanti" <davide.bonfanti@bticino.it>,
+        Shyam Saini <shyam.saini@amarulasolutions.com>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v2 1/4] drm/panel: simple: Add support for Rocktech RK070ER9427 LCD panel
+Date: Fri, 27 Apr 2018 18:40:40 +0530
+Message-Id: <20180427131040.28775-1-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/27/2018 06:16 AM, Will Deacon wrote:
-> Hi Waiman,
->
-> On Thu, Apr 26, 2018 at 04:16:30PM -0400, Waiman Long wrote:
->> On 04/26/2018 06:34 AM, Will Deacon wrote:
->>> diff --git a/kernel/locking/qspinlock_paravirt.h b/kernel/locking/qspinlock_paravirt.h
->>> index 2711940429f5..2dbad2f25480 100644
->>> --- a/kernel/locking/qspinlock_paravirt.h
->>> +++ b/kernel/locking/qspinlock_paravirt.h
->>> @@ -118,11 +118,6 @@ static __always_inline void set_pending(struct qspinlock *lock)
->>>  	WRITE_ONCE(lock->pending, 1);
->>>  }
->>>  
->>> -static __always_inline void clear_pending(struct qspinlock *lock)
->>> -{
->>> -	WRITE_ONCE(lock->pending, 0);
->>> -}
->>> -
->>>  /*
->>>   * The pending bit check in pv_queued_spin_steal_lock() isn't a memory
->>>   * barrier. Therefore, an atomic cmpxchg_acquire() is used to acquire the
->> There is another clear_pending() function after the "#else /*
->> _Q_PENDING_BITS == 8 */" line that need to be removed as well.
-> Bugger, sorry I missed that one. Is the >= 16K CPUs case supported elsewhere
-> in Linux? The x86 Kconfig appears to clamp NR_CPUS to 8192 iiuc.
->
-> Anyway, additional patch below. Ingo -- please can you apply this on top?
->
-I don't think we support >= 16k in any of the distros. However, this
-will be a limit that we will reach eventually. That is why I said we can
-wait.
+This adds support for the Rocktech Display Ltd. RK070ER9427
+800(RGB)x480 TFT LCD panel, which can be supported by the
+simple panel driver.
 
-Cheers,
-Longman
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+---
+Changes for v2:
+- included drm drm panel maintainers
+
+ .../display/panel/rocktech,rk070er9427.txt         | 25 ++++++++++++++++
+ drivers/gpu/drm/panel/panel-simple.c               | 33 ++++++++++++++++++++++
+ 2 files changed, 58 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/rocktech,rk070er9427.txt
+
+diff --git a/Documentation/devicetree/bindings/display/panel/rocktech,rk070er9427.txt b/Documentation/devicetree/bindings/display/panel/rocktech,rk070er9427.txt
+new file mode 100644
+index 000000000000..eb1fb9f8d1f4
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/panel/rocktech,rk070er9427.txt
+@@ -0,0 +1,25 @@
++Rocktech Display Ltd. RK070ER9427 800(RGB)x480 TFT LCD panel
++
++This binding is compatible with the simple-panel binding, which is specified
++in simple-panel.txt in this directory.
++
++Required properties:
++- compatible: should be "rocktech,rk070er9427"
++
++Optional properties:
++- backlight: phandle of the backlight device attached to the panel
++
++Optional nodes:
++- Video port for LCD panel input.
++
++Example:
++	panel {
++		compatible = "rocktech,rk070er9427";
++		backlight = <&backlight_lcd>;
++
++		port {
++			lcd_panel_in: endpoint {
++				remote-endpoint = <&lcd_display_out>;
++			};
++		};
++	};
+diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+index cbf1ab404ee7..a6c633fd0559 100644
+--- a/drivers/gpu/drm/panel/panel-simple.c
++++ b/drivers/gpu/drm/panel/panel-simple.c
+@@ -745,6 +745,36 @@ static const struct panel_desc avic_tm070ddh03 = {
+ 	},
+ };
+ 
++static const struct display_timing rocktech_rk070er9427_timing = {
++	.pixelclock = { 26400000, 33300000, 46800000 },
++	.hactive = { 800, 800, 800 },
++	.hfront_porch = { 16, 210, 354 },
++	.hback_porch = { 46, 46, 46 },
++	.hsync_len = { 1, 1, 1 },
++	.vactive = { 480, 480, 480 },
++	.vfront_porch = { 7, 22, 147 },
++	.vback_porch = { 23, 23, 23 },
++	.vsync_len = { 1, 1, 1 },
++	.flags = DISPLAY_FLAGS_DE_HIGH,
++};
++
++static const struct panel_desc rocktech_rk070er9427 = {
++	.timings = &rocktech_rk070er9427_timing,
++	.num_timings = 1,
++	.bpc = 6,
++	.size = {
++		.width = 154,
++		.height = 86,
++	},
++	.delay = {
++		.prepare = 41,
++		.enable = 50,
++		.unprepare = 41,
++		.disable = 50,
++	},
++	.bus_format = MEDIA_BUS_FMT_RGB666_1X18,
++};
++
+ static const struct drm_display_mode boe_nv101wxmn51_modes[] = {
+ 	{
+ 		.clock = 71900,
+@@ -2226,6 +2256,9 @@ static const struct of_device_id platform_of_match[] = {
+ 	}, {
+ 		.compatible = "qiaodian,qd43003c0-40",
+ 		.data = &qd43003c0_40,
++	}, {
++		.compatible = "rocktech,rk070er9427",
++		.data = &rocktech_rk070er9427,
+ 	}, {
+ 		.compatible = "samsung,lsn122dl01-c01",
+ 		.data = &samsung_lsn122dl01_c01,
+-- 
+2.14.3
