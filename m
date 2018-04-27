@@ -1,195 +1,133 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-585387-1524655614-2-8850946451039804857
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='US-ASCII'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524655613; b=WIlA3fsFb5GK15i9J5Z6J0oyLfuaatQDoh+pV2z9HlsVsTNJcr
-    FEu58SJAVysLqsJ93VQGolPLJflNyYuMVfBicadKEfeg48cVL/Hmi3S7GiN8EZw9
-    p8/R96XA06MWxrGfHV+67CjiyNb7i5kTxLn59mGPOmFXqrDXRayFluIOM6xUHlkz
-    DpFfb5zDde+6Fr3ZS8MdbwVDqKD5ROEvNfdoRdHUSkLMJbCEaORU9Me7H+GdPBAI
-    Tph9HJFSDGM6cFAw8A4i87VotJFm5AScBtTmFcySILC0jinETJRT3+CC9BCGWgJt
-    Vj3Y0/pCpRDbQzFCOlWN0+K76du+Dia254Og==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :in-reply-to:references:mime-version:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1524655613;
-    bh=A28nSBMoA+TxMsW/RVxKESXCP2raCtwjGUJbfkMs1Hs=; b=OLDskrAY4Xfo
-    zCH9G/pPhGHXqdn+CM+8A+phNoDHjO27dfa0wzhFXfrOeem23ggu62yqbSUFgEmN
-    n264dQoXsSd6HSjFf7zh4gP1AoarML+UaXM5Yyrr+aZfR0ZhpFwKvqI5gtDyN6SN
-    N6YPCSCZ+UJTVRH65u6tjHfO+EreFsdKlmNsDd9oQaNQjV6KW8zWPo2VsveGaEOc
-    BD4v5fIoQuSpCK3b8O0wmHCui43+GIZMjkKZmI8lr7bD1pJaaJAfPdfcDOLi5VLd
-    /8wVQrPSAzCMD325mU+3YGvrZJiQbWq0oBL+gTj/bo0oFrJgOyOyRbZO2Ia1tmEs
-    hHZwFQpTpQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=LgjgujKk x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Ja+11ui7;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=LgjgujKk x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Ja+11ui7;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfCA+Zp+gRLb9CZFEKpel81yGDg5pzj0CF7+079eruOOxZbCD3TM1bTxwfLfbXsm/OVCWhT/bXhT1cXVnioVyHcFRwLyUOnFsQvJ2O+1Ykug+Mrr9ezRp
-    +kn0AFm3HfHPcXkSiwKNsf+OzAP50J8LIE9L7gx4XGVUlFi5Z2YDYwyAWY6GPBUQWCqNV8y5523SQNIrpA6kr2ZP+qIgKzdP7bPyB4KMXQzUjVLSafRx0P0i
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=x7bEGLp0ZPQA:10
-    a=mXOwmpu4K-kA:10 a=Kd1tUaAdevIA:10 a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8
-    a=pGLkceISAAAA:8 a=yDcbQmbxFT0WilZeeYwA:9 a=CjuIK1q_8ugA:10
-    a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752989AbeDYL0f (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 25 Apr 2018 07:26:35 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:39678 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752156AbeDYL0b (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 25 Apr 2018 07:26:31 -0400
-X-Google-Smtp-Source: AIpwx4/IqKYXrycsv4fSjMK0A+6KRSIXoKv0YL1N1KzxOdcRUrE7ZE43jfRW78luEA4Mit9ewQT43A==
-Date: Wed, 25 Apr 2018 21:26:13 +1000
-From: Nicholas Piggin <npiggin@gmail.com>
-To: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
-Cc: rjw@rjwysocki.net, viresh.kumar@linaro.org,
-        benh@kernel.crashing.org, mpe@ellerman.id.au,
-        linux-pm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, ppaidipe@linux.vnet.ibm.com,
-        svaidy@linux.vnet.ibm.com, <stable@vger.kernel.org>
-Subject: Re: [PATCH V3] cpufreq: powernv: Fix the hardlockup by synchronus
- smp_call in timer interrupt
-Message-ID: <20180425212613.1fc2c468@roar.ozlabs.ibm.com>
-In-Reply-To: <1524653971-4919-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
-References: <1524653971-4919-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
-Organization: IBM
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Return-Path: <37rbjWgkbAMc5BCxnyyr4n22vq.t11tyr75r4p106r06.p1z@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1524872943; cv=none;
+        d=google.com; s=arc-20160816;
+        b=rplbYqUvTSJ/FHa2Pm007/9mCGxPPID1d+P8iQC3AckyrFAEshZRk4WZTBY7RZZ87t
+         UaaGAXPptJpvJAnxOeph9uTcLgOqcjuDmAXm2semnXVNMouxJJbTzmRM60DkYjwT/ChC
+         szMebnMxClU2qkcbGM+dMTJwvrl5MesXQdriszKtEhaCHFVH6h05jveKvHAh0B+9hKaQ
+         hXvkJfgSqFqxslIXlX51hwy+we0SHL9WLlRM11hRam/Cz3j0ifLEbrycXaQH/oemRwrC
+         wAStii/FrbtNJ7MSX7UfyORK3afXUkXv3j8lzgDysFaWNq/jHBS9kVkrq63stDqTRGJG
+         9/JA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :arc-authentication-results;
+        bh=h6D+KwkNvo9EhRnCzwjDhxoQUcOo0kM8n1qNdGpRVqM=;
+        b=JfyDfB2TeAd/0r0oewcdnu5YHA+K80lNJ+5vI4JV/MNWVU4rAWVazxywoDnu8t3JRD
+         5BksKRGiBg+F6dsyP9XjNgIhfGBZA4UF3OSDN7IT0Mr0Cvqpt258ku4x4TeZY1oO/JpA
+         7jZwTtr/O7TgvrFSNangx5MwPNNmoUfKWXOdacCNP/jo7lzq6qkcAv0HEOJ+ybpWgz8J
+         v4ysUSCWaGhjm/Pww3zaMuagnUzuBhnkUnQ4RfQ5pPo3GrIPr/hi9JtCsmmKmbDWmY6F
+         bT+FEi7lDONRi/5WdbGI8LF0uSU6zG9Os1AtlIqnrFam0mcNNpCw96EZ7aENTQ4vQXox
+         lvwg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of 37rbjwgkbamc5bcxnyyr4n22vq.t11tyr75r4p106r06.p1z@m3kw2wvrgufz5godrsrytgd7.apphosting.bounces.google.com designates 209.85.220.69 as permitted sender) smtp.mailfrom=37rbjWgkbAMc5BCxnyyr4n22vq.t11tyr75r4p106r06.p1z@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=appspotmail.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of 37rbjwgkbamc5bcxnyyr4n22vq.t11tyr75r4p106r06.p1z@m3kw2wvrgufz5godrsrytgd7.apphosting.bounces.google.com designates 209.85.220.69 as permitted sender) smtp.mailfrom=37rbjWgkbAMc5BCxnyyr4n22vq.t11tyr75r4p106r06.p1z@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=appspotmail.com
+X-Google-Smtp-Source: AB8JxZrm15IEJfp6jXdxGezuZBVLzPIS1gt/Ik2Uyw7gG0o7XH+btjKxpo1bXuqfhr7SgpGIzdofcHRCHeS4IepmDbzZISySnv7Z
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Date: Fri, 27 Apr 2018 16:49:02 -0700
+In-Reply-To: <94eb2c05a38090aaeb0560706bb5@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001554a7056add26c6@google.com>
+Subject: Re: INFO: rcu detected stall in blkdev_ioctl
+From: syzbot <syzbot+369c35474963daf8f8eea897ecf33cb6ad6c7ea2@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, axboe@kernel.dk, gregkh@linuxfoundation.org,
+	hpa@zytor.com, kstewart@linuxfoundation.org, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, mingo@redhat.com, npiggin@gmail.com,
+	pombredanne@nexb.com, syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
+	x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1586926286498565093?=
+X-GMAIL-MSGID: =?utf-8?q?1598945171535646087?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, 25 Apr 2018 16:29:31 +0530
-Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com> wrote:
+syzbot has found reproducer for the following crash on upstream commit
+d8a332730e757129e70675679f2b2a03f1ecf65e (Fri Apr 27 17:39:38 2018 +0000)
+Merge tag 'char-misc-4.17-rc3' of  
+git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc
+syzbot dashboard link:  
+https://syzkaller.appspot.com/bug?extid=369c35474963daf8f8eea897ecf33cb6ad6c7ea2
 
-> gpstate_timer_handler() uses synchronous smp_call to set the pstate
-> on the requested core. This causes the below hard lockup:
-> 
-> [c000003fe566b320] [c0000000001d5340] smp_call_function_single+0x110/0x180 (unreliable)
-> [c000003fe566b390] [c0000000001d55e0] smp_call_function_any+0x180/0x250
-> [c000003fe566b3f0] [c000000000acd3e8] gpstate_timer_handler+0x1e8/0x580
-> [c000003fe566b4a0] [c0000000001b46b0] call_timer_fn+0x50/0x1c0
-> [c000003fe566b520] [c0000000001b4958] expire_timers+0x138/0x1f0
-> [c000003fe566b590] [c0000000001b4bf8] run_timer_softirq+0x1e8/0x270
-> [c000003fe566b630] [c000000000d0d6c8] __do_softirq+0x158/0x3e4
-> [c000003fe566b710] [c000000000114be8] irq_exit+0xe8/0x120
-> [c000003fe566b730] [c000000000024d0c] timer_interrupt+0x9c/0xe0
-> [c000003fe566b760] [c000000000009014] decrementer_common+0x114/0x120
-> -- interrupt: 901 at doorbell_global_ipi+0x34/0x50
-> LR = arch_send_call_function_ipi_mask+0x120/0x130
-> [c000003fe566ba50] [c00000000004876c]
-> arch_send_call_function_ipi_mask+0x4c/0x130
-> [c000003fe566ba90] [c0000000001d59f0] smp_call_function_many+0x340/0x450
-> [c000003fe566bb00] [c000000000075f18] pmdp_invalidate+0x98/0xe0
-> [c000003fe566bb30] [c0000000003a1120] change_huge_pmd+0xe0/0x270
-> [c000003fe566bba0] [c000000000349278] change_protection_range+0xb88/0xe40
-> [c000003fe566bcf0] [c0000000003496c0] mprotect_fixup+0x140/0x340
-> [c000003fe566bdb0] [c000000000349a74] SyS_mprotect+0x1b4/0x350
-> [c000003fe566be30] [c00000000000b184] system_call+0x58/0x6c
-> 
-> One way to avoid this is removing the smp-call. We can ensure that the timer
-> always runs on one of the policy-cpus. If the timer gets migrated to a
-> cpu outside the policy then re-queue it back on the policy->cpus. This way
-> we can get rid of the smp-call which was being used to set the pstate
-> on the policy->cpus.
-> 
-> Fixes: 7bc54b652f13 (timers, cpufreq/powernv: Initialize the gpstate timer as pinned)
-> Cc: <stable@vger.kernel.org>        [4.8+]
-> Reported-by: Nicholas Piggin <npiggin@gmail.com>
-> Reported-by: Pridhiviraj Paidipeddi <ppaidipe@linux.vnet.ibm.com>
-> Signed-off-by: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
+So far this crash happened 132 times on linux-next, mmots, upstream.
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5968408013176832
+syzkaller reproducer:  
+https://syzkaller.appspot.com/x/repro.syz?id=5497672618213376
+Raw console output:  
+https://syzkaller.appspot.com/x/log.txt?id=4900987307294720
+Kernel config:  
+https://syzkaller.appspot.com/x/.config?id=7043958930931867332
+compiler: gcc (GCC) 8.0.1 20180413 (experimental)
 
-Thanks, this looks good to me. I don't know the code though, so
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by:  
+syzbot+369c35474963daf8f8eea897ecf33cb6ad6c7ea2@syzkaller.appspotmail.com
+It will help syzbot understand when the bug is fixed.
 
-Acked-by: Nicholas Piggin <npiggin@gmail.com>
-
-> ---
-> Changes from V2:
-> - Remove the check for active policy while requeing the migrated timer
-> Changes from V1:
-> - Remove smp_call in the pstate handler.
-> 
->  drivers/cpufreq/powernv-cpufreq.c | 14 +++++++++++---
->  1 file changed, 11 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/cpufreq/powernv-cpufreq.c b/drivers/cpufreq/powernv-cpufreq.c
-> index 71f8682..e368e1f 100644
-> --- a/drivers/cpufreq/powernv-cpufreq.c
-> +++ b/drivers/cpufreq/powernv-cpufreq.c
-> @@ -679,6 +679,16 @@ void gpstate_timer_handler(struct timer_list *t)
->  
->  	if (!spin_trylock(&gpstates->gpstate_lock))
->  		return;
-
-I still think it would be good to do something about the trylock failure.
-It may be rare, but if it happens it could stop the timer and lead to
-some rare unpredictable behaviour? Not for this patch, but while you're
-looking at the code it would be good to consider it. Just queueing up
-another timer seems like it should be enough.
-
-> +	/*
-> +	 * If the timer has migrated to the different cpu then bring
-> +	 * it back to one of the policy->cpus
-> +	 */
-> +	if (!cpumask_test_cpu(raw_smp_processor_id(), policy->cpus)) {
-> +		gpstates->timer.expires = jiffies + msecs_to_jiffies(1);
-> +		add_timer_on(&gpstates->timer, cpumask_first(policy->cpus));
-> +		spin_unlock(&gpstates->gpstate_lock);
-> +		return;
-> +	}
-
-Really small nitpick, but you could use cpumask_any there.
-
-Thanks,
-Nick
-
-
->  
->  	/*
->  	 * If PMCR was last updated was using fast_swtich then
-> @@ -718,10 +728,8 @@ void gpstate_timer_handler(struct timer_list *t)
->  	if (gpstate_idx != gpstates->last_lpstate_idx)
->  		queue_gpstate_timer(gpstates);
->  
-> +	set_pstate(&freq_data);
->  	spin_unlock(&gpstates->gpstate_lock);
-> -
-> -	/* Timer may get migrated to a different cpu on cpu hot unplug */
-> -	smp_call_function_any(policy->cpus, set_pstate, &freq_data, 1);
->  }
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+INFO: rcu_sched self-detected stall on CPU
+	0-....: (124998 ticks this GP) idle=45e/1/4611686018427387906  
+softirq=9820/9820 fqs=31227
+	 (t=125000 jiffies g=4939 c=4938 q=43)
+NMI backtrace for cpu 0
+CPU: 0 PID: 4515 Comm: syz-executor699 Not tainted 4.17.0-rc2+ #20
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  <IRQ>
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+  nmi_cpu_backtrace.cold.4+0x19/0xce lib/nmi_backtrace.c:103
+  nmi_trigger_cpumask_backtrace+0x151/0x192 lib/nmi_backtrace.c:62
+  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
+  trigger_single_cpu_backtrace include/linux/nmi.h:156 [inline]
+  rcu_dump_cpu_stacks+0x175/0x1c2 kernel/rcu/tree.c:1376
+  print_cpu_stall kernel/rcu/tree.c:1525 [inline]
+  check_cpu_stall.isra.61.cold.80+0x36c/0x59a kernel/rcu/tree.c:1593
+  __rcu_pending kernel/rcu/tree.c:3356 [inline]
+  rcu_pending kernel/rcu/tree.c:3401 [inline]
+  rcu_check_callbacks+0x21b/0xad0 kernel/rcu/tree.c:2763
+  update_process_times+0x2d/0x70 kernel/time/timer.c:1636
+  tick_sched_handle+0x9f/0x180 kernel/time/tick-sched.c:173
+  tick_sched_timer+0x45/0x130 kernel/time/tick-sched.c:1283
+  __run_hrtimer kernel/time/hrtimer.c:1386 [inline]
+  __hrtimer_run_queues+0x3e3/0x10a0 kernel/time/hrtimer.c:1448
+  hrtimer_interrupt+0x286/0x650 kernel/time/hrtimer.c:1506
+  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1025 [inline]
+  smp_apic_timer_interrupt+0x15d/0x710 arch/x86/kernel/apic/apic.c:1050
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
+  </IRQ>
+RIP: 0010:is_loop_device drivers/block/loop.c:713 [inline]
+RIP: 0010:loop_set_fd drivers/block/loop.c:901 [inline]
+RIP: 0010:lo_ioctl+0x1bb4/0x2130 drivers/block/loop.c:1397
+RSP: 0018:ffff8801b37d7948 EFLAGS: 00000293 ORIG_RAX: ffffffffffffff13
+RAX: 0000000000000000 RBX: ffff8801d2930d80 RCX: ffffffff84b2b784
+RDX: 0000000000000007 RSI: 0000000000000007 RDI: 0000000000000005
+RBP: ffff8801b37d79c0 R08: ffff8801b2d52500 R09: ffffed003b5c46c2
+R10: 0000000000000003 R11: 0000000000000001 R12: 0000000000000000
+R13: ffff8801d4ff7418 R14: ffff8801b70936e0 R15: ffff8801b7093600
+  __blkdev_driver_ioctl block/ioctl.c:303 [inline]
+  blkdev_ioctl+0x9b6/0x2020 block/ioctl.c:601
+  block_ioctl+0xee/0x130 fs/block_dev.c:1877
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:500 [inline]
+  do_vfs_ioctl+0x1cf/0x16a0 fs/ioctl.c:684
+  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:701
+  __do_sys_ioctl fs/ioctl.c:708 [inline]
+  __se_sys_ioctl fs/ioctl.c:706 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:706
+  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x443e59
+RSP: 002b:00007fff93b51bd8 EFLAGS: 00000217 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 6f6f6c2f7665642f RCX: 0000000000443e59
+RDX: 0000000000000007 RSI: 0000000000004c00 RDI: 0000000000000008
+RBP: 702f74656e2f666c R08: 00000000004002e0 R09: 00000000004002e0
+R10: 0000000000000000 R11: 0000000000000217 R12: 65732f636f72702f
+R13: 0000000000401b90 R14: 0000000000000000 R15: 0000000000000000
