@@ -1,40 +1,39 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrsHgtfkHqPvmTEODa0JdQsyQ5EeZnTZHtmSXWOlY50E03tBdKnOBa31arP5uHVHydhC9zs
-ARC-Seal: i=1; a=rsa-sha256; t=1524837705; cv=none;
+X-Google-Smtp-Source: AB8JxZoMsABmtqUTujoJ6rUJncCO4fkkviFozRDdgL4oSi/QO9oCfTOa9a5bk1PyGBbyWtYJsCUQ
+ARC-Seal: i=1; a=rsa-sha256; t=1524837702; cv=none;
         d=google.com; s=arc-20160816;
-        b=cbuCuIaV0xNYdrSTsAN/S4RUtzgW3MeEmIFNn6FKVDgdrSNeaMBe6NtRi+PZSq37EJ
-         qJlkZFk9i4k1q0B57Qpnr1WuEkbzq7njRkO3Aq2CGWHytbu1dfIfxzVUZILCjXzTpm+Z
-         k3b+gkW+7IzoceMqTPk7ZUFPk9CJYtZDbE05op0svWRFHjgIqB98wCnFSsax4BD+geqW
-         tAzc3GY4ugqyvbvB8aBiwG9/2Wp/LHyeB2u1yIZvSD6i1zy7JidYFdq/K9dqBBQtuFU2
-         2cBixUOynI6jY85KfOBSaJW0Ecz2x+m9Snx5FMnXUuuj2d1kHE3BNFeM19yl+2PCk6PL
-         flng==
+        b=ndoo1oqS3O7HUPWDYHghCyo6bJP8easX7UyiuzyxtSg1IyEPWQFbKyZzutTketCnNr
+         cj3z+HKvpF5iFqT8v6Lw3YD8l6B854TNT3ScmrSEPc9qOFon00RC0cCocedIxdyvsGi2
+         BdMoPvhRhLiR1kBiUBKshLYV0sUjt/cWvRi7gaZ0BheJaIBrzGclh6WdAjiXm8smqrPv
+         9wKJUnkigJtkMQToE/jLT9BSNTqKblCU/7MfoyipwnRINTPd23jw4GDAtMkCa4QhApy9
+         BvTOQwKC6c00cdZluHcdGAnig7qT2rr3eGUP/5HMCpGxVJGwsRHAe4MHLRxMo1xhtTXh
+         oHWw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=ZqtoS5ByaEFCrwmCbbNuaETKZqejS12BXH1/vAhnMQU=;
-        b=lWdJFwioD5SHeN+Dygr/b4bOLln+h33VisEt3bRO4G7URlvkvg3u39QgC/I7NQmyGF
-         9UDEWodV5KZWtcMGKV5Nzr/cyYFh/9YhfPKsnhljYmaLKvbmYKrPlqwW6VZ3vYPEwgDj
-         gvV7hKgct9G463euk/25Qs99Lhi4PwUML8WXcDcieIzFq4Bv+fUZ9wS8tP9uxKcatvhY
-         cKGYQ4tyqqdq0/hDpBB2jigb3vEhCdpcX9UmrkewgUE3TiEQB39ZapPQwrlcNYT9GqbL
-         +6/fpSWGE7eIXb7vj6Jtl8UW1XKQRbrQ87HHZKdIXfWJFLJzVOS2p08v+nOjjFJAor6t
-         5Y5Q==
+        bh=On37cJ2uYTv/nISkXhG+WF2+wvYA1kL27Egt3KCU/so=;
+        b=E1hDRA20oiy89szjhN0Yuvj3cW3YHa8pSJuwstigg8asLzuKJYxs5xjUnUM3aqSJV1
+         zwPuTsPJN2aaz3J8zdehg1bDfccCsW6b2ROEc3+XfuvNR8Gf+AK/j603GxXmvp2Y/Nne
+         KDDpK+cL7sZjB562ETsn2rFchDLGXF7fo4FFun7w6P1SAMFaGDHW5XQOMiHMbljmCkId
+         DCw56vt38Lk68Oppz4PZ9ZAmbIzxNiy9mo749hf9891gzeVyw6oP1cMCG7EvzSEodPP4
+         Kf1GEeQLEfpd4FK74lUzQIe9J+RDE2TRMQdWyP/TfTlqjY4TCkeOxxTNXH19wMfu7O2q
+         UpJw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 921252185A
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0631F2185A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	=?UTF-8?q?Jo=C3=A3o=20Avelino=20Bellomo=20Filho?= <jbellomo@redhat.com>,
-	Xin Long <lucien.xin@gmail.com>,
+	Paolo Abeni <pabeni@redhat.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 35/50] team: fix netconsole setup over team
-Date: Fri, 27 Apr 2018 15:58:37 +0200
-Message-Id: <20180427135657.753338237@linuxfoundation.org>
+Subject: [PATCH 4.4 34/50] team: avoid adding twice the same option to the event list
+Date: Fri, 27 Apr 2018 15:58:36 +0200
+Message-Id: <20180427135657.700693843@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135655.623669681@linuxfoundation.org>
 References: <20180427135655.623669681@linuxfoundation.org>
@@ -44,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908221945898093?=
-X-GMAIL-MSGID: =?utf-8?q?1598908221945898093?=
+X-GMAIL-THRID: =?utf-8?q?1598908014850313788?=
+X-GMAIL-MSGID: =?utf-8?q?1598908219052059828?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,86 +52,116 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Paolo Abeni <pabeni@redhat.com>
 
 
-[ Upstream commit 9cf2f437ca5b39828984064fad213e68fc17ef11 ]
+[ Upstream commit 4fb0534fb7bbc2346ba7d3a072b538007f4135a5 ]
 
-The same fix in Commit dbe173079ab5 ("bridge: fix netconsole
-setup over bridge") is also needed for team driver.
+When parsing the options provided by the user space,
+team_nl_cmd_options_set() insert them in a temporary list to send
+multiple events with a single message.
+While each option's attribute is correctly validated, the code does
+not check for duplicate entries before inserting into the event
+list.
 
-While at it, remove the unnecessary parameter *team from
-team_port_enable_netpoll().
+Exploiting the above, the syzbot was able to trigger the following
+splat:
 
-v1->v2:
-  - fix it in a better way, as does bridge.
+kernel BUG at lib/list_debug.c:31!
+invalid opcode: 0000 [#1] SMP KASAN
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Modules linked in:
+CPU: 0 PID: 4466 Comm: syzkaller556835 Not tainted 4.16.0+ #17
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+Google 01/01/2011
+RIP: 0010:__list_add_valid+0xaa/0xb0 lib/list_debug.c:29
+RSP: 0018:ffff8801b04bf248 EFLAGS: 00010286
+RAX: 0000000000000058 RBX: ffff8801c8fc7a90 RCX: 0000000000000000
+RDX: 0000000000000058 RSI: ffffffff815fbf41 RDI: ffffed0036097e3f
+RBP: ffff8801b04bf260 R08: ffff8801b0b2a700 R09: ffffed003b604f90
+R10: ffffed003b604f90 R11: ffff8801db027c87 R12: ffff8801c8fc7a90
+R13: ffff8801c8fc7a90 R14: dffffc0000000000 R15: 0000000000000000
+FS:  0000000000b98880(0000) GS:ffff8801db000000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000000043fc30 CR3: 00000001afe8e000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  __list_add include/linux/list.h:60 [inline]
+  list_add include/linux/list.h:79 [inline]
+  team_nl_cmd_options_set+0x9ff/0x12b0 drivers/net/team/team.c:2571
+  genl_family_rcv_msg+0x889/0x1120 net/netlink/genetlink.c:599
+  genl_rcv_msg+0xc6/0x170 net/netlink/genetlink.c:624
+  netlink_rcv_skb+0x172/0x440 net/netlink/af_netlink.c:2448
+  genl_rcv+0x28/0x40 net/netlink/genetlink.c:635
+  netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
+  netlink_unicast+0x58b/0x740 net/netlink/af_netlink.c:1336
+  netlink_sendmsg+0x9f0/0xfa0 net/netlink/af_netlink.c:1901
+  sock_sendmsg_nosec net/socket.c:629 [inline]
+  sock_sendmsg+0xd5/0x120 net/socket.c:639
+  ___sys_sendmsg+0x805/0x940 net/socket.c:2117
+  __sys_sendmsg+0x115/0x270 net/socket.c:2155
+  SYSC_sendmsg net/socket.c:2164 [inline]
+  SyS_sendmsg+0x29/0x30 net/socket.c:2162
+  do_syscall_64+0x29e/0x9d0 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x4458b9
+RSP: 002b:00007ffd1d4a7278 EFLAGS: 00000213 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 000000000000001b RCX: 00000000004458b9
+RDX: 0000000000000010 RSI: 0000000020000d00 RDI: 0000000000000004
+RBP: 00000000004a74ed R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000213 R12: 00007ffd1d4a7348
+R13: 0000000000402a60 R14: 0000000000000000 R15: 0000000000000000
+Code: 75 e8 eb a9 48 89 f7 48 89 75 e8 e8 d1 85 7b fe 48 8b 75 e8 eb bb 48
+89 f2 48 89 d9 4c 89 e6 48 c7 c7 a0 84 d8 87 e8 ea 67 28 fe <0f> 0b 0f 1f
+40 00 48 b8 00 00 00 00 00 fc ff df 55 48 89 e5 41
+RIP: __list_add_valid+0xaa/0xb0 lib/list_debug.c:29 RSP: ffff8801b04bf248
 
-Fixes: 0fb52a27a04a ("team: cleanup netpoll clode")
-Reported-by: João Avelino Bellomo Filho <jbellomo@redhat.com>
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
+This changeset addresses the avoiding list_add() if the current
+option is already present in the event list.
+
+Reported-and-tested-by: syzbot+4d4af685432dc0e56c91@syzkaller.appspotmail.com
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Fixes: 2fcdb2c9e659 ("team: allow to send multiple set events in one message")
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/team/team.c |   19 ++++++++++++-------
- 1 file changed, 12 insertions(+), 7 deletions(-)
+ drivers/net/team/team.c |   19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
 --- a/drivers/net/team/team.c
 +++ b/drivers/net/team/team.c
-@@ -1050,14 +1050,11 @@ static void team_port_leave(struct team
+@@ -247,6 +247,17 @@ static void __team_option_inst_mark_remo
+ 	}
  }
  
- #ifdef CONFIG_NET_POLL_CONTROLLER
--static int team_port_enable_netpoll(struct team *team, struct team_port *port)
-+static int __team_port_enable_netpoll(struct team_port *port)
- {
- 	struct netpoll *np;
- 	int err;
- 
--	if (!team->dev->npinfo)
--		return 0;
--
- 	np = kzalloc(sizeof(*np), GFP_KERNEL);
- 	if (!np)
- 		return -ENOMEM;
-@@ -1071,6 +1068,14 @@ static int team_port_enable_netpoll(stru
- 	return err;
- }
- 
-+static int team_port_enable_netpoll(struct team_port *port)
++static bool __team_option_inst_tmp_find(const struct list_head *opts,
++					const struct team_option_inst *needle)
 +{
-+	if (!port->team->dev->npinfo)
-+		return 0;
++	struct team_option_inst *opt_inst;
 +
-+	return __team_port_enable_netpoll(port);
++	list_for_each_entry(opt_inst, opts, tmp_list)
++		if (opt_inst == needle)
++			return true;
++	return false;
 +}
 +
- static void team_port_disable_netpoll(struct team_port *port)
- {
- 	struct netpoll *np = port->np;
-@@ -1085,7 +1090,7 @@ static void team_port_disable_netpoll(st
- 	kfree(np);
- }
- #else
--static int team_port_enable_netpoll(struct team *team, struct team_port *port)
-+static int team_port_enable_netpoll(struct team_port *port)
- {
- 	return 0;
- }
-@@ -1192,7 +1197,7 @@ static int team_port_add(struct team *te
- 		goto err_vids_add;
- 	}
- 
--	err = team_port_enable_netpoll(team, port);
-+	err = team_port_enable_netpoll(port);
- 	if (err) {
- 		netdev_err(dev, "Failed to enable netpoll on device %s\n",
- 			   portname);
-@@ -1900,7 +1905,7 @@ static int team_netpoll_setup(struct net
- 
- 	mutex_lock(&team->lock);
- 	list_for_each_entry(port, &team->port_list, list) {
--		err = team_port_enable_netpoll(team, port);
-+		err = __team_port_enable_netpoll(port);
- 		if (err) {
- 			__team_netpoll_cleanup(team);
- 			break;
+ static int __team_options_register(struct team *team,
+ 				   const struct team_option *option,
+ 				   size_t option_count)
+@@ -2544,6 +2555,14 @@ static int team_nl_cmd_options_set(struc
+ 			if (err)
+ 				goto team_put;
+ 			opt_inst->changed = true;
++
++			/* dumb/evil user-space can send us duplicate opt,
++			 * keep only the last one
++			 */
++			if (__team_option_inst_tmp_find(&opt_inst_list,
++							opt_inst))
++				continue;
++
+ 			list_add(&opt_inst->tmp_list, &opt_inst_list);
+ 		}
+ 		if (!opt_found) {
