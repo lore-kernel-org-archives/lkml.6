@@ -1,80 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932748AbeD0LB7 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 07:01:59 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:40471 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932415AbeD0LB6 (ORCPT
+        id S932797AbeD0LCc (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 07:02:32 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:36640 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932700AbeD0LC3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 07:01:58 -0400
-Date: Fri, 27 Apr 2018 04:01:31 -0700
-From: tip-bot for Will Deacon <tipbot@zytor.com>
-Message-ID: <tip-3bea9adc96842b8a7345c7fb202c16ae9c8d5b25@git.kernel.org>
-Cc: hpa@zytor.com, mingo@kernel.org, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, will.deacon@arm.com, longman@redhat.com,
-        tglx@linutronix.de, torvalds@linux-foundation.org
-Reply-To: torvalds@linux-foundation.org, tglx@linutronix.de,
-        longman@redhat.com, will.deacon@arm.com, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, mingo@kernel.org, hpa@zytor.com
-In-Reply-To: <20180427101619.GB21705@arm.com>
-References: <20180427101619.GB21705@arm.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] locking/qspinlock: Remove duplicate
- clear_pending() function from PV code
-Git-Commit-ID: 3bea9adc96842b8a7345c7fb202c16ae9c8d5b25
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        Fri, 27 Apr 2018 07:02:29 -0400
+X-Google-Smtp-Source: AB8JxZrQ2sKRMRqWVFpImAx2a1N36P/k8oavkofTHu9q61H0WAosxA04/QqxOWUfYT9/dZQEuGc2ZA==
+From: Arvind Yadav <arvind.yadav.cs@gmail.com>
+To: broonie@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
+Subject: [PATCH] spi: mpc52xx: Use gpio_is_valid()
+Date: Fri, 27 Apr 2018 16:32:17 +0530
+Message-Id: <aef1b612f61b530012459def8ac958f88674e1c8.1524826858.git.arvind.yadav.cs@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  3bea9adc96842b8a7345c7fb202c16ae9c8d5b25
-Gitweb:     https://git.kernel.org/tip/3bea9adc96842b8a7345c7fb202c16ae9c8d5b25
-Author:     Will Deacon <will.deacon@arm.com>
-AuthorDate: Fri, 27 Apr 2018 10:40:13 +0100
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Fri, 27 Apr 2018 12:55:22 +0200
+Replace the manual validity checks for the GPIO with the
+gpio_is_valid().
 
-locking/qspinlock: Remove duplicate clear_pending() function from PV code
-
-The native clear_pending() function is identical to the PV version, so the
-latter can simply be removed.
-
-This fixes the build for systems with >= 16K CPUs using the PV lock implementation.
-
-Reported-by: Waiman Long <longman@redhat.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: boqun.feng@gmail.com
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: paulmck@linux.vnet.ibm.com
-Link: http://lkml.kernel.org/r/20180427101619.GB21705@arm.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
 ---
- kernel/locking/qspinlock_paravirt.h | 5 -----
- 1 file changed, 5 deletions(-)
+ drivers/spi/spi-mpc52xx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/locking/qspinlock_paravirt.h b/kernel/locking/qspinlock_paravirt.h
-index 25730b2ac022..5a0cf5f9008c 100644
---- a/kernel/locking/qspinlock_paravirt.h
-+++ b/kernel/locking/qspinlock_paravirt.h
-@@ -130,11 +130,6 @@ static __always_inline void set_pending(struct qspinlock *lock)
- 	atomic_or(_Q_PENDING_VAL, &lock->val);
- }
+diff --git a/drivers/spi/spi-mpc52xx.c b/drivers/spi/spi-mpc52xx.c
+index e8b59ce..0e55784 100644
+--- a/drivers/spi/spi-mpc52xx.c
++++ b/drivers/spi/spi-mpc52xx.c
+@@ -447,7 +447,7 @@ static int mpc52xx_spi_probe(struct platform_device *op)
  
--static __always_inline void clear_pending(struct qspinlock *lock)
--{
--	atomic_andnot(_Q_PENDING_VAL, &lock->val);
--}
--
- static __always_inline int trylock_clear_pending(struct qspinlock *lock)
- {
- 	int val = atomic_read(&lock->val);
+ 		for (i = 0; i < ms->gpio_cs_count; i++) {
+ 			gpio_cs = of_get_gpio(op->dev.of_node, i);
+-			if (gpio_cs < 0) {
++			if (!gpio_is_valid(gpio_cs)) {
+ 				dev_err(&op->dev,
+ 					"could not parse the gpio field in oftree\n");
+ 				rc = -ENODEV;
+-- 
+1.9.1
