@@ -1,47 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758498AbeD0Plt (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 11:41:49 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:47796 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752471AbeD0Pls (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 11:41:48 -0400
-Date: Fri, 27 Apr 2018 17:41:15 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: tony.luck@intel.com, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        the arch/x86 maintainers <x86@kernel.org>, linux-edac@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: stack out-of-bounds write in mce-inject.c
-Message-ID: <20180427154115.GF15229@pd.tnic>
-References: <CACT4Y+Ys9bKFNaBm7YuCvk04jcZ2SnLiDSxgCojZMwtb2PKVBg@mail.gmail.com>
+        id S1758559AbeD0PmT (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 11:42:19 -0400
+Received: from mail.efficios.com ([167.114.142.138]:57376 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757457AbeD0PmQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 11:42:16 -0400
+Date: Fri, 27 Apr 2018 11:42:15 -0400 (EDT)
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: rostedt <rostedt@goodmis.org>
+Cc: Joel Fernandes <joelaf@google.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        fweisbec <fweisbec@gmail.com>, Randy Dunlap <rdunlap@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        kbuild test robot <fengguang.wu@intel.com>,
+        baohong liu <baohong.liu@intel.com>,
+        vedang patel <vedang.patel@intel.com>,
+        kernel-team <kernel-team@android.com>
+Message-ID: <362165882.5842.1524843735295.JavaMail.zimbra@efficios.com>
+In-Reply-To: <20180427104747.2d965925@gandalf.local.home>
+References: <20180427042656.190746-1-joelaf@google.com> <1169911546.5820.1524839189395.JavaMail.zimbra@efficios.com> <20180427104747.2d965925@gandalf.local.home>
+Subject: Re: [PATCH RFC] tracepoint: Introduce tracepoint callbacks
+ executing with preempt on
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+Ys9bKFNaBm7YuCvk04jcZ2SnLiDSxgCojZMwtb2PKVBg@mail.gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.8_GA_2009 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_2009)
+Thread-Topic: tracepoint: Introduce tracepoint callbacks executing with preempt on
+Thread-Index: BH5HvqWk/LjMYiOaANkWtrwYKN04ig==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 27, 2018 at 05:24:24PM +0200, Dmitry Vyukov wrote:
-> Hi,
+----- On Apr 27, 2018, at 10:47 AM, rostedt rostedt@goodmis.org wrote:
+
+> On Fri, 27 Apr 2018 10:26:29 -0400 (EDT)
+> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
 > 
-> Opening /sys/kernel/debug/mce-inject/flags overwrites stack:
+>> The general approach and the implementation look fine, except for
+>> one small detail: I would be tempted to explicitly disable preemption
+>> around the call to the tracepoint callback for the rcuidle variant,
+>> unless we plan to audit every tracer right away to remove any assumption
+>> that preemption is disabled in the callback implementation.
 > 
-> ==================================================================
-> BUG: KASAN: stack-out-of-bounds in vsnprintf+0x1b23/0x1b40 lib/vsprintf.c:2365
-> Write of size 1 at addr ffff8800627b7abb by task egrep/4309
+> I'm thinking that we do that audit. There shouldn't be many instances
+> of it. I like the idea that a tracepoint callback gets called with
+> preemption enabled.
 
-How do you trigger this exactly?
+I see that ftrace explicitly disables preemption in its ring buffer
+code. FWIW, this is redundant when called from sched-rcu tracepoints
+and from kprobes which adds unnecessary performance overhead.
 
-You grep it for something apparently...
+LTTng expects preemption to be disabled when invoked. I can adapt on my
+side as needed, but would prefer not to have redundant preemption disabling
+for probes hooking on sched-rcu tracepoints (which is the common case).
 
-Thx.
+Do perf callbacks expect preemption to be disabled ?
+
+Thanks,
+
+Mathieu
 
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
