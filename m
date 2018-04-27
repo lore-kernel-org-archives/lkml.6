@@ -1,41 +1,48 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZp6mVIan8uh53WGDlG1g34aB2j40g8U0vyB+asqfz5T5b5BYs/aqyYX5x4cEZBgEbUmF2DP
-ARC-Seal: i=1; a=rsa-sha256; t=1524837889; cv=none;
+X-Google-Smtp-Source: AB8JxZpLT0cUOntq+gJzEblEmYHIDbqnVXi3MKIPiQ13KndYJpV9eDmuvWJwG9drG/PnPCE5QpSX
+ARC-Seal: i=1; a=rsa-sha256; t=1524837887; cv=none;
         d=google.com; s=arc-20160816;
-        b=ByOwKqObO3AGUIPI4kviYqQOvPIKkV31uWM1IvmAvcgemk4vvHxTZY8yYnMbGkaUHQ
-         o3Tntc2eIOcWAHP4LxqfKlF8wQG05YngRtXjnskVgQvQMhB/EjEmcvtwtFs5pF0DRClJ
-         Mw2juR/GclSe3ARWYd9yKr6pOm0pJ0765++xTTkxV5GZ1P8o2wRIl8e6rdbqAgDXph/Y
-         NBFMlknPfApkyYpxJ92gnGCTE4sHuUmTKpzj+xIECevbDsGhQWAK8P92Dhaanb6PABKY
-         Eqi8deXMDxybMfrykhTMeFP0LPdJhe5NJiIHjGNcm7N4yAAJdqX82m+dOxTqpYgAnn3T
-         CLjg==
+        b=BNZTBbZ+trtgQOWK4sX9E7W1rMz8mBseiZmZ5JMO7Pfcp9KZ1cv/Rs+kS1ziTpbGsG
+         Hf8NZZJI5PZD2cFBWboS1EknvzDl6I8MPAcHtMammCKqu9jpRZ4Oq0ISqDjzomunl1U4
+         g1fheFTJGGKZT8qRx7ZqR9Eu3hf5jXw3iLRawOq6vbiz3D+gD2RbwUKP/ms030oKkKOk
+         sbExE7XTF4awEH+vs0kyC97qBJr88pu1XME9FpHw847wny8JbNekgDtWgsGnrJOseOab
+         fHG09Av16uZZecyvqFL2N+S/QjbfGh8WmE/mMwyhk6J8ftj4cmTzL3plQbKuSpCwkFnh
+         yBuw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=30Ut5+T8yI/XVpr8n91Qeowi/t9OhoMNM7/1UpDcwwc=;
-        b=akEBvDTfwyqa/3ZxlrSuqali3IP8Qzj2QOEISYAFW78xIsYzJLp21CYgL/ELkVkETj
-         KIWABEwG8mg+X5tSKXrGAiuQgr9NDSdNSYjEhM8rZ+ILSJFmB5JQ2T6UmL1pHoXJ7KmI
-         OKxV5ZivqCgpiODkCAiWsmh//DHIxBf/FYS0dul/ij8h8hnd0C35JMCsIDvvj938D0hC
-         My4M+tedbvU8vGe8xb0eOJtPpL32DYGUCWrsHs9QJ07B2EmrPa3jmN9wbRNQGLlHYMxp
-         NpdeQde2UZ2MRhHs/TazEncOQPNjIbqtnoNkalz2lgQzZfk9KNRXApTUKGxyt12KM1i+
-         wAEw==
+        bh=1SYWtclqjKFcUAz0ZfPjpDKa96YNXlEBOctNgLrdoQc=;
+        b=CgmeXarvdA80hkciX/FXLOPVXGbRFT4JdsGgJXn+fNV5WdzbJoWDuV+Sv08fEa9qsR
+         euQLQTI/eYowCbnrxiWcD6ijcKaorBqWIgq/+qFRaxXVKubtdJEYhP5gv7E5GULCCNBW
+         h7pSXrssFTCUokAokV6f8mqLXMiZiPc89hc6Q1JFBf3GP6T4rM8Ob98LFE6vJIa4hDUX
+         YFSJCxWBKLDBBDsj22DKTsEOVNK6SwmedhY46+kWzt8WpXK+Ajat4Bhk0AVdY1nLgWgW
+         lvADLpPjpTqLTg7NxB69+AP9cGPPSQcZZq8vASc87qpekzyIZrDb3z97Ao8ixpG+PRDb
+         uqXw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8763218A0
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A04821890
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzkaller <syzkaller@googlegroups.com>,
-	Maor Gottlieb <maorg@mellanox.com>,
-	Leon Romanovsky <leonro@mellanox.com>,
-	Doug Ledford <dledford@redhat.com>
-Subject: [PATCH 4.9 21/74] RDMA/mlx5: Fix NULL dereference while accessing XRC_TGT QPs
-Date: Fri, 27 Apr 2018 15:58:11 +0200
-Message-Id: <20180427135710.775714326@linuxfoundation.org>
+	Jiri Olsa <jolsa@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Andi Kleen <andi@firstfloor.org>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Stephane Eranian <eranian@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	syzkaller-bugs@googlegroups.com,
+	x86@kernel.org,
+	Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 4.9 20/74] perf: Return proper values for user stack errors
+Date: Fri, 27 Apr 2018 15:58:10 +0200
+Message-Id: <20180427135710.739093313@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135709.899303463@linuxfoundation.org>
 References: <20180427135709.899303463@linuxfoundation.org>
@@ -45,8 +52,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908415271174286?=
-X-GMAIL-MSGID: =?utf-8?q?1598908415271174286?=
+X-GMAIL-THRID: =?utf-8?q?1598908138120907757?=
+X-GMAIL-MSGID: =?utf-8?q?1598908412425638067?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,75 +61,44 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Leon Romanovsky <leonro@mellanox.com>
+From: Jiri Olsa <jolsa@kernel.org>
 
-commit 75a4598209cbe45540baa316c3b51d9db222e96e upstream.
+commit 78b562fbfa2cf0a9fcb23c3154756b690f4905c1 upstream.
 
-mlx5 modify_qp() relies on FW that the error will be thrown if wrong
-state is supplied. The missing check in FW causes the following crash
-while using XRC_TGT QPs.
+Return immediately when we find issue in the user stack checks. The
+error value could get overwritten by following check for
+PERF_SAMPLE_REGS_INTR.
 
-[   14.769632] BUG: unable to handle kernel NULL pointer dereference at (null)
-[   14.771085] IP: mlx5_ib_modify_qp+0xf60/0x13f0
-[   14.771894] PGD 800000001472e067 P4D 800000001472e067 PUD 14529067 PMD 0
-[   14.773126] Oops: 0002 [#1] SMP PTI
-[   14.773763] CPU: 0 PID: 365 Comm: ubsan Not tainted 4.16.0-rc1-00038-g8151138c0793 #119
-[   14.775192] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.7.5-0-ge51488c-20140602_164612-nilsson.home.kraxel.org 04/01/2014
-[   14.777522] RIP: 0010:mlx5_ib_modify_qp+0xf60/0x13f0
-[   14.778417] RSP: 0018:ffffbf48001c7bd8 EFLAGS: 00010246
-[   14.779346] RAX: 0000000000000000 RBX: ffff9a8f9447d400 RCX: 0000000000000000
-[   14.780643] RDX: 0000000000000000 RSI: 000000000000000a RDI: 0000000000000000
-[   14.781930] RBP: 0000000000000000 R08: 00000000000217b0 R09: ffffffffbc9c1504
-[   14.783214] R10: fffff4a180519480 R11: ffff9a8f94523600 R12: ffff9a8f9493e240
-[   14.784507] R13: ffff9a8f9447d738 R14: 000000000000050a R15: 0000000000000000
-[   14.785800] FS:  00007f545b466700(0000) GS:ffff9a8f9fc00000(0000) knlGS:0000000000000000
-[   14.787073] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   14.787792] CR2: 0000000000000000 CR3: 00000000144be000 CR4: 00000000000006b0
-[   14.788689] Call Trace:
-[   14.789007]  _ib_modify_qp+0x71/0x120
-[   14.789475]  modify_qp.isra.20+0x207/0x2f0
-[   14.790010]  ib_uverbs_modify_qp+0x90/0xe0
-[   14.790532]  ib_uverbs_write+0x1d2/0x3c0
-[   14.791049]  ? __handle_mm_fault+0x93c/0xe40
-[   14.791644]  __vfs_write+0x36/0x180
-[   14.792096]  ? handle_mm_fault+0xc1/0x210
-[   14.792601]  vfs_write+0xad/0x1e0
-[   14.793018]  SyS_write+0x52/0xc0
-[   14.793422]  do_syscall_64+0x75/0x180
-[   14.793888]  entry_SYSCALL_64_after_hwframe+0x21/0x86
-[   14.794527] RIP: 0033:0x7f545ad76099
-[   14.794975] RSP: 002b:00007ffd78787468 EFLAGS: 00000287 ORIG_RAX: 0000000000000001
-[   14.795958] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f545ad76099
-[   14.797075] RDX: 0000000000000078 RSI: 0000000020009000 RDI: 0000000000000003
-[   14.798140] RBP: 00007ffd78787470 R08: 00007ffd78787480 R09: 00007ffd78787480
-[   14.799207] R10: 00007ffd78787480 R11: 0000000000000287 R12: 00005599ada98760
-[   14.800277] R13: 00007ffd78787560 R14: 0000000000000000 R15: 0000000000000000
-[   14.801341] Code: 4c 8b 1c 24 48 8b 83 70 02 00 00 48 c7 83 cc 02 00
-00 00 00 00 00 48 c7 83 24 03 00 00 00 00 00 00 c7 83 2c 03 00 00 00 00
-00 00 <c7> 00 00 00 00 00 48 8b 83 70 02 00 00 c7 40 04 00 00 00 00 4c
-[   14.804012] RIP: mlx5_ib_modify_qp+0xf60/0x13f0 RSP: ffffbf48001c7bd8
-[   14.804838] CR2: 0000000000000000
-[   14.805288] ---[ end trace 3f1da0df5c8b7c37 ]---
-
-Cc: syzkaller <syzkaller@googlegroups.com>
-Reported-by: Maor Gottlieb <maorg@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <andi@firstfloor.org>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: syzkaller-bugs@googlegroups.com
+Cc: x86@kernel.org
+Fixes: 60e2364e60e8 ("perf: Add ability to sample machine state on interrupt")
+Link: http://lkml.kernel.org/r/20180415092352.12403-1-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/hw/mlx5/qp.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ kernel/events/core.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/infiniband/hw/mlx5/qp.c
-+++ b/drivers/infiniband/hw/mlx5/qp.c
-@@ -2848,7 +2848,8 @@ static int __mlx5_ib_modify_qp(struct ib
- 	 * If we moved a kernel QP to RESET, clean up all old CQ
- 	 * entries and reinitialize the QP.
- 	 */
--	if (new_state == IB_QPS_RESET && !ibqp->uobject) {
-+	if (new_state == IB_QPS_RESET &&
-+	    !ibqp->uobject && ibqp->qp_type != IB_QPT_XRC_TGT) {
- 		mlx5_ib_cq_clean(recv_cq, base->mqp.qpn,
- 				 ibqp->srq ? to_msrq(ibqp->srq) : NULL);
- 		if (send_cq != recv_cq)
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -9456,9 +9456,9 @@ static int perf_copy_attr(struct perf_ev
+ 		 * __u16 sample size limit.
+ 		 */
+ 		if (attr->sample_stack_user >= USHRT_MAX)
+-			ret = -EINVAL;
++			return -EINVAL;
+ 		else if (!IS_ALIGNED(attr->sample_stack_user, sizeof(u64)))
+-			ret = -EINVAL;
++			return -EINVAL;
+ 	}
+ 
+ 	if (attr->sample_type & PERF_SAMPLE_REGS_INTR)
