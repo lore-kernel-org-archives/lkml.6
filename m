@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758249AbeD0M7i (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 08:59:38 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:9990 "EHLO
+        id S1758282AbeD0NAE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 09:00:04 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:15058 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1757846AbeD0M7h (ORCPT
+        by vger.kernel.org with ESMTP id S1757846AbeD0NAC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 08:59:37 -0400
+        Fri, 27 Apr 2018 09:00:02 -0400
 From: Philippe CORNU <philippe.cornu@st.com>
 To: Yannick FERTRE <yannick.fertre@st.com>,
         Benjamin Gaignard <benjamin.gaignard@linaro.org>,
@@ -15,14 +15,14 @@ To: Yannick FERTRE <yannick.fertre@st.com>,
         "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 CC: Alexandre TORGUE <alexandre.torgue@st.com>
-Subject: Re: [PATCH] drm/stm: ltdc: fix deferred endpoint management
-Thread-Topic: [PATCH] drm/stm: ltdc: fix deferred endpoint management
-Thread-Index: AQHT1kAeg2xTBfuOqE2IlGfCK/9MDKQQ+3mAgAOFooA=
-Date: Fri, 27 Apr 2018 12:59:25 +0000
-Message-ID: <d2194303-8b95-09f8-0623-d29b9769bd50@st.com>
-References: <20180417113441.8214-1-philippe.cornu@st.com>
- <22c16fe0-9f0b-c325-4a7c-35f3aa86dd86@st.com>
-In-Reply-To: <22c16fe0-9f0b-c325-4a7c-35f3aa86dd86@st.com>
+Subject: Re: [PATCH] drm/stm: ltdc: add mode_valid()
+Thread-Topic: [PATCH] drm/stm: ltdc: add mode_valid()
+Thread-Index: AQHT1kDms4rb0CcO1UuIGz3k5PZYoKQQ+5eAgAOFoAA=
+Date: Fri, 27 Apr 2018 12:59:50 +0000
+Message-ID: <e1f4db2b-a409-3557-5ebd-494fb08a95d1@st.com>
+References: <20180417114026.8709-1-philippe.cornu@st.com>
+ <c3470496-e7ff-18e6-633a-fc899ee15e17@st.com>
+In-Reply-To: <c3470496-e7ff-18e6-633a-fc899ee15e17@st.com>
 Accept-Language: fr-FR, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -33,7 +33,7 @@ x-ms-exchange-messagesentrepresentingtype: 1
 x-ms-exchange-transport-fromentityheader: Hosted
 x-originating-ip: [10.75.127.44]
 Content-Type: text/plain; charset="utf-8"
-Content-ID: <320C3D5BAB3EF740A7FCD8B06913AC7D@st.com>
+Content-ID: <5120818970EE494DB19ECB3C35F86CBA@st.com>
 MIME-Version: 1.0
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-27_03:,,
  signatures=0
@@ -41,56 +41,90 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3RCxhNd015378
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3RD0AhH015387
+
 
 
 On 04/25/2018 09:12 AM, Yannick FERTRE wrote:
 > Hi Philippe,
 > 
 > Reviewed-by: Yannick Fertré <yannick.fertre@st.com>
+> 
 
 Applied on drm-misc-next.
 Many thanks,
 Philippe :-)
 
-
-> 
-> 
-> On 04/17/2018 01:34 PM, Philippe Cornu wrote:
->> When a driver related to one of the endpoints is deferred
->> due to probe dependencies (i2c, spi...) but the other one
->> is ready, ltdc probe continues and the deferred driver
->> will never be probed again.
+> On 04/17/2018 01:40 PM, Philippe Cornu wrote:
+>> Add mode_valid() function to filter modes according to available
+>> pll clock values and "preferred" modes. It is particularly
+>> useful for hdmi modes that require precise pixel clocks.
 >>
->> The fix consists in waiting for all deferred endpoints before
->> continuing the ltdc probe.
+>> Note that "preferred" modes are always accepted:
+>> - this is important for panels because panel clock tolerances are
+>>     bigger than hdmi ones and there is no reason to not accept them
+>>     (the fps may vary a little but it is not a problem).
+>> - the hdmi preferred mode will be accepted too, but userland will
+>>     be able to use others hdmi "valid" modes if necessary.
 >>
 >> Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
 >> ---
->>    drivers/gpu/drm/stm/ltdc.c | 11 +++++------
->>    1 file changed, 5 insertions(+), 6 deletions(-)
+>>    drivers/gpu/drm/stm/ltdc.c | 38 ++++++++++++++++++++++++++++++++++++++
+>>    1 file changed, 38 insertions(+)
 >>
 >> diff --git a/drivers/gpu/drm/stm/ltdc.c b/drivers/gpu/drm/stm/ltdc.c
->> index e3121d9e4230..014cef8cef37 100644
+>> index 014cef8cef37..616191fe98ae 100644
 >> --- a/drivers/gpu/drm/stm/ltdc.c
 >> +++ b/drivers/gpu/drm/stm/ltdc.c
->> @@ -987,14 +987,13 @@ int ltdc_load(struct drm_device *ddev)
->>    						  &bridge[i]);
+>> @@ -445,6 +445,43 @@ static void ltdc_crtc_atomic_disable(struct drm_crtc *crtc,
+>>    	reg_set(ldev->regs, LTDC_SRCR, SRCR_IMR);
+>>    }
 >>    
->>    		/*
->> -		 * If at least one endpoint is ready, continue probing,
->> -		 * else if at least one endpoint is -EPROBE_DEFER and
->> -		 * there is no previous ready endpoints, defer probing.
->> +		 * If at least one endpoint is -EPROBE_DEFER, defer probing,
->> +		 * else if at least one endpoint is ready, continue probing.
->>    		 */
->> -		if (!ret)
->> +		if (ret == -EPROBE_DEFER)
->> +			return ret;
->> +		else if (!ret)
->>    			endpoint_not_ready = 0;
->> -		else if (ret == -EPROBE_DEFER && endpoint_not_ready)
->> -			endpoint_not_ready = -EPROBE_DEFER;
->>    	}
+>> +#define CLK_TOLERANCE_HZ 50
+>> +
+>> +static enum drm_mode_status
+>> +ltdc_crtc_mode_valid(struct drm_crtc *crtc,
+>> +		     const struct drm_display_mode *mode)
+>> +{
+>> +	struct ltdc_device *ldev = crtc_to_ltdc(crtc);
+>> +	int target = mode->clock * 1000;
+>> +	int target_min = target - CLK_TOLERANCE_HZ;
+>> +	int target_max = target + CLK_TOLERANCE_HZ;
+>> +	int result;
+>> +
+>> +	/*
+>> +	 * Accept all "preferred" modes:
+>> +	 * - this is important for panels because panel clock tolerances are
+>> +	 *   bigger than hdmi ones and there is no reason to not accept them
+>> +	 *   (the fps may vary a little but it is not a problem).
+>> +	 * - the hdmi preferred mode will be accepted too, but userland will
+>> +	 *   be able to use others hdmi "valid" modes if necessary.
+>> +	 */
+>> +	if (mode->type & DRM_MODE_TYPE_PREFERRED)
+>> +		return MODE_OK;
+>> +
+>> +	result = clk_round_rate(ldev->pixel_clk, target);
+>> +
+>> +	DRM_DEBUG_DRIVER("clk rate target %d, available %d\n", target, result);
+>> +
+>> +	/*
+>> +	 * Filter modes according to the clock value, particularly useful for
+>> +	 * hdmi modes that require precise pixel clocks.
+>> +	 */
+>> +	if (result < target_min || result > target_max)
+>> +		return MODE_CLOCK_RANGE;
+>> +
+>> +	return MODE_OK;
+>> +}
+>> +
+>>    static bool ltdc_crtc_mode_fixup(struct drm_crtc *crtc,
+>>    				 const struct drm_display_mode *mode,
+>>    				 struct drm_display_mode *adjusted_mode)
+>> @@ -559,6 +596,7 @@ static void ltdc_crtc_atomic_flush(struct drm_crtc *crtc,
+>>    }
 >>    
->>    	if (endpoint_not_ready)
+>>    static const struct drm_crtc_helper_funcs ltdc_crtc_helper_funcs = {
+>> +	.mode_valid = ltdc_crtc_mode_valid,
+>>    	.mode_fixup = ltdc_crtc_mode_fixup,
+>>    	.mode_set_nofb = ltdc_crtc_mode_set_nofb,
+>>    	.atomic_flush = ltdc_crtc_atomic_flush,
