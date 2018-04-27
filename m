@@ -1,80 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758826AbeD0Qhq (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 12:37:46 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49119 "EHLO mx2.suse.de"
+        id S1758829AbeD0QiF (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 12:38:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53504 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1757716AbeD0Qho (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 12:37:44 -0400
-Date: Fri, 27 Apr 2018 18:37:40 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Christopher Lameter <cl@linux.com>
-Cc: Christoph Hellwig <hch@infradead.org>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>, linux-mm@kvack.org,
-        Jan Kara <jack@suse.cz>, matthew@wil.cx, x86@kernel.org,
-        luto@amacapital.net, martin.petersen@oracle.com, jthumshirn@suse.de,
-        broonie@kernel.org, linux-spi@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "lsf-pc@lists.linux-foundation.org"
-        <lsf-pc@lists.linux-foundation.org>
-Subject: Re: [LSF/MM TOPIC NOTES] x86 ZONE_DMA love
-Message-ID: <20180427163740.GI17484@dhcp22.suse.cz>
-References: <20180426215406.GB27853@wotan.suse.de>
- <20180427053556.GB11339@infradead.org>
- <20180427071843.GB17484@dhcp22.suse.cz>
- <alpine.DEB.2.20.1804271103160.11686@nuc-kabylake>
+        id S1757716AbeD0QiE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 12:38:04 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEA01218CA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Fri, 27 Apr 2018 12:37:59 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Joel Fernandes <joelaf@google.com>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        fweisbec <fweisbec@gmail.com>, Randy Dunlap <rdunlap@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        kbuild test robot <fengguang.wu@intel.com>,
+        baohong liu <baohong.liu@intel.com>,
+        vedang patel <vedang.patel@intel.com>,
+        "Cc: Android Kernel" <kernel-team@android.com>
+Subject: Re: [PATCH RFC] tracepoint: Introduce tracepoint callbacks
+ executing with preempt on
+Message-ID: <20180427123759.0bc4b8de@gandalf.local.home>
+In-Reply-To: <CAJWu+ortS=BQ98BSmExHPz_vQ6-rgcKQC7dhSR2_3e6714QVzA@mail.gmail.com>
+References: <20180427042656.190746-1-joelaf@google.com>
+        <1169911546.5820.1524839189395.JavaMail.zimbra@efficios.com>
+        <20180427104747.2d965925@gandalf.local.home>
+        <CAJWu+ortS=BQ98BSmExHPz_vQ6-rgcKQC7dhSR2_3e6714QVzA@mail.gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.20.1804271103160.11686@nuc-kabylake>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 27-04-18 11:07:07, Cristopher Lameter wrote:
-> On Fri, 27 Apr 2018, Michal Hocko wrote:
-> 
-> > On Thu 26-04-18 22:35:56, Christoph Hellwig wrote:
-> > > On Thu, Apr 26, 2018 at 09:54:06PM +0000, Luis R. Rodriguez wrote:
-> > > > In practice if you don't have a floppy device on x86, you don't need ZONE_DMA,
-> > >
-> > > I call BS on that, and you actually explain later why it it BS due
-> > > to some drivers using it more explicitly.  But even more importantly
-> > > we have plenty driver using it through dma_alloc_* and a small DMA
-> > > mask, and they are in use - we actually had a 4.16 regression due to
-> > > them.
+On Fri, 27 Apr 2018 09:30:05 -0700
+Joel Fernandes <joelaf@google.com> wrote:
+
+> On Fri, Apr 27, 2018 at 7:47 AM, Steven Rostedt <rostedt@goodmis.org> wrote:
+> > On Fri, 27 Apr 2018 10:26:29 -0400 (EDT)
+> > Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+> >  
+> >> The general approach and the implementation look fine, except for
+> >> one small detail: I would be tempted to explicitly disable preemption
+> >> around the call to the tracepoint callback for the rcuidle variant,
+> >> unless we plan to audit every tracer right away to remove any assumption
+> >> that preemption is disabled in the callback implementation.  
 > >
-> > Well, but do we need a zone for that purpose? The idea was to actually
-> > replace the zone by a CMA pool (at least on x86). With the current
-> > implementation of the CMA we would move the range [0-16M] pfn range into
-> > zone_movable so it can be used and we would get rid of all of the
-> > overhead each zone brings (a bit in page flags, kmalloc caches and who
-> > knows what else)
+> > I'm thinking that we do that audit. There shouldn't be many instances
+> > of it. I like the idea that a tracepoint callback gets called with
+> > preemption enabled.  
 > 
-> Well it looks like what we are using it for is to force allocation from
-> low physical memory if we fail to obtain proper memory through a normal
-> channel.  The use of ZONE_DMA is only there for emergency purposes.
-> I think we could subsitute ZONE_DMA32 on x87 without a problem.
+> Here is the list of all callers of the _rcuidle :
+
+I was thinking of auditing who registers callbacks to any tracepoints.
+
+-- Steve
+
 > 
-> Which means that ZONE_DMA has no purpose anymore.
-
-We still need to make sure the low 16MB is available on request. And
-that is what CMA can help with. We do not really seem to need the whole
-zone infreastructure for that.
-
-> Can we make ZONE_DMA on x86 refer to the low 32 bit physical addresses
-> instead and remove ZONE_DMA32?
-
-Why that would be an advantage? If anything I would rename ZONE_DMA32 to
-ZONE_ADDR32 or something like that.
-
-> That would actually improve the fallback because you have more memory for
-> the old devices.
-
-I do not really understand how is that related to removal ZONE_DMA. We
-are really talking about the lowest 16MB...
-
--- 
-Michal Hocko
-SUSE Labs
+> trace_clk_disable_complete_rcuidle
+> trace_clk_disable_rcuidle
+> trace_clk_enable_complete_rcuidle
+> trace_clk_enable_rcuidle
+> trace_console_rcuidle
+> trace_cpu_idle_rcuidle
+> trace_ipi_entry_rcuidle
+> trace_ipi_exit_rcuidle
+> trace_ipi_raise_rcuidle
+> trace_irq_disable_rcuidle
+> trace_irq_enable_rcuidle
+> trace_power_domain_target_rcuidle
+> trace_preempt_disable_rcuidle
+> trace_preempt_enable_rcuidle
+> trace_rpm_idle_rcuidle
+> trace_rpm_resume_rcuidle
+> trace_rpm_return_int_rcuidle
+> trace_rpm_suspend_rcuidle
+> trace_tlb_flush_rcuidle
+> 
+> All of these are either called from irqs or preemption disabled
+> already. So I think it should be fine to keep preemption on. But I'm
+> Ok with disabling it before callback execution if we agree that we
+> want that.
+> 
+> (and the ring buffer code is able to cope anyway Steven pointed).
+> 
+> thanks,
+> 
+>  - Joel
