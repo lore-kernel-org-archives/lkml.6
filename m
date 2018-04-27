@@ -1,41 +1,41 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpTO1BFbZ7OT7qhmdjiQlW56esjq98oL/flGYYZ3+D0DfMYncr7tiEidk4dt9kZTECLbjGo
-ARC-Seal: i=1; a=rsa-sha256; t=1524837599; cv=none;
+X-Google-Smtp-Source: AB8JxZphUuU1KAk5nKMPEujvktXWk1kNQWbeCk8ZhT+DbDHJcLXv1YHF6uaZMgG7jw5LfCA1zV0s
+ARC-Seal: i=1; a=rsa-sha256; t=1524837597; cv=none;
         d=google.com; s=arc-20160816;
-        b=BIkybzdw/m7SQpzpmhn7zkBCMoZcPOM6fJRnlwn8l/2pxbTE8HlwISYf/pLnYcCKQJ
-         Go65EVPjCoby2Eh7vko6FXGjPqCWt8S3lDJSa48nbky+ZdhraOBkRRwgpBmQe68NUlzI
-         yWYRqHRw/+sKMoegLelaqm8uJIfNeolCt+gBPEBINyBaQRd98pCwymGlPuU7XVugbbik
-         qm6Roi583tkvAvZMvpAuXL1xYTeGn1Gb2RaXVgBvglO5SVea2ikQZBhsJi/STHAYIKjX
-         3cKdyE1GBLpMeK312Piil14cV3lhVKEeRx3XUqDqKWA2g1U6yhmyjsems+jGMXFkJT5C
-         qimg==
+        b=N3wltEtkChLESeQhJcUHUPUpTDhP7pV60mjNxMn1EbSgLzOPR3bRoXxSi2N8oFxirX
+         RlZMGzfixjGvtFoH64RJF7A0Hvb9tB9sU1mgEydsMHCHFrUfSLsCjI013Sr8n+/C//Ln
+         Eh2V7VZ6zW7T465KDeu+XEJXKRRA2xhv4VIX6DGNLjuWhV17WbrVQO5NanPCzyYCRq8o
+         DaDQmREkRTXyntszhloDkvItmh2MttbHKdU59hwdhkxVrAOOXDgXH8YnttkarfD9mjSh
+         6pbLLuCsMG3zVX2iOjbd6p+ZZgrZK5YzFYZMP7L7RLPyoNHyHU3sLll0rdVkCJty9vbB
+         0iPw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=fALIJ0DnNeZISh0Cdr308ntbE9tSDTqfjLfc/1uy+pw=;
-        b=LG58S9B/RLPWodevCVkUdw36jXRdai36YHslPZElKtkUAeSqKKF6JyjeB5/PmYvxBU
-         zW3kEjEArXuAvvXsMnK1UHcKTrgHC3KAV3RoFINjRGJ6pn0J7XDoeY5iv2B8ZmrfIRz+
-         fl5W/kwfIGFs54NpOJB3QxXUyzlhm+sZJo2l3LC5xWhI6m+6Fz5tEKThN5V7AGXBTUHc
-         FPDG7fg8i8s+X3+lr20RBhUZPRBdv4x8IPooSdYg1G2zh98tBFLSJxMi6rGLn3JaO210
-         KT+RMYo/kAISY3jDfU5iqA7urFO7kMPEYQgiYqdgY2oj35guaKL96zV4hl6F+AVSOMeb
-         UR3Q==
+        bh=ztOznQVT2oEwK1eszv9sDImdbKlQDkVJq0ZSxnViTWA=;
+        b=l3dzebpzl0xziBQXMyf/K4pliu7YVqSdUsMFBmirpzAEomeY3APK3oZe3dYGRtWNra
+         FF7zT4ei5oQpCg908vaDXBZuNnRqzw1++JTUuuSFe7IlLC4pdqaF/N/6BlX/u8xeFet7
+         H0aRE1peolNufSS5vqkoZCphSdiw5y1udx5USVoZbCfLD8qV4P5GI0/0JlI+CezCGIhH
+         d7vGw1flULlfrg0VrXAFPlh8Sa0AELqGiCSIUoxr24/mQcT8+k0jZ++k7YJlv9L345Jr
+         c2LpMYGG5cwD/lUF1dywx02xN9Rm92nN0DnckKijfPIHit+IcOqLKTA7nPij5IS0Gmwb
+         iznA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA52721837
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4103321890
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>,
-	syzbot <syzkaller@googlegroups.com>,
-	Yuchung Cheng <ycheng@google.com>,
+	DaeRyong Jeong <threeearcat@gmail.com>,
+	Byoungyoung Lee <byoungyoung@purdue.edu>,
+	Willem de Bruijn <willemb@google.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 19/24] tcp: md5: reject TCP_MD5SIG or TCP_MD5SIG_EXT on established sockets
-Date: Fri, 27 Apr 2018 15:57:54 +0200
-Message-Id: <20180427135632.373548822@linuxfoundation.org>
+Subject: [PATCH 3.18 18/24] packet: fix bitfield update race
+Date: Fri, 27 Apr 2018 15:57:53 +0200
+Message-Id: <20180427135632.336601010@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135631.584839868@linuxfoundation.org>
 References: <20180427135631.584839868@linuxfoundation.org>
@@ -45,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908111210232536?=
-X-GMAIL-MSGID: =?utf-8?q?1598908111210232536?=
+X-GMAIL-THRID: =?utf-8?q?1598908108463523673?=
+X-GMAIL-MSGID: =?utf-8?q?1598908108463523673?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,108 +54,196 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Willem de Bruijn <willemb@google.com>
 
 
-[ Upstream commit 7212303268918b9a203aebeacfdbd83b5e87b20d ]
+[ Upstream commit a6361f0ca4b25460f2cdf3235ebe8115f622901e ]
 
-syzbot/KMSAN reported an uninit-value in tcp_parse_options() [1]
+Updates to the bitfields in struct packet_sock are not atomic.
+Serialize these read-modify-write cycles.
 
-I believe this was caused by a TCP_MD5SIG being set on live
-flow.
+Move po->running into a separate variable. Its writes are protected by
+po->bind_lock (except for one startup case at packet_create). Also
+replace a textual precondition warning with lockdep annotation.
 
-This is highly unexpected, since TCP option space is limited.
+All others are set only in packet_setsockopt. Serialize these
+updates by holding the socket lock. Analogous to other field updates,
+also hold the lock when testing whether a ring is active (pg_vec).
 
-For instance, presence of TCP MD5 option automatically disables
-TCP TimeStamp option at SYN/SYNACK time, which we can not do
-once flow has been established.
-
-Really, adding/deleting an MD5 key only makes sense on sockets
-in CLOSE or LISTEN state.
-
-[1]
-BUG: KMSAN: uninit-value in tcp_parse_options+0xd74/0x1a30 net/ipv4/tcp_input.c:3720
-CPU: 1 PID: 6177 Comm: syzkaller192004 Not tainted 4.16.0+ #83
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:17 [inline]
- dump_stack+0x185/0x1d0 lib/dump_stack.c:53
- kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
- __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:676
- tcp_parse_options+0xd74/0x1a30 net/ipv4/tcp_input.c:3720
- tcp_fast_parse_options net/ipv4/tcp_input.c:3858 [inline]
- tcp_validate_incoming+0x4f1/0x2790 net/ipv4/tcp_input.c:5184
- tcp_rcv_established+0xf60/0x2bb0 net/ipv4/tcp_input.c:5453
- tcp_v4_do_rcv+0x6cd/0xd90 net/ipv4/tcp_ipv4.c:1469
- sk_backlog_rcv include/net/sock.h:908 [inline]
- __release_sock+0x2d6/0x680 net/core/sock.c:2271
- release_sock+0x97/0x2a0 net/core/sock.c:2786
- tcp_sendmsg+0xd6/0x100 net/ipv4/tcp.c:1464
- inet_sendmsg+0x48d/0x740 net/ipv4/af_inet.c:764
- sock_sendmsg_nosec net/socket.c:630 [inline]
- sock_sendmsg net/socket.c:640 [inline]
- SYSC_sendto+0x6c3/0x7e0 net/socket.c:1747
- SyS_sendto+0x8a/0xb0 net/socket.c:1715
- do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-RIP: 0033:0x448fe9
-RSP: 002b:00007fd472c64d38 EFLAGS: 00000216 ORIG_RAX: 000000000000002c
-RAX: ffffffffffffffda RBX: 00000000006e5a30 RCX: 0000000000448fe9
-RDX: 000000000000029f RSI: 0000000020a88f88 RDI: 0000000000000004
-RBP: 00000000006e5a34 R08: 0000000020e68000 R09: 0000000000000010
-R10: 00000000200007fd R11: 0000000000000216 R12: 0000000000000000
-R13: 00007fff074899ef R14: 00007fd472c659c0 R15: 0000000000000009
-
-Uninit was created at:
- kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
- kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:188
- kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:314
- kmsan_slab_alloc+0x11/0x20 mm/kmsan/kmsan.c:321
- slab_post_alloc_hook mm/slab.h:445 [inline]
- slab_alloc_node mm/slub.c:2737 [inline]
- __kmalloc_node_track_caller+0xaed/0x11c0 mm/slub.c:4369
- __kmalloc_reserve net/core/skbuff.c:138 [inline]
- __alloc_skb+0x2cf/0x9f0 net/core/skbuff.c:206
- alloc_skb include/linux/skbuff.h:984 [inline]
- tcp_send_ack+0x18c/0x910 net/ipv4/tcp_output.c:3624
- __tcp_ack_snd_check net/ipv4/tcp_input.c:5040 [inline]
- tcp_ack_snd_check net/ipv4/tcp_input.c:5053 [inline]
- tcp_rcv_established+0x2103/0x2bb0 net/ipv4/tcp_input.c:5469
- tcp_v4_do_rcv+0x6cd/0xd90 net/ipv4/tcp_ipv4.c:1469
- sk_backlog_rcv include/net/sock.h:908 [inline]
- __release_sock+0x2d6/0x680 net/core/sock.c:2271
- release_sock+0x97/0x2a0 net/core/sock.c:2786
- tcp_sendmsg+0xd6/0x100 net/ipv4/tcp.c:1464
- inet_sendmsg+0x48d/0x740 net/ipv4/af_inet.c:764
- sock_sendmsg_nosec net/socket.c:630 [inline]
- sock_sendmsg net/socket.c:640 [inline]
- SYSC_sendto+0x6c3/0x7e0 net/socket.c:1747
- SyS_sendto+0x8a/0xb0 net/socket.c:1715
- do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-
-Fixes: cfb6eeb4c860 ("[TCP]: MD5 Signature Option (RFC2385) support.")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Acked-by: Yuchung Cheng <ycheng@google.com>
+Fixes: 8dc419447415 ("[PACKET]: Add optional checksum computation for recvmsg")
+Reported-by: DaeRyong Jeong <threeearcat@gmail.com>
+Reported-by: Byoungyoung Lee <byoungyoung@purdue.edu>
+Signed-off-by: Willem de Bruijn <willemb@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/tcp.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ net/packet/af_packet.c |   60 +++++++++++++++++++++++++++++++++++--------------
+ net/packet/internal.h  |   10 ++++----
+ 2 files changed, 49 insertions(+), 21 deletions(-)
 
---- a/net/ipv4/tcp.c
-+++ b/net/ipv4/tcp.c
-@@ -2593,8 +2593,10 @@ static int do_tcp_setsockopt(struct sock
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -323,11 +323,11 @@ static void packet_pick_tx_queue(struct
+ 	skb_set_queue_mapping(skb, queue_index);
+ }
  
- #ifdef CONFIG_TCP_MD5SIG
- 	case TCP_MD5SIG:
--		/* Read the IP->Key mappings from userspace */
--		err = tp->af_specific->md5_parse(sk, optval, optlen);
-+		if ((1 << sk->sk_state) & (TCPF_CLOSE | TCPF_LISTEN))
-+			err = tp->af_specific->md5_parse(sk, optval, optlen);
-+		else
-+			err = -EINVAL;
- 		break;
- #endif
- 	case TCP_USER_TIMEOUT:
+-/* register_prot_hook must be invoked with the po->bind_lock held,
++/* __register_prot_hook must be invoked through register_prot_hook
+  * or from a context in which asynchronous accesses to the packet
+  * socket is not possible (packet_create()).
+  */
+-static void register_prot_hook(struct sock *sk)
++static void __register_prot_hook(struct sock *sk)
+ {
+ 	struct packet_sock *po = pkt_sk(sk);
+ 
+@@ -342,8 +342,13 @@ static void register_prot_hook(struct so
+ 	}
+ }
+ 
+-/* {,__}unregister_prot_hook() must be invoked with the po->bind_lock
+- * held.   If the sync parameter is true, we will temporarily drop
++static void register_prot_hook(struct sock *sk)
++{
++	lockdep_assert_held_once(&pkt_sk(sk)->bind_lock);
++	__register_prot_hook(sk);
++}
++
++/* If the sync parameter is true, we will temporarily drop
+  * the po->bind_lock and do a synchronize_net to make sure no
+  * asynchronous packet processing paths still refer to the elements
+  * of po->prot_hook.  If the sync parameter is false, it is the
+@@ -353,6 +358,8 @@ static void __unregister_prot_hook(struc
+ {
+ 	struct packet_sock *po = pkt_sk(sk);
+ 
++	lockdep_assert_held_once(&po->bind_lock);
++
+ 	po->running = 0;
+ 
+ 	if (po->fanout)
+@@ -2861,7 +2868,7 @@ static int packet_create(struct net *net
+ 
+ 	if (proto) {
+ 		po->prot_hook.type = proto;
+-		register_prot_hook(sk);
++		__register_prot_hook(sk);
+ 	}
+ 
+ 	mutex_lock(&net->packet.sklist_lock);
+@@ -3352,12 +3359,18 @@ packet_setsockopt(struct socket *sock, i
+ 
+ 		if (optlen != sizeof(val))
+ 			return -EINVAL;
+-		if (po->rx_ring.pg_vec || po->tx_ring.pg_vec)
+-			return -EBUSY;
+ 		if (copy_from_user(&val, optval, sizeof(val)))
+ 			return -EFAULT;
+-		po->tp_loss = !!val;
+-		return 0;
++
++		lock_sock(sk);
++		if (po->rx_ring.pg_vec || po->tx_ring.pg_vec) {
++			ret = -EBUSY;
++		} else {
++			po->tp_loss = !!val;
++			ret = 0;
++		}
++		release_sock(sk);
++		return ret;
+ 	}
+ 	case PACKET_AUXDATA:
+ 	{
+@@ -3368,7 +3381,9 @@ packet_setsockopt(struct socket *sock, i
+ 		if (copy_from_user(&val, optval, sizeof(val)))
+ 			return -EFAULT;
+ 
++		lock_sock(sk);
+ 		po->auxdata = !!val;
++		release_sock(sk);
+ 		return 0;
+ 	}
+ 	case PACKET_ORIGDEV:
+@@ -3380,7 +3395,9 @@ packet_setsockopt(struct socket *sock, i
+ 		if (copy_from_user(&val, optval, sizeof(val)))
+ 			return -EFAULT;
+ 
++		lock_sock(sk);
+ 		po->origdev = !!val;
++		release_sock(sk);
+ 		return 0;
+ 	}
+ 	case PACKET_VNET_HDR:
+@@ -3389,15 +3406,20 @@ packet_setsockopt(struct socket *sock, i
+ 
+ 		if (sock->type != SOCK_RAW)
+ 			return -EINVAL;
+-		if (po->rx_ring.pg_vec || po->tx_ring.pg_vec)
+-			return -EBUSY;
+ 		if (optlen < sizeof(val))
+ 			return -EINVAL;
+ 		if (copy_from_user(&val, optval, sizeof(val)))
+ 			return -EFAULT;
+ 
+-		po->has_vnet_hdr = !!val;
+-		return 0;
++		lock_sock(sk);
++		if (po->rx_ring.pg_vec || po->tx_ring.pg_vec) {
++			ret = -EBUSY;
++		} else {
++			po->has_vnet_hdr = !!val;
++			ret = 0;
++		}
++		release_sock(sk);
++		return ret;
+ 	}
+ 	case PACKET_TIMESTAMP:
+ 	{
+@@ -3428,11 +3450,17 @@ packet_setsockopt(struct socket *sock, i
+ 
+ 		if (optlen != sizeof(val))
+ 			return -EINVAL;
+-		if (po->rx_ring.pg_vec || po->tx_ring.pg_vec)
+-			return -EBUSY;
+ 		if (copy_from_user(&val, optval, sizeof(val)))
+ 			return -EFAULT;
+-		po->tp_tx_has_off = !!val;
++
++		lock_sock(sk);
++		if (po->rx_ring.pg_vec || po->tx_ring.pg_vec) {
++			ret = -EBUSY;
++		} else {
++			po->tp_tx_has_off = !!val;
++			ret = 0;
++		}
++		release_sock(sk);
+ 		return 0;
+ 	}
+ 	case PACKET_QDISC_BYPASS:
+--- a/net/packet/internal.h
++++ b/net/packet/internal.h
+@@ -100,10 +100,12 @@ struct packet_sock {
+ 	int			copy_thresh;
+ 	spinlock_t		bind_lock;
+ 	struct mutex		pg_vec_lock;
+-	unsigned int		running:1,	/* prot_hook is attached*/
+-				auxdata:1,
++	unsigned int		running;	/* bind_lock must be held */
++	unsigned int		auxdata:1,	/* writer must hold sock lock */
+ 				origdev:1,
+-				has_vnet_hdr:1;
++				has_vnet_hdr:1,
++				tp_loss:1,
++				tp_tx_has_off:1;
+ 	int			ifindex;	/* bound device		*/
+ 	__be16			num;
+ 	struct packet_mclist	*mclist;
+@@ -111,8 +113,6 @@ struct packet_sock {
+ 	enum tpacket_versions	tp_version;
+ 	unsigned int		tp_hdrlen;
+ 	unsigned int		tp_reserve;
+-	unsigned int		tp_loss:1;
+-	unsigned int		tp_tx_has_off:1;
+ 	unsigned int		tp_tstamp;
+ 	struct net_device __rcu	*cached_dev;
+ 	int			(*xmit)(struct sk_buff *skb);
