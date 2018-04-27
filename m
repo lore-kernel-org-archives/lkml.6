@@ -1,27 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932647AbeD0JoN (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 05:44:13 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:45241 "EHLO
+        id S1757882AbeD0Jor (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 05:44:47 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:45775 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932411AbeD0JoK (ORCPT
+        with ESMTP id S1757842AbeD0Jon (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 05:44:10 -0400
-Date: Fri, 27 Apr 2018 02:43:44 -0700
-From: tip-bot for Waiman Long <tipbot@zytor.com>
-Message-ID: <tip-81d3dc9a349b1e61d77106bbb05a6e6dd29b9d5e@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, longman@redhat.com,
-        torvalds@linux-foundation.org, peterz@infradead.org, hpa@zytor.com,
-        tglx@linutronix.de, mingo@kernel.org
-Reply-To: hpa@zytor.com, peterz@infradead.org, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, longman@redhat.com, mingo@kernel.org,
+        Fri, 27 Apr 2018 05:44:43 -0400
+Date: Fri, 27 Apr 2018 02:44:20 -0700
+From: tip-bot for Will Deacon <tipbot@zytor.com>
+Message-ID: <tip-baa8c6ddf7be33f2b0ddeb68906d668caf646baa@git.kernel.org>
+Cc: will.deacon@arm.com, longman@redhat.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, mingo@kernel.org,
+        torvalds@linux-foundation.org, peterz@infradead.org,
         tglx@linutronix.de
-In-Reply-To: <1524738868-31318-14-git-send-email-will.deacon@arm.com>
-References: <1524738868-31318-14-git-send-email-will.deacon@arm.com>
+Reply-To: linux-kernel@vger.kernel.org, mingo@kernel.org, tglx@linutronix.de,
+        peterz@infradead.org, torvalds@linux-foundation.org, hpa@zytor.com,
+        longman@redhat.com, will.deacon@arm.com
+In-Reply-To: <1524738868-31318-15-git-send-email-will.deacon@arm.com>
+References: <1524738868-31318-15-git-send-email-will.deacon@arm.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] locking/qspinlock: Add stat tracking for pending
- vs. slowpath
-Git-Commit-ID: 81d3dc9a349b1e61d77106bbb05a6e6dd29b9d5e
+Subject: [tip:locking/core] MAINTAINERS: Add myself as a co-maintainer for
+ the locking subsystem
+Git-Commit-ID: baa8c6ddf7be33f2b0ddeb68906d668caf646baa
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -34,170 +35,45 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  81d3dc9a349b1e61d77106bbb05a6e6dd29b9d5e
-Gitweb:     https://git.kernel.org/tip/81d3dc9a349b1e61d77106bbb05a6e6dd29b9d5e
-Author:     Waiman Long <longman@redhat.com>
-AuthorDate: Thu, 26 Apr 2018 11:34:27 +0100
+Commit-ID:  baa8c6ddf7be33f2b0ddeb68906d668caf646baa
+Gitweb:     https://git.kernel.org/tip/baa8c6ddf7be33f2b0ddeb68906d668caf646baa
+Author:     Will Deacon <will.deacon@arm.com>
+AuthorDate: Thu, 26 Apr 2018 11:34:28 +0100
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Fri, 27 Apr 2018 09:48:53 +0200
+CommitDate: Fri, 27 Apr 2018 09:48:54 +0200
 
-locking/qspinlock: Add stat tracking for pending vs. slowpath
+MAINTAINERS: Add myself as a co-maintainer for the locking subsystem
 
-Currently, the qspinlock_stat code tracks only statistical counts in the
-PV qspinlock code. However, it may also be useful to track the number
-of locking operations done via the pending code vs. the MCS lock queue
-slowpath for the non-PV case.
+I've been heavily involved with concurrency and memory ordering stuff
+(see ATOMIC INFRASTRUCTURE and LINUX KERNEL MEMORY CONSISTENCY MODEL)
+and with arm64 now using qrwlock with a view to using qspinlock in the
+near future, I'm going to continue being involved with the core locking
+primitives. Reflect this by adding myself as a co-maintainer alongside
+Ingo and Peter.
 
-The qspinlock stat code is modified to do that. The stat counter
-pv_lock_slowpath is renamed to lock_slowpath so that it can be used by
-both the PV and non-PV cases.
-
-Signed-off-by: Waiman Long <longman@redhat.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Waiman Long <longman@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Waiman Long <longman@redhat.com>
 Cc: boqun.feng@gmail.com
 Cc: linux-arm-kernel@lists.infradead.org
 Cc: paulmck@linux.vnet.ibm.com
-Cc: will.deacon@arm.com
-Link: http://lkml.kernel.org/r/1524738868-31318-14-git-send-email-will.deacon@arm.com
+Link: http://lkml.kernel.org/r/1524738868-31318-15-git-send-email-will.deacon@arm.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/locking/qspinlock.c          | 14 +++++++++++---
- kernel/locking/qspinlock_paravirt.h |  7 +------
- kernel/locking/qspinlock_stat.h     |  9 ++++++---
- 3 files changed, 18 insertions(+), 12 deletions(-)
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/kernel/locking/qspinlock.c b/kernel/locking/qspinlock.c
-index 46813185957b..bfaeb05123ff 100644
---- a/kernel/locking/qspinlock.c
-+++ b/kernel/locking/qspinlock.c
-@@ -12,11 +12,11 @@
-  * GNU General Public License for more details.
-  *
-  * (C) Copyright 2013-2015 Hewlett-Packard Development Company, L.P.
-- * (C) Copyright 2013-2014 Red Hat, Inc.
-+ * (C) Copyright 2013-2014,2018 Red Hat, Inc.
-  * (C) Copyright 2015 Intel Corp.
-  * (C) Copyright 2015 Hewlett-Packard Enterprise Development LP
-  *
-- * Authors: Waiman Long <waiman.long@hpe.com>
-+ * Authors: Waiman Long <longman@redhat.com>
-  *          Peter Zijlstra <peterz@infradead.org>
-  */
- 
-@@ -32,6 +32,11 @@
- #include <asm/byteorder.h>
- #include <asm/qspinlock.h>
- 
-+/*
-+ * Include queued spinlock statistics code
-+ */
-+#include "qspinlock_stat.h"
-+
- /*
-  * The basic principle of a queue-based spinlock can best be understood
-  * by studying a classic queue-based spinlock implementation called the
-@@ -295,7 +300,7 @@ void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
- 	BUILD_BUG_ON(CONFIG_NR_CPUS >= (1U << _Q_TAIL_CPU_BITS));
- 
- 	if (pv_enabled())
--		goto queue;
-+		goto pv_queue;
- 
- 	if (virt_spin_lock(lock))
- 		return;
-@@ -348,6 +353,7 @@ void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
- 		 * *,1,0 -> *,0,1
- 		 */
- 		clear_pending_set_locked(lock);
-+		qstat_inc(qstat_lock_pending, true);
- 		return;
- 	}
- 
-@@ -363,6 +369,8 @@ void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
- 	 * queuing.
- 	 */
- queue:
-+	qstat_inc(qstat_lock_slowpath, true);
-+pv_queue:
- 	node = this_cpu_ptr(&mcs_nodes[0]);
- 	idx = node->count++;
- 	tail = encode_tail(smp_processor_id(), idx);
-diff --git a/kernel/locking/qspinlock_paravirt.h b/kernel/locking/qspinlock_paravirt.h
-index 2dbad2f25480..25730b2ac022 100644
---- a/kernel/locking/qspinlock_paravirt.h
-+++ b/kernel/locking/qspinlock_paravirt.h
-@@ -55,11 +55,6 @@ struct pv_node {
- 	u8			state;
- };
- 
--/*
-- * Include queued spinlock statistics code
-- */
--#include "qspinlock_stat.h"
--
- /*
-  * Hybrid PV queued/unfair lock
-  *
-@@ -428,7 +423,7 @@ pv_wait_head_or_lock(struct qspinlock *lock, struct mcs_spinlock *node)
- 	/*
- 	 * Tracking # of slowpath locking operations
- 	 */
--	qstat_inc(qstat_pv_lock_slowpath, true);
-+	qstat_inc(qstat_lock_slowpath, true);
- 
- 	for (;; waitcnt++) {
- 		/*
-diff --git a/kernel/locking/qspinlock_stat.h b/kernel/locking/qspinlock_stat.h
-index 4a30ef63c607..6bd78c0740fc 100644
---- a/kernel/locking/qspinlock_stat.h
-+++ b/kernel/locking/qspinlock_stat.h
-@@ -22,13 +22,14 @@
-  *   pv_kick_wake	- # of vCPU kicks used for computing pv_latency_wake
-  *   pv_latency_kick	- average latency (ns) of vCPU kick operation
-  *   pv_latency_wake	- average latency (ns) from vCPU kick to wakeup
-- *   pv_lock_slowpath	- # of locking operations via the slowpath
-  *   pv_lock_stealing	- # of lock stealing operations
-  *   pv_spurious_wakeup	- # of spurious wakeups in non-head vCPUs
-  *   pv_wait_again	- # of wait's after a queue head vCPU kick
-  *   pv_wait_early	- # of early vCPU wait's
-  *   pv_wait_head	- # of vCPU wait's at the queue head
-  *   pv_wait_node	- # of vCPU wait's at a non-head queue node
-+ *   lock_pending	- # of locking operations via pending code
-+ *   lock_slowpath	- # of locking operations via MCS lock queue
-  *
-  * Writing to the "reset_counters" file will reset all the above counter
-  * values.
-@@ -46,13 +47,14 @@ enum qlock_stats {
- 	qstat_pv_kick_wake,
- 	qstat_pv_latency_kick,
- 	qstat_pv_latency_wake,
--	qstat_pv_lock_slowpath,
- 	qstat_pv_lock_stealing,
- 	qstat_pv_spurious_wakeup,
- 	qstat_pv_wait_again,
- 	qstat_pv_wait_early,
- 	qstat_pv_wait_head,
- 	qstat_pv_wait_node,
-+	qstat_lock_pending,
-+	qstat_lock_slowpath,
- 	qstat_num,	/* Total number of statistical counters */
- 	qstat_reset_cnts = qstat_num,
- };
-@@ -73,12 +75,13 @@ static const char * const qstat_names[qstat_num + 1] = {
- 	[qstat_pv_spurious_wakeup] = "pv_spurious_wakeup",
- 	[qstat_pv_latency_kick]	   = "pv_latency_kick",
- 	[qstat_pv_latency_wake]    = "pv_latency_wake",
--	[qstat_pv_lock_slowpath]   = "pv_lock_slowpath",
- 	[qstat_pv_lock_stealing]   = "pv_lock_stealing",
- 	[qstat_pv_wait_again]      = "pv_wait_again",
- 	[qstat_pv_wait_early]      = "pv_wait_early",
- 	[qstat_pv_wait_head]       = "pv_wait_head",
- 	[qstat_pv_wait_node]       = "pv_wait_node",
-+	[qstat_lock_pending]       = "lock_pending",
-+	[qstat_lock_slowpath]      = "lock_slowpath",
- 	[qstat_reset_cnts]         = "reset_counters",
- };
- 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index dd66ae9a847e..e4585e33862c 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8328,6 +8328,7 @@ F:	Documentation/admin-guide/LSM/LoadPin.rst
+ LOCKING PRIMITIVES
+ M:	Peter Zijlstra <peterz@infradead.org>
+ M:	Ingo Molnar <mingo@redhat.com>
++M:	Will Deacon <will.deacon@arm.com>
+ L:	linux-kernel@vger.kernel.org
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking/core
+ S:	Maintained
