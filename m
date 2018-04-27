@@ -1,102 +1,187 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757963AbeD0KUj (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 06:20:39 -0400
-Received: from sauhun.de ([88.99.104.3]:48152 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1757810AbeD0KUg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 06:20:36 -0400
-Date: Fri, 27 Apr 2018 12:20:33 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Rakesh Iyer <riyer@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>, linux-input@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 20/61] input: keyboard: simplify getting .drvdata
-Message-ID: <20180427102033.msrr5sourxrtypg7@ninjato>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
- <20180419140641.27926-21-wsa+renesas@sang-engineering.com>
- <20180426191947.GC162443@dtor-ws>
- <20180426200401.lvqiy4gnchkwr4qw@ninjato>
- <20180426212327.GB210716@dtor-ws>
+        id S1757961AbeD0KWx (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 06:22:53 -0400
+Received: from mail-pf0-f182.google.com ([209.85.192.182]:35983 "EHLO
+        mail-pf0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757609AbeD0KWv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 06:22:51 -0400
+X-Google-Smtp-Source: AB8JxZpChJva8xAot0dP1+IByLEav3tfC/6TtQUtxnEh5FA3rOwL/jq+lP/w+kulYC7YlA5n02WrPg==
+Date: Fri, 27 Apr 2018 19:22:45 +0900
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>, akpm@linux-foundation.org,
+        linux-mm@kvack.org, Peter Zijlstra <peterz@infradead.org>,
+        Jan Kara <jack@suse.cz>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [PATCH] printk: Ratelimit messages printed by console drivers
+Message-ID: <20180427102245.GA591@jagdpanzerIV>
+References: <20180420080428.622a8e7f@gandalf.local.home>
+ <20180420140157.2nx5nkojj7l2y7if@pathway.suse.cz>
+ <20180420101751.6c1c70e8@gandalf.local.home>
+ <20180420145720.hb7bbyd5xbm5je32@pathway.suse.cz>
+ <20180420111307.44008fc7@gandalf.local.home>
+ <20180423103232.k23yulv2e7fah42r@pathway.suse.cz>
+ <20180423073603.6b3294ba@gandalf.local.home>
+ <20180423124502.423fb57thvbf3zet@pathway.suse.cz>
+ <20180425053146.GA25288@jagdpanzerIV>
+ <20180426094211.okftwdzgfn72rik3@pathway.suse.cz>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ro7fbsqyzfs5cg2h"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180426212327.GB210716@dtor-ws>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180426094211.okftwdzgfn72rik3@pathway.suse.cz>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On (04/26/18 11:42), Petr Mladek wrote:
+[..]
+> 
+> Believe me, I could perfectly understand the desire to create perfect
+> defensive solutions that would never break anything. It is not easy
+> to decide when the best-effort solutions are worth the risk.
 
---ro7fbsqyzfs5cg2h
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yes, but my point is - I don't think we clearly understand the root
+cause of the problem. See below [you can jump over the next section].
 
-Hi Dmitry,
+[..]
+> Honestly, I do not believe that console drivers are like Scheherazade.
+> They are not able to make up long interesting stories. Let's say that
+> lockdep splat has more than 100 lines but it can happen only once.
+> Let's say that WARNs have about 40 lines. I somehow doubt that we
+> could ever see 10 different WARN calls from one con->write() call.
 
-> > Isn't it actually the other way around? platform_get_drvdata() is a
-> > convenience function to access driver_data which is embedded in struct
-> > device?
->=20
-> I guess it depends on how you read it. I always considered it separate
-> because none (?) of the bus implementation assert this in comments to
-> XXX_get_drvdata().
+The problem here is that it takes a human being with IQ to tell what's
+repetitive, what's useless and what's not.
 
-Well, even in the case somebody will implement a custom driver_data for
-platform_devices, this person will need to convert all current users to
-'dev_get_drvdata(&pdev->dev);' first in order to avoid regressions, I'd
-think. This is what my patch does right now (but merely for overhead
-reasons). Or?
+	vprintk(...)
+	{
+		if (!__ratelimit())
+			return;
+	}
 
-> > > in the future, so I'd prefer keep using the proper accessors for the
-> > > objects we are dealing with.
-> >=20
-> > Exactly. I'd just argue, the object we are dealing with, declared in the
-> > PM functions, is a struct device.
->=20
-> No, the driver does not create a generic device, it actually creates a
-> platform device, or i2c client, or spi, or something else. The fact that
-
-True.
-
-> suspend and resume routines have generic device as their argument has
-> more to do with the language limitation rather than reflection of true
-> type of the objects we are dealing with.
-
-Ok, can be argued. I'd personally still go for the gain, but I won't
-push harder than this mail.
-
-Regards,
-
-   Wolfram
+has zero IQ to make such decisions. Sorry, the numbers don't work for me.
+"Console drivers added 100 lines in 1 hour" does not tell me that we had
+"an infinite console_unlock() loop".
+Dunno. Quite likely I'm wrong. Wouldn't be the first time ever. But it's
+unclear to me why we are out of options, without even looking at
+logs, but... May be.
 
 
---ro7fbsqyzfs5cg2h
-Content-Type: application/pgp-signature; name="signature.asc"
+> > But we first need a real reason. Right now it looks to me like
+> > we have "a solution" to a problem which we have never witnessed.
+> 
+> I am trying to find a "simple" and generic solution for the problem
+> reported by Tejun:
+[..]
+> 1. Console is IPMI emulated serial console.  Super slow.  Also
+>    netconsole is in use.
+> 2. System runs out of memory, OOM triggers.
+> 3. OOM handler is printing out OOM debug info.
+> 4. While trying to emit the messages for netconsole, the network stack
+>    / driver tries to allocate memory and then fail, which in turn
+>    triggers allocation failure or other warning messages.  printk was
+>    already flushing, so the messages are queued on the ring.
+> 5. OOM handler keeps flushing but 4 repeats and the queue is never
+>    shrinking.  Because OOM handler is trapped in printk flushing, it
+>    never manages to free memory and no one else can enter OOM path
+>    either, so the system is trapped in this state.
+> </paste>
 
------BEGIN PGP SIGNATURE-----
+Yes, and that's why I want to take a look at the logs/backtraces.
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlri+W0ACgkQFA3kzBSg
-KbaA8RAAkAc1/BldRxZwTtZe+wdvyAJeqmAvEr0Q89w3mD9zRSGiUy6fyUziggtI
-xxWfsOlzCQFr2d1Q8oqiyrqC3S5VrvmNinOfdRVcFbkAwlwoprNlnLT9EIYJBQND
-09oEqYv+SfaZMOGNjSBwL6udRJtN9UHxs+/s5xtox9xz0qLUla/iqn+mJ24FTQ6K
-qQ4GabIU8iRCUfIUaYozZisNJD/+6ikCVGBPQu/0kqYgSrFmdZupXHvVZ5IeAq7U
-cU+sBsz0SGEniPV6Q/GevnpJpfz4wrnU3l6c+kz82iGGoJmJu4Rg1vsj5krlXNx7
-KMy/JZQ7lAQmChsSVHgSHw5qtxXKYQmlywDWf8TJeA6ELRdQKa69SjVo5jW4aWTX
-Ni73xwSWxZGTueM23JYw33lYzP+OtCE4I6DwnT25skqzT8GHEHL/xMzYrWgiCpXL
-TWcIA28A3WW44PPCD2xS9rlSOhWjQIoETUZ1SVOkfxrXfCfGagZAtRc5NLU1MGSa
-JszHEFYSzi8pxVraoc+eZRgGtU5fnZrHwicRkNsouXqI/j6J37OUzs8VSnGNTmuS
-LRoEOQ5Y4zbw5ChRi13olVYuOmIa9oOnMk++4i/k8wMqjer+dDV9qtaZzs+Q+Tjp
-qkZMUdEdW6ggDX+Hzcgb3d5wFIts2aNQb1S8D0aY+MAk5EG9p3k=
-=rOVE
------END PGP SIGNATURE-----
+I had a very-very quick look at netconsole code, and some parts of net
+code [skb allocation, etc]. And I didn't manage to find that "every
+console driver call adds new messages to the logbuf".
 
---ro7fbsqyzfs5cg2h--
+OK, suppose that at some point netcon or net stack does kmalloc(GFP_ATOMIC)
+or alloc_pages(GFP_ATOMIC). So if it was kmalloc() and we need to
+cache_grow_begin()->kmem_getpages() or ___slab_alloc()->new_slab(),
+then:
+
+- kmem_getpages() can slab_out_of_memory().
+  But slab_out_of_memory():
+
+ a) ratelimited to DEFAULT_RATELIMIT_INTERVAL / DEFAULT_RATELIMIT_BURST
+ b) enabled only `#if DEBUG' [probably out of consideration]
+
+- So we end up in __alloc_pages_slowpath():
+
+  alloc_pages() -> __alloc_pages_slowpath()
+or
+  kmem_getpages()->__alloc_pages_slowpath()
+or
+  ___slab_alloc()->new_slab()->__alloc_pages_slowpath()
+
+__alloc_pages_slowpath() can call warn_alloc(), yes.
+
+But warn_alloc() is also ratelimted to DEFAULT_RATELIMIT_INTERVAL and
+DEFAULT_RATELIMIT_BURST.
+
+
+That "triggers allocation failure or other warning messages" part is
+questionable.
+
+
+1) Does the bug report actually say that - DEFAULT_RATELIMIT_INTERVAL
+and DEFAULT_RATELIMIT_BURST in MM are not good enough? If so, then why do
+we "fix" printk()? Can we just tweak the rate limiting in MM code?
+
+2) If the bug report is saying that MM code has non-ratelimited
+warnings/printouts in allocation path - then we need to rate limit
+those; the same way it's done in slab_out_of_memory() / warn_alloc().
+
+
+OK...
+
+So DEFAULT_RATELIMIT_INTERVAL / DEFAULT_RATELIMIT_BURST allows
+up to 10 warn_alloc()-s in 5 seconds. Let's assume that allocation
+failure backtrace is around 50 lines [including registers print out].
+Along with backtrace we have Mem-info print out. Let's assume that it's
+around 30 lines. So a single warn_alloc() can be around 80 lines.
+Mem-info lines are very long, so it would be reasonable to count the
+number of characters here, but let's just use lines. So we can have around
+800 lines in just 10 seconds.
+
+Now, I think "Console is IPMI emulated serial console.  Super slow."
+is a critically important bit of information. [And that's why we better
+count the number of characters in OOM report, not the lines].
+
+We print to the consoles sequentially, hence netconsole becomes as "fast"
+as that super slow IPMI console. MM ratelimit, meanwhile, does not care.
+The slower IPMI is, the "sooner" netconsole gets its chance to add 10 more
+kmalloc()->warn_alloc() to the logbuf - another ~800 lines, or may be
+significantly more than that. Because of slow IPMI we don't call
+netconsole frequent enough to get advantage of the rate limiting in
+warn_alloc().
+
+[And notice how "100/1000 lines per hour" is a bad news in this regard].
+
+
+If this is the case, and if my assumptions are valid, then we really
+should not rate limit console_drivers()->printk(). Mem-info print outs
+don't seem to be "a repetitive garbage" that we can easily discard.
+Those are important bits of information, which show the OOM/reclaimer
+progress, and so on.
+
+
+So, Petr, let's slow down for a second. There are things that are
+not completely clear.
+
+Opinions?
+
+[..]
+> For me it is hard to believe that all these possible errors will be
+> cured just by offloading. Not to say that offloading is not trivial
+> and there is some resistance against it.
+
+Well, I didn't say this. All I said was that I really like that "the patch
+does not pretend to be smart and does not drop random printk() messages"
+part.
+
+	-ss
