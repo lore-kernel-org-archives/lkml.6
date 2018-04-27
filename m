@@ -1,198 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758835AbeD0Qzm (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 12:55:42 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:41870 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757569AbeD0Qzj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 12:55:39 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 06CFE60314
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-Date: Fri, 27 Apr 2018 10:55:36 -0600
-From: Lina Iyer <ilina@codeaurora.org>
-To: Matthias Kaehlcke <mka@chromium.org>
-Cc: andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        rnayak@codeaurora.org, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org, sboyd@kernel.org, evgreen@chromium.org,
-        dianders@chromium.org
-Subject: Re: [PATCH v6 04/10] drivers: qcom: rpmh: add RPMH helper functions
-Message-ID: <20180427165536.GC6380@codeaurora.org>
-References: <20180419221635.17849-1-ilina@codeaurora.org>
- <20180419221635.17849-5-ilina@codeaurora.org>
- <20180426180529.GG243180@google.com>
+        id S1758845AbeD0Q4E (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 12:56:04 -0400
+Received: from foss.arm.com ([217.140.101.70]:43778 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1757569AbeD0Q4C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 12:56:02 -0400
+Subject: Re: [PATCH] drm/vmwgfx: Fix scatterlist unmapping
+To: Thomas Hellstrom <thellstrom@vmware.com>,
+        linux-graphics-maintainer@vmware.com, syeh@vmware.com
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <3a08f0343cb4e7a767601c59a381884121f9b751.1523632202.git.robin.murphy@arm.com>
+ <85d48f28-5df7-8c7e-d175-ce651838db53@vmware.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <8850b346-453f-e555-550d-7079b4f9d00d@arm.com>
+Date: Fri, 27 Apr 2018 17:56:00 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20180426180529.GG243180@google.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <85d48f28-5df7-8c7e-d175-ce651838db53@vmware.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 26 2018 at 12:05 -0600, Matthias Kaehlcke wrote:
->Hi Lina,
->
->On Thu, Apr 19, 2018 at 04:16:29PM -0600, Lina Iyer wrote:
->> Sending RPMH requests and waiting for response from the controller
->> through a callback is common functionality across all platform drivers.
->> To simplify drivers, add a library functions to create RPMH client and
->> send resource state requests.
+Hi Thomas,
+
+On 25/04/18 14:21, Thomas Hellstrom wrote:
+> Hi, Robin,
+> 
+> Thanks for the patch. It was some time since I put together that code, 
+> but I remember hitting something similar to
+> 
+> https://www.linuxquestions.org/questions/linux-kernel-70/%27nents%27-argument-of-dma_unmap_sg-4175621964/ 
+> 
+> 
+> Even if it's clear from the documentation that orig_nents should be used.
+
+Hmmm, it's odd that you would see issues - it's always been something 
+that CONFIG_DMA_API_DEBUG would have screamed about, and as far as I'm 
+aware for x86, nents and orig_nents should always end up equal anyway. I 
+would definitely be interested to see the specific fault details if it 
+can be reproduced. I suppose one possibility is that there's some path 
+where you inadvertently unmap something which was never mapped, but 
+passing nents=0 means you manage to get away with it without the DMA API 
+backend trying to interpret any bogus DMA addresses/lengths.
+
+FWIW, the rationale is that sync_sg/unmap_sg operate on sg->page (which 
+can always be translated back to a meaningful CPU address for 
+cache/write buffer maintenance), not sg->dma_address (which sometimes 
+cannot), therefore passing a truncated list will have the effect of just 
+not syncing the tail end of the buffer, which is clearly bad.
+
+Robin.
+
+> 
+> /Thomas
+> 
+> On 04/13/2018 05:14 PM, Robin Murphy wrote:
+>> dma_unmap_sg() should be called with the same number of entries
+>> originally passed to dma_map_sg(), not the number it returned, which may
+>> be fewer. Admittedly this driver probably never runs on non-coherent
+>> architectures where getting that wrong could lead to data loss, but it's
+>> always good to be correct, and it's trivially easy to fix by just
+>> restoring the SG table state before the call instead of afterwards.
 >>
->> rpmh_write() is a synchronous blocking call that can be used to send
->> active state requests.
->>
->> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+>> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
 >> ---
 >>
->> Changes in v6:
->> 	- replace rpmh_client with device
->> 	- inline wait_for_tx_done()
+>> Found by inspection while poking around TTM users.
 >>
->> Changes in v4:
->> 	- use const struct tcs_cmd in API
->> 	- remove wait count from this patch
->> 	- changed -EFAULT to -EINVAL
->> ---
->>  drivers/soc/qcom/Makefile        |   4 +-
->>  drivers/soc/qcom/rpmh-internal.h |   6 ++
->>  drivers/soc/qcom/rpmh-rsc.c      |   8 ++
->>  drivers/soc/qcom/rpmh.c          | 168 +++++++++++++++++++++++++++++++
->>  include/soc/qcom/rpmh.h          |  25 +++++
->>  5 files changed, 210 insertions(+), 1 deletion(-)
->>  create mode 100644 drivers/soc/qcom/rpmh.c
->>  create mode 100644 include/soc/qcom/rpmh.h
+>>   drivers/gpu/drm/vmwgfx/vmwgfx_buffer.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
 >>
->> diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
->> index cb6300f6a8e9..bb395c3202ca 100644
->> --- a/drivers/soc/qcom/Makefile
->> +++ b/drivers/soc/qcom/Makefile
->> @@ -7,7 +7,9 @@ obj-$(CONFIG_QCOM_PM)	+=	spm.o
->>  obj-$(CONFIG_QCOM_QMI_HELPERS)	+= qmi_helpers.o
->>  qmi_helpers-y	+= qmi_encdec.o qmi_interface.o
->>  obj-$(CONFIG_QCOM_RMTFS_MEM)	+= rmtfs_mem.o
->> -obj-$(CONFIG_QCOM_RPMH)	+=	rpmh-rsc.o
->> +obj-$(CONFIG_QCOM_RPMH)		+= qcom_rpmh.o
->> +qcom_rpmh-y			+= rpmh-rsc.o
->> +qcom_rpmh-y			+= rpmh.o
->>  obj-$(CONFIG_QCOM_SMD_RPM)	+= smd-rpm.o
->>  obj-$(CONFIG_QCOM_SMEM) +=	smem.o
->>  obj-$(CONFIG_QCOM_SMEM_STATE) += smem_state.o
->> diff --git a/drivers/soc/qcom/rpmh-internal.h b/drivers/soc/qcom/rpmh-internal.h
->> index cc29176f1303..d9a21726e568 100644
->> --- a/drivers/soc/qcom/rpmh-internal.h
->> +++ b/drivers/soc/qcom/rpmh-internal.h
->> @@ -14,6 +14,7 @@
->>  #define MAX_CMDS_PER_TCS		16
->>  #define MAX_TCS_PER_TYPE		3
->>  #define MAX_TCS_NR			(MAX_TCS_PER_TYPE * TCS_TYPE_NR)
->> +#define RPMH_MAX_CTRLR			2
->>
->>  struct rsc_drv;
->>
->> @@ -52,6 +53,7 @@ struct tcs_group {
->>   * @tcs:        TCS groups
->>   * @tcs_in_use: s/w state of the TCS
->>   * @lock:       synchronize state of the controller
->> + * @list:       element in list of drv
->>   */
->>  struct rsc_drv {
->>  	const char *name;
->> @@ -61,9 +63,13 @@ struct rsc_drv {
->>  	struct tcs_group tcs[TCS_TYPE_NR];
->>  	DECLARE_BITMAP(tcs_in_use, MAX_TCS_NR);
->>  	spinlock_t lock;
->> +	struct list_head list;
->>  };
->>
->> +extern struct list_head rsc_drv_list;
->>
->>  int rpmh_rsc_send_data(struct rsc_drv *drv, const struct tcs_request *msg);
->>
->> +void rpmh_tx_done(const struct tcs_request *msg, int r);
->                                                        ~
->
->nit: consider using a more expressive name, like status, rc, res or
->err.
->
-OK. Will fix.
-
-><snip>
->
->> +static struct rpmh_ctrlr *get_rpmh_ctrlr(const struct device *dev)
->> +{
->> +	int i;
->> +	struct rsc_drv *p, *drv = dev_get_drvdata(dev->parent);
->> +	struct rpmh_ctrlr *ctrlr = ERR_PTR(-EINVAL);
->> +
->> +	if (!drv)
->> +		return ctrlr;
->> +
->> +	for (i = 0; i < RPMH_MAX_CTRLR; i++) {
->> +		if (rpmh_rsc[i].drv == drv) {
->> +			ctrlr = &rpmh_rsc[i];
->> +			return ctrlr;
->> +		}
->> +	}
->> +
->> +	list_for_each_entry(p, &rsc_drv_list, list) {
->> +		if (drv == p) {
->> +			for (i = 0; i < RPMH_MAX_CTRLR; i++) {
->> +				if (!rpmh_rsc[i].drv)
->> +					break;
->> +			}
->> +			rpmh_rsc[i].drv = drv;
->
->There is a race condition, get_rpmh_ctrlr() could be executed
->simulatenously in different contexts, and select the same
->controller instance for different DRVs.
->
-True. This will need to be serialized.
-
->It's probably an unlikely case, but to be safe you'd have to do
->something like this:
->
->retry:
->for (i = 0; i < RPMH_MAX_CTRLR; i++) {
->	if (!rpmh_rsc[i].drv)
->		break;
->}
->
->spin_lock(&rpmh_rsc[i].lock);
->
->if (!rpmh_rsc[i].drv) {
->	rpmh_rsc[i].drv = drv;
->	ctrlr = &rpmh_rsc[i];
->} else {
->	spin_unlock(&rpmh_rsc[i].lock);
->	goto retry;
->}
->
->spin_unlock(&rpmh_rsc[i].lock);
->
->
->The above code doesn't address another potential error case, where
->#DRV > RPMH_MAX_CTRLR. In this case we'd access memory beyond
->rpmh_rsc. This would be a configuration error, not sure if it's
->strictly necessary to handle it.
->
-I think I might be able to solve for this a bit simpler with another
-spinlock for the rpmh_rsc.
-
-><snip>
->
->> +/**
->> + * rpmh_write: Write a set of RPMH commands and block until response
->> + *
->> + * @rc: The RPMh handle got from rpmh_get_client
->               ~~~~
->
->nit: Other than this the driver consistently uses 'RPMH'
->
-OK.
-
-Thanks for the review Matthias.
-
--- Lina
+>> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_buffer.c 
+>> b/drivers/gpu/drm/vmwgfx/vmwgfx_buffer.c
+>> index 21111fd091f9..971223d39469 100644
+>> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_buffer.c
+>> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_buffer.c
+>> @@ -369,9 +369,9 @@ static void vmw_ttm_unmap_from_dma(struct 
+>> vmw_ttm_tt *vmw_tt)
+>>   {
+>>       struct device *dev = vmw_tt->dev_priv->dev->dev;
+>> +    vmw_tt->sgt.nents = vmw_tt->sgt.orig_nents;
+>>       dma_unmap_sg(dev, vmw_tt->sgt.sgl, vmw_tt->sgt.nents,
+>>           DMA_BIDIRECTIONAL);
+>> -    vmw_tt->sgt.nents = vmw_tt->sgt.orig_nents;
+>>   }
+>>   /**
+> 
+> 
