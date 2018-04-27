@@ -1,70 +1,58 @@
-Return-Path: <rdunlap@infradead.org>
-X-Google-Smtp-Source: AB8JxZpC2ZAQ3w9IPf1nxR95Qdb1Mhdz+UsyTKxW7/74NYXq0V351/wnSxW1rWykQhhQs4TT9u5i
-ARC-Seal: i=1; a=rsa-sha256; t=1524792590; cv=none;
+Return-Path: <corbet@lwn.net>
+X-Google-Smtp-Source: AB8JxZojB3MCgohgkfQz/TgDknsIGge5dtsB7+Wuu5a+aAmbny1xVk4hT9lV1xxYFapeTEaDYm26
+ARC-Seal: i=1; a=rsa-sha256; t=1524871080; cv=none;
         d=google.com; s=arc-20160816;
-        b=gfpacxWQMZ8Y0aeSN+TcX1S8+81zy0hB05qGKGZvniyTVR4wf9fsuDckpA+IxK57Ej
-         flTuPzWREkKKnHdBMMN7Y61RFVmLm2QMGZ5B8+ok+nQMXV5d9D7aElVUQzIASEFaYTi8
-         LLSHiVXav3Q8VBB0W7t70ivOV09my82hK+6VguwDgVFxsS1q7kJc85a7l85KhUpChMXP
-         qu/nEu1yzn9kgDNzJpjeE91JjVoMXGJPnTYH+i+CkJ39uYLtpeU32ui9cUiq3b6KynBX
-         vyteSKjZcv2LHeI/+3YQ+xAN9jgiXiEb3OdyhEpooseu7m8Ofx/sZzieWAddbgKrtptm
-         eCCg==
+        b=zqTP6qJ9JsJQI8D/7Jmh5cqreYx9ixJDwNK5iYB/5LcTMQh8Nm9fSn7yjYyoBO3DdG
+         mG1Y28IXKcZqRBEtbRbpjfMbKtIf5CbK9i0QgdX41/s3CM/kQRSy5TNvUEM77oYGL6EC
+         YteNYqAYEOIQl6Nr0lHUjRb8HH+G6HSGGLr5RvHp6FH0FSpsg74lGWZN+CHjr+gx8RdZ
+         hDiEhF0X0u3V2uUPU0iCzP74wYQT6YTxyYNYP3e5b5N2GjqFkISV27UTTThV9CuyRXCu
+         nd++EdyOMNT8XAFgabFiLEdf8K+f6KqVVbKjXCVjZt6uYzmk43XSBwmO4dVxlcofFI57
+         3QzQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:mime-version:user-agent
-         :date:message-id:subject:from:cc:to:dkim-signature
+        h=content-transfer-encoding:mime-version:organization:references
+         :in-reply-to:message-id:subject:cc:to:from:date
          :arc-authentication-results;
-        bh=XoFVXFuYs2HKyCyykPTPxYg9I1ujdzoDqUeD85gWxIk=;
-        b=TWWH29DRgPE1GUV7xKyrtYxZP8nHzRzo14INn1tIhOfjXourFU+xFuni2IpsaVDIwe
-         SMb+RoFpAJ1uS5LE8SZHvXVLucyj9io/k1USGrE26X9rvW1H1Hxe7NoX8+Mynnp+Z7fG
-         nDDLoX0xaDQF3t22lLuSPlmDhZUater+48BirAc9U3SPlO/rg8bLUn5Krw2BWXwMgilp
-         O8ouEMJAv+KSqo56WCr63ExxmjErqTQTUhdnrzi4wLawWOFAOUHwCQHgCKAuEd0mvqLT
-         DNp5UeCac58HpyzcT/PmpiLGOmpQAvVDECyLEbF3ps3s5L4L5/5fJrdd8n7Sfw0rYSRj
-         aIPg==
+        bh=oA3mZ/COaDVHG+i+wfLmv/5U7YVGwyXC/rJ16gd0qnk=;
+        b=TWu6v00puJgldOB2/etFCldDrQC3mkgA1BJ8F8J2fJMJSh8ahOSnq7kvHn2DOHKhjw
+         1dfDslca4/2h4Z6utCx9XNnTAvmdlTU94S0pHBUm9o4sFCgkAVfQpz/SVcSInwsXwoVh
+         M5Kgq9O0LNI+IPy5umgG6L379NR2/eRmGDQzOdgXYpc+Old6zD/TZEyglu/bG6LN0RkS
+         CfaC44+Q5gkYkPc4IIyWUyF+Pvq+jTicLgedEfxhxcl7frChzd9wLg0HqihbwlOjq/nB
+         rTftN8ETkDO5aKbZW+NI+QMX70rkLbFENTzPYQDOG0H9Q1PG9e6f2oc1IeUkUUGJ8lp/
+         xzzQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=CUzArWpR;
-       spf=pass (google.com: best guess record for domain of rdunlap@infradead.org designates 2607:7c80:54:e::133 as permitted sender) smtp.mailfrom=rdunlap@infradead.org
+       spf=pass (google.com: domain of corbet@lwn.net designates 45.79.88.28 as permitted sender) smtp.mailfrom=corbet@lwn.net
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=CUzArWpR;
-       spf=pass (google.com: best guess record for domain of rdunlap@infradead.org designates 2607:7c80:54:e::133 as permitted sender) smtp.mailfrom=rdunlap@infradead.org
-To: "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Jonathan Corbet <corbet@lwn.net>
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH] Documentation: driver-api: fix device_connection.rst
+       spf=pass (google.com: domain of corbet@lwn.net designates 45.79.88.28 as permitted sender) smtp.mailfrom=corbet@lwn.net
+Date: Fri, 27 Apr 2018 17:17:58 -0600
+From: Jonathan Corbet <corbet@lwn.net>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, LKML
+ <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Heikki Krogerus
+ <heikki.krogerus@linux.intel.com>
+Subject: Re: [PATCH] Documentation: driver-api: fix device_connection.rst
  kernel-doc error
-Message-ID: <4dcdb5c8-1365-9a0a-81be-893b0d1ea731@infradead.org>
-Date: Thu, 26 Apr 2018 18:29:41 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+Message-ID: <20180427171758.3c5a55be@lwn.net>
+In-Reply-To: <4dcdb5c8-1365-9a0a-81be-893b0d1ea731@infradead.org>
+References: <4dcdb5c8-1365-9a0a-81be-893b0d1ea731@infradead.org>
+Organization: LWN.net
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1598860916051196881?=
-X-GMAIL-MSGID: =?utf-8?q?1598860916051196881?=
+X-GMAIL-MSGID: =?utf-8?q?1598943218302783616?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Randy Dunlap <rdunlap@infradead.org>
+On Thu, 26 Apr 2018 18:29:41 -0700
+Randy Dunlap <rdunlap@infradead.org> wrote:
 
-Using incorrect :functions: syntax (extra space) causes an odd kernel-doc
-warning, so fix that.
+> Using incorrect :functions: syntax (extra space) causes an odd kernel-doc
+> warning, so fix that.
+> 
+> Documentation/driver-api/device_connection.rst:42: ERROR: Error in "kernel-doc" directive:
 
-Documentation/driver-api/device_connection.rst:42: ERROR: Error in "kernel-doc" directive:
+Applied, thanks.
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
----
- Documentation/driver-api/device_connection.rst |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- linux-next-20180426.orig/Documentation/driver-api/device_connection.rst
-+++ linux-next-20180426/Documentation/driver-api/device_connection.rst
-@@ -40,4 +40,4 @@ API
- ---
- 
- .. kernel-doc:: drivers/base/devcon.c
--   : functions: device_connection_find_match device_connection_find device_connection_add device_connection_remove
-+   :functions: device_connection_find_match device_connection_find device_connection_add device_connection_remove
+jon
