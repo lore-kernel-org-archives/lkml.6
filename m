@@ -1,83 +1,38 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-288473-1524837841-2-4961832260977225016
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES unknown,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524837840; b=YwAIAmM2RWxc2LGtulODXjDosFLaGKOgGoSC4a9/3vedZv/l10
-    TAQHR5e9XnzQhBUKavNCKanzw+AHDSXQBWtRy5yKZxpd9m/m6pNZJH8EmVrFp/Wc
-    XTVU33lOec8ctSSvFvS9+2JzYbv72DQD7UWFyL969o+18K5M45JGirTRV0Je9odL
-    rhdZEZTkkD7d5ZuFQ/+H8Qr9qtdFgRT3tL8BcVMT3ajBIyVZfsQirUIpkRaj74Xd
-    ieNZr2bgDEqRTGr5xBbs4OHI2kTJfaP6C8IuHH4pXNKY8cf8bNOnNJuwGcF0anT0
-    UnLgumI7H1Tc3SzPUuaVQbKP+ii33hBRN0vg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524837840; bh=6lo5lR5hHH+GZYH4Z2HPWw4nW/1arQ
-    93JTkYHUb1VeQ=; b=nTRYCXwd05wQ3DuHZxp2/aYNzlHalpLQh0jerbzMeSjdGG
-    0CTYCNMZM2l9FxXu4a3rPwlnl0r5Dnyg217Qc5q3GVEIHAsvF3992OXqg33zPMXN
-    nknzqghNp+D92X4IVV/Uqr4iv8UKo3gXFKutnUwdIvaKwTLwTVsvXjm1nQq/9rGK
-    iQvjLh+2ZN5XJ/HXKbsUMvxLKZRwdbmLXfnYzPzVclHW1vjREHpqLMzBszRi/R1q
-    QSnpahIzivNl/g511hNIjVZG5QrRBzVNx6h9m9hfc33CH6sBsIhzV6YZqmH9ixSZ
-    Se7pDOM6Fkiywakj/vJe5xPtONuklyzrgtVP8T9Q==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfG2LDi2jTLLVaMslFclSC6DMHy+o2NGzSFw7u5dkCSMaFzmM1VTvqi5SORM6zPMzL1UhFfsHCXZZeBKVHMJzDhMsSeV0yO9DVivXAWS6OGVosLpXRzVA
-    LyNJ57VmgQRch+pN+S7M3m30Wwn8/hrF2zMHVigtYsoLUpF1VWlqOTKAJ5odr1rIFaVLwBOdQ894AuH2CLRYUgDkmxH+Os99GYFvZpEWuQc7Asx604dmj5F5
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=VnNF1IyMAAAA:8 a=ag1SF4gXAAAA:8 a=XH7PKExuMGqO0J9mnHIA:9 a=QEXdDO2ut3YA:10
-    a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933336AbeD0ODr (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 27 Apr 2018 10:03:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50224 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933188AbeD0ODp (ORCPT <rfc822;stable@vger.kernel.org>);
-        Fri, 27 Apr 2018 10:03:45 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EE5D2189D
+Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
+X-Google-Smtp-Source: AB8JxZq9Cz5mhFSqw6ryqyHETV5XeDpHOxoh28BLXDdeMiTQmDopYuh85RAtGFskSpTRwJYqx+Ol
+ARC-Seal: i=1; a=rsa-sha256; t=1524837840; cv=none;
+        d=google.com; s=arc-20160816;
+        b=mOWPkWRE9cqzwwzoDWGZT1SRxikhwpA4Rur5+1VTiXWzlOWTeLlqgCtZUa/aJbWSE+
+         HNcD8yTye4QeoHzQRkX82bu5GNp6ZAHlQJ8xZEYF57h/wu3ysXMiEKd/0Z7s9r4nBucf
+         eItUnKBuSQnPF1e0glC9yFGWnX3yrkkPfB26HdJRJQKWnYGvyC07AfLFu4v9/XfjCIo2
+         KoZDa0rK0IkRmE/LWZTd+v9nJn0af8KOXJLNevipZEghAFkjUYJUcMpqUpdMbj9OMY8c
+         TpsFLB9dOfEQTdt1RfdsY1h4mfFaNQfbk0mNv4SKJfe+v2bPzFr1H/zCAfffRDZ08/Hu
+         /QBA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dmarc-filter:arc-authentication-results;
+        bh=LCCye3larhWYAEJGAra/mXHTw2IUFWeFMblBCX1YUt0=;
+        b=RFc25hIZUx0iprocDTLpclHtxbOu3tGKIXGBfYJzbLycadv+5HrwnnFlsTkE8GG6os
+         7yukMLRoTyJzr2l7/kK0eePpjUsfxo3Ip+6x6LQZyaNbvanFRkGkmxZChC4j3uYtPkwW
+         2PlF9TAujiDXFlEKzOytna/j2KA2wP9fsgnWZHCKkTnSwi7+GkTKBhMWBZVsuQ6yu/ur
+         6Ct2CpYCTmQU5H458YI3IH818HOaMVvwwH7zdm/X/Uoom885SO7no25Ubg2GZ08bQOcs
+         9M1gCxOdIgFYiNkWKwM9aZVCEhaLfrCYk0emZ6WsUGEj22lLfNCDrRT6pfjzDRJHk87O
+         mnfQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0DB021890
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>
-Subject: [PATCH 4.9 31/74] s390: scrub registers on kernel entry and KVM exit
-Date: Fri, 27 Apr 2018 15:58:21 +0200
-Message-Id: <20180427135711.222188812@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: [PATCH 4.9 36/74] s390: introduce execute-trampolines for branches
+Date: Fri, 27 Apr 2018 15:58:26 +0200
+Message-Id: <20180427135711.430975096@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135709.899303463@linuxfoundation.org>
 References: <20180427135709.899303463@linuxfoundation.org>
@@ -85,9 +40,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1598908173732489083?=
+X-GMAIL-MSGID: =?utf-8?q?1598908363447037485?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -98,107 +54,711 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Martin Schwidefsky <schwidefsky@de.ibm.com>
 
 
-[ Upstream commit 7041d28115e91f2144f811ffe8a195c696b1e1d0 ]
+[ Upstream commit f19fbd5ed642dc31c809596412dab1ed56f2f156 ]
 
-Clear all user space registers on entry to the kernel and all KVM guest
-registers on KVM guest exit if the register does not contain either a
-parameter or a result value.
+Add CONFIG_EXPOLINE to enable the use of the new -mindirect-branch= and
+-mfunction_return= compiler options to create a kernel fortified against
+the specte v2 attack.
 
-Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
+With CONFIG_EXPOLINE=y all indirect branches will be issued with an
+execute type instruction. For z10 or newer the EXRL instruction will
+be used, for older machines the EX instruction. The typical indirect
+call
+
+	basr	%r14,%r1
+
+is replaced with a PC relative call to a new thunk
+
+	brasl	%r14,__s390x_indirect_jump_r1
+
+The thunk contains the EXRL/EX instruction to the indirect branch
+
+__s390x_indirect_jump_r1:
+	exrl	0,0f
+	j	.
+0:	br	%r1
+
+The detour via the execute type instruction has a performance impact.
+To get rid of the detour the new kernel parameter "nospectre_v2" and
+"spectre_v2=[on,off,auto]" can be used. If the parameter is specified
+the kernel and module code will be patched at runtime.
+
 Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/s390/kernel/entry.S |   47 +++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 47 insertions(+)
+ arch/s390/Kconfig                     |   28 ++++++++
+ arch/s390/Makefile                    |   10 +++
+ arch/s390/include/asm/lowcore.h       |    4 -
+ arch/s390/include/asm/nospec-branch.h |   18 +++++
+ arch/s390/kernel/Makefile             |    4 +
+ arch/s390/kernel/entry.S              |  113 ++++++++++++++++++++++++++--------
+ arch/s390/kernel/module.c             |   62 +++++++++++++++---
+ arch/s390/kernel/nospec-branch.c      |  101 ++++++++++++++++++++++++++++++
+ arch/s390/kernel/setup.c              |    4 +
+ arch/s390/kernel/smp.c                |    1 
+ arch/s390/kernel/vmlinux.lds.S        |   14 ++++
+ drivers/s390/char/Makefile            |    2 
+ 12 files changed, 326 insertions(+), 35 deletions(-)
+ create mode 100644 arch/s390/include/asm/nospec-branch.h
+ create mode 100644 arch/s390/kernel/nospec-branch.c
 
+--- a/arch/s390/Kconfig
++++ b/arch/s390/Kconfig
+@@ -721,6 +721,34 @@ config KERNEL_NOBP
+ 
+ 	  If unsure, say N.
+ 
++config EXPOLINE
++	def_bool n
++	prompt "Avoid speculative indirect branches in the kernel"
++	help
++	  Compile the kernel with the expoline compiler options to guard
++	  against kernel-to-user data leaks by avoiding speculative indirect
++	  branches.
++	  Requires a compiler with -mindirect-branch=thunk support for full
++	  protection. The kernel may run slower.
++
++	  If unsure, say N.
++
++choice
++	prompt "Expoline default"
++	depends on EXPOLINE
++	default EXPOLINE_FULL
++
++config EXPOLINE_OFF
++	bool "spectre_v2=off"
++
++config EXPOLINE_MEDIUM
++	bool "spectre_v2=auto"
++
++config EXPOLINE_FULL
++	bool "spectre_v2=on"
++
++endchoice
++
+ endmenu
+ 
+ menu "Power Management"
+--- a/arch/s390/Makefile
++++ b/arch/s390/Makefile
+@@ -79,6 +79,16 @@ ifeq ($(call cc-option-yn,-mwarn-dynamic
+ cflags-$(CONFIG_WARN_DYNAMIC_STACK) += -mwarn-dynamicstack
+ endif
+ 
++ifdef CONFIG_EXPOLINE
++  ifeq ($(call cc-option-yn,$(CC_FLAGS_MARCH) -mindirect-branch=thunk),y)
++    CC_FLAGS_EXPOLINE := -mindirect-branch=thunk
++    CC_FLAGS_EXPOLINE += -mfunction-return=thunk
++    CC_FLAGS_EXPOLINE += -mindirect-branch-table
++    export CC_FLAGS_EXPOLINE
++    cflags-y += $(CC_FLAGS_EXPOLINE)
++  endif
++endif
++
+ ifdef CONFIG_FUNCTION_TRACER
+ # make use of hotpatch feature if the compiler supports it
+ cc_hotpatch	:= -mhotpatch=0,3
+--- a/arch/s390/include/asm/lowcore.h
++++ b/arch/s390/include/asm/lowcore.h
+@@ -135,7 +135,9 @@ struct lowcore {
+ 	/* Per cpu primary space access list */
+ 	__u32	paste[16];			/* 0x0400 */
+ 
+-	__u8	pad_0x04c0[0x0e00-0x0440];	/* 0x0440 */
++	/* br %r1 trampoline */
++	__u16	br_r1_trampoline;		/* 0x0440 */
++	__u8	pad_0x0442[0x0e00-0x0442];	/* 0x0442 */
+ 
+ 	/*
+ 	 * 0xe00 contains the address of the IPL Parameter Information
+--- /dev/null
++++ b/arch/s390/include/asm/nospec-branch.h
+@@ -0,0 +1,18 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _ASM_S390_EXPOLINE_H
++#define _ASM_S390_EXPOLINE_H
++
++#ifndef __ASSEMBLY__
++
++#include <linux/types.h>
++
++extern int nospec_call_disable;
++extern int nospec_return_disable;
++
++void nospec_init_branches(void);
++void nospec_call_revert(s32 *start, s32 *end);
++void nospec_return_revert(s32 *start, s32 *end);
++
++#endif /* __ASSEMBLY__ */
++
++#endif /* _ASM_S390_EXPOLINE_H */
+--- a/arch/s390/kernel/Makefile
++++ b/arch/s390/kernel/Makefile
+@@ -42,6 +42,7 @@ ifneq ($(CC_FLAGS_MARCH),-march=z900)
+ CFLAGS_REMOVE_sclp.o	+= $(CC_FLAGS_MARCH)
+ CFLAGS_sclp.o		+= -march=z900
+ CFLAGS_REMOVE_als.o	+= $(CC_FLAGS_MARCH)
++CFLAGS_REMOVE_als.o	+= $(CC_FLAGS_EXPOLINE)
+ CFLAGS_als.o		+= -march=z900
+ AFLAGS_REMOVE_head.o	+= $(CC_FLAGS_MARCH)
+ AFLAGS_head.o		+= -march=z900
+@@ -61,6 +62,9 @@ obj-y	+= entry.o reipl.o relocate_kernel
+ 
+ extra-y				+= head.o head64.o vmlinux.lds
+ 
++obj-$(CONFIG_EXPOLINE)		+= nospec-branch.o
++CFLAGS_REMOVE_expoline.o	+= $(CC_FLAGS_EXPOLINE)
++
+ obj-$(CONFIG_MODULES)		+= module.o
+ obj-$(CONFIG_SMP)		+= smp.o
+ obj-$(CONFIG_SCHED_TOPOLOGY)	+= topology.o
 --- a/arch/s390/kernel/entry.S
 +++ b/arch/s390/kernel/entry.S
-@@ -255,6 +255,12 @@ ENTRY(sie64a)
- sie_exit:
- 	lg	%r14,__SF_EMPTY+8(%r15)		# load guest register save area
- 	stmg	%r0,%r13,0(%r14)		# save guest gprs 0-13
-+	xgr	%r0,%r0				# clear guest registers to
-+	xgr	%r1,%r1				# prevent speculative use
-+	xgr	%r2,%r2
-+	xgr	%r3,%r3
-+	xgr	%r4,%r4
-+	xgr	%r5,%r5
+@@ -226,6 +226,68 @@ _PIF_WORK	= (_PIF_PER_TRAP)
+ 	.popsection
+ 	.endm
+ 
++#ifdef CONFIG_EXPOLINE
++
++	.macro GEN_BR_THUNK name,reg,tmp
++	.section .text.\name,"axG",@progbits,\name,comdat
++	.globl \name
++	.hidden \name
++	.type \name,@function
++\name:
++	.cfi_startproc
++#ifdef CONFIG_HAVE_MARCH_Z10_FEATURES
++	exrl	0,0f
++#else
++	larl	\tmp,0f
++	ex	0,0(\tmp)
++#endif
++	j	.
++0:	br	\reg
++	.cfi_endproc
++	.endm
++
++	GEN_BR_THUNK __s390x_indirect_jump_r1use_r9,%r9,%r1
++	GEN_BR_THUNK __s390x_indirect_jump_r1use_r14,%r14,%r1
++	GEN_BR_THUNK __s390x_indirect_jump_r11use_r14,%r14,%r11
++
++	.macro BASR_R14_R9
++0:	brasl	%r14,__s390x_indirect_jump_r1use_r9
++	.pushsection .s390_indirect_branches,"a",@progbits
++	.long	0b-.
++	.popsection
++	.endm
++
++	.macro BR_R1USE_R14
++0:	jg	__s390x_indirect_jump_r1use_r14
++	.pushsection .s390_indirect_branches,"a",@progbits
++	.long	0b-.
++	.popsection
++	.endm
++
++	.macro BR_R11USE_R14
++0:	jg	__s390x_indirect_jump_r11use_r14
++	.pushsection .s390_indirect_branches,"a",@progbits
++	.long	0b-.
++	.popsection
++	.endm
++
++#else	/* CONFIG_EXPOLINE */
++
++	.macro BASR_R14_R9
++	basr	%r14,%r9
++	.endm
++
++	.macro BR_R1USE_R14
++	br	%r14
++	.endm
++
++	.macro BR_R11USE_R14
++	br	%r14
++	.endm
++
++#endif /* CONFIG_EXPOLINE */
++
++
+ 	.section .kprobes.text, "ax"
+ .Ldummy:
+ 	/*
+@@ -241,7 +303,7 @@ _PIF_WORK	= (_PIF_PER_TRAP)
+ ENTRY(__bpon)
+ 	.globl __bpon
+ 	BPON
+-	br	%r14
++	BR_R1USE_R14
+ 
+ /*
+  * Scheduler resume function, called by switch_to
+@@ -269,9 +331,9 @@ ENTRY(__switch_to)
+ 	mvc	__LC_CURRENT_PID(4,%r0),__TASK_pid(%r3) # store pid of next
+ 	lmg	%r6,%r15,__SF_GPRS(%r15)	# load gprs of next task
+ 	TSTMSK	__LC_MACHINE_FLAGS,MACHINE_FLAG_LPP
+-	bzr	%r14
++	jz	0f
+ 	.insn	s,0xb2800000,__LC_LPP		# set program parameter
+-	br	%r14
++0:	BR_R1USE_R14
+ 
+ .L__critical_start:
+ 
+@@ -337,7 +399,7 @@ sie_exit:
+ 	xgr	%r5,%r5
  	lmg	%r6,%r14,__SF_GPRS(%r15)	# restore kernel registers
  	lg	%r2,__SF_EMPTY+16(%r15)		# return exit reason code
- 	br	%r14
-@@ -290,6 +296,8 @@ ENTRY(system_call)
- .Lsysc_vtime:
- 	UPDATE_VTIME %r10,%r13,__LC_SYNC_ENTER_TIMER
- 	stmg	%r0,%r7,__PT_R0(%r11)
-+	# clear user controlled register to prevent speculative use
-+	xgr	%r0,%r0
- 	mvc	__PT_R8(64,%r11),__LC_SAVE_AREA_SYNC
- 	mvc	__PT_PSW(16,%r11),__LC_SVC_OLD_PSW
- 	mvc	__PT_INT_CODE(4,%r11),__LC_SVC_ILC
-@@ -517,6 +525,15 @@ ENTRY(pgm_check_handler)
- 	mvc	__THREAD_trap_tdb(256,%r14),0(%r13)
- 3:	la	%r11,STACK_FRAME_OVERHEAD(%r15)
- 	stmg	%r0,%r7,__PT_R0(%r11)
-+	# clear user controlled registers to prevent speculative use
-+	xgr	%r0,%r0
-+	xgr	%r1,%r1
-+	xgr	%r2,%r2
-+	xgr	%r3,%r3
-+	xgr	%r4,%r4
-+	xgr	%r5,%r5
-+	xgr	%r6,%r6
-+	xgr	%r7,%r7
- 	mvc	__PT_R8(64,%r11),__LC_SAVE_AREA_SYNC
- 	stmg	%r8,%r9,__PT_PSW(%r11)
- 	mvc	__PT_INT_CODE(4,%r11),__LC_PGM_ILC
-@@ -580,6 +597,16 @@ ENTRY(io_int_handler)
- 	lmg	%r8,%r9,__LC_IO_OLD_PSW
- 	SWITCH_ASYNC __LC_SAVE_AREA_ASYNC,__LC_ASYNC_ENTER_TIMER
- 	stmg	%r0,%r7,__PT_R0(%r11)
-+	# clear user controlled registers to prevent speculative use
-+	xgr	%r0,%r0
-+	xgr	%r1,%r1
-+	xgr	%r2,%r2
-+	xgr	%r3,%r3
-+	xgr	%r4,%r4
-+	xgr	%r5,%r5
-+	xgr	%r6,%r6
-+	xgr	%r7,%r7
-+	xgr	%r10,%r10
- 	mvc	__PT_R8(64,%r11),__LC_SAVE_AREA_ASYNC
- 	stmg	%r8,%r9,__PT_PSW(%r11)
- 	mvc	__PT_INT_CODE(12,%r11),__LC_SUBCHANNEL_ID
-@@ -755,6 +782,16 @@ ENTRY(ext_int_handler)
- 	lmg	%r8,%r9,__LC_EXT_OLD_PSW
- 	SWITCH_ASYNC __LC_SAVE_AREA_ASYNC,__LC_ASYNC_ENTER_TIMER
- 	stmg	%r0,%r7,__PT_R0(%r11)
-+	# clear user controlled registers to prevent speculative use
-+	xgr	%r0,%r0
-+	xgr	%r1,%r1
-+	xgr	%r2,%r2
-+	xgr	%r3,%r3
-+	xgr	%r4,%r4
-+	xgr	%r5,%r5
-+	xgr	%r6,%r6
-+	xgr	%r7,%r7
-+	xgr	%r10,%r10
- 	mvc	__PT_R8(64,%r11),__LC_SAVE_AREA_ASYNC
- 	stmg	%r8,%r9,__PT_PSW(%r11)
- 	lghi	%r1,__LC_EXT_PARAMS2
-@@ -925,6 +962,16 @@ ENTRY(mcck_int_handler)
- .Lmcck_skip:
- 	lghi	%r14,__LC_GPREGS_SAVE_AREA+64
- 	stmg	%r0,%r7,__PT_R0(%r11)
-+	# clear user controlled registers to prevent speculative use
-+	xgr	%r0,%r0
-+	xgr	%r1,%r1
-+	xgr	%r2,%r2
-+	xgr	%r3,%r3
-+	xgr	%r4,%r4
-+	xgr	%r5,%r5
-+	xgr	%r6,%r6
-+	xgr	%r7,%r7
-+	xgr	%r10,%r10
- 	mvc	__PT_R8(64,%r11),0(%r14)
- 	stmg	%r8,%r9,__PT_PSW(%r11)
- 	xc	__PT_FLAGS(8,%r11),__PT_FLAGS(%r11)
+-	br	%r14
++	BR_R1USE_R14
+ .Lsie_fault:
+ 	lghi	%r14,-EFAULT
+ 	stg	%r14,__SF_EMPTY+16(%r15)	# set exit reason code
+@@ -396,7 +458,7 @@ ENTRY(system_call)
+ 	lgf	%r9,0(%r8,%r10)			# get system call add.
+ 	TSTMSK	__TI_flags(%r12),_TIF_TRACE
+ 	jnz	.Lsysc_tracesys
+-	basr	%r14,%r9			# call sys_xxxx
++	BASR_R14_R9				# call sys_xxxx
+ 	stg	%r2,__PT_R2(%r11)		# store return value
+ 
+ .Lsysc_return:
+@@ -536,7 +598,7 @@ ENTRY(system_call)
+ 	lmg	%r3,%r7,__PT_R3(%r11)
+ 	stg	%r7,STACK_FRAME_OVERHEAD(%r15)
+ 	lg	%r2,__PT_ORIG_GPR2(%r11)
+-	basr	%r14,%r9		# call sys_xxx
++	BASR_R14_R9			# call sys_xxx
+ 	stg	%r2,__PT_R2(%r11)	# store return value
+ .Lsysc_tracenogo:
+ 	TSTMSK	__TI_flags(%r12),_TIF_TRACE
+@@ -560,7 +622,7 @@ ENTRY(ret_from_fork)
+ 	lmg	%r9,%r10,__PT_R9(%r11)	# load gprs
+ ENTRY(kernel_thread_starter)
+ 	la	%r2,0(%r10)
+-	basr	%r14,%r9
++	BASR_R14_R9
+ 	j	.Lsysc_tracenogo
+ 
+ /*
+@@ -634,9 +696,9 @@ ENTRY(pgm_check_handler)
+ 	nill	%r10,0x007f
+ 	sll	%r10,2
+ 	je	.Lpgm_return
+-	lgf	%r1,0(%r10,%r1)		# load address of handler routine
++	lgf	%r9,0(%r10,%r1)		# load address of handler routine
+ 	lgr	%r2,%r11		# pass pointer to pt_regs
+-	basr	%r14,%r1		# branch to interrupt-handler
++	BASR_R14_R9			# branch to interrupt-handler
+ .Lpgm_return:
+ 	LOCKDEP_SYS_EXIT
+ 	tm	__PT_PSW+1(%r11),0x01	# returning to user ?
+@@ -914,7 +976,7 @@ ENTRY(psw_idle)
+ 	stpt	__TIMER_IDLE_ENTER(%r2)
+ .Lpsw_idle_lpsw:
+ 	lpswe	__SF_EMPTY(%r15)
+-	br	%r14
++	BR_R1USE_R14
+ .Lpsw_idle_end:
+ 
+ /*
+@@ -928,7 +990,7 @@ ENTRY(save_fpu_regs)
+ 	lg	%r2,__LC_CURRENT
+ 	aghi	%r2,__TASK_thread
+ 	TSTMSK	__LC_CPU_FLAGS,_CIF_FPU
+-	bor	%r14
++	jo	.Lsave_fpu_regs_exit
+ 	stfpc	__THREAD_FPU_fpc(%r2)
+ .Lsave_fpu_regs_fpc_end:
+ 	lg	%r3,__THREAD_FPU_regs(%r2)
+@@ -958,7 +1020,8 @@ ENTRY(save_fpu_regs)
+ 	std	15,120(%r3)
+ .Lsave_fpu_regs_done:
+ 	oi	__LC_CPU_FLAGS+7,_CIF_FPU
+-	br	%r14
++.Lsave_fpu_regs_exit:
++	BR_R1USE_R14
+ .Lsave_fpu_regs_end:
+ #if IS_ENABLED(CONFIG_KVM)
+ EXPORT_SYMBOL(save_fpu_regs)
+@@ -978,7 +1041,7 @@ load_fpu_regs:
+ 	lg	%r4,__LC_CURRENT
+ 	aghi	%r4,__TASK_thread
+ 	TSTMSK	__LC_CPU_FLAGS,_CIF_FPU
+-	bnor	%r14
++	jno	.Lload_fpu_regs_exit
+ 	lfpc	__THREAD_FPU_fpc(%r4)
+ 	TSTMSK	__LC_MACHINE_FLAGS,MACHINE_FLAG_VX
+ 	lg	%r4,__THREAD_FPU_regs(%r4)	# %r4 <- reg save area
+@@ -1007,7 +1070,8 @@ load_fpu_regs:
+ 	ld	15,120(%r4)
+ .Lload_fpu_regs_done:
+ 	ni	__LC_CPU_FLAGS+7,255-_CIF_FPU
+-	br	%r14
++.Lload_fpu_regs_exit:
++	BR_R1USE_R14
+ .Lload_fpu_regs_end:
+ 
+ .L__critical_end:
+@@ -1180,7 +1244,7 @@ cleanup_critical:
+ 	jl	0f
+ 	clg	%r9,BASED(.Lcleanup_table+104)	# .Lload_fpu_regs_end
+ 	jl	.Lcleanup_load_fpu_regs
+-0:	br	%r14
++0:	BR_R11USE_R14
+ 
+ 	.align	8
+ .Lcleanup_table:
+@@ -1210,7 +1274,7 @@ cleanup_critical:
+ 	ni	__SIE_PROG0C+3(%r9),0xfe	# no longer in SIE
+ 	lctlg	%c1,%c1,__LC_USER_ASCE		# load primary asce
+ 	larl	%r9,sie_exit			# skip forward to sie_exit
+-	br	%r14
++	BR_R11USE_R14
+ #endif
+ 
+ .Lcleanup_system_call:
+@@ -1267,7 +1331,7 @@ cleanup_critical:
+ 	stg	%r15,56(%r11)		# r15 stack pointer
+ 	# set new psw address and exit
+ 	larl	%r9,.Lsysc_do_svc
+-	br	%r14
++	BR_R11USE_R14
+ .Lcleanup_system_call_insn:
+ 	.quad	system_call
+ 	.quad	.Lsysc_stmg
+@@ -1277,7 +1341,7 @@ cleanup_critical:
+ 
+ .Lcleanup_sysc_tif:
+ 	larl	%r9,.Lsysc_tif
+-	br	%r14
++	BR_R11USE_R14
+ 
+ .Lcleanup_sysc_restore:
+ 	# check if stpt has been executed
+@@ -1294,14 +1358,14 @@ cleanup_critical:
+ 	mvc	0(64,%r11),__PT_R8(%r9)
+ 	lmg	%r0,%r7,__PT_R0(%r9)
+ 1:	lmg	%r8,%r9,__LC_RETURN_PSW
+-	br	%r14
++	BR_R11USE_R14
+ .Lcleanup_sysc_restore_insn:
+ 	.quad	.Lsysc_exit_timer
+ 	.quad	.Lsysc_done - 4
+ 
+ .Lcleanup_io_tif:
+ 	larl	%r9,.Lio_tif
+-	br	%r14
++	BR_R11USE_R14
+ 
+ .Lcleanup_io_restore:
+ 	# check if stpt has been executed
+@@ -1315,7 +1379,7 @@ cleanup_critical:
+ 	mvc	0(64,%r11),__PT_R8(%r9)
+ 	lmg	%r0,%r7,__PT_R0(%r9)
+ 1:	lmg	%r8,%r9,__LC_RETURN_PSW
+-	br	%r14
++	BR_R11USE_R14
+ .Lcleanup_io_restore_insn:
+ 	.quad	.Lio_exit_timer
+ 	.quad	.Lio_done - 4
+@@ -1368,17 +1432,17 @@ cleanup_critical:
+ 	# prepare return psw
+ 	nihh	%r8,0xfcfd		# clear irq & wait state bits
+ 	lg	%r9,48(%r11)		# return from psw_idle
+-	br	%r14
++	BR_R11USE_R14
+ .Lcleanup_idle_insn:
+ 	.quad	.Lpsw_idle_lpsw
+ 
+ .Lcleanup_save_fpu_regs:
+ 	larl	%r9,save_fpu_regs
+-	br	%r14
++	BR_R11USE_R14
+ 
+ .Lcleanup_load_fpu_regs:
+ 	larl	%r9,load_fpu_regs
+-	br	%r14
++	BR_R11USE_R14
+ 
+ /*
+  * Integer constants
+@@ -1394,7 +1458,6 @@ cleanup_critical:
+ .Lsie_critical_length:
+ 	.quad	.Lsie_done - .Lsie_gmap
+ #endif
+-
+ 	.section .rodata, "a"
+ #define SYSCALL(esame,emu)	.long esame
+ 	.globl	sys_call_table
+--- a/arch/s390/kernel/module.c
++++ b/arch/s390/kernel/module.c
+@@ -32,6 +32,8 @@
+ #include <linux/moduleloader.h>
+ #include <linux/bug.h>
+ #include <asm/alternative.h>
++#include <asm/nospec-branch.h>
++#include <asm/facility.h>
+ 
+ #if 0
+ #define DEBUGP printk
+@@ -168,7 +170,11 @@ int module_frob_arch_sections(Elf_Ehdr *
+ 	me->arch.got_offset = me->core_layout.size;
+ 	me->core_layout.size += me->arch.got_size;
+ 	me->arch.plt_offset = me->core_layout.size;
+-	me->core_layout.size += me->arch.plt_size;
++	if (me->arch.plt_size) {
++		if (IS_ENABLED(CONFIG_EXPOLINE) && !nospec_call_disable)
++			me->arch.plt_size += PLT_ENTRY_SIZE;
++		me->core_layout.size += me->arch.plt_size;
++	}
+ 	return 0;
+ }
+ 
+@@ -322,9 +328,21 @@ static int apply_rela(Elf_Rela *rela, El
+ 			unsigned int *ip;
+ 			ip = me->core_layout.base + me->arch.plt_offset +
+ 				info->plt_offset;
+-			ip[0] = 0x0d10e310; /* basr 1,0; lg 1,10(1); br 1 */
+-			ip[1] = 0x100a0004;
+-			ip[2] = 0x07f10000;
++			ip[0] = 0x0d10e310;	/* basr 1,0  */
++			ip[1] = 0x100a0004;	/* lg	1,10(1) */
++			if (IS_ENABLED(CONFIG_EXPOLINE) &&
++			    !nospec_call_disable) {
++				unsigned int *ij;
++				ij = me->core_layout.base +
++					me->arch.plt_offset +
++					me->arch.plt_size - PLT_ENTRY_SIZE;
++				ip[2] = 0xa7f40000 +	/* j __jump_r1 */
++					(unsigned int)(u16)
++					(((unsigned long) ij - 8 -
++					  (unsigned long) ip) / 2);
++			} else {
++				ip[2] = 0x07f10000;	/* br %r1 */
++			}
+ 			ip[3] = (unsigned int) (val >> 32);
+ 			ip[4] = (unsigned int) val;
+ 			info->plt_initialized = 1;
+@@ -430,16 +448,42 @@ int module_finalize(const Elf_Ehdr *hdr,
+ 		    struct module *me)
+ {
+ 	const Elf_Shdr *s;
+-	char *secstrings;
++	char *secstrings, *secname;
++	void *aseg;
++
++	if (IS_ENABLED(CONFIG_EXPOLINE) &&
++	    !nospec_call_disable && me->arch.plt_size) {
++		unsigned int *ij;
++
++		ij = me->core_layout.base + me->arch.plt_offset +
++			me->arch.plt_size - PLT_ENTRY_SIZE;
++		if (test_facility(35)) {
++			ij[0] = 0xc6000000;	/* exrl	%r0,.+10	*/
++			ij[1] = 0x0005a7f4;	/* j	.		*/
++			ij[2] = 0x000007f1;	/* br	%r1		*/
++		} else {
++			ij[0] = 0x44000000 | (unsigned int)
++				offsetof(struct lowcore, br_r1_trampoline);
++			ij[1] = 0xa7f40000;	/* j	.		*/
++		}
++	}
+ 
+ 	secstrings = (void *)hdr + sechdrs[hdr->e_shstrndx].sh_offset;
+ 	for (s = sechdrs; s < sechdrs + hdr->e_shnum; s++) {
+-		if (!strcmp(".altinstructions", secstrings + s->sh_name)) {
+-			/* patch .altinstructions */
+-			void *aseg = (void *)s->sh_addr;
++		aseg = (void *) s->sh_addr;
++		secname = secstrings + s->sh_name;
+ 
++		if (!strcmp(".altinstructions", secname))
++			/* patch .altinstructions */
+ 			apply_alternatives(aseg, aseg + s->sh_size);
+-		}
++
++		if (IS_ENABLED(CONFIG_EXPOLINE) &&
++		    (!strcmp(".nospec_call_table", secname)))
++			nospec_call_revert(aseg, aseg + s->sh_size);
++
++		if (IS_ENABLED(CONFIG_EXPOLINE) &&
++		    (!strcmp(".nospec_return_table", secname)))
++			nospec_return_revert(aseg, aseg + s->sh_size);
+ 	}
+ 
+ 	jump_label_apply_nops(me);
+--- /dev/null
++++ b/arch/s390/kernel/nospec-branch.c
+@@ -0,0 +1,101 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <linux/module.h>
++#include <asm/facility.h>
++#include <asm/nospec-branch.h>
++
++int nospec_call_disable = IS_ENABLED(EXPOLINE_OFF);
++int nospec_return_disable = !IS_ENABLED(EXPOLINE_FULL);
++
++static int __init nospectre_v2_setup_early(char *str)
++{
++	nospec_call_disable = 1;
++	nospec_return_disable = 1;
++	return 0;
++}
++early_param("nospectre_v2", nospectre_v2_setup_early);
++
++static int __init spectre_v2_setup_early(char *str)
++{
++	if (str && !strncmp(str, "on", 2)) {
++		nospec_call_disable = 0;
++		nospec_return_disable = 0;
++	}
++	if (str && !strncmp(str, "off", 3)) {
++		nospec_call_disable = 1;
++		nospec_return_disable = 1;
++	}
++	if (str && !strncmp(str, "auto", 4)) {
++		nospec_call_disable = 0;
++		nospec_return_disable = 1;
++	}
++	return 0;
++}
++early_param("spectre_v2", spectre_v2_setup_early);
++
++static void __init_or_module __nospec_revert(s32 *start, s32 *end)
++{
++	enum { BRCL_EXPOLINE, BRASL_EXPOLINE } type;
++	u8 *instr, *thunk, *br;
++	u8 insnbuf[6];
++	s32 *epo;
++
++	/* Second part of the instruction replace is always a nop */
++	memcpy(insnbuf + 2, (char[]) { 0x47, 0x00, 0x00, 0x00 }, 4);
++	for (epo = start; epo < end; epo++) {
++		instr = (u8 *) epo + *epo;
++		if (instr[0] == 0xc0 && (instr[1] & 0x0f) == 0x04)
++			type = BRCL_EXPOLINE;	/* brcl instruction */
++		else if (instr[0] == 0xc0 && (instr[1] & 0x0f) == 0x05)
++			type = BRASL_EXPOLINE;	/* brasl instruction */
++		else
++			continue;
++		thunk = instr + (*(int *)(instr + 2)) * 2;
++		if (thunk[0] == 0xc6 && thunk[1] == 0x00)
++			/* exrl %r0,<target-br> */
++			br = thunk + (*(int *)(thunk + 2)) * 2;
++		else if (thunk[0] == 0xc0 && (thunk[1] & 0x0f) == 0x00 &&
++			 thunk[6] == 0x44 && thunk[7] == 0x00 &&
++			 (thunk[8] & 0x0f) == 0x00 && thunk[9] == 0x00 &&
++			 (thunk[1] & 0xf0) == (thunk[8] & 0xf0))
++			/* larl %rx,<target br> + ex %r0,0(%rx) */
++			br = thunk + (*(int *)(thunk + 2)) * 2;
++		else
++			continue;
++		if (br[0] != 0x07 || (br[1] & 0xf0) != 0xf0)
++			continue;
++		switch (type) {
++		case BRCL_EXPOLINE:
++			/* brcl to thunk, replace with br + nop */
++			insnbuf[0] = br[0];
++			insnbuf[1] = (instr[1] & 0xf0) | (br[1] & 0x0f);
++			break;
++		case BRASL_EXPOLINE:
++			/* brasl to thunk, replace with basr + nop */
++			insnbuf[0] = 0x0d;
++			insnbuf[1] = (instr[1] & 0xf0) | (br[1] & 0x0f);
++			break;
++		}
++
++		s390_kernel_write(instr, insnbuf, 6);
++	}
++}
++
++void __init_or_module nospec_call_revert(s32 *start, s32 *end)
++{
++	if (nospec_call_disable)
++		__nospec_revert(start, end);
++}
++
++void __init_or_module nospec_return_revert(s32 *start, s32 *end)
++{
++	if (nospec_return_disable)
++		__nospec_revert(start, end);
++}
++
++extern s32 __nospec_call_start[], __nospec_call_end[];
++extern s32 __nospec_return_start[], __nospec_return_end[];
++void __init nospec_init_branches(void)
++{
++	nospec_call_revert(__nospec_call_start, __nospec_call_end);
++	nospec_return_revert(__nospec_return_start, __nospec_return_end);
++}
+--- a/arch/s390/kernel/setup.c
++++ b/arch/s390/kernel/setup.c
+@@ -64,6 +64,7 @@
+ #include <asm/sysinfo.h>
+ #include <asm/numa.h>
+ #include <asm/alternative.h>
++#include <asm/nospec-branch.h>
+ #include "entry.h"
+ 
+ /*
+@@ -375,6 +376,7 @@ static void __init setup_lowcore(void)
+ #ifdef CONFIG_SMP
+ 	lc->spinlock_lockval = arch_spin_lockval(0);
+ #endif
++	lc->br_r1_trampoline = 0x07f1;	/* br %r1 */
+ 
+ 	set_prefix((u32)(unsigned long) lc);
+ 	lowcore_ptr[0] = lc;
+@@ -935,6 +937,8 @@ void __init setup_arch(char **cmdline_p)
+ 	set_preferred_console();
+ 
+ 	apply_alternative_instructions();
++	if (IS_ENABLED(CONFIG_EXPOLINE))
++		nospec_init_branches();
+ 
+ 	/* Setup zfcpdump support */
+ 	setup_zfcpdump();
+--- a/arch/s390/kernel/smp.c
++++ b/arch/s390/kernel/smp.c
+@@ -205,6 +205,7 @@ static int pcpu_alloc_lowcore(struct pcp
+ 	lc->panic_stack = panic_stack + PANIC_FRAME_OFFSET;
+ 	lc->cpu_nr = cpu;
+ 	lc->spinlock_lockval = arch_spin_lockval(cpu);
++	lc->br_r1_trampoline = 0x07f1;	/* br %r1 */
+ 	if (MACHINE_HAS_VX)
+ 		lc->vector_save_area_addr =
+ 			(unsigned long) &lc->vector_save_area;
+--- a/arch/s390/kernel/vmlinux.lds.S
++++ b/arch/s390/kernel/vmlinux.lds.S
+@@ -122,6 +122,20 @@ SECTIONS
+ 		*(.altinstr_replacement)
+ 	}
+ 
++	/*
++	 * Table with the patch locations to undo expolines
++	*/
++	.nospec_call_table : {
++		__nospec_call_start = . ;
++		*(.s390_indirect*)
++		__nospec_call_end = . ;
++	}
++	.nospec_return_table : {
++		__nospec_return_start = . ;
++		*(.s390_return*)
++		__nospec_return_end = . ;
++	}
++
+ 	/* early.c uses stsi, which requires page aligned data. */
+ 	. = ALIGN(PAGE_SIZE);
+ 	INIT_DATA_SECTION(0x100)
+--- a/drivers/s390/char/Makefile
++++ b/drivers/s390/char/Makefile
+@@ -2,6 +2,8 @@
+ # S/390 character devices
+ #
+ 
++CFLAGS_REMOVE_sclp_early_core.o	+= $(CC_FLAGS_EXPOLINE)
++
+ obj-y += ctrlchar.o keyboard.o defkeymap.o sclp.o sclp_rw.o sclp_quiesce.o \
+ 	 sclp_cmd.o sclp_config.o sclp_cpi_sys.o sclp_ocf.o sclp_ctl.o \
+ 	 sclp_early.o
