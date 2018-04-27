@@ -1,61 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933942AbeD0PH0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 11:07:26 -0400
-Received: from relay1.mentorg.com ([192.94.38.131]:40930 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933738AbeD0OEj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 10:04:39 -0400
-From: Jiada Wang <jiada_wang@mentor.com>
-To: <morten.rasmussen@arm.com>
-CC: <valentin.schneider@arm.com>, <dietmar.eggemann@arm.com>,
-        <vincent.guittot@linaro.org>, <gaku.inami.xh@renesas.com>,
-        <linux-kernel@vger.kernel.org>, <jiada_wang@mentor.com>
-Subject: Re: [PATCHv2,1/7] sched: Add static_key for asymmetric cpu capacity optimizations
-Date: Fri, 27 Apr 2018 23:04:38 +0900
-Message-ID: <20180427140438.7433-1-jiada_wang@mentor.com>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <1521125224-15434-2-git-send-email-morten.rasmussen@arm.com>
-References: <1521125224-15434-2-git-send-email-morten.rasmussen@arm.com>
+        id S933738AbeD0PHt convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 11:07:49 -0400
+Received: from gloria.sntech.de ([95.129.55.99]:37004 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933389AbeD0PHr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 11:07:47 -0400
+From: Heiko Stuebner <heiko@sntech.de>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] video: fbdev: remove unused auo_k190xfb drivers
+Date: Fri, 27 Apr 2018 17:07:41 +0200
+Message-ID: <3959140.hnfON7x99k@phil>
+In-Reply-To: <6386409.PTMV4p8OHo@amdc3058>
+References: <CGME20180427110425eucas1p12aca3b573a6c3fc4b51da9d5d34b3cec@eucas1p1.samsung.com> <6386409.PTMV4p8OHo@amdc3058>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
+Am Freitag, 27. April 2018, 13:04:24 CEST schrieb Bartlomiej Zolnierkiewicz:
+> auo_k1900fb and auo_k1901fb drivers have been introduced six
+> years ago by following commits:
+> 
+> commit 2c8304d3125b ("video: auo_k190x: add code shared by controller drivers")
+> commit 96b1d500e028 ("video: auo_k190x: add driver for AUO-K1900 variant")
+> commit 53027cdf2a67 ("video: auo_k190x: add driver for AUO-K1901 variant")
+> 
+> They never had any in-kernel user so just remove them (since
+> they are platform drivers they need corresponding platform
+> devices to be registered by kernel and it has never happened).
+> 
+> Cc: Heiko Stübner <heiko@sntech.de>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-with this patch, if enable CONFIG_DEBUG_ATOMIC_SLEEP=y,
-then I am getting following BUG report during early startup
+While I still hold the ereaders using these controllers in high regard
+as my first kernel hacking project, reality is that I don't think I'll
+ever continue on trying to mainline these and if later someone wants
+to resurrect these (very old now) devices, they'll probably need a drm-
+driver anyway. So for the removal
 
-Backtrace caused by [1] during early kernel startup:
-[ 5.325288] CPU: All CPU(s) started at EL2
-[ 5.325700] alternatives: patching kernel code
-[ 5.329255] BUG: sleeping function called from invalid context at ./include/linux/percpu-rwsem.h:34
-[ 5.329525] in_atomic(): 0, irqs_disabled(): 0, pid: 1, name: swapper/0
-[ 5.329657] 2 locks held by swapper/0/1:
-[ 5.329744] #0: (sched_domains_mutex){+.+.}, at: [<ffff20000957f244>] sched_init_smp+0x88/0x158
-[ 5.329993] #1: (rcu_read_lock){....}, at: [<ffff200008159794>] build_sched_domains+0x9cc/0x2f08
-[ 5.330233] Preemption disabled at:
-[ 5.330256] [<ffff200008157b5c>] rq_attach_root+0x28/0x1d8
-[ 5.330511] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.14.17+ #123
-[ 5.330635] Hardware name: Renesas Salvator-X board based on r8a7795 ES2.0+ (DT)
-[ 5.330779] Call trace:
-[ 5.330853] [<ffff20000808fe88>] dump_backtrace+0x0/0x364
-[ 5.330968] [<ffff200008090200>] show_stack+0x14/0x1c
-[ 5.331080] [<ffff200008f365d8>] dump_stack+0x108/0x174
-[ 5.331194] [<ffff200008113170>] ___might_sleep+0x43c/0x44c
-[ 5.331310] [<ffff2000081132e4>] __might_sleep+0x164/0x178
-[ 5.331429] [<ffff2000080b2338>] cpus_read_lock+0x38/0x12c
-[ 5.331547] [<ffff2000082d5860>] static_key_enable+0x14/0x2c
-[ 5.331665] [<ffff20000815bcac>] build_sched_domains+0x2ee4/0x2f08
-[ 5.331789] [<ffff20000815cc9c>] sched_init_domains+0xcc/0xe8
-[ 5.331908] [<ffff20000957f250>] sched_init_smp+0x94/0x158
-[ 5.332026] [<ffff200009571560>] kernel_init_freeable+0x1ec/0x4c4
-[ 5.332153] [<ffff200008f593a8>] kernel_init+0x10/0x128
-[ 5.332264] [<ffff2000080865d4>] ret_from_fork+0x10/0x18
-[ 5.343400] devtmpfs: initialized
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
-Thanks,
-Jiada
+
+Heiko
