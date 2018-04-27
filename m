@@ -1,142 +1,93 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1897398-1524918942-2-6559765323059940998
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, MAILING_LIST_MULTI -1, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
-  LANGUAGES enro, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524918941; b=GanDobohWG+VzHRtX8jWE9tr3E9fPR/OdUYPJNjZFnlZMjj4pA
-    rhW0gUxrBYzwLhp/qHa1iyoFBk1aOSBXm8n6DX//sDsoRSfWIvmzUj33vhQNQbKS
-    hPbFJFJqSAuTh2+7BJVJRozgyfHwCKbFs10Okxdm53dD/mKan0jaq9YCQZdhSKQv
-    Qj+eJCfo+u9XvaaXaDaRxKY1LdJMgTamM5Vft5z46vI6VSnRgYVZ0MbfgUpkLVQo
-    7/+FS/MWPvmchrsPhoHkkSEZc3hlInR7JCi07z77dU0d/NMF5ztqa7D3b4sNYwM4
-    PMGCybKnb7j7seGzGBtRFyu1cNB+6+1ZDICg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1524918941;
-    bh=TERBZd3F5+c9Iiu2NLgq/KtRTuUcQoIQpJTEtEz4zoU=; b=fmpjqQbFsbhH
-    0FMLT9kDVE6OizNh4/sF+cIO1AvCj9nKwdBEermCi04+vPK2iJLKqGQll5+vR2BT
-    HMvTmMIHxuydfmE091hfdNaZWIYo2rWusLLnH1SWriPiOmYJKbQhTTcL3HG4Ntci
-    UTIF1aGMxFrV7Hy5DZQVaQlEwvdfcLJBZtG+SyB+2SgyD1GK2h4bna1Zs/zJOQax
-    w9QkLo3PjGMYY3E5TZ6xb03zqzqgCHmZQkuhMKD2vOArXl9ERUimkXZ+hBBHPSK2
-    9+xP0eYVjOeRRgZuzGwakGiRaO/+gCl+CMj2PkUgOQFVYZhgeWLS9WM1uwGCDk8Y
-    e+B7KUiY7A==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJBOBVwR9T/7N8x9v3rJPHeaI1XVhGlvWxHoCx5xV0p+9sXrRh1sV7wsHvRrqlN7bRGx0zUEGUmUnQiNtptmP9nOIWvSBRhEYq5XUSdEckhIeHeN+aNO
-    fF7WU9s/t+2ivnIXjkCQ/wXBYpK6QweOxtGsCawZoDqyaLK2y1iSdwJlBIRZs/RNMMt4tGKcYAElz3ndKxSUx1r+ySQvv1bGZMmWdM0cZOiqMX3Vwy3Ow8Mc
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=x9PI1KbnNgAxJWOJjEUA:9 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1759924AbeD1Mf2 (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 28 Apr 2018 08:35:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57702 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1759699AbeD1Mf1 (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sat, 28 Apr 2018 08:35:27 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C16E321A96
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
-Cc: Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
-        x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-        Ananth N Mavinakayanahalli <ananth@in.ibm.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jon Medhurst <tixy@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        "Tobin C . Harding" <me@tobin.cc>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Richter <tmricht@linux.ibm.com>,
-        akpm@linux-foundation.org, acme@kernel.org, rostedt@goodmis.org,
-        brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
-        stable@vger.kernel.org
-Subject: [PATCH v4 1/7] kprobes: Make list and blacklist root user read only
-Date: Sat, 28 Apr 2018 21:35:01 +0900
-Message-Id: <152491890171.9916.5183693615601334087.stgit@devbox>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <152491886943.9916.18051658590418236184.stgit@devbox>
-References: <152491886943.9916.18051658590418236184.stgit@devbox>
-User-Agent: StGit/0.17.1-dirty
+Return-Path: <rdunlap@infradead.org>
+X-Google-Smtp-Source: AB8JxZoCZ9GsqiFWDvtuJ2/e7Yyh6TMBkNCOs4dpizuPTc39Gj2SmMA2+R2Yi0ohVoq5PXKH27UE
+ARC-Seal: i=1; a=rsa-sha256; t=1524850109; cv=none;
+        d=google.com; s=arc-20160816;
+        b=GD2PLArXD2G11TLEzzg+bQVM1ODzoWYJlvLQFadLZqA5GWbHC9e3aKxWgU/HW1OdzM
+         coFbFXxIm7dX9NODjpkGBTTnuOogKzUcAU8GEY+QKS/5Q0H0n2dpV0EP88JbzWRvTPEY
+         iychlLVs0B9QvzXEdl7AnQyNEg88CA+X7HS94F54BU29BqeoRAvs1dbh6rSGix5OHLfo
+         ePcWQ48E3jxfEAHZsE+U4Z/2JAdRqIAZvmMHNd4vB7vf+1Aj0+wzX6vNPEN1pDh8kRUO
+         FQGHbQIXCG4d85Ltk7R5zbfcRWY/HuPvzyY1tm/b0wGeOT0e7jFlWZl7GEcHXKggrz05
+         Kz3w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:cc:from:references:to:subject
+         :dkim-signature:arc-authentication-results;
+        bh=ZfYVwSf5AvNQUM5GFByxwqUkhB5g3a9rZZ6bTmRxqiQ=;
+        b=TI2erSmlWurbD962juBh1IKGISfQyN4stWVUcUQgeKssbbFHhPWemTZYateIpLyNKu
+         hQx/JEaW4hHpTk1ztqiP31uPT0PQ2oIrqCkoqTf1TK7CqkzpmD6p4zCk5jLAKkcN0RCS
+         pPEZPwsrVBpvVi9Y/ayHRrPgfyueuEtRNLVE+1ZYkeshO1/bpYLAG/tQH+WVJOwUMiAI
+         4Un19BXBuafSkP6li4O1mNa90J3kzlfdAQyVVuJYHrUPYcs12AcpdTuFHMSm/XZm3kTz
+         4v92UaXRiwBJPTX+KzDUYILkYhZsGXxqzmuC/LMtA/ZG3FJMco1ihjtW6ANF6mF1uFIG
+         oScQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=qyRTmKRu;
+       spf=pass (google.com: best guess record for domain of rdunlap@infradead.org designates 2607:7c80:54:e::133 as permitted sender) smtp.mailfrom=rdunlap@infradead.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=qyRTmKRu;
+       spf=pass (google.com: best guess record for domain of rdunlap@infradead.org designates 2607:7c80:54:e::133 as permitted sender) smtp.mailfrom=rdunlap@infradead.org
+Subject: Re: kernel-4.9.94 compile error: 'KMOD_DECOMP_LEN' undeclared
+To: Teck Choon Giam <giamteckchoon@gmail.com>,
+ LKML <linux-kernel@vger.kernel.org>
+References: <CAEwRVpOFS5UsyVHkHr+w_OR0eSpvT-CZGG6b4Vr6gxkc4rwO6g@mail.gmail.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ acme@kernel.org, Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Message-ID: <84b1d534-9b9d-ff70-ead6-3f8bb70a4d4b@infradead.org>
+Date: Fri, 27 Apr 2018 10:28:27 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <CAEwRVpOFS5UsyVHkHr+w_OR0eSpvT-CZGG6b4Vr6gxkc4rwO6g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcSW1wb3J0YW50Ig==?=
+X-GMAIL-THRID: =?utf-8?q?1598370592739113214?=
+X-GMAIL-MSGID: =?utf-8?q?1598921228585970630?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Since the blacklist and list files on debugfs indicates
-a sensitive address information to reader, it should be
-restricted to the root user.
+[adding some Cc:]
 
-Suggested-by: Thomas Richter <tmricht@linux.ibm.com>
-Suggested-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: stable@vger.kernel.org
----
- Changes in v4:
-  - Fix "list" file's mode too.
----
- kernel/kprobes.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On 04/14/2018 02:41 AM, Teck Choon Giam wrote:
+> Hi,
+> 
+> Compile linux-4.9.94 will have error related to KMOD_DECOMP_LEN
+> undeclared.  Searching string related to KMOD_DECOMP_LEN in
+> linux-4.9.94 and linux-4.15.17 sources as below:
+> 
+> <mock-chroot>sh-4.2# grep -r KMOD_DECOMP_LEN ./linux-4.15.17
+> ./linux-4.15.17/tools/perf/tests/code-reading.c: char
+> decomp_name[KMOD_DECOMP_LEN];
+> ./linux-4.15.17/tools/perf/util/dso.h:#define KMOD_DECOMP_LEN
+> sizeof(KMOD_DECOMP_NAME)
+> ./linux-4.15.17/tools/perf/util/annotate.c: char tmp[KMOD_DECOMP_LEN];
+> ./linux-4.15.17/tools/perf/util/dso.c: char newpath[KMOD_DECOMP_LEN];
+> sh-4.2# grep -r KMOD_DECOMP_LEN ./linux-4.9.94
+> ./linux-4.9.94/tools/perf/tests/code-reading.c: char
+> decomp_name[KMOD_DECOMP_LEN];
+> ./linux-4.9.94/tools/perf/util/dso.c: char newpath[KMOD_DECOMP_LEN];
+> 
+> So I guess for linux-4.9.94 has not define KMOD_DECOMP_LEN in
+> tools/perf/util/dso.h?
 
-diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-index ea619021d901..5eb42c82497c 100644
---- a/kernel/kprobes.c
-+++ b/kernel/kprobes.c
-@@ -2611,7 +2611,7 @@ static int __init debugfs_kprobe_init(void)
- 	if (!dir)
- 		return -ENOMEM;
- 
--	file = debugfs_create_file("list", 0444, dir, NULL,
-+	file = debugfs_create_file("list", 0400, dir, NULL,
- 				&debugfs_kprobes_operations);
- 	if (!file)
- 		goto error;
-@@ -2621,7 +2621,7 @@ static int __init debugfs_kprobe_init(void)
- 	if (!file)
- 		goto error;
- 
--	file = debugfs_create_file("blacklist", 0444, dir, NULL,
-+	file = debugfs_create_file("blacklist", 0400, dir, NULL,
- 				&debugfs_kprobe_blacklist_ops);
- 	if (!file)
- 		goto error;
+
+4.9.9[456] lack:
+#define KMOD_DECOMP_NAME  "/tmp/perf-kmod-XXXXXX"
+#define KMOD_DECOMP_LEN   sizeof(KMOD_DECOMP_NAME)
+
+
+However, the commit that added those macros does not apply cleanly to 4.9.96.
+
+commit 42b3fa670825983fc8bd0ac7b80cc84ae3abb75b
+Author: Namhyung Kim <namhyung@kernel.org>
+Date:   Thu Jun 8 16:31:03 2017 +0900
+
+    perf tools: Introduce dso__decompress_kmodule_{fd,path}
+
+
+-- 
+~Randy
