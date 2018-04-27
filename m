@@ -1,40 +1,41 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpPPWUv4CgegRrKOpej7RU3RVwr6cSX6ZN9LupG9RYPQHdf2NA/UDkBQzlIBffZWiPitKjL
-ARC-Seal: i=1; a=rsa-sha256; t=1524837783; cv=none;
+X-Google-Smtp-Source: AB8JxZryvJAVD1KU/y4nxQq2Ggun2iHXvhQHQti3DBYc0rkpZxpO9QkJmpyBawoqZ81sw5DqMcRI
+ARC-Seal: i=1; a=rsa-sha256; t=1524837780; cv=none;
         d=google.com; s=arc-20160816;
-        b=iOTyNxbagIFxTGEImgL0hzFTmRRO3aMlF2GiMc8ZM/PWeaNoLM5kMZidrq6NE3mC6H
-         OlFhN4y2eLtOCPrJ4xEIE+YaW9laZNFL1kwGPFWPYhz4Z1hKf7CpjJJSON7RkzIPAt99
-         ByAVDjb24bMH4cx1lYSm2obmJosTEK6hSpVBROljpyUSCBFAPi2KCsDWnx66xdoczOEE
-         LqYSsx/zkW2Mqto12E36d2smoxYLs2DKSqt8Gd/hYpek+O0Lu3B8JRFqGLlEJF2WYkPr
-         XU4dVrpeq3d8r8lwdD8xazId8BsMh0yumM8BH/bicMaer0eTXhFfC55/yKh69q3u7IsK
-         Xbig==
+        b=fYltU/pGr9Tw2N8+UG8zVc07BMqnChWVzw7m8waO8rzfTi12+fMJMxTUqufjwdFiFh
+         ++Lx9N8u6dCl2lW4L3pue1BBztK8DKgYbx0L2DAwauBnmVS3N5COB3hQ22gUjluY9cgY
+         mDVxuZa8Qr+KP4OQ3ObQ6lJJ5Bj4ji3KUnzhe1/RJVTQEhUcCFIbINarFiYmk2ySFRYR
+         gSvZW1xgFLLY1OSK5PnbUk/JkCXimz5Yb21fh/JF8PmpUzeCEBZyZEmpTFp+EL2eHsHC
+         o3pT3oLizstn1ZgJK4zTzyFg/ctfzDktRsUojTZLWlqMgd9etKJlN9YwKneq72sbxgqC
+         MSAA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=QpAIJzE0aqrPaptJ0ydabaTVOOccPhlc0NdlESawe7c=;
-        b=oVUCsdM0X4EEVhF76v3esOOvzRtIk/aDe0x6M0SYuQIrzFHotAuLZt5v9Aeyx53Jm7
-         3y1kgBXwYaXO/XSPHLyP8NQGx60AbCyrsz/9sk0eWEfFlr8lA8RJwN8lHaihkOuFQuS+
-         8VXUhQExLUfUt1WkBuyJVrxX+oBB4ncQZ7kkJR+lZKpXKtHKb8Ighsksn/rFSw/Q/OLC
-         1sGS8K5RVGBqlgLWEMLq9k6MkOvq0TuVz+ddRpBaubaFRWLlOnhgB/1E0ft5pb5o+yWs
-         vbDuAchCKeAN+XEFKuRq+T66Z6vKFNXCf8GyPNFi5wNGoF5OfVOunhk6IsEukssugXU1
-         N9pQ==
+        bh=ZQPtcy4zMn+MYhYt4WBWUEEvlXSMwyq62UPF+YPeD3Y=;
+        b=GDCkgu6FTU2Pv5J1znh0fLXmvrsHzMCYGhvN/7CZ4xq3ifRN8PvudyH+psHe1DBIpP
+         vy/y3rEMW3ZMdnezrO5viVysdW1RZ52hNihk1B6wvNQvt0CCTXLjiRRHeZjimyPauYw3
+         pKPPpMJ6aPi0GOQrLqcVsos1uso/OhImBfJfDpyHqPIfhVOrUzjfax/ZerP+OJQshUea
+         Q4aHrkv5EoxnHfuIzTUnNna6Zuo8QOyN9KruFkRmWM3aUibH3Qd0GbMr4QJcQVqN4qSg
+         QN/yHC9SgVq8CAMTeRpSShI0/aXIUW1Sry5ukvxQqZ9IKGd7rwhAy1bl9yAR78MmoDuh
+         5oPQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52B01218A3
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBB8B21890
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-	Wolfram Sang <wsa@the-dreams.de>,
-	Jean Delvare <jdelvare@suse.de>
-Subject: [PATCH 4.9 05/74] i2c: i801: store and restore the SLVCMD register at load and unload
-Date: Fri, 27 Apr 2018 15:57:55 +0200
-Message-Id: <20180427135710.123455520@linuxfoundation.org>
+	Clinton Taylor <clinton.a.taylor@intel.com>,
+	=?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>,
+	Imre Deak <imre.deak@intel.com>,
+	Jani Nikula <jani.nikula@intel.com>
+Subject: [PATCH 4.9 04/74] drm/i915: Fix LSPCON TMDS output buffer enabling from low-power state
+Date: Fri, 27 Apr 2018 15:57:54 +0200
+Message-Id: <20180427135710.078316161@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135709.899303463@linuxfoundation.org>
 References: <20180427135709.899303463@linuxfoundation.org>
@@ -44,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908303391011194?=
-X-GMAIL-MSGID: =?utf-8?q?1598908303391011194?=
+X-GMAIL-THRID: =?utf-8?q?1598908300592414118?=
+X-GMAIL-MSGID: =?utf-8?q?1598908300592414118?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,64 +54,88 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+From: Imre Deak <imre.deak@intel.com>
 
-commit 22e94bd6779e1140350c0792e85c79552ec43673 upstream.
+commit 7eb2c4dd54ff841f2fe509a84973eb25fa20bda2 upstream.
 
-Also do not override any other configuration in this register.
+LSPCON adapters in low-power state may ignore the first I2C write during
+TMDS output buffer enabling, resulting in a blank screen even with an
+otherwise enabled pipe. Fix this by reading back and validating the
+written value a few times.
 
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-Cc: Jean Delvare <jdelvare@suse.de>
+The problem was noticed on GLK machines with an onboard LSPCON adapter
+after entering/exiting DC5 power state. Doing an I2C read of the adapter
+ID as the first transaction - instead of the I2C write to enable the
+TMDS buffers - returns the correct value. Based on this we assume that
+the transaction itself is sent properly, it's only the adapter that is
+not ready for some reason to accept this first write after waking from
+low-power state. In my case the second I2C write attempt always
+succeeded.
+
+Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=105854
+Cc: Clinton Taylor <clinton.a.taylor@intel.com>
+Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Imre Deak <imre.deak@intel.com>
+Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20180416155309.11100-1-imre.deak@intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/i2c/busses/i2c-i801.c |   17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/drm_dp_dual_mode_helper.c |   39 ++++++++++++++++++++++++------
+ 1 file changed, 32 insertions(+), 7 deletions(-)
 
---- a/drivers/i2c/busses/i2c-i801.c
-+++ b/drivers/i2c/busses/i2c-i801.c
-@@ -243,6 +243,7 @@ struct i801_priv {
- 	struct i2c_adapter adapter;
- 	unsigned long smba;
- 	unsigned char original_hstcfg;
-+	unsigned char original_slvcmd;
- 	struct pci_dev *pci_dev;
- 	unsigned int features;
+--- a/drivers/gpu/drm/drm_dp_dual_mode_helper.c
++++ b/drivers/gpu/drm/drm_dp_dual_mode_helper.c
+@@ -322,19 +322,44 @@ int drm_dp_dual_mode_set_tmds_output(enu
+ {
+ 	uint8_t tmds_oen = enable ? 0 : DP_DUAL_MODE_TMDS_DISABLE;
+ 	ssize_t ret;
++	int retry;
  
-@@ -962,13 +963,26 @@ static int i801_enable_host_notify(struc
- 	if (!priv->host_notify)
- 		return -ENOMEM;
+ 	if (type < DRM_DP_DUAL_MODE_TYPE2_DVI)
+ 		return 0;
  
--	outb_p(SMBSLVCMD_HST_NTFY_INTREN, SMBSLVCMD(priv));
-+	priv->original_slvcmd = inb_p(SMBSLVCMD(priv));
+-	ret = drm_dp_dual_mode_write(adapter, DP_DUAL_MODE_TMDS_OEN,
+-				     &tmds_oen, sizeof(tmds_oen));
+-	if (ret) {
+-		DRM_DEBUG_KMS("Failed to %s TMDS output buffers\n",
+-			      enable ? "enable" : "disable");
+-		return ret;
++	/*
++	 * LSPCON adapters in low-power state may ignore the first write, so
++	 * read back and verify the written value a few times.
++	 */
++	for (retry = 0; retry < 3; retry++) {
++		uint8_t tmp;
 +
-+	if (!(SMBSLVCMD_HST_NTFY_INTREN & priv->original_slvcmd))
-+		outb_p(SMBSLVCMD_HST_NTFY_INTREN | priv->original_slvcmd,
-+		       SMBSLVCMD(priv));
++		ret = drm_dp_dual_mode_write(adapter, DP_DUAL_MODE_TMDS_OEN,
++					     &tmds_oen, sizeof(tmds_oen));
++		if (ret) {
++			DRM_DEBUG_KMS("Failed to %s TMDS output buffers (%d attempts)\n",
++				      enable ? "enable" : "disable",
++				      retry + 1);
++			return ret;
++		}
 +
- 	/* clear Host Notify bit to allow a new notification */
- 	outb_p(SMBSLVSTS_HST_NTFY_STS, SMBSLVSTS(priv));
++		ret = drm_dp_dual_mode_read(adapter, DP_DUAL_MODE_TMDS_OEN,
++					    &tmp, sizeof(tmp));
++		if (ret) {
++			DRM_DEBUG_KMS("I2C read failed during TMDS output buffer %s (%d attempts)\n",
++				      enable ? "enabling" : "disabling",
++				      retry + 1);
++			return ret;
++		}
++
++		if (tmp == tmds_oen)
++			return 0;
+ 	}
  
- 	return 0;
+-	return 0;
++	DRM_DEBUG_KMS("I2C write value mismatch during TMDS output buffer %s\n",
++		      enable ? "enabling" : "disabling");
++
++	return -EIO;
  }
+ EXPORT_SYMBOL(drm_dp_dual_mode_set_tmds_output);
  
-+static void i801_disable_host_notify(struct i801_priv *priv)
-+{
-+	if (!(priv->features & FEATURE_HOST_NOTIFY))
-+		return;
-+
-+	outb_p(priv->original_slvcmd, SMBSLVCMD(priv));
-+}
-+
- static const struct i2c_algorithm smbus_algorithm = {
- 	.smbus_xfer	= i801_access,
- 	.functionality	= i801_func,
-@@ -1666,6 +1680,7 @@ static void i801_remove(struct pci_dev *
- 	pm_runtime_forbid(&dev->dev);
- 	pm_runtime_get_noresume(&dev->dev);
- 
-+	i801_disable_host_notify(priv);
- 	i801_del_mux(priv);
- 	i2c_del_adapter(&priv->adapter);
- 	i801_acpi_remove(priv);
