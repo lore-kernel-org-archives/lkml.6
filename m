@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-298528-1524839416-5-9637968449555213134
+X-Cyrus-Session-Id: sloti22d1t05-298528-1524839361-2-15656465297984118700
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524839416; b=YpJ0iJE9m65Uq3oDEnr3sJVfVbTUCa6mFTmZYs0XTSKKlCH8LP
-    w2cDDHcGGbYFnFTT+hVYNwACbSDqToJWbS3/7fZdvkX3yD1xLabTuaweoH9cSll5
-    MPy/JSayGYUOjuUXIpmKn1cifvz7ohDRY8jnvyD4NXZaLijqBZikIGm81qecMh18
-    WPj1nBjwfYhLjQXkX0Bq60RSScmIgSDe+44lPgBu7kZB5z6mwEye1RhdDc857XoQ
-    +GYZm9JDXiOMgOlutaOYODkVvyMSm6DKJTkJ1aapTasJnTB40IMTcpxeFxaSPCCY
-    6A66rx3Ezt1/Ww0HsGnQVmBCec0Xc/8IfEYg==
+    1524839360; b=HTM6dzpNwqDCjXfGe4cuCXKODQnxc31d/QQ2RV5dddj0Uh9WK0
+    J4mYVMWR2DM6X9To5VmqlcNN7uwHdnRwb7BqEowrUqPxFrGg/IH6ItV0dvKq+Aiv
+    oZJHNqEfcpiVTAkKRcbUmopu9Yv/YW28pZTwctbyJgQjBZCo7H7vT6bBWm4WkJUJ
+    E/7f4YzuzKWK2mu5YOK47lfpECx5j0PIUtjn/e/bkKZtRckA2evB/FN4wgli3h7J
+    LtfTeHu+Asb/7Lscn2LZDGbB5Yd/wDmXzbMKS/1hKr2wu/11qI+rd5RYwuIF30ZO
+    fKzXe7zOYxiDyeSQiGfKo3Vyp4qRi7oqBamw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1524839416; bh=MnklLWmgRFfGfE/4Wol0Z6w7UFTHzE
-    qYzYcZq3KXo+0=; b=kswFCFHoAqcbhUj/kC7BDGhcVhk0NaRswA8l/lndbjCXoi
-    uMCitBsgZremaLXcqG3lzx2pxi0iPz9XfJjGCSpD0z9z4lKjTaTAgBWRLPX9S8EC
-    FzofzSQ2qHj4F8jWUhAypM3zREj7Q0b5ojMUW7M1poHZ3zPWXzsEAKF7u3ngkqM3
-    wAS0xyFWYEKj3FzH+ja9IKlL+JMENavPptjsII9t4p0VNJmwQ9wQMHCM9b+zoEr7
-    nwxj0jw8lI7+VpScCzB1nyb7qQQnd6VlkVtYTivwPgWHeRN6WDfi6Gb7LwQgAi3h
-    nfwn05yZLEIZvNiq0rb/mdA28c3QuBx0HmfBXUKw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1524839360; bh=QojBfPUZBw4payw+xmfOCFnwXhAVcV
+    RdMf/tSulPdfE=; b=NnG79ZeRVGzfU782NqCHX0Hgg0Q/y8CB33aq5WF4HA3JkN
+    KdRhdvNK2lyM2PB7fxae1vn/2Jsijb5jjLeZxDmr09pFw8VPX9SGGI1dkwg8rPuL
+    n9l5CIXtDCOs2YEhxtrJNXZCiHi3RcISsKChQD8JFcoKFUY5M4fqJs3YwOnsPq4+
+    lkIbE7Tbb3ShEMj65vj6z42nyr8m3CP3QfHgeb/O2tCWKLaYiRX5WWyHNZVqa0wL
+    nRToMEunBVA7Wt2yh5aGyzIRnwdO2bYv0fTlmK4fs0VPlMMWw39QbKNiheDjHFPo
+    KVH1JUo9l4FsdQjqb3T+n+0gDYdTlQ/1rXQyLqDA==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,33 +51,34 @@ Authentication-Results: mx5.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfHUu24I3QukggVgjIUo24jch961XzD7zvvjE+lhPFmwn0BbcUaPhz15tNiGa60APWVfTGud+sNESzc/F13txpr+ccQ6RVfG1SXKde2N9DwYcf9sUoHlG
-    IjoSci9nRE5cs6UEuywSoisEtrsqPePuuIwXHHHTWAjTZwnzksGyBtWEq0jIpeVjk4sCPCBA3gaYK4Zr3eVIpA/BiwOeCaM5sfOugj6CeexAt5Dfytg9/FCF
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfPG/f+LVjRt0/64R1y467NI2U/e2GiPQNvaiT4iw818ExWx+kpL1vjnsUuzEuS+RiWPCwsuopa6QAPCOp6ka5NcMJJ0S35zmI2/ogHpKGvw1Su0Vesqa
+    XmdZVcddmvGhdduFDUvBk5nt2p87QLyF/Tcs16wg7WMAn2S3BkLmHTsvtSk7tS1DxfSIeay1deqQsMnpNdbc0btG0GMcsB8Cjcr5jkwc4X6wehcqsN/PlCvk
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=s69QxFRhAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=572aw6MZ-aO4NtqmRjgA:9
-    a=vuQKtNYfoVCEpe09:21 a=y6uC6XJbNsGZyPhR:21 a=QEXdDO2ut3YA:10
-    a=FzsZaHqyxIPyk0jfoVVe:22 a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=eh1Yez-EAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=EIqoDTw9sgbaII3D_O4A:9
+    a=FUPER-ISmEGs5ufQ:21 a=vGe3rE3NxhcbhR0Z:21 a=QEXdDO2ut3YA:10
+    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934768AbeD0O34 (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 27 Apr 2018 10:29:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55972 "EHLO mail.kernel.org"
+        id S934977AbeD0O3B (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 27 Apr 2018 10:29:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56022 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934799AbeD0OLD (ORCPT <rfc822;stable@vger.kernel.org>);
-        Fri, 27 Apr 2018 10:11:03 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E2832189E
+        id S932916AbeD0OLJ (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 27 Apr 2018 10:11:09 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 855F72189E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Olivier Gayot <olivier.gayot@sigexec.com>,
+        stable@vger.kernel.org, Ronak Doshi <doshir@vmware.com>,
+        Guolin Yang <gyang@vmware.com>, Louis Luo <llouis@vmware.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 09/81] docs: ip-sysctl.txt: fix name of some ipv6 variables
-Date: Fri, 27 Apr 2018 15:58:11 +0200
-Message-Id: <20180427135743.747605475@linuxfoundation.org>
+Subject: [PATCH 4.16 34/81] vmxnet3: fix incorrect dereference when rxvlan is disabled
+Date: Fri, 27 Apr 2018 15:58:36 +0200
+Message-Id: <20180427135744.984141762@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135743.216853156@linuxfoundation.org>
 References: <20180427135743.216853156@linuxfoundation.org>
@@ -95,59 +96,80 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Olivier Gayot <olivier.gayot@sigexec.com>
+From: Ronak Doshi <doshir@vmware.com>
 
 
-[ Upstream commit ab913455dd59b81204b6a0d387a44697b0e0bd85 ]
+[ Upstream commit 65ec0bd1c7c14522670a5294de35710fb577a7fd ]
 
-The name of the following proc/sysctl entries were incorrectly
-documented:
+vmxnet3_get_hdr_len() is used to calculate the header length which in
+turn is used to calculate the gso_size for skb. When rxvlan offload is
+disabled, vlan tag is present in the header and the function references
+ip header from sizeof(ethhdr) and leads to incorrect pointer reference.
 
-    /proc/sys/net/ipv6/conf/<interface>/max_dst_opts_number
-    /proc/sys/net/ipv6/conf/<interface>/max_hbt_opts_number
-    /proc/sys/net/ipv6/conf/<interface>/max_dst_opts_length
-    /proc/sys/net/ipv6/conf/<interface>/max_hbt_length
+This patch fixes this issue by taking sizeof(vlan_ethhdr) into account
+if vlan tag is present and correctly references the ip hdr.
 
-Their name was set to the name of the symbol in the .data field of the
-control table instead of their .proc name.
-
-Signed-off-by: Olivier Gayot <olivier.gayot@sigexec.com>
+Signed-off-by: Ronak Doshi <doshir@vmware.com>
+Acked-by: Guolin Yang <gyang@vmware.com>
+Acked-by: Louis Luo <llouis@vmware.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- Documentation/networking/ip-sysctl.txt |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/vmxnet3/vmxnet3_drv.c |   17 +++++++++++++----
+ drivers/net/vmxnet3/vmxnet3_int.h |    4 ++--
+ 2 files changed, 15 insertions(+), 6 deletions(-)
 
---- a/Documentation/networking/ip-sysctl.txt
-+++ b/Documentation/networking/ip-sysctl.txt
-@@ -1386,26 +1386,26 @@ mld_qrv - INTEGER
- 	Default: 2 (as specified by RFC3810 9.1)
- 	Minimum: 1 (as specified by RFC6636 4.5)
+--- a/drivers/net/vmxnet3/vmxnet3_drv.c
++++ b/drivers/net/vmxnet3/vmxnet3_drv.c
+@@ -1218,6 +1218,7 @@ vmxnet3_get_hdr_len(struct vmxnet3_adapt
+ 	union {
+ 		void *ptr;
+ 		struct ethhdr *eth;
++		struct vlan_ethhdr *veth;
+ 		struct iphdr *ipv4;
+ 		struct ipv6hdr *ipv6;
+ 		struct tcphdr *tcp;
+@@ -1228,16 +1229,24 @@ vmxnet3_get_hdr_len(struct vmxnet3_adapt
+ 	if (unlikely(sizeof(struct iphdr) + sizeof(struct tcphdr) > maplen))
+ 		return 0;
  
--max_dst_opts_cnt - INTEGER
-+max_dst_opts_number - INTEGER
- 	Maximum number of non-padding TLVs allowed in a Destination
- 	options extension header. If this value is less than zero
- 	then unknown options are disallowed and the number of known
- 	TLVs allowed is the absolute value of this number.
- 	Default: 8
++	if (skb->protocol == cpu_to_be16(ETH_P_8021Q) ||
++	    skb->protocol == cpu_to_be16(ETH_P_8021AD))
++		hlen = sizeof(struct vlan_ethhdr);
++	else
++		hlen = sizeof(struct ethhdr);
++
+ 	hdr.eth = eth_hdr(skb);
+ 	if (gdesc->rcd.v4) {
+-		BUG_ON(hdr.eth->h_proto != htons(ETH_P_IP));
+-		hdr.ptr += sizeof(struct ethhdr);
++		BUG_ON(hdr.eth->h_proto != htons(ETH_P_IP) &&
++		       hdr.veth->h_vlan_encapsulated_proto != htons(ETH_P_IP));
++		hdr.ptr += hlen;
+ 		BUG_ON(hdr.ipv4->protocol != IPPROTO_TCP);
+ 		hlen = hdr.ipv4->ihl << 2;
+ 		hdr.ptr += hdr.ipv4->ihl << 2;
+ 	} else if (gdesc->rcd.v6) {
+-		BUG_ON(hdr.eth->h_proto != htons(ETH_P_IPV6));
+-		hdr.ptr += sizeof(struct ethhdr);
++		BUG_ON(hdr.eth->h_proto != htons(ETH_P_IPV6) &&
++		       hdr.veth->h_vlan_encapsulated_proto != htons(ETH_P_IPV6));
++		hdr.ptr += hlen;
+ 		/* Use an estimated value, since we also need to handle
+ 		 * TSO case.
+ 		 */
+--- a/drivers/net/vmxnet3/vmxnet3_int.h
++++ b/drivers/net/vmxnet3/vmxnet3_int.h
+@@ -69,10 +69,10 @@
+ /*
+  * Version numbers
+  */
+-#define VMXNET3_DRIVER_VERSION_STRING   "1.4.13.0-k"
++#define VMXNET3_DRIVER_VERSION_STRING   "1.4.14.0-k"
  
--max_hbh_opts_cnt - INTEGER
-+max_hbh_opts_number - INTEGER
- 	Maximum number of non-padding TLVs allowed in a Hop-by-Hop
- 	options extension header. If this value is less than zero
- 	then unknown options are disallowed and the number of known
- 	TLVs allowed is the absolute value of this number.
- 	Default: 8
+ /* a 32-bit int, each byte encode a verion number in VMXNET3_DRIVER_VERSION */
+-#define VMXNET3_DRIVER_VERSION_NUM      0x01040d00
++#define VMXNET3_DRIVER_VERSION_NUM      0x01040e00
  
--max dst_opts_len - INTEGER
-+max_dst_opts_length - INTEGER
- 	Maximum length allowed for a Destination options extension
- 	header.
- 	Default: INT_MAX (unlimited)
- 
--max hbh_opts_len - INTEGER
-+max_hbh_length - INTEGER
- 	Maximum length allowed for a Hop-by-Hop options extension
- 	header.
- 	Default: INT_MAX (unlimited)
+ #if defined(CONFIG_PCI_MSI)
+ 	/* RSS only makes sense if MSI-X is supported. */
