@@ -1,149 +1,199 @@
-Return-Path: <lee.jones@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1525084232; cv=none;
+Return-Path: <matthias.bgg@kernel.org>
+X-Google-Smtp-Source: AB8JxZpyKYlPAnKut6jHPyrLM49wHW7m9Ep41OKa/tTuNc9QiEq1byx4q7VE7WAyublYbkjHYMnu
+ARC-Seal: i=1; a=rsa-sha256; t=1524821075; cv=none;
         d=google.com; s=arc-20160816;
-        b=WiQHBxC0s1WtVANwKXn0XMJFVyNobFVcPUebU1lE8RtQWmmcug8+7a4YX4O7Xw1wH6
-         uAqv8fofgqWnb9GcSiUtaVLs7NgpA/zltt5aSyfZrP4ZXRbQ772Ie+V0iyyQ7zwbM8rB
-         NO3ZSZQh+ZTeuNqvzNCudStqVIjBncJCXv7/+XwFOe67w60o/UyjuCFdJhPo8I91wTXG
-         vLDQBdoZrEi6N/B5s0YGOpcbmCSkDbH3UcphNpCRk3pSbAJtHTmmF911AVS9enzhZX58
-         xK/tnCAKA0VMiuyl2wWS64Iswc8lFW3gGE3dJyZxhrTHK4+yCe/xiQ4DQeHLugLmne4S
-         bzGA==
+        b=g6wvxizJtfpPEe59jeMWjfCvOgLRxqys5e/f3JRPRT2oIPmiwzQmDuKg9SpOxkptAU
+         LrvquV+aOmw8HAwyolKTzLiOydUqV+lv/MGfImqzS0Huzn7eHKZryWe/S70/PVnPOxZU
+         tKHF5Xlg4uTonrCKt8VoCujrLcRFk89r8USJXv3wyY6xbbILpH9GfcRVN8XpehrAnEIw
+         eprldzJza04+lJuJAPFcM6BRhJAzMQW/PoisvSBWsgwxVgD6jULbY/vxwA2QevgOifpy
+         JuRu7ExMWl5sFvgrDrDr3SnZPs2bHI7nefvrTQyClTrlWpuyB8DUhczNC7khk5PfwxGL
+         YYlw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:dkim-signature:arc-authentication-results;
-        bh=pNhCL5NHo42HQ/3bdFvBUUZIWwn5z2onYFUV1tH6uu4=;
-        b=KeuV88dXFr0sUNVxeVMFRSceF7g/N6WQqx10dIHKbTUgPAwNxeL3VABF/M8pE6Wv7N
-         /aVrE/e/JAmEhPnVahT4I0CVDnbeMEIm9hpvG1NHNL4q28yI/++4MwRpQ6KTTJITqyVu
-         6XGumK1Q0QLn5pPsTi2gMfZgmWCITG8Lj0jn+Ti+ZBQegTkh1MKh2OH8I2zoaat1mLYe
-         6NnELYd04wtaOfxaqdQmkTp27SsLXl4/dv8sosllv+Jej+KRUbjdEPfhMT/tuzd5gXsy
-         CpYDc7sQysQICNsZeXvzEve79ikPRLtyeiWD9UegQ4JXL1WEil7cJGxeGwyWcq7hW0cu
-         gjBg==
+        h=references:in-reply-to:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dmarc-filter:arc-authentication-results;
+        bh=fK+g+24Y+OYL2r5Ex38iFFJ/iMyFOZaah6v6CF2I0mM=;
+        b=pjKx+X8pqpykua8Y0SqoUZqbwvNl04ol/L+Ur3VUMu6j6X25oNfzj+1rzZFDiQ6tTU
+         OC+JWqIqQxelUVL4IzQO3MN956bq3T9PMenwznnuE48P4UJ5U2YI6RzktgNobBZQOLXW
+         z70ZP25SgjGcShVzOXKbUgiQdywX1dzwOKjbNpVFZshmOEBurVwi2Nv05jRcuYRbSOg8
+         jsVpnokXpx6/nsZx4uRnWN1ni8U69L6YwIXg0ALBL6qVCchrIydhky9fKoYfswI2I2Kg
+         gf1R/vXTRXJ51JKxuNn1RilI+JxAjmA213/PbhSgT6FIxG0kQapI/iu1QuqeIEzZ/X+V
+         quGw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=FaMjiFz+;
-       spf=pass (google.com: domain of lee.jones@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=lee.jones@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+       spf=pass (google.com: best guess record for domain of matthias.bgg@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=matthias.bgg@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=FaMjiFz+;
-       spf=pass (google.com: domain of lee.jones@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=lee.jones@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AB8JxZoU3xNm+8nZFJ6PX+QFx1wbvFEpemn1JJqv3DAPFbUYQTGuGjIVHTaa5tlvCg14oyheUQvw7Q==
-Date: Mon, 30 Apr 2018 11:30:29 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: matthias.bgg@kernel.org
-Cc: ulrich.hecht+renesas@gmail.com, laurent.pinchart@ideasonboard.com,
-	ck.hu@mediatek.com, p.zabel@pengutronix.de, airlied@linux.ie,
-	robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
-	sboyd@codeaurora.org, davem@davemloft.net,
-	gregkh@linuxfoundation.org, mchehab@kernel.org,
-	rdunlap@infradead.org, sean.wang@mediatek.com,
-	linux-clk@vger.kernel.org, linux@armlinux.org.uk,
-	matthias.bgg@gmail.com, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+       spf=pass (google.com: best guess record for domain of matthias.bgg@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=matthias.bgg@kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 853032187E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=matthias.bgg@kernel.org
+From: matthias.bgg@kernel.org
+To: ulrich.hecht+renesas@gmail.com,
+	laurent.pinchart@ideasonboard.com,
+	ck.hu@mediatek.com,
+	p.zabel@pengutronix.de,
+	airlied@linux.ie,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	mturquette@baylibre.com,
+	sboyd@codeaurora.org,
+	lee.jones@linaro.org
+Cc: davem@davemloft.net,
+	gregkh@linuxfoundation.org,
+	mchehab@kernel.org,
+	rdunlap@infradead.org,
+	sean.wang@mediatek.com,
+	linux-clk@vger.kernel.org,
+	linux@armlinux.org.uk,
+	matthias.bgg@gmail.com,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-mediatek@lists.infradead.org,
 	Matthias Brugger <mbrugger@suse.com>
-Subject: Re: [v3 01/10] dt-bindings: mediatek: mmsys: Add support for mfd
-Message-ID: <20180430103029.GD5147@dell>
+Subject: [v3 03/10] mfd: mtk-mmsys: Add mmsys driver
+Date: Fri, 27 Apr 2018 11:23:55 +0200
+Message-Id: <e0894c97775e46ce6d9a441dc05e2e2479a4b612.1524820923.git.mbrugger@suse.com>
+X-Mailer: git-send-email 2.16.3
+In-Reply-To: <cover.1524820923.git.mbrugger@suse.com>
 References: <cover.1524820923.git.mbrugger@suse.com>
- <64ca273429d92f581568a48f3efe6035af65f579.1524820923.git.mbrugger@suse.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <64ca273429d92f581568a48f3efe6035af65f579.1524820923.git.mbrugger@suse.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <cover.1524820923.git.mbrugger@suse.com>
+References: <cover.1524820923.git.mbrugger@suse.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598890774192452836?=
-X-GMAIL-MSGID: =?utf-8?q?1599166723776672088?=
+X-GMAIL-THRID: =?utf-8?q?1598890783825363754?=
+X-GMAIL-MSGID: =?utf-8?q?1598890783825363754?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, 27 Apr 2018, matthias.bgg@kernel.org wrote:
+From: Matthias Brugger <mbrugger@suse.com>
 
-> From: Matthias Brugger <mbrugger@suse.com>
-> 
-> Add binding description for the mmsys mfd for some Mediatek
-> devices. mmsys has some registers to control clock gates (which is
-> used in the clk driver) and some registers to set the routing and enable
-> the differnet blocks of the display subsystem.
-> 
-> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
-> ---
->  .../bindings/arm/mediatek/mediatek,mmsys.txt       |  2 --
->  .../bindings/display/mediatek/mediatek,disp.txt    |  2 +-
->  .../devicetree/bindings/mfd/mediatek,mmsys.txt     | 27 ++++++++++++++++++++++
->  3 files changed, 28 insertions(+), 3 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
-> index 4eb8bbe15c01..4468345f8b1a 100644
-> --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
-> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
-> @@ -6,10 +6,8 @@ The Mediatek mmsys controller provides various clocks to the system.
->  Required Properties:
->  
->  - compatible: Should be one of:
-> -	- "mediatek,mt2701-mmsys", "syscon"
->  	- "mediatek,mt2712-mmsys", "syscon"
->  	- "mediatek,mt6797-mmsys", "syscon"
-> -	- "mediatek,mt8173-mmsys", "syscon"
->  - #clock-cells: Must be 1
->  
->  The mmsys controller uses the common clk binding from
-> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt b/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
-> index 383183a89164..85a3b4ec06cd 100644
-> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
-> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
-> @@ -9,7 +9,7 @@ function block.
->  
->  All DISP device tree nodes must be siblings to the central MMSYS_CONFIG node.
->  For a description of the MMSYS_CONFIG binding, see
-> -Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt.
-> +Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt
->  
->  DISP function blocks
->  ====================
-> diff --git a/Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt b/Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt
-> new file mode 100644
-> index 000000000000..2331ae16917e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt
-> @@ -0,0 +1,27 @@
-> +MediaTek MMSYS Multifunction Device Driver
+The MMSYS subsystem includes clocks and drm components.
+This patch adds a MFD device to probe both drivers from the same
+device tree compatible.
 
-What is "MMSYS"?
+Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+---
+ drivers/mfd/Kconfig     |  9 ++++++
+ drivers/mfd/Makefile    |  2 ++
+ drivers/mfd/mtk-mmsys.c | 79 +++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 90 insertions(+)
+ create mode 100644 drivers/mfd/mtk-mmsys.c
 
-"Multi-Function Driver"s are specific to Linux.
-
-What actually is the device?
-
-> +MMSYS is a multifunction device with the following sub modules:
-> +- clocks for the multi-media subsystem
-> +- central node for the DRM subsystem.
-> +
-> +This document describes the binding for MFD device. The MFD takes care to initailize
-> +the clock driver and the DRM driver. More info see
-> +Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
-> +
-> +Required properties:
-> +- compatible: Should be one of:
-> +	- "mediatek,mt2701-mmsys", "syscon"
-> +	- "mediatek,mt8173-mmsys", "syscon"
-> +- #clock-cells: Must be 1
-> +
-> +Optional properties:
-> +- power-domains: list of powerdomains needed for the subsystem to work
-> +
-> +Example:
-> +
-> +mmsys: clock-controller@14000000 {
-> +	compatible = "mediatek,mt8173-mmsys", "syscon";
-> +	reg = <0 0x14000000 0 0x1000>;
-> +	power-domains = <&scpsys MT8173_POWER_DOMAIN_MM>;
-> +	#clock-cells = <1>;
-> +};
-
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index b860eb5aa194..d23a3b9a2c58 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -378,6 +378,15 @@ config MFD_MC13XXX_I2C
+ 	help
+ 	  Select this if your MC13xxx is connected via an I2C bus.
+ 
++config MFD_MEDIATEK_MMSYS
++	tristate "Mediatek MMSYS interface"
++	select MFD_CORE
++	select REGMAP_MMIO
++	help
++	  Select this if you have a MMSYS subsystem in your SoC. The
++	  MMSYS subsystem has at least a clock driver part and some
++	  DRM components.
++
+ config MFD_MXS_LRADC
+ 	tristate "Freescale i.MX23/i.MX28 LRADC"
+ 	depends on ARCH_MXS || COMPILE_TEST
+diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+index d9d2cf0d32ef..b96118bd68d9 100644
+--- a/drivers/mfd/Makefile
++++ b/drivers/mfd/Makefile
+@@ -98,6 +98,8 @@ obj-$(CONFIG_MFD_MC13XXX)	+= mc13xxx-core.o
+ obj-$(CONFIG_MFD_MC13XXX_SPI)	+= mc13xxx-spi.o
+ obj-$(CONFIG_MFD_MC13XXX_I2C)	+= mc13xxx-i2c.o
+ 
++obj-$(CONFIG_MFD_MEDIATEK_MMSYS) += mtk-mmsys.o
++
+ obj-$(CONFIG_MFD_CORE)		+= mfd-core.o
+ 
+ obj-$(CONFIG_EZX_PCAP)		+= ezx-pcap.o
+diff --git a/drivers/mfd/mtk-mmsys.c b/drivers/mfd/mtk-mmsys.c
+new file mode 100644
+index 000000000000..c802343fb1c6
+--- /dev/null
++++ b/drivers/mfd/mtk-mmsys.c
+@@ -0,0 +1,79 @@
++// SPDX-License-Identifier: GPL-2.0+
++
++/*
++ * mtk-mmsys.c -- Mediatek MMSYS multi-function driver
++ *
++ * Copyright (c) 2018 Matthias Brugger <matthias.bgg@gmail.com>
++ *
++ * Author: Matthias Brugger <matthias.bgg@gmail.com>
++ */
++
++#include <linux/module.h>
++#include <linux/init.h>
++#include <linux/mfd/core.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++
++enum {
++	MMSYS_MT2701 = 1,
++};
++
++static const struct mfd_cell mmsys_mt2701_devs[] = {
++	{ .name = "clk-mt2701-mm", },
++	{ .name = "drm-mt2701-mm", },
++};
++
++static int mmsys_probe(struct platform_device *pdev)
++{
++	const struct mfd_cell *mmsys_cells;
++	int nr_cells;
++	long id;
++	int ret;
++
++	id = (long) of_device_get_match_data(&pdev->dev);
++	if (!id) {
++		dev_err(&pdev->dev, "of_device_get match_data() failed\n");
++		return -EINVAL;
++	}
++
++	switch (id) {
++	case MMSYS_MT2701:
++		mmsys_cells = mmsys_mt2701_devs;
++		nr_cells = ARRAY_SIZE(mmsys_mt2701_devs);
++		break;
++	default:
++		return -ENODEV;
++	}
++
++	ret = devm_mfd_add_devices(&pdev->dev, 0, mmsys_cells, nr_cells,
++					NULL, 0, NULL);
++	if (ret) {
++		dev_err(&pdev->dev, "failed to add MFD devices %d\n", ret);
++		return ret;
++	}
++
++	return 0;
++};
++
++static const struct of_device_id of_match_mmsys[] = {
++	{ .compatible = "mediatek,mt2701-mmsys",
++	  .data = (void *) MMSYS_MT2701,
++	},
++	{ /* sentinel */ },
++};
++
++static struct platform_driver mmsys_drv = {
++	.probe = mmsys_probe,
++	.driver = {
++		.name = "mediatek-mmysys",
++		.of_match_table = of_match_ptr(of_match_mmsys),
++	},
++};
++
++builtin_platform_driver(mmsys_drv);
++
++MODULE_DESCRIPTION("Mediatek MMSYS multi-function driver");
++MODULE_LICENSE("GPL");
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.16.3
