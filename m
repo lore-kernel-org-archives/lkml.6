@@ -1,129 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758266AbeD0MNw (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 08:13:52 -0400
-Received: from www62.your-server.de ([213.133.104.62]:36567 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757999AbeD0MNu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 08:13:50 -0400
-Subject: Re: [tip:x86/cleanups] x86/bpf: Clean up non-standard comments, to
- make the code more readable
-To: peterz@infradead.org, edumazet@google.com, davem@davemloft.net,
-        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        ast@fb.com, bp@alien8.de, hpa@zytor.com, mingo@kernel.org,
-        yoshfuji@linux-ipv6.org, tglx@linutronix.de,
-        linux-tip-commits@vger.kernel.org, netdev@vger.kernel.org
-References: <tip-5f26c50143f58f256535bee8d93a105f36d4d2da@git.kernel.org>
-From: Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <44202670-ed43-366b-caf2-f72863ee7c6a@iogearbox.net>
-Date: Fri, 27 Apr 2018 14:13:38 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        id S1758268AbeD0MOV (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 08:14:21 -0400
+Received: from sauhun.de ([88.99.104.3]:48802 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1758174AbeD0MOT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 08:14:19 -0400
+Date: Fri, 27 Apr 2018 14:14:17 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Baolin Wang <baolin.wang@linaro.org>
+Cc: broonie@kernel.org, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] i2c: sprd: Prevent i2c accesses after suspend is
+ called
+Message-ID: <20180427121417.auv4ppryegkprv32@ninjato>
+References: <99031524fa147e72451d26f54b24f36093c0d3fa.1523255712.git.baolin.wang@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <tip-5f26c50143f58f256535bee8d93a105f36d4d2da@git.kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="rtsyducdkarauc4p"
+Content-Disposition: inline
+In-Reply-To: <99031524fa147e72451d26f54b24f36093c0d3fa.1523255712.git.baolin.wang@linaro.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ingo,
 
-On 04/27/2018 01:00 PM, tip-bot for Ingo Molnar wrote:
-> Commit-ID:  5f26c50143f58f256535bee8d93a105f36d4d2da
-> Gitweb:     https://git.kernel.org/tip/5f26c50143f58f256535bee8d93a105f36d4d2da
-> Author:     Ingo Molnar <mingo@kernel.org>
-> AuthorDate: Fri, 27 Apr 2018 11:54:40 +0200
-> Committer:  Ingo Molnar <mingo@kernel.org>
-> CommitDate: Fri, 27 Apr 2018 12:42:04 +0200
-> 
-> x86/bpf: Clean up non-standard comments, to make the code more readable
-> 
-> So by chance I looked into x86 assembly in arch/x86/net/bpf_jit_comp.c and
-> noticed the weird and inconsistent comment style it mistakenly learned from
-> the networking code:
-> 
->  /* Multi-line comment ...
->   * ... looks like this.
->   */
-> 
-> Fix this to use the standard comment style specified in Documentation/CodingStyle
-> and used in arch/x86/ as well:
-> 
->  /*
->   * Multi-line comment ...
->   * ... looks like this.
->   */
-> 
-> Also, to quote Linus's ... more explicit views about this:
-> 
->   http://article.gmane.org/gmane.linux.kernel.cryptoapi/21066
-> 
->   > But no, the networking code picked *none* of the above sane formats.
->   > Instead, it picked these two models that are just half-arsed
->   > shit-for-brains:
->   >
->   >  (no)
->   >      /* This is disgusting drug-induced
->   >        * crap, and should die
->   >        */
->   >
->   >   (no-no-no)
->   >       /* This is also very nasty
->   >        * and visually unbalanced */
->   >
->   > Please. The networking code actually has the *worst* possible comment
->   > style. You can literally find that (no-no-no) style, which is just
->   > really horribly disgusting and worse than the otherwise fairly similar
->   > (d) in pretty much every way.
-> 
-> Also improve the comments and some other details while at it:
-> 
->  - Don't mix same-line and previous-line comment style on otherwise
->    identical code patterns within the same function,
-> 
->  - capitalize 'BPF' and x86 register names consistently,
-> 
->  - capitalize sentences consistently,
-> 
->  - instead of 'x64' use 'x86-64': x64 is a Microsoft specific term,
-> 
->  - use more consistent punctuation,
-> 
->  - use standard coding style in macros as well,
-> 
->  - fix typos and a few other minor details.
-> 
-> Consistent coding style is not optional, at least in arch/x86/.
-> 
-> No change in functionality.
+--rtsyducdkarauc4p
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for the cleanup, looks fine to me!
+On Mon, Apr 09, 2018 at 02:40:54PM +0800, Baolin Wang wrote:
+> Add one flag to indicate if the i2c controller has been in suspend state,
+> which can prevent i2c accesses after i2c controller is suspended following
+> system suspend.
+>=20
+> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 
-> ( In case this commit causes conflicts with pending development code
->   I'll be glad to help resolve any conflicts! )
+Applied to for-current, thanks!
 
-Any objections if we would simply route this via bpf-next tree, otherwise
-this will indeed cause really ugly merge conflicts throughout the JIT with
-pending work.
+We should maybe handle this in the core somewhen, though. Or?
 
-> Acked-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: H. Peter Anvin <hpa@zytor.com>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: David S. Miller <davem@davemloft.net>
-> Cc: Eric Dumazet <edumazet@google.com>
-> Cc: Daniel Borkmann <daniel@iogearbox.net>
-> Cc: Alexei Starovoitov <ast@fb.com>
-> Cc: Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
-> Cc: netdev@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: Daniel Borkmann <daniel@iogearbox.net>
 
-Thanks,
-Daniel
+--rtsyducdkarauc4p
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlrjFBkACgkQFA3kzBSg
+Kbbbfg//eftzZ8oQPqQkuSuYU3D5qas3i3n4qAycJQmpSVaYjDOBcqiRzPV6gaQQ
+6hYvc4EIpIfv4ZLa9Nwa9ds9lN25gLKZOUIt9KzFXtwRTzxHAxD/jDR5xXEijJ0a
+bPoeuuUjBnAq7G/hp2j/KjCf1s7nuvkAnk9jyGeSGNfyOO8B/coEYzZ4b0Nw4pQJ
+A+ahJ48f/AsxuVqAXgMc1GUpZrzvpgX0F2DPbZG84bcN2b4k+DdNC/qCL4AlkB4C
+4pA5ciBa5VDAaz7ppfWGrDnRNl479TWQlhpL/rJ58e6NZ+8Cc305+L9Z2K693UKJ
+J9IUkcHmhFISYRLtNhMe4FYCWoTMsK3npIP4MBu6/lQTNBL3wN6iAaWLHcyFiGLj
+Vg478nR9I3Bu39+2udXk9YgjBZELo1KMD6gh9g7S9LczlQkYS7eoiy/ijR6priE9
+fA07DTWExGQMzogchxmQJ7VakvTu1AG8gYVwu3UHhOVhBaADP0C+dDBOsUS/d7QH
+/Uxeo2ztdvPt3zX8QQBMAyd9UmNAH49Wy8Zosxzh4gHsemv49ZoZb+zx06rFEe0q
+tkHHMfw4Q4VwONL0293hO3sx9nGNDny1lsaFzcQqxXoebS+LWLxddUxyxX8fj2E8
+thA2SI5I5tNeVuGF6rHqdoEUrDUgJwpsf0pkS470jMqvuv1EwPY=
+=LiUL
+-----END PGP SIGNATURE-----
+
+--rtsyducdkarauc4p--
