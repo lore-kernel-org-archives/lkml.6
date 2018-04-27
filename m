@@ -1,118 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757311AbeD0Bw3 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 26 Apr 2018 21:52:29 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:35692 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1757152AbeD0Bw1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Apr 2018 21:52:27 -0400
-Subject: Re: [f2fs-dev] [PATCH 4/5 v2] f2fs: sanity check for total valid
- blocks
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
-CC: <linux-kernel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-References: <20180425054613.2700-1-jaegeuk@kernel.org>
- <20180425054613.2700-4-jaegeuk@kernel.org>
- <e9ccab38-0773-156f-67b1-0374b0aeb6ed@kernel.org>
- <20180426152932.GD68594@jaegeuk-macbookpro.roam.corp.google.com>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <34cca0ad-3cfd-9115-0f42-11d73d415a20@huawei.com>
-Date: Fri, 27 Apr 2018 09:52:25 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
-MIME-Version: 1.0
-In-Reply-To: <20180426152932.GD68594@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+        id S932351AbeD0B5t (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 26 Apr 2018 21:57:49 -0400
+Received: from mail.savoirfairelinux.com ([208.88.110.44]:43994 "EHLO
+        mail.savoirfairelinux.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757128AbeD0B5p (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Apr 2018 21:57:45 -0400
+From: Vivien Didelot <vivien.didelot@savoirfairelinux.com>
+To: netdev@vger.kernel.org
+Cc: Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>, linux-kernel@vger.kernel.org,
+        kernel@savoirfairelinux.com
+Subject: [PATCH net-next 3/3] net: dsa: mv88e6xxx: remove Global 2 setup
+Date: Thu, 26 Apr 2018 21:56:46 -0400
+Message-Id: <20180427015646.24946-4-vivien.didelot@savoirfairelinux.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180427015646.24946-1-vivien.didelot@savoirfairelinux.com>
+References: <20180427015646.24946-1-vivien.didelot@savoirfairelinux.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/4/26 23:29, Jaegeuk Kim wrote:
-> This patch enhances sanity check for SIT entries.
-> 
-> syzbot hit the following crash on upstream commit
-> 83beed7b2b26f232d782127792dd0cd4362fdc41 (Fri Apr 20 17:56:32 2018 +0000)
-> Merge branch 'fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal
-> syzbot dashboard link: https://syzkaller.appspot.com/bug?extid=bf9253040425feb155ad
-> 
-> syzkaller reproducer: https://syzkaller.appspot.com/x/repro.syz?id=5692130282438656
-> Raw console output: https://syzkaller.appspot.com/x/log.txt?id=5095924598571008
-> Kernel config: https://syzkaller.appspot.com/x/.config?id=1808800213120130118
-> compiler: gcc (GCC) 8.0.1 20180413 (experimental)
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+bf9253040425feb155ad@syzkaller.appspotmail.com
-> It will help syzbot understand when the bug is fixed. See footer for details.
-> If you forward the report, please keep this part and the footer.
-> 
-> F2FS-fs (loop0): invalid crc value
-> F2FS-fs (loop0): Try to recover 1th superblock, ret: 0
-> F2FS-fs (loop0): Mounted with checkpoint version = d
-> F2FS-fs (loop0): Bitmap was wrongly cleared, blk:9740
-> ------------[ cut here ]------------
-> kernel BUG at fs/f2fs/segment.c:1884!
-> invalid opcode: 0000 [#1] SMP KASAN
-> Dumping ftrace buffer:
->    (ftrace buffer empty)
-> Modules linked in:
-> CPU: 1 PID: 4508 Comm: syz-executor0 Not tainted 4.17.0-rc1+ #10
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> RIP: 0010:update_sit_entry+0x1215/0x1590 fs/f2fs/segment.c:1882
-> RSP: 0018:ffff8801af526708 EFLAGS: 00010282
-> RAX: ffffed0035ea4cc0 RBX: ffff8801ad454f90 RCX: 0000000000000000
-> RDX: 0000000000000000 RSI: ffffffff82eeb87e RDI: ffffed0035ea4cb6
-> RBP: ffff8801af526760 R08: ffff8801ad4a2480 R09: ffffed003b5e4f90
-> R10: ffffed003b5e4f90 R11: ffff8801daf27c87 R12: ffff8801adb8d380
-> R13: 0000000000000001 R14: 0000000000000008 R15: 00000000ffffffff
-> FS:  00000000014af940(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f06bc223000 CR3: 00000001adb02000 CR4: 00000000001406e0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  allocate_data_block+0x66f/0x2050 fs/f2fs/segment.c:2663
->  do_write_page+0x105/0x1b0 fs/f2fs/segment.c:2727
->  write_node_page+0x129/0x350 fs/f2fs/segment.c:2770
->  __write_node_page+0x7da/0x1370 fs/f2fs/node.c:1398
->  sync_node_pages+0x18cf/0x1eb0 fs/f2fs/node.c:1652
->  block_operations+0x429/0xa60 fs/f2fs/checkpoint.c:1088
->  write_checkpoint+0x3ba/0x5380 fs/f2fs/checkpoint.c:1405
->  f2fs_sync_fs+0x2fb/0x6a0 fs/f2fs/super.c:1077
->  __sync_filesystem fs/sync.c:39 [inline]
->  sync_filesystem+0x265/0x310 fs/sync.c:67
->  generic_shutdown_super+0xd7/0x520 fs/super.c:429
->  kill_block_super+0xa4/0x100 fs/super.c:1191
->  kill_f2fs_super+0x9f/0xd0 fs/f2fs/super.c:3030
->  deactivate_locked_super+0x97/0x100 fs/super.c:316
->  deactivate_super+0x188/0x1b0 fs/super.c:347
->  cleanup_mnt+0xbf/0x160 fs/namespace.c:1174
->  __cleanup_mnt+0x16/0x20 fs/namespace.c:1181
->  task_work_run+0x1e4/0x290 kernel/task_work.c:113
->  tracehook_notify_resume include/linux/tracehook.h:191 [inline]
->  exit_to_usermode_loop+0x2bd/0x310 arch/x86/entry/common.c:166
->  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
->  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
->  do_syscall_64+0x6ac/0x800 arch/x86/entry/common.c:290
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x457d97
-> RSP: 002b:00007ffd46f9c8e8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
-> RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000457d97
-> RDX: 00000000014b09a3 RSI: 0000000000000002 RDI: 00007ffd46f9da50
-> RBP: 00007ffd46f9da50 R08: 0000000000000000 R09: 0000000000000009
-> R10: 0000000000000005 R11: 0000000000000246 R12: 00000000014b0940
-> R13: 0000000000000000 R14: 0000000000000002 R15: 000000000000658e
-> RIP: update_sit_entry+0x1215/0x1590 fs/f2fs/segment.c:1882 RSP: ffff8801af526708
-> ---[ end trace f498328bb02610a2 ]---
-> 
-> Reported-and-tested-by: syzbot+bf9253040425feb155ad@syzkaller.appspotmail.com
-> Reported-and-tested-by: syzbot+7d6d31d3bc702f566ce3@syzkaller.appspotmail.com
-> Reported-and-tested-by: syzbot+0a725420475916460f12@syzkaller.appspotmail.com
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+The remaining values written to the Switch Management Register in the
+mv88e6xxx_g2_setup function are specific to 88E6352 and older, and are
+the default values anyway.
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Thus remove completely this function. The mv88e6xxx driver no more
+contains setup code to access arbitrary Global 2 registers.
 
-Thanks,
+Signed-off-by: Vivien Didelot <vivien.didelot@savoirfairelinux.com>
+---
+ drivers/net/dsa/mv88e6xxx/chip.c    |  7 -------
+ drivers/net/dsa/mv88e6xxx/global2.c | 18 ------------------
+ drivers/net/dsa/mv88e6xxx/global2.h |  6 ------
+ 3 files changed, 31 deletions(-)
+
+diff --git a/drivers/net/dsa/mv88e6xxx/chip.c b/drivers/net/dsa/mv88e6xxx/chip.c
+index 0b7530452643..5671fb78c252 100644
+--- a/drivers/net/dsa/mv88e6xxx/chip.c
++++ b/drivers/net/dsa/mv88e6xxx/chip.c
+@@ -2222,13 +2222,6 @@ static int mv88e6xxx_setup(struct dsa_switch *ds)
+ 	if (err)
+ 		goto unlock;
+ 
+-	/* Setup Switch Global 2 Registers */
+-	if (chip->info->global2_addr) {
+-		err = mv88e6xxx_g2_setup(chip);
+-		if (err)
+-			goto unlock;
+-	}
+-
+ 	err = mv88e6xxx_irl_setup(chip);
+ 	if (err)
+ 		goto unlock;
+diff --git a/drivers/net/dsa/mv88e6xxx/global2.c b/drivers/net/dsa/mv88e6xxx/global2.c
+index 96e74d8d500d..e6d658181b27 100644
+--- a/drivers/net/dsa/mv88e6xxx/global2.c
++++ b/drivers/net/dsa/mv88e6xxx/global2.c
+@@ -1118,21 +1118,3 @@ void mv88e6xxx_g2_irq_mdio_free(struct mv88e6xxx_chip *chip,
+ 	for (phy = 0; phy < chip->info->num_internal_phys; phy++)
+ 		irq_dispose_mapping(bus->irq[phy]);
+ }
+-
+-int mv88e6xxx_g2_setup(struct mv88e6xxx_chip *chip)
+-{
+-	u16 reg;
+-	int err;
+-
+-	/* Ignore removed tag data on doubly tagged packets, disable
+-	 * flow control messages, force flow control priority to the
+-	 * highest, and send all special multicast frames to the CPU
+-	 * port at the highest priority.
+-	 */
+-	reg = MV88E6XXX_G2_SWITCH_MGMT_FORCE_FLOW_CTL_PRI | (0x7 << 4);
+-	err = mv88e6xxx_g2_write(chip, MV88E6XXX_G2_SWITCH_MGMT, reg);
+-	if (err)
+-		return err;
+-
+-	return 0;
+-}
+diff --git a/drivers/net/dsa/mv88e6xxx/global2.h b/drivers/net/dsa/mv88e6xxx/global2.h
+index 46913a289255..37e8ce2c72a0 100644
+--- a/drivers/net/dsa/mv88e6xxx/global2.h
++++ b/drivers/net/dsa/mv88e6xxx/global2.h
+@@ -314,7 +314,6 @@ int mv88e6xxx_g2_pvt_write(struct mv88e6xxx_chip *chip, int src_dev,
+ 			   int src_port, u16 data);
+ int mv88e6xxx_g2_misc_4_bit_port(struct mv88e6xxx_chip *chip);
+ 
+-int mv88e6xxx_g2_setup(struct mv88e6xxx_chip *chip);
+ int mv88e6xxx_g2_irq_setup(struct mv88e6xxx_chip *chip);
+ void mv88e6xxx_g2_irq_free(struct mv88e6xxx_chip *chip);
+ 
+@@ -447,11 +446,6 @@ static inline int mv88e6xxx_g2_misc_4_bit_port(struct mv88e6xxx_chip *chip)
+ 	return -EOPNOTSUPP;
+ }
+ 
+-static inline int mv88e6xxx_g2_setup(struct mv88e6xxx_chip *chip)
+-{
+-	return -EOPNOTSUPP;
+-}
+-
+ static inline int mv88e6xxx_g2_irq_setup(struct mv88e6xxx_chip *chip)
+ {
+ 	return -EOPNOTSUPP;
+-- 
+2.17.0
