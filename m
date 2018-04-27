@@ -1,78 +1,266 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932799AbeD0LIt (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 07:08:49 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48362 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932605AbeD0LIs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 07:08:48 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>, broonie@kernel.org,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-spi@vger.kernel.org
-Subject: Applied "spi: mpc52xx: Use gpio_is_valid()" to the spi tree
-In-Reply-To: <aef1b612f61b530012459def8ac958f88674e1c8.1524826858.git.arvind.yadav.cs@gmail.com>
-Message-Id: <E1fC1F8-0004WI-06@debutante>
-Date: Fri, 27 Apr 2018 12:08:46 +0100
+        id S1755199AbeD0LO1 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 07:14:27 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38620 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751140AbeD0LOZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 07:14:25 -0400
+Date: Fri, 27 Apr 2018 13:14:22 +0200
+From: Christoffer Dall <christoffer.dall@arm.com>
+To: Punit Agrawal <punit.agrawal@arm.com>
+Cc: kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org,
+        marc.zyngier@arm.com, linux-kernel@vger.kernel.org,
+        suzuki.poulose@arm.com, Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH 4/4] KVM: arm64: Add support for PUD hugepages at stage 2
+Message-ID: <20180427111422.GK13249@C02W217FHV2R.local>
+References: <20180420145409.24485-1-punit.agrawal@arm.com>
+ <20180420145409.24485-5-punit.agrawal@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180420145409.24485-5-punit.agrawal@arm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Fri, Apr 20, 2018 at 03:54:09PM +0100, Punit Agrawal wrote:
+> KVM only supports PMD hugepages at stage 2. Extend the stage 2 fault
+> handling to add support for PUD hugepages.
+> 
+> Addition of pud hugepage support enables additional hugepage
+> sizes (e.g., 1G with 4K granule) which can be useful on cores that
+> support mapping larger block sizes in the TLB entries.
+> 
+> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
+> Cc: Christoffer Dall <christoffer.dall@arm.com>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Cc: Russell King <linux@armlinux.org.uk>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> ---
+>  arch/arm/include/asm/kvm_mmu.h         | 19 +++++++++
+>  arch/arm64/include/asm/kvm_mmu.h       | 15 +++++++
+>  arch/arm64/include/asm/pgtable-hwdef.h |  4 ++
+>  arch/arm64/include/asm/pgtable.h       |  2 +
+>  virt/kvm/arm/mmu.c                     | 54 ++++++++++++++++++++------
+>  5 files changed, 83 insertions(+), 11 deletions(-)
+> 
+> diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
+> index 224c22c0a69c..155916dbdd7e 100644
+> --- a/arch/arm/include/asm/kvm_mmu.h
+> +++ b/arch/arm/include/asm/kvm_mmu.h
+> @@ -77,8 +77,11 @@ void kvm_clear_hyp_idmap(void);
+>  
+>  #define kvm_pfn_pte(pfn, prot)	pfn_pte(pfn, prot)
+>  #define kvm_pfn_pmd(pfn, prot)	pfn_pmd(pfn, prot)
+> +#define kvm_pfn_pud(pfn, prot)	(__pud(0))
+>  
+>  #define kvm_pmd_mkhuge(pmd)	pmd_mkhuge(pmd)
+> +/* No support for pud hugepages */
+> +#define kvm_pud_mkhuge(pud)	(pud)
+>  
+>  /*
+>   * The following kvm_*pud*() functionas are provided strictly to allow
+> @@ -95,6 +98,22 @@ static inline bool kvm_s2pud_readonly(pud_t *pud)
+>  	return false;
+>  }
+>  
+> +static inline void kvm_set_pud(pud_t *pud, pud_t new_pud)
+> +{
+> +	BUG();
+> +}
+> +
+> +static inline pud_t kvm_s2pud_mkwrite(pud_t pud)
+> +{
+> +	BUG();
+> +	return pud;
+> +}
+> +
+> +static inline pud_t kvm_s2pud_mkexec(pud_t pud)
+> +{
+> +	BUG();
+> +	return pud;
+> +}
+>  
+>  static inline void kvm_set_pmd(pmd_t *pmd, pmd_t new_pmd)
+>  {
+> diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
+> index f440cf216a23..f49a68fcbf26 100644
+> --- a/arch/arm64/include/asm/kvm_mmu.h
+> +++ b/arch/arm64/include/asm/kvm_mmu.h
+> @@ -172,11 +172,14 @@ void kvm_clear_hyp_idmap(void);
+>  
+>  #define	kvm_set_pte(ptep, pte)		set_pte(ptep, pte)
+>  #define	kvm_set_pmd(pmdp, pmd)		set_pmd(pmdp, pmd)
+> +#define kvm_set_pud(pudp, pud)		set_pud(pudp, pud)
+>  
+>  #define kvm_pfn_pte(pfn, prot)		pfn_pte(pfn, prot)
+>  #define kvm_pfn_pmd(pfn, prot)		pfn_pmd(pfn, prot)
+> +#define kvm_pfn_pud(pfn, prot)		pfn_pud(pfn, prot)
+>  
+>  #define kvm_pmd_mkhuge(pmd)		pmd_mkhuge(pmd)
+> +#define kvm_pud_mkhuge(pud)		pud_mkhuge(pud)
+>  
+>  static inline pte_t kvm_s2pte_mkwrite(pte_t pte)
+>  {
+> @@ -190,6 +193,12 @@ static inline pmd_t kvm_s2pmd_mkwrite(pmd_t pmd)
+>  	return pmd;
+>  }
+>  
+> +static inline pud_t kvm_s2pud_mkwrite(pud_t pud)
+> +{
+> +	pud_val(pud) |= PUD_S2_RDWR;
+> +	return pud;
+> +}
+> +
+>  static inline pte_t kvm_s2pte_mkexec(pte_t pte)
+>  {
+>  	pte_val(pte) &= ~PTE_S2_XN;
+> @@ -202,6 +211,12 @@ static inline pmd_t kvm_s2pmd_mkexec(pmd_t pmd)
+>  	return pmd;
+>  }
+>  
+> +static inline pud_t kvm_s2pud_mkexec(pud_t pud)
+> +{
+> +	pud_val(pud) &= ~PUD_S2_XN;
+> +	return pud;
+> +}
+> +
+>  static inline void kvm_set_s2pte_readonly(pte_t *ptep)
+>  {
+>  	pteval_t old_pteval, pteval;
+> diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
+> index fd208eac9f2a..e327665e94d1 100644
+> --- a/arch/arm64/include/asm/pgtable-hwdef.h
+> +++ b/arch/arm64/include/asm/pgtable-hwdef.h
+> @@ -193,6 +193,10 @@
+>  #define PMD_S2_RDWR		(_AT(pmdval_t, 3) << 6)   /* HAP[2:1] */
+>  #define PMD_S2_XN		(_AT(pmdval_t, 2) << 53)  /* XN[1:0] */
+>  
+> +#define PUD_S2_RDONLY		(_AT(pudval_t, 1) << 6)   /* HAP[2:1] */
+> +#define PUD_S2_RDWR		(_AT(pudval_t, 3) << 6)   /* HAP[2:1] */
+> +#define PUD_S2_XN		(_AT(pudval_t, 2) << 53)  /* XN[1:0] */
+> +
+>  /*
+>   * Memory Attribute override for Stage-2 (MemAttr[3:0])
+>   */
+> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+> index 7e2c27e63cd8..5efb4585c879 100644
+> --- a/arch/arm64/include/asm/pgtable.h
+> +++ b/arch/arm64/include/asm/pgtable.h
+> @@ -386,6 +386,8 @@ static inline int pmd_protnone(pmd_t pmd)
+>  
+>  #define pud_write(pud)		pte_write(pud_pte(pud))
+>  
+> +#define pud_mkhuge(pud)		(__pud(pud_val(pud) & ~PUD_TABLE_BIT))
+> +
+>  #define __pud_to_phys(pud)	__pte_to_phys(pud_pte(pud))
+>  #define __phys_to_pud_val(phys)	__phys_to_pte_val(phys)
+>  #define pud_pfn(pud)		((__pud_to_phys(pud) & PUD_MASK) >> PAGE_SHIFT)
+> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+> index 5f53909da90e..7fb58dca0a83 100644
+> --- a/virt/kvm/arm/mmu.c
+> +++ b/virt/kvm/arm/mmu.c
+> @@ -1036,6 +1036,26 @@ static int stage2_set_pmd_huge(struct kvm *kvm, struct kvm_mmu_memory_cache
+>  	return 0;
+>  }
+>  
+> +static int stage2_set_pud_huge(struct kvm *kvm, struct kvm_mmu_memory_cache *cache,
+> +			       phys_addr_t addr, const pud_t *new_pud)
+> +{
+> +	pud_t *pud, old_pud;
+> +
+> +	pud = stage2_get_pud(kvm, cache, addr);
+> +	VM_BUG_ON(!pud);
+> +
+> +	old_pud = *pud;
+> +	if (pud_present(old_pud)) {
+> +		pud_clear(pud);
+> +		kvm_tlb_flush_vmid_ipa(kvm, addr);
+> +	} else {
+> +		get_page(virt_to_page(pud));
+> +	}
+> +
+> +	kvm_set_pud(pud, *new_pud);
+> +	return 0;
+> +}
+> +
+>  static bool stage2_is_exec(struct kvm *kvm, phys_addr_t addr)
+>  {
+>  	pmd_t *pmdp;
+> @@ -1452,9 +1472,12 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+>  	}
+>  
+>  	vma_pagesize = vma_kernel_pagesize(vma);
+> -	if (vma_pagesize == PMD_SIZE && !logging_active) {
+> +	if ((vma_pagesize == PMD_SIZE || vma_pagesize == PUD_SIZE) &&
+> +	    !logging_active) {
+> +		struct hstate *h = hstate_vma(vma);
+> +
+>  		hugetlb = true;
+> -		gfn = (fault_ipa & PMD_MASK) >> PAGE_SHIFT;
+> +		gfn = (fault_ipa & huge_page_mask(h)) >> PAGE_SHIFT;
+>  	} else {
+>  		/*
+>  		 * Pages belonging to memslots that don't have the same
+> @@ -1521,15 +1544,8 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+>  	if (mmu_notifier_retry(kvm, mmu_seq))
+>  		goto out_unlock;
+>  
+> -	if (!hugetlb && !force_pte) {
+> -		/*
+> -		 * Only PMD_SIZE transparent hugepages(THP) are
+> -		 * currently supported. This code will need to be
+> -		 * updated if other THP sizes are supported.
+> -		 */
+> +	if (!hugetlb && !force_pte)
+>  		hugetlb = transparent_hugepage_adjust(&pfn, &fault_ipa);
+> -		vma_pagesize = PMD_SIZE;
 
-   spi: mpc52xx: Use gpio_is_valid()
+Why this change?  Won't you end up trying to map THPs as individual
+pages now?
 
-has been applied to the spi tree at
+> -	}
+>  
+>  	if (writable)
+>  		kvm_set_pfn_dirty(pfn);
+> @@ -1540,7 +1556,23 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+>  	if (exec_fault)
+>  		invalidate_icache_guest_page(pfn, vma_pagesize);
+>  
+> -	if (hugetlb) {
+> +	if (vma_pagesize == PUD_SIZE) {
+> +		pud_t new_pud = kvm_pfn_pud(pfn, mem_type);
+> +
+> +		new_pud = kvm_pud_mkhuge(new_pud);
+> +		if (writable)
+> +			new_pud = kvm_s2pud_mkwrite(new_pud);
+> +
+> +		if (exec_fault) {
+> +			new_pud = kvm_s2pud_mkexec(new_pud);
+> +		} else if (fault_status == FSC_PERM) {
+> +			/* Preserve execute if XN was already cleared */
+> +			if (stage2_is_exec(kvm, fault_ipa))
+> +				new_pud = kvm_s2pud_mkexec(new_pud);
+> +		}
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+aha, another reason for my suggestion in the other patch.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+> +
+> +		ret = stage2_set_pud_huge(kvm, memcache, fault_ipa, &new_pud);
+> +	} else if (vma_pagesize == PMD_SIZE) {
+>  		pmd_t new_pmd = kvm_pfn_pmd(pfn, mem_type);
+>  
+>  		new_pmd = kvm_pmd_mkhuge(new_pmd);
+> -- 
+> 2.17.0
+> 
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+Otherwise, this patch looks fine.
 
 Thanks,
-Mark
-
->From 0a090d6537d3ac14391e7aeaf025b725e72a9675 Mon Sep 17 00:00:00 2001
-From: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Date: Fri, 27 Apr 2018 16:32:17 +0530
-Subject: [PATCH] spi: mpc52xx: Use gpio_is_valid()
-
-Replace the manual validity checks for the GPIO with the
-gpio_is_valid().
-
-Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/spi/spi-mpc52xx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/spi/spi-mpc52xx.c b/drivers/spi/spi-mpc52xx.c
-index e8b59ce4dc3a..0e55784a3ad9 100644
---- a/drivers/spi/spi-mpc52xx.c
-+++ b/drivers/spi/spi-mpc52xx.c
-@@ -447,7 +447,7 @@ static int mpc52xx_spi_probe(struct platform_device *op)
- 
- 		for (i = 0; i < ms->gpio_cs_count; i++) {
- 			gpio_cs = of_get_gpio(op->dev.of_node, i);
--			if (gpio_cs < 0) {
-+			if (!gpio_is_valid(gpio_cs)) {
- 				dev_err(&op->dev,
- 					"could not parse the gpio field in oftree\n");
- 				rc = -ENODEV;
--- 
-2.17.0
+-Christoffer
