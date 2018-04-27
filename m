@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758031AbeD0Lrm (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 07:47:42 -0400
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:48799 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758002AbeD0Lrk (ORCPT
+        id S1758077AbeD0Lry (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 07:47:54 -0400
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:46561 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758058AbeD0Lrv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 07:47:40 -0400
+        Fri, 27 Apr 2018 07:47:51 -0400
 From: Kishon Vijay Abraham I <kishon@ti.com>
 To: Ulf Hansson <ulf.hansson@linaro.org>,
         Adrian Hunter <adrian.hunter@intel.com>
@@ -14,9 +14,9 @@ CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
         <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
         <kishon@ti.com>
-Subject: [PATCH v5 01/14] mmc: sdhci-omap: Fix when capabilities are obtained from SDHCI_CAPABILITIES reg
-Date: Fri, 27 Apr 2018 17:17:10 +0530
-Message-ID: <20180427114723.2687-2-kishon@ti.com>
+Subject: [PATCH v5 05/14] mmc: sdhci: Disable 1.8v modes (HS200/HS400/UHS) if controller can't support 1.8v
+Date: Fri, 27 Apr 2018 17:17:14 +0530
+Message-ID: <20180427114723.2687-6-kishon@ti.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427114723.2687-1-kishon@ti.com>
 References: <20180427114723.2687-1-kishon@ti.com>
@@ -27,61 +27,62 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-sdhci_omap_config_iodelay_pinctrl_state() requires caps and caps2 to be
-initialized (speed mode capabilities like UHS/HS200) before it is
-invoked. While mmc_of_parse() initializes caps/caps2 if capabilities is
-populated in device tree, it will remain uninitialized for capabilities
-obtained from SDHCI_CAPABILITIES register.
-Fix sdhci_omap_config_iodelay_pinctrl_state() to be used even while
-getting the capabilities from SDHCI_CAPABILITIES register by invoking
-sdhci_setup_host() before sdhci_omap_config_iodelay_pinctrl_state().
+The SDHCI controller in a SoC might support HS200/HS400 (indicated
+using mmc-hs200-1_8v/mmc-hs400-1_8v dt property), but if the board is
+modeled such that the IO lines are not connected to 1.8v then
+HS200/HS400 cannot be supported. Disable HS200/HS400 if the board
+does not have 1.8v connected to the IO lines. Also Disable DDR/UHS in 1.8v
+if the IO lines are not connected to 1.8v.
 
 Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 Acked-by: Tony Lindgren <tony@atomide.com>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 ---
- drivers/mmc/host/sdhci-omap.c | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+ drivers/mmc/host/sdhci.c | 10 ++++++++++
+ include/linux/mmc/host.h |  4 ++++
+ 2 files changed, 14 insertions(+)
 
-diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
-index 1456abd5eeb9..e7e43f2ae224 100644
---- a/drivers/mmc/host/sdhci-omap.c
-+++ b/drivers/mmc/host/sdhci-omap.c
-@@ -916,10 +916,6 @@ static int sdhci_omap_probe(struct platform_device *pdev)
- 		goto err_put_sync;
+diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+index 2ededa7f43df..0f3cdca3e769 100644
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -3672,6 +3672,16 @@ int sdhci_setup_host(struct sdhci_host *host)
+ 	if (host->quirks2 & SDHCI_QUIRK2_NO_1_8_V) {
+ 		host->caps1 &= ~(SDHCI_SUPPORT_SDR104 | SDHCI_SUPPORT_SDR50 |
+ 				 SDHCI_SUPPORT_DDR50);
++		/*
++		 * The SDHCI controller in a SoC might support HS200/HS400
++		 * (indicated using mmc-hs200-1_8v/mmc-hs400-1_8v dt property),
++		 * but if the board is modeled such that the IO lines are not
++		 * connected to 1.8v then HS200/HS400 cannot be supported.
++		 * Disable HS200/HS400 if the board does not have 1.8v connected
++		 * to the IO lines. (Applicable for other modes in 1.8v)
++		 */
++		mmc->caps2 &= ~(MMC_CAP2_HSX00_1_8V | MMC_CAP2_HS400_ES);
++		mmc->caps &= ~(MMC_CAP_1_8V_DDR | MMC_CAP_UHS);
  	}
  
--	ret = sdhci_omap_config_iodelay_pinctrl_state(omap_host);
--	if (ret)
--		goto err_put_sync;
--
- 	host->mmc_host_ops.get_ro = mmc_gpio_get_ro;
- 	host->mmc_host_ops.start_signal_voltage_switch =
- 					sdhci_omap_start_signal_voltage_switch;
-@@ -930,12 +926,23 @@ static int sdhci_omap_probe(struct platform_device *pdev)
- 	sdhci_read_caps(host);
- 	host->caps |= SDHCI_CAN_DO_ADMA2;
- 
--	ret = sdhci_add_host(host);
-+	ret = sdhci_setup_host(host);
- 	if (ret)
- 		goto err_put_sync;
- 
-+	ret = sdhci_omap_config_iodelay_pinctrl_state(omap_host);
-+	if (ret)
-+		goto err_cleanup_host;
-+
-+	ret = __sdhci_add_host(host);
-+	if (ret)
-+		goto err_cleanup_host;
-+
- 	return 0;
- 
-+err_cleanup_host:
-+	sdhci_cleanup_host(host);
-+
- err_put_sync:
- 	pm_runtime_put_sync(dev);
- 
+ 	/* Any UHS-I mode in caps implies SDR12 and SDR25 support. */
+diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
+index 7c6eaf63f5ce..8f1859044db1 100644
+--- a/include/linux/mmc/host.h
++++ b/include/linux/mmc/host.h
+@@ -320,6 +320,9 @@ struct mmc_host {
+ #define MMC_CAP_UHS_SDR50	(1 << 18)	/* Host supports UHS SDR50 mode */
+ #define MMC_CAP_UHS_SDR104	(1 << 19)	/* Host supports UHS SDR104 mode */
+ #define MMC_CAP_UHS_DDR50	(1 << 20)	/* Host supports UHS DDR50 mode */
++#define MMC_CAP_UHS		(MMC_CAP_UHS_SDR12 | MMC_CAP_UHS_SDR25 | \
++				 MMC_CAP_UHS_SDR50 | MMC_CAP_UHS_SDR104 | \
++				 MMC_CAP_UHS_DDR50)
+ /* (1 << 21) is free for reuse */
+ #define MMC_CAP_DRIVER_TYPE_A	(1 << 23)	/* Host supports Driver Type A */
+ #define MMC_CAP_DRIVER_TYPE_C	(1 << 24)	/* Host supports Driver Type C */
+@@ -345,6 +348,7 @@ struct mmc_host {
+ #define MMC_CAP2_HS400_1_2V	(1 << 16)	/* Can support HS400 1.2V */
+ #define MMC_CAP2_HS400		(MMC_CAP2_HS400_1_8V | \
+ 				 MMC_CAP2_HS400_1_2V)
++#define MMC_CAP2_HSX00_1_8V	(MMC_CAP2_HS200_1_8V_SDR | MMC_CAP2_HS400_1_8V)
+ #define MMC_CAP2_HSX00_1_2V	(MMC_CAP2_HS200_1_2V_SDR | MMC_CAP2_HS400_1_2V)
+ #define MMC_CAP2_SDIO_IRQ_NOTHREAD (1 << 17)
+ #define MMC_CAP2_NO_WRITE_PROTECT (1 << 18)	/* No physical write protect pin, assume that card is always read-write */
 -- 
 2.17.0
