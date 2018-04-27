@@ -1,73 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758865AbeD0RNU (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 13:13:20 -0400
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:16961 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758271AbeD0RNR (ORCPT
+        id S1758915AbeD0RSd (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 13:18:33 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:50710 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1758271AbeD0RSc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 13:13:17 -0400
-Subject: Re: [PATCH v6 5/7] remoteproc/davinci: use octal permissions for
- module_param()
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        David Lechner <david@lechnology.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20180417173038.25510-1-brgl@bgdev.pl>
- <20180417173038.25510-6-brgl@bgdev.pl>
-From: Suman Anna <s-anna@ti.com>
-Message-ID: <0bd29608-fe2c-50c8-3f8c-eb1b2f001a6d@ti.com>
-Date: Fri, 27 Apr 2018 12:11:54 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Fri, 27 Apr 2018 13:18:32 -0400
+Date: Fri, 27 Apr 2018 10:18:05 -0700
+From: Martin KaFai Lau <kafai@fb.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+CC: Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH 1/2] bpf: btf: silence uninitialize variable warnings
+Message-ID: <20180427171803.4zq3ts4owhhau6ds@kafai-mbp>
+References: <20180427140409.GA19583@mwanda>
 MIME-Version: 1.0
-In-Reply-To: <20180417173038.25510-6-brgl@bgdev.pl>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180427140409.GA19583@mwanda>
+User-Agent: NeoMutt/20171208
+X-Originating-IP: [192.168.52.123]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-27_05:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/17/2018 12:30 PM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Fri, Apr 27, 2018 at 05:04:09PM +0300, Dan Carpenter wrote:
+> Smatch complains that size can be uninitialized if btf_type_id_size()
+> returns NULL.  It seems reasonable enough to check for that.
 > 
-> Checkpatch recommends to use octal perms instead of S_IRUGO.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-
-Looks like you missed by Acked-by from v3, so adding it back
-
-Acked-by: Suman Anna <s-anna@ti.com>
-
-regards
-Suman
-
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > ---
->  drivers/remoteproc/da8xx_remoteproc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> This goes to the BPF tree (linux-next).
 > 
-> diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
-> index f134192922e0..b668e32996e2 100644
-> --- a/drivers/remoteproc/da8xx_remoteproc.c
-> +++ b/drivers/remoteproc/da8xx_remoteproc.c
-> @@ -25,7 +25,7 @@
->  #include "remoteproc_internal.h"
+> diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
+> index 22e1046a1a86..e631b6fd60d3 100644
+> --- a/kernel/bpf/btf.c
+> +++ b/kernel/bpf/btf.c
+> @@ -1229,7 +1229,8 @@ static int btf_array_check_member(struct btf_verifier_env *env,
+>  	}
 >  
->  static char *da8xx_fw_name;
-> -module_param(da8xx_fw_name, charp, S_IRUGO);
-> +module_param(da8xx_fw_name, charp, 0444);
->  MODULE_PARM_DESC(da8xx_fw_name,
->  		 "Name of DSP firmware file in /lib/firmware (if not specified defaults to 'rproc-dsp-fw')");
+>  	array_type_id = member->type;
+> -	btf_type_id_size(btf, &array_type_id, &array_size);
+> +	if (!btf_type_id_size(btf, &array_type_id, &array_size))
+> +		return -EINVAL;
+This check is not needed.  It does not happen for array.
+
+>  	struct_size = struct_type->size;
+>  	bytes_offset = BITS_ROUNDDOWN_BYTES(struct_bits_off);
+>  	if (struct_size - bytes_offset < array_size) {
+> @@ -1351,6 +1352,8 @@ static void btf_array_seq_show(const struct btf *btf, const struct btf_type *t,
 >  
-> 
+>  	elem_type_id = array->type;
+>  	elem_type = btf_type_id_size(btf, &elem_type_id, &elem_size);
+> +	if (!elem_type)
+> +		return;
+This case has already been checked in verification phase.  No need
+to recheck everything again..
+
+>  	elem_ops = btf_type_ops(elem_type);
+>  	seq_puts(m, "[");
+>  	for (i = 0; i < array->nelems; i++) {
