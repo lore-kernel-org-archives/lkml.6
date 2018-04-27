@@ -1,79 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757601AbeD0Hzm (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 03:55:42 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52024 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1757536AbeD0Hzj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 03:55:39 -0400
-Subject: Re: [PATCH] perf test: Adapt test case record+probe_libc_inet_pton.sh
- for s390
-To: Martin Vuille <jpmv27@aim.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com
-References: <20180412081959.85193-1-tmricht@linux.ibm.com>
- <20180412131012.GC9818@kernel.org>
- <25418aa4-60bb-9f16-c880-8caaf8a20931@aim.com>
- <151b93fd-8e12-4abf-1e69-329de6eab777@linux.ibm.com>
- <57ea75b8-cebd-0ca2-0e4e-acf2beb6e981@aim.com>
-From: Thomas-Mich Richter <tmricht@linux.ibm.com>
-Organization: IBM LTC
-Date: Fri, 27 Apr 2018 09:55:33 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1757620AbeD0H5A (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 03:57:00 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:50454 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1757518AbeD0H46 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 03:56:58 -0400
+Date: Fri, 27 Apr 2018 09:56:45 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Marek Vasut <marex@denx.de>, David Woodhouse <dwmw2@infradead.org>,
+        Richard Weinberger <richard@nod.at>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] mtd: Fixes for 4.17-rc3
+Message-ID: <20180427095645.5e583c24@bbrezillon>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <57ea75b8-cebd-0ca2-0e4e-acf2beb6e981@aim.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18042707-0040-0000-0000-000004339E7F
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18042707-0041-0000-0000-00002637A93D
-Message-Id: <a9448c11-2843-c82f-34d3-e9c96db346cf@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-27_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804270078
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/26/2018 05:26 PM, Martin Vuille wrote:
-> 
-> 
-> On 04/26/18 04:09, Thomas-Mich Richter wrote:
->> was different. With you patch it changed from /usr/lib64/libc.so (old) to
->> /usr/lib/debug/lib64/libc-2.26.so.debug (new)
->>
-> Thomas,
-> 
-> Can you tell me what 'file' reports for the old and new files?
-> 
-> Regards,
-> MV
-> 
+Hello Linus,
 
-Martin,
+Here is the MTD fixes PR for 4.17-rc3.
 
-not sure I understand your question:
+Regards,
 
-Before your patch the file which was picked by dwarf was
-/usr/lib64/libc.so
+Boris
 
-With your patch file which was picked by dwarf was 
-/usr/lib/debug/lib64/libc-2.26.so.debug
+The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
 
-Was this your question?
--- 
-Thomas Richter, Dept 3303, IBM s390 Linux Development, Boeblingen, Germany
---
-Vorsitzende des Aufsichtsrats: Martina Koederitz 
-Geschäftsführung: Dirk Wittkopp
-Sitz der Gesellschaft: Böblingen / Registergericht: Amtsgericht Stuttgart, HRB 243294
+  Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
+
+are available in the git repository at:
+
+  git://git.infradead.org/linux-mtd.git tags/mtd/fixes-for-4.17-rc3
+
+for you to fetch changes up to f6997bec6af43396ff530caee79e178d32774a49:
+
+  mtd: rawnand: marvell: fix the chip-select DT parsing logic (2018-04-26 19:06:42 +0200)
+
+----------------------------------------------------------------
+* Fix nanddev_mtd_erase() function to match the changes done in
+  e7bfb3fdbde3 ("mtd: Stop updating erase_info->state and calling
+  mtd_erase_callback()")
+* Fix a memory leak in the Tango NAND controller driver
+* Fix read/write to a suspended erase block in the CFI driver
+* Fix the DT parsing logic in the Marvell NAND controller driver
+
+----------------------------------------------------------------
+Boris Brezillon (1):
+      mtd: nand: Fix nanddev_mtd_erase()
+
+Joakim Tjernlund (3):
+      mtd: cfi: cmdset_0001: Do not allow read/write to suspend erase block.
+      mtd: cfi: cmdset_0001: Workaround Micron Erase suspend bug.
+      mtd: cfi: cmdset_0002: Do not allow read/write to suspend erase block.
+
+Marc Gonzalez (1):
+      mtd: rawnand: tango: Fix struct clk memory leak
+
+Miquel Raynal (1):
+      mtd: rawnand: marvell: fix the chip-select DT parsing logic
+
+Thor Thayer (1):
+      mtd: spi-nor: cadence-quadspi: Fix page fault kernel panic
+
+ drivers/mtd/chips/cfi_cmdset_0001.c   | 33 ++++++++++++++++++++++++++++-----
+ drivers/mtd/chips/cfi_cmdset_0002.c   |  9 ++++++---
+ drivers/mtd/nand/core.c               |  3 ---
+ drivers/mtd/nand/raw/marvell_nand.c   | 25 ++++++++-----------------
+ drivers/mtd/nand/raw/tango_nand.c     |  2 +-
+ drivers/mtd/spi-nor/cadence-quadspi.c | 19 +++++++++++++++++--
+ include/linux/mtd/flashchip.h         |  1 +
+ 7 files changed, 61 insertions(+), 31 deletions(-)
