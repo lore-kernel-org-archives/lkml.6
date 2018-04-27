@@ -1,138 +1,206 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3800878-1524812920-2-7969464314878161512
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524812919; b=DnuGSP62FHv6AJ8vcw7G0mFs0lEOpmHcTW89HSCtwyOtTCqyH0
-    xShX+PTTVajvKIKdWyGTih3726AzXzt/H+wtR12qevWq+wbsHZxeurR3QLj2gqZN
-    eqdL8+vrNRgz4RVwmeh+0n2iD6CLQK5G4xfUGKxl0lZu+38p6Dg00q+5DC6523i2
-    fegOwYKwdjsFPBa9nDqlkjjb51z9cQbmpJ+boBx1zL8tMOEW6D1cobGItIZHXM0h
-    UuIOudrLyZuccDUvYkPDrabosWt/J+/PYvBXGWJgk6N59N/LEFvn0FTMJ0GlGpfI
-    M2yEa4HzKuYSvMeRMzmfIPmBpUt008+CDmMg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1524812919; bh=YtwCHq/X7B8YwwGxAdyYwFbnGqliTs
-    ho9LWgI6hzDMg=; b=Hwcm2D8douZI+gm7OewKtz0quhh+G18d8tBKmcHwfiGBD5
-    oI3NYEwvL4jwPl09vhUPSXgshbEAF99p4jSnBg0ATqgPHbmtdQ4QYsMmvCWghA3f
-    ztki6Pie32maAeQdfF84IeqeXxl+6RMt1ymyBe9gDknFrGEE6aunNuYtOVlV1P/s
-    kIpQC61PFED75CJCy3ldOKSDRTh9VGsjb3l+OMnwk3QBWV94+Xg2KxX7wEU1QdMv
-    g2dYkLVrmokYxhKTH+Gos1LEY8j/AJ8LbRKQFzVfUhxnA6F7vteJHMdoSbFy/ZK0
-    iCuF9EyqqPCY7NMXmYdrqQkX55dWlFo2pi66nMvw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfD8JcyPHuKMo8+6KaUMR9KU8ohha6muSFv45r6iSMBu3+3Da0ZL7Q4wtfchCXAs/bA00m2mN7OwfNl88pzskiHqt3zjB/4h6UWrTlP+1sJbf3YGJZP5Q
-    Kp8MrBZhXuk/Y2In2i+KH2E9HmuB+0GhByORgQGQCNxn7zUeTAv9ywCBfZYk4iozVgK+MfR2UAY0Ixc+J6+sS1lbV1nZniSHwYRCRuFT3yCfld1n1asrsQFH
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=VwQbUJbxAAAA:8 a=yPCof4ZbAAAA:8 a=iox4zFpeAAAA:8 a=KpxBfPu5LOzXpxnn_V0A:9
-    a=CjuIK1q_8ugA:10 a=1R1Xb7_w0-cA:10 a=OREKyDgYLcYA:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=WzC6qhA0u3u7Ye7llzcV:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757406AbeD0HIi (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 27 Apr 2018 03:08:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36522 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1757367AbeD0HIh (ORCPT <rfc822;stable@vger.kernel.org>);
-        Fri, 27 Apr 2018 03:08:37 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4DE021864
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
-Date: Fri, 27 Apr 2018 09:08:28 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        akpm@linux-foundation.org, kirill.shutemov@linux.intel.com,
-        linux-kernel@vger.kernel.org, mhocko@suse.com, linux-mm@kvack.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH] mm: sections are not offlined during memory hotremove
-Message-ID: <20180427070828.GC4931@kroah.com>
-References: <20180426203002.3151-1-pasha.tatashin@oracle.com>
+Return-Path: <0be70181.ANAAAAYeH9kAAAAAAAAAAADFWYUAAAASzIYAAAAAAArW7ABa4rkP@bnc3.mailjet.com>
+X-Google-Smtp-Source: AB8JxZrF0iagmCltpVBJKG+CEbnLcle2ycCECz+df2+4mMQNsmhcKMxSpM5PuAJeUc+owkizyxBn
+ARC-Seal: i=1; a=rsa-sha256; t=1524807952; cv=none;
+        d=google.com; s=arc-20160816;
+        b=axVXSMvrRw15o5lSGy25LKdczBOix4LNiHSnw8zSRQsxhksoB5jZKLADTBSFvvI+Iy
+         wsH2ZV0Ca++WcZoxKkzEvS8PwIv4ZL4aKVAGHEKS4c59Uz5nc7VeMwOUgozkZz/43lCV
+         RhF2GLQ8gYuWlHu1ndt3tu2pQ4giB2YXRSulaOpswOSq0sBC9+Enhd9UKwbD+1BYPcbK
+         uaXjnn82vDVz2u62ZRtXvkIev/y2c60OmNsvYOLoKw4SLOOZoQVfsTjypsKXo5bgkiFA
+         0FK6QlQO+4wCuKBwW5byzgqeYoipIIqoGsA2fwkAW39Gjd0hC9HOY3eSfOfHSDGdLGLz
+         rrlA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:mime-version:cc:list-unsubscribe:date
+         :subject:to:from:message-id:dkim-signature
+         :arc-authentication-results;
+        bh=mdlAxiZbKtYZY9Ff2n2LCVOT/T2oAQvnHRDYa9pOe1I=;
+        b=lw3MRQwtegKXWbvxa6YceNZCkgyLDtaZkk6oFNBS2M7MQoBp5PIrMEdHoTVsTnd1N7
+         3jd1ghhBcnZEIkWpd2W9hxWrlUcKZR/CK3Mk8+o5p0JVJFzpj9LTwZPToEiekBdeD1gB
+         G5IIrYI03LlN60ycLH5uEDLSZWHE2X4MbD+I/CkxQPNeXAF1vEQ3ek/m2pxQnWyR3ltj
+         bfUT6DNOere8bRoZoczXrfAZ6vASjcsNNJxUpZ9qnBjY+JVC/A5bRbmHJeEOcI6hG/2p
+         MStrOXhna3bxtC6H6CD8d6FEBGRdjPnZdy3Y5uKbRHCnkm/5Mz5sxzbHLyHp+paYf8c4
+         Bt8g==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=fail header.i=@elg.io header.s=mailjet header.b=c1d1TNB/;
+       spf=pass (google.com: domain of 0be70181.anaaaayeh9kaaaaaaaaaaadfwyuaaaasziyaaaaaaarw7aba4rkp@bnc3.mailjet.com designates 87.253.234.128 as permitted sender) smtp.mailfrom=0be70181.ANAAAAYeH9kAAAAAAAAAAADFWYUAAAASzIYAAAAAAArW7ABa4rkP@bnc3.mailjet.com
+Authentication-Results: mx.google.com;
+       dkim=fail header.i=@elg.io header.s=mailjet header.b=c1d1TNB/;
+       spf=pass (google.com: domain of 0be70181.anaaaayeh9kaaaaaaaaaaadfwyuaaaasziyaaaaaaarw7aba4rkp@bnc3.mailjet.com designates 87.253.234.128 as permitted sender) smtp.mailfrom=0be70181.ANAAAAYeH9kAAAAAAAAAAADFWYUAAAASzIYAAAAAAArW7ABa4rkP@bnc3.mailjet.com
+Message-Id: <0be70181.ANAAAAYeH9kAAAAAAAAAAADFWYUAAAASzIYAAAAAAArW7ABa4rkP@mailjet.com>
+From: Efstratios Gavas <xtrat@elg.io>
+To: xtrat@elg.io
+Subject: [PATCH] Staging: wlan-ng: prism2sta: fixed indent coding style
+ issues.
+Date: Fri, 27 Apr 2018 05:45:07 +0000
+List-Unsubscribe: <mailto:unsub-0be70181.7334.s31zvq6m2lt8@bnc3.mailjet.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, AbdAllah-MEZITI
+	<abdallah.meziti.pro@gmail.com>, Thibaut SAUTEREAU
+	<thibaut.sautereau@telecom-sudparis.eu>, Aviv Palivoda <palaviv@gmail.com>,
+	devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+X-CSA-Complaints: whitelist-complaints@eco.de
+X-MJ-Mid: ANAAAAYeH9kAAAAAAAAAAADFWYUAAAASzIYAAAAAAArW7ABa4rkPD_LPFWWXQ3mYqOO859jNHwAKs_E
+X-MJ-SMTPGUID: 946aed3e-7cb9-47d5-b0da-f1cb78af501e
+X-REPORT-ABUSE-TO: Message sent by Mailjet please report to
+	abuse@mailjet.com with a copy of the message
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180426203002.3151-1-pasha.tatashin@oracle.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1598877023838012015?=
+X-GMAIL-MSGID: =?utf-8?q?1598877023838012015?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Apr 26, 2018 at 04:30:02PM -0400, Pavel Tatashin wrote:
-> Memory hotplug, and hotremove operate with per-block granularity. If
-> machine has large amount of memory (more than 64G), the size of memory
-> block can span multiple sections. By mistake, during hotremove we set
-> only the first section to offline state.
-> 
-> The bug was discovered because kernel selftest started to fail:
-> https://lkml.kernel.org/r/20180423011247.GK5563@yexl-desktop
-> 
-> After commit, "mm/memory_hotplug: optimize probe routine". But, the bug is
-> older than this commit. In this optimization we also added a check for
-> sections to be in a proper state during hotplug operation.
-> 
-> Fixes: 2d070eab2e82 ("mm: consider zone which is not fully populated to have holes")
-> 
-> Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
-> Acked-by: Michal Hocko <mhocko@suse.com>
-> ---
->  mm/sparse.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/mm/sparse.c b/mm/sparse.c
-> index 62eef264a7bd..73dc2fcc0eab 100644
-> --- a/mm/sparse.c
-> +++ b/mm/sparse.c
-> @@ -629,7 +629,7 @@ void offline_mem_sections(unsigned long start_pfn, unsigned long end_pfn)
->  	unsigned long pfn;
->  
->  	for (pfn = start_pfn; pfn < end_pfn; pfn += PAGES_PER_SECTION) {
-> -		unsigned long section_nr = pfn_to_section_nr(start_pfn);
-> +		unsigned long section_nr = pfn_to_section_nr(pfn);
->  		struct mem_section *ms;
->  
->  		/*
-> -- 
-> 2.17.0
+Fixed coding style issues.
+Signed-off-by: Efstratios Gavas <xtrat@elg.io>
+---
+ drivers/staging/wlan-ng/prism2sta.c | 52 +++++++++++++++++----------------=
+----
+ 1 file changed, 24 insertions(+), 28 deletions(-)
 
-<formletter>
+diff --git a/drivers/staging/wlan-ng/prism2sta.c b/drivers/staging/wlan-ng/=
+prism2sta.c
+index fed0b8ceca6f..914970249680 100644
+--- a/drivers/staging/wlan-ng/prism2sta.c
++++ b/drivers/staging/wlan-ng/prism2sta.c
+@@ -764,16 +764,16 @@ static int prism2sta_getcardinfo(struct wlandevice *w=
+landev)
+=20
+ 	if (hw->cap_sup_sta.id =3D=3D 0x04) {
+ 		netdev_info(wlandev->netdev,
+-		       "STA:SUP:role=3D0x%02x:id=3D0x%02x:var=3D0x%02x:b/t=3D%d/%d\n",
+-		       hw->cap_sup_sta.role, hw->cap_sup_sta.id,
+-		       hw->cap_sup_sta.variant, hw->cap_sup_sta.bottom,
+-		       hw->cap_sup_sta.top);
++			    "STA:SUP:role=3D0x%02x:id=3D0x%02x:var=3D0x%02x:b/t=3D%d/%d\n",
++			    hw->cap_sup_sta.role, hw->cap_sup_sta.id,
++			    hw->cap_sup_sta.variant, hw->cap_sup_sta.bottom,
++			    hw->cap_sup_sta.top);
+ 	} else {
+ 		netdev_info(wlandev->netdev,
+-		       "AP:SUP:role=3D0x%02x:id=3D0x%02x:var=3D0x%02x:b/t=3D%d/%d\n",
+-		       hw->cap_sup_sta.role, hw->cap_sup_sta.id,
+-		       hw->cap_sup_sta.variant, hw->cap_sup_sta.bottom,
+-		       hw->cap_sup_sta.top);
++			    "AP:SUP:role=3D0x%02x:id=3D0x%02x:var=3D0x%02x:b/t=3D%d/%d\n",
++			    hw->cap_sup_sta.role, hw->cap_sup_sta.id,
++			    hw->cap_sup_sta.variant, hw->cap_sup_sta.bottom,
++			    hw->cap_sup_sta.top);
+ 	}
+=20
+ 	/* Compatibility range, primary f/w actor, CFI supplier */
+@@ -1189,7 +1189,6 @@ void prism2sta_processing_defer(struct work_struct *d=
+ata)
+ 			inf =3D (struct hfa384x_inf_frame *)skb->data;
+ 			prism2sta_inf_authreq_defer(wlandev, inf);
+ 		}
+-
+ 	}
+=20
+ 	/* Now let's handle the linkstatus stuff */
+@@ -1241,9 +1240,9 @@ void prism2sta_processing_defer(struct work_struct *d=
+ata)
+ 			/* Collect the BSSID, and set state to allow tx */
+=20
+ 			result =3D hfa384x_drvr_getconfig(hw,
+-						HFA384x_RID_CURRENTBSSID,
+-						wlandev->bssid,
+-						WLAN_BSSID_LEN);
++							HFA384x_RID_CURRENTBSSID,
++							wlandev->bssid,
++							WLAN_BSSID_LEN);
+ 			if (result) {
+ 				pr_debug
+ 				    ("getconfig(0x%02x) failed, result =3D %d\n",
+@@ -1260,14 +1259,13 @@ void prism2sta_processing_defer(struct work_struct =
+*data)
+ 				     HFA384x_RID_CURRENTSSID, result);
+ 				return;
+ 			}
+-			prism2mgmt_bytestr2pstr(
+-					(struct hfa384x_bytestr *)&ssid,
+-					(struct p80211pstrd *)&wlandev->ssid);
++			prism2mgmt_bytestr2pstr((struct hfa384x_bytestr *)&ssid,
++						(struct p80211pstrd *)&wlandev->ssid);
+=20
+ 			/* Collect the port status */
+ 			result =3D hfa384x_drvr_getconfig16(hw,
+-							HFA384x_RID_PORTSTATUS,
+-							&portstatus);
++							  HFA384x_RID_PORTSTATUS,
++							  &portstatus);
+ 			if (result) {
+ 				pr_debug
+ 				    ("getconfig(0x%02x) failed, result =3D %d\n",
+@@ -1404,7 +1402,7 @@ void prism2sta_processing_defer(struct work_struct *d=
+ata)
+ 					       &joinreq,
+ 					       HFA384x_RID_JOINREQUEST_LEN);
+ 			netdev_info(wlandev->netdev,
+-			       "linkstatus=3DASSOCFAIL (re-submitting join)\n");
++				    "linkstatus=3DASSOCFAIL (re-submitting join)\n");
+ 		} else {
+ 			netdev_info(wlandev->netdev, "linkstatus=3DASSOCFAIL (unhandled)\n");
+ 		}
+@@ -1501,7 +1499,7 @@ static void prism2sta_inf_assocstatus(struct wlandevi=
+ce *wlandev,
+ 	if (i >=3D hw->authlist.cnt) {
+ 		if (rec.assocstatus !=3D HFA384x_ASSOCSTATUS_AUTHFAIL)
+ 			netdev_warn(wlandev->netdev,
+-	"assocstatus info frame received for non-authenticated station.\n");
++				    "assocstatus info frame received for non-authenticated station.\n"=
+);
+ 	} else {
+ 		hw->authlist.assoc[i] =3D
+ 		    (rec.assocstatus =3D=3D HFA384x_ASSOCSTATUS_STAASSOC ||
+@@ -1509,7 +1507,7 @@ static void prism2sta_inf_assocstatus(struct wlandevi=
+ce *wlandev,
+=20
+ 		if (rec.assocstatus =3D=3D HFA384x_ASSOCSTATUS_AUTHFAIL)
+ 			netdev_warn(wlandev->netdev,
+-"authfail assocstatus info frame received for authenticated station.\n");
++				    "authfail assocstatus info frame received for authenticated statio=
+n.\n");
+ 	}
+ }
+=20
+@@ -1674,9 +1672,8 @@ static void prism2sta_inf_authreq_defer(struct wlande=
+vice *wlandev,
+ 			if (hw->authlist.cnt >=3D WLAN_AUTH_MAX) {
+ 				rec.status =3D cpu_to_le16(P80211ENUM_status_ap_full);
+ 			} else {
+-				ether_addr_copy(
+-					hw->authlist.addr[hw->authlist.cnt],
+-					rec.address);
++				ether_addr_copy(hw->authlist.addr[hw->authlist.cnt],
++						rec.address);
+ 				hw->authlist.cnt++;
+ 				added =3D 1;
+ 			}
+@@ -1697,8 +1694,8 @@ static void prism2sta_inf_authreq_defer(struct wlande=
+vice *wlandev,
+ 		if (added)
+ 			hw->authlist.cnt--;
+ 		netdev_err(wlandev->netdev,
+-		       "setconfig(authenticatestation) failed, result=3D%d\n",
+-		       result);
++			   "setconfig(authenticatestation) failed, result=3D%d\n",
++			   result);
+ 	}
+ }
+=20
+@@ -1937,9 +1934,8 @@ void prism2sta_commsqual_defer(struct work_struct *da=
+ta)
+=20
+ 	/* It only makes sense to poll these in non-IBSS */
+ 	if (wlandev->macmode !=3D WLAN_MACMODE_IBSS_STA) {
+-		result =3D hfa384x_drvr_getconfig(
+-				hw, HFA384x_RID_DBMCOMMSQUALITY,
+-				&hw->qual, HFA384x_RID_DBMCOMMSQUALITY_LEN);
++		result =3D hfa384x_drvr_getconfig(hw, HFA384x_RID_DBMCOMMSQUALITY,
++						&hw->qual, HFA384x_RID_DBMCOMMSQUALITY_LEN);
+=20
+ 		if (result) {
+ 			netdev_err(wlandev->netdev, "error fetching commsqual\n");
+--=20
+2.11.0
 
-This is not the correct way to submit patches for inclusion in the
-stable kernel tree.  Please read:
-    https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
-for how to do this properly.
-
-</formletter>
+=
