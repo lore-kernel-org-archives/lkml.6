@@ -1,199 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757689AbeD0ITt (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 04:19:49 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:38294 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757587AbeD0ITp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 04:19:45 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F324C60881
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-From: Taniya Das <tdas@codeaurora.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Odelu Kukatla <okukatla@codeaurora.org>,
-        Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH] clk: qcom: gdsc: Add support to poll CFG register to check GDSC state
-Date: Fri, 27 Apr 2018 13:49:31 +0530
-Message-Id: <1524817171-7258-1-git-send-email-tdas@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        id S1757732AbeD0IZp convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 04:25:45 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:51311 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1757587AbeD0IZl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 04:25:41 -0400
+Date: Fri, 27 Apr 2018 10:25:28 +0200
+From: =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@bootlin.com>
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: linux@armlinux.org.uk, wens@csie.org, marc.zyngier@arm.com,
+        mark.rutland@arm.com, robh+dt@kernel.org, horms@verge.net.au,
+        geert@linux-m68k.org, magnus.damm@gmail.com,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
+        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 06/11] ARM: sunxi: Add initialization of CNTVOFF
+Message-ID: <20180427102528.04b8e5c1@dell-desktop.home>
+In-Reply-To: <20180423081609.dirsitco3aeaqztx@flea>
+References: <20180420211022.11759-1-mylene.josserand@bootlin.com>
+        <20180420211022.11759-7-mylene.josserand@bootlin.com>
+        <20180423081609.dirsitco3aeaqztx@flea>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Amit Nischal <anischal@codeaurora.org>
+Hello Maxime,
 
-The default behavior of the GDSC enable/disable sequence is to
-poll the status bits of either the actual GDSCR or the
-corresponding HW_CTRL registers.
+Thanks for your review.
 
-On targets which have support for a CFG_GDSCR register, the
-status bits might not show the correct state of the GDSC,
-especially in the disable sequence, where the status bit
-will be cleared even before the core is completely power
-collapsed. On targets with this issue, poll the power on/off
-bits in the CFG_GDSCR register instead to correctly determine
-the GDSC state.
+On Mon, 23 Apr 2018 10:16:09 +0200
+Maxime Ripard <maxime.ripard@bootlin.com> wrote:
 
-Signed-off-by: Amit Nischal <anischal@codeaurora.org>
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
----
- drivers/clk/qcom/gdsc.c | 42 ++++++++++++++++++++++++++----------------
- drivers/clk/qcom/gdsc.h |  1 +
- 2 files changed, 27 insertions(+), 16 deletions(-)
+> On Fri, Apr 20, 2018 at 11:10:17PM +0200, Mylène Josserand wrote:
+> > Add the initialization of CNTVOFF for sun8i-a83t.
+> > 
+> > For boot CPU, create a new machine that handles this
+> > function's call in an "init_early" callback. We need to initialize
+> > CNTVOFF before the arch timer's initialization otherwise, it will
+> > not be taken into account and fails to boot correctly.
+> > Because of that, this function can't be called in SMP's early_initcall
+> > function which is called after timer's init.
+> > 
+> > For secondary CPUs, add this function into secondary_startup
+> > assembly entry.
+> > 
+> > Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
+> > ---
+> >  arch/arm/mach-sunxi/headsmp.S |  1 +
+> >  arch/arm/mach-sunxi/sunxi.c   | 20 +++++++++++++++++++-
+> >  2 files changed, 20 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/arm/mach-sunxi/headsmp.S b/arch/arm/mach-sunxi/headsmp.S
+> > index 37dc772701f3..32d76be98541 100644
+> > --- a/arch/arm/mach-sunxi/headsmp.S
+> > +++ b/arch/arm/mach-sunxi/headsmp.S
+> > @@ -71,6 +71,7 @@ ENDPROC(sunxi_mc_smp_cluster_cache_enable)
+> >  
+> >  ENTRY(sunxi_mc_smp_secondary_startup)
+> >  	bl	sunxi_mc_smp_cluster_cache_enable
+> > +	bl	secure_cntvoff_init
+> >  	b	secondary_startup
+> >  ENDPROC(sunxi_mc_smp_secondary_startup)
+> >  
+> > diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
+> > index 5e9602ce1573..ddc439f6269b 100644
+> > --- a/arch/arm/mach-sunxi/sunxi.c
+> > +++ b/arch/arm/mach-sunxi/sunxi.c
+> > @@ -16,6 +16,7 @@
+> >  #include <linux/platform_device.h>
+> >  
+> >  #include <asm/mach/arch.h>
+> > +#include <asm/secure_cntvoff.h>
+> >  
+> >  static const char * const sunxi_board_dt_compat[] = {
+> >  	"allwinner,sun4i-a10",
+> > @@ -62,7 +63,6 @@ MACHINE_END
+> >  static const char * const sun8i_board_dt_compat[] = {
+> >  	"allwinner,sun8i-a23",
+> >  	"allwinner,sun8i-a33",
+> > -	"allwinner,sun8i-a83t",
+> >  	"allwinner,sun8i-h2-plus",
+> >  	"allwinner,sun8i-h3",
+> >  	"allwinner,sun8i-r40",
+> > @@ -75,6 +75,24 @@ DT_MACHINE_START(SUN8I_DT, "Allwinner sun8i Family")
+> >  	.dt_compat	= sun8i_board_dt_compat,
+> >  MACHINE_END
+> >  
+> > +void __init sun8i_cntvoff_init(void)
+> > +{
+> > +#ifdef CONFIG_SMP
+> > +	secure_cntvoff_init();
+> > +#endif
+> > +}
+> > +
+> > +static const char * const sun8i_cntvoff_board_dt_compat[] = {
+> > +	"allwinner,sun8i-a83t",
+> > +	NULL,
+> > +};
+> > +
+> > +DT_MACHINE_START(SUN8I_CNTVOFF_DT, "Allwinner sun8i-a83t board")  
+> 
+> This name still doesn't really make much sense. It's an A83t, that's
+> it.
 
-diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-index a4f3580..f8a9501 100644
---- a/drivers/clk/qcom/gdsc.c
-+++ b/drivers/clk/qcom/gdsc.c
-@@ -32,6 +32,11 @@
- #define SW_COLLAPSE_MASK	BIT(0)
- #define GMEM_CLAMP_IO_MASK	BIT(0)
+True, I forgot this one, sorry.
 
-+/* CFG_GDSCR */
-+#define GDSC_POWER_UP_COMPLETE		BIT(16)
-+#define GDSC_POWER_DOWN_COMPLETE	BIT(15)
-+#define CFG_GDSCR_OFFSET		0x4
-+
- /* Wait 2^n CXO cycles between all states. Here, n=2 (4 cycles). */
- #define EN_REST_WAIT_VAL	(0x2 << 20)
- #define EN_FEW_WAIT_VAL		(0x8 << 16)
-@@ -44,15 +49,28 @@
+> 
+> Apart from the other minor comment I had, and once that name has been
+> fixed:
+> Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> 
+> Maxime
+> 
 
- #define domain_to_gdsc(domain) container_of(domain, struct gdsc, pd)
+Thank you!
 
--static int gdsc_is_enabled(struct gdsc *sc, unsigned int reg)
-+static int gdsc_is_enabled(struct gdsc *sc, bool en)
- {
-+	unsigned int reg;
- 	u32 val;
- 	int ret;
+Best regards,
 
-+	if (sc->flags & POLL_CFG_GDSCR)
-+		reg = sc->gdscr + CFG_GDSCR_OFFSET;
-+	else
-+		reg = sc->gds_hw_ctrl ?  sc->gds_hw_ctrl : sc->gdscr;
-+
- 	ret = regmap_read(sc->regmap, reg, &val);
- 	if (ret)
- 		return ret;
-
-+	if (sc->flags & POLL_CFG_GDSCR) {
-+		if (en)
-+			return !!(val & GDSC_POWER_UP_COMPLETE);
-+		else
-+			return !(val & GDSC_POWER_DOWN_COMPLETE);
-+	}
-+
- 	return !!(val & PWR_ON_MASK);
- }
-
-@@ -63,17 +81,17 @@ static int gdsc_hwctrl(struct gdsc *sc, bool en)
- 	return regmap_update_bits(sc->regmap, sc->gdscr, HW_CONTROL_MASK, val);
- }
-
--static int gdsc_poll_status(struct gdsc *sc, unsigned int reg, bool en)
-+static int gdsc_poll_status(struct gdsc *sc, bool en)
- {
- 	ktime_t start;
-
- 	start = ktime_get();
- 	do {
--		if (gdsc_is_enabled(sc, reg) == en)
-+		if (gdsc_is_enabled(sc, en) == en)
- 			return 0;
- 	} while (ktime_us_delta(ktime_get(), start) < TIMEOUT_US);
-
--	if (gdsc_is_enabled(sc, reg) == en)
-+	if (gdsc_is_enabled(sc, en) == en)
- 		return 0;
-
- 	return -ETIMEDOUT;
-@@ -83,7 +101,6 @@ static int gdsc_toggle_logic(struct gdsc *sc, bool en)
- {
- 	int ret;
- 	u32 val = en ? 0 : SW_COLLAPSE_MASK;
--	unsigned int status_reg = sc->gdscr;
-
- 	ret = regmap_update_bits(sc->regmap, sc->gdscr, SW_COLLAPSE_MASK, val);
- 	if (ret)
-@@ -100,8 +117,7 @@ static int gdsc_toggle_logic(struct gdsc *sc, bool en)
- 		return 0;
- 	}
-
--	if (sc->gds_hw_ctrl) {
--		status_reg = sc->gds_hw_ctrl;
-+	if (sc->gds_hw_ctrl)
- 		/*
- 		 * The gds hw controller asserts/de-asserts the status bit soon
- 		 * after it receives a power on/off request from a master.
-@@ -113,9 +129,8 @@ static int gdsc_toggle_logic(struct gdsc *sc, bool en)
- 		 * and polling the status bit.
- 		 */
- 		udelay(1);
--	}
-
--	return gdsc_poll_status(sc, status_reg, en);
-+	return gdsc_poll_status(sc, en);
- }
-
- static inline int gdsc_deassert_reset(struct gdsc *sc)
-@@ -222,8 +237,6 @@ static int gdsc_disable(struct generic_pm_domain *domain)
-
- 	/* Turn off HW trigger mode if supported */
- 	if (sc->flags & HW_CTRL) {
--		unsigned int reg;
--
- 		ret = gdsc_hwctrl(sc, false);
- 		if (ret < 0)
- 			return ret;
-@@ -235,8 +248,7 @@ static int gdsc_disable(struct generic_pm_domain *domain)
- 		 */
- 		udelay(1);
-
--		reg = sc->gds_hw_ctrl ? sc->gds_hw_ctrl : sc->gdscr;
--		ret = gdsc_poll_status(sc, reg, true);
-+		ret = gdsc_poll_status(sc, true);
- 		if (ret)
- 			return ret;
- 	}
-@@ -258,7 +270,6 @@ static int gdsc_init(struct gdsc *sc)
- {
- 	u32 mask, val;
- 	int on, ret;
--	unsigned int reg;
-
- 	/*
- 	 * Disable HW trigger: collapse/restore occur based on registers writes.
-@@ -279,8 +290,7 @@ static int gdsc_init(struct gdsc *sc)
- 			return ret;
- 	}
-
--	reg = sc->gds_hw_ctrl ? sc->gds_hw_ctrl : sc->gdscr;
--	on = gdsc_is_enabled(sc, reg);
-+	on = gdsc_is_enabled(sc, true);
- 	if (on < 0)
- 		return on;
-
-diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
-index 3964834..ac5f844 100644
---- a/drivers/clk/qcom/gdsc.h
-+++ b/drivers/clk/qcom/gdsc.h
-@@ -53,6 +53,7 @@ struct gdsc {
- #define VOTABLE		BIT(0)
- #define CLAMP_IO	BIT(1)
- #define HW_CTRL		BIT(2)
-+#define POLL_CFG_GDSCR  BIT(5)
- 	struct reset_controller_dev	*rcdev;
- 	unsigned int			*resets;
- 	unsigned int			reset_count;
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+-- 
+Mylène Josserand, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
