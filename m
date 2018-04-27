@@ -1,110 +1,241 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932708AbeD0KpP (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 06:45:15 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:50468 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932415AbeD0KpN (ORCPT
+        id S932745AbeD0Kxr (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 06:53:47 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51270 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932415AbeD0Kxp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 06:45:13 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 49C7960390
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
-Subject: Re: [PATCH v4 1/5] dt-bindings: reset: Add AOSS reset bindings for
- SDM845 SoCs
-To: Philipp Zabel <p.zabel@pengutronix.de>, bjorn.andersson@linaro.org,
-        robh+dt@kernel.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, georgi.djakov@linaro.org,
-        jassisinghbrar@gmail.com, ohad@wizery.com, mark.rutland@arm.com,
-        kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
-References: <20180425150843.26657-1-sibis@codeaurora.org>
- <20180425150843.26657-2-sibis@codeaurora.org>
- <1524824650.17614.4.camel@pengutronix.de>
-From: Sibi S <sibis@codeaurora.org>
-Message-ID: <9e5ed0e1-e397-68f4-281b-6df09c8c125e@codeaurora.org>
-Date: Fri, 27 Apr 2018 16:15:06 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
-MIME-Version: 1.0
-In-Reply-To: <1524824650.17614.4.camel@pengutronix.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Fri, 27 Apr 2018 06:53:45 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        alsa-devel@alsa-project.org, Jassi Brar <jaswinder.singh@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: uniphier: remove boilerplate from lisence comment" to the asoc tree
+In-Reply-To: <20180427052734.3506-1-suzuki.katsuhiro@socionext.com>
+Message-Id: <E1fC10U-0003Q0-5e@debutante>
+Date: Fri, 27 Apr 2018 11:53:38 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Philipp,
+The patch
 
-Thanks for the review
+   ASoC: uniphier: remove boilerplate from lisence comment
 
-On 04/27/2018 03:54 PM, Philipp Zabel wrote:
-> Hi Sibi,
-> 
-> On Wed, 2018-04-25 at 20:38 +0530, Sibi Sankar wrote:
->> Add SDM845 AOSS (always on subsystem) reset controller binding
->>
->> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
->> ---
->>   .../bindings/reset/qcom,aoss-reset.txt        | 52 +++++++++++++++++++
->>   include/dt-bindings/reset/qcom,sdm845-aoss.h  | 17 ++++++
->>   2 files changed, 69 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt
->>   create mode 100644 include/dt-bindings/reset/qcom,sdm845-aoss.h
->>
->> diff --git a/Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt b/Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt
->> new file mode 100644
->> index 000000000000..e5201de9a314
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt
->> @@ -0,0 +1,52 @@
->> +Qualcomm AOSS Reset Controller
->> +======================================
->> +
->> +This binding describes a reset-controller found on AOSS (always on subsystem)
->> +for Qualcomm SDM845 SoCs.
->> +
->> +Required properties:
->> +- compatible:
->> +	Usage: required
->> +	Value type: <string>
->> +	Definition: must be:
->> +		    "qcom,sdm845-aoss-reset"
->> +
->> +- reg:
->> +	Usage: required
->> +	Value type: <prop-encoded-array>
->> +	Definition: must specify the base address and size of the register
->> +	            space.
->> +
->> +- #reset-cells:
->> +	Usage: required
->> +	Value type: <uint>
->> +	Definition: must be 1; cell entry represents the reset index.
->> +
->> +Example:
->> +
->> +aoss_reset: qcom,reset-controller@b2e0100 {
-> 
-> The node name should be "reset-controller", not "qcom,reset-controller"
-> 
->> +	compatible = "qcom,sdm845-aoss-reset";
->> +	reg = <0xc2b0000 0x21000>;
-> 
-> The address here should match the address part of the node name above.
-> 
+has been applied to the asoc tree at
 
-sure will change them
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-> Apart from those two nitpicks, the binding looks good to me.
->
-> regards
-> Philipp
-> 
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From e19f77ee0e8ade56564dad07f904b75dd5c37e31 Mon Sep 17 00:00:00 2001
+From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Date: Fri, 27 Apr 2018 14:27:34 +0900
+Subject: [PATCH] ASoC: uniphier: remove boilerplate from lisence comment
+
+This patch removes boilerplate of GPLv2, use only SPDX identifier as
+same as other recently ASoC DAI drivers.
+
+Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/uniphier/aio-compress.c | 13 -------------
+ sound/soc/uniphier/aio-core.c     | 13 -------------
+ sound/soc/uniphier/aio-cpu.c      | 13 -------------
+ sound/soc/uniphier/aio-dma.c      | 13 -------------
+ sound/soc/uniphier/aio-ld11.c     | 13 -------------
+ sound/soc/uniphier/aio-reg.h      | 13 -------------
+ sound/soc/uniphier/aio.h          | 13 -------------
+ 7 files changed, 91 deletions(-)
+
+diff --git a/sound/soc/uniphier/aio-compress.c b/sound/soc/uniphier/aio-compress.c
+index 4c1027aa615e..17f773ac5ca1 100644
+--- a/sound/soc/uniphier/aio-compress.c
++++ b/sound/soc/uniphier/aio-compress.c
+@@ -3,19 +3,6 @@
+ // Socionext UniPhier AIO Compress Audio driver.
+ //
+ // Copyright (c) 2017-2018 Socionext Inc.
+-//
+-// This program is free software; you can redistribute it and/or
+-// modify it under the terms of the GNU General Public License
+-// as published by the Free Software Foundation; version 2
+-// of the License.
+-//
+-// This program is distributed in the hope that it will be useful,
+-// but WITHOUT ANY WARRANTY; without even the implied warranty of
+-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-// GNU General Public License for more details.
+-//
+-// You should have received a copy of the GNU General Public License
+-// along with this program; if not, see <http://www.gnu.org/licenses/>.
+ 
+ #include <linux/bitfield.h>
+ #include <linux/circ_buf.h>
+diff --git a/sound/soc/uniphier/aio-core.c b/sound/soc/uniphier/aio-core.c
+index 6d50042a4571..e37b80921abb 100644
+--- a/sound/soc/uniphier/aio-core.c
++++ b/sound/soc/uniphier/aio-core.c
+@@ -3,19 +3,6 @@
+ // Socionext UniPhier AIO ALSA common driver.
+ //
+ // Copyright (c) 2016-2018 Socionext Inc.
+-//
+-// This program is free software; you can redistribute it and/or
+-// modify it under the terms of the GNU General Public License
+-// as published by the Free Software Foundation; version 2
+-// of the License.
+-//
+-// This program is distributed in the hope that it will be useful,
+-// but WITHOUT ANY WARRANTY; without even the implied warranty of
+-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-// GNU General Public License for more details.
+-//
+-// You should have received a copy of the GNU General Public License
+-// along with this program; if not, see <http://www.gnu.org/licenses/>.
+ 
+ #include <linux/bitfield.h>
+ #include <linux/errno.h>
+diff --git a/sound/soc/uniphier/aio-cpu.c b/sound/soc/uniphier/aio-cpu.c
+index 1e5eb8e6f8c7..00b6441bf195 100644
+--- a/sound/soc/uniphier/aio-cpu.c
++++ b/sound/soc/uniphier/aio-cpu.c
+@@ -3,19 +3,6 @@
+ // Socionext UniPhier AIO ALSA CPU DAI driver.
+ //
+ // Copyright (c) 2016-2018 Socionext Inc.
+-//
+-// This program is free software; you can redistribute it and/or
+-// modify it under the terms of the GNU General Public License
+-// as published by the Free Software Foundation; version 2
+-// of the License.
+-//
+-// This program is distributed in the hope that it will be useful,
+-// but WITHOUT ANY WARRANTY; without even the implied warranty of
+-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-// GNU General Public License for more details.
+-//
+-// You should have received a copy of the GNU General Public License
+-// along with this program; if not, see <http://www.gnu.org/licenses/>.
+ 
+ #include <linux/clk.h>
+ #include <linux/errno.h>
+diff --git a/sound/soc/uniphier/aio-dma.c b/sound/soc/uniphier/aio-dma.c
+index ef7bafa8e171..4ec6b65bfb44 100644
+--- a/sound/soc/uniphier/aio-dma.c
++++ b/sound/soc/uniphier/aio-dma.c
+@@ -3,19 +3,6 @@
+ // Socionext UniPhier AIO DMA driver.
+ //
+ // Copyright (c) 2016-2018 Socionext Inc.
+-//
+-// This program is free software; you can redistribute it and/or
+-// modify it under the terms of the GNU General Public License
+-// as published by the Free Software Foundation; version 2
+-// of the License.
+-//
+-// This program is distributed in the hope that it will be useful,
+-// but WITHOUT ANY WARRANTY; without even the implied warranty of
+-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-// GNU General Public License for more details.
+-//
+-// You should have received a copy of the GNU General Public License
+-// along with this program; if not, see <http://www.gnu.org/licenses/>.
+ 
+ #include <linux/dma-mapping.h>
+ #include <linux/errno.h>
+diff --git a/sound/soc/uniphier/aio-ld11.c b/sound/soc/uniphier/aio-ld11.c
+index 4c4dd3dd4dee..ab04d3331be9 100644
+--- a/sound/soc/uniphier/aio-ld11.c
++++ b/sound/soc/uniphier/aio-ld11.c
+@@ -3,19 +3,6 @@
+ // Socionext UniPhier AIO ALSA driver for LD11/LD20.
+ //
+ // Copyright (c) 2016-2018 Socionext Inc.
+-//
+-// This program is free software; you can redistribute it and/or
+-// modify it under the terms of the GNU General Public License
+-// as published by the Free Software Foundation; version 2
+-// of the License.
+-//
+-// This program is distributed in the hope that it will be useful,
+-// but WITHOUT ANY WARRANTY; without even the implied warranty of
+-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-// GNU General Public License for more details.
+-//
+-// You should have received a copy of the GNU General Public License
+-// along with this program; if not, see <http://www.gnu.org/licenses/>.
+ 
+ #include <linux/module.h>
+ 
+diff --git a/sound/soc/uniphier/aio-reg.h b/sound/soc/uniphier/aio-reg.h
+index 136d3563cf44..511ea3c01847 100644
+--- a/sound/soc/uniphier/aio-reg.h
++++ b/sound/soc/uniphier/aio-reg.h
+@@ -3,19 +3,6 @@
+  * Socionext UniPhier AIO ALSA driver.
+  *
+  * Copyright (c) 2016-2018 Socionext Inc.
+- *
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU General Public License
+- * as published by the Free Software Foundation; version 2
+- * of the License.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, see <http://www.gnu.org/licenses/>.
+  */
+ 
+ #ifndef SND_UNIPHIER_AIO_REG_H__
+diff --git a/sound/soc/uniphier/aio.h b/sound/soc/uniphier/aio.h
+index 8cab4a553a97..52670126084f 100644
+--- a/sound/soc/uniphier/aio.h
++++ b/sound/soc/uniphier/aio.h
+@@ -3,19 +3,6 @@
+  * Socionext UniPhier AIO ALSA driver.
+  *
+  * Copyright (c) 2016-2018 Socionext Inc.
+- *
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU General Public License
+- * as published by the Free Software Foundation; version 2
+- * of the License.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, see <http://www.gnu.org/licenses/>.
+  */
+ 
+ #ifndef SND_UNIPHIER_AIO_H__
 -- 
-Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc, is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.17.0
