@@ -1,103 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758255AbeD0SoJ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 14:44:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36188 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1758007AbeD0SoH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 14:44:07 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE93621894
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh@kernel.org
-X-Google-Smtp-Source: AB8JxZqn03xuIeT99cW4SeFFngSJkdtbAfEPMloRxoBiaxf+xDldy+6KP0B29PQihKSDYCbyfoPmHM872EIVDA+SIWc=
-MIME-Version: 1.0
-In-Reply-To: <CAHQ1cqFep9Xs3_hsz1EiDwu8mcDDzbFs4H-kLnKkj=iokX=fCg@mail.gmail.com>
-References: <20180411015948.19562-1-andrew.smirnov@gmail.com>
- <20180411015948.19562-2-andrew.smirnov@gmail.com> <20180416150507.2wm4s7opgr242v6a@rob-hp-laptop>
- <CAHQ1cqFep9Xs3_hsz1EiDwu8mcDDzbFs4H-kLnKkj=iokX=fCg@mail.gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Fri, 27 Apr 2018 13:43:45 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqLWmF-xrf5vDALuG3Geq-XHB2-W5Z6XWvHs=PeZ==Bm+w@mail.gmail.com>
-Message-ID: <CAL_JsqLWmF-xrf5vDALuG3Geq-XHB2-W5Z6XWvHs=PeZ==Bm+w@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: nvmem: Add binding for RAVE SP EEPROM driver
-To: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Chris Healy <cphealy@gmail.com>, Lucas Stach <l.stach@pengutronix.de>,
-        Aleksander Morgado <aleksander@aleksander.es>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        id S1758239AbeD0Stm (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 14:49:42 -0400
+Received: from mail-pg0-f44.google.com ([74.125.83.44]:36919 "EHLO
+        mail-pg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757854AbeD0Stj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 14:49:39 -0400
+X-Google-Smtp-Source: AB8JxZqnn5abQNXf/t4RDb57tU4XECAXMZzZx/i3M8kTN7k1qNynpNOZdUIlq53bz08aJoWeBUDkcg==
+From: Kevin Hilman <khilman@baylibre.com>
+To: Yixun Lan <yixun.lan@amlogic.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Carlo Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
         <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v7 0/7] clk: meson-axg: Add AO Cloclk and Reset driver
+Organization: BayLibre
+References: <20180426084437.192394-1-yixun.lan@amlogic.com>
+        <1524820841.4026.112.camel@baylibre.com>
+        <fbd24a73-6793-76be-3ca5-04cbac5db198@amlogic.com>
+        <1524823154.4026.123.camel@baylibre.com>
+        <ab754711-f727-133c-7bc3-a9f3243c2278@amlogic.com>
+Date: Fri, 27 Apr 2018 11:49:35 -0700
+In-Reply-To: <ab754711-f727-133c-7bc3-a9f3243c2278@amlogic.com> (Yixun Lan's
+        message of "Fri, 27 Apr 2018 20:33:42 +0800")
+Message-ID: <7hsh7g1o3k.fsf@baylibre.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 27, 2018 at 1:05 AM, Andrey Smirnov
-<andrew.smirnov@gmail.com> wrote:
-> On Mon, Apr 16, 2018 at 8:05 AM, Rob Herring <robh@kernel.org> wrote:
->> On Tue, Apr 10, 2018 at 06:59:47PM -0700, Andrey Smirnov wrote:
->>> Add Device Tree bindings for RAVE SP EEPROM driver - an MFD cell of
->>> parent RAVE SP driver (documented in
->>> Documentation/devicetree/bindings/mfd/zii,rave-sp.txt).
->>>
->>> Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->>> Cc: linux-kernel@vger.kernel.org
->>> Cc: Chris Healy <cphealy@gmail.com>
->>> Cc: Lucas Stach <l.stach@pengutronix.de>
->>> Cc: Aleksander Morgado <aleksander@aleksander.es>
->>> Cc: Rob Herring <robh+dt@kernel.org>
->>> Cc: Mark Rutland <mark.rutland@arm.com>
->>> Cc: devicetree@vger.kernel.org
->>> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
->>> ---
->>>  .../bindings/nvmem/zii,rave-sp-eeprom.txt          | 29 ++++++++++++++++++++++
->>>  1 file changed, 29 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.txt
->>>
->>> diff --git a/Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.txt b/Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.txt
->>> new file mode 100644
->>> index 000000000000..a4e838c30b67
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.txt
->>> @@ -0,0 +1,29 @@
->>> +Zodiac Inflight Innovations RAVE EEPROM Bindings
->>> +
->>> +RAVE SP EEPROM device is a "MFD cell" device exposing physical EEPROM
->>> +attached to RAVE Supervisory Processor. It is expected that its Device
->>> +Tree node is specified as a child of the node corresponding to the
->>> +parent RAVE SP device (as documented in
->>> +Documentation/devicetree/bindings/mfd/zii,rave-sp.txt)
->>> +
->>> +Required properties:
->>> +
->>> +- compatible: Should be "zii,rave-sp-eeprom"
->>
->> Need to state somewhere this follows the bindings/nvmem/nvmem.txt
->> binding.
->>
->
-> OK, will fix in v3.
->
->>> +
->>> +Example:
->>> +
->>> +     rave-sp {
->>> +             compatible = "zii,rave-sp-rdu1";
->>> +             current-speed = <38400>;
->>> +
->>> +             main-eeprom {
->>
->> eeprom@a4
->
-> Any chance I can keep it as is? I am asking because this node name is
-> used by the driver as device name which is how it also appears in
-> sysfs. Reason for that being that "main-eeprom" and "dds-eeprom"
-> (second EEPROM in the system) are easier to rembmer and tell apart
-> than "eeprom@a4" and "eeprom@a5". Granted, I can divorce naming scheme
-> in the driver from device node name, but then I'd have to keep a
-> "address -> deivce name" lookup table which I was hoping to avoid.
+Hi Yixun,
 
-It generates a dtc warning if you don't fix it.
+Yixun Lan <yixun.lan@amlogic.com> writes:
 
-Rob
+> On 04/27/2018 05:59 PM, Jerome Brunet wrote:
+
+[...]
+
+>> 
+>> Looks to be the problem indeed. But it is still an issue with how your patchset
+>> in organized.
+>> 
+>> I can't merge this until Kevin merges the patch above, which he can't merge
+>> until there is the clkc_ao support in axg, which is given by this series.
+>> 
+>> 1# You should remove the axg part of the patch above. Kevin will be able to
+>> merge it w/o any dependencies. (BTW, the patch is broken for axg because 1) you
+>> did not include the dt-binding header for the clkc_ao in axg and 2) the clkc_ao
+>> does not exist at this stage)
+>> 2# I can then safely merge this series - w/o breaking gxbb and gxl.
+>> 3# Finally you'll have to make a DT change for the axg, enabling the clkc_ao and
+>> changes the uart clocks at the same time.
+>> 
+>
+>   I didn't make myself clear in previous email
+>
+>   I mean, could you merge patch 1-6, just exclude the patch 7
+> then kevin can merge the DT part (there are three patches) [1]
+> after the DT patches merged, then you can take this patch 7
+> This way, it won't break gxl or any other SoCs
+>
+>   I'm sending patch 7 along with this series, it would be better if I
+> give a warning about it.
+
+Your proposal requires extra work from a couple different maintainers to
+track all the dependencies, and is very error prone.  Sometimes
+maintainers may do this for you if they have time and are feeling
+generous, but you will have much more success if you can ease the
+process.
+
+Jerome has provided lots of guidance throughout this series and just
+above has provided you with a very good proposal above which minimizes
+the dependencies, and provides the changes in the right order.
+
+Please follow Jerome's suggestion,
+
+Thanks,
+
+Kevin
