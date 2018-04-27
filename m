@@ -1,551 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752422AbeD0ENK (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 00:13:10 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:50998 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751728AbeD0ENH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 00:13:07 -0400
-X-UUID: 3398743da4fa4671b1200bb67551b3ea-20180427
-Message-ID: <1524802381.12322.164.camel@mtkswgap22>
-Subject: Re: [PATCH v1 6/7] Bluetooth: hci_mediatek: Add protocol support
- for MediaTek serial devices
-From: Sean Wang <sean.wang@mediatek.com>
-To: Marcel Holtmann <marcel@holtmann.org>
-CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        BlueZ development <linux-bluetooth@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Date: Fri, 27 Apr 2018 12:13:01 +0800
-In-Reply-To: <0DB4E6C1-28AD-41B7-8623-10046809A686@holtmann.org>
-References: <cover.1522736996.git.sean.wang@mediatek.com>
-         <f0e0a0b7f1dc3845dc6eafb4ccd60284d1675f8d.1522736996.git.sean.wang@mediatek.com>
-         <A7391E5D-2945-415B-8AB1-8DFBF2E65878@holtmann.org>
-         <1524728068.12322.125.camel@mtkswgap22>
-         <0DB4E6C1-28AD-41B7-8623-10046809A686@holtmann.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 8bit
+        id S1751669AbeD0ESH (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 00:18:07 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33540 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751348AbeD0ESG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 00:18:06 -0400
+Date: Fri, 27 Apr 2018 07:18:03 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: Tiwei Bie <tiwei.bie@intel.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org, wexu@redhat.com,
+        jfreimann@redhat.com
+Subject: Re: [RFC v3 0/5] virtio: support packed ring
+Message-ID: <20180427071725-mutt-send-email-mst@kernel.org>
+References: <20180425051550.24342-1-tiwei.bie@intel.com>
+ <5ad1ca01-1e5c-7105-f303-7e8d42f6a068@redhat.com>
 MIME-Version: 1.0
-X-MTK: N
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5ad1ca01-1e5c-7105-f303-7e8d42f6a068@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-04-26 at 11:47 +0200, Marcel Holtmann wrote:
-> Hi Sean,
+On Fri, Apr 27, 2018 at 11:56:05AM +0800, Jason Wang wrote:
 > 
-> >>> This adds a driver for the MediaTek serial protocol based on H4 protocol,
-> >>> which can enable the built-in Bluetooth device inside MT7622 SoC.
-> >>> 
-> >>> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> >>> ---
-
-[... snip ...]
-
-> >>> +
-> >>> +	/* Start to build a WMT header and its actual payload. */
-> >>> +	whdr = skb_put(skb, MTK_WMT_HDR_SIZE);
-> >>> +	whdr->dir = 1;
-> >>> +	whdr->op = opcode;
-> >>> +	whdr->dlen = cpu_to_le16(plen + 1);
-> >>> +	whdr->flag = flag;
-> >>> +	skb_put_data(skb, param, plen);
-> >>> +
-> >>> +	mtk_enqueue(hu, skb);
-> >>> +	hci_uart_tx_wakeup(hu);
-> >>> +
-> >>> +	/*
-> >>> +	 * Waiting a WMT event response, while we must take care in case of
-> >>> +	 * failures for the wait.
-> >>> +	 */
-> >>> +	ret = wait_for_completion_interruptible_timeout(&btdev->wmt_cmd, HZ);
-> >>> +
-> >>> +	return ret > 0 ? 0 : ret < 0 ? ret : -ETIMEDOUT;
-> >>> +}
-> >> 
-> >> All in all I am not convinced that this is super clean. I get that we need something special for having this in the ACL data packets, but for the standard HCI command I prefer that __hci_cmd_sync is used. I addition, it seems that patch download is the only special case and that happens before at the setup stage. So we could make things special for that. I need to understand this a bit better. Can I get a btmon -w trace.log file from the whole init procedure.
-> >> 
-> >> 
-> > 
-> > I can try to use __hci_cmd_sync to send those chip-specific hci commands
-> > which only can be recognized by the chip, but no meaningful to bluez
-> > core.
-> > 
-> > Is btmon able to capture these cmd/evt between driver and device?
-> > 
-> > my question's caused by that mtk_wmt_cmd_sync and its events only happen
-> > between driver and device,  it doesn't go to core.
 > 
-> for Intel, Broadcom, Qualcomm, Realtek etc. we use __hci_cmd_sync() in the ->setup() callback and it will show up in btmon. For at least Intel and Broadcom, btmon will decode them as well. You can hint the manufacturer id out of band it will be told to btmon. And that is also how I want it. If it is using HCI as transport, I want it to go through the Bluetooth core.
+> On 2018年04月25日 13:15, Tiwei Bie wrote:
+> > Hello everyone,
+> > 
+> > This RFC implements packed ring support in virtio driver.
+> > 
+> > Some simple functional tests have been done with Jason's
+> > packed ring implementation in vhost:
+> > 
+> > https://lkml.org/lkml/2018/4/23/12
+> > 
+> > Both of ping and netperf worked as expected (with EVENT_IDX
+> > disabled). But there are below known issues:
+> > 
+> > 1. Reloading the guest driver will break the Tx/Rx;
 > 
-
-understood. I will allow chip-specific HCI cmd/evt to go to bluetooth
-core.
-
-> >>> +
-> >>> +static int mtk_setup_fw(struct hci_uart *hu)
-> >>> +{
-> >>> +	struct mtk_bt_dev *btdev = hu->priv;
-> >>> +	const struct firmware *fw;
-> >>> +	struct device *dev;
-> >>> +	const char *fwname;
-> >>> +	const u8 *fw_ptr;
-> >>> +	size_t fw_size;
-> >>> +	int err, dlen;
-> >>> +	u8 flag;
-> >>> +
-> >>> +	dev = &hu->serdev->dev;
-> >>> +	fwname = FIRMWARE_MT7622;
-> >>> +
-> >>> +	init_completion(&btdev->wmt_cmd);
-> >>> +
-> >>> +	err = request_firmware(&fw, fwname, dev);
-> >>> +	if (err < 0) {
-> >>> +		dev_err(dev, "%s: Failed to load firmware file (%d)",
-> >>> +			hu->hdev->name, err);
-> >>> +		return err;
-> >>> +	}
-> >>> +
-> >>> +	fw_ptr = fw->data;
-> >>> +	fw_size = fw->size;
-> >>> +
-> >>> +	/* The size of a patch header at least has 30 bytes. */
-> >>> +	if (fw_size < 30)
-> >>> +		return -EINVAL;
-> >>> +
-> >>> +	while (fw_size > 0) {
-> >>> +		dlen = min_t(int, 1000, fw_size);
-> >>> +
-> >>> +		/* Tell deivice the position in sequence. */
-> >>> +		flag = (fw_size - dlen <= 0) ? 3 :
-> >>> +		       (fw_size < fw->size) ? 2 : 1;
-> >>> +
-> >>> +		err = mtk_wmt_cmd_sync(hu, MTK_WMT_PATCH_DWNLD, flag,
-> >>> +				       dlen, fw_ptr);
-> >>> +		if (err < 0)
-> >>> +			break;
-> >>> +
-> >>> +		fw_size -= dlen;
-> >>> +		fw_ptr += dlen;
-> >>> +	}
-> >>> +
-> >>> +	release_firmware(fw);
-> >>> +
-> >>> +	return err;
-> >>> +}
-> >>> +
-> >>> +static int mtk_open(struct hci_uart *hu)
-> >>> +{
-> >>> +	struct mtk_bt_dev *btdev = hu->priv;
-> >>> +	struct device *dev;
-> >>> +	int err = 0;
-> >>> +
-> >>> +	dev = &hu->serdev->dev;
-> >>> +
-> >>> +	serdev_device_open(hu->serdev);
-> >>> +	skb_queue_head_init(&btdev->txq);
-> >>> +
-> >>> +	/* Setup the usage of H4. */
-> >>> +	hu->alignment = 1;
-> >>> +	hu->padding = 0;
-> >>> +	mtk_stp_reset(btdev->sp);
-> >>> +
-> >>> +	/* Enable the power domain and clock the device requires */
-> >>> +	pm_runtime_enable(dev);
-> >>> +	err = pm_runtime_get_sync(dev);
-> >>> +	if (err < 0) {
-> >>> +		pm_runtime_disable(dev);
-> >>> +		return err;
-> >>> +	}
-> >>> +
-> >>> +	err = clk_prepare_enable(btdev->clk);
-> >>> +	if (err < 0) {
-> >>> +		pm_runtime_put_sync(dev);
-> >>> +		pm_runtime_disable(dev);
-> >>> +	}
-> >>> +
-> >>> +	return err;
-> >>> +}
-> >>> +
-> >>> +static int mtk_close(struct hci_uart *hu)
-> >>> +{
-> >>> +	struct mtk_bt_dev *btdev = hu->priv;
-> >>> +	struct device *dev = &hu->serdev->dev;
-> >>> +	u8 param = 0x0;
-> >>> +
-> >>> +	skb_queue_purge(&btdev->txq);
-> >>> +	kfree_skb(btdev->rx_skb);
-> >>> +
-> >>> +	/* Disable the device. */
-> >>> +	mtk_wmt_cmd_sync(hu, MTK_WMT_FUNC_CTRL, 0x0, sizeof(param), &param);
-> >> 
-> >> Wouldn’t this require a enable device in open callback?
-> >> 
-> > 
-> > It's another story ...
-> > 
-> > At initial time I began working on the driver. I indeed made the
-> > mtk_open and mtk_close be consistent, but it's required a few patches
-> > for core to solve a problem: 
-> > 
-> > The problem is that hci_uart resource CAN'T be used in mtk_open to send
-> > these specific command taking to the chip since hci_uart_proto->open()
-> > would be called much earlier in hci_uart_register_device at which
-> > hci_uart is even not being allocated yet. 
-> > 
-> > So, in the first version I want to make thing be simple, instead, I only
-> > hold mtk_open is doing platform stuff such as clock enablement, and
-> > power enablement and any other thing about configuring chip all is moved
-> > to setup handler.
+> Will have a look at this issue.
 > 
-> You are also not suppose to be sending HCI commands to close the transport in close(). In close() you are suppose to close the transport. You can use shutdown() if there more commands needed. And setup() if for HCI commands after registration.
+> > 2. Zeroing the flags when detaching a used desc will
+> >     break the guest -> host path.
 > 
-
-okay. in the next changes, I will make that 
-
-1. open(), close() would be handling open/close transport and
-platform-specific thing such clk, pwr setup
-
-2. setup() would be handling chip-specific commands/firmware download to
-configure the chip 
-
-3. shutdown() would be doing the reverse of setup(),which involve a few
-chip-specific commands to disable something in that chip
-
-
-> Using hci_uart has a bit of legacy in it due to the line discipline. Maybe using btuart.c (which I posted) might be a better starting point since then you hook directly into it as a plain HCI driver.
+> I still think zeroing flags is unnecessary or even a bug. At host, I track
+> last observed avail wrap counter and detect avail like (what is suggested in
+> the example code in the spec):
 > 
-> That all said, I have no issues with extending the core driver framework. I rather do that than having drivers hack around it. That always ends badly.
+> static bool desc_is_avail(struct vhost_virtqueue *vq, __virtio16 flags)
+> {
+>        bool avail = flags & cpu_to_vhost16(vq, DESC_AVAIL);
 > 
-
-
-where could I find the newest btuart.c (which seems cannot be found in
-4.17 rc2)? It seems a time to rewrite the driver based on btuart.c
-
-> > 
-> >>> +
-> >>> +	/* Shutdown the clock and power domain the device requires. */
-> >>> +	clk_disable_unprepare(btdev->clk);
-> >>> +
-> >>> +	pm_runtime_put_sync(dev);
-> >>> +	pm_runtime_disable(dev);
-> >>> +
-> >>> +	serdev_device_close(hu->serdev);
-> >>> +
-> >>> +	return 0;
-> >>> +}
-> >>> +
-> >>> +int mtk_recv_frame(struct hci_dev *hdev, struct sk_buff *skb)
-> >>> +{
-> >>> +	struct hci_event_hdr *hdr = (void *)skb->data;
-> >>> +	struct hci_uart *hu = hci_get_drvdata(hdev);
-> >>> +	struct mtk_bt_dev *btdev = hu->priv;
-> >>> +
-> >>> +	if (hci_skb_pkt_type(skb) == HCI_EVENT_PKT &&
-> >>> +	    hdr->evt == 0xe4) {
-> >>> +		complete(&btdev->wmt_cmd);
-> >>> +		kfree_skb(skb);
-> >>> +		return 0;
-> >>> +	}
-> >>> +
-> >>> +	return hci_recv_frame(hdev, skb);
-> >>> +}
-> >> 
-> >> actually this is overdoing it. You can use hci_recv_frame for ACL and SCO and just a special one for events. However all in all I question the need for the special handling anyway. As I said above, I have the feeling this can be done via __hci_cmd_sync or __hci_cmd_sync_ev. So I really like to see a btmon -w trace.log for these so that I can see how they look.
-> > 
-> > in the next version, I would only use a special way for events; ACL and
-> > SCO can just use a generic way. 
-> > 
-> > BTW, add more words for the mtk_recv_frame what it's doing for
-> > 
-> > * The special handling with hdr->evt 0xe4 in mtk_recv_frame is
-> > corresponding to mtk_wmt_cmd_sync.
-> > 
-> > * It is expected to not to propagate the chip-specific events to bluez
-> > core since it's only meaningful data between driver and device.
+>        return avail == vq->avail_wrap_counter;
+> }
 > 
-> No, HCI vendor commands and events can happily go through the core. I actually prefer it that way. Mind you that the core HCI handling is rock solid. So trying to hack around it will just lead to bugs. And no other manufacturer is doing that.
-
-
-
-understood. I will allow chip-specific HCI cmd/evt to go to bluetooth
-core. The discard for the specific event can be prevented.
-
-> >>> +
-> >>> +static const struct h4_recv_pkt mtk_recv_pkts[] = {
-> >>> +	{ H4_RECV_ACL,		.recv = mtk_recv_frame },
-> >>> +	{ H4_RECV_SCO,		.recv = mtk_recv_frame },
-> >>> +	{ H4_RECV_EVENT,	.recv = mtk_recv_frame },
-> >>> +};
-> >>> +
-> >>> +static int mtk_recv(struct hci_uart *hu, const void *data, int count)
-> >>> +{
-> >>> +	const unsigned char *p_left = data, *p_h4;
-> >>> +	struct mtk_bt_dev *btdev = hu->priv;
-> >>> +	int sz_left = count, sz_h4, adv;
-> >>> +	struct device *dev;
-> >>> +	int err;
-> >>> +
-> >>> +	if (!test_bit(HCI_UART_REGISTERED, &hu->flags))
-> >>> +		return -EUNATCH;
-> >>> +
-> >>> +	dev = &hu->serdev->dev;
-> >>> +
-> >>> +	while (sz_left > 0) {
-> >>> +		p_h4 = mtk_stp_split(dev, btdev->sp, p_left, sz_left, &sz_h4);
-> >>> +		if (!p_h4)
-> >>> +			break;
-> >> 
-> >> Now this is troubling me a bit. While there are some H:4 frames somewhere in here, you need to do another set of framing. So what is the framing that comes from the serial part in the first place?
-> >> 
-> > 
-> > the chip always adds a fews bytes before and after the H:4 data, it's
-> > something like that.
-> > 
-> > -------------------------------------  
-> > | STP header  |  H:4   | STP tailer |  
-> > -------------------------------------  
-> > 
-> > mtk_stp_split no looked into the details of H:4, only is used to find
-> > where is the start of H:4 part and keep info. from STP header and then
-> > feed the H:4 part into h4_recv_buf to reuse the extent logic to process
-> > HCI/ACL/SCO pkts. So, I think it should be unnecessary to create a new
-> > framing for the current usage.
+> So zeroing wrap can not work with this obviously.
 > 
-> I would disagree right now. I think taking btuart.c and writing your own driver might be a lot simpler. You have less legacy and you have less things to hack around.
-> 
-> If you have framing around H:4 packets anyway, then why bother trying to use h4_recv_buf anyway (which you could even from a separate driver, see bpa10x.c). The reason behind h4_recv_buf is that we have no framing and need to understand H:4 to find the end of a packet. If you know it, then there is not point in that (see bfusb.c driver).
-> 
+> Thanks
 
-Thanks for the advice. I will check with btuart.c first and to see if I
-have a clean and better solution for the parse logic.
-
-> >> Btw. it is fine if hci_uart is not a good fit. I actually think it is a bad fit and using the btuart driver I send around a few weeks ago is a better starting point. However if the framing itself is more elaborate actually, then even a brand new driver and just re-using h4_recv.h would be good. If however the extra framing already does a real framing job, then even h4_recv.h is useless and we can just pick the frames right out of serial device. For example bfusb.c had such an extra framing on top of H:4.
-> > 
-> > 
-> > 
-> >>> +
-> >>> +		adv = p_h4 - p_left;
-> >>> +		sz_left -= adv;
-> >>> +		p_left += adv;
-> >>> +
-> >>> +		btdev->rx_skb = h4_recv_buf(hu->hdev, btdev->rx_skb,
-> >>> +					    p_h4, sz_h4, mtk_recv_pkts,
-> >>> +					    ARRAY_SIZE(mtk_recv_pkts));
-> >>> +		if (IS_ERR(btdev->rx_skb)) {
-> >>> +			err = PTR_ERR(btdev->rx_skb);
-> >>> +			dev_err(dev, "Frame reassembly failed (%d)", err);
-> >>> +			btdev->rx_skb = NULL;
-> >>> +			return err;
-> >>> +		}
-> >>> +
-> >>> +		sz_left -= sz_h4;
-> >>> +		p_left += sz_h4;
-> >>> +	}
-> >>> +
-> >>> +	return count;
-> >>> +}
-> >>> +
-> >>> +static struct sk_buff *mtk_dequeue(struct hci_uart *hu)
-> >>> +{
-> >>> +	struct mtk_bt_dev *btdev = hu->priv;
-> >>> +
-> >>> +	return skb_dequeue(&btdev->txq);
-> >>> +}
-> >>> +
-> >>> +static int mtk_flush(struct hci_uart *hu)
-> >>> +{
-> >>> +	struct mtk_bt_dev *btdev = hu->priv;
-> >>> +
-> >>> +	skb_queue_purge(&btdev->txq);
-> >>> +
-> >>> +	return 0;
-> >>> +}
-> >>> +
-> >>> +static int mtk_setup(struct hci_uart *hu)
-> >>> +{
-> >>> +	struct device *dev;
-> >>> +	u8 param = 0x1;
-> >>> +	int err;
-> >>> +
-> >>> +	dev = &hu->serdev->dev;
-> >>> +
-> >>> +	/* Setup a firmware which the device definitely requires. */
-> >>> +	err = mtk_setup_fw(hu);
-> >>> +	if (err < 0) {
-> >>> +		dev_err(dev, "Fail at setup FW (%d): %d", __LINE__, err);
-> >>> +		return err;
-> >>> +	}
-> >>> +
-> >>> +	/* Activate funciton the firmware provides to. */
-> >>> +	err = mtk_wmt_cmd_sync(hu, MTK_WMT_RST, 0x4, 0, 0);
-> >>> +	if (err < 0) {
-> >>> +		dev_err(dev, "Fail at WMT RST (%d): %d", __LINE__, err);
-> >>> +		return err;
-> >>> +	}
-> >>> +
-> >>> +	/* Enable Bluetooth protocol. */
-> >>> +	err = mtk_wmt_cmd_sync(hu, MTK_WMT_FUNC_CTRL, 0x0, sizeof(param),
-> >>> +			       &param);
-> >>> +	if (err < 0)
-> >>> +		dev_err(dev, "Fail at FUNC CTRL (%d): %d", __LINE__, err);
-> >> 
-> >> Just as a reminder, setup callback is only called once. You should enable the transport in open callback.
-> >> 
-> > 
-> > If capable, I would like to move all chip initialization stuff to
-> > mtk_open and de-initialization stuff to mtk_close.
-> 
-> So open/close is for establishing the HCI transport. Sending commands there is something we have not yet encountered.
-> 
-> > In that way, a user power up/down with bluetoothctl or hcitool can
-> > completely recover the chip from any fatal errors. and even it seem at
-> > bluez core, there's workqueue in charge of recovery thing.
-> > 
-> > But the core seems not supports me to move chip handling in
-> > mtk_open :-( 
-> 
-> What do you need for your driver. On every power on, you need to execute a HCI command to enable the chip? Do you need to re-load the firmware or does it survive a power down/up cycle?
-> 
-
-the Bluetooth device can't survive in a power/down cycle and
-
-* power on should be including
-  - enable clk and power domain
-  - download firmware through specific ACL command
-  - send specific commands to configure bluetooth (Required to note that
-the steps should be after downloading firmware because the behavior for
-the command might be changed by the firmware)
-
-
-* power off should be including
-  - send specific commands, such as to disable bluetooth
-  - disable power domain and clk
+I agree. I think what one should do is flip the available bit.
 
 > > 
-> >>> +
-> >>> +	return err;
-> >>> +}
-> >>> +
-> >>> +static const struct hci_uart_proto mtk_proto = {
-> >>> +	.id		= HCI_UART_MTK,
-> >>> +	.name		= "MediaTek",
-> >>> +	.open		= mtk_open,
-> >>> +	.close		= mtk_close,
-> >>> +	.recv		= mtk_recv,
-> >>> +	.enqueue	= mtk_enqueue,
-> >>> +	.dequeue	= mtk_dequeue,
-> >>> +	.flush		= mtk_flush,
-> >>> +	.setup		= mtk_setup,
-> >>> +	.manufacturer	= 1,
-> >> 
-> >> Unless you are Nokia, this id is wrong.
-> >> 
+> > Some simple functional tests have also been done with
+> > Wei's packed ring implementation in QEMU:
 > > 
-> > okay, i will remove it 
+> > http://lists.nongnu.org/archive/html/qemu-devel/2018-04/msg00342.html
 > > 
-> >>> +};
-> >>> +
-> >>> +static int mtk_bluetooth_serdev_probe(struct serdev_device *serdev)
-> >>> +{
-> >>> +	struct device *dev = &serdev->dev;
-> >>> +	struct mtk_bt_dev *btdev;
-> >>> +	int err = 0;
-> >>> +
-> >>> +	btdev = devm_kzalloc(dev, sizeof(*btdev), GFP_KERNEL);
-> >>> +	if (!btdev)
-> >>> +		return -ENOMEM;
-> >>> +
-> >>> +	btdev->sp = devm_kzalloc(dev, sizeof(*btdev->sp), GFP_KERNEL);
-> >>> +	if (!btdev->sp)
-> >>> +		return -ENOMEM;
-> >>> +
-> >>> +	btdev->clk = devm_clk_get(dev, "ref");
-> >>> +	if (IS_ERR(btdev->clk))
-> >>> +		return PTR_ERR(btdev->clk);
-> >>> +
-> >>> +	btdev->hu.serdev = serdev;
-> >>> +	btdev->hu.priv = btdev;
-> >>> +
-> >>> +	serdev_device_set_drvdata(serdev, btdev);
-> >>> +
-> >>> +	err = hci_uart_register_device(&btdev->hu, &mtk_proto);
-> >>> +	if (err)
-> >>> +		dev_err(dev, "Could not register bluetooth uart: %d", err);
-> >>> +
-> >>> +	return err;
-> >>> +}
-> >>> +
-> >>> +static void mtk_bluetooth_serdev_remove(struct serdev_device *serdev)
-> >>> +{
-> >>> +	struct mtk_bt_dev *btdev = serdev_device_get_drvdata(serdev);
-> >>> +
-> >>> +	hci_uart_unregister_device(&btdev->hu);
-> >>> +}
-> >>> +
-> >>> +static const struct of_device_id mtk_bluetooth_of_match[] = {
-> >>> +	{ .compatible = "mediatek,mt7622-bluetooth" },
-> >>> +	{},
-> >>> +};
-> >>> +MODULE_DEVICE_TABLE(of, mtk_bluetooth_of_match);
-> >>> +
-> >>> +static struct serdev_device_driver mtk_bluetooth_serdev_driver = {
-> >>> +	.probe = mtk_bluetooth_serdev_probe,
-> >>> +	.remove = mtk_bluetooth_serdev_remove,
-> >>> +	.driver = {
-> >>> +		.name = "mediatek-bluetooth",
-> >>> +		.of_match_table = of_match_ptr(mtk_bluetooth_of_match),
-> >>> +	},
-> >>> +};
-> >>> +
-> >>> +module_serdev_device_driver(mtk_bluetooth_serdev_driver);
-> >>> +
-> >>> +MODULE_AUTHOR("Sean Wang <sean.wang@mediatek.com>");
-> >>> +MODULE_DESCRIPTION("Bluetooth HCI Serial driver for MediaTek SoC");
-> >>> +MODULE_LICENSE("GPL v2");
-> >>> diff --git a/drivers/bluetooth/hci_uart.h b/drivers/bluetooth/hci_uart.h
-> >>> index 66e8c68..3f0911e 100644
-> >>> --- a/drivers/bluetooth/hci_uart.h
-> >>> +++ b/drivers/bluetooth/hci_uart.h
-> >>> @@ -35,7 +35,7 @@
-> >>> #define HCIUARTGETFLAGS		_IOR('U', 204, int)
-> >>> 
-> >>> /* UART protocols */
-> >>> -#define HCI_UART_MAX_PROTO	12
-> >>> +#define HCI_UART_MAX_PROTO	13
-> >>> 
-> >>> #define HCI_UART_H4	0
-> >>> #define HCI_UART_BCSP	1
-> >>> @@ -49,6 +49,7 @@
-> >>> #define HCI_UART_AG6XX	9
-> >>> #define HCI_UART_NOKIA	10
-> >>> #define HCI_UART_MRVL	11
-> >>> +#define HCI_UART_MTK	12
-> >> 
-> >> I am really trying to avoid new id assignments here and go for serdev only drivers.
-> >> 
+> > Both of ping and netperf worked as expected (with EVENT_IDX
+> > disabled). Reloading the guest driver also worked as expected.
 > > 
-> > it seems no necessary for a serdev device. can i remove it from driver?
-> > but what id should be filled in hci_uart_proto ?
+> > TODO:
+> > - Refinements (for code and commit log) and bug fixes;
+> > - Discuss/fix/test EVENT_IDX support;
+> > - Test devices other than net;
 > > 
-> > 430 static const struct hci_uart_proto mtk_proto = {
-> > 431         .id             = HCI_UART_MTK,
-> > 432         .name           = "MediaTek",
-> > 433         .open           = mtk_open,
-> 
-> We can work on something to allow an unassigned id here, but I still feel that you should go for a separate driver in the first place.
-> 
-> If you only have a hammer, then everything looks like a nail. hci_uart being the hammer here. I think you would be better served with starting with btuart.c and then evolve it into your own driver. Try that and see where your problems are.
-> 
-
-Okay, lets see whether the addressed problems are still present on 2n
-version based on btuart.c to evolve
-
-> Regards
-> 
-> Marcel
-> 
+> > RFC v2 -> RFC v3:
+> > - Split into small patches (Jason);
+> > - Add helper virtqueue_use_indirect() (Jason);
+> > - Just set id for the last descriptor of a list (Jason);
+> > - Calculate the prev in virtqueue_add_packed() (Jason);
+> > - Fix/improve desc suppression code (Jason/MST);
+> > - Refine the code layout for XXX_split/packed and wrappers (MST);
+> > - Fix the comments and API in uapi (MST);
+> > - Remove the BUG_ON() for indirect (Jason);
+> > - Some other refinements and bug fixes;
+> > 
+> > RFC v1 -> RFC v2:
+> > - Add indirect descriptor support - compile test only;
+> > - Add event suppression supprt - compile test only;
+> > - Move vring_packed_init() out of uapi (Jason, MST);
+> > - Merge two loops into one in virtqueue_add_packed() (Jason);
+> > - Split vring_unmap_one() for packed ring and split ring (Jason);
+> > - Avoid using '%' operator (Jason);
+> > - Rename free_head -> next_avail_idx (Jason);
+> > - Add comments for virtio_wmb() in virtqueue_add_packed() (Jason);
+> > - Some other refinements and bug fixes;
+> > 
+> > Thanks!
+> > 
+> > Tiwei Bie (5):
+> >    virtio: add packed ring definitions
+> >    virtio_ring: support creating packed ring
+> >    virtio_ring: add packed ring support
+> >    virtio_ring: add event idx support in packed ring
+> >    virtio_ring: enable packed ring
+> > 
+> >   drivers/virtio/virtio_ring.c       | 1271 ++++++++++++++++++++++++++++--------
+> >   include/linux/virtio_ring.h        |    8 +-
+> >   include/uapi/linux/virtio_config.h |   12 +-
+> >   include/uapi/linux/virtio_ring.h   |   36 +
+> >   4 files changed, 1049 insertions(+), 278 deletions(-)
+> > 
