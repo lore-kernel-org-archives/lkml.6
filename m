@@ -1,54 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1759171AbeD0UMh (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 16:12:37 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:39870 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758703AbeD0UMg (ORCPT
+        id S1759193AbeD0UOC (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 16:14:02 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:39015 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758944AbeD0UOA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 16:12:36 -0400
-X-Google-Smtp-Source: AB8JxZqTzlPsJeGJDD6r5RkoNt2FGb45sTWSN4izI9uNetJq3twvlFwRGpa8PsyslET2XXr+MxHYCw==
-Date: Fri, 27 Apr 2018 15:12:34 -0500
+        Fri, 27 Apr 2018 16:14:00 -0400
+X-Google-Smtp-Source: AB8JxZr0edVrvmCdai++COgj1vAcsJnzksMDXhVeIUPP/lLzKZd/jscITbhHU2YnQiN4xHaGwFinzA==
+Date: Fri, 27 Apr 2018 15:13:59 -0500
 From: Rob Herring <robh@kernel.org>
-To: Jagan Teki <jagan@amarulasolutions.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
-        Shawn Guo <shawnguo@kernel.org>, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Fabio maggi <fabio.mauri@bticino.it>, lamiaposta71@gmail.com,
-        Andrea CORTESE <andrea.cortese@bticino.it>,
-        "davide . bonfanti" <davide.bonfanti@bticino.it>,
-        Shyam Saini <shyam.saini@amarulasolutions.com>,
-        Michael Trimarchi <michael@amarulasolutions.com>
-Subject: Re: [PATCH v2 1/4] drm/panel: simple: Add support for Rocktech
- RK070ER9427 LCD panel
-Message-ID: <20180427201234.hkaqkwa6zsj7tfda@rob-hp-laptop>
-References: <20180427131040.28775-1-jagan@amarulasolutions.com>
+To: Jean-Jacques Hiblot <jjhiblot@ti.com>
+Cc: broonie@kernel.org, mark.rutland@arm.com, perex@perex.cz,
+        tiwai@suse.com, dannenberg@ti.com, afd@ti.com,
+        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] ASoC: tas6424: Add support for the standby pin
+Message-ID: <20180427201359.pl2artabp23eimcc@rob-hp-laptop>
+References: <1524837349-16350-1-git-send-email-jjhiblot@ti.com>
+ <1524837349-16350-2-git-send-email-jjhiblot@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180427131040.28775-1-jagan@amarulasolutions.com>
+In-Reply-To: <1524837349-16350-2-git-send-email-jjhiblot@ti.com>
 User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 27, 2018 at 06:40:40PM +0530, Jagan Teki wrote:
-> This adds support for the Rocktech Display Ltd. RK070ER9427
-> 800(RGB)x480 TFT LCD panel, which can be supported by the
-> simple panel driver.
+On Fri, Apr 27, 2018 at 03:55:47PM +0200, Jean-Jacques Hiblot wrote:
+> The standby pin can be connected to a GPIO. In that case we have to drive
+> it to the correct values for the TAS6424 to operate properly.
 > 
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
 > ---
-> Changes for v2:
-> - included drm drm panel maintainers
-> 
->  .../display/panel/rocktech,rk070er9427.txt         | 25 ++++++++++++++++
->  drivers/gpu/drm/panel/panel-simple.c               | 33 ++++++++++++++++++++++
->  2 files changed, 58 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/panel/rocktech,rk070er9427.txt
+>  .../devicetree/bindings/sound/ti,tas6424.txt       |  1 +
+>  sound/soc/codecs/tas6424.c                         | 22 ++++++++++++++++++++++
+>  2 files changed, 23 insertions(+)
 
 Reviewed-by: Rob Herring <robh@kernel.org>
