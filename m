@@ -1,28 +1,28 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqb+ng4yFnF+nW90eoTD32tHnsDYV0vpsVkKLsGi21IPTxSmMeMGmeScVdUdAzMUR1wijwA
-ARC-Seal: i=1; a=rsa-sha256; t=1524837674; cv=none;
+X-Google-Smtp-Source: AB8JxZpI3Dqepl/DRl1CgFUELAAVDAo5NKuwE4f9FWtGcVYD8TebbwTND6pLxGJm/bCzUCnx0rNB
+ARC-Seal: i=1; a=rsa-sha256; t=1524837672; cv=none;
         d=google.com; s=arc-20160816;
-        b=Fe4RbdOMRoH9GV1f0n+KBobiKfF7V6Vh20WNv4R7r9myYU2Tn3u2riOhit27iGpZLV
-         qSvFwPK/pzq1LpJO6Fm+GSpjDpz1BBuXXu1jkE+TiS4IhR0zb64poYwPi/wg1zPAElRn
-         svLICLeZgmcEHeAlZJJfW1+ThFVNCvzZJRkdaH2eiVYrX7yoEITLfpNzD4jitBL8WuSZ
-         inQf3dCnsr2I7Sdvy3wUrLcwDM4mCl9zs9zuTjCtdY8CrayoKpBiGJBlh80pP1m1Fr8f
-         AGaVuoArWnLNsSZtX60iPw4ueCXiKeA4Fwnf47EfsFkjM2Ocl7hsSscc2P5lASbOGn/7
-         d1Hg==
+        b=kSlsmt9uufENYsjTMV65YkV+F/Y79nNSuDhp3aM6acbskKAPRZFrCOvxszSVhGt6fv
+         CaRVdHG14t4Bo9pJZFvtQGWW7p+nmVyGa8rH4KVVj+BC9404iGiQ+AwtxIaFezwsvGlb
+         FGLGcOdCMS/2tFwmi9yMQ3I0OGS8pGalMpD9O35Wh2W94JyB5ZYrzqt+scHgSOcOys2A
+         vNJ18FhDgJC/xn5F9ndaeMMeREvW3PGXlXYBDn0gDtRB1WdutHvyMVvLcGm/RkPoHRIp
+         LJ3aAEVkHQAvMbEKzxdOT0JKXCJiB7n35Q4VGgCHcE54eL2lC5jjkflMYQNIfM/rvf5a
+         6NjA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=p2VFOG1e8YmOPBM2BL6bi1rCbUlmIDqL0Gf+tkFcPVk=;
-        b=M/HG9o4KNRfZzZsCP4Igwtp5KeH0FOZqbro48dNJ8q14eCXIcV5vSExgFqa3THp1tE
-         p/VWT7zTcdphbYj095bFPWLBXkol3du/JT++6MsUTlaTxwjJiKgUWOhXYKZlniROBxoB
-         muNj3L5YdODoWFbjSL8lGYGZ+2uFuwWZl5Qtrxz/9rxXyEmA4MVyCG+Os4u0rBva8GyH
-         oh3lOsTv6/LunLaPHWDAN3+EW2vq/jCNKqywuagN+1ycosWod5pMPJJC3j3pQ5kXmgtN
-         mUc2GQ4X4ySsY5qJxQt5/2DKSqOwDs4XKqjBKciTFnVPkvzk0hEpdP72hJMArGDodWy0
-         30Jw==
+        bh=JWITksNB/DyK4XehIhGsrfEttzSaheWZ2dnn2u81kJk=;
+        b=w+/6CYFJv2OuwLA3osg8iR2zTQLcKuLxULmsNcFkSXXHhO+wjlUfcrFkFTH/4t/i+l
+         UhUEgyGkjaqib6MrxTLW3eGo2EL/Zb0gbq6xcFI/VI/MC7yaUSbdD+MuD2/xuYTOOAIq
+         fJdGGLbvvY7lSbDngJIXVBqzBjcXh7J++3XLumQearPQKJhIiEvjrvDu71qXCUdzku+F
+         MpWvoxmCZsRtsVqT3CdPj0D0BueslOd4Z9zmyhLbCInPhXo3IjNMyTO53VhE+gbFmRMk
+         ZVOV+PVCIaV5oSNl6GBuF47YB1ZnggihGtMfBEWuOwR1/DNPjKl0HuNCzNuUUlG1AaeG
+         9GAA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B538F2185A
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C2CC2185A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
@@ -30,9 +30,9 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4.4 24/50] s390: report spectre mitigation via syslog
-Date: Fri, 27 Apr 2018 15:58:26 +0200
-Message-Id: <20180427135657.143654571@linuxfoundation.org>
+Subject: [PATCH 4.4 23/50] s390: add automatic detection of the spectre defense
+Date: Fri, 27 Apr 2018 15:58:25 +0200
+Message-Id: <20180427135657.079938783@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135655.623669681@linuxfoundation.org>
 References: <20180427135655.623669681@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908189377552235?=
-X-GMAIL-MSGID: =?utf-8?q?1598908189377552235?=
+X-GMAIL-THRID: =?utf-8?q?1598908186714193846?=
+X-GMAIL-MSGID: =?utf-8?q?1598908186714193846?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,35 +54,227 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Martin Schwidefsky <schwidefsky@de.ibm.com>
 
 
-[ Upstream commit bc035599718412cfba9249aa713f90ef13f13ee9 ]
+[ Upstream commit 6e179d64126b909f0b288fa63cdbf07c531e9b1d ]
 
-Add a boot message if either of the spectre defenses is active.
-The message is
-    "Spectre V2 mitigation: execute trampolines."
-or  "Spectre V2 mitigation: limited branch prediction."
+Automatically decide between nobp vs. expolines if the spectre_v2=auto
+kernel parameter is specified or CONFIG_EXPOLINE_AUTO=y is set.
+
+The decision made at boot time due to CONFIG_EXPOLINE_AUTO=y being set
+can be overruled with the nobp, nospec and spectre_v2 kernel parameters.
 
 Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/s390/kernel/nospec-branch.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/s390/Kconfig                     |    2 -
+ arch/s390/Makefile                    |    2 -
+ arch/s390/include/asm/nospec-branch.h |    6 +--
+ arch/s390/kernel/alternative.c        |    1 
+ arch/s390/kernel/module.c             |   11 ++---
+ arch/s390/kernel/nospec-branch.c      |   68 +++++++++++++++++++++-------------
+ 6 files changed, 52 insertions(+), 38 deletions(-)
 
+--- a/arch/s390/Kconfig
++++ b/arch/s390/Kconfig
+@@ -742,7 +742,7 @@ choice
+ config EXPOLINE_OFF
+ 	bool "spectre_v2=off"
+ 
+-config EXPOLINE_MEDIUM
++config EXPOLINE_AUTO
+ 	bool "spectre_v2=auto"
+ 
+ config EXPOLINE_FULL
+--- a/arch/s390/Makefile
++++ b/arch/s390/Makefile
+@@ -83,7 +83,7 @@ ifdef CONFIG_EXPOLINE
+     CC_FLAGS_EXPOLINE += -mfunction-return=thunk
+     CC_FLAGS_EXPOLINE += -mindirect-branch-table
+     export CC_FLAGS_EXPOLINE
+-    cflags-y += $(CC_FLAGS_EXPOLINE)
++    cflags-y += $(CC_FLAGS_EXPOLINE) -DCC_USING_EXPOLINE
+   endif
+ endif
+ 
+--- a/arch/s390/include/asm/nospec-branch.h
++++ b/arch/s390/include/asm/nospec-branch.h
+@@ -6,12 +6,10 @@
+ 
+ #include <linux/types.h>
+ 
+-extern int nospec_call_disable;
+-extern int nospec_return_disable;
++extern int nospec_disable;
+ 
+ void nospec_init_branches(void);
+-void nospec_call_revert(s32 *start, s32 *end);
+-void nospec_return_revert(s32 *start, s32 *end);
++void nospec_revert(s32 *start, s32 *end);
+ 
+ #endif /* __ASSEMBLY__ */
+ 
+--- a/arch/s390/kernel/alternative.c
++++ b/arch/s390/kernel/alternative.c
+@@ -1,6 +1,7 @@
+ #include <linux/module.h>
+ #include <asm/alternative.h>
+ #include <asm/facility.h>
++#include <asm/nospec-branch.h>
+ 
+ #define MAX_PATCH_LEN (255 - 1)
+ 
+--- a/arch/s390/kernel/module.c
++++ b/arch/s390/kernel/module.c
+@@ -167,7 +167,7 @@ int module_frob_arch_sections(Elf_Ehdr *
+ 	me->core_size += me->arch.got_size;
+ 	me->arch.plt_offset = me->core_size;
+ 	if (me->arch.plt_size) {
+-		if (IS_ENABLED(CONFIG_EXPOLINE) && !nospec_call_disable)
++		if (IS_ENABLED(CONFIG_EXPOLINE) && !nospec_disable)
+ 			me->arch.plt_size += PLT_ENTRY_SIZE;
+ 		me->core_size += me->arch.plt_size;
+ 	}
+@@ -326,8 +326,7 @@ static int apply_rela(Elf_Rela *rela, El
+ 				info->plt_offset;
+ 			ip[0] = 0x0d10e310;	/* basr 1,0  */
+ 			ip[1] = 0x100a0004;	/* lg	1,10(1) */
+-			if (IS_ENABLED(CONFIG_EXPOLINE) &&
+-			    !nospec_call_disable) {
++			if (IS_ENABLED(CONFIG_EXPOLINE) && !nospec_disable) {
+ 				unsigned int *ij;
+ 				ij = me->module_core +
+ 					me->arch.plt_offset +
+@@ -448,7 +447,7 @@ int module_finalize(const Elf_Ehdr *hdr,
+ 	void *aseg;
+ 
+ 	if (IS_ENABLED(CONFIG_EXPOLINE) &&
+-	    !nospec_call_disable && me->arch.plt_size) {
++	    !nospec_disable && me->arch.plt_size) {
+ 		unsigned int *ij;
+ 
+ 		ij = me->module_core + me->arch.plt_offset +
+@@ -475,11 +474,11 @@ int module_finalize(const Elf_Ehdr *hdr,
+ 
+ 		if (IS_ENABLED(CONFIG_EXPOLINE) &&
+ 		    (!strcmp(".nospec_call_table", secname)))
+-			nospec_call_revert(aseg, aseg + s->sh_size);
++			nospec_revert(aseg, aseg + s->sh_size);
+ 
+ 		if (IS_ENABLED(CONFIG_EXPOLINE) &&
+ 		    (!strcmp(".nospec_return_table", secname)))
+-			nospec_return_revert(aseg, aseg + s->sh_size);
++			nospec_revert(aseg, aseg + s->sh_size);
+ 	}
+ 
+ 	jump_label_apply_nops(me);
 --- a/arch/s390/kernel/nospec-branch.c
 +++ b/arch/s390/kernel/nospec-branch.c
-@@ -33,6 +33,16 @@ static int __init nospec_setup_early(cha
+@@ -11,10 +11,17 @@ static int __init nobp_setup_early(char
+ 	rc = kstrtobool(str, &enabled);
+ 	if (rc)
+ 		return rc;
+-	if (enabled && test_facility(82))
++	if (enabled && test_facility(82)) {
++		/*
++		 * The user explicitely requested nobp=1, enable it and
++		 * disable the expoline support.
++		 */
+ 		__set_facility(82, S390_lowcore.alt_stfle_fac_list);
+-	else
++		if (IS_ENABLED(CONFIG_EXPOLINE))
++			nospec_disable = 1;
++	} else {
+ 		__clear_facility(82, S390_lowcore.alt_stfle_fac_list);
++	}
+ 	return 0;
  }
- early_param("nospec", nospec_setup_early);
+ early_param("nobp", nobp_setup_early);
+@@ -28,31 +35,46 @@ early_param("nospec", nospec_setup_early
  
-+static int __init nospec_report(void)
-+{
-+	if (IS_ENABLED(CC_USING_EXPOLINE) && !nospec_disable)
-+		pr_info("Spectre V2 mitigation: execute trampolines.\n");
-+	if (__test_facility(82, S390_lowcore.alt_stfle_fac_list))
-+		pr_info("Spectre V2 mitigation: limited branch prediction.\n");
-+	return 0;
-+}
-+arch_initcall(nospec_report);
-+
  #ifdef CONFIG_EXPOLINE
  
- int nospec_disable = IS_ENABLED(CONFIG_EXPOLINE_OFF);
+-int nospec_call_disable = IS_ENABLED(CONFIG_EXPOLINE_OFF);
+-int nospec_return_disable = !IS_ENABLED(CONFIG_EXPOLINE_FULL);
++int nospec_disable = IS_ENABLED(CONFIG_EXPOLINE_OFF);
+ 
+ static int __init nospectre_v2_setup_early(char *str)
+ {
+-	nospec_call_disable = 1;
+-	nospec_return_disable = 1;
++	nospec_disable = 1;
+ 	return 0;
+ }
+ early_param("nospectre_v2", nospectre_v2_setup_early);
+ 
++static int __init spectre_v2_auto_early(void)
++{
++	if (IS_ENABLED(CC_USING_EXPOLINE)) {
++		/*
++		 * The kernel has been compiled with expolines.
++		 * Keep expolines enabled and disable nobp.
++		 */
++		nospec_disable = 0;
++		__clear_facility(82, S390_lowcore.alt_stfle_fac_list);
++	}
++	/*
++	 * If the kernel has not been compiled with expolines the
++	 * nobp setting decides what is done, this depends on the
++	 * CONFIG_KERNEL_NP option and the nobp/nospec parameters.
++	 */
++	return 0;
++}
++#ifdef CONFIG_EXPOLINE_AUTO
++early_initcall(spectre_v2_auto_early);
++#endif
++
+ static int __init spectre_v2_setup_early(char *str)
+ {
+ 	if (str && !strncmp(str, "on", 2)) {
+-		nospec_call_disable = 0;
+-		nospec_return_disable = 0;
+-	}
+-	if (str && !strncmp(str, "off", 3)) {
+-		nospec_call_disable = 1;
+-		nospec_return_disable = 1;
+-	}
+-	if (str && !strncmp(str, "auto", 4)) {
+-		nospec_call_disable = 0;
+-		nospec_return_disable = 1;
++		nospec_disable = 0;
++		__clear_facility(82, S390_lowcore.alt_stfle_fac_list);
+ 	}
++	if (str && !strncmp(str, "off", 3))
++		nospec_disable = 1;
++	if (str && !strncmp(str, "auto", 4))
++		spectre_v2_auto_early();
+ 	return 0;
+ }
+ early_param("spectre_v2", spectre_v2_setup_early);
+@@ -105,15 +127,9 @@ static void __init_or_module __nospec_re
+ 	}
+ }
+ 
+-void __init_or_module nospec_call_revert(s32 *start, s32 *end)
+-{
+-	if (nospec_call_disable)
+-		__nospec_revert(start, end);
+-}
+-
+-void __init_or_module nospec_return_revert(s32 *start, s32 *end)
++void __init_or_module nospec_revert(s32 *start, s32 *end)
+ {
+-	if (nospec_return_disable)
++	if (nospec_disable)
+ 		__nospec_revert(start, end);
+ }
+ 
+@@ -121,8 +137,8 @@ extern s32 __nospec_call_start[], __nosp
+ extern s32 __nospec_return_start[], __nospec_return_end[];
+ void __init nospec_init_branches(void)
+ {
+-	nospec_call_revert(__nospec_call_start, __nospec_call_end);
+-	nospec_return_revert(__nospec_return_start, __nospec_return_end);
++	nospec_revert(__nospec_call_start, __nospec_call_end);
++	nospec_revert(__nospec_return_start, __nospec_return_end);
+ }
+ 
+ #endif /* CONFIG_EXPOLINE */
