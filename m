@@ -1,43 +1,39 @@
 Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqI8KTgBh+e/0X0o85qpJso8l4BmKFbdw1WaINx5XPqyQ+pC9f9y37PUh0lxhP8lNSBl3tG
-ARC-Seal: i=1; a=rsa-sha256; t=1524838362; cv=none;
+X-Google-Smtp-Source: AB8JxZrwGnSlVDqNNs+b/qBvhvtJF87ZNK1tALuAU8T+XRuM+nfKkyIqg6yILX9daug7ofFTPCYt
+ARC-Seal: i=1; a=rsa-sha256; t=1524838360; cv=none;
         d=google.com; s=arc-20160816;
-        b=LmuNUnHzmVn4P5ZfPQz3rrD2gwQjGTzS8aNlh49cSXcVZRrPGhUYv4wgR+47ntlRMY
-         eEu21vk3Y/+7HkxpFw2jPYzow2syC0hXyWYIdNmwdwTFdaHvHG61AtdQODvqTkjPCA2A
-         A00FYnSDOq+w8Izn0cjKxueioHDDxeVznwCqVA5JEqjeHF0QJoh/zu6pWZiyoWEnkTQl
-         lZKBbhBOnwRKIOr+iws+39lhvZ+YUQN3qh/GlRKKht59i+VfsIqMeBI+iF6ZHPXblCi1
-         SCUzcFGTjCelLrUV96rPp79Odtn0x1V+z3Ahz7ht4nCdA2nni1aNm2DSrjDkwwtfvgoC
-         cwmA==
+        b=PmHWTe7tYnhqtGYvgBTJ6ScxQqdeV2YpL5yHZzuKtRFUA/U7HijaP0mJ8prOxBUsJT
+         ZLF8LFT7ILa0EhpXIdYxWxkI90lZy95YskIDYBN58FsdVO9agYnTBoXI/fbZVcll9guW
+         qZ6c4CiYS2PPUEN5TJ8I+AffxhzjHJJTqOLsau+UdCZDHtslYbmvvNlc88sHg1xcnW9m
+         BMEPM2lA0SRlavQzGPyKLm1fc/U/prR/cV/GuatlbOgDOYPJ18/9MhQiTWfKSsUhMLaQ
+         XheQdqgbPo+BPtoKMV4nUp1Ffw6XKb4ccB8HDXUxx4NgiqqK+vi50Fk8PEueoIMGquI+
+         lojA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=KCnk/XAjAee1ps++pw3ZUeiSGm1kcfSb0guWzSJZiQg=;
-        b=lJ+AA4VYXi7X2j+swhBfGiKMpb+TENZwzUsXihA2A4432l/Aa5NXYBcW78vbuHNy6H
-         otCINmOBAqU95iqBhjrQfrtagmC24VaduJhPISODCIYtzX9xlG1BbfVe1bVwqb8SB24j
-         HWkS9MlyEbFQ0+5C5gKmbAGEnvHzsOvkGbw0kkAIrYiL2mgQVXdFIppGhxlc/cpXJhzJ
-         B/+nWrbTtltKZJ/3ybbHKSDdCoypEwQasY5+AzYgPu/rYzK7ivDIErjK+0kzLDttJshB
-         RSd8MmgpIG2CKdvixnabrfZcqjeFPmq6p632Nw1PMkLYrIUmxstk3CmpOscYnL7fquKC
-         Kpjw==
+        bh=WadiLSpOg02NTFk0hDOHoXa4uYgLOakAzgqoY92ZIec=;
+        b=dfkuPATZPjJyhfLTXeGvi78HJGdLlcsc7LARv7TwxJEFAtbxq2ZgdXLDDSVbT6Ti0e
+         vKBOvdtPbYb1mWwhNwEmClbbRC5z5uy+tpj9k8Jnhx1IRhAmBFbwilvIje4k6ZkrZqfa
+         1p7La49fRPTRfin1WU3eV/wa81U541uYIrAkkM9hfC4mYIOW7bTqDtEo4S6zmER/ncIO
+         fw0voJP+x6LM+NcLkVu9TI+j3vSq1iIEwvqjWl26MO4SFFOGHtbGo6C4qQj+putm3iki
+         YO6uuWf+EUCG6Est8GCp8eXAmt5cjqNejKyUuj6eMCpLWH62qjQbWqsP/GrXuJjTStJg
+         9F0Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FBA721895
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BA6A21895
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Laurent Vivier <lvivier@redhat.com>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	linuxppc-dev@lists.ozlabs.org,
-	Jens Axboe <axboe@kernel.dk>,
-	Stan Johnson <userm57@yahoo.com>,
-	Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH 4.16 69/81] block/swim: Rename macros to avoid inconsistent inverted logic
-Date: Fri, 27 Apr 2018 15:59:11 +0200
-Message-Id: <20180427135747.323596278@linuxfoundation.org>
+	Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.16 33/81] vlan: Fix reading memory beyond skb->tail in skb_vlan_tagged_multi
+Date: Fri, 27 Apr 2018 15:58:35 +0200
+Message-Id: <20180427135744.941363276@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180427135743.216853156@linuxfoundation.org>
 References: <20180427135743.216853156@linuxfoundation.org>
@@ -47,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908686299602165?=
-X-GMAIL-MSGID: =?utf-8?q?1598908910799473552?=
+X-GMAIL-THRID: =?utf-8?q?1598908232509203798?=
+X-GMAIL-MSGID: =?utf-8?q?1598908907961626423?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -56,93 +52,133 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Finn Thain <fthain@telegraphics.com.au>
+From: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
 
-commit 56a1c5ee54f69dd767fb61d301883dc919ddc259 upstream.
 
-The Sony drive status bits use active-low logic. The swim_readbit()
-function converts that to 'C' logic for readability. Hence, the
-sense of the names of the status bit macros should not be inverted.
+[ Upstream commit 7ce2367254e84753bceb07327aaf5c953cfce117 ]
 
-Mostly they are correct. However, the TWOMEG_DRIVE, MFM_MODE and
-TWOMEG_MEDIA macros have inverted sense (like MkLinux). Fix this
-inconsistency and make the following patches less confusing.
+Syzkaller spotted an old bug which leads to reading skb beyond tail by 4
+bytes on vlan tagged packets.
+This is caused because skb_vlan_tagged_multi() did not check
+skb_headlen.
 
-The same problem affects swim3.c so fix that too.
+BUG: KMSAN: uninit-value in eth_type_vlan include/linux/if_vlan.h:283 [inline]
+BUG: KMSAN: uninit-value in skb_vlan_tagged_multi include/linux/if_vlan.h:656 [inline]
+BUG: KMSAN: uninit-value in vlan_features_check include/linux/if_vlan.h:672 [inline]
+BUG: KMSAN: uninit-value in dflt_features_check net/core/dev.c:2949 [inline]
+BUG: KMSAN: uninit-value in netif_skb_features+0xd1b/0xdc0 net/core/dev.c:3009
+CPU: 1 PID: 3582 Comm: syzkaller435149 Not tainted 4.16.0+ #82
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:17 [inline]
+  dump_stack+0x185/0x1d0 lib/dump_stack.c:53
+  kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
+  __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:676
+  eth_type_vlan include/linux/if_vlan.h:283 [inline]
+  skb_vlan_tagged_multi include/linux/if_vlan.h:656 [inline]
+  vlan_features_check include/linux/if_vlan.h:672 [inline]
+  dflt_features_check net/core/dev.c:2949 [inline]
+  netif_skb_features+0xd1b/0xdc0 net/core/dev.c:3009
+  validate_xmit_skb+0x89/0x1320 net/core/dev.c:3084
+  __dev_queue_xmit+0x1cb2/0x2b60 net/core/dev.c:3549
+  dev_queue_xmit+0x4b/0x60 net/core/dev.c:3590
+  packet_snd net/packet/af_packet.c:2944 [inline]
+  packet_sendmsg+0x7c57/0x8a10 net/packet/af_packet.c:2969
+  sock_sendmsg_nosec net/socket.c:630 [inline]
+  sock_sendmsg net/socket.c:640 [inline]
+  sock_write_iter+0x3b9/0x470 net/socket.c:909
+  do_iter_readv_writev+0x7bb/0x970 include/linux/fs.h:1776
+  do_iter_write+0x30d/0xd40 fs/read_write.c:932
+  vfs_writev fs/read_write.c:977 [inline]
+  do_writev+0x3c9/0x830 fs/read_write.c:1012
+  SYSC_writev+0x9b/0xb0 fs/read_write.c:1085
+  SyS_writev+0x56/0x80 fs/read_write.c:1082
+  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+RIP: 0033:0x43ffa9
+RSP: 002b:00007fff2cff3948 EFLAGS: 00000217 ORIG_RAX: 0000000000000014
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043ffa9
+RDX: 0000000000000001 RSI: 0000000020000080 RDI: 0000000000000003
+RBP: 00000000006cb018 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000217 R12: 00000000004018d0
+R13: 0000000000401960 R14: 0000000000000000 R15: 0000000000000000
 
-No functional change.
+Uninit was created at:
+  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
+  kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:188
+  kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:314
+  kmsan_slab_alloc+0x11/0x20 mm/kmsan/kmsan.c:321
+  slab_post_alloc_hook mm/slab.h:445 [inline]
+  slab_alloc_node mm/slub.c:2737 [inline]
+  __kmalloc_node_track_caller+0xaed/0x11c0 mm/slub.c:4369
+  __kmalloc_reserve net/core/skbuff.c:138 [inline]
+  __alloc_skb+0x2cf/0x9f0 net/core/skbuff.c:206
+  alloc_skb include/linux/skbuff.h:984 [inline]
+  alloc_skb_with_frags+0x1d4/0xb20 net/core/skbuff.c:5234
+  sock_alloc_send_pskb+0xb56/0x1190 net/core/sock.c:2085
+  packet_alloc_skb net/packet/af_packet.c:2803 [inline]
+  packet_snd net/packet/af_packet.c:2894 [inline]
+  packet_sendmsg+0x6444/0x8a10 net/packet/af_packet.c:2969
+  sock_sendmsg_nosec net/socket.c:630 [inline]
+  sock_sendmsg net/socket.c:640 [inline]
+  sock_write_iter+0x3b9/0x470 net/socket.c:909
+  do_iter_readv_writev+0x7bb/0x970 include/linux/fs.h:1776
+  do_iter_write+0x30d/0xd40 fs/read_write.c:932
+  vfs_writev fs/read_write.c:977 [inline]
+  do_writev+0x3c9/0x830 fs/read_write.c:1012
+  SYSC_writev+0x9b/0xb0 fs/read_write.c:1085
+  SyS_writev+0x56/0x80 fs/read_write.c:1082
+  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
 
-The FDHD drive status bits are documented in sonydriv.cpp from MAME
-and in swimiii.h from MkLinux.
-
-Cc: Laurent Vivier <lvivier@redhat.com>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: linuxppc-dev@lists.ozlabs.org
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: stable@vger.kernel.org # v4.14+
-Tested-by: Stan Johnson <userm57@yahoo.com>
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-Acked-by: Laurent Vivier <lvivier@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: 58e998c6d239 ("offloading: Force software GSO for multiple vlan tags.")
+Reported-and-tested-by: syzbot+0bbe42c764feafa82c5a@syzkaller.appspotmail.com
+Signed-off-by: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/block/swim.c  |    8 ++++----
- drivers/block/swim3.c |    6 +++---
- 2 files changed, 7 insertions(+), 7 deletions(-)
+ include/linux/if_vlan.h |    7 +++++--
+ net/core/dev.c          |    2 +-
+ 2 files changed, 6 insertions(+), 3 deletions(-)
 
---- a/drivers/block/swim.c
-+++ b/drivers/block/swim.c
-@@ -110,7 +110,7 @@ struct iwm {
- /* Select values for swim_select and swim_readbit */
+--- a/include/linux/if_vlan.h
++++ b/include/linux/if_vlan.h
+@@ -639,7 +639,7 @@ static inline bool skb_vlan_tagged(const
+  * Returns true if the skb is tagged with multiple vlan headers, regardless
+  * of whether it is hardware accelerated or not.
+  */
+-static inline bool skb_vlan_tagged_multi(const struct sk_buff *skb)
++static inline bool skb_vlan_tagged_multi(struct sk_buff *skb)
+ {
+ 	__be16 protocol = skb->protocol;
  
- #define READ_DATA_0	0x074
--#define TWOMEG_DRIVE	0x075
-+#define ONEMEG_DRIVE	0x075
- #define SINGLE_SIDED	0x076
- #define DRIVE_PRESENT	0x077
- #define DISK_IN		0x170
-@@ -118,9 +118,9 @@ struct iwm {
- #define TRACK_ZERO	0x172
- #define TACHO		0x173
- #define READ_DATA_1	0x174
--#define MFM_MODE	0x175
-+#define GCR_MODE	0x175
- #define SEEK_COMPLETE	0x176
--#define ONEMEG_MEDIA	0x177
-+#define TWOMEG_MEDIA	0x177
+@@ -649,6 +649,9 @@ static inline bool skb_vlan_tagged_multi
+ 		if (likely(!eth_type_vlan(protocol)))
+ 			return false;
  
- /* Bits in handshake register */
++		if (unlikely(!pskb_may_pull(skb, VLAN_ETH_HLEN)))
++			return false;
++
+ 		veh = (struct vlan_ethhdr *)skb->data;
+ 		protocol = veh->h_vlan_encapsulated_proto;
+ 	}
+@@ -666,7 +669,7 @@ static inline bool skb_vlan_tagged_multi
+  *
+  * Returns features without unsafe ones if the skb has multiple tags.
+  */
+-static inline netdev_features_t vlan_features_check(const struct sk_buff *skb,
++static inline netdev_features_t vlan_features_check(struct sk_buff *skb,
+ 						    netdev_features_t features)
+ {
+ 	if (skb_vlan_tagged_multi(skb)) {
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -2942,7 +2942,7 @@ netdev_features_t passthru_features_chec
+ }
+ EXPORT_SYMBOL(passthru_features_check);
  
-@@ -612,7 +612,7 @@ static void setup_medium(struct floppy_s
- 		struct floppy_struct *g;
- 		fs->disk_in = 1;
- 		fs->write_protected = swim_readbit(base, WRITE_PROT);
--		fs->type = swim_readbit(base, ONEMEG_MEDIA);
-+		fs->type = swim_readbit(base, TWOMEG_MEDIA);
- 
- 		if (swim_track00(base))
- 			printk(KERN_ERR
---- a/drivers/block/swim3.c
-+++ b/drivers/block/swim3.c
-@@ -148,7 +148,7 @@ struct swim3 {
- #define MOTOR_ON	2
- #define RELAX		3	/* also eject in progress */
- #define READ_DATA_0	4
--#define TWOMEG_DRIVE	5
-+#define ONEMEG_DRIVE	5
- #define SINGLE_SIDED	6	/* drive or diskette is 4MB type? */
- #define DRIVE_PRESENT	7
- #define DISK_IN		8
-@@ -156,9 +156,9 @@ struct swim3 {
- #define TRACK_ZERO	10
- #define TACHO		11
- #define READ_DATA_1	12
--#define MFM_MODE	13
-+#define GCR_MODE	13
- #define SEEK_COMPLETE	14
--#define ONEMEG_MEDIA	15
-+#define TWOMEG_MEDIA	15
- 
- /* Definitions of values used in writing and formatting */
- #define DATA_ESCAPE	0x99
+-static netdev_features_t dflt_features_check(const struct sk_buff *skb,
++static netdev_features_t dflt_features_check(struct sk_buff *skb,
+ 					     struct net_device *dev,
+ 					     netdev_features_t features)
+ {
