@@ -1,82 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1759846AbeD1Kso (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 28 Apr 2018 06:48:44 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:54606 "EHLO mx1.redhat.com"
+        id S1759883AbeD1LQI (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 28 Apr 2018 07:16:08 -0400
+Received: from ozlabs.org ([203.11.71.1]:58037 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1759651AbeD1Ksm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Apr 2018 06:48:42 -0400
-Date: Sat, 28 Apr 2018 06:48:41 -0400 (EDT)
-From: Pankaj Gupta <pagupta@redhat.com>
-To: Stefan Hajnoczi <stefanha@redhat.com>
-Cc: jack@suse.cz, kvm@vger.kernel.org, david@redhat.com,
-        linux-nvdimm@ml01.01.org, ross zwisler <ross.zwisler@intel.com>,
-        qemu-devel@nongnu.org, lcapitulino@redhat.com, linux-mm@kvack.org,
-        niteshnarayanlal@hotmail.com, mst@redhat.com, hch@infradead.org,
-        Stefan Hajnoczi <stefanha@gmail.com>, marcel@redhat.com,
-        nilal@redhat.com, haozhong zhang <haozhong.zhang@intel.com>,
-        riel@surriel.com, pbonzini@redhat.com,
-        dan j williams <dan.j.williams@intel.com>, kwolf@redhat.com,
-        xiaoguangrong eric <xiaoguangrong.eric@gmail.com>,
-        linux-kernel@vger.kernel.org, imammedo@redhat.com
-Message-ID: <1266554822.23475618.1524912521209.JavaMail.zimbra@redhat.com>
-In-Reply-To: <20180427133146.GB11150@stefanha-x1.localdomain>
-References: <20180425112415.12327-1-pagupta@redhat.com> <20180425112415.12327-2-pagupta@redhat.com> <20180426131236.GA30991@stefanha-x1.localdomain> <197910974.22984070.1524757499459.JavaMail.zimbra@redhat.com> <20180427133146.GB11150@stefanha-x1.localdomain>
-Subject: Re: [Qemu-devel] [RFC v2 1/2] virtio: add pmem driver
+        id S1759699AbeD1LQG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Apr 2018 07:16:06 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: alexandre.belloni@bootlin.com, alistair@popple.id.au,
+        arbab@linux.ibm.com, bsingharora@gmail.com, laurentiu.tudor@nxp.com,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        mahesh@linux.vnet.ibm.com, npiggin@gmail.com,
+        shilpa.bhat@linux.vnet.ibm.com, svaidy@linux.vnet.ibm.com,
+        viresh.kumar@linaro.org
+Subject: [GIT PULL] Please pull powerpc/linux.git powerpc-4.17-4 tag
+Date: Sat, 28 Apr 2018 21:16:01 +1000
+Message-ID: <87po2jtwcu.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.116.38, 10.4.195.28]
-Thread-Topic: virtio: add pmem driver
-Thread-Index: yfnsc35dwFGDNzCGklJwWeo1J1CSKA==
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA256
 
-> > > > +        int err;
-> > > > +
-> > > > +        sg_init_one(&sg, buf, sizeof(buf));
-> > > > +
-> > > > +        err = virtqueue_add_outbuf(vpmem->req_vq, &sg, 1, buf, GFP_KERNEL);
-> > > > +
-> > > > +        if (err) {
-> > > > +                dev_err(&vdev->dev, "failed to send command to virtio pmem
-> > > > device\n");
-> > > > +                return;
-> > > > +        }
-> > > > +
-> > > > +        virtqueue_kick(vpmem->req_vq);
-> > > 
-> > > Is any locking necessary?  Two CPUs must not invoke virtio_pmem_flush()
-> > > at the same time.  Not sure if anything guarantees this, maybe you're
-> > > relying on libnvdimm but I haven't checked.
-> > 
-> > I thought about it to some extent, and wanted to go ahead with simple
-> > version first:
-> > 
-> > - I think file 'inode -> locking' sill is there for request on single file.
-> > - For multiple files, our aim is to just flush the backend block image.
-> > - Even there is collision for virt queue read/write entry it should just
-> > trigger a Qemu fsync.
-> >   We just want most recent flush to assure guest writes are synced
-> >   properly.
-> > 
-> > Important point here: We are doing entire block fsync for guest virtual
-> > disk.
-> 
-> I don't understand your answer.  Is locking necessary or not?
+Hi Linus,
 
-It will be required with other changes.
+Please pull some more powerpc fixes for 4.17. The RTC and cpufreq
+changes are both acked by a relevant maintainer.
 
-> 
-> From the virtqueue_add_outbuf() documentation:
-> 
->  * Caller must ensure we don't call this with other virtqueue operations
->  * at the same time (except where noted).
+cheers
 
-Yes, I also saw it. But thought if can avoid it with current functionality. :)
+The following changes since commit 6d08b06e67cd117f6992c46611dfb4ce267cd71e:
 
+  Linux 4.17-rc2 (2018-04-22 19:20:09 -0700)
 
-Thanks,
-Pankaj
+are available in the git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-4.17-4
+
+for you to fetch changes up to b2d7ecbe355698010a6b7a15eb179e09eb3d6a34:
+
+  powerpc/kvm/booke: Fix altivec related build break (2018-04-27 16:36:03 +1000)
+
+- ----------------------------------------------------------------
+powerpc fixes for 4.17 #4
+
+A bunch of fixes, mostly for existing code and going to stable.
+
+Our memory hot-unplug path wasn't flushing the cache before removing memory.
+That is a problem now that we are doing memory hotplug on bare metal.
+
+Three fixes for the NPU code that supports devices connected via NVLink (ie.
+GPUs). The main one tweaks the TLB flush algorithm to avoid soft lockups for
+large flushes.
+
+A fix for our memory error handling where we would loop infinitely, returning
+back to the bad access and hard lockup the CPU.
+
+Fixes for the OPAL RTC driver, which wasn't handling some error cases correctly.
+
+A fix for a hardlockup in the powernv cpufreq driver.
+
+And finally two fixes to our smp_send_stop(), required due to a recent change to
+use it on shutdown.
+
+Thanks to:
+  Alistair Popple, Balbir Singh, Laurentiu Tudor, Mahesh Salgaonkar, Mark
+  Hairgrove, Nicholas Piggin, Rashmica Gupta, Shilpasri G Bhat.
+
+- ----------------------------------------------------------------
+Alistair Popple (3):
+      powerpc/powernv/npu: Add lock to prevent race in concurrent context init/destroy
+      powerpc/powernv/npu: Prevent overwriting of pnv_npu2_init_contex() callback parameters
+      powerpc/powernv/npu: Do a PID GPU TLB flush when invalidating a large address range
+
+Balbir Singh (2):
+      powerpc/mm: Flush cache on memory hot(un)plug
+      powerpc/powernv/memtrace: Let the arch hotunplug code flush cache
+
+Laurentiu Tudor (1):
+      powerpc/kvm/booke: Fix altivec related build break
+
+Mahesh Salgaonkar (1):
+      powerpc/mce: Fix a bug where mce loops on memory UE.
+
+Nicholas Piggin (3):
+      rtc: opal: Fix OPAL RTC driver OPAL_BUSY loops
+      powerpc: Fix smp_send_stop NMI IPI handling
+      powerpc: Fix deadlock with multiple calls to smp_send_stop
+
+Shilpasri G Bhat (1):
+      cpufreq: powernv: Fix hardlockup due to synchronous smp_call in timer interrupt
+
+ arch/powerpc/include/asm/powernv.h        |  2 +-
+ arch/powerpc/kernel/mce_power.c           |  7 +--
+ arch/powerpc/kernel/smp.c                 | 49 ++++++++++++++---
+ arch/powerpc/kvm/booke.c                  |  7 +++
+ arch/powerpc/mm/mem.c                     |  2 +
+ arch/powerpc/platforms/powernv/memtrace.c | 17 ------
+ arch/powerpc/platforms/powernv/npu-dma.c  | 88 +++++++++++++++++++++++++------
+ arch/powerpc/platforms/powernv/opal-rtc.c |  8 +--
+ drivers/cpufreq/powernv-cpufreq.c         | 14 +++--
+ drivers/rtc/rtc-opal.c                    | 37 ++++++++-----
+ 10 files changed, 166 insertions(+), 65 deletions(-)
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJa5FfxAAoJEFHr6jzI4aWAe54P/RSoKFn7Bfuhkp3vdeD6Q6fU
+Mlbm/VIzamrZ+4X4jrXbizwQgrphrqA84FTWprQet04V+VjYFKtdoIUsng+1rmZ+
+CiiajXTsDz9YRYoG8mKiEBis8doBLvAIelN5lT0nx0e9BTeg/Q0gDGaLlSl6Cw2r
+yusEthM3MmAYrqPlsEaZ2Ex5F2zxEW26nVjr1/SVmKJm5+zxRMIm2WCMjHDaEXBx
+K5FEyT2FgCrcSitc2NQKVJ/OKyv3iAbk4/2sZrCu8h6hlJ3qVX2SCuzQvbey0rKK
+jLsnZ+51uqx5TwivCQDHUM6Fzwa3moreNpHl6CtSSFp5WlHSfbOttf3i+9mSHhTP
+pnORQDPw2la/DD6XKhJmSYTIBiu5/cDeAcwtYgG6WKbgOGKCVhJ5Mfne0DxxnLLc
+lKeFRwQBdKQYB3qqFdjiubLpJbDW9CyqKMyIQMivqkoGwEoya04cazhaVmYartSD
+cOYueG4zbJmCoeXDdCfKH2duxkAKnQVKJDj29N5IOuuNGua2dozMG/SvNQmwYX4S
+Z4ZItxJAdSxGXyhzh2GNYPnd8Hp1mnMLC+bn5TRYOAy7tO3zd4Vt4Q434SyJOOsL
+G6wcyT8J2ARrNEssE6m/32nskIPAOIRQaVcHjO5HKCR8fnscMSDPxYlZHPbnPT46
+6ZgczHdxre4oUTAqrq9O
+=D9Tc
+-----END PGP SIGNATURE-----
