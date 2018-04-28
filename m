@@ -1,168 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933345AbeD1FXz (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 28 Apr 2018 01:23:55 -0400
-Received: from mail-pf0-f169.google.com ([209.85.192.169]:33572 "EHLO
-        mail-pf0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751731AbeD1FXx (ORCPT
+        id S1752539AbeD1F1C (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 28 Apr 2018 01:27:02 -0400
+Received: from mail-pg0-f54.google.com ([74.125.83.54]:35312 "EHLO
+        mail-pg0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751303AbeD1F1A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Apr 2018 01:23:53 -0400
-X-Google-Smtp-Source: AB8JxZqOO+3PbJaoJPfzjGZ69IJUL9sXUctuU3IKlVXoU0PPnYFMsmnTJiX54M3/YW5fedRDfH8mxA==
-Date: Fri, 27 Apr 2018 22:23:49 -0700
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To: Eric Biggers <ebiggers3@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, rostedt@goodmis.org, syzkaller-bugs@googlegroups.com,
-        netdev@vger.kernel.org,
-        syzbot
-        <bot+a9dbb3c3e64b62536a4bc5ee7bbd4ca627566188@syzkaller.appspotmail.com>
-Subject: Re: WARNING in perf_trace_buf_alloc (2)
-Message-ID: <20180428052347.4fjjxmjlqsx6dtnv@ast-mbp>
-References: <001a11404e22634fb0055d4f2346@google.com>
- <20180421193701.GE1098@sol.localdomain>
+        Sat, 28 Apr 2018 01:27:00 -0400
+X-Google-Smtp-Source: AB8JxZoBB8DYpkfjcGklt/wUiqmuCR7olgN1Mp34q36rPaIHkO9IMRu0GFbt8Ppbi6V/6IN1asJ0fBUwHpaQroFuNWY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180421193701.GE1098@sol.localdomain>
-User-Agent: NeoMutt/20180223
+In-Reply-To: <736468DE-36BE-471B-B5F2-DB3D0B3E892B@dilger.ca>
+References: <CAH2r5mtRF-yS6stThuVzem+WFmxDqpGLwFvUPviYcmh9dXXwkA@mail.gmail.com>
+ <EFCB08E9-C9B9-41AC-A398-4D552FC8EFC9@dilger.ca> <20180427234126.GA213261@gmail.com>
+ <736468DE-36BE-471B-B5F2-DB3D0B3E892B@dilger.ca>
+From: Steve French <smfrench@gmail.com>
+Date: Sat, 28 Apr 2018 00:26:38 -0500
+Message-ID: <CAH2r5mv7nxfgdr_rgk6oRLPN9UhXKDnU6n1PP9hu6r-X1E+iHg@mail.gmail.com>
+Subject: Re: copy_file_range and user space tools to do copy fastest
+To: Andreas Dilger <adilger@dilger.ca>
+Cc: Eric Biggers <ebiggers3@gmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        samba-technical <samba-technical@lists.samba.org>,
+        CIFS <linux-cifs@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Apr 21, 2018 at 12:37:01PM -0700, Eric Biggers wrote:
-> [+bpf maintainers and netdev]
-> 
-> On Mon, Nov 06, 2017 at 03:56:01AM -0800, syzbot wrote:
-> > Hello,
-> > 
-> > syzkaller hit the following crash on
-> > 5cb0512c02ecd7e6214e912e4c150f4219ac78e0
-> > git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/master
-> > compiler: gcc (GCC) 7.1.1 20170620
-> > .config is attached
-> > Raw console output is attached.
-> > C reproducer is attached
-> > syzkaller reproducer is attached. See https://goo.gl/kgGztJ
-> > for information about syzkaller reproducers
-> > 
-> > 
-> > ------------[ cut here ]------------
-> > WARNING: CPU: 0 PID: 3008 at kernel/trace/trace_event_perf.c:274
-> > perf_trace_buf_alloc+0x12d/0x160 kernel/trace/trace_event_perf.c:273
-> > Kernel panic - not syncing: panic_on_warn set ...
-> > 
-> > CPU: 0 PID: 3008 Comm: syzkaller609027 Not tainted 4.14.0-rc7+ #159
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> > Google 01/01/2011
-> > Call Trace:
-> >  __dump_stack lib/dump_stack.c:17 [inline]
-> >  dump_stack+0x194/0x257 lib/dump_stack.c:53
-> >  panic+0x1e4/0x417 kernel/panic.c:181
-> >  __warn+0x1c4/0x1d9 kernel/panic.c:542
-> >  report_bug+0x211/0x2d0 lib/bug.c:184
-> >  fixup_bug+0x40/0x90 arch/x86/kernel/traps.c:178
-> >  do_trap_no_signal arch/x86/kernel/traps.c:212 [inline]
-> >  do_trap+0x260/0x390 arch/x86/kernel/traps.c:261
-> >  do_error_trap+0x120/0x390 arch/x86/kernel/traps.c:298
-> >  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:311
-> >  invalid_op+0x18/0x20 arch/x86/entry/entry_64.S:906
-> > RIP: 0010:perf_trace_buf_alloc+0x12d/0x160
-> > kernel/trace/trace_event_perf.c:273
-> > RSP: 0018:ffff8801c0fdf760 EFLAGS: 00010286
-> > RAX: 000000000000001c RBX: 1ffff100381fbefe RCX: 0000000000000000
-> > RDX: 000000000000001c RSI: 1ffff100381fbeac RDI: ffffed00381fbee0
-> > RBP: ffff8801c0fdf780 R08: 0000000000000001 R09: 0000000000000000
-> > R10: ffff8801c0fdf7a0 R11: 0000000000000000 R12: 000000000000082c
-> > R13: ffff8801c0fdf810 R14: ffff8801c0fdf890 R15: ffff8801d8b34b40
-> >  perf_trace_bpf_map_keyval+0x260/0xbd0 include/trace/events/bpf.h:228
-> >  trace_bpf_map_update_elem include/trace/events/bpf.h:274 [inline]
-> >  map_update_elem kernel/bpf/syscall.c:597 [inline]
-> >  SYSC_bpf kernel/bpf/syscall.c:1478 [inline]
-> >  SyS_bpf+0x33eb/0x46a0 kernel/bpf/syscall.c:1453
-> >  entry_SYSCALL_64_fastpath+0x1f/0xbe
-> > RIP: 0033:0x445c29
-> > RSP: 002b:00000000007eff68 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
-> > RAX: ffffffffffffffda RBX: 00007ffe66adb340 RCX: 0000000000445c29
-> > RDX: 0000000000000020 RSI: 000000002053dfe0 RDI: 0000000000000002
-> > RBP: 0000000000000082 R08: 0000000000000000 R09: 0000000000000000
-> > R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000403280
-> > R13: 0000000000403310 R14: 0000000000000000 R15: 0000000000000000
-> > Dumping ftrace buffer:
-> >    (ftrace buffer empty)
-> > Kernel Offset: disabled
-> > Rebooting in 86400 seconds..
-> > 
-> > 
-> > ---
-> > This bug is generated by a dumb bot. It may contain errors.
-> > See https://goo.gl/tpsmEJ for details.
-> > Direct all questions to syzkaller@googlegroups.com.
-> > Please credit me with: Reported-by: syzbot <syzkaller@googlegroups.com>
-> > 
-> > syzbot will keep track of this bug report.
-> > Once a fix for this bug is committed, please reply to this email with:
-> > #syz fix: exact-commit-title
-> > To mark this as a duplicate of another syzbot report, please reply with:
-> > #syz dup: exact-subject-of-another-report
-> > If it's a one-off invalid bug report, please reply with:
-> > #syz invalid
-> > Note: if the crash happens again, it will cause creation of a new bug
-> > report.
-> > Note: all commands must start from beginning of the line.
-> 
-> This still happens on Linus' tree.  It seems one of the BPF tracepoints is
-> trying to pass a buffer that is too long.  Here's a simplified reproducer that
+On Sat, Apr 28, 2018 at 12:18 AM, Andreas Dilger <adilger@dilger.ca> wrote:
+> On Apr 27, 2018, at 5:41 PM, Eric Biggers <ebiggers3@gmail.com> wrote:
+>>
+>> On Fri, Apr 27, 2018 at 01:45:40PM -0600, Andreas Dilger wrote:
+>>> On Apr 27, 2018, at 12:25 PM, Steve French <smfrench@gmail.com> wrote:
+>>>>
+>>>> Are there any user space tools (other than our test tools and xfs_io
+>>>> etc.) that support copy_file_range?  Looks like at least cp and rsync
+>>>> and dd don't.  That syscall which now has been around a couple years,
+>>>> and was reminded about at the LSF/MM summit a few days ago, presumably
+>>>> is the 'best' way to copy a file fast since it tries all the
+>>>> mechanisms (reflink etc.) in order.
+>>>>
+>>>> Since copy_file_range syscall can be 100x or more faster for network
+>>>> file systems than the alternative, was surprised when I noticed that
+>>>> cp and rsync didn't support it.  It doesn't look like rsync even
+>>>> supports reflink either(although presumably if you call
+>>>> copy_file_range you don't have to worry about that), and reads/writes
+>>>> are 8K. See copy_file() in rsync/util.c
+>>>>
+>>>> In the cp command it looks like it can call the FICLONE IOCTL (see
+>>>> clone_file() in coreutils/src/copy.c) but doesn't call the expected
+>>>> "copy_file_range" syscall.
+>>>>
+>>>> In the dd command it doesn't call either - see dd_copy in corutils/src/dd.c
+>>>>
+>>>> Since it can be 100x or more faster in some cases to call
+>>>> copy_file_range than do reads/writes back and forth to do a copy
+>>>> (especially if network or clustered backend or cloud), what tools are
+>>>> the best to recommend?
+>>>>
+>>>> Would rsync or cp be likely to take patches to call the standard
+>>>> "copy_file_range" syscall
+>>>> (http://man7.org/linux/man-pages/man2/copy_file_range.2.html)?
+>>>> Presumably not if it has been two+ years ... but would be interested
+>>>> what copy tools to recommend to use instead.
+>>>
+>>> I would start with submitting a patch to coreutils, if you can figure
+>>> out that code enough to do so (I find it quite opaque).  Since it has
+>>> been in the kernel for a while already, it should be acceptable to the
+>>> upstream coreutils maintainers to use this interface.  Doubly so if you
+>>> include some benchmarks with CIFS/NFS clients avoiding network overhead
+>>> during the copy.
+>>>
+>>
+>> For cp (coreutils), apparently there was a concern that copy_file_range()
+>> expands holes; see the thread at
+>> https://lists.gnu.org/archive/html/bug-coreutils/2016-09/msg00020.html.
+>> Though, I'd think it could just be used on non-holes only.  And I don't think
+>> the size_t type of 'len' is a problem either, since it's the copy length, not
+>> the file size.  You just call it multiple times if the file is larger.
+>
+> I think cp is already using SEEK_HOLE/SEEK_DATA and/or FIEMAP to determine
+> the mapped and sparse segments of the file, so it should be practical to
+> use copy_file_range() in conjunction with these to copy only the allocated
+> parts of the file.
 
-right. this is easily reproducible.
-looks like tracepoints in bpf core rot quite a bit.
-will send a patch to address that soon.
+For the case where clone/reflink or copy_file_range is supported - is
+there any reason to
+not sent the request to copy the whole file? Presumably long
+timeout/errors might be a concern, but
+that could happen with ranges too.  In any case, if sent the whole
+file copy request,
+the server file system can figure out the  holes and copy more efficiently.
 
-> works on Linus' tree (commit 5e7c7806111ade5).  Note: it's not 100% reliable for
-> some reason; you may have to run it a couple times.  Daniel or Alexei, can one
-> of you please look into this more?  Thanks!
-> 
-> #include <linux/bpf.h>
-> #include <linux/perf_event.h>
-> #include <stdio.h>
-> #include <sys/syscall.h>
-> #include <unistd.h>
-> 
-> int main()
-> {
->         int tracepoint_id;
->         FILE *f;
-> 
->         f = fopen("/sys/kernel/debug/tracing/events/bpf/bpf_map_update_elem/id",
->                   "r");
->         fscanf(f, "%d", &tracepoint_id);
-> 
->         struct perf_event_attr perf_attr = {
->                 .type = PERF_TYPE_TRACEPOINT,
->                 .size = sizeof(perf_attr),
->                 .config = tracepoint_id,
->         };
->         syscall(__NR_perf_event_open, &perf_attr, 0, 0, -1, 0);
-> 
->         for (;;) {
->                 union bpf_attr create_attr = {
->                         .map_type = BPF_MAP_TYPE_HASH,
->                         .key_size = 4,
->                         .value_size = 2048,
->                         .max_entries = 1,
->                 };
->                 int fd = syscall(__NR_bpf, BPF_MAP_CREATE,
->                                  &create_attr, sizeof(create_attr));
-> 
->                 char key[4] = { 0 };
->                 char value[2048] = { 0 };
->                 union bpf_attr update_attr = {
->                         .map_fd = fd,
->                         .key = (unsigned long)key,
->                         .value = (unsigned long)value,
->                 };
->                 syscall(__NR_bpf, BPF_MAP_UPDATE_ELEM,
->                         &update_attr, sizeof(update_attr));
->                 close(fd);
->         }
-> }
+In the case where it is copying local to remote or remote to local -
+figuring out whether it is
+sparse and optimizing makes a lot of sense - but I didn't think cp did
+that (at least the
+sections of code I was looking at).
+
+
+
+-- 
+Thanks,
+
+Steve
