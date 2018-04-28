@@ -1,63 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752343AbeD1WbN (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 28 Apr 2018 18:31:13 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:46692 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751602AbeD1WbL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Apr 2018 18:31:11 -0400
-From: Colin King <colin.king@canonical.com>
-To: Stanislav Yakovlev <stas.yakovlev@gmail.com>,
-        Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] wireless: ipw2100: fix spelling mistake: "decsribed" -> "described"
-Date: Sat, 28 Apr 2018 23:31:08 +0100
-Message-Id: <20180428223108.20458-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        id S1752414AbeD1WgJ (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 28 Apr 2018 18:36:09 -0400
+Received: from mail.ispras.ru ([83.149.199.45]:51792 "EHLO mail.ispras.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752096AbeD1WgI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Apr 2018 18:36:08 -0400
+From: Alexey Khoroshilov <khoroshilov@ispras.ru>
+To: Sebastian Reichel <sre@kernel.org>,
+        Mike Looijmans <mike.looijmans@topic.nl>
+Cc: Alexey Khoroshilov <khoroshilov@ispras.ru>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ldv-project@linuxtesting.org,
+        Julia Lawall <julia.lawall@lip6.fr>, sil2review@lists.osadl.org
+Subject: [PATCH] power: supply: ltc2941-battery-gauge: Release device_node in ltc294x_i2c_probe()
+Date: Sun, 29 Apr 2018 01:35:55 +0300
+Message-Id: <1524954955-22107-1-git-send-email-khoroshilov@ispras.ru>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+There is of_node_get(client->dev.of_node) in ltc294x_i2c_probe(),
+but these is no of_node_put() somethere in the driver.
 
-Trivial fix to spelling mistake in comment and in the ord_data text
+The patch adds one on error and normal paths.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Found by Linux Driver Verification project (linuxtesting.org).
+
+Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
 ---
- drivers/net/wireless/intel/ipw2x00/ipw2100.c | 2 +-
- drivers/net/wireless/intel/ipw2x00/ipw2100.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/power/supply/ltc2941-battery-gauge.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/wireless/intel/ipw2x00/ipw2100.c b/drivers/net/wireless/intel/ipw2x00/ipw2100.c
-index 236b52423506..7c4f550a1475 100644
---- a/drivers/net/wireless/intel/ipw2x00/ipw2100.c
-+++ b/drivers/net/wireless/intel/ipw2x00/ipw2100.c
-@@ -3732,7 +3732,7 @@ IPW2100_ORD(STAT_TX_HOST_REQUESTS, "requested Host Tx's (MSDU)"),
- 	    IPW2100_ORD(ASSOCIATED_AP_PTR,
- 				"0 if not associated, else pointer to AP table entry"),
- 	    IPW2100_ORD(AVAILABLE_AP_CNT,
--				"AP's decsribed in the AP table"),
-+				"AP's described in the AP table"),
- 	    IPW2100_ORD(AP_LIST_PTR, "Ptr to list of available APs"),
- 	    IPW2100_ORD(STAT_AP_ASSNS, "associations"),
- 	    IPW2100_ORD(STAT_ASSN_FAIL, "association failures"),
-diff --git a/drivers/net/wireless/intel/ipw2x00/ipw2100.h b/drivers/net/wireless/intel/ipw2x00/ipw2100.h
-index 193947865efd..ce3e35f6b60f 100644
---- a/drivers/net/wireless/intel/ipw2x00/ipw2100.h
-+++ b/drivers/net/wireless/intel/ipw2x00/ipw2100.h
-@@ -1009,7 +1009,7 @@ typedef enum _ORDINAL_TABLE_1 {	// NS - means Not Supported by FW
- 	IPW_ORD_STAT_PERCENT_RETRIES,	// current calculation of % missed tx retries
- 	IPW_ORD_ASSOCIATED_AP_PTR,	// If associated, this is ptr to the associated
- 	// AP table entry. set to 0 if not associated
--	IPW_ORD_AVAILABLE_AP_CNT,	// # of AP's decsribed in the AP table
-+	IPW_ORD_AVAILABLE_AP_CNT,	// # of AP's described in the AP table
- 	IPW_ORD_AP_LIST_PTR,	// Ptr to list of available APs
- 	IPW_ORD_STAT_AP_ASSNS,	// # of associations
- 	IPW_ORD_STAT_ASSN_FAIL,	// # of association failures
+diff --git a/drivers/power/supply/ltc2941-battery-gauge.c b/drivers/power/supply/ltc2941-battery-gauge.c
+index 4f129bb4c972..7854a89b3332 100644
+--- a/drivers/power/supply/ltc2941-battery-gauge.c
++++ b/drivers/power/supply/ltc2941-battery-gauge.c
+@@ -481,7 +481,7 @@ static int ltc294x_i2c_probe(struct i2c_client *client,
+ 	if (ret < 0) {
+ 		dev_err(&client->dev,
+ 			"Could not find lltc,resistor-sense in devicetree\n");
+-		return ret;
++		goto err_node_put;
+ 	}
+ 	info->r_sense = r_sense;
+ 
+@@ -511,7 +511,7 @@ static int ltc294x_i2c_probe(struct i2c_client *client,
+ 		if (ret < 0) {
+ 			dev_err(&client->dev,
+ 				"Could not read status register\n");
+-			return ret;
++			goto err_node_put;
+ 		}
+ 		if (status & LTC2941_REG_STATUS_CHIP_ID)
+ 			info->id = LTC2941_ID;
+@@ -550,19 +550,25 @@ static int ltc294x_i2c_probe(struct i2c_client *client,
+ 	ret = ltc294x_reset(info, prescaler_exp);
+ 	if (ret < 0) {
+ 		dev_err(&client->dev, "Communication with chip failed\n");
+-		return ret;
++		goto err_node_put;
+ 	}
+ 
+ 	info->supply = power_supply_register(&client->dev, &info->supply_desc,
+ 					     &psy_cfg);
+ 	if (IS_ERR(info->supply)) {
+ 		dev_err(&client->dev, "failed to register ltc2941\n");
+-		return PTR_ERR(info->supply);
++		ret = PTR_ERR(info->supply);
++		goto err_node_put;
+ 	} else {
+ 		schedule_delayed_work(&info->work, LTC294X_WORK_DELAY * HZ);
+ 	}
+ 
++	of_node_put(np);
+ 	return 0;
++
++err_node_put:
++	of_node_put(np);
++	return ret;
+ }
+ 
+ static void ltc294x_i2c_shutdown(struct i2c_client *client)
 -- 
-2.17.0
+2.7.4
