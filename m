@@ -1,118 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933316AbeD1Ego (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 28 Apr 2018 00:36:44 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7635 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751943AbeD1Egn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Apr 2018 00:36:43 -0400
-From: YueHaibing <yuehaibing@huawei.com>
-To: <ganeshgr@chelsio.com>, <johannes.berg@intel.com>,
-        <davem@davemloft.net>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH net-next] libcxgb,cxgb4: use __skb_put_zero to simplfy code
-Date: Sat, 28 Apr 2018 12:35:22 +0800
-Message-ID: <20180428043522.12408-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1752663AbeD1FGD (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 28 Apr 2018 01:06:03 -0400
+Received: from mga03.intel.com ([134.134.136.65]:62283 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751342AbeD1FGB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Apr 2018 01:06:01 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,337,1520924400";
+   d="scan'208";a="35277339"
+Date: Sat, 28 Apr 2018 10:40:43 +0530
+From: Vinod Koul <vinod.koul@intel.com>
+To: Lars-Peter Clausen <lars@metafoo.de>
+Cc: Moritz Fischer <moritz.fischer.private@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dmaengine@vger.kernel.org, dan.j.williams@intel.com
+Subject: Re: [PATCH v2] dmaengine: axi-dmac: Request IRQ with IRQF_SHARED
+Message-ID: <20180428051043.GG6014@localhost>
+References: <20180426174000.12008-1-mdf@kernel.org>
+ <20180427051115.GX6014@localhost>
+ <748ffc14-de12-c11e-eb12-65c599fe5f4e@metafoo.de>
+ <20180427070830.GC6014@localhost>
+ <CAJYdmeO=k06MJi1L8++BC_zPqeb-BkrT=a7GOOCUE17Tk093NA@mail.gmail.com>
+ <716956a2-a4f4-9cbd-8761-8db477f1dfc0@metafoo.de>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <716956a2-a4f4-9cbd-8761-8db477f1dfc0@metafoo.de>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-use helper __skb_put_zero to replace the pattern of __skb_put() && memset()
+On Fri, Apr 27, 2018 at 05:18:29PM +0200, Lars-Peter Clausen wrote:
+> On 04/27/2018 05:15 PM, Moritz Fischer wrote:
+> > Hi Vinod,
+> > 
+> > On Fri, Apr 27, 2018 at 12:08 AM, Vinod Koul <vinod.koul@intel.com> wrote:
+> >> On Fri, Apr 27, 2018 at 08:53:39AM +0200, Lars-Peter Clausen wrote:
+> >>> On 04/27/2018 07:11 AM, Vinod Koul wrote:
+> >>>> On Thu, Apr 26, 2018 at 10:40:00AM -0700, Moritz Fischer wrote:
+> >>>>> Request IRQ with IRQF_SHARED flag. This works since the interrupt
+> >>>>> handler already checks if there is an actual IRQ pending and returns
+> >>>>> IRQ_NONE otherwise.
+> >>>>
+> >>>> hmmm what are we trying to fix here? Is your device on a shared line or not?
+> >>>
+> >>> IRQF_SHARED does not mean that the IRQ is on a shared line. It means that
+> >>> the driver can handle it if the IRQ is on a shared line. Since the driver
+> >>> can handle it setting the flag is a good idea since this enables usecases
+> >>> where the line is shared.
+> >>
+> >> Yes that is correct indeed, but what is the motivation for the change.
+> >>
+> >> If you never expect this to be in shared environment why to do this?
+> >> Sorry but "it works" is not a good enough reason for this change, to enable
+> >> usecases where the line is shared is a good reason :)
+> > 
+> > Remember, this is an FPGA soft core. I happen to have a design [1] where it
+> > is hooked up with multiple of them on one IRQ line, so to make this work,
+> > I need this change.
+> 
+> I think what Vinod is asking for is a change to the commit message saying
+> that "this change enables the driver to be used with devices where the
+> interrupt line is shared".
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/net/ethernet/chelsio/cxgb4/cxgb4_filter.c |  3 +--
- drivers/net/ethernet/chelsio/cxgb4/srq.c          |  3 +--
- drivers/net/ethernet/chelsio/libcxgb/libcxgb_cm.h | 15 +++++----------
- 3 files changed, 7 insertions(+), 14 deletions(-)
+Correct, changelog need to reflect why a change was made, down the line
+people need to know the reasons, sometimes it might be even you..
 
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_filter.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_filter.c
-index db92f18..aae9802 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_filter.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_filter.c
-@@ -64,8 +64,7 @@ static int set_tcb_field(struct adapter *adap, struct filter_entry *f,
- 	if (!skb)
- 		return -ENOMEM;
- 
--	req = (struct cpl_set_tcb_field *)__skb_put(skb, sizeof(*req));
--	memset(req, 0, sizeof(*req));
-+	req = (struct cpl_set_tcb_field *)__skb_put_zero(skb, sizeof(*req));
- 	INIT_TP_WR_CPL(req, CPL_SET_TCB_FIELD, ftid);
- 	req->reply_ctrl = htons(REPLY_CHAN_V(0) |
- 				QUEUENO_V(adap->sge.fw_evtq.abs_id) |
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/srq.c b/drivers/net/ethernet/chelsio/cxgb4/srq.c
-index 6228a57..82b70a5 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/srq.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4/srq.c
-@@ -84,8 +84,7 @@ int cxgb4_get_srq_entry(struct net_device *dev,
- 	if (!skb)
- 		return -ENOMEM;
- 	req = (struct cpl_srq_table_req *)
--		__skb_put(skb, sizeof(*req));
--	memset(req, 0, sizeof(*req));
-+		__skb_put_zero(skb, sizeof(*req));
- 	INIT_TP_WR(req, 0);
- 	OPCODE_TID(req) = htonl(MK_OPCODE_TID(CPL_SRQ_TABLE_REQ,
- 					      TID_TID_V(srq_idx) |
-diff --git a/drivers/net/ethernet/chelsio/libcxgb/libcxgb_cm.h b/drivers/net/ethernet/chelsio/libcxgb/libcxgb_cm.h
-index 4b5aacc..240ba9d 100644
---- a/drivers/net/ethernet/chelsio/libcxgb/libcxgb_cm.h
-+++ b/drivers/net/ethernet/chelsio/libcxgb/libcxgb_cm.h
-@@ -90,8 +90,7 @@ cxgb_mk_tid_release(struct sk_buff *skb, u32 len, u32 tid, u16 chan)
- {
- 	struct cpl_tid_release *req;
- 
--	req = __skb_put(skb, len);
--	memset(req, 0, len);
-+	req = __skb_put_zero(skb, len);
- 
- 	INIT_TP_WR(req, tid);
- 	OPCODE_TID(req) = cpu_to_be32(MK_OPCODE_TID(CPL_TID_RELEASE, tid));
-@@ -104,8 +103,7 @@ cxgb_mk_close_con_req(struct sk_buff *skb, u32 len, u32 tid, u16 chan,
- {
- 	struct cpl_close_con_req *req;
- 
--	req = __skb_put(skb, len);
--	memset(req, 0, len);
-+	req = __skb_put_zero(skb, len);
- 
- 	INIT_TP_WR(req, tid);
- 	OPCODE_TID(req) = cpu_to_be32(MK_OPCODE_TID(CPL_CLOSE_CON_REQ, tid));
-@@ -119,8 +117,7 @@ cxgb_mk_abort_req(struct sk_buff *skb, u32 len, u32 tid, u16 chan,
- {
- 	struct cpl_abort_req *req;
- 
--	req = __skb_put(skb, len);
--	memset(req, 0, len);
-+	req = __skb_put_zero(skb, len);
- 
- 	INIT_TP_WR(req, tid);
- 	OPCODE_TID(req) = cpu_to_be32(MK_OPCODE_TID(CPL_ABORT_REQ, tid));
-@@ -134,8 +131,7 @@ cxgb_mk_abort_rpl(struct sk_buff *skb, u32 len, u32 tid, u16 chan)
- {
- 	struct cpl_abort_rpl *rpl;
- 
--	rpl = __skb_put(skb, len);
--	memset(rpl, 0, len);
-+	rpl = __skb_put_zero(skb, len);
- 
- 	INIT_TP_WR(rpl, tid);
- 	OPCODE_TID(rpl) = cpu_to_be32(MK_OPCODE_TID(CPL_ABORT_RPL, tid));
-@@ -149,8 +145,7 @@ cxgb_mk_rx_data_ack(struct sk_buff *skb, u32 len, u32 tid, u16 chan,
- {
- 	struct cpl_rx_data_ack *req;
- 
--	req = __skb_put(skb, len);
--	memset(req, 0, len);
-+	req = __skb_put_zero(skb, len);
- 
- 	INIT_TP_WR(req, tid);
- 	OPCODE_TID(req) = cpu_to_be32(MK_OPCODE_TID(CPL_RX_DATA_ACK, tid));
 -- 
-2.7.0
+~Vinod
