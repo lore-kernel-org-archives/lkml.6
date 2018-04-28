@@ -1,67 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932781AbeD1Qak (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 28 Apr 2018 12:30:40 -0400
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:42265 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932552AbeD1Qaj (ORCPT
+        id S1759017AbeD1Qd7 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 28 Apr 2018 12:33:59 -0400
+Received: from mo4-p02-ob.smtp.rzone.de ([81.169.146.169]:9099 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758307AbeD1Qdz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Apr 2018 12:30:39 -0400
-X-Google-Smtp-Source: AB8JxZphDggqeJ0Y/aVU1kHwpgN3kazs9TN0YncjoLDHs89MkI8HeVwqBV04L56XijSwlGAfLv0/vyJ3ghEqd/ZWgU0=
-MIME-Version: 1.0
-In-Reply-To: <20180427130811.7642-1-michel@daenzer.net>
-References: <20180426150618.13470-1-michel@daenzer.net> <20180427130811.7642-1-michel@daenzer.net>
-From: Ilia Mirkin <imirkin@alum.mit.edu>
-Date: Sat, 28 Apr 2018 12:30:37 -0400
-X-Google-Sender-Auth: XmJ4I8SqIJyiw5gbIOS13yCxbSU
-Message-ID: <CAKb7Uvj6FFRK6dtvR7xpfZDzs0o3QKHq7ESueBBmr_VnQt6XDQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] drm/ttm: Only allocate huge pages with new flag TTM_PAGE_FLAG_TRANSHUGE
-To: =?UTF-8?Q?Michel_D=C3=A4nzer?= <michel@daenzer.net>
-Cc: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        amd-gfx mailing list <amd-gfx@lists.freedesktop.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Sat, 28 Apr 2018 12:33:55 -0400
+X-RZG-AUTH: :JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNO4Ij0Nfzb0=
+X-RZG-CLASS-ID: mo00
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
+To: galak@codeaurora.org, andy.shevchenko@gmail.com,
+        Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alexandre Courbot <gnurou@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org,
+        kernel@pyra-handheld.com, "H. Nikolaus Schaller" <hns@goldelico.com>
+Subject: [PATCH v5 2/7] gpio: pca953x: add more register definitions for pcal953x
+Date: Sat, 28 Apr 2018 18:31:32 +0200
+Message-Id: <79da0e04213915b797222027bbeaebf513387e62.1524933096.git.hns@goldelico.com>
+X-Mailer: git-send-email 2.12.2
+In-Reply-To: <cover.1524933096.git.hns@goldelico.com>
+References: <cover.1524933096.git.hns@goldelico.com>
+In-Reply-To: <cover.1524933096.git.hns@goldelico.com>
+References: <cover.1524933096.git.hns@goldelico.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3SGUkQp005764
 
-On Fri, Apr 27, 2018 at 9:08 AM, Michel Dänzer <michel@daenzer.net> wrote:
-> From: Michel Dänzer <michel.daenzer@amd.com>
->
-> Previously, TTM would always (with CONFIG_TRANSPARENT_HUGEPAGE enabled)
-> try to allocate huge pages. However, not all drivers can take advantage
-> of huge pages, but they would incur the overhead for allocating and
-> freeing them anyway.
->
-> Now, drivers which can take advantage of huge pages need to set the new
-> flag TTM_PAGE_FLAG_TRANSHUGE to get them. Drivers not setting this flag
-> no longer incur any overhead for allocating or freeing huge pages.
->
-> v2:
-> * Also guard swapping of consecutive pages in ttm_get_pages
-> * Reword commit log, hopefully clearer now
->
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Michel Dänzer <michel.daenzer@amd.com>
+PCAL chips ("L" seems to stand for "latched") have additional
+registers starting at address 0x40 to control the latches,
+interrupt mask, pull-up and pull down etc.
 
-Both I and lots of other people, based on reports, are still seeing
-plenty of issues with this as late as 4.16.4. Admittedly I'm on
-nouveau, but others have reported issues with radeon/amdgpu as well.
-It's been going on since the feature was merged in v4.15, with what
-seems like little investigation from the authors introducing the
-feature.
+Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+---
+ drivers/gpio/gpio-pca953x.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-We now have *two* broken releases, v4.15 and v4.16 (anything that
-spews error messages and stack traces ad-infinitum in dmesg is, by
-definition, broken). You're putting this behind a flag now (finally),
-but should it be enabled anywhere? Why is it being flipped on for
-amdgpu by default, despite the still-existing problems?
-
-Reverting this feature without just resetting back to the code in
-v4.14 is painful, but why make Joe User suffer by enabling it while
-you're still working out the kinks?
-
-  -ilia
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index 508d0f6dceb7..fecd0e0aba93 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -41,9 +41,13 @@
+ #define PCA957X_MSK		0x06
+ #define PCA957X_INTS		0x07
+ 
++#define PCAL953X_OUT_STRENGTH	0x20
+ #define PCAL953X_IN_LATCH	0x22
++#define PCAL953X_PULL_EN	0x23
++#define PCAL953X_PULL_SEL	0x24
+ #define PCAL953X_INT_MASK	0x25
+ #define PCAL953X_INT_STAT	0x26
++#define PCAL953X_OUT_CONF	0x27
+ 
+ #define PCA_GPIO_MASK		0x00FF
+ #define PCA_INT			0x0100
+-- 
+2.12.2
