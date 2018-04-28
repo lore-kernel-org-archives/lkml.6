@@ -1,133 +1,57 @@
-Return-Path: <37rbjWgkbAMc5BCxnyyr4n22vq.t11tyr75r4p106r06.p1z@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1524872943; cv=none;
+Return-Path: <penguin-kernel@i-love.sakura.ne.jp>
+X-Google-Smtp-Source: AB8JxZqTP396lpSsHha9lpjcGDsLm5z6b7YZtFPgHQt9doTZJcpzbEWQb9ZvJpbllx4OQHAuZyWs
+ARC-Seal: i=1; a=rsa-sha256; t=1524905902; cv=none;
         d=google.com; s=arc-20160816;
-        b=rplbYqUvTSJ/FHa2Pm007/9mCGxPPID1d+P8iQC3AckyrFAEshZRk4WZTBY7RZZ87t
-         UaaGAXPptJpvJAnxOeph9uTcLgOqcjuDmAXm2semnXVNMouxJJbTzmRM60DkYjwT/ChC
-         szMebnMxClU2qkcbGM+dMTJwvrl5MesXQdriszKtEhaCHFVH6h05jveKvHAh0B+9hKaQ
-         hXvkJfgSqFqxslIXlX51hwy+we0SHL9WLlRM11hRam/Cz3j0ifLEbrycXaQH/oemRwrC
-         wAStii/FrbtNJ7MSX7UfyORK3afXUkXv3j8lzgDysFaWNq/jHBS9kVkrq63stDqTRGJG
-         9/JA==
+        b=HL1ZnPZ5vnzOAAhA6grus2qH0nE3+rsxx/0wi8UyYeCEj7an6JtgDdqfdLTRcMoQwr
+         V7yx/oiz9iNKfM31svFHy7IhyMexhkHi4OcvLcU5JYFybVZl7IJQoVGgg7c8NUQ0klNb
+         yMuDxgQ3L2e/iQRlPTFwQlf4ftiRQLiZOHwHqpq9VQ5z+ahF4vhRaiHRo56ZymCUHKze
+         aJW39wjKqhPE+F/j+8mMpJh/HZXyunnkADg3s71Tr0MNkgkJVkRCoHDZNb7rK4MF/WsW
+         DvoZ8E5DC52ycnoHxWfK1TNXHZEwg/0v5KaRCVk2zhkWrFZYOQS+UgGoOp5ynP95udmz
+         Ms7g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:cc:references:to:subject
          :arc-authentication-results;
-        bh=h6D+KwkNvo9EhRnCzwjDhxoQUcOo0kM8n1qNdGpRVqM=;
-        b=JfyDfB2TeAd/0r0oewcdnu5YHA+K80lNJ+5vI4JV/MNWVU4rAWVazxywoDnu8t3JRD
-         5BksKRGiBg+F6dsyP9XjNgIhfGBZA4UF3OSDN7IT0Mr0Cvqpt258ku4x4TeZY1oO/JpA
-         7jZwTtr/O7TgvrFSNangx5MwPNNmoUfKWXOdacCNP/jo7lzq6qkcAv0HEOJ+ybpWgz8J
-         v4ysUSCWaGhjm/Pww3zaMuagnUzuBhnkUnQ4RfQ5pPo3GrIPr/hi9JtCsmmKmbDWmY6F
-         bT+FEi7lDONRi/5WdbGI8LF0uSU6zG9Os1AtlIqnrFam0mcNNpCw96EZ7aENTQ4vQXox
-         lvwg==
+        bh=zZ+lfYIc1Dw7TpFgl+0+0KIciNm9QsXZJVjTcfx2yec=;
+        b=UoNKNl+spDQsyRmTUTCHryj/xUScA/YQfiD5QnCJvF2VUbcxrEZipni9vDpM2oZEaL
+         FbiE6CtdBNomIxDhQK+sTdKTpctTf+lGIT/N2pRSAn+0QhHekq+eGtOMRMNpW5/UpgfS
+         fmoGr/UI3PtHSZdGWlMV+8oVEPocmTBwjng3qEI8lQ+Z42Vu41IlW6VeNoF7SBiJLt3c
+         uoddBo5y6xaWqtmT9jolhk4Far8pzm5j6yXPGilE2i3zNX37pBCXVf4qCP/q3Cx3E6Dn
+         g1EflMUGzFEOME4+WZeSmb3V4BniFRajfdD/xeG+9RzGpHWD6QsUtJRyO/1c/twJ/UMl
+         ATYA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of 37rbjwgkbamc5bcxnyyr4n22vq.t11tyr75r4p106r06.p1z@m3kw2wvrgufz5godrsrytgd7.apphosting.bounces.google.com designates 209.85.220.69 as permitted sender) smtp.mailfrom=37rbjWgkbAMc5BCxnyyr4n22vq.t11tyr75r4p106r06.p1z@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=appspotmail.com
+       spf=pass (google.com: best guess record for domain of penguin-kernel@i-love.sakura.ne.jp designates 202.181.97.72 as permitted sender) smtp.mailfrom=penguin-kernel@i-love.sakura.ne.jp
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of 37rbjwgkbamc5bcxnyyr4n22vq.t11tyr75r4p106r06.p1z@m3kw2wvrgufz5godrsrytgd7.apphosting.bounces.google.com designates 209.85.220.69 as permitted sender) smtp.mailfrom=37rbjWgkbAMc5BCxnyyr4n22vq.t11tyr75r4p106r06.p1z@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=appspotmail.com
-X-Google-Smtp-Source: AB8JxZrm15IEJfp6jXdxGezuZBVLzPIS1gt/Ik2Uyw7gG0o7XH+btjKxpo1bXuqfhr7SgpGIzdofcHRCHeS4IepmDbzZISySnv7Z
-MIME-Version: 1.0
-Date: Fri, 27 Apr 2018 16:49:02 -0700
-In-Reply-To: <94eb2c05a38090aaeb0560706bb5@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000001554a7056add26c6@google.com>
+       spf=pass (google.com: best guess record for domain of penguin-kernel@i-love.sakura.ne.jp designates 202.181.97.72 as permitted sender) smtp.mailfrom=penguin-kernel@i-love.sakura.ne.jp
 Subject: Re: INFO: rcu detected stall in blkdev_ioctl
-From: syzbot <syzbot+369c35474963daf8f8eea897ecf33cb6ad6c7ea2@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, axboe@kernel.dk, gregkh@linuxfoundation.org,
-	hpa@zytor.com, kstewart@linuxfoundation.org, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mingo@redhat.com, npiggin@gmail.com,
-	pombredanne@nexb.com, syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
-	x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+To: syzbot
+ <syzbot+369c35474963daf8f8eea897ecf33cb6ad6c7ea2@syzkaller.appspotmail.com>,
+        axboe@kernel.dk, linux-block@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+References: <94eb2c05a38090aaeb0560706bb5@google.com>
+ <0000000000001554a7056add26c6@google.com>
+Cc: akpm@linux-foundation.org, gregkh@linuxfoundation.org, hpa@zytor.com,
+        kstewart@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, npiggin@gmail.com, pombredanne@nexb.com,
+        tglx@linutronix.de, x86@kernel.org
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <18608105-31d3-3d77-ccbb-a25bbe7e55e6@I-love.SAKURA.ne.jp>
+Date: Sat, 28 Apr 2018 17:57:35 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <0000000000001554a7056add26c6@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1586926286498565093?=
-X-GMAIL-MSGID: =?utf-8?q?1598945171535646087?=
+X-GMAIL-MSGID: =?utf-8?q?1598979731801864158?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-syzbot has found reproducer for the following crash on upstream commit
-d8a332730e757129e70675679f2b2a03f1ecf65e (Fri Apr 27 17:39:38 2018 +0000)
-Merge tag 'char-misc-4.17-rc3' of  
-git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc
-syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=369c35474963daf8f8eea897ecf33cb6ad6c7ea2
+Like I noted in a patch at
 
-So far this crash happened 132 times on linux-next, mmots, upstream.
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5968408013176832
-syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=5497672618213376
-Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=4900987307294720
-Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=7043958930931867332
-compiler: gcc (GCC) 8.0.1 20180413 (experimental)
+https://groups.google.com/d/msg/syzkaller-bugs/2Rw8-OM6IbM/PzdobV8kAgAJ
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by:  
-syzbot+369c35474963daf8f8eea897ecf33cb6ad6c7ea2@syzkaller.appspotmail.com
-It will help syzbot understand when the bug is fixed.
-
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-INFO: rcu_sched self-detected stall on CPU
-	0-....: (124998 ticks this GP) idle=45e/1/4611686018427387906  
-softirq=9820/9820 fqs=31227
-	 (t=125000 jiffies g=4939 c=4938 q=43)
-NMI backtrace for cpu 0
-CPU: 0 PID: 4515 Comm: syz-executor699 Not tainted 4.17.0-rc2+ #20
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  <IRQ>
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  nmi_cpu_backtrace.cold.4+0x19/0xce lib/nmi_backtrace.c:103
-  nmi_trigger_cpumask_backtrace+0x151/0x192 lib/nmi_backtrace.c:62
-  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
-  trigger_single_cpu_backtrace include/linux/nmi.h:156 [inline]
-  rcu_dump_cpu_stacks+0x175/0x1c2 kernel/rcu/tree.c:1376
-  print_cpu_stall kernel/rcu/tree.c:1525 [inline]
-  check_cpu_stall.isra.61.cold.80+0x36c/0x59a kernel/rcu/tree.c:1593
-  __rcu_pending kernel/rcu/tree.c:3356 [inline]
-  rcu_pending kernel/rcu/tree.c:3401 [inline]
-  rcu_check_callbacks+0x21b/0xad0 kernel/rcu/tree.c:2763
-  update_process_times+0x2d/0x70 kernel/time/timer.c:1636
-  tick_sched_handle+0x9f/0x180 kernel/time/tick-sched.c:173
-  tick_sched_timer+0x45/0x130 kernel/time/tick-sched.c:1283
-  __run_hrtimer kernel/time/hrtimer.c:1386 [inline]
-  __hrtimer_run_queues+0x3e3/0x10a0 kernel/time/hrtimer.c:1448
-  hrtimer_interrupt+0x286/0x650 kernel/time/hrtimer.c:1506
-  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1025 [inline]
-  smp_apic_timer_interrupt+0x15d/0x710 arch/x86/kernel/apic/apic.c:1050
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
-  </IRQ>
-RIP: 0010:is_loop_device drivers/block/loop.c:713 [inline]
-RIP: 0010:loop_set_fd drivers/block/loop.c:901 [inline]
-RIP: 0010:lo_ioctl+0x1bb4/0x2130 drivers/block/loop.c:1397
-RSP: 0018:ffff8801b37d7948 EFLAGS: 00000293 ORIG_RAX: ffffffffffffff13
-RAX: 0000000000000000 RBX: ffff8801d2930d80 RCX: ffffffff84b2b784
-RDX: 0000000000000007 RSI: 0000000000000007 RDI: 0000000000000005
-RBP: ffff8801b37d79c0 R08: ffff8801b2d52500 R09: ffffed003b5c46c2
-R10: 0000000000000003 R11: 0000000000000001 R12: 0000000000000000
-R13: ffff8801d4ff7418 R14: ffff8801b70936e0 R15: ffff8801b7093600
-  __blkdev_driver_ioctl block/ioctl.c:303 [inline]
-  blkdev_ioctl+0x9b6/0x2020 block/ioctl.c:601
-  block_ioctl+0xee/0x130 fs/block_dev.c:1877
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  file_ioctl fs/ioctl.c:500 [inline]
-  do_vfs_ioctl+0x1cf/0x16a0 fs/ioctl.c:684
-  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:701
-  __do_sys_ioctl fs/ioctl.c:708 [inline]
-  __se_sys_ioctl fs/ioctl.c:706 [inline]
-  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:706
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x443e59
-RSP: 002b:00007fff93b51bd8 EFLAGS: 00000217 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 6f6f6c2f7665642f RCX: 0000000000443e59
-RDX: 0000000000000007 RSI: 0000000000004c00 RDI: 0000000000000008
-RBP: 702f74656e2f666c R08: 00000000004002e0 R09: 00000000004002e0
-R10: 0000000000000000 R11: 0000000000000217 R12: 65732f636f72702f
-R13: 0000000000401b90 R14: 0000000000000000 R15: 0000000000000000
+loop module is not thread safe. Can we use more global lock?
