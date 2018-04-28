@@ -1,62 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751637AbeD1Tur (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 28 Apr 2018 15:50:47 -0400
-Received: from vmicros1.altlinux.org ([194.107.17.57]:56576 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751268AbeD1Tuq (ORCPT
+        id S1751530AbeD1UFG (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 28 Apr 2018 16:05:06 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:41914 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751161AbeD1UFF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Apr 2018 15:50:46 -0400
-Date: Sat, 28 Apr 2018 22:50:44 +0300
-From: "Dmitry V. Levin" <ldv@altlinux.org>
-To: "Theodore Ts'o" <tytso@mit.edu>
-Cc: Alexey Gladkov <legion@altlinux.org>,
-        Vitaly Chikunov <vt@altlinux.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] ext4: add crc32c soft dependency
-Message-ID: <20180428195044.GA14126@altlinux.org>
-Mail-Followup-To: Theodore Ts'o <tytso@mit.edu>,
-        Alexey Gladkov <legion@altlinux.org>,
-        Vitaly Chikunov <vt@altlinux.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+        Sat, 28 Apr 2018 16:05:05 -0400
+X-Google-Smtp-Source: AB8JxZqTswvteeOhOQaoE6Ja8hZ/a6rKBxAvPvrUJ3uY6rok4irs1BWNw9A6trtcCL+hOgRzS3Z4dQ==
+From: Moritz Fischer <mdf@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: dmaengine@vger.kernel.org, dan.j.williams@intel.com,
+        vinod.koul@intel.com, lars@metafoo.de, Moritz Fischer <mdf@kernel.org>
+Subject: [PATCH v3] dmaengine: axi-dmac: Request IRQ with IRQF_SHARED
+Date: Sat, 28 Apr 2018 12:57:54 -0700
+Message-Id: <20180428195754.3053-1-mdf@kernel.org>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Starting with commit a45403b51582, ext4 unconditionally requires
-a crc32c provider, which broke certain mkinitrd setups.
+Request IRQ with IRQF_SHARED flag to enable setups with multiple
+instances of the core sharing a single IRQ line.
+This works out since the IRQ handler already checks if there is
+an actual IRQ pending and returns IRQ_NONE otherwise.
 
-Add a soft dependency on crc32c so that mkinitrd, dracut, and other
-initrd image generators could include the required helper module.
-
-The dependency on crc32c is quite hard but there seems to be no
-mechanism to specify a dependency on an alias, so let's use this
-soft dependency as a workaround.
-
-Suggested-by: Alexey Gladkov <legion@altlinux.org>
-Fixes: a45403b51582 ("ext4: always initialize the crc32c checksum driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
+Acked-by: Lars-Peter Clausen <lars@metafoo.de>
+Signed-off-by: Moritz Fischer <mdf@kernel.org>
 ---
- fs/ext4/super.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 185f7e6..eb104e8 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -5886,5 +5886,6 @@ static void __exit ext4_exit_fs(void)
- MODULE_AUTHOR("Remy Card, Stephen Tweedie, Andrew Morton, Andreas Dilger, Theodore Ts'o and others");
- MODULE_DESCRIPTION("Fourth Extended Filesystem");
- MODULE_LICENSE("GPL");
-+MODULE_SOFTDEP("pre: crc32c");
- module_init(ext4_init_fs)
- module_exit(ext4_exit_fs)
+Changes from v2:
+- Reworded commit message
 
+Changes from v1:
+- Added Lars' Acked-by
+- Dropped patch [1/2] and changed accordingly
+
+---
+ drivers/dma/dma-axi-dmac.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/dma/dma-axi-dmac.c b/drivers/dma/dma-axi-dmac.c
+index 2419fe524daa..15b2453d2647 100644
+--- a/drivers/dma/dma-axi-dmac.c
++++ b/drivers/dma/dma-axi-dmac.c
+@@ -687,7 +687,7 @@ static int axi_dmac_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto err_unregister_device;
+ 
+-	ret = request_irq(dmac->irq, axi_dmac_interrupt_handler, 0,
++	ret = request_irq(dmac->irq, axi_dmac_interrupt_handler, IRQF_SHARED,
+ 		dev_name(&pdev->dev), dmac);
+ 	if (ret)
+ 		goto err_unregister_of;
 -- 
-ldv
+2.17.0
