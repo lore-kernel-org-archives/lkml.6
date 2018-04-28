@@ -1,114 +1,109 @@
-Return-Path: <arvind.yadav.cs@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1524893747; cv=none;
+Return-Path: <mcgrof@kernel.org>
+X-Google-Smtp-Source: AB8JxZonWRAoV9xVbxUBJCYSuvUb04MxE4NYhvfsLE+BKJYfipwL2eDxPyVWbGPKmWOudhwbp1ew
+ARC-Seal: i=1; a=rsa-sha256; t=1524874530; cv=none;
         d=google.com; s=arc-20160816;
-        b=eXkO+Lj4DTWCiC5dcBBr3LF8XnnL3USFE4DvSvAFfQT5p2vcKtKyqy/eccw8T58rli
-         OSQmnPs56UUQ9H1VAJ/jVCxDBNNb7kCrid+azJvVGCy1GEeIQrSSH64U/h2CsRs9HOGJ
-         Fgi/6DVBwex+XjCzpXjV24RjEPF2eNLpRECZs6WsDUb7nZKrI8prgJYuuBZmX7TJw94r
-         BoPlTG0wALuQfwO9JWsCaEgRDmHT6pyF+gELUvPJTEB4wYCZrho402UKbpTLBj053EBg
-         KQ+74rUr+Etpeb4zAnstsQLuNxSf+bAyE0CKeHXLos+KiJGIn5P2N5lr5MuIwCh78/A6
-         fzKA==
+        b=iSmuxTeZRdtu/rbDJ+p6xGrL5r63N+70V1T8Vvdd62UdVl71REamP+OIlLxYZMIbRO
+         n3w7zcBBWa2n76LMHcvum9KhZhjbPzLSxm3wXDBzm0wlsugUDYjYF9jaJFsXRNEUJDqa
+         txKu17A6Qsm2tv+wFevvqyapE4ofRk/g57BuqSLIu+wGOqrxtHQ30jZdBeXAJJf2i1ML
+         3lAf4W0eOTgDp+b8BF1+dfZ4NRL7tgH9V5QcaFFCUq+Kggp54i7RrDni9TSC1u8og4Qh
+         OmNDz0pKUWnep9gLxrfBnEgDezXCceSeCo6UHo3FGU0A0A0gWcp4j3GFJWZCPBJOVkBC
+         AlJw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:in-reply-to:mime-version:user-agent:date
-         :message-id:from:cc:references:to:subject:dkim-signature
+        h=message-id:date:subject:cc:to:from:dmarc-filter
          :arc-authentication-results;
-        bh=k04MFl14AUhtiW+YWGL6YiIpBsjwROvJeuSUSmZQkcA=;
-        b=zmHvao7l3ETFBM4gLOgKs8VqjKEPFwvlhrIwnjGcrJKT8EiscV3zt6JNGStN3SB7YL
-         rTYAsak/h/hHQtxYAOUzQ6kmAREHqvP8tnH1DAOiHrAcWaaHqSwNvZtB6ILw6rNzdo96
-         rAHYwm/Clc01OY/7YzDvjT1TcEiSL3j2QDJx5Hl5Cf5aHOfepIQjcWWmkdrVrLnIu/ce
-         Tih3QoqFvK0nlSrKqyTpxGFjuA3maGvu5OQxAJU0hfKnXLsQBMAKFnXNNIxEyVZXtd0G
-         uFld9nLlJ5AE7eRuPxf3ek+LUcB+mZCYa64xNU/wUanbmM7OxFUEwNhSboLoLCeWnvcZ
-         mulg==
+        bh=TJN5jtAEoUgHHPs9Y1KasX4OorS5/JJBoOdPqLmxyks=;
+        b=B6+79UYWMaK6jNgIE+p810smFHgclLHAYFLySTQnEymtNo8vGZSGQ8gtX480SaphWu
+         8PS7D1QQnUXi8Hmqpt6VTdzeNkisHILvfny/bo1MnILdDa2/FID1O6XYzISi7tdGbHBH
+         3gW0ayOLD4iSn0VXeAOadSNckXfYrp0XnlpvVin/vG+14QLrDplp901XPn5bp40qHt/m
+         MvmXgiEMBuyHdaouGy9gVqu474TsYSiOTYIh2XRxoQmh7g1zYRP2Z6BAeb56IzEuBEib
+         +/diPHVp/g0yy4js5YaTX0gC9juCF/hhLaMKuCqYtFquLS7O0XCnkOTQXI/QghSCGU6w
+         GUQw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=iWSMb62l;
-       spf=pass (google.com: domain of arvind.yadav.cs@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=arvind.yadav.cs@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=pass (google.com: best guess record for domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=iWSMb62l;
-       spf=pass (google.com: domain of arvind.yadav.cs@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=arvind.yadav.cs@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AB8JxZrvtVNqnzddiGKdn/cH0tsNtrQtv1atKAq5JilSt1agqsHoFO2LBBxAEujGxTYAl7hzgOUi0A==
-Subject: Re: [PATCH] mm: memory_hotplug: use put_device() if device_register
- fail
-To: Michal Hocko <mhocko@kernel.org>
-References: <2987b5bdb31e7c18cd837da0f1e32a98fecd3278.1524757165.git.arvind.yadav.cs@gmail.com>
- <20180427145623.GC5404@dhcp22.suse.cz>
-Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
-From: arvindY <arvind.yadav.cs@gmail.com>
-Message-ID: <5AE40830.2090007@gmail.com>
-Date: Sat, 28 Apr 2018 11:05:44 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180427145623.GC5404@dhcp22.suse.cz>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+       spf=pass (google.com: best guess record for domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1649921926
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mcgrof@kernel.org
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+To: arnd@arndb.de
+Cc: gregkh@linuxfoundation.org,
+	linux-arch@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	"Luis R. Rodriguez" <mcgrof@kernel.org>
+Subject: [PATCH] mm: provide a fallback for PAGE_KERNEL_RO for architectures
+Date: Fri, 27 Apr 2018 17:15:26 -0700
+Message-Id: <20180428001526.22475-1-mcgrof@kernel.org>
+X-Mailer: git-send-email 2.13.2
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598823954747248901?=
-X-GMAIL-MSGID: =?utf-8?q?1598966986930210358?=
+X-GMAIL-THRID: =?utf-8?q?1598946836077947117?=
+X-GMAIL-MSGID: =?utf-8?q?1598946836077947117?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+Some architectures do not define PAGE_KERNEL_RO, best we can do
+for them is to provide a fallback onto PAGE_KERNEL. Remove the
+hack from the firmware loader and move it onto the asm-generic
+header, and document while at it the affected architectures
+which do not have a PAGE_KERNEL_RO:
 
+  o alpha
+  o ia64
+  o m68k
+  o mips
+  o sparc64
+  o sparc
 
-On Friday 27 April 2018 08:26 PM, Michal Hocko wrote:
-> On Thu 26-04-18 21:12:09, Arvind Yadav wrote:
->> if device_register() returned an error. Always use put_device()
->> to give up the initialized reference and release allocated memory.
-> Is this patch correct? The docummentation says
->   * NOTE: _Never_ directly free @dev after calling this function, even
->   * if it returned an error! Always use put_device() to give up your
->   * reference instead.
->
-> but we do not have _our_ reference in this path AFAICS. Maybe this is
-> just a documentation issue? How have you tested this change btw.?
-The document is correct. Here device_register() will initialize object by
-making reference count as 1 and also increment reference count for device.
+Blessed-by: 0-day
+Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
+---
+ drivers/base/firmware_loader/fallback.c |  5 -----
+ include/asm-generic/pgtable.h           | 15 +++++++++++++++
+ 2 files changed, 15 insertions(+), 5 deletions(-)
 
-device_register() {
-    device_initialize()->kobject_init()->kref_init() - initialize 
-object( reference count = 1).
-    device_add()->get_device() - increment reference count for device.
-}
-
-If device_register() will fail then we have to release the object by making
-reference count 0. So we need to call put_object() which will release the
-object and other resources like memory etc. so long as the reference
-count is nonzero, the object continue to exist in memory.
-
-I have not tested this peace of code. But I have tested other code which
-is using Kboject.
-
-~arvind
->
->> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
->> ---
->>   drivers/base/memory.c | 8 +++++++-
->>   1 file changed, 7 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/base/memory.c b/drivers/base/memory.c
->> index bffe861..f5e5601 100644
->> --- a/drivers/base/memory.c
->> +++ b/drivers/base/memory.c
->> @@ -649,13 +649,19 @@ static const struct attribute_group *memory_memblk_attr_groups[] = {
->>   static
->>   int register_memory(struct memory_block *memory)
->>   {
->> +	int ret;
->> +
->>   	memory->dev.bus = &memory_subsys;
->>   	memory->dev.id = memory->start_section_nr / sections_per_block;
->>   	memory->dev.release = memory_block_release;
->>   	memory->dev.groups = memory_memblk_attr_groups;
->>   	memory->dev.offline = memory->state == MEM_OFFLINE;
->>   
->> -	return device_register(&memory->dev);
->> +	ret = device_register(&memory->dev);
->> +	if (ret)
->> +		put_device(&memory->dev);
->> +
->> +	return ret;
->>   }
->>   
->>   static int init_memory_block(struct memory_block **memory,
->> -- 
->> 2.7.4
+diff --git a/drivers/base/firmware_loader/fallback.c b/drivers/base/firmware_loader/fallback.c
+index 31b5015b59fe..90f36be9e5ca 100644
+--- a/drivers/base/firmware_loader/fallback.c
++++ b/drivers/base/firmware_loader/fallback.c
+@@ -219,11 +219,6 @@ static ssize_t firmware_loading_show(struct device *dev,
+ 	return sprintf(buf, "%d\n", loading);
+ }
+ 
+-/* Some architectures don't have PAGE_KERNEL_RO */
+-#ifndef PAGE_KERNEL_RO
+-#define PAGE_KERNEL_RO PAGE_KERNEL
+-#endif
+-
+ /* one pages buffer should be mapped/unmapped only once */
+ static int map_fw_priv_pages(struct fw_priv *fw_priv)
+ {
+diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
+index f59639afaa39..da47fe81df51 100644
+--- a/include/asm-generic/pgtable.h
++++ b/include/asm-generic/pgtable.h
+@@ -1083,6 +1083,21 @@ int phys_mem_access_prot_allowed(struct file *file, unsigned long pfn,
+ static inline void init_espfix_bsp(void) { }
+ #endif
+ 
++/*
++ * Some architectures don't have PAGE_KERNEL_RO. This is the best
++ * we can do for them buggers for now. Currently known to not have it:
++ *
++ *  o alpha
++ *  o ia64
++ *  o m68k
++ *  o mips
++ *  o sparc64
++ *  o sparc
++ */
++#ifndef PAGE_KERNEL_RO
++#define PAGE_KERNEL_RO PAGE_KERNEL
++#endif
++
+ #endif /* !__ASSEMBLY__ */
+ 
+ #ifndef io_remap_pfn_range
+-- 
+2.13.2
