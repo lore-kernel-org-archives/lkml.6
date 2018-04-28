@@ -1,151 +1,100 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-1303162-1524890158-2-17184064643352825576
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES unknown,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524890158; b=DJl/NtjNhA647OYPo++Zgd/k2Ff1pjrBfY0KrOUVGBQUCvYeOS
-    gn4TjtpV0ytFVvdym2wHi0OilxUHI/UBa/XrPVaD8r+P5AnY+L7Ngvhig4q3Tjf0
-    vNkkCLdfMxKRkzky/ppSUDfU4g7xYqtxE7I2WxA6MB9Grwrcb+Rir74ZKfDSSlT9
-    wZXuExF79Lxs7x5i0Czw6mqnUFZZxLywFH3uE6YP6Ht1sEVULi8+dXVtKZOmhYd9
-    KCTMwC3sGAFh/7SSQ9m2FgxzFKdh4LToGn8HozOa1KW38fDP2QsAZtDy6KWZ+1wX
-    JjLa+MsBt0vGhDIToLOP5Q4BtAJ8FyjlAYgw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:subject:date:message-id:list-id
-    :list-unsubscribe:list-archive:list-post:list-help
-    :list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1524890158; bh=3pgCu
-    Gq41Gj6lj6Tdq1/fEeQV+ZWl4iCBYLnTuwWjOw=; b=MN9ozOAPcEC9MNPfVLXsZ
-    U7AZEq+iwY96uGmCpBJiSx1WKBItk7a1NNURej7yQbfbCRn1SZhT6bQu3jBQd2jy
-    c/ArdXaU6g+t8Y+kt6Kf828xgXZFKFIFcoRzGhmTy05/kJKjg0wWkoWbodAKY0tm
-    O3XAbW3IHfGMr2K2uF2697tPCrGLP4wD9ZH5GnlHtynEAZoU4u9761zS+hlufAe9
-    NEZ2V66Job/Ghsm9OXGlkdG9NZEF3R1T8aoxoTGi8MkpcSiibXYCNj9e+qG95sgI
-    YexxRdSgiq2adSbtBTo7c0zV/rvf8HYgMhv2gcXwNzrr4IeOcsJhq6yWoNGPotUq
-    A==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=RnBcUL99 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=TZIkzsxc;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=RnBcUL99 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=TZIkzsxc;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=0 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfHzQIqGEwJRyyP2ipyiSuXuA5KP4ldlNtIueD0rYvZSeOGhdhhpa6fE0LWx+AZBwKBKrq1EtRP/+pi16sMwd2WRUdW1gRUMXJzH99so7nj3em2jiAha4
-    2C+nBBgf+GcSLpPs41nfDAjrWcFclV2bXRJlUYqmZh1eHlMyxB3/ahQAjoglojs3V+TP+dE/FUDQvUyXc/N8yYqCLGdhNR0kPg0B3XubNpd7TggjZTbo5NyK
-    3BDJCbQ6Wm8L2qt7HUeLXA==
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
-    a=kIo7DnY5WRu98hpln7do/g==:17 a=kj9zAlcOel0A:10 a=x7bEGLp0ZPQA:10
-    a=LxSDy4Xbj5AA:10 a=Kd1tUaAdevIA:10 a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10
-    a=pGLkceISAAAA:8 a=DDOyTI_5AAAA:8 a=hGDZC-2D4ysIxYB3-XQA:9 a=CjuIK1q_8ugA:10
-    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
-X-ME-CMScore: 0
-X-ME-CMCategory: discussion
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AB8JxZo2i5o2IFieE0zt7oqdJDotMChWia/f+3eeTSXfBO4h7SoUDyG6LUOCzdlFWBVvXaNfApbWzg==
-From: Arvind Yadav <arvind.yadav.cs@gmail.com>
-To: hvaibhav.linux@gmail.com, johan@kernel.org, elder@kernel.org,
- gregkh@linuxfoundation.org
-Subject: [PATCH v2] staging: greybus: Use gpio_is_valid()
-Date: Sat, 28 Apr 2018 10:05:39 +0530
-Message-Id: <5c8c96b1971bc09a2a2bfa62c343973ab986aec8.1524889296.git.arvind.yadav.cs@gmail.com>
-X-Mailer: git-send-email 2.7.4
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Return-Path: <elder@linaro.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1524945509; cv=none;
+        d=google.com; s=arc-20160816;
+        b=hODbb/vI74zqRmjZxBXUou6iNFtyHnto97PwuYKCeOpHyhYnFVpSSN7qKZYXNJhRf0
+         Fo9/gQzuo+ve8B62CluUV47gMhPha+M2rewGqciuKbvV0Nx6oY8gE+9XXiMvjLF+AAx4
+         o+My2vledt1+8WrvGufyoVLeB0NaWr9nR/BWdVtc5XjDUFi7kWwCuIjmU1dQkrw6yiNr
+         CtRfaniZhxl9d8FuMSOFo9/kJmbgeH2jRL8ROcVrqEkFEmahDMoMdFuP+3tEY9+0gIyh
+         SXCS0ucMHg2xgq+anddIdvN+C1THf4OV0B2rWC4a9GhB4v6f/faPf5ne4UWtl0dhqyRp
+         V7XA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :dkim-signature:arc-authentication-results;
+        bh=1NRGZwStwNqT7I8+LEqlDJa7K4FKXszzQzXaY6mPSus=;
+        b=0XdJuN5IM23RLQ/IiGqZ/c8iKfIHUbsQHW4Lq7yw5STwt/J4OAzBZsgEdspgv1ifNr
+         vXIM1AcL0FLHmu0QeISBzy4DK1HkNgyrsWxIGjtr7PT87LAH5Z+dDgf/L/k7bse0mzpY
+         3wPVDxPXMZW86MAQDZgNs7VGx0qgYSGt8sCasgqqAAtGpRxFmP4ZjjLa9wwmd6QHnELP
+         uiu7smpCuT3athd7oMTvgTvVuc9z0+yaU5aiW66ECgAVgwrQk4ewyOdroAveuPQ1FSYB
+         x+uSgS/Zn4ywpQw6DLaN+0df+QFx9vs/tptQJR+Ybm5PyEzWbQAJ8cisujUKNsapA0WA
+         O4eg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@linaro.org header.s=google header.b=QXcR+B8/;
+       spf=pass (google.com: domain of elder@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=elder@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@linaro.org header.s=google header.b=QXcR+B8/;
+       spf=pass (google.com: domain of elder@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=elder@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+X-Google-Smtp-Source: AB8JxZpyDamJMsxohHm4S0fEzFYxcPLkGEmw9ncFcjK+tTuu+QhfG5Ye5ukifeZcN0mrzTsVxWQ0Mw==
+Subject: Re: [greybus-dev] [PATCH v2] staging: greybus: Use gpio_is_valid()
+To: Arvind Yadav <arvind.yadav.cs@gmail.com>, hvaibhav.linux@gmail.com,
+ johan@kernel.org, elder@kernel.org, gregkh@linuxfoundation.org
 Cc: devel@driverdev.osuosl.org, greybus-dev@lists.linaro.org,
  linux-kernel@vger.kernel.org
+References: <5c8c96b1971bc09a2a2bfa62c343973ab986aec8.1524889296.git.arvind.yadav.cs@gmail.com>
+From: Alex Elder <elder@linaro.org>
+Message-ID: <b2ab24c5-92ea-5c99-af89-30c3e7ee61af@linaro.org>
+Date: Sat, 28 Apr 2018 14:58:27 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <5c8c96b1971bc09a2a2bfa62c343973ab986aec8.1524889296.git.arvind.yadav.cs@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1598896358310387815?=
+X-GMAIL-MSGID: =?utf-8?q?1599021262750652036?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Replace the manual validity checks for the GPIO with the
-gpio_is_valid().
+On 04/27/2018 11:35 PM, Arvind Yadav wrote:
+> Replace the manual validity checks for the GPIO with the
+> gpio_is_valid().
+> 
+> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
 
-Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+Looks good.
+
 Reviewed-by: Alex Elder <elder@linaro.org>
----
-chnage in v2 :
-             Returning invalid gpio as error instead of -ENODEV.
 
- drivers/staging/greybus/arche-platform.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/staging/greybus/arche-platform.c b/drivers/staging/greybus/arche-platform.c
-index 83254a7..c3a7da5 100644
---- a/drivers/staging/greybus/arche-platform.c
-+++ b/drivers/staging/greybus/arche-platform.c
-@@ -448,7 +448,7 @@ static int arche_platform_probe(struct platform_device *pdev)
- 	arche_pdata->svc_reset_gpio = of_get_named_gpio(np,
- 							"svc,reset-gpio",
- 							0);
--	if (arche_pdata->svc_reset_gpio < 0) {
-+	if (!gpio_is_valid(arche_pdata->svc_reset_gpio)) {
- 		dev_err(dev, "failed to get reset-gpio\n");
- 		return arche_pdata->svc_reset_gpio;
- 	}
-@@ -468,7 +468,7 @@ static int arche_platform_probe(struct platform_device *pdev)
- 	arche_pdata->svc_sysboot_gpio = of_get_named_gpio(np,
- 							  "svc,sysboot-gpio",
- 							  0);
--	if (arche_pdata->svc_sysboot_gpio < 0) {
-+	if (!gpio_is_valid(arche_pdata->svc_sysboot_gpio)) {
- 		dev_err(dev, "failed to get sysboot gpio\n");
- 		return arche_pdata->svc_sysboot_gpio;
- 	}
-@@ -487,7 +487,7 @@ static int arche_platform_probe(struct platform_device *pdev)
- 	arche_pdata->svc_refclk_req = of_get_named_gpio(np,
- 							"svc,refclk-req-gpio",
- 							0);
--	if (arche_pdata->svc_refclk_req < 0) {
-+	if (!gpio_is_valid(arche_pdata->svc_refclk_req)) {
- 		dev_err(dev, "failed to get svc clock-req gpio\n");
- 		return arche_pdata->svc_refclk_req;
- 	}
--- 
-2.7.4
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+> ---
+> chnage in v2 :
+>              Returning invalid gpio as error instead of -ENODEV.
+> 
+>  drivers/staging/greybus/arche-platform.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/staging/greybus/arche-platform.c b/drivers/staging/greybus/arche-platform.c
+> index 83254a7..c3a7da5 100644
+> --- a/drivers/staging/greybus/arche-platform.c
+> +++ b/drivers/staging/greybus/arche-platform.c
+> @@ -448,7 +448,7 @@ static int arche_platform_probe(struct platform_device *pdev)
+>  	arche_pdata->svc_reset_gpio = of_get_named_gpio(np,
+>  							"svc,reset-gpio",
+>  							0);
+> -	if (arche_pdata->svc_reset_gpio < 0) {
+> +	if (!gpio_is_valid(arche_pdata->svc_reset_gpio)) {
+>  		dev_err(dev, "failed to get reset-gpio\n");
+>  		return arche_pdata->svc_reset_gpio;
+>  	}
+> @@ -468,7 +468,7 @@ static int arche_platform_probe(struct platform_device *pdev)
+>  	arche_pdata->svc_sysboot_gpio = of_get_named_gpio(np,
+>  							  "svc,sysboot-gpio",
+>  							  0);
+> -	if (arche_pdata->svc_sysboot_gpio < 0) {
+> +	if (!gpio_is_valid(arche_pdata->svc_sysboot_gpio)) {
+>  		dev_err(dev, "failed to get sysboot gpio\n");
+>  		return arche_pdata->svc_sysboot_gpio;
+>  	}
+> @@ -487,7 +487,7 @@ static int arche_platform_probe(struct platform_device *pdev)
+>  	arche_pdata->svc_refclk_req = of_get_named_gpio(np,
+>  							"svc,refclk-req-gpio",
+>  							0);
+> -	if (arche_pdata->svc_refclk_req < 0) {
+> +	if (!gpio_is_valid(arche_pdata->svc_refclk_req)) {
+>  		dev_err(dev, "failed to get svc clock-req gpio\n");
+>  		return arche_pdata->svc_refclk_req;
+>  	}
+> 
