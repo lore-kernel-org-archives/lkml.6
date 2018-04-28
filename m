@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933245AbeD1Qe7 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 28 Apr 2018 12:34:59 -0400
-Received: from mo4-p03-ob.smtp.rzone.de ([81.169.146.173]:14760 "EHLO
-        mo4-p03-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758735AbeD1Qd6 (ORCPT
+        id S1759076AbeD1QfW (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 28 Apr 2018 12:35:22 -0400
+Received: from mo4-p02-ob.smtp.rzone.de ([81.169.146.171]:14181 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758581AbeD1Qd5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Apr 2018 12:33:58 -0400
+        Sat, 28 Apr 2018 12:33:57 -0400
 X-RZG-AUTH: :JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNO4Ij0Nfzb0=
 X-RZG-CLASS-ID: mo00
 From: "H. Nikolaus Schaller" <hns@goldelico.com>
@@ -19,9 +19,9 @@ To: galak@codeaurora.org, andy.shevchenko@gmail.com,
 Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org,
         kernel@pyra-handheld.com, "H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH v5 7/7] DTS: Bindings: pca953x: add example how to use interrupt-controller and gpio-controller
-Date: Sat, 28 Apr 2018 18:31:37 +0200
-Message-Id: <23c048310088d42c99c3c20a83795c97d1b8f1cc.1524933096.git.hns@goldelico.com>
+Subject: [PATCH v5 3/7] gpio: pca953x: add more register definitions for pcal6524
+Date: Sat, 28 Apr 2018 18:31:33 +0200
+Message-Id: <3cb7c78f496ec9933288b7aac7b4ee9c55d9037d.1524933096.git.hns@goldelico.com>
 X-Mailer: git-send-email 2.12.2
 In-Reply-To: <cover.1524933096.git.hns@goldelico.com>
 References: <cover.1524933096.git.hns@goldelico.com>
@@ -31,62 +31,30 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is not completely obvious that these are required and
-how to use them. So we provide a tested example.
+The pcal6524 has another set of registers to fine control
+the interrupt handling.
 
 Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- .../devicetree/bindings/gpio/gpio-pca953x.txt      | 33 ++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+ drivers/gpio/gpio-pca953x.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt b/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
-index 6a7cddb187c1..88f228665507 100644
---- a/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
-+++ b/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
-@@ -31,6 +31,10 @@ Required properties:
- 	ti,tca9554
- 	onnn,pca9654
- 	exar,xra1202
-+ - gpio-controller: if used as gpio expander.
-+ - #gpio-cells: if used as gpio expander.
-+ - interrupt-controller: if to be used as interrupt expander.
-+ - #interrupt-cells: if to be used as interrupt expander.
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index fecd0e0aba93..2b667166e855 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -49,6 +49,12 @@
+ #define PCAL953X_INT_STAT	0x26
+ #define PCAL953X_OUT_CONF	0x27
  
- Optional properties:
-  - reset-gpios: GPIO specification for the RESET input. This is an
-@@ -48,3 +52,32 @@ Example:
- 		interrupt-parent = <&gpio3>;
- 		interrupts = <23 IRQ_TYPE_LEVEL_LOW>;
- 	};
++#define PCAL6524_INT_EDGE	0x28
++#define PCAL6524_INT_CLR	0x2a
++#define PCAL6524_IN_STATUS	0x2b
++#define PCAL6524_OUT_INDCONF	0x2c
++#define PCAL6524_DEBOUNCE	0x2d
 +
-+
-+Example with Interrupts:
-+
-+
-+	gpio99: gpio@22 {
-+		compatible = "nxp,pcal6524";
-+		reg = <0x22>;
-+		interrupt-parent = <&gpio6>;
-+		interrupts = <1 IRQ_TYPE_EDGE_FALLING>;	/* gpio6_161 */
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+		vcc-supply = <&vdds_1v8_main>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		gpio-line-names =
-+			"hdmi-ct-hpd", "hdmi.ls-oe", "p02", "p03", "vibra", "fault2", "p06", "p07",
-+			"en-usb", "en-host1", "en-host2", "chg-int", "p14", "p15", "mic-int", "en-modem",
-+			"shdn-hs-amp", "chg-status+red", "green", "blue", "en-esata", "fault1", "p26", "p27";
-+	};
-+
-+	ts3a227@3b {
-+		compatible = "ti,ts3a227e";
-+		reg = <0x3b>;
-+		interrupt-parent = <&gpio99>;
-+		interrupts = <14 IRQ_TYPE_EDGE_RISING>;
-+		ti,micbias = <0>;	/* 2.1V */
-+	};
-+
+ #define PCA_GPIO_MASK		0x00FF
+ #define PCA_INT			0x0100
+ #define PCA_PCAL		0x0200
 -- 
 2.12.2
