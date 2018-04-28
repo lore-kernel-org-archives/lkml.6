@@ -1,125 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1759883AbeD1LQI (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 28 Apr 2018 07:16:08 -0400
-Received: from ozlabs.org ([203.11.71.1]:58037 "EHLO ozlabs.org"
+        id S1759854AbeD1LVX (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 28 Apr 2018 07:21:23 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50309 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1759699AbeD1LQG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Apr 2018 07:16:06 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: alexandre.belloni@bootlin.com, alistair@popple.id.au,
-        arbab@linux.ibm.com, bsingharora@gmail.com, laurentiu.tudor@nxp.com,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        mahesh@linux.vnet.ibm.com, npiggin@gmail.com,
-        shilpa.bhat@linux.vnet.ibm.com, svaidy@linux.vnet.ibm.com,
-        viresh.kumar@linaro.org
-Subject: [GIT PULL] Please pull powerpc/linux.git powerpc-4.17-4 tag
-Date: Sat, 28 Apr 2018 21:16:01 +1000
-Message-ID: <87po2jtwcu.fsf@concordia.ellerman.id.au>
+        id S1759699AbeD1LVV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Apr 2018 07:21:21 -0400
+Subject: Re: [PATCH 2/3] dt-bindings: Add "sifive" vendor prefix
+To: "Wesley W. Terpstra" <wesley@sifive.com>
+References: <1524869998-2805-1-git-send-email-wesley@sifive.com>
+ <1524869998-2805-3-git-send-email-wesley@sifive.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>,
+        David Lechner <david@lechnology.com>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+        SZ Lin <sz.lin@moxa.com>, linux-pwm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
+ 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
+Organization: SUSE Linux GmbH
+Message-ID: <72c263ef-09c3-a05f-3c16-1bc8df667d38@suse.de>
+Date: Sat, 28 Apr 2018 13:21:15 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1524869998-2805-3-git-send-email-wesley@sifive.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA256
+Am 28.04.2018 um 00:59 schrieb Wesley W. Terpstra:
+> This adds a vendor prefix "sifive" for SiFive, Inc.
+> We make chips.
+> 
+> Signed-off-by: Wesley W. Terpstra <wesley@sifive.com>
+> ---
+>  Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
+>  1 file changed, 1 insertion(+)
 
-Hi Linus,
+Reviewed-by: Andreas Färber <afaerber@suse.de>
 
-Please pull some more powerpc fixes for 4.17. The RTC and cpufreq
-changes are both acked by a relevant maintainer.
+but please reorder the patches, so that the prefix definition comes
+before its first use in the pwm binding.
 
-cheers
+Regards,
+Andreas
 
-The following changes since commit 6d08b06e67cd117f6992c46611dfb4ce267cd71e:
-
-  Linux 4.17-rc2 (2018-04-22 19:20:09 -0700)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-4.17-4
-
-for you to fetch changes up to b2d7ecbe355698010a6b7a15eb179e09eb3d6a34:
-
-  powerpc/kvm/booke: Fix altivec related build break (2018-04-27 16:36:03 +1000)
-
-- ----------------------------------------------------------------
-powerpc fixes for 4.17 #4
-
-A bunch of fixes, mostly for existing code and going to stable.
-
-Our memory hot-unplug path wasn't flushing the cache before removing memory.
-That is a problem now that we are doing memory hotplug on bare metal.
-
-Three fixes for the NPU code that supports devices connected via NVLink (ie.
-GPUs). The main one tweaks the TLB flush algorithm to avoid soft lockups for
-large flushes.
-
-A fix for our memory error handling where we would loop infinitely, returning
-back to the bad access and hard lockup the CPU.
-
-Fixes for the OPAL RTC driver, which wasn't handling some error cases correctly.
-
-A fix for a hardlockup in the powernv cpufreq driver.
-
-And finally two fixes to our smp_send_stop(), required due to a recent change to
-use it on shutdown.
-
-Thanks to:
-  Alistair Popple, Balbir Singh, Laurentiu Tudor, Mahesh Salgaonkar, Mark
-  Hairgrove, Nicholas Piggin, Rashmica Gupta, Shilpasri G Bhat.
-
-- ----------------------------------------------------------------
-Alistair Popple (3):
-      powerpc/powernv/npu: Add lock to prevent race in concurrent context init/destroy
-      powerpc/powernv/npu: Prevent overwriting of pnv_npu2_init_contex() callback parameters
-      powerpc/powernv/npu: Do a PID GPU TLB flush when invalidating a large address range
-
-Balbir Singh (2):
-      powerpc/mm: Flush cache on memory hot(un)plug
-      powerpc/powernv/memtrace: Let the arch hotunplug code flush cache
-
-Laurentiu Tudor (1):
-      powerpc/kvm/booke: Fix altivec related build break
-
-Mahesh Salgaonkar (1):
-      powerpc/mce: Fix a bug where mce loops on memory UE.
-
-Nicholas Piggin (3):
-      rtc: opal: Fix OPAL RTC driver OPAL_BUSY loops
-      powerpc: Fix smp_send_stop NMI IPI handling
-      powerpc: Fix deadlock with multiple calls to smp_send_stop
-
-Shilpasri G Bhat (1):
-      cpufreq: powernv: Fix hardlockup due to synchronous smp_call in timer interrupt
-
- arch/powerpc/include/asm/powernv.h        |  2 +-
- arch/powerpc/kernel/mce_power.c           |  7 +--
- arch/powerpc/kernel/smp.c                 | 49 ++++++++++++++---
- arch/powerpc/kvm/booke.c                  |  7 +++
- arch/powerpc/mm/mem.c                     |  2 +
- arch/powerpc/platforms/powernv/memtrace.c | 17 ------
- arch/powerpc/platforms/powernv/npu-dma.c  | 88 +++++++++++++++++++++++++------
- arch/powerpc/platforms/powernv/opal-rtc.c |  8 +--
- drivers/cpufreq/powernv-cpufreq.c         | 14 +++--
- drivers/rtc/rtc-opal.c                    | 37 ++++++++-----
- 10 files changed, 166 insertions(+), 65 deletions(-)
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJa5FfxAAoJEFHr6jzI4aWAe54P/RSoKFn7Bfuhkp3vdeD6Q6fU
-Mlbm/VIzamrZ+4X4jrXbizwQgrphrqA84FTWprQet04V+VjYFKtdoIUsng+1rmZ+
-CiiajXTsDz9YRYoG8mKiEBis8doBLvAIelN5lT0nx0e9BTeg/Q0gDGaLlSl6Cw2r
-yusEthM3MmAYrqPlsEaZ2Ex5F2zxEW26nVjr1/SVmKJm5+zxRMIm2WCMjHDaEXBx
-K5FEyT2FgCrcSitc2NQKVJ/OKyv3iAbk4/2sZrCu8h6hlJ3qVX2SCuzQvbey0rKK
-jLsnZ+51uqx5TwivCQDHUM6Fzwa3moreNpHl6CtSSFp5WlHSfbOttf3i+9mSHhTP
-pnORQDPw2la/DD6XKhJmSYTIBiu5/cDeAcwtYgG6WKbgOGKCVhJ5Mfne0DxxnLLc
-lKeFRwQBdKQYB3qqFdjiubLpJbDW9CyqKMyIQMivqkoGwEoya04cazhaVmYartSD
-cOYueG4zbJmCoeXDdCfKH2duxkAKnQVKJDj29N5IOuuNGua2dozMG/SvNQmwYX4S
-Z4ZItxJAdSxGXyhzh2GNYPnd8Hp1mnMLC+bn5TRYOAy7tO3zd4Vt4Q434SyJOOsL
-G6wcyT8J2ARrNEssE6m/32nskIPAOIRQaVcHjO5HKCR8fnscMSDPxYlZHPbnPT46
-6ZgczHdxre4oUTAqrq9O
-=D9Tc
------END PGP SIGNATURE-----
+-- 
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
