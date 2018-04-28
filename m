@@ -1,79 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752045AbeD1VmQ (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 28 Apr 2018 17:42:16 -0400
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:39388 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751572AbeD1VmO (ORCPT
+        id S1752075AbeD1VvH (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 28 Apr 2018 17:51:07 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:41174 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751602AbeD1VvF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Apr 2018 17:42:14 -0400
-X-Google-Smtp-Source: AB8JxZpnAJaBpWx7c6Wri/kpB6+8H4p33RK3y4+fwvQnyuFczbt7HaFdy828ecV2KEfwUC9CgLTTJ5xcmmzw7FRgst4=
+        Sat, 28 Apr 2018 17:51:05 -0400
+X-Google-Smtp-Source: AB8JxZqOEKu7Y0W/SkVRA5+ID0gXCIrJYcVf6sVkytf5xe7BjTjn77uOJ1e86PZkLUE9/CSrJ7beMQ==
+From: Frank Mori Hess <fmh6jj@gmail.com>
+To: Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
+        r.baldyga@hackerion.com
+Subject: [PATCH] Revert "dmaengine: pl330: add DMA_PAUSE feature"
+Date: Sat, 28 Apr 2018 17:50:58 -0400
+Message-ID: <2484918.HKVQc3yJkt@bear>
+User-Agent: KMail/5.2.3 (Linux/4.9.0-6-amd64; KDE/5.28.0; x86_64; ; )
 MIME-Version: 1.0
-In-Reply-To: <bd125268-a685-ba6e-efc4-130a0621855f@infradead.org>
-References: <CAG=yYwnMXFxHxCnYNWCb-HhpAb21kc5_e_6q-N_DRGhMVurPMQ@mail.gmail.com>
- <bd125268-a685-ba6e-efc4-130a0621855f@infradead.org>
-From: Jeffrin Thalakkottoor <jeffrin@rajagiritech.edu.in>
-Date: Sun, 29 Apr 2018 03:12:12 +0530
-Message-ID: <CAG=yYwnq1KwAmKL5t=KFTMcRY9rDFM_5XBDNpbvzM-8J-U7TKQ@mail.gmail.com>
-Subject: Re: PROBLEM: error due to conflicting types during build of kselftests
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: lkml <linux-kernel@vger.kernel.org>, linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3SLgQ0C023780
 
-anyway my current is gcc (Debian 7.3.0-16) 7.3.0
+This reverts commit 88987d2c7534a0269f567fb101e6d71a08f0f01d.
 
-may be you can try ... make -C tools/testing/selftests 2> error.txt
+The pl330.c pause implementation violates the dmaengine requirement
+for no data loss, since it relies on the DMAKILL
+instruction.  However, DMAKILL discards in-flight data from the
+dma controller's fifo.  This is documented in the dma-330 manual
+and I have observed it with hardware doing device-to-memory burst
+transfers.  The discarded data may or may not show up in the
+residue count, depending on timing (resulting in data corruption
+effectively).
 
-On Sat, Apr 28, 2018 at 5:08 AM, Randy Dunlap <rdunlap@infradead.org> wrote:
-> On 04/20/2018 11:03 AM, Jeffrin Thalakkottoor wrote:
->> hello,
->>
->> the following is the error found...
->> -----------------------------------------------------------------------------------
->> protection_keys.c:421:5: error: conflicting types for ‘pkey_set’
->>  int pkey_set(int pkey, unsigned long rights, unsigned long flags)
->>      ^~~~~~~~
->> ------------------------------------------------------------------------------------
->>
->> to reproduce this error...
->> make -C tools/testing/selftests
->
-> Hi,
->
-> I can't reproduce this problem.  What is your gcc --version?
->
-> Thanks.
->
->> Details about software:
->>
->> Linux debian 4.17.0-rc1+ #1 SMP Thu Apr 19 18:59:45 IST 2018 x86_64 GNU/Linux
->>
->> GNU Make             4.2.1
->> Binutils             2.30
->> Util-linux           2.31.1
->> Mount                2.31.1
->> Linux C Library      2.27
->> Dynamic linker (ldd) 2.27
->> readlink: missing operand
->> Try 'readlink --help' for more information.
->> Procps               3.3.14
->> Kbd                  2.0.4
->> Console-tools        2.0.4
->> Sh-utils             8.28
->> Udev                 238
->>
->
->
-> --
-> ~Randy
+Signed-off-by: Frank Mori Hess <fmh6jj@gmail.com>
+---
+ drivers/dma/pl330.c | 28 ----------------------------
+ 1 file changed, 28 deletions(-)
 
-
-
+diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+index 6237069001c4..f802bd3b0481 100644
+--- a/drivers/dma/pl330.c
++++ b/drivers/dma/pl330.c
+@@ -2290,33 +2290,6 @@ static int pl330_terminate_all(struct dma_chan *chan)
+ 	return 0;
+ }
+ 
+-/*
+- * We don't support DMA_RESUME command because of hardware
+- * limitations, so after pausing the channel we cannot restore
+- * it to active state. We have to terminate channel and setup
+- * DMA transfer again. This pause feature was implemented to
+- * allow safely read residue before channel termination.
+- */
+-static int pl330_pause(struct dma_chan *chan)
+-{
+-	struct dma_pl330_chan *pch = to_pchan(chan);
+-	struct pl330_dmac *pl330 = pch->dmac;
+-	unsigned long flags;
+-
+-	pm_runtime_get_sync(pl330->ddma.dev);
+-	spin_lock_irqsave(&pch->lock, flags);
+-
+-	spin_lock(&pl330->lock);
+-	_stop(pch->thread);
+-	spin_unlock(&pl330->lock);
+-
+-	spin_unlock_irqrestore(&pch->lock, flags);
+-	pm_runtime_mark_last_busy(pl330->ddma.dev);
+-	pm_runtime_put_autosuspend(pl330->ddma.dev);
+-
+-	return 0;
+-}
+-
+ static void pl330_free_chan_resources(struct dma_chan *chan)
+ {
+ 	struct dma_pl330_chan *pch = to_pchan(chan);
+@@ -3027,7 +3000,6 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
+ 	pd->device_tx_status = pl330_tx_status;
+ 	pd->device_prep_slave_sg = pl330_prep_slave_sg;
+ 	pd->device_config = pl330_config;
+-	pd->device_pause = pl330_pause;
+ 	pd->device_terminate_all = pl330_terminate_all;
+ 	pd->device_issue_pending = pl330_issue_pending;
+ 	pd->src_addr_widths = PL330_DMA_BUSWIDTHS;
 -- 
-software engineer
-rajagiri school of engineering and technology
+2.11.0
