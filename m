@@ -1,113 +1,148 @@
-Return-Path: <krzk@kernel.org>
-X-Google-Smtp-Source: AIpwx4/td3x4k4F6A4C2OSWXn9W3KIcM0wX8LNzJ5n6D81PcMlL2yR8CSELWRNjMsWxJca3/Yk8f
-ARC-Seal: i=1; a=rsa-sha256; t=1524602005; cv=none;
-        d=google.com; s=arc-20160816;
-        b=iBuH22yUd99mLXM/7sal6rIBjy+ne8BbsHmwG9ffJgrIlREiS58lG6seTB/VUp59YB
-         2kLu5K4JG5jE5VDEaT9le3JLtHYUpFAmXT3GOVBHD5MGvdtfXeZ5G7L7fK0y8VB14Xh2
-         iKDOXzpkH1StvYlc4VG7nv/n2TdoCbMu2WoGAsp+X6+AUtboJBKbnPMV7CosimaCUrFY
-         0SEaVxO+ahFoH+gm8uwOwKPUAfyxK9cvQ/s+1kzwYtD9910AIkPO7CXZDO3fK+6CwC03
-         omZf6dKRTRu+ASuXbSmBL1hraiBUO302h6imdQRfrIiJvxfHs4CVbarcbHg63mUhFqgr
-         izjQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dmarc-filter:arc-authentication-results;
-        bh=FPHdO1e2J3fflVZ7q/2XHCcjcHzfUuYnOi/YzZi2KTw=;
-        b=Pb0CWpH9QnNh9k4eHsrpE/6R5VHBVDxKa4FrgKI2kxFCtER9KaZcHvgnojxGJwPyiM
-         a+lANC2TKr8RhHkoQp6Fn3QyQJtLJASStGc+eMQGY375UOHiuRmLSU/omQm0amb2EsBv
-         bSHm+f6QZVbVkCI4KO9QorRB7ZC8DxGD21GyosvMpnXTkwc9mczF1OQPnShyuJMijo/3
-         l7U59GxY+NgwNzzZi9bCu3Kel6ie0gqLxtqfpYAUeyBBQDRLZTo3f3SzL0lnjQ50Y7RD
-         nIPydN5vFNgXuvQTleVlmTfOTeIGnf+2GFpo5Vo3W5E4UlhcUki99LI6OV7LqCYtCsNK
-         PivA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of krzk@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=krzk@kernel.org
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of krzk@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=krzk@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD228217D4
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1897398-1524918901-2-7422978205266338128
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, MAILING_LIST_MULTI -1, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
+  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524918901; b=UCZVL8xiy6T76h1qua0wH7R/0NmM7OzwnMNXnS9HCYeg5CR3Qg
+    ECwzj4QqgsUnLbEHoJMdC4NLo4SzjaQq8h2lKUbfcA61WpOR68y+6Iwi9SeFG+8q
+    2PGmjShU9VqwN9P3AfRNdj9tC9G8dyuENnJ3gqU6ueTPJjeSzgirid7ab6RFf6yX
+    jkpI69SfoO2qVw4Z3qp7j4OF4QaHVS+m3peNWM4AZkn2P+/7+Ov9vnRQ9JnEvFhT
+    mOFATcIU/ZTzEFt0IelC126SZ3tZ3zyfcUt4Y6fHDyp23mhwDtNoi8Or+4srO/x1
+    2nhqLS/rnFm/tZTEaVenHrdpMZoJfmhWsgEA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :mime-version:content-type:content-transfer-encoding:sender
+    :list-id; s=fm2; t=1524918901; bh=DSzGJNL7KFi4v0fmu3Su38fX1BpNBj
+    nCycDOumduXGM=; b=LAyEF7ZwzRM6jU4T78cQypUiAgcJ97ssNQCIzjHg7DQFHy
+    dQbGDvwr9GFq3MBajbBT7DYx3JdWCfOC0EpW0eH4a7zg2d5ba3Efcn5uQyWQyn1m
+    9ceN68yvq/f3eCvSU2fek1ODhy8LCxe411X1r/GWbw31mzQDsU6AvlHuL4jqciIg
+    o5I3NsOn5f5tsDVHhQbzRX6u9K+OeumjuHLDtg0OgBJzt5xIK+IU3hTSOn5NP0YY
+    VtRO0cp/mFx0TPXrSqu1CM8APE3gFGjdht2suEBCcDUz2h4iiGU6lysZuvD6ZtKw
+    KmYMwk+3KC98CJslpA7vR+8h32P6DD+DQDLiiOZQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=orgdomain_pass (Domain org match);
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=orgdomain_pass (Domain org match);
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfHDpcUh+ehy9VMSxSZUbltrStR9exxXCGMX8dtcLsKw6xuDG9ATPPNqk3au9qWpDVLSXnb1opv2pgDE4eONXQnFn2TDuJHW1PHD4sOBEeZqm4pakehw5
+    qrpw68fxxh+pOFfHMQSpoHVTYFb1cAnjCgBYQI3pp9/gvt0Oz/SOCFAhx/DilGE1gjFecvG3K5cAi1YngQoO1FgYLqByt0HPdFlSdTKwFhLPKOELUrjSTJxt
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=VwQbUJbxAAAA:8 a=7HTw5qNjFICyrjSqi0kA:9 a=YX7VmZAZ6HkmtB_A:21
+    a=v_x1RpOncQ5JE6Xe:21 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1759829AbeD1Me5 (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 28 Apr 2018 08:34:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57522 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1759699AbeD1Me4 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sat, 28 Apr 2018 08:34:56 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FA3721A96
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=krzk@kernel.org
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kukjin Kim <kgene@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Tejun Heo <tj@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Tomasz Figa <tomasz.figa@gmail.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Eduardo Valentin <edubezval@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Andi Shyti <andi@etezian.org>,
-	Mark Brown <broonie@kernel.org>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-ide@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-spi@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Olof Johansson <olof@lixom.net>,
-	Jaehoon Chung <jh80.chung@samsung.com>
-Subject: [RFC 02/10] ata: ahci-platform: Remove support for Exynos5440
-Date: Tue, 24 Apr 2018 22:32:31 +0200
-Message-Id: <20180424203239.21885-3-krzk@kernel.org>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180424203239.21885-1-krzk@kernel.org>
-References: <20180424203239.21885-1-krzk@kernel.org>
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
+Cc: Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
+        x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+        Ananth N Mavinakayanahalli <ananth@in.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jon Medhurst <tixy@linaro.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        "Tobin C . Harding" <me@tobin.cc>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Richter <tmricht@linux.ibm.com>,
+        akpm@linux-foundation.org, acme@kernel.org, rostedt@goodmis.org,
+        brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
+        stable@vger.kernel.org
+Subject: [PATCH v4 0/7] kprobes: Fix %p in kprobes
+Date: Sat, 28 Apr 2018 21:34:30 +0900
+Message-Id: <152491886943.9916.18051658590418236184.stgit@devbox>
+X-Mailer: git-send-email 2.13.6
+User-Agent: StGit/0.17.1-dirty
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598661072571633220?=
-X-GMAIL-MSGID: =?utf-8?q?1598661072571633220?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The Exynos5440 is not actively developed, there are no development
-boards available and probably there are no real products with it.
-Remove wide-tree support for Exynos5440.
+Hi,
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+This 4th version of the series which fixes %p uses in kprobes.
+Some by replacing with %pS, some by replacing with %px but
+masking with kallsyms_show_value().
+
+I've read the thread about %pK and if I understand correctly
+we shouldn't print kernel addresses. However, kprobes debugfs
+interface can not stop to show the actual probe address because
+it should be compared with addresses in kallsyms for debugging.
+So, it depends on that kallsyms_show_value() allows to show
+address to user, because if it returns true, anyway that user
+can dump /proc/kallsyms.
+Other error messages are replaced it with %pS or just removed.
+
+This series also including fixes for arch ports too.
+
+Changes in this version;
+  [1/7] Fix "list" file's mode too.
+  [2/7] Do not use local variables and fix comment.
+  [4/7] Use WARN_ONCE() for single bug.
+  [5/7] Just remove %p.
+
+Thank you,
+
 ---
- Documentation/devicetree/bindings/ata/ahci-platform.txt | 1 -
- drivers/ata/ahci_platform.c                             | 1 -
- 2 files changed, 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/ata/ahci-platform.txt b/Documentation/devicetree/bindings/ata/ahci-platform.txt
-index c760ecb81381..663766685818 100644
---- a/Documentation/devicetree/bindings/ata/ahci-platform.txt
-+++ b/Documentation/devicetree/bindings/ata/ahci-platform.txt
-@@ -17,7 +17,6 @@ Required properties:
-   - "marvell,armada-380-ahci"
-   - "marvell,armada-3700-ahci"
-   - "snps,dwc-ahci"
--  - "snps,exynos5440-ahci"
-   - "snps,spear-ahci"
-   - "generic-ahci"
- - interrupts        : <interrupt mapping for SATA IRQ>
-diff --git a/drivers/ata/ahci_platform.c b/drivers/ata/ahci_platform.c
-index 99f9a895a459..564570ea3e27 100644
---- a/drivers/ata/ahci_platform.c
-+++ b/drivers/ata/ahci_platform.c
-@@ -75,7 +75,6 @@ static const struct of_device_id ahci_of_match[] = {
- 	{ .compatible = "generic-ahci", },
- 	/* Keep the following compatibles for device tree compatibility */
- 	{ .compatible = "snps,spear-ahci", },
--	{ .compatible = "snps,exynos5440-ahci", },
- 	{ .compatible = "ibm,476gtr-ahci", },
- 	{ .compatible = "snps,dwc-ahci", },
- 	{ .compatible = "hisilicon,hisi-ahci", },
--- 
-2.14.1
+Masami Hiramatsu (7):
+      kprobes: Make list and blacklist root user read only
+      kprobes: Show blacklist addresses as same as kallsyms does
+      kprobes: Show address of kprobes if kallsyms does
+      kprobes: Replace %p with other pointer types
+      kprobes/x86: Fix %p uses in error messages
+      kprobes/arm: Fix %p uses in error messages
+      kprobes/arm64: Fix %p uses in error messages
+
+
+ arch/arm/probes/kprobes/core.c      |   10 +++----
+ arch/arm/probes/kprobes/test-core.c |    1 -
+ arch/arm64/kernel/probes/kprobes.c  |    4 +--
+ arch/x86/kernel/kprobes/core.c      |   13 +++------
+ kernel/kprobes.c                    |   52 +++++++++++++++++++++--------------
+ 5 files changed, 42 insertions(+), 38 deletions(-)
+
+--
+Masami Hiramatsu (Linaro) <mhiramat@kernel.org>
