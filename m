@@ -1,77 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758550AbeD1Qdy (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 28 Apr 2018 12:33:54 -0400
-Received: from mo4-p02-ob.smtp.rzone.de ([81.169.146.169]:20879 "EHLO
-        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752121AbeD1Qdw (ORCPT
+        id S1759064AbeD1QhM (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 28 Apr 2018 12:37:12 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:36235 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757893AbeD1QhL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Apr 2018 12:33:52 -0400
-X-RZG-AUTH: :JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNO4Ij0Nfzb0=
-X-RZG-CLASS-ID: mo00
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-To: galak@codeaurora.org, andy.shevchenko@gmail.com,
-        Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alexandre Courbot <gnurou@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org,
-        kernel@pyra-handheld.com, "H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH v5 0/7] pcal6524 extensions and fixes for pca953x driver
-Date: Sat, 28 Apr 2018 18:31:30 +0200
-Message-Id: <cover.1524933096.git.hns@goldelico.com>
-X-Mailer: git-send-email 2.12.2
+        Sat, 28 Apr 2018 12:37:11 -0400
+X-Google-Smtp-Source: AB8JxZr2jRZFgfUiACb2j9MPv/WzWmimBy7juHByqhd2vukCFQhPZzR51912wL3c4HovOzDm6yB2y1WuPhA1WLLy1rE=
+MIME-Version: 1.0
+References: <alpine.DEB.2.21.1804272122390.1596@nanos.tec.linutronix.de> <20180428091823.h3iajtxkqdwdcpst@gmail.com>
+In-Reply-To: <20180428091823.h3iajtxkqdwdcpst@gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sat, 28 Apr 2018 16:36:59 +0000
+Message-ID: <CA+55aFwgcmpSoNh17Pbtsw8j8KzufdvroC9Rsd3K-UbTTP9qPg@mail.gmail.com>
+Subject: Re: [RFD] x86: The future of MPX
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-V5:
-* fix wrong split up between patches 1/7and 2/7.
+On Sat, Apr 28, 2018 at 2:18 AM Ingo Molnar <mingo@kernel.org> wrote:
 
-2018-04-26 19:35:07: V4:
-* introduced PCA_LATCH_INT constant to make of_table more
-  readable (suggested by Andy Shevchenko)
-* converted all register constants to hex in a separate
-  patch (suggested by Andy Shevchenko)
-* separated additional pcal953x and pcal6524 register
-  definitions into separate patches (suggested by Andy Shevchenko)
-* made special pcal6524 address adjustment more readable
-  (suggested by Andy Shevchenko)
-* moved gpio-controller and interrupt-controller to the
-  "required" section (reviewed by Rob Herring)
+> I just tried the MPX testcases with the latest kernel:
 
-2018-04-10 18:07:07: V3:
-* add Reported-by: and Reviewed-by:
-* fix wording for bindings description and example
-* convert all register offsets to hex
-* omit the LEVEL-IRQ RFC/hack commit
+>   deimos:~/tip/tools/testing/selftests/x86> ./mpx-mini-test_64
 
-2018-04-04 21:00:27: V2:
-* added PCA_PCAL flags if matched through of-table
-* fix address calculation for extended PCAL6524 registers
-* hack to map LEVEL_LOW to EDGE_FALLING to be able to
-  test in combination with ts3a227e driver
-* improve description of bindings for optional vcc-supply
-  and interrupt-controller;
+They need to be run as root. They try to access
 
-2018-03-10 09:32:53: no initial description
+     /sys/kernel/debug/tracing/set_ftrace_pid
+     /sys/kernel/debug/tracing/trace
 
-H. Nikolaus Schaller (7):
-  gpio: pca953x: convert register constants to hex
-  gpio: pca953x: add more register definitions for pcal953x
-  gpio: pca953x: add more register definitions for pcal6524
-  gpio: pca953x: define masks for addressing common and extended
-    registers
-  gpio: pca953x: fix address calculation for pcal6524
-  DTS: Bindings: pca953x add an optional vcc-supply property
-  DTS: Bindings: pca953x: add example how to use interrupt-controller
-    and gpio-controller
+and that's root-only.
 
- .../devicetree/bindings/gpio/gpio-pca953x.txt      | 34 ++++++++++++++
- drivers/gpio/gpio-pca953x.c                        | 53 ++++++++++++++--------
- 2 files changed, 69 insertions(+), 18 deletions(-)
+> ... and both of them crashed.
 
--- 
-2.12.2
+That's just because they use "assert()" to check that the file open worked.
+
+"assert()" is evil and bad bad bad.
+
+                      Linus
