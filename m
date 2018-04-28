@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758888AbeD1Qd6 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 28 Apr 2018 12:33:58 -0400
-Received: from mo4-p02-ob.smtp.rzone.de ([81.169.146.168]:8104 "EHLO
-        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758222AbeD1Qdz (ORCPT
+        id S933245AbeD1Qe7 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 28 Apr 2018 12:34:59 -0400
+Received: from mo4-p03-ob.smtp.rzone.de ([81.169.146.173]:14760 "EHLO
+        mo4-p03-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758735AbeD1Qd6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Apr 2018 12:33:55 -0400
+        Sat, 28 Apr 2018 12:33:58 -0400
 X-RZG-AUTH: :JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNO4Ij0Nfzb0=
 X-RZG-CLASS-ID: mo00
 From: "H. Nikolaus Schaller" <hns@goldelico.com>
@@ -19,9 +19,9 @@ To: galak@codeaurora.org, andy.shevchenko@gmail.com,
 Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org,
         kernel@pyra-handheld.com, "H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH v5 1/7] gpio: pca953x: convert register constants to hex
-Date: Sat, 28 Apr 2018 18:31:31 +0200
-Message-Id: <56bf53debf69534a452538e689dc15f94aea31a4.1524933096.git.hns@goldelico.com>
+Subject: [PATCH v5 7/7] DTS: Bindings: pca953x: add example how to use interrupt-controller and gpio-controller
+Date: Sat, 28 Apr 2018 18:31:37 +0200
+Message-Id: <23c048310088d42c99c3c20a83795c97d1b8f1cc.1524933096.git.hns@goldelico.com>
 X-Mailer: git-send-email 2.12.2
 In-Reply-To: <cover.1524933096.git.hns@goldelico.com>
 References: <cover.1524933096.git.hns@goldelico.com>
@@ -31,58 +31,62 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-which makes it easier to match them with the data sheets.
+It is not completely obvious that these are required and
+how to use them. So we provide a tested example.
 
 Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- drivers/gpio/gpio-pca953x.c | 32 ++++++++++++++++----------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+ .../devicetree/bindings/gpio/gpio-pca953x.txt      | 33 ++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index d02964983b5b..508d0f6dceb7 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -25,25 +25,25 @@
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt b/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
+index 6a7cddb187c1..88f228665507 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
++++ b/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
+@@ -31,6 +31,10 @@ Required properties:
+ 	ti,tca9554
+ 	onnn,pca9654
+ 	exar,xra1202
++ - gpio-controller: if used as gpio expander.
++ - #gpio-cells: if used as gpio expander.
++ - interrupt-controller: if to be used as interrupt expander.
++ - #interrupt-cells: if to be used as interrupt expander.
  
- #include <asm/unaligned.h>
- 
--#define PCA953X_INPUT		0
--#define PCA953X_OUTPUT		1
--#define PCA953X_INVERT		2
--#define PCA953X_DIRECTION	3
-+#define PCA953X_INPUT		0x00
-+#define PCA953X_OUTPUT		0x01
-+#define PCA953X_INVERT		0x02
-+#define PCA953X_DIRECTION	0x03
- 
- #define REG_ADDR_AI		0x80
- 
--#define PCA957X_IN		0
--#define PCA957X_INVRT		1
--#define PCA957X_BKEN		2
--#define PCA957X_PUPD		3
--#define PCA957X_CFG		4
--#define PCA957X_OUT		5
--#define PCA957X_MSK		6
--#define PCA957X_INTS		7
--
--#define PCAL953X_IN_LATCH	34
--#define PCAL953X_INT_MASK	37
--#define PCAL953X_INT_STAT	38
-+#define PCA957X_IN		0x00
-+#define PCA957X_INVRT		0x01
-+#define PCA957X_BKEN		0x02
-+#define PCA957X_PUPD		0x03
-+#define PCA957X_CFG		0x04
-+#define PCA957X_OUT		0x05
-+#define PCA957X_MSK		0x06
-+#define PCA957X_INTS		0x07
+ Optional properties:
+  - reset-gpios: GPIO specification for the RESET input. This is an
+@@ -48,3 +52,32 @@ Example:
+ 		interrupt-parent = <&gpio3>;
+ 		interrupts = <23 IRQ_TYPE_LEVEL_LOW>;
+ 	};
 +
-+#define PCAL953X_IN_LATCH	0x22
-+#define PCAL953X_INT_MASK	0x25
-+#define PCAL953X_INT_STAT	0x26
- 
- #define PCA_GPIO_MASK		0x00FF
- #define PCA_INT			0x0100
++
++Example with Interrupts:
++
++
++	gpio99: gpio@22 {
++		compatible = "nxp,pcal6524";
++		reg = <0x22>;
++		interrupt-parent = <&gpio6>;
++		interrupts = <1 IRQ_TYPE_EDGE_FALLING>;	/* gpio6_161 */
++		interrupt-controller;
++		#interrupt-cells = <2>;
++		vcc-supply = <&vdds_1v8_main>;
++		gpio-controller;
++		#gpio-cells = <2>;
++		gpio-line-names =
++			"hdmi-ct-hpd", "hdmi.ls-oe", "p02", "p03", "vibra", "fault2", "p06", "p07",
++			"en-usb", "en-host1", "en-host2", "chg-int", "p14", "p15", "mic-int", "en-modem",
++			"shdn-hs-amp", "chg-status+red", "green", "blue", "en-esata", "fault1", "p26", "p27";
++	};
++
++	ts3a227@3b {
++		compatible = "ti,ts3a227e";
++		reg = <0x3b>;
++		interrupt-parent = <&gpio99>;
++		interrupts = <14 IRQ_TYPE_EDGE_RISING>;
++		ti,micbias = <0>;	/* 2.1V */
++	};
++
 -- 
 2.12.2
