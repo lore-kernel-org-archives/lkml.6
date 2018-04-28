@@ -1,114 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1759688AbeD1Imb (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 28 Apr 2018 04:42:31 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43128 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759620AbeD1Im1 (ORCPT
+        id S1759712AbeD1JS3 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 28 Apr 2018 05:18:29 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:41502 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759620AbeD1JS1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Apr 2018 04:42:27 -0400
-Date: Sat, 28 Apr 2018 01:42:21 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>, linux-mm@kvack.org,
-        mhocko@kernel.org, cl@linux.com, Jan Kara <jack@suse.cz>,
-        matthew@wil.cx, x86@kernel.org, luto@amacapital.net,
-        martin.petersen@oracle.com, jthumshirn@suse.de, broonie@kernel.org,
-        Juergen Gross <jgross@suse.com>, linux-spi@vger.kernel.org,
-        Joerg Roedel <joro@8bytes.org>, linux-scsi@vger.kernel.org,
-        Dan Carpenter <dan.carpenter@oracle.com>, linux-kernel@vger.kernel.org,
-        "lsf-pc@lists.linux-foundation.org"
-        <lsf-pc@lists.linux-foundation.org>
-Subject: Re: [LSF/MM TOPIC NOTES] x86 ZONE_DMA love
-Message-ID: <20180428084221.GD31684@infradead.org>
-References: <20180426215406.GB27853@wotan.suse.de>
- <20180427053556.GB11339@infradead.org>
- <20180427161456.GD27853@wotan.suse.de>
+        Sat, 28 Apr 2018 05:18:27 -0400
+X-Google-Smtp-Source: AB8JxZqjJWcu+rXiZEFYgptodkeqW3kg7eMjEpLDO2QyvfrXMTqx6dDLDb+Sq+qE/WkvpwLiSsfFFw==
+Date: Sat, 28 Apr 2018 11:18:23 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [RFD] x86: The future of MPX
+Message-ID: <20180428091823.h3iajtxkqdwdcpst@gmail.com>
+References: <alpine.DEB.2.21.1804272122390.1596@nanos.tec.linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180427161456.GD27853@wotan.suse.de>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <alpine.DEB.2.21.1804272122390.1596@nanos.tec.linutronix.de>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 27, 2018 at 04:14:56PM +0000, Luis R. Rodriguez wrote:
-> But curious, on a standard qemu x86_x64 KVM guest, which of the
-> drivers do we know for certain *are* being used from the ones
-> listed?
 
-On a KVM guest probably none.  But not all the world is relatively
-sane and standardized VMs unfortunately.
+* Thomas Gleixner <tglx@linutronix.de> wrote:
 
-> > But even more importantly
-> > we have plenty driver using it through dma_alloc_* and a small DMA
-> > mask, and they are in use 
+> Dave,
 > 
-> Do we have a list of users for x86 with a small DMA mask?
-> Or, given that I'm not aware of a tool to be able to look
-> for this in an easy way, would it be good to find out which
-> x86 drivers do have a small mask?
-
-Basically you'll have to grep for calls to dma_set_mask/
-dma_set_coherent_mask/dma_set_mask_and_coherent and their pci_*
-wrappers with masks smaller 32-bit.  Some use numeric values,
-some use DMA_BIT_MASK and various places uses local variables
-or struct members to parse them, so finding them will be a bit
-more work.  Nothing a coccinell expert couldn't solve, though :)
-
-> > - we actually had a 4.16 regression due to them.
+> I've got the following MPX related information:
 > 
-> Ah what commit was the culprit? Is that fixed already? If so what
-> commit?
-
-66bdb147 ("swiotlb: Use dma_direct_supported() for swiotlb_ops")
-
-> > > SCSI is *severely* affected:
-> > 
-> > Not really.  We have unchecked_isa_dma to support about 4 drivers,
+>  .... But they [Intel] certainly haven't maintained the whole MPX support
+>  in GCC at all since two or three years (e.g. bootstrap with MPX was broken
+>  since forever), so now it's gone from GCC. ....
 > 
-> Ah very neat:
+> and I know that GCC is discussing MPX removal since May last year at least.
+> To the best of my knowledge clang does not support it either.
 > 
->   * CONFIG_CHR_DEV_OSST - "SCSI OnStream SC-x0 tape support"
->   * CONFIG_SCSI_ADVANSYS - "AdvanSys SCSI support"
->   * CONFIG_SCSI_AHA1542 - "Adaptec AHA1542 support"
->   * CONFIG_SCSI_ESAS2R - "ATTO Technology's ExpressSAS RAID adapter driver"
+> So what's the state of this stuff? If we don't have a compiler supporting
+> it how on earth is that useful or even testable for anyone who does not
+> have access to some magic Intel internal compiler version?
 > 
-> > and less than a hand ful of drivers doing stupid things, which can
-> > be fixed easily, and just need a volunteer.
-> 
-> Care to list what needs to be done? Can an eager beaver student do it?
+> If that's the sad state of affairs, then we just should move the whole
+> stuff into staging or simply queue it for removal in 4.18.
 
-Drop the drivers, as in my branch I prepared a while ago would be
-easiest:
+I just tried the MPX testcases with the latest kernel:
 
-http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/unchecked_isa_dma
+ deimos:~/tip/tools/testing/selftests/x86> ./mpx-mini-test_64 
+ XSAVE is supported by HW & OS
+ XSAVE processor supported state mask: 0x21f
+ XSAVE OS supported state mask: 0x21f
+  BNDREGS: size: 64 user: 1 supervisor: 0 aligned: 0
+   BNDCSR: size: 64 user: 1 supervisor: 0 aligned: 0
+ mpx-mini-test_64: mpx-mini-test.c:58: write_int_to: Assertion `fd >= 0' failed.
+ Aborted (core dumped)
 
-But unlike the other few aha1542 actually seems to have active users,
-or at least had recently.  I'll need to send this out as a RFC, but
-don't really expect it to fly.
+ deimos:~/tip/tools/testing/selftests/x86> ./mpx-mini-test_32 
+ XSAVE is supported by HW & OS
+ XSAVE processor supported state mask: 0x21f
+ XSAVE OS supported state mask: 0x21f
+  BNDREGS: size: 64 user: 1 supervisor: 0 aligned: 0
+   BNDCSR: size: 64 user: 1 supervisor: 0 aligned: 0
+ mpx-mini-test_32: mpx-mini-test.c:58: write_int_to: Assertion `fd >= 0' failed.
+ Aborted (core dumped)
 
-If it doesn't we'll need to enhance swiotlb to support a ISA DMA pool
-in addition to current 32-bit DMA pool, and also convert aha1542 to
-use the DMA API.  Not really student material.
+... and both of them crashed.
 
-> > > That's the end of the review of all current explicit callers on x86.
-> > > 
-> > > # dma_alloc_coherent_gfp_flags() and dma_generic_alloc_coherent()
-> > > 
-> > > dma_alloc_coherent_gfp_flags() and dma_generic_alloc_coherent() set
-> > > GFP_DMA if if (dma_mask <= DMA_BIT_MASK(24))
-> > 
-> > All that code is long gone and replaced with dma-direct.  Which still
-> > uses GFP_DMA based on the dma mask, though - see above.
-> 
-> And that's mostly IOMMU code, on the alloc() dma_map_ops.
+The CPU has MPX support and the kernel has CONFIG_X86_INTEL_MPX=y:
 
-It is the dma mapping API, which translates the dma mask to the right
-zone, and probably is the biggest user of ZONE_DMA in modern systems.
+ deimos:~> dmesg | grep -i mpx
+ [    0.000000] x86/fpu: Supporting XSAVE feature 0x008: 'MPX bounds registers'
+ [    0.000000] x86/fpu: Supporting XSAVE feature 0x010: 'MPX CSR'
 
-Currently there are still various arch and iommu specific
-implementations of the allocator decisions, but I'm working to
-consolidate them into common code.
+Thanks,
+
+	Ingo
