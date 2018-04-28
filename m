@@ -1,80 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933118AbeD0Xlb (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 19:41:31 -0400
-Received: from mail-pg0-f50.google.com ([74.125.83.50]:38013 "EHLO
-        mail-pg0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932980AbeD0Xl3 (ORCPT
+        id S933187AbeD1AKK (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 20:10:10 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:46840 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933115AbeD1AKI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 19:41:29 -0400
-X-Google-Smtp-Source: AB8JxZqjIcBIVV64e+fKL+7J2JeVj3sSaCWgCZacnOV7o433gTVJZr6VIlx0BU24DIRZneGVu4LtNA==
-Date: Fri, 27 Apr 2018 16:41:26 -0700
-From: Eric Biggers <ebiggers3@gmail.com>
-To: Andreas Dilger <adilger@dilger.ca>
-Cc: Steve French <smfrench@gmail.com>,
+        Fri, 27 Apr 2018 20:10:08 -0400
+Date: Sat, 28 Apr 2018 01:10:03 +0100
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: NeilBrown <neilb@suse.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        samba-technical <samba-technical@lists.samba.org>,
-        CIFS <linux-cifs@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: copy_file_range and user space tools to do copy fastest
-Message-ID: <20180427234126.GA213261@gmail.com>
-References: <CAH2r5mtRF-yS6stThuVzem+WFmxDqpGLwFvUPviYcmh9dXXwkA@mail.gmail.com>
- <EFCB08E9-C9B9-41AC-A398-4D552FC8EFC9@dilger.ca>
+        Christoph Hellwig <hch@lst.de>, Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Eric Biederman <ebiederm@xmission.com>
+Subject: Re: dcache: remove trylock loops (was Re: [BUG] lock_parent()
+ breakage when used from shrink_dentry_list())
+Message-ID: <20180428001003.GA14907@ZenIV.linux.org.uk>
+References: <20180223150928.GC30522@ZenIV.linux.org.uk>
+ <20180223174216.GD30522@ZenIV.linux.org.uk>
+ <20180223201317.GG30522@ZenIV.linux.org.uk>
+ <CA+55aFyP9JtyzUzA_S2sdKCK+8CZtNoA3UkXg5X4J0Hf2_ekjg@mail.gmail.com>
+ <20180224002248.GH30522@ZenIV.linux.org.uk>
+ <20180225073950.GI30522@ZenIV.linux.org.uk>
+ <87bmgbnhar.fsf_-_@linutronix.de>
+ <20180312191351.GN30522@ZenIV.linux.org.uk>
+ <20180312200540.GO30522@ZenIV.linux.org.uk>
+ <87o9jsdbho.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <EFCB08E9-C9B9-41AC-A398-4D552FC8EFC9@dilger.ca>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <87o9jsdbho.fsf@notabene.neil.brown.name>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 27, 2018 at 01:45:40PM -0600, Andreas Dilger wrote:
-> On Apr 27, 2018, at 12:25 PM, Steve French <smfrench@gmail.com> wrote:
-> > 
-> > Are there any user space tools (other than our test tools and xfs_io
-> > etc.) that support copy_file_range?  Looks like at least cp and rsync
-> > and dd don't.  That syscall which now has been around a couple years,
-> > and was reminded about at the LSF/MM summit a few days ago, presumably
-> > is the 'best' way to copy a file fast since it tries all the
-> > mechanisms (reflink etc.) in order.
-> > 
-> > Since copy_file_range syscall can be 100x or more faster for network
-> > file systems than the alternative, was surprised when I noticed that
-> > cp and rsync didn't support it.  It doesn't look like rsync even
-> > supports reflink either(although presumably if you call
-> > copy_file_range you don't have to worry about that), and reads/writes
-> > are 8K. See copy_file() in rsync/util.c
-> > 
-> > In the cp command it looks like it can call the FICLONE IOCTL (see
-> > clone_file() in coreutils/src/copy.c) but doesn't call the expected
-> > "copy_file_range" syscall.
-> > 
-> > In the dd command it doesn't call either - see dd_copy in corutils/src/dd.c
-> > 
-> > Since it can be 100x or more faster in some cases to call
-> > copy_file_range than do reads/writes back and forth to do a copy
-> > (especially if network or clustered backend or cloud), what tools are
-> > the best to recommend?
-> > 
-> > Would rsync or cp be likely to take patches to call the standard
-> > "copy_file_range" syscall
-> > (http://man7.org/linux/man-pages/man2/copy_file_range.2.html)?
-> > Presumably not if it has been two+ years ... but would be interested
-> > what copy tools to recommend to use instead.
-> 
-> I would start with submitting a patch to coreutils, if you can figure
-> out that code enough to do so (I find it quite opaque).  Since it has
-> been in the kernel for a while already, it should be acceptable to the
-> upstream coreutils maintainers to use this interface.  Doubly so if you
-> include some benchmarks with CIFS/NFS clients avoiding network overhead
-> during the copy.
-> 
+On Tue, Mar 13, 2018 at 12:12:51PM +1100, NeilBrown wrote:
 
-For cp (coreutils), apparently there was a concern that copy_file_range()
-expands holes; see the thread at
-https://lists.gnu.org/archive/html/bug-coreutils/2016-09/msg00020.html.
-Though, I'd think it could just be used on non-holes only.  And I don't think
-the size_t type of 'len' is a problem either, since it's the copy length, not
-the file size.  You just call it multiple times if the file is larger.
+> >	     * selinux inode_doinit_with_dentry() (two call sites, very alike)
+> 
+> I'm less sure about this one, but I think it probably wants
+> d_find_any_alias() as well.  Like cap_inode_getsecurity() it only wants
+> a dentry so that it can pass something to __vfs_getxattr(),
+> and that only wants a dentry so it can pass something to ->get.
+> 
+> Possibly we should rename d_find_alias() to d_find_hashed_alias() so that
+> people need to make a conscious choice between d_find_hashed_alias() and
+> d_find_any_alias() ??
 
-Eric
+FWIW, it *is* a bug; this
+                        /*
+                         * this is can be hit on boot when a file is accessed
+                         * before the policy is loaded.  When we load policy we
+                         * may find inodes that have no dentry on the
+                         * sbsec->isec_head list.  No reason to complain as these
+                         * will get fixed up the next time we go through
+                         * inode_doinit with a dentry, before these inodes could
+                         * be used again by userspace.
+                         */
+in selinux/hooks.c is flat-out wrong now.  Sure, if you first load selinux
+policy after exporting something over NFS or letting attacker play with
+open-by-fhandle, you are past any help, but still...
+
+I disagree about going for d_find_any_alias() from the very beginning, BTW -
+we need to try it in case of d_find_alias() failure, but sufficiently crappy
+filesystem can bloody well fail to access xattrs via disconnected dentry.
