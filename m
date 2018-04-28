@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933376AbeD1Adb (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 20:33:31 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:43193 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933309AbeD1Ac5 (ORCPT
+        id S933401AbeD1AeG (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 20:34:06 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:35988 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933277AbeD1Acz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 20:32:57 -0400
-X-Google-Smtp-Source: AB8JxZo0k5pvBMNSZXYj3KKKiiHE/rKIMXaeDhfft/Nq0bOlU4uzl/1/D6zfhW7vZUKHspvAFrqZpQ==
+        Fri, 27 Apr 2018 20:32:55 -0400
+X-Google-Smtp-Source: AB8JxZoTVLAQLufKlwUQ8+BfVaffkZh1l/MxkTZg1H9qVkJ9U6ZRzw1Zk+iun/WPg/mLNqCAYMNNnQ==
 From: Florian Fainelli <f.fainelli@gmail.com>
 To: netdev@vger.kernel.org
 Cc: Florian Fainelli <f.fainelli@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
@@ -16,9 +16,9 @@ Cc: Florian Fainelli <f.fainelli@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
         cphealy@gmail.com, nikita.yoush@cogentembedded.com,
         vivien.didelot@savoirfairelinux.com, Nisar.Sayed@microchip.com,
         UNGLinuxDriver@microchip.com
-Subject: [PATCH ethtool 1/2] ethtool-copy.h: Sync with net-next
-Date: Fri, 27 Apr 2018 17:32:36 -0700
-Message-Id: <20180428003237.1536-7-f.fainelli@gmail.com>
+Subject: [RFC net-next 5/5] net: phy: broadcom: Add support for PHY test modes
+Date: Fri, 27 Apr 2018 17:32:35 -0700
+Message-Id: <20180428003237.1536-6-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180428003237.1536-1-f.fainelli@gmail.com>
 References: <20180428003237.1536-1-f.fainelli@gmail.com>
@@ -26,60 +26,61 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This brings support for PHY test modes (not accepted yet)
+Re-use the generic PHY library test modes for 100BaseT2 and 1000BaseT
+and advertise support for those through the newly added ethtool knobs.
 
 Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- ethtool-copy.h | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ drivers/net/phy/bcm-phy-lib.c | 15 +++++++++------
+ drivers/net/phy/bcm7xxx.c     |  3 +++
+ 2 files changed, 12 insertions(+), 6 deletions(-)
 
-diff --git a/ethtool-copy.h b/ethtool-copy.h
-index 8cc61e9ab40b..42fb94129da5 100644
---- a/ethtool-copy.h
-+++ b/ethtool-copy.h
-@@ -572,6 +572,7 @@ enum ethtool_stringset {
- 	ETH_SS_TUNABLES,
- 	ETH_SS_PHY_STATS,
- 	ETH_SS_PHY_TUNABLES,
-+	ETH_SS_PHY_TESTS,
- };
+diff --git a/drivers/net/phy/bcm-phy-lib.c b/drivers/net/phy/bcm-phy-lib.c
+index e797e0863895..cb3081e523a5 100644
+--- a/drivers/net/phy/bcm-phy-lib.c
++++ b/drivers/net/phy/bcm-phy-lib.c
+@@ -334,6 +334,8 @@ int bcm_phy_get_sset_count(struct phy_device *phydev, int sset)
+ {
+ 	if (sset == ETH_SS_PHY_STATS)
+ 		return ARRAY_SIZE(bcm_phy_hw_stats);
++	else if (sset == ETH_SS_PHY_TESTS)
++		return genphy_get_test_count(phydev);
  
- /**
-@@ -1296,6 +1297,25 @@ enum ethtool_fec_config_bits {
- #define ETHTOOL_FEC_RS			(1 << ETHTOOL_FEC_RS_BIT)
- #define ETHTOOL_FEC_BASER		(1 << ETHTOOL_FEC_BASER_BIT)
+ 	return -EOPNOTSUPP;
+ }
+@@ -343,12 +345,13 @@ void bcm_phy_get_strings(struct phy_device *phydev, u32 stringset, u8 *data)
+ {
+ 	unsigned int i;
  
-+/**
-+ * struct ethtool_phy_test - Ethernet PHY test mode
-+ * @cmd: Command number = %ETHTOOL_GPHYTEST or %ETHTOOL_SPHYTEST
-+ * @flags: A bitmask of flags from &enum ethtool_test_flags.  Some
-+ *      flags may be set by the user on entry; others may be set by
-+ *      the driver on return.
-+ * @mode: PHY test mode to enter. The index should be a valid test mode
-+ * obtained through ethtool_get_strings with %ETH_SS_PHY_TESTS
-+ * @len: The length of the test specific array @data
-+ * @data: Array of test specific results to be interpreted with @mode
-+ */
-+struct ethtool_phy_test {
-+        __u32   cmd;
-+        __u32   flags;
-+        __u32   mode;
-+        __u32   len;
-+        __u8    data[0];
-+};
-+
- /* CMDs currently supported */
- #define ETHTOOL_GSET		0x00000001 /* DEPRECATED, Get settings.
- 					    * Please use ETHTOOL_GLINKSETTINGS
-@@ -1391,6 +1411,9 @@ enum ethtool_fec_config_bits {
- #define ETHTOOL_GFECPARAM	0x00000050 /* Get FEC settings */
- #define ETHTOOL_SFECPARAM	0x00000051 /* Set FEC settings */
+-	if (stringset != ETH_SS_PHY_STATS)
+-		return;
+-
+-	for (i = 0; i < ARRAY_SIZE(bcm_phy_hw_stats); i++)
+-		strlcpy(data + i * ETH_GSTRING_LEN,
+-			bcm_phy_hw_stats[i].string, ETH_GSTRING_LEN);
++	if (stringset == ETH_SS_PHY_STATS) {
++		for (i = 0; i < ARRAY_SIZE(bcm_phy_hw_stats); i++)
++			strlcpy(data + i * ETH_GSTRING_LEN,
++				bcm_phy_hw_stats[i].string, ETH_GSTRING_LEN);
++	} else if (stringset == ETH_SS_PHY_TESTS) {
++		genphy_get_test_strings(phydev, data);
++	}
+ }
+ EXPORT_SYMBOL_GPL(bcm_phy_get_strings);
  
-+#define ETHTOOL_GPHYTEST        0x00000052 /* Get PHY test mode(s) */
-+#define ETHTOOL_SPHYTEST        0x00000053 /* Set PHY test mode */
-+
- /* compatibility with older code */
- #define SPARC_ETH_GSET		ETHTOOL_GSET
- #define SPARC_ETH_SSET		ETHTOOL_SSET
+diff --git a/drivers/net/phy/bcm7xxx.c b/drivers/net/phy/bcm7xxx.c
+index 1835af147eea..1efd287ed320 100644
+--- a/drivers/net/phy/bcm7xxx.c
++++ b/drivers/net/phy/bcm7xxx.c
+@@ -619,6 +619,9 @@ static int bcm7xxx_28nm_probe(struct phy_device *phydev)
+ 	.get_sset_count	= bcm_phy_get_sset_count,			\
+ 	.get_strings	= bcm_phy_get_strings,				\
+ 	.get_stats	= bcm7xxx_28nm_get_phy_stats,			\
++	.set_test	= genphy_set_test,				\
++	.get_test	= genphy_get_test,				\
++	.get_test_len	= genphy_get_test_len,				\
+ 	.probe		= bcm7xxx_28nm_probe,				\
+ }
+ 
 -- 
 2.14.1
