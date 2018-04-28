@@ -1,84 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753336AbeD1Rut (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 28 Apr 2018 13:50:49 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:40137 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751612AbeD1Rus (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Apr 2018 13:50:48 -0400
-X-Google-Smtp-Source: AB8JxZpF2DK/KHMhs2GG/rMJOg9QEOo5Nkun/6aJYe0d79xugzM1sIZBE/eWUZlVlBcl2ZgooirXeA==
-Date: Sat, 28 Apr 2018 19:50:43 +0200
-From: Ingo Molnar <mingo@kernel.org>
+        id S1751212AbeD1SBa (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 28 Apr 2018 14:01:30 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44436 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750775AbeD1SB3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Apr 2018 14:01:29 -0400
+Date: Sat, 28 Apr 2018 19:58:53 +0200
+From: David Sterba <dsterba@suse.cz>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
+Cc: David Sterba <dsterba@suse.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>
-Subject: Re: [RFD] x86: The future of MPX
-Message-ID: <20180428175043.y35czmhcursyrzsy@gmail.com>
-References: <alpine.DEB.2.21.1804272122390.1596@nanos.tec.linutronix.de>
- <20180428091823.h3iajtxkqdwdcpst@gmail.com>
- <CA+55aFwgcmpSoNh17Pbtsw8j8KzufdvroC9Rsd3K-UbTTP9qPg@mail.gmail.com>
+        Martin Steigerwald <martin@lichtvoll.de>,
+        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Subject: Re: [PATCH] MAINTAINERS: add myself as maintainer of AFFS
+Message-ID: <20180428175853.GM21272@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        David Sterba <dsterba@suse.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Martin Steigerwald <martin@lichtvoll.de>,
+        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+References: <20180428170504.16031-1-dsterba@suse.com>
+ <CA+55aFzH=CjVD4kUXfPBjimsKhfphjOceDtcskWtj5Vk3ByB4Q@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CA+55aFwgcmpSoNh17Pbtsw8j8KzufdvroC9Rsd3K-UbTTP9qPg@mail.gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <CA+55aFzH=CjVD4kUXfPBjimsKhfphjOceDtcskWtj5Vk3ByB4Q@mail.gmail.com>
+User-Agent: Mutt/1.5.23.1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-* Linus Torvalds <torvalds@linux-foundation.org> wrote:
-
-> On Sat, Apr 28, 2018 at 2:18 AM Ingo Molnar <mingo@kernel.org> wrote:
+On Sat, Apr 28, 2018 at 05:33:57PM +0000, Linus Torvalds wrote:
+> On Sat, Apr 28, 2018 at 10:07 AM David Sterba <dsterba@suse.com> wrote:
 > 
-> > I just tried the MPX testcases with the latest kernel:
+> > I volunteer to act as a maintainer of AFFS to collect any fixes that
+> > might show up and to guard fs/affs/ against another spring cleaning.
 > 
-> >   deimos:~/tip/tools/testing/selftests/x86> ./mpx-mini-test_64
+> Hmm. Please be more careful.
 > 
-> They need to be run as root. They try to access
+> > @@ -564,8 +564,10 @@ S: Maintained
 > 
->      /sys/kernel/debug/tracing/set_ftrace_pid
->      /sys/kernel/debug/tracing/trace
+> The above says it adds two lines (8 -> 10), but the actual patch itself
+> only adds one, and modifies another:
 > 
-> and that's root-only.
+> > +M:     David Sterba <dsterba@suse.com>
+> > -S:     Orphan
+> > +S:     Odd Fixes
+> 
+> I'm used to editing patches for things like this, because I have years and
+> years of just hand-editing patches I didn't like for some reason, but it
+> looks like you tried to edit a patch without knowing all the rules for how
+> unified patches work.
+> 
+> So please don't edit patches by hand.  It's a skill nobody should have.
+> 
+> Anyway, I fixed the patch and applied it, but let's not make a habit of it.
 
-Indeed - but note that they are crashing as root as well here:
-
-  root@deimos:/home/mingo/tip/tools/testing/selftests/x86# ./mpx-mini-test_64 
-  [...]
-  Aborted (core dumped)
-
-... because I don't even have /sys/kernel/debug/tracing/set_ftrace_pid... :-/
-
-That's despite having ftrace enabled.
-
-After some digging I found out that 'set_ftrace_pid' is dependent on 
-CONFIG_FUNCTION_TRACING=y (not just CONFIG_TRACING=y), which I didn't
-have enabled on this kernel.
-
-After enabling it I got the 64-bit testcase to work:
-
-  #
-  ...
-  ./mpx-mini-test_64 completed successfully
-
-But the 32-bit testcase is erroring out:
-
-  root@deimos:/home/mingo/tip/tools/testing/selftests/x86# ./mpx-mini-test_32 
-  XSAVE is supported by HW & OS
-  XSAVE processor supported state mask: 0x21f
-  XSAVE OS supported state mask: 0x21f
-   BNDREGS: size: 64 user: 1 supervisor: 0 aligned: 0
-    BNDCSR: size: 64 user: 1 supervisor: 0 aligned: 0
-  executing unmaptest
-  mpx dig (  1) complete, SUCCESS (       0 /    0)
-  #BR status == 2, missing bounds table,kernel should have handled!!
-
-v4.17-rc2 based kernel, so it should have the latest MPX code.
-
-Thanks,
-
-	Ingo
+Sorry, it was a last minute change. There was a T: line with a git tree
+reference, but this looked odd and I deleted it, but did not realize the
+patch would not apply. Too excited to send it.
