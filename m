@@ -1,48 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1759525AbeD1GQI (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 28 Apr 2018 02:16:08 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7636 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751844AbeD1GQG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Apr 2018 02:16:06 -0400
-From: Pengcheng Li <lipengcheng8@huawei.com>
-To: <linux-kernel@vger.kernel.org>
-CC: <lipengcheng8@huawei.com>, <yaobaofeng@huawei.com>,
-        <lijiangxiong@hisilicon.com>, <kongfei@hisilicon.com>
-Subject: [PATCH] misc: st_core: Fix skb double free corruption
-Date: Sat, 28 Apr 2018 14:07:49 +0800
-Message-ID: <1524895669-47953-1-git-send-email-lipengcheng8@huawei.com>
-X-Mailer: git-send-email 2.8.0
+        id S1759550AbeD1GlC (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 28 Apr 2018 02:41:02 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:37990 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752556AbeD1GlA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Apr 2018 02:41:00 -0400
+X-Google-Smtp-Source: AB8JxZpzmODM9TcG+wbw+P3al909UfSwpkdmJKxyGAI/1n6eT3kfFhXDK/QDsqPOSs3OMogixbMOs77sJ2ghaM7U8RE=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.181.43]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20180427213509.20385-1-hdegoede@redhat.com>
+References: <20180427213509.20385-1-hdegoede@redhat.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date: Sat, 28 Apr 2018 08:40:59 +0200
+Message-ID: <CAKv+Gu9xxSy2XXN446etRC5xaXdeOBBBYBxZZy=0bZbdZA_K8Q@mail.gmail.com>
+Subject: Re: [PATCH v2] efi: Ignore unrealistically large option roms
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>, linux-efi@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When some failures happened in hci_recv_frame() function,
-skb is freed by both hci_recv_frame and st_send_frame
+Hi Hans,
 
-Signed-off-by: Li Pengcheng <lipengcheng8@huawei.com>
-Signed-off-by: Yao Baofeng <yaobaofeng@huawei.com>
-Signed-off-by: Li Jiangxiong <lijiangxiong@hisilicon.com>
----
- drivers/misc/ti-st/st_core.c | 1 -
- 1 file changed, 1 deletion(-)
+On 27 April 2018 at 23:35, Hans de Goede <hdegoede@redhat.com> wrote:
+> setup_efi_pci() tries to save a copy of each PCI option ROM as this may
+> be necessary for the device driver for the PCI device to have access too.
+>
+> On some systems the efi_pci_io_protocol_64's romimage and romsize fields
+> contain invalid data, which looks a bit like pointers pointing back into
+> other EFI code or data. Interpreting these pointers as romsize leads to
+> a very large value and if we then try to alloc this amount of memory to
+> save a copy the alloc call fails.
+>
+> This leads to a "Failed to alloc mem for rom" error being printed on the
+> EFI console for each PCI device.
+>
+> This commit avoids the printing of these errors, by checking romsize
+> before doing the alloc and if it is larger then 256M silently ignore the
+> ROM fields instead of trying to alloc mem and fail.
+>
 
-diff --git a/drivers/misc/ti-st/st_core.c b/drivers/misc/ti-st/st_core.c
-index 0005159..f4ce211 100644
---- a/drivers/misc/ti-st/st_core.c
-+++ b/drivers/misc/ti-st/st_core.c
-@@ -124,7 +124,6 @@ static void st_send_frame(unsigned char chnl_id, struct st_data_s *st_gdata)
- 			(st_gdata->list[chnl_id]->priv_data, st_gdata->rx_skb)
- 			     != 0)) {
- 			pr_err(" proto stack %d's ->recv failed", chnl_id);
--			kfree_skb(st_gdata->rx_skb);
- 			return;
- 		}
- 	} else {
+The UEFI spec limits the size of option ROMs to 16 MiB, so I'd prefer
+we use that as the upper bound instead.
+
+With that changed,
+
+Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+
+or I can take it via the EFI tree if desired.
+
 -- 
-2.8.0
+Ard.
+
+
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> ---
+> Changes in v2:
+> -Add the check to both __setup_efi_pci32 and __setup_efi_pci64 instead of
+>  only to __setup_efi_pci64, some CHT devices which need this still use a
+>  32 bit UEFI
+> ---
+>  arch/x86/boot/compressed/eboot.c | 16 ++++++++++++++--
+>  1 file changed, 14 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/x86/boot/compressed/eboot.c b/arch/x86/boot/compressed/eboot.c
+> index 47d3efff6805..6d3257a459c8 100644
+> --- a/arch/x86/boot/compressed/eboot.c
+> +++ b/arch/x86/boot/compressed/eboot.c
+> @@ -122,7 +122,13 @@ __setup_efi_pci32(efi_pci_io_protocol_32 *pci, struct pci_setup_rom **__rom)
+>         if (status != EFI_SUCCESS)
+>                 return status;
+>
+> -       if (!pci->romimage || !pci->romsize)
+> +       /*
+> +        * Some firmwares contain EFI function pointers at the place where the
+> +        * romimage and romsize fields are supposed to be. Typically the EFI
+> +        * code is mapped at high addresses, translating to an unrealistically
+> +        * large romsize. We reject any roms over 256M in size to catch this.
+> +        */
+> +       if (!pci->romimage || !pci->romsize || pci->romsize > 0x10000000)
+>                 return EFI_INVALID_PARAMETER;
+>
+>         size = pci->romsize + sizeof(*rom);
+> @@ -230,7 +236,13 @@ __setup_efi_pci64(efi_pci_io_protocol_64 *pci, struct pci_setup_rom **__rom)
+>         if (status != EFI_SUCCESS)
+>                 return status;
+>
+> -       if (!pci->romimage || !pci->romsize)
+> +       /*
+> +        * Some firmwares contain EFI function pointers at the place where the
+> +        * romimage and romsize fields are supposed to be. Typically the EFI
+> +        * code is mapped at high addresses, translating to an unrealistically
+> +        * large romsize. We reject any roms over 256M in size to catch this.
+> +        */
+> +       if (!pci->romimage || !pci->romsize || pci->romsize > 0x10000000)
+>                 return EFI_INVALID_PARAMETER;
+>
+>         size = pci->romsize + sizeof(*rom);
+> --
+> 2.16.2
+>
