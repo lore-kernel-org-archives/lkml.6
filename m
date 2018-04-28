@@ -1,95 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933397AbeD1GOH (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 28 Apr 2018 02:14:07 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:43521 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751844AbeD1GOF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Apr 2018 02:14:05 -0400
-X-Google-Smtp-Source: AB8JxZryNq1STqUtyqJkg0H/yZ0EdXPH7r5ACz5fzx34bwMMsfhBDfrpgBpo4PRDnl7uQcrxTdlFHQ==
-Date: Sat, 28 Apr 2018 08:14:01 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Jeffrey Hugo <jhugo@codeaurora.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jan Glauber <jan.glauber@caviumnetworks.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Laura Abbott <labbott@redhat.com>,
-        Timur Tabi <timur@codeaurora.org>, Stephen Smalley <sds@tycho.nsa.gov>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH v2] init: Fix false positives in W+X checking
-Message-ID: <20180428061401.oj4tytn6yy277f7y@gmail.com>
-References: <1524866145-20337-1-git-send-email-jhugo@codeaurora.org>
+        id S1759525AbeD1GQI (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 28 Apr 2018 02:16:08 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7636 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751844AbeD1GQG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Apr 2018 02:16:06 -0400
+From: Pengcheng Li <lipengcheng8@huawei.com>
+To: <linux-kernel@vger.kernel.org>
+CC: <lipengcheng8@huawei.com>, <yaobaofeng@huawei.com>,
+        <lijiangxiong@hisilicon.com>, <kongfei@hisilicon.com>
+Subject: [PATCH] misc: st_core: Fix skb double free corruption
+Date: Sat, 28 Apr 2018 14:07:49 +0800
+Message-ID: <1524895669-47953-1-git-send-email-lipengcheng8@huawei.com>
+X-Mailer: git-send-email 2.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1524866145-20337-1-git-send-email-jhugo@codeaurora.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Type: text/plain
+X-Originating-IP: [10.177.181.43]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+When some failures happened in hci_recv_frame() function,
+skb is freed by both hci_recv_frame and st_send_frame
 
-* Jeffrey Hugo <jhugo@codeaurora.org> wrote:
+Signed-off-by: Li Pengcheng <lipengcheng8@huawei.com>
+Signed-off-by: Yao Baofeng <yaobaofeng@huawei.com>
+Signed-off-by: Li Jiangxiong <lijiangxiong@hisilicon.com>
+---
+ drivers/misc/ti-st/st_core.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-> load_module() creates W+X mappings via __vmalloc_node_range() (from
-> layout_and_allocate()->move_module()->module_alloc()) by using
-> PAGE_KERNEL_EXEC.  These mappings are later cleaned up via
-> "call_rcu_sched(&freeinit->rcu, do_free_init)" from do_init_module().
-> 
-> This is a problem because call_rcu_sched() queues work, which can be run
-> after debug_checkwx() is run, resulting in a race condition.  If hit, the
-> race results in a nasty splat about insecure W+X mappings, which results
-> in a poor user experience as these are not the mappings that
-> debug_checkwx() is intended to catch.
-> 
-> This issue is observed on multiple arm64 platforms, and has been
-> artificially triggered on an x86 platform.
-> 
-> Address the race by flushing the queued work before running the
-> arch-defined mark_rodata_ro() which then calls debug_checkwx().
-> 
-> Reported-by: Timur Tabi <timur@codeaurora.org>
-> Reported-by: Jan Glauber <jan.glauber@caviumnetworks.com>
-> Fixes: e1a58320a38d ("x86/mm: Warn on W^X mappings")
-> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
-> ---
-> 
-> v1:
-> -was "arm64: mm: Fix false positives in W+X checking" (see [1])
-> -moved to common code based on review and confirmation of issue on x86
-> 
-> [1] http://lists.infradead.org/pipermail/linux-arm-kernel/2018-April/573776.html
-> 
->  init/main.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/init/main.c b/init/main.c
-> index b795aa3..499d957 100644
-> --- a/init/main.c
-> +++ b/init/main.c
-> @@ -1034,6 +1034,13 @@ static int __init set_debug_rodata(char *str)
->  static void mark_readonly(void)
->  {
->  	if (rodata_enabled) {
-> +		/*
-> +		 * load_module() results in W+X mappings, which are cleaned up
-> +		 * with call_rcu_sched().  Let's make sure that queued work is
-> +		 * flushed so that we don't hit false positives looking for
-> +		 * insecure pages which are W+X.
-> +		 */
-> +		rcu_barrier_sched();
-
-I'd suggest adding a matching comment to the module loading portion as well,
-to make sure this connection does not get lost. With that:
-
-Acked-by: Ingo Molnar <mingo@kernel.org>
-
-Thanks,
-
-	Ingo
+diff --git a/drivers/misc/ti-st/st_core.c b/drivers/misc/ti-st/st_core.c
+index 0005159..f4ce211 100644
+--- a/drivers/misc/ti-st/st_core.c
++++ b/drivers/misc/ti-st/st_core.c
+@@ -124,7 +124,6 @@ static void st_send_frame(unsigned char chnl_id, struct st_data_s *st_gdata)
+ 			(st_gdata->list[chnl_id]->priv_data, st_gdata->rx_skb)
+ 			     != 0)) {
+ 			pr_err(" proto stack %d's ->recv failed", chnl_id);
+-			kfree_skb(st_gdata->rx_skb);
+ 			return;
+ 		}
+ 	} else {
+-- 
+2.8.0
