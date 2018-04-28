@@ -1,63 +1,144 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752791AbeD1FRj (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 28 Apr 2018 01:17:39 -0400
-Received: from mga09.intel.com ([134.134.136.24]:45554 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752533AbeD1FRf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Apr 2018 01:17:35 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,337,1520924400";
-   d="scan'208";a="36810558"
-Date: Sat, 28 Apr 2018 13:16:43 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Sujeev Dias <sdias@codeaurora.org>
-Cc: kbuild-all@01.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, Sujeev Dias <sdias@codeaurora.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Tony Truong <truong@codeaurora.org>
-Subject: [PATCH] mhi_bus: dev: uci: fix semicolon.cocci warnings
-Message-ID: <20180428051643.GA68605@cairo>
-References: <1524795811-21399-5-git-send-email-sdias@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1524795811-21399-5-git-send-email-sdias@codeaurora.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+        id S1753382AbeD1FSy (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 28 Apr 2018 01:18:54 -0400
+Received: from mail-pg0-f49.google.com ([74.125.83.49]:36834 "EHLO
+        mail-pg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751731AbeD1FSv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Apr 2018 01:18:51 -0400
+X-Google-Smtp-Source: AB8JxZq+vWpGWZqpWmP6+GBEFFUeDia+c9OweP5G801rsJFY7wfsw+NLNtxwTLPtusTsfHd3GEA3Ww==
+From: Andreas Dilger <adilger@dilger.ca>
+Message-Id: <736468DE-36BE-471B-B5F2-DB3D0B3E892B@dilger.ca>
+Content-Type: multipart/signed;
+ boundary="Apple-Mail=_F36350DE-BF6B-428E-B6C6-1E7E894AAAFE";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: copy_file_range and user space tools to do copy fastest
+Date: Fri, 27 Apr 2018 23:18:41 -0600
+In-Reply-To: <20180427234126.GA213261@gmail.com>
+Cc: Steve French <smfrench@gmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        samba-technical <samba-technical@lists.samba.org>,
+        CIFS <linux-cifs@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Eric Biggers <ebiggers3@gmail.com>
+References: <CAH2r5mtRF-yS6stThuVzem+WFmxDqpGLwFvUPviYcmh9dXXwkA@mail.gmail.com>
+ <EFCB08E9-C9B9-41AC-A398-4D552FC8EFC9@dilger.ca>
+ <20180427234126.GA213261@gmail.com>
+X-Mailer: Apple Mail (2.3273)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Fengguang Wu <fengguang.wu@intel.com>
 
-drivers/bus/mhi/devices/mhi_uci.c:556:2-3: Unneeded semicolon
+--Apple-Mail=_F36350DE-BF6B-428E-B6C6-1E7E894AAAFE
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=us-ascii
+
+On Apr 27, 2018, at 5:41 PM, Eric Biggers <ebiggers3@gmail.com> wrote:
+>=20
+> On Fri, Apr 27, 2018 at 01:45:40PM -0600, Andreas Dilger wrote:
+>> On Apr 27, 2018, at 12:25 PM, Steve French <smfrench@gmail.com> =
+wrote:
+>>>=20
+>>> Are there any user space tools (other than our test tools and xfs_io
+>>> etc.) that support copy_file_range?  Looks like at least cp and =
+rsync
+>>> and dd don't.  That syscall which now has been around a couple =
+years,
+>>> and was reminded about at the LSF/MM summit a few days ago, =
+presumably
+>>> is the 'best' way to copy a file fast since it tries all the
+>>> mechanisms (reflink etc.) in order.
+>>>=20
+>>> Since copy_file_range syscall can be 100x or more faster for network
+>>> file systems than the alternative, was surprised when I noticed that
+>>> cp and rsync didn't support it.  It doesn't look like rsync even
+>>> supports reflink either(although presumably if you call
+>>> copy_file_range you don't have to worry about that), and =
+reads/writes
+>>> are 8K. See copy_file() in rsync/util.c
+>>>=20
+>>> In the cp command it looks like it can call the FICLONE IOCTL (see
+>>> clone_file() in coreutils/src/copy.c) but doesn't call the expected
+>>> "copy_file_range" syscall.
+>>>=20
+>>> In the dd command it doesn't call either - see dd_copy in =
+corutils/src/dd.c
+>>>=20
+>>> Since it can be 100x or more faster in some cases to call
+>>> copy_file_range than do reads/writes back and forth to do a copy
+>>> (especially if network or clustered backend or cloud), what tools =
+are
+>>> the best to recommend?
+>>>=20
+>>> Would rsync or cp be likely to take patches to call the standard
+>>> "copy_file_range" syscall
+>>> (http://man7.org/linux/man-pages/man2/copy_file_range.2.html)?
+>>> Presumably not if it has been two+ years ... but would be interested
+>>> what copy tools to recommend to use instead.
+>>=20
+>> I would start with submitting a patch to coreutils, if you can figure
+>> out that code enough to do so (I find it quite opaque).  Since it has
+>> been in the kernel for a while already, it should be acceptable to =
+the
+>> upstream coreutils maintainers to use this interface.  Doubly so if =
+you
+>> include some benchmarks with CIFS/NFS clients avoiding network =
+overhead
+>> during the copy.
+>>=20
+>=20
+> For cp (coreutils), apparently there was a concern that =
+copy_file_range()
+> expands holes; see the thread at
+> =
+https://lists.gnu.org/archive/html/bug-coreutils/2016-09/msg00020.html.
+> Though, I'd think it could just be used on non-holes only.  And I =
+don't think
+> the size_t type of 'len' is a problem either, since it's the copy =
+length, not
+> the file size.  You just call it multiple times if the file is larger.
+
+I think cp is already using SEEK_HOLE/SEEK_DATA and/or FIEMAP to =
+determine
+the mapped and sparse segments of the file, so it should be practical to
+use copy_file_range() in conjunction with these to copy only the =
+allocated
+parts of the file.
+
+Cheers, Andreas
 
 
- Remove unneeded semicolon.
 
-Generated by: scripts/coccinelle/misc/semicolon.cocci
 
-Fixes: 2064c7ebc5cb ("mhi_bus: dev: uci: add user space interface driver")
-CC: Sujeev Dias <sdias@codeaurora.org>
-Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
----
 
- mhi_uci.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/bus/mhi/devices/mhi_uci.c
-+++ b/drivers/bus/mhi/devices/mhi_uci.c
-@@ -553,7 +553,7 @@ static int mhi_uci_probe(struct mhi_devi
- 		spin_lock_init(&uci_chan->lock);
- 		init_waitqueue_head(&uci_chan->wq);
- 		INIT_LIST_HEAD(&uci_chan->pending);
--	};
-+	}
- 
- 	uci_dev->mtu = id->driver_data;
- 	mhi_device_set_devdata(mhi_dev, uci_dev);
+--Apple-Mail=_F36350DE-BF6B-428E-B6C6-1E7E894AAAFE
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - http://gpgtools.org
+
+iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAlrkBDMACgkQcqXauRfM
+H+Bpzw//QuS1htKV7SYg1PBkFULb2sEgI83jPjnPIebBIbPrkTBl+uMh79R1rm+P
+sy5cQJZLdHTpV70IVyYE0KPiuCUx6PtCv21jT+MyTnqoRyaI8TV8v4yNURxgdKGn
+V/nn0MHI7YsWAownf6jvE+2DN7brc9W1BEH8xJKai/nB2NHELKt+SVKaCzM9P6Uj
+1bff71w66NhwF0FtulSZ01HmiFIsCufbZO8KyQ0ccNzX0eKNfkmnsFlY6KgnhZo5
+6HD/rfx/TQAJ46Wanst8SC75twVyJeBMfXg1/uXYVWeut8BiCbJmccWVOxRs2NUF
+wQsWOTzOvQkiEVji32i/HZR3p1OM1miXV3T3Cf5swnOezqVVBUfQXFDY1dgg0dKw
+cfveJQVxuClh+x6+BMsYG/2vH03CNl3iz3AHMFyaq4qQOdvYzGoUc8b4x7GTcXk5
+mXIRy3QU+H/crv21LspQRujJ4GefkU+HQpUv8bc3dVnJhw0a8/oP7xs0b3DYpcts
+D55cNAePpT0A/IFTPw61xEwJg5EXpMO3bEHF8mtQrSJYm/1mBEiEQPiD9IiNkcbF
+GjJeYTsj5G4x4F7BTnkBceVAmC2kDbhdix6DpIv8Y7dXYKssMGM/ui2sefSvrlXt
+q4KCY9bhLKzOFmcv1QqrKoviedj24oHL7NpQzXThct8KfwHOza0=
+=7zBj
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_F36350DE-BF6B-428E-B6C6-1E7E894AAAFE--
