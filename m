@@ -1,70 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933274AbeD1Bbd (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 21:31:33 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:40019 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932940AbeD1Bbb (ORCPT
+        id S933259AbeD1Btu (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 21:49:50 -0400
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:57902 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759215AbeD1Bts (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 21:31:31 -0400
-X-Google-Smtp-Source: AB8JxZqRgs4m9pzs8o3oL8tgfvouexpONaiOkMgJiDFcw0XVj6Whj98QXo5PNL3gcduhnnhbgYu/VQ==
-From: frowand.list@gmail.com
-To: Rob Herring <robh+dt@kernel.org>, pantelis.antoniou@konsulko.com,
-        Pantelis Antoniou <panto@antoniou-consulting.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jan Kiszka <jan.kiszka@siemens.com>
-Subject: [PATCH v2] MAINTAINERS: add keyword for devicetree overlay notifiers
-Date: Fri, 27 Apr 2018 18:31:20 -0700
-Message-Id: <1524879080-27111-1-git-send-email-frowand.list@gmail.com>
-X-Mailer: git-send-email 1.9.1
+        Fri, 27 Apr 2018 21:49:48 -0400
+Subject: Re: [PATCH v7 0/7] clk: meson-axg: Add AO Cloclk and Reset driver
+To: Kevin Hilman <khilman@baylibre.com>
+References: <20180426084437.192394-1-yixun.lan@amlogic.com>
+ <1524820841.4026.112.camel@baylibre.com>
+ <fbd24a73-6793-76be-3ca5-04cbac5db198@amlogic.com>
+ <1524823154.4026.123.camel@baylibre.com>
+ <ab754711-f727-133c-7bc3-a9f3243c2278@amlogic.com>
+ <7hsh7g1o3k.fsf@baylibre.com>
+CC: <yixun.lan@amlogic.com>, Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Carlo Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+From: Yixun Lan <yixun.lan@amlogic.com>
+Message-ID: <973672c6-1cc1-7f38-ac30-263fd5f0b69c@amlogic.com>
+Date: Sat, 28 Apr 2018 09:50:06 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
+MIME-Version: 1.0
+In-Reply-To: <7hsh7g1o3k.fsf@baylibre.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.18.20.235]
+X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
+ (10.18.11.6)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Frank Rowand <frank.rowand@sony.com>
+Hi Kevin
 
-Devicetree overlay notifiers have a chance to potentially get
-pointers into the overlay unflattened devicetree and overlay FDT.
-The only protection against these pointers being accessed after
-the underlying data has been released by kfree() is by source
-code review of patches.  Add a keyword line to the devicetree
-overlay maintainers entry to try to catch overlay notifier
-related patches.
+On 04/28/18 02:49, Kevin Hilman wrote:
+> Hi Yixun,
+> 
+> Yixun Lan <yixun.lan@amlogic.com> writes:
+> 
+>> On 04/27/2018 05:59 PM, Jerome Brunet wrote:
+> 
+> [...]
+> 
+>>>
+>>> Looks to be the problem indeed. But it is still an issue with how your patchset
+>>> in organized.
+>>>
+>>> I can't merge this until Kevin merges the patch above, which he can't merge
+>>> until there is the clkc_ao support in axg, which is given by this series.
+>>>
+>>> 1# You should remove the axg part of the patch above. Kevin will be able to
+>>> merge it w/o any dependencies. (BTW, the patch is broken for axg because 1) you
+>>> did not include the dt-binding header for the clkc_ao in axg and 2) the clkc_ao
+>>> does not exist at this stage)
+>>> 2# I can then safely merge this series - w/o breaking gxbb and gxl.
+>>> 3# Finally you'll have to make a DT change for the axg, enabling the clkc_ao and
+>>> changes the uart clocks at the same time.
+>>>
+>>
+>>   I didn't make myself clear in previous email
+>>
+>>   I mean, could you merge patch 1-6, just exclude the patch 7
+>> then kevin can merge the DT part (there are three patches) [1]
+>> after the DT patches merged, then you can take this patch 7
+>> This way, it won't break gxl or any other SoCs
+>>
 
-The keyword line is added to the devicetree overlay entry instead
-of the devicetree entry so that not all maintainers will receive
-the additional review traffic.  Add Frank Rowand (already a
-maintainer in the devicetree entry) so that he will receive
-the additional review traffic.
+>>   I'm sending patch 7 along with this series, it would be better if I
+>> give a warning about it.
+> 
+> Your proposal requires extra work from a couple different maintainers to
+> track all the dependencies, and is very error prone.  Sometimes
+> maintainers may do this for you if they have time and are feeling
+> generous, but you will have much more success if you can ease the
+> process.
+> 
+Indeed
 
-Signed-off-by: Frank Rowand <frank.rowand@sony.com>
----
+ I've actually put a note in the cover letter to highlight special
+attention needed for patch 7, but turns out rely on maintainers to
+handle the dependencies isn't a wise idea
+ Lesson has been learned here, and I'll handle dependencies myself next
+time.
 
-changes from version 1:
-   - removed extraneous "From:" tags at top of patch description
 
+> Jerome has provided lots of guidance throughout this series and just
+> above has provided you with a very good proposal above which minimizes
+> the dependencies, and provides the changes in the right order.
+> 
+> Please follow Jerome's suggestion,
+> 
+as already replied in my previous email, again here is my approach
 
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+a) I'll send patch 2-6, just leave out patch 7 for now, and as patch 1
+is already accepted.. this way it won't break gxbb/gxl (the OLD SoC)
+b) will pin you to require DT patch merged or re-send if necessary (as
+till now the clkao driver is merged)
+c) send out the patch 7 for UART AO clock fix
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 92be777d060a..aca3956694f8 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10422,12 +10422,14 @@ F:	drivers/infiniband/ulp/opa_vnic
- 
- OPEN FIRMWARE AND DEVICE TREE OVERLAYS
- M:	Pantelis Antoniou <pantelis.antoniou@konsulko.com>
-+M:	Frank Rowand <frowand.list@gmail.com>
- L:	devicetree@vger.kernel.org
- S:	Maintained
- F:	Documentation/devicetree/dynamic-resolution-notes.txt
- F:	Documentation/devicetree/overlay-notes.txt
- F:	drivers/of/overlay.c
- F:	drivers/of/resolver.c
-+K:	of_overlay_notifier_
- 
- OPEN FIRMWARE AND FLATTENED DEVICE TREE
- M:	Rob Herring <robh+dt@kernel.org>
--- 
-Frank Rowand <frank.rowand@sony.com>
+this is exactly what Jerome suggested..
+
+Thank you
+
+Yixun
