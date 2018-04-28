@@ -1,289 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933411AbeD1Aee (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 20:34:34 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:39799 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933259AbeD1Acx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 20:32:53 -0400
-X-Google-Smtp-Source: AB8JxZpRG+KwdzJCjOW0bpe8OlIZ2RbzrqwBw3hJNUye+dRdlD88rvpaw3kZHA/tMRzJOknUUSsVbQ==
-From: Florian Fainelli <f.fainelli@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Florian Fainelli <f.fainelli@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
-        Russell King <rmk@armlinux.org.uk>,
-        linux-kernel@vger.kernel.org (open list), davem@davemloft.net,
-        cphealy@gmail.com, nikita.yoush@cogentembedded.com,
-        vivien.didelot@savoirfairelinux.com, Nisar.Sayed@microchip.com,
-        UNGLinuxDriver@microchip.com
-Subject: [RFC net-next 4/5] net: phy: Add support for IEEE standard test modes
-Date: Fri, 27 Apr 2018 17:32:34 -0700
-Message-Id: <20180428003237.1536-5-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180428003237.1536-1-f.fainelli@gmail.com>
-References: <20180428003237.1536-1-f.fainelli@gmail.com>
+        id S933233AbeD1AmJ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 20:42:09 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49962 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754447AbeD1AmH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 20:42:07 -0400
+Subject: Re: [PATCH 2/2] kvm: nVMX: Introduce KVM_CAP_STATE
+To: Jim Mattson <jmattson@google.com>
+Cc: "Raslan, KarimAllah" <karahmed@amazon.de>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>
+References: <1523545958-28059-1-git-send-email-karahmed@amazon.de>
+ <1523545958-28059-2-git-send-email-karahmed@amazon.de>
+ <CALMp9eSS4nL1-1i1Df=vyPFT1FZVprPB0Yx-JX0auknNc09Gtg@mail.gmail.com>
+ <1523898937.22952.13.camel@amazon.de>
+ <CALMp9eS6D4pfbGEfcz7MpRncTte5weUJE9g-C_qMVxnaGd+RtQ@mail.gmail.com>
+ <f8875546-da53-fc36-d3da-5b5ff089ccc0@redhat.com>
+ <CALMp9eSG-nAuJEyavJoBp7QS1_VuYpuNSjKNUoK6MMEeywypeQ@mail.gmail.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <724a2ae2-e38f-148c-ce29-9869b2ab535f@redhat.com>
+Date: Sat, 28 Apr 2018 02:42:02 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <CALMp9eSG-nAuJEyavJoBp7QS1_VuYpuNSjKNUoK6MMEeywypeQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for the 100BaseT2 and 1000BaseT standard test modes as
-defined by the IEEE 802.3-2012-Section two and three. We provide a set
-of helper functions for PHY drivers to either punt entirely onto
-genphy_* functions or if they desire, build additional tests on top of
-the standard ones available.
+On 27/04/2018 17:19, Jim Mattson wrote:
+> 
+> If the default treatment of SMIs and SMM (see Section 34.14) is
+> active, the VMX-preemption timer counts across an SMI to VMX non-root
+> operation, subsequent execution in SMM, and the return from SMM via
+> the RSM instruction. However, the timer can cause a VM exit only from
+> VMX non-root operation. If the timer expires during SMI, in SMM, or
+> during RSM, a timer-induced VM exit occurs immediately after RSM with
+> its normal priority unless it is blocked based on activity state
+> (Section 25.2).
+> 
+> So, there's no loophole here that allows us to reset the VMX
+> preemption timer when restoring nested state.
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- drivers/net/phy/Kconfig     |   6 ++
- drivers/net/phy/Makefile    |   4 +-
- drivers/net/phy/phy-tests.c | 159 ++++++++++++++++++++++++++++++++++++++++++++
- include/linux/phy.h         |  22 ++++++
- 4 files changed, 190 insertions(+), 1 deletion(-)
- create mode 100644 drivers/net/phy/phy-tests.c
+Or when an SMI occurs.  So the expiration TSC of the preemption timer
+should be stored into an "artificial" field of the vmcs12 at vmentry
+time and later reused.
 
-diff --git a/drivers/net/phy/Kconfig b/drivers/net/phy/Kconfig
-index edb8b9ab827f..ef3f2f1ae990 100644
---- a/drivers/net/phy/Kconfig
-+++ b/drivers/net/phy/Kconfig
-@@ -200,6 +200,12 @@ config LED_TRIGGER_PHY
- 		<Speed in megabits>Mbps OR <Speed in gigabits>Gbps OR link
- 		for any speed known to the PHY.
- 
-+config CONFIG_PHYLIB_TEST_MODES
-+	bool "Support for test modes"
-+	---help---
-+	  Selecting this option will allow the PHY library to support
-+	  test modes: electrical, cable diagnostics, pattern generator etc.
-+
- 
- comment "MII PHY device drivers"
- 
-diff --git a/drivers/net/phy/Makefile b/drivers/net/phy/Makefile
-index 701ca0b8717e..e9905432e164 100644
---- a/drivers/net/phy/Makefile
-+++ b/drivers/net/phy/Makefile
-@@ -1,7 +1,8 @@
- # SPDX-License-Identifier: GPL-2.0
- # Makefile for Linux PHY drivers and MDIO bus drivers
- 
--libphy-y			:= phy.o phy-c45.o phy-core.o phy_device.o
-+libphy-y			:= phy.o phy-c45.o phy-core.o phy_device.o \
-+				   phy-tests.o
- mdio-bus-y			+= mdio_bus.o mdio_device.o
- 
- ifdef CONFIG_MDIO_DEVICE
-@@ -18,6 +19,7 @@ obj-$(CONFIG_MDIO_DEVICE)	+= mdio-bus.o
- endif
- libphy-$(CONFIG_SWPHY)		+= swphy.o
- libphy-$(CONFIG_LED_TRIGGER_PHY)	+= phy_led_triggers.o
-+libphy-$(CONFIG_PHYLIB_TEST_MODES)	+= phy-tests.o
- 
- obj-$(CONFIG_PHYLINK)		+= phylink.o
- obj-$(CONFIG_PHYLIB)		+= libphy.o
-diff --git a/drivers/net/phy/phy-tests.c b/drivers/net/phy/phy-tests.c
-new file mode 100644
-index 000000000000..5709d7821925
---- /dev/null
-+++ b/drivers/net/phy/phy-tests.c
-@@ -0,0 +1,159 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* PHY library common test modes
-+ */
-+#include <linux/export.h>
-+#include <linux/phy.h>
-+
-+/* genphy_get_test - Get PHY test specific data
-+ * @phydev: the PHY device instance
-+ * @test: the desired test mode
-+ * @data: test specific data (none)
-+ */
-+int genphy_get_test(struct phy_device *phydev, struct ethtool_phy_test *test,
-+		    u8 *data)
-+{
-+	if (test->mode >= PHY_STD_TEST_MODE_MAX)
-+		return -EOPNOTSUPP;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(genphy_get_test);
-+
-+/* genphy_set_test - Make a PHY enter one of the standard IEEE defined
-+ * test modes
-+ * @phydev: the PHY device instance
-+ * @test: the desired test mode
-+ * @data: test specific data (none)
-+ *
-+ * This function makes the designated @phydev enter the desired standard
-+ * 100BaseT2 or 1000BaseT test mode as defined in IEEE 802.3-2012 section TWO
-+ * and THREE under 32.6.1.2.1 and 40.6.1.1.2 respectively
-+ */
-+int genphy_set_test(struct phy_device *phydev,
-+		    struct ethtool_phy_test *test, const u8 *data)
-+{
-+	u16 shift, base, bmcr = 0;
-+	int ret;
-+
-+	/* Exit test mode */
-+	if (test->mode == PHY_STD_TEST_MODE_NORMAL) {
-+		ret = phy_read(phydev, MII_CTRL1000);
-+		if (ret < 0)
-+			return ret;
-+
-+		ret &= ~GENMASK(15, 13);
-+
-+		return phy_write(phydev, MII_CTRL1000, ret);
-+	}
-+
-+	switch (test->mode) {
-+	case PHY_STD_TEST_MODE_100BASET2_1:
-+	case PHY_STD_TEST_MODE_100BASET2_2:
-+	case PHY_STD_TEST_MODE_100BASET2_3:
-+		if (!(phydev->supported & PHY_100BT_FEATURES))
-+			return -EOPNOTSUPP;
-+
-+		shift = 14;
-+		base = test->mode - PHY_STD_TEST_MODE_NORMAL;
-+		bmcr = BMCR_SPEED100;
-+		break;
-+
-+	case PHY_STD_TEST_MODE_1000BASET_1:
-+	case PHY_STD_TEST_MODE_1000BASET_2:
-+	case PHY_STD_TEST_MODE_1000BASET_3:
-+	case PHY_STD_TEST_MODE_1000BASET_4:
-+		if (!(phydev->supported & PHY_1000BT_FEATURES))
-+			return -EOPNOTSUPP;
-+
-+		shift = 13;
-+		base = test->mode - PHY_STD_TEST_MODE_100BASET2_MAX;
-+		bmcr = BMCR_SPEED1000;
-+		break;
-+
-+	default:
-+		/* Let an upper driver deal with additional modes it may
-+		 * support
-+		 */
-+		return -EOPNOTSUPP;
-+	}
-+
-+	/* Force speed and duplex */
-+	ret = phy_write(phydev, MII_BMCR, bmcr | BMCR_FULLDPLX);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Set the desired test mode bit */
-+	return phy_write(phydev, MII_CTRL1000, (test->mode + base) << shift);
-+}
-+EXPORT_SYMBOL_GPL(genphy_set_test);
-+
-+static const char *const phy_std_test_mode_str[] = {
-+	"normal",
-+	"100baseT2-tx-waveform",
-+	"100baseT2-tx-jitter",
-+	"100baseT2-tx-idle",
-+	"1000baseT-tx-waveform",
-+	"1000baseT-tx-jitter-master",
-+	"1000baseT-tx-jitter-slave",
-+	"1000BaseT-tx-distorsion"
-+};
-+
-+/* genphy_get_test_count - Get PHY test count
-+ * @phydev: the PHY device instance
-+ *
-+ * Returns the number of supported test modes for this PHY
-+ */
-+int genphy_get_test_count(struct phy_device *phydev)
-+{
-+	return ARRAY_SIZE(phy_std_test_mode_str);
-+}
-+EXPORT_SYMBOL_GPL(genphy_get_test_count);
-+
-+/* genphy_get_test_len - Return the amount of test specific data given
-+ * a specific test mode
-+ * @phydev: the PHY device instance
-+ * @mode: the desired test mode
-+ */
-+int genphy_get_test_len(struct phy_device *phydev, u32 mode)
-+{
-+	switch (mode) {
-+	case PHY_STD_TEST_MODE_NORMAL:
-+	case PHY_STD_TEST_MODE_100BASET2_1:
-+	case PHY_STD_TEST_MODE_100BASET2_2:
-+	case PHY_STD_TEST_MODE_100BASET2_3:
-+	case PHY_STD_TEST_MODE_1000BASET_1:
-+	case PHY_STD_TEST_MODE_1000BASET_2:
-+	case PHY_STD_TEST_MODE_1000BASET_3:
-+	case PHY_STD_TEST_MODE_1000BASET_4:
-+		/* no test specific data */
-+		return 0;
-+	default:
-+		return -EOPNOTSUPP;
-+	}
-+}
-+EXPORT_SYMBOL_GPL(genphy_get_test_len);
-+
-+/* genphy_get_test_strings - Obtain the PHY device supported test modes
-+ * text representations
-+ * @phydev: the PHY device instance
-+ * @data: buffer to store strings
-+ */
-+void genphy_get_test_strings(struct phy_device *phydev, u8 *data)
-+{
-+	unsigned int i;
-+
-+	if (!(phydev->supported & PHY_100BT_FEATURES))
-+		return;
-+
-+	for (i = 0; i < PHY_STD_TEST_MODE_100BASET2_MAX; i++)
-+		strlcpy(data + i * ETH_GSTRING_LEN,
-+			phy_std_test_mode_str[i], ETH_GSTRING_LEN);
-+
-+	if (!(phydev->supported & PHY_1000BT_FEATURES))
-+		return;
-+
-+	for (; i < PHY_STD_TEST_MODE_MAX; i++)
-+		strlcpy(data + i * ETH_GSTRING_LEN,
-+			phy_std_test_mode_str[i], ETH_GSTRING_LEN);
-+}
-+EXPORT_SYMBOL_GPL(genphy_get_test_strings);
-diff --git a/include/linux/phy.h b/include/linux/phy.h
-index 449afde7ca7c..7155187cf268 100644
---- a/include/linux/phy.h
-+++ b/include/linux/phy.h
-@@ -165,6 +165,20 @@ static inline const char *phy_modes(phy_interface_t interface)
- 	}
- }
- 
-+enum phy_std_test_mode {
-+	/* Normal operation - disables test mode */
-+	PHY_STD_TEST_MODE_NORMAL = 0,
-+	PHY_STD_TEST_MODE_100BASET2_1,
-+	PHY_STD_TEST_MODE_100BASET2_2,
-+	PHY_STD_TEST_MODE_100BASET2_3,
-+	PHY_STD_TEST_MODE_100BASET2_MAX = PHY_STD_TEST_MODE_100BASET2_3,
-+	PHY_STD_TEST_MODE_1000BASET_1,
-+	PHY_STD_TEST_MODE_1000BASET_2,
-+	PHY_STD_TEST_MODE_1000BASET_3,
-+	PHY_STD_TEST_MODE_1000BASET_4,
-+	PHY_STD_TEST_MODE_MAX,
-+	/* PHY drivers can implement their own test modes after that value */
-+};
- 
- #define PHY_INIT_TIMEOUT	100000
- #define PHY_STATE_TIME		1
-@@ -997,6 +1011,14 @@ int genphy_read_mmd_unsupported(struct phy_device *phdev, int devad,
- int genphy_write_mmd_unsupported(struct phy_device *phdev, int devnum,
- 				 u16 regnum, u16 val);
- 
-+int genphy_get_test(struct phy_device *phydev, struct ethtool_phy_test *t,
-+		    u8 *data);
-+int genphy_set_test(struct phy_device *phydev, struct ethtool_phy_test *t,
-+		    const u8 *data);
-+int genphy_get_test_count(struct phy_device *phydev);
-+void genphy_get_test_strings(struct phy_device *phydev, u8 *data);
-+int genphy_get_test_len(struct phy_device *phydev, u32 mode);
-+
- /* Clause 45 PHY */
- int genphy_c45_restart_aneg(struct phy_device *phydev);
- int genphy_c45_aneg_done(struct phy_device *phydev);
--- 
-2.14.1
+vmx->nested.smm.guest_node should also be saved...
+
+Paolo
+
+> As a follow-on change, we should probably fix this.
