@@ -1,122 +1,141 @@
-Return-Path: <ebiederm@xmission.com>
-X-Google-Smtp-Source: AB8JxZqdCWqgWLRIILb2jb+bs1q69mB/dnTElgbegr4TPf/TU4QOhc1k9ie+VZNpTWQi0bqCy2le
-ARC-Seal: i=1; a=rsa-sha256; t=1524975908; cv=none;
+Return-Path: <christianvanbrauner@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1524943239; cv=none;
         d=google.com; s=arc-20160816;
-        b=u1Ip2WBkB0O5+apQUzA3C6ffAn52PWX17lkvzAUR+xSAF5vC1rBAF2CEOyd/4ze+gG
-         AnDwwyMIqhUhZJljjHbO6LKjILNhYzSlBk1b5ECR/sjIj5hk16TmCFraH83dKGhlxVzD
-         rdFzMUifW7L0xh7jqomxgPuxpNEUjYl3GaH1FMdz/ATO03uTTLXkgRMZKD1eUqgrScSq
-         Udla/ez/kECqr1oKq/4VMjvXsyIYbHLoCE77D5YhiWGfg2rvR6jeO1d7yiIcHGzRswg5
-         Brzrc9kGOjxjoYHuAf5O3GhjhmLEvgxk6dbfRHvewHC7XKSBDfY0EbE83SKXsxkn0n3f
-         dfyA==
+        b=hEQeUiiRWaAZZU8eVtVBlb41JLxhYvSFzgvNkicmzfE+QMVnLuhq5aYMgM++0tOF2g
+         Os/0BDXHraW5axiAg3Npc/pISBQWvdFm8hMBmdTWJhytxj1x+3oB4Cye91oUWd+8H3nz
+         gIsExz6/1YBh8n8cyWijgOB5Fgu2t7Mp7Vh95Uh8708oF3uUS4IHvSUMwYekIlD4/X0A
+         NxMq4wT2e/j/MR6GZYREo3Z0bc+JEmsJgmEa3lcvchgSv2ZibAvwsCUmYd9Oh6pBW/M2
+         WmK1g45YDndqrfTFvNpGNj51YeRa6WJUaAWfmOw7zPgmAYM60Xfkk80AFzC4FVaH5m90
+         31Eg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=subject:mime-version:user-agent:message-id:in-reply-to:date
-         :references:cc:to:from:arc-authentication-results;
-        bh=xEPXDdxpVpBpSoiMlLUzjZChlsY6dI0K7qisxFjJIN8=;
-        b=szFx5/QQbyO1lw71rs+nC/pYTu84XiWCBGlJ3as2JFwt4Ab/tETf5F2cQQLAixJK7L
-         ImKMWu/1xFj0yPqGI+/4FVwKP582E5FGoDSUDTvierEssGK3O2ndRRjmhp15OrvMmvaH
-         Su9wVBT0UFqyY1KkSzz4G+iOWnshYHKJcKDuMkkQxchqs4pAAP949PIcr7KorNWhVs1K
-         w8vfYCOZaNrWdpTu+YG4NPc8FPF0+sp56uJrpUqBwcO3nTD5+wLeJIey33Yr/BBqfwYK
-         JlexuzY/UH0HP9eMR8F6NEgvjnNLGFMEcPE9KDArzsAU2XnUwf57rqWFo3cu2cTAIXwy
-         +YCg==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=kmTVJ2sYG/ViKy9Hf7JBN1GZJusI2xLIOaQID71TufQ=;
+        b=fmExGZnHsE60jOCV22zgVS/OokBxGt/1j7BsBhkmswj9X7C3aJTaoX57ovA+dv4uaB
+         J2uBeVzowdDC/7JBVLLMBkc9cvmslIFkRQmlazlhrhXqxJA9BkqtMLIAElhbVj1R412W
+         qGEnBhcyZzT9LVSa3PgN12cv4dIPhLa3K7tCQaen2N7vqSOnaloU3n5rOwf3jUeyTHyu
+         +R2zos3s3t7cFeG3nN2MzpXoqB9W0QgD02G+z3N9TsWftxhkxUGCJqbtUQ/eE9NoxDfM
+         j5AKKq0UZamYprPdhx3xDJ9XBEq1TK1uiyHBrd4bJfUD1Z0hcva21uIC/GT7yIMXM/Mz
+         aTzg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of ebiederm@xmission.com designates 166.70.13.231 as permitted sender) smtp.mailfrom=ebiederm@xmission.com
+       spf=pass (google.com: domain of christianvanbrauner@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=christianvanbrauner@gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of ebiederm@xmission.com designates 166.70.13.231 as permitted sender) smtp.mailfrom=ebiederm@xmission.com
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Christian Brauner <christian.brauner@ubuntu.com>
-Cc: davem@davemloft.net,  netdev@vger.kernel.org,  linux-kernel@vger.kernel.org,  avagin@virtuozzo.com,  ktkhai@virtuozzo.com,  serge@hallyn.com,  gregkh@linuxfoundation.org
+       spf=pass (google.com: domain of christianvanbrauner@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=christianvanbrauner@gmail.com
+X-Google-Smtp-Source: AB8JxZpRTd0duAYf46MzRz+DBa230kLZ5JjY9OCgz5OFf7UGn3y1JS1rt0tO8f20A/rI7jjCQDmY/g==
+From: Christian Brauner <christian.brauner@ubuntu.com>
+To: ebiederm@xmission.com,
+	davem@davemloft.net,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: avagin@virtuozzo.com,
+	ktkhai@virtuozzo.com,
+	serge@hallyn.com,
+	gregkh@linuxfoundation.org,
+	Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH net-next 1/2 v4] uevent: add alloc_uevent_skb() helper
+Date: Sat, 28 Apr 2018 21:20:24 +0200
+Message-Id: <20180428192025.2075-2-christian.brauner@ubuntu.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180428192025.2075-1-christian.brauner@ubuntu.com>
 References: <20180428192025.2075-1-christian.brauner@ubuntu.com>
-Date: Sat, 28 Apr 2018 23:25:01 -0500
-In-Reply-To: <20180428192025.2075-1-christian.brauner@ubuntu.com> (Christian
-	Brauner's message of "Sat, 28 Apr 2018 21:20:23 +0200")
-Message-ID: <87d0yid4gy.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1fCdta-00065o-AL;;;mid=<87d0yid4gy.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=68.116.237.29;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX198nxDMqE3cEnMYMU3HGDcs7UKQbAXDydQ=
-X-SA-Exim-Connect-IP: 68.116.237.29
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-	*      [score: 0.4928]
-	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-	*      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
-	*  0.1 XMSolicitRefs_0 Weightloss drug
-	*  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Christian Brauner <christian.brauner@ubuntu.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 219 ms - load_scoreonly_sql: 0.03 (0.0%),
-	signal_user_changed: 2.8 (1.3%), b_tie_ro: 1.95 (0.9%), parse: 0.96 (0.4%),
-	extract_message_metadata: 18 (8.1%), get_uri_detail_list: 2.8 (1.3%),
-	tests_pri_-1000: 9 (4.2%), tests_pri_-950: 1.15 (0.5%), tests_pri_-900: 0.98
-	(0.4%), tests_pri_-400: 20 (8.9%), check_bayes: 19 (8.5%), b_tokenize: 6
-	(2.9%), b_tok_get_all: 6 (2.6%), b_comp_prob: 1.92 (0.9%), b_tok_touch_all:
-	2.6 (1.2%), b_finish: 0.63 (0.3%), tests_pri_0: 160 (72.8%),
-	check_dkim_signature: 0.45 (0.2%), check_dkim_adsp: 2.4 (1.1%),
-	tests_pri_500: 4.7 (2.1%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH net-next 0/2 v4] netns: uevent filtering
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599018881448203807?=
-X-GMAIL-MSGID: =?utf-8?q?1599053137694610129?=
+X-GMAIL-THRID: =?utf-8?q?1599018882280223334?=
+X-GMAIL-MSGID: =?utf-8?q?1599018882280223334?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Christian Brauner <christian.brauner@ubuntu.com> writes:
+This patch adds alloc_uevent_skb() in preparation for follow up patches.
 
-> Hey everyone,
->
-> This is the new approach to uevent filtering as discussed (see the
-> threads in [1], [2], and [3]). It only contains *non-functional
-> changes*.
->
-> This series deals with with fixing up uevent filtering logic:
-> - uevent filtering logic is simplified
-> - locking time on uevent_sock_list is minimized
-> - tagged and untagged kobjects are handled in separate codepaths
-> - permissions for userspace are fixed for network device uevents in
->   network namespaces owned by non-initial user namespaces
->   Udev is now able to see those events correctly which it wasn't before.
->   For example, moving a physical device into a network namespace not
->   owned by the initial user namespaces before gave:
->
->   root@xen1:~# udevadm --debug monitor -k
->   calling: monitor
->   monitor will print the received events for:
->   KERNEL - the kernel uevent
->
->   sender uid=65534, message ignored
->   sender uid=65534, message ignored
->   sender uid=65534, message ignored
->   sender uid=65534, message ignored
->   sender uid=65534, message ignored
->
->   and now after the discussion and solution in [3] correctly gives:
->
->   root@xen1:~# udevadm --debug monitor -k
->   calling: monitor
->   monitor will print the received events for:
->   KERNEL - the kernel uevent
->
->   KERNEL[625.301042] add      /devices/pci0000:00/0000:00:02.0/0000:01:00.1/net/enp1s0f1 (net)
->   KERNEL[625.301109] move     /devices/pci0000:00/0000:00:02.0/0000:01:00.1/net/enp1s0f1 (net)
->   KERNEL[625.301138] move     /devices/pci0000:00/0000:00:02.0/0000:01:00.1/net/eth1 (net)
->   KERNEL[655.333272] remove /devices/pci0000:00/0000:00:02.0/0000:01:00.1/net/eth1 (net)
->
-> Thanks!
-> Christian
->
-> [1]: https://lkml.org/lkml/2018/4/4/739
-> [2]: https://lkml.org/lkml/2018/4/26/767
-> [3]: https://lkml.org/lkml/2018/4/26/738
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+---
+v3->v4:
+* non-functional changes:
+  initialize some variables again explicitly to make it obvious to
+  readers that they are correctly set
+v2->v3:
+* new approach: patch added
+v1->v2:
+* different approach in different patchset
+v0->v1:
+* different approach in different patchset
+---
+ lib/kobject_uevent.c | 47 ++++++++++++++++++++++++++++++++------------
+ 1 file changed, 34 insertions(+), 13 deletions(-)
 
-Again ovearall ack.  One last nit that might be worth addressing.
-
-Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
-
-Eric
+diff --git a/lib/kobject_uevent.c b/lib/kobject_uevent.c
+index 15ea216a67ce..649bf60a9440 100644
+--- a/lib/kobject_uevent.c
++++ b/lib/kobject_uevent.c
+@@ -22,6 +22,7 @@
+ #include <linux/socket.h>
+ #include <linux/skbuff.h>
+ #include <linux/netlink.h>
++#include <linux/uidgid.h>
+ #include <linux/uuid.h>
+ #include <linux/ctype.h>
+ #include <net/sock.h>
+@@ -296,6 +297,38 @@ static void cleanup_uevent_env(struct subprocess_info *info)
+ }
+ #endif
+ 
++#ifdef CONFIG_NET
++static struct sk_buff *alloc_uevent_skb(struct kobj_uevent_env *env,
++					const char *action_string,
++					const char *devpath)
++{
++	struct netlink_skb_parms *parms;
++	struct sk_buff *skb = NULL;
++	char *scratch;
++	size_t len;
++
++	/* allocate message with maximum possible size */
++	len = strlen(action_string) + strlen(devpath) + 2;
++	skb = alloc_skb(len + env->buflen, GFP_KERNEL);
++	if (!skb)
++		return NULL;
++
++	/* add header */
++	scratch = skb_put(skb, len);
++	sprintf(scratch, "%s@%s", action_string, devpath);
++
++	skb_put_data(skb, env->buf, env->buflen);
++
++	parms = &NETLINK_CB(skb);
++	parms->creds.uid = GLOBAL_ROOT_UID;
++	parms->creds.gid = GLOBAL_ROOT_GID;
++	parms->dst_group = 1;
++	parms->portid = 0;
++
++	return skb;
++}
++#endif
++
+ static int kobject_uevent_net_broadcast(struct kobject *kobj,
+ 					struct kobj_uevent_env *env,
+ 					const char *action_string,
+@@ -314,22 +347,10 @@ static int kobject_uevent_net_broadcast(struct kobject *kobj,
+ 			continue;
+ 
+ 		if (!skb) {
+-			/* allocate message with the maximum possible size */
+-			size_t len = strlen(action_string) + strlen(devpath) + 2;
+-			char *scratch;
+-
+ 			retval = -ENOMEM;
+-			skb = alloc_skb(len + env->buflen, GFP_KERNEL);
++			skb = alloc_uevent_skb(env, action_string, devpath);
+ 			if (!skb)
+ 				continue;
+-
+-			/* add header */
+-			scratch = skb_put(skb, len);
+-			sprintf(scratch, "%s@%s", action_string, devpath);
+-
+-			skb_put_data(skb, env->buf, env->buflen);
+-
+-			NETLINK_CB(skb).dst_group = 1;
+ 		}
+ 
+ 		retval = netlink_broadcast_filtered(uevent_sock, skb_get(skb),
+-- 
+2.17.0
