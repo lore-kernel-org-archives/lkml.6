@@ -1,73 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751612AbeD1ULw (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 28 Apr 2018 16:11:52 -0400
-Received: from mail-wm0-f49.google.com ([74.125.82.49]:37124 "EHLO
-        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751318AbeD1ULv (ORCPT
+        id S1751808AbeD1Ulf (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 28 Apr 2018 16:41:35 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59566 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751151AbeD1Uld (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Apr 2018 16:11:51 -0400
-X-Google-Smtp-Source: AB8JxZpI4STNzi40YDjE0fmwic540lp2Pey3/KfiNuUZVaI3mUiv5HR19dyvbajbFhzPhCfpzkdDqA==
-Subject: Re: [PATCH v2] efi: Ignore unrealistically large option roms
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        the arch/x86 maintainers <x86@kernel.org>, linux-efi@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180427213509.20385-1-hdegoede@redhat.com>
- <CAKv+Gu9xxSy2XXN446etRC5xaXdeOBBBYBxZZy=0bZbdZA_K8Q@mail.gmail.com>
-From: Hans de Goede <hdegoede@redhat.com>
-Message-ID: <253539f8-a24b-72f0-ef6e-27fb3eac2408@redhat.com>
-Date: Sat, 28 Apr 2018 22:11:47 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Sat, 28 Apr 2018 16:41:33 -0400
+Date: Sat, 28 Apr 2018 13:41:18 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Julia Lawall <julia.lawall@lip6.fr>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>, linux-mm@kvack.org,
+        mhocko@kernel.org, cl@linux.com, Jan Kara <jack@suse.cz>,
+        matthew@wil.cx, x86@kernel.org, luto@amacapital.net,
+        martin.petersen@oracle.com, jthumshirn@suse.de, broonie@kernel.org,
+        Juergen Gross <jgross@suse.com>, linux-spi@vger.kernel.org,
+        Joerg Roedel <joro@8bytes.org>, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "lsf-pc@lists.linux-foundation.org"
+        <lsf-pc@lists.linux-foundation.org>
+Subject: Re: [LSF/MM TOPIC NOTES] x86 ZONE_DMA love
+Message-ID: <20180428204118.GA3305@bombadil.infradead.org>
+References: <20180426215406.GB27853@wotan.suse.de>
+ <20180427053556.GB11339@infradead.org>
+ <20180427161456.GD27853@wotan.suse.de>
+ <20180428084221.GD31684@infradead.org>
+ <20180428185514.GW27853@wotan.suse.de>
+ <alpine.DEB.2.20.1804282145450.2532@hadrien>
 MIME-Version: 1.0
-In-Reply-To: <CAKv+Gu9xxSy2XXN446etRC5xaXdeOBBBYBxZZy=0bZbdZA_K8Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.20.1804282145450.2532@hadrien>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 28-04-18 08:40, Ard Biesheuvel wrote:
-> Hi Hans,
+On Sat, Apr 28, 2018 at 09:46:52PM +0200, Julia Lawall wrote:
+> FWIW, here is my semantic patch and the output - it reports on things that
+> appear to be too small and things that it doesn't know about.
 > 
-> On 27 April 2018 at 23:35, Hans de Goede <hdegoede@redhat.com> wrote:
->> setup_efi_pci() tries to save a copy of each PCI option ROM as this may
->> be necessary for the device driver for the PCI device to have access too.
->>
->> On some systems the efi_pci_io_protocol_64's romimage and romsize fields
->> contain invalid data, which looks a bit like pointers pointing back into
->> other EFI code or data. Interpreting these pointers as romsize leads to
->> a very large value and if we then try to alloc this amount of memory to
->> save a copy the alloc call fails.
->>
->> This leads to a "Failed to alloc mem for rom" error being printed on the
->> EFI console for each PCI device.
->>
->> This commit avoids the printing of these errors, by checking romsize
->> before doing the alloc and if it is larger then 256M silently ignore the
->> ROM fields instead of trying to alloc mem and fail.
->>
-> 
-> The UEFI spec limits the size of option ROMs to 16 MiB, so I'd prefer
-> we use that as the upper bound instead.
-> 
-> With that changed,
-> 
-> Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> What are the relevant pci wrappers?  I didn't find them.
 
-Thanks for the review, fixed for v3 which I'm about to send.
+Basically all of the functions in include/linux/pci-dma-compat.h
 
-> or I can take it via the EFI tree if desired.
+> too small: drivers/gpu/drm/i915/i915_drv.c:1138: 30
+> too small: drivers/net/wireless/broadcom/b43/dma.c:1068: 30
+> unknown: sound/pci/ctxfi/cthw20k2.c:2033: DMA_BIT_MASK(dma_bits)
+> unknown: sound/pci/ctxfi/cthw20k2.c:2034: DMA_BIT_MASK(dma_bits)
 
-I've no preference for how this goes upstream. x86 folks, please let
-us know if you will take this, or if you would prefer for this to
-go upstream through the EFI tree.
+This one's good:
 
-Regards,
+        const unsigned int dma_bits = BITS_PER_LONG;
 
-Hans
+> unknown: drivers/scsi/megaraid/megaraid_sas_base.c:6036: consistent_mask
+
+and this one:
+        consistent_mask = (instance->adapter_type == VENTURA_SERIES) ?
+                                DMA_BIT_MASK(64) : DMA_BIT_MASK(32);
+
+> unknown: drivers/net/wireless/ath/wil6210/txrx.c:200: DMA_BIT_MASK(wil->dma_addr_size)
+
+        if (wil->dma_addr_size > 32)
+                dma_set_mask_and_coherent(dev,
+                                          DMA_BIT_MASK(wil->dma_addr_size));
+
+> unknown: drivers/net/ethernet/netronome/nfp/nfp_main.c:452: DMA_BIT_MASK(NFP_NET_MAX_DMA_BITS)
+
+drivers/net/ethernet/netronome/nfp/nfp_net.h:#define NFP_NET_MAX_DMA_BITS       40
+
+> unknown: drivers/gpu/host1x/dev.c:199: host->info->dma_mask
+
+Looks safe ...
+
+drivers/gpu/host1x/bus.c:       device->dev.coherent_dma_mask = host1x->dev->coherent_dma_mask;
+drivers/gpu/host1x/bus.c:       device->dev.dma_mask = &device->dev.coherent_dma_mask;
+drivers/gpu/host1x/dev.c:       .dma_mask = DMA_BIT_MASK(32),
+drivers/gpu/host1x/dev.c:       .dma_mask = DMA_BIT_MASK(32),
+drivers/gpu/host1x/dev.c:       .dma_mask = DMA_BIT_MASK(34),
+drivers/gpu/host1x/dev.c:       .dma_mask = DMA_BIT_MASK(34),
+drivers/gpu/host1x/dev.c:       .dma_mask = DMA_BIT_MASK(34),
+drivers/gpu/host1x/dev.c:       dma_set_mask_and_coherent(host->dev, host->info->dma_mask);
+drivers/gpu/host1x/dev.h:       u64 dma_mask; /* mask of addressable memory */
+
+... but that reminds us that maybe some drivers aren't using dma_set_mask()
+but rather touching dma_mask directly.
+
+... 57 more to look at ...
