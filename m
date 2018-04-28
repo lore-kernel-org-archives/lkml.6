@@ -1,57 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751534AbeD1TtF (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 28 Apr 2018 15:49:05 -0400
-Received: from mail-yw0-f176.google.com ([209.85.161.176]:42192 "EHLO
-        mail-yw0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751245AbeD1TtE (ORCPT
+        id S1751637AbeD1Tur (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 28 Apr 2018 15:50:47 -0400
+Received: from vmicros1.altlinux.org ([194.107.17.57]:56576 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751268AbeD1Tuq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Apr 2018 15:49:04 -0400
-X-Google-Smtp-Source: AB8JxZqqRb8Gv/XZ0LNeKS1ATwux9+z4vtIQxz5x9ySACjBdjgzMoO5Ek8Z8kWaExINTiNXDNlRf114oBEGGf3E2Ydc=
+        Sat, 28 Apr 2018 15:50:46 -0400
+Date: Sat, 28 Apr 2018 22:50:44 +0300
+From: "Dmitry V. Levin" <ldv@altlinux.org>
+To: "Theodore Ts'o" <tytso@mit.edu>
+Cc: Alexey Gladkov <legion@altlinux.org>,
+        Vitaly Chikunov <vt@altlinux.org>,
+        Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] ext4: add crc32c soft dependency
+Message-ID: <20180428195044.GA14126@altlinux.org>
+Mail-Followup-To: Theodore Ts'o <tytso@mit.edu>,
+        Alexey Gladkov <legion@altlinux.org>,
+        Vitaly Chikunov <vt@altlinux.org>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
 MIME-Version: 1.0
-References: <20180427155851.16402-1-mika.westerberg@linux.intel.com>
-In-Reply-To: <20180427155851.16402-1-mika.westerberg@linux.intel.com>
-From: Yehezkel Bernat <yehezkelshb@gmail.com>
-Date: Sat, 28 Apr 2018 19:48:48 +0000
-Message-ID: <CA+CmpXufiyeAOqoRhYaMd7u65LY-RyjsewOuohpKAXi42zOuTw@mail.gmail.com>
-Subject: Re: [PATCH] thunderbolt: Handle NULL boot ACL entries properly
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, andreas.noever@gmail.com,
-        michael.jamet@intel.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 27, 2018 at 6:58 PM Mika Westerberg <
-mika.westerberg@linux.intel.com> wrote:
+Starting with commit a45403b51582, ext4 unconditionally requires
+a crc32c provider, which broke certain mkinitrd setups.
 
-> If the boot ACL entry is already NULL we should not fill in the upper
-> two DWs with 0xfffffffff. Otherwise they are not shown as empty entries
-> when the sysfs attribute is read.
-> Fixes: 9aaa3b8b4c56 ("thunderbolt: Add support for preboot ACL")
-> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> ---
->    drivers/thunderbolt/icm.c | 2 +-
->    1 file changed, 1 insertion(+), 1 deletion(-)
+Add a soft dependency on crc32c so that mkinitrd, dracut, and other
+initrd image generators could include the required helper module.
 
-> diff --git a/drivers/thunderbolt/icm.c b/drivers/thunderbolt/icm.c
-> index 2d2ceda9aa26..aec6a82989d8 100644
-> --- a/drivers/thunderbolt/icm.c
-> +++ b/drivers/thunderbolt/icm.c
-> @@ -1255,7 +1255,7 @@ static int icm_ar_get_boot_acl(struct tb *tb,
-uuid_t *uuids, size_t nuuids)
->                           /* Map empty entries to null UUID */
->                           uuid[0] = 0;
->                           uuid[1] = 0;
-> -               } else {
-> +               } else if (uuid[0] != 0 && uuid[1] != 0) {
+The dependency on crc32c is quite hard but there seems to be no
+mechanism to specify a dependency on an alias, so let's use this
+soft dependency as a workaround.
 
-Maybe || instead of &&?
-I'd think it's enough for one of them to be non-zero to be a valid UUID.
+Suggested-by: Alexey Gladkov <legion@altlinux.org>
+Fixes: a45403b51582 ("ext4: always initialize the crc32c checksum driver")
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
+---
+ fs/ext4/super.c | 1 +
+ 1 file changed, 1 insertion(+)
 
->                           /* Upper two DWs are always one's */
->                           uuid[2] = 0xffffffff;
->                           uuid[3] = 0xffffffff;
-> --
-> 2.17.0
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index 185f7e6..eb104e8 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -5886,5 +5886,6 @@ static void __exit ext4_exit_fs(void)
+ MODULE_AUTHOR("Remy Card, Stephen Tweedie, Andrew Morton, Andreas Dilger, Theodore Ts'o and others");
+ MODULE_DESCRIPTION("Fourth Extended Filesystem");
+ MODULE_LICENSE("GPL");
++MODULE_SOFTDEP("pre: crc32c");
+ module_init(ext4_init_fs)
+ module_exit(ext4_exit_fs)
+
+-- 
+ldv
