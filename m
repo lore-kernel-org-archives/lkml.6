@@ -1,75 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1759457AbeD1AxF (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 20:53:05 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:42238 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755617AbeD1AxD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 20:53:03 -0400
-X-Google-Smtp-Source: AB8JxZouGcfH9f3LE1zdVraeTiOjdrkBBTpgoBsGCDsqcjfRM2jQSbVLcrE3QAdbB43ZiJUJDeOsHQ==
-Subject: Re: ed74ae0342 ("blk-mq: Avoid that a completion can be ignored .."):
- BUG: kernel hang in test stage
-To: kernel test robot <lkp@intel.com>,
-        Bart Van Assche <bart.vanassche@wdc.com>
-Cc: LKP <lkp@01.org>, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org, wfg@linux.intel.com
-References: <5adf9ada.EgNO094GdvSdHQ3v%lkp@intel.com>
-From: Jens Axboe <axboe@kernel.dk>
-Message-ID: <07256b82-12b1-9ccf-c660-9dfbedfd3cac@kernel.dk>
-Date: Fri, 27 Apr 2018 18:52:58 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        id S933032AbeD1A4e (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 20:56:34 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39728 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1755617AbeD1A4d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 20:56:33 -0400
+Date: Sat, 28 Apr 2018 08:56:20 +0800
+From: Dave Young <dyoung@redhat.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Sinan Kaya <okaya@codeaurora.org>, linux-pci@vger.kernel.org,
+        Paul Menzel <pmenzel+linux-pci@molgen.mpg.de>,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Lukas Wunner <lukas@wunner.de>, Eric Biederman <ebiederm@xmission.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, Vivek Goyal <vgoyal@redhat.com>
+Subject: Re: pciehp 0000:00:1c.0:pcie004: Timeout on hotplug command 0x1038
+ (issued 65284 msec ago)
+Message-ID: <20180428005620.GB1675@dhcp-128-65.nay.redhat.com>
+References: <8770820b-85a0-172b-7230-3a44524e6c9f@molgen.mpg.de>
+ <20180427192207.GG8199@bhelgaas-glaptop.roam.corp.google.com>
+ <b62c2a8e-fe14-6d7d-147c-0ce3b0c0ab2f@codeaurora.org>
+ <20180427211255.GI8199@bhelgaas-glaptop.roam.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <5adf9ada.EgNO094GdvSdHQ3v%lkp@intel.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180427211255.GI8199@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/24/18 3:00 PM, kernel test robot wrote:
-> Greetings,
+On 04/27/18 at 04:12pm, Bjorn Helgaas wrote:
+> [+cc Eric, Vivek, kexec list]
 > 
-> 0day kernel testing robot got the below dmesg and the first bad commit is
+> On Fri, Apr 27, 2018 at 03:34:30PM -0400, Sinan Kaya wrote:
+> > On 4/27/2018 3:22 PM, Bjorn Helgaas wrote:
+> > > Sinan mooted the idea of using a "no-wait" path of sending the "don't
+> > > generate hotplug interrupts" command.  I think we should work on this
+> > > idea a little more.  If we're shutting down the whole system, I can't
+> > > believe there's much value in *anything* we do in the pciehp_remove()
+> > > path.
+> > > 
+> > > Maybe we should just get rid of pciehp_remove() (and probably
+> > > pcie_port_remove_service() and the other service driver remove methods)
+> > > completely.  That dates from when the service drivers could be modules that
+> > > could be potentially unloaded, but unloading them hasn't been possible for
+> > > years.
+> > 
+> > Shutdown path is also used for kexec. Leaving hotplug interrupts
+> > pending is dangerous for the newly loaded kernel as it leaves
+> > spurious interrupts during the new kernel boot.
+> > 
+> > I think we should always disable the hotplug interrupt on shutdown.
+> > We might think of not waiting for command-completion as a
+> > middle-ground or go to polling path instead of interrupts all the
+> > time.
 > 
-> https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git for-linus
-> 
-> commit ed74ae03424684a6ad8a973c3fa727c6b4162432
-> Author:     Bart Van Assche <bart.vanassche@wdc.com>
-> AuthorDate: Thu Apr 19 09:43:53 2018 -0700
-> Commit:     Jens Axboe <axboe@kernel.dk>
-> CommitDate: Thu Apr 19 14:21:47 2018 -0600
-> 
->     blk-mq: Avoid that a completion can be ignored for BLK_EH_RESET_TIMER
->     
->     The blk-mq timeout handling code ignores completions that occur after
->     blk_mq_check_expired() has been called and before blk_mq_rq_timed_out()
->     has reset rq->aborted_gstate. If a block driver timeout handler always
->     returns BLK_EH_RESET_TIMER then the result will be that the request
->     never terminates.
->     
->     Fix this race as follows:
->     - Use the deadline instead of the request generation to detect whether
->       or not a request timer fired after reinitialization of a request.
->     - Store the request state in the lowest two bits of the deadline instead
->       of the lowest two bits of 'gstate'.
->     - Rename MQ_RQ_STATE_MASK into RQ_STATE_MASK and change it from an
->       enumeration member into a #define such that its type can be changed
->       into unsigned long. That allows to write & ~RQ_STATE_MASK instead of
->       ~(unsigned long)RQ_STATE_MASK.
->     - Remove all request member variables that became superfluous due to
->       this change: gstate, gstate_seq and aborted_gstate_sync.
->     - Remove the request state information that became superfluous due to this
->       patch, namely RQF_MQ_TIMEOUT_EXPIRED.
->     - Remove the code that became superfluous due to this change, namely
->       the RCU lock and unlock statements in blk_mq_complete_request() and
->       also the synchronize_rcu() call in the timeout handler.
+> Ah, I forgot about the kexec path.  The kexec path is used for
+> crashdump, too, so ideally the newly-loaded kernel would defend itself
+> when possible so it doesn't depend on the original kernel doing things
+> correctly.
 
-Any chance you can try with the newer version?
+It is true for kdump.  But kexec needs device shutdown.
 
-https://github.com/bvanassche/linux/commit/4acd555fa13087
+> 
+> Seems like this question of whether to do things in the original
+> kernel or the kexec-ed kernel comes up periodically, but I can never
+> remember a definitive answer.  My initial reaction is that it'd be
+> nice if we didn't have to do *any* shutdown in the original kernel,
+> but I'm sure there are reasons that's not practical.
 
--- 
-Jens Axboe
+Devices sometimes assume it is in a good state initialized in firmware boot
+phase, so we need a shutdown in 1st kernel so that kexec kernel can boot
+correctly for those devices.  For kdump since kernel already panicked
+and it is not reliable so we do as less as we can in the 1st kernel
+crash path, but there are some special handling for kdump in various drivers
+to reset the devices in 2nd kernel, eg. when it see "reset_devices" kernel parameter.
+
+> 
+> I copied Eric (kexec maintainer) and Vivek (contact listed in
+> Documentation/kdump/kdump.txt) in case they have suggestions or would
+> consider some sort of Documentation/ update.
+> 
+> Bjorn
+> 
+> _______________________________________________
+> kexec mailing list
+> kexec@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/kexec
+
+Thanks
+Dave
