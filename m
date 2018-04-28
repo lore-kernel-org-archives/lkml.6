@@ -1,122 +1,254 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2389010-1523451852-2-4126204880284187472
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-2329175-1524947278-2-9369578513359424954
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  MISSING_HEADERS 1.021, RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001,
+  LANGUAGES roensv, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
+  FromHeader='io', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523451851; b=HJeTUnSCl8SykwEHxL+Kd4vZzzRTxiw3Xy+ad9rKKmcq4pcAzT
-    mO24lsUTGttGi/hHNi0TdX/titPrzhErALHmDhiqz87A6H1hLONCrpFhl+NyY43k
-    6mqUBm47+k27lqjYRon0SFGApBIZasyuv+pS22eUAXgQApxarCD6uXP0aJq5mYWf
-    hrTDLDjdbZ5IE3hrFT8o2PDqC6dhsQctfbb/OgP8PY5sO8apZBaQNPO8jOy5RGxK
-    pJVI0/tUlLm1/wEuxxu0D5/qvC6I5+K/cS99bCiKTumzVQLm3ZvPE88m4Z1OjjVE
-    7zRTuFpyJ42vYOogWJJi+RWw98vwjoDDXtMQ==
+    1524947277; b=cp5m5Kz6MkKqbMhUBXsvDBPOWJmiJTJMy+9NI7iDA2F2ppM9Ke
+    gnS4dy6p9ARW61NDxthTakePVzQXMOMYnwfNvAcIpVa0CJ8LxA0mGhHiN5QyVMeY
+    WO+nz3zZKyW6wi8MKnVO/oUL3h58gsW9ysTfOpeSeLH6UF39BYVVoNKZErmDsKpj
+    h7MRoWpMRqZDt25Ht/bIMRMh+DIPX1KDt34bOKNf+wKdFeooKDLIOcv8rRWq8jhY
+    70z6vHTcbVPbe86fE6OzART1JFr9eo5XzzNFalstShle4OTWNPXq4RMb5WXDCUOo
+    cpPdNrnAzr5izAHvBv+hvObdlbUz3w6kUtVg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    fm2; t=1523451851; bh=LQYd894qCesN1WOWrjIi8WuTxqXuILA/PsWZCVpO46
-    A=; b=dSdZsuI+8KEb1CapktVmIY4UEV5oMHfHJWUtYS/O8cdL1hTfC0mQZGPNe+
-    1q3jmeJSC0roMMkJzjR9zz4MktymqQjqzJhg0Zne6c/3VFmk39Lt6e7RfgNIDhfo
-    h2V/CEkVrBQr46di8UzNPDZI6aUkygu8V1RUfJf2whcR3UhZVCl5OK0WgA1Jf3RA
-    5/9v/l0KtKu9t0mOLdOOv0h0v0UBa8yr/Ux7PzmT/DAvwL9Zw38eXUktjLlLEN8i
-    +slDMFTACrj23dNFnFbU14IXTypiV+YL9EYCf/PkE9o7jbpYkkHjms7NnvIBLwJw
-    o2JWsGLFA1WeNx3r3f4NO1KPGihQ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=SeXBZsgZ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    messagingengine.com; h=message-id:from:subject:date:mime-version
+    :list-id:list-unsubscribe:list-archive:list-post:list-help
+    :list-subscribe:cc:content-type:content-transfer-encoding
+    :sender; s=fm2; t=1524947277; bh=4UYVFvA6viE4geGK0IEdJ1OnUSOXXJV
+    xlTg4fb+PlfM=; b=OyHm144I2qBrQm82cyDSaFcccM5ffB8VqdOxWa0lCmcE/8F
+    7LAfg6Lsy4xCwfCLYQxe3U4EFPhhYu+XMdmyeLVgSYiR8SGlnqMdHMZcyqJdFJz2
+    WjkiMumtYItMXqmhWxOWZ08YgaYgvI+WElxk+DDeA4hLmBSleSFKEV2zyCi4YxI7
+    z8RxjtJws6Q69jP7WZasdum4aPax1+PwmZKRYqTB8d9lxOLr4O5wfeTmQ7kyx94Z
+    AKQb2zLwSkyU4CXz1jwxTqr4X1FCqNXbWhXtNbFa3eGMS1sQWUVgNk1+4H71BouY
+    wedafyZRu7Wns+KhDE+O9OMjvhLSH2L9JNd3FAQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=elg.io header.i=xtrat@elg.io header.b=IHcuGEP9 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=mailjet;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=elg.io;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=oNNLfhvN;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+    x-cm=discussion score=0;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=elg.io header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=-70 state=0
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=SeXBZsgZ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=elg.io header.i=xtrat@elg.io header.b=IHcuGEP9 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=mailjet;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=elg.io;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=oNNLfhvN;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+    x-cm=discussion score=0;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=elg.io header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=-70 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDbLcWUexeLKYMYtSZiQ+PpSd1ty8LAoQakf8a/JoTsmBvky80zgbXNyUIeqnrxSysQYzq5x/kbSusJTpjaf18DqgdTAwoFHBWXccrS7HLajyc7lDDjK
-    h2+qLlEieois0jtz8Q57pylzWuK3Ahss5Q5E0/7Oj9D8sdoxAzsIXgIL+fL3uhphRHLRkqgSkKg2BC0PMzYx8NfJF44PpdntRF3Y+U49sn/csm8GeqmkM+HL
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=x7bEGLp0ZPQA:10
-    a=unD1LOn5OY8A:10 a=Kd1tUaAdevIA:10 a=QyXUC8HyAAAA:8 a=pGLkceISAAAA:8
-    a=riMJuovTzz6P4l8tzVkA:9 a=QEXdDO2ut3YA:10
+X-CM-Envelope: MS4wfGc7epcL6MnmB6CmFBt18MpOaurs4cNjOPKoI+MJEWlT3C2UNbaRtnrv6nfirC4CkyXW5OpOcal/PdtyccRKqvi2rZFmXVtnvKNlgyCqbzoWgS8A1zGS
+    9CN3KGmRhhKuMPr2Bx1cj6MdJbtjKHrjtZ+DhGmt1gzAaPwUpaeQKpOZPbCDY84o4PqNwLMt9gakKlh88i99TJFjn9/Xhc2gYSHpWhSY9fk3c9c+1FP5a18/
+    19mjhmGIZhf9OXQ4IFc6Lw==
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
+    a=kIo7DnY5WRu98hpln7do/g==:17 a=9cW_t1CCXrUA:10 a=kj9zAlcOel0A:10
+    a=KqOhe5OoNmIA:10 a=Kd1tUaAdevIA:10 a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10
+    a=DDOyTI_5AAAA:8 a=rIQ2OwTckwrSlP6gn0gA:9 a=5VaGLcz0iRVLOl0S:21
+    a=hxr04kVqGWSo2uM-:21 a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753320AbeDKNEI (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 09:04:08 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:39737 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753243AbeDKNEH (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 09:04:07 -0400
-X-Google-Smtp-Source: AIpwx4+yQMa3WNc2ZbjIgEKQuSIn0dC/eJTXEhCIiJ0aKASSINkmtV5s4seXEl21/z1CCL4fu3UP3bR53b1yK25ubog=
+X-ME-CMCategory: discussion
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+Message-Id: <4127cb6a.ANAAAAZc5IEAAAAAAAAAAADFWYgAAAASzIYAAAAAAArW7ABa5NlE@mailjet.com>
+From: Efstratios Gavas <xtrat@elg.io>
+Subject: [PATCH] [v4] staging: wlan-ng: prism2sta: fixed indent coding style
+ issues.
+Date: Sat, 28 Apr 2018 20:26:29 +0000
+X-CSA-Complaints: whitelist-complaints@eco.de
+X-MJ-Mid: ANAAAAZc5IEAAAAAAAAAAADFWYgAAAASzIYAAAAAAArW7ABa5NlETQVR0qHXS526gAXhgPycIQAKs_E
+X-MJ-SMTPGUID: a448c927-8107-42b3-b9c1-be259fba652d
+X-REPORT-ABUSE-TO: Message sent by Mailjet please report to
+ abuse@mailjet.com with a copy of the message
 MIME-Version: 1.0
-In-Reply-To: <87lgdugc85.fsf@intel.com>
-References: <20180411044213.383-1-ianwmorrison@gmail.com> <871sfmhz88.fsf@intel.com>
- <CAFXWsS_SvkLvJcibx9LoUw+onN-AAzSLMrRgx3U3hsbMVyty2g@mail.gmail.com> <87lgdugc85.fsf@intel.com>
-From: Ian W MORRISON <ianwmorrison@gmail.com>
-Date: Wed, 11 Apr 2018 23:04:06 +1000
-Message-ID: <CAFXWsS9NJDPMqESRavO_jSGuzUL3Bp8rWPfP=MjSkMdYBpjtFQ@mail.gmail.com>
-Subject: Re: [RESEND PATCH 1/1] drm/i915/glk: Add MODULE_FIRMWARE for Geminilake
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: rodrigo.vivi@intel.com, anusha.srivatsa@intel.com,
-        michal.wajdeczko@intel.com, Greg KH <gregkh@linuxfoundation.org>,
-        airlied@linux.ie, joonas.lahtinen@linux.intel.com,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org,
+ Thibaut SAUTEREAU <thibaut.sautereau@telecom-sudparis.eu>,
+ Christopher H Pezley <chris@pezley.net>, Kees Cook <keescook@chromium.org>,
+ Efstratios Gavas <xtrat@elg.io>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org,
+ AbdAllah-MEZITI <abdallah.meziti.pro@gmail.com>,
+ Aviv Palivoda <palaviv@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 11 April 2018 at 22:27, Jani Nikula <jani.nikula@linux.intel.com> wrote:
-> On Wed, 11 Apr 2018, Ian W MORRISON <ianwmorrison@gmail.com> wrote:
->> <snip>
->>
->>>
->>> NAK on indiscriminate Cc: stable. There are zero guarantees that older
->>> kernels will work with whatever firmware you throw at them.
->>>
->>
->> I included 'Cc: stable' so the patch would get added to the v4.16 and
->> v4.15 kernels which I have tested with the patch. I found that earlier
->> kernels didn't support the 'linux-firmware' package required to get
->> wifi working on Intel's new Gemini Lake NUC.
->
-> You realize that this patch should have nothing to do with wifi?
->
+Fixed format/style issues found with checkpatch. No code changes.
+Corrected alignment of variables after open parenthesis and line breaks.
+Checkpatch now returns clean except for "line over 80 char" warnings.
 
-Yes. Runtime power management depends on the patch but when distros
-such as Ubuntu are installed on a Intel Gemini Lake NUC as an example,
-wifi/bluetooth depends on Intel Wireless-AC 9462 which in turn depends
-on v4.15 as a minimum so my logic was to add the patch to 4.15 and later.
+Signed-off-by: Efstratios Gavas <xtrat@elg.io>
+---
+v2(unlabled): changed title info
+v3: improved changlog description
+v4: corrected patch versioning
+---
+ drivers/staging/wlan-ng/prism2sta.c | 52 +++++++++++++++++--------------------
+ 1 file changed, 24 insertions(+), 28 deletions(-)
 
-> Rodrigo, Anusha, if you think Cc: stable is appropriate, please indicate
-> the specific versions of stable it is appropriate for.
->
+diff --git a/drivers/staging/wlan-ng/prism2sta.c b/drivers/staging/wlan-ng/prism2sta.c
+index fed0b8ceca6f..914970249680 100644
+--- a/drivers/staging/wlan-ng/prism2sta.c
++++ b/drivers/staging/wlan-ng/prism2sta.c
+@@ -764,16 +764,16 @@ static int prism2sta_getcardinfo(struct wlandevice *wlandev)
+ 
+ 	if (hw->cap_sup_sta.id == 0x04) {
+ 		netdev_info(wlandev->netdev,
+-		       "STA:SUP:role=0x%02x:id=0x%02x:var=0x%02x:b/t=%d/%d\n",
+-		       hw->cap_sup_sta.role, hw->cap_sup_sta.id,
+-		       hw->cap_sup_sta.variant, hw->cap_sup_sta.bottom,
+-		       hw->cap_sup_sta.top);
++			    "STA:SUP:role=0x%02x:id=0x%02x:var=0x%02x:b/t=%d/%d\n",
++			    hw->cap_sup_sta.role, hw->cap_sup_sta.id,
++			    hw->cap_sup_sta.variant, hw->cap_sup_sta.bottom,
++			    hw->cap_sup_sta.top);
+ 	} else {
+ 		netdev_info(wlandev->netdev,
+-		       "AP:SUP:role=0x%02x:id=0x%02x:var=0x%02x:b/t=%d/%d\n",
+-		       hw->cap_sup_sta.role, hw->cap_sup_sta.id,
+-		       hw->cap_sup_sta.variant, hw->cap_sup_sta.bottom,
+-		       hw->cap_sup_sta.top);
++			    "AP:SUP:role=0x%02x:id=0x%02x:var=0x%02x:b/t=%d/%d\n",
++			    hw->cap_sup_sta.role, hw->cap_sup_sta.id,
++			    hw->cap_sup_sta.variant, hw->cap_sup_sta.bottom,
++			    hw->cap_sup_sta.top);
+ 	}
+ 
+ 	/* Compatibility range, primary f/w actor, CFI supplier */
+@@ -1189,7 +1189,6 @@ void prism2sta_processing_defer(struct work_struct *data)
+ 			inf = (struct hfa384x_inf_frame *)skb->data;
+ 			prism2sta_inf_authreq_defer(wlandev, inf);
+ 		}
+-
+ 	}
+ 
+ 	/* Now let's handle the linkstatus stuff */
+@@ -1241,9 +1240,9 @@ void prism2sta_processing_defer(struct work_struct *data)
+ 			/* Collect the BSSID, and set state to allow tx */
+ 
+ 			result = hfa384x_drvr_getconfig(hw,
+-						HFA384x_RID_CURRENTBSSID,
+-						wlandev->bssid,
+-						WLAN_BSSID_LEN);
++							HFA384x_RID_CURRENTBSSID,
++							wlandev->bssid,
++							WLAN_BSSID_LEN);
+ 			if (result) {
+ 				pr_debug
+ 				    ("getconfig(0x%02x) failed, result = %d\n",
+@@ -1260,14 +1259,13 @@ void prism2sta_processing_defer(struct work_struct *data)
+ 				     HFA384x_RID_CURRENTSSID, result);
+ 				return;
+ 			}
+-			prism2mgmt_bytestr2pstr(
+-					(struct hfa384x_bytestr *)&ssid,
+-					(struct p80211pstrd *)&wlandev->ssid);
++			prism2mgmt_bytestr2pstr((struct hfa384x_bytestr *)&ssid,
++						(struct p80211pstrd *)&wlandev->ssid);
+ 
+ 			/* Collect the port status */
+ 			result = hfa384x_drvr_getconfig16(hw,
+-							HFA384x_RID_PORTSTATUS,
+-							&portstatus);
++							  HFA384x_RID_PORTSTATUS,
++							  &portstatus);
+ 			if (result) {
+ 				pr_debug
+ 				    ("getconfig(0x%02x) failed, result = %d\n",
+@@ -1404,7 +1402,7 @@ void prism2sta_processing_defer(struct work_struct *data)
+ 					       &joinreq,
+ 					       HFA384x_RID_JOINREQUEST_LEN);
+ 			netdev_info(wlandev->netdev,
+-			       "linkstatus=ASSOCFAIL (re-submitting join)\n");
++				    "linkstatus=ASSOCFAIL (re-submitting join)\n");
+ 		} else {
+ 			netdev_info(wlandev->netdev, "linkstatus=ASSOCFAIL (unhandled)\n");
+ 		}
+@@ -1501,7 +1499,7 @@ static void prism2sta_inf_assocstatus(struct wlandevice *wlandev,
+ 	if (i >= hw->authlist.cnt) {
+ 		if (rec.assocstatus != HFA384x_ASSOCSTATUS_AUTHFAIL)
+ 			netdev_warn(wlandev->netdev,
+-	"assocstatus info frame received for non-authenticated station.\n");
++				    "assocstatus info frame received for non-authenticated station.\n");
+ 	} else {
+ 		hw->authlist.assoc[i] =
+ 		    (rec.assocstatus == HFA384x_ASSOCSTATUS_STAASSOC ||
+@@ -1509,7 +1507,7 @@ static void prism2sta_inf_assocstatus(struct wlandevice *wlandev,
+ 
+ 		if (rec.assocstatus == HFA384x_ASSOCSTATUS_AUTHFAIL)
+ 			netdev_warn(wlandev->netdev,
+-"authfail assocstatus info frame received for authenticated station.\n");
++				    "authfail assocstatus info frame received for authenticated station.\n");
+ 	}
+ }
+ 
+@@ -1674,9 +1672,8 @@ static void prism2sta_inf_authreq_defer(struct wlandevice *wlandev,
+ 			if (hw->authlist.cnt >= WLAN_AUTH_MAX) {
+ 				rec.status = cpu_to_le16(P80211ENUM_status_ap_full);
+ 			} else {
+-				ether_addr_copy(
+-					hw->authlist.addr[hw->authlist.cnt],
+-					rec.address);
++				ether_addr_copy(hw->authlist.addr[hw->authlist.cnt],
++						rec.address);
+ 				hw->authlist.cnt++;
+ 				added = 1;
+ 			}
+@@ -1697,8 +1694,8 @@ static void prism2sta_inf_authreq_defer(struct wlandevice *wlandev,
+ 		if (added)
+ 			hw->authlist.cnt--;
+ 		netdev_err(wlandev->netdev,
+-		       "setconfig(authenticatestation) failed, result=%d\n",
+-		       result);
++			   "setconfig(authenticatestation) failed, result=%d\n",
++			   result);
+ 	}
+ }
+ 
+@@ -1937,9 +1934,8 @@ void prism2sta_commsqual_defer(struct work_struct *data)
+ 
+ 	/* It only makes sense to poll these in non-IBSS */
+ 	if (wlandev->macmode != WLAN_MACMODE_IBSS_STA) {
+-		result = hfa384x_drvr_getconfig(
+-				hw, HFA384x_RID_DBMCOMMSQUALITY,
+-				&hw->qual, HFA384x_RID_DBMCOMMSQUALITY_LEN);
++		result = hfa384x_drvr_getconfig(hw, HFA384x_RID_DBMCOMMSQUALITY,
++						&hw->qual, HFA384x_RID_DBMCOMMSQUALITY_LEN);
+ 
+ 		if (result) {
+ 			netdev_err(wlandev->netdev, "error fetching commsqual\n");
+-- 
+2.11.0
 
-Thanks you..
-
-Best regards,
-Ian
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
