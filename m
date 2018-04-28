@@ -1,56 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1759748AbeD1JWZ (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 28 Apr 2018 05:22:25 -0400
-Received: from mga09.intel.com ([134.134.136.24]:9689 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1759620AbeD1JWX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Apr 2018 05:22:23 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,338,1520924400";
-   d="scan'208";a="195094916"
-Date: Sat, 28 Apr 2018 17:21:22 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Jean-Jacques Hiblot <jjhiblot@ti.com>
-Cc: kbuild-all@01.org, broonie@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, perex@perex.cz, tiwai@suse.com,
-        dannenberg@ti.com, afd@ti.com, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jean-Jacques Hiblot <jjhiblot@ti.com>
-Subject: [RFC PATCH] ASoC: tas6424: diags_enum can be static
-Message-ID: <20180428092122.GA115601@ivytown2>
-References: <1524837349-16350-4-git-send-email-jjhiblot@ti.com>
+        id S1759742AbeD1JY7 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 28 Apr 2018 05:24:59 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:40887 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759622AbeD1JY5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Apr 2018 05:24:57 -0400
+From: Colin King <colin.king@canonical.com>
+To: Jiri Kosina <jikos@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
+        x86@kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] x86: apm: fix spelling mistake: "caculate" -> "calculate"
+Date: Sat, 28 Apr 2018 10:24:48 +0100
+Message-Id: <20180428092448.6493-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1524837349-16350-4-git-send-email-jjhiblot@ti.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: c9f4b53ff449 ("ASoC: tas6424: Allow disabling auto diagnostics for faster power-on")
-Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
+Trivial fix to spelling mistake in module parameter description text
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- tas6424.c |    2 +-
+ arch/x86/kernel/apm_32.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/tas6424.c b/sound/soc/codecs/tas6424.c
-index 8eb4842..8bca6b2 100644
---- a/sound/soc/codecs/tas6424.c
-+++ b/sound/soc/codecs/tas6424.c
-@@ -58,7 +58,7 @@ static DECLARE_TLV_DB_SCALE(dac_tlv, -10350, 50, 0);
- 
- static const char * const diags_enum_texts[] = {"OFF", "ON"};
- static unsigned int diags_enum_values[] = {1, 0};
--SOC_VALUE_ENUM_SINGLE_DECL(diags_enum, TAS6424_DC_DIAG_CTRL1,
-+static SOC_VALUE_ENUM_SINGLE_DECL(diags_enum, TAS6424_DC_DIAG_CTRL1,
- 			   TAS6424_LDGBYPASS_SHIFT, TAS6424_LDGBYPASS_MASK,
- 			   diags_enum_texts, diags_enum_values);
- 
+diff --git a/arch/x86/kernel/apm_32.c b/arch/x86/kernel/apm_32.c
+index dfcbe6924eaf..6b345f35f023 100644
+--- a/arch/x86/kernel/apm_32.c
++++ b/arch/x86/kernel/apm_32.c
+@@ -2446,7 +2446,7 @@ MODULE_PARM_DESC(idle_threshold,
+ 	"System idle percentage above which to make APM BIOS idle calls");
+ module_param(idle_period, int, 0444);
+ MODULE_PARM_DESC(idle_period,
+-	"Period (in sec/100) over which to caculate the idle percentage");
++	"Period (in sec/100) over which to calculate the idle percentage");
+ module_param(smp, bool, 0444);
+ MODULE_PARM_DESC(smp,
+ 	"Set this to enable APM use on an SMP platform. Use with caution on older systems");
+-- 
+2.17.0
