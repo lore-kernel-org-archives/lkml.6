@@ -1,67 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933011AbeD1Auc (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 20:50:32 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:39133 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754447AbeD1Aua (ORCPT
+        id S1759457AbeD1AxF (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 20:53:05 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:42238 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755617AbeD1AxD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 20:50:30 -0400
-X-Google-Smtp-Source: AB8JxZoreGjbV6cDRIixW7ej1XWvYwfHv8xAzk8r/pRuBwGfaHveHtKOBzTpK55xyTS1+QCHmV8L2g==
-From: frowand.list@gmail.com
-To: Rob Herring <robh+dt@kernel.org>, pantelis.antoniou@konsulko.com,
-        Pantelis Antoniou <panto@antoniou-consulting.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jan Kiszka <jan.kiszka@siemens.com>
-Subject: [PATCH] MAINTAINERS: add keyword for devicetree overlay notifiers
-Date: Fri, 27 Apr 2018 17:50:19 -0700
-Message-Id: <1524876619-26283-1-git-send-email-frowand.list@gmail.com>
-X-Mailer: git-send-email 1.9.1
+        Fri, 27 Apr 2018 20:53:03 -0400
+X-Google-Smtp-Source: AB8JxZouGcfH9f3LE1zdVraeTiOjdrkBBTpgoBsGCDsqcjfRM2jQSbVLcrE3QAdbB43ZiJUJDeOsHQ==
+Subject: Re: ed74ae0342 ("blk-mq: Avoid that a completion can be ignored .."):
+ BUG: kernel hang in test stage
+To: kernel test robot <lkp@intel.com>,
+        Bart Van Assche <bart.vanassche@wdc.com>
+Cc: LKP <lkp@01.org>, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org, wfg@linux.intel.com
+References: <5adf9ada.EgNO094GdvSdHQ3v%lkp@intel.com>
+From: Jens Axboe <axboe@kernel.dk>
+Message-ID: <07256b82-12b1-9ccf-c660-9dfbedfd3cac@kernel.dk>
+Date: Fri, 27 Apr 2018 18:52:58 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
+MIME-Version: 1.0
+In-Reply-To: <5adf9ada.EgNO094GdvSdHQ3v%lkp@intel.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Frank Rowand <frank.rowand@sony.com>
+On 4/24/18 3:00 PM, kernel test robot wrote:
+> Greetings,
+> 
+> 0day kernel testing robot got the below dmesg and the first bad commit is
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git for-linus
+> 
+> commit ed74ae03424684a6ad8a973c3fa727c6b4162432
+> Author:     Bart Van Assche <bart.vanassche@wdc.com>
+> AuthorDate: Thu Apr 19 09:43:53 2018 -0700
+> Commit:     Jens Axboe <axboe@kernel.dk>
+> CommitDate: Thu Apr 19 14:21:47 2018 -0600
+> 
+>     blk-mq: Avoid that a completion can be ignored for BLK_EH_RESET_TIMER
+>     
+>     The blk-mq timeout handling code ignores completions that occur after
+>     blk_mq_check_expired() has been called and before blk_mq_rq_timed_out()
+>     has reset rq->aborted_gstate. If a block driver timeout handler always
+>     returns BLK_EH_RESET_TIMER then the result will be that the request
+>     never terminates.
+>     
+>     Fix this race as follows:
+>     - Use the deadline instead of the request generation to detect whether
+>       or not a request timer fired after reinitialization of a request.
+>     - Store the request state in the lowest two bits of the deadline instead
+>       of the lowest two bits of 'gstate'.
+>     - Rename MQ_RQ_STATE_MASK into RQ_STATE_MASK and change it from an
+>       enumeration member into a #define such that its type can be changed
+>       into unsigned long. That allows to write & ~RQ_STATE_MASK instead of
+>       ~(unsigned long)RQ_STATE_MASK.
+>     - Remove all request member variables that became superfluous due to
+>       this change: gstate, gstate_seq and aborted_gstate_sync.
+>     - Remove the request state information that became superfluous due to this
+>       patch, namely RQF_MQ_TIMEOUT_EXPIRED.
+>     - Remove the code that became superfluous due to this change, namely
+>       the RCU lock and unlock statements in blk_mq_complete_request() and
+>       also the synchronize_rcu() call in the timeout handler.
 
-From: Frank Rowand <frowand.list@gmail.com>
+Any chance you can try with the newer version?
 
-Devicetree overlay notifiers have a chance to potentially get
-pointers into the overlay unflattened devicetree and overlay FDT.
-The only protection against these pointers being accessed after
-the underlying data has been released by kfree() is by source
-code review of patches.  Add a keyword line to the devicetree
-overlay maintainers entry to try to catch overlay notifier
-related patches.
+https://github.com/bvanassche/linux/commit/4acd555fa13087
 
-The keyword line is added to the devicetree overlay entry instead
-of the devicetree entry so that not all maintainers will receive
-the additional review traffic.  Add Frank Rowand (already a
-maintainer in the devicetree entry) so that he will receive
-the additional review traffic.
-
-Signed-off-by: Frank Rowand <frowand.list@gmail.com>
----
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 92be777d060a..aca3956694f8 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10422,12 +10422,14 @@ F:	drivers/infiniband/ulp/opa_vnic
- 
- OPEN FIRMWARE AND DEVICE TREE OVERLAYS
- M:	Pantelis Antoniou <pantelis.antoniou@konsulko.com>
-+M:	Frank Rowand <frowand.list@gmail.com>
- L:	devicetree@vger.kernel.org
- S:	Maintained
- F:	Documentation/devicetree/dynamic-resolution-notes.txt
- F:	Documentation/devicetree/overlay-notes.txt
- F:	drivers/of/overlay.c
- F:	drivers/of/resolver.c
-+K:	of_overlay_notifier_
- 
- OPEN FIRMWARE AND FLATTENED DEVICE TREE
- M:	Rob Herring <robh+dt@kernel.org>
 -- 
-Frank Rowand <frank.rowand@sony.com>
+Jens Axboe
