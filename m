@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933138AbeD1Qef (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 28 Apr 2018 12:34:35 -0400
-Received: from mo4-p03-ob.smtp.rzone.de ([81.169.146.172]:33559 "EHLO
-        mo4-p03-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759032AbeD1QeC (ORCPT
+        id S1758888AbeD1Qd6 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 28 Apr 2018 12:33:58 -0400
+Received: from mo4-p02-ob.smtp.rzone.de ([81.169.146.168]:8104 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758222AbeD1Qdz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Apr 2018 12:34:02 -0400
+        Sat, 28 Apr 2018 12:33:55 -0400
 X-RZG-AUTH: :JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNO4Ij0Nfzb0=
 X-RZG-CLASS-ID: mo00
 From: "H. Nikolaus Schaller" <hns@goldelico.com>
@@ -19,9 +19,9 @@ To: galak@codeaurora.org, andy.shevchenko@gmail.com,
 Cc: devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org,
         kernel@pyra-handheld.com, "H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH v5 6/7] DTS: Bindings: pca953x add an optional vcc-supply property
-Date: Sat, 28 Apr 2018 18:31:36 +0200
-Message-Id: <de4bade4236415f62088d68cd5fcd6fb7b67e020.1524933096.git.hns@goldelico.com>
+Subject: [PATCH v5 1/7] gpio: pca953x: convert register constants to hex
+Date: Sat, 28 Apr 2018 18:31:31 +0200
+Message-Id: <56bf53debf69534a452538e689dc15f94aea31a4.1524933096.git.hns@goldelico.com>
 X-Mailer: git-send-email 2.12.2
 In-Reply-To: <cover.1524933096.git.hns@goldelico.com>
 References: <cover.1524933096.git.hns@goldelico.com>
@@ -31,26 +31,58 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hardware can have a switchable Vcc supply, so let's add it to
-the bindings (the current Linux driver code already supports it).
+which makes it easier to match them with the data sheets.
 
 Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- Documentation/devicetree/bindings/gpio/gpio-pca953x.txt | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpio/gpio-pca953x.c | 32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt b/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
-index d2a937682836..6a7cddb187c1 100644
---- a/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
-+++ b/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
-@@ -35,6 +35,7 @@ Required properties:
- Optional properties:
-  - reset-gpios: GPIO specification for the RESET input. This is an
- 		active low signal to the PCA953x.
-+ - vcc-supply:	power supply regulator.
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index d02964983b5b..508d0f6dceb7 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -25,25 +25,25 @@
  
- Example:
+ #include <asm/unaligned.h>
  
+-#define PCA953X_INPUT		0
+-#define PCA953X_OUTPUT		1
+-#define PCA953X_INVERT		2
+-#define PCA953X_DIRECTION	3
++#define PCA953X_INPUT		0x00
++#define PCA953X_OUTPUT		0x01
++#define PCA953X_INVERT		0x02
++#define PCA953X_DIRECTION	0x03
+ 
+ #define REG_ADDR_AI		0x80
+ 
+-#define PCA957X_IN		0
+-#define PCA957X_INVRT		1
+-#define PCA957X_BKEN		2
+-#define PCA957X_PUPD		3
+-#define PCA957X_CFG		4
+-#define PCA957X_OUT		5
+-#define PCA957X_MSK		6
+-#define PCA957X_INTS		7
+-
+-#define PCAL953X_IN_LATCH	34
+-#define PCAL953X_INT_MASK	37
+-#define PCAL953X_INT_STAT	38
++#define PCA957X_IN		0x00
++#define PCA957X_INVRT		0x01
++#define PCA957X_BKEN		0x02
++#define PCA957X_PUPD		0x03
++#define PCA957X_CFG		0x04
++#define PCA957X_OUT		0x05
++#define PCA957X_MSK		0x06
++#define PCA957X_INTS		0x07
++
++#define PCAL953X_IN_LATCH	0x22
++#define PCAL953X_INT_MASK	0x25
++#define PCAL953X_INT_STAT	0x26
+ 
+ #define PCA_GPIO_MASK		0x00FF
+ #define PCA_INT			0x0100
 -- 
 2.12.2
