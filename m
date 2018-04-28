@@ -1,64 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751994AbeD1Vac (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 28 Apr 2018 17:30:32 -0400
-Received: from mout.gmx.net ([212.227.17.21]:35447 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751151AbeD1Vab (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Apr 2018 17:30:31 -0400
+        id S1752045AbeD1VmQ (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 28 Apr 2018 17:42:16 -0400
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:39388 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751572AbeD1VmO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Apr 2018 17:42:14 -0400
+X-Google-Smtp-Source: AB8JxZpnAJaBpWx7c6Wri/kpB6+8H4p33RK3y4+fwvQnyuFczbt7HaFdy828ecV2KEfwUC9CgLTTJ5xcmmzw7FRgst4=
 MIME-Version: 1.0
-Message-ID: <trinity-b6e4284e-0ab8-45f5-bf10-467f775e4d43-1524951029803@3c-app-gmx-bs73>
-From: "John Smith" <john-s-84@gmx.net>
-To: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3.18 18/52] HID: i2c-hid: fix size check and type usage
-Content-Type: text/plain; charset=UTF-8
-Date: Sat, 28 Apr 2018 23:30:29 +0200
-Importance: normal
-Sensitivity: Normal
-References: <trinity-0dcac895-4529-4180-924f-ccbb1284323c-1524949271985@3c-app-gmx-bs13>
- <trinity-bff38853-2a86-4917-a956-4688923718e1-1524949392271@3c-app-gmx-bs13>
- <trinity-89e26547-70eb-4dbb-a1f5-45ed0521f340-1524949740067@3c-app-gmx-bs73>
-X-UI-Message-Type: mail
-X-Priority: 3
-X-Provags-ID: V03:K1:Nc74xovWl5r4cXaAlZPIul9kAapsNt1obQ5eOqFk88G
- njXCYnyp1l2Dh1pMP2uE2C0Z/0HaznbwY7k+PO+9e/qMHVl72w
- cySaG06N6hwjejKuh6cP/40zU+ygQoAnJ4s/j/4d2I7LkJY8zg
- y87FWIFmulctxuwnTdtcPjO2s7vf7a1m+SKd/uyn+EBjr8oa7/
- WzWb5N9daU8HDp8zDy3bp7xptAN8cz8R1/ckwo0EhzmeAZktR/
- eT6j/G+gNBGj4CKDixRKwR4afls9a6Zvx/vZEqMJ2vqIa86Olv JRioyk=
-X-UI-Out-Filterresults: notjunk:1;V01:K0:6aOZK9UNsyM=:RxjnPZgs2Gk+5DTcxUDoe+
- YCHK/HO+JmZu3RNFze/PPnDq+L2jloUpOfoOFllmcX2uruFVUUn+9rIGbD2ZVi479z2ODv3pS
- HB6KrnFfaNZa4a6QYS87rBCKD7ZoPkXvWCRYh+tlTqXXgt/7SFF6hgWeIrOpQm+c4F5CZVRcy
- nBp1XzTVZzupdMmJLdg6bunIxiMrLwTPGMyRiZLiFSCH38a3DmfdHmcMCOV61rCNoj4arsNEJ
- EplvyIszJH7mQpSiiSPBcFCLZeVYZh2S5UOc0TnI8UTgEpqJvo54LrFv1dW/e9zAXUeRTF7la
- CfnImZdN/qxChRZQX31iWV9AKWlfJmrMavc+yEC4Qpcv/kVtpHTakh06jLCPXyYgKAaTJraoi
- imwecAcMQD9X0zKvyfxMyFnqiZ04Q+BivMd+tioWlxbn5LtNv/LwpVmDKdWGu1kP2IM60C+fO
- dP+l8prKk/z1Hr0/tZYPJkhSpKso+hY9wdywuChDu4UxFr1Umswc
+In-Reply-To: <bd125268-a685-ba6e-efc4-130a0621855f@infradead.org>
+References: <CAG=yYwnMXFxHxCnYNWCb-HhpAb21kc5_e_6q-N_DRGhMVurPMQ@mail.gmail.com>
+ <bd125268-a685-ba6e-efc4-130a0621855f@infradead.org>
+From: Jeffrin Thalakkottoor <jeffrin@rajagiritech.edu.in>
+Date: Sun, 29 Apr 2018 03:12:12 +0530
+Message-ID: <CAG=yYwnq1KwAmKL5t=KFTMcRY9rDFM_5XBDNpbvzM-8J-U7TKQ@mail.gmail.com>
+Subject: Re: PROBLEM: error due to conflicting types during build of kselftests
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: lkml <linux-kernel@vger.kernel.org>, linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3SLgQ0C023780
 
-> - if (ret_size > size) {
-> + if ((ret_size > size) || (ret_size <= 2)) {
-> dev_err(&ihid->client->dev, "%s: incomplete report (%d/%d)\n",
-> __func__, size, ret_size);
-> return;
+anyway my current is gcc (Debian 7.3.0-16) 7.3.0
+
+may be you can try ... make -C tools/testing/selftests 2> error.txt
+
+On Sat, Apr 28, 2018 at 5:08 AM, Randy Dunlap <rdunlap@infradead.org> wrote:
+> On 04/20/2018 11:03 AM, Jeffrin Thalakkottoor wrote:
+>> hello,
+>>
+>> the following is the error found...
+>> -----------------------------------------------------------------------------------
+>> protection_keys.c:421:5: error: conflicting types for ‘pkey_set’
+>>  int pkey_set(int pkey, unsigned long rights, unsigned long flags)
+>>      ^~~~~~~~
+>> ------------------------------------------------------------------------------------
+>>
+>> to reproduce this error...
+>> make -C tools/testing/selftests
+>
+> Hi,
+>
+> I can't reproduce this problem.  What is your gcc --version?
+>
+> Thanks.
+>
+>> Details about software:
+>>
+>> Linux debian 4.17.0-rc1+ #1 SMP Thu Apr 19 18:59:45 IST 2018 x86_64 GNU/Linux
+>>
+>> GNU Make             4.2.1
+>> Binutils             2.30
+>> Util-linux           2.31.1
+>> Mount                2.31.1
+>> Linux C Library      2.27
+>> Dynamic linker (ldd) 2.27
+>> readlink: missing operand
+>> Try 'readlink --help' for more information.
+>> Procps               3.3.14
+>> Kbd                  2.0.4
+>> Console-tools        2.0.4
+>> Sh-utils             8.28
+>> Udev                 238
+>>
+>
+>
+> --
+> ~Randy
 
 
-This change spams in the dmesg output. Could you please undo this change? Or
 
-- if ((ret_size > size) || (ret_size <= 2)) {
-+ if ((ret_size > size) || (ret_size < 2)) {
-
-
-$ dmesg
-
-[ 1781.266353] i2c_hid i2c-ALP0017:00: i2c_hid_get_input: incomplete report (30/2)
-[ 1781.273898] i2c_hid i2c-ALP0017:00: i2c_hid_get_input: incomplete report (30/2)
-[ 1781.281464] i2c_hid i2c-ALP0017:00: i2c_hid_get_input: incomplete report (30/2)
-[ 1781.289064] i2c_hid i2c-ALP0017:00: i2c_hid_get_input: incomplete report (30/2)
-[ 1781.296607] i2c_hid i2c-ALP0017:00: i2c_hid_get_input: incomplete report (30/2)
-[ 1781.304131] i2c_hid i2c-ALP0017:00: i2c_hid_get_input: incomplete report (30/2)
-[ 1781.311751] i2c_hid i2c-ALP0017:00: i2c_hid_get_input: incomplete report (30/2)
-[ 1781.319315] i2c_hid i2c-ALP0017:00: i2c_hid_get_input: incomplete report (30/2)
-[ 1781.326882] i2c_hid i2c-ALP0017:00: i2c_hid_get_input: incomplete report (30/2)
+-- 
+software engineer
+rajagiri school of engineering and technology
