@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752143AbeD1WWC (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 28 Apr 2018 18:22:02 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:46635 "EHLO
+        id S1752343AbeD1WbN (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 28 Apr 2018 18:31:13 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:46692 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751310AbeD1WWB (ORCPT
+        with ESMTP id S1751602AbeD1WbL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Apr 2018 18:22:01 -0400
+        Sat, 28 Apr 2018 18:31:11 -0400
 From: Colin King <colin.king@canonical.com>
-To: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>,
-        Rex Zhu <Rex.Zhu@amd.com>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
+To: Stanislav Yakovlev <stas.yakovlev@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/amd/powerplay: fix spelling mistake: "contruct" -> "construct"
-Date: Sat, 28 Apr 2018 23:21:55 +0100
-Message-Id: <20180428222155.20242-1-colin.king@canonical.com>
+Subject: [PATCH] wireless: ipw2100: fix spelling mistake: "decsribed" -> "described"
+Date: Sat, 28 Apr 2018 23:31:08 +0100
+Message-Id: <20180428223108.20458-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -26,39 +25,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Trivial fix to spelling mistake in PP_ASSERT_WITH_CODE message text
+Trivial fix to spelling mistake in comment and in the ord_data text
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c   | 2 +-
- drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c | 2 +-
+ drivers/net/wireless/intel/ipw2x00/ipw2100.c | 2 +-
+ drivers/net/wireless/intel/ipw2x00/ipw2100.h | 2 +-
  2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
-index 26fbeafc3c96..726994cf03ea 100644
---- a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
-+++ b/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
-@@ -1229,7 +1229,7 @@ static int smu7_enable_dpm_tasks(struct pp_hwmgr *hwmgr)
- 
- 		tmp_result = smu7_construct_voltage_tables(hwmgr);
- 		PP_ASSERT_WITH_CODE((0 == tmp_result),
--				"Failed to contruct voltage tables!",
-+				"Failed to construct voltage tables!",
- 				result = tmp_result);
- 	}
- 	smum_initialize_mc_reg_table(hwmgr);
-diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c
-index 7cbb56ba6fab..ced1c2aab7a9 100644
---- a/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c
-+++ b/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c
-@@ -2829,7 +2829,7 @@ static int vega10_enable_dpm_tasks(struct pp_hwmgr *hwmgr)
- 
- 	tmp_result = vega10_construct_voltage_tables(hwmgr);
- 	PP_ASSERT_WITH_CODE(!tmp_result,
--			"Failed to contruct voltage tables!",
-+			"Failed to construct voltage tables!",
- 			result = tmp_result);
- 
- 	tmp_result = vega10_init_smc_table(hwmgr);
+diff --git a/drivers/net/wireless/intel/ipw2x00/ipw2100.c b/drivers/net/wireless/intel/ipw2x00/ipw2100.c
+index 236b52423506..7c4f550a1475 100644
+--- a/drivers/net/wireless/intel/ipw2x00/ipw2100.c
++++ b/drivers/net/wireless/intel/ipw2x00/ipw2100.c
+@@ -3732,7 +3732,7 @@ IPW2100_ORD(STAT_TX_HOST_REQUESTS, "requested Host Tx's (MSDU)"),
+ 	    IPW2100_ORD(ASSOCIATED_AP_PTR,
+ 				"0 if not associated, else pointer to AP table entry"),
+ 	    IPW2100_ORD(AVAILABLE_AP_CNT,
+-				"AP's decsribed in the AP table"),
++				"AP's described in the AP table"),
+ 	    IPW2100_ORD(AP_LIST_PTR, "Ptr to list of available APs"),
+ 	    IPW2100_ORD(STAT_AP_ASSNS, "associations"),
+ 	    IPW2100_ORD(STAT_ASSN_FAIL, "association failures"),
+diff --git a/drivers/net/wireless/intel/ipw2x00/ipw2100.h b/drivers/net/wireless/intel/ipw2x00/ipw2100.h
+index 193947865efd..ce3e35f6b60f 100644
+--- a/drivers/net/wireless/intel/ipw2x00/ipw2100.h
++++ b/drivers/net/wireless/intel/ipw2x00/ipw2100.h
+@@ -1009,7 +1009,7 @@ typedef enum _ORDINAL_TABLE_1 {	// NS - means Not Supported by FW
+ 	IPW_ORD_STAT_PERCENT_RETRIES,	// current calculation of % missed tx retries
+ 	IPW_ORD_ASSOCIATED_AP_PTR,	// If associated, this is ptr to the associated
+ 	// AP table entry. set to 0 if not associated
+-	IPW_ORD_AVAILABLE_AP_CNT,	// # of AP's decsribed in the AP table
++	IPW_ORD_AVAILABLE_AP_CNT,	// # of AP's described in the AP table
+ 	IPW_ORD_AP_LIST_PTR,	// Ptr to list of available APs
+ 	IPW_ORD_STAT_AP_ASSNS,	// # of associations
+ 	IPW_ORD_STAT_ASSN_FAIL,	// # of association failures
 -- 
 2.17.0
