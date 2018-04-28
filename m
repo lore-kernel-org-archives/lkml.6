@@ -1,117 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933517AbeD1NDM (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 28 Apr 2018 09:03:12 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:41158 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933450AbeD1NDK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Apr 2018 09:03:10 -0400
+        id S933539AbeD1NMa (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 28 Apr 2018 09:12:30 -0400
+Received: from sauhun.de ([88.99.104.3]:57820 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933450AbeD1NM3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Apr 2018 09:12:29 -0400
+Date: Sat, 28 Apr 2018 15:12:27 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Ryder Lee <ryder.lee@mediatek.com>
+Cc: Jun Gao <jun.gao@mediatek.com>, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] i2c: mediatek: use of_device_get_match_data()
+Message-ID: <20180428131227.u7cuvdhuo3dahsdt@ninjato>
+References: <31f944ab8dfcc1d7b6f03b35657a2a34825b5246.1523347340.git.ryder.lee@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Sat, 28 Apr 2018 09:03:09 -0400
-From: okaya@codeaurora.org
-To: Dave Young <dyoung@redhat.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, linux-pci@vger.kernel.org,
-        Paul Menzel <pmenzel+linux-pci@molgen.mpg.de>,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Lukas Wunner <lukas@wunner.de>, Eric Biederman <ebiederm@xmission.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, Vivek Goyal <vgoyal@redhat.com>
-Subject: Re: pciehp 0000:00:1c.0:pcie004: Timeout on hotplug command 0x1038
- (issued 65284 msec ago)
-In-Reply-To: <20180428011845.GC1675@dhcp-128-65.nay.redhat.com>
-References: <8770820b-85a0-172b-7230-3a44524e6c9f@molgen.mpg.de>
- <20180427192207.GG8199@bhelgaas-glaptop.roam.corp.google.com>
- <b62c2a8e-fe14-6d7d-147c-0ce3b0c0ab2f@codeaurora.org>
- <20180427211255.GI8199@bhelgaas-glaptop.roam.corp.google.com>
- <20180428005620.GB1675@dhcp-128-65.nay.redhat.com>
- <20180428011845.GC1675@dhcp-128-65.nay.redhat.com>
-Message-ID: <3ebc908fb196168bf0373875ffc5679e@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="elwt6h2lmsgibred"
+Content-Disposition: inline
+In-Reply-To: <31f944ab8dfcc1d7b6f03b35657a2a34825b5246.1523347340.git.ryder.lee@mediatek.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-04-27 21:18, Dave Young wrote:
-> On 04/28/18 at 08:56am, Dave Young wrote:
->> On 04/27/18 at 04:12pm, Bjorn Helgaas wrote:
->> > [+cc Eric, Vivek, kexec list]
->> >
->> > On Fri, Apr 27, 2018 at 03:34:30PM -0400, Sinan Kaya wrote:
->> > > On 4/27/2018 3:22 PM, Bjorn Helgaas wrote:
->> > > > Sinan mooted the idea of using a "no-wait" path of sending the "don't
->> > > > generate hotplug interrupts" command.  I think we should work on this
->> > > > idea a little more.  If we're shutting down the whole system, I can't
->> > > > believe there's much value in *anything* we do in the pciehp_remove()
->> > > > path.
->> > > >
->> > > > Maybe we should just get rid of pciehp_remove() (and probably
->> > > > pcie_port_remove_service() and the other service driver remove methods)
->> > > > completely.  That dates from when the service drivers could be modules that
-> 
-> Hmm, if it is the remove() method then kexec does not use it.  kexec 
-> use
-> the shutdown() method instead.  I missed this details when I replied.
 
-Portdrv hooks up remove handler to shutdown. That's why remove is 
-getting called.
+--elwt6h2lmsgibred
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
->> > > > could be potentially unloaded, but unloading them hasn't been possible for
->> > > > years.
->> > >
->> > > Shutdown path is also used for kexec. Leaving hotplug interrupts
->> > > pending is dangerous for the newly loaded kernel as it leaves
->> > > spurious interrupts during the new kernel boot.
->> > >
->> > > I think we should always disable the hotplug interrupt on shutdown.
->> > > We might think of not waiting for command-completion as a
->> > > middle-ground or go to polling path instead of interrupts all the
->> > > time.
->> >
->> > Ah, I forgot about the kexec path.  The kexec path is used for
->> > crashdump, too, so ideally the newly-loaded kernel would defend itself
->> > when possible so it doesn't depend on the original kernel doing things
->> > correctly.
->> 
->> It is true for kdump.  But kexec needs device shutdown.
->> 
->> >
->> > Seems like this question of whether to do things in the original
->> > kernel or the kexec-ed kernel comes up periodically, but I can never
->> > remember a definitive answer.  My initial reaction is that it'd be
->> > nice if we didn't have to do *any* shutdown in the original kernel,
->> > but I'm sure there are reasons that's not practical.
->> 
->> Devices sometimes assume it is in a good state initialized in firmware 
->> boot
->> phase, so we need a shutdown in 1st kernel so that kexec kernel can 
->> boot
->> correctly for those devices.  For kdump since kernel already panicked
->> and it is not reliable so we do as less as we can in the 1st kernel
->> crash path, but there are some special handling for kdump in various 
->> drivers
->> to reset the devices in 2nd kernel, eg. when it see "reset_devices" 
->> kernel parameter.
->> 
->> >
->> > I copied Eric (kexec maintainer) and Vivek (contact listed in
->> > Documentation/kdump/kdump.txt) in case they have suggestions or would
->> > consider some sort of Documentation/ update.
->> >
->> > Bjorn
->> >
->> > _______________________________________________
->> > kexec mailing list
->> > kexec@lists.infradead.org
->> > http://lists.infradead.org/mailman/listinfo/kexec
->> 
->> Thanks
->> Dave
->> 
->> _______________________________________________
->> kexec mailing list
->> kexec@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/kexec
+On Mon, Apr 16, 2018 at 10:32:52AM +0800, Ryder Lee wrote:
+> The usage of of_device_get_match_data() reduce the code size a bit.
+>=20
+> Also, the only way to call mtk_i2c_probe() is to match an entry in
+> mtk_i2c_of_match[], so of_id cannot be NULL.
+>=20
+> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+
+Applied to for-next, thanks!
+
+Does somebody from Mediatek maybe want to maintain this driver?
+
+
+--elwt6h2lmsgibred
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlrkczcACgkQFA3kzBSg
+KbbwoQ/+KCYGO5O5SkhaWxtb6akUXQgTnvnsoBHa66kJugWnzMyHIVwxCS6hBhRw
+qMtiZ2kiaoQfg+2JNhr2va1a7k+sQBV7xNjMkVJjKwvXEiYsFqOjSMOkf9q+8nAZ
+eTegPYX4f4lcdW5ObBP0GlekMywa29/I7VjfqjPjL462XeCp38aO3dATUomuZcmz
+770Ndja8cEfzO/PCulmGvF9ca/nC8Z1edsxo9YWcWL9+ylGMEfHdByk7njBrmVL1
+4nGkPhLq3sRssrjXKxiHT3S6QcJVSwJAd+zU7vq/kBm16ddpQEacAyeCGghr9RUt
+Kttd1THKLeYdYoamim/I//9UCNZG8eiuQxYNQbYIu1III3QYoxh6hpIqcUS8rene
+o9mKokCxLjEfD8ukzorO/+MbXfFdkUHbQUcnUkYrHGitDpg4fCILFovf9DNJWuO4
++F9PijySeWCD3sEQ/xZR/zm5dVcUe/N4K4p5QIZZSq+ZFFrcbooMSN4JmceUn/E1
+wexz+hBVcsa3h2S6CspDWt7yCZIRoRRiB2TBQo4NswaUX60okf8A+4mpu6ndqFau
+x8FOOk6INLThEvLDxjfuAgxw98piC944eWx3T6oLnT3qz6m+lNKynWOgIhWR2b2w
+QBF+IcqJJFowGzu3hlwcCk2ET5ha2j0PAj78iPZfUUxS8OSlSDM=
+=9Ftn
+-----END PGP SIGNATURE-----
+
+--elwt6h2lmsgibred--
