@@ -1,106 +1,144 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752539AbeD1F1C (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 28 Apr 2018 01:27:02 -0400
-Received: from mail-pg0-f54.google.com ([74.125.83.54]:35312 "EHLO
-        mail-pg0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751303AbeD1F1A (ORCPT
+        id S1752601AbeD1F3P (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 28 Apr 2018 01:29:15 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:42914 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751303AbeD1F3N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Apr 2018 01:27:00 -0400
-X-Google-Smtp-Source: AB8JxZoBB8DYpkfjcGklt/wUiqmuCR7olgN1Mp34q36rPaIHkO9IMRu0GFbt8Ppbi6V/6IN1asJ0fBUwHpaQroFuNWY=
+        Sat, 28 Apr 2018 01:29:13 -0400
+X-Google-Smtp-Source: AB8JxZph3daCjpt88t+3hliETbRMgl7IB70n6ZTpHLiibNXYYrX0UXXKhUUrblZqywqHj+B6xQiIqg==
+Date: Sat, 28 Apr 2018 13:29:17 +0800
+From: Wang YanQing <udknight@gmail.com>
+To: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, ast@kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] bpf: fix misaligned access for BPF_PROG_TYPE_PERF_EVENT
+ program type on x86_32 platform
+Message-ID: <20180428052917.GA1579@udknight>
+Mail-Followup-To: Wang YanQing <udknight@gmail.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, ast@kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180426095749.GA29207@udknight>
+ <20180427224854.2g7ximim7nwkgdpd@ast-mbp>
+ <c62438dd-2e2e-8c70-aa19-37d5173d76d1@iogearbox.net>
 MIME-Version: 1.0
-In-Reply-To: <736468DE-36BE-471B-B5F2-DB3D0B3E892B@dilger.ca>
-References: <CAH2r5mtRF-yS6stThuVzem+WFmxDqpGLwFvUPviYcmh9dXXwkA@mail.gmail.com>
- <EFCB08E9-C9B9-41AC-A398-4D552FC8EFC9@dilger.ca> <20180427234126.GA213261@gmail.com>
- <736468DE-36BE-471B-B5F2-DB3D0B3E892B@dilger.ca>
-From: Steve French <smfrench@gmail.com>
-Date: Sat, 28 Apr 2018 00:26:38 -0500
-Message-ID: <CAH2r5mv7nxfgdr_rgk6oRLPN9UhXKDnU6n1PP9hu6r-X1E+iHg@mail.gmail.com>
-Subject: Re: copy_file_range and user space tools to do copy fastest
-To: Andreas Dilger <adilger@dilger.ca>
-Cc: Eric Biggers <ebiggers3@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        samba-technical <samba-technical@lists.samba.org>,
-        CIFS <linux-cifs@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c62438dd-2e2e-8c70-aa19-37d5173d76d1@iogearbox.net>
+User-Agent: Mutt/1.7.1 (2016-10-04)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Apr 28, 2018 at 12:18 AM, Andreas Dilger <adilger@dilger.ca> wrote:
-> On Apr 27, 2018, at 5:41 PM, Eric Biggers <ebiggers3@gmail.com> wrote:
->>
->> On Fri, Apr 27, 2018 at 01:45:40PM -0600, Andreas Dilger wrote:
->>> On Apr 27, 2018, at 12:25 PM, Steve French <smfrench@gmail.com> wrote:
->>>>
->>>> Are there any user space tools (other than our test tools and xfs_io
->>>> etc.) that support copy_file_range?  Looks like at least cp and rsync
->>>> and dd don't.  That syscall which now has been around a couple years,
->>>> and was reminded about at the LSF/MM summit a few days ago, presumably
->>>> is the 'best' way to copy a file fast since it tries all the
->>>> mechanisms (reflink etc.) in order.
->>>>
->>>> Since copy_file_range syscall can be 100x or more faster for network
->>>> file systems than the alternative, was surprised when I noticed that
->>>> cp and rsync didn't support it.  It doesn't look like rsync even
->>>> supports reflink either(although presumably if you call
->>>> copy_file_range you don't have to worry about that), and reads/writes
->>>> are 8K. See copy_file() in rsync/util.c
->>>>
->>>> In the cp command it looks like it can call the FICLONE IOCTL (see
->>>> clone_file() in coreutils/src/copy.c) but doesn't call the expected
->>>> "copy_file_range" syscall.
->>>>
->>>> In the dd command it doesn't call either - see dd_copy in corutils/src/dd.c
->>>>
->>>> Since it can be 100x or more faster in some cases to call
->>>> copy_file_range than do reads/writes back and forth to do a copy
->>>> (especially if network or clustered backend or cloud), what tools are
->>>> the best to recommend?
->>>>
->>>> Would rsync or cp be likely to take patches to call the standard
->>>> "copy_file_range" syscall
->>>> (http://man7.org/linux/man-pages/man2/copy_file_range.2.html)?
->>>> Presumably not if it has been two+ years ... but would be interested
->>>> what copy tools to recommend to use instead.
->>>
->>> I would start with submitting a patch to coreutils, if you can figure
->>> out that code enough to do so (I find it quite opaque).  Since it has
->>> been in the kernel for a while already, it should be acceptable to the
->>> upstream coreutils maintainers to use this interface.  Doubly so if you
->>> include some benchmarks with CIFS/NFS clients avoiding network overhead
->>> during the copy.
->>>
->>
->> For cp (coreutils), apparently there was a concern that copy_file_range()
->> expands holes; see the thread at
->> https://lists.gnu.org/archive/html/bug-coreutils/2016-09/msg00020.html.
->> Though, I'd think it could just be used on non-holes only.  And I don't think
->> the size_t type of 'len' is a problem either, since it's the copy length, not
->> the file size.  You just call it multiple times if the file is larger.
->
-> I think cp is already using SEEK_HOLE/SEEK_DATA and/or FIEMAP to determine
-> the mapped and sparse segments of the file, so it should be practical to
-> use copy_file_range() in conjunction with these to copy only the allocated
-> parts of the file.
+On Sat, Apr 28, 2018 at 01:33:15AM +0200, Daniel Borkmann wrote:
+> On 04/28/2018 12:48 AM, Alexei Starovoitov wrote:
+> > On Thu, Apr 26, 2018 at 05:57:49PM +0800, Wang YanQing wrote:
+> >> All the testcases for BPF_PROG_TYPE_PERF_EVENT program type in
+> >> test_verifier(kselftest) report below errors on x86_32:
+> >> "
+> >> 172/p unpriv: spill/fill of different pointers ldx FAIL
+> >> Unexpected error message!
+> >> 0: (bf) r6 = r10
+> >> 1: (07) r6 += -8
+> >> 2: (15) if r1 == 0x0 goto pc+3
+> >> R1=ctx(id=0,off=0,imm=0) R6=fp-8,call_-1 R10=fp0,call_-1
+> >> 3: (bf) r2 = r10
+> >> 4: (07) r2 += -76
+> >> 5: (7b) *(u64 *)(r6 +0) = r2
+> >> 6: (55) if r1 != 0x0 goto pc+1
+> >> R1=ctx(id=0,off=0,imm=0) R2=fp-76,call_-1 R6=fp-8,call_-1 R10=fp0,call_-1 fp-8=fp
+> >> 7: (7b) *(u64 *)(r6 +0) = r1
+> >> 8: (79) r1 = *(u64 *)(r6 +0)
+> >> 9: (79) r1 = *(u64 *)(r1 +68)
+> >> invalid bpf_context access off=68 size=8
+> >>
+> >> 378/p check bpf_perf_event_data->sample_period byte load permitted FAIL
+> >> Failed to load prog 'Permission denied'!
+> >> 0: (b7) r0 = 0
+> >> 1: (71) r0 = *(u8 *)(r1 +68)
+> >> invalid bpf_context access off=68 size=1
+> >>
+> >> 379/p check bpf_perf_event_data->sample_period half load permitted FAIL
+> >> Failed to load prog 'Permission denied'!
+> >> 0: (b7) r0 = 0
+> >> 1: (69) r0 = *(u16 *)(r1 +68)
+> >> invalid bpf_context access off=68 size=2
+> >>
+> >> 380/p check bpf_perf_event_data->sample_period word load permitted FAIL
+> >> Failed to load prog 'Permission denied'!
+> >> 0: (b7) r0 = 0
+> >> 1: (61) r0 = *(u32 *)(r1 +68)
+> >> invalid bpf_context access off=68 size=4
+> >>
+> >> 381/p check bpf_perf_event_data->sample_period dword load permitted FAIL
+> >> Failed to load prog 'Permission denied'!
+> >> 0: (b7) r0 = 0
+> >> 1: (79) r0 = *(u64 *)(r1 +68)
+> >> invalid bpf_context access off=68 size=8
+> >> "
+> >>
+> >> This patch fix it, the fix isn't only necessary for x86_32, it will fix the
+> >> same problem for other platforms too, if their size of bpf_user_pt_regs_t
+> >> can't divide exactly into 8.
+> >>
+> >> Signed-off-by: Wang YanQing <udknight@gmail.com>
+> >> ---
+> >>  Hi all!
+> >>  After mainline accept this patch, then we need to submit a sync patch
+> >>  to update the tools/include/uapi/linux/bpf_perf_event.h.
+> >>
+> >>  Thanks.
+> >>
+> >>  include/uapi/linux/bpf_perf_event.h | 2 +-
+> >>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >> diff --git a/include/uapi/linux/bpf_perf_event.h b/include/uapi/linux/bpf_perf_event.h
+> >> index eb1b9d2..ff4c092 100644
+> >> --- a/include/uapi/linux/bpf_perf_event.h
+> >> +++ b/include/uapi/linux/bpf_perf_event.h
+> >> @@ -12,7 +12,7 @@
+> >>  
+> >>  struct bpf_perf_event_data {
+> >>  	bpf_user_pt_regs_t regs;
+> >> -	__u64 sample_period;
+> >> +	__u64 sample_period __attribute__((aligned(8)));
+> > 
+> > I don't think this necessary.
+> > imo it's a bug in pe_prog_is_valid_access
+> > that should have allowed 8-byte access to 4-byte aligned sample_period.
+> > The access rewritten by pe_prog_convert_ctx_access anyway,
+> > no alignment issues as far as I can see.
+> 
+> Right, good point. Wang, could you give the below a test run:
+> 
+> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+> index 56ba0f2..95b9142 100644
+> --- a/kernel/trace/bpf_trace.c
+> +++ b/kernel/trace/bpf_trace.c
+> @@ -833,8 +833,14 @@ static bool pe_prog_is_valid_access(int off, int size, enum bpf_access_type type
+>  		return false;
+>  	if (type != BPF_READ)
+>  		return false;
+> -	if (off % size != 0)
+> -		return false;
+> +	if (off % size != 0) {
+> +		if (sizeof(long) != 4)
+> +			return false;
+> +		if (size != 8)
+> +			return false;
+> +		if (off % size != 4)
+> +			return false;
+> +	}
+> 
+>  	switch (off) {
+>  	case bpf_ctx_range(struct bpf_perf_event_data, sample_period):
+Hi all!
 
-For the case where clone/reflink or copy_file_range is supported - is
-there any reason to
-not sent the request to copy the whole file? Presumably long
-timeout/errors might be a concern, but
-that could happen with ranges too.  In any case, if sent the whole
-file copy request,
-the server file system can figure out the  holes and copy more efficiently.
+I have tested this patch, but test_verifier reports the same errors
+for the five testcases.
 
-In the case where it is copying local to remote or remote to local -
-figuring out whether it is
-sparse and optimizing makes a lot of sense - but I didn't think cp did
-that (at least the
-sections of code I was looking at).
+The reason is they all failed to pass the test of bpf_ctx_narrow_access_ok.
 
-
-
--- 
-Thanks,
-
-Steve
+Thanks.
