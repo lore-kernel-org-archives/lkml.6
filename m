@@ -1,58 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1759624AbeD1HuR (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 28 Apr 2018 03:50:17 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:41233 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752688AbeD1HuP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Apr 2018 03:50:15 -0400
-From: YueHaibing <yuehaibing@huawei.com>
-To: <wg@grandegger.com>, <mkl@pengutronix.de>
-CC: <netdev@vger.kernel.org>, <linux-can@vger.kernel.org>,
-        <davem@davemloft.net>, <linux-kernel@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH net-next] can: dev:  use skb_put_zero to simplfy code
-Date: Sat, 28 Apr 2018 15:49:57 +0800
-Message-ID: <20180428074957.17084-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1759627AbeD1IFa (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 28 Apr 2018 04:05:30 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:56710 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753174AbeD1IF1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Apr 2018 04:05:27 -0400
+Date: Sat, 28 Apr 2018 16:05:17 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Subject: Crypto Fixes for 4.17
+Message-ID: <20180428080517.haxgpvqrwgotakyo@gondor.apana.org.au>
+References: <20161119102748.GA4277@gondor.apana.org.au>
+ <20161213132414.GA7898@gondor.apana.org.au>
+ <20170223125141.GA17400@gondor.apana.org.au>
+ <20170714141855.GA29426@gondor.apana.org.au>
+ <20170922084401.GA15541@gondor.apana.org.au>
+ <20171128230929.GA17783@gondor.apana.org.au>
+ <20171222064931.GA27068@gondor.apana.org.au>
+ <20180105073808.GA14405@gondor.apana.org.au>
+ <20180212031702.GA26153@gondor.apana.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180212031702.GA26153@gondor.apana.org.au>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-use helper skb_put_zero to replace the pattern of skb_put() && memset()
+Hi Linus: 
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/net/can/dev.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+This push fixes the following issues:
 
-diff --git a/drivers/net/can/dev.c b/drivers/net/can/dev.c
-index b177956..d8140a9 100644
---- a/drivers/net/can/dev.c
-+++ b/drivers/net/can/dev.c
-@@ -649,8 +649,7 @@ struct sk_buff *alloc_can_skb(struct net_device *dev, struct can_frame **cf)
- 	can_skb_prv(skb)->ifindex = dev->ifindex;
- 	can_skb_prv(skb)->skbcnt = 0;
- 
--	*cf = skb_put(skb, sizeof(struct can_frame));
--	memset(*cf, 0, sizeof(struct can_frame));
-+	*cf = skb_put_zero(skb, sizeof(struct can_frame));
- 
- 	return skb;
- }
-@@ -678,8 +677,7 @@ struct sk_buff *alloc_canfd_skb(struct net_device *dev,
- 	can_skb_prv(skb)->ifindex = dev->ifindex;
- 	can_skb_prv(skb)->skbcnt = 0;
- 
--	*cfd = skb_put(skb, sizeof(struct canfd_frame));
--	memset(*cfd, 0, sizeof(struct canfd_frame));
-+	*cfd = skb_put_zero(skb, sizeof(struct canfd_frame));
- 
- 	return skb;
- }
+- Crypto API regression that may cause sporadic alloc failures.
+- Double-free bug in drbg.
+
+
+Please pull from
+
+git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git linus
+
+
+Eric Biggers (1):
+      crypto: api - fix finding algorithm currently being tested
+
+Stephan Mueller (1):
+      crypto: drbg - set freed buffers to NULL
+
+ crypto/api.c  |   11 ++++++++---
+ crypto/drbg.c |    2 ++
+ 2 files changed, 10 insertions(+), 3 deletions(-)
+
+Thanks,
 -- 
-2.7.0
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
