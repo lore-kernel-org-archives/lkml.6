@@ -1,61 +1,234 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1759469AbeD1CE2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 22:04:28 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:48608 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759215AbeD1CE1 (ORCPT
+        id S933245AbeD1CVU (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 22:21:20 -0400
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:34894 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759490AbeD1CVS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 22:04:27 -0400
-Subject: Re: [PATCH] documentation: core-api: rearrange a few kernel-api
- chapters and sections
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <f05c8785-e9e1-0a5e-b362-50669b75d80b@infradead.org>
- <20180427171712.4e09233a@lwn.net>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <3b6a2a91-2921-0e34-6f80-2f2726d96977@infradead.org>
-Date: Fri, 27 Apr 2018 19:04:23 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Fri, 27 Apr 2018 22:21:18 -0400
+From: Yixun Lan <yixun.lan@amlogic.com>
+To: "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>
+CC: Yixun Lan <yixun.lan@amlogic.com>, Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 2/2] net: stmmac: dwmac-meson: extend phy mode setting
+Date: Sat, 28 Apr 2018 10:21:11 +0000
+Message-ID: <20180428102111.18384-3-yixun.lan@amlogic.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180428102111.18384-1-yixun.lan@amlogic.com>
+References: <20180428102111.18384-1-yixun.lan@amlogic.com>
 MIME-Version: 1.0
-In-Reply-To: <20180427171712.4e09233a@lwn.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.18.20.250]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/27/2018 04:17 PM, Jonathan Corbet wrote:
-> On Thu, 26 Apr 2018 18:11:02 -0700
-> Randy Dunlap <rdunlap@infradead.org> wrote:
-> 
->> Rearrange some kernel-api chapters and sections to group them
->> together better.
->>
->> - move Bit Operations from Basic C Library Functions to Basic
->>   Kernel Library Functions (now adjacent to Bitmap Operations since
->>   they are not typical C library functions)
->>
->> - move Sorting from Math Functions to Basic Kernel Library Functions
->>   since sort functions are more Basic than Math Functions
->>
->> - move Text Searching from Math Functions to Basic Kernel Library
->>   Functions (keep Sorting and Searching close to each other)
->>
->> - combine CRC and Math functions together into the (newly named)
->>   CRC and Math Functions chapter
-> 
-> The changes look good.  But ... grr... some of the stuff you are moving
-> around was introduced in -rc2 via the networking tree.  That kind of thing
-> makes life harder than it needs to be.  I've sorted it out and applied the
-> patch, thanks.
+  In the Meson-AXG SoC, the phy mode setting of PRG_ETH0 in the glue layer
+is extended from bit[0] to bit[2:0].
+  There is no problem if we configure it to the RGMII 1000M PHY mode,
+since the register setting is coincidentally compatible with previous one,
+but for the RMII 100M PHY mode, the configuration need to be changed to
+value - b100.
+  This patch was verified with a RTL8201F 100M ethernet PHY.
 
-Sorry, I thought that making the patch on linux-next 20180426 (which is based
-on -rc2 and a few hundred git trees) would help with that.
+Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+---
+ .../ethernet/stmicro/stmmac/dwmac-meson8b.c   | 120 +++++++++++++++---
+ 1 file changed, 104 insertions(+), 16 deletions(-)
 
-Thanks for fixing.
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
+index 7cb794094a70..4ff231df7322 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
+@@ -18,6 +18,7 @@
+ #include <linux/io.h>
+ #include <linux/ioport.h>
+ #include <linux/module.h>
++#include <linux/of_device.h>
+ #include <linux/of_net.h>
+ #include <linux/mfd/syscon.h>
+ #include <linux/platform_device.h>
+@@ -29,6 +30,10 @@
+ 
+ #define PRG_ETH0_RGMII_MODE		BIT(0)
+ 
++#define PRG_ETH0_EXT_PHY_MODE_MASK	GENMASK(2, 0)
++#define PRG_ETH0_EXT_RGMII_MODE		1
++#define PRG_ETH0_EXT_RMII_MODE		4
++
+ /* mux to choose between fclk_div2 (bit unset) and mpll2 (bit set) */
+ #define PRG_ETH0_CLK_M250_SEL_SHIFT	4
+ #define PRG_ETH0_CLK_M250_SEL_MASK	GENMASK(4, 4)
+@@ -47,12 +52,20 @@
+ 
+ #define MUX_CLK_NUM_PARENTS		2
+ 
++struct meson8b_dwmac;
++
++struct meson8b_dwmac_data {
++	int (*set_phy_mode)(struct meson8b_dwmac *dwmac);
++};
++
+ struct meson8b_dwmac {
+-	struct device		*dev;
+-	void __iomem		*regs;
+-	phy_interface_t		phy_mode;
+-	struct clk		*rgmii_tx_clk;
+-	u32			tx_delay_ns;
++	struct device			*dev;
++	void __iomem			*regs;
++
++	const struct meson8b_dwmac_data	*data;
++	phy_interface_t			phy_mode;
++	struct clk			*rgmii_tx_clk;
++	u32				tx_delay_ns;
+ };
+ 
+ struct meson8b_dwmac_clk_configs {
+@@ -171,6 +184,59 @@ static int meson8b_init_rgmii_tx_clk(struct meson8b_dwmac *dwmac)
+ 	return 0;
+ }
+ 
++static int meson8b_set_phy_mode(struct meson8b_dwmac *dwmac)
++{
++	switch (dwmac->phy_mode) {
++	case PHY_INTERFACE_MODE_RGMII:
++	case PHY_INTERFACE_MODE_RGMII_RXID:
++	case PHY_INTERFACE_MODE_RGMII_ID:
++	case PHY_INTERFACE_MODE_RGMII_TXID:
++		/* enable RGMII mode */
++		meson8b_dwmac_mask_bits(dwmac, PRG_ETH0,
++					PRG_ETH0_RGMII_MODE,
++					PRG_ETH0_RGMII_MODE);
++		break;
++	case PHY_INTERFACE_MODE_RMII:
++		/* disable RGMII mode -> enables RMII mode */
++		meson8b_dwmac_mask_bits(dwmac, PRG_ETH0,
++					PRG_ETH0_RGMII_MODE, 0);
++		break;
++	default:
++		dev_err(dwmac->dev, "fail to set phy-mode %s\n",
++			phy_modes(dwmac->phy_mode));
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
++static int meson_axg_set_phy_mode(struct meson8b_dwmac *dwmac)
++{
++	switch (dwmac->phy_mode) {
++	case PHY_INTERFACE_MODE_RGMII:
++	case PHY_INTERFACE_MODE_RGMII_RXID:
++	case PHY_INTERFACE_MODE_RGMII_ID:
++	case PHY_INTERFACE_MODE_RGMII_TXID:
++		/* enable RGMII mode */
++		meson8b_dwmac_mask_bits(dwmac, PRG_ETH0,
++					PRG_ETH0_EXT_PHY_MODE_MASK,
++					PRG_ETH0_EXT_RGMII_MODE);
++		break;
++	case PHY_INTERFACE_MODE_RMII:
++		/* disable RGMII mode -> enables RMII mode */
++		meson8b_dwmac_mask_bits(dwmac, PRG_ETH0,
++					PRG_ETH0_EXT_PHY_MODE_MASK,
++					PRG_ETH0_EXT_RMII_MODE);
++		break;
++	default:
++		dev_err(dwmac->dev, "fail to set phy-mode %s\n",
++			phy_modes(dwmac->phy_mode));
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
+ static int meson8b_init_prg_eth(struct meson8b_dwmac *dwmac)
+ {
+ 	int ret;
+@@ -188,10 +254,6 @@ static int meson8b_init_prg_eth(struct meson8b_dwmac *dwmac)
+ 
+ 	case PHY_INTERFACE_MODE_RGMII_ID:
+ 	case PHY_INTERFACE_MODE_RGMII_TXID:
+-		/* enable RGMII mode */
+-		meson8b_dwmac_mask_bits(dwmac, PRG_ETH0, PRG_ETH0_RGMII_MODE,
+-					PRG_ETH0_RGMII_MODE);
+-
+ 		/* only relevant for RMII mode -> disable in RGMII mode */
+ 		meson8b_dwmac_mask_bits(dwmac, PRG_ETH0,
+ 					PRG_ETH0_INVERTED_RMII_CLK, 0);
+@@ -224,10 +286,6 @@ static int meson8b_init_prg_eth(struct meson8b_dwmac *dwmac)
+ 		break;
+ 
+ 	case PHY_INTERFACE_MODE_RMII:
+-		/* disable RGMII mode -> enables RMII mode */
+-		meson8b_dwmac_mask_bits(dwmac, PRG_ETH0, PRG_ETH0_RGMII_MODE,
+-					0);
+-
+ 		/* invert internal clk_rmii_i to generate 25/2.5 tx_rx_clk */
+ 		meson8b_dwmac_mask_bits(dwmac, PRG_ETH0,
+ 					PRG_ETH0_INVERTED_RMII_CLK,
+@@ -274,6 +332,11 @@ static int meson8b_dwmac_probe(struct platform_device *pdev)
+ 		goto err_remove_config_dt;
+ 	}
+ 
++	dwmac->data = (const struct meson8b_dwmac_data *)
++		of_device_get_match_data(&pdev->dev);
++	if (!dwmac->data)
++		return -EINVAL;
++
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+ 	dwmac->regs = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(dwmac->regs)) {
+@@ -298,6 +361,10 @@ static int meson8b_dwmac_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto err_remove_config_dt;
+ 
++	ret = dwmac->data->set_phy_mode(dwmac);
++	if (ret)
++		goto err_remove_config_dt;
++
+ 	ret = meson8b_init_prg_eth(dwmac);
+ 	if (ret)
+ 		goto err_remove_config_dt;
+@@ -316,10 +383,31 @@ static int meson8b_dwmac_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
++static const struct meson8b_dwmac_data meson8b_dwmac_data = {
++	.set_phy_mode = meson8b_set_phy_mode,
++};
++
++static const struct meson8b_dwmac_data meson_axg_dwmac_data = {
++	.set_phy_mode = meson_axg_set_phy_mode,
++};
++
+ static const struct of_device_id meson8b_dwmac_match[] = {
+-	{ .compatible = "amlogic,meson8b-dwmac" },
+-	{ .compatible = "amlogic,meson8m2-dwmac" },
+-	{ .compatible = "amlogic,meson-gxbb-dwmac" },
++	{
++		.compatible = "amlogic,meson8b-dwmac",
++		.data = &meson8b_dwmac_data,
++	},
++	{
++		.compatible = "amlogic,meson8m2-dwmac",
++		.data = &meson8b_dwmac_data,
++	},
++	{
++		.compatible = "amlogic,meson-gxbb-dwmac",
++		.data = &meson8b_dwmac_data,
++	},
++	{
++		.compatible = "amlogic,meson-axg-dwmac",
++		.data = &meson_axg_dwmac_data,
++	},
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, meson8b_dwmac_match);
 -- 
-~Randy
+2.17.0
