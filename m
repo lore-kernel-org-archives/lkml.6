@@ -1,105 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933227AbeD1BS6 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 27 Apr 2018 21:18:58 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40848 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1759215AbeD1BS5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Apr 2018 21:18:57 -0400
-Date: Sat, 28 Apr 2018 09:18:45 +0800
-From: Dave Young <dyoung@redhat.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: linux-pci@vger.kernel.org,
-        Paul Menzel <pmenzel+linux-pci@molgen.mpg.de>,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Sinan Kaya <okaya@codeaurora.org>, Lukas Wunner <lukas@wunner.de>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, Vivek Goyal <vgoyal@redhat.com>
-Subject: Re: pciehp 0000:00:1c.0:pcie004: Timeout on hotplug command 0x1038
- (issued 65284 msec ago)
-Message-ID: <20180428011845.GC1675@dhcp-128-65.nay.redhat.com>
-References: <8770820b-85a0-172b-7230-3a44524e6c9f@molgen.mpg.de>
- <20180427192207.GG8199@bhelgaas-glaptop.roam.corp.google.com>
- <b62c2a8e-fe14-6d7d-147c-0ce3b0c0ab2f@codeaurora.org>
- <20180427211255.GI8199@bhelgaas-glaptop.roam.corp.google.com>
- <20180428005620.GB1675@dhcp-128-65.nay.redhat.com>
+        id S933265AbeD1B1o (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 27 Apr 2018 21:27:44 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:49622 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932939AbeD1B1m (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Apr 2018 21:27:42 -0400
+Date: Fri, 27 Apr 2018 18:27:11 -0700
+From: Martin KaFai Lau <kafai@fb.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+CC: Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH 2/2] bpf: btf: remove a couple conditions
+Message-ID: <20180428012646.r6idamuylruykb7h@kafai-mbp>
+References: <20180427140459.GB19583@mwanda>
+ <20180427172023.6japncdd3nbqauzn@kafai-mbp>
+ <20180427175544.vydqf4iufopcyv6d@kafai-mbp>
+ <20180427193959.3nebosalgl3ch4mv@mwanda>
+ <21126ae9-5178-5d09-679c-6bca57ad48e8@iogearbox.net>
+ <20180427203135.mjkqoofbanozxzkd@mwanda>
+ <20180427212648.zskc5bk2hunkwvsg@kafai-mbp.dhcp.thefacebook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20180428005620.GB1675@dhcp-128-65.nay.redhat.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180427212648.zskc5bk2hunkwvsg@kafai-mbp.dhcp.thefacebook.com>
+User-Agent: NeoMutt/20171208
+X-Originating-IP: [192.168.52.123]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-27_07:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/28/18 at 08:56am, Dave Young wrote:
-> On 04/27/18 at 04:12pm, Bjorn Helgaas wrote:
-> > [+cc Eric, Vivek, kexec list]
-> > 
-> > On Fri, Apr 27, 2018 at 03:34:30PM -0400, Sinan Kaya wrote:
-> > > On 4/27/2018 3:22 PM, Bjorn Helgaas wrote:
-> > > > Sinan mooted the idea of using a "no-wait" path of sending the "don't
-> > > > generate hotplug interrupts" command.  I think we should work on this
-> > > > idea a little more.  If we're shutting down the whole system, I can't
-> > > > believe there's much value in *anything* we do in the pciehp_remove()
-> > > > path.
-> > > > 
-> > > > Maybe we should just get rid of pciehp_remove() (and probably
-> > > > pcie_port_remove_service() and the other service driver remove methods)
-> > > > completely.  That dates from when the service drivers could be modules that
-
-Hmm, if it is the remove() method then kexec does not use it.  kexec use
-the shutdown() method instead.  I missed this details when I replied.
-
-> > > > could be potentially unloaded, but unloading them hasn't been possible for
-> > > > years.
+On Fri, Apr 27, 2018 at 02:26:50PM -0700, Martin KaFai Lau wrote:
+> On Fri, Apr 27, 2018 at 11:31:36PM +0300, Dan Carpenter wrote:
+> > On Fri, Apr 27, 2018 at 10:21:17PM +0200, Daniel Borkmann wrote:
+> > > On 04/27/2018 09:39 PM, Dan Carpenter wrote:
+> > > > On Fri, Apr 27, 2018 at 10:55:46AM -0700, Martin KaFai Lau wrote:
+> > > >> On Fri, Apr 27, 2018 at 10:20:25AM -0700, Martin KaFai Lau wrote:
+> > > >>> On Fri, Apr 27, 2018 at 05:04:59PM +0300, Dan Carpenter wrote:
+> > > >>>> We know "err" is zero so we can remove these and pull the code in one
+> > > >>>> indent level.
+> > > >>>>
+> > > >>>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > > >>> Thanks for the simplification!
+> > > >>>
+> > > >>> Acked-by: Martin KaFai Lau <kafai@fb.com>
+> > > >> btw, it should be for bpf-next.  Please tag the subject with bpf-next when
+> > > >> you respin. Thanks!
 > > > 
-> > > Shutdown path is also used for kexec. Leaving hotplug interrupts
-> > > pending is dangerous for the newly loaded kernel as it leaves
-> > > spurious interrupts during the new kernel boot.
+> > > Dan, thanks a lot for your fixes! Please respin with addressing Martin's
+> > > feedback when you get a chance.
 > > > 
-> > > I think we should always disable the hotplug interrupt on shutdown.
-> > > We might think of not waiting for command-completion as a
-> > > middle-ground or go to polling path instead of interrupts all the
-> > > time.
 > > 
-> > Ah, I forgot about the kexec path.  The kexec path is used for
-> > crashdump, too, so ideally the newly-loaded kernel would defend itself
-> > when possible so it doesn't depend on the original kernel doing things
-> > correctly.
+> > My understanding is that he'd prefer we just ignore the static checker
+> > warning since it's a false positive.
+> Right, I think patch 1 is not needed.  I would prefer to use a comment
+> in those cases.
 > 
-> It is true for kdump.  But kexec needs device shutdown.
-> 
+> > Should I instead initialize the
+> > size to zero or something just to silence it?
+After another thought,  I think init size to zero is
+fine which is less intrusive.
+
+Thanks!
+Martin
+
 > > 
-> > Seems like this question of whether to do things in the original
-> > kernel or the kexec-ed kernel comes up periodically, but I can never
-> > remember a definitive answer.  My initial reaction is that it'd be
-> > nice if we didn't have to do *any* shutdown in the original kernel,
-> > but I'm sure there are reasons that's not practical.
-> 
-> Devices sometimes assume it is in a good state initialized in firmware boot
-> phase, so we need a shutdown in 1st kernel so that kexec kernel can boot
-> correctly for those devices.  For kdump since kernel already panicked
-> and it is not reliable so we do as less as we can in the 1st kernel
-> crash path, but there are some special handling for kdump in various drivers
-> to reset the devices in 2nd kernel, eg. when it see "reset_devices" kernel parameter.
-> 
+> > regards,
+> > dan carpenter
 > > 
-> > I copied Eric (kexec maintainer) and Vivek (contact listed in
-> > Documentation/kdump/kdump.txt) in case they have suggestions or would
-> > consider some sort of Documentation/ update.
-> > 
-> > Bjorn
-> > 
-> > _______________________________________________
-> > kexec mailing list
-> > kexec@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/kexec
-> 
-> Thanks
-> Dave
-> 
-> _______________________________________________
-> kexec mailing list
-> kexec@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/kexec
