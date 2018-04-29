@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751640AbeD2EPh (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 29 Apr 2018 00:15:37 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:46706 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750769AbeD2EPf (ORCPT
+        id S1751999AbeD2EQw (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 29 Apr 2018 00:16:52 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:36399 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751811AbeD2EQv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Apr 2018 00:15:35 -0400
-X-Google-Smtp-Source: AB8JxZoGO1rzN/eaBkct6MZzytiz+d/L3KtaU4JV068Dhxz0/mdZGY8zUro9NvEbgMaRB55uapgVfto/owJ6SRpzuvY=
+        Sun, 29 Apr 2018 00:16:51 -0400
+X-Google-Smtp-Source: AB8JxZqXrLPmspxxLtDSibHQbjJh4sRYeFFkJRy+Mp+gtQ62H8DM5NJbfgSN1g9KG3KXTq9/HWuiA6PIf5/r3z4ikJA=
 MIME-Version: 1.0
 In-Reply-To: <1524966879-9424-1-git-send-email-linux@roeck-us.net>
 References: <1524966879-9424-1-git-send-email-linux@roeck-us.net>
 From: Gabriel C <nix.or.die@gmail.com>
-Date: Sun, 29 Apr 2018 06:15:03 +0200
-Message-ID: <CAEJqkgh3mpLKv1o1MM5FBoUCmsPXFweNHvqsuhY6Ufj6CvZp3w@mail.gmail.com>
+Date: Sun, 29 Apr 2018 06:16:19 +0200
+Message-ID: <CAEJqkghLXNMmxjJ5ARv=E20FqvGxOaihAH5dizsetGoBOV_r=A@mail.gmail.com>
 Subject: Re: [PATCH 1/2] x86/amd_nb: Add support for Raven Ridge CPUs
 To: Guenter Roeck <linux@roeck-us.net>
 Cc: Thomas Gleixner <tglx@linutronix.de>,
@@ -91,5 +91,6 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Works fine for me on top stable and on top v4.17-rc2-398-gcdface520934
 
 Tested-by: Gabriel Craciunescu <nix.or.die@gmail.com>
+
 
 Regards
