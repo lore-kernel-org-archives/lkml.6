@@ -1,22 +1,23 @@
 Return-Path: <hdegoede@redhat.com>
-X-Google-Smtp-Source: AB8JxZqmCaFVe1h0zhD0Q9zu02oXFh3swsJoDD6U7xP4fw+iFNK5lF/UwNu7n1mrJwdxvcaua1eg
-ARC-Seal: i=1; a=rsa-sha256; t=1524994564; cv=none;
+X-Google-Smtp-Source: AB8JxZqwr/bwIZNDzXRUUg6IfPoAgPivvFsMBoLQchyamGwsYGFDfIWHHqkdprPLP0Vzjw0Toe78
+ARC-Seal: i=1; a=rsa-sha256; t=1524994581; cv=none;
         d=google.com; s=arc-20160816;
-        b=l5G8TO4LYSPlYhbYzICnPmnVumfgjtmYRGz3VfbTG7YorFOO6rmt28kD+QE/dc89hd
-         pDC6QnSG4ObIQSq0iCfQwVayL9payUEfn4WYpwnuyW9Xs1GL1/79nXXHY44nLj/mcuzN
-         nvz6tKwI322/0elvqgI4mg5n8+qk/2F4A5LvxxdRjCEa+ZHt7DroS4aNUdRIn4+ZCP2r
-         d77Egg2g2kft1B39sfYKJX5pKfd/F77xn0XPhEVbsZYr6wLDfZRRQoC3FvqWAY/YgWl+
-         NoZBPxlYSmRNgsu05CU/v6B1fd/0/K4h8eBpEQMJ2FNlYYsefdYYib/BT8Qjv70SqSRb
-         SESA==
+        b=r0myA68pV2quBfuanhmPhrrUAWRtAaJfhcAPtGRKYFt7YOQJJ5tSwrCXGvQ/DDt8t3
+         noepOGihmYRJqWqPdze/dKKAt75Cz6Up5bPpl+g/F7fZmAiJvKBCX0AKxtWGzvnDbsF/
+         31BzOS+2Go2x9SJrOhj5tuX7Jf4zE3Go8L1TQD7z+lvs43jaeooV8TZeHAxLO1ha9qka
+         ykjEibQYDjaStIIklzPufXKA9+tPmF41cDNtyQm2F86Uzhg7d5C7NPn28jnzHOqTmZd7
+         TA4EJhG/RsvQG7DQrgkdNTghRcrwSXACGFT/MHwkPTYE60nbITZmcmTPmhkGpjal3wKA
+         RMug==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=+vBip1QzbO//OkxTsTNKeKunUHXRLODC1tD+pToYqfk=;
-        b=zPJQg1WV4W1fD2L+OwyUgzIaaP1k6oRH8/WLgiGPxz9i03J0FGhwqGI4Wzbl4+R6c4
-         r3CZEFvH19U311ldAYaWN/0BQfJ0dWQRuk4qJUsl7vNTqqCxRBWoO+oRPSl3RLo/OsHF
-         5s5UjEbA72xDIsw1IJCkD9medpt+nGGB/mJZFPjRgCqS1PajF/i3h05LBifH1NzH1V2W
-         RRlPnWmeywXZkDrUNAzq+YXm0Ra3AwjnoSncpUSMOGeI6n0s3OTnCrnNnpKxyHFT8OfK
-         /5LCb9epe4lL4QWqNtl26sWmyV45SgGRfDpQJYRczT//fb9prVFhizu2SvjXxcyM6Jdl
-         HDjQ==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=tX7xHUZE9sjOHWOewoJwLTQwl6rqNAny7H/FR8esXwY=;
+        b=mPBQGm8tWo2g49c727B3ztYMD7BqBiqnJm4gseVnvm+1UQlK+Yr0u0VU6dA1utx73M
+         RxD7+OoXbxPwr5NpokM132hQgH1xyx9wk26rXnlzDxF/HW8alnMpJ8MmPXDdDx5t24QC
+         ENVAqr2gAyhDiW8mpjXaarScAHwTFLPAc0hs8gs5lXAbSmcBQL+7GyStm0jHw7NspqQt
+         TtVfAY1hgQeox+HeRAZDOCc5vROZl/HHnALC/OMDLN2tUWGSNl6APA5XgldRjCqpjUQ2
+         pm2qKvv+dzqdDNl7fg7XjtU1ioYrvNlTyut4k5ytDdmlYXmEgVEVqjF1rW6sqpOp41Xn
+         hsGw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of hdegoede@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
@@ -51,103 +52,70 @@ Cc: Hans de Goede <hdegoede@redhat.com>,
 	x86@kernel.org,
 	linux-efi@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 0/5] efi/firmware/platform-x86: Add EFI embedded fw support
-Date: Sun, 29 Apr 2018 11:35:53 +0200
-Message-Id: <20180429093558.5411-1-hdegoede@redhat.com>
+Subject: [PATCH v5 5/5] platform/x86: touchscreen_dmi: Add info for the Chuwi Vi8 Plus tablet
+Date: Sun, 29 Apr 2018 11:35:58 +0200
+Message-Id: <20180429093558.5411-6-hdegoede@redhat.com>
+In-Reply-To: <20180429093558.5411-1-hdegoede@redhat.com>
+References: <20180429093558.5411-1-hdegoede@redhat.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599072701077174089?=
-X-GMAIL-MSGID: =?utf-8?q?1599072701077174089?=
+X-GMAIL-THRID: =?utf-8?q?1599072718546647819?=
+X-GMAIL-MSGID: =?utf-8?q?1599072718546647819?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi All,
+Add touchscreen info for the Chuwi Vi8 Plus tablet. This tablet uses a
+Chipone ICN8505 touchscreen controller, with the firmware used by the
+touchscreen embedded in the EFI firmware.
 
-Here is v5 of my patch-set to add support for EFI embedded fw to the kernel.
+Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+---
+ drivers/platform/x86/touchscreen_dmi.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-Changes since v4:
--Rename the EFI_BOOT_SERVICES flag to EFI_PRESERVE_BS_REGIONS
-
-So I think this patch-set is getting close to ready for merging, which
-brings us to the question of how to merge this, I think that patches 1
-and 2 should probably both be merged through the same tree. Then an
-unmutable branch should be created on that tree, merged into the
-platform/x86 tree and then the last 3 patches can be merged through
-that tree.
-
-Ard has already indicated he is fine with the EFI bits going upstream
-through another tree, so perhaps patches 1-2 can be merged through the
-firmware-loader-tree and then do an unmutable branch on the
-firmware-loader-tree for the platform/x86 tree to merge?
-
-I don't think taking all 5 through 1 tree is a good idea because of
-the file rename under platform/x86.
-
-
-For the record here are the cover letters of the previous versions:
-
-Changes since v3:
--Drop note in docs about EFI_FIRMWARE_VOLUME_PROTOCOL, it is not part of
- UEFI proper, so the EFI maintainers don't want us referring people to it
--Use new EFI_BOOT_SERVICES flag
--Put the new fw_get_efi_embedded_fw() function in its own fallback_efi.c
- file which only gets built when EFI_EMBEDDED_FIRMWARE is selected
--Define an empty stub for fw_get_efi_embedded_fw() in fallback.h hwen
- EFI_EMBEDDED_FIRMWARE is not selected, to avoid the need for #ifdefs
- in firmware_loader/main.c
--Properly call security_kernel_post_read_file() on the firmware returned
- by efi_get_embedded_fw() to make sure that we are allowed to use it
-
-The 3 most prominent changes in v2 are:
-
-1) Add documentation describing the EFI embedded firmware mechanism to:
-   Documentation/driver-api/firmware/request_firmware.rst
-
-2) Instead of having a single dmi_system_id array with its driver_data
-   members pointing to efi_embedded_fw_desc structs, have the drivers which
-   need EFI embedded-fw support export a dmi_system_id array and register
-   that with the EFI embedded-fw code
-
-   This series also includes the first driver to use this, in the form of
-   the touchscreen_dmi code (formerly silead_dmi) from drivers/platfrom/x86
-
-3) As discussed during the review of v1 we want to make the firmware_loader
-   code fallback to EFI embedded-fw optional.  Rather the adding yet another
-   firmware_request_foo variant for this, with the risk of later also needing
-   firmware_request_foo_nowait, etc. variants I've decided to make the code
-   check if the device has a "efi-embedded-firmware" device-property bool set.
-
-   This also seemed better because the same driver may want to use the
-   fallback on some systems, but not on others since e.g. not all (x86)
-   systems with a silead touchscreen have their touchscreen firmware embedded
-   in their EFI.
-
-   Note that (as discussed) when the EFI fallback path is requested, the
-   usermodehelper fallback path is skipped.
-
-Here is the full changelog of patch 2/5 which is where most of the changes are:
-
-Changes in v2:
--Rebased on driver-core/driver-core-next
--Add documentation describing the EFI embedded firmware mechanism to:
- Documentation/driver-api/firmware/request_firmware.rst
--Add a new EFI_EMBEDDED_FIRMWARE Kconfig bool and only build the embedded
- fw support if this is set. This is an invisible option which should be
- selected by drivers which need this
--Remove the efi_embedded_fw_desc and dmi_system_id-s for known devices
- from the efi-embedded-fw code, instead drivers using this are expected to
- export a dmi_system_id array, with each entries' driver_data pointing to a
- efi_embedded_fw_desc struct and register this with the efi-embedded-fw code
--Use kmemdup to make a copy instead of efi_mem_reserve()-ing the firmware,
- this avoids us messing with the EFI memmap and avoids the need to make
- changes to efi_mem_desc_lookup()
--Make the firmware-loader code only fallback to efi_get_embedded_fw() if the
- passed in device has the "efi-embedded-firmware" device-property bool set
--Skip usermodehelper fallback when "efi-embedded-firmware" device-property
- is set
-
-Patches 3-5 are new and implement using the EFI embedded-fw mechanism for
-Silead gslXXXX and Chipone icn8505 touchscreens on x86 devices.
-
-Regards,
-
-Hans
+diff --git a/drivers/platform/x86/touchscreen_dmi.c b/drivers/platform/x86/touchscreen_dmi.c
+index 6488cd50ba79..5fdb6fe878f4 100644
+--- a/drivers/platform/x86/touchscreen_dmi.c
++++ b/drivers/platform/x86/touchscreen_dmi.c
+@@ -301,6 +301,22 @@ static const struct ts_dmi_data teclast_x3_plus_data = {
+ 	.properties	= teclast_x3_plus_props,
+ };
+ 
++static const struct property_entry efi_embedded_fw_props[] = {
++	PROPERTY_ENTRY_BOOL("efi-embedded-firmware"),
++	{ }
++};
++
++static const struct ts_dmi_data chuwi_vi8_plus_data = {
++	.embedded_fw = {
++		.name	= "chipone/icn8505-HAMP0002.fw",
++		.prefix = { 0xb0, 0x07, 0x00, 0x00, 0xe4, 0x07, 0x00, 0x00 },
++		.length	= 35012,
++		.crc	= 0x74dfd3fc,
++	},
++	.acpi_name	= "CHPN0001:00",
++	.properties	= efi_embedded_fw_props,
++};
++
+ const struct dmi_system_id touchscreen_dmi_table[] = {
+ 	{
+ 		/* CUBE iwork8 Air */
+@@ -487,6 +503,15 @@ const struct dmi_system_id touchscreen_dmi_table[] = {
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "Y8W81"),
+ 		},
+ 	},
++	{
++		/* Chuwi Vi8 Plus (CWI506) */
++		.driver_data = (void *)&chuwi_vi8_plus_data,
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Hampoo"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "D2D3_Vi8A1"),
++			DMI_MATCH(DMI_BOARD_NAME, "Cherry Trail CR"),
++		},
++	},
+ 	{ },
+ };
+ 
+-- 
+2.17.0
