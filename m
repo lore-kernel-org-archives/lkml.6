@@ -1,252 +1,159 @@
-Return-Path: <david@redhat.com>
-X-Google-Smtp-Source: AIpwx48nVddD40cZuWkYOCDLNFMPixXikGdz9nFU0H6pTtHIlVN6hbNW97GfmlvqojE/m6SDnfH+
-ARC-Seal: i=1; a=rsa-sha256; t=1523625405; cv=none;
-        d=google.com; s=arc-20160816;
-        b=w5EAkEswOwfvoZd61aut9htnJN6kmRnWFPjRt7+QKjh6a06/txgqsc8Wai2pM6C5Pd
-         hM00dJJPtnlaLyjcjLsm4Sil6Dfips0t5/2sGTLumQv17u5Kq62NNZ7yfkOZwtvaOmSX
-         orEvBEOBPZlg0aJ5m879PbL0JVbhs414KBQcOvjbeGEfLSVeIMEdBkCBEohFCDUMDCbR
-         V7kObogZQjKPBE6Vt3p8GyVSuiO+EcTlrPmLwJbr7zRhWa4t24JTT4AqhPkrpBFC2bVo
-         xAYlYQzRpeL/+JZwrjamYi4Izcj5RAiBcMRkBo7kJvzztqd7pxVh01vU7qPSbrqJLmnM
-         LUUg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=n42Yk6PHqHjzap+xA3JX3C04+jr6LlM3LQvMw06iuQw=;
-        b=Bjn0l/EIgPlQyFpTiTrcZi8eiRV8BJ+wiEIHa/BvcsLe4KuAsuaKRe1qi1YwlwqkyV
-         vqKD1Zrov+ARG5Eh9RTEbyZXpNKeN0l0cOtFT1jMxr8ENeiak2dtRwgmMgH1vv72rkSm
-         zIdQeRA3hHhGAyw4/bG/0H2MEzf4NxsbTRxGp2qBH8y3N4LjEymz2Rnbl+lN9w3XC3bn
-         HavpFCgI+hEAF3WStsxirIxpMfyFQlVDaKY/PIOqT/t2skl4cQ3SWaecHxOYJhbUjATu
-         Pch/01jgPiJB9SnFJdXkT0p/FxQOdIWlRDZQbTfr6rByxljz+ZDSpKl8GcQZ+hPjDIuq
-         rO6A==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of david@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=david@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of david@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=david@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
-From: David Hildenbrand <david@redhat.com>
-To: linux-mm@kvack.org
-Cc: David Hildenbrand <david@redhat.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Pavel Tatashin <pasha.tatashin@oracle.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Michal Hocko <mhocko@suse.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Reza Arbab <arbab@linux.vnet.ibm.com>,
-	Mel Gorman <mgorman@techsingularity.net>,
-	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	David Rientjes <rientjes@google.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH RFC 1/8] mm/memory_hotplug: Revert "mm/memory_hotplug: optimize memory hotplug"
-Date: Fri, 13 Apr 2018 15:16:25 +0200
-Message-Id: <20180413131632.1413-2-david@redhat.com>
-In-Reply-To: <20180413131632.1413-1-david@redhat.com>
-References: <20180413131632.1413-1-david@redhat.com>
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3940792-1525028572-2-11187792817798673070
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, URIBL_RED 0.001, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1525028571; b=KOENaZsTzO//9ZrCSeTPz4uDUIWCFq5zs3BIJNgxrw9YlJKj7M
+    wx/RaB/4qjEiI67yd2iBh21ZLjxdXBM9xDRvr8S5lA7i04A37Xsd8rqcEoKqI8T/
+    M/GEHXaddaOIUhoELONGGhfODA4bgoNkvI6zUXzJYfvhIDWcLB7m/+WP6R4pEnnJ
+    dEs4NP/c9WqWYaAydzFN06OrEtTFbabRNxCiqnZtVPw5iKc2/MnAmjjqpFRtN5U1
+    TpX4KqjlmyUNeZ3umixmKWemczixbs0c4Sa6SEx/Gd/N1dGnipoDT+HoKw0FJU4t
+    2Ljx813wAFfjpU0jjwiIVg1PXcMbw2Qz0YeQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1525028571; bh=IPRsbujQfwKZAzLC0P8KRyq8f5X7j2
+    UKwqTOjBKcMQo=; b=WejydamQD1ZLo/f8pcN2Cn5B5xPysPKcNT3nRKEloy5CCE
+    dmkWx85/KkxgMiUYQmcMd7Ws/mKAhMfhODX8GtcOJq/AUAo46OcXAt7i39S5pbrX
+    7j0H5IZ/o7FDu3zclN352X/kMerdr1FpUXdnuxyyfBajvx9och+KaG/jI0oy61DV
+    6dStV9/QbR8eqwctiXugKWCNXGNXHkQb4lQsmVrBD+ogJuAvcN1nwZwTwMCzasrZ
+    pKfIKOPMeohPNV84gnJroq1mrnuhzt8aviomdujSu4S9sZw+c7FP1lFcGso4j75h
+    IAIOFIp6Iz86G1/+jfKNOB6Uw3eCUG1FnI4Btyew==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=ziemianowicz.com header.i=marcin@ziemianowicz.com header.b=UOeKnaEs x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=somekey;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=ziemianowicz.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=ziemianowicz.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=ziemianowicz.com header.i=marcin@ziemianowicz.com header.b=UOeKnaEs x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=somekey;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=ziemianowicz.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=ziemianowicz.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfKU8ktN6XG1A3IutoX6N9K2EHHh8gmn9GBDLZMduNJyrg6ziMNmzdSoKdDEvDvQmnnAPhJJ2m3DN1mwx3qZ5b5IDHQbTuo23Lb6UwXjwA9dx/FlnWBzl
+    ReTjwRbPjjQN4vsz2GoQiQdsIQSuoj/1q/dbpL3DqcWEQwmSwyzLEHiq/EoZojzFlGtPOMWERy9GRLKDZfiAC78nIjrrD8fDMjksiIUCxSkBwzWyISJ3yDry
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=0AA9OZvs-ncA:10
+    a=VwQbUJbxAAAA:8 a=b5HTAggMAAAA:8 a=v8ABPxu3pFR2WDZMx44A:9
+    a=AjGcO6oz07-iQ99wixmX:22 a=zfgeMz1PSwFLVvhDL7gT:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753985AbeD2TCg (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 29 Apr 2018 15:02:36 -0400
+Received: from sender-of-o52.zoho.com ([135.84.80.217]:21359 "EHLO
+        sender-of-o52.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753719AbeD2TCf (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sun, 29 Apr 2018 15:02:35 -0400
+From: Marcin Ziemianowicz <marcin@ziemianowicz.com>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Marcin Ziemianowicz <marcin@ziemianowicz.com>,
+        stable@vger.kernel.org,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH V4] clk: at91: PLL recalc_rate() now using cached MUL and DIV values
+Date: Sun, 29 Apr 2018 15:01:11 -0400
+Message-Id: <20180429190111.14247-1-marcin@ziemianowicz.com>
+X-Mailer: git-send-email 2.17.0
+X-ZohoMailClient: External
+X-ZohoMail: Z_636351567 SPT_1 Z_636351566 SPT_1 SLF_D S_163
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597637033562508385?=
-X-GMAIL-MSGID: =?utf-8?q?1597637033562508385?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Conflicts with the possibility to online sub-section chunks. Revert it
-for now.
+When a USB device is connected to the USB host port on the SAM9N12 then
+you get "-62" error which seems to indicate USB replies from the device
+are timing out. Based on a logic sniffer, I saw the USB bus was running
+at half speed.
 
-Signed-off-by: David Hildenbrand <david@redhat.com>
+The PLL code uses cached MUL and DIV values which get set in set_rate()
+and applied in prepare(), but the recalc_rate() function instead
+queries the hardware instead of using these cached values. Therefore,
+if recalc_rate() is called between a set_rate() and prepare(), the
+wrong frequency is calculated and later the USB clock divider for the
+SAM9N12 SOC will be configured for an incorrect clock.
+
+In my case, the PLL hardware was set to 96 Mhz before the OHCI
+driver loads, and therefore the usb clock divider was being set
+to /2 even though the OHCI driver set the PLL to 48 Mhz.
+
+As an alternative explanation, I noticed this was fixed in the past by
+87e2ed338f1b ("clk: at91: fix recalc_rate implementation of PLL
+driver") but the bug was later re-introduced by 1bdf02326b71 ("clk:
+at91: make use of syscon/regmap internally").
+
+Fixes: 1bdf02326b71 ("clk: at91: make use of syscon/regmap internally)
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Marcin Ziemianowicz <marcin@ziemianowicz.com>
 ---
- drivers/base/node.c    |  2 --
- include/linux/memory.h |  1 -
- mm/memory_hotplug.c    | 27 +++++++++++++++++++--------
- mm/page_alloc.c        | 28 ++++++++++++++++++----------
- mm/sparse.c            |  8 +-------
- 5 files changed, 38 insertions(+), 28 deletions(-)
+Thank you for bearing with me about this Boris.
 
-diff --git a/drivers/base/node.c b/drivers/base/node.c
-index 7a3a580821e0..92b00a7e6a02 100644
---- a/drivers/base/node.c
-+++ b/drivers/base/node.c
-@@ -407,8 +407,6 @@ int register_mem_sect_under_node(struct memory_block *mem_blk, int nid,
- 
- 	if (!mem_blk)
- 		return -EFAULT;
--
--	mem_blk->nid = nid;
- 	if (!node_online(nid))
- 		return 0;
- 
-diff --git a/include/linux/memory.h b/include/linux/memory.h
-index 31ca3e28b0eb..9f8cd856ca1e 100644
---- a/include/linux/memory.h
-+++ b/include/linux/memory.h
-@@ -33,7 +33,6 @@ struct memory_block {
- 	void *hw;			/* optional pointer to fw/hw data */
- 	int (*phys_callback)(struct memory_block *);
- 	struct device dev;
--	int nid;			/* NID for this memory block */
- };
- 
- int arch_get_memory_phys_device(unsigned long start_pfn);
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index f74826cdceea..d4474781c799 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -250,6 +250,7 @@ static int __meminit __add_section(int nid, unsigned long phys_start_pfn,
- 		struct vmem_altmap *altmap, bool want_memblock)
+Changes since V3:
+  Fix for double returns found by kbluild test robot
+  > Comments by Boris Brezillon about email formatting issues
+Changes since V2:
+  Removed all logging/debug messages I added
+  > Comment by Boris Brezillon about my fix being wrong addressed
+Changes since V1:
+  Added patch set cover letter
+  Shortened lines which were over >80 characters long
+  > Comment by Greg Kroah-Hartman about "from" field in email addressed
+  > Comment by Alan Stern about redundant debug lines addressed
+
+ drivers/clk/at91/clk-pll.c | 13 +------------
+ 1 file changed, 1 insertion(+), 12 deletions(-)
+
+diff --git a/drivers/clk/at91/clk-pll.c b/drivers/clk/at91/clk-pll.c
+index 7d3223fc..72b6091e 100644
+--- a/drivers/clk/at91/clk-pll.c
++++ b/drivers/clk/at91/clk-pll.c
+@@ -132,19 +132,8 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
+ 					 unsigned long parent_rate)
  {
- 	int ret;
-+	int i;
- 
- 	if (pfn_valid(phys_start_pfn))
- 		return -EEXIST;
-@@ -258,6 +259,23 @@ static int __meminit __add_section(int nid, unsigned long phys_start_pfn,
- 	if (ret < 0)
- 		return ret;
- 
-+	/*
-+	 * Make all the pages reserved so that nobody will stumble over half
-+	 * initialized state.
-+	 * FIXME: We also have to associate it with a node because page_to_nid
-+	 * relies on having page with the proper node.
-+	 */
-+	for (i = 0; i < PAGES_PER_SECTION; i++) {
-+		unsigned long pfn = phys_start_pfn + i;
-+		struct page *page;
-+		if (!pfn_valid(pfn))
-+			continue;
-+
-+		page = pfn_to_page(pfn);
-+		set_page_node(page, nid);
-+		SetPageReserved(page);
-+	}
-+
- 	if (!want_memblock)
- 		return 0;
- 
-@@ -891,15 +909,8 @@ int __ref online_pages(unsigned long pfn, unsigned long nr_pages, int online_typ
- 	int nid;
- 	int ret;
- 	struct memory_notify arg;
--	struct memory_block *mem;
+ 	struct clk_pll *pll = to_clk_pll(hw);
+-	unsigned int pllr;
+-	u16 mul;
+-	u8 div;
 -
--	/*
--	 * We can't use pfn_to_nid() because nid might be stored in struct page
--	 * which is not yet initialized. Instead, we find nid from memory block.
--	 */
--	mem = find_memory_block(__pfn_to_section(pfn));
--	nid = mem->nid;
- 
-+	nid = pfn_to_nid(pfn);
- 	/* associate pfn range with the zone */
- 	zone = move_pfn_range(online_type, nid, pfn, nr_pages);
- 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 905db9d7962f..647c8c6dd4d1 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -1172,9 +1172,10 @@ static void free_one_page(struct zone *zone,
- }
- 
- static void __meminit __init_single_page(struct page *page, unsigned long pfn,
--				unsigned long zone, int nid)
-+				unsigned long zone, int nid, bool zero)
- {
--	mm_zero_struct_page(page);
-+	if (zero)
-+		mm_zero_struct_page(page);
- 	set_page_links(page, zone, nid, pfn);
- 	init_page_count(page);
- 	page_mapcount_reset(page);
-@@ -1188,6 +1189,12 @@ static void __meminit __init_single_page(struct page *page, unsigned long pfn,
- #endif
- }
- 
-+static void __meminit __init_single_pfn(unsigned long pfn, unsigned long zone,
-+					int nid, bool zero)
-+{
-+	return __init_single_page(pfn_to_page(pfn), pfn, zone, nid, zero);
-+}
-+
- #ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
- static void __meminit init_reserved_page(unsigned long pfn)
- {
-@@ -1206,7 +1213,7 @@ static void __meminit init_reserved_page(unsigned long pfn)
- 		if (pfn >= zone->zone_start_pfn && pfn < zone_end_pfn(zone))
- 			break;
- 	}
--	__init_single_page(pfn_to_page(pfn), pfn, zid, nid);
-+	__init_single_pfn(pfn, zid, nid, true);
- }
- #else
- static inline void init_reserved_page(unsigned long pfn)
-@@ -1523,7 +1530,7 @@ static unsigned long  __init deferred_init_pages(int nid, int zid,
- 		} else {
- 			page++;
- 		}
--		__init_single_page(page, pfn, zid, nid);
-+		__init_single_page(page, pfn, zid, nid, true);
- 		nr_pages++;
- 	}
- 	return (nr_pages);
-@@ -5460,7 +5467,6 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
- 	pg_data_t *pgdat = NODE_DATA(nid);
- 	unsigned long pfn;
- 	unsigned long nr_initialised = 0;
--	struct page *page;
- #ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
- 	struct memblock_region *r = NULL, *tmp;
- #endif
-@@ -5513,11 +5519,6 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
- #endif
- 
- not_early:
--		page = pfn_to_page(pfn);
--		__init_single_page(page, pfn, zone, nid);
--		if (context == MEMMAP_HOTPLUG)
--			SetPageReserved(page);
+-	regmap_read(pll->regmap, PLL_REG(pll->id), &pllr);
 -
- 		/*
- 		 * Mark the block movable so that blocks are reserved for
- 		 * movable at startup. This will force kernel allocations
-@@ -5534,8 +5535,15 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
- 		 * because this is done early in sparse_add_one_section
- 		 */
- 		if (!(pfn & (pageblock_nr_pages - 1))) {
-+			struct page *page = pfn_to_page(pfn);
-+
-+			__init_single_page(page, pfn, zone, nid,
-+					context != MEMMAP_HOTPLUG);
- 			set_pageblock_migratetype(page, MIGRATE_MOVABLE);
- 			cond_resched();
-+		} else {
-+			__init_single_pfn(pfn, zone, nid,
-+					context != MEMMAP_HOTPLUG);
- 		}
- 	}
+-	div = PLL_DIV(pllr);
+-	mul = PLL_MUL(pllr, pll->layout);
+-
+-	if (!div || !mul)
+-		return 0;
+ 
+-	return (parent_rate / div) * (mul + 1);
++	return (parent_rate / pll->div) * (pll->mul + 1);
  }
-diff --git a/mm/sparse.c b/mm/sparse.c
-index 62eef264a7bd..58cab483e81b 100644
---- a/mm/sparse.c
-+++ b/mm/sparse.c
-@@ -779,13 +779,7 @@ int __meminit sparse_add_one_section(struct pglist_data *pgdat,
- 		goto out;
- 	}
  
--#ifdef CONFIG_DEBUG_VM
--	/*
--	 * Poison uninitialized struct pages in order to catch invalid flags
--	 * combinations.
--	 */
--	memset(memmap, PAGE_POISON_PATTERN, sizeof(struct page) * PAGES_PER_SECTION);
--#endif
-+	memset(memmap, 0, sizeof(struct page) * PAGES_PER_SECTION);
- 
- 	section_mark_present(ms);
- 
+ static long clk_pll_get_best_div_mul(struct clk_pll *pll, unsigned long rate,
 -- 
-2.14.3
+2.17.0
