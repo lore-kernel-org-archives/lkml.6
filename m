@@ -1,53 +1,159 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753404AbeD2Mbz (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 29 Apr 2018 08:31:55 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:52836 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753130AbeD2Mbx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Apr 2018 08:31:53 -0400
-From: Colin King <colin.king@canonical.com>
-To: Sathya Prakash <sathya.prakash@broadcom.com>,
-        Chaitra P B <chaitra.basappa@broadcom.com>,
-        Suganath Prabu Subramani
-        <suganath-prabu.subramani@broadcom.com>,
-        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: mpt3sas: fix spelling mistake: "disbale" -> "disable"
-Date: Sun, 29 Apr 2018 13:31:49 +0100
-Message-Id: <20180429123149.11077-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.0
+        id S1753454AbeD2MfF (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 29 Apr 2018 08:35:05 -0400
+Received: from foss.arm.com ([217.140.101.70]:52416 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752895AbeD2MfE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Apr 2018 08:35:04 -0400
+Date: Sun, 29 Apr 2018 14:35:01 +0200
+From: Christoffer Dall <christoffer.dall@arm.com>
+To: Eric Auger <eric.auger@redhat.com>
+Cc: eric.auger.pro@gmail.com, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
+        marc.zyngier@arm.com, cdall@kernel.org, peter.maydell@linaro.org,
+        andre.przywara@arm.com
+Subject: Re: [PATCH v4 06/12] KVM: arm/arm64: Adapt vgic_v3_check_base to
+ multiple rdist regions
+Message-ID: <20180429123500.GC7512@C02W217FHV2R.local>
+References: <1524838505-3823-1-git-send-email-eric.auger@redhat.com>
+ <1524838505-3823-7-git-send-email-eric.auger@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1524838505-3823-7-git-send-email-eric.auger@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Fri, Apr 27, 2018 at 04:14:59PM +0200, Eric Auger wrote:
+> vgic_v3_check_base() currently only handles the case of a unique
+> legacy redistributor region whose size is not explicitly set but
+> infered, instead, from the number of online vcpus.
 
-Trivial fix to spelling mistake in module parameter description text
+nit: inferred
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/scsi/mpt3sas/mpt3sas_base.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> We adapt it to handle the case of multiple redistributor regions
+> with explicitly defined size. We rely on two new helpers:
+> - vgic_v3_rdist_overlap() is used to detect overlap with the dist
+>   region if defined
+> - vgic_v3_rd_region_size computes the size of the redist region,
+>   would it be a legacy unique region or a new explicitly sized
+>   region.
+> 
+> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+> 
+> ---
+> 
+> v3 -> v4:
+> - squash vgic_v3_check_base adaptation and vgic_v3_rdist_overlap
+>   + vgic_v3_rd_region_size introduction  and put this patch
+>   before v3 patch 6
+> ---
+>  virt/kvm/arm/vgic/vgic-v3.c | 49 +++++++++++++++++++++++++++++----------------
+>  virt/kvm/arm/vgic/vgic.h    | 10 +++++++++
+>  2 files changed, 42 insertions(+), 17 deletions(-)
+> 
+> diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-v3.c
+> index f81a63a..c4a2a46 100644
+> --- a/virt/kvm/arm/vgic/vgic-v3.c
+> +++ b/virt/kvm/arm/vgic/vgic-v3.c
+> @@ -410,6 +410,29 @@ int vgic_v3_save_pending_tables(struct kvm *kvm)
+>  	return 0;
+>  }
+>  
+> +/**
+> + * vgic_v3_rdist_overlap - check if a region overlaps with any
+> + * existing redistributor region
+> + *
+> + * @kvm: kvm handle
+> + * @base: base of the region
+> + * @size: size of region
+> + *
+> + * Return: true if there is an overlap
+> + */
+> +bool vgic_v3_rdist_overlap(struct kvm *kvm, gpa_t base, size_t size)
+> +{
+> +	struct vgic_dist *d = &kvm->arch.vgic;
+> +	struct vgic_redist_region *rdreg;
+> +
+> +	list_for_each_entry(rdreg, &d->rd_regions, list) {
+> +		if ((base + size > rdreg->base) &&
+> +			(base < rdreg->base + vgic_v3_rd_region_size(kvm, rdreg)))
+> +			return true;
+> +	}
+> +	return false;
+> +}
+> +
+>  /*
+>   * Check for overlapping regions and for regions crossing the end of memory
+>   * for base addresses which have already been set.
+> @@ -417,31 +440,23 @@ int vgic_v3_save_pending_tables(struct kvm *kvm)
+>  bool vgic_v3_check_base(struct kvm *kvm)
+>  {
+>  	struct vgic_dist *d = &kvm->arch.vgic;
+> -	gpa_t redist_size = KVM_VGIC_V3_REDIST_SIZE;
+> -	struct vgic_redist_region *rdreg =
+> -		list_first_entry(&d->rd_regions,
+> -				 struct vgic_redist_region, list);
+> -
+> -	redist_size *= atomic_read(&kvm->online_vcpus);
+> +	struct vgic_redist_region *rdreg;
+>  
+>  	if (!IS_VGIC_ADDR_UNDEF(d->vgic_dist_base) &&
+>  	    d->vgic_dist_base + KVM_VGIC_V3_DIST_SIZE < d->vgic_dist_base)
+>  		return false;
+>  
+> -	if (rdreg && (rdreg->base + redist_size < rdreg->base))
+> -		return false;
+> +	list_for_each_entry(rdreg, &d->rd_regions, list) {
+> +		if (rdreg->base + vgic_v3_rd_region_size(kvm, rdreg) <
+> +			rdreg->base)
+> +			return false;
+> +	}
+>  
+> -	/* Both base addresses must be set to check if they overlap */
+> -	if (IS_VGIC_ADDR_UNDEF(d->vgic_dist_base) || !rdreg)
+> +	if (IS_VGIC_ADDR_UNDEF(d->vgic_dist_base))
+>  		return true;
+>  
+> -	if (d->vgic_dist_base + KVM_VGIC_V3_DIST_SIZE <= rdreg->base)
+> -		return true;
+> -
+> -	if (rdreg->base + redist_size <= d->vgic_dist_base)
+> -		return true;
+> -
+> -	return false;
+> +	return !vgic_v3_rdist_overlap(kvm, d->vgic_dist_base,
+> +				      KVM_VGIC_V3_DIST_SIZE);
+>  }
+>  
+>  /**
+> diff --git a/virt/kvm/arm/vgic/vgic.h b/virt/kvm/arm/vgic/vgic.h
+> index fea32cb..e6e3ae9 100644
+> --- a/virt/kvm/arm/vgic/vgic.h
+> +++ b/virt/kvm/arm/vgic/vgic.h
+> @@ -262,6 +262,16 @@ vgic_v3_redist_region_full(struct vgic_redist_region *region)
+>  
+>  struct vgic_redist_region *vgic_v3_rdist_free_slot(struct list_head *rdregs);
+>  
+> +static inline size_t
+> +vgic_v3_rd_region_size(struct kvm *kvm, struct vgic_redist_region *rdreg)
+> +{
+> +	if (!rdreg->count)
+> +		return atomic_read(&kvm->online_vcpus) * KVM_VGIC_V3_REDIST_SIZE;
+> +	else
+> +		return rdreg->count * KVM_VGIC_V3_REDIST_SIZE;
+> +}
+> +bool vgic_v3_rdist_overlap(struct kvm *kvm, gpa_t base, size_t size);
+> +
+>  int vgic_its_resolve_lpi(struct kvm *kvm, struct vgic_its *its,
+>  			 u32 devid, u32 eventid, struct vgic_irq **irq);
+>  struct vgic_its *vgic_msi_to_its(struct kvm *kvm, struct kvm_msi *msi);
+> -- 
+> 2.5.5
+> 
 
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.c b/drivers/scsi/mpt3sas/mpt3sas_base.c
-index 61f93a134956..4edf1fc0e80c 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_base.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
-@@ -87,7 +87,7 @@ MODULE_PARM_DESC(msix_disable, " disable msix routed interrupts (default=0)");
- 
- static int smp_affinity_enable = 1;
- module_param(smp_affinity_enable, int, S_IRUGO);
--MODULE_PARM_DESC(smp_affinity_enable, "SMP affinity feature enable/disbale Default: enable(1)");
-+MODULE_PARM_DESC(smp_affinity_enable, "SMP affinity feature enable/disable Default: enable(1)");
- 
- static int max_msix_vectors = -1;
- module_param(max_msix_vectors, int, 0);
--- 
-2.17.0
+Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
