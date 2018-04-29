@@ -1,212 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754133AbeD2SXd (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 29 Apr 2018 14:23:33 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:36875 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753764AbeD2SXc (ORCPT
+        id S1754150AbeD2SYd (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 29 Apr 2018 14:24:33 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:37573 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753584AbeD2SYb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Apr 2018 14:23:32 -0400
-X-Google-Smtp-Source: AB8JxZp4FlhrVC9d5eJUVs1zoV2JIkt75LkK11jpIZqzq8XG9wsMALcjCBVbPqbTWQ1tH/1ziAreug==
-Subject: Re: [PATCH 2/2] hwmon: (k10temp) Use API function to access System
- Management Network
-To: Gabriel C <nix.or.die@gmail.com>
+        Sun, 29 Apr 2018 14:24:31 -0400
+X-Google-Smtp-Source: AB8JxZoJtmyZF0F6zJDZ3Jh7t/yxqozokmlNd9Za2LpZHEVzMC23q5b3jsnAn+YGv+QcDIrTY4wdCQ==
+Subject: Re: [PATCH 1/2] x86/amd_nb: Add support for Raven Ridge CPUs
+To: Borislav Petkov <bp@suse.de>, Yazen Ghannam <Yazen.Ghannam@amd.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Clemens Ladisch <clemens@ladisch.de>, X86 ML <x86@kernel.org>,
-        Jean Delvare <jdelvare@suse.com>, LKML <linux-kernel@vger.kernel.org>,
-        linux-hwmon@vger.kernel.org, Borislav Petkov <bp@suse.de>,
-        Yazen Ghannam <Yazen.Ghannam@amd.com>,
-        Brian Woods <brian.woods@amd.com>
+        Clemens Ladisch <clemens@ladisch.de>, x86@kernel.org,
+        Jean Delvare <jdelvare@suse.com>, linux-kernel@vger.kernel.org,
+        linux-hwmon@vger.kernel.org, Brian Woods <brian.woods@amd.com>
 References: <1524966879-9424-1-git-send-email-linux@roeck-us.net>
- <1524966879-9424-2-git-send-email-linux@roeck-us.net>
- <2db436f9-a335-9e25-d177-23095c2527ff@roeck-us.net>
- <CAEJqkggwaQL3H-F=eJ5CWAMp0NNxQnbLkPK1LcUfP8ihsbJ-wA@mail.gmail.com>
+ <20180429175305.GB19814@pd.tnic>
 From: Guenter Roeck <linux@roeck-us.net>
-Message-ID: <b271675b-348d-ee1a-b488-28aa7d3e5c46@roeck-us.net>
-Date: Sun, 29 Apr 2018 11:23:29 -0700
+Message-ID: <a4b1d937-c5b8-67d0-b5f0-312145fefc09@roeck-us.net>
+Date: Sun, 29 Apr 2018 11:24:29 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <CAEJqkggwaQL3H-F=eJ5CWAMp0NNxQnbLkPK1LcUfP8ihsbJ-wA@mail.gmail.com>
+In-Reply-To: <20180429175305.GB19814@pd.tnic>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/29/2018 11:19 AM, Gabriel C wrote:
-> 2018-04-29 19:46 GMT+02:00 Guenter Roeck <linux@roeck-us.net>:
->> On 04/28/2018 06:54 PM, Guenter Roeck wrote:
->>>
->>> The SMN (System Management Network) on Family 17h AMD CPUs is also
->>> accessed
->>> from other drivers, specifically EDAC. Accessing it directly is racy.
->>> On top of that, accessing the SMN through root bridge 00:00 is wrong on
->>> multi-die CPUs and may result in reading the temperature from the wrong
->>> die. Use available API functions to fix the problem.
->>>
->>> For this to work, also change the Raven Ridge PCI device ID to point to
->>> Data Fabric Function 3, since this ID is used by the API functions to
->>> find the CPU node.
->>>
->>> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
->>> ---
->>>    drivers/hwmon/k10temp.c | 11 ++++++-----
->>>    1 file changed, 6 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/drivers/hwmon/k10temp.c b/drivers/hwmon/k10temp.c
->>> index b06bb1f90853..00e785afae0d 100644
->>> --- a/drivers/hwmon/k10temp.c
->>> +++ b/drivers/hwmon/k10temp.c
->>> @@ -23,6 +23,7 @@
->>>    #include <linux/init.h>
->>>    #include <linux/module.h>
->>>    #include <linux/pci.h>
->>> +#include <asm/amd_nb.h>
->>>    #include <asm/processor.h>
->>>      MODULE_DESCRIPTION("AMD Family 10h+ CPU core temperature monitor");
->>> @@ -40,8 +41,8 @@ static DEFINE_MUTEX(nb_smu_ind_mutex);
->>>    #define PCI_DEVICE_ID_AMD_17H_DF_F3   0x1463
->>>    #endif
->>>    -#ifndef PCI_DEVICE_ID_AMD_17H_RR_NB
->>> -#define PCI_DEVICE_ID_AMD_17H_RR_NB    0x15d0
->>> +#ifndef PCI_DEVICE_ID_AMD_17H_RR_DF_F3
->>> +#define PCI_DEVICE_ID_AMD_17H_RR_DF_F3 0x14eb
+On 04/29/2018 10:53 AM, Borislav Petkov wrote:
+> On Sat, Apr 28, 2018 at 06:54:38PM -0700, Guenter Roeck wrote:
+>> Add Raven Ridge root bridge and data fabric PCI IDs.
+>> This is required for amd_pci_dev_to_node_id() and amd_smn_read().
 >>
+>> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+>> ---
+>> This patch is a prerequisite for the second patch in the series.
+>> I'll be happy to apply both patches through hwmon if that is acceptable
+>> (and Cc: stable for 4.16+). If not, I'll be happy to wait for this patch
+>> to be available upstream.
 >>
->> This should have been 0x15eb. I'll resend after a week or so, waiting for
->> more feedback.
+>> Since that there is no public documentation available for Raven Ridge,
+>> PCI IDs are derived from output of lspci.
+>>
+>>   arch/x86/kernel/amd_nb.c | 6 ++++++
+>>   1 file changed, 6 insertions(+)
+>>
+>> diff --git a/arch/x86/kernel/amd_nb.c b/arch/x86/kernel/amd_nb.c
+>> index c88e0b127810..bd33613ecb7c 100644
+>> --- a/arch/x86/kernel/amd_nb.c
+>> +++ b/arch/x86/kernel/amd_nb.c
+>> @@ -14,8 +14,11 @@
+>>   #include <asm/amd_nb.h>
+>>   
+>>   #define PCI_DEVICE_ID_AMD_17H_ROOT	0x1450
+>> +#define PCI_DEVICE_ID_AMD_17H_RR_ROOT	0x15d0
 > 
+> I think the nomenclature we decided upon at the time was
 > 
-> re-tested with that too .. Doesn't seems to matter here ..
+> ...AMD_<family>H_M<model>H...
+> 
+> PCI_DEVICE_ID_AMD_15H_M10H_F3, for example.
+> 
+> And in this case, it should be
+> 
+> PCI_DEVICE_ID_AMD_17H_M<which model is RV>H_F<PCI function number>
 > 
 
-Yes, that only matters for Raven Ridge CPUs (eg 2200G, 2400G).
+Makes sense.
+
+> Yazen, which is the first model of Raven Ridge?
+> 
+
+2400G is model 17 (0x11). I was unable to find information if there are
+other chips/models using the same set of PCI IDs.
+
+I'll wait for additional feedback before resending.
 
 Thanks,
 Guenter
-
-> with original patch:
-> 
-> crazy@ant:~/Work/Linux/linux$ sensors
-> k10temp-pci-00f3
-> Adapter: PCI adapter
-> Tdie:         +22.2°C  (high = +70.0°C)
-> Tctl:         +22.2°C
-> 
-> k10temp-pci-00e3
-> Adapter: PCI adapter
-> Tdie:         +23.8°C  (high = +70.0°C)
-> Tctl:         +23.8°C
-> 
-> k10temp-pci-00d3
-> Adapter: PCI adapter
-> Tdie:         +23.0°C  (high = +70.0°C)
-> Tctl:         +23.0°C
-> 
-> k10temp-pci-00c3
-> Adapter: PCI adapter
-> Tdie:         +25.0°C  (high = +70.0°C)
-> Tctl:         +25.0°C
-> 
-> k10temp-pci-00fb
-> Adapter: PCI adapter
-> Tdie:         +22.8°C  (high = +70.0°C)
-> Tctl:         +22.8°C
-> 
-> k10temp-pci-00eb
-> Adapter: PCI adapter
-> Tdie:         +23.2°C  (high = +70.0°C)
-> Tctl:         +23.2°C
-> 
-> k10temp-pci-00db
-> Adapter: PCI adapter
-> Tdie:         +22.8°C  (high = +70.0°C)
-> Tctl:         +22.8°C
-> 
-> k10temp-pci-00cb
-> Adapter: PCI adapter
-> Tdie:         +22.6°C  (high = +70.0°C)
-> Tctl:         +22.6°C
-> 
-> now with 0x15eb
-> 
-> crazy@ant:~/Work/Linux/linux$ sudo rmmod k10temp
-> crazy@ant:~/Work/Linux/linux$ git grep -w PCI_DEVICE_ID_AMD_17H_RR_DF_F3
-> arch/x86/kernel/amd_nb.c:#define PCI_DEVICE_ID_AMD_17H_RR_DF_F3 0x15eb
-> arch/x86/kernel/amd_nb.c:       { PCI_DEVICE(PCI_VENDOR_ID_AMD,
-> PCI_DEVICE_ID_AMD_17H_RR_DF_F3) },
-> drivers/hwmon/k10temp.c:#ifndef PCI_DEVICE_ID_AMD_17H_RR_DF_F3
-> drivers/hwmon/k10temp.c:#define PCI_DEVICE_ID_AMD_17H_RR_DF_F3  0x15eb
-> drivers/hwmon/k10temp.c:        { PCI_VDEVICE(AMD,
-> PCI_DEVICE_ID_AMD_17H_RR_DF_F3) },
-> crazy@ant:~/Work/Linux/linux$ sudo insmod ./drivers/hwmon/k10temp.ko
-> crazy@ant:~/Work/Linux/linux$ sensors
-> k10temp-pci-00f3
-> Adapter: PCI adapter
-> Tdie:         +22.2°C  (high = +70.0°C)
-> Tctl:         +22.2°C
-> 
-> k10temp-pci-00e3
-> Adapter: PCI adapter
-> Tdie:         +23.8°C  (high = +70.0°C)
-> Tctl:         +23.8°C
-> 
-> k10temp-pci-00d3
-> Adapter: PCI adapter
-> Tdie:         +23.0°C  (high = +70.0°C)
-> Tctl:         +23.0°C
-> 
-> k10temp-pci-00c3
-> Adapter: PCI adapter
-> Tdie:         +25.0°C  (high = +70.0°C)
-> Tctl:         +25.0°C
-> 
-> k10temp-pci-00fb
-> Adapter: PCI adapter
-> Tdie:         +22.9°C  (high = +70.0°C)
-> Tctl:         +22.9°C
-> 
-> k10temp-pci-00eb
-> Adapter: PCI adapter
-> Tdie:         +23.2°C  (high = +70.0°C)
-> Tctl:         +23.2°C
-> 
-> k10temp-pci-00db
-> Adapter: PCI adapter
-> Tdie:         +22.8°C  (high = +70.0°C)
-> Tctl:         +22.8°C
-> 
-> k10temp-pci-00cb
-> Adapter: PCI adapter
-> Tdie:         +22.8°C  (high = +70.0°C)
-> Tctl:         +22.8°C
-> 
-> 
->>
->>>    #endif
->>>      /* CPUID function 0x80000001, ebx */
->>> @@ -136,8 +137,8 @@ static void read_tempreg_nb_f15(struct pci_dev *pdev,
->>> u32 *regval)
->>>      static void read_tempreg_nb_f17(struct pci_dev *pdev, u32 *regval)
->>>    {
->>> -       amd_nb_index_read(pdev, PCI_DEVFN(0, 0), 0x60,
->>> -                         F17H_M01H_REPORTED_TEMP_CTRL_OFFSET, regval);
->>> +       amd_smn_read(amd_pci_dev_to_node_id(pdev),
->>> +                    F17H_M01H_REPORTED_TEMP_CTRL_OFFSET, regval);
->>>    }
->>>      static ssize_t temp1_input_show(struct device *dev,
->>> @@ -323,7 +324,7 @@ static const struct pci_device_id k10temp_id_table[] =
->>> {
->>>          { PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_16H_NB_F3) },
->>>          { PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_16H_M30H_NB_F3) },
->>>          { PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_17H_DF_F3) },
->>> -       { PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_17H_RR_NB) },
->>> +       { PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_17H_RR_DF_F3) },
->>>          {}
->>>    };
->>>    MODULE_DEVICE_TABLE(pci, k10temp_id_table);
->>>
->>
-> 
