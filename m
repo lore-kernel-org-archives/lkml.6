@@ -1,126 +1,155 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753811AbeD2QKF (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 29 Apr 2018 12:10:05 -0400
-Received: from mail-io0-f199.google.com ([209.85.223.199]:48346 "EHLO
-        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753605AbeD2QKC (ORCPT
+        id S1753841AbeD2QMb (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 29 Apr 2018 12:12:31 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:45484 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753719AbeD2QM3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Apr 2018 12:10:02 -0400
-X-Google-Smtp-Source: AB8JxZrmLtlxYLmvjwEPQRLIasoWIbYbQVEc2iBFf5/oxz8ZcFlkXlPI6sKorjqCGPjezjmzcSXyBKmpfLraCxG5VU4CMzWIZ99t
+        Sun, 29 Apr 2018 12:12:29 -0400
+X-Google-Smtp-Source: AB8JxZruRhBmMr8gohDlrk3ZDY5/sxwP6+QnJY5divWd60z0KpDeskA/gQQc5SIgWnEGTORsTkfyUg==
+Subject: Re: [PATCH v2] hwmon: (k10temp) Fix reading critical temperature
+ register
+To: Gabriel C <nix.or.die@gmail.com>
+Cc: Clemens Ladisch <clemens@ladisch.de>, linux-hwmon@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>, Brian Woods <brian.woods@amd.com>
+References: <1525014504-14742-1-git-send-email-linux@roeck-us.net>
+ <CAEJqkgg8tchaUBsupH6_k0pHrOtY52N7iBq0o=8SUAHzNuf+Ug@mail.gmail.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <e3eab27c-e65c-95f6-0b62-26bfb2e00d3e@roeck-us.net>
+Date: Sun, 29 Apr 2018 09:12:25 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Date: Sun, 29 Apr 2018 09:10:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000035dab5056afef8d6@google.com>
-Subject: WARNING: ODEBUG bug in del_timer
-From: syzbot <syzbot+03faa2dc16b8b64be396@syzkaller.appspotmail.com>
-To: davem@davemloft.net, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, ubraun@linux.ibm.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <CAEJqkgg8tchaUBsupH6_k0pHrOtY52N7iBq0o=8SUAHzNuf+Ug@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 04/29/2018 09:03 AM, Gabriel C wrote:
+> 2018-04-29 17:08 GMT+02:00 Guenter Roeck <linux@roeck-us.net>:
+>> The HTC (Hardware Temperature Control) register has moved
+>> for recent chips.
+>>
+>> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+>> ---
+>> v2: Actually call the new function pointer from show_temp_crit().
+>>
+>>   drivers/hwmon/k10temp.c | 40 ++++++++++++++++++++++++++++++----------
+>>   1 file changed, 30 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/drivers/hwmon/k10temp.c b/drivers/hwmon/k10temp.c
+>> index d2cc55e21374..34b5448b00be 100644
+>> --- a/drivers/hwmon/k10temp.c
+>> +++ b/drivers/hwmon/k10temp.c
+>> @@ -63,10 +63,12 @@ static DEFINE_MUTEX(nb_smu_ind_mutex);
+>>   #define  NB_CAP_HTC                    0x00000400
+>>
+>>   /*
+>> - * For F15h M60h, functionality of REG_REPORTED_TEMPERATURE
+>> - * has been moved to D0F0xBC_xD820_0CA4 [Reported Temperature
+>> - * Control]
+>> + * For F15h M60h and M70h, REG_HARDWARE_THERMAL_CONTROL
+>> + * and REG_REPORTED_TEMPERATURE have been moved to
+>> + * D0F0xBC_xD820_0C64 [Hardware Temperature Control]
+>> + * D0F0xBC_xD820_0CA4 [Reported Temperature Control]
+>>    */
+>> +#define F15H_M60H_HARDWARE_TEMP_CTRL_OFFSET    0xd8200c64
+>>   #define F15H_M60H_REPORTED_TEMP_CTRL_OFFSET    0xd8200ca4
+>>
+>>   /* F17h M01h Access througn SMN */
+>> @@ -74,6 +76,7 @@ static DEFINE_MUTEX(nb_smu_ind_mutex);
+>>
+>>   struct k10temp_data {
+>>          struct pci_dev *pdev;
+>> +       void (*read_htcreg)(struct pci_dev *pdev, u32 *regval);
+>>          void (*read_tempreg)(struct pci_dev *pdev, u32 *regval);
+>>          int temp_offset;
+>>          u32 temp_adjust_mask;
+>> @@ -98,6 +101,11 @@ static const struct tctl_offset tctl_offset_table[] = {
+>>          { 0x17, "AMD Ryzen Threadripper 1910", 10000 },
+>>   };
+>>
+>> +static void read_htcreg_pci(struct pci_dev *pdev, u32 *regval)
+>> +{
+>> +       pci_read_config_dword(pdev, REG_HARDWARE_THERMAL_CONTROL, regval);
+>> +}
+>> +
+>>   static void read_tempreg_pci(struct pci_dev *pdev, u32 *regval)
+>>   {
+>>          pci_read_config_dword(pdev, REG_REPORTED_TEMPERATURE, regval);
+>> @@ -114,6 +122,12 @@ static void amd_nb_index_read(struct pci_dev *pdev, unsigned int devfn,
+>>          mutex_unlock(&nb_smu_ind_mutex);
+>>   }
+>>
+>> +static void read_htcreg_nb_f15(struct pci_dev *pdev, u32 *regval)
+>> +{
+>> +       amd_nb_index_read(pdev, PCI_DEVFN(0, 0), 0xb8,
+>> +                         F15H_M60H_HARDWARE_TEMP_CTRL_OFFSET, regval);
+>> +}
+>> +
+>>   static void read_tempreg_nb_f15(struct pci_dev *pdev, u32 *regval)
+>>   {
+>>          amd_nb_index_read(pdev, PCI_DEVFN(0, 0), 0xb8,
+>> @@ -160,8 +174,7 @@ static ssize_t show_temp_crit(struct device *dev,
+>>          u32 regval;
+>>          int value;
+>>
+>> -       pci_read_config_dword(data->pdev,
+>> -                             REG_HARDWARE_THERMAL_CONTROL, &regval);
+>> +       data->read_htcreg(data->pdev, &regval);
+>>          value = ((regval >> 16) & 0x7f) * 500 + 52000;
+>>          if (show_hyst)
+>>                  value -= ((regval >> 24) & 0xf) * 500;
+>> @@ -181,13 +194,18 @@ static umode_t k10temp_is_visible(struct kobject *kobj,
+>>          struct pci_dev *pdev = data->pdev;
+>>
+>>          if (index >= 2) {
+>> -               u32 reg_caps, reg_htc;
+>> +               u32 reg;
+>> +
+>> +               if (!data->read_htcreg)
+>> +                       return 0;
+>>
+>>                  pci_read_config_dword(pdev, REG_NORTHBRIDGE_CAPABILITIES,
+>> -                                     &reg_caps);
+>> -               pci_read_config_dword(pdev, REG_HARDWARE_THERMAL_CONTROL,
+>> -                                     &reg_htc);
+>> -               if (!(reg_caps & NB_CAP_HTC) || !(reg_htc & HTC_ENABLE))
+>> +                                     &reg);
+>> +               if (!(reg & NB_CAP_HTC))
+>> +                       return 0;
+>> +
+>> +               data->read_htcreg(data->pdev, &reg);
+>> +               if (!(reg & HTC_ENABLE))
+>>                          return 0;
+>>          }
+>>          return attr->mode;
+>> @@ -268,11 +286,13 @@ static int k10temp_probe(struct pci_dev *pdev,
+>>
+>>          if (boot_cpu_data.x86 == 0x15 && (boot_cpu_data.x86_model == 0x60 ||
+>>                                            boot_cpu_data.x86_model == 0x70)) {
+>> +               data->read_htcreg = read_htcreg_nb_f15;
+>>                  data->read_tempreg = read_tempreg_nb_f15;
+>>          } else if (boot_cpu_data.x86 == 0x17) {
+>>                  data->temp_adjust_mask = 0x80000;
+>>                  data->read_tempreg = read_tempreg_nb_f17;
+>>          } else {
+>> +               data->read_htcreg = read_htcreg_pci;
+>>                  data->read_tempreg = read_tempreg_pci;
+>>          }
+>>
+>> --
+>> 2.7.4
+>>
+> 
+> Tested on 4.17.0-rc2-00398-gcdface520934 , works fine for me.
+> 
+> Tested-by: Gabriel Craciunescu <nix.or.die@gmail.com>
+> 
+Thanks a lot!
 
-syzbot hit the following crash on net-next commit
-af201bab50a89aa6cf4df952b2c3bf55895c8eee (Fri Apr 27 15:12:10 2018 +0000)
-udp: remove stray export symbol
-syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=03faa2dc16b8b64be396
-
-So far this crash happened 26 times on net-next.
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5925539139289088
-syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=4983245594689536
-Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=5476181675606016
-Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=4410550353033654931
-compiler: gcc (GCC) 8.0.1 20180413 (experimental)
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+03faa2dc16b8b64be396@syzkaller.appspotmail.com
-It will help syzbot understand when the bug is fixed. See footer for  
-details.
-If you forward the report, please keep this part and the footer.
-
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-------------[ cut here ]------------
-ODEBUG: assert_init not available (active state 0) object type: timer_list  
-hint:           (null)
-WARNING: CPU: 1 PID: 4490 at lib/debugobjects.c:329  
-debug_print_object+0x16a/0x210 lib/debugobjects.c:326
-Kernel panic - not syncing: panic_on_warn set ...
-
-CPU: 1 PID: 4490 Comm: syz-executor609 Not tainted 4.17.0-rc2+ #23
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  panic+0x22f/0x4de kernel/panic.c:184
-  __warn.cold.8+0x163/0x1b3 kernel/panic.c:536
-  report_bug+0x252/0x2d0 lib/bug.c:186
-  fixup_bug arch/x86/kernel/traps.c:178 [inline]
-  do_error_trap+0x1de/0x490 arch/x86/kernel/traps.c:296
-  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
-  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:992
-RIP: 0010:debug_print_object+0x16a/0x210 lib/debugobjects.c:326
-RSP: 0018:ffff8801af1e7880 EFLAGS: 00010086
-RAX: 0000000000000061 RBX: 0000000000000005 RCX: ffffffff818433e8
-RDX: 0000000000000000 RSI: ffffffff8160f561 RDI: 0000000000000001
-RBP: ffff8801af1e78c0 R08: ffff8801afa62100 R09: ffffed003b5e3eb2
-R10: ffffed003b5e3eb2 R11: ffff8801daf1f597 R12: 0000000000000001
-R13: ffffffff88d96cc0 R14: ffffffff87fa34e0 R15: ffffffff81666d30
-  debug_object_assert_init+0x309/0x500 lib/debugobjects.c:692
-  debug_timer_assert_init kernel/time/timer.c:724 [inline]
-  debug_assert_init kernel/time/timer.c:776 [inline]
-  del_timer+0x74/0x140 kernel/time/timer.c:1198
-  try_to_grab_pending+0x439/0x9a0 kernel/workqueue.c:1223
-  mod_delayed_work_on+0x91/0x250 kernel/workqueue.c:1592
-  mod_delayed_work include/linux/workqueue.h:541 [inline]
-  smc_setsockopt+0x33d/0x630 net/smc/af_smc.c:1353
-  __sys_setsockopt+0x1bd/0x390 net/socket.c:1903
-  __do_sys_setsockopt net/socket.c:1914 [inline]
-  __se_sys_setsockopt net/socket.c:1911 [inline]
-  __x64_sys_setsockopt+0xbe/0x150 net/socket.c:1911
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x43fd09
-RSP: 002b:00007ffe1f251c58 EFLAGS: 00000207 ORIG_RAX: 0000000000000036
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fd09
-RDX: 0000000000000001 RSI: 0000000000000006 RDI: 0000000000000003
-RBP: 00000000006ca018 R08: 0000000000000004 R09: 00000000004002c8
-R10: 0000000020000180 R11: 0000000000000207 R12: 0000000000401630
-R13: 00000000004016c0 R14: 0000000000000000 R15: 0000000000000000
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
-
----
-This bug is generated by a dumb bot. It may contain errors.
-See https://goo.gl/tpsmEJ for details.
-Direct all questions to syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report.
-If you forgot to add the Reported-by tag, once the fix for this bug is  
-merged
-into any tree, please reply to this email with:
-#syz fix: exact-commit-title
-If you want to test a patch for this bug, please reply with:
-#syz test: git://repo/address.git branch
-and provide the patch inline or as an attachment.
-To mark this as a duplicate of another syzbot report, please reply with:
-#syz dup: exact-subject-of-another-report
-If it's a one-off invalid bug report, please reply with:
-#syz invalid
-Note: if the crash happens again, it will cause creation of a new bug  
-report.
-Note: all commands must start from beginning of the line in the email body.
+Guenter
