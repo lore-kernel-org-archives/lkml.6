@@ -1,94 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751645AbeD2Byp (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 28 Apr 2018 21:54:45 -0400
-Received: from bh-25.webhostbox.net ([208.91.199.152]:46861 "EHLO
-        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751262AbeD2Byn (ORCPT
+        id S1751754AbeD2B4y (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 28 Apr 2018 21:56:54 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:57438 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751319AbeD2B4x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Apr 2018 21:54:43 -0400
-From: Guenter Roeck <linux@roeck-us.net>
-To: Thomas Gleixner <tglx@linutronix.de>,
-        Clemens Ladisch <clemens@ladisch.de>
-Cc: x86@kernel.org, Jean Delvare <jdelvare@suse.com>,
-        linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        Borislav Petkov <bp@suse.de>, Yazen Ghannam <Yazen.Ghannam@amd.com>,
-        Brian Woods <brian.woods@amd.com>, Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 1/2] x86/amd_nb: Add support for Raven Ridge CPUs
-Date: Sat, 28 Apr 2018 18:54:38 -0700
-Message-Id: <1524966879-9424-1-git-send-email-linux@roeck-us.net>
-X-Mailer: git-send-email 2.7.4
-X-Authenticated_sender: guenter@roeck-us.net
-X-OutGoing-Spam-Status: No, score=-1.0
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - roeck-us.net
-X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
-X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+        Sat, 28 Apr 2018 21:56:53 -0400
+To: linux-kbuild <linux-kbuild@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: [RFC patch] Documenation: don't build media .rst files when not
+ building Documentation/media/
+Message-ID: <10b4346b-d9ac-b7d1-4187-0a227ae53cf4@infradead.org>
+Date: Sat, 28 Apr 2018 18:56:51 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add Raven Ridge root bridge and data fabric PCI IDs.
-This is required for amd_pci_dev_to_node_id() and amd_smn_read().
 
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Don't build media .rst files from header files when Documentation/media/
+is not in the target SPHINXDIRS.
+
+It looks like the dependencies in Documentation/media/Makefile should
+take care of running parse-headers.pl to generated .rst files from the
+header files, but it's not happening and I don't see why not.
+
 ---
-This patch is a prerequisite for the second patch in the series.
-I'll be happy to apply both patches through hwmon if that is acceptable
-(and Cc: stable for 4.16+). If not, I'll be happy to wait for this patch
-to be available upstream.
+ Documentation/Makefile |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Since that there is no public documentation available for Raven Ridge,
-PCI IDs are derived from output of lspci.
-
- arch/x86/kernel/amd_nb.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/arch/x86/kernel/amd_nb.c b/arch/x86/kernel/amd_nb.c
-index c88e0b127810..bd33613ecb7c 100644
---- a/arch/x86/kernel/amd_nb.c
-+++ b/arch/x86/kernel/amd_nb.c
-@@ -14,8 +14,11 @@
- #include <asm/amd_nb.h>
+--- linux-next-20180426.orig/Documentation/Makefile
++++ linux-next-20180426/Documentation/Makefile
+@@ -52,8 +52,7 @@ loop_cmd = $(echo-cmd) $(cmd_$(1)) || ex
+ #    e.g. "media" for the linux-tv book-set at ./Documentation/media
  
- #define PCI_DEVICE_ID_AMD_17H_ROOT	0x1450
-+#define PCI_DEVICE_ID_AMD_17H_RR_ROOT	0x15d0
- #define PCI_DEVICE_ID_AMD_17H_DF_F3	0x1463
- #define PCI_DEVICE_ID_AMD_17H_DF_F4	0x1464
-+#define PCI_DEVICE_ID_AMD_17H_RR_DF_F3	0x15eb
-+#define PCI_DEVICE_ID_AMD_17H_RR_DF_F4	0x15ec
- 
- /* Protect the PCI config register pairs used for SMN and DF indirect access. */
- static DEFINE_MUTEX(smn_mutex);
-@@ -24,6 +27,7 @@ static u32 *flush_words;
- 
- static const struct pci_device_id amd_root_ids[] = {
- 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_ROOT) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_RR_ROOT) },
- 	{}
- };
- 
-@@ -39,6 +43,7 @@ const struct pci_device_id amd_nb_misc_ids[] = {
- 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_16H_NB_F3) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_16H_M30H_NB_F3) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_DF_F3) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_RR_DF_F3) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_CNB17H_F3) },
- 	{}
- };
-@@ -51,6 +56,7 @@ static const struct pci_device_id amd_nb_link_ids[] = {
- 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_16H_NB_F4) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_16H_M30H_NB_F4) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_DF_F4) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_RR_DF_F4) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_CNB17H_F4) },
- 	{}
- };
--- 
-2.7.4
+ quiet_cmd_sphinx = SPHINX  $@ --> file://$(abspath $(BUILDDIR)/$3/$4)
+-      cmd_sphinx = $(MAKE) BUILDDIR=$(abspath $(BUILDDIR)) $(build)=Documentation/media $2 && \
+-	PYTHONDONTWRITEBYTECODE=1 \
++      cmd_sphinx = PYTHONDONTWRITEBYTECODE=1 \
+ 	BUILDDIR=$(abspath $(BUILDDIR)) SPHINX_CONF=$(abspath $(srctree)/$(src)/$5/$(SPHINX_CONF)) \
+ 	$(SPHINXBUILD) \
+ 	-b $2 \
