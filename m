@@ -1,58 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753336AbeD2MXR (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 29 Apr 2018 08:23:17 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:39999 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753054AbeD2MXQ (ORCPT
+        id S1753422AbeD2MZi (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 29 Apr 2018 08:25:38 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:52788 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753054AbeD2MZg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Apr 2018 08:23:16 -0400
-X-Google-Smtp-Source: AB8JxZq/A8968LdvKBF3V9Q43Djais+2xa7wUufIvS0TuVcJin1cAroR5jVtr1/MpX65NazZEQbUYg==
-From: Etienne Carriere <etienne.carriere@linaro.org>
-To: alexandre.jutras@nxp.com, linux-kernel@vger.kernel.org,
-        jens.wiklander@linaro.org
-Cc: Etienne Carriere <etienne.carriere@linaro.org>
-Subject: [PATCH] tee: check shm references are consistent in offset/size
-Date: Sun, 29 Apr 2018 14:22:29 +0200
-Message-Id: <1525004549-16266-1-git-send-email-etienne.carriere@linaro.org>
-X-Mailer: git-send-email 1.9.1
+        Sun, 29 Apr 2018 08:25:36 -0400
+From: Colin King <colin.king@canonical.com>
+To: Kashyap Desai <kashyap.desai@broadcom.com>,
+        Sumit Saxena <sumit.saxena@broadcom.com>,
+        Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
+        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        megaraidlinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] scsi: megaraid_sas: fix spelling mistake: "disbale" -> "disable"
+Date: Sun, 29 Apr 2018 13:25:32 +0100
+Message-Id: <20180429122532.10879-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This change prevents userland from referencing TEE shared memory
-outside the area initially allocated by its owner. Prior this change an
-application could not reference or access memory it did not own but
-it could reference memory not explicitly allocated by owner but still
-allocated to the owner due to the memory allocation granule.
+From: Colin Ian King <colin.king@canonical.com>
 
-Reported-by: Alexandre Jutras <alexandre.jutras@nxp.com>
-Signed-off-by: Etienne Carriere <etienne.carriere@linaro.org>
+Trivial fix to spelling mistake in module parameter description text
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/tee/tee_core.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/scsi/megaraid/megaraid_sas_base.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/tee/tee_core.c b/drivers/tee/tee_core.c
-index 0124a91..dd46b75 100644
---- a/drivers/tee/tee_core.c
-+++ b/drivers/tee/tee_core.c
-@@ -238,6 +238,17 @@ static int params_from_user(struct tee_context *ctx, struct tee_param *params,
- 			if (IS_ERR(shm))
- 				return PTR_ERR(shm);
+diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megaraid/megaraid_sas_base.c
+index 026fad818b2a..55c38bcf3c73 100644
+--- a/drivers/scsi/megaraid/megaraid_sas_base.c
++++ b/drivers/scsi/megaraid/megaraid_sas_base.c
+@@ -92,7 +92,7 @@ MODULE_PARM_DESC(resetwaittime, "Wait time in seconds after I/O timeout "
  
-+			/*
-+			 * Ensure offset + size does not overflow offset
-+			 * and does not overflow the size of the referred
-+			 * shared memory object.
-+			 */
-+			if ((ip.a + ip.b) < ip.a ||
-+			    (ip.a + ip.b) > shm->size) {
-+				tee_shm_put(shm);
-+				return -EINVAL;
-+			}
-+
- 			params[n].u.memref.shm_offs = ip.a;
- 			params[n].u.memref.size = ip.b;
- 			params[n].u.memref.shm = shm;
+ int smp_affinity_enable = 1;
+ module_param(smp_affinity_enable, int, S_IRUGO);
+-MODULE_PARM_DESC(smp_affinity_enable, "SMP affinity feature enable/disbale Default: enable(1)");
++MODULE_PARM_DESC(smp_affinity_enable, "SMP affinity feature enable/disable Default: enable(1)");
+ 
+ int rdpq_enable = 1;
+ module_param(rdpq_enable, int, S_IRUGO);
 -- 
-1.9.1
+2.17.0
