@@ -1,47 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752782AbeD2Gh6 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 29 Apr 2018 02:37:58 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:52483 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752631AbeD2Gh5 (ORCPT
+        id S1752739AbeD2Gne (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 29 Apr 2018 02:43:34 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:33414 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752128AbeD2Gnc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Apr 2018 02:37:57 -0400
-X-Google-Smtp-Source: AB8JxZoAbuOwJq5yhRfSJiDQQ1Bn1FZY8oK2nO1icmb3i1UYXPJBGxwqf1Wy7turX51Fk0rFA4YD03SVnvxRQZl339o=
+        Sun, 29 Apr 2018 02:43:32 -0400
+X-Google-Smtp-Source: AB8JxZoVY6oYW811mpmHjJ+xOTbd1yhm7ic05Yo3/ofxSKimtQtZDDKr1RkyYRAlNQShytV/Sw7CDw==
+Subject: Re: [PATCH 1/1] tg3: fix meaningless hw_stats reading after tg3_halt
+ memset 0 hw_stats
+To: Michael Chan <michael.chan@broadcom.com>
+References: <20180428031544.210054-1-zumeng.chen@gmail.com>
+ <CACKFLi=UxiSUAx8CoMKpx16d7mVSAbbmhR-m=1W_kzNrePu7XQ@mail.gmail.com>
+Cc: Netdev <netdev@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Siva Reddy Kallam <siva.kallam@broadcom.com>,
+        "michael.chan@broadcom.com" <mchan@broadcom.com>,
+        "prashant.sreedharan@broadcom.com" <prashant@broadcom.com>,
+        David Miller <davem@davemloft.net>
+From: Zumeng Chen <zumeng.chen@gmail.com>
+Message-ID: <eb6f9052-88fc-6b90-2278-88df3b3cccd8@gmail.com>
+Date: Sun, 29 Apr 2018 14:43:19 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.0
 MIME-Version: 1.0
-In-Reply-To: <e0b5ae90-f21e-f5db-a4af-52900a2e8c07@arm.com>
-References: <1516190084-18978-1-git-send-email-julien.thierry@arm.com> <e0b5ae90-f21e-f5db-a4af-52900a2e8c07@arm.com>
-From: Joel Fernandes <joel.opensrc@gmail.com>
-Date: Sat, 28 Apr 2018 23:37:55 -0700
-Message-ID: <CAEi0qNkt75cqF=03HrQ81+pDdWVOpzGiHrk8_cTNTJo9os9D8Q@mail.gmail.com>
-Subject: Re: [PATCH v2 0/6] arm64: provide pseudo NMI with GICv3
-To: Julien Thierry <julien.thierry@arm.com>
-Cc: Linux ARM Kernel List <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        mark.rutland@arm.com, marc.zyngier@arm.com, james.morse@arm.com,
-        daniel.thompson@linaro.org, Joel Fernandes <joelaf@google.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CACKFLi=UxiSUAx8CoMKpx16d7mVSAbbmhR-m=1W_kzNrePu7XQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 17, 2018 at 4:10 AM, Julien Thierry <julien.thierry@arm.com> wrote:
-> Hi,
+On 2018年04月29日 02:36, Michael Chan wrote:
+> On Fri, Apr 27, 2018 at 8:15 PM, Zumeng Chen <zumeng.chen@gmail.com> wrote:
 >
-> On 17/01/18 11:54, Julien Thierry wrote:
+>> diff --git a/drivers/net/ethernet/broadcom/tg3.h b/drivers/net/ethernet/broadcom/tg3.h
+>> index 3b5e98e..6727d93 100644
+>> --- a/drivers/net/ethernet/broadcom/tg3.h
+>> +++ b/drivers/net/ethernet/broadcom/tg3.h
+>> @@ -3352,6 +3352,7 @@ struct tg3 {
+>>          struct pci_dev                  *pdev_peer;
 >>
->> This series is a continuation of the work started by Daniel [1]. The goal
->> is to use GICv3 interrupt priorities to simulate an NMI.
+>>          struct tg3_hw_stats             *hw_stats;
+>> +       bool                            hw_stats_flag;
+> You can just add another bit to enum TG3_FLAGS for this purpose.
+
+Right, it's a good idea, I didn't notice it, I'll send V2 with that later.
+
+>
+> While this scheme will probably work, I think a better and more
+> elegant way to fix this is to use RCU.
+
+IMHO, RCU is not necessary for this simple two consumers, and no 
+frequent ops
+on tg3_halt, plus no new locker involved either.
+
+Cheers,
+Zumeng
+>
+>>          dma_addr_t                      stats_mapping;
+>>          struct work_struct              reset_task;
 >>
->
->
-> I have submitted a separate series making use of this feature for the ARM
-> PMUv3 interrupt [1].
-
-I guess the hard lockup detector using NMI could be a nice next step
-to see how well it works with lock up detection. That's the main
-usecase for my interest. However, perf profiling is also a strong one.
-
-thanks,
-
-- Joel
+>> --
+>> 2.9.3
+>>
