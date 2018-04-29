@@ -1,23 +1,23 @@
 Return-Path: <hdegoede@redhat.com>
-X-Google-Smtp-Source: AB8JxZqwr/bwIZNDzXRUUg6IfPoAgPivvFsMBoLQchyamGwsYGFDfIWHHqkdprPLP0Vzjw0Toe78
-ARC-Seal: i=1; a=rsa-sha256; t=1524994581; cv=none;
+X-Google-Smtp-Source: AB8JxZp+jrs4WwbsRrBFm9h7vRxMZh2V8WwkY5FuuKoUp5q4YyURczyEoY/8xSHSGSAzjZHXBIhj
+ARC-Seal: i=1; a=rsa-sha256; t=1524994578; cv=none;
         d=google.com; s=arc-20160816;
-        b=r0myA68pV2quBfuanhmPhrrUAWRtAaJfhcAPtGRKYFt7YOQJJ5tSwrCXGvQ/DDt8t3
-         noepOGihmYRJqWqPdze/dKKAt75Cz6Up5bPpl+g/F7fZmAiJvKBCX0AKxtWGzvnDbsF/
-         31BzOS+2Go2x9SJrOhj5tuX7Jf4zE3Go8L1TQD7z+lvs43jaeooV8TZeHAxLO1ha9qka
-         ykjEibQYDjaStIIklzPufXKA9+tPmF41cDNtyQm2F86Uzhg7d5C7NPn28jnzHOqTmZd7
-         TA4EJhG/RsvQG7DQrgkdNTghRcrwSXACGFT/MHwkPTYE60nbITZmcmTPmhkGpjal3wKA
-         RMug==
+        b=Ob8QS/yYKtIxi6GVAZWg9czsqznlEWDlg14HM4aaDiS/rd1Xg0kwebS/85Rfar1617
+         /JEZoath7gxDv0ZhkFqYYwHt14WzBDsMiQxkn3KRoxi8eekG9/TUgmOMPEfn+P5wXCSV
+         bMjyVd3XtrTXL90jn/fpIos8wx9p4CI5vLsL664w84FPBdzY1HzDpMI6xRT9LO8+8N46
+         Z31TUQmH13ryqCsOrcab+q94AIfXq1wxurH5+9e9Ry8d1QZcZuti0ITH7iCzOX/2OiXw
+         h1SAeAz7z9xVF+GPdAAZR5k5LrNDeZNzrARg/DIADxY/DeNYyl0U3wq7M6UjTqoUDBmO
+         uC9g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=tX7xHUZE9sjOHWOewoJwLTQwl6rqNAny7H/FR8esXwY=;
-        b=mPBQGm8tWo2g49c727B3ztYMD7BqBiqnJm4gseVnvm+1UQlK+Yr0u0VU6dA1utx73M
-         RxD7+OoXbxPwr5NpokM132hQgH1xyx9wk26rXnlzDxF/HW8alnMpJ8MmPXDdDx5t24QC
-         ENVAqr2gAyhDiW8mpjXaarScAHwTFLPAc0hs8gs5lXAbSmcBQL+7GyStm0jHw7NspqQt
-         TtVfAY1hgQeox+HeRAZDOCc5vROZl/HHnALC/OMDLN2tUWGSNl6APA5XgldRjCqpjUQ2
-         pm2qKvv+dzqdDNl7fg7XjtU1ioYrvNlTyut4k5ytDdmlYXmEgVEVqjF1rW6sqpOp41Xn
-         hsGw==
+        bh=EdVL2eVDaMv845+e8bmrwTyrGFN4p8h9ipa0nn4qqkY=;
+        b=jd9kexKhRHfZ337rmLi/OuT8ouyKG9oi5RtQt2gQhPGsvvAwL31sLTUoBm47hrZyuZ
+         U9eWeF/nRAK3fc/MbVn51tAWXlouDQUnGpDAPvIkI0+JgmnetlOrG6Nu0cKmhtmF6q0n
+         ZylMhuaYVnqRNLlfTTsst5FfozjKVdM3KXPV6zYDiMaRYLLhxztl7Yckkxijqg7VJ+qT
+         eissDdT2DHCG9v4NQ1XbV9d6kS9kZbt9aACKruv9+Zsv253hHwLilWqAfCoUvA8n1YfJ
+         dGyW1dpUl7hNBx0ZFlPEK4P9CHWXAAvfIM4txsglL4lE/Qhd+Fo8DO/h75HzvXO2uxHM
+         j7Wg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of hdegoede@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
@@ -52,70 +52,158 @@ Cc: Hans de Goede <hdegoede@redhat.com>,
 	x86@kernel.org,
 	linux-efi@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 5/5] platform/x86: touchscreen_dmi: Add info for the Chuwi Vi8 Plus tablet
-Date: Sun, 29 Apr 2018 11:35:58 +0200
-Message-Id: <20180429093558.5411-6-hdegoede@redhat.com>
+Subject: [PATCH v5 4/5] platform/x86: touchscreen_dmi: Add EFI embedded firmware info support
+Date: Sun, 29 Apr 2018 11:35:57 +0200
+Message-Id: <20180429093558.5411-5-hdegoede@redhat.com>
 In-Reply-To: <20180429093558.5411-1-hdegoede@redhat.com>
 References: <20180429093558.5411-1-hdegoede@redhat.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599072718546647819?=
-X-GMAIL-MSGID: =?utf-8?q?1599072718546647819?=
+X-GMAIL-THRID: =?utf-8?q?1599072714825836591?=
+X-GMAIL-MSGID: =?utf-8?q?1599072714825836591?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Add touchscreen info for the Chuwi Vi8 Plus tablet. This tablet uses a
-Chipone ICN8505 touchscreen controller, with the firmware used by the
-touchscreen embedded in the EFI firmware.
+Sofar we have been unable to get permission from the vendors to put the
+firmware for touchscreens listed in touchscreen_dmi in linux-firmware.
+
+Some of the tablets with such a touchscreen have a touchscreen driver, and
+thus a copy of the firmware, as part of their EFI code.
+
+This commit adds the necessary info for the new EFI embedded-firmware code
+to extract these firmwares, making the touchscreen work OOTB without the
+user needing to manually add the firmware.
 
 Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 ---
- drivers/platform/x86/touchscreen_dmi.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ drivers/firmware/efi/embedded-firmware.c |  3 +++
+ drivers/platform/x86/Kconfig             |  1 +
+ drivers/platform/x86/touchscreen_dmi.c   | 26 +++++++++++++++++++++++-
+ include/linux/efi_embedded_fw.h          |  2 ++
+ 4 files changed, 31 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/firmware/efi/embedded-firmware.c b/drivers/firmware/efi/embedded-firmware.c
+index 22a0f598b53d..36a93a6938f0 100644
+--- a/drivers/firmware/efi/embedded-firmware.c
++++ b/drivers/firmware/efi/embedded-firmware.c
+@@ -23,6 +23,9 @@ struct embedded_fw {
+ static LIST_HEAD(found_fw_list);
+ 
+ static const struct dmi_system_id * const embedded_fw_table[] = {
++#ifdef CONFIG_TOUCHSCREEN_DMI
++	touchscreen_dmi_table,
++#endif
+ 	NULL
+ };
+ 
+diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+index 7ff206e5edfe..cc4d95459190 100644
+--- a/drivers/platform/x86/Kconfig
++++ b/drivers/platform/x86/Kconfig
+@@ -1199,6 +1199,7 @@ config INTEL_TURBO_MAX_3
+ config TOUCHSCREEN_DMI
+ 	bool "DMI based touchscreen configuration info"
+ 	depends on ACPI && DMI && I2C=y && TOUCHSCREEN_SILEAD
++	select EFI_EMBEDDED_FIRMWARE if EFI
+ 	---help---
+ 	  Certain ACPI based tablets with e.g. Silead or Chipone touchscreens
+ 	  do not have enough data in ACPI tables for the touchscreen driver to
 diff --git a/drivers/platform/x86/touchscreen_dmi.c b/drivers/platform/x86/touchscreen_dmi.c
-index 6488cd50ba79..5fdb6fe878f4 100644
+index 87fc839b28f7..6488cd50ba79 100644
 --- a/drivers/platform/x86/touchscreen_dmi.c
 +++ b/drivers/platform/x86/touchscreen_dmi.c
-@@ -301,6 +301,22 @@ static const struct ts_dmi_data teclast_x3_plus_data = {
+@@ -15,12 +15,15 @@
+ #include <linux/acpi.h>
+ #include <linux/device.h>
+ #include <linux/dmi.h>
++#include <linux/efi_embedded_fw.h>
+ #include <linux/i2c.h>
+ #include <linux/notifier.h>
+ #include <linux/property.h>
+ #include <linux/string.h>
+ 
+ struct ts_dmi_data {
++	/* The EFI embedded-fw code expects this to be the first member! */
++	struct efi_embedded_fw_desc embedded_fw;
+ 	const char *acpi_name;
+ 	const struct property_entry *properties;
+ };
+@@ -31,10 +34,17 @@ static const struct property_entry cube_iwork8_air_props[] = {
+ 	PROPERTY_ENTRY_BOOL("touchscreen-swapped-x-y"),
+ 	PROPERTY_ENTRY_STRING("firmware-name", "gsl3670-cube-iwork8-air.fw"),
+ 	PROPERTY_ENTRY_U32("silead,max-fingers", 10),
++	PROPERTY_ENTRY_BOOL("efi-embedded-firmware"),
+ 	{ }
+ };
+ 
+ static const struct ts_dmi_data cube_iwork8_air_data = {
++	.embedded_fw = {
++		.name	= "silead/gsl3670-cube-iwork8-air.fw",
++		.prefix = { 0xf0, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00 },
++		.length	= 38808,
++		.crc	= 0xfecde51f,
++	},
+ 	.acpi_name	= "MSSL1680:00",
+ 	.properties	= cube_iwork8_air_props,
+ };
+@@ -119,10 +129,17 @@ static const struct property_entry pipo_w2s_props[] = {
+ 	PROPERTY_ENTRY_BOOL("touchscreen-swapped-x-y"),
+ 	PROPERTY_ENTRY_STRING("firmware-name",
+ 			      "gsl1680-pipo-w2s.fw"),
++	PROPERTY_ENTRY_BOOL("efi-embedded-firmware"),
+ 	{ }
+ };
+ 
+ static const struct ts_dmi_data pipo_w2s_data = {
++	.embedded_fw = {
++		.name	= "silead/gsl1680-pipo-w2s.fw",
++		.prefix = { 0xf0, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00 },
++		.length	= 39072,
++		.crc	= 0x28d5dc6c,
++	},
+ 	.acpi_name	= "MSSL1680:00",
+ 	.properties	= pipo_w2s_props,
+ };
+@@ -162,10 +179,17 @@ static const struct property_entry chuwi_hi8_pro_props[] = {
+ 	PROPERTY_ENTRY_BOOL("touchscreen-swapped-x-y"),
+ 	PROPERTY_ENTRY_STRING("firmware-name", "gsl3680-chuwi-hi8-pro.fw"),
+ 	PROPERTY_ENTRY_BOOL("silead,home-button"),
++	PROPERTY_ENTRY_BOOL("efi-embedded-firmware"),
+ 	{ }
+ };
+ 
+ static const struct ts_dmi_data chuwi_hi8_pro_data = {
++	.embedded_fw = {
++		.name	= "silead/gsl3680-chuwi-hi8-pro.fw",
++		.prefix = { 0xf0, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00 },
++		.length	= 39864,
++		.crc	= 0xfe2bedba,
++	},
+ 	.acpi_name	= "MSSL1680:00",
+ 	.properties	= chuwi_hi8_pro_props,
+ };
+@@ -277,7 +301,7 @@ static const struct ts_dmi_data teclast_x3_plus_data = {
  	.properties	= teclast_x3_plus_props,
  };
  
-+static const struct property_entry efi_embedded_fw_props[] = {
-+	PROPERTY_ENTRY_BOOL("efi-embedded-firmware"),
-+	{ }
-+};
-+
-+static const struct ts_dmi_data chuwi_vi8_plus_data = {
-+	.embedded_fw = {
-+		.name	= "chipone/icn8505-HAMP0002.fw",
-+		.prefix = { 0xb0, 0x07, 0x00, 0x00, 0xe4, 0x07, 0x00, 0x00 },
-+		.length	= 35012,
-+		.crc	= 0x74dfd3fc,
-+	},
-+	.acpi_name	= "CHPN0001:00",
-+	.properties	= efi_embedded_fw_props,
-+};
-+
- const struct dmi_system_id touchscreen_dmi_table[] = {
+-static const struct dmi_system_id touchscreen_dmi_table[] = {
++const struct dmi_system_id touchscreen_dmi_table[] = {
  	{
  		/* CUBE iwork8 Air */
-@@ -487,6 +503,15 @@ const struct dmi_system_id touchscreen_dmi_table[] = {
- 			DMI_MATCH(DMI_PRODUCT_NAME, "Y8W81"),
- 		},
- 	},
-+	{
-+		/* Chuwi Vi8 Plus (CWI506) */
-+		.driver_data = (void *)&chuwi_vi8_plus_data,
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Hampoo"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "D2D3_Vi8A1"),
-+			DMI_MATCH(DMI_BOARD_NAME, "Cherry Trail CR"),
-+		},
-+	},
- 	{ },
+ 		.driver_data = (void *)&cube_iwork8_air_data,
+diff --git a/include/linux/efi_embedded_fw.h b/include/linux/efi_embedded_fw.h
+index 0f7d4df3f57a..4c8cfe38ec02 100644
+--- a/include/linux/efi_embedded_fw.h
++++ b/include/linux/efi_embedded_fw.h
+@@ -20,6 +20,8 @@ struct efi_embedded_fw_desc {
+ 	u32 crc;
  };
  
++extern const struct dmi_system_id touchscreen_dmi_table[];
++
+ int efi_get_embedded_fw(const char *name, void **dat, size_t *sz, size_t msize);
+ 
+ #endif
 -- 
 2.17.0
