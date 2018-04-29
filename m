@@ -1,62 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754233AbeD2Uaa (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 29 Apr 2018 16:30:30 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:33650 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753781AbeD2Ua3 (ORCPT
+        id S1754261AbeD2Uvi (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 29 Apr 2018 16:51:38 -0400
+Received: from mail-yb0-f177.google.com ([209.85.213.177]:33526 "EHLO
+        mail-yb0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754138AbeD2Uvg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Apr 2018 16:30:29 -0400
-Date: Sun, 29 Apr 2018 13:30:23 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Kees Cook <keescook@chromium.org>
-Cc: Julia Lawall <julia.lawall@lip6.fr>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <mawilcox@microsoft.com>, Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        cocci@systeme.lip6.fr, Himanshu Jha <himanshujha199640@gmail.com>
-Subject: Re: [PATCH 2/2] mm: Add kvmalloc_ab_c and kvzalloc_struct
-Message-ID: <20180429203023.GA11891@bombadil.infradead.org>
-References: <20180214182618.14627-1-willy@infradead.org>
- <20180214182618.14627-3-willy@infradead.org>
- <CAGXu5jL9hqQGe672CmvFwqNbtTr=qu7WRwHuS4Vy7o5sX_UTgg@mail.gmail.com>
- <alpine.DEB.2.20.1803072212160.2814@hadrien>
- <20180308025812.GA9082@bombadil.infradead.org>
- <alpine.DEB.2.20.1803080722300.3754@hadrien>
- <20180308230512.GD29073@bombadil.infradead.org>
- <alpine.DEB.2.20.1803131818550.3117@hadrien>
- <20180313183220.GA21538@bombadil.infradead.org>
- <CAGXu5jKLaY2vzeFNaEhZOXbMgDXp4nF4=BnGCFfHFRwL6LXNHA@mail.gmail.com>
+        Sun, 29 Apr 2018 16:51:36 -0400
+X-Google-Smtp-Source: AB8JxZoWiiFH29txD4vImmG8pk3wAb6AWw2PSsOvdXB2SU55/nz5aCqzakhiAUvgBGVGANdnJhV9K2CP9hWsA3rUDvQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGXu5jKLaY2vzeFNaEhZOXbMgDXp4nF4=BnGCFfHFRwL6LXNHA@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180429055417.GA10221@mithrandir>
+References: <1524869998-2805-1-git-send-email-wesley@sifive.com>
+ <1524869998-2805-2-git-send-email-wesley@sifive.com> <20180429055417.GA10221@mithrandir>
+From: Wesley Terpstra <wesley@sifive.com>
+Date: Sun, 29 Apr 2018 13:51:34 -0700
+Message-ID: <CAMgXwTgN26aKaSuVdSj2TDUgbR7bAmy4TdtOuKj_QC0kNNbphg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] dt-bindings: added new pwm-sifive driver documentation
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        =?UTF-8?Q?Noralf_Tr=C3=B8nnes?= <noralf@tronnes.org>,
+        David Lechner <david@lechnology.com>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+        SZ Lin <sz.lin@moxa.com>, linux-pwm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Apr 29, 2018 at 09:59:27AM -0700, Kees Cook wrote:
-> Did this ever happen?
+On Sat, Apr 28, 2018 at 10:54 PM, Thierry Reding
+<thierry.reding@gmail.com> wrote:
+> On Fri, Apr 27, 2018 at 03:59:56PM -0700, Wesley W. Terpstra wrote:
+>> +Unlike most other PWM controllers, the SiFive PWM controller currently only
+>> +supports one period for all channels in the PWM. This is set globally in DTS.
+>> +The period also has significant restrictions on the values it can achieve,
+>> +which the driver rounds to the nearest achievable frequency.
+>
+> How about you encode this in the driver rather than DT? We have several
+> drivers with similar restrictions and they usually allow the first PWM
+> channel to choose an arbitrary period and return an error if subsequent
+> channels request a period that can't be supported.
+>
+> I think something similar could work with that second restriction. Why
+> not return an error if the exact period can't be set? Or perhaps allow
+> some percentage of deviation.
 
-Not yet.  I brought it up at LSFMM, and I'll repost the patches soon.
+Interesting. There are two ways to use this PWM. In one mode you use
+all channels of the PWM as outputs. This is the mode the driver
+supports because the HiFive Unleashed board uses all channels
+connected to LEDs.
 
-> I'd also like to see kmalloc_array_3d() or
-> something that takes three size arguments. We have a lot of this
-> pattern too:
-> 
-> kmalloc(sizeof(foo) * A * B, gfp...)
-> 
-> And we could turn that into:
-> 
-> kmalloc_array_3d(sizeof(foo), A, B, gfp...)
+In this case, the PWM period must always be a power-of-two reduction
+from the core bus clock frequency. The core bus clock frequency can
+vary. Therefore, even if the caller's frequency can be achieved at the
+time of the method call, it may not remain achievable. You might say
+this is a ridiculous PWM design, and I'd agree with you, but sadly
+this is what is found in these chips. So effectively, the only thing
+we can guarantee is that the period is within a multiple of sqrt(2)
+from the requested period, except even that is not true due to
+saturation restrictions that could push the period even further from
+what you ask.
 
-Are either of A or B constant?  Because if so, we could just use
-kmalloc_array.  If not, then kmalloc_array_3d becomes a little more
-expensive than kmalloc_array because we have to do a divide at runtime
-instead of compile-time.  that's still better than allocating too few
-bytes, of course.
+In the other mode (where you sacrifice one of the output channels),
+you have finer control of the period, but it still affects all
+channels. This mode might be a better fit for your proposed API,
+except that the driver would still be subject to saturation
+restrictions on the period. And those restrictions will change as the
+core bus frequency is changed, which means that again, even if your
+target period can be achieved (common to all channels) at invocation,
+it might not be achievable later.
 
-I'm wondering how far down the abc + ab + ac + bc + d rabbit-hole we're
-going to end up going.  As far as we have to, I guess.
+IMO the only real control this PWM can offer reliably is the duty
+cycle, which is why I've written it how I have.
+
+If you see a better solution to the above problems, I am open to suggestions.
+
+>> +Required properties:
+>> +- compatible: should be "sifive,pwm0"
+>
+> Why not simply "sifive,pwm"? If this is supposed to be some sort of
+> version number, then it is more customary to use the name of the first
+> SoC that integrates the IP. There are some exceptions, like for example
+> when the IP is third-party and is integrated in a number of different
+> SoCs. In such cases the IP is often properly versioned. But that doesn't
+> seem to be the case here.
+
+It is indeed a version number. The first SoC which integrated this IP
+cannot run linux. We've put a version number like this into all of our
+IP blocks. Isn't an increasing number, which clearly indicates
+increased functionality, better than a reference to a sequence of SoCs
+whose relationships are not all that clear?
