@@ -1,122 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752843AbeD2JQK (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 29 Apr 2018 05:16:10 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:41171 "EHLO mail.bootlin.com"
+        id S1753006AbeD2JoU (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 29 Apr 2018 05:44:20 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48761 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751356AbeD2JQI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Apr 2018 05:16:08 -0400
-Date: Sun, 29 Apr 2018 11:16:05 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Kees Cook <keescook@chromium.org>
-Cc: linux-kernel@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org
-Subject: Re: [PATCH] mtd: nftl: Remove VLA usage
-Message-ID: <20180429111605.4cdf5ab2@bbrezillon>
-In-Reply-To: <20180423203500.GA36488@beast>
-References: <20180423203500.GA36488@beast>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1751930AbeD2JoS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Apr 2018 05:44:18 -0400
+Subject: Re: [PATCH] md: fix two problems with setting the "re-add" device
+ state.
+To: NeilBrown <neilb@suse.com>, Shaohua Li <shli@kernel.org>
+Cc: Linux RAID Mailing List <linux-raid@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <87efj2mv6i.fsf@notabene.neil.brown.name>
+From: Goldwyn Rodrigues <rgoldwyn@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=rgoldwyn@suse.de; prefer-encrypt=mutual; keydata=
+ xsDiBEaI9tIRBAC+jCQxwxm9mPCrzNiUskTzyLKUPLdW4n8Rjmt/N4ISt0AZWDKq7SpiDQjr
+ yfOORLFFBFsfSH40OJlBjIpO+mh9XHPbc83bOESJdT5huIbC/0yuqR0xYVt+U0FLXQJ3w70N
+ 9eALGVxPPcQ3uIBpdTJUqkvKf9x3xLUdqRe/GQnXcwCgjKJ0sON51KlW36oNEyj4gF50Pg8D
+ /jis+JcqnVlunIkGljWiYu6gNVXBXXiFqqbxnwWDGrA1e86Xl8A/aJn5tP/XELURNU7L1H1L
+ f1g3K/usDaTkNsJ1HwmH378ctJTu7JYx/euCoz7MhKEJ2EgLC0Ob262cnk9JLAnpJOYPwIhA
+ dgdtcdqASfln8gfP+6M+qFqOopfKA/9xLmyVSfxEoy4qdhlUC3GRFjZ5Ste2aOr9G0JXnWIg
+ jccn/dT4sOb2lhKIKHiJmD4ns8Io01QPh/Cd6ecZ6Cx3InCQHyzMOVvZn0fdbO9/+348yRSl
+ YOBXoViPxlUWGc/52eWohuleDhsrtn0aVX4d1zvhc5oswj6dKDDvDnnN580lR29sZHd5biBS
+ b2RyaWd1ZXMgPHJnb2xkd3luQHN1c2UuY29tPsKVBBMRAgBVAhsjBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgAIZAQUJHC+BBRYhBO+WsixA7W+EivWnh0m5sHYwIjhsBQJamCrlEhhoa3A6
+ Ly9wZ3AubWl0LmVkdQAKCRBJubB2MCI4bHt8AJwKjLlv73VEx6e63oQfUoOJKibHWwCfXIG1
+ LHEVJbYPWAPKQ6Zk8ZCodXrOwU0ERoj26RAIAKKaKET9+fkkdP745IAQ17wrIzkpU/pAz90C
+ fjJVhKngrb6PMFHyOPXlRAyJPCpp8Whl8P+KmAM7SZof4n8aLyrl+SVYFMe9RwYSshD7eNBD
+ WmPNJd2qK8JJLUC8/ZRb5yw/bHfIRITogS9Tie5WJwHjMapizdQV8dyI+hSpYmWPDSOUaYCF
+ T/nWaQP2NObZDFpBX3P8kP3LSTP+JW3Fz06CrJ03bAtm2CPDNI02sc5MHvRJXGNM2grvh+bK
+ 4V0sDrBeWr9sHy5ADoIx9PXGIfNH4NbSVBSGW3Oy8dmZnDfMgtAb9oY6HaGKZDj/F+AgxywB
+ 8oyvGfrJhfizIYROmycAAwUH/AtsttodDYydHeM9GFiZy0o/n4FAseYiMJKRI8fC2pYvrojt
+ zbpQKXa64vQv2INtJHm8D1iGpzdrNkjL5jlqPKSUIkhwt9yUpOH3UQifwYOeKZUiv7vrapnW
+ 1gJb7RWhg4ske+qOa2FKvFVMsJ2quuu0qHOH0K8l7T8VqaW8FH4097c3TeSO17qRtwnNm+F7
+ a+cXijMOaajZ9Xp4X04+wrEf7Rmvhc0zr96t3Z5QYx4ZwoyDfLefm5ORUe2CcRva7TnycB9P
+ IxdGoVS2eIyepO+RMjvq5e6xjkpoiJ3cybQhsUt+pZd/KGSkZmhHpId3Y6zivOq7Lj+ELOtW
+ dOTcV0TCTwQYEQIADwIbDAUCWVJ2GQUJHC+AsAAKCRBJubB2MCI4bC2IAJoDDDkaRi7G/lzz
+ fUIV2179DCq38wCaAmivz68q3lkN6rF6vnh5DEGS74c=
+Message-ID: <2f8d2066-8b2e-dab9-d1b9-b750055d6937@suse.de>
+Date: Sun, 29 Apr 2018 04:44:13 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <87efj2mv6i.fsf@notabene.neil.brown.name>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kees,
 
-On Mon, 23 Apr 2018 13:35:00 -0700
-Kees Cook <keescook@chromium.org> wrote:
 
-> On the quest to remove all VLAs from the kernel[1] this changes the
-> check_free_sectors() routine to use the same stack buffer for both
-> data byte checks (SECTORSIZE) and oob byte checks (oobsize). Since
-> these regions aren't needed at the same time, they don't need to be
-> consecutively allocated. Additionally, while it's possible for oobsize
-> to be large, it is unlikely to be larger than the actual SECTORSIZE. As
-> such, remove the VLA, adjust offsets and add a sanity check to make sure
-> we never get a pathological oobsize.
+On 04/25/2018 11:46 PM, NeilBrown wrote:
 > 
-> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+> If "re-add" is written to the "state" file for a device
+> which is faulty, this has an effect similar to removing
+> and re-adding the device.  It should take up the
+> same slot in the array that it previously had, and
+> an accelerated (e.g. bitmap-based) rebuild should happen.
 > 
-> Signed-off-by: Kees Cook <keescook@chromium.org>
+> The slot that "it previously had" is determined by
+> rdev->saved_raid_disk.
+> However this is not set when a device fails (only when a device
+> is added), and it is cleared when resync completes.
+> This means that "re-add" will normally work once, but may not work a
+> second time.
+> 
+> This patch includes two fixes.
+> 1/ when a device fails, record the ->raid_disk value in
+>     ->saved_raid_disk before clearing ->raid_disk
+> 2/ when "re-add" is written to a device for which
+>     ->saved_raid_disk is not set, fail.
+> 
+> I think this is suitable for stable as it can
+> cause re-adding a device to be forced to do a full
+> resync which takes a lot longer and so puts data at
+> more risk.
+> 
+> Cc: <stable@vger.kernel.org> (v4.1)
+> Fixes: 97f6cd39da22 ("md-cluster: re-add capabilities")
+> Signed-off-by: NeilBrown <neilb@suse.com>
 > ---
->  drivers/mtd/inftlmount.c | 11 ++++++++---
->  drivers/mtd/nftlmount.c  | 11 ++++++++---
->  2 files changed, 16 insertions(+), 6 deletions(-)
+>  drivers/md/md.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/mtd/inftlmount.c b/drivers/mtd/inftlmount.c
-> index aab4f68bd36f..9cdae7f0fc2e 100644
-> --- a/drivers/mtd/inftlmount.c
-> +++ b/drivers/mtd/inftlmount.c
-> @@ -334,7 +334,7 @@ static int memcmpb(void *a, int c, int n)
->  static int check_free_sectors(struct INFTLrecord *inftl, unsigned int address,
->  	int len, int check_oob)
->  {
-> -	u8 buf[SECTORSIZE + inftl->mbd.mtd->oobsize];
-> +	u8 buf[SECTORSIZE];
-
-Could we instead move to dynamic allocation. I mean, SECTORSIZE is 512
-bytes, so only with this function we consume 1/16 of the stack. Not to
-mention that some MTD drivers might want to do DMA on buffer passed by
-the MTD user, and if the buffer is on the stack they'll have to use a
-bounce buffer instead.
-
-Regards,
-
-Boris
-
->  	struct mtd_info *mtd = inftl->mbd.mtd;
->  	size_t retlen;
->  	int i;
-> @@ -346,10 +346,15 @@ static int check_free_sectors(struct INFTLrecord *inftl, unsigned int address,
->  			return -1;
->  
->  		if (check_oob) {
-> +			if (mtd->oobsize > sizeof(buf)) {
-> +				pr_warn("MTD oobsize > SECTORSIZE: %d\n",
-> +					mtd->oobsize);
-> +				return -1;
-> +			}
->  			if(inftl_read_oob(mtd, address, mtd->oobsize,
-> -					  &retlen, &buf[SECTORSIZE]) < 0)
-> +					  &retlen, buf) < 0)
->  				return -1;
-> -			if (memcmpb(buf + SECTORSIZE, 0xff, mtd->oobsize) != 0)
-> +			if (memcmpb(buf, 0xff, mtd->oobsize) != 0)
->  				return -1;
+> diff --git a/drivers/md/md.c b/drivers/md/md.c
+> index 3bea45e8ccff..ecd4235c6e30 100644
+> --- a/drivers/md/md.c
+> +++ b/drivers/md/md.c
+> @@ -2853,7 +2853,8 @@ state_store(struct md_rdev *rdev, const char *buf, size_t len)
+>  			err = 0;
 >  		}
->  		address += SECTORSIZE;
-> diff --git a/drivers/mtd/nftlmount.c b/drivers/mtd/nftlmount.c
-> index a6fbfa4e5799..e6eba7f3fdf5 100644
-> --- a/drivers/mtd/nftlmount.c
-> +++ b/drivers/mtd/nftlmount.c
-> @@ -272,7 +272,7 @@ static int memcmpb(void *a, int c, int n)
->  static int check_free_sectors(struct NFTLrecord *nftl, unsigned int address, int len,
->  			      int check_oob)
->  {
-> -	u8 buf[SECTORSIZE + nftl->mbd.mtd->oobsize];
-> +	u8 buf[SECTORSIZE];
->  	struct mtd_info *mtd = nftl->mbd.mtd;
->  	size_t retlen;
->  	int i;
-> @@ -284,10 +284,15 @@ static int check_free_sectors(struct NFTLrecord *nftl, unsigned int address, int
->  			return -1;
->  
->  		if (check_oob) {
-> +			if (mtd->oobsize > sizeof(buf)) {
-> +				pr_warn("MTD oobsize > SECTORSIZE: %d\n",
-> +					mtd->oobsize);
-> +				return -1;
-> +			}
->  			if(nftl_read_oob(mtd, address, mtd->oobsize,
-> -					 &retlen, &buf[SECTORSIZE]) < 0)
-> +					 &retlen, buf) < 0)
->  				return -1;
-> -			if (memcmpb(buf + SECTORSIZE, 0xff, mtd->oobsize) != 0)
-> +			if (memcmpb(buf, 0xff, mtd->oobsize) != 0)
->  				return -1;
->  		}
->  		address += SECTORSIZE;
+>  	} else if (cmd_match(buf, "re-add")) {
+> -		if (test_bit(Faulty, &rdev->flags) && (rdev->raid_disk == -1)) {
+> +		if (test_bit(Faulty, &rdev->flags) && (rdev->raid_disk == -1) &&
+> +			rdev->saved_raid_disk >= 0) {
+>  			/* clear_bit is performed _after_ all the devices
+>  			 * have their local Faulty bit cleared. If any writes
+>  			 * happen in the meantime in the local node, they
+> @@ -8641,6 +8642,7 @@ static int remove_and_add_spares(struct mddev *mddev,
+>  			if (mddev->pers->hot_remove_disk(
+>  				    mddev, rdev) == 0) {
+>  				sysfs_unlink_rdev(mddev, rdev);
+> +				rdev->saved_raid_disk = rdev->raid_disk;
+>  				rdev->raid_disk = -1;
+>  				removed++;
+>  			}
+> 
+
+Performing a partial resync as opposed to full resync is always better
+and less time consuming. Thanks!
+
+Reviewed-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+
+-- 
+Goldwyn
