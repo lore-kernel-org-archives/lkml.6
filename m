@@ -1,66 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753817AbeD2Q7b (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 29 Apr 2018 12:59:31 -0400
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:45166 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753553AbeD2Q73 (ORCPT
+        id S1753985AbeD2RAH (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 29 Apr 2018 13:00:07 -0400
+Received: from mail-it0-f71.google.com ([209.85.214.71]:52170 "EHLO
+        mail-it0-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753852AbeD2RAD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Apr 2018 12:59:29 -0400
-X-Google-Smtp-Source: AB8JxZpwgPHBoTPVfE56a617fXPqr6jcBWOrUWKs4+3zhT4wkpNjC5nDoDwo+rENPKMo5J46mliqTkUP//2+9VbhUCM=
+        Sun, 29 Apr 2018 13:00:03 -0400
+X-Google-Smtp-Source: AB8JxZru8bRvgonmeiPCnseO5pD1+ypTskohBTVV+K/n8onOq0sS3jdY+4hcSokSpOhhoy7JvDCHBGnl5KOYp8uWs88kyRA5awv2
 MIME-Version: 1.0
-In-Reply-To: <20180313183220.GA21538@bombadil.infradead.org>
-References: <20180214182618.14627-1-willy@infradead.org> <20180214182618.14627-3-willy@infradead.org>
- <CAGXu5jL9hqQGe672CmvFwqNbtTr=qu7WRwHuS4Vy7o5sX_UTgg@mail.gmail.com>
- <alpine.DEB.2.20.1803072212160.2814@hadrien> <20180308025812.GA9082@bombadil.infradead.org>
- <alpine.DEB.2.20.1803080722300.3754@hadrien> <20180308230512.GD29073@bombadil.infradead.org>
- <alpine.DEB.2.20.1803131818550.3117@hadrien> <20180313183220.GA21538@bombadil.infradead.org>
-From: Kees Cook <keescook@chromium.org>
-Date: Sun, 29 Apr 2018 09:59:27 -0700
-X-Google-Sender-Auth: RmVoOUoHuSaB061QNNXRm-7o9bY
-Message-ID: <CAGXu5jKLaY2vzeFNaEhZOXbMgDXp4nF4=BnGCFfHFRwL6LXNHA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] mm: Add kvmalloc_ab_c and kvzalloc_struct
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Julia Lawall <julia.lawall@lip6.fr>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <mawilcox@microsoft.com>, Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        cocci@systeme.lip6.fr, Himanshu Jha <himanshujha199640@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Date: Sun, 29 Apr 2018 10:00:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001490fb056affabd8@google.com>
+Subject: WARNING in task_participate_group_stop (2)
+From: syzbot <syzbot+b109633ea805cac54a61@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, ebiederm@xmission.com, ldv@altlinux.org,
+        linux-kernel@vger.kernel.org, linux@dominikbrodowski.net,
+        oleg@redhat.com, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 13, 2018 at 11:32 AM, Matthew Wilcox <willy@infradead.org> wrote:
-> On Tue, Mar 13, 2018 at 06:19:51PM +0100, Julia Lawall wrote:
->> On Thu, 8 Mar 2018, Matthew Wilcox wrote:
->> > On Thu, Mar 08, 2018 at 07:24:47AM +0100, Julia Lawall wrote:
->> > > Thanks.  So it's OK to replace kmalloc and kzalloc, even though they
->> > > didn't previously consider vmalloc and even though kmalloc doesn't zero?
->> >
->> > We'll also need to replace the corresponding places where those structs
->> > are freed with kvfree().  Can coccinelle handle that too?
->>
->> Is the use of vmalloc a necessary part of the design?  Or could there be a
->> non vmalloc versions for call sites that are already ok with that?
->
-> We can also add kmalloc_struct() along with kmalloc_ab_c that won't fall
-> back to vmalloc but just return NULL.
+Hello,
 
-Did this ever happen? I'd also like to see kmalloc_array_3d() or
-something that takes three size arguments. We have a lot of this
-pattern too:
+syzbot hit the following crash on upstream commit
+bf8f5de17442bba5f811e7e724980730e079ee11 (Sat Apr 28 17:05:04 2018 +0000)
+MAINTAINERS: add myself as maintainer of AFFS
+syzbot dashboard link:  
+https://syzkaller.appspot.com/bug?extid=b109633ea805cac54a61
 
-kmalloc(sizeof(foo) * A * B, gfp...)
+So far this crash happened 2 times on upstream.
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5663992005525504
+syzkaller reproducer:  
+https://syzkaller.appspot.com/x/repro.syz?id=6218046343479296
+Raw console output:  
+https://syzkaller.appspot.com/x/log.txt?id=6209281858732032
+Kernel config:  
+https://syzkaller.appspot.com/x/.config?id=7043958930931867332
+compiler: gcc (GCC) 8.0.1 20180413 (experimental)
 
-And we could turn that into:
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+b109633ea805cac54a61@syzkaller.appspotmail.com
+It will help syzbot understand when the bug is fixed. See footer for  
+details.
+If you forward the report, please keep this part and the footer.
 
-kmalloc_array_3d(sizeof(foo), A, B, gfp...)
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+WARNING: CPU: 1 PID: 4520 at kernel/signal.c:351  
+task_participate_group_stop+0x205/0x260 kernel/signal.c:351
+Kernel panic - not syncing: panic_on_warn set ...
 
--Kees
+CPU: 1 PID: 4520 Comm: 3 Not tainted 4.17.0-rc2+ #22
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+  panic+0x22f/0x4de kernel/panic.c:184
+  __warn.cold.8+0x163/0x1b3 kernel/panic.c:536
+  report_bug+0x252/0x2d0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:178 [inline]
+  do_error_trap+0x1de/0x490 arch/x86/kernel/traps.c:296
+  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:992
+RIP: 0010:task_participate_group_stop+0x205/0x260 kernel/signal.c:351
+RSP: 0018:ffff8801ae7b7880 EFLAGS: 00010093
+RAX: ffff8801d96200c0 RBX: 0000000000000000 RCX: ffffffff81498b5b
+RDX: 0000000000000000 RSI: ffffffff81498c75 RDI: 0000000000000005
+RBP: ffff8801ae7b78a0 R08: ffff8801d96200c0 R09: ffffed0036c48971
+R10: ffffed0036c48971 R11: ffff8801b6244b8b R12: ffff8801d926ecd8
+R13: ffff8801d926ec40 R14: 0000000000040000 R15: dffffc0000000000
+  do_signal_stop+0x502/0xa20 kernel/signal.c:2176
+  get_signal+0x9b4/0x1960 kernel/signal.c:2353
+  do_signal+0x98/0x2040 arch/x86/kernel/signal.c:810
+  exit_to_usermode_loop+0x28a/0x310 arch/x86/entry/common.c:162
+  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
+  do_syscall_64+0x6ac/0x800 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x127
+RSP: 002b:00007ffda970b440 EFLAGS: 00000200 ORIG_RAX: 000000000000003b
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
 
--- 
-Kees Cook
-Pixel Security
+---
+This bug is generated by a dumb bot. It may contain errors.
+See https://goo.gl/tpsmEJ for details.
+Direct all questions to syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report.
+If you forgot to add the Reported-by tag, once the fix for this bug is  
+merged
+into any tree, please reply to this email with:
+#syz fix: exact-commit-title
+If you want to test a patch for this bug, please reply with:
+#syz test: git://repo/address.git branch
+and provide the patch inline or as an attachment.
+To mark this as a duplicate of another syzbot report, please reply with:
+#syz dup: exact-subject-of-another-report
+If it's a one-off invalid bug report, please reply with:
+#syz invalid
+Note: if the crash happens again, it will cause creation of a new bug  
+report.
+Note: all commands must start from beginning of the line in the email body.
