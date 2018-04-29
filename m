@@ -1,89 +1,98 @@
-Return-Path: <linux-fsdevel-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-900250-1524671250-2-11849508534145696357
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: linux@kroah.com
-X-Delivered-to: linux@kroah.com
-X-Mail-from: linux-fsdevel-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524671250; b=kEkP7hqKDpZkdkqgJkANh3hO1svrjRY7RZZ3iYXKVLk07h/Z8l
-    YMN0Ypy92P08hxOUi97zTyD7evVdghnOlHWestVg2VpgW7nYEa+rWaH6iPv88j0U
-    n+XYBjNtGGRc257BbJ3YffHWzON8A57LpHD4vLtPlth9mvZU8oTjrLNRebgHt4vj
-    sXvULXoOYQaU7cAcMwRZLAUhyri6jKX1qfpEpz4cePIl8nXnI6QvyiW3TjPJEj0E
-    fsf19zVzyaP4GFI/ju2jHadp2dTgtnTLTXozvIzwJ8A7l/7O3HgC7HN3O46fUdI9
-    2k7OmlLEfmR1Fr1lS0mDQZ0dkD0EOj0pHxUA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1524671250; bh=4h9Jz3EIG2G0JImJekMKcpm9ecgZAE
-    eT0odWAK3oFxU=; b=DYpYqrimqulR70/FhE0WZptR0NfnhS5m0g4QtImvL3a2Kn
-    HSU3dZa6OIN642GwsdxN9A3iz6twMUVdNKFkex/+u4a/hzfDa7xBVcn465f3kHnt
-    auSEuabjm2XvXB2qHJL8g/IuaSxTAd5FoJ1iQbwPTxMIiIX9ybqMyq8KYJBakNlA
-    ByNYx8TnIl9dIaS7SZM9RUJUlMV+1dlb4vFiLq7wAa/E+992Ke/VpWzjNbNVcssh
-    Xtenm5V0zPpFE2CFGbezvVrUFxujNjVGXuuF8LwhI1TehJ7iHhNsRKPXEWpc9rmV
-    mwe+kCMsP8yH5Fsc6rnbyjGzoq0tcipHoVwuyZaQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=HjhUOvEY x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=infradead.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=HjhUOvEY x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=infradead.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfBxs2sFOwA2TB+cRe+78JqvNnDBhzgZp6FigRi0GjMA23kilaN73M/XoynmR7UHAVdEERUKQV8KVxijpp4Y7eGRWAffiPCmQN9lBHw74t3w4BclZpcX2
-    P3Gn4tE953mhouXLpjj/GG5fQZhedny35E9j6fhcE4tSnfC9KaNuKPFrkN6H25Zu4IpPqEA29B+tOirRVsSPejnts1aTrxRFXKYI0eMLtOPB0bY4xN4gm04M
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=mTioiX8BpfavDslvfnIA:9 a=CjuIK1q_8ugA:10
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754655AbeDYPrY (ORCPT <rfc822;linux@kroah.com>);
-        Wed, 25 Apr 2018 11:47:24 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:36202 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754196AbeDYPrX (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Apr 2018 11:47:23 -0400
-Date: Wed, 25 Apr 2018 08:47:22 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Moving unmaintained filesystems to staging
-Message-ID: <20180425154722.GA29415@infradead.org>
-References: <20180425154602.GA8546@bombadil.infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180425154602.GA8546@bombadil.infradead.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-Sender: linux-fsdevel-owner@vger.kernel.org
-X-Mailing-List: linux-fsdevel@vger.kernel.org
+Return-Path: <ahiliation@yahoo.co.in>
+X-Google-Smtp-Source: AB8JxZruZq1iPmn9I0qz9DV0+6zEC7833WvS4AE/etoywrpnz5MqCJA7tQvsTxUWmyan0lq+flq2
+ARC-Seal: i=1; a=rsa-sha256; t=1525029212; cv=none;
+        d=google.com; s=arc-20160816;
+        b=dVYEwcXldhYyXfVXTBiJGoKNTKlx+W34IKJ5Wd3/rDLf1P2LQr9OMGfUWKog6OPz1B
+         35HOhLPhnuHX3k4HnHzNdW/eS7WngRJkDtUgqX0gmKXUbm0usKrDoLWeL/EYdiCLBVYd
+         yONJO/h1QZlqseYYZ/JmSHmW5VASWCFnBpXdhMuCJjyRLC3S0D7oahqd3rQr01AcYj1J
+         SMni/J6ucviAEGMjNVr3GzGw2oKVEJEss56ujqhoniKStd7I1PZi0BhGXLNTdK0+l5qu
+         aKt3+8ONV9XpDtaxLhelUSe1SdMbvmVzdxtp+PSmXVvrq7eT/1VmGU8qWM5z8QLoMcbT
+         7jlw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=C8iMnQMkQ8EJpJt651AkrZxjWIN53YQ2hbzFZSOm1Q8=;
+        b=hC4CiircJCJCTQaTZQ8hnagIckHHGP42FXFJh74bAFVDLK5tsx1Ue8eXJm8IbmoN8r
+         iqxYx9ClWfRnAVYs5c4eGAh9flK3FQBnbKWPeTmdJESWXTPzeibvfzBlGF/xyh42lXBD
+         sfGTyBot22glpGg1z4fzni+fUMDzcwW97+sDIDivN7KrQHLpfbUoP/7pQ1BHjtrywHRu
+         Q1/jbjnSwQ8Zbrt00tXb46tKRotQXz44yY7MLoCIunMLHFY6KNOLCmGN7Ai56MyUF73v
+         FX+u3H2BSqKlcEvAxU75h6v0A6MaZFq9A4TCtG2jqvrE1j+apcOTJohEcUGVS0ETpD5d
+         iGEg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@yahoo.co.in header.s=s2048 header.b=njxrGFru;
+       spf=pass (google.com: domain of ahiliation@yahoo.co.in designates 106.10.242.84 as permitted sender) smtp.mailfrom=ahiliation@yahoo.co.in;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=yahoo.co.in
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@yahoo.co.in header.s=s2048 header.b=njxrGFru;
+       spf=pass (google.com: domain of ahiliation@yahoo.co.in designates 106.10.242.84 as permitted sender) smtp.mailfrom=ahiliation@yahoo.co.in;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=yahoo.co.in
+X-YMail-OSG: HUQqXZoVM1mGV2uRsAzYdWXGGlAHWCT2GHPlwnLBNO11oCP_jIi5vYhtkCeytfV
+ PJ_ESign9Bjx55JuGz1TcHIahDxtdomFfDziRTpVryFHsQ2gq27w.9i8asJG_LWQHY4LORsbK0Vg
+ 8EDyUEtuifYJJgRrYQlD7qhWFvxsXMnhE6kczcsUqvYotagKbqJtZeAeE05MIztrmuCHQ9Wx5RWJ
+ 6cYx.TvkzLi64sAGeh45yLv5867yzzHbKcbsGi1iYWvoXMLrItkptdjXZqFj7jfCSiZZqDq8drAX
+ HywInGZkT96buEYuBiDk1yWdUqGy3BQWnhSS7h1gy6TLa432vilTk0pwadsFcnFhIW.U1eBSW5Hh
+ O9NxVNuSt5hBkjt_gj.0MzFZ1js9zUIOcVGOB5x48pzCMkfE5oVNOaV4erwJhM5dymrc5BZQAFX0
+ 6zHoTU1zyKw_Io3gxdg1I7c1vLbdOv7coCd_31E_4vSs9q_Zfi42qvUUOmIJGMAPx4xkvUWH2qsk
+ e58UVJ_fK92NFZVZ_PeQXBx3AHhtvndHEpShRr_WtnqKsLjsVpTy.pSYYVxm1wG2bkZx2rUitpon
+ GEEM51we_cFJJy_OWo9.QqY7WUDl1pypdNlaGPaxB.nxDeUuMQNQzuA0n6gAxgUiYVoYwWhrzhNQ
+ Pi58xtSLAyi4TO981m2oc04HueffsA1XMSew-
+From: Jeffrin Jose T <ahiliation@yahoo.co.in>
+To: shuah@kernel.org,
+	kstewart@linuxfoundation.org,
+	daniel.diaz@linaro.org,
+	pombredanne@nexb.com,
+	gregkh@linuxfoundation.org,
+	thomas@m3y3r.de
+Cc: linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jeffrin Jose T <ahiliation@yahoo.co.in>,
+	Jeffrin Jose T <jeffrin@rajagiritech.edu.in>
+Subject: [PATCH] selftests:intel_pstate: fixes typical crash of a testing script for Intel P-State driver
+Date: Mon, 30 Apr 2018 00:42:26 +0530
+Message-Id: <20180429191226.14242-1-ahiliation@yahoo.co.in>
+X-Mailer: git-send-email 2.17.0
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1599109031684062016?=
+X-GMAIL-MSGID: =?utf-8?q?1599109031684062016?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Apr 25, 2018 at 08:46:02AM -0700, Matthew Wilcox wrote:
-> hfsplus - Mac filesystem.
+ Testing script for Intel P-State driver crashes during
+ the run.  this patch fixes that crash and produce typical results.
 
-I don't think this is unmaintained, and it is pretty heavily used.
+Signed-off-by: Jeffrin Jose T <jeffrin@rajagiritech.edu.in>
 
-> minix
+---
+ tools/testing/selftests/intel_pstate/run.sh | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-Still plenty of use.
+diff --git a/tools/testing/selftests/intel_pstate/run.sh b/tools/testing/selftests/intel_pstate/run.sh
+index c670359becc6..cd32aca8806f 100755
+--- a/tools/testing/selftests/intel_pstate/run.sh
++++ b/tools/testing/selftests/intel_pstate/run.sh
+@@ -27,6 +27,7 @@
+ # and the test will error out in those cases.  The result.X file can be checked
+ # for consistency and modified to remove the extra MHz values.  The result.X
+ # files can be re-evaluated by setting EVALUATE_ONLY to 1 below.
++#set -xv
+ 
+ EVALUATE_ONLY=0
+ 
+@@ -101,12 +102,13 @@ cpupower frequency-set -g powersave --max=${max_freq}MHz >& /dev/null
+ echo "Target      Actual      Difference     MSR(0x199)     max_perf_pct"
+ for freq in `seq $max_freq -100 $min_freq`
+ do
+-	result_freq=$(cat /tmp/result.${freq} | grep "cpu MHz" | awk ' { print $4 } ' | awk -F "." ' { print $1 } ')
++       result_freq=$(cat /tmp/result.${freq} | grep "cpu MHz" \
+        | awk '{print $4}' | awk -F "." '{print $1}')
++	result_freq=$(echo $result_freq | head -n1 | cut -d " " -f1)
+ 	msr=$(cat /tmp/result.${freq} | grep "msr" | awk ' { print $3 } ')
+ 	max_perf_pct=$(cat /tmp/result.${freq} | grep "max_perf_pct" | awk ' { print $2 } ' )
+-	if [ $result_freq -eq $freq ]; then
++	if (( "$result_freq" == "$freq" ))
++	then
+ 		echo " $freq        $result_freq             0          $msr         $(($max_perf_pct*3300))"
+ 	else
+ 		echo " $freq        $result_freq          $(($result_freq-$freq))          $msr          $(($max_perf_pct*$max_freq))"
+-- 
+2.17.0
