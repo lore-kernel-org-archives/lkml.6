@@ -1,51 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751754AbeD2B4y (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 28 Apr 2018 21:56:54 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:57438 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751319AbeD2B4x (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Apr 2018 21:56:53 -0400
-To: linux-kbuild <linux-kbuild@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: [RFC patch] Documenation: don't build media .rst files when not
- building Documentation/media/
-Message-ID: <10b4346b-d9ac-b7d1-4187-0a227ae53cf4@infradead.org>
-Date: Sat, 28 Apr 2018 18:56:51 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751607AbeD2CBW (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 28 Apr 2018 22:01:22 -0400
+Received: from mga02.intel.com ([134.134.136.20]:14670 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751310AbeD2CBV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Apr 2018 22:01:21 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,341,1520924400";
+   d="scan'208";a="45375150"
+Date: Sun, 29 Apr 2018 10:01:17 +0800
+From: Fengguang Wu <wfg@linux.intel.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: kernel test robot <lkp@intel.com>,
+        Bart Van Assche <bart.vanassche@wdc.com>, LKP <lkp@01.org>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
+Subject: Re: ed74ae0342 ("blk-mq: Avoid that a completion can be ignored
+ .."): BUG: kernel hang in test stage
+Message-ID: <20180429020117.jv2dmvsuetkfqn6l@wfg-t540p.sh.intel.com>
+References: <5adf9ada.EgNO094GdvSdHQ3v%lkp@intel.com>
+ <07256b82-12b1-9ccf-c660-9dfbedfd3cac@kernel.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <07256b82-12b1-9ccf-c660-9dfbedfd3cac@kernel.dk>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Jens,
 
-Don't build media .rst files from header files when Documentation/media/
-is not in the target SPHINXDIRS.
+On Fri, Apr 27, 2018 at 06:52:58PM -0600, Jens Axboe wrote:
+>On 4/24/18 3:00 PM, kernel test robot wrote:
+>> Greetings,
+>>
+>> 0day kernel testing robot got the below dmesg and the first bad commit is
+>>
+>> https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git for-linus
+>>
+>> commit ed74ae03424684a6ad8a973c3fa727c6b4162432
+>> Author:     Bart Van Assche <bart.vanassche@wdc.com>
+>> AuthorDate: Thu Apr 19 09:43:53 2018 -0700
+>> Commit:     Jens Axboe <axboe@kernel.dk>
+>> CommitDate: Thu Apr 19 14:21:47 2018 -0600
+>>
+>>     blk-mq: Avoid that a completion can be ignored for BLK_EH_RESET_TIMER
 
-It looks like the dependencies in Documentation/media/Makefile should
-take care of running parse-headers.pl to generated .rst files from the
-header files, but it's not happening and I don't see why not.
+>Any chance you can try with the newer version?
+>
+>https://github.com/bvanassche/linux/commit/4acd555fa13087
 
----
- Documentation/Makefile |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+That works!
 
---- linux-next-20180426.orig/Documentation/Makefile
-+++ linux-next-20180426/Documentation/Makefile
-@@ -52,8 +52,7 @@ loop_cmd = $(echo-cmd) $(cmd_$(1)) || ex
- #    e.g. "media" for the linux-tv book-set at ./Documentation/media
- 
- quiet_cmd_sphinx = SPHINX  $@ --> file://$(abspath $(BUILDDIR)/$3/$4)
--      cmd_sphinx = $(MAKE) BUILDDIR=$(abspath $(BUILDDIR)) $(build)=Documentation/media $2 && \
--	PYTHONDONTWRITEBYTECODE=1 \
-+      cmd_sphinx = PYTHONDONTWRITEBYTECODE=1 \
- 	BUILDDIR=$(abspath $(BUILDDIR)) SPHINX_CONF=$(abspath $(srctree)/$(src)/$5/$(SPHINX_CONF)) \
- 	$(SPHINXBUILD) \
- 	-b $2 \
+Tested-by: Fengguang Wu <fengguang.wu@intel.com>
