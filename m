@@ -1,83 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754150AbeD2SYd (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 29 Apr 2018 14:24:33 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:37573 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753584AbeD2SYb (ORCPT
+        id S1754143AbeD2SbD (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 29 Apr 2018 14:31:03 -0400
+Received: from mail-ot0-f176.google.com ([74.125.82.176]:38333 "EHLO
+        mail-ot0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753584AbeD2SbC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Apr 2018 14:24:31 -0400
-X-Google-Smtp-Source: AB8JxZoJtmyZF0F6zJDZ3Jh7t/yxqozokmlNd9Za2LpZHEVzMC23q5b3jsnAn+YGv+QcDIrTY4wdCQ==
-Subject: Re: [PATCH 1/2] x86/amd_nb: Add support for Raven Ridge CPUs
-To: Borislav Petkov <bp@suse.de>, Yazen Ghannam <Yazen.Ghannam@amd.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Clemens Ladisch <clemens@ladisch.de>, x86@kernel.org,
-        Jean Delvare <jdelvare@suse.com>, linux-kernel@vger.kernel.org,
-        linux-hwmon@vger.kernel.org, Brian Woods <brian.woods@amd.com>
-References: <1524966879-9424-1-git-send-email-linux@roeck-us.net>
- <20180429175305.GB19814@pd.tnic>
-From: Guenter Roeck <linux@roeck-us.net>
-Message-ID: <a4b1d937-c5b8-67d0-b5f0-312145fefc09@roeck-us.net>
-Date: Sun, 29 Apr 2018 11:24:29 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Sun, 29 Apr 2018 14:31:02 -0400
+X-Google-Smtp-Source: AB8JxZrfT3wVSq2ojQoZPvNKiEN3MVf2qtyq7MsgP1RCku04i8gv1arFk5B8EvvSqcP5Esde0cWdGg==
+Date: Sun, 29 Apr 2018 11:30:57 -0700
+From: Sultan Alsawaf <sultanxda@gmail.com>
+To: "Theodore Y. Ts'o" <tytso@mit.edu>, linux-kernel@vger.kernel.org,
+        Jann Horn <jannh@google.com>
+Subject: Re: Linux messages full of `random: get_random_u32 called from`
+Message-ID: <20180429183057.kk666r4z5biamzvs@sultan-box>
+References: <d92d049a-8810-a765-d57a-2a7a805fadaf@gmail.com>
+ <20180426050056.GF18803@thunk.org>
+ <b902d9f5-300e-2611-289d-f6d49dd43f11@gmail.com>
+ <20180426073255.GH18803@thunk.org>
+ <b6aa3fac-a768-e27d-3070-00d929ebc245@gmail.com>
+ <20180426192524.GD5965@thunk.org>
+ <2add15cb-2113-0504-a732-81255ea61bf5@gmail.com>
+ <20180426235630.GG5965@thunk.org>
+ <3eb5761e-7b25-4178-0560-fba5eb43ce6a@gmail.com>
+ <20180427201036.GL5965@thunk.org>
 MIME-Version: 1.0
-In-Reply-To: <20180429175305.GB19814@pd.tnic>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180427201036.GL5965@thunk.org>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/29/2018 10:53 AM, Borislav Petkov wrote:
-> On Sat, Apr 28, 2018 at 06:54:38PM -0700, Guenter Roeck wrote:
->> Add Raven Ridge root bridge and data fabric PCI IDs.
->> This is required for amd_pci_dev_to_node_id() and amd_smn_read().
->>
->> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
->> ---
->> This patch is a prerequisite for the second patch in the series.
->> I'll be happy to apply both patches through hwmon if that is acceptable
->> (and Cc: stable for 4.16+). If not, I'll be happy to wait for this patch
->> to be available upstream.
->>
->> Since that there is no public documentation available for Raven Ridge,
->> PCI IDs are derived from output of lspci.
->>
->>   arch/x86/kernel/amd_nb.c | 6 ++++++
->>   1 file changed, 6 insertions(+)
->>
->> diff --git a/arch/x86/kernel/amd_nb.c b/arch/x86/kernel/amd_nb.c
->> index c88e0b127810..bd33613ecb7c 100644
->> --- a/arch/x86/kernel/amd_nb.c
->> +++ b/arch/x86/kernel/amd_nb.c
->> @@ -14,8 +14,11 @@
->>   #include <asm/amd_nb.h>
->>   
->>   #define PCI_DEVICE_ID_AMD_17H_ROOT	0x1450
->> +#define PCI_DEVICE_ID_AMD_17H_RR_ROOT	0x15d0
-> 
-> I think the nomenclature we decided upon at the time was
-> 
-> ...AMD_<family>H_M<model>H...
-> 
-> PCI_DEVICE_ID_AMD_15H_M10H_F3, for example.
-> 
-> And in this case, it should be
-> 
-> PCI_DEVICE_ID_AMD_17H_M<which model is RV>H_F<PCI function number>
-> 
+I'd also like to add that my high-spec x86 laptop exhibits the same issue as
+my Edgar Chromebook.
 
-Makes sense.
+Here's my dmesg: https://hastebin.com/dofejolobi.go
 
-> Yazen, which is the first model of Raven Ridge?
-> 
+The most interesting line:
+[   90.811633] random: crng init done
 
-2400G is model 17 (0x11). I was unable to find information if there are
-other chips/models using the same set of PCI IDs.
+I waited 90 seconds after boot to provide entropy myself, at which point crng
+init completed. In other words, crng init only completed because I provided
+the entropy by smashing the keyboard. I could've waited longer and crng init
+wouldn't have completed without my input.
 
-I'll wait for additional feedback before resending.
+Mind you, this laptop has a 45W CPU, so power savings were definitely not
+considered in its design. Do you have any machines that can provide enough
+boot entropy to satisfy crng init without requiring user-provided entropy?
 
-Thanks,
-Guenter
+Sultan
