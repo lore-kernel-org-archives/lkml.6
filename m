@@ -1,89 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753501AbeD2OKO (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 29 Apr 2018 10:10:14 -0400
-Received: from mail-io0-f178.google.com ([209.85.223.178]:38173 "EHLO
-        mail-io0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752895AbeD2OKM (ORCPT
+        id S1753482AbeD2OWW (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 29 Apr 2018 10:22:22 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:52111 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752895AbeD2OWU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Apr 2018 10:10:12 -0400
-X-Google-Smtp-Source: AB8JxZpoRArteVaMqoqdU7ps3KuBrddQ3YLTJypMv+Oz4I8do/c2BTHSQYjhd9Ue0U1oj4UQdR8bhB1yyn8//1KHszY=
+        Sun, 29 Apr 2018 10:22:20 -0400
+Date: Sun, 29 Apr 2018 16:22:18 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Paul Menzel <pmenzel+linux-random-number@molgen.mpg.de>
+Cc: "Theodore Y. Ts'o" <tytso@mit.edu>, linux-kernel@vger.kernel.org
+Subject: Re: Linux messages full of `random: get_random_u32 called from`
+Message-ID: <20180429142218.GA13475@amd>
+References: <42c1b84b-ab1f-5577-6304-e0985a637cf9@molgen.mpg.de>
+ <20180424135621.GD4189@thunk.org>
+ <20180424154904.GC30619@thunk.org>
+ <d251173a-d7c0-3f55-7c22-a100f6093176@molgen.mpg.de>
+ <20180425074144.GA18803@thunk.org>
+ <4d707453-0771-2d1f-3ebb-0d19b85177a2@molgen.mpg.de>
 MIME-Version: 1.0
-X-Originating-IP: [195.192.248.120]
-In-Reply-To: <d167cc6987fdb7f04493c634873d430dcd216887.camel@paulk.fr>
-References: <20180422142151.17910-1-contact@paulk.fr> <20180422143911.GB16141@n2100.armlinux.org.uk>
- <8012696a7bf0132dd2361a896bf0abfbe8a3084e.camel@paulk.fr> <d167cc6987fdb7f04493c634873d430dcd216887.camel@paulk.fr>
-From: Jon Nettleton <jon@solid-run.com>
-Date: Sun, 29 Apr 2018 16:09:31 +0200
-Message-ID: <CABdtJHun8DWbr-bUgwQEK61UXMLh5pPkwvUTF+KxhHmJaXEr-A@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: imx6qdl-cubox-i: Move card-detect GPIO to 1.5
- SOM devices only
-To: Paul Kocialkowski <contact@paulk.fr>
-Cc: Russell King - ARM Linux <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="u3/rZRmxL6MmkK24"
+Content-Disposition: inline
+In-Reply-To: <4d707453-0771-2d1f-3ebb-0d19b85177a2@molgen.mpg.de>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3TEALAm007688
 
-On Sun, Apr 29, 2018 at 3:47 PM, Paul Kocialkowski <contact@paulk.fr> wrote:
-> Hi,
->
-> Le dimanche 22 avril 2018 à 19:22 +0200, Paul Kocialkowski a écrit :
->> Are all CuBox-i units that have ever been sold supposed to have a
->> connector with a CD line? I find it hard to believe that it's broken
->> specifically on mine.
->
-> Do you have a clue whether there should, in fact, be a CD line on all
-> CuBox-i models out there? Although you seemed to imply that my device
-> might be broken, I am still confused about whether this issue concerns
-> my device only or a specific revision of the CuBox-i.
->
->> If that's really needed, I could open up the device, check whether the
->> R8 pull is in place and check the voltage there.
->
-> In case there is a doubt, I will proceed with opening the device so we
-> can have a clear idea, but I'd rather avoid it as much as possible.
->
-> Cheers,
->
-> --
-> Paul Kocialkowski,
->
-> developer of free digital technology and hardware support.
->
-> Website: https://www.paulk.fr/
-> Coding blog: https://code.paulk.fr/
-> Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
 
-Paul,
+--u3/rZRmxL6MmkK24
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-You can see on our schematics that the hinged sdhc card slot is an
-assembly option and not the default.
-https://wiki.solid-run.com/lib/exe/fetch.php?media=imx6:cubox-i:schematics-rev-1.1:cubox-i-lower.pdf
+Hi!
 
-You have either an initial early developer unit (pre-production) that
-was assembled like this for testing, or a unit that someone
-specifically ordered assembled this way.  You can see from the
-schematic that this option does not have a CD-pin because it is meant
-to be a more permanent storage option.
+> Am 25.04.2018 um 09:41 schrieb Theodore Y. Ts'o:
+> >Does this help on your system?
+>=20
+> Thank you, after figuring out how to apply the paste, yes it helped on my
+> Lenovo X60.
+>=20
+> >commit 4e00b339e264802851aff8e73cde7d24b57b18ce
+> >Author: Theodore Ts'o <tytso@mit.edu>
+> >Date:   Wed Apr 25 01:12:32 2018 -0400
+> >
+> >     random: rate limit unseeded randomness warnings
+> >     On systems without sufficient boot randomness, no point spamming dm=
+esg.
+>=20
+> I guess this is a problem with old hardware?
 
-That being said, this is not a default option and therefore should not
-be merged into the mainline device-tree.  Our soms and carriers are
-designed to be very flexible regarding the assembly options and we try
-to mainline device-tree files that represent the most common assembly
-options.  Once there is a common accepted mainlining for device-tree
-fragments for overlays, that would be the proper place to make this
-change.  Although in this case you would also need a custom u-boot so
-it is probably best to just handle the change there.  If you would
-like touch base with me off list and I can point you at the required
-u-boot changes.
+Ok, I see it too, thinkpad x60.
 
-Thanks,
-Jon
+But... this machine has spinning harddrive and independend RTC; there
+really should be enough randomness...
+
+Could we exploit either of them as randomness source when we run out
+of entropy?
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--u3/rZRmxL6MmkK24
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlrl1RoACgkQMOfwapXb+vK5zACgphRq7tc258wO9zvI9IGb4jQK
+zXkAoJhNTiBnwg9yk3OPlT0HstrNbkW/
+=Wb+l
+-----END PGP SIGNATURE-----
+
+--u3/rZRmxL6MmkK24--
