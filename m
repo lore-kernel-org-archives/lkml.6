@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751712AbeD2Byr (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 28 Apr 2018 21:54:47 -0400
-Received: from bh-25.webhostbox.net ([208.91.199.152]:44692 "EHLO
+        id S1751645AbeD2Byp (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 28 Apr 2018 21:54:45 -0400
+Received: from bh-25.webhostbox.net ([208.91.199.152]:46861 "EHLO
         bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751319AbeD2Byn (ORCPT
+        with ESMTP id S1751262AbeD2Byn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 28 Apr 2018 21:54:43 -0400
 From: Guenter Roeck <linux@roeck-us.net>
@@ -14,12 +14,10 @@ Cc: x86@kernel.org, Jean Delvare <jdelvare@suse.com>,
         linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
         Borislav Petkov <bp@suse.de>, Yazen Ghannam <Yazen.Ghannam@amd.com>,
         Brian Woods <brian.woods@amd.com>, Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 2/2] hwmon: (k10temp) Use API function to access System Management Network
-Date: Sat, 28 Apr 2018 18:54:39 -0700
-Message-Id: <1524966879-9424-2-git-send-email-linux@roeck-us.net>
+Subject: [PATCH 1/2] x86/amd_nb: Add support for Raven Ridge CPUs
+Date: Sat, 28 Apr 2018 18:54:38 -0700
+Message-Id: <1524966879-9424-1-git-send-email-linux@roeck-us.net>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1524966879-9424-1-git-send-email-linux@roeck-us.net>
-References: <1524966879-9424-1-git-send-email-linux@roeck-us.net>
 X-Authenticated_sender: guenter@roeck-us.net
 X-OutGoing-Spam-Status: No, score=-1.0
 X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
@@ -36,63 +34,61 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The SMN (System Management Network) on Family 17h AMD CPUs is also accessed
-from other drivers, specifically EDAC. Accessing it directly is racy.
-On top of that, accessing the SMN through root bridge 00:00 is wrong on
-multi-die CPUs and may result in reading the temperature from the wrong
-die. Use available API functions to fix the problem.
-
-For this to work, also change the Raven Ridge PCI device ID to point to
-Data Fabric Function 3, since this ID is used by the API functions to
-find the CPU node.
+Add Raven Ridge root bridge and data fabric PCI IDs.
+This is required for amd_pci_dev_to_node_id() and amd_smn_read().
 
 Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 ---
- drivers/hwmon/k10temp.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+This patch is a prerequisite for the second patch in the series.
+I'll be happy to apply both patches through hwmon if that is acceptable
+(and Cc: stable for 4.16+). If not, I'll be happy to wait for this patch
+to be available upstream.
 
-diff --git a/drivers/hwmon/k10temp.c b/drivers/hwmon/k10temp.c
-index b06bb1f90853..00e785afae0d 100644
---- a/drivers/hwmon/k10temp.c
-+++ b/drivers/hwmon/k10temp.c
-@@ -23,6 +23,7 @@
- #include <linux/init.h>
- #include <linux/module.h>
- #include <linux/pci.h>
-+#include <asm/amd_nb.h>
- #include <asm/processor.h>
+Since that there is no public documentation available for Raven Ridge,
+PCI IDs are derived from output of lspci.
+
+ arch/x86/kernel/amd_nb.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/arch/x86/kernel/amd_nb.c b/arch/x86/kernel/amd_nb.c
+index c88e0b127810..bd33613ecb7c 100644
+--- a/arch/x86/kernel/amd_nb.c
++++ b/arch/x86/kernel/amd_nb.c
+@@ -14,8 +14,11 @@
+ #include <asm/amd_nb.h>
  
- MODULE_DESCRIPTION("AMD Family 10h+ CPU core temperature monitor");
-@@ -40,8 +41,8 @@ static DEFINE_MUTEX(nb_smu_ind_mutex);
+ #define PCI_DEVICE_ID_AMD_17H_ROOT	0x1450
++#define PCI_DEVICE_ID_AMD_17H_RR_ROOT	0x15d0
  #define PCI_DEVICE_ID_AMD_17H_DF_F3	0x1463
- #endif
+ #define PCI_DEVICE_ID_AMD_17H_DF_F4	0x1464
++#define PCI_DEVICE_ID_AMD_17H_RR_DF_F3	0x15eb
++#define PCI_DEVICE_ID_AMD_17H_RR_DF_F4	0x15ec
  
--#ifndef PCI_DEVICE_ID_AMD_17H_RR_NB
--#define PCI_DEVICE_ID_AMD_17H_RR_NB	0x15d0
-+#ifndef PCI_DEVICE_ID_AMD_17H_RR_DF_F3
-+#define PCI_DEVICE_ID_AMD_17H_RR_DF_F3	0x14eb
- #endif
+ /* Protect the PCI config register pairs used for SMN and DF indirect access. */
+ static DEFINE_MUTEX(smn_mutex);
+@@ -24,6 +27,7 @@ static u32 *flush_words;
  
- /* CPUID function 0x80000001, ebx */
-@@ -136,8 +137,8 @@ static void read_tempreg_nb_f15(struct pci_dev *pdev, u32 *regval)
- 
- static void read_tempreg_nb_f17(struct pci_dev *pdev, u32 *regval)
- {
--	amd_nb_index_read(pdev, PCI_DEVFN(0, 0), 0x60,
--			  F17H_M01H_REPORTED_TEMP_CTRL_OFFSET, regval);
-+	amd_smn_read(amd_pci_dev_to_node_id(pdev),
-+		     F17H_M01H_REPORTED_TEMP_CTRL_OFFSET, regval);
- }
- 
- static ssize_t temp1_input_show(struct device *dev,
-@@ -323,7 +324,7 @@ static const struct pci_device_id k10temp_id_table[] = {
- 	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_16H_NB_F3) },
- 	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_16H_M30H_NB_F3) },
- 	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_17H_DF_F3) },
--	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_17H_RR_NB) },
-+	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_17H_RR_DF_F3) },
+ static const struct pci_device_id amd_root_ids[] = {
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_ROOT) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_RR_ROOT) },
  	{}
  };
- MODULE_DEVICE_TABLE(pci, k10temp_id_table);
+ 
+@@ -39,6 +43,7 @@ const struct pci_device_id amd_nb_misc_ids[] = {
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_16H_NB_F3) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_16H_M30H_NB_F3) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_DF_F3) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_RR_DF_F3) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_CNB17H_F3) },
+ 	{}
+ };
+@@ -51,6 +56,7 @@ static const struct pci_device_id amd_nb_link_ids[] = {
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_16H_NB_F4) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_16H_M30H_NB_F4) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_DF_F4) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_RR_DF_F4) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_CNB17H_F4) },
+ 	{}
+ };
 -- 
 2.7.4
