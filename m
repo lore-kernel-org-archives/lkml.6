@@ -1,82 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753482AbeD2OWW (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 29 Apr 2018 10:22:22 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:52111 "EHLO
+        id S1753514AbeD2O37 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 29 Apr 2018 10:29:59 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:52280 "EHLO
         atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752895AbeD2OWU (ORCPT
+        with ESMTP id S1752895AbeD2O36 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Apr 2018 10:22:20 -0400
-Date: Sun, 29 Apr 2018 16:22:18 +0200
+        Sun, 29 Apr 2018 10:29:58 -0400
+Date: Sun, 29 Apr 2018 16:29:56 +0200
 From: Pavel Machek <pavel@ucw.cz>
-To: Paul Menzel <pmenzel+linux-random-number@molgen.mpg.de>
-Cc: "Theodore Y. Ts'o" <tytso@mit.edu>, linux-kernel@vger.kernel.org
+To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Sultan Alsawaf <sultanxda@gmail.com>, linux-kernel@vger.kernel.org,
+        Jann Horn <jannh@google.com>
 Subject: Re: Linux messages full of `random: get_random_u32 called from`
-Message-ID: <20180429142218.GA13475@amd>
-References: <42c1b84b-ab1f-5577-6304-e0985a637cf9@molgen.mpg.de>
- <20180424135621.GD4189@thunk.org>
- <20180424154904.GC30619@thunk.org>
- <d251173a-d7c0-3f55-7c22-a100f6093176@molgen.mpg.de>
- <20180425074144.GA18803@thunk.org>
- <4d707453-0771-2d1f-3ebb-0d19b85177a2@molgen.mpg.de>
+Message-ID: <20180429142956.GB13475@amd>
+References: <d92d049a-8810-a765-d57a-2a7a805fadaf@gmail.com>
+ <20180426050056.GF18803@thunk.org>
+ <b902d9f5-300e-2611-289d-f6d49dd43f11@gmail.com>
+ <20180426073255.GH18803@thunk.org>
+ <b6aa3fac-a768-e27d-3070-00d929ebc245@gmail.com>
+ <20180426192524.GD5965@thunk.org>
+ <2add15cb-2113-0504-a732-81255ea61bf5@gmail.com>
+ <20180426235630.GG5965@thunk.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="u3/rZRmxL6MmkK24"
+        protocol="application/pgp-signature"; boundary="kXdP64Ggrk/fb43R"
 Content-Disposition: inline
-In-Reply-To: <4d707453-0771-2d1f-3ebb-0d19b85177a2@molgen.mpg.de>
+In-Reply-To: <20180426235630.GG5965@thunk.org>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---u3/rZRmxL6MmkK24
+--kXdP64Ggrk/fb43R
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
-
-> Am 25.04.2018 um 09:41 schrieb Theodore Y. Ts'o:
-> >Does this help on your system?
+On Thu 2018-04-26 19:56:30, Theodore Y. Ts'o wrote:
+> On Thu, Apr 26, 2018 at 01:22:02PM -0700, Sultan Alsawaf wrote:
+> >=20
+> > Also, regardless of what's hanging on CRNG init, CRNG should be able to=
+ init on its own in a timely
+> > manner without the need for user-provided entropy. Userspace was workin=
+g fine before the recent CRNG
+> > kernel changes, so I don't think this is a userspace bug.
 >=20
-> Thank you, after figuring out how to apply the paste, yes it helped on my
-> Lenovo X60.
+> The CRNG changes were needed because were erroneously saying that the
+> entropy pool was securely initialized before it really was.  Saying
+> that CRNG should be able to init on its own is much like saying, "Ted
+> should be able to fly wherever he wants in his own personal Gulfstream
+> V."  It would certainly be _nice_ if I could afford my personal jet.
+> I certainly wish I were that rich.  But the problem is that dollars
+> (or Euro's) are like entropy, they don't just magically drop out of
+> the sky.
 >=20
-> >commit 4e00b339e264802851aff8e73cde7d24b57b18ce
-> >Author: Theodore Ts'o <tytso@mit.edu>
-> >Date:   Wed Apr 25 01:12:32 2018 -0400
-> >
-> >     random: rate limit unseeded randomness warnings
-> >     On systems without sufficient boot randomness, no point spamming dm=
-esg.
->=20
-> I guess this is a problem with old hardware?
+> If there isn't user-provided entropy, and the hardware isn't providing
+> sufficient entropy, where did you think the kernel is supposed to get
+> the entropy from?  Should it dial 1-800-TRUST-NSA?
 
-Ok, I see it too, thinkpad x60.
+Yes, we could dial 1-800-TRUST-NSA. Then nicely ask them to provide us
+some unbackdoored randomness. Then we'd ignore whatever they say, but
+would collect randomness from timing and noise on the telephone line.
 
-But... this machine has spinning harddrive and independend RTC; there
-really should be enough randomness...
+> The other approach would be to compile the kernel with
+> CONFIG_HW_RANDOM_TPM and to modify drivers/char/tpm/tpm-chip.c tot
+> initalize chip->hwrng.quality =3D 500.  We've historically made this
+> something that the system administrator must set via sysfs.  This is
+> because we wanted system adminisrators to explicitly say that they
+> trust the any hardware manufacturer that (a) they haven't been paid by
+> your choice of the Chinese MSS or the US NSA to introduce a backdoor,i
+> and (b) they are competent to actually implemnt a _secure_ hardware
+> random number generator.  Sadly, this has not always been the case.
 
-Could we exploit either of them as randomness source when we run out
-of entropy?
+Well, we could actively start accessing suitable device (SD card ? HDD
+? CMOS RTC?) when we detect entropy is low. Yes, that would eat power,
+but that would be better than machine that hangs at boot.
 
-									Pavel
+We could also access the hwrng, then collect entropy from the
+timing. TPM is slow chip...
+                                                                        Pav=
+el
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---u3/rZRmxL6MmkK24
+--kXdP64Ggrk/fb43R
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAlrl1RoACgkQMOfwapXb+vK5zACgphRq7tc258wO9zvI9IGb4jQK
-zXkAoJhNTiBnwg9yk3OPlT0HstrNbkW/
-=Wb+l
+iEYEARECAAYFAlrl1uQACgkQMOfwapXb+vJg6gCfSaQ4ccTbDjF3fz8H+dm9PPQ1
+CO8An3zEePRGgPTlgLaRafOwnx/tg0lC
+=07R6
 -----END PGP SIGNATURE-----
 
---u3/rZRmxL6MmkK24--
+--kXdP64Ggrk/fb43R--
