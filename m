@@ -1,54 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754013AbeD2R2g (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 29 Apr 2018 13:28:36 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:55652 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753719AbeD2R2e (ORCPT
+        id S1754003AbeD2Rqa (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 29 Apr 2018 13:46:30 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:45342 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753584AbeD2Rq2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Apr 2018 13:28:34 -0400
-X-Google-Smtp-Source: AB8JxZoV7zkT7pXSNGLgh+FlRQHtMMCVwuFCCqjQOMK9KK1iIp3bdc3S53khhhuy0bHM4p+BE2C28g==
-Date: Sun, 29 Apr 2018 19:28:28 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/5] ARM: dts: exynos: Remove unnecessary address/size
- properties in Midas boards
-Message-ID: <20180429172828.2j2qjuwl6z2oipup@kozik-lap>
-References: <20180424174602.3915-1-krzk@kernel.org>
+        Sun, 29 Apr 2018 13:46:28 -0400
+X-Google-Smtp-Source: AB8JxZpLnl2vopSnSu6hes6cxoFZpQ3Ul9W2x8mmGOtedHIdZXdR320117qwZUxJ47yQr277PDQvtw==
+Subject: Re: [PATCH 2/2] hwmon: (k10temp) Use API function to access System
+ Management Network
+To: Thomas Gleixner <tglx@linutronix.de>,
+        Clemens Ladisch <clemens@ladisch.de>
+Cc: x86@kernel.org, Jean Delvare <jdelvare@suse.com>,
+        linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        Borislav Petkov <bp@suse.de>, Yazen Ghannam <Yazen.Ghannam@amd.com>,
+        Brian Woods <brian.woods@amd.com>
+References: <1524966879-9424-1-git-send-email-linux@roeck-us.net>
+ <1524966879-9424-2-git-send-email-linux@roeck-us.net>
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <2db436f9-a335-9e25-d177-23095c2527ff@roeck-us.net>
+Date: Sun, 29 Apr 2018 10:46:25 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180424174602.3915-1-krzk@kernel.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <1524966879-9424-2-git-send-email-linux@roeck-us.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 24, 2018 at 07:45:58PM +0200, Krzysztof Kozlowski wrote:
-> The children of regulators node do not have reg/ranges properties.  Move the
-> children up one level, get rid of regulators node and remove
-> address-cells and size-cells properties.  This fixes warnings for
-> Exynos4412 Midas family boards:
+On 04/28/2018 06:54 PM, Guenter Roeck wrote:
+> The SMN (System Management Network) on Family 17h AMD CPUs is also accessed
+> from other drivers, specifically EDAC. Accessing it directly is racy.
+> On top of that, accessing the SMN through root bridge 00:00 is wrong on
+> multi-die CPUs and may result in reading the temperature from the wrong
+> die. Use available API functions to fix the problem.
 > 
->     arch/arm/boot/dts/exynos4412-i9300.dtb: Warning (avoid_unnecessary_addr_size):
->         /regulators: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
->     arch/arm/boot/dts/exynos4412-i9305.dtb: Warning (avoid_unnecessary_addr_size):
->         /regulators: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
->     arch/arm/boot/dts/exynos4412-n710x.dtb: Warning (avoid_unnecessary_addr_size):
->         /regulators: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
+> For this to work, also change the Raven Ridge PCI device ID to point to
+> Data Fabric Function 3, since this ID is used by the API functions to
+> find the CPU node.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 > ---
->  arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi | 32 +++++------
->  arch/arm/boot/dts/exynos4412-midas.dtsi     | 86 ++++++++++++++---------------
->  2 files changed, 55 insertions(+), 63 deletions(-)
+>   drivers/hwmon/k10temp.c | 11 ++++++-----
+>   1 file changed, 6 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/hwmon/k10temp.c b/drivers/hwmon/k10temp.c
+> index b06bb1f90853..00e785afae0d 100644
+> --- a/drivers/hwmon/k10temp.c
+> +++ b/drivers/hwmon/k10temp.c
+> @@ -23,6 +23,7 @@
+>   #include <linux/init.h>
+>   #include <linux/module.h>
+>   #include <linux/pci.h>
+> +#include <asm/amd_nb.h>
+>   #include <asm/processor.h>
+>   
+>   MODULE_DESCRIPTION("AMD Family 10h+ CPU core temperature monitor");
+> @@ -40,8 +41,8 @@ static DEFINE_MUTEX(nb_smu_ind_mutex);
+>   #define PCI_DEVICE_ID_AMD_17H_DF_F3	0x1463
+>   #endif
+>   
+> -#ifndef PCI_DEVICE_ID_AMD_17H_RR_NB
+> -#define PCI_DEVICE_ID_AMD_17H_RR_NB	0x15d0
+> +#ifndef PCI_DEVICE_ID_AMD_17H_RR_DF_F3
+> +#define PCI_DEVICE_ID_AMD_17H_RR_DF_F3	0x14eb
 
-Applied entire series.
+This should have been 0x15eb. I'll resend after a week or so, waiting for more feedback.
 
+Guenter
 
-Best regards,
-Krzysztof
+>   #endif
+>   
+>   /* CPUID function 0x80000001, ebx */
+> @@ -136,8 +137,8 @@ static void read_tempreg_nb_f15(struct pci_dev *pdev, u32 *regval)
+>   
+>   static void read_tempreg_nb_f17(struct pci_dev *pdev, u32 *regval)
+>   {
+> -	amd_nb_index_read(pdev, PCI_DEVFN(0, 0), 0x60,
+> -			  F17H_M01H_REPORTED_TEMP_CTRL_OFFSET, regval);
+> +	amd_smn_read(amd_pci_dev_to_node_id(pdev),
+> +		     F17H_M01H_REPORTED_TEMP_CTRL_OFFSET, regval);
+>   }
+>   
+>   static ssize_t temp1_input_show(struct device *dev,
+> @@ -323,7 +324,7 @@ static const struct pci_device_id k10temp_id_table[] = {
+>   	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_16H_NB_F3) },
+>   	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_16H_M30H_NB_F3) },
+>   	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_17H_DF_F3) },
+> -	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_17H_RR_NB) },
+> +	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_17H_RR_DF_F3) },
+>   	{}
+>   };
+>   MODULE_DEVICE_TABLE(pci, k10temp_id_table);
+> 
