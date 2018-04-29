@@ -1,22 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753968AbeD2QbX (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 29 Apr 2018 12:31:23 -0400
-Received: from mail-it0-f70.google.com ([209.85.214.70]:52726 "EHLO
-        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753855AbeD2QbC (ORCPT
+        id S1754001AbeD2QcE (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 29 Apr 2018 12:32:04 -0400
+Received: from mail-it0-f69.google.com ([209.85.214.69]:53900 "EHLO
+        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753855AbeD2QcC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Apr 2018 12:31:02 -0400
-X-Google-Smtp-Source: AB8JxZp+viGqnpSPrt4c1JFf758CbAi0roq4VhLXTJfmUT6mLn/TwNEJDJ9KtuNB7xKksBXo/3QwzMWQ9T0LBycSF47XUr8XZRx9
+        Sun, 29 Apr 2018 12:32:02 -0400
+X-Google-Smtp-Source: AB8JxZqL5E4ZEXmljNnffK0LP+T/6ceOdkBN8vUL6W7J7bUVoQ6ITbrPKlJdJjn2WCexgE2vPEoB8PyQdKGvjdOs+HGkosgatAiq
 MIME-Version: 1.0
-Date: Sun, 29 Apr 2018 09:31:01 -0700
+Date: Sun, 29 Apr 2018 09:32:02 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004949d1056aff43f0@google.com>
-Subject: KASAN: use-after-free Read in path_init
-From: syzbot <syzbot+ebb37fc8fd7a28c93dec@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Message-ID: <000000000000e4758d056aff4604@google.com>
+Subject: KMSAN: uninit-value in _decode_session4
+From: syzbot <syzbot+e7fec512bc2eb4ae0781@syzkaller.appspotmail.com>
+To: davem@davemloft.net, herbert@gondor.apana.org.au, kuznet@ms2.inr.ac.ru,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        steffen.klassert@secunet.com, syzkaller-bugs@googlegroups.com,
+        yoshfuji@linux-ipv6.org
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -24,108 +26,92 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hello,
 
-syzbot hit the following crash on upstream commit
-d8a332730e757129e70675679f2b2a03f1ecf65e (Fri Apr 27 17:39:38 2018 +0000)
-Merge tag 'char-misc-4.17-rc3' of  
-git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc
+syzbot hit the following crash on  
+https://github.com/google/kmsan.git/master commit
+d2d741e5d1898dfde1a75ea3d29a9a3e2edf0617 (Sun Apr 22 15:05:22 2018 +0000)
+kmsan: add initialization for shmem pages
 syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=ebb37fc8fd7a28c93dec
+https://syzkaller.appspot.com/bug?extid=e7fec512bc2eb4ae0781
 
-Unfortunately, I don't have any reproducer for this crash yet.
+So far this crash happened 6 times on  
+https://github.com/google/kmsan.git/master.
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5844177157881856
+syzkaller reproducer:  
+https://syzkaller.appspot.com/x/repro.syz?id=6093669123751936
 Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=6333718402695168
-Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=7043958930931867332
-compiler: gcc (GCC) 8.0.1 20180413 (experimental)
+https://syzkaller.appspot.com/x/log.txt?id=4545366699540480
+Kernel config: https://syzkaller.appspot.com/x/.config?id=328654897048964367
+compiler: clang version 7.0.0 (trunk 329391)
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+ebb37fc8fd7a28c93dec@syzkaller.appspotmail.com
+Reported-by: syzbot+e7fec512bc2eb4ae0781@syzkaller.appspotmail.com
 It will help syzbot understand when the bug is fixed. See footer for  
 details.
 If you forward the report, please keep this part and the footer.
 
-TCP: request_sock_TCPv6: Possible SYN flooding on port 20002. Sending  
-cookies.  Check SNMP counters.
+IPv6: ADDRCONF(NETDEV_UP): veth1: link is not ready
+IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
+IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
+8021q: adding VLAN 0 to HW filter on device team0
 ==================================================================
-BUG: KASAN: use-after-free in path_init+0x1675/0x2320 fs/namei.c:2132
-Read of size 1 at addr ffff8801c907ae80 by task syz-executor7/4548
-
-CPU: 1 PID: 4548 Comm: syz-executor7 Not tainted 4.17.0-rc2+ #20
+BUG: KMSAN: uninit-value in _decode_session4+0x11d3/0x1ce0  
+net/ipv4/xfrm4_policy.c:126
+CPU: 0 PID: 4502 Comm: syz-executor427 Not tainted 4.16.0+ #87
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  print_address_description+0x6c/0x20b mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
-  __asan_report_load1_noabort+0x14/0x20 mm/kasan/report.c:430
-  path_init+0x1675/0x2320 fs/namei.c:2132
-  path_openat+0x1f1/0x4e20 fs/namei.c:3495
-  do_filp_open+0x249/0x350 fs/namei.c:3535
-  do_sys_open+0x56f/0x740 fs/open.c:1093
-  __do_sys_open fs/open.c:1111 [inline]
-  __se_sys_open fs/open.c:1106 [inline]
-  __x64_sys_open+0x7e/0xc0 fs/open.c:1106
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x453aa0
-RSP: 002b:0000000000a3d940 EFLAGS: 00000202 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: 000000000000004a RCX: 0000000000453aa0
-RDX: 000000000000000c RSI: 0000000000090800 RDI: 0000000000a3f790
-RBP: 0000000000a3f790 R08: 0000000000000001 R09: 0000000000e25940
-R10: 0000000000000000 R11: 0000000000000202 R12: 00000000000001e4
-R13: 0000000000000000 R14: 00000000000001e4 R15: 000000000001b450
+  __dump_stack lib/dump_stack.c:17 [inline]
+  dump_stack+0x185/0x1d0 lib/dump_stack.c:53
+  kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
+  __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:683
+  _decode_session4+0x11d3/0x1ce0 net/ipv4/xfrm4_policy.c:126
+  __xfrm_decode_session+0x151/0x200 net/xfrm/xfrm_policy.c:2368
+  xfrm_decode_session include/net/xfrm.h:1206 [inline]
+  vti6_tnl_xmit+0x49b/0x2070 net/ipv6/ip6_vti.c:546
+  __netdev_start_xmit include/linux/netdevice.h:4066 [inline]
+  netdev_start_xmit include/linux/netdevice.h:4075 [inline]
+  xmit_one net/core/dev.c:3026 [inline]
+  dev_hard_start_xmit+0x5f1/0xc70 net/core/dev.c:3042
+  __dev_queue_xmit+0x27ee/0x3520 net/core/dev.c:3557
+  dev_queue_xmit+0x4b/0x60 net/core/dev.c:3590
+  packet_snd net/packet/af_packet.c:2944 [inline]
+  packet_sendmsg+0x7c70/0x8a30 net/packet/af_packet.c:2969
+  sock_sendmsg_nosec net/socket.c:630 [inline]
+  sock_sendmsg net/socket.c:640 [inline]
+  SYSC_sendto+0x6c3/0x7e0 net/socket.c:1747
+  SyS_sendto+0x8a/0xb0 net/socket.c:1715
+  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+RIP: 0033:0x4418f9
+RSP: 002b:00007ffcea97afc8 EFLAGS: 00000216 ORIG_RAX: 000000000000002c
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00000000004418f9
+RDX: 0000000000000000 RSI: 00000000200001c0 RDI: 0000000000000003
+RBP: 00000000006cd018 R08: 0000000020000000 R09: 000000000000001c
+R10: 0000000000000000 R11: 0000000000000216 R12: 00000000004025f0
+R13: 0000000000402680 R14: 0000000000000000 R15: 0000000000000000
 
-Allocated by task 4549:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
-  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
-  kmem_cache_alloc+0x12e/0x760 mm/slab.c:3554
-  getname_flags+0xd0/0x5a0 fs/namei.c:140
-  getname fs/namei.c:211 [inline]
-  do_rmdir+0xe3/0x610 fs/namei.c:3878
-  __do_sys_rmdir fs/namei.c:3929 [inline]
-  __se_sys_rmdir fs/namei.c:3927 [inline]
-  __x64_sys_rmdir+0x36/0x40 fs/namei.c:3927
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 4549:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kmem_cache_free+0x86/0x2d0 mm/slab.c:3756
-  putname+0xf2/0x130 fs/namei.c:261
-  do_rmdir+0x202/0x610 fs/namei.c:3919
-  __do_sys_rmdir fs/namei.c:3929 [inline]
-  __se_sys_rmdir fs/namei.c:3927 [inline]
-  __x64_sys_rmdir+0x36/0x40 fs/namei.c:3927
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff8801c907ae80
-  which belongs to the cache names_cache of size 4096
-The buggy address is located 0 bytes inside of
-  4096-byte region [ffff8801c907ae80, ffff8801c907be80)
-The buggy address belongs to the page:
-page:ffffea0007241e80 count:1 mapcount:0 mapping:ffff8801c907ae80 index:0x0  
-compound_mapcount: 0
-flags: 0x2fffc0000008100(slab|head)
-raw: 02fffc0000008100 ffff8801c907ae80 0000000000000000 0000000100000001
-raw: ffffea0007245ea0 ffffea0006bbc220 ffff8801da988dc0 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8801c907ad80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-  ffff8801c907ae00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> ffff8801c907ae80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                    ^
-  ffff8801c907af00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8801c907af80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+Uninit was created at:
+  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
+  kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:188
+  kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:314
+  kmsan_slab_alloc+0x11/0x20 mm/kmsan/kmsan.c:321
+  slab_post_alloc_hook mm/slab.h:445 [inline]
+  slab_alloc_node mm/slub.c:2737 [inline]
+  __kmalloc_node_track_caller+0xaed/0x11c0 mm/slub.c:4369
+  __kmalloc_reserve net/core/skbuff.c:138 [inline]
+  __alloc_skb+0x2cf/0x9f0 net/core/skbuff.c:206
+  alloc_skb include/linux/skbuff.h:984 [inline]
+  alloc_skb_with_frags+0x1d4/0xb20 net/core/skbuff.c:5234
+  sock_alloc_send_pskb+0xb56/0x1190 net/core/sock.c:2085
+  packet_alloc_skb net/packet/af_packet.c:2803 [inline]
+  packet_snd net/packet/af_packet.c:2894 [inline]
+  packet_sendmsg+0x6454/0x8a30 net/packet/af_packet.c:2969
+  sock_sendmsg_nosec net/socket.c:630 [inline]
+  sock_sendmsg net/socket.c:640 [inline]
+  SYSC_sendto+0x6c3/0x7e0 net/socket.c:1747
+  SyS_sendto+0x8a/0xb0 net/socket.c:1715
+  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
 ==================================================================
 
 
@@ -139,6 +125,9 @@ If you forgot to add the Reported-by tag, once the fix for this bug is
 merged
 into any tree, please reply to this email with:
 #syz fix: exact-commit-title
+If you want to test a patch for this bug, please reply with:
+#syz test: git://repo/address.git branch
+and provide the patch inline or as an attachment.
 To mark this as a duplicate of another syzbot report, please reply with:
 #syz dup: exact-subject-of-another-report
 If it's a one-off invalid bug report, please reply with:
