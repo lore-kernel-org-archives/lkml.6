@@ -1,44 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754208AbeD2UUk (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 29 Apr 2018 16:20:40 -0400
-Received: from mail-oi0-f41.google.com ([209.85.218.41]:45452 "EHLO
-        mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753989AbeD2UUh (ORCPT
+        id S1754233AbeD2Uaa (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 29 Apr 2018 16:30:30 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:33650 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753781AbeD2Ua3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Apr 2018 16:20:37 -0400
-X-Google-Smtp-Source: AB8JxZrh/D/nS0+bA4KyxQn2oFLqfPxG7WBRqDqa31G4y3E8dZgP4Kuz9N7sLQzaDmJT7NdUcjtFZA==
-Date: Sun, 29 Apr 2018 13:20:33 -0700
-From: Sultan Alsawaf <sultanxda@gmail.com>
-To: Pavel Machek <pavel@ucw.cz>
-Cc: "Theodore Y. Ts'o" <tytso@mit.edu>, linux-kernel@vger.kernel.org,
-        Jann Horn <jannh@google.com>
-Subject: Re: Linux messages full of `random: get_random_u32 called from`
-Message-ID: <20180429202033.ysmc42mj2rrk3h7p@sultan-box>
-References: <20180426073255.GH18803@thunk.org>
- <b6aa3fac-a768-e27d-3070-00d929ebc245@gmail.com>
- <20180426192524.GD5965@thunk.org>
- <2add15cb-2113-0504-a732-81255ea61bf5@gmail.com>
- <20180426235630.GG5965@thunk.org>
- <3eb5761e-7b25-4178-0560-fba5eb43ce6a@gmail.com>
- <20180427201036.GL5965@thunk.org>
- <20180429143205.GD13475@amd>
- <20180429170541.lrzwyihrd6d75rql@sultan-box>
- <20180429184101.GA31156@amd>
+        Sun, 29 Apr 2018 16:30:29 -0400
+Date: Sun, 29 Apr 2018 13:30:23 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Kees Cook <keescook@chromium.org>
+Cc: Julia Lawall <julia.lawall@lip6.fr>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <mawilcox@microsoft.com>, Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        cocci@systeme.lip6.fr, Himanshu Jha <himanshujha199640@gmail.com>
+Subject: Re: [PATCH 2/2] mm: Add kvmalloc_ab_c and kvzalloc_struct
+Message-ID: <20180429203023.GA11891@bombadil.infradead.org>
+References: <20180214182618.14627-1-willy@infradead.org>
+ <20180214182618.14627-3-willy@infradead.org>
+ <CAGXu5jL9hqQGe672CmvFwqNbtTr=qu7WRwHuS4Vy7o5sX_UTgg@mail.gmail.com>
+ <alpine.DEB.2.20.1803072212160.2814@hadrien>
+ <20180308025812.GA9082@bombadil.infradead.org>
+ <alpine.DEB.2.20.1803080722300.3754@hadrien>
+ <20180308230512.GD29073@bombadil.infradead.org>
+ <alpine.DEB.2.20.1803131818550.3117@hadrien>
+ <20180313183220.GA21538@bombadil.infradead.org>
+ <CAGXu5jKLaY2vzeFNaEhZOXbMgDXp4nF4=BnGCFfHFRwL6LXNHA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180429184101.GA31156@amd>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <CAGXu5jKLaY2vzeFNaEhZOXbMgDXp4nF4=BnGCFfHFRwL6LXNHA@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Apr 29, 2018 at 08:41:01PM +0200, Pavel Machek wrote:
-> Umm. No. https://www.youtube.com/watch?v=xneBjc8z0DE
+On Sun, Apr 29, 2018 at 09:59:27AM -0700, Kees Cook wrote:
+> Did this ever happen?
 
-Okay, but /dev/urandom isn't a solution to this problem because it isn't usable
-until crng init is complete, so it suffers from the same init lag as
-/dev/random.
+Not yet.  I brought it up at LSFMM, and I'll repost the patches soon.
 
-Sultan
+> I'd also like to see kmalloc_array_3d() or
+> something that takes three size arguments. We have a lot of this
+> pattern too:
+> 
+> kmalloc(sizeof(foo) * A * B, gfp...)
+> 
+> And we could turn that into:
+> 
+> kmalloc_array_3d(sizeof(foo), A, B, gfp...)
+
+Are either of A or B constant?  Because if so, we could just use
+kmalloc_array.  If not, then kmalloc_array_3d becomes a little more
+expensive than kmalloc_array because we have to do a divide at runtime
+instead of compile-time.  that's still better than allocating too few
+bytes, of course.
+
+I'm wondering how far down the abc + ab + ac + bc + d rabbit-hole we're
+going to end up going.  As far as we have to, I guess.
