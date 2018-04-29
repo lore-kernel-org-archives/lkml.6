@@ -1,65 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753318AbeD2Lta (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 29 Apr 2018 07:49:30 -0400
-Received: from mail.fireflyinternet.com ([109.228.58.192]:63850 "EHLO
-        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1753087AbeD2Lt3 (ORCPT
+        id S1753362AbeD2Lyc (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 29 Apr 2018 07:54:32 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:52574 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752415AbeD2Lyb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Apr 2018 07:49:29 -0400
-X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
-From: Chris Wilson <chris@chris-wilson.co.uk>
-To: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org, intel-gfx@lists.freedesktop.org,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH] x86: Mark up large pm4/5 constants with UL
-Date: Sun, 29 Apr 2018 12:48:32 +0100
-Message-Id: <20180429114832.14552-1-chris@chris-wilson.co.uk>
+        Sun, 29 Apr 2018 07:54:31 -0400
+From: Colin King <colin.king@canonical.com>
+To: Shuah Khan <shuah@kernel.org>,
+        "Eric W . Biedermane" <ebiederm@xmission.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        linux-kselftest@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] selftests: fix spelling mistake: "desciptor" -> "descriptor"
+Date: Sun, 29 Apr 2018 12:54:25 +0100
+Message-Id: <20180429115425.9378-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.17.0
-X-Originating-IP: 78.156.65.138
-X-Country: code=GB country="United Kingdom" ip=78.156.65.138
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To silence sparse while maintaining compatibility with the assembly, use
-_UL which conditionally only appends the UL suffix for C code.
+From: Colin Ian King <colin.king@canonical.com>
 
-Fixes: a7412546d8cb ("x86/mm: Adjust vmalloc base and size at boot-time")
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
+Trivial fix to spelling mistake in message text
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- arch/x86/include/asm/pgtable_64_types.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ tools/testing/selftests/filesystems/devpts_pts.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/pgtable_64_types.h b/arch/x86/include/asm/pgtable_64_types.h
-index d5c21a382475..40caf5eb9c18 100644
---- a/arch/x86/include/asm/pgtable_64_types.h
-+++ b/arch/x86/include/asm/pgtable_64_types.h
-@@ -105,14 +105,14 @@ extern unsigned int ptrs_per_p4d;
- #define LDT_PGD_ENTRY		(pgtable_l5_enabled ? LDT_PGD_ENTRY_L5 : LDT_PGD_ENTRY_L4)
- #define LDT_BASE_ADDR		(LDT_PGD_ENTRY << PGDIR_SHIFT)
+diff --git a/tools/testing/selftests/filesystems/devpts_pts.c b/tools/testing/selftests/filesystems/devpts_pts.c
+index b9055e974289..ea5de8271521 100644
+--- a/tools/testing/selftests/filesystems/devpts_pts.c
++++ b/tools/testing/selftests/filesystems/devpts_pts.c
+@@ -279,7 +279,7 @@ int main(int argc, char *argv[])
+ 	int ret;
  
--#define __VMALLOC_BASE_L4	0xffffc90000000000
--#define __VMALLOC_BASE_L5 	0xffa0000000000000
-+#define __VMALLOC_BASE_L4	_UL(0xffffc90000000000)
-+#define __VMALLOC_BASE_L5 	_UL(0xffa0000000000000)
- 
- #define VMALLOC_SIZE_TB_L4	32UL
- #define VMALLOC_SIZE_TB_L5	12800UL
- 
--#define __VMEMMAP_BASE_L4	0xffffea0000000000
--#define __VMEMMAP_BASE_L5	0xffd4000000000000
-+#define __VMEMMAP_BASE_L4	_UL(0xffffea0000000000)
-+#define __VMEMMAP_BASE_L5	_UL(0xffd4000000000000)
- 
- #ifdef CONFIG_DYNAMIC_MEMORY_LAYOUT
- # define VMALLOC_START		vmalloc_base
+ 	if (!isatty(STDIN_FILENO)) {
+-		fprintf(stderr, "Standard input file desciptor is not attached "
++		fprintf(stderr, "Standard input file descriptor is not attached "
+ 				"to a terminal. Skipping test\n");
+ 		exit(EXIT_FAILURE);
+ 	}
 -- 
 2.17.0
