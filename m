@@ -1,103 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753514AbeD2O37 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 29 Apr 2018 10:29:59 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:52280 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752895AbeD2O36 (ORCPT
+        id S1753626AbeD2ObT (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 29 Apr 2018 10:31:19 -0400
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:46823 "EHLO
+        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753599AbeD2ObR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Apr 2018 10:29:58 -0400
-Date: Sun, 29 Apr 2018 16:29:56 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Sultan Alsawaf <sultanxda@gmail.com>, linux-kernel@vger.kernel.org,
-        Jann Horn <jannh@google.com>
-Subject: Re: Linux messages full of `random: get_random_u32 called from`
-Message-ID: <20180429142956.GB13475@amd>
-References: <d92d049a-8810-a765-d57a-2a7a805fadaf@gmail.com>
- <20180426050056.GF18803@thunk.org>
- <b902d9f5-300e-2611-289d-f6d49dd43f11@gmail.com>
- <20180426073255.GH18803@thunk.org>
- <b6aa3fac-a768-e27d-3070-00d929ebc245@gmail.com>
- <20180426192524.GD5965@thunk.org>
- <2add15cb-2113-0504-a732-81255ea61bf5@gmail.com>
- <20180426235630.GG5965@thunk.org>
+        Sun, 29 Apr 2018 10:31:17 -0400
+X-Google-Smtp-Source: AB8JxZrDx1wG63FE7LqIOEgNlseIbn4nO1JrMZNuQX+Qj75vWpXHhS3tIXewyJt58qMd51H/5w3OQsy19/TFE/B/7A0=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="kXdP64Ggrk/fb43R"
-Content-Disposition: inline
-In-Reply-To: <20180426235630.GG5965@thunk.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180429111605.4cdf5ab2@bbrezillon>
+References: <20180423203500.GA36488@beast> <20180429111605.4cdf5ab2@bbrezillon>
+From: Kees Cook <keescook@chromium.org>
+Date: Sun, 29 Apr 2018 07:31:15 -0700
+X-Google-Sender-Auth: __v2UCE-csl8NDh1xSsCx6UivmE
+Message-ID: <CAGXu5jJJDF-3E_rt-16B-0CwjcF+52LPNGefD-KP+qz1JwM=6g@mail.gmail.com>
+Subject: Re: [PATCH] mtd: nftl: Remove VLA usage
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Linux mtd <linux-mtd@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, Apr 29, 2018 at 2:16 AM, Boris Brezillon
+<boris.brezillon@bootlin.com> wrote:
+> Hi Kees,
+>
+> On Mon, 23 Apr 2018 13:35:00 -0700
+> Kees Cook <keescook@chromium.org> wrote:
+>
+>> On the quest to remove all VLAs from the kernel[1] this changes the
+>> check_free_sectors() routine to use the same stack buffer for both
+>> data byte checks (SECTORSIZE) and oob byte checks (oobsize). Since
+>> these regions aren't needed at the same time, they don't need to be
+>> consecutively allocated. Additionally, while it's possible for oobsize
+>> to be large, it is unlikely to be larger than the actual SECTORSIZE. As
+>> such, remove the VLA, adjust offsets and add a sanity check to make sure
+>> we never get a pathological oobsize.
+>>
+>> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+>>
+>> Signed-off-by: Kees Cook <keescook@chromium.org>
+>> ---
+>>  drivers/mtd/inftlmount.c | 11 ++++++++---
+>>  drivers/mtd/nftlmount.c  | 11 ++++++++---
+>>  2 files changed, 16 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/mtd/inftlmount.c b/drivers/mtd/inftlmount.c
+>> index aab4f68bd36f..9cdae7f0fc2e 100644
+>> --- a/drivers/mtd/inftlmount.c
+>> +++ b/drivers/mtd/inftlmount.c
+>> @@ -334,7 +334,7 @@ static int memcmpb(void *a, int c, int n)
+>>  static int check_free_sectors(struct INFTLrecord *inftl, unsigned int address,
+>>       int len, int check_oob)
+>>  {
+>> -     u8 buf[SECTORSIZE + inftl->mbd.mtd->oobsize];
+>> +     u8 buf[SECTORSIZE];
+>
+> Could we instead move to dynamic allocation. I mean, SECTORSIZE is 512
+> bytes, so only with this function we consume 1/16 of the stack. Not to
+> mention that some MTD drivers might want to do DMA on buffer passed by
+> the MTD user, and if the buffer is on the stack they'll have to use a
+> bounce buffer instead.
 
---kXdP64Ggrk/fb43R
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sure! I can rework it to do that. Is GFP_KERNEL okay for that, or does
+it need something else?
 
-Hi!
-On Thu 2018-04-26 19:56:30, Theodore Y. Ts'o wrote:
-> On Thu, Apr 26, 2018 at 01:22:02PM -0700, Sultan Alsawaf wrote:
-> >=20
-> > Also, regardless of what's hanging on CRNG init, CRNG should be able to=
- init on its own in a timely
-> > manner without the need for user-provided entropy. Userspace was workin=
-g fine before the recent CRNG
-> > kernel changes, so I don't think this is a userspace bug.
->=20
-> The CRNG changes were needed because were erroneously saying that the
-> entropy pool was securely initialized before it really was.  Saying
-> that CRNG should be able to init on its own is much like saying, "Ted
-> should be able to fly wherever he wants in his own personal Gulfstream
-> V."  It would certainly be _nice_ if I could afford my personal jet.
-> I certainly wish I were that rich.  But the problem is that dollars
-> (or Euro's) are like entropy, they don't just magically drop out of
-> the sky.
->=20
-> If there isn't user-provided entropy, and the hardware isn't providing
-> sufficient entropy, where did you think the kernel is supposed to get
-> the entropy from?  Should it dial 1-800-TRUST-NSA?
+-Kees
 
-Yes, we could dial 1-800-TRUST-NSA. Then nicely ask them to provide us
-some unbackdoored randomness. Then we'd ignore whatever they say, but
-would collect randomness from timing and noise on the telephone line.
-
-> The other approach would be to compile the kernel with
-> CONFIG_HW_RANDOM_TPM and to modify drivers/char/tpm/tpm-chip.c tot
-> initalize chip->hwrng.quality =3D 500.  We've historically made this
-> something that the system administrator must set via sysfs.  This is
-> because we wanted system adminisrators to explicitly say that they
-> trust the any hardware manufacturer that (a) they haven't been paid by
-> your choice of the Chinese MSS or the US NSA to introduce a backdoor,i
-> and (b) they are competent to actually implemnt a _secure_ hardware
-> random number generator.  Sadly, this has not always been the case.
-
-Well, we could actively start accessing suitable device (SD card ? HDD
-? CMOS RTC?) when we detect entropy is low. Yes, that would eat power,
-but that would be better than machine that hangs at boot.
-
-We could also access the hwrng, then collect entropy from the
-timing. TPM is slow chip...
-                                                                        Pav=
-el
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---kXdP64Ggrk/fb43R
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlrl1uQACgkQMOfwapXb+vJg6gCfSaQ4ccTbDjF3fz8H+dm9PPQ1
-CO8An3zEePRGgPTlgLaRafOwnx/tg0lC
-=07R6
------END PGP SIGNATURE-----
-
---kXdP64Ggrk/fb43R--
+-- 
+Kees Cook
+Pixel Security
