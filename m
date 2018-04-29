@@ -1,133 +1,160 @@
-Return-Path: <3oe_nWgkbAPww23oeppivettmh.ksskpiywivgsrxirx.gsq@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1525149601; cv=none;
-        d=google.com; s=arc-20160816;
-        b=iSkxGNCjEFzvpT+8J8nUdT0jnbNd2OcZI8u/Tyt17a4FHo+Y9K8IzzCa0vi8ctsVLI
-         sUBa5IMQAFfE1P7BvxyPj+IZ00j0dzW1Yek/+A8qTeJUYV+08bURR08pXHQ2qyWDvbkD
-         Olfj4nD14BuRiLvacCMzbChUE/vvemziTlneqanMp75cMtxXTHONTsqDgcNu9H29jw1J
-         Owz6seD3EYM8yuUptPfvnnusfm6LaHJQW3d8TlrN2KLddmubJ1KgW3mQ/h9v8uRf+xLT
-         i2LXrvsj1hOkGHaCH3SODy5IyoJPMi+wpCf5deT0VEhP55842qzpclzfrd97Z3u9hhwQ
-         GN0g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=to:from:subject:message-id:date:mime-version
-         :arc-authentication-results;
-        bh=h+xs1ePZKm8HQjfm26K8Vt9/ZTQZt/tJ9sP2a4XXr8M=;
-        b=DhVaUmspky8COnwZ6wgQFilkl7U1OLYufYZ9gdGwH0KRwyMiVyX/20KC4Lm71DqIwh
-         WsE4yI7ubfKm4qq6vpraYT8TxOakpRu/J8fSzpmBKFeNnzpj8hRotpqr7fPv9T9PiS5m
-         +Zxm0nbCVoo8ULPznWop3cya7xwAlttw/paw+4ZXLdGhMu4oFFTKERzR/rHMcpYrXcg8
-         cukgz4Dc99HMgnkd0qcSt2VNp4nlehnyh2CS5Jt32Pvvi/6ORrF6ZqqgOTLixxrrbEix
-         u8m7y2LjHvwop2YxY9cdGlI8MWaPHYabLyLVlzwMnu7u/aZTlAGRH8oQ1rdubFJskr0e
-         0g9Q==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of 3oe_nwgkbapww23oeppivettmh.ksskpiywivgsrxirx.gsq@m3kw2wvrgufz5godrsrytgd7.apphosting.bounces.google.com designates 209.85.220.69 as permitted sender) smtp.mailfrom=3oe_nWgkbAPww23oeppivettmh.ksskpiywivgsrxirx.gsq@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=appspotmail.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of 3oe_nwgkbapww23oeppivettmh.ksskpiywivgsrxirx.gsq@m3kw2wvrgufz5godrsrytgd7.apphosting.bounces.google.com designates 209.85.220.69 as permitted sender) smtp.mailfrom=3oe_nWgkbAPww23oeppivettmh.ksskpiywivgsrxirx.gsq@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=appspotmail.com
-X-Google-Smtp-Source: AB8JxZqhiKlbYYfC/d6eOV4k8QrV+WtR0lc9VkGWHFVSdAx/OOcWCkarRryAzvbDiOInb9gNCyBwHW4gZliwdLZ+/SJ1bBCjUgDN
-MIME-Version: 1.0
-Date: Mon, 30 Apr 2018 21:40:01 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003b1d65056b1d9046@google.com>
-Subject: general protection fault in n_tty_set_termios
-From: syzbot <syzbot+ed02be0ad5f26ef4e31b@syzkaller.appspotmail.com>
-To: gregkh@linuxfoundation.org, jslaby@suse.com, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3721122-1525017708-5-13382130729999183719
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1525017707; b=iinNNgPKDlcNAbfCrYhKQ+g6kxpikzrNzuKr3LZVh/SaEJJNPQ
+    F5JAH7x6z8yvfXYB7/TJEEoqBanzbpmjMHHqGeZw4Y3I3T4vWwUqlXERtt4PU7Rc
+    O0G0JzdBl3LZpwmbyL/H9+OcPJoQDxUqmt+lJkedzbDY2doTZSVpEHn8KSPyOMkt
+    6iautGNvcWXRPlNdUj2tJf/Mtt6IYod3KS/qgZX+khwy9RqmTboUDnwe5E5Th47U
+    99VCXmvUpBe+ts3MsK0CMUzyXG+0gZrKRkNiCbxbGGn+0om96b54vD2LQprRDyEE
+    aBAIPpMUx/ZZ/sow0E+zreAkND50BO05gXzA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1525017707; bh=ADO+APEPxkeDTFuMDXFLDRN4Kp5k5U
+    YUlxYyldz60nQ=; b=m2pFmvpZn4Pg0hbP8R/MRKXPLPpa2HnlcNssG/mWyYlyLA
+    9kGhP2gpElnPEK9a3sRaGU3y5j1eTrj5LYvwdAO9DDNMar+rdazWvReoAJHOIBde
+    kpcjUWxkOiXpZzAtzE+DiGNG8wXCJb3RSG0qgMLDuWu9njVGNYeTKyti1xlNwIsK
+    GfYChT89mnzCxTYT9WmFvVgYjf091FPCsWefemZOaouJg3pMZMH5AtPkItgSEvUV
+    QjfpBGWPF8zcqIj58lUxyqJqFKJNhFY40k3rNgB2chi+6MR4R45EGSN2DJSpROKw
+    h2o5XCO+vhd01ale8RGwuVmSnZqhKLYdxJU+Q0pQ==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=HukniSqb x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=KpJ26cqk;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=HukniSqb x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=KpJ26cqk;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfHSzA5ZYBa2VZjT1pDnaEyfsQiHZW3lytJk934lXwmqOzu/1bNqw3dE4ePrf/U2x2dRQrFzbVQsM4va4anqVDUke4DheU2Wm4OOL6kuRb5wLqF1+1OvS
+    0WpMbQDW/PJVfeGnVieax9tFNM/g6f2mPsJP/SNy5ImDzHUQ0OoiLZh2RNdmSJon/DjUt59zc9iqCLHM/cQnayDaYrQvaqSX8sQNo+vNj6bsb806Jbrrz4GC
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=x7bEGLp0ZPQA:10 a=zLncjWLdyN0A:10
+    a=Kd1tUaAdevIA:10 a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8 a=yPCof4ZbAAAA:8
+    a=BSTGaPtrplHwReIcmCQA:9 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753616AbeD2QBp (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 29 Apr 2018 12:01:45 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:46637 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753584AbeD2QBo (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sun, 29 Apr 2018 12:01:44 -0400
+X-Google-Smtp-Source: AB8JxZoR6JujgMnxPDZaPpnyO3xUfanT3sN50nHtVPoOu4JRoDqSH/cH6M6sDGPh/nTa8NAleDW5FQ==
+From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+X-Google-Original-From: Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        stable@vger.kernel.org,
+        "Martin K . Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH v2] libata: blacklist Micron SSD
+Date: Sun, 29 Apr 2018 17:01:38 +0100
+Message-Id: <20180429160138.11091-1-sudip.mukherjee@codethink.co.uk>
+X-Mailer: git-send-email 2.11.0
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599235269199846482?=
-X-GMAIL-MSGID: =?utf-8?q?1599235269199846482?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hello,
+From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 
-syzbot found the following crash on:
+While whitelisting Micron M500DC drives, the tweaked blacklist entry
+enabled queued TRIM for M500IT variants also. But these do not support
+queued TRIM. And while using those SSDs with the latest kernel we have
+seen errors and even the partition table getting corrupted.
 
-HEAD commit:    8188fc8bef8c Merge  
-git://git.kernel.org/pub/scm/linux/kerne...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?id=5093449355231232
-kernel config:   
-https://syzkaller.appspot.com/x/.config?id=6493557782959164711
-dashboard link: https://syzkaller.appspot.com/bug?extid=ed02be0ad5f26ef4e31b
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller  
-repro:https://syzkaller.appspot.com/x/repro.syz?id=6543533393575936
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?id=5754063643738112
+Some part from the dmesg:
+[    6.727384] ata1.00: ATA-9: Micron_M500IT_MTFDDAK060MBD, MU01, max UDMA/133
+[    6.727390] ata1.00: 117231408 sectors, multi 16: LBA48 NCQ (depth 31/32), AA
+[    6.741026] ata1.00: supports DRM functions and may not be fully accessible
+[    6.759887] ata1.00: configured for UDMA/133
+[    6.762256] scsi 0:0:0:0: Direct-Access     ATA      Micron_M500IT_MT MU01 PQ: 0 ANSI: 5
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+ed02be0ad5f26ef4e31b@syzkaller.appspotmail.com
+and then for the error:
+[  120.860334] ata1.00: exception Emask 0x1 SAct 0x7ffc0007 SErr 0x0 action 0x6 frozen
+[  120.860338] ata1.00: irq_stat 0x40000008
+[  120.860342] ata1.00: failed command: SEND FPDMA QUEUED
+[  120.860351] ata1.00: cmd 64/01:00:00:00:00/00:00:00:00:00/a0 tag 0 ncq dma 512 out
+         res 40/00:00:00:00:00/00:00:00:00:00/00 Emask 0x5 (timeout)
+[  120.860353] ata1.00: status: { DRDY }
+[  120.860543] ata1: hard resetting link
+[  121.166128] ata1: SATA link up 3.0 Gbps (SStatus 123 SControl 300)
+[  121.166376] ata1.00: supports DRM functions and may not be fully accessible
+[  121.186238] ata1.00: supports DRM functions and may not be fully accessible
+[  121.204445] ata1.00: configured for UDMA/133
+[  121.204454] ata1.00: device reported invalid CHS sector 0
+[  121.204541] sd 0:0:0:0: [sda] tag#18 UNKNOWN(0x2003) Result: hostbyte=0x00 driverbyte=0x08
+[  121.204546] sd 0:0:0:0: [sda] tag#18 Sense Key : 0x5 [current] 
+[  121.204550] sd 0:0:0:0: [sda] tag#18 ASC=0x21 ASCQ=0x4 
+[  121.204555] sd 0:0:0:0: [sda] tag#18 CDB: opcode=0x93 93 08 00 00 00 00 00 04 28 80 00 00 00 30 00 00
+[  121.204559] print_req_error: I/O error, dev sda, sector 272512
 
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Modules linked in:
-CPU: 1 PID: 4509 Comm: syz-executor654 Not tainted 4.17.0-rc3+ #26
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:n_tty_set_termios+0x2d9/0xe80 drivers/tty/n_tty.c:1782
-RSP: 0018:ffff8801b42df698 EFLAGS: 00010203
-RAX: 0000000000000001 RBX: 0000000000000000 RCX: 000000000000000b
-RDX: dffffc0000000000 RSI: 0000000000000000 RDI: 0000000000000005
-RBP: ffff8801b42df6d0 R08: ffff8801d97aa000 R09: 0000000000000002
-R10: ffff8801d97aa888 R11: ffff8801d97aa000 R12: ffff8801d9bea500
-R13: ffff8801d9bea8b4 R14: 000000000000005d R15: ffff8801b42df730
-FS:  00007f082d3d7700(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f082d3b5e78 CR3: 00000001ac8aa000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  tty_set_termios+0x7a0/0xac0 drivers/tty/tty_ioctl.c:341
-  set_termios+0x41e/0x7d0 drivers/tty/tty_ioctl.c:414
-  tty_mode_ioctl+0x855/0xb50 drivers/tty/tty_ioctl.c:749
-  n_tty_ioctl_helper+0x54/0x3b0 drivers/tty/tty_ioctl.c:940
-  n_tty_ioctl+0x54/0x320 drivers/tty/n_tty.c:2441
-  tty_ioctl+0x5e1/0x1870 drivers/tty/tty_io.c:2655
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  file_ioctl fs/ioctl.c:500 [inline]
-  do_vfs_ioctl+0x1cf/0x16a0 fs/ioctl.c:684
-  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:701
-  __do_sys_ioctl fs/ioctl.c:708 [inline]
-  __se_sys_ioctl fs/ioctl.c:706 [inline]
-  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:706
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x445d19
-RSP: 002b:00007f082d3d6da8 EFLAGS: 00000297 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00000000006dac3c RCX: 0000000000445d19
-RDX: 0000000020000040 RSI: 0000000000005402 RDI: 0000000000000033
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000297 R12: 00000000006dac38
-R13: 6d74702f7665642f R14: 00007f082d3d79c0 R15: 0000000000000007
-Code: 8b 45 d0 31 ff 83 e0 02 89 c6 89 45 d0 e8 50 4a e1 fd 8b 45 d0 4c 89  
-f1 48 ba 00 00 00 00 00 fc ff df 85 c0 0f 95 c0 48 c1 e9 03 <0f> b6 14 11  
-4c 89 f1 83 e1 07 38 ca 7f 08 84 d2 0f 85 96 09 00
-RIP: n_tty_set_termios+0x2d9/0xe80 drivers/tty/n_tty.c:1782 RSP:  
-ffff8801b42df698
----[ end trace b89be7398398fc5c ]---
+After few reboots with these errors, and the SSD is corrupted.
+After blacklisting it, the errors are not seen and the SSD does not get
+corrupted any more.
 
+We know that M500IT MG02 and M500DC support this feature, Martin asked
+Micron for a list of SSDs which have support for this feature. But there
+was no reply. It is best to blacklst all Micron SSDs for now, except the
+known two variants, to prevent corrupting other Micron SSDs which do not
+support this.
 
+Fixes: 243918be6393 ("libata: Do not blacklist Micron M500DC")
+Cc: stable@vger.kernel.org
+Cc: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this bug report.
-If you forgot to add the Reported-by tag, once the fix for this bug is  
-merged
-into any tree, please reply to this email with:
-#syz fix: exact-commit-title
-If you want to test a patch for this bug, please reply with:
-#syz test: git://repo/address.git branch
-and provide the patch inline or as an attachment.
-To mark this as a duplicate of another syzbot report, please reply with:
-#syz dup: exact-subject-of-another-report
-If it's a one-off invalid bug report, please reply with:
-#syz invalid
-Note: if the crash happens again, it will cause creation of a new bug  
-report.
-Note: all commands must start from beginning of the line in the email body.
+v1: Only M500IT MU01 was blacklisted.
+
+v2: Whitelist M500IT BG02 and M500DC and then blacklist all other Micron. 
+
+ drivers/ata/libata-core.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
+index 8bc71ca61e7f..df5d716c0a07 100644
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -4550,7 +4550,9 @@ static const struct ata_blacklist_entry ata_device_blacklist [] = {
+ 						ATA_HORKAGE_NOLPM, },
+ 
+ 	/* devices that don't properly handle queued TRIM commands */
+-	{ "Micron_M500_*",		NULL,	ATA_HORKAGE_NO_NCQ_TRIM |
++	{ "Micron_M500DC*",		NULL,	0},
++	{ "Micron_M500IT_*",		"MG02",	0},
++	{ "Micron_M500*",		NULL,	ATA_HORKAGE_NO_NCQ_TRIM |
+ 						ATA_HORKAGE_ZERO_AFTER_TRIM, },
+ 	{ "Crucial_CT*M500*",		NULL,	ATA_HORKAGE_NO_NCQ_TRIM |
+ 						ATA_HORKAGE_ZERO_AFTER_TRIM, },
+-- 
+2.11.0
