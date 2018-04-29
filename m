@@ -1,76 +1,171 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754044AbeD2Rx3 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 29 Apr 2018 13:53:29 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48951 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753574AbeD2Rx1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Apr 2018 13:53:27 -0400
-Date: Sun, 29 Apr 2018 19:53:05 +0200
-From: Borislav Petkov <bp@suse.de>
-To: Guenter Roeck <linux@roeck-us.net>,
-        Yazen Ghannam <Yazen.Ghannam@amd.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Clemens Ladisch <clemens@ladisch.de>, x86@kernel.org,
-        Jean Delvare <jdelvare@suse.com>, linux-kernel@vger.kernel.org,
-        linux-hwmon@vger.kernel.org, Brian Woods <brian.woods@amd.com>
-Subject: Re: [PATCH 1/2] x86/amd_nb: Add support for Raven Ridge CPUs
-Message-ID: <20180429175305.GB19814@pd.tnic>
-References: <1524966879-9424-1-git-send-email-linux@roeck-us.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1524966879-9424-1-git-send-email-linux@roeck-us.net>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        id S1753928AbeD2SRo (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 29 Apr 2018 14:17:44 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:33554 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753546AbeD2SRm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Apr 2018 14:17:42 -0400
+X-Google-Smtp-Source: AB8JxZpKbdSlPeQwmUGy3sDa7jXlP4IweT37+/5g5JvVIorhDbVl7L1d71ZzYPKFpGL9ONuzXkG4Bw==
+From: Gil Kupfer <gilkup@gmail.com>
+X-Google-Original-From: Gil Kupfer <gilkup@cs.technion.ac.il>
+To: joro@8bytes.org, dwmw2@infradead.org, bhelgaas@google.com
+Cc: iommu@lists.linux-foundation.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, nadav.amit@gmail.com,
+        Gil Kupfer <gilkup@cs.technion.ac.il>
+Subject: [RFC/RFT] Add noats flag to boot parameters
+Date: Sun, 29 Apr 2018 21:16:48 +0300
+Message-Id: <1525025808-2365-1-git-send-email-gilkup@cs.technion.ac.il>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Apr 28, 2018 at 06:54:38PM -0700, Guenter Roeck wrote:
-> Add Raven Ridge root bridge and data fabric PCI IDs.
-> This is required for amd_pci_dev_to_node_id() and amd_smn_read().
-> 
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-> ---
-> This patch is a prerequisite for the second patch in the series.
-> I'll be happy to apply both patches through hwmon if that is acceptable
-> (and Cc: stable for 4.16+). If not, I'll be happy to wait for this patch
-> to be available upstream.
-> 
-> Since that there is no public documentation available for Raven Ridge,
-> PCI IDs are derived from output of lspci.
-> 
->  arch/x86/kernel/amd_nb.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/arch/x86/kernel/amd_nb.c b/arch/x86/kernel/amd_nb.c
-> index c88e0b127810..bd33613ecb7c 100644
-> --- a/arch/x86/kernel/amd_nb.c
-> +++ b/arch/x86/kernel/amd_nb.c
-> @@ -14,8 +14,11 @@
->  #include <asm/amd_nb.h>
->  
->  #define PCI_DEVICE_ID_AMD_17H_ROOT	0x1450
-> +#define PCI_DEVICE_ID_AMD_17H_RR_ROOT	0x15d0
+This patch adds noats option to the pci boot parameter.
+When noats is selected, all ATS related functions fail immediately and
+the IOMMU is configured to not use device-iotlb.
 
-I think the nomenclature we decided upon at the time was
+Any function that checks for ATS capabilities directly against the
+devices should also check this flag. (Currently, such functions exist
+only in IOMMU drivers, and they are covered by this patch.)
 
-...AMD_<family>H_M<model>H...
+The motivation behind this patch is the existence of malicious devices.
+Lots of research has been done about how to utilitize the IOMMU as a
+protection from such devices. When ATS is supported, any I/O device can
+access any physical access by faking device-IOTLB entries.
+Adding the ability to ignore these entries lets sysadmins enhance system
+security.
 
-PCI_DEVICE_ID_AMD_15H_M10H_F3, for example.
+Signed-off-by: Gil Kupfer <gilkup@cs.technion.ac.il>
 
-And in this case, it should be
+---
+This patch is intended to add the ability to disable ATS at boot time.
 
-PCI_DEVICE_ID_AMD_17H_M<which model is RV>H_F<PCI function number>
+My IOMMU has the ATS ecap but I don't have any PCI device that supports
+ATS so I can't fully test it. However, I did ran it (with and without the
+new boot flag) on QEMU with virtualized IOMMU with the device-iotlb flag
+and it seems that at least the machine does not crush.
 
-Yazen, which is the first model of Raven Ridge?
+QEMU version:
+	master branch from Jul 11 2017
+	commit aa916e409c04 ("Merge 29741be b876804")
+---
+ Documentation/admin-guide/kernel-parameters.txt |  2 ++
+ drivers/iommu/amd_iommu.c                       | 11 ++++++++---
+ drivers/iommu/intel-iommu.c                     |  3 ++-
+ drivers/pci/ats.c                               |  3 +++
+ drivers/pci/pci.c                               |  7 +++++++
+ include/linux/pci.h                             |  2 ++
+ 6 files changed, 24 insertions(+), 4 deletions(-)
 
-Thx.
-
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 7737ab5..f443362 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -3000,6 +3000,8 @@
+ 		pcie_scan_all	Scan all possible PCIe devices.  Otherwise we
+ 				only look for one device below a PCIe downstream
+ 				port.
++		noats		[PCIE, Intel-IOMMU, AMD-IOMMU]
++				do not use PCIe ATS (and IOMMU device-iotlb).
+ 
+ 	pcie_aspm=	[PCIE] Forcibly enable or disable PCIe Active State Power
+ 			Management.
+diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+index 0f1219f..2aa757e 100644
+--- a/drivers/iommu/amd_iommu.c
++++ b/drivers/iommu/amd_iommu.c
+@@ -388,6 +388,9 @@ static bool pci_iommuv2_capable(struct pci_dev *pdev)
+ 	};
+ 	int i, pos;
+ 
++	if (is_pcie_ats_disabled())
++		return false;
++
+ 	for (i = 0; i < 3; ++i) {
+ 		pos = pci_find_ext_capability(pdev, caps[i]);
+ 		if (pos == 0)
+@@ -3602,9 +3605,11 @@ int amd_iommu_device_info(struct pci_dev *pdev,
+ 
+ 	memset(info, 0, sizeof(*info));
+ 
+-	pos = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_ATS);
+-	if (pos)
+-		info->flags |= AMD_IOMMU_DEVICE_FLAG_ATS_SUP;
++	if (!is_pcie_ats_disabled()) {
++		pos = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_ATS);
++		if (pos)
++			info->flags |= AMD_IOMMU_DEVICE_FLAG_ATS_SUP;
++	}
+ 
+ 	pos = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_PRI);
+ 	if (pos)
+diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+index fc2765c..7ac4adc 100644
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -2434,7 +2434,8 @@ static struct dmar_domain *dmar_insert_one_dev_info(struct intel_iommu *iommu,
+ 	if (dev && dev_is_pci(dev)) {
+ 		struct pci_dev *pdev = to_pci_dev(info->dev);
+ 
+-		if (ecap_dev_iotlb_support(iommu->ecap) &&
++		if (!is_pcie_ats_disabled() &&
++		    ecap_dev_iotlb_support(iommu->ecap) &&
+ 		    pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_ATS) &&
+ 		    dmar_find_matched_atsr_unit(pdev))
+ 			info->ats_supported = 1;
+diff --git a/drivers/pci/ats.c b/drivers/pci/ats.c
+index eeb9fb2..619024d 100644
+--- a/drivers/pci/ats.c
++++ b/drivers/pci/ats.c
+@@ -21,6 +21,9 @@ void pci_ats_init(struct pci_dev *dev)
+ {
+ 	int pos;
+ 
++	if (is_pcie_ats_disabled())
++		return;
++
+ 	pos = pci_find_ext_capability(dev, PCI_EXT_CAP_ID_ATS);
+ 	if (!pos)
+ 		return;
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index 563901c..eb77590 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -109,6 +109,10 @@ unsigned int pcibios_max_latency = 255;
+ /* If set, the PCIe ARI capability will not be used. */
+ static bool pcie_ari_disabled;
+ 
++/* If set, the PCIe ATS capability will not be used. */
++static bool pcie_ats_disabled;
++bool is_pcie_ats_disabled(void) { return pcie_ats_disabled; }
++
+ /* Disable bridge_d3 for all PCIe ports */
+ static bool pci_bridge_d3_disable;
+ /* Force bridge_d3 for all PCIe ports */
+@@ -5430,6 +5434,9 @@ static int __init pci_setup(char *str)
+ 		if (*str && (str = pcibios_setup(str)) && *str) {
+ 			if (!strcmp(str, "nomsi")) {
+ 				pci_no_msi();
++			} else if (!strncmp(str, "noats", 5)) {
++				pr_info("PCIe: ATS is disabled\n");
++				pcie_ats_disabled = true;
+ 			} else if (!strcmp(str, "noaer")) {
+ 				pci_no_aer();
+ 			} else if (!strncmp(str, "realloc=", 8)) {
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index 8039f9f..58fe5fb 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -1420,6 +1420,8 @@ int  ht_create_irq(struct pci_dev *dev, int idx);
+ void ht_destroy_irq(unsigned int irq);
+ #endif /* CONFIG_HT_IRQ */
+ 
++bool is_pcie_ats_disabled(void);
++
+ #ifdef CONFIG_PCI_ATS
+ /* Address Translation Service */
+ void pci_ats_init(struct pci_dev *dev);
 -- 
-Regards/Gruss,
-    Boris.
-
-SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
--- 
+2.7.4
