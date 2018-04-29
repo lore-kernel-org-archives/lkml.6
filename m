@@ -1,106 +1,77 @@
-Date: Sun, 29 Apr 2018 17:09:14 -0700
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
+Return-Path: <lurodriguez@suse.de>
+X-Google-Smtp-Source: AB8JxZr9T7tmx5Qyarg/HbazOZKgdTOdBkKf8mhVjZHmSDiJTDhjz1V58NghrbDqujWT7alrfrGb
+ARC-Seal: i=1; a=rsa-sha256; t=1524985397; cv=none;
+        d=google.com; s=arc-20160816;
+        b=Q84FVaV4BaVNmopQ5ci9SIuvIfamfeAyxOG0mSHG8G1zZNHlzchKdvTEwjUW1MO7Tr
+         dx9uZUzx6vnpttaPv1D2XQlmIDhGL0Q4+L3BmnnBfh1CDhRJDqJkMqbY4KcdxhVq2tOY
+         zh36YNKGZ9dx1J8UbEBEZsnN9csWRKodBe8drtMAb/VBwGixpDr1CmL5ww1aX+9IZHTK
+         0p0GcgAKxZWItqSFIIQXt5xxuj4R0IbtYnoFg+J/zR9f3CUwKLgBVeJ/hll3TUyi5gBS
+         U0Aj3cWF065KnyRcDxvkvM7EJa35yKgHCL3vME28Y1b+njkWf+kLJ2kqU1N9GaJtW9Ua
+         9E0g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=m680imUln8F/Z18u0E5EBoIdxo82fvdZKIIq5QMawbk=;
+        b=PwD9fbpWBOppVDjyxRD4Q5oi+cxCpVyG8Fm7tHw436PspUwt/MNtW/tDWS7ad53riy
+         LC0rewHeDwzu8/pxHysxvQE9WJLxGIhqGLKvIlSRJmSDYxrgecWDJT2Hn3s0la6Hoehb
+         PmNRKntBZdNc/31xhT2MxMwuePFxkKizfJ3mlvtbrx/oHitQx1fZrre+flt4j4qGGzrX
+         lUEdmeZHV6o8lev5qmfWvY5NSo9pEcXKZG6+tC8bbMkD3HwkWi6jC8j+dxj3gU/pd2yk
+         mnjFACzy7ReTHcBQv92/ORY2b1LlGclT3OqAmSF/IE2PyzYC8MU72ifYdhZwP0zOMtCC
+         4Tpg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of lurodriguez@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=lurodriguez@suse.de
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of lurodriguez@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=lurodriguez@suse.de
+Date: Sun, 29 Apr 2018 07:03:15 +0000
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
 	LKML <linux-kernel@vger.kernel.org>,
 	Jonathan Corbet <corbet@lwn.net>,
 	DOCUMENTATION <linux-doc@vger.kernel.org>,
 	Linus Torvalds <torvalds@linuxfoundation.org>,
 	Andrew Morton <akpm@linuxfoundation.org>,
+	Kate Stewart <kate@linuxfoundation.org>,
 	Philippe Ombredanne <pombredanne@nexb.com>,
 	Christoph Hellwig <hch@lst.de>,
 	Russell King <rmk+kernel@armlinux.org.uk>,
 	Rob Herring <rob.herring@linaro.org>, Jonas Oberg <jonas@fsfe.org>,
 	Joe Perches <joe@perches.com>, linux-xfs@vger.kernel.org,
 	Kate Stewart <kstewart@linuxfoundation.org>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	"Luis R. Rodriguez" <mcgrof@kernel.org>
+	Florian Fainelli <f.fainelli@gmail.com>
 Subject: Re: LICENSES: Missing ISC text & possibly a category ("Not
  recommended" vs. "Preferred licenses")
-Message-ID: <20180430000914.GB29548@kroah.com>
+Message-ID: <20180429070315.GC27875@wotan.suse.de>
 References: <CACna6rz_Ms2Uv1P6E0gCGNsRwK4nm=PMAOaJ5Uk9aJxs2VSamQ@mail.gmail.com>
  <20180429052617.GC24294@kroah.com>
- <CACna6rw0R7j9pkFnUKnJFcudoZ2n1r1Dig4xSpj+n7e9Qo129w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACna6rw0R7j9pkFnUKnJFcudoZ2n1r1Dig4xSpj+n7e9Qo129w@mail.gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180429052617.GC24294@kroah.com>
+User-Agent: Mutt/1.6.0 (2016-04-01)
+X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1599026726440039181?=
+X-GMAIL-MSGID: =?utf-8?q?1599063088452530930?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sun, Apr 29, 2018 at 12:15:11PM +0200, Rafał Miłecki wrote:
-> On 29 April 2018 at 07:26, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> > On Sat, Apr 28, 2018 at 11:25:17PM +0200, Rafał Miłecki wrote:
-> >> Due to some maintainers *preferring* BSD-compatible license for DTS
-> >> files [0], I was writing mine using ISC. I had no very special reason
-> >> for it: I was choosing between BSD-2-Clause, MIT and ISC. I've chosen
-> >> ISC as I read about its "removal of language deemed unnecessary".
-> >>
-> >> I took a moment to look at the new SPDX thing and noticed that:
-> >> 1) File license-rules.rst provides "LICENSES/other/ISC" as an example
-> >
-> > Yeah, bad example, we should fix that text up.  Care to send a patch? :)
-> 
-> Sure. I see that license-rules.rst also refers to LICENSES/other/ZLib
-> which also doesn't exist.
-> 
-> As "other" directory contains only GPL-1.0 and MPL-1.1 I guess one of
-> these should be referenced.
+On Sun, Apr 29, 2018 at 07:26:17AM +0200, Greg Kroah-Hartman wrote:
+> I see it is only used in a very small number of dts files.  Why not just
+> use BSD-2-Clause instead?  What do you find in ISC that is not available
+> to you with just BSD?
 
-See the patch set that Thomas has posted to hopefully resolve these
-issues.  I think they are all now taken care of with that series.
+ISC license is a simplified version of the BSD license due to the Berne
+convention. It was also used for wireless drivers to help the BSD community in
+particular OpenBSD who had picked that license for new contributions claimed
+simplification of the BSD-2-Clause. Because of this reason many BSD communities
+feel super comfortable with picking up kernel code in Linux under this license.
 
-> >> 2) License file LICENSES/other/ISC doesn't exist
-> >> 3) ISC is listed as an *example* under the "Not recommended licenses"
-> >
-> > Yes, please don't use it if at all possible.
-> >
-> >> First of all, as ISC is used by some files in the Linux kernel, I
-> >> think it's worth adding to the LICENSE/*/ISC.
-> >
-> > I see it is only used in a very small number of dts files.  Why not just
-> > use BSD-2-Clause instead?  What do you find in ISC that is not available
-> > to you with just BSD?
-> 
-> As said, I read about its "removal of language deemed unnecessary". I
-> assumed that the simpler license text the better.
+Granted, I'm on no longer a fan of promoting permissive licenses as it didn't
+buy us cross-collaboration at all. We tried.
 
-Simple up to a point, having loads of different licenses is a mess, as
-you are finding out :)
+But it would be unfair to advice against a license unless a reason is stated in
+favor of another BSD license. Why is the ISC license worse than the
+BSD-2-Clause?
 
-> >> Secondly, it isn't 100% clear to me if ISC is preferred or not
-> >> recommended. File license-rules.rst suggests the later by listing it
-> >> as an example for "Not recommended". It's just an example though, so
-> >> I'm not 100% sure without seeing it in either: "preferred" or "other"
-> >> directories. Also if anyone finds it "Not recommended", can we get a
-> >> short explanation why is it so, please?
-> >
-> > The license is functionally equalivant to BSD-2, so why would you want
-> > to add more complexity here and have two licenses that are the same be
-> > "recommended"?
-> 
-> I don't insist on it, I'm trying to figure out what's the best for the
-> Linux community.
-> 
-> On the other hand I could ask why do we want more complexity by having
-> MIT license. It's very similar to the BSD-2-Clause after all. AFAIK
-> the only minor differences are that:
-> 1) MIT clearly allows sublicensing
-> 2) BSD 2-Clause clearly requires distributing *binaries* with
-> copyrights + license text
-
-I think you will find more dual-licensed MIT code in the tree already
-than ISC, right?
-
-And really, in the end, the odds of someone taking this code _out_ of
-the tree and using it only under a non-GPLv2 license is slim, to none,
-so it's best to just stick with the common licenses, as long as they
-match what you wish the code to abide by.  As you want to follow what
-MIT says, then just use that and all should be good, right?
-
-thanks,
-
-greg k-h
+  Luis
