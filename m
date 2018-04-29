@@ -1,20 +1,17 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752429AbeD3Hz0 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 03:55:26 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:33753 "EHLO
+        id S1752561AbeD3Hzb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 03:55:31 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:44003 "EHLO
         metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752099AbeD3HzY (ORCPT
+        with ESMTP id S1752445AbeD3Hz3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 03:55:24 -0400
-Subject: Re: [PATCH] can: cc770: fix spelling mistake: "comptibility" ->
- "compatibility"
-To: Colin King <colin.king@canonical.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Andri Yngvason <andri.yngvason@marel.com>, linux-can@vger.kernel.org,
-        netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180428221600.20039-1-colin.king@canonical.com>
+        Mon, 30 Apr 2018 03:55:29 -0400
+Subject: Re: [PATCH net-next] can: dev: use skb_put_zero to simplfy code
+To: YueHaibing <yuehaibing@huawei.com>, wg@grandegger.com
+Cc: netdev@vger.kernel.org, linux-can@vger.kernel.org, davem@davemloft.net,
+        linux-kernel@vger.kernel.org
+References: <20180428074957.17084-1-yuehaibing@huawei.com>
 From: Marc Kleine-Budde <mkl@pengutronix.de>
 Openpgp: preference=signencrypt
 Autocrypt: addr=mkl@pengutronix.de; keydata=
@@ -56,15 +53,15 @@ Autocrypt: addr=mkl@pengutronix.de; keydata=
  Efe7jTF9WUzFhm0HYiYSiiQyHuZPLc6t/L9OqvrNVTdYaEkBsm/LVv6h6rqpklJLQhU/2KtL
  bImH8IQK6+7up2rtwyqeehbNdsiqyDA6Sso5eKCoxKKbAFM7PtEYMC2Kv6wAca5SqEOUtRHU
  /6jKeO1yNpD5UgI9bzazBn1mwg==
-Message-ID: <68f69d7c-b437-831e-b466-6d699c0000ee@pengutronix.de>
-Date: Sun, 29 Apr 2018 18:26:51 +0200
+Message-ID: <0f0a2623-da07-d102-8bed-d2034c41520a@pengutronix.de>
+Date: Sun, 29 Apr 2018 18:24:19 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180428221600.20039-1-colin.king@canonical.com>
+In-Reply-To: <20180428074957.17084-1-yuehaibing@huawei.com>
 Content-Type: multipart/signed; micalg=pgp-sha512;
  protocol="application/pgp-signature";
- boundary="lmPQESVjH3ez8IxUCxopcQu78NJMGezfp"
+ boundary="h7VF7kDEiHZCpqK4hmtA9O6mLmnTRpLUk"
 X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
 X-SA-Exim-Mail-From: mkl@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
@@ -74,36 +71,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---lmPQESVjH3ez8IxUCxopcQu78NJMGezfp
-Content-Type: multipart/mixed; boundary="lovmR6k3y1lLUeXXVsgLT1ligOlx6Ojsn";
+--h7VF7kDEiHZCpqK4hmtA9O6mLmnTRpLUk
+Content-Type: multipart/mixed; boundary="ZT4sclf9KRnlyTZZdDcm5VvmZvDJrrFkk";
  protected-headers="v1"
 From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Colin King <colin.king@canonical.com>,
- Wolfgang Grandegger <wg@grandegger.com>,
- Andri Yngvason <andri.yngvason@marel.com>, linux-can@vger.kernel.org,
- netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-ID: <68f69d7c-b437-831e-b466-6d699c0000ee@pengutronix.de>
-Subject: Re: [PATCH] can: cc770: fix spelling mistake: "comptibility" ->
- "compatibility"
-References: <20180428221600.20039-1-colin.king@canonical.com>
-In-Reply-To: <20180428221600.20039-1-colin.king@canonical.com>
+To: YueHaibing <yuehaibing@huawei.com>, wg@grandegger.com
+Cc: netdev@vger.kernel.org, linux-can@vger.kernel.org, davem@davemloft.net,
+ linux-kernel@vger.kernel.org
+Message-ID: <0f0a2623-da07-d102-8bed-d2034c41520a@pengutronix.de>
+Subject: Re: [PATCH net-next] can: dev: use skb_put_zero to simplfy code
+References: <20180428074957.17084-1-yuehaibing@huawei.com>
+In-Reply-To: <20180428074957.17084-1-yuehaibing@huawei.com>
 
---lovmR6k3y1lLUeXXVsgLT1ligOlx6Ojsn
+--ZT4sclf9KRnlyTZZdDcm5VvmZvDJrrFkk
 Content-Type: text/plain; charset=utf-8
 Content-Language: de-DE
 Content-Transfer-Encoding: quoted-printable
 
-On 04/29/2018 12:16 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> Trivial fix to spelling mistake in module parameter description text
->=20
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+On 04/28/2018 09:49 AM, YueHaibing wrote:
+> use helper skb_put_zero to replace the pattern of skb_put() && memset()=
 
-Added to linux-can-next.
+>=20
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-Thnx,
+Applied to linux-can-next.
+
+Tnx,
 Marc
 
 --=20
@@ -113,23 +106,23 @@ Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
 Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
 
 
---lovmR6k3y1lLUeXXVsgLT1ligOlx6Ojsn--
+--ZT4sclf9KRnlyTZZdDcm5VvmZvDJrrFkk--
 
---lmPQESVjH3ez8IxUCxopcQu78NJMGezfp
+--h7VF7kDEiHZCpqK4hmtA9O6mLmnTRpLUk
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCgAdFiEENrCndlB/VnAEWuH5k9IU1zQoZfEFAlrl8kwACgkQk9IU1zQo
-ZfF7KQgAnMzozpwBqRFqe6cA73ufgvrk6aZZ2JOiy/405yQUBJnZAKXwpchTgH+N
-jwHHZMVcua5ku5vDuaK/ZvoQvditXqc+tX4uYk4T2XJtv8tqZkNh/5QmRn6g0N7I
-vZwuUXKOi4PvtwaI0Lg09VEPHPPQ3C+a9gI6EUUOTiqx23HOcc/UhKjk8hfIeUNP
-Ur8StQLIQdhsQc0mmjfSAlzrFfaBtDEVeNZ+s7Ru+U5eyg8AcDYaYTNfS2xHGVld
-VdDDnVfmLhNgvSTUSgBbuxprU37xe+LBJeHBzGE5pONhOqg5GrT2MxIx1heMD98+
-VqXRgH9bg2gDK42/hu/7GIQWKGOB5Q==
-=mn+N
+iQEzBAEBCgAdFiEENrCndlB/VnAEWuH5k9IU1zQoZfEFAlrl8bMACgkQk9IU1zQo
+ZfGfIAgAw59vA9/t8GsiIehpDjmL+RTT9WQpYqLCQZSnWkYfV1YZ1OiHpbKiPUrI
++F+mxDzMPrjQE1Z+uxSzvjxUmdKq2EcEek0zgNetd+kLjzJnifeVCt2dH8/pdtNY
+fmObXrvvV4xXMf10EBo44CQo7PYpBi2VE0nUVrqSd3PhVMpnV5l6LEkb+7inyftH
+KLqC/kZsOqT4aj+fFYkMycExqoPT7c0ud+zr4jvqsavRwOZNm62t6gZgMRQPfW1M
+V3vXDv+aG6UlzCqZu634Eujb55yhHZEgIBRRUDekzGo/3AI+ZzDEatIK+sWNSNvs
+3+Rsv2r9J+cfQUFfGdp72bsc3vhpVg==
+=bZ5U
 -----END PGP SIGNATURE-----
 
---lmPQESVjH3ez8IxUCxopcQu78NJMGezfp--
+--h7VF7kDEiHZCpqK4hmtA9O6mLmnTRpLUk--
