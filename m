@@ -1,48 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752331AbeD2DbB (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 28 Apr 2018 23:31:01 -0400
-Received: from mail-io0-f169.google.com ([209.85.223.169]:35011 "EHLO
-        mail-io0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751671AbeD2Da7 (ORCPT
+        id S1751640AbeD2EPh (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 29 Apr 2018 00:15:37 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:46706 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750769AbeD2EPf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Apr 2018 23:30:59 -0400
-X-Google-Smtp-Source: AB8JxZorhT/mlly1RpHx6uYghumJ5q2tme006QmLQigQ3UuzoZsWwk4K4AumrGqToc7yklUUBkw5/XORZxwQfkI7nZs=
+        Sun, 29 Apr 2018 00:15:35 -0400
+X-Google-Smtp-Source: AB8JxZoGO1rzN/eaBkct6MZzytiz+d/L3KtaU4JV068Dhxz0/mdZGY8zUro9NvEbgMaRB55uapgVfto/owJ6SRpzuvY=
 MIME-Version: 1.0
-References: <20180429021235.vibzosv34t264nbs@wfg-t540p.sh.intel.com>
-In-Reply-To: <20180429021235.vibzosv34t264nbs@wfg-t540p.sh.intel.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 29 Apr 2018 03:30:48 +0000
-Message-ID: <CA+55aFzeCvwUw=yi5oDy2ouv7onkXDapgamJJ5AhjybyBH8UCw@mail.gmail.com>
-Subject: Re: [llc_ui_release] BUG: unable to handle kernel NULL pointer
- dereference at 0000000000000004
-To: Wu Fengguang <fengguang.wu@intel.com>
-Cc: Network Development <netdev@vger.kernel.org>,
-        David Miller <davem@davemloft.net>, xiaolou4617@gmail.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        LKP <lkp@01.org>
+In-Reply-To: <1524966879-9424-1-git-send-email-linux@roeck-us.net>
+References: <1524966879-9424-1-git-send-email-linux@roeck-us.net>
+From: Gabriel C <nix.or.die@gmail.com>
+Date: Sun, 29 Apr 2018 06:15:03 +0200
+Message-ID: <CAEJqkgh3mpLKv1o1MM5FBoUCmsPXFweNHvqsuhY6Ufj6CvZp3w@mail.gmail.com>
+Subject: Re: [PATCH 1/2] x86/amd_nb: Add support for Raven Ridge CPUs
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Clemens Ladisch <clemens@ladisch.de>, X86 ML <x86@kernel.org>,
+        Jean Delvare <jdelvare@suse.com>, LKML <linux-kernel@vger.kernel.org>,
+        linux-hwmon@vger.kernel.org, Borislav Petkov <bp@suse.de>,
+        Yazen Ghannam <Yazen.Ghannam@amd.com>,
+        Brian Woods <brian.woods@amd.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Apr 28, 2018 at 7:12 PM Fengguang Wu <fengguang.wu@intel.com> wrote:
+2018-04-29 3:54 GMT+02:00 Guenter Roeck <linux@roeck-us.net>:
+> Add Raven Ridge root bridge and data fabric PCI IDs.
+> This is required for amd_pci_dev_to_node_id() and amd_smn_read().
+>
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> ---
+> This patch is a prerequisite for the second patch in the series.
+> I'll be happy to apply both patches through hwmon if that is acceptable
+> (and Cc: stable for 4.16+). If not, I'll be happy to wait for this patch
+> to be available upstream.
+>
+> Since that there is no public documentation available for Raven Ridge,
+> PCI IDs are derived from output of lspci.
+>
+>  arch/x86/kernel/amd_nb.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>
+> diff --git a/arch/x86/kernel/amd_nb.c b/arch/x86/kernel/amd_nb.c
+> index c88e0b127810..bd33613ecb7c 100644
+> --- a/arch/x86/kernel/amd_nb.c
+> +++ b/arch/x86/kernel/amd_nb.c
+> @@ -14,8 +14,11 @@
+>  #include <asm/amd_nb.h>
+>
+>  #define PCI_DEVICE_ID_AMD_17H_ROOT     0x1450
+> +#define PCI_DEVICE_ID_AMD_17H_RR_ROOT  0x15d0
+>  #define PCI_DEVICE_ID_AMD_17H_DF_F3    0x1463
+>  #define PCI_DEVICE_ID_AMD_17H_DF_F4    0x1464
+> +#define PCI_DEVICE_ID_AMD_17H_RR_DF_F3 0x15eb
+> +#define PCI_DEVICE_ID_AMD_17H_RR_DF_F4 0x15ec
+>
+>  /* Protect the PCI config register pairs used for SMN and DF indirect access. */
+>  static DEFINE_MUTEX(smn_mutex);
+> @@ -24,6 +27,7 @@ static u32 *flush_words;
+>
+>  static const struct pci_device_id amd_root_ids[] = {
+>         { PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_ROOT) },
+> +       { PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_RR_ROOT) },
+>         {}
+>  };
+>
+> @@ -39,6 +43,7 @@ const struct pci_device_id amd_nb_misc_ids[] = {
+>         { PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_16H_NB_F3) },
+>         { PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_16H_M30H_NB_F3) },
+>         { PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_DF_F3) },
+> +       { PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_RR_DF_F3) },
+>         { PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_CNB17H_F3) },
+>         {}
+>  };
+> @@ -51,6 +56,7 @@ static const struct pci_device_id amd_nb_link_ids[] = {
+>         { PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_16H_NB_F4) },
+>         { PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_16H_M30H_NB_F4) },
+>         { PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_DF_F4) },
+> +       { PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_RR_DF_F4) },
+>         { PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_CNB17H_F4) },
+>         {}
+>  };
+> --
+> 2.7.4
+>
 
-> FYI this happens in mainline kernel 4.17.0-rc2.
-> It looks like a new regression.
+Works fine for me on top stable and on top v4.17-rc2-398-gcdface520934
 
-> It occurs in 5 out of 5 boots.
+Tested-by: Gabriel Craciunescu <nix.or.die@gmail.com>
 
-> [main] 375 sockets created based on info from socket cachefile.
-> [main] Generating file descriptors
-> [main] Added 83 filenames from /dev
-> udevd[507]: failed to execute '/sbin/modprobe' '/sbin/modprobe -bv
-platform:regulatory': No such file or directory
-> [  372.057947] caif:caif_disconnect_client(): nothing to disconnect
-> [  372.082415] BUG: unable to handle kernel NULL pointer dereference at
-0000000000000004
-
-I think this is fixed by commit 3a04ce7130a7 ("llc: fix NULL pointer deref
-for SOCK_ZAPPED")
-
-                Liunus
+Regards
