@@ -1,171 +1,200 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753928AbeD2SRo (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 29 Apr 2018 14:17:44 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:33554 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753546AbeD2SRm (ORCPT
+        id S1754131AbeD2SUc (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 29 Apr 2018 14:20:32 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:45790 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754017AbeD2SUa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Apr 2018 14:17:42 -0400
-X-Google-Smtp-Source: AB8JxZpKbdSlPeQwmUGy3sDa7jXlP4IweT37+/5g5JvVIorhDbVl7L1d71ZzYPKFpGL9ONuzXkG4Bw==
-From: Gil Kupfer <gilkup@gmail.com>
-X-Google-Original-From: Gil Kupfer <gilkup@cs.technion.ac.il>
-To: joro@8bytes.org, dwmw2@infradead.org, bhelgaas@google.com
-Cc: iommu@lists.linux-foundation.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, nadav.amit@gmail.com,
-        Gil Kupfer <gilkup@cs.technion.ac.il>
-Subject: [RFC/RFT] Add noats flag to boot parameters
-Date: Sun, 29 Apr 2018 21:16:48 +0300
-Message-Id: <1525025808-2365-1-git-send-email-gilkup@cs.technion.ac.il>
-X-Mailer: git-send-email 2.7.4
+        Sun, 29 Apr 2018 14:20:30 -0400
+X-Google-Smtp-Source: AB8JxZpezsi1TqN1WGSYt7D0TrfVfJ8aD2e89FQMZ8Ea+eN60d0KE/Y/qzMfGr/s/CenbY+VKb1ReJcyXC8nWFI6Qe0=
+MIME-Version: 1.0
+In-Reply-To: <2db436f9-a335-9e25-d177-23095c2527ff@roeck-us.net>
+References: <1524966879-9424-1-git-send-email-linux@roeck-us.net>
+ <1524966879-9424-2-git-send-email-linux@roeck-us.net> <2db436f9-a335-9e25-d177-23095c2527ff@roeck-us.net>
+From: Gabriel C <nix.or.die@gmail.com>
+Date: Sun, 29 Apr 2018 20:19:58 +0200
+Message-ID: <CAEJqkggwaQL3H-F=eJ5CWAMp0NNxQnbLkPK1LcUfP8ihsbJ-wA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] hwmon: (k10temp) Use API function to access System
+ Management Network
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Clemens Ladisch <clemens@ladisch.de>, X86 ML <x86@kernel.org>,
+        Jean Delvare <jdelvare@suse.com>, LKML <linux-kernel@vger.kernel.org>,
+        linux-hwmon@vger.kernel.org, Borislav Petkov <bp@suse.de>,
+        Yazen Ghannam <Yazen.Ghannam@amd.com>,
+        Brian Woods <brian.woods@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3TIKcU6027378
 
-This patch adds noats option to the pci boot parameter.
-When noats is selected, all ATS related functions fail immediately and
-the IOMMU is configured to not use device-iotlb.
+2018-04-29 19:46 GMT+02:00 Guenter Roeck <linux@roeck-us.net>:
+> On 04/28/2018 06:54 PM, Guenter Roeck wrote:
+>>
+>> The SMN (System Management Network) on Family 17h AMD CPUs is also
+>> accessed
+>> from other drivers, specifically EDAC. Accessing it directly is racy.
+>> On top of that, accessing the SMN through root bridge 00:00 is wrong on
+>> multi-die CPUs and may result in reading the temperature from the wrong
+>> die. Use available API functions to fix the problem.
+>>
+>> For this to work, also change the Raven Ridge PCI device ID to point to
+>> Data Fabric Function 3, since this ID is used by the API functions to
+>> find the CPU node.
+>>
+>> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+>> ---
+>>   drivers/hwmon/k10temp.c | 11 ++++++-----
+>>   1 file changed, 6 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/hwmon/k10temp.c b/drivers/hwmon/k10temp.c
+>> index b06bb1f90853..00e785afae0d 100644
+>> --- a/drivers/hwmon/k10temp.c
+>> +++ b/drivers/hwmon/k10temp.c
+>> @@ -23,6 +23,7 @@
+>>   #include <linux/init.h>
+>>   #include <linux/module.h>
+>>   #include <linux/pci.h>
+>> +#include <asm/amd_nb.h>
+>>   #include <asm/processor.h>
+>>     MODULE_DESCRIPTION("AMD Family 10h+ CPU core temperature monitor");
+>> @@ -40,8 +41,8 @@ static DEFINE_MUTEX(nb_smu_ind_mutex);
+>>   #define PCI_DEVICE_ID_AMD_17H_DF_F3   0x1463
+>>   #endif
+>>   -#ifndef PCI_DEVICE_ID_AMD_17H_RR_NB
+>> -#define PCI_DEVICE_ID_AMD_17H_RR_NB    0x15d0
+>> +#ifndef PCI_DEVICE_ID_AMD_17H_RR_DF_F3
+>> +#define PCI_DEVICE_ID_AMD_17H_RR_DF_F3 0x14eb
+>
+>
+> This should have been 0x15eb. I'll resend after a week or so, waiting for
+> more feedback.
 
-Any function that checks for ATS capabilities directly against the
-devices should also check this flag. (Currently, such functions exist
-only in IOMMU drivers, and they are covered by this patch.)
 
-The motivation behind this patch is the existence of malicious devices.
-Lots of research has been done about how to utilitize the IOMMU as a
-protection from such devices. When ATS is supported, any I/O device can
-access any physical access by faking device-IOTLB entries.
-Adding the ability to ignore these entries lets sysadmins enhance system
-security.
+re-tested with that too .. Doesn't seems to matter here ..
 
-Signed-off-by: Gil Kupfer <gilkup@cs.technion.ac.il>
+with original patch:
 
----
-This patch is intended to add the ability to disable ATS at boot time.
+crazy@ant:~/Work/Linux/linux$ sensors
+k10temp-pci-00f3
+Adapter: PCI adapter
+Tdie:         +22.2°C  (high = +70.0°C)
+Tctl:         +22.2°C
 
-My IOMMU has the ATS ecap but I don't have any PCI device that supports
-ATS so I can't fully test it. However, I did ran it (with and without the
-new boot flag) on QEMU with virtualized IOMMU with the device-iotlb flag
-and it seems that at least the machine does not crush.
+k10temp-pci-00e3
+Adapter: PCI adapter
+Tdie:         +23.8°C  (high = +70.0°C)
+Tctl:         +23.8°C
 
-QEMU version:
-	master branch from Jul 11 2017
-	commit aa916e409c04 ("Merge 29741be b876804")
----
- Documentation/admin-guide/kernel-parameters.txt |  2 ++
- drivers/iommu/amd_iommu.c                       | 11 ++++++++---
- drivers/iommu/intel-iommu.c                     |  3 ++-
- drivers/pci/ats.c                               |  3 +++
- drivers/pci/pci.c                               |  7 +++++++
- include/linux/pci.h                             |  2 ++
- 6 files changed, 24 insertions(+), 4 deletions(-)
+k10temp-pci-00d3
+Adapter: PCI adapter
+Tdie:         +23.0°C  (high = +70.0°C)
+Tctl:         +23.0°C
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 7737ab5..f443362 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -3000,6 +3000,8 @@
- 		pcie_scan_all	Scan all possible PCIe devices.  Otherwise we
- 				only look for one device below a PCIe downstream
- 				port.
-+		noats		[PCIE, Intel-IOMMU, AMD-IOMMU]
-+				do not use PCIe ATS (and IOMMU device-iotlb).
- 
- 	pcie_aspm=	[PCIE] Forcibly enable or disable PCIe Active State Power
- 			Management.
-diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
-index 0f1219f..2aa757e 100644
---- a/drivers/iommu/amd_iommu.c
-+++ b/drivers/iommu/amd_iommu.c
-@@ -388,6 +388,9 @@ static bool pci_iommuv2_capable(struct pci_dev *pdev)
- 	};
- 	int i, pos;
- 
-+	if (is_pcie_ats_disabled())
-+		return false;
-+
- 	for (i = 0; i < 3; ++i) {
- 		pos = pci_find_ext_capability(pdev, caps[i]);
- 		if (pos == 0)
-@@ -3602,9 +3605,11 @@ int amd_iommu_device_info(struct pci_dev *pdev,
- 
- 	memset(info, 0, sizeof(*info));
- 
--	pos = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_ATS);
--	if (pos)
--		info->flags |= AMD_IOMMU_DEVICE_FLAG_ATS_SUP;
-+	if (!is_pcie_ats_disabled()) {
-+		pos = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_ATS);
-+		if (pos)
-+			info->flags |= AMD_IOMMU_DEVICE_FLAG_ATS_SUP;
-+	}
- 
- 	pos = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_PRI);
- 	if (pos)
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index fc2765c..7ac4adc 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -2434,7 +2434,8 @@ static struct dmar_domain *dmar_insert_one_dev_info(struct intel_iommu *iommu,
- 	if (dev && dev_is_pci(dev)) {
- 		struct pci_dev *pdev = to_pci_dev(info->dev);
- 
--		if (ecap_dev_iotlb_support(iommu->ecap) &&
-+		if (!is_pcie_ats_disabled() &&
-+		    ecap_dev_iotlb_support(iommu->ecap) &&
- 		    pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_ATS) &&
- 		    dmar_find_matched_atsr_unit(pdev))
- 			info->ats_supported = 1;
-diff --git a/drivers/pci/ats.c b/drivers/pci/ats.c
-index eeb9fb2..619024d 100644
---- a/drivers/pci/ats.c
-+++ b/drivers/pci/ats.c
-@@ -21,6 +21,9 @@ void pci_ats_init(struct pci_dev *dev)
- {
- 	int pos;
- 
-+	if (is_pcie_ats_disabled())
-+		return;
-+
- 	pos = pci_find_ext_capability(dev, PCI_EXT_CAP_ID_ATS);
- 	if (!pos)
- 		return;
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index 563901c..eb77590 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -109,6 +109,10 @@ unsigned int pcibios_max_latency = 255;
- /* If set, the PCIe ARI capability will not be used. */
- static bool pcie_ari_disabled;
- 
-+/* If set, the PCIe ATS capability will not be used. */
-+static bool pcie_ats_disabled;
-+bool is_pcie_ats_disabled(void) { return pcie_ats_disabled; }
-+
- /* Disable bridge_d3 for all PCIe ports */
- static bool pci_bridge_d3_disable;
- /* Force bridge_d3 for all PCIe ports */
-@@ -5430,6 +5434,9 @@ static int __init pci_setup(char *str)
- 		if (*str && (str = pcibios_setup(str)) && *str) {
- 			if (!strcmp(str, "nomsi")) {
- 				pci_no_msi();
-+			} else if (!strncmp(str, "noats", 5)) {
-+				pr_info("PCIe: ATS is disabled\n");
-+				pcie_ats_disabled = true;
- 			} else if (!strcmp(str, "noaer")) {
- 				pci_no_aer();
- 			} else if (!strncmp(str, "realloc=", 8)) {
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index 8039f9f..58fe5fb 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -1420,6 +1420,8 @@ int  ht_create_irq(struct pci_dev *dev, int idx);
- void ht_destroy_irq(unsigned int irq);
- #endif /* CONFIG_HT_IRQ */
- 
-+bool is_pcie_ats_disabled(void);
-+
- #ifdef CONFIG_PCI_ATS
- /* Address Translation Service */
- void pci_ats_init(struct pci_dev *dev);
--- 
-2.7.4
+k10temp-pci-00c3
+Adapter: PCI adapter
+Tdie:         +25.0°C  (high = +70.0°C)
+Tctl:         +25.0°C
+
+k10temp-pci-00fb
+Adapter: PCI adapter
+Tdie:         +22.8°C  (high = +70.0°C)
+Tctl:         +22.8°C
+
+k10temp-pci-00eb
+Adapter: PCI adapter
+Tdie:         +23.2°C  (high = +70.0°C)
+Tctl:         +23.2°C
+
+k10temp-pci-00db
+Adapter: PCI adapter
+Tdie:         +22.8°C  (high = +70.0°C)
+Tctl:         +22.8°C
+
+k10temp-pci-00cb
+Adapter: PCI adapter
+Tdie:         +22.6°C  (high = +70.0°C)
+Tctl:         +22.6°C
+
+now with 0x15eb
+
+crazy@ant:~/Work/Linux/linux$ sudo rmmod k10temp
+crazy@ant:~/Work/Linux/linux$ git grep -w PCI_DEVICE_ID_AMD_17H_RR_DF_F3
+arch/x86/kernel/amd_nb.c:#define PCI_DEVICE_ID_AMD_17H_RR_DF_F3 0x15eb
+arch/x86/kernel/amd_nb.c:       { PCI_DEVICE(PCI_VENDOR_ID_AMD,
+PCI_DEVICE_ID_AMD_17H_RR_DF_F3) },
+drivers/hwmon/k10temp.c:#ifndef PCI_DEVICE_ID_AMD_17H_RR_DF_F3
+drivers/hwmon/k10temp.c:#define PCI_DEVICE_ID_AMD_17H_RR_DF_F3  0x15eb
+drivers/hwmon/k10temp.c:        { PCI_VDEVICE(AMD,
+PCI_DEVICE_ID_AMD_17H_RR_DF_F3) },
+crazy@ant:~/Work/Linux/linux$ sudo insmod ./drivers/hwmon/k10temp.ko
+crazy@ant:~/Work/Linux/linux$ sensors
+k10temp-pci-00f3
+Adapter: PCI adapter
+Tdie:         +22.2°C  (high = +70.0°C)
+Tctl:         +22.2°C
+
+k10temp-pci-00e3
+Adapter: PCI adapter
+Tdie:         +23.8°C  (high = +70.0°C)
+Tctl:         +23.8°C
+
+k10temp-pci-00d3
+Adapter: PCI adapter
+Tdie:         +23.0°C  (high = +70.0°C)
+Tctl:         +23.0°C
+
+k10temp-pci-00c3
+Adapter: PCI adapter
+Tdie:         +25.0°C  (high = +70.0°C)
+Tctl:         +25.0°C
+
+k10temp-pci-00fb
+Adapter: PCI adapter
+Tdie:         +22.9°C  (high = +70.0°C)
+Tctl:         +22.9°C
+
+k10temp-pci-00eb
+Adapter: PCI adapter
+Tdie:         +23.2°C  (high = +70.0°C)
+Tctl:         +23.2°C
+
+k10temp-pci-00db
+Adapter: PCI adapter
+Tdie:         +22.8°C  (high = +70.0°C)
+Tctl:         +22.8°C
+
+k10temp-pci-00cb
+Adapter: PCI adapter
+Tdie:         +22.8°C  (high = +70.0°C)
+Tctl:         +22.8°C
+
+
+>
+>>   #endif
+>>     /* CPUID function 0x80000001, ebx */
+>> @@ -136,8 +137,8 @@ static void read_tempreg_nb_f15(struct pci_dev *pdev,
+>> u32 *regval)
+>>     static void read_tempreg_nb_f17(struct pci_dev *pdev, u32 *regval)
+>>   {
+>> -       amd_nb_index_read(pdev, PCI_DEVFN(0, 0), 0x60,
+>> -                         F17H_M01H_REPORTED_TEMP_CTRL_OFFSET, regval);
+>> +       amd_smn_read(amd_pci_dev_to_node_id(pdev),
+>> +                    F17H_M01H_REPORTED_TEMP_CTRL_OFFSET, regval);
+>>   }
+>>     static ssize_t temp1_input_show(struct device *dev,
+>> @@ -323,7 +324,7 @@ static const struct pci_device_id k10temp_id_table[] =
+>> {
+>>         { PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_16H_NB_F3) },
+>>         { PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_16H_M30H_NB_F3) },
+>>         { PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_17H_DF_F3) },
+>> -       { PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_17H_RR_NB) },
+>> +       { PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_17H_RR_DF_F3) },
+>>         {}
+>>   };
+>>   MODULE_DEVICE_TABLE(pci, k10temp_id_table);
+>>
+>
