@@ -1,79 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753626AbeD2ObT (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 29 Apr 2018 10:31:19 -0400
-Received: from mail-vk0-f66.google.com ([209.85.213.66]:46823 "EHLO
-        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753599AbeD2ObR (ORCPT
+        id S1753640AbeD2OcI (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 29 Apr 2018 10:32:08 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:52369 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753549AbeD2OcH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Apr 2018 10:31:17 -0400
-X-Google-Smtp-Source: AB8JxZrDx1wG63FE7LqIOEgNlseIbn4nO1JrMZNuQX+Qj75vWpXHhS3tIXewyJt58qMd51H/5w3OQsy19/TFE/B/7A0=
+        Sun, 29 Apr 2018 10:32:07 -0400
+Date: Sun, 29 Apr 2018 16:32:05 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Sultan Alsawaf <sultanxda@gmail.com>, linux-kernel@vger.kernel.org,
+        Jann Horn <jannh@google.com>
+Subject: Re: Linux messages full of `random: get_random_u32 called from`
+Message-ID: <20180429143205.GD13475@amd>
+References: <d92d049a-8810-a765-d57a-2a7a805fadaf@gmail.com>
+ <20180426050056.GF18803@thunk.org>
+ <b902d9f5-300e-2611-289d-f6d49dd43f11@gmail.com>
+ <20180426073255.GH18803@thunk.org>
+ <b6aa3fac-a768-e27d-3070-00d929ebc245@gmail.com>
+ <20180426192524.GD5965@thunk.org>
+ <2add15cb-2113-0504-a732-81255ea61bf5@gmail.com>
+ <20180426235630.GG5965@thunk.org>
+ <3eb5761e-7b25-4178-0560-fba5eb43ce6a@gmail.com>
+ <20180427201036.GL5965@thunk.org>
 MIME-Version: 1.0
-In-Reply-To: <20180429111605.4cdf5ab2@bbrezillon>
-References: <20180423203500.GA36488@beast> <20180429111605.4cdf5ab2@bbrezillon>
-From: Kees Cook <keescook@chromium.org>
-Date: Sun, 29 Apr 2018 07:31:15 -0700
-X-Google-Sender-Auth: __v2UCE-csl8NDh1xSsCx6UivmE
-Message-ID: <CAGXu5jJJDF-3E_rt-16B-0CwjcF+52LPNGefD-KP+qz1JwM=6g@mail.gmail.com>
-Subject: Re: [PATCH] mtd: nftl: Remove VLA usage
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Linux mtd <linux-mtd@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="76DTJ5CE0DCVQemd"
+Content-Disposition: inline
+In-Reply-To: <20180427201036.GL5965@thunk.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Apr 29, 2018 at 2:16 AM, Boris Brezillon
-<boris.brezillon@bootlin.com> wrote:
-> Hi Kees,
->
-> On Mon, 23 Apr 2018 13:35:00 -0700
-> Kees Cook <keescook@chromium.org> wrote:
->
->> On the quest to remove all VLAs from the kernel[1] this changes the
->> check_free_sectors() routine to use the same stack buffer for both
->> data byte checks (SECTORSIZE) and oob byte checks (oobsize). Since
->> these regions aren't needed at the same time, they don't need to be
->> consecutively allocated. Additionally, while it's possible for oobsize
->> to be large, it is unlikely to be larger than the actual SECTORSIZE. As
->> such, remove the VLA, adjust offsets and add a sanity check to make sure
->> we never get a pathological oobsize.
->>
->> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
->>
->> Signed-off-by: Kees Cook <keescook@chromium.org>
->> ---
->>  drivers/mtd/inftlmount.c | 11 ++++++++---
->>  drivers/mtd/nftlmount.c  | 11 ++++++++---
->>  2 files changed, 16 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/mtd/inftlmount.c b/drivers/mtd/inftlmount.c
->> index aab4f68bd36f..9cdae7f0fc2e 100644
->> --- a/drivers/mtd/inftlmount.c
->> +++ b/drivers/mtd/inftlmount.c
->> @@ -334,7 +334,7 @@ static int memcmpb(void *a, int c, int n)
->>  static int check_free_sectors(struct INFTLrecord *inftl, unsigned int address,
->>       int len, int check_oob)
->>  {
->> -     u8 buf[SECTORSIZE + inftl->mbd.mtd->oobsize];
->> +     u8 buf[SECTORSIZE];
->
-> Could we instead move to dynamic allocation. I mean, SECTORSIZE is 512
-> bytes, so only with this function we consume 1/16 of the stack. Not to
-> mention that some MTD drivers might want to do DMA on buffer passed by
-> the MTD user, and if the buffer is on the stack they'll have to use a
-> bounce buffer instead.
 
-Sure! I can rework it to do that. Is GFP_KERNEL okay for that, or does
-it need something else?
+--76DTJ5CE0DCVQemd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--Kees
+Hi!
 
--- 
-Kees Cook
-Pixel Security
+> This is why ultimately, we do need to attack this problem from both
+> ends, which means teaching userspace programs to only request
+> cryptographic-grade randomness when it is really needed --- and most
+> of the time, if the user has not logged in yet, you probably don't
+> need cryptographic-grade randomness....
+
+IOW moving them from /dev/random to /dev/urandom?
+								Pavel
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--76DTJ5CE0DCVQemd
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlrl12UACgkQMOfwapXb+vJc+QCbBaNKQIZdhqW6fRlaQWm6VMCh
+y44AoKYo1rwzjyH0CNAyMkojLSu4kUg7
+=BUwT
+-----END PGP SIGNATURE-----
+
+--76DTJ5CE0DCVQemd--
