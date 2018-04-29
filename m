@@ -1,361 +1,109 @@
-Return-Path: <christianvanbrauner@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1524943240; cv=none;
+Return-Path: <ebiederm@xmission.com>
+X-Google-Smtp-Source: AB8JxZo1ikAutEVLfmlD30Pim1wB2dV2GcBW3nDtys3oORAC5LpGSU5Vrzi1eu4BFM8q04hUSPUW
+ARC-Seal: i=1; a=rsa-sha256; t=1524975847; cv=none;
         d=google.com; s=arc-20160816;
-        b=NbzzAUQfn/iIuewnrYgUrY8VTQ+AUoATMj7hRA/WjfZljq32/0K2ZCnhApbXMVomuj
-         gkjax9C5PWC0wp52tCrdZk1GSRtnE+KZ7so1MLJ28rHTo4mpb5u4CYgYJ2hqh379kaHD
-         NOBPpwVF3xtruAf1othe72JD9C55r0Tlnfo6w3a/d7bPboURE9yUC4CYDJlOPKoq5Ga2
-         5W2eCSSfTXfg4Kct9OcQRZzVkMvI4CV5TaZ2HZrqQ5WK3jsQFIeTUcoqsCzrvhsEcP4L
-         wCoaD6FBYi2JFaVBs33wkvIddiIYpsqjIYD4yQZLof3NnniBK1lfWTRFdfVGbXdLGbha
-         tndQ==
+        b=ay5EPMISKWbQY0+j9gmTlqKBcKkojInL9oIoPOq7SYBPnG7r43D/6CL0CoFXDGmzSD
+         la/4FYoOzebdqdDZ1XhYKan9oPxnT1MI/hHJhgyrwFEktHra73mTgwvM8h8Kfo93w5ql
+         q80iB8+FUdPEhAgtED33MNslY8QBYW+nYGd/jcpmkXBnuVX61Nd415Kf/3xBnTapY6aH
+         y+Er/GSOeLsRnI7ug8X5BbTDy9uOEHwFnMtZOpN+t+UUosNh8SEa+cpQJ31Tr21yjuPO
+         ZSHftrCfFCgW2JMj4uVgA9r1/J/BcnzVS3KcBa7rG0Jov7lyILYWLPSWgG7FtXiTR615
+         pyZg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=YCGjJ2o3SYmG3gHMSYLZS3DbTpgNR7JtEjcDjcdkQfE=;
-        b=pRbW/z/NNh8Jw4MKEvZ/v1hqx52kPkLpjfcpBP5JJxxedrjEKkFifhZODaBO8pYbBB
-         cohqb/LdasS58Fg4vKH4RIzZwAZKNM+Korczzxy57F0dTuc90psDCTJs27MsiM/73FZV
-         ud3vqKIUA+yKAKFHd/i8B72uhr/QzyJwnKT27h6P2KOZSH0kBFf5PgTkpoYN6SMEvP2z
-         v+vMvD5tH8FCPwdI9fEblxYc+K8+sjml8d5957nzudfhMGQKtijtO30/eLyAJ3HTFdLe
-         x7DmKZeyrT5YofyixsNkbpKi90JfWDQHJ2lrVRsvrcoF0q25GBP06e7hcP2c+x9MJsz6
-         SLwA==
+        h=subject:mime-version:user-agent:message-id:in-reply-to:date
+         :references:cc:to:from:arc-authentication-results;
+        bh=GlVFZVOqyxVeu6i3Xcu9qNiruxpgmC7EsX/fXrGK3b8=;
+        b=DcCQV0l2VXUmCMGJYJyO7fatjKS7u8dd46yjAeRoXBLuArSdafSXwvrLN1KlAWJkqn
+         JpRLJTelvRlbxKEFy/BFB9UhxCnBTdXeFyyBksNHy1/+w7I+gKLBFJEfAzGqx+O9clD0
+         wIcxNDeoIJi8ap5Q+hjZ2yLEeupBRCy8DXR7iaTBh0DasYKx1HNf9tWY2LDCae5tDsLa
+         FMBxXAvEMDO885FQBu7P/d8UgIo+910knRCT8Ej1spjbcaoiDYOtHwQEHc990yBlK+So
+         ieMmLXZkWOOAoogMuZr8GG6lzM2kTWfAOaKERmvjVSYhuqw8RO/jVagT+Z86pngy5d5Z
+         LX7A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of christianvanbrauner@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=christianvanbrauner@gmail.com
+       spf=pass (google.com: domain of ebiederm@xmission.com designates 166.70.13.231 as permitted sender) smtp.mailfrom=ebiederm@xmission.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of christianvanbrauner@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=christianvanbrauner@gmail.com
-X-Google-Smtp-Source: AB8JxZqkzCa1JVaaXTnpgP5ZGPLzfKgiBxbrfXXt5Db8+oRMyZdMI0w1jeb0dxQM6/Sa+UjXROmf5A==
-From: Christian Brauner <christian.brauner@ubuntu.com>
-To: ebiederm@xmission.com,
-	davem@davemloft.net,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: avagin@virtuozzo.com,
-	ktkhai@virtuozzo.com,
-	serge@hallyn.com,
-	gregkh@linuxfoundation.org,
-	Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH net-next 2/2 v4] netns: restrict uevents
-Date: Sat, 28 Apr 2018 21:20:25 +0200
-Message-Id: <20180428192025.2075-3-christian.brauner@ubuntu.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180428192025.2075-1-christian.brauner@ubuntu.com>
+       spf=pass (google.com: domain of ebiederm@xmission.com designates 166.70.13.231 as permitted sender) smtp.mailfrom=ebiederm@xmission.com
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: Christian Brauner <christian.brauner@ubuntu.com>
+Cc: davem@davemloft.net,  netdev@vger.kernel.org,  linux-kernel@vger.kernel.org,  avagin@virtuozzo.com,  ktkhai@virtuozzo.com,  serge@hallyn.com,  gregkh@linuxfoundation.org
 References: <20180428192025.2075-1-christian.brauner@ubuntu.com>
+	<20180428192025.2075-3-christian.brauner@ubuntu.com>
+Date: Sat, 28 Apr 2018 23:23:58 -0500
+In-Reply-To: <20180428192025.2075-3-christian.brauner@ubuntu.com> (Christian
+	Brauner's message of "Sat, 28 Apr 2018 21:20:25 +0200")
+Message-ID: <87in8ad4ip.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-XM-SPF: eid=1fCdsY-0005yb-Ue;;;mid=<87in8ad4ip.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=68.116.237.29;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/uILcuZt6+kU04S0kcBSB4hzR6PFTCYSw=
+X-SA-Exim-Connect-IP: 68.116.237.29
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+	*      [score: 0.4723]
+	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+	*      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
+	*  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Christian Brauner <christian.brauner@ubuntu.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 145 ms - load_scoreonly_sql: 0.03 (0.0%),
+	signal_user_changed: 2.7 (1.8%), b_tie_ro: 1.85 (1.3%), parse: 0.69 (0.5%),
+	extract_message_metadata: 2.0 (1.4%), get_uri_detail_list: 0.56 (0.4%),
+	tests_pri_-1000: 3.5 (2.4%), tests_pri_-950: 1.13 (0.8%), tests_pri_-900:
+	0.96 (0.7%), tests_pri_-400: 14 (9.7%), check_bayes: 13 (9.0%), b_tokenize:
+	4.4 (3.1%), b_tok_get_all: 3.9 (2.7%), b_comp_prob: 1.25 (0.9%),
+	b_tok_touch_all: 1.97 (1.4%), b_finish: 0.56 (0.4%), tests_pri_0: 109 (74.8%),
+	 check_dkim_signature: 0.45 (0.3%), check_dkim_adsp: 2.8 (1.9%),
+	tests_pri_500: 4.3 (3.0%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH net-next 2/2 v4] netns: restrict uevents
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1599018883940568849?=
-X-GMAIL-MSGID: =?utf-8?q?1599018883940568849?=
+X-GMAIL-MSGID: =?utf-8?q?1599053073693211736?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-commit 07e98962fa77 ("kobject: Send hotplug events in all network namespaces")
 
-enabled sending hotplug events into all network namespaces back in 2010.
-Over time the set of uevents that get sent into all network namespaces has
-shrunk. We have now reached the point where hotplug events for all devices
-that carry a namespace tag are filtered according to that namespace.
-Specifically, they are filtered whenever the namespace tag of the kobject
-does not match the namespace tag of the netlink socket.
-Currently, only network devices carry namespace tags (i.e. network
-namespace tags). Hence, uevents for network devices only show up in the
-network namespace such devices are created in or moved to.
+> +	/* fix credentials */
+> +	if (owning_user_ns != &init_user_ns) {
+> +		struct netlink_skb_parms *parms = &NETLINK_CB(skb);
+> +		kuid_t root_uid;
+> +		kgid_t root_gid;
+> +
+> +		/* fix uid */
+> +		root_uid = make_kuid(owning_user_ns, 0);
+> +		if (!uid_valid(root_uid))
+> +			root_uid = GLOBAL_ROOT_UID;
+> +		parms->creds.uid = root_uid;
+> +
+> +		/* fix gid */
+> +		root_gid = make_kgid(owning_user_ns, 0);
+> +		if (!gid_valid(root_gid))
+> +			root_gid = GLOBAL_ROOT_GID;
+> +		parms->creds.gid = root_gid;
 
-However, any uevent for a kobject that does not have a namespace tag
-associated with it will not be filtered and we will broadcast it into all
-network namespaces. This behavior stopped making sense when user namespaces
-were introduced.
+One last nit:
 
-This patch simplifies and fixes couple of things:
-- Split codepath for sending uevents by kobject namespace tags:
-  1. Untagged kobjects - uevent_net_broadcast_untagged():
-     Untagged kobjects will be broadcast into all uevent sockets recorded
-     in uevent_sock_list, i.e. into all network namespacs owned by the
-     intial user namespace.
-  2. Tagged kobjects - uevent_net_broadcast_tagged():
-     Tagged kobjects will only be broadcast into the network namespace they
-     were tagged with.
-  Handling of tagged kobjects in 2. does not cause any semantic changes.
-  This is just splitting out the filtering logic that was handled by
-  kobj_bcast_filter() before.
-  Handling of untagged kobjects in 1. will cause a semantic change. The
-  reasons why this is needed and ok have been discussed in [1]. Here is a
-  short summary:
-  - Userspace ignores uevents from network namespaces that are not owned by
-    the intial user namespace:
-    Uevents are filtered by userspace in a user namespace because the
-    received uid != 0. Instead the uid associated with the event will be
-    65534 == "nobody" because the global root uid is not mapped.
-    This means we can safely and without introducing regressions modify the
-    kernel to not send uevents into all network namespaces whose owning
-    user namespace is not the initial user namespace because we know that
-    userspace will ignore the message because of the uid anyway.
-    I have a) verified that is is true for every udev implementation out
-    there b) that this behavior has been present in all udev
-    implementations from the very beginning.
-  - Thundering herd:
-    Broadcasting uevents into all network namespaces introduces significant
-    overhead.
-    All processes that listen to uevents running in non-initial user
-    namespaces will end up responding to uevents that will be meaningless
-    to them. Mainly, because non-initial user namespaces cannot easily
-    manage devices unless they have a privileged host-process helping them
-    out. This means that there will be a thundering herd of activity when
-    there shouldn't be any.
-  - Removing needless overhead/Increasing performance:
-    Currently, the uevent socket for each network namespace is added to the
-    global variable uevent_sock_list. The list itself needs to be protected
-    by a mutex. So everytime a uevent is generated the mutex is taken on
-    the list. The mutex is held *from the creation of the uevent (memory
-    allocation, string creation etc. until all uevent sockets have been
-    handled*. This is aggravated by the fact that for each uevent socket
-    that has listeners the mc_list must be walked as well which means we're
-    talking O(n^2) here. Given that a standard Linux workload usually has
-    quite a lot of network namespaces and - in the face of containers - a
-    lot of user namespaces this quickly becomes a performance problem (see
-    "Thundering herd" above). By just recording uevent sockets of network
-    namespaces that are owned by the initial user namespace we
-    significantly increase performance in this codepath.
-  - Injecting uevents:
-    There's a valid argument that containers might be interested in
-    receiving device events especially if they are delegated to them by a
-    privileged userspace process. One prime example are SR-IOV enabled
-    devices that are explicitly designed to be handed of to other users
-    such as VMs or containers.
-    This use-case can now be correctly handled since
-    commit 692ec06d7c92 ("netns: send uevent messages"). This commit
-    introduced the ability to send uevents from userspace. As such we can
-    let a sufficiently privileged (CAP_SYS_ADMIN in the owning user
-    namespace of the network namespace of the netlink socket) userspace
-    process make a decision what uevents should be sent. This removes the
-    need to blindly broadcast uevents into all user namespaces and provides
-    a performant and safe solution to this problem.
-  - Filtering logic:
-    This patch filters by *owning user namespace of the network namespace a
-    given task resides in* and not by user namespace of the task per se.
-    This means if the user namespace of a given task is unshared but the
-    network namespace is kept and is owned by the initial user namespace a
-    listener that is opening the uevent socket in that network namespace
-    can still listen to uevents.
-- Fix permission for tagged kobjects:
-  Network devices that are created or moved into a network namespace that
-  is owned by a non-initial user namespace currently are send with
-  INVALID_{G,U}ID in their credentials. This means that all current udev
-  implementations in userspace will ignore the uevent they receive for
-  them. This has lead to weird bugs whereby new devices showing up in such
-  network namespaces were not recognized and did not get IPs assigned etc.
-  This patch adjusts the permission to the appropriate {g,u}id in the
-  respective user namespace. This way udevd is able to correctly handle
-  such devices.
-- Simplify filtering logic:
-  do_one_broadcast() already ensures that only listeners in mc_list receive
-  uevents that have the same network namespace as the uevent socket itself.
-  So the filtering logic in kobj_bcast_filter is not needed (see [3]). This
-  patch therefore removes kobj_bcast_filter() and replaces
-  netlink_broadcast_filtered() with the simpler netlink_broadcast()
-  everywhere.
+	You can only make the assignment if the uid is valid.
+        Leaving it GLBOAL_ROOT_UID if the composed uid is invalid.
+        AKA
 
-[1]: https://lkml.org/lkml/2018/4/4/739
-[2]: https://lkml.org/lkml/2018/4/26/767
-[3]: https://lkml.org/lkml/2018/4/26/738
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
----
-v3->v4:
-* patch unchanged
-v2->v3:
-* new approach: patch added
-v1->v2:
-* old approach: different patchset
-v0->v1:
-* old approach: different patchset
----
- lib/kobject_uevent.c | 139 ++++++++++++++++++++++++++++++-------------
- 1 file changed, 97 insertions(+), 42 deletions(-)
+		/* fix uid */
+		root_uid = make_kuid(owning_user_ns, 0);
+		if (uid_valid(root_uid))
+                	parms->creds.uid = root_uid;
 
-diff --git a/lib/kobject_uevent.c b/lib/kobject_uevent.c
-index 649bf60a9440..d5300056bc0c 100644
---- a/lib/kobject_uevent.c
-+++ b/lib/kobject_uevent.c
-@@ -232,30 +232,6 @@ int kobject_synth_uevent(struct kobject *kobj, const char *buf, size_t count)
- 	return r;
- }
- 
--#ifdef CONFIG_NET
--static int kobj_bcast_filter(struct sock *dsk, struct sk_buff *skb, void *data)
--{
--	struct kobject *kobj = data, *ksobj;
--	const struct kobj_ns_type_operations *ops;
--
--	ops = kobj_ns_ops(kobj);
--	if (!ops && kobj->kset) {
--		ksobj = &kobj->kset->kobj;
--		if (ksobj->parent != NULL)
--			ops = kobj_ns_ops(ksobj->parent);
--	}
--
--	if (ops && ops->netlink_ns && kobj->ktype->namespace) {
--		const void *sock_ns, *ns;
--		ns = kobj->ktype->namespace(kobj);
--		sock_ns = ops->netlink_ns(dsk);
--		return sock_ns != ns;
--	}
--
--	return 0;
--}
--#endif
--
- #ifdef CONFIG_UEVENT_HELPER
- static int kobj_usermode_filter(struct kobject *kobj)
- {
-@@ -327,17 +303,14 @@ static struct sk_buff *alloc_uevent_skb(struct kobj_uevent_env *env,
- 
- 	return skb;
- }
--#endif
- 
--static int kobject_uevent_net_broadcast(struct kobject *kobj,
--					struct kobj_uevent_env *env,
--					const char *action_string,
--					const char *devpath)
-+static int uevent_net_broadcast_untagged(struct kobj_uevent_env *env,
-+					 const char *action_string,
-+					 const char *devpath)
- {
--	int retval = 0;
--#if defined(CONFIG_NET)
- 	struct sk_buff *skb = NULL;
- 	struct uevent_sock *ue_sk;
-+	int retval = 0;
- 
- 	/* send netlink message */
- 	list_for_each_entry(ue_sk, &uevent_sock_list, list) {
-@@ -353,19 +326,95 @@ static int kobject_uevent_net_broadcast(struct kobject *kobj,
- 				continue;
- 		}
- 
--		retval = netlink_broadcast_filtered(uevent_sock, skb_get(skb),
--						    0, 1, GFP_KERNEL,
--						    kobj_bcast_filter,
--						    kobj);
-+		retval = netlink_broadcast(uevent_sock, skb_get(skb), 0, 1,
-+					   GFP_KERNEL);
- 		/* ENOBUFS should be handled in userspace */
- 		if (retval == -ENOBUFS || retval == -ESRCH)
- 			retval = 0;
- 	}
- 	consume_skb(skb);
--#endif
-+
- 	return retval;
- }
- 
-+static int uevent_net_broadcast_tagged(struct sock *usk,
-+				       struct kobj_uevent_env *env,
-+				       const char *action_string,
-+				       const char *devpath)
-+{
-+	struct user_namespace *owning_user_ns = sock_net(usk)->user_ns;
-+	struct sk_buff *skb = NULL;
-+	int ret = 0;
-+
-+	skb = alloc_uevent_skb(env, action_string, devpath);
-+	if (!skb)
-+		return -ENOMEM;
-+
-+	/* fix credentials */
-+	if (owning_user_ns != &init_user_ns) {
-+		struct netlink_skb_parms *parms = &NETLINK_CB(skb);
-+		kuid_t root_uid;
-+		kgid_t root_gid;
-+
-+		/* fix uid */
-+		root_uid = make_kuid(owning_user_ns, 0);
-+		if (!uid_valid(root_uid))
-+			root_uid = GLOBAL_ROOT_UID;
-+		parms->creds.uid = root_uid;
-+
-+		/* fix gid */
-+		root_gid = make_kgid(owning_user_ns, 0);
-+		if (!gid_valid(root_gid))
-+			root_gid = GLOBAL_ROOT_GID;
-+		parms->creds.gid = root_gid;
-+	}
-+
-+	ret = netlink_broadcast(usk, skb, 0, 1, GFP_KERNEL);
-+	/* ENOBUFS should be handled in userspace */
-+	if (ret == -ENOBUFS || ret == -ESRCH)
-+		ret = 0;
-+
-+	return ret;
-+}
-+#endif
-+
-+static int kobject_uevent_net_broadcast(struct kobject *kobj,
-+					struct kobj_uevent_env *env,
-+					const char *action_string,
-+					const char *devpath)
-+{
-+	int ret = 0;
-+
-+#ifdef CONFIG_NET
-+	const struct kobj_ns_type_operations *ops;
-+	const struct net *net = NULL;
-+
-+	ops = kobj_ns_ops(kobj);
-+	if (!ops && kobj->kset) {
-+		struct kobject *ksobj = &kobj->kset->kobj;
-+		if (ksobj->parent != NULL)
-+			ops = kobj_ns_ops(ksobj->parent);
-+	}
-+
-+	/* kobjects currently only carry network namespace tags and they
-+	 * are the only tag relevant here since we want to decide which
-+	 * network namespaces to broadcast the uevent into.
-+	 */
-+	if (ops && ops->netlink_ns && kobj->ktype->namespace)
-+		if (ops->type == KOBJ_NS_TYPE_NET)
-+			net = kobj->ktype->namespace(kobj);
-+
-+	if (!net)
-+		ret = uevent_net_broadcast_untagged(env, action_string,
-+						    devpath);
-+	else
-+		ret = uevent_net_broadcast_tagged(net->uevent_sock->sk, env,
-+						  action_string, devpath);
-+#endif
-+
-+	return ret;
-+}
-+
- static void zap_modalias_env(struct kobj_uevent_env *env)
- {
- 	static const char modalias_prefix[] = "MODALIAS=";
-@@ -724,9 +773,13 @@ static int uevent_net_init(struct net *net)
- 
- 	net->uevent_sock = ue_sk;
- 
--	mutex_lock(&uevent_sock_mutex);
--	list_add_tail(&ue_sk->list, &uevent_sock_list);
--	mutex_unlock(&uevent_sock_mutex);
-+	/* Restrict uevents to initial user namespace. */
-+	if (sock_net(ue_sk->sk)->user_ns == &init_user_ns) {
-+		mutex_lock(&uevent_sock_mutex);
-+		list_add_tail(&ue_sk->list, &uevent_sock_list);
-+		mutex_unlock(&uevent_sock_mutex);
-+	}
-+
- 	return 0;
- }
- 
-@@ -734,9 +787,11 @@ static void uevent_net_exit(struct net *net)
- {
- 	struct uevent_sock *ue_sk = net->uevent_sock;
- 
--	mutex_lock(&uevent_sock_mutex);
--	list_del(&ue_sk->list);
--	mutex_unlock(&uevent_sock_mutex);
-+	if (sock_net(ue_sk->sk)->user_ns == &init_user_ns) {
-+		mutex_lock(&uevent_sock_mutex);
-+		list_del(&ue_sk->list);
-+		mutex_unlock(&uevent_sock_mutex);
-+	}
- 
- 	netlink_kernel_release(ue_sk->sk);
- 	kfree(ue_sk);
--- 
-2.17.0
+                /* fix gid */
+		root_gid = make_kgid(owning_user_ns, 0);
+                if (gid_valid(root_gid))
+                	params->creds.gid = root_gid;
+
+
+One line shorter and I think a little clearer.  I suspect
+it even results in better code.
+
+Eric
