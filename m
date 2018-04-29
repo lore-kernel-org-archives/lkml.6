@@ -1,114 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752394AbeD2FyY (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 29 Apr 2018 01:54:24 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:45398 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751825AbeD2FyX (ORCPT
+        id S1752331AbeD2Gfl (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 29 Apr 2018 02:35:41 -0400
+Received: from mail-wm0-f53.google.com ([74.125.82.53]:37697 "EHLO
+        mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751999AbeD2Gfk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Apr 2018 01:54:23 -0400
-X-Google-Smtp-Source: AB8JxZrztPblLvfpRVmrdSXeundcWIiMAztLaH8cV08RItu8WwmFtzgpDoQVl0R98eeQr5i3pTbgrg==
-Date: Sun, 29 Apr 2018 07:54:19 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: "Wesley W. Terpstra" <wesley@sifive.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
-        Noralf =?utf-8?Q?Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        David Lechner <david@lechnology.com>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        SZ Lin <sz.lin@moxa.com>, linux-pwm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: added new pwm-sifive driver
- documentation
-Message-ID: <20180429055417.GA10221@mithrandir>
-References: <1524869998-2805-1-git-send-email-wesley@sifive.com>
- <1524869998-2805-2-git-send-email-wesley@sifive.com>
+        Sun, 29 Apr 2018 02:35:40 -0400
+X-Google-Smtp-Source: AB8JxZqHCDbT7CghWWUSGuAiaIWy9HOHMk8b4igKFFB1kquFxeWWQ18aIG9mrFGtMfKEggIxLqQtLIMS00GpknnSJHs=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="2oS5YaxWCcQjTEyO"
-Content-Disposition: inline
-In-Reply-To: <1524869998-2805-2-git-send-email-wesley@sifive.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <1516190084-18978-1-git-send-email-julien.thierry@arm.com>
+References: <1516190084-18978-1-git-send-email-julien.thierry@arm.com>
+From: Joel Fernandes <joel.opensrc@gmail.com>
+Date: Sat, 28 Apr 2018 23:35:38 -0700
+Message-ID: <CAEi0qNk7pVtfcrFU4gM35sajPb09xjR8d6cJkgoSr-H0Tgo+QA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/6] arm64: provide pseudo NMI with GICv3
+To: Julien Thierry <julien.thierry@arm.com>
+Cc: Linux ARM Kernel List <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        mark.rutland@arm.com, marc.zyngier@arm.com, james.morse@arm.com,
+        daniel.thompson@linaro.org, Joel Fernandes <joelaf@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Julien,
 
---2oS5YaxWCcQjTEyO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I am interested in evaluating if using this is feasible for our
+Android devices. There is quite a usecase for lockup detection that it
+seems worthwhile if it works well. Atleast I feel this can be used a
+debug option considering the performance downgrade.
 
-On Fri, Apr 27, 2018 at 03:59:56PM -0700, Wesley W. Terpstra wrote:
-> Document new PWM device tree bindings for SiFive SoCs.
->=20
-> Signed-off-by: Wesley W. Terpstra <wesley@sifive.com>
-> ---
->  .../devicetree/bindings/pwm/pwm-sifive.txt         | 28 ++++++++++++++++=
-++++++
->  1 file changed, 28 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pwm/pwm-sifive.txt
->=20
-> diff --git a/Documentation/devicetree/bindings/pwm/pwm-sifive.txt b/Docum=
-entation/devicetree/bindings/pwm/pwm-sifive.txt
-> new file mode 100644
-> index 0000000..7cea20d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pwm/pwm-sifive.txt
-> @@ -0,0 +1,28 @@
-> +SiFive PWM controller
-> +
-> +Unlike most other PWM controllers, the SiFive PWM controller currently o=
-nly
-> +supports one period for all channels in the PWM. This is set globally in=
- DTS.
-> +The period also has significant restrictions on the values it can achiev=
-e,
-> +which the driver rounds to the nearest achievable frequency.
+Do you have more details of if any GICv3 based system will work, or is
+there a way an SoC can be misconfigured so that this series will not
+work? I think Marc told me that's possible, but I wasn't sure. I will
+be quite happy if it works on SoC as long as they have the requisite
+GIC version.
 
-How about you encode this in the driver rather than DT? We have several
-drivers with similar restrictions and they usually allow the first PWM
-channel to choose an arbitrary period and return an error if subsequent
-channels request a period that can't be supported.
+Some more questions below:
 
-I think something similar could work with that second restriction. Why
-not return an error if the exact period can't be set? Or perhaps allow
-some percentage of deviation.
+On Wed, Jan 17, 2018 at 3:54 AM, Julien Thierry <julien.thierry@arm.com> wrote:
+> Hi,
+>
+> This series is a continuation of the work started by Daniel [1]. The goal
+> is to use GICv3 interrupt priorities to simulate an NMI.
+>
+> To achieve this, set two priorities, one for standard interrupts and
+> another, higher priority, for NMIs. Whenever we want to disable interrupts,
+> we mask the standard priority instead so NMIs can still be raised. Some
+> corner cases though still require to actually mask all interrupts
+> effectively disabling the NMI.
+>
+> Of course, using priority masking instead of PSR.I comes at some cost. On
+> hackbench, the drop of performance seems to be >1% on average for this
+> version. I can only attribute that to recent changes in the kernel as
 
-If the exact period is achieved in a deterministic way, it should be
-possible for board designers to specify it exactly, so the consumer's
-pwms property can simply take the correct period.
+Do you have more specific performance data on the performance overhead
+with this series?
 
-> +Required properties:
-> +- compatible: should be "sifive,pwm0"
+> hackbench seems slightly slower compared to my other benchmarks while the
+> runs with the use of GICv3 priorities have stayed in the same time frames.
+> KVM Guests do not seem to be affected preformance-wise by the host using
+> PMR to mask interrupts or not.
+>
+> Currently, only PPIs and SPIs can be set as NMIs. IPIs being currently
+> hardcoded IRQ numbers, there isn't a generic interface to set SGIs as NMI
+> for now. I don't think there is any reason LPIs should be allowed to be set
+> as NMI as they do not have an active state.
+> When an NMI is active on a CPU, no other NMI can be triggered on the CPU.
+>
+>
+> Requirements to use this:
+> - Have GICv3
+> - SCR_EL3.FIQ is set to 1 when linux runs
 
-Why not simply "sifive,pwm"? If this is supposed to be some sort of
-version number, then it is more customary to use the name of the first
-SoC that integrates the IP. There are some exceptions, like for example
-when the IP is third-party and is integrated in a number of different
-SoCs. In such cases the IP is often properly versioned. But that doesn't
-seem to be the case here.
+Ah I see it mentioned here. Again, can you clarify if this is
+something that can be misconfigured? Is it something that the
+bootloader sets?
 
-Thierry
+Sorry if these questions sound premature, I haven't yet taken a closer
+look at the series.
 
---2oS5YaxWCcQjTEyO
-Content-Type: application/pgp-signature; name="signature.asc"
+thanks,
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrlXgAACgkQ3SOs138+
-s6G0og/5AcKecMoLYsTgL/lfsWklBkmYsnoNapJacw4g7JWBgbhcx0HpWM3rK1AQ
-CdjVFvb5i/XPAG9O2VEobdWpSjzXwx3d71v9QfaSqLSPQnbhOPcBieWCcq1F0vll
-dtUMHwAPVmSDDIiCcmQoFRsEQ7NgtklZbQcFxR06PknQ14Dcg3KpOww5+JDv5zdy
-ZBPLGhRBm4jfcxeV6oIbEDSOHYKOdLZNwf7qnWFHo8fzMnI4PSkRfG09kHP3AJMz
-qK4dkj8ZwmhIT92XkCzt9Xa4zXyAp9CRDnhe9qT+Svy8RU1m1If7DbE5w/ENbmpJ
-735qfQL9jlgm/Q0bJQOHE8N8ZLTCCBmWRpcioPTy/+8TPJSmG3e8jPmlKnJDxUzF
-gCbWYL+PuiWBU+NRzCxTtQMarpmRc08pqPBbScHQgSioUfcd+KDZrPPQUdp1uUmB
-d2jadVcI+bRn7u/Hlt01Sax4h8hV5ZLWdiMPhZGB3MgoDRbNiv95X8MqcRnY9yd6
-usyj8ZHwTJ/SNtRCdCIZI26zwztzx4BYDyD4grE7noYMJFY4+yjfU07gb6qtSqgZ
-LvoXm6R1WDqeATn2g4svd4nKz5O7GpYe3lLf/EXUyIvtTxHjVu3BLpEXW7VwZPXV
-TpqnNC7thuVskPodkixMi+6bn2DFi0yOKwHLrIaUsFGJc9hhj0g=
-=DkNP
------END PGP SIGNATURE-----
-
---2oS5YaxWCcQjTEyO--
+- Joel
