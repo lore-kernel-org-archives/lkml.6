@@ -1,59 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753399AbeD2MQg (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 29 Apr 2018 08:16:36 -0400
-Received: from mga01.intel.com ([192.55.52.88]:34543 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752875AbeD2MQf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Apr 2018 08:16:35 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,343,1520924400";
-   d="scan'208";a="46935336"
-Date: Sun, 29 Apr 2018 20:16:31 +0800
-From: Fengguang Wu <fengguang.wu@intel.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Network Development <netdev@vger.kernel.org>,
-        David Miller <davem@davemloft.net>, xiaolou4617@gmail.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        LKP <lkp@01.org>
-Subject: Re: [llc_ui_release] BUG: unable to handle kernel NULL pointer
- dereference at 0000000000000004
-Message-ID: <20180429121631.fd2qf2scjdjmjvnh@wfg-t540p.sh.intel.com>
-References: <20180429021235.vibzosv34t264nbs@wfg-t540p.sh.intel.com>
- <CA+55aFzeCvwUw=yi5oDy2ouv7onkXDapgamJJ5AhjybyBH8UCw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <CA+55aFzeCvwUw=yi5oDy2ouv7onkXDapgamJJ5AhjybyBH8UCw@mail.gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+        id S1753336AbeD2MXR (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 29 Apr 2018 08:23:17 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:39999 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753054AbeD2MXQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Apr 2018 08:23:16 -0400
+X-Google-Smtp-Source: AB8JxZq/A8968LdvKBF3V9Q43Djais+2xa7wUufIvS0TuVcJin1cAroR5jVtr1/MpX65NazZEQbUYg==
+From: Etienne Carriere <etienne.carriere@linaro.org>
+To: alexandre.jutras@nxp.com, linux-kernel@vger.kernel.org,
+        jens.wiklander@linaro.org
+Cc: Etienne Carriere <etienne.carriere@linaro.org>
+Subject: [PATCH] tee: check shm references are consistent in offset/size
+Date: Sun, 29 Apr 2018 14:22:29 +0200
+Message-Id: <1525004549-16266-1-git-send-email-etienne.carriere@linaro.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Apr 29, 2018 at 03:30:48AM +0000, Linus Torvalds wrote:
->On Sat, Apr 28, 2018 at 7:12 PM Fengguang Wu <fengguang.wu@intel.com> wrote:
->
->> FYI this happens in mainline kernel 4.17.0-rc2.
->> It looks like a new regression.
->
->> It occurs in 5 out of 5 boots.
->
->> [main] 375 sockets created based on info from socket cachefile.
->> [main] Generating file descriptors
->> [main] Added 83 filenames from /dev
->> udevd[507]: failed to execute '/sbin/modprobe' '/sbin/modprobe -bv
->platform:regulatory': No such file or directory
->> [  372.057947] caif:caif_disconnect_client(): nothing to disconnect
->> [  372.082415] BUG: unable to handle kernel NULL pointer dereference at
->0000000000000004
->
->I think this is fixed by commit 3a04ce7130a7 ("llc: fix NULL pointer deref
->for SOCK_ZAPPED")
+This change prevents userland from referencing TEE shared memory
+outside the area initially allocated by its owner. Prior this change an
+application could not reference or access memory it did not own but
+it could reference memory not explicitly allocated by owner but still
+allocated to the owner due to the memory allocation granule.
 
-Confirmed. Sorry for the late report!
+Reported-by: Alexandre Jutras <alexandre.jutras@nxp.com>
+Signed-off-by: Etienne Carriere <etienne.carriere@linaro.org>
+---
+ drivers/tee/tee_core.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-Regards,
-Fengguang
+diff --git a/drivers/tee/tee_core.c b/drivers/tee/tee_core.c
+index 0124a91..dd46b75 100644
+--- a/drivers/tee/tee_core.c
++++ b/drivers/tee/tee_core.c
+@@ -238,6 +238,17 @@ static int params_from_user(struct tee_context *ctx, struct tee_param *params,
+ 			if (IS_ERR(shm))
+ 				return PTR_ERR(shm);
+ 
++			/*
++			 * Ensure offset + size does not overflow offset
++			 * and does not overflow the size of the referred
++			 * shared memory object.
++			 */
++			if ((ip.a + ip.b) < ip.a ||
++			    (ip.a + ip.b) > shm->size) {
++				tee_shm_put(shm);
++				return -EINVAL;
++			}
++
+ 			params[n].u.memref.shm_offs = ip.a;
+ 			params[n].u.memref.size = ip.b;
+ 			params[n].u.memref.shm = shm;
+-- 
+1.9.1
