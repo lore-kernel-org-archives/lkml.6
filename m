@@ -1,24 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754172AbeD2TyR (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 29 Apr 2018 15:54:17 -0400
-Received: from gateway23.websitewelcome.com ([192.185.50.129]:43701 "EHLO
-        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753764AbeD2TyQ (ORCPT
+        id S1754179AbeD2T7t (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 29 Apr 2018 15:59:49 -0400
+Received: from gateway22.websitewelcome.com ([192.185.46.225]:44810 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753817AbeD2T7s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Apr 2018 15:54:16 -0400
+        Sun, 29 Apr 2018 15:59:48 -0400
 X-Authority-Reason: nr=8
 From: Matheus Castello <matheus@castello.eng.br>
 To: linus.walleij@linaro.org, stefan.wahren@i2se.com, eric@anholt.net
 Cc: swarren@wwwdotorg.org, robh+dt@kernel.org, mark.rutland@arm.com,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         Matheus Castello <matheus@castello.eng.br>
-Subject: Re: [PATCH v6 0/3] bcm2835: Add generic pinctrl support
-Date: Sun, 29 Apr 2018 15:28:10 -0400
-Message-Id: <1525030092-3643-1-git-send-email-matheus@castello.eng.br>
+Subject: [PATCH v6 3/3] pinctrl: bcm2835: Add support for output-low output-high properties
+Date: Sun, 29 Apr 2018 15:28:12 -0400
+Message-Id: <1525030092-3643-3-git-send-email-matheus@castello.eng.br>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <CACRpkdaH6kgbM+3UHVJ_JfKZ367XXRhSjXhvsZ-8b0Ovbkpmew@mail.gmail.com>
+In-Reply-To: <1525030092-3643-1-git-send-email-matheus@castello.eng.br>
 References: <CACRpkdaH6kgbM+3UHVJ_JfKZ367XXRhSjXhvsZ-8b0Ovbkpmew@mail.gmail.com>
+ <1525030092-3643-1-git-send-email-matheus@castello.eng.br>
 X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
 X-AntiAbuse: Primary Hostname - br164.hostgator.com.br
 X-AntiAbuse: Original Domain - vger.kernel.org
@@ -27,59 +28,43 @@ X-AntiAbuse: Sender Address Domain - castello.eng.br
 X-BWhitelist: no
 X-Source-IP: 191.189.21.134
 X-Source-L: No
-X-Exim-ID: 1fCs0c-001ixz-Ar
+X-Exim-ID: 1fCs10-001ixz-Ms
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
 X-Source-Sender: (localhost.localdomain) [191.189.21.134]:22196
 X-Source-Auth: matheus@castello.eng.br
-X-Email-Count: 3
+X-Email-Count: 22
 X-Source-Cap: Y2FzdGUyNDg7Y2FzdGUyNDg7YnIxNjQuaG9zdGdhdG9yLmNvbS5icg==
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series adds support for generic binding for pinctrl bcm2835 driver,
-and add the code for set output buffer of a pin using the output-low and
-output-high generic properties.
+Properties to set initial value of pin output buffer.
+This can be useful for configure hardware in overlay files, and in early
+boot for checking it states in QA sanity tests.
 
-Tested on Raspberry Pi Zero W, based on bcm2835 SoC.
+Signed-off-by: Matheus Castello <matheus@castello.eng.br>
+---
+ drivers/pinctrl/bcm/pinctrl-bcm2835.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Changes since v5:
-(Suggested by Stefan Wahren)
-- Fix checkpatch warnings
-- Use PIN_CONFIG_END+1 for bcm2835_pinconf_param for our pull legacy
-configuration
-(Suggested by Linus Walleij)
-- Only resend patch 2+3
-- Add Stephen Warren for subsequent postings
-
-Changes since v4:
-(Suggested by Rob Herring)
-- Change dt-bindings docs driver reference to hardware in case the BCM2835
-pin configuration and multiplexing
-
-Changes since v3:
-(Suggested by Stefan Wahren)
-- Change dt-bindings docs patch order and subject
-
-Changes since v2:
-(Suggested by Eric Anholt)
-- Remove PACK and UNPACK macros
-- Use pinconf_to_config_* functions
-(Suggested by Stefan Wahren)
-- Fold Kconfig changes with the driver changes in a single patch
-- Add devicetree bindings documentations about generic properties support
-- Add devicetree bindings maintainers
-
-Matheus Castello (2):
-  pinctrl: bcm2835: Add support for generic pinctrl binding
-  pinctrl: bcm2835: Add support for output-low output-high properties
-
- drivers/pinctrl/bcm/Kconfig           |   1 +
- drivers/pinctrl/bcm/pinctrl-bcm2835.c | 100 +++++++++++++++++++++-------------
- 2 files changed, 64 insertions(+), 37 deletions(-)
-
+diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+index 0231107..3bc0d04 100644
+--- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
++++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+@@ -965,6 +965,11 @@ static int bcm2835_pinconf_set(struct pinctrl_dev *pctldev,
+ 			bcm2835_pull_config_set(pc, pin, BCM2835_PUD_UP);
+ 			break;
+ 
++		/* Set output-high or output-low */
++		case PIN_CONFIG_OUTPUT:
++			bcm2835_gpio_set_bit(pc, arg ? GPSET0 : GPCLR0, pin);
++			break;
++
+ 		default:
+ 			return -EINVAL;
+ 
 -- 
 2.7.4
