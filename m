@@ -1,22 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754023AbeD2RAc (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 29 Apr 2018 13:00:32 -0400
-Received: from mail-it0-f72.google.com ([209.85.214.72]:56643 "EHLO
-        mail-it0-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753866AbeD2RAE (ORCPT
+        id S1754042AbeD2RAu (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 29 Apr 2018 13:00:50 -0400
+Received: from mail-io0-f197.google.com ([209.85.223.197]:39146 "EHLO
+        mail-io0-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753855AbeD2RAD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Apr 2018 13:00:04 -0400
-X-Google-Smtp-Source: AB8JxZrphkWk24oKgP5YESKTm1HLcaGmSGfUibbPXbcX6yw91RYfZEyNtkx/piOuTxTade9AIpF1O8ZxrHy4VC68bgIjOzapLjO9
+        Sun, 29 Apr 2018 13:00:03 -0400
+X-Google-Smtp-Source: AB8JxZqOf6DUtdpfqSSGZ5H5zjAj4OTgdn67f3HZ1ED/4aIENgG3GsBZrStg7i6auPtWd4P8D9Nc4XGK5LZqALP1TNMWMJN+gLcH
 MIME-Version: 1.0
 Date: Sun, 29 Apr 2018 10:00:03 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000194520056affab14@google.com>
-Subject: possible deadlock in vfs_fallocate
-From: syzbot <syzbot+148c2885d71194f18d28@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Message-ID: <000000000000170595056affab1c@google.com>
+Subject: WARNING in __mutex_unlock_slowpath
+From: syzbot <syzbot+35666cba7f0a337e2e79@syzkaller.appspotmail.com>
+To: hpa@zytor.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, pbonzini@redhat.com, rkrcmar@redhat.com,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -25,156 +26,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Hello,
 
 syzbot hit the following crash on upstream commit
-cdface5209349930ae1b51338763c8e029971b97 (Sun Apr 29 03:07:21 2018 +0000)
-Merge tag 'for_linus_stable' of  
-git://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4
+bf8f5de17442bba5f811e7e724980730e079ee11 (Sat Apr 28 17:05:04 2018 +0000)
+MAINTAINERS: add myself as maintainer of AFFS
 syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=148c2885d71194f18d28
+https://syzkaller.appspot.com/bug?extid=35666cba7f0a337e2e79
 
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5054004375584768
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5686569910403072
 syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=6438048191479808
+https://syzkaller.appspot.com/x/repro.syz?id=5767017265102848
 Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=5404215203594240
+https://syzkaller.appspot.com/x/log.txt?id=6346308495343616
 Kernel config:  
 https://syzkaller.appspot.com/x/.config?id=7043958930931867332
 compiler: gcc (GCC) 8.0.1 20180413 (experimental)
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+148c2885d71194f18d28@syzkaller.appspotmail.com
+Reported-by: syzbot+35666cba7f0a337e2e79@syzkaller.appspotmail.com
 It will help syzbot understand when the bug is fixed. See footer for  
 details.
 If you forward the report, please keep this part and the footer.
 
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
+------------[ cut here ]------------
+DEBUG_LOCKS_WARN_ON(__owner_task(owner) != current)
+WARNING: CPU: 0 PID: 4525 at kernel/locking/mutex.c:1032  
+__mutex_unlock_slowpath+0x62e/0x8a0 kernel/locking/mutex.c:1032
+Kernel panic - not syncing: panic_on_warn set ...
 
-======================================================
-WARNING: possible circular locking dependency detected
-4.17.0-rc2+ #23 Not tainted
-------------------------------------------------------
-syz-executor715/4492 is trying to acquire lock:
-         (ptrval) (sb_writers#6){.+.+}, at: file_start_write  
-include/linux/fs.h:2718 [inline]
-         (ptrval) (sb_writers#6){.+.+}, at: vfs_fallocate+0x5be/0x8d0  
-fs/open.c:318
-
-but task is already holding lock:
-         (ptrval) (ashmem_mutex){+.+.}, at: ashmem_shrink_scan+0xac/0x560  
-drivers/staging/android/ashmem.c:440
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #3 (ashmem_mutex){+.+.}:
-        __mutex_lock_common kernel/locking/mutex.c:756 [inline]
-        __mutex_lock+0x16d/0x17f0 kernel/locking/mutex.c:893
-        mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:908
-        ashmem_mmap+0x53/0x460 drivers/staging/android/ashmem.c:361
-        call_mmap include/linux/fs.h:1789 [inline]
-        mmap_region+0xd13/0x1820 mm/mmap.c:1723
-        do_mmap+0xc79/0x11d0 mm/mmap.c:1494
-        do_mmap_pgoff include/linux/mm.h:2237 [inline]
-        vm_mmap_pgoff+0x1fb/0x2a0 mm/util.c:357
-        ksys_mmap_pgoff+0x4c9/0x640 mm/mmap.c:1544
-        __do_sys_mmap arch/x86/kernel/sys_x86_64.c:100 [inline]
-        __se_sys_mmap arch/x86/kernel/sys_x86_64.c:91 [inline]
-        __x64_sys_mmap+0xe9/0x1b0 arch/x86/kernel/sys_x86_64.c:91
-        do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
--> #2 (&mm->mmap_sem){++++}:
-        __might_fault+0x155/0x1e0 mm/memory.c:4555
-        _copy_to_user+0x30/0x110 lib/usercopy.c:25
-        copy_to_user include/linux/uaccess.h:155 [inline]
-        filldir+0x1ea/0x3a0 fs/readdir.c:196
-        dir_emit_dot include/linux/fs.h:3378 [inline]
-        dir_emit_dots include/linux/fs.h:3389 [inline]
-        dcache_readdir+0x13a/0x620 fs/libfs.c:192
-        iterate_dir+0x4b0/0x5d0 fs/readdir.c:51
-        __do_sys_getdents fs/readdir.c:231 [inline]
-        __se_sys_getdents fs/readdir.c:212 [inline]
-        __x64_sys_getdents+0x293/0x4e0 fs/readdir.c:212
-        do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
--> #1 (&sb->s_type->i_mutex_key#11){++++}:
-        down_write+0x87/0x120 kernel/locking/rwsem.c:70
-        inode_lock include/linux/fs.h:713 [inline]
-        do_last fs/namei.c:3274 [inline]
-        path_openat+0x123b/0x4e20 fs/namei.c:3501
-        do_filp_open+0x249/0x350 fs/namei.c:3535
-        do_sys_open+0x56f/0x740 fs/open.c:1093
-        __do_sys_open fs/open.c:1111 [inline]
-        __se_sys_open fs/open.c:1106 [inline]
-        __x64_sys_open+0x7e/0xc0 fs/open.c:1106
-        do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
--> #0 (sb_writers#6){.+.+}:
-        lock_acquire+0x1dc/0x520 kernel/locking/lockdep.c:3920
-        percpu_down_read_preempt_disable include/linux/percpu-rwsem.h:36  
-[inline]
-        percpu_down_read include/linux/percpu-rwsem.h:59 [inline]
-        __sb_start_write+0x1e9/0x300 fs/super.c:1385
-        file_start_write include/linux/fs.h:2718 [inline]
-        vfs_fallocate+0x5be/0x8d0 fs/open.c:318
-        ashmem_shrink_scan+0x1f1/0x560 drivers/staging/android/ashmem.c:447
-        ashmem_ioctl+0x3bf/0x13a0 drivers/staging/android/ashmem.c:789
-        vfs_ioctl fs/ioctl.c:46 [inline]
-        file_ioctl fs/ioctl.c:500 [inline]
-        do_vfs_ioctl+0x1cf/0x16a0 fs/ioctl.c:684
-        ksys_ioctl+0xa9/0xd0 fs/ioctl.c:701
-        __do_sys_ioctl fs/ioctl.c:708 [inline]
-        __se_sys_ioctl fs/ioctl.c:706 [inline]
-        __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:706
-        do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-other info that might help us debug this:
-
-Chain exists of:
-   sb_writers#6 --> &mm->mmap_sem --> ashmem_mutex
-
-  Possible unsafe locking scenario:
-
-        CPU0                    CPU1
-        ----                    ----
-   lock(ashmem_mutex);
-                                lock(&mm->mmap_sem);
-                                lock(ashmem_mutex);
-   lock(sb_writers#6);
-
-  *** DEADLOCK ***
-
-1 lock held by syz-executor715/4492:
-  #0:         (ptrval) (ashmem_mutex){+.+.}, at:  
-ashmem_shrink_scan+0xac/0x560 drivers/staging/android/ashmem.c:440
-
-stack backtrace:
-CPU: 1 PID: 4492 Comm: syz-executor715 Not tainted 4.17.0-rc2+ #23
+CPU: 0 PID: 4525 Comm: syz-executor809 Not tainted 4.17.0-rc2+ #22
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
   __dump_stack lib/dump_stack.c:77 [inline]
   dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  print_circular_bug.isra.36.cold.54+0x1bd/0x27d  
-kernel/locking/lockdep.c:1223
-  check_prev_add kernel/locking/lockdep.c:1863 [inline]
-  check_prevs_add kernel/locking/lockdep.c:1976 [inline]
-  validate_chain kernel/locking/lockdep.c:2417 [inline]
-  __lock_acquire+0x343e/0x5140 kernel/locking/lockdep.c:3431
-  lock_acquire+0x1dc/0x520 kernel/locking/lockdep.c:3920
-  percpu_down_read_preempt_disable include/linux/percpu-rwsem.h:36 [inline]
-  percpu_down_read include/linux/percpu-rwsem.h:59 [inline]
-  __sb_start_write+0x1e9/0x300 fs/super.c:1385
-  file_start_write include/linux/fs.h:2718 [inline]
-  vfs_fallocate+0x5be/0x8d0 fs/open.c:318
-  ashmem_shrink_scan+0x1f1/0x560 drivers/staging/android/ashmem.c:447
-  ashmem_ioctl+0x3bf/0x13a0 drivers/staging/android/ashmem.c:789
+  panic+0x22f/0x4de kernel/panic.c:184
+  __warn.cold.8+0x163/0x1b3 kernel/panic.c:536
+  report_bug+0x252/0x2d0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:178 [inline]
+  do_error_trap+0x1de/0x490 arch/x86/kernel/traps.c:296
+  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:992
+RIP: 0010:__mutex_unlock_slowpath+0x62e/0x8a0 kernel/locking/mutex.c:1032
+RSP: 0018:ffff8801cf31f138 EFLAGS: 00010286
+RAX: 0000000000000033 RBX: 1ffff10039e63e30 RCX: ffffffff8160b82d
+RDX: 0000000000000000 RSI: ffffffff816104e1 RDI: 0000000000000001
+RBP: ffff8801cf31f2a8 R08: ffff8801d9042180 R09: fffffbfff11b0974
+R10: fffffbfff11b0974 R11: ffffffff88d84ba3 R12: ffffffff8a713a20
+R13: dffffc0000000000 R14: 0000000000000000 R15: ffff8801989d6b08
+  mutex_unlock+0xd/0x10 kernel/locking/mutex.c:614
+  kvm_hv_eventfd_deassign arch/x86/kvm/hyperv.c:1434 [inline]
+  kvm_vm_ioctl_hv_eventfd+0x1ea/0x24b arch/x86/kvm/hyperv.c:1451
+  kvm_arch_vm_ioctl+0x155e/0x2690 arch/x86/kvm/x86.c:4563
+  kvm_vm_ioctl+0x246/0x1d90 arch/x86/kvm/../../../virt/kvm/kvm_main.c:3100
   vfs_ioctl fs/ioctl.c:46 [inline]
   file_ioctl fs/ioctl.c:500 [inline]
   do_vfs_ioctl+0x1cf/0x16a0 fs/ioctl.c:684
@@ -184,14 +86,17 @@ kernel/locking/lockdep.c:1223
   __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:706
   do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x440179
-RSP: 002b:00007ffc165d4a28 EFLAGS: 00000217 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 6873612f7665642f RCX: 0000000000440179
-RDX: 0000000000000000 RSI: 000000000000770a RDI: 0000000000000004
-RBP: 00000000006ca018 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000004 R11: 0000000000000217 R12: 00000000004016a0
-R13: 0000000000401730 R14: 0000000000000000 R15: 0000000000000000
-random: crng init done
+RIP: 0033:0x4401f9
+RSP: 002b:00007ffcd5727a48 EFLAGS: 00000217 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 6d766b2f7665642f RCX: 00000000004401f9
+RDX: 0000000020000140 RSI: 000000004018aebd RDI: 00000000000000ee
+RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
+R10: 00000000004002c8 R11: 0000000000000217 R12: 0000000000401720
+R13: 00000000004017b0 R14: 0000000000000000 R15: 0000000000000000
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
 
 ---
