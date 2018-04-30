@@ -1,39 +1,42 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqvUarXT0+n5TjE60RP+9MKau955fFcn6EWhbEAjOxhfW86LjckwEi4ictnExwNo6Ud7m4V
-ARC-Seal: i=1; a=rsa-sha256; t=1525116412; cv=none;
+X-Google-Smtp-Source: AB8JxZpT7nfNthuTavearPra2fDlToGbJsgZ0J2nQYcylwO2C/looBHujiSQNGadowc/dzCHLZ93
+ARC-Seal: i=1; a=rsa-sha256; t=1525116409; cv=none;
         d=google.com; s=arc-20160816;
-        b=0u2tiNeZ7vgFVN6kEwwzizM56MUMEEQ2CApx511iQptqUoyC/473KAW+P4G+4Ft4/J
-         e00QhEgCuXZXj5tEijlBsRpRO1XyKk4O/byQeDHEt9nypSU/GlOJlI9kCxEFfVIq4tOI
-         tdgX5Y7RvtR2fx9po3fLPzxOrPRlbOFEkqfEln+TDI0SqsyXdME9OtAnopEQOrDujI2H
-         U/xa7sq3hGn9zdgraofL+gkfK7Bsy77aqbQNaMbNWMqnM044Fn8OlSUo6rJr0/Sfvk6Z
-         d7i8s1YsPjcrYvp3VZoNPHuhZhtUj6L7dPTbVz5eYBdT1l0KhaGmsSn+uyaMm4C8cehq
-         bpqA==
+        b=xy1LCJIPazmYj/b/22QmXfhqMu0GwIKSTOGrVWFA103aEVqrB9s5F/+RByuc14jbLN
+         lmkgVEwgFTsOoqhnLUKxqhiy9Ttp9bgKlUvm8Ty1REuVvLTezkxkSaU0JFXzt9ALdItd
+         TIsJr981PpDCgSmifHQD9Oye/J38V91OBJM+UAXWx69pVqoWoW22Nurbz/dgZXBt/zUN
+         Ngr2K7BFQJvoc49W8ip8sn43mhChgoGqlOjxbQ8d8aVQ5zcZ9y4LEwUmFS3JXkqx8+ky
+         oJHsf1vVLu2GPU+MY07Wy4/01XoSL1hAr17lH0iYMgUfzj6jkMS7TLJx0sdLOnDSFCcZ
+         YlNw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=jivmbtgVWs/C1eY0xQpYGguoV1B8XAA3lLghk9SLxe8=;
-        b=o6JzqFu8D/rOxwbUctp51bvSEN2dZ1cRRo7oa+BNOBgDHU+xjvODOKQaIAvwi+38uV
-         647c6UaSe8HYKDSG6fFr3DRIXlYb5WyP09OSNcXmNrXP8bf2ngTzfPnvi4J5CdSTHCyE
-         pLj+1Dpxegmm8D25sVJe+ZLnb7dPTw52gGKJJWMaT019EaqlDQhgnO71bI6/5iTPhYHs
-         WxOdCJ4pYQUN18vLVTilDPmIkPo13s30BvMVhkWv2YdOvtW27w+aSA/0D2VNp16JJ1j7
-         aPerxtG485MWNSKDoeJNTWh9ecFVZ67Pxn68ZJuPQjSk/q+YpJcV+pyQJIbvif2Rstq7
-         fcWA==
+        bh=CxEa+KOqxqkRUQ+g81IZMLTIKp7TQEo2ppFwcFYNxWw=;
+        b=x8ir1bd0QQhhWNq276R3UaE76JLXCTAJaOaJaEqycfMGy5rmSxCRldfP7y6JCUjGvo
+         pf4o8xDm7yaFqtHAKSkuAfc1m07n9t18rhh9nSadSFSJMCCSNub06ZRXTbC6iI9lBnty
+         hKBuPbqKBSfkF6wTj4x7B0UQhOYQ3mhjSUaQNHB9GFGFlC//GnNSGzKgsONTjby1Q/Kn
+         VdSeUudDNJrJglcxMhlqVW8zgI/565ZDMTTascuZlGDv0lzQFTN4t/3ZdwjQw9O70l1a
+         bIrZbGfNdznU5YhB6QoT4qEg7JJt0JrrmXqpqWTebgpyO4ICig6xECS5MCnAdy616Qkq
+         N11w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2C3122DAC
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40AB522DBF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Todd Kjos <tkjos@google.com>
-Subject: [PATCH 4.9 46/61] ARM: amba: Dont read past the end of sysfs "driver_override" buffer
-Date: Mon, 30 Apr 2018 12:24:49 -0700
-Message-Id: <20180430183955.253660569@linuxfoundation.org>
+	Victor Gu <xigu@marvell.com>,
+	Wilson Ding <dingwei@marvell.com>,
+	Nadav Haklai <nadavh@marvell.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: [PATCH 4.9 42/61] PCI: aardvark: Set PIO_ADDR_LS correctly in advk_pcie_rd_conf()
+Date: Mon, 30 Apr 2018 12:24:45 -0700
+Message-Id: <20180430183954.895591878@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430183951.312721450@linuxfoundation.org>
 References: <20180430183951.312721450@linuxfoundation.org>
@@ -43,8 +46,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200467272175726?=
-X-GMAIL-MSGID: =?utf-8?q?1599200467272175726?=
+X-GMAIL-THRID: =?utf-8?q?1599200464256377805?=
+X-GMAIL-MSGID: =?utf-8?q?1599200464256377805?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,37 +55,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Victor Gu <xigu@marvell.com>
 
-commit d2ffed5185df9d8d9ccd150e4340e3b6f96a8381 upstream.
+commit 4fa3999ee672c54a5498ce98e20fe3fdf9c1cbb4 upstream.
 
-When printing the driver_override parameter when it is 4095 and 4094
-bytes long, the printing code would access invalid memory because we
-need count + 1 bytes for printing.
+When setting the PIO_ADDR_LS register during a configuration read, we
+were properly passing the device number, function number and register
+number, but not the bus number, causing issues when reading the
+configuration of PCIe devices.
 
-Cfr. commits 4efe874aace57dba ("PCI: Don't read past the end of sysfs
-"driver_override" buffer") and bf563b01c2895a4b ("driver core: platform:
-Don't read past the end of "driver_override" buffer").
-
-Fixes: 3cf385713460eb2b ("ARM: 8256/1: driver coamba: add device binding path 'driver_override'")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Todd Kjos <tkjos@google.com>
-Cc: stable <stable@vger.kernel.org>
+Fixes: 8c39d710363c1 ("PCI: aardvark: Add Aardvark PCI host controller driver")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Victor Gu <xigu@marvell.com>
+Reviewed-by: Wilson Ding <dingwei@marvell.com>
+Reviewed-by: Nadav Haklai <nadavh@marvell.com>
+[Thomas: tweak commit log.]
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/amba/bus.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/pci/host/pci-aardvark.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/drivers/amba/bus.c
-+++ b/drivers/amba/bus.c
-@@ -84,7 +84,8 @@ static ssize_t driver_override_store(str
- 	struct amba_device *dev = to_amba_device(_dev);
- 	char *driver_override, *old, *cp;
+--- a/drivers/pci/host/pci-aardvark.c
++++ b/drivers/pci/host/pci-aardvark.c
+@@ -175,8 +175,6 @@
+ #define PCIE_CONFIG_WR_TYPE0			0xa
+ #define PCIE_CONFIG_WR_TYPE1			0xb
  
--	if (count > PATH_MAX)
-+	/* We need to keep extra room for a newline */
-+	if (count >= (PAGE_SIZE - 1))
- 		return -EINVAL;
+-/* PCI_BDF shifts 8bit, so we need extra 4bit shift */
+-#define PCIE_BDF(dev)				(dev << 4)
+ #define PCIE_CONF_BUS(bus)			(((bus) & 0xff) << 20)
+ #define PCIE_CONF_DEV(dev)			(((dev) & 0x1f) << 15)
+ #define PCIE_CONF_FUNC(fun)			(((fun) & 0x7)	<< 12)
+@@ -458,7 +456,7 @@ static int advk_pcie_rd_conf(struct pci_
+ 	advk_writel(pcie, reg, PIO_CTRL);
  
- 	driver_override = kstrndup(buf, count, GFP_KERNEL);
+ 	/* Program the address registers */
+-	reg = PCIE_BDF(devfn) | PCIE_CONF_REG(where);
++	reg = PCIE_CONF_ADDR(bus->number, devfn, where);
+ 	advk_writel(pcie, reg, PIO_ADDR_LS);
+ 	advk_writel(pcie, 0, PIO_ADDR_MS);
+ 
