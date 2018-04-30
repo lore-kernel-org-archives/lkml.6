@@ -1,175 +1,184 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754026AbeD3OD2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 10:03:28 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:43782 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751949AbeD3OD1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 10:03:27 -0400
-Date: Mon, 30 Apr 2018 10:03:26 -0400 (EDT)
-From: Dave Anderson <anderson@redhat.com>
-To: Laura Abbott <labbott@redhat.com>
-Cc: Kees Cook <keescook@chromium.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, Andi Kleen <andi@firstfloor.org>
-Message-ID: <964518723.25675338.1525097006267.JavaMail.zimbra@redhat.com>
-In-Reply-To: <7ab806fe-ee36-59ad-483b-d6734fcd3451@redhat.com>
-References: <981100282.24860394.1524770798522.JavaMail.zimbra@redhat.com> <823082096.24861749.1524771086176.JavaMail.zimbra@redhat.com> <CAGXu5j+3LpvTk49p8o4oBiS3e=3UBAqL5oHzBZB1i9AegvMmDg@mail.gmail.com> <7ab806fe-ee36-59ad-483b-d6734fcd3451@redhat.com>
-Subject: Re: BUG: /proc/kcore does not export direct-mapped memory on arm64
- (and presumably some other architectures)
+        id S1753740AbeD3OHu (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 10:07:50 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54902 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751949AbeD3OHs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 10:07:48 -0400
+Subject: Re: [PATCH v10 06/25] mm: make pte_unmap_same compatible with SPF
+To: Minchan Kim <minchan@kernel.org>
+Cc: akpm@linux-foundation.org, mhocko@kernel.org, peterz@infradead.org,
+        kirill@shutemov.name, ak@linux.intel.com, dave@stgolabs.net,
+        jack@suse.cz, Matthew Wilcox <willy@infradead.org>,
+        benh@kernel.crashing.org, mpe@ellerman.id.au, paulus@samba.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
+        sergey.senozhatsky.work@gmail.com,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        David Rientjes <rientjes@google.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Ganesh Mahendran <opensource.ganesh@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
+        npiggin@gmail.com, bsingharora@gmail.com, paulmck@linux.vnet.ibm.com,
+        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org
+References: <1523975611-15978-1-git-send-email-ldufour@linux.vnet.ibm.com>
+ <1523975611-15978-7-git-send-email-ldufour@linux.vnet.ibm.com>
+ <20180423063157.GB114098@rodete-desktop-imager.corp.google.com>
+From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Date: Mon, 30 Apr 2018 16:07:30 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
+In-Reply-To: <20180423063157.GB114098@rodete-desktop-imager.corp.google.com>
 Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.18.17.201, 10.4.195.27]
-Thread-Topic: /proc/kcore does not export direct-mapped memory on arm64 (and presumably some other architectures)
-Thread-Index: ssVgjX4ZXXtUUA8qO4M14K88SJOVFg==
+X-TM-AS-GCONF: 00
+x-cbid: 18043014-0040-0000-0000-000004347DF6
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18043014-0041-0000-0000-0000263893D0
+Message-Id: <dd5c4338-3cbb-c65a-f0c1-c71e2a0037ee@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-30_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804300135
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
------ Original Message -----
-> On 04/26/2018 02:16 PM, Kees Cook wrote:
-> > On Thu, Apr 26, 2018 at 12:31 PM, Dave Anderson <anderson@redhat.com>
-> > wrote:
-> >>
-> >> While testing /proc/kcore as the live memory source for the crash utility,
-> >> it fails on arm64.  The failure on arm64 occurs because only the
-> >> vmalloc/module space segments are exported in PT_LOAD segments,
-> >> and it's missing all of the PT_LOAD segments for the generic
-> >> unity-mapped regions of physical memory, as well as their associated
-> >> vmemmap sections.
-> >>
-> >> The mapping of unity-mapped RAM segments in fs/proc/kcore.c is
-> >> architecture-neutral, and after debugging it, I found this as the
-> >> problem.  For each chunk of physical memory, kcore_update_ram()
-> >> calls walk_system_ram_range(), passing kclist_add_private() as a
-> >> callback function to add the chunk to the kclist, and eventually
-> >> leading to the creation of a PT_LOAD segment.
-> >>
-> >> kclist_add_private() does some verification of the memory region,
-> >> but this one below is bogus for arm64:
-> >>
-> >>      static int
-> >>      kclist_add_private(unsigned long pfn, unsigned long nr_pages, void
-> >>      *arg)
-> >>      {
-> >>      ... [ cut ] ...
-> >>              ent->addr = (unsigned long)__va((pfn << PAGE_SHIFT));
-> >>      ... [ cut ] ...
-> >>
-> >>              /* Sanity check: Can happen in 32bit arch...maybe */
-> >>              if (ent->addr < (unsigned long) __va(0))
-> >>                      goto free_out;
-> >>
-> >> And that's because __va(0) is a bogus check for arm64.  It is checking
-> >> whether the ent->addr value is less than the lowest possible unity-mapped
-> >> address.  But "0" should not be used as a physical address on arm64; the
-> >> lowest legitimate physical address for this __va() check would be the
-> >> arm64
-> >> PHYS_OFFSET, or memstart_addr:
-> >>
-> >> Here's the arm64 __va() and PHYS_OFFSET:
-> >>
-> >>    #define __va(x) ((void *)__phys_to_virt((phys_addr_t)(x)))
-> >>    #define __phys_to_virt(x)       ((unsigned long)((x) - PHYS_OFFSET) |
-> >>    PAGE_OFFSET)
-> >>
-> >>    extern s64                      memstart_addr;
-> >>    /* PHYS_OFFSET - the physical address of the start of memory. */
-> >>    #define PHYS_OFFSET             ({ VM_BUG_ON(memstart_addr & 1);
-> >>    memstart_addr; })
-> >>
-> >> If PHYS_OFFSET/memstart_addr is anything other than 0 (it is 0x4000000000
-> >> on my
-> >> test system), the __va(0) calculation goes negative and creates a bogus,
-> >> very
-> >> large, virtual address.  And since the ent->addr virtual address is less
-> >> than
-> >> bogus __va(0) address, the test fails, and the memory chunk is rejected.
-> >>
-> >> Looking at the kernel sources, it seems that this would affect other
-> >> architectures as well, i.e., the ones whose __va() is not a simple
-> >> addition of the physical address with PAGE_OFFSET.
-> >>
-> >> Anyway, I don't know what the best approach for an architecture-neutral
-> >> fix would be in this case.  So I figured I'd throw it out to you guys for
-> >> some ideas.
-> > 
-> > I'm not as familiar with this code, but I've added Ard and Laura to CC
-> > here, as this feels like something they'd be able to comment on. :)
-> > 
-> > -Kees
-> > 
+On 23/04/2018 08:31, Minchan Kim wrote:
+> On Tue, Apr 17, 2018 at 04:33:12PM +0200, Laurent Dufour wrote:
+>> pte_unmap_same() is making the assumption that the page table are still
+>> around because the mmap_sem is held.
+>> This is no more the case when running a speculative page fault and
+>> additional check must be made to ensure that the final page table are still
+>> there.
+>>
+>> This is now done by calling pte_spinlock() to check for the VMA's
+>> consistency while locking for the page tables.
+>>
+>> This is requiring passing a vm_fault structure to pte_unmap_same() which is
+>> containing all the needed parameters.
+>>
+>> As pte_spinlock() may fail in the case of a speculative page fault, if the
+>> VMA has been touched in our back, pte_unmap_same() should now return 3
+>> cases :
+>> 	1. pte are the same (0)
+>> 	2. pte are different (VM_FAULT_PTNOTSAME)
+>> 	3. a VMA's changes has been detected (VM_FAULT_RETRY)
+>>
+>> The case 2 is handled by the introduction of a new VM_FAULT flag named
+>> VM_FAULT_PTNOTSAME which is then trapped in cow_user_page().
 > 
-> It seems backwards that we're converting a physical address to
-> a virtual address and then validating that. I think checking against
-> pfn_valid (to ensure there is a valid memmap entry)
-> and then checking page_to_virt against virt_addr_valid to catch
-> other cases (e.g. highmem or holes in the space) seems cleaner.
+> I don't see such logic in this patch.
+> Maybe you introduces it later? If so, please comment on it.
+> Or just return 0 in case of 2 without introducing VM_FAULT_PTNOTSAME.
 
-Hi Laura,
+Late in the series, pte_spinlock() will check for the VMA's changes and may
+return 1. This will be then required to handle the 3 cases presented above.
 
-Thanks a lot for looking into this -- I couldn't find a maintainer for kcore.  
+I can move this handling later in the series, but I wondering if this will make
+it more easier to read.
 
-The patch looks good to me, as long as virt_addr_valid() will fail on 32-bit
-arches when page_to_virt() creates an invalid address when it gets passed a
-highmem-physical address.  
-
-Thanks again,
-  Dave
-
-
-> Maybe something like:
 > 
-> diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
-> index d1e82761de81..e64ecb9f2720 100644
-> --- a/fs/proc/kcore.c
-> +++ b/fs/proc/kcore.c
-> @@ -209,25 +209,34 @@ kclist_add_private(unsigned long pfn, unsigned long
-> nr_pages, void *arg)
->   {
->   	struct list_head *head = (struct list_head *)arg;
->   	struct kcore_list *ent;
-> +	struct page *p;
-> +
-> +	if (!pfn_valid(pfn))
-> +		return 1;
-> +
-> +	p = pfn_to_page(pfn);
-> +	if (!memmap_valid_within(pfn, p, page_zone(p)))
-> +		return 1;
->   
->   	ent = kmalloc(sizeof(*ent), GFP_KERNEL);
->   	if (!ent)
->   		return -ENOMEM;
-> -	ent->addr = (unsigned long)__va((pfn << PAGE_SHIFT));
-> +	ent->addr = (unsigned long)page_to_virt(p);
->   	ent->size = nr_pages << PAGE_SHIFT;
->   
-> -	/* Sanity check: Can happen in 32bit arch...maybe */
-> -	if (ent->addr < (unsigned long) __va(0))
-> +	if (!virt_addr_valid(ent->addr))
->   		goto free_out;
->   
->   	/* cut not-mapped area. ....from ppc-32 code. */
->   	if (ULONG_MAX - ent->addr < ent->size)
->   		ent->size = ULONG_MAX - ent->addr;
->   
-> -	/* cut when vmalloc() area is higher than direct-map area */
-> -	if (VMALLOC_START > (unsigned long)__va(0)) {
-> -		if (ent->addr > VMALLOC_START)
-> -			goto free_out;
-> +	/*
-> +	 * We've already checked virt_addr_valid so we know this address
-> +	 * is a valid pointer, therefore we can check against it to determine
-> +	 * if we need to trim
-> +	 */
-> +	if (VMALLOC_START > ent->addr) {
->   		if (VMALLOC_START - ent->addr < ent->size)
->   			ent->size = VMALLOC_START - ent->addr;
->   	}
-> 
+>> If VM_FAULT_RETRY is returned, it is passed up to the callers to retry the
+>> page fault while holding the mmap_sem.
+>>
+>> Acked-by: David Rientjes <rientjes@google.com>
+>> Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+>> ---
+>>  include/linux/mm.h |  1 +
+>>  mm/memory.c        | 39 ++++++++++++++++++++++++++++-----------
+>>  2 files changed, 29 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/include/linux/mm.h b/include/linux/mm.h
+>> index 4d1aff80669c..714da99d77a3 100644
+>> --- a/include/linux/mm.h
+>> +++ b/include/linux/mm.h
+>> @@ -1208,6 +1208,7 @@ static inline void clear_page_pfmemalloc(struct page *page)
+>>  #define VM_FAULT_NEEDDSYNC  0x2000	/* ->fault did not modify page tables
+>>  					 * and needs fsync() to complete (for
+>>  					 * synchronous page faults in DAX) */
+>> +#define VM_FAULT_PTNOTSAME 0x4000	/* Page table entries have changed */
+>>  
+>>  #define VM_FAULT_ERROR	(VM_FAULT_OOM | VM_FAULT_SIGBUS | VM_FAULT_SIGSEGV | \
+>>  			 VM_FAULT_HWPOISON | VM_FAULT_HWPOISON_LARGE | \
+>> diff --git a/mm/memory.c b/mm/memory.c
+>> index 0b9a51f80e0e..f86efcb8e268 100644
+>> --- a/mm/memory.c
+>> +++ b/mm/memory.c
+>> @@ -2309,21 +2309,29 @@ static inline bool pte_map_lock(struct vm_fault *vmf)
+>>   * parts, do_swap_page must check under lock before unmapping the pte and
+>>   * proceeding (but do_wp_page is only called after already making such a check;
+>>   * and do_anonymous_page can safely check later on).
+>> + *
+>> + * pte_unmap_same() returns:
+>> + *	0			if the PTE are the same
+>> + *	VM_FAULT_PTNOTSAME	if the PTE are different
+>> + *	VM_FAULT_RETRY		if the VMA has changed in our back during
+>> + *				a speculative page fault handling.
+>>   */
+>> -static inline int pte_unmap_same(struct mm_struct *mm, pmd_t *pmd,
+>> -				pte_t *page_table, pte_t orig_pte)
+>> +static inline int pte_unmap_same(struct vm_fault *vmf)
+>>  {
+>> -	int same = 1;
+>> +	int ret = 0;
+>> +
+>>  #if defined(CONFIG_SMP) || defined(CONFIG_PREEMPT)
+>>  	if (sizeof(pte_t) > sizeof(unsigned long)) {
+>> -		spinlock_t *ptl = pte_lockptr(mm, pmd);
+>> -		spin_lock(ptl);
+>> -		same = pte_same(*page_table, orig_pte);
+>> -		spin_unlock(ptl);
+>> +		if (pte_spinlock(vmf)) {
+>> +			if (!pte_same(*vmf->pte, vmf->orig_pte))
+>> +				ret = VM_FAULT_PTNOTSAME;
+>> +			spin_unlock(vmf->ptl);
+>> +		} else
+>> +			ret = VM_FAULT_RETRY;
+>>  	}
+>>  #endif
+>> -	pte_unmap(page_table);
+>> -	return same;
+>> +	pte_unmap(vmf->pte);
+>> +	return ret;
+>>  }
+>>  
+>>  static inline void cow_user_page(struct page *dst, struct page *src, unsigned long va, struct vm_area_struct *vma)
+>> @@ -2912,10 +2920,19 @@ int do_swap_page(struct vm_fault *vmf)
+>>  	pte_t pte;
+>>  	int locked;
+>>  	int exclusive = 0;
+>> -	int ret = 0;
+>> +	int ret;
+>>  
+>> -	if (!pte_unmap_same(vma->vm_mm, vmf->pmd, vmf->pte, vmf->orig_pte))
+>> +	ret = pte_unmap_same(vmf);
+>> +	if (ret) {
+>> +		/*
+>> +		 * If pte != orig_pte, this means another thread did the
+>> +		 * swap operation in our back.
+>> +		 * So nothing else to do.
+>> +		 */
+>> +		if (ret == VM_FAULT_PTNOTSAME)
+>> +			ret = 0;
+>>  		goto out;
+>> +	}
+>>  
+>>  	entry = pte_to_swp_entry(vmf->orig_pte);
+>>  	if (unlikely(non_swap_entry(entry))) {
+>> -- 
+>> 2.7.4
+>>
 > 
