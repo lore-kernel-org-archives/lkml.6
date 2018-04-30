@@ -1,42 +1,40 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZq1QEmL4ccDYKfiGA7SxemCQM0GozExEWQZurKRWhFVFzxE4B7GmM8A06Xe/d9HvIKSDi0O
-ARC-Seal: i=1; a=rsa-sha256; t=1525116511; cv=none;
+X-Google-Smtp-Source: AB8JxZoO+vl8jOxCseRhC/iqCG/aDATvcIdFn7vWAbqjMO/KQw4u8VzKKGUh2VplBmblbNpz7Qzq
+ARC-Seal: i=1; a=rsa-sha256; t=1525116503; cv=none;
         d=google.com; s=arc-20160816;
-        b=Y1urRB6H2HQW7D9bkZMB0JSSORiK6RABG7QmHQeGhqbbCsLHk8EHdhXmTD7qgUiv0N
-         OzuxcvGuZ9aa4U4HRYzt6CRvm9uf0hwX8Pn+X+n9e6ybxgL4oMC6qyT5o2/0K700nF4Z
-         6ngBO8ujEEsWoUN8uuMQ0IaMmS9sBXzDVaRPva1baigyT6IkJKIOAf02w6OIAoVvJ4nh
-         2aGZduEx2CpSdH9XQSlqqxFyNqUPm+BKNmfLsnazDnMW79QYHk/yCqsW1iYiV53bKSGh
-         JLxr08uYjtrIW0ttvFgg+p2c45oxMVh558luIpXv4dKGfvDXFd/ZwE9Oyt5M+tuE/K9v
-         64Ew==
+        b=lfrAUgliV9rB5m8TC2flQztxomNArD2ytzXg/cd46JU8QYTCbGyqdJPg+ka5oq6xdh
+         SKj/3v1otbeUKga1zNkNDHn6o1vKizWShVJRVIhaRgP26SspQ42IoNnsuH0l+UwSn6IH
+         BZNHXVBiCJQNYLe2Wfw4hZN2afqGhI1mh8356RXANK7bpdJBI1kBSxire1F+ZurNIAtp
+         wn1Kaop4uv6/3uEFFzqrYJSqYtyWWON3V6wf3OZCXqMuTua6he+3O20ZltY1aCboicrY
+         LhhXElHdzK5HMiWIR/im+azcqyKkX8yPyBP7MWzv/lnl0lfHNcxIiDjogXahFWEt6wCA
+         tcnQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=lzipe47cCOJN3hupaiXh6s8k0v0wlJ3kLO8jp7eoWNs=;
-        b=HwJQjYV+1pxBVwJ/9FI+/VxCTLpQKee+rIp4bQZa4CNl4b84p57WMopRiU0sKFesEz
-         vxOSAI5ILMH1/7Zfa0hhKR1f/Xzw3vteCpYjvGi8q0Q0VMuIcP0EhvyqUK29xVPJcRys
-         D+i/x0KmlESVG0hOxLJQb5oFr4x0n/FGqD85T2zXgDycKCx6Fd3FiSgVinOvboO3h1W5
-         rgiagvvM3RvmiPwLJtfstOy97toxTefmepdSKW/RSFYCQ+k1MPYpqceiD9lU0WkvUELe
-         4VIh1xoCa94dRfo/Q2inQRGDwxmNcPtxzrSNkUwYWTVS9HBvm246afEnUnUBR1yNrSWC
-         A11w==
+        bh=t+5tv2IM+HNuSwYwL8ZMHZOChl66DNn8YJWIFsSf6Nw=;
+        b=eWeUzvhv52dNVXZN8JlgdRtn8mxka5w4V9m3nxtUG0SlniZAZunX5XwtxJ5XDNWxPp
+         0J2JA/wIaIPUGwWB+tFsm8Wb7LDDIt4hM68YAdnwy3xQ3VU+JPZs9agPh9E0FzIECEok
+         tCYljsbtcjhwDspAnsM6/wDC6kE6gBOq/l3OaqetqOKxzJUeRZ8KS0X4qVriZhaiCMrp
+         HetkdWxroNoW8FqyZwu/bbatftrpdQGVqsozzkUMell9UQwxGmsu1j50oYpuoY/k/LEL
+         0x2X9gtr9nuqqfWghfqOVBw+E8YpJSZvRSW6U99H0S9BednDv932A2FBjDwnWUVrJGoy
+         fl9g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4424222DAC
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F1FA22E72
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Victor Gu <xigu@marvell.com>,
-	Wilson Ding <dingwei@marvell.com>,
-	Nadav Haklai <nadavh@marvell.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: [PATCH 4.16 070/113] PCI: aardvark: Set PIO_ADDR_LS correctly in advk_pcie_rd_conf()
-Date: Mon, 30 Apr 2018 12:24:41 -0700
-Message-Id: <20180430184018.181832334@linuxfoundation.org>
+	Joakim Tjernlund <joakim.tjernlund@infinera.com>,
+	Richard Weinberger <richard@nod.at>,
+	Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: [PATCH 4.16 057/113] mtd: cfi: cmdset_0002: Do not allow read/write to suspend erase block.
+Date: Mon, 30 Apr 2018 12:24:28 -0700
+Message-Id: <20180430184017.470046971@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184015.043892819@linuxfoundation.org>
 References: <20180430184015.043892819@linuxfoundation.org>
@@ -46,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200464256377805?=
-X-GMAIL-MSGID: =?utf-8?q?1599200571831504364?=
+X-GMAIL-THRID: =?utf-8?q?1599200285170089780?=
+X-GMAIL-MSGID: =?utf-8?q?1599200562448683643?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,46 +53,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Victor Gu <xigu@marvell.com>
+From: Joakim Tjernlund <joakim.tjernlund@infinera.com>
 
-commit 4fa3999ee672c54a5498ce98e20fe3fdf9c1cbb4 upstream.
+commit 7b70eb14392a7cf505f9b358d06c33b5af73d1e7 upstream.
 
-When setting the PIO_ADDR_LS register during a configuration read, we
-were properly passing the device number, function number and register
-number, but not the bus number, causing issues when reading the
-configuration of PCIe devices.
+Currently it is possible to read and/or write to suspend EB's.
+Writing /dev/mtdX or /dev/mtdblockX from several processes may
+break the flash state machine.
 
-Fixes: 8c39d710363c1 ("PCI: aardvark: Add Aardvark PCI host controller driver")
+Taken from cfi_cmdset_0001 driver.
+
+Signed-off-by: Joakim Tjernlund <joakim.tjernlund@infinera.com>
 Cc: <stable@vger.kernel.org>
-Signed-off-by: Victor Gu <xigu@marvell.com>
-Reviewed-by: Wilson Ding <dingwei@marvell.com>
-Reviewed-by: Nadav Haklai <nadavh@marvell.com>
-[Thomas: tweak commit log.]
-Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Reviewed-by: Richard Weinberger <richard@nod.at>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/host/pci-aardvark.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/mtd/chips/cfi_cmdset_0002.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/drivers/pci/host/pci-aardvark.c
-+++ b/drivers/pci/host/pci-aardvark.c
-@@ -172,8 +172,6 @@
- #define PCIE_CONFIG_WR_TYPE0			0xa
- #define PCIE_CONFIG_WR_TYPE1			0xb
+--- a/drivers/mtd/chips/cfi_cmdset_0002.c
++++ b/drivers/mtd/chips/cfi_cmdset_0002.c
+@@ -816,9 +816,10 @@ static int get_chip(struct map_info *map
+ 		    (mode == FL_WRITING && (cfip->EraseSuspend & 0x2))))
+ 			goto sleep;
  
--/* PCI_BDF shifts 8bit, so we need extra 4bit shift */
--#define PCIE_BDF(dev)				(dev << 4)
- #define PCIE_CONF_BUS(bus)			(((bus) & 0xff) << 20)
- #define PCIE_CONF_DEV(dev)			(((dev) & 0x1f) << 15)
- #define PCIE_CONF_FUNC(fun)			(((fun) & 0x7)	<< 12)
-@@ -456,7 +454,7 @@ static int advk_pcie_rd_conf(struct pci_
- 	advk_writel(pcie, reg, PIO_CTRL);
+-		/* We could check to see if we're trying to access the sector
+-		 * that is currently being erased. However, no user will try
+-		 * anything like that so we just wait for the timeout. */
++		/* Do not allow suspend iff read/write to EB address */
++		if ((adr & chip->in_progress_block_mask) ==
++		    chip->in_progress_block_addr)
++			goto sleep;
  
- 	/* Program the address registers */
--	reg = PCIE_BDF(devfn) | PCIE_CONF_REG(where);
-+	reg = PCIE_CONF_ADDR(bus->number, devfn, where);
- 	advk_writel(pcie, reg, PIO_ADDR_LS);
- 	advk_writel(pcie, 0, PIO_ADDR_MS);
+ 		/* Erase suspend */
+ 		/* It's harmless to issue the Erase-Suspend and Erase-Resume
+@@ -2267,6 +2268,7 @@ static int __xipram do_erase_chip(struct
+ 	chip->state = FL_ERASING;
+ 	chip->erase_suspended = 0;
+ 	chip->in_progress_block_addr = adr;
++	chip->in_progress_block_mask = ~(map->size - 1);
  
+ 	INVALIDATE_CACHE_UDELAY(map, chip,
+ 				adr, map->size,
+@@ -2356,6 +2358,7 @@ static int __xipram do_erase_oneblock(st
+ 	chip->state = FL_ERASING;
+ 	chip->erase_suspended = 0;
+ 	chip->in_progress_block_addr = adr;
++	chip->in_progress_block_mask = ~(len - 1);
+ 
+ 	INVALIDATE_CACHE_UDELAY(map, chip,
+ 				adr, len,
