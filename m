@@ -1,39 +1,38 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqkPiypevEhqEeQc4z5S6EZRRJdRoryWCL/03B1siKf47rjO6fLZtUPp/c82skFk9/dat5g
-ARC-Seal: i=1; a=rsa-sha256; t=1525116499; cv=none;
+X-Google-Smtp-Source: AB8JxZrDAUMxoob2vmhiJ5npOvErZPArvAf+Uh6UHxfpjN6X3OTiOjING1vIoUaXG/h0r6sZOz1p
+ARC-Seal: i=1; a=rsa-sha256; t=1525116497; cv=none;
         d=google.com; s=arc-20160816;
-        b=dGJXqvTbDjGjynBOhTxkFaHkVUMBsuHa8R6rGD98P0V6Z+20qccCfpjAGAvcimXvv5
-         LagyPv9sXb93jFIp+5zBaF1K4JFjxfSgqA3+7DBqHJdoSl5tpzH9bnrdWfToIOkj81iy
-         RkevHimgCggLlRNzlCMM43nURIEtsbK2GIv/NBAGnr5sqrRjj+gOekFIrHx2Diqm5z7s
-         0SxRSIM3LdbE/6uqSLNztwEMsdcxM8I99EzabRdSzTxZ74163ONE8QJvnD4daD3nVzUx
-         5mmEyCvANA3YPbpoF3o2XT+ghbmQj4UBSnudLw71EZ4NhYEFJKLXIK0jRCon7zPLD+u4
-         UtbQ==
+        b=TNMmseFZ0C0KGTjqrEvNv5LqLZWLX8ss3rk41lPkBDrk5zDZhj/Cz0+RrQ+7eTzvH8
+         AiF95wouju7ewNdyW/5cr6gaqaw+xrqEdNj/Zjy8E9CSDf/s3Ht/DYZE17STrAZVzlY5
+         c6wxTyIHSxIiyLJTzyT0W+fNmc/Yjycfq3ovB3VOJ4wygkRsI+23WkzlGHSpxQ6CxkrL
+         yyxJsHeP/1e+lbrS9Guyx+tMn1490oLXxPShQy3m3OwrWW6V/8omcS+KOS+L7iH6nqvR
+         DQXgXMopow18PDA60/5ZgrypAwpYcuYUcbPJyZKeSCKNyg270ABpaJjDYLPmlZ0DJjcS
+         TF+g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=I0ftzbqM5rwnA+aw0VPjuYRH1aziiFbZW6MPaQYilhc=;
-        b=r8jdLX6FbqVhMxUD6szKXLxhaYvzbd6qIJXsY6H4UNF4pt3Or6bCgMVPUfMcWBacif
-         l9BhhuGS6kqyMs7TqnRsSAYwseRLu7mBL9Nc6oRzzYP2nQAO47tPE/HPDnS87JUOqeI0
-         l9pe59V+bHEcGIVawV0Jx+rY/jTEp8OsQ7NtjmyHMZFDbeVzwXzyjAj/n4SQzK8d28W3
-         HT4YHHP70C/Bm9DaqbwOhk/2NlWpMKHGevdzC0TSyA7HlnO4oNPa8hO5qj+0gGbLnNiB
-         Ihhw+IXljMXIoK4P6DYZ7TeQlu0cWgGm5RvNDtClKpNMNCm44IrsisVlItca6JvZxn4P
-         sSDw==
+        bh=UafsftucGLMpLcydjHq/Q0M27cvCip5NOHmE1GjZj/k=;
+        b=rUpLiJeVHPxyuQZ7VyxT9aBEksuexRquAvb0xLBaS3uZEAYZvFZv5DvTalSBCNAiPE
+         8Qf3CQ8J/H6uM8x5VPrvEUd+GgRr0XjVV9GO/RN1fYYCmXMYaJ1YiI5Aff1FGOAMiXka
+         0VSXVdfGNDpXBVe36ALO5mAvS+xvozyRTBFAGK2nlZGhqXRktxqQuDyrUYn+Q+MHVLvl
+         WSsL1QGCT0BTlWmlKFN7QrcUh48yKue0GcnmPtJuDJ0CDBEXtiDEE5mGJE1ecXWOMSBV
+         EoFEOkckHb23VaGqSPYFv3j1ED/33jRuZQrNixSnnli/LGtHgMvK4+KJ5z4L362G8oeZ
+         L1Rg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00D1A22E71
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EB5A22DC1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Kailang Yang <kailang@realtek.com>,
 	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.16 052/113] ALSA: hda/realtek - Update ALC255 depop optimize
-Date: Mon, 30 Apr 2018 12:24:23 -0700
-Message-Id: <20180430184017.263092867@linuxfoundation.org>
+Subject: [PATCH 4.16 048/113] ALSA: seq: oss: Fix unbalanced use lock for synth MIDI device
+Date: Mon, 30 Apr 2018 12:24:19 -0700
+Message-Id: <20180430184017.086433596@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184015.043892819@linuxfoundation.org>
 References: <20180430184015.043892819@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200496509330414?=
-X-GMAIL-MSGID: =?utf-8?q?1599200559004942148?=
+X-GMAIL-THRID: =?utf-8?q?1599200282251951106?=
+X-GMAIL-MSGID: =?utf-8?q?1599200555883603569?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,30 +51,44 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kailang Yang <kailang@realtek.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit ab3b8e5159b5335c81ba2d09ee5054d4a1b5a7a6 upstream.
+commit f5e94b4c6ebdabe0f602d796e0430180927521a0 upstream.
 
-Add ALC255 its own depop functions for alc_init and alc_shutup.
-Assign it to ALC256 usage.
+When get_synthdev() is called for a MIDI device, it returns the fixed
+midi_synth_dev without the use refcounting.  OTOH, the caller is
+supposed to unreference unconditionally after the usage, so this would
+lead to unbalanced refcount.
 
-Signed-off-by: Kailang Yang <kailang@realtek.com>
+This patch corrects the behavior and keep up the refcount balance also
+for the MIDI synth device.
+
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |    2 ++
- 1 file changed, 2 insertions(+)
+ sound/core/seq/oss/seq_oss_synth.c |   12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -7164,6 +7164,8 @@ static int patch_alc269(struct hda_codec
- 	case 0x10ec0235:
- 	case 0x10ec0255:
- 		spec->codec_variant = ALC269_TYPE_ALC255;
-+		spec->shutup = alc256_shutup;
-+		spec->init_hook = alc256_init;
- 		break;
- 	case 0x10ec0236:
- 	case 0x10ec0256:
+--- a/sound/core/seq/oss/seq_oss_synth.c
++++ b/sound/core/seq/oss/seq_oss_synth.c
+@@ -363,10 +363,14 @@ get_synthdev(struct seq_oss_devinfo *dp,
+ 		return NULL;
+ 	if (! dp->synths[dev].opened)
+ 		return NULL;
+-	if (dp->synths[dev].is_midi)
+-		return &midi_synth_dev;
+-	if ((rec = get_sdev(dev)) == NULL)
+-		return NULL;
++	if (dp->synths[dev].is_midi) {
++		rec = &midi_synth_dev;
++		snd_use_lock_use(&rec->use_lock);
++	} else {
++		rec = get_sdev(dev);
++		if (!rec)
++			return NULL;
++	}
+ 	if (! rec->opened) {
+ 		snd_use_lock_free(&rec->use_lock);
+ 		return NULL;
