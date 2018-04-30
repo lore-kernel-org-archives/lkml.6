@@ -1,28 +1,28 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZoVHJ3RwrhU+z0CytW/sdrshmRiRCXjAoO2zx5VaqsYqfFIP/7rZx3BP/kB2Brxpv9pSMVH
-ARC-Seal: i=1; a=rsa-sha256; t=1525116359; cv=none;
+X-Google-Smtp-Source: AB8JxZokddCBJKuANKrZcIeppCYmNGbE21ZJLEX9VWQr00JkHC60Z4Fm8u5K9Vx+j0oqTkcHHms/
+ARC-Seal: i=1; a=rsa-sha256; t=1525116358; cv=none;
         d=google.com; s=arc-20160816;
-        b=Bm9P/RgMbr16LcTCnRKrLz/QZX828LtMdB0Q2r+RSVoZKYhxlY0gSMAxvvBi3bM+O3
-         j6HihQVIF1ncmY26WCNXEAwxdtSo4Zlkvh/ruSY9inYDy+jmHnbrwjc9cDnl09NkWkMY
-         TN2MuS14Lcxinur63BINQxnf4fT+AKqs1160tbZ0lEVufaN7xyVixp1hmMIRkIw/zLu7
-         wKLUNaeV8ptGKuYjaghbHeL517t7DguU3GgPPR26cjLOTliBo+JKxy8vX9nbpdtUqTMC
-         M/WRZh9FB3ex5yBlNYoT2bsYqWYFkK6jyhoMw55gOqKsO+pknE3IibGr0yyJS2jyj33v
-         W7Iw==
+        b=OfIXP81aykanY+WMpTmxSvRAuf3+nIKVmIEmaRQDgmUzw0mqYL5UYS9CcU995c9Hhb
+         f3aDIHFMnULmZvjXUfWFCt2XsaiBxgIA11X/BNiIixFW+q74Q250+iNS8/c5CjrBRjOS
+         M0eK/MkOlcv320Ke5/xTfV0HNg/BffddTVFD/EJGGLQMRkfYGdk36xzZVI1fz1g4p4Fx
+         H7ARhNOMfBAhCwQntzUSbUiBqB1uDezqgKb6kLuP6MDy6vY06CrO0N3fYkbfTaFr0/5f
+         WnOFD+uRQ4kJ3StwV4XdDiHrl1wgJz+4FpcYkyeAgUX0+hCA8ianDC1PDku6XcfvpQEA
+         MpYA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=S1zVaw6304OtohHbt+gukv8FhinktR9kS0sS6AW+XUM=;
-        b=x56ZgiNEaHUs/GVHIQmMNxBP7B2ZTe2du4jRbrCZkkS174Hw6D2M32FGTYjOgpG0qT
-         cC4WEEHkLl57yVmAAiadFGsFW71+C2Gxab+b/Qj7N8EXup+mfz2ft/8mI+yFhLLB2ptB
-         NVjSmeAPFhlc9bRAjrzuYkqz21PMCJj8600rQGwKDhlKEO+NTWWdm7tF3qMtwSsTMVJW
-         G8wgTYvdR5CKerGyHWLrB/aU3hRYphRfKtXM7zuQXQNiLRNZQiXaXQW+0US1H3og2Xqt
-         nscHOoUZTNAQos+zKajlqFabIVDYaPzsVnrGIiUrsmNC6Mv+epJqTCp5Req9i9S8tv59
-         KjHQ==
+        bh=dYnElPwRF7pLq9y0HWXF7oVDqxX5xbICgyhXmAvvXjM=;
+        b=CXKgjjOAg16rn6AV2IN8oUfIJQUrfJFhdKOVHBJlajg9Jp2SPOe9iL0WWsXYHli/tg
+         uFdMN+12ND2oSXCg/j9Q2lG/apQJYcb5zv7MAqHUiDxSd1hk48RIY593qlZojVfW+0gu
+         UHnhSYAEo1su2CDMeqrjWsqsssv06vYs7PpI76rRzz9+m+I9cOe98JlhSWFLLwFebQBj
+         RnATyClwQ55W4nAOOlKwnBhFzRxG2N4zbemE2q3Bz0ZVD9VI+834CnDILDKPjFw7CDMd
+         76NWc3DWLuSX00VvMXHVEYx9SmxQJ1aNBAP2T318e+m1KUNS6Qgel0yPPVCocZvpXfOT
+         TcDg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB1D122DC1
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 223F622DC0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
@@ -32,9 +32,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Joakim Tjernlund <joakim.tjernlund@infinera.com>,
 	Richard Weinberger <richard@nod.at>,
 	Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: [PATCH 4.4 31/44] mtd: cfi: cmdset_0001: Workaround Micron Erase suspend bug.
-Date: Mon, 30 Apr 2018 12:24:42 -0700
-Message-Id: <20180430190947.576190091@linuxfoundation.org>
+Subject: [PATCH 4.4 30/44] mtd: cfi: cmdset_0001: Do not allow read/write to suspend erase block.
+Date: Mon, 30 Apr 2018 12:24:41 -0700
+Message-Id: <20180430190947.537410858@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430190946.093694747@linuxfoundation.org>
 References: <20180430190946.093694747@linuxfoundation.org>
@@ -44,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200283537847620?=
-X-GMAIL-MSGID: =?utf-8?q?1599200411479087189?=
+X-GMAIL-THRID: =?utf-8?q?1599200282823323540?=
+X-GMAIL-MSGID: =?utf-8?q?1599200410963837585?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,11 +55,11 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Joakim Tjernlund <joakim.tjernlund@transmode.se>
 
-commit 46a16a2283f9e678a4e26829175e0c37a5191860 upstream.
+commit 6510bbc88e3258631831ade49033537081950605 upstream.
 
-Some Micron chips does not work well wrt Erase suspend for
-boot blocks. This avoids the issue by not allowing Erase suspend
-for the boot blocks for the 28F00AP30(1GBit) chip.
+Currently it is possible to read and/or write to suspend EB's.
+Writing /dev/mtdX or /dev/mtdblockX from several processes may
+break the flash state machine.
 
 Signed-off-by: Joakim Tjernlund <joakim.tjernlund@infinera.com>
 Cc: <stable@vger.kernel.org>
@@ -68,46 +68,68 @@ Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mtd/chips/cfi_cmdset_0001.c |   17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ drivers/mtd/chips/cfi_cmdset_0001.c |   16 +++++++++++-----
+ include/linux/mtd/flashchip.h       |    1 +
+ 2 files changed, 12 insertions(+), 5 deletions(-)
 
 --- a/drivers/mtd/chips/cfi_cmdset_0001.c
 +++ b/drivers/mtd/chips/cfi_cmdset_0001.c
-@@ -45,6 +45,7 @@
- #define I82802AB	0x00ad
- #define I82802AC	0x00ac
- #define PF38F4476	0x881c
-+#define M28F00AP30	0x8963
- /* STMicroelectronics chips */
- #define M50LPW080       0x002F
- #define M50FLW080A	0x0080
-@@ -375,6 +376,17 @@ static void cfi_fixup_major_minor(struct
- 		extp->MinorVersion = '1';
- }
- 
-+static int cfi_is_micron_28F00AP30(struct cfi_private *cfi, struct flchip *chip)
-+{
-+	/*
-+	 * Micron(was Numonyx) 1Gbit bottom boot are buggy w.r.t
-+	 * Erase Supend for their small Erase Blocks(0x8000)
-+	 */
-+	if (cfi->mfr == CFI_MFR_INTEL && cfi->id == M28F00AP30)
-+		return 1;
-+	return 0;
-+}
-+
- static inline struct cfi_pri_intelext *
- read_pri_intelext(struct map_info *map, __u16 adr)
- {
-@@ -830,6 +842,11 @@ static int chip_ready (struct map_info *
- 		    chip->in_progress_block_addr)
+@@ -825,21 +825,25 @@ static int chip_ready (struct map_info *
+ 		     (mode == FL_WRITING && (cfip->SuspendCmdSupport & 1))))
  			goto sleep;
  
-+		/* do not suspend small EBs, buggy Micron Chips */
-+		if (cfi_is_micron_28F00AP30(cfi, chip) &&
-+		    (chip->in_progress_block_mask == ~(0x8000-1)))
++		/* Do not allow suspend iff read/write to EB address */
++		if ((adr & chip->in_progress_block_mask) ==
++		    chip->in_progress_block_addr)
 +			goto sleep;
-+
- 		/* Erase suspend */
- 		map_write(map, CMD(0xB0), chip->in_progress_block_addr);
  
+ 		/* Erase suspend */
+-		map_write(map, CMD(0xB0), adr);
++		map_write(map, CMD(0xB0), chip->in_progress_block_addr);
+ 
+ 		/* If the flash has finished erasing, then 'erase suspend'
+ 		 * appears to make some (28F320) flash devices switch to
+ 		 * 'read' mode.  Make sure that we switch to 'read status'
+ 		 * mode so we get the right data. --rmk
+ 		 */
+-		map_write(map, CMD(0x70), adr);
++		map_write(map, CMD(0x70), chip->in_progress_block_addr);
+ 		chip->oldstate = FL_ERASING;
+ 		chip->state = FL_ERASE_SUSPENDING;
+ 		chip->erase_suspended = 1;
+ 		for (;;) {
+-			status = map_read(map, adr);
++			status = map_read(map, chip->in_progress_block_addr);
+ 			if (map_word_andequal(map, status, status_OK, status_OK))
+ 			        break;
+ 
+@@ -1035,8 +1039,8 @@ static void put_chip(struct map_info *ma
+ 		   sending the 0x70 (Read Status) command to an erasing
+ 		   chip and expecting it to be ignored, that's what we
+ 		   do. */
+-		map_write(map, CMD(0xd0), adr);
+-		map_write(map, CMD(0x70), adr);
++		map_write(map, CMD(0xd0), chip->in_progress_block_addr);
++		map_write(map, CMD(0x70), chip->in_progress_block_addr);
+ 		chip->oldstate = FL_READY;
+ 		chip->state = FL_ERASING;
+ 		break;
+@@ -1927,6 +1931,8 @@ static int __xipram do_erase_oneblock(st
+ 	map_write(map, CMD(0xD0), adr);
+ 	chip->state = FL_ERASING;
+ 	chip->erase_suspended = 0;
++	chip->in_progress_block_addr = adr;
++	chip->in_progress_block_mask = ~(len - 1);
+ 
+ 	ret = INVAL_CACHE_AND_WAIT(map, chip, adr,
+ 				   adr, len,
+--- a/include/linux/mtd/flashchip.h
++++ b/include/linux/mtd/flashchip.h
+@@ -85,6 +85,7 @@ struct flchip {
+ 	unsigned int write_suspended:1;
+ 	unsigned int erase_suspended:1;
+ 	unsigned long in_progress_block_addr;
++	unsigned long in_progress_block_mask;
+ 
+ 	struct mutex mutex;
+ 	wait_queue_head_t wq; /* Wait on here when we're waiting for the chip
