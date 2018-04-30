@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751049AbeD3EOy (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 00:14:54 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:23096 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750780AbeD3EOw (ORCPT
+        id S1751023AbeD3EUc (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 00:20:32 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:44727 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750743AbeD3EUb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 00:14:52 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20180430041450epoutp02adfe7e691db3168c9b862aab1a10b4da~qG4b9Zom32358223582epoutp02S
-X-AuditID: b6c32a37-511ff70000001030-44-5ae69839f258
+        Mon, 30 Apr 2018 00:20:31 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20180430042029epoutp04fcbfb62df39651249d5c7586ca06bcf8~qG9XhCIIQ0285402854epoutp04H
+X-AuditID: b6c32a48-c31ff70000000fef-ec-5ae6998ce2ae
 From: CHANDAN VN <chandan.vn@samsung.com>
 To: catalin.marinas@arm.com, will.deacon@arm.com,
         takahiro.akashi@linaro.org, james.morse@arm.com, robin.murphy@arm.com,
@@ -17,43 +17,46 @@ To: catalin.marinas@arm.com, will.deacon@arm.com,
 Cc: cpgs@samsung.com, chandan.vn@samsung.com, vn.chandan@gmail.com
 Subject: [PATCHv2 1/1] arm64: To remove initrd reserved area entry from
  memblock
-Date: Mon, 30 Apr 2018 09:43:45 +0530
-Message-id: <1525061625-7940-1-git-send-email-chandan.vn@samsung.com>
+Date: Mon, 30 Apr 2018 09:50:18 +0530
+Message-id: <1525062018-8065-1-git-send-email-chandan.vn@samsung.com>
 X-Mailer: git-send-email 1.9.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrPKsWRmVeSWpSXmKPExsWy7bCmrq7ljGdRBiePcFq8X9bDaDHhS4TF
+In-reply-to: <1522990390-30804-1-git-send-email-chandan.vn@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDKsWRmVeSWpSXmKPExsWy7bCmuW7PzGdRBgs3ilm8X9bDaDHhS4TF
         y0OaFvf3LWeyuH+8jdVi5Z4fTBabHl9jtbi8aw6bxcEPT1gtJr3ZxmTxZ/9PFovXty+wW7z8
         eILFgddjzbw1jB47Z91l97hzbQ+bx+Yl9R7v911l8+jbsorR4/MmuQD2qFSbjNTElNQihdS8
         5PyUzLx0WyXv4HjneFMzA0NdQ0sLcyWFvMTcVFslF58AXbfMHKBblRTKEnNKgUIBicXFSvp2
         NkX5pSWpChn5xSW2StGGhkZ6hgbmekZGRnomprFWRqZAJQmpGT9W6xWs5aiYsX0NSwPjR7Yu
-        Rk4OCQETic6bXSxdjFwcQgI7GCVOvu5jgnC+M0qs3HsXrurAtsPsEIndjBItj6ayQji/GSUO
-        rl/EBFLFJqApcWLeNLAqEYF2JomrxzuBEhwczAJOEtev+4PUCAsESZw/95UFxGYRUJW4Pf0s
-        2AZeAVeJh8cOMUJsk5M4eWwy2AIJgRVsEouPfGOFSLhI3Hi8hx3CFpZ4dXwLO8h8CQFpiUtH
-        bSHC9RLrL19mgejtYJT42XQZ6gV7iRmLtzKD2MwCfBLvvvawQvTySnS0CUGYHhIvXtRBVDtK
-        rLp0AmyrkECsxKK1HUwTGCUXMDKsYhRLLSjOTU8tNiww1itOzC0uzUvXS87P3cQITjxa5jsY
-        N5zzOcQowMGoxMO7wfpZlBBrYllxZe4hRgkOZiUR3pUdQCHelMTKqtSi/Pii0pzU4kOMpsDQ
-        mMgsJZqcD0yKeSXxhiaWBiZmRsYmFoZmhkrivE99zkQJCaQnlqRmp6YWpBbB9DFxcEo1MM56
-        NEtvu+C9Qpn2Rw5PpsTPuLcv4LXyDgNbnTOLdmd9rQ0Lu3kg2ZQr+pKUWKPFRTUbk+l8Zdfl
-        wkV/8ttMundyztMfX3mPHCjkm7hatV+BfVXeiwMRLIqnIufcOTF3WtfKuPaYhQpXAmINAzxV
-        Mpo2TpKu8ftUHLa1ctfr9Tw2dfE6EStd9yuxFGckGmoxFxUnAgCRMDfVUgMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBLMWRmVeSWpSXmKPExsVy+t9jAV2LGc+iDK49NbB4v6yH0WLClwiL
+        Rk4OCQETiafN/5i6GLk4hAR2MEp82feZBcL5zijRtbmFFabqV/NkNojEBkaJRdc+MUI4vxkl
+        Jn87CTaLTUBT4sS8aewgCRGBdiaJq8c7gQZzcDALOElcv+4PUiMsECRx/txXFhCbRUBVYv6Z
+        GWwgJbwCrhJvHilCLJOTOHlsMthiTgF3iccP+9kh4gfYJFb+MYewXSS23P0AdZywxKvjW6Bq
+        pCWerdrICGHXS6y/fBnsGwmBDkaJn02XoX62l5ixeCsziM0swCfRcfgvO8gNEgK8Eh1tQhAl
+        HhK97+dBlTtKXNv3ih3i31mMEpcmzWKcwCi1gJFhFaNYakFxbnpqsVGBiV5xYm5xaV66XnJ+
+        7iZGcErS8tjBeOCczyFGAQ5GJR7eDdbPooRYE8uKK3MPMUpwMCuJ8K7sAArxpiRWVqUW5ccX
+        leakFh9iNAUGzURmKdHkfGC6zCuJNzSxNDAxMzMxMDe1MFYS523wPRMlJJCeWJKanZpakFoE
+        08fEwSnVwMiT85ypRXq7B0PuakdxxzffpG8eXufkbXDBzUXB5Owu/znfDX+LXbzE/07/9C8v
+        jquBK1ZLeM3U/cXc8l+dfxmfo+DUn3VT0kREdpf/O/Sh63fWllufYp4zv3/CNdv+hMeS4/++
+        7PN+veZJ3TOueMbyae9W3ju/qGr9li05D841nVF2bzha8qFFiaU4I9FQi7moOBEAWS9pHl8D
+        AAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHLMWRmVeSWpSXmKPExsVy+t9jQd3umc+iDD6esrF4v6yH0WLClwiL
         l4c0Le7vW85kcf94G6vFyj0/mCw2Pb7GanF51xw2i4MfnrBaTHqzjcniz/6fLBavb19gt3j5
         8QSLA6/HmnlrGD12zrrL7nHn2h42j81L6j3e77vK5tG3ZRWjx+dNcgHsUVw2Kak5mWWpRfp2
-        CVwZP1brFazlqJixfQ1LA+NHti5GTg4JAROJA9sOs3cxcnEICexklDjTvJcVwvnNKLGh6TUz
-        SBWbgKbEiXnTwKpEBNqZJJoXfgBKcHAwCzhJXL/uD1IjLBAg8e/eI7CpLAKqErennwWzeQVc
-        JR4eO8QIsU1O4uSxyawTGLkWMDKsYpRMLSjOTc8tNiowzEst1ytOzC0uzUvXS87P3cQIDK9t
-        h7X6djDeXxJ/iFGAg1GJh3eD9bMoIdbEsuLK3EOMEhzMSiK8KzuAQrwpiZVVqUX58UWlOanF
-        hxilOViUxHlv5x2LFBJITyxJzU5NLUgtgskycXBKNTAGnEuRr6o9a7dRaEfCF6F7vk1Txbhe
-        roxlflIUs6FyxZWbG6OVhPeZbPoZrvd7dpNrisnmxAcTl+evFVlRG8X+aP5n8YuMDpyC55Js
-        pC62CHf8WJjwfmfdaj29WDYNjp03asIm1blnX2s9sTA592UAk/Ju+dqWfe+aS3Tv8XgeNNI+
-        XXOKqUiJpTgj0VCLuag4EQA1Lh8SKwIAAA==
-X-CMS-MailID: 20180430041448epcas1p228a727858328da77c67c01c25802b86d
+        CVwZP1brFazlqJixfQ1LA+NHti5GTg4JAROJX82TgWwuDiGBdYwSLdtvsIMkhAR+M0q8XpMP
+        YrMJaEqcmDeNHaRIRKCdSaJ54QfmLkYODmYBJ4nr1/1BaoQFAiT+3XsENpRFQFVi/pkZbCAl
+        vAKuEm8eKULskpM4eWwyK4jNKeAu8fhhP9QqN4mfv1axTWDkWcDIsIpRMrWgODc9t9iowCgv
+        tVyvODG3uDQvXS85P3cTIzAUtx3W6t/B+HhJ/CFGAQ5GJR7eDdbPooRYE8uKK3MPMUpwMCuJ
+        8K7sAArxpiRWVqUW5ccXleakFh9ilOZgURLn5c8/FikkkJ5YkpqdmlqQWgSTZeLglGpgdNbf
+        uXWFqKvH9PknJr9MPVEgpj6zcuUWE49NS1a2pmrWH7h7LSVCMOl8QUjWmf/Mtz8c33+8Me/1
+        VtOmyWd23yuu3FihPNlZb//HUP2PpRWuuzn4Kv9O/cnNX/5z6XaeGwab5909bDZhyTKnJsOc
+        7RLu2tbrlJfzaP5yTf92UXti9Mbajy8Z5JVYijMSDbWYi4oTAchcHBlBAgAA
+X-CMS-MailID: 20180430042028epcas2p24418c10ebe7b2c656cdfc31e98ed540b
 X-Msg-Generator: CA
-CMS-TYPE: 101P
+CMS-TYPE: 102P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180430041448epcas1p228a727858328da77c67c01c25802b86d
-X-RootMTR: 20180430041448epcas1p228a727858328da77c67c01c25802b86d
-References: <CGME20180430041448epcas1p228a727858328da77c67c01c25802b86d@epcas1p2.samsung.com>
+X-CMS-RootMailID: 20180430042028epcas2p24418c10ebe7b2c656cdfc31e98ed540b
+X-RootMTR: 20180430042028epcas2p24418c10ebe7b2c656cdfc31e98ed540b
+References: <1522990390-30804-1-git-send-email-chandan.vn@samsung.com>
+        <CGME20180430042028epcas2p24418c10ebe7b2c656cdfc31e98ed540b@epcas2p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
