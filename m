@@ -1,39 +1,39 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZq871Xny68hTeycU+O2eQ7XonnuFiqVuniQ8qZkhvz1EmO3DvFTTiQwPnD1lvGtrdfcUVYY
-ARC-Seal: i=1; a=rsa-sha256; t=1525116495; cv=none;
+X-Google-Smtp-Source: AB8JxZrEwbGN0QiajvfZyK/cLh1lHOVqKQ0spocpDqI5lnaG6W0ZnSwTPtz4fbY23KFM5QUA0F3P
+ARC-Seal: i=1; a=rsa-sha256; t=1525116477; cv=none;
         d=google.com; s=arc-20160816;
-        b=dAEVa/H+qns/d2EywBGcwz1F+hXGcMyb6X4tp9ZjEgJOqLK+fzAO9rX6RJQDxLv62y
-         yf2+DwdwHomyayEHMkM/e4zEt1osEIabY1pFx0nE7fA/hjCwXw8jK3sAw9nmy5PyVWZA
-         fOKlGma4/TZRmQA4GtbZlYzyNz0c0p2lpIWePaHHa6FIHcKhnYsPZi8XESVDppFGpMuG
-         Vx4rdvYPm1Ef7CfF1bhexdrgP2mQ17Dpvp3phSP+XqW5Xmb0tkJT3NQygbfKYuBnS8dP
-         295lNxbvTCl3ujwkp+3TBT/ZmS9WEGyOo3HYPmaRiqQACzKhnZddzGJ4ZNuR/FH8gKi2
-         Z4kA==
+        b=witSvomf2XzlfihocHGEDH4sLNk/dNo0Wb3D9UsUnraeqX2lAqgLwu8wOnbOpc+y1T
+         YKf8h5xyYS0W4orzMoY5TphnWZU5F68c/uyjVLD3I2FMSG3jVa6wxwkYRrrLhqGhVvw3
+         xYDLmdmwbV9Wa7cD4C1NzGgtz0PwgBl/KSQuuCpE/nfLq4daDPw8AaPxA0M3zFXULSed
+         mEHgeD6gUAjq16DlIlP9s3UXOlR5VG8FTpw7oNukNesTXLBsJAmwULcEGE3RFwEXJxzV
+         qHvRIae+43QgEz8OgbtpQNh4s4wVH4k/ygVQKA6aPnib4AWo2l0Bbf70gOt6nr9nprSK
+         dOWA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=EEORpjBbA404ctVRJ/0C0YgG5deoIM3OCXU0ixSeQu0=;
-        b=fjlSwf7ReI8Xnv7c9GNLXEA8wV4OgOH0O9XDIc3g+lAGbO7oTv/C1TePUruqtheRh1
-         g8uDGmtVOf+UvlPh3Dz2IFyWyPj+MYbKmlY8x3RLh8vON8wYncSQRF21fflqpPpg1ZsS
-         mmLDOfMHlVnlyeXhiKa/uBBEo2An8jU/DIB+QlGam+lOcOfQ/U34TD3xN3dTbO54Hw4s
-         0+/Gwfof9CHyLLiR/x/7VW4B7EbKZ8d26s0gdQvK4YEkcN1Xc/YTyU1TBDQ/lajyfvYh
-         qEtXVUpTHdRRdDoqnSiAP5CTsHS7KcWFmepcCAHOv/p8s0IFJD2gDRsl5A9sbj5pk5C8
-         pQuQ==
+        bh=CV+7V1dPUUrAyYhIQfdTovQDop0dybELtIZmCv8Et8E=;
+        b=OeovKczntBVU+WtBEF+JgNERxj3Rtoy2A/W3Gi1Y2WyeW8TbpcvHiE3p3DUsx+o/WB
+         Ad+m4P3QzgdT5n7/d97KYgWqFiLYiopJoSHjDHGl448dcobk+QLpEfti48YjICwKVoBL
+         GDAUKMyHPNhElI6coBKaIGwgqR0lfUacwn5Owah5pvTaT7vgbLlYFPgD3TB/bG+8POtJ
+         OoOMH7r3CW82Mb3OkxlDFvsRHyYV2FrUBWQXKnDH9T58wn/u0Z92lJUFmHU3GIrbIONp
+         7I/Ay0o9JKG6tDaC6iMKxOZsOPRFze+4X88vyeG/9xuK+tNz35SzlQpqEQGQ508LMf+x
+         kUlw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55AC622E02
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A211622DCC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jeffery Miller <jmiller@neverware.com>,
-	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.16 046/113] ALSA: pcm: Return negative delays from SNDRV_PCM_IOCTL_DELAY.
-Date: Mon, 30 Apr 2018 12:24:17 -0700
-Message-Id: <20180430184016.993790918@linuxfoundation.org>
+	Collin May <collin@collinswebsite.com>,
+	Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.16 016/113] USB: serial: simple: add libtransistor console
+Date: Mon, 30 Apr 2018 12:23:47 -0700
+Message-Id: <20180430184015.766207178@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184015.043892819@linuxfoundation.org>
 References: <20180430184015.043892819@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200491876239874?=
-X-GMAIL-MSGID: =?utf-8?q?1599200554729189740?=
+X-GMAIL-THRID: =?utf-8?q?1599200404256407404?=
+X-GMAIL-MSGID: =?utf-8?q?1599200535200919107?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,99 +52,61 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jeffery Miller <jmiller@neverware.com>
+From: Collin May <collin@collinswebsite.com>
 
-commit 912e4c332037e7ed063c164985c36fb2b549ea3a upstream.
+commit fe710508b6ba9d28730f3021fed70e7043433b2e upstream.
 
-The commit c2c86a97175f ("ALSA: pcm: Remove set_fs() in PCM core code")
-changed SNDRV_PCM_IOCTL_DELAY to return an inconsistent error instead of a
-negative delay.  Originally the call would succeed and return the negative
-delay.  The Chromium OS Audio Server (CRAS) gets confused and hangs when
-the error is returned instead of the negative delay.
+Add simple driver for libtransistor USB console.
+This device is implemented in software:
+https://github.com/reswitched/libtransistor/blob/development/lib/usb_serial.c
 
-Help CRAS avoid the issue by rolling back the behavior to return a
-negative delay instead of an error.
-
-Fixes: c2c86a97175f ("ALSA: pcm: Remove set_fs() in PCM core code")
-Signed-off-by: Jeffery Miller <jmiller@neverware.com>
-Cc: <stable@vger.kernel.org> # v4.13+
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Collin May <collin@collinswebsite.com>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/core/pcm_compat.c |    7 ++++---
- sound/core/pcm_native.c |   23 +++++++++++------------
- 2 files changed, 15 insertions(+), 15 deletions(-)
+ drivers/usb/serial/Kconfig             |    1 +
+ drivers/usb/serial/usb-serial-simple.c |    7 +++++++
+ 2 files changed, 8 insertions(+)
 
---- a/sound/core/pcm_compat.c
-+++ b/sound/core/pcm_compat.c
-@@ -27,10 +27,11 @@ static int snd_pcm_ioctl_delay_compat(st
- 				      s32 __user *src)
- {
- 	snd_pcm_sframes_t delay;
-+	int err;
+--- a/drivers/usb/serial/Kconfig
++++ b/drivers/usb/serial/Kconfig
+@@ -62,6 +62,7 @@ config USB_SERIAL_SIMPLE
+ 		- Fundamental Software dongle.
+ 		- Google USB serial devices
+ 		- HP4x calculators
++		- Libtransistor USB console
+ 		- a number of Motorola phones
+ 		- Motorola Tetra devices
+ 		- Novatel Wireless GPS receivers
+--- a/drivers/usb/serial/usb-serial-simple.c
++++ b/drivers/usb/serial/usb-serial-simple.c
+@@ -63,6 +63,11 @@ DEVICE(flashloader, FLASHLOADER_IDS);
+ 					0x01) }
+ DEVICE(google, GOOGLE_IDS);
  
--	delay = snd_pcm_delay(substream);
--	if (delay < 0)
--		return delay;
-+	err = snd_pcm_delay(substream, &delay);
-+	if (err)
-+		return err;
- 	if (put_user(delay, src))
- 		return -EFAULT;
- 	return 0;
---- a/sound/core/pcm_native.c
-+++ b/sound/core/pcm_native.c
-@@ -2687,7 +2687,8 @@ static int snd_pcm_hwsync(struct snd_pcm
- 	return err;
- }
- 		
--static snd_pcm_sframes_t snd_pcm_delay(struct snd_pcm_substream *substream)
-+static int snd_pcm_delay(struct snd_pcm_substream *substream,
-+			 snd_pcm_sframes_t *delay)
- {
- 	struct snd_pcm_runtime *runtime = substream->runtime;
- 	int err;
-@@ -2703,7 +2704,9 @@ static snd_pcm_sframes_t snd_pcm_delay(s
- 		n += runtime->delay;
- 	}
- 	snd_pcm_stream_unlock_irq(substream);
--	return err < 0 ? err : n;
-+	if (!err)
-+		*delay = n;
-+	return err;
- }
- 		
- static int snd_pcm_sync_ptr(struct snd_pcm_substream *substream,
-@@ -2911,11 +2914,13 @@ static int snd_pcm_common_ioctl(struct f
- 		return snd_pcm_hwsync(substream);
- 	case SNDRV_PCM_IOCTL_DELAY:
- 	{
--		snd_pcm_sframes_t delay = snd_pcm_delay(substream);
-+		snd_pcm_sframes_t delay;
- 		snd_pcm_sframes_t __user *res = arg;
-+		int err;
- 
--		if (delay < 0)
--			return delay;
-+		err = snd_pcm_delay(substream, &delay);
-+		if (err)
-+			return err;
- 		if (put_user(delay, res))
- 			return -EFAULT;
- 		return 0;
-@@ -3003,13 +3008,7 @@ int snd_pcm_kernel_ioctl(struct snd_pcm_
- 	case SNDRV_PCM_IOCTL_DROP:
- 		return snd_pcm_drop(substream);
- 	case SNDRV_PCM_IOCTL_DELAY:
--	{
--		result = snd_pcm_delay(substream);
--		if (result < 0)
--			return result;
--		*frames = result;
--		return 0;
--	}
-+		return snd_pcm_delay(substream, frames);
- 	default:
- 		return -EINVAL;
- 	}
++/* Libtransistor USB console */
++#define LIBTRANSISTOR_IDS()			\
++	{ USB_DEVICE(0x1209, 0x8b00) }
++DEVICE(libtransistor, LIBTRANSISTOR_IDS);
++
+ /* ViVOpay USB Serial Driver */
+ #define VIVOPAY_IDS()			\
+ 	{ USB_DEVICE(0x1d5f, 0x1004) }	/* ViVOpay 8800 */
+@@ -110,6 +115,7 @@ static struct usb_serial_driver * const
+ 	&funsoft_device,
+ 	&flashloader_device,
+ 	&google_device,
++	&libtransistor_device,
+ 	&vivopay_device,
+ 	&moto_modem_device,
+ 	&motorola_tetra_device,
+@@ -126,6 +132,7 @@ static const struct usb_device_id id_tab
+ 	FUNSOFT_IDS(),
+ 	FLASHLOADER_IDS(),
+ 	GOOGLE_IDS(),
++	LIBTRANSISTOR_IDS(),
+ 	VIVOPAY_IDS(),
+ 	MOTO_IDS(),
+ 	MOTOROLA_TETRA_IDS(),
