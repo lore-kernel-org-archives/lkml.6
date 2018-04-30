@@ -1,75 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754848AbeD3SkL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 14:40:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47710 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753608AbeD3SkJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 14:40:09 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE55B21746
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Mon, 30 Apr 2018 13:40:07 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 3/6] PCI: Introduce devm_of_pci_get_host_bridge_resources
-Message-ID: <20180430184007.GC95643@bhelgaas-glaptop.roam.corp.google.com>
-References: <cover.1524582822.git.jan.kiszka@siemens.com>
- <e387d04ea235c9a4879a897bb730adc383a96635.1524582822.git.jan.kiszka@siemens.com>
- <20180427222427.GB73638@bhelgaas-glaptop.roam.corp.google.com>
- <869a8ad9-dd2f-8462-c0c4-2d8a62d74185@siemens.com>
+        id S1754610AbeD3Skp (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 14:40:45 -0400
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:37449 "EHLO
+        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752255AbeD3Sko (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 14:40:44 -0400
+X-Google-Smtp-Source: AB8JxZoudAuybLjYifMlEmsMOFJIkuTiFoxIfPVa2+WZ+tr+PXbHJCkGO2d2tNk9BxlrxJ9QqSsXOH8ZDXBEivRduqc=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <869a8ad9-dd2f-8462-c0c4-2d8a62d74185@siemens.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <e87810b2-db26-ee13-731a-cde53185e977@redhat.com>
+References: <1525103946-29526-1-git-send-email-jhugo@codeaurora.org> <e87810b2-db26-ee13-731a-cde53185e977@redhat.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Mon, 30 Apr 2018 11:40:42 -0700
+X-Google-Sender-Auth: a0E9yUOmft--KMTEz5wOskoYXTU
+Message-ID: <CAGXu5jJFjH4hiRqovOtaMOuKUQbGYWjBiGGDV-bjWSmTvZp9Pw@mail.gmail.com>
+Subject: Re: [PATCH v3] init: Fix false positives in W+X checking
+To: Laura Abbott <labbott@redhat.com>
+Cc: Jeffrey Hugo <jhugo@codeaurora.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jan Glauber <jan.glauber@caviumnetworks.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Timur Tabi <timur@codeaurora.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Apr 28, 2018 at 09:28:47AM +0200, Jan Kiszka wrote:
-> On 2018-04-28 00:24, Bjorn Helgaas wrote:
-> > On Tue, Apr 24, 2018 at 05:13:39PM +0200, Jan Kiszka wrote:
-> >> From: Jan Kiszka <jan.kiszka@siemens.com>
-> >>
-> >> of_pci_get_host_bridge_resources allocates the resource structures it
-> >> fills dynamically, but none of its callers care to release them so far.
-> >> Rather than requiring everyone to do this explicitly, introduce a
-> >> managed version of that service. This differs API-wise only in taking a
-> >> reference to the associated device, rather than to the device tree node.
-> >>
-> >> As of_pci_get_host_bridge_resources is an exported interface, we cannot
-> >> simply drop it at this point. After converting all in-tree users to the
-> >> new API, we could phase out the unmanaged one over some grace period.
-> > 
-> > It looks like it might be possible to split this into three or four
-> > patches:
-> > 
-> >   1) Factor __of_pci_get_host_bridge_resources() out of
-> >      of_pci_get_host_bridge_resources()
-> > 
-> >   2) Add struct device * argument
-> > 
-> >   3) Convert pr_info() to dev_info()
-> > 
-> >   4) Add devm_of_pci_get_host_bridge_resources()
-> 
-> Will do. I'm even considering
-> 
-> 5) mark of_pci_get_host_bridge_resources() __deprecated, due to the leak
->    and no remaining in-tree user - what do you think?
+On Mon, Apr 30, 2018 at 10:19 AM, Laura Abbott <labbott@redhat.com> wrote:
+> On 04/30/2018 08:59 AM, Jeffrey Hugo wrote:
+>>
+>> load_module() creates W+X mappings via __vmalloc_node_range() (from
+>> layout_and_allocate()->move_module()->module_alloc()) by using
+>> PAGE_KERNEL_EXEC.  These mappings are later cleaned up via
+>> "call_rcu_sched(&freeinit->rcu, do_free_init)" from do_init_module().
+>>
+>> This is a problem because call_rcu_sched() queues work, which can be run
+>> after debug_checkwx() is run, resulting in a race condition.  If hit, the
+>> race results in a nasty splat about insecure W+X mappings, which results
+>> in a poor user experience as these are not the mappings that
+>> debug_checkwx() is intended to catch.
+>>
+>> This issue is observed on multiple arm64 platforms, and has been
+>> artificially triggered on an x86 platform.
+>>
+>> Address the race by flushing the queued work before running the
+>> arch-defined mark_rodata_ro() which then calls debug_checkwx().
+>>
+>> Reported-by: Timur Tabi <timur@codeaurora.org>
+>> Reported-by: Jan Glauber <jan.glauber@caviumnetworks.com>
+>> Fixes: e1a58320a38d ("x86/mm: Warn on W^X mappings")
+>> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+>> Acked-by: Kees Cook <keescook@chromium.org>
+>> Acked-by: Ingo Molnar <mingo@kernel.org>
+>> Acked-by: Will Deacon <will.deacon@arm.com>
+>> ---
+>>
+>
+> Acked-by: Laura Abbott <labbott@redhat.com>
+>
+> If you don't have a tree for this to go through, I might suggest having
+> Kees take it.
 
-Sounds good.
+akpm has taken the W^X stuff in the past, but I'm happy to do so. Just
+let me know either way. :)
 
-It'd be nice if we had some guideline about deprecation -- whether we
-actually need to mark things __deprecated, and then how long to wait
-before actually removing them, but I don't see anything in
-Documentation/.
+-Kees
 
-Looks like it was added by cbe4097f8ae6 ("of/pci: Add support for
-parsing PCI host bridge resources from DT") in v3.18, so it's been
-around for a while and I guess it would be nice to have a grace period
-before removing it.
+-- 
+Kees Cook
+Pixel Security
