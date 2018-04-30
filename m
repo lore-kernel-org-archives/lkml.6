@@ -1,133 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754342AbeD3LwB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 07:52:01 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59246 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753878AbeD3Lv6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 07:51:58 -0400
-Date: Mon, 30 Apr 2018 13:51:53 +0200
-From: Cornelia Huck <cohuck@redhat.com>
-To: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>,
-        Halil Pasic <pasic@linux.vnet.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, borntraeger@de.ibm.com, bjsdjshi@linux.ibm.com,
-        pasic@linux.ibm.com, pmorel@linux.ibm.com
-Subject: Re: [PATCH v2 5/5] vfio: ccw: add traceponits for interesting error
- paths
-Message-ID: <20180430135153.1d108675.cohuck@redhat.com>
-In-Reply-To: <20180428055023.GS5428@bjsdjshi@linux.vnet.ibm.com>
-References: <20180423110113.59385-1-bjsdjshi@linux.vnet.ibm.com>
-        <20180423110113.59385-6-bjsdjshi@linux.vnet.ibm.com>
-        <20180427121353.4453bdc2.cohuck@redhat.com>
-        <20180428055023.GS5428@bjsdjshi@linux.vnet.ibm.com>
-Organization: Red Hat GmbH
+        id S1753645AbeD3Lxq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 07:53:46 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:36463 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752363AbeD3Lxn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 07:53:43 -0400
+Subject: Re: [PATCH v3 4/6] rpmsg: Guard against null endpoint ops in destroy
+From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+To: Chris Lew <clew@codeaurora.org>, <bjorn.andersson@linaro.org>,
+        <andy.gross@linaro.org>, <david.brown@linaro.org>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>
+CC: <aneela@codeaurora.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-soc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1524783545-21951-1-git-send-email-clew@codeaurora.org>
+ <1524783545-21951-5-git-send-email-clew@codeaurora.org>
+ <b328de2b-f1f9-6a10-eb80-b21d4d77acc1@st.com>
+Message-ID: <85871a63-5e7c-9769-6a76-36b1cf44f59b@st.com>
+Date: Mon, 30 Apr 2018 13:53:32 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <b328de2b-f1f9-6a10-eb80-b21d4d77acc1@st.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.75.127.49]
+X-ClientProxiedBy: SFHDAG4NODE1.st.com (10.75.127.10) To SFHDAG3NODE1.st.com
+ (10.75.127.7)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-30_04:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 28 Apr 2018 13:50:23 +0800
-Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com> wrote:
 
-> * Cornelia Huck <cohuck@redhat.com> [2018-04-27 12:13:53 +0200]:
+
+On 04/30/2018 10:36 AM, Arnaud Pouliquen wrote:
+> Hello Chris,
 > 
-> > On Mon, 23 Apr 2018 13:01:13 +0200
-> > Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com> wrote:
-> > 
-> > typo in subject: s/traceponits/tracepoints/
-> >   
-> > > From: Halil Pasic <pasic@linux.vnet.ibm.com>
-> > > 
-> > > Add some tracepoints so we can inspect what is not working as is should.
-> > > 
-> > > Signed-off-by: Halil Pasic <pasic@linux.vnet.ibm.com>
-> > > Signed-off-by: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
-> > > ---
-> > >  drivers/s390/cio/Makefile         |  1 +
-> > >  drivers/s390/cio/vfio_ccw_fsm.c   | 16 +++++++-
-> > >  drivers/s390/cio/vfio_ccw_trace.h | 77 +++++++++++++++++++++++++++++++++++++++
-> > >  3 files changed, 93 insertions(+), 1 deletion(-)
-> > >  create mode 100644 drivers/s390/cio/vfio_ccw_trace.h  
-> > 
-> >   
-> > > @@ -135,6 +142,8 @@ static void fsm_io_request(struct vfio_ccw_private *private,
-> > >  			goto err_out;
-> > >  
-> > >  		io_region->ret_code = cp_prefetch(&private->cp);
-> > > +		trace_vfio_ccw_cp_prefetch(get_schid(private),
-> > > +					   io_region->ret_code);
-> > >  		if (io_region->ret_code) {
-> > >  			cp_free(&private->cp);
-> > >  			goto err_out;
-> > > @@ -142,11 +151,13 @@ static void fsm_io_request(struct vfio_ccw_private *private,
-> > >  
-> > >  		/* Start channel program and wait for I/O interrupt. */
-> > >  		io_region->ret_code = fsm_io_helper(private);
-> > > +		trace_vfio_ccw_fsm_io_helper(get_schid(private),
-> > > +					     io_region->ret_code);
-> > >  		if (io_region->ret_code) {
-> > >  			cp_free(&private->cp);
-> > >  			goto err_out;
-> > >  		}
-> > > -		return;
-> > > +		goto out;
-> > >  	} else if (scsw->cmd.fctl & SCSW_FCTL_HALT_FUNC) {
-> > >  		/* XXX: Handle halt. */
-> > >  		io_region->ret_code = -EOPNOTSUPP;
-> > > @@ -159,6 +170,9 @@ static void fsm_io_request(struct vfio_ccw_private *private,
-> > >  
-> > >  err_out:
-> > >  	private->state = VFIO_CCW_STATE_IDLE;
-> > > +out:
-> > > +	trace_vfio_ccw_io_fctl(scsw->cmd.fctl, get_schid(private),
-> > > +			       io_region->ret_code);
-> > >  }
-> > >  
-> > >  /*  
-> > 
-> > I really don't want to bikeshed, especially as some tracepoints are
-> > better than no tracepoints, but...
-> > 
-> > We now trace fctl/schid/ret_code unconditionally (good).
-> > 
-> > We trace the outcome of cp_prefetch() and fsm_io_helper()
-> > unconditionally. We don't, however, trace all things that may go wrong.
-> > We have the tracepoint at the end, but it cannot tell us where the
-> > error came from. Should we have tracepoints in every place (in this
-> > function) that may generate an error? Only if there is an actual error?
-> > Are the two enough for common debug scenarios?  
-> Trace actual error sounds like a better idea than trace unconditionally
-> of these two functions.
-> These two are not enough for common debug scenarios. For example, we
-> cann't tell if a -EOPNOTSUPP is a orb->tm.b problem, or error code
-> returned by cp_init().
+> On 04/27/2018 12:59 AM, Chris Lew wrote:
+>> In RPMSG GLINK the chrdev device will allocate an ept as part of the
+>> rpdev creation. This device will not register endpoint ops even though
+>> it has an allocated ept. Protect against the case where the device is
+>> being destroyed.
+>>
+>> Signed-off-by: Chris Lew <clew@codeaurora.org>
+>> ---
+>>
+>> Changes since v1:
+>> - New change
+>>
+>>  drivers/rpmsg/rpmsg_core.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+>> index 920a02f0462c..7bfe36afccc5 100644
+>> --- a/drivers/rpmsg/rpmsg_core.c
+>> +++ b/drivers/rpmsg/rpmsg_core.c
+>> @@ -88,7 +88,7 @@ struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_device *rpdev,
+>>   */
+>>  void rpmsg_destroy_ept(struct rpmsg_endpoint *ept)
+>>  {
+>> -	if (ept)
+>> +	if (ept && ept->ops)
+>>  		ept->ops->destroy_ept(ept);
+>>  }
+>>  EXPORT_SYMBOL(rpmsg_destroy_ept);
+>>
 > 
-> Idea to improve:
-> 1. Trace actual error.
-> 2. Define a trace event and add error trace for cp_init().
+> Would make sense that you also add test on ept->ops->destroy_ept. I
+> guess that ops may not be null while destroy_ept pointer is.
 
-Hm. Going from what I have done in the past when doing printk debugging:
+Sorry i cross checked in rpmsg_endpoint_ops. destroy_ept is required. So
+my comment is not relevant.
 
-- stick in a message that is always hit, with some information about
-  parameters, if it makes sense
-- stick in a message "foo happened!" in the error branches
-   - or, alternatively, trace the called functions
+Nevertheless do it make sense to have an endpoint without associated ops?
+I don't use rpmsg_char but I tried to figure out how rpmsg_create_ept is
+called in rpmsg_char without rpmsg_device ops...
+Seems that qcom_glink_create_ept should be called, so  ept->ops should
+point to  glink_endpoint_ops struct, right?
 
-So tracing on failure only might be more useful? Have all failure paths
-under a common knob to turn on/off?
+Another point concerns the send and try send ops that are also required.
+Do you test rpmsg_trysend and/or rpmsg_send function call?
+seems that you should face the same issue...
 
-> > Opinions? We can just go ahead with this and improve things later
-> > on, I guess.
-> >   
-> I think it's also fine to do this - better something than nothing. We
-> could at least have a code base to be improved to make everybody
-> happier in future.
-
-Maybe keep the patch as it is now, except trace the errors only
-(keeping the fctl trace point)?
-
-Halil, as you wrote the patch (and I presume you found it helpful):
-What is your opinion?
+> 
+> Regards
+> Arnaud
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-remoteproc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
