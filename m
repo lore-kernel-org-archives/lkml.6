@@ -1,40 +1,40 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqRDGmFDx5AFW7YSzZvOrGA91ylSjn9CYCzFc71ormvYG4PnFsJwCtlzbmU334+oWYchge8
-ARC-Seal: i=1; a=rsa-sha256; t=1525116442; cv=none;
+X-Google-Smtp-Source: AB8JxZrGaVBfHh4Ui3OdXLhsmoRdE29zJx4tQUrgCHZ1ugEaICa2rJq3Ca0Z9nFuwDQm7RtCpWeS
+ARC-Seal: i=1; a=rsa-sha256; t=1525116441; cv=none;
         d=google.com; s=arc-20160816;
-        b=yV2XThZf79VCEjHhQsqDxye1bkSGG5RH6NgHZK2Ucxqkr0+DiadhhwDGIgAvAj61WW
-         +BuxXlhDmQq2DHNKlNGcQizAeCfHjk/6FxEzUOOHTfV9isicemvomdWfeEdvqJUKj3SX
-         H6nyC2Xk9DoAIhs0dHng6WoqWw08Ke6/o6X5sjrQT4vD8ciDco0tdQhuoNR18hi0TGsC
-         EtxSCRyGLTqLaggkCNUrBqqkRyJjQQm/JgzraFA30W4c6KvkikZpa4KmcyJuYdfwnLPl
-         3T8gIhS6LeUbA+tel2QDX//69HG4LBkq0P2yHoEaxJAtFVqM5sA9PF6ggb47zrqDi8fj
-         bMMA==
+        b=a376O+ulah7vZNcsHFgsNlc4MQB/wVkcrlPcuroelunfnNq8KiaFkSLvLkzkrpfRH7
+         XEskZ4xqb9/HEC11W+D5w1y7ZnogPYQl2MY/m7FDTN/ICyE9YKs7vds3avsy4kpcp3IB
+         fDNfjT/5ZcoSGv8KplKNA+pqsvu9Sy+z2lZRA5ybyvogHZIcxPb9qzE0aPmrh39KIUd0
+         vH6xgnxxK1JcqoOguqS4zoo4qKSO7mt+0Yh5LEkXTbHwlXLZCnFbYm3qiB1l7VYBMfdD
+         69t5qSZ9UeDziRpTqzysC8D6lXxuny77EMJtCDMKYHw3nhmZ8nlcWwj9o6bkywyBy/q2
+         6vjA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=KccKTyRYjXTZNcfRR4AFB3YYLP13f4VUckmmWxmT+Rw=;
-        b=nBletTsXes/3/BFi3Y3wjLSBzIwij/x1a8j2Mt+0vQFUZYd4obxuRmpzox3UcINxwV
-         V5/sPztNtkqpj4S5IbXxVAsxwaPzUhgxS/ij1lcyMq/u9eVfFFQVJqEnwiaPtxf0NmAu
-         Y54hiwXXupjiEM67WN/A8se+GfC1VRTj/1V7WK3iVmj5viL6SUf761jlO+B5F8nEde1N
-         9NaksOGJqhCFzw85CFGbPv7kQq+NnHe7DwQGad7SfqISdSrMG0frQZBfTWC17HtVVVRA
-         Ml2DmEG9IP3RhwAnxr+NEl2kGSqswpZklsCrWOciF6Yo8Py6h8FszqAzYyDVj/ogiZya
-         sQuQ==
+        bh=YaVp98QCZezH7UIQVSegWVrd1bs/PO4h0aeWlmTdpX0=;
+        b=Uh8MJ9sydv7WSiMjzRPMX2VhfTwBVOhyqfR3naECf55JNY1bie9r2Q8zfku0TvkvkQ
+         46vdxWcwE3mgCKkylhwLFxaHq/Z2QjiLcdJ7pKNIdjT8YuV1UjvwoAYUlyE/kynBoQIP
+         dWP+KGJakVNqz5TEWeAikj0KUSQ5d6H/ZuiLHOSAVwxDW3q26kZjYN049tIoVYcFAIrX
+         Y/pS5EV/473mhnV48sSsNkVqwyOtLCAAva+PIpqku987xAVmpVFHRhe9W3ZFTGVO4nfP
+         necKMMfk48esXOskiZCzdgZnM2CV7yRNC3G3H7tASn68vlI5Uai0dOggo3UUA/3Z+s6X
+         x2BQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E44E22DCB
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC53922DC1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Joakim Tjernlund <joakim.tjernlund@infinera.com>,
-	Richard Weinberger <richard@nod.at>,
+	Thor Thayer <thor.thayer@linux.intel.com>,
+	Marek Vasut <marek.vasut@gmail.com>,
 	Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: [PATCH 4.14 51/91] mtd: cfi: cmdset_0001: Do not allow read/write to suspend erase block.
-Date: Mon, 30 Apr 2018 12:24:33 -0700
-Message-Id: <20180430184006.846857768@linuxfoundation.org>
+Subject: [PATCH 4.14 50/91] mtd: spi-nor: cadence-quadspi: Fix page fault kernel panic
+Date: Mon, 30 Apr 2018 12:24:32 -0700
+Message-Id: <20180430184006.796020072@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184004.216234025@linuxfoundation.org>
 References: <20180430184004.216234025@linuxfoundation.org>
@@ -44,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200282823323540?=
-X-GMAIL-MSGID: =?utf-8?q?1599200498306415369?=
+X-GMAIL-THRID: =?utf-8?q?1599200497469699470?=
+X-GMAIL-MSGID: =?utf-8?q?1599200497469699470?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,83 +53,79 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Joakim Tjernlund <joakim.tjernlund@transmode.se>
+From: Thor Thayer <thor.thayer@linux.intel.com>
 
-commit 6510bbc88e3258631831ade49033537081950605 upstream.
+commit 47016b341fc3b3fd4909e058c6fa38f165b53646 upstream.
 
-Currently it is possible to read and/or write to suspend EB's.
-Writing /dev/mtdX or /dev/mtdblockX from several processes may
-break the flash state machine.
+The current Cadence QSPI driver caused a kernel panic when loading
+a Root Filesystem from QSPI. The problem was caused by reading more
+bytes than needed because the QSPI operated on 4 bytes at a time.
+<snip>
+[    7.947754] spi_nor_read[1048]:from 0x037cad74, len 1 [bfe07fff]
+[    7.956247] cqspi_read[910]:offset 0x58502516, buffer=bfe07fff
+[    7.956247]
+[    7.966046] Unable to handle kernel paging request at virtual
+address bfe08002
+[    7.973239] pgd = eebfc000
+[    7.975931] [bfe08002] *pgd=2fffb811, *pte=00000000, *ppte=00000000
+</snip>
+Notice above how only 1 byte needed to be read but by reading 4 bytes
+into the end of a mapped page, an unrecoverable page fault occurred.
 
-Signed-off-by: Joakim Tjernlund <joakim.tjernlund@infinera.com>
+This patch uses a temporary buffer to hold the 4 bytes read and then
+copies only the bytes required into the buffer. A min() function is
+used to limit the length to prevent buffer overflows.
+
+Request testing of this patch on other platforms. This was tested
+on the Intel Arria10 SoCFPGA DevKit.
+
+Fixes: 0cf1725676a97fc8 ("mtd: spi-nor: cqspi: Fix build on arches missing readsl/writesl")
+Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
 Cc: <stable@vger.kernel.org>
-Reviewed-by: Richard Weinberger <richard@nod.at>
+Reviewed-by: Marek Vasut <marek.vasut@gmail.com>
 Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mtd/chips/cfi_cmdset_0001.c |   16 +++++++++++-----
- include/linux/mtd/flashchip.h       |    1 +
- 2 files changed, 12 insertions(+), 5 deletions(-)
+ drivers/mtd/spi-nor/cadence-quadspi.c |   19 +++++++++++++++++--
+ 1 file changed, 17 insertions(+), 2 deletions(-)
 
---- a/drivers/mtd/chips/cfi_cmdset_0001.c
-+++ b/drivers/mtd/chips/cfi_cmdset_0001.c
-@@ -831,21 +831,25 @@ static int chip_ready (struct map_info *
- 		     (mode == FL_WRITING && (cfip->SuspendCmdSupport & 1))))
- 			goto sleep;
+--- a/drivers/mtd/spi-nor/cadence-quadspi.c
++++ b/drivers/mtd/spi-nor/cadence-quadspi.c
+@@ -495,7 +495,9 @@ static int cqspi_indirect_read_execute(s
+ 	void __iomem *reg_base = cqspi->iobase;
+ 	void __iomem *ahb_base = cqspi->ahb_base;
+ 	unsigned int remaining = n_rx;
++	unsigned int mod_bytes = n_rx % 4;
+ 	unsigned int bytes_to_read = 0;
++	u8 *rxbuf_end = rxbuf + n_rx;
+ 	int ret = 0;
  
-+		/* Do not allow suspend iff read/write to EB address */
-+		if ((adr & chip->in_progress_block_mask) ==
-+		    chip->in_progress_block_addr)
-+			goto sleep;
+ 	writel(remaining, reg_base + CQSPI_REG_INDIRECTRDBYTES);
+@@ -523,11 +525,24 @@ static int cqspi_indirect_read_execute(s
+ 		}
  
- 		/* Erase suspend */
--		map_write(map, CMD(0xB0), adr);
-+		map_write(map, CMD(0xB0), chip->in_progress_block_addr);
- 
- 		/* If the flash has finished erasing, then 'erase suspend'
- 		 * appears to make some (28F320) flash devices switch to
- 		 * 'read' mode.  Make sure that we switch to 'read status'
- 		 * mode so we get the right data. --rmk
- 		 */
--		map_write(map, CMD(0x70), adr);
-+		map_write(map, CMD(0x70), chip->in_progress_block_addr);
- 		chip->oldstate = FL_ERASING;
- 		chip->state = FL_ERASE_SUSPENDING;
- 		chip->erase_suspended = 1;
- 		for (;;) {
--			status = map_read(map, adr);
-+			status = map_read(map, chip->in_progress_block_addr);
- 			if (map_word_andequal(map, status, status_OK, status_OK))
- 			        break;
- 
-@@ -1041,8 +1045,8 @@ static void put_chip(struct map_info *ma
- 		   sending the 0x70 (Read Status) command to an erasing
- 		   chip and expecting it to be ignored, that's what we
- 		   do. */
--		map_write(map, CMD(0xd0), adr);
--		map_write(map, CMD(0x70), adr);
-+		map_write(map, CMD(0xd0), chip->in_progress_block_addr);
-+		map_write(map, CMD(0x70), chip->in_progress_block_addr);
- 		chip->oldstate = FL_READY;
- 		chip->state = FL_ERASING;
- 		break;
-@@ -1933,6 +1937,8 @@ static int __xipram do_erase_oneblock(st
- 	map_write(map, CMD(0xD0), adr);
- 	chip->state = FL_ERASING;
- 	chip->erase_suspended = 0;
-+	chip->in_progress_block_addr = adr;
-+	chip->in_progress_block_mask = ~(len - 1);
- 
- 	ret = INVAL_CACHE_AND_WAIT(map, chip, adr,
- 				   adr, len,
---- a/include/linux/mtd/flashchip.h
-+++ b/include/linux/mtd/flashchip.h
-@@ -85,6 +85,7 @@ struct flchip {
- 	unsigned int write_suspended:1;
- 	unsigned int erase_suspended:1;
- 	unsigned long in_progress_block_addr;
-+	unsigned long in_progress_block_mask;
- 
- 	struct mutex mutex;
- 	wait_queue_head_t wq; /* Wait on here when we're waiting for the chip
+ 		while (bytes_to_read != 0) {
++			unsigned int word_remain = round_down(remaining, 4);
++
+ 			bytes_to_read *= cqspi->fifo_width;
+ 			bytes_to_read = bytes_to_read > remaining ?
+ 					remaining : bytes_to_read;
+-			ioread32_rep(ahb_base, rxbuf,
+-				     DIV_ROUND_UP(bytes_to_read, 4));
++			bytes_to_read = round_down(bytes_to_read, 4);
++			/* Read 4 byte word chunks then single bytes */
++			if (bytes_to_read) {
++				ioread32_rep(ahb_base, rxbuf,
++					     (bytes_to_read / 4));
++			} else if (!word_remain && mod_bytes) {
++				unsigned int temp = ioread32(ahb_base);
++
++				bytes_to_read = mod_bytes;
++				memcpy(rxbuf, &temp, min((unsigned int)
++							 (rxbuf_end - rxbuf),
++							 bytes_to_read));
++			}
+ 			rxbuf += bytes_to_read;
+ 			remaining -= bytes_to_read;
+ 			bytes_to_read = cqspi_get_rd_sram_level(cqspi);
