@@ -1,179 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754788AbeD3QK6 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 12:10:58 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33508 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754474AbeD3QK4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 12:10:56 -0400
-Date: Mon, 30 Apr 2018 10:10:50 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Joerg Roedel <joro@8bytes.org>
-Cc: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        Linuxarm <linuxarm@huawei.com>, John Garry <john.garry@huawei.com>,
-        "xuwei (O)" <xuwei5@huawei.com>, Robin Murphy <robin.murphy@arm.com>,
-        "eric.auger@redhat.com" <eric.auger@redhat.com>,
-        "pmorel@linux.vnet.ibm.com" <pmorel@linux.vnet.ibm.com>
-Subject: Re: [PATCH v6 4/7] iommu/dma: Move PCI window region reservation
- back into dma specific path.
-Message-ID: <20180430101050.671cb772@w520.home>
-In-Reply-To: <5FC3163CFD30C246ABAA99954A238FA8386928A8@FRAEML521-MBX.china.huawei.com>
-References: <20180418114045.7968-1-shameerali.kolothum.thodi@huawei.com>
-        <20180418114045.7968-5-shameerali.kolothum.thodi@huawei.com>
-        <5FC3163CFD30C246ABAA99954A238FA8386928A8@FRAEML521-MBX.china.huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1754769AbeD3QOA (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 12:14:00 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:33700 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754555AbeD3QN6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 12:13:58 -0400
+Date: Mon, 30 Apr 2018 12:13:57 -0400 (EDT)
+Message-Id: <20180430.121357.2257158218189689071.davem@davemloft.net>
+To: amsalam20@gmail.com
+Cc: dav.lebrun@gmail.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [net-next v2] ipv6: sr: extract the right key values for
+ "seg6_make_flowlabel"
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <1524910715-12097-1-git-send-email-amsalam20@gmail.com>
+References: <1524910715-12097-1-git-send-email-amsalam20@gmail.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 24 Apr 2018 13:16:19 +0000
-Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com> wrote:
+From: Ahmed Abdelsalam <amsalam20@gmail.com>
+Date: Sat, 28 Apr 2018 12:18:35 +0200
 
-> Hi Joerg,
+> The seg6_make_flowlabel() is used by seg6_do_srh_encap() to compute the
+> flowlabel from a given skb. It relies on skb_get_hash() which eventually
+> calls __skb_flow_dissect() to extract the flow_keys struct values from
+> the skb.
 > 
-> Could you please take a look at this patch and let me know.
+> In case of IPv4 traffic, calling seg6_make_flowlabel() after skb_push(),
+> skb_reset_network_header(), and skb_mac_header_rebuild() will results in
+> flow_keys struct of all key values set to zero.
 > 
-> I have rebased this to 4.17-rc1  and added Robin's R-by.
+> This patch calls seg6_make_flowlabel() before resetting the headers of skb
+> to get the right key values.
 > 
-> This series[1] is now pending on this patch as without this it will break few
-> ARM platforms[2]. 
+> Extracted Key values are based on the type inner packet as follows:
+> 1) IPv6 traffic: src_IP, dst_IP, L4 proto, and flowlabel of inner packet.
+> 2) IPv4 traffic: src_IP, dst_IP, L4 proto, src_port, and dst_port
+> 3) L2 traffic: depends on what kind of traffic carried into the L2
+> frame. IPv6 and IPv4 traffic works as discussed 1) and 2)
 > 
-> Please take a look and let me know.
+> Here a hex_dump of struct flow_keys for IPv4 and IPv6 traffic
+> 10.100.1.100: 47302 > 30.0.0.2: 5001
+> 00000000: 14 00 02 00 00 00 00 00 08 00 11 00 00 00 00 00
+> 00000010: 00 00 00 00 00 00 00 00 13 89 b8 c6 1e 00 00 02
+> 00000020: 0a 64 01 64
+> 
+> fc00:a1:a > b2::2
+> 00000000: 28 00 03 00 00 00 00 00 86 dd 11 00 99 f9 02 00
+> 00000010: 00 00 00 00 00 00 00 00 00 00 00 00 00 b2 00 00
+> 00000020: 00 00 00 00 00 00 00 00 00 00 00 02 fc 00 00 a1
+> 00000030: 00 00 00 00 00 00 00 00 00 00 00 0a
+> 
+> Signed-off-by: Ahmed Abdelsalam <amsalam20@gmail.com>
 
-Hi Joerg,
-
-Any thoughts on this patch?  Shameer is blocked on this series without
-your ack.  We could consider moving this to a separate IOMMU patch, but
-then I think we'd need to order our v4.18 pull requests, so there's a
-bit of a preference to keep it within this series.  Thanks,
-
-Alex
-
-> [1] https://lkml.org/lkml/2018/4/18/293
-> [2] https://lkml.org/lkml/2018/3/14/881
-> 
-> 
-> > -----Original Message-----
-> > From: Shameerali Kolothum Thodi
-> > Sent: Wednesday, April 18, 2018 12:41 PM
-> > To: alex.williamson@redhat.com; eric.auger@redhat.com;
-> > pmorel@linux.vnet.ibm.com
-> > Cc: kvm@vger.kernel.org; linux-kernel@vger.kernel.org; iommu@lists.linux-
-> > foundation.org; Linuxarm <linuxarm@huawei.com>; John Garry
-> > <john.garry@huawei.com>; xuwei (O) <xuwei5@huawei.com>; Shameerali
-> > Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>; Joerg Roedel
-> > <joro@8bytes.org>
-> > Subject: [PATCH v6 4/7] iommu/dma: Move PCI window region reservation
-> > back into dma specific path.
-> > 
-> > This pretty much reverts commit 273df9635385 ("iommu/dma: Make PCI
-> > window reservation generic")  by moving the PCI window region
-> > reservation back into the dma specific path so that these regions
-> > doesn't get exposed via the IOMMU API interface. With this change,
-> > the vfio interface will report only iommu specific reserved regions
-> > to the user space.
-> > 
-> > Cc: Joerg Roedel <joro@8bytes.org>
-> > Signed-off-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-> > Reviewed-by: Robin Murphy <robin.murphy@arm.com>
-> > ---
-> >  drivers/iommu/dma-iommu.c | 54 ++++++++++++++++++++++----------------------
-> > ---
-> >  1 file changed, 25 insertions(+), 29 deletions(-)
-> > 
-> > diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-> > index f05f3cf..ddcbbdb 100644
-> > --- a/drivers/iommu/dma-iommu.c
-> > +++ b/drivers/iommu/dma-iommu.c
-> > @@ -167,40 +167,16 @@ EXPORT_SYMBOL(iommu_put_dma_cookie);
-> >   * @list: Reserved region list from iommu_get_resv_regions()
-> >   *
-> >   * IOMMU drivers can use this to implement their .get_resv_regions callback
-> > - * for general non-IOMMU-specific reservations. Currently, this covers host
-> > - * bridge windows for PCI devices and GICv3 ITS region reservation on ACPI
-> > - * based ARM platforms that may require HW MSI reservation.
-> > + * for general non-IOMMU-specific reservations. Currently, this covers GICv3
-> > + * ITS region reservation on ACPI based ARM platforms that may require HW
-> > MSI
-> > + * reservation.
-> >   */
-> >  void iommu_dma_get_resv_regions(struct device *dev, struct list_head *list)
-> >  {
-> > -	struct pci_host_bridge *bridge;
-> > -	struct resource_entry *window;
-> > -
-> > -	if (!is_of_node(dev->iommu_fwspec->iommu_fwnode) &&
-> > -		iort_iommu_msi_get_resv_regions(dev, list) < 0)
-> > -		return;
-> > -
-> > -	if (!dev_is_pci(dev))
-> > -		return;
-> > -
-> > -	bridge = pci_find_host_bridge(to_pci_dev(dev)->bus);
-> > -	resource_list_for_each_entry(window, &bridge->windows) {
-> > -		struct iommu_resv_region *region;
-> > -		phys_addr_t start;
-> > -		size_t length;
-> > -
-> > -		if (resource_type(window->res) != IORESOURCE_MEM)
-> > -			continue;
-> > 
-> > -		start = window->res->start - window->offset;
-> > -		length = window->res->end - window->res->start + 1;
-> > -		region = iommu_alloc_resv_region(start, length, 0,
-> > -				IOMMU_RESV_RESERVED);
-> > -		if (!region)
-> > -			return;
-> > +	if (!is_of_node(dev->iommu_fwspec->iommu_fwnode))
-> > +		iort_iommu_msi_get_resv_regions(dev, list);
-> > 
-> > -		list_add_tail(&region->list, list);
-> > -	}
-> >  }
-> >  EXPORT_SYMBOL(iommu_dma_get_resv_regions);
-> > 
-> > @@ -229,6 +205,23 @@ static int cookie_init_hw_msi_region(struct
-> > iommu_dma_cookie *cookie,
-> >  	return 0;
-> >  }
-> > 
-> > +static void iova_reserve_pci_windows(struct pci_dev *dev,
-> > +		struct iova_domain *iovad)
-> > +{
-> > +	struct pci_host_bridge *bridge = pci_find_host_bridge(dev->bus);
-> > +	struct resource_entry *window;
-> > +	unsigned long lo, hi;
-> > +
-> > +	resource_list_for_each_entry(window, &bridge->windows) {
-> > +		if (resource_type(window->res) != IORESOURCE_MEM)
-> > +			continue;
-> > +
-> > +		lo = iova_pfn(iovad, window->res->start - window->offset);
-> > +		hi = iova_pfn(iovad, window->res->end - window->offset);
-> > +		reserve_iova(iovad, lo, hi);
-> > +	}
-> > +}
-> > +
-> >  static int iova_reserve_iommu_regions(struct device *dev,
-> >  		struct iommu_domain *domain)
-> >  {
-> > @@ -238,6 +231,9 @@ static int iova_reserve_iommu_regions(struct device
-> > *dev,
-> >  	LIST_HEAD(resv_regions);
-> >  	int ret = 0;
-> > 
-> > +	if (dev_is_pci(dev))
-> > +		iova_reserve_pci_windows(to_pci_dev(dev), iovad);
-> > +
-> >  	iommu_get_resv_regions(dev, &resv_regions);
-> >  	list_for_each_entry(region, &resv_regions, list) {
-> >  		unsigned long lo, hi;
-> > --
-> > 2.7.4
-> >   
-> 
+Looks good, applied, thank you.
