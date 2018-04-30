@@ -1,28 +1,31 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753321AbeD3JIY (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 05:08:24 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43356 "EHLO mx1.redhat.com"
+        id S1753140AbeD3JII (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 05:08:08 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40758 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753152AbeD3JIM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 05:08:12 -0400
+        id S1752877AbeD3JIF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 05:08:05 -0400
 From: Eric Auger <eric.auger@redhat.com>
 To: eric.auger.pro@gmail.com, eric.auger@redhat.com,
         linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
         kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com, cdall@kernel.org,
         peter.maydell@linaro.org
 Cc: andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
-Subject: [PATCH v5 12/12] KVM: arm/arm64: Bump VGIC_V3_MAX_CPUS to 512
-Date: Mon, 30 Apr 2018 11:07:44 +0200
-Message-Id: <1525079264-25533-13-git-send-email-eric.auger@redhat.com>
+Subject: [PATCH v5 08/12] KVM: arm/arm64: Check vcpu redist base before registering an iodev
+Date: Mon, 30 Apr 2018 11:07:40 +0200
+Message-Id: <1525079264-25533-9-git-send-email-eric.auger@redhat.com>
 In-Reply-To: <1525079264-25533-1-git-send-email-eric.auger@redhat.com>
 References: <1525079264-25533-1-git-send-email-eric.auger@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Let's raise the number of supported vcpus along with
-vgic v3 now that HW is looming with more physical CPUs.
+As we are going to register several redist regions,
+vgic_register_all_redist_iodevs() may be called several times. We need
+to register a redist_iodev for a given vcpu only once. So let's
+check if the base address has already been set. Initialize this latter
+in kvm_vgic_vcpu_early_init().
 
 Signed-off-by: Eric Auger <eric.auger@redhat.com>
 Acked-by: Christoffer Dall <christoffer.dall@arm.com>
@@ -30,23 +33,39 @@ Acked-by: Christoffer Dall <christoffer.dall@arm.com>
 ---
 
 v4 -> v5:
-- addded Christoffer's A-b
+- added Christoffer's A-b
 ---
- include/kvm/arm_vgic.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ virt/kvm/arm/vgic/vgic-init.c    | 3 +++
+ virt/kvm/arm/vgic/vgic-mmio-v3.c | 3 +++
+ 2 files changed, 6 insertions(+)
 
-diff --git a/include/kvm/arm_vgic.h b/include/kvm/arm_vgic.h
-index dc55ee8..2eac942 100644
---- a/include/kvm/arm_vgic.h
-+++ b/include/kvm/arm_vgic.h
-@@ -28,7 +28,7 @@
+diff --git a/virt/kvm/arm/vgic/vgic-init.c b/virt/kvm/arm/vgic/vgic-init.c
+index 6456371..7e040e7 100644
+--- a/virt/kvm/arm/vgic/vgic-init.c
++++ b/virt/kvm/arm/vgic/vgic-init.c
+@@ -82,6 +82,9 @@ void kvm_vgic_vcpu_early_init(struct kvm_vcpu *vcpu)
+ 	INIT_LIST_HEAD(&vgic_cpu->ap_list_head);
+ 	spin_lock_init(&vgic_cpu->ap_list_lock);
  
- #include <linux/irqchip/arm-gic-v4.h>
++	vgic_cpu->rd_iodev.base_addr = VGIC_ADDR_UNDEF;
++	vgic_cpu->sgi_iodev.base_addr = VGIC_ADDR_UNDEF;
++
+ 	/*
+ 	 * Enable and configure all SGIs to be edge-triggered and
+ 	 * configure all PPIs as level-triggered.
+diff --git a/virt/kvm/arm/vgic/vgic-mmio-v3.c b/virt/kvm/arm/vgic/vgic-mmio-v3.c
+index cbf8f4e..1b1e07f 100644
+--- a/virt/kvm/arm/vgic/vgic-mmio-v3.c
++++ b/virt/kvm/arm/vgic/vgic-mmio-v3.c
+@@ -592,6 +592,9 @@ int vgic_register_redist_iodev(struct kvm_vcpu *vcpu)
+ 	gpa_t rd_base, sgi_base;
+ 	int ret;
  
--#define VGIC_V3_MAX_CPUS	255
-+#define VGIC_V3_MAX_CPUS	512
- #define VGIC_V2_MAX_CPUS	8
- #define VGIC_NR_IRQS_LEGACY     256
- #define VGIC_NR_SGIS		16
++	if (!IS_VGIC_ADDR_UNDEF(vgic_cpu->rd_iodev.base_addr))
++		return 0;
++
+ 	/*
+ 	 * We may be creating VCPUs before having set the base address for the
+ 	 * redistributor region, in which case we will come back to this
 -- 
 2.5.5
