@@ -1,63 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754769AbeD3QOA (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 12:14:00 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:33700 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754555AbeD3QN6 (ORCPT
+        id S1754761AbeD3QUd (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 12:20:33 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:49382 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753334AbeD3QUa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 12:13:58 -0400
-Date: Mon, 30 Apr 2018 12:13:57 -0400 (EDT)
-Message-Id: <20180430.121357.2257158218189689071.davem@davemloft.net>
-To: amsalam20@gmail.com
-Cc: dav.lebrun@gmail.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [net-next v2] ipv6: sr: extract the right key values for
- "seg6_make_flowlabel"
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <1524910715-12097-1-git-send-email-amsalam20@gmail.com>
-References: <1524910715-12097-1-git-send-email-amsalam20@gmail.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Mon, 30 Apr 2018 12:20:30 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7A7196074C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=anischal@codeaurora.org
+From: Amit Nischal <anischal@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Odelu Kukatla <okukatla@codeaurora.org>,
+        Taniya Das <tdas@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Amit Nischal <anischal@codeaurora.org>
+Subject: [PATCH v6 0/3] Misc patches to support clocks for SDM845
+Date: Mon, 30 Apr 2018 21:50:07 +0530
+Message-Id: <1525105210-8689-1-git-send-email-anischal@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ahmed Abdelsalam <amsalam20@gmail.com>
-Date: Sat, 28 Apr 2018 12:18:35 +0200
+Changes in v6:
+1. Adressed review comments for v3 and v4 version of GCC driver for SDM845.
+   https://lkml.org/lkml/2018/4/16/1129.
+2. Add support for new flag 'BRANCH_NO_DELAY' for branch clocks.
+3. Addressed review comments for v5 version of rcg2_shared_ops patch.
+   https://lkml.org/lkml/2018/4/19/86
+4. The GCC clock driver(patch 3) depends upon the below patches related to
+   GDSC operation and RPMh clock driver, which are under review.
+   https://lkml.org/lkml/2018/4/27/110
+   https://lkml.org/lkml/2018/4/24/390
 
-> The seg6_make_flowlabel() is used by seg6_do_srh_encap() to compute the
-> flowlabel from a given skb. It relies on skb_get_hash() which eventually
-> calls __skb_flow_dissect() to extract the flow_keys struct values from
-> the skb.
-> 
-> In case of IPv4 traffic, calling seg6_make_flowlabel() after skb_push(),
-> skb_reset_network_header(), and skb_mac_header_rebuild() will results in
-> flow_keys struct of all key values set to zero.
-> 
-> This patch calls seg6_make_flowlabel() before resetting the headers of skb
-> to get the right key values.
-> 
-> Extracted Key values are based on the type inner packet as follows:
-> 1) IPv6 traffic: src_IP, dst_IP, L4 proto, and flowlabel of inner packet.
-> 2) IPv4 traffic: src_IP, dst_IP, L4 proto, src_port, and dst_port
-> 3) L2 traffic: depends on what kind of traffic carried into the L2
-> frame. IPv6 and IPv4 traffic works as discussed 1) and 2)
-> 
-> Here a hex_dump of struct flow_keys for IPv4 and IPv6 traffic
-> 10.100.1.100: 47302 > 30.0.0.2: 5001
-> 00000000: 14 00 02 00 00 00 00 00 08 00 11 00 00 00 00 00
-> 00000010: 00 00 00 00 00 00 00 00 13 89 b8 c6 1e 00 00 02
-> 00000020: 0a 64 01 64
-> 
-> fc00:a1:a > b2::2
-> 00000000: 28 00 03 00 00 00 00 00 86 dd 11 00 99 f9 02 00
-> 00000010: 00 00 00 00 00 00 00 00 00 00 00 00 00 b2 00 00
-> 00000020: 00 00 00 00 00 00 00 00 00 00 00 02 fc 00 00 a1
-> 00000030: 00 00 00 00 00 00 00 00 00 00 00 0a
-> 
-> Signed-off-by: Ahmed Abdelsalam <amsalam20@gmail.com>
+Changes in v5:
+1. Adressed review comments for v3 and v4 version of GCC driver for SDM845
+   https://lkml.org/lkml/2018/4/16/1129
+2. Removed bi_tcxo clock being modelled from the GCC driver, as RPMH clock
+   driver would provide the same. https://lkml.org/lkml/2018/4/13/685
+3. The GCC clock driver(patch 2) depends upon the below patches related to
+   GDSC operation and RPMh clock driver, which are under review.
+   https://lkml.org/lkml/2018/4/2/143
+   https://lkml.org/lkml/2018/4/13/685
 
-Looks good, applied, thank you.
+Changes in v4:
+1. Adressed review comments for v2 version of GCC driver for SDM845
+   https://lkml.org/lkml/2018/4/9/55.
+2. The GCC clock driver(patch 3) depends upon the below patches
+   related to GDSC operation and are under review.
+
+   https://lkml.org/lkml/2018/4/2/142
+
+Changes in v3:
+1. Adressed review comments given for v2 series.
+2. The GCC clock driver(patch 3) depends upon the below patches related
+   to GDSC operation and are under review.
+
+   https://lkml.org/lkml/2018/4/2/142
+
+Changes in v2:
+Fixup for recalc_rate ops for clk_rcg2_shared_ops:
+There could be few scenarios where shared clocks are configured
+at rate other than CXO by boot. In those cases there would be a
+mismatch between the rate calculated by the recalc shared ops
+and the actual HW register configuration. Fix the same by adding
+an additional check to read current src from CFG register and
+make a decision based on that.
+
+Changes in v1:
+https://lkml.org/lkml/2018/1/31/209
+
+This patch series does the miscellaneous changes to support
+clock nodes for SDM845. Below are the major changes for
+which the existing code does not have support.
+
+1. Clear hardware clock control bit of RCGs where HW clock
+   control bit is set by default so that software can control
+   those root clocks.
+2. Introduces clk_rcg2_shared_ops to support clock controller
+   drivers for SDM845. With new shared ops, RCGs with shared
+   branches will be configured to a safe source in disable
+   path and actual RCG update configuration will be done in
+   enable path instead of doing config update in set_rate.
+   In set_rate(), just cache the rate instead of doing actual
+   configuration update. Also each RCG in clock controller
+   driver will have their own safe configuration frequency
+   table to switch to safe frequency.
+3. Add support for controlling Fabia PLL for which the support
+   is not available in existing alpha PLL code.
+4. Add Global Clock controller (GCC) driver for SDM845. This
+   should allow most non-multimedia device drivers to probe
+   and control their clocks.
+
+[v1] : https://lkml.org/lkml/2018/1/31/209
+[v2] : https://lkml.org/lkml/2018/3/8/495
+[v3] : https://www.spinics.net/lists/linux-arm-msm/msg35009.html
+[v4] : https://lkml.org/lkml/2018/4/9/79
+[v5] : https://lkml.org/lkml/2018/4/18/367
+
+Amit Nischal (2):
+  clk: qcom: Configure the RCGs to a safe source as needed
+  clk: qcom: Add support for BRANCH_NO_DELAY flag for branch clocks
+
+Taniya Das (1):
+  clk: qcom: Add Global Clock controller (GCC) driver for SDM845
+
+ .../devicetree/bindings/clock/qcom,gcc.txt         |    1 +
+ drivers/clk/qcom/Kconfig                           |   10 +-
+ drivers/clk/qcom/Makefile                          |    1 +
+ drivers/clk/qcom/clk-branch.c                      |    7 +-
+ drivers/clk/qcom/clk-branch.h                      |    1 +
+ drivers/clk/qcom/clk-rcg.h                         |    7 +-
+ drivers/clk/qcom/clk-rcg2.c                        |  207 +-
+ drivers/clk/qcom/gcc-sdm845.c                      | 3480 ++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-sdm845.h        |  239 ++
+ 9 files changed, 3940 insertions(+), 13 deletions(-)
+ create mode 100644 drivers/clk/qcom/gcc-sdm845.c
+ create mode 100644 include/dt-bindings/clock/qcom,gcc-sdm845.h
+
+--
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
