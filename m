@@ -1,97 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755199AbeD3VWg (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 17:22:36 -0400
-Received: from mail-io0-f201.google.com ([209.85.223.201]:35380 "EHLO
-        mail-io0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751772AbeD3VWc (ORCPT
+        id S1755370AbeD3VXM (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 17:23:12 -0400
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:46435 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1755266AbeD3VXK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 17:22:32 -0400
-X-Google-Smtp-Source: AB8JxZrqTzpO0Kdv5aF4j6gfjsFzZ9ByKMM8AyxAdTd2SHN3WgSFs8CR93y7/OWGDCbWT8/6+72RekKtUOs/eA==
+        Mon, 30 Apr 2018 17:23:10 -0400
+X-ME-Sender: <xms:PonnWv3cDJvU65XL0sSs93ZzIahkRgUs2Bv145E_fTWoIym_TzD3Ew>
+Date: Tue, 1 May 2018 07:23:05 +1000
+From: "Tobin C. Harding" <me@tobin.cc>
+To: Kees Cook <keescook@chromium.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        "Ted Ts'o" <tytso@mit.edu>, Steven Rostedt <rostedt@goodmis.org>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>
+Subject: Re: Hashed pointer issues
+Message-ID: <20180430212305.GD22100@eros>
+References: <alpine.DEB.2.20.1804301741570.3243@hypnos.tec.linutronix.de>
+ <CAGXu5jL1W=AC023asgeMRUXAnhU2vd-RJRqGtOOetQ=aXwDcFQ@mail.gmail.com>
+ <CA+55aFwieC1-nAs+NFq9RTwaR8ef9hWa4MjNBWL41F-8wM49eA@mail.gmail.com>
+ <20180430124135.0cce92e3@gandalf.local.home>
+ <CA+55aFzpJC4+tuSopeze72D2sv1urGdap8+Bj2Y9hEYitAkE4Q@mail.gmail.com>
+ <CA+55aFyNqnrM=_5pMgEeL20jVKN7MgWKG52pbaR0FayO=5VuXw@mail.gmail.com>
+ <CAGXu5jLVJxDJcbhrQU5-wduaP+OvePXP8VvCFMrJ47pYD-zaXg@mail.gmail.com>
+ <CA+55aFyreOY8uzOkkDkU=WttNfbH2_6nStfsm9j2T6F5ZyntHg@mail.gmail.com>
+ <CAGXu5jKbagUs7cS5y6zRQkgiA0tnD7K0FajwA1Gt+ZCPrc2jfQ@mail.gmail.com>
 MIME-Version: 1.0
-Date: Mon, 30 Apr 2018 14:21:27 -0700
-Message-Id: <20180430212127.54865-1-auradkar@google.com>
-X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
-Subject: [RFC] [PATCH] Do not start queue from interrupt context
-From: Vikram Auradkar <auradkar@google.com>
-To: jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        auradkar@google.com
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Vikram Auradkar <auradkar@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGXu5jKbagUs7cS5y6zRQkgiA0tnD7K0FajwA1Gt+ZCPrc2jfQ@mail.gmail.com>
+X-Mailer: Mutt 1.5.24 (2015-08-30)
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Lockdep warning is seen when driver is handling a topology change
-event after drive removal.
-Starting queue eventually enables irq, which throws lockdep warning in
-scsi_request_fn. This change makes starting queues async.
+On Mon, Apr 30, 2018 at 12:16:45PM -0700, Kees Cook wrote:
+> On Mon, Apr 30, 2018 at 12:00 PM, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> > On Mon, Apr 30, 2018 at 11:38 AM Kees Cook <keescook@chromium.org> wrote:
+> >
+> >> Something like this? (Untested.)
+> >
+> > Looks workable.
+> >
+> >> +       /* If we have hw RNG, start hashing immediately. */
+> >> +       if (arch_has_random()) {
+> >> +               get_random_bytes_arch(&ptr_key, sizeof(ptr_key));
+> >> +               ptr_key_ready();
+> >> +               return 0;
+> >> +       }
+> >
+> > Small tweak: you should check the return value of get_random_bytes_arch(),
+> > because in theory it can fail.
+> >
+> > Sadly, that's not actually how get_random_bytes_arch() really works - it
+> > falls back on "get_random_bytes()" on failure instead, which is explicitly
+> > against the whole point here.
+> 
+> I just noticed: there are _no_ users of get_random_bytes_arch() ...
+> didn't we once use it to feed entropy to the CRNG?
+> 
+> > So I think it would need some tweaking, with a new function entirely
+> > (get_random_bytes_arch() with a failure return for "cannot fill buffer").
+> >
+> > But that would be just a few more lines, because we could make the existing
+> > get_random_bytes_arch() just use the failure-case thing.
+> >
+> > So add a "get_hw_random_bytes()" that does that same loop in
+> > get_random_bytes_arch(), but returns the number of bytes it filled in.
+> >
+> > Then get_random_bytes_arch() turns into
+> >
+> >      got = get_hw_random_bytes(p, nbytes);
+> >      if (got < nbytes)
+> >          get_random_bytes(p+got, nbytes-got);
+> >
+> > and the initialize_ptr_random() use would be something like
+> >
+> >      if (get_hw_random_bytes(&ptr_key, sizeof(ptr_key)) == sizeof(ptr_key)) {
+> >          ptr_key_ready();
+> >          return 0;
+> >     }
+> >
+> > Hmm?
+> >
+> > Maybe we could call the "get_hw_random_bytes()" something like
+> > "get_early_random_bytes()" and the "use HW for it" is purely an
+> > implementation detail?
+> 
+> Yeah, and if we add __must_check, I think this should be fine. Ted,
+> any thoughts on this?
+> 
+> Tobin, is this something you've got time to implement and test?
 
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 0 at kernel/lockdep.c:2593 trace_hardirqs_on_caller+0x1bc/0x1d0()
-DEBUG_LOCKS_WARN_ON(current->hardirq_context)
-CPU: 0 PID: 0 Comm: swapper/0 Tainted: G           O  3.11.10-dbg-DEV #1
-Hardware name: Intel Grantley,Wellsburg/Ixion_QC_15, BIOS 2.50.0 01/21/2016
- 0000000000000000 ffff881fff803b28 ffffffffa4ea1bd5 ffff881fff803b78
- ffffffffa491bdcc ffff881fff803b68 ffffffffa48ae464 00000000cc6405a0
- 0000000000000000 ffffffffa4805a50 ffff881f9b3ae000 0000000000000000
-Call Trace:
- <IRQ>  [<ffffffffa4ea1bd5>] dump_stack+0x68/0x91
- [<ffffffffa491bdcc>] ? trace_hardirqs_on_caller+0x1bc/0x1d0
- [<ffffffffa48ae464>] warn_slowpath_common+0x94/0xc0
- [<ffffffffa4805a50>] ? _raw_spin_unlock_irq+0x30/0x50
- [<ffffffffa48ae546>] warn_slowpath_fmt+0x46/0x50
- [<ffffffffa491bdcc>] trace_hardirqs_on_caller+0x1bc/0x1d0
- [<ffffffffa491bded>] trace_hardirqs_on+0xd/0x10
- [<ffffffffa4805a50>] _raw_spin_unlock_irq+0x30/0x50
- [<ffffffffa4c5398f>] scsi_request_fn+0xaf/0x720
- [<ffffffffa4b66907>] __blk_run_queue+0x37/0x50
- [<ffffffffa4b66f1e>] blk_start_queue+0x3e/0x80
- [<ffffffffa4c52d7f>] scsi_internal_device_unblock+0x3f/0x90
- [<ffffffffc0358357>] _scsih_ublock_io_device+0x87/0xd0 [mpt2sas]
- [<ffffffffc035c105>] _scsih_tm_tr_send+0x185/0x340 [mpt2sas]
- [<ffffffffc0362e10>] mpt2sas_scsih_event_callback+0x3e0/0x840 [mpt2sas]
- [<ffffffffc034e0ba>] _base_interrupt+0x2fa/0x950 [mpt2sas]
- [<ffffffffa491bcbb>] ? trace_hardirqs_on_caller+0xab/0x1d0
- [<ffffffffa491bded>] ? trace_hardirqs_on+0xd/0x10
- [<ffffffffa4950784>] handle_irq_event_percpu+0x74/0x230
- [<ffffffffa4950988>] handle_irq_event+0x48/0x70
- [<ffffffffa495315e>] ? handle_edge_irq+0x1e/0x110
- [<ffffffffa49531b7>] handle_edge_irq+0x77/0x110
- [<ffffffffa4857d82>] handle_irq+0x22/0x40
- [<ffffffffa4805e9f>] do_IRQ+0x7f/0x110
- [<ffffffffa4ea3f2f>] common_interrupt+0x6f/0x6f
- <EOI>  [<ffffffffa4d3fe8c>] ? __cpuidle_enter_state+0x7c/0x120
- [<ffffffffa4d3fe87>] ? __cpuidle_enter_state+0x77/0x120
- [<ffffffffa4d40105>] cpuidle_enter_state+0xd5/0x250
- [<ffffffffa4909aa8>] cpu_startup_entry+0xb8/0x1e0
- [<ffffffffa4e98536>] rest_init+0xd6/0xe0
- [<ffffffffa4e98465>] ? rest_init+0x5/0xe0
- [<ffffffffa5874ec1>] start_kernel+0x3ed/0x3fa
- [<ffffffffa58748d0>] ? repair_env_string+0x5e/0x5e
- [<ffffffffa58745a5>] x86_64_start_reservations+0x2a/0x2c
- [<ffffffffa58746b0>] x86_64_start_kernel+0x109/0x10d
----[ end trace 46d48ef4760a5d9c ]--
+Sure thing, thanks for the opportunity.
 
-Signed-off-by: Vikram Auradkar <auradkar@google.com>
----
- drivers/scsi/scsi_lib.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
-index e9b4f279d29c..72c90233f261 100644
---- a/drivers/scsi/scsi_lib.c
-+++ b/drivers/scsi/scsi_lib.c
-@@ -3178,7 +3178,7 @@ void scsi_start_queue(struct scsi_device *sdev)
- 		blk_mq_unquiesce_queue(q);
- 	} else {
- 		spin_lock_irqsave(q->queue_lock, flags);
--		blk_start_queue(q);
-+		blk_start_queue_async(q);
- 		spin_unlock_irqrestore(q->queue_lock, flags);
- 	}
- }
--- 
-2.17.0.441.gb46fe60e1d-goog
+	Tobin
