@@ -1,42 +1,40 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqMv9vu5nY45IrF16AOmaBCpsUkKlPXOyeLe6QroMOtgfov3Eq4MOuoEtpSWKTe69eaStwg
-ARC-Seal: i=1; a=rsa-sha256; t=1525116239; cv=none;
+X-Google-Smtp-Source: AB8JxZp0OTHtMbhhTsuH0mNFTqBGvlbEklLb9a7Aix9V7D+KgTaCxM9ePvJ850QNyR6dh4soqJsn
+ARC-Seal: i=1; a=rsa-sha256; t=1525116238; cv=none;
         d=google.com; s=arc-20160816;
-        b=UgslM49Mucoh62xwQxtr+HXEBF0GJ6DiPtaeFAymszxleAc+MUW3C+ouxi5EKI8QcE
-         /uBi3SxpLsNiCDPBklQe2E2vFhmkV/lHqr8p7Uw9LQc4bt/ZCZubf6/XMFgBROuMpmCd
-         yawfjLaftjNCQTcXyHaOgU67FOhwCUPR66Lf9vb5bEkop67gHEU4TKx5zJzBWaJJw27M
-         zUb45Lo9KLhZ+nbhx54fQMRZAD9hq7LDQ5l1F51qG5aQeawlKi/4vdSN58iTeB8+mxgI
-         H4Mz7gOSCuLN+iblYVRAFfDjA5paqoRhKufuoW//hIFXgyVVN1b8zbRIaWvxNEqp7Jg4
-         /ZKg==
+        b=UcjuPV6S89mChxMmHPfXE4T7rrBTtOZLO2yX24saTtb6C1pJZc3yyZjLGa/cfpT8at
+         ta7ul3rdKMUb4FWx8I6MIcONZsV0VXhQ+L79U0NRezCHXSopeCQh4qlcIyd9FdurtUOP
+         Os2xVjo6ar6WelwP1Kzn7TVuU7pZiGjGvwEW4TB/IGPE2xuR97TC6uI3jPyrcmU2StzT
+         SkRaEh/Zp526hKO/XfBlNR6bzPqyEZYP3H+DHwbM+3Y2s9ym6GXVQlctBkYwtI0sLkJz
+         KQWDPHGlOZ/hgljQq+OtAByQLGYStJ3kxYkN6Pen28f3oWWPibZr1s652D5l9fNJ0V8K
+         ZmmA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=txPEvKYGBDlXMqTs/VG/d5Lzvw6tFEfA+M76a0oGsBg=;
-        b=z224peFHjNlk/sJXfoPlKEJDHePSJFYQ+BglNpMxm3FI36BHfSHzn257vFcWGBIrUG
-         idgcauN4DWpqKRkXQSBrYP4l4F72tvNLMarc9qeTYW0PxQ3i0L5t4t5eqwIYLtmKV61G
-         uSjFuMfP4tH9P9F7kpkztooEuHw2hpOrL8eLq6g+FLk8reC86Pr3p7j0S8AKVDmEbY7x
-         A8D51OB9PvNvUkafdh9h8CqHwsixG5HoscZf4X8WuMa6LBpT/NssAV8BA8VZzPrzc15s
-         pbcSiAhvgss+SVBcI0SU+hxKXjUObz8ixWqUMI6ACgftvhLXbyUeIu6x3HHP81DVZPyB
-         8ZQg==
+        bh=Ssj8+PuhiEM3p8szEvIZ5SJ1SURGdTdZMTu3KDrNX5Y=;
+        b=AG+iZqWf4rrg/Q1PGRY5q6zJgsd6/TUNg9Mb3l245ZgH9hJZ1D3vysM19iPovnV0rM
+         8JX6UDQu4+TMEhgu7BBXLbaxNpQdpniY0qVmVm7czl5+E8UEuB5oOwgVubT/cxz+VCt3
+         351vzCUHjwR72uh6rF3oB7/Za6Q1zWViCgk+EKN68KmpSwNmq/lpN4eTa/MMa049ae7N
+         wY7r7SzYAxD9qpVVW3FZc0mXWDkc28jTWcT+E57iseRb8VDCo3pAjWkTCPSw0lc7JBtK
+         4k0JRrSktrGy8swQshw2U3F/P9WxaCKHQNPkPePmFZkizmaKmwkmP5w9A38gwoKfkMz+
+         vmvQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B042A22DBE
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B6DB22DAC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dmitry Vyukov <dvyukov@google.com>,
-	syzbot+209c0f67f99fec8eb14b@syzkaller.appspotmail.com,
-	syzbot+7fb6d9525a4528104e05@syzkaller.appspotmail.com,
-	syzbot+2e63711063e2d8f9ea27@syzkaller.appspotmail.com,
-	syzbot+de73361ee4971b6e6f75@syzkaller.appspotmail.com
-Subject: [PATCH 3.18 21/25] kobject: dont use WARN for registration failures
-Date: Mon, 30 Apr 2018 12:23:28 -0700
-Message-Id: <20180430183911.685047353@linuxfoundation.org>
+	Joakim Tjernlund <joakim.tjernlund@infinera.com>,
+	Richard Weinberger <richard@nod.at>,
+	Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: [PATCH 3.18 20/25] mtd: cfi: cmdset_0002: Do not allow read/write to suspend erase block.
+Date: Mon, 30 Apr 2018 12:23:27 -0700
+Message-Id: <20180430183911.643116131@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430183910.801976983@linuxfoundation.org>
 References: <20180430183910.801976983@linuxfoundation.org>
@@ -46,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200285796531709?=
-X-GMAIL-MSGID: =?utf-8?q?1599200285796531709?=
+X-GMAIL-THRID: =?utf-8?q?1599200285170089780?=
+X-GMAIL-MSGID: =?utf-8?q?1599200285170089780?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,45 +53,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dmitry Vyukov <dvyukov@google.com>
+From: Joakim Tjernlund <joakim.tjernlund@infinera.com>
 
-commit 3e14c6abbfb5c94506edda9d8e2c145d79375798 upstream.
+commit 7b70eb14392a7cf505f9b358d06c33b5af73d1e7 upstream.
 
-This WARNING proved to be noisy. The function still returns an error
-and callers should handle it. That's how most of kernel code works.
-Downgrade the WARNING to pr_err() and leave WARNINGs for kernel bugs.
+Currently it is possible to read and/or write to suspend EB's.
+Writing /dev/mtdX or /dev/mtdblockX from several processes may
+break the flash state machine.
 
-Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
-Reported-by: syzbot+209c0f67f99fec8eb14b@syzkaller.appspotmail.com
-Reported-by: syzbot+7fb6d9525a4528104e05@syzkaller.appspotmail.com
-Reported-by: syzbot+2e63711063e2d8f9ea27@syzkaller.appspotmail.com
-Reported-by: syzbot+de73361ee4971b6e6f75@syzkaller.appspotmail.com
-Cc: stable <stable@vger.kernel.org>
+Taken from cfi_cmdset_0001 driver.
+
+Signed-off-by: Joakim Tjernlund <joakim.tjernlund@infinera.com>
+Cc: <stable@vger.kernel.org>
+Reviewed-by: Richard Weinberger <richard@nod.at>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- lib/kobject.c |   12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+ drivers/mtd/chips/cfi_cmdset_0002.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/lib/kobject.c
-+++ b/lib/kobject.c
-@@ -234,14 +234,12 @@ static int kobject_add_internal(struct k
+--- a/drivers/mtd/chips/cfi_cmdset_0002.c
++++ b/drivers/mtd/chips/cfi_cmdset_0002.c
+@@ -814,9 +814,10 @@ static int get_chip(struct map_info *map
+ 		    (mode == FL_WRITING && (cfip->EraseSuspend & 0x2))))
+ 			goto sleep;
  
- 		/* be noisy on error issues */
- 		if (error == -EEXIST)
--			WARN(1, "%s failed for %s with "
--			     "-EEXIST, don't try to register things with "
--			     "the same name in the same directory.\n",
--			     __func__, kobject_name(kobj));
-+			pr_err("%s failed for %s with -EEXIST, don't try to register things with the same name in the same directory.\n",
-+			       __func__, kobject_name(kobj));
- 		else
--			WARN(1, "%s failed for %s (error: %d parent: %s)\n",
--			     __func__, kobject_name(kobj), error,
--			     parent ? kobject_name(parent) : "'none'");
-+			pr_err("%s failed for %s (error: %d parent: %s)\n",
-+			       __func__, kobject_name(kobj), error,
-+			       parent ? kobject_name(parent) : "'none'");
- 	} else
- 		kobj->state_in_sysfs = 1;
+-		/* We could check to see if we're trying to access the sector
+-		 * that is currently being erased. However, no user will try
+-		 * anything like that so we just wait for the timeout. */
++		/* Do not allow suspend iff read/write to EB address */
++		if ((adr & chip->in_progress_block_mask) ==
++		    chip->in_progress_block_addr)
++			goto sleep;
  
+ 		/* Erase suspend */
+ 		/* It's harmless to issue the Erase-Suspend and Erase-Resume
+@@ -2265,6 +2266,7 @@ static int __xipram do_erase_chip(struct
+ 	chip->state = FL_ERASING;
+ 	chip->erase_suspended = 0;
+ 	chip->in_progress_block_addr = adr;
++	chip->in_progress_block_mask = ~(map->size - 1);
+ 
+ 	INVALIDATE_CACHE_UDELAY(map, chip,
+ 				adr, map->size,
+@@ -2354,6 +2356,7 @@ static int __xipram do_erase_oneblock(st
+ 	chip->state = FL_ERASING;
+ 	chip->erase_suspended = 0;
+ 	chip->in_progress_block_addr = adr;
++	chip->in_progress_block_mask = ~(len - 1);
+ 
+ 	INVALIDATE_CACHE_UDELAY(map, chip,
+ 				adr, len,
