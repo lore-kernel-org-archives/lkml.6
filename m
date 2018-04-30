@@ -1,40 +1,39 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZriKngxrRBC/7dVE47esxQpxFtadojhJ/raG3ycwTqcdzks+52R/0PoKpPL9zEK2VY+4ed8
-ARC-Seal: i=1; a=rsa-sha256; t=1525116394; cv=none;
+X-Google-Smtp-Source: AB8JxZpQjauPo1zT4DxSu+ddzXkFNjSn9OzYgD0Sr+SYU6LBRaRjyTM3U7FPZRWjWl1v8qNZaHj5
+ARC-Seal: i=1; a=rsa-sha256; t=1525116385; cv=none;
         d=google.com; s=arc-20160816;
-        b=ZhklzBZgitIed9lB42X17KXXw9w0pbZwJ0gsZCisM+ob8ixJC/zSG0R0XtGiN5y1OM
-         Xt9IOHbkTQETPDWClwKZ1s4HPDP5nWCkGJGYWI/wc7MAfvoJ52cV3mnv9IRJFt4P8okw
-         +Ijerq2/rOx4CqUTKLvl+sox6zEegsEV2nrkgoy20nqQrKvODJxqWuXOZxd5F2TW+Jcu
-         geusufGV0JJwn4Rx9+XXTIXowTqGK7hogUfbH7IUMpdLvsnQywHhrWmlpXwlBdUfDWHT
-         SRIOf/RnHbeXt0i+Pn+niyv4XL662da0ImejRDCoVqXWm6+1Lhw3KDemOAG1Vt5Fkpji
-         mTYQ==
+        b=AqrFghR7xGihGjw2H4paSr2RYBcdblCu5danecKLfyeqi5ZcfDjRqfxEZwDaq64JmG
+         EyixoeLe5QqzU1kV9LSDGcPXEqyFYH6Y30W1jI9uuTDU/adOunjz8IeJle5yMwc6prVQ
+         7kog8ZAVqbYWR6KJfa0s2TFr6/perIIgh2LwM5OcOSQXTUGLQfNThWap/eFSz6w4TWg6
+         8VLs/l3xY0KyLAePD6B7VJcHgLGv+ERZi7OO4fygeKjPc4lyxqXJcfCbaO3WZnXNIG9L
+         122Y56udWvl4bwivc+y/8GcwJ3P35bb19n0HFh6IMmgCRUD+B/+r4SN2/uT/XNVsxeHB
+         4wxw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=GLPpa/+S51hIFVYp4rjztYiFjHKzW0REFC7uhSpLa04=;
-        b=K2V+ojAbQfI6RBuXYaJu0ms/d9PNBV1U46EApZ5MzGybkvOfByNJ9PnLF6ypEBwWFm
-         A43+SqVVJps0i5Mlv4S7PfgWiyRJ9v5syKGOC+Cq10bxJmbwKMOsV1yjkP+1TFfk4IUY
-         lIXg3HJypkYyUprjZxssEP8q8XoUYnMmGKkpAfsZb0059LYQrj26iAHHQdwVDjSzgx4g
-         dCZI0RYHp9nRUa/zctj3o/JuM7hmGuh67QBh1Hx/3GkBJj7KiQ6BSPpnC7I96XZ7x7Sm
-         yJkWcAUU4KYm3M0+SCTsW7aSvuTmxFKjTbKyrKF+TNWRTQSR+QCcsbOvDAJY8diLbPkc
-         WUJA==
+        bh=uGdC7LIZ3y7+CS+VxJQ/Fw2uX4f2MfcgZtnC3BM8lVI=;
+        b=YtqirWo65JiAqwcZjnGTuqiGLb8BqEGEiyFNzI70kc1F0GCCmh2SmgglCryPW2EPmN
+         9dZZsiZBzGVKXMnPl20qoJDdPcR8EMs6ondEBaOJIReGPHJZhE6MEXLkG6c5EpqV3EOV
+         B6yPG/si2ijG073XVlCjWeG6aHstaDxJQKZtJ7R528STsarkUxqZwOpehG5uv+Y3qbJp
+         xqLIN90tJumh1T5tUtfjgTwLXmwCNB7jmcIceMpoQiCVF/rHjqIrRKrxlwn93loVM8fs
+         yBjZKqDoJGFaKb4IkEwwsXCPikkl6qui6l4wigrVuMDlRLyu+l+k5jnf6W3txpPQrtys
+         L27A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22F6422DAE
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FFDA22DCB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Joakim Tjernlund <joakim.tjernlund@infinera.com>,
-	Richard Weinberger <richard@nod.at>,
-	Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: [PATCH 4.9 37/61] mtd: cfi: cmdset_0001: Workaround Micron Erase suspend bug.
-Date: Mon, 30 Apr 2018 12:24:40 -0700
-Message-Id: <20180430183954.482062431@linuxfoundation.org>
+	Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+	Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.9 24/61] ALSA: dice: fix OUI for TC group
+Date: Mon, 30 Apr 2018 12:24:27 -0700
+Message-Id: <20180430183953.343122494@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430183951.312721450@linuxfoundation.org>
 References: <20180430183951.312721450@linuxfoundation.org>
@@ -44,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200283537847620?=
-X-GMAIL-MSGID: =?utf-8?q?1599200448778839234?=
+X-GMAIL-THRID: =?utf-8?q?1599200511040409140?=
+X-GMAIL-MSGID: =?utf-8?q?1599200439268500789?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,61 +52,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Joakim Tjernlund <joakim.tjernlund@transmode.se>
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 
-commit 46a16a2283f9e678a4e26829175e0c37a5191860 upstream.
+commit 10412c420af9ba1f3de8483a95d360e5eb5bfc84 upstream.
 
-Some Micron chips does not work well wrt Erase suspend for
-boot blocks. This avoids the issue by not allowing Erase suspend
-for the boot blocks for the 28F00AP30(1GBit) chip.
+OUI for TC Electronic is 0x000166, for TC GROUP A/S. 0x001486 is for Echo
+Digital Audio Corporation.
 
-Signed-off-by: Joakim Tjernlund <joakim.tjernlund@infinera.com>
-Cc: <stable@vger.kernel.org>
-Reviewed-by: Richard Weinberger <richard@nod.at>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Fixes: 7cafc65b3aa1 ('ALSA: dice: force to add two pcm devices for listed models')
+Cc: <stable@vger.kernel.org> # v4.6+
+Reference: http://standards-oui.ieee.org/oui/oui.txt
+Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mtd/chips/cfi_cmdset_0001.c |   17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ sound/firewire/dice/dice.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/mtd/chips/cfi_cmdset_0001.c
-+++ b/drivers/mtd/chips/cfi_cmdset_0001.c
-@@ -45,6 +45,7 @@
- #define I82802AB	0x00ad
- #define I82802AC	0x00ac
- #define PF38F4476	0x881c
-+#define M28F00AP30	0x8963
- /* STMicroelectronics chips */
- #define M50LPW080       0x002F
- #define M50FLW080A	0x0080
-@@ -375,6 +376,17 @@ static void cfi_fixup_major_minor(struct
- 		extp->MinorVersion = '1';
- }
+--- a/sound/firewire/dice/dice.c
++++ b/sound/firewire/dice/dice.c
+@@ -14,7 +14,7 @@ MODULE_LICENSE("GPL v2");
+ #define OUI_WEISS		0x001c6a
+ #define OUI_LOUD		0x000ff2
+ #define OUI_FOCUSRITE		0x00130e
+-#define OUI_TCELECTRONIC	0x001486
++#define OUI_TCELECTRONIC	0x000166
  
-+static int cfi_is_micron_28F00AP30(struct cfi_private *cfi, struct flchip *chip)
-+{
-+	/*
-+	 * Micron(was Numonyx) 1Gbit bottom boot are buggy w.r.t
-+	 * Erase Supend for their small Erase Blocks(0x8000)
-+	 */
-+	if (cfi->mfr == CFI_MFR_INTEL && cfi->id == M28F00AP30)
-+		return 1;
-+	return 0;
-+}
-+
- static inline struct cfi_pri_intelext *
- read_pri_intelext(struct map_info *map, __u16 adr)
- {
-@@ -836,6 +848,11 @@ static int chip_ready (struct map_info *
- 		    chip->in_progress_block_addr)
- 			goto sleep;
- 
-+		/* do not suspend small EBs, buggy Micron Chips */
-+		if (cfi_is_micron_28F00AP30(cfi, chip) &&
-+		    (chip->in_progress_block_mask == ~(0x8000-1)))
-+			goto sleep;
-+
- 		/* Erase suspend */
- 		map_write(map, CMD(0xB0), chip->in_progress_block_addr);
- 
+ #define DICE_CATEGORY_ID	0x04
+ #define WEISS_CATEGORY_ID	0x00
