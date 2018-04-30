@@ -1,165 +1,128 @@
-Return-Path: <ctatlor97@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1523109608; cv=none;
-        d=google.com; s=arc-20160816;
-        b=V6zuswBGrwks6q9l7G1tdE3SPuGCn+6v1XyGbcMpTJCsW/5otwernuzyChge9mCt7Q
-         2xTfAnCk0tF1YitJ8httWEWWmdh80cbjkfWFsY0hdcp7TzNRR/2YcwANVF6sTWI/mhPn
-         TjYDVgekf0oCkR+gmq4h6GVApJ/xkeb7Kl58160C+UYFtEJZ0chlHT6+G9cxsf5TZNkq
-         5TsF9bS4vXlhiCjcK+jz7ybr+AnfFml+KqrDy1zryufJIEs0oVl/1iYv8Xtg516JafPi
-         B5uL9xjcZtmBoITp2ldyNgYBJ+8iKl1trKykgd5SAMTmiHkvvsqnPoV0gRNFdvTmisnF
-         y/Rg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=yZmxzOIBiHi1qC+Qn/37m/M9pZawE0RbZYAJS0N6Jgs=;
-        b=CP+3B3y7hGdcu4NwPmkEPrNNSDNfG9sFb5qWnm8iKQsUPBUCSGCKU2RI8XRt1J10N2
-         xDj0ZA1rm47pKTYIQfcMWSeYNxjAEn7r+Em4xLPdmMGpB5q9KWCifA1YELZZ6rv0T6Io
-         s+STebbE7NXQCp9DjPy0doPYpzc2kmpNH5lMMOVUrL+wJugN9otYoKjZ1Ob9aZ4q8j8X
-         PyMGRa3AObsNqSrvbet3r3lpCNdL4gAhP016aDEnZidfNDLbeOpq8RS67MY62e/GMyb8
-         yIcDv9p59MZAcoPHZaiodYji32wlTSl1iO+ihnDbshUQxjX7XbGDTD1iJhaZnJ7hED1l
-         O2tg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=jFiG3hEg;
-       spf=pass (google.com: domain of ctatlor97@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ctatlor97@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=jFiG3hEg;
-       spf=pass (google.com: domain of ctatlor97@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ctatlor97@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AIpwx4+VmJdnlSPD/7iK7V93ZBYfizSodoKvcgbXVMUUwFX/CLuqt7kW7Fv+Zl4Eh03IIR7Y6pUkrg==
-From: Craig Tatlor <ctatlor97@gmail.com>
-To: 
-Cc: ctatlor97@gmail.com,
-	linux-arm-msm@vger.kernel.org,
-	Sebastian Reichel <sre@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/3] dt-bindings: power: supply: qcom_bms: Add bindings
-Date: Sat,  7 Apr 2018 14:59:20 +0100
-Message-Id: <20180407135934.26122-2-ctatlor97@gmail.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180407135934.26122-1-ctatlor97@gmail.com>
-References: <20180407135934.26122-1-ctatlor97@gmail.com>
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1619120-1525105371-2-4901310991899807940
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, UNPARSEABLE_RELAY 0.001, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1525105370; b=Ykcm8iryY/mheeo4m7aUnwnM1CZBHK8VFJEUwIBpo0LhXdYDjB
+    P/MJ9vXsIk5l6GA6TOVrKtWpeb6CDPJJ8ExhPEaUPTFg6GvD5kbvzmXWLe1fFZnf
+    0DCespdldISkIt2kUbz4fLi7w652xCvuCh/vf/mSUlK7Qxgz3kOmjnWtb1DI4603
+    aTr6i82G/L8g9lCQFxLAjJToxaTnt0vapXyUsLh5kzB0Dv5PTbDOuJlOpmbtSyNh
+    8Rka1S0WkecEMP2s8ha07ym5GYYE54Ypla6R3S2VPBUtflBCaQUY4PT+0KfNA7Zb
+    3JewB5EzN/KiL/bBtojVt00kmtHFdbT4EtgA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=fm2; t=1525105370; bh=
+    wSfBe5aHhuUedNOcOFQxQfl6PqxUJqdQxQ1thPm3dzA=; b=YV/rr+AA3fpxHnbK
+    yUV8hHl3Pr4Vtm3vi32hGBA89Zhxr0ZjOtTK02Vswvf40Df5kUG/azFjs8gK5h9w
+    9tCuy0OE0JxhW8f0YvLGuAoapCgUFF7g4Yhoo0YgcVphdOpaukJU9BXWQZJ0AT8s
+    wyGc6+Jx/63t2SIQNeFv89vUu6EAqpKiQLlNi0CzkprnB3cZ5zcj1Afl5X4NtMMa
+    24S5gnPMSVl9iEZmCelBUKQX0B9+m57L5scqE4FOsXku5lU8BrWkoYlJnJVFM4xD
+    5Jt4zqEyj40TiGn0F5Ip4ucUvEXkgVLx970Hu+xLItlFkFRA5AG9WRBRTedAC75b
+    FtA7mQ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=aIHpeAmN x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=oracle.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=oracle.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=oracle.com header.i=@oracle.com header.b=aIHpeAmN x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=oracle.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=oracle.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfDbObNHI5kIS49uJNda+cS5IL+A+XO1gqaGRM8AbMRgtMcViVBkOf6X10iuNJNjqDnYXFJ8p/oEIrChihLfcy3Qurp71y4ZMQQsQlbbpy3GzXJcnkO1S
+    9+wTbrXyCQhB31fYqK1k63UGWwEbgfbXWD+3nEkBVWXMdHoqPXQoCMwdMtZZCbpjRdX2jpblASzIoE8TAsc2CykZ/uRFLORS1nQDC1YtQicoa8UlFBSf2kBP
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=yPCof4ZbAAAA:8
+    a=VwQbUJbxAAAA:8 a=BRfX-kF5JHxRc2FuUgcA:9 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1755045AbeD3QWf (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 30 Apr 2018 12:22:35 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:60058 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754870AbeD3QVl (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 30 Apr 2018 12:21:41 -0400
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+To: linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org
+Cc: jgross@suse.com, Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        stable@vger.kernel.org
+Subject: [PATCH 1/4] xen/PVH: Replace GDT_ENTRY with explicit constant
+Date: Mon, 30 Apr 2018 12:23:36 -0400
+Message-Id: <20180430162339.17143-2-boris.ostrovsky@oracle.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180430162339.17143-1-boris.ostrovsky@oracle.com>
+References: <20180430162339.17143-1-boris.ostrovsky@oracle.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8879 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=434
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804300156
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597095394982255487?=
-X-GMAIL-MSGID: =?utf-8?q?1597096180436670471?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Add bindings for the Qualcomm Battery Monitoring system.
+Latest binutils release (2.29.1) will no longer allow proper computation
+of GDT entries on 32-bits, with warning:
 
-Signed-off-by: Craig Tatlor <ctatlor97@gmail.com>
+arch/x86/xen/xen-pvh.S: Assembler messages:
+arch/x86/xen/xen-pvh.S:150: Warning: shift count out of range (32 is not between 0 and 31)
+arch/x86/xen/xen-pvh.S:150: Warning: shift count out of range (40 is not between 0 and 31)
+arch/x86/xen/xen-pvh.S:150: Warning: shift count out of range (32 is not between 0 and 31)
+arch/x86/xen/xen-pvh.S:152: Warning: shift count out of range (32 is not between 0 and 31)
+arch/x86/xen/xen-pvh.S:152: Warning: shift count out of range (40 is not between 0 and 31)
+arch/x86/xen/xen-pvh.S:152: Warning: shift count out of range (32 is not between 0 and 31)
+
+Use explicit value of the entry instead of using GDT_ENTRY() macro.
+
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: stable@vger.kernel.org
 ---
- .../bindings/power/supply/qcom_bms.txt        | 93 +++++++++++++++++++
- 1 file changed, 93 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/power/supply/qcom_bms.txt
+ arch/x86/xen/xen-pvh.S | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/power/supply/qcom_bms.txt b/Documentation/devicetree/bindings/power/supply/qcom_bms.txt
-new file mode 100644
-index 000000000000..6296399edc09
---- /dev/null
-+++ b/Documentation/devicetree/bindings/power/supply/qcom_bms.txt
-@@ -0,0 +1,93 @@
-+Qualcomm Battery Measurement System
-+
-+The Qualcomm Battery Measurement System is found inside of Qualcomm PM8941
-+PMICs. It provides OCV and coulomb counter registers that allow the kernel
-+to infer a capacity level.
-+
-+Required properties:
-+- compatible:               Should contain "qcom,pm8941-bms".
-+- reg:                      Specifies the SPMI address and length of the
-+			    controller's registers.
-+- interrupts:               OCV threshold interrupt.
-+- io-channels:              Should contain IIO channel specifier for the
-+			    ADC channel that reports battery temperature.
-+- io-channel-names:         Should contain "temp".
-+- qcom,fcc-temp-legend:     An array containing the temperature, in degC,
-+			    for each column of the FCC lookup table.
-+- qcom,fcc-lut:             An array of FCC values in mah, one entry for each
-+			    temperature defined in in qcom,fcc-temp-legend.
-+- qcom,ocv-temp-legend:     An array containing the temperature, in degC,
-+			    for each column of the OCV lookup table.
-+- qcom,ocv-capacity-legend: An array containing the capacity for each
-+			    row of the OCV lookup table.
-+- qcom,ocv-lut:             An array of OCV values in mV, one entry for each
-+			    capacity defined in qcom,ocv-capacity-legend.
-+
-+Example:
-+
-+		pm8941_vadc: vadc@3100 {
-+			compatible = "qcom,spmi-vadc";
-+			reg = <0x3100>;
-+			interrupts = <0x0 0x31 0x0 IRQ_TYPE_EDGE_RISING>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			#io-channel-cells = <1>;
-+
-+			bat_temp {
-+				reg = <VADC_LR_MUX1_BAT_THERM>;
-+			};
-+		};
-+
-+		bms@4000 {
-+			compatible = "qcom,pm8941-bms";
-+			reg = <0x4000>;
-+			interrupts = <0x0 0x40 0x4 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "ocv_thr";
-+
-+			io-channels = <&pm8941_vadc VADC_LR_MUX1_BAT_THERM>;
-+			io-channel-names = "temp";
-+
-+			qcom,fcc-temp-legend = /bits/ 8 <(-10) 0 25 50 65>;
-+			qcom,fcc-lut = /bits/ 16 <6010 6070 6680 6780 6670>;
-+
-+			qcom,ocv-capacity-legend = /bits/ 8 <100 95 90 85
-+							     80 75 70 65
-+							     60 55 50 45
-+							     40 35 30 25
-+							     20 15 10 9
-+							     8 7 6 5 4
-+							     3 2 1 0>;
-+
-+			qcom,ocv-temp-legend = /bits/ 8 <(-10) 0 25 50 65>;
-+			qcom,ocv-lut = /bits/ 16 <4288 4288 4306 4315 4315
-+						  4261 4241 4259 4266 4246
-+						  4201 4181 4201 4207 4187
-+						  4153 4133 4150 4155 4135
-+						  4105 4085 4100 4104 4084
-+						  4058 4038 4052 4058 4038
-+						  4012 3992 4004 4014 3994
-+						  3970 3950 3959 3971 3951
-+						  3931 3911 3915 3927 3907
-+						  3899 3879 3880 3884 3864
-+						  3873 3853 3851 3853 3833
-+						  3848 3828 3827 3829 3809
-+						  3829 3809 3808 3809 3789
-+						  3815 3795 3791 3791 3771
-+						  3801 3781 3775 3772 3752
-+						  3785 3765 3751 3746 3726
-+						  3767 3747 3727 3719 3699
-+						  3750 3730 3702 3692 3672
-+						  3728 3708 3680 3672 3652
-+						  3720 3700 3676 3665 3645
-+						  3712 3692 3670 3660 3645
-+						  3695 3675 3658 3648 3633
-+						  3662 3647 3629 3620 3610
-+						  3620 3605 3589 3580 3570
-+						  3562 3552 3538 3529 3519
-+						  3490 3480 3474 3470 3465
-+						  3403 3398 3388 3380 3375
-+						  3320 3300 3255 3221 3206
-+						  3000 3000 3000 3000 3000>;
-+		};
-+	};
-+};
+diff --git a/arch/x86/xen/xen-pvh.S b/arch/x86/xen/xen-pvh.S
+index e1a5fbe..934f7d4 100644
+--- a/arch/x86/xen/xen-pvh.S
++++ b/arch/x86/xen/xen-pvh.S
+@@ -145,11 +145,11 @@ gdt_start:
+ 	.quad 0x0000000000000000            /* NULL descriptor */
+ 	.quad 0x0000000000000000            /* reserved */
+ #ifdef CONFIG_X86_64
+-	.quad GDT_ENTRY(0xa09a, 0, 0xfffff) /* __KERNEL_CS */
++	.quad 0x00af9a000000ffff            /* __BOOT_CS */
+ #else
+-	.quad GDT_ENTRY(0xc09a, 0, 0xfffff) /* __KERNEL_CS */
++	.quad 0x00cf9a000000ffff            /* __BOOT_CS */
+ #endif
+-	.quad GDT_ENTRY(0xc092, 0, 0xfffff) /* __KERNEL_DS */
++	.quad 0x00cf92000000ffff            /* __BOOT_DS */
+ gdt_end:
+ 
+ 	.balign 4
 -- 
-2.17.0
+2.9.3
