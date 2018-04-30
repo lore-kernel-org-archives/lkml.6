@@ -1,73 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753039AbeD3LUh (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 07:20:37 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:33334 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751064AbeD3LUg (ORCPT
+        id S1753292AbeD3LVR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 07:21:17 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:50830 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752532AbeD3LVP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 07:20:36 -0400
-Date: Mon, 30 Apr 2018 13:20:29 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Gaurav Kohli <gkohli@codeaurora.org>, tglx@linutronix.de,
-        mpe@ellerman.id.au, mingo@kernel.org, bigeasy@linutronix.de,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Neeraj Upadhyay <neeraju@codeaurora.org>,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH v1] kthread/smpboot: Serialize kthread parking against
- wakeup
-Message-ID: <20180430112029.GF4082@hirez.programming.kicks-ass.net>
-References: <1524645199-5596-1-git-send-email-gkohli@codeaurora.org>
- <20180425200917.GZ4082@hirez.programming.kicks-ass.net>
- <20180426084131.GV4129@hirez.programming.kicks-ass.net>
- <20180426161820.GA15391@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180426161820.GA15391@redhat.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        Mon, 30 Apr 2018 07:21:15 -0400
+X-Google-Smtp-Source: AB8JxZrS7GPIGe4pHHAvOWmvl1vmiO0LaMYpD0U9ZzVzTdxRBeBVRooNcSJ1uwfBMiutKyiEEBEIBA==
+From: Christina Quast <cquast@baylibre.com>
+To: tony@atomide.com
+Cc: linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        narmstrong@baylibre.com, Christina Quast <cquast@baylibre.com>
+Subject: [PATCH 0/2] Add macro defines for AM335x
+Date: Mon, 30 Apr 2018 13:20:04 +0200
+Message-Id: <20180430112006.20861-1-cquast@baylibre.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 26, 2018 at 06:18:20PM +0200, Oleg Nesterov wrote:
-> On 04/26, Peter Zijlstra wrote:
-> >
-> > For the others, I think we want to do something like the below. I still
-> > need to look at TASK_TRACED, which I suspect is also special,
-> 
-> Yes, and TASK_STOPPED.
+This patchset replaces the register offsets for am335x with macro defines.
+The values are extraced from the "AM335x SitaraTM Processors Technical
+Reference Manual".
 
-I already did that one, right ;-)
+Christina Quast (2):
+  ARM: dts: am335x: Replace numeric pinmux address with macro defines
+  ARM: dts: am335x: Replaced register offsets with defines
 
-> 
-> ptrace_freeze_traced() and ptrace_unfreeze_traced() should be fine, but
-> ptrace_stop() wants set_special_state() too, I think.
+ arch/arm/boot/dts/am335x-baltos-ir2110.dts    |  17 +-
+ arch/arm/boot/dts/am335x-baltos-ir3220.dts    |  39 +--
+ arch/arm/boot/dts/am335x-baltos-ir5221.dts    |  43 +--
+ arch/arm/boot/dts/am335x-baltos-leds.dtsi     |   7 +-
+ arch/arm/boot/dts/am335x-baltos.dtsi          | 141 ++++-----
+ arch/arm/boot/dts/am335x-base0033.dts         |  49 +--
+ arch/arm/boot/dts/am335x-bone-common.dtsi     | 105 +++----
+ .../arm/boot/dts/am335x-boneblack-common.dtsi |  55 ++--
+ .../boot/dts/am335x-boneblack-wireless.dts    |  29 +-
+ arch/arm/boot/dts/am335x-boneblue.dts         | 105 +++----
+ .../arm/boot/dts/am335x-bonegreen-common.dtsi |   5 +-
+ .../boot/dts/am335x-bonegreen-wireless.dts    |  29 +-
+ arch/arm/boot/dts/am335x-chiliboard.dts       |  67 ++---
+ arch/arm/boot/dts/am335x-chilisom.dtsi        |  35 +--
+ arch/arm/boot/dts/am335x-cm-t335.dts          | 155 +++++-----
+ arch/arm/boot/dts/am335x-evm.dts              | 221 +++++++-------
+ arch/arm/boot/dts/am335x-evmsk.dts            | 279 +++++++++---------
+ arch/arm/boot/dts/am335x-icev2.dts            | 117 ++++----
+ arch/arm/boot/dts/am335x-igep0033.dtsi        |  41 +--
+ arch/arm/boot/dts/am335x-lxm.dts              | 121 ++++----
+ .../arm/boot/dts/am335x-moxa-uc-8100-me-t.dts | 117 ++++----
+ arch/arm/boot/dts/am335x-nano.dts             | 141 ++++-----
+ arch/arm/boot/dts/am335x-pcm-953.dtsi         |  75 ++---
+ arch/arm/boot/dts/am335x-pdu001.dts           | 171 +++++------
+ arch/arm/boot/dts/am335x-pepper.dts           | 201 ++++++-------
+ arch/arm/boot/dts/am335x-phycore-som.dtsi     |  61 ++--
+ arch/arm/boot/dts/am335x-sbc-t335.dts         | 113 +++----
+ arch/arm/boot/dts/am335x-shc.dts              | 225 +++++++-------
+ arch/arm/boot/dts/am335x-sl50.dts             | 153 +++++-----
+ arch/arm/boot/dts/am335x-wega.dtsi            |  69 ++---
+ include/dt-bindings/pinctrl/am335x.h          | 236 +++++++++++++++
+ 31 files changed, 1744 insertions(+), 1478 deletions(-)
+ create mode 100644 include/dt-bindings/pinctrl/am335x.h
 
-Thanks for going through that, I'll update the patch.
-
-> > +/*
-> > + * set_special_state() should be used for those states when the blocking task
-> > + * can not use the regular condition based wait-loop. In that case we must
-> > + * serialize against wakeups such that any possible in-flight TASK_RUNNING stores
-> > + * will not collide with out state change.
-> > + */
-> > +#define set_special_state(state_value)					\
-> > +	do {								\
-> > +		unsigned long flags; /* may shadow */			\
-> > +		raw_spin_lock_irqsave(&current->pi_lock, flags);	\
-> > +		current->state = (state_value);				\
-> > +		raw_spin_unlock_irqrestore(&current->pi_lock, flags);	\
-> > +	} while (0)
-> > +
-> 
-> Agreed.
-> 
-> I thought that perhaps we can change ttwu_do_wakeup() cmpxchg() instead of
-> plain p->state = TASK_RUNNING, but this helper looks much more clear and simple.
-
-Aside from cmpxchg() slowing down the common fast path, that also
-would not work on architectures where cmpxchg() is not in fact atomic vs
-regular stores (and yes, sadly we still have those, PARISC and SPARC32
-come to mind).
+-- 
+2.17.0
