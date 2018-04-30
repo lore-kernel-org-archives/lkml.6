@@ -1,140 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754478AbeD3SsQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 14:48:16 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:44033 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753397AbeD3SsO (ORCPT
+        id S1754234AbeD3TBC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 15:01:02 -0400
+Received: from mail-io0-f181.google.com ([209.85.223.181]:33219 "EHLO
+        mail-io0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752534AbeD3TBA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 14:48:14 -0400
-X-Google-Smtp-Source: AB8JxZo0suwv5kFoiO7oBGFXTicI2KSlPQs5U4nzwwbL66XeBMh+UrQGkcQG/QYv9MZyCzfRhO/xovq/g/hmDyQepJk=
+        Mon, 30 Apr 2018 15:01:00 -0400
+X-Google-Smtp-Source: AB8JxZqQmEkSQuqiD5nfYXs2W2W0afwpfwO4jzPjK5y0odVKeke0GvnMvLvAd6nBzbviWhiTVQG2gzraruhihuKzWk0=
 MIME-Version: 1.0
-In-Reply-To: <1523975611-15978-18-git-send-email-ldufour@linux.vnet.ibm.com>
-References: <1523975611-15978-1-git-send-email-ldufour@linux.vnet.ibm.com> <1523975611-15978-18-git-send-email-ldufour@linux.vnet.ibm.com>
-From: Punit Agrawal <punitagrawal@gmail.com>
-Date: Mon, 30 Apr 2018 19:47:53 +0100
-Message-ID: <CAD4BONeTCmSZgzThatyY66xVx1a9nCgNO+LCory0h9ZpBkn_+w@mail.gmail.com>
-Subject: Re: [PATCH v10 17/25] mm: protect mm_rb tree with a rwlock
-To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Cc: akpm@linux-foundation.org, mhocko@kernel.org, peterz@infradead.org,
-        kirill@shutemov.name, ak@linux.intel.com, dave@stgolabs.net,
-        jack@suse.cz, Matthew Wilcox <willy@infradead.org>,
-        benh@kernel.crashing.org, mpe@ellerman.id.au, paulus@samba.org,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
-        sergey.senozhatsky.work@gmail.com,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        David Rientjes <rientjes@google.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Ganesh Mahendran <opensource.ganesh@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
-        npiggin@gmail.com, bsingharora@gmail.com, paulmck@linux.vnet.ibm.com,
-        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
-        x86@kernel.org
+References: <alpine.DEB.2.20.1804301741570.3243@hypnos.tec.linutronix.de>
+ <CAGXu5jL1W=AC023asgeMRUXAnhU2vd-RJRqGtOOetQ=aXwDcFQ@mail.gmail.com>
+ <CA+55aFwieC1-nAs+NFq9RTwaR8ef9hWa4MjNBWL41F-8wM49eA@mail.gmail.com>
+ <20180430124135.0cce92e3@gandalf.local.home> <CA+55aFzpJC4+tuSopeze72D2sv1urGdap8+Bj2Y9hEYitAkE4Q@mail.gmail.com>
+ <CA+55aFyNqnrM=_5pMgEeL20jVKN7MgWKG52pbaR0FayO=5VuXw@mail.gmail.com> <CAGXu5jLVJxDJcbhrQU5-wduaP+OvePXP8VvCFMrJ47pYD-zaXg@mail.gmail.com>
+In-Reply-To: <CAGXu5jLVJxDJcbhrQU5-wduaP+OvePXP8VvCFMrJ47pYD-zaXg@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 30 Apr 2018 19:00:49 +0000
+Message-ID: <CA+55aFyreOY8uzOkkDkU=WttNfbH2_6nStfsm9j2T6F5ZyntHg@mail.gmail.com>
+Subject: Re: Hashed pointer issues
+To: Kees Cook <keescook@chromium.org>
+Cc: tcharding <me@tobin.cc>, Steven Rostedt <rostedt@goodmis.org>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Laurent,
+On Mon, Apr 30, 2018 at 11:38 AM Kees Cook <keescook@chromium.org> wrote:
 
-One nitpick below.
+> Something like this? (Untested.)
 
-On Tue, Apr 17, 2018 at 3:33 PM, Laurent Dufour
-<ldufour@linux.vnet.ibm.com> wrote:
-> This change is inspired by the Peter's proposal patch [1] which was
-> protecting the VMA using SRCU. Unfortunately, SRCU is not scaling well in
-> that particular case, and it is introducing major performance degradation
-> due to excessive scheduling operations.
->
-> To allow access to the mm_rb tree without grabbing the mmap_sem, this patch
-> is protecting it access using a rwlock.  As the mm_rb tree is a O(log n)
-> search it is safe to protect it using such a lock.  The VMA cache is not
-> protected by the new rwlock and it should not be used without holding the
-> mmap_sem.
->
-> To allow the picked VMA structure to be used once the rwlock is released, a
-> use count is added to the VMA structure. When the VMA is allocated it is
-> set to 1.  Each time the VMA is picked with the rwlock held its use count
-> is incremented. Each time the VMA is released it is decremented. When the
-> use count hits zero, this means that the VMA is no more used and should be
-> freed.
->
-> This patch is preparing for 2 kind of VMA access :
->  - as usual, under the control of the mmap_sem,
->  - without holding the mmap_sem for the speculative page fault handler.
->
-> Access done under the control the mmap_sem doesn't require to grab the
-> rwlock to protect read access to the mm_rb tree, but access in write must
-> be done under the protection of the rwlock too. This affects inserting and
-> removing of elements in the RB tree.
->
-> The patch is introducing 2 new functions:
->  - vma_get() to find a VMA based on an address by holding the new rwlock.
->  - vma_put() to release the VMA when its no more used.
-> These services are designed to be used when access are made to the RB tree
-> without holding the mmap_sem.
->
-> When a VMA is removed from the RB tree, its vma->vm_rb field is cleared and
-> we rely on the WMB done when releasing the rwlock to serialize the write
-> with the RMB done in a later patch to check for the VMA's validity.
->
-> When free_vma is called, the file associated with the VMA is closed
-> immediately, but the policy and the file structure remained in used until
-> the VMA's use count reach 0, which may happens later when exiting an
-> in progress speculative page fault.
->
-> [1] https://patchwork.kernel.org/patch/5108281/
->
-> Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-> ---
->  include/linux/mm.h       |   1 +
->  include/linux/mm_types.h |   4 ++
->  kernel/fork.c            |   3 ++
->  mm/init-mm.c             |   3 ++
->  mm/internal.h            |   6 +++
->  mm/mmap.c                | 115 +++++++++++++++++++++++++++++++++++------------
->  6 files changed, 104 insertions(+), 28 deletions(-)
->
+Looks workable.
 
-[...]
+> +       /* If we have hw RNG, start hashing immediately. */
+> +       if (arch_has_random()) {
+> +               get_random_bytes_arch(&ptr_key, sizeof(ptr_key));
+> +               ptr_key_ready();
+> +               return 0;
+> +       }
 
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index 5601f1ef8bb9..a82950960f2e 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -160,6 +160,27 @@ void unlink_file_vma(struct vm_area_struct *vma)
->         }
->  }
->
-> +static void __free_vma(struct vm_area_struct *vma)
-> +{
-> +       if (vma->vm_file)
-> +               fput(vma->vm_file);
-> +       mpol_put(vma_policy(vma));
-> +       kmem_cache_free(vm_area_cachep, vma);
-> +}
-> +
-> +#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
-> +void put_vma(struct vm_area_struct *vma)
-> +{
-> +       if (atomic_dec_and_test(&vma->vm_ref_count))
-> +               __free_vma(vma);
-> +}
-> +#else
-> +static inline void put_vma(struct vm_area_struct *vma)
-> +{
-> +       return __free_vma(vma);
+Small tweak: you should check the return value of get_random_bytes_arch(),
+because in theory it can fail.
 
-Please drop the "return".
+Sadly, that's not actually how get_random_bytes_arch() really works - it
+falls back on "get_random_bytes()" on failure instead, which is explicitly
+against the whole point here.
 
-Thanks,
-Punit
+So I think it would need some tweaking, with a new function entirely
+(get_random_bytes_arch() with a failure return for "cannot fill buffer").
 
-[...]
+But that would be just a few more lines, because we could make the existing
+get_random_bytes_arch() just use the failure-case thing.
+
+So add a "get_hw_random_bytes()" that does that same loop in
+get_random_bytes_arch(), but returns the number of bytes it filled in.
+
+Then get_random_bytes_arch() turns into
+
+     got = get_hw_random_bytes(p, nbytes);
+     if (got < nbytes)
+         get_random_bytes(p+got, nbytes-got);
+
+and the initialize_ptr_random() use would be something like
+
+     if (get_hw_random_bytes(&ptr_key, sizeof(ptr_key)) == sizeof(ptr_key)) {
+         ptr_key_ready();
+         return 0;
+    }
+
+Hmm?
+
+Maybe we could call the "get_hw_random_bytes()" something like
+"get_early_random_bytes()" and the "use HW for it" is purely an
+implementation detail?
+
+                Linus
