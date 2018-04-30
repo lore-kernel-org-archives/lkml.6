@@ -1,31 +1,31 @@
 Return-Path: <npiggin@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1525100176; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1525100172; cv=none;
         d=google.com; s=arc-20160816;
-        b=D3r9O41M4+A7LTqRDAabG/8R2ojDx53HiA/e7S9f7ZfJOJLqwMJ2Cv0EsFGuJ2g3Gr
-         oRuB5loDSsCQEeI5px8EESNkO8kafTgGTXmfgHhT7pajBRrNExFHeMgAw1gHfPXX7wN8
-         jp30LDgBEovCfkwwO05jZRLZ0uEMydZ8UQkd5svNUJnFrjNzxO60899XIWDB5g3AJ9OQ
-         Fqj6iSAu63td0O4jOsx7uM1zyXUefAxrbUh7m15e8jKBGefWgI3C2R9HijnOJeCUqq2p
-         X1xSRua7OAY+o6Tgr8BaCPK1bRl+7q6UAzkOomN3Z0WZDtHYZRNAd/DNcLBJstwLYWyp
-         bszA==
+        b=mDLCtV9otnh7TvRdywwhvBoFNAu6AC0q5AmMUcfTOtE9NxpObgQwkw3wcX0HRyVlVc
+         VwdWNJogCzrnqEuj4kniXTjri0Mnh7NmVT1KvhebPfNpRB4010/ddiPk6+/UWsMXZDXr
+         XTztcGnOS3tINxX0hinWrMKe06VczS+8Y5njd7He1LT7lEA1zYNiFopblsei+zDQMGVq
+         kCJtormZ2X41mYcB20uwqrpe5inOosRrilLFKazedr0OCLA3ItnRjkFgpXciomkflDcX
+         Q3qj/R23hhS4enJKu+rB27awMBrMyC03a+z4EG0LEii+pE9p9dUnoIjotL4nqpOc8p5k
+         IzNg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=sd88prHf5rtLnyO68gtc/59LXDPfxF6onmPanQ5rfZY=;
-        b=N1pV0XAQqy3iMDg0IebfsGWHmqG2SYTSH7HL5js+FFQkQGIdOJiiypWzdfBJ5UaF41
-         SfJ816Dc0uEhAJS1hhATJ+KuqSbdteRlC54vhMEEzs3tXCl2AEFrYvFwzGnIfQjqxN4G
-         lNmMmMSapbyAGHC6JxeAn7MODu9rTVvWCcLa82t4LSqmcS+p7tj5bCX2OIhFvknoYcom
-         +jwkdr6UrSlT9n/GXAyoEd9KTRsOA61oJFWZDs7vxFA8UcKmm9gUThpApFtj7m8XRw7l
-         KKjNYw7FT/YEZhwWGJQrWJ8J+QUb4bMjinQ6C3BBMQsmi5Es10n6gE+XSjua1CEf1O0J
-         AIpA==
+        bh=Un0p1Eukz+1AlGLfbig1HwEh7qdLym2j7MsHl3FR87c=;
+        b=c08hsCRLIrc2wXjOFEpAguPrEoMWO+msDp3ThXDYofjj6f2+E2hFpR19B+guW1bhQo
+         U+vbLeuB68D0TWy2AJVFexjtCKTti62Y3XH1Bppq1e1AFm3ovsreXPTKFnHx0zmHGTmg
+         rKsvN8ScFDTPsFPSTtaqvVnuUAJbldY8nZTTUdM+f5gVm+3hdD8e3EsqDNPH5HlWAFyY
+         nYeNxoZ5ugWBZWoatOgaBXkdWEXLcJgA85kz44a12Pri7J8kMtDe/9wFtZKQLNzRgO7b
+         fIXoKCxVbu9I8odSC8DviIORRldfMMlGvVwmEBpgMPDhk/du08K+D2PHWHw7V2S7/79i
+         UoqQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=c4GeRREG;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=A8XcqWPk;
        spf=pass (google.com: domain of npiggin@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=npiggin@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=c4GeRREG;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=A8XcqWPk;
        spf=pass (google.com: domain of npiggin@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=npiggin@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AB8JxZoPTz6DZZobYKqRaFp1sp0YJIHcWvN+gbtyFqtGEQo0UrLs2sDY1UEq1A9+9b8qxUhBvsXH+Q==
+X-Google-Smtp-Source: AB8JxZopSZ99a4kci+KS/caLlCcpkANsSs1IiqoUyY+QvSmACl9/yyLm0yTRgS40eO3bn7/BqX7cag==
 From: Nicholas Piggin <npiggin@gmail.com>
 To: linuxppc-dev@lists.ozlabs.org
 Cc: Nicholas Piggin <npiggin@gmail.com>,
@@ -33,91 +33,45 @@ Cc: Nicholas Piggin <npiggin@gmail.com>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Jiri Slaby <jslaby@suse.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 02/15] powerpc/powernv: Fix OPAL console driver OPAL_BUSY loops
-Date: Tue,  1 May 2018 00:55:45 +1000
-Message-Id: <20180430145558.4308-3-npiggin@gmail.com>
+Subject: [PATCH 01/15] powerpc/powernv: opal_put_chars partial write fix
+Date: Tue,  1 May 2018 00:55:44 +1000
+Message-Id: <20180430145558.4308-2-npiggin@gmail.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430145558.4308-1-npiggin@gmail.com>
 References: <20180430145558.4308-1-npiggin@gmail.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599183442783390128?=
-X-GMAIL-MSGID: =?utf-8?q?1599183442783390128?=
+X-GMAIL-THRID: =?utf-8?q?1599183439096619694?=
+X-GMAIL-MSGID: =?utf-8?q?1599183439096619694?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The OPAL console driver does not delay in case it gets OPAL_BUSY or
-OPAL_BUSY_EVENT from firmware.
+The intention here is to consume and discard the remaining buffer
+upon error. This works if there has not been a previous partial write.
+If there has been, then total_len is no longer total number of bytes
+to copy. total_len is always "bytes left to copy", so it should be
+added to written bytes.
 
-It can't yet be made to sleep because it is called under spinlock,
-but it can be changed to the standard OPAL_BUSY loop form, and a
-delay added to keep it from hitting the firmware too frequently.
+This code may not be exercised any more if partial writes will not be
+hit, but this is a small bugfix before a larger change.
 
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Reviewed-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
 ---
- arch/powerpc/platforms/powernv/opal.c | 38 ++++++++++++++++-----------
- 1 file changed, 23 insertions(+), 15 deletions(-)
+ arch/powerpc/platforms/powernv/opal.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/powerpc/platforms/powernv/opal.c b/arch/powerpc/platforms/powernv/opal.c
-index e695b836fd49..6b621d47ac29 100644
+index 48fbb41af5d1..e695b836fd49 100644
 --- a/arch/powerpc/platforms/powernv/opal.c
 +++ b/arch/powerpc/platforms/powernv/opal.c
-@@ -378,33 +378,41 @@ int opal_put_chars(uint32_t vtermno, const char *data, int total_len)
- 	/* We still try to handle partial completions, though they
- 	 * should no longer happen.
- 	 */
--	rc = OPAL_BUSY;
--	while(total_len > 0 && (rc == OPAL_BUSY ||
--				rc == OPAL_BUSY_EVENT || rc == OPAL_SUCCESS)) {
-+
-+	while (total_len > 0) {
- 		olen = cpu_to_be64(total_len);
--		rc = opal_console_write(vtermno, &olen, data);
-+
-+		rc = OPAL_BUSY;
-+		while (rc == OPAL_BUSY || rc == OPAL_BUSY_EVENT) {
-+			rc = opal_console_write(vtermno, &olen, data);
-+			if (rc == OPAL_BUSY_EVENT) {
-+				mdelay(OPAL_BUSY_DELAY_MS);
-+				opal_poll_events(NULL);
-+			} else if (rc == OPAL_BUSY) {
-+				mdelay(OPAL_BUSY_DELAY_MS);
-+			}
-+		}
-+
- 		len = be64_to_cpu(olen);
- 
+@@ -388,7 +388,7 @@ int opal_put_chars(uint32_t vtermno, const char *data, int total_len)
  		/* Closed or other error drop */
--		if (rc != OPAL_SUCCESS && rc != OPAL_BUSY &&
--		    rc != OPAL_BUSY_EVENT) {
--			written += total_len;
-+		if (rc != OPAL_SUCCESS) {
-+			written += total_len; /* drop remaining chars */
+ 		if (rc != OPAL_SUCCESS && rc != OPAL_BUSY &&
+ 		    rc != OPAL_BUSY_EVENT) {
+-			written = total_len;
++			written += total_len;
  			break;
  		}
--		if (rc == OPAL_SUCCESS) {
--			total_len -= len;
--			data += len;
--			written += len;
--		}
-+
-+		total_len -= len;
-+		data += len;
-+		written += len;
-+
- 		/* This is a bit nasty but we need that for the console to
- 		 * flush when there aren't any interrupts. We will clean
- 		 * things a bit later to limit that to synchronous path
- 		 * such as the kernel console and xmon/udbg
- 		 */
--		do
-+		do {
- 			opal_poll_events(&evt);
--		while(rc == OPAL_SUCCESS &&
--			(be64_to_cpu(evt) & OPAL_EVENT_CONSOLE_OUTPUT));
-+		} while (be64_to_cpu(evt) & OPAL_EVENT_CONSOLE_OUTPUT);
- 	}
- 	spin_unlock_irqrestore(&opal_write_lock, flags);
- 	return written;
+ 		if (rc == OPAL_SUCCESS) {
 -- 
 2.17.0
