@@ -1,64 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751768AbeD3FyG (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 01:54:06 -0400
-Received: from mta-p8.oit.umn.edu ([134.84.196.208]:45886 "EHLO
-        mta-p8.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751601AbeD3FyE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 01:54:04 -0400
-X-Google-Smtp-Source: AB8JxZrZRJFn5iFf3VSU8tM2ib+SdcAZvCad/zrU55a7MKzhbDWAVtfDk2gPHeub2sPAgztbPM9mOQ==
-From: Wenwen Wang <wang6495@umn.edu>
-To: Wenwen Wang <wang6495@umn.edu>
-Cc: Kangjie Lu <kjlu@umn.edu>, Wolfram Sang <wsa@the-dreams.de>,
-        linux-i2c@vger.kernel.org (open list:I2C SUBSYSTEM),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] i2c: core-smbus: fix a potential uninitialization bug
-Date: Mon, 30 Apr 2018 00:53:38 -0500
-Message-Id: <1525067618-836-1-git-send-email-wang6495@umn.edu>
-X-Mailer: git-send-email 2.7.4
+        id S1751722AbeD3GLI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 02:11:08 -0400
+Received: from mail.sysgo.com ([176.9.12.79]:59918 "EHLO mail.sysgo.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750888AbeD3GLH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 02:11:07 -0400
+Subject: Re: [PATCH v2] i2c: at91: Read all available bytes at once
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: ludovic.desroches@microchip.com, nicolas.ferre@microchip.com,
+        alexandre.belloni@bootlin.com, linux-i2c@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20180426082558.GX13305@rfolt0960.corp.atmel.com>
+ <20180426095314.12758-1-david.engraf@sysgo.com>
+ <20180428123838.abxiht7k4egv7iel@ninjato>
+From: David Engraf <david.engraf@sysgo.com>
+Message-ID: <d728f2ac-5763-48af-03b5-571a75265281@sysgo.com>
+Date: Mon, 30 Apr 2018 08:11:05 +0200
+MIME-Version: 1.0
+In-Reply-To: <20180428123838.abxiht7k4egv7iel@ninjato>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In i2c_smbus_xfer_emulated(), there are two buffers: msgbuf0 and msgbuf1,
-which are used to save a series of messages, as mentioned in the comment.
-According to the value of the variable "size", msgbuf0 is initialized to
-various values. In contrast, msgbuf1 is left uninitialized until the
-function i2c_transfer() is invoked. However, mgsbuf1 is not always
-initialized on all possible execution paths (implementation) of
-i2c_transfer(). Thus, it is possible that mgsbuf1 may still not be
-uninitialized even after the invocation of the function i2c_transfer(). In
-the following execution, the uninitialized msgbuf1 will be used, such as
-for security checks. Since uninitialized values can be random and
-arbitrary, this will cause undefined behaviors or even check bypass. For
-example, it is expected that if the value of "size" is
-I2C_SMBUS_BLOCK_PROC_CALL, the value of data->block[0] should not be larger
-than I2C_SMBUS_BLOCK_MAX. But, at the end of i2c_smbus_xfer_emulated(), the
-value read from msgbuf1 is assigned to data->block[0], which can
-potentially lead to invalid block write size, as demonstrated in the error
-message.
+Am 28.04.2018 um 14:38 schrieb Wolfram Sang:
+> On Thu, Apr 26, 2018 at 11:53:14AM +0200, David Engraf wrote:
+>> With FIFO enabled it is possible to read multiple bytes
+>> at once in the interrupt handler as long as RXRDY is
+>> set. This may also reduce the number of interrupts.
+>>
+>> This patch polls RXRDY and reads all available bytes at
+>> once.
+>>
+>> Signed-off-by: David Engraf <david.engraf@sysgo.com>
+> 
+> checkpatch said twice:
+> 
+> WARNING: line over 80 characters
+> 
+> While I am not super-strict with this limit, it makes sense here IMO.
+> The comment stays readable, and we don't even lose a line.
 
-This patch simply initializes the buffer msgbuf1 with 0 to avoid undefined
-behaviors or security issues.
+Sorry for that.
 
-Signed-off-by: Wenwen Wang <wang6495@umn.edu>
----
- drivers/i2c/i2c-core-smbus.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Fixed it this time for you.
 
-diff --git a/drivers/i2c/i2c-core-smbus.c b/drivers/i2c/i2c-core-smbus.c
-index b5aec33..0fcca75 100644
---- a/drivers/i2c/i2c-core-smbus.c
-+++ b/drivers/i2c/i2c-core-smbus.c
-@@ -324,7 +324,7 @@ static s32 i2c_smbus_xfer_emulated(struct i2c_adapter *adapter, u16 addr,
- 	 * somewhat simpler.
- 	 */
- 	unsigned char msgbuf0[I2C_SMBUS_BLOCK_MAX+3];
--	unsigned char msgbuf1[I2C_SMBUS_BLOCK_MAX+2];
-+	unsigned char msgbuf1[I2C_SMBUS_BLOCK_MAX+2] = {0};
- 	int num = read_write == I2C_SMBUS_READ ? 2 : 1;
- 	int i;
- 	u8 partial_pec = 0;
--- 
-2.7.4
+Thanks
+- David
+
+> Applied to for-next, thanks!
+> 
