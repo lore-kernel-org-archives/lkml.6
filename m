@@ -1,19 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751935AbeD3FtS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 01:49:18 -0400
-Received: from goliath.siemens.de ([192.35.17.28]:54617 "EHLO
-        goliath.siemens.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751707AbeD3FtM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751899AbeD3FtQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 01:49:16 -0400
+Received: from thoth.sbs.de ([192.35.17.2]:41332 "EHLO thoth.sbs.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751744AbeD3FtM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 30 Apr 2018 01:49:12 -0400
 From: Jan Kiszka <jan.kiszka@siemens.com>
 To: Bjorn Helgaas <bhelgaas@google.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 04/10] PCI: Add dev parameter to __of_pci_get_host_bridge_resources()
-Date: Mon, 30 Apr 2018 07:48:38 +0200
-Message-Id: <cfab525f3d0436f75187fbd65907ada909d7692f.1525067324.git.jan.kiszka@siemens.com>
+Subject: [PATCH v2 08/10] PCI: Deprecate of_pci_get_host_bridge_resources()
+Date: Mon, 30 Apr 2018 07:48:42 +0200
+Message-Id: <aca0d89cd8c1551a83b87ffab29fcd6e1d59a61c.1525067324.git.jan.kiszka@siemens.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <cover.1525067324.git.jan.kiszka@siemens.com>
 References: <cover.1525067324.git.jan.kiszka@siemens.com>
@@ -25,62 +24,122 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jan Kiszka <jan.kiszka@siemens.com>
 
-When non-NULL, use the new dev parameter of
-__of_pci_get_host_bridge_resources() to allocate the resource data
-structures via devm_kzalloc. That allows to release them automatically
-during device destruction.
+There are no in-tree users remaining, all are converted to the managed
+variant. And it is unlikely that any out-of-tree user got the resource
+management right as well. So deprecate the interface and push users to
+the managed version instead.
+
+To avoid raising a warning when exporting a deprecated symbol, wrap the
+API with an inline and export an internal name.
 
 Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 ---
- drivers/pci/of.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+ drivers/pci/of.c       | 23 ++---------------------
+ include/linux/of_pci.h | 36 ++++++++++++++++++++++++++++++++----
+ 2 files changed, 34 insertions(+), 25 deletions(-)
 
 diff --git a/drivers/pci/of.c b/drivers/pci/of.c
-index 375de447a58e..bfa282b538d5 100644
+index 5a88d46a41b7..ccf8c7544e10 100644
 --- a/drivers/pci/of.c
 +++ b/drivers/pci/of.c
-@@ -243,7 +243,7 @@ void of_pci_check_probe_only(void)
- EXPORT_SYMBOL_GPL(of_pci_check_probe_only);
+@@ -351,33 +351,14 @@ static int __of_pci_get_host_bridge_resources(struct device *dev,
+ 	return err;
+ }
  
- #if defined(CONFIG_OF_ADDRESS)
--static int __of_pci_get_host_bridge_resources(
-+static int __of_pci_get_host_bridge_resources(struct device *dev,
- 			struct device_node *dev_node,
- 			unsigned char busno, unsigned char bus_max,
- 			struct list_head *resources, resource_size_t *io_base)
-@@ -259,7 +259,10 @@ static int __of_pci_get_host_bridge_resources(
- 	if (io_base)
- 		*io_base = (resource_size_t)OF_BAD_ADDR;
- 
--	bus_range = kzalloc(sizeof(*bus_range), GFP_KERNEL);
-+	if (dev)
-+		bus_range = devm_kzalloc(dev,sizeof(*bus_range), GFP_KERNEL);
-+	else
-+		bus_range = kzalloc(sizeof(*bus_range), GFP_KERNEL);
- 	if (!bus_range)
- 		return -ENOMEM;
- 
-@@ -303,7 +306,11 @@ static int __of_pci_get_host_bridge_resources(
- 		if (range.cpu_addr == OF_BAD_ADDR || range.size == 0)
- 			continue;
- 
--		res = kzalloc(sizeof(struct resource), GFP_KERNEL);
-+		if (dev)
-+			res = devm_kzalloc(dev, sizeof(struct resource),
-+					   GFP_KERNEL);
-+		else
-+			res = kzalloc(sizeof(struct resource), GFP_KERNEL);
- 		if (!res) {
- 			err = -ENOMEM;
- 			goto parse_failed;
-@@ -365,7 +372,7 @@ int of_pci_get_host_bridge_resources(struct device_node *dev_node,
+-/**
+- * of_pci_get_host_bridge_resources() - Parse PCI host bridge resources from DT
+- * @dev_node: device node of the host bridge having the range property
+- * @busno: bus number associated with the bridge root bus
+- * @bus_max: maximum number of buses for this bridge
+- * @resources: list where the range of resources will be added after DT parsing
+- * @io_base: pointer to a variable that will contain on return the physical
+- * address for the start of the I/O range. Can be NULL if the caller doesn't
+- * expect I/O ranges to be present in the device tree.
+- *
+- * It is the caller's job to free the @resources list.
+- *
+- * This function will parse the "ranges" property of a PCI host bridge device
+- * node and setup the resource mapping based on its content. It is expected
+- * that the property conforms with the Power ePAPR document.
+- *
+- * It returns zero if the range parsing has been successful or a standard error
+- * value if it failed.
+- */
+-int of_pci_get_host_bridge_resources(struct device_node *dev_node,
++int __of_pci_get_host_bridge_resources_deprecated(struct device_node *dev_node,
  			unsigned char busno, unsigned char bus_max,
  			struct list_head *resources, resource_size_t *io_base)
  {
--	return __of_pci_get_host_bridge_resources(dev_node, busno,
-+	return __of_pci_get_host_bridge_resources(NULL, dev_node, busno,
+ 	return __of_pci_get_host_bridge_resources(NULL, dev_node, busno,
  						  bus_max, resources, io_base);
  }
- EXPORT_SYMBOL_GPL(of_pci_get_host_bridge_resources);
+-EXPORT_SYMBOL_GPL(of_pci_get_host_bridge_resources);
++EXPORT_SYMBOL_GPL(__of_pci_get_host_bridge_resources_deprecated);
+ 
+ /**
+  * of_pci_get_host_bridge_resources() - Resource-managed parsing of PCI host
+diff --git a/include/linux/of_pci.h b/include/linux/of_pci.h
+index 08b8f02426a5..c6408bd6f862 100644
+--- a/include/linux/of_pci.h
++++ b/include/linux/of_pci.h
+@@ -71,26 +71,54 @@ of_irq_parse_and_map_pci(const struct pci_dev *dev, u8 slot, u8 pin)
+ #endif
+ 
+ #if defined(CONFIG_OF_ADDRESS)
+-int of_pci_get_host_bridge_resources(struct device_node *dev_node,
++int __of_pci_get_host_bridge_resources_deprecated(struct device_node *dev_node,
+ 			unsigned char busno, unsigned char bus_max,
+ 			struct list_head *resources, resource_size_t *io_base);
+ int devm_of_pci_get_host_bridge_resources(struct device *dev,
+ 			unsigned char busno, unsigned char bus_max,
+ 			struct list_head *resources, resource_size_t *io_base);
+ #else
+-static inline int of_pci_get_host_bridge_resources(struct device_node *dev_node,
++static inline int devm_of_pci_get_host_bridge_resources(struct device *dev,
+ 			unsigned char busno, unsigned char bus_max,
+ 			struct list_head *resources, resource_size_t *io_base)
+ {
+ 	return -EINVAL;
+ }
++#endif
+ 
+-static inline int devm_of_pci_get_host_bridge_resources(struct device *dev,
++/**
++ * of_pci_get_host_bridge_resources() - Parse PCI host bridge resources from DT
++ * @dev_node: device node of the host bridge having the range property
++ * @busno: bus number associated with the bridge root bus
++ * @bus_max: maximum number of buses for this bridge
++ * @resources: list where the range of resources will be added after DT parsing
++ * @io_base: pointer to a variable that will contain on return the physical
++ * address for the start of the I/O range. Can be NULL if the caller doesn't
++ * expect I/O ranges to be present in the device tree.
++ *
++ * It is the caller's job to free the @resources list.
++ *
++ * This function will parse the "ranges" property of a PCI host bridge device
++ * node and setup the resource mapping based on its content. It is expected
++ * that the property conforms with the Power ePAPR document.
++ *
++ * It returns zero if the range parsing has been successful or a standard error
++ * value if it failed.
++ *
++ * Note: This function is deprecated and will eventually be removed. Use
++ * devm_of_pci_get_host_bridge_resources() instead.
++ */
++static inline int __deprecated of_pci_get_host_bridge_resources(
++			struct device_node *dev_node,
+ 			unsigned char busno, unsigned char bus_max,
+ 			struct list_head *resources, resource_size_t *io_base)
+ {
++#if defined(CONFIG_OF_ADDRESS)
++	return __of_pci_get_host_bridge_resources_deprecated(dev_node, busno,
++			bus_max, resources, io_base);
++#else
+ 	return -EINVAL;
+-}
+ #endif
++}
+ 
+ #endif
 -- 
 2.13.6
