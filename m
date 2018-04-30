@@ -1,43 +1,40 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZp4gZ4aiuVjGmoDJaygMJsrDuAdbMm9X0pNLnrhdZlmCJOLQi0XhYc/5zyLjMTmd0or6tZN
-ARC-Seal: i=1; a=rsa-sha256; t=1525116505; cv=none;
+X-Google-Smtp-Source: AB8JxZpAyW0wkI+FCbFlIT7rBKP6SUKoDV3edvs7uD34lu7I86b/GdHwSOPV8/NDGnHDDg+xAfFW
+ARC-Seal: i=1; a=rsa-sha256; t=1525116502; cv=none;
         d=google.com; s=arc-20160816;
-        b=uX+6yi02wsn6ty0f03OgaglPrPH321CVPlh0ui2LKcMvBP93Uq6AqhRZLrFaJmYuLN
-         0iQuR4pGP2pardmG2WLZ2LvBN+TrV7XZCsze74LNKV7hRSgXbYLRTadXc6LM8xtcDFhY
-         oK5ikBmJg23d3zJh3438fvTUgqbJBGVzdUQBv6minBc3STYyOEpKi+JvvtMEVH3zRqPr
-         WJHq6EsdpyzofxWsRmr416uz8aaYWJ3Pmfqz2JbrxvVzcf95ZU30hPVP5m22xHndNwJ/
-         pzzTDvsBNOLSEFrVT6YNMQ/hcS2URwJ6B85F0Nt6e4zGclZa8QyOmnEFxz/544SDRXL7
-         pZ7A==
+        b=VxE9TZQOgWnF7VNLSqwTceCSoAoZNS/dkX2zEfZs0I2xwD0CQyZcsmh0D5wXHGLxTs
+         L/MFVARhsB0BpFWUXtzGNA7bx8/Qz/JDbuR5rYmxM8N984mGdAEJ5e840CKah6ZEu6Jd
+         wdXqt1qm7Gb1PuMijz2yy+KH8pz1AlP995T+6TuLQ5hlQTT/qHjm3WUl4H3/NeuNLsxH
+         7KFVDG+mGbKgDbbMZK2kG3pVG0aWPNmZ3NBaE267F2lDUfLFxygl9N+MdLf3Y0M4eKPT
+         8hCUAtD0QZXI18Vc+BMDtbFBOgBdX9uVF5mofsMYEPEfwZcuixNHH58jzCUtsLKQIxpF
+         bvHg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=c/w+p2Fyv468WCot5nBVjOHCqksggJaEHBZNY5KAnYM=;
-        b=LQCpGEk8Xnunm/yvYOEs8m240cCXthZi4OkizEtlMdN6vjORke/k/vzfIhXwE9pOM9
-         KG77wxZ1satOCpFENj10vmz293xpKog+Co4MLJqSsIQTR7AY/DrMr3fuOGRLJTwuFY2C
-         xCiIqqviPgthK7WSHx+SMXe+UmGXL5yHCTuwqTC6At7xhvOo7RKfLzF3MSKJIxLObnQD
-         sLcIc4jCoEYGWSMScUJJOPUDF9ZFAZ1kUpmvKdAkxBr5BYL4boWZoc4/xfKC/Pr/xvb7
-         4IweKInUEJsNhC0VKhW+YSEeJV8cZDCCPOPNmW/NOoyGDNse8aum1gbhFKFbkxEIF0Th
-         SvGQ==
+        bh=pPUCszKd5EZxMQxnr64ahIKLSEWyDipgLdiJNbUoqx0=;
+        b=tkJntq9CFSZysbHfhGmVfVaHbGOGdqCCEEtnK6WT4J1iMFL1A8z5s1NGPZDZ/29ILZ
+         wt7o4nlDZaBKG54FWi2jouOII6Spb3Ep5NVdEmfhd0NYONXf8ZS8mqFCnhQjXepIe070
+         qKsAyJGaEErOy0bLVojGGULNvgpA8/tV9tiH8vC4hLKZrCqsDbkMZq9J839J/Qzmok07
+         Gx6le36QzkreMLqNltAy+xND40wTwYkCD11OlfuoStKudpU8K9Q5z0DZ+tmZiuycND8m
+         2yjVDHsUzjK9O4Fwv6klrePvP+HdOL54zdsT2B8OA1Q4DQ67ntYmlryP6GM4qFT97Bzz
+         wecQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 107BE22E02
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FF2B22E71
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Bart Van Assche <bart.vanassche@wdc.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Damien Le Moal <damien.lemoal@wdc.com>,
-	Christoph Hellwig <hch@lst.de>,
-	Hannes Reinecke <hare@suse.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.16 061/113] scsi: sd_zbc: Avoid that resetting a zone fails sporadically
-Date: Mon, 30 Apr 2018 12:24:32 -0700
-Message-Id: <20180430184017.634438324@linuxfoundation.org>
+	Joakim Tjernlund <joakim.tjernlund@infinera.com>,
+	Richard Weinberger <richard@nod.at>,
+	Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: [PATCH 4.16 056/113] mtd: cfi: cmdset_0001: Workaround Micron Erase suspend bug.
+Date: Mon, 30 Apr 2018 12:24:27 -0700
+Message-Id: <20180430184017.430385776@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184015.043892819@linuxfoundation.org>
 References: <20180430184015.043892819@linuxfoundation.org>
@@ -47,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200565163435218?=
-X-GMAIL-MSGID: =?utf-8?q?1599200565163435218?=
+X-GMAIL-THRID: =?utf-8?q?1599200283537847620?=
+X-GMAIL-MSGID: =?utf-8?q?1599200562261019713?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -56,340 +53,61 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Bart Van Assche <bart.vanassche@wdc.com>
+From: Joakim Tjernlund <joakim.tjernlund@transmode.se>
 
-commit ccce20fc7968d546fb1e8e147bf5cdc8afc4278a upstream.
+commit 46a16a2283f9e678a4e26829175e0c37a5191860 upstream.
 
-Since SCSI scanning occurs asynchronously, since sd_revalidate_disk() is
-called from sd_probe_async() and since sd_revalidate_disk() calls
-sd_zbc_read_zones() it can happen that sd_zbc_read_zones() is called
-concurrently with blkdev_report_zones() and/or blkdev_reset_zones().  That can
-cause these functions to fail with -EIO because sd_zbc_read_zones() e.g. sets
-q->nr_zones to zero before restoring it to the actual value, even if no drive
-characteristics have changed.  Avoid that this can happen by making the
-following changes:
+Some Micron chips does not work well wrt Erase suspend for
+boot blocks. This avoids the issue by not allowing Erase suspend
+for the boot blocks for the 28F00AP30(1GBit) chip.
 
-- Protect the code that updates zone information with blk_queue_enter()
-  and blk_queue_exit().
-- Modify sd_zbc_setup_seq_zones_bitmap() and sd_zbc_setup() such that
-  these functions do not modify struct scsi_disk before all zone
-  information has been obtained.
-
-Note: since commit 055f6e18e08f ("block: Make q_usage_counter also track
-legacy requests"; kernel v4.15) the request queue freezing mechanism also
-affects legacy request queues.
-
-Fixes: 89d947561077 ("sd: Implement support for ZBC devices")
-Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Damien Le Moal <damien.lemoal@wdc.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Hannes Reinecke <hare@suse.com>
-Cc: stable@vger.kernel.org # v4.16
-Reviewed-by: Damien Le Moal <damien.lemoal@wdc.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Joakim Tjernlund <joakim.tjernlund@infinera.com>
+Cc: <stable@vger.kernel.org>
+Reviewed-by: Richard Weinberger <richard@nod.at>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/sd_zbc.c  |  140 ++++++++++++++++++++++++++++---------------------
- include/linux/blkdev.h |    5 +
- 2 files changed, 87 insertions(+), 58 deletions(-)
+ drivers/mtd/chips/cfi_cmdset_0001.c |   17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
---- a/drivers/scsi/sd_zbc.c
-+++ b/drivers/scsi/sd_zbc.c
-@@ -400,8 +400,10 @@ static int sd_zbc_check_capacity(struct
-  *
-  * Check that all zones of the device are equal. The last zone can however
-  * be smaller. The zone size must also be a power of two number of LBAs.
-+ *
-+ * Returns the zone size in bytes upon success or an error code upon failure.
-  */
--static int sd_zbc_check_zone_size(struct scsi_disk *sdkp)
-+static s64 sd_zbc_check_zone_size(struct scsi_disk *sdkp)
- {
- 	u64 zone_blocks = 0;
- 	sector_t block = 0;
-@@ -412,8 +414,6 @@ static int sd_zbc_check_zone_size(struct
- 	int ret;
- 	u8 same;
+--- a/drivers/mtd/chips/cfi_cmdset_0001.c
++++ b/drivers/mtd/chips/cfi_cmdset_0001.c
+@@ -45,6 +45,7 @@
+ #define I82802AB	0x00ad
+ #define I82802AC	0x00ac
+ #define PF38F4476	0x881c
++#define M28F00AP30	0x8963
+ /* STMicroelectronics chips */
+ #define M50LPW080       0x002F
+ #define M50FLW080A	0x0080
+@@ -375,6 +376,17 @@ static void cfi_fixup_major_minor(struct
+ 		extp->MinorVersion = '1';
+ }
  
--	sdkp->zone_blocks = 0;
--
- 	/* Get a buffer */
- 	buf = kmalloc(SD_ZBC_BUF_SIZE, GFP_KERNEL);
- 	if (!buf)
-@@ -445,16 +445,17 @@ static int sd_zbc_check_zone_size(struct
- 
- 		/* Parse zone descriptors */
- 		while (rec < buf + buf_len) {
--			zone_blocks = get_unaligned_be64(&rec[8]);
--			if (sdkp->zone_blocks == 0) {
--				sdkp->zone_blocks = zone_blocks;
--			} else if (zone_blocks != sdkp->zone_blocks &&
--				   (block + zone_blocks < sdkp->capacity
--				    || zone_blocks > sdkp->zone_blocks)) {
--				zone_blocks = 0;
-+			u64 this_zone_blocks = get_unaligned_be64(&rec[8]);
++static int cfi_is_micron_28F00AP30(struct cfi_private *cfi, struct flchip *chip)
++{
++	/*
++	 * Micron(was Numonyx) 1Gbit bottom boot are buggy w.r.t
++	 * Erase Supend for their small Erase Blocks(0x8000)
++	 */
++	if (cfi->mfr == CFI_MFR_INTEL && cfi->id == M28F00AP30)
++		return 1;
++	return 0;
++}
 +
-+			if (zone_blocks == 0) {
-+				zone_blocks = this_zone_blocks;
-+			} else if (this_zone_blocks != zone_blocks &&
-+				   (block + this_zone_blocks < sdkp->capacity
-+				    || this_zone_blocks > zone_blocks)) {
-+				this_zone_blocks = 0;
- 				goto out;
- 			}
--			block += zone_blocks;
-+			block += this_zone_blocks;
- 			rec += 64;
- 		}
- 
-@@ -467,8 +468,6 @@ static int sd_zbc_check_zone_size(struct
- 
- 	} while (block < sdkp->capacity);
- 
--	zone_blocks = sdkp->zone_blocks;
--
- out:
- 	if (!zone_blocks) {
- 		if (sdkp->first_scan)
-@@ -488,8 +487,7 @@ out:
- 				  "Zone size too large\n");
- 		ret = -ENODEV;
- 	} else {
--		sdkp->zone_blocks = zone_blocks;
--		sdkp->zone_shift = ilog2(zone_blocks);
-+		ret = zone_blocks;
- 	}
- 
- out_free:
-@@ -500,21 +498,21 @@ out_free:
- 
- /**
-  * sd_zbc_alloc_zone_bitmap - Allocate a zone bitmap (one bit per zone).
-- * @sdkp: The disk of the bitmap
-+ * @nr_zones: Number of zones to allocate space for.
-+ * @numa_node: NUMA node to allocate the memory from.
-  */
--static inline unsigned long *sd_zbc_alloc_zone_bitmap(struct scsi_disk *sdkp)
-+static inline unsigned long *
-+sd_zbc_alloc_zone_bitmap(u32 nr_zones, int numa_node)
+ static inline struct cfi_pri_intelext *
+ read_pri_intelext(struct map_info *map, __u16 adr)
  {
--	struct request_queue *q = sdkp->disk->queue;
--
--	return kzalloc_node(BITS_TO_LONGS(sdkp->nr_zones)
--			    * sizeof(unsigned long),
--			    GFP_KERNEL, q->node);
-+	return kzalloc_node(BITS_TO_LONGS(nr_zones) * sizeof(unsigned long),
-+			    GFP_KERNEL, numa_node);
- }
+@@ -836,6 +848,11 @@ static int chip_ready (struct map_info *
+ 		    chip->in_progress_block_addr)
+ 			goto sleep;
  
- /**
-  * sd_zbc_get_seq_zones - Parse report zones reply to identify sequential zones
-  * @sdkp: disk used
-  * @buf: report reply buffer
-+ * @zone_shift: logarithm base 2 of the number of blocks in a zone
-  * @seq_zone_bitamp: bitmap of sequential zones to set
-  *
-  * Parse reported zone descriptors in @buf to identify sequential zones and
-@@ -524,7 +522,7 @@ static inline unsigned long *sd_zbc_allo
-  * Return the LBA after the last zone reported.
-  */
- static sector_t sd_zbc_get_seq_zones(struct scsi_disk *sdkp, unsigned char *buf,
--				     unsigned int buflen,
-+				     unsigned int buflen, u32 zone_shift,
- 				     unsigned long *seq_zones_bitmap)
- {
- 	sector_t lba, next_lba = sdkp->capacity;
-@@ -543,7 +541,7 @@ static sector_t sd_zbc_get_seq_zones(str
- 		if (type != ZBC_ZONE_TYPE_CONV &&
- 		    cond != ZBC_ZONE_COND_READONLY &&
- 		    cond != ZBC_ZONE_COND_OFFLINE)
--			set_bit(lba >> sdkp->zone_shift, seq_zones_bitmap);
-+			set_bit(lba >> zone_shift, seq_zones_bitmap);
- 		next_lba = lba + get_unaligned_be64(&rec[8]);
- 		rec += 64;
- 	}
-@@ -552,12 +550,16 @@ static sector_t sd_zbc_get_seq_zones(str
- }
- 
- /**
-- * sd_zbc_setup_seq_zones_bitmap - Initialize the disk seq zone bitmap.
-+ * sd_zbc_setup_seq_zones_bitmap - Initialize a seq zone bitmap.
-  * @sdkp: target disk
-+ * @zone_shift: logarithm base 2 of the number of blocks in a zone
-+ * @nr_zones: number of zones to set up a seq zone bitmap for
-  *
-  * Allocate a zone bitmap and initialize it by identifying sequential zones.
-  */
--static int sd_zbc_setup_seq_zones_bitmap(struct scsi_disk *sdkp)
-+static unsigned long *
-+sd_zbc_setup_seq_zones_bitmap(struct scsi_disk *sdkp, u32 zone_shift,
-+			      u32 nr_zones)
- {
- 	struct request_queue *q = sdkp->disk->queue;
- 	unsigned long *seq_zones_bitmap;
-@@ -565,9 +567,9 @@ static int sd_zbc_setup_seq_zones_bitmap
- 	unsigned char *buf;
- 	int ret = -ENOMEM;
- 
--	seq_zones_bitmap = sd_zbc_alloc_zone_bitmap(sdkp);
-+	seq_zones_bitmap = sd_zbc_alloc_zone_bitmap(nr_zones, q->node);
- 	if (!seq_zones_bitmap)
--		return -ENOMEM;
-+		return ERR_PTR(-ENOMEM);
- 
- 	buf = kmalloc(SD_ZBC_BUF_SIZE, GFP_KERNEL);
- 	if (!buf)
-@@ -578,7 +580,7 @@ static int sd_zbc_setup_seq_zones_bitmap
- 		if (ret)
- 			goto out;
- 		lba = sd_zbc_get_seq_zones(sdkp, buf, SD_ZBC_BUF_SIZE,
--					   seq_zones_bitmap);
-+					   zone_shift, seq_zones_bitmap);
- 	}
- 
- 	if (lba != sdkp->capacity) {
-@@ -590,12 +592,9 @@ out:
- 	kfree(buf);
- 	if (ret) {
- 		kfree(seq_zones_bitmap);
--		return ret;
-+		return ERR_PTR(ret);
- 	}
--
--	q->seq_zones_bitmap = seq_zones_bitmap;
--
--	return 0;
-+	return seq_zones_bitmap;
- }
- 
- static void sd_zbc_cleanup(struct scsi_disk *sdkp)
-@@ -611,44 +610,64 @@ static void sd_zbc_cleanup(struct scsi_d
- 	q->nr_zones = 0;
- }
- 
--static int sd_zbc_setup(struct scsi_disk *sdkp)
-+static int sd_zbc_setup(struct scsi_disk *sdkp, u32 zone_blocks)
- {
- 	struct request_queue *q = sdkp->disk->queue;
-+	u32 zone_shift = ilog2(zone_blocks);
-+	u32 nr_zones;
- 	int ret;
- 
--	/* READ16/WRITE16 is mandatory for ZBC disks */
--	sdkp->device->use_16_for_rw = 1;
--	sdkp->device->use_10_for_rw = 0;
--
- 	/* chunk_sectors indicates the zone size */
--	blk_queue_chunk_sectors(sdkp->disk->queue,
--			logical_to_sectors(sdkp->device, sdkp->zone_blocks));
--	sdkp->nr_zones =
--		round_up(sdkp->capacity, sdkp->zone_blocks) >> sdkp->zone_shift;
-+	blk_queue_chunk_sectors(q,
-+			logical_to_sectors(sdkp->device, zone_blocks));
-+	nr_zones = round_up(sdkp->capacity, zone_blocks) >> zone_shift;
- 
- 	/*
- 	 * Initialize the device request queue information if the number
- 	 * of zones changed.
- 	 */
--	if (sdkp->nr_zones != q->nr_zones) {
--
--		sd_zbc_cleanup(sdkp);
--
--		q->nr_zones = sdkp->nr_zones;
--		if (sdkp->nr_zones) {
--			q->seq_zones_wlock = sd_zbc_alloc_zone_bitmap(sdkp);
--			if (!q->seq_zones_wlock) {
-+	if (nr_zones != sdkp->nr_zones || nr_zones != q->nr_zones) {
-+		unsigned long *seq_zones_wlock = NULL, *seq_zones_bitmap = NULL;
-+		size_t zone_bitmap_size;
++		/* do not suspend small EBs, buggy Micron Chips */
++		if (cfi_is_micron_28F00AP30(cfi, chip) &&
++		    (chip->in_progress_block_mask == ~(0x8000-1)))
++			goto sleep;
 +
-+		if (nr_zones) {
-+			seq_zones_wlock = sd_zbc_alloc_zone_bitmap(nr_zones,
-+								   q->node);
-+			if (!seq_zones_wlock) {
- 				ret = -ENOMEM;
- 				goto err;
- 			}
+ 		/* Erase suspend */
+ 		map_write(map, CMD(0xB0), chip->in_progress_block_addr);
  
--			ret = sd_zbc_setup_seq_zones_bitmap(sdkp);
--			if (ret) {
--				sd_zbc_cleanup(sdkp);
-+			seq_zones_bitmap = sd_zbc_setup_seq_zones_bitmap(sdkp,
-+							zone_shift, nr_zones);
-+			if (IS_ERR(seq_zones_bitmap)) {
-+				ret = PTR_ERR(seq_zones_bitmap);
-+				kfree(seq_zones_wlock);
- 				goto err;
- 			}
- 		}
--
-+		zone_bitmap_size = BITS_TO_LONGS(nr_zones) *
-+			sizeof(unsigned long);
-+		blk_mq_freeze_queue(q);
-+		if (q->nr_zones != nr_zones) {
-+			/* READ16/WRITE16 is mandatory for ZBC disks */
-+			sdkp->device->use_16_for_rw = 1;
-+			sdkp->device->use_10_for_rw = 0;
-+
-+			sdkp->zone_blocks = zone_blocks;
-+			sdkp->zone_shift = zone_shift;
-+			sdkp->nr_zones = nr_zones;
-+			q->nr_zones = nr_zones;
-+			swap(q->seq_zones_wlock, seq_zones_wlock);
-+			swap(q->seq_zones_bitmap, seq_zones_bitmap);
-+		} else if (memcmp(q->seq_zones_bitmap, seq_zones_bitmap,
-+				  zone_bitmap_size) != 0) {
-+			memcpy(q->seq_zones_bitmap, seq_zones_bitmap,
-+			       zone_bitmap_size);
-+		}
-+		blk_mq_unfreeze_queue(q);
-+		kfree(seq_zones_wlock);
-+		kfree(seq_zones_bitmap);
- 	}
- 
- 	return 0;
-@@ -660,6 +679,7 @@ err:
- 
- int sd_zbc_read_zones(struct scsi_disk *sdkp, unsigned char *buf)
- {
-+	int64_t zone_blocks;
- 	int ret;
- 
- 	if (!sd_is_zoned(sdkp))
-@@ -696,12 +716,16 @@ int sd_zbc_read_zones(struct scsi_disk *
- 	 * Check zone size: only devices with a constant zone size (except
- 	 * an eventual last runt zone) that is a power of 2 are supported.
- 	 */
--	ret = sd_zbc_check_zone_size(sdkp);
--	if (ret)
-+	zone_blocks = sd_zbc_check_zone_size(sdkp);
-+	ret = -EFBIG;
-+	if (zone_blocks != (u32)zone_blocks)
-+		goto err;
-+	ret = zone_blocks;
-+	if (ret < 0)
- 		goto err;
- 
- 	/* The drive satisfies the kernel restrictions: set it up */
--	ret = sd_zbc_setup(sdkp);
-+	ret = sd_zbc_setup(sdkp, zone_blocks);
- 	if (ret)
- 		goto err;
- 
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -605,6 +605,11 @@ struct request_queue {
- 	 * initialized by the low level device driver (e.g. scsi/sd.c).
- 	 * Stacking drivers (device mappers) may or may not initialize
- 	 * these fields.
-+	 *
-+	 * Reads of this information must be protected with blk_queue_enter() /
-+	 * blk_queue_exit(). Modifying this information is only allowed while
-+	 * no requests are being processed. See also blk_mq_freeze_queue() and
-+	 * blk_mq_unfreeze_queue().
- 	 */
- 	unsigned int		nr_zones;
- 	unsigned long		*seq_zones_bitmap;
