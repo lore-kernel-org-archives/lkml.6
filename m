@@ -1,96 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752859AbeD3J3x (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 05:29:53 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:33206 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751821AbeD3J3v (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 05:29:51 -0400
-X-Google-Smtp-Source: AB8JxZoSWFPPXU5Fz+cW8Y09pRnfkgEQQTsH6YTERlI6b4YRudEEdPosWFR9iTm/6C2DNbTZmFn2UA==
-Date: Mon, 30 Apr 2018 11:29:47 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Grygorii Strashko <grygorii.strashko@ti.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org, Hoan Tran <hotran@apm.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux-OMAP <linux-omap@vger.kernel.org>, linux-tegra@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 10/61] gpio: simplify getting .drvdata
-Message-ID: <20180430092947.GC2270@ulmo>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
- <20180419140641.27926-11-wsa+renesas@sang-engineering.com>
- <b0c1e303-ca95-8bc8-a5d4-65e75dc8398a@ti.com>
- <CACRpkday+d9iGeX+CRHTEyC=w+oNUK-8oTy0HqugO5PRhHn62w@mail.gmail.com>
+        id S1752429AbeD3Jbo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 05:31:44 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56810 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751420AbeD3Jbn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 05:31:43 -0400
+Date: Mon, 30 Apr 2018 11:31:39 +0200
+From: Christoffer Dall <christoffer.dall@arm.com>
+To: Eric Auger <eric.auger@redhat.com>
+Cc: eric.auger.pro@gmail.com, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
+        marc.zyngier@arm.com, cdall@kernel.org, peter.maydell@linaro.org,
+        andre.przywara@arm.com
+Subject: Re: [PATCH v5 02/12] KVM: arm/arm64: Document
+ KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
+Message-ID: <20180430093139.GA12204@C02W217FHV2R.local>
+References: <1525079264-25533-1-git-send-email-eric.auger@redhat.com>
+ <1525079264-25533-3-git-send-email-eric.auger@redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="9Ek0hoCL9XbhcSqy"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CACRpkday+d9iGeX+CRHTEyC=w+oNUK-8oTy0HqugO5PRhHn62w@mail.gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <1525079264-25533-3-git-send-email-eric.auger@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Apr 30, 2018 at 11:07:34AM +0200, Eric Auger wrote:
+> We introduce a new KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION attribute in
+> KVM_DEV_ARM_VGIC_GRP_ADDR group. It allows userspace to provide the
+> base address and size of a redistributor region
+> 
+> Compared to KVM_VGIC_V3_ADDR_TYPE_REDIST, this new attribute allows
+> to declare several separate redistributor regions.
+> 
+> So the whole redist space does not need to be contiguous anymore.
+> 
+> Signed-off-by: Eric Auger <eric.auger@redhat.com>
 
---9Ek0hoCL9XbhcSqy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Acked-by: Christoffer Dall <christoffer.dall@arm.com>
 
-On Mon, Apr 30, 2018 at 11:03:25AM +0200, Linus Walleij wrote:
-> On Thu, Apr 19, 2018 at 5:14 PM, Grygorii Strashko
-> <grygorii.strashko@ti.com> wrote:
-> > On 04/19/2018 09:05 AM, Wolfram Sang wrote:
-> >>
-> >> We should get drvdata from struct device directly. Going via
-> >> platform_device is an unneeded step back and forth.
-> >>
-> >> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> >> ---
-> >>
-> >> Build tested only. buildbot is happy. Please apply individually.
-> >
-> >
-> > for gpio-omap.c:
-> > Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
->=20
-> Hm I only see the responses not the actual patch, I guess I will find it
-> sooner or later.
->=20
-> Wolfram: if I don't find it, poke me with something sharp so I get to app=
-ly it.
-
-I had the same problem, turned out this got classified as spam by Google
-for some reason. Maybe try your spam folder?
-
-Thierry
-
---9Ek0hoCL9XbhcSqy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrm4gsACgkQ3SOs138+
-s6E+/Q/9EjphqdxUrnsFSD+/mR1PWKT+wgaYut4Zt8pP0aPfTRABNwbDutpCoz/w
-PTdquuAzoziVhHWLZFYyqEfug3/gB/4rHfl9UspVMirZlLjL/CJCGag79Df2oENl
-C6Q43ql8C5GfosbgL17xjZ5YkboZbPWmbaiODae3XOTRc3EDwCPiw1yn5xFiQxRG
-h16gu6kwhXDoipAXN5ljenWF2QkL1av5/7lY01n6NVtIOMg5ercIfx50NofCPpoi
-eniMXrWziPcryMq2u8e6rZKERXq+iZAMfZSr9s+NDsVrESPDkRM2PiCtRtCKH34g
-UYKK1pG7BikpaQmZKmBllMQ3fPKzsWVdhirioYwv5igTBJ4egwgmnjdjhHq8MOOd
-TV1YAjxFen0gAUTCo2MPUEvN3khqUY3xi0dnOgZOF64Q6D+ZHGltdCZcB5PdL2xE
-qLJ2CDGPxCk9fWI2oCVsZXjzc9T4l06baKF2dcxLdTyoCgB4ru3R4eV7V2CuRnnu
-/0IqZ1wRTWH9GW2VrmD+/CWJqSgknhWRwBVPQaZT87hfWMZC7xmRqAC+cK/OdBX/
-uadYQvwvLJBc3BsjtljiqzvvV8FwoXlhkVt0OPIARKCnBJtenbJfOMwewdVKjvVW
-42PBcd6qBelFBrohpOO3eQ967KJG+Z8c/NkrZ6t0JF8i4GaBT4o=
-=odoW
------END PGP SIGNATURE-----
-
---9Ek0hoCL9XbhcSqy--
+> 
+> ---
+> v4 -> v5:
+> - Document read access
+> - removed Peter's R-b
+> 
+> v3 -> v4:
+> - Added Peter's R-b
+> ---
+>  Documentation/virtual/kvm/devices/arm-vgic-v3.txt | 30 +++++++++++++++++++++--
+>  1 file changed, 28 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/virtual/kvm/devices/arm-vgic-v3.txt b/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
+> index 9293b45..dcb7504 100644
+> --- a/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
+> +++ b/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
+> @@ -27,16 +27,42 @@ Groups:
+>        VCPU and all of the redistributor pages are contiguous.
+>        Only valid for KVM_DEV_TYPE_ARM_VGIC_V3.
+>        This address needs to be 64K aligned.
+> +
+> +    KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION (rw, 64-bit)
+> +      The attribute data pointed by kvm_device_attr.addr is a __u64 value:
+> +      bits:     | 63   ....  52  |  51   ....   16 | 15 - 12  |11 - 0
+> +      values:   |     count      |       base      |  flags   | index
+> +      - index encodes the unique redistributor region index
+> +      - flags: reserved for future use, currently 0
+> +      - base field encodes bits [51:16] of the guest physical base address
+> +        of the first redistributor in the region.
+> +      - count encodes the number of redistributors in the region. Must be
+> +        greater than 0.
+> +      There are two 64K pages for each redistributor in the region and
+> +      redistributors are laid out contiguously within the region. Regions
+> +      are filled with redistributors in the index order. The sum of all
+> +      region count fields must be greater than or equal to the number of
+> +      VCPUs. Redistributor regions must be registered in the incremental
+> +      index order, starting from index 0.
+> +      The characteristics of a specific redistributor region can be read
+> +      by presetting the index field in the attr data.
+> +      Only valid for KVM_DEV_TYPE_ARM_VGIC_V3.
+> +
+> +  It is invalid to mix calls with KVM_VGIC_V3_ADDR_TYPE_REDIST and
+> +  KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION attributes.
+> +
+>    Errors:
+>      -E2BIG:  Address outside of addressable IPA range
+> -    -EINVAL: Incorrectly aligned address
+> +    -EINVAL: Incorrectly aligned address, bad redistributor region
+> +             count/index, mixed redistributor region attribute usage
+>      -EEXIST: Address already configured
+> +    -ENOENT: Attempt to read the characteristics of a non existing
+> +             redistributor region
+>      -ENXIO:  The group or attribute is unknown/unsupported for this device
+>               or hardware support is missing.
+>      -EFAULT: Invalid user pointer for attr->addr.
+>  
+>  
+> -
+>    KVM_DEV_ARM_VGIC_GRP_DIST_REGS
+>    KVM_DEV_ARM_VGIC_GRP_REDIST_REGS
+>    Attributes:
+> -- 
+> 2.5.5
+> 
+> _______________________________________________
+> kvmarm mailing list
+> kvmarm@lists.cs.columbia.edu
+> https://lists.cs.columbia.edu/mailman/listinfo/kvmarm
