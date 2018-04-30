@@ -1,211 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753655AbeD3Jos (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 05:44:48 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56992 "EHLO
+        id S1752834AbeD3Jqy (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 05:46:54 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57020 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753258AbeD3Joq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 05:44:46 -0400
-Date: Mon, 30 Apr 2018 11:44:17 +0200
-From: Christoffer Dall <christoffer.dall@arm.com>
-To: Eric Auger <eric.auger@redhat.com>
-Cc: eric.auger.pro@gmail.com, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
-        marc.zyngier@arm.com, cdall@kernel.org, peter.maydell@linaro.org,
-        andre.przywara@arm.com
-Subject: Re: [PATCH v5 11/12] KVM: arm/arm64: Implement
- KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
-Message-ID: <20180430094417.GC12204@C02W217FHV2R.local>
-References: <1525079264-25533-1-git-send-email-eric.auger@redhat.com>
- <1525079264-25533-12-git-send-email-eric.auger@redhat.com>
+        id S1750882AbeD3Jqx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 05:46:53 -0400
+Subject: Re: [PATCH v2 0/6] arm64: provide pseudo NMI with GICv3
+To: Joel Fernandes <joel.opensrc@gmail.com>
+Cc: Linux ARM Kernel List <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        mark.rutland@arm.com, marc.zyngier@arm.com, james.morse@arm.com,
+        daniel.thompson@linaro.org, Joel Fernandes <joelaf@google.com>
+References: <1516190084-18978-1-git-send-email-julien.thierry@arm.com>
+ <CAEi0qNk7pVtfcrFU4gM35sajPb09xjR8d6cJkgoSr-H0Tgo+QA@mail.gmail.com>
+From: Julien Thierry <julien.thierry@arm.com>
+Message-ID: <cc4347d0-995d-6921-a796-374a214cdce9@arm.com>
+Date: Mon, 30 Apr 2018 10:46:50 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1525079264-25533-12-git-send-email-eric.auger@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAEi0qNk7pVtfcrFU4gM35sajPb09xjR8d6cJkgoSr-H0Tgo+QA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 30, 2018 at 11:07:43AM +0200, Eric Auger wrote:
-> Now all the internals are ready to handle multiple redistributor
-> regions, let's allow the userspace to register them.
-> 
-> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+Hi Joel,
 
-Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
+Thanks for the interest.
 
+On 29/04/18 07:35, Joel Fernandes wrote:
+> Hi Julien,
 > 
-> ---
-> v4 -> v5:
-> - s/uint<n>_t/u<n>
-> - fix KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION read
-> - fix read path
-> - return -ENOENT instead of -ENODEV when reading the
->   attributes of a region that does not exist
+> I am interested in evaluating if using this is feasible for our
+> Android devices. There is quite a usecase for lockup detection that it
+> seems worthwhile if it works well. Atleast I feel this can be used a
+> debug option considering the performance downgrade.
 > 
-> v3 -> v4:
-> - vgic_v3_rdist_region_from_index is introduced in this patch
+> Do you have more details of if any GICv3 based system will work, or is
+> there a way an SoC can be misconfigured so that this series will not
+> work? I think Marc told me that's possible, but I wasn't sure. I will
+> be quite happy if it works on SoC as long as they have the requisite
+> GIC version.
 > 
-> v2 -> v3:
-> - early exit if vgic_v3_rdist_region_from_index() fails
-> ---
->  virt/kvm/arm/vgic/vgic-kvm-device.c | 40 ++++++++++++++++++++++++++++++++++++-
->  virt/kvm/arm/vgic/vgic-mmio-v3.c    |  4 ++--
->  virt/kvm/arm/vgic/vgic-v3.c         | 14 +++++++++++++
->  virt/kvm/arm/vgic/vgic.h            | 13 +++++++++++-
->  4 files changed, 67 insertions(+), 4 deletions(-)
+> Some more questions below:
 > 
-> diff --git a/virt/kvm/arm/vgic/vgic-kvm-device.c b/virt/kvm/arm/vgic/vgic-kvm-device.c
-> index 76ab369..6ada243 100644
-> --- a/virt/kvm/arm/vgic/vgic-kvm-device.c
-> +++ b/virt/kvm/arm/vgic/vgic-kvm-device.c
-> @@ -92,7 +92,7 @@ int kvm_vgic_addr(struct kvm *kvm, unsigned long type, u64 *addr, bool write)
->  		if (r)
->  			break;
->  		if (write) {
-> -			r = vgic_v3_set_redist_base(kvm, *addr);
-> +			r = vgic_v3_set_redist_base(kvm, 0, *addr, 0);
->  			goto out;
->  		}
->  		rdreg = list_first_entry(&vgic->rd_regions,
-> @@ -103,6 +103,43 @@ int kvm_vgic_addr(struct kvm *kvm, unsigned long type, u64 *addr, bool write)
->  			addr_ptr = &rdreg->base;
->  		break;
->  	}
-> +	case KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION:
-> +	{
-> +		struct vgic_redist_region *rdreg;
-> +		u8 index;
-> +
-> +		r = vgic_check_type(kvm, KVM_DEV_TYPE_ARM_VGIC_V3);
-> +		if (r)
-> +			break;
-> +
-> +		index = *addr & KVM_VGIC_V3_RDIST_INDEX_MASK;
-> +
-> +		if (write) {
-> +			gpa_t base = *addr & KVM_VGIC_V3_RDIST_BASE_MASK;
-> +			u32 count = (*addr & KVM_VGIC_V3_RDIST_COUNT_MASK)
-> +					>> KVM_VGIC_V3_RDIST_COUNT_SHIFT;
-> +			u8 flags = (*addr & KVM_VGIC_V3_RDIST_FLAGS_MASK)
-> +					>> KVM_VGIC_V3_RDIST_FLAGS_SHIFT;
-> +
-> +			if (!count || flags)
-> +				r = -EINVAL;
-> +			else
-> +				r = vgic_v3_set_redist_base(kvm, index,
-> +							    base, count);
-> +			goto out;
-> +		}
-> +
-> +		rdreg = vgic_v3_rdist_region_from_index(kvm, index);
-> +		if (!rdreg) {
-> +			r = -ENOENT;
-> +			goto out;
-> +		}
-> +
-> +		*addr = index;
-> +		*addr |= rdreg->base;
-> +		*addr |= (u64)rdreg->count << KVM_VGIC_V3_RDIST_COUNT_SHIFT;
-> +		goto out;
-> +	}
->  	default:
->  		r = -ENODEV;
->  	}
-> @@ -674,6 +711,7 @@ static int vgic_v3_has_attr(struct kvm_device *dev,
->  		switch (attr->attr) {
->  		case KVM_VGIC_V3_ADDR_TYPE_DIST:
->  		case KVM_VGIC_V3_ADDR_TYPE_REDIST:
-> +		case KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION:
->  			return 0;
->  		}
->  		break;
-> diff --git a/virt/kvm/arm/vgic/vgic-mmio-v3.c b/virt/kvm/arm/vgic/vgic-mmio-v3.c
-> index 1b1e07f..fcebd42 100644
-> --- a/virt/kvm/arm/vgic/vgic-mmio-v3.c
-> +++ b/virt/kvm/arm/vgic/vgic-mmio-v3.c
-> @@ -764,11 +764,11 @@ static int vgic_v3_insert_redist_region(struct kvm *kvm, uint32_t index,
->  	return ret;
->  }
->  
-> -int vgic_v3_set_redist_base(struct kvm *kvm, u64 addr)
-> +int vgic_v3_set_redist_base(struct kvm *kvm, u32 index, u64 addr, u32 count)
->  {
->  	int ret;
->  
-> -	ret = vgic_v3_insert_redist_region(kvm, 0, addr, 0);
-> +	ret = vgic_v3_insert_redist_region(kvm, index, addr, count);
->  	if (ret)
->  		return ret;
->  
-> diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-v3.c
-> index 5563671..70d5ba1 100644
-> --- a/virt/kvm/arm/vgic/vgic-v3.c
-> +++ b/virt/kvm/arm/vgic/vgic-v3.c
-> @@ -482,6 +482,20 @@ struct vgic_redist_region *vgic_v3_rdist_free_slot(struct list_head *rd_regions)
->  	return NULL;
->  }
->  
-> +struct vgic_redist_region *vgic_v3_rdist_region_from_index(struct kvm *kvm,
-> +							   u32 index)
-> +{
-> +	struct list_head *rd_regions = &kvm->arch.vgic.rd_regions;
-> +	struct vgic_redist_region *rdreg;
-> +
-> +	list_for_each_entry(rdreg, rd_regions, list) {
-> +		if (rdreg->index == index)
-> +			return rdreg;
-> +	}
-> +	return NULL;
-> +}
-> +
-> +
->  int vgic_v3_map_resources(struct kvm *kvm)
->  {
->  	struct vgic_dist *dist = &kvm->arch.vgic;
-> diff --git a/virt/kvm/arm/vgic/vgic.h b/virt/kvm/arm/vgic/vgic.h
-> index 6af7d8a..375aa66 100644
-> --- a/virt/kvm/arm/vgic/vgic.h
-> +++ b/virt/kvm/arm/vgic/vgic.h
-> @@ -96,6 +96,13 @@
->  /* we only support 64 kB translation table page size */
->  #define KVM_ITS_L1E_ADDR_MASK		GENMASK_ULL(51, 16)
->  
-> +#define KVM_VGIC_V3_RDIST_INDEX_MASK	GENMASK_ULL(11, 0)
-> +#define KVM_VGIC_V3_RDIST_FLAGS_MASK	GENMASK_ULL(15, 12)
-> +#define KVM_VGIC_V3_RDIST_FLAGS_SHIFT	12
-> +#define KVM_VGIC_V3_RDIST_BASE_MASK	GENMASK_ULL(51, 16)
-> +#define KVM_VGIC_V3_RDIST_COUNT_MASK	GENMASK_ULL(63, 52)
-> +#define KVM_VGIC_V3_RDIST_COUNT_SHIFT	52
-> +
->  /* Requires the irq_lock to be held by the caller. */
->  static inline bool irq_is_pending(struct vgic_irq *irq)
->  {
-> @@ -201,7 +208,7 @@ int vgic_v3_probe(const struct gic_kvm_info *info);
->  int vgic_v3_map_resources(struct kvm *kvm);
->  int vgic_v3_lpi_sync_pending_status(struct kvm *kvm, struct vgic_irq *irq);
->  int vgic_v3_save_pending_tables(struct kvm *kvm);
-> -int vgic_v3_set_redist_base(struct kvm *kvm, u64 addr);
-> +int vgic_v3_set_redist_base(struct kvm *kvm, u32 index, u64 addr, u32 count);
->  int vgic_register_redist_iodev(struct kvm_vcpu *vcpu);
->  bool vgic_v3_check_base(struct kvm *kvm);
->  
-> @@ -270,6 +277,10 @@ vgic_v3_rd_region_size(struct kvm *kvm, struct vgic_redist_region *rdreg)
->  	else
->  		return rdreg->count * KVM_VGIC_V3_REDIST_SIZE;
->  }
-> +
-> +struct vgic_redist_region *vgic_v3_rdist_region_from_index(struct kvm *kvm,
-> +							   u32 index);
-> +
->  bool vgic_v3_rdist_overlap(struct kvm *kvm, gpa_t base, size_t size);
->  
->  static inline bool vgic_dist_overlap(struct kvm *kvm, gpa_t base, size_t size)
-> -- 
-> 2.5.5
+> On Wed, Jan 17, 2018 at 3:54 AM, Julien Thierry <julien.thierry@arm.com> wrote:
+>> Hi,
+>>
+>> This series is a continuation of the work started by Daniel [1]. The goal
+>> is to use GICv3 interrupt priorities to simulate an NMI.
+>>
+>> To achieve this, set two priorities, one for standard interrupts and
+>> another, higher priority, for NMIs. Whenever we want to disable interrupts,
+>> we mask the standard priority instead so NMIs can still be raised. Some
+>> corner cases though still require to actually mask all interrupts
+>> effectively disabling the NMI.
+>>
+>> Of course, using priority masking instead of PSR.I comes at some cost. On
+>> hackbench, the drop of performance seems to be >1% on average for this
+>> version. I can only attribute that to recent changes in the kernel as
 > 
-> _______________________________________________
-> kvmarm mailing list
-> kvmarm@lists.cs.columbia.edu
-> https://lists.cs.columbia.edu/mailman/listinfo/kvmarm
+> Do you have more specific performance data on the performance overhead
+> with this series?
+> 
+
+Not at the moment. I was planning on doing a v3 anyway considering this 
+series is getting a bit old and the GICv3 driver has had some modifications.
+
+Once I get to it I can try to have more detailed performance data on a 
+recent kernel. I've really only measured the performance on hackbench 
+and on kernel build from defconfig (and for the kernel build the 
+performance difference was completely hidden by the noise).
+
+>> hackbench seems slightly slower compared to my other benchmarks while the
+>> runs with the use of GICv3 priorities have stayed in the same time frames.
+>> KVM Guests do not seem to be affected preformance-wise by the host using
+>> PMR to mask interrupts or not.
+>>
+>> Currently, only PPIs and SPIs can be set as NMIs. IPIs being currently
+>> hardcoded IRQ numbers, there isn't a generic interface to set SGIs as NMI
+>> for now. I don't think there is any reason LPIs should be allowed to be set
+>> as NMI as they do not have an active state.
+>> When an NMI is active on a CPU, no other NMI can be triggered on the CPU.
+>>
+>>
+>> Requirements to use this:
+>> - Have GICv3
+>> - SCR_EL3.FIQ is set to 1 when linux runs
+> 
+> Ah I see it mentioned here. Again, can you clarify if this is
+> something that can be misconfigured? Is it something that the
+> bootloader sets?
+> 
+
+Yes, this is something that the bootloader sets and we have seen a few 
+cases where it is set to 0, so it can be "misconfigured".
+
+It is not impossible to handle this case, but this bit affects the view 
+the GICv3 CPU interface has on interrupt priority values. However it 
+requires to add some conditions in both the interrupt handling and 
+masking/unmasking code, so ideally we would avoid adding things to this.
+
+But the idea is that Linux only deals with group 1 interrupts, and group 
+1 interrupts are only signaled as FIQs when the execution state is 
+secure or at EL3, which should never happen in Linux's case. So ideally 
+we'd like firmwares to set up this bit properly rather than to have to 
+deal with both cases when only one of them makes sense for Linux.
+
+> Sorry if these questions sound premature, I haven't yet taken a closer
+> look at the series.
+> 
+Cheers,
+
+-- 
+Julien Thierry
