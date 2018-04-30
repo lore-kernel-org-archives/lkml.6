@@ -1,89 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752374AbeD3HtC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 03:49:02 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:3359 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752063AbeD3Hs7 (ORCPT
+        id S1752407AbeD3HvU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 03:51:20 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51382 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752134AbeD3HvS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 03:48:59 -0400
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Mon, 30 Apr 2018 00:48:56 -0700
-Date: Mon, 30 Apr 2018 10:48:54 +0300
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Dmitry Osipenko <digetx@gmail.com>
-CC: Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Linus Walleij" <linus.walleij@linaro.org>,
-        Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>,
-        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 1/4] clk: tegra20: Add DEV1/DEV2 OSC dividers
-Message-ID: <20180430074854.GM6835@tbergstrom-lnx.Nvidia.com>
-References: <20180426235818.10018-1-digetx@gmail.com>
- <20180426235818.10018-2-digetx@gmail.com>
+        Mon, 30 Apr 2018 03:51:18 -0400
+Date: Mon, 30 Apr 2018 00:51:06 -0700
+From: Ram Pai <linuxram@us.ibm.com>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org, shakeelb@google.com,
+        stable@kernel.org, tglx@linutronix.de, mpe@ellerman.id.au,
+        mingo@kernel.org, akpm@linux-foundation.org, shuah@kernel.org
+Subject: Re: [PATCH 4/9] x86, pkeys: override pkey when moving away from
+ PROT_EXEC
+Reply-To: Ram Pai <linuxram@us.ibm.com>
+References: <20180326172721.D5B2CBB4@viggo.jf.intel.com>
+ <20180326172727.025EBF16@viggo.jf.intel.com>
+ <20180407000943.GA15890@ram.oc3035372033.ibm.com>
+ <6e3f8e1c-afed-64de-9815-8478e18532aa@intel.com>
+ <20180407010919.GB15890@ram.oc3035372033.ibm.com>
+ <aedcb0b6-73f5-f72f-742e-b417131895d3@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180426235818.10018-2-digetx@gmail.com>
-X-NVConfidentiality: public
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Originating-IP: [10.21.24.170]
-X-ClientProxiedBy: UKMAIL102.nvidia.com (10.26.138.15) To UKMAIL102.nvidia.com
- (10.26.138.15)
+In-Reply-To: <aedcb0b6-73f5-f72f-742e-b417131895d3@intel.com>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-TM-AS-GCONF: 00
+x-cbid: 18043007-0008-0000-0000-000004F15983
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18043007-0009-0000-0000-00001E856F78
+Message-Id: <20180430075106.GA5666@ram.oc3035372033.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-30_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804300077
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 27, 2018 at 02:58:15AM +0300, Dmitry Osipenko wrote:
-> CDEV1/CDEV2 clocks could have corresponding oscillator clock divider as
-> a parent. Add these dividers in order to be able to provide that parent
-> option.
+On Thu, Apr 26, 2018 at 10:57:31AM -0700, Dave Hansen wrote:
+> On 04/06/2018 06:09 PM, Ram Pai wrote:
+> > Well :). my point is add this code and delete the other
+> > code that you add later in that function.
 > 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/clk/tegra/clk-tegra20.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
+> I don't think I'm understanding what your suggestion was.  I looked at
+> the code and I honestly do not think I can remove any of it.
 > 
-> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-> index 0ee56dd04cec..16cf4108f2ff 100644
-> --- a/drivers/clk/tegra/clk-tegra20.c
-> +++ b/drivers/clk/tegra/clk-tegra20.c
-> @@ -26,6 +26,8 @@
->  #include "clk.h"
->  #include "clk-id.h"
->  
-> +#define MISC_CLK_ENB 0x48
-> +
->  #define OSC_CTRL 0x50
->  #define OSC_CTRL_OSC_FREQ_MASK (3<<30)
->  #define OSC_CTRL_OSC_FREQ_13MHZ (0<<30)
-> @@ -831,6 +833,16 @@ static void __init tegra20_periph_clk_init(void)
->  				    periph_clk_enb_refcnt);
->  	clks[TEGRA20_CLK_PEX] = clk;
->  
-> +	/* cdev1 OSC divider */
-> +	clk_register_divider(NULL, "cdev1_osc_div", "clk_m",
-> +			     0, clk_base + MISC_CLK_ENB, 20, 2,
-> +			     CLK_DIVIDER_POWER_OF_TWO, NULL);
-> +
-
-I don't know if this divider can be changed glitchlessly so to be safe,
-I would mark this readonly, so add the CLK_DIVIDER_READ_ONLY flag.
-
-> +	/* cdev2 OSC divider */
-> +	clk_register_divider(NULL, "cdev2_osc_div", "clk_m",
-> +			     0, clk_base + MISC_CLK_ENB, 22, 2,
-> +			     CLK_DIVIDER_POWER_OF_TWO, NULL);
-> +
->  	/* cdev1 */
->  	clk = clk_register_fixed_rate(NULL, "cdev1_fixed", NULL, 0, 26000000);
->  	clk = tegra_clk_register_periph_gate("cdev1", "cdev1_fixed", 0,
-> -- 
-> 2.17.0
+> For the plain (non-explicit pkey_mprotect()) case, there are exactly
+> four paths through __arch_override_mprotect_pkey(), resulting in three
+> different results.
 > 
+> 1. New prot==PROT_EXEC, no pkey-exec support -> do not override
+> 2. New prot!=PROT_EXEC, old VMA not PROT_EXEC-> do not override
+> 3. New prot==PROT_EXEC, w/ pkey-exec support -> override to exec pkey
+> 4. New prot!=PROT_EXEC, old VMA is PROT_EXEC -> override to default
+> 
+> I don't see any redundancy there, or any code that we can eliminate or
+> simplify.  It was simpler before, but that's what where bug was.
 
-Peter.
+Your code is fine.  But than the following code accomplishes the same
+outcome; arguably with a one line change. Its not a big deal. Just
+trying to clarify my comment.
+
+int __arch_override_mprotect_pkey(struct vm_area_struct *vma, int prot, int pkey)
+{
+	/*
+	 * Is this an mprotect_pkey() call?  If so, never
+	 * override the value that came from the user.
+	 */
+	if (pkey != -1)
+		return pkey;
+	/*
+	 * Look for a protection-key-drive execute-only mapping
+	 * which is now being given permissions that are not
+	 * execute-only.  Move it back to the default pkey.
+	 */
+	if (vma_is_pkey_exec_only(vma) && (prot != PROT_EXEC)) <--------
+		return ARCH_DEFAULT_PKEY;
+
+	/*
+	 * The mapping is execute-only.  Go try to get the
+	 * execute-only protection key.  If we fail to do that,
+	 * fall through as if we do not have execute-only
+	 * support.
+	 */
+	if (prot == PROT_EXEC) {
+		pkey = execute_only_pkey(vma->vm_mm);
+		if (pkey > 0)
+			return pkey;
+	}
+	/*
+	 * This is a vanilla, non-pkey mprotect (or we failed to
+	 * setup execute-only), inherit the pkey from the VMA we
+	 * are working on.
+	 */
+	return vma_pkey(vma);
+}
+
+-- 
+Ram Pai
