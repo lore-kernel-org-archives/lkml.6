@@ -1,42 +1,40 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrCRJzI5ZzImkZdG4OwxVr5RFQw6ZTuqx6jDoZ9chBc3F1jlzZl6yPjrn1QMAqvT905vSjc
-ARC-Seal: i=1; a=rsa-sha256; t=1525116406; cv=none;
+X-Google-Smtp-Source: AB8JxZpipWFFwsleOwwhB2Z6x/95YxAT39G2khhan7KSh26JRTfasuTOo+7Y831AaCpsnpAO2tCg
+ARC-Seal: i=1; a=rsa-sha256; t=1525116404; cv=none;
         d=google.com; s=arc-20160816;
-        b=TptaX4ckYylYn+1xCWqZh57ORs2sdA7y07sk3SXWtoRm5v8vTuGbdWwPijtBkwDEut
-         6ibknvBDN6NMRI5zp/go7FuI5p399JWD4/iwBmKsfUOT/PdBUi6n8r/R6RheLnVEV30u
-         j7xVaRwPiPCmsrD2hoz/KS9xCGkUb0ZY8FgwlojBBPB4gZ15GqgWCCAb1MuYjJJmyf79
-         OhvGyZl2CWqY46Ee+AuIIBHoGT0b6fxBiQHPVE3TdXHsloyW7+KRf1iKj+gCVBa3SbEM
-         FxYgrBq6+q9oRdzV6Dl2dRIjNWLfmFcWu6OFun6YRQ6XyOBXNQQWcwKtMFlZisxWJB4q
-         rTsQ==
+        b=Qb4LAfQYjRyzzZrCx9TDsxjY2kljebeixtVvkUMPIb2761Y4gsUmRQGn/60yEUMJtO
+         QTEVxFt4ag3MbfTcyfiZQHnj0pgTJn2j87Mb6wgxl4BCWMRmekyrj8W7zxn/RF7etHdp
+         oZzeZJei1pxy9fVnu4DNIsXne6fqUmJxfCA6wwMdBUf/Vr9EQbFVe52AaEb45K6M/7LT
+         iHvK0L3aJkylSb9ySI536NBHUhUnoZgYuVuq4dWYweFSdhvC9RYZBDZq/aS8tik7Qrf1
+         4uIijif1pEEKnj8VFbbKddWaU7D0T8qTb2bnOmwbp36D1T6IYwubaD3UO/KVGJ9nIrLF
+         P3HA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=kOIdh2eCzQq5jn7nxWyjzsiADp36PFFMXEfRhqM4aWY=;
-        b=Z+Q3AB8/1XSDpE6d9GHn/GZnmfn4CqBt2R2JWTf7wxXi6hGAcTxG38eaaydTASggJo
-         Jia12trRHP7gkaraCRWpaRaQnmsUhwEooyLN3sudDdkSPMPA1JGXph+LGcAmjd+32LLl
-         nNKi4kch8SURcRoXNBfywNMzA3UVwpvhN++A/eE8VWSyxyCP7JiN2mQsJZaviEjUADeZ
-         J3vNvyKEbOQJGkAhti/aP6gnRM5RmkVvvpQwxWjpNmOLeplr13a7mEqZY9rpu+tWfzBx
-         6/6cvQYt/7/wW/JoENwMpRb7ujGLPpdI1g4crf6kVZMjrl9rsERfQTHYWbwGrnql2y82
-         7spA==
+        bh=xU07u9rcJF9kv9Y9+olcsCZCoiLRtsRWpMhGsDLzb5M=;
+        b=rZpMmYNFgR6M/0Kel7N/E4drsxOebLCOyTibLSc6xOMFziJmZjmD/TcnEiCclcCVPt
+         qs8PSuTX6aoMyuB+FmpoW4+KBYO3yhe9rkJcbZqn1T7KtcdonwuuNK0AnuIVnEzJcBYF
+         UpewJ7x8bKlQtcmlhGceS/cGkZZcV6hMZGlrkMreW6ngk1B5T0MAuE12ti6dMmAv4Rk5
+         Ik68mV7Akknj/XJ5aBUS2a6f5K5iyAnVFhUm01XekuFZBNHRkDw3jghyRbiiJg4lmW5C
+         nUj45R2qzG/l07nqGkqywXYloZdw3z9vWtmgjnzgO23ki55HlPGKloWgxIiQKvG2ikE0
+         vVfQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B8C622DC0
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BC6A22E02
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"H . J . Lu" <hjl.tools@gmail.com>,
-	Jeffrey Walton <noloader@gmail.com>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH 4.9 58/61] x86/ipc: Fix x32 version of shmid64_ds and msqid64_ds
-Date: Mon, 30 Apr 2018 12:25:01 -0700
-Message-Id: <20180430183956.206685084@linuxfoundation.org>
+	Nicholas Piggin <npiggin@gmail.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.9 54/61] rtc: opal: Fix OPAL RTC driver OPAL_BUSY loops
+Date: Mon, 30 Apr 2018 12:24:57 -0700
+Message-Id: <20180430183955.893665304@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430183951.312721450@linuxfoundation.org>
 References: <20180430183951.312721450@linuxfoundation.org>
@@ -46,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200461344232814?=
-X-GMAIL-MSGID: =?utf-8?q?1599200461344232814?=
+X-GMAIL-THRID: =?utf-8?q?1599200458168211675?=
+X-GMAIL-MSGID: =?utf-8?q?1599200458168211675?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,126 +53,114 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Nicholas Piggin <npiggin@gmail.com>
 
-commit 1a512c0882bd311c5b5561840fcfbe4c25b8f319 upstream.
+commit 682e6b4da5cbe8e9a53f979a58c2a9d7dc997175 upstream.
 
-A bugfix broke the x32 shmid64_ds and msqid64_ds data structure layout
-(as seen from user space)  a few years ago: Originally, __BITS_PER_LONG
-was defined as 64 on x32, so we did not have padding after the 64-bit
-__kernel_time_t fields, After __BITS_PER_LONG got changed to 32,
-applications would observe extra padding.
+The OPAL RTC driver does not sleep in case it gets OPAL_BUSY or
+OPAL_BUSY_EVENT from firmware, which causes large scheduling
+latencies, up to 50 seconds have been observed here when RTC stops
+responding (BMC reboot can do it).
 
-In other parts of the uapi headers we seem to have a mix of those
-expecting either 32 or 64 on x32 applications, so we can't easily revert
-the path that broke these two structures.
+Fix this by converting it to the standard form OPAL_BUSY loop that
+sleeps.
 
-Instead, this patch decouples x32 from the other architectures and moves
-it back into arch specific headers, partially reverting the even older
-commit 73a2d096fdf2 ("x86: remove all now-duplicate header files").
-
-It's not clear whether this ever made any difference, since at least
-glibc carries its own (correct) copy of both of these header files,
-so possibly no application has ever observed the definitions here.
-
-Based on a suggestion from H.J. Lu, I tried out the tool from
-https://github.com/hjl-tools/linux-header to find other such
-bugs, which pointed out the same bug in statfs(), which also has
-a separate (correct) copy in glibc.
-
-Fixes: f4b4aae18288 ("x86/headers/uapi: Fix __BITS_PER_LONG value for x32 builds")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: "H . J . Lu" <hjl.tools@gmail.com>
-Cc: Jeffrey Walton <noloader@gmail.com>
-Cc: stable@vger.kernel.org
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Link: https://lkml.kernel.org/r/20180424212013.3967461-1-arnd@arndb.de
+Fixes: 628daa8d5abf ("powerpc/powernv: Add RTC and NVRAM support plus RTAS fallbacks")
+Cc: stable@vger.kernel.org # v3.2+
+Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/uapi/asm/msgbuf.h |   31 +++++++++++++++++++++++++++
- arch/x86/include/uapi/asm/shmbuf.h |   42 +++++++++++++++++++++++++++++++++++++
- 2 files changed, 73 insertions(+)
+ arch/powerpc/platforms/powernv/opal-rtc.c |    8 ++++--
+ drivers/rtc/rtc-opal.c                    |   37 ++++++++++++++++++------------
+ 2 files changed, 28 insertions(+), 17 deletions(-)
 
---- a/arch/x86/include/uapi/asm/msgbuf.h
-+++ b/arch/x86/include/uapi/asm/msgbuf.h
-@@ -1 +1,32 @@
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-+#ifndef __ASM_X64_MSGBUF_H
-+#define __ASM_X64_MSGBUF_H
+--- a/arch/powerpc/platforms/powernv/opal-rtc.c
++++ b/arch/powerpc/platforms/powernv/opal-rtc.c
+@@ -48,10 +48,12 @@ unsigned long __init opal_get_boot_time(
+ 
+ 	while (rc == OPAL_BUSY || rc == OPAL_BUSY_EVENT) {
+ 		rc = opal_rtc_read(&__y_m_d, &__h_m_s_ms);
+-		if (rc == OPAL_BUSY_EVENT)
++		if (rc == OPAL_BUSY_EVENT) {
++			mdelay(OPAL_BUSY_DELAY_MS);
+ 			opal_poll_events(NULL);
+-		else if (rc == OPAL_BUSY)
+-			mdelay(10);
++		} else if (rc == OPAL_BUSY) {
++			mdelay(OPAL_BUSY_DELAY_MS);
++		}
+ 	}
+ 	if (rc != OPAL_SUCCESS)
+ 		return 0;
+--- a/drivers/rtc/rtc-opal.c
++++ b/drivers/rtc/rtc-opal.c
+@@ -57,7 +57,7 @@ static void tm_to_opal(struct rtc_time *
+ 
+ static int opal_get_rtc_time(struct device *dev, struct rtc_time *tm)
+ {
+-	long rc = OPAL_BUSY;
++	s64 rc = OPAL_BUSY;
+ 	int retries = 10;
+ 	u32 y_m_d;
+ 	u64 h_m_s_ms;
+@@ -66,13 +66,17 @@ static int opal_get_rtc_time(struct devi
+ 
+ 	while (rc == OPAL_BUSY || rc == OPAL_BUSY_EVENT) {
+ 		rc = opal_rtc_read(&__y_m_d, &__h_m_s_ms);
+-		if (rc == OPAL_BUSY_EVENT)
++		if (rc == OPAL_BUSY_EVENT) {
++			msleep(OPAL_BUSY_DELAY_MS);
+ 			opal_poll_events(NULL);
+-		else if (retries-- && (rc == OPAL_HARDWARE
+-				       || rc == OPAL_INTERNAL_ERROR))
+-			msleep(10);
+-		else if (rc != OPAL_BUSY && rc != OPAL_BUSY_EVENT)
+-			break;
++		} else if (rc == OPAL_BUSY) {
++			msleep(OPAL_BUSY_DELAY_MS);
++		} else if (rc == OPAL_HARDWARE || rc == OPAL_INTERNAL_ERROR) {
++			if (retries--) {
++				msleep(10); /* Wait 10ms before retry */
++				rc = OPAL_BUSY; /* go around again */
++			}
++		}
+ 	}
+ 
+ 	if (rc != OPAL_SUCCESS)
+@@ -87,21 +91,26 @@ static int opal_get_rtc_time(struct devi
+ 
+ static int opal_set_rtc_time(struct device *dev, struct rtc_time *tm)
+ {
+-	long rc = OPAL_BUSY;
++	s64 rc = OPAL_BUSY;
+ 	int retries = 10;
+ 	u32 y_m_d = 0;
+ 	u64 h_m_s_ms = 0;
+ 
+ 	tm_to_opal(tm, &y_m_d, &h_m_s_ms);
 +
-+#if !defined(__x86_64__) || !defined(__ILP32__)
- #include <asm-generic/msgbuf.h>
-+#else
-+/*
-+ * The msqid64_ds structure for x86 architecture with x32 ABI.
-+ *
-+ * On x86-32 and x86-64 we can just use the generic definition, but
-+ * x32 uses the same binary layout as x86_64, which is differnet
-+ * from other 32-bit architectures.
-+ */
-+
-+struct msqid64_ds {
-+	struct ipc64_perm msg_perm;
-+	__kernel_time_t msg_stime;	/* last msgsnd time */
-+	__kernel_time_t msg_rtime;	/* last msgrcv time */
-+	__kernel_time_t msg_ctime;	/* last change time */
-+	__kernel_ulong_t msg_cbytes;	/* current number of bytes on queue */
-+	__kernel_ulong_t msg_qnum;	/* number of messages in queue */
-+	__kernel_ulong_t msg_qbytes;	/* max number of bytes on queue */
-+	__kernel_pid_t msg_lspid;	/* pid of last msgsnd */
-+	__kernel_pid_t msg_lrpid;	/* last receive pid */
-+	__kernel_ulong_t __unused4;
-+	__kernel_ulong_t __unused5;
-+};
-+
-+#endif
-+
-+#endif /* __ASM_GENERIC_MSGBUF_H */
---- a/arch/x86/include/uapi/asm/shmbuf.h
-+++ b/arch/x86/include/uapi/asm/shmbuf.h
-@@ -1 +1,43 @@
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-+#ifndef __ASM_X86_SHMBUF_H
-+#define __ASM_X86_SHMBUF_H
-+
-+#if !defined(__x86_64__) || !defined(__ILP32__)
- #include <asm-generic/shmbuf.h>
-+#else
-+/*
-+ * The shmid64_ds structure for x86 architecture with x32 ABI.
-+ *
-+ * On x86-32 and x86-64 we can just use the generic definition, but
-+ * x32 uses the same binary layout as x86_64, which is differnet
-+ * from other 32-bit architectures.
-+ */
-+
-+struct shmid64_ds {
-+	struct ipc64_perm	shm_perm;	/* operation perms */
-+	size_t			shm_segsz;	/* size of segment (bytes) */
-+	__kernel_time_t		shm_atime;	/* last attach time */
-+	__kernel_time_t		shm_dtime;	/* last detach time */
-+	__kernel_time_t		shm_ctime;	/* last change time */
-+	__kernel_pid_t		shm_cpid;	/* pid of creator */
-+	__kernel_pid_t		shm_lpid;	/* pid of last operator */
-+	__kernel_ulong_t	shm_nattch;	/* no. of current attaches */
-+	__kernel_ulong_t	__unused4;
-+	__kernel_ulong_t	__unused5;
-+};
-+
-+struct shminfo64 {
-+	__kernel_ulong_t	shmmax;
-+	__kernel_ulong_t	shmmin;
-+	__kernel_ulong_t	shmmni;
-+	__kernel_ulong_t	shmseg;
-+	__kernel_ulong_t	shmall;
-+	__kernel_ulong_t	__unused1;
-+	__kernel_ulong_t	__unused2;
-+	__kernel_ulong_t	__unused3;
-+	__kernel_ulong_t	__unused4;
-+};
-+
-+#endif
-+
-+#endif /* __ASM_X86_SHMBUF_H */
+ 	while (rc == OPAL_BUSY || rc == OPAL_BUSY_EVENT) {
+ 		rc = opal_rtc_write(y_m_d, h_m_s_ms);
+-		if (rc == OPAL_BUSY_EVENT)
++		if (rc == OPAL_BUSY_EVENT) {
++			msleep(OPAL_BUSY_DELAY_MS);
+ 			opal_poll_events(NULL);
+-		else if (retries-- && (rc == OPAL_HARDWARE
+-				       || rc == OPAL_INTERNAL_ERROR))
+-			msleep(10);
+-		else if (rc != OPAL_BUSY && rc != OPAL_BUSY_EVENT)
+-			break;
++		} else if (rc == OPAL_BUSY) {
++			msleep(OPAL_BUSY_DELAY_MS);
++		} else if (rc == OPAL_HARDWARE || rc == OPAL_INTERNAL_ERROR) {
++			if (retries--) {
++				msleep(10); /* Wait 10ms before retry */
++				rc = OPAL_BUSY; /* go around again */
++			}
++		}
+ 	}
+ 
+ 	return rc == OPAL_SUCCESS ? 0 : -EIO;
