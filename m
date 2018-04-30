@@ -1,42 +1,39 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpix6a+lBrcfpEdZnE1r+YD+BjUOIoCmd9m2ApE9OGqDOnjb1x1ZwVgIlyVMLbZE/6CbZPS
-ARC-Seal: i=1; a=rsa-sha256; t=1525116446; cv=none;
+X-Google-Smtp-Source: AB8JxZqE41RvOiBK/9NnMqEcEyOrk95fXSqlxY4pCFdWeunPupLj1q6qIjFRERvL5sXY2uvB7ndh
+ARC-Seal: i=1; a=rsa-sha256; t=1525116447; cv=none;
         d=google.com; s=arc-20160816;
-        b=MKVN4r4k0S/wBcimGbKiU8kIanwj0utnw8a0q96mTd1tgz7de1be8MnN4RDdfmlBop
-         0otLjCCdHMM/hVPvdr6S4iZ61/WCBdwZoge1wqerI3Vms1TzNtPyJBo+9YLKEaENNA+J
-         ird96OdvKjHfbvOD133oBL5PhVlMYiPtY/kPa8JZ+bPod6WxgGfez98LybF6W4bWyJkH
-         0GJ2WoNLz3MUIdWDqlc7bTZe0s+T3/h65CpZXIHeqFvdU45XNgCyuEOdtmIA50Q33L8K
-         uNpA8tqBwbWyXwXaPnIkBx70U7YcWRXunqXLRb/RFNO4/ma4Kq9lpCHl41UlNlXjyHZI
-         /Z/A==
+        b=GPVPhAKCIVr+NXd6AzZHwX6he5H6k34miEEMy5qZRc2uW6nxjSYvAKOb7Oc6OApQzF
+         Tzciv5GrFoXsbkpq69Sqfd3Illl18rwmGllHRq0RNInJDWcZYJu1fzlccRMcCehNnmfw
+         eLNTEf0q4TwSZi01Xy/GAa5+rwQ7rExn32BXfwyBF3bE8GwvUODkiNqGwUa4ZYzBwtI4
+         2aRrY81IoQ7kQ8aDh3oaXwQl8Zb+qB9TcKAb2142jvTfK/IMq1MI91PzWyCqWe0Tvmq/
+         vVoFqXrNQfAxUVsK7r0Wff6bkoIbBLqc1qGJZnH1BdjCg/vtTWFo43SUMgNMINiPu4Wu
+         kdkQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=e9LblJuZ2SPRt75/ifzcJ3+6Z0Tn4LDhj/rqR9CWj6M=;
-        b=hcDgcnKbfKkXKwuvyJ6gnelyjsJr0I6Z4ix6KlUPRc4bRweoKHZMOiDtyFhmAimgU9
-         WzkkOuUgbNMJ6SG5DrXH3176r/f0Vbdh0LwMPGludF7NWmGeqksA0C2a2hQGSivEbcN1
-         yjDi8G2x7zfw4SZYWWi+9z0BsE7sSPHCviz6bhYPYBORASfzqX8G0b+Mxdp4xmJ1to3G
-         Hor2gEnM5BhoIUo2qOeh+nDcN3s6q91I3zVSGeDxgtLwAHBH2jd4UtI0c2ZAy/8lMPKj
-         yk7EQES4PKDyY/9/7/YEhdlfDoCaqPG/Ozb9xlLngrS2or7TSWNl6pZeKG5BgZKos+Jh
-         +joA==
+        bh=BTvgHnWiHcfOpP/OTayW4ZkeAnpNIrNKpqD2akEEqgs=;
+        b=ne1HvSmolpdnE2S4XRqp2gNDETMdk84YZ3yiGh0hRqb9NAY2ZZDXXba1IEtAAJZml5
+         48bYvPKtd3Zqqm+ERydJ6buCYB64+T8OT23IVjL9aKFSKi5YnD+oTzteJwMMHk7XzeFO
+         63TZKmIkj5S+CJtRbOS/ThmkGuDMbqvAndTQ3WLAEfttXyG5KbZRkKHfyeyvHNAB29dV
+         MP1Bp3MH+d+A2ksNi0puFdpOPooh0demOk2MIJPdTCBJj7gTcakuv+2a9th29X6cXaZR
+         1WbCsfxbFr+Fz3kxRWOnXLSUy0viyyV9rcfVJoMLNxWDZT6YdR+/HVlJAa7knDaoh42j
+         fo4A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E29722DAC
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1210522DCC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dong Jia Shi <bjsdjshi@linux.ibm.com>,
-	Halil Pasic <pasic@linux.vnet.ibm.com>,
-	Pierre Morel <pmorel@linux.vnet.ibm.com>,
-	Cornelia Huck <cohuck@redhat.com>,
-	Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4.14 58/91] vfio: ccw: process ssch with interrupts disabled
-Date: Mon, 30 Apr 2018 12:24:40 -0700
-Message-Id: <20180430184007.196458060@linuxfoundation.org>
+	syzbot+09e05aba06723a94d43d@syzkaller.appspotmail.com,
+	Martijn Coenen <maco@android.com>
+Subject: [PATCH 4.14 59/91] ANDROID: binder: prevent transactions into own process.
+Date: Mon, 30 Apr 2018 12:24:41 -0700
+Message-Id: <20180430184007.246412352@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184004.216234025@linuxfoundation.org>
 References: <20180430184004.216234025@linuxfoundation.org>
@@ -46,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200503442942312?=
-X-GMAIL-MSGID: =?utf-8?q?1599200503442942312?=
+X-GMAIL-THRID: =?utf-8?q?1599200504167877540?=
+X-GMAIL-MSGID: =?utf-8?q?1599200504167877540?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,76 +52,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Cornelia Huck <cohuck@redhat.com>
+From: Martijn Coenen <maco@android.com>
 
-commit 3368e547c52b96586f0edf9657ca12b94d8e61a7 upstream.
+commit 7aa135fcf26377f92dc0680a57566b4c7f3e281b upstream.
 
-When we call ssch, an interrupt might already be pending once we
-return from the START SUBCHANNEL instruction. Therefore we need to
-make sure interrupts are disabled while holding the subchannel lock
-until after we're done with our processing.
+This can't happen with normal nodes (because you can't get a ref
+to a node you own), but it could happen with the context manager;
+to make the behavior consistent with regular nodes, reject
+transactions into the context manager by the process owning it.
 
-Cc: stable@vger.kernel.org #v4.12+
-Reviewed-by: Dong Jia Shi <bjsdjshi@linux.ibm.com>
-Acked-by: Halil Pasic <pasic@linux.vnet.ibm.com>
-Acked-by: Pierre Morel <pmorel@linux.vnet.ibm.com>
-Signed-off-by: Cornelia Huck <cohuck@redhat.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Reported-by: syzbot+09e05aba06723a94d43d@syzkaller.appspotmail.com
+Signed-off-by: Martijn Coenen <maco@android.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/s390/cio/vfio_ccw_fsm.c |   19 ++++++++++++-------
- 1 file changed, 12 insertions(+), 7 deletions(-)
+ drivers/android/binder.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/drivers/s390/cio/vfio_ccw_fsm.c
-+++ b/drivers/s390/cio/vfio_ccw_fsm.c
-@@ -20,12 +20,12 @@ static int fsm_io_helper(struct vfio_ccw
- 	int ccode;
- 	__u8 lpm;
- 	unsigned long flags;
-+	int ret;
- 
- 	sch = private->sch;
- 
- 	spin_lock_irqsave(sch->lock, flags);
- 	private->state = VFIO_CCW_STATE_BUSY;
--	spin_unlock_irqrestore(sch->lock, flags);
- 
- 	orb = cp_get_orb(&private->cp, (u32)(addr_t)sch, sch->lpm);
- 
-@@ -38,10 +38,12 @@ static int fsm_io_helper(struct vfio_ccw
- 		 * Initialize device status information
- 		 */
- 		sch->schib.scsw.cmd.actl |= SCSW_ACTL_START_PEND;
--		return 0;
-+		ret = 0;
-+		break;
- 	case 1:		/* Status pending */
- 	case 2:		/* Busy */
--		return -EBUSY;
-+		ret = -EBUSY;
-+		break;
- 	case 3:		/* Device/path not operational */
- 	{
- 		lpm = orb->cmd.lpm;
-@@ -51,13 +53,16 @@ static int fsm_io_helper(struct vfio_ccw
- 			sch->lpm = 0;
- 
- 		if (cio_update_schib(sch))
--			return -ENODEV;
--
--		return sch->lpm ? -EACCES : -ENODEV;
-+			ret = -ENODEV;
-+		else
-+			ret = sch->lpm ? -EACCES : -ENODEV;
-+		break;
- 	}
- 	default:
--		return ccode;
-+		ret = ccode;
- 	}
-+	spin_unlock_irqrestore(sch->lock, flags);
-+	return ret;
- }
- 
- static void fsm_notoper(struct vfio_ccw_private *private,
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -2785,6 +2785,14 @@ static void binder_transaction(struct bi
+ 			else
+ 				return_error = BR_DEAD_REPLY;
+ 			mutex_unlock(&context->context_mgr_node_lock);
++			if (target_node && target_proc == proc) {
++				binder_user_error("%d:%d got transaction to context manager from process owning it\n",
++						  proc->pid, thread->pid);
++				return_error = BR_FAILED_REPLY;
++				return_error_param = -EINVAL;
++				return_error_line = __LINE__;
++				goto err_invalid_target_handle;
++			}
+ 		}
+ 		if (!target_node) {
+ 			/*
