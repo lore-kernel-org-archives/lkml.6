@@ -1,46 +1,39 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZps1KfrvBwN6uU9s3gd0d40PyypTNZjbiN3tryXRPwgpUX+MbT/QXf/WlbqS3mfn0leC+Fo
-ARC-Seal: i=1; a=rsa-sha256; t=1525116368; cv=none;
+X-Google-Smtp-Source: AB8JxZpm8d97nGg0+Db3TqwP+1E0sAekvPPZmQnaVR93ZC6FbCkCltr27ceHeVnVRP9BPYXKJsPs
+ARC-Seal: i=1; a=rsa-sha256; t=1525116366; cv=none;
         d=google.com; s=arc-20160816;
-        b=JGwvskDFXwf6qPx9tGX2jAmX7oaK4BdDNATWCcnvhVwZyINKvvogfRy3euvCzq92NU
-         WvmpDlAp8vuxCOgdvfecAxmkjrMG/UI68GZpZUHZBcE4x1LjRqby8cyp3GTBujaNYJfk
-         rM5smNeuaBypQCV6fvY6daZgRf/3htpHA0PSs2q6lbk9B2+XAhbUlBghmg/I0O44lDw2
-         DxH8cQQeVHTmLXO9PzRrbFjcLhf3AOB+Fggv6opWGdICDNvsBTINCEsP/kkVko95ThoE
-         k+bmQlvrKegBFU8ssGB0R9xr/WgWs+F3MZL1qgdIvGm2A6FNHLWnUAy0uVvlpMFmA9cd
-         /nBQ==
+        b=Y85T8SoWKMh3xhmO6MI0I/x/cIqMeNDOgt7DXT1TLr/EhQZ6H6dU99YBy3MBCPnLbl
+         oki4E9IsB9ppN956LNNGM00xdTHIWI/tUkQXyUeqgfFKNLNWwpWs3vpd+D1QLJdV6dEe
+         N+1YT7mbB5vZHy3Z94gKjsCZ0ckEOvOGWvZt2Qr3800j6ezswuu7GS5KHpLcQlSvGsk5
+         LEkAo8K2qHjtaZhoo3tBs34aLNERjjq12zkAIK7iA4WP/EWwZL+u7rKzaBiG4G93nNGx
+         OMyiqFaYAZWckSZSFFgSHw+li5dVglItDHkldDdA/tRMxsCqaUgyVQdd1N5MAiQfOqNN
+         gibA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=HjzndYgWAxmyz00ycVK6o2yyr26VrC7ZxcOxvL9lhYM=;
-        b=HqZpTZUsmFt4d+w/KZ3qHM5xEP4onCWLm3VEQJiuDkQPYUL1f7xMpwI+xPoRornFqn
-         PxeUkgSe5yOXKTarzJdOkZKjZkwJebV/UqrqgW1KY8BOFFS0X3tQc39m19cgObvhzQp3
-         401LXkxwd+FJgCVjBMrJ200h9T695wy2aRbcgq4gA/juBXOjuZuYbjzY3ynY3WAB5EkM
-         cqC+8nsg5DsHCZP+I8aji6KT6wtVQ9map6CsMn0YnGbWgtX1AOkQmiWZeC0QuZrep8F0
-         erWqDhsQRuLOEfSijUzyoPCyP+tEjeMPG4DcLkpcho2hBLd9KdOhOciBQUSud5+G6RG3
-         J0tg==
+        bh=i74FCuS1Iz9uq/tWZTGjYXm0aPnueAczP2ifSwOfjiI=;
+        b=RlDAIJvCMe4ErczKzMFBGKEDUBjAucZNd8IjtHwJ45KaLHwJZrM+hoyJOP3ttQpbgY
+         /LTVDAW+d7sZgNbZ+EzJooYwfaqDxh3kqyYsGDnJFmlxMKrVy9OcbqfkHEP268RX70Ut
+         Jam3L5K2rdU9bnk1ljqF39OZuS0lEFiRXwGEa7edU6Izj4Xg+Da/naytHpkCeBzwfHh/
+         zWNhueHC1rgUEiKqg0Gl8TG9x2cpb0BL0ytG/1lPLBPzD0jl5FJaVGIMGZBAihDGvHfe
+         gNtvUduAJO2wjj6gy0VASXWQzSbMoGYulaBWiJ/rwe8fbG5YfMW/N/c/7uBDmbOzWVZA
+         MZPA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3502322DCC
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E91022DC0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-	syzbot <syzbot+40b7287c2dc987c48c81@syzkaller.appspotmail.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Vegard Nossum <vegard.nossum@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Jiri Slaby <jslaby@suse.com>,
-	Peter Hurley <peter@hurleysoftware.com>,
-	One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.4 19/44] tty: Use __GFP_NOFAIL for tty_ldisc_get()
-Date: Mon, 30 Apr 2018 12:24:30 -0700
-Message-Id: <20180430190947.110953301@linuxfoundation.org>
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Daniel Wagner <wagi@monom.org>
+Subject: [PATCH 4.4 42/44] serial: mctrl_gpio: export mctrl_gpio_disable_ms and mctrl_gpio_init
+Date: Mon, 30 Apr 2018 12:24:53 -0700
+Message-Id: <20180430190948.010454613@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430190946.093694747@linuxfoundation.org>
 References: <20180430190946.093694747@linuxfoundation.org>
@@ -50,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200280833625701?=
-X-GMAIL-MSGID: =?utf-8?q?1599200421515415711?=
+X-GMAIL-THRID: =?utf-8?q?1599200419043675299?=
+X-GMAIL-MSGID: =?utf-8?q?1599200419043675299?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -59,55 +52,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-commit bcdd0ca8cb8730573afebcaae4138f8f4c8eaa20 upstream.
+commit 4f71a2e0a282611e55bacb60b564eaef5d16c27b upstream.
 
-syzbot is reporting crashes triggered by memory allocation fault injection
-at tty_ldisc_get() [1]. As an attempt to handle OOM in a graceful way, we
-have tried commit 5362544bebe85071 ("tty: don't panic on OOM in
-tty_set_ldisc()"). But we reverted that attempt by commit a8983d01f9b7d600
-("Revert "tty: don't panic on OOM in tty_set_ldisc()"") due to reproducible
-crash. We should spend resource for finding and fixing race condition bugs
-rather than complicate error paths for 2 * sizeof(void *) bytes allocation
-failure.
+To be able to make use of the mctrl-gpio helper from a module these
+functions must be exported. This was forgotten in the commit introducing
+support interrupt handling for these functions (while it was done for
+mctrl_gpio_enable_ms, *sigh*).
 
-[1] https://syzkaller.appspot.com/bug?id=489d33fa386453859ead58ff5171d43772b13aa3
-
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: syzbot <syzbot+40b7287c2dc987c48c81@syzkaller.appspotmail.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Vegard Nossum <vegard.nossum@gmail.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Jiri Slaby <jslaby@suse.com>
-Cc: Peter Hurley <peter@hurleysoftware.com>
-Cc: One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: ce59e48fdbad ("serial: mctrl_gpio: implement interrupt handling")
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Cc: Daniel Wagner <wagi@monom.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/tty_ldisc.c |   11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ drivers/tty/serial/serial_mctrl_gpio.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/tty/tty_ldisc.c
-+++ b/drivers/tty/tty_ldisc.c
-@@ -168,12 +168,11 @@ static struct tty_ldisc *tty_ldisc_get(s
- 			return ERR_CAST(ldops);
+--- a/drivers/tty/serial/serial_mctrl_gpio.c
++++ b/drivers/tty/serial/serial_mctrl_gpio.c
+@@ -193,6 +193,7 @@ struct mctrl_gpios *mctrl_gpio_init(stru
+ 
+ 	return gpios;
+ }
++EXPORT_SYMBOL_GPL(mctrl_gpio_init);
+ 
+ void mctrl_gpio_free(struct device *dev, struct mctrl_gpios *gpios)
+ {
+@@ -247,3 +248,4 @@ void mctrl_gpio_disable_ms(struct mctrl_
+ 		disable_irq(gpios->irq[i]);
  	}
- 
--	ld = kmalloc(sizeof(struct tty_ldisc), GFP_KERNEL);
--	if (ld == NULL) {
--		put_ldops(ldops);
--		return ERR_PTR(-ENOMEM);
--	}
--
-+	/*
-+	 * There is no way to handle allocation failure of only 16 bytes.
-+	 * Let's simplify error handling and save more memory.
-+	 */
-+	ld = kmalloc(sizeof(struct tty_ldisc), GFP_KERNEL | __GFP_NOFAIL);
- 	ld->ops = ldops;
- 	ld->tty = tty;
- 
+ }
++EXPORT_SYMBOL_GPL(mctrl_gpio_disable_ms);
