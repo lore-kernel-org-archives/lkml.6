@@ -1,118 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754650AbeD3S3Q (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 14:29:16 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:36089 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754138AbeD3S3P (ORCPT
+        id S1754654AbeD3Sir (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 14:38:47 -0400
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:42424 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754104AbeD3Sip (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 14:29:15 -0400
-X-Google-Smtp-Source: AB8JxZpG9MCV1z87hjcLRJME7oulQyHrhh0xyQeQdZz6XLyq5ONpNNg5Jhc2Pt0OiG5HWzVKxSU40g==
-Reply-To: christian.koenig@amd.com
-Subject: Re: [PATCH 2/3] drm/scheduler: Don't call wait_event_killable for
- signaled process.
-To: Andrey Grodzovsky <Andrey.Grodzovsky@amd.com>,
-        Oleg Nesterov <oleg@redhat.com>
-Cc: David.Panariti@amd.com, linux-kernel@vger.kernel.org,
-        amd-gfx@lists.freedesktop.org,
-        "Eric W. Biederman" <ebiederm@xmission.com>, Alexander.Deucher@amd.com,
-        akpm@linux-foundation.org, christian.koenig@amd.com
-References: <87muxsbmkp.fsf@xmission.com>
- <8840ac96-50c4-f94d-eb7c-f007940163f3@amd.com> <877eowa5qh.fsf@xmission.com>
- <20180425135552.GD7592@redhat.com>
- <f45c7017-c75a-7f0c-b6d5-4d79600cdd33@amd.com>
- <20180425171757.GA10441@redhat.com>
- <c39cb438-1e8a-4f2c-50f6-c6e2a144487b@amd.com> <874ljyu98e.fsf@xmission.com>
- <c3c9787d-b279-8169-43d1-74eeb666ffbd@gmail.com>
- <bceb1a1b-c453-782d-5a7d-40fa2f22c813@amd.com>
- <20180430160006.GB10583@redhat.com>
- <e5b0221d-84ba-10ff-4a58-4fa27c99650f@amd.com>
-From: =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>
-Message-ID: <bb224134-7ccb-cc87-9a71-3ef1743eb074@gmail.com>
-Date: Mon, 30 Apr 2018 20:29:11 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 30 Apr 2018 14:38:45 -0400
+X-Google-Smtp-Source: AB8JxZruoi6vZYy/NhAWA2AqWHEHGEDYRXv+M/mxsHCZ2o0vUMJXqZCM8IfyJ3odhkcQEjjYRHnATjcNl1Bq01YFbas=
 MIME-Version: 1.0
-In-Reply-To: <e5b0221d-84ba-10ff-4a58-4fa27c99650f@amd.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+In-Reply-To: <CA+55aFyNqnrM=_5pMgEeL20jVKN7MgWKG52pbaR0FayO=5VuXw@mail.gmail.com>
+References: <alpine.DEB.2.20.1804301741570.3243@hypnos.tec.linutronix.de>
+ <CAGXu5jL1W=AC023asgeMRUXAnhU2vd-RJRqGtOOetQ=aXwDcFQ@mail.gmail.com>
+ <CA+55aFwieC1-nAs+NFq9RTwaR8ef9hWa4MjNBWL41F-8wM49eA@mail.gmail.com>
+ <20180430124135.0cce92e3@gandalf.local.home> <CA+55aFzpJC4+tuSopeze72D2sv1urGdap8+Bj2Y9hEYitAkE4Q@mail.gmail.com>
+ <CA+55aFyNqnrM=_5pMgEeL20jVKN7MgWKG52pbaR0FayO=5VuXw@mail.gmail.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Mon, 30 Apr 2018 11:38:42 -0700
+X-Google-Sender-Auth: 9s89w1C9chvQ-nItNmKQE7VeG_Q
+Message-ID: <CAGXu5jLVJxDJcbhrQU5-wduaP+OvePXP8VvCFMrJ47pYD-zaXg@mail.gmail.com>
+Subject: Re: Hashed pointer issues
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+        "Tobin C. Harding" <me@tobin.cc>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 30.04.2018 um 18:10 schrieb Andrey Grodzovsky:
+On Mon, Apr 30, 2018 at 10:01 AM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Mon, Apr 30, 2018 at 9:57 AM Linus Torvalds <
+> torvalds@linux-foundation.org> wrote:
 >
+>> Although in *practice* we'd have tons of entropy on any modern development
+>> CPU too, since any new hardware will have the hardware random number
+>> generation. Some overly cautious person might not trust it, of course.
 >
-> On 04/30/2018 12:00 PM, Oleg Nesterov wrote:
->> On 04/30, Andrey Grodzovsky wrote:
->>> What about changing PF_SIGNALED to PF_EXITING in
->>> drm_sched_entity_do_release
->>>
->>> -       if ((current->flags & PF_SIGNALED) && current->exit_code == 
->>> SIGKILL)
->>> +      if ((current->flags & PF_EXITING) && current->exit_code == 
->>> SIGKILL)
->> let me repeat, please don't use task->exit_code. And in fact this 
->> check is racy
->>
->> But this doesn't matter. Say, we can trivially add 
->> SIGNAL_GROUP_KILLED_BY_SIGKILL,
->> or do something else,
+> In fact, maybe that's the right policy. Avoid a boot-time parameter by just
+> saying
 >
->
-> Can you explain where is the race and what is a possible alternative 
-> then ?
+>   "if you have hardware random number generation, we can fill entropy
+> immediately"
 
-The race is that the release doesn't necessarily comes from the 
-process/context which used the fd.
+Something like this? (Untested.)
 
-E.g. it is just called when the last reference count goes away, but that 
-can be anywhere not related to the original process using it, e.g. in a 
-kernel thread or a debugger etc...
+diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+index 30c0cb8cc9bc..2d8615f14dc9 100644
+--- a/lib/vsprintf.c
++++ b/lib/vsprintf.c
+@@ -1672,9 +1672,8 @@ char *pointer_string(char *buf, char *end, const
+void *ptr,
+ static bool have_filled_random_ptr_key __read_mostly;
+ static siphash_key_t ptr_key __read_mostly;
 
-The approach with the flush is indeed a really nice idea and I bite 
-myself to not had that previously as well.
+-static void fill_random_ptr_key(struct random_ready_callback *unused)
++static void ptr_key_ready(void)
+ {
+-       get_random_bytes(&ptr_key, sizeof(ptr_key));
+        /*
+         * have_filled_random_ptr_key==true is dependent on get_random_bytes().
+         * ptr_to_id() needs to see have_filled_random_ptr_key==true
+@@ -1684,14 +1683,28 @@ static void fill_random_ptr_key(struct
+random_ready_callback *unused)
+        WRITE_ONCE(have_filled_random_ptr_key, true);
+ }
 
-Christian.
++static void fill_random_ptr_key(struct random_ready_callback *unused)
++{
++       get_random_bytes(&ptr_key, sizeof(ptr_key));
++       ptr_key_ready();
++}
++
+ static struct random_ready_callback random_ready = {
+        .func = fill_random_ptr_key
+ };
+
+ static int __init initialize_ptr_random(void)
+ {
+-       int ret = add_random_ready_callback(&random_ready);
++       int ret;
++
++       /* If we have hw RNG, start hashing immediately. */
++       if (arch_has_random()) {
++               get_random_bytes_arch(&ptr_key, sizeof(ptr_key));
++               ptr_key_ready();
++               return 0;
++       }
+
++       ret = add_random_ready_callback(&random_ready);
+        if (!ret) {
+                return 0;
+        } else if (ret == -EALREADY) {
+
 
 >
->>   but I fail to understand what are you trying to do. Suppose
->> that the check above is correct in that it is true iff the task is 
->> exiting and
->> it was killed by SIGKILL. What about the "else" branch which does
->>
->>     r = wait_event_killable(sched->job_scheduled, ...)
->>
->> ?
->>
->> Once again, fatal_signal_pending() (or even signal_pending()) is not 
->> well defined
->> after the exiting task passes exit_signals().
->>
->> So wait_event_killable() can fail because fatal_signal_pending() is 
->> true; and this
->> can happen even if it was not killed.
->>
->> Or it can block and SIGKILL won't be able to wake it up.
->>
->>> If SIGINT was sent then it's SIGINT,
->> Yes, but see above. in this case fatal_signal_pending() will be 
->> likely true so
->> wait_event_killable() will fail unless condition is already true.
+> No kernel command line needed in practice any more. That's assuming any
+> kernel developer will have an IvyBridge or newer.
 >
-> My bad, I didn't show the full intended fix, it was just a snippet to 
-> address the differentiation between exiting
-> do to SIGKILL and any other exit, I also intended to change 
-> wait_event_killable to wait_event_timeout.
+> The "I don't trust my hardware" people can still disable that with
+> "nordrand".
 >
-> Andrey
+> Hmm?
 >
->>
->> Oleg.
->>
->
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+>                     Linus
+
+
+
+-- 
+Kees Cook
+Pixel Security
