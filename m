@@ -1,149 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754167AbeD3Rd3 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 13:33:29 -0400
-Received: from smtprelay.synopsys.com ([198.182.37.59]:52431 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753425AbeD3Rd0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 13:33:26 -0400
-Subject: Re: [PATCH v7 3/9] PCI: endpoint: functions/pci-epf-test: Add second
- entry
-To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: "bhelgaas@google.com" <bhelgaas@google.com>,
-        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
-        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-        "kishon@ti.com" <kishon@ti.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        id S1753731AbeD3RgT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 13:36:19 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56298 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752430AbeD3RgR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 13:36:17 -0400
+Date: Mon, 30 Apr 2018 10:21:52 -0700
+From: Davidlohr Bueso <dave@stgolabs.net>
+To: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Joe Lawrence <joe.lawrence@redhat.com>, akpm@linux-foundation.org,
+        gareth.evans@contextis.co.uk,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-References: <cover.1524577064.git.gustavo.pimentel@synopsys.com>
- <c6cfd167838ae8e226dee0820983efe918fa4e1f.1524577064.git.gustavo.pimentel@synopsys.com>
- <20180426165605.GA6370@e107981-ln.cambridge.arm.com>
-From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Message-ID: <d6f3d669-aa94-f6ab-e166-8af0fa7f4d0a@synopsys.com>
-Date: Mon, 30 Apr 2018 18:32:07 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        linux-mm@kvack.org
+Subject: Re: Questions about commit "ipc/shm: Fix shmat mmap nil-page
+ protection"
+Message-ID: <20180430172152.nfa564pvgpk3ut7p@linux-n805>
+Mail-Followup-To: Andrea Arcangeli <aarcange@redhat.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>, akpm@linux-foundation.org,
+        gareth.evans@contextis.co.uk,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-mm@kvack.org
+References: <472dbcaa-47b5-7a1b-7c4a-49373db784d3@redhat.com>
+ <20170925214438.GU31084@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180426165605.GA6370@e107981-ln.cambridge.arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20170925214438.GU31084@redhat.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26/04/2018 17:56, Lorenzo Pieralisi wrote:
-> On Tue, Apr 24, 2018 at 02:44:40PM +0100, Gustavo Pimentel wrote:
->> Adds a seconds entry on the pci_epf_test_ids structure that disables the
-> 
-> "Add a second entry to..."
-> 
->> linkup_notifier parameter on driver for the designware EP.
+On Mon, 25 Sep 2017, Andrea Arcangeli wrote:
+
+Sorry this took so long guys. I had forgotten about this until it recently
+resurfaced.
+
+>Hello,
+>
+>On Mon, Sep 25, 2017 at 03:38:07PM -0400, Joe Lawrence wrote:
+>> Hi Davidlohr,
 >>
->> This allows designware EPs that doesn't have linkup notification signal
->> to work with pcitest.
+>> I was looking into backporting commit 95e91b831f87 ("ipc/shm: Fix shmat
+>> mmap nil-page protection") to a distro kernel and Andrea brought up some
+>> interesting questions about that change.
 >>
->> Updates the binding documentation accordingly.
-> 
-> Valid for all the series: use imperative sentences.
-> 
-> eg:
-> 
-> "Update the binding documentation accordingly".
-> 
-> not
-> 
-> "Updates the binding documentation accordingly".
-> 
-
-Ok, I will do an overall check to fix the entries.
-
->> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
->> Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
->> ---
->> Change v2->v3:
->>  - Added second entry in pci_epf_test_ids structure.
->>  - Remove test_reg_bar field assignment on second entry.
->> Changes v3->v4:
->>  - Nothing changed, just to follow the patch set version.
->> Changes v4->v5:
->>  - Changed pci_epf_test_cfg2 to pci_epf_test_designware.
->> Changes v5->v6:
->>  - Changed name field from pci_epf_test_designware to pci_epf_test_dw.
->> Changes v6->v7:
->>  - Changed variable name from data_cfg2 to data_linkup_notifier_disabled.
+>> We saw that a LTP test [1] was added some time ago to reproduce behavior
+>> matching that of the original report [2].  However, Andrea and I are a
+>> little confused about that original report and what the upstream commit
+>> was intended to fix.  A quick summary of our offlist discussion:
 >>
->>  Documentation/PCI/endpoint/function/binding/pci-test.txt | 2 ++
->>  drivers/pci/endpoint/functions/pci-epf-test.c            | 8 ++++++++
->>  2 files changed, 10 insertions(+)
+>> - This is only about privileged users (and no SELinux).
 >>
->> diff --git a/Documentation/PCI/endpoint/function/binding/pci-test.txt b/Documentation/PCI/endpoint/function/binding/pci-test.txt
->> index 3b68b95..dc39f47 100644
->> --- a/Documentation/PCI/endpoint/function/binding/pci-test.txt
->> +++ b/Documentation/PCI/endpoint/function/binding/pci-test.txt
->> @@ -1,6 +1,8 @@
->>  PCI TEST ENDPOINT FUNCTION
->>  
->>  name: Should be "pci_epf_test" to bind to the pci_epf_test driver.
->> +name: Should be "pci_epf_test_dw" to bind to the pci_epf_test driver
->> +      with a custom configuration for the designware EP.
-> 
-> The link between the "name" and the device created is quite obscure and
-> reading pci-test-howto.txt certainly does not clarify it.
+>> - We modified the 20170119_shmat_nullpage_poc.c reproducer from [2] to
+>>   include MAP_FIXED to prove (as root, no SELinux):
+>>
+>>     It is possible to mmap 0
+>>     It is NOT possible to mmap 1
+>>
+>> - Andrea points out that mmap(1, ...) fails not because of any
+>>   mmap_min_addr checks, but for alignment reasons.
+>>
+>> - He also wonders about other bogus addr values above 4k, but below
+>>   mmap_min_addr and whether this change misses those values
+>
+>Yes, thanks for the accurate summary Joe.
+>
+>> Is it possible that the original report noticed that shmat allowed
+>> attach to an address of 1, and it was assumed that somehow mmap_min_addr
+>> protections were circumvented?  Then commit 95e91b831f87 modified the
+>> rounding in do_shmat() so that shmat would fail on similar input (but
+>> for apparently different reasons)?
+>>
+>> I didn't see any discussion when looking up the original commit in the
+>> list archives, so any explanations or pointers would be very helpful.
+>
+>We identified only one positive side effect to such change, it is
+>about the semantics of SHM_REMAP when addr < shmlba (and != 0). Before
+>the patch SHM_REMAP was erroneously implicit for that virtual
+>range. However that's not security related either, and there's no
+>mention of SHM_REMAP in the commit message.
 
-I will add more information about it.
+Coincidence. I didn't notice the SHM_REMAP, but after looking at it
+you appear to be right. I'll send a patch along with the revert
+(see below).
 
-> 
-> In pci-test-howto.txt an explanation should be added to the configs
-> device creation paragraph to clarify it.
+>
+>So then we wondered what this CVE is about in the first place, it
+>looks a invalid CVE for a not existent security issue. The testcase at
+>least shows no malfunction, mapping addr 0 is fine to succeed with
+>CAP_SYS_RAWIO.
 
-That's true, it should exist some explanation of that. To be honest I didn't
-remember of the pci-test-howto.txt file existence.
+This is exactly the issue. I thought mapping addr=0 with MAP_FIXED
+was an issue, including for root. Hence avoiding the round off from
+1 to 0. If this is legal, then this commit needs reverted.
 
-> 
->>  Configurable Fields:
->>  vendorid	 : should be 0x104c
->> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
->> index 7cef851..4ab463b 100644
->> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
->> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
->> @@ -459,10 +459,18 @@ static int pci_epf_test_bind(struct pci_epf *epf)
->>  	return 0;
->>  }
->>  
->> +static const struct pci_epf_test_data data_linkup_notifier_disabled = {
->> +	.linkup_notifier = false
->> +};
->> +
->>  static const struct pci_epf_device_id pci_epf_test_ids[] = {
->>  	{
->>  		.name = "pci_epf_test",
->>  	},
->> +	{
->> +		.name = "pci_epf_test_dw",
->> +		.driver_data = (kernel_ulong_t)&data_linkup_notifier_disabled,
->> +	},
->>  	{},
-> 
-> Should not this be a property derived from the controller compatible
-> property instead of the test device name written in configfs ?
-> 
-> I think I am missing something in the whole scheme of things, please
-> clarify.
+In fact, X11[1] seems to rely on this _exact_ case; and this change
+breaks semantics.
 
-This type of configuration / configuration was suggested by Kishon. I can only
-assume that it would not be possible (or no one thought of it) to correlate the
-compatible string of the controller to select the configuration, perhaps Kishon
-could give his opinion on the feasibility of this and even to provide some
-example of it. :)
+>
+>From the commit message, testcase and CVE I couldn't get what this
+>commit is about.
+>
+>Last but not the least, if there was a security problem in calling
+>do_mmap_pgoff with addr=0, flags=MAP_FIXED|MAP_SHARED the fix would
+>better be moved to do_mmap_pgoff, not in ipc/shm.c.
 
-If it is possible, it will be quite straightforward.
+Yeah at the time, akpm and I wondered why this was special to security.
 
-> 
-> Thanks,
-> Lorenzo
-> 
+[1] https://cgit.freedesktop.org/xorg/xserver/tree/hw/xfree86/os-support/linux/int10/linux.c#n347
+
+Thanks,
+Davidlohr
