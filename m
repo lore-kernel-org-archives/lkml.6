@@ -1,52 +1,39 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqAbdGzzYeSFKB4Oq2GRtPfYjkIbEqLbhsUbFnG1de7idIHr5/g7fKFEI5YIhsP1mMxrqOa
-ARC-Seal: i=1; a=rsa-sha256; t=1525116233; cv=none;
+X-Google-Smtp-Source: AB8JxZpxZEC0kq+vD8DadIl6giROMkbANn1FXu/p/1WpbCmatS10bVRnhQRen4RluIvYWfmntYaV
+ARC-Seal: i=1; a=rsa-sha256; t=1525116232; cv=none;
         d=google.com; s=arc-20160816;
-        b=UgvKdZBjYQfZMR1/NBMmSA3VkE69rwRgurLwMKSCV65LixRKZXSeFP454ak/zL5wLd
-         lGxNrKNhHQVLCiShxEQe/FQf7HWKANapNXkr9SsPdBMZWJH+/Lg9ocyVmQNIkP26s+Yh
-         zjzIjbJkikGbK02vJ0Jff9vSvKz3zISPzcOB75IL/kz5JdJAkJjPrSNlU9skYQer5bCZ
-         EMF3mna8WX7jz4F80+0j8Y0icFGZlPftzB+7nmRfw6+vb63eS06Zr01czDUbYXrI7K5A
-         L73uY7Q9urJiKAlhbJ1jv9gcw2W8D3hbd08IsfguAhl0ET5+hF4TzmGb8lpXVvVIpmaB
-         Lgmg==
+        b=xE19UrhJDTzM2IGO+ztrsYrIyQoAE8foic9FveKmLSJUMrWWBIEYbxmXb3C+s05T24
+         l64B6nYlF2LdiH/P3w3bpO4qr9SZE2LgLM6mUxD9oVU7icyoSqFrToc0AOmyNFtlfCs2
+         UlCUulENs+sPdok4Kt6HUaOGEZ1NNBya8kRKrM0m4T48mfm17rx5um6M8Wtl+wgxVxDb
+         u95cV1hrfWDmeSHQPGBRihslKA9duskyERdjEoXY4TC2F7UX3mDu/LfC+Oh4Rr1nOZZW
+         ItBUKG3moxU8ptqwGOR1o3w3AZuHXyuoMuLtf7LMS/HqSGs1mZmQ0WFW8gDTgiIp9VDC
+         YiLQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=gOsNHDEwskmBmX+0tfI+d/4f7/mshLTUz9vDrIsITt0=;
-        b=xQqwIwQsHEoRx98mgmE60kRxtDZ2XaUss3H1FD1dZS3g8dPRAA8hNCFvVPbtUxkMZ0
-         ppXt3gDTxSQfPSqHUIee3673vZ8SyRbGu2BOUBMGlvtDEIsdxmzFBvsW/L/4lTfg2sR/
-         TNiLSZyBkLWHBqfD3A2Z+BBlBcHi1p3ZIMqxdmt54LkSJ5cDuS8G5+chC++n5bSH1KSK
-         TmLb45XLEAssjHsAjd1+yu52olrqItSYdEQFSGCp8IdKdhSo4upv5zQM7vNuTwrbWSw2
-         LZLeqCBc/Q5B8fjLH9efa0G3vREJfpa/au6mjxoZkkbt99EFqfMf/j+stHuT6PVv8EUu
-         +OAg==
+        bh=UWw1dr4G45kbbOD42QDGtXl5q8LngD0VGXVzmFEmdNo=;
+        b=BezoGzAIiPAAJ5ltsQLPHnYjLpOhXt3Y4CRWWdF50bzku8mNd1MWc0C8BLur0gP0Em
+         ocLrzF4Fp5K2yd468WpC8QrqJoZNw9PEDWrAIp5UN+MqgVuAPXb9JHzzUaRXfeD4BVAo
+         hTGYhjJd+ooCG4W1gxdErg5OmzhB9lN+dcHbps/mk9Jy4Dlfh/tvQNhRm+zSan1NJ0zv
+         38olTIm/4pu8ff2kAtGwPvleEwAX4giYZ/INm+s+WOpsiSyWGKp+SBA7P4UQ1EQKp6GH
+         ih4s1BMIt2gKugLNHvQpbjiJ0NFWpcmOi6zymwyoOy+YtcGuHeaVnFX2b67hW9iVPWTQ
+         X3vQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB56222DAE
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 487D122DBF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	Alan Cox <alan@llwyncelyn.cymru>,
-	Dan Williams <dcbw@redhat.com>,
-	Jiri Prchal <jiri.prchal@aksignal.cz>,
-	Jiri Slaby <jslaby@suse.cz>,
-	Marcel Partap <mpartap@gmx.net>,
-	Merlijn Wajer <merlijn@wizzup.org>,
-	Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
-	Michael Scott <michael.scott@linaro.org>,
-	Pavel Machek <pavel@ucw.cz>,
-	Peter Hurley <peter@hurleysoftware.com>,
-	Russ Gorby <russ.gorby@intel.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Sebastian Reichel <sre@kernel.org>,
-	Tony Lindgren <tony@atomide.com>
-Subject: [PATCH 3.18 13/25] tty: n_gsm: Fix long delays with control frame timeouts in ADM mode
-Date: Mon, 30 Apr 2018 12:23:20 -0700
-Message-Id: <20180430183911.366096677@linuxfoundation.org>
+	Tiwei Bie <tiwei.bie@intel.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>
+Subject: [PATCH 3.18 12/25] virtio_console: free buffers after reset
+Date: Mon, 30 Apr 2018 12:23:19 -0700
+Message-Id: <20180430183911.323377335@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430183910.801976983@linuxfoundation.org>
 References: <20180430183910.801976983@linuxfoundation.org>
@@ -56,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200279464606414?=
-X-GMAIL-MSGID: =?utf-8?q?1599200279464606414?=
+X-GMAIL-THRID: =?utf-8?q?1599200279068382565?=
+X-GMAIL-MSGID: =?utf-8?q?1599200279068382565?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -65,89 +52,137 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tony Lindgren <tony@atomide.com>
+From: Michael S. Tsirkin <mst@redhat.com>
 
-commit e9ec22547986dd32c5c70da78107ce35dbff1344 upstream.
+commit a7a69ec0d8e4a58be7db88d33cbfa2912807bb2b upstream.
 
-Commit ea3d8465ab9b ("tty: n_gsm: Allow ADM response in addition to UA for
-control dlci") added support for DLCI to stay in Asynchronous Disconnected
-Mode (ADM). But we still get long delays waiting for commands to other
-DLCI to complete:
+Console driver is out of spec. The spec says:
+	A driver MUST NOT decrement the available idx on a live
+	virtqueue (ie. there is no way to “unexpose” buffers).
+and it does exactly that by trying to detach unused buffers
+without doing a device reset first.
 
---> 5) C: SABM(P)
-Q>  0) C: UIH(F)
-Q>  0) C: UIH(F)
-Q>  0) C: UIH(F)
-...
+Defer detaching the buffers until device unplug.
 
-This happens because gsm_control_send() sets cretries timer to T2 that is
-by default set to 34. This will cause resend for T2 times for the control
-frame. In ADM mode, we will never get a response so the control frame, so
-retries are just delaying all the commands.
+Of course this means we might get an interrupt for
+a vq without an attached port now. Handle that by
+discarding the consumed buffer.
 
-Let's fix the issue by setting DLCI_MODE_ADM flag after detecting the ADM
-mode for the control DLCI. Then we can use that in gsm_control_send() to
-set retries to 1. This means the control frame will be sent once allowing
-the other end at an opportunity to switch from ADM to ABM mode.
-
-Note that retries will be decremented in gsm_control_retransmit() so
-we don't want to set it to 0 here.
-
-Fixes: ea3d8465ab9b ("tty: n_gsm: Allow ADM response in addition to UA for control dlci")
-Cc: linux-serial@vger.kernel.org
-Cc: Alan Cox <alan@llwyncelyn.cymru>
-Cc: Dan Williams <dcbw@redhat.com>
-Cc: Jiri Prchal <jiri.prchal@aksignal.cz>
-Cc: Jiri Slaby <jslaby@suse.cz>
-Cc: Marcel Partap <mpartap@gmx.net>
-Cc: Merlijn Wajer <merlijn@wizzup.org>
-Cc: Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
-Cc: Michael Scott <michael.scott@linaro.org>
-Cc: Pavel Machek <pavel@ucw.cz>
-Cc: Peter Hurley <peter@hurleysoftware.com>
-Cc: Russ Gorby <russ.gorby@intel.com>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Sebastian Reichel <sre@kernel.org>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Cc: stable <stable@vger.kernel.org>
+Reported-by: Tiwei Bie <tiwei.bie@intel.com>
+Fixes: b3258ff1d6 ("virtio: Decrement avail idx on buffer detach")
+Cc: stable@vger.kernel.org
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/n_gsm.c |   12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ drivers/char/virtio_console.c |   49 ++++++++++++++++++++----------------------
+ 1 file changed, 24 insertions(+), 25 deletions(-)
 
---- a/drivers/tty/n_gsm.c
-+++ b/drivers/tty/n_gsm.c
-@@ -137,6 +137,9 @@ struct gsm_dlci {
- 	struct mutex mutex;
+--- a/drivers/char/virtio_console.c
++++ b/drivers/char/virtio_console.c
+@@ -1398,7 +1398,6 @@ static int add_port(struct ports_device
+ {
+ 	char debugfs_name[16];
+ 	struct port *port;
+-	struct port_buffer *buf;
+ 	dev_t devt;
+ 	unsigned int nr_added_bufs;
+ 	int err;
+@@ -1509,8 +1508,6 @@ static int add_port(struct ports_device
+ 	return 0;
  
- 	/* Link layer */
-+	int mode;
-+#define DLCI_MODE_ABM		0	/* Normal Asynchronous Balanced Mode */
-+#define DLCI_MODE_ADM		1	/* Asynchronous Disconnected Mode */
- 	spinlock_t lock;	/* Protects the internal state */
- 	struct timer_list t1;	/* Retransmit timer for SABM and UA */
- 	int retries;
-@@ -1380,7 +1383,13 @@ retry:
- 	ctrl->data = data;
- 	ctrl->len = clen;
- 	gsm->pending_cmd = ctrl;
--	gsm->cretries = gsm->n2;
+ free_inbufs:
+-	while ((buf = virtqueue_detach_unused_buf(port->in_vq)))
+-		free_buf(buf, true);
+ free_device:
+ 	device_destroy(pdrvdata.class, port->dev->devt);
+ free_cdev:
+@@ -1535,34 +1532,14 @@ static void remove_port(struct kref *kre
+ 
+ static void remove_port_data(struct port *port)
+ {
+-	struct port_buffer *buf;
+-
+ 	spin_lock_irq(&port->inbuf_lock);
+ 	/* Remove unused data this port might have received. */
+ 	discard_port_data(port);
+ 	spin_unlock_irq(&port->inbuf_lock);
+ 
+-	/* Remove buffers we queued up for the Host to send us data in. */
+-	do {
+-		spin_lock_irq(&port->inbuf_lock);
+-		buf = virtqueue_detach_unused_buf(port->in_vq);
+-		spin_unlock_irq(&port->inbuf_lock);
+-		if (buf)
+-			free_buf(buf, true);
+-	} while (buf);
+-
+ 	spin_lock_irq(&port->outvq_lock);
+ 	reclaim_consumed_buffers(port);
+ 	spin_unlock_irq(&port->outvq_lock);
+-
+-	/* Free pending buffers from the out-queue. */
+-	do {
+-		spin_lock_irq(&port->outvq_lock);
+-		buf = virtqueue_detach_unused_buf(port->out_vq);
+-		spin_unlock_irq(&port->outvq_lock);
+-		if (buf)
+-			free_buf(buf, true);
+-	} while (buf);
+ }
+ 
+ /*
+@@ -1783,13 +1760,24 @@ static void control_work_handler(struct
+ 	spin_unlock(&portdev->c_ivq_lock);
+ }
+ 
++static void flush_bufs(struct virtqueue *vq, bool can_sleep)
++{
++	struct port_buffer *buf;
++	unsigned int len;
 +
-+	/* If DLCI0 is in ADM mode skip retries, it won't respond */
-+	if (gsm->dlci[0]->mode == DLCI_MODE_ADM)
-+		gsm->cretries = 1;
-+	else
-+		gsm->cretries = gsm->n2;
++	while ((buf = virtqueue_get_buf(vq, &len)))
++		free_buf(buf, can_sleep);
++}
 +
- 	mod_timer(&gsm->t2_timer, jiffies + gsm->t2 * HZ / 100);
- 	gsm_control_transmit(gsm, ctrl);
- 	spin_unlock_irqrestore(&gsm->control_lock, flags);
-@@ -1488,6 +1497,7 @@ static void gsm_dlci_t1(unsigned long da
- 			if (debug & 8)
- 				pr_info("DLCI %d opening in ADM mode.\n",
- 					dlci->addr);
-+			dlci->mode = DLCI_MODE_ADM;
- 			gsm_dlci_open(dlci);
- 		} else {
- 			gsm_dlci_close(dlci);
+ static void out_intr(struct virtqueue *vq)
+ {
+ 	struct port *port;
+ 
+ 	port = find_port_by_vq(vq->vdev->priv, vq);
+-	if (!port)
++	if (!port) {
++		flush_bufs(vq, false);
+ 		return;
++	}
+ 
+ 	wake_up_interruptible(&port->waitqueue);
+ }
+@@ -1800,8 +1788,10 @@ static void in_intr(struct virtqueue *vq
+ 	unsigned long flags;
+ 
+ 	port = find_port_by_vq(vq->vdev->priv, vq);
+-	if (!port)
++	if (!port) {
++		flush_bufs(vq, false);
+ 		return;
++	}
+ 
+ 	spin_lock_irqsave(&port->inbuf_lock, flags);
+ 	port->inbuf = get_inbuf(port);
+@@ -1976,6 +1966,15 @@ static const struct file_operations port
+ 
+ static void remove_vqs(struct ports_device *portdev)
+ {
++	struct virtqueue *vq;
++
++	virtio_device_for_each_vq(portdev->vdev, vq) {
++		struct port_buffer *buf;
++
++		flush_bufs(vq, true);
++		while ((buf = virtqueue_detach_unused_buf(vq)))
++			free_buf(buf, true);
++	}
+ 	portdev->vdev->config->del_vqs(portdev->vdev);
+ 	kfree(portdev->in_vqs);
+ 	kfree(portdev->out_vqs);
