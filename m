@@ -1,41 +1,40 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqU+Pf4UxF+OrVsHTAIj/wGos10vJLcJnTFOrEYyZuHkXe7kgmhvIFgIBWR6uZf5u/EowAT
-ARC-Seal: i=1; a=rsa-sha256; t=1525116408; cv=none;
+X-Google-Smtp-Source: AB8JxZqotNKwDyVQVJbnYf5ypS6wAYwv7siAzQlSeJNOW5NB7hIy8ohJ+DPY8KYV7iH7pVYTdrN8
+ARC-Seal: i=1; a=rsa-sha256; t=1525116395; cv=none;
         d=google.com; s=arc-20160816;
-        b=1Igzp/z83+11TLi0j3lKe2RVaCqyoN9LIzcNfE/sOf4nHUU5ayWgIKUxAFunNzRwQ4
-         H10E6eEgGV8RqaNsFD0QT3pgvTbxQ9FhPIkJ/pj/vLA5R3jjsOoGSEKPV4FP/6Y6D2Kj
-         QSAC7HhKSPozxbt2sF4SfweZMHrNrqkT6rzV0dJtiWns8iweEj44pklgax2ulKhntTxA
-         UXczuN/SCbb/gB6G3eJt9+OLiOHNIjbqOxXvYAFCUm7nwRo/cp6mWojn5OPTVUDkFh8N
-         lqRQgbEI3a5v4Pi9Qf2s2GyrNsavVEjc/L1dBaTzR1HCYUyXUjzmh1HEGKbJDP+JmyAF
-         3rfA==
+        b=llITUSGCXF37dG8/PLxBOENQcFQXH+UsyV7dZRYuVAIebuZCWme7mnK0nmCADooPLC
+         V6j7UzlSxCY0OXBIiyAXxCvU9DyDuUbsC4hHXQHz971Edf7x66pw3ZqbtmODUEcTFM8d
+         apvbtMvXrZmVyOR9rdzD5iP/BRBDNZui4P70OkvF/lk4i5d5tOW6OOPi3ggGtMa0LQLr
+         dVkZS/mp4SLM9vJ0mzRV+mtezyxXNYIPBu2OlRbxXf0EBCxfPRp2HPmSog23cqkUYgWK
+         nADGL83P9OtBNsWF292DizxQOCaZkyW3NPa+I/MJC/XUJy+nH8P4BwjKhGE2Suq0UVCm
+         NITg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=51eZmsvATuoyjpw0adnjoJEneWguze2HdlEJjo8xvjk=;
-        b=DNYG6pGT0kOHBsKTM2JmpuvkgpSCic+1hqScCZ8QTOC2ZX8YvS/03MVUGCYJOYgOY6
-         G0L3iGYzY0zj9BX98M81gI1+/7kqO5Hrx7mXgNF0jBHDr0t/3KilgjcA+4Gd56Te7X/q
-         V+JxEgsPu2/kUAXGnnN7HLfWwNuAHh4xswwJKIe+byPjl50KxFCnBCLq8dbtNL1iEBRF
-         1IqVRdMMbJcMeGAZ/HQmXq+M72BGVjdRhl3fB9N5U5aC6YQKSDwLLRZUQTYQa5AYLBJx
-         gHP0G8eXG7SVC6K02jEZBsEdXBNtFZOZ9NVEs+snylOpX7LKI621/oL19Zj1yQ+0rbZz
-         8oiA==
+        bh=0ZmCBg9cddY69m1EhAuW7p0qcVgcyIUwCtNFSwnafy4=;
+        b=ucUNlDBJOmNXnLUJ6FdnfxyqAnWi87D5Tz/GnmZUbIUNF1g1cDbM/5uRvBCMHLTw9l
+         YfcqrZ6DuFeN9xyPEru7y688fe3bdLGjXxogX9ZWWS8tiKvauWfkl9VTcMwnjtTLWh41
+         tDyTDlkdg3DLTgDYTqIAowlrW41EukTOCLTSzGxfnZH2ZJvaxNTcyo0tVpKpUuUOHBLz
+         N5zI1/efvdV18tON9jCG3DPh+zS1r36m1zw2wd/yWuPfMors7fvO/4h0zhWYgPRNRskT
+         wUfYO4oo/OZKg/Q28lpp6NfCQbAHK+UMJ/KLPjNjqdiSeHC8vJDslVhaIen1C63aSED1
+         1FXg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF79522DCC
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B62D922DCB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Vitezslav Samel <vitezslav@samel.cz>,
-	Borislav Petkov <bp@suse.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ashok Raj <ashok.raj@intel.com>
-Subject: [PATCH 4.9 60/61] x86/microcode/intel: Save microcode patch unconditionally
-Date: Mon, 30 Apr 2018 12:25:03 -0700
-Message-Id: <20180430183956.327516089@linuxfoundation.org>
+	Joakim Tjernlund <joakim.tjernlund@infinera.com>,
+	Richard Weinberger <richard@nod.at>,
+	Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: [PATCH 4.9 38/61] mtd: cfi: cmdset_0002: Do not allow read/write to suspend erase block.
+Date: Mon, 30 Apr 2018 12:24:41 -0700
+Message-Id: <20180430183954.580338167@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430183951.312721450@linuxfoundation.org>
 References: <20180430183951.312721450@linuxfoundation.org>
@@ -45,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200597007916325?=
-X-GMAIL-MSGID: =?utf-8?q?1599200463115385547?=
+X-GMAIL-THRID: =?utf-8?q?1599200285170089780?=
+X-GMAIL-MSGID: =?utf-8?q?1599200449277061585?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,47 +53,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Borislav Petkov <bp@suse.de>
+From: Joakim Tjernlund <joakim.tjernlund@infinera.com>
 
-commit 84749d83758af6576552046b215b9b7f37f9556b upstream.
+commit 7b70eb14392a7cf505f9b358d06c33b5af73d1e7 upstream.
 
-save_mc_for_early() was a no-op on !CONFIG_HOTPLUG_CPU but the
-generic_load_microcode() path saves the microcode patches it has found into
-the cache of patches which is used for late loading too. Regardless of
-whether CPU hotplug is used or not.
+Currently it is possible to read and/or write to suspend EB's.
+Writing /dev/mtdX or /dev/mtdblockX from several processes may
+break the flash state machine.
 
-Make the saving unconditional so that late loading can find the proper
-patch.
+Taken from cfi_cmdset_0001 driver.
 
-Reported-by: Vitezslav Samel <vitezslav@samel.cz>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Vitezslav Samel <vitezslav@samel.cz>
-Tested-by: Ashok Raj <ashok.raj@intel.com>
-Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/20180418081140.GA2439@pc11.op.pod.cz
-Link: https://lkml.kernel.org/r/20180421081930.15741-1-bp@alien8.de
+Signed-off-by: Joakim Tjernlund <joakim.tjernlund@infinera.com>
+Cc: <stable@vger.kernel.org>
+Reviewed-by: Richard Weinberger <richard@nod.at>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/cpu/microcode/intel.c |    2 --
- 1 file changed, 2 deletions(-)
+ drivers/mtd/chips/cfi_cmdset_0002.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/arch/x86/kernel/cpu/microcode/intel.c
-+++ b/arch/x86/kernel/cpu/microcode/intel.c
-@@ -474,7 +474,6 @@ static void show_saved_mc(void)
-  */
- static void save_mc_for_early(u8 *mc)
- {
--#ifdef CONFIG_HOTPLUG_CPU
- 	/* Synchronization during CPU hotplug. */
- 	static DEFINE_MUTEX(x86_cpu_microcode_mutex);
+--- a/drivers/mtd/chips/cfi_cmdset_0002.c
++++ b/drivers/mtd/chips/cfi_cmdset_0002.c
+@@ -812,9 +812,10 @@ static int get_chip(struct map_info *map
+ 		    (mode == FL_WRITING && (cfip->EraseSuspend & 0x2))))
+ 			goto sleep;
  
-@@ -521,7 +520,6 @@ static void save_mc_for_early(u8 *mc)
+-		/* We could check to see if we're trying to access the sector
+-		 * that is currently being erased. However, no user will try
+-		 * anything like that so we just wait for the timeout. */
++		/* Do not allow suspend iff read/write to EB address */
++		if ((adr & chip->in_progress_block_mask) ==
++		    chip->in_progress_block_addr)
++			goto sleep;
  
- out:
- 	mutex_unlock(&x86_cpu_microcode_mutex);
--#endif
- }
+ 		/* Erase suspend */
+ 		/* It's harmless to issue the Erase-Suspend and Erase-Resume
+@@ -2263,6 +2264,7 @@ static int __xipram do_erase_chip(struct
+ 	chip->state = FL_ERASING;
+ 	chip->erase_suspended = 0;
+ 	chip->in_progress_block_addr = adr;
++	chip->in_progress_block_mask = ~(map->size - 1);
  
- static bool __init load_builtin_intel_microcode(struct cpio_data *cp)
+ 	INVALIDATE_CACHE_UDELAY(map, chip,
+ 				adr, map->size,
+@@ -2352,6 +2354,7 @@ static int __xipram do_erase_oneblock(st
+ 	chip->state = FL_ERASING;
+ 	chip->erase_suspended = 0;
+ 	chip->in_progress_block_addr = adr;
++	chip->in_progress_block_mask = ~(len - 1);
+ 
+ 	INVALIDATE_CACHE_UDELAY(map, chip,
+ 				adr, len,
