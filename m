@@ -1,132 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754096AbeD3LpQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 07:45:16 -0400
-Received: from foss.arm.com ([217.140.101.70]:60606 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753810AbeD3LmK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 07:42:10 -0400
-Subject: Re: [PATCH] drm/vmwgfx: Fix scatterlist unmapping
-To: Thomas Hellstrom <thellstrom@vmware.com>,
-        linux-graphics-maintainer@vmware.com, syeh@vmware.com
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <3a08f0343cb4e7a767601c59a381884121f9b751.1523632202.git.robin.murphy@arm.com>
- <85d48f28-5df7-8c7e-d175-ce651838db53@vmware.com>
- <8850b346-453f-e555-550d-7079b4f9d00d@arm.com>
- <9c6981bc-5b86-29d6-d58e-c8988031c706@vmware.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <b2321c39-bda8-0ba9-d55d-5400aeefa5be@arm.com>
-Date: Mon, 30 Apr 2018 12:42:08 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <9c6981bc-5b86-29d6-d58e-c8988031c706@vmware.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+        id S1753023AbeD3Lst (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 07:48:49 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55710 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751696AbeD3Lss (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 07:48:48 -0400
+From: Eric Auger <eric.auger@redhat.com>
+To: eric.auger.pro@gmail.com, eric.auger@redhat.com,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com, cdall@kernel.org,
+        peter.maydell@linaro.org
+Cc: andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
+Subject: [PATCH v6 00/12] KVM: arm/arm64: Allow multiple GICv3 redistributor regions
+Date: Mon, 30 Apr 2018 13:48:26 +0200
+Message-Id: <1525088918-8600-1-git-send-email-eric.auger@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27/04/18 18:39, Thomas Hellstrom wrote:
-> On 04/27/2018 06:56 PM, Robin Murphy wrote:
->> Hi Thomas,
->>
->> On 25/04/18 14:21, Thomas Hellstrom wrote:
->>> Hi, Robin,
->>>
->>> Thanks for the patch. It was some time since I put together that 
->>> code, but I remember hitting something similar to
->>>
->>> https://urldefense.proofpoint.com/v2/url?u=https-3A__www.linuxquestions.org_questions_linux-2Dkernel-2D70_-2527nents-2527-2Dargument-2Dof-2Ddma-5Funmap-5Fsg-2D4175621964_&d=DwIDaQ&c=uilaK90D4TOVoH58JNXRgQ&r=wnSlgOCqfpNS4d02vP68_E9q2BNMCwfD2OZ_6dCFVQQ&m=UACKfhMfw9wac0BNUWXnAiivjaBgY_jAEupre0zXoOQ&s=8NQNd-XBCViYHJH4fHk-RluFYd9CDjbYzXl_BWhC0ig&e= 
->>>
->>>
->>> Even if it's clear from the documentation that orig_nents should be 
->>> used.
->>
->> Hmmm, it's odd that you would see issues - it's always been something 
->> that CONFIG_DMA_API_DEBUG would have screamed about, and as far as I'm 
->> aware for x86, nents and orig_nents should always end up equal anyway. 
->> I would definitely be interested to see the specific fault details if 
->> it can be reproduced. I suppose one possibility is that there's some 
->> path where you inadvertently unmap something which was never mapped, 
->> but passing nents=0 means you manage to get away with it without the 
->> DMA API backend trying to interpret any bogus DMA addresses/lengths.
->>
->> FWIW, the rationale is that sync_sg/unmap_sg operate on sg->page 
->> (which can always be translated back to a meaningful CPU address for 
->> cache/write buffer maintenance), not sg->dma_address (which sometimes 
->> cannot), therefore passing a truncated list will have the effect of 
->> just not syncing the tail end of the buffer, which is clearly bad.
->>
->> Robin.
->>
-> I agree. I browsed the current software- and hardware iommu dma backends 
-> and all of them seem to set nents == orig_nents.
-> Still, according to the docs sg_map() is free to erase any sg->page - 
-> related information and given that, it would be more natural if all 
-> operations after sg_map() would operate on sg->dma_address.
+At the moment the KVM VGICv3 only supports a single redistributor
+region (whose base address is set through the GICv3 kvm device
+KVM_DEV_ARM_VGIC_GRP_ADDR/KVM_VGIC_V3_ADDR_TYPE_REDIST). There,
+all the redistributors are laid out contiguously. The size of this
+single redistributor region is not set explicitly but instead
+induced at a late stage by the number of online vcpus.
 
-TBH I've never really understood that aspect of the API - I've yet to 
-come across an implementation which does actually destroy the non-DMA 
-parts of the scatterlist, and I can't think of a good reason why one 
-would ever need or want to.
+The GIC specification does not mandate all redistributors to be
+contiguous. Moreover DT and ACPI were specified so that multiple
+redistributors regions can be defined.
 
-> I mean if 
-> sg_map would truncate the sg list length to 1, and erase all other 
-> information (which it clearly is free to do according to the docs), it 
-> would be pretty meaningless to supply orig_nents for the unmapping 
-> operation?
+The current interface brings a limitation on QEMU where ARM
+virt machine available GPA holes only allowed to assign a
+redistributor region fitting a max of 123 vcpus. Overcoming this
+limitation would force either to create a new machine or relocate
+the single rdist region or allow the allocation of multiple rdist
+regions.
 
-Sure, but not all implementations can work that way - a bounce-buffering 
-scheme, for example, could quite feasibly merge pages in the bounce 
-buffer and return a single DMA segment, but definitely needs all the 
-original page info in unmap_sg in order to be able to copy new DMA data 
-back to the right places. A non-coherent IOMMU implementation *could* 
-walk the IOMMU page tables for every page worth of the DMA segment to 
-get back to the relevant CPU addresses to perform cache maintenance 
-with, but that's horrendously inefficient compared to just using the 
-original CPU view directly (notably, they *do* have to do such a table 
-walk for unmap_page, but only once since a single mapping is always 
-physically contiguous by definition).
+This series enables this last alternative. A new GICv3 KVM device
+KVM_DEV_ARM_VGIC_GRP_ADDR/KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION allows
+to register individual redistributor regions whose size is defined
+explicitly. Those rdist regions then are filled by vcpu rdist frames
+according to the need. The vgic init and related base address checks
+are impacted.
 
-Robin.
+Best Regards
 
-> 
-> /Thomas
->>> On 04/13/2018 05:14 PM, Robin Murphy wrote:
->>>> dma_unmap_sg() should be called with the same number of entries
->>>> originally passed to dma_map_sg(), not the number it returned, which 
->>>> may
->>>> be fewer. Admittedly this driver probably never runs on non-coherent
->>>> architectures where getting that wrong could lead to data loss, but 
->>>> it's
->>>> always good to be correct, and it's trivially easy to fix by just
->>>> restoring the SG table state before the call instead of afterwards.
->>>>
->>>> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
->>>> ---
->>>>
->>>> Found by inspection while poking around TTM users.
->>>>
->>>>   drivers/gpu/drm/vmwgfx/vmwgfx_buffer.c | 2 +-
->>>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_buffer.c 
->>>> b/drivers/gpu/drm/vmwgfx/vmwgfx_buffer.c
->>>> index 21111fd091f9..971223d39469 100644
->>>> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_buffer.c
->>>> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_buffer.c
->>>> @@ -369,9 +369,9 @@ static void vmw_ttm_unmap_from_dma(struct 
->>>> vmw_ttm_tt *vmw_tt)
->>>>   {
->>>>       struct device *dev = vmw_tt->dev_priv->dev->dev;
->>>> +    vmw_tt->sgt.nents = vmw_tt->sgt.orig_nents;
->>>>       dma_unmap_sg(dev, vmw_tt->sgt.sgl, vmw_tt->sgt.nents,
->>>>           DMA_BIDIRECTIONAL);
->>>> -    vmw_tt->sgt.nents = vmw_tt->sgt.orig_nents;
->>>>   }
->>>>   /**
->>>
->>>
-> 
+Eric
+
+Git: complete series available at
+https://github.com/eauger/linux/tree/v4.17-rc2-rdist-regions-v6
+Previous version:
+https://github.com/eauger/linux/tree/v4.17-rc2-rdist-regions-v5
+
+History:
+v5 -> v6:
+- truly use list_last_entry in vgic_v3_insert_redist_region
+- s/pointed by/pointed to by in API doc
+- collected last R-b/A-b
+
+v4 -> v5:
+- fix KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION read path and update
+  the documentation accordingly (removed Peter's and
+  Christoffer's A-b)
+- use u<n> instead of uint<n>_t
+- collected additional R-b/A-b
+
+v3 -> v4:
+- Collected Christoffer's R-b
+- reworked vgic_v3_rdist_overlap and introduced vgic_dist_overlap
+- vgic_v3_insert_redist_region cleanup
+- inverse order for patches 6 and 7
+
+v2 -> v3:
+- Add details to the user API documentation
+- early exit if vgic_v3_rdist_region_from_index() fails
+- return -EINVAL if legacy and new redist region API are mixed
+
+v1 -> v2:
+- Rework the uapi. Only bits [51:16] of the redist region are
+  exposed. Also a new flags field was introduced
+- Do not store the last bit in the vgic_cpu struct anymore
+- remove dist->spis check in 1st patch
+- add last patch to bump VGIC_V3_MAX_CPUS to 512
+- advertise the new attribute
+
+Eric Auger (12):
+  KVM: arm/arm64: Set dist->spis to NULL after kfree
+  KVM: arm/arm64: Document KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
+  KVM: arm/arm64: Replace the single rdist region by a list
+  KVM: arm/arm64: Helper to locate free rdist index
+  KVM: arm/arm64: Revisit Redistributor TYPER last bit computation
+  KVM: arm/arm64: Adapt vgic_v3_check_base to multiple rdist regions
+  KVM: arm/arm64: Helper to register a new redistributor region
+  KVM: arm/arm64: Check vcpu redist base before registering an iodev
+  KVM: arm/arm64: Check all vcpu redistributors are set on map_resources
+  KVM: arm/arm64: Add KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
+  KVM: arm/arm64: Implement KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
+  KVM: arm/arm64: Bump VGIC_V3_MAX_CPUS to 512
+
+ Documentation/virtual/kvm/devices/arm-vgic-v3.txt |  30 +++++-
+ arch/arm/include/uapi/asm/kvm.h                   |   1 +
+ arch/arm64/include/uapi/asm/kvm.h                 |   1 +
+ include/kvm/arm_vgic.h                            |  16 ++-
+ virt/kvm/arm/vgic/vgic-init.c                     |  20 +++-
+ virt/kvm/arm/vgic/vgic-kvm-device.c               |  53 +++++++++-
+ virt/kvm/arm/vgic/vgic-mmio-v3.c                  | 114 +++++++++++++++++++---
+ virt/kvm/arm/vgic/vgic-v3.c                       | 101 +++++++++++++++----
+ virt/kvm/arm/vgic/vgic.h                          |  42 +++++++-
+ 9 files changed, 333 insertions(+), 45 deletions(-)
+
+-- 
+2.5.5
