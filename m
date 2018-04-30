@@ -1,41 +1,39 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZr+Z39p7xjWhT0nKE2X7U0Q7PCZWlqWvbVdoW6K5TpuAWQM4XJmf2bnpZzSO7bmoCB1I38a
-ARC-Seal: i=1; a=rsa-sha256; t=1525116240; cv=none;
+X-Google-Smtp-Source: AB8JxZrgNY+5IiMoodjI3wSX0dyIwp5nADq3+oNND5fqXSo9l0EKcXGsJQLk8GlQq0Hv6E5eEtwS
+ARC-Seal: i=1; a=rsa-sha256; t=1525116239; cv=none;
         d=google.com; s=arc-20160816;
-        b=wrX1fwO2akucRZkm4u3ljPUDULIVIXcFHHtcNiP9dbOEXWPzahmQyF3+IPY5gBq0iP
-         NAUkUtJ5f3kh1kMlQp+5KL2CIzT0DF5IWdj6cHjy4gFChgU7UNbLl4hVJloXAOxxvjLo
-         2L9aYsQVof0pDYoso8ojpn5SbtnaqnLNwr3smcaLI957FtmaIk/CJu67LWcuUy5KDqiw
-         xJ1VNmDH5P/Lm6uvhC7iu1eCJiMfpoJzEK0HsBiaIW0u2NwNMqxAXc4w962SZgUBIcIp
-         rhb1BsQphrDPudzACFV1643Nw3vof2NAj7B0ROSuv6QtZN1dj3mKa3wI1zyb06KRSfmZ
-         B9aQ==
+        b=UvngH3+HgNx6244IRSiD58k16taAXLTUO3Tf91OF+flcGA19+cGlc6bEunE8UpLtWL
+         FttBGqoYHcJaxlvqkscnhlXRwk9ApdqHc5uHZIunkX2TZnweT9G5tTmQyPJsUUL33iM6
+         AATb+aHMLL2jKRWPyASQ+rjGcZY6sltFkGXIRE6JQb3/ygEJbMqBbhul5UfEDjLPeef0
+         wOwq79IGq1WdVSqj/kKuAbEX55jk98tdv9Yn12EqvjT8uNiAGDzbA5mmRJ756CXcfNWf
+         WcN1V++EFF8e8A0UsfpQ87n4SRtd78slkIXrQ8Pj1zeEs4rXc5ZxCam9yrmpc6K9cvel
+         KA+Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=i5UXxSaSKAUK3mh/kOXxrPLeoIv/6aD7HxKvEGohyHc=;
-        b=PD0nnDQDti+rmNlN1UsFOjflfIZkxU9KK/ll2ciHmiDYc1rdhsJWRpTipf+tr+8aa/
-         nG3AxKZC28lpY9zY1o4t6hnz7OsVBITphjfHr0SwoKbJEho8ld//ClBlN420mLowq1Hj
-         T3LJM7TLz1MJbafAYoRxE3iT1DtYi6rxXE8vVt2wJkP35zvc1n17XFGrR53L4vyxCIkE
-         zImgiKyv2oemjd7ndvtK0Cv+YwJRyZbzQ1eFwQ7WARB1X+hfhvZgho3kT5snB/rnKroi
-         s6JDcI+xrNx6VHKx8ebloZJg6LZiuxgL6bZZIz60r1ZLU5Ik+hz/928L3i9Ksva81VMS
-         qH+w==
+        bh=20PfhTE+VRuD8r+6+TmR4vQQrzOtR5Y+gTI3Zx6dByo=;
+        b=LESQcHp3SdnvxZ3Z4/ZRbhdmYLas9BAD9H9e6rRqbH1RFu3OQ4RcYiV8DI79e94NR5
+         Y0+7uMFLkW3dNJ8AlGkjfj/plqz52+iBn5LC8L5JHK0AgwSujllyIQVVVE6H+QiAmRne
+         0LiB4goi5TSFVWs4xeFd9bIbojYbQn6IFYnfJG5Ij07ZHQG7KgExZW6uuuebMfpO5DKg
+         D4C3zwzxLogCzLD70fygtx/0g19yASUgxZwdFup5PZF79bMCLP0+qEwgiDKi5chsc7fg
+         /51nxgnLFo7Z5iyABbp5DBzBUs43Fxi+6PYu87DBOi/oqP+MUe6+jbBewZQ11j8tJYyS
+         qXaA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDDB522DAC
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54DB122DBF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Marek Vasut <marex@denx.de>,
-	Nicolin Chen <nicoleotsuka@gmail.com>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Mark Brown <broonie@kernel.org>
-Subject: [PATCH 3.18 23/25] ASoC: fsl_esai: Fix divisor calculation failure at lower ratio
-Date: Mon, 30 Apr 2018 12:23:30 -0700
-Message-Id: <20180430183911.776436294@linuxfoundation.org>
+	Mahesh Rajashekhara <mahesh.rajashekhara@microsemi.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 3.18 22/25] scsi: sd: Defer spinning up drive while SANITIZE is in progress
+Date: Mon, 30 Apr 2018 12:23:29 -0700
+Message-Id: <20180430183911.726349587@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430183910.801976983@linuxfoundation.org>
 References: <20180430183910.801976983@linuxfoundation.org>
@@ -45,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200287248158187?=
-X-GMAIL-MSGID: =?utf-8?q?1599200287248158187?=
+X-GMAIL-THRID: =?utf-8?q?1599200285952229082?=
+X-GMAIL-MSGID: =?utf-8?q?1599200285952229082?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,45 +52,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Nicolin Chen <nicoleotsuka@gmail.com>
+From: Mahesh Rajashekhara <mahesh.rajashekhara@microsemi.com>
 
-commit c656941df9bc80f7ec65b92ca73c42f8b0b62628 upstream.
+commit 505aa4b6a8834a2300971c5220c380c3271ebde3 upstream.
 
-When the desired ratio is less than 256, the savesub (tolerance)
-in the calculation would become 0. This will then fail the loop-
-search immediately without reporting any errors.
+A drive being sanitized will return NOT READY / ASC 0x4 / ASCQ
+0x1b ("LOGICAL UNIT NOT READY. SANITIZE IN PROGRESS").
 
-But if the ratio is smaller enough, there is no need to calculate
-the tolerance because PM divisor alone is enough to get the ratio.
+Prevent spinning up the drive until this condition clears.
 
-So a simple fix could be just to set PM directly instead of going
-into the loop-search.
+[mkp: tweaked commit message]
 
-Reported-by: Marek Vasut <marex@denx.de>
-Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
-Tested-by: Marek Vasut <marex@denx.de>
-Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
+Signed-off-by: Mahesh Rajashekhara <mahesh.rajashekhara@microsemi.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/fsl/fsl_esai.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/scsi/sd.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/sound/soc/fsl/fsl_esai.c
-+++ b/sound/soc/fsl/fsl_esai.c
-@@ -143,6 +143,13 @@ static int fsl_esai_divisor_cal(struct s
- 
- 	psr = ratio <= 256 * maxfp ? ESAI_xCCR_xPSR_BYPASS : ESAI_xCCR_xPSR_DIV8;
- 
-+	/* Do not loop-search if PM (1 ~ 256) alone can serve the ratio */
-+	if (ratio <= 256) {
-+		pm = ratio;
-+		fp = 1;
-+		goto out;
-+	}
-+
- 	/* Set the max fluctuation -- 0.1% of the max devisor */
- 	savesub = (psr ? 1 : 8)  * 256 * maxfp / 1000;
- 
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -1848,6 +1848,8 @@ sd_spinup_disk(struct scsi_disk *sdkp)
+ 				break;	/* standby */
+ 			if (sshdr.asc == 4 && sshdr.ascq == 0xc)
+ 				break;	/* unavailable */
++			if (sshdr.asc == 4 && sshdr.ascq == 0x1b)
++				break;	/* sanitize in progress */
+ 			/*
+ 			 * Issue command to spin up drive when not ready
+ 			 */
