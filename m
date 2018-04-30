@@ -1,201 +1,175 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754140AbeD3OCm (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 10:02:42 -0400
-Received: from mail-pf0-f182.google.com ([209.85.192.182]:41605 "EHLO
-        mail-pf0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753425AbeD3OCk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 10:02:40 -0400
-X-Google-Smtp-Source: AB8JxZrdKO324XC7MbVOal4UogF4ubGhbWt+hXZz7LEuxVTThDEJRan7OomH7+M7X+rEqX1sNqwSzWsz3eXOfKuGy24=
+        id S1754026AbeD3OD2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 10:03:28 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:43782 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751949AbeD3OD1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 10:03:27 -0400
+Date: Mon, 30 Apr 2018 10:03:26 -0400 (EDT)
+From: Dave Anderson <anderson@redhat.com>
+To: Laura Abbott <labbott@redhat.com>
+Cc: Kees Cook <keescook@chromium.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, Andi Kleen <andi@firstfloor.org>
+Message-ID: <964518723.25675338.1525097006267.JavaMail.zimbra@redhat.com>
+In-Reply-To: <7ab806fe-ee36-59ad-483b-d6734fcd3451@redhat.com>
+References: <981100282.24860394.1524770798522.JavaMail.zimbra@redhat.com> <823082096.24861749.1524771086176.JavaMail.zimbra@redhat.com> <CAGXu5j+3LpvTk49p8o4oBiS3e=3UBAqL5oHzBZB1i9AegvMmDg@mail.gmail.com> <7ab806fe-ee36-59ad-483b-d6734fcd3451@redhat.com>
+Subject: Re: BUG: /proc/kcore does not export direct-mapped memory on arm64
+ (and presumably some other architectures)
 MIME-Version: 1.0
-In-Reply-To: <9f8d657c-7f42-7bd9-4477-6c3addf16dee@sandeen.net>
-References: <f403043cbe8414177d0568e81405@google.com> <20180403043854.GL1150@dastard>
- <CACT4Y+ZadV0xTqhiGTAHmadAnYaSfPKhUy_TFXMza2o_n8+o9w@mail.gmail.com>
- <20180405213844.GE23861@dastard> <20180406161053.GF7500@magnolia>
- <CACT4Y+aaEOffkFA-B-hMzwzSiQwVpkPrc2udC087a55OTnkS4g@mail.gmail.com>
- <95c1400b-94f2-1af4-2d5d-c61c274c28ff@sandeen.net> <CACT4Y+aiwgRg5pk+N7bq9HYpgumTFyqG6-y3EZ8pWkq9-uB1aA@mail.gmail.com>
- <9f8d657c-7f42-7bd9-4477-6c3addf16dee@sandeen.net>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Mon, 30 Apr 2018 16:02:19 +0200
-Message-ID: <CACT4Y+bUx4jw83Ux7w9URL9bCy1ERLaVGTTwvA9Fe_UtLFeqCw@mail.gmail.com>
-Subject: Re: WARNING: bad unlock balance in xfs_iunlock
-To: Eric Sandeen <sandeen@sandeen.net>
-Cc: "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <david@fromorbit.com>,
-        syzbot <syzbot+84a67953651a971809ba@syzkaller.appspotmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-xfs@vger.kernel.org,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        syzkaller <syzkaller@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.18.17.201, 10.4.195.27]
+Thread-Topic: /proc/kcore does not export direct-mapped memory on arm64 (and presumably some other architectures)
+Thread-Index: ssVgjX4ZXXtUUA8qO4M14K88SJOVFg==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3UE2nsp026792
-
-On Mon, Apr 30, 2018 at 3:49 PM, Eric Sandeen <sandeen@sandeen.net> wrote:
-> On 4/30/18 8:23 AM, Dmitry Vyukov wrote:
->> On Mon, Apr 16, 2018 at 9:22 PM, Eric Sandeen <sandeen@sandeen.net> wrote:
->
-> ...
->
->>> It sure /seems/ to have a notion of images: what else is syz_mount_image()?
->>>
->>> i.e. you are mounting an image to reproduce the problem, correct?
->>> And the system is "smart" enough to fire off an email to a filesystem list;
->>> if it does so, add a link to the image itself, as you already have already done
->>> for the C reproducer.
->>>
->>> Filesystem images are common parlance for filesystem engineers.  When
->>> you engage with them you'll have better results if you  provide them with
->>> inputs they can use directly instead of requiring them to reverse-engineer
->>> your custom test harness.
->>
->>
->> Well, yes and no.
->> syz_mount_image() is the only part of a large system that knows about
->> images. For the rest of the system it's just a syscall like any other
->> syscall. And the part that sends emails is far away from
->> syz_mount_image().
->> syzbot does not know per se that it sends an email to filesystems
->> list.
->
-> I am asking it to learn this trick as an enhancement.  The MAINTAINERS
-> file contains big clues about which subsystems are filesystems, for example:
->
-> $ grep FILESYSTEM$ MAINTAINERS
-> AFS FILESYSTEM
-> CRAMFS FILESYSTEM
-> EFI VARIABLE FILESYSTEM
-> EFS FILESYSTEM
-> FREEVXFS FILESYSTEM
-> ...
->
->> It just extracted kernel source file name that looked relevant
->> to this crash and run get_maintainers.pl on it.
->> Also the image can contain dynamically generated data, which makes it
->> impossible to have as a file at all.
->
-> I guess I'm not sure what this means, can you explain?
-
-Say, a value that we generally pass to close system call is not static
-and can't be dumped to a static file. It's whatever a previous open
-system call has returned. Inside of the program we memorize the return
-value of open in a variable and then pass it to close. This generally
-stands for all system calls. Say, an image can contain an uid, and
-that uid can be obtained from a system call too.
 
 
->> Thinking of this, what should be reasonably easy to do and may be a
->> compromise for near future is the following. We could insert code into
->> syz_mount_image() which dump the image if you build a program with a
->> special define (e.g. -DSYZ_DUMP_IMAGE). Will this work for you?
->
-> If this is possible, I guess I still don't understand why you can't dump the
-> image and provide link.  You have fast, efficient robots.  We have slow,
-> busy humans.
->
->>>> Please elaborate re commits. It's a basic rule of any good bug report
->>>> -- communicate exact state of source code when the bug was hit, i.e.
->>>> provide the commit hash.
->>>
->>> Further best practice is to provide the /correct/ commit hash.
->
-> ....
->
->>> I can't imagine these are right...
->>
->>
->> As I said, bisection is on our plate:
->> https://github.com/google/syzkaller/issues/501
->> Though, we will see how well it works, because it's not trivial (see
->> the issue for details).
->
-> Oh I see. I had misunderstood; so:
->
->> syzbot hit the following crash on upstream commit
->> 86bbbebac1933e6e95e8234c4f7d220c5ddd38bc (Mon Apr 2 18:47:07 2018 +0000)
->> Merge branch 'ras-core-for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
->
-> doesn't mean you bisected to that commit, or that this was the first bad commit,
-> it just means you happened to have a tree at this commit when you hit the problem.
->
-> That was not at all clear to me.  I thought when syzkaller was telling us
-> "on upstream commit XYZ," it meant that it had identified commit XYZ as bad.
-> I'm not sure if anyone else made that mistake, but  perhaps you could also clarify
-> the bug report text in this regard?
 
-Suggestions are welcome. Currently it says "syzbot hit the following
-crash on upstream commit SHA1", which was supposed to mean just the
-state of the source tree when the crash happened. But I am not a
-native speaker, so perhaps I am saying not what I intend to say.
+----- Original Message -----
+> On 04/26/2018 02:16 PM, Kees Cook wrote:
+> > On Thu, Apr 26, 2018 at 12:31 PM, Dave Anderson <anderson@redhat.com>
+> > wrote:
+> >>
+> >> While testing /proc/kcore as the live memory source for the crash utility,
+> >> it fails on arm64.  The failure on arm64 occurs because only the
+> >> vmalloc/module space segments are exported in PT_LOAD segments,
+> >> and it's missing all of the PT_LOAD segments for the generic
+> >> unity-mapped regions of physical memory, as well as their associated
+> >> vmemmap sections.
+> >>
+> >> The mapping of unity-mapped RAM segments in fs/proc/kcore.c is
+> >> architecture-neutral, and after debugging it, I found this as the
+> >> problem.  For each chunk of physical memory, kcore_update_ram()
+> >> calls walk_system_ram_range(), passing kclist_add_private() as a
+> >> callback function to add the chunk to the kclist, and eventually
+> >> leading to the creation of a PT_LOAD segment.
+> >>
+> >> kclist_add_private() does some verification of the memory region,
+> >> but this one below is bogus for arm64:
+> >>
+> >>      static int
+> >>      kclist_add_private(unsigned long pfn, unsigned long nr_pages, void
+> >>      *arg)
+> >>      {
+> >>      ... [ cut ] ...
+> >>              ent->addr = (unsigned long)__va((pfn << PAGE_SHIFT));
+> >>      ... [ cut ] ...
+> >>
+> >>              /* Sanity check: Can happen in 32bit arch...maybe */
+> >>              if (ent->addr < (unsigned long) __va(0))
+> >>                      goto free_out;
+> >>
+> >> And that's because __va(0) is a bogus check for arm64.  It is checking
+> >> whether the ent->addr value is less than the lowest possible unity-mapped
+> >> address.  But "0" should not be used as a physical address on arm64; the
+> >> lowest legitimate physical address for this __va() check would be the
+> >> arm64
+> >> PHYS_OFFSET, or memstart_addr:
+> >>
+> >> Here's the arm64 __va() and PHYS_OFFSET:
+> >>
+> >>    #define __va(x) ((void *)__phys_to_virt((phys_addr_t)(x)))
+> >>    #define __phys_to_virt(x)       ((unsigned long)((x) - PHYS_OFFSET) |
+> >>    PAGE_OFFSET)
+> >>
+> >>    extern s64                      memstart_addr;
+> >>    /* PHYS_OFFSET - the physical address of the start of memory. */
+> >>    #define PHYS_OFFSET             ({ VM_BUG_ON(memstart_addr & 1);
+> >>    memstart_addr; })
+> >>
+> >> If PHYS_OFFSET/memstart_addr is anything other than 0 (it is 0x4000000000
+> >> on my
+> >> test system), the __va(0) calculation goes negative and creates a bogus,
+> >> very
+> >> large, virtual address.  And since the ent->addr virtual address is less
+> >> than
+> >> bogus __va(0) address, the test fails, and the memory chunk is rejected.
+> >>
+> >> Looking at the kernel sources, it seems that this would affect other
+> >> architectures as well, i.e., the ones whose __va() is not a simple
+> >> addition of the physical address with PAGE_OFFSET.
+> >>
+> >> Anyway, I don't know what the best approach for an architecture-neutral
+> >> fix would be in this case.  So I figured I'd throw it out to you guys for
+> >> some ideas.
+> > 
+> > I'm not as familiar with this code, but I've added Ard and Laura to CC
+> > here, as this feels like something they'd be able to comment on. :)
+> > 
+> > -Kees
+> > 
+> 
+> It seems backwards that we're converting a physical address to
+> a virtual address and then validating that. I think checking against
+> pfn_valid (to ensure there is a valid memmap entry)
+> and then checking page_to_virt against virt_addr_valid to catch
+> other cases (e.g. highmem or holes in the space) seems cleaner.
 
-There are also suggestions on report format improvement from +Ted
-currently in works:
-https://github.com/google/syzkaller/issues/565#issuecomment-380792942
-Not sure if they make this distinction 100% clear, though.
+Hi Laura,
+
+Thanks a lot for looking into this -- I couldn't find a maintainer for kcore.  
+
+The patch looks good to me, as long as virt_addr_valid() will fail on 32-bit
+arches when page_to_virt() creates an invalid address when it gets passed a
+highmem-physical address.  
+
+Thanks again,
+  Dave
 
 
->>> I think that in this case, what we are asking for is a fine tuning of the
->>> testing and reporting so that we can more efficiently address these issues.
->>> Off the top of my head, and there may be more items:
->>>
->>> 1) Add a human contact to the emails, start an IRC channel, etc, for better
->>>    two-way communication.  (it wasn't clear that syzkaller@ reached humans,
->>>    tbh.)
->>
->> There is a human contact at syzkaller@googlegroups.com. Report footer
->> will be improved to make it more clear:
->> https://github.com/google/syzkaller/issues/565#issuecomment-380793620
->>
->>> 2) _Properly_ identify the regressing commit, if any.  If it doesn't look like
->>>    a recent regression, you can state that too.
->>
->> Bisection is on our plate.
->>
->>> 3) If you're reporting a filesystem bug that arose from using a filesystem
->>>    image, provide a URL to that filesystem image directly in the report.
->>
->> See above. It may not be necessary representable as a static file at all.
->
-> Can you explain this?  Do you mean that the mounted image is changing while the
-> tool runs, while the filesystem is mounted?
->
->>> 4) Create a filesystem image that can be more easily debugged by the experts,
->>>    i.e. one with > 1 allocation group, so standard repair & analysis tools can
->>>    be used with it.
->>
->> What is "> 1 allocation group"?
->
-> Maybe I should back up; how are the xfs images created?  I had assumed that
-> surely you start with a base image of some sort, and start fuzzing it from there.
-> Is this correct?
->
-> If so, allocation groups are a fundamental geometry of the filesystem; from
-> man mkfs.xfs.8:
->
->                    agcount=value
->                           This is used to specify  the  number  of  allocation
->                           groups.  The  data  section  of  the  filesystem  is
->                           divided into allocation groups to improve  the  per‐
->                           formance  of  XFS. More allocation groups imply that
->                           more parallelism can  be  achieved  when  allocating
->                           blocks and inodes. The minimum allocation group size
->                           is 16 MiB; the maximum size is  just  under  1  TiB.
->                           The  data  section of the filesystem is divided into
->                           value allocation groups  (default  value  is  scaled
->                           automatically based on the underlying device size).
->
-> If the base image only has one allocation group, it makes it more difficult for
-> some tools to work with the image, because there is no redundancy.  1 AG is
-> not a supported or recommended geometry for any real-life use of xfs.
->
-> If I am correct that you start with a base image w/ a certain geometry or
-> set of mkfs options, starting with >= 2 AGs would improve the usefulness of the
-> filesystem image.
-
-syzkaller can generate/mutate images based on structured format
-templates, but for now we don't have any templates and these are just
-opaque blobs.
+> Maybe something like:
+> 
+> diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
+> index d1e82761de81..e64ecb9f2720 100644
+> --- a/fs/proc/kcore.c
+> +++ b/fs/proc/kcore.c
+> @@ -209,25 +209,34 @@ kclist_add_private(unsigned long pfn, unsigned long
+> nr_pages, void *arg)
+>   {
+>   	struct list_head *head = (struct list_head *)arg;
+>   	struct kcore_list *ent;
+> +	struct page *p;
+> +
+> +	if (!pfn_valid(pfn))
+> +		return 1;
+> +
+> +	p = pfn_to_page(pfn);
+> +	if (!memmap_valid_within(pfn, p, page_zone(p)))
+> +		return 1;
+>   
+>   	ent = kmalloc(sizeof(*ent), GFP_KERNEL);
+>   	if (!ent)
+>   		return -ENOMEM;
+> -	ent->addr = (unsigned long)__va((pfn << PAGE_SHIFT));
+> +	ent->addr = (unsigned long)page_to_virt(p);
+>   	ent->size = nr_pages << PAGE_SHIFT;
+>   
+> -	/* Sanity check: Can happen in 32bit arch...maybe */
+> -	if (ent->addr < (unsigned long) __va(0))
+> +	if (!virt_addr_valid(ent->addr))
+>   		goto free_out;
+>   
+>   	/* cut not-mapped area. ....from ppc-32 code. */
+>   	if (ULONG_MAX - ent->addr < ent->size)
+>   		ent->size = ULONG_MAX - ent->addr;
+>   
+> -	/* cut when vmalloc() area is higher than direct-map area */
+> -	if (VMALLOC_START > (unsigned long)__va(0)) {
+> -		if (ent->addr > VMALLOC_START)
+> -			goto free_out;
+> +	/*
+> +	 * We've already checked virt_addr_valid so we know this address
+> +	 * is a valid pointer, therefore we can check against it to determine
+> +	 * if we need to trim
+> +	 */
+> +	if (VMALLOC_START > ent->addr) {
+>   		if (VMALLOC_START - ent->addr < ent->size)
+>   			ent->size = VMALLOC_START - ent->addr;
+>   	}
+> 
+> 
