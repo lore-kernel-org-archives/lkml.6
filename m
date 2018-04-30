@@ -1,114 +1,99 @@
-Return-Path: <bot@kernelci.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1525142660; cv=none;
+Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
+X-Google-Smtp-Source: AB8JxZrTCXfIHaN6Ct1o6UDaPhc3ikulRUnTEvjsyMuYAUaLSFMFrrwmctSe5MbXP3yDtAE5KUpy
+ARC-Seal: i=1; a=rsa-sha256; t=1525116414; cv=none;
         d=google.com; s=arc-20160816;
-        b=lgr2qfw+Bl3JtnHxjDAWLATgCE/QyNO1dugBom9mQ0EOX8wNGHCQP3INQdHqXgNBR8
-         3VoDqh9gvXHSBpL6edr6sIMFT22eaRhU+UsSzfnHSZl1nuNZMt6DrB5IPh3oIwsCYhCo
-         34pGwLNWc51a0at5kQSJalRV9CEiNTXOB/fgcADIPr1HQwCJc0URDuDEoDZvAaLN/Ftc
-         /XOtr0ON6FBLcEVwlMESSx5Xa5GlP0uRGbheMlXPD96Wop2UdfBPEouafSsjdoXRhXS1
-         XNWaE1qMBroIlJVM9CmLSmXBrrCXpV50ac0W8u3nTzJEfedUj+2jGZC6kDhmy8p3iAM2
-         LUYA==
+        b=ctdHAMER/OwmSOITemsJAFHGzaiswjZXatbzz7brB79UxQpJaSAYQFL5k97rpy7oTv
+         n7XuRp+HKntRoLM71kbJz6JnIsCZbpKTaeY0UmPqwnQMmI1IbmOv7OQJmWTxEIuVSfTX
+         BVo+iNFMDjjlLHA250Uwgl5gKbsJPtVXhPu8GJTNva3hezQ1pYH4IOMv2yUdX9HiVSYX
+         rcdJcDiAz1jQXG1ctfS/aIa63O2evPj84690LOIUf0PX8RWLfWor46U1QcMn2g4uLP76
+         suiaO6iQ9ctyRSua7UT6vluooODjAoWN6dUfrDbt39SXW+3RKMv9G4fzE3VbwtyP+56c
+         F8JQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:from:to:subject:references:in-reply-to:content-transfer-encoding
-         :mime-version:date:message-id:arc-authentication-results;
-        bh=5nuB5O149yk3kjqNijr1z6lRAvHm5fy7hTpgkFdHhsM=;
-        b=YkuTt2uykwT0zSPGRrPefeUMz1g3u6l9p/F+H2tfSqivFPHUIUHRo+Z8T0zxXPejCg
-         it3B96WjFhnnwE+FXeCeZ0e1bwAh1oAf7Ve7z3xgubiqxKrqkFoVNBdjTDU9g7EfKjnO
-         wL/5Xf4kzxSSLdUYKzMv5ficzhuGOsvzvt/kCjVDGMvqppYLF787VGKIKIyIZbg49EEm
-         GE8pf9yXdok12sshoKLAPsN5VEde7Ri6SeYLXUCpHjr8QoTS952xNEZ2I8Y3h0Gr5pkZ
-         jCim/pZD95G0kF+LVLq2adf9+UGevhd9QbgiFkw0ESzaqsweBGgpFOMH0EZ/gdNH1mhv
-         kiKw==
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dmarc-filter:arc-authentication-results;
+        bh=nzdf+xBcTKbLt+OZLmltrxW9UspAb041uhFkSSb1z/M=;
+        b=v8X6msHbhNoppYq3sVTDPyYviePDgzPMnrZfSaIYbfq8z99TSFgDA6jiB58KLQWjaK
+         RLLqSXfYxwktf0KM/NyIBhs+LwJRtY/GGroH9MJwzN7Boke0hfjwiEPMJuG+BCA1z7zl
+         D1Ym4CHgAf6uggJPDmN/RCLBCsY6kpIIuk588GK9QUL9/5mYqlRpc9wlmcXUAQu9z2xq
+         2H9xXwjA9aY/ggPTjWREovnKQ8f+GlzjhS8XayrMXGYUo+c37rtDbKAZd0uxfVhyCSg8
+         4U3WAnYoIeLI3hy7vSrD+nRBtY3mHiloJiuFSR3KmTs04xPCtrsIuoI997QkBuPTyigJ
+         SQ5w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=bot@kernelci.org
+       spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=bot@kernelci.org
-X-Google-Smtp-Source: AB8JxZobO5T700aWMHNc9CCNrmGUCIVx+aRrq5cw636NAKdFvbatmoWj+EWvIDK3wFiKvhq1FCt6Tg==
-Message-ID: <5ae7d483.d3371c0a.50d58.d1dd@mx.google.com>
-Date: Mon, 30 Apr 2018 19:44:19 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: linux-4.9.y
-X-Kernelci-Tree: stable-rc
-X-Kernelci-Report-Type: boot
-X-Kernelci-Kernel: v4.9.97-62-gdfbcc7b09b85
+       spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C382022E02
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org,
+	Dmitry Vyukov <dvyukov@google.com>,
+	syzbot+209c0f67f99fec8eb14b@syzkaller.appspotmail.com,
+	syzbot+7fb6d9525a4528104e05@syzkaller.appspotmail.com,
+	syzbot+2e63711063e2d8f9ea27@syzkaller.appspotmail.com,
+	syzbot+de73361ee4971b6e6f75@syzkaller.appspotmail.com
+Subject: [PATCH 4.9 39/61] kobject: dont use WARN for registration failures
+Date: Mon, 30 Apr 2018 12:24:42 -0700
+Message-Id: <20180430183954.632232883@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430183951.312721450@linuxfoundation.org>
 References: <20180430183951.312721450@linuxfoundation.org>
-Subject: Re: [PATCH 4.9 00/61] 4.9.98-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org
-From: kernelci.org bot <bot@kernelci.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net,
- shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk,
- lkft-triage@lists.linaro.org, stable@vger.kernel.org
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599200428921963582?=
-X-GMAIL-MSGID: =?utf-8?q?1599227990424239370?=
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1599200285796531709?=
+X-GMAIL-MSGID: =?utf-8?q?1599200468898218575?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-stable-rc/linux-4.9.y boot: 137 boots: 2 failed, 129 passed with 5 offline,=
- 1 conflict (v4.9.97-62-gdfbcc7b09b85)
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.9.y/kernel/v4.9.97-62-gdfbcc7b09b85/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.9.y=
-/kernel/v4.9.97-62-gdfbcc7b09b85/
+------------------
 
-Tree: stable-rc
-Branch: linux-4.9.y
-Git Describe: v4.9.97-62-gdfbcc7b09b85
-Git Commit: dfbcc7b09b85cb3ef0a6253f94c245e6ddbf3a80
-Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git
-Tested: 69 unique boards, 21 SoC families, 19 builds out of 183
+From: Dmitry Vyukov <dvyukov@google.com>
 
-Boot Regressions Detected:
+commit 3e14c6abbfb5c94506edda9d8e2c145d79375798 upstream.
 
-arm:
+This WARNING proved to be noisy. The function still returns an error
+and callers should handle it. That's how most of kernel code works.
+Downgrade the WARNING to pr_err() and leave WARNINGs for kernel bugs.
 
-    multi_v7_defconfig:
-        armada-375-db:
-            lab-free-electrons: new failure (last pass: v4.9.97)
-        armada-388-clearfog:
-            lab-free-electrons: new failure (last pass: v4.9.97)
-        exynos5422-odroidxu3:
-            lab-collabora: new failure (last pass: v4.9.97)
-
-Boot Failures Detected:
-
-arm:
-
-    multi_v7_defconfig
-        armada-375-db: 1 failed lab
-        armada-388-clearfog: 1 failed lab
-
-Offline Platforms:
-
-arm:
-
-    multi_v7_defconfig:
-        qcom-apq8064-cm-qs600: 1 offline lab
-        qcom-apq8064-ifc6410: 1 offline lab
-
-    qcom_defconfig:
-        qcom-apq8064-cm-qs600: 1 offline lab
-        qcom-apq8064-ifc6410: 1 offline lab
-
-arm64:
-
-    defconfig:
-        apq8016-sbc: 1 offline lab
-
-Conflicting Boot Failure Detected: (These likely are not failures as other =
-labs are reporting PASS. Needs review.)
-
-arm:
-
-    multi_v7_defconfig:
-        exynos5422-odroidxu3:
-            lab-collabora: FAIL
-            lab-baylibre-seattle: PASS
+Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
+Reported-by: syzbot+209c0f67f99fec8eb14b@syzkaller.appspotmail.com
+Reported-by: syzbot+7fb6d9525a4528104e05@syzkaller.appspotmail.com
+Reported-by: syzbot+2e63711063e2d8f9ea27@syzkaller.appspotmail.com
+Reported-by: syzbot+de73361ee4971b6e6f75@syzkaller.appspotmail.com
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
-For more info write to <info@kernelci.org>
+ lib/kobject.c |   12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
+
+--- a/lib/kobject.c
++++ b/lib/kobject.c
+@@ -234,14 +234,12 @@ static int kobject_add_internal(struct k
+ 
+ 		/* be noisy on error issues */
+ 		if (error == -EEXIST)
+-			WARN(1, "%s failed for %s with "
+-			     "-EEXIST, don't try to register things with "
+-			     "the same name in the same directory.\n",
+-			     __func__, kobject_name(kobj));
++			pr_err("%s failed for %s with -EEXIST, don't try to register things with the same name in the same directory.\n",
++			       __func__, kobject_name(kobj));
+ 		else
+-			WARN(1, "%s failed for %s (error: %d parent: %s)\n",
+-			     __func__, kobject_name(kobj), error,
+-			     parent ? kobject_name(parent) : "'none'");
++			pr_err("%s failed for %s (error: %d parent: %s)\n",
++			       __func__, kobject_name(kobj), error,
++			       parent ? kobject_name(parent) : "'none'");
+ 	} else
+ 		kobj->state_in_sysfs = 1;
+ 
