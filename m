@@ -1,97 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754752AbeD3TQs (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 15:16:48 -0400
-Received: from mail-vk0-f52.google.com ([209.85.213.52]:43377 "EHLO
-        mail-vk0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753522AbeD3TQq (ORCPT
+        id S1754639AbeD3TXM (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 15:23:12 -0400
+Received: from mail-qk0-f172.google.com ([209.85.220.172]:37836 "EHLO
+        mail-qk0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753482AbeD3TXK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 15:16:46 -0400
-X-Google-Smtp-Source: AB8JxZqXlYf5dwgL78PYRo2N0SGH1f+CoFR1epVMwjv7Kkga8YfRQOiIX+0YGR5IdEyDr/sXEC0Fjpbmah1kk+g06B0=
+        Mon, 30 Apr 2018 15:23:10 -0400
+X-Google-Smtp-Source: AB8JxZqS1Vk4/+c9B+RAqcSQN6WQDSdCyyFuhEjMlE73dTejYVXDNgq/aEDyBhUciw/g4Mfkp4PslQ==
+Subject: Re: [RFC net-next 0/5] Support for PHY test modes
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org,
+        rmk@armlinux.org.uk, linux-kernel@vger.kernel.org, cphealy@gmail.com,
+        nikita.yoush@cogentembedded.com, vivien.didelot@savoirfairelinux.com,
+        Nisar.Sayed@microchip.com, UNGLinuxDriver@microchip.com
+References: <20180428003237.1536-1-f.fainelli@gmail.com>
+ <20180429.225554.2165914401649980919.davem@davemloft.net>
+ <eea70076-891c-5caa-a590-ef1b0421f3b2@gmail.com>
+ <20180430164012.GB16854@lunn.ch>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ HGuUuzv+GKZ6nsysJw==
+Message-ID: <bde58941-42f0-73d5-22b3-060349da25c6@gmail.com>
+Date: Mon, 30 Apr 2018 12:23:00 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <CA+55aFyreOY8uzOkkDkU=WttNfbH2_6nStfsm9j2T6F5ZyntHg@mail.gmail.com>
-References: <alpine.DEB.2.20.1804301741570.3243@hypnos.tec.linutronix.de>
- <CAGXu5jL1W=AC023asgeMRUXAnhU2vd-RJRqGtOOetQ=aXwDcFQ@mail.gmail.com>
- <CA+55aFwieC1-nAs+NFq9RTwaR8ef9hWa4MjNBWL41F-8wM49eA@mail.gmail.com>
- <20180430124135.0cce92e3@gandalf.local.home> <CA+55aFzpJC4+tuSopeze72D2sv1urGdap8+Bj2Y9hEYitAkE4Q@mail.gmail.com>
- <CA+55aFyNqnrM=_5pMgEeL20jVKN7MgWKG52pbaR0FayO=5VuXw@mail.gmail.com>
- <CAGXu5jLVJxDJcbhrQU5-wduaP+OvePXP8VvCFMrJ47pYD-zaXg@mail.gmail.com> <CA+55aFyreOY8uzOkkDkU=WttNfbH2_6nStfsm9j2T6F5ZyntHg@mail.gmail.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Mon, 30 Apr 2018 12:16:45 -0700
-X-Google-Sender-Auth: lZasT2WGEPl5k-ywLeLuVWu37A8
-Message-ID: <CAGXu5jKbagUs7cS5y6zRQkgiA0tnD7K0FajwA1Gt+ZCPrc2jfQ@mail.gmail.com>
-Subject: Re: Hashed pointer issues
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-        "Tobin C. Harding" <me@tobin.cc>, "Ted Ts'o" <tytso@mit.edu>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180430164012.GB16854@lunn.ch>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 30, 2018 at 12:00 PM, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Mon, Apr 30, 2018 at 11:38 AM Kees Cook <keescook@chromium.org> wrote:
->
->> Something like this? (Untested.)
->
-> Looks workable.
->
->> +       /* If we have hw RNG, start hashing immediately. */
->> +       if (arch_has_random()) {
->> +               get_random_bytes_arch(&ptr_key, sizeof(ptr_key));
->> +               ptr_key_ready();
->> +               return 0;
->> +       }
->
-> Small tweak: you should check the return value of get_random_bytes_arch(),
-> because in theory it can fail.
->
-> Sadly, that's not actually how get_random_bytes_arch() really works - it
-> falls back on "get_random_bytes()" on failure instead, which is explicitly
-> against the whole point here.
+On 04/30/2018 09:40 AM, Andrew Lunn wrote:
+>> Turning these tests on will typically result in the link partner
+>> dropping the link with us, and the interface will be non-functional as
+>> far as the data path is concerned (similar to an isolation mode). This
+>> might warrant properly reporting that to user-space through e.g: a
+>> private IFF_* value maybe?
+> 
+> Hi Florian
+> 
+> I've not looked at the code yet....
+> 
+> Is it also necessary to kick off auto-neg again after the test has
+> finished, in order to reestablish the link?
 
-I just noticed: there are _no_ users of get_random_bytes_arch() ...
-didn't we once use it to feed entropy to the CRNG?
+It would yes. Right now there is a test mode exposed named "normal"
+which really, means: bring back to the PHY to an operation state. This
+state likely does not belong here and we would have to introduce flags
+instead such as start and stop the test instead.
 
-> So I think it would need some tweaking, with a new function entirely
-> (get_random_bytes_arch() with a failure return for "cannot fill buffer").
->
-> But that would be just a few more lines, because we could make the existing
-> get_random_bytes_arch() just use the failure-case thing.
->
-> So add a "get_hw_random_bytes()" that does that same loop in
-> get_random_bytes_arch(), but returns the number of bytes it filled in.
->
-> Then get_random_bytes_arch() turns into
->
->      got = get_hw_random_bytes(p, nbytes);
->      if (got < nbytes)
->          get_random_bytes(p+got, nbytes-got);
->
-> and the initialize_ptr_random() use would be something like
->
->      if (get_hw_random_bytes(&ptr_key, sizeof(ptr_key)) == sizeof(ptr_key)) {
->          ptr_key_ready();
->          return 0;
->     }
->
-> Hmm?
->
-> Maybe we could call the "get_hw_random_bytes()" something like
-> "get_early_random_bytes()" and the "use HW for it" is purely an
-> implementation detail?
-
-Yeah, and if we add __must_check, I think this should be fine. Ted,
-any thoughts on this?
-
-Tobin, is this something you've got time to implement and test?
-
--Kees
-
+Please review the patches when we get a chance, because I suspect this
+is not the only issue they have ;)
 -- 
-Kees Cook
-Pixel Security
+Florian
