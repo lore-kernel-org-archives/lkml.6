@@ -1,277 +1,93 @@
-Return-Path: <keescook@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1524841118; cv=none;
+Return-Path: <j.neuschaefer@gmx.net>
+X-Google-Smtp-Source: AB8JxZqQtv3JfIYTnhR2HSzm/fgN1IjOkobxm2HF31Yx293tGIj6YTuZphmnIRCINhem52ZsFfmu
+ARC-Seal: i=1; a=rsa-sha256; t=1525096159; cv=none;
         d=google.com; s=arc-20160816;
-        b=ooNfvvX49wb/MZi55Gd3FRpKngfKflY4jpWN59UaPMfWV8DCrYervG0ZFfsFKQxdZx
-         iEcMlU1nO97upAuGF7QRgfEn4r50+w2Qda2hg5umuH6PIOByJ8h+5swIH9WZvxeP1Pta
-         HpY82sCpTnfw7lqYcU6jtbfDTJro9aikF8UMGsjinvAhgOLLObWbCeFaxUa4twG60Zak
-         MLjybHw+/wzUFmwQcx5N/Wm5xXmE7PshGzb9k70PiarpafmuebW85V4FGjhZtkttLIcY
-         u5fwlExCWQhsIgvmv4mKM88/s4j2qFiHcFOHJnd9Ilc4tT9NQGHcJ++pHxC3BdkzDAxC
-         gXoA==
+        b=MahyY9BH3V+m0cE1Qsevw4tTzN2KdL9PSqdyT8vNaeYdfIZ5J5bKJJWvUnlK0rOPT5
+         zy7Q1bgVgpPYX4CDZj/2UlJjtZuH8WnoUp9/PKVevdGyVGF4LXvFu2qKG/tNczwqnzkE
+         vYLQIDxxaymdhEfHyZ/YkbKdhTQLVSSp+wy+4qANDxVZJS8q57U/p8EvFfZlpkTj6jPG
+         gnsJ34qojphjYmw4BD6mSAHrWTYkm6jbFJOGOob2m2mKjHRUey4KG0938xKXLppNcjKs
+         VeIO3TcA68HUmFzPwBYve2eBfpiZCPF6Hpiq6XJZRL6VXkBP+01gdUaTKrDl5A2KZ1vP
+         WagQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :references:in-reply-to:sender:mime-version:dkim-signature
-         :dkim-signature:arc-authentication-results;
-        bh=5hI/znEsQTrcR0RQpsbmLZLFeIN6cNT5Tpmsd2uTHlE=;
-        b=ZrYGQH6f53ZGHZVnzWvGlWdg81HL7pNB0GiuppuAKGsS46wc/5l/v4GrOs6FgEfnBd
-         aTf2jUwzsZEYYiwzSB85EFgbrs4gVc+pS3NVs++jrpp++rfthyM6DHKDzOSrQ3cnx1aK
-         V7ICjZ02GmIp3afvi9E1YWA+wrUI0qvl/2ulnimCy8PoQ1LMb4bEOhgPOfVlnjq4Jybr
-         CcgKMAyiwCIfbAiC6ZcJBf1WIKqJ9OUPjwWbX+mwToKiDCnQHDmN7IwHgQ17WSyd0KB9
-         jrTdNvYth6tGYTSxOyJ1F9sOxZXxebRuX86Kp0rXZDYvoVnYLl2Q6MVIxFPaVhsl4P8h
-         EKgw==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:arc-authentication-results;
+        bh=mG8TPRbCPTbRCdm+f0YaebaWlAF2KRw+QqTabLQmafY=;
+        b=QG2EVLO8l5bz9RsOQnf+IUAcrrsQavd9mCyXxYgPQ4GdH/Q1J/YxeIiVBFx9YvH4lx
+         n6IRlUpXc5Ms0n3yTSitUwYG9STqyiwQvGVXyH4Wo8X474LfHEd3riFlZO9YSR+p1fcO
+         5bDg1QuJQn4sJDa8DFpFJkDHHbtqQScFTp7vBd72kT9nQbyg4IC0Z41LoZDbwQU+4kw4
+         2K4Dwhhs2GNicH+fuYx45s7N6UU6J/lgcOKrqV5RIjh5BmxLA/2GLidv2i/mCWqbt+p3
+         Dr1RU2FNrNTkFacMrNpYRuiiTpKPj5KfYQz0efEy3NqqZ8JRYZBPOnRLL772+vACH6Td
+         vdOw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=D0CS5Le2;
-       dkim=pass header.i=@chromium.org header.s=google header.b=WGkP5iUP;
-       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+       spf=pass (google.com: domain of j.neuschaefer@gmx.net designates 212.227.15.18 as permitted sender) smtp.mailfrom=j.neuschaefer@gmx.net
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=D0CS5Le2;
-       dkim=pass header.i=@chromium.org header.s=google header.b=WGkP5iUP;
-       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
-X-Google-Smtp-Source: AB8JxZp6x7Yre6s/jpFgXzroMHFtbJny6oEnezHBvj9ym02vSk1Ark82TcPFsEWZ9q/mvRZL74j0WsSkBCfwPPC7RZo=
+       spf=pass (google.com: domain of j.neuschaefer@gmx.net designates 212.227.15.18 as permitted sender) smtp.mailfrom=j.neuschaefer@gmx.net
+From: =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To: linuxppc-dev@lists.ozlabs.org
+Cc: Joel Stanley <joel@jms.id.au>,
+	=?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Paul Mackerras <paulus@samba.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	"Robin H. Johnson" <robbat2@gentoo.org>,
+	Benjamin Gilbert <benjamin.gilbert@coreos.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] powerpc: wii_defconfig: Disable Ethernet driver support code
+Date: Mon, 30 Apr 2018 15:42:46 +0200
+Message-Id: <20180430134252.17345-1-j.neuschaefer@gmx.net>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-Sender: keescook@google.com
-In-Reply-To: <20180427134936.GA31171@kroah.com>
-References: <20180427123547.15727-1-tmricht@linux.ibm.com> <20180427134936.GA31171@kroah.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Fri, 27 Apr 2018 07:58:35 -0700
-X-Google-Sender-Auth: Nvyl6xY_XsgGoRSYsGNBg5vtft8
-Message-ID: <CAGXu5j+LK8-g9bg+RNn+-v1LpRC32sTCAUNZr1v0HXquiG9fQw@mail.gmail.com>
-Subject: Re: [PATCH v2] inode: debugfs_create_dir uses mode permission from parent
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Thomas Richter <tmricht@linux.ibm.com>,
-	Kernel Hardening <kernel-hardening@lists.openwall.com>, brueckner@linux.vnet.ibm.com,
-	Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>,
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:43/0o+W810eO+5I2x4pVUNOUnaMoJ03BP9caofW8nokLssBzK7l
+ s7pVUNEEJYK5AfuMaRiJd1Sw6ELU1O5hDEK7lSzdSAwQ/93LJQrzNb7R+Z6ikOs61WElqw6
+ yG+Ig7fZcrC6Gy2fNz07rh7I6r8f7nwSFrdJI3fUeRGYgw624BNpO5IgIDuxcJ4GsUPQLSK
+ r/Zw/XLsgXAeyGstVrxoA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:ds4hU6aKOVY=:MBeJ/t/UBL7FUoyQfeEqxR
+ diuTbilRiCWQFsy4t3AEtQxKbcCvQ/ixDdMWhha+bKUDBaSt0bAk4K20PbhTagiZRAig8yg+u
+ kkwlDQga+VdvYe1FuflFiSy0JbE2Dh5MLDWFGccgy0mxto6nsJBs285FIUu0wV+5jFXs+6npn
+ 21Hja30o6l194n05/75s7n0I+WUdSIC+8EnyBzo38MlrDy8dRp0XAyR2YLAuG0I2WgYr3+C/c
+ /4oG0yekRxLTlO3kFO+6H2WNQhv1bXG55LElv3EJya/WsR2eibdUeZb4irY2rGrXxsJifHdAV
+ Uzzwgl5JYTx8eeTYBjN8gXLcv8FCLpnZVtppAPFihOUBd6KcZ6LusqUmSBalGSAelmuRE26VR
+ Ss2qWXdmUYaevV9xKjeJu6uzCPPNzmBOKdxERSn1E2FExSgLSmLmqWtk2tPpdkvwYJChagueW
+ oarez+v3V9yc5tjZZmzEs/jDrN1UV3Uo/jb01oG2ejuK/XQh6hCRuresH1lEPJenx9ImtsURr
+ S781JVbk2WbITEYjx12hfTLb5QDwhX2g+c3Fe432xruokKWgfY3dZ2WtEljJ7YZgvon0heKTk
+ 1sgH9D33VvSxT2PCAWLjR1LA8QTKZjbGWbGWMuD6J277H4rBHLjtpK8iPu8GyrO8ilod8wc5z
+ eG1DmHs5g5BSrEyCCr2Jyub1yxNBYi+P6NeTyGzkTOYp6T3qTLZ5CpSNsfKQrDmNtJeT8FxSf
+ 1q0nmume+etgw+ihkFcak52n5gfusAJmx69IbG2+IEOtII/+OO7QPvljFrhQwVGuf+nuff4HL
+ S3nGJsS
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598885939373348657?=
-X-GMAIL-MSGID: =?utf-8?q?1598911801108304689?=
+X-GMAIL-THRID: =?utf-8?q?1599179231098843389?=
+X-GMAIL-MSGID: =?utf-8?q?1599179231098843389?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Apr 27, 2018 at 6:49 AM, Greg KH <gregkh@linuxfoundation.org> wrote=
-:
-> I'm going to add Kees and the kernel-hardning list here, as I'd like
-> their opinions for the patch below.
->
-> Kees, do you have any problems with this patch?  I know you worked on
-> making debugfs more "secure" from non-root users, this should still keep
-> the intial mount permissions all fine, right?  Anything I'm not
-> considering here?
+The Wii doesn't have built-in Ethernet and USB Ethernet adapters are in
+a different menu. Disable CONFIG_ETHERNET to save some space in support
+code for Ethernet drivers.
 
-This appears correct to me. I'd like to see some stronger rationale
-for why this is needed, just so I have a "design" to compare the
-implementation against. :)
+add/remove: 0/0 grow/shrink: 0/1 up/down: 0/-367 (-367)
+Function                                     old     new   delta
+kernel_config_data                         13691   13324    -367
+Total: Before=8341718, After=8341351, chg -0.00%
 
-Normally, the top-level directory permissions should block all the
-subdirectories too. The only time I think of this being needed is if
-someone is explicitly bind-mounting a subdirectory to another location
-(e.g. Chrome OS does this for the i915 subdirectory). In that case,
-I'd expect them to tweak permissions too. Thomas, what's your
-use-case?
+Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
+---
+ arch/powerpc/configs/wii_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
--Kees
-
->
-> thanks,
->
-> greg k-h
->
-> On Fri, Apr 27, 2018 at 02:35:47PM +0200, Thomas Richter wrote:
->> Currently function debugfs_create_dir() creates a new
->> directory in the debugfs (usually mounted /sys/kernel/debug)
->> with permission rwxr-xr-x. This is hard coded.
->>
->> Change this to use the parent directory permission.
->>
->> Output before the patch:
->> root@s8360047 ~]# tree -dp -L 1 /sys/kernel/debug/
->> /sys/kernel/debug/
->> =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  bdi
->> =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  block
->> =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  dasd
->> =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  device_component
->> =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  extfrag
->> =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  hid
->> =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  kprobes
->> =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  kvm
->> =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  memblock
->> =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  pm_qos
->> =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  qdio
->> =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  s390
->> =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  s390dbf
->> =E2=94=94=E2=94=80=E2=94=80 [drwx------]  tracing
->>
->> 14 directories
->> [root@s8360047 linux]#
->>
->> Output after the patch:
->> [root@s8360047 ~]# tree -dp -L 1 /sys/kernel/debug/
->> sys/kernel/debug/
->> =E2=94=9C=E2=94=80=E2=94=80 [drwx------]  bdi
->> =E2=94=9C=E2=94=80=E2=94=80 [drwx------]  block
->> =E2=94=9C=E2=94=80=E2=94=80 [drwx------]  dasd
->> =E2=94=9C=E2=94=80=E2=94=80 [drwx------]  device_component
->> =E2=94=9C=E2=94=80=E2=94=80 [drwx------]  extfrag
->> =E2=94=9C=E2=94=80=E2=94=80 [drwx------]  hid
->> =E2=94=9C=E2=94=80=E2=94=80 [drwx------]  kprobes
->> =E2=94=9C=E2=94=80=E2=94=80 [drwx------]  kvm
->> =E2=94=9C=E2=94=80=E2=94=80 [drwx------]  memblock
->> =E2=94=9C=E2=94=80=E2=94=80 [drwx------]  pm_qos
->> =E2=94=9C=E2=94=80=E2=94=80 [drwx------]  qdio
->> =E2=94=9C=E2=94=80=E2=94=80 [drwx------]  s390
->> =E2=94=9C=E2=94=80=E2=94=80 [drwx------]  s390dbf
->> =E2=94=94=E2=94=80=E2=94=80 [drwx------]  tracing
->>
->> 14 directories
->> [root@s8360047 linux]#
->>
->> Here is the full diff output done with:
->> [root@s8360047 ~]# diff -u treefull.before treefull.after |
->>       sed 's-^- # -' > treefull.diff
->>  # --- treefull.before        2018-04-27 13:22:04.532824564 +0200
->>  # +++ treefull.after 2018-04-27 13:24:12.106182062 +0200
->>  # @@ -1,55 +1,55 @@
->>  #  /sys/kernel/debug/
->>  # -=E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  bdi
->>  # -=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  1:0
->>  # -=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  1:1
->>  # -=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  1:10
->>  # -=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  1:11
->>  # -=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  1:12
->>  # -=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  1:13
->>  # -=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  1:14
->>  # -=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  1:15
->>  # -=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  1:2
->>  # -=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  1:3
->>  # -=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  1:4
->>  # -=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  1:5
->>  # -=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  1:6
->>  # -=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  1:7
->>  # -=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  1:8
->>  # -=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  1:9
->>  # -=E2=94=82   =E2=94=94=E2=94=80=E2=94=80 [drwxr-xr-x]  94:0
->>  # -=E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  block
->>  # -=E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  dasd
->>  # -=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  0.0.e18a
->>  # -=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  dasda
->>  # -=E2=94=82   =E2=94=94=E2=94=80=E2=94=80 [drwxr-xr-x]  global
->>  # -=E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  device_component
->>  # -=E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  extfrag
->>  # -=E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  hid
->>  # -=E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  kprobes
->>  # -=E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  kvm
->>  # -=E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  memblock
->>  # -=E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  pm_qos
->>  # -=E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  qdio
->>  # -=E2=94=82   =E2=94=94=E2=94=80=E2=94=80 [drwxr-xr-x]  0.0.f5f2
->>  # -=E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  s390
->>  # -=E2=94=82   =E2=94=94=E2=94=80=E2=94=80 [drwxr-xr-x]  stsi
->>  # -=E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  s390dbf
->>  # -=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  0.0.e18a
->>  # -=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  cio_crw
->>  # -=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  cio_msg
->>  # -=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  cio_trace
->>  # -=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  dasd
->>  # -=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  kvm-trace
->>  # -=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  lgr
->>  # -=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  qdio_0.0.f5f2
->>  # -=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  qdio_error
->>  # -=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  qdio_setup
->>  # -=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  qeth_card_0.0.=
-f5f0
->>  # -=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  qeth_control
->>  # -=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  qeth_msg
->>  # -=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  qeth_setup
->>  # -=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  vmcp
->>  # -=E2=94=82   =E2=94=94=E2=94=80=E2=94=80 [drwxr-xr-x]  vmur
->>  # +=E2=94=9C=E2=94=80=E2=94=80 [drwx------]  bdi
->>  # +=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwx------]  1:0
->>  # +=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwx------]  1:1
->>  # +=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwx------]  1:10
->>  # +=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwx------]  1:11
->>  # +=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwx------]  1:12
->>  # +=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwx------]  1:13
->>  # +=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwx------]  1:14
->>  # +=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwx------]  1:15
->>  # +=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwx------]  1:2
->>  # +=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwx------]  1:3
->>  # +=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwx------]  1:4
->>  # +=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwx------]  1:5
->>  # +=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwx------]  1:6
->>  # +=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwx------]  1:7
->>  # +=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwx------]  1:8
->>  # +=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwx------]  1:9
->>  # +=E2=94=82   =E2=94=94=E2=94=80=E2=94=80 [drwx------]  94:0
->>  # +=E2=94=9C=E2=94=80=E2=94=80 [drwx------]  block
->>  # +=E2=94=9C=E2=94=80=E2=94=80 [drwx------]  dasd
->>  # +=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwx------]  0.0.e18a
->>  # +=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwx------]  dasda
->>  # +=E2=94=82   =E2=94=94=E2=94=80=E2=94=80 [drwx------]  global
->>  # +=E2=94=9C=E2=94=80=E2=94=80 [drwx------]  device_component
->>  # +=E2=94=9C=E2=94=80=E2=94=80 [drwx------]  extfrag
->>  # +=E2=94=9C=E2=94=80=E2=94=80 [drwx------]  hid
->>  # +=E2=94=9C=E2=94=80=E2=94=80 [drwx------]  kprobes
->>  # +=E2=94=9C=E2=94=80=E2=94=80 [drwx------]  kvm
->>  # +=E2=94=9C=E2=94=80=E2=94=80 [drwx------]  memblock
->>  # +=E2=94=9C=E2=94=80=E2=94=80 [drwx------]  pm_qos
->>  # +=E2=94=9C=E2=94=80=E2=94=80 [drwx------]  qdio
->>  # +=E2=94=82   =E2=94=94=E2=94=80=E2=94=80 [drwx------]  0.0.f5f2
->>  # +=E2=94=9C=E2=94=80=E2=94=80 [drwx------]  s390
->>  # +=E2=94=82   =E2=94=94=E2=94=80=E2=94=80 [drwx------]  stsi
->>  # +=E2=94=9C=E2=94=80=E2=94=80 [drwx------]  s390dbf
->>  # +=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwx------]  0.0.e18a
->>  # +=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwx------]  cio_crw
->>  # +=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwx------]  cio_msg
->>  # +=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwx------]  cio_trace
->>  # +=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwx------]  dasd
->>  # +=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwx------]  kvm-trace
->>  # +=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwx------]  lgr
->>  # +=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwx------]  qdio_0.0.f5f2
->>  # +=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwx------]  qdio_error
->>  # +=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwx------]  qdio_setup
->>  # +=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwx------]  qeth_card_0.0.=
-f5f0
->>  # +=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwx------]  qeth_control
->>  # +=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwx------]  qeth_msg
->>  # +=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwx------]  qeth_setup
->>  # +=E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwx------]  vmcp
->>  # +=E2=94=82   =E2=94=94=E2=94=80=E2=94=80 [drwx------]  vmur
->>  #  =E2=94=94=E2=94=80=E2=94=80 [drwx------]  tracing
->>  #      =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  events
->>  #      =E2=94=82   =E2=94=9C=E2=94=80=E2=94=80 [drwxr-xr-x]  alarmtimer
->>
->> Fixes: edac65eaf8d5c ("debugfs: take mode-dependent parts of debugfs_get=
-_inode() into callers")
->> Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
->> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->> ---
->>  fs/debugfs/inode.c | 4 +++-
->>  1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
->> index 13b0135..a913b12 100644
->> --- a/fs/debugfs/inode.c
->> +++ b/fs/debugfs/inode.c
->> @@ -512,7 +512,9 @@ struct dentry *debugfs_create_dir(const char *name, =
-struct dentry *parent)
->>       if (unlikely(!inode))
->>               return failed_creating(dentry);
->>
->> -     inode->i_mode =3D S_IFDIR | S_IRWXU | S_IRUGO | S_IXUGO;
->> +     if (!parent)
->> +             parent =3D debugfs_mount->mnt_root;
->> +     inode->i_mode =3D S_IFDIR | ((d_inode(parent)->i_mode & 0770));
->>       inode->i_op =3D &simple_dir_inode_operations;
->>       inode->i_fop =3D &simple_dir_operations;
->>
->> --
->> 2.9.3
-
-
-
---=20
-Kees Cook
-Pixel Security
+diff --git a/arch/powerpc/configs/wii_defconfig b/arch/powerpc/configs/wii_defconfig
+index 0b0f78823a1b..3167b9d7f3e5 100644
+--- a/arch/powerpc/configs/wii_defconfig
++++ b/arch/powerpc/configs/wii_defconfig
+@@ -49,6 +49,7 @@ CONFIG_BLK_DEV_RAM_COUNT=2
+ CONFIG_SCSI=y
+ CONFIG_BLK_DEV_SD=y
+ CONFIG_NETDEVICES=y
++# CONFIG_ETHERNET is not set
+ CONFIG_B43=y
+ CONFIG_B43_SDIO=y
+ # CONFIG_B43_PHY_LP is not set
+-- 
+2.17.0
