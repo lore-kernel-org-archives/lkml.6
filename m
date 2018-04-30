@@ -1,42 +1,42 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrNQpJELMSP3gnlsr+jxG82q//8VuUdMDXBkB8Bmbly+dF/FuWoPhEq1ZoCw6JSeQNONRfH
-ARC-Seal: i=1; a=rsa-sha256; t=1525116450; cv=none;
+X-Google-Smtp-Source: AB8JxZpJwPkFypLOa7ZIMH4Ve7iiMUZHtPRrb5HZ6irGyUXktylYlLJv8H41qJFiriDkAcWF6oUz
+ARC-Seal: i=1; a=rsa-sha256; t=1525116445; cv=none;
         d=google.com; s=arc-20160816;
-        b=0ujoo3Th1riq6aXX3Imo/XWifzr1+sPVSqFn/oJG3TiBjcciBvII4y0XUw7NID1ynm
-         /rxL3rhc8I+Vj1tNOHkk914sl7BkBgUpaoUDKzkaCZm7vYO1tzIVYcEk1SF6Vi+4Gpi9
-         hziej0Wo6evYTJo1OG+MW9gIAx/aAMDPnWbGXuc9IpbLIab8Ps2xUj4QzQeh4mx/M30X
-         a7M1qs0VYPqxogwsIjaXK46S5+I61+CpIXexK96W8zv+dxF4YXIP/WYRiWMNYxbfFTjr
-         cgpQ+mgKMr41pV3fFMADuyQJR16MxoQCcXiUNh61KceGOk2Pf9dKu+GCUgBmWEudai4B
-         gsdQ==
+        b=iJd6uXNQDoc28bP0ItW/ExhD/+yw8HftVYXsQsDCnp+bC9xhUFnBXSfpC7wea3kHvq
+         lVA5ajABcaJwmbvh1MahQuOFniXhKjWZSRUPlCu3B4tfctS5OzSqQSxuspLhgsXLDvk2
+         TVA88XswWLg5CJUzpnu2zy1kz4S1x1JpAcxJxSSNmuWQXbQZB8EMtyogzdkFkoGRNKbZ
+         5d1HEzOE9ElH/zojsqNipHuZw1f7jMnOu31sd5IdfDEGymA1vlI3y7YWCv0/3D3PM+Gk
+         eQd4E/duS/iRmVQqN46xe6sBB0kDaeepb5OuIMib5+9V2pkYnM8Jl4HizHn8gJxbDwOu
+         gERw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=+ZmhvW+3D5eGeYgk1QNvHg1FkL+TpwgHGmstgRgiyCw=;
-        b=Dt3u2edlyV8PH9v/gAxe7Lt3mcl9YOeA5TQkESgUfKCHisfW+oS8lxKKshebXUvZtf
-         sG6yyBb/qbZDcdtnPG8Ykf3d0BvwW0wJ/zjFK00GogZJWuGyASPirMyHRqz01AeCNzrT
-         bvPEpMF24XzNW0PHeeIDWvlmtwuJPuzOKwx0Z8aoSKAh9lg56nInr96+fKkrrRH0emMc
-         rUYH4D4haGCtItQzb05E/DKJM1E+eiXBmQjKl+ORZwHOy8v9fT3Z7lLjZ71vE9DUTuSF
-         uYeVxmIax52lNT00AB3MN/qWA/S5f0viFNGduVISYGwTQg54MEU2v7nmwaZMplwWPp9t
-         EWAA==
+        bh=XER83H+ptP6lW8rK2aGVUJgpFesRNp4rVRLC973Ioqw=;
+        b=Hv2w0CRKeGPfB/jd69P0DqnAlJbdKKShapdPzv4+zgIcrHE3jrchnB4x87KpkwyClV
+         6zHR2RKd1C4jrL1TeTGjI+Mz2eYQyMcVxY2294hqfCe0AcI1gWVq/RmK0WKLFj8N7SID
+         YTAGk44L9vTW4NzExzaLXk5FNmngacP4QWGkpnd3UAtiO+/Akxg1JqFN1EVGeZY1zUFV
+         UVQF6OvOSzK2eQVaQIFoTuD30mT8vd+87p4jt9u3xq6VRJBkTFgVV1pSmvpIhbUHRWK1
+         X8ZBkfGeEiaq70vsakB+fcAd20GNghiIlwOhX509Le+Hpd1vZTyE4B+1KtGWLVbcSdOt
+         S0Lg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B018F22DC1
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DA9722DC1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Evan Wang <xswang@marvell.com>,
-	Victor Gu <xigu@marvell.com>,
-	Nadav Haklai <nadavh@marvell.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: [PATCH 4.14 63/91] PCI: aardvark: Fix PCIe Max Read Request Size setting
-Date: Mon, 30 Apr 2018 12:24:45 -0700
-Message-Id: <20180430184007.441875556@linuxfoundation.org>
+	Dmitry Vyukov <dvyukov@google.com>,
+	syzbot+209c0f67f99fec8eb14b@syzkaller.appspotmail.com,
+	syzbot+7fb6d9525a4528104e05@syzkaller.appspotmail.com,
+	syzbot+2e63711063e2d8f9ea27@syzkaller.appspotmail.com,
+	syzbot+de73361ee4971b6e6f75@syzkaller.appspotmail.com
+Subject: [PATCH 4.14 55/91] kobject: dont use WARN for registration failures
+Date: Mon, 30 Apr 2018 12:24:37 -0700
+Message-Id: <20180430184007.053623683@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184004.216234025@linuxfoundation.org>
 References: <20180430184004.216234025@linuxfoundation.org>
@@ -46,8 +46,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200572509818955?=
-X-GMAIL-MSGID: =?utf-8?q?1599200506695385825?=
+X-GMAIL-THRID: =?utf-8?q?1599200285796531709?=
+X-GMAIL-MSGID: =?utf-8?q?1599200501268606343?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,45 +55,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Evan Wang <xswang@marvell.com>
+From: Dmitry Vyukov <dvyukov@google.com>
 
-commit fc31c4e347c9dad50544d01d5ee98b22c7df88bb upstream.
+commit 3e14c6abbfb5c94506edda9d8e2c145d79375798 upstream.
 
-There is an obvious typo issue in the definition of the PCIe maximum
-read request size: a bit shift is directly used as a value, while it
-should be used to shift the correct value.
+This WARNING proved to be noisy. The function still returns an error
+and callers should handle it. That's how most of kernel code works.
+Downgrade the WARNING to pr_err() and leave WARNINGs for kernel bugs.
 
-Fixes: 8c39d710363c1 ("PCI: aardvark: Add Aardvark PCI host controller driver")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Evan Wang <xswang@marvell.com>
-Reviewed-by: Victor Gu <xigu@marvell.com>
-Reviewed-by: Nadav Haklai <nadavh@marvell.com>
-[Thomas: tweak commit log.]
-Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
+Reported-by: syzbot+209c0f67f99fec8eb14b@syzkaller.appspotmail.com
+Reported-by: syzbot+7fb6d9525a4528104e05@syzkaller.appspotmail.com
+Reported-by: syzbot+2e63711063e2d8f9ea27@syzkaller.appspotmail.com
+Reported-by: syzbot+de73361ee4971b6e6f75@syzkaller.appspotmail.com
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/host/pci-aardvark.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ lib/kobject.c |   12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
---- a/drivers/pci/host/pci-aardvark.c
-+++ b/drivers/pci/host/pci-aardvark.c
-@@ -32,6 +32,7 @@
- #define     PCIE_CORE_DEV_CTRL_STATS_MAX_PAYLOAD_SZ_SHIFT	5
- #define     PCIE_CORE_DEV_CTRL_STATS_SNOOP_DISABLE		(0 << 11)
- #define     PCIE_CORE_DEV_CTRL_STATS_MAX_RD_REQ_SIZE_SHIFT	12
-+#define     PCIE_CORE_DEV_CTRL_STATS_MAX_RD_REQ_SZ		0x2
- #define PCIE_CORE_LINK_CTRL_STAT_REG				0xd0
- #define     PCIE_CORE_LINK_L0S_ENTRY				BIT(0)
- #define     PCIE_CORE_LINK_TRAINING				BIT(5)
-@@ -298,7 +299,8 @@ static void advk_pcie_setup_hw(struct ad
- 	reg = PCIE_CORE_DEV_CTRL_STATS_RELAX_ORDER_DISABLE |
- 		(7 << PCIE_CORE_DEV_CTRL_STATS_MAX_PAYLOAD_SZ_SHIFT) |
- 		PCIE_CORE_DEV_CTRL_STATS_SNOOP_DISABLE |
--		PCIE_CORE_DEV_CTRL_STATS_MAX_RD_REQ_SIZE_SHIFT;
-+		(PCIE_CORE_DEV_CTRL_STATS_MAX_RD_REQ_SZ <<
-+		 PCIE_CORE_DEV_CTRL_STATS_MAX_RD_REQ_SIZE_SHIFT);
- 	advk_writel(pcie, reg, PCIE_CORE_DEV_CTRL_STATS_REG);
+--- a/lib/kobject.c
++++ b/lib/kobject.c
+@@ -234,14 +234,12 @@ static int kobject_add_internal(struct k
  
- 	/* Program PCIe Control 2 to disable strict ordering */
+ 		/* be noisy on error issues */
+ 		if (error == -EEXIST)
+-			WARN(1, "%s failed for %s with "
+-			     "-EEXIST, don't try to register things with "
+-			     "the same name in the same directory.\n",
+-			     __func__, kobject_name(kobj));
++			pr_err("%s failed for %s with -EEXIST, don't try to register things with the same name in the same directory.\n",
++			       __func__, kobject_name(kobj));
+ 		else
+-			WARN(1, "%s failed for %s (error: %d parent: %s)\n",
+-			     __func__, kobject_name(kobj), error,
+-			     parent ? kobject_name(parent) : "'none'");
++			pr_err("%s failed for %s (error: %d parent: %s)\n",
++			       __func__, kobject_name(kobj), error,
++			       parent ? kobject_name(parent) : "'none'");
+ 	} else
+ 		kobj->state_in_sysfs = 1;
+ 
