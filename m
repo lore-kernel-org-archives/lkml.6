@@ -1,129 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751949AbeD3J1E (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 05:27:04 -0400
-Received: from mail-wr0-f181.google.com ([209.85.128.181]:44994 "EHLO
-        mail-wr0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750882AbeD3J1C (ORCPT
+        id S1752834AbeD3J1h (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 05:27:37 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:43707 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752348AbeD3J1g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 05:27:02 -0400
-X-Google-Smtp-Source: AB8JxZq8Mrh1gub7d74qlxqj06/DWK/nHPMTLK3SvumFn0zzMtVb7kg+P+JiI0zBw6cqsEWdNWzXqQ==
-Date: Mon, 30 Apr 2018 10:26:59 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: John Garry <john.garry@huawei.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
-        andriy.shevchenko@linux.intel.com, rjw@rjwysocki.net,
-        linux-acpi@vger.kernel.org, lenb@kernel.org, lorenzo.pieralisi@arm.com,
-        linux-kernel@vger.kernel.org, arnd@arndb.de, graeme.gregory@linaro.org,
-        helgaas@kernel.org, linuxarm@huawei.com, z.liuxinliang@hisilicon.com,
-        "Liguozhu (Kenneth)" <liguozhu@hisilicon.com>
-Subject: Re: [RFC PATCH 1/2] ACPI / PNP: Don't add "enumeration_by_parent"
- devices
-Message-ID: <20180430092659.GA5147@dell>
-References: <20180420130727.GV2173@lahna.fi.intel.com>
- <27c3f84e-4d53-4b6b-7382-04908082ed01@huawei.com>
- <20180420135222.GY2173@lahna.fi.intel.com>
- <75eae3ac-228f-d6a4-bb0e-4bd27e35c55d@huawei.com>
- <09e3aa95-86ae-ca30-7bb5-a9704d296b43@huawei.com>
- <20180426140808.GK2173@lahna.fi.intel.com>
- <15443a87-2622-01ee-f7f2-426a51ca0f11@huawei.com>
- <44e047a2-93e1-9eff-45b8-d538a7ae9092@huawei.com>
- <20180430053611.GA11990@dell>
- <67a620ee-fd1f-4b5e-aa91-9f280a63807b@huawei.com>
+        Mon, 30 Apr 2018 05:27:36 -0400
+X-Google-Smtp-Source: AB8JxZoDO9qGwAwmXVTgVB4H/kwY4ePVs6JOBDh0xFXRSOULIa3JQRJ+bAWq2X7D0nFLQ3LlfnuZbw==
+Date: Mon, 30 Apr 2018 11:27:31 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Eric Anholt <eric@anholt.net>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] drm/panel: Enable DSI transactions on the RPi panel.
+Message-ID: <20180430092731.GA2270@ulmo>
+References: <20171031193258.17373-1-eric@anholt.net>
+ <20171031193258.17373-2-eric@anholt.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="vkogqOf2sHV7VnPd"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <67a620ee-fd1f-4b5e-aa91-9f280a63807b@huawei.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20171031193258.17373-2-eric@anholt.net>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 30 Apr 2018, John Garry wrote:
 
-> On 30/04/2018 06:36, Lee Jones wrote:
-> > On Fri, 27 Apr 2018, John Garry wrote:
-> > > On 26/04/2018 15:23, John Garry wrote:
-> > > > On 26/04/2018 15:08, Mika Westerberg wrote:
-> > > > > On Thu, Apr 26, 2018 at 02:49:49PM +0100, John Garry wrote:
-> > > > > > diff --git a/drivers/bus/hisi_lpc.c b/drivers/bus/hisi_lpc.c
-> > > > > > index 2d4611e..b04425b 100644
-> > > > > > --- a/drivers/bus/hisi_lpc.c
-> > > > > > +++ b/drivers/bus/hisi_lpc.c
-> > > > > > @@ -18,6 +18,8 @@
-> > > > > >  #include <linux/of_platform.h>
-> > > > > >  #include <linux/pci.h>
-> > > > > >  #include <linux/slab.h>
-> > > > > > +#include <linux/serial_8250.h>
-> > > > > > +#include "../tty/serial/8250/8250.h"
-> > > > > > 
-> > > > > >  #define DRV_NAME "hisi-lpc"
-> > > > > > 
-> > > > > > @@ -345,6 +347,7 @@ static void hisi_lpc_comm_outs(void *hostdata,
-> > > > > > unsigned
-> > > > > > long pio,
-> > > > > >  #define MFD_CHILD_NAME_LEN (ACPI_ID_LEN +
-> > > > > > sizeof(MFD_CHILD_NAME_PREFIX) -
-> > > > > > 1)
-> > > > > > 
-> > > > > >  struct hisi_lpc_mfd_cell {
-> > > > > > +    struct plat_serial8250_port serial8250_port;
-> > > > > >      struct mfd_cell_acpi_match acpi_match;
-> > > > > >      char name[MFD_CHILD_NAME_LEN];
-> > > > > >      char pnpid[ACPI_ID_LEN];
-> > > > > > @@ -513,10 +516,31 @@ static int hisi_lpc_acpi_probe(struct device
-> > > > > > *hostdev)
-> > > > > >          dev_warn(&child->dev, "set resource fail (%d)\n", ret);
-> > > > > >              return ret;
-> > > > > >          }
-> > > > > > +    if (!strcmp(acpi_device_hid(child), "HISI1031")) {
-> > > > > 
-> > > > 
-> > > > Hi Mika,
-> > > > 
-> > > > > Hmm, there is a way in struct mfd_cell to match child devices using _HID
-> > > > > so is there something preventing you from using that?
-> > > > 
-> > > > Not that I know about. Can you describe this method? I guess I also
-> > > > don't need to set the mfd_cell pnpid either for this special case device.
-> > > > 
-> > > 
-> > > So we using the mfd_cell to match child devices using _HID. At a glance, I
-> > > don't actually see other drivers to use mfd_cell_acpi_match.pnpid .
-> > > 
-> > > Anyway we don't use static tables as we need to update the resources of the
-> > > cell dynamically. However I do look at a driver like intel_quark_i2c_gpio.c,
-> > > and this dynamically modifies the value of global mfd_cell array here:
-> > > https://elixir.bootlin.com/linux/latest/source/drivers/mfd/intel_quark_i2c_gpio.c#L266
-> > > 
-> > > I know the cell array is only used at probe time, but this did not look to
-> > > be good standard practice to me.
-> > 
-> > Lots of drivers do this to supply dynamic data.  If there is no other
-> > sane way of providing such data, it's fine to do.  Although each
-> > situation should be dealt with on a case-by-case basis.
-> > 
-> 
-> Hi Lee,
-> 
-> Thanks for your input.
-> 
-> I do see others drivers which use dynamic mem for the mfd_cells (like
-> cros_ec_dev.c), so what we're doing in this driver already is not totally
-> unchartered territory. But creating the MFD cells from the ACPI table could
-> be ...
+--vkogqOf2sHV7VnPd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Right.  I don't normally like mixing platform data technologies (MFD,
-ACPI and DT).  I normally NACK patches which take information from
-Device Tree and populate MFD cells with it.  ACPI would be the same I
-guess.
+On Tue, Oct 31, 2017 at 12:32:58PM -0700, Eric Anholt wrote:
+> It turns out that I had just mistaken what type of write the register
+> writes were supposed to be, using DCS instead of generic long writes.
+>=20
+> Switching to transactions instead of using the atmel as a bridge also
+> seems to resolve the sparkling pixels problem I've had.
+>=20
+> Signed-off-by: Eric Anholt <eric@anholt.net>
+> Fixes: 2f733d6194bd ("drm/panel: Add support for the Raspberry Pi 7" Touc=
+hscreen.")
+> ---
+>  drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c | 14 +-------------
+>  1 file changed, 1 insertion(+), 13 deletions(-)
 
-> Anyway, I'll cc you in my next patchset and maybe you can kindly check it.
-> 
+Did you want to take this along with patch 1 through drm-misc-next? If
+so:
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--vkogqOf2sHV7VnPd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrm4YEACgkQ3SOs138+
+s6HOUQ//cWBKxhPHpo99liEnuylq30AaLeuGx99PVspiJ0nA2rrIV13o3n33QqFd
+jApQojFJ6Y7hWmVF5sgf7jpj2Weq95L3a95a+Ko9hwIIfHCntPe4UEbKbizd0ChW
+JCL4mI4oG+s7DPjzwOkfSCVAsF88lsqE6nfRJAIhFICACSxM4OvoR6YqJvizPYyd
+uGo/se/iUoL7sAcAuAr0CR/2h4hnoQyRzwOSRY++UyqVgnJJ7rz6UESJ+glk5hQQ
+v7yGlBHcnzqTVXhO6V1Crhw9uP66irUS0YrO9/0/OdJgcn/SYQoy8FGa1fwcpSz5
+WqDdXk9p4q09eRmMW//9J8Wv1wqi3k02tHNxqnXq9DG3CxVw5weVw5298nnKpVkN
+eRWEDy1J510UhokDsMiW6wO6szTo4Qkd/HOsN/jPo/NYyKN66Qpv4yAP5WTDrinU
+0Hp7sNEU1DfZrxt3oFrpJ7rYRVRhYhqqEarqkepHJi3xum3rv6bGql2x+QTv+e40
+zTvPvIsoBcR/ITvsC6+3bk90ElrswT033+A0N8s7sB7TI/0VjblIpLHlyliRykCh
+UGRF9q72iK9riiwHTD9q8RTIGaiSp3r/RJcb62ru6W173BTquCFiyQCEekSQYOM/
+CLkin+vu2YZ8ucqoJifmux05dVz4MEImbsDp4MIwYYnbG7dQ450=
+=F8ks
+-----END PGP SIGNATURE-----
+
+--vkogqOf2sHV7VnPd--
