@@ -1,95 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754258AbeD3Lv0 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 07:51:26 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:37050 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753414AbeD3LvX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 07:51:23 -0400
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
-Subject: Re: [PATCH] IB/core: Make ib_mad_client_id atomic
-From: =?utf-8?Q?H=C3=A5kon_Bugge?= <haakon.bugge@oracle.com>
-In-Reply-To: <1524856116.11756.85.camel@redhat.com>
-Date: Mon, 30 Apr 2018 13:50:57 +0200
-Cc: jackm <jackm@dev.mellanox.co.il>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Don Hiatt <don.hiatt@intel.com>, Ira Weiny <ira.weiny@intel.com>,
-        Sean Hefty <sean.hefty@intel.com>,
-        OFED mailing list <linux-rdma@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Message-Id: <DCABB189-F45C-487C-A78F-2F8441928E4B@oracle.com>
-References: <20180418142450.15581-1-Haakon.Bugge@oracle.com>
- <1524196555.11756.30.camel@redhat.com> <20180420153451.GF30433@ziepe.ca>
- <50E3FE4A-2C6E-4493-92E1-383C349FAE3A@oracle.com>
- <20180423221618.0000795d@dev.mellanox.co.il>
- <C546E163-297B-438E-AF76-CC04247ABFBA@oracle.com>
- <20180426213250.0000515d@dev.mellanox.co.il>
- <9fdd3ec4-ee91-5442-e753-25d2ecd27ea9@xsintricity.com>
- <A58D5192-06E7-46A3-869C-273E9A2BC128@oracle.com>
- <1524856116.11756.85.camel@redhat.com>
-To: Doug Ledford <dledford@redhat.com>
-X-Mailer: Apple Mail (2.3445.6.18)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8878 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=965
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804300115
+        id S1754304AbeD3Lv6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 07:51:58 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53802 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753092AbeD3Lsw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 07:48:52 -0400
+From: Eric Auger <eric.auger@redhat.com>
+To: eric.auger.pro@gmail.com, eric.auger@redhat.com,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com, cdall@kernel.org,
+        peter.maydell@linaro.org
+Cc: andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
+Subject: [PATCH v6 02/12] KVM: arm/arm64: Document KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
+Date: Mon, 30 Apr 2018 13:48:28 +0200
+Message-Id: <1525088918-8600-3-git-send-email-eric.auger@redhat.com>
+In-Reply-To: <1525088918-8600-1-git-send-email-eric.auger@redhat.com>
+References: <1525088918-8600-1-git-send-email-eric.auger@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3UBpVBs019350
 
+We introduce a new KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION attribute in
+KVM_DEV_ARM_VGIC_GRP_ADDR group. It allows userspace to provide the
+base address and size of a redistributor region
 
+Compared to KVM_VGIC_V3_ADDR_TYPE_REDIST, this new attribute allows
+to declare several separate redistributor regions.
 
-> On 27 Apr 2018, at 21:08, Doug Ledford <dledford@redhat.com> wrote:
-> 
-> On Thu, 2018-04-26 at 20:51 +0200, Håkon Bugge wrote:
->>> Jason is out this week.  I'll end up processing this one (probably later
->>> today).  But I’ll fix up the commit message to suit my tastes when I do.
->> 
->> Thank you, Doug and Jack,
-> 
-> I reworded the commit message, let me know if you think I worded it
-> wrong:
-> 
-> commit 69f01b81539c62f3dd96f9f02138ad7b839a0c70 (HEAD -> k.o/wip/dl-for-rc)
-> Author: Håkon Bugge <haakon.bugge@oracle.com>
-> Date:   Wed Apr 18 16:24:50 2018 +0200
-> 
->    IB/core: Make ib_mad_client_id atomic
-> 
->    Currently, kernel protects access to the agent ID allocator on a per
->    port basis using a spinlock, so it is impossible for two apps/threads on
->    the same port to get the same TID, but it is entirely possible for two
->    threads on different ports to end up with the same TID.  As this can be
->    confusing (regardless of it being legal according to the IB Spec 1.3,
->    C13-18.1.1, in section 13.4.6.4 - TransactionID usage: "Then initiating
->    a new operation, MADHeader:TransactionID shall be set to such a value
->    that within that MAD the combination of TIG, SGID, and MgmtClass is
->    different from that of any other currently executing operation. If the
->    MAD does not have a GRH, its SLID is used in the combination in place of
->    an SGID." which guarantees we are legal because our different ports will
->    have different SGID/SLID creating a unique tuple even if the TIDs are
->    identical), and as we might want to open the TID allocator up to more
->    parallel usage later, make the TID an atomic type so that no two
->    allocations, regardless of port number, will be the same.
+So the whole redist space does not need to be contiguous anymore.
 
-The wording is OK per se, but the last sentence spans 12 lines - and as such - a little bit hard to comprehend. I suggest just to refer to IB Spec 1.3, clause C13-18.1.1 and not quote it and make the last sub-sentence (starting with “and as we might want to open”) a sentence by its own.
+Signed-off-by: Eric Auger <eric.auger@redhat.com>
+Reviewed-by: Peter Maydell <peter.maydell@linaro.org>
+Acked-by: Christoffer Dall <christoffer.dall@arm.com>
 
+---
+v5 -> v6:
+- s/pointed by/pointed to by
+- add Peter's R-b and Christoffer's A-b
 
-Thxs, Håkon
+v4 -> v5:
+- Document read access
+- removed Peter's R-b
 
-> 
->    Signed-off-by: Håkon Bugge <haakon.bugge@oracle.com>
->    Reviewed-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
->    Reviewed-by: Ira Weiny <ira.weiny@intel.com>
->    Reviewed-by: Zhu Yanjun <yanjun.zhu@oracle.com>
->    Signed-off-by: Doug Ledford <dledford@redhat.com>
-> 
-> -- 
-> Doug Ledford <dledford@redhat.com>
->    GPG KeyID: B826A3330E572FDD
->    Key fingerprint = AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
+v3 -> v4:
+- Added Peter's R-b
+---
+ Documentation/virtual/kvm/devices/arm-vgic-v3.txt | 30 +++++++++++++++++++++--
+ 1 file changed, 28 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/virtual/kvm/devices/arm-vgic-v3.txt b/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
+index 9293b45..2408ab7 100644
+--- a/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
++++ b/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
+@@ -27,16 +27,42 @@ Groups:
+       VCPU and all of the redistributor pages are contiguous.
+       Only valid for KVM_DEV_TYPE_ARM_VGIC_V3.
+       This address needs to be 64K aligned.
++
++    KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION (rw, 64-bit)
++      The attribute data pointed to by kvm_device_attr.addr is a __u64 value:
++      bits:     | 63   ....  52  |  51   ....   16 | 15 - 12  |11 - 0
++      values:   |     count      |       base      |  flags   | index
++      - index encodes the unique redistributor region index
++      - flags: reserved for future use, currently 0
++      - base field encodes bits [51:16] of the guest physical base address
++        of the first redistributor in the region.
++      - count encodes the number of redistributors in the region. Must be
++        greater than 0.
++      There are two 64K pages for each redistributor in the region and
++      redistributors are laid out contiguously within the region. Regions
++      are filled with redistributors in the index order. The sum of all
++      region count fields must be greater than or equal to the number of
++      VCPUs. Redistributor regions must be registered in the incremental
++      index order, starting from index 0.
++      The characteristics of a specific redistributor region can be read
++      by presetting the index field in the attr data.
++      Only valid for KVM_DEV_TYPE_ARM_VGIC_V3.
++
++  It is invalid to mix calls with KVM_VGIC_V3_ADDR_TYPE_REDIST and
++  KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION attributes.
++
+   Errors:
+     -E2BIG:  Address outside of addressable IPA range
+-    -EINVAL: Incorrectly aligned address
++    -EINVAL: Incorrectly aligned address, bad redistributor region
++             count/index, mixed redistributor region attribute usage
+     -EEXIST: Address already configured
++    -ENOENT: Attempt to read the characteristics of a non existing
++             redistributor region
+     -ENXIO:  The group or attribute is unknown/unsupported for this device
+              or hardware support is missing.
+     -EFAULT: Invalid user pointer for attr->addr.
+ 
+ 
+-
+   KVM_DEV_ARM_VGIC_GRP_DIST_REGS
+   KVM_DEV_ARM_VGIC_GRP_REDIST_REGS
+   Attributes:
+-- 
+2.5.5
