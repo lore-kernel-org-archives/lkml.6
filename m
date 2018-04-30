@@ -1,64 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752585AbeD3JDo (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 05:03:44 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:43918 "EHLO mail.bootlin.com"
+        id S1752668AbeD3JEB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 05:04:01 -0400
+Received: from mail.sysgo.com ([176.9.12.79]:36266 "EHLO mail.sysgo.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752484AbeD3JDl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 05:03:41 -0400
-Date: Mon, 30 Apr 2018 11:03:39 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Eric Anholt <eric@anholt.net>
-Cc: dri-devel@lists.freedesktop.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] drm/vc4: Skip ULPS latching when we're in that ULPS
- state already.
-Message-ID: <20180430110339.29d217e7@bbrezillon>
-In-Reply-To: <20171031193258.17373-1-eric@anholt.net>
-References: <20171031193258.17373-1-eric@anholt.net>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1752103AbeD3JD7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 05:03:59 -0400
+From: David Engraf <david.engraf@sysgo.com>
+To: dmitry.torokhov@gmail.com
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        David Engraf <david.engraf@sysgo.com>
+Subject: [PATCH] Input: serio - add writing multiple bytes at once
+Date: Mon, 30 Apr 2018 11:03:24 +0200
+Message-Id: <20180430090324.30845-1-david.engraf@sysgo.com>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 31 Oct 2017 12:32:57 -0700
-Eric Anholt <eric@anholt.net> wrote:
+The current version only supports forwarding a single byte to the tty
+layer.
 
-> It seems that trying to go from unlatched to unlatched will time out
-> waiting for STOP, and we can just skip that.
-> 
-> Signed-off-by: Eric Anholt <eric@anholt.net>
+This patch adds serio_write_length() to allow a serport driver writing
+multiple bytes at once. The patch also includes a fallback to
+serio_write_length() when a driver did not register a single byte function.
 
-Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Signed-off-by: David Engraf <david.engraf@sysgo.com>
+---
+ drivers/input/serio/serport.c |  7 ++++---
+ include/linux/serio.h         | 13 ++++++++++++-
+ 2 files changed, 16 insertions(+), 4 deletions(-)
 
-> ---
->  drivers/gpu/drm/vc4/vc4_dsi.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/vc4/vc4_dsi.c b/drivers/gpu/drm/vc4/vc4_dsi.c
-> index 94085f8bcd68..8aa897835118 100644
-> --- a/drivers/gpu/drm/vc4/vc4_dsi.c
-> +++ b/drivers/gpu/drm/vc4/vc4_dsi.c
-> @@ -753,6 +753,11 @@ static void vc4_dsi_ulps(struct vc4_dsi *dsi, bool ulps)
->  			 (dsi->lanes > 2 ? DSI1_STAT_PHY_D2_STOP : 0) |
->  			 (dsi->lanes > 3 ? DSI1_STAT_PHY_D3_STOP : 0));
->  	int ret;
-> +	bool ulps_currently_enabled = (DSI_PORT_READ(PHY_AFEC0) &
-> +				       DSI_PORT_BIT(PHY_AFEC0_LATCH_ULPS));
-> +
-> +	if (ulps == ulps_currently_enabled)
-> +		return;
->  
->  	DSI_PORT_WRITE(STAT, stat_ulps);
->  	DSI_PORT_WRITE(PHYC, DSI_PORT_READ(PHYC) | phyc_ulps);
-
-
-
+diff --git a/drivers/input/serio/serport.c b/drivers/input/serio/serport.c
+index f8ead9f9c77e..209343f636a3 100644
+--- a/drivers/input/serio/serport.c
++++ b/drivers/input/serio/serport.c
+@@ -45,10 +45,11 @@ struct serport {
+  * Callback functions from the serio code.
+  */
+ 
+-static int serport_serio_write(struct serio *serio, unsigned char data)
++static int serport_serio_write_length(struct serio *serio,
++				      const unsigned char *data, int count)
+ {
+ 	struct serport *serport = serio->port_data;
+-	return -(serport->tty->ops->write(serport->tty, &data, 1) != 1);
++	return -(serport->tty->ops->write(serport->tty, data, count) != count);
+ }
+ 
+ static int serport_serio_open(struct serio *serio)
+@@ -176,7 +177,7 @@ static ssize_t serport_ldisc_read(struct tty_struct * tty, struct file * file, u
+ 	snprintf(serio->phys, sizeof(serio->phys), "%s/serio0", tty_name(tty));
+ 	serio->id = serport->id;
+ 	serio->id.type = SERIO_RS232;
+-	serio->write = serport_serio_write;
++	serio->write_length = serport_serio_write_length;
+ 	serio->open = serport_serio_open;
+ 	serio->close = serport_serio_close;
+ 	serio->port_data = serport;
+diff --git a/include/linux/serio.h b/include/linux/serio.h
+index 138a5efe863a..6f5cb92d0f22 100644
+--- a/include/linux/serio.h
++++ b/include/linux/serio.h
+@@ -35,6 +35,8 @@ struct serio {
+ 	spinlock_t lock;
+ 
+ 	int (*write)(struct serio *, unsigned char);
++	int (*write_length)(struct serio *serio, const unsigned char *data,
++			    int count);
+ 	int (*open)(struct serio *);
+ 	void (*close)(struct serio *);
+ 	int (*start)(struct serio *);
+@@ -122,12 +124,21 @@ void serio_unregister_driver(struct serio_driver *drv);
+ 	module_driver(__serio_driver, serio_register_driver, \
+ 		       serio_unregister_driver)
+ 
++static inline int serio_write_length(struct serio *serio,
++				     const unsigned char *data, int count)
++{
++	if (serio->write_length)
++		return serio->write_length(serio, data, count);
++	else
++		return -1;
++}
++
+ static inline int serio_write(struct serio *serio, unsigned char data)
+ {
+ 	if (serio->write)
+ 		return serio->write(serio, data);
+ 	else
+-		return -1;
++		return serio_write_length(serio, &data, 1);
+ }
+ 
+ static inline void serio_drv_write_wakeup(struct serio *serio)
 -- 
-Boris Brezillon, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.14.1
