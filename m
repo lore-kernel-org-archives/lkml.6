@@ -1,51 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753910AbeD3NWg (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 09:22:36 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55930 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752110AbeD3NWf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 09:22:35 -0400
-Date: Mon, 30 Apr 2018 15:22:32 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: syzbot <syzbot+b109633ea805cac54a61@syzkaller.appspotmail.com>
-Cc: akpm@linux-foundation.org, ebiederm@xmission.com, ldv@altlinux.org,
-        linux-kernel@vger.kernel.org, linux@dominikbrodowski.net,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Subject: Re: WARNING in task_participate_group_stop (2)
-Message-ID: <20180430132232.GA7990@redhat.com>
-References: <0000000000001490fb056affabd8@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0000000000001490fb056affabd8@google.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S1754059AbeD3NXC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 09:23:02 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:41095 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752312AbeD3NXA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 09:23:00 -0400
+From: Colin King <colin.king@canonical.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        linux-gpio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next][V2] pinctrl: actions: fix missing break in PIN_CONFIG_DRIVE_STRENGTH case.
+Date: Mon, 30 Apr 2018 14:22:59 +0100
+Message-Id: <20180430132259.9938-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/29, syzbot wrote:
->
-> RIP: 0010:task_participate_group_stop+0x205/0x260 kernel/signal.c:351
-> RSP: 0018:ffff8801ae7b7880 EFLAGS: 00010093
-> RAX: ffff8801d96200c0 RBX: 0000000000000000 RCX: ffffffff81498b5b
-> RDX: 0000000000000000 RSI: ffffffff81498c75 RDI: 0000000000000005
-> RBP: ffff8801ae7b78a0 R08: ffff8801d96200c0 R09: ffffed0036c48971
-> R10: ffffed0036c48971 R11: ffff8801b6244b8b R12: ffff8801d926ecd8
-> R13: ffff8801d926ec40 R14: 0000000000040000 R15: dffffc0000000000
->  do_signal_stop+0x502/0xa20 kernel/signal.c:2176
->  get_signal+0x9b4/0x1960 kernel/signal.c:2353
->  do_signal+0x98/0x2040 arch/x86/kernel/signal.c:810
->  exit_to_usermode_loop+0x28a/0x310 arch/x86/entry/common.c:162
->  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
->  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
->  do_syscall_64+0x6ac/0x800 arch/x86/entry/common.c:290
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+From: Colin Ian King <colin.king@canonical.com>
 
-Thanks... I need to think and recall how this code works, but at first glance
-zap_other_threads() needs task_clear_jobctl_pending(current).
+There is a missing break in case PIN_CONFIG_DRIVE_STRENGTH leading to
+a fall-through to the PIN_CONFIG_SLEW_RATE case that performs different
+checks against *arg. This looks like an unintentional missing break so
+add in the break.
 
-I am almost sure the warning should go away, but iiuc there are more problems
-and it is not clear to me what can we do...
+Detected by CoverityScan, CID#1468456, 1468459 ("Missing break in switch")
 
-Oleg.
+Fixes: 513d7a2f7e0f ("pinctrl: actions: Add Actions S900 pinctrl driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/pinctrl/actions/pinctrl-owl.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/pinctrl/actions/pinctrl-owl.c b/drivers/pinctrl/actions/pinctrl-owl.c
+index 928b40f71a3c..ee090697b1e9 100644
+--- a/drivers/pinctrl/actions/pinctrl-owl.c
++++ b/drivers/pinctrl/actions/pinctrl-owl.c
+@@ -406,6 +406,7 @@ static int owl_group_pinconf_arg2val(const struct owl_pingroup *g,
+ 		default:
+ 			return -EINVAL;
+ 		}
++		break;
+ 	case PIN_CONFIG_SLEW_RATE:
+ 		if (*arg)
+ 			*arg = OWL_PINCONF_SLEW_FAST;
+@@ -441,6 +442,7 @@ static int owl_group_pinconf_val2arg(const struct owl_pingroup *g,
+ 		default:
+ 			return -EINVAL;
+ 		}
++		break;
+ 	case PIN_CONFIG_SLEW_RATE:
+ 		if (*arg)
+ 			*arg = 1;
+-- 
+2.17.0
