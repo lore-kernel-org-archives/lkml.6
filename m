@@ -1,78 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755283AbeD3XBQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 19:01:16 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:53628 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751384AbeD3XBO (ORCPT
+        id S1755345AbeD3XEi (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 19:04:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42314 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751384AbeD3XEh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 19:01:14 -0400
-X-Google-Smtp-Source: AB8JxZqvpakLgw5Lp99OzCNQIsLNoTQdnOLsqnTXLmG9uQZLIdL093F+B7T4UHU1FrHMElbpF8S9GA==
-Date: Mon, 30 Apr 2018 17:01:08 -0600
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Doug Ledford <dledford@redhat.com>
-Cc: jackm <jackm@dev.mellanox.co.il>,
-        =?utf-8?B?SMOla29u?= Bugge <haakon.bugge@oracle.com>,
-        Don Hiatt <don.hiatt@intel.com>,
-        Dasaratharaman Chandramouli
-        <dasaratharaman.chandramouli@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>, Sean Hefty <sean.hefty@intel.com>,
-        OFED mailing list <linux-rdma@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] IB/core: Make ib_mad_client_id atomic
-Message-ID: <20180430230108.GE26909@ziepe.ca>
-References: <20180418142450.15581-1-Haakon.Bugge@oracle.com>
- <1524196555.11756.30.camel@redhat.com>
- <20180420153451.GF30433@ziepe.ca>
- <50E3FE4A-2C6E-4493-92E1-383C349FAE3A@oracle.com>
- <20180423221618.0000795d@dev.mellanox.co.il>
- <20180430144930.GB26895@ziepe.ca>
- <1525108249.11756.93.camel@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1525108249.11756.93.camel@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Mon, 30 Apr 2018 19:04:37 -0400
+Date: Mon, 30 Apr 2018 16:04:36 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Chintan Pandya <cpandya@codeaurora.org>
+Cc: vbabka@suse.cz, labbott@redhat.com, catalin.marinas@arm.com,
+        hannes@cmpxchg.org, f.fainelli@gmail.com, xieyisheng1@huawei.com,
+        ard.biesheuvel@linaro.org, richard.weiyang@gmail.com,
+        byungchul.park@lge.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, khandual@linux.vnet.ibm.com,
+        mhocko@kernel.org
+Subject: Re: [PATCH v2 2/2] mm: vmalloc: Pass proper vm_start into
+ debugobjects
+Message-Id: <20180430160436.45f92ec5b3c78c84e4425ec4@linux-foundation.org>
+In-Reply-To: <1523961828-9485-3-git-send-email-cpandya@codeaurora.org>
+References: <1523961828-9485-1-git-send-email-cpandya@codeaurora.org>
+        <1523961828-9485-3-git-send-email-cpandya@codeaurora.org>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 30, 2018 at 01:10:49PM -0400, Doug Ledford wrote:
-> On Mon, 2018-04-30 at 08:49 -0600, Jason Gunthorpe wrote:
-> > On Mon, Apr 23, 2018 at 10:16:18PM +0300, jackm wrote:
-> > 
-> > > > > TIDs need to be globally unique on the entire machine.  
-> > > Jason, that is not exactly correct.
-> > 
-> > The expecation for /dev/umad users is that they all receive locally
-> > unique TID prefixes. The kernel may be OK to keep things port-specific
-> > but it is slightly breaking the API we are presenting to userspace to
-> > allow them to alias..
-> > 
-> > Jason
-> 
-> Would people be happier with this commit message then:
-> 
-> IB/core: Make ib_mad_client_id atomic
->   
-> Currently, the kernel protects access to the agent ID allocator on a per
-> port basis using a spinlock, so it is impossible for two apps/threads on
-> the same port to get the same TID, but it is entirely possible for two
-> threads on different ports to end up with the same TID.  
-> 
-> As this can be confusing (regardless of it being legal according to the
-> IB Spec 1.3, C13-18.1.1, in section 13.4.6.4 - TransactionID usage),
-> and as the rdma-core user space API for /dev/umad devices implies unique
-> TIDs even across ports, make the TID an atomic type so that no two
-> allocations, regardless of port number, will be the same.
-> 
-> Signed-off-by: Håkon Bugge <haakon.bugge@oracle.com>
-> Reviewed-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
-> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
-> Reviewed-by: Zhu Yanjun <yanjun.zhu@oracle.com>
-> Signed-off-by: Doug Ledford <dledford@redhat.com>
+On Tue, 17 Apr 2018 16:13:48 +0530 Chintan Pandya <cpandya@codeaurora.org> wrote:
 
-fine for me
+> Client can call vunmap with some intermediate 'addr'
+> which may not be the start of the VM area. Entire
+> unmap code works with vm->vm_start which is proper
+> but debug object API is called with 'addr'. This
+> could be a problem within debug objects.
 
-Jason
+As far as I can tell this is indeed the case, but it's a pretty weird
+thing for us to do.  I wonder if there is any code in the kernel which
+is passing such an offset address into vunmap().  If so, perhaps we
+should check for it and do a WARN_ONCE so it gets fixed.
+
+> Pass proper start address into debug object API.
+>
+> ...
+>
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -1124,15 +1124,15 @@ void vm_unmap_ram(const void *mem, unsigned int count)
+>  	BUG_ON(addr > VMALLOC_END);
+>  	BUG_ON(!PAGE_ALIGNED(addr));
+>  
+> -	debug_check_no_locks_freed(mem, size);
+> -
+>  	if (likely(count <= VMAP_MAX_ALLOC)) {
+> +		debug_check_no_locks_freed(mem, size);
+
+But this still has the problem you described, no?  Shouldn't we be
+doing yet another find_vmap_area()?
+
+>  		vb_free(mem, size);
+>  		return;
+>  	}
+>  
+>  	va = find_vmap_area(addr);
+>  	BUG_ON(!va);
+> +	debug_check_no_locks_freed(va->va_start, (va->va_end - va->va_start));
+>  	free_unmap_vmap_area(va);
+>  }
+>  EXPORT_SYMBOL(vm_unmap_ram);
+> @@ -1507,8 +1507,8 @@ static void __vunmap(const void *addr, int deallocate_pages)
+>  		return;
+>  	}
+>  
+> -	debug_check_no_locks_freed(addr, get_vm_area_size(area));
+> -	debug_check_no_obj_freed(addr, get_vm_area_size(area));
+> +	debug_check_no_locks_freed(area->addr, get_vm_area_size(area));
+> +	debug_check_no_obj_freed(area->addr, get_vm_area_size(area));
+>  
+
+Offtopic: it's a bit sad that __vunmap() does the find_vmap_area() then
+calls remove_vm_area() which runs find_vmap_area() yet again...
