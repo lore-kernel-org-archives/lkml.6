@@ -1,41 +1,45 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZr3OkOrL6yab741zLXRiNgbPaf1D30YTGRlMpAViOP6R+u77BaNuRQfpPi8RZCXkbZ+BcWn
-ARC-Seal: i=1; a=rsa-sha256; t=1525116536; cv=none;
+X-Google-Smtp-Source: AB8JxZpbbg98A2I2eaudGGuVmvUJh0axryG7LE0NMirsfKv55Z1W/bHrngMgysplxBNdlTSFLEyS
+ARC-Seal: i=1; a=rsa-sha256; t=1525116534; cv=none;
         d=google.com; s=arc-20160816;
-        b=W39HPsUdyrJAkVF6/N6IU6GqI7zfkcrw5SCJLhP2uQRaAfjUzsGx6wWeLLvNakEWZM
-         DOq5PVpovHqQSF9nUm85Ko/KjQ7bFXblhaHoycnN/7FDytu68ozpRubCkXkJaXdShMjE
-         6TTtb4SY3rEQRlKOboYE41UmPXoPP//7efUd4WBaSG94p0YFkd4y5yicd9+KhPJ1/jG4
-         LI3NmRee0UZAPmzjACDXgbBFu1H7sTMjX8pjczbk3qLikwiTIgxNBAjUluezo+MbhA5p
-         13sdYBvnb+4xAjqoCje+h5opV5mP60upqJsEZjCdb5OURjIj4058oQHAl3S9JdyLzZgi
-         OxpA==
+        b=maMP0CDMgcCEVqnFxzeBqPQZ3D/czEwZL5d1DuvkGumjwdHGmyRtwzDHtLYvYrPU5w
+         u1XPtXz3ZF2oT2cGwhD4yrPX5ZEJkx07YXoxbimHZa9h4daKFDqrCBXWBuCnc3nAIpqq
+         hWBWfCizP2mKE1DxE3uID/Z1PqbiV/2Ten03lC4oHdr85Jfsy0Eq/XB3EX7XTDK/uDDR
+         JAYDPW0IAS5qzAn0NXTHlg9LI8PFIGWKKM+fyHLAoLf8LdPjWm0kbF6jtoIn05ufenPI
+         5Yc5l+UbBtj5smu/fH/zLuY2VNxRBDY8hEdIGHGHZ6dvhxLjR97rj/T2EfKcuKvZs4XE
+         FGlQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=4zQ7Gpvh9pBx+jFkm43dcP2Ggl8OFrzc6xB0MEwX7CI=;
-        b=JovEnyHrPxeNpLFMNpYaJJeSRy0SUZ4RE191suwtL/76up87ZmHIGY7+MDz0ZjqARF
-         CB10HmYwY0aP7ejf32NML1N1tJOcMRKpR1+vD6PY6BAADJDqO1G2rEJJAXcC1nI08c9R
-         rDeqJemOHB3H411Kl5YFsYItwstwFPqtvbmXpfhbwqCDiXoHCPtDwb+I5M5NU5QXmEpG
-         p2GtcJ7CweBMwb7hm/roKvOAvEftIbehgmJkkGbAXF4l60HsbFvAQVrEMlova+a1dTVX
-         ba9RBCSGhkpobi0K/SWn4wD5sNlRePi77FZB/Zwm0T4UApcBWU/kd/IrwuWD9dOaP7Wr
-         pCKA==
+        bh=bdixK1XGgf3OqWKBVHt8MvCsLaLM8092VJ5eUBejoIA=;
+        b=Z+as3+1enIeyNTnlSz4MgLrcxppx38BlO0c30oyjlW4XJPiBMqmMv+Jb1R/bGr+PLm
+         V+4BzfOb4VdeJGDJE4IqRNd9ioSvRBK3T7ScmguX4WC0D/UnsTuOHfXKCCqKRnmh5utW
+         ch6/TjgHvBS2JGHYXeDUWqxBkDEzpufZ6twFH8xiTotd04YmBYdB45dv2OlWqX5DDA6e
+         HQtlQ/fq/gpU0HxpcT12S7TRwJ8GXJAvlccoaAi/vTfcldoAA5QhRbYvDfcXZnFl+lFM
+         Rr+GJN0fHrqzAQVhhaiQvZdHgtZTiVa/zsmJbnsBSPAB7Y6ew9fRBUWUVtN+xx+d5NTM
+         mqfQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24C46235E5
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F9E72344C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Vitezslav Samel <vitezslav@samel.cz>,
-	Borislav Petkov <bp@suse.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ashok Raj <ashok.raj@intel.com>
-Subject: [PATCH 4.16 110/113] x86/microcode: Do not exit early from __reload_late()
-Date: Mon, 30 Apr 2018 12:25:21 -0700
-Message-Id: <20180430184019.843643264@linuxfoundation.org>
+	Laura Abbott <labbott@redhat.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Wang Nan <wangnan0@huawei.com>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	=?UTF-8?q?Fredrik=20Sch=C3=B6n?= <fredrikschon@gmail.com>
+Subject: [PATCH 4.16 106/113] objtool, perf: Fix GCC 8 -Wrestrict error
+Date: Mon, 30 Apr 2018 12:25:17 -0700
+Message-Id: <20180430184019.681265563@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184015.043892819@linuxfoundation.org>
 References: <20180430184015.043892819@linuxfoundation.org>
@@ -45,8 +49,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200597625375020?=
-X-GMAIL-MSGID: =?utf-8?q?1599200597625375020?=
+X-GMAIL-THRID: =?utf-8?q?1599200594550452578?=
+X-GMAIL-MSGID: =?utf-8?q?1599200594550452578?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,58 +58,44 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Borislav Petkov <bp@suse.de>
+From: Josh Poimboeuf <jpoimboe@redhat.com>
 
-commit 09e182d17e8891dd73baba961a0f5a82e9274c97 upstream.
+commit 854e55ad289ef8888e7991f0ada85d5846f5afb9 upstream.
 
-Vitezslav reported a case where the
+Starting with recent GCC 8 builds, objtool and perf fail to build with
+the following error:
 
-  "Timeout during microcode update!"
+  ../str_error_r.c: In function ‘str_error_r’:
+  ../str_error_r.c:25:3: error: passing argument 1 to restrict-qualified parameter aliases with argument 5 [-Werror=restrict]
+     snprintf(buf, buflen, "INTERNAL ERROR: strerror_r(%d, %p, %zd)=%d", errnum, buf, buflen, err);
 
-panic would hit. After a deeper look, it turned out that his .config had
-CONFIG_HOTPLUG_CPU disabled which practically made save_mc_for_early() a
-no-op.
+The code seems harmless, but there's probably no benefit in printing the
+'buf' pointer in this situation anyway, so just remove it to make GCC
+happy.
 
-When that happened, the discovered microcode patch wasn't saved into the
-cache and the late loading path wouldn't find any.
-
-This, then, lead to early exit from __reload_late() and thus CPUs waiting
-until the timeout is reached, leading to the panic.
-
-In hindsight, that function should have been written so it does not return
-before the post-synchronization. Oh well, I know better now...
-
-Fixes: bb8c13d61a62 ("x86/microcode: Fix CPU synchronization routine")
-Reported-by: Vitezslav Samel <vitezslav@samel.cz>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Vitezslav Samel <vitezslav@samel.cz>
-Tested-by: Ashok Raj <ashok.raj@intel.com>
-Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/20180418081140.GA2439@pc11.op.pod.cz
-Link: https://lkml.kernel.org/r/20180421081930.15741-2-bp@alien8.de
+Reported-by: Laura Abbott <labbott@redhat.com>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Tested-by: Laura Abbott <labbott@redhat.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: http://lkml.kernel.org/r/20180316031154.juk2uncs7baffctp@treble
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Fredrik Schön <fredrikschon@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/cpu/microcode/core.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ tools/lib/str_error_r.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kernel/cpu/microcode/core.c
-+++ b/arch/x86/kernel/cpu/microcode/core.c
-@@ -564,14 +564,12 @@ static int __reload_late(void *info)
- 	apply_microcode_local(&err);
- 	spin_unlock(&update_lock);
- 
-+	/* siblings return UCODE_OK because their engine got updated already */
- 	if (err > UCODE_NFOUND) {
- 		pr_warn("Error reloading microcode on CPU %d\n", cpu);
--		return -1;
--	/* siblings return UCODE_OK because their engine got updated already */
-+		ret = -1;
- 	} else if (err == UCODE_UPDATED || err == UCODE_OK) {
- 		ret = 1;
--	} else {
--		return ret;
- 	}
- 
- 	/*
+--- a/tools/lib/str_error_r.c
++++ b/tools/lib/str_error_r.c
+@@ -22,6 +22,6 @@ char *str_error_r(int errnum, char *buf,
+ {
+ 	int err = strerror_r(errnum, buf, buflen);
+ 	if (err)
+-		snprintf(buf, buflen, "INTERNAL ERROR: strerror_r(%d, %p, %zd)=%d", errnum, buf, buflen, err);
++		snprintf(buf, buflen, "INTERNAL ERROR: strerror_r(%d, [buf], %zd)=%d", errnum, buflen, err);
+ 	return buf;
+ }
