@@ -1,31 +1,31 @@
 Return-Path: <npiggin@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1525100218; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1525100214; cv=none;
         d=google.com; s=arc-20160816;
-        b=z8kzhks9ckteeIpGfpMsvzGhEUDnUm/eMghHInhKK5f5aAuS7gHov1dVQzbZBv2uln
-         iT2mx0Au4xRZmbFeI54BPvQ/URx9Dwu6BY/YzYoY/6aMdJHI+sXKHxPP6OFYW/yhOjtE
-         UmBwn60fIYRYjkunw9lUyVjE3jHfI1hLrlKP3qSmmrWW36AbpkESncrzjT2CC2qcE5/S
-         Y3LeVjdNwC9edBxDIXbQtEWxpRsdG+FWrbkWLYHdCAyZDgXxrgTfad4vJGJ+hTAsEHfJ
-         VRCzGID6hjHKaXFypn6VPvjNycpg1WISL0DMUMIuDYTIs5o5e/wPDxPomU9KxAPeWo5J
-         JRrw==
+        b=dN7BUxYLGAqvqfUO3D0Qgrx0LMXLEUNLClJHk1VicojH1/16UYg3TA9d3IYYt91HZd
+         pwxmac9VWjV8Ni+irIqkvbq3ZBhDUNzyloNPHt9VHB1O3AdAaZxyHSBDnEpN6FpjBmHZ
+         KCKCP0DeM7Y2J7Q09Jr1T7+MwfkuIshFhvdbLUeq1qp2tlUsQDa+wr5rhOLO5iZw8djN
+         s3ipGBiWsuFMf8kbSfqPwm1H7dBmMAO4g+ndPzuXQ5eJE8XrDKiqc71Z7NdmNB4o2HV2
+         jtMVCPAJ5uFHwuL6PTfsyTrw14mxsb+yJ9NoZmq8/h+EUswD+C+i3phTICYcnl1ddJup
+         yxNg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=fjmC+kPlGE91uLgJT33jj6nSucLu36EYujTmEQhL5nY=;
-        b=eK5KZRcQ8IrxyMQKKK3X6ACS/Vbg5Zh/uWaotiMg2MhMyfd5Bm7W4b+VzP4OMBV9B1
-         Kisi7hDBrsRh4lZeNAiWUzNrV8v75915cx8El8PCZEXJmhCfxkoN59d0TpP9utEi9bl8
-         3IZeFD9ZmywcHx4ZfQGPjb6sQiSo8kc+mQtIUtD+t/TV7dJAviKT6ayxOtTh4Cye86bP
-         YwkuFBoArVypiRIFg0a5Ok/VsxN/JGlcO7oWTpjjUiX/SWnpe3oTCG+eEiuHD//FsXXN
-         7e2iS18X4Acg4ng20eDya+SnF95Av+1t3GAFFuOG0FBYB0mQBuKPjZZxtZKS7gvAKSm4
-         RVYw==
+        bh=+IU9OuKDo/5/9ugzSvyn0R1pJSCZ7KdQ+KLiU89lKWk=;
+        b=dGB3ZrKw7raB97UJvxLXRBToVNvNdqWWNEqPfdEyxmH40rMSJlkKkJVyeBuAq9c2yX
+         zPPT9K40Un+fVEn/6FqFSzMGuIca0RrjKUkp706IGd6KOXP8uU3gh9irlTWZ/g9uebtq
+         A6AI8A4dGb4Q5yA1iJ80plcFpQjyzjYyRf9dHHHMA6oRj1khC02jZAf72fhv4Cc3zolb
+         PuwdpgEvqg2iaHBRZWX2eZuwd5so/L2YkLerBUcmB7qvIykLw/BcZI3UcPv0Ti9z0noq
+         LbFSuQ7djjCO+/mDbOXtepJGw5pJG6TQqeQp8SFrarDCRpZVW3j2iKXjwI9+JUM7sxFp
+         spDQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=GBPOoj/g;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=cbNhWRUl;
        spf=pass (google.com: domain of npiggin@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=npiggin@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=GBPOoj/g;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=cbNhWRUl;
        spf=pass (google.com: domain of npiggin@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=npiggin@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AB8JxZodEV0i8zzV9sG3KhRBGYv2MMDLSoRzC0ItxrmXoNZ4Xb1py5sVRZMmieA8BfJCmHcpEOQJBw==
+X-Google-Smtp-Source: AB8JxZrU2OEUOSWu+MSE/XPJHZGdDd8+ZJyg9PLDHn+bmN5mI7cQk82AMK1CB3jS+hgYbVHs4EZOFQ==
 From: Nicholas Piggin <npiggin@gmail.com>
 To: linuxppc-dev@lists.ozlabs.org
 Cc: Nicholas Piggin <npiggin@gmail.com>,
@@ -33,76 +33,73 @@ Cc: Nicholas Piggin <npiggin@gmail.com>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Jiri Slaby <jslaby@suse.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 13/15] tty: hvc: hvc_write may sleep
-Date: Tue,  1 May 2018 00:55:56 +1000
-Message-Id: <20180430145558.4308-14-npiggin@gmail.com>
+Subject: [PATCH 12/15] tty: hvc: hvc_poll may sleep
+Date: Tue,  1 May 2018 00:55:55 +1000
+Message-Id: <20180430145558.4308-13-npiggin@gmail.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430145558.4308-1-npiggin@gmail.com>
 References: <20180430145558.4308-1-npiggin@gmail.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599183486856301586?=
-X-GMAIL-MSGID: =?utf-8?q?1599183486856301586?=
+X-GMAIL-THRID: =?utf-8?q?1599183483271658480?=
+X-GMAIL-MSGID: =?utf-8?q?1599183483271658480?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Rework the hvc_write loop to drop and re-take the spinlock on each
-iteration, add a cond_resched. Don't bother with an initial hvc_push
-initially, which makes the logic simpler -- just do a hvc_push on
-each time around the loop.
+Introduce points where hvc_poll drops the lock, enables interrupts,
+and reschedules.
 
 Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
 ---
- drivers/tty/hvc/hvc_console.c | 36 ++++++++++++++++++++---------------
- 1 file changed, 21 insertions(+), 15 deletions(-)
+ drivers/tty/hvc/hvc_console.c | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/tty/hvc/hvc_console.c b/drivers/tty/hvc/hvc_console.c
-index 2abfc0b15fbb..6131d5084c42 100644
+index 745ac220fce8..2abfc0b15fbb 100644
 --- a/drivers/tty/hvc/hvc_console.c
 +++ b/drivers/tty/hvc/hvc_console.c
-@@ -493,23 +493,29 @@ static int hvc_write(struct tty_struct *tty, const unsigned char *buf, int count
- 	if (hp->port.count <= 0)
- 		return -EIO;
+@@ -589,7 +589,7 @@ static u32 timeout = MIN_TIMEOUT;
+ #define HVC_POLL_READ	0x00000001
+ #define HVC_POLL_WRITE	0x00000002
  
--	spin_lock_irqsave(&hp->lock, flags);
-+	while (count > 0) {
-+		spin_lock_irqsave(&hp->lock, flags);
- 
--	/* Push pending writes */
--	if (hp->n_outbuf > 0)
--		hvc_push(hp);
--
--	while (count > 0 && (rsize = hp->outbuf_size - hp->n_outbuf) > 0) {
--		if (rsize > count)
--			rsize = count;
--		memcpy(hp->outbuf + hp->n_outbuf, buf, rsize);
--		count -= rsize;
--		buf += rsize;
--		hp->n_outbuf += rsize;
--		written += rsize;
--		hvc_push(hp);
-+		rsize = hp->outbuf_size - hp->n_outbuf;
-+
-+		if (rsize) {
-+			if (rsize > count)
-+				rsize = count;
-+			memcpy(hp->outbuf + hp->n_outbuf, buf, rsize);
-+			count -= rsize;
-+			buf += rsize;
-+			hp->n_outbuf += rsize;
-+			written += rsize;
-+		}
-+
-+		if (hp->n_outbuf > 0)
-+			hvc_push(hp);
-+
-+		spin_unlock_irqrestore(&hp->lock, flags);
-+
-+		if (count)
-+			cond_resched();
+-int hvc_poll(struct hvc_struct *hp)
++static int __hvc_poll(struct hvc_struct *hp, bool may_sleep)
+ {
+ 	struct tty_struct *tty;
+ 	int i, n, count, poll_mask = 0;
+@@ -611,6 +611,12 @@ int hvc_poll(struct hvc_struct *hp)
+ 		timeout = (written_total) ? 0 : MIN_TIMEOUT;
  	}
--	spin_unlock_irqrestore(&hp->lock, flags);
  
- 	/*
- 	 * Racy, but harmless, kick thread if there is still pending data.
++	if (may_sleep) {
++		spin_unlock_irqrestore(&hp->lock, flags);
++		cond_resched();
++		spin_lock_irqsave(&hp->lock, flags);
++	}
++
+ 	/* No tty attached, just skip */
+ 	tty = tty_port_tty_get(&hp->port);
+ 	if (tty == NULL)
+@@ -698,6 +704,11 @@ int hvc_poll(struct hvc_struct *hp)
+ 
+ 	return poll_mask;
+ }
++
++int hvc_poll(struct hvc_struct *hp)
++{
++	return __hvc_poll(hp, false);
++}
+ EXPORT_SYMBOL_GPL(hvc_poll);
+ 
+ /**
+@@ -736,7 +747,8 @@ static int khvcd(void *unused)
+ 		if (!cpus_are_in_xmon()) {
+ 			mutex_lock(&hvc_structs_mutex);
+ 			list_for_each_entry(hp, &hvc_structs, next) {
+-				poll_mask |= hvc_poll(hp);
++				poll_mask |= __hvc_poll(hp, true);
++				cond_resched();
+ 			}
+ 			mutex_unlock(&hvc_structs_mutex);
+ 		} else
 -- 
 2.17.0
