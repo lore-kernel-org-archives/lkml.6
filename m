@@ -1,40 +1,42 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqgySkNvGDW8lT5+bNnzxUBYHaNycDKBXeZnQLUY93mr76oNeTlsTL2ZDQfaOql6axHKyTU
-ARC-Seal: i=1; a=rsa-sha256; t=1525116469; cv=none;
+X-Google-Smtp-Source: AB8JxZqfyaY+E8rtJ3/Nnmnzq3H1BXkYfzsJJlThCmwYuRxmH4WX5GhDqoODEi8JOXh8IGv4Apz5
+ARC-Seal: i=1; a=rsa-sha256; t=1525116467; cv=none;
         d=google.com; s=arc-20160816;
-        b=gS1AbII7d0a6E9LOmYGKkiEWArEp3GPXnBUM1iIxdTtUTHDFpGECHNaykfL5BTTPro
-         OrCyLaGZfBAt51iwJrHaJqORrm8Esudk7dRmkKKnX64PCteDPnHV0ySB6jy+E80l40iX
-         LDm+RTX7oosXMo2kcsN7HvRQEkHY24UgIPIv2fHZIzeBANyDZ6uUI60mGp0xdOTlPrWX
-         SAy8U9KuYrNPIQaaA17qq4Id7UbIycyO1jVkHx0OanCASeWjAokWMx1LKc8AArSenHYq
-         bIbcx/Dvlf+fQywsIk4d2hCoprEsgR4X5DDOdDqAmZX67ukT7+SrcZgsQykwMC7oeNM8
-         3b4A==
+        b=IzPBhzLehgEVzZH0UXrOj7uwnJhmOLoGM9ANaBJkBcxNBpsP+5TlVElEFn1Sk+i/i/
+         VaqGij/3UuQbXIRcQJThHWyVuWOXTi9UGOj5smaVdX8MOr+8lMkgAwn3JhfD9Pf/ufkv
+         t9aFXqsNPNnPvzfua2svFYtoR1v4gw2GE+BzqRaYV/e9de5UaCNSdQOIntpTICK8MWEt
+         eH44ty/al7MOSpSIphhhhrLgiU+MfINrRXnJQ+7gQFoftf8xhBlObSjqU41eg5b7YKGK
+         NYVH0ZTwEokt9zvCVS686U2aD6KTtRO4KQa8TbUBSwSprmODjUwEpT8q1xqKg7O+DgWZ
+         yDjQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=s6TWoDpvM5j9oOuFexHwETeZGeGSizrvtZoNUHY0I34=;
-        b=lVO/gW1vCgmFJjYDNUQJXk6gsnONUW5B1giRAeAZ/81h2k46noTir7gX3+e6Oe3BLf
-         b7v/zUXae0c7mLclimIAYnSOIdokepneAGsS9lkFFYvUt1SZi5zk/nkXBA2mSyc6h0nz
-         tWGWTbJycqLw7qVP9uQGZOzquaLRQGZptXK/ts70Ddg0nzBpyjr4zDw2bW6PhR4Pleme
-         GNaV/gJHvzxnfkXGdTa6qe8bALoG+P6niIDAetMM3h3F0//oPVLVIid5bx7BAXXGP8LI
-         H4yHCMY/WUfd1ETMyNhadDWMexuqjvJwe+veEDIeP5BZXv1VDerhIzZ0c+QeFHmOXHfb
-         uoew==
+        bh=6atjlO99cNBIDjn+m8IM1qcGeKKQvIu2fPc4XsWrEJg=;
+        b=1FZieVuBXmD3D6e+bURXnmULSmW/35bf7KQsZ+FJ9qUvNb1T+EGKEP+qapzzHUOdre
+         ef0OVRijmS/oSPQ65Jlzq209aybHagZW4wucDA202biE1BgPdAGABWXLAQ/zdx0KebI+
+         fQcf51Kkni/VAvfzgf2nWYvjvd7EL4Yq7E5a0CAKADdPnk9Agfg+doUcvPrmMhOw+w0C
+         ThANj7WPdTSs9tpOwF/WNciQh1bzct8MCiOqqUB/pYXE39bD1Nml5HPt+s/JOOQEWEiu
+         8sk0ugkyYuZJtS2ap7jBzBQ6WcDFtVON3Zqaus0GOuZtC8o198jvlErGiO29YBlpX2HS
+         NZ6Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3218122DAC
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE42A22E71
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Alistair Popple <alistair@popple.id.au>,
-	Balbir Singh <bsingharora@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.14 70/91] powerpc/powernv/npu: Do a PID GPU TLB flush when invalidating a large address range
-Date: Mon, 30 Apr 2018 12:24:52 -0700
-Message-Id: <20180430184007.897760550@linuxfoundation.org>
+	Roman Kapl <code@rkapl.cz>,
+	Xin Long <lucien.xin@gmail.com>,
+	Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Thomas Deutschmann <whissi@gentoo.org>
+Subject: [PATCH 4.14 91/91] net: dont call update_pmtu unconditionally
+Date: Mon, 30 Apr 2018 12:25:13 -0700
+Message-Id: <20180430184009.063075183@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184004.216234025@linuxfoundation.org>
 References: <20180430184004.216234025@linuxfoundation.org>
@@ -44,8 +46,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200526908319926?=
-X-GMAIL-MSGID: =?utf-8?q?1599200526908319926?=
+X-GMAIL-THRID: =?utf-8?q?1599200524949886141?=
+X-GMAIL-MSGID: =?utf-8?q?1599200524949886141?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,71 +55,150 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alistair Popple <alistair@popple.id.au>
+From: Nicolas Dichtel <nicolas.dichtel@6wind.com>
 
-commit d0cf9b561ca97d5245bb9e0c4774b7fadd897d67 upstream.
+commit f15ca723c1ebe6c1a06bc95fda6b62cd87b44559 upstream.
 
-The NPU has a limited number of address translation shootdown (ATSD)
-registers and the GPU has limited bandwidth to process ATSDs. This can
-result in contention of ATSD registers leading to soft lockups on some
-threads, particularly when invalidating a large address range in
-pnv_npu2_mn_invalidate_range().
+Some dst_ops (e.g. md_dst_ops)) doesn't set this handler. It may result to:
+"BUG: unable to handle kernel NULL pointer dereference at           (null)"
 
-At some threshold it becomes more efficient to flush the entire GPU
-TLB for the given MM context (PID) than individually flushing each
-address in the range. This patch will result in ranges greater than
-2MB being converted from 32+ ATSDs into a single ATSD which will flush
-the TLB for the given PID on each GPU.
+Let's add a helper to check if update_pmtu is available before calling it.
 
-Fixes: 1ab66d1fbada ("powerpc/powernv: Introduce address translation services for Nvlink2")
-Cc: stable@vger.kernel.org # v4.12+
-Signed-off-by: Alistair Popple <alistair@popple.id.au>
-Acked-by: Balbir Singh <bsingharora@gmail.com>
-Tested-by: Balbir Singh <bsingharora@gmail.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Fixes: 52a589d51f10 ("geneve: update skb dst pmtu on tx path")
+Fixes: a93bf0ff4490 ("vxlan: update skb dst pmtu on tx path")
+CC: Roman Kapl <code@rkapl.cz>
+CC: Xin Long <lucien.xin@gmail.com>
+Signed-off-by: Nicolas Dichtel <nicolas.dichtel@6wind.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+[backport to 4.14.y by thomas]
+Cc: Thomas Deutschmann <whissi@gentoo.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/platforms/powernv/npu-dma.c |   23 +++++++++++++++++++----
- 1 file changed, 19 insertions(+), 4 deletions(-)
+ drivers/infiniband/ulp/ipoib/ipoib_cm.c |    3 +--
+ drivers/net/vxlan.c                     |    6 ++----
+ include/net/dst.h                       |    8 ++++++++
+ net/ipv4/ip_tunnel.c                    |    3 +--
+ net/ipv4/ip_vti.c                       |    2 +-
+ net/ipv6/ip6_tunnel.c                   |    5 ++---
+ net/ipv6/ip6_vti.c                      |    2 +-
+ net/ipv6/sit.c                          |    4 ++--
+ 8 files changed, 18 insertions(+), 15 deletions(-)
 
---- a/arch/powerpc/platforms/powernv/npu-dma.c
-+++ b/arch/powerpc/platforms/powernv/npu-dma.c
-@@ -34,6 +34,13 @@
- #define npu_to_phb(x) container_of(x, struct pnv_phb, npu)
+--- a/drivers/infiniband/ulp/ipoib/ipoib_cm.c
++++ b/drivers/infiniband/ulp/ipoib/ipoib_cm.c
+@@ -1447,8 +1447,7 @@ void ipoib_cm_skb_too_long(struct net_de
+ 	struct ipoib_dev_priv *priv = ipoib_priv(dev);
+ 	int e = skb_queue_empty(&priv->cm.skb_queue);
  
- /*
-+ * When an address shootdown range exceeds this threshold we invalidate the
-+ * entire TLB on the GPU for the given PID rather than each specific address in
-+ * the range.
-+ */
-+#define ATSD_THRESHOLD (2*1024*1024)
-+
-+/*
-  * Other types of TCE cache invalidation are not functional in the
-  * hardware.
-  */
-@@ -621,11 +628,19 @@ static void pnv_npu2_mn_invalidate_range
- 	struct npu_context *npu_context = mn_to_npu_context(mn);
- 	unsigned long address;
+-	if (skb_dst(skb))
+-		skb_dst(skb)->ops->update_pmtu(skb_dst(skb), NULL, skb, mtu);
++	skb_dst_update_pmtu(skb, mtu);
  
--	for (address = start; address < end; address += PAGE_SIZE)
--		mmio_invalidate(npu_context, 1, address, false);
-+	if (end - start > ATSD_THRESHOLD) {
-+		/*
-+		 * Just invalidate the entire PID if the address range is too
-+		 * large.
-+		 */
-+		mmio_invalidate(npu_context, 0, 0, true);
-+	} else {
-+		for (address = start; address < end; address += PAGE_SIZE)
-+			mmio_invalidate(npu_context, 1, address, false);
+ 	skb_queue_tail(&priv->cm.skb_queue, skb);
+ 	if (e)
+--- a/drivers/net/vxlan.c
++++ b/drivers/net/vxlan.c
+@@ -2158,8 +2158,7 @@ static void vxlan_xmit_one(struct sk_buf
+ 		if (skb_dst(skb)) {
+ 			int mtu = dst_mtu(ndst) - VXLAN_HEADROOM;
  
--	/* Do the flush only on the final addess == end */
--	mmio_invalidate(npu_context, 1, address, true);
-+		/* Do the flush only on the final addess == end */
-+		mmio_invalidate(npu_context, 1, address, true);
-+	}
+-			skb_dst(skb)->ops->update_pmtu(skb_dst(skb), NULL,
+-						       skb, mtu);
++			skb_dst_update_pmtu(skb, mtu);
+ 		}
+ 
+ 		tos = ip_tunnel_ecn_encap(tos, old_iph, skb);
+@@ -2200,8 +2199,7 @@ static void vxlan_xmit_one(struct sk_buf
+ 		if (skb_dst(skb)) {
+ 			int mtu = dst_mtu(ndst) - VXLAN6_HEADROOM;
+ 
+-			skb_dst(skb)->ops->update_pmtu(skb_dst(skb), NULL,
+-						       skb, mtu);
++			skb_dst_update_pmtu(skb, mtu);
+ 		}
+ 
+ 		tos = ip_tunnel_ecn_encap(tos, old_iph, skb);
+--- a/include/net/dst.h
++++ b/include/net/dst.h
+@@ -520,4 +520,12 @@ static inline struct xfrm_state *dst_xfr
  }
+ #endif
  
- static const struct mmu_notifier_ops nv_nmmu_notifier_ops = {
++static inline void skb_dst_update_pmtu(struct sk_buff *skb, u32 mtu)
++{
++	struct dst_entry *dst = skb_dst(skb);
++
++	if (dst && dst->ops->update_pmtu)
++		dst->ops->update_pmtu(dst, NULL, skb, mtu);
++}
++
+ #endif /* _NET_DST_H */
+--- a/net/ipv4/ip_tunnel.c
++++ b/net/ipv4/ip_tunnel.c
+@@ -521,8 +521,7 @@ static int tnl_update_pmtu(struct net_de
+ 	else
+ 		mtu = skb_dst(skb) ? dst_mtu(skb_dst(skb)) : dev->mtu;
+ 
+-	if (skb_dst(skb))
+-		skb_dst(skb)->ops->update_pmtu(skb_dst(skb), NULL, skb, mtu);
++	skb_dst_update_pmtu(skb, mtu);
+ 
+ 	if (skb->protocol == htons(ETH_P_IP)) {
+ 		if (!skb_is_gso(skb) &&
+--- a/net/ipv4/ip_vti.c
++++ b/net/ipv4/ip_vti.c
+@@ -209,7 +209,7 @@ static netdev_tx_t vti_xmit(struct sk_bu
+ 
+ 	mtu = dst_mtu(dst);
+ 	if (skb->len > mtu) {
+-		skb_dst(skb)->ops->update_pmtu(skb_dst(skb), NULL, skb, mtu);
++		skb_dst_update_pmtu(skb, mtu);
+ 		if (skb->protocol == htons(ETH_P_IP)) {
+ 			icmp_send(skb, ICMP_DEST_UNREACH, ICMP_FRAG_NEEDED,
+ 				  htonl(mtu));
+--- a/net/ipv6/ip6_tunnel.c
++++ b/net/ipv6/ip6_tunnel.c
+@@ -652,7 +652,7 @@ ip4ip6_err(struct sk_buff *skb, struct i
+ 		if (rel_info > dst_mtu(skb_dst(skb2)))
+ 			goto out;
+ 
+-		skb_dst(skb2)->ops->update_pmtu(skb_dst(skb2), NULL, skb2, rel_info);
++		skb_dst_update_pmtu(skb2, rel_info);
+ 	}
+ 	if (rel_type == ICMP_REDIRECT)
+ 		skb_dst(skb2)->ops->redirect(skb_dst(skb2), NULL, skb2);
+@@ -1141,8 +1141,7 @@ route_lookup:
+ 		mtu = 576;
+ 	}
+ 
+-	if (skb_dst(skb) && !t->parms.collect_md)
+-		skb_dst(skb)->ops->update_pmtu(skb_dst(skb), NULL, skb, mtu);
++	skb_dst_update_pmtu(skb, mtu);
+ 	if (skb->len - t->tun_hlen - eth_hlen > mtu && !skb_is_gso(skb)) {
+ 		*pmtu = mtu;
+ 		err = -EMSGSIZE;
+--- a/net/ipv6/ip6_vti.c
++++ b/net/ipv6/ip6_vti.c
+@@ -486,7 +486,7 @@ vti6_xmit(struct sk_buff *skb, struct ne
+ 
+ 	mtu = dst_mtu(dst);
+ 	if (!skb->ignore_df && skb->len > mtu) {
+-		skb_dst(skb)->ops->update_pmtu(dst, NULL, skb, mtu);
++		skb_dst_update_pmtu(skb, mtu);
+ 
+ 		if (skb->protocol == htons(ETH_P_IPV6)) {
+ 			if (mtu < IPV6_MIN_MTU)
+--- a/net/ipv6/sit.c
++++ b/net/ipv6/sit.c
+@@ -925,8 +925,8 @@ static netdev_tx_t ipip6_tunnel_xmit(str
+ 			df = 0;
+ 		}
+ 
+-		if (tunnel->parms.iph.daddr && skb_dst(skb))
+-			skb_dst(skb)->ops->update_pmtu(skb_dst(skb), NULL, skb, mtu);
++		if (tunnel->parms.iph.daddr)
++			skb_dst_update_pmtu(skb, mtu);
+ 
+ 		if (skb->len > mtu && !skb_is_gso(skb)) {
+ 			icmpv6_send(skb, ICMPV6_PKT_TOOBIG, 0, mtu);
