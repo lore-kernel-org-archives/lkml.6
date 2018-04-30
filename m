@@ -1,53 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752115AbeD3Ftn (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 01:49:43 -0400
-Received: from mslow2.mail.gandi.net ([217.70.178.242]:35764 "EHLO
-        slow1-d.mail.gandi.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752063AbeD3Ftl (ORCPT
+        id S1751935AbeD3FtS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 01:49:18 -0400
+Received: from goliath.siemens.de ([192.35.17.28]:54617 "EHLO
+        goliath.siemens.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751707AbeD3FtM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 01:49:41 -0400
-X-Originating-IP: 50.39.166.153
-Date: Sun, 29 Apr 2018 22:20:33 -0700
-From: Josh Triplett <josh@joshtriplett.org>
-To: NeilBrown <neilb@suse.com>
-Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Trond Myklebust <trond.myklebust@primarydata.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>, linux-nfs@vger.kernel.org,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] rculist: add list_for_each_entry_from_rcu()
-Message-ID: <20180430052032.GA16963@localhost>
-References: <152506256513.7246.13171564155614823841.stgit@noble>
- <152506269061.7246.13075216914692813995.stgit@noble>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <152506269061.7246.13075216914692813995.stgit@noble>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        Mon, 30 Apr 2018 01:49:12 -0400
+From: Jan Kiszka <jan.kiszka@siemens.com>
+To: Bjorn Helgaas <bhelgaas@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 04/10] PCI: Add dev parameter to __of_pci_get_host_bridge_resources()
+Date: Mon, 30 Apr 2018 07:48:38 +0200
+Message-Id: <cfab525f3d0436f75187fbd65907ada909d7692f.1525067324.git.jan.kiszka@siemens.com>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <cover.1525067324.git.jan.kiszka@siemens.com>
+References: <cover.1525067324.git.jan.kiszka@siemens.com>
+In-Reply-To: <cover.1525067324.git.jan.kiszka@siemens.com>
+References: <cover.1525067324.git.jan.kiszka@siemens.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 30, 2018 at 02:31:30PM +1000, NeilBrown wrote:
-> list_for_each_entry_from_rcu() is an RCU version of
-> list_for_each_entry_from().  It walks a linked list under rcu
-> protection, from a given start point.
-> 
-> It is similar to list_for_each_entry_continue_rcu() but starts *at*
-> the given position rather than *after* it.
-> 
-> Naturally, the start point must be known to be in the list.
+From: Jan Kiszka <jan.kiszka@siemens.com>
 
-I'd suggest giving an explicit advisory comment to clarify and suggest
-correct usage:
+When non-NULL, use the new dev parameter of
+__of_pci_get_host_bridge_resources() to allocate the resource data
+structures via devm_kzalloc. That allows to release them automatically
+during device destruction.
 
-"This would typically require either that you obtained the node from a
-previous walk of the list in the same RCU read-side critical section, or
-that you held some sort of non-RCU reference (such as a reference count)
-to keep the node alive *and* in the list."
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+---
+ drivers/pci/of.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
-(Feel free to wordsmith the exact wording, but something like that seems
-like it would help people understand how to use this correctly, and make
-it less likely that they'd use it incorrectly.)
+diff --git a/drivers/pci/of.c b/drivers/pci/of.c
+index 375de447a58e..bfa282b538d5 100644
+--- a/drivers/pci/of.c
++++ b/drivers/pci/of.c
+@@ -243,7 +243,7 @@ void of_pci_check_probe_only(void)
+ EXPORT_SYMBOL_GPL(of_pci_check_probe_only);
+ 
+ #if defined(CONFIG_OF_ADDRESS)
+-static int __of_pci_get_host_bridge_resources(
++static int __of_pci_get_host_bridge_resources(struct device *dev,
+ 			struct device_node *dev_node,
+ 			unsigned char busno, unsigned char bus_max,
+ 			struct list_head *resources, resource_size_t *io_base)
+@@ -259,7 +259,10 @@ static int __of_pci_get_host_bridge_resources(
+ 	if (io_base)
+ 		*io_base = (resource_size_t)OF_BAD_ADDR;
+ 
+-	bus_range = kzalloc(sizeof(*bus_range), GFP_KERNEL);
++	if (dev)
++		bus_range = devm_kzalloc(dev,sizeof(*bus_range), GFP_KERNEL);
++	else
++		bus_range = kzalloc(sizeof(*bus_range), GFP_KERNEL);
+ 	if (!bus_range)
+ 		return -ENOMEM;
+ 
+@@ -303,7 +306,11 @@ static int __of_pci_get_host_bridge_resources(
+ 		if (range.cpu_addr == OF_BAD_ADDR || range.size == 0)
+ 			continue;
+ 
+-		res = kzalloc(sizeof(struct resource), GFP_KERNEL);
++		if (dev)
++			res = devm_kzalloc(dev, sizeof(struct resource),
++					   GFP_KERNEL);
++		else
++			res = kzalloc(sizeof(struct resource), GFP_KERNEL);
+ 		if (!res) {
+ 			err = -ENOMEM;
+ 			goto parse_failed;
+@@ -365,7 +372,7 @@ int of_pci_get_host_bridge_resources(struct device_node *dev_node,
+ 			unsigned char busno, unsigned char bus_max,
+ 			struct list_head *resources, resource_size_t *io_base)
+ {
+-	return __of_pci_get_host_bridge_resources(dev_node, busno,
++	return __of_pci_get_host_bridge_resources(NULL, dev_node, busno,
+ 						  bus_max, resources, io_base);
+ }
+ EXPORT_SYMBOL_GPL(of_pci_get_host_bridge_resources);
+-- 
+2.13.6
