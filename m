@@ -1,79 +1,154 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754234AbeD3TBC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 15:01:02 -0400
-Received: from mail-io0-f181.google.com ([209.85.223.181]:33219 "EHLO
-        mail-io0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752534AbeD3TBA (ORCPT
+        id S1754738AbeD3TBm (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 15:01:42 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40178 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754409AbeD3TBk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 15:01:00 -0400
-X-Google-Smtp-Source: AB8JxZqQmEkSQuqiD5nfYXs2W2W0afwpfwO4jzPjK5y0odVKeke0GvnMvLvAd6nBzbviWhiTVQG2gzraruhihuKzWk0=
-MIME-Version: 1.0
-References: <alpine.DEB.2.20.1804301741570.3243@hypnos.tec.linutronix.de>
- <CAGXu5jL1W=AC023asgeMRUXAnhU2vd-RJRqGtOOetQ=aXwDcFQ@mail.gmail.com>
- <CA+55aFwieC1-nAs+NFq9RTwaR8ef9hWa4MjNBWL41F-8wM49eA@mail.gmail.com>
- <20180430124135.0cce92e3@gandalf.local.home> <CA+55aFzpJC4+tuSopeze72D2sv1urGdap8+Bj2Y9hEYitAkE4Q@mail.gmail.com>
- <CA+55aFyNqnrM=_5pMgEeL20jVKN7MgWKG52pbaR0FayO=5VuXw@mail.gmail.com> <CAGXu5jLVJxDJcbhrQU5-wduaP+OvePXP8VvCFMrJ47pYD-zaXg@mail.gmail.com>
-In-Reply-To: <CAGXu5jLVJxDJcbhrQU5-wduaP+OvePXP8VvCFMrJ47pYD-zaXg@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 30 Apr 2018 19:00:49 +0000
-Message-ID: <CA+55aFyreOY8uzOkkDkU=WttNfbH2_6nStfsm9j2T6F5ZyntHg@mail.gmail.com>
-Subject: Re: Hashed pointer issues
-To: Kees Cook <keescook@chromium.org>
-Cc: tcharding <me@tobin.cc>, Steven Rostedt <rostedt@goodmis.org>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Mon, 30 Apr 2018 15:01:40 -0400
+Subject: [PATCH] ima: define a new policy condition based on the filesystem
+ name
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: linux-integrity <linux-integrity@vger.kernel.org>
+Cc: linux-fsdevel@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Dave Chinner <david@fromorbit.com>, "Theodore Ts'o" <tytso@mit.edu>
+Date: Mon, 30 Apr 2018 15:01:34 -0400
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18043019-0040-0000-0000-00000453916C
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18043019-0041-0000-0000-000020F7AA05
+Message-Id: <1525114894.5669.5.camel@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-30_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804300182
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 30, 2018 at 11:38 AM Kees Cook <keescook@chromium.org> wrote:
+If/when file data signatures are distributed with the file data, this
+patch will not be needed.  In the current environment where only some
+files are signed, the ability to differentiate between file systems is
+needed.  Some file systems consider the file system magic number
+internal to the file system.
 
-> Something like this? (Untested.)
+This patch defines a new IMA policy condition named "fsname", based on
+the superblock's file_system_type (sb->s_type) name. This allows policy
+rules to be expressed in terms of the filesystem name.
 
-Looks workable.
+The following sample rules require file signatures on rootfs files
+executed or mmap'ed.
 
-> +       /* If we have hw RNG, start hashing immediately. */
-> +       if (arch_has_random()) {
-> +               get_random_bytes_arch(&ptr_key, sizeof(ptr_key));
-> +               ptr_key_ready();
-> +               return 0;
-> +       }
+appraise func=BPRM_CHECK fsname=rootfs appraise_type=imasig
+appraise func=FILE_MMAP fsname=rootfs appraise_type=imasig
 
-Small tweak: you should check the return value of get_random_bytes_arch(),
-because in theory it can fail.
+Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: Dave Chinner <david@fromorbit.com>
+Cc: Theodore Ts'o <tytso@mit.edu>
+---
+ Documentation/ABI/testing/ima_policy |  2 +-
+ security/integrity/ima/ima_policy.c  | 25 ++++++++++++++++++++++++-
+ 2 files changed, 25 insertions(+), 2 deletions(-)
 
-Sadly, that's not actually how get_random_bytes_arch() really works - it
-falls back on "get_random_bytes()" on failure instead, which is explicitly
-against the whole point here.
-
-So I think it would need some tweaking, with a new function entirely
-(get_random_bytes_arch() with a failure return for "cannot fill buffer").
-
-But that would be just a few more lines, because we could make the existing
-get_random_bytes_arch() just use the failure-case thing.
-
-So add a "get_hw_random_bytes()" that does that same loop in
-get_random_bytes_arch(), but returns the number of bytes it filled in.
-
-Then get_random_bytes_arch() turns into
-
-     got = get_hw_random_bytes(p, nbytes);
-     if (got < nbytes)
-         get_random_bytes(p+got, nbytes-got);
-
-and the initialize_ptr_random() use would be something like
-
-     if (get_hw_random_bytes(&ptr_key, sizeof(ptr_key)) == sizeof(ptr_key)) {
-         ptr_key_ready();
-         return 0;
-    }
-
-Hmm?
-
-Maybe we could call the "get_hw_random_bytes()" something like
-"get_early_random_bytes()" and the "use HW for it" is purely an
-implementation detail?
-
-                Linus
+diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
+index b8465e00ba5f..74c6702de74e 100644
+--- a/Documentation/ABI/testing/ima_policy
++++ b/Documentation/ABI/testing/ima_policy
+@@ -21,7 +21,7 @@ Description:
+ 			audit | hash | dont_hash
+ 		condition:= base | lsm  [option]
+ 			base:	[[func=] [mask=] [fsmagic=] [fsuuid=] [uid=]
+-				[euid=] [fowner=]]
++				[euid=] [fowner=] [fsname=]]
+ 			lsm:	[[subj_user=] [subj_role=] [subj_type=]
+ 				 [obj_user=] [obj_role=] [obj_type=]]
+ 			option:	[[appraise_type=]] [permit_directio]
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index d89bebf85421..03cbba423e59 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -33,6 +33,7 @@
+ #define IMA_INMASK	0x0040
+ #define IMA_EUID	0x0080
+ #define IMA_PCR		0x0100
++#define IMA_FSNAME	0x0200
+ 
+ #define UNKNOWN		0
+ #define MEASURE		0x0001	/* same as IMA_MEASURE */
+@@ -74,6 +75,7 @@ struct ima_rule_entry {
+ 		void *args_p;	/* audit value */
+ 		int type;	/* audit type */
+ 	} lsm[MAX_LSM_RULES];
++	char *fsname;
+ };
+ 
+ /*
+@@ -273,6 +275,9 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
+ 	if ((rule->flags & IMA_FSMAGIC)
+ 	    && rule->fsmagic != inode->i_sb->s_magic)
+ 		return false;
++	if ((rule->flags & IMA_FSNAME)
++	    && strcmp(rule->fsname, inode->i_sb->s_type->name))
++		return false;
+ 	if ((rule->flags & IMA_FSUUID) &&
+ 	    !uuid_equal(&rule->fsuuid, &inode->i_sb->s_uuid))
+ 		return false;
+@@ -540,7 +545,7 @@ enum {
+ 	Opt_audit, Opt_hash, Opt_dont_hash,
+ 	Opt_obj_user, Opt_obj_role, Opt_obj_type,
+ 	Opt_subj_user, Opt_subj_role, Opt_subj_type,
+-	Opt_func, Opt_mask, Opt_fsmagic,
++	Opt_func, Opt_mask, Opt_fsmagic, Opt_fsname,
+ 	Opt_fsuuid, Opt_uid_eq, Opt_euid_eq, Opt_fowner_eq,
+ 	Opt_uid_gt, Opt_euid_gt, Opt_fowner_gt,
+ 	Opt_uid_lt, Opt_euid_lt, Opt_fowner_lt,
+@@ -565,6 +570,7 @@ static match_table_t policy_tokens = {
+ 	{Opt_func, "func=%s"},
+ 	{Opt_mask, "mask=%s"},
+ 	{Opt_fsmagic, "fsmagic=%s"},
++	{Opt_fsname, "fsname=%s"},
+ 	{Opt_fsuuid, "fsuuid=%s"},
+ 	{Opt_uid_eq, "uid=%s"},
+ 	{Opt_euid_eq, "euid=%s"},
+@@ -776,6 +782,17 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+ 			if (!result)
+ 				entry->flags |= IMA_FSMAGIC;
+ 			break;
++		case Opt_fsname:
++			ima_log_string(ab, "fsname", args[0].from);
++
++			entry->fsname = kstrdup(args[0].from, GFP_KERNEL);
++			if (!entry->fsname) {
++				result = -ENOMEM;
++				break;
++			}
++			result = 0;
++			entry->flags |= IMA_FSNAME;
++			break;
+ 		case Opt_fsuuid:
+ 			ima_log_string(ab, "fsuuid", args[0].from);
+ 
+@@ -1104,6 +1121,12 @@ int ima_policy_show(struct seq_file *m, void *v)
+ 		seq_puts(m, " ");
+ 	}
+ 
++	if (entry->flags & IMA_FSNAME) {
++		snprintf(tbuf, sizeof(tbuf), "%s", entry->fsname);
++		seq_printf(m, pt(Opt_fsname), tbuf);
++		seq_puts(m, " ");
++	}
++
+ 	if (entry->flags & IMA_PCR) {
+ 		snprintf(tbuf, sizeof(tbuf), "%d", entry->pcr);
+ 		seq_printf(m, pt(Opt_pcr), tbuf);
+-- 
+2.7.5
