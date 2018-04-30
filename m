@@ -1,92 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755155AbeD3Uty (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 16:49:54 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:53872 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754872AbeD3Utw (ORCPT
+        id S1754974AbeD3Uvt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 16:51:49 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:42821 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751241AbeD3Uvr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 16:49:52 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8CD2E60271
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-Subject: Re: [PATCH v3] init: Fix false positives in W+X checking
-To: Kees Cook <keescook@chromium.org>, Laura Abbott <labbott@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Timur Tabi <timur@codeaurora.org>, Will Deacon <will.deacon@arm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jan Glauber <jan.glauber@caviumnetworks.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Stephen Smalley <sds@tycho.nsa.gov>, Ingo Molnar <mingo@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-References: <1525103946-29526-1-git-send-email-jhugo@codeaurora.org>
- <e87810b2-db26-ee13-731a-cde53185e977@redhat.com>
- <CAGXu5jJFjH4hiRqovOtaMOuKUQbGYWjBiGGDV-bjWSmTvZp9Pw@mail.gmail.com>
-From: Jeffrey Hugo <jhugo@codeaurora.org>
-Message-ID: <2fd6b503-17b9-4e4c-e3ea-44eb34d209e9@codeaurora.org>
-Date: Mon, 30 Apr 2018 14:49:44 -0600
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 30 Apr 2018 16:51:47 -0400
+X-Google-Smtp-Source: AB8JxZotGFK+jCxy/66chh987yji+TPPdC3fdtAEL6V/H4Ho596dT0RnS0UntprbA1vx6dqcwq/fqw==
+Date: Mon, 30 Apr 2018 13:51:45 -0700
+From: Matthias Kaehlcke <mka@chromium.org>
+To: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>,
+        Guenter Roeck <groeck@chromium.org>, intel-gfx@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: Re: [Intel-gfx] [PATCH v2] drm/i915: Disable some extra clang
+ warnings
+Message-ID: <20180430205145.GC133494@google.com>
+References: <20180319191451.83910-1-mka@chromium.org>
+ <20180430193119.GB133494@google.com>
+ <152511850981.10429.1077865835761338509@mail.alporthouse.com>
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5jJFjH4hiRqovOtaMOuKUQbGYWjBiGGDV-bjWSmTvZp9Pw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <152511850981.10429.1077865835761338509@mail.alporthouse.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/30/2018 12:40 PM, Kees Cook wrote:
-> On Mon, Apr 30, 2018 at 10:19 AM, Laura Abbott <labbott@redhat.com> wrote:
->> On 04/30/2018 08:59 AM, Jeffrey Hugo wrote:
->>>
->>> load_module() creates W+X mappings via __vmalloc_node_range() (from
->>> layout_and_allocate()->move_module()->module_alloc()) by using
->>> PAGE_KERNEL_EXEC.  These mappings are later cleaned up via
->>> "call_rcu_sched(&freeinit->rcu, do_free_init)" from do_init_module().
->>>
->>> This is a problem because call_rcu_sched() queues work, which can be run
->>> after debug_checkwx() is run, resulting in a race condition.  If hit, the
->>> race results in a nasty splat about insecure W+X mappings, which results
->>> in a poor user experience as these are not the mappings that
->>> debug_checkwx() is intended to catch.
->>>
->>> This issue is observed on multiple arm64 platforms, and has been
->>> artificially triggered on an x86 platform.
->>>
->>> Address the race by flushing the queued work before running the
->>> arch-defined mark_rodata_ro() which then calls debug_checkwx().
->>>
->>> Reported-by: Timur Tabi <timur@codeaurora.org>
->>> Reported-by: Jan Glauber <jan.glauber@caviumnetworks.com>
->>> Fixes: e1a58320a38d ("x86/mm: Warn on W^X mappings")
->>> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
->>> Acked-by: Kees Cook <keescook@chromium.org>
->>> Acked-by: Ingo Molnar <mingo@kernel.org>
->>> Acked-by: Will Deacon <will.deacon@arm.com>
->>> ---
->>>
->>
->> Acked-by: Laura Abbott <labbott@redhat.com>
->>
->> If you don't have a tree for this to go through, I might suggest having
->> Kees take it.
+On Mon, Apr 30, 2018 at 09:01:49PM +0100, Chris Wilson wrote:
+> Quoting Matthias Kaehlcke (2018-04-30 20:31:19)
+> > On Mon, Mar 19, 2018 at 12:14:51PM -0700, Matthias Kaehlcke wrote:
+> > > Commit 39bf4de89ff7 ("drm/i915: Add -Wall -Wextra to our build, set
+> > > warnings to full") enabled extra warnings for i915 to spot possible
+> > > bugs in new code, and then disabled a subset of these warnings to keep
+> > > the current code building without warnings (with gcc). Enabling the
+> > > extra warnings also enabled some additional clang-only warnings, as a
+> > > result building i915 with clang currently is extremely noisy. For now
+> > > also disable the clang warnings sign-compare, sometimes-uninitialized,
+> > > unneeded-internal-declaration and initializer-overrides. If desired
+> > > they can be re-enabled after the code has been fixed.
+> > > 
+> > > Fixes: 39bf4de89ff7 ("drm/i915: Add -Wall -Wextra to our build, set
+> > > warnings to full")
 > 
-> akpm has taken the W^X stuff in the past, but I'm happy to do so. Just
-> let me know either way. :)
-> 
-> -Kees
-> 
+> Do we need to backport this for a non-default build with a non-default
+> compiler?
 
-That sounds fine to me.  Is that agreeable to you, Andrew?
+If it affected a LTS build I'd say yes, but since that isn't the case
+I think it's not necessary.
 
--- 
-Jeffrey Hugo
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
-Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+> > > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> > > ---
+> > > Changes in v2:
+> > > - rebased on drm-tip
+> > > - added comment indicating that disabled warnings are clang warnings
+> > > 
+> > >  drivers/gpu/drm/i915/Makefile | 5 +++++
+> > >  1 file changed, 5 insertions(+)
+> > > 
+> > > diff --git a/drivers/gpu/drm/i915/Makefile b/drivers/gpu/drm/i915/Makefile
+> > > index 4eee91a3a236..9717c037b582 100644
+> > > --- a/drivers/gpu/drm/i915/Makefile
+> > > +++ b/drivers/gpu/drm/i915/Makefile
+> > > @@ -18,6 +18,11 @@ subdir-ccflags-y += $(call cc-disable-warning, type-limits)
+> > >  subdir-ccflags-y += $(call cc-disable-warning, missing-field-initializers)
+> > >  subdir-ccflags-y += $(call cc-disable-warning, implicit-fallthrough)
+> > >  subdir-ccflags-y += $(call cc-disable-warning, unused-but-set-variable)
+> > > +# clang warnings
+> > > +subdir-ccflags-y += $(call cc-disable-warning, sign-compare)
+> 
+> Too much mixup in the code to be fixed overnight indeed.
+> 
+> > > +subdir-ccflags-y += $(call cc-disable-warning, sometimes-uninitialized)
+> 
+> Annoyingly it appears that clang has more false positives.
+> 
+> > > +subdir-ccflags-y += $(call cc-disable-warning, unneeded-internal-declaration)
+> 
+> Example? I don't recall this one, so don't know if we should just not
+> fix it rather than suppress. I've used ignored-attributes, perhaps that
+> was for the same cause.
+
+drivers/gpu/drm/i915/intel_guc_submission.c:183:13: warning: function
+  'has_doorbell' is not needed and will not be emitted
+  [-Wunneeded-internal-declaration]
+static bool has_doorbell(struct intel_guc_client *client)
+
+The function is only called within a GEM_BUG_ON macro, which does not
+evaluate the expression unless CONFIG_DRM_I915_DEBUG_GEM is set.
+
+Instead of disabling the warning it would probably be better to mark
+has_doorbell as __maybe_unused.
