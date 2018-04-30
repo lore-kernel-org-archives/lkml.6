@@ -1,91 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752424AbeD3FvP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 01:51:15 -0400
-Received: from thoth.sbs.de ([192.35.17.2]:41346 "EHLO thoth.sbs.de"
+        id S1751669AbeD3FtL (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 01:49:11 -0400
+Received: from thoth.sbs.de ([192.35.17.2]:41312 "EHLO thoth.sbs.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751770AbeD3FtO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 01:49:14 -0400
+        id S1751569AbeD3FtJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 01:49:09 -0400
 From: Jan Kiszka <jan.kiszka@siemens.com>
 To: Bjorn Helgaas <bhelgaas@google.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Jingoo Han <jingoohan1@gmail.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH v2 00/10] PCI: leak fixes, removable generic PCI host, assorted stuff
-Date: Mon, 30 Apr 2018 07:48:34 +0200
-Message-Id: <cover.1525067324.git.jan.kiszka@siemens.com>
+Subject: [PATCH v2 01/10] PCI: Make pci_get_new_domain_nr() static
+Date: Mon, 30 Apr 2018 07:48:35 +0200
+Message-Id: <7e10d1bd6ca988c9deca593588e5b7fdd72a8de4.1525067324.git.jan.kiszka@siemens.com>
 X-Mailer: git-send-email 2.13.6
+In-Reply-To: <cover.1525067324.git.jan.kiszka@siemens.com>
+References: <cover.1525067324.git.jan.kiszka@siemens.com>
+In-Reply-To: <cover.1525067324.git.jan.kiszka@siemens.com>
+References: <cover.1525067324.git.jan.kiszka@siemens.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Changes in v2:
- - patch 1: commit message reworking as suggested by Lorenzo
- - patch 3-6: split-up as suggested by Bjorn
- - patch 8: new
- - patch 10: select PCI_DOMAINS from PCI_HOST_GENERIC, rather than
-   allowing manual choice, as suggested by Lorenzo
+From: Jan Kiszka <jan.kiszka@siemens.com>
 
-This primarily enables to unbind the generic PCI host controller without
-leaving lots of memory leaks behind. A previous proposal patch 5 was
-rejected because of those issues [1].
+The only user of pci_get_new_domain_nr() is of_pci_bus_find_domain_nr().
+Since they are defined in the same compilation unit,
+pci_get_new_domain_nr() can be made static, which also simplifies
+preprocessor conditionals.
 
-The fixes have been validated in the Jailhouse setup, where we add and
-remove a virtual PCI host controller on hypervisor activation/
-deactivation, with the help of kmemleak.
+No functional change intended.
 
-Besides that, there is tiny PCI API cleanup at the beginning and
-support for manually enabled PCI domains at the end that enables the
-Jailhouse scenario.
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+---
+ drivers/pci/pci.c   | 6 ++----
+ include/linux/pci.h | 3 ---
+ 2 files changed, 2 insertions(+), 7 deletions(-)
 
-Jan
-
-[1] http://lkml.iu.edu/hypermail/linux/kernel/1606.3/00072.html
-
-
-CC: Jingoo Han <jingoohan1@gmail.com>
-CC: Joao Pinto <Joao.Pinto@synopsys.com>
-CC: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-CC: Will Deacon <will.deacon@arm.com>
-
-Jan Kiszka (10):
-  PCI: Make pci_get_new_domain_nr() static
-  PCI: Fix memory leak of devm_pci_alloc_host_bridge()
-  PCI: Factor out __of_pci_get_host_bridge_resources()
-  PCI: Add dev parameter to __of_pci_get_host_bridge_resources()
-  PCI: Replace pr_*() with dev_*() in
-    __of_pci_get_host_bridge_resources()
-  PCI: Introduce devm_of_pci_get_host_bridge_resources()
-  PCI: Convert of_pci_get_host_bridge_resources() users to devm variant
-  PCI: Deprecate of_pci_get_host_bridge_resources()
-  PCI: Add support for unbinding the generic PCI host controller
-  PCI: Enable PCI_DOMAINS along with generic PCI host controller
-
- drivers/pci/dwc/pcie-designware-host.c |   2 +-
- drivers/pci/host/Kconfig               |   1 +
- drivers/pci/host/pci-aardvark.c        |   5 +-
- drivers/pci/host/pci-ftpci100.c        |   4 +-
- drivers/pci/host/pci-host-common.c     |  13 ++++
- drivers/pci/host/pci-host-generic.c    |   1 +
- drivers/pci/host/pci-v3-semi.c         |   3 +-
- drivers/pci/host/pci-versatile.c       |   3 +-
- drivers/pci/host/pci-xgene.c           |   3 +-
- drivers/pci/host/pcie-altera.c         |   5 +-
- drivers/pci/host/pcie-iproc-platform.c |   4 +-
- drivers/pci/host/pcie-rcar.c           |   5 +-
- drivers/pci/host/pcie-rockchip.c       |   4 +-
- drivers/pci/host/pcie-xilinx-nwl.c     |   4 +-
- drivers/pci/host/pcie-xilinx.c         |   4 +-
- drivers/pci/of.c                       | 105 +++++++++++++++++++++------------
- drivers/pci/pci.c                      |   6 +-
- drivers/pci/probe.c                    |   4 +-
- include/linux/of_pci.h                 |  42 ++++++++++++-
- include/linux/pci-ecam.h               |   1 +
- include/linux/pci.h                    |   3 -
- 21 files changed, 149 insertions(+), 73 deletions(-)
-
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index a04197ce767d..811d71e7ee05 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -5702,15 +5702,14 @@ static void pci_no_domains(void)
+ #endif
+ }
+ 
+-#ifdef CONFIG_PCI_DOMAINS
++#ifdef CONFIG_PCI_DOMAINS_GENERIC
+ static atomic_t __domain_nr = ATOMIC_INIT(-1);
+ 
+-int pci_get_new_domain_nr(void)
++static int pci_get_new_domain_nr(void)
+ {
+ 	return atomic_inc_return(&__domain_nr);
+ }
+ 
+-#ifdef CONFIG_PCI_DOMAINS_GENERIC
+ static int of_pci_bus_find_domain_nr(struct device *parent)
+ {
+ 	static int use_dt_domains = -1;
+@@ -5765,7 +5764,6 @@ int pci_bus_find_domain_nr(struct pci_bus *bus, struct device *parent)
+ 			       acpi_pci_bus_find_domain_nr(bus);
+ }
+ #endif
+-#endif
+ 
+ /**
+  * pci_ext_cfg_avail - can we access extended PCI config space?
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index 73178a2fcee0..963232a6cd2e 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -1510,12 +1510,10 @@ void pci_cfg_access_unlock(struct pci_dev *dev);
+  */
+ #ifdef CONFIG_PCI_DOMAINS
+ extern int pci_domains_supported;
+-int pci_get_new_domain_nr(void);
+ #else
+ enum { pci_domains_supported = 0 };
+ static inline int pci_domain_nr(struct pci_bus *bus) { return 0; }
+ static inline int pci_proc_domain(struct pci_bus *bus) { return 0; }
+-static inline int pci_get_new_domain_nr(void) { return -ENOSYS; }
+ #endif /* CONFIG_PCI_DOMAINS */
+ 
+ /*
+@@ -1670,7 +1668,6 @@ static inline struct pci_dev *pci_get_domain_bus_and_slot(int domain,
+ 
+ static inline int pci_domain_nr(struct pci_bus *bus) { return 0; }
+ static inline struct pci_dev *pci_dev_get(struct pci_dev *dev) { return NULL; }
+-static inline int pci_get_new_domain_nr(void) { return -ENOSYS; }
+ 
+ #define dev_is_pci(d) (false)
+ #define dev_is_pf(d) (false)
 -- 
 2.13.6
