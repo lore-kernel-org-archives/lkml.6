@@ -1,46 +1,45 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZp6Oj/zZs/Td/CGSp3IoBL2Xc8ktz9NrchCl9UCKSsQXx9KNm83+bj0szuYdi9jm/P0/VND
-ARC-Seal: i=1; a=rsa-sha256; t=1525116385; cv=none;
+X-Google-Smtp-Source: AB8JxZpBK3RMlHYWtobi693ufMlF4ZZk4POh3L8GoeaWehOoQ75RBx6pjLsODgsnztIxQdHR+Wsj
+ARC-Seal: i=1; a=rsa-sha256; t=1525116405; cv=none;
         d=google.com; s=arc-20160816;
-        b=c9dgCY7R1gMy/H8/zJV/UbNT0FAfHFunJzD+PstADhTulT0kCXlOiwysUVxSslZx8L
-         OOU0fi/LYmEYFDkktQEQ5j9AW+xbFqsYGyYvCP2APk7GZi6QYXSTuEg+oUaqdbiSxWSL
-         4xtoK+5SNbNZSTnyTnWiD4GRoVSh8Mw82w+09rC5aWkQjqrJEdprn6s0QSBdXplsOKm2
-         V7833IvSjJBCb0fnoK0HbjwLPVEeDCONN2+quemkxMB2Iq+gTuaVg0r7pIs8g3QZbUZc
-         SH+kd44PH+LygY5iUvScAqNRagOkmJEP3XKY3w7R7ks5pdfIRUN5M5JqmfwOny9e1pTu
-         oR5A==
+        b=ehEsMZ8JScZEkMx8QZ4HpTTjaeXZ3bd5hdsj9lA4geymeB23i15xeiXUsaq/XqyO2H
+         oZJhxoev0UL0R0bpVVb8DQlBox98Kna6sUjbkNCMQONoPNdfHjAugyDLmstqpRvI+R5X
+         2TEj8JT4O4jBm6fLrz40A/ihVbRdNTRvje03zUa1DP/A35EfHlctCuLdOjRHob33gK2+
+         ReeSCz1iu4pZMqL2BW2cOAMmfqTkLU8QMUw+gI/iorRkpPtybjQw3ebYBJW4LWcoXMh8
+         qXVHinGN+rPQ2bXv6w3kcimkgXVOgTNtpLZVc8+6v/AkKQokTdJNvRhuajap8wGwoBjW
+         v68w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=YdkX13b8iSCcZ2b+e1okolvRpPFOWkIASMm95cO9u80=;
-        b=LJIASifzAbzOX1la1pNlQs3lwmQLerXgiq6QV36b0MroKI7P0Wk0Dsut5nXZIAwclU
-         1+wfMJ+ccAkHxWcxpygttgmBUBMIq7Iiz7H3HIAXff+yR0gq19dynEfnEVChzJXXgR9T
-         HCCDRLtFbP8pTITZa20v/nXfl+pSLwZEeUu2vXTrYZJkH2j+yeyB/MtPIUQtVvCIl7Md
-         BB0KyqxMmqv9aV3f7Ot4IbPat0ku9EpBZAFdF4LJZcasiCWYSj9ZOsvj/TBhvuEguLbA
-         KmHYyZNB2h7A4IZeIwP1TaPGLqJ9oTkOpHh76HJXlDmDb/t+OW1vpZo0EYAYHAZ0Xue5
-         GHCw==
+        bh=2DkoLwQMQUpbvR9ZRnjI7eBFrRHyCiUnwh9jX4JtU3U=;
+        b=tkBBXjo/W31ZCO0x9zFFW9chg4bh0xRRVpbXKbaSCVRaiOrSiNlpV3JJieFwlZozf3
+         o+3R3XKZSwbQlTKeVWaYrfiZXA0rpj7zzDEArsdkTiRU4dJ4brUWtPfNWpuuirGLN1VL
+         2/CRwJ0JrQJNngyxSDAzOgpulnpGNH7xPl4gBa6Js6qTSUzloUcGAXEbbpjHdYJtgz4G
+         qyEND7PK4wnKvPrxwAmWoICj0VbfwWcZNfrnxp7zbKul9pfln7CQXydu89yW4Mx2CMBy
+         AaQQrfC/YUN+FyhunDUCsj0fnu1CxOCw3JPvM99biDV9Ys+9SvDoq0722g1sy4imrzbz
+         fkCg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9413422DC8
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B935A22E03
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-	syzbot <syzbot+40b7287c2dc987c48c81@syzkaller.appspotmail.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Vegard Nossum <vegard.nossum@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Jiri Slaby <jslaby@suse.com>,
-	Peter Hurley <peter@hurleysoftware.com>,
-	One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.9 23/61] tty: Use __GFP_NOFAIL for tty_ldisc_get()
-Date: Mon, 30 Apr 2018 12:24:26 -0700
-Message-Id: <20180430183953.271720856@linuxfoundation.org>
+	Laura Abbott <labbott@redhat.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Wang Nan <wangnan0@huawei.com>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	=?UTF-8?q?Fredrik=20Sch=C3=B6n?= <fredrikschon@gmail.com>
+Subject: [PATCH 4.9 56/61] objtool, perf: Fix GCC 8 -Wrestrict error
+Date: Mon, 30 Apr 2018 12:24:59 -0700
+Message-Id: <20180430183956.047089363@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430183951.312721450@linuxfoundation.org>
 References: <20180430183951.312721450@linuxfoundation.org>
@@ -50,8 +49,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200280833625701?=
-X-GMAIL-MSGID: =?utf-8?q?1599200438421331694?=
+X-GMAIL-THRID: =?utf-8?q?1599200594550452578?=
+X-GMAIL-MSGID: =?utf-8?q?1599200459798761288?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -59,55 +58,44 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Josh Poimboeuf <jpoimboe@redhat.com>
 
-commit bcdd0ca8cb8730573afebcaae4138f8f4c8eaa20 upstream.
+commit 854e55ad289ef8888e7991f0ada85d5846f5afb9 upstream.
 
-syzbot is reporting crashes triggered by memory allocation fault injection
-at tty_ldisc_get() [1]. As an attempt to handle OOM in a graceful way, we
-have tried commit 5362544bebe85071 ("tty: don't panic on OOM in
-tty_set_ldisc()"). But we reverted that attempt by commit a8983d01f9b7d600
-("Revert "tty: don't panic on OOM in tty_set_ldisc()"") due to reproducible
-crash. We should spend resource for finding and fixing race condition bugs
-rather than complicate error paths for 2 * sizeof(void *) bytes allocation
-failure.
+Starting with recent GCC 8 builds, objtool and perf fail to build with
+the following error:
 
-[1] https://syzkaller.appspot.com/bug?id=489d33fa386453859ead58ff5171d43772b13aa3
+  ../str_error_r.c: In function ‘str_error_r’:
+  ../str_error_r.c:25:3: error: passing argument 1 to restrict-qualified parameter aliases with argument 5 [-Werror=restrict]
+     snprintf(buf, buflen, "INTERNAL ERROR: strerror_r(%d, %p, %zd)=%d", errnum, buf, buflen, err);
 
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: syzbot <syzbot+40b7287c2dc987c48c81@syzkaller.appspotmail.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Vegard Nossum <vegard.nossum@gmail.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Jiri Slaby <jslaby@suse.com>
-Cc: Peter Hurley <peter@hurleysoftware.com>
-Cc: One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+The code seems harmless, but there's probably no benefit in printing the
+'buf' pointer in this situation anyway, so just remove it to make GCC
+happy.
+
+Reported-by: Laura Abbott <labbott@redhat.com>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Tested-by: Laura Abbott <labbott@redhat.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: http://lkml.kernel.org/r/20180316031154.juk2uncs7baffctp@treble
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Fredrik Schön <fredrikschon@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/tty_ldisc.c |   11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ tools/lib/str_error_r.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/tty/tty_ldisc.c
-+++ b/drivers/tty/tty_ldisc.c
-@@ -175,12 +175,11 @@ static struct tty_ldisc *tty_ldisc_get(s
- 			return ERR_CAST(ldops);
- 	}
- 
--	ld = kmalloc(sizeof(struct tty_ldisc), GFP_KERNEL);
--	if (ld == NULL) {
--		put_ldops(ldops);
--		return ERR_PTR(-ENOMEM);
--	}
--
-+	/*
-+	 * There is no way to handle allocation failure of only 16 bytes.
-+	 * Let's simplify error handling and save more memory.
-+	 */
-+	ld = kmalloc(sizeof(struct tty_ldisc), GFP_KERNEL | __GFP_NOFAIL);
- 	ld->ops = ldops;
- 	ld->tty = tty;
- 
+--- a/tools/lib/str_error_r.c
++++ b/tools/lib/str_error_r.c
+@@ -21,6 +21,6 @@ char *str_error_r(int errnum, char *buf,
+ {
+ 	int err = strerror_r(errnum, buf, buflen);
+ 	if (err)
+-		snprintf(buf, buflen, "INTERNAL ERROR: strerror_r(%d, %p, %zd)=%d", errnum, buf, buflen, err);
++		snprintf(buf, buflen, "INTERNAL ERROR: strerror_r(%d, [buf], %zd)=%d", errnum, buflen, err);
+ 	return buf;
+ }
