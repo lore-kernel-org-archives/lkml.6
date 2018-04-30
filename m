@@ -1,67 +1,92 @@
-Return-Path: <bot@kernelci.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1525136659; cv=none;
+Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
+X-Google-Smtp-Source: AB8JxZrSJ98Nn+EDRwyIiqcHTB+GGkFEc8yhd6So+sEr5jP3qB4cNxA9Ypq6SSkXYVaNJlo8/hK9
+ARC-Seal: i=1; a=rsa-sha256; t=1525116287; cv=none;
         d=google.com; s=arc-20160816;
-        b=njUfMH/qaLLgwq8sV1eBCX9ZhUIvwO5v/rv37vjanWwZz7r/ryYIxs5+lZZWVwh09C
-         ICfpDNsAThvCRG5DM4XtpP+wPYxYBAuzgHRSvsSx/FloYV75dVKGg0t/MRBdr2uyoDom
-         cd6flv1+kd140Xn49gMiUauIc4NqOAs76lAZTRN3amRAzaMZHMmZdn1IY7Ljglkdkdq+
-         AzKbG8roPAxf4VWUF2szpK/6fPoefLWmKceNq3HPszvLyHAjtA9lg5369bSXdR2qKvQN
-         JytNPyEw9zND0VzizILP6Nb1PF3rs7bbR7PXjsh3jSVb/QnH2FFurNFbPhQUW+WSQYuC
-         jo3Q==
+        b=upkRWXPCIXDiEDKbQocI+wBYJlE4625lSJiJGDL+gCUnUnxRPHmsgcqutvypDootFK
+         16W+0akk4kTVEQ+i/QcduSnX8XfCG8mrR9UbE6u7RwKjL9wUSj2LMNEUcHQoSN9c7YOu
+         CaH8RzpA++sWvGMj0tNphkoGFmewdMz8jOdZRfHMexxwuds960DY4uxlLCKcj+mxSO/i
+         zb+ibVWK9injGLEVmHv2A7dn0aL1eNlzjharwcFzgfJDkEMdJzL2C7ZscdZZjVUSuExa
+         ov3JyolqqGSTAKVlBB6LNIOb5ppjcGNCVvE+W9c1aouXnZG/hTRjOeTeWDSdlx+GZtgH
+         CGdA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:from:to:subject:references:in-reply-to:content-transfer-encoding
-         :mime-version:date:message-id:arc-authentication-results;
-        bh=0ameSpFel26aT2ChuY8VdIIHwtbvxw59t/5/mHOZBoI=;
-        b=eu0fQsX6Nkfl1sPyxPdE6PjllebAP3kDaHCjXXzywxJXx0v2SZTPv2kxP0vZ6A6Vw4
-         Qht+yo51Hcbo5VOm+sjSCQYG5FMAJQIxnF1N9OxzeeFNHITuPAcJafWpjPhcRcDlKxIR
-         fTyB4m6Jv0PK4woiKpYvb7wRFS9D343GXDFV4MEK5Id/SM/d4foFhcPDQNYg2hbbHXH4
-         t1uJMwe5hyR4dCaMYySjaab8fmroZokaiq/M1uaqkOMVsRrIMfTic3PLKKSJKmKRuDoy
-         WKLpW3/oUc49CrCdIHx7l5Jx99QeJigXl11lNidY6Iixi7mgn1Lo8TviE1M2FaILKLfm
-         ZWjw==
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dmarc-filter:arc-authentication-results;
+        bh=LTyCJeyeOG3Qrzq7Bgsbz5o+BBXrC93p8TmUpGQ6OPU=;
+        b=LMmrxRgPNKoZeGB4o6qFZiRPQdxdh4mPzQX0ZdHdkY1ifeA9DuV2b4lLIPv620+3um
+         yt2VlUI6i+jhYMN2uZ0dJM+Z3YjAwkEpiKs8heZHC+e9SiC8SbLfSLQGLlWGCyZaqy1Z
+         wIEJDd6aot90MyyVNFQSBLjq2yx+GBDoN9i8tKmXRcqK/UlUF0M3k7kRkRhYiJ4ccor/
+         J4MBuWHqJZlpmzcF+z2uHtqVdXeTAAwuVZrDS5A9uVa6dPzG6qpy3Lvb13CWvIMa/loH
+         dSfyxhf32TeglEKc12AwrLEGIWKlXBqpMNTY1p4cijBogkUkdEsiAwnsYiOBMFcaj7Qe
+         +NiA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=bot@kernelci.org
+       spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=bot@kernelci.org
-X-Google-Smtp-Source: AB8JxZohUvjYBBQ9iBTX1X3a8IQDQNpsAfkfapPCSRD0jENDAv3Uxn/LZzAcxLesn3sToRKN3C1wUg==
-Message-ID: <5ae7bd11.1c69fb81.95955.6be6@mx.google.com>
-Date: Mon, 30 Apr 2018 18:04:17 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: linux-3.18.y
-X-Kernelci-Tree: stable-rc
-X-Kernelci-Report-Type: boot
-X-Kernelci-Kernel: v3.18.107-26-g261b9a2d80e9
+       spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9708322DA3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org,
+	Theodore Tso <tytso@mit.edu>,
+	Andreas Dilger <adilger@dilger.ca>,
+	Jan Kara <jack@suse.cz>
+Subject: [PATCH 3.18 01/25] ext4: set h_journal if there is a failure starting a reserved handle
+Date: Mon, 30 Apr 2018 12:23:08 -0700
+Message-Id: <20180430183910.863189903@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430183910.801976983@linuxfoundation.org>
 References: <20180430183910.801976983@linuxfoundation.org>
-Subject: Re: [PATCH 3.18 00/25] 3.18.108-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org
-From: kernelci.org bot <bot@kernelci.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net,
- shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk,
- lkft-triage@lists.linaro.org, stable@vger.kernel.org
+User-Agent: quilt/0.65
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599200268789190038?=
-X-GMAIL-MSGID: =?utf-8?q?1599221697683480844?=
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1599200336209029872?=
+X-GMAIL-MSGID: =?utf-8?q?1599200336209029872?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-stable-rc/linux-3.18.y boot: 62 boots: 0 failed, 62 passed (v3.18.107-26-g2=
-61b9a2d80e9)
+3.18-stable review patch.  If anyone has any objections, please let me know.
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--3.18.y/kernel/v3.18.107-26-g261b9a2d80e9/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-3.18.=
-y/kernel/v3.18.107-26-g261b9a2d80e9/
+------------------
 
-Tree: stable-rc
-Branch: linux-3.18.y
-Git Describe: v3.18.107-26-g261b9a2d80e9
-Git Commit: 261b9a2d80e901dfcaaf4feeaa2b900685f53a96
-Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git
-Tested: 31 unique boards, 12 SoC families, 15 builds out of 183
+From: Theodore Ts'o <tytso@mit.edu>
+
+commit b2569260d55228b617bd82aba6d0db2faeeb4116 upstream.
+
+If ext4 tries to start a reserved handle via
+jbd2_journal_start_reserved(), and the journal has been aborted, this
+can result in a NULL pointer dereference.  This is because the fields
+h_journal and h_transaction in the handle structure share the same
+memory, via a union, so jbd2_journal_start_reserved() will clear
+h_journal before calling start_this_handle().  If this function fails
+due to an aborted handle, h_journal will still be NULL, and the call
+to jbd2_journal_free_reserved() will pass a NULL journal to
+sub_reserve_credits().
+
+This can be reproduced by running "kvm-xfstests -c dioread_nolock
+generic/475".
+
+Cc: stable@kernel.org # 3.11
+Fixes: 8f7d89f36829b ("jbd2: transaction reservation support")
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Reviewed-by: Andreas Dilger <adilger@dilger.ca>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
-For more info write to <info@kernelci.org>
+ fs/jbd2/transaction.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/fs/jbd2/transaction.c
++++ b/fs/jbd2/transaction.c
+@@ -515,6 +515,7 @@ int jbd2_journal_start_reserved(handle_t
+ 	 */
+ 	ret = start_this_handle(journal, handle, GFP_NOFS);
+ 	if (ret < 0) {
++		handle->h_journal = journal;
+ 		jbd2_journal_free_reserved(handle);
+ 		return ret;
+ 	}
