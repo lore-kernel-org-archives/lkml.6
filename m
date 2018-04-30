@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753691AbeD3Ll4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 07:41:56 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:46349 "EHLO
+        id S1753795AbeD3LmD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 07:42:03 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:45246 "EHLO
         mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753626AbeD3Llw (ORCPT
+        with ESMTP id S1753705AbeD3Ll7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 07:41:52 -0400
-X-Google-Smtp-Source: AB8JxZo5g4Slk8Mj3SiUSH9kbkS/y37+puBWFlWBycSiIvdhphigvVFtgEXnwteaq61T5dd3N7nBGw==
+        Mon, 30 Apr 2018 07:41:59 -0400
+X-Google-Smtp-Source: AB8JxZrgoEwsSC0xBls0qfU+KRGrQY0BwwaaSu6ppK4CwaDHQSzEsNW3pxniDZla/Xrv23co6oIZCw==
 From: Jagan Teki <jagan@amarulasolutions.com>
 To: Maxime Ripard <maxime.ripard@free-electrons.com>
 Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
@@ -22,9 +22,9 @@ Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
         Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH 06/21] arm64: defconfig: Enable CONFIG_DRM_SUN4I
-Date: Mon, 30 Apr 2018 17:10:43 +0530
-Message-Id: <20180430114058.5061-7-jagan@amarulasolutions.com>
+Subject: [PATCH 07/21] bindings: display: Add compatible for A64 HDMI
+Date: Mon, 30 Apr 2018 17:10:44 +0530
+Message-Id: <20180430114058.5061-8-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180430114058.5061-1-jagan@amarulasolutions.com>
 References: <20180430114058.5061-1-jagan@amarulasolutions.com>
@@ -32,24 +32,24 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable DRM Support for Allwinner Display Engine, built as a module.
+HDMI on Allwinner A64 has similar like H3/H5.
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
- arch/arm64/configs/defconfig | 1 +
+ Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 8ac1feafe563..723e6a5121fa 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -410,6 +410,7 @@ CONFIG_DRM_EXYNOS_DSI=y
- CONFIG_DRM_EXYNOS_HDMI=y
- CONFIG_DRM_EXYNOS_MIC=y
- CONFIG_DRM_ROCKCHIP=m
-+CONFIG_DRM_SUN4I=m
- CONFIG_ROCKCHIP_ANALOGIX_DP=y
- CONFIG_ROCKCHIP_CDN_DP=y
- CONFIG_ROCKCHIP_DW_HDMI=y
+diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+index f0fd9274a25d..9ea4353caadd 100644
+--- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
++++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+@@ -78,6 +78,7 @@ Required properties:
+ 
+   - compatible: value must be one of:
+     * "allwinner,sun8i-a83t-dw-hdmi"
++    * "allwinner,sun50i-a64-dw-hdmi"
+   - reg: base address and size of memory-mapped region
+   - reg-io-width: See dw_hdmi.txt. Shall be 1.
+   - interrupts: HDMI interrupt number
 -- 
 2.14.3
