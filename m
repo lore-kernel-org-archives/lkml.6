@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1878097-1525117062-2-1357225131427255997
+X-Cyrus-Session-Id: sloti22d1t05-1851310-1525117055-2-15643074332282985093
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525117062; b=R+HGEuRs9th0sMbiN+OeStklCMqAfRHsKKkqLSNlNR+io2vWvG
-    nQaSG40VM0R6omWPm3k8HTGezc7hGZp/n2Pa9Evfzqv8+iL4qqOoHHPLeamALehU
-    4EeDXIVc3ydw0uDlom/a8WaMDJYj9V1sY7MT3QNCr6IHQTf4YBEejNy9ldg9mpjD
-    PbB2oaJaR1Wfcs/yXPRwBaBP8NOYXYD8Awz5I1hsW8g62ibpLDWZitRZYfL0/30J
-    22CV3WqL3TZzO7PH8B40qif6QAMBQVcZlwa3Q/Xi2iVzTG4YkwuH25Hnat+wM8nZ
-    6pqwDIcQL351yk9B0Qdj4cO7Ym64zkEbQOHA==
+    1525117055; b=hdhiU6r+EiUURDcG7CHLeYWrqEdqKw+HbeT+2Hk+OrCaQJwSau
+    ZjICmhdeK5BRyUWPQc0Ti4ob9rPtZ4AyaAalMglaPHBhT0bwBhG5BZn9EpcR8VZ9
+    UA/yx0Z2o6dle1dq1tvrZZjOJD5EUhoGhK3XjyDNihgozNu2uYGaOnW3xUaykp8f
+    p1F0+KBCrlFHiP29XyHeAxO+ogJCdyzFwL6cQe6O5JMAl8JKML3VE+8MMwjhdJJO
+    AgneJbB5omup4JCxFkBC5yPk+2V2wx5/r0LeCch55/rZyfpa9bw4GQFlWHTvQkb9
+    KwMhYpoCeeKMxNYzyb6gedlnY8ZXbqk3t3nA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1525117062; bh=W1iDUXB7NvT9+P9E/QwR6YWwoxwDKJ
-    kINc05lyPLBWg=; b=m/6E3YYepbuIKwlVRJ1gPZOUwRoec5wuJCPJew29vhNdPD
-    bIHJXs3LY9/1QDyfuZT8U7mbjOyKBgzVskuNPH/tzbD0+5c4vUdGZxj5p1SC6Mmh
-    lM0UWW406q916G5D/aSFUeMphlYvcs0glNukk+X449ts7yC7pdXafFKB4a2hZWHT
-    XsmYqMFpKyCa195P+EaaGAwvTLr1TSqJqYRclNpP/tOlzpUDslsGYZNqQt8SBUi2
-    /PgmUqL1/dayZqcQWV9vrg7LZWUjnYDWPjtuDSZj9PS1d/pQR3e9JJ8QJn307SgH
-    DUD1CVejtdUw2Gghg0x5ZEivM5+f77Sp85D7rb0g==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1525117055; bh=ceYz1JbNhL6lM7xNcjqZIY/lmu4tL+
+    ZxGCudMZDTAPw=; b=XT3tItpTagspIODjv4Fa9nGbB5DIol7gwx2KwZvpbItRxq
+    T0XxQFd3im6olTEqQf3EkrEWUMJq0qOfAotsbyQX9Wo6IRuJsCFzpBbQKAMTD9S7
+    zR8i5cQE/b9tUZ34N4YJ2jmSrop2DCOp/rS7+1d8dByOh5JTn483z5pd6DQG6VS0
+    VO/SxgiTlbuDXCw9Bjs7JCseWSYF5yG4UM0l8uf64uD/oOAtmns0qu5Mq4TfFW+T
+    yF3idoQzKufM6XjwhPEfcr0dPptgID26xTPtQP+LCQfJDkP9SjPOyPOZa+wymgaX
+    Q22/vRg1VN8Jib3ss7DnZJBZ5aPQS3eM38UD2HMQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,33 +51,35 @@ Authentication-Results: mx3.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfPgm75j17/jcmaZTzu55Af6QHnmiNYqLFuWbAoXqngxb76pn3Qj+hw7jesqPYMn4m/9Rv3KzuKXqoGl2rs3WKR4g4LqutuspH6Gh4dRydmJcZYfUxJ0A
-    ooQIrDCF1X8jwmpwYcOZisPUzoQwmdANGhgP9FlAZgmN/RhdUh3e5BZ+iHFx5M4hnSVoPG5AiXI6aJxWyE/2K+V9NovFW2fFrI6V/97r7ed9XN1VbMeEh2rT
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfOXoLasmdilmOe6smfpGzlv49vrQc0QzykyAwX2rn2GTUUQTmjEgtI/XwbtbyJFkWtjNuCsETYutVfveAsuDaKedtSdq5uyZ18MeFUoG2YFAGplt2d9U
+    PiBJmXNIeBOBtiC4H0x6kXKbNpiLihLYB5tySiWMJof5AimcymrP2xtlcu/2AP+bcr9VkEwQq5cLNE3ng9NaashovOKtJLfceeJNtMUUaiF4j9Di+UfQEkg6
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=1XWaLZrsAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=5EMsjEJVl8QOgak0-BcA:9
-    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=pGLkceISAAAA:8 a=8AirrxEcAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8
+    a=SN8IJsBbIC5xGUleRXAA:9 a=QEXdDO2ut3YA:10 a=ST-jHhOKWsTCqRlWije3:22
+    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756373AbeD3T2m (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 30 Apr 2018 15:28:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36562 "EHLO mail.kernel.org"
+        id S1756396AbeD3T2n (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 30 Apr 2018 15:28:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36640 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756372AbeD3T2i (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 30 Apr 2018 15:28:38 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F45622DCB
+        id S1755343AbeD3T2j (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 30 Apr 2018 15:28:39 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49F2722E01
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Todd Kjos <tkjos@google.com>
-Subject: [PATCH 4.16 074/113] ARM: amba: Fix race condition with driver_override
-Date: Mon, 30 Apr 2018 12:24:45 -0700
-Message-Id: <20180430184018.331824098@linuxfoundation.org>
+        stable@vger.kernel.org, Marek Vasut <marex@denx.de>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.16 085/113] ASoC: fsl_esai: Fix divisor calculation failure at lower ratio
+Date: Mon, 30 Apr 2018 12:24:56 -0700
+Message-Id: <20180430184018.786859422@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184015.043892819@linuxfoundation.org>
 References: <20180430184015.043892819@linuxfoundation.org>
@@ -95,67 +97,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Nicolin Chen <nicoleotsuka@gmail.com>
 
-commit 6a7228d90d42bcacfe38786756ba62762b91c20a upstream.
+commit c656941df9bc80f7ec65b92ca73c42f8b0b62628 upstream.
 
-The driver_override implementation is susceptible to a race condition
-when different threads are reading vs storing a different driver
-override.  Add locking to avoid this race condition.
+When the desired ratio is less than 256, the savesub (tolerance)
+in the calculation would become 0. This will then fail the loop-
+search immediately without reporting any errors.
 
-Cfr. commits 6265539776a0810b ("driver core: platform: fix race
-condition with driver_override") and 9561475db680f714 ("PCI: Fix race
-condition with driver_override").
+But if the ratio is smaller enough, there is no need to calculate
+the tolerance because PM divisor alone is enough to get the ratio.
 
-Fixes: 3cf385713460eb2b ("ARM: 8256/1: driver coamba: add device binding path 'driver_override'")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Todd Kjos <tkjos@google.com>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+So a simple fix could be just to set PM directly instead of going
+into the loop-search.
+
+Reported-by: Marek Vasut <marex@denx.de>
+Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+Tested-by: Marek Vasut <marex@denx.de>
+Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/amba/bus.c |   11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ sound/soc/fsl/fsl_esai.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/drivers/amba/bus.c
-+++ b/drivers/amba/bus.c
-@@ -69,8 +69,12 @@ static ssize_t driver_override_show(stru
- 				    struct device_attribute *attr, char *buf)
- {
- 	struct amba_device *dev = to_amba_device(_dev);
-+	ssize_t len;
+--- a/sound/soc/fsl/fsl_esai.c
++++ b/sound/soc/fsl/fsl_esai.c
+@@ -144,6 +144,13 @@ static int fsl_esai_divisor_cal(struct s
  
--	return sprintf(buf, "%s\n", dev->driver_override);
-+	device_lock(_dev);
-+	len = sprintf(buf, "%s\n", dev->driver_override);
-+	device_unlock(_dev);
-+	return len;
- }
+ 	psr = ratio <= 256 * maxfp ? ESAI_xCCR_xPSR_BYPASS : ESAI_xCCR_xPSR_DIV8;
  
- static ssize_t driver_override_store(struct device *_dev,
-@@ -78,7 +82,7 @@ static ssize_t driver_override_store(str
- 				     const char *buf, size_t count)
- {
- 	struct amba_device *dev = to_amba_device(_dev);
--	char *driver_override, *old = dev->driver_override, *cp;
-+	char *driver_override, *old, *cp;
- 
- 	if (count > PATH_MAX)
- 		return -EINVAL;
-@@ -91,12 +95,15 @@ static ssize_t driver_override_store(str
- 	if (cp)
- 		*cp = '\0';
- 
-+	device_lock(_dev);
-+	old = dev->driver_override;
- 	if (strlen(driver_override)) {
- 		dev->driver_override = driver_override;
- 	} else {
- 	       kfree(driver_override);
- 	       dev->driver_override = NULL;
- 	}
-+	device_unlock(_dev);
- 
- 	kfree(old);
++	/* Do not loop-search if PM (1 ~ 256) alone can serve the ratio */
++	if (ratio <= 256) {
++		pm = ratio;
++		fp = 1;
++		goto out;
++	}
++
+ 	/* Set the max fluctuation -- 0.1% of the max devisor */
+ 	savesub = (psr ? 1 : 8)  * 256 * maxfp / 1000;
  
