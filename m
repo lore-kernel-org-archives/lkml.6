@@ -1,79 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753394AbeD3JJB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 05:09:01 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43322 "EHLO mx1.redhat.com"
+        id S1753031AbeD3JIE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 05:08:04 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40752 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753062AbeD3JIH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 05:08:07 -0400
+        id S1752877AbeD3JH5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 05:07:57 -0400
 From: Eric Auger <eric.auger@redhat.com>
 To: eric.auger.pro@gmail.com, eric.auger@redhat.com,
         linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
         kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com, cdall@kernel.org,
         peter.maydell@linaro.org
 Cc: andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
-Subject: [PATCH v5 09/12] KVM: arm/arm64: Check all vcpu redistributors are set on map_resources
-Date: Mon, 30 Apr 2018 11:07:41 +0200
-Message-Id: <1525079264-25533-10-git-send-email-eric.auger@redhat.com>
+Subject: [PATCH v5 04/12] KVM: arm/arm64: Helper to locate free rdist index
+Date: Mon, 30 Apr 2018 11:07:36 +0200
+Message-Id: <1525079264-25533-5-git-send-email-eric.auger@redhat.com>
 In-Reply-To: <1525079264-25533-1-git-send-email-eric.auger@redhat.com>
 References: <1525079264-25533-1-git-send-email-eric.auger@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On vcpu first run, we eventually know the actual number of vcpus.
-This is a synchronization point to check all redistributors
-were assigned. On kvm_vgic_map_resources() we check both dist and
-redist were set, eventually check potential base address inconsistencies.
+We introduce vgic_v3_rdist_free_slot to help identifying
+where we can place a new 2x64KB redistributor.
 
 Signed-off-by: Eric Auger <eric.auger@redhat.com>
 Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
 
 ---
 
-v4 -> v5:
-- added Christoffer's R-b
-
 v3 -> v4:
-- use kvm_debug
+- add details to vgic_v3_rdist_free_slot kernel doc comment
+- Added Christoffer's R-b
 ---
- virt/kvm/arm/vgic/vgic-v3.c | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+ virt/kvm/arm/vgic/vgic-mmio-v3.c |  3 +--
+ virt/kvm/arm/vgic/vgic-v3.c      | 23 +++++++++++++++++++++++
+ virt/kvm/arm/vgic/vgic.h         | 11 +++++++++++
+ 3 files changed, 35 insertions(+), 2 deletions(-)
 
+diff --git a/virt/kvm/arm/vgic/vgic-mmio-v3.c b/virt/kvm/arm/vgic/vgic-mmio-v3.c
+index d1aab18..49ca176 100644
+--- a/virt/kvm/arm/vgic/vgic-mmio-v3.c
++++ b/virt/kvm/arm/vgic/vgic-mmio-v3.c
+@@ -593,8 +593,7 @@ int vgic_register_redist_iodev(struct kvm_vcpu *vcpu)
+ 	 * function for all VCPUs when the base address is set.  Just return
+ 	 * without doing any work for now.
+ 	 */
+-	rdreg = list_first_entry(&vgic->rd_regions,
+-				 struct vgic_redist_region, list);
++	rdreg = vgic_v3_rdist_free_slot(&vgic->rd_regions);
+ 	if (!rdreg)
+ 		return 0;
+ 
 diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-v3.c
-index c4a2a46..5563671 100644
+index 94de6cd..f81a63a 100644
 --- a/virt/kvm/arm/vgic/vgic-v3.c
 +++ b/virt/kvm/arm/vgic/vgic-v3.c
-@@ -484,16 +484,25 @@ struct vgic_redist_region *vgic_v3_rdist_free_slot(struct list_head *rd_regions)
+@@ -444,6 +444,29 @@ bool vgic_v3_check_base(struct kvm *kvm)
+ 	return false;
+ }
  
++/**
++ * vgic_v3_rdist_free_slot - Look up registered rdist regions and identify one
++ * which has free space to put a new rdist region.
++ *
++ * @rd_regions: redistributor region list head
++ *
++ * A redistributor regions maps n redistributors, n = region size / (2 x 64kB).
++ * Stride between redistributors is 0 and regions are filled in the index order.
++ *
++ * Return: the redist region handle, if any, that has space to map a new rdist
++ * region.
++ */
++struct vgic_redist_region *vgic_v3_rdist_free_slot(struct list_head *rd_regions)
++{
++	struct vgic_redist_region *rdreg;
++
++	list_for_each_entry(rdreg, rd_regions, list) {
++		if (!vgic_v3_redist_region_full(rdreg))
++			return rdreg;
++	}
++	return NULL;
++}
++
  int vgic_v3_map_resources(struct kvm *kvm)
  {
--	int ret = 0;
- 	struct vgic_dist *dist = &kvm->arch.vgic;
--	struct vgic_redist_region *rdreg =
--		list_first_entry(&dist->rd_regions,
--				 struct vgic_redist_region, list);
-+	struct kvm_vcpu *vcpu;
-+	int ret = 0;
-+	int c;
+ 	int ret = 0;
+diff --git a/virt/kvm/arm/vgic/vgic.h b/virt/kvm/arm/vgic/vgic.h
+index 830e815..fea32cb 100644
+--- a/virt/kvm/arm/vgic/vgic.h
++++ b/virt/kvm/arm/vgic/vgic.h
+@@ -251,6 +251,17 @@ static inline int vgic_v3_max_apr_idx(struct kvm_vcpu *vcpu)
+ 	}
+ }
  
- 	if (vgic_ready(kvm))
- 		goto out;
- 
--	if (IS_VGIC_ADDR_UNDEF(dist->vgic_dist_base) || !rdreg) {
-+	kvm_for_each_vcpu(c, vcpu, kvm) {
-+		struct vgic_cpu *vgic_cpu = &vcpu->arch.vgic_cpu;
++static inline bool
++vgic_v3_redist_region_full(struct vgic_redist_region *region)
++{
++	if (!region->count)
++		return false;
 +
-+		if (IS_VGIC_ADDR_UNDEF(vgic_cpu->rd_iodev.base_addr)) {
-+			kvm_debug("vcpu %d redistributor base not set\n", c);
-+			ret = -ENXIO;
-+			goto out;
-+		}
-+	}
++	return (region->free_index >= region->count);
++}
 +
-+	if (IS_VGIC_ADDR_UNDEF(dist->vgic_dist_base)) {
- 		kvm_err("Need to set vgic distributor addresses first\n");
- 		ret = -ENXIO;
- 		goto out;
++struct vgic_redist_region *vgic_v3_rdist_free_slot(struct list_head *rdregs);
++
+ int vgic_its_resolve_lpi(struct kvm *kvm, struct vgic_its *its,
+ 			 u32 devid, u32 eventid, struct vgic_irq **irq);
+ struct vgic_its *vgic_msi_to_its(struct kvm *kvm, struct kvm_msi *msi);
 -- 
 2.5.5
