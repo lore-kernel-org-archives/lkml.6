@@ -1,40 +1,41 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpipWFFwsleOwwhB2Z6x/95YxAT39G2khhan7KSh26JRTfasuTOo+7Y831AaCpsnpAO2tCg
-ARC-Seal: i=1; a=rsa-sha256; t=1525116404; cv=none;
+X-Google-Smtp-Source: AB8JxZor1mPzhq+o4QkAyGSetekQ0IlajBCgrnVpXr1Hl5sD6K+jKMwCsXziBjw9e9P6OuKDnPST
+ARC-Seal: i=1; a=rsa-sha256; t=1525116402; cv=none;
         d=google.com; s=arc-20160816;
-        b=Qb4LAfQYjRyzzZrCx9TDsxjY2kljebeixtVvkUMPIb2761Y4gsUmRQGn/60yEUMJtO
-         QTEVxFt4ag3MbfTcyfiZQHnj0pgTJn2j87Mb6wgxl4BCWMRmekyrj8W7zxn/RF7etHdp
-         oZzeZJei1pxy9fVnu4DNIsXne6fqUmJxfCA6wwMdBUf/Vr9EQbFVe52AaEb45K6M/7LT
-         iHvK0L3aJkylSb9ySI536NBHUhUnoZgYuVuq4dWYweFSdhvC9RYZBDZq/aS8tik7Qrf1
-         4uIijif1pEEKnj8VFbbKddWaU7D0T8qTb2bnOmwbp36D1T6IYwubaD3UO/KVGJ9nIrLF
-         P3HA==
+        b=tS51hCQ8DtpUg7KLvdTFJ+cF7I7Yr5BdFmHG0V0fsQMfIcWEnOohGm1ZyolpbY2KZn
+         2H0MFK1lB57Y1WLoQE/fTYUB1edtLqiB6jXcUZs5pronrHyQwhBJp5U6Q9/w18FtQgu1
+         8Ddltt+hiR+scuYQKewnIjUEjbGiljZVy+eZqB4WUMggbbKuRPXVtxi1FgRlk30QQmFd
+         azLZHGIe+OZvJqVyuyC7yBTs1EHAI+aqCGjIyLwytvbOVN/XDS3BJJ2rJ2ZoRjQLB79T
+         694gU235PUEarN6kZvUTKh2s9TSxVWTxEW86B6EzOJ32l5oTmV+VB/PLbuR5QFaTXIcC
+         BmDg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=xU07u9rcJF9kv9Y9+olcsCZCoiLRtsRWpMhGsDLzb5M=;
-        b=rZpMmYNFgR6M/0Kel7N/E4drsxOebLCOyTibLSc6xOMFziJmZjmD/TcnEiCclcCVPt
-         qs8PSuTX6aoMyuB+FmpoW4+KBYO3yhe9rkJcbZqn1T7KtcdonwuuNK0AnuIVnEzJcBYF
-         UpewJ7x8bKlQtcmlhGceS/cGkZZcV6hMZGlrkMreW6ngk1B5T0MAuE12ti6dMmAv4Rk5
-         Ik68mV7Akknj/XJ5aBUS2a6f5K5iyAnVFhUm01XekuFZBNHRkDw3jghyRbiiJg4lmW5C
-         nUj45R2qzG/l07nqGkqywXYloZdw3z9vWtmgjnzgO23ki55HlPGKloWgxIiQKvG2ikE0
-         vVfQ==
+        bh=eubIFyvpDQ+fAXaNUMdqVqyknFFvTh/vPXHkJHMBIuw=;
+        b=qm8R1UKA7MuMWHkIOBSuRekECKMekGRnWDgHBUSEbWKaUUO5X2UMLToWwM7vE/m1wK
+         T4O/XAd1BX48kRwm7OISpU5bkuD4VGxUSOumCQ+QL1a4qjU+BmTXu8JVQfa7VpdAwaLw
+         c08e6f5eUJNWoDxqDiKAdZ3KfsZcYXhB/xWQDaGwJwcY4QGIYK1BFm7yvoobL0Zgfl7k
+         zAWnfDgi/WoJhOAISWOlJZdZtU4EnaWOTk/SJYdyJZsmJYsaebz1n04BUoqle6PEvtfz
+         uddJObEB3iWaZVYXErCoWU4nnuDa2/FB8Sigs3XWGEk/gWCJSEUrOUVWHo/4k3lvutWf
+         t0pw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BC6A22E02
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D3D922DCB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.9 54/61] rtc: opal: Fix OPAL RTC driver OPAL_BUSY loops
-Date: Mon, 30 Apr 2018 12:24:57 -0700
-Message-Id: <20180430183955.893665304@linuxfoundation.org>
+	Daniel Kurtz <djkurtz@chromium.org>,
+	Aaron Durbin <adurbin@chromium.org>,
+	Rob Herring <robh@kernel.org>,
+	Guenter Roeck <groeck@chromium.org>
+Subject: [PATCH 4.9 52/61] earlycon: Use a pointer table to fix __earlycon_table stride
+Date: Mon, 30 Apr 2018 12:24:55 -0700
+Message-Id: <20180430183955.764509891@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430183951.312721450@linuxfoundation.org>
 References: <20180430183951.312721450@linuxfoundation.org>
@@ -44,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200458168211675?=
-X-GMAIL-MSGID: =?utf-8?q?1599200458168211675?=
+X-GMAIL-THRID: =?utf-8?q?1599200457375038545?=
+X-GMAIL-MSGID: =?utf-8?q?1599200457375038545?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,114 +54,143 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Nicholas Piggin <npiggin@gmail.com>
+From: Daniel Kurtz <djkurtz@chromium.org>
 
-commit 682e6b4da5cbe8e9a53f979a58c2a9d7dc997175 upstream.
+commit dd709e72cb934eefd44de8d9969097173fbf45dc upstream.
 
-The OPAL RTC driver does not sleep in case it gets OPAL_BUSY or
-OPAL_BUSY_EVENT from firmware, which causes large scheduling
-latencies, up to 50 seconds have been observed here when RTC stops
-responding (BMC reboot can do it).
+Commit 99492c39f39f ("earlycon: Fix __earlycon_table stride") tried to fix
+__earlycon_table stride by forcing the earlycon_id struct alignment to 32
+and asking the linker to 32-byte align the __earlycon_table symbol.  This
+fix was based on commit 07fca0e57fca92 ("tracing: Properly align linker
+defined symbols") which tried a similar fix for the tracing subsystem.
 
-Fix this by converting it to the standard form OPAL_BUSY loop that
-sleeps.
+However, this fix doesn't quite work because there is no guarantee that
+gcc will place structures packed into an array format.  In fact, gcc 4.9
+chooses to 64-byte align these structs by inserting additional padding
+between the entries because it has no clue that they are supposed to be in
+an array.  If we are unlucky, the linker will assign symbol
+"__earlycon_table" to a 32-byte aligned address which does not correspond
+to the 64-byte aligned contents of section "__earlycon_table".
 
-Fixes: 628daa8d5abf ("powerpc/powernv: Add RTC and NVRAM support plus RTAS fallbacks")
-Cc: stable@vger.kernel.org # v3.2+
-Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
-Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+To address this same problem, the fix to the tracing system was
+subsequently re-implemented using a more robust table of pointers approach
+by commits:
+ 3d56e331b653 ("tracing: Replace syscall_meta_data struct array with pointer array")
+ 654986462939 ("tracepoints: Fix section alignment using pointer array")
+ e4a9ea5ee7c8 ("tracing: Replace trace_event struct array with pointer array")
+
+Let's use this same "array of pointers to structs" approach for
+EARLYCON_TABLE.
+
+Fixes: 99492c39f39f ("earlycon: Fix __earlycon_table stride")
+Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
+Suggested-by: Aaron Durbin <adurbin@chromium.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Tested-by: Guenter Roeck <groeck@chromium.org>
+Reviewed-by: Guenter Roeck <groeck@chromium.org>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/platforms/powernv/opal-rtc.c |    8 ++++--
- drivers/rtc/rtc-opal.c                    |   37 ++++++++++++++++++------------
- 2 files changed, 28 insertions(+), 17 deletions(-)
+ drivers/of/fdt.c                  |    7 +++++--
+ drivers/tty/serial/earlycon.c     |    6 ++++--
+ include/asm-generic/vmlinux.lds.h |    2 +-
+ include/linux/serial_core.h       |   21 ++++++++++++++-------
+ 4 files changed, 24 insertions(+), 12 deletions(-)
 
---- a/arch/powerpc/platforms/powernv/opal-rtc.c
-+++ b/arch/powerpc/platforms/powernv/opal-rtc.c
-@@ -48,10 +48,12 @@ unsigned long __init opal_get_boot_time(
+--- a/drivers/of/fdt.c
++++ b/drivers/of/fdt.c
+@@ -935,7 +935,7 @@ int __init early_init_dt_scan_chosen_std
+ 	int offset;
+ 	const char *p, *q, *options = NULL;
+ 	int l;
+-	const struct earlycon_id *match;
++	const struct earlycon_id **p_match;
+ 	const void *fdt = initial_boot_params;
  
- 	while (rc == OPAL_BUSY || rc == OPAL_BUSY_EVENT) {
- 		rc = opal_rtc_read(&__y_m_d, &__h_m_s_ms);
--		if (rc == OPAL_BUSY_EVENT)
-+		if (rc == OPAL_BUSY_EVENT) {
-+			mdelay(OPAL_BUSY_DELAY_MS);
- 			opal_poll_events(NULL);
--		else if (rc == OPAL_BUSY)
--			mdelay(10);
-+		} else if (rc == OPAL_BUSY) {
-+			mdelay(OPAL_BUSY_DELAY_MS);
-+		}
- 	}
- 	if (rc != OPAL_SUCCESS)
+ 	offset = fdt_path_offset(fdt, "/chosen");
+@@ -962,7 +962,10 @@ int __init early_init_dt_scan_chosen_std
  		return 0;
---- a/drivers/rtc/rtc-opal.c
-+++ b/drivers/rtc/rtc-opal.c
-@@ -57,7 +57,7 @@ static void tm_to_opal(struct rtc_time *
- 
- static int opal_get_rtc_time(struct device *dev, struct rtc_time *tm)
- {
--	long rc = OPAL_BUSY;
-+	s64 rc = OPAL_BUSY;
- 	int retries = 10;
- 	u32 y_m_d;
- 	u64 h_m_s_ms;
-@@ -66,13 +66,17 @@ static int opal_get_rtc_time(struct devi
- 
- 	while (rc == OPAL_BUSY || rc == OPAL_BUSY_EVENT) {
- 		rc = opal_rtc_read(&__y_m_d, &__h_m_s_ms);
--		if (rc == OPAL_BUSY_EVENT)
-+		if (rc == OPAL_BUSY_EVENT) {
-+			msleep(OPAL_BUSY_DELAY_MS);
- 			opal_poll_events(NULL);
--		else if (retries-- && (rc == OPAL_HARDWARE
--				       || rc == OPAL_INTERNAL_ERROR))
--			msleep(10);
--		else if (rc != OPAL_BUSY && rc != OPAL_BUSY_EVENT)
--			break;
-+		} else if (rc == OPAL_BUSY) {
-+			msleep(OPAL_BUSY_DELAY_MS);
-+		} else if (rc == OPAL_HARDWARE || rc == OPAL_INTERNAL_ERROR) {
-+			if (retries--) {
-+				msleep(10); /* Wait 10ms before retry */
-+				rc = OPAL_BUSY; /* go around again */
-+			}
-+		}
  	}
  
- 	if (rc != OPAL_SUCCESS)
-@@ -87,21 +91,26 @@ static int opal_get_rtc_time(struct devi
- 
- static int opal_set_rtc_time(struct device *dev, struct rtc_time *tm)
- {
--	long rc = OPAL_BUSY;
-+	s64 rc = OPAL_BUSY;
- 	int retries = 10;
- 	u32 y_m_d = 0;
- 	u64 h_m_s_ms = 0;
- 
- 	tm_to_opal(tm, &y_m_d, &h_m_s_ms);
+-	for (match = __earlycon_table; match < __earlycon_table_end; match++) {
++	for (p_match = __earlycon_table; p_match < __earlycon_table_end;
++	     p_match++) {
++		const struct earlycon_id *match = *p_match;
 +
- 	while (rc == OPAL_BUSY || rc == OPAL_BUSY_EVENT) {
- 		rc = opal_rtc_write(y_m_d, h_m_s_ms);
--		if (rc == OPAL_BUSY_EVENT)
-+		if (rc == OPAL_BUSY_EVENT) {
-+			msleep(OPAL_BUSY_DELAY_MS);
- 			opal_poll_events(NULL);
--		else if (retries-- && (rc == OPAL_HARDWARE
--				       || rc == OPAL_INTERNAL_ERROR))
--			msleep(10);
--		else if (rc != OPAL_BUSY && rc != OPAL_BUSY_EVENT)
--			break;
-+		} else if (rc == OPAL_BUSY) {
-+			msleep(OPAL_BUSY_DELAY_MS);
-+		} else if (rc == OPAL_HARDWARE || rc == OPAL_INTERNAL_ERROR) {
-+			if (retries--) {
-+				msleep(10); /* Wait 10ms before retry */
-+				rc = OPAL_BUSY; /* go around again */
-+			}
-+		}
- 	}
+ 		if (!match->compatible[0])
+ 			continue;
  
- 	return rc == OPAL_SUCCESS ? 0 : -EIO;
+--- a/drivers/tty/serial/earlycon.c
++++ b/drivers/tty/serial/earlycon.c
+@@ -172,7 +172,7 @@ static int __init register_earlycon(char
+  */
+ int __init setup_earlycon(char *buf)
+ {
+-	const struct earlycon_id *match;
++	const struct earlycon_id **p_match;
+ 
+ 	if (!buf || !buf[0])
+ 		return -EINVAL;
+@@ -180,7 +180,9 @@ int __init setup_earlycon(char *buf)
+ 	if (early_con.flags & CON_ENABLED)
+ 		return -EALREADY;
+ 
+-	for (match = __earlycon_table; match < __earlycon_table_end; match++) {
++	for (p_match = __earlycon_table; p_match < __earlycon_table_end;
++	     p_match++) {
++		const struct earlycon_id *match = *p_match;
+ 		size_t len = strlen(match->name);
+ 
+ 		if (strncmp(buf, match->name, len))
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -170,7 +170,7 @@
+ #endif
+ 
+ #ifdef CONFIG_SERIAL_EARLYCON
+-#define EARLYCON_TABLE() STRUCT_ALIGN();			\
++#define EARLYCON_TABLE() . = ALIGN(8);				\
+ 			 VMLINUX_SYMBOL(__earlycon_table) = .;	\
+ 			 *(__earlycon_table)			\
+ 			 VMLINUX_SYMBOL(__earlycon_table_end) = .;
+--- a/include/linux/serial_core.h
++++ b/include/linux/serial_core.h
+@@ -347,10 +347,10 @@ struct earlycon_id {
+ 	char	name[16];
+ 	char	compatible[128];
+ 	int	(*setup)(struct earlycon_device *, const char *options);
+-} __aligned(32);
++};
+ 
+-extern const struct earlycon_id __earlycon_table[];
+-extern const struct earlycon_id __earlycon_table_end[];
++extern const struct earlycon_id *__earlycon_table[];
++extern const struct earlycon_id *__earlycon_table_end[];
+ 
+ #if defined(CONFIG_SERIAL_EARLYCON) && !defined(MODULE)
+ #define EARLYCON_USED_OR_UNUSED	__used
+@@ -358,12 +358,19 @@ extern const struct earlycon_id __earlyc
+ #define EARLYCON_USED_OR_UNUSED	__maybe_unused
+ #endif
+ 
+-#define OF_EARLYCON_DECLARE(_name, compat, fn)				\
+-	static const struct earlycon_id __UNIQUE_ID(__earlycon_##_name)	\
+-	     EARLYCON_USED_OR_UNUSED __section(__earlycon_table)	\
++#define _OF_EARLYCON_DECLARE(_name, compat, fn, unique_id)		\
++	static const struct earlycon_id unique_id			\
++	     EARLYCON_USED_OR_UNUSED __initconst			\
+ 		= { .name = __stringify(_name),				\
+ 		    .compatible = compat,				\
+-		    .setup = fn  }
++		    .setup = fn  };					\
++	static const struct earlycon_id EARLYCON_USED_OR_UNUSED		\
++		__section(__earlycon_table)				\
++		* const __PASTE(__p, unique_id) = &unique_id
++
++#define OF_EARLYCON_DECLARE(_name, compat, fn)				\
++	_OF_EARLYCON_DECLARE(_name, compat, fn,				\
++			     __UNIQUE_ID(__earlycon_##_name))
+ 
+ #define EARLYCON_DECLARE(_name, fn)	OF_EARLYCON_DECLARE(_name, "", fn)
+ 
