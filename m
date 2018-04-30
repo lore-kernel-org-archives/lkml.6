@@ -1,188 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754907AbeD3Vt7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 17:49:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59818 "EHLO mail.kernel.org"
+        id S1752884AbeD3WAQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 18:00:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32788 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753058AbeD3Vt5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 17:49:57 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C60022DC2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Mon, 30 Apr 2018 16:49:54 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Vidya Sagar <vidyas@nvidia.com>, Rajat Jain <rajatja@google.com>,
-        linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: Bug? pcie_aspm=off cause less power consumption as default
-Message-ID: <20180430214954.GH95643@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180422171647.7v65zrlwhya5mq7v@pali>
- <20180427195313.GH8199@bhelgaas-glaptop.roam.corp.google.com>
- <20180430212321.hwvdhwk2hhjbd7nw@pali>
+        id S1751265AbeD3WAP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 18:00:15 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 553FA22576
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Mon, 30 Apr 2018 18:00:11 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Joel Fernandes <joelaf@google.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        "Cc: Frederic Weisbecker" <fweisbec@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Fenguang Wu <fengguang.wu@intel.com>,
+        Baohong Liu <baohong.liu@intel.com>,
+        Vedang Patel <vedang.patel@intel.com>,
+        "Cc: Android Kernel" <kernel-team@android.com>
+Subject: Re: [PATCH] softirq: reorder trace_softirqs_on to prevent lockdep
+ splat
+Message-ID: <20180430180011.2ded931c@gandalf.local.home>
+In-Reply-To: <CAJWu+ookMimv4rgSyjgzKyd8Cr0MgJHFFj8XftawZ7GRr4vOvg@mail.gmail.com>
+References: <20180427041100.133772-1-joelaf@google.com>
+        <20180430123813.3b8315d8@gandalf.local.home>
+        <CAJWu+ooY-BXFQO+TK526pZpE6gsGRZdHq6i7yM7LSmgXi4552g@mail.gmail.com>
+        <CAJWu+ookMimv4rgSyjgzKyd8Cr0MgJHFFj8XftawZ7GRr4vOvg@mail.gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180430212321.hwvdhwk2hhjbd7nw@pali>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 30, 2018 at 11:23:21PM +0200, Pali Rohár wrote:
-> On Friday 27 April 2018 14:53:13 Bjorn Helgaas wrote:
-> > Can you apply the following patch and try just the "force powersave" situation?
+On Mon, 30 Apr 2018 17:01:04 +0000
+Joel Fernandes <joelaf@google.com> wrote:
+Tried 4.17-rc3 and see it too. Could be difference in configs? Also, the
+> environment is a Qemu system with single CPU 1GB memory. Attached is the
+> config.
 > 
-> Hi! You forgot to attach that patch.
+> I think when I had multiple CPUs it was harder to trigger it, but can't
+> really remember now. There was a time when triggering it was quite
+> intermittent.
+>
 
-Oops, I sure did!  I must have been subconsciously dreading analyzing the
-resulting data :)  Here's the patch:
+Bah, I didn't have CONFIG_DEBUG_LOCKDEP enabled, and that is what does
+the backtrace.
 
-
-diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
-index c687c817b47d..d5fef9b0a541 100644
---- a/drivers/pci/pcie/aspm.c
-+++ b/drivers/pci/pcie/aspm.c
-@@ -155,10 +155,13 @@ static void pcie_set_clkpm_nocheck(struct pcie_link_state *link, int enable)
- 	struct pci_bus *linkbus = link->pdev->subordinate;
- 	u32 val = enable ? PCI_EXP_LNKCTL_CLKREQ_EN : 0;
- 
--	list_for_each_entry(child, &linkbus->devices, bus_list)
-+	list_for_each_entry(child, &linkbus->devices, bus_list) {
- 		pcie_capability_clear_and_set_word(child, PCI_EXP_LNKCTL,
- 						   PCI_EXP_LNKCTL_CLKREQ_EN,
- 						   val);
-+		pci_info(child, "set PCI_EXP_LNKCTL %#06x %s\n", val,
-+			 __func__);
-+	}
- 	link->clkpm_enabled = !!enable;
- }
- 
-@@ -184,12 +187,16 @@ static void pcie_clkpm_cap_init(struct pcie_link_state *link, int blacklist)
- 	/* All functions should have the same cap and state, take the worst */
- 	list_for_each_entry(child, &linkbus->devices, bus_list) {
- 		pcie_capability_read_dword(child, PCI_EXP_LNKCAP, &reg32);
-+		pci_info(child, "rd  PCI_EXP_LNKCAP %#010x %s\n", reg32,
-+			 __func__);
- 		if (!(reg32 & PCI_EXP_LNKCAP_CLKPM)) {
- 			capable = 0;
- 			enabled = 0;
- 			break;
- 		}
- 		pcie_capability_read_word(child, PCI_EXP_LNKCTL, &reg16);
-+		pci_info(child, "rd  PCI_EXP_LNKCTL %#06x %s\n", reg16,
-+			 __func__);
- 		if (!(reg16 & PCI_EXP_LNKCTL_CLKREQ_EN))
- 			enabled = 0;
- 	}
-@@ -229,12 +236,16 @@ static void pcie_aspm_configure_common_clock(struct pcie_link_state *link)
- 
- 	/* Port might be already in common clock mode */
- 	pcie_capability_read_word(parent, PCI_EXP_LNKCTL, &reg16);
-+	pci_info(parent, "rd  PCI_EXP_LNKCTL %#06x %s\n", reg16,
-+		 __func__);
- 	if (same_clock && (reg16 & PCI_EXP_LNKCTL_CCC)) {
- 		bool consistent = true;
- 
- 		list_for_each_entry(child, &linkbus->devices, bus_list) {
- 			pcie_capability_read_word(child, PCI_EXP_LNKCTL,
- 						  &reg16);
-+			pci_info(child, "rd  PCI_EXP_LNKCTL %#06x %s loop 1\n", reg16,
-+				 __func__);
- 			if (!(reg16 & PCI_EXP_LNKCTL_CCC)) {
- 				consistent = false;
- 				break;
-@@ -248,26 +259,36 @@ static void pcie_aspm_configure_common_clock(struct pcie_link_state *link)
- 	/* Configure downstream component, all functions */
- 	list_for_each_entry(child, &linkbus->devices, bus_list) {
- 		pcie_capability_read_word(child, PCI_EXP_LNKCTL, &reg16);
-+		pci_info(child, "rd  PCI_EXP_LNKCTL %#06x %s loop 2\n", reg16,
-+			 __func__);
- 		child_reg[PCI_FUNC(child->devfn)] = reg16;
- 		if (same_clock)
- 			reg16 |= PCI_EXP_LNKCTL_CCC;
- 		else
- 			reg16 &= ~PCI_EXP_LNKCTL_CCC;
- 		pcie_capability_write_word(child, PCI_EXP_LNKCTL, reg16);
-+		pci_info(child, "wr  PCI_EXP_LNKCTL %#06x %s loop 2\n", reg16,
-+			 __func__);
- 	}
- 
- 	/* Configure upstream component */
- 	pcie_capability_read_word(parent, PCI_EXP_LNKCTL, &reg16);
-+	pci_info(parent, "rd  PCI_EXP_LNKCTL %#06x %s\n", reg16,
-+		 __func__);
- 	parent_reg = reg16;
- 	if (same_clock)
- 		reg16 |= PCI_EXP_LNKCTL_CCC;
- 	else
- 		reg16 &= ~PCI_EXP_LNKCTL_CCC;
- 	pcie_capability_write_word(parent, PCI_EXP_LNKCTL, reg16);
-+	pci_info(parent, "wr  PCI_EXP_LNKCTL %#06x %s\n", reg16,
-+		 __func__);
- 
- 	/* Retrain link */
- 	reg16 |= PCI_EXP_LNKCTL_RL;
- 	pcie_capability_write_word(parent, PCI_EXP_LNKCTL, reg16);
-+	pci_info(parent, "wr  PCI_EXP_LNKCTL %#06x %s retrain\n", reg16,
-+		 __func__);
- 
- 	/* Wait for link training end. Break out after waiting for timeout */
- 	start_jiffies = jiffies;
-@@ -284,10 +305,15 @@ static void pcie_aspm_configure_common_clock(struct pcie_link_state *link)
- 
- 	/* Training failed. Restore common clock configurations */
- 	pci_err(parent, "ASPM: Could not configure common clock\n");
--	list_for_each_entry(child, &linkbus->devices, bus_list)
-+	list_for_each_entry(child, &linkbus->devices, bus_list) {
- 		pcie_capability_write_word(child, PCI_EXP_LNKCTL,
- 					   child_reg[PCI_FUNC(child->devfn)]);
-+		pci_info(child, "wr  PCI_EXP_LNKCTL %#06x %s restore\n",
-+			 child_reg[PCI_FUNC(child->devfn)], __func__);
-+	}
- 	pcie_capability_write_word(parent, PCI_EXP_LNKCTL, parent_reg);
-+	pci_info(parent, "wr  PCI_EXP_LNKCTL %#06x %s restore\n", parent_reg,
-+		 __func__);
- }
- 
- /* Convert L0s latency encoding to ns */
-@@ -383,10 +409,14 @@ static void pcie_get_aspm_reg(struct pci_dev *pdev,
- 	u32 reg32;
- 
- 	pcie_capability_read_dword(pdev, PCI_EXP_LNKCAP, &reg32);
-+	pci_info(pdev, "rd  PCI_EXP_LNKCAP %#010x %s\n", reg32,
-+		 __func__);
- 	info->support = (reg32 & PCI_EXP_LNKCAP_ASPMS) >> 10;
- 	info->latency_encoding_l0s = (reg32 & PCI_EXP_LNKCAP_L0SEL) >> 12;
- 	info->latency_encoding_l1  = (reg32 & PCI_EXP_LNKCAP_L1EL) >> 15;
- 	pcie_capability_read_word(pdev, PCI_EXP_LNKCTL, &reg16);
-+	pci_info(pdev, "rd  PCI_EXP_LNKCTL %#06x %s\n", reg16,
-+		 __func__);
- 	info->enabled = reg16 & PCI_EXP_LNKCTL_ASPMC;
- 
- 	/* Read L1 PM substate capabilities */
-@@ -690,8 +720,12 @@ static void pcie_config_aspm_l1ss(struct pcie_link_state *link, u32 state)
- 	if (enable_req & (ASPM_STATE_L1_1 | ASPM_STATE_L1_2)) {
- 		pcie_capability_clear_and_set_word(child, PCI_EXP_LNKCTL,
- 						   PCI_EXP_LNKCTL_ASPM_L1, 0);
-+		pci_info(child, "clr PCI_EXP_LNKCTL %#06x %s\n",
-+			 PCI_EXP_LNKCTL_ASPM_L1, __func__);
- 		pcie_capability_clear_and_set_word(parent, PCI_EXP_LNKCTL,
- 						   PCI_EXP_LNKCTL_ASPM_L1, 0);
-+		pci_info(parent, "clr PCI_EXP_LNKCTL %#06x %s\n",
-+			 PCI_EXP_LNKCTL_ASPM_L1, __func__);
- 	}
- 
- 	if (enable_req & ASPM_STATE_L1_2_MASK) {
-@@ -739,6 +773,8 @@ static void pcie_config_aspm_dev(struct pci_dev *pdev, u32 val)
- {
- 	pcie_capability_clear_and_set_word(pdev, PCI_EXP_LNKCTL,
- 					   PCI_EXP_LNKCTL_ASPMC, val);
-+	pci_info(pdev, "set PCI_EXP_LNKCTL %#06x %s\n",
-+		 val, __func__);
- }
- 
- static void pcie_config_aspm_link(struct pcie_link_state *link, u32 state)
+-- Steve
