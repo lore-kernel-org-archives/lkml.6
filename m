@@ -1,46 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754639AbeD3PUB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 11:20:01 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:54114 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752939AbeD3PTX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 11:19:23 -0400
-From: John Garry <john.garry@huawei.com>
-To: <xuwei5@hisilicon.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <linuxarm@huawei.com>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        John Garry <john.garry@huawei.com>
-Subject: [PATCH 0/3] HiSilicon LPC defconfig and DT patches
-Date: Mon, 30 Apr 2018 23:15:39 +0800
-Message-ID: <1525101342-27120-1-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 1.9.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+        id S1754682AbeD3PUI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 11:20:08 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:32990 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752939AbeD3PUF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 11:20:05 -0400
+Date: Mon, 30 Apr 2018 11:17:21 -0400 (EDT)
+Message-Id: <20180430.111721.844644740463403738.davem@davemloft.net>
+To: zbr@ioremap.net
+Cc: stefan.strogin@gmail.com, jderehag@hotmail.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, xe-linux-external@cisco.com,
+        matt.helsley@gmail.com
+Subject: Re: [PATCH] connector: add parent pid and tgid to coredump and
+ exit events
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <4667631525100490@web38o.yandex.ru>
+References: <DB6P190MB0389513E240BD8ECEE575DB4DDBB0@DB6P190MB0389.EURP190.PROD.OUTLOOK.COM>
+        <32f14672-5715-3e21-ba85-b27dc8d2c6b0@gmail.com>
+        <4667631525100490@web38o.yandex.ru>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series introduces 3 patches, to enable the
-HISILICON_LPC config in the arm64 defconfig
-and also add the relevant LPC DT entries.
+From: Evgeniy Polyakov <zbr@ioremap.net>
+Date: Mon, 30 Apr 2018 18:01:30 +0300
 
-For hip06 UART support, we depend on this patch:
-https://lkml.org/lkml/2018/4/27/258
+> Stefan, hi
+> 
+> Sorry for delay.
+> 
+> 26.04.2018, 15:04, "Stefan Strogin" <stefan.strogin@gmail.com>:
+>> Hi David, Evgeniy,
+>>
+>> Sorry to bother you, but could you please comment about the UAPI change and the patch?
+> 
+> With 4-bytes pid_t everything looks fine, and I do not know arch where pid is larger currently, so it looks safe.
+> 
+> David, please pull it into your tree, or should it go via different path?
+> 
+> Acked-by: Evgeniy Polyakov <zbr@ioremap.net>
 
-John Garry (3):
-  arm64: defconfig: Enable HISILICON_LPC
-  arm64: dts: hisi: Enable Hisi LPC node for hip06
-  arm64: dts: hisi: Enable Hisi LPC node for hip07
-
- arch/arm64/boot/dts/hisilicon/hip06-d03.dts |  8 ++++++++
- arch/arm64/boot/dts/hisilicon/hip06.dtsi    | 21 +++++++++++++++++++++
- arch/arm64/boot/dts/hisilicon/hip07-d05.dts |  4 ++++
- arch/arm64/boot/dts/hisilicon/hip07.dtsi    | 14 ++++++++++++++
- arch/arm64/configs/defconfig                |  1 +
- 5 files changed, 48 insertions(+)
-
--- 
-1.9.1
+After this much time it needs to be resubmitted.
