@@ -1,38 +1,40 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqHsTcs/ecWPYat8i4jvCx/b7YWUXpKTsWyraPAUSthFRzC5stAUnfJz9GIwcjdMy/0YFSO
-ARC-Seal: i=1; a=rsa-sha256; t=1525116391; cv=none;
+X-Google-Smtp-Source: AB8JxZoUM4mG9p0Ft82rGwrFW/uWmwcYSOwxBUbtsjg8eXeBFpTFKagZJehDGGCekfwrErZUP7vr
+ARC-Seal: i=1; a=rsa-sha256; t=1525116390; cv=none;
         d=google.com; s=arc-20160816;
-        b=nP37uaMKpx6hHCpHPVdif0QQQwNX+O02BXEftciOHRpGg6pmSAeesaqdDuomCqy18A
-         o/8UFb2H1YmykGcYbHzRbHDaiBjw80j/MctIgRBeGxkTDOEQhb3KR+U5JLuarRm3XjJ7
-         jvbLw9Qz/OF/tOT68mXLAz3gspFPsW+tgdKbGo+47+C1baPy0vCKBK8Ls0wR1ST+aJqg
-         YCyDOW5YihvsPsoC4DXjuGwiprOPz1QPfsFgSDVt76XieE9XfRmFp96CtOAWw3+92c0X
-         kXTRsyiR+WgV55DmsH/JWtZp1Ejy2sz6Ju9YTAhzWJ0sjvAXAnXIjWKJ8qj/i5mo0yJY
-         2rKg==
+        b=O03YqaaE/tTcJhkXIl6hJkuBehGw4BAVKlq8WG/lGpKLI2UoOu05H5XYzMt/yuwhQ1
+         cv34AIwmUiut5tbGsvzuOOKT26tilSGdCWiayk3nbQzspzLbZirGjhTVtG303dGVqiCt
+         If9+IjvLjKRFpHSdMSe/1XCJ1qdSXa25UziU7OdyrtgZ7LjXOgakbeVssTAp/U754vd1
+         +a3j06mVSBZkxa++MwpyY63MPn5JgfY9Fbndfz8quje3s+2VPt714EU8d0tW66Y4nOh5
+         yHl7xsZERBdadGCeOcX9VS4c3vjMwu79eFxqV5edWpXgpPFK4t4UWiHMLB5tgLyT2WOB
+         ++/w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=aW+OB4dBjMIpTxss8Kxl06QcM8zirr7Cw0d/1uIUSrc=;
-        b=BJSxPuD2ktrgogjrsZdwjwIO7Wb0dFYnSTKDFx/96LTWjvCTIV8sL7j38UvJY5ttWu
-         uBGtDDWXA3VvP/HYPZ3EbrYDU5CTfUrpIYG/GE11cgyhk3JT1lQ036AR9Ff+Gb/iKLZ8
-         SZQLdePtlqZNNiDyM8mIBJLwp6sCqJ0nTdBvcJhvO11eIflNrhJmC8y+L0IAjDDiSceY
-         9LbzxkJt/qrGJmxsOCZXTY7iv/E+fFbDH8DKg7DUNrj7nysMuxa6MfRiuZLEmYptv4dC
-         l1f9WKvVQDu2FY7B6oibFr+NmB4RXR1FH4AB66uww/rN4s+/GMxDJl05W1yENK+qLzBE
-         dJGA==
+        bh=H+HkN+NuutGgVGc8smM25+8nMq6Zia27KZSgr1Wc5GE=;
+        b=mY2q3YLzNxnVtGJgwwTYwCkc7/4rTJ3N4Kx62i9A/r5xCqBsp4PSPcYwnepG/yf3+J
+         vUp0ergEI3lmnue9QOpEB2cRNXSaxLTwGq8N3Vr6xDNIjyY+WMU5qCnysRE1mUKRLve0
+         6rjDdyDgpeF2ISfr7aYDF9ApHl8ULQFslZbvqDMqZFeF49S8B6y0bFeIi8og6fU1Hp9z
+         XFirKPTvQxUhW1hGjy/RXqVGEHU+MtAjdTu1WEm+jueb5S03dTLxRJZNaocQNINBBbHO
+         +SEKL59dTXYbM/PCW4w8v1Puuc6wLt6asNKqYAU3EuMediFCClXep0ptDdZK+W6/baww
+         VCyA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6BBA22E03
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FE4B22DCB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
+	David Henningsson <diwic@ubuntu.com>,
+	Takashi Sakamoto <o-takashi@sakamocchi.jp>,
 	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.9 32/61] ALSA: seq: oss: Fix unbalanced use lock for synth MIDI device
-Date: Mon, 30 Apr 2018 12:24:35 -0700
-Message-Id: <20180430183954.120329729@linuxfoundation.org>
+Subject: [PATCH 4.9 31/61] ALSA: core: Report audio_tstamp in snd_pcm_sync_ptr
+Date: Mon, 30 Apr 2018 12:24:34 -0700
+Message-Id: <20180430183954.020728739@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430183951.312721450@linuxfoundation.org>
 References: <20180430183951.312721450@linuxfoundation.org>
@@ -42,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200282251951106?=
-X-GMAIL-MSGID: =?utf-8?q?1599200445631664245?=
+X-GMAIL-THRID: =?utf-8?q?1599200281194240670?=
+X-GMAIL-MSGID: =?utf-8?q?1599200444953308595?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,44 +53,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: David Henningsson <diwic@ubuntu.com>
 
-commit f5e94b4c6ebdabe0f602d796e0430180927521a0 upstream.
+commit f853dcaae2f5bbe021161e421bd1576845bae8f6 upstream.
 
-When get_synthdev() is called for a MIDI device, it returns the fixed
-midi_synth_dev without the use refcounting.  OTOH, the caller is
-supposed to unreference unconditionally after the usage, so this would
-lead to unbalanced refcount.
+It looks like a simple mistake that this struct member
+was forgotten.
 
-This patch corrects the behavior and keep up the refcount balance also
-for the MIDI synth device.
+Audio_tstamp isn't used much, and on some archs (such as x86) this
+ioctl is not used by default, so that might be the reason why this
+has slipped for so long.
 
-Cc: <stable@vger.kernel.org>
+Fixes: 4eeaaeaea1ce ("ALSA: core: add hooks for audio timestamps")
+Signed-off-by: David Henningsson <diwic@ubuntu.com>
+Reviewed-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Cc: <stable@vger.kernel.org> # v3.8+
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/core/seq/oss/seq_oss_synth.c |   12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ sound/core/pcm_native.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/sound/core/seq/oss/seq_oss_synth.c
-+++ b/sound/core/seq/oss/seq_oss_synth.c
-@@ -363,10 +363,14 @@ get_synthdev(struct seq_oss_devinfo *dp,
- 		return NULL;
- 	if (! dp->synths[dev].opened)
- 		return NULL;
--	if (dp->synths[dev].is_midi)
--		return &midi_synth_dev;
--	if ((rec = get_sdev(dev)) == NULL)
--		return NULL;
-+	if (dp->synths[dev].is_midi) {
-+		rec = &midi_synth_dev;
-+		snd_use_lock_use(&rec->use_lock);
-+	} else {
-+		rec = get_sdev(dev);
-+		if (!rec)
-+			return NULL;
-+	}
- 	if (! rec->opened) {
- 		snd_use_lock_free(&rec->use_lock);
- 		return NULL;
+--- a/sound/core/pcm_native.c
++++ b/sound/core/pcm_native.c
+@@ -2729,6 +2729,7 @@ static int snd_pcm_sync_ptr(struct snd_p
+ 	sync_ptr.s.status.hw_ptr = status->hw_ptr;
+ 	sync_ptr.s.status.tstamp = status->tstamp;
+ 	sync_ptr.s.status.suspended_state = status->suspended_state;
++	sync_ptr.s.status.audio_tstamp = status->audio_tstamp;
+ 	snd_pcm_stream_unlock_irq(substream);
+ 	if (copy_to_user(_sync_ptr, &sync_ptr, sizeof(sync_ptr)))
+ 		return -EFAULT;
