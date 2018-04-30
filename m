@@ -1,226 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752151AbeD3HZJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 03:25:09 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39288 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751755AbeD3HZH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 03:25:07 -0400
-Subject: Re: [PATCH v3 11/12] KVM: arm/arm64: Implement
- KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
-To: Christoffer Dall <christoffer.dall@arm.com>
-References: <1523607658-9166-1-git-send-email-eric.auger@redhat.com>
- <1523607658-9166-12-git-send-email-eric.auger@redhat.com>
- <20180424210625.GC4533@C02W217FHV2R.local>
-Cc: eric.auger.pro@gmail.com, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
-        marc.zyngier@arm.com, cdall@kernel.org, peter.maydell@linaro.org,
-        andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
-From: Auger Eric <eric.auger@redhat.com>
-Message-ID: <1203ac02-b3c2-1bad-440d-b933ff284abc@redhat.com>
-Date: Mon, 30 Apr 2018 09:25:03 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+        id S1752033AbeD3H0p (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 03:26:45 -0400
+Received: from mailgw02.mediatek.com ([1.203.163.81]:49997 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751751AbeD3H0o (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 03:26:44 -0400
+X-UUID: 661a9bd7db0041d8b3e077538f54e989-20180430
+Message-ID: <1525073196.21494.3.camel@mtkswgap22>
+Subject: Re: [PATCH] spi: mediatek: Use of_device_get_match_data()
+From: Ryder Lee <ryder.lee@mediatek.com>
+To: Mark Brown <broonie@kernel.org>
+CC: Leilk Liu =?UTF-8?Q?=28=E5=88=98=E7=A3=8A=29?=
+        <Leilk.Liu@mediatek.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "linux-mediatek@lists.infradead.org"
+        <linux-mediatek@lists.infradead.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Date: Mon, 30 Apr 2018 15:26:36 +0800
+In-Reply-To: <94cba80f703be048666afde1ed53c15c3704c533.1523347340.git.ryder.lee@mediatek.com>
+References: <31f944ab8dfcc1d7b6f03b35657a2a34825b5246.1523347340.git.ryder.lee@mediatek.com>
+         <94cba80f703be048666afde1ed53c15c3704c533.1523347340.git.ryder.lee@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
-In-Reply-To: <20180424210625.GC4533@C02W217FHV2R.local>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christoffer,
+Hi Mark,
 
-On 04/24/2018 11:06 PM, Christoffer Dall wrote:
-> On Fri, Apr 13, 2018 at 10:20:57AM +0200, Eric Auger wrote:
->> Now all the internals are ready to handle multiple redistributor
->> regions, let's allow the userspace to register them.
->>
->> Signed-off-by: Eric Auger <eric.auger@redhat.com>
->>
->> ---
->>
->> v2 -> v3:
->> - early exit if vgic_v3_rdist_region_from_index() fails
->> ---
->>  virt/kvm/arm/vgic/vgic-kvm-device.c | 42 +++++++++++++++++++++++++++++++++++--
->>  virt/kvm/arm/vgic/vgic-mmio-v3.c    |  4 ++--
->>  virt/kvm/arm/vgic/vgic.h            |  9 +++++++-
->>  3 files changed, 50 insertions(+), 5 deletions(-)
->>
->> diff --git a/virt/kvm/arm/vgic/vgic-kvm-device.c b/virt/kvm/arm/vgic/vgic-kvm-device.c
->> index e7b5a86..00e03d3 100644
->> --- a/virt/kvm/arm/vgic/vgic-kvm-device.c
->> +++ b/virt/kvm/arm/vgic/vgic-kvm-device.c
->> @@ -65,7 +65,8 @@ int kvm_vgic_addr(struct kvm *kvm, unsigned long type, u64 *addr, bool write)
->>  {
->>  	int r = 0;
->>  	struct vgic_dist *vgic = &kvm->arch.vgic;
->> -	phys_addr_t *addr_ptr, alignment;
->> +	phys_addr_t *addr_ptr = NULL;
->> +	phys_addr_t alignment;
->>  	uint64_t undef_value = VGIC_ADDR_UNDEF;
-> 
-> nit: mussed this one before, type should be u64
-> 
->>  
->>  	mutex_lock(&kvm->lock);
->> @@ -92,7 +93,7 @@ int kvm_vgic_addr(struct kvm *kvm, unsigned long type, u64 *addr, bool write)
->>  		if (r)
->>  			break;
->>  		if (write) {
->> -			r = vgic_v3_set_redist_base(kvm, *addr);
->> +			r = vgic_v3_set_redist_base(kvm, 0, *addr, 0);
->>  			goto out;
->>  		}
->>  		rdreg = list_first_entry(&vgic->rd_regions,
->> @@ -103,6 +104,42 @@ int kvm_vgic_addr(struct kvm *kvm, unsigned long type, u64 *addr, bool write)
->>  			addr_ptr = &rdreg->base;
->>  		break;
->>  	}
->> +	case KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION:
->> +	{
->> +		struct vgic_redist_region *rdreg;
->> +		uint8_t index;
->> +
-> 
-> we tend to use u8, u32, etc. in the kernel.
-> 
->> +		r = vgic_check_type(kvm, KVM_DEV_TYPE_ARM_VGIC_V3);
->> +		if (r)
->> +			break;
->> +
->> +		index = *addr & KVM_VGIC_V3_RDIST_INDEX_MASK;
->> +
->> +		if (write) {
->> +			gpa_t base = *addr & KVM_VGIC_V3_RDIST_BASE_MASK;
->> +			uint32_t count = (*addr & KVM_VGIC_V3_RDIST_COUNT_MASK)
->> +					>> KVM_VGIC_V3_RDIST_COUNT_SHIFT;
->> +			uint8_t flags = (*addr & KVM_VGIC_V3_RDIST_FLAGS_MASK)
->> +					>> KVM_VGIC_V3_RDIST_FLAGS_SHIFT;
->> +
->> +			if (!count || flags)
->> +				r = -EINVAL;
->> +			else
->> +				r = vgic_v3_set_redist_base(kvm, index,
->> +							    base, count);
->> +			goto out;
->> +		}
->> +
->> +		rdreg = vgic_v3_rdist_region_from_index(kvm, index);
->> +		if (!rdreg) {
->> +			r = -ENODEV;
->> +			goto out;
->> +		}
->> +
->> +		*addr_ptr = rdreg->base & index &
->> +			(uint64_t)rdreg->count << KVM_VGIC_V3_RDIST_COUNT_SHIFT;
-> 
-> This looks fairly broken, isn't this a clear null pointer dereference?
-> 
-> (If we're making this ioctl read-only using the parameter as both in/out
-> for set/get, that should also be documented in the API text, then you
-> should consider writing a small test along with your userspace
-> implementation to actually test that functionality - otherwise we should
-> just make this write-only and omit the index part.  It could be said
-> that retrieving what the kernel actually has is a reasonable debug
-> feature.)
-> 
-> I think you want (notice the | instead of & as well):
-> 
-> 		*addr = index;
-> 		*addr |= rdreg->base;
-> 		*addr |= (u64)rdreg->count << KVM_VGIC_V3_RDIST_COUNT_SHIFT;
-> 		goto out;
-> 
-> It is then debatable if the addr_ptr construct gets too convoluted when
-> not used in every case, and if the logic should be embedded into each
-> case, and the addr_ptr variable dropped.  Meh, I don't mind leaving it
-> for now.
+Is it okay with you?
 
-Please apologize, I skipped this email while respinning into v4. Those
-are definitively 2 bugs and I fixed them as you suggested above. As for
-the documentation, I added:
-
-"
-      The characteristics of a specific redistributor region can be read
-      by presetting the index field in the attr data.
-
-  Errors:
-../..
-    -ENOENT: Attempt to read the characteristics of a non existing
-             redistributor region
-"
-
-Currently testing the read path with a hacked qemu ;-)
-
-Thanks
-
-Eric
+On Mon, 2018-04-16 at 10:33 +0800, Ryder Lee (李庚?V) wrote:
+> The usage of of_device_get_match_data() reduce the code size a bit.
 > 
+> Also, the only way to call mtk_spi_probe() is to match an entry in
+> mtk_spi_of_match[], so of_id cannot be NULL.
 > 
->> +		break;
->> +	}
->>  	default:
->>  		r = -ENODEV;
->>  	}
->> @@ -674,6 +711,7 @@ static int vgic_v3_has_attr(struct kvm_device *dev,
->>  		switch (attr->attr) {
->>  		case KVM_VGIC_V3_ADDR_TYPE_DIST:
->>  		case KVM_VGIC_V3_ADDR_TYPE_REDIST:
->> +		case KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION:
->>  			return 0;
->>  		}
->>  		break;
->> diff --git a/virt/kvm/arm/vgic/vgic-mmio-v3.c b/virt/kvm/arm/vgic/vgic-mmio-v3.c
->> index df23e66..f603fdf 100644
->> --- a/virt/kvm/arm/vgic/vgic-mmio-v3.c
->> +++ b/virt/kvm/arm/vgic/vgic-mmio-v3.c
->> @@ -770,11 +770,11 @@ static int vgic_v3_insert_redist_region(struct kvm *kvm, uint32_t index,
->>  	return ret;
->>  }
->>  
->> -int vgic_v3_set_redist_base(struct kvm *kvm, u64 addr)
->> +int vgic_v3_set_redist_base(struct kvm *kvm, u32 index, u64 addr, u32 count)
->>  {
->>  	int ret;
->>  
->> -	ret = vgic_v3_insert_redist_region(kvm, 0, addr, 0);
->> +	ret = vgic_v3_insert_redist_region(kvm, index, addr, count);
->>  	if (ret)
->>  		return ret;
->>  
->> diff --git a/virt/kvm/arm/vgic/vgic.h b/virt/kvm/arm/vgic/vgic.h
->> index 95b8345..0a95b43 100644
->> --- a/virt/kvm/arm/vgic/vgic.h
->> +++ b/virt/kvm/arm/vgic/vgic.h
->> @@ -96,6 +96,13 @@
->>  /* we only support 64 kB translation table page size */
->>  #define KVM_ITS_L1E_ADDR_MASK		GENMASK_ULL(51, 16)
->>  
->> +#define KVM_VGIC_V3_RDIST_INDEX_MASK	GENMASK_ULL(11, 0)
->> +#define KVM_VGIC_V3_RDIST_FLAGS_MASK	GENMASK_ULL(15, 12)
->> +#define KVM_VGIC_V3_RDIST_FLAGS_SHIFT	12
->> +#define KVM_VGIC_V3_RDIST_BASE_MASK	GENMASK_ULL(51, 16)
->> +#define KVM_VGIC_V3_RDIST_COUNT_MASK	GENMASK_ULL(63, 52)
->> +#define KVM_VGIC_V3_RDIST_COUNT_SHIFT	52
->> +
->>  /* Requires the irq_lock to be held by the caller. */
->>  static inline bool irq_is_pending(struct vgic_irq *irq)
->>  {
->> @@ -201,7 +208,7 @@ int vgic_v3_probe(const struct gic_kvm_info *info);
->>  int vgic_v3_map_resources(struct kvm *kvm);
->>  int vgic_v3_lpi_sync_pending_status(struct kvm *kvm, struct vgic_irq *irq);
->>  int vgic_v3_save_pending_tables(struct kvm *kvm);
->> -int vgic_v3_set_redist_base(struct kvm *kvm, u64 addr);
->> +int vgic_v3_set_redist_base(struct kvm *kvm, u32 index, u64 addr, u32 count);
->>  int vgic_register_redist_iodev(struct kvm_vcpu *vcpu);
->>  bool vgic_v3_check_base(struct kvm *kvm);
->>  
->> -- 
->> 2.5.5
->>
-> 
-> Thanks,
-> -Christoffer
+> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+> ---
+>  drivers/spi/spi-mt65xx.c | 12 +++---------
+>  1 file changed, 3 insertions(+), 9 deletions(-)
 > 
