@@ -1,114 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753655AbeD3JNa (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 05:13:30 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:54149 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753624AbeD3JKU (ORCPT
+        id S1753890AbeD3JNt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 05:13:49 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:33242 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753075AbeD3JNq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 05:10:20 -0400
-X-Google-Smtp-Source: AB8JxZoyyO8vg5XkWOdby079VtKZi8v7KytQHKYlhjgJZ4RXMNAXeEoo/g6BNtS6il1WWm7hI+06Fw==
-From: "=?UTF-8?q?Javier=20Gonz=C3=A1lez?=" <javier@javigon.com>
-X-Google-Original-From: =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
-To: mb@lightnvm.io
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
-Subject: [PATCH 03/11] lightnvm: pblk: check read lba on gc path
-Date: Mon, 30 Apr 2018 11:10:01 +0200
-Message-Id: <1525079409-6588-4-git-send-email-javier@cnexlabs.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1525079409-6588-1-git-send-email-javier@cnexlabs.com>
-References: <1525079409-6588-1-git-send-email-javier@cnexlabs.com>
+        Mon, 30 Apr 2018 05:13:46 -0400
+X-Google-Smtp-Source: AB8JxZp8sccZzPKsgImJv6diO5AavfnMi9sf7CEFggVvp4QbA2+kNuFW8mZzLNfuCJrMr/ZzH8At8eacJbaOLUWyRoA=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180422213126.32756-1-lukma@denx.de>
+References: <20180422213126.32756-1-lukma@denx.de>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 30 Apr 2018 11:13:45 +0200
+Message-ID: <CACRpkdbzvnSHPQOZjs3WcL9pOMz3R0W9P9Gre5n_G40udTMUjQ@mail.gmail.com>
+Subject: Re: [PATCH] mmc: disable card sleep via device-tree
+To: Lukasz Majewski <lukma@denx.de>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Chanho Min <chanho.min@lge.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        Stanislav Meduna <stanislav.meduna@nxtcontrol.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Check that the lba stored in the LBA metadata is correct in the GC path
-too. This requires a new helper function to check random reads in the
-vector read.
+On Sun, Apr 22, 2018 at 11:31 PM, Lukasz Majewski <lukma@denx.de> wrote:
 
-Signed-off-by: Javier González <javier@cnexlabs.com>
----
- drivers/lightnvm/pblk-read.c | 39 +++++++++++++++++++++++++++++++++------
- 1 file changed, 33 insertions(+), 6 deletions(-)
+> From: Stanislav Meduna <stanislav.meduna@nxtcontrol.com>
+>
+> On a TQMa53 module the mmc_sleep leaves the eMMC card in a state
+> that the imx53 rom boot code is unable to probe, resulting in
+> reboot hanging. Add a device tree property to disable sleeping
+> on suspend.
+>
+> For TQMa53 modules the exact commit to cause hang after reboot
+> (v3.10 -> v3.11):
+> commit 486fdbbc1483 ("mmc: core: Add shutdown callback for (e)MMC bus_ops")
+>
+> [The exact discussion can be found here:
+> https://patchwork.kernel.org/patch/8881401/
+> "i.MX53 restart via watchdog does not work"
+>
+> Signed-off-by: Stanislav Meduna <stanislav.meduna@nxtcontrol.com>
+> Signed-off-by: Lukasz Majewski <lukma@denx.de>
+(...)
 
-diff --git a/drivers/lightnvm/pblk-read.c b/drivers/lightnvm/pblk-read.c
-index 9eee10f69df0..1f699c09e0ea 100644
---- a/drivers/lightnvm/pblk-read.c
-+++ b/drivers/lightnvm/pblk-read.c
-@@ -113,15 +113,14 @@ static int pblk_submit_read_io(struct pblk *pblk, struct nvm_rq *rqd)
- 	return NVM_IO_OK;
- }
- 
--static void pblk_read_check(struct pblk *pblk, struct nvm_rq *rqd,
--			   sector_t blba)
-+static void pblk_read_check_seq(struct pblk *pblk, void *meta_list,
-+				sector_t blba, int nr_lbas)
- {
--	struct pblk_sec_meta *meta_list = rqd->meta_list;
--	int nr_lbas = rqd->nr_ppas;
-+	struct pblk_sec_meta *meta_lba_list = meta_list;
- 	int i;
- 
- 	for (i = 0; i < nr_lbas; i++) {
--		u64 lba = le64_to_cpu(meta_list[i].lba);
-+		u64 lba = le64_to_cpu(meta_lba_list[i].lba);
- 
- 		if (lba == ADDR_EMPTY)
- 			continue;
-@@ -130,6 +129,32 @@ static void pblk_read_check(struct pblk *pblk, struct nvm_rq *rqd,
- 	}
- }
- 
-+/*
-+ * There can be holes in the lba list.
-+ */
-+static void pblk_read_check_rand(struct pblk *pblk, void *meta_list,
-+				u64 *lba_list, int nr_lbas)
-+{
-+	struct pblk_sec_meta *meta_lba_list = meta_list;
-+	int i, j;
-+
-+	for (i = 0, j = 0; i < nr_lbas; i++) {
-+		u64 lba = lba_list[i];
-+		u64 meta_lba;
-+
-+		if (lba == ADDR_EMPTY)
-+			continue;
-+
-+		meta_lba = le64_to_cpu(meta_lba_list[j++].lba);
-+
-+		if (lba != meta_lba) {
-+			pr_err("pblk: corrupted read LBA (%llu/%llu)\n",
-+								lba, meta_lba);
-+			WARN_ON(1);
-+		}
-+	}
-+}
-+
- static void pblk_read_put_rqd_kref(struct pblk *pblk, struct nvm_rq *rqd)
- {
- 	struct ppa_addr *ppa_list;
-@@ -172,7 +197,7 @@ static void __pblk_end_io_read(struct pblk *pblk, struct nvm_rq *rqd,
- 		WARN_ONCE(bio->bi_status, "pblk: corrupted read error\n");
- #endif
- 
--	pblk_read_check(pblk, rqd, r_ctx->lba);
-+	pblk_read_check_seq(pblk, rqd->meta_list, r_ctx->lba, rqd->nr_ppas);
- 
- 	bio_put(bio);
- 	if (r_ctx->private)
-@@ -585,6 +610,8 @@ int pblk_submit_read_gc(struct pblk *pblk, struct pblk_gc_rq *gc_rq)
- 		goto err_free_bio;
- 	}
- 
-+	pblk_read_check_rand(pblk, rqd.meta_list, gc_rq->lba_list, rqd.nr_ppas);
-+
- 	atomic_dec(&pblk->inflight_io);
- 
- 	if (rqd.error) {
--- 
-2.7.4
+>  Optional properties:
+>  -broken-hpi : Use this to indicate that the mmc-card has a broken hpi
+>                implementation, and that hpi should not be used
+> +-no-sleep-on-suspend : Do not put the card to sleep when suspending.
+> +              There are boards with bootloaders that are unable
+> +              to probe such card when rebooting.
+
+As far as I understand this problem is not coming from the host
+controller itself,
+so it should not be tagged on to the host controller either. Rather the problem
+is how the specific system has integrated the host controller, the problem is
+in the fixture of this specific machine, as you say, in the i.MX53 ROM.
+
+In that case, I would say use this:
+
+if (of_machine_is_compatible("fsl,imx53")) {
+   ..activate quirk...
+}
+
+Yours,
+Linus Walleij
