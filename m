@@ -1,73 +1,176 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755214AbeD3VRo (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 17:17:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52742 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755151AbeD3VRn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 17:17:43 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DDC4229E6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Mon, 30 Apr 2018 16:17:40 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Sinan Kaya <okaya@codeaurora.org>
-Cc: Paul Menzel <pmenzel+linux-pci@molgen.mpg.de>,
-        Dave Young <dyoung@redhat.com>, linux-pci@vger.kernel.org,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Lukas Wunner <lukas@wunner.de>, Eric Biederman <ebiederm@xmission.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, Vivek Goyal <vgoyal@redhat.com>
-Subject: Re: pciehp 0000:00:1c.0:pcie004: Timeout on hotplug command 0x1038
- (issued 65284 msec ago)
-Message-ID: <20180430211740.GG95643@bhelgaas-glaptop.roam.corp.google.com>
-References: <8770820b-85a0-172b-7230-3a44524e6c9f@molgen.mpg.de>
- <20180427192207.GG8199@bhelgaas-glaptop.roam.corp.google.com>
- <b62c2a8e-fe14-6d7d-147c-0ce3b0c0ab2f@codeaurora.org>
- <20180427211255.GI8199@bhelgaas-glaptop.roam.corp.google.com>
- <20180428005620.GB1675@dhcp-128-65.nay.redhat.com>
- <20180428011845.GC1675@dhcp-128-65.nay.redhat.com>
- <3ebc908fb196168bf0373875ffc5679e@codeaurora.org>
- <d8d134dc-9757-97cd-7a24-cbb21611d6c6@codeaurora.org>
+        id S1755295AbeD3VSA (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 17:18:00 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:38220 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753482AbeD3VR6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 17:17:58 -0400
+X-Google-Smtp-Source: AB8JxZoAsMEhkMHp16SoKsoW3u6n3pg3OUJRaIPn7feEMWbSj1iw9e4EHcGuUoQgbE4KGaK2bW0iww==
+Date: Mon, 30 Apr 2018 14:17:54 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Arvind Yadav <arvind.yadav.cs@gmail.com>,
+        Stephen Lyons <slysven@virginmedia.com>, linux-input@vger.kernel.org
+Subject: Re: [PATCH] input/psmouse: Don't hold the mutex while calling
+ ->disconnect
+Message-ID: <20180430211754.GB54182@dtor-ws>
+References: <20180430195649.17445-1-daniel.vetter@ffwll.ch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d8d134dc-9757-97cd-7a24-cbb21611d6c6@codeaurora.org>
+In-Reply-To: <20180430195649.17445-1-daniel.vetter@ffwll.ch>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 30, 2018 at 04:48:15PM -0400, Sinan Kaya wrote:
-> Bjorn,
+Hi Daniel,
+
+On Mon, Apr 30, 2018 at 09:56:49PM +0200, Daniel Vetter wrote:
+> At least trackpoint_disconnect wants to remove some sysfs files, and
+> we can't remove sysfs files while holding psmouse_mutex:
 > 
-> On 4/28/2018 9:03 AM, okaya@codeaurora.org wrote:
-> >> Hmm, if it is the remove() method then kexec does not use it.  kexec use
-> >> the shutdown() method instead.  I missed this details when I replied.
-> > 
-> > Portdrv hooks up remove handler to shutdown. That's why remove is getting called.
+> ======================================================
+> WARNING: possible circular locking dependency detected
+> 4.16.0-rc5-g613eb885b69e-drmtip_1+ #1 Tainted: G     U
+> ------------------------------------------------------
+> kworker/0:3/102 is trying to acquire lock:
+>  (kn->count#130){++++}, at: [<000000009679748b>] kernfs_remove_by_name_ns+0x3b/0x80
 > 
-> What should we do about this?
+> but task is already holding lock:
+>  (psmouse_mutex){+.+.}, at: [<0000000014f44bcc>] psmouse_disconnect+0x62/0x160
 > 
-> Since there is an actual HW errata involved, should we quirk this
-> root port and not wait as if remove/shutdown doesn't exist?
+> which lock already depends on the new lock.
+> 
+> the existing dependency chain (in reverse order) is:
+> 
+> -> #1 (psmouse_mutex){+.+.}:
+>        psmouse_attr_set_helper+0x28/0x140
+>        kernfs_fop_write+0xfe/0x180
+>        __vfs_write+0x1e/0x130
+>        vfs_write+0xbd/0x1b0
+>        SyS_write+0x40/0xa0
+>        do_syscall_64+0x65/0x1a0
+>        entry_SYSCALL_64_after_hwframe+0x42/0xb7
+> 
+> -> #0 (kn->count#130){++++}:
+>        __kernfs_remove+0x243/0x2b0
+>        kernfs_remove_by_name_ns+0x3b/0x80
+>        remove_files.isra.0+0x2b/0x60
+>        sysfs_remove_group+0x38/0x80
+>        sysfs_remove_groups+0x24/0x40
+>        trackpoint_disconnect+0x2c/0x50
+>        psmouse_disconnect+0x8f/0x160
+>        serio_disconnect_driver+0x28/0x40
+>        serio_driver_remove+0xc/0x10
+>        device_release_driver_internal+0x15b/0x230
+>        serio_handle_event+0x1c8/0x260
+>        process_one_work+0x215/0x620
+>        worker_thread+0x48/0x3a0
+>        kthread+0xfb/0x130
+>        ret_from_fork+0x3a/0x50
+> 
+> other info that might help us debug this:
+> 
+>  Possible unsafe locking scenario:
+> 
+>        CPU0                    CPU1
+>        ----                    ----
+>   lock(psmouse_mutex);
+>                                lock(kn->count#130);
+>                                lock(psmouse_mutex);
+>   lock(kn->count#130);
+> 
+>  *** DEADLOCK ***
+> 
+> 6 locks held by kworker/0:3/102:
+>  #0:  ((wq_completion)"events_long"){+.+.}, at: [<000000002e408bfa>] process_one_work+0x191/0x620
+>  #1:  (serio_event_work){+.+.}, at: [<000000002e408bfa>] process_one_work+0x191/0x620
+>  #2:  (serio_mutex){+.+.}, at: [<00000000c8a49847>] serio_handle_event+0x23/0x260
+>  #3:  (&dev->mutex){....}, at: [<00000000b55eee75>] device_release_driver_internal+0x2f/0x230
+>  #4:  (&serio->drv_mutex){+.+.}, at: [<000000009719f997>] serio_disconnect_driver+0x16/0x40
+>  #5:  (psmouse_mutex){+.+.}, at: [<0000000014f44bcc>] psmouse_disconnect+0x62/0x160
+> 
+> stack backtrace:
+> CPU: 0 PID: 102 Comm: kworker/0:3 Tainted: G     U           4.16.0-rc5-g613eb885b69e-drmtip_1+ #1
+> Hardware name: LENOVO 74591P0/74591P0, BIOS 6DET28WW (1.05 ) 07/30/2008
+> Workqueue: events_long serio_handle_event
+> Call Trace:
+>  dump_stack+0x5f/0x86
+>  print_circular_bug.isra.18+0x1d0/0x2c0
+>  __lock_acquire+0x14ae/0x1b60
+>  ? kernfs_remove_by_name_ns+0x20/0x80
+>  ? lock_acquire+0xaf/0x200
+>  lock_acquire+0xaf/0x200
+>  ? kernfs_remove_by_name_ns+0x3b/0x80
+>  __kernfs_remove+0x243/0x2b0
+>  ? kernfs_remove_by_name_ns+0x3b/0x80
+>  ? kernfs_name_hash+0xd/0x70
+>  ? kernfs_find_ns+0x7e/0x100
+>  kernfs_remove_by_name_ns+0x3b/0x80
+>  remove_files.isra.0+0x2b/0x60
+>  sysfs_remove_group+0x38/0x80
+>  sysfs_remove_groups+0x24/0x40
+>  trackpoint_disconnect+0x2c/0x50
+>  psmouse_disconnect+0x8f/0x160
+>  serio_disconnect_driver+0x28/0x40
+>  serio_driver_remove+0xc/0x10
+>  device_release_driver_internal+0x15b/0x230
+>  serio_handle_event+0x1c8/0x260
+>  process_one_work+0x215/0x620
+>  worker_thread+0x48/0x3a0
+>  ? _raw_spin_unlock_irqrestore+0x4c/0x60
+>  kthread+0xfb/0x130
+>  ? process_one_work+0x620/0x620
+>  ? _kthread_create_on_node+0x30/0x30
+>  ret_from_fork+0x3a/0x50
+> 
+> Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+> Cc: Arvind Yadav <arvind.yadav.cs@gmail.com>
+> Cc: Stephen Lyons <slysven@virginmedia.com>
+> Cc: linux-input@vger.kernel.org
+> ---
+>  drivers/input/mouse/psmouse-base.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/input/mouse/psmouse-base.c b/drivers/input/mouse/psmouse-base.c
+> index 8900c3166ebf..06ccd8e22f3c 100644
+> --- a/drivers/input/mouse/psmouse-base.c
+> +++ b/drivers/input/mouse/psmouse-base.c
+> @@ -1484,8 +1484,10 @@ static void psmouse_disconnect(struct serio *serio)
+>  		psmouse_deactivate(parent);
+>  	}
+>  
+> +	mutex_unlock(&psmouse_mutex);
+>  	if (psmouse->disconnect)
+>  		psmouse->disconnect(psmouse);
+> +	mutex_lock(&psmouse_mutex);
 
-I was hoping to avoid a quirk because AFAIK all Intel parts have this
-issue so it will be an ongoing maintenance issue.  I tried to avoid
-the timeout delays, e.g., with 40b960831cfa ("PCI: pciehp: Compute
-timeout from hotplug command start time").
+Why do you think it is proper to drop this mutex? It is introduced for a
+reason.
 
-But we still see the alarming messages, so we should probably add a
-quirk to get rid of those.
+I think the trace you are seeing is due to:
 
-But I haven't given up on the idea of getting rid of the
-pciehp_remove() path.  I'm not convinced yet that we actually need to
-do anything to shut this device down.  I don't like the assumption
-that kexec requires this.  The kexec is fundamentally just a branch,
-and anything we do before the branch (i.e., in the old kernel), we
-should also be able to do after the branch (i.e., in the kexec-ed
-kernel).
+commit 988cd7afb3f37598891ca70b4c6eb914c338c46a
+Author: Tejun Heo <tj@kernel.org>
+Date:   Mon Feb 3 14:02:58 2014 -0500
 
-> Paul,
-> You might want to file a bugzilla so that we can keep our debug
-> efforts out of this list.
+    kernfs: remove kernfs_addrm_cxt
+
+where we started taking kernfs_mutex when adding/removing sysfs files.
+Ultimately I think we may have to change switching protocol to a work
+item to be done asynchronously from writing to sysfs attribute.
+
+Thanks.
+
+-- 
+Dmitry
