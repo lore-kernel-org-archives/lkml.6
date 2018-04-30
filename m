@@ -1,39 +1,52 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZp44SBaAxoZXLf29sgA5EWczqVlGKHBSFY5Aunqaw9VLvkyEFZ3pJk0BWeMAPqN5iYTLyH8
-ARC-Seal: i=1; a=rsa-sha256; t=1525116369; cv=none;
+X-Google-Smtp-Source: AB8JxZqaeHj7crsjSccNViGbQrdpTRws1jXGqEo17P5BsDUIYKKP8McaUB+MX4j8eKyaRIyxStpQ
+ARC-Seal: i=1; a=rsa-sha256; t=1525116362; cv=none;
         d=google.com; s=arc-20160816;
-        b=c9sbMqdf0zT2Hr8A8SDg6hz3RMyJdN8o39TYTjkwvba4gyTKzrRjQ8NaOnlQER/Rtt
-         /MnYVQ1539nkUbOV67kzzYEdH2FLx4pEj4DHRzYAag166pMa2AVo7reilT1AljYTUxb1
-         enacnE0V2qBSbDVSAiokmKxZR5PJcANrkoO0ENNCMetOweWji8P62pMiL8puoQucmUcc
-         6F+kQEOFsMWbD2ubW1z85WJSqrOyiew8n9FUWp9+v0+p4fxcfkj/cVnk9Se2yd4IXoBl
-         58EiT3SE+D4PnPXsgC3Wkk1wjMDwaCnvaWlNPOjnz3awX+NTW5WOCoRVKjhINTmLVHI2
-         qhiw==
+        b=YjLq1jRgnpBJHdJQ76zB8VaMVehQDjGj958YN95nKarp07i5tKhHsIf7hctr2Bs3nf
+         XiiwOxWK+SBN+nc9XXj9R/tiEgJMlMNoLBhF+JmTEMnQGm2H2n3jkYf/s7+M3p64s5Fx
+         JJ0J8GNa1gHRt5UfNR5Jcwu4+C0dgc0Fz7KmcYpiIG1Q6xkwzHEVyMMViIBDWw3buHVm
+         cOrAWmmq9X8Hxtn0eNABzIlu8KIbGHeHwlVUdYVx02pxWoV1qiUgqcwmca0NB+KguctW
+         +yY//wOmj+turVB3aOxjfuon7emKICGGy/hpVidIjRToeQp3Xt1XzfD/oyqMfGz3GkaR
+         /Vwg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=LzDW5Hn56GEnfeOHzOGt1xed2ZWhhZGwBwC5qYbMcH8=;
-        b=ku+D9dFINoRJSKnidmXuUvAI8oUDS4n8637Snq4dpJcMFKoCx9h56LFaFJqESe4DIJ
-         c3rGx5eWVwoZnq7qI3qLbed0V7qRJBjTOjDslwB8xRAOTYWiH0uN3K7eDJg8/n/+d8+B
-         gCIn4Qv1+AvkLMHarE2uMOeacUOqXxoYPpyniNP3Qoa5O73f5t1DNImOsJ8Pr5K5IJD5
-         vBS5Wy4WDrQbeNqWPrMpXD9e3Te5HMVsprjiRW4wMPCtI9SyiOSuwfzGTIwEDXJc463P
-         B2/uNZgWC73d8FKyCmJ/Z+b9UWd4Jl70hJ5xYvSoO7DBOU/z8KeZP+8S/ZKK9KKDnZHE
-         u5bQ==
+        bh=IFcBjhT5ax87mJAgwUMFF59Nd6moLgH5aEtF2Qi7DRw=;
+        b=HLVXiVmA8eZ8Rdd5lsnRz5wp8ZMZXIsBYYmt1H5eEpb/lal9TyuN6WEGq98AiO2E89
+         1tqLFkW4ow/rcoLpQyUWVI5//1UG7QxsN+pXrz9PMg1xj7xgiGK6cf8NA5zbQtgL+mer
+         J0cjPWWDZeBLJ2pSJEQINAdebvkx1uzuHfUq/yZosF23XiA4Lz4dRgJa29WNNzmJtZW8
+         +rD7UJjVBHJTDq/P0Zlb9PthQdfeWU5uVaznX/KkoAzy5GXxh5y1XAHG3X17haFA+EVd
+         WpgD6kYWfsNdoE4+eun9vnUFHsChmxt2KT1+lWeTqwRFNZ/gy30p0R+OSjugYBGF3KdD
+         a+xQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B52E22DBE
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C10AE22DC1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dan Carpenter <dan.carpenter@oracle.com>,
-	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.4 21/44] ALSA: asihpi: Hardening for potential Spectre v1
-Date: Mon, 30 Apr 2018 12:24:32 -0700
-Message-Id: <20180430190947.189947288@linuxfoundation.org>
+	linux-serial@vger.kernel.org,
+	Alan Cox <alan@llwyncelyn.cymru>,
+	Dan Williams <dcbw@redhat.com>,
+	Jiri Prchal <jiri.prchal@aksignal.cz>,
+	Jiri Slaby <jslaby@suse.cz>,
+	Marcel Partap <mpartap@gmx.net>,
+	Merlijn Wajer <merlijn@wizzup.org>,
+	Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
+	Michael Scott <michael.scott@linaro.org>,
+	Pavel Machek <pavel@ucw.cz>,
+	Peter Hurley <peter@hurleysoftware.com>,
+	Russ Gorby <russ.gorby@intel.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Sebastian Reichel <sre@kernel.org>,
+	Tony Lindgren <tony@atomide.com>
+Subject: [PATCH 4.4 18/44] tty: n_gsm: Fix DLCI handling for ADM mode if debug & 2 is not set
+Date: Mon, 30 Apr 2018 12:24:29 -0700
+Message-Id: <20180430190947.072041702@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430190946.093694747@linuxfoundation.org>
 References: <20180430190946.093694747@linuxfoundation.org>
@@ -43,8 +56,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200441146295899?=
-X-GMAIL-MSGID: =?utf-8?q?1599200423005305702?=
+X-GMAIL-THRID: =?utf-8?q?1599200279987877864?=
+X-GMAIL-MSGID: =?utf-8?q?1599200414893753302?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,85 +65,67 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Tony Lindgren <tony@atomide.com>
 
-commit f9d94b57e30fd1575b4935045b32d738668aa74b upstream.
+commit b2d89ad9c9682e795ed6eeb9ed455789ad6cedf1 upstream.
 
-As recently Smatch suggested, a couple of places in ASIHPI driver may
-expand the array directly from the user-space value with speculation:
-  sound/pci/asihpi/hpimsginit.c:70 hpi_init_response() warn: potential spectre issue 'res_size' (local cap)
-  sound/pci/asihpi/hpioctl.c:189 asihpi_hpi_ioctl() warn: potential spectre issue 'adapters'
+At least on droid 4 with control channel in ADM mode, there is no response
+to Modem Status Command (MSC). Currently gsmtty_modem_update() expects to
+have data in dlci->modem_rx unless debug & 2 is set. This means that on
+droid 4, things only work if debug & 2 is set.
 
-This patch puts array_index_nospec() for hardening against them.
+Let's fix the issue by ignoring empty dlci->modem_rx for ADM mode. In
+the AMD mode, CMD_MSC will never respond and gsm_process_modem() won't
+get called to set dlci->modem_rx.
 
-BugLink: https://marc.info/?l=linux-kernel&m=152411496503418&w=2
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+And according to ts_127010v140000p.pdf, MSC is only relevant if basic
+option is chosen, so let's test for that too.
+
+Fixes: ea3d8465ab9b ("tty: n_gsm: Allow ADM response in addition to UA for control dlci")
+Cc: linux-serial@vger.kernel.org
+Cc: Alan Cox <alan@llwyncelyn.cymru>
+Cc: Dan Williams <dcbw@redhat.com>
+Cc: Jiri Prchal <jiri.prchal@aksignal.cz>
+Cc: Jiri Slaby <jslaby@suse.cz>
+Cc: Marcel Partap <mpartap@gmx.net>
+Cc: Merlijn Wajer <merlijn@wizzup.org>
+Cc: Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
+Cc: Michael Scott <michael.scott@linaro.org>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: Peter Hurley <peter@hurleysoftware.com>
+Cc: Russ Gorby <russ.gorby@intel.com>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Sebastian Reichel <sre@kernel.org>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/asihpi/hpimsginit.c |   13 +++++++++----
- sound/pci/asihpi/hpioctl.c    |    4 +++-
- 2 files changed, 12 insertions(+), 5 deletions(-)
+ drivers/tty/n_gsm.c |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
---- a/sound/pci/asihpi/hpimsginit.c
-+++ b/sound/pci/asihpi/hpimsginit.c
-@@ -23,6 +23,7 @@
- 
- #include "hpi_internal.h"
- #include "hpimsginit.h"
-+#include <linux/nospec.h>
- 
- /* The actual message size for each object type */
- static u16 msg_size[HPI_OBJ_MAXINDEX + 1] = HPI_MESSAGE_SIZE_BY_OBJECT;
-@@ -39,10 +40,12 @@ static void hpi_init_message(struct hpi_
+--- a/drivers/tty/n_gsm.c
++++ b/drivers/tty/n_gsm.c
+@@ -2891,11 +2891,22 @@ static int gsmtty_modem_update(struct gs
+ static int gsm_carrier_raised(struct tty_port *port)
  {
- 	u16 size;
+ 	struct gsm_dlci *dlci = container_of(port, struct gsm_dlci, port);
++	struct gsm_mux *gsm = dlci->gsm;
++
+ 	/* Not yet open so no carrier info */
+ 	if (dlci->state != DLCI_OPEN)
+ 		return 0;
+ 	if (debug & 2)
+ 		return 1;
++
++	/*
++	 * Basic mode with control channel in ADM mode may not respond
++	 * to CMD_MSC at all and modem_rx is empty.
++	 */
++	if (gsm->encoding == 0 && gsm->dlci[0]->mode == DLCI_MODE_ADM &&
++	    !dlci->modem_rx)
++		return 1;
++
+ 	return dlci->modem_rx & TIOCM_CD;
+ }
  
--	if ((object > 0) && (object <= HPI_OBJ_MAXINDEX))
-+	if ((object > 0) && (object <= HPI_OBJ_MAXINDEX)) {
-+		object = array_index_nospec(object, HPI_OBJ_MAXINDEX + 1);
- 		size = msg_size[object];
--	else
-+	} else {
- 		size = sizeof(*phm);
-+	}
- 
- 	memset(phm, 0, size);
- 	phm->size = size;
-@@ -66,10 +69,12 @@ void hpi_init_response(struct hpi_respon
- {
- 	u16 size;
- 
--	if ((object > 0) && (object <= HPI_OBJ_MAXINDEX))
-+	if ((object > 0) && (object <= HPI_OBJ_MAXINDEX)) {
-+		object = array_index_nospec(object, HPI_OBJ_MAXINDEX + 1);
- 		size = res_size[object];
--	else
-+	} else {
- 		size = sizeof(*phr);
-+	}
- 
- 	memset(phr, 0, sizeof(*phr));
- 	phr->size = size;
---- a/sound/pci/asihpi/hpioctl.c
-+++ b/sound/pci/asihpi/hpioctl.c
-@@ -33,6 +33,7 @@
- #include <linux/stringify.h>
- #include <linux/module.h>
- #include <linux/vmalloc.h>
-+#include <linux/nospec.h>
- 
- #ifdef MODULE_FIRMWARE
- MODULE_FIRMWARE("asihpi/dsp5000.bin");
-@@ -182,7 +183,8 @@ long asihpi_hpi_ioctl(struct file *file,
- 		struct hpi_adapter *pa = NULL;
- 
- 		if (hm->h.adapter_index < ARRAY_SIZE(adapters))
--			pa = &adapters[hm->h.adapter_index];
-+			pa = &adapters[array_index_nospec(hm->h.adapter_index,
-+							  ARRAY_SIZE(adapters))];
- 
- 		if (!pa || !pa->adapter || !pa->adapter->type) {
- 			hpi_init_response(&hr->r0, hm->h.object,
