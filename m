@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754205AbeD3LnK (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 07:43:10 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:35095 "EHLO
+        id S1754224AbeD3LnR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 07:43:17 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:33925 "EHLO
         mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754175AbeD3LnH (ORCPT
+        with ESMTP id S1753452AbeD3LnO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 07:43:07 -0400
-X-Google-Smtp-Source: AB8JxZrL6t0mrAEjUyZRSs4525a9Iwyrn1MRh0Uy3cIjuuN9lTJt7SPVxAJXr88MLY2kY6Im9atm6Q==
+        Mon, 30 Apr 2018 07:43:14 -0400
+X-Google-Smtp-Source: AB8JxZrAWxV1B4HOlGoTdC3AGMleWJH0xw+QA4QRXRnjxlGcL5D7B1IaF5eCi60TIwczbgaDC1vcTw==
 From: Jagan Teki <jagan@amarulasolutions.com>
 To: Maxime Ripard <maxime.ripard@free-electrons.com>
 Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
@@ -22,9 +22,9 @@ Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
         Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH 17/21] arm64: dts: allwinner: a64: nanopi-a64: Enable HDMI output
-Date: Mon, 30 Apr 2018 17:10:54 +0530
-Message-Id: <20180430114058.5061-18-jagan@amarulasolutions.com>
+Subject: [PATCH 18/21] arm64: dts: allwinner: a64: orangepi-win: Enable HDMI output
+Date: Mon, 30 Apr 2018 17:10:55 +0530
+Message-Id: <20180430114058.5061-19-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180430114058.5061-1-jagan@amarulasolutions.com>
 References: <20180430114058.5061-1-jagan@amarulasolutions.com>
@@ -32,18 +32,18 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable HDMI output on nanopi-a64 board.
+Enable HDMI output on Orangepi-win board.
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
- .../boot/dts/allwinner/sun50i-a64-nanopi-a64.dts   | 26 ++++++++++++++++++++++
+ .../boot/dts/allwinner/sun50i-a64-orangepi-win.dts | 26 ++++++++++++++++++++++
  1 file changed, 26 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
-index e2dce48fa29a..19fe7eed45e9 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
-@@ -57,6 +57,21 @@
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
+index bf42690a3361..b6fdd052d473 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
+@@ -57,12 +57,38 @@
  	chosen {
  		stdout-path = "serial0:115200n8";
  	};
@@ -64,8 +64,7 @@ index e2dce48fa29a..19fe7eed45e9 100644
 +	status = "okay";
  };
  
- &ehci0 {
-@@ -67,6 +82,17 @@
+ &ehci1 {
  	status = "okay";
  };
  
@@ -80,8 +79,8 @@ index e2dce48fa29a..19fe7eed45e9 100644
 +	};
 +};
 +
- /* i2c1 connected with gpio headers like pine64, bananapi */
- &i2c1 {
+ &mmc0 {
  	pinctrl-names = "default";
+ 	pinctrl-0 = <&mmc0_pins>;
 -- 
 2.14.3
