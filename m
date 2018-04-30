@@ -1,67 +1,155 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754160AbeD3Nwr (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 09:52:47 -0400
-Received: from agrajag.zerfleddert.de ([88.198.237.222]:39184 "EHLO
-        agrajag.zerfleddert.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753545AbeD3Nwq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 09:52:46 -0400
-Date: Mon, 30 Apr 2018 15:52:44 +0200
-From: Tobias Jordan <Tobias.Jordan@elektrobit.com>
-To: wsa@the-dreams.de
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] i2c: axxia: enable clock before calling clk_get_rate()
-Message-ID: <20180430135244.kud5hf5xjfxg4ufn@agrajag.zerfleddert.de>
+        id S1754224AbeD3NxB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 09:53:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49104 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753632AbeD3Nw7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 09:52:59 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E252222C89
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+Date: Mon, 30 Apr 2018 10:52:56 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Colin King <colin.king@canonical.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Andi Kleen <andi@firstfloor.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] perf vendor events: fix spelling mistake: "alloacated"
+ -> "allocated"
+Message-ID: <20180430135256.GA3557@kernel.org>
+References: <20180427185206.16347-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180427185206.16347-1-colin.king@canonical.com>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-axxia_i2c_init() uses clk_get_rate() for idev->i2c_clk. clk_get_rate()
-should only be called if the clock is enabled, so ensure that by moving
-the clk_prepare_enable() call before the call to axxia_i2c_init().
+Em Fri, Apr 27, 2018 at 07:52:06PM +0100, Colin King escreveu:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Trivial fix to spelling mistakes in json text strings
 
-Found by Linux Driver Verification project (linuxtesting.org).
+These files are generated from other files, so any future update to them
+will bring back the spelling mistakes, so, as Andi pointed out
+previously, we better fix the spellings in the original files,
+maintained by Intel.
 
-Fixes: 08678b850cd0 ("i2c: axxia: Add I2C driver for AXM55xx")
-Signed-off-by: Tobias Jordan <Tobias.Jordan@elektrobit.com>
----
- drivers/i2c/busses/i2c-axxia.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-axxia.c b/drivers/i2c/busses/i2c-axxia.c
-index 13f07482ec68..51338c48d193 100644
---- a/drivers/i2c/busses/i2c-axxia.c
-+++ b/drivers/i2c/busses/i2c-axxia.c
-@@ -532,6 +532,12 @@ static int axxia_i2c_probe(struct platform_device *pdev)
- 	if (idev->bus_clk_rate == 0)
- 		idev->bus_clk_rate = 100000;	/* default clock rate */
+- Arnaldo
  
-+	ret = clk_prepare_enable(idev->i2c_clk);
-+	if (ret) {
-+		dev_err(&pdev->dev, "failed to enable clock\n");
-+		return ret;
-+	}
-+
- 	ret = axxia_i2c_init(idev);
- 	if (ret) {
- 		dev_err(&pdev->dev, "failed to initialize\n");
-@@ -545,12 +551,6 @@ static int axxia_i2c_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	ret = clk_prepare_enable(idev->i2c_clk);
--	if (ret) {
--		dev_err(&pdev->dev, "failed to enable clock\n");
--		return ret;
--	}
--
- 	i2c_set_adapdata(&idev->adapter, idev);
- 	strlcpy(idev->adapter.name, pdev->name, sizeof(idev->adapter.name));
- 	idev->adapter.owner = THIS_MODULE;
--- 
-2.11.0
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  tools/perf/pmu-events/arch/x86/nehalemep/cache.json     | 4 ++--
+>  tools/perf/pmu-events/arch/x86/nehalemex/cache.json     | 4 ++--
+>  tools/perf/pmu-events/arch/x86/westmereep-dp/cache.json | 4 ++--
+>  tools/perf/pmu-events/arch/x86/westmereep-sp/cache.json | 4 ++--
+>  tools/perf/pmu-events/arch/x86/westmereex/cache.json    | 4 ++--
+>  5 files changed, 10 insertions(+), 10 deletions(-)
+> 
+> diff --git a/tools/perf/pmu-events/arch/x86/nehalemep/cache.json b/tools/perf/pmu-events/arch/x86/nehalemep/cache.json
+> index a11029efda2f..c20ff6b3cb9d 100644
+> --- a/tools/perf/pmu-events/arch/x86/nehalemep/cache.json
+> +++ b/tools/perf/pmu-events/arch/x86/nehalemep/cache.json
+> @@ -333,7 +333,7 @@
+>          "UMask": "0x7",
+>          "EventName": "L2_LINES_IN.ANY",
+>          "SampleAfterValue": "100000",
+> -        "BriefDescription": "L2 lines alloacated"
+> +        "BriefDescription": "L2 lines allocated"
+>      },
+>      {
+>          "EventCode": "0xF1",
+> @@ -3226,4 +3226,4 @@
+>          "BriefDescription": "Offcore prefetch requests that HITM in a remote cache",
+>          "Offcore": "1"
+>      }
+> -]
+> \ No newline at end of file
+> +]
+> diff --git a/tools/perf/pmu-events/arch/x86/nehalemex/cache.json b/tools/perf/pmu-events/arch/x86/nehalemex/cache.json
+> index 21a0f8fd057e..79f7120c50a5 100644
+> --- a/tools/perf/pmu-events/arch/x86/nehalemex/cache.json
+> +++ b/tools/perf/pmu-events/arch/x86/nehalemex/cache.json
+> @@ -333,7 +333,7 @@
+>          "UMask": "0x7",
+>          "EventName": "L2_LINES_IN.ANY",
+>          "SampleAfterValue": "100000",
+> -        "BriefDescription": "L2 lines alloacated"
+> +        "BriefDescription": "L2 lines allocated"
+>      },
+>      {
+>          "EventCode": "0xF1",
+> @@ -3181,4 +3181,4 @@
+>          "BriefDescription": "Offcore prefetch requests that HITM in a remote cache",
+>          "Offcore": "1"
+>      }
+> -]
+> \ No newline at end of file
+> +]
+> diff --git a/tools/perf/pmu-events/arch/x86/westmereep-dp/cache.json b/tools/perf/pmu-events/arch/x86/westmereep-dp/cache.json
+> index 6e61ae20d01a..08fa9ebf056a 100644
+> --- a/tools/perf/pmu-events/arch/x86/westmereep-dp/cache.json
+> +++ b/tools/perf/pmu-events/arch/x86/westmereep-dp/cache.json
+> @@ -213,7 +213,7 @@
+>          "UMask": "0x7",
+>          "EventName": "L2_LINES_IN.ANY",
+>          "SampleAfterValue": "100000",
+> -        "BriefDescription": "L2 lines alloacated"
+> +        "BriefDescription": "L2 lines allocated"
+>      },
+>      {
+>          "EventCode": "0xF1",
+> @@ -2814,4 +2814,4 @@
+>          "BriefDescription": "REQUEST = PREFETCH and RESPONSE = REMOTE_CACHE_HITM",
+>          "Offcore": "1"
+>      }
+> -]
+> \ No newline at end of file
+> +]
+> diff --git a/tools/perf/pmu-events/arch/x86/westmereep-sp/cache.json b/tools/perf/pmu-events/arch/x86/westmereep-sp/cache.json
+> index dad20f0e3cac..be612cda6b68 100644
+> --- a/tools/perf/pmu-events/arch/x86/westmereep-sp/cache.json
+> +++ b/tools/perf/pmu-events/arch/x86/westmereep-sp/cache.json
+> @@ -213,7 +213,7 @@
+>          "UMask": "0x7",
+>          "EventName": "L2_LINES_IN.ANY",
+>          "SampleAfterValue": "100000",
+> -        "BriefDescription": "L2 lines alloacated"
+> +        "BriefDescription": "L2 lines allocated"
+>      },
+>      {
+>          "EventCode": "0xF1",
+> @@ -3230,4 +3230,4 @@
+>          "BriefDescription": "Offcore prefetch requests that HITM in a remote cache",
+>          "Offcore": "1"
+>      }
+> -]
+> \ No newline at end of file
+> +]
+> diff --git a/tools/perf/pmu-events/arch/x86/westmereex/cache.json b/tools/perf/pmu-events/arch/x86/westmereex/cache.json
+> index f9bc7fdd48d6..c5896ed6542c 100644
+> --- a/tools/perf/pmu-events/arch/x86/westmereex/cache.json
+> +++ b/tools/perf/pmu-events/arch/x86/westmereex/cache.json
+> @@ -213,7 +213,7 @@
+>          "UMask": "0x7",
+>          "EventName": "L2_LINES_IN.ANY",
+>          "SampleAfterValue": "100000",
+> -        "BriefDescription": "L2 lines alloacated"
+> +        "BriefDescription": "L2 lines allocated"
+>      },
+>      {
+>          "EventCode": "0xF1",
+> @@ -3222,4 +3222,4 @@
+>          "BriefDescription": "Offcore prefetch requests that HITM in a remote cache",
+>          "Offcore": "1"
+>      }
+> -]
+> \ No newline at end of file
+> +]
+> -- 
+> 2.17.0
