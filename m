@@ -1,98 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754668AbeD3P24 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 11:28:56 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34692 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753256AbeD3P2y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 11:28:54 -0400
-Date: Mon, 30 Apr 2018 17:28:51 +0200
-From: Cornelia Huck <cohuck@redhat.com>
-To: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
-Cc: Pierre Morel <pmorel@linux.vnet.ibm.com>, pasic@linux.vnet.ibm.com,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Subject: Re: [PATCH 03/10] vfio: ccw: new SCH_EVENT event
-Message-ID: <20180430172851.2cb3d550.cohuck@redhat.com>
-In-Reply-To: <20180426065954.GP5428@bjsdjshi@linux.vnet.ibm.com>
-References: <1524149293-12658-1-git-send-email-pmorel@linux.vnet.ibm.com>
-        <1524149293-12658-4-git-send-email-pmorel@linux.vnet.ibm.com>
-        <20180426065954.GP5428@bjsdjshi@linux.vnet.ibm.com>
-Organization: Red Hat GmbH
+        id S1754690AbeD3P3S (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 11:29:18 -0400
+Received: from one.firstfloor.org ([193.170.194.197]:47718 "EHLO
+        one.firstfloor.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754012AbeD3P3R (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 11:29:17 -0400
+Date: Mon, 30 Apr 2018 08:29:14 -0700
+From: Andi Kleen <andi@firstfloor.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Colin King <colin.king@canonical.com>, Ingo Molnar <mingo@redhat.com>,
+        Andi Kleen <andi@firstfloor.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] perf vendor events: fix spelling mistake: "alloacated"
+ -> "allocated"
+Message-ID: <20180430152914.q26ehqszf7la3n3p@two.firstfloor.org>
+References: <20180427185206.16347-1-colin.king@canonical.com>
+ <20180430135256.GA3557@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180430135256.GA3557@kernel.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 26 Apr 2018 14:59:54 +0800
-Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com> wrote:
-
-> * Pierre Morel <pmorel@linux.vnet.ibm.com> [2018-04-19 16:48:06 +0200]:
-> 
-> > The Sub channel event callback is threaded using workqueues.
-> > The work uses the FSM introducing the VFIO_CCW_EVENT_SCH_EVENT
-> > event.
-> > The update of the SCHIB is now done inside the FSM function.
+On Mon, Apr 30, 2018 at 10:52:56AM -0300, Arnaldo Carvalho de Melo wrote:
+> Em Fri, Apr 27, 2018 at 07:52:06PM +0100, Colin King escreveu:
+> > From: Colin Ian King <colin.king@canonical.com>
 > > 
-> > Signed-off-by: Pierre Morel <pmorel@linux.vnet.ibm.com>
-> > ---
-> >  drivers/s390/cio/vfio_ccw_drv.c     | 33 +++++++++++++--------------------
-> >  drivers/s390/cio/vfio_ccw_fsm.c     | 23 +++++++++++++++++++++++
-> >  drivers/s390/cio/vfio_ccw_private.h |  3 +++
-> >  3 files changed, 39 insertions(+), 20 deletions(-)
-> > 
-
-> > @@ -171,28 +181,11 @@ static void vfio_ccw_sch_shutdown(struct subchannel *sch)
-> >  static int vfio_ccw_sch_event(struct subchannel *sch, int process)
-> >  {
-> >  	struct vfio_ccw_private *private = dev_get_drvdata(&sch->dev);
-> > -	unsigned long flags;
-> > 
-> > -	spin_lock_irqsave(sch->lock, flags);
-> >  	if (!device_is_registered(&sch->dev))
-> > -		goto out_unlock;
-> > -
-> > -	if (work_pending(&sch->todo_work))
-> > -		goto out_unlock;  
-> Just realized that this has a bug in the orignal implementation. For
-> error out this should return -EAGAIN. We'd need a separated fix on
-> this.
-
-Indeed. Will you send a patch, or should I hack something up?
-
+> > Trivial fix to spelling mistakes in json text strings
 > 
-> > -
-> > -	if (cio_update_schib(sch)) {
-> > -		vfio_ccw_fsm_event(private, VFIO_CCW_EVENT_NOT_OPER);
-> > -		goto out_unlock;
-> > -	}
-> > -
-> > -	private = dev_get_drvdata(&sch->dev);
-> > -	if (private->state == VFIO_CCW_STATE_NOT_OPER) {
-> > -		private->state = private->mdev ? VFIO_CCW_STATE_IDLE :
-> > -				 VFIO_CCW_STATE_STANDBY;
-> > -	}  
-> This hunk was toatally removed, and this is fine because?
-> 
-> > -
-> > -out_unlock:
-> > -	spin_unlock_irqrestore(sch->lock, flags);
-> > +		return -1;  
-> -1 is not a valid code.
+> These files are generated from other files, so any future update to them
+> will bring back the spelling mistakes, so, as Andi pointed out
+> previously, we better fix the spellings in the original files,
+> maintained by Intel.
 
--ENODEV looks more fitting, if we decide to go with this rework.
-
-> 
-> > +	WARN_ON(work_pending(&private->event_work));
-> > +	queue_work(vfio_ccw_work_q, &private->event_work);
-> > 
-> >  	return 0;
-> >  }
-
-I'm wondering why this should always be done via a workqueue. It seems
-the other subchannel types try to do as much as possible immediately?
-
-(And returning -EAGAIN already triggers the css code to schedule
-another call later.)
+Thanks. I forwarded to the right people.
+-Andi
