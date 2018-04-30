@@ -1,57 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752836AbeD3JGT (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 05:06:19 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:59750 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751426AbeD3JGS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 05:06:18 -0400
-Date: Mon, 30 Apr 2018 11:05:42 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 6/6] x86/microcode/AMD: Check the equivalence table
- size when scanning it
-Message-ID: <20180430090542.GD6509@pd.tnic>
-References: <cover.1524515406.git.mail@maciej.szmigiero.name>
- <68fade9fda9e63c0722052abecaf4ed0c360beeb.1524515406.git.mail@maciej.szmigiero.name>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <68fade9fda9e63c0722052abecaf4ed0c360beeb.1524515406.git.mail@maciej.szmigiero.name>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        id S1752623AbeD3JHv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 05:07:51 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44884 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751923AbeD3JHt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 05:07:49 -0400
+From: Eric Auger <eric.auger@redhat.com>
+To: eric.auger.pro@gmail.com, eric.auger@redhat.com,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com, cdall@kernel.org,
+        peter.maydell@linaro.org
+Cc: andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
+Subject: [PATCH v5 00/12] KVM: arm/arm64: Allow multiple GICv3 redistributor regions
+Date: Mon, 30 Apr 2018 11:07:32 +0200
+Message-Id: <1525079264-25533-1-git-send-email-eric.auger@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 23, 2018 at 11:34:11PM +0200, Maciej S. Szmigiero wrote:
-> Currently, the code scanning the CPU equivalence table read from a
-> microcode container file assumes that it actually contains a terminating
-> zero entry.
-> Let's check also the size of this table to make sure that we don't read
-> past it in case it actually doesn't.
+At the moment the KVM VGICv3 only supports a single redistributor
+region (whose base address is set through the GICv3 kvm device
+KVM_DEV_ARM_VGIC_GRP_ADDR/KVM_VGIC_V3_ADDR_TYPE_REDIST). There,
+all the redistributors are laid out contiguously. The size of this
+single redistributor region is not set explicitly but instead
+induced at a late stage by the number of online vcpus.
 
-...
+The GIC specification does not mandate all redistributors to be
+contiguous. Moreover DT and ACPI were specified so that multiple
+redistributors regions can be defined.
 
-> @@ -697,6 +706,7 @@ static unsigned int install_equiv_cpu_table(const u8 *buf, size_t buf_size)
->  	}
->  
->  	memcpy(equiv_cpu_table, buf + CONTAINER_HDR_SZ, equiv_tbl_len);
-> +	equiv_cpu_table_entries = equiv_tbl_len / sizeof(struct equiv_cpu_entry);
->  
->  	return equiv_tbl_len;
+The current interface brings a limitation on QEMU where ARM
+virt machine available GPA holes only allowed to assign a
+redistributor region fitting a max of 123 vcpus. Overcoming this
+limitation would force either to create a new machine or relocate
+the single rdist region or allow the allocation of multiple rdist
+regions.
 
-Instead of adding yet another global var which needs handling too,
-and touching so many places, just do all checks and preparations in
-install_equiv_cpu_table() so that the rest of the code can get what it
-expects: terminating zero entry and proper size.
+This series enables this last alternative. A new GICv3 KVM device
+KVM_DEV_ARM_VGIC_GRP_ADDR/KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION allows
+to register individual redistributor regions whose size is defined
+explicitly. Those rdist regions then are filled by vcpu rdist frames
+according to the need. The vgic init and related base address checks
+are impacted.
 
-Thx.
+Best Regards
+
+Eric
+
+Git: complete series available at
+https://github.com/eauger/linux/tree/v4.17-rc2-rdist-regions-v5
+Previous version:
+https://github.com/eauger/linux/tree/v4.17-rc2-rdist-regions-v4
+
+History:
+
+v4 -> v5:
+- fix KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION read path and update
+  the documentation accordingly (removed Peter's and
+  Christoffer's A-b)
+- use u<n> instead of uint<n>_t
+- collected additional R-b/A-b
+
+v3 -> v4:
+- Collected Christoffer's R-b
+- reworked vgic_v3_rdist_overlap and introduced vgic_dist_overlap
+- vgic_v3_insert_redist_region cleanup
+- inverse order for patches 6 and 7
+
+v2 -> v3:
+- Add details to the user API documentation
+- early exit if vgic_v3_rdist_region_from_index() fails
+- return -EINVAL if legacy and new redist region API are mixed
+
+v1 -> v2:
+- Rework the uapi. Only bits [51:16] of the redist region are
+  exposed. Also a new flags field was introduced
+- Do not store the last bit in the vgic_cpu struct anymore
+- remove dist->spis check in 1st patch
+- add last patch to bump VGIC_V3_MAX_CPUS to 512
+- advertise the new attribute
+
+
+Eric Auger (12):
+  KVM: arm/arm64: Set dist->spis to NULL after kfree
+  KVM: arm/arm64: Document KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
+  KVM: arm/arm64: Replace the single rdist region by a list
+  KVM: arm/arm64: Helper to locate free rdist index
+  KVM: arm/arm64: Revisit Redistributor TYPER last bit computation
+  KVM: arm/arm64: Adapt vgic_v3_check_base to multiple rdist regions
+  KVM: arm/arm64: Helper to register a new redistributor region
+  KVM: arm/arm64: Check vcpu redist base before registering an iodev
+  KVM: arm/arm64: Check all vcpu redistributors are set on map_resources
+  KVM: arm/arm64: Add KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
+  KVM: arm/arm64: Implement KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
+  KVM: arm/arm64: Bump VGIC_V3_MAX_CPUS to 512
+
+ Documentation/virtual/kvm/devices/arm-vgic-v3.txt |  30 +++++-
+ arch/arm/include/uapi/asm/kvm.h                   |   1 +
+ arch/arm64/include/uapi/asm/kvm.h                 |   1 +
+ include/kvm/arm_vgic.h                            |  16 ++-
+ virt/kvm/arm/vgic/vgic-init.c                     |  20 +++-
+ virt/kvm/arm/vgic/vgic-kvm-device.c               |  53 +++++++++-
+ virt/kvm/arm/vgic/vgic-mmio-v3.c                  | 114 +++++++++++++++++++---
+ virt/kvm/arm/vgic/vgic-v3.c                       | 101 +++++++++++++++----
+ virt/kvm/arm/vgic/vgic.h                          |  42 +++++++-
+ 9 files changed, 333 insertions(+), 45 deletions(-)
 
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+2.5.5
