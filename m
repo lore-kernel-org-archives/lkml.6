@@ -1,41 +1,40 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqyTg2UdhCRBkZYVYVaUtVbLfq+KME3KinmtpA2i0ZOMbZAlY900St2qh8wFYZUj4NUdpdo
+X-Google-Smtp-Source: AB8JxZqgySkNvGDW8lT5+bNnzxUBYHaNycDKBXeZnQLUY93mr76oNeTlsTL2ZDQfaOql6axHKyTU
 ARC-Seal: i=1; a=rsa-sha256; t=1525116469; cv=none;
         d=google.com; s=arc-20160816;
-        b=mMmDsmS/QmQt1SPEVyWB/wjkmkKPljno3kK6J8hEz6hsrIxuIk+ME9gAC79LxUCnLW
-         FLUzASSvcFYpzbMuZZRq+9W/VSr+LlUBOB3sToDBy7zY+D1Obn92/FU+Vm/qkTlDDwGU
-         e5CvEZaiAai1D4OmCV7qiZFQ8m8qLWHcnNfazwYugU+5/qqmpAZQf3JrsaWt2i94yJwH
-         pUNjCSxsXmOA5s2onYI66nqQ0lNKtPrkDMb9T/AxueXVmiD0w1s0LNNxmLykKM/4Vhhk
-         xw4gvOReL2kmyOeZM1+w244VIKaPavgU6sgQTBreF+vXlyTUJ8ccZhzJCvMI6Nf3Rc9d
-         DQyg==
+        b=gS1AbII7d0a6E9LOmYGKkiEWArEp3GPXnBUM1iIxdTtUTHDFpGECHNaykfL5BTTPro
+         OrCyLaGZfBAt51iwJrHaJqORrm8Esudk7dRmkKKnX64PCteDPnHV0ySB6jy+E80l40iX
+         LDm+RTX7oosXMo2kcsN7HvRQEkHY24UgIPIv2fHZIzeBANyDZ6uUI60mGp0xdOTlPrWX
+         SAy8U9KuYrNPIQaaA17qq4Id7UbIycyO1jVkHx0OanCASeWjAokWMx1LKc8AArSenHYq
+         bIbcx/Dvlf+fQywsIk4d2hCoprEsgR4X5DDOdDqAmZX67ukT7+SrcZgsQykwMC7oeNM8
+         3b4A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=K+TS+6UoePTM0JcZOKpNlp8TLlAxb9MHS7gw2KYbUBY=;
-        b=mv2nsZqeGA5Qhz9a9oHO8bn+D4UeHkqyMRW8MZithzkkAbiHVLQ9byICaoLMwf3iaV
-         uD4aZiKCe7Gu7O2dP0QZcruqcrRn/jC4pacKKaC3RC/TiSCkDwZB53JdpmZMiTAresI3
-         NmBOxN+q6HEH8ymqaftENGYi9YVytKG6FfDW9FKUL5v6vK1oRy9u3p8ERIXVkD4lrQML
-         wYuJvkIHPjFmJlwWoDRT04HpvyO/XAKsgP9J92NrHxjzd6MJ0HVozIBYHnIgBWTdhwUs
-         ZLD0htDVdhpBOXT2kHqvQEloGH17S5QvuL5aLIKcGs3yEUWLNCWn09kumaFjVq5yzFxH
-         f+kw==
+        bh=s6TWoDpvM5j9oOuFexHwETeZGeGSizrvtZoNUHY0I34=;
+        b=lVO/gW1vCgmFJjYDNUQJXk6gsnONUW5B1giRAeAZ/81h2k46noTir7gX3+e6Oe3BLf
+         b7v/zUXae0c7mLclimIAYnSOIdokepneAGsS9lkFFYvUt1SZi5zk/nkXBA2mSyc6h0nz
+         tWGWTbJycqLw7qVP9uQGZOzquaLRQGZptXK/ts70Ddg0nzBpyjr4zDw2bW6PhR4Pleme
+         GNaV/gJHvzxnfkXGdTa6qe8bALoG+P6niIDAetMM3h3F0//oPVLVIid5bx7BAXXGP8LI
+         H4yHCMY/WUfd1ETMyNhadDWMexuqjvJwe+veEDIeP5BZXv1VDerhIzZ0c+QeFHmOXHfb
+         uoew==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9233322DBF
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3218122DAC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
+	Alistair Popple <alistair@popple.id.au>,
 	Balbir Singh <bsingharora@gmail.com>,
-	Reza Arbab <arbab@linux.ibm.com>,
-	Rashmica Gupta <rashmica.g@gmail.com>,
 	Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.14 69/91] powerpc/mm: Flush cache on memory hot(un)plug
-Date: Mon, 30 Apr 2018 12:24:51 -0700
-Message-Id: <20180430184007.842987749@linuxfoundation.org>
+Subject: [PATCH 4.14 70/91] powerpc/powernv/npu: Do a PID GPU TLB flush when invalidating a large address range
+Date: Mon, 30 Apr 2018 12:24:52 -0700
+Message-Id: <20180430184007.897760550@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184004.216234025@linuxfoundation.org>
 References: <20180430184004.216234025@linuxfoundation.org>
@@ -45,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200526410353909?=
-X-GMAIL-MSGID: =?utf-8?q?1599200526410353909?=
+X-GMAIL-THRID: =?utf-8?q?1599200526908319926?=
+X-GMAIL-MSGID: =?utf-8?q?1599200526908319926?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,57 +53,71 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Balbir Singh <bsingharora@gmail.com>
+From: Alistair Popple <alistair@popple.id.au>
 
-commit fb5924fddf9ee31db04da7ad4e8c3434a387101b upstream.
+commit d0cf9b561ca97d5245bb9e0c4774b7fadd897d67 upstream.
 
-This patch adds support for flushing potentially dirty cache lines
-when memory is hot-plugged/hot-un-plugged. The support is currently
-limited to 64 bit systems.
+The NPU has a limited number of address translation shootdown (ATSD)
+registers and the GPU has limited bandwidth to process ATSDs. This can
+result in contention of ATSD registers leading to soft lockups on some
+threads, particularly when invalidating a large address range in
+pnv_npu2_mn_invalidate_range().
 
-The bug was exposed when mappings for a device were actually
-hot-unplugged and plugged in back later. A similar issue was observed
-during the development of memtrace, but memtrace does it's own
-flushing of region via a custom routine.
+At some threshold it becomes more efficient to flush the entire GPU
+TLB for the given MM context (PID) than individually flushing each
+address in the range. This patch will result in ranges greater than
+2MB being converted from 32+ ATSDs into a single ATSD which will flush
+the TLB for the given PID on each GPU.
 
-These patches do a flush both on hotplug/unplug to clear any stale
-data in the cache w.r.t mappings, there is a small race window where a
-clean cache line may be created again just prior to tearing down the
-mapping.
-
-The patches were tested by disabling the flush routines in memtrace
-and doing I/O on the trace file. The system immediately
-checkstops (quite reliablly if prior to the hot-unplug of the memtrace
-region, we memset the regions we are about to hot unplug). After these
-patches no custom flushing is needed in the memtrace code.
-
-Fixes: 9d5171a8f248 ("powerpc/powernv: Enable removal of memory for in memory tracing")
-Cc: stable@vger.kernel.org # v4.14+
-Signed-off-by: Balbir Singh <bsingharora@gmail.com>
-Acked-by: Reza Arbab <arbab@linux.ibm.com>
-Reviewed-by: Rashmica Gupta <rashmica.g@gmail.com>
+Fixes: 1ab66d1fbada ("powerpc/powernv: Introduce address translation services for Nvlink2")
+Cc: stable@vger.kernel.org # v4.12+
+Signed-off-by: Alistair Popple <alistair@popple.id.au>
+Acked-by: Balbir Singh <bsingharora@gmail.com>
+Tested-by: Balbir Singh <bsingharora@gmail.com>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/mm/mem.c |    2 ++
- 1 file changed, 2 insertions(+)
+ arch/powerpc/platforms/powernv/npu-dma.c |   23 +++++++++++++++++++----
+ 1 file changed, 19 insertions(+), 4 deletions(-)
 
---- a/arch/powerpc/mm/mem.c
-+++ b/arch/powerpc/mm/mem.c
-@@ -143,6 +143,7 @@ int arch_add_memory(int nid, u64 start,
- 			start, start + size, rc);
- 		return -EFAULT;
- 	}
-+	flush_inval_dcache_range(start, start + size);
+--- a/arch/powerpc/platforms/powernv/npu-dma.c
++++ b/arch/powerpc/platforms/powernv/npu-dma.c
+@@ -34,6 +34,13 @@
+ #define npu_to_phb(x) container_of(x, struct pnv_phb, npu)
  
- 	return __add_pages(nid, start_pfn, nr_pages, want_memblock);
+ /*
++ * When an address shootdown range exceeds this threshold we invalidate the
++ * entire TLB on the GPU for the given PID rather than each specific address in
++ * the range.
++ */
++#define ATSD_THRESHOLD (2*1024*1024)
++
++/*
+  * Other types of TCE cache invalidation are not functional in the
+  * hardware.
+  */
+@@ -621,11 +628,19 @@ static void pnv_npu2_mn_invalidate_range
+ 	struct npu_context *npu_context = mn_to_npu_context(mn);
+ 	unsigned long address;
+ 
+-	for (address = start; address < end; address += PAGE_SIZE)
+-		mmio_invalidate(npu_context, 1, address, false);
++	if (end - start > ATSD_THRESHOLD) {
++		/*
++		 * Just invalidate the entire PID if the address range is too
++		 * large.
++		 */
++		mmio_invalidate(npu_context, 0, 0, true);
++	} else {
++		for (address = start; address < end; address += PAGE_SIZE)
++			mmio_invalidate(npu_context, 1, address, false);
+ 
+-	/* Do the flush only on the final addess == end */
+-	mmio_invalidate(npu_context, 1, address, true);
++		/* Do the flush only on the final addess == end */
++		mmio_invalidate(npu_context, 1, address, true);
++	}
  }
-@@ -171,6 +172,7 @@ int arch_remove_memory(u64 start, u64 si
  
- 	/* Remove htab bolted mappings for this section of memory */
- 	start = (unsigned long)__va(start);
-+	flush_inval_dcache_range(start, start + size);
- 	ret = remove_section_mapping(start, start + size);
- 
- 	/* Ensure all vmalloc mappings are flushed in case they also
+ static const struct mmu_notifier_ops nv_nmmu_notifier_ops = {
