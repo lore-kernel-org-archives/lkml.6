@@ -1,50 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754084AbeD3SAX (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 14:00:23 -0400
-Received: from g9t5008.houston.hpe.com ([15.241.48.72]:57168 "EHLO
-        g9t5008.houston.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752255AbeD3SAW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 14:00:22 -0400
-From: Toshi Kani <toshi.kani@hpe.com>
-To: mhocko@suse.com, akpm@linux-foundation.org, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com
-Cc: cpandya@codeaurora.org, linux-mm@kvack.org, x86@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/3] fix free pmd/pte page handlings on x86
-Date: Mon, 30 Apr 2018 11:59:22 -0600
-Message-Id: <20180430175925.2657-1-toshi.kani@hpe.com>
-X-Mailer: git-send-email 2.14.3
+        id S1754285AbeD3SDU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 14:03:20 -0400
+Received: from ms.lwn.net ([45.79.88.28]:39210 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752382AbeD3SDS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 14:03:18 -0400
+Date: Mon, 30 Apr 2018 12:03:16 -0600
+From: Jonathan Corbet <corbet@lwn.net>
+To: NeilBrown <neilb@suse.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH resend] VFS: simplify seq_file iteration code and
+ interface
+Message-ID: <20180430120316.081914d7@lwn.net>
+In-Reply-To: <87fu3dihtf.fsf@notabene.neil.brown.name>
+References: <87vacsrt0r.fsf@notabene.neil.brown.name>
+        <87fu3dihtf.fsf@notabene.neil.brown.name>
+Organization: LWN.net
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series fixes x86 ioremap free page handlings when setting up
-pud/pmd maps.
+On Mon, 30 Apr 2018 11:50:04 +1000
+NeilBrown <neilb@suse.com> wrote:
 
-Patch 01 is from Chintan's v9 01/04 patch [1], which adds a new arg 'addr'.
-This avoids merge conflicts with his series.
+> This patch simplifies the interface for first/next iteration and
+> simplifies the code, while maintaining complete backward
+> compatability.  Now:
+> 
+> - if ->start() is given a pos of zero, it should return an iterator
+>   placed at the start of the sequence
+> - if ->start() is given a non-zero pos, it should return the iterator
+>   in the same state it was after the last ->start or ->next.
+> 
+> This is particularly useful for interators which walk the multiple
+> chains in a hash table, e.g. using rhashtable_walk*. See
+> fs/gfs2/glock.c and drivers/staging/lustre/lustre/llite/vvp_dev.c
 
-Patch 02 adds a TLB purge (INVLPG) to purge page-structure caches that
-may be cached by speculation.  See patch 2/2 for the detals.
+For the docs part:
 
-Patch 03 disables free page handling on x86-PAE to address BUG_ON reported
-by Joerg.
+	Acked-by: Jonathan Corbet <corbet@lwn.net>
 
-[1] https://patchwork.kernel.org/patch/10371015/
-
----
-Chintan Pandya (1):
-  1/3 ioremap: Update pgtable free interfaces with addr
-
-Toshi Kani (2):
-  2/3 x86/mm: add TLB purge to free pmd/pte page interfaces
-  3/3 x86/mm: disable ioremap free page handling on x86-PAE
-
----
- arch/arm64/mm/mmu.c           |  4 +--
- arch/x86/mm/pgtable.c         | 57 +++++++++++++++++++++++++++++++++++++------
- include/asm-generic/pgtable.h |  8 +++---
- lib/ioremap.c                 |  4 +--
- 4 files changed, 57 insertions(+), 16 deletions(-)
+jon
