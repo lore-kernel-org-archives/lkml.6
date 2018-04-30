@@ -1,41 +1,40 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpnKfh25awBXZk/Ox/GGJasb/ujYxqfKMn/uMIjg4oE/iH7ahOb3HqSlSgvi6oNPPkVYXTP
-ARC-Seal: i=1; a=rsa-sha256; t=1525116535; cv=none;
+X-Google-Smtp-Source: AB8JxZqJ1FvBBzw6DIq8Rxcz4gVZ89gqCewGysEqwZxJinMG5eJRi8VNRXrIzYDXrYqvWDFddTVs
+ARC-Seal: i=1; a=rsa-sha256; t=1525116537; cv=none;
         d=google.com; s=arc-20160816;
-        b=bIVZahpeSoFCTa5eIyHdgJyBQshKVBgkU10jrt8w0mG5YkKjcIESy+4mZ/1lnmRGDP
-         BJGjHbD3ilT5QWBGAZGrYGHh3gu9ZTu1F8ZY6kfWTfzelZz6NgwUPC0zja0lV1p1wb90
-         wQXO+EZL0+8337Gi6aPqlzxFmeY3yaNXyjLvVChS95hrgKzOYIJphx31hUJywQZUejyy
-         4z4Et2vUbhNowaPh+zf4s0m+Il+1Rx99rGtEEqcox5HKEWKZaLhKpYbHEf3/lujyuQ83
-         /BO74i98cnFOKksncK/IV8Eqj0XPpxHBBusG+mx5nNZK3LnEOB1CgpDnuGNR9/ifvGEA
-         SD0Q==
+        b=ha2zD113/WwrbMLyJUpL4TMb2jwCHsutRa5X4fmYIN1sR898qS2omWfISMv8B9JzRx
+         g4G1V4F7ecb33rrZJgWMuNygghtP3WPnccoG1Ok2jGVsuoO+rrC5RUj0N1suyGc8Att1
+         74wwFJ8Qgea74/9LMvDayJNUMGdf4lAo2kYZkVAIvGfn7+q/WCTvx8Tem6TIIfAcVuCy
+         apxSxMyTPE8+KroWGulDKI1MEwQMyVffgWMyPePeFL3uhSvNBJ/IEQ07xLbcmYoDCcSk
+         HbyC/Mi2Kwd75VjZMawEJmbZjDgf/JnDhJZJiULJOACtBC7apiPSlv/IMKIuZnuNLt4L
+         Wllg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=TcUkpkahmBmxeNOXpX1ki5myqWzJFwPkW2h5D1R7JM4=;
-        b=o8lYLnzn+Ce+RNWKUCEK3lOK1y4rcCbFv06ZqhceteasucV1UdRRFobjAf/MbhwV5e
-         2Uutdl3KRzfMZZcQtst8PtyMCmLtj+x5zyct4kbR3Gr2OKypcODOv2V/FG1cGEXwBqi6
-         4aiYPZtIjJtr5z75zaYe9GiXcLMCIXR4Y1FWHl3nQ4NmmYvrnahk0EBLSH4uUiCMYzip
-         EU9MYtCQxBYjlx8A6x/fUYAioE8CQvfho4ThjENbX4QKvdZp1F1JrT5X0bB4tiDwVp9G
-         7e6AbV+DKjHcHIGB53kiZQytXOdfJuNmxCtX2kTKi5aO/upmQvZ1ZjegOZBLmYcnUkbN
-         fIdw==
+        bh=AI02XonvfkK+fF5r5lW7sRBRc6O3OUxhm9flUhSoDpU=;
+        b=LG50UQOVLB9EXFFRQL2nELB0+vFKiRLb7rfIzsTkc0iZ63Sj59kRmcZE6HGiI5fkP3
+         t/DQWnY+hibeBwrJqPGNgukZ1v3Z0FroFnYRQkJ+fvpwjfqr15HeYm6cd3j3WweoPSBj
+         Q0ErekGMlH+9dPoiK7bIm/ipnU6fjxWWmj5MW+PUrZ69dN4nIXPC+7oCxdDjXAtG/wKH
+         tR2CJjVBeT6VHTqbx0szXeC448howjVpWGpaQ1haP17qz5Q+h6W1gLlzMge4kL0SYZz9
+         NpiQClxWblHYeAK6ff/zoxR+at72GO8h83kU/sG/YYXuAHwAaaGW9lBnEAt/12Zv7Add
+         2Pbw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D350922DAC
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5867922DCB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Yazen Ghannam <yazen.ghannam@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@suse.de>,
-	Yazen Ghannam <Yazen.Ghannam@amd.com>
-Subject: [PATCH 4.16 108/113] x86/smpboot: Dont use mwait_play_dead() on AMD systems
-Date: Mon, 30 Apr 2018 12:25:19 -0700
-Message-Id: <20180430184019.766115001@linuxfoundation.org>
+	Mark Rutland <mark.rutland@arm.com>,
+	Shannon Zhao <zhaoshenglong@huawei.com>,
+	Marc Zyngier <marc.zyngier@arm.com>
+Subject: [PATCH 4.16 078/113] KVM: arm/arm64: Close VMID generation race
+Date: Mon, 30 Apr 2018 12:24:49 -0700
+Message-Id: <20180430184018.481197643@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184015.043892819@linuxfoundation.org>
 References: <20180430184015.043892819@linuxfoundation.org>
@@ -45,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200418723747238?=
-X-GMAIL-MSGID: =?utf-8?q?1599200596495203528?=
+X-GMAIL-THRID: =?utf-8?q?1599200599118656888?=
+X-GMAIL-MSGID: =?utf-8?q?1599200599118656888?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,42 +53,90 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Yazen Ghannam <yazen.ghannam@amd.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
 
-commit da6fa7ef67f07108a1b0cb9fd9e7fcaabd39c051 upstream.
+commit f0cf47d939d0b4b4f660c5aaa4276fa3488f3391 upstream.
 
-Recent AMD systems support using MWAIT for C1 state. However, MWAIT will
-not allow deeper cstates than C1 on current systems.
+Before entering the guest, we check whether our VMID is still
+part of the current generation. In order to avoid taking a lock,
+we start with checking that the generation is still current, and
+only if not current do we take the lock, recheck, and update the
+generation and VMID.
 
-play_dead() expects to use the deepest state available.  The deepest state
-available on AMD systems is reached through SystemIO or HALT. If MWAIT is
-available, it is preferred over the other methods, so the CPU never reaches
-the deepest possible state.
+This leaves open a small race: A vcpu can bump up the global
+generation number as well as the VM's, but has not updated
+the VMID itself yet.
 
-Don't try to use MWAIT to play_dead() on AMD systems. Instead, use CPUIDLE
-to enter the deepest state advertised by firmware. If CPUIDLE is not
-available then fallback to HALT.
+At that point another vcpu from the same VM comes in, checks
+the generation (and finds it not needing anything), and jumps
+into the guest. At this point, we end-up with two vcpus belonging
+to the same VM running with two different VMIDs. Eventually, the
+VMID used by the second vcpu will get reassigned, and things will
+really go wrong...
 
-Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Borislav Petkov <bp@suse.de>
+A simple solution would be to drop this initial check, and always take
+the lock. This is likely to cause performance issues. A middle ground
+is to convert the spinlock to a rwlock, and only take the read lock
+on the fast path. If the check fails at that point, drop it and
+acquire the write lock, rechecking the condition.
+
+This ensures that the above scenario doesn't occur.
+
 Cc: stable@vger.kernel.org
-Cc: Yazen Ghannam <Yazen.Ghannam@amd.com>
-Link: https://lkml.kernel.org/r/20180403140228.58540-1-Yazen.Ghannam@amd.com
+Reported-by: Mark Rutland <mark.rutland@arm.com>
+Tested-by: Shannon Zhao <zhaoshenglong@huawei.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/smpboot.c |    2 ++
- 1 file changed, 2 insertions(+)
+ virt/kvm/arm/arm.c |   15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -1536,6 +1536,8 @@ static inline void mwait_play_dead(void)
- 	void *mwait_ptr;
- 	int i;
+--- a/virt/kvm/arm/arm.c
++++ b/virt/kvm/arm/arm.c
+@@ -63,7 +63,7 @@ static DEFINE_PER_CPU(struct kvm_vcpu *,
+ static atomic64_t kvm_vmid_gen = ATOMIC64_INIT(1);
+ static u32 kvm_next_vmid;
+ static unsigned int kvm_vmid_bits __read_mostly;
+-static DEFINE_SPINLOCK(kvm_vmid_lock);
++static DEFINE_RWLOCK(kvm_vmid_lock);
  
-+	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD)
-+		return;
- 	if (!this_cpu_has(X86_FEATURE_MWAIT))
+ static bool vgic_present;
+ 
+@@ -470,11 +470,16 @@ static void update_vttbr(struct kvm *kvm
+ {
+ 	phys_addr_t pgd_phys;
+ 	u64 vmid;
++	bool new_gen;
+ 
+-	if (!need_new_vmid_gen(kvm))
++	read_lock(&kvm_vmid_lock);
++	new_gen = need_new_vmid_gen(kvm);
++	read_unlock(&kvm_vmid_lock);
++
++	if (!new_gen)
  		return;
- 	if (!this_cpu_has(X86_FEATURE_CLFLUSH))
+ 
+-	spin_lock(&kvm_vmid_lock);
++	write_lock(&kvm_vmid_lock);
+ 
+ 	/*
+ 	 * We need to re-check the vmid_gen here to ensure that if another vcpu
+@@ -482,7 +487,7 @@ static void update_vttbr(struct kvm *kvm
+ 	 * use the same vmid.
+ 	 */
+ 	if (!need_new_vmid_gen(kvm)) {
+-		spin_unlock(&kvm_vmid_lock);
++		write_unlock(&kvm_vmid_lock);
+ 		return;
+ 	}
+ 
+@@ -516,7 +521,7 @@ static void update_vttbr(struct kvm *kvm
+ 	vmid = ((u64)(kvm->arch.vmid) << VTTBR_VMID_SHIFT) & VTTBR_VMID_MASK(kvm_vmid_bits);
+ 	kvm->arch.vttbr = kvm_phys_to_vttbr(pgd_phys) | vmid;
+ 
+-	spin_unlock(&kvm_vmid_lock);
++	write_unlock(&kvm_vmid_lock);
+ }
+ 
+ static int kvm_vcpu_first_run_init(struct kvm_vcpu *vcpu)
