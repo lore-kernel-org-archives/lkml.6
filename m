@@ -1,39 +1,40 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrXKYDGpl7x2IQdeqKYhpRytYegJJyP2nJXFf5qllWCOgfFGfbFFJGbigc0NeyObBGGJ7dI
-ARC-Seal: i=1; a=rsa-sha256; t=1525116435; cv=none;
+X-Google-Smtp-Source: AB8JxZrg4T4wJ1nK7/YIamNa9FZVDpz7w2OUA6jg52iEuRPfuTY9vXbyBP+FwAyT6TvJrkixRt9P
+ARC-Seal: i=1; a=rsa-sha256; t=1525116436; cv=none;
         d=google.com; s=arc-20160816;
-        b=ED1jzaPdYaGK7K1K3VWoKjFbEPv8p2/bCi2U94pqomGc0qffyP9h5NCugIZ7UgD2uv
-         5tcn3LUjMN8N5YG7rc3pjfFXpr0Cb9Wf3g1iQijd9XcXkK4Y45OAT0PQuRZKxwFXhO+C
-         gY5jNDH7XbNavt7JrSNyDuuwGVQ+DshIGN/8MRoA/c2JDBXAoa/e7xVKjUJSYbtnVUwz
-         VxpVMRXkZlI96GKOtt4F7CntJvEudOknUYBpuIsag6EUxlhkX2ucYcqUlho61j87xPl3
-         jxOlS9pQ4izgKLtVAJqPUbOdVAZHnylak77O1uIPuWrWuff3WXSgJ9dq7Kw0nJKbl6HC
-         jN5A==
+        b=qoT8Nq/klfrNLNRt2oQtchNllt+2xjnqjNIF/Q0XpiVk12mkpFvWwYsqKliLrnjab8
+         jaiwNy8XO1nu/8c+78yRWLFmzkEE1+ezl9qCO+YEwA58yoqSwPIv6d3aJAj6DT5iYR04
+         WJFF7PRYtSXTwK9QODeDCdMrymhrJ5CrVD2U2R4jk98iFSlc+TvYISXW/88GRwBjVDOt
+         OClgrnY2zwdwS1bQ++5Uuo/vAvQnQ370vQTvy95rlYF/h137alFMpUuGPUMLFTPKCGhZ
+         KnhSRi8BTnkD32orX/hjA+vpJ2/vki909mB69wAPpCHrw4nRaT/T/50qijA1XLXjL0Ni
+         Xc0g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=V5XRDg4yJryQhM9joMsG4dEhM7BttmM9TxqqJ8Ftruc=;
-        b=J+paFN7hA5fvsi1u9WJfsPKVgzNLRHeD9l2h6qO6NK098JyOdS5wkjW1G2WZcJC3eM
-         DehGJpmaFSEVVz1gm17PbrZg1M1C/6/aJWEWXvtoGNEy0TLLDeyRzBgllR8dfhV6ANs/
-         S4gCeIx/4Wo+R4EhVQ+vks0JT8gfekRrYiNTXBOlI0041tmz1Sb9zWId6h3OeH1AIu+u
-         REmWRwQm/b+aTC0sRtoe457QtomR/Z8WKRYBqgZH3UKjrNoMwH6/iUVvivAviw45N0aG
-         H8SEPbLZKiNRZ4KaJunkMlUxNYtcLN7Yd979sZiQ839wN0tvRKtTQcZAuwLAitf/VnBD
-         AzmQ==
+        bh=l5qtPaofFlDuuaS5GhX6QeMEvgViTsGyv5gx4nwW1EQ=;
+        b=me16E4dG4fQszq4OYZn1+7K4Lo9IcM/Kkyu35D8mFNGpUYsFagbK3UhP7SjK6vYTKo
+         i9GPgE/+zLs+BzY8Ll9gcG9B+D4vfGVIxQpMrUVu3x2dOEGceyq6SMUrU46+ve7jLzFv
+         suBs6OVHP3ZKrvxN29VvRHxExkdhpKL95oEk4ngPYaFrprWWsqwWwl6OeGGqjtVcTmcw
+         zy90cqbeY81SzKAw3pS7CMg08nnxx7NUE88D+4DzMP/V0eQNzA8WOpAOWNcdwxwbOPrg
+         0MMCxWWcHv5d6ZoDsMVZSa3/4pFnMWFttK99P6IIMzCASyH+dDfVOPYyf2OuSPot/pPd
+         3zoQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E31222DCB
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED49B22DCC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jeffery Miller <jmiller@neverware.com>,
+	David Henningsson <diwic@ubuntu.com>,
+	Takashi Sakamoto <o-takashi@sakamocchi.jp>,
 	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 42/91] ALSA: pcm: Return negative delays from SNDRV_PCM_IOCTL_DELAY.
-Date: Mon, 30 Apr 2018 12:24:24 -0700
-Message-Id: <20180430184006.379687812@linuxfoundation.org>
+Subject: [PATCH 4.14 43/91] ALSA: core: Report audio_tstamp in snd_pcm_sync_ptr
+Date: Mon, 30 Apr 2018 12:24:25 -0700
+Message-Id: <20180430184006.422361938@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184004.216234025@linuxfoundation.org>
 References: <20180430184004.216234025@linuxfoundation.org>
@@ -43,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200491876239874?=
-X-GMAIL-MSGID: =?utf-8?q?1599200491876239874?=
+X-GMAIL-THRID: =?utf-8?q?1599200281194240670?=
+X-GMAIL-MSGID: =?utf-8?q?1599200492126126234?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,99 +53,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jeffery Miller <jmiller@neverware.com>
+From: David Henningsson <diwic@ubuntu.com>
 
-commit 912e4c332037e7ed063c164985c36fb2b549ea3a upstream.
+commit f853dcaae2f5bbe021161e421bd1576845bae8f6 upstream.
 
-The commit c2c86a97175f ("ALSA: pcm: Remove set_fs() in PCM core code")
-changed SNDRV_PCM_IOCTL_DELAY to return an inconsistent error instead of a
-negative delay.  Originally the call would succeed and return the negative
-delay.  The Chromium OS Audio Server (CRAS) gets confused and hangs when
-the error is returned instead of the negative delay.
+It looks like a simple mistake that this struct member
+was forgotten.
 
-Help CRAS avoid the issue by rolling back the behavior to return a
-negative delay instead of an error.
+Audio_tstamp isn't used much, and on some archs (such as x86) this
+ioctl is not used by default, so that might be the reason why this
+has slipped for so long.
 
-Fixes: c2c86a97175f ("ALSA: pcm: Remove set_fs() in PCM core code")
-Signed-off-by: Jeffery Miller <jmiller@neverware.com>
-Cc: <stable@vger.kernel.org> # v4.13+
+Fixes: 4eeaaeaea1ce ("ALSA: core: add hooks for audio timestamps")
+Signed-off-by: David Henningsson <diwic@ubuntu.com>
+Reviewed-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Cc: <stable@vger.kernel.org> # v3.8+
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/core/pcm_compat.c |    7 ++++---
- sound/core/pcm_native.c |   23 +++++++++++------------
- 2 files changed, 15 insertions(+), 15 deletions(-)
+ sound/core/pcm_native.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/sound/core/pcm_compat.c
-+++ b/sound/core/pcm_compat.c
-@@ -27,10 +27,11 @@ static int snd_pcm_ioctl_delay_compat(st
- 				      s32 __user *src)
- {
- 	snd_pcm_sframes_t delay;
-+	int err;
- 
--	delay = snd_pcm_delay(substream);
--	if (delay < 0)
--		return delay;
-+	err = snd_pcm_delay(substream, &delay);
-+	if (err)
-+		return err;
- 	if (put_user(delay, src))
- 		return -EFAULT;
- 	return 0;
 --- a/sound/core/pcm_native.c
 +++ b/sound/core/pcm_native.c
-@@ -2689,7 +2689,8 @@ static int snd_pcm_hwsync(struct snd_pcm
- 	return err;
- }
- 		
--static snd_pcm_sframes_t snd_pcm_delay(struct snd_pcm_substream *substream)
-+static int snd_pcm_delay(struct snd_pcm_substream *substream,
-+			 snd_pcm_sframes_t *delay)
- {
- 	struct snd_pcm_runtime *runtime = substream->runtime;
- 	int err;
-@@ -2705,7 +2706,9 @@ static snd_pcm_sframes_t snd_pcm_delay(s
- 		n += runtime->delay;
- 	}
+@@ -2751,6 +2751,7 @@ static int snd_pcm_sync_ptr(struct snd_p
+ 	sync_ptr.s.status.hw_ptr = status->hw_ptr;
+ 	sync_ptr.s.status.tstamp = status->tstamp;
+ 	sync_ptr.s.status.suspended_state = status->suspended_state;
++	sync_ptr.s.status.audio_tstamp = status->audio_tstamp;
  	snd_pcm_stream_unlock_irq(substream);
--	return err < 0 ? err : n;
-+	if (!err)
-+		*delay = n;
-+	return err;
- }
- 		
- static int snd_pcm_sync_ptr(struct snd_pcm_substream *substream,
-@@ -2913,11 +2916,13 @@ static int snd_pcm_common_ioctl(struct f
- 		return snd_pcm_hwsync(substream);
- 	case SNDRV_PCM_IOCTL_DELAY:
- 	{
--		snd_pcm_sframes_t delay = snd_pcm_delay(substream);
-+		snd_pcm_sframes_t delay;
- 		snd_pcm_sframes_t __user *res = arg;
-+		int err;
- 
--		if (delay < 0)
--			return delay;
-+		err = snd_pcm_delay(substream, &delay);
-+		if (err)
-+			return err;
- 		if (put_user(delay, res))
- 			return -EFAULT;
- 		return 0;
-@@ -3005,13 +3010,7 @@ int snd_pcm_kernel_ioctl(struct snd_pcm_
- 	case SNDRV_PCM_IOCTL_DROP:
- 		return snd_pcm_drop(substream);
- 	case SNDRV_PCM_IOCTL_DELAY:
--	{
--		result = snd_pcm_delay(substream);
--		if (result < 0)
--			return result;
--		*frames = result;
--		return 0;
--	}
-+		return snd_pcm_delay(substream, frames);
- 	default:
- 		return -EINVAL;
- 	}
+ 	if (copy_to_user(_sync_ptr, &sync_ptr, sizeof(sync_ptr)))
+ 		return -EFAULT;
