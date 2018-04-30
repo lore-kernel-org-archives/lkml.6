@@ -1,76 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753119AbeD3Nv5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 09:51:57 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:33159 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753425AbeD3Nvz (ORCPT
+        id S1754160AbeD3Nwr (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 09:52:47 -0400
+Received: from agrajag.zerfleddert.de ([88.198.237.222]:39184 "EHLO
+        agrajag.zerfleddert.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753545AbeD3Nwq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 09:51:55 -0400
-X-Google-Smtp-Source: AB8JxZqYzKIbkzUZjIvdgoU1eRGjU1WHTkdxlJ1HhfNhw5DAAH5Qt2z0+eH6uA+qK/M0DO370DOgrg==
-Date: Mon, 30 Apr 2018 19:21:49 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Colin King <colin.king@canonical.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next][V2] pinctrl: actions: fix missing break in
- PIN_CONFIG_DRIVE_STRENGTH case.
-Message-ID: <20180430135149.mn4ywt6i73ocoobk@linaro.org>
-References: <20180430132259.9938-1-colin.king@canonical.com>
+        Mon, 30 Apr 2018 09:52:46 -0400
+Date: Mon, 30 Apr 2018 15:52:44 +0200
+From: Tobias Jordan <Tobias.Jordan@elektrobit.com>
+To: wsa@the-dreams.de
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] i2c: axxia: enable clock before calling clk_get_rate()
+Message-ID: <20180430135244.kud5hf5xjfxg4ufn@agrajag.zerfleddert.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180430132259.9938-1-colin.king@canonical.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 30, 2018 at 02:22:59PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a missing break in case PIN_CONFIG_DRIVE_STRENGTH leading to
-> a fall-through to the PIN_CONFIG_SLEW_RATE case that performs different
-> checks against *arg. This looks like an unintentional missing break so
-> add in the break.
-> 
-> Detected by CoverityScan, CID#1468456, 1468459 ("Missing break in switch")
->
+axxia_i2c_init() uses clk_get_rate() for idev->i2c_clk. clk_get_rate()
+should only be called if the clock is enabled, so ensure that by moving
+the clk_prepare_enable() call before the call to axxia_i2c_init().
 
-Thanks for fixing!
+Found by Linux Driver Verification project (linuxtesting.org).
+
+Fixes: 08678b850cd0 ("i2c: axxia: Add I2C driver for AXM55xx")
+Signed-off-by: Tobias Jordan <Tobias.Jordan@elektrobit.com>
+---
+ drivers/i2c/busses/i2c-axxia.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-axxia.c b/drivers/i2c/busses/i2c-axxia.c
+index 13f07482ec68..51338c48d193 100644
+--- a/drivers/i2c/busses/i2c-axxia.c
++++ b/drivers/i2c/busses/i2c-axxia.c
+@@ -532,6 +532,12 @@ static int axxia_i2c_probe(struct platform_device *pdev)
+ 	if (idev->bus_clk_rate == 0)
+ 		idev->bus_clk_rate = 100000;	/* default clock rate */
  
-> Fixes: 513d7a2f7e0f ("pinctrl: actions: Add Actions S900 pinctrl driver")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-
-Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org> 
-
-Thanks,
-Mani
-
-> ---
->  drivers/pinctrl/actions/pinctrl-owl.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/actions/pinctrl-owl.c b/drivers/pinctrl/actions/pinctrl-owl.c
-> index 928b40f71a3c..ee090697b1e9 100644
-> --- a/drivers/pinctrl/actions/pinctrl-owl.c
-> +++ b/drivers/pinctrl/actions/pinctrl-owl.c
-> @@ -406,6 +406,7 @@ static int owl_group_pinconf_arg2val(const struct owl_pingroup *g,
->  		default:
->  			return -EINVAL;
->  		}
-> +		break;
->  	case PIN_CONFIG_SLEW_RATE:
->  		if (*arg)
->  			*arg = OWL_PINCONF_SLEW_FAST;
-> @@ -441,6 +442,7 @@ static int owl_group_pinconf_val2arg(const struct owl_pingroup *g,
->  		default:
->  			return -EINVAL;
->  		}
-> +		break;
->  	case PIN_CONFIG_SLEW_RATE:
->  		if (*arg)
->  			*arg = 1;
-> -- 
-> 2.17.0
-> 
++	ret = clk_prepare_enable(idev->i2c_clk);
++	if (ret) {
++		dev_err(&pdev->dev, "failed to enable clock\n");
++		return ret;
++	}
++
+ 	ret = axxia_i2c_init(idev);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "failed to initialize\n");
+@@ -545,12 +551,6 @@ static int axxia_i2c_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	ret = clk_prepare_enable(idev->i2c_clk);
+-	if (ret) {
+-		dev_err(&pdev->dev, "failed to enable clock\n");
+-		return ret;
+-	}
+-
+ 	i2c_set_adapdata(&idev->adapter, idev);
+ 	strlcpy(idev->adapter.name, pdev->name, sizeof(idev->adapter.name));
+ 	idev->adapter.owner = THIS_MODULE;
+-- 
+2.11.0
