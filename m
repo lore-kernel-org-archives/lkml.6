@@ -1,40 +1,40 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrrx5dLuWpKNTgau3YtXLcBJK09EHt5lkdxKD1zSBe+N/WlSkHBopYylUCpO56RSjlWi9+n
+X-Google-Smtp-Source: AB8JxZp+7w8GWNz67R5jo4FsP6czf0k9hrZESqCVowCfyYTzZ3exMNtnujF9JsxNJLbGAWcsxcWR
 ARC-Seal: i=1; a=rsa-sha256; t=1525116237; cv=none;
         d=google.com; s=arc-20160816;
-        b=OpFLtBWsu3y8vk/SBBe4ZYnaAxAY1wRtQeHusRqgBb77p7fV53VLsj+OXWaaJXY6u1
-         tL2WsIb6cyKKrfkp6uHkv66+dbY+tdsFigxdfn5pFV6hgSgoExd76Jnc0kWuAEAjMc/0
-         /5kf4uuY3ldt/fAjru8hdVoiji9IxMVMjR0+07gW1mNuVShxSFVvrGkB82199YIOwpoY
-         N1mhmxqHrhdubrPi32lSEh2RKm6XExOmW1htVGflWMqQCy0cTptM3fSsKMF1F1uMQTmq
-         7RRAzJWNC7fxYVKNKV/O0fnzgn7UrczrGP7WBaMNoj0IHbJ6Ohb4xgXiYz0uls7QQKJR
-         NCFg==
+        b=aX2riKpNocirI4W0IHUcYh/CaVLI0Rk18O34pcYCpeSb17T3Zt06RMPjnsW6n396Hh
+         ChgtpB5YxNJgeRkO+35qn5i3hm5dK8xjKsWIkoLhu+i+KC2m92uN1gMItcjTyCF95WNq
+         fE+084Uys0jyYVEIJcZYuZWEUbMod4XPrz8gogYSLIZpaKF+7VjA7R4yqezWnQv9f7Jb
+         1fFBvnRLD3KL2813uNzdZgcSpecg+2fIqOS6ZpWRJkN73XFLJrvzpUGOaAoOMv1fi4l9
+         AJqrlh5P/Toh/qCUx1mVQ4LKQnlwIELXff07kUeLJ/eriUH6HbKX3xR+VAbvl2MmFfkr
+         MyOQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=/KZuBvmDa72KQ5ID4N6xtMKGD2pfqQvS7FaBMWKWLhE=;
-        b=sTvubuhKPU+q+bxEEDpVvj9O9MvqTns5Pwx3iptM2ChFl2HOYgknoxi2lgN+XKiCCw
-         l5aBMWshPIfWx9ykxQ1UfUP88+FtrO6TKoDQxokNmkoDnZ44fHg2Fz2HjyhBthtSd/SS
-         iwwe1vP9jFkUL3gx62xGgRJ/jgVA5D7Nrn2/+yoBNNMF4WxNSSvWR/SAJoATutmV9u1k
-         bD4Z7ut0UylItU+Qy5dmLpM0hfEJBAbNa7jRNxWUZ98RGB39IDyPxaFb6xPu5rkf+1Nq
-         oR9U8VlgyTKeZB/A7KmiisYy2xSdy2WA74J5hhyRucrlYLO6JGFVCGFIhonIV/FqPGze
-         yDAw==
+        bh=ePPbxZgkg1+6mZVIYaLp2j9XmJtfOObyxXwoJlEHxhA=;
+        b=kf5SPACDMcluNQD6qkYqFXqUh4l/IZJLXYAIlPoZXeFJvo1UDMZxq8gu8BExIFN/OI
+         HwypYvKfEh9QJXU9x69j06le0FAdJ1Kb70LBH3vVNtel6qkv7XRs0FD51+15MLOj5v+E
+         DAtz+UP58VCDm9eyYmTV2mUZu5Ey4PmxMbfbWD+/6BBIKCs0a5JrQfukp/+9cQpU7cgC
+         NZ7vsDdyvoS+pPr9phqcD9XzWkwPsedeQAlErNHGmty0XswwSPU/N9CaXY7lAt/1gGNK
+         Rtz0x3ZNxMLrZFo7kk6mHO1+Qls+4We0f9Z+YkZfKTmbmrURSEkKia04HKZaDswS/dUD
+         6IUg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A9DC22DA3
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CCA222DBE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Wen Xu <wen.xu@gatech.edu>,
-	Theodore Tso <tytso@mit.edu>,
-	Harsh Shandilya <harsh@prjkt.io>
-Subject: [PATCH 3.18 02/25] ext4: add validity checks for bitmap block numbers
-Date: Mon, 30 Apr 2018 12:23:09 -0700
-Message-Id: <20180430183910.898507174@linuxfoundation.org>
+	Joakim Tjernlund <joakim.tjernlund@infinera.com>,
+	Richard Weinberger <richard@nod.at>,
+	Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: [PATCH 3.18 19/25] mtd: cfi: cmdset_0001: Workaround Micron Erase suspend bug.
+Date: Mon, 30 Apr 2018 12:23:26 -0700
+Message-Id: <20180430183911.601983296@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430183910.801976983@linuxfoundation.org>
 References: <20180430183910.801976983@linuxfoundation.org>
@@ -44,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200284172323398?=
-X-GMAIL-MSGID: =?utf-8?q?1599200284172323398?=
+X-GMAIL-THRID: =?utf-8?q?1599200283537847620?=
+X-GMAIL-MSGID: =?utf-8?q?1599200283537847620?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,109 +53,61 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Joakim Tjernlund <joakim.tjernlund@transmode.se>
 
-commit 7dac4a1726a9c64a517d595c40e95e2d0d135f6f upstream.
+commit 46a16a2283f9e678a4e26829175e0c37a5191860 upstream.
 
-An privileged attacker can cause a crash by mounting a crafted ext4
-image which triggers a out-of-bounds read in the function
-ext4_valid_block_bitmap() in fs/ext4/balloc.c.
+Some Micron chips does not work well wrt Erase suspend for
+boot blocks. This avoids the issue by not allowing Erase suspend
+for the boot blocks for the 28F00AP30(1GBit) chip.
 
-This issue has been assigned CVE-2018-1093.
-
-Backport notes:
-3.18.y is missing commit 6a797d273783 ("ext4: call out CRC and corruption errors with specific error codes")
-so the EFSCORRUPTED label doesn't exist. Replaced
-all instances of EFSCORRUPTED with EUCLEAN since that's
-what 6a797d273783 defined it as.
-
-BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=199181
-BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1560782
-Reported-by: Wen Xu <wen.xu@gatech.edu>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@vger.kernel.org
-[harsh@prjkt.io: s/EFSCORRUPTED/EUCLEAN/ fs/ext4/balloc.c]
-Signed-off-by: Harsh Shandilya <harsh@prjkt.io>
+Signed-off-by: Joakim Tjernlund <joakim.tjernlund@infinera.com>
+Cc: <stable@vger.kernel.org>
+Reviewed-by: Richard Weinberger <richard@nod.at>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/ext4/balloc.c |   16 ++++++++++++++--
- fs/ext4/ialloc.c |    8 +++++++-
- 2 files changed, 21 insertions(+), 3 deletions(-)
 
---- a/fs/ext4/balloc.c
-+++ b/fs/ext4/balloc.c
-@@ -338,20 +338,25 @@ static ext4_fsblk_t ext4_valid_block_bit
- 	/* check whether block bitmap block number is set */
- 	blk = ext4_block_bitmap(sb, desc);
- 	offset = blk - group_first_block;
--	if (!ext4_test_bit(EXT4_B2C(sbi, offset), bh->b_data))
-+	if (offset < 0 || EXT4_B2C(sbi, offset) >= sb->s_blocksize ||
-+	    !ext4_test_bit(EXT4_B2C(sbi, offset), bh->b_data))
- 		/* bad block bitmap */
- 		return blk;
+---
+ drivers/mtd/chips/cfi_cmdset_0001.c |   17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+
+--- a/drivers/mtd/chips/cfi_cmdset_0001.c
++++ b/drivers/mtd/chips/cfi_cmdset_0001.c
+@@ -45,6 +45,7 @@
+ #define I82802AB	0x00ad
+ #define I82802AC	0x00ac
+ #define PF38F4476	0x881c
++#define M28F00AP30	0x8963
+ /* STMicroelectronics chips */
+ #define M50LPW080       0x002F
+ #define M50FLW080A	0x0080
+@@ -375,6 +376,17 @@ static void cfi_fixup_major_minor(struct
+ 		extp->MinorVersion = '1';
+ }
  
- 	/* check whether the inode bitmap block number is set */
- 	blk = ext4_inode_bitmap(sb, desc);
- 	offset = blk - group_first_block;
--	if (!ext4_test_bit(EXT4_B2C(sbi, offset), bh->b_data))
-+	if (offset < 0 || EXT4_B2C(sbi, offset) >= sb->s_blocksize ||
-+	    !ext4_test_bit(EXT4_B2C(sbi, offset), bh->b_data))
- 		/* bad block bitmap */
- 		return blk;
- 
- 	/* check whether the inode table block number is set */
- 	blk = ext4_inode_table(sb, desc);
- 	offset = blk - group_first_block;
-+	if (offset < 0 || EXT4_B2C(sbi, offset) >= sb->s_blocksize ||
-+	    EXT4_B2C(sbi, offset + sbi->s_itb_per_group) >= sb->s_blocksize)
-+		return blk;
- 	next_zero_bit = ext4_find_next_zero_bit(bh->b_data,
- 			EXT4_B2C(sbi, offset + EXT4_SB(sb)->s_itb_per_group),
- 			EXT4_B2C(sbi, offset));
-@@ -414,6 +419,7 @@ struct buffer_head *
- ext4_read_block_bitmap_nowait(struct super_block *sb, ext4_group_t block_group)
++static int cfi_is_micron_28F00AP30(struct cfi_private *cfi, struct flchip *chip)
++{
++	/*
++	 * Micron(was Numonyx) 1Gbit bottom boot are buggy w.r.t
++	 * Erase Supend for their small Erase Blocks(0x8000)
++	 */
++	if (cfi->mfr == CFI_MFR_INTEL && cfi->id == M28F00AP30)
++		return 1;
++	return 0;
++}
++
+ static inline struct cfi_pri_intelext *
+ read_pri_intelext(struct map_info *map, __u16 adr)
  {
- 	struct ext4_group_desc *desc;
-+	struct ext4_sb_info *sbi = EXT4_SB(sb);
- 	struct buffer_head *bh;
- 	ext4_fsblk_t bitmap_blk;
+@@ -830,6 +842,11 @@ static int chip_ready (struct map_info *
+ 		    chip->in_progress_block_addr)
+ 			goto sleep;
  
-@@ -421,6 +427,12 @@ ext4_read_block_bitmap_nowait(struct sup
- 	if (!desc)
- 		return NULL;
- 	bitmap_blk = ext4_block_bitmap(sb, desc);
-+	if ((bitmap_blk <= le32_to_cpu(sbi->s_es->s_first_data_block)) ||
-+	    (bitmap_blk >= ext4_blocks_count(sbi->s_es))) {
-+		ext4_error(sb, "Invalid block bitmap block %llu in "
-+			   "block_group %u", bitmap_blk, block_group);
-+		return ERR_PTR(-EUCLEAN);
-+	}
- 	bh = sb_getblk(sb, bitmap_blk);
- 	if (unlikely(!bh)) {
- 		ext4_error(sb, "Cannot get buffer for block bitmap - "
---- a/fs/ext4/ialloc.c
-+++ b/fs/ext4/ialloc.c
-@@ -84,16 +84,22 @@ static struct buffer_head *
- ext4_read_inode_bitmap(struct super_block *sb, ext4_group_t block_group)
- {
- 	struct ext4_group_desc *desc;
-+	struct ext4_sb_info *sbi = EXT4_SB(sb);
- 	struct buffer_head *bh = NULL;
- 	ext4_fsblk_t bitmap_blk;
- 	struct ext4_group_info *grp;
--	struct ext4_sb_info *sbi = EXT4_SB(sb);
++		/* do not suspend small EBs, buggy Micron Chips */
++		if (cfi_is_micron_28F00AP30(cfi, chip) &&
++		    (chip->in_progress_block_mask == ~(0x8000-1)))
++			goto sleep;
++
+ 		/* Erase suspend */
+ 		map_write(map, CMD(0xB0), chip->in_progress_block_addr);
  
- 	desc = ext4_get_group_desc(sb, block_group, NULL);
- 	if (!desc)
- 		return NULL;
- 
- 	bitmap_blk = ext4_inode_bitmap(sb, desc);
-+	if ((bitmap_blk <= le32_to_cpu(sbi->s_es->s_first_data_block)) ||
-+	    (bitmap_blk >= ext4_blocks_count(sbi->s_es))) {
-+		ext4_error(sb, "Invalid inode bitmap blk %llu in "
-+			   "block_group %u", bitmap_blk, block_group);
-+		return ERR_PTR(-EUCLEAN);
-+	}
- 	bh = sb_getblk(sb, bitmap_blk);
- 	if (unlikely(!bh)) {
- 		ext4_error(sb, "Cannot read inode bitmap - "
