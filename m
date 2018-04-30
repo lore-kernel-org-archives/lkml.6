@@ -1,42 +1,39 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZriImCVut6JkqsoP8b//JyrdU/ra+cyObkCPf+EcTmNBQBzr++5teTPBIqqfPCtSYUZA7jK
-ARC-Seal: i=1; a=rsa-sha256; t=1525116462; cv=none;
+X-Google-Smtp-Source: AB8JxZpuKE3+EzCbTKmCHEBA3kTJb0spG+bOOXWO4g+pjq7tOLwMAwUzgQ6mC5Pc9FFsejJPHf0N
+ARC-Seal: i=1; a=rsa-sha256; t=1525116434; cv=none;
         d=google.com; s=arc-20160816;
-        b=fEPB39cdzgYMUELjDBsc8uj3UH0wgSMb5AgJv4lCY8L+XAteF9Q6uLQjq1Fq8oQC2k
-         L/l1WI/MC9HQXFQ1NBQh3qPr6O1hYFVe1GF6aYT1St2Fk+XDKmE9qHgCqr/XhbmV5WG2
-         XN2zYPbLCtsI5SXm/JzCSeRtRvCycGfbQ2uQfFu2vOkWFuiO8Z+0HzZrrWgJckSDgf6b
-         oUzecrVcJhHwCUbRHmflsqwyf17GCQa+zvE2jVfL1rIFR+PYdyRR+VWJy3CNzkwrrNte
-         kfMMdB9U+4fV9bAAz0DgsENaXyYLJsTd+/XTWsv4NAG4k1DOTu36V8eX7z3RS4vZTfDF
-         OjkA==
+        b=rD6JGbERR4u13+gafzRMKUERg8ZVCPkLqqGKF96HHocvPl9Ogcc8vReJ9jAR/qStgZ
+         GJ/kan2omJOo6wK1sP4m2AHWjz/YqgWpiWAKmXnIEhA1EA+tXY71gWyDAsV1oAXYAAd3
+         sPF7zN9VBqgb+VAdBZTSVEzErEoY31DhvQ/lYHHZs/aeXovY75JSTPZGYq1B+Th8yNJT
+         ma6hDd3PjI0PTWghzSkjnH3A5Qj2SnXB/5qouIydiKhHRdkvx6boxcQ2BbSszV5XDQP0
+         2qvyhpLFB0qziT4Yo7G0qiP0VrR+mDHO9p2agxFjzp5ffvVvsR5uC5FS6r+dI7BEgApJ
+         Up2w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=YzQNS/wy4yoJX7mzDdQatVYgXBcuPFrh8bLjQRfrt2w=;
-        b=aamQcGmp/eXewDkP8hoMS4QHhy7APbLsJ2DTETavE/OfO5wIeRWDnAMRxHHCLFgxuu
-         G7P+h3fw9blCWT7hPCL66i2/8mosM4z6ALORv1pdWlkkQXh+eQS0gvQTysLfhcTRXBdb
-         YMT/fIoUOD5fQJdjx8EmgVXa/c5+MtE7IzEtZTgowX/VV+dS2U6wH9iITf7GbT47mzuJ
-         0emBkCFZNau1zvsgo1Fxttgu0/RiHTZHu+LOD0xvj/jQ/PxgZ0/VCPJTy4RBR1ezkNJe
-         y47/mbFjZmLkNQL86QaFenkIUN5tgqOC5tLHMs0Hyneiao/kC/MMtv/gTW01O2dvn2CG
-         WVbg==
+        bh=MzfCqD0VH5FV1UgibykHL4DWPb5KFKhtgWjA9sYxKWM=;
+        b=xZrG1PmwZvB1YFdozzlpCmGHYLOKBKJChg2nH80LuJqol1vItPZ4xFjLee+m2KGlCh
+         nfPPmeyIt4XsCbVESp/ssnj7GUqyo9DZi/eBGecKF7Z8qvBILyprd4kix5XtxXYfnG6u
+         4zgxalFCSzH00hyBQsCN3bIbS2rsx/Xf814u6dw3saDc7QPokjBy1LYZw4AqO/83f7oA
+         OGgj5kp07IaKwQ4IjFF4wKAdOmUiu2Cknz8cpmWaMYJs8Hb8mLQmKT+tohzeSwlS+zTn
+         PEZCadq08Fd82Vb8aUxcuOBaAlGcLI0tQ3GNfd3VGGBuiJJ/n6U7OeMHob8QmfKf/rvX
+         7eBQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 431D922DC1
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7767622DCC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"H . J . Lu" <hjl.tools@gmail.com>,
-	Jeffrey Walton <noloader@gmail.com>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH 4.14 84/91] x86/ipc: Fix x32 version of shmid64_ds and msqid64_ds
-Date: Mon, 30 Apr 2018 12:25:06 -0700
-Message-Id: <20180430184008.670582578@linuxfoundation.org>
+	Dan Carpenter <dan.carpenter@oracle.com>,
+	Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 39/91] ALSA: hdspm: Hardening for potential Spectre v1
+Date: Mon, 30 Apr 2018 12:24:21 -0700
+Message-Id: <20180430184006.201800944@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184004.216234025@linuxfoundation.org>
 References: <20180430184004.216234025@linuxfoundation.org>
@@ -46,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200461344232814?=
-X-GMAIL-MSGID: =?utf-8?q?1599200520347681960?=
+X-GMAIL-THRID: =?utf-8?q?1599200425501203379?=
+X-GMAIL-MSGID: =?utf-8?q?1599200489914436580?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,126 +52,89 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 1a512c0882bd311c5b5561840fcfbe4c25b8f319 upstream.
+commit 10513142a7114d251670361ad40cba2c61403406 upstream.
 
-A bugfix broke the x32 shmid64_ds and msqid64_ds data structure layout
-(as seen from user space)  a few years ago: Originally, __BITS_PER_LONG
-was defined as 64 on x32, so we did not have padding after the 64-bit
-__kernel_time_t fields, After __BITS_PER_LONG got changed to 32,
-applications would observe extra padding.
+As recently Smatch suggested, a couple of places in HDSP MADI driver
+may expand the array directly from the user-space value with
+speculation:
+  sound/pci/rme9652/hdspm.c:5717 snd_hdspm_channel_info() warn: potential spectre issue 'hdspm->channel_map_out' (local cap)
+  sound/pci/rme9652/hdspm.c:5734 snd_hdspm_channel_info() warn: potential spectre issue 'hdspm->channel_map_in' (local cap)
 
-In other parts of the uapi headers we seem to have a mix of those
-expecting either 32 or 64 on x32 applications, so we can't easily revert
-the path that broke these two structures.
+This patch puts array_index_nospec() for hardening against them.
 
-Instead, this patch decouples x32 from the other architectures and moves
-it back into arch specific headers, partially reverting the even older
-commit 73a2d096fdf2 ("x86: remove all now-duplicate header files").
-
-It's not clear whether this ever made any difference, since at least
-glibc carries its own (correct) copy of both of these header files,
-so possibly no application has ever observed the definitions here.
-
-Based on a suggestion from H.J. Lu, I tried out the tool from
-https://github.com/hjl-tools/linux-header to find other such
-bugs, which pointed out the same bug in statfs(), which also has
-a separate (correct) copy in glibc.
-
-Fixes: f4b4aae18288 ("x86/headers/uapi: Fix __BITS_PER_LONG value for x32 builds")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: "H . J . Lu" <hjl.tools@gmail.com>
-Cc: Jeffrey Walton <noloader@gmail.com>
-Cc: stable@vger.kernel.org
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Link: https://lkml.kernel.org/r/20180424212013.3967461-1-arnd@arndb.de
+BugLink: https://marc.info/?l=linux-kernel&m=152411496503418&w=2
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/uapi/asm/msgbuf.h |   31 +++++++++++++++++++++++++++
- arch/x86/include/uapi/asm/shmbuf.h |   42 +++++++++++++++++++++++++++++++++++++
- 2 files changed, 73 insertions(+)
+ sound/pci/rme9652/hdspm.c |   24 ++++++++++++++----------
+ 1 file changed, 14 insertions(+), 10 deletions(-)
 
---- a/arch/x86/include/uapi/asm/msgbuf.h
-+++ b/arch/x86/include/uapi/asm/msgbuf.h
-@@ -1 +1,32 @@
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-+#ifndef __ASM_X64_MSGBUF_H
-+#define __ASM_X64_MSGBUF_H
-+
-+#if !defined(__x86_64__) || !defined(__ILP32__)
- #include <asm-generic/msgbuf.h>
-+#else
-+/*
-+ * The msqid64_ds structure for x86 architecture with x32 ABI.
-+ *
-+ * On x86-32 and x86-64 we can just use the generic definition, but
-+ * x32 uses the same binary layout as x86_64, which is differnet
-+ * from other 32-bit architectures.
-+ */
-+
-+struct msqid64_ds {
-+	struct ipc64_perm msg_perm;
-+	__kernel_time_t msg_stime;	/* last msgsnd time */
-+	__kernel_time_t msg_rtime;	/* last msgrcv time */
-+	__kernel_time_t msg_ctime;	/* last change time */
-+	__kernel_ulong_t msg_cbytes;	/* current number of bytes on queue */
-+	__kernel_ulong_t msg_qnum;	/* number of messages in queue */
-+	__kernel_ulong_t msg_qbytes;	/* max number of bytes on queue */
-+	__kernel_pid_t msg_lspid;	/* pid of last msgsnd */
-+	__kernel_pid_t msg_lrpid;	/* last receive pid */
-+	__kernel_ulong_t __unused4;
-+	__kernel_ulong_t __unused5;
-+};
-+
-+#endif
-+
-+#endif /* __ASM_GENERIC_MSGBUF_H */
---- a/arch/x86/include/uapi/asm/shmbuf.h
-+++ b/arch/x86/include/uapi/asm/shmbuf.h
-@@ -1 +1,43 @@
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-+#ifndef __ASM_X86_SHMBUF_H
-+#define __ASM_X86_SHMBUF_H
-+
-+#if !defined(__x86_64__) || !defined(__ILP32__)
- #include <asm-generic/shmbuf.h>
-+#else
-+/*
-+ * The shmid64_ds structure for x86 architecture with x32 ABI.
-+ *
-+ * On x86-32 and x86-64 we can just use the generic definition, but
-+ * x32 uses the same binary layout as x86_64, which is differnet
-+ * from other 32-bit architectures.
-+ */
-+
-+struct shmid64_ds {
-+	struct ipc64_perm	shm_perm;	/* operation perms */
-+	size_t			shm_segsz;	/* size of segment (bytes) */
-+	__kernel_time_t		shm_atime;	/* last attach time */
-+	__kernel_time_t		shm_dtime;	/* last detach time */
-+	__kernel_time_t		shm_ctime;	/* last change time */
-+	__kernel_pid_t		shm_cpid;	/* pid of creator */
-+	__kernel_pid_t		shm_lpid;	/* pid of last operator */
-+	__kernel_ulong_t	shm_nattch;	/* no. of current attaches */
-+	__kernel_ulong_t	__unused4;
-+	__kernel_ulong_t	__unused5;
-+};
-+
-+struct shminfo64 {
-+	__kernel_ulong_t	shmmax;
-+	__kernel_ulong_t	shmmin;
-+	__kernel_ulong_t	shmmni;
-+	__kernel_ulong_t	shmseg;
-+	__kernel_ulong_t	shmall;
-+	__kernel_ulong_t	__unused1;
-+	__kernel_ulong_t	__unused2;
-+	__kernel_ulong_t	__unused3;
-+	__kernel_ulong_t	__unused4;
-+};
-+
-+#endif
-+
-+#endif /* __ASM_X86_SHMBUF_H */
+--- a/sound/pci/rme9652/hdspm.c
++++ b/sound/pci/rme9652/hdspm.c
+@@ -137,6 +137,7 @@
+ #include <linux/pci.h>
+ #include <linux/math64.h>
+ #include <linux/io.h>
++#include <linux/nospec.h>
+ 
+ #include <sound/core.h>
+ #include <sound/control.h>
+@@ -5698,40 +5699,43 @@ static int snd_hdspm_channel_info(struct
+ 		struct snd_pcm_channel_info *info)
+ {
+ 	struct hdspm *hdspm = snd_pcm_substream_chip(substream);
++	unsigned int channel = info->channel;
+ 
+ 	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
+-		if (snd_BUG_ON(info->channel >= hdspm->max_channels_out)) {
++		if (snd_BUG_ON(channel >= hdspm->max_channels_out)) {
+ 			dev_info(hdspm->card->dev,
+ 				 "snd_hdspm_channel_info: output channel out of range (%d)\n",
+-				 info->channel);
++				 channel);
+ 			return -EINVAL;
+ 		}
+ 
+-		if (hdspm->channel_map_out[info->channel] < 0) {
++		channel = array_index_nospec(channel, hdspm->max_channels_out);
++		if (hdspm->channel_map_out[channel] < 0) {
+ 			dev_info(hdspm->card->dev,
+ 				 "snd_hdspm_channel_info: output channel %d mapped out\n",
+-				 info->channel);
++				 channel);
+ 			return -EINVAL;
+ 		}
+ 
+-		info->offset = hdspm->channel_map_out[info->channel] *
++		info->offset = hdspm->channel_map_out[channel] *
+ 			HDSPM_CHANNEL_BUFFER_BYTES;
+ 	} else {
+-		if (snd_BUG_ON(info->channel >= hdspm->max_channels_in)) {
++		if (snd_BUG_ON(channel >= hdspm->max_channels_in)) {
+ 			dev_info(hdspm->card->dev,
+ 				 "snd_hdspm_channel_info: input channel out of range (%d)\n",
+-				 info->channel);
++				 channel);
+ 			return -EINVAL;
+ 		}
+ 
+-		if (hdspm->channel_map_in[info->channel] < 0) {
++		channel = array_index_nospec(channel, hdspm->max_channels_in);
++		if (hdspm->channel_map_in[channel] < 0) {
+ 			dev_info(hdspm->card->dev,
+ 				 "snd_hdspm_channel_info: input channel %d mapped out\n",
+-				 info->channel);
++				 channel);
+ 			return -EINVAL;
+ 		}
+ 
+-		info->offset = hdspm->channel_map_in[info->channel] *
++		info->offset = hdspm->channel_map_in[channel] *
+ 			HDSPM_CHANNEL_BUFFER_BYTES;
+ 	}
+ 
