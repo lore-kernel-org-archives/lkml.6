@@ -1,170 +1,133 @@
-Return-Path: <linux-security-module-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3287437-1525387948-2-9287037140345330844
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-charsets: plain='utf-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: linux@kroah.com
-X-Delivered-to: linux@kroah.com
-X-Mail-from: linux-security-module-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525387948; b=bhdjkEl32unMfU9mda9VNAL0lKD+V59YOTpP4DEtnzRDcazzcl
-    cWNLqRQwu0cjtEpPbaphuAtPoOt6Wm2Uis5PyYVrj6OAwuNhe0DoCuQG+B+p8Jep
-    EfbkPr+fpHoMvHT7lNXHXo8Bk19JCQPkZ6mVt2wE6WAKHOiOcK3N1l7gsU2srqfn
-    o86alGdocYBzpJSUKIGjqTOmnTqnhVH6KDxju47i/dWtb5rz2gjnM88dTGZo66OS
-    W6KzW+Df4jdjEDa4jrWUDaLHq7K+S+IHNBUp3zjt7kRq/L/g6xAMNpGT6X1wMfeO
-    NPR4Vi2pdhVr0VF8e/DPCYYilP/+uYyg66dg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1525387948;
-    bh=hJ/hmnGwyD117h68PUjur37hAZkP7DLJn5oEuQjEyRE=; b=dc0uXjxqeMzv
-    NCM9qDyAY/qAxIh93Nr67duatRNWVqQlNSiMpoSHkzwyVgI1wU1vrsGsWcTrgWAi
-    hsjcf5ycaEWMnciPuxPQT+0y1Du6CS3oMV46F+j7Ls/Ut6xid6Hq0ymH+zIAmSzq
-    fzt+w6WStst/mp35+aWtCv+83RixPGQKUgshtNIwdfP0fsOD+e1RmomWzN+d0MxZ
-    8FMXcXkS/8vEB3N6gJxgTe362Hbja1qYjRickYZuH7S3uR2FEVoHNw8x22wIia09
-    50tE5yvaadKTOPy4Sxjt2vs1LhBEQ7ZHrAvfMQTe9gXNXeT5zuNJ2q68Mp0y5j3g
-    Yci5b0ZY4Q==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256)
-    header.d=gmail.com header.i=@gmail.com header.b=ZLYfSFXc x-bits=2048
-    x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
-    header.d=1e100.net header.i=@1e100.net header.b=mIKxmt+T;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256)
-      header.d=gmail.com header.i=@gmail.com header.b=ZLYfSFXc x-bits=2048
-      x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
-      header.d=1e100.net header.i=@1e100.net header.b=mIKxmt+T;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIVchJ9LzuJfpku9Ln0kB0mw+G+yj/om9s6GEQLgXtUuuOjBU14k8xWkGpbc5E8oVsUxrf1w6k5SQJSDgbkuTJl2Yv9lSm8Kc+IlAqJEIYrueMRcwt6+
-    winkBbCmZ8OzwQHJFthg0phgNLTQ2Cs+Hfa7pMDs07ikj9yazPlUR7XuFRVrAiVbqqeSCzZJ8Qv7rpxoBN4ihF2R9mOva+2Vrxvz1VLmNl4j7b8/yUJJkkww
-    tjZnwudtj2KzXc6zh00cMQ==
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=x7bEGLp0ZPQA:10
-    a=OWgH-102JUsA:10 a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8 a=bipczEzUf6gePfAZrc0A:9
-    a=CEVPCDR6jXBw6lkU:21 a=lLXuVgZuF7MzRysZ:21 a=QEXdDO2ut3YA:10
-    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751116AbeECWw1 (ORCPT <rfc822;linux@kroah.com>);
-        Thu, 3 May 2018 18:52:27 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:44727 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751111AbeECWwZ (ORCPT
-        <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 3 May 2018 18:52:25 -0400
-X-Google-Smtp-Source: AB8JxZp3HpAE7GUbaSF0jdCr3BRS783Xhd/9v9QhX6SL393hHdBm2JpMAHx08gkjWckxeKjh7VPn2Q==
-Subject: Re: Correct way to access the physmap? - Was: Re: [PATCH 7/9] Pmalloc
- Rare Write: modify selected pools
-To: Dave Hansen <dave.hansen@intel.com>,
-        Matthew Wilcox <willy@infradead.org>
-Cc: linux-security-module@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com,
-        Igor Stoppa <igor.stoppa@huawei.com>
-References: <20180423125458.5338-1-igor.stoppa@huawei.com>
- <20180423125458.5338-8-igor.stoppa@huawei.com>
- <20180424115050.GD26636@bombadil.infradead.org>
- <035f2bba-ebb1-06a0-fb88-3d40f7e484a7@gmail.com>
- <ef116557-1fb1-780e-2480-3eef9052b609@intel.com>
-From: Igor Stoppa <igor.stoppa@gmail.com>
-Message-ID: <91ca0b5e-0719-7ebf-4e11-8b17f54251fe@gmail.com>
-Date: Fri, 4 May 2018 02:52:22 +0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+Return-Path: <threeearcat@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1525102030; cv=none;
+        d=google.com; s=arc-20160816;
+        b=1BBwB4UeihXUrkWFaphvOJV0/4TeLM604Q+XBMa+0U9jaYYkMRq1U39EvJsG5qfzLt
+         OVe3Zlsz0Aqxh8pD4IlB6nFSmmtDt2EoM1A6oUh1HSOaMA6OE9+16NCuciqEzr99y9i8
+         XGZQPl8y9Zb9rb6vCfihpAZHUojUzxSHeF4KcW829okwcYuFBopXfZth3M0/ZBix0jkH
+         nc4Nzr/z6kFsBgUdK7IR7dKf1kgNrkBlT8Q9+z0BTeO2BR3dUk4VQSBjvQtm84BgNPqB
+         d3E5b2g8yCcOgYct2wYVT/lvlrGc/9ZaKukSNl14LBQHT6FMm33YpqRCHWB8veCzutcA
+         pP9Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=user-agent:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:dkim-signature:arc-authentication-results;
+        bh=aeO8nZTyxO0poLfn+r/b7WJWpQL8G3BkEKqV0n7S4MA=;
+        b=RZmGxkWpIM9scX4ejNn/FOqV32EVN8BK1JssDus5githLVXIKx/ZhtJo8FXspRhipP
+         szXYixuDbURCk0QQpbEYrADURFxfcoRG9QykpRfwTG1SeXlikmq9enlOwg6y70hrxWMi
+         +juC+k0BpdKjZJaN+9J8tlxyASbKo1XlKSJW2ayuu3ED3eKZ2evNr+X179LJil0/JykL
+         L1tFPBGAFVbcDHvEn0i1+kKWwLkKH5ven79mkKZwaSXfixP27Qg/kWZCDh7H5Enpv6gX
+         3umUf5cjsDY0DJWp4T++OQcy4btfphzT4EGrQqwT04PAlHK1Q+Wo9fsUFhosyyI3utsN
+         sTUA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=moEOVksB;
+       spf=pass (google.com: domain of threeearcat@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=threeearcat@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=moEOVksB;
+       spf=pass (google.com: domain of threeearcat@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=threeearcat@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AB8JxZoqWWRHK2a0zmw+nSM9epQi/25egjO9VfzxvubSqlOqGYOTrNvglyhwdgDNlsu5sRB1AUDYgQ==
+Date: Tue, 1 May 2018 00:27:04 +0900
+From: DaeRyong Jeong <threeearcat@gmail.com>
+To: gregkh@linuxfoundation.org, jslaby@suse.com
+Cc: byoungyoung@purdue.edu, kt0755@gmail.com, bammanag@purdue.edu,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] tty: Fix data race in tty_insert_flip_string_fixed_flag
+Message-ID: <20180430152700.GA17514@dragonet.kaist.ac.kr>
 MIME-Version: 1.0
-In-Reply-To: <ef116557-1fb1-780e-2480-3eef9052b609@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-Sender: owner-linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.2 (2017-12-15)
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1599185386348568762?=
+X-GMAIL-MSGID: =?utf-8?q?1599185386348568762?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+Unlike normal serials, in pty layer, there is no guarantee that multiple
+threads don't insert input characters at the same time. If it is happened,
+tty_insert_flip_string_fixed_flag can be executed concurrently. This can
+lead slab out-of-bounds write in tty_insert_flip_string_fixed_flag.
 
+Call sequences are as follows.
+CPU0                                    CPU1
+n_tty_ioctl_helper                      n_tty_ioctl_helper
+__start_tty                             tty_send_xchar
+tty_wakeup                              pty_write
+n_hdlc_tty_wakeup                       tty_insert_flip_string
+n_hdlc_send_frames                      tty_insert_flip_string_fixed_flag
+pty_write
+tty_insert_flip_string
+tty_insert_flip_string_fixed_flag
 
-On 04/05/18 01:55, Dave Hansen wrote:
-> On 05/03/2018 02:52 PM, Igor Stoppa wrote:
->> At the end of the summit, we agreed that I would go through the physmap.
-> 
-> Do you mean the kernel linear map? 
+To fix the race, acquire port->lock in pty_write() before it inserts input
+characters to tty buffer. It prevents multiple threads from inserting
+input characters concurrently.
 
-Apparently I did mean it. It was confusing, because I couldn't find a 
-single place stating it explicitly, like you just did.
+The crash log is as follows:
+BUG: KASAN: slab-out-of-bounds in tty_insert_flip_string_fixed_flag+0xb5/
+0x130 drivers/tty/tty_buffer.c:316 at addr ffff880114fcc121
+Write of size 1792 by task syz-executor0/30017
+CPU: 1 PID: 30017 Comm: syz-executor0 Not tainted 4.8.0 #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
+BIOS rel-1.8.2-0-g33fbe13 by qemu-project.org 04/01/2014
+ 0000000000000000 ffff88011638f888 ffffffff81694cc3 ffff88007d802140
+ ffff880114fcb300 ffff880114fcc300 ffff880114fcb300 ffff88011638f8b0
+ ffffffff8130075c ffff88011638f940 ffff88007d802140 ffff880194fcc121
+Call Trace:
+ __dump_stack lib/dump_stack.c:15 [inline]
+ dump_stack+0xb3/0x110 lib/dump_stack.c:51
+ kasan_object_err+0x1c/0x70 mm/kasan/report.c:156
+ print_address_description mm/kasan/report.c:194 [inline]
+ kasan_report_error+0x1f7/0x4e0 mm/kasan/report.c:283
+ kasan_report+0x36/0x40 mm/kasan/report.c:303
+ check_memory_region_inline mm/kasan/kasan.c:292 [inline]
+ check_memory_region+0x13e/0x1a0 mm/kasan/kasan.c:299
+ memcpy+0x37/0x50 mm/kasan/kasan.c:335
+ tty_insert_flip_string_fixed_flag+0xb5/0x130 drivers/tty/tty_buffer.c:316
+ tty_insert_flip_string include/linux/tty_flip.h:35 [inline]
+ pty_write+0x7f/0xc0 drivers/tty/pty.c:115
+ n_hdlc_send_frames+0x1d4/0x3b0 drivers/tty/n_hdlc.c:419
+ n_hdlc_tty_wakeup+0x73/0xa0 drivers/tty/n_hdlc.c:496
+ tty_wakeup+0x92/0xb0 drivers/tty/tty_io.c:601
+ __start_tty.part.26+0x66/0x70 drivers/tty/tty_io.c:1018
+ __start_tty+0x34/0x40 drivers/tty/tty_io.c:1013
+ n_tty_ioctl_helper+0x146/0x1e0 drivers/tty/tty_ioctl.c:1138
+ n_hdlc_tty_ioctl+0xb3/0x2b0 drivers/tty/n_hdlc.c:794
+ tty_ioctl+0xa85/0x16d0 drivers/tty/tty_io.c:2992
+ vfs_ioctl fs/ioctl.c:43 [inline]
+ do_vfs_ioctl+0x13e/0xba0 fs/ioctl.c:679
+ SYSC_ioctl fs/ioctl.c:694 [inline]
+ SyS_ioctl+0x8f/0xc0 fs/ioctl.c:685
+ entry_SYSCALL_64_fastpath+0x1f/0xbd
 
-> That's just another name for the
-> virtual address that you get back from page_to_virt():
-> 
-> 	int *j = page_to_virt(vmalloc_to_page(i));
-> 
+Signed-off-by: DaeRyong Jeong <threeearcat@gmail.com>
+---
+ drivers/tty/pty.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-One reason why I was not sure is that also the linear mapping gets 
-protected, when I protect hte corresponding page in the vmap_area:
+diff --git a/drivers/tty/pty.c b/drivers/tty/pty.c
+index 364c0e9..0c7ec27 100644
+--- a/drivers/tty/pty.c
++++ b/drivers/tty/pty.c
+@@ -110,16 +110,19 @@ static void pty_unthrottle(struct tty_struct *tty)
+ static int pty_write(struct tty_struct *tty, const unsigned char *buf, int c)
+ {
+ 	struct tty_struct *to = tty->link;
++	unsigned long flags;
 
-if i do:
+ 	if (tty->stopped)
+ 		return 0;
 
-int *i = vmalloc(sizeof(int));
-int *j = page_to_virt(vmalloc_to_page(i));
-*i = 1;
-set_memory_ro(i, 1);
-*j = 2;
-
-I get an error, because also *j has become read only.
-I was expecting to have to do the protection of the linear mapping in a 
-second phase.
-
-It turns out that - at least on x86_64 - it's already in place.
-
-But it invalidates what we agreed, which was based on the assumption 
-that the linear mapping was writable all the time.
-
-I see two options:
-
-1) continue to go through the linear mapping, unprotecting it for the 
-time it takes to make the write.
-
-2) use the code I already wrote, which creates an additional, temporary 
-mapping in R/W mode at a random address.
-
-
-I'd prefer 2) because it is already designed to make life harder for 
-someone trying to attack the data in the page: even if one manages to 
-take over a core and busy loop on it, option 2) will use a random 
-temporary address, that is harder to figure out.
-
-Option 1) re-uses the linear mapping and therefore the attacker really 
-only needs to get lucky and, depending on the target, write over some 
-other data that was in the same page being unprotected, or overwrite the 
-same data being updated, after the update has taken place.
-
-
-Is there any objection if I continue with options 2?
-
+ 	if (c > 0) {
++		spin_lock_irqsave(&to->port->lock, flags);
+ 		/* Stuff the data into the input queue of the other end */
+ 		c = tty_insert_flip_string(to->port, buf, c);
+ 		/* And shovel */
+ 		if (c)
+ 			tty_flip_buffer_push(to->port);
++		spin_unlock_irqrestore(&to->port->lock, flags);
+ 	}
+ 	return c;
+ }
 --
-igor
+2.7.4
