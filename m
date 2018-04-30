@@ -1,10 +1,11 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1984963-1525122298-2-11109501769984735942
+X-Cyrus-Session-Id: sloti22d1t05-1984963-1525122216-2-6759670255195724449
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES enda, BAYES_USED global, SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org'
 X-Spam-charsets: from='UTF-8', cc='UTF-8', plain='UTF-8'
@@ -12,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525122298; b=fTzD6VVd8C/wf1P0lOJ2+AzBsnUbXVN2uzjHTHn5mACCBopgJI
-    8m5rNqvzsDuR4SFa/4sGmVtLr2H7nWH7yhg8V7y4sBNc5sSkSj8u6C3mD/osCJAr
-    SSkivZL+XIpxXXEGwrWBl6KOGBOuiC2n4KYPh6/qld/D2grtVGSrokpNpbXDJbGi
-    hey52CgyqVGuFf3MikVGCYGNWftQkuobp0VMjRVZWAxAh0S8vKxLYeQFy7yNDFPR
-    C+8Cf7oPsGw975eIZqap1Jjxi2nelCvJGViESz7/RnFc536nIhFT/U8GZVpO7TA6
-    I2C6saR2VKbD/sENXZdPi3yJWRKGtBz53qfQ==
+    1525122215; b=XhwgZ49eFhKywJcqxK24PT66CrqYkgCtSrTxO+veFs7iB9LDe/
+    Qgt8oD8Ipp5EpuMiA0Sw4ihK89joGKYUc5dVNdZ1cg/I8oTBfI/oCi1oBICbyvtO
+    f4nA+aWSio5x0++z+tDFBYeuKsjfFkTpbjW/aQvGzVlbsrBXdWIQ1X5xFGQ4WD9I
+    UEU4ifr+8EQrC/G/7qajyEvSDUKwts7uyjDmgvu5gKZZYsO1FDYWFLFkfp9kX6KV
+    Rqwr/VO/BqOfcAgyhsczRqB6kDgljZxZwkS/EEWVVpSW2Gnxd969vmMIjLDsrG0T
+    p8Ms2vN2K5F2kjT68Y7c5rZfmaniq9WAfs+A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:in-reply-to:references
     :content-type:content-transfer-encoding:sender:list-id; s=fm2;
-    t=1525122298; bh=dfZ6CAZM4OjbtKFvtwOo5DVWc4WLcAXnkJM5/3/ftT4=; b=
-    V2kFzTojU5YIvNNtxxfpA693c9SaG6p9Zowg+I9FZmOtQxYLLGMK7A0kuSFwyKLC
-    28bYGBDX79lufoS9Sj9VTVqR96ji1cWpN/kecd6gGTPr7i/mtemJaBDkkDmIa/5j
-    9eRA1g/Ss4lFD4odJOsWMUR/5UVsuE6QYnn0GNAdtcnMx/5Hcw1sis6AJHs77gBd
-    OEs2eOdOYgO1h4mTYEBlGYyWBzp5PCnoZ6IOCS+s+6mBiq4sXGun3FfwUoA5mulC
-    9LC2p/x1Y2Ed5eghpb2viQwaFmp+EMWdqQ6XqPpx1+KNj60EuQIGD4reMjM4uRsc
-    YLOqkPPD86fNi+45Hh+1Qg==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=messagingengine.com header.i=@messagingengine.com header.b=MLMyC7qz x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=fm2;
+    t=1525122215; bh=qbqmRhkpvcyIHbtP/SSLxZLxfqUEJ9wpd3L3J9ChNBc=; b=
+    dpcKXoxM6JvPH/KnCBj4BLfkLDZiKVI4kCbA6FjxFIp+leWYjC1OMFLaqthtSjWK
+    NQtm7tCuRQ0G2uxyF2v6F8MtdV208KAzGDXi0Xjyo6JObHX+HpSfELBTXtVZCQNY
+    K8xb2JHgkzKEbC2ERPfwLAEUpiA3GbY9fI7XMQl8boEH84Luv3t/cLD/QL/bDTmG
+    UPaYBxbg6r//cAPSnKWy4HXjAl3XzEZGKGAmFQVVo5VP/YoUUEynytQAyRKg62Bz
+    +bpWO2FUaZ82dLYcDEUeTcTB5a0WJsLoIGTm+TQaIly2BEIX/yiXdnWph2D04bMS
+    DkD3EGKbBB5tSFrKzmPnLQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=messagingengine.com header.i=@messagingengine.com header.b=SsYGSyjg x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=fm2;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=invisiblethingslab.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -39,9 +40,9 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=invisiblethingslab.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-95 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=messagingengine.com header.i=@messagingengine.com header.b=MLMyC7qz x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=fm2;
+    dkim=pass (2048-bit rsa key sha256) header.d=messagingengine.com header.i=@messagingengine.com header.b=SsYGSyjg x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=fm2;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=invisiblethingslab.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -51,22 +52,23 @@ Authentication-Results: mx3.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=invisiblethingslab.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-95 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfAqEarDrDn/f7Y+ZnkhIBWAJE7QvokPFWdOYHvG4+MQs/yUfv7VPyauUjN00xAiLFMVwCkDPtFebighRV0m5xXIWgnyhH5zU2UP+RIHMiJqlrGw/d6w/
-    ccn+UDdGNvARLMymvlCSJlZUo4Y0GzW3TnBTFT/5tQgKxyTEg0ieheaXpmlraEI2OqQoZV2CZkmGhm/OZhvaUisgYl1/yJGDYCR6l6wLYfMYNCXggBusrbpb
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfGC/mpgK8f+b2IUnz+/xeoH++VQytLRTdWyH6fjJcjUHnm1QLmnRVMeWnzSYuTHtAu6qk43k+6nV5VC1TGLHsAX+RN8i5qxDtiM3qCwy9YyLY3dG0qx5
+    k++HcYiplf/QQSpHLwi3htRLLsyVMc4YTv+06EFPcW66pjdRQ1MJlutqqAOrlLf8A7SOz7km1kHlNd1D5J6MAuh0Uxhhu8gFrdxhUIbmQ3yulrZmuw18Hu//
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=VwQbUJbxAAAA:8 a=vkfgAjWNAAAA:8 a=FHifSlABsJDh7vlGtUMA:9 a=QEXdDO2ut3YA:10
+    a=VwQbUJbxAAAA:8 a=vkfgAjWNAAAA:8 a=eaI9A0Ays5jijd5Za5IA:9
+    a=4FBsF3pJapm-deHQ:21 a=cwy39cYD_6_qU1tZ:21 a=QEXdDO2ut3YA:10
     a=AjGcO6oz07-iQ99wixmX:22 a=s88AYcEWOXMFsoP9cgP2:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754871AbeD3VEM (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 30 Apr 2018 17:04:12 -0400
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:47109 "EHLO
+        id S1755396AbeD3VDW (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 30 Apr 2018 17:03:22 -0400
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:33365 "EHLO
         out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1755162AbeD3VDF (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 30 Apr 2018 17:03:05 -0400
-X-ME-Sender: <xms:iITnWsj7Gz83rKoENa5aWBvQ1fe3_JqDkP8O0fJIxCvwx5guyNIzyw>
+        by vger.kernel.org with ESMTP id S1755369AbeD3VDH (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 30 Apr 2018 17:03:07 -0400
+X-ME-Sender: <xms:ioTnWiLo8ULU7S_HphNBOQ5f5zYD6bNNRSdNPQzTIYZzwA2TKw8aKg>
 From: =?UTF-8?q?Marek=20Marczykowski-G=C3=B3recki?=
         <marmarek@invisiblethingslab.com>
 To: xen-devel@lists.xenproject.org
@@ -78,9 +80,9 @@ Cc: =?UTF-8?q?Marek=20Marczykowski-G=C3=B3recki?=
         Juergen Gross <jgross@suse.com>, Jens Axboe <axboe@kernel.dk>,
         linux-block@vger.kernel.org (open list:BLOCK LAYER),
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 5/6] xen-blkfront: make local copy of response before using it
-Date: Mon, 30 Apr 2018 23:01:49 +0200
-Message-Id: <4af6663fbb4b4a97e5c89096033064627367982d.1525122026.git-series.marmarek@invisiblethingslab.com>
+Subject: [PATCH 6/6] xen-blkfront: prepare request locally, only then put it on the shared ring
+Date: Mon, 30 Apr 2018 23:01:50 +0200
+Message-Id: <951a221b0e655b3077d1f96ac365194320bc8809.1525122026.git-series.marmarek@invisiblethingslab.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <cover.7ee732ab822b728ec486a3118ec12e9c06f0f325.1525122026.git-series.marmarek@invisiblethingslab.com>
 References: <cover.7ee732ab822b728ec486a3118ec12e9c06f0f325.1525122026.git-series.marmarek@invisiblethingslab.com>
@@ -95,121 +97,183 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Data on the shared page can be changed at any time by the backend. Make
-a local copy, which is no longer controlled by the backend. And only
-then access it.
+Do not reuse data which theoretically might be already modified by the
+backend. This is mostly about private copy of the request
+(info->shadow[id].req) - make sure the request saved there is really the
+one just filled.
 
 This is complementary to XSA155.
 
 CC: stable@vger.kernel.org
 Signed-off-by: Marek Marczykowski-Górecki <marmarek@invisiblethingslab.com>
 ---
- drivers/block/xen-blkfront.c | 34 +++++++++++++++++-----------------
- 1 file changed, 17 insertions(+), 17 deletions(-)
+ drivers/block/xen-blkfront.c | 76 +++++++++++++++++++++----------------
+ 1 file changed, 44 insertions(+), 32 deletions(-)
 
 diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
-index 2a8e781..3926811 100644
+index 3926811..b100b55 100644
 --- a/drivers/block/xen-blkfront.c
 +++ b/drivers/block/xen-blkfront.c
-@@ -1549,7 +1549,7 @@ static bool blkif_completion(unsigned long *id,
- static irqreturn_t blkif_interrupt(int irq, void *dev_id)
+@@ -525,19 +525,16 @@ static int blkif_ioctl(struct block_device *bdev, fmode_t mode,
+ 
+ static unsigned long blkif_ring_get_request(struct blkfront_ring_info *rinfo,
+ 					    struct request *req,
+-					    struct blkif_request **ring_req)
++					    struct blkif_request *ring_req)
  {
- 	struct request *req;
--	struct blkif_response *bret;
-+	struct blkif_response bret;
- 	RING_IDX i, rp;
- 	unsigned long flags;
- 	struct blkfront_ring_info *rinfo = (struct blkfront_ring_info *)dev_id;
-@@ -1566,8 +1566,8 @@ static irqreturn_t blkif_interrupt(int irq, void *dev_id)
- 	for (i = rinfo->ring.rsp_cons; i != rp; i++) {
- 		unsigned long id;
+ 	unsigned long id;
  
--		bret = RING_GET_RESPONSE(&rinfo->ring, i);
--		id   = bret->id;
-+		RING_COPY_RESPONSE(&rinfo->ring, i, &bret);
-+		id   = bret.id;
- 		/*
- 		 * The backend has messed up and given us an id that we would
- 		 * never have given to it (we stamp it up to BLK_RING_SIZE -
-@@ -1575,39 +1575,39 @@ static irqreturn_t blkif_interrupt(int irq, void *dev_id)
+-	*ring_req = RING_GET_REQUEST(&rinfo->ring, rinfo->ring.req_prod_pvt);
+-	rinfo->ring.req_prod_pvt++;
+-
+ 	id = get_id_from_freelist(rinfo);
+ 	rinfo->shadow[id].request = req;
+ 	rinfo->shadow[id].status = REQ_WAITING;
+ 	rinfo->shadow[id].associated_id = NO_ASSOCIATED_ID;
+ 
+-	(*ring_req)->u.rw.id = id;
++	ring_req->u.rw.id = id;
+ 
+ 	return id;
+ }
+@@ -545,23 +542,28 @@ static unsigned long blkif_ring_get_request(struct blkfront_ring_info *rinfo,
+ static int blkif_queue_discard_req(struct request *req, struct blkfront_ring_info *rinfo)
+ {
+ 	struct blkfront_info *info = rinfo->dev_info;
+-	struct blkif_request *ring_req;
++	struct blkif_request ring_req = { 0 };
+ 	unsigned long id;
+ 
+ 	/* Fill out a communications ring structure. */
+ 	id = blkif_ring_get_request(rinfo, req, &ring_req);
+ 
+-	ring_req->operation = BLKIF_OP_DISCARD;
+-	ring_req->u.discard.nr_sectors = blk_rq_sectors(req);
+-	ring_req->u.discard.id = id;
+-	ring_req->u.discard.sector_number = (blkif_sector_t)blk_rq_pos(req);
++	ring_req.operation = BLKIF_OP_DISCARD;
++	ring_req.u.discard.nr_sectors = blk_rq_sectors(req);
++	ring_req.u.discard.id = id;
++	ring_req.u.discard.sector_number = (blkif_sector_t)blk_rq_pos(req);
+ 	if (req_op(req) == REQ_OP_SECURE_ERASE && info->feature_secdiscard)
+-		ring_req->u.discard.flag = BLKIF_DISCARD_SECURE;
++		ring_req.u.discard.flag = BLKIF_DISCARD_SECURE;
+ 	else
+-		ring_req->u.discard.flag = 0;
++		ring_req.u.discard.flag = 0;
++
++	/* make the request available to the backend */
++	*RING_GET_REQUEST(&rinfo->ring, rinfo->ring.req_prod_pvt) = ring_req;
++	wmb();
++	rinfo->ring.req_prod_pvt++;
+ 
+ 	/* Keep a private copy so we can reissue requests when recovering. */
+-	rinfo->shadow[id].req = *ring_req;
++	rinfo->shadow[id].req = ring_req;
+ 
+ 	return 0;
+ }
+@@ -693,7 +695,7 @@ static void blkif_setup_extra_req(struct blkif_request *first,
+ static int blkif_queue_rw_req(struct request *req, struct blkfront_ring_info *rinfo)
+ {
+ 	struct blkfront_info *info = rinfo->dev_info;
+-	struct blkif_request *ring_req, *extra_ring_req = NULL;
++	struct blkif_request ring_req = { 0 }, extra_ring_req = { 0 };
+ 	unsigned long id, extra_id = NO_ASSOCIATED_ID;
+ 	bool require_extra_req = false;
+ 	int i;
+@@ -758,16 +760,16 @@ static int blkif_queue_rw_req(struct request *req, struct blkfront_ring_info *ri
+ 		 * BLKIF_OP_WRITE
  		 */
- 		if (id >= BLK_RING_SIZE(info)) {
- 			WARN(1, "%s: response to %s has incorrect id (%ld)\n",
--			     info->gd->disk_name, op_name(bret->operation), id);
-+			     info->gd->disk_name, op_name(bret.operation), id);
- 			/* We can't safely get the 'struct request' as
- 			 * the id is busted. */
- 			continue;
- 		}
- 		req  = rinfo->shadow[id].request;
- 
--		if (bret->operation != BLKIF_OP_DISCARD) {
-+		if (bret.operation != BLKIF_OP_DISCARD) {
+ 		BUG_ON(req_op(req) == REQ_OP_FLUSH || req->cmd_flags & REQ_FUA);
+-		ring_req->operation = BLKIF_OP_INDIRECT;
+-		ring_req->u.indirect.indirect_op = rq_data_dir(req) ?
++		ring_req.operation = BLKIF_OP_INDIRECT;
++		ring_req.u.indirect.indirect_op = rq_data_dir(req) ?
+ 			BLKIF_OP_WRITE : BLKIF_OP_READ;
+-		ring_req->u.indirect.sector_number = (blkif_sector_t)blk_rq_pos(req);
+-		ring_req->u.indirect.handle = info->handle;
+-		ring_req->u.indirect.nr_segments = num_grant;
++		ring_req.u.indirect.sector_number = (blkif_sector_t)blk_rq_pos(req);
++		ring_req.u.indirect.handle = info->handle;
++		ring_req.u.indirect.nr_segments = num_grant;
+ 	} else {
+-		ring_req->u.rw.sector_number = (blkif_sector_t)blk_rq_pos(req);
+-		ring_req->u.rw.handle = info->handle;
+-		ring_req->operation = rq_data_dir(req) ?
++		ring_req.u.rw.sector_number = (blkif_sector_t)blk_rq_pos(req);
++		ring_req.u.rw.handle = info->handle;
++		ring_req.operation = rq_data_dir(req) ?
+ 			BLKIF_OP_WRITE : BLKIF_OP_READ;
+ 		if (req_op(req) == REQ_OP_FLUSH || req->cmd_flags & REQ_FUA) {
  			/*
- 			 * We may need to wait for an extra response if the
- 			 * I/O request is split in 2
+@@ -778,15 +780,15 @@ static int blkif_queue_rw_req(struct request *req, struct blkfront_ring_info *ri
+ 			 * since it is guaranteed ordered WRT previous writes.)
  			 */
--			if (!blkif_completion(&id, rinfo, bret))
-+			if (!blkif_completion(&id, rinfo, &bret))
- 				continue;
+ 			if (info->feature_flush && info->feature_fua)
+-				ring_req->operation =
++				ring_req.operation =
+ 					BLKIF_OP_WRITE_BARRIER;
+ 			else if (info->feature_flush)
+-				ring_req->operation =
++				ring_req.operation =
+ 					BLKIF_OP_FLUSH_DISKCACHE;
+ 			else
+-				ring_req->operation = 0;
++				ring_req.operation = 0;
  		}
+-		ring_req->u.rw.nr_segments = num_grant;
++		ring_req.u.rw.nr_segments = num_grant;
+ 		if (unlikely(require_extra_req)) {
+ 			extra_id = blkif_ring_get_request(rinfo, req,
+ 							  &extra_ring_req);
+@@ -796,7 +798,7 @@ static int blkif_queue_rw_req(struct request *req, struct blkfront_ring_info *ri
+ 			 */
+ 			rinfo->shadow[extra_id].num_sg = 0;
  
- 		if (add_id_to_freelist(rinfo, id)) {
- 			WARN(1, "%s: response to %s (id %ld) couldn't be recycled!\n",
--			     info->gd->disk_name, op_name(bret->operation), id);
-+			     info->gd->disk_name, op_name(bret.operation), id);
- 			continue;
+-			blkif_setup_extra_req(ring_req, extra_ring_req);
++			blkif_setup_extra_req(&ring_req, &extra_ring_req);
+ 
+ 			/* Link the 2 requests together */
+ 			rinfo->shadow[extra_id].associated_id = id;
+@@ -804,12 +806,12 @@ static int blkif_queue_rw_req(struct request *req, struct blkfront_ring_info *ri
  		}
+ 	}
  
--		if (bret->status == BLKIF_RSP_OKAY)
-+		if (bret.status == BLKIF_RSP_OKAY)
- 			blkif_req(req)->error = BLK_STS_OK;
- 		else
- 			blkif_req(req)->error = BLK_STS_IOERR;
+-	setup.ring_req = ring_req;
++	setup.ring_req = &ring_req;
+ 	setup.id = id;
  
--		switch (bret->operation) {
-+		switch (bret.operation) {
- 		case BLKIF_OP_DISCARD:
--			if (unlikely(bret->status == BLKIF_RSP_EOPNOTSUPP)) {
-+			if (unlikely(bret.status == BLKIF_RSP_EOPNOTSUPP)) {
- 				struct request_queue *rq = info->rq;
- 				printk(KERN_WARNING "blkfront: %s: %s op failed\n",
--					   info->gd->disk_name, op_name(bret->operation));
-+					   info->gd->disk_name, op_name(bret.operation));
- 				blkif_req(req)->error = BLK_STS_NOTSUPP;
- 				info->feature_discard = 0;
- 				info->feature_secdiscard = 0;
-@@ -1617,15 +1617,15 @@ static irqreturn_t blkif_interrupt(int irq, void *dev_id)
- 			break;
- 		case BLKIF_OP_FLUSH_DISKCACHE:
- 		case BLKIF_OP_WRITE_BARRIER:
--			if (unlikely(bret->status == BLKIF_RSP_EOPNOTSUPP)) {
-+			if (unlikely(bret.status == BLKIF_RSP_EOPNOTSUPP)) {
- 				printk(KERN_WARNING "blkfront: %s: %s op failed\n",
--				       info->gd->disk_name, op_name(bret->operation));
-+				       info->gd->disk_name, op_name(bret.operation));
- 				blkif_req(req)->error = BLK_STS_NOTSUPP;
- 			}
--			if (unlikely(bret->status == BLKIF_RSP_ERROR &&
-+			if (unlikely(bret.status == BLKIF_RSP_ERROR &&
- 				     rinfo->shadow[id].req.u.rw.nr_segments == 0)) {
- 				printk(KERN_WARNING "blkfront: %s: empty %s op failed\n",
--				       info->gd->disk_name, op_name(bret->operation));
-+				       info->gd->disk_name, op_name(bret.operation));
- 				blkif_req(req)->error = BLK_STS_NOTSUPP;
- 			}
- 			if (unlikely(blkif_req(req)->error)) {
-@@ -1638,9 +1638,9 @@ static irqreturn_t blkif_interrupt(int irq, void *dev_id)
- 			/* fall through */
- 		case BLKIF_OP_READ:
- 		case BLKIF_OP_WRITE:
--			if (unlikely(bret->status != BLKIF_RSP_OKAY))
-+			if (unlikely(bret.status != BLKIF_RSP_OKAY))
- 				dev_dbg(&info->xbdev->dev, "Bad return from blkdev data "
--					"request: %x\n", bret->status);
-+					"request: %x\n", bret.status);
+ 	setup.require_extra_req = require_extra_req;
+ 	if (unlikely(require_extra_req))
+-		setup.extra_ring_req = extra_ring_req;
++		setup.extra_ring_req = &extra_ring_req;
  
- 			break;
- 		default:
+ 	for_each_sg(rinfo->shadow[id].sg, sg, num_sg, i) {
+ 		BUG_ON(sg->offset + sg->length > PAGE_SIZE);
+@@ -831,10 +833,20 @@ static int blkif_queue_rw_req(struct request *req, struct blkfront_ring_info *ri
+ 	if (setup.segments)
+ 		kunmap_atomic(setup.segments);
+ 
++	/* make the request available to the backend */
++	*RING_GET_REQUEST(&rinfo->ring, rinfo->ring.req_prod_pvt) = ring_req;
++	wmb();
++	rinfo->ring.req_prod_pvt++;
+ 	/* Keep a private copy so we can reissue requests when recovering. */
+-	rinfo->shadow[id].req = *ring_req;
+-	if (unlikely(require_extra_req))
+-		rinfo->shadow[extra_id].req = *extra_ring_req;
++	rinfo->shadow[id].req = ring_req;
++
++	if (unlikely(require_extra_req)) {
++		*RING_GET_REQUEST(&rinfo->ring, rinfo->ring.req_prod_pvt) = extra_ring_req;
++		wmb();
++		rinfo->ring.req_prod_pvt++;
++		/* Keep a private copy so we can reissue requests when recovering. */
++		rinfo->shadow[extra_id].req = extra_ring_req;
++	}
+ 
+ 	if (new_persistent_gnts)
+ 		gnttab_free_grant_references(setup.gref_head);
 -- 
 git-series 0.9.1
