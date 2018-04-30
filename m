@@ -1,48 +1,50 @@
 Return-Path: <mr.nuke.me@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1523984991; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1525117953; cv=none;
         d=google.com; s=arc-20160816;
-        b=okaaRua3cf6zkUGWeh9izUwGTa+RN7ly+qV3JjFdulD2YehuWWW9zFznBe8YuFoade
-         ExptoczEPaoxy3N2pMVpLNzKjTPTehBhAjkPuQQPVGpNHKHsCofmKxnYHOPp6SSMzyGt
-         +jNonht0dTddT1AR364SzeWObtZGH0DGddD05AxBvtm1YnYFCcwBO8qp3r9ODUxweNzI
-         2xe0CTByF2pDHwIW3I6lPTdezf0Qd58HY9BuH8qRK0pwY7tK6U8bZnbMS2UTgpFKqxON
-         NWZsa0vxia3I10qYIJR54sXUdLLvq/iS4JTuICkyFzfUEL6rXLjzzKJoPDDoNkVRiHZh
-         Hwcg==
+        b=ruSom2wdlwBHw4Px/CH+Ws653K44aVU+XLpDlpXqmaAuo6jCIjIbJ+flGoTegGZ7CV
+         2sKtcfTSPXjSIW0BmLtWIiKkqEVIiCR0dqokHWQeoNahCOlb8J40Yyt24ZZV7Xe87Wty
+         iIyVMPSDHNXUzNyjfDl+Kra4yIFeomh0TnyAwps+3LKbfD2J0lEIupHmGzuJ77/QjPRx
+         m/zYbadPpT/5T/m6OwfdvFaxMAQ0xCV/S+Xog0jyVTt7IBDc9cink8aw7ECqZ7bjnxWE
+         NT/1YG2mWdeFu7XawdjuywC7opkw0DghCaVexgPgjfurNO37/lFVqO82vDNqhdjZnifu
+         MuhA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:dkim-signature
-         :arc-authentication-results;
-        bh=PEYjKfzE2DRKd4gxfVIi7aHdPcHMttStVmLOsDOoXzE=;
-        b=HaPNSAeXfDUcVvwdaixoV6eDdwnr3Z35h5wbM1LNYMf2WVcN+dJ+Awj5EnLAYWVOfz
-         XGgXxNCdxSeOa58L0mV6aJ/O6kT3OCfVGHPyTMyhzTwcDcD8RRMLBuZiqqTY3SGV/vOr
-         1RsLdEHXK4d+zcSPby3whCTtc4TilndMouf6LoDaLXSLe4RrFKU/A8T8S2QKaiJ8qcni
-         mfi0cAcQQed4yhHx6nYR2EnCU9xK1HWCgdIOYwNet31EWEVdhH7mCbylVQbTtEoMtiMP
-         rYZBb4Q08SwmyCYunCuj6kQdlUi/2bYENm96tguT7cnVvVz72ZI29RLwnWla+agzfVV1
-         0OwA==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=ZqdagjNc4E7EH/WGEFB37DMpL5NHHCpi5AJL7EnYbuk=;
+        b=Q8MRrTWMUhKkWPsWo6zlbTzeRml4Hn5kprsAP+2YNpcUdyfg6uRyMJOdVp5nO2klir
+         HEiWHE/pPJJI3fk0GjsK0jzxYqQSwpgHk4fJFNAtFQ+1C3qMnw+ueARpt5Xh+j7agDi7
+         qDCbjcodtvjHcUDwx9GPaP7bqHlF+VhpCLi7+n18UHPb5gn3tdg0PE+xPIRdrbndRGK0
+         aUe9+aJsBv+edgSRD6mmHgqcVE2OA7KEnAZUKLEryWG8Lt6XhtmdDtcYFNSiYlBWK8Cx
+         Lo/Pk36sd87ihwZOSPn/dS691rSZVmW0GLHAJ+q3tEnC30fbI6sOfr9xWIXsA0KMoMQ6
+         XQnQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Ngek7N9y;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=R7U7hd5R;
        spf=pass (google.com: domain of mr.nuke.me@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=mr.nuke.me@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Ngek7N9y;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=R7U7hd5R;
        spf=pass (google.com: domain of mr.nuke.me@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=mr.nuke.me@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AIpwx4+uyTQJmdvhQPvIsW6pwi6UqjrBlyyOzN2/MPsFBGTHHJz9WOWMPBhqlakjJEYOCHGaRuTlQw==
+X-Google-Smtp-Source: AB8JxZqDHWMubI+9yUGRYtg1mBQ2ubns4mf/IHjUvVUaFe80BV3IM/lsMdqBoIcr9StM3W7QULGypg==
 From: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-To: bhelgaas@google.com,
-	linux-pci@vger.kernel.org
-Cc: gregkh@linuxfoundation.org,
-	fred@fredlawl.com,
-	linux-kernel@vger.kernel.org,
-	alex_gagniuc@dellteam.com,
+To: bhelgaas@google.com
+Cc: alex_gagniuc@dellteam.com,
 	austin_bolen@dell.com,
-	keith.busch@intel.com,
-	Alexandru Gagniuc <mr.nuke.me@gmail.com>
-Subject: [PATCH RESEND] PCI/AER: Use a common function to print AER error bits
-Date: Tue, 17 Apr 2018 12:09:43 -0500
-Message-Id: <20180417170943.1767-1-mr.nuke.me@gmail.com>
+	shyam_iyer@dell.com,
+	Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+	Frederick Lawler <fred@fredlawl.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-pci@vger.kernel.org (open list:PCI SUBSYSTEM),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2] PCI/AER: Use a common function to print AER error bits
+Date: Mon, 30 Apr 2018 14:52:15 -0500
+Message-Id: <20180430195218.27654-1-mr.nuke.me@gmail.com>
 X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180417170943.1767-1-mr.nuke.me@gmail.com>
+References: <20180417170943.1767-1-mr.nuke.me@gmail.com>
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1598014086120567687?=
-X-GMAIL-MSGID: =?utf-8?q?1598014086120567687?=
+X-GMAIL-MSGID: =?utf-8?q?1599202083173497892?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,11 +55,17 @@ to provide a more consistent log format.
 
 Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
 ---
+
+Changes since v1:
+  - Parse aer regs for first error pointer instead of disabling it
+On the Dell machine where I tested this, the first error pointer is
+reported correctly by firmware.
+
  drivers/pci/pcie/aer/aerdrv_errprint.c | 16 +++++++++-------
  1 file changed, 9 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/pci/pcie/aer/aerdrv_errprint.c b/drivers/pci/pcie/aer/aerdrv_errprint.c
-index cfc89dd57831..cfae4d52f848 100644
+index cfc89dd57831..b5612cc51b63 100644
 --- a/drivers/pci/pcie/aer/aerdrv_errprint.c
 +++ b/drivers/pci/pcie/aer/aerdrv_errprint.c
 @@ -216,28 +216,30 @@ EXPORT_SYMBOL_GPL(cper_severity_to_aer);
@@ -90,7 +98,7 @@ index cfc89dd57831..cfae4d52f848 100644
 +	info.severity = aer_severity;
 +	info.status = status;
 +	info.mask = mask;
-+	info.first_error = 0x1f;
++	info.first_error = PCI_ERR_CAP_FEP(aer->cap_control);
 +
  	pci_err(dev, "aer_status: 0x%08x, aer_mask: 0x%08x\n", status, mask);
 -	cper_print_bits("", status, status_strs, status_strs_size);
