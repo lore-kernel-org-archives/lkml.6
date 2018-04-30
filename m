@@ -1,100 +1,89 @@
-Return-Path: <drustafa@yandex.ru>
-X-Google-Smtp-Source: AB8JxZpe9kSTVUMfUQiQ1kMa8YvHocJJO7k2g6/USYVO6Ik8bN7pLimw19pl6Y5V1CDcUzu9Aw+A
-ARC-Seal: i=1; a=rsa-sha256; t=1525100578; cv=none;
+Return-Path: <gustavo@embeddedor.com>
+X-Google-Smtp-Source: AB8JxZpz5UCCYSeccGx2ZOPGliHhjguaDpjKTGrBIlvxz0A8FZdEfeRxIr4pHFjI0ob/CBVlysTW
+ARC-Seal: i=1; a=rsa-sha256; t=1525094588; cv=none;
         d=google.com; s=arc-20160816;
-        b=QNSOEne/p139QPtORxgmy5Iqx4gd3SkK4cNDwXkRfkQ9QrWQf6J6lOlv9/sIHoFMzj
-         iN9elCck0HKvvTUBcDUtM2IxYhkulDDZX4Cf35IPd5uNLHNhCa57oWb8WbihDvcXpTk9
-         K9dtwW+hqQEsy1reYjNUS3Z/9X0md0KPCmckblNExHaaaNbM6MXhz47GgrIefxedY/AF
-         mcFVjuV0vH8TiuKSn409JoJtDUmUElhYR2CwHCQvJMQtQeKwX8dNwAbOVR5nsrRjeyPa
-         39JkHGPq1vzYM3/wl4IVUA5zN6tGoWWW3mN1ukFihTqYrGiZ8VS2tDwzCrbGR6csLSsc
-         31KQ==
+        b=rq3MfWkRsORfcC+sx3lFeUwI8J+OdzTJqOJmwu22K2hu7e+r4dKqsD2yVlXpH19fBN
+         SkoGMlUmhHFNrCAVDPJ4fEFudjNOGvP4hlre4NcD9AdcCcrT3IWaIUkq88MtBS3QfSMi
+         cw4wYapOftPMAPGylolhpln0N1OjtNrlKH5iJU0Vb+r4KsSYCdPaAqFNG6gdbnLM9Dli
+         qsD3G+FRnSDlpBIRglF4iWsCLa2jJ26etCbrBmLY/Bu5rmKVm/4K8DVoVw7gMLuWsO+J
+         tp+Wd3SncNZ+WOiSdnVNjQBcoQBrrfVmjKQKkdY8ME2x2tO9KOZmi6UWPv32L3ufpFic
+         Tlyg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:date:message-id:mime-version:subject
-         :references:in-reply-to:cc:to:envelope-from:from:dkim-signature
-         :arc-authentication-results;
-        bh=LwCXQ+BQma9Z/1SwUG8lHNGZjZADMXquWzgZ1L+BrSg=;
-        b=PJTiTkd1RRqlLrDNHnFr46zQaY6LCFw8x12nyup44gvMp2/cmy0RY07MEVGYuTbROq
-         vFlyeNNMgmyiJH40bEPDOE5eEXIep+6t3NPXLdlQFd99wGO+N9zoQfFeLvJbl6bGWgYR
-         hNO//aO0WwCRDOnNgKJD1WpwOS8Wlkci9JrBgmFFOdDHZRehCrHicPF4lNG/4cgo2b3U
-         au8hcfokhyCXosOuFnS2pfMooo2Kw4IKUgOtUgTE68ztW9mTqWlw9UvuSkcmsqYqURUu
-         rzsK0k/hdaUwhvFBvstMp4/s4Pljb9bHOsuQ+L8AMz7jF4esDHrjObQKtlmHcpEKlR2G
-         G+SA==
+        h=user-agent:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:arc-authentication-results;
+        bh=MFUGT1mFqr8OhIREzZRqyHkWZbwUThJXWTDdJmmsAzw=;
+        b=l5nqultRVnrg5GK97xXlyIhON8+drkzquz6c0FHly1Wz6HUlyMJSPknKsRyO9kOhku
+         BrwlEg/ciotA4KU0iW8BaKzwoMvBdJZ8HFqshK/M67fToK7Q3+cKrdTJfjKAaIkgaa5J
+         GgpaTD7gONwDTtlouCbvKXR9J4yR+cb6MGZNdr5jX5mBAnQDgzmUaA++gSo1Cx4/TGy7
+         NYPY2jhofE/cAgri2tevT5viXeTiuWgqlNtH9wFIq9lJXxlyjVdfWeZMKEzuwCj8oCw6
+         jFyFQAamXqOlFgxH6e0YyJnR5ZnIx0B87LqNMy36uX7QmtrgLs35FdvOVy/7BhnUKNLT
+         HSYw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@yandex.ru header.s=mail header.b=HYPY7PXH;
-       spf=pass (google.com: domain of drustafa@yandex.ru designates 2a02:6b8:0:1630::17 as permitted sender) smtp.mailfrom=drustafa@yandex.ru
+       spf=pass (google.com: domain of gustavo@embeddedor.com designates 192.185.65.13 as permitted sender) smtp.mailfrom=gustavo@embeddedor.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@yandex.ru header.s=mail header.b=HYPY7PXH;
-       spf=pass (google.com: domain of drustafa@yandex.ru designates 2a02:6b8:0:1630::17 as permitted sender) smtp.mailfrom=drustafa@yandex.ru
-Authentication-Results: mxback1g.mail.yandex.net; dkim=pass header.i=@yandex.ru
-From: Evgeniy Polyakov <zbr@ioremap.net>
-Envelope-From: drustafa@yandex.ru
-To: Stefan Potyra <stefan.potyra@elektrobit.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+       spf=pass (google.com: domain of gustavo@embeddedor.com designates 192.185.65.13 as permitted sender) smtp.mailfrom=gustavo@embeddedor.com
+X-Authority-Reason: nr=8
+Date: Mon, 30 Apr 2018 08:23:06 -0500
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "ldv-project@linuxtesting.org" <ldv-project@linuxtesting.org>,
-	"sil2review@lists.osadl.org" <sil2review@lists.osadl.org>
-In-Reply-To: <20180419130254.7nriykiybpyi6j2g@agrajag.zerfleddert.de>
-References: <20180419130254.7nriykiybpyi6j2g@agrajag.zerfleddert.de>
-Subject: Re: [PATCH] Enable clock before calling clk_get_rate() on it.
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	"Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] typec: tcpm: Fix incorrect 'and' operator
+Message-ID: <20180430132305.GA20092@embeddedor.com>
 MIME-Version: 1.0
-Message-Id: <4863111525100577@web2o.yandex.ru>
-X-Mailer: Yamail [ http://yandex.ru ] 5.0
-Date: Mon, 30 Apr 2018 18:02:57 +0300
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - linuxfoundation.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.172.56.86
+X-Source-L: No
+X-Exim-ID: 1fD8ln-002KmA-I5
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [187.172.56.86]:50344
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 3
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcSW1wb3J0YW50Ig==?=
-X-GMAIL-THRID: =?utf-8?q?1599183864651429148?=
-X-GMAIL-MSGID: =?utf-8?q?1599183864651429148?=
+X-GMAIL-THRID: =?utf-8?q?1599177583315006788?=
+X-GMAIL-MSGID: =?utf-8?q?1599177583315006788?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Stefan
+Currently, logical and is being used instead of *bitwise* and.
 
-Nice catch, thank you!
+Fix this by using a proper bitwise and operator.
 
-19.04.2018, 16:02, "Stefan Potyra" <stefan.potyra@elektrobit.com>:
-> According to the API, you may only call clk_get_rate() after actually
-> enabling it.
->
-> Found by Linux Driver Verification project (linuxtesting.org).
->
-> Fixes: a5fd9139f74c w1: add 1-wire master driver for i.MX27 / i.MX31
-> Signed-off-by: Stefan Potyra <Stefan.Potyra@elektrobit.com>
+Addresses-Coverity-ID: 1468455 ("Logical vs. bitwise operator")
+Fixes: 64f7c494a3c0 ("typec: tcpm: Add support for sink PPS related messages")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Acked-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+---
+ drivers/usb/typec/tcpm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Acked-by: Evgeniy Polyakov <zbr@ioremap.net>
-
-Greg, please pull it into your tree. Is this a stable material?
-
-> ---
->  drivers/w1/masters/mxc_w1.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/w1/masters/mxc_w1.c b/drivers/w1/masters/mxc_w1.c
-> index 74f2e6e6202a..a9599027d4ef 100644
-> --- a/drivers/w1/masters/mxc_w1.c
-> +++ b/drivers/w1/masters/mxc_w1.c
-> @@ -112,6 +112,10 @@ static int mxc_w1_probe(struct platform_device *pdev)
->          if (IS_ERR(mdev->clk))
->                  return PTR_ERR(mdev->clk);
->
-> + err = clk_prepare_enable(mdev->clk);
-> + if (err)
-> + return err;
-> +
->          clkrate = clk_get_rate(mdev->clk);
->          if (clkrate < 10000000)
->                  dev_warn(&pdev->dev,
-> @@ -128,10 +132,6 @@ static int mxc_w1_probe(struct platform_device *pdev)
->          if (IS_ERR(mdev->regs))
->                  return PTR_ERR(mdev->regs);
->
-> - err = clk_prepare_enable(mdev->clk);
-> - if (err)
-> - return err;
-> -
->          /* Software reset 1-Wire module */
->          writeb(MXC_W1_RESET_RST, mdev->regs + MXC_W1_RESET);
->          writeb(0, mdev->regs + MXC_W1_RESET);
-> --
-> 2.17.0
+diff --git a/drivers/usb/typec/tcpm.c b/drivers/usb/typec/tcpm.c
+index 1ee259b..7ee417a 100644
+--- a/drivers/usb/typec/tcpm.c
++++ b/drivers/usb/typec/tcpm.c
+@@ -1772,7 +1772,7 @@ static void tcpm_pd_ext_msg_request(struct tcpm_port *port,
+ 	enum pd_ext_msg_type type = pd_header_type_le(msg->header);
+ 	unsigned int data_size = pd_ext_header_data_size_le(msg->ext_msg.header);
+ 
+-	if (!(msg->ext_msg.header && PD_EXT_HDR_CHUNKED)) {
++	if (!(msg->ext_msg.header & PD_EXT_HDR_CHUNKED)) {
+ 		tcpm_log(port, "Unchunked extended messages unsupported");
+ 		return;
+ 	}
+-- 
+2.7.4
