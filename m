@@ -1,129 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755074AbeD3QiC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 12:38:02 -0400
-Received: from smtprelay6.synopsys.com ([198.182.37.59]:52251 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755056AbeD3QiA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 12:38:00 -0400
-Subject: Re: [PATCH v8 3/9] PCI: endpoint: functions/pci-epf-test: Add second
- entry
-To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: "bhelgaas@google.com" <bhelgaas@google.com>,
-        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
-        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-        "kishon@ti.com" <kishon@ti.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-References: <cover.1524829928.git.gustavo.pimentel@synopsys.com>
- <c2b6cb8de2502e1b5352be3b6d687b1cb4b7033a.1524829928.git.gustavo.pimentel@synopsys.com>
- <20180430142213.GC32033@e107981-ln.cambridge.arm.com>
-From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Message-ID: <425dfb4f-b249-8496-aa9f-d2a48d0b64b9@synopsys.com>
-Date: Mon, 30 Apr 2018 17:36:42 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1755090AbeD3QiT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 12:38:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45258 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754860AbeD3QiR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 12:38:17 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5968B22C92
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Mon, 30 Apr 2018 12:38:13 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Joel Fernandes <joelaf@google.com>
+Cc: linux-kernel@vger.kernel.org, Peter Zilstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Fenguang Wu <fengguang.wu@intel.com>,
+        Baohong Liu <baohong.liu@intel.com>,
+        Vedang Patel <vedang.patel@intel.com>, kernel-team@android.com
+Subject: Re: [PATCH] softirq: reorder trace_softirqs_on to prevent lockdep
+ splat
+Message-ID: <20180430123813.3b8315d8@gandalf.local.home>
+In-Reply-To: <20180427041100.133772-1-joelaf@google.com>
+References: <20180427041100.133772-1-joelaf@google.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180430142213.GC32033@e107981-ln.cambridge.arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lorenzo,
+On Thu, 26 Apr 2018 21:11:00 -0700
+Joel Fernandes <joelaf@google.com> wrote:
 
-On 30/04/2018 15:22, Lorenzo Pieralisi wrote:
-> On Fri, Apr 27, 2018 at 12:59:58PM +0100, Gustavo Pimentel wrote:
->> Add a seconds entry on the pci_epf_test_ids structure that disables the
+> I'm able to reproduce a lockdep splat when CONFIG_PROVE_LOCKING=y and
+> CONFIG_PREEMPTIRQ_EVENTS=y.
 > 
-> "Add a second entry..."
+> $ echo 1 > /d/tracing/events/preemptirq/preempt_enable/enable
+> ---
+> [   26.112609] DEBUG_LOCKS_WARN_ON(current->softirqs_enabled)
+> [   26.112636] WARNING: CPU: 0 PID: 118 at kernel/locking/lockdep.c:3854
+> [...]
+> [   26.144229] Call Trace:
+> [   26.144926]  <IRQ>
+> [   26.145506]  lock_acquire+0x55/0x1b0
+> [   26.146499]  ? __do_softirq+0x46f/0x4d9
+> [   26.147571]  ? __do_softirq+0x46f/0x4d9
+> [   26.148646]  trace_preempt_on+0x8f/0x240
+> [   26.149744]  ? trace_preempt_on+0x4d/0x240
+> [   26.150862]  ? __do_softirq+0x46f/0x4d9
+> [   26.151930]  preempt_count_sub+0x18a/0x1a0
+> [   26.152985]  __do_softirq+0x46f/0x4d9
+> [   26.153937]  irq_exit+0x68/0xe0
+> [   26.154755]  smp_apic_timer_interrupt+0x271/0x280
+> [   26.156056]  apic_timer_interrupt+0xf/0x20
+> [   26.157105]  </IRQ>
 
-Fixed, sorry for letting it slip...
+I'm not able to trigger this. Is there more to it?
 
-> 
->> linkup_notifier parameter on driver for the DesignWare EP.
->>
->> Allow DesignWare EPs that doesn't have linkup notification signal to work
->> with pcitest.
->>
->> Update the binding documentation accordingly.
->>
->> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
->> Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
->> ---
->> Change v2->v3:
->>  - Added second entry in pci_epf_test_ids structure.
->>  - Remove test_reg_bar field assignment on second entry.
->> Changes v3->v4:
->>  - Nothing changed, just to follow the patch set version.
->> Changes v4->v5:
->>  - Changed pci_epf_test_cfg2 to pci_epf_test_designware.
->> Changes v5->v6:
->>  - Changed name field from pci_epf_test_designware to pci_epf_test_dw.
->> Changes v6->v7:
->>  - Changed variable name from data_cfg2 to data_linkup_notifier_disabled.
->> Changes v7->v8:
->>  - Patch description rework for an imperative verbal mode.
->>
->>  Documentation/PCI/endpoint/function/binding/pci-test.txt | 2 ++
->>  drivers/pci/endpoint/functions/pci-epf-test.c            | 8 ++++++++
->>  2 files changed, 10 insertions(+)
->>
->> diff --git a/Documentation/PCI/endpoint/function/binding/pci-test.txt b/Documentation/PCI/endpoint/function/binding/pci-test.txt
->> index 3b68b95..dc39f47 100644
->> --- a/Documentation/PCI/endpoint/function/binding/pci-test.txt
->> +++ b/Documentation/PCI/endpoint/function/binding/pci-test.txt
->> @@ -1,6 +1,8 @@
->>  PCI TEST ENDPOINT FUNCTION
->>  
->>  name: Should be "pci_epf_test" to bind to the pci_epf_test driver.
->> +name: Should be "pci_epf_test_dw" to bind to the pci_epf_test driver
->> +      with a custom configuration for the designware EP.
->>  
->>  Configurable Fields:
->>  vendorid	 : should be 0x104c
->> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
->> index 7cef851..4ab463b 100644
->> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
->> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
->> @@ -459,10 +459,18 @@ static int pci_epf_test_bind(struct pci_epf *epf)
->>  	return 0;
->>  }
->>  
->> +static const struct pci_epf_test_data data_linkup_notifier_disabled = {
->> +	.linkup_notifier = false
->> +};
->> +
->>  static const struct pci_epf_device_id pci_epf_test_ids[] = {
->>  	{
->>  		.name = "pci_epf_test",
->>  	},
->> +	{
->> +		.name = "pci_epf_test_dw",
->> +		.driver_data = (kernel_ulong_t)&data_linkup_notifier_disabled,
-> 
-> You have not answered my question on this though:
-> 
-> https://urldefense.proofpoint.com/v2/url?u=https-3A__marc.info_-3Fl-3Dlinux-2Dpci-26m-3D152476180723047-26w-3D2&d=DwIBAg&c=DPL6_X_6JkXFx7AXWqB0tg&r=bkWxpLoW-f-E3EdiDCCa0_h0PicsViasSlvIpzZvPxs&m=KsCYNT_jNohKd03qgHN_Q73bRDsN78isEgeuYF8SypU&s=N1gpsLtS4or3TlSamRxP49rYAJv6gjEq7apuhN7paLs&e=
-
-I did not see those questions, sorry. I will respond on top of that email.
-
-Regards,
-Gustavo
+-- Steve
 
 > 
->> +	},
->>  	{},
->>  };
->>  
->> -- 
->> 2.7.4
->>
->>
+> The problem is the softirqs annotation in lockdep goes out of sync with
+> the reality of the world that softirq is still off. This causes a
+> lockdep splat because the preempt_count_sub can call into a preemptoff
+> tracer or the trace events code, which inturn can call into lockdep
+> *before* softirqs are really turned back on, which can cause a softirqs
+> invalid annotation splat in lockdep.
 > 
+> The same issue was fixed in local_bh_disable_ip which has a comment so:
+> /*
+>  * The preempt tracer hooks into preempt_count_add and will break
+>  * lockdep because it calls back into lockdep after SOFTIRQ_OFFSET
+>  * is set and before current->softirq_enabled is cleared.
+>  * We must manually increment preempt_count here and manually
+>  * call the trace_preempt_off later.
+>  */
+> 
+> I have done a similar change to the local_bh_enable path to fix it.
+> 
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Cc: Peter Zilstra <peterz@infradead.org>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Cc: Thomas Glexiner <tglx@linutronix.de>
+> Cc: Boqun Feng <boqun.feng@gmail.com>
+> Cc: Paul McKenney <paulmck@linux.vnet.ibm.com>
+> Cc: Frederic Weisbecker <fweisbec@gmail.com>
+> Cc: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> Cc: Fenguang Wu <fengguang.wu@intel.com>
+> Cc: Baohong Liu <baohong.liu@intel.com>
+> Cc: Vedang Patel <vedang.patel@intel.com>
+> Cc: kernel-team@android.com
+> Signed-off-by: Joel Fernandes <joelaf@google.com>
+> ---
+>  kernel/softirq.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/softirq.c b/kernel/softirq.c
+> index 177de3640c78..8a040bcaa033 100644
+> --- a/kernel/softirq.c
+> +++ b/kernel/softirq.c
+> @@ -139,9 +139,13 @@ static void __local_bh_enable(unsigned int cnt)
+>  {
+>  	lockdep_assert_irqs_disabled();
+>  
+> +	if (preempt_count() == cnt)
+> +		trace_preempt_on(CALLER_ADDR0, get_lock_parent_ip());
+> +
+>  	if (softirq_count() == (cnt & SOFTIRQ_MASK))
+>  		trace_softirqs_on(_RET_IP_);
+> -	preempt_count_sub(cnt);
+> +
+> +	__preempt_count_sub(cnt);
+>  }
+>  
+>  /*
