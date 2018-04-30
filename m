@@ -1,39 +1,39 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqoi60Sx4bXSd7Q1kXE7M1mESmn5GVT080HDsJO6rS6vBgOLgeDMzMSX4/Ko8fss9XxFo62
-ARC-Seal: i=1; a=rsa-sha256; t=1525116345; cv=none;
+X-Google-Smtp-Source: AB8JxZomgJHj+RwPQmQgNnC8Bj1uwZ3MUXBWPulPf/bvjBi9JFMh22wUgrKhVsGcLQXlDV05bC2C
+ARC-Seal: i=1; a=rsa-sha256; t=1525116344; cv=none;
         d=google.com; s=arc-20160816;
-        b=EdlFsXr+U+iXJdOxo+M2lqaKgsgTLxENgHH6APnJc1LaTqfv9TvqL83kaltTuvFJi2
-         vFc3cIN9+wD9YBxotqk2LtYhwELaZC8GfdvtCLNOR0pLr4WAQ7py43Bu6sRUC8a7fb17
-         O/IjUmBGpuR67N3qw99d7PVXYvooajkWm2D8dKLAfmbUtGR7TagbLenXsALuNcu7L2Tz
-         dtf+WdZKrrjKolx062V+nlf2cD3Ybf1O2Ah4acUcFhvoUlwTl1WCy7bQc7fCRPs1WjIR
-         uSdWZ01zgXSnxBe75ZwTtubdzT/4nMromhE7XdCOgtbEuiKxRjFjyEMQkDfsGhW/FP3e
-         jKYQ==
+        b=Hho4GjxPU8K2djwPOSRHA5EiV83GeV9aaJ4DIzRK5GsdaPNyP5LwgRu07ZaXXDDfam
+         ySuG5fz2fgsjlyM4ADlNkDpXQCZobb8JwhfSOYE+uuZYrW3akca8FbltTsoykKk4B6Fh
+         mL8BR0mixojWDbSPLuI3BHrbXqoVqs9kvEHce8Kb8VXVzoo/9LBX0VobAtNcLo7+XTec
+         FoMw76YNPsGwScLqb0zNzW8C5vLZbyS2KrQjHwzmfiMM5PrB4LWNobZ+JqCXlrp9B4Eq
+         sKbNFYQDqTMYfDsdUQaWKS2hMFF4B5eClgO7B//6iyjgt0wXqfWufNanHx0XyVqAu71F
+         Toug==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=C1OYbWDd0ZnTrMF+T94/pfHwar0mqLhACj6fhUnYFQ0=;
-        b=jfEzkR+YFzvbONYYfSn8I00ICuYlSJTRVX3Gq4XflNZQlWLPFwO/n3ECoICkBICAV4
-         RVn1xv0+drWP97wGm03uCuljklOteCpPpeEwSJs4IfnPIpmn6yToZ0Xq6vpVAdzfAIFd
-         gOBukdh/R0hQLMBUtPGc2CBm/9nvLd7SgEYtQmdkjBOTVMv4fyVM9R61Qb9jyuf3lcD5
-         lGiDbESuFkAPmH0TVkaYU3wD5L4WR3It5DgGTpZ5SnQTDe8kQmkVA3JzP4+aJQfxLtPo
-         Q9wpZUqWSUD3Qrs4aJd5UO7oEL96mk2bDn4B0e4DE+wTvPZa+fQckRqBibkylihdr72h
-         jSLQ==
+        bh=NQfyMVLqSDBw72Xjg5LU78RtlcTxK27W50rWUBeywKw=;
+        b=LVWdmQh5TtE9tLbMUwzJ2gCy3J1/tYI2JNONpPFw2K4534pdNY6rSii+C6HEt44m35
+         vGedZBncz/6OvcvObpXrDkUNVoYW5EHB1A9wEHTiN67mmcb4L28FhxNJYGsDYXLzSlFf
+         8kId87jIlWY/K41Gs4F/8+m6zSZEoFdn7nyJBmqWcTwm2IbTDpPM5JSZ5pT2zOMMsm8t
+         Q/Sb0xsLTcQaA8CynHGOJJylbknhimQifPdY2YaKUbHV74J3cov+jLEE322cNX/nbfqJ
+         CBJAnfKTkEUC6Hmv4in982mRINn2x5XWaS8oH4n5XskQr2Gv+wyR9h5hMsB8bCiU1KKe
+         7MBQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D6B622DAE
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 785D622DAC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ravi Chandra Sadineni <ravisadineni@chromium.org>,
-	Alan Stern <stern@rowland.harvard.edu>
-Subject: [PATCH 4.4 11/44] USB: Increment wakeup count on remote wakeup.
-Date: Mon, 30 Apr 2018 12:24:22 -0700
-Message-Id: <20180430190946.794995849@linuxfoundation.org>
+	Kamil Lulko <kamilx.lulko@intel.com>,
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+Subject: [PATCH 4.4 10/44] usb: core: Add quirk for HP v222w 16GB Mini
+Date: Mon, 30 Apr 2018 12:24:21 -0700
+Message-Id: <20180430190946.752230461@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430190946.093694747@linuxfoundation.org>
 References: <20180430190946.093694747@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200292434828035?=
-X-GMAIL-MSGID: =?utf-8?q?1599200397165316187?=
+X-GMAIL-THRID: =?utf-8?q?1599200291962669964?=
+X-GMAIL-MSGID: =?utf-8?q?1599200396830388578?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,80 +52,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ravi Chandra Sadineni <ravisadineni@chromium.org>
+From: Kamil Lulko <kamilx.lulko@intel.com>
 
-commit 83a62c51ba7b3c0bf45150c4eac7aefc6c785e94 upstream.
+commit 3180dabe08e3653bf0a838553905d88f3773f29c upstream.
 
-On chromebooks we depend on wakeup count to identify the wakeup source.
-But currently USB devices do not increment the wakeup count when they
-trigger the remote wake. This patch addresses the same.
+Add DELAY_INIT quirk to fix the following problem with HP
+v222w 16GB Mini:
 
-Resume condition is reported differently on USB 2.0 and USB 3.0 devices.
+usb 1-3: unable to read config index 0 descriptor/start: -110
+usb 1-3: can't read configurations, error -110
+usb 1-3: can't set config #1, error -110
 
-On USB 2.0 devices, a wake capable device, if wake enabled, drives
-resume signal to indicate a remote wake (USB 2.0 spec section 7.1.7.7).
-The upstream facing port then sets C_PORT_SUSPEND bit and reports a
-port change event (USB 2.0 spec section 11.24.2.7.2.3). Thus if a port
-has resumed before driving the resume signal from the host and
-C_PORT_SUSPEND is set, then the device attached to the given port might
-be the reason for the last system wakeup. Increment the wakeup count for
-the same.
-
-On USB 3.0 devices, a function may signal that it wants to exit from device
-suspend by sending a Function Wake Device Notification to the host (USB3.0
-spec section 8.5.6.4) Thus on receiving the Function Wake, increment the
-wakeup count.
-
-Signed-off-by: Ravi Chandra Sadineni <ravisadineni@chromium.org>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Signed-off-by: Kamil Lulko <kamilx.lulko@intel.com>
+Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/core/hcd.c |    1 +
- drivers/usb/core/hub.c |   10 +++++++++-
- 2 files changed, 10 insertions(+), 1 deletion(-)
+ drivers/usb/core/quirks.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/usb/core/hcd.c
-+++ b/drivers/usb/core/hcd.c
-@@ -2339,6 +2339,7 @@ void usb_hcd_resume_root_hub (struct usb
+--- a/drivers/usb/core/quirks.c
++++ b/drivers/usb/core/quirks.c
+@@ -45,6 +45,9 @@ static const struct usb_device_id usb_qu
+ 	{ USB_DEVICE(0x03f0, 0x0701), .driver_info =
+ 			USB_QUIRK_STRING_FETCH_255 },
  
- 	spin_lock_irqsave (&hcd_root_hub_lock, flags);
- 	if (hcd->rh_registered) {
-+		pm_wakeup_event(&hcd->self.root_hub->dev, 0);
- 		set_bit(HCD_FLAG_WAKEUP_PENDING, &hcd->flags);
- 		queue_work(pm_wq, &hcd->wakeup_work);
- 	}
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@ -632,12 +632,17 @@ void usb_wakeup_notification(struct usb_
- 		unsigned int portnum)
- {
- 	struct usb_hub *hub;
-+	struct usb_port *port_dev;
- 
- 	if (!hdev)
- 		return;
- 
- 	hub = usb_hub_to_struct_hub(hdev);
- 	if (hub) {
-+		port_dev = hub->ports[portnum - 1];
-+		if (port_dev && port_dev->child)
-+			pm_wakeup_event(&port_dev->child->dev, 0);
++	/* HP v222w 16GB Mini USB Drive */
++	{ USB_DEVICE(0x03f0, 0x3f40), .driver_info = USB_QUIRK_DELAY_INIT },
 +
- 		set_bit(portnum, hub->wakeup_bits);
- 		kick_hub_wq(hub);
- 	}
-@@ -3361,8 +3366,11 @@ int usb_port_resume(struct usb_device *u
+ 	/* Creative SB Audigy 2 NX */
+ 	{ USB_DEVICE(0x041e, 0x3020), .driver_info = USB_QUIRK_RESET_RESUME },
  
- 	/* Skip the initial Clear-Suspend step for a remote wakeup */
- 	status = hub_port_status(hub, port1, &portstatus, &portchange);
--	if (status == 0 && !port_is_suspended(hub, portstatus))
-+	if (status == 0 && !port_is_suspended(hub, portstatus)) {
-+		if (portchange & USB_PORT_STAT_C_SUSPEND)
-+			pm_wakeup_event(&udev->dev, 0);
- 		goto SuspendCleared;
-+	}
- 
- 	/* see 7.1.7.7; affects power usage, but not budgeting */
- 	if (hub_is_superspeed(hub->hdev))
