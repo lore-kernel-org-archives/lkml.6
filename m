@@ -1,170 +1,140 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751803AbeD3Ec3 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 00:32:29 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38800 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751754AbeD3Ec1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 00:32:27 -0400
-From: NeilBrown <neilb@suse.com>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Trond Myklebust <trond.myklebust@primarydata.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>
-Date: Mon, 30 Apr 2018 14:31:30 +1000
-Subject: [PATCH 4/4] NFS: Avoid quadratic search when freeing delegations.
-Cc: linux-nfs@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org
-Message-ID: <152506269064.7246.3777224904785228306.stgit@noble>
-In-Reply-To: <152506256513.7246.13171564155614823841.stgit@noble>
-References: <152506256513.7246.13171564155614823841.stgit@noble>
-User-Agent: StGit/0.17.1-dirty
+        id S1751621AbeD3Eew (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 00:34:52 -0400
+Received: from mail-ot0-f182.google.com ([74.125.82.182]:42642 "EHLO
+        mail-ot0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751023AbeD3Eeu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 00:34:50 -0400
+X-Google-Smtp-Source: AB8JxZqarNrkenKTvZMqMTmOdhml+Q/3Nj4KN71JXzfIgBm3hDrIiP98WVFHbJyf7Krkp+a3PgUccQ==
+Date: Sun, 29 Apr 2018 21:34:45 -0700
+From: Sultan Alsawaf <sultanxda@gmail.com>
+To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>, Pavel Machek <pavel@ucw.cz>,
+        LKML <linux-kernel@vger.kernel.org>, Jann Horn <jannh@google.com>
+Subject: Re: Linux messages full of `random: get_random_u32 called from`
+Message-ID: <20180430043445.t7wkykxzkhex2isi@sultan-box>
+References: <20180427201036.GL5965@thunk.org>
+ <20180429143205.GD13475@amd>
+ <20180429170541.lrzwyihrd6d75rql@sultan-box>
+ <20180429184101.GA31156@amd>
+ <20180429202033.ysmc42mj2rrk3h7p@sultan-box>
+ <20180429220519.GQ5965@thunk.org>
+ <20180429222625.35tedjzkizchudcm@sultan-box>
+ <CAHmME9r5XNS_AU234vKbt9PoHGN3PooFSA8EqNfDRpBHREdQAQ@mail.gmail.com>
+ <20180429224928.teg6zyfjxndbcnsn@sultan-box>
+ <20180430001106.GS5965@thunk.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180430001106.GS5965@thunk.org>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are three places that walk all delegation for an nfs_client and
-restart whenever they find something interesting - potentially
-resulting in a quadratic search:  If there are 10,000 uninteresting
-delegations followed by 10,000 interesting one, then the code
-skips over 100,000,000 delegations, which can take a noticeable amount
-of time.
+On Sun, Apr 29, 2018 at 08:11:07PM -0400, Theodore Y. Ts'o wrote:
+>
+> What your patch does is assume that there is a full bit of uncertainty
+> that can be obtained from the information gathered from each
+> interrupt.  I *might* be willing to assume that to be valid on x86
+> systems that have a high resolution cycle counter.  But on ARM
+> platforms, especially during system bootup when the user isn't typing
+> anything and SSD's and flash storage tend to have very predictable
+> timing patterns?  Not a bet I'd be willing to take.  Even with a cycle
+> counter, there's a reason why we assumed that we need to mix in timing
+> results from 64 interrupts or one second's worth before we would give
+> a single bit's worth of entropy credit.
+> 
+> 							- Ted
 
-Of these nfs_delegation_reap_unclaimed() and
-nfs_reap_expired_delegations() are only called during unusual events:
-a server reboots or reports expired delegations, probably due to a
-network partition.  Optimizing these is not particularly important.
+What about abusing high-resolution timers to get entropy? Since hrtimers can't
+make guarantees down to the nanosecond, there's always a skew between the
+requested expiry time and the actual expiry time.
 
-The third, nfs_client_return_marked_delegations(), is called
-periodically via nfs_expire_unreferenced_delegations().  It could
-cause periodic problems on a busy server.
+Please see the attached patch and let me know just how horrible it is.
 
-New delegations are added to the end of the list, so if there are
-10,000 open files with delegations, and 10,000 more recently opened files
-that received delegations but are now closed, then
-nfs_client_return_marked_delegations() can take seconds to skip over
-the 10,000 open files 10,000 times.  That is a waste of time.
+Sultan
 
-The avoid this waste a place-holder (an inode) is kept when locks are
-dropped, so that the place can usually be found again after taking
-rcu_readlock().  This place holder ensure that we find the right
-starting point in the list of nfs_servers, and makes is probable that
-we find the right starting point in the list of delegations.
-We might need to occasionally restart at the head of that list.
+>From b0d21c38558c661531d4cb46816fbb36b874a169 Mon Sep 17 00:00:00 2001
+From: Sultan Alsawaf <sultanxda@gmail.com>
+Date: Sun, 29 Apr 2018 21:28:08 -0700
+Subject: [PATCH] random: use high-res timers to generate entropy until crng
+ init is done
 
-It might be possible that the place_holder inode could lose its
-delegation separately, and then get a new one using the same (freed
-and then reallocated) 'struct nfs_delegation'.  Were this to happen,
-the new delegation would be at the end of the list and we would miss
-returning some other delegations.  This would have the effect of
-unnecessarily delaying the return of some unused delegations until the
-next time this function is called - typically 90 seconds later.  As
-this is not a correctness issue and is vanishingly unlikely to happen,
-it does not seem worth addressing.
-
-Signed-off-by: NeilBrown <neilb@suse.com>
 ---
- fs/nfs/delegation.c |   57 +++++++++++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 53 insertions(+), 4 deletions(-)
+ drivers/char/random.c | 47 +++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
 
-diff --git a/fs/nfs/delegation.c b/fs/nfs/delegation.c
-index 76ab1374f589..cfec852c8bad 100644
---- a/fs/nfs/delegation.c
-+++ b/fs/nfs/delegation.c
-@@ -483,28 +483,73 @@ static bool nfs_delegation_need_return(struct nfs_delegation *delegation)
- int nfs_client_return_marked_delegations(struct nfs_client *clp)
- {
- 	struct nfs_delegation *delegation;
-+	struct nfs_delegation *prev;
- 	struct nfs_server *server;
- 	struct inode *inode;
-+	struct inode *place_holder = NULL;
-+	struct nfs_delegation *place_holder_deleg = NULL;
- 	int err = 0;
+diff --git a/drivers/char/random.c b/drivers/char/random.c
+index d9e38523b383..af2d60bbcec3 100644
+--- a/drivers/char/random.c
++++ b/drivers/char/random.c
+@@ -286,6 +286,7 @@
+ #define OUTPUT_POOL_WORDS	(1 << (OUTPUT_POOL_SHIFT-5))
+ #define SEC_XFER_SIZE		512
+ #define EXTRACT_SIZE		10
++#define ENTROPY_GEN_INTVL_NS	(1 * NSEC_PER_MSEC)
  
- restart:
-+	/*
-+	 * To avoid quadratic looping we hold a reference
-+	 * to an inode place_holder.  Each time we restart, we
-+	 * list nfs_servers from the server of that inode, and
-+	 * delegation in the server from the delegations of that
-+	 * inode.
-+	 * prev is an RCU-protected pointer to a delegation which
-+	 * wasn't marked for return and might be a good choice for
-+	 * the next place_holder.
-+	 */
- 	rcu_read_lock();
--	list_for_each_entry_rcu(server, &clp->cl_superblocks, client_link) {
--		list_for_each_entry_rcu(delegation, &server->delegations,
--								super_list) {
--			if (!nfs_delegation_need_return(delegation))
-+	prev = NULL;
-+	if (place_holder)
-+		server = NFS_SERVER(place_holder);
-+	else
-+		server = list_entry_rcu(clp->cl_superblocks.next,
-+					struct nfs_server, client_link);
-+	list_for_each_entry_from_rcu(server, &clp->cl_superblocks, client_link) {
-+		delegation = NULL;
-+		if (place_holder && server == NFS_SERVER(place_holder))
-+			delegation = rcu_dereference(NFS_I(place_holder)->delegation);
-+		if (!delegation || delegation != place_holder_deleg)
-+			delegation = list_entry_rcu(server->delegations.next,
-+						    struct nfs_delegation, super_list);
-+		list_for_each_entry_from_rcu(delegation, &server->delegations, super_list) {
-+			struct inode *to_put = NULL;
-+
-+			if (!nfs_delegation_need_return(delegation)) {
-+				prev = delegation;
- 				continue;
-+			}
- 			if (!nfs_sb_active(server->super))
- 				break;
-+
-+			if (prev) {
-+				struct inode *tmp;
-+
-+				tmp = nfs_delegation_grab_inode(prev);
-+				if (tmp) {
-+					to_put = place_holder;
-+					place_holder = tmp;
-+					place_holder_deleg = prev;
-+				}
-+			}
-+
- 			inode = nfs_delegation_grab_inode(delegation);
- 			if (inode == NULL) {
- 				rcu_read_unlock();
-+				if (to_put)
-+					iput(to_put);
- 				nfs_sb_deactive(server->super);
- 				goto restart;
- 			}
- 			delegation = nfs_start_delegation_return_locked(NFS_I(inode));
- 			rcu_read_unlock();
  
-+			if (to_put)
-+				iput(to_put);
+ #define LONGS(x) (((x) + sizeof(unsigned long) - 1)/sizeof(unsigned long))
+@@ -408,6 +409,8 @@ static struct fasync_struct *fasync;
+ static DEFINE_SPINLOCK(random_ready_list_lock);
+ static LIST_HEAD(random_ready_list);
+ 
++static struct hrtimer entropy_gen_hrtimer;
 +
- 			err = nfs_end_delegation_return(inode, delegation, 0);
- 			iput(inode);
- 			nfs_sb_deactive(server->super);
-@@ -512,10 +557,14 @@ int nfs_client_return_marked_delegations(struct nfs_client *clp)
- 			if (!err)
- 				goto restart;
- 			set_bit(NFS4CLNT_DELEGRETURN, &clp->cl_state);
-+			if (place_holder)
-+				iput(place_holder);
- 			return err;
- 		}
- 	}
- 	rcu_read_unlock();
-+	if (place_holder)
-+		iput(place_holder);
- 	return 0;
+ struct crng_state {
+ 	__u32		state[16];
+ 	unsigned long	init_time;
+@@ -2287,3 +2290,47 @@ void add_hwgenerator_randomness(const char *buffer, size_t count,
+ 	credit_entropy_bits(poolp, entropy);
  }
- 
+ EXPORT_SYMBOL_GPL(add_hwgenerator_randomness);
++
++/*
++ * Generate entropy on init using high-res timers. Although high-res timers
++ * provide nanosecond precision, they don't actually honor requests to the
++ * nanosecond. The skew between the expected time difference in nanoseconds and
++ * the actual time difference can be used as a way to generate entropy on boot
++ * for machines that lack sufficient boot-time entropy.
++ */
++static enum hrtimer_restart entropy_timer_cb(struct hrtimer *timer)
++{
++	static u64 prev_ns;
++	u64 curr_ns, delta;
++
++	if (crng_ready())
++		return HRTIMER_NORESTART;
++
++	curr_ns = ktime_get_mono_fast_ns();
++	delta = curr_ns - prev_ns;
++
++	add_interrupt_randomness(delta);
++
++	/* Use the hrtimer skew to make the next interval more unpredictable */
++	if (likely(prev_ns))
++		hrtimer_add_expires_ns(timer, delta);
++	else
++		hrtimer_add_expires_ns(timer, ENTROPY_GEN_INTVL_NS);
++
++	prev_ns = curr_ns;
++	return HRTIMER_RESTART;
++}
++
++static int entropy_gen_hrtimer_init(void)
++{
++	if (!IS_ENABLED(CONFIG_HIGH_RES_TIMERS))
++		return 0;
++
++	hrtimer_init(&entropy_gen_hrtimer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
++
++	entropy_gen_hrtimer.function = entropy_timer_cb;
++	hrtimer_start(&entropy_gen_hrtimer, ns_to_ktime(ENTROPY_GEN_INTVL_NS),
++		HRTIMER_MODE_REL);
++	return 0;
++}
++core_initcall(entropy_gen_hrtimer_init);
+-- 
+2.14.1
