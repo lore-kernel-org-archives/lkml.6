@@ -1,39 +1,38 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrZ3MgwoqwG0RhlQ3gr91jfcwEZgR4CjW3MGGtSlxbp5NDMDwaJBYUk7NqLMqDpBDsLC5DI
-ARC-Seal: i=1; a=rsa-sha256; t=1525116432; cv=none;
+X-Google-Smtp-Source: AB8JxZqid0CMU8ztAGbbgVQsayo43b3cV+fw2AYBxlI0KKqeKZRi/LI2+wp9HNB3yW2pMmotgVQ2
+ARC-Seal: i=1; a=rsa-sha256; t=1525116429; cv=none;
         d=google.com; s=arc-20160816;
-        b=ajAdtHhyAhKNkWwy4IsvUDXM5jH6K0H1t3Qfad6azbIQb1tJaS5Edy21jtoPHEFH27
-         QtVrjNl7X0GwRhyi/DyPkyr+hB6GivqMU7gm4mYgSceFcnWK9J5CLUCnPKsv7LCEfyLM
-         EFpMop05ondeFxYwjDEmVLmSwzp6lzgZ8pZnCKsaDwXb8+aE1M1GUxSE3kX0ubT5NMMf
-         xaj6LLXtM07OxT+Z8Nrbf1/iMqBaesq0K2sKpQ+1io9LufGxHSpjMOdcHiA7hrBu1hAa
-         AsMqNtER6Hoo+uOTP+unPcIIaORofAyATN26jyNiXIXZ+91Tc2eTBt8LEP4SSuG0zUWh
-         d01A==
+        b=PQsogmyGnAeK8kBhEhl7xbEslVemk+U/AVU6U/Oy7G5zCKV3viUizEIAMl9Y8bHG2N
+         ZWXHAlaYtaybmLgzuw32byvKvWywta0z/BVJybe0VOP0k2xXQ0e6f4zxz8+zqSWpTzHh
+         12PH6G1N9n3RcyIq0K1SmugFALkLWq4F6Xp52H0bPGQBnRi2MR0vdRrRVmQWZtFbxAFz
+         nWgj7SB40GVNdHWxp7eQBL6HqBpkj2N6qBWgvJOMffTFlC9ca9addhNxmCMHHe1vhWLK
+         jUi/JORjL/wVOKg7AwEoo8m2QlSmjaxIj4U7/Zo5iOm2qtdWnZNrRp0j18s39cZOBkN7
+         EB0g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=Cr/xQ1NPAIk1GtPZUYNBNo27oUxoy2J8B1hghssUNO8=;
-        b=oI1MUMVvftjEy0WfJl862C1jU9zCLPNyLTHBNdpVzVJ8f5hzAMU4fZYnHVIyU0sa/y
-         n2kbpRVsvydo6L0MABHfcQ3GwM/s83qK2HRsMx6YYypSbOlN3vPoMcdPoy3HEPPxUyAh
-         w7Fd5VNyl1xuGR2/71AC+/JKep5IUcsO7SWNg6Ck5dr6FOJSaYPjep9OGXXh0xl1wRv3
-         q2yTDa7E3box/TRapp9AFDNnaXvtLO4notfsxyPjPYXho+QyZLjablxo+s028KAmb95/
-         yHCnUb3HuSz4OV5KyHUprS1olBxCqq0BhSfdcjg0r2Wb99wBGAUYZraaQBzF7xqBynRO
-         AYsg==
+        bh=fcnopRmcrE5Pya+4OA+J9UURMfnGj7Sb852HBeuxuko=;
+        b=UbaadVFrSS44sBCerX1d4jjOEcjsrokKJh8a2JZqrl3uui3fcbs2jCD0K2+US2+zzw
+         xTwk+906N8FswNpmiT8TU09t8hZgISZ/49836x+B+9XPzQkqtYdXif8EMJAYF/AQwpq4
+         1dgKogs0X7kNj2aOqqVoUQ+WKKb11yPRf1w03dmYVfUUqV5HUZPDC8PbBblBK4lWMay7
+         gHh1cN4zON7fmoRP+0sz0iEm0ebXEuSn1qbkAX8fVeD7onifKKP0o/McMkxdHDlYzeve
+         ZB6bHHv/uHZf4Ty9nHXo4ZiRK0OdREbQnxlt/yQ12dX1vKg7EOWKLOgJb+q1I37SvT68
+         +xHA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 418D522DC1
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00C1722DC1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dan Carpenter <dan.carpenter@oracle.com>,
-	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 37/91] ALSA: opl3: Hardening for potential Spectre v1
-Date: Mon, 30 Apr 2018 12:24:19 -0700
-Message-Id: <20180430184006.106444963@linuxfoundation.org>
+	Shuah Khan <shuahkh@osg.samsung.com>
+Subject: [PATCH 4.14 09/91] usbip: usbip_event: fix to not print kernel pointer address
+Date: Mon, 30 Apr 2018 12:23:51 -0700
+Message-Id: <20180430184004.713027025@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184004.216234025@linuxfoundation.org>
 References: <20180430184004.216234025@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200422064417466?=
-X-GMAIL-MSGID: =?utf-8?q?1599200488593762736?=
+X-GMAIL-THRID: =?utf-8?q?1599200451835054515?=
+X-GMAIL-MSGID: =?utf-8?q?1599200485299785090?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,53 +51,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Shuah Khan <shuahkh@osg.samsung.com>
 
-commit 7f054a5bee0987f1e2d4e59daea462421c76f2cb upstream.
+commit 4c982482341c64f55daf69b6caa5a2bcd9b43824 upstream.
 
-As recently Smatch suggested, one place in OPL3 driver may expand the
-array directly from the user-space value with speculation:
-  sound/drivers/opl3/opl3_synth.c:476 snd_opl3_set_voice() warn: potential spectre issue 'snd_opl3_regmap'
+Fix it to not print kernel pointer address. Remove the conditional
+and debug message as it isn't very useful.
 
-This patch puts array_index_nospec() for hardening against it.
-
-BugLink: https://marc.info/?l=linux-kernel&m=152411496503418&w=2
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/drivers/opl3/opl3_synth.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/usb/usbip/usbip_event.c |    4 ----
+ 1 file changed, 4 deletions(-)
 
---- a/sound/drivers/opl3/opl3_synth.c
-+++ b/sound/drivers/opl3/opl3_synth.c
-@@ -21,6 +21,7 @@
+--- a/drivers/usb/usbip/usbip_event.c
++++ b/drivers/usb/usbip/usbip_event.c
+@@ -105,10 +105,6 @@ static void event_handler(struct work_st
+ 			unset_event(ud, USBIP_EH_UNUSABLE);
+ 		}
  
- #include <linux/slab.h>
- #include <linux/export.h>
-+#include <linux/nospec.h>
- #include <sound/opl3.h>
- #include <sound/asound_fm.h>
- 
-@@ -448,7 +449,7 @@ static int snd_opl3_set_voice(struct snd
- {
- 	unsigned short reg_side;
- 	unsigned char op_offset;
--	unsigned char voice_offset;
-+	unsigned char voice_offset, voice_op;
- 
- 	unsigned short opl3_reg;
- 	unsigned char reg_val;
-@@ -473,7 +474,9 @@ static int snd_opl3_set_voice(struct snd
- 		voice_offset = voice->voice - MAX_OPL2_VOICES;
+-		/* Stop the error handler. */
+-		if (ud->event & USBIP_EH_BYE)
+-			usbip_dbg_eh("removed %p\n", ud);
+-
+ 		wake_up(&ud->eh_waitq);
  	}
- 	/* Get register offset of operator */
--	op_offset = snd_opl3_regmap[voice_offset][voice->op];
-+	voice_offset = array_index_nospec(voice_offset, MAX_OPL2_VOICES);
-+	voice_op = array_index_nospec(voice->op, 4);
-+	op_offset = snd_opl3_regmap[voice_offset][voice_op];
- 
- 	reg_val = 0x00;
- 	/* Set amplitude modulation (tremolo) effect */
+ }
