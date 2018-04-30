@@ -1,43 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755383AbeD3XPS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 19:15:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43416 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752614AbeD3XPQ (ORCPT
+        id S1755486AbeD3XP0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 19:15:26 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:34518 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755390AbeD3XPV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 19:15:16 -0400
-Date: Mon, 30 Apr 2018 16:15:15 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Igor Stoppa <igor.stoppa@gmail.com>
-Cc: willy@infradead.org, mhocko@kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, igor.stoppa@huawei.com
-Subject: Re: [PATCH 0/2] mm: tweaks for improving use of vmap_area
-Message-Id: <20180430161515.118e6538e4d4f1cc4ae425cc@linux-foundation.org>
-In-Reply-To: <20180426234243.22267-1-igor.stoppa@huawei.com>
-References: <20180426234243.22267-1-igor.stoppa@huawei.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Mon, 30 Apr 2018 19:15:21 -0400
+X-Google-Smtp-Source: AB8JxZpRdpAxLfUtJKWuQcOyw5FTVMrUEMoqFOnOKu+dv+lG6O24Ued5ikClX799g6XMJi+VrJ7tN5+lV+yt50L9aVs=
+MIME-Version: 1.0
+In-Reply-To: <361a765a-f491-4450-867e-fa88857827ee@gmail.com>
+References: <20180426150618.13470-1-michel@daenzer.net> <20180427130811.7642-1-michel@daenzer.net>
+ <CAKb7Uvj6FFRK6dtvR7xpfZDzs0o3QKHq7ESueBBmr_VnQt6XDQ@mail.gmail.com>
+ <e8166443-14f0-1eb3-a6a2-d425792b0643@daenzer.net> <d5f9459e-801c-e592-d06d-c9052ef3ad4d@amd.com>
+ <e5256136-6da0-cc5e-9490-5a70c89dfd83@daenzer.net> <361a765a-f491-4450-867e-fa88857827ee@gmail.com>
+From: Dave Airlie <airlied@gmail.com>
+Date: Tue, 1 May 2018 09:15:19 +1000
+Message-ID: <CAPM=9tzmmT5G5a_2WCH5xpRr6rhY6sHdi-Kg5my0az_=haVZTw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] drm/ttm: Only allocate huge pages with new flag TTM_PAGE_FLAG_TRANSHUGE
+To: "Koenig, Christian" <christian.koenig@amd.com>
+Cc: =?UTF-8?Q?Michel_D=C3=A4nzer?= <michel@daenzer.net>,
+        Ilia Mirkin <imirkin@alum.mit.edu>,
+        amd-gfx mailing list <amd-gfx@lists.freedesktop.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 27 Apr 2018 03:42:41 +0400 Igor Stoppa <igor.stoppa@gmail.com> wrote:
+>
+>
+> Yes, I fixed the original false positive messages myself with the swiotlb
+> maintainer and I was CCed in fixing the recent fallout from Chris changes as
+> well.
 
-> These two patches were written in preparation for the creation of
-> protectable memory, however their use is not limited to pmalloc and can
-> improve the use of virtally contigous memory.
-> 
-> The first provides a faster path from struct page to the vm_struct that
-> tracks it.
-> 
-> The second patch renames a single linked list field inside of vmap_area.
-> The list is currently used only for disposing of the data structure, once
-> it is not in use anymore.
-> Which means that it cold be used for other purposes while it'not queued
-> for destruction.
+So do we have a good summary of where this at now?
 
-The patches look benign to me (feel free to add my ack), but I'm not
-seeing a reason to apply them at this time?
+I'm getting reports on 4.16.4 still displaying these, what hammer do I
+need to hit things with to get 4.16.x+1 to not do this?
+
+Is there still outstanding issues upstream.
+
+For future reference I think how this should have gone down is
+
+a) AMD implement a public CI with igt tests for all of this
+b) we get these patches pushed and debugged.
+
+Though to be a bit more constructive, I think you should have said at
+-rc6 or 7 this isn't working for this kernel cycle,
+push a minimal patch to back it off, even if the bug is in swiotlb, we
+don't just add stuff broken like this, even if it's not
+your bug we should have backed off for a kernel or two until we had
+the underlying infrastructure fixed. Otherwise we
+get what we have now, which is bit of a crappile, because now I've no
+idea if the swiotlb things people report are
+the false positive, or some new thing.
+
+Dave.
