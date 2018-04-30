@@ -1,64 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755089AbeD3UsU (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 16:48:20 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:53050 "EHLO
+        id S1755155AbeD3Uty (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 16:49:54 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:53872 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754871AbeD3UsT (ORCPT
+        with ESMTP id S1754872AbeD3Utw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 16:48:19 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7394D60271
+        Mon, 30 Apr 2018 16:49:52 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8CD2E60271
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: pciehp 0000:00:1c.0:pcie004: Timeout on hotplug command 0x1038
- (issued 65284 msec ago)
-To: Paul Menzel <pmenzel+linux-pci@molgen.mpg.de>
-Cc: Dave Young <dyoung@redhat.com>, Bjorn Helgaas <helgaas@kernel.org>,
-        linux-pci@vger.kernel.org, kexec@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, Vivek Goyal <vgoyal@redhat.com>
-References: <8770820b-85a0-172b-7230-3a44524e6c9f@molgen.mpg.de>
- <20180427192207.GG8199@bhelgaas-glaptop.roam.corp.google.com>
- <b62c2a8e-fe14-6d7d-147c-0ce3b0c0ab2f@codeaurora.org>
- <20180427211255.GI8199@bhelgaas-glaptop.roam.corp.google.com>
- <20180428005620.GB1675@dhcp-128-65.nay.redhat.com>
- <20180428011845.GC1675@dhcp-128-65.nay.redhat.com>
- <3ebc908fb196168bf0373875ffc5679e@codeaurora.org>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <d8d134dc-9757-97cd-7a24-cbb21611d6c6@codeaurora.org>
-Date: Mon, 30 Apr 2018 16:48:15 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+Subject: Re: [PATCH v3] init: Fix false positives in W+X checking
+To: Kees Cook <keescook@chromium.org>, Laura Abbott <labbott@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Timur Tabi <timur@codeaurora.org>, Will Deacon <will.deacon@arm.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jan Glauber <jan.glauber@caviumnetworks.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Stephen Smalley <sds@tycho.nsa.gov>, Ingo Molnar <mingo@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+References: <1525103946-29526-1-git-send-email-jhugo@codeaurora.org>
+ <e87810b2-db26-ee13-731a-cde53185e977@redhat.com>
+ <CAGXu5jJFjH4hiRqovOtaMOuKUQbGYWjBiGGDV-bjWSmTvZp9Pw@mail.gmail.com>
+From: Jeffrey Hugo <jhugo@codeaurora.org>
+Message-ID: <2fd6b503-17b9-4e4c-e3ea-44eb34d209e9@codeaurora.org>
+Date: Mon, 30 Apr 2018 14:49:44 -0600
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <3ebc908fb196168bf0373875ffc5679e@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CAGXu5jJFjH4hiRqovOtaMOuKUQbGYWjBiGGDV-bjWSmTvZp9Pw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bjorn,
-
-On 4/28/2018 9:03 AM, okaya@codeaurora.org wrote:
->> Hmm, if it is the remove() method then kexec does not use it.  kexec use
->> the shutdown() method instead.  I missed this details when I replied.
+On 4/30/2018 12:40 PM, Kees Cook wrote:
+> On Mon, Apr 30, 2018 at 10:19 AM, Laura Abbott <labbott@redhat.com> wrote:
+>> On 04/30/2018 08:59 AM, Jeffrey Hugo wrote:
+>>>
+>>> load_module() creates W+X mappings via __vmalloc_node_range() (from
+>>> layout_and_allocate()->move_module()->module_alloc()) by using
+>>> PAGE_KERNEL_EXEC.  These mappings are later cleaned up via
+>>> "call_rcu_sched(&freeinit->rcu, do_free_init)" from do_init_module().
+>>>
+>>> This is a problem because call_rcu_sched() queues work, which can be run
+>>> after debug_checkwx() is run, resulting in a race condition.  If hit, the
+>>> race results in a nasty splat about insecure W+X mappings, which results
+>>> in a poor user experience as these are not the mappings that
+>>> debug_checkwx() is intended to catch.
+>>>
+>>> This issue is observed on multiple arm64 platforms, and has been
+>>> artificially triggered on an x86 platform.
+>>>
+>>> Address the race by flushing the queued work before running the
+>>> arch-defined mark_rodata_ro() which then calls debug_checkwx().
+>>>
+>>> Reported-by: Timur Tabi <timur@codeaurora.org>
+>>> Reported-by: Jan Glauber <jan.glauber@caviumnetworks.com>
+>>> Fixes: e1a58320a38d ("x86/mm: Warn on W^X mappings")
+>>> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+>>> Acked-by: Kees Cook <keescook@chromium.org>
+>>> Acked-by: Ingo Molnar <mingo@kernel.org>
+>>> Acked-by: Will Deacon <will.deacon@arm.com>
+>>> ---
+>>>
+>>
+>> Acked-by: Laura Abbott <labbott@redhat.com>
+>>
+>> If you don't have a tree for this to go through, I might suggest having
+>> Kees take it.
 > 
-> Portdrv hooks up remove handler to shutdown. That's why remove is getting called.
+> akpm has taken the W^X stuff in the past, but I'm happy to do so. Just
+> let me know either way. :)
+> 
+> -Kees
+> 
 
-What should we do about this?
-
-Since there is an actual HW errata involved, should we quirk this root port and
-not wait as if remove/shutdown doesn't exist?
-
-Paul,
-You might want to file a bugzilla so that we can keep our debug efforts out of this
-list.
-
-Sinan
+That sounds fine to me.  Is that agreeable to you, Andrew?
 
 -- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+Jeffrey Hugo
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
+Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
