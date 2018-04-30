@@ -1,70 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754497AbeD3SLD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 14:11:03 -0400
-Received: from anholt.net ([50.246.234.109]:38378 "EHLO anholt.net"
+        id S1754682AbeD3SLR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 14:11:17 -0400
+Received: from anholt.net ([50.246.234.109]:38388 "EHLO anholt.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753165AbeD3SLB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 14:11:01 -0400
+        id S1753522AbeD3SLC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 14:11:02 -0400
 From: Eric Anholt <eric@anholt.net>
 To: dri-devel@lists.freedesktop.org, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, Eric Anholt <eric@anholt.net>
-Subject: [PATCH v3 1/2] dt-bindings: Add a new binding for Broadcom V3D 3.x and newer GPUs.
-Date: Mon, 30 Apr 2018 11:10:57 -0700
-Message-Id: <20180430181058.30181-2-eric@anholt.net>
+Subject: [PATCH v3 0/2] V3D DRM driver
+Date: Mon, 30 Apr 2018 11:10:56 -0700
+Message-Id: <20180430181058.30181-1-eric@anholt.net>
 X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180430181058.30181-1-eric@anholt.net>
-References: <20180430181058.30181-1-eric@anholt.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These OpenGL ES GPUs are present in the 7268 and 7278 set top box
-chips.
+This is a resend of the V3D driver for the DT binding nitpicks.
 
-v2: no changes
-v3: move to gpu/, fix typo
+Eric Anholt (2):
+  dt-bindings: Add a new binding for Broadcom V3D 3.x and newer GPUs.
+  drm/v3d: Introduce a new DRM driver for Broadcom V3D V3.x+
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
----
- .../devicetree/bindings/gpu/brcm,bcm-v3d.txt  | 28 +++++++++++++++++++
- 1 file changed, 28 insertions(+)
+ .../devicetree/bindings/gpu/brcm,bcm-v3d.txt  |  28 +
+ Documentation/gpu/drivers.rst                 |   1 +
+ MAINTAINERS                                   |   8 +
+ drivers/gpu/drm/Kconfig                       |   2 +
+ drivers/gpu/drm/Makefile                      |   1 +
+ drivers/gpu/drm/v3d/Kconfig                   |   9 +
+ drivers/gpu/drm/v3d/Makefile                  |  18 +
+ drivers/gpu/drm/v3d/v3d_bo.c                  | 379 ++++++++++
+ drivers/gpu/drm/v3d/v3d_debugfs.c             | 191 +++++
+ drivers/gpu/drm/v3d/v3d_drv.c                 | 371 ++++++++++
+ drivers/gpu/drm/v3d/v3d_drv.h                 | 294 ++++++++
+ drivers/gpu/drm/v3d/v3d_fence.c               |  58 ++
+ drivers/gpu/drm/v3d/v3d_gem.c                 | 663 ++++++++++++++++++
+ drivers/gpu/drm/v3d/v3d_irq.c                 | 206 ++++++
+ drivers/gpu/drm/v3d/v3d_mmu.c                 | 122 ++++
+ drivers/gpu/drm/v3d/v3d_regs.h                | 295 ++++++++
+ drivers/gpu/drm/v3d/v3d_sched.c               | 228 ++++++
+ drivers/gpu/drm/v3d/v3d_trace.h               |  82 +++
+ drivers/gpu/drm/v3d/v3d_trace_points.c        |   9 +
+ include/uapi/drm/v3d_drm.h                    | 191 +++++
+ 20 files changed, 3156 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/gpu/brcm,bcm-v3d.txt
+ create mode 100644 drivers/gpu/drm/v3d/Kconfig
+ create mode 100644 drivers/gpu/drm/v3d/Makefile
+ create mode 100644 drivers/gpu/drm/v3d/v3d_bo.c
+ create mode 100644 drivers/gpu/drm/v3d/v3d_debugfs.c
+ create mode 100644 drivers/gpu/drm/v3d/v3d_drv.c
+ create mode 100644 drivers/gpu/drm/v3d/v3d_drv.h
+ create mode 100644 drivers/gpu/drm/v3d/v3d_fence.c
+ create mode 100644 drivers/gpu/drm/v3d/v3d_gem.c
+ create mode 100644 drivers/gpu/drm/v3d/v3d_irq.c
+ create mode 100644 drivers/gpu/drm/v3d/v3d_mmu.c
+ create mode 100644 drivers/gpu/drm/v3d/v3d_regs.h
+ create mode 100644 drivers/gpu/drm/v3d/v3d_sched.c
+ create mode 100644 drivers/gpu/drm/v3d/v3d_trace.h
+ create mode 100644 drivers/gpu/drm/v3d/v3d_trace_points.c
+ create mode 100644 include/uapi/drm/v3d_drm.h
 
-diff --git a/Documentation/devicetree/bindings/gpu/brcm,bcm-v3d.txt b/Documentation/devicetree/bindings/gpu/brcm,bcm-v3d.txt
-new file mode 100644
-index 000000000000..c907aa8dd755
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpu/brcm,bcm-v3d.txt
-@@ -0,0 +1,28 @@
-+Broadcom V3D GPU
-+
-+Only the Broadcom V3D 3.x and newer GPUs are covered by this binding.
-+For V3D 2.x, see brcm,bcm-vc4.txt.
-+
-+Required properties:
-+- compatible:	Should be "brcm,7268-v3d" or "brcm,7278-v3d"
-+- reg:		Physical base addresses and lengths of the register areas
-+- reg-names:	Names for the register areas.  The "hub", "bridge", and "core0"
-+		  register areas are always required.  The "gca" register area
-+		  is required if the GCA cache controller is present.
-+- interrupts:	The interrupt numbers.  The first interrupt is for the hub,
-+		  while the following interrupts are for the cores.
-+		  See bindings/interrupt-controller/interrupts.txt
-+
-+Optional properties:
-+- clocks:	The core clock the unit runs on
-+
-+v3d {
-+	compatible = "brcm,7268-v3d";
-+	reg = <0xf1204000 0x100>,
-+	      <0xf1200000 0x4000>,
-+	      <0xf1208000 0x4000>,
-+	      <0xf1204100 0x100>;
-+	reg-names = "bridge", "hub", "core0", "gca";
-+	interrupts = <0 78 4>,
-+		     <0 77 4>;
-+};
 -- 
 2.17.0
