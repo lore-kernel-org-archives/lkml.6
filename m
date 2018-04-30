@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1878097-1525116681-2-1923761374210697507
+X-Cyrus-Session-Id: sloti22d1t05-1851310-1525116657-2-6575199113895062225
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525116680; b=USjX/Ht0p/C+dW+4hjQXkT4HDFOFiyxDXS1RBWOeyvJCqrPcqE
-    YzPYYpKFUH4/d5zfJlZZi/C7bJYl3IWfWX7zgRORGpXrj7SSAEqGGPEA3aE74f0C
-    Bxuy0vfoHYeteMAlbied4dcsDM8BHYjCynkowr0RQAUfnMzMb5uKW44s6ZyknGRN
-    QM1XGqC+T9+YYKoqHKQaR8ZpAdqSlzr9Mm87mtaNbbwicz8pcCu+jvxczU7tKFdW
-    gYZBskHWRLuVL6Oihu01T5EAwmtDhLVNi4oYXQUy2/MwgAe3h1ucoajLlsoB2TcR
-    5JWd94BWHDTZfQQHOt61nKrmY8AT8Q3dj2uw==
+    1525116657; b=g6He8eo1UsMkaq91CHhwP4oOZP/M7BJSphUYRdq9CdY32fFhdW
+    qP6MY62fdW4REmlzamhR+SPTqEg7m3HTdKapCmEmZpwOe/3fUg8N7I/F0tKffMW+
+    VlO3LukNlBwJFelVSA7gCwo4ILUVfSNvJSJp7foWGQRfNM7C1XhzW0WPfvEK8Vxz
+    crsj4PBcdwAWocLg/e1yPtXu5Ozuzh9prGpsNa2kZJhyc+8oHSCwkb339svkfNkI
+    +f6k1LIRuGImFoKAvgUjqdDqQiX2tHGW5ldGih0mucH9MRErlVugqxxetv5I2c3c
+    AWC2eg4CAJS0qs3YmPEeUyqXRltLTAN7epYg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1525116680; bh=uO2AL9Yk/MsCuhSVB1nFqMQ9bmYh9Y
-    GCreAmxKoWQxE=; b=HZEw8D7Bnne759Q1ERFWb4Ec+FGocq+Itdd9u7pUnIBl8V
-    mumtN6pxUXGKaWggx4HZpJM5TYAGN6boCOybTUqygm/6O1vxaTz47qXOOe5bpCk5
-    T0+/WTjh6e6a8YCexHjtYTLZl244yy1Zn/hIyzuimU76SDQobSZS4Sr8Xg5DZBOD
-    E3ZUEcw+DhcZOhI8ryV8t5KZ9lkjyjd6YGqLDzUbPAkNxmJ72Wt/gPSQ9bCf/Tqd
-    fxJJQt+lkweo/T8DD7+tbq5VEHfMB4w+ax0kld25WLELzA37AXKKAY2Sq2J63Cd7
-    aghec1Cq6vTn4N40Ua9EvxlvEh4C99FdJffRTLCQ==
+    :list-id; s=fm2; t=1525116657; bh=7YG6bYrNVL6kLzTYwFqN3vF1x4QGtp
+    XHBKW/LdaAzRM=; b=esoNlc78LSvI/S0d2YmGvwROi++2rnF/rkIqpLXIQnUe+w
+    hUe76VveoLtV291MOI0LrJoCZy1WSiW/ZracCo8jgW5E8aWVk0YslbmC0viLtOtn
+    G6roVlRMWHfjpyFQPFFT2ZyaOiPUeKSEqdorzmgDV33gVE/o8SNwpcBvtru2nUyS
+    J1l0KlsWwAUgCs+wADaSMAcQyIS1TJkkIJIFn66jUQxysgPlBrQ+XEpxec0kbgfB
+    gTgei9JxM/JE0Zq2zi4H2yjL2LL/8sil5JsIblnCmQ1cZTSsENsXa9TMyhfMZLkD
+    uiW0gJ1Eb+Pv2tgZB00g1nrt4oORcdjy67KimyCg==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,42 +51,33 @@ Authentication-Results: mx2.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFgjjPWMQApfftOQvSHpqVtp/Pl4TcVBRAYAWjFCsnfYBwvaoMHB2aauslYKwL8RfCJfw5/MU2mWc9ShQAvP6/qDaS6dg9pt2OGOKREtFwSXGyLluZln
-    uyVFG7XFclub6u/3LHCvFi2CofoGe79AsAu/A58vLIf2rfeAETZIt/npzAwWLDnAemzb+Mor5O7MC3Q/xvIyCcIUg6Paq5QXawTy81JwgzkNGkztDfBGKWes
+X-CM-Envelope: MS4wfOAuzBSS0hjBOYLoV+g+3iJ2JUWD1Q2ELw+0Sbmb1HFWCZltkt+C36Y5FvqmD/Q+o4Fpb75eH8vqU8RzGCpkUIjJDm4UoVsTJOgAEkGbuwM8RWHIbvjd
+    z+6Ekcq0PEkjz+pIORgMVTQKQugsaE140KANFTUbx0PdB3+coBeOS7OzilEW06bQABKFxbs04KUJDRBZpqf5TWx1aOWkVQoQWKCEcDNqdk8DJa0Dr1bnBbgN
 X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=JfrnYn6hAAAA:8 a=pGLkceISAAAA:8
-    a=ag1SF4gXAAAA:8 a=ltTupQoCc_Z_9e4zf-QA:9 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=1CNFftbPRP8L7MoqJWF3:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=VwQbUJbxAAAA:8 a=RPJ6JBhKAAAA:8 a=ag1SF4gXAAAA:8 a=1LLt1D0RfLeyhq938B4A:9
+    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=fa_un-3J20JGBB2Tu-mn:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932268AbeD3T3d (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 30 Apr 2018 15:29:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37502 "EHLO mail.kernel.org"
+        id S1756505AbeD3Tal (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 30 Apr 2018 15:30:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38324 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932468AbeD3T3C (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 30 Apr 2018 15:29:02 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 338E722DAC
+        id S1756483AbeD3Taj (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 30 Apr 2018 15:30:39 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5FCF22DAA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Wan Kaike" <kaike.wan@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        "Marciniszyn Mike" <mike.marciniszyn@intel.com>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        linux-rdma@vger.kernel.org,
-        "Dalessandro Dennis" <dennis.dalessandro@intel.com>,
-        "Fleck John" <john.fleck@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        "Weiny Ira" <ira.weiny@intel.com>
-Subject: [PATCH 4.16 111/113] tick/sched: Do not mess with an enqueued hrtimer
-Date: Mon, 30 Apr 2018 12:25:22 -0700
-Message-Id: <20180430184019.880363152@linuxfoundation.org>
+        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
+        Andreas Dilger <adilger@dilger.ca>, Jan Kara <jack@suse.cz>
+Subject: [PATCH 4.16 002/113] ext4: set h_journal if there is a failure starting a reserved handle
+Date: Mon, 30 Apr 2018 12:23:33 -0700
+Message-Id: <20180430184015.170310390@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184015.043892819@linuxfoundation.org>
 References: <20180430184015.043892819@linuxfoundation.org>
@@ -104,97 +95,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit 1f71addd34f4c442bec7d7c749acc1beb58126f2 upstream.
+commit b2569260d55228b617bd82aba6d0db2faeeb4116 upstream.
 
-Kaike reported that in tests rdma hrtimers occasionaly stopped working. He
-did great debugging, which provided enough context to decode the problem.
+If ext4 tries to start a reserved handle via
+jbd2_journal_start_reserved(), and the journal has been aborted, this
+can result in a NULL pointer dereference.  This is because the fields
+h_journal and h_transaction in the handle structure share the same
+memory, via a union, so jbd2_journal_start_reserved() will clear
+h_journal before calling start_this_handle().  If this function fails
+due to an aborted handle, h_journal will still be NULL, and the call
+to jbd2_journal_free_reserved() will pass a NULL journal to
+sub_reserve_credits().
 
-CPU 3			     	      	     CPU 2
+This can be reproduced by running "kvm-xfstests -c dioread_nolock
+generic/475".
 
-idle
-start sched_timer expires = 712171000000
- queue->next = sched_timer
-					    start rdmavt timer. expires = 712172915662
-					    lock(baseof(CPU3))
-tick_nohz_stop_tick()
-tick = 716767000000			    timerqueue_add(tmr)
-
-hrtimer_set_expires(sched_timer, tick);
-  sched_timer->expires = 716767000000  <---- FAIL
-					     if (tmr->expires < queue->next->expires)
-hrtimer_start(sched_timer)		          queue->next = tmr;
-lock(baseof(CPU3))
-					     unlock(baseof(CPU3))
-timerqueue_remove()
-timerqueue_add()
-
-ts->sched_timer is queued and queue->next is pointing to it, but then
-ts->sched_timer.expires is modified.
-
-This not only corrupts the ordering of the timerqueue RB tree, it also
-makes CPU2 see the new expiry time of timerqueue->next->expires when
-checking whether timerqueue->next needs to be updated. So CPU2 sees that
-the rdma timer is earlier than timerqueue->next and sets the rdma timer as
-new next.
-
-Depending on whether it had also seen the new time at RB tree enqueue, it
-might have queued the rdma timer at the wrong place and then after removing
-the sched_timer the RB tree is completely hosed.
-
-The problem was introduced with a commit which tried to solve inconsistency
-between the hrtimer in the tick_sched data and the underlying hardware
-clockevent. It split out hrtimer_set_expires() to store the new tick time
-in both the NOHZ and the NOHZ + HIGHRES case, but missed the fact that in
-the NOHZ + HIGHRES case the hrtimer might still be queued.
-
-Use hrtimer_start(timer, tick...) for the NOHZ + HIGHRES case which sets
-timer->expires after canceling the timer and move the hrtimer_set_expires()
-invocation into the NOHZ only code path which is not affected as it merily
-uses the hrtimer as next event storage so code pathes can be shared with
-the NOHZ + HIGHRES case.
-
-Fixes: d4af6d933ccf ("nohz: Fix spurious warning when hrtimer and clockevent get out of sync")
-Reported-by: "Wan Kaike" <kaike.wan@intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Frederic Weisbecker <frederic@kernel.org>
-Cc: "Marciniszyn Mike" <mike.marciniszyn@intel.com>
-Cc: Anna-Maria Gleixner <anna-maria@linutronix.de>
-Cc: linux-rdma@vger.kernel.org
-Cc: "Dalessandro Dennis" <dennis.dalessandro@intel.com>
-Cc: "Fleck John" <john.fleck@intel.com>
-Cc: stable@vger.kernel.org
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Frederic Weisbecker <fweisbec@gmail.com>
-Cc: "Weiny Ira" <ira.weiny@intel.com>
-Cc: "linux-rdma@vger.kernel.org"
-Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1804241637390.1679@nanos.tec.linutronix.de
-Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1804242119210.1597@nanos.tec.linutronix.de
+Cc: stable@kernel.org # 3.11
+Fixes: 8f7d89f36829b ("jbd2: transaction reservation support")
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Reviewed-by: Andreas Dilger <adilger@dilger.ca>
+Reviewed-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/time/tick-sched.c |   11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ fs/jbd2/transaction.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/kernel/time/tick-sched.c
-+++ b/kernel/time/tick-sched.c
-@@ -797,12 +797,13 @@ static ktime_t tick_nohz_stop_sched_tick
- 		goto out;
+--- a/fs/jbd2/transaction.c
++++ b/fs/jbd2/transaction.c
+@@ -532,6 +532,7 @@ int jbd2_journal_start_reserved(handle_t
+ 	 */
+ 	ret = start_this_handle(journal, handle, GFP_NOFS);
+ 	if (ret < 0) {
++		handle->h_journal = journal;
+ 		jbd2_journal_free_reserved(handle);
+ 		return ret;
  	}
- 
--	hrtimer_set_expires(&ts->sched_timer, tick);
--
--	if (ts->nohz_mode == NOHZ_MODE_HIGHRES)
--		hrtimer_start_expires(&ts->sched_timer, HRTIMER_MODE_ABS_PINNED);
--	else
-+	if (ts->nohz_mode == NOHZ_MODE_HIGHRES) {
-+		hrtimer_start(&ts->sched_timer, tick, HRTIMER_MODE_ABS_PINNED);
-+	} else {
-+		hrtimer_set_expires(&ts->sched_timer, tick);
- 		tick_program_event(tick, 1);
-+	}
-+
- out:
- 	/*
- 	 * Update the estimated sleep length until the next timer
