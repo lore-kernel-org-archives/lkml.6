@@ -1,115 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753583AbeD3Jnc (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 05:43:32 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:38277 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753381AbeD3Jn2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 05:43:28 -0400
-X-Google-Smtp-Source: AB8JxZraE9fOxrpiVQFVtvPriYFNMH5Jf2raMQjl0V47QKxbDr7eU13SiNp/WeKH1w8G4u/js9Ss5xq83WmEyznjjOY=
-MIME-Version: 1.0
-In-Reply-To: <1525079264-25533-3-git-send-email-eric.auger@redhat.com>
-References: <1525079264-25533-1-git-send-email-eric.auger@redhat.com> <1525079264-25533-3-git-send-email-eric.auger@redhat.com>
-From: Peter Maydell <peter.maydell@linaro.org>
-Date: Mon, 30 Apr 2018 10:43:07 +0100
-Message-ID: <CAFEAcA9yC_UUDTt58rnMicUKjeMOcKUky3oK_Xp--a9PjZSfhw@mail.gmail.com>
-Subject: Re: [PATCH v5 02/12] KVM: arm/arm64: Document KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
-To: Eric Auger <eric.auger@redhat.com>
-Cc: Eric Auger <eric.auger.pro@gmail.com>,
-        lkml - Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kvm-devel <kvm@vger.kernel.org>, kvmarm@lists.cs.columbia.edu,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Christoffer Dall <cdall@kernel.org>,
-        Andre Przywara <andre.przywara@arm.com>,
-        Andrew Jones <drjones@redhat.com>, Wei Huang <wei@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1753228AbeD3Jmz (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 05:42:55 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47194 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753075AbeD3Jmt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 05:42:49 -0400
+From: David Hildenbrand <david@redhat.com>
+To: linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Young <dyoung@redhat.com>, Baoquan He <bhe@redhat.com>,
+        Hari Bathini <hbathini@linux.vnet.ibm.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: [PATCH RCFv2 2/7] kdump: include PAGE_OFFLINE_MAPCOUNT_VALUE in ELF info
+Date: Mon, 30 Apr 2018 11:42:31 +0200
+Message-Id: <20180430094236.29056-3-david@redhat.com>
+In-Reply-To: <20180430094236.29056-1-david@redhat.com>
+References: <20180430094236.29056-1-david@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30 April 2018 at 10:07, Eric Auger <eric.auger@redhat.com> wrote:
-> We introduce a new KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION attribute in
-> KVM_DEV_ARM_VGIC_GRP_ADDR group.
+This allows dump tools to skip pages that are offline.
 
-Hi; one minor grammar nit in the docs below, otherwise
-Reviewed-by: Peter Maydell <peter.maydell@linaro.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Dave Young <dyoung@redhat.com>
+Cc: Baoquan He <bhe@redhat.com>
+Cc: Hari Bathini <hbathini@linux.vnet.ibm.com>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Signed-off-by: David Hildenbrand <david@redhat.com>
+---
+ kernel/crash_core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> It allows userspace to provide the
-> base address and size of a redistributor region
->
-> Compared to KVM_VGIC_V3_ADDR_TYPE_REDIST, this new attribute allows
-> to declare several separate redistributor regions.
->
-> So the whole redist space does not need to be contiguous anymore.
->
-> Signed-off-by: Eric Auger <eric.auger@redhat.com>
->
-> ---
-> v4 -> v5:
-> - Document read access
-> - removed Peter's R-b
->
-> v3 -> v4:
-> - Added Peter's R-b
-> ---
->  Documentation/virtual/kvm/devices/arm-vgic-v3.txt | 30 +++++++++++++++++++++--
->  1 file changed, 28 insertions(+), 2 deletions(-)
->
-> diff --git a/Documentation/virtual/kvm/devices/arm-vgic-v3.txt b/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
-> index 9293b45..dcb7504 100644
-> --- a/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
-> +++ b/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
-> @@ -27,16 +27,42 @@ Groups:
->        VCPU and all of the redistributor pages are contiguous.
->        Only valid for KVM_DEV_TYPE_ARM_VGIC_V3.
->        This address needs to be 64K aligned.
-> +
-> +    KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION (rw, 64-bit)
-> +      The attribute data pointed by kvm_device_attr.addr is a __u64 value:
-
-"pointed to by"
-
-> +      bits:     | 63   ....  52  |  51   ....   16 | 15 - 12  |11 - 0
-> +      values:   |     count      |       base      |  flags   | index
-> +      - index encodes the unique redistributor region index
-> +      - flags: reserved for future use, currently 0
-> +      - base field encodes bits [51:16] of the guest physical base address
-> +        of the first redistributor in the region.
- > +      - count encodes the number of redistributors in the region. Must be
-> +        greater than 0.
-> +      There are two 64K pages for each redistributor in the region and
-> +      redistributors are laid out contiguously within the region. Regions
-> +      are filled with redistributors in the index order. The sum of all
-> +      region count fields must be greater than or equal to the number of
-> +      VCPUs. Redistributor regions must be registered in the incremental
-> +      index order, starting from index 0.
-> +      The characteristics of a specific redistributor region can be read
-> +      by presetting the index field in the attr data.
-> +      Only valid for KVM_DEV_TYPE_ARM_VGIC_V3.
-> +
-> +  It is invalid to mix calls with KVM_VGIC_V3_ADDR_TYPE_REDIST and
-> +  KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION attributes.
-> +
->    Errors:
->      -E2BIG:  Address outside of addressable IPA range
-> -    -EINVAL: Incorrectly aligned address
-> +    -EINVAL: Incorrectly aligned address, bad redistributor region
-> +             count/index, mixed redistributor region attribute usage
->      -EEXIST: Address already configured
-> +    -ENOENT: Attempt to read the characteristics of a non existing
-> +             redistributor region
->      -ENXIO:  The group or attribute is unknown/unsupported for this device
->               or hardware support is missing.
->      -EFAULT: Invalid user pointer for attr->addr.
->
->
-> -
->    KVM_DEV_ARM_VGIC_GRP_DIST_REGS
->    KVM_DEV_ARM_VGIC_GRP_REDIST_REGS
->    Attributes:
-> --
-> 2.5.5
-
-thanks
--- PMM
+diff --git a/kernel/crash_core.c b/kernel/crash_core.c
+index f7674d676889..c0a45e9ba84e 100644
+--- a/kernel/crash_core.c
++++ b/kernel/crash_core.c
+@@ -464,6 +464,7 @@ static int __init crash_save_vmcoreinfo_init(void)
+ #ifdef CONFIG_HUGETLB_PAGE
+ 	VMCOREINFO_NUMBER(HUGETLB_PAGE_DTOR);
+ #endif
++	VMCOREINFO_NUMBER(PAGE_OFFLINE_MAPCOUNT_VALUE);
+ 
+ 	arch_crash_save_vmcoreinfo();
+ 	update_vmcoreinfo_note();
+-- 
+2.14.3
