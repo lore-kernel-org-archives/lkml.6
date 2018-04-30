@@ -1,121 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752534AbeD3LRz (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 07:17:55 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:33280 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751606AbeD3LRx (ORCPT
+        id S1753044AbeD3LSa (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 07:18:30 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:35752 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752668AbeD3LS3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 07:17:53 -0400
-Date: Mon, 30 Apr 2018 13:17:44 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Kohli, Gaurav" <gkohli@codeaurora.org>
-Cc: tglx@linutronix.de, mpe@ellerman.id.au, mingo@kernel.org,
-        bigeasy@linutronix.de, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Neeraj Upadhyay <neeraju@codeaurora.org>,
-        Will Deacon <will.deacon@arm.com>, Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [PATCH v1] kthread/smpboot: Serialize kthread parking against
- wakeup
-Message-ID: <20180430111744.GE4082@hirez.programming.kicks-ass.net>
-References: <1524645199-5596-1-git-send-email-gkohli@codeaurora.org>
- <20180425200917.GZ4082@hirez.programming.kicks-ass.net>
- <20180426084131.GV4129@hirez.programming.kicks-ass.net>
- <20180426085719.GW4129@hirez.programming.kicks-ass.net>
- <4d3f68f8-e599-6b27-a2e8-9e96b401d57a@codeaurora.org>
+        Mon, 30 Apr 2018 07:18:29 -0400
+X-Google-Smtp-Source: AB8JxZquBUopHcrqa6xBHSDyldom1b1d7sU9dDPSPKvvw/pF5icpX6gLxMXXLeJ0XUl4L3VaDt4yyA==
+Subject: Re: [PATCH] watchdog: sp805: add restart handler
+To: Jongsung Kim <neidhard.kim@lge.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Wim Van Sebroeck <wim@iguana.be>, linux-watchdog@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Chanho Min <chanho.min@lge.com>
+References: <20180430064433.28715-1-neidhard.kim@lge.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <452a2320-c297-2bd2-2e98-0b71a077c065@roeck-us.net>
+Date: Mon, 30 Apr 2018 04:18:26 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4d3f68f8-e599-6b27-a2e8-9e96b401d57a@codeaurora.org>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180430064433.28715-1-neidhard.kim@lge.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 26, 2018 at 09:23:25PM +0530, Kohli, Gaurav wrote:
-> On 4/26/2018 2:27 PM, Peter Zijlstra wrote:
+On 04/29/2018 11:44 PM, Jongsung Kim wrote:
+> Add restart handler for SP805 watchdog so that the driver can be
+> used to reboot the system.
 > 
-> > On Thu, Apr 26, 2018 at 10:41:31AM +0200, Peter Zijlstra wrote:
-> > > diff --git a/kernel/kthread.c b/kernel/kthread.c
-> > > index cd50e99202b0..4b6503c6a029 100644
-> > > --- a/kernel/kthread.c
-> > > +++ b/kernel/kthread.c
-> > > @@ -177,12 +177,13 @@ void *kthread_probe_data(struct task_struct *task)
-> > >   static void __kthread_parkme(struct kthread *self)
-> > >   {
-> > > -	__set_current_state(TASK_PARKED);
-> > > -	while (test_bit(KTHREAD_SHOULD_PARK, &self->flags)) {
-> > > +	for (;;) {
-> > > +		__set_task_state(TASK_PARKED);
-> > 		set_current_state(TASK_PARKED);
-> > 
-> > of course..
+> Signed-off-by: Jongsung Kim <neidhard.kim@lge.com>
+> ---
+>   drivers/watchdog/sp805_wdt.c | 19 +++++++++++++++++++
+>   1 file changed, 19 insertions(+)
 > 
-> Hi Peter,
-> 
-> Maybe i am missing something , but still that race can come as we don't put task_parked on special state.
-> 
-> Controller                                                                       Hotplug
-> 
->                                                                                  Loop
-> 
->                                                                                  Task_Interruptible
-> 
-> Set SHOULD_PARK
-> 
-> wakeup -> Proceeds
-> 
->                                                                                   Set Running
-> 
->                                                                                   kthread_parkme
-> 
->                                                                                   SET TASK_PARKED
-> 
->                                                                                   schedule
-> 
-> Set TASK_RUNNING
-> 
-> Can you please correct ME, if I misunderstood this.
+> diff --git a/drivers/watchdog/sp805_wdt.c b/drivers/watchdog/sp805_wdt.c
+> index 01d816251302..01f7b6c29f92 100644
+> --- a/drivers/watchdog/sp805_wdt.c
+> +++ b/drivers/watchdog/sp805_wdt.c
+> @@ -23,6 +23,7 @@
+>   #include <linux/module.h>
+>   #include <linux/moduleparam.h>
+>   #include <linux/pm.h>
+> +#include <linux/reboot.h>
+>   #include <linux/slab.h>
+>   #include <linux/spinlock.h>
+>   #include <linux/types.h>
+> @@ -67,6 +68,7 @@ struct sp805_wdt {
+>   	struct clk			*clk;
+>   	struct amba_device		*adev;
+>   	unsigned int			load_val;
+> +	struct notifier_block		restart;
+>   };
+>   
+>   static bool nowayout = WATCHDOG_NOWAYOUT;
+> @@ -200,6 +202,18 @@ static const struct watchdog_ops wdt_ops = {
+>   	.get_timeleft	= wdt_timeleft,
+>   };
+>   
+> +static int
+> +wdt_restart(struct notifier_block *this, unsigned long mode, void *cmd)
+> +{
+> +	struct sp805_wdt *wdt = container_of(this, struct sp805_wdt, restart);
+> +
+> +	writel_relaxed(0, wdt->base + WDTCONTROL);
+> +	writel_relaxed(0, wdt->base + WDTLOAD);
+> +	writel_relaxed(INT_ENABLE | RESET_ENABLE, wdt->base + WDTCONTROL);
+> +
+> +	return 0;
+> +}
+> +
+>   static int
+>   sp805_wdt_probe(struct amba_device *adev, const struct amba_id *id)
+>   {
+> @@ -241,6 +255,10 @@ sp805_wdt_probe(struct amba_device *adev, const struct amba_id *id)
+>   	}
+>   	amba_set_drvdata(adev, wdt);
+>   
+> +	wdt->restart.notifier_call = wdt_restart;
+> +	wdt->restart.priority = 128;
+> +	register_restart_handler(&wdt->restart);
+> +
 
-If that could happen, all wait-loops would be broken. However,
-AFAICT that cannot happen, because ttwu_remote() and schedule()
-serialize on rq->lock. See:
+Why not use the watchdog core ?
 
+Guenter
 
-A						B
-
-for (;;) {
-	set_current_state(UNINTERRUPTIBLE);
-
-						cond1 = true;
-						wake_up_process(A)
-						  lock(A->pi_lock)
-						  smp_mb__after_spinlock()
-						  if (A->state & TASK_NORMAL)
-						    A->on_rq && ttwu_remote()
-	if (cond1) // true
-		break;
-	schedule();
-}
-__set_current_state(RUNNING);
-
-for (;;) {
-	set_current_state(UNINTERRUPTIBLE);
-	if (cond2)
-		break;
-
-	schedule();
-	  lock(rq->lock)
-	  smp_mb__after_spinlock();
-	  deactivate_task(A);
-	  <sched-out>
-	  unlock(rq->lock);
-						      rq = __task_rq_lock(A)
-						      if (A->on_rq) // false
-						        A->state = TASK_RUNNING;
-						      __task_rq_unlock(rq)
-
-
-Either A's schedule() must observe RUNNING (not shown) or B must
-observe !A->on_rq (shown) and not issue the store.
+>   	dev_info(&adev->dev, "registration successful\n");
+>   	return 0;
+>   
+> @@ -253,6 +271,7 @@ static int sp805_wdt_remove(struct amba_device *adev)
+>   {
+>   	struct sp805_wdt *wdt = amba_get_drvdata(adev);
+>   
+> +	unregister_restart_handler(&wdt->restart);
+>   	watchdog_unregister_device(&wdt->wdd);
+>   	watchdog_set_drvdata(&wdt->wdd, NULL);
+>   
+> 
