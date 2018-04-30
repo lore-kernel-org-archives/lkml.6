@@ -1,23 +1,23 @@
 Return-Path: <david@redhat.com>
-X-Google-Smtp-Source: AB8JxZobGHUw3OllZHlRjZWA4DsKCkTkov4wte7+OsSSkao4Fp0dD6/9tMScXr/UBgLS/PphFIjz
-ARC-Seal: i=1; a=rsa-sha256; t=1525081381; cv=none;
+X-Google-Smtp-Source: AB8JxZoXVk6cDRZ8OcYZFIHR2mCVOX0yJ5uWDDDDdlKsS8PeMUQK0fpQjZ3eR40OKjQASScQ8UcD
+ARC-Seal: i=1; a=rsa-sha256; t=1525081379; cv=none;
         d=google.com; s=arc-20160816;
-        b=Gp5mtjI7fdco2YSyCd+xOcxux9dX+6WPWyeYmeuwhBIG09gRP4C+9r3EiZia9dBnu9
-         Sju4/icLiDPxyLgorLywyGJcySAYjmTylKkVUOJ8A5YS7YVSg3sIrvauR7sDa/uBTl0i
-         D1hfXRjI2fIFM2tFir6WCdZqGV8Ku6FlSWgnh5t0AjrzQ63NRcmcAhNwFyO0hSgeKvz6
-         S9Vbj49zCxfbSq96WuWfyLWVnr27U4KBvd9O6db31L3o0omTMy7XoIgX5itHpwIBQ4gH
-         lIvxVRDagfQ95DqpEm/M/qpD6x7FbzUtWo4FzQ8iVh29goRKCV0+7pgWAQYW7qBNTIo+
-         2WtQ==
+        b=pZAg6ryCRJSjYemfADijODxx1pvAYIogD10HUGBgppKEVyzPMmWEIaJAUF3ffk4yyD
+         E0mU7A2IjzWiLx8V1/TYxifUe4poAGyuhD1BSP7NYah3cFQX1wzjRXNz+ec9Xqq1ZL9H
+         Lv9NTlmFuKwSX8dqKPyItScL/M7u5HGP6ebTq7MjN0T1dYWDVUHujIWeIIJAM/S+4o1d
+         2iQiJZ9bdfuPaeIPF8g1YxpJGl6rxYEoCLvxMpZ64vm/LkJjN6nZxwfRGixQTcnLVNQS
+         84YYAfrx0WHpsNFa4qmioJ/eoDNWC+eEhmZp2e2DOMtockl+TShdNTjXWboh94k/bpIq
+         60hw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=k/kevtbN8t5jjZysacuzGBelZ/sEJRGUtgakmDP3mIA=;
-        b=S4qdngjDibCD3Ek/vp27UU9zEbjDOsKmBmw20PoF9KmrJ7/JJSnEcPkrP2NMzE1JmC
-         skZw4y6MY22qyXOD8y9XQMHKw0f0o+CfyawJLLIwGMLkmmrZdBZXFn+bG/bFUkPq2qJe
-         /VcLJtrZh9ZbF+9VflrBoRGENMDrrt50c4ica8P9gNNv0uJ1V00M6sKRnwOdCw1wm5Wi
-         ETNcPDbC7kA3rPjGCIfhLvbMpfpyXysz3QU07nMpWjLjRRXoH6JKQnELHgdDZzzajMup
-         sXjmk8Jal0xflKuqRZfpPQf5BDDvcVSBbhzA5S1vtRAtSBjoKY1geYcJ4NqhxDxqiIXi
-         LLYQ==
+        bh=Y8fMAfSHritLnWkT0WvH7RFx/qlMA9hp8NNej6VUNds=;
+        b=MiKvdssoCwyq1QoTNVZoyEEES1l3j+O4zuzeRK3B8Pfu/clMeC6znV5xtgMdzY+3hs
+         m90PzgODiuuUHjWtjHQvDqhI/H6joVhsOza0JSXzk+IVz63fAt1fIQNr0sqSggRTLORb
+         f+Kgig+AAmgzt7GrZbZ1zqVSPBqQDGRbm0DSL6497nlbJe2LWOMKaKv702uyk+yYk6Pb
+         K3kFSLP233J0oExSs/4JFF4oY4lDodCMC475wkjW/xXzxyy/k08lakU2ugAl7dXRK8id
+         NNRw7IdseLT1APRpaPiGHd9cpNcDAYJNjJZS4CWO8QxUxgAmD4jbiWHCq4t1qQGD1y1F
+         nohg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of david@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=david@redhat.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
@@ -28,147 +28,167 @@ From: David Hildenbrand <david@redhat.com>
 To: linux-mm@kvack.org
 Cc: linux-kernel@vger.kernel.org,
 	David Hildenbrand <david@redhat.com>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Paul Mackerras <paulus@samba.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rashmica Gupta <rashmica.g@gmail.com>,
+	Balbir Singh <bsingharora@gmail.com>,
 	Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
 	Michal Hocko <mhocko@suse.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
 	Dan Williams <dan.j.williams@intel.com>,
-	Pavel Tatashin <pasha.tatashin@oracle.com>,
 	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Pavel Tatashin <pasha.tatashin@oracle.com>,
+	Reza Arbab <arbab@linux.vnet.ibm.com>,
 	Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH RCFv2 7/7] mm/memory_hotplug: allow online/offline memory by a kernel module
-Date: Mon, 30 Apr 2018 11:42:36 +0200
-Message-Id: <20180430094236.29056-8-david@redhat.com>
+Subject: [PATCH RCFv2 6/7] mm/memory_hotplug: teach offline_pages() to not try forever
+Date: Mon, 30 Apr 2018 11:42:35 +0200
+Message-Id: <20180430094236.29056-7-david@redhat.com>
 In-Reply-To: <20180430094236.29056-1-david@redhat.com>
 References: <20180430094236.29056-1-david@redhat.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599163734643507607?=
-X-GMAIL-MSGID: =?utf-8?q?1599163734643507607?=
+X-GMAIL-THRID: =?utf-8?q?1599163732436361107?=
+X-GMAIL-MSGID: =?utf-8?q?1599163732436361107?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Kernel modules that want to control how/when memory is onlined/offlined
-need a proper interface to these functions. Also, for adding memory
-properly, memory_block_size_bytes is required.
+It can easily happen that we get stuck forever trying to offline pages -
+e.g. on persistent errors.
 
+Let's add a way to change this behavior and fail fast.
+
+This is interesting if offline_pages() is called from a driver and we
+just want to find some block to offline.
+
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Rashmica Gupta <rashmica.g@gmail.com>
+Cc: Balbir Singh <bsingharora@gmail.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>
 Cc: Michal Hocko <mhocko@suse.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
 Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
 Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
+Cc: Reza Arbab <arbab@linux.vnet.ibm.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
- drivers/base/memory.c          |  1 +
- include/linux/memory_hotplug.h |  2 ++
- mm/memory_hotplug.c            | 27 +++++++++++++++++++++++++--
- 3 files changed, 28 insertions(+), 2 deletions(-)
+ arch/powerpc/platforms/powernv/memtrace.c |  2 +-
+ drivers/base/memory.c                     |  2 +-
+ include/linux/memory_hotplug.h            |  8 ++++----
+ mm/memory_hotplug.c                       | 14 ++++++++++----
+ 4 files changed, 16 insertions(+), 10 deletions(-)
 
+diff --git a/arch/powerpc/platforms/powernv/memtrace.c b/arch/powerpc/platforms/powernv/memtrace.c
+index fc222a0c2ac4..8ce71f7e1558 100644
+--- a/arch/powerpc/platforms/powernv/memtrace.c
++++ b/arch/powerpc/platforms/powernv/memtrace.c
+@@ -110,7 +110,7 @@ static bool memtrace_offline_pages(u32 nid, u64 start_pfn, u64 nr_pages)
+ 	walk_memory_range(start_pfn, end_pfn, (void *)MEM_GOING_OFFLINE,
+ 			  change_memblock_state);
+ 
+-	if (offline_pages(start_pfn, nr_pages)) {
++	if (offline_pages(start_pfn, nr_pages, true)) {
+ 		walk_memory_range(start_pfn, end_pfn, (void *)MEM_ONLINE,
+ 				  change_memblock_state);
+ 		return false;
 diff --git a/drivers/base/memory.c b/drivers/base/memory.c
-index c785e4c01b23..0a7c79cfaaf8 100644
+index 3b8616551561..c785e4c01b23 100644
 --- a/drivers/base/memory.c
 +++ b/drivers/base/memory.c
-@@ -88,6 +88,7 @@ unsigned long __weak memory_block_size_bytes(void)
- {
- 	return MIN_MEMORY_BLOCK_SIZE;
- }
-+EXPORT_SYMBOL(memory_block_size_bytes);
- 
- static unsigned long get_memory_block_size(void)
- {
+@@ -248,7 +248,7 @@ memory_block_action(struct memory_block *mem, unsigned long action)
+ 		ret = online_pages(start_pfn, nr_pages, mem->online_type);
+ 		break;
+ 	case MEM_OFFLINE:
+-		ret = offline_pages(start_pfn, nr_pages);
++		ret = offline_pages(start_pfn, nr_pages, true);
+ 		break;
+ 	default:
+ 		WARN(1, KERN_WARNING "%s(%ld, %ld) unknown action: "
 diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
-index ae53017b54df..0e3e48410415 100644
+index 497e28f5b000..ae53017b54df 100644
 --- a/include/linux/memory_hotplug.h
 +++ b/include/linux/memory_hotplug.h
-@@ -97,6 +97,8 @@ extern void __online_page_increment_counters(struct page *page);
- extern void __online_page_free(struct page *page);
+@@ -303,7 +303,8 @@ static inline void pgdat_resize_init(struct pglist_data *pgdat) {}
  
- extern int try_online_node(int nid);
-+extern int online_memory_blocks(uint64_t start, uint64_t size);
-+extern int offline_memory_blocks(uint64_t start, uint64_t size);
+ extern bool is_mem_section_removable(unsigned long pfn, unsigned long nr_pages);
+ extern void try_offline_node(int nid);
+-extern int offline_pages(unsigned long start_pfn, unsigned long nr_pages);
++extern int offline_pages(unsigned long start_pfn, unsigned long nr_pages,
++			 bool retry_forever);
+ extern void remove_memory(int nid, u64 start, u64 size);
  
- extern bool memhp_auto_online;
- /* If movable_node boot option specified */
+ #else
+@@ -315,7 +316,8 @@ static inline bool is_mem_section_removable(unsigned long pfn,
+ 
+ static inline void try_offline_node(int nid) {}
+ 
+-static inline int offline_pages(unsigned long start_pfn, unsigned long nr_pages)
++static inline int offline_pages(unsigned long start_pfn, unsigned long nr_pages,
++				bool retry_forever)
+ {
+ 	return -EINVAL;
+ }
+@@ -333,9 +335,7 @@ extern int arch_add_memory(int nid, u64 start, u64 size,
+ 		struct vmem_altmap *altmap, bool want_memblock);
+ extern void move_pfn_range_to_zone(struct zone *zone, unsigned long start_pfn,
+ 		unsigned long nr_pages, struct vmem_altmap *altmap);
+-extern int offline_pages(unsigned long start_pfn, unsigned long nr_pages);
+ extern bool is_memblock_offlined(struct memory_block *mem);
+-extern void remove_memory(int nid, u64 start, u64 size);
+ extern int sparse_add_one_section(struct pglist_data *pgdat,
+ 		unsigned long start_pfn, struct vmem_altmap *altmap);
+ extern void sparse_remove_one_section(struct zone *zone, struct mem_section *ms,
 diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index c47cc68341fc..849bf0543fb1 100644
+index d8f127754c2e..c47cc68341fc 100644
 --- a/mm/memory_hotplug.c
 +++ b/mm/memory_hotplug.c
-@@ -89,12 +89,14 @@ void mem_hotplug_begin(void)
- 	cpus_read_lock();
- 	percpu_down_write(&mem_hotplug_lock);
+@@ -1618,8 +1618,8 @@ static void node_states_clear_node(int node, struct memory_notify *arg)
+ 		node_clear_state(node, N_MEMORY);
  }
-+EXPORT_SYMBOL(mem_hotplug_begin);
  
- void mem_hotplug_done(void)
+-static int __ref __offline_pages(unsigned long start_pfn,
+-		  unsigned long end_pfn)
++static int __ref __offline_pages(unsigned long start_pfn, unsigned long end_pfn,
++				 bool retry_forever)
  {
- 	percpu_up_write(&mem_hotplug_lock);
- 	cpus_read_unlock();
- }
-+EXPORT_SYMBOL(mem_hotplug_done);
+ 	unsigned long pfn, nr_pages;
+ 	long offlined_pages;
+@@ -1671,6 +1671,10 @@ static int __ref __offline_pages(unsigned long start_pfn,
+ 	pfn = scan_movable_pages(start_pfn, end_pfn);
+ 	if (pfn) { /* We have movable pages */
+ 		ret = do_migrate_range(pfn, end_pfn);
++		if (ret && !retry_forever) {
++			ret = -EBUSY;
++			goto failed_removal;
++		}
+ 		goto repeat;
+ 	}
  
- /* add this memory to iomem resource */
- static struct resource *register_memory_resource(u64 start, u64 size)
-@@ -980,6 +982,7 @@ int __ref online_pages(unsigned long pfn, unsigned long nr_pages, int online_typ
- 	memory_notify(MEM_CANCEL_ONLINE, &arg);
- 	return ret;
- }
-+EXPORT_SYMBOL(online_pages);
- #endif /* CONFIG_MEMORY_HOTPLUG_SPARSE */
- 
- static void reset_node_present_pages(pg_data_t *pgdat)
-@@ -1109,6 +1112,25 @@ static int online_memory_block(struct memory_block *mem, void *arg)
- 	return device_online(&mem->dev);
- }
- 
-+static int offline_memory_block(struct memory_block *mem, void *arg)
-+{
-+	return device_offline(&mem->dev);
-+}
-+
-+int online_memory_blocks(uint64_t start, uint64_t size)
-+{
-+	return walk_memory_range(PFN_DOWN(start), PFN_UP(start + size - 1),
-+				 NULL, online_memory_block);
-+}
-+EXPORT_SYMBOL(online_memory_blocks);
-+
-+int offline_memory_blocks(uint64_t start, uint64_t size)
-+{
-+	return walk_memory_range(PFN_DOWN(start), PFN_UP(start + size - 1),
-+				 NULL, offline_memory_block);
-+}
-+EXPORT_SYMBOL(offline_memory_blocks);
-+
- static int mark_memory_block_driver_managed(struct memory_block *mem, void *arg)
+@@ -1737,6 +1741,7 @@ static int __ref __offline_pages(unsigned long start_pfn,
+  * offline_pages - offline pages in a given range (that are currently online)
+  * @start_pfn: start pfn of the memory range
+  * @nr_pages: the number of pages
++ * @retry_forever: weather to retry (possibly) forever
+  *
+  * This function tries to offline the given pages. The alignment/size that
+  * can be used is given by offline_nr_pages.
+@@ -1749,9 +1754,10 @@ static int __ref __offline_pages(unsigned long start_pfn,
+  *
+  * Must be protected by mem_hotplug_begin() or a device_lock
+  */
+-int offline_pages(unsigned long start_pfn, unsigned long nr_pages)
++int offline_pages(unsigned long start_pfn, unsigned long nr_pages,
++		  bool retry_forever)
  {
- 	mem->driver_managed = true;
-@@ -1197,8 +1219,7 @@ int __ref add_memory_resource(int nid, struct resource *res, bool online,
- 
- 	/* online pages if requested */
- 	if (online)
--		walk_memory_range(PFN_DOWN(start), PFN_UP(start + size - 1),
--				  NULL, online_memory_block);
-+		online_memory_blocks(start, size);
- 	else if (driver_managed)
- 		walk_memory_range(PFN_DOWN(start), PFN_UP(start + size - 1),
- 				  NULL, mark_memory_block_driver_managed);
-@@ -1297,6 +1318,7 @@ bool is_mem_section_removable(unsigned long start_pfn, unsigned long nr_pages)
- 	/* All pageblocks in the memory block are likely to be hot-removable */
- 	return true;
+-	return __offline_pages(start_pfn, start_pfn + nr_pages);
++	return __offline_pages(start_pfn, start_pfn + nr_pages, retry_forever);
  }
-+EXPORT_SYMBOL(is_mem_section_removable);
- 
- /*
-  * Confirm all pages in a range [start, end) belong to the same zone.
-@@ -1759,6 +1781,7 @@ int offline_pages(unsigned long start_pfn, unsigned long nr_pages,
- {
- 	return __offline_pages(start_pfn, start_pfn + nr_pages, retry_forever);
- }
-+EXPORT_SYMBOL(offline_pages);
  #endif /* CONFIG_MEMORY_HOTREMOVE */
  
- /**
 -- 
 2.14.3
