@@ -1,39 +1,41 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZocoj3dcny+GeX650HeFye3SCYyQa1fa/MkuahK8q814BjqgAej0iAXXdk2o+Ll1IS3ZBH9
-ARC-Seal: i=1; a=rsa-sha256; t=1525116401; cv=none;
+X-Google-Smtp-Source: AB8JxZqU+Pf4UxF+OrVsHTAIj/wGos10vJLcJnTFOrEYyZuHkXe7kgmhvIFgIBWR6uZf5u/EowAT
+ARC-Seal: i=1; a=rsa-sha256; t=1525116408; cv=none;
         d=google.com; s=arc-20160816;
-        b=aYS5HGo9cj13m2MQpkpXjAbGXKmzalXDOpZG0XZ0XZgeIsQwZUO3HFX9Dau43q9ON8
-         i+EW7XALQ6ZdcPi/sVg+29eg7ptB0woTI+DgR0RNDlBqj+KeLEDfIyJHqdAtJybzXYtJ
-         IyzwiK5JTpK+Dd1ZdUgddvxAr40gu0L7P38dGg9q1933oOf5aVSt/8jcgM/vxWHLuT7c
-         4ZItJUs4RVk9xCQgiCm6N1F/cIWqKQR/iiOKx7MA0XjyxeC6UNcq+rrTpeYWRQTqvbX9
-         Myh2LtzYLGcmC5G9crbzJj6xsKq5Mks0X82j+b1CTUcuC7iS5/iUfII0T/MpNFyS/lA9
-         ZVsA==
+        b=1Igzp/z83+11TLi0j3lKe2RVaCqyoN9LIzcNfE/sOf4nHUU5ayWgIKUxAFunNzRwQ4
+         H10E6eEgGV8RqaNsFD0QT3pgvTbxQ9FhPIkJ/pj/vLA5R3jjsOoGSEKPV4FP/6Y6D2Kj
+         QSAC7HhKSPozxbt2sF4SfweZMHrNrqkT6rzV0dJtiWns8iweEj44pklgax2ulKhntTxA
+         UXczuN/SCbb/gB6G3eJt9+OLiOHNIjbqOxXvYAFCUm7nwRo/cp6mWojn5OPTVUDkFh8N
+         lqRQgbEI3a5v4Pi9Qf2s2GyrNsavVEjc/L1dBaTzR1HCYUyXUjzmh1HEGKbJDP+JmyAF
+         3rfA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=xD06JwWD0c0ozgSw9WhKJa/nZrfbZfmRWQx7Cluv/w0=;
-        b=T5Y5Fwsx70W7fdlkPYUbN1u+lO6BYAFoI/25BiCiqEhVuLUejl2yliRgoUgUJG+y9/
-         eowVGVlyfJfdrb/g7pUiz1FvlyN89CAbkXg8gHv8cj4vo3NW/We2inZYiB7cI9yHaKwz
-         iH3o0dSdDTQQANhYcvKkoowE/L44SHLJl0kPra8goFOeJ8s5zMDho+E/3oMCSxy2UzQL
-         FFU19qPw9IOFI79il68j/Iv6RBQjk7g/OY3uC9p8CfvlTlll/746z5fQR7o7SPdcDc/w
-         /j7WtmV4tovDAz8YxTpGSjmrVxWzzOhFoQwWoEsgMbXobybdo9Jukh2F1SoQ8kAy45YP
-         6r9A==
+        bh=51eZmsvATuoyjpw0adnjoJEneWguze2HdlEJjo8xvjk=;
+        b=DNYG6pGT0kOHBsKTM2JmpuvkgpSCic+1hqScCZ8QTOC2ZX8YvS/03MVUGCYJOYgOY6
+         G0L3iGYzY0zj9BX98M81gI1+/7kqO5Hrx7mXgNF0jBHDr0t/3KilgjcA+4Gd56Te7X/q
+         V+JxEgsPu2/kUAXGnnN7HLfWwNuAHh4xswwJKIe+byPjl50KxFCnBCLq8dbtNL1iEBRF
+         1IqVRdMMbJcMeGAZ/HQmXq+M72BGVjdRhl3fB9N5U5aC6YQKSDwLLRZUQTYQa5AYLBJx
+         gHP0G8eXG7SVC6K02jEZBsEdXBNtFZOZ9NVEs+snylOpX7LKI621/oL19Zj1yQ+0rbZz
+         8oiA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBA0722DAE
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF79522DCC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ilya Dryomov <idryomov@gmail.com>,
-	Jason Dillaman <dillaman@redhat.com>
-Subject: [PATCH 4.9 50/61] libceph: reschedule a tick in finish_hunting()
-Date: Mon, 30 Apr 2018 12:24:53 -0700
-Message-Id: <20180430183955.562969932@linuxfoundation.org>
+	Vitezslav Samel <vitezslav@samel.cz>,
+	Borislav Petkov <bp@suse.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ashok Raj <ashok.raj@intel.com>
+Subject: [PATCH 4.9 60/61] x86/microcode/intel: Save microcode patch unconditionally
+Date: Mon, 30 Apr 2018 12:25:03 -0700
+Message-Id: <20180430183956.327516089@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430183951.312721450@linuxfoundation.org>
 References: <20180430183951.312721450@linuxfoundation.org>
@@ -43,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200581417359909?=
-X-GMAIL-MSGID: =?utf-8?q?1599200455794758658?=
+X-GMAIL-THRID: =?utf-8?q?1599200597007916325?=
+X-GMAIL-MSGID: =?utf-8?q?1599200463115385547?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,47 +54,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ilya Dryomov <idryomov@gmail.com>
+From: Borislav Petkov <bp@suse.de>
 
-commit 7b4c443d139f1d2b5570da475f7a9cbcef86740c upstream.
+commit 84749d83758af6576552046b215b9b7f37f9556b upstream.
 
-If we go without an established session for a while, backoff delay will
-climb to 30 seconds.  The keepalive timeout is also 30 seconds, so it's
-pretty easily hit after a prolonged hunting for a monitor: we don't get
-a chance to send out a keepalive in time, which means we never get back
-a keepalive ack in time, cutting an established session and attempting
-to connect to a different monitor every 30 seconds:
+save_mc_for_early() was a no-op on !CONFIG_HOTPLUG_CPU but the
+generic_load_microcode() path saves the microcode patches it has found into
+the cache of patches which is used for late loading too. Regardless of
+whether CPU hotplug is used or not.
 
-  [Sun Apr 1 23:37:05 2018] libceph: mon0 10.80.20.99:6789 session established
-  [Sun Apr 1 23:37:36 2018] libceph: mon0 10.80.20.99:6789 session lost, hunting for new mon
-  [Sun Apr 1 23:37:36 2018] libceph: mon2 10.80.20.103:6789 session established
-  [Sun Apr 1 23:38:07 2018] libceph: mon2 10.80.20.103:6789 session lost, hunting for new mon
-  [Sun Apr 1 23:38:07 2018] libceph: mon1 10.80.20.100:6789 session established
-  [Sun Apr 1 23:38:37 2018] libceph: mon1 10.80.20.100:6789 session lost, hunting for new mon
-  [Sun Apr 1 23:38:37 2018] libceph: mon2 10.80.20.103:6789 session established
-  [Sun Apr 1 23:39:08 2018] libceph: mon2 10.80.20.103:6789 session lost, hunting for new mon
+Make the saving unconditional so that late loading can find the proper
+patch.
 
-The regular keepalive interval is 10 seconds.  After ->hunting is
-cleared in finish_hunting(), call __schedule_delayed() to ensure we
-send out a keepalive after 10 seconds.
-
-Cc: stable@vger.kernel.org # 4.7+
-Link: http://tracker.ceph.com/issues/23537
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-Reviewed-by: Jason Dillaman <dillaman@redhat.com>
+Reported-by: Vitezslav Samel <vitezslav@samel.cz>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Vitezslav Samel <vitezslav@samel.cz>
+Tested-by: Ashok Raj <ashok.raj@intel.com>
+Cc: stable@vger.kernel.org
+Link: http://lkml.kernel.org/r/20180418081140.GA2439@pc11.op.pod.cz
+Link: https://lkml.kernel.org/r/20180421081930.15741-1-bp@alien8.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/ceph/mon_client.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/kernel/cpu/microcode/intel.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/net/ceph/mon_client.c
-+++ b/net/ceph/mon_client.c
-@@ -1124,6 +1124,7 @@ static void finish_hunting(struct ceph_m
- 		monc->hunting = false;
- 		monc->had_a_connection = true;
- 		un_backoff(monc);
-+		__schedule_delayed(monc);
- 	}
+--- a/arch/x86/kernel/cpu/microcode/intel.c
++++ b/arch/x86/kernel/cpu/microcode/intel.c
+@@ -474,7 +474,6 @@ static void show_saved_mc(void)
+  */
+ static void save_mc_for_early(u8 *mc)
+ {
+-#ifdef CONFIG_HOTPLUG_CPU
+ 	/* Synchronization during CPU hotplug. */
+ 	static DEFINE_MUTEX(x86_cpu_microcode_mutex);
+ 
+@@ -521,7 +520,6 @@ static void save_mc_for_early(u8 *mc)
+ 
+ out:
+ 	mutex_unlock(&x86_cpu_microcode_mutex);
+-#endif
  }
  
+ static bool __init load_builtin_intel_microcode(struct cpio_data *cp)
