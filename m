@@ -1,52 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754037AbeD3LtR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 07:49:17 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51496 "EHLO mx1.redhat.com"
+        id S1753984AbeD3LtN (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 07:49:13 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42510 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753885AbeD3LtP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 07:49:15 -0400
+        id S1753885AbeD3LtL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 07:49:11 -0400
 From: Eric Auger <eric.auger@redhat.com>
 To: eric.auger.pro@gmail.com, eric.auger@redhat.com,
         linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
         kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com, cdall@kernel.org,
         peter.maydell@linaro.org
 Cc: andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
-Subject: [PATCH v6 12/12] KVM: arm/arm64: Bump VGIC_V3_MAX_CPUS to 512
-Date: Mon, 30 Apr 2018 13:48:38 +0200
-Message-Id: <1525088918-8600-13-git-send-email-eric.auger@redhat.com>
+Subject: [PATCH v6 10/12] KVM: arm/arm64: Add KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
+Date: Mon, 30 Apr 2018 13:48:36 +0200
+Message-Id: <1525088918-8600-11-git-send-email-eric.auger@redhat.com>
 In-Reply-To: <1525088918-8600-1-git-send-email-eric.auger@redhat.com>
 References: <1525088918-8600-1-git-send-email-eric.auger@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Let's raise the number of supported vcpus along with
-vgic v3 now that HW is looming with more physical CPUs.
+This new attribute allows the userspace to set the base address
+of a reditributor region, relaxing the constraint of having all
+consecutive redistibutor frames contiguous.
 
 Signed-off-by: Eric Auger <eric.auger@redhat.com>
 Acked-by: Christoffer Dall <christoffer.dall@arm.com>
 
 ---
 
-v4 -> v5:
-- addded Christoffer's A-b
+v3 -> v4:
+- keep previous indentation for existing attributes
+- added Christoffer's A-b
 ---
- include/kvm/arm_vgic.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/include/uapi/asm/kvm.h   | 1 +
+ arch/arm64/include/uapi/asm/kvm.h | 1 +
+ 2 files changed, 2 insertions(+)
 
-diff --git a/include/kvm/arm_vgic.h b/include/kvm/arm_vgic.h
-index dc55ee8..2eac942 100644
---- a/include/kvm/arm_vgic.h
-+++ b/include/kvm/arm_vgic.h
-@@ -28,7 +28,7 @@
+diff --git a/arch/arm/include/uapi/asm/kvm.h b/arch/arm/include/uapi/asm/kvm.h
+index caae484..16e006f 100644
+--- a/arch/arm/include/uapi/asm/kvm.h
++++ b/arch/arm/include/uapi/asm/kvm.h
+@@ -91,6 +91,7 @@ struct kvm_regs {
+ #define KVM_VGIC_V3_ADDR_TYPE_DIST	2
+ #define KVM_VGIC_V3_ADDR_TYPE_REDIST	3
+ #define KVM_VGIC_ITS_ADDR_TYPE		4
++#define KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION	5
  
- #include <linux/irqchip/arm-gic-v4.h>
+ #define KVM_VGIC_V3_DIST_SIZE		SZ_64K
+ #define KVM_VGIC_V3_REDIST_SIZE		(2 * SZ_64K)
+diff --git a/arch/arm64/include/uapi/asm/kvm.h b/arch/arm64/include/uapi/asm/kvm.h
+index 04b3256..4e76630 100644
+--- a/arch/arm64/include/uapi/asm/kvm.h
++++ b/arch/arm64/include/uapi/asm/kvm.h
+@@ -91,6 +91,7 @@ struct kvm_regs {
+ #define KVM_VGIC_V3_ADDR_TYPE_DIST	2
+ #define KVM_VGIC_V3_ADDR_TYPE_REDIST	3
+ #define KVM_VGIC_ITS_ADDR_TYPE		4
++#define KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION	5
  
--#define VGIC_V3_MAX_CPUS	255
-+#define VGIC_V3_MAX_CPUS	512
- #define VGIC_V2_MAX_CPUS	8
- #define VGIC_NR_IRQS_LEGACY     256
- #define VGIC_NR_SGIS		16
+ #define KVM_VGIC_V3_DIST_SIZE		SZ_64K
+ #define KVM_VGIC_V3_REDIST_SIZE		(2 * SZ_64K)
 -- 
 2.5.5
