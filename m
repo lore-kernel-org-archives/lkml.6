@@ -1,41 +1,39 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpz8LzB6lskBYimMp1dL/6mg+OZm+Y1uC6iYuVbi7KxKHa6sdBk9NlOIQduc8hN/f9Cz+FE
-ARC-Seal: i=1; a=rsa-sha256; t=1525116348; cv=none;
+X-Google-Smtp-Source: AB8JxZob4OtKp8CedsAhOga5xb1sz2+4P3poFkcv6uiYqT9sd+p9n3gJ+M2+R/bFUSUEVhfFHrHQ
+ARC-Seal: i=1; a=rsa-sha256; t=1525116347; cv=none;
         d=google.com; s=arc-20160816;
-        b=p5S1XaIQASxPchD2H7RQcsWhroT1js5JZHFubRPf7cS6CqFx6U+tcxgipF+O7+Cq4F
-         uMCFzayFi/+7TbVWe55s1Wi5K2savR42/oWtasYXLiykB6sOrelJ/Vh9dX2DcQeyk+zi
-         PcgKXvQ+pVt0y/aW4AP5/EX+OEh8+QM7bkrKL/TDrkcI4nyKlcYTR1gJLpTAuK8ZgiNY
-         M3q8hQ8oLll8jqvmlR8Y6yJLp4rBwr1w0fhBNNVVjbNLoRPyCWJlyuWNsrygM3B9w3dL
-         QjMTINPqain7dI5DX3GLbrBvOAChaNSCkEniczZYQut+F7nZtgvIl2CdZ/2hMnq3H61m
-         LaeA==
+        b=vdHIC9vvqkou7IjYxl2KiMfB9dAvuiL0hMr7N/cHRIxo2bTIwWJTugKcyDLhnxlrNw
+         wGGkl5MOHAbYqT24FOBIbVZbZNDGkz1FpuE2kdtf8kXheryEj5F5T4B5C0OhLDMErSQQ
+         O9Ct97DwzNo5lW0a4DAOReXJOaDPvEKO9kaMp1gPJLIjvj6qsGr+UFmdVll5VacF2jkL
+         WmS+2Seseotz5mKkLkwsPoIXk49Jhb+8BWMjteXu54PlP257b2Wn9oGDAF7KUp5t5SCU
+         aM0xlZsRKKj+Tsjp8tW1kr6p7cUdpZlZYJLOmZMe9a3cwOrgGXz98lZ0GzW6E9wgSARE
+         LpvA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=T6v8JTDYJkQy3JXyya+0jMtt+w9ATCvH+vJ+JiL9PFw=;
-        b=fYuFFRwi7eyGWPtjHL4dzunAFcrNv+E2wKbOdFr3aMBNYq034nAUJRB1FkS2NDLGro
-         ZFj+1xS40OvYLg2IHMyCGSJJ0y258Ex86+ertiWxUHRX8jOIwbmyRPwTHbCy9QKoFh1N
-         HyXH5AIT4egsHt5BuQJW3xsRFiO+k1znYDPD9JEiJhvIlPMcN/rmYC680GwiEYsxZAxR
-         ENWWbsJEaX4jgkqa1NGW9qx8FR5v1g6IP8/UYwYG0iuU935V9i+kCKzu6dZc4KAXSJC2
-         BOmtLatCnZs80dh5ic6xxxZNarfgZQK6vKxe+2lMGNvnEIg7d2gq5tV6mgSqWwezzZGr
-         mJ2g==
+        bh=qwOTnFWl64GJf4zIQ0rrAusj3t/YUikv6cvGkfta8Oo=;
+        b=YjSf5vuCsKj0O2GPjfmmYo+VGNP9vvteov8Kn2dwxmAS+sDWA5drylD5IaIwm1Uw5e
+         CEh7QeE3htrjQ6jXMYHjpZkBDZgxhuHjTW7W4jmdPqlzOG3ytFm31E7KDuj0fI9cMCAX
+         pqxHrhtRFxhKVXI2mQB3Q+H+BIOQMNmvqGv4if6/SQ4o7N9Mjn13u1FUgP3Aw5B5QWHI
+         JF5m88IkNWEtB89BJOgHewu9UuYELKR0W9sD+KPVsnZKg3eKr3g/hg2OTN1ywVFwcpog
+         KZBowc/Kjl+21LU3lSgjNfpGxdvesqrB/eo6W7tV1rtXLvJmq+glNeXGppb5fqxmw1YC
+         ojlg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5B1C22DBE
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A4E222DAE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Alain Magloire <amagloire@blackberry.com>,
-	Gerd Hoffmann <kraxel@redhat.com>,
-	Dave Airlie <airlied@redhat.com>,
-	Sean Paul <seanpaul@chromium.org>
-Subject: [PATCH 4.4 15/44] drm/virtio: fix vq wait_event condition
-Date: Mon, 30 Apr 2018 12:24:26 -0700
-Message-Id: <20180430190946.952441015@linuxfoundation.org>
+	Tiwei Bie <tiwei.bie@intel.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>
+Subject: [PATCH 4.4 14/44] virtio_console: free buffers after reset
+Date: Mon, 30 Apr 2018 12:24:25 -0700
+Message-Id: <20180430190946.915174631@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430190946.093694747@linuxfoundation.org>
 References: <20180430190946.093694747@linuxfoundation.org>
@@ -45,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200400304649329?=
-X-GMAIL-MSGID: =?utf-8?q?1599200400304649329?=
+X-GMAIL-THRID: =?utf-8?q?1599200399540203794?=
+X-GMAIL-MSGID: =?utf-8?q?1599200399540203794?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,43 +52,137 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Gerd Hoffmann <kraxel@redhat.com>
+From: Michael S. Tsirkin <mst@redhat.com>
 
-commit d02d270014f70dcab0117776b81a37b6fca745ae upstream.
+commit a7a69ec0d8e4a58be7db88d33cbfa2912807bb2b upstream.
 
-Wait until we have enough space in the virt queue to actually queue up
-our request.  Avoids the guest spinning in case we have a non-zero
-amount of free entries but not enough for the request.
+Console driver is out of spec. The spec says:
+	A driver MUST NOT decrement the available idx on a live
+	virtqueue (ie. there is no way to “unexpose” buffers).
+and it does exactly that by trying to detach unused buffers
+without doing a device reset first.
 
+Defer detaching the buffers until device unplug.
+
+Of course this means we might get an interrupt for
+a vq without an attached port now. Handle that by
+discarding the consumed buffer.
+
+Reported-by: Tiwei Bie <tiwei.bie@intel.com>
+Fixes: b3258ff1d6 ("virtio: Decrement avail idx on buffer detach")
 Cc: stable@vger.kernel.org
-Reported-by: Alain Magloire <amagloire@blackberry.com>
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-Reviewed-by: Dave Airlie <airlied@redhat.com>
-Link: http://patchwork.freedesktop.org/patch/msgid/20180403095904.11152-1-kraxel@redhat.com
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/virtio/virtgpu_vq.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/char/virtio_console.c |   49 ++++++++++++++++++++----------------------
+ 1 file changed, 24 insertions(+), 25 deletions(-)
 
---- a/drivers/gpu/drm/virtio/virtgpu_vq.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
-@@ -324,7 +324,7 @@ retry:
- 	ret = virtqueue_add_sgs(vq, sgs, outcnt, incnt, vbuf, GFP_ATOMIC);
- 	if (ret == -ENOSPC) {
- 		spin_unlock(&vgdev->ctrlq.qlock);
--		wait_event(vgdev->ctrlq.ack_queue, vq->num_free);
-+		wait_event(vgdev->ctrlq.ack_queue, vq->num_free >= outcnt + incnt);
- 		spin_lock(&vgdev->ctrlq.qlock);
- 		goto retry;
- 	} else {
-@@ -399,7 +399,7 @@ retry:
- 	ret = virtqueue_add_sgs(vq, sgs, outcnt, 0, vbuf, GFP_ATOMIC);
- 	if (ret == -ENOSPC) {
- 		spin_unlock(&vgdev->cursorq.qlock);
--		wait_event(vgdev->cursorq.ack_queue, vq->num_free);
-+		wait_event(vgdev->cursorq.ack_queue, vq->num_free >= outcnt);
- 		spin_lock(&vgdev->cursorq.qlock);
- 		goto retry;
- 	} else {
+--- a/drivers/char/virtio_console.c
++++ b/drivers/char/virtio_console.c
+@@ -1399,7 +1399,6 @@ static int add_port(struct ports_device
+ {
+ 	char debugfs_name[16];
+ 	struct port *port;
+-	struct port_buffer *buf;
+ 	dev_t devt;
+ 	unsigned int nr_added_bufs;
+ 	int err;
+@@ -1510,8 +1509,6 @@ static int add_port(struct ports_device
+ 	return 0;
+ 
+ free_inbufs:
+-	while ((buf = virtqueue_detach_unused_buf(port->in_vq)))
+-		free_buf(buf, true);
+ free_device:
+ 	device_destroy(pdrvdata.class, port->dev->devt);
+ free_cdev:
+@@ -1536,34 +1533,14 @@ static void remove_port(struct kref *kre
+ 
+ static void remove_port_data(struct port *port)
+ {
+-	struct port_buffer *buf;
+-
+ 	spin_lock_irq(&port->inbuf_lock);
+ 	/* Remove unused data this port might have received. */
+ 	discard_port_data(port);
+ 	spin_unlock_irq(&port->inbuf_lock);
+ 
+-	/* Remove buffers we queued up for the Host to send us data in. */
+-	do {
+-		spin_lock_irq(&port->inbuf_lock);
+-		buf = virtqueue_detach_unused_buf(port->in_vq);
+-		spin_unlock_irq(&port->inbuf_lock);
+-		if (buf)
+-			free_buf(buf, true);
+-	} while (buf);
+-
+ 	spin_lock_irq(&port->outvq_lock);
+ 	reclaim_consumed_buffers(port);
+ 	spin_unlock_irq(&port->outvq_lock);
+-
+-	/* Free pending buffers from the out-queue. */
+-	do {
+-		spin_lock_irq(&port->outvq_lock);
+-		buf = virtqueue_detach_unused_buf(port->out_vq);
+-		spin_unlock_irq(&port->outvq_lock);
+-		if (buf)
+-			free_buf(buf, true);
+-	} while (buf);
+ }
+ 
+ /*
+@@ -1788,13 +1765,24 @@ static void control_work_handler(struct
+ 	spin_unlock(&portdev->c_ivq_lock);
+ }
+ 
++static void flush_bufs(struct virtqueue *vq, bool can_sleep)
++{
++	struct port_buffer *buf;
++	unsigned int len;
++
++	while ((buf = virtqueue_get_buf(vq, &len)))
++		free_buf(buf, can_sleep);
++}
++
+ static void out_intr(struct virtqueue *vq)
+ {
+ 	struct port *port;
+ 
+ 	port = find_port_by_vq(vq->vdev->priv, vq);
+-	if (!port)
++	if (!port) {
++		flush_bufs(vq, false);
+ 		return;
++	}
+ 
+ 	wake_up_interruptible(&port->waitqueue);
+ }
+@@ -1805,8 +1793,10 @@ static void in_intr(struct virtqueue *vq
+ 	unsigned long flags;
+ 
+ 	port = find_port_by_vq(vq->vdev->priv, vq);
+-	if (!port)
++	if (!port) {
++		flush_bufs(vq, false);
+ 		return;
++	}
+ 
+ 	spin_lock_irqsave(&port->inbuf_lock, flags);
+ 	port->inbuf = get_inbuf(port);
+@@ -1981,6 +1971,15 @@ static const struct file_operations port
+ 
+ static void remove_vqs(struct ports_device *portdev)
+ {
++	struct virtqueue *vq;
++
++	virtio_device_for_each_vq(portdev->vdev, vq) {
++		struct port_buffer *buf;
++
++		flush_bufs(vq, true);
++		while ((buf = virtqueue_detach_unused_buf(vq)))
++			free_buf(buf, true);
++	}
+ 	portdev->vdev->config->del_vqs(portdev->vdev);
+ 	kfree(portdev->in_vqs);
+ 	kfree(portdev->out_vqs);
