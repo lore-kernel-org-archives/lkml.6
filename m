@@ -1,271 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752033AbeD3FtX (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 01:49:23 -0400
-Received: from david.siemens.de ([192.35.17.14]:41508 "EHLO david.siemens.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751982AbeD3FtU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 01:49:20 -0400
-From: Jan Kiszka <jan.kiszka@siemens.com>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Jingoo Han <jingoohan1@gmail.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: [PATCH v2 07/10] PCI: Convert of_pci_get_host_bridge_resources() users to devm variant
-Date: Mon, 30 Apr 2018 07:48:41 +0200
-Message-Id: <ed3e6df4feca5febefa14716d62aaddd5b4a39d1.1525067324.git.jan.kiszka@siemens.com>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <cover.1525067324.git.jan.kiszka@siemens.com>
-References: <cover.1525067324.git.jan.kiszka@siemens.com>
-In-Reply-To: <cover.1525067324.git.jan.kiszka@siemens.com>
-References: <cover.1525067324.git.jan.kiszka@siemens.com>
+        id S1752115AbeD3Ftn (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 01:49:43 -0400
+Received: from mslow2.mail.gandi.net ([217.70.178.242]:35764 "EHLO
+        slow1-d.mail.gandi.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752063AbeD3Ftl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 01:49:41 -0400
+X-Originating-IP: 50.39.166.153
+Date: Sun, 29 Apr 2018 22:20:33 -0700
+From: Josh Triplett <josh@joshtriplett.org>
+To: NeilBrown <neilb@suse.com>
+Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Trond Myklebust <trond.myklebust@primarydata.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>, linux-nfs@vger.kernel.org,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/4] rculist: add list_for_each_entry_from_rcu()
+Message-ID: <20180430052032.GA16963@localhost>
+References: <152506256513.7246.13171564155614823841.stgit@noble>
+ <152506269061.7246.13075216914692813995.stgit@noble>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <152506269061.7246.13075216914692813995.stgit@noble>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+On Mon, Apr 30, 2018 at 02:31:30PM +1000, NeilBrown wrote:
+> list_for_each_entry_from_rcu() is an RCU version of
+> list_for_each_entry_from().  It walks a linked list under rcu
+> protection, from a given start point.
+> 
+> It is similar to list_for_each_entry_continue_rcu() but starts *at*
+> the given position rather than *after* it.
+> 
+> Naturally, the start point must be known to be in the list.
 
-Straightforward for all of them, no more leaks afterwards.
+I'd suggest giving an explicit advisory comment to clarify and suggest
+correct usage:
 
-CC: Jingoo Han <jingoohan1@gmail.com>
-CC: Joao Pinto <Joao.Pinto@synopsys.com>
-CC: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-Acked-by: Jingoo Han <jingoo1han@gmail.com>
----
- drivers/pci/dwc/pcie-designware-host.c | 2 +-
- drivers/pci/host/pci-aardvark.c        | 5 ++---
- drivers/pci/host/pci-ftpci100.c        | 4 ++--
- drivers/pci/host/pci-v3-semi.c         | 3 ++-
- drivers/pci/host/pci-versatile.c       | 3 +--
- drivers/pci/host/pci-xgene.c           | 3 ++-
- drivers/pci/host/pcie-altera.c         | 5 ++---
- drivers/pci/host/pcie-iproc-platform.c | 4 ++--
- drivers/pci/host/pcie-rcar.c           | 5 ++---
- drivers/pci/host/pcie-rockchip.c       | 4 ++--
- drivers/pci/host/pcie-xilinx-nwl.c     | 4 ++--
- drivers/pci/host/pcie-xilinx.c         | 4 ++--
- drivers/pci/of.c                       | 4 ++--
- 13 files changed, 24 insertions(+), 26 deletions(-)
+"This would typically require either that you obtained the node from a
+previous walk of the list in the same RCU read-side critical section, or
+that you held some sort of non-RCU reference (such as a reference count)
+to keep the node alive *and* in the list."
 
-diff --git a/drivers/pci/dwc/pcie-designware-host.c b/drivers/pci/dwc/pcie-designware-host.c
-index 6c409079d514..a8f6ab54b4c0 100644
---- a/drivers/pci/dwc/pcie-designware-host.c
-+++ b/drivers/pci/dwc/pcie-designware-host.c
-@@ -342,7 +342,7 @@ int dw_pcie_host_init(struct pcie_port *pp)
- 	if (!bridge)
- 		return -ENOMEM;
- 
--	ret = of_pci_get_host_bridge_resources(np, 0, 0xff,
-+	ret = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff,
- 					&bridge->windows, &pp->io_base);
- 	if (ret)
- 		return ret;
-diff --git a/drivers/pci/host/pci-aardvark.c b/drivers/pci/host/pci-aardvark.c
-index 9abf549631b4..1e048dd806dc 100644
---- a/drivers/pci/host/pci-aardvark.c
-+++ b/drivers/pci/host/pci-aardvark.c
-@@ -822,14 +822,13 @@ static int advk_pcie_parse_request_of_pci_ranges(struct advk_pcie *pcie)
- {
- 	int err, res_valid = 0;
- 	struct device *dev = &pcie->pdev->dev;
--	struct device_node *np = dev->of_node;
- 	struct resource_entry *win, *tmp;
- 	resource_size_t iobase;
- 
- 	INIT_LIST_HEAD(&pcie->resources);
- 
--	err = of_pci_get_host_bridge_resources(np, 0, 0xff, &pcie->resources,
--					       &iobase);
-+	err = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff,
-+						    &pcie->resources, &iobase);
- 	if (err)
- 		return err;
- 
-diff --git a/drivers/pci/host/pci-ftpci100.c b/drivers/pci/host/pci-ftpci100.c
-index 5008fd87956a..87748eaeaaed 100644
---- a/drivers/pci/host/pci-ftpci100.c
-+++ b/drivers/pci/host/pci-ftpci100.c
-@@ -476,8 +476,8 @@ static int faraday_pci_probe(struct platform_device *pdev)
- 	if (IS_ERR(p->base))
- 		return PTR_ERR(p->base);
- 
--	ret = of_pci_get_host_bridge_resources(dev->of_node, 0, 0xff,
--					       &res, &io_base);
-+	ret = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff,
-+						    &res, &io_base);
- 	if (ret)
- 		return ret;
- 
-diff --git a/drivers/pci/host/pci-v3-semi.c b/drivers/pci/host/pci-v3-semi.c
-index 0a4dea796663..167bf6f6b378 100644
---- a/drivers/pci/host/pci-v3-semi.c
-+++ b/drivers/pci/host/pci-v3-semi.c
-@@ -791,7 +791,8 @@ static int v3_pci_probe(struct platform_device *pdev)
- 	if (IS_ERR(v3->config_base))
- 		return PTR_ERR(v3->config_base);
- 
--	ret = of_pci_get_host_bridge_resources(np, 0, 0xff, &res, &io_base);
-+	ret = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff, &res,
-+						    &io_base);
- 	if (ret)
- 		return ret;
- 
-diff --git a/drivers/pci/host/pci-versatile.c b/drivers/pci/host/pci-versatile.c
-index 5b3876f5312b..ff2cd12b3978 100644
---- a/drivers/pci/host/pci-versatile.c
-+++ b/drivers/pci/host/pci-versatile.c
-@@ -64,11 +64,10 @@ static int versatile_pci_parse_request_of_pci_ranges(struct device *dev,
- 						     struct list_head *res)
- {
- 	int err, mem = 1, res_valid = 0;
--	struct device_node *np = dev->of_node;
- 	resource_size_t iobase;
- 	struct resource_entry *win, *tmp;
- 
--	err = of_pci_get_host_bridge_resources(np, 0, 0xff, res, &iobase);
-+	err = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff, res, &iobase);
- 	if (err)
- 		return err;
- 
-diff --git a/drivers/pci/host/pci-xgene.c b/drivers/pci/host/pci-xgene.c
-index 0a0d7ee6d3c9..7b3ed6e34b6c 100644
---- a/drivers/pci/host/pci-xgene.c
-+++ b/drivers/pci/host/pci-xgene.c
-@@ -632,7 +632,8 @@ static int xgene_pcie_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	ret = of_pci_get_host_bridge_resources(dn, 0, 0xff, &res, &iobase);
-+	ret = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff, &res,
-+						    &iobase);
- 	if (ret)
- 		return ret;
- 
-diff --git a/drivers/pci/host/pcie-altera.c b/drivers/pci/host/pcie-altera.c
-index a6af62e0256d..49410c7ba0cc 100644
---- a/drivers/pci/host/pcie-altera.c
-+++ b/drivers/pci/host/pcie-altera.c
-@@ -488,11 +488,10 @@ static int altera_pcie_parse_request_of_pci_ranges(struct altera_pcie *pcie)
- {
- 	int err, res_valid = 0;
- 	struct device *dev = &pcie->pdev->dev;
--	struct device_node *np = dev->of_node;
- 	struct resource_entry *win;
- 
--	err = of_pci_get_host_bridge_resources(np, 0, 0xff, &pcie->resources,
--					       NULL);
-+	err = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff
-+						    &pcie->resources, NULL);
- 	if (err)
- 		return err;
- 
-diff --git a/drivers/pci/host/pcie-iproc-platform.c b/drivers/pci/host/pcie-iproc-platform.c
-index e764a2a2693c..99c2022813e4 100644
---- a/drivers/pci/host/pcie-iproc-platform.c
-+++ b/drivers/pci/host/pcie-iproc-platform.c
-@@ -99,8 +99,8 @@ static int iproc_pcie_pltfm_probe(struct platform_device *pdev)
- 		pcie->phy = NULL;
- 	}
- 
--	ret = of_pci_get_host_bridge_resources(np, 0, 0xff, &resources,
--					       &iobase);
-+	ret = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff, &resources,
-+						    &iobase);
- 	if (ret) {
- 		dev_err(dev, "unable to get PCI host bridge resources\n");
- 		return ret;
-diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
-index 6ab28f29ac6a..6eb36c924983 100644
---- a/drivers/pci/host/pcie-rcar.c
-+++ b/drivers/pci/host/pcie-rcar.c
-@@ -1067,12 +1067,11 @@ static int rcar_pcie_parse_request_of_pci_ranges(struct rcar_pcie *pci)
- {
- 	int err;
- 	struct device *dev = pci->dev;
--	struct device_node *np = dev->of_node;
- 	resource_size_t iobase;
- 	struct resource_entry *win, *tmp;
- 
--	err = of_pci_get_host_bridge_resources(np, 0, 0xff, &pci->resources,
--					       &iobase);
-+	err = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff,
-+						    &pci->resources, &iobase);
- 	if (err)
- 		return err;
- 
-diff --git a/drivers/pci/host/pcie-rockchip.c b/drivers/pci/host/pcie-rockchip.c
-index f1e8f97ea1fb..27b97fcddf15 100644
---- a/drivers/pci/host/pcie-rockchip.c
-+++ b/drivers/pci/host/pcie-rockchip.c
-@@ -1560,8 +1560,8 @@ static int rockchip_pcie_probe(struct platform_device *pdev)
- 	if (err < 0)
- 		goto err_deinit_port;
- 
--	err = of_pci_get_host_bridge_resources(dev->of_node, 0, 0xff,
--					       &res, &io_base);
-+	err = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff,
-+						    &res, &io_base);
- 	if (err)
- 		goto err_remove_irq_domain;
- 
-diff --git a/drivers/pci/host/pcie-xilinx-nwl.c b/drivers/pci/host/pcie-xilinx-nwl.c
-index 4839ae578711..64df768c795c 100644
---- a/drivers/pci/host/pcie-xilinx-nwl.c
-+++ b/drivers/pci/host/pcie-xilinx-nwl.c
-@@ -825,7 +825,6 @@ static const struct of_device_id nwl_pcie_of_match[] = {
- static int nwl_pcie_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
--	struct device_node *node = dev->of_node;
- 	struct nwl_pcie *pcie;
- 	struct pci_bus *bus;
- 	struct pci_bus *child;
-@@ -855,7 +854,8 @@ static int nwl_pcie_probe(struct platform_device *pdev)
- 		return err;
- 	}
- 
--	err = of_pci_get_host_bridge_resources(node, 0, 0xff, &res, &iobase);
-+	err = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff, &res,
-+						    &iobase);
- 	if (err) {
- 		dev_err(dev, "Getting bridge resources failed\n");
- 		return err;
-diff --git a/drivers/pci/host/pcie-xilinx.c b/drivers/pci/host/pcie-xilinx.c
-index 0ad188effc09..88c96e5669e0 100644
---- a/drivers/pci/host/pcie-xilinx.c
-+++ b/drivers/pci/host/pcie-xilinx.c
-@@ -643,8 +643,8 @@ static int xilinx_pcie_probe(struct platform_device *pdev)
- 		return err;
- 	}
- 
--	err = of_pci_get_host_bridge_resources(dev->of_node, 0, 0xff, &res,
--					       &iobase);
-+	err = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff, &res,
-+						    &iobase);
- 	if (err) {
- 		dev_err(dev, "Getting bridge resources failed\n");
- 		return err;
-diff --git a/drivers/pci/of.c b/drivers/pci/of.c
-index f16b343d3b85..5a88d46a41b7 100644
---- a/drivers/pci/of.c
-+++ b/drivers/pci/of.c
-@@ -645,12 +645,12 @@ int pci_parse_request_of_pci_ranges(struct device *dev,
- 				    struct resource **bus_range)
- {
- 	int err, res_valid = 0;
--	struct device_node *np = dev->of_node;
- 	resource_size_t iobase;
- 	struct resource_entry *win, *tmp;
- 
- 	INIT_LIST_HEAD(resources);
--	err = of_pci_get_host_bridge_resources(np, 0, 0xff, resources, &iobase);
-+	err = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff, resources,
-+						    &iobase);
- 	if (err)
- 		return err;
- 
--- 
-2.13.6
+(Feel free to wordsmith the exact wording, but something like that seems
+like it would help people understand how to use this correctly, and make
+it less likely that they'd use it incorrectly.)
