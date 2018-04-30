@@ -1,81 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755404AbeD3V3J (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 17:29:09 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:54966 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751304AbeD3V3H (ORCPT
+        id S1754555AbeD3VeN (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 17:34:13 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:46020 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751084AbeD3VeK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 17:29:07 -0400
-X-Google-Smtp-Source: AB8JxZqFFE/+S6DoLQqRXgqn7OtLxnpf/Drjmky1BZS2GFizmZJlGe8YPUv1i7FwDjdW+eA8fbPLfg==
-Subject: Re: [PATCH 2/2] mm: Add kvmalloc_ab_c and kvzalloc_struct
-To: Matthew Wilcox <willy@infradead.org>,
-        Kees Cook <keescook@chromium.org>
-Cc: Julia Lawall <julia.lawall@lip6.fr>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <mawilcox@microsoft.com>, Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        cocci@systeme.lip6.fr, Himanshu Jha <himanshujha199640@gmail.com>
-References: <CAGXu5jL9hqQGe672CmvFwqNbtTr=qu7WRwHuS4Vy7o5sX_UTgg@mail.gmail.com>
- <alpine.DEB.2.20.1803072212160.2814@hadrien>
- <20180308025812.GA9082@bombadil.infradead.org>
- <alpine.DEB.2.20.1803080722300.3754@hadrien>
- <20180308230512.GD29073@bombadil.infradead.org>
- <alpine.DEB.2.20.1803131818550.3117@hadrien>
- <20180313183220.GA21538@bombadil.infradead.org>
- <CAGXu5jKLaY2vzeFNaEhZOXbMgDXp4nF4=BnGCFfHFRwL6LXNHA@mail.gmail.com>
- <20180429203023.GA11891@bombadil.infradead.org>
- <CAGXu5j+N9tt4rxaUMxoZnE-ziqU_yu-jkt-cBZ=R8wmYq6XBTg@mail.gmail.com>
- <20180430201607.GA7041@bombadil.infradead.org>
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <4ad99a55-9c93-5ea1-5954-3cb6e5ba7df9@rasmusvillemoes.dk>
-Date: Mon, 30 Apr 2018 23:29:04 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180430201607.GA7041@bombadil.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 30 Apr 2018 17:34:10 -0400
+X-Google-Smtp-Source: AB8JxZqyozgbf6gTaAr14JnhwMibrcyIV4mKUijaXnZ+AWY+D8TCor2tC5jJYHcWq0bQnLuAYQh0cQ==
+From: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+To: bp@alien8.de
+Cc: alex_gagniuc@dellteam.com, austin_bolen@dell.com, shyam_iyer@dell.com,
+        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
+        Tony Luck <tony.luck@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Robert Moore <robert.moore@intel.com>,
+        Erik Schmauss <erik.schmauss@intel.com>,
+        Tyler Baicar <tbaicar@codeaurora.org>,
+        Will Deacon <will.deacon@arm.com>, James Morse <james.morse@arm.com>,
+        Shiju Jose <shiju.jose@huawei.com>,
+        "Jonathan (Zhixiong) Zhang" <zjzhang@codeaurora.org>,
+        Dongjiu Geng <gengdongjiu@huawei.com>, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
+        devel@acpica.org
+Subject: [RFC PATCH v4 1/3] EDAC, GHES: Remove unused argument to ghes_edac_report_mem_error
+Date: Mon, 30 Apr 2018 16:33:50 -0500
+Message-Id: <20180430213358.8319-1-mr.nuke.me@gmail.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180430212836.7807-1-mr.nuke.me@gmail.com>
+References: <20180430212836.7807-1-mr.nuke.me@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-04-30 22:16, Matthew Wilcox wrote:
-> On Mon, Apr 30, 2018 at 12:02:14PM -0700, Kees Cook wrote:
->>
->> Getting the constant ordering right could be part of the macro
->> definition, maybe? i.e.:
->>
->> static inline void *kmalloc_ab(size_t a, size_t b, gfp_t flags)
->> {
->>     if (__builtin_constant_p(a) && a != 0 && \
->>         b > SIZE_MAX / a)
->>             return NULL;
->>     else if (__builtin_constant_p(b) && b != 0 && \
->>                a > SIZE_MAX / b)
->>             return NULL;
->>
->>     return kmalloc(a * b, flags);
->> }
-> 
-> Ooh, if neither a nor b is constant, it just didn't do a check ;-(  This
-> stuff is hard.
-> 
->> (I just wish C had a sensible way to catch overflow...)
-> 
-> Every CPU I ever worked with had an "overflow" bit ... do we have a
-> friend on the C standards ctte who might figure out a way to let us
-> write code that checks it?
+The use of the 'ghes' argument was removed in a previous commit, but
+function signature was not updated to reflect this.
 
-gcc 5.1+ (I think) have the __builtin_OP_overflow checks that should
-generate reasonable code. Too bad there's no completely generic
-check_all_ops_in_this_expression(a+b*c+d/e, or_jump_here). Though it's
-hard to define what they should be checked against - probably would
-require all subexpressions (including the variables themselves) to have
-the same type.
+Fixes: 0fe5f281f749 ("EDAC, ghes: Model a single, logical memory controller")
+Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+---
+ drivers/acpi/apei/ghes.c | 2 +-
+ drivers/edac/ghes_edac.c | 3 +--
+ include/acpi/ghes.h      | 5 ++---
+ 3 files changed, 4 insertions(+), 6 deletions(-)
 
-plug: https://lkml.org/lkml/2015/7/19/358
-
-Rasmus
+diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+index 1efefe919555..f9b53a6f55f3 100644
+--- a/drivers/acpi/apei/ghes.c
++++ b/drivers/acpi/apei/ghes.c
+@@ -481,7 +481,7 @@ static void ghes_do_proc(struct ghes *ghes,
+ 		if (guid_equal(sec_type, &CPER_SEC_PLATFORM_MEM)) {
+ 			struct cper_sec_mem_err *mem_err = acpi_hest_get_payload(gdata);
+ 
+-			ghes_edac_report_mem_error(ghes, sev, mem_err);
++			ghes_edac_report_mem_error(sev, mem_err);
+ 
+ 			arch_apei_report_mem_error(sev, mem_err);
+ 			ghes_handle_memory_failure(gdata, sev);
+diff --git a/drivers/edac/ghes_edac.c b/drivers/edac/ghes_edac.c
+index 68b6ee18bea6..32bb8c5f47dc 100644
+--- a/drivers/edac/ghes_edac.c
++++ b/drivers/edac/ghes_edac.c
+@@ -172,8 +172,7 @@ static void ghes_edac_dmidecode(const struct dmi_header *dh, void *arg)
+ 	}
+ }
+ 
+-void ghes_edac_report_mem_error(struct ghes *ghes, int sev,
+-				struct cper_sec_mem_err *mem_err)
++void ghes_edac_report_mem_error(int sev, struct cper_sec_mem_err *mem_err)
+ {
+ 	enum hw_event_mc_err_type type;
+ 	struct edac_raw_error_desc *e;
+diff --git a/include/acpi/ghes.h b/include/acpi/ghes.h
+index 8feb0c866ee0..e096a4e7f611 100644
+--- a/include/acpi/ghes.h
++++ b/include/acpi/ghes.h
+@@ -55,15 +55,14 @@ enum {
+ /* From drivers/edac/ghes_edac.c */
+ 
+ #ifdef CONFIG_EDAC_GHES
+-void ghes_edac_report_mem_error(struct ghes *ghes, int sev,
+-				struct cper_sec_mem_err *mem_err);
++void ghes_edac_report_mem_error(int sev, struct cper_sec_mem_err *mem_err);
+ 
+ int ghes_edac_register(struct ghes *ghes, struct device *dev);
+ 
+ void ghes_edac_unregister(struct ghes *ghes);
+ 
+ #else
+-static inline void ghes_edac_report_mem_error(struct ghes *ghes, int sev,
++static inline void ghes_edac_report_mem_error(int sev,
+ 				       struct cper_sec_mem_err *mem_err)
+ {
+ }
+-- 
+2.14.3
