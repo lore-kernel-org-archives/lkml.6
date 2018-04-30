@@ -1,40 +1,39 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrzDGu9CzszKS5ofEJ6VYJWzp/OwBZ6vxaHplWdcWcLlRVPezvFiehY0RVQmM41xwar7Mou
-ARC-Seal: i=1; a=rsa-sha256; t=1525116413; cv=none;
+X-Google-Smtp-Source: AB8JxZqvUarXT0+n5TjE60RP+9MKau955fFcn6EWhbEAjOxhfW86LjckwEi4ictnExwNo6Ud7m4V
+ARC-Seal: i=1; a=rsa-sha256; t=1525116412; cv=none;
         d=google.com; s=arc-20160816;
-        b=evHYf6tX+oj7aoMgJXHxwk6q3rW7eg6rad+0qyjdEMLSHkfjSQ7nTJavOL3L2fuXEk
-         bJeiTQAhDp63vPEdATelcGXaCI4qlLIzBjOxPWQCbF4yHAa9jL29/+zWfsb1Xso4JGme
-         z5o4orU+gc1FdgbKMOJ35N+t247SvgIOjmsxl/y4Mvm5qCd0D7CJEAcmJKQBKJ8RJq3K
-         YEznmAJ/hBLjhYPVlfDjxMv0+Og1uZIXZHhL9Z4ApZ1yhIqC7OoXtCfDtUgNI8rL8JTy
-         I9ZbKknurX6lrStyLsb1sSRpe3s+H4NqhFNfc7NKSHbCo+kG1FAUuI26L5Ls88mnZhNO
-         RUIQ==
+        b=0u2tiNeZ7vgFVN6kEwwzizM56MUMEEQ2CApx511iQptqUoyC/473KAW+P4G+4Ft4/J
+         e00QhEgCuXZXj5tEijlBsRpRO1XyKk4O/byQeDHEt9nypSU/GlOJlI9kCxEFfVIq4tOI
+         tdgX5Y7RvtR2fx9po3fLPzxOrPRlbOFEkqfEln+TDI0SqsyXdME9OtAnopEQOrDujI2H
+         U/xa7sq3hGn9zdgraofL+gkfK7Bsy77aqbQNaMbNWMqnM044Fn8OlSUo6rJr0/Sfvk6Z
+         d7i8s1YsPjcrYvp3VZoNPHuhZhtUj6L7dPTbVz5eYBdT1l0KhaGmsSn+uyaMm4C8cehq
+         bpqA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=ia/z4cV6s8sggu57SMdDb2V1ITC45F1xB9wB1lWQewc=;
-        b=Ds+XUTQc/u+3C61SXxJnCo+Ujl+cIHt8XiH1zkHpIQTnqgxzSsfWxtYoo9iyFn9WTX
-         Xxa5H77FHUXQJmdccWXBvuP+wM0Tke/k7ea5/OMps5cTAg+gABi/PUfl7HwS1RJYDyDB
-         QmqIYDVPUqVZZPjt9XYJYIQtDxL2H8IKuvzsSzayU0sUTq4cUQF+X2Ysg03CIHezbSkR
-         9XUOt0XYYV6jfXX2Q9DA3PIfzcSPEQLuXaYDnMWQ1M5DsKzjWdch8mL5UlJ9Sc6+paCQ
-         WPDAOb2CATtid09d4Fk4vkbAQ4To30ou1nh+2IJ/oCTNAnP9rIj+NXUWvbyLeF82EJos
-         HVVA==
+        bh=jivmbtgVWs/C1eY0xQpYGguoV1B8XAA3lLghk9SLxe8=;
+        b=o6JzqFu8D/rOxwbUctp51bvSEN2dZ1cRRo7oa+BNOBgDHU+xjvODOKQaIAvwi+38uV
+         647c6UaSe8HYKDSG6fFr3DRIXlYb5WyP09OSNcXmNrXP8bf2ngTzfPnvi4J5CdSTHCyE
+         pLj+1Dpxegmm8D25sVJe+ZLnb7dPTw52gGKJJWMaT019EaqlDQhgnO71bI6/5iTPhYHs
+         WxOdCJ4pYQUN18vLVTilDPmIkPo13s30BvMVhkWv2YdOvtW27w+aSA/0D2VNp16JJ1j7
+         aPerxtG485MWNSKDoeJNTWh9ecFVZ67Pxn68ZJuPQjSk/q+YpJcV+pyQJIbvif2Rstq7
+         fcWA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8895322E71
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2C3122DAC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Stephan Mueller <smueller@chronox.de>,
-	syzbot+75397ee3df5c70164154@syzkaller.appspotmail.com,
-	Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.9 47/61] crypto: drbg - set freed buffers to NULL
-Date: Mon, 30 Apr 2018 12:24:50 -0700
-Message-Id: <20180430183955.325249799@linuxfoundation.org>
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Todd Kjos <tkjos@google.com>
+Subject: [PATCH 4.9 46/61] ARM: amba: Dont read past the end of sysfs "driver_override" buffer
+Date: Mon, 30 Apr 2018 12:24:49 -0700
+Message-Id: <20180430183955.253660569@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430183951.312721450@linuxfoundation.org>
 References: <20180430183951.312721450@linuxfoundation.org>
@@ -44,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200468155576446?=
-X-GMAIL-MSGID: =?utf-8?q?1599200468155576446?=
+X-GMAIL-THRID: =?utf-8?q?1599200467272175726?=
+X-GMAIL-MSGID: =?utf-8?q?1599200467272175726?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,37 +52,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Stephan Mueller <smueller@chronox.de>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-commit eea0d3ea7546961f69f55b26714ac8fd71c7c020 upstream.
+commit d2ffed5185df9d8d9ccd150e4340e3b6f96a8381 upstream.
 
-During freeing of the internal buffers used by the DRBG, set the pointer
-to NULL. It is possible that the context with the freed buffers is
-reused. In case of an error during initialization where the pointers
-do not yet point to allocated memory, the NULL value prevents a double
-free.
+When printing the driver_override parameter when it is 4095 and 4094
+bytes long, the printing code would access invalid memory because we
+need count + 1 bytes for printing.
 
-Cc: stable@vger.kernel.org
-Fixes: 3cfc3b9721123 ("crypto: drbg - use aligned buffers")
-Signed-off-by: Stephan Mueller <smueller@chronox.de>
-Reported-by: syzbot+75397ee3df5c70164154@syzkaller.appspotmail.com
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Cfr. commits 4efe874aace57dba ("PCI: Don't read past the end of sysfs
+"driver_override" buffer") and bf563b01c2895a4b ("driver core: platform:
+Don't read past the end of "driver_override" buffer").
+
+Fixes: 3cf385713460eb2b ("ARM: 8256/1: driver coamba: add device binding path 'driver_override'")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Todd Kjos <tkjos@google.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- crypto/drbg.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/amba/bus.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/crypto/drbg.c
-+++ b/crypto/drbg.c
-@@ -1134,8 +1134,10 @@ static inline void drbg_dealloc_state(st
- 	if (!drbg)
- 		return;
- 	kzfree(drbg->Vbuf);
-+	drbg->Vbuf = NULL;
- 	drbg->V = NULL;
- 	kzfree(drbg->Cbuf);
-+	drbg->Cbuf = NULL;
- 	drbg->C = NULL;
- 	kzfree(drbg->scratchpadbuf);
- 	drbg->scratchpadbuf = NULL;
+--- a/drivers/amba/bus.c
++++ b/drivers/amba/bus.c
+@@ -84,7 +84,8 @@ static ssize_t driver_override_store(str
+ 	struct amba_device *dev = to_amba_device(_dev);
+ 	char *driver_override, *old, *cp;
+ 
+-	if (count > PATH_MAX)
++	/* We need to keep extra room for a newline */
++	if (count >= (PAGE_SIZE - 1))
+ 		return -EINVAL;
+ 
+ 	driver_override = kstrndup(buf, count, GFP_KERNEL);
