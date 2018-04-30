@@ -1,125 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753019AbeD3JcM (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 05:32:12 -0400
-Received: from mail-out.m-online.net ([212.18.0.10]:50922 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752059AbeD3JcK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 05:32:10 -0400
-X-Auth-Info: 9hhpsKVoxhcxYNP+NYtMGuX2eywsx9AP8a4W3AuspWw=
-Date: Mon, 30 Apr 2018 11:31:57 +0200
-From: Lukasz Majewski <lukma@denx.de>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Chanho Min <chanho.min@lge.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        Stanislav Meduna <stanislav.meduna@nxtcontrol.com>
-Subject: Re: [PATCH] mmc: disable card sleep via device-tree
-Message-ID: <20180430113157.37a09e5c@jawa>
-In-Reply-To: <CACRpkdbzvnSHPQOZjs3WcL9pOMz3R0W9P9Gre5n_G40udTMUjQ@mail.gmail.com>
-References: <20180422213126.32756-1-lukma@denx.de>
-        <CACRpkdbzvnSHPQOZjs3WcL9pOMz3R0W9P9Gre5n_G40udTMUjQ@mail.gmail.com>
-Organization: denx.de
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1752467AbeD3Jfs (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 05:35:48 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7637 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751027AbeD3Jfq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 05:35:46 -0400
+Subject: Re: [RFC PATCH 1/2] ACPI / PNP: Don't add "enumeration_by_parent"
+ devices
+To: Lee Jones <lee.jones@linaro.org>
+References: <20180420130727.GV2173@lahna.fi.intel.com>
+ <27c3f84e-4d53-4b6b-7382-04908082ed01@huawei.com>
+ <20180420135222.GY2173@lahna.fi.intel.com>
+ <75eae3ac-228f-d6a4-bb0e-4bd27e35c55d@huawei.com>
+ <09e3aa95-86ae-ca30-7bb5-a9704d296b43@huawei.com>
+ <20180426140808.GK2173@lahna.fi.intel.com>
+ <15443a87-2622-01ee-f7f2-426a51ca0f11@huawei.com>
+ <44e047a2-93e1-9eff-45b8-d538a7ae9092@huawei.com>
+ <20180430053611.GA11990@dell>
+ <67a620ee-fd1f-4b5e-aa91-9f280a63807b@huawei.com>
+ <20180430092659.GA5147@dell>
+CC: Mika Westerberg <mika.westerberg@linux.intel.com>,
+        <andriy.shevchenko@linux.intel.com>, <rjw@rjwysocki.net>,
+        <linux-acpi@vger.kernel.org>, <lenb@kernel.org>,
+        <lorenzo.pieralisi@arm.com>, <linux-kernel@vger.kernel.org>,
+        <arnd@arndb.de>, <graeme.gregory@linaro.org>, <helgaas@kernel.org>,
+        <linuxarm@huawei.com>, <z.liuxinliang@hisilicon.com>,
+        "Liguozhu (Kenneth)" <liguozhu@hisilicon.com>
+From: John Garry <john.garry@huawei.com>
+Message-ID: <6e71041d-1fc5-40b1-11b2-4af2f2d9c569@huawei.com>
+Date: Mon, 30 Apr 2018 10:35:13 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/GQcZcnqHsueOF9j.h1LrYQo"; protocol="application/pgp-signature"
+In-Reply-To: <20180430092659.GA5147@dell>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.227.238]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/GQcZcnqHsueOF9j.h1LrYQo
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+>>>> So we using the mfd_cell to match child devices using _HID. At a glance, I
+>>>> don't actually see other drivers to use mfd_cell_acpi_match.pnpid .
+>>>>
+>>>> Anyway we don't use static tables as we need to update the resources of the
+>>>> cell dynamically. However I do look at a driver like intel_quark_i2c_gpio.c,
+>>>> and this dynamically modifies the value of global mfd_cell array here:
+>>>> https://elixir.bootlin.com/linux/latest/source/drivers/mfd/intel_quark_i2c_gpio.c#L266
+>>>>
+>>>> I know the cell array is only used at probe time, but this did not look to
+>>>> be good standard practice to me.
+>>>
+>>> Lots of drivers do this to supply dynamic data.  If there is no other
+>>> sane way of providing such data, it's fine to do.  Although each
+>>> situation should be dealt with on a case-by-case basis.
+>>>
+>>
+>> Hi Lee,
+>>
+>> Thanks for your input.
+>>
+>> I do see others drivers which use dynamic mem for the mfd_cells (like
+>> cros_ec_dev.c), so what we're doing in this driver already is not totally
+>> unchartered territory. But creating the MFD cells from the ACPI table could
+>> be ...
+>
+> Right.  I don't normally like mixing platform data technologies (MFD,
+> ACPI and DT).  I normally NACK patches which take information from
+> Device Tree and populate MFD cells with it.  ACPI would be the same I
+> guess.
 
-On Mon, 30 Apr 2018 11:13:45 +0200
-Hi Linus,
+Oh, well that is what we have in this driver. So what's the preferred 
+approach? Just not use MFD model at all if ACPI/DT needs to be scanned 
+for data to create the cells?
 
-> On Sun, Apr 22, 2018 at 11:31 PM, Lukasz Majewski <lukma@denx.de>
-> wrote:
->=20
-> > From: Stanislav Meduna <stanislav.meduna@nxtcontrol.com>
-> >
-> > On a TQMa53 module the mmc_sleep leaves the eMMC card in a state
-> > that the imx53 rom boot code is unable to probe, resulting in
-> > reboot hanging. Add a device tree property to disable sleeping
-> > on suspend.
-> >
-> > For TQMa53 modules the exact commit to cause hang after reboot
-> > (v3.10 -> v3.11):
-> > commit 486fdbbc1483 ("mmc: core: Add shutdown callback for (e)MMC
-> > bus_ops")
-> >
-> > [The exact discussion can be found here:
-> > https://patchwork.kernel.org/patch/8881401/
-> > "i.MX53 restart via watchdog does not work"
-> >
-> > Signed-off-by: Stanislav Meduna <stanislav.meduna@nxtcontrol.com>
-> > Signed-off-by: Lukasz Majewski <lukma@denx.de> =20
-> (...)
->=20
-> >  Optional properties:
-> >  -broken-hpi : Use this to indicate that the mmc-card has a broken
-> > hpi implementation, and that hpi should not be used
-> > +-no-sleep-on-suspend : Do not put the card to sleep when
-> > suspending.
-> > +              There are boards with bootloaders that are unable
-> > +              to probe such card when rebooting. =20
->=20
-> As far as I understand this problem is not coming from the host
-> controller itself,
-> so it should not be tagged on to the host controller either. Rather
-> the problem is how the specific system has integrated the host
-> controller, the problem is in the fixture of this specific machine,
-> as you say, in the i.MX53 ROM.
->=20
-> In that case, I would say use this:
->=20
-> if (of_machine_is_compatible("fsl,imx53")) {
->    ..activate quirk...
-> }
+Thanks,
+John
 
-I see. Thanks for pointing this.
-
->=20
-> Yours,
-> Linus Walleij
-
-
-
-
-Best regards,
-
-Lukasz Majewski
-
---
-
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-Phone: (+49)-8142-66989-10 Fax: (+49)-8142-66989-80 Email: wd@denx.de
-
---Sig_/GQcZcnqHsueOF9j.h1LrYQo
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAlrm4o0ACgkQAR8vZIA0
-zr2sFQgAv82zj0TyT0DP6MwwHWZ27wU8H3GjV0n6w1jRM5g9btdBLTHC9aHPzG7G
-yIW0NNM8WSe29uDqd8THmfGrjbMtzdxa/1eAj3eQxtwJsKJd43w5KrZVmU8azPmk
-+kQkxLalkjDqkUsRv7CiTAPCn+OGVngaA8dcCvV1EvDBkzgCKBzfc7ahBj2TWcK6
-3ejEbPNw8i9ujLP8qtRdpEUAOtJlYWNPG7U6n9ddtQCIQH0JZ8pU0+Ff0iAI7150
-2nqPtmCyIlQUZYlIYslf2KG7PpH45lJ09uKu2tM7lpaiRBQnuG+nYf7dxsPfnage
-8aVTBQyZZg1gDZ3q/OUvAqTRDZkYnw==
-=sbpo
------END PGP SIGNATURE-----
-
---Sig_/GQcZcnqHsueOF9j.h1LrYQo--
+>
+>> Anyway, I'll cc you in my next patchset and maybe you can kindly check it.
+>>
+>
