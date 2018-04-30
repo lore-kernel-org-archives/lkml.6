@@ -1,113 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754976AbeD3QV5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 12:21:57 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:42302 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754909AbeD3QVm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1754915AbeD3QVm (ORCPT <rfc822;w@1wt.eu>);
         Mon, 30 Apr 2018 12:21:42 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:60046 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754868AbeD3QVk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 12:21:40 -0400
 From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 To: linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org
 Cc: jgross@suse.com, Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Subject: [PATCH 4/4] xen/PVH: Remove reserved entry in PVH GDT
-Date: Mon, 30 Apr 2018 12:23:39 -0400
-Message-Id: <20180430162339.17143-5-boris.ostrovsky@oracle.com>
+Subject: [PATCH 0/4] PVH GDT fixes and cleanup
+Date: Mon, 30 Apr 2018 12:23:35 -0400
+Message-Id: <20180430162339.17143-1-boris.ostrovsky@oracle.com>
 X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180430162339.17143-1-boris.ostrovsky@oracle.com>
-References: <20180430162339.17143-1-boris.ostrovsky@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8879 signatures=668698
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=668
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=688
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1711220000 definitions=main-1804300156
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-And without it we can't use _BOOT_XX macros any longer so define new ones.
+Switching to new binutils release triggered the first bug.
 
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
----
- arch/x86/xen/xen-pvh.S | 23 +++++++++++++----------
- 1 file changed, 13 insertions(+), 10 deletions(-)
+Not sure if stack canary bug is related to the new tools as well
+(haven't checked it with old tools, but they are really old, from
+Fedora 13 days).
 
-diff --git a/arch/x86/xen/xen-pvh.S b/arch/x86/xen/xen-pvh.S
-index 4eed586..30dd067 100644
---- a/arch/x86/xen/xen-pvh.S
-+++ b/arch/x86/xen/xen-pvh.S
-@@ -54,7 +54,11 @@
-  * charge of setting up it's own stack, GDT and IDT.
-  */
- 
--#define PVH_GDT_ENTRY_CANARY    4
-+#define PVH_GDT_ENTRY_CS        1
-+#define PVH_GDT_ENTRY_DS        2
-+#define PVH_GDT_ENTRY_CANARY    3
-+#define PVH_CS_SEL              (PVH_GDT_ENTRY_CS * 8)
-+#define PVH_DS_SEL              (PVH_GDT_ENTRY_DS * 8)
- #define PVH_CANARY_SEL          (PVH_GDT_ENTRY_CANARY * 8)
- 
- ENTRY(pvh_start_xen)
-@@ -62,7 +66,7 @@ ENTRY(pvh_start_xen)
- 
- 	lgdt (_pa(gdt))
- 
--	mov $(__BOOT_DS),%eax
-+	mov $(PVH_DS_SEL),%eax
- 	mov %eax,%ds
- 	mov %eax,%es
- 	mov %eax,%ss
-@@ -99,7 +103,7 @@ ENTRY(pvh_start_xen)
- 	mov %eax, %cr0
- 
- 	/* Jump to 64-bit mode. */
--	ljmp $__BOOT_CS, $_pa(1f)
-+	ljmp $PVH_CS_SEL, $_pa(1f)
- 
- 	/* 64-bit entry point. */
- 	.code64
-@@ -122,13 +126,13 @@ ENTRY(pvh_start_xen)
- 	or $(X86_CR0_PG | X86_CR0_PE), %eax
- 	mov %eax, %cr0
- 
--	ljmp $__BOOT_CS, $1f
-+	ljmp $PVH_CS_SEL, $1f
- 1:
- 	call xen_prepare_pvh
- 	mov $_pa(pvh_bootparams), %esi
- 
- 	/* startup_32 doesn't expect paging and PAE to be on. */
--	ljmp $__BOOT_CS, $_pa(2f)
-+	ljmp $PVH_CS_SEL, $_pa(2f)
- 2:
- 	mov %cr0, %eax
- 	and $~X86_CR0_PG, %eax
-@@ -137,7 +141,7 @@ ENTRY(pvh_start_xen)
- 	and $~X86_CR4_PAE, %eax
- 	mov %eax, %cr4
- 
--	ljmp $__BOOT_CS, $_pa(startup_32)
-+	ljmp $PVH_CS_SEL, $_pa(startup_32)
- #endif
- END(pvh_start_xen)
- 
-@@ -149,13 +153,12 @@ gdt:
- 	.word 0
- gdt_start:
- 	.quad 0x0000000000000000            /* NULL descriptor */
--	.quad 0x0000000000000000            /* reserved */
- #ifdef CONFIG_X86_64
--	.quad 0x00af9a000000ffff            /* __BOOT_CS */
-+	.quad 0x00af9a000000ffff            /* PVH_CS_SEL */
- #else
--	.quad 0x00cf9a000000ffff            /* __BOOT_CS */
-+	.quad 0x00cf9a000000ffff            /* PVH_CS_SEL */
- #endif
--	.quad 0x00cf92000000ffff            /* __BOOT_DS */
-+	.quad 0x00cf92000000ffff            /* PVH_DS_SEL */
- 	.quad 0x0040900000000018            /* PVH_CANARY_SEL */
- gdt_end:
- 
+64-bit guests run fine even without adding the entry for GS but my
+guess is that's because Xen toolstack sets cached portions of the
+register to sane values and HW makes fewer checks in long mode.
+Since those values are not part of the ABI I figured I should fix
+it for both 32- and 64-bit mode.
+
+
+Boris Ostrovsky (4):
+  xen/PVH: Replace GDT_ENTRY with explicit constant
+  xen/PVH: Use proper CS selector in long mode
+  xen/PVH: Set up GS segment for stack canary
+  xen/PVH: Remove reserved entry in PVH GDT
+
+ arch/x86/xen/xen-pvh.S | 28 +++++++++++++++++++---------
+ 1 file changed, 19 insertions(+), 9 deletions(-)
+
 -- 
 2.9.3
