@@ -1,46 +1,39 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqaaHG5ewg/JkvUNl5/W8vJm6Oiz1iLVhB1FKvyED4IeRycCBg2G6vkgmEBN/k24c0qwY6e
-ARC-Seal: i=1; a=rsa-sha256; t=1525116453; cv=none;
+X-Google-Smtp-Source: AB8JxZqoHd18pqFKv0DOV4zf7wElkuHqne9nub1qFTlVRxx86IfnLT2PPUj2zXiNT1fQJvBsgHnG
+ARC-Seal: i=1; a=rsa-sha256; t=1525116440; cv=none;
         d=google.com; s=arc-20160816;
-        b=qdolvTOB5DTGlPqXxvx4wgDZCkLcVy1XZwmL/4cxv0kAb/vpnAmHUG6o3BWK2tKLlk
-         UI3l+owC6uNtcT6M5ykcNWVYHRkkMNHRD7MyIbDBTXCBpbmi9mWAc3uW59czAWbu0wti
-         T65Q72yEqFZFQNuSQUB27/fRq1CF9kY9v9iXyH7MsmVWMOG3uTjF8BoZJQHe/iDvT6w8
-         MKVQJvWjIfhr3esn5RfKqEyd8PZOAwtnt4Yf5HlX/BKE51BHDPKwxbUOFnV6NwUcUd9z
-         FpaudcBoSFmoAidPS4vleSKrYtnnSVYuEiz+f6/pSZNUDHio2WPSPMV8XawQKnMh6+yQ
-         v8jA==
+        b=dA/3Zf28y6RImt8ldngFxwOdSHhx97dehL9BjNqyWKnbNN4Cl+3Sc0VS6W+NP9KvJw
+         UM+i91zNbmvkFpdaZWoJONyKPfY7sn0DzenYVkv5Qs4gFjdeV+nxzQOdX/sNfpZ4Ohq4
+         W15rN30AE2YiFc/W21TRZuUp4QAtIoMTHiHgUcHH7Bk2bCM4wjiUsAvkxRICjtXIR243
+         tak2+3oj7u4WoSFjWXlysB8H4NxkqZgyku41y62YzR3iGdyohPt4dVblxJmVedANHRcC
+         DUnonOEpzj90SivTngZWbpXx7tQgVOxlVZcXmKITbIp8/j4V+BBl9/NWuYwEnOE0Oi+J
+         h/ag==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=BKh7Ir1/RlNzX4r9lKuHZTU9m4ccm2bEi2PNbj59Vq8=;
-        b=XIvhN4V5xV8FyNjJB/cLQHnGHayx/vYrIiJUPFxbzBlNHGYbu0ixhPM64UO7anvtdf
-         iOwd+17fKQMuJBeJxBPwRjFimp3F4FsTzUfFS1I/nDDEemPSscsEawAgFXmA/PPjJxJ7
-         8WP1l8h93v773W57Y017Y0Ludb1NN/ThftaeX6HO/GHhFvyl1XK2gFnzUz8iDMf08UVR
-         dMrTsTkVSPlNJTzgvgkNzkbEdqXzOH4pubfj4BQwwRJPC3LDSCY66A20owILOpdkR/Xm
-         7XkulJ38z8KzwxHzf0Jy+iMyAwCLYdY/V3BWGT0uBWu8vkBQnrNHYqcaYs5baPL1ykQ9
-         cjPg==
+        bh=xH2RzRmXHrDlDFXTEzpuHImBIfMXpMM18IhjYRVkWEs=;
+        b=tWShYHLZGAS0Q++LePZ1rFzdYrXGsmQisNbSfpbUv7nGzHZ1hG+6tkuhMa9+GDgn5Z
+         LIfiPWe+Tvz0cStJNaH0rtF1Eb1gTHMC7snJc/9ZrUym+liACT2HkUN6vRVB/sCBQpAc
+         AT0lL+oORtqX12h3sQgJ5mDATLRgeMEagrra6O2B5UUiTd6f1kdhIMef7MPrcmhy5GED
+         5YPYrw47bbDXdLS2BF/v1n/SeiMvmv8OA1MwyhTWBqD2GVyddozRYJehG53Av/URog5O
+         ZIj6Cvi0huq5WsHnf1u/e/tqPeJ/Bta62WRVjYP7Wecdo+XOoE6q6IrCWdRIoQs/HLYK
+         aC5g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D359522DCB
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F1A122DCC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-	syzbot <syzbot+40b7287c2dc987c48c81@syzkaller.appspotmail.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Vegard Nossum <vegard.nossum@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Jiri Slaby <jslaby@suse.com>,
-	Peter Hurley <peter@hurleysoftware.com>,
-	One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 33/91] tty: Use __GFP_NOFAIL for tty_ldisc_get()
-Date: Mon, 30 Apr 2018 12:24:15 -0700
-Message-Id: <20180430184005.898132642@linuxfoundation.org>
+	Kailang Yang <kailang@realtek.com>,
+	Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 49/91] ALSA: hda/realtek - change the location for one of two front mics
+Date: Mon, 30 Apr 2018 12:24:31 -0700
+Message-Id: <20180430184006.749308970@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184004.216234025@linuxfoundation.org>
 References: <20180430184004.216234025@linuxfoundation.org>
@@ -50,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200280833625701?=
-X-GMAIL-MSGID: =?utf-8?q?1599200510624173444?=
+X-GMAIL-THRID: =?utf-8?q?1599200496886897577?=
+X-GMAIL-MSGID: =?utf-8?q?1599200496886897577?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -59,55 +52,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Kailang Yang <kailang@realtek.com>
 
-commit bcdd0ca8cb8730573afebcaae4138f8f4c8eaa20 upstream.
+commit 65811834ba56e9ed88117cf6c09880416c9951ab upstream.
 
-syzbot is reporting crashes triggered by memory allocation fault injection
-at tty_ldisc_get() [1]. As an attempt to handle OOM in a graceful way, we
-have tried commit 5362544bebe85071 ("tty: don't panic on OOM in
-tty_set_ldisc()"). But we reverted that attempt by commit a8983d01f9b7d600
-("Revert "tty: don't panic on OOM in tty_set_ldisc()"") due to reproducible
-crash. We should spend resource for finding and fixing race condition bugs
-rather than complicate error paths for 2 * sizeof(void *) bytes allocation
-failure.
+On this Lenovo ThinkCentre machine. There are two front mics,
+we change the location for one of them.
 
-[1] https://syzkaller.appspot.com/bug?id=489d33fa386453859ead58ff5171d43772b13aa3
+Relation: f33f79f3d0e5 ("ALSA: hda/realtek - change the location for
+one of two front microphones")
 
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: syzbot <syzbot+40b7287c2dc987c48c81@syzkaller.appspotmail.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Vegard Nossum <vegard.nossum@gmail.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Jiri Slaby <jslaby@suse.com>
-Cc: Peter Hurley <peter@hurleysoftware.com>
-Cc: One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Kailang Yang <kailang@realtek.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/tty_ldisc.c |   11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ sound/pci/hda/patch_realtek.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/tty/tty_ldisc.c
-+++ b/drivers/tty/tty_ldisc.c
-@@ -175,12 +175,11 @@ static struct tty_ldisc *tty_ldisc_get(s
- 			return ERR_CAST(ldops);
- 	}
- 
--	ld = kmalloc(sizeof(struct tty_ldisc), GFP_KERNEL);
--	if (ld == NULL) {
--		put_ldops(ldops);
--		return ERR_PTR(-ENOMEM);
--	}
--
-+	/*
-+	 * There is no way to handle allocation failure of only 16 bytes.
-+	 * Let's simplify error handling and save more memory.
-+	 */
-+	ld = kmalloc(sizeof(struct tty_ldisc), GFP_KERNEL | __GFP_NOFAIL);
- 	ld->ops = ldops;
- 	ld->tty = tty;
- 
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -6436,6 +6436,7 @@ static const struct snd_pci_quirk alc269
+ 	SND_PCI_QUIRK(0x17aa, 0x30bb, "ThinkCentre AIO", ALC233_FIXUP_LENOVO_LINE2_MIC_HOTKEY),
+ 	SND_PCI_QUIRK(0x17aa, 0x30e2, "ThinkCentre AIO", ALC233_FIXUP_LENOVO_LINE2_MIC_HOTKEY),
+ 	SND_PCI_QUIRK(0x17aa, 0x310c, "ThinkCentre Station", ALC294_FIXUP_LENOVO_MIC_LOCATION),
++	SND_PCI_QUIRK(0x17aa, 0x312f, "ThinkCentre Station", ALC294_FIXUP_LENOVO_MIC_LOCATION),
+ 	SND_PCI_QUIRK(0x17aa, 0x3138, "ThinkCentre Station", ALC294_FIXUP_LENOVO_MIC_LOCATION),
+ 	SND_PCI_QUIRK(0x17aa, 0x313c, "ThinkCentre Station", ALC294_FIXUP_LENOVO_MIC_LOCATION),
+ 	SND_PCI_QUIRK(0x17aa, 0x3112, "ThinkCentre AIO", ALC233_FIXUP_LENOVO_LINE2_MIC_HOTKEY),
