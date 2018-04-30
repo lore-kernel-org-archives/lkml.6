@@ -1,39 +1,39 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpKBrvTeuYIljFnmp7tJdYu41IK9DpBh0D46fPCpMKmAV9RYykw/pr31Xfw1AXFuXB4CjBz
-ARC-Seal: i=1; a=rsa-sha256; t=1525116480; cv=none;
+X-Google-Smtp-Source: AB8JxZpn+pOejohBWlJ4eh52ypIBeGhLxbhppMTqNi5gw2JS1Bz8WXKM2qJYyvxw542HDBdB6sxk
+ARC-Seal: i=1; a=rsa-sha256; t=1525116486; cv=none;
         d=google.com; s=arc-20160816;
-        b=HH1z9oJPdo44srLqAGR3rqz+n5/L1ydJAkvMjxcPtgK6T8/hVwffZPZv5xmG6vtZba
-         zFP9lqRJSLfctbZdCxKDNckVqOZixkY7gfYSaWGZuMmIDRzEnQD2elJJ+7fICsbDIAlv
-         bI+ho+zxhDr9yS6qE9RgZpTagTkQY/J3MS4vQwvtHcn403ayKh5oOmZTCo0AD36/ns63
-         sP914x4K44pW4xWgqZFCQRgVscQOuLMkJVKS+V7uLpQRl/QRPeoxbPbeV4elNeOb/w7Y
-         3HqoGAaThOw0HqaVXQgkvNOIdYaaMriYmi6ETh337DpONXNQrs+7P3kLgBREKgJqB0eT
-         j5Bw==
+        b=WQuYFaZgDHuK6UZ5LsxdB46L0uXMcF9+BmXBVuM+SldFTHHr+XchwrAHEmYwIoWDIg
+         j8C3cfzjRHtpWjxFArvKYexCvezSFSCSaTHBgR/UzJjvpn97RXEXAHvc0ONkYn9dhmSr
+         GoJHPjPEFikYibZIrmZuqNsMlTRA9Z9RL2Qkf7H3p5Y4i9JW0vqkl4iOMeCt6FAcfdqu
+         VLT16FfG9+WO/z4D3323SGhBXkDGaF+iLCa7rH+s3g0yOiqYDUueIcrjjKEmfyFGLn8p
+         lQuuAiSmsBTtE3fRiqULXImHJcaM+/LjvxQZYvmNDNvAofjyfSwGwP5Syychiy8RNk5u
+         HyNg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=0gTBzhqDZBP9Ra7e8JgGVNS71sYcO4OUR5sintK9pYs=;
-        b=r9dedVkNg+iQnIEQ5YKLxUPqD2OgRG46mFrcDaYGCWuhZqvIQTtgy4AL9WeSJe/ow9
-         GeJQpZRf18rn4OWYLepPDp9B6rtvrXeD5E/fYpV9H6pXOT3rBDLVwEVO2rM49poFTb0v
-         T2kFPZ7P82fAWiMqpZua4R1igT5tFHh9zFFS8twM5RxBbuL50mXdrUe4COLqEqNF4NsI
-         pFL8Rn4cFpNYnfmAyXJsoFblWL+G5g8E7e5ydbBNW0M7wg9CUjCSmsoa/b2vpcEkMgqQ
-         1MxjUzG6bLNG8+xYe0Lyb9XgR3IO+ACKxFVDikJG7zysAwud7vwaJrCe0ihRllsQeRTH
-         +Qzg==
+        bh=oyqBGomcDhWqcxNPfp76h7XCLvnaAhquTRsW9qUdEak=;
+        b=EY/TfXFztjsZBUpE9vfAKvsThcozycFtkddpl4h0E+nM1Kf1oOKu1Iii0brVw0FbMF
+         L1THOwshPFivmhEPPFGfrHm+vHtqVqwonDE6kAncVcTiqJgcQAagrdxle+zN9HzPyouv
+         sj8jfzakIbDkL62PP3JQTDq3zEETWzlaVC9yTnrlef1mzEGI7eAf7k6XtIQuQwn2VVrJ
+         DOYTiKLpQxVW1gkD52WmpMtLqb5R9DdD1CG9Lk8nTdqZwgJ/k4onYvvkTMFMO6mU9a0t
+         yQZRsgkXdDGv5WXdZxz74LJXPoChP3dFy3ejvqaCMV+ij6lr+HeRl6JL7AILfdfWh6ss
+         3R5g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0C0C22DC1
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A3DB22DAC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Quanxian Wang <quanxian.wang@intel.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Subject: [PATCH 4.16 020/113] usb: typec: ucsi: Increase command completion timeout value
-Date: Mon, 30 Apr 2018 12:23:51 -0700
-Message-Id: <20180430184015.932987279@linuxfoundation.org>
+	=?UTF-8?q?Fran=C3=A7ois=20Valenduc?= <francoisvalenduc@gmail.com>,
+	Theodore Tso <tytso@mit.edu>
+Subject: [PATCH 4.16 003/113] ext4: add MODULE_SOFTDEP to ensure crc32c is included in the initramfs
+Date: Mon, 30 Apr 2018 12:23:34 -0700
+Message-Id: <20180430184015.219290940@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184015.043892819@linuxfoundation.org>
 References: <20180430184015.043892819@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200475896831863?=
-X-GMAIL-MSGID: =?utf-8?q?1599200538596059239?=
+X-GMAIL-THRID: =?utf-8?q?1599200544892175194?=
+X-GMAIL-MSGID: =?utf-8?q?1599200544892175194?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,32 +52,26 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit b1b59e16075f5e5da2943ce8de724ab96bc3c6c2 upstream.
+commit 7ef79ad52136712172eb0525bf0b462516bf2f93 upstream.
 
-On some boards, under heavy load, the EC firmware is
-unable to complete commands even in one second. Increasing
-the command completion timeout value to five seconds.
-
-Reported-by: Quanxian Wang <quanxian.wang@intel.com>
-Fixes: c1b0bc2dabfa ("usb: typec: Add support for UCSI interface")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Fixes: a45403b51582 ("ext4: always initialize the crc32c checksum driver")
+Reported-by: François Valenduc <francoisvalenduc@gmail.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/typec/ucsi/ucsi.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/ext4/super.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/usb/typec/ucsi/ucsi.c
-+++ b/drivers/usb/typec/ucsi/ucsi.c
-@@ -28,7 +28,7 @@
-  * difficult to estimate the time it takes for the system to process the command
-  * before it is actually passed to the PPM.
-  */
--#define UCSI_TIMEOUT_MS		1000
-+#define UCSI_TIMEOUT_MS		5000
- 
- /*
-  * UCSI_SWAP_TIMEOUT_MS - Timeout for role swap requests
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -5868,5 +5868,6 @@ static void __exit ext4_exit_fs(void)
+ MODULE_AUTHOR("Remy Card, Stephen Tweedie, Andrew Morton, Andreas Dilger, Theodore Ts'o and others");
+ MODULE_DESCRIPTION("Fourth Extended Filesystem");
+ MODULE_LICENSE("GPL");
++MODULE_SOFTDEP("pre: crc32c");
+ module_init(ext4_init_fs)
+ module_exit(ext4_exit_fs)
