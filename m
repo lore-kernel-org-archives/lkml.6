@@ -1,97 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751669AbeD3FtL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 01:49:11 -0400
-Received: from thoth.sbs.de ([192.35.17.2]:41312 "EHLO thoth.sbs.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751569AbeD3FtJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 01:49:09 -0400
-From: Jan Kiszka <jan.kiszka@siemens.com>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 01/10] PCI: Make pci_get_new_domain_nr() static
-Date: Mon, 30 Apr 2018 07:48:35 +0200
-Message-Id: <7e10d1bd6ca988c9deca593588e5b7fdd72a8de4.1525067324.git.jan.kiszka@siemens.com>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <cover.1525067324.git.jan.kiszka@siemens.com>
-References: <cover.1525067324.git.jan.kiszka@siemens.com>
-In-Reply-To: <cover.1525067324.git.jan.kiszka@siemens.com>
-References: <cover.1525067324.git.jan.kiszka@siemens.com>
+        id S1751768AbeD3FyG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 01:54:06 -0400
+Received: from mta-p8.oit.umn.edu ([134.84.196.208]:45886 "EHLO
+        mta-p8.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751601AbeD3FyE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 01:54:04 -0400
+X-Google-Smtp-Source: AB8JxZrZRJFn5iFf3VSU8tM2ib+SdcAZvCad/zrU55a7MKzhbDWAVtfDk2gPHeub2sPAgztbPM9mOQ==
+From: Wenwen Wang <wang6495@umn.edu>
+To: Wenwen Wang <wang6495@umn.edu>
+Cc: Kangjie Lu <kjlu@umn.edu>, Wolfram Sang <wsa@the-dreams.de>,
+        linux-i2c@vger.kernel.org (open list:I2C SUBSYSTEM),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] i2c: core-smbus: fix a potential uninitialization bug
+Date: Mon, 30 Apr 2018 00:53:38 -0500
+Message-Id: <1525067618-836-1-git-send-email-wang6495@umn.edu>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+In i2c_smbus_xfer_emulated(), there are two buffers: msgbuf0 and msgbuf1,
+which are used to save a series of messages, as mentioned in the comment.
+According to the value of the variable "size", msgbuf0 is initialized to
+various values. In contrast, msgbuf1 is left uninitialized until the
+function i2c_transfer() is invoked. However, mgsbuf1 is not always
+initialized on all possible execution paths (implementation) of
+i2c_transfer(). Thus, it is possible that mgsbuf1 may still not be
+uninitialized even after the invocation of the function i2c_transfer(). In
+the following execution, the uninitialized msgbuf1 will be used, such as
+for security checks. Since uninitialized values can be random and
+arbitrary, this will cause undefined behaviors or even check bypass. For
+example, it is expected that if the value of "size" is
+I2C_SMBUS_BLOCK_PROC_CALL, the value of data->block[0] should not be larger
+than I2C_SMBUS_BLOCK_MAX. But, at the end of i2c_smbus_xfer_emulated(), the
+value read from msgbuf1 is assigned to data->block[0], which can
+potentially lead to invalid block write size, as demonstrated in the error
+message.
 
-The only user of pci_get_new_domain_nr() is of_pci_bus_find_domain_nr().
-Since they are defined in the same compilation unit,
-pci_get_new_domain_nr() can be made static, which also simplifies
-preprocessor conditionals.
+This patch simply initializes the buffer msgbuf1 with 0 to avoid undefined
+behaviors or security issues.
 
-No functional change intended.
-
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Signed-off-by: Wenwen Wang <wang6495@umn.edu>
 ---
- drivers/pci/pci.c   | 6 ++----
- include/linux/pci.h | 3 ---
- 2 files changed, 2 insertions(+), 7 deletions(-)
+ drivers/i2c/i2c-core-smbus.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index a04197ce767d..811d71e7ee05 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -5702,15 +5702,14 @@ static void pci_no_domains(void)
- #endif
- }
- 
--#ifdef CONFIG_PCI_DOMAINS
-+#ifdef CONFIG_PCI_DOMAINS_GENERIC
- static atomic_t __domain_nr = ATOMIC_INIT(-1);
- 
--int pci_get_new_domain_nr(void)
-+static int pci_get_new_domain_nr(void)
- {
- 	return atomic_inc_return(&__domain_nr);
- }
- 
--#ifdef CONFIG_PCI_DOMAINS_GENERIC
- static int of_pci_bus_find_domain_nr(struct device *parent)
- {
- 	static int use_dt_domains = -1;
-@@ -5765,7 +5764,6 @@ int pci_bus_find_domain_nr(struct pci_bus *bus, struct device *parent)
- 			       acpi_pci_bus_find_domain_nr(bus);
- }
- #endif
--#endif
- 
- /**
-  * pci_ext_cfg_avail - can we access extended PCI config space?
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index 73178a2fcee0..963232a6cd2e 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -1510,12 +1510,10 @@ void pci_cfg_access_unlock(struct pci_dev *dev);
-  */
- #ifdef CONFIG_PCI_DOMAINS
- extern int pci_domains_supported;
--int pci_get_new_domain_nr(void);
- #else
- enum { pci_domains_supported = 0 };
- static inline int pci_domain_nr(struct pci_bus *bus) { return 0; }
- static inline int pci_proc_domain(struct pci_bus *bus) { return 0; }
--static inline int pci_get_new_domain_nr(void) { return -ENOSYS; }
- #endif /* CONFIG_PCI_DOMAINS */
- 
- /*
-@@ -1670,7 +1668,6 @@ static inline struct pci_dev *pci_get_domain_bus_and_slot(int domain,
- 
- static inline int pci_domain_nr(struct pci_bus *bus) { return 0; }
- static inline struct pci_dev *pci_dev_get(struct pci_dev *dev) { return NULL; }
--static inline int pci_get_new_domain_nr(void) { return -ENOSYS; }
- 
- #define dev_is_pci(d) (false)
- #define dev_is_pf(d) (false)
+diff --git a/drivers/i2c/i2c-core-smbus.c b/drivers/i2c/i2c-core-smbus.c
+index b5aec33..0fcca75 100644
+--- a/drivers/i2c/i2c-core-smbus.c
++++ b/drivers/i2c/i2c-core-smbus.c
+@@ -324,7 +324,7 @@ static s32 i2c_smbus_xfer_emulated(struct i2c_adapter *adapter, u16 addr,
+ 	 * somewhat simpler.
+ 	 */
+ 	unsigned char msgbuf0[I2C_SMBUS_BLOCK_MAX+3];
+-	unsigned char msgbuf1[I2C_SMBUS_BLOCK_MAX+2];
++	unsigned char msgbuf1[I2C_SMBUS_BLOCK_MAX+2] = {0};
+ 	int num = read_write == I2C_SMBUS_READ ? 2 : 1;
+ 	int i;
+ 	u8 partial_pec = 0;
 -- 
-2.13.6
+2.7.4
