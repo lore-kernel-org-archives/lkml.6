@@ -1,41 +1,39 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqLcFiTdPZSAdAyPO18QVLoxFfCoeSIr6KWcLQpZ3gv5E8kLCFUZPX6KTJFlDJ7QVJyXbMn
-ARC-Seal: i=1; a=rsa-sha256; t=1525116470; cv=none;
+X-Google-Smtp-Source: AB8JxZqYNlAv+PMWw2F5PznILMq+GqFn/C5YWnbRE8r+v9vjrr6IerF3HOhR69IovGftsdRTgEQa
+ARC-Seal: i=1; a=rsa-sha256; t=1525116439; cv=none;
         d=google.com; s=arc-20160816;
-        b=D6jcX0gptFoL89LufkjWdRCc6L0vyv65O/d3KMBcHZnVon24QHMtm9LLoRxrk2v6xe
-         nuCwaDP99UYLSY2DG13EtVb4rIelwA6FEHDNAfP1NUS+UUJasSAbEWbDZB/GACWD9Vh2
-         KcbVZv41y4IYcWI7FggsULbmdamR1LA16BnR8is/bPx4xZR672+36LfVxQ80SRNB0B5r
-         m1LcOFsSuGmrFKnQhgnq62kp+/10QllDLq8aQDLNmcE+T2iUFTk5zxDWEspzhjpLBIJg
-         30jEiPLhGf3Fm5EPBjQGw6iSJFslDKw7gXiAYMi0t4NMzz+hhQenX44/KJNsR33K4hGD
-         YJEQ==
+        b=hKXd8gFTkgTUllP5bPG51bUnxQdhJe2lqkMUGouAR0KVxOobS+lx/6YPxlagBChudd
+         EdlrDouUDGe95GZkdB71nGF/9lrm+J/shB8cH6l+iUitsKriRaxi/AErCqqDnN9n21F2
+         YKpXzEG5Gea1aiHT72f3F70Pk93GOv+9gQutvH086eCq4/5w5jxzYK3NghOxAx7EiAmY
+         6aT/suIfxzIqK9SqOSQR6zH4T1CwtUFCnSqr9JV1+D0n5QvnlZ6RaYZG+rAG6m/B0Ffn
+         j12xb8y2wZSJWRuFP0ozdZ62+QmCblm/dPS0NeN7BdkhdsnIoS8NtS1PTJdHE7jH3Y1p
+         j1UA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=0gqd+6616BGB2J3m+034bIvVxQsljnizYF31bXEE4q8=;
-        b=fqr7Asad8xjS4zvOfRBI4s/ajKdSSJpHsrzsX9e11Wz0yB2ywNsbaaxxPzvJ5MlMZ4
-         vLEVqXeML/uuLVYezrMjOs8/H0vD5YkX+c7paLWS8pYB4xKroKcCZQ+ik0wScTP9vl8z
-         Vu76TF+7LJh8+kqx4QOxydJZulITomQyfjXLUg3xuribzpQfXg8/L3JNvlARr8O/NsvW
-         f4GvabhpO6viUlXxAA7WUWd/gbtEa2n2xyorsWYPzMNXROCFAt7qjj3vC4VF2AdINqA6
-         QjrgjTVENMxiof87PZF/VqyYzQg//AjS+hllBaf2tMc2ryy+Z8Sy8ZCBldES8uRCBHyr
-         knNA==
+        bh=IHE9UUpa0VDO7UbZu613+yFAVAdljxat05fwqkI9Ilc=;
+        b=M2uWEq7esHLhCvTWeGVWpyZTF1lzCNmnqU8IMva3Npy7sROPeflK9DmkcuTTjTWWcq
+         ChRq7LaCY7kZ7ljuuZJU8dEVO+IkLI9QgpRnoo9V9TVWjPjSnVBMmNPkxB3KcETTWJTU
+         nxC2g6wc6q6o2r3YkN/8LPx4JyNerM3mlQuwAxNS3UvwLF0arNePLWO4aT85np+7/qC4
+         N2IURQjSukuYNUtulrKpI4z1gMJKL4uzBDsf/FgsUGxvF6QhrT4vLfDXrfW/WQojonwC
+         wX/lQ/Y8FigVcHykANt0N9jbK5kbfROrYnIxtMMY9Arq54nf9fD0rZ5ifu2C8BDDBslu
+         qHzA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E75222DCC
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AB0722DCB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Marek Vasut <marex@denx.de>,
-	Nicolin Chen <nicoleotsuka@gmail.com>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.14 72/91] ASoC: fsl_esai: Fix divisor calculation failure at lower ratio
-Date: Mon, 30 Apr 2018 12:24:54 -0700
-Message-Id: <20180430184008.011918885@linuxfoundation.org>
+	Kailang Yang <kailang@realtek.com>,
+	Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 47/91] ALSA: hda/realtek - Add some fixes for ALC233
+Date: Mon, 30 Apr 2018 12:24:29 -0700
+Message-Id: <20180430184006.647880215@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184004.216234025@linuxfoundation.org>
 References: <20180430184004.216234025@linuxfoundation.org>
@@ -45,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200287248158187?=
-X-GMAIL-MSGID: =?utf-8?q?1599200528982252324?=
+X-GMAIL-THRID: =?utf-8?q?1599200410209388577?=
+X-GMAIL-MSGID: =?utf-8?q?1599200495754413435?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,45 +52,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Nicolin Chen <nicoleotsuka@gmail.com>
+From: Kailang Yang <kailang@realtek.com>
 
-commit c656941df9bc80f7ec65b92ca73c42f8b0b62628 upstream.
+commit ea04a1dbf8b1d6af759d58e705636fde48583f8f upstream.
 
-When the desired ratio is less than 256, the savesub (tolerance)
-in the calculation would become 0. This will then fail the loop-
-search immediately without reporting any errors.
+Fill COEF to change EAPD to verb control.
+Assigned codec type.
 
-But if the ratio is smaller enough, there is no need to calculate
-the tolerance because PM divisor alone is enough to get the ratio.
+This is an additional fix over 92f974df3460 ("ALSA: hda/realtek - New
+vendor ID for ALC233").
 
-So a simple fix could be just to set PM directly instead of going
-into the loop-search.
+[ More notes:
+  according to Kailang, the chip is 10ec:0235 bonding for ALC233b,
+  which is equivalent with ALC255.  It's only used for Lenovo.
+  The chip needs no alc_process_coef_fw() for headset unlike ALC255. ]
 
-Reported-by: Marek Vasut <marex@denx.de>
-Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
-Tested-by: Marek Vasut <marex@denx.de>
-Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
+Signed-off-by: Kailang Yang <kailang@realtek.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/fsl/fsl_esai.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ sound/pci/hda/patch_realtek.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/sound/soc/fsl/fsl_esai.c
-+++ b/sound/soc/fsl/fsl_esai.c
-@@ -144,6 +144,13 @@ static int fsl_esai_divisor_cal(struct s
- 
- 	psr = ratio <= 256 * maxfp ? ESAI_xCCR_xPSR_BYPASS : ESAI_xCCR_xPSR_DIV8;
- 
-+	/* Do not loop-search if PM (1 ~ 256) alone can serve the ratio */
-+	if (ratio <= 256) {
-+		pm = ratio;
-+		fp = 1;
-+		goto out;
-+	}
-+
- 	/* Set the max fluctuation -- 0.1% of the max devisor */
- 	savesub = (psr ? 1 : 8)  * 256 * maxfp / 1000;
- 
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -331,6 +331,7 @@ static void alc_fill_eapd_coef(struct hd
+ 		/* fallthrough */
+ 	case 0x10ec0215:
+ 	case 0x10ec0233:
++	case 0x10ec0235:
+ 	case 0x10ec0236:
+ 	case 0x10ec0255:
+ 	case 0x10ec0256:
+@@ -7015,6 +7016,7 @@ static int patch_alc269(struct hda_codec
+ 	case 0x10ec0298:
+ 		spec->codec_variant = ALC269_TYPE_ALC298;
+ 		break;
++	case 0x10ec0235:
+ 	case 0x10ec0255:
+ 		spec->codec_variant = ALC269_TYPE_ALC255;
+ 		break;
