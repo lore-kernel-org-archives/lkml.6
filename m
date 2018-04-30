@@ -1,109 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752861AbeD3MIs (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 08:08:48 -0400
-Received: from mail-wm0-f48.google.com ([74.125.82.48]:39552 "EHLO
-        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751822AbeD3MIr (ORCPT
+        id S1752732AbeD3MPE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 08:15:04 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:34140 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751606AbeD3MPD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 08:08:47 -0400
-X-Google-Smtp-Source: AB8JxZqo+nk8py8iEHq5NsLHz+1yt5yJgP0E+3A+ZWdYOfLBnuS+MS91fUuHf6xmObAPyYDhebmEAQ==
-Reply-To: christian.koenig@amd.com
-Subject: Re: [PATCH 2/3] drm/scheduler: Don't call wait_event_killable for
- signaled process.
-To: "Eric W. Biederman" <ebiederm@xmission.com>,
-        Andrey Grodzovsky <Andrey.Grodzovsky@amd.com>
-Cc: David.Panariti@amd.com, Oleg Nesterov <oleg@redhat.com>,
-        amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Alexander.Deucher@amd.com, akpm@linux-foundation.org,
-        Christian.Koenig@amd.com
-References: <1524583836-12130-1-git-send-email-andrey.grodzovsky@amd.com>
- <1524583836-12130-3-git-send-email-andrey.grodzovsky@amd.com>
- <87muxsbmkp.fsf@xmission.com> <8840ac96-50c4-f94d-eb7c-f007940163f3@amd.com>
- <877eowa5qh.fsf@xmission.com> <20180425135552.GD7592@redhat.com>
- <f45c7017-c75a-7f0c-b6d5-4d79600cdd33@amd.com>
- <20180425171757.GA10441@redhat.com>
- <c39cb438-1e8a-4f2c-50f6-c6e2a144487b@amd.com> <874ljyu98e.fsf@xmission.com>
-From: =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>
-Message-ID: <c3c9787d-b279-8169-43d1-74eeb666ffbd@gmail.com>
-Date: Mon, 30 Apr 2018 14:08:44 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 30 Apr 2018 08:15:03 -0400
+X-Google-Smtp-Source: AB8JxZr+dWC7fHrLBB9LSN4xStCq1UQ63QHDXKGLJtyTKSvluIf7c+D0yIUqv3jLPWuvCMZUxfGoYg==
+Date: Mon, 30 Apr 2018 13:14:59 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>
+Subject: Re: [PATCH 5/6] backlight: Also nuke BL_CORE_DRIVER1
+Message-ID: <20180430121459.GF5147@dell>
+References: <20180425174253.4616-1-daniel.vetter@ffwll.ch>
+ <20180425174253.4616-5-daniel.vetter@ffwll.ch>
+ <87d0yh9elr.fsf@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <874ljyu98e.fsf@xmission.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87d0yh9elr.fsf@intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eric,
+On Mon, 30 Apr 2018, Jani Nikula wrote:
 
-sorry for the late response, was on vacation last week.
+> On Wed, 25 Apr 2018, Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
+> > Now that the 3 drivers using this are cleaned up we can also remove
+> > this final bit of confusion of leaking driver internals into the
+> > backlight power interface.
+> >
+> > The backlight power interface itself is still a massive mess.
+> >
+> > Cc: Lee Jones <lee.jones@linaro.org>
+> > Cc: Daniel Thompson <daniel.thompson@linaro.org>
+> > Cc: Jingoo Han <jingoohan1@gmail.com>
+> > Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+> > Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+> > ---
+> >  include/linux/backlight.h | 1 -
+> >  1 file changed, 1 deletion(-)
+> >
+> > diff --git a/include/linux/backlight.h b/include/linux/backlight.h
+> > index 1db67662bfcb..7fbf0539e14a 100644
+> > --- a/include/linux/backlight.h
+> > +++ b/include/linux/backlight.h
+> > @@ -84,7 +84,6 @@ struct backlight_properties {
+> >  
+> >  #define BL_CORE_SUSPENDED	(1 << 0)	/* backlight is suspended */
+> >  #define BL_CORE_FBBLANK		(1 << 1)	/* backlight is under an fb blank event */
+> > -#define BL_CORE_DRIVER1		(1 << 31)	/* reserved for driver specific use */
+> 
+> Please also remove the
+> 
+> 	/* Upper 4 bits are reserved for driver internal use */
+> 
+> comment a few lines up to not give anyone ideas.
+> 
+> With that,
+> 
+> Reviewed-by: Jani Nikula <jani.nikula@intel.com>
 
-Am 26.04.2018 um 02:01 schrieb Eric W. Biederman:
-> Andrey Grodzovsky <Andrey.Grodzovsky@amd.com> writes:
->
->> On 04/25/2018 01:17 PM, Oleg Nesterov wrote:
->>> On 04/25, Andrey Grodzovsky wrote:
->>>> here (drm_sched_entity_fini) is also a bad idea, but we still want to be
->>>> able to exit immediately
->>>> and not wait for GPU jobs completion when the reason for reaching this code
->>>> is because of KILL
->>>> signal to the user process who opened the device file.
->>> Can you hook f_op->flush method?
+I'm merging these patches (with Jani's Acks) now.
 
-THANKS! That sounds like a really good idea to me and we haven't 
-investigated into that direction yet.
+Please send this request as a subsequent patch.
 
->> But this one is called for each task releasing a reference to the the file, so
->> not sure I see how this solves the problem.
-> The big question is why do you need to wait during the final closing a
-> file?
-
-As always it's because of historical reasons. Initially user space 
-pushed commands directly to a hardware queue and when a processes 
-finished we didn't need to wait for anything.
-
-Then the GPU scheduler was introduced which delayed pushing the jobs to 
-the hardware queue to a later point in time.
-
-This wait was then added to maintain backward compability and not break 
-userspace (but see below).
-
-> The wait can be terminated so the wait does not appear to be simply a
-> matter of correctness.
-
-Well when the process is killed we don't care about correctness any 
-more, we just want to get rid of it as quickly as possible (OOM 
-situation etc...).
-
-But it is perfectly possible that a process submits some render commands 
-and then calls exit() or terminates because of a SIGTERM, SIGINT etc.. 
-In this case we need to wait here to make sure that all rendering is 
-pushed to the hardware because the scheduler might need 
-resources/settings from the file descriptor.
-
-For example if you just remove that wait you could close firefox and get 
-garbage on the screen for a millisecond because the remaining rendering 
-commands where not executed.
-
-So what we essentially need is to distinct between a SIGKILL (which 
-means stop processing as soon as possible) and any other reason because 
-then we don't want to annoy the user with garbage on the screen (even if 
-it's just for a few milliseconds).
-
-Constructive ideas how to handle this would be very welcome, cause I 
-completely agree that what we have at the moment by checking PF_SIGNAL 
-is just a very very hacky workaround.
-
-Thanks,
-Christian.
-
->
-> Eric
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
