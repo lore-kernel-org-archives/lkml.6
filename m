@@ -1,39 +1,39 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqsHPdtAotG9L29vsaowrM5F/8fkzNSqThy9/coe4PXJZUPFTxV1ZjQ+q5/0LIfBog2ZBEh
-ARC-Seal: i=1; a=rsa-sha256; t=1525116513; cv=none;
+X-Google-Smtp-Source: AB8JxZohtG/mIxEoWwmgm0Xdwzrp5u2Y9/18hXE1GVnjdDrORXkxskoFM2iaKPpXHEXF5jGOWBEq
+ARC-Seal: i=1; a=rsa-sha256; t=1525116515; cv=none;
         d=google.com; s=arc-20160816;
-        b=xGrQXWTNlVhDF1jXlGtrmd7IZ85WTXfjgJW+dbqHyqi9q00JrkdYRJfGyZJZXTH0/3
-         lwmq8wfMMH1l9ArVKpT6QO4M2CMwEqpmxvJtNTkdVBphoX1WuS6Nd05QuQB3uaYYOCtG
-         i+0DhWBBhud7rrqKpFYOqkMohovpcTqQdXFjfICQf0BxJISpD/hHOqwpWyikzOXw4Ky3
-         acyn+EWJ+hRLIRQSEZazAryQeyedm1eIoMuIfh8x8Q+zXfMc9ZD6Qvc+rkw/NKiF6+wJ
-         Arje3pKZ8qiS3C75TBnpFhQT42q+kakmQNb/K3SRpaqiQvjFf4U3NbLclaDqfXRE1/AI
-         zrDQ==
+        b=nl+4mo5pLbi7jLB4opC9eS+HRK7YGm2c2VNeI3A4NpWN+eXkd27TMUMtjizzGbTPOJ
+         KOsdDp0yMJORda928qKlhLfGh9q/a1nDjDhsik9a/RcKal33MgC350GEJ3a6rdNInCMz
+         FxhiPFJpiQpY13n84/jKbLUXdrEEIdgvkspv2ThTOtl8CLjqW1B9IRGevPCVvWF8YaEm
+         TgWOxrmeBVQ42ZJPrWnAOGK2i3VIo0PGPU8IAShX6FuLZMASgOEYCrBpA2EOynpyEpah
+         al3mk6b/jX/xndNdn+SRK03BgbMx9D0ROO7tW1bvPihsaEpgdOejvciw/PLCGgtvdGuM
+         k8xg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=/3Xsv55FJzFxdT5dAZyKlj4aaOurhyVuHzQw6aFnfW0=;
-        b=aZSTt2IiE0ZPlpjiLIF6lSTdHVvMLOWjh71ClO26CEYUJdadRwmlKU3Jd6cN4cZ9hX
-         Zo4h40jbti/tiMzBF6aHSWoh6L3k866Saj1r8FoFMs4vW3/Nx+qcqv7/U7nIv+jibAGa
-         XWYbvtTeSsm9DsFsHBp0KQMdLCNxCs4F5KYqrHEjrQ+NV2XpIxetlGj3eSlBIZT6OJ/e
-         tdcVAwJIeSbZ8PuAbPrD8SJ2MpITmG2U6wANx607fcRrzU8CJng6SbD29uii5AVEY+0U
-         k57Be/rAxZu0+xPV8lBSJqKSoRLfQhJ+CltRl3zPLpuuNn++qC4hEZTP/BbO1i59XXW8
-         9t8A==
+        bh=10h74zg/4rO+GNq2jqpg4s+R98sfok/fy5bil3bwZhk=;
+        b=ZiDt4SlioB9T7IQhgdCCrlsJNlkxBnwavifXNGBwBILbgB5uOZgQh1PigLMg9IWuJ0
+         w9AEzxw+7NpVzYehbSH5TXlQVZSjQXrGNDvuZsvvyDO1qx0b0Q8pfPSBKT/wscZradny
+         nMA+dbW/xCNvTyf5epN+gYbNpT5LHYFi8vrxEngDrtiA9zaJRhwmrP4nmFIIsqplwmas
+         holAKB4EmGvCBjlCGcGFLiNTFlJUqPKK9/w19d/D0+xlwaJWlNt53ygKT5dBcv7Bkdo/
+         pGwqoz2YbOdB6scZ0HnaAXXnY5KLdluHbJvDuVs0cVScZcd57grNrz5tkFay2hzytDtM
+         aU+w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2599022DCC
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3EEF22DCC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+	Dan Carpenter <dan.carpenter@oracle.com>,
 	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.16 038/113] ALSA: dice: fix OUI for TC group
-Date: Mon, 30 Apr 2018 12:24:09 -0700
-Message-Id: <20180430184016.659764709@linuxfoundation.org>
+Subject: [PATCH 4.16 041/113] ALSA: opl3: Hardening for potential Spectre v1
+Date: Mon, 30 Apr 2018 12:24:12 -0700
+Message-Id: <20180430184016.793344825@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184015.043892819@linuxfoundation.org>
 References: <20180430184015.043892819@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200511040409140?=
-X-GMAIL-MSGID: =?utf-8?q?1599200573418012993?=
+X-GMAIL-THRID: =?utf-8?q?1599200422064417466?=
+X-GMAIL-MSGID: =?utf-8?q?1599200575501734037?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,32 +52,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 10412c420af9ba1f3de8483a95d360e5eb5bfc84 upstream.
+commit 7f054a5bee0987f1e2d4e59daea462421c76f2cb upstream.
 
-OUI for TC Electronic is 0x000166, for TC GROUP A/S. 0x001486 is for Echo
-Digital Audio Corporation.
+As recently Smatch suggested, one place in OPL3 driver may expand the
+array directly from the user-space value with speculation:
+  sound/drivers/opl3/opl3_synth.c:476 snd_opl3_set_voice() warn: potential spectre issue 'snd_opl3_regmap'
 
-Fixes: 7cafc65b3aa1 ('ALSA: dice: force to add two pcm devices for listed models')
-Cc: <stable@vger.kernel.org> # v4.6+
-Reference: http://standards-oui.ieee.org/oui/oui.txt
-Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+This patch puts array_index_nospec() for hardening against it.
+
+BugLink: https://marc.info/?l=linux-kernel&m=152411496503418&w=2
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/firewire/dice/dice.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/drivers/opl3/opl3_synth.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/sound/firewire/dice/dice.c
-+++ b/sound/firewire/dice/dice.c
-@@ -14,7 +14,7 @@ MODULE_LICENSE("GPL v2");
- #define OUI_WEISS		0x001c6a
- #define OUI_LOUD		0x000ff2
- #define OUI_FOCUSRITE		0x00130e
--#define OUI_TCELECTRONIC	0x001486
-+#define OUI_TCELECTRONIC	0x000166
+--- a/sound/drivers/opl3/opl3_synth.c
++++ b/sound/drivers/opl3/opl3_synth.c
+@@ -21,6 +21,7 @@
  
- #define DICE_CATEGORY_ID	0x04
- #define WEISS_CATEGORY_ID	0x00
+ #include <linux/slab.h>
+ #include <linux/export.h>
++#include <linux/nospec.h>
+ #include <sound/opl3.h>
+ #include <sound/asound_fm.h>
+ 
+@@ -448,7 +449,7 @@ static int snd_opl3_set_voice(struct snd
+ {
+ 	unsigned short reg_side;
+ 	unsigned char op_offset;
+-	unsigned char voice_offset;
++	unsigned char voice_offset, voice_op;
+ 
+ 	unsigned short opl3_reg;
+ 	unsigned char reg_val;
+@@ -473,7 +474,9 @@ static int snd_opl3_set_voice(struct snd
+ 		voice_offset = voice->voice - MAX_OPL2_VOICES;
+ 	}
+ 	/* Get register offset of operator */
+-	op_offset = snd_opl3_regmap[voice_offset][voice->op];
++	voice_offset = array_index_nospec(voice_offset, MAX_OPL2_VOICES);
++	voice_op = array_index_nospec(voice->op, 4);
++	op_offset = snd_opl3_regmap[voice_offset][voice_op];
+ 
+ 	reg_val = 0x00;
+ 	/* Set amplitude modulation (tremolo) effect */
