@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753904AbeD3LmQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 07:42:16 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:45268 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753858AbeD3LmN (ORCPT
+        id S1753957AbeD3LmZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 07:42:25 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:33814 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753910AbeD3LmU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 07:42:13 -0400
-X-Google-Smtp-Source: AB8JxZqFyrexq3VOFtxu6jn7GTZON4Z9WLnISHBtRI7LU82+bSs4v+1ygqIRepGE4vcLDTNn9creFA==
+        Mon, 30 Apr 2018 07:42:20 -0400
+X-Google-Smtp-Source: AB8JxZo8gq5Hart0LcPFWdZukYU36n9sdfN+b2k10eVwa46ZJtGDqF4HavQ6hjZXnluJK2w3M+ZshA==
 From: Jagan Teki <jagan@amarulasolutions.com>
 To: Maxime Ripard <maxime.ripard@free-electrons.com>
 Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
@@ -22,9 +22,9 @@ Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
         Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH 09/21] arm64: dts: allwinner: a64: Add HDMI support
-Date: Mon, 30 Apr 2018 17:10:46 +0530
-Message-Id: <20180430114058.5061-10-jagan@amarulasolutions.com>
+Subject: [PATCH 10/21] drm/sun4i: Enable DesignWare HDMI for Allwinner 64-bit SoCs
+Date: Mon, 30 Apr 2018 17:10:47 +0530
+Message-Id: <20180430114058.5061-11-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180430114058.5061-1-jagan@amarulasolutions.com>
 References: <20180430114058.5061-1-jagan@amarulasolutions.com>
@@ -32,66 +32,25 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HDMI on Allwinner A64 has similar behavior like H3/H5, so
-reuse the same dts node details for A64.
+Allwinner 64-bit SoC like H5/A64 has DesignWare HDMI so
+enable them as default.
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 28 +++++++++++++++++++++++++++
- include/dt-bindings/clock/sun50i-a64-ccu.h    |  2 ++
- 2 files changed, 30 insertions(+)
+ drivers/gpu/drm/sun4i/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-index 67b80bbe5bf5..da9128ae836d 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-@@ -644,6 +644,34 @@
- 			#interrupt-cells = <3>;
- 		};
+diff --git a/drivers/gpu/drm/sun4i/Kconfig b/drivers/gpu/drm/sun4i/Kconfig
+index eee6bc0eaf97..60468a779a63 100644
+--- a/drivers/gpu/drm/sun4i/Kconfig
++++ b/drivers/gpu/drm/sun4i/Kconfig
+@@ -42,6 +42,7 @@ config DRM_SUN4I_BACKEND
  
-+		hdmi: hdmi@1ee0000 {
-+			compatible = "allwinner,sun50i-a64-dw-hdmi",
-+				     "allwinner,sun8i-a83t-dw-hdmi";
-+			reg = <0x01ee0000 0x10000>;
-+			reg-io-width = <1>;
-+			interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_DDC>,
-+				 <&ccu CLK_HDMI>;
-+			clock-names = "iahb", "isfr", "tmds";
-+			resets = <&ccu RST_BUS_HDMI1>;
-+			reset-names = "ctrl";
-+			phys = <&hdmi_phy>;
-+			phy-names = "hdmi-phy";
-+			status = "disabled";
-+		};
-+
-+		hdmi_phy: hdmi-phy@1ef0000 {
-+			compatible = "allwinner,sun50i-a64-hdmi-phy",
-+				     "allwinner,sun8i-h3-hdmi-phy";
-+			reg = <0x01ef0000 0x10000>;
-+			clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_DDC>,
-+				 <&ccu CLK_PLL_VIDEO1>;
-+			clock-names = "bus", "mod", "pll-0";
-+			resets = <&ccu RST_BUS_HDMI0>;
-+			reset-names = "phy";
-+			#phy-cells = <0>;
-+		};
-+
- 		rtc: rtc@1f00000 {
- 			compatible = "allwinner,sun6i-a31-rtc";
- 			reg = <0x01f00000 0x54>;
-diff --git a/include/dt-bindings/clock/sun50i-a64-ccu.h b/include/dt-bindings/clock/sun50i-a64-ccu.h
-index d66432c6e675..41c09df797ef 100644
---- a/include/dt-bindings/clock/sun50i-a64-ccu.h
-+++ b/include/dt-bindings/clock/sun50i-a64-ccu.h
-@@ -45,6 +45,8 @@
- 
- #define CLK_PLL_PERIPH0		11
- 
-+#define CLK_PLL_VIDEO1		15
-+
- #define CLK_BUS_MIPI_DSI	28
- #define CLK_BUS_CE		29
- #define CLK_BUS_DMA		30
+ config DRM_SUN8I_DW_HDMI
+ 	tristate "Support for Allwinner version of DesignWare HDMI"
++	default ARM64 && ARCH_SUNXI
+ 	depends on DRM_SUN4I
+ 	select DRM_DW_HDMI
+ 	help
 -- 
 2.14.3
