@@ -1,73 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755516AbeD3VEa (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 17:04:30 -0400
-Received: from anholt.net ([50.246.234.109]:40530 "EHLO anholt.net"
+        id S1755271AbeD3VDD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 17:03:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48172 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755162AbeD3VE3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 17:04:29 -0400
-From: Eric Anholt <eric@anholt.net>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] drm/panel: Enable DSI transactions on the RPi panel.
-In-Reply-To: <20180430092731.GA2270@ulmo>
-References: <20171031193258.17373-1-eric@anholt.net> <20171031193258.17373-2-eric@anholt.net> <20180430092731.GA2270@ulmo>
-User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
-Date: Mon, 30 Apr 2018 14:04:26 -0700
-Message-ID: <87vac8jtid.fsf@anholt.net>
+        id S1755162AbeD3VC7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 17:02:59 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5246122B37
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Date: Mon, 30 Apr 2018 16:02:56 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: linux-pci@vger.kernel.org
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Sinan Kaya <okaya@codeaurora.org>, Rajat Jain <rajatja@google.com>,
+        Srinath Mannam <srinath.mannam@broadcom.com>,
+        Ray Jui <ray.jui@broadcom.com>, Keith Busch <keith.busch@intel.com>,
+        linux-acpi@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 0/2] PCI/ASPM: Tighten up ASPM L1.2 and LTR usage
+Message-ID: <20180430210256.GE95643@bhelgaas-glaptop.roam.corp.google.com>
+References: <152417080402.76853.4258398181136860884.stgit@bhelgaas-glaptop.roam.corp.google.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <152417080402.76853.4258398181136860884.stgit@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On Thu, Apr 19, 2018 at 04:05:19PM -0500, Bjorn Helgaas wrote:
+> The ASPM L1.2 substate depends on LTR information.  Per the PCI
+> Firmware spec, the OS is supposed to negotiate with the platform for
+> control of the LTR feature, but previously we didn't do that.
+> 
+> In addition, we must not enable LTR in an endpoint unless the Root
+> Complex and all intermediate switches also support LTR.  We already
+> took care of that in pci_configure_ltr(), but we didn't ensure that
+> LTR was enabled before allowing ASPM L1.2 to be enabled.
+> 
+> These patches fix both of these issues.  Or rather, they *should* fix
+> them.  I don't have hardware to test them, so any help with testing
+> would be appreciated.
+> 
+> I think the most likely issue would be a platform where the hardware
+> supports LTR and the ASPM L1.2 substate, but the BIOS doesn't support
+> LTR in _OSC.  In that case, we previously could have enabled ASPM L1.2
+> (though it probably wouldn't work correctly), and after these patches,
+> we should not enable ASPM L1.2.
+> 
+> You can look for issues by comparing dmesg and "lspci -vv" output
+> before and after these patches.
+> 
+> It would also be interesting to collect an acpidump from platforms
+> that support LTR, even if there's no endpoint that supports ASPM L1.2.
+> The acpidump should show that _OSC supports LTR.
+> 
+> I included some NVMe folks because these were motivated by Srinath's
+> recent report of LTR and ASPM issues with a Samsung NVMe SSD
+> Controller SM961/PM961 device, so this is sort of FYI in case you see
+> similar issues or are in a position to test these.
+> 
+> ---
+> 
+> Bjorn Helgaas (2):
+>       PCI/ASPM: Disable ASPM L1.2 Substate if we don't have LTR
+>       PCI/ACPI: Request LTR control from platform before using it
+> 
+> 
+>  drivers/acpi/pci_root.c |    7 +++++++
+>  drivers/pci/pcie/aspm.c |    9 +++++++++
+>  drivers/pci/probe.c     |    5 +++++
+>  include/linux/acpi.h    |    3 ++-
+>  include/linux/pci.h     |    1 +
+>  5 files changed, 24 insertions(+), 1 deletion(-)
 
-Thierry Reding <thierry.reding@gmail.com> writes:
-
-> [ Unknown signature status ]
-> On Tue, Oct 31, 2017 at 12:32:58PM -0700, Eric Anholt wrote:
->> It turns out that I had just mistaken what type of write the register
->> writes were supposed to be, using DCS instead of generic long writes.
->>=20
->> Switching to transactions instead of using the atmel as a bridge also
->> seems to resolve the sparkling pixels problem I've had.
->>=20
->> Signed-off-by: Eric Anholt <eric@anholt.net>
->> Fixes: 2f733d6194bd ("drm/panel: Add support for the Raspberry Pi 7" Tou=
-chscreen.")
->> ---
->>  drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c | 14 +-----------=
---
->>  1 file changed, 1 insertion(+), 13 deletions(-)
->
-> Did you want to take this along with patch 1 through drm-misc-next? If
-> so:
->
-> Acked-by: Thierry Reding <treding@nvidia.com>
-
-I've pushed both to drm-misc-next.  Thanks!
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlrnhNoACgkQtdYpNtH8
-nuj7xg/6A3VFmzRxvtI2hP43Qt6Sl7ONcN4UYwbDg0yPqx6gkV5WScNDPZrQCBcy
-NzPElt9RBWzj4CDVKqlekcjxtOXVqInd5j6EbI3EYTIuXN/hKv94TdvU7J+4OnFh
-eWit/w/xa++0inaXfe62spejLZX9MxQyEGeVDFQP9GRdQTpk6Qsb+urKmomTaou4
-CDEyIpz5RWGQPqYxe2VMUUfyH5jjzdcj1IFX9SAtRVQIARD1Cltyg/K9qyJGJy5x
-Q5N80pFB+GH0Gw1E8WKJYHYrQz+eMcFHPvuaap977H3r6dRfytSIWvGMMb7vsS3C
-dMSXLA+64edlLsLwnudEpWSjLxK6lmKtEugNIyKgdAKU/Gd7GGdapXraYEBhVsgi
-WM5fn/HNYx4Jt6GBIiV9PuPVLOARxpMPJWTdWtKi7dew64SHZojzlRgmbuFWPYne
-yjSq4DACmdNFgibvITFihBaENpjsjT28j2k5DIoWPr7kINSekDBHazWIUhWDPRNz
-9/X7LY1uxwIXK+2n1u6RjG8HAm7uneU4OGN4yW9edHORZDzxrBBru6kd0IoEIII5
-g9kPtwLjDg279X5KSqF4/x/jUWc8jUun/SWNrCz1/D3flC5vHFRhWUZSTVODxROT
-Z99xDhwBaS0rSqYls2vdh+zSNXmIAFvGxJylN3XyYp7+dt0pV5c=
-=s0WP
------END PGP SIGNATURE-----
---=-=-=--
+Applied to pci/aspm for v4.18 with Rafael's reviewed-by and Srinath's
+tested-by (on first patch).
