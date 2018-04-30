@@ -1,63 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754922AbeD3Qlj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 12:41:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45906 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754613AbeD3Qli (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 12:41:38 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C6A522BDA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Mon, 30 Apr 2018 12:41:35 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Kees Cook <keescook@chromium.org>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        tcharding <me@tobin.cc>
-Subject: Re: Hashed pointer issues
-Message-ID: <20180430124135.0cce92e3@gandalf.local.home>
-In-Reply-To: <CA+55aFwieC1-nAs+NFq9RTwaR8ef9hWa4MjNBWL41F-8wM49eA@mail.gmail.com>
-References: <alpine.DEB.2.20.1804301741570.3243@hypnos.tec.linutronix.de>
-        <CAGXu5jL1W=AC023asgeMRUXAnhU2vd-RJRqGtOOetQ=aXwDcFQ@mail.gmail.com>
-        <CA+55aFwieC1-nAs+NFq9RTwaR8ef9hWa4MjNBWL41F-8wM49eA@mail.gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1755003AbeD3QpJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 12:45:09 -0400
+Received: from mail-io0-f169.google.com ([209.85.223.169]:33588 "EHLO
+        mail-io0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754772AbeD3QpH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 12:45:07 -0400
+X-Google-Smtp-Source: AB8JxZrkKDWvkj9NxhMgmy4CXg88GfRIHkUQ9BmVM765ygNd13E55I9FY+fjuF6Fju5HmEMl1Hicpq0BL4+5VGc7FVk=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180430120930.4768a7cb@bbrezillon>
+References: <20180430082453.8091-1-brgl@bgdev.pl> <20180430120930.4768a7cb@bbrezillon>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 30 Apr 2018 18:45:06 +0200
+Message-ID: <CAMRc=Mf2TKsuiudxPdEFStrstHH65jHb6JFJ0Ort9GvWDSo9bQ@mail.gmail.com>
+Subject: Re: [PATCH 00/12] mtd: nand: davinci: stop using pdev->id as chipselect
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>, Tony Lindgren <tony@atomide.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-mtd@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 30 Apr 2018 16:31:52 +0000
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+2018-04-30 12:09 GMT+02:00 Boris Brezillon <boris.brezillon@bootlin.com>:
+> Hi Bartosz,
+>
+> On Mon, 30 Apr 2018 10:24:41 +0200
+> Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+>
+>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>
+>> We have the 'ti,davinci-chipselect' property in the device tree, but
+>> when using platform data the driver silently uses the id field of
+>> struct platform_device as the chipselect. This is confusing and we
+>> almost broke the nand support again recently after converting the
+>> platform to common clock framework (which changed the device id in the
+>> clock lookup - the problem is gone now that we no longer acquire the
+>> clock in the nand driver.
+>>
+>> This series adds a new field to davinci-nand platform data, then makes
+>> all board use it and finally modifies the two drivers that make use of
+>> it.
+>>
+>> Bartosz Golaszewski (12):
+>>   mtd: nand: davinci: store the core chipselect number in platform data
+>
+> Raw NAND related patches (that is, everything that is not onenand or
+> SPI NAND) should use the "mtd: rawnand: " prefix now. Other than that,
+> I'm fine with the patch series, just let me know how you want to have it
+> merged (through the MTD tree or the davinci tree).
+>
+> Thanks,
+>
+> Boris
 
-> On Mon, Apr 30, 2018 at 9:11 AM Kees Cook <keescook@chromium.org> wrote:
-> 
-> > I (or other folks?) had proposed this before, but, AIUI, Linus remains
-> > opposed.  
-> 
-> Yeah, I hate this, because it will make people paper over their problems by
-> just booting with that option.
-> 
-> I think it should just be fixed.
-> 
-> Is there really any reason why trace buffers have to be dumped so early
-> that the entropy hasn't even taken yet?
+I think Sekhar could pick all those patches up for 4.18.
 
-In this case, an RCU stall was triggering and a "dump on oops" would
-dump the trace buffers, (before entropy was established).
+Sekhar - do you want me to resend the series with the commit message
+changed as requested by Boris, or can you fix it when applying the
+series?
 
-> 
-> And if we really want a command line option, can we make that still hash
-> the pointer, just force the entropy early. That way kernel developers that
-> test that command line option are still testing the *hashing*, they just
-> are missing the good entropy.
-> 
-
-That may work too. Even with bad entropy, pointers at start up are hard
-to come by, and I can't see a hacker being able to use them as it only
-happens once during boot.
-
--- Steve
+Best regards,
+Bartosz Golaszewski
