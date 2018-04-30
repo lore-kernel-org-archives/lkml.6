@@ -1,51 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754506AbeD3OsI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 10:48:08 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:42856 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754460AbeD3OsG (ORCPT
+        id S1754333AbeD3Otb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 10:49:31 -0400
+Received: from agrajag.zerfleddert.de ([88.198.237.222]:40322 "EHLO
+        agrajag.zerfleddert.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753022AbeD3Ota (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 10:48:06 -0400
-From: Colin King <colin.king@canonical.com>
-To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] cpufreq: s3c2440: fix spelling mistake: "divsiors" -> "divisors"
-Date: Mon, 30 Apr 2018 15:48:01 +0100
-Message-Id: <20180430144801.6727-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.0
+        Mon, 30 Apr 2018 10:49:30 -0400
+Date: Mon, 30 Apr 2018 16:49:29 +0200
+From: Tobias Jordan <Tobias.Jordan@elektrobit.com>
+To: wsa@the-dreams.de
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] i2c: axxia: enable clock before calling clk_get_rate()
+Message-ID: <20180430144929.ld6wjyyrorrj5kcr@agrajag.zerfleddert.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+axxia_i2c_init() uses clk_get_rate() for idev->i2c_clk. clk_get_rate()
+should only be called if the clock is enabled, so ensure that by moving
+the clk_prepare_enable() call before the call to axxia_i2c_init().
 
-Trivial fix to spelling mistake in s3c_freq_dbg debug message text.
+Found by Linux Driver Verification project (linuxtesting.org).
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 08678b850cd0 ("i2c: axxia: Add I2C driver for AXM55xx")
+Signed-off-by: Tobias Jordan <Tobias.Jordan@elektrobit.com>
 ---
- drivers/cpufreq/s3c2440-cpufreq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v2:
+first version of the patch ignored that the clock should be disabled in
+case we bail out later...
+compile-tested and coccichecked.
 
-diff --git a/drivers/cpufreq/s3c2440-cpufreq.c b/drivers/cpufreq/s3c2440-cpufreq.c
-index d0d75b65ddd6..d2f67b7a20dd 100644
---- a/drivers/cpufreq/s3c2440-cpufreq.c
-+++ b/drivers/cpufreq/s3c2440-cpufreq.c
-@@ -143,7 +143,7 @@ static void s3c2440_cpufreq_setdivs(struct s3c_cpufreq_config *cfg)
- {
- 	unsigned long clkdiv, camdiv;
+ drivers/i2c/busses/i2c-axxia.c | 26 ++++++++++++++------------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-axxia.c b/drivers/i2c/busses/i2c-axxia.c
+index 13f07482ec68..12f92369888b 100644
+--- a/drivers/i2c/busses/i2c-axxia.c
++++ b/drivers/i2c/busses/i2c-axxia.c
+@@ -532,23 +532,23 @@ static int axxia_i2c_probe(struct platform_device *pdev)
+ 	if (idev->bus_clk_rate == 0)
+ 		idev->bus_clk_rate = 100000;	/* default clock rate */
  
--	s3c_freq_dbg("%s: divsiors: h=%d, p=%d\n", __func__,
-+	s3c_freq_dbg("%s: divisors: h=%d, p=%d\n", __func__,
- 		     cfg->divs.h_divisor, cfg->divs.p_divisor);
++	ret = clk_prepare_enable(idev->i2c_clk);
++	if (ret) {
++		dev_err(&pdev->dev, "failed to enable clock\n");
++		return ret;
++	}
++
+ 	ret = axxia_i2c_init(idev);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "failed to initialize\n");
+-		return ret;
++		goto error_disable_clk;
+ 	}
  
- 	clkdiv = __raw_readl(S3C2410_CLKDIVN);
+ 	ret = devm_request_irq(&pdev->dev, irq, axxia_i2c_isr, 0,
+ 			       pdev->name, idev);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "failed to claim IRQ%d\n", irq);
+-		return ret;
+-	}
+-
+-	ret = clk_prepare_enable(idev->i2c_clk);
+-	if (ret) {
+-		dev_err(&pdev->dev, "failed to enable clock\n");
+-		return ret;
++		goto error_disable_clk;
+ 	}
+ 
+ 	i2c_set_adapdata(&idev->adapter, idev);
+@@ -563,12 +563,14 @@ static int axxia_i2c_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, idev);
+ 
+ 	ret = i2c_add_adapter(&idev->adapter);
+-	if (ret) {
+-		clk_disable_unprepare(idev->i2c_clk);
+-		return ret;
+-	}
++	if (ret)
++		goto error_disable_clk;
+ 
+ 	return 0;
++
++error_disable_clk:
++	clk_disable_unprepare(idev->i2c_clk);
++	return ret;
+ }
+ 
+ static int axxia_i2c_remove(struct platform_device *pdev)
 -- 
-2.17.0
+2.11.0
