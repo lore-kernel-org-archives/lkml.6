@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752786AbeD3IZi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 04:25:38 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:35093 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752521AbeD3IZb (ORCPT
+        id S1752735AbeD3IZh (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 04:25:37 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:40774 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752610AbeD3IZc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 04:25:31 -0400
-X-Google-Smtp-Source: AB8JxZp5Wx6yf5urATgapLxHnVU9RCiD37vWf8TNOADNbN2+03KQs/wUMzIuo3hqSZXiPA5e9r9aWg==
+        Mon, 30 Apr 2018 04:25:32 -0400
+X-Google-Smtp-Source: AB8JxZprUTAss7PLTGAXn9tLUrr3erO0TZjJdhGSSi6zIZan22q1rYFKblfxN044h7tXeucU9M+FTg==
 From: Bartosz Golaszewski <brgl@bgdev.pl>
 To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Russell King <linux@armlinux.org.uk>,
@@ -20,9 +20,9 @@ To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
 Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-mtd@lists.infradead.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 10/12] ARM: davinci: neuros-osd2: specify the chipselect in davinci_nand_pdata
-Date: Mon, 30 Apr 2018 10:24:51 +0200
-Message-Id: <20180430082453.8091-11-brgl@bgdev.pl>
+Subject: [PATCH 11/12] mtd: nand: davinci: stop using pdev->id as chipselect
+Date: Mon, 30 Apr 2018 10:24:52 +0200
+Message-Id: <20180430082453.8091-12-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430082453.8091-1-brgl@bgdev.pl>
 References: <20180430082453.8091-1-brgl@bgdev.pl>
@@ -32,25 +32,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-We now have the core_chipsel field in davinci_nand_pdata. Use it
-instead of the platform_device id number.
+All platform now use the core_chipsel field in platform data. Stop
+using pdev->id in the driver.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- arch/arm/mach-davinci/board-neuros-osd2.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/mtd/nand/raw/davinci_nand.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/mach-davinci/board-neuros-osd2.c b/arch/arm/mach-davinci/board-neuros-osd2.c
-index 06e7f592b62b..353f9e5a1454 100644
---- a/arch/arm/mach-davinci/board-neuros-osd2.c
-+++ b/arch/arm/mach-davinci/board-neuros-osd2.c
-@@ -87,6 +87,7 @@ static struct mtd_partition davinci_ntosd2_nandflash_partition[] = {
- };
+diff --git a/drivers/mtd/nand/raw/davinci_nand.c b/drivers/mtd/nand/raw/davinci_nand.c
+index 7255a0d94374..cd12e5abafde 100644
+--- a/drivers/mtd/nand/raw/davinci_nand.c
++++ b/drivers/mtd/nand/raw/davinci_nand.c
+@@ -545,7 +545,7 @@ static struct davinci_nand_pdata
+ 			return ERR_PTR(-ENOMEM);
+ 		if (!of_property_read_u32(pdev->dev.of_node,
+ 			"ti,davinci-chipselect", &prop))
+-			pdev->id = prop;
++			pdata->core_chipsel = prop;
+ 		else
+ 			return ERR_PTR(-EINVAL);
  
- static struct davinci_nand_pdata davinci_ntosd2_nandflash_data = {
-+	.core_chipsel	= 0,
- 	.parts		= davinci_ntosd2_nandflash_partition,
- 	.nr_parts	= ARRAY_SIZE(davinci_ntosd2_nandflash_partition),
- 	.ecc_mode	= NAND_ECC_HW,
+@@ -627,7 +627,7 @@ static int nand_davinci_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 
+ 	/* which external chipselect will we be managing? */
+-	if (pdev->id < 0 || pdev->id > 3)
++	if (pdata->core_chipsel < 0 || pdata->core_chipsel > 3)
+ 		return -ENODEV;
+ 
+ 	info = devm_kzalloc(&pdev->dev, sizeof(*info), GFP_KERNEL);
+@@ -683,7 +683,7 @@ static int nand_davinci_probe(struct platform_device *pdev)
+ 	info->ioaddr		= (uint32_t __force) vaddr;
+ 
+ 	info->current_cs	= info->ioaddr;
+-	info->core_chipsel	= pdev->id;
++	info->core_chipsel	= pdata->core_chipsel;
+ 	info->mask_chipsel	= pdata->mask_chipsel;
+ 
+ 	/* use nandboot-capable ALE/CLE masks by default */
 -- 
 2.17.0
