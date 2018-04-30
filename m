@@ -1,141 +1,118 @@
-Return-Path: <a13xp0p0v88@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1523024577; cv=none;
-        d=google.com; s=arc-20160816;
-        b=nAJhnZlCiADOMbForya65cPAWfH8OobwvODdcJ/AFOy+kT1bk/xI0RyoHA2RoXQ25C
-         J5neb+EujuHNhbUbiwWU/4MgqaI65qFWQT+hVitjTFsCVdoTZ+Ws90goo2VibrQ+EYik
-         Dxcp7FS964raQnxpbGL/nkMacffP5WWbcHAA7ESH5q2TfC/FQG+CocQsbEAhToGEBC5t
-         6U7XPlq35P09Z6VoX1BDiIi2fHEO7klWCJoEOW+7CdbK2xyIVv4qodYzR4t7nDUSRPJt
-         BaFqQoI3AznRWJPOnfggQrrfFfcTzLyXacogyKFx1j4BZsAQnZeWOjUDAzlFxYxyC9ep
-         VjtA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:to:from
-         :arc-authentication-results;
-        bh=EDnRyEkUWY+17yuV5p5k1NrPfVvSW7u12r4hjFpZ8tM=;
-        b=Rh+4tV5Xw57Nho6ArB+F9fb+HxvddT5qVp0ffzxBL2svNJB0QDEwOdk3hPtdSXcC1U
-         KzOkUaL13jYX6XIdwaN3oOa0HWz8nE24DH2xSYSBUs3s3NlxZ1MR+jCbvYZSlmI3i7q7
-         hvgSXQjg1oCR6GJXnJu/VM3fPceTerxxRfC2kkqps/midM6KLcW5znIRL4/y0qhUhhv6
-         p8cP1Zs2Ul1nUfuFd6SGH5ySCOuylYrIiySVf0yGUlyDdX7TKocQVo0KANsJ+gqCYVQi
-         Pyvwyg0FonJbhZUb1EfnhuNf6KNGXNdg5q0TrFPIxh49Sb/F+6J/wC1eVl7j5UL6ZDlU
-         qOVg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of a13xp0p0v88@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=a13xp0p0v88@gmail.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of a13xp0p0v88@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=a13xp0p0v88@gmail.com
-X-Google-Smtp-Source: AIpwx48TWGlw5a6MUnhAxJNsRUBTXgt10mdY9dLjnagW9fBxL6Xd6NGcvsnStvELe5ly439Lrf1Unw==
-From: Alexander Popov <alex.popov@linux.com>
-To: kernel-hardening@lists.openwall.com,
-	Kees Cook <keescook@chromium.org>,
-	PaX Team <pageexec@freemail.hu>,
-	Brad Spengler <spender@grsecurity.net>,
-	Ingo Molnar <mingo@kernel.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	Tycho Andersen <tycho@tycho.ws>,
-	Laura Abbott <labbott@redhat.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Richard Sandiford <richard.sandiford@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <a.p.zijlstra@chello.nl>,
-	"Dmitry V . Levin" <ldv@altlinux.org>,
-	Emese Revfy <re.emese@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andrey Ryabinin <aryabinin@virtuozzo.com>,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-	Thomas Garnier <thgarnie@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Josef Bacik <jbacik@fb.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	"David S . Miller" <davem@davemloft.net>,
-	Ding Tianhong <dingtianhong@huawei.com>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Dominik Brodowski <linux@dominikbrodowski.net>,
-	Juergen Gross <jgross@suse.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Mathias Krause <minipli@googlemail.com>,
-	Vikas Shivappa <vikas.shivappa@linux.intel.com>,
-	Kyle Huey <me@kylehuey.com>,
-	Dmitry Safonov <dsafonov@virtuozzo.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Florian Weimer <fweimer@redhat.com>,
-	Boris Lukashev <blukashev@sempervictus.com>,
-	x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	alex.popov@linux.com
-Subject: [PATCH v11 1/6] gcc-plugins: Clean up the cgraph_create_edge* macros
-Date: Fri,  6 Apr 2018 17:22:21 +0300
-Message-Id: <1523024546-6150-2-git-send-email-alex.popov@linux.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1523024546-6150-1-git-send-email-alex.popov@linux.com>
-References: <1523024546-6150-1-git-send-email-alex.popov@linux.com>
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2075229-1525126700-2-6188010859052818729
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, MAILING_LIST_MULTI -1, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
+  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-usb-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1525126699; b=Le4oF9Kwv0aOw6pmD812c8YGUpBFK5/c/1TtJ5Ynjfv9IvnmA1
+    9O8jORMrOFjFNEhfH3muYwvg0VbNIUvenjy/Mf9NwpFgKHWphbMXoiZQ4a+0dIPy
+    1vJpw2Oq3901uOd3bjdV7dUkLTMoIW3woztb1i+JnLJIeOG4jaF6J1HdajGy4ZVw
+    aWh3XItdbCNlV1wWLEYh4rANP3NFp1dO923jYrXLv5C22z+C/HgUF3xe21gl4chQ
+    ovNEiXcnjzH//5SdFnc7juBQar4CJvZYv4sNs2r9uwzkm5tilp9TFj8Iqxsa0CW0
+    XVPiD6sjX23Qxr1a9Gvga0vvL0ZU91/z8kxQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1525126699; bh=YwsOYq3FRegeB/qTRvhbTYaRlnFrCR
+    bpVC5BPV2MVCA=; b=crFOR0nGvGCMA29x6JblX5wKesZV62znnhkd5G3ISu5Pbr
+    /IouLy7KopF+znlj6I4YZwJ7TJvcrUsvzwGdUY8TC9reu2CqTjf3TVERW56MHpOf
+    YdEuRZUhkQMeSrhQwmmdtzzaS6oK98KPUkViKmkikfWZd+Ml+4CaGq/VRHyirUfj
+    6QaZ4seioYVhxUK6iat24Z1vlXAqvmLyuQQGyOZyyYf7xtc/HKefi2tPU7NtdqQw
+    zGAj47SsM96miadIf/RxoupXG716b4emdZVNnp1/ftOneECIVLKxZw+t7Mgbx8Qx
+    uB66WNusiXb719RAgDO3XNYS8KEQDsu98PudjQcw==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=orgdomain_pass (Domain org match);
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=orgdomain_pass (Domain org match);
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfACyu8VFNimSrjLUvVkp3RlFZBPTWFdNt3voxWaqQwkxugaiLnNUawKUOFS0QMFVsBjXdJj1OoSAfRKx+hXa936Igup1ZvEkUXc4YsrIvHYk/as6P6bm
+    CqsOmIIAr9kBVbRjVXOEKAmfck204FqKahqUgzICuJ7/T6EBJtYd1ObGiyTy78zIgYnpsPOd1Bwp2pstdyeBHMfQ993mGtr3wjsSLqxPorRpUGYNaT1RmNh7
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8
+    a=_Bs-QTHlmUP4gWKnpksA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753530AbeD3WRu (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 30 Apr 2018 18:17:50 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:42989 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751384AbeD3WRt (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Mon, 30 Apr 2018 18:17:49 -0400
+From: "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
+To: valentina.manea.m@gmail.com, shuah@kernel.org,
+        gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [REBASED PATCH 1/2] usbip: usbip_host: delete device from busid_table after rebind
+Date: Mon, 30 Apr 2018 16:17:19 -0600
+Message-Id: <9cfffc546fc9774a9e38e81b0f396866a9d8d11f.1525115738.git.shuah@kernel.org>
+X-Mailer: git-send-email 2.14.1
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597007019117023314?=
-X-GMAIL-MSGID: =?utf-8?q?1597007019117023314?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Drop useless redefinitions of cgraph_create_edge* macros. Drop the unused
-nest argument. Also support gcc-8, which doesn't have freq argument.
+Device is left in the busid_table after unbind and rebind. Rebind
+initiates usb bus scan and the original driver claims the device.
+After rescan the device should be deleted from the busid_table as
+it no longer belongs to usbip_host.
 
-Signed-off-by: Alexander Popov <alex.popov@linux.com>
+Fix it to delete the device after device_attach() succeeds.
+
+Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
 ---
- scripts/gcc-plugins/gcc-common.h | 26 ++++++++++++++++----------
- 1 file changed, 16 insertions(+), 10 deletions(-)
+ drivers/usb/usbip/stub_main.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/scripts/gcc-plugins/gcc-common.h b/scripts/gcc-plugins/gcc-common.h
-index f467500..552d5ef 100644
---- a/scripts/gcc-plugins/gcc-common.h
-+++ b/scripts/gcc-plugins/gcc-common.h
-@@ -392,13 +392,6 @@ static inline struct cgraph_node *cgraph_alias_target(struct cgraph_node *n)
+diff --git a/drivers/usb/usbip/stub_main.c b/drivers/usb/usbip/stub_main.c
+index d41d0cdeec0f..fb46bd62d538 100644
+--- a/drivers/usb/usbip/stub_main.c
++++ b/drivers/usb/usbip/stub_main.c
+@@ -186,6 +186,9 @@ static ssize_t rebind_store(struct device_driver *dev, const char *buf,
+ 	if (!bid)
+ 		return -ENODEV;
+ 
++	/* mark the device for deletion so probe ignores it during rescan */
++	bid->status = STUB_BUSID_OTHER;
++
+ 	/* device_attach() callers should hold parent lock for USB */
+ 	if (bid->udev->dev.parent)
+ 		device_lock(bid->udev->dev.parent);
+@@ -197,6 +200,9 @@ static ssize_t rebind_store(struct device_driver *dev, const char *buf,
+ 		return ret;
+ 	}
+ 
++	/* delete device from busid_table */
++	del_match_busid((char *) buf);
++
+ 	return count;
  }
- #endif
  
--#if BUILDING_GCC_VERSION >= 4007 && BUILDING_GCC_VERSION <= 4009
--#define cgraph_create_edge(caller, callee, call_stmt, count, freq, nest) \
--	cgraph_create_edge((caller), (callee), (call_stmt), (count), (freq))
--#define cgraph_create_edge_including_clones(caller, callee, old_call_stmt, call_stmt, count, freq, nest, reason) \
--	cgraph_create_edge_including_clones((caller), (callee), (old_call_stmt), (call_stmt), (count), (freq), (reason))
--#endif
--
- #if BUILDING_GCC_VERSION <= 4008
- #define ENTRY_BLOCK_PTR_FOR_FN(FN)	ENTRY_BLOCK_PTR_FOR_FUNCTION(FN)
- #define EXIT_BLOCK_PTR_FOR_FN(FN)	EXIT_BLOCK_PTR_FOR_FUNCTION(FN)
-@@ -723,10 +716,23 @@ static inline const char *get_decl_section_name(const_tree decl)
- #define varpool_get_node(decl) varpool_node::get(decl)
- #define dump_varpool_node(file, node) (node)->dump(file)
- 
--#define cgraph_create_edge(caller, callee, call_stmt, count, freq, nest) \
-+#if BUILDING_GCC_VERSION >= 8000
-+#define cgraph_create_edge(caller, callee, call_stmt, count, freq) \
-+	(caller)->create_edge((callee), (call_stmt), (count))
-+
-+#define cgraph_create_edge_including_clones(caller, callee,	\
-+		old_call_stmt, call_stmt, count, freq, reason)	\
-+	(caller)->create_edge_including_clones((callee),	\
-+		(old_call_stmt), (call_stmt), (count), (reason))
-+#else
-+#define cgraph_create_edge(caller, callee, call_stmt, count, freq) \
- 	(caller)->create_edge((callee), (call_stmt), (count), (freq))
--#define cgraph_create_edge_including_clones(caller, callee, old_call_stmt, call_stmt, count, freq, nest, reason) \
--	(caller)->create_edge_including_clones((callee), (old_call_stmt), (call_stmt), (count), (freq), (reason))
-+
-+#define cgraph_create_edge_including_clones(caller, callee,	\
-+		old_call_stmt, call_stmt, count, freq, reason)	\
-+	(caller)->create_edge_including_clones((callee),	\
-+		(old_call_stmt), (call_stmt), (count), (freq), (reason))
-+#endif
- 
- typedef struct cgraph_node *cgraph_node_ptr;
- typedef struct cgraph_edge *cgraph_edge_p;
 -- 
-2.7.4
+2.14.1
+
