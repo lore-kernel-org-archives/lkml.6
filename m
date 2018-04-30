@@ -1,108 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754324AbeD3Oox (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 10:44:53 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:43910 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753683AbeD3Oou (ORCPT
+        id S1754390AbeD3Oo6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 10:44:58 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:54596 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754333AbeD3Ooy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 10:44:50 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E2F2B60251
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
-From: Sibi Sankar <sibis@codeaurora.org>
-To: andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org,
-        bjorn.andersson@linaro.org
-Cc: mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-soc@vger.kernel.org,
-        Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v2] arm64: dts: qcom: Add SDM845 SMEM nodes
-Date: Mon, 30 Apr 2018 20:14:28 +0530
-Message-Id: <20180430144428.3288-1-sibis@codeaurora.org>
-X-Mailer: git-send-email 2.17.0
+        Mon, 30 Apr 2018 10:44:54 -0400
+X-Google-Smtp-Source: AB8JxZpExoN1/YdA4W1YXBalPfhywcmkyRcK6i9MLiumqOTMHJARWd45QbV0pTM758z9ngkZtbDotw==
+Date: Mon, 30 Apr 2018 16:44:50 +0200
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Eduardo Valentin <edubezval@gmail.com>,
+        Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 03/18] thermal: exynos: always check for critical trip
+ points existence
+Message-ID: <20180430144450.GI11457@mai>
+References: <1524743493-28113-1-git-send-email-b.zolnierkie@samsung.com>
+ <CGME20180426115206epcas1p2da6ae1d85708907dc99a97baf0791b4d@epcas1p2.samsung.com>
+ <1524743493-28113-4-git-send-email-b.zolnierkie@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1524743493-28113-4-git-send-email-b.zolnierkie@samsung.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add all the necessary dt nodes to support SMEM driver
-on SDM845. It also adds the required memory carveouts
-so that the kernel does not access memory that is in
-use.
+On Thu, Apr 26, 2018 at 01:51:18PM +0200, Bartlomiej Zolnierkiewicz wrote:
+> * Check for critical trip point existence in exynos_tmu_initialize()
+>   so it is checked on all SoCs (except Exynos5433 for now).
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
-
-This patch depends on:
-https://patchwork.kernel.org/patch/10276419/
-https://patchwork.kernel.org/patch/10363361/
-
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 38 ++++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index 9be763da0664..55e7d7e23b10 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -21,6 +21,27 @@
- 		reg = <0 0x80000000 0 0>;
- 	};
+Why "except Exynos5433" ?
  
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		memory@85fc0000 {
-+			reg = <0 0x85fc0000 0 0x20000>;
-+			no-map;
-+		};
-+
-+		smem_mem: memory@86000000 {
-+			reg = <0x0 0x86000000 0x0 0x200000>;
-+			no-map;
-+		};
-+
-+		memory@86200000 {
-+			reg = <0 0x86200000 0 0x2d00000>;
-+			no-map;
-+		};
-+	};
-+
- 	cpus {
- 		#address-cells = <2>;
- 		#size-cells = <0>;
-@@ -147,6 +168,18 @@
- 		};
- 	};
- 
-+	tcsr_mutex: hwlock {
-+		compatible = "qcom,tcsr-mutex";
-+		syscon = <&tcsr_mutex_regs 0 0x1000>;
-+		#hwlock-cells = <1>;
-+	};
-+
-+	smem {
-+		compatible = "qcom,smem";
-+		memory-region = <&smem_mem>;
-+		hwlocks = <&tcsr_mutex 3>;
-+	};
-+
- 	psci {
- 		compatible = "arm,psci-1.0";
- 		method = "smc";
-@@ -339,6 +372,11 @@
- 			};
- 		};
- 
-+		tcsr_mutex_regs: syscon@1f40000 {
-+			compatible = "syscon";
-+			reg = <0x1f40000 0x40000>;
-+		};
-+
- 		apss_shared: mailbox@17990000 {
- 			compatible = "qcom,sdm845-apss-shared";
- 			reg = <0x17990000 0x1000>;
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> * Use dev_err() instead of pr_err().
+> 
+> * Fix dev_err() to reference "device tree" not "of-thermal.c".
+> 
+> * Remove no longer needed check from exynos4412_tmu_initialize().
+> 
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
