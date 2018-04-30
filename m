@@ -1,39 +1,39 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqE41RvOiBK/9NnMqEcEyOrk95fXSqlxY4pCFdWeunPupLj1q6qIjFRERvL5sXY2uvB7ndh
-ARC-Seal: i=1; a=rsa-sha256; t=1525116447; cv=none;
+X-Google-Smtp-Source: AB8JxZr8xJNyd5PuZa6YRHDzqYrlnh64s52pXszeW8yq8R/N/jAt+nA35AOCr5kGdXkMy37t3lSF
+ARC-Seal: i=1; a=rsa-sha256; t=1525116445; cv=none;
         d=google.com; s=arc-20160816;
-        b=GPVPhAKCIVr+NXd6AzZHwX6he5H6k34miEEMy5qZRc2uW6nxjSYvAKOb7Oc6OApQzF
-         Tzciv5GrFoXsbkpq69Sqfd3Illl18rwmGllHRq0RNInJDWcZYJu1fzlccRMcCehNnmfw
-         eLNTEf0q4TwSZi01Xy/GAa5+rwQ7rExn32BXfwyBF3bE8GwvUODkiNqGwUa4ZYzBwtI4
-         2aRrY81IoQ7kQ8aDh3oaXwQl8Zb+qB9TcKAb2142jvTfK/IMq1MI91PzWyCqWe0Tvmq/
-         vVoFqXrNQfAxUVsK7r0Wff6bkoIbBLqc1qGJZnH1BdjCg/vtTWFo43SUMgNMINiPu4Wu
-         kdkQ==
+        b=u5T8WKG5Cj54mDzW2/c9YukE4KSR6hsCmjdMpTGgZQAwYtGHZIkZEvg4U3RMTAIjAO
+         bTtGZrhiMqHBaJFw1MMlsfSl1FWWOP7FNizhWNZGbSQpsewvHobT9RHTH+AqrsBYBjwV
+         H+sUfZrcJZHpF994E7iVsCfGC4ahesq9V8J+sOXFAC6r8nsAALl5obV6nOeYMXhz1g9Y
+         bJkuRnVwXo7527ZlKvp7WTM8N34Lgaxqv6nRhATvM+NQz1nO/4Bo9IzseY+2QPaU49W2
+         8vwsCa8kYSfXTu+k9UpKlaY9SNWi0w8HtkQlMB/xen8O+9fYziF1jBkM4GxAb8MkpjIG
+         4M2A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=BTvgHnWiHcfOpP/OTayW4ZkeAnpNIrNKpqD2akEEqgs=;
-        b=ne1HvSmolpdnE2S4XRqp2gNDETMdk84YZ3yiGh0hRqb9NAY2ZZDXXba1IEtAAJZml5
-         48bYvPKtd3Zqqm+ERydJ6buCYB64+T8OT23IVjL9aKFSKi5YnD+oTzteJwMMHk7XzeFO
-         63TZKmIkj5S+CJtRbOS/ThmkGuDMbqvAndTQ3WLAEfttXyG5KbZRkKHfyeyvHNAB29dV
-         MP1Bp3MH+d+A2ksNi0puFdpOPooh0demOk2MIJPdTCBJj7gTcakuv+2a9th29X6cXaZR
-         1WbCsfxbFr+Fz3kxRWOnXLSUy0viyyV9rcfVJoMLNxWDZT6YdR+/HVlJAa7knDaoh42j
-         fo4A==
+        bh=zF1Bg62Ci7aujaTubhQdExu8bc8fOREHdgdMPxRhiMc=;
+        b=NBMyET3JpqUdld/Nwun+wvW2a20ILU4Rc+NLQwFV7OdUcr1T7ibcuTbt9FvmaLpt9m
+         fRUBxIrso2qxTlVS8E2c8K6ibkm9FPshDrwh1YfgijzuJKrX3Lpe4flKzK/eB4VnvvZW
+         VASlzHNkkyGuGR0rt1aossyJzXDBTyF6FFCwO0ajwyMUbrdQCNBBLEB7MHsceTqnijkx
+         7P889uUWUFDOm7f3PiV2lSqMW9TS1kTT9fTJrt1j5OetFncjj1fqQLA0jHIjovW+myA5
+         KIop4eKfAbun5FDqrCv9cKyfVXpR2ixxwF3pyacZrdiAjTNHbiWkP+OrDD1FfzOf01hz
+         XvLw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1210522DCC
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32D8422DCB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+09e05aba06723a94d43d@syzkaller.appspotmail.com,
-	Martijn Coenen <maco@android.com>
-Subject: [PATCH 4.14 59/91] ANDROID: binder: prevent transactions into own process.
-Date: Mon, 30 Apr 2018 12:24:41 -0700
-Message-Id: <20180430184007.246412352@linuxfoundation.org>
+	Mahesh Rajashekhara <mahesh.rajashekhara@microsemi.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.14 56/91] scsi: sd: Defer spinning up drive while SANITIZE is in progress
+Date: Mon, 30 Apr 2018 12:24:38 -0700
+Message-Id: <20180430184007.103170251@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184004.216234025@linuxfoundation.org>
 References: <20180430184004.216234025@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200504167877540?=
-X-GMAIL-MSGID: =?utf-8?q?1599200504167877540?=
+X-GMAIL-THRID: =?utf-8?q?1599200285952229082?=
+X-GMAIL-MSGID: =?utf-8?q?1599200502333381591?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,38 +52,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Martijn Coenen <maco@android.com>
+From: Mahesh Rajashekhara <mahesh.rajashekhara@microsemi.com>
 
-commit 7aa135fcf26377f92dc0680a57566b4c7f3e281b upstream.
+commit 505aa4b6a8834a2300971c5220c380c3271ebde3 upstream.
 
-This can't happen with normal nodes (because you can't get a ref
-to a node you own), but it could happen with the context manager;
-to make the behavior consistent with regular nodes, reject
-transactions into the context manager by the process owning it.
+A drive being sanitized will return NOT READY / ASC 0x4 / ASCQ
+0x1b ("LOGICAL UNIT NOT READY. SANITIZE IN PROGRESS").
 
-Reported-by: syzbot+09e05aba06723a94d43d@syzkaller.appspotmail.com
-Signed-off-by: Martijn Coenen <maco@android.com>
-Cc: stable <stable@vger.kernel.org>
+Prevent spinning up the drive until this condition clears.
+
+[mkp: tweaked commit message]
+
+Signed-off-by: Mahesh Rajashekhara <mahesh.rajashekhara@microsemi.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/android/binder.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/scsi/sd.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/android/binder.c
-+++ b/drivers/android/binder.c
-@@ -2785,6 +2785,14 @@ static void binder_transaction(struct bi
- 			else
- 				return_error = BR_DEAD_REPLY;
- 			mutex_unlock(&context->context_mgr_node_lock);
-+			if (target_node && target_proc == proc) {
-+				binder_user_error("%d:%d got transaction to context manager from process owning it\n",
-+						  proc->pid, thread->pid);
-+				return_error = BR_FAILED_REPLY;
-+				return_error_param = -EINVAL;
-+				return_error_line = __LINE__;
-+				goto err_invalid_target_handle;
-+			}
- 		}
- 		if (!target_node) {
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -2132,6 +2132,8 @@ sd_spinup_disk(struct scsi_disk *sdkp)
+ 				break;	/* standby */
+ 			if (sshdr.asc == 4 && sshdr.ascq == 0xc)
+ 				break;	/* unavailable */
++			if (sshdr.asc == 4 && sshdr.ascq == 0x1b)
++				break;	/* sanitize in progress */
  			/*
+ 			 * Issue command to spin up drive when not ready
+ 			 */
