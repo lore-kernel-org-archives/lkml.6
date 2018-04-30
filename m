@@ -1,48 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752356AbeD3KEp (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 06:04:45 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:38238 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750882AbeD3KEo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 06:04:44 -0400
-Message-Id: <20180430100344.472662715@infradead.org>
-User-Agent: quilt/0.63-1
-Date: Mon, 30 Apr 2018 12:00:11 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: tglx@linutronix.de
-Cc: linux-kernel@vger.kernel.org, peterz@infradead.org,
-        diego.viola@gmail.com, len.brown@intel.com, rjw@rjwysocki.net,
-        rui.zhang@intel.com
-Subject: [PATCH v2 3/7] clocksource: Initialize cs->wd_list
-References: <20180430100008.503783478@infradead.org>
+        id S1752084AbeD3KJd (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 06:09:33 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:45422 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751186AbeD3KJc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 06:09:32 -0400
+Date: Mon, 30 Apr 2018 12:09:30 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>, Tony Lindgren <tony@atomide.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 00/12] mtd: nand: davinci: stop using pdev->id as
+ chipselect
+Message-ID: <20180430120930.4768a7cb@bbrezillon>
+In-Reply-To: <20180430082453.8091-1-brgl@bgdev.pl>
+References: <20180430082453.8091-1-brgl@bgdev.pl>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline; filename=peterz-tsc-early-fix-3.patch
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A number of places relies on list_empty(&cs->wd_list), however the
-list_head does not get initialized. Do so upon registration, such that
-thereafter it is possible to rely on list_empty() correctly reflecting
-the list membership status.
+Hi Bartosz,
 
-Tested-by: Diego Viola <diego.viola@gmail.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- kernel/time/clocksource.c |    2 ++
- 1 file changed, 2 insertions(+)
+On Mon, 30 Apr 2018 10:24:41 +0200
+Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 
---- a/kernel/time/clocksource.c
-+++ b/kernel/time/clocksource.c
-@@ -332,6 +332,8 @@ static void clocksource_resume_watchdog(
- 
- static void clocksource_enqueue_watchdog(struct clocksource *cs)
- {
-+	INIT_LIST_HEAD(&cs->wd_list);
-+
- 	if (cs->flags & CLOCK_SOURCE_MUST_VERIFY) {
- 		/* cs is a clocksource to be watched. */
- 		list_add(&cs->wd_list, &watchdog_list);
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> We have the 'ti,davinci-chipselect' property in the device tree, but
+> when using platform data the driver silently uses the id field of
+> struct platform_device as the chipselect. This is confusing and we
+> almost broke the nand support again recently after converting the
+> platform to common clock framework (which changed the device id in the
+> clock lookup - the problem is gone now that we no longer acquire the
+> clock in the nand driver.
+> 
+> This series adds a new field to davinci-nand platform data, then makes
+> all board use it and finally modifies the two drivers that make use of
+> it.
+> 
+> Bartosz Golaszewski (12):
+>   mtd: nand: davinci: store the core chipselect number in platform data
+
+Raw NAND related patches (that is, everything that is not onenand or
+SPI NAND) should use the "mtd: rawnand: " prefix now. Other than that,
+I'm fine with the patch series, just let me know how you want to have it
+merged (through the MTD tree or the davinci tree).
+
+Thanks,
+
+Boris
