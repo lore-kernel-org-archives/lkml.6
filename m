@@ -1,42 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754297AbeD3OhN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 10:37:13 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37380 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753683AbeD3OhM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 10:37:12 -0400
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20180424141248.GA26136@lst.de>
-References: <20180424141248.GA26136@lst.de> <22411.1524142823@warthog.procyon.org.uk> <20180419124140.9309-21-hch@lst.de> <20180419124140.9309-1-hch@lst.de> <22726.1524227374@warthog.procyon.org.uk>
-To: Christoph Hellwig <hch@lst.de>
-Cc: dhowells@redhat.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-afs@lists.infradead.org, Alexey Dobriyan <adobriyan@gmail.com>
-Subject: Re: [PATCH 20/39] afs: simplify procfs code
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <19808.1525099030.1@warthog.procyon.org.uk>
-Date: Mon, 30 Apr 2018 15:37:10 +0100
-Message-ID: <19809.1525099030@warthog.procyon.org.uk>
+        id S1754324AbeD3Oox (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 10:44:53 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:43910 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753683AbeD3Oou (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 10:44:50 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E2F2B60251
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
+From: Sibi Sankar <sibis@codeaurora.org>
+To: andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org,
+        bjorn.andersson@linaro.org
+Cc: mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-soc@vger.kernel.org,
+        Sibi Sankar <sibis@codeaurora.org>
+Subject: [PATCH v2] arm64: dts: qcom: Add SDM845 SMEM nodes
+Date: Mon, 30 Apr 2018 20:14:28 +0530
+Message-Id: <20180430144428.3288-1-sibis@codeaurora.org>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christoph Hellwig <hch@lst.de> wrote:
+Add all the necessary dt nodes to support SMEM driver
+on SDM845. It also adds the required memory carveouts
+so that the kernel does not access memory that is in
+use.
 
-> I don't think you should need any of these.  seq_file_net or
-> seq_file_single_net will return you the net_ns based on a struct
-> seq_file.  And even from your write routines you can reach the
-> seq_file in file->private pretty easily.
+Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+---
 
-You've taken away things like single_open/release_net() which means I can't
-supply my own fops and use the proc_net stuff.  I wonder if I should add a
-write op to struct proc_dir_entry.
+This patch depends on:
+https://patchwork.kernel.org/patch/10276419/
+https://patchwork.kernel.org/patch/10363361/
 
-David
+ arch/arm64/boot/dts/qcom/sdm845.dtsi | 38 ++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+index 9be763da0664..55e7d7e23b10 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+@@ -21,6 +21,27 @@
+ 		reg = <0 0x80000000 0 0>;
+ 	};
+ 
++	reserved-memory {
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		memory@85fc0000 {
++			reg = <0 0x85fc0000 0 0x20000>;
++			no-map;
++		};
++
++		smem_mem: memory@86000000 {
++			reg = <0x0 0x86000000 0x0 0x200000>;
++			no-map;
++		};
++
++		memory@86200000 {
++			reg = <0 0x86200000 0 0x2d00000>;
++			no-map;
++		};
++	};
++
+ 	cpus {
+ 		#address-cells = <2>;
+ 		#size-cells = <0>;
+@@ -147,6 +168,18 @@
+ 		};
+ 	};
+ 
++	tcsr_mutex: hwlock {
++		compatible = "qcom,tcsr-mutex";
++		syscon = <&tcsr_mutex_regs 0 0x1000>;
++		#hwlock-cells = <1>;
++	};
++
++	smem {
++		compatible = "qcom,smem";
++		memory-region = <&smem_mem>;
++		hwlocks = <&tcsr_mutex 3>;
++	};
++
+ 	psci {
+ 		compatible = "arm,psci-1.0";
+ 		method = "smc";
+@@ -339,6 +372,11 @@
+ 			};
+ 		};
+ 
++		tcsr_mutex_regs: syscon@1f40000 {
++			compatible = "syscon";
++			reg = <0x1f40000 0x40000>;
++		};
++
+ 		apss_shared: mailbox@17990000 {
+ 			compatible = "qcom,sdm845-apss-shared";
+ 			reg = <0x17990000 0x1000>;
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
