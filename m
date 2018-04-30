@@ -1,70 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754642AbeD3PPB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 11:15:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37140 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752255AbeD3PO5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 11:14:57 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9DA922C80
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Mon, 30 Apr 2018 11:14:54 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Josh Triplett <josh@joshtriplett.org>, NeilBrown <neilb@suse.com>,
-        Trond Myklebust <trond.myklebust@primarydata.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>, linux-nfs@vger.kernel.org,
-        Lai Jiangshan <jiangshanlai@gmail.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] rculist: add list_for_each_entry_from_rcu()
-Message-ID: <20180430111454.722c2aa8@gandalf.local.home>
-In-Reply-To: <20180430134308.GT26088@linux.vnet.ibm.com>
-References: <152506256513.7246.13171564155614823841.stgit@noble>
-        <152506269061.7246.13075216914692813995.stgit@noble>
-        <20180430052032.GA16963@localhost>
-        <20180430134308.GT26088@linux.vnet.ibm.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1754669AbeD3PPJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 11:15:09 -0400
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:45622 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752255AbeD3PPG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 11:15:06 -0400
+Date: Mon, 30 Apr 2018 18:15:03 +0300
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Colin King <colin.king@canonical.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] media: ispstat: don't dereference user_cfg before
+ a null check
+Message-ID: <20180430151503.d3kq2zomil6uh2xf@valkosipuli.retiisi.org.uk>
+References: <20180424130618.18211-1-colin.king@canonical.com>
+ <20180426083731.72bmygsp2waf3eeu@valkosipuli.retiisi.org.uk>
+ <2302951.d1m0yxIoYN@avalon>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2302951.d1m0yxIoYN@avalon>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 30 Apr 2018 06:43:08 -0700
-"Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
-
-> On Sun, Apr 29, 2018 at 10:20:33PM -0700, Josh Triplett wrote:
-> > On Mon, Apr 30, 2018 at 02:31:30PM +1000, NeilBrown wrote:  
-> > > list_for_each_entry_from_rcu() is an RCU version of
-> > > list_for_each_entry_from().  It walks a linked list under rcu
-> > > protection, from a given start point.
-> > > 
-> > > It is similar to list_for_each_entry_continue_rcu() but starts *at*
-> > > the given position rather than *after* it.
-> > > 
-> > > Naturally, the start point must be known to be in the list.  
-> > 
-> > I'd suggest giving an explicit advisory comment to clarify and suggest
-> > correct usage:
-> > 
-> > "This would typically require either that you obtained the node from a
-> > previous walk of the list in the same RCU read-side critical section, or
-> > that you held some sort of non-RCU reference (such as a reference count)
-> > to keep the node alive *and* in the list."
-> > 
-> > (Feel free to wordsmith the exact wording, but something like that seems
-> > like it would help people understand how to use this correctly, and make
-> > it less likely that they'd use it incorrectly.)  
+On Thu, Apr 26, 2018 at 01:03:15PM +0300, Laurent Pinchart wrote:
+> Hi Sakari,
 > 
-> What Josh said!  Could you also contrast this with the existing
-> list_for_each_entry_continue_rcu() macro in the header comment as well
-> as in the commit log?
+> On Thursday, 26 April 2018 11:37:31 EEST Sakari Ailus wrote:
+> > On Tue, Apr 24, 2018 at 02:06:18PM +0100, Colin King wrote:
+> > > From: Colin Ian King <colin.king@canonical.com>
+> > > 
+> > > The pointer user_cfg (a copy of new_conf) is dereference before
+> > > new_conf is null checked, hence we may have a null pointer dereference
+> > > on user_cfg when assigning buf_size from user_cfg->buf_size. Ensure
+> > > this does not occur by moving the assignment of buf_size after the
+> > > null check.
+> > > 
+> > > Detected by CoverityScan, CID#1468386 ("Dereference before null check")
+> > > 
+> > > Fixes: 68e342b3068c ("[media] omap3isp: Statistics")
+> > > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> > 
+> > Thanks for the patch.
+> > 
+> > Gustavo sent effectively the same patch a moment earlier, and that patch
+> > got applied instead.
 > 
+> Isn't there a guarantee that new_buf won't be NULL ? The new_buf pointer comes 
+> from the parg variable in video_usercopy(), which should always point to a 
+> valid buffer given that the ioctl number specifies a non-zero size.
 
-Should Documentation/RCU/whatisRCU.txt be updated?
+Fair question. After looking at the code, I agree with you; there should be
+no reason to perform the check in the first place. It may have been that
+the function has been used differently in the past but the check should be
+rather removed now.
 
-Specifically section: 7.  FULL LIST OF RCU APIs
+I'll drop the patch.
 
--- Steve
+-- 
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi
