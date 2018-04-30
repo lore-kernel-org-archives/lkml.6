@@ -1,104 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753044AbeD3LSa (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 07:18:30 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:35752 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752668AbeD3LS3 (ORCPT
+        id S1753039AbeD3LUh (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 07:20:37 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:33334 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751064AbeD3LUg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 07:18:29 -0400
-X-Google-Smtp-Source: AB8JxZquBUopHcrqa6xBHSDyldom1b1d7sU9dDPSPKvvw/pF5icpX6gLxMXXLeJ0XUl4L3VaDt4yyA==
-Subject: Re: [PATCH] watchdog: sp805: add restart handler
-To: Jongsung Kim <neidhard.kim@lge.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Wim Van Sebroeck <wim@iguana.be>, linux-watchdog@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Chanho Min <chanho.min@lge.com>
-References: <20180430064433.28715-1-neidhard.kim@lge.com>
-From: Guenter Roeck <linux@roeck-us.net>
-Message-ID: <452a2320-c297-2bd2-2e98-0b71a077c065@roeck-us.net>
-Date: Mon, 30 Apr 2018 04:18:26 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 30 Apr 2018 07:20:36 -0400
+Date: Mon, 30 Apr 2018 13:20:29 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Gaurav Kohli <gkohli@codeaurora.org>, tglx@linutronix.de,
+        mpe@ellerman.id.au, mingo@kernel.org, bigeasy@linutronix.de,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Neeraj Upadhyay <neeraju@codeaurora.org>,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH v1] kthread/smpboot: Serialize kthread parking against
+ wakeup
+Message-ID: <20180430112029.GF4082@hirez.programming.kicks-ass.net>
+References: <1524645199-5596-1-git-send-email-gkohli@codeaurora.org>
+ <20180425200917.GZ4082@hirez.programming.kicks-ass.net>
+ <20180426084131.GV4129@hirez.programming.kicks-ass.net>
+ <20180426161820.GA15391@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180430064433.28715-1-neidhard.kim@lge.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180426161820.GA15391@redhat.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/29/2018 11:44 PM, Jongsung Kim wrote:
-> Add restart handler for SP805 watchdog so that the driver can be
-> used to reboot the system.
+On Thu, Apr 26, 2018 at 06:18:20PM +0200, Oleg Nesterov wrote:
+> On 04/26, Peter Zijlstra wrote:
+> >
+> > For the others, I think we want to do something like the below. I still
+> > need to look at TASK_TRACED, which I suspect is also special,
 > 
-> Signed-off-by: Jongsung Kim <neidhard.kim@lge.com>
-> ---
->   drivers/watchdog/sp805_wdt.c | 19 +++++++++++++++++++
->   1 file changed, 19 insertions(+)
+> Yes, and TASK_STOPPED.
+
+I already did that one, right ;-)
+
 > 
-> diff --git a/drivers/watchdog/sp805_wdt.c b/drivers/watchdog/sp805_wdt.c
-> index 01d816251302..01f7b6c29f92 100644
-> --- a/drivers/watchdog/sp805_wdt.c
-> +++ b/drivers/watchdog/sp805_wdt.c
-> @@ -23,6 +23,7 @@
->   #include <linux/module.h>
->   #include <linux/moduleparam.h>
->   #include <linux/pm.h>
-> +#include <linux/reboot.h>
->   #include <linux/slab.h>
->   #include <linux/spinlock.h>
->   #include <linux/types.h>
-> @@ -67,6 +68,7 @@ struct sp805_wdt {
->   	struct clk			*clk;
->   	struct amba_device		*adev;
->   	unsigned int			load_val;
-> +	struct notifier_block		restart;
->   };
->   
->   static bool nowayout = WATCHDOG_NOWAYOUT;
-> @@ -200,6 +202,18 @@ static const struct watchdog_ops wdt_ops = {
->   	.get_timeleft	= wdt_timeleft,
->   };
->   
-> +static int
-> +wdt_restart(struct notifier_block *this, unsigned long mode, void *cmd)
-> +{
-> +	struct sp805_wdt *wdt = container_of(this, struct sp805_wdt, restart);
-> +
-> +	writel_relaxed(0, wdt->base + WDTCONTROL);
-> +	writel_relaxed(0, wdt->base + WDTLOAD);
-> +	writel_relaxed(INT_ENABLE | RESET_ENABLE, wdt->base + WDTCONTROL);
-> +
-> +	return 0;
-> +}
-> +
->   static int
->   sp805_wdt_probe(struct amba_device *adev, const struct amba_id *id)
->   {
-> @@ -241,6 +255,10 @@ sp805_wdt_probe(struct amba_device *adev, const struct amba_id *id)
->   	}
->   	amba_set_drvdata(adev, wdt);
->   
-> +	wdt->restart.notifier_call = wdt_restart;
-> +	wdt->restart.priority = 128;
-> +	register_restart_handler(&wdt->restart);
-> +
+> ptrace_freeze_traced() and ptrace_unfreeze_traced() should be fine, but
+> ptrace_stop() wants set_special_state() too, I think.
 
-Why not use the watchdog core ?
+Thanks for going through that, I'll update the patch.
 
-Guenter
-
->   	dev_info(&adev->dev, "registration successful\n");
->   	return 0;
->   
-> @@ -253,6 +271,7 @@ static int sp805_wdt_remove(struct amba_device *adev)
->   {
->   	struct sp805_wdt *wdt = amba_get_drvdata(adev);
->   
-> +	unregister_restart_handler(&wdt->restart);
->   	watchdog_unregister_device(&wdt->wdd);
->   	watchdog_set_drvdata(&wdt->wdd, NULL);
->   
+> > +/*
+> > + * set_special_state() should be used for those states when the blocking task
+> > + * can not use the regular condition based wait-loop. In that case we must
+> > + * serialize against wakeups such that any possible in-flight TASK_RUNNING stores
+> > + * will not collide with out state change.
+> > + */
+> > +#define set_special_state(state_value)					\
+> > +	do {								\
+> > +		unsigned long flags; /* may shadow */			\
+> > +		raw_spin_lock_irqsave(&current->pi_lock, flags);	\
+> > +		current->state = (state_value);				\
+> > +		raw_spin_unlock_irqrestore(&current->pi_lock, flags);	\
+> > +	} while (0)
+> > +
 > 
+> Agreed.
+> 
+> I thought that perhaps we can change ttwu_do_wakeup() cmpxchg() instead of
+> plain p->state = TASK_RUNNING, but this helper looks much more clear and simple.
+
+Aside from cmpxchg() slowing down the common fast path, that also
+would not work on architectures where cmpxchg() is not in fact atomic vs
+regular stores (and yes, sadly we still have those, PARISC and SPARC32
+come to mind).
