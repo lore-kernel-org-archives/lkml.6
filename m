@@ -1,35 +1,34 @@
 Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2136210-1525129953-2-16320918994735992111
+X-Cyrus-Session-Id: sloti22d1t05-2075229-1525126688-2-3958629070453398189
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, MAILING_LIST_MULTI -1, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
-  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+  LANGUAGES ensk.us-ascii, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
+X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525129952; b=ZcyTL/3Yq7msi8fxHwK+1GyV33z4q6FqA0xgFSpaFwVCfFMWrA
-    1IF6tANfC4HZGU/+tNln/OHOhOhaLOhlZLXaEcpFbs7Y2pbYV7WKYpNjbxfbi+4R
-    T9oRvNFWzXhKqlGtPZ5TLh3MoX75wfSGfJvL/RufBW6GRMuxpAJ5SnyAJkeMRnsQ
-    h/Ubq95dp2tqCcNZ6oC04iKvQpYVLxBqmKEjpBSja15ra07bf/YG4gUqKeuCUtNA
-    gorpofjSZM6qQ4DwdtOshQcpk7N5e0O15Ftmtj0A+b08qBrKhyGZm/9asxiCmsKH
-    3E4xgGUd/z8CWzo5ZqwpTGTi8VXQ4FPXHVsA==
+    1525126688; b=dvHpCv8ZV7eEyEPE27+TEmgJIFJpeQet15pLOR+jZiexpxG/Tm
+    JKlB7WnIso8gOiX7xfHCX5Rboz5ymDN5XERCES8IFWQ4dkUtw8i8iTYUwCV7I9n+
+    YP50rFuSCa2We0aFL5ZJjl8ze0Viqlqs7+TNoXZTwLwpf0tLcc5WpaSNeS7bOhPo
+    X2BTXINqOqaAwb+zbg88AQbr/VsWvnlcS6zkRRV0GroG5BMd74US1h0G/VgMwBOx
+    ngLudXvgD/oEhGwqVy6DD4T385qRDySsPkQswuqGdxGEgGytEl19EulsBo+G1Z8I
+    CLGRv2E6dJ4uygp3btR9fS+Co4ioW5uFVDMg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=reply-to:subject:to:cc:references:from
-    :message-id:date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1525129952;
-    bh=eBs0mMKMe6/5GZTqmZ+GLKHngAXbNgKPHsmz4dXgNuo=; b=i7Iitk+lBaMx
-    WCqlm0kRpyU6iuKbKHsDiZ6FuFfium1XiOb746NFarrxy1flCwhrc2TJIqHA6QlO
-    738m4/HI6TZFGa2gtA11KgoYfTxegBp8lBJqLDgvrFk8QU8BrdGYW6dMmVgf2GBA
-    2sxwTNEuXNHVGrPQd+smMnJ9sMh3MI9NMh8aNHzQqj9FQs368ivFJvQ5ZNrwWVPV
-    6acN8/sjJ/2OmDHu6XKW1xbv3uwo718s44uQfEKSTZWh6ZkdlpUCzHamRehd+OXG
-    tCuTvNw5i56q2QfPy0vYh+9/hycdmE5OeVD9d4lwTTM70xVmgcXUILTuD6R+KDqw
-    tQrxHwMhbQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:in-reply-to:references:sender:list-id;
+    s=fm2; t=1525126688; bh=/JAav4AjmzoQzc8oYvw1ouzGZzoz4BcglFfQ9Hh
+    LSJQ=; b=Sh3M3IKtRCm//pwb9Df57VkVE+l2nfaCu/0DsNqjDXyvQnnZpJVMIIR
+    xUOKqyEI2dTfcbWVdaUyteI2JnKzzj41/BhtIfw1OrQc6jzM4usj0r6nW/xerDt1
+    VcSor3MTrYo8sT0cw8Yy9UT8SbI3ivGYLcGpAudjDjovMSe3YRN6lW2dm5UiXEvp
+    GQND6ampHEUoFn5YYx7/ZGT3vk/umzRWocu58hdio5g96MGtnfR5PtNqwiJwaoZn
+    VNUWGz4YA+2pkNpgHq1R1fBb4x+BAAf8SXkFmCnynXjjuHnn576Yymjto5k946Td
+    dp3NaHDWLikrrgtbLAcTFmdmey4WXOQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,8 +37,8 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+    x-vs=clean score=25 state=0
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
@@ -49,127 +48,168 @@ Authentication-Results: mx6.messagingengine.com;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+    x-vs=clean score=25 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfBfHSFBO9kWybm/fOrmXZMXIKiZDe1+BwRnd7yS6KxEyb9ool3R75W4yDLyimBNozdDlgdG/A9Tp3dgItjzu+pevlaAVBxS42AItKk6s7+Ipc+3/gBd2
-    oAzq4RW6X8GFij2sSvwc6/HF7S+uF29QqZHqZ/Ma44SXkBYOGxWh7AJKLl/7W4iwJnofklJNzwcnEgLAw/UrNeYFAbCh3h8CAJdZQd3AKNQnL3TzMPvgZkUg
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=VwQbUJbxAAAA:8 a=dsnrDgoj750ufJt9GM4A:9 a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10
-    a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfGa+FMI38qEUhaqkAXrFMGo4Q9K/4cIzWHufKpGzHEAkquxMmmLu4llwM17ApoeVsxVXytbJO/yD5mDo58U65Gm8aKNNfnupVdSUu5UT2NsX2pOZb/yT
+    etLSTC/W5f7voNhV3CX4LPWFFDUy8s7HVvzwemNyPLudBK0nkM3tqAXQTjSEUa3hiTfDl/4nIygrdP7ssHnXpdLX43Dphe/NrQOLLN5ciFNcMgbl+GSQfie4
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8
+    a=q2PgIVKw4fGj3j7AW1QA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753744AbeD3XMT (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 30 Apr 2018 19:12:19 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:44686 "EHLO
+        id S1755302AbeD3WR6 (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 30 Apr 2018 18:17:58 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:43000 "EHLO
         mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752225AbeD3XMR (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Mon, 30 Apr 2018 19:12:17 -0400
-Reply-To: shuah@kernel.org
-Subject: Re: [REBASED PATCH 1/2] usbip: usbip_host: delete device from
- busid_table after rebind
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: valentina.manea.m@gmail.com, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Shuah Khan <shuah@kernel.org>
+        with ESMTP id S1753482AbeD3WR4 (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Mon, 30 Apr 2018 18:17:56 -0400
+X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "References"
+From: "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
+To: valentina.manea.m@gmail.com, shuah@kernel.org,
+        gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [REBASED PATCH 2/2] usbip: usbip_host: run rebind from exit when module is removed
+Date: Mon, 30 Apr 2018 16:17:20 -0600
+Message-Id: <b83a623aab86df09c49b37010848121f807c3fba.1525115738.git.shuah@kernel.org>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <9cfffc546fc9774a9e38e81b0f396866a9d8d11f.1525115738.git.shuah@kernel.org>
 References: <9cfffc546fc9774a9e38e81b0f396866a9d8d11f.1525115738.git.shuah@kernel.org>
- <20180430224831.GA7190@kroah.com>
-From: Shuah Khan <shuah@kernel.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=shuah@kernel.org; prefer-encrypt=mutual; keydata=
- xsFNBFIzbI0BEADtNDUjCT2vg2pVl9+XAwjq43AnDpggRIWjq8c82lcGgt9WYeQ2ezoGHADx
- 9XS5dP8OUdf2e1j2GtxOA9DpuAE6KNp9q4n2WHl9Q6Y06JwaXcMKlqH1WzAu8QWDou8KC8UL
- k+Ma/80uqlwQDmy+SDuLSLSPXP03P3NfKII8vAdREVTDfDzle+IKXDgYB8E5On1533QNVXdH
- rWQOU/SggOF8pGklv/a8VMR6KUYbkkkFy9wGLSLeBUx6ZfRkZSYBcAinwHLqWyDGB1993l1K
- y/FArlfEYLjKZ9od9ZGmnA3Ww9EMqpUUTP9b7a/sNuBhmsk5WVwMhMEtCxtIxHj0PVX8+m2R
- mj7mvdBukwsBOfu4ef0tK8CJHUNOXpWwNEl8LY1S+yJS/AZuwvzjpmfNQCzdixGG48oAeb11
- 9YKDCAUP0gjI44jZOiWb38jUn1SGqphW4i2jSiDi9R82mCtrcEXFHUuom2aRGyXEVdL9cEor
- 9/e4uaLDDZPGI4QqlbH6VoJkLzNFTAZnCKW9UsPXonQ7lP9hzH4+3sekYDkpmm2FcIXfVBRC
- XQPri2YuJtk/tgjuTC/5Y+b1itiI/xuKj7YmTYwFICUjYF9ehNe/6giG7zYZPIp2cr+oKwW5
- OTo49wqTdUVm84gULn90p2YQlXnbcw81l+K09AvGj5BntvmjDQARAQABzSFTaHVhaCBLaGFu
- IDxzaHVhaEBnb25laGlraW5nLm9yZz7CwXoEEwECACQCGwMCHgECF4AFCwkIBwMFFQoJCAsF
- FgIDAQAFAlIzc34CGQEACgkQCwJExA0NQxyAmhAAiIg5u11jeZtK2T1cGqITPyrzMg+Mu5WB
- /8xKvbc8wYuStJ6mn84zedBzAjjpCUpdZBfGKGV4Piyj6RyVtPOUe1aze7xNl6jq2XodyHpz
- yCBpVozvQGlWdSO34vTA+iwmbQat4DDHoIjvuGf2gqMzSNXiP6KG0erKOP0l5wBGOgjRtJAn
- 6LSrxC/q7M0OKdSxOQpLd9JHc9MPhjRiEHJGxRTYwb93kzJVZTYVIi5ns709/VvR9dA2kcJx
- mE7AxFduFYEkndF1eS15YRHzPUgH6qlcmpd+BqFDd9Xr4qlEygcOKbUktAbi0iqGJZQiAm7k
- Bc1C/WLVmf6w1Hmd5kc+9JU4nYN3LzsvUHVkzY+XqaTkYYIlziRec40XvIDE6J55ByJYTO94
- iBswwY7IwcxL1qUWrBDvJC8jJFtZw+hcuCZr8cwH9UpFRPejZ2iuXycLagtYAe6ppor8uepj
- FB3yJjrFwwe5XSxjAQyBRvGpzLjZTvSGfsJ6WUwE+7/my9Ab+wnDhebxEbyCuGoIQsNaA5qh
- JHL5xXEw0yVrYSiuBTuOVyTwZvyisvOWAnehIlVok+Oq372vjXitfAr43doeyKoQJkpKdcgD
- wMfU2Sxbiqvfqid/9g+GaySvA9jnkO11INvUqQAnFwQ8QjmzRCMRVK3/ZP4lQ8d4rkks+Rsy
- 7HvOwU0EUjNzxQEQALrsbTCFLIY0/JmCNZ4Wdy6iWdAYjLBqKVxLQ9hBD+y8cQ/tF183XfP/
- oVQrRHiJXJHFN94KjL05g9ww4HHoqSq66f8nYFBtZ58kvhY1qgZDbnXaraz5dTN+um5jUTNp
- jmnqmVRiEs+UredmKUIQkQOnbY+sZNUPb25BX6ebdQ0p+aiJysJtO6fi/Au2K2PIj26RmwAK
- L2+DGSqFR183N8/XTBtb2qtFsvm1hO+jUtt7MB6+jf35AR+CDZd6c+ypqO+RpoS3G+5Cbiv0
- D8jMQxWgZ8MTxAKlI5aUT2J2ep+cQxnm8J1NXM996MkUZE8+6CFeH8y/JftlsZ1dvaBs4eHC
- UqeE2xc6dFxrftDuDlFTtEDGCPmd/z5KWUAM0yX+pJXUiu4ljxtu0drdo/QfcNf4RTSw4JoI
- WE8WjHTnONfyMW860qJknddYB2/m+tpF4C/5ocNms3SaFYnMPOu1orn3imBMEeYmiX778FU+
- CgZBIlftMwcY2+3EeWBTjbJdZnhJ0jD+akLRnjJWUXY9RtxYLS2D7nFZCiUiwjGrh+ctEs7U
- we4in7KOb1lZKykrH/DM70HgKRkSHnFqNSinbRA2ty8QoE04RIy56JNNgqDSthlgW/aY7Q4g
- d70eu5/GMuqvMAa8ONceuJZ6vEZ9vvPL0Boolac+I0hiS71KqqpvABEBAAHCwV8EGAECAAkF
- AlIzc8UCGwwACgkQCwJExA0NQxyxXxAAqaLaK7pYT+z89HDsIrgWIbOv1Fr+LuEWYLk9UFEm
- Y0S/Hl7WIII1XHnspeWauaA6XDQ14Lyw7ywmhwhbwfUPC+W2UXRZ/6azE+pxJYcde41pLXgY
- vBHrvs2thzsZNUHslwHoN/tNwRZLpg2tbRVCbjV7/xAWXl0WCmvOd0C5yMVKx4oQ6/Eg1EaW
- TiPpZ5DM0TKBQ99nzwx8yQs2AZSzgl/mx0e9jWFzsn0XiH8DJKiGK5biKiHN3gsorEULkAje
- /GqbYDQuHbT7khmKiLtLcXktV8OVTGAg+cJaHtmpRSUQ16Gji4IkZCt0ZTZclAs2EstECa5a
- zuehlSFo7wmVteR4/ox+qJvQjwI+CU2l4Rcz9l9QgAo5bhW74oQ4mcN3o9OzRo85e8DVaR8K
- jKe2BHpSRV7mpiRXQ/t7sNKZN3w8mMIXzq5xa+TFWaVHJfOLwKvtFpL/7gRBZV2+yqV/J35b
- CjTFOY1/+fA5hwODGBz/SiHv21t11Nnk6yg9Solpc4HG47V24h2lTwlEfIUTpuwhYG+LBY48
- uPJXU+CdBcyHUwWSA/O1/vXMuJ6byXTbcwtrwBnIO3hoBfxIfGVIgzjwI+/PkDEyn3m0+IAX
- 7ipOURNtfmY71UIeV+kk2j9tHWlcx8yOmStvZ3JFpAuqgZhrDa9aAlaq9GyT/t3HsKs=
-Message-ID: <439ac9b8-5eec-3ada-bacd-af42b9353aeb@kernel.org>
-Date: Mon, 30 Apr 2018 17:12:04 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180430224831.GA7190@kroah.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <9cfffc546fc9774a9e38e81b0f396866a9d8d11f.1525115738.git.shuah@kernel.org>
+References: <9cfffc546fc9774a9e38e81b0f396866a9d8d11f.1525115738.git.shuah@kernel.org>
 Sender: linux-usb-owner@vger.kernel.org
 X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 04/30/2018 04:48 PM, Greg KH wrote:
-> On Mon, Apr 30, 2018 at 04:17:19PM -0600, Shuah Khan (Samsung OSG) wrote:
->> Device is left in the busid_table after unbind and rebind. Rebind
->> initiates usb bus scan and the original driver claims the device.
->> After rescan the device should be deleted from the busid_table as
->> it no longer belongs to usbip_host.
->>
->> Fix it to delete the device after device_attach() succeeds.
->>
->> Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
->> ---
->>  drivers/usb/usbip/stub_main.c | 6 ++++++
->>  1 file changed, 6 insertions(+)
-> 
-> Why are these REBASED?  I can't remember the first version of these
-> patches, what are these for?
-> 
-> confused,
-> 
-> greg k-h
-> 
-> 
+After removing usbip_host module, devices it releases are left without
+a driver. For example, when a keyboard or a mass storage device are
+bound to usbip_host when it is removed, these devices are no longer
+bound to any driver.
 
-Here is the original patches
+Fix it to run device_attach() from the module exit routine to restore
+the devices to their original drivers. This includes cleanup changes
+and moving device_attach() code to a common routine to be called from
+rebind_store() and usbip_host_exit().
 
-https://patchwork.kernel.org/patch/10337657/
-https://patchwork.kernel.org/patch/10337661/
+Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+---
+ drivers/usb/usbip/stub_dev.c  |  6 +----
+ drivers/usb/usbip/stub_main.c | 60 ++++++++++++++++++++++++++++++++++++-------
+ 2 files changed, 52 insertions(+), 14 deletions(-)
 
-I sent a 3 patch series and the last two didn't apply to usb-next. You asked me to
-rebase them. I realized the reason they didn't apply is because these two depend on
-the fixes that went into 4.17-rc3 and now with usb-next at 4.17-rc3, they apply.
-
-I ended up generating patches on usb-next latest and resend the rebased patches.
-
-Hope this makes sense.
-
-thanks,
--- Shuah
-
+diff --git a/drivers/usb/usbip/stub_dev.c b/drivers/usb/usbip/stub_dev.c
+index 7813c1862941..9d0425113c4b 100644
+--- a/drivers/usb/usbip/stub_dev.c
++++ b/drivers/usb/usbip/stub_dev.c
+@@ -448,12 +448,8 @@ static void stub_disconnect(struct usb_device *udev)
+ 	busid_priv->sdev = NULL;
+ 	stub_device_free(sdev);
+ 
+-	if (busid_priv->status == STUB_BUSID_ALLOC) {
++	if (busid_priv->status == STUB_BUSID_ALLOC)
+ 		busid_priv->status = STUB_BUSID_ADDED;
+-	} else {
+-		busid_priv->status = STUB_BUSID_OTHER;
+-		del_match_busid((char *)udev_busid);
+-	}
+ }
+ 
+ #ifdef CONFIG_PM
+diff --git a/drivers/usb/usbip/stub_main.c b/drivers/usb/usbip/stub_main.c
+index fb46bd62d538..587b9bc10042 100644
+--- a/drivers/usb/usbip/stub_main.c
++++ b/drivers/usb/usbip/stub_main.c
+@@ -14,6 +14,7 @@
+ #define DRIVER_DESC "USB/IP Host Driver"
+ 
+ struct kmem_cache *stub_priv_cache;
++
+ /*
+  * busid_tables defines matching busids that usbip can grab. A user can change
+  * dynamically what device is locally used and what device is exported to a
+@@ -169,6 +170,51 @@ static ssize_t match_busid_store(struct device_driver *dev, const char *buf,
+ }
+ static DRIVER_ATTR_RW(match_busid);
+ 
++static int do_rebind(char *busid, struct bus_id_priv *busid_priv)
++{
++	int ret;
++
++	/* device_attach() callers should hold parent lock for USB */
++	if (busid_priv->udev->dev.parent)
++		device_lock(busid_priv->udev->dev.parent);
++	ret = device_attach(&busid_priv->udev->dev);
++	if (busid_priv->udev->dev.parent)
++		device_unlock(busid_priv->udev->dev.parent);
++	if (ret < 0) {
++		dev_err(&busid_priv->udev->dev, "rebind failed\n");
++		return ret;
++	}
++	return 0;
++}
++
++static void stub_device_rebind(void)
++{
++#if IS_MODULE(CONFIG_USBIP_HOST)
++	struct bus_id_priv *busid_priv;
++	int i;
++
++	/* update status to STUB_BUSID_OTHER so probe ignores the device */
++	spin_lock(&busid_table_lock);
++	for (i = 0; i < MAX_BUSID; i++) {
++		if (busid_table[i].name[0] &&
++		    busid_table[i].shutdown_busid) {
++			busid_priv = &(busid_table[i]);
++			busid_priv->status = STUB_BUSID_OTHER;
++		}
++	}
++	spin_unlock(&busid_table_lock);
++
++	/* now run rebind */
++	for (i = 0; i < MAX_BUSID; i++) {
++		if (busid_table[i].name[0] &&
++		    busid_table[i].shutdown_busid) {
++			busid_priv = &(busid_table[i]);
++			do_rebind(busid_table[i].name, busid_priv);
++		}
++	}
++#endif
++}
++
+ static ssize_t rebind_store(struct device_driver *dev, const char *buf,
+ 				 size_t count)
+ {
+@@ -189,16 +235,9 @@ static ssize_t rebind_store(struct device_driver *dev, const char *buf,
+ 	/* mark the device for deletion so probe ignores it during rescan */
+ 	bid->status = STUB_BUSID_OTHER;
+ 
+-	/* device_attach() callers should hold parent lock for USB */
+-	if (bid->udev->dev.parent)
+-		device_lock(bid->udev->dev.parent);
+-	ret = device_attach(&bid->udev->dev);
+-	if (bid->udev->dev.parent)
+-		device_unlock(bid->udev->dev.parent);
+-	if (ret < 0) {
+-		dev_err(&bid->udev->dev, "rebind failed\n");
++	ret = do_rebind((char *) buf, bid);
++	if (ret < 0)
+ 		return ret;
+-	}
+ 
+ 	/* delete device from busid_table */
+ 	del_match_busid((char *) buf);
+@@ -323,6 +362,9 @@ static void __exit usbip_host_exit(void)
+ 	 */
+ 	usb_deregister_device_driver(&stub_driver);
+ 
++	/* initiate scan to attach devices */
++	stub_device_rebind();
++
+ 	kmem_cache_destroy(stub_priv_cache);
+ }
+ 
+-- 
+2.14.1
 
