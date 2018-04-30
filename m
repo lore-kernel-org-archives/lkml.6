@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1851310-1525116787-2-11541596668843912534
+X-Cyrus-Session-Id: sloti22d1t05-1851310-1525116732-2-3860359598858617984
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525116786; b=VOOFkQZc9fy4NXSqKMDFKd5vP/8P0jkxI8CWL13lBGRaDCZT4W
-    95zystUJk+WLa/nrLCHAnyu9f87+ziJp7Tw7g3hpMIoioKtIkKo++wNN2G7NjijH
-    z35Xg7Wm5xlJqM7KdHxgm4btr57/vyA0VaHxqMSZaHg8X9H/xR5YOcv3rjAPP1i2
-    C3G1TnZYjLP8Vjc2c/NC05fKhy2VmiQbQ36x2WvKLV77/yegHBJO69n0hMd0TT3x
-    dK/Ero+fJ3uAos3YwRapmlnkA9yC6ycLI0i7iDg12uN8vRaiWcvXMJwIs5d26SFT
-    0SkWNdAnTCrhHXcTZlFS5UdeiIo0FxenCQvA==
+    1525116731; b=BD6yuF48ZiY4YZcCeIg0TpNbrzgZ27oD77ASmkOnG/vGtFA7a3
+    t1GY7DlYv6WESGQMVqIL+BiOanFNmGWpAfwf+BvfXksKfetxaFzk42W6euMwHtX2
+    iKwhMKF+9aks1ZSmZ5ONxLOq6Svc1HGJ55PuAKE4ryF0oZ0hamRlENOZcUOHS+Sp
+    6AKG5sqPrnSlm1RLyGEnSQqDrffUxjCXLE+ZaCMsetRg9hWS1FHzBnV4gCXrUnDz
+    b+2UweYO1GEIFeHJHqQpLJNf9isLqfqGFJQWJaEISSShYRkSQd5bkqOzLfYQ//Yu
+    I1tznPVEe0BxAYKaqS0KiFrMZsubhG0v29pg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1525116786; bh=U+3fIaiuQAP0P0C4MyRhgXjVufcTcA
-    cSdqFvwDtO1AA=; b=IvT19wjT5GNema9011F5AVBiHFVDWCSQuYwRQ+ue/x87do
-    +TuSem0/BgymF8Kq0FxNxABTIIdtQ4BnnB57VwSlpVJIu9+9RexvukYUZR3cN/bk
-    kCCvqDpMcvBdLn3ae+niPgkOOQ507AkVDKtEcGN3r7dsNfFegWxRpz8VR5AP+LQF
-    EH7tx5jiXde6NE87VwuQYt8yhCLKI4isFx3hRo/52nOBL0FLcWtTHXf4hOH/HBMV
-    Uq1y4opZ7V6XI5xJJBhaupxqYM85BwIt6dBY5DwGDSwnTFfvxLSNaE9Ap9Woztu1
-    kNwgThajgH05iL+4V5KiYwgMkHHWebR4FUlhDkGw==
+    :list-id; s=fm2; t=1525116731; bh=picRc/ofA9i4Ig6fJOzSQD860iVzkW
+    lBhjPP7mxUyV4=; b=Ne39n/vW6rY1EgS1/tjA7vGMjnOTGBvJ/ZqNXi2Vz69+IE
+    /iBYEDYmjDBR1KL0lf+h6rltYZsFqnmeZ/zUeKbV7dF/mu2cJlOmuIFeQyyiMZP6
+    LznZtMhlsn1MJG2v0U+fjq4/lPbU7xjfuIDvr5uG+fNiAXX+Oo35Pi/3QhmIUj+5
+    aJsfpSqRBKZOeeHRSnfV0P0a81t22Q0WFR45aGk4KHyj7wzSWecGdyUXlE6e7s0x
+    oGhWzMWZ6S07IoIsQpUWA1Fwkq/fXGepou7jxO4C34uxmY6EOBNv0apn3OY+jdTz
+    glQl2WxlLvNRblT2qJmYl9p4vi6kVrGBElY+HLcg==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,32 +51,34 @@ Authentication-Results: mx5.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJNunnvIPsWfDjQEqf6VxBH0ARfFhc95/UHUiIXCO7OCzDePgPHb8WWmWk3JeeN6IbbcjTXk0Cdhq8Hx7xLr7GBOrOLnExF+ESIB0LbPKaX5PGG4PAcY
-    jia1hXEGg5PQI2OKO10BR5LU56VWjQWYAzfnO0uRGBXO81VsBwAr+COrVX8YyFBQeuZhuYd5UhuDpX353hkAr9E8t1NVKb5iXc0TKvGqayV0hLt0WEiBEeWd
+X-CM-Envelope: MS4wfHyNqLKbzB8yFnaNPBjqUnbX4KNcQJqgqZmGax0bCpduI8jpFnIRB7r/TuD6wRbjkt9tLtKJmqCzvQ/UeIkzaeRGKfkICwukzBXK+0gS18KOVo/QewIo
+    TFkyZ4H9wNF4xqNkMVfD+Ep5t0nmmV0pE6UkPlA5eHmbye/ac+EZnVKeM/8XXbpW3CetL5IhNiII70Rm44fFktBaNjyOWq2NI+yNA0UrCnIEymRZLXYNcMnN
 X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=O-rJpSWE__A3FIjncxQA:9
-    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=ag1SF4gXAAAA:8 a=UwP2SR5P6s2dbk43-pEA:9
+    a=m3qw9H-hkk5F1kt-:21 a=aqC3XoRQiQxCncLf:21 a=QEXdDO2ut3YA:10
+    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932395AbeD3T26 (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 30 Apr 2018 15:28:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37138 "EHLO mail.kernel.org"
+        id S1756458AbeD3Tbz (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 30 Apr 2018 15:31:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37410 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756427AbeD3T25 (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 30 Apr 2018 15:28:57 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B378F22DCC
+        id S932429AbeD3T3A (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 30 Apr 2018 15:29:00 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C146B2344C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thor Thayer <thor.thayer@linux.intel.com>,
-        Dinh Nguyen <dinguyen@kernel.org>
-Subject: [PATCH 4.16 077/113] ARM: socfpga_defconfig: Remove QSPI Sector 4K size force
-Date: Mon, 30 Apr 2018 12:24:48 -0700
-Message-Id: <20180430184018.445977046@linuxfoundation.org>
+        stable@vger.kernel.org, Alistair Popple <alistair@popple.id.au>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.16 082/113] powerpc/powernv/npu: Do a PID GPU TLB flush when invalidating a large address range
+Date: Mon, 30 Apr 2018 12:24:53 -0700
+Message-Id: <20180430184018.652944439@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184015.043892819@linuxfoundation.org>
 References: <20180430184015.043892819@linuxfoundation.org>
@@ -94,32 +96,71 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Thor Thayer <thor.thayer@linux.intel.com>
+From: Alistair Popple <alistair@popple.id.au>
 
-commit 6e8fe39989720b87439fee7817a5ca362b16d931 upstream.
+commit d0cf9b561ca97d5245bb9e0c4774b7fadd897d67 upstream.
 
-Remove QSPI Sector 4K size force which is causing QSPI boot
-problems with the JFFS2 root filesystem.
+The NPU has a limited number of address translation shootdown (ATSD)
+registers and the GPU has limited bandwidth to process ATSDs. This can
+result in contention of ATSD registers leading to soft lockups on some
+threads, particularly when invalidating a large address range in
+pnv_npu2_mn_invalidate_range().
 
-Fixes the following error:
-     "Magic bitmask 0x1985 not found at ..."
+At some threshold it becomes more efficient to flush the entire GPU
+TLB for the given MM context (PID) than individually flushing each
+address in the range. This patch will result in ranges greater than
+2MB being converted from 32+ ATSDs into a single ATSD which will flush
+the TLB for the given PID on each GPU.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+Fixes: 1ab66d1fbada ("powerpc/powernv: Introduce address translation services for Nvlink2")
+Cc: stable@vger.kernel.org # v4.12+
+Signed-off-by: Alistair Popple <alistair@popple.id.au>
+Acked-by: Balbir Singh <bsingharora@gmail.com>
+Tested-by: Balbir Singh <bsingharora@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/configs/socfpga_defconfig |    1 +
- 1 file changed, 1 insertion(+)
+ arch/powerpc/platforms/powernv/npu-dma.c |   23 +++++++++++++++++++----
+ 1 file changed, 19 insertions(+), 4 deletions(-)
 
---- a/arch/arm/configs/socfpga_defconfig
-+++ b/arch/arm/configs/socfpga_defconfig
-@@ -57,6 +57,7 @@ CONFIG_MTD_M25P80=y
- CONFIG_MTD_NAND=y
- CONFIG_MTD_NAND_DENALI_DT=y
- CONFIG_MTD_SPI_NOR=y
-+# CONFIG_MTD_SPI_NOR_USE_4K_SECTORS is not set
- CONFIG_SPI_CADENCE_QUADSPI=y
- CONFIG_OF_OVERLAY=y
- CONFIG_OF_CONFIGFS=y
+--- a/arch/powerpc/platforms/powernv/npu-dma.c
++++ b/arch/powerpc/platforms/powernv/npu-dma.c
+@@ -34,6 +34,13 @@
+ #define npu_to_phb(x) container_of(x, struct pnv_phb, npu)
+ 
+ /*
++ * When an address shootdown range exceeds this threshold we invalidate the
++ * entire TLB on the GPU for the given PID rather than each specific address in
++ * the range.
++ */
++#define ATSD_THRESHOLD (2*1024*1024)
++
++/*
+  * Other types of TCE cache invalidation are not functional in the
+  * hardware.
+  */
+@@ -627,11 +634,19 @@ static void pnv_npu2_mn_invalidate_range
+ 	struct npu_context *npu_context = mn_to_npu_context(mn);
+ 	unsigned long address;
+ 
+-	for (address = start; address < end; address += PAGE_SIZE)
+-		mmio_invalidate(npu_context, 1, address, false);
++	if (end - start > ATSD_THRESHOLD) {
++		/*
++		 * Just invalidate the entire PID if the address range is too
++		 * large.
++		 */
++		mmio_invalidate(npu_context, 0, 0, true);
++	} else {
++		for (address = start; address < end; address += PAGE_SIZE)
++			mmio_invalidate(npu_context, 1, address, false);
+ 
+-	/* Do the flush only on the final addess == end */
+-	mmio_invalidate(npu_context, 1, address, true);
++		/* Do the flush only on the final addess == end */
++		mmio_invalidate(npu_context, 1, address, true);
++	}
+ }
+ 
+ static const struct mmu_notifier_ops nv_nmmu_notifier_ops = {
