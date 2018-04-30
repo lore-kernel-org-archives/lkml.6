@@ -1,40 +1,41 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpECBln7fBvNaWzJfDGfgZHsnFrEg1v4/J5WMSdXb2W22BfC8fqB/hxzHZqi00Lnmkx+d8k
-ARC-Seal: i=1; a=rsa-sha256; t=1525116367; cv=none;
+X-Google-Smtp-Source: AB8JxZoFMSpHC8+Yj2w2DerF5SAKP6EhI2BZTVGTbd81we4oyaaLdGrVTOB70T+XDGQRiXTkqY0n
+ARC-Seal: i=1; a=rsa-sha256; t=1525116366; cv=none;
         d=google.com; s=arc-20160816;
-        b=Fwg9xdwYbsVqjf1LR9hUtwr8FHR9797X8jEzcqR/67IvFU0xLsXY4M9vy4la8+fbuE
-         ggnnpOHBEIzh05s6who7/5KX6HOP7KfXmKndIU4wTtCahPmwYHatkYPY3usENxl3siPk
-         cS6TIXT/scmDKTAm1/9+aSTsNqTsBW9ZyNKiqB3ZqCvtiHcxQ6yF/5PrfIST5Ga5VLxR
-         lRViaCt3jR9HnYXA2weVWK55zAyxEE/4quLzbU8+OHQfjkHKLMXk3Lf+GplP+8Oku/z9
-         Rraw3kclVY4zyjogr7jcYcg79iMHLyJjliAVWER91fi0PdSFpsRExPI1RZKo2mdFLXxn
-         P8Vw==
+        b=zPW5znB6vMzl/sE0bdqWL+LlGARflHwuMA8VfmxrVXlHxJxbtSMttcPIepbjpTz6qm
+         AhqIZhRUvhhfrocLPw0ql6IDIqIm8sS3/4+jkgjF6EdeYxfUJ1j/Xb3j57WnJ6/vw0oo
+         68g6yKFlgqiUQFhMy6ruU8UbvajkYZ2UB2z5fQqCaxWKqfM20HU8Oo4Uu66l9Cb1Vt8v
+         6T80bGa3Hk68sZWcWxOI8S3qCEhH6GtNR5Sk/WOd6oSVWwNNayBR5Ry+mS9vEGgF/icF
+         OQTZlHeGWRUdIWJTpa7qKl1pY1xCWijiKTgwWrQa6hq4q0lgZMFELRs/Hg2yrozV0cZQ
+         lBtA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=U684LyANKGYpIcUo1fs2d2o8h+gfrWRClYjijKOwkvk=;
-        b=cTVhDOBEjWFILFgPBs9FcEbKhy5jhatzm3O7eCU/+hIVeDku9v1sEhBAt8QxAfNNaa
-         jyGlNftCCpuJpkfyfz2IFgJaUFsjBdg3O75RrufW/7UhBCZTcYsy0gKKsa2DULuX6B1o
-         pHOaT7h6T/jZqZKg3svqg6j9U4hF8cMHesWrG0xkuYosm12j3cPgLmRv3pGti/ClqJ30
-         dO/nDxdwy564AinDBnzyOfXeBpqK/TdF6K3UmxaRIU/NOVPApLTRMywnfXJGgFQZciA1
-         PzwKfBGkA86Lqp/TTUdGal0U0Q9QyEX+lRFc7waEvM8cRa+N4Hw0RYCROlT4pOASY7UR
-         F9sg==
+        bh=+cqqRqnAmt42Yo7pJWUROHFnvb53JS3WNP+2HV2Wwpo=;
+        b=w4n06o23QGlJrPqzL796rBpIYpYraRXGlq0Bc4MMXe3f2HoRU2vG/HgMHyqunc5Aol
+         4B9YLKje2IrJ9IANT98zf/YcflVdeXu9LkojSJ/G40Fae8NK0L84kV3SuDRRmO/3Uecf
+         shcZLcZWExPmmfiw18ipJknUHCSVLWvexsRnV5ChJeBPwrvU/42x+YWN+11xZh1WIsR3
+         jWw61WTBYo9o2yk3leJAav+wBrI4iRdZH2/syT6ek+dfCcmxwHoQC9ve6dDiyulJwckH
+         wqPrEQVitJkwezWfKShg6RU0tyGYB5+8PnAzuX1sjCW0pjmhTXY1cNhOpQ+emNN4rJJn
+         zR5Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECF4C22DC2
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC03622DAC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Romain Izard <romain.izard.pro@gmail.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	Daniel Wagner <wagi@monom.org>
-Subject: [PATCH 4.4 43/44] serial: mctrl_gpio: Add missing module license
-Date: Mon, 30 Apr 2018 12:24:54 -0700
-Message-Id: <20180430190948.046565745@linuxfoundation.org>
+	Yazen Ghannam <yazen.ghannam@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@suse.de>,
+	Yazen Ghannam <Yazen.Ghannam@amd.com>
+Subject: [PATCH 4.4 41/44] x86/smpboot: Dont use mwait_play_dead() on AMD systems
+Date: Mon, 30 Apr 2018 12:24:52 -0700
+Message-Id: <20180430190947.967684398@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430190946.093694747@linuxfoundation.org>
 References: <20180430190946.093694747@linuxfoundation.org>
@@ -44,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200420468321322?=
-X-GMAIL-MSGID: =?utf-8?q?1599200420468321322?=
+X-GMAIL-THRID: =?utf-8?q?1599200418723747238?=
+X-GMAIL-MSGID: =?utf-8?q?1599200418723747238?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,37 +54,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Romain Izard <romain.izard.pro@gmail.com>
+From: Yazen Ghannam <yazen.ghannam@amd.com>
 
-commit 82a3f87f6e80e0bf7978152021eb8938976721cb upstream.
+commit da6fa7ef67f07108a1b0cb9fd9e7fcaabd39c051 upstream.
 
-As the mctrl_gpio driver can be built as a module, it needs to have its
-license specified with MODULE_LICENSE. Otherwise, it cannot access
-required symbols exported through EXPORT_SYMBOL_GPL.
+Recent AMD systems support using MWAIT for C1 state. However, MWAIT will
+not allow deeper cstates than C1 on current systems.
 
-Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
-Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Daniel Wagner <wagi@monom.org>
+play_dead() expects to use the deepest state available.  The deepest state
+available on AMD systems is reached through SystemIO or HALT. If MWAIT is
+available, it is preferred over the other methods, so the CPU never reaches
+the deepest possible state.
+
+Don't try to use MWAIT to play_dead() on AMD systems. Instead, use CPUIDLE
+to enter the deepest state advertised by firmware. If CPUIDLE is not
+available then fallback to HALT.
+
+Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Borislav Petkov <bp@suse.de>
+Cc: stable@vger.kernel.org
+Cc: Yazen Ghannam <Yazen.Ghannam@amd.com>
+Link: https://lkml.kernel.org/r/20180403140228.58540-1-Yazen.Ghannam@amd.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/serial/serial_mctrl_gpio.c |    3 +++
- 1 file changed, 3 insertions(+)
+ arch/x86/kernel/smpboot.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/tty/serial/serial_mctrl_gpio.c
-+++ b/drivers/tty/serial/serial_mctrl_gpio.c
-@@ -20,6 +20,7 @@
- #include <linux/gpio/consumer.h>
- #include <linux/termios.h>
- #include <linux/serial_core.h>
-+#include <linux/module.h>
+--- a/arch/x86/kernel/smpboot.c
++++ b/arch/x86/kernel/smpboot.c
+@@ -1442,6 +1442,8 @@ static inline void mwait_play_dead(void)
+ 	void *mwait_ptr;
+ 	int i;
  
- #include "serial_mctrl_gpio.h"
- 
-@@ -249,3 +250,5 @@ void mctrl_gpio_disable_ms(struct mctrl_
- 	}
- }
- EXPORT_SYMBOL_GPL(mctrl_gpio_disable_ms);
-+
-+MODULE_LICENSE("GPL");
++	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD)
++		return;
+ 	if (!this_cpu_has(X86_FEATURE_MWAIT))
+ 		return;
+ 	if (!this_cpu_has(X86_FEATURE_CLFLUSH))
