@@ -1,68 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754669AbeD3PPJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 11:15:09 -0400
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:45622 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752255AbeD3PPG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 11:15:06 -0400
-Date: Mon, 30 Apr 2018 18:15:03 +0300
-From: Sakari Ailus <sakari.ailus@iki.fi>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Colin King <colin.king@canonical.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] media: ispstat: don't dereference user_cfg before
- a null check
-Message-ID: <20180430151503.d3kq2zomil6uh2xf@valkosipuli.retiisi.org.uk>
-References: <20180424130618.18211-1-colin.king@canonical.com>
- <20180426083731.72bmygsp2waf3eeu@valkosipuli.retiisi.org.uk>
- <2302951.d1m0yxIoYN@avalon>
+        id S1754315AbeD3PRr (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 11:17:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37498 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751938AbeD3PRo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 11:17:44 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8C7922C94
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Mon, 30 Apr 2018 11:17:41 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: NeilBrown <neilb@suse.com>
+Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Trond Myklebust <trond.myklebust@primarydata.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>, linux-nfs@vger.kernel.org,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Josh Triplett <josh@joshtriplett.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] NFS: slight optimization for walking list for
+ delegations
+Message-ID: <20180430111741.561df374@gandalf.local.home>
+In-Reply-To: <152506269054.7246.3941740801391514623.stgit@noble>
+References: <152506256513.7246.13171564155614823841.stgit@noble>
+        <152506269054.7246.3941740801391514623.stgit@noble>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2302951.d1m0yxIoYN@avalon>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 26, 2018 at 01:03:15PM +0300, Laurent Pinchart wrote:
-> Hi Sakari,
+On Mon, 30 Apr 2018 14:31:30 +1000
+NeilBrown <neilb@suse.com> wrote:
+
+> There are 3 places where we walk the list of delegations
+> for an nfs_client.
+> In each case there are two nested loops, one for nfs_servers
+> and one for nfs_delegations.
 > 
-> On Thursday, 26 April 2018 11:37:31 EEST Sakari Ailus wrote:
-> > On Tue, Apr 24, 2018 at 02:06:18PM +0100, Colin King wrote:
-> > > From: Colin Ian King <colin.king@canonical.com>
-> > > 
-> > > The pointer user_cfg (a copy of new_conf) is dereference before
-> > > new_conf is null checked, hence we may have a null pointer dereference
-> > > on user_cfg when assigning buf_size from user_cfg->buf_size. Ensure
-> > > this does not occur by moving the assignment of buf_size after the
-> > > null check.
-> > > 
-> > > Detected by CoverityScan, CID#1468386 ("Dereference before null check")
-> > > 
-> > > Fixes: 68e342b3068c ("[media] omap3isp: Statistics")
-> > > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > 
-> > Thanks for the patch.
-> > 
-> > Gustavo sent effectively the same patch a moment earlier, and that patch
-> > got applied instead.
+> When we find an interesting delegation we try to get an active
+> reference to the server.  If that fails, it is pointless to
+> continue to look at the other delegation for the server as
+> we will never be able to get an active reference.
+> So instead of continuing in the inner loop, break out
+> and continue in the outer loop.
+> ---
+>  fs/nfs/delegation.c |    6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> Isn't there a guarantee that new_buf won't be NULL ? The new_buf pointer comes 
-> from the parg variable in video_usercopy(), which should always point to a 
-> valid buffer given that the ioctl number specifies a non-zero size.
+> diff --git a/fs/nfs/delegation.c b/fs/nfs/delegation.c
+> index 1819d0d0ba4b..af32365894c8 100644
+> --- a/fs/nfs/delegation.c
+> +++ b/fs/nfs/delegation.c
+> @@ -495,7 +495,7 @@ int nfs_client_return_marked_delegations(struct nfs_client *clp)
+>  			if (!nfs_delegation_need_return(delegation))
+>  				continue;
+>  			if (!nfs_sb_active(server->super))
+> -				continue;
+> +				break;
 
-Fair question. After looking at the code, I agree with you; there should be
-no reason to perform the check in the first place. It may have been that
-the function has been used differently in the past but the check should be
-rather removed now.
+For documentation purposes, what I usually do when using a break inside
+a inner loop to continue the outer loop, I add a comment:
 
-I'll drop the patch.
+				break; /* continue outer loop */
 
--- 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi
+Such that in the future, people will know exactly what you mean and
+don't think it's a bug (thinking it breaks out of all loops).
+
+-- Steve
+
+
+>  			inode = nfs_delegation_grab_inode(delegation);
+>  			if (inode == NULL) {
+>  				rcu_read_unlock();
+> @@ -887,7 +887,7 @@ void nfs_delegation_reap_unclaimed(struct nfs_client *clp)
+>  						&delegation->flags) == 0)
+>  				continue;
+>  			if (!nfs_sb_active(server->super))
+> -				continue;
+> +				break;
+>  			inode = nfs_delegation_grab_inode(delegation);
+>  			if (inode == NULL) {
+>  				rcu_read_unlock();
+> @@ -995,7 +995,7 @@ void nfs_reap_expired_delegations(struct nfs_client *clp)
+>  						&delegation->flags) == 0)
+>  				continue;
+>  			if (!nfs_sb_active(server->super))
+> -				continue;
+> +				break;
+>  			inode = nfs_delegation_grab_inode(delegation);
+>  			if (inode == NULL) {
+>  				rcu_read_unlock();
+> 
