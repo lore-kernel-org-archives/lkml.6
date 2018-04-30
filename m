@@ -1,33 +1,33 @@
 Return-Path: <cpandya@codeaurora.org>
-X-Google-Smtp-Source: AB8JxZoqEqaj4UMNzI5usROumWy3bmEGlrHfRmCJD01mF5TGm0PGcIsMPZ5B1m6b5AdtsUZph07M
-ARC-Seal: i=1; a=rsa-sha256; t=1525074152; cv=none;
+X-Google-Smtp-Source: AB8JxZq6tlrTroGHtzPGh68JbOj4tY6PwxUTISHqfDqa9MBW8O2ZXY+5jaiN+/CTREs5RPY3lv3p
+ARC-Seal: i=1; a=rsa-sha256; t=1525074151; cv=none;
         d=google.com; s=arc-20160816;
-        b=iYw5CFCD2JgzUB2y6l6pveoOzxWW1MUoB6Rtnt91PYh1m5BjekXUS1v13GOBmVUG52
-         ov+iNi1Qs/0QLAMZppzlrmcUTvVEK9WCU2ZjJYcXTNsCd+hmkuLPK9Z3rswgW8RryInw
-         P/S9KbHucai6aTARPADd/Oxp/jXajrzUGammoGAlsVmMUg+e7WAhfCDJ58oFGbMlhx91
-         GvektTozKWmvgzkpUKSD5fY90GEhevyAxVyYq9h+PzSqkXLPsT5AJAwdS6E6IZPTOw5L
-         g4HuaZn02jFf0EXFmP8AiMovEhbEeIgtCImSkyW06DczwqR8VCTeaat1jjyHlK6XAxYS
-         ZWDA==
+        b=hJS929t+9Q/wMHhvtZbO6VZISd3gWvOrRHpZK6qAuVQf/8JZhbvh8M3tGLvyBLO+qn
+         Rke5Ir8rm6gjskFURlAhvWVT8ohms+RZ6HRFVHzHixwIT80Ypr3bSf5JJNChpn/255p6
+         hP/rZgSNgLgF2semqLUqFZbG81o8IYKhSFkjGvl3mrWPh2KgL3eelngJyanrGamfXD6G
+         xZe2BtKPYTVSIbf2x/EN7RXEw/1WeETETBcDZAUeF+hqeNOpnLgCS37XikonIoCBEytb
+         cGydkjEJ2Vvoee/1t6W0VeerA5wDDVa/HtnAjGqWEHvJQCnkosEtGY8Aes9/3zgLU93+
+         38jQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dmarc-filter:dkim-signature:dkim-signature
          :arc-authentication-results;
-        bh=u2r8QUXuWgESiiNQgZ8q+LKQNcJ7J2hG7+CNhfcAYRY=;
-        b=mVwE4wP2rcfUbUEWLG1dcKvk9iOWNCYVyh0BoJAkPUpbTX36IJ6HtqRIEQD9+oGySZ
-         DE62QyIk7j1/QRvLwfUfBOXCU+q5TFJo8PY38nkpiG+yfpXnK29B6/P90kRlVoec3rIf
-         n/wop6lDH6i1Dnr1IjR8wG3/gFPGvJJ34AHlQ4DFZzM5cl0Ig0tA3XtPk5SOfLKD/QS7
-         NqB/7pMW5XEsLBfeapg4Noh8hLViCBWCWh7/n0DOXEchbtuyoZ2jSE1UYzooMELL+2Z/
-         qZVlehV7la8N3WSE3oBhu+z6PqDOf8b+sXK1OyQQzUU3k7OqAyswQ5/z/tpYgrvoHgEr
-         mN/g==
+        bh=/zJNIcJfeUuQacDi4LQ10egUIeDxiQg7R+ACXjZn1tc=;
+        b=dFCUZ2bqZ7EZbFIHQFttugu4BNHNwdfKZVftTZHgg7Lo6M2gmvX/2x804MxqSkKSzp
+         yU6Z4vWAxL5dwky64VkR5WxFCThzmAyBEWuI1SAIHqxsK2IhguW5lW6OJGScr3O5cCrD
+         PawxyE5Ts2ojzOeSUJT4v20nNwmpeWyyY0XcDFZ39FBT5VqRsMOgcFShVHYkRstG8zp4
+         BiLt3GHe4awQMlohSIC9YKllE3IWlUnzRYzMn8ruivHFMarssa9ApGXx4Z/DO/OPlF1P
+         ws1eXvPd9X74ViufJYUqxdqn2JgJAZXOihd7ZR8jQwJf6YBhTmN3tuF+TNqCpDpHA4rI
+         nFXA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=EszFPipp;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=GBpo7HJL;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=kFtTpmva;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=blYnc/ty;
        spf=pass (google.com: domain of cpandya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=cpandya@codeaurora.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=EszFPipp;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=GBpo7HJL;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=kFtTpmva;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=blYnc/ty;
        spf=pass (google.com: domain of cpandya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=cpandya@codeaurora.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2422A61133
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 771F060FAA
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cpandya@codeaurora.org
 From: Chintan Pandya <cpandya@codeaurora.org>
@@ -52,55 +52,80 @@ Cc: Thomas Gleixner <tglx@linutronix.de>,
 	linux-kernel@vger.kernel.org,
 	linux-arch@vger.kernel.org,
 	Chintan Pandya <cpandya@codeaurora.org>
-Subject: [PATCH v9 4/4] Revert "arm64: Enforce BBM for huge IO/VMAP mappings"
-Date: Mon, 30 Apr 2018 13:11:34 +0530
-Message-Id: <1525074094-25839-5-git-send-email-cpandya@codeaurora.org>
+Subject: [PATCH v9 3/4] arm64: Implement page table free interfaces
+Date: Mon, 30 Apr 2018 13:11:33 +0530
+Message-Id: <1525074094-25839-4-git-send-email-cpandya@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1525074094-25839-1-git-send-email-cpandya@codeaurora.org>
 References: <1525074094-25839-1-git-send-email-cpandya@codeaurora.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599156154517450059?=
-X-GMAIL-MSGID: =?utf-8?q?1599156154517450059?=
+X-GMAIL-THRID: =?utf-8?q?1599156152916121293?=
+X-GMAIL-MSGID: =?utf-8?q?1599156152916121293?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This commit 15122ee2c515a ("arm64: Enforce BBM for huge
-IO/VMAP mappings") is a temporary work-around until the
-issues with CONFIG_HAVE_ARCH_HUGE_VMAP gets fixed.
+Implement pud_free_pmd_page() and pmd_free_pte_page().
 
-Revert this change as we have fixes for the issue.
+Implementation requires,
+ 1) Clearing off the current pud/pmd entry
+ 2) Invalidate TLB which could have previously
+    valid but not stale entry
+ 3) Freeing of the un-used next level page tables
 
 Signed-off-by: Chintan Pandya <cpandya@codeaurora.org>
 ---
- arch/arm64/mm/mmu.c | 8 --------
- 1 file changed, 8 deletions(-)
+ arch/arm64/mm/mmu.c | 29 +++++++++++++++++++++++++----
+ 1 file changed, 25 insertions(+), 4 deletions(-)
 
 diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-index 0f651db..170009b 100644
+index da98828..0f651db 100644
 --- a/arch/arm64/mm/mmu.c
 +++ b/arch/arm64/mm/mmu.c
-@@ -935,10 +935,6 @@ int pud_set_huge(pud_t *pudp, phys_addr_t phys, pgprot_t prot)
- 	pgprot_t sect_prot = __pgprot(PUD_TYPE_SECT |
- 					pgprot_val(mk_sect_prot(prot)));
+@@ -45,6 +45,7 @@
+ #include <asm/memblock.h>
+ #include <asm/mmu_context.h>
+ #include <asm/ptdump.h>
++#include <asm/tlbflush.h>
  
--	/* ioremap_page_range doesn't honour BBM */
--	if (pud_present(READ_ONCE(*pudp)))
--		return 0;
--
- 	BUG_ON(phys & ~PUD_MASK);
- 	set_pud(pudp, pfn_pud(__phys_to_pfn(phys), sect_prot));
+ #define NO_BLOCK_MAPPINGS	BIT(0)
+ #define NO_CONT_MAPPINGS	BIT(1)
+@@ -973,12 +974,32 @@ int pmd_clear_huge(pmd_t *pmdp)
  	return 1;
-@@ -949,10 +945,6 @@ int pmd_set_huge(pmd_t *pmdp, phys_addr_t phys, pgprot_t prot)
- 	pgprot_t sect_prot = __pgprot(PMD_TYPE_SECT |
- 					pgprot_val(mk_sect_prot(prot)));
+ }
  
--	/* ioremap_page_range doesn't honour BBM */
--	if (pmd_present(READ_ONCE(*pmdp)))
--		return 0;
--
- 	BUG_ON(phys & ~PMD_MASK);
- 	set_pmd(pmdp, pfn_pmd(__phys_to_pfn(phys), sect_prot));
- 	return 1;
+-int pud_free_pmd_page(pud_t *pud, unsigned long addr)
++int pmd_free_pte_page(pmd_t *pmdp, unsigned long addr)
+ {
+-	return pud_none(*pud);
++	pmd_t *table;
++
++	if (pmd_present(READ_ONCE(*pmdp))) {
++		table = __va(pmd_val(*pmdp));
++		pmd_clear(pmdp);
++		__flush_tlb_kernel_pgtable(addr);
++		free_page((unsigned long) table);
++	}
++	return 1;
+ }
+ 
+-int pmd_free_pte_page(pmd_t *pmd, unsigned long addr)
++int pud_free_pmd_page(pud_t *pudp, unsigned long addr)
+ {
+-	return pmd_none(*pmd);
++	pmd_t *table;
++	int i;
++
++	if (pud_present(READ_ONCE(*pudp))) {
++		table = __va(pud_val(*pudp));
++		for (i = 0; i < PTRS_PER_PMD; i++)
++			pmd_free_pte_page(&table[i], addr + (i * PMD_SIZE));
++
++		pud_clear(pudp);
++		__flush_tlb_kernel_pgtable(addr);
++		free_page((unsigned long) table);
++	}
++	return 1;
+ }
 -- 
 Qualcomm India Private Limited, on behalf of Qualcomm Innovation
 Center, Inc., is a member of Code Aurora Forum, a Linux Foundation
