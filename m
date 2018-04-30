@@ -1,28 +1,28 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpJFtqIvf5PcuGMJlgw9/sPBbKtVujHimCM9OJjM14XfT0nOxLLuCT9N1obq4cQf1g8JgcK
+X-Google-Smtp-Source: AB8JxZqhtKFeUGtrO2D1vQIEbAeJ2bKhSYJ5juE1crOYnJpWRBzrEM1QzcNowk8ehD5s8lLkVAu2
 ARC-Seal: i=1; a=rsa-sha256; t=1525116516; cv=none;
         d=google.com; s=arc-20160816;
-        b=y9DcM6Z43JgizUU6cUOrygeeQaBC9O9aQuOHsCASYN37Z5YsQ/XxtuIH08eNI8sn53
-         3bkUirU77hVDJIomIqVsyKAIbZMidm6NaZzlwbqpa5Y2XXVd45Bb7FWQm8cFpzEg8WZt
-         SWLHJNHIENMkGwM7YOkQmdCi8A4KRli+pEtsp446E1iRKZpCfZ72fjRPM9A5gY0zWDKF
-         pA5n6Y1CIcUGLkiKxMZK8EerjBwpoVScVLuufd3DvuAf1vS9MIRFhKZBQSsKPUoesfMk
-         zahsgCotvEelTOM/Oa5RZxhSFftIqbB3hCz0TXXwT0PcsLqUx27o1Y2iCnbY69RoWDo5
-         uXDg==
+        b=rol4ETka+RD1zFoj+Ycmz3p+E3oIdVuZxjqCAYgxSvxZZOvzd02IokDN5BZsxCXwTK
+         BP/NVWksexHrjHkkVztK4Loaw37liciX97obelzxGSaxSBwYrXIPpHgOWVQYEBEwYIbH
+         SAnIOvndHN0gadCYwTcgY/iD/wVlI8yeKp2fAP4WWhXCIZBMuR9L2TsFpI4MY935aIe6
+         dxLo/JFA++eSDodvXxDETwCgWj+mVYZZDS9srTdSH68hkC++Y6s3qWnUI2zNhPIF2BbR
+         wD0HEkj1Dh88U3WznLz8ZhTrBbDCESthmk/gCjMEQxHMFzlOCT7ogFUV+LoNfhCg9/XC
+         IPLA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=Dv6RS00eLbCVpOGQDotoLD1NiiJ9D77SHf3J+qS0LXI=;
-        b=NKBEA4yCYp/vwCskrnjH96GD0133AsF4TZOLNuK0vCjptUIW75sW3MLvk7ex6VXV3/
-         KG1PW2WxKD+SgU1uKyPLT+hyC3P45quP4Ix1GFlfWUrjfbOP89rsaQodVrzOfahToZn+
-         y5HkbQ8AstyyOVlPdVBDn+RdERgMhHPUv9UNVX7QFGe6p5Ko6S5OnWixz2Fc2YWUgC9C
-         14UpC2zOq7Z/5dQeUa+KLHNvkQLI5TErFTax5+IHqKxAdi5iVtLIKDbk/riiLYNEj33N
-         n0fwqkzU87GjbAtI2oJoZfq2jHJGDoQBE8I2k57o3bXS3PSFpdCpvJRFcJZzrCHGIG8t
-         +NRg==
+        bh=Ixqk4RTBdihBskGl5DhJbAwmfQ338VyBx3hTyUI8Tws=;
+        b=vpr3oNflwbnsXmzImmmKQxIbABHDkfPUmAtR2C9wWr0Y78oUJdPj9ijSLYxgg29q5G
+         fzLgmLl18qnJbyewdTbrspF2WMG37BsD3UfGCjxWsPr29DnGzdRuYPHZYDFEzDoWzz8q
+         9Qc0DtyG4+wLFCtMJMWunnaW20tzkzlJ60oq/vwlYGRN3BFWoMeioTBD6STwb/XqiM63
+         Ql4sGfNmIhzoq8OOTAt7Z/HD0FER9ePdpTTjSNsTIEKrFhaqxCdNpxUb8Dt2IYacxl9r
+         oKDJbANzgA2Q+j91A/Iz+ix7CZuMSREaPCVvybI+JetUYZxUkQqPuKlf2ZAnccEFGLUQ
+         etuw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3026022DBF
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9452F22DAC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
@@ -31,9 +31,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Dan Carpenter <dan.carpenter@oracle.com>,
 	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.16 043/113] ALSA: hdspm: Hardening for potential Spectre v1
-Date: Mon, 30 Apr 2018 12:24:14 -0700
-Message-Id: <20180430184016.875135579@linuxfoundation.org>
+Subject: [PATCH 4.16 042/113] ALSA: asihpi: Hardening for potential Spectre v1
+Date: Mon, 30 Apr 2018 12:24:13 -0700
+Message-Id: <20180430184016.830523146@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184015.043892819@linuxfoundation.org>
 References: <20180430184015.043892819@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200425501203379?=
-X-GMAIL-MSGID: =?utf-8?q?1599200576538036721?=
+X-GMAIL-THRID: =?utf-8?q?1599200441146295899?=
+X-GMAIL-MSGID: =?utf-8?q?1599200576110816514?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,13 +54,12 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Takashi Iwai <tiwai@suse.de>
 
-commit 10513142a7114d251670361ad40cba2c61403406 upstream.
+commit f9d94b57e30fd1575b4935045b32d738668aa74b upstream.
 
-As recently Smatch suggested, a couple of places in HDSP MADI driver
-may expand the array directly from the user-space value with
-speculation:
-  sound/pci/rme9652/hdspm.c:5717 snd_hdspm_channel_info() warn: potential spectre issue 'hdspm->channel_map_out' (local cap)
-  sound/pci/rme9652/hdspm.c:5734 snd_hdspm_channel_info() warn: potential spectre issue 'hdspm->channel_map_in' (local cap)
+As recently Smatch suggested, a couple of places in ASIHPI driver may
+expand the array directly from the user-space value with speculation:
+  sound/pci/asihpi/hpimsginit.c:70 hpi_init_response() warn: potential spectre issue 'res_size' (local cap)
+  sound/pci/asihpi/hpioctl.c:189 asihpi_hpi_ioctl() warn: potential spectre issue 'adapters'
 
 This patch puts array_index_nospec() for hardening against them.
 
@@ -71,70 +70,67 @@ Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/rme9652/hdspm.c |   24 ++++++++++++++----------
- 1 file changed, 14 insertions(+), 10 deletions(-)
+ sound/pci/asihpi/hpimsginit.c |   13 +++++++++----
+ sound/pci/asihpi/hpioctl.c    |    4 +++-
+ 2 files changed, 12 insertions(+), 5 deletions(-)
 
---- a/sound/pci/rme9652/hdspm.c
-+++ b/sound/pci/rme9652/hdspm.c
-@@ -137,6 +137,7 @@
- #include <linux/pci.h>
- #include <linux/math64.h>
- #include <linux/io.h>
+--- a/sound/pci/asihpi/hpimsginit.c
++++ b/sound/pci/asihpi/hpimsginit.c
+@@ -23,6 +23,7 @@
+ 
+ #include "hpi_internal.h"
+ #include "hpimsginit.h"
 +#include <linux/nospec.h>
  
- #include <sound/core.h>
- #include <sound/control.h>
-@@ -5698,40 +5699,43 @@ static int snd_hdspm_channel_info(struct
- 		struct snd_pcm_channel_info *info)
+ /* The actual message size for each object type */
+ static u16 msg_size[HPI_OBJ_MAXINDEX + 1] = HPI_MESSAGE_SIZE_BY_OBJECT;
+@@ -39,10 +40,12 @@ static void hpi_init_message(struct hpi_
  {
- 	struct hdspm *hdspm = snd_pcm_substream_chip(substream);
-+	unsigned int channel = info->channel;
+ 	u16 size;
  
- 	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
--		if (snd_BUG_ON(info->channel >= hdspm->max_channels_out)) {
-+		if (snd_BUG_ON(channel >= hdspm->max_channels_out)) {
- 			dev_info(hdspm->card->dev,
- 				 "snd_hdspm_channel_info: output channel out of range (%d)\n",
--				 info->channel);
-+				 channel);
- 			return -EINVAL;
- 		}
+-	if ((object > 0) && (object <= HPI_OBJ_MAXINDEX))
++	if ((object > 0) && (object <= HPI_OBJ_MAXINDEX)) {
++		object = array_index_nospec(object, HPI_OBJ_MAXINDEX + 1);
+ 		size = msg_size[object];
+-	else
++	} else {
+ 		size = sizeof(*phm);
++	}
  
--		if (hdspm->channel_map_out[info->channel] < 0) {
-+		channel = array_index_nospec(channel, hdspm->max_channels_out);
-+		if (hdspm->channel_map_out[channel] < 0) {
- 			dev_info(hdspm->card->dev,
- 				 "snd_hdspm_channel_info: output channel %d mapped out\n",
--				 info->channel);
-+				 channel);
- 			return -EINVAL;
- 		}
+ 	memset(phm, 0, size);
+ 	phm->size = size;
+@@ -66,10 +69,12 @@ void hpi_init_response(struct hpi_respon
+ {
+ 	u16 size;
  
--		info->offset = hdspm->channel_map_out[info->channel] *
-+		info->offset = hdspm->channel_map_out[channel] *
- 			HDSPM_CHANNEL_BUFFER_BYTES;
- 	} else {
--		if (snd_BUG_ON(info->channel >= hdspm->max_channels_in)) {
-+		if (snd_BUG_ON(channel >= hdspm->max_channels_in)) {
- 			dev_info(hdspm->card->dev,
- 				 "snd_hdspm_channel_info: input channel out of range (%d)\n",
--				 info->channel);
-+				 channel);
- 			return -EINVAL;
- 		}
+-	if ((object > 0) && (object <= HPI_OBJ_MAXINDEX))
++	if ((object > 0) && (object <= HPI_OBJ_MAXINDEX)) {
++		object = array_index_nospec(object, HPI_OBJ_MAXINDEX + 1);
+ 		size = res_size[object];
+-	else
++	} else {
+ 		size = sizeof(*phr);
++	}
  
--		if (hdspm->channel_map_in[info->channel] < 0) {
-+		channel = array_index_nospec(channel, hdspm->max_channels_in);
-+		if (hdspm->channel_map_in[channel] < 0) {
- 			dev_info(hdspm->card->dev,
- 				 "snd_hdspm_channel_info: input channel %d mapped out\n",
--				 info->channel);
-+				 channel);
- 			return -EINVAL;
- 		}
+ 	memset(phr, 0, sizeof(*phr));
+ 	phr->size = size;
+--- a/sound/pci/asihpi/hpioctl.c
++++ b/sound/pci/asihpi/hpioctl.c
+@@ -33,6 +33,7 @@
+ #include <linux/stringify.h>
+ #include <linux/module.h>
+ #include <linux/vmalloc.h>
++#include <linux/nospec.h>
  
--		info->offset = hdspm->channel_map_in[info->channel] *
-+		info->offset = hdspm->channel_map_in[channel] *
- 			HDSPM_CHANNEL_BUFFER_BYTES;
- 	}
+ #ifdef MODULE_FIRMWARE
+ MODULE_FIRMWARE("asihpi/dsp5000.bin");
+@@ -186,7 +187,8 @@ long asihpi_hpi_ioctl(struct file *file,
+ 		struct hpi_adapter *pa = NULL;
  
+ 		if (hm->h.adapter_index < ARRAY_SIZE(adapters))
+-			pa = &adapters[hm->h.adapter_index];
++			pa = &adapters[array_index_nospec(hm->h.adapter_index,
++							  ARRAY_SIZE(adapters))];
+ 
+ 		if (!pa || !pa->adapter || !pa->adapter->type) {
+ 			hpi_init_response(&hr->r0, hm->h.object,
