@@ -1,39 +1,42 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqhtKFeUGtrO2D1vQIEbAeJ2bKhSYJ5juE1crOYnJpWRBzrEM1QzcNowk8ehD5s8lLkVAu2
-ARC-Seal: i=1; a=rsa-sha256; t=1525116516; cv=none;
+X-Google-Smtp-Source: AB8JxZpmh5DsVmWXfG9v+7A0s70xkQGh+vEhgBClRv0mgINyTMWMx/BmuErnwAnjoEuEJ8gVoOJr
+ARC-Seal: i=1; a=rsa-sha256; t=1525116513; cv=none;
         d=google.com; s=arc-20160816;
-        b=rol4ETka+RD1zFoj+Ycmz3p+E3oIdVuZxjqCAYgxSvxZZOvzd02IokDN5BZsxCXwTK
-         BP/NVWksexHrjHkkVztK4Loaw37liciX97obelzxGSaxSBwYrXIPpHgOWVQYEBEwYIbH
-         SAnIOvndHN0gadCYwTcgY/iD/wVlI8yeKp2fAP4WWhXCIZBMuR9L2TsFpI4MY935aIe6
-         dxLo/JFA++eSDodvXxDETwCgWj+mVYZZDS9srTdSH68hkC++Y6s3qWnUI2zNhPIF2BbR
-         wD0HEkj1Dh88U3WznLz8ZhTrBbDCESthmk/gCjMEQxHMFzlOCT7ogFUV+LoNfhCg9/XC
-         IPLA==
+        b=AbuQNK8Kit3FHoCN+HsXN6v89E5nMZ9ZmaCglbHvqSiXISDVK5Du7hRBCBoWTwYevy
+         K6iKVghpC/MHyqC1Stg0tKmAxXKTFCkw4Wsz87p4gXS99NxYyN2okFZFgpsER9VNdJrd
+         /UlcRNXz+skmNSeoVKKmkk5z/Ji9ZtIWGB81XJn9AFQqnii7l3t3qbOiBPLQGyhVMVZO
+         MQeYunpI1wswUEsP0APYk8banyf4cXY988BA66hCQYV/qlYbT5qf2Vss7Q9LRPCfE9h5
+         A1m+Zmv/2sgR2wKqqg31423nddB7BdAcjGaj78ZFhx/9Zrt0Jhe0ucv7ObeEOQF6NMLV
+         4Rrg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=Ixqk4RTBdihBskGl5DhJbAwmfQ338VyBx3hTyUI8Tws=;
-        b=vpr3oNflwbnsXmzImmmKQxIbABHDkfPUmAtR2C9wWr0Y78oUJdPj9ijSLYxgg29q5G
-         fzLgmLl18qnJbyewdTbrspF2WMG37BsD3UfGCjxWsPr29DnGzdRuYPHZYDFEzDoWzz8q
-         9Qc0DtyG4+wLFCtMJMWunnaW20tzkzlJ60oq/vwlYGRN3BFWoMeioTBD6STwb/XqiM63
-         Ql4sGfNmIhzoq8OOTAt7Z/HD0FER9ePdpTTjSNsTIEKrFhaqxCdNpxUb8Dt2IYacxl9r
-         oKDJbANzgA2Q+j91A/Iz+ix7CZuMSREaPCVvybI+JetUYZxUkQqPuKlf2ZAnccEFGLUQ
-         etuw==
+        bh=36HfO4/q51279GysW14/5a5EcP/NeRE2duXkaKPx0Ug=;
+        b=WJIYUYDIkwPb9ownI5lTdYOO9kM13PIaFN8JDILeXWLr/lvscscSiw336oFR9wzAbk
+         94mOqO5mvrpW75N6jfK30XZZ7Ol/yf7OeM5pS2NviIp4iKmcjy/CqOQzrXkWbcz3dMt2
+         UBT5ZfjaXNRL07A7BqIoNRGwuHkTUfAIBtxhFpyzRSjC42VctfM0Kys8TL6dB8UkQcoq
+         YlwtQxToIgMZYmIaW2OPOQldHNW+jJdKq7eg1Jx1En4NYVBDZqjat3y+MjAR/mgAgS5E
+         inmqDGNkkoHdQxYCyzOGDLbPdpDlavjqu9Vlrba9ML87g8fy3RRaE7knxz1Ps5PdhXzd
+         ouJw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9452F22DAC
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 830E522DC1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dan Carpenter <dan.carpenter@oracle.com>,
-	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.16 042/113] ALSA: asihpi: Hardening for potential Spectre v1
-Date: Mon, 30 Apr 2018 12:24:13 -0700
-Message-Id: <20180430184016.830523146@linuxfoundation.org>
+	Evan Wang <xswang@marvell.com>,
+	Victor Gu <xigu@marvell.com>,
+	Nadav Haklai <nadavh@marvell.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: [PATCH 4.16 072/113] PCI: aardvark: Fix PCIe Max Read Request Size setting
+Date: Mon, 30 Apr 2018 12:24:43 -0700
+Message-Id: <20180430184018.258016604@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184015.043892819@linuxfoundation.org>
 References: <20180430184015.043892819@linuxfoundation.org>
@@ -43,8 +46,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200441146295899?=
-X-GMAIL-MSGID: =?utf-8?q?1599200576110816514?=
+X-GMAIL-THRID: =?utf-8?q?1599200572509818955?=
+X-GMAIL-MSGID: =?utf-8?q?1599200572509818955?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,85 +55,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Evan Wang <xswang@marvell.com>
 
-commit f9d94b57e30fd1575b4935045b32d738668aa74b upstream.
+commit fc31c4e347c9dad50544d01d5ee98b22c7df88bb upstream.
 
-As recently Smatch suggested, a couple of places in ASIHPI driver may
-expand the array directly from the user-space value with speculation:
-  sound/pci/asihpi/hpimsginit.c:70 hpi_init_response() warn: potential spectre issue 'res_size' (local cap)
-  sound/pci/asihpi/hpioctl.c:189 asihpi_hpi_ioctl() warn: potential spectre issue 'adapters'
+There is an obvious typo issue in the definition of the PCIe maximum
+read request size: a bit shift is directly used as a value, while it
+should be used to shift the correct value.
 
-This patch puts array_index_nospec() for hardening against them.
-
-BugLink: https://marc.info/?l=linux-kernel&m=152411496503418&w=2
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 8c39d710363c1 ("PCI: aardvark: Add Aardvark PCI host controller driver")
 Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Evan Wang <xswang@marvell.com>
+Reviewed-by: Victor Gu <xigu@marvell.com>
+Reviewed-by: Nadav Haklai <nadavh@marvell.com>
+[Thomas: tweak commit log.]
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/asihpi/hpimsginit.c |   13 +++++++++----
- sound/pci/asihpi/hpioctl.c    |    4 +++-
- 2 files changed, 12 insertions(+), 5 deletions(-)
+ drivers/pci/host/pci-aardvark.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/sound/pci/asihpi/hpimsginit.c
-+++ b/sound/pci/asihpi/hpimsginit.c
-@@ -23,6 +23,7 @@
+--- a/drivers/pci/host/pci-aardvark.c
++++ b/drivers/pci/host/pci-aardvark.c
+@@ -29,6 +29,7 @@
+ #define     PCIE_CORE_DEV_CTRL_STATS_MAX_PAYLOAD_SZ_SHIFT	5
+ #define     PCIE_CORE_DEV_CTRL_STATS_SNOOP_DISABLE		(0 << 11)
+ #define     PCIE_CORE_DEV_CTRL_STATS_MAX_RD_REQ_SIZE_SHIFT	12
++#define     PCIE_CORE_DEV_CTRL_STATS_MAX_RD_REQ_SZ		0x2
+ #define PCIE_CORE_LINK_CTRL_STAT_REG				0xd0
+ #define     PCIE_CORE_LINK_L0S_ENTRY				BIT(0)
+ #define     PCIE_CORE_LINK_TRAINING				BIT(5)
+@@ -295,7 +296,8 @@ static void advk_pcie_setup_hw(struct ad
+ 	reg = PCIE_CORE_DEV_CTRL_STATS_RELAX_ORDER_DISABLE |
+ 		(7 << PCIE_CORE_DEV_CTRL_STATS_MAX_PAYLOAD_SZ_SHIFT) |
+ 		PCIE_CORE_DEV_CTRL_STATS_SNOOP_DISABLE |
+-		PCIE_CORE_DEV_CTRL_STATS_MAX_RD_REQ_SIZE_SHIFT;
++		(PCIE_CORE_DEV_CTRL_STATS_MAX_RD_REQ_SZ <<
++		 PCIE_CORE_DEV_CTRL_STATS_MAX_RD_REQ_SIZE_SHIFT);
+ 	advk_writel(pcie, reg, PCIE_CORE_DEV_CTRL_STATS_REG);
  
- #include "hpi_internal.h"
- #include "hpimsginit.h"
-+#include <linux/nospec.h>
- 
- /* The actual message size for each object type */
- static u16 msg_size[HPI_OBJ_MAXINDEX + 1] = HPI_MESSAGE_SIZE_BY_OBJECT;
-@@ -39,10 +40,12 @@ static void hpi_init_message(struct hpi_
- {
- 	u16 size;
- 
--	if ((object > 0) && (object <= HPI_OBJ_MAXINDEX))
-+	if ((object > 0) && (object <= HPI_OBJ_MAXINDEX)) {
-+		object = array_index_nospec(object, HPI_OBJ_MAXINDEX + 1);
- 		size = msg_size[object];
--	else
-+	} else {
- 		size = sizeof(*phm);
-+	}
- 
- 	memset(phm, 0, size);
- 	phm->size = size;
-@@ -66,10 +69,12 @@ void hpi_init_response(struct hpi_respon
- {
- 	u16 size;
- 
--	if ((object > 0) && (object <= HPI_OBJ_MAXINDEX))
-+	if ((object > 0) && (object <= HPI_OBJ_MAXINDEX)) {
-+		object = array_index_nospec(object, HPI_OBJ_MAXINDEX + 1);
- 		size = res_size[object];
--	else
-+	} else {
- 		size = sizeof(*phr);
-+	}
- 
- 	memset(phr, 0, sizeof(*phr));
- 	phr->size = size;
---- a/sound/pci/asihpi/hpioctl.c
-+++ b/sound/pci/asihpi/hpioctl.c
-@@ -33,6 +33,7 @@
- #include <linux/stringify.h>
- #include <linux/module.h>
- #include <linux/vmalloc.h>
-+#include <linux/nospec.h>
- 
- #ifdef MODULE_FIRMWARE
- MODULE_FIRMWARE("asihpi/dsp5000.bin");
-@@ -186,7 +187,8 @@ long asihpi_hpi_ioctl(struct file *file,
- 		struct hpi_adapter *pa = NULL;
- 
- 		if (hm->h.adapter_index < ARRAY_SIZE(adapters))
--			pa = &adapters[hm->h.adapter_index];
-+			pa = &adapters[array_index_nospec(hm->h.adapter_index,
-+							  ARRAY_SIZE(adapters))];
- 
- 		if (!pa || !pa->adapter || !pa->adapter->type) {
- 			hpi_init_response(&hr->r0, hm->h.object,
+ 	/* Program PCIe Control 2 to disable strict ordering */
