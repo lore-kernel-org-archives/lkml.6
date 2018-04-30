@@ -1,99 +1,87 @@
-Return-Path: <helgaas@kernel.org>
-X-Google-Smtp-Source: AB8JxZr/jPYj/GnAUUR0ES2KHy2g6ZdzrS+R0M54hqInGtYEyyvOTMs6/1pvNt4TvJMkhoXAaFax
-ARC-Seal: i=1; a=rsa-sha256; t=1525108533; cv=none;
+Return-Path: <mr.nuke.me@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1525110088; cv=none;
         d=google.com; s=arc-20160816;
-        b=fVIu9/91V3fXFQmyqzH8csy7faMq2G925ajFghlpsyvZ/2Je3S1tTI7qmaJnAkCFSi
-         QcKaFM05HY5Id/voupj7rL2CoUsI5E2fTLvEZqDowCnnlWOzghp5ErSAgJxK2SwkkayG
-         hFa4ji0bHfl7HQIwDIj2H7s/ifsBIhWRLctRPeqwQsJejW+rbcWWk/9zbD8W/UPD9lLW
-         cpWaiHJM1QGb5zVC9LKJjV3C4UTNSlb++mgowkL+qPOp1qIMfTPNUVZEp+t7yeyPgxeL
-         Scc/sNZcspFzg1rfzEzbxraXgMeBhRu5QWepcGEFPq1zcVtlbsHpoqTJ5cl9qZ9LENRQ
-         66nA==
+        b=RL4zNKiPzl6l3uH3/aHQpUnIhr07UgJ0qXOIokW7728z1EaD+71s/agCbwnZkHQyXF
+         M7pRNsWmNEVB12wZPKdlXR5nSQ01UgjfqXmSj3lzOVjMAzyjXFz1yAGB29rUR9pz/VX7
+         I34rAtlj6azREfAwRXYRTxoIwoEhWFxt+wDkgHv1HI96naccsNzuDf0hc1ioHljmwOIA
+         krnUTM9qB4FGWpvPe5nOvREGHg8KDruP/D+hBFxL2rSTYuWQpEnaUj8sgwDrQZF2m5PT
+         hDEsa+xAJcxzT+1cel1c/S4rDB5mUn6VMesVAIwaGbOug+s9f4gVeDnF5r0F8TNm6L3h
+         YkAg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:dmarc-filter:arc-authentication-results;
-        bh=dsSKODxO5Y7B4UwK7iCuFHtA3Fb2DHw0dcvzy7K4mZE=;
-        b=NecbnXWzOLwHugs6zVerT7W6ElciZN6iBDWMAZJ6Y54+30YD1mIRsp2HF2Kdvzfgf4
-         RRMClxhN8WJkwyt1Hxn/xJKKLaTviYJJlb0VxWxkpkamkMsKHNnVF4nHQ9rVPzS5Z2Jv
-         5YeZEM+1moZKAVO9crfFo3f52ykcPQq03UfrU2T+EUp3R+suhrNUwyP5ReiVP2SashPI
-         5HpXAKDfjl21s3uLPphp8o2V53kgG84gkY1O8HnUuvO60b5OgbLTK6cNvh6yBELATpyh
-         gbgojWGceqyulkC+vEiCSU7KaATUvn0YVRBGPkZ2s8IA0AvJIT+9aZSsPBsloSioWkF6
-         GqOA==
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :dkim-signature:arc-authentication-results;
+        bh=uLfQqqkI98fgsIspshT/SVJb0OerH4QAhj+gdzXY6B4=;
+        b=XOwHnliztw88+VskL6uT1W72E9QEsa1ASnW/Vl8jKfRrfxQiUtBz4r9PYC8iPmrYZY
+         EDnWVIFNw5Vs3ToSPxt1mUf25UlfrL+KxMXQpRDymc94yQfFQOJdckS5vqm3cVMlwLnZ
+         5VQNteN1YVUBKjU8RyrecMMELMSR5tqwUJaqm7nFhIJnP2CjyPKMHOvzUVaeOEw2ZNYh
+         0CMLXzafiNZask04Zu96XBsyT4oQ8YKhZ2Fzmo/nq6KdWG99tqj/nw1K9CF3d+NKLjoX
+         ZRq2grRMAvFFMnG1o1E28zBQz7TINPsCkPOV1ooqh8tmoYy4FoK06bJcLK8MPgqfbRzZ
+         NJtg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of helgaas@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=helgaas@kernel.org
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=D3EtrySR;
+       spf=pass (google.com: domain of mr.nuke.me@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=mr.nuke.me@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of helgaas@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=helgaas@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA17B22D48
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Mon, 30 Apr 2018 12:15:31 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: "Alex G." <mr.nuke.me@gmail.com>
-Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
-	gregkh@linuxfoundation.org, fred@fredlawl.com,
-	linux-kernel@vger.kernel.org, alex_gagniuc@dellteam.com,
-	austin_bolen@dell.com, keith.busch@intel.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=D3EtrySR;
+       spf=pass (google.com: domain of mr.nuke.me@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=mr.nuke.me@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AB8JxZpJm47/Sdoxnbm+t55dh+gLIkbXN2yJg9En71u3plhMc2GqExtuIHtYBNHlcHene8CC1Wmk7Q==
 Subject: Re: [PATCH RESEND] PCI/AER: Use a common function to print AER error
  bits
-Message-ID: <20180430171531.GB95643@bhelgaas-glaptop.roam.corp.google.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
+ gregkh@linuxfoundation.org, fred@fredlawl.com, linux-kernel@vger.kernel.org,
+ alex_gagniuc@dellteam.com, austin_bolen@dell.com, keith.busch@intel.com
 References: <20180417170943.1767-1-mr.nuke.me@gmail.com>
  <20180427224337.GC73256@bhelgaas-glaptop.roam.corp.google.com>
  <12343e44-2d8a-51e1-a0be-e6804e9bd8a3@gmail.com>
  <220bb125-b933-abf3-7b30-63446634e8d6@gmail.com>
+ <20180430171531.GB95643@bhelgaas-glaptop.roam.corp.google.com>
+From: "Alex G." <mr.nuke.me@gmail.com>
+Message-ID: <8e8a8de1-a90c-ab88-c8ac-bbe8bcc7d49c@gmail.com>
+Date: Mon, 30 Apr 2018 12:41:26 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <220bb125-b933-abf3-7b30-63446634e8d6@gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180430171531.GB95643@bhelgaas-glaptop.roam.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1598014086120567687?=
-X-GMAIL-MSGID: =?utf-8?q?1599192205664594782?=
+X-GMAIL-MSGID: =?utf-8?q?1599193836183343381?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sat, Apr 28, 2018 at 12:07:48PM -0500, Alex G. wrote:
-> On 04/28/2018 11:46 AM, Alex G. wrote:
-> > On 04/27/2018 05:43 PM, Bjorn Helgaas wrote:
-> > > On Tue, Apr 17, 2018 at 12:09:43PM -0500, Alexandru Gagniuc wrote:
-> (snip)
-> > > > +    memset(&info, 0, sizeof(info));
-> > > > +    info.severity = aer_severity;
-> > > > +    info.status = status;
-> > > > +    info.mask = mask;
-> > > > +    info.first_error = 0x1f;
-> > > 
-> > > I like this patch a lot, but where does this "first_error = 0x1f" come
-> > > from?
-> > 
-> > aer_(un)correctable_error_string don't go to [0x1f], so this guarantees
-> > us we don't print "(First)".
-> > 
-> > > I assume this is supposed to be the "First Error Pointer" in the
-> > > Advanced Error Capabilities and Control register (PCIe r4.0, sec
-> > > 7.8.4.7).  There is a "cap_control" field in struct
-> > > aer_capability_regs; should we be using that here?
-> > 
-> > There is a way to extract it from the PCI regs, and it's quite simple.
-> > IIRC, it should be all f's when the capability is not implemented. I
-> > wanted to avoid any further parsing of PCI regs in this patch.
+
+
+On 04/30/2018 12:15 PM, Bjorn Helgaas wrote:
+> On Sat, Apr 28, 2018 at 12:07:48PM -0500, Alex G. wrote:
+
+(snip)
+>> I could update the offending line to say:
+>>  +	info.first_error = PCI_ERR_CAP_FEP(aer->cap_control);
 > 
-> I could update the offending line to say:
->  +	info.first_error = PCI_ERR_CAP_FEP(aer->cap_control);
+> That's what I would have expected.  So I'd say either do this, or add
+> a comment about why it's not the right thing to do.
 
-That's what I would have expected.  So I'd say either do this, or add
-a comment about why it's not the right thing to do.
+Okay.
 
-> Though I still have the concerns with validating CPER data:
+>> Though I still have the concerns with validating CPER data:
+>>
+>>> I can see a way to use even more common printk code, but that requires
+>>> validating the PCI regs we get from firmware. That means we need to make
+>>> a guarantee about CPER that is beyond the scope of this patch.
 > 
-> > I can see a way to use even more common printk code, but that requires
-> > validating the PCI regs we get from firmware. That means we need to make
-> > a guarantee about CPER that is beyond the scope of this patch.
+> Sounds like this is material for another patch, but if/when you do
+> that, I'd like to understand your concern about validating the
+> registers we get from firmware.  Are you worried about getting
+> incorrect register contents, then printing the wrong info, making
+> the wrong decision about how to recover, something else?
 
-Sounds like this is material for another patch, but if/when you do
-that, I'd like to understand your concern about validating the
-registers we get from firmware.  Are you worried about getting
-incorrect register contents, then printing the wrong info, making
-the wrong decision about how to recover, something else?
+I don't trust firmware, and I have daymares about firmware leaving these
+fields uninitialized. In jargon, I'd like to treat it as external
+untrusted serialized data.
 
-Bjorn
+Alex
