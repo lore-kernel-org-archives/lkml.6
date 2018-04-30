@@ -1,88 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754285AbeD3Odt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 10:33:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58370 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753558AbeD3Odr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 10:33:47 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F59622D47
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh@kernel.org
-X-Google-Smtp-Source: AB8JxZoLAottONdPgfLMxRSRzM8qvxU919T4CfVg82xRWFKGa+vwBLfraqA+9U1xiAwHZVdNSCuPP2BCCqisDf7Qs4Y=
+        id S1754130AbeD3OhC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 10:37:02 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:38100 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753683AbeD3OhA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 10:37:00 -0400
+X-Google-Smtp-Source: AB8JxZof9QZsCvEnuTIIu0XwzHo17PjX5LHiRgDFHZ/Psd89+9MJbQgBXKENDAkP3rB/ndvow7FPsQ==
+Date: Mon, 30 Apr 2018 16:36:56 +0200
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Eduardo Valentin <edubezval@gmail.com>,
+        Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/18] thermal: exynos: fix setting rising_threshold for
+ Exynos5433
+Message-ID: <20180430143656.GH11457@mai>
+References: <1524743493-28113-1-git-send-email-b.zolnierkie@samsung.com>
+ <CGME20180426115201epcas2p17e5cdb0f79927903880e58c290b663e6@epcas2p1.samsung.com>
+ <1524743493-28113-2-git-send-email-b.zolnierkie@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <b458e2bf5b23a4af996e80d81ceabaa4@codeaurora.org>
-References: <1524524972-12014-1-git-send-email-rishabhb@codeaurora.org>
- <1524524972-12014-2-git-send-email-rishabhb@codeaurora.org>
- <20180427142144.tvy5xamuwz6jnxk5@rob-hp-laptop> <b458e2bf5b23a4af996e80d81ceabaa4@codeaurora.org>
-From: Rob Herring <robh@kernel.org>
-Date: Mon, 30 Apr 2018 09:33:25 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJEQU-BysQ7LmQRJ5ySPpUXYCMPAQ1JqeboGoQL-SyAqg@mail.gmail.com>
-Message-ID: <CAL_JsqJEQU-BysQ7LmQRJ5ySPpUXYCMPAQ1JqeboGoQL-SyAqg@mail.gmail.com>
-Subject: Re: [PATCH v5 1/2] dt-bindings: Documentation for qcom, llcc
-To: Rishabh Bhatnagar <rishabhb@codeaurora.org>
-Cc: "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        devicetree@vger.kernel.org, linux-arm@lists.infradead.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Trilok Soni <tsoni@codeaurora.org>, Kyle Yan <kyan@codeaurora.org>,
-        ckadabi@codeaurora.org, Evan Green <evgreen@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1524743493-28113-2-git-send-email-b.zolnierkie@samsung.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 27, 2018 at 5:57 PM,  <rishabhb@codeaurora.org> wrote:
-> On 2018-04-27 07:21, Rob Herring wrote:
->>
->> On Mon, Apr 23, 2018 at 04:09:31PM -0700, Rishabh Bhatnagar wrote:
->>>
->>> Documentation for last level cache controller device tree bindings,
->>> client bindings usage examples.
->>>
->>> Signed-off-by: Channagoud Kadabi <ckadabi@codeaurora.org>
->>> Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
->>> ---
->>>  .../devicetree/bindings/arm/msm/qcom,llcc.txt      | 60
->>> ++++++++++++++++++++++
->>>  1 file changed, 60 insertions(+)
->>>  create mode 100644
->>> Documentation/devicetree/bindings/arm/msm/qcom,llcc.txt
->>
->>
->> My comments on v4 still apply.
->>
->> Rob
->
->
-> Hi Rob,
-> Reposting our replies to your comments on v4:
->
-> This is partially true, a bunch of SoCs would support this design but
-> clients IDs are not expected to change. So Ideally client drivers could
-> hard code these IDs.
->
-> However I have other concerns of moving the client Ids in the driver.
-> The way the APIs implemented today are as follows:
-> #1. Client calls into system cache driver to get cache slice handle
-> with the usecase Id as input.
-> #2. System cache driver gets the phandle of system cache instance from
-> the client device to obtain the private data.
-> #3. Based on the usecase Id perform look up in the private data to get
-> cache slice handle.
-> #4. Return the cache slice handle to client
->
-> If we don't have the connection between client & system cache then the
->  private data needs to declared as static global in the system cache driver,
-> that limits us to have just once instance of system cache block.
+On Thu, Apr 26, 2018 at 01:51:16PM +0200, Bartlomiej Zolnierkiewicz wrote:
+> Add missing clearing of the previous value when setting rising
+> temperature threshold.
+> 
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+>  drivers/thermal/samsung/exynos_tmu.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+> index cda716c..523d26e 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.c
+> +++ b/drivers/thermal/samsung/exynos_tmu.c
+> @@ -577,6 +577,7 @@ static int exynos5433_tmu_initialize(struct platform_device *pdev)
+>  		threshold_code = temp_to_code(data, temp);
+>  
+>  		rising_threshold = readl(data->base + rising_reg_offset);
+> +		rising_threshold &= ~(0xff << j * 8);
+>  		rising_threshold |= (threshold_code << j * 8);
 
-How many instances do you have?
+Bartlomiej,
 
-It is easier to put the data into the kernel and move it to DT later
-than vice-versa. I don't think it is a good idea to do a custom
-binding here and one that only addresses caches and nothing else in
-the interconnect. So either we define an extensible and future-proof
-binding or put the data into the kernel for now.
+I see this code is duplicated all around the driver, so I can't blame you to
+fix it in the same way it is written today but this is not how to deal with
+fields in a register mapping. Can you fix it by adding correct macros with
+masks?
 
-Rob
+-- 
+
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
