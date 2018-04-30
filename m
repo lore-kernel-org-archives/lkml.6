@@ -1,39 +1,39 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrINcYV3f5Pxl4MTpRURnTsOHvD/tSuvJ7jfWGM1WQEAv49V8Hx+bk/nDN/LmD28G44YUHg
-ARC-Seal: i=1; a=rsa-sha256; t=1525116455; cv=none;
+X-Google-Smtp-Source: AB8JxZpC71Iiy7D13AwD7ZrDxdbJhkqxNKzxKQxs+/sTGydmg6ZJhmNLPJS6JZHNpqfAUSYTSmNv
+ARC-Seal: i=1; a=rsa-sha256; t=1525116421; cv=none;
         d=google.com; s=arc-20160816;
-        b=R8UXh5betI79794Xm7HbpJd8LVe9xEkso+j4DDwAS135vH8gD1XuaCDOFgZdOK6B2v
-         yomUEwBFsAazB7zs85czScb84HhuTs9BryYvLwLPyycCow0cfB4hQ7ChGUN4fhQktC2+
-         RiNRcQhfL6Ycwh7g3DoZQhNJY0WfodPuCiit27sBxcjy0d+d8e3AL11OP36fpGDBXsQj
-         bYf5QIdKGxTnR10CsktR4lWzMQOd6RtbSorqZTPeut5ceydK3OIqkLzsFa5Q7UIC4lMU
-         Awe3hK2H/G1mg7qWe1/eLP5awFcLdxMeBN47gxfUbvoIFGm3gu35ZQ1dFTw/zr7lortf
-         mEFg==
+        b=rM5dJUTAGq94s3fv8Xsh5jHNG+3MCtMF0FLKEnb65gVzcMc4UzUbJ2Hp1SUnfwVwk1
+         YqLCAO5WAhUEuvFBR7DvlwNsyY6vmTVu3UReKbzR4WYH/3nUVg3MMKzBD+EFEPizyxD+
+         B2mCi6LzSAqa8aEEHKR1XAGBdyvLq9OKmFHijcl+JxSJEy77r2kbt43KImR9V/ys0PfK
+         9dXhlMXzGhrrflEBWU97zx8MgxOKYFL2CoPT9j8rKEw9K7hM6Y8OLuxanYKGgRAcOYBz
+         tu+T3C0eN2h9mMfurzdlSoDMb/B3DqSxI1Ol6lj/6JWpI8tGb1dwOiiWhm+M690WgOOQ
+         T9qQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=IYU0uE/XJA30o+SK7W6q/gGwTzZ5nepqL9dFMRdICfg=;
-        b=osxfjiEI+k8OeHoSju/iRAKw/bLjNMXnAgiOmmDY0EyuOwRNaG8Wrf0KzR5ISNCs6e
-         EkAy49JMI6yuV8mzmOLKpmvDM0kCyan6BTUOKdrVgaWgf0vr6IFvmV6ZHApLV/lcoo/R
-         PQkUpQs8v6EF3zy4cmT+wso90xl0651SAmt732GWs0cAtRJWGOe+PvgSKL3c7h7qaw6H
-         4NoGlQOcPkLvF69llV0W/8x6iRpr1BXxfs2lpr2ufFmQKp3TcWH8w/8HQgxb5VuSzoud
-         wEnLFSQQVnJzGVVy0v6UpUc8iguMyk9enaaJiOQXnaYyPfRo/oe2NZz594hsUUskGsMz
-         aQ+Q==
+        bh=kYBTDKSDlfnwOBfvdb3S9ZhpIIO9UmVC/TnZ/Y371Cg=;
+        b=GsR9wknUJpLKj73gYp3GGPoDLJITsxLrxuChyFUWfcSCvPcx96nLUKyRiJV5v/rha9
+         CgOf11ZE9zZjBXB9ky7c1KT8JSJzPcUeDlo5aKDfg342WRkoJ4ayaVT125WqGL4CikYK
+         39ngE/kt2jiLKVYTrwyFh2Dpf4gwlpSENFqf7WQ4iXve8170idIwR6P3OrUmO1NA84Ka
+         sEetU8IHi3wfFih9ZxOkJY7NU/kbUelN6gnZAZbqTF/roy8ewcOI/6uojpeuQ4le+eYn
+         ui8QJqombWzbbRc+TkMirjSSnVYQxhqk0y8XjvOUZKP+LEYRbR9n1OoFK1ZA1tyW0MMz
+         IueQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C67E22DCC
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D60D422DAC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ilya Dryomov <idryomov@gmail.com>,
-	Jason Dillaman <dillaman@redhat.com>
-Subject: [PATCH 4.14 74/91] libceph: reschedule a tick in finish_hunting()
-Date: Mon, 30 Apr 2018 12:24:56 -0700
-Message-Id: <20180430184008.125080894@linuxfoundation.org>
+	Kamil Lulko <kamilx.lulko@intel.com>,
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+Subject: [PATCH 4.14 19/91] usb: core: Add quirk for HP v222w 16GB Mini
+Date: Mon, 30 Apr 2018 12:24:01 -0700
+Message-Id: <20180430184005.218334146@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184004.216234025@linuxfoundation.org>
 References: <20180430184004.216234025@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200581417359909?=
-X-GMAIL-MSGID: =?utf-8?q?1599200512452052217?=
+X-GMAIL-THRID: =?utf-8?q?1599200291962669964?=
+X-GMAIL-MSGID: =?utf-8?q?1599200476619136732?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,47 +52,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ilya Dryomov <idryomov@gmail.com>
+From: Kamil Lulko <kamilx.lulko@intel.com>
 
-commit 7b4c443d139f1d2b5570da475f7a9cbcef86740c upstream.
+commit 3180dabe08e3653bf0a838553905d88f3773f29c upstream.
 
-If we go without an established session for a while, backoff delay will
-climb to 30 seconds.  The keepalive timeout is also 30 seconds, so it's
-pretty easily hit after a prolonged hunting for a monitor: we don't get
-a chance to send out a keepalive in time, which means we never get back
-a keepalive ack in time, cutting an established session and attempting
-to connect to a different monitor every 30 seconds:
+Add DELAY_INIT quirk to fix the following problem with HP
+v222w 16GB Mini:
 
-  [Sun Apr 1 23:37:05 2018] libceph: mon0 10.80.20.99:6789 session established
-  [Sun Apr 1 23:37:36 2018] libceph: mon0 10.80.20.99:6789 session lost, hunting for new mon
-  [Sun Apr 1 23:37:36 2018] libceph: mon2 10.80.20.103:6789 session established
-  [Sun Apr 1 23:38:07 2018] libceph: mon2 10.80.20.103:6789 session lost, hunting for new mon
-  [Sun Apr 1 23:38:07 2018] libceph: mon1 10.80.20.100:6789 session established
-  [Sun Apr 1 23:38:37 2018] libceph: mon1 10.80.20.100:6789 session lost, hunting for new mon
-  [Sun Apr 1 23:38:37 2018] libceph: mon2 10.80.20.103:6789 session established
-  [Sun Apr 1 23:39:08 2018] libceph: mon2 10.80.20.103:6789 session lost, hunting for new mon
+usb 1-3: unable to read config index 0 descriptor/start: -110
+usb 1-3: can't read configurations, error -110
+usb 1-3: can't set config #1, error -110
 
-The regular keepalive interval is 10 seconds.  After ->hunting is
-cleared in finish_hunting(), call __schedule_delayed() to ensure we
-send out a keepalive after 10 seconds.
-
-Cc: stable@vger.kernel.org # 4.7+
-Link: http://tracker.ceph.com/issues/23537
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-Reviewed-by: Jason Dillaman <dillaman@redhat.com>
+Signed-off-by: Kamil Lulko <kamilx.lulko@intel.com>
+Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/ceph/mon_client.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/usb/core/quirks.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/net/ceph/mon_client.c
-+++ b/net/ceph/mon_client.c
-@@ -1133,6 +1133,7 @@ static void finish_hunting(struct ceph_m
- 		monc->hunting = false;
- 		monc->had_a_connection = true;
- 		un_backoff(monc);
-+		__schedule_delayed(monc);
- 	}
- }
+--- a/drivers/usb/core/quirks.c
++++ b/drivers/usb/core/quirks.c
+@@ -45,6 +45,9 @@ static const struct usb_device_id usb_qu
+ 	{ USB_DEVICE(0x03f0, 0x0701), .driver_info =
+ 			USB_QUIRK_STRING_FETCH_255 },
+ 
++	/* HP v222w 16GB Mini USB Drive */
++	{ USB_DEVICE(0x03f0, 0x3f40), .driver_info = USB_QUIRK_DELAY_INIT },
++
+ 	/* Creative SB Audigy 2 NX */
+ 	{ USB_DEVICE(0x041e, 0x3020), .driver_info = USB_QUIRK_RESET_RESUME },
  
