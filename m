@@ -1,97 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754974AbeD3Uvt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 16:51:49 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:42821 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751241AbeD3Uvr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 16:51:47 -0400
-X-Google-Smtp-Source: AB8JxZotGFK+jCxy/66chh987yji+TPPdC3fdtAEL6V/H4Ho596dT0RnS0UntprbA1vx6dqcwq/fqw==
-Date: Mon, 30 Apr 2018 13:51:45 -0700
-From: Matthias Kaehlcke <mka@chromium.org>
-To: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>,
-        Guenter Roeck <groeck@chromium.org>, intel-gfx@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [Intel-gfx] [PATCH v2] drm/i915: Disable some extra clang
- warnings
-Message-ID: <20180430205145.GC133494@google.com>
-References: <20180319191451.83910-1-mka@chromium.org>
- <20180430193119.GB133494@google.com>
- <152511850981.10429.1077865835761338509@mail.alporthouse.com>
+        id S932117AbeD3VEP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 17:04:15 -0400
+Received: from anholt.net ([50.246.234.109]:40508 "EHLO anholt.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755162AbeD3VEO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 17:04:14 -0400
+From: Eric Anholt <eric@anholt.net>
+To: Vaishali Thakkar <vthakkar1994@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Vaishali Thakkar <vthakkar1994@gmail.com>
+Subject: Re: [PATCH] drm/vc4: make function vc4_allocate_bin_bo static
+In-Reply-To: <20180425070953.17933-1-vthakkar1994@gmail.com>
+References: <20180425070953.17933-1-vthakkar1994@gmail.com>
+User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
+Date: Mon, 30 Apr 2018 14:04:11 -0700
+Message-ID: <8736zce790.fsf@anholt.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <152511850981.10429.1077865835761338509@mail.alporthouse.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 30, 2018 at 09:01:49PM +0100, Chris Wilson wrote:
-> Quoting Matthias Kaehlcke (2018-04-30 20:31:19)
-> > On Mon, Mar 19, 2018 at 12:14:51PM -0700, Matthias Kaehlcke wrote:
-> > > Commit 39bf4de89ff7 ("drm/i915: Add -Wall -Wextra to our build, set
-> > > warnings to full") enabled extra warnings for i915 to spot possible
-> > > bugs in new code, and then disabled a subset of these warnings to keep
-> > > the current code building without warnings (with gcc). Enabling the
-> > > extra warnings also enabled some additional clang-only warnings, as a
-> > > result building i915 with clang currently is extremely noisy. For now
-> > > also disable the clang warnings sign-compare, sometimes-uninitialized,
-> > > unneeded-internal-declaration and initializer-overrides. If desired
-> > > they can be re-enabled after the code has been fixed.
-> > > 
-> > > Fixes: 39bf4de89ff7 ("drm/i915: Add -Wall -Wextra to our build, set
-> > > warnings to full")
-> 
-> Do we need to backport this for a non-default build with a non-default
-> compiler?
+--=-=-=
+Content-Type: text/plain
 
-If it affected a LTS build I'd say yes, but since that isn't the case
-I think it's not necessary.
+Vaishali Thakkar <vthakkar1994@gmail.com> writes:
 
-> > > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> > > ---
-> > > Changes in v2:
-> > > - rebased on drm-tip
-> > > - added comment indicating that disabled warnings are clang warnings
-> > > 
-> > >  drivers/gpu/drm/i915/Makefile | 5 +++++
-> > >  1 file changed, 5 insertions(+)
-> > > 
-> > > diff --git a/drivers/gpu/drm/i915/Makefile b/drivers/gpu/drm/i915/Makefile
-> > > index 4eee91a3a236..9717c037b582 100644
-> > > --- a/drivers/gpu/drm/i915/Makefile
-> > > +++ b/drivers/gpu/drm/i915/Makefile
-> > > @@ -18,6 +18,11 @@ subdir-ccflags-y += $(call cc-disable-warning, type-limits)
-> > >  subdir-ccflags-y += $(call cc-disable-warning, missing-field-initializers)
-> > >  subdir-ccflags-y += $(call cc-disable-warning, implicit-fallthrough)
-> > >  subdir-ccflags-y += $(call cc-disable-warning, unused-but-set-variable)
-> > > +# clang warnings
-> > > +subdir-ccflags-y += $(call cc-disable-warning, sign-compare)
-> 
-> Too much mixup in the code to be fixed overnight indeed.
-> 
-> > > +subdir-ccflags-y += $(call cc-disable-warning, sometimes-uninitialized)
-> 
-> Annoyingly it appears that clang has more false positives.
-> 
-> > > +subdir-ccflags-y += $(call cc-disable-warning, unneeded-internal-declaration)
-> 
-> Example? I don't recall this one, so don't know if we should just not
-> fix it rather than suppress. I've used ignored-attributes, perhaps that
-> was for the same cause.
+> Sparse complains with following warning:
+> drivers/gpu/drm/vc4/vc4_v3d.c:222:1: warning: symbol
+> 'vc4_allocate_bin_bo' was not declared. Should it be static?
+>
+> Make vc4_allocate_bin static as it is not used outside of
+> vc4_v3d.c.
+>
+> Signed-off-by: Vaishali Thakkar <vthakkar1994@gmail.com>
 
-drivers/gpu/drm/i915/intel_guc_submission.c:183:13: warning: function
-  'has_doorbell' is not needed and will not be emitted
-  [-Wunneeded-internal-declaration]
-static bool has_doorbell(struct intel_guc_client *client)
+Applied to drm-misc-next.  Thanks!
 
-The function is only called within a GEM_BUG_ON macro, which does not
-evaluate the expression unless CONFIG_DRM_I915_DEBUG_GEM is set.
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Instead of disabling the warning it would probably be better to mark
-has_doorbell as __maybe_unused.
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlrnhMwACgkQtdYpNtH8
+nui/3Q/7BVLzZpPO0q53cB1iqX3fV7HpObfEGCoeaILzEGDvVwmXK+IkeecyBHj9
+3ugBBz2Bmfcu97hOU/+1k4d+H0LWmdXj6McVBfX9LBWL4Gbz4asQ0/HvLbKwTxfm
+5h9ub7S5JugRN7mAx58It0D0KYbeCMZkfIE3QK58USbcpeorVi9JoRIhgxbtcxA9
+A/zzMysxzIvGUvwfAlwkAqbXIgzFtyzqU0b5vBtqa+UxBpf/vLEvwzXP9nb/3lCQ
+O4EQT+6z2U4aSuDETGKz4oU/V8h2zWeufmBoXHBDgSV2p5TTOBRO18zvib+mziB7
++Rj99Y1VzwrNn27PmB3R0s+Twv6NalT08OhGZmaasOo3lCwFIIjLhGoCFOHeEjs3
+TepBxY6FdO9klXa6zGDGarA2x354Z/n0MYeH3oUMkmXiinlEDfE58/uNZpgaqhu3
+Yu1NZOHeDG2Ach2f4+NeF+WnTgK+RUfwYJivnUDVNmujh8iu9iZQ8NlpfgkS9u8a
+nslsQjsEeBW34I/KCJuNCNuvEsfFYbAd/O9D0QMshPaixjhfV179E9mzigU4vMLV
+Kp+dO9Js0IfgK2h2/onq18Sgg0CI7lk0ambMMMOWR3baj91gROQNE6CAWcIGSTpf
+yxob36kJgsQ1CUzm6q4/UbplGi22imxO8XG8IZ0/Fju1iGirGs8=
+=6Odt
+-----END PGP SIGNATURE-----
+--=-=-=--
