@@ -1,39 +1,38 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZoOB0uFwiatFgMpTQkuM3dvbuJRJsvkIkgI5d0nMAlrw7S6Hs84QCWSqB7aZzdv1jsM3Cri
-ARC-Seal: i=1; a=rsa-sha256; t=1525116352; cv=none;
+X-Google-Smtp-Source: AB8JxZqhz6fMv0ylQl9FgOgdTfnPW/EdAhWK9RE8jZtzCBgaBZWaECfp8TtCrrPQWAuSof2LjnUP
+ARC-Seal: i=1; a=rsa-sha256; t=1525116351; cv=none;
         d=google.com; s=arc-20160816;
-        b=MQEuKcjGUxj91OLZrGv+ueIAcSalP5msxDCdZgnDwERmBamXOJKP0tto3sH5Hz3ZKr
-         SErmopTtjC/DhrRuFCpOW93SN5XzLxH6NQKXoSGOIjpGGsWaaS696NzBA1/CPIJi3z6h
-         tgZDWztsP2ZaOcrTNn/f2wmwRsukROD5KH53aVKDLsgIyGdem4Ju/wL+NCCxQhecWk45
-         Ctaw+a444Vgiq2hwS/OxXUH64MrW5nX47o/2S8aYS2RywYb0p5l9GVf6hJdIyJon2uIF
-         ntCsPDTLJ/v+lKS1620MWFDSceSIoj0ZrVMhp/JavM6Seim+OlZPKqaj2bPxgLZDoKzq
-         nWIw==
+        b=En1x6YJYZzBOLuoRkel441d4qJhySTwVyKS22yJlaWemZ1GySosyosLosd8Us0I/L/
+         /pSnJ2hazTdbYD+55fZxu1apj4Vgyat5ZtOVbgemESzCmFrHvo7OSAIJKTHg8oxu2Vnn
+         iUI5zMsfW6l5qqn8A05GF9PLJP2OGWzAnkd7MY5Dp/CXeiPseGyFbwLq04QzQlaECvGs
+         CffIWVctbdEF/0zp+MggEQtBS1YFxocVt5IVXOR+ctariwjEA3YeJEhIsDxuTUowPvCE
+         qkSFp7dlsta+jCmhUfcW9vE67DYFcaE/lgbCL71NNTgrBa8hdaGPFxF/c4UaN+b2eL/E
+         yX4A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=JBLwXAL2LeR4MxHiIJo2Si8W0UTHdGX146Ga1ehQG9U=;
-        b=V2xCJBXFpQBRIJ7qJq52yl3CH2XVU8gkzqefZlpAEyQuezZHF43OrJ/CclbEHF2lYF
-         2siJqMV29QbOwntcau6hbUwJtK2SO1NHkgY5LQE01t6XKQor+pk0BMAZuoAL/jW4Dez0
-         355evvs5YMye1SjknGlasu0aWmK0IAxJzLH0u9epfym8sfXQTR5UvLk50E8XcZRC6m69
-         0nKqzTAkY3LN24uSebvfd8YR5J2el9l+eP2nI2L/Wbr+cDL1kPLKyCI51b2irbwEIbG1
-         66mHX7uIaFY4qq6sj+ozKysiqQzZSLrGuaXnpYcsV+bcsM/1lDlEwAF0AATT+HbDGL2j
-         6vVw==
+        bh=YFVMEA8QwcHlambRNaKr0uqghY1VsldL6giY7Q9wnzk=;
+        b=cfQv3KIzgyLdQ82UvRDZ8WQ+0xsIGEAqLne2tFPp054OjCMDJZdTFJ2HHHTDZ9N1yn
+         t0zaJGGBPlnbxvPc0qeYSAcBWjVGUPPsSNxfXTTQLC1pTqORUSvA19ex0WDV8Mqb98P8
+         RhsI8DHbB42ay1j9G+oIwfIB9iuExzgWWDWrD+r0JdqjyrRb5yKbuULYg7GA3PWzSTC/
+         FmZNw2NdXIvNTb/0WPPIRNPIxByEA0fM4BCb3jmxQcNHe6ZDVzfwKz7VudsJMzVqUogN
+         KJIZR5VHTBAlBsQPagvYF9vEAzzaImujKfivcmfkFlSk04q1fXMLsQmVpXIX+oj5o5EK
+         2Nrw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD56A22DBF
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C8C122DBE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Collin May <collin@collinswebsite.com>,
-	Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.4 07/44] USB: serial: simple: add libtransistor console
-Date: Mon, 30 Apr 2018 12:24:18 -0700
-Message-Id: <20180430190946.631305721@linuxfoundation.org>
+	Shuah Khan <shuahkh@osg.samsung.com>
+Subject: [PATCH 4.4 06/44] usbip: vhci_hcd: Fix usb device and sockfd leaks
+Date: Mon, 30 Apr 2018 12:24:17 -0700
+Message-Id: <20180430190946.589260457@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430190946.093694747@linuxfoundation.org>
 References: <20180430190946.093694747@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200404256407404?=
-X-GMAIL-MSGID: =?utf-8?q?1599200404256407404?=
+X-GMAIL-THRID: =?utf-8?q?1599200290205217782?=
+X-GMAIL-MSGID: =?utf-8?q?1599200403597284455?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,61 +51,29 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Collin May <collin@collinswebsite.com>
+From: Shuah Khan <shuahkh@osg.samsung.com>
 
-commit fe710508b6ba9d28730f3021fed70e7043433b2e upstream.
+commit 9020a7efe537856eb3e826ebebdf38a5d07a7857 upstream.
 
-Add simple driver for libtransistor USB console.
-This device is implemented in software:
-https://github.com/reswitched/libtransistor/blob/development/lib/usb_serial.c
+vhci_hcd fails to do reset to put usb device and sockfd in the
+module remove/stop paths. Fix the leak.
 
-Signed-off-by: Collin May <collin@collinswebsite.com>
+Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
 Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/Kconfig             |    1 +
- drivers/usb/serial/usb-serial-simple.c |    7 +++++++
- 2 files changed, 8 insertions(+)
+ drivers/usb/usbip/usbip_common.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/serial/Kconfig
-+++ b/drivers/usb/serial/Kconfig
-@@ -62,6 +62,7 @@ config USB_SERIAL_SIMPLE
- 		- Fundamental Software dongle.
- 		- Google USB serial devices
- 		- HP4x calculators
-+		- Libtransistor USB console
- 		- a number of Motorola phones
- 		- Motorola Tetra devices
- 		- Novatel Wireless GPS receivers
---- a/drivers/usb/serial/usb-serial-simple.c
-+++ b/drivers/usb/serial/usb-serial-simple.c
-@@ -66,6 +66,11 @@ DEVICE(flashloader, FLASHLOADER_IDS);
- 					0x01) }
- DEVICE(google, GOOGLE_IDS);
+--- a/drivers/usb/usbip/usbip_common.h
++++ b/drivers/usb/usbip/usbip_common.h
+@@ -248,7 +248,7 @@ enum usbip_side {
+ #define	SDEV_EVENT_ERROR_SUBMIT	(USBIP_EH_SHUTDOWN | USBIP_EH_RESET)
+ #define	SDEV_EVENT_ERROR_MALLOC	(USBIP_EH_SHUTDOWN | USBIP_EH_UNUSABLE)
  
-+/* Libtransistor USB console */
-+#define LIBTRANSISTOR_IDS()			\
-+	{ USB_DEVICE(0x1209, 0x8b00) }
-+DEVICE(libtransistor, LIBTRANSISTOR_IDS);
-+
- /* ViVOpay USB Serial Driver */
- #define VIVOPAY_IDS()			\
- 	{ USB_DEVICE(0x1d5f, 0x1004) }	/* ViVOpay 8800 */
-@@ -113,6 +118,7 @@ static struct usb_serial_driver * const
- 	&funsoft_device,
- 	&flashloader_device,
- 	&google_device,
-+	&libtransistor_device,
- 	&vivopay_device,
- 	&moto_modem_device,
- 	&motorola_tetra_device,
-@@ -129,6 +135,7 @@ static const struct usb_device_id id_tab
- 	FUNSOFT_IDS(),
- 	FLASHLOADER_IDS(),
- 	GOOGLE_IDS(),
-+	LIBTRANSISTOR_IDS(),
- 	VIVOPAY_IDS(),
- 	MOTO_IDS(),
- 	MOTOROLA_TETRA_IDS(),
+-#define	VDEV_EVENT_REMOVED	(USBIP_EH_SHUTDOWN | USBIP_EH_BYE)
++#define	VDEV_EVENT_REMOVED (USBIP_EH_SHUTDOWN | USBIP_EH_RESET | USBIP_EH_BYE)
+ #define	VDEV_EVENT_DOWN		(USBIP_EH_SHUTDOWN | USBIP_EH_RESET)
+ #define	VDEV_EVENT_ERROR_TCP	(USBIP_EH_SHUTDOWN | USBIP_EH_RESET)
+ #define	VDEV_EVENT_ERROR_MALLOC	(USBIP_EH_SHUTDOWN | USBIP_EH_UNUSABLE)
