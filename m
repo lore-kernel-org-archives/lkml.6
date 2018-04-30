@@ -1,40 +1,42 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZoJ6WqSn3r6GRJbc2vd4YVeXYKhommkDhFcdp1UhmX3LsUhTYR8cSJxfUBRezlEVaFaqENu
-ARC-Seal: i=1; a=rsa-sha256; t=1525116468; cv=none;
+X-Google-Smtp-Source: AB8JxZriImCVut6JkqsoP8b//JyrdU/ra+cyObkCPf+EcTmNBQBzr++5teTPBIqqfPCtSYUZA7jK
+ARC-Seal: i=1; a=rsa-sha256; t=1525116462; cv=none;
         d=google.com; s=arc-20160816;
-        b=TCJGWglyywGsoR+io5DbnOC0jqYMnEfQ4jz/a7B6Oq2pFEE+VZQxxsboTqz7vjldOM
-         cnK4xKmHSpdti62QuuY6h3dDDiN5rR1ytwAXJ6z3XUfDaLv3Maq8RJodi7KzrG5VS3eo
-         1dEisSzb/nndnSastR/Pg2lcR3dtC5CsAH1KNe7+DouhGzQAAufOpKkVRPndvm3sMlVV
-         CYl2Xo/VjVy9uLLt0XObifl6rGvT88NSsr7RNRgMHqyW8P5QaMWHupRnNST8Jvm50PnW
-         7NJ4Xsi0n94nvtkPr2QI7yguNAEpD1WGvUWl1K3NuOx5HajzhqLSiYGJVoT7m4NlWADQ
-         co5w==
+        b=fEPB39cdzgYMUELjDBsc8uj3UH0wgSMb5AgJv4lCY8L+XAteF9Q6uLQjq1Fq8oQC2k
+         L/l1WI/MC9HQXFQ1NBQh3qPr6O1hYFVe1GF6aYT1St2Fk+XDKmE9qHgCqr/XhbmV5WG2
+         XN2zYPbLCtsI5SXm/JzCSeRtRvCycGfbQ2uQfFu2vOkWFuiO8Z+0HzZrrWgJckSDgf6b
+         oUzecrVcJhHwCUbRHmflsqwyf17GCQa+zvE2jVfL1rIFR+PYdyRR+VWJy3CNzkwrrNte
+         kfMMdB9U+4fV9bAAz0DgsENaXyYLJsTd+/XTWsv4NAG4k1DOTu36V8eX7z3RS4vZTfDF
+         OjkA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=Se02EUgjj+69eTjbOIA3e10bSuLDFjAVbc0CrjR1K+U=;
-        b=Ih+JPuZQCeCQwNKKAJAeXND6HmEGgBkNO/N+qNG1ALsiEQt1hlHleCEhASw0+92XEg
-         Xmt3fM+gylu/7yg7weO7R2pi5vzqV5ZgT7u/y7XTonjYz/Xb/8DMy4tT7eg3bAnMEgpT
-         d3BjaM6P8YG6NgrXNMqxGNJJAeinzogyGLUJchO3JNkSrerwpXLHhAz87bJ46ao4z5lW
-         1YxAUMi8WwENW+BClQ1k0XUgUeSSpg7/NZke4rq2udZYC1Ut461gM7b7WjwGgcD+4nif
-         CGn8wz25h0NcdC7pMppavS8zJRFyyNwUB2teSu2OW3FRXFMh7La2lX049qVL80K06iZt
-         4guw==
+        bh=YzQNS/wy4yoJX7mzDdQatVYgXBcuPFrh8bLjQRfrt2w=;
+        b=aamQcGmp/eXewDkP8hoMS4QHhy7APbLsJ2DTETavE/OfO5wIeRWDnAMRxHHCLFgxuu
+         G7P+h3fw9blCWT7hPCL66i2/8mosM4z6ALORv1pdWlkkQXh+eQS0gvQTysLfhcTRXBdb
+         YMT/fIoUOD5fQJdjx8EmgVXa/c5+MtE7IzEtZTgowX/VV+dS2U6wH9iITf7GbT47mzuJ
+         0emBkCFZNau1zvsgo1Fxttgu0/RiHTZHu+LOD0xvj/jQ/PxgZ0/VCPJTy4RBR1ezkNJe
+         y47/mbFjZmLkNQL86QaFenkIUN5tgqOC5tLHMs0Hyneiao/kC/MMtv/gTW01O2dvn2CG
+         WVbg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3B8122E03
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 431D922DC1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mark Rutland <mark.rutland@arm.com>,
-	Shannon Zhao <zhaoshenglong@huawei.com>,
-	Marc Zyngier <marc.zyngier@arm.com>
-Subject: [PATCH 4.14 68/91] KVM: arm/arm64: Close VMID generation race
-Date: Mon, 30 Apr 2018 12:24:50 -0700
-Message-Id: <20180430184007.791224754@linuxfoundation.org>
+	Arnd Bergmann <arnd@arndb.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"H . J . Lu" <hjl.tools@gmail.com>,
+	Jeffrey Walton <noloader@gmail.com>,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: [PATCH 4.14 84/91] x86/ipc: Fix x32 version of shmid64_ds and msqid64_ds
+Date: Mon, 30 Apr 2018 12:25:06 -0700
+Message-Id: <20180430184008.670582578@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184004.216234025@linuxfoundation.org>
 References: <20180430184004.216234025@linuxfoundation.org>
@@ -44,8 +46,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200599118656888?=
-X-GMAIL-MSGID: =?utf-8?q?1599200526070147653?=
+X-GMAIL-THRID: =?utf-8?q?1599200461344232814?=
+X-GMAIL-MSGID: =?utf-8?q?1599200520347681960?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,90 +55,126 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit f0cf47d939d0b4b4f660c5aaa4276fa3488f3391 upstream.
+commit 1a512c0882bd311c5b5561840fcfbe4c25b8f319 upstream.
 
-Before entering the guest, we check whether our VMID is still
-part of the current generation. In order to avoid taking a lock,
-we start with checking that the generation is still current, and
-only if not current do we take the lock, recheck, and update the
-generation and VMID.
+A bugfix broke the x32 shmid64_ds and msqid64_ds data structure layout
+(as seen from user space)  a few years ago: Originally, __BITS_PER_LONG
+was defined as 64 on x32, so we did not have padding after the 64-bit
+__kernel_time_t fields, After __BITS_PER_LONG got changed to 32,
+applications would observe extra padding.
 
-This leaves open a small race: A vcpu can bump up the global
-generation number as well as the VM's, but has not updated
-the VMID itself yet.
+In other parts of the uapi headers we seem to have a mix of those
+expecting either 32 or 64 on x32 applications, so we can't easily revert
+the path that broke these two structures.
 
-At that point another vcpu from the same VM comes in, checks
-the generation (and finds it not needing anything), and jumps
-into the guest. At this point, we end-up with two vcpus belonging
-to the same VM running with two different VMIDs. Eventually, the
-VMID used by the second vcpu will get reassigned, and things will
-really go wrong...
+Instead, this patch decouples x32 from the other architectures and moves
+it back into arch specific headers, partially reverting the even older
+commit 73a2d096fdf2 ("x86: remove all now-duplicate header files").
 
-A simple solution would be to drop this initial check, and always take
-the lock. This is likely to cause performance issues. A middle ground
-is to convert the spinlock to a rwlock, and only take the read lock
-on the fast path. If the check fails at that point, drop it and
-acquire the write lock, rechecking the condition.
+It's not clear whether this ever made any difference, since at least
+glibc carries its own (correct) copy of both of these header files,
+so possibly no application has ever observed the definitions here.
 
-This ensures that the above scenario doesn't occur.
+Based on a suggestion from H.J. Lu, I tried out the tool from
+https://github.com/hjl-tools/linux-header to find other such
+bugs, which pointed out the same bug in statfs(), which also has
+a separate (correct) copy in glibc.
 
+Fixes: f4b4aae18288 ("x86/headers/uapi: Fix __BITS_PER_LONG value for x32 builds")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: "H . J . Lu" <hjl.tools@gmail.com>
+Cc: Jeffrey Walton <noloader@gmail.com>
 Cc: stable@vger.kernel.org
-Reported-by: Mark Rutland <mark.rutland@arm.com>
-Tested-by: Shannon Zhao <zhaoshenglong@huawei.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Link: https://lkml.kernel.org/r/20180424212013.3967461-1-arnd@arndb.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- virt/kvm/arm/arm.c |   15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ arch/x86/include/uapi/asm/msgbuf.h |   31 +++++++++++++++++++++++++++
+ arch/x86/include/uapi/asm/shmbuf.h |   42 +++++++++++++++++++++++++++++++++++++
+ 2 files changed, 73 insertions(+)
 
---- a/virt/kvm/arm/arm.c
-+++ b/virt/kvm/arm/arm.c
-@@ -61,7 +61,7 @@ static DEFINE_PER_CPU(struct kvm_vcpu *,
- static atomic64_t kvm_vmid_gen = ATOMIC64_INIT(1);
- static u32 kvm_next_vmid;
- static unsigned int kvm_vmid_bits __read_mostly;
--static DEFINE_SPINLOCK(kvm_vmid_lock);
-+static DEFINE_RWLOCK(kvm_vmid_lock);
- 
- static bool vgic_present;
- 
-@@ -462,11 +462,16 @@ static void update_vttbr(struct kvm *kvm
- {
- 	phys_addr_t pgd_phys;
- 	u64 vmid;
-+	bool new_gen;
- 
--	if (!need_new_vmid_gen(kvm))
-+	read_lock(&kvm_vmid_lock);
-+	new_gen = need_new_vmid_gen(kvm);
-+	read_unlock(&kvm_vmid_lock);
+--- a/arch/x86/include/uapi/asm/msgbuf.h
++++ b/arch/x86/include/uapi/asm/msgbuf.h
+@@ -1 +1,32 @@
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
++#ifndef __ASM_X64_MSGBUF_H
++#define __ASM_X64_MSGBUF_H
 +
-+	if (!new_gen)
- 		return;
- 
--	spin_lock(&kvm_vmid_lock);
-+	write_lock(&kvm_vmid_lock);
- 
- 	/*
- 	 * We need to re-check the vmid_gen here to ensure that if another vcpu
-@@ -474,7 +479,7 @@ static void update_vttbr(struct kvm *kvm
- 	 * use the same vmid.
- 	 */
- 	if (!need_new_vmid_gen(kvm)) {
--		spin_unlock(&kvm_vmid_lock);
-+		write_unlock(&kvm_vmid_lock);
- 		return;
- 	}
- 
-@@ -508,7 +513,7 @@ static void update_vttbr(struct kvm *kvm
- 	vmid = ((u64)(kvm->arch.vmid) << VTTBR_VMID_SHIFT) & VTTBR_VMID_MASK(kvm_vmid_bits);
- 	kvm->arch.vttbr = pgd_phys | vmid;
- 
--	spin_unlock(&kvm_vmid_lock);
-+	write_unlock(&kvm_vmid_lock);
- }
- 
- static int kvm_vcpu_first_run_init(struct kvm_vcpu *vcpu)
++#if !defined(__x86_64__) || !defined(__ILP32__)
+ #include <asm-generic/msgbuf.h>
++#else
++/*
++ * The msqid64_ds structure for x86 architecture with x32 ABI.
++ *
++ * On x86-32 and x86-64 we can just use the generic definition, but
++ * x32 uses the same binary layout as x86_64, which is differnet
++ * from other 32-bit architectures.
++ */
++
++struct msqid64_ds {
++	struct ipc64_perm msg_perm;
++	__kernel_time_t msg_stime;	/* last msgsnd time */
++	__kernel_time_t msg_rtime;	/* last msgrcv time */
++	__kernel_time_t msg_ctime;	/* last change time */
++	__kernel_ulong_t msg_cbytes;	/* current number of bytes on queue */
++	__kernel_ulong_t msg_qnum;	/* number of messages in queue */
++	__kernel_ulong_t msg_qbytes;	/* max number of bytes on queue */
++	__kernel_pid_t msg_lspid;	/* pid of last msgsnd */
++	__kernel_pid_t msg_lrpid;	/* last receive pid */
++	__kernel_ulong_t __unused4;
++	__kernel_ulong_t __unused5;
++};
++
++#endif
++
++#endif /* __ASM_GENERIC_MSGBUF_H */
+--- a/arch/x86/include/uapi/asm/shmbuf.h
++++ b/arch/x86/include/uapi/asm/shmbuf.h
+@@ -1 +1,43 @@
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
++#ifndef __ASM_X86_SHMBUF_H
++#define __ASM_X86_SHMBUF_H
++
++#if !defined(__x86_64__) || !defined(__ILP32__)
+ #include <asm-generic/shmbuf.h>
++#else
++/*
++ * The shmid64_ds structure for x86 architecture with x32 ABI.
++ *
++ * On x86-32 and x86-64 we can just use the generic definition, but
++ * x32 uses the same binary layout as x86_64, which is differnet
++ * from other 32-bit architectures.
++ */
++
++struct shmid64_ds {
++	struct ipc64_perm	shm_perm;	/* operation perms */
++	size_t			shm_segsz;	/* size of segment (bytes) */
++	__kernel_time_t		shm_atime;	/* last attach time */
++	__kernel_time_t		shm_dtime;	/* last detach time */
++	__kernel_time_t		shm_ctime;	/* last change time */
++	__kernel_pid_t		shm_cpid;	/* pid of creator */
++	__kernel_pid_t		shm_lpid;	/* pid of last operator */
++	__kernel_ulong_t	shm_nattch;	/* no. of current attaches */
++	__kernel_ulong_t	__unused4;
++	__kernel_ulong_t	__unused5;
++};
++
++struct shminfo64 {
++	__kernel_ulong_t	shmmax;
++	__kernel_ulong_t	shmmin;
++	__kernel_ulong_t	shmmni;
++	__kernel_ulong_t	shmseg;
++	__kernel_ulong_t	shmall;
++	__kernel_ulong_t	__unused1;
++	__kernel_ulong_t	__unused2;
++	__kernel_ulong_t	__unused3;
++	__kernel_ulong_t	__unused4;
++};
++
++#endif
++
++#endif /* __ASM_X86_SHMBUF_H */
