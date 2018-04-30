@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1851310-1525116630-2-14306810337132753989
+X-Cyrus-Session-Id: sloti22d1t05-1851310-1525116619-2-6165784041433675184
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525116630; b=ZJsDxn0iVIbvF+s1W1BMjWo+Cn7lQ8rvdlxOFTXs1cFh2niR8r
-    1MSgUsShvaznZaXGip3XECd9e+sRhuA7qdACYISpAIiu4fW0Js+wEETIZGwGFumJ
-    Fe61M/d6Xi9cNDMdz0mkW2ESQ5fTWU4RaXkoMtaY62ck9Yt/Ie2ofl0iFPP5cEUQ
-    DTFL5cLXGeA9ime8CO9EjrZ0neAEEQhbvY/URjBgzdk8oZBdWS9Zu9i0Tyg6EYTC
-    4Uv8cq1fFjRkMLpsGFugAeIRoX7klD9bZGcXbckJTB5wuxT1BN9NMX48dyuJusur
-    wnkrqpPBmNR+rqFwOMT+uhcdZbjeDbOl/N6g==
+    1525116619; b=I3iX8UBNg4n27K8yXJ/PamnAu8YgbvKuCN2ktoDbvJnh96xJ1v
+    RuKGzR4e2rDRq6ExAILS0WHsiyvvtue7cpPa+t/E2dyXxXvcVyEtooyGmtGQt1RY
+    0KdwoAYWv2j2L01szvG5M10A/GxJeInjutOBnvcVM9bfZzQ4MHVX2rRZd+S7abXj
+    eFUPBMbJqqH+7hIa8speSSSfXjBgm9mc1e6a242ccBh7IJaT6H4YlodyPXPhV1/X
+    2mZOOjXE9Hd205+HkYUNDFWYHMN6g11Py3L+8B9YCMjkN02QtTbRLVSJ8xWYLthw
+    sxj9er66d2zJYoDVQukPKbwNLLtVa+34jKdA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1525116630; bh=JJcj3L9+GW+jA+DTDkucgPyT4eKQf3
-    RFEJFKL2Rb8vU=; b=RyWdxh4r/ExSH/XQcjU/xdQIdh7lV+CVxgUGdpXxzxfycd
-    TByUH8bQUdnHeDesx2A/y3rfcDA+jLa72BC1EYBSC/R5ekRcD52W99oTuTDuX0zB
-    Ltv0pfOF0QTFTPmNW4xVd4paBAlhaO9NdW2yBRrkZYri8Y1vRaAZDaKUVJA+qGoQ
-    Cd8K09tAxE25si3hslkVrHci0D5WlYy27pO/3HJqxhYB5TOXIwh22d2cROXGtmNp
-    3i5pYim7BSDLbFPgLMPvb4Kv6/ndIGvDj8ubY/0Pt1u19dOlWMny+eVskZACf8Gt
-    3PxqJTl1jxC8/Df6OWpI3UMoybKcMq0jLp8CnQxA==
+    :list-id; s=fm2; t=1525116619; bh=CfSFftIVdiqpOmfSZXSs5wlBfqSezw
+    IobvzGydgOfcw=; b=Rxx4uYdS3kLXl7B0+Gm2U0hwiDfCwgYrTOlUAVY7mKtbEk
+    1T/ROdfL9OrjZFYXnN6hO9dfU/XJRO7dqnWblTJlT19gYOkApj6zJg46QTJqoqsR
+    Jo+SgPuAycAjvx6yAKks64JcTqANU9SfJDOIwIcrH7xaz9CqPtUyesg345GdDgAT
+    /sC2hk2UWQ41YzcbrhCCmlEJZ8OQlRK2Xzd6MBBUcVjZti3lLQuFqfQ0T1jOj4Bo
+    nU+khHZCHJhLqW7n645RklHhVoZdrRl/tviciQQPVeDASn42QhaH03vttOVdrCdU
+    1TqEgvxpP11380G9polB8gtEqx0zyADkRLr3UJGg==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,32 +51,33 @@ Authentication-Results: mx5.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfBzwk4/fRAoY0uXrZfrj/cakobiuBFUyz/twXmOYDuTvhnLS2xAtjh7XQbxsIS/U+FWlaRc0kGozdBZWrsM23B3Ivtcvpn9M0JIe67LGVGVaxgxVuzkM
-    9WHWQGQtWqlpgJ1Z03Uz7NlPuBgze19REiRIQelISnleTd8kOdQaB5ZPx8WwgqMgYSDWZAHArpMxRlZNABvbFM0/lfDRpFHstTn9XKllg7gviCqOszpq1BR2
+X-CM-Envelope: MS4wfOmsUZ3QWKx7EE+lA0TGIU9oiyJfXSDXNpqGFv67sgLtvB1qyg+yqEOU3lO9PHtdsyXvHpSOs+XReDvBwMaL1bx13zgpZFuOtoraLsQRyzupypAVZ0vx
+    ayoqNR6n6awvdBWL+bzeujU+kJVfIoiOSiUlfr2sumc7LV91bjLMEHOGZGwiWJXrn7ypVUy9xunLrz8x03k2/ibFJXT0KTsgvREItfya9qM+oQXRq/p/AaFd
 X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=1XWaLZrsAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=vDTwGnz7tqcdVkfDgaMA:9
-    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=VwQbUJbxAAAA:8 a=RPJ6JBhKAAAA:8 a=ag1SF4gXAAAA:8 a=1LLt1D0RfLeyhq938B4A:9
+    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=fa_un-3J20JGBB2Tu-mn:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932450AbeD3TaX (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 30 Apr 2018 15:30:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38176 "EHLO mail.kernel.org"
+        id S1755993AbeD3TaD (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 30 Apr 2018 15:30:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37976 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756479AbeD3TaV (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 30 Apr 2018 15:30:21 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 224D822DAA
+        id S1755751AbeD3T3v (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 30 Apr 2018 15:29:51 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 730D822DAC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Theodore Tso <tytso@mit.edu>
-Subject: [PATCH 4.9 05/61] random: set up the NUMA crng instances after the CRNG is fully initialized
-Date: Mon, 30 Apr 2018 12:24:08 -0700
-Message-Id: <20180430183951.779500324@linuxfoundation.org>
+        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
+        Andreas Dilger <adilger@dilger.ca>, Jan Kara <jack@suse.cz>
+Subject: [PATCH 4.9 02/61] ext4: set h_journal if there is a failure starting a reserved handle
+Date: Mon, 30 Apr 2018 12:24:05 -0700
+Message-Id: <20180430183951.537285237@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430183951.312721450@linuxfoundation.org>
 References: <20180430183951.312721450@linuxfoundation.org>
@@ -96,95 +97,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Theodore Ts'o <tytso@mit.edu>
 
-commit 8ef35c866f8862df074a49a93b0309725812dea8 upstream.
+commit b2569260d55228b617bd82aba6d0db2faeeb4116 upstream.
 
-Until the primary_crng is fully initialized, don't initialize the NUMA
-crng nodes.  Otherwise users of /dev/urandom on NUMA systems before
-the CRNG is fully initialized can get very bad quality randomness.  Of
-course everyone should move to getrandom(2) where this won't be an
-issue, but there's a lot of legacy code out there.  This related to
-CVE-2018-1108.
+If ext4 tries to start a reserved handle via
+jbd2_journal_start_reserved(), and the journal has been aborted, this
+can result in a NULL pointer dereference.  This is because the fields
+h_journal and h_transaction in the handle structure share the same
+memory, via a union, so jbd2_journal_start_reserved() will clear
+h_journal before calling start_this_handle().  If this function fails
+due to an aborted handle, h_journal will still be NULL, and the call
+to jbd2_journal_free_reserved() will pass a NULL journal to
+sub_reserve_credits().
 
-Reported-by: Jann Horn <jannh@google.com>
-Fixes: 1e7f583af67b ("random: make /dev/urandom scalable for silly...")
-Cc: stable@kernel.org # 4.8+
+This can be reproduced by running "kvm-xfstests -c dioread_nolock
+generic/475".
+
+Cc: stable@kernel.org # 3.11
+Fixes: 8f7d89f36829b ("jbd2: transaction reservation support")
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Reviewed-by: Andreas Dilger <adilger@dilger.ca>
+Reviewed-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/random.c |   46 +++++++++++++++++++++++++++-------------------
- 1 file changed, 27 insertions(+), 19 deletions(-)
+ fs/jbd2/transaction.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/char/random.c
-+++ b/drivers/char/random.c
-@@ -819,6 +819,32 @@ static int crng_fast_load(const char *cp
- 	return 1;
- }
- 
-+#ifdef CONFIG_NUMA
-+static void numa_crng_init(void)
-+{
-+	int i;
-+	struct crng_state *crng;
-+	struct crng_state **pool;
-+
-+	pool = kcalloc(nr_node_ids, sizeof(*pool), GFP_KERNEL|__GFP_NOFAIL);
-+	for_each_online_node(i) {
-+		crng = kmalloc_node(sizeof(struct crng_state),
-+				    GFP_KERNEL | __GFP_NOFAIL, i);
-+		spin_lock_init(&crng->lock);
-+		crng_initialize(crng);
-+		pool[i] = crng;
-+	}
-+	mb();
-+	if (cmpxchg(&crng_node_pool, NULL, pool)) {
-+		for_each_node(i)
-+			kfree(pool[i]);
-+		kfree(pool);
-+	}
-+}
-+#else
-+static void numa_crng_init(void) {}
-+#endif
-+
- static void crng_reseed(struct crng_state *crng, struct entropy_store *r)
- {
- 	unsigned long	flags;
-@@ -848,6 +874,7 @@ static void crng_reseed(struct crng_stat
- 	memzero_explicit(&buf, sizeof(buf));
- 	crng->init_time = jiffies;
- 	if (crng == &primary_crng && crng_init < 2) {
-+		numa_crng_init();
- 		crng_init = 2;
- 		process_random_ready_list();
- 		wake_up_interruptible(&crng_init_wait);
-@@ -1661,29 +1688,10 @@ static void init_std_data(struct entropy
-  */
- static int rand_initialize(void)
- {
--#ifdef CONFIG_NUMA
--	int i;
--	struct crng_state *crng;
--	struct crng_state **pool;
--#endif
--
- 	init_std_data(&input_pool);
- 	init_std_data(&blocking_pool);
- 	crng_initialize(&primary_crng);
- 	crng_global_init_time = jiffies;
--
--#ifdef CONFIG_NUMA
--	pool = kcalloc(nr_node_ids, sizeof(*pool), GFP_KERNEL|__GFP_NOFAIL);
--	for_each_online_node(i) {
--		crng = kmalloc_node(sizeof(struct crng_state),
--				    GFP_KERNEL | __GFP_NOFAIL, i);
--		spin_lock_init(&crng->lock);
--		crng_initialize(crng);
--		pool[i] = crng;
--	}
--	mb();
--	crng_node_pool = pool;
--#endif
- 	return 0;
- }
- early_initcall(rand_initialize);
+--- a/fs/jbd2/transaction.c
++++ b/fs/jbd2/transaction.c
+@@ -528,6 +528,7 @@ int jbd2_journal_start_reserved(handle_t
+ 	 */
+ 	ret = start_this_handle(journal, handle, GFP_NOFS);
+ 	if (ret < 0) {
++		handle->h_journal = journal;
+ 		jbd2_journal_free_reserved(handle);
+ 		return ret;
+ 	}
