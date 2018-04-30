@@ -1,40 +1,83 @@
-Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqfVva5LSq+iPpEfE7cO1onw/IxMqUBoq/45Fx6VbbXit8r4NsJ92Ovo+h4RG5C3s4QYs8q
-ARC-Seal: i=1; a=rsa-sha256; t=1525116501; cv=none;
-        d=google.com; s=arc-20160816;
-        b=cW/O2Q6in8BZJoELq/cfMRkxrYdwCF3wDE5VSAPlZSaw7oQFY3qazLxth3oL/qW24K
-         BotH+SM0VOvWGc2M0MJ6yoRFNt7d0fOjfKu0dMyFd/KiEe7MJQH080Uz2CnjElK2fIQd
-         WmxpMNJcl1GVB3rlBZFoIhZaJsReM53eLdgESyoRg6cFgFI9oT/yfD6aZ+EQ1S6CAeqV
-         a6bPkLbNfJ+4hg+rTE0aF/W5dnuF83tKBhq7+u/jGlBecUvWObiYw6xdlOacC8Et0jnQ
-         gTtomHraU7WrY9q++Pk0JENBQlS2aM90eHO6XpvVAZczcAZaHPU3eOUDwaH+2cjZSJJ1
-         E8lA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=RKMzk0aad9ldAG7vzg1j40JNqw650IQdp3OrST22jFk=;
-        b=MOTJo386hShU7LOSwI72Yzvkv4dLGojW3E+a7s3JPUu5HYUYAy0ULGoDjBkdgWs88/
-         t8MXzX/Y4UvuP0KSYC2Gh8v9f+tPJ8LYBkAmfZHjKFkdmNqPdRwfgSTX8vyhwru7veMt
-         mvvuO0QiMPL7vxu91+lSlYXv4pcMbNyRdLQF6Sjk36i2sg4ClO1ByT3cKYgffe3RSf+u
-         JpDP2xrwds7tEOQ1jNpzDFb3LwsiRsuG5wJEeHWKNnIOmL2LclzCOQK2OC3S1m47+SUP
-         I8FooyIKGCQ4tobWr0qHSof0PdjOrbW5GeJ/sWh8cqKsLyDCxFPKpyToKsy3wIaaAtG6
-         OVlQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 707D322DAC
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1851310-1525116502-2-284615151389146561
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1525116501; b=JXCgtXINE2rNZq/QxgXztpoHf/5oRyEFgfEAB+Ct+G4pxlhlCx
+    s+tZ4xHeiabdY5lLz/fpbrdLYAG+1I2ySEhBL3m5lE1tT01pDvLn8gUqC6M9lzxZ
+    yCytDPVdWMOvnyVRQKZRpWGwf7TOIo4mJCb1rd+n8fxnB59LxXO8vsjS9/RNJjyd
+    mBzLSpFoRuuyPkWWWPQYkvxf9n+a7KP1JPqrRBdKNLM8c43mBayfj9LEpJn0mn9N
+    wPQsCljnPCBuPUyfkUpV/3nsP2yMNghEBjEYwPqbVjPQ21SmgorRZUXk7HjMUS2w
+    fpiWT/zxOTFZE42u8JU1FWW54oSeIA4I2xhw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1525116501; bh=GVxOIDHi+K6xlg+Wj3xP4gUGFSY8in
+    CHN5ClMbD2kaE=; b=cSdYtEICYFh6UcfP4NEsK0iVtKpg8u0MkMYwNIbNhioSUx
+    XvR5J0o3yeuYbXSMV7ey73hvXgiqIiOenPCtkDXD7QAQScETMDxXwB5gelujsbJ+
+    VS2+aHQJTXd8w+utG/yXbLAAAHKJ/aut9RQfhhzNyvC2oMLrozpzC97ZmhXHFJ7G
+    R2vxMQ/eCNVOmqD2OrDRqTxnahWWJMlXTNBUojoeXCFXiA8J9vPQ2Q1kudsqmlz3
+    nJIEKJ4PkfljYcoltqJKfhOIgaF4zSKFYjINxqWLOx2oOJsieK7wWZ9Hisk/qjvS
+    f5kJkjunVfx4WrBC1T5s/2HVtV+smxLZQBleLXQA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfONjxDyKqfO/W5gEPYJugo0wBXjzpfoiPoadVa5uWFFSA0Z34+FPM7UzSn1mvwpuAUUssr5OOuGjvFuck/2i1YmrYVdjztEL6plyHJnSmy+KRgZAQ++2
+    y+2DDu0TZQN17h2CDvyCCyYi7pKXWaFPXtkBVq29Oph0qoJVXMp6YzSnGa5SVN0eWdFqcMllMLpjjd33tp4c6HoEdLy0jdLBDXetxVc/M/jteUWTg4Nc5Bzq
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=gu6fZOg2AAAA:8 a=yPCof4ZbAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8
+    a=L2pDD6m2-fKMQEhe2X8A:9 a=QEXdDO2ut3YA:10 a=-FEs8UIgK8oA:10 a=NWVoK91CQyQA:10
+    a=2RSlZUUhi9gRBrsHwhhZ:22 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1756241AbeD3T2S (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 30 Apr 2018 15:28:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35720 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755602AbeD3T2O (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 30 Apr 2018 15:28:14 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DD5B22DC1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Joakim Tjernlund <joakim.tjernlund@infinera.com>,
-	Richard Weinberger <richard@nod.at>,
-	Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: [PATCH 4.16 055/113] mtd: cfi: cmdset_0001: Do not allow read/write to suspend erase block.
-Date: Mon, 30 Apr 2018 12:24:26 -0700
-Message-Id: <20180430184017.386404824@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.16 044/113] ALSA: rme9652: Hardening for potential Spectre v1
+Date: Mon, 30 Apr 2018 12:24:15 -0700
+Message-Id: <20180430184016.910864220@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184015.043892819@linuxfoundation.org>
 References: <20180430184015.043892819@linuxfoundation.org>
@@ -42,10 +85,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200282823323540?=
-X-GMAIL-MSGID: =?utf-8?q?1599200561069289005?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,83 +95,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Joakim Tjernlund <joakim.tjernlund@transmode.se>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 6510bbc88e3258631831ade49033537081950605 upstream.
+commit f526afcd8f71945c23ce581d7864ace93de8a4f7 upstream.
 
-Currently it is possible to read and/or write to suspend EB's.
-Writing /dev/mtdX or /dev/mtdblockX from several processes may
-break the flash state machine.
+As recently Smatch suggested, one place in RME9652 driver may expand
+the array directly from the user-space value with speculation:
+  sound/pci/rme9652/rme9652.c:2074 snd_rme9652_channel_info() warn: potential spectre issue 'rme9652->channel_map' (local cap)
 
-Signed-off-by: Joakim Tjernlund <joakim.tjernlund@infinera.com>
+This patch puts array_index_nospec() for hardening against it.
+
+BugLink: https://marc.info/?l=linux-kernel&m=152411496503418&w=2
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: <stable@vger.kernel.org>
-Reviewed-by: Richard Weinberger <richard@nod.at>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mtd/chips/cfi_cmdset_0001.c |   16 +++++++++++-----
- include/linux/mtd/flashchip.h       |    1 +
- 2 files changed, 12 insertions(+), 5 deletions(-)
+ sound/pci/rme9652/rme9652.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/mtd/chips/cfi_cmdset_0001.c
-+++ b/drivers/mtd/chips/cfi_cmdset_0001.c
-@@ -831,21 +831,25 @@ static int chip_ready (struct map_info *
- 		     (mode == FL_WRITING && (cfip->SuspendCmdSupport & 1))))
- 			goto sleep;
+--- a/sound/pci/rme9652/rme9652.c
++++ b/sound/pci/rme9652/rme9652.c
+@@ -26,6 +26,7 @@
+ #include <linux/pci.h>
+ #include <linux/module.h>
+ #include <linux/io.h>
++#include <linux/nospec.h>
  
-+		/* Do not allow suspend iff read/write to EB address */
-+		if ((adr & chip->in_progress_block_mask) ==
-+		    chip->in_progress_block_addr)
-+			goto sleep;
+ #include <sound/core.h>
+ #include <sound/control.h>
+@@ -2071,9 +2072,10 @@ static int snd_rme9652_channel_info(stru
+ 	if (snd_BUG_ON(info->channel >= RME9652_NCHANNELS))
+ 		return -EINVAL;
  
- 		/* Erase suspend */
--		map_write(map, CMD(0xB0), adr);
-+		map_write(map, CMD(0xB0), chip->in_progress_block_addr);
+-	if ((chn = rme9652->channel_map[info->channel]) < 0) {
++	chn = rme9652->channel_map[array_index_nospec(info->channel,
++						      RME9652_NCHANNELS)];
++	if (chn < 0)
+ 		return -EINVAL;
+-	}
  
- 		/* If the flash has finished erasing, then 'erase suspend'
- 		 * appears to make some (28F320) flash devices switch to
- 		 * 'read' mode.  Make sure that we switch to 'read status'
- 		 * mode so we get the right data. --rmk
- 		 */
--		map_write(map, CMD(0x70), adr);
-+		map_write(map, CMD(0x70), chip->in_progress_block_addr);
- 		chip->oldstate = FL_ERASING;
- 		chip->state = FL_ERASE_SUSPENDING;
- 		chip->erase_suspended = 1;
- 		for (;;) {
--			status = map_read(map, adr);
-+			status = map_read(map, chip->in_progress_block_addr);
- 			if (map_word_andequal(map, status, status_OK, status_OK))
- 			        break;
- 
-@@ -1041,8 +1045,8 @@ static void put_chip(struct map_info *ma
- 		   sending the 0x70 (Read Status) command to an erasing
- 		   chip and expecting it to be ignored, that's what we
- 		   do. */
--		map_write(map, CMD(0xd0), adr);
--		map_write(map, CMD(0x70), adr);
-+		map_write(map, CMD(0xd0), chip->in_progress_block_addr);
-+		map_write(map, CMD(0x70), chip->in_progress_block_addr);
- 		chip->oldstate = FL_READY;
- 		chip->state = FL_ERASING;
- 		break;
-@@ -1933,6 +1937,8 @@ static int __xipram do_erase_oneblock(st
- 	map_write(map, CMD(0xD0), adr);
- 	chip->state = FL_ERASING;
- 	chip->erase_suspended = 0;
-+	chip->in_progress_block_addr = adr;
-+	chip->in_progress_block_mask = ~(len - 1);
- 
- 	ret = INVAL_CACHE_AND_WAIT(map, chip, adr,
- 				   adr, len,
---- a/include/linux/mtd/flashchip.h
-+++ b/include/linux/mtd/flashchip.h
-@@ -85,6 +85,7 @@ struct flchip {
- 	unsigned int write_suspended:1;
- 	unsigned int erase_suspended:1;
- 	unsigned long in_progress_block_addr;
-+	unsigned long in_progress_block_mask;
- 
- 	struct mutex mutex;
- 	wait_queue_head_t wq; /* Wait on here when we're waiting for the chip
+ 	info->offset = chn * RME9652_CHANNEL_BUFFER_BYTES;
+ 	info->first = 0;
