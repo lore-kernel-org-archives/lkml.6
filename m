@@ -1,38 +1,39 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZp9fHiUcIohwBLRsxtyVPbVJxrTG7i3LZAV0lVY61IyopAcxOG8+qg14WIvqsu1ZbBnA8pZ
-ARC-Seal: i=1; a=rsa-sha256; t=1525116483; cv=none;
+X-Google-Smtp-Source: AB8JxZqsHPdtAotG9L29vsaowrM5F/8fkzNSqThy9/coe4PXJZUPFTxV1ZjQ+q5/0LIfBog2ZBEh
+ARC-Seal: i=1; a=rsa-sha256; t=1525116513; cv=none;
         d=google.com; s=arc-20160816;
-        b=uwc3I2E2F2BNz4xsttjACG8z3F/Zx9va5vJFbZqrqpi8A8OfZm+gbAKmWWR3k3aaHf
-         t/ldunGYabyv0HDyqrjoIryEy3Dg1kOabSiyGZNVEgspQa12xPRXiAN0AMOCz0C9Jj6c
-         vgoH/gbJ7Ya/E3mTDb1L5m+Pch9dPLh1aMirdjM/W5KMc4mOBWG6N8PsFKzs886VrSyk
-         Ax3Hs0u0ZHnaApNQcAnBOlH/+L3iK/Yl+p9gA5pazBtBGiKdHih2FrVUhGeDkXjwU7qD
-         MFI1iR+vmzihNG4/XOrPPsVG8O813ty340S9NMG+ggMNdP4BesBa0qmYBD5srLK0Gg8Q
-         gcMA==
+        b=xGrQXWTNlVhDF1jXlGtrmd7IZ85WTXfjgJW+dbqHyqi9q00JrkdYRJfGyZJZXTH0/3
+         lwmq8wfMMH1l9ArVKpT6QO4M2CMwEqpmxvJtNTkdVBphoX1WuS6Nd05QuQB3uaYYOCtG
+         i+0DhWBBhud7rrqKpFYOqkMohovpcTqQdXFjfICQf0BxJISpD/hHOqwpWyikzOXw4Ky3
+         acyn+EWJ+hRLIRQSEZazAryQeyedm1eIoMuIfh8x8Q+zXfMc9ZD6Qvc+rkw/NKiF6+wJ
+         Arje3pKZ8qiS3C75TBnpFhQT42q+kakmQNb/K3SRpaqiQvjFf4U3NbLclaDqfXRE1/AI
+         zrDQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=GYgGUbD3XG/E9LG7ckVJeKs9lFqA6zckexaanj3nW4M=;
-        b=JTRCNq1lIxZ3kuU8Eiw5Rle2ADyquGxH6OpDGV8P0McCmP3Ra7p7uzsTGoO95+1pyx
-         Q1supNus+eNDtkmHZ615WPIHQo2TGZsGhjN/IqYQh7m0G3UO8og4s4PMMZZUQ0U1fZ88
-         8NL/pr3hiDPCpQ6zZtC8o+v8t+AcPm8bFD8BgnFYL9ayz0soDIbUIG1WEUCS8wbBKpCx
-         zo1EsPRMf/w6eSw5dYLEsuNLkXGIAPSs3hZZKR0eDDads3VgfKCAu0BXuIahL3sFWmng
-         EQux9kAYaBad+PTZSl+Cmw51YwiFxxCHzVYt4dzjICij78CxB35iqhLUhftRV7ZAVxQX
-         sUOA==
+        bh=/3Xsv55FJzFxdT5dAZyKlj4aaOurhyVuHzQw6aFnfW0=;
+        b=aZSTt2IiE0ZPlpjiLIF6lSTdHVvMLOWjh71ClO26CEYUJdadRwmlKU3Jd6cN4cZ9hX
+         Zo4h40jbti/tiMzBF6aHSWoh6L3k866Saj1r8FoFMs4vW3/Nx+qcqv7/U7nIv+jibAGa
+         XWYbvtTeSsm9DsFsHBp0KQMdLCNxCs4F5KYqrHEjrQ+NV2XpIxetlGj3eSlBIZT6OJ/e
+         tdcVAwJIeSbZ8PuAbPrD8SJ2MpITmG2U6wANx607fcRrzU8CJng6SbD29uii5AVEY+0U
+         k57Be/rAxZu0+xPV8lBSJqKSoRLfQhJ+CltRl3zPLpuuNn++qC4hEZTP/BbO1i59XXW8
+         9t8A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA28822DC1
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2599022DCC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"Michael S. Tsirkin" <mst@redhat.com>
-Subject: [PATCH 4.16 025/113] virtio_console: dont tie bufs to a vq
-Date: Mon, 30 Apr 2018 12:23:56 -0700
-Message-Id: <20180430184016.139579045@linuxfoundation.org>
+	Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+	Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.16 038/113] ALSA: dice: fix OUI for TC group
+Date: Mon, 30 Apr 2018 12:24:09 -0700
+Message-Id: <20180430184016.659764709@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184015.043892819@linuxfoundation.org>
 References: <20180430184015.043892819@linuxfoundation.org>
@@ -42,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200479987044089?=
-X-GMAIL-MSGID: =?utf-8?q?1599200541512949152?=
+X-GMAIL-THRID: =?utf-8?q?1599200511040409140?=
+X-GMAIL-MSGID: =?utf-8?q?1599200573418012993?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,77 +52,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michael S. Tsirkin <mst@redhat.com>
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 
-commit 2855b33514d290c51d52d94e25d3ef942cd4d578 upstream.
+commit 10412c420af9ba1f3de8483a95d360e5eb5bfc84 upstream.
 
-an allocated buffer doesn't need to be tied to a vq -
-only vq->vdev is ever used. Pass the function the
-just what it needs - the vdev.
+OUI for TC Electronic is 0x000166, for TC GROUP A/S. 0x001486 is for Echo
+Digital Audio Corporation.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+Fixes: 7cafc65b3aa1 ('ALSA: dice: force to add two pcm devices for listed models')
+Cc: <stable@vger.kernel.org> # v4.6+
+Reference: http://standards-oui.ieee.org/oui/oui.txt
+Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/virtio_console.c |   14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ sound/firewire/dice/dice.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/char/virtio_console.c
-+++ b/drivers/char/virtio_console.c
-@@ -422,7 +422,7 @@ static void reclaim_dma_bufs(void)
- 	}
- }
+--- a/sound/firewire/dice/dice.c
++++ b/sound/firewire/dice/dice.c
+@@ -14,7 +14,7 @@ MODULE_LICENSE("GPL v2");
+ #define OUI_WEISS		0x001c6a
+ #define OUI_LOUD		0x000ff2
+ #define OUI_FOCUSRITE		0x00130e
+-#define OUI_TCELECTRONIC	0x001486
++#define OUI_TCELECTRONIC	0x000166
  
--static struct port_buffer *alloc_buf(struct virtqueue *vq, size_t buf_size,
-+static struct port_buffer *alloc_buf(struct virtio_device *vdev, size_t buf_size,
- 				     int pages)
- {
- 	struct port_buffer *buf;
-@@ -445,16 +445,16 @@ static struct port_buffer *alloc_buf(str
- 		return buf;
- 	}
- 
--	if (is_rproc_serial(vq->vdev)) {
-+	if (is_rproc_serial(vdev)) {
- 		/*
- 		 * Allocate DMA memory from ancestor. When a virtio
- 		 * device is created by remoteproc, the DMA memory is
- 		 * associated with the grandparent device:
- 		 * vdev => rproc => platform-dev.
- 		 */
--		if (!vq->vdev->dev.parent || !vq->vdev->dev.parent->parent)
-+		if (!vdev->dev.parent || !vdev->dev.parent->parent)
- 			goto free_buf;
--		buf->dev = vq->vdev->dev.parent->parent;
-+		buf->dev = vdev->dev.parent->parent;
- 
- 		/* Increase device refcnt to avoid freeing it */
- 		get_device(buf->dev);
-@@ -838,7 +838,7 @@ static ssize_t port_fops_write(struct fi
- 
- 	count = min((size_t)(32 * 1024), count);
- 
--	buf = alloc_buf(port->out_vq, count, 0);
-+	buf = alloc_buf(port->portdev->vdev, count, 0);
- 	if (!buf)
- 		return -ENOMEM;
- 
-@@ -957,7 +957,7 @@ static ssize_t port_fops_splice_write(st
- 	if (ret < 0)
- 		goto error_out;
- 
--	buf = alloc_buf(port->out_vq, 0, pipe->nrbufs);
-+	buf = alloc_buf(port->portdev->vdev, 0, pipe->nrbufs);
- 	if (!buf) {
- 		ret = -ENOMEM;
- 		goto error_out;
-@@ -1374,7 +1374,7 @@ static unsigned int fill_queue(struct vi
- 
- 	nr_added_bufs = 0;
- 	do {
--		buf = alloc_buf(vq, PAGE_SIZE, 0);
-+		buf = alloc_buf(vq->vdev, PAGE_SIZE, 0);
- 		if (!buf)
- 			break;
- 
+ #define DICE_CATEGORY_ID	0x04
+ #define WEISS_CATEGORY_ID	0x00
