@@ -1,86 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752391AbeD3HkX (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 03:40:23 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:42300 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752084AbeD3HkV (ORCPT
+        id S1752894AbeD3Hkp (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 03:40:45 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:56185 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751751AbeD3Hi0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 03:40:21 -0400
-Date: Mon, 30 Apr 2018 09:40:17 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: geert@linux-m68k.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: media: renesas-ceu: Add R-Mobile
- R8A7740
-Message-ID: <20180430074017.sl2uav7hxc4rjsqe@verge.net.au>
-References: <1524767083-19862-1-git-send-email-jacopo+renesas@jmondi.org>
- <1524767083-19862-2-git-send-email-jacopo+renesas@jmondi.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1524767083-19862-2-git-send-email-jacopo+renesas@jmondi.org>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Mon, 30 Apr 2018 03:38:26 -0400
+X-Google-Smtp-Source: AB8JxZpey0OsrgiDybG4xmYTRAnFYoVQfzPnFVg6fMWpW//vvs6Yn/41Y5Ms6n8MIwUe1IKFf6OXQQ==
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 03/12] gpio: ge: Use of_device_get_match_data()
+Date: Mon, 30 Apr 2018 09:38:10 +0200
+Message-Id: <20180430073819.31827-3-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180430073819.31827-1-thierry.reding@gmail.com>
+References: <20180430073819.31827-1-thierry.reding@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 26, 2018 at 08:24:42PM +0200, Jacopo Mondi wrote:
-> Add R-Mobile A1 R8A7740 SoC to the list of compatible values for the CEU
-> unit.
-> 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+From: Thierry Reding <treding@nvidia.com>
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Use of_device_get_match_data() instead of open-coding it.
 
-> ---
->  Documentation/devicetree/bindings/media/renesas,ceu.txt | 7 ++++---
->  drivers/media/platform/renesas-ceu.c                    | 1 +
->  2 files changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/renesas,ceu.txt b/Documentation/devicetree/bindings/media/renesas,ceu.txt
-> index 3fc66df..8a7a616 100644
-> --- a/Documentation/devicetree/bindings/media/renesas,ceu.txt
-> +++ b/Documentation/devicetree/bindings/media/renesas,ceu.txt
-> @@ -2,14 +2,15 @@ Renesas Capture Engine Unit (CEU)
->  ----------------------------------------------
->  
->  The Capture Engine Unit is the image capture interface found in the Renesas
-> -SH Mobile and RZ SoCs.
-> +SH Mobile, R-Mobile and RZ SoCs.
->  
->  The interface supports a single parallel input with data bus width of 8 or 16
->  bits.
->  
->  Required properties:
-> -- compatible: Shall be "renesas,r7s72100-ceu" for CEU units found in RZ/A1H
-> -  and RZ/A1M SoCs.
-> +- compatible: Shall be one of the following values:
-> +	"renesas,r7s72100-ceu" for CEU units found in RZ/A1H and RZ/A1M SoCs
-> +	"renesas,r8a7740-ceu" for CEU units found in R-Mobile A1 R8A7740 SoCs
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/gpio/gpio-ge.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Nit: I think you can drop R8A7740 as I believe that by adding it to
-R-Mobile A1 you have constructed a tautology (I mean "R-Mobile A1" =
-"R8A7740" as far as I know).
-
->  - reg: Registers address base and size.
->  - interrupts: The interrupt specifier.
->  
-> diff --git a/drivers/media/platform/renesas-ceu.c b/drivers/media/platform/renesas-ceu.c
-> index 6599dba..c964a56 100644
-> --- a/drivers/media/platform/renesas-ceu.c
-> +++ b/drivers/media/platform/renesas-ceu.c
-> @@ -1545,6 +1545,7 @@ static const struct ceu_data ceu_data_sh4 = {
->  #if IS_ENABLED(CONFIG_OF)
->  static const struct of_device_id ceu_of_match[] = {
->  	{ .compatible = "renesas,r7s72100-ceu", .data = &ceu_data_rz },
-> +	{ .compatible = "renesas,r8a7740-ceu", .data = &ceu_data_rz },
->  	{ }
->  };
->  MODULE_DEVICE_TABLE(of, ceu_of_match);
-> -- 
-> 2.7.4
-> 
+diff --git a/drivers/gpio/gpio-ge.c b/drivers/gpio/gpio-ge.c
+index 1fe2d3418f2f..4c43562434cf 100644
+--- a/drivers/gpio/gpio-ge.c
++++ b/drivers/gpio/gpio-ge.c
+@@ -52,8 +52,6 @@ MODULE_DEVICE_TABLE(of, gef_gpio_ids);
+ 
+ static int __init gef_gpio_probe(struct platform_device *pdev)
+ {
+-	const struct of_device_id *of_id =
+-		of_match_device(gef_gpio_ids, &pdev->dev);
+ 	struct gpio_chip *gc;
+ 	void __iomem *regs;
+ 	int ret;
+@@ -82,7 +80,7 @@ static int __init gef_gpio_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	gc->base = -1;
+-	gc->ngpio = (u16)(uintptr_t)of_id->data;
++	gc->ngpio = (u16)of_device_get_match_data(&pdev->dev);
+ 	gc->of_gpio_n_cells = 2;
+ 	gc->of_node = pdev->dev.of_node;
+ 
+-- 
+2.17.0
