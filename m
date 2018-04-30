@@ -1,101 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755575AbeD3X2W (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 19:28:22 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:34068 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752614AbeD3X2U (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 19:28:20 -0400
-X-Google-Smtp-Source: AB8JxZoDup1hvv5sv/Rf3tbH+9/DdHICYxGF5epOtDcW25ZvjUwafjI/DR15HAyJtcvI6Fj9Ys/cdQ==
-Reply-To: ahs3@redhat.com
-Subject: Re: [PATCH v2 2/3] ACPI: ensure acpi_parse_entries_array() does not
- access non-existent table data
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>
-References: <20180424193505.6934-1-ahs3@redhat.com>
- <20180424193505.6934-3-ahs3@redhat.com>
- <CAJZ5v0h77XTGeJ3oDzxjW2_Otm5bZtu51fudCJ277yd_CXWTuQ@mail.gmail.com>
-From: Al Stone <ahs3@redhat.com>
-Organization: Red Hat, Inc.
-Message-ID: <e644ffce-cbbc-dcf3-33a9-a06fe2477a18@redhat.com>
-Date: Mon, 30 Apr 2018 17:28:18 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0h77XTGeJ3oDzxjW2_Otm5bZtu51fudCJ277yd_CXWTuQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1755451AbeD3Xa1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 19:30:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47866 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753252AbeD3Xa0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 19:30:26 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9DE722DC0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jlayton@kernel.org
+Message-ID: <15524dbe4fafbab833479f28b5c3f548a7fc7ad1.camel@kernel.org>
+Subject: [GIT PULL] errseq_t fix for v4.17
+From: Jeff Layton <jlayton@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Matthew Wilcox <mawilcox@microsoft.com>,
+        Andres Freund <andres@anarazel.de>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Date: Mon, 30 Apr 2018 19:30:17 -0400
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-nIJrzuGbLxvk7H3K5rUv"
+X-Mailer: Evolution 3.28.1 (3.28.1-2.fc28) 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/27/2018 05:05 AM, Rafael J. Wysocki wrote:
-> On Tue, Apr 24, 2018 at 9:35 PM, Al Stone <ahs3@redhat.com> wrote:
->> For ACPI tables that have subtables, acpi_parse_entries_array() gets used
->> to step through each of the subtables in memory.  The primary loop for this
->> was checking that the beginning location of the subtable being examined
->> plus the length of struct acpi_subtable_header was not beyond the end of
->> the complete ACPI table; if it wasn't, the subtable could be examined, but
->> if it was the loop would terminate as it should.
->>
->> In the middle of this subtable loop, a callback is used to examine the
->> subtable in detail.
->>
->> Should the callback function try to examine elements of the subtable that
->> are located past the subtable header, and the ACPI table containing this
->> subtable has an incorrect length, it is possible to access either invalid
->> or protected memory and cause a fault.  And, the length of struct
->> acpi_subtable_header will always be smaller than the length of the actual
->> subtable.
->>
->> To fix this, we make the main loop check that the beginning of the
->> subtable being examined plus the actual length of the subtable does
->> not go past the end of the enclosing ACPI table.  While this cannot
->> protect us from malicious callback functions, it can prevent us from
->> failing because of some poorly constructed ACPI tables.
->>
->> Found by inspection.  There is no functional change to existing code
->> that is known to work when calling acpi_parse_entries_array().
->>
->> Signed-off-by: Al Stone <ahs3@redhat.com>
->> Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
->> Cc: Len Brown <lenb@kernel.org>
->> ---
->>  drivers/acpi/tables.c | 3 +--
->>  1 file changed, 1 insertion(+), 2 deletions(-)
->>
->> diff --git a/drivers/acpi/tables.c b/drivers/acpi/tables.c
->> index 21535762b890..c7b028f231a6 100644
->> --- a/drivers/acpi/tables.c
->> +++ b/drivers/acpi/tables.c
->> @@ -271,8 +271,7 @@ acpi_parse_entries_array(char *id, unsigned long table_size,
->>         entry = (struct acpi_subtable_header *)
->>             ((unsigned long)table_header + table_size);
->>
->> -       while (((unsigned long)entry) + sizeof(struct acpi_subtable_header) <
->> -              table_end) {
->> +       while (((unsigned long)entry + entry->length) <= table_end) {
-> 
-> The inner parens are not needed.
 
-Pure paranoia on my part.  Will fix.
+--=-nIJrzuGbLxvk7H3K5rUv
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
->>                 if (max_entries && count >= max_entries)
->>                         break;
->>
->> --
+The following changes since commit 0644f186fc9d77bb5bd198369e59fb28927a3692=
+:
 
+  Merge tag 'for_linus' of git://git.kernel.org/pub/scm/linux/kernel/git/ms=
+t/vhost (2018-04-26 16:36:11 -0700)
 
--- 
-ciao,
-al
------------------------------------
-Al Stone
-Software Engineer
-Red Hat, Inc.
-ahs3@redhat.com
------------------------------------
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git tags/errs=
+eq-v4.17
+
+for you to fetch changes up to b4678df184b314a2bd47d2329feca2c2534aa12b:
+
+  errseq: Always report a writeback error once (2018-04-27 08:51:26 -0400)
+
+----------------------------------------------------------------
+The PostgreSQL developers recently had a spirited discussion about the
+writeback error handling in Linux, and reached out to us about a
+behavoir change to the code that bit them when the errseq_t changes
+were merged.
+
+When we changed to using errseq_t for tracking writeback errors, we
+lost the ability for an application to see a writeback error that
+occurred before the open on which the fsync was issued. This was
+problematic for PostgreSQL which offloads fsync calls to a completely
+separate process from the DB writers.
+
+This patch restores that ability. If the errseq_t value in the inode
+does not have the SEEN flag set, then we just return 0 for the sample.
+That ensures that any recorded error is always delivered at least once.
+
+Note that we might still lose the error if the inode gets evicted from
+the cache before anything can reopen it, but that was the case before
+errseq_t was merged. At LSF/MM we had some discussion about keeping
+inodes with unreported writeback errors around in the cache for longer
+(possibly indefinitely), but that's really a separate problem.
+----------------------------------------------------------------
+Matthew Wilcox (1):
+      errseq: Always report a writeback error once
+
+ lib/errseq.c | 23 +++++++++--------------
+ 1 file changed, 9 insertions(+), 14 deletions(-)
+--=-nIJrzuGbLxvk7H3K5rUv
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEES8DXskRxsqGE6vXTAA5oQRlWghUFAlrnpwkACgkQAA5oQRlW
+ghXcrw//RUubLSUYc9nocuy/CKedg2UWocI5TqGX69MG8ze/t+bzLAVmHPXx1koo
+vYdzMPmJ2YE37SPk74E1bnpQ8qFzxSOU60BVANayPImppc0Iq2ykahihq50SNagY
+uJydTLrmArsLVWyqDfCWjFBd5GxOZk3UjpeLtj6+YCBl2/aIEA3Lb6K5oFRSBEOH
+JzqyTwAMFo/UDNTF2m0/vuvy0/G7x7FKbHnAG9HRyLZ3Iu8RJcdcgCiT3UbkNBdF
+MJJCxixEHDUCmy51p7uzWlS4YfifUhYLKKfukqp1OAtxqWxPW2+k9IctS9xFL99g
+3RrSYulzaTxhWdMmvIi8MIaMPI7ac+8kLOB265jEltjCXuEZFdIPP3s787qR3EhE
+2AFJVYR/eQ3O8cxtnVpQoenIKg1sn2WDBECDq3ovjeP161mePTXZU9HGnsTg2bm1
+J797zgGQd/N4RxANf4rNjeFDdFUkLlYn53sZ3qgxlol/B2tK2QA+nhpPM1e93Ws+
+8UpE5+J99gDt/RenL51rs6yPtRidlFKphebm7tBAilcpr8jQGLJX9eiv/km9tvZo
+4AcUfjlypBlJVou+IgFHrwWhDd8ncQQlHGBi+oZfkgBb1jOV9q08TC1rDq0NawFs
+UF+0x4g3adzuiB5U+FIkqGMXhXJQ1Bp4xnvtxHnGftrRNyotYn8=
+=VWkh
+-----END PGP SIGNATURE-----
+
+--=-nIJrzuGbLxvk7H3K5rUv--
