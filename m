@@ -1,60 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754620AbeD3AcU (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 29 Apr 2018 20:32:20 -0400
-Received: from mail-oi0-f43.google.com ([209.85.218.43]:33341 "EHLO
-        mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754409AbeD3AcS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Apr 2018 20:32:18 -0400
-X-Google-Smtp-Source: AB8JxZohpC+g5Cyqf8304tmRf0I4FmQg76Fv7FLLFNombRIZUi7DFbgogGlGpgzuTQ0eoum444bB0g==
-Subject: Re: Linux messages full of `random: get_random_u32 called from`
-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Sultan Alsawaf <sultanxda@gmail.com>, Pavel Machek <pavel@ucw.cz>,
-        linux-kernel@vger.kernel.org, Jann Horn <jannh@google.com>
-References: <b6aa3fac-a768-e27d-3070-00d929ebc245@gmail.com>
- <20180426192524.GD5965@thunk.org>
- <2add15cb-2113-0504-a732-81255ea61bf5@gmail.com>
- <20180426235630.GG5965@thunk.org>
- <3eb5761e-7b25-4178-0560-fba5eb43ce6a@gmail.com>
- <20180427201036.GL5965@thunk.org> <20180429143205.GD13475@amd>
- <20180429170541.lrzwyihrd6d75rql@sultan-box> <20180429184101.GA31156@amd>
- <20180429202033.ysmc42mj2rrk3h7p@sultan-box>
- <20180429220519.GQ5965@thunk.org>
-From: Laura Abbott <labbott@redhat.com>
-Message-ID: <b2c478b3-91bf-3ffa-b283-2b80e46a1165@redhat.com>
-Date: Sun, 29 Apr 2018 17:32:15 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1754636AbeD3Af5 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 29 Apr 2018 20:35:57 -0400
+Received: from ozlabs.org ([203.11.71.1]:57803 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754385AbeD3Afy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Apr 2018 20:35:54 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Mon, 30 Apr 2018 10:35:46 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Steffen Klassert <steffen.klassert@secunet.com>,
+        David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jacek Kalwas <jacek.kalwas@intel.com>,
+        Willem de Bruijn <willemb@google.com>
+Subject: linux-next: manual merge of the ipsec-next tree with the net-next
+ tree
+Message-ID: <20180430103546.2d1b6778@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20180429220519.GQ5965@thunk.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/WH_Ga+fJp9VleP.IwbY10J7"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/29/2018 03:05 PM, Theodore Y. Ts'o wrote:
-> What would be useful is if people gave reports that listed exactly
-> what laptop and distributions they are using.  Just "a high spec x86
-> laptop" isn't terribly useful, because*my*  brand-new Dell XPS 13
-> running Debian testing is working just fine.  The year, model, make,
-> and CPU type plus what distribution (and distro version number) you
-> are running is useful, so I can assess how wide spread the unhappiness
-> is going to be, and what mitigation steps make sense.
+--Sig_/WH_Ga+fJp9VleP.IwbY10J7
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I'm pretty sure Fedora is hitting this in our VMs. I just spent some
-time debugging an issue of a boot delay with someone from the
-infrastructure team where it would take upwards of 2 minutes to boot.
-If someone holds down a key, it boots in 4 seconds. There's a qemu
-reproducer at https://bugzilla.redhat.com/show_bug.cgi?id=1572916#c3
-I suggested a cat on the keyboard as a workaround.
+Hi all,
 
-Independently, we also got a report of a boot hang in GCE with 4.16.4
-where as 4.16.3 works which corresponds to the previous report of a
-stable regression. This was just via IRC so I didn't have time to
-dig into this.
+Today's linux-next merge of the ipsec-next tree got a conflict in:
 
-Thanks,
-Laura
+  net/ipv4/ip_output.c
+
+between commit:
+
+  bec1f6f69736 ("udp: generate gso with UDP_SEGMENT")
+
+from the net-next tree and commit:
+
+  cd027a5433d6 ("udp: enable UDP checksum offload for ESP")
+
+from the ipsec-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc net/ipv4/ip_output.c
+index f2338e40c37d,a2dfb5a9ba76..000000000000
+--- a/net/ipv4/ip_output.c
++++ b/net/ipv4/ip_output.c
+@@@ -909,8 -906,8 +909,8 @@@ static int __ip_append_data(struct soc
+  	if (transhdrlen &&
+  	    length + fragheaderlen <=3D mtu &&
+  	    rt->dst.dev->features & (NETIF_F_HW_CSUM | NETIF_F_IP_CSUM) &&
+ -	    !(flags & MSG_MORE) &&
+ +	    (!(flags & MSG_MORE) || cork->gso_size) &&
+- 	    !exthdrlen)
++ 	    (!exthdrlen || (rt->dst.dev->features & NETIF_F_HW_ESP_TX_CSUM)))
+  		csummode =3D CHECKSUM_PARTIAL;
+ =20
+  	cork->length +=3D length;
+
+--Sig_/WH_Ga+fJp9VleP.IwbY10J7
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrmZOIACgkQAVBC80lX
+0GwQcAf/WamzQmhP7QyUeCGOquwivknjlTiILKc4d513TaA30BkShVshIwbF24sf
+no1ORpZt6e/NfGVN3kdy4APbh8swkQnPbrSwIDrenWyRlD7GXILpPYsd8d6jZOuL
+rwwIuvbSQkjP6lC3+0vwBEoq9yGSJL9Ko7gRj1Zm2HnCOOZiwSvTmZY2mP8SP6hN
+eNe2bV4vsyiFyJEgyOhmEOTqyMs38XWL0XugqZsQBxX8G9JErj9WjIVshCxIFj7k
+8ZrhfZ+4MEBniJ4fp1rduZTIsBcO+uaZHHKEc+FjmOC3b1k31htnCK4rz9aX68B6
+BasCwH1YPJlEtSExN4mAnPC998fGMA==
+=1RBy
+-----END PGP SIGNATURE-----
+
+--Sig_/WH_Ga+fJp9VleP.IwbY10J7--
