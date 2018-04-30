@@ -1,40 +1,38 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZoBJIERFBUgNywWjJaxTegAvKcfO3yMp0HaS3x1IIdDvn4jc/2W9f8rl+z97f3iNnAgf8XB
-ARC-Seal: i=1; a=rsa-sha256; t=1525116470; cv=none;
+X-Google-Smtp-Source: AB8JxZrYw2k5QXBDkWuEBL99KGu9C/0ikyua3tynpNpQ2OIuLYVsAp5W8T/hUJBVdyqQRsQ/xDHn
+ARC-Seal: i=1; a=rsa-sha256; t=1525116432; cv=none;
         d=google.com; s=arc-20160816;
-        b=0E20Nyo9dDUVa3C8UoHFIP5fj/lHkDcFpTWogLaVuL6HT9cq8iw8EFcwC0l1C1yYmT
-         yfqAbfxAm+Y43DiNjNFEcAVcqLMOEVjt63TOtRBXoqurthrosfOasFSJ6PSDcQ8fv0tn
-         RJJlsN6tHvPieM1XEMwn60m323tnihQ+sio2DDvCayFK1D+lMf6aX3nurnfM6FPs9I0U
-         pADubHCjHwf1Wd8D+kDIHynSKTsAPcI1cAtAh5YishuxNli5/lwPx0qRpRmnDSpi+oGX
-         mhxSzjIQ7e/eZDrqsmcb7R8lKpnwlhvbeV4qP5Pp0wKMBSnVbq8Tm8DoV2pjcuKslTSq
-         SnuA==
+        b=lDu/Rtdh7Pcsby06WEEWlj5NNFY+QZ/aSJrRkT0csWQqvT3Lac8HAP+NOSe+9V5aip
+         rvcPjzlapYzctSfDJqSj7ShwSNdTok1XR1iWg7kqE4dUwuz1wJ+lx/sVN1tvjxYfVYJi
+         oPV/XeWQlSnd+qxqyQwmpAZmZ/1I0UIKWz/X0npmNJhGWVycLKgiB4f9TOfqdqJK4oV+
+         eLz9H4mqUpAkpGum0abIDySF3Jin8e3Z6VShGgMEkeTVldJvyO5NbKja/2X1vl2njhJz
+         ZFX+cZ82z5M8jgL6X2fugw5QfQTDi04qEZaxQu7GeQvJrfG7SquAauFX/eU75OcEVhmw
+         uHNw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=DXL16JLVbFhVwAsZIQp+1hWYvRb6Yqkq/1VpvZSqt3s=;
-        b=Po3vWuyHAAv7PUZnGMCdx7F1NIWLoc5/rnSJYOFuQA9s/KplTAZPiJ9Eh+Tv3CZKDX
-         K9rxz28K9uoQ/eDAJdJxJsQ1fN18tNTaXXRbckrVg5SHYboDJD+NhMSu9V2MMRKhLd3g
-         4rNfYRa1sUlzCkCisQ7yFLDLfiuyLDPBX4R7Wf4Kq4tuleROi0C2zTGZ1Z/ftBtTKCC6
-         waL5Si21YbSX82MltccVg80PiU+WTy+jZzEAlkaV9Smy86IgNiVX0oLMjdxqEH1elp6u
-         hzyop82TdPE7vt5CTNdopaYi4G6QhOo0o/lOviSNPBaqkp6L9SI2q6cA0BDCe11bd/p2
-         EOWw==
+        bh=VUh43D/PdK0m6evhnHjUkt8HK0Q0AuvHMOvHyM5HT/k=;
+        b=rMmKr0m4sMTBAN3FzMPDBQTzrbk43WQo3mq7OntuvGzp0VXA03cNIlGyRQdD+c3Yv3
+         SJsFllDpc7nToscDUzjMLNR9nSlj08Fh85VGTllbJLSog94p8txrISqz8yR7oWYnMeID
+         koA1kmPIJoiNvOOQ4XP4KhX0tsHLRkunEA3XFLHGULKSVnn5N9EoSi2uC6VBiNs/zDKn
+         IWLDI8VowVDL/wQfiEJY+Wy25DAQvN8TjNw4LAudn3WeWFOaTtAYACsuO6aQryNDx1xO
+         ENtP5t44lZ7V0dUq/yWVlxyVQAzet8e/DUPfTdXYXDHOfNL74LgE10zAd+pMSah0cGL5
+         3qNQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE84422E72
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A79322DCC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Stephan Mueller <smueller@chronox.de>,
-	syzbot+75397ee3df5c70164154@syzkaller.appspotmail.com,
-	Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.14 71/91] crypto: drbg - set freed buffers to NULL
-Date: Mon, 30 Apr 2018 12:24:53 -0700
-Message-Id: <20180430184007.964340007@linuxfoundation.org>
+	Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 36/91] ALSA: hda - Skip jack and others for non-existing PCM streams
+Date: Mon, 30 Apr 2018 12:24:18 -0700
+Message-Id: <20180430184006.052682115@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184004.216234025@linuxfoundation.org>
 References: <20180430184004.216234025@linuxfoundation.org>
@@ -44,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200468155576446?=
-X-GMAIL-MSGID: =?utf-8?q?1599200528294991533?=
+X-GMAIL-THRID: =?utf-8?q?1599200574792885884?=
+X-GMAIL-MSGID: =?utf-8?q?1599200487676228654?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,37 +51,60 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Stephan Mueller <smueller@chronox.de>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit eea0d3ea7546961f69f55b26714ac8fd71c7c020 upstream.
+commit 8a7d6003df41cb16f6b3b620da044fbd92d2f5ee upstream.
 
-During freeing of the internal buffers used by the DRBG, set the pointer
-to NULL. It is possible that the context with the freed buffers is
-reused. In case of an error during initialization where the pointers
-do not yet point to allocated memory, the NULL value prevents a double
-free.
+When CONFIG_SND_DYNAMIC_MINORS isn't set, there are only limited
+number of devices available, and HD-audio, especially with HDMI/DP
+codec, will fail to create more than two devices.
 
-Cc: stable@vger.kernel.org
-Fixes: 3cfc3b9721123 ("crypto: drbg - use aligned buffers")
-Signed-off-by: Stephan Mueller <smueller@chronox.de>
-Reported-by: syzbot+75397ee3df5c70164154@syzkaller.appspotmail.com
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+The driver warns about the lack of such devices and skips the PCM
+device creations, but the HDMI driver still tries to create the
+corresponding JACK, SPDIF and ELD controls even for the non-existing
+PCM substreams.  This results in confusion on user-space, and even may
+break the operation.
+
+Similarly, Intel HDMI/DP codec builds the ELD notification from i915
+graphics driver, and this may be broken if a notification is sent for
+the non-existing PCM stream.
+
+This patch adds the check of the existence of the assigned PCM
+substream in the both scenarios above, and skips the further operation
+if the PCM substream is not assigned.
+
+Fixes: 9152085defb6 ("ALSA: hda - add DP MST audio support")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- crypto/drbg.c |    2 ++
- 1 file changed, 2 insertions(+)
+ sound/pci/hda/patch_hdmi.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/crypto/drbg.c
-+++ b/crypto/drbg.c
-@@ -1134,8 +1134,10 @@ static inline void drbg_dealloc_state(st
- 	if (!drbg)
+--- a/sound/pci/hda/patch_hdmi.c
++++ b/sound/pci/hda/patch_hdmi.c
+@@ -1383,6 +1383,8 @@ static void hdmi_pcm_setup_pin(struct hd
+ 		pcm = get_pcm_rec(spec, per_pin->pcm_idx);
+ 	else
  		return;
- 	kzfree(drbg->Vbuf);
-+	drbg->Vbuf = NULL;
- 	drbg->V = NULL;
- 	kzfree(drbg->Cbuf);
-+	drbg->Cbuf = NULL;
- 	drbg->C = NULL;
- 	kzfree(drbg->scratchpadbuf);
- 	drbg->scratchpadbuf = NULL;
++	if (!pcm->pcm)
++		return;
+ 	if (!test_bit(per_pin->pcm_idx, &spec->pcm_in_use))
+ 		return;
+ 
+@@ -2151,8 +2153,13 @@ static int generic_hdmi_build_controls(s
+ 	int dev, err;
+ 	int pin_idx, pcm_idx;
+ 
+-
+ 	for (pcm_idx = 0; pcm_idx < spec->pcm_used; pcm_idx++) {
++		if (!get_pcm_rec(spec, pcm_idx)->pcm) {
++			/* no PCM: mark this for skipping permanently */
++			set_bit(pcm_idx, &spec->pcm_bitmap);
++			continue;
++		}
++
+ 		err = generic_hdmi_build_jack(codec, pcm_idx);
+ 		if (err < 0)
+ 			return err;
