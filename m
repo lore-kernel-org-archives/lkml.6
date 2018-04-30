@@ -1,43 +1,43 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZp1h9RFJPLoy26Tn2PUyQ5j/q64KVkOGeun3daphIaqpC/bULWJa7Mz4YmxyaQF3lrV7q5z
-ARC-Seal: i=1; a=rsa-sha256; t=1525116530; cv=none;
+X-Google-Smtp-Source: AB8JxZpWVD/xgYaMpDiCe43XlNBmfBBTTNwtE25HHzO67hRz7i+hWbcJb9wJTbTb1n4LD6zg7UQ2
+ARC-Seal: i=1; a=rsa-sha256; t=1525116527; cv=none;
         d=google.com; s=arc-20160816;
-        b=E9mlShYMg4Hc4EtFWvjJ3+1OGar2dJm0esZd5SPaiCYWs2nt2RIniZZPEr2REvmHPI
-         9TGUANo7dF8ehtydKy1jKlaeU5sZH3V5MUj3bJ1gO119YoXlPGb7t3lsD8snLxH5LUAJ
-         4B3bVRHOk3I0XXteYyuLSfQ6fFE16H9nUivSy/XGVXmrLZ9fdGrk+91Mrqea6laY5OnQ
-         9Iq30dQUThUlxXBxvof+sgl1Xt8+bKvJdVmwsFtCZEu3qz35OJS8D3PaQWaU245plzTA
-         qx3ndQwDFaR7L1zZ219QF+UUysH9UA4w33tTykMkgH8ClG9bgoA7Q4xccmVe2vRXMp/t
-         wH+w==
+        b=xvpm+LGYrpcv3iTFkPN3fXrVr6PoFuYmtu/Nfk5+tDj4SY3fnbfvZbZlrFwj/kFJLi
+         ijEaw2zu2cbvwgB8hWkZpv9s9CnTkt0okIicc4OAGjxAGHrdHpv6K2fqsOeUmj0GMFXG
+         oGBwbfHpazhQhn3lwAjyjgQreIFLBOY/nbFMP9d/gxe40fsG8CLLfsycZVPFyFIDYdot
+         uwhRFxQj2EMmvTiIbROpMJns+4+676lGvZE+nGfCdCOS0lMs8qxFh3rWn7wCtkmiS3X2
+         aLhr/IUQj6JDM9iHZeYHTbR3jeo724k6NUt6EYXL8EZd5I9iroTgt1+17qEtgtHV81+m
+         pQ3g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=i0V+5cj921W/DFwJw3r3nm36KlNnXJQvtpe1RkgI/XQ=;
-        b=j2WEwjUQh+GbLbgbc2XKLT9kxUjh8bN5d6zyaVt34rSuooYHj4xTDXlyFL+U7fz7Pn
-         ILY175O0Umd0q4og7xch7mDG3z9V84Q2WYAogK8FKs5NqdvR7hsQEziCNDVUn0LoLaeP
-         OFiSZw/RIkcDlXhJZ7NT5IaGX49eB/SZwx/mdAZoXVOoNLg3HXDpDgbqhtcwdXjVJsus
-         j1RWfpdQGsHtIM5zGcerN5E4MKJIO5wouB0aAHVkIXKKGmjXYrqdiH1LHssuAHAeWGXT
-         TFY0pEhZ+EANbrIZIax/3adkgac0ZIxkvnRttx+UVIUurmkuWEyt7pKH0XgKcIEzwO7Z
-         kKCg==
+        bh=8w6aM0fr2eVs1lgSQbZ6NaeMHPquQRknsZL+4zSiCmg=;
+        b=nR7/WeVPBlO6z6VlskS5dv2YzUUpXvM/Yo0prA4aZGmdetBmoofKttR38lsa+9Pse8
+         JmtvCEgv7bjIrjqgLLVFso7kGzDz3agJTJr0DdUc+FAQnsnQ9OzUHWgYxN8Yv09IFUm2
+         i3J7ll/ajreepjyZheb++bzrMPFxjxLA7iSQ+ucAWKqz9l3S3qLcuQw8Z6FOfRNL8PYP
+         AUd4lVsOfgcW3ZHdZNLhx8K/DUqOewMAMezKIItYATwByNScCWoAFdbL+QRlJrmk0g82
+         /jwoIbI+raN/yeRMXSmDse/Hy6OAz/9PpC3A6OzHxXS/0pHYBAmVr5APgdA3Pico44+M
+         JHaQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E540722DAC
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAC7C22DBF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	=?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>,
-	Dhinakaran Pandiyan <dhinakaran.pandiyan@gmail.com>,
-	Wenkai Du <wenkai.du@intel.com>,
-	Abhay Kumar <abhay.kumar@intel.com>,
-	Jani Nikula <jani.nikula@intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Subject: [PATCH 4.16 101/113] drm/i915/audio: set minimum CD clock to twice the BCLK
-Date: Mon, 30 Apr 2018 12:25:12 -0700
-Message-Id: <20180430184019.479034930@linuxfoundation.org>
+	Nicholas Piggin <npiggin@gmail.com>,
+	Pridhiviraj Paidipeddi <ppaidipe@linux.vnet.ibm.com>,
+	Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.16 096/113] cpufreq: powernv: Fix hardlockup due to synchronous smp_call in timer interrupt
+Date: Mon, 30 Apr 2018 12:25:07 -0700
+Message-Id: <20180430184019.264163678@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184015.043892819@linuxfoundation.org>
 References: <20180430184015.043892819@linuxfoundation.org>
@@ -47,8 +47,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200591168939802?=
-X-GMAIL-MSGID: =?utf-8?q?1599200591168939802?=
+X-GMAIL-THRID: =?utf-8?q?1599200457710271097?=
+X-GMAIL-MSGID: =?utf-8?q?1599200587808603584?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -56,73 +56,83 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Abhay Kumar <abhay.kumar@intel.com>
+From: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
 
-commit 904e1b1ff4c70044334f395aa751c8e73fb42714 upstream.
+commit c0f7f5b6c69107ca92909512533e70258ee19188 upstream.
 
-In GLK when the device boots with only 1366x768 panel without audio, HDA
-codec doesn't come up. In this case, the CDCLK is less than twice the
-BCLK. Even though audio isn't being enabled, having a too low CDCLK
-leads to audio probe failing altogether.
+gpstate_timer_handler() uses synchronous smp_call to set the pstate
+on the requested core. This causes the below hard lockup:
 
-Require CDCLK to be at least twice the BLCK regardless of audio. This is
-a minimal fix to improve things. Unfortunately, this a) leads to too
-high CDCLK being used when audio is not used, and b) is still not enough
-to fix audio probe when no outputs are connected at probe time.
+  smp_call_function_single+0x110/0x180 (unreliable)
+  smp_call_function_any+0x180/0x250
+  gpstate_timer_handler+0x1e8/0x580
+  call_timer_fn+0x50/0x1c0
+  expire_timers+0x138/0x1f0
+  run_timer_softirq+0x1e8/0x270
+  __do_softirq+0x158/0x3e4
+  irq_exit+0xe8/0x120
+  timer_interrupt+0x9c/0xe0
+  decrementer_common+0x114/0x120
+  -- interrupt: 901 at doorbell_global_ipi+0x34/0x50
+  LR = arch_send_call_function_ipi_mask+0x120/0x130
+  arch_send_call_function_ipi_mask+0x4c/0x130
+  smp_call_function_many+0x340/0x450
+  pmdp_invalidate+0x98/0xe0
+  change_huge_pmd+0xe0/0x270
+  change_protection_range+0xb88/0xe40
+  mprotect_fixup+0x140/0x340
+  SyS_mprotect+0x1b4/0x350
+  system_call+0x58/0x6c
 
-The proper fix would be to increase CDCLK dynamically from the audio
-component hooks.
+One way to avoid this is removing the smp-call. We can ensure that the
+timer always runs on one of the policy-cpus. If the timer gets
+migrated to a cpu outside the policy then re-queue it back on the
+policy->cpus. This way we can get rid of the smp-call which was being
+used to set the pstate on the policy->cpus.
 
-v2:
-    - Address comment (Jani)
-    - New design approach
-v3: - Typo fix on top of v1
-
-v4 by Jani: rewrite commit message, add comment in code
-
-Cc: stable@vger.kernel.org
-Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Cc: Dhinakaran Pandiyan <dhinakaran.pandiyan@gmail.com>
-Cc: Wenkai Du <wenkai.du@intel.com>
-Reviewed-by: Wenkai Du <wenkai.du@intel.com>
-Tested-by: Wenkai Du <wenkai.du@intel.com>
-Acked-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=102937
-Signed-off-by: Abhay Kumar <abhay.kumar@intel.com>
-Signed-off-by: Jani Nikula <jani.nikula@intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180418103707.14645-1-jani.nikula@intel.com
-(cherry picked from commit 2a5b95b448485e143ec3e004eabe53b31db78eb3)
-Signed-off-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Fixes: 7bc54b652f13 ("timers, cpufreq/powernv: Initialize the gpstate timer as pinned")
+Cc: stable@vger.kernel.org # v4.8+
+Reported-by: Nicholas Piggin <npiggin@gmail.com>
+Reported-by: Pridhiviraj Paidipeddi <ppaidipe@linux.vnet.ibm.com>
+Signed-off-by: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
+Acked-by: Nicholas Piggin <npiggin@gmail.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Acked-by: Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/intel_cdclk.c |   16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+ drivers/cpufreq/powernv-cpufreq.c |   14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
---- a/drivers/gpu/drm/i915/intel_cdclk.c
-+++ b/drivers/gpu/drm/i915/intel_cdclk.c
-@@ -1946,10 +1946,22 @@ int intel_crtc_compute_min_cdclk(const s
- 		}
- 	}
+--- a/drivers/cpufreq/powernv-cpufreq.c
++++ b/drivers/cpufreq/powernv-cpufreq.c
+@@ -679,6 +679,16 @@ void gpstate_timer_handler(struct timer_
  
--	/* According to BSpec, "The CD clock frequency must be at least twice
+ 	if (!spin_trylock(&gpstates->gpstate_lock))
+ 		return;
 +	/*
-+	 * According to BSpec, "The CD clock frequency must be at least twice
- 	 * the frequency of the Azalia BCLK." and BCLK is 96 MHz by default.
-+	 *
-+	 * FIXME: Check the actual, not default, BCLK being used.
-+	 *
-+	 * FIXME: This does not depend on ->has_audio because the higher CDCLK
-+	 * is required for audio probe, also when there are no audio capable
-+	 * displays connected at probe time. This leads to unnecessarily high
-+	 * CDCLK when audio is not required.
-+	 *
-+	 * FIXME: This limit is only applied when there are displays connected
-+	 * at probe time. If we probe without displays, we'll still end up using
-+	 * the platform minimum CDCLK, failing audio probe.
- 	 */
--	if (crtc_state->has_audio && INTEL_GEN(dev_priv) >= 9)
-+	if (INTEL_GEN(dev_priv) >= 9)
- 		min_cdclk = max(2 * 96000, min_cdclk);
++	 * If the timer has migrated to the different cpu then bring
++	 * it back to one of the policy->cpus
++	 */
++	if (!cpumask_test_cpu(raw_smp_processor_id(), policy->cpus)) {
++		gpstates->timer.expires = jiffies + msecs_to_jiffies(1);
++		add_timer_on(&gpstates->timer, cpumask_first(policy->cpus));
++		spin_unlock(&gpstates->gpstate_lock);
++		return;
++	}
  
  	/*
+ 	 * If PMCR was last updated was using fast_swtich then
+@@ -718,10 +728,8 @@ void gpstate_timer_handler(struct timer_
+ 	if (gpstate_idx != gpstates->last_lpstate_idx)
+ 		queue_gpstate_timer(gpstates);
+ 
++	set_pstate(&freq_data);
+ 	spin_unlock(&gpstates->gpstate_lock);
+-
+-	/* Timer may get migrated to a different cpu on cpu hot unplug */
+-	smp_call_function_any(policy->cpus, set_pstate, &freq_data, 1);
+ }
+ 
+ /*
