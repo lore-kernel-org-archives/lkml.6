@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754224AbeD3LnR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 07:43:17 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:33925 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753452AbeD3LnO (ORCPT
+        id S1754269AbeD3LnZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 07:43:25 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:41387 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754232AbeD3LnV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 07:43:14 -0400
-X-Google-Smtp-Source: AB8JxZrAWxV1B4HOlGoTdC3AGMleWJH0xw+QA4QRXRnjxlGcL5D7B1IaF5eCi60TIwczbgaDC1vcTw==
+        Mon, 30 Apr 2018 07:43:21 -0400
+X-Google-Smtp-Source: AB8JxZptPf/w+7J1mUmWqgury/x9r4Q2WwuagsA9sKgt5HYt+C5DUuq/1msljO5fp+vFnoj3xCZ+sg==
 From: Jagan Teki <jagan@amarulasolutions.com>
 To: Maxime Ripard <maxime.ripard@free-electrons.com>
 Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
@@ -22,9 +22,9 @@ Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
         Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH 18/21] arm64: dts: allwinner: a64: orangepi-win: Enable HDMI output
-Date: Mon, 30 Apr 2018 17:10:55 +0530
-Message-Id: <20180430114058.5061-19-jagan@amarulasolutions.com>
+Subject: [PATCH 19/21] arm64: dts: allwinner: a64: a64-olinuxino: Enable HDMI output
+Date: Mon, 30 Apr 2018 17:10:56 +0530
+Message-Id: <20180430114058.5061-20-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180430114058.5061-1-jagan@amarulasolutions.com>
 References: <20180430114058.5061-1-jagan@amarulasolutions.com>
@@ -32,22 +32,21 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable HDMI output on Orangepi-win board.
+Enable HDMI output on a64-olinuxino board.
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
- .../boot/dts/allwinner/sun50i-a64-orangepi-win.dts | 26 ++++++++++++++++++++++
+ .../boot/dts/allwinner/sun50i-a64-olinuxino.dts    | 26 ++++++++++++++++++++++
  1 file changed, 26 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
-index bf42690a3361..b6fdd052d473 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
-@@ -57,12 +57,38 @@
- 	chosen {
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
+index 3b3081b10ecb..83329c8fec4f 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
+@@ -58,12 +58,38 @@
  		stdout-path = "serial0:115200n8";
  	};
-+
+ 
 +	connector {
 +		compatible = "hdmi-connector";
 +		type = "a";
@@ -58,16 +57,17 @@ index bf42690a3361..b6fdd052d473 100644
 +			};
 +		};
 +	};
-+};
 +
+ 	wifi_pwrseq: wifi_pwrseq {
+ 		compatible = "mmc-pwrseq-simple";
+ 		reset-gpios = <&r_pio 0 2 GPIO_ACTIVE_LOW>; /* PL2 */
+ 	};
+ };
+ 
 +&de {
 +	status = "okay";
- };
- 
- &ehci1 {
- 	status = "okay";
- };
- 
++};
++
 +&hdmi {
 +	hvcc-supply = <&reg_dldo1>;
 +	status = "okay";
