@@ -1,106 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752103AbeD3Iwv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 04:52:51 -0400
-Received: from foss.arm.com ([217.140.101.70]:56342 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751283AbeD3Iws (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 04:52:48 -0400
-Date: Mon, 30 Apr 2018 09:53:08 +0100
-From: Will Deacon <will.deacon@arm.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        mingo@kernel.org, boqun.feng@gmail.com, paulmck@linux.vnet.ibm.com,
-        longman@redhat.com
-Subject: Re: [PATCH v3 05/14] locking/qspinlock: Remove unbounded cmpxchg
- loop from locking slowpath
-Message-ID: <20180430085307.GB15504@arm.com>
-References: <1524738868-31318-1-git-send-email-will.deacon@arm.com>
- <1524738868-31318-6-git-send-email-will.deacon@arm.com>
- <20180426155335.GL4064@hirez.programming.kicks-ass.net>
- <20180426165518.GC898@arm.com>
- <20180428124537.GD4082@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180428124537.GD4082@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        id S1752348AbeD3Ixm convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 04:53:42 -0400
+Received: from coyote.holtmann.net ([212.227.132.17]:51156 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751814AbeD3Ixk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 04:53:40 -0400
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
+Subject: Re: [PATCH] Bluetooth: Add a new 13d3:3496 QCA_ROME device
+From: Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <20180427170958.30401-1-jprvita@endlessm.com>
+Date: Mon, 30 Apr 2018 10:53:39 +0200
+Cc: Johan Hedberg <johan.hedberg@gmail.com>,
+        BlueZ development <linux-bluetooth@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux@endlessm.com,
+        =?utf-8?Q?Jo=C3=A3o_Paulo_Rechi_Vita?= <jprvita@endlessm.com>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <B1847DDB-8160-440D-B44B-34829298D64D@holtmann.org>
+References: <20180427170958.30401-1-jprvita@endlessm.com>
+To: =?utf-8?Q?Jo=C3=A3o_Paulo_Rechi_Vita?= <jprvita@gmail.com>
+X-Mailer: Apple Mail (2.3445.6.18)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Apr 28, 2018 at 02:45:37PM +0200, Peter Zijlstra wrote:
-> On Thu, Apr 26, 2018 at 05:55:19PM +0100, Will Deacon wrote:
-> > On Thu, Apr 26, 2018 at 05:53:35PM +0200, Peter Zijlstra wrote:
-> > > On Thu, Apr 26, 2018 at 11:34:19AM +0100, Will Deacon wrote:
-> > > > @@ -290,58 +312,50 @@ void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
-> > > >  	}
-> > > >  
-> > > >  	/*
-> > > > +	 * If we observe any contention; queue.
-> > > > +	 */
-> > > > +	if (val & ~_Q_LOCKED_MASK)
-> > > > +		goto queue;
-> > > > +
-> > > > +	/*
-> > > >  	 * trylock || pending
-> > > >  	 *
-> > > >  	 * 0,0,0 -> 0,0,1 ; trylock
-> > > >  	 * 0,0,1 -> 0,1,1 ; pending
-> > > >  	 */
-> > > > +	val = atomic_fetch_or_acquire(_Q_PENDING_VAL, &lock->val);
-> > > > +	if (!(val & ~_Q_LOCKED_MASK)) {
-> > > >  		/*
-> > > > +		 * we're pending, wait for the owner to go away.
-> > > > +		 *
-> > > > +		 * *,1,1 -> *,1,0
-> > > 
-> > > Tail must be 0 here, right?
-> > 
-> > Not necessarily. If we're concurrently setting pending with another slowpath
-> > locker, they could queue in the tail behind us, so we can't mess with those
-> > upper bits.
+Hi Joao Paulo,
+
+> Without this patch we can't establish a SCO connection with this
+> adapter.
 > 
-> Could be my brain just entirely stopped working; but I read that as:
+> This adapter is named "IMC Networks" under lsusb.
 > 
-> 	!(val & ~0xFF) := !(val & 0xFFFFFF00)
+> T:  Bus=01 Lev=01 Prnt=01 Port=07 Cnt=02 Dev#=  3 Spd=12   MxCh= 0
+> D:  Ver= 1.10 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
+> P:  Vendor=13d3 ProdID=3496 Rev= 0.01
+> C:* #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=100mA
+> I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
+> E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+> E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+> I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+> I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+> I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+> I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+> I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+> I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
 > 
-> which then pretty much mandates the top bits are empty, no?
+> Signed-off-by: João Paulo Rechi Vita <jprvita@endlessm.com>
+> ---
+> drivers/bluetooth/btusb.c | 1 +
+> 1 file changed, 1 insertion(+)
 
-Only if there isn't a concurrent locker. For example:
+patch has been applied to bluetooth-next tree.
 
+Regards
 
-T0:
-// fastpath fails to acquire the lock, returns val == _Q_LOCKED_VAL
-
-if (val & ~_Q_LOCKED_MASK)
-	goto queue;
-
-// Fallthrough
-
-T1:
-// fastpath fails to acquire the lock, returns val == _Q_LOCKED_VAL
-
-if (val & ~_Q_LOCKED_MASK)
-	goto queue;
-
-// Fallthrough
-
-T0:
-val = atomic_fetch_or_acquire(_Q_PENDING_VAL, &lock->val);
-// val == _Q_LOCKED_VAL
-
-T1:
-val = atomic_fetch_or_acquire(_Q_PENDING_VAL, &lock->val);
-// val == _Q_PENDING_VAL | _Q_LOCKED_VAL
-// Queue into tail
-
-T0:
-// Spins for _Q_LOCKED_MASK to go to zero, but tail is *non-zero*
-
-
-So it's really down to whether the state transitions in the comments refer
-to the lockword in memory, or the local "val" variable. I think the former
-is more instructive, because the whole thing is concurrent.
-
-Will
+Marcel
