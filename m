@@ -1,42 +1,38 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpJwPkFypLOa7ZIMH4Ve7iiMUZHtPRrb5HZ6irGyUXktylYlLJv8H41qJFiriDkAcWF6oUz
-ARC-Seal: i=1; a=rsa-sha256; t=1525116445; cv=none;
+X-Google-Smtp-Source: AB8JxZqqrcjrFdc3ImCGJ/VF+zeFZqb45QTEcXfY8+6/i+gbLfWw62Zo2hFXsMqSXrLldfrqFDAT
+ARC-Seal: i=1; a=rsa-sha256; t=1525116416; cv=none;
         d=google.com; s=arc-20160816;
-        b=iJd6uXNQDoc28bP0ItW/ExhD/+yw8HftVYXsQsDCnp+bC9xhUFnBXSfpC7wea3kHvq
-         lVA5ajABcaJwmbvh1MahQuOFniXhKjWZSRUPlCu3B4tfctS5OzSqQSxuspLhgsXLDvk2
-         TVA88XswWLg5CJUzpnu2zy1kz4S1x1JpAcxJxSSNmuWQXbQZB8EMtyogzdkFkoGRNKbZ
-         5d1HEzOE9ElH/zojsqNipHuZw1f7jMnOu31sd5IdfDEGymA1vlI3y7YWCv0/3D3PM+Gk
-         eQd4E/duS/iRmVQqN46xe6sBB0kDaeepb5OuIMib5+9V2pkYnM8Jl4HizHn8gJxbDwOu
-         gERw==
+        b=xAZEjhbAhpUPGycIEGIkAm49nuFa1UVI5DN8rJ+o3QR09ccjhWRXUwzcAXnGYTa3v5
+         3RLjtbBGDLPb3yjaylaBsbb4gd0hSheaeY4QJzds9WB7yDrFeMSOAFwaWBDqb1Kc+KEG
+         6tlOej1nmP0Un7stvuX/ZyQ2fn3mj9/SivOrfQek2Jk4GqlJqg4ovdRlNYnQNZLCI+qK
+         Dbu/tpo+cMd8+skZLszzDGqvy0YVpIqokU66d7/aOXoJaK0dQ44KrdXHtMyT1/CsjuHS
+         q9xXjkpzwrNPOZ/g2gi3+hHdBTjS/O2LZr+wiWuYirQm8nnG9cJ9t6Xf5CMM/CSC91Ax
+         RICA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=XER83H+ptP6lW8rK2aGVUJgpFesRNp4rVRLC973Ioqw=;
-        b=Hv2w0CRKeGPfB/jd69P0DqnAlJbdKKShapdPzv4+zgIcrHE3jrchnB4x87KpkwyClV
-         6zHR2RKd1C4jrL1TeTGjI+Mz2eYQyMcVxY2294hqfCe0AcI1gWVq/RmK0WKLFj8N7SID
-         YTAGk44L9vTW4NzExzaLXk5FNmngacP4QWGkpnd3UAtiO+/Akxg1JqFN1EVGeZY1zUFV
-         UVQF6OvOSzK2eQVaQIFoTuD30mT8vd+87p4jt9u3xq6VRJBkTFgVV1pSmvpIhbUHRWK1
-         X8ZBkfGeEiaq70vsakB+fcAd20GNghiIlwOhX509Le+Hpd1vZTyE4B+1KtGWLVbcSdOt
-         S0Lg==
+        bh=HXMIXgaSzMIzSKvDiOOP8V/5bHObYly43SKACWb8iB0=;
+        b=BvRBGSiATo8BGOVpaarKaZWDrzBSbFHzYFJw8cirzq9/v/soeDAUrZ0llXv51JfeCc
+         1B/Afd+CdPp7d3XCZDWnJ+otmml8CJ5lbqSy+5W0nbr0IcfDreo6RSFD9CZTWSe5J/Dq
+         aDac3F3+OnJPkS0/nfznLE96dWGl6cNqAyS47RFMCnl+/v9kuomMN9c3PWflH8XRskMI
+         OA4wjBvsULWq2/VKe2NoniW+5RjLtNzaqp4gjX0rh1y0vfUzZyiGgexv3JnE/j1ecpiu
+         7DpADZCiOSZpAZIUyw3vDaeGVSC936BAamlw0PvLXk23nSeFSt8oNMSZD/FD2rVBeg/F
+         udew==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DA9722DC1
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A4DB22DC1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dmitry Vyukov <dvyukov@google.com>,
-	syzbot+209c0f67f99fec8eb14b@syzkaller.appspotmail.com,
-	syzbot+7fb6d9525a4528104e05@syzkaller.appspotmail.com,
-	syzbot+2e63711063e2d8f9ea27@syzkaller.appspotmail.com,
-	syzbot+de73361ee4971b6e6f75@syzkaller.appspotmail.com
-Subject: [PATCH 4.14 55/91] kobject: dont use WARN for registration failures
-Date: Mon, 30 Apr 2018 12:24:37 -0700
-Message-Id: <20180430184007.053623683@linuxfoundation.org>
+	Shuah Khan <shuahkh@osg.samsung.com>
+Subject: [PATCH 4.14 12/91] usbip: vhci_hcd: check rhport before using in vhci_hub_control()
+Date: Mon, 30 Apr 2018 12:23:54 -0700
+Message-Id: <20180430184004.862563869@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184004.216234025@linuxfoundation.org>
 References: <20180430184004.216234025@linuxfoundation.org>
@@ -46,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200285796531709?=
-X-GMAIL-MSGID: =?utf-8?q?1599200501268606343?=
+X-GMAIL-THRID: =?utf-8?q?1599200532252138668?=
+X-GMAIL-MSGID: =?utf-8?q?1599200471837805847?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,45 +51,72 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dmitry Vyukov <dvyukov@google.com>
+From: Shuah Khan <shuahkh@osg.samsung.com>
 
-commit 3e14c6abbfb5c94506edda9d8e2c145d79375798 upstream.
+commit 5b22f676118ff25049382041da0db8012e57c9e8 upstream.
 
-This WARNING proved to be noisy. The function still returns an error
-and callers should handle it. That's how most of kernel code works.
-Downgrade the WARNING to pr_err() and leave WARNINGs for kernel bugs.
+Validate !rhport < 0 before using it to access port_status array.
 
-Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
-Reported-by: syzbot+209c0f67f99fec8eb14b@syzkaller.appspotmail.com
-Reported-by: syzbot+7fb6d9525a4528104e05@syzkaller.appspotmail.com
-Reported-by: syzbot+2e63711063e2d8f9ea27@syzkaller.appspotmail.com
-Reported-by: syzbot+de73361ee4971b6e6f75@syzkaller.appspotmail.com
+Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
 Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- lib/kobject.c |   12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+ drivers/usb/usbip/vhci_hcd.c |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
---- a/lib/kobject.c
-+++ b/lib/kobject.c
-@@ -234,14 +234,12 @@ static int kobject_add_internal(struct k
+--- a/drivers/usb/usbip/vhci_hcd.c
++++ b/drivers/usb/usbip/vhci_hcd.c
+@@ -368,6 +368,8 @@ static int vhci_hub_control(struct usb_h
+ 		usbip_dbg_vhci_rh(" ClearHubFeature\n");
+ 		break;
+ 	case ClearPortFeature:
++		if (rhport < 0)
++			goto error;
+ 		switch (wValue) {
+ 		case USB_PORT_FEAT_SUSPEND:
+ 			if (hcd->speed == HCD_USB3) {
+@@ -525,11 +527,16 @@ static int vhci_hub_control(struct usb_h
+ 				goto error;
+ 			}
  
- 		/* be noisy on error issues */
- 		if (error == -EEXIST)
--			WARN(1, "%s failed for %s with "
--			     "-EEXIST, don't try to register things with "
--			     "the same name in the same directory.\n",
--			     __func__, kobject_name(kobj));
-+			pr_err("%s failed for %s with -EEXIST, don't try to register things with the same name in the same directory.\n",
-+			       __func__, kobject_name(kobj));
- 		else
--			WARN(1, "%s failed for %s (error: %d parent: %s)\n",
--			     __func__, kobject_name(kobj), error,
--			     parent ? kobject_name(parent) : "'none'");
-+			pr_err("%s failed for %s (error: %d parent: %s)\n",
-+			       __func__, kobject_name(kobj), error,
-+			       parent ? kobject_name(parent) : "'none'");
- 	} else
- 		kobj->state_in_sysfs = 1;
- 
++			if (rhport < 0)
++				goto error;
++
+ 			vhci_hcd->port_status[rhport] |= USB_PORT_STAT_SUSPEND;
+ 			break;
+ 		case USB_PORT_FEAT_POWER:
+ 			usbip_dbg_vhci_rh(
+ 				" SetPortFeature: USB_PORT_FEAT_POWER\n");
++			if (rhport < 0)
++				goto error;
+ 			if (hcd->speed == HCD_USB3)
+ 				vhci_hcd->port_status[rhport] |= USB_SS_PORT_STAT_POWER;
+ 			else
+@@ -538,6 +545,8 @@ static int vhci_hub_control(struct usb_h
+ 		case USB_PORT_FEAT_BH_PORT_RESET:
+ 			usbip_dbg_vhci_rh(
+ 				" SetPortFeature: USB_PORT_FEAT_BH_PORT_RESET\n");
++			if (rhport < 0)
++				goto error;
+ 			/* Applicable only for USB3.0 hub */
+ 			if (hcd->speed != HCD_USB3) {
+ 				pr_err("USB_PORT_FEAT_BH_PORT_RESET req not "
+@@ -548,6 +557,8 @@ static int vhci_hub_control(struct usb_h
+ 		case USB_PORT_FEAT_RESET:
+ 			usbip_dbg_vhci_rh(
+ 				" SetPortFeature: USB_PORT_FEAT_RESET\n");
++			if (rhport < 0)
++				goto error;
+ 			/* if it's already enabled, disable */
+ 			if (hcd->speed == HCD_USB3) {
+ 				vhci_hcd->port_status[rhport] = 0;
+@@ -568,6 +579,8 @@ static int vhci_hub_control(struct usb_h
+ 		default:
+ 			usbip_dbg_vhci_rh(" SetPortFeature: default %d\n",
+ 					  wValue);
++			if (rhport < 0)
++				goto error;
+ 			if (hcd->speed == HCD_USB3) {
+ 				if ((vhci_hcd->port_status[rhport] &
+ 				     USB_SS_PORT_STAT_POWER) != 0) {
