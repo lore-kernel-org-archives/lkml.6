@@ -1,102 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754304AbeD3Lv6 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 07:51:58 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53802 "EHLO mx1.redhat.com"
+        id S1754342AbeD3LwB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 07:52:01 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59246 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753092AbeD3Lsw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 07:48:52 -0400
-From: Eric Auger <eric.auger@redhat.com>
-To: eric.auger.pro@gmail.com, eric.auger@redhat.com,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com, cdall@kernel.org,
-        peter.maydell@linaro.org
-Cc: andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
-Subject: [PATCH v6 02/12] KVM: arm/arm64: Document KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
-Date: Mon, 30 Apr 2018 13:48:28 +0200
-Message-Id: <1525088918-8600-3-git-send-email-eric.auger@redhat.com>
-In-Reply-To: <1525088918-8600-1-git-send-email-eric.auger@redhat.com>
-References: <1525088918-8600-1-git-send-email-eric.auger@redhat.com>
+        id S1753878AbeD3Lv6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 07:51:58 -0400
+Date: Mon, 30 Apr 2018 13:51:53 +0200
+From: Cornelia Huck <cohuck@redhat.com>
+To: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>,
+        Halil Pasic <pasic@linux.vnet.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, borntraeger@de.ibm.com, bjsdjshi@linux.ibm.com,
+        pasic@linux.ibm.com, pmorel@linux.ibm.com
+Subject: Re: [PATCH v2 5/5] vfio: ccw: add traceponits for interesting error
+ paths
+Message-ID: <20180430135153.1d108675.cohuck@redhat.com>
+In-Reply-To: <20180428055023.GS5428@bjsdjshi@linux.vnet.ibm.com>
+References: <20180423110113.59385-1-bjsdjshi@linux.vnet.ibm.com>
+        <20180423110113.59385-6-bjsdjshi@linux.vnet.ibm.com>
+        <20180427121353.4453bdc2.cohuck@redhat.com>
+        <20180428055023.GS5428@bjsdjshi@linux.vnet.ibm.com>
+Organization: Red Hat GmbH
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We introduce a new KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION attribute in
-KVM_DEV_ARM_VGIC_GRP_ADDR group. It allows userspace to provide the
-base address and size of a redistributor region
+On Sat, 28 Apr 2018 13:50:23 +0800
+Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com> wrote:
 
-Compared to KVM_VGIC_V3_ADDR_TYPE_REDIST, this new attribute allows
-to declare several separate redistributor regions.
+> * Cornelia Huck <cohuck@redhat.com> [2018-04-27 12:13:53 +0200]:
+> 
+> > On Mon, 23 Apr 2018 13:01:13 +0200
+> > Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com> wrote:
+> > 
+> > typo in subject: s/traceponits/tracepoints/
+> >   
+> > > From: Halil Pasic <pasic@linux.vnet.ibm.com>
+> > > 
+> > > Add some tracepoints so we can inspect what is not working as is should.
+> > > 
+> > > Signed-off-by: Halil Pasic <pasic@linux.vnet.ibm.com>
+> > > Signed-off-by: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
+> > > ---
+> > >  drivers/s390/cio/Makefile         |  1 +
+> > >  drivers/s390/cio/vfio_ccw_fsm.c   | 16 +++++++-
+> > >  drivers/s390/cio/vfio_ccw_trace.h | 77 +++++++++++++++++++++++++++++++++++++++
+> > >  3 files changed, 93 insertions(+), 1 deletion(-)
+> > >  create mode 100644 drivers/s390/cio/vfio_ccw_trace.h  
+> > 
+> >   
+> > > @@ -135,6 +142,8 @@ static void fsm_io_request(struct vfio_ccw_private *private,
+> > >  			goto err_out;
+> > >  
+> > >  		io_region->ret_code = cp_prefetch(&private->cp);
+> > > +		trace_vfio_ccw_cp_prefetch(get_schid(private),
+> > > +					   io_region->ret_code);
+> > >  		if (io_region->ret_code) {
+> > >  			cp_free(&private->cp);
+> > >  			goto err_out;
+> > > @@ -142,11 +151,13 @@ static void fsm_io_request(struct vfio_ccw_private *private,
+> > >  
+> > >  		/* Start channel program and wait for I/O interrupt. */
+> > >  		io_region->ret_code = fsm_io_helper(private);
+> > > +		trace_vfio_ccw_fsm_io_helper(get_schid(private),
+> > > +					     io_region->ret_code);
+> > >  		if (io_region->ret_code) {
+> > >  			cp_free(&private->cp);
+> > >  			goto err_out;
+> > >  		}
+> > > -		return;
+> > > +		goto out;
+> > >  	} else if (scsw->cmd.fctl & SCSW_FCTL_HALT_FUNC) {
+> > >  		/* XXX: Handle halt. */
+> > >  		io_region->ret_code = -EOPNOTSUPP;
+> > > @@ -159,6 +170,9 @@ static void fsm_io_request(struct vfio_ccw_private *private,
+> > >  
+> > >  err_out:
+> > >  	private->state = VFIO_CCW_STATE_IDLE;
+> > > +out:
+> > > +	trace_vfio_ccw_io_fctl(scsw->cmd.fctl, get_schid(private),
+> > > +			       io_region->ret_code);
+> > >  }
+> > >  
+> > >  /*  
+> > 
+> > I really don't want to bikeshed, especially as some tracepoints are
+> > better than no tracepoints, but...
+> > 
+> > We now trace fctl/schid/ret_code unconditionally (good).
+> > 
+> > We trace the outcome of cp_prefetch() and fsm_io_helper()
+> > unconditionally. We don't, however, trace all things that may go wrong.
+> > We have the tracepoint at the end, but it cannot tell us where the
+> > error came from. Should we have tracepoints in every place (in this
+> > function) that may generate an error? Only if there is an actual error?
+> > Are the two enough for common debug scenarios?  
+> Trace actual error sounds like a better idea than trace unconditionally
+> of these two functions.
+> These two are not enough for common debug scenarios. For example, we
+> cann't tell if a -EOPNOTSUPP is a orb->tm.b problem, or error code
+> returned by cp_init().
+> 
+> Idea to improve:
+> 1. Trace actual error.
+> 2. Define a trace event and add error trace for cp_init().
 
-So the whole redist space does not need to be contiguous anymore.
+Hm. Going from what I have done in the past when doing printk debugging:
 
-Signed-off-by: Eric Auger <eric.auger@redhat.com>
-Reviewed-by: Peter Maydell <peter.maydell@linaro.org>
-Acked-by: Christoffer Dall <christoffer.dall@arm.com>
+- stick in a message that is always hit, with some information about
+  parameters, if it makes sense
+- stick in a message "foo happened!" in the error branches
+   - or, alternatively, trace the called functions
 
----
-v5 -> v6:
-- s/pointed by/pointed to by
-- add Peter's R-b and Christoffer's A-b
+So tracing on failure only might be more useful? Have all failure paths
+under a common knob to turn on/off?
 
-v4 -> v5:
-- Document read access
-- removed Peter's R-b
+> > Opinions? We can just go ahead with this and improve things later
+> > on, I guess.
+> >   
+> I think it's also fine to do this - better something than nothing. We
+> could at least have a code base to be improved to make everybody
+> happier in future.
 
-v3 -> v4:
-- Added Peter's R-b
----
- Documentation/virtual/kvm/devices/arm-vgic-v3.txt | 30 +++++++++++++++++++++--
- 1 file changed, 28 insertions(+), 2 deletions(-)
+Maybe keep the patch as it is now, except trace the errors only
+(keeping the fctl trace point)?
 
-diff --git a/Documentation/virtual/kvm/devices/arm-vgic-v3.txt b/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
-index 9293b45..2408ab7 100644
---- a/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
-+++ b/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
-@@ -27,16 +27,42 @@ Groups:
-       VCPU and all of the redistributor pages are contiguous.
-       Only valid for KVM_DEV_TYPE_ARM_VGIC_V3.
-       This address needs to be 64K aligned.
-+
-+    KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION (rw, 64-bit)
-+      The attribute data pointed to by kvm_device_attr.addr is a __u64 value:
-+      bits:     | 63   ....  52  |  51   ....   16 | 15 - 12  |11 - 0
-+      values:   |     count      |       base      |  flags   | index
-+      - index encodes the unique redistributor region index
-+      - flags: reserved for future use, currently 0
-+      - base field encodes bits [51:16] of the guest physical base address
-+        of the first redistributor in the region.
-+      - count encodes the number of redistributors in the region. Must be
-+        greater than 0.
-+      There are two 64K pages for each redistributor in the region and
-+      redistributors are laid out contiguously within the region. Regions
-+      are filled with redistributors in the index order. The sum of all
-+      region count fields must be greater than or equal to the number of
-+      VCPUs. Redistributor regions must be registered in the incremental
-+      index order, starting from index 0.
-+      The characteristics of a specific redistributor region can be read
-+      by presetting the index field in the attr data.
-+      Only valid for KVM_DEV_TYPE_ARM_VGIC_V3.
-+
-+  It is invalid to mix calls with KVM_VGIC_V3_ADDR_TYPE_REDIST and
-+  KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION attributes.
-+
-   Errors:
-     -E2BIG:  Address outside of addressable IPA range
--    -EINVAL: Incorrectly aligned address
-+    -EINVAL: Incorrectly aligned address, bad redistributor region
-+             count/index, mixed redistributor region attribute usage
-     -EEXIST: Address already configured
-+    -ENOENT: Attempt to read the characteristics of a non existing
-+             redistributor region
-     -ENXIO:  The group or attribute is unknown/unsupported for this device
-              or hardware support is missing.
-     -EFAULT: Invalid user pointer for attr->addr.
- 
- 
--
-   KVM_DEV_ARM_VGIC_GRP_DIST_REGS
-   KVM_DEV_ARM_VGIC_GRP_REDIST_REGS
-   Attributes:
--- 
-2.5.5
+Halil, as you wrote the patch (and I presume you found it helpful):
+What is your opinion?
