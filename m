@@ -1,40 +1,39 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqbSls/3QfIBkteZ9ibVKl0XyILNX/1vUftW6o8Pukw2TKUZF9S6TVcESJMOrI7AfzodQcg
-ARC-Seal: i=1; a=rsa-sha256; t=1525116374; cv=none;
+X-Google-Smtp-Source: AB8JxZr9SZndqflfYYOfhN1nfTwf6WFVYrcSm7wkdAqURspa80V6yLNeGS97ydIf6ED9ZnknqiDY
+ARC-Seal: i=1; a=rsa-sha256; t=1525116373; cv=none;
         d=google.com; s=arc-20160816;
-        b=We2mSXoV9WO+JZxXPEUPwjB9wI+SdGa+38IFMMp2OPOBUvaxQU2G/Ivw+EuKaPTxHn
-         FeMIXoeRh10I1HjJmeBfV7rfvw7lc7CBjckpSN97shCaREm17RzqLAzEGnvdcUs02dGX
-         2yPBUkTzmKu3W8DMFI+UUJP8yLZiHm19mlbO41LyicEqpbX4FHxOoY0JXWBAiSnBuyOU
-         TZCRc34kcQ8MChRoa92+xJV4sfA3FeuCCCRSkKc3RLejRVIztMIA5o/vYOJ+3Gg3ue6A
-         hzgLQH4e0DOxiB100u+9pX1mJ1Ho9wHJ3haAJgQPohAwJWnigQYe4SMHug4lZWNqlRlJ
-         qMPg==
+        b=VCYd6YY1olWWk4xvQYNHdjMYVXqE/60BotUmcJ6KnRxtVUUUuLmojDLNE8OiAbQShL
+         X+X7yhMPaXdRg8uBpsP/OekLdpO30Z8YNFZmi65e3np8WOcqOaUo61rnvabkTpOjQqBx
+         flz7e7s+/TM1qzfnOOav0hj28Nc7sAPa9y6Vc0WfIr1+VUSwv/0XOvcDirYVWbrxPwRt
+         XjfOjnH+PIETVNEJnEI4bRmpl+PFZbfsB5kaaIDw20xL3p1IgQwdazKzhopg0E4PC/ju
+         Ldpib3QM7XW9uiD+kC1mwthxgonEvJscyMaMmlDJp6iSRAJCg98kkxe9JGzKb6hOAPaq
+         CKBA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=GjwC6NtVxYE+5HRoSeaOZs5MuiNV4Zptyv1Orlv4Bkg=;
-        b=HJvyLP82JmM4/QG9RT2CG5J3UIt2Ch1vwg59enCIbNS+ja6pH3NU2NONiOFasWIzpT
-         gtu2aAuBpp+OsHf263ezVWRopaOKfy/Nz+ypTP6/9RSWbHoAfyelPFyj2p22/xsypGhq
-         U/JV9U+PpiKy5Qq3MRDdOjqXWoiC44nzhoja6JPeEGCYFWvBjhLy18QNw8l+B3B1p9DL
-         OC/I/tyPF1LMzpVdkRkSAJpoPVGsFJbTlfoxKJIpicFTqOmh/hFWh93lYwJiZ+EKPYeA
-         cdc+kj2gY2+SWysc+RXzTLJTTBKjQ8KKQfG72F40iCYmQJOB/eilGh3LQ2ih+yTeJSZ2
-         8Epg==
+        bh=u6F57In1LyIer2815VCuKURPVZ9wOUPkbSH+qHVWi+8=;
+        b=Hf6MDV6+tjZJhkt18UkhjAzz6El4LLmJWntdmDK1iTg2S9RfBaUvhDZdLqY0fbX3sB
+         EcoHgkEP7GkFOkyX2iMhbbxMdBuageGoHKmcCuMQGok7B8RvhKFptHUhgh94hD8nlzaO
+         7QQrbOY/vOJ55GkcJ/a+2YaclG/l2a/FOoaKe377KnlOozzPALA12jQNjbWfzjG1G5Hw
+         Ob4Azbr5EK0k72K+SlXeokeDz0OzR9v27tyMn1VokZBD0I/MVG7XmmrqLKHpFLVtnCR6
+         FublmYEDqU+MdwUj2we6e5ysqvot/P4nRbSyH6JDG/gEOvBAJhVN8jyv6Xg3SCBFJV24
+         H2+A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDA9622DAC
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 431AC22DBE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	David Henningsson <diwic@ubuntu.com>,
-	Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+	Dan Carpenter <dan.carpenter@oracle.com>,
 	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.4 25/44] ALSA: core: Report audio_tstamp in snd_pcm_sync_ptr
-Date: Mon, 30 Apr 2018 12:24:36 -0700
-Message-Id: <20180430190947.346166658@linuxfoundation.org>
+Subject: [PATCH 4.4 24/44] ALSA: control: Hardening for potential Spectre v1
+Date: Mon, 30 Apr 2018 12:24:35 -0700
+Message-Id: <20180430190947.309464317@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430190946.093694747@linuxfoundation.org>
 References: <20180430190946.093694747@linuxfoundation.org>
@@ -44,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200281194240670?=
-X-GMAIL-MSGID: =?utf-8?q?1599200427297764229?=
+X-GMAIL-THRID: =?utf-8?q?1599200426740166309?=
+X-GMAIL-MSGID: =?utf-8?q?1599200426740166309?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,35 +52,64 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: David Henningsson <diwic@ubuntu.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit f853dcaae2f5bbe021161e421bd1576845bae8f6 upstream.
+commit 088e861edffb84879cf0c0d1b02eda078c3a0ffe upstream.
 
-It looks like a simple mistake that this struct member
-was forgotten.
+As recently Smatch suggested, a few places in ALSA control core codes
+may expand the array directly from the user-space value with
+speculation:
 
-Audio_tstamp isn't used much, and on some archs (such as x86) this
-ioctl is not used by default, so that might be the reason why this
-has slipped for so long.
+  sound/core/control.c:1003 snd_ctl_elem_lock() warn: potential spectre issue 'kctl->vd'
+  sound/core/control.c:1031 snd_ctl_elem_unlock() warn: potential spectre issue 'kctl->vd'
+  sound/core/control.c:844 snd_ctl_elem_info() warn: potential spectre issue 'kctl->vd'
+  sound/core/control.c:891 snd_ctl_elem_read() warn: potential spectre issue 'kctl->vd'
+  sound/core/control.c:939 snd_ctl_elem_write() warn: potential spectre issue 'kctl->vd'
 
-Fixes: 4eeaaeaea1ce ("ALSA: core: add hooks for audio timestamps")
-Signed-off-by: David Henningsson <diwic@ubuntu.com>
-Reviewed-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Cc: <stable@vger.kernel.org> # v3.8+
+Although all these seem doing only the first load without further
+reference, we may want to stay in a safer side, so hardening with
+array_index_nospec() would still make sense.
+
+In this patch, we put array_index_nospec() to the common
+snd_ctl_get_ioff*() helpers instead of each caller.  These helpers are
+also referred from some drivers, too, and basically all usages are to
+calculate the array index from the user-space value, hence it's better
+to cover there.
+
+BugLink: https://marc.info/?l=linux-kernel&m=152411496503418&w=2
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/core/pcm_native.c |    1 +
- 1 file changed, 1 insertion(+)
+ include/sound/control.h |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/sound/core/pcm_native.c
-+++ b/sound/core/pcm_native.c
-@@ -2727,6 +2727,7 @@ static int snd_pcm_sync_ptr(struct snd_p
- 	sync_ptr.s.status.hw_ptr = status->hw_ptr;
- 	sync_ptr.s.status.tstamp = status->tstamp;
- 	sync_ptr.s.status.suspended_state = status->suspended_state;
-+	sync_ptr.s.status.audio_tstamp = status->audio_tstamp;
- 	snd_pcm_stream_unlock_irq(substream);
- 	if (copy_to_user(_sync_ptr, &sync_ptr, sizeof(sync_ptr)))
- 		return -EFAULT;
+--- a/include/sound/control.h
++++ b/include/sound/control.h
+@@ -22,6 +22,7 @@
+  *
+  */
+ 
++#include <linux/nospec.h>
+ #include <sound/asound.h>
+ 
+ #define snd_kcontrol_chip(kcontrol) ((kcontrol)->private_data)
+@@ -147,12 +148,14 @@ int snd_ctl_get_preferred_subdevice(stru
+ 
+ static inline unsigned int snd_ctl_get_ioffnum(struct snd_kcontrol *kctl, struct snd_ctl_elem_id *id)
+ {
+-	return id->numid - kctl->id.numid;
++	unsigned int ioff = id->numid - kctl->id.numid;
++	return array_index_nospec(ioff, kctl->count);
+ }
+ 
+ static inline unsigned int snd_ctl_get_ioffidx(struct snd_kcontrol *kctl, struct snd_ctl_elem_id *id)
+ {
+-	return id->index - kctl->id.index;
++	unsigned int ioff = id->index - kctl->id.index;
++	return array_index_nospec(ioff, kctl->count);
+ }
+ 
+ static inline unsigned int snd_ctl_get_ioff(struct snd_kcontrol *kctl, struct snd_ctl_elem_id *id)
