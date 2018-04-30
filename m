@@ -1,65 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754711AbeD3P3p (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 11:29:45 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34728 "EHLO mx1.redhat.com"
+        id S1754629AbeD3Pae (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 11:30:34 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41076 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753480AbeD3P3o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 11:29:44 -0400
-Date: Mon, 30 Apr 2018 17:29:41 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Christian =?iso-8859-1?Q?K=F6nig?=
-        <ckoenig.leichtzumerken@gmail.com>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
-        Andrey Grodzovsky <Andrey.Grodzovsky@amd.com>, David.Panariti@amd.com,
-        amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Alexander.Deucher@amd.com, akpm@linux-foundation.org,
-        Christian.Koenig@amd.com
-Subject: Re: [PATCH 2/3] drm/scheduler: Don't call wait_event_killable for
- signaled process.
-Message-ID: <20180430152941.GA10583@redhat.com>
-References: <1524583836-12130-3-git-send-email-andrey.grodzovsky@amd.com>
- <87muxsbmkp.fsf@xmission.com>
- <8840ac96-50c4-f94d-eb7c-f007940163f3@amd.com>
- <877eowa5qh.fsf@xmission.com>
- <20180425135552.GD7592@redhat.com>
- <f45c7017-c75a-7f0c-b6d5-4d79600cdd33@amd.com>
- <20180425171757.GA10441@redhat.com>
- <c39cb438-1e8a-4f2c-50f6-c6e2a144487b@amd.com>
- <874ljyu98e.fsf@xmission.com>
- <c3c9787d-b279-8169-43d1-74eeb666ffbd@gmail.com>
+        id S1753334AbeD3Pac (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 11:30:32 -0400
+Date: Mon, 30 Apr 2018 17:30:28 +0200
+From: Cornelia Huck <cohuck@redhat.com>
+To: Pierre Morel <pmorel@linux.vnet.ibm.com>
+Cc: pasic@linux.vnet.ibm.com, bjsdjshi@linux.vnet.ibm.com,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Subject: Re: [PATCH 04/10] vfio: ccw: replace IO_REQ event with SSCH_REQ
+ event
+Message-ID: <20180430173028.0dca976c.cohuck@redhat.com>
+In-Reply-To: <24f638e4-2f7e-00e1-1efb-ff3fe524bca0@linux.vnet.ibm.com>
+References: <1524149293-12658-1-git-send-email-pmorel@linux.vnet.ibm.com>
+        <1524149293-12658-5-git-send-email-pmorel@linux.vnet.ibm.com>
+        <20180425104138.1337aff5.cohuck@redhat.com>
+        <24f638e4-2f7e-00e1-1efb-ff3fe524bca0@linux.vnet.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c3c9787d-b279-8169-43d1-74eeb666ffbd@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/30, Christian König wrote:
->
-> Well when the process is killed we don't care about correctness any more, we
-> just want to get rid of it as quickly as possible (OOM situation etc...).
+On Wed, 25 Apr 2018 15:52:19 +0200
+Pierre Morel <pmorel@linux.vnet.ibm.com> wrote:
 
-OK,
+> On 25/04/2018 10:41, Cornelia Huck wrote:
+> > On Thu, 19 Apr 2018 16:48:07 +0200
+> > Pierre Morel<pmorel@linux.vnet.ibm.com>  wrote:
 
-> But it is perfectly possible that a process submits some render commands and
-> then calls exit() or terminates because of a SIGTERM, SIGINT etc..
+> >> diff --git a/drivers/s390/cio/vfio_ccw_private.h b/drivers/s390/cio/vfio_ccw_private.h
+> >> index 3284e64..93aab87 100644
+> >> --- a/drivers/s390/cio/vfio_ccw_private.h
+> >> +++ b/drivers/s390/cio/vfio_ccw_private.h
+> >> @@ -76,7 +76,7 @@ enum vfio_ccw_state {
+> >>    */
+> >>   enum vfio_ccw_event {
+> >>   	VFIO_CCW_EVENT_NOT_OPER,
+> >> -	VFIO_CCW_EVENT_IO_REQ,
+> >> +	VFIO_CCW_EVENT_SSCH_REQ,
+> >>   	VFIO_CCW_EVENT_INTERRUPT,
+> >>   	VFIO_CCW_EVENT_SCH_EVENT,
+> >>   	/* last element! */  
+> > I don't think we should separate the ssch handling. The major 
+> > difference to halt/clear is that it needs channel program translation. 
+> > Everything else (issuing the instruction and processing the interrupt) 
+> > are basically the same. If we just throw everything at the hardware 
+> > and let the host's channel subsystem figure it out, we already should 
+> > be fine with regard to most of the races.  
+> 
+> We must test at a moment or another the kind of request we do,
+> cancel, halt and clear only need the subchannel id in register 1 and as 
+> you said are much more direct to implement.
+> 
+> If we do not separate them here, we need a switch in the "do_io_request" 
+> function.
+> Is it what you mean?
 
-This doesn't differ from SIGKILL. I mean, any unhandled fatal signal translates
-to SIGKILL and I think this is fine.
-
-but this doesn't really matter,
-
-> So what we essentially need is to distinct between a SIGKILL (which means
-> stop processing as soon as possible) and any other reason because then we
-> don't want to annoy the user with garbage on the screen (even if it's just
-> for a few milliseconds).
-
-For what?
-
-OK, I see another email from Andrey, I'll reply to that email...
-
-Oleg.
+Yes. Most of the handling should be the same for any function.
