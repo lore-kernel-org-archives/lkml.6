@@ -1,157 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752906AbeD3KPU (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 06:15:20 -0400
-Received: from stargate.chelsio.com ([12.32.117.8]:25206 "EHLO
-        stargate.chelsio.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751437AbeD3KPS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 06:15:18 -0400
-From: Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
-To: netdev@vger.kernel.org, kexec@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: davem@davemloft.net, viro@zeniv.linux.org.uk, ebiederm@xmission.com,
-        stephen@networkplumber.org, akpm@linux-foundation.org,
-        torvalds@linux-foundation.org, ganeshgr@chelsio.com,
-        nirranjan@chelsio.com, indranil@chelsio.com,
-        Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
-Subject: [PATCH net-next v6 0/3] kernel: add support to collect hardware logs in crash recovery kernel
-Date: Mon, 30 Apr 2018 15:43:57 +0530
-Message-Id: <cover.1525082669.git.rahul.lakkireddy@chelsio.com>
-X-Mailer: git-send-email 2.5.3
+        id S1752335AbeD3KSY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 06:18:24 -0400
+Received: from mga07.intel.com ([134.134.136.100]:36323 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751064AbeD3KSX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 06:18:23 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,346,1520924400";
+   d="scan'208";a="51101736"
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc: Daniel Thompson <daniel.thompson@linaro.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Meghana Madhyastha <meghana.madhyastha@gmail.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH 1/6] backlight: Nuke unused backlight.props.state states
+In-Reply-To: <20180425174253.4616-1-daniel.vetter@ffwll.ch>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20180425174253.4616-1-daniel.vetter@ffwll.ch>
+Date: Mon, 30 Apr 2018 13:21:02 +0300
+Message-ID: <87o9i19er5.fsf@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On production servers running variety of workloads over time, kernel
-panic can happen sporadically after days or even months. It is
-important to collect as much debug logs as possible to root cause
-and fix the problem, that may not be easy to reproduce. Snapshot of
-underlying hardware/firmware state (like register dump, firmware
-logs, adapter memory, etc.), at the time of kernel panic will be very
-helpful while debugging the culprit device driver.
+On Wed, 25 Apr 2018, Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
+> The backlight power state handling is supremely confusing. We have:
+> - props.power, using FB_BLANK_* defines
+> - props.fb_blank, using the same, but deprecated int favour of
+>   props.state
+> - props.state, using the BL_CORE_* defines
+> - and finally a bunch of backlight drivers treat brightness == 0 as
+>   off. But of course not all of them.
+>
+> This is way too much confusion to fix in a simple patch, but at least
+> prevent more hilarity from spreading by removing the unused BL_CORE_*
+> defines. I have no idea why exactly anyone would need that.
+>
+> Wrt the ideal state, we really just want a boolean state. The 4 power
+> saving states that the fbdev subsystem uses are overkill in todays hw
+> (this was only relevant for VGA and similar analog circuits like
+> TV-out), the new drm atomic modeset api simplified even the uapi to a
+> simple bool. And there was never a valid technical reason to have the
+> intermediate fbdev power states for backlights (those really only can
+> be either off or on).
+>
+> Cleanup motivated by Meghana's questions about all this.
+>
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Cc: Daniel Thompson <daniel.thompson@linaro.org>
+> Cc: Jingoo Han <jingoohan1@gmail.com>
+> Cc: Meghana Madhyastha <meghana.madhyastha@gmail.com>
+> Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+> Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
 
-This series of patches add new generic framework that enable device
-drivers to collect device specific snapshot of the hardware/firmware
-state of the underlying device in the crash recovery kernel. In crash
-recovery kernel, the collected logs are added as elf notes to
-/proc/vmcore, which is copied by user space scripts for post-analysis.
+Reviewed-by: Jani Nikula <jani.nikula@intel.com>
 
-The sequence of actions done by device drivers to append their device
-specific hardware/firmware logs to /proc/vmcore are as follows:
-
-1. During probe (before hardware is initialized), device drivers
-register to the vmcore module (via vmcore_add_device_dump()), with
-callback function, along with buffer size and log name needed for
-firmware/hardware log collection.
-
-2. vmcore module allocates the buffer with requested size. It adds
-an elf note and invokes the device driver's registered callback
-function.
-
-3. Device driver collects all hardware/firmware logs into the buffer
-and returns control back to vmcore module.
-
-The device specific hardware/firmware logs can be seen as elf notes:
-
-# readelf -n /proc/vmcore
-
-Displaying notes found at file offset 0x00001000 with length 0x040032bc:
-  Owner                 Data size	Description
-  CHELSIO              0x02000fec	Unknown note type: (0x00000700)
-  CHELSIO              0x02000fec	Unknown note type: (0x00000700)
-  CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
-  CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
-  CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
-  CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
-  CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
-  CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
-  CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
-  CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
-  VMCOREINFO           0x00000784	Unknown note type: (0x00000000)
-
-Patch 1 adds API to vmcore module to allow drivers to register callback
-to collect the device specific hardware/firmware logs.  The logs will
-be added to /proc/vmcore as elf notes.
-
-Patch 2 updates read and mmap logic to append device specific hardware/
-firmware logs as elf notes.
-
-Patch 3 shows a cxgb4 driver example using the API to collect
-hardware/firmware logs in crash recovery kernel, before hardware is
-initialized.
-
-Thanks,
-Rahul
-
----
-v6:
-- Reworked device dump elf note name to contain vendor identifier.
-- Added vmcoredd_header that precedes actual dump in the Elf Note.
-- Device dump's name is moved inside vmcoredd_header.
-- Added "CHELSIO" string as vendor identifier in the Elf Note name
-  for cxgb4 device dumps.
-
-v5:
-- Removed enabling CONFIG_PROC_VMCORE_DEVICE_DUMP by default and
-  updated help message.
-
-v4:
-- Made __vmcore_add_device_dump() static.
-- Moved compile check to define vmcore_add_device_dump() to
-  crash_dump.h to fix compilation when vmcore.c is not compiled in.
-- Convert ---help--- to help in Kconfig as indicated by checkpatch.
-- Rebased to tip.
-
-v3:
-- Dropped sysfs crashdd module.
-- Exported dumps as elf notes. Suggested by Eric Biederman
-  <ebiederm@xmission.com>.  Added as patch 2 in this version.
-- Added CONFIG_PROC_VMCORE_DEVICE_DUMP to allow configuring device
-  dump support.
-- Moved logic related to adding dumps from crashdd to vmcore module.
-- Rename all crashdd* to vmcoredd*.
-- Updated comments.
-
-v2:
-- Added ABI Documentation for crashdd.
-- Directly use octal permission instead of macro.
-
-Changes since rfc v2:
-- Moved exporting crashdd from procfs to sysfs. Suggested by
-  Stephen Hemminger <stephen@networkplumber.org>
-- Moved code from fs/proc/crashdd.c to fs/crashdd/ directory.
-- Replaced all proc API with sysfs API and updated comments.
-- Calling driver callback before creating the binary file under
-  crashdd sysfs.
-- Changed binary dump file permission from S_IRUSR to S_IRUGO.
-- Changed module name from CRASH_DRIVER_DUMP to CRASH_DEVICE_DUMP.
-
-rfc v2:
-- Collecting logs in 2nd kernel instead of during kernel panic.
-  Suggested by Eric Biederman <ebiederm@xmission.com>.
-- Added new crashdd module that exports /proc/crashdd/ containing
-  driver's registered hardware/firmware logs in patch 1.
-- Replaced the API to allow drivers to register their hardware/firmware
-  log collect routine in crash recovery kernel in patch 1.
-- Updated patch 2 to use the new API in patch 1.
-
-Rahul Lakkireddy (3):
-  vmcore: add API to collect hardware dump in second kernel
-  vmcore: append device dumps to vmcore as elf notes
-  cxgb4: collect hardware dump in second kernel
-
- drivers/net/ethernet/chelsio/cxgb4/cxgb4.h       |   4 +
- drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.c |  27 ++
- drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.h |   4 +
- drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c  |  10 +
- fs/proc/Kconfig                                  |  15 +
- fs/proc/vmcore.c                                 | 415 ++++++++++++++++++++++-
- include/linux/crash_core.h                       |  10 +
- include/linux/crash_dump.h                       |  18 +
- include/linux/kcore.h                            |   6 +
- include/uapi/linux/elf.h                         |   1 +
- 10 files changed, 497 insertions(+), 13 deletions(-)
+> ---
+>  include/linux/backlight.h | 3 ---
+>  1 file changed, 3 deletions(-)
+>
+> diff --git a/include/linux/backlight.h b/include/linux/backlight.h
+> index 2baab6f3861d..1db67662bfcb 100644
+> --- a/include/linux/backlight.h
+> +++ b/include/linux/backlight.h
+> @@ -84,9 +84,6 @@ struct backlight_properties {
+>  
+>  #define BL_CORE_SUSPENDED	(1 << 0)	/* backlight is suspended */
+>  #define BL_CORE_FBBLANK		(1 << 1)	/* backlight is under an fb blank event */
+> -#define BL_CORE_DRIVER4		(1 << 28)	/* reserved for driver specific use */
+> -#define BL_CORE_DRIVER3		(1 << 29)	/* reserved for driver specific use */
+> -#define BL_CORE_DRIVER2		(1 << 30)	/* reserved for driver specific use */
+>  #define BL_CORE_DRIVER1		(1 << 31)	/* reserved for driver specific use */
+>  
+>  };
 
 -- 
-2.14.1
+Jani Nikula, Intel Open Source Technology Center
