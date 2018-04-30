@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932117AbeD3VEP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 17:04:15 -0400
-Received: from anholt.net ([50.246.234.109]:40508 "EHLO anholt.net"
+        id S1755516AbeD3VEa (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 17:04:30 -0400
+Received: from anholt.net ([50.246.234.109]:40530 "EHLO anholt.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755162AbeD3VEO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 17:04:14 -0400
+        id S1755162AbeD3VE3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 17:04:29 -0400
 From: Eric Anholt <eric@anholt.net>
-To: Vaishali Thakkar <vthakkar1994@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Vaishali Thakkar <vthakkar1994@gmail.com>
-Subject: Re: [PATCH] drm/vc4: make function vc4_allocate_bin_bo static
-In-Reply-To: <20180425070953.17933-1-vthakkar1994@gmail.com>
-References: <20180425070953.17933-1-vthakkar1994@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] drm/panel: Enable DSI transactions on the RPi panel.
+In-Reply-To: <20180430092731.GA2270@ulmo>
+References: <20171031193258.17373-1-eric@anholt.net> <20171031193258.17373-2-eric@anholt.net> <20180430092731.GA2270@ulmo>
 User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
-Date: Mon, 30 Apr 2018 14:04:11 -0700
-Message-ID: <8736zce790.fsf@anholt.net>
+Date: Mon, 30 Apr 2018 14:04:26 -0700
+Message-ID: <87vac8jtid.fsf@anholt.net>
 MIME-Version: 1.0
 Content-Type: multipart/signed; boundary="=-=-=";
         micalg=pgp-sha512; protocol="application/pgp-signature"
@@ -25,37 +24,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 --=-=-=
 Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Vaishali Thakkar <vthakkar1994@gmail.com> writes:
+Thierry Reding <thierry.reding@gmail.com> writes:
 
-> Sparse complains with following warning:
-> drivers/gpu/drm/vc4/vc4_v3d.c:222:1: warning: symbol
-> 'vc4_allocate_bin_bo' was not declared. Should it be static?
+> [ Unknown signature status ]
+> On Tue, Oct 31, 2017 at 12:32:58PM -0700, Eric Anholt wrote:
+>> It turns out that I had just mistaken what type of write the register
+>> writes were supposed to be, using DCS instead of generic long writes.
+>>=20
+>> Switching to transactions instead of using the atmel as a bridge also
+>> seems to resolve the sparkling pixels problem I've had.
+>>=20
+>> Signed-off-by: Eric Anholt <eric@anholt.net>
+>> Fixes: 2f733d6194bd ("drm/panel: Add support for the Raspberry Pi 7" Tou=
+chscreen.")
+>> ---
+>>  drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c | 14 +-----------=
+--
+>>  1 file changed, 1 insertion(+), 13 deletions(-)
 >
-> Make vc4_allocate_bin static as it is not used outside of
-> vc4_v3d.c.
+> Did you want to take this along with patch 1 through drm-misc-next? If
+> so:
 >
-> Signed-off-by: Vaishali Thakkar <vthakkar1994@gmail.com>
+> Acked-by: Thierry Reding <treding@nvidia.com>
 
-Applied to drm-misc-next.  Thanks!
+I've pushed both to drm-misc-next.  Thanks!
 
 --=-=-=
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlrnhMwACgkQtdYpNtH8
-nui/3Q/7BVLzZpPO0q53cB1iqX3fV7HpObfEGCoeaILzEGDvVwmXK+IkeecyBHj9
-3ugBBz2Bmfcu97hOU/+1k4d+H0LWmdXj6McVBfX9LBWL4Gbz4asQ0/HvLbKwTxfm
-5h9ub7S5JugRN7mAx58It0D0KYbeCMZkfIE3QK58USbcpeorVi9JoRIhgxbtcxA9
-A/zzMysxzIvGUvwfAlwkAqbXIgzFtyzqU0b5vBtqa+UxBpf/vLEvwzXP9nb/3lCQ
-O4EQT+6z2U4aSuDETGKz4oU/V8h2zWeufmBoXHBDgSV2p5TTOBRO18zvib+mziB7
-+Rj99Y1VzwrNn27PmB3R0s+Twv6NalT08OhGZmaasOo3lCwFIIjLhGoCFOHeEjs3
-TepBxY6FdO9klXa6zGDGarA2x354Z/n0MYeH3oUMkmXiinlEDfE58/uNZpgaqhu3
-Yu1NZOHeDG2Ach2f4+NeF+WnTgK+RUfwYJivnUDVNmujh8iu9iZQ8NlpfgkS9u8a
-nslsQjsEeBW34I/KCJuNCNuvEsfFYbAd/O9D0QMshPaixjhfV179E9mzigU4vMLV
-Kp+dO9Js0IfgK2h2/onq18Sgg0CI7lk0ambMMMOWR3baj91gROQNE6CAWcIGSTpf
-yxob36kJgsQ1CUzm6q4/UbplGi22imxO8XG8IZ0/Fju1iGirGs8=
-=6Odt
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlrnhNoACgkQtdYpNtH8
+nuj7xg/6A3VFmzRxvtI2hP43Qt6Sl7ONcN4UYwbDg0yPqx6gkV5WScNDPZrQCBcy
+NzPElt9RBWzj4CDVKqlekcjxtOXVqInd5j6EbI3EYTIuXN/hKv94TdvU7J+4OnFh
+eWit/w/xa++0inaXfe62spejLZX9MxQyEGeVDFQP9GRdQTpk6Qsb+urKmomTaou4
+CDEyIpz5RWGQPqYxe2VMUUfyH5jjzdcj1IFX9SAtRVQIARD1Cltyg/K9qyJGJy5x
+Q5N80pFB+GH0Gw1E8WKJYHYrQz+eMcFHPvuaap977H3r6dRfytSIWvGMMb7vsS3C
+dMSXLA+64edlLsLwnudEpWSjLxK6lmKtEugNIyKgdAKU/Gd7GGdapXraYEBhVsgi
+WM5fn/HNYx4Jt6GBIiV9PuPVLOARxpMPJWTdWtKi7dew64SHZojzlRgmbuFWPYne
+yjSq4DACmdNFgibvITFihBaENpjsjT28j2k5DIoWPr7kINSekDBHazWIUhWDPRNz
+9/X7LY1uxwIXK+2n1u6RjG8HAm7uneU4OGN4yW9edHORZDzxrBBru6kd0IoEIII5
+g9kPtwLjDg279X5KSqF4/x/jUWc8jUun/SWNrCz1/D3flC5vHFRhWUZSTVODxROT
+Z99xDhwBaS0rSqYls2vdh+zSNXmIAFvGxJylN3XyYp7+dt0pV5c=
+=s0WP
 -----END PGP SIGNATURE-----
 --=-=-=--
