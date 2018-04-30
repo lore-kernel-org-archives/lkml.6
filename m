@@ -1,177 +1,161 @@
-Return-Path: <bot@kernelci.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1525143860; cv=none;
-        d=google.com; s=arc-20160816;
-        b=EZxPH1abyixcBVz0JXKeBKiEoSaAWDjdyC68rM9mFMExjJejRV54m8krNkGfSYg1tS
-         D6a8hOxGFG8tNI/70t3p3KMt9tHpCC4f4np4rXssPqPJ5KTRQ5d50/CUKdRz7KUggzWw
-         /Mplge+Ie8Bryx8qRCjmaPlU1NEbkP+GfoD+IePuFAc40zzq7ZIPALCC8ztLcbN/Xj3/
-         tks6fPqitVor/cgLaEEkxyDTl7KnOxGPiL33FTNUsCGD8xmZuw8yBSLqEg+4WxnYrghp
-         XPI/ei2wRGkrIgbO77xpqurH/636/Gi2futXDL/WuS1OhHknPBdJWvRgjHb6vxLIskep
-         qhmg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:from:to:subject:references:in-reply-to:content-transfer-encoding
-         :mime-version:date:message-id:arc-authentication-results;
-        bh=oEvDgNj20miGz1srOjOZjQ4yhITyThAb6Rm29RlaCf0=;
-        b=FMEg8LGeOiK7q0HS4CNqgr0lr26ehnFuKcjNIqVnwwScyrMtsPSck3F/79mEf+y0JH
-         A2Y2jJLIdFP/oTbF00iQna46fslH7utLDI3bglEiSI0gzlR2Fbutz5g6ZyvQRedseg+V
-         kxbXVe1EqcSe+vQoxByQKpM3/ekevPfZAP2eG3GYO8IJPhMajUPdq0M+MHeNof3B0dN6
-         QPCbGZnWL7SnAXQsMmwLzjr6zAbyjh+sUnhHQYHgK4S7Qe2OWOBh0qogFVChIOOuh3rH
-         s7AiNXqTn06ZYoA/8uikco0Ky6Pe+3ZVv6cT3VQdlxst6bwI/c1uJSz/MoDU/D0WT53+
-         gI6A==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
-X-Google-Smtp-Source: AB8JxZq2inS0d1F3en6rxKaSwSeGHnlnSrAVAkUHrzykKJZwRSgyVpnIERIuZMkB4Xk1CDXj1nDddA==
-Message-ID: <5ae7d933.1c69fb81.dfe2.9198@mx.google.com>
-Date: Mon, 30 Apr 2018 20:04:19 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: linux-4.16.y
-X-Kernelci-Tree: stable-rc
-X-Kernelci-Report-Type: boot
-X-Kernelci-Kernel: v4.16.6-114-g2556b63fc617
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1878097-1525117062-2-1357225131427255997
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1525117062; b=R+HGEuRs9th0sMbiN+OeStklCMqAfRHsKKkqLSNlNR+io2vWvG
+    nQaSG40VM0R6omWPm3k8HTGezc7hGZp/n2Pa9Evfzqv8+iL4qqOoHHPLeamALehU
+    4EeDXIVc3ydw0uDlom/a8WaMDJYj9V1sY7MT3QNCr6IHQTf4YBEejNy9ldg9mpjD
+    PbB2oaJaR1Wfcs/yXPRwBaBP8NOYXYD8Awz5I1hsW8g62ibpLDWZitRZYfL0/30J
+    22CV3WqL3TZzO7PH8B40qif6QAMBQVcZlwa3Q/Xi2iVzTG4YkwuH25Hnat+wM8nZ
+    6pqwDIcQL351yk9B0Qdj4cO7Ym64zkEbQOHA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1525117062; bh=W1iDUXB7NvT9+P9E/QwR6YWwoxwDKJ
+    kINc05lyPLBWg=; b=m/6E3YYepbuIKwlVRJ1gPZOUwRoec5wuJCPJew29vhNdPD
+    bIHJXs3LY9/1QDyfuZT8U7mbjOyKBgzVskuNPH/tzbD0+5c4vUdGZxj5p1SC6Mmh
+    lM0UWW406q916G5D/aSFUeMphlYvcs0glNukk+X449ts7yC7pdXafFKB4a2hZWHT
+    XsmYqMFpKyCa195P+EaaGAwvTLr1TSqJqYRclNpP/tOlzpUDslsGYZNqQt8SBUi2
+    /PgmUqL1/dayZqcQWV9vrg7LZWUjnYDWPjtuDSZj9PS1d/pQR3e9JJ8QJn307SgH
+    DUD1CVejtdUw2Gghg0x5ZEivM5+f77Sp85D7rb0g==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfPgm75j17/jcmaZTzu55Af6QHnmiNYqLFuWbAoXqngxb76pn3Qj+hw7jesqPYMn4m/9Rv3KzuKXqoGl2rs3WKR4g4LqutuspH6Gh4dRydmJcZYfUxJ0A
+    ooQIrDCF1X8jwmpwYcOZisPUzoQwmdANGhgP9FlAZgmN/RhdUh3e5BZ+iHFx5M4hnSVoPG5AiXI6aJxWyE/2K+V9NovFW2fFrI6V/97r7ed9XN1VbMeEh2rT
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=1XWaLZrsAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=5EMsjEJVl8QOgak0-BcA:9
+    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1756373AbeD3T2m (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 30 Apr 2018 15:28:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36562 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756372AbeD3T2i (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 30 Apr 2018 15:28:38 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F45622DCB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Todd Kjos <tkjos@google.com>
+Subject: [PATCH 4.16 074/113] ARM: amba: Fix race condition with driver_override
+Date: Mon, 30 Apr 2018 12:24:45 -0700
+Message-Id: <20180430184018.331824098@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184015.043892819@linuxfoundation.org>
 References: <20180430184015.043892819@linuxfoundation.org>
-Subject: Re: [PATCH 4.16 000/113] 4.16.7-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org
-From: kernelci.org bot <bot@kernelci.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net,
- shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk,
- lkft-triage@lists.linaro.org, stable@vger.kernel.org
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599200552563125993?=
-X-GMAIL-MSGID: =?utf-8?q?1599229248710825519?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-stable-rc/linux-4.16.y boot: 141 boots: 2 failed, 77 passed with 62 offline=
- (v4.16.6-114-g2556b63fc617)
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.16.y/kernel/v4.16.6-114-g2556b63fc617/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.16.=
-y/kernel/v4.16.6-114-g2556b63fc617/
+------------------
 
-Tree: stable-rc
-Branch: linux-4.16.y
-Git Describe: v4.16.6-114-g2556b63fc617
-Git Commit: 2556b63fc6172dd60f9d95749b5b8cfa6378cf78
-Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git
-Tested: 77 unique boards, 23 SoC families, 17 builds out of 186
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Boot Regressions Detected:
+commit 6a7228d90d42bcacfe38786756ba62762b91c20a upstream.
 
-arm:
+The driver_override implementation is susceptible to a race condition
+when different threads are reading vs storing a different driver
+override.  Add locking to avoid this race condition.
 
-    multi_v7_defconfig:
-        at91-sama5d4_xplained:
-            lab-free-electrons: new failure (last pass: v4.16.6)
-        sun8i-a83t-allwinner-h8homlet-v2:
-            lab-free-electrons: new failure (last pass: v4.16.6)
+Cfr. commits 6265539776a0810b ("driver core: platform: fix race
+condition with driver_override") and 9561475db680f714 ("PCI: Fix race
+condition with driver_override").
 
-Boot Failures Detected:
-
-arm:
-
-    multi_v7_defconfig
-        at91-sama5d4_xplained: 1 failed lab
-        sun8i-a83t-allwinner-h8homlet-v2: 1 failed lab
-
-Offline Platforms:
-
-arm:
-
-    sunxi_defconfig:
-        sun4i-a10-cubieboard: 1 offline lab
-        sun7i-a20-cubietruck: 1 offline lab
-
-    bcm2835_defconfig:
-        bcm2835-rpi-b: 1 offline lab
-
-    sama5_defconfig:
-        at91-sama5d4_xplained: 1 offline lab
-
-    multi_v7_defconfig:
-        alpine-db: 1 offline lab
-        am335x-boneblack: 1 offline lab
-        armada-xp-openblocks-ax3-4: 1 offline lab
-        at91-sama5d4_xplained: 1 offline lab
-        exynos5250-arndale: 1 offline lab
-        exynos5420-arndale-octa: 1 offline lab
-        exynos5422-odroidxu3: 1 offline lab
-        exynos5800-peach-pi: 1 offline lab
-        imx6dl-wandboard_dual: 1 offline lab
-        imx7s-warp: 1 offline lab
-        meson8b-odroidc1: 1 offline lab
-        mt7623n-bananapi-bpi-r2: 1 offline lab
-        omap3-beagle: 1 offline lab
-        omap3-beagle-xm: 1 offline lab
-        omap4-panda: 1 offline lab
-        qcom-apq8064-cm-qs600: 1 offline lab
-        qcom-apq8064-ifc6410: 1 offline lab
-        socfpga_cyclone5_de0_sockit: 1 offline lab
-        stih410-b2120: 1 offline lab
-        sun4i-a10-cubieboard: 1 offline lab
-        sun7i-a20-bananapi: 1 offline lab
-        sun7i-a20-cubietruck: 1 offline lab
-        tegra124-jetson-tk1: 1 offline lab
-        tegra20-iris-512: 1 offline lab
-        tegra30-beaver: 1 offline lab
-        vf610-colibri-eval-v3: 1 offline lab
-        zynq-zc702: 1 offline lab
-
-    tegra_defconfig:
-        tegra124-jetson-tk1: 1 offline lab
-        tegra20-iris-512: 1 offline lab
-        tegra30-beaver: 1 offline lab
-
-    imx_v6_v7_defconfig:
-        imx6dl-wandboard_dual: 1 offline lab
-        imx6dl-wandboard_solo: 1 offline lab
-        imx7s-warp: 1 offline lab
-        vf610-colibri-eval-v3: 1 offline lab
-
-    exynos_defconfig:
-        exynos5250-arndale: 1 offline lab
-        exynos5420-arndale-octa: 1 offline lab
-        exynos5422-odroidxu3: 1 offline lab
-        exynos5800-peach-pi: 1 offline lab
-
-    qcom_defconfig:
-        qcom-apq8064-cm-qs600: 1 offline lab
-        qcom-apq8064-ifc6410: 1 offline lab
-
-    omap2plus_defconfig:
-        am335x-boneblack: 1 offline lab
-        omap3-beagle: 1 offline lab
-        omap3-beagle-xm: 1 offline lab
-        omap4-panda: 1 offline lab
-
-    davinci_all_defconfig:
-        da850-lcdk: 1 offline lab
-        dm365evm,legacy: 1 offline lab
-
-    mvebu_v7_defconfig:
-        armada-xp-openblocks-ax3-4: 1 offline lab
-
-arm64:
-
-    defconfig:
-        apq8016-sbc: 1 offline lab
-        juno-r2: 1 offline lab
-        meson-gxbb-odroidc2: 1 offline lab
-        meson-gxbb-p200: 1 offline lab
-        meson-gxl-s905d-p230: 1 offline lab
-        meson-gxl-s905x-khadas-vim: 1 offline lab
-        meson-gxl-s905x-nexbox-a95x: 1 offline lab
-        meson-gxl-s905x-p212: 1 offline lab
-        mt7622-rfb1: 1 offline lab
-        rk3399-firefly: 1 offline lab
-        sun50i-a64-pine64-plus: 1 offline lab
+Fixes: 3cf385713460eb2b ("ARM: 8256/1: driver coamba: add device binding path 'driver_override'")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Todd Kjos <tkjos@google.com>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
-For more info write to <info@kernelci.org>
+ drivers/amba/bus.c |   11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+--- a/drivers/amba/bus.c
++++ b/drivers/amba/bus.c
+@@ -69,8 +69,12 @@ static ssize_t driver_override_show(stru
+ 				    struct device_attribute *attr, char *buf)
+ {
+ 	struct amba_device *dev = to_amba_device(_dev);
++	ssize_t len;
+ 
+-	return sprintf(buf, "%s\n", dev->driver_override);
++	device_lock(_dev);
++	len = sprintf(buf, "%s\n", dev->driver_override);
++	device_unlock(_dev);
++	return len;
+ }
+ 
+ static ssize_t driver_override_store(struct device *_dev,
+@@ -78,7 +82,7 @@ static ssize_t driver_override_store(str
+ 				     const char *buf, size_t count)
+ {
+ 	struct amba_device *dev = to_amba_device(_dev);
+-	char *driver_override, *old = dev->driver_override, *cp;
++	char *driver_override, *old, *cp;
+ 
+ 	if (count > PATH_MAX)
+ 		return -EINVAL;
+@@ -91,12 +95,15 @@ static ssize_t driver_override_store(str
+ 	if (cp)
+ 		*cp = '\0';
+ 
++	device_lock(_dev);
++	old = dev->driver_override;
+ 	if (strlen(driver_override)) {
+ 		dev->driver_override = driver_override;
+ 	} else {
+ 	       kfree(driver_override);
+ 	       dev->driver_override = NULL;
+ 	}
++	device_unlock(_dev);
+ 
+ 	kfree(old);
+ 
