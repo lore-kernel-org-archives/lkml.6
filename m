@@ -1,84 +1,40 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1851310-1525116542-2-3958885547639767471
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525116541; b=G8KAzxuIMKw0/VIz3dRSuvC48jan/9D0S1nvGxMmHeLSJGz6JL
-    czqAZBVGjrdLf3i9sWxQ3RjCqbEauDgixgjVohwXtKViGVG0FTByb/Cxlw107Tb1
-    zLpjgYK0mPZipErdNU9sZ5VCFoJlvIht4gmxbBFTR0+QEmFYQAu/6f2G0w1kmQEW
-    yZSttNSWEBJBrIpb17MNcKGnmxtKP3yRqfIpxARiAImQNG2URrzUBZJvNY99Updr
-    wbQWNBzT0rcSWebuowHSOgnn97y+pOnKeFKB2BKr1HDQb6X91+PAQORgjpZRbKFt
-    +DzxC20dFEUNVE+ftEcp+t8yKzcEdWAMVJvA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1525116541; bh=8J5+ALNfF4SnvjZuxJQj5R/mZsXZRy
-    Ab9MX5/POP59M=; b=L/sUKrz1coBnR5c6Gzw9eXN0OhHIwJy4D7fjeaN5NG4VNg
-    GH8AddbW0MUqinHQVaOEKCS74LK+/vLksR/qWgNc43DMYIceJwun42kZOlrwBOIC
-    ZLLZwuUzPHTzJ4kIqt6ZAopOyChuogijAUt1TI6nMC/RSbqeEvEHMFtSKWVXsCyg
-    iyS1th39ZOfksKD+x4wFcVZYrEO5R+2+eXMt4aK6GVM7ORisb3v1UqZFkAoxPkLs
-    Mdr1NWmopEejtkGn2HHjniEj3CGrAW1BEgli1PJOG6/4Drc4k9kGwTRWdhWS7axX
-    u8YoUpr4CvFa3kkckEkApiMPPOGlguL7CyS8ZqBQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfHFKv2h0iD+dr4IsTWAWz8Tz6ayD1oJtU1HuTL5jYiF1kTi43JhaL9YWWQZ5ji+Y+SggZLUHtxULbJ7tTAcu/mCVvXykMA6DSIVdRz8Wc+OC0zk6uvzv
-    1Aw4S+zFVRlOQlegwgcVcLzxVCYUMIQi1WXMcogsUWwJUsK8QQ4gwd4300+DwXnad2eC7XaKqAdQn/9rFT/xgEsfXYI8WniX10//ASugONV3AGvNx9lH3dSD
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=GAEBHUnfkgZ9E9rjFQMA:9
-    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756455AbeD3T25 (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 30 Apr 2018 15:28:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37268 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755258AbeD3T24 (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 30 Apr 2018 15:28:56 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8293323448
+Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
+X-Google-Smtp-Source: AB8JxZoDxy1Wv9JHZQgsP/X20V7Z9GF0fJq/csxpnKVo5ptzUghdubXVJqi+DRflwnnGTYQisSqa
+ARC-Seal: i=1; a=rsa-sha256; t=1525116539; cv=none;
+        d=google.com; s=arc-20160816;
+        b=ZgFU1HB7PD7/rCiXdAL0qV/Y+o24MYYSZ4vt9+A/I9Kx6QA1WD/J5kvRAxntMLHnGn
+         StTRtGHTj+XCZIEA8j+rqBAXmZEqojybG6UbZ42o633x9hzmrS0nh+sLdarLYzRmjeEM
+         wtK3JIHkH0HplA+T9pYQF7SxZuuu/P0CrEiDhI3cFx9jIT0Q1Od6qrQsllhv6T8Dv+ro
+         TJVSq3xcaOfTtvnAodm8juqgFSxGAxbeTmGeakrjzjX+7EsUTb/K2KdWZvpSV0dxuyL9
+         IR77xuY+xPRmaEb2UZ/aHFj0MMXsis9Hxi0UIKuBAeMSDoIllxXRX1ozdAyOHkuZGmfw
+         chaA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dmarc-filter:arc-authentication-results;
+        bh=jBvzrorcW81Se9aA7HdvC7IpqiqUKZ63HH2NC/5sH0c=;
+        b=mibp4SE52smhzWtVEfIXoZ9S1vbI2N7+3lBIK5d8SPK32MHBnx/62rGQvaJFhxRUnk
+         d5Yd8oUfZUqrs0M/mLe/ZT/IAiNHgeFo5GXrtTHKCfGmyq0tFUOJ3qXhMO9rMytBr3AI
+         HOHgOjQQtyl+nok6pTNqUBXKyxRQCex2lG1+J+qKr+Ev485zOc+LuBdpuSGnrd576inD
+         pvfbBoESFxX0Ng4iDXGS2xEPRw74n25xGE9cSNPEiSsRUFuyGd09FEfr8G7xh8V2BHP9
+         GLSVsogSz/cdqsYZyVj4zefUSb2aSbJvYSdPFWAxwi37X57DYzTF0H/L0rGNewU2xJGf
+         ieGQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AD7B22E03
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vitezslav Samel <vitezslav@samel.cz>,
-        Borislav Petkov <bp@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ashok Raj <ashok.raj@intel.com>
-Subject: [PATCH 4.16 109/113] x86/microcode/intel: Save microcode patch unconditionally
-Date: Mon, 30 Apr 2018 12:25:20 -0700
-Message-Id: <20180430184019.802044613@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+	Balbir Singh <bsingharora@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.16 081/113] powerpc/mce: Fix a bug where mce loops on memory UE.
+Date: Mon, 30 Apr 2018 12:24:52 -0700
+Message-Id: <20180430184018.603869231@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184015.043892819@linuxfoundation.org>
 References: <20180430184015.043892819@linuxfoundation.org>
@@ -86,9 +42,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1599200600844926211?=
+X-GMAIL-MSGID: =?utf-8?q?1599200600844926211?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -96,47 +53,102 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Borislav Petkov <bp@suse.de>
+From: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
 
-commit 84749d83758af6576552046b215b9b7f37f9556b upstream.
+commit 75ecfb49516c53da00c57b9efe48fa3f5504a791 upstream.
 
-save_mc_for_early() was a no-op on !CONFIG_HOTPLUG_CPU but the
-generic_load_microcode() path saves the microcode patches it has found into
-the cache of patches which is used for late loading too. Regardless of
-whether CPU hotplug is used or not.
+The current code extracts the physical address for UE errors and then
+hooks it up into memory failure infrastructure. On successful
+extraction of physical address it wrongly sets "handled = 1" which
+means this UE error has been recovered. Since MCE handler gets return
+value as handled = 1, it assumes that error has been recovered and
+goes back to same NIP. This causes MCE interrupt again and again in a
+loop leading to hard lockup.
 
-Make the saving unconditional so that late loading can find the proper
-patch.
+Also, initialize phys_addr to ULONG_MAX so that we don't end up
+queuing undesired page to hwpoison.
 
-Reported-by: Vitezslav Samel <vitezslav@samel.cz>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Vitezslav Samel <vitezslav@samel.cz>
-Tested-by: Ashok Raj <ashok.raj@intel.com>
-Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/20180418081140.GA2439@pc11.op.pod.cz
-Link: https://lkml.kernel.org/r/20180421081930.15741-1-bp@alien8.de
+Without this patch we see:
+  Severe Machine check interrupt [Recovered]
+    NIP: [000000001002588c] PID: 7109 Comm: find
+    Initiator: CPU
+    Error type: UE [Load/Store]
+      Effective address: 00007fffd2755940
+      Physical address:  000020181a080000
+  ...
+  Severe Machine check interrupt [Recovered]
+    NIP: [000000001002588c] PID: 7109 Comm: find
+    Initiator: CPU
+    Error type: UE [Load/Store]
+      Effective address: 00007fffd2755940
+      Physical address:  000020181a080000
+  Severe Machine check interrupt [Recovered]
+    NIP: [000000001002588c] PID: 7109 Comm: find
+    Initiator: CPU
+    Error type: UE [Load/Store]
+      Effective address: 00007fffd2755940
+      Physical address:  000020181a080000
+  Memory failure: 0x20181a08: recovery action for dirty LRU page: Recovered
+  Memory failure: 0x20181a08: already hardware poisoned
+  Memory failure: 0x20181a08: already hardware poisoned
+  Memory failure: 0x20181a08: already hardware poisoned
+  Memory failure: 0x20181a08: already hardware poisoned
+  Memory failure: 0x20181a08: already hardware poisoned
+  Memory failure: 0x20181a08: already hardware poisoned
+  ...
+  Watchdog CPU:38 Hard LOCKUP
+
+After this patch we see:
+
+  Severe Machine check interrupt [Not recovered]
+    NIP: [00007fffaae585f4] PID: 7168 Comm: find
+    Initiator: CPU
+    Error type: UE [Load/Store]
+      Effective address: 00007fffaafe28ac
+      Physical address:  00002017c0bd0000
+  find[7168]: unhandled signal 7 at 00007fffaae585f4 nip 00007fffaae585f4 lr 00007fffaae585e0 code 4
+  Memory failure: 0x2017c0bd: recovery action for dirty LRU page: Recovered
+
+Fixes: 01eaac2b0591 ("powerpc/mce: Hookup ierror (instruction) UE errors")
+Fixes: ba41e1e1ccb9 ("powerpc/mce: Hookup derror (load/store) UE errors")
+Cc: stable@vger.kernel.org # v4.15+
+Signed-off-by: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
+Signed-off-by: Balbir Singh <bsingharora@gmail.com>
+Reviewed-by: Balbir Singh <bsingharora@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/cpu/microcode/intel.c |    2 --
- 1 file changed, 2 deletions(-)
+ arch/powerpc/kernel/mce_power.c |    7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
---- a/arch/x86/kernel/cpu/microcode/intel.c
-+++ b/arch/x86/kernel/cpu/microcode/intel.c
-@@ -485,7 +485,6 @@ static void show_saved_mc(void)
-  */
- static void save_mc_for_early(u8 *mc, unsigned int size)
+--- a/arch/powerpc/kernel/mce_power.c
++++ b/arch/powerpc/kernel/mce_power.c
+@@ -441,7 +441,6 @@ static int mce_handle_ierror(struct pt_r
+ 					if (pfn != ULONG_MAX) {
+ 						*phys_addr =
+ 							(pfn << PAGE_SHIFT);
+-						handled = 1;
+ 					}
+ 				}
+ 			}
+@@ -532,9 +531,7 @@ static int mce_handle_derror(struct pt_r
+ 			 * kernel/exception-64s.h
+ 			 */
+ 			if (get_paca()->in_mce < MAX_MCE_DEPTH)
+-				if (!mce_find_instr_ea_and_pfn(regs, addr,
+-								phys_addr))
+-					handled = 1;
++				mce_find_instr_ea_and_pfn(regs, addr, phys_addr);
+ 		}
+ 		found = 1;
+ 	}
+@@ -572,7 +569,7 @@ static long mce_handle_error(struct pt_r
+ 		const struct mce_ierror_table itable[])
  {
--#ifdef CONFIG_HOTPLUG_CPU
- 	/* Synchronization during CPU hotplug. */
- 	static DEFINE_MUTEX(x86_cpu_microcode_mutex);
+ 	struct mce_error_info mce_err = { 0 };
+-	uint64_t addr, phys_addr;
++	uint64_t addr, phys_addr = ULONG_MAX;
+ 	uint64_t srr1 = regs->msr;
+ 	long handled;
  
-@@ -495,7 +494,6 @@ static void save_mc_for_early(u8 *mc, un
- 	show_saved_mc();
- 
- 	mutex_unlock(&x86_cpu_microcode_mutex);
--#endif
- }
- 
- static bool load_builtin_intel_microcode(struct cpio_data *cp)
