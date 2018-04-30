@@ -1,39 +1,41 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZovIYUvTA6W/jc5Cp/GaiOyauf7GeFWl5Wyv8sP8l7d8THPX6B1C1PYUvsmf4ujhLuewBgG
+X-Google-Smtp-Source: AB8JxZqQmHVGoxdJ9Bq97y2KmX6iYEahZuynE3dDWnRsv5Mj0qsyklRoPpmoMv2y3PaggL+0DodQ
 ARC-Seal: i=1; a=rsa-sha256; t=1525116364; cv=none;
         d=google.com; s=arc-20160816;
-        b=AmIh6OAZWMsJG9/+YqF4cworcseU2oSQ5ve/GCYY3SLUE20WbEO4BaY15eEbUbg5Rr
-         ozE0Jtvn7zeHaWy42Pmargj+/RIPixAiA6eU06xQfqch9iBn01oYfDeLIfsz5UX1QV6d
-         ZCF2iPgdn+Be68h/nnK4kaCIiyvTDWl87MPjGBm1hg3HtjdhF5sVVsb4gMLul9/CDA0n
-         vZe7nZqWtq2yBvMTuAfQIMzoqf89mKkLY6197ywIXZ9J1wcbTVNvhjpCRSWxK0QSj+pW
-         11H0dbm77NYjlyv1lKeR4kKBERIz9+DrD3bZ7bAMz6yy0D8OMALZr30ejCjGZD/ylQ58
-         R85A==
+        b=QqdGr6sEYt1zk9bvCX2d4sWRZxcu0NkN4HB+eJDzhzyI5yGidZhtAHDYr59yvvlHgL
+         WdtFCU9Iv/Y6jJ1e7jcmjsow+RUC6d+3n9XpVleY/ElrDMXxZQ8gD2d383E5Dq+YxeLu
+         KVNyu2/gwwzCfGQgZTApsY3zOzYOvh21N/LOquMDX+4ow26xCGY89pj6jRm9sqKmHTJ6
+         Fc0jerh+8vk5ZEOaAU9lJYSmnK5U3iSpaJmSpSdGwrkyqXypS1gI6JyO3xajlw90sGHr
+         U5TeOS6JcItXN8tm7i/S6JOhV0KOgU0+bw76wULSkdYP1Z8//9NEEQwUok4IWypbnttn
+         YziA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=gS7jFwxLjE8Ya63X/lEQTLoKfEFD49qYA9BZMEhPMNY=;
-        b=1C2yMZJGRj7GJfEmfm2a61XgaKSgQUTOJdrwTLP4jYdUtLHpkdjz1zx0AdLBFzntia
-         auKK3N3Eiv9me5RVeIFjAbvmOVjBEBtCYwPQtdBGgDGnUwaMpH/mh45TrluQvUbCJMCq
-         oP8oWdkk3spZbokC93ubCrLRLnCVYc3u14t/8FCmd0L7uxNePboJG0GkGM+jZb6D/kYk
-         HdTAUCrtitC+DQh97fYKojPGPhgWNRPqzYW9wJvg5WgfAk3OvvO1+wxcLAJeXVb7hZdq
-         3FkMMt9+G6IWi/y0LYVqtcsPV0hdgP9OgNoUFtNVTU5PPQZ5uTWYXoipLH0OQsNGwVeo
-         +Tfw==
+        bh=NcFMQf4mI/PuzrE/SFWHe7khDP0p+vcS4jV3ykOr60U=;
+        b=djSkSZJQ6SVVBb6qYxFQlSr1cLTZjScqmVjV9VoHU9s03jQ3PZs+XWrlxnWFIiTj2f
+         /iBM/jaYa/3NBC+bSEgzorLgCMW6s8qn9PuAeRHBwF7EuJrrxTwv5NhP/arFEltCseVi
+         0/a4KMcXiGMuRZ+7P3qZc2KcvZ/i3Vb6asKD9rVdoep9oKIIFQ7SbfoUk6yD8eRtLlDy
+         IsSvOYKYpGxV+ZSDtjFcN2Vb8ud3Dyeu9juyMEbzU5mhdsWHcTynxg7HrQwfMeiUhfhW
+         wpWhgPDQhEtm6a/6fthBLQhQUsbv69mS32wBghDY3CM5EUl+Cs89f9Mk5usifXfY1IoB
+         ZoMA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64F3A22E01
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1A7322DC9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ilya Dryomov <idryomov@gmail.com>,
-	Jason Dillaman <dillaman@redhat.com>
-Subject: [PATCH 4.4 39/44] libceph: validate con->state at the top of try_write()
-Date: Mon, 30 Apr 2018 12:24:50 -0700
-Message-Id: <20180430190947.889032341@linuxfoundation.org>
+	Marek Vasut <marex@denx.de>,
+	Nicolin Chen <nicoleotsuka@gmail.com>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.4 38/44] ASoC: fsl_esai: Fix divisor calculation failure at lower ratio
+Date: Mon, 30 Apr 2018 12:24:49 -0700
+Message-Id: <20180430190947.851669215@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430190946.093694747@linuxfoundation.org>
 References: <20180430190946.093694747@linuxfoundation.org>
@@ -43,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200287508150200?=
-X-GMAIL-MSGID: =?utf-8?q?1599200417385396480?=
+X-GMAIL-THRID: =?utf-8?q?1599200287248158187?=
+X-GMAIL-MSGID: =?utf-8?q?1599200416651151490?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,54 +54,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ilya Dryomov <idryomov@gmail.com>
+From: Nicolin Chen <nicoleotsuka@gmail.com>
 
-commit 9c55ad1c214d9f8c4594ac2c3fa392c1c32431a7 upstream.
+commit c656941df9bc80f7ec65b92ca73c42f8b0b62628 upstream.
 
-ceph_con_workfn() validates con->state before calling try_read() and
-then try_write().  However, try_read() temporarily releases con->mutex,
-notably in process_message() and ceph_con_in_msg_alloc(), opening the
-window for ceph_con_close() to sneak in, close the connection and
-release con->sock.  When try_write() is called on the assumption that
-con->state is still valid (i.e. not STANDBY or CLOSED), a NULL sock
-gets passed to the networking stack:
+When the desired ratio is less than 256, the savesub (tolerance)
+in the calculation would become 0. This will then fail the loop-
+search immediately without reporting any errors.
 
-  BUG: unable to handle kernel NULL pointer dereference at 0000000000000020
-  IP: selinux_socket_sendmsg+0x5/0x20
+But if the ratio is smaller enough, there is no need to calculate
+the tolerance because PM divisor alone is enough to get the ratio.
 
-Make sure con->state is valid at the top of try_write() and add an
-explicit BUG_ON for this, similar to try_read().
+So a simple fix could be just to set PM directly instead of going
+into the loop-search.
 
+Reported-by: Marek Vasut <marex@denx.de>
+Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+Tested-by: Marek Vasut <marex@denx.de>
+Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Cc: stable@vger.kernel.org
-Link: https://tracker.ceph.com/issues/23706
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-Reviewed-by: Jason Dillaman <dillaman@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/ceph/messenger.c |    7 +++++++
+ sound/soc/fsl/fsl_esai.c |    7 +++++++
  1 file changed, 7 insertions(+)
 
---- a/net/ceph/messenger.c
-+++ b/net/ceph/messenger.c
-@@ -2531,6 +2531,11 @@ static int try_write(struct ceph_connect
- 	int ret = 1;
+--- a/sound/soc/fsl/fsl_esai.c
++++ b/sound/soc/fsl/fsl_esai.c
+@@ -143,6 +143,13 @@ static int fsl_esai_divisor_cal(struct s
  
- 	dout("try_write start %p state %lu\n", con, con->state);
-+	if (con->state != CON_STATE_PREOPEN &&
-+	    con->state != CON_STATE_CONNECTING &&
-+	    con->state != CON_STATE_NEGOTIATING &&
-+	    con->state != CON_STATE_OPEN)
-+		return 0;
+ 	psr = ratio <= 256 * maxfp ? ESAI_xCCR_xPSR_BYPASS : ESAI_xCCR_xPSR_DIV8;
  
- more:
- 	dout("try_write out_kvec_bytes %d\n", con->out_kvec_bytes);
-@@ -2556,6 +2561,8 @@ more:
- 	}
- 
- more_kvec:
-+	BUG_ON(!con->sock);
++	/* Do not loop-search if PM (1 ~ 256) alone can serve the ratio */
++	if (ratio <= 256) {
++		pm = ratio;
++		fp = 1;
++		goto out;
++	}
 +
- 	/* kvec data queued? */
- 	if (con->out_kvec_left) {
- 		ret = write_partial_kvec(con);
+ 	/* Set the max fluctuation -- 0.1% of the max devisor */
+ 	savesub = (psr ? 1 : 8)  * 256 * maxfp / 1000;
+ 
