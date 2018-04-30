@@ -1,58 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753740AbeD3N4V (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 09:56:21 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57206 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751949AbeD3N4U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 09:56:20 -0400
-Date: Mon, 30 Apr 2018 15:56:16 +0200
-From: Cornelia Huck <cohuck@redhat.com>
-To: Halil Pasic <pasic@linux.ibm.com>
-Cc: Pierre Morel <pmorel@linux.vnet.ibm.com>,
-        Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>, pasic@linux.vnet.ibm.com,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Subject: Re: [PATCH 01/10] vfio: ccw: Moving state change out of IRQ context
-Message-ID: <20180430155616.38529d08.cohuck@redhat.com>
-In-Reply-To: <bf8256f2-17a4-e1ec-ec35-a10bde734b65@linux.ibm.com>
-References: <1524149293-12658-1-git-send-email-pmorel@linux.vnet.ibm.com>
-        <1524149293-12658-2-git-send-email-pmorel@linux.vnet.ibm.com>
-        <20180424065442.GV12194@bjsdjshi@linux.vnet.ibm.com>
-        <ac4b7441-2d17-922b-695e-98c01d87cd42@linux.vnet.ibm.com>
-        <20180424115929.5b5e1ff0.cohuck@redhat.com>
-        <245ee547-75bc-95f5-5acb-bfa96f91afd2@linux.ibm.com>
-        <20180425085726.3a8a97a5.cohuck@redhat.com>
-        <bf8256f2-17a4-e1ec-ec35-a10bde734b65@linux.ibm.com>
-Organization: Red Hat GmbH
+        id S1754107AbeD3N5p (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 09:57:45 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:34452 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751949AbeD3N5o (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 09:57:44 -0400
+Date: Mon, 30 Apr 2018 15:57:27 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Luwei Kang <luwei.kang@intel.com>
+Cc: kvm@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        hpa@zytor.com, x86@kernel.org, pbonzini@redhat.com, rkrcmar@redhat.com,
+        linux-kernel@vger.kernel.org, joro@8bytes.org,
+        Chao Peng <chao.p.peng@linux.intel.com>
+Subject: Re: [PATCH v6 01/11] perf/x86/intel/pt: Move Intel-PT MSR bit
+ definitions to a public header
+Message-ID: <20180430135727.GA12258@hirez.programming.kicks-ass.net>
+References: <1521544918-31084-1-git-send-email-luwei.kang@intel.com>
+ <1521544918-31084-2-git-send-email-luwei.kang@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1521544918-31084-2-git-send-email-luwei.kang@intel.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 25 Apr 2018 13:06:31 +0200
-Halil Pasic <pasic@linux.ibm.com> wrote:
+On Tue, Mar 20, 2018 at 07:21:48PM +0800, Luwei Kang wrote:
+> From: Chao Peng <chao.p.peng@linux.intel.com>
+> 
+> Intel Processor Trace virtualization enabling in guest need
+> to use these MSR bits, so move them to public header msr-index.h.
+> Introduce RTIT_CTL_FABRIC_EN and sync the definitions to
+> latest spec.
 
-> On 04/25/2018 08:57 AM, Cornelia Huck wrote:
-> >> AFAIU this will be the problem of the person implementing the clear
-> >> and the halt for vfio-ccw. I.e. it's a non-problem right now.  
-> > Well, that person is me:)  I will post some RFC Real Soon Now if I stop
-> > getting sidetracked...
-> >   
-> 
-> Makes sense. It should be fine either way AFAIU.
-> 
-> CSCH, more precisely the clear function is supposed to clear the
-> interruption request(s) too. But I guess there is no way of the CP to
-> identify an I/O interrupt that should have been cleared -- that is catch
-> us disrespecting the architecture. I can't think of a way to establish
-> must happen before relationship...
-> 
-> But discarding the first interrupt and delivering just one for the CSCH
-> is fine too for the same reason.
+You forgot to Cc the maintainers.
 
-Yes, both work. The calling code in the guest has to be able to handle
-both anyway, since both can happen on real hardware as well (with a
-smaller race window).
+Also, this patch does 2 things, I think we have a rule that says that's
+a bad thing.
