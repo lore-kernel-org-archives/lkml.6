@@ -1,39 +1,41 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqHMN1wWtIpX70zhMIoDmzV1hV1sgxQSItZYr8UOYv8AG4lC9Qsq+A7rCcrSQrtJw78hUnv
-ARC-Seal: i=1; a=rsa-sha256; t=1525116472; cv=none;
+X-Google-Smtp-Source: AB8JxZqyTg2UdhCRBkZYVYVaUtVbLfq+KME3KinmtpA2i0ZOMbZAlY900St2qh8wFYZUj4NUdpdo
+ARC-Seal: i=1; a=rsa-sha256; t=1525116469; cv=none;
         d=google.com; s=arc-20160816;
-        b=ZPaJrBDbOg86ID1EJhdBUeZmAsBSDA6RXsS77Zzq8udXbA6f5tURcw95X9iECuuPp2
-         qT5rZeNDQH0POzx115EY15LpICS9PJowEZ1ei5MmoilzvevxtXv5/VmV5eRh4n6viL1V
-         6hO+c8CdgBFrzvbnkslZXQb22J/EwFSLW1z1Us7QkTJF7CMi1G4b0X0nL+pmPvMUawD8
-         eVXxBkimRC69FnQIOzROpDqbwzyndww4iYe9IsoDdkLIrhwoaS595b8PwNXNY0dljapc
-         WF35QLtkRDPqyugiDsI5Gm/XgX8TyL+rAwx0IN/6fFMKW+wSyz4UWnKTyjFrj4AOJUhE
-         JEDg==
+        b=mMmDsmS/QmQt1SPEVyWB/wjkmkKPljno3kK6J8hEz6hsrIxuIk+ME9gAC79LxUCnLW
+         FLUzASSvcFYpzbMuZZRq+9W/VSr+LlUBOB3sToDBy7zY+D1Obn92/FU+Vm/qkTlDDwGU
+         e5CvEZaiAai1D4OmCV7qiZFQ8m8qLWHcnNfazwYugU+5/qqmpAZQf3JrsaWt2i94yJwH
+         pUNjCSxsXmOA5s2onYI66nqQ0lNKtPrkDMb9T/AxueXVmiD0w1s0LNNxmLykKM/4Vhhk
+         xw4gvOReL2kmyOeZM1+w244VIKaPavgU6sgQTBreF+vXlyTUJ8ccZhzJCvMI6Nf3Rc9d
+         DQyg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=zeFyEbiJzp5mcQzsGCGVDe5RpVHrq6PS7+a549i5H7I=;
-        b=hj2Soh8T/4nE7cSeXSk71+VHzpw4ZH2uBS2XBwIgXDIGk92O+LPbQdKBG9QVhBSfZN
-         dUGNEobLdl+FkLmZ1luQTsEuPeWV6wRE5yCMX0DRS6QJmm11koYeFQRX9UkViVl0Rw4B
-         DexpH5SOYWfA7E/7xV2dydSG1wdPUK11B6B/KoIut6FWJ/iyxDqF913xvq6soI21ZOtt
-         LwJcAzePJ+HgNRd6MaOnZtGLJwcmrR2OD+qJdP+NJadt3f9eTnGxiIkTUgxrO0V1wo/R
-         YgRNzo625RFQ+lxTwQXkrkV+cbsq+sCy4gU1vfg2nhyQRTmiGDmCr4X+2mjVKy/eN7pZ
-         wBUQ==
+        bh=K+TS+6UoePTM0JcZOKpNlp8TLlAxb9MHS7gw2KYbUBY=;
+        b=mv2nsZqeGA5Qhz9a9oHO8bn+D4UeHkqyMRW8MZithzkkAbiHVLQ9byICaoLMwf3iaV
+         uD4aZiKCe7Gu7O2dP0QZcruqcrRn/jC4pacKKaC3RC/TiSCkDwZB53JdpmZMiTAresI3
+         NmBOxN+q6HEH8ymqaftENGYi9YVytKG6FfDW9FKUL5v6vK1oRy9u3p8ERIXVkD4lrQML
+         wYuJvkIHPjFmJlwWoDRT04HpvyO/XAKsgP9J92NrHxjzd6MJ0HVozIBYHnIgBWTdhwUs
+         ZLD0htDVdhpBOXT2kHqvQEloGH17S5QvuL5aLIKcGs3yEUWLNCWn09kumaFjVq5yzFxH
+         f+kw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A510622DBF
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9233322DBF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Todd Kjos <tkjos@google.com>
-Subject: [PATCH 4.14 64/91] ARM: amba: Make driver_override output consistent with other buses
-Date: Mon, 30 Apr 2018 12:24:46 -0700
-Message-Id: <20180430184007.499428338@linuxfoundation.org>
+	Balbir Singh <bsingharora@gmail.com>,
+	Reza Arbab <arbab@linux.ibm.com>,
+	Rashmica Gupta <rashmica.g@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.14 69/91] powerpc/mm: Flush cache on memory hot(un)plug
+Date: Mon, 30 Apr 2018 12:24:51 -0700
+Message-Id: <20180430184007.842987749@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184004.216234025@linuxfoundation.org>
 References: <20180430184004.216234025@linuxfoundation.org>
@@ -43,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200414584259129?=
-X-GMAIL-MSGID: =?utf-8?q?1599200529972367189?=
+X-GMAIL-THRID: =?utf-8?q?1599200526410353909?=
+X-GMAIL-MSGID: =?utf-8?q?1599200526410353909?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,38 +54,57 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Balbir Singh <bsingharora@gmail.com>
 
-commit 5f53624662eaac89598641cee6cd54fc192572d9 upstream.
+commit fb5924fddf9ee31db04da7ad4e8c3434a387101b upstream.
 
-For AMBA devices with unconfigured driver override, the
-"driver_override" sysfs virtual file is empty, while it contains
-"(null)" for platform and PCI devices.
+This patch adds support for flushing potentially dirty cache lines
+when memory is hot-plugged/hot-un-plugged. The support is currently
+limited to 64 bit systems.
 
-Make AMBA consistent with other buses by dropping the test for a NULL
-pointer.
+The bug was exposed when mappings for a device were actually
+hot-unplugged and plugged in back later. A similar issue was observed
+during the development of memtrace, but memtrace does it's own
+flushing of region via a custom routine.
 
-Note that contrary to popular belief, sprintf() handles NULL pointers
-fine; they are printed as "(null)".
+These patches do a flush both on hotplug/unplug to clear any stale
+data in the cache w.r.t mappings, there is a small race window where a
+clean cache line may be created again just prior to tearing down the
+mapping.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: stable <stable@vger.kernel.org>
-Reviewed-by: Todd Kjos <tkjos@google.com>
+The patches were tested by disabling the flush routines in memtrace
+and doing I/O on the trace file. The system immediately
+checkstops (quite reliablly if prior to the hot-unplug of the memtrace
+region, we memset the regions we are about to hot unplug). After these
+patches no custom flushing is needed in the memtrace code.
+
+Fixes: 9d5171a8f248 ("powerpc/powernv: Enable removal of memory for in memory tracing")
+Cc: stable@vger.kernel.org # v4.14+
+Signed-off-by: Balbir Singh <bsingharora@gmail.com>
+Acked-by: Reza Arbab <arbab@linux.ibm.com>
+Reviewed-by: Rashmica Gupta <rashmica.g@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/amba/bus.c |    3 ---
- 1 file changed, 3 deletions(-)
+ arch/powerpc/mm/mem.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/amba/bus.c
-+++ b/drivers/amba/bus.c
-@@ -70,9 +70,6 @@ static ssize_t driver_override_show(stru
- {
- 	struct amba_device *dev = to_amba_device(_dev);
+--- a/arch/powerpc/mm/mem.c
++++ b/arch/powerpc/mm/mem.c
+@@ -143,6 +143,7 @@ int arch_add_memory(int nid, u64 start,
+ 			start, start + size, rc);
+ 		return -EFAULT;
+ 	}
++	flush_inval_dcache_range(start, start + size);
  
--	if (!dev->driver_override)
--		return 0;
--
- 	return sprintf(buf, "%s\n", dev->driver_override);
+ 	return __add_pages(nid, start_pfn, nr_pages, want_memblock);
  }
+@@ -171,6 +172,7 @@ int arch_remove_memory(u64 start, u64 si
  
+ 	/* Remove htab bolted mappings for this section of memory */
+ 	start = (unsigned long)__va(start);
++	flush_inval_dcache_range(start, start + size);
+ 	ret = remove_section_mapping(start, start + size);
+ 
+ 	/* Ensure all vmalloc mappings are flushed in case they also
