@@ -1,36 +1,30 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932108AbeD3ALN (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 29 Apr 2018 20:11:13 -0400
-Received: from imap.thunk.org ([74.207.234.97]:43524 "EHLO imap.thunk.org"
+        id S1754553AbeD3AVJ (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 29 Apr 2018 20:21:09 -0400
+Received: from imap.thunk.org ([74.207.234.97]:43552 "EHLO imap.thunk.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932071AbeD3ALJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Apr 2018 20:11:09 -0400
-Date: Sun, 29 Apr 2018 20:11:07 -0400
+        id S1754359AbeD3AVI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Apr 2018 20:21:08 -0400
+Date: Sun, 29 Apr 2018 20:21:03 -0400
 From: "Theodore Y. Ts'o" <tytso@mit.edu>
-To: Sultan Alsawaf <sultanxda@gmail.com>
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>, Pavel Machek <pavel@ucw.cz>,
-        LKML <linux-kernel@vger.kernel.org>, Jann Horn <jannh@google.com>
+To: Dave Jones <davej@codemonkey.org.uk>,
+        Paul Menzel <pmenzel+linux-random-number@molgen.mpg.de>,
+        linux-kernel@vger.kernel.org
 Subject: Re: Linux messages full of `random: get_random_u32 called from`
-Message-ID: <20180430001106.GS5965@thunk.org>
+Message-ID: <20180430002102.GT5965@thunk.org>
 Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Sultan Alsawaf <sultanxda@gmail.com>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>, Pavel Machek <pavel@ucw.cz>,
-        LKML <linux-kernel@vger.kernel.org>, Jann Horn <jannh@google.com>
-References: <3eb5761e-7b25-4178-0560-fba5eb43ce6a@gmail.com>
- <20180427201036.GL5965@thunk.org>
- <20180429143205.GD13475@amd>
- <20180429170541.lrzwyihrd6d75rql@sultan-box>
- <20180429184101.GA31156@amd>
- <20180429202033.ysmc42mj2rrk3h7p@sultan-box>
- <20180429220519.GQ5965@thunk.org>
- <20180429222625.35tedjzkizchudcm@sultan-box>
- <CAHmME9r5XNS_AU234vKbt9PoHGN3PooFSA8EqNfDRpBHREdQAQ@mail.gmail.com>
- <20180429224928.teg6zyfjxndbcnsn@sultan-box>
+        Dave Jones <davej@codemonkey.org.uk>,
+        Paul Menzel <pmenzel+linux-random-number@molgen.mpg.de>,
+        linux-kernel@vger.kernel.org
+References: <42c1b84b-ab1f-5577-6304-e0985a637cf9@molgen.mpg.de>
+ <20180424135621.GD4189@thunk.org>
+ <20180429230202.rcsjtnp2jhbqyag2@codemonkey.org.uk>
+ <20180429230728.whjg3fpeunxuvkyn@codemonkey.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180429224928.teg6zyfjxndbcnsn@sultan-box>
+In-Reply-To: <20180429230728.whjg3fpeunxuvkyn@codemonkey.org.uk>
 User-Agent: Mutt/1.9.5 (2018-04-13)
 X-SA-Exim-Connect-IP: <locally generated>
 X-SA-Exim-Mail-From: tytso@thunk.org
@@ -39,29 +33,45 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Apr 29, 2018 at 03:49:28PM -0700, Sultan Alsawaf wrote:
-> On Mon, Apr 30, 2018 at 12:43:48AM +0200, Jason A. Donenfeld wrote:
-> > > -       if ((fast_pool->count < 64) &&
-> > > -           !time_after(now, fast_pool->last + HZ))
-> > > -               return;
-> > > -
-> > 
-> > I suspect you still want the rate-limiting in place. But if you _do_
-> > want to cheat like this, you could instead just modify the condition
-> > to only relax the rate limiting when !crng_init().
+On Sun, Apr 29, 2018 at 07:07:29PM -0400, Dave Jones wrote:
+>  > Why do we continue to print this stuff out when crng_init=1 though ?
 > 
-> Good idea. Attached a new patch that's less intrusive. It still fixes my issue,
-> of course.
+> answering my own question, I think.. This is a tristate, and we need it
+> to be >1 to be quiet, which doesn't happen until..
+> 
+>  > [  165.806247] random: crng init done
+> 
+> this point.
 
-What your patch does is assume that there is a full bit of uncertainty
-that can be obtained from the information gathered from each
-interrupt.  I *might* be willing to assume that to be valid on x86
-systems that have a high resolution cycle counter.  But on ARM
-platforms, especially during system bootup when the user isn't typing
-anything and SSD's and flash storage tend to have very predictable
-timing patterns?  Not a bet I'd be willing to take.  Even with a cycle
-counter, there's a reason why we assumed that we need to mix in timing
-results from 64 interrupts or one second's worth before we would give
-a single bit's worth of entropy credit.
+Right.  What happens is that we divert the first 64 bits of entropy
+credits directly into the crng state, without initializing the
+input_pool.  So when we hit crng_init=1, the crng has only 64 bits of
+entropy (conservatively speaking); furthermore, since we aren't doing
+catastrophic reseeding, if something is continuously reading from
+/dev/urandom or get_random_bytes() during that time, then the attacker
+could be able to detremine which one of the 32 states the entropy pool
+was when the entropy count was 5, and then 5 bits later, poll the
+output of the pool again, and guess which of the 32 states the pool
+was in, etc., and effectively keep up with the entropy as it trickles
+in.
 
-							- Ted
+This is the reasoning behind catastrophic reseeding; we wait until we
+have 128 bits of entropy in the input pool, and then we reseed the
+pool all at once.
+
+Why do we have the crng_init=1 state?  Because it provides some basic
+protection for super-early users of the entropy pool.  It's
+essentially a bandaid, and we could improve the time to get to fully
+initialize by about 33% if we left the pool totally unititalized and
+only focused on filling the input pool.  But given that on many
+distributions, ssh still insists on initializing long-term public keys
+at first boot from /dev/urandom, instead of *waiting* until the first
+time someone attempts to ssh into box, or waiting until getrandom(2)
+doesn't block --- without hanging the boot --- we have the crng_init=1
+hack essentially as a palliative.
+
+I view this as working around broken user space.  But userspace has
+been broken for a long time, and users tend to blame the kernel, not
+userspace....
+
+						- Ted
