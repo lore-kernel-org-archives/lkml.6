@@ -1,38 +1,40 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqZ3RELJ6tcVX1wKLbj4OFo7GMfhNbor7uE4DhYf2c/O2xljZgtAMYzReGkG2N1v6OeJLst
+X-Google-Smtp-Source: AB8JxZp3toNYYWRLEpCWbhORtJID6s4IfJylL9yTOW9wNXau+qEYCHApTptFus43/3h5VKdqzlKt
 ARC-Seal: i=1; a=rsa-sha256; t=1525116350; cv=none;
         d=google.com; s=arc-20160816;
-        b=TCLYa8Yk6zuTLJXjcrI/X2G6GxxgCPUluM5WRadJmHttqiOBuzo3XlUGcptL1OsIK/
-         gmxZunrczUsrLK43/5DPGWMiRRgXYGxRWsGU17Y1g9caaQotPVLe4vvd3AT45VBpo+Ro
-         G6/14cKIXeh+mQCJ0AgPP3dm3ke1A5aDRFjFTT84royjYuuaYDuZUNDcB2JL3zOGB1LX
-         WAqOA3+Dzt57Y5KJ76ZgowBssbiHS8XOjvEg6tLyyB/RhA0tFvWUJu6H1dJCTIL3npwN
-         2g4y4Ho3QJjlsvtuxjMjd7Q/CovbrumuW7KwB7Cca83gDLwd+e5fyBQUDxW7aoR2vaWz
-         SQvQ==
+        b=ap6+VunJ/CTEJ+IyNLbbK1SwWCDBmRkVpj18L/mS+Qj+23p9aoOe9twXkxP2bFUV7P
+         bcW1hF0RUVmBKWKdz9KIW+BnuTMk0S3v+u76Mk11RHl0XO9vxrQilsjbBKvFo+P+ouBf
+         vC/dmQAJ6bOJy8DB/+fbE3UJpNARCdM2c5Q0N4z9pSuNmkfleitYrCzWMQ+4N7EqapOo
+         g7biQNOqMxsRgDBsf+vJSTLotZM6Qu+EhVdSgMxzcS6Hm3DZKfXwiWM0Fev///rpbD8I
+         55OAZJn9cVLz7uOdq0ZcSJk0b6dUog9FN3vfMtsJcbHPJQbTcPxCbDdl6mEBfGyc9ZPl
+         jNOA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=WXDj5i0tUWBPa63GLfuevdV2Cdn4xFYKto+kt2AepHs=;
-        b=URkD7aQGaOsUtePK5K4KJfwd2GkkyeFhT9gLfbSNSl/23h3mOxTs8ckBZtVkIBcpo2
-         smhIH8uPVpowHZDTWutcmEFSiF5BeuWM61oIWVbCW5DR4OVfxI3+s7WWMdZzrHemc4JH
-         lcA3q4Tk5yljUU+/+C5wj2o2KODOOK07Dm+IGojKxM+7IA+wamDb1vGtfrTm86GLzz5k
-         mXT6x9+ct2CSULvZmqxnBmc0x7003CIQBVHHv82mC2VfqItrp889A+5zj9Rmtv20zFQ+
-         HjhswMMn5/LTWEXEt1dVAPpGtMHgw/T+3UE7wwxVxeax8v2XUVzlTtY9QQZT5px1P4xx
-         5w5g==
+        bh=7EzYqReFzrKEEnLobbVf+Zv8BrBI8LVwklW0AYuCyu0=;
+        b=ammK0M4Q19M0zl3MuHShduJ0KC1QqnbB+JDjRofATjx8lrAecs8acmn74LTs9W6+Pb
+         izwfgBxOBWq2vf12jF1XV/s0VmRnNTn0lCGoaXnTMwDftNl/Ub4pjqA723MUPY8YLeAo
+         sXDQZSM8CUvlIxU0OeQ2hkfeOc4dCyeIPYsp11vtsLplXsJkK3y4c2UBhnlff5LaN/1E
+         SRQ+F/iBplzGvn7i4eDTmqsHtYQo3XklEkHoSM2V4GNShoXR7GJlR7fU7YhMLg1V++ZT
+         UGf5pFdmjOvSozD0HnRbPaFVy8fX0mNXs+s6gm0Dy7ZQzgiluOoXhCOP7WFMZmhAftAj
+         427g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7562422DAC
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD18F22DAE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Shuah Khan <shuahkh@osg.samsung.com>
-Subject: [PATCH 4.4 05/44] usbip: usbip_host: fix to hold parent lock for device_attach() calls
-Date: Mon, 30 Apr 2018 12:24:16 -0700
-Message-Id: <20180430190946.548163410@linuxfoundation.org>
+	Lukas Czerner <lczerner@redhat.com>,
+	Theodore Tso <tytso@mit.edu>,
+	Ilya Dryomov <idryomov@gmail.com>
+Subject: [PATCH 4.4 04/44] ext4: fix bitmap position validation
+Date: Mon, 30 Apr 2018 12:24:15 -0700
+Message-Id: <20180430190946.504097014@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430190946.093694747@linuxfoundation.org>
 References: <20180430190946.093694747@linuxfoundation.org>
@@ -42,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200289053392249?=
-X-GMAIL-MSGID: =?utf-8?q?1599200402338855090?=
+X-GMAIL-THRID: =?utf-8?q?1599200288532951391?=
+X-GMAIL-MSGID: =?utf-8?q?1599200401849761461?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,33 +53,78 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Shuah Khan <shuahkh@osg.samsung.com>
+From: Lukas Czerner <lczerner@redhat.com>
 
-commit 4bfb141bc01312a817d36627cc47c93f801c216d upstream.
+commit 22be37acce25d66ecf6403fc8f44df9c5ded2372 upstream.
 
-usbip_host calls device_attach() without holding dev->parent lock.
-Fix it.
+Currently in ext4_valid_block_bitmap() we expect the bitmap to be
+positioned anywhere between 0 and s_blocksize clusters, but that's
+wrong because the bitmap can be placed anywhere in the block group. This
+causes false positives when validating bitmaps on perfectly valid file
+system layouts. Fix it by checking whether the bitmap is within the group
+boundary.
 
-Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
-Cc: stable <stable@vger.kernel.org>
+The problem can be reproduced using the following
+
+mkfs -t ext3 -E stride=256 /dev/vdb1
+mount /dev/vdb1 /mnt/test
+cd /mnt/test
+wget https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-4.16.3.tar.xz
+tar xf linux-4.16.3.tar.xz
+
+This will result in the warnings in the logs
+
+EXT4-fs error (device vdb1): ext4_validate_block_bitmap:399: comm tar: bg 84: block 2774529: invalid block bitmap
+
+[ Changed slightly for clarity and to not drop a overflow test -- TYT ]
+
+Signed-off-by: Lukas Czerner <lczerner@redhat.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Reported-by: Ilya Dryomov <idryomov@gmail.com>
+Fixes: 7dac4a1726a9 ("ext4: add validity checks for bitmap block numbers")
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/usbip/stub_main.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ fs/ext4/balloc.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
---- a/drivers/usb/usbip/stub_main.c
-+++ b/drivers/usb/usbip/stub_main.c
-@@ -201,7 +201,12 @@ static ssize_t rebind_store(struct devic
- 	if (!bid)
- 		return -ENODEV;
+--- a/fs/ext4/balloc.c
++++ b/fs/ext4/balloc.c
+@@ -320,6 +320,7 @@ static ext4_fsblk_t ext4_valid_block_bit
+ 	struct ext4_sb_info *sbi = EXT4_SB(sb);
+ 	ext4_grpblk_t offset;
+ 	ext4_grpblk_t next_zero_bit;
++	ext4_grpblk_t max_bit = EXT4_CLUSTERS_PER_GROUP(sb);
+ 	ext4_fsblk_t blk;
+ 	ext4_fsblk_t group_first_block;
  
-+	/* device_attach() callers should hold parent lock for USB */
-+	if (bid->udev->dev.parent)
-+		device_lock(bid->udev->dev.parent);
- 	ret = device_attach(&bid->udev->dev);
-+	if (bid->udev->dev.parent)
-+		device_unlock(bid->udev->dev.parent);
- 	if (ret < 0) {
- 		dev_err(&bid->udev->dev, "rebind failed\n");
- 		return ret;
+@@ -337,7 +338,7 @@ static ext4_fsblk_t ext4_valid_block_bit
+ 	/* check whether block bitmap block number is set */
+ 	blk = ext4_block_bitmap(sb, desc);
+ 	offset = blk - group_first_block;
+-	if (offset < 0 || EXT4_B2C(sbi, offset) >= sb->s_blocksize ||
++	if (offset < 0 || EXT4_B2C(sbi, offset) >= max_bit ||
+ 	    !ext4_test_bit(EXT4_B2C(sbi, offset), bh->b_data))
+ 		/* bad block bitmap */
+ 		return blk;
+@@ -345,7 +346,7 @@ static ext4_fsblk_t ext4_valid_block_bit
+ 	/* check whether the inode bitmap block number is set */
+ 	blk = ext4_inode_bitmap(sb, desc);
+ 	offset = blk - group_first_block;
+-	if (offset < 0 || EXT4_B2C(sbi, offset) >= sb->s_blocksize ||
++	if (offset < 0 || EXT4_B2C(sbi, offset) >= max_bit ||
+ 	    !ext4_test_bit(EXT4_B2C(sbi, offset), bh->b_data))
+ 		/* bad block bitmap */
+ 		return blk;
+@@ -353,8 +354,8 @@ static ext4_fsblk_t ext4_valid_block_bit
+ 	/* check whether the inode table block number is set */
+ 	blk = ext4_inode_table(sb, desc);
+ 	offset = blk - group_first_block;
+-	if (offset < 0 || EXT4_B2C(sbi, offset) >= sb->s_blocksize ||
+-	    EXT4_B2C(sbi, offset + sbi->s_itb_per_group) >= sb->s_blocksize)
++	if (offset < 0 || EXT4_B2C(sbi, offset) >= max_bit ||
++	    EXT4_B2C(sbi, offset + sbi->s_itb_per_group) >= max_bit)
+ 		return blk;
+ 	next_zero_bit = ext4_find_next_zero_bit(bh->b_data,
+ 			EXT4_B2C(sbi, offset + EXT4_SB(sb)->s_itb_per_group),
