@@ -1,57 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932135AbeD3UM0 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 16:12:26 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:36242 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751517AbeD3UMY (ORCPT
+        id S1755913AbeD3UOP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 16:14:15 -0400
+Received: from mail-vk0-f41.google.com ([209.85.213.41]:36600 "EHLO
+        mail-vk0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755548AbeD3UOM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 16:12:24 -0400
-Date: Mon, 30 Apr 2018 16:12:22 -0400 (EDT)
-Message-Id: <20180430.161222.657632197850615574.davem@davemloft.net>
-To: torvalds@linux-foundation.org
-CC: akpm@linux-foundation.org, sparclinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [GIT] Sparc
-From: David Miller <davem@davemloft.net>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Mon, 30 Apr 2018 16:14:12 -0400
+X-Google-Smtp-Source: AB8JxZppqyi7YhSF47ECLdTuYtBZC7hQyk40MuQeAYi/aoIuyDkMWja6plLClGMITDdGNLgcBBE6ZGLlR3I8MufDkuw=
+MIME-Version: 1.0
+Reply-To: whiteheadm@acm.org
+From: tedheadster <tedheadster@gmail.com>
+Date: Mon, 30 Apr 2018 16:13:51 -0400
+Message-ID: <CAP8WD_YwYbYs-c+DpuuvAT0MiDDt9cRoTChmRSdPG9r_4+oQcA@mail.gmail.com>
+Subject: sar reporting zero cpu usage for everything
+To: Thomas Gleixner <tglx@linutronix.de>,
+        Steven Rostedt <rostedt@goodmis.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Thomas and Steven,
+  I am running the 4.16 kernel and I found some odd behavior in sar.
+It shows zero usage time in ALL categories.
 
-Please pull to get the following fixes:
+12:12:36        CPU     %user     %nice   %system   %iowait    %steal     %idle
+12:34:10        all      0.00      0.00      0.00      0.00      0.00      0.00
+12:58:04        all      0.00      0.00      0.00      0.00      0.00      0.00
+13:06:01        all      0.00      0.00      0.00      0.00      0.00      0.00
 
-1) Fixup license text for oradax driver, from Rob Gardner.
+This is run every two minutes via cron with '/usr/lib/sa/sa1 30 4 -S DISK'.
 
-2) Release device object with put_device() instead of straight
-   kfree(), from Arvind Yadav.
+You both helped me before with a similar problem, so I thought I would
+ask you first for a place to start debugging this.
 
-Thanks!
+(apologies, had to be re-sent in text-only mode)
 
-The following changes since commit 17dec0a949153d9ac00760ba2f5b78cb583e995f:
-
-  Merge branch 'userns-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace (2018-04-03 19:15:32 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/davem/sparc.git 
-
-for you to fetch changes up to 00ad691ab140b54ab9f5de5e74cb994f552e8124:
-
-  sparc: vio: use put_device() instead of kfree() (2018-04-30 16:09:34 -0400)
-
-----------------------------------------------------------------
-Arvind Yadav (1):
-      sparc: vio: use put_device() instead of kfree()
-
-Rob Gardner (1):
-      sparc64: Fix mistake in oradax license text
-
- arch/sparc/include/uapi/asm/oradax.h | 2 +-
- arch/sparc/kernel/vio.c              | 2 +-
- drivers/sbus/char/oradax.c           | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+- Matthew Whitehead
