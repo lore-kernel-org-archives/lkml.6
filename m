@@ -1,40 +1,45 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZr2thy6yHbS1MWKuNd4NLdfWMitMJsl+1N7/Bo0whSULx5S3a60FkpXPF2WiSvxNTq8+Qj9
-ARC-Seal: i=1; a=rsa-sha256; t=1525116532; cv=none;
+X-Google-Smtp-Source: AB8JxZom6g3qcsOiXFHZMydqT2NZsDeV2ey1+dVNFlxjwslu4z0mXFWV5VvR7w1m0kqRGqXu62H0
+ARC-Seal: i=1; a=rsa-sha256; t=1525116517; cv=none;
         d=google.com; s=arc-20160816;
-        b=MZ1pWDg+GfEgxYXFACeIIBU/eagz5L29vyUEYsrZHbOQBB40dHreR+DmQWIZTZlWuc
-         +vwoW8r+0+tGyIX/pLG3/OMnFnHq7JFPw4UIbjkR5kxePNtzO+d0Aq4e4VU59vjuHPke
-         1WCG67KcNdAA75d2nteOFIFCYzEossco63VVJ0uNjYGax5YKJefeDRm23c0AF8PxMtoS
-         jz1lshTneMPqgdmbDM8/630JuvHd0fEgbwHwNC1r0xQ/kdVKlgnhzaID/O3F+vbFU8+z
-         ziQzqBZI2lD+rW+xSOCAgCC9fgPfJRBl7K4DMnd3ATjGlmS0woZUiSxt3ifQlFMt+1il
-         yb/g==
+        b=YAKPTSFlAJNO1qRpzSPxeIwsZqQtgCEgADNATm12r1cwzFjw6hKQCU5/3c783IyOrs
+         yzF+2Cym5hnpOFnV/ytmJ0/45e3cGzNXc3IFhwolDmZehPawGxJCJB2xhHObu+CR/U50
+         FOthS1Ck0U/uuDrwLDSvWZZyyam2+QUPuU5QCeU9ojuoSf6lX2lrRAVb1/Dp9BlgaSxz
+         zza5ojO01wxrN6XkWaYlKgTjXNAbxe13Q1L2XxXxD3uJguaXXzyGgAu+h5im6SOuFe82
+         SxCjBCxenhwN8U4vPzcnhDvscmfupDR4RvNpFlO5EiKy9C+XtPNZozMW1e33ZOyYpU/O
+         sIjQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=awGJggrmdeZ6zI6VDi9uzRx0/NRvjrxA9S2BiPXN9Mw=;
-        b=cio6QeoZZX0SAM1/S3cnx2l2eh2v6QuXpER9O7EXxQWODXre5OGM5Bol3JI1uS9fUm
-         TFvkog/xVVBxb/zVvWz1heojnpkJXTELXvWqmR6wl5Gevrc8FaTF6J1n/Aoe/hSuVygr
-         L9jP9LHJbSskaRPhHdYGhoHkuDf9oGMf9tgx0gMw6zENnNsLgJcJwaJEH2Fi7n5dFJm7
-         blNI/ne4LCUrT8g3/RS+ep4nWjd8YpHwf8ByesKfrVFAvIxoBtmzAcas9N9UMNUaMtX6
-         HEnQwPWdO2+HmUD0DODY6AaJPJ6q47VNkcn2fry4tVshR8WYbEymoK3M3MwnAS5kqwnA
-         3RMg==
+        bh=6R9Og3qVgjfLzH/90ShcVVyLnox5KMBd0h/CUQZkl6Q=;
+        b=C78y9pfknVW14leZGlKgeqtzzSOayRunTJrKUcAfnjEKPpznDTUp/+TLUkwTefcdcJ
+         f9Kj2XvNc9ivM+T1UF6aQnz/H3VGiWjfr5VLgoo0JSmm1GVOdcd3s8Ep86gepJk+/mz0
+         +nZSQ95LHorbgwKYoCVQddTPRLrrbXkxYB/e9FoPn+10hNeB5XbNfv+ar+HHuRjZNoSF
+         yww87ZyzskqYzmZktM7bIUeMM8BUti8fTr1paH2pwAjOs3VPFy3qGQdZ+hhAY1wzSzYP
+         kWxHhs5Cnh7RhGlupMrnFw+RBz1Mke3Xbh8jUatUokqmveXdecfE0pfepQL+dVRasF9C
+         k4nQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF3A922DAC
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA07B22DC1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mikita Lipski <mikita.lipski@amd.com>,
-	Harry Wentland <Harry.Wentland@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 4.16 103/113] drm/amd/display: Fix deadlock when flushing irq
-Date: Mon, 30 Apr 2018 12:25:14 -0700
-Message-Id: <20180430184019.560271947@linuxfoundation.org>
+	syzbot+40b7287c2dc987c48c81@syzkaller.appspotmail.com,
+	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+	Jiri Slaby <jslaby@suse.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Alan Cox <alan@llwyncelyn.cymru>,
+	Christoph Hellwig <hch@lst.de>,
+	Michal Hocko <mhocko@suse.com>
+Subject: [PATCH 4.16 034/113] tty: Avoid possible error pointer dereference at tty_ldisc_restore().
+Date: Mon, 30 Apr 2018 12:24:05 -0700
+Message-Id: <20180430184016.495545202@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184015.043892819@linuxfoundation.org>
 References: <20180430184015.043892819@linuxfoundation.org>
@@ -44,8 +49,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200593272959034?=
-X-GMAIL-MSGID: =?utf-8?q?1599200593272959034?=
+X-GMAIL-THRID: =?utf-8?q?1599200577624150021?=
+X-GMAIL-MSGID: =?utf-8?q?1599200577624150021?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,41 +58,65 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mikita Lipski <mikita.lipski@amd.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-commit ad64dc0137968f09800e58174bbfd5eac9fe5418 upstream.
+commit 598c2d41ff44889dd8eced4f117403e472158d85 upstream.
 
-Lock irq table when reading a work in queue,
-unlock to flush the work, lock again till all tasks
-are cleared
+syzbot is reporting crashes [1] triggered by memory allocation failure at
+tty_ldisc_get() from tty_ldisc_restore(). While syzbot stops at WARN_ON()
+due to panic_on_warn == true, panic_on_warn == false will after all trigger
+an OOPS by dereferencing old->ops->num if IS_ERR(old) == true.
 
-Signed-off-by: Mikita Lipski <mikita.lipski@amd.com>
-Reviewed-by: Harry Wentland <Harry.Wentland@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Cc: stable@vger.kernel.org
+We can simplify tty_ldisc_restore() as three calls (old->ops->num, N_TTY,
+N_NULL) to tty_ldisc_failto() in addition to avoiding possible error
+pointer dereference.
+
+If someone reports kernel panic triggered by forcing all memory allocations
+for tty_ldisc_restore() to fail, we can consider adding __GFP_NOFAIL for
+tty_ldisc_restore() case.
+
+[1] https://syzkaller.appspot.com/bug?id=6ac359c61e71d22e06db7f8f88243feb11d927e7
+
+Reported-by: syzbot+40b7287c2dc987c48c81@syzkaller.appspotmail.com
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jslaby@suse.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Alan Cox <alan@llwyncelyn.cymru>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_irq.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/tty/tty_ldisc.c |   13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_irq.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_irq.c
-@@ -400,14 +400,15 @@ void amdgpu_dm_irq_fini(struct amdgpu_de
+--- a/drivers/tty/tty_ldisc.c
++++ b/drivers/tty/tty_ldisc.c
+@@ -527,19 +527,16 @@ static int tty_ldisc_failto(struct tty_s
+ static void tty_ldisc_restore(struct tty_struct *tty, struct tty_ldisc *old)
  {
- 	int src;
- 	struct irq_list_head *lh;
-+	unsigned long irq_table_flags;
- 	DRM_DEBUG_KMS("DM_IRQ: releasing resources.\n");
--
- 	for (src = 0; src < DAL_IRQ_SOURCES_NUMBER; src++) {
--
-+		DM_IRQ_TABLE_LOCK(adev, irq_table_flags);
- 		/* The handler was removed from the table,
- 		 * it means it is safe to flush all the 'work'
- 		 * (because no code can schedule a new one). */
- 		lh = &adev->dm.irq_handler_list_low_tab[src];
-+		DM_IRQ_TABLE_UNLOCK(adev, irq_table_flags);
- 		flush_work(&lh->work);
+ 	/* There is an outstanding reference here so this is safe */
+-	old = tty_ldisc_get(tty, old->ops->num);
+-	WARN_ON(IS_ERR(old));
+-	tty->ldisc = old;
+-	tty_set_termios_ldisc(tty, old->ops->num);
+-	if (tty_ldisc_open(tty, old) < 0) {
+-		tty_ldisc_put(old);
++	if (tty_ldisc_failto(tty, old->ops->num) < 0) {
++		const char *name = tty_name(tty);
++
++		pr_warn("Falling back ldisc for %s.\n", name);
+ 		/* The traditional behaviour is to fall back to N_TTY, we
+ 		   want to avoid falling back to N_NULL unless we have no
+ 		   choice to avoid the risk of breaking anything */
+ 		if (tty_ldisc_failto(tty, N_TTY) < 0 &&
+ 		    tty_ldisc_failto(tty, N_NULL) < 0)
+-			panic("Couldn't open N_NULL ldisc for %s.",
+-			      tty_name(tty));
++			panic("Couldn't open N_NULL ldisc for %s.", name);
  	}
+ }
  
