@@ -1,79 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754891AbeD3TJf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 15:09:35 -0400
-Received: from mail-yw0-f180.google.com ([209.85.161.180]:34914 "EHLO
-        mail-yw0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754639AbeD3TJa (ORCPT
+        id S1754752AbeD3TQs (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 15:16:48 -0400
+Received: from mail-vk0-f52.google.com ([209.85.213.52]:43377 "EHLO
+        mail-vk0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753522AbeD3TQq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 15:09:30 -0400
-X-Google-Smtp-Source: AB8JxZqrSY0AhEmguSebpP4aXmqvOY+LBJ0ROGp3cv3T0pOhIzgLawXqx0TrNu9mcmwdBNCTmMniAPqdwSvNv7S1myw=
+        Mon, 30 Apr 2018 15:16:46 -0400
+X-Google-Smtp-Source: AB8JxZqXlYf5dwgL78PYRo2N0SGH1f+CoFR1epVMwjv7Kkga8YfRQOiIX+0YGR5IdEyDr/sXEC0Fjpbmah1kk+g06B0=
 MIME-Version: 1.0
-In-Reply-To: <20180430082750.GI2484@ulmo>
-References: <1524869998-2805-1-git-send-email-wesley@sifive.com>
- <1524869998-2805-2-git-send-email-wesley@sifive.com> <20180429055417.GA10221@mithrandir>
- <CAMgXwTgN26aKaSuVdSj2TDUgbR7bAmy4TdtOuKj_QC0kNNbphg@mail.gmail.com> <20180430082750.GI2484@ulmo>
-From: Wesley Terpstra <wesley@sifive.com>
-Date: Mon, 30 Apr 2018 12:09:29 -0700
-Message-ID: <CAMgXwThTd32cyEBcbGnYw72x-P9_P8ks2J6QJV69RUUUDsT+3A@mail.gmail.com>
-Subject: Re: [PATCH 1/3] dt-bindings: added new pwm-sifive driver documentation
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        =?UTF-8?Q?Noralf_Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        David Lechner <david@lechnology.com>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        SZ Lin <sz.lin@moxa.com>, linux-pwm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <CA+55aFyreOY8uzOkkDkU=WttNfbH2_6nStfsm9j2T6F5ZyntHg@mail.gmail.com>
+References: <alpine.DEB.2.20.1804301741570.3243@hypnos.tec.linutronix.de>
+ <CAGXu5jL1W=AC023asgeMRUXAnhU2vd-RJRqGtOOetQ=aXwDcFQ@mail.gmail.com>
+ <CA+55aFwieC1-nAs+NFq9RTwaR8ef9hWa4MjNBWL41F-8wM49eA@mail.gmail.com>
+ <20180430124135.0cce92e3@gandalf.local.home> <CA+55aFzpJC4+tuSopeze72D2sv1urGdap8+Bj2Y9hEYitAkE4Q@mail.gmail.com>
+ <CA+55aFyNqnrM=_5pMgEeL20jVKN7MgWKG52pbaR0FayO=5VuXw@mail.gmail.com>
+ <CAGXu5jLVJxDJcbhrQU5-wduaP+OvePXP8VvCFMrJ47pYD-zaXg@mail.gmail.com> <CA+55aFyreOY8uzOkkDkU=WttNfbH2_6nStfsm9j2T6F5ZyntHg@mail.gmail.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Mon, 30 Apr 2018 12:16:45 -0700
+X-Google-Sender-Auth: lZasT2WGEPl5k-ywLeLuVWu37A8
+Message-ID: <CAGXu5jKbagUs7cS5y6zRQkgiA0tnD7K0FajwA1Gt+ZCPrc2jfQ@mail.gmail.com>
+Subject: Re: Hashed pointer issues
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+        "Tobin C. Harding" <me@tobin.cc>, "Ted Ts'o" <tytso@mit.edu>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 30, 2018 at 1:27 AM, Thierry Reding
-<thierry.reding@gmail.com> wrote:
-> I don't like the idea of specifying something in DT that is completely
-> approximate because it doesn't give users any kind of control over what
-> is considered acceptable. In some cases an approximation to within 10%
-> might be acceptable, in other cases users may only want to allow 5%. In
-> this case there's even no way to catch or report a deviation from the
-> desired value.
-
-My view was that you basically don't have period control on this IP.
-You can give it a target that it tries to get as close to as possible,
-but there's no guarantee of any kind wrt. the period.
-
-I saw there were a couple other PWM drivers which had no period
-control whatsoever. They just allowed duty cycle control. Because this
-IP has such a broken period-control interface, I was essentially
-trying to bin it in the same category as those drivers.
-
-Perhaps I should just remove all pretense of supporting period and
-just always default to the fastest period possible?
-
-> How about you allow users to specify a valid frequency range with
-> something like:
+On Mon, Apr 30, 2018 at 12:00 PM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Mon, Apr 30, 2018 at 11:38 AM Kees Cook <keescook@chromium.org> wrote:
 >
->         frequency-range = <MIN MAX>;
+>> Something like this? (Untested.)
 >
-> or
+> Looks workable.
 >
->         period-range = <MIN MAX>;
+>> +       /* If we have hw RNG, start hashing immediately. */
+>> +       if (arch_has_random()) {
+>> +               get_random_bytes_arch(&ptr_key, sizeof(ptr_key));
+>> +               ptr_key_ready();
+>> +               return 0;
+>> +       }
+>
+> Small tweak: you should check the return value of get_random_bytes_arch(),
+> because in theory it can fail.
+>
+> Sadly, that's not actually how get_random_bytes_arch() really works - it
+> falls back on "get_random_bytes()" on failure instead, which is explicitly
+> against the whole point here.
 
-Ok, but now you have to define what happens if a clock change prevents
-you from staying within this range.
+I just noticed: there are _no_ users of get_random_bytes_arch() ...
+didn't we once use it to feed entropy to the CRNG?
 
-Rejecting the clock frequency change does not seem a good option for
-the actual SoC for which I wrote this driver. There, all the PWM does
-is drive an LED bank and clock changes are used to change the core
-frequency.
+> So I think it would need some tweaking, with a new function entirely
+> (get_random_bytes_arch() with a failure return for "cannot fill buffer").
+>
+> But that would be just a few more lines, because we could make the existing
+> get_random_bytes_arch() just use the failure-case thing.
+>
+> So add a "get_hw_random_bytes()" that does that same loop in
+> get_random_bytes_arch(), but returns the number of bytes it filled in.
+>
+> Then get_random_bytes_arch() turns into
+>
+>      got = get_hw_random_bytes(p, nbytes);
+>      if (got < nbytes)
+>          get_random_bytes(p+got, nbytes-got);
+>
+> and the initialize_ptr_random() use would be something like
+>
+>      if (get_hw_random_bytes(&ptr_key, sizeof(ptr_key)) == sizeof(ptr_key)) {
+>          ptr_key_ready();
+>          return 0;
+>     }
+>
+> Hmm?
+>
+> Maybe we could call the "get_hw_random_bytes()" something like
+> "get_early_random_bytes()" and the "use HW for it" is purely an
+> implementation detail?
 
-> you could disable the PWM if it was fed with an invalid range.
+Yeah, and if we add __must_check, I think this should be fine. Ted,
+any thoughts on this?
 
-Is that really desirable behavior? If the period is defined as being
-best effort for this PWM IP, which is essentially what I've done, it's
-clear you want the PWM to continue to operate. That's certainly the
-behavior I want on the actual SoC with this IP.
+Tobin, is this something you've got time to implement and test?
 
-I'll make all the DTS changes you guys suggested. ie: "-v0", clarified
-clocks description, and remove unused interrupts comment.
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
