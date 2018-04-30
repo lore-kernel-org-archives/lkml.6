@@ -1,44 +1,41 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZq+FSwXchwf9+p0x/3IqXUQGFDtEsR4id7MM0YC593CZUAx0Z88mnJUX5JLNZoBikDpSvR0
-ARC-Seal: i=1; a=rsa-sha256; t=1525116529; cv=none;
+X-Google-Smtp-Source: AB8JxZrhO/UnJcTL0RcZzlqWDHdwHoltRREXfESd4KFsgX6JDuxntGYkb7Qd97BU9XLZMRpIl1Qp
+ARC-Seal: i=1; a=rsa-sha256; t=1525116487; cv=none;
         d=google.com; s=arc-20160816;
-        b=zYdU8yUwDYCI3qU5UZzzs0g/KPC9SVKyE35rzUQdLn5vCmdKmFlUYQfDiKFxrI00kH
-         t6IKuA8smhl95RVpa6Hzif43+5emyP39uG29fEuOb44l4Zbs1D+QQzMTLYhDU/NqYtxu
-         4tvn1+5tkinCbN8UkB8SCEhJYt/Wx9hnihcFzwwaR5KSnElWlr87cGHrirm797yizhKi
-         K//MSpJZ+XBHZvQcm8ESi+nIpbgIafltbv41hYsvVh2TvJqQ27mRxLpl0Y0lcKkJ19Sx
-         A7w6CPEvxdyShyxSv9l1NeqaFachYPi0/kJ9a95MRlLQWaUf2fYxRoENdYGBAu77Tc7H
-         NMrQ==
+        b=PVpt7IbWgBqRjJkJqeo0JSCPi9f8p9voJJQYOlfMcnZ0l2ikcj1ToUzIwis505L3TT
+         KtkkFntn84YmK3kDG5uIupN+bVT7HopkLowWE1Cg9AiaMasw/clFB9/i2PElXEFb6JcB
+         9kkTxuXsr8SkHOlX22JprLULgoIVB3By3XZprmQLcW+FGTOokGCDMMXAh3dAwGSAmYtL
+         y3QnCtjOCo+JFV1voERBV+11MLU5QOLsodXegA8+NMa+3w/o2K47JWzNnHaVSnQ81ezm
+         1QQFigYG589PgBgFdDJ03uzFTPNyrsrIfMA9jwOyLcoHlDwsTQ2wp+0pazH/gWlqBI0X
+         WjdQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=GBa6YydgA16L/OLwlWVbXfNIMS2CILd5f5SWjxepXqQ=;
-        b=MNgg4JLfXrp1bGzzj3EKjXTrXI47ChgW4PAN8t4mPNjZU8RUG3jzOv2cFH2oiQlrL4
-         UZz+60JgfG88CNm7Uu1OLYYGzZu+1ttb6SkKO8G2gTkeMD8bx3Ynop0bLpFj9ZiXU3p0
-         Sd33sHtSe2oJKLJwi/H6p8GKgaBpPnsBB8iVFcjciy5yTPbkpkM8Fk8CXhjutPcj25vs
-         shM9oo1fFSfJTpTFFu/RpeHhRtT621x16k6+P1qHnEXVzUeZtuzAZrWAxdnhveOSaO0U
-         OFQisK3PZbB4IKyxuFk+WV3hTJw4/7RBOzF6iMbO14yIEl3t+5U81NvLvNVehM7tFuzz
-         zzpw==
+        bh=tOgZcj4ZrDOy8Mxt5y2f9Yy4royyzsju31TyhcPFxMg=;
+        b=yTMv+R7L+0hJzz013qLLis3Lsnw/8tohrHkszQcEfSqPTBeFa5SQoQDvubRSOSL5NS
+         mD3uKsoHNzXJu0l7qDRXU40d1fMO8qMxDwkyeJ9BM7sW299u+iKFCG8l7sea5ntM856o
+         UylL5RmQvj60cft1L63atxbRO2kr6HFL1YHRWH8VCV7H3E6/NR6cUroe4VMrvYLUWgnt
+         v8CXDN5A8zITF44xg2v9bt0qNHFrgryod5oj2qRwScKZTSRlf9KSrcO4ZZRjoJVydDn8
+         rJDg6xBaqjYc99dBw0NXXlXSQzl+vezkhUQaZ2LWR47ur/elJevOsrrdhLhzpIE4d+Og
+         AQAw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 561C922DBF
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4ADB22DC1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Chris Wilson <chris@chris-wilson.co.uk>,
-	=?UTF-8?q?Jos=C3=A9=20Roberto=20de=20Souza?= <jose.souza@intel.com>,
-	Paul Menzel <pmenzel@molgen.mpg.de>,
-	Ian Pilcher <arequipeno@gmail.com>,
-	Jani Nikula <jani.nikula@intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Subject: [PATCH 4.16 100/113] drm/i915/fbdev: Enable late fbdev initial configuration
-Date: Mon, 30 Apr 2018 12:25:11 -0700
-Message-Id: <20180430184019.440372868@linuxfoundation.org>
+	Alain Magloire <amagloire@blackberry.com>,
+	Gerd Hoffmann <kraxel@redhat.com>,
+	Dave Airlie <airlied@redhat.com>,
+	Sean Paul <seanpaul@chromium.org>
+Subject: [PATCH 4.16 030/113] drm/virtio: fix vq wait_event condition
+Date: Mon, 30 Apr 2018 12:24:01 -0700
+Message-Id: <20180430184016.343904638@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184015.043892819@linuxfoundation.org>
 References: <20180430184015.043892819@linuxfoundation.org>
@@ -48,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200590650011458?=
-X-GMAIL-MSGID: =?utf-8?q?1599200590650011458?=
+X-GMAIL-THRID: =?utf-8?q?1599200400304649329?=
+X-GMAIL-MSGID: =?utf-8?q?1599200545719744158?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -57,61 +54,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: José Roberto de Souza <jose.souza@intel.com>
+From: Gerd Hoffmann <kraxel@redhat.com>
 
-commit 0b551f1e0fc50ee4e3cde2dd639cb010dae5b997 upstream.
+commit d02d270014f70dcab0117776b81a37b6fca745ae upstream.
 
-If the initial fbdev configuration (intel_fbdev_initial_config()) runs
-and there still no sink connected it will cause
-drm_fb_helper_initial_config() to return 0 as no error happened (but
-internally the return is -EAGAIN).  Because no framebuffer was
-allocated, when a sink is connected intel_fbdev_output_poll_changed()
-will not execute drm_fb_helper_hotplug_event() that would trigger
-another try to do the initial fbdev configuration.
+Wait until we have enough space in the virt queue to actually queue up
+our request.  Avoids the guest spinning in case we have a non-zero
+amount of free entries but not enough for the request.
 
-So here allowing drm_fb_helper_hotplug_event() to be executed when there
-is no framebuffer allocated and fbdev was not set up yet.
-
-This issue also happens when a MST DP sink is connected since boot, as
-the MST topology is discovered in parallel if
-intel_fbdev_initial_config() is executed before the first sink MST is
-discovered it will cause this same issue.
-
-This is a follow-up patch of
-https://patchwork.freedesktop.org/patch/196089/
-
-Changes from v1:
-- not creating a dump framebuffer anymore, instead just allowing
-  drm_fb_helper_hotplug_event() to execute when fbdev is not setup yet.
-
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=104158
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=104425
-Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc: stable@vger.kernel.org # v4.15+
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-Signed-off-by: José Roberto de Souza <jose.souza@intel.com>
-Tested-by: Paul Menzel <pmenzel@molgen.mpg.de>
-Tested-by: frederik <frederik.schwan@linux.com> # 4.15.17
-Tested-by: Ian Pilcher <arequipeno@gmail.com>
-Acked-by: Chris Wilson <chris@chris-wilson.co.uk>
-Signed-off-by: Jani Nikula <jani.nikula@intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180418234158.9388-1-jose.souza@intel.com
-(cherry picked from commit df9e6521749ab33cde306e8a4350b0ac7889220a)
-Signed-off-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Cc: stable@vger.kernel.org
+Reported-by: Alain Magloire <amagloire@blackberry.com>
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+Reviewed-by: Dave Airlie <airlied@redhat.com>
+Link: http://patchwork.freedesktop.org/patch/msgid/20180403095904.11152-1-kraxel@redhat.com
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/intel_fbdev.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/virtio/virtgpu_vq.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/gpu/drm/i915/intel_fbdev.c
-+++ b/drivers/gpu/drm/i915/intel_fbdev.c
-@@ -801,7 +801,7 @@ void intel_fbdev_output_poll_changed(str
- 		return;
- 
- 	intel_fbdev_sync(ifbdev);
--	if (ifbdev->vma)
-+	if (ifbdev->vma || ifbdev->helper.deferred_setup)
- 		drm_fb_helper_hotplug_event(&ifbdev->helper);
- }
- 
+--- a/drivers/gpu/drm/virtio/virtgpu_vq.c
++++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
+@@ -291,7 +291,7 @@ retry:
+ 	ret = virtqueue_add_sgs(vq, sgs, outcnt, incnt, vbuf, GFP_ATOMIC);
+ 	if (ret == -ENOSPC) {
+ 		spin_unlock(&vgdev->ctrlq.qlock);
+-		wait_event(vgdev->ctrlq.ack_queue, vq->num_free);
++		wait_event(vgdev->ctrlq.ack_queue, vq->num_free >= outcnt + incnt);
+ 		spin_lock(&vgdev->ctrlq.qlock);
+ 		goto retry;
+ 	} else {
+@@ -366,7 +366,7 @@ retry:
+ 	ret = virtqueue_add_sgs(vq, sgs, outcnt, 0, vbuf, GFP_ATOMIC);
+ 	if (ret == -ENOSPC) {
+ 		spin_unlock(&vgdev->cursorq.qlock);
+-		wait_event(vgdev->cursorq.ack_queue, vq->num_free);
++		wait_event(vgdev->cursorq.ack_queue, vq->num_free >= outcnt);
+ 		spin_lock(&vgdev->cursorq.qlock);
+ 		goto retry;
+ 	} else {
