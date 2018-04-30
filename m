@@ -1,40 +1,42 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrkLz1WA4TTEH3OO1lz7BWqm1bk/hfs3zRv2TqCWXlsgXPtQ8XLK7wQxOqNYIMUYDJpBUCq
-ARC-Seal: i=1; a=rsa-sha256; t=1525116450; cv=none;
+X-Google-Smtp-Source: AB8JxZoTxJ5tNmBalwcw9+iurOG8POD4Gen2qBTF5dSJteAcZTQ1raeXrdqL9TkF4RZKPcs/GyI8
+ARC-Seal: i=1; a=rsa-sha256; t=1525116448; cv=none;
         d=google.com; s=arc-20160816;
-        b=fQrMbHrMe4Bzx2hcAVo1B1hcgxZB714O5wCofhtJSawglhuOH/7wb8Xf4F4wMphhzC
-         61QYVEbfCi3qnJ2v4gW8NYFYmyI5nGC3nlikAcRrUvbUBUP3zGQp7sB1sRWJUIzuiPI1
-         i7IvTn1Bf9btDxwKg5XG4IJlKoaDvpjqCnjmnoihTlzZlHMxuUAfCscujcq/cVkf7+Nq
-         fnpkdt6ax0Aw0sGN1E+nImjkUrm5UuR6DxZ/plpDf3ldEjdGRsQnuAgCiWhVj3qm3Z6x
-         yMWHQWw+rcXu6hxiIdKQnw+wZmy43U6DcQ9jVXEHtjA//YYsWdBbX1Xak5zfAnEN7fav
-         Ig0A==
+        b=Mjx0dvDQ1CSuQl/NhfQLlHvTGS5lql5I3JnLdZKFz75YhDFryqBmh0JnGmbok0WmZ/
+         qEG6ju1kWHObO0/c4ka4ka95AqfEwfy8HbDWZMbCikpHXhAQwXkeFzdmqbwAuCGnfcOl
+         wGSJ81FRbKPlt4a7HHdMA21mHj1ZMvCW7iJWENbHTbiW+7vRMxyepi6BcfwQYG78y6fr
+         Wq07Rn4Z4Bib4lsqZt1nqFst8vxGwUhL6JwgvZH9Ut//zmErG6X01udijdy/TZue4NQW
+         tinn/EoPlwgePeRuOv2bCoPdycU3WvXxk1Pbf+E96Meijo/snj8QFJxKLuKLGfnnWjxR
+         iTqA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=giQk4he6JYDw2Xz3HIlcXIve1fG/+S2q09Qz07Lemx8=;
-        b=hAtoX8nnqWil3PpPolvaKg1aRgFt+3DS123pbhfdpzF5btI2K0RJQxO8ce074wjHZ9
-         ZYQp8NoT5C/+RVAum14VxvdEb8Uq7X1SEG0gqfh7pNyfLm0xKMX+/4qKIeW9i9/Pij5q
-         dItcaujgFCu8yEncTw3QY+OkSD0cNlET+PyJQOM1YZQSgHlmMdvmfdCFSWgroeOLcZzq
-         t7oDXslFde/GCNBoqSAjmRGEQ6ihWDO/PhyDugX0AJUyPSFdNwSowKTQ2jJrDZgb4KS9
-         XuX5HWpeU1sl8GSIjIaqgW+W5UKc7LmwkY/dtXTibGHG8JZdBwVoMeE1o65t9mcxK4oP
-         zVqg==
+        bh=0X9NAwGzEfxFUCrK0sBJrnNHz38SFchcONvnAkqNcbA=;
+        b=zMM4+lnX4RMIz9A0ABPx0+V2owUKI+oMb2q5sqwUJSjdY2lVMGGT71HHumUEXE9Fbu
+         SHwnGD1qPCvabsed67DzaS8XBhxq56uMVCznpMuDiTuid7cCIEVvhLYs0ffpX+UPbkJn
+         E/SNu3VEEs9Zcl1tGadGBXcSjZZtfp5xLIvaNyoO5x1OFsayA2LX7J4Ce480pCpZSbXR
+         4mBmb/ne4X1+TJgMDi7Bfsa/Sb7+UsGKEMz2gB0MzJAf8EeLnUTaJndWBQWZhcOzkWAc
+         nFsj6V8ZG1ylu+mUcA4ZJ3cSuHO4oI8yNGuon3CmMr+JZDr5vBNmgChwlc7N/rWZkbCR
+         g3Gw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5573122DCB
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 311F222DBF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-	syzbot <syzkaller@googlegroups.com>,
-	Jiri Slaby <jslaby@suse.com>
-Subject: [PATCH 4.14 29/91] tty: Dont call panic() at tty_ldisc_init()
-Date: Mon, 30 Apr 2018 12:24:11 -0700
-Message-Id: <20180430184005.696407137@linuxfoundation.org>
+	Victor Gu <xigu@marvell.com>,
+	Wilson Ding <dingwei@marvell.com>,
+	Nadav Haklai <nadavh@marvell.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: [PATCH 4.14 61/91] PCI: aardvark: Set PIO_ADDR_LS correctly in advk_pcie_rd_conf()
+Date: Mon, 30 Apr 2018 12:24:43 -0700
+Message-Id: <20180430184007.357954537@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184004.216234025@linuxfoundation.org>
 References: <20180430184004.216234025@linuxfoundation.org>
@@ -44,8 +46,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200428340821221?=
-X-GMAIL-MSGID: =?utf-8?q?1599200508013090554?=
+X-GMAIL-THRID: =?utf-8?q?1599200464256377805?=
+X-GMAIL-MSGID: =?utf-8?q?1599200505268076190?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,70 +55,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Victor Gu <xigu@marvell.com>
 
-commit 903f9db10f18f735e62ba447147b6c434b6af003 upstream.
+commit 4fa3999ee672c54a5498ce98e20fe3fdf9c1cbb4 upstream.
 
-syzbot is reporting kernel panic [1] triggered by memory allocation failure
-at tty_ldisc_get() from tty_ldisc_init(). But since both tty_ldisc_get()
-and caller of tty_ldisc_init() can cleanly handle errors, tty_ldisc_init()
-does not need to call panic() when tty_ldisc_get() failed.
+When setting the PIO_ADDR_LS register during a configuration read, we
+were properly passing the device number, function number and register
+number, but not the bus number, causing issues when reading the
+configuration of PCIe devices.
 
-[1] https://syzkaller.appspot.com/bug?id=883431818e036ae6a9981156a64b821110f39187
-
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jiri Slaby <jslaby@suse.com>
-Cc: stable <stable@vger.kernel.org>
+Fixes: 8c39d710363c1 ("PCI: aardvark: Add Aardvark PCI host controller driver")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Victor Gu <xigu@marvell.com>
+Reviewed-by: Wilson Ding <dingwei@marvell.com>
+Reviewed-by: Nadav Haklai <nadavh@marvell.com>
+[Thomas: tweak commit log.]
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/tty_io.c    |    5 ++++-
- drivers/tty/tty_ldisc.c |    5 +++--
- include/linux/tty.h     |    2 +-
- 3 files changed, 8 insertions(+), 4 deletions(-)
+ drivers/pci/host/pci-aardvark.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/drivers/tty/tty_io.c
-+++ b/drivers/tty/tty_io.c
-@@ -2815,7 +2815,10 @@ struct tty_struct *alloc_tty_struct(stru
+--- a/drivers/pci/host/pci-aardvark.c
++++ b/drivers/pci/host/pci-aardvark.c
+@@ -175,8 +175,6 @@
+ #define PCIE_CONFIG_WR_TYPE0			0xa
+ #define PCIE_CONFIG_WR_TYPE1			0xb
  
- 	kref_init(&tty->kref);
- 	tty->magic = TTY_MAGIC;
--	tty_ldisc_init(tty);
-+	if (tty_ldisc_init(tty)) {
-+		kfree(tty);
-+		return NULL;
-+	}
- 	tty->session = NULL;
- 	tty->pgrp = NULL;
- 	mutex_init(&tty->legacy_mutex);
---- a/drivers/tty/tty_ldisc.c
-+++ b/drivers/tty/tty_ldisc.c
-@@ -823,12 +823,13 @@ EXPORT_SYMBOL_GPL(tty_ldisc_release);
-  *	the tty structure is not completely set up when this call is made.
-  */
+-/* PCI_BDF shifts 8bit, so we need extra 4bit shift */
+-#define PCIE_BDF(dev)				(dev << 4)
+ #define PCIE_CONF_BUS(bus)			(((bus) & 0xff) << 20)
+ #define PCIE_CONF_DEV(dev)			(((dev) & 0x1f) << 15)
+ #define PCIE_CONF_FUNC(fun)			(((fun) & 0x7)	<< 12)
+@@ -459,7 +457,7 @@ static int advk_pcie_rd_conf(struct pci_
+ 	advk_writel(pcie, reg, PIO_CTRL);
  
--void tty_ldisc_init(struct tty_struct *tty)
-+int tty_ldisc_init(struct tty_struct *tty)
- {
- 	struct tty_ldisc *ld = tty_ldisc_get(tty, N_TTY);
- 	if (IS_ERR(ld))
--		panic("n_tty: init_tty");
-+		return PTR_ERR(ld);
- 	tty->ldisc = ld;
-+	return 0;
- }
+ 	/* Program the address registers */
+-	reg = PCIE_BDF(devfn) | PCIE_CONF_REG(where);
++	reg = PCIE_CONF_ADDR(bus->number, devfn, where);
+ 	advk_writel(pcie, reg, PIO_ADDR_LS);
+ 	advk_writel(pcie, 0, PIO_ADDR_MS);
  
- /**
---- a/include/linux/tty.h
-+++ b/include/linux/tty.h
-@@ -701,7 +701,7 @@ extern int tty_unregister_ldisc(int disc
- extern int tty_set_ldisc(struct tty_struct *tty, int disc);
- extern int tty_ldisc_setup(struct tty_struct *tty, struct tty_struct *o_tty);
- extern void tty_ldisc_release(struct tty_struct *tty);
--extern void tty_ldisc_init(struct tty_struct *tty);
-+extern int __must_check tty_ldisc_init(struct tty_struct *tty);
- extern void tty_ldisc_deinit(struct tty_struct *tty);
- extern int tty_ldisc_receive_buf(struct tty_ldisc *ld, const unsigned char *p,
- 				 char *f, int count);
