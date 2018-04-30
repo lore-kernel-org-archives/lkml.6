@@ -1,40 +1,39 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZo0aWQQj5PG/mPfxOJVYhhRAm7/Pjaojg67wJG3k/5dQfN34Nq63h0XgsmKywCTzKPW9RCr
-ARC-Seal: i=1; a=rsa-sha256; t=1525116487; cv=none;
+X-Google-Smtp-Source: AB8JxZpdu0KBorCf9KWetmhIJn6pK2NqoJIaSzRQfVBkUnxppXyrQ7bDHjv8AE3M/I90gku32TFV
+ARC-Seal: i=1; a=rsa-sha256; t=1525116480; cv=none;
         d=google.com; s=arc-20160816;
-        b=d8fUjU8NIY/R2no2lrj4zvtrtTw7F7qOIqI5Ch5Fw8BMCvOd1I3J1sqyGXZup5qN1p
-         meJHABacb7xLMqCJanQ2OyxYABCUnSrytKQC8Fn9CJqFmvZpailmxtjEY3aCgsmnLxKa
-         CxqCwcylBi30dv6g3gQgJ4ukVnEcDhRnNdnMj+FwsihwR4MTCbgrYpIPXXc4Uu76pmcs
-         fIqPWUK1etGUvL4OmcFY0VntvcPrvTqIIphdX/Q13/GAt4eIEHI1aSJVFSyySfEBjoom
-         cQgmGMSLod7wFkye+SWqBOmk1KOg8ck7SIPJn/fSnjZuuu/eCIP3C7GSqHb9kxmgUmNV
-         kN0w==
+        b=0YPRNNFMRiDP7rDCHnFP7NpSaT6lHinUPvbAlcQLSM0hffVA4U+PH+JJXK/TI81nYQ
+         1NUrS1semuIkKiLiBsWFZtVPmHZUY/9q9pWJ0WV0XXhL+Yw/rZGpTnEDRKOeeX99dqXK
+         S4YCAUX3GR7NarRGhmQrRBwKLDjONtxTggdXsPjmIkGOutPlKw9GuxrNcRq+641DwJX2
+         BrZaYppNxaa/hyxOzZ0rTm70MOdwzg7rr9LTKFFYG3BkIegrBQp3hnxhZ+nt06W/yhct
+         lLCE8qSGrQue1CQFOimDEOSrjHkycDYxUxhj419R6nVVD+NjGi1FJa7fwDuWvctE4xgY
+         uOlg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=LAOXkOdbAVuQ3uoYzodTFfllowpOstsTPg6lKgubdaY=;
-        b=l9pXcj6Z1/ASybCzOg/a3wTIN6AYvL5OcfQcVnOrePNpcLK3Cu2RXqaUH7el/gUOmI
-         nYuW9xVSnSIVa2TTc/NTXqBTN0Lqlq23YdoePZEil4yMnsXMip2qEcNF0i2jITJ0J/69
-         +OpmUzyPahgHNcaVf744FR39wZ3c4acToX8nJVBr9t20+KKl7d0J4PE5mfSqNd+lBumT
-         0QY/ef56DDomyIsgt133HJYCYI32ulDtov+iBLfZ3Uws83Q9Tu/aInGK2+LK/KUqtEfc
-         W06UVw/ChspdJdsZFn0s0znSKnlumeuvrCdCUvlrO+6j9S6cX/yn/fnNe5uaAiXe/Z4u
-         r+2Q==
+        bh=AG2t1M9CRYlNRMO0qJDqZqavFQpzuKf7AbbLugNPDVM=;
+        b=tHuSdBYrUHEjBdEVJen8AK5UYX39vdl08TAbI/91FPqalaSLnH9Xz9W8Pzi5US+0tt
+         vAyfSH5YqxYMgXUK8rJr8eVkuZTnDm9whHzVjISnFPCkx6XZzshEKtSE8Mhx+Rh0y1Qh
+         EWFmtjDxHeUlPU75lJiLkr2ZxwAZhNOr5MHXnKe6SSwOD2Hr28X4p7XKMeRgAW20slql
+         5aVLy2KJMfyUV8IFuaOMp/YAIE59K1vU85UxWQsqYMYf5tMxkn8v9bxeDuHDH962Hslu
+         vN7nzv0NPS35yOX5HiXT6y9r1TrNJaW9spB5A6edDhGHTrq5ZSh30Pe/oeXmFwatSJP9
+         6P1g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B3A322DCB
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42A7922DAC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-	syzbot <syzkaller@googlegroups.com>,
-	Jiri Slaby <jslaby@suse.com>
-Subject: [PATCH 4.16 031/113] tty: Dont call panic() at tty_ldisc_init()
-Date: Mon, 30 Apr 2018 12:24:02 -0700
-Message-Id: <20180430184016.382970214@linuxfoundation.org>
+	Kamil Lulko <kamilx.lulko@intel.com>,
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+Subject: [PATCH 4.16 021/113] usb: core: Add quirk for HP v222w 16GB Mini
+Date: Mon, 30 Apr 2018 12:23:52 -0700
+Message-Id: <20180430184015.973229828@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184015.043892819@linuxfoundation.org>
 References: <20180430184015.043892819@linuxfoundation.org>
@@ -44,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200428340821221?=
-X-GMAIL-MSGID: =?utf-8?q?1599200546500592168?=
+X-GMAIL-THRID: =?utf-8?q?1599200291962669964?=
+X-GMAIL-MSGID: =?utf-8?q?1599200539054260995?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,70 +52,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Kamil Lulko <kamilx.lulko@intel.com>
 
-commit 903f9db10f18f735e62ba447147b6c434b6af003 upstream.
+commit 3180dabe08e3653bf0a838553905d88f3773f29c upstream.
 
-syzbot is reporting kernel panic [1] triggered by memory allocation failure
-at tty_ldisc_get() from tty_ldisc_init(). But since both tty_ldisc_get()
-and caller of tty_ldisc_init() can cleanly handle errors, tty_ldisc_init()
-does not need to call panic() when tty_ldisc_get() failed.
+Add DELAY_INIT quirk to fix the following problem with HP
+v222w 16GB Mini:
 
-[1] https://syzkaller.appspot.com/bug?id=883431818e036ae6a9981156a64b821110f39187
+usb 1-3: unable to read config index 0 descriptor/start: -110
+usb 1-3: can't read configurations, error -110
+usb 1-3: can't set config #1, error -110
 
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jiri Slaby <jslaby@suse.com>
+Signed-off-by: Kamil Lulko <kamilx.lulko@intel.com>
+Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/tty_io.c    |    5 ++++-
- drivers/tty/tty_ldisc.c |    5 +++--
- include/linux/tty.h     |    2 +-
- 3 files changed, 8 insertions(+), 4 deletions(-)
+ drivers/usb/core/quirks.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/tty/tty_io.c
-+++ b/drivers/tty/tty_io.c
-@@ -2816,7 +2816,10 @@ struct tty_struct *alloc_tty_struct(stru
+--- a/drivers/usb/core/quirks.c
++++ b/drivers/usb/core/quirks.c
+@@ -40,6 +40,9 @@ static const struct usb_device_id usb_qu
+ 	{ USB_DEVICE(0x03f0, 0x0701), .driver_info =
+ 			USB_QUIRK_STRING_FETCH_255 },
  
- 	kref_init(&tty->kref);
- 	tty->magic = TTY_MAGIC;
--	tty_ldisc_init(tty);
-+	if (tty_ldisc_init(tty)) {
-+		kfree(tty);
-+		return NULL;
-+	}
- 	tty->session = NULL;
- 	tty->pgrp = NULL;
- 	mutex_init(&tty->legacy_mutex);
---- a/drivers/tty/tty_ldisc.c
-+++ b/drivers/tty/tty_ldisc.c
-@@ -824,12 +824,13 @@ EXPORT_SYMBOL_GPL(tty_ldisc_release);
-  *	the tty structure is not completely set up when this call is made.
-  */
++	/* HP v222w 16GB Mini USB Drive */
++	{ USB_DEVICE(0x03f0, 0x3f40), .driver_info = USB_QUIRK_DELAY_INIT },
++
+ 	/* Creative SB Audigy 2 NX */
+ 	{ USB_DEVICE(0x041e, 0x3020), .driver_info = USB_QUIRK_RESET_RESUME },
  
--void tty_ldisc_init(struct tty_struct *tty)
-+int tty_ldisc_init(struct tty_struct *tty)
- {
- 	struct tty_ldisc *ld = tty_ldisc_get(tty, N_TTY);
- 	if (IS_ERR(ld))
--		panic("n_tty: init_tty");
-+		return PTR_ERR(ld);
- 	tty->ldisc = ld;
-+	return 0;
- }
- 
- /**
---- a/include/linux/tty.h
-+++ b/include/linux/tty.h
-@@ -701,7 +701,7 @@ extern int tty_unregister_ldisc(int disc
- extern int tty_set_ldisc(struct tty_struct *tty, int disc);
- extern int tty_ldisc_setup(struct tty_struct *tty, struct tty_struct *o_tty);
- extern void tty_ldisc_release(struct tty_struct *tty);
--extern void tty_ldisc_init(struct tty_struct *tty);
-+extern int __must_check tty_ldisc_init(struct tty_struct *tty);
- extern void tty_ldisc_deinit(struct tty_struct *tty);
- extern int tty_ldisc_receive_buf(struct tty_ldisc *ld, const unsigned char *p,
- 				 char *f, int count);
