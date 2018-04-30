@@ -1,103 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751835AbeD3FtP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 01:49:15 -0400
-Received: from goliath.siemens.de ([192.35.17.28]:54614 "EHLO
-        goliath.siemens.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751575AbeD3FtM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 01:49:12 -0400
+        id S1752424AbeD3FvP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 01:51:15 -0400
+Received: from thoth.sbs.de ([192.35.17.2]:41346 "EHLO thoth.sbs.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751770AbeD3FtO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 01:49:14 -0400
 From: Jan Kiszka <jan.kiszka@siemens.com>
 To: Bjorn Helgaas <bhelgaas@google.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 05/10] PCI: Replace pr_*() with dev_*() in __of_pci_get_host_bridge_resources()
-Date: Mon, 30 Apr 2018 07:48:39 +0200
-Message-Id: <63f2e316090ea3284b4be62e446b3b28f998ac55.1525067324.git.jan.kiszka@siemens.com>
+Cc: Jingoo Han <jingoohan1@gmail.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH v2 00/10] PCI: leak fixes, removable generic PCI host, assorted stuff
+Date: Mon, 30 Apr 2018 07:48:34 +0200
+Message-Id: <cover.1525067324.git.jan.kiszka@siemens.com>
 X-Mailer: git-send-email 2.13.6
-In-Reply-To: <cover.1525067324.git.jan.kiszka@siemens.com>
-References: <cover.1525067324.git.jan.kiszka@siemens.com>
-In-Reply-To: <cover.1525067324.git.jan.kiszka@siemens.com>
-References: <cover.1525067324.git.jan.kiszka@siemens.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+Changes in v2:
+ - patch 1: commit message reworking as suggested by Lorenzo
+ - patch 3-6: split-up as suggested by Bjorn
+ - patch 8: new
+ - patch 10: select PCI_DOMAINS from PCI_HOST_GENERIC, rather than
+   allowing manual choice, as suggested by Lorenzo
 
-Now that we have a device reference, make use of it for printing. And as
-long as dev can still be NULL, we will still get some reasonable output
-nevertheless.
+This primarily enables to unbind the generic PCI host controller without
+leaving lots of memory leaks behind. A previous proposal patch 5 was
+rejected because of those issues [1].
 
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
----
- drivers/pci/of.c | 22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
+The fixes have been validated in the Jailhouse setup, where we add and
+remove a virtual PCI host controller on hypervisor activation/
+deactivation, with the help of kmemleak.
 
-diff --git a/drivers/pci/of.c b/drivers/pci/of.c
-index bfa282b538d5..8f6cbf13e18d 100644
---- a/drivers/pci/of.c
-+++ b/drivers/pci/of.c
-@@ -266,15 +266,15 @@ static int __of_pci_get_host_bridge_resources(struct device *dev,
- 	if (!bus_range)
- 		return -ENOMEM;
- 
--	pr_info("host bridge %pOF ranges:\n", dev_node);
-+	dev_info(dev, "host bridge %pOF ranges:\n", dev_node);
- 
- 	err = of_pci_parse_bus_range(dev_node, bus_range);
- 	if (err) {
- 		bus_range->start = busno;
- 		bus_range->end = bus_max;
- 		bus_range->flags = IORESOURCE_BUS;
--		pr_info("  No bus range found for %pOF, using %pR\n",
--			dev_node, bus_range);
-+		dev_info(dev, "  No bus range found for %pOF, using %pR\n",
-+			 dev_node, bus_range);
- 	} else {
- 		if (bus_range->end > bus_range->start + bus_max)
- 			bus_range->end = bus_range->start + bus_max;
-@@ -286,7 +286,7 @@ static int __of_pci_get_host_bridge_resources(struct device *dev,
- 	if (err)
- 		goto parse_failed;
- 
--	pr_debug("Parsing ranges property...\n");
-+	dev_dbg(dev, "Parsing ranges property...\n");
- 	for_each_of_pci_range(&parser, &range) {
- 		/* Read next ranges element */
- 		if ((range.flags & IORESOURCE_TYPE_BITS) == IORESOURCE_IO)
-@@ -295,9 +295,9 @@ static int __of_pci_get_host_bridge_resources(struct device *dev,
- 			snprintf(range_type, 4, "MEM");
- 		else
- 			snprintf(range_type, 4, "err");
--		pr_info("  %s %#010llx..%#010llx -> %#010llx\n", range_type,
--			range.cpu_addr, range.cpu_addr + range.size - 1,
--			range.pci_addr);
-+		dev_info(dev, "  %s %#010llx..%#010llx -> %#010llx\n",
-+			 range_type, range.cpu_addr,
-+			 range.cpu_addr + range.size - 1, range.pci_addr);
- 
- 		/*
- 		 * If we failed translation or got a zero-sized region
-@@ -324,14 +324,16 @@ static int __of_pci_get_host_bridge_resources(struct device *dev,
- 
- 		if (resource_type(res) == IORESOURCE_IO) {
- 			if (!io_base) {
--				pr_err("I/O range found for %pOF. Please provide an io_base pointer to save CPU base address\n",
-+				dev_err(dev,
-+					"I/O range found for %pOF. Please provide an io_base pointer to save CPU base address\n",
- 					dev_node);
- 				err = -EINVAL;
- 				goto conversion_failed;
- 			}
- 			if (*io_base != (resource_size_t)OF_BAD_ADDR)
--				pr_warn("More than one I/O resource converted for %pOF. CPU base address for old range lost!\n",
--					dev_node);
-+				dev_warn(dev,
-+					 "More than one I/O resource converted for %pOF. CPU base address for old range lost!\n",
-+					 dev_node);
- 			*io_base = range.cpu_addr;
- 		}
- 
+Besides that, there is tiny PCI API cleanup at the beginning and
+support for manually enabled PCI domains at the end that enables the
+Jailhouse scenario.
+
+Jan
+
+[1] http://lkml.iu.edu/hypermail/linux/kernel/1606.3/00072.html
+
+
+CC: Jingoo Han <jingoohan1@gmail.com>
+CC: Joao Pinto <Joao.Pinto@synopsys.com>
+CC: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+CC: Will Deacon <will.deacon@arm.com>
+
+Jan Kiszka (10):
+  PCI: Make pci_get_new_domain_nr() static
+  PCI: Fix memory leak of devm_pci_alloc_host_bridge()
+  PCI: Factor out __of_pci_get_host_bridge_resources()
+  PCI: Add dev parameter to __of_pci_get_host_bridge_resources()
+  PCI: Replace pr_*() with dev_*() in
+    __of_pci_get_host_bridge_resources()
+  PCI: Introduce devm_of_pci_get_host_bridge_resources()
+  PCI: Convert of_pci_get_host_bridge_resources() users to devm variant
+  PCI: Deprecate of_pci_get_host_bridge_resources()
+  PCI: Add support for unbinding the generic PCI host controller
+  PCI: Enable PCI_DOMAINS along with generic PCI host controller
+
+ drivers/pci/dwc/pcie-designware-host.c |   2 +-
+ drivers/pci/host/Kconfig               |   1 +
+ drivers/pci/host/pci-aardvark.c        |   5 +-
+ drivers/pci/host/pci-ftpci100.c        |   4 +-
+ drivers/pci/host/pci-host-common.c     |  13 ++++
+ drivers/pci/host/pci-host-generic.c    |   1 +
+ drivers/pci/host/pci-v3-semi.c         |   3 +-
+ drivers/pci/host/pci-versatile.c       |   3 +-
+ drivers/pci/host/pci-xgene.c           |   3 +-
+ drivers/pci/host/pcie-altera.c         |   5 +-
+ drivers/pci/host/pcie-iproc-platform.c |   4 +-
+ drivers/pci/host/pcie-rcar.c           |   5 +-
+ drivers/pci/host/pcie-rockchip.c       |   4 +-
+ drivers/pci/host/pcie-xilinx-nwl.c     |   4 +-
+ drivers/pci/host/pcie-xilinx.c         |   4 +-
+ drivers/pci/of.c                       | 105 +++++++++++++++++++++------------
+ drivers/pci/pci.c                      |   6 +-
+ drivers/pci/probe.c                    |   4 +-
+ include/linux/of_pci.h                 |  42 ++++++++++++-
+ include/linux/pci-ecam.h               |   1 +
+ include/linux/pci.h                    |   3 -
+ 21 files changed, 149 insertions(+), 73 deletions(-)
+
 -- 
 2.13.6
