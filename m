@@ -1,169 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755513AbeD3W6U (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 18:58:20 -0400
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:43871 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753257AbeD3W6S (ORCPT
+        id S1755283AbeD3XBQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 19:01:16 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:53628 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751384AbeD3XBO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 18:58:18 -0400
-X-Google-Smtp-Source: AB8JxZqYx0Z/99T0MPzIypZMCrwnc1DTNaeJL5x2I1IhhI4n2W1/rg0PGR4+x9byFIuvjXJDNKyFTx6yB4Ry/741NDE=
+        Mon, 30 Apr 2018 19:01:14 -0400
+X-Google-Smtp-Source: AB8JxZqvpakLgw5Lp99OzCNQIsLNoTQdnOLsqnTXLmG9uQZLIdL093F+B7T4UHU1FrHMElbpF8S9GA==
+Date: Mon, 30 Apr 2018 17:01:08 -0600
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Doug Ledford <dledford@redhat.com>
+Cc: jackm <jackm@dev.mellanox.co.il>,
+        =?utf-8?B?SMOla29u?= Bugge <haakon.bugge@oracle.com>,
+        Don Hiatt <don.hiatt@intel.com>,
+        Dasaratharaman Chandramouli
+        <dasaratharaman.chandramouli@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>, Sean Hefty <sean.hefty@intel.com>,
+        OFED mailing list <linux-rdma@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] IB/core: Make ib_mad_client_id atomic
+Message-ID: <20180430230108.GE26909@ziepe.ca>
+References: <20180418142450.15581-1-Haakon.Bugge@oracle.com>
+ <1524196555.11756.30.camel@redhat.com>
+ <20180420153451.GF30433@ziepe.ca>
+ <50E3FE4A-2C6E-4493-92E1-383C349FAE3A@oracle.com>
+ <20180423221618.0000795d@dev.mellanox.co.il>
+ <20180430144930.GB26895@ziepe.ca>
+ <1525108249.11756.93.camel@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180427185925.222682-1-samitolvanen@google.com>
-References: <20180427185925.222682-1-samitolvanen@google.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Mon, 30 Apr 2018 15:58:17 -0700
-X-Google-Sender-Auth: JWlgO-mK6wsa0UDid4OuzGJGBAg
-Message-ID: <CAGXu5j+_uVdLM8gWPFB5pgHKWKGxSjasK9_wsqv+x6oLZsEh0A@mail.gmail.com>
-Subject: Re: [PATCH] media: v4l2-ioctl: fix function types for IOCTL_INFO_STD
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-        linux-media@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1525108249.11756.93.camel@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 27, 2018 at 11:59 AM, Sami Tolvanen <samitolvanen@google.com> wrote:
-> This change fixes indirect call mismatches with Control-Flow Integrity
-> checking, which are caused by calling standard ioctls using a function
-> pointer that doesn't match the type of the actual function.
->
-> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+On Mon, Apr 30, 2018 at 01:10:49PM -0400, Doug Ledford wrote:
+> On Mon, 2018-04-30 at 08:49 -0600, Jason Gunthorpe wrote:
+> > On Mon, Apr 23, 2018 at 10:16:18PM +0300, jackm wrote:
+> > 
+> > > > > TIDs need to be globally unique on the entire machine.  
+> > > Jason, that is not exactly correct.
+> > 
+> > The expecation for /dev/umad users is that they all receive locally
+> > unique TID prefixes. The kernel may be OK to keep things port-specific
+> > but it is slightly breaking the API we are presenting to userspace to
+> > allow them to alias..
+> > 
+> > Jason
+> 
+> Would people be happier with this commit message then:
+> 
+> IB/core: Make ib_mad_client_id atomic
+>   
+> Currently, the kernel protects access to the agent ID allocator on a per
+> port basis using a spinlock, so it is impossible for two apps/threads on
+> the same port to get the same TID, but it is entirely possible for two
+> threads on different ports to end up with the same TID.  
+> 
+> As this can be confusing (regardless of it being legal according to the
+> IB Spec 1.3, C13-18.1.1, in section 13.4.6.4 - TransactionID usage),
+> and as the rdma-core user space API for /dev/umad devices implies unique
+> TIDs even across ports, make the TID an atomic type so that no two
+> allocations, regardless of port number, will be the same.
+> 
+> Signed-off-by: Håkon Bugge <haakon.bugge@oracle.com>
+> Reviewed-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
+> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+> Reviewed-by: Zhu Yanjun <yanjun.zhu@oracle.com>
+> Signed-off-by: Doug Ledford <dledford@redhat.com>
 
-I think this actually makes things much more readable in the end. Thanks!
+fine for me
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
-
--Kees
-
-
-> ---
->  drivers/media/v4l2-core/v4l2-ioctl.c | 72 ++++++++++++++++++----------
->  1 file changed, 46 insertions(+), 26 deletions(-)
->
-> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-> index f48c505550e0..d50a06ab3509 100644
-> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
-> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-> @@ -2489,11 +2489,8 @@ struct v4l2_ioctl_info {
->         unsigned int ioctl;
->         u32 flags;
->         const char * const name;
-> -       union {
-> -               u32 offset;
-> -               int (*func)(const struct v4l2_ioctl_ops *ops,
-> -                               struct file *file, void *fh, void *p);
-> -       } u;
-> +       int (*func)(const struct v4l2_ioctl_ops *ops, struct file *file,
-> +                   void *fh, void *p);
->         void (*debug)(const void *arg, bool write_only);
->  };
->
-> @@ -2501,27 +2498,24 @@ struct v4l2_ioctl_info {
->  #define INFO_FL_PRIO           (1 << 0)
->  /* This control can be valid if the filehandle passes a control handler. */
->  #define INFO_FL_CTRL           (1 << 1)
-> -/* This is a standard ioctl, no need for special code */
-> -#define INFO_FL_STD            (1 << 2)
->  /* This is ioctl has its own function */
-> -#define INFO_FL_FUNC           (1 << 3)
-> +#define INFO_FL_FUNC           (1 << 2)
->  /* Queuing ioctl */
-> -#define INFO_FL_QUEUE          (1 << 4)
-> +#define INFO_FL_QUEUE          (1 << 3)
->  /* Always copy back result, even on error */
-> -#define INFO_FL_ALWAYS_COPY    (1 << 5)
-> +#define INFO_FL_ALWAYS_COPY    (1 << 4)
->  /* Zero struct from after the field to the end */
->  #define INFO_FL_CLEAR(v4l2_struct, field)                      \
->         ((offsetof(struct v4l2_struct, field) +                 \
->           sizeof(((struct v4l2_struct *)0)->field)) << 16)
->  #define INFO_FL_CLEAR_MASK     (_IOC_SIZEMASK << 16)
->
-> -#define IOCTL_INFO_STD(_ioctl, _vidioc, _debug, _flags)                        \
-> -       [_IOC_NR(_ioctl)] = {                                           \
-> -               .ioctl = _ioctl,                                        \
-> -               .flags = _flags | INFO_FL_STD,                          \
-> -               .name = #_ioctl,                                        \
-> -               .u.offset = offsetof(struct v4l2_ioctl_ops, _vidioc),   \
-> -               .debug = _debug,                                        \
-> +#define DEFINE_IOCTL_STD_FNC(_vidioc)                          \
-> +       static int __v4l_ ## _vidioc ## _fnc(                   \
-> +                       const struct v4l2_ioctl_ops *ops,       \
-> +                       struct file *file, void *fh, void *p)   \
-> +       {                                                       \
-> +               return ops->_vidioc(file, fh, p);               \
->         }
->
->  #define IOCTL_INFO_FNC(_ioctl, _func, _debug, _flags)                  \
-> @@ -2529,10 +2523,42 @@ struct v4l2_ioctl_info {
->                 .ioctl = _ioctl,                                        \
->                 .flags = _flags | INFO_FL_FUNC,                         \
->                 .name = #_ioctl,                                        \
-> -               .u.func = _func,                                        \
-> +               .func = _func,                                          \
->                 .debug = _debug,                                        \
->         }
->
-> +#define IOCTL_INFO_STD(_ioctl, _vidioc, _debug, _flags)        \
-> +       IOCTL_INFO_FNC(_ioctl, __v4l_ ## _vidioc ## _fnc, _debug, _flags)
-> +
-> +DEFINE_IOCTL_STD_FNC(vidioc_g_fbuf)
-> +DEFINE_IOCTL_STD_FNC(vidioc_s_fbuf)
-> +DEFINE_IOCTL_STD_FNC(vidioc_expbuf)
-> +DEFINE_IOCTL_STD_FNC(vidioc_g_std)
-> +DEFINE_IOCTL_STD_FNC(vidioc_g_audio)
-> +DEFINE_IOCTL_STD_FNC(vidioc_s_audio)
-> +DEFINE_IOCTL_STD_FNC(vidioc_g_input)
-> +DEFINE_IOCTL_STD_FNC(vidioc_g_edid)
-> +DEFINE_IOCTL_STD_FNC(vidioc_s_edid)
-> +DEFINE_IOCTL_STD_FNC(vidioc_g_output)
-> +DEFINE_IOCTL_STD_FNC(vidioc_g_audout)
-> +DEFINE_IOCTL_STD_FNC(vidioc_s_audout)
-> +DEFINE_IOCTL_STD_FNC(vidioc_g_jpegcomp)
-> +DEFINE_IOCTL_STD_FNC(vidioc_s_jpegcomp)
-> +DEFINE_IOCTL_STD_FNC(vidioc_enumaudio)
-> +DEFINE_IOCTL_STD_FNC(vidioc_enumaudout)
-> +DEFINE_IOCTL_STD_FNC(vidioc_enum_framesizes)
-> +DEFINE_IOCTL_STD_FNC(vidioc_enum_frameintervals)
-> +DEFINE_IOCTL_STD_FNC(vidioc_g_enc_index)
-> +DEFINE_IOCTL_STD_FNC(vidioc_encoder_cmd)
-> +DEFINE_IOCTL_STD_FNC(vidioc_try_encoder_cmd)
-> +DEFINE_IOCTL_STD_FNC(vidioc_decoder_cmd)
-> +DEFINE_IOCTL_STD_FNC(vidioc_try_decoder_cmd)
-> +DEFINE_IOCTL_STD_FNC(vidioc_s_dv_timings)
-> +DEFINE_IOCTL_STD_FNC(vidioc_g_dv_timings)
-> +DEFINE_IOCTL_STD_FNC(vidioc_enum_dv_timings)
-> +DEFINE_IOCTL_STD_FNC(vidioc_query_dv_timings)
-> +DEFINE_IOCTL_STD_FNC(vidioc_dv_timings_cap)
-> +
->  static struct v4l2_ioctl_info v4l2_ioctls[] = {
->         IOCTL_INFO_FNC(VIDIOC_QUERYCAP, v4l_querycap, v4l_print_querycap, 0),
->         IOCTL_INFO_FNC(VIDIOC_ENUM_FMT, v4l_enum_fmt, v4l_print_fmtdesc, INFO_FL_CLEAR(v4l2_fmtdesc, type)),
-> @@ -2717,14 +2743,8 @@ static long __video_do_ioctl(struct file *file,
->         }
->
->         write_only = _IOC_DIR(cmd) == _IOC_WRITE;
-> -       if (info->flags & INFO_FL_STD) {
-> -               typedef int (*vidioc_op)(struct file *file, void *fh, void *p);
-> -               const void *p = vfd->ioctl_ops;
-> -               const vidioc_op *vidioc = p + info->u.offset;
-> -
-> -               ret = (*vidioc)(file, fh, arg);
-> -       } else if (info->flags & INFO_FL_FUNC) {
-> -               ret = info->u.func(ops, file, fh, arg);
-> +       if (info->flags & INFO_FL_FUNC) {
-> +               ret = info->func(ops, file, fh, arg);
->         } else if (!ops->vidioc_default) {
->                 ret = -ENOTTY;
->         } else {
-> --
-> 2.17.0.441.gb46fe60e1d-goog
->
-
-
-
--- 
-Kees Cook
-Pixel Security
+Jason
