@@ -1,39 +1,39 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZohLtYyFy7rRq0tvKLNdO5/ivS/AE4yogyid2Z6nsQOZpVZdbOae8GGKUWPwaEhe0eQ5+Ru
-ARC-Seal: i=1; a=rsa-sha256; t=1525116456; cv=none;
+X-Google-Smtp-Source: AB8JxZrOsrl8LZ9kquBCVzSSJ4MkrVLjpH5Ne0VCtcFjnxKAl685Bb9NuQItVSnI44ZXihDs3Y6k
+ARC-Seal: i=1; a=rsa-sha256; t=1525116454; cv=none;
         d=google.com; s=arc-20160816;
-        b=nUG4wvJqkOWosj7oWIhOu0hD5r1kGiuiZCpyAjZRhdc2miYUj1umVV4RfuWVMKH7R/
-         Qaug+GjPhG1Fo7y4Y1i3TXGx0D1F0gjG9mSnpDjyziXqiBTIHN0PdaqM4NpEtERYaw5b
-         nNvT+8tj+FDk0oEPVmx0+oWsPJPb9cihZYBAcHT9Y9PsFYN7/IipYBHSLuuwEroGoC6h
-         tg0q1OBYpg52bDmOtGhVu4/QnPP48PcJLgPU+cdlEX94Vkfo7LRaCauts6KvWvBmY7rG
-         7t5b4+SQYDiXq+RjOMWI1KEQBsskLWbq/olgRU2pbh3Af/ZKOBaczCFQ/o0NqB5erFUQ
-         OtWA==
+        b=tAD9X1Oc3Qadd2ZpVeIt4veZD7C0DvOEJ+2CUnxSKr8OdjvZhzU1tIsl45iJ/F3Fc1
+         x8AlhJYTI4xhHG1+cJbZXNfliqfFVUbNzL5EPotRQCMMbv6QXMdQKEcSuw9/j65Gvpld
+         AUy/2A17Fy1iecH2TTXFidpdAqOAmjCnWqgFGWa0j2PYwNzSNTPAmbnx2nZ8rIR1pAjZ
+         EI0EK9uxiYFQSEJpsXi6qG1yeiOj1FV8XLhkYp2e96rZHLV6V6XtfGDsNDX0dAm1MEc6
+         e+HO0rD3z42sqzLB0QqYCdZlSy1Tz4vMhyFacfWcMNTw+Wtnr3yo3KoRe8NQlgZldYOk
+         +G8A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=I8819N/Gr086P398h+4fzE67zuzHrcqS21+FwLXmiDc=;
-        b=t8njpiuzge+fG7+i1Pscxw4MGTLNviC5vhVpWsv2raqs6SGMBje3oiI70IKrhYiJc2
-         UQPgIJHj3F/S+uj2OW24K94XSohBtr7gPizou9m+eIEAmlKWX+IfJAFNps98T/6Sxwqw
-         bKsryjruhrZqjd/Yg/OL/bD8KN2BRX6ymPi43dZL9FEqlZ69HL2+DYLFnfcl+vyHspFY
-         mlfqmGdp6U6mh3psOGm/flM4OOvlVUelPlyGGQHnh09Qm9DqRURXQrD+mvFjyO6Bqzbe
-         YGUEEsoYsBiD3opahZkYctJilvMI+wdKjHM0x/vgPmrC88hd5yOPTJDUaYPk0CIH0szB
-         V3fg==
+        bh=NERrlFtl+J1pMK/4DJR5zwFTw7t9WCSd6V1+I2HR9k8=;
+        b=jXcHL6CgWiFrxSz34PBKr1f/u38prxCalREpOBY3UBGhKnT8NFOCUH8Zd5g2YMFJ+g
+         7YaSPWThkfGqzcApWfgXsOO9N8jB0OqOY+314x12XfD9ab/RMdbAdgMUIw287BeIriY4
+         ncN0iNtxur0lLsjUQQ40ZRKHzSizD9XjFm0mcSkNwYZsXEzRJFDZ07zpK1v11PReOrU4
+         537Uqa/TYF/Jj9ieE3lpnnecJZw4e+e8feHiR7+Tg25re/4M3semqDJyOmWJa2ZYDdkd
+         05gEYsx4OVYK9S35jm9+RR5tGxYwu21yPK7MKC3jGawvSyKDmcuyoJIhiNvRRVDZIJZz
+         5IRQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0410322E01
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77DE422DCC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ilya Dryomov <idryomov@gmail.com>,
-	Jason Dillaman <dillaman@redhat.com>
-Subject: [PATCH 4.14 75/91] libceph: validate con->state at the top of try_write()
-Date: Mon, 30 Apr 2018 12:24:57 -0700
-Message-Id: <20180430184008.182097707@linuxfoundation.org>
+	Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+	Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 34/91] ALSA: dice: fix OUI for TC group
+Date: Mon, 30 Apr 2018 12:24:16 -0700
+Message-Id: <20180430184005.954053971@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184004.216234025@linuxfoundation.org>
 References: <20180430184004.216234025@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200287508150200?=
-X-GMAIL-MSGID: =?utf-8?q?1599200513700747692?=
+X-GMAIL-THRID: =?utf-8?q?1599200511040409140?=
+X-GMAIL-MSGID: =?utf-8?q?1599200511040409140?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,54 +52,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ilya Dryomov <idryomov@gmail.com>
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 
-commit 9c55ad1c214d9f8c4594ac2c3fa392c1c32431a7 upstream.
+commit 10412c420af9ba1f3de8483a95d360e5eb5bfc84 upstream.
 
-ceph_con_workfn() validates con->state before calling try_read() and
-then try_write().  However, try_read() temporarily releases con->mutex,
-notably in process_message() and ceph_con_in_msg_alloc(), opening the
-window for ceph_con_close() to sneak in, close the connection and
-release con->sock.  When try_write() is called on the assumption that
-con->state is still valid (i.e. not STANDBY or CLOSED), a NULL sock
-gets passed to the networking stack:
+OUI for TC Electronic is 0x000166, for TC GROUP A/S. 0x001486 is for Echo
+Digital Audio Corporation.
 
-  BUG: unable to handle kernel NULL pointer dereference at 0000000000000020
-  IP: selinux_socket_sendmsg+0x5/0x20
-
-Make sure con->state is valid at the top of try_write() and add an
-explicit BUG_ON for this, similar to try_read().
-
-Cc: stable@vger.kernel.org
-Link: https://tracker.ceph.com/issues/23706
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-Reviewed-by: Jason Dillaman <dillaman@redhat.com>
+Fixes: 7cafc65b3aa1 ('ALSA: dice: force to add two pcm devices for listed models')
+Cc: <stable@vger.kernel.org> # v4.6+
+Reference: http://standards-oui.ieee.org/oui/oui.txt
+Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/ceph/messenger.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ sound/firewire/dice/dice.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/ceph/messenger.c
-+++ b/net/ceph/messenger.c
-@@ -2530,6 +2530,11 @@ static int try_write(struct ceph_connect
- 	int ret = 1;
+--- a/sound/firewire/dice/dice.c
++++ b/sound/firewire/dice/dice.c
+@@ -14,7 +14,7 @@ MODULE_LICENSE("GPL v2");
+ #define OUI_WEISS		0x001c6a
+ #define OUI_LOUD		0x000ff2
+ #define OUI_FOCUSRITE		0x00130e
+-#define OUI_TCELECTRONIC	0x001486
++#define OUI_TCELECTRONIC	0x000166
  
- 	dout("try_write start %p state %lu\n", con, con->state);
-+	if (con->state != CON_STATE_PREOPEN &&
-+	    con->state != CON_STATE_CONNECTING &&
-+	    con->state != CON_STATE_NEGOTIATING &&
-+	    con->state != CON_STATE_OPEN)
-+		return 0;
- 
- more:
- 	dout("try_write out_kvec_bytes %d\n", con->out_kvec_bytes);
-@@ -2555,6 +2560,8 @@ more:
- 	}
- 
- more_kvec:
-+	BUG_ON(!con->sock);
-+
- 	/* kvec data queued? */
- 	if (con->out_kvec_left) {
- 		ret = write_partial_kvec(con);
+ #define DICE_CATEGORY_ID	0x04
+ #define WEISS_CATEGORY_ID	0x00
