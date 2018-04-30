@@ -1,40 +1,39 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrI714LdzJimnV4hzRjFxg1lhc2v1UP5HvGT5YlPGDunA28a4N0rjuRjMtLJCUIh1Jq+WVf
-ARC-Seal: i=1; a=rsa-sha256; t=1525116457; cv=none;
+X-Google-Smtp-Source: AB8JxZohLtYyFy7rRq0tvKLNdO5/ivS/AE4yogyid2Z6nsQOZpVZdbOae8GGKUWPwaEhe0eQ5+Ru
+ARC-Seal: i=1; a=rsa-sha256; t=1525116456; cv=none;
         d=google.com; s=arc-20160816;
-        b=nq3VX2bcTNLKCqil9nyigWLUHhrm1K3v3tCJGK7Bq451gwFTOshXXg/IWID8yfQHEj
-         hccT7g5FTZ5wHmZzdm8UnLLK0nQ/1CxN3WjpNvv13LOCNRiBlU4ajANhnW83QAn3xu5t
-         bdBnIyVGx57EtoY1oEocp6Z8jaNAsVLQtN8MuvL++GbyHpFHo1NukdUTFTOZ5elaJJVP
-         1Do7EV/FrbPQze1yZzD/Dsce6ETtf5tmfggMXogdbjRAHQ/kLGCQZMDd3GWF21Maibeg
-         y6k5CCxY5DUfwiHXNX1/rg1Q5uu3mJ4bKXDW+8ph//kNUqMv+kmYKuYjMh45Nsl02ZOv
-         x/bQ==
+        b=nUG4wvJqkOWosj7oWIhOu0hD5r1kGiuiZCpyAjZRhdc2miYUj1umVV4RfuWVMKH7R/
+         Qaug+GjPhG1Fo7y4Y1i3TXGx0D1F0gjG9mSnpDjyziXqiBTIHN0PdaqM4NpEtERYaw5b
+         nNvT+8tj+FDk0oEPVmx0+oWsPJPb9cihZYBAcHT9Y9PsFYN7/IipYBHSLuuwEroGoC6h
+         tg0q1OBYpg52bDmOtGhVu4/QnPP48PcJLgPU+cdlEX94Vkfo7LRaCauts6KvWvBmY7rG
+         7t5b4+SQYDiXq+RjOMWI1KEQBsskLWbq/olgRU2pbh3Af/ZKOBaczCFQ/o0NqB5erFUQ
+         OtWA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=51MbXB0UzuM/KmcB2653YpZa2aJcZ8V64YUJQ/dCV3w=;
-        b=mDlRK5d1Er3MvCWyCEqnX1bbtKnmhkRuIWjHhqA89MozLWDaBznBNVQJc7thuHZWfS
-         JlzQqwT1TGcr3EYf6T4o88wsog8ohNUIvD1UxCxSH+DsVslJOfPTORzkG8Wwte1yfPox
-         8dku8VOwm9vILbrG4DwUPO+uyw1p7YRWLLLt+/GIyhAZYfaoJmT5QU3EE9SaLACUYu9M
-         SNVPmuGnwnLtZDm3v5sujscsCmwv2fRv+RUxY4SEMaUjNgnG5IcH4RbDjT8qr4zjXNn+
-         oOssGPHvv0ecAHwBJg/CutHQwedtj3V8OPEv8GaC2EpuInsdGgjm3KKS97mSACee2nTi
-         ClEA==
+        bh=I8819N/Gr086P398h+4fzE67zuzHrcqS21+FwLXmiDc=;
+        b=t8njpiuzge+fG7+i1Pscxw4MGTLNviC5vhVpWsv2raqs6SGMBje3oiI70IKrhYiJc2
+         UQPgIJHj3F/S+uj2OW24K94XSohBtr7gPizou9m+eIEAmlKWX+IfJAFNps98T/6Sxwqw
+         bKsryjruhrZqjd/Yg/OL/bD8KN2BRX6ymPi43dZL9FEqlZ69HL2+DYLFnfcl+vyHspFY
+         mlfqmGdp6U6mh3psOGm/flM4OOvlVUelPlyGGQHnh09Qm9DqRURXQrD+mvFjyO6Bqzbe
+         YGUEEsoYsBiD3opahZkYctJilvMI+wdKjHM0x/vgPmrC88hd5yOPTJDUaYPk0CIH0szB
+         V3fg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EFD1235EE
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0410322E01
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Anatolij Gustschin <agust@denx.de>,
-	Alan Tull <atull@kernel.org>,
-	Moritz Fischer <mdf@kernel.org>
-Subject: [PATCH 4.14 76/91] fpga-manager: altera-ps-spi: preserve nCONFIG state
-Date: Mon, 30 Apr 2018 12:24:58 -0700
-Message-Id: <20180430184008.243601470@linuxfoundation.org>
+	Ilya Dryomov <idryomov@gmail.com>,
+	Jason Dillaman <dillaman@redhat.com>
+Subject: [PATCH 4.14 75/91] libceph: validate con->state at the top of try_write()
+Date: Mon, 30 Apr 2018 12:24:57 -0700
+Message-Id: <20180430184008.182097707@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184004.216234025@linuxfoundation.org>
 References: <20180430184004.216234025@linuxfoundation.org>
@@ -44,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200514004063912?=
-X-GMAIL-MSGID: =?utf-8?q?1599200514004063912?=
+X-GMAIL-THRID: =?utf-8?q?1599200287508150200?=
+X-GMAIL-MSGID: =?utf-8?q?1599200513700747692?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,33 +52,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Anatolij Gustschin <agust@denx.de>
+From: Ilya Dryomov <idryomov@gmail.com>
 
-commit 881c93c0fb73328845898344208fa0bf0d62cac6 upstream.
+commit 9c55ad1c214d9f8c4594ac2c3fa392c1c32431a7 upstream.
 
-If the driver module is loaded when FPGA is configured, the FPGA
-is reset because nconfig is pulled low (low-active gpio inited
-with GPIOD_OUT_HIGH activates the signal which means setting its
-value to low). Init nconfig with GPIOD_OUT_LOW to prevent this.
+ceph_con_workfn() validates con->state before calling try_read() and
+then try_write().  However, try_read() temporarily releases con->mutex,
+notably in process_message() and ceph_con_in_msg_alloc(), opening the
+window for ceph_con_close() to sneak in, close the connection and
+release con->sock.  When try_write() is called on the assumption that
+con->state is still valid (i.e. not STANDBY or CLOSED), a NULL sock
+gets passed to the networking stack:
 
-Signed-off-by: Anatolij Gustschin <agust@denx.de>
-Acked-by: Alan Tull <atull@kernel.org>
-Signed-off-by: Moritz Fischer <mdf@kernel.org>
-Cc: stable <stable@vger.kernel.org> # 4.14+
+  BUG: unable to handle kernel NULL pointer dereference at 0000000000000020
+  IP: selinux_socket_sendmsg+0x5/0x20
+
+Make sure con->state is valid at the top of try_write() and add an
+explicit BUG_ON for this, similar to try_read().
+
+Cc: stable@vger.kernel.org
+Link: https://tracker.ceph.com/issues/23706
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+Reviewed-by: Jason Dillaman <dillaman@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/fpga/altera-ps-spi.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ceph/messenger.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/drivers/fpga/altera-ps-spi.c
-+++ b/drivers/fpga/altera-ps-spi.c
-@@ -249,7 +249,7 @@ static int altera_ps_probe(struct spi_de
+--- a/net/ceph/messenger.c
++++ b/net/ceph/messenger.c
+@@ -2530,6 +2530,11 @@ static int try_write(struct ceph_connect
+ 	int ret = 1;
  
- 	conf->data = of_id->data;
- 	conf->spi = spi;
--	conf->config = devm_gpiod_get(&spi->dev, "nconfig", GPIOD_OUT_HIGH);
-+	conf->config = devm_gpiod_get(&spi->dev, "nconfig", GPIOD_OUT_LOW);
- 	if (IS_ERR(conf->config)) {
- 		dev_err(&spi->dev, "Failed to get config gpio: %ld\n",
- 			PTR_ERR(conf->config));
+ 	dout("try_write start %p state %lu\n", con, con->state);
++	if (con->state != CON_STATE_PREOPEN &&
++	    con->state != CON_STATE_CONNECTING &&
++	    con->state != CON_STATE_NEGOTIATING &&
++	    con->state != CON_STATE_OPEN)
++		return 0;
+ 
+ more:
+ 	dout("try_write out_kvec_bytes %d\n", con->out_kvec_bytes);
+@@ -2555,6 +2560,8 @@ more:
+ 	}
+ 
+ more_kvec:
++	BUG_ON(!con->sock);
++
+ 	/* kvec data queued? */
+ 	if (con->out_kvec_left) {
+ 		ret = write_partial_kvec(con);
