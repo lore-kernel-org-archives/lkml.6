@@ -1,20 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752368AbeD3Fut (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 01:50:49 -0400
-Received: from thoth.sbs.de ([192.35.17.2]:41356 "EHLO thoth.sbs.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751807AbeD3FtP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751835AbeD3FtP (ORCPT <rfc822;w@1wt.eu>);
         Mon, 30 Apr 2018 01:49:15 -0400
+Received: from goliath.siemens.de ([192.35.17.28]:54614 "EHLO
+        goliath.siemens.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751575AbeD3FtM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 01:49:12 -0400
 From: Jan Kiszka <jan.kiszka@siemens.com>
 To: Bjorn Helgaas <bhelgaas@google.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Will Deacon <will.deacon@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: [PATCH v2 09/10] PCI: Add support for unbinding the generic PCI host controller
-Date: Mon, 30 Apr 2018 07:48:43 +0200
-Message-Id: <c0f1b44f4b1fda35e3e8d2666ba7961571c31980.1525067324.git.jan.kiszka@siemens.com>
+Subject: [PATCH v2 05/10] PCI: Replace pr_*() with dev_*() in __of_pci_get_host_bridge_resources()
+Date: Mon, 30 Apr 2018 07:48:39 +0200
+Message-Id: <63f2e316090ea3284b4be62e446b3b28f998ac55.1525067324.git.jan.kiszka@siemens.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <cover.1525067324.git.jan.kiszka@siemens.com>
 References: <cover.1525067324.git.jan.kiszka@siemens.com>
@@ -26,62 +25,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jan Kiszka <jan.kiszka@siemens.com>
 
-Particularly useful when working in virtual environments where the
-controller may come and go, but possibly not only there.
+Now that we have a device reference, make use of it for printing. And as
+long as dev can still be NULL, we will still get some reasonable output
+nevertheless.
 
-CC: Will Deacon <will.deacon@arm.com>
-CC: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 ---
- drivers/pci/host/pci-host-common.c  | 13 +++++++++++++
- drivers/pci/host/pci-host-generic.c |  1 +
- include/linux/pci-ecam.h            |  1 +
- 3 files changed, 15 insertions(+)
+ drivers/pci/of.c | 22 ++++++++++++----------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/pci/host/pci-host-common.c b/drivers/pci/host/pci-host-common.c
-index 5d028f53fdcd..d8f10451f273 100644
---- a/drivers/pci/host/pci-host-common.c
-+++ b/drivers/pci/host/pci-host-common.c
-@@ -101,5 +101,18 @@ int pci_host_common_probe(struct platform_device *pdev,
- 		return ret;
- 	}
+diff --git a/drivers/pci/of.c b/drivers/pci/of.c
+index bfa282b538d5..8f6cbf13e18d 100644
+--- a/drivers/pci/of.c
++++ b/drivers/pci/of.c
+@@ -266,15 +266,15 @@ static int __of_pci_get_host_bridge_resources(struct device *dev,
+ 	if (!bus_range)
+ 		return -ENOMEM;
  
-+	platform_set_drvdata(pdev, bridge->bus);
-+	return 0;
-+}
-+
-+int pci_host_common_remove(struct platform_device *pdev)
-+{
-+	struct pci_bus *bus = platform_get_drvdata(pdev);
-+
-+	pci_lock_rescan_remove();
-+	pci_stop_root_bus(bus);
-+	pci_remove_root_bus(bus);
-+	pci_unlock_rescan_remove();
-+
- 	return 0;
- }
-diff --git a/drivers/pci/host/pci-host-generic.c b/drivers/pci/host/pci-host-generic.c
-index 45319ee3b484..dea3ec7592a2 100644
---- a/drivers/pci/host/pci-host-generic.c
-+++ b/drivers/pci/host/pci-host-generic.c
-@@ -95,5 +95,6 @@ static struct platform_driver gen_pci_driver = {
- 		.suppress_bind_attrs = true,
- 	},
- 	.probe = gen_pci_probe,
-+	.remove = pci_host_common_remove,
- };
- builtin_platform_driver(gen_pci_driver);
-diff --git a/include/linux/pci-ecam.h b/include/linux/pci-ecam.h
-index baadad1aabbc..29efa09d686b 100644
---- a/include/linux/pci-ecam.h
-+++ b/include/linux/pci-ecam.h
-@@ -62,5 +62,6 @@ extern struct pci_ecam_ops xgene_v2_pcie_ecam_ops; /* APM X-Gene PCIe v2.x */
- /* for DT-based PCI controllers that support ECAM */
- int pci_host_common_probe(struct platform_device *pdev,
- 			  struct pci_ecam_ops *ops);
-+int pci_host_common_remove(struct platform_device *pdev);
- #endif
- #endif
+-	pr_info("host bridge %pOF ranges:\n", dev_node);
++	dev_info(dev, "host bridge %pOF ranges:\n", dev_node);
+ 
+ 	err = of_pci_parse_bus_range(dev_node, bus_range);
+ 	if (err) {
+ 		bus_range->start = busno;
+ 		bus_range->end = bus_max;
+ 		bus_range->flags = IORESOURCE_BUS;
+-		pr_info("  No bus range found for %pOF, using %pR\n",
+-			dev_node, bus_range);
++		dev_info(dev, "  No bus range found for %pOF, using %pR\n",
++			 dev_node, bus_range);
+ 	} else {
+ 		if (bus_range->end > bus_range->start + bus_max)
+ 			bus_range->end = bus_range->start + bus_max;
+@@ -286,7 +286,7 @@ static int __of_pci_get_host_bridge_resources(struct device *dev,
+ 	if (err)
+ 		goto parse_failed;
+ 
+-	pr_debug("Parsing ranges property...\n");
++	dev_dbg(dev, "Parsing ranges property...\n");
+ 	for_each_of_pci_range(&parser, &range) {
+ 		/* Read next ranges element */
+ 		if ((range.flags & IORESOURCE_TYPE_BITS) == IORESOURCE_IO)
+@@ -295,9 +295,9 @@ static int __of_pci_get_host_bridge_resources(struct device *dev,
+ 			snprintf(range_type, 4, "MEM");
+ 		else
+ 			snprintf(range_type, 4, "err");
+-		pr_info("  %s %#010llx..%#010llx -> %#010llx\n", range_type,
+-			range.cpu_addr, range.cpu_addr + range.size - 1,
+-			range.pci_addr);
++		dev_info(dev, "  %s %#010llx..%#010llx -> %#010llx\n",
++			 range_type, range.cpu_addr,
++			 range.cpu_addr + range.size - 1, range.pci_addr);
+ 
+ 		/*
+ 		 * If we failed translation or got a zero-sized region
+@@ -324,14 +324,16 @@ static int __of_pci_get_host_bridge_resources(struct device *dev,
+ 
+ 		if (resource_type(res) == IORESOURCE_IO) {
+ 			if (!io_base) {
+-				pr_err("I/O range found for %pOF. Please provide an io_base pointer to save CPU base address\n",
++				dev_err(dev,
++					"I/O range found for %pOF. Please provide an io_base pointer to save CPU base address\n",
+ 					dev_node);
+ 				err = -EINVAL;
+ 				goto conversion_failed;
+ 			}
+ 			if (*io_base != (resource_size_t)OF_BAD_ADDR)
+-				pr_warn("More than one I/O resource converted for %pOF. CPU base address for old range lost!\n",
+-					dev_node);
++				dev_warn(dev,
++					 "More than one I/O resource converted for %pOF. CPU base address for old range lost!\n",
++					 dev_node);
+ 			*io_base = range.cpu_addr;
+ 		}
+ 
 -- 
 2.13.6
