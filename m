@@ -1,21 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754578AbeD3TJQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 15:09:16 -0400
-Received: from mail-yw0-f170.google.com ([209.85.161.170]:42059 "EHLO
-        mail-yw0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752722AbeD3TJN (ORCPT
+        id S1754891AbeD3TJf (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 15:09:35 -0400
+Received: from mail-yw0-f180.google.com ([209.85.161.180]:34914 "EHLO
+        mail-yw0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754639AbeD3TJa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 15:09:13 -0400
-X-Google-Smtp-Source: AB8JxZqfZqX6p6mlNVWeyNRTCbsjpvxnaCLKS08VXJ3IBFsuxjjryoRaTvghfSDhU1YyeDL6+oAlCGlCfQ0RGttYMxo=
+        Mon, 30 Apr 2018 15:09:30 -0400
+X-Google-Smtp-Source: AB8JxZqrSY0AhEmguSebpP4aXmqvOY+LBJ0ROGp3cv3T0pOhIzgLawXqx0TrNu9mcmwdBNCTmMniAPqdwSvNv7S1myw=
 MIME-Version: 1.0
-In-Reply-To: <20180430093907.GA2476@ulmo>
+In-Reply-To: <20180430082750.GI2484@ulmo>
 References: <1524869998-2805-1-git-send-email-wesley@sifive.com>
- <1524869998-2805-4-git-send-email-wesley@sifive.com> <20180430093907.GA2476@ulmo>
+ <1524869998-2805-2-git-send-email-wesley@sifive.com> <20180429055417.GA10221@mithrandir>
+ <CAMgXwTgN26aKaSuVdSj2TDUgbR7bAmy4TdtOuKj_QC0kNNbphg@mail.gmail.com> <20180430082750.GI2484@ulmo>
 From: Wesley Terpstra <wesley@sifive.com>
-Date: Mon, 30 Apr 2018 12:09:11 -0700
-Message-ID: <CAMgXwThkz5Ah6tWds9rY7BPOP2xM8qh9MgDc85RbTUnMFgEDew@mail.gmail.com>
-Subject: Re: [PATCH 3/3] pwm-sifive: add a driver for SiFive SoC PWM
+Date: Mon, 30 Apr 2018 12:09:29 -0700
+Message-ID: <CAMgXwThTd32cyEBcbGnYw72x-P9_P8ks2J6QJV69RUUUDsT+3A@mail.gmail.com>
+Subject: Re: [PATCH 1/3] dt-bindings: added new pwm-sifive driver documentation
 To: Thierry Reding <thierry.reding@gmail.com>
 Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
         =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
@@ -23,105 +24,56 @@ Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
         David Lechner <david@lechnology.com>,
         Alexandre Belloni <alexandre.belloni@free-electrons.com>,
         SZ Lin <sz.lin@moxa.com>, linux-pwm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Wesley W . Terpstra" <wesley@terpstra.ca>
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-First of all, thank you very much for this detailed review! I really
-appreciate it, as this is just the first driver of several we would
-like to upstream and getting the reviews front-loaded like this will
-really help us improve the subsequent drivers before trying to
-upstream them.
-
-On Mon, Apr 30, 2018 at 2:39 AM, Thierry Reding
+On Mon, Apr 30, 2018 at 1:27 AM, Thierry Reding
 <thierry.reding@gmail.com> wrote:
-> Please include a SPDX license identifier here. That's the preferred way
-> to specify the license these days.
+> I don't like the idea of specifying something in DT that is completely
+> approximate because it doesn't give users any kind of control over what
+> is considered acceptable. In some cases an approximation to within 10%
+> might be acceptable, in other cases users may only want to allow 5%. In
+> this case there's even no way to catch or report a deviation from the
+> desired value.
 
-Done
+My view was that you basically don't have period control on this IP.
+You can give it a target that it tries to get as close to as possible,
+but there's no guarantee of any kind wrt. the period.
 
->> +#include <dt-bindings/pwm/pwm.h>
-> There should be no need to include this in a driver.
+I saw there were a couple other PWM drivers which had no period
+control whatsoever. They just allowed duty cycle control. Because this
+IP has such a broken period-control interface, I was essentially
+trying to bin it in the same category as those drivers.
 
-Done
+Perhaps I should just remove all pretense of supporting period and
+just always default to the fastest period possible?
 
->> +             if (state->polarity == PWM_POLARITY_NORMAL)
->> +                     state->duty_cycle = state->period - state->duty_cycle;
+> How about you allow users to specify a valid frequency range with
+> something like:
 >
-> That's not the right way to handle polarity. The above often has the
-> same effect as inversed polarity, but it's not generally the right thing
-> to do. Please only support polarity if your hardware can actually really
-> reverse it. The above is something that PWM consumers (such as the
-> backlight driver) should take care of.
-
-I don't know how to declare non-support for polarity. How do I do that?
-
-I still want DTS references to state whether or not the polarity
-should be reversed, because the PWM might be connected with either
-positive or negative logic to an LED, for example.
-
->> +     state->polarity   = PWM_POLARITY_INVERSED;
-> Is the polarity really reversed by default on this IP?
-
-Yes. In the sense that the PWM is low while the counter is less than
-the duty-cycle, and high when >= the duty-cycle.
-
-Note that this also means it's possible to achieve a constant high
-value, but impossible to achieve a constant low value, other than
-approximate.
-
-> I don't think this is a good idea. Nobody should be allowed to just
-> change the PWM period without letting the PWM controller have a say in
-> the matter.
-
-I agree and I intend to fight hard to make sure that future chips don't do this.
-
-> Is this ever really an issue?
-
-Unfortunately, yes. This chip has only one PLL output that controls
-almost everything. The core runs at the PLL's output. The bus runs at
-half the PLL's output. Each peripheral clock is a divided down version
-of the bus clock.
-
-> Does the PWM controller use a shared clock that changes rate frequently?
-
-When you want to change the CPU frequency, you have to update all the
-peripheral device clock dividers. It sucks, but that's what has to
-happen if the core clock is changed. Fortunately, this is not done
-dynamically, but might be done during boot.
-
-For PWM, this is not a big issue, because the period mostly does not
-matter as it's broken already. However, for an active SPI transfer,
-this can be problematic.
-
->> +     ret = of_property_read_u32(node, "sifive,npwm", &chip->npwm);
->> +     if (ret < 0 || chip->npwm > MAX_PWM)
->> +             chip->npwm = MAX_PWM;
+>         frequency-range = <MIN MAX>;
 >
-> I don't see this documented in the DT bindings. I also don't see a need
-> for it. Under what circumstances would you want to change this?
-
-The PWM controller can have less than 4 channels. I could try to probe
-how many there are by poking registers, but that seems risky if the
-PWM is attached to something.
-
-Shall I just add this to the dt-bindings?
-
->> +     pwm->irq = platform_get_irq(pdev, 0);
->> +     if (pwm->irq < 0) {
->> +             dev_err(dev, "Unable to find interrupt\n");
->> +             return pwm->irq;
->> +     }
+> or
 >
-> You don't do anything with this, why bother retrieving it?
+>         period-range = <MIN MAX>;
 
-Mostly to ensure that it is included in the DTS so that I can rely on
-it being there in any future driver updates.
+Ok, but now you have to define what happens if a clock change prevents
+you from staying within this range.
 
->> +     dev_info(dev, "SiFive PWM chip registered %d PWMs\n", chip->npwm);
-> Please don't do this.
+Rejecting the clock frequency change does not seem a good option for
+the actual SoC for which I wrote this driver. There, all the PWM does
+is drive an LED bank and clock changes are used to change the core
+frequency.
 
-Removed.
+> you could disable the PWM if it was fed with an invalid range.
+
+Is that really desirable behavior? If the period is defined as being
+best effort for this PWM IP, which is essentially what I've done, it's
+clear you want the PWM to continue to operate. That's certainly the
+behavior I want on the actual SoC with this IP.
+
+I'll make all the DTS changes you guys suggested. ie: "-v0", clarified
+clocks description, and remove unused interrupts comment.
