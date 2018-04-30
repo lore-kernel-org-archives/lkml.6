@@ -1,39 +1,52 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZp3IE0atKVtCMA2MjSZA4Vky3L2TSQvfckXF4bNtgEgnIqRwTjsavL7mAIFG7Q56CnMRk5D
-ARC-Seal: i=1; a=rsa-sha256; t=1525116471; cv=none;
+X-Google-Smtp-Source: AB8JxZpWVov3N0NfJfpTlFmNlFL2XWnmfnYA2VnS8rn7pTE3i4w5whA3yBUggHMUD2NeQ5Ow6EfW
+ARC-Seal: i=1; a=rsa-sha256; t=1525116452; cv=none;
         d=google.com; s=arc-20160816;
-        b=X9tvuYEuG7/7JLC7b1ZXZZzgwrxuol5IVVRt2P0viwCyGA1XLzp6wJwLA3o1Xan/lI
-         4Q0GwKsh/s4+x4ef5aMg/bjlNZ4J8yWJDVggAJAcQnBSR1H5He0ndwJFu8aGFsUwojdX
-         aFsXWwSLa/zO7affF412yAit38sAXOPGqb6WBiKUFkaMoqxamOgwfLPn2i80IpgM+N0c
-         AE/jn9y8JPFMbBetNt2LhrpCu3jZBpH55eAeLgxsbNBziMPYS1hK7LvIlibEvtgzY8rL
-         suhvrBkkGVbL1XqOXa236PaA8n20wn0AnMAr6kHyvq49w6Inlo7MULLe9o9hC0AXFNQ3
-         RtkQ==
+        b=sspTgtZNHdthBByzMNpfguIJI8N9R7CmUUkvf4ex9EIuFFWjUktFkaN0OThXAh610s
+         sxwW0QB8LpB81Q+LHtsa7/1NWyUZ4ZzU9iSuK/E33Fv05ZnjjRgjBOx8IBxUbzFi47cC
+         Lol4FTJrAD7gaRP2+OyEk4aLG7wZojx1Euf0KgvWUuFygk6CPfspJ2uACNZLjdguwSXE
+         M7YnxAAsiKMfqMBgu5wDZtDEMjBDSQH2AfS5KbJ5CpmxacZptRQXJBFpLRt6BMuV7LL0
+         kzQuajAbPF17BvMIbsDrHwoPSOtic3A2LjEI760zFTgmLqIopCFe+qyaiQywHpn1DAfK
+         eS6Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=LpQEQEikT9RlTA61if5potvP2VjLDdoT3WKwffdqHDY=;
-        b=0jGzM5xSV8pEkfKSeNeMakfWy3VqrD6e/2jEyrGvXjbt4i3vBzbBeNPl7ZQCf9nZuo
-         VB9sDawOxFL0XSUch8LuxSNp8mKlPPWNvk1U3xIPohRSMOjFpA1Qm4IIjXywfIGEW/uk
-         maSK7l7hE9zriS6kuioQ6JLbu4aMrH0B0q+f+gD/BRgPuf9SLY/nIs2SVjLr2Hq58GQO
-         3UVIy4TcyjZToAEn49aXL5zG+gL81iAndUN4JNff+JtO2WMuOh1o1EHfpeslH3HGWcD6
-         E0Plz2R1rXdKdBIs9D0hqV53XZgoqOhwS0FMQ67wjS3K1EZC2qSj/rOzNoOgR4uBAHyR
-         hNfg==
+        bh=wZtaPTmw8OcgYO8X5YL9W4vkrayL010G6rujZZB6gvk=;
+        b=XXgIfOxpbNuAVUUHoEq8wEe4iXCOLyNiYHzSlXSdWe7V47xijo7srtQXQBwp/0znvE
+         v6U0HCwD8C4WRIIz4hvjGwMDn2iyaFsM6GO9akpMljFgLDqIzUwE5i9038+ig1ODHdcQ
+         ilfcSjbLpj+YBsj+Eyb8mYdNah/oZ6PPhAuZema4hr6ABHVZwtGWyqveZL601JLvw/0f
+         H7M9FnOok3aAclVQRI4qolOP1rlwuYlHekkcih2xczarhmFWgrI+ZUtKMrQe8W4R6j/d
+         LTk5iZKhcA76QOIHakDl6sjKwmjNd7pW+9bLSUsID8gcflNzGOLs1yof1+EvMWYgYYwm
+         oXOg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DCA222E02
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8982522DAC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ilya Dryomov <idryomov@gmail.com>,
-	Jason Dillaman <dillaman@redhat.com>
-Subject: [PATCH 4.14 73/91] libceph: un-backoff on tick when we have a authenticated session
-Date: Mon, 30 Apr 2018 12:24:55 -0700
-Message-Id: <20180430184008.072931788@linuxfoundation.org>
+	linux-serial@vger.kernel.org,
+	Alan Cox <alan@llwyncelyn.cymru>,
+	Dan Williams <dcbw@redhat.com>,
+	Jiri Prchal <jiri.prchal@aksignal.cz>,
+	Jiri Slaby <jslaby@suse.cz>,
+	Marcel Partap <mpartap@gmx.net>,
+	Merlijn Wajer <merlijn@wizzup.org>,
+	Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
+	Michael Scott <michael.scott@linaro.org>,
+	Pavel Machek <pavel@ucw.cz>,
+	Peter Hurley <peter@hurleysoftware.com>,
+	Russ Gorby <russ.gorby@intel.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Sebastian Reichel <sre@kernel.org>,
+	Tony Lindgren <tony@atomide.com>
+Subject: [PATCH 4.14 31/91] tty: n_gsm: Fix DLCI handling for ADM mode if debug & 2 is not set
+Date: Mon, 30 Apr 2018 12:24:13 -0700
+Message-Id: <20180430184005.798978596@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184004.216234025@linuxfoundation.org>
 References: <20180430184004.216234025@linuxfoundation.org>
@@ -43,8 +56,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200455140576288?=
-X-GMAIL-MSGID: =?utf-8?q?1599200529107115977?=
+X-GMAIL-THRID: =?utf-8?q?1599200279987877864?=
+X-GMAIL-MSGID: =?utf-8?q?1599200508715092210?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,58 +65,67 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ilya Dryomov <idryomov@gmail.com>
+From: Tony Lindgren <tony@atomide.com>
 
-commit facb9f6eba3df4e8027301cc0e514dc582a1b366 upstream.
+commit b2d89ad9c9682e795ed6eeb9ed455789ad6cedf1 upstream.
 
-This means that if we do some backoff, then authenticate, and are
-healthy for an extended period of time, a subsequent failure won't
-leave us starting our hunting sequence with a large backoff.
+At least on droid 4 with control channel in ADM mode, there is no response
+to Modem Status Command (MSC). Currently gsmtty_modem_update() expects to
+have data in dlci->modem_rx unless debug & 2 is set. This means that on
+droid 4, things only work if debug & 2 is set.
 
-Mirrors ceph.git commit d466bc6e66abba9b464b0b69687cf45c9dccf383.
+Let's fix the issue by ignoring empty dlci->modem_rx for ADM mode. In
+the AMD mode, CMD_MSC will never respond and gsm_process_modem() won't
+get called to set dlci->modem_rx.
 
-Cc: stable@vger.kernel.org # 4.7+
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-Reviewed-by: Jason Dillaman <dillaman@redhat.com>
+And according to ts_127010v140000p.pdf, MSC is only relevant if basic
+option is chosen, so let's test for that too.
+
+Fixes: ea3d8465ab9b ("tty: n_gsm: Allow ADM response in addition to UA for control dlci")
+Cc: linux-serial@vger.kernel.org
+Cc: Alan Cox <alan@llwyncelyn.cymru>
+Cc: Dan Williams <dcbw@redhat.com>
+Cc: Jiri Prchal <jiri.prchal@aksignal.cz>
+Cc: Jiri Slaby <jslaby@suse.cz>
+Cc: Marcel Partap <mpartap@gmx.net>
+Cc: Merlijn Wajer <merlijn@wizzup.org>
+Cc: Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
+Cc: Michael Scott <michael.scott@linaro.org>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: Peter Hurley <peter@hurleysoftware.com>
+Cc: Russ Gorby <russ.gorby@intel.com>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Sebastian Reichel <sre@kernel.org>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/ceph/mon_client.c |   13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ drivers/tty/n_gsm.c |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
---- a/net/ceph/mon_client.c
-+++ b/net/ceph/mon_client.c
-@@ -209,6 +209,14 @@ static void reopen_session(struct ceph_m
- 	__open_session(monc);
- }
- 
-+static void un_backoff(struct ceph_mon_client *monc)
-+{
-+	monc->hunt_mult /= 2; /* reduce by 50% */
-+	if (monc->hunt_mult < 1)
-+		monc->hunt_mult = 1;
-+	dout("%s hunt_mult now %d\n", __func__, monc->hunt_mult);
-+}
+--- a/drivers/tty/n_gsm.c
++++ b/drivers/tty/n_gsm.c
+@@ -2885,11 +2885,22 @@ static int gsmtty_modem_update(struct gs
+ static int gsm_carrier_raised(struct tty_port *port)
+ {
+ 	struct gsm_dlci *dlci = container_of(port, struct gsm_dlci, port);
++	struct gsm_mux *gsm = dlci->gsm;
 +
- /*
-  * Reschedule delayed work timer.
-  */
-@@ -963,6 +971,7 @@ static void delayed_work(struct work_str
- 		if (!monc->hunting) {
- 			ceph_con_keepalive(&monc->con);
- 			__validate_auth(monc);
-+			un_backoff(monc);
- 		}
- 
- 		if (is_auth &&
-@@ -1123,9 +1132,7 @@ static void finish_hunting(struct ceph_m
- 		dout("%s found mon%d\n", __func__, monc->cur_mon);
- 		monc->hunting = false;
- 		monc->had_a_connection = true;
--		monc->hunt_mult /= 2; /* reduce by 50% */
--		if (monc->hunt_mult < 1)
--			monc->hunt_mult = 1;
-+		un_backoff(monc);
- 	}
+ 	/* Not yet open so no carrier info */
+ 	if (dlci->state != DLCI_OPEN)
+ 		return 0;
+ 	if (debug & 2)
+ 		return 1;
++
++	/*
++	 * Basic mode with control channel in ADM mode may not respond
++	 * to CMD_MSC at all and modem_rx is empty.
++	 */
++	if (gsm->encoding == 0 && gsm->dlci[0]->mode == DLCI_MODE_ADM &&
++	    !dlci->modem_rx)
++		return 1;
++
+ 	return dlci->modem_rx & TIOCM_CD;
  }
  
