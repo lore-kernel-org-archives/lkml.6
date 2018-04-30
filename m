@@ -1,39 +1,41 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZp6SmX2Y/amERgWlwrqb7dJ7U/fQtnnshPqSX+h/cwWOtBy3rTneV/k0Plig7okTJ2rprc5
-ARC-Seal: i=1; a=rsa-sha256; t=1525116378; cv=none;
+X-Google-Smtp-Source: AB8JxZpLaqfE4wKaHtbqzgK0P+4Pwd/YZuoVKrgCrTY7QYT0IQKfQeXmuWze2/mRKb8Uai4Nb+7B
+ARC-Seal: i=1; a=rsa-sha256; t=1525116413; cv=none;
         d=google.com; s=arc-20160816;
-        b=jN8i2tOpB4Mh0fNUEA6cB0Uc+Tx0KnC6Z83VmYG+MwsRl1qZW5Fj92BQnnNueI/orB
-         b1sr1Dz2IorR2LOm1VDtjx/sEw6nEOu/7aDD6FYcfP5KdfUKoz5jNRXt6uXenDmhcmax
-         u0yfAXQCN1Jk9yDIfBi1P3dOATuKrN0LH/tc/4K7LUZFQZKbUDb7bA9nAGFbb9R1PQ/u
-         Om8vncgcGPucZ4ui+4iIumwLMMWjo8jUSNDdQ91cQq+qf+8VRrvWWfBGo8EiFN9Q2Zyf
-         tSQE6Ywhy1Dzewg2Is5DqD2UklNKoW1XoD3SOTHkvtolpsQ8fOntrxUkba35fcJ20sAx
-         ra5A==
+        b=hw9WN9ytecZAV3KYwN7SlCDjAW1FopExHfeWgaOqOQqKOMLjGRH6X01rnQFVUEKpC/
+         j9mWM8UhOMPnRnE3P+dp91T+AF56wRwXx4zoQjMvfqD+1r3Ra0UQ3qovK93eSPJ7tRsp
+         obOBrAIE6bLnpdedlpB6va8gYAPGwvdZySMz+jrE0jJM9VcR8AbBl7Y0SnhQAJfGLsKF
+         XLWTim24abtqr9LpgP1Y5BFBrfkfrLZi2568ftCft10p5bsz4SFivLd484jBytrWmdyj
+         gvkFtt4R0rH5BncVsk0T0mWX7EZCARGs9H/GBPUR7hlL+WcPYozPIOh76XVLc8mScPUi
+         uStQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=+pOqLtZhCsank5jYmVLDCM8CaXM0AN2dxbJYaq7MkyU=;
-        b=YypSUqlDyPBZAyE6SYyVBuOqmNva/PICrD6xwfLm55UQWG2U2Ji4ngAFze8iswcYyo
-         OKpWQIP9VdX57H+zAjTmJUlSL3bPJKrBLAWCiGTq+igQ3Flb6NepdHKnh2M85l7D2Cbs
-         lD1Ac5b8ttfRAqhI2h5opLodbEAeN05q+xEertLpbl2OPRbSi7TACzfL/sEyFa3hPf3Q
-         2T6Wnk+w43M6aV0+T1lx7dGNn2GzDcXLa1OpaAH2e0UnHrOQLv3Xmqf+Atlu0ZYE4nVi
-         qPTOBZoszpNh7PeOS7aAcAy2h2Y28pTZB+MIAPKC3fmPuzRbXscoVs8ey7v/zyTqotiW
-         RZbg==
+        bh=9DHO31b4pT+Zi/d3f2x91r0bX7ORRtDboByZmyXAF1M=;
+        b=zIGnfuK57LRN2fHvgVjVFSXSkoPOsRzTmaMZYACo/+JJ9KR87vNKcces8fb/ZEMvgl
+         BJ7FZe5X2lqOHVH+ekPtBGsdIbB9ITvIsLUpBJEAqHjocohUkmUdUeRJS3hRC5HshpMC
+         LIbe4yPx1x9zoCCvr4NEtyj3vM9k3/zjUG40jKxWEHq5Fn4knSgEg7x3kRn2LPKp1Q6q
+         DQlSnDfHJnc0FUcHQosAwvz/qBdTJjQJdLsYDPRseoXXJw987tTNuBX/mYM2bunga365
+         GPp3QHgESNWUfpP/0H0qk6kyp4w+tskImYw12Tf2B6dp986zDB+Pv5gAKTCdaR/wY9iU
+         qQOA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35D5A22DAC
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BDC022DBF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Kamil Lulko <kamilx.lulko@intel.com>,
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-Subject: [PATCH 4.9 14/61] usb: core: Add quirk for HP v222w 16GB Mini
-Date: Mon, 30 Apr 2018 12:24:17 -0700
-Message-Id: <20180430183952.437495553@linuxfoundation.org>
+	Marek Vasut <marex@denx.de>,
+	Nicolin Chen <nicoleotsuka@gmail.com>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.9 48/61] ASoC: fsl_esai: Fix divisor calculation failure at lower ratio
+Date: Mon, 30 Apr 2018 12:24:51 -0700
+Message-Id: <20180430183955.410289974@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430183951.312721450@linuxfoundation.org>
 References: <20180430183951.312721450@linuxfoundation.org>
@@ -43,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200291962669964?=
-X-GMAIL-MSGID: =?utf-8?q?1599200432071704445?=
+X-GMAIL-THRID: =?utf-8?q?1599200287248158187?=
+X-GMAIL-MSGID: =?utf-8?q?1599200468795019674?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,35 +54,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kamil Lulko <kamilx.lulko@intel.com>
+From: Nicolin Chen <nicoleotsuka@gmail.com>
 
-commit 3180dabe08e3653bf0a838553905d88f3773f29c upstream.
+commit c656941df9bc80f7ec65b92ca73c42f8b0b62628 upstream.
 
-Add DELAY_INIT quirk to fix the following problem with HP
-v222w 16GB Mini:
+When the desired ratio is less than 256, the savesub (tolerance)
+in the calculation would become 0. This will then fail the loop-
+search immediately without reporting any errors.
 
-usb 1-3: unable to read config index 0 descriptor/start: -110
-usb 1-3: can't read configurations, error -110
-usb 1-3: can't set config #1, error -110
+But if the ratio is smaller enough, there is no need to calculate
+the tolerance because PM divisor alone is enough to get the ratio.
 
-Signed-off-by: Kamil Lulko <kamilx.lulko@intel.com>
-Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-Cc: stable <stable@vger.kernel.org>
+So a simple fix could be just to set PM directly instead of going
+into the loop-search.
+
+Reported-by: Marek Vasut <marex@denx.de>
+Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+Tested-by: Marek Vasut <marex@denx.de>
+Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/core/quirks.c |    3 +++
- 1 file changed, 3 insertions(+)
+ sound/soc/fsl/fsl_esai.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/drivers/usb/core/quirks.c
-+++ b/drivers/usb/core/quirks.c
-@@ -45,6 +45,9 @@ static const struct usb_device_id usb_qu
- 	{ USB_DEVICE(0x03f0, 0x0701), .driver_info =
- 			USB_QUIRK_STRING_FETCH_255 },
+--- a/sound/soc/fsl/fsl_esai.c
++++ b/sound/soc/fsl/fsl_esai.c
+@@ -145,6 +145,13 @@ static int fsl_esai_divisor_cal(struct s
  
-+	/* HP v222w 16GB Mini USB Drive */
-+	{ USB_DEVICE(0x03f0, 0x3f40), .driver_info = USB_QUIRK_DELAY_INIT },
+ 	psr = ratio <= 256 * maxfp ? ESAI_xCCR_xPSR_BYPASS : ESAI_xCCR_xPSR_DIV8;
+ 
++	/* Do not loop-search if PM (1 ~ 256) alone can serve the ratio */
++	if (ratio <= 256) {
++		pm = ratio;
++		fp = 1;
++		goto out;
++	}
 +
- 	/* Creative SB Audigy 2 NX */
- 	{ USB_DEVICE(0x041e, 0x3020), .driver_info = USB_QUIRK_RESET_RESUME },
+ 	/* Set the max fluctuation -- 0.1% of the max devisor */
+ 	savesub = (psr ? 1 : 8)  * 256 * maxfp / 1000;
  
