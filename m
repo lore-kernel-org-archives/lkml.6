@@ -1,22 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932193AbeD3UKF (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 16:10:05 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:36220 "EHLO
+        id S932135AbeD3UM0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 16:12:26 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:36242 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754555AbeD3UKB (ORCPT
+        with ESMTP id S1751517AbeD3UMY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 16:10:01 -0400
-Date: Mon, 30 Apr 2018 16:10:00 -0400 (EDT)
-Message-Id: <20180430.161000.699679324055043425.davem@davemloft.net>
-To: arvind.yadav.cs@gmail.com
-Cc: shannon.nelson@oracle.com, jag.raman@oracle.com,
-        liam.merwick@oracle.com, linux-kernel@vger.kernel.org,
-        sparclinux@vger.kernel.org
-Subject: Re: [PATCH] sparc: vio: use put_device() instead of kfree()
+        Mon, 30 Apr 2018 16:12:24 -0400
+Date: Mon, 30 Apr 2018 16:12:22 -0400 (EDT)
+Message-Id: <20180430.161222.657632197850615574.davem@davemloft.net>
+To: torvalds@linux-foundation.org
+CC: akpm@linux-foundation.org, sparclinux@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [GIT] Sparc
 From: David Miller <davem@davemloft.net>
-In-Reply-To: <a3722bda2eadf1ff229f73da6f0316f954956ae1.1524668025.git.arvind.yadav.cs@gmail.com>
-References: <a3722bda2eadf1ff229f73da6f0316f954956ae1.1524668025.git.arvind.yadav.cs@gmail.com>
 X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
@@ -25,13 +22,36 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Date: Wed, 25 Apr 2018 20:26:14 +0530
 
-> Never directly free @dev after calling device_register(), even
-> if it returned an error. Always use put_device() to give up the
-> reference initialized.
-> 
-> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+Please pull to get the following fixes:
 
-Applied and queued up for -stable, thanks.
+1) Fixup license text for oradax driver, from Rob Gardner.
+
+2) Release device object with put_device() instead of straight
+   kfree(), from Arvind Yadav.
+
+Thanks!
+
+The following changes since commit 17dec0a949153d9ac00760ba2f5b78cb583e995f:
+
+  Merge branch 'userns-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace (2018-04-03 19:15:32 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/davem/sparc.git 
+
+for you to fetch changes up to 00ad691ab140b54ab9f5de5e74cb994f552e8124:
+
+  sparc: vio: use put_device() instead of kfree() (2018-04-30 16:09:34 -0400)
+
+----------------------------------------------------------------
+Arvind Yadav (1):
+      sparc: vio: use put_device() instead of kfree()
+
+Rob Gardner (1):
+      sparc64: Fix mistake in oradax license text
+
+ arch/sparc/include/uapi/asm/oradax.h | 2 +-
+ arch/sparc/kernel/vio.c              | 2 +-
+ drivers/sbus/char/oradax.c           | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
