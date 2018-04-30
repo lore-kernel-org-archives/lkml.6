@@ -1,83 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753708AbeD3NRW (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 09:17:22 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58696 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751741AbeD3NRT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 09:17:19 -0400
-Subject: Re: [PATCH v6 00/11] Intel Processor Trace virtualization enabling
-To: Luwei Kang <luwei.kang@intel.com>, kvm@vger.kernel.org
-Cc: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-        rkrcmar@redhat.com, linux-kernel@vger.kernel.org, joro@8bytes.org,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>
-References: <1521544918-31084-1-git-send-email-luwei.kang@intel.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <936aa045-cd48-e749-b1ff-ca19e834a1ae@redhat.com>
-Date: Mon, 30 Apr 2018 15:17:12 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1753921AbeD3NRk (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 09:17:40 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:44940 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753795AbeD3NRj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 09:17:39 -0400
+Date: Mon, 30 Apr 2018 15:17:30 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+Cc: Bhadram Varka <vbhadram@nvidia.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jingju Hou <Jingju.Hou@synaptics.com>
+Subject: Re: [PATCH] net: phy: marvell: clear wol event before setting it
+Message-ID: <20180430131730.GE10066@lunn.ch>
+References: <20180419160232.519d15be@xhacker.debian>
+ <20180419121801.GC17888@lunn.ch>
+ <4273f766-a017-b336-7d14-a28901d274b9@nvidia.com>
+ <20180426141508.6660a633@xhacker.debian>
+ <be2addb5-b3fd-13cb-ad33-f0527931a0d2@nvidia.com>
+ <73e21c83-f78a-8b22-a421-f179ef6adef1@nvidia.com>
+ <20180427152555.5e8efb9c@xhacker.debian>
 MIME-Version: 1.0
-In-Reply-To: <1521544918-31084-1-git-send-email-luwei.kang@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180427152555.5e8efb9c@xhacker.debian>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/03/2018 12:21, Luwei Kang wrote:
-> Hi All,
+> > diff --git a/drivers/net/phy/marvell.c b/drivers/net/phy/marvell.c
+> > index ed8a67d..5d3d138 100644
+> > --- a/drivers/net/phy/marvell.c
+> > +++ b/drivers/net/phy/marvell.c
+> > @@ -55,6 +55,7 @@
+> > 
+> >   #define MII_M1011_IEVENT               0x13
+> >   #define MII_M1011_IEVENT_CLEAR         0x0000
+> > +#define MII_M1011_IEVENT_WOL_EVENT     BIT(7)
+> > 
+> >   #define MII_M1011_IMASK                        0x12
+> > - #define MII_M1011_IMASK_INIT           0x6400
+> > + #define MII_M1011_IMASK_INIT           0x6480
+> > 
+> > @@ -195,13 +196,40 @@ struct marvell_priv {
+> >          bool copper;
+> >   };
+> > 
+> > +static int marvell_clear_wol_status(struct phy_device *phydev)
+> > +{
+> > +       int err, temp, oldpage;
+> > +
+> > +       oldpage = phy_read(phydev, MII_MARVELL_PHY_PAGE);
+> > +       if (oldpage < 0)
+> > +               return oldpage;
+> > +
+> > +       err = phy_write(phydev, MII_MARVELL_PHY_PAGE,
+> > +                        MII_88E1318S_PHY_WOL_PAGE);
+> > +       if (err < 0)
+> > +               return err;
+> > +
+> > +       /*
+> > +        * Clear WOL status so that for next WOL event
+> > +        * interrupt will be generated by HW
+> > +        */
+> > +       temp = phy_read(phydev, MII_88E1318S_PHY_WOL_CTRL);
+> > +       temp |= MII_88E1318S_PHY_WOL_CTRL_CLEAR_WOL_STATUS;
+> > +       err = phy_write(phydev, MII_88E1318S_PHY_WOL_CTRL, temp);
 > 
-> Here is a patch-series which adding Processor Trace enabling in KVM
-> guest. 
-> 
-> Processor Trace virtualization can be work in one of 3 possible modes
-> by set new option "pt_mode". Default value is system mode.
-> a. system-wide: trace both host/guest and output to host buffer;
-> b. host-only: only trace host and output to host buffer;
-> c. host-guest: trace host/guest simultaneous and output to their
-> respective buffer.
+> is it better to reuse __phy_write()?
 
-tip folks, could you please ack and/or prepare a topic branch for
-patches 1-3 in this series?
+phy_modify_paged() would be the best function to use.
 
-Thanks!
-
-Paolo
+	Andrew
