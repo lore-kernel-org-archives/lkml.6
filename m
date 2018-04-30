@@ -1,70 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753782AbeD3BcX (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 29 Apr 2018 21:32:23 -0400
-Received: from mta-p8.oit.umn.edu ([134.84.196.208]:35236 "EHLO
-        mta-p8.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753514AbeD3BcW (ORCPT
+        id S1754059AbeD3BeY (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 29 Apr 2018 21:34:24 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:54024 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753839AbeD3BeT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Apr 2018 21:32:22 -0400
-X-Google-Smtp-Source: AB8JxZpODi7zOIXt0hsa/QtJPT+edvhtjZSytOwvBQCzhTCUQi99dhVJ7j0rGVRcw9sW+/cilPD88g==
-From: Wenwen Wang <wang6495@umn.edu>
-To: Wenwen Wang <wang6495@umn.edu>
-Cc: Kangjie Lu <kjlu@umn.edu>, "David S. Miller" <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Edward Cree <ecree@solarflare.com>, Inbar Karmy <inbark@mellanox.com>,
-        Eugenia Emantayev <eugenia@mellanox.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Yury Norov <ynorov@caviumnetworks.com>,
-        Vidya Sagar Ravipati <vidya.chowdary@gmail.com>,
-        Alan Brady <alan.brady@intel.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        netdev@vger.kernel.org (open list:NETWORKING [GENERAL]),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] ethtool: fix a potential missing-check bug
-Date: Sun, 29 Apr 2018 20:31:54 -0500
-Message-Id: <1525051915-31944-1-git-send-email-wang6495@umn.edu>
-X-Mailer: git-send-email 2.7.4
+        Sun, 29 Apr 2018 21:34:19 -0400
+Date: Sun, 29 Apr 2018 21:34:17 -0400 (EDT)
+Message-Id: <20180429.213417.1622456092178936722.davem@davemloft.net>
+To: edumazet@google.com
+Cc: netdev@vger.kernel.org, luto@kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, ka-cheong.poon@oracle.com, eric.dumazet@gmail.com
+Subject: Re: [PATCH v4 net-next 0/2] tcp: mmap: rework zerocopy receive
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180427155809.79094-1-edumazet@google.com>
+References: <20180427155809.79094-1-edumazet@google.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In ethtool_get_rxnfc(), the object "info" is firstly copied from
-user-space. If the FLOW_RSS flag is set in the member field flow_type of
-"info" (and cmd is ETHTOOL_GRXFH), info needs to be copied again from
-user-space because FLOW_RSS is newer and has new definition, as mentioned
-in the comment. However, given that the user data resides in user-space, a
-malicious user can race to change the data after the first copy. By doing
-so, the user can inject inconsistent data. For example, in the second
-copy, the FLOW_RSS flag could be cleared in the field flow_type of "info".
-In the following execution, "info" will be used in the function
-ops->get_rxnfc(). Such inconsistent data can potentially lead to unexpected
-information leakage since ops->get_rxnfc() will prepare various types of
-data according to flow_type, and the prepared data will be eventually
-copied to user-space. This inconsistent data may also cause undefined
-behaviors based on how ops->get_rxnfc() is implemented.
+From: Eric Dumazet <edumazet@google.com>
+Date: Fri, 27 Apr 2018 08:58:07 -0700
 
-This patch re-verifies the flow_type field of "info" after the second copy.
-If the value is not as expected, an error code will be returned.
+> syzbot reported a lockdep issue caused by tcp mmap() support.
+> 
+> I implemented Andy Lutomirski nice suggestions to resolve the
+> issue and increase scalability as well.
+> 
+> First patch is adding a new getsockopt() operation and changes mmap()
+> behavior.
+> 
+> Second patch changes tcp_mmap reference program.
+> 
+> v4: tcp mmap() support depends on CONFIG_MMU, as kbuild bot told us.
+> 
+> v3: change TCP_ZEROCOPY_RECEIVE to be a getsockopt() option
+>     instead of setsockopt(), feedback from Ka-Cheon Poon
+> 
+> v2: Added a missing page align of zc->length in tcp_zerocopy_receive()
+>     Properly clear zc->recv_skip_hint in case user request was completed.
 
-Signed-off-by: Wenwen Wang <wang6495@umn.edu>
----
- net/core/ethtool.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/net/core/ethtool.c b/net/core/ethtool.c
-index 03416e6..a121034 100644
---- a/net/core/ethtool.c
-+++ b/net/core/ethtool.c
-@@ -1032,6 +1032,8 @@ static noinline_for_stack int ethtool_get_rxnfc(struct net_device *dev,
- 		info_size = sizeof(info);
- 		if (copy_from_user(&info, useraddr, info_size))
- 			return -EFAULT;
-+		if (!(info.flow_type & FLOW_RSS))
-+			return -EINVAL;
- 	}
- 
- 	if (info.cmd == ETHTOOL_GRXCLSRLALL) {
--- 
-2.7.4
+Looks great, series applied, thanks Eric.
