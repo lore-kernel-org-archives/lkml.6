@@ -1,39 +1,40 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrIXVCw9aHN0GOFsxMCTJhHaujFw+hMMTMffaB5yd8v/GcU0Yn/Hekw82IXpA7Bp5GpfeGU
-ARC-Seal: i=1; a=rsa-sha256; t=1525116369; cv=none;
+X-Google-Smtp-Source: AB8JxZpECBln7fBvNaWzJfDGfgZHsnFrEg1v4/J5WMSdXb2W22BfC8fqB/hxzHZqi00Lnmkx+d8k
+ARC-Seal: i=1; a=rsa-sha256; t=1525116367; cv=none;
         d=google.com; s=arc-20160816;
-        b=g0iplVvDnDLl9TF1tb1yEiT6aARg1y1J4V+jb+VsN8X3vuJIn7lnN4vedbOJrqyMhP
-         lYnOer/6Uu86hMgYeBcpWBVhj8ZkRIMpO+QNTQWfhxBF9NhctHlWQY/m7O1EFYv0IKPG
-         cBbK4kWk+PsDWTFuTm3uCMtGsy//sVCyNziURFBXaZiVeWJVinz5UNJkTyqbCRyVv+Ii
-         p/BT9QH7SQFOQhRzMc+jBqQx0IGTvJL6K+pi3ekycbBaeV7JB6Ge3BoiqcpyFulmGysU
-         op0ZNh4oYClDYqUEsO5aqfRhm2yqXJ+gk3sr0WQy3JKo9wf2vTnDNBvhzBPaitqo/Ql8
-         k7bg==
+        b=Fwg9xdwYbsVqjf1LR9hUtwr8FHR9797X8jEzcqR/67IvFU0xLsXY4M9vy4la8+fbuE
+         ggnnpOHBEIzh05s6who7/5KX6HOP7KfXmKndIU4wTtCahPmwYHatkYPY3usENxl3siPk
+         cS6TIXT/scmDKTAm1/9+aSTsNqTsBW9ZyNKiqB3ZqCvtiHcxQ6yF/5PrfIST5Ga5VLxR
+         lRViaCt3jR9HnYXA2weVWK55zAyxEE/4quLzbU8+OHQfjkHKLMXk3Lf+GplP+8Oku/z9
+         Rraw3kclVY4zyjogr7jcYcg79iMHLyJjliAVWER91fi0PdSFpsRExPI1RZKo2mdFLXxn
+         P8Vw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=ihgVskkEh2dApA7/XQ3roK45SHLuvI1Toq5pwxrqeaA=;
-        b=P0yB8YQ0R3DfPlDtyG7zyV403fysmm+YCyL+o0SAcFUE0+T5xyEhaWK7j3gCHGvU7i
-         lpFRSuOviaxwHKyGr+BVNr220YFtQpMr0a1ti4K5ayhq+tpWQ42vLeFahIUGK1u7NoYe
-         qvaaJZ7dqoUCUaVBcPMvpzMrXGNfFYIwL3ywx4ZusI399H2ynD8pPqS0i9xESJgIxJ0L
-         Ruw11qVWY24h3slDl8ELpVWWfehjwgo1Z9CsxaNdycx0pMtH1ifnVgBKfwk9GVqXi+Zj
-         P8vjc818kSbUDpPurWAstDCeKWNtF7SZdSybKs7GRryC610ge/XYkPtmqPH1lIqrmLjZ
-         iVIA==
+        bh=U684LyANKGYpIcUo1fs2d2o8h+gfrWRClYjijKOwkvk=;
+        b=cTVhDOBEjWFILFgPBs9FcEbKhy5jhatzm3O7eCU/+hIVeDku9v1sEhBAt8QxAfNNaa
+         jyGlNftCCpuJpkfyfz2IFgJaUFsjBdg3O75RrufW/7UhBCZTcYsy0gKKsa2DULuX6B1o
+         pHOaT7h6T/jZqZKg3svqg6j9U4hF8cMHesWrG0xkuYosm12j3cPgLmRv3pGti/ClqJ30
+         dO/nDxdwy564AinDBnzyOfXeBpqK/TdF6K3UmxaRIU/NOVPApLTRMywnfXJGgFQZciA1
+         PzwKfBGkA86Lqp/TTUdGal0U0Q9QyEX+lRFc7waEvM8cRa+N4Hw0RYCROlT4pOASY7UR
+         F9sg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D302022DAE
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECF4C22DC2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dan Carpenter <dan.carpenter@oracle.com>,
-	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.4 20/44] ALSA: opl3: Hardening for potential Spectre v1
-Date: Mon, 30 Apr 2018 12:24:31 -0700
-Message-Id: <20180430190947.152790912@linuxfoundation.org>
+	Romain Izard <romain.izard.pro@gmail.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Daniel Wagner <wagi@monom.org>
+Subject: [PATCH 4.4 43/44] serial: mctrl_gpio: Add missing module license
+Date: Mon, 30 Apr 2018 12:24:54 -0700
+Message-Id: <20180430190948.046565745@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430190946.093694747@linuxfoundation.org>
 References: <20180430190946.093694747@linuxfoundation.org>
@@ -43,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200422064417466?=
-X-GMAIL-MSGID: =?utf-8?q?1599200422064417466?=
+X-GMAIL-THRID: =?utf-8?q?1599200420468321322?=
+X-GMAIL-MSGID: =?utf-8?q?1599200420468321322?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,53 +53,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Romain Izard <romain.izard.pro@gmail.com>
 
-commit 7f054a5bee0987f1e2d4e59daea462421c76f2cb upstream.
+commit 82a3f87f6e80e0bf7978152021eb8938976721cb upstream.
 
-As recently Smatch suggested, one place in OPL3 driver may expand the
-array directly from the user-space value with speculation:
-  sound/drivers/opl3/opl3_synth.c:476 snd_opl3_set_voice() warn: potential spectre issue 'snd_opl3_regmap'
+As the mctrl_gpio driver can be built as a module, it needs to have its
+license specified with MODULE_LICENSE. Otherwise, it cannot access
+required symbols exported through EXPORT_SYMBOL_GPL.
 
-This patch puts array_index_nospec() for hardening against it.
-
-BugLink: https://marc.info/?l=linux-kernel&m=152411496503418&w=2
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
+Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Daniel Wagner <wagi@monom.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/drivers/opl3/opl3_synth.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/tty/serial/serial_mctrl_gpio.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/sound/drivers/opl3/opl3_synth.c
-+++ b/sound/drivers/opl3/opl3_synth.c
-@@ -21,6 +21,7 @@
+--- a/drivers/tty/serial/serial_mctrl_gpio.c
++++ b/drivers/tty/serial/serial_mctrl_gpio.c
+@@ -20,6 +20,7 @@
+ #include <linux/gpio/consumer.h>
+ #include <linux/termios.h>
+ #include <linux/serial_core.h>
++#include <linux/module.h>
  
- #include <linux/slab.h>
- #include <linux/export.h>
-+#include <linux/nospec.h>
- #include <sound/opl3.h>
- #include <sound/asound_fm.h>
+ #include "serial_mctrl_gpio.h"
  
-@@ -448,7 +449,7 @@ static int snd_opl3_set_voice(struct snd
- {
- 	unsigned short reg_side;
- 	unsigned char op_offset;
--	unsigned char voice_offset;
-+	unsigned char voice_offset, voice_op;
- 
- 	unsigned short opl3_reg;
- 	unsigned char reg_val;
-@@ -473,7 +474,9 @@ static int snd_opl3_set_voice(struct snd
- 		voice_offset = voice->voice - MAX_OPL2_VOICES;
+@@ -249,3 +250,5 @@ void mctrl_gpio_disable_ms(struct mctrl_
  	}
- 	/* Get register offset of operator */
--	op_offset = snd_opl3_regmap[voice_offset][voice->op];
-+	voice_offset = array_index_nospec(voice_offset, MAX_OPL2_VOICES);
-+	voice_op = array_index_nospec(voice->op, 4);
-+	op_offset = snd_opl3_regmap[voice_offset][voice_op];
- 
- 	reg_val = 0x00;
- 	/* Set amplitude modulation (tremolo) effect */
+ }
+ EXPORT_SYMBOL_GPL(mctrl_gpio_disable_ms);
++
++MODULE_LICENSE("GPL");
