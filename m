@@ -1,45 +1,40 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpGV4MtazXkrx3SetimT1L/BIFiWUwU1Uy57Weec1VGdtZpqXVDvN9giYFimtMpCYYjf5cj
-ARC-Seal: i=1; a=rsa-sha256; t=1525116452; cv=none;
+X-Google-Smtp-Source: AB8JxZoBJIERFBUgNywWjJaxTegAvKcfO3yMp0HaS3x1IIdDvn4jc/2W9f8rl+z97f3iNnAgf8XB
+ARC-Seal: i=1; a=rsa-sha256; t=1525116470; cv=none;
         d=google.com; s=arc-20160816;
-        b=majKGpXxxqjArrsGe+7emuS7K7l0/BqOiqfKNOTkmgcjDFCGv1TCkqabi2uJ5jbv66
-         3XA4B4wRtHyS4/T+ZpSCRuLt/SBXS+kDnwbpCzqNGvroaMAG5MlmAWZFPIK7nRUZ8BzW
-         PAeiX1Gllrq/Rnvh1qWYQvzRxpeRWU1n4/l1F4zkkiUfToNafEGpcqyU7JD9tHwcFs2Y
-         rOiBxYQFSP/2Tj2AyQi1Fq40dCgFvgPMeoVsTaOA162/PJnaHCmc+ZfnwdUVhQGmheC3
-         PlKaR+df69RZYOJhf9Mkj+w++oAEsKSU0Kvu2RQ20ccJs1YfLs2YS3cBwSf38+FWFegi
-         8NYw==
+        b=0E20Nyo9dDUVa3C8UoHFIP5fj/lHkDcFpTWogLaVuL6HT9cq8iw8EFcwC0l1C1yYmT
+         yfqAbfxAm+Y43DiNjNFEcAVcqLMOEVjt63TOtRBXoqurthrosfOasFSJ6PSDcQ8fv0tn
+         RJJlsN6tHvPieM1XEMwn60m323tnihQ+sio2DDvCayFK1D+lMf6aX3nurnfM6FPs9I0U
+         pADubHCjHwf1Wd8D+kDIHynSKTsAPcI1cAtAh5YishuxNli5/lwPx0qRpRmnDSpi+oGX
+         mhxSzjIQ7e/eZDrqsmcb7R8lKpnwlhvbeV4qP5Pp0wKMBSnVbq8Tm8DoV2pjcuKslTSq
+         SnuA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=Kw+n2UISrW/jaVgI2BwNqyohNgQM5v2p7dXBY0+FRuQ=;
-        b=mGwY4oOZVWlZGbmIcXfD5H6kmtM0Jztz43VwdfHjwVgq/3Ci+berjhqVHhAMrc4s1W
-         PQJgEHvsyJY6P7AC2y5RKtdys8h6/nHi1joyP0zTEgC0HiS4CLh46SmC8StDeGxslEBo
-         /9bi0OG+ECraTNNr9nWiN2AZ9UDKTbjrVuNo/2D3oFd3TKJxNvaRmeRm0VD74Ny+lZCK
-         WrWCDtiqNujBYamh1gY0B9FcE88EGJmEVZdbL/Te3jbHuHqVavRXiHO3Teq0NXwx1SQr
-         W02ZInczK5zPGat8kXsqMJlnMtRWINpaODZbHaPHNIhIapPBnyUFfLehyUpI8Uf61YCv
-         Paew==
+        bh=DXL16JLVbFhVwAsZIQp+1hWYvRb6Yqkq/1VpvZSqt3s=;
+        b=Po3vWuyHAAv7PUZnGMCdx7F1NIWLoc5/rnSJYOFuQA9s/KplTAZPiJ9Eh+Tv3CZKDX
+         K9rxz28K9uoQ/eDAJdJxJsQ1fN18tNTaXXRbckrVg5SHYboDJD+NhMSu9V2MMRKhLd3g
+         4rNfYRa1sUlzCkCisQ7yFLDLfiuyLDPBX4R7Wf4Kq4tuleROi0C2zTGZ1Z/ftBtTKCC6
+         waL5Si21YbSX82MltccVg80PiU+WTy+jZzEAlkaV9Smy86IgNiVX0oLMjdxqEH1elp6u
+         hzyop82TdPE7vt5CTNdopaYi4G6QhOo0o/lOviSNPBaqkp6L9SI2q6cA0BDCe11bd/p2
+         EOWw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C7F722DC1
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE84422E72
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+40b7287c2dc987c48c81@syzkaller.appspotmail.com,
-	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-	Jiri Slaby <jslaby@suse.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Alan Cox <alan@llwyncelyn.cymru>,
-	Christoph Hellwig <hch@lst.de>,
-	Michal Hocko <mhocko@suse.com>
-Subject: [PATCH 4.14 32/91] tty: Avoid possible error pointer dereference at tty_ldisc_restore().
-Date: Mon, 30 Apr 2018 12:24:14 -0700
-Message-Id: <20180430184005.847588872@linuxfoundation.org>
+	Stephan Mueller <smueller@chronox.de>,
+	syzbot+75397ee3df5c70164154@syzkaller.appspotmail.com,
+	Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.14 71/91] crypto: drbg - set freed buffers to NULL
+Date: Mon, 30 Apr 2018 12:24:53 -0700
+Message-Id: <20180430184007.964340007@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184004.216234025@linuxfoundation.org>
 References: <20180430184004.216234025@linuxfoundation.org>
@@ -49,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200577624150021?=
-X-GMAIL-MSGID: =?utf-8?q?1599200509148199259?=
+X-GMAIL-THRID: =?utf-8?q?1599200468155576446?=
+X-GMAIL-MSGID: =?utf-8?q?1599200528294991533?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -58,65 +53,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Stephan Mueller <smueller@chronox.de>
 
-commit 598c2d41ff44889dd8eced4f117403e472158d85 upstream.
+commit eea0d3ea7546961f69f55b26714ac8fd71c7c020 upstream.
 
-syzbot is reporting crashes [1] triggered by memory allocation failure at
-tty_ldisc_get() from tty_ldisc_restore(). While syzbot stops at WARN_ON()
-due to panic_on_warn == true, panic_on_warn == false will after all trigger
-an OOPS by dereferencing old->ops->num if IS_ERR(old) == true.
+During freeing of the internal buffers used by the DRBG, set the pointer
+to NULL. It is possible that the context with the freed buffers is
+reused. In case of an error during initialization where the pointers
+do not yet point to allocated memory, the NULL value prevents a double
+free.
 
-We can simplify tty_ldisc_restore() as three calls (old->ops->num, N_TTY,
-N_NULL) to tty_ldisc_failto() in addition to avoiding possible error
-pointer dereference.
-
-If someone reports kernel panic triggered by forcing all memory allocations
-for tty_ldisc_restore() to fail, we can consider adding __GFP_NOFAIL for
-tty_ldisc_restore() case.
-
-[1] https://syzkaller.appspot.com/bug?id=6ac359c61e71d22e06db7f8f88243feb11d927e7
-
-Reported-by: syzbot+40b7287c2dc987c48c81@syzkaller.appspotmail.com
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jiri Slaby <jslaby@suse.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Alan Cox <alan@llwyncelyn.cymru>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: stable <stable@vger.kernel.org>
+Cc: stable@vger.kernel.org
+Fixes: 3cfc3b9721123 ("crypto: drbg - use aligned buffers")
+Signed-off-by: Stephan Mueller <smueller@chronox.de>
+Reported-by: syzbot+75397ee3df5c70164154@syzkaller.appspotmail.com
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/tty_ldisc.c |   13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+ crypto/drbg.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/tty/tty_ldisc.c
-+++ b/drivers/tty/tty_ldisc.c
-@@ -526,19 +526,16 @@ static int tty_ldisc_failto(struct tty_s
- static void tty_ldisc_restore(struct tty_struct *tty, struct tty_ldisc *old)
- {
- 	/* There is an outstanding reference here so this is safe */
--	old = tty_ldisc_get(tty, old->ops->num);
--	WARN_ON(IS_ERR(old));
--	tty->ldisc = old;
--	tty_set_termios_ldisc(tty, old->ops->num);
--	if (tty_ldisc_open(tty, old) < 0) {
--		tty_ldisc_put(old);
-+	if (tty_ldisc_failto(tty, old->ops->num) < 0) {
-+		const char *name = tty_name(tty);
-+
-+		pr_warn("Falling back ldisc for %s.\n", name);
- 		/* The traditional behaviour is to fall back to N_TTY, we
- 		   want to avoid falling back to N_NULL unless we have no
- 		   choice to avoid the risk of breaking anything */
- 		if (tty_ldisc_failto(tty, N_TTY) < 0 &&
- 		    tty_ldisc_failto(tty, N_NULL) < 0)
--			panic("Couldn't open N_NULL ldisc for %s.",
--			      tty_name(tty));
-+			panic("Couldn't open N_NULL ldisc for %s.", name);
- 	}
- }
- 
+--- a/crypto/drbg.c
++++ b/crypto/drbg.c
+@@ -1134,8 +1134,10 @@ static inline void drbg_dealloc_state(st
+ 	if (!drbg)
+ 		return;
+ 	kzfree(drbg->Vbuf);
++	drbg->Vbuf = NULL;
+ 	drbg->V = NULL;
+ 	kzfree(drbg->Cbuf);
++	drbg->Cbuf = NULL;
+ 	drbg->C = NULL;
+ 	kzfree(drbg->scratchpadbuf);
+ 	drbg->scratchpadbuf = NULL;
