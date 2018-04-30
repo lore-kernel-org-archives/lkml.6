@@ -1,40 +1,39 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrtfsFwKtNjICcWIYemzNGaj3AOXEXTrge+WQAxaMoJEi7YGdMOTrTwGV3BykU6QuwyXrXn
-ARC-Seal: i=1; a=rsa-sha256; t=1525116390; cv=none;
+X-Google-Smtp-Source: AB8JxZo38hcuKf4rwmAo/1oQaI47bHuRwy3SeJeW4DwoXCDex5UqZcMh5HxJcKhLK07YQ+WvpRLL
+ARC-Seal: i=1; a=rsa-sha256; t=1525116389; cv=none;
         d=google.com; s=arc-20160816;
-        b=Z4X9IhjHELBzUU7UAupcsAzMvRfNz3xB0+zh2bLaQkCMe1kOZFK4wE1LeM5LU3OKjd
-         417CP+j5q5qLc3Qp5729F0dHF0KCqQOlKFZKLniqmmtb9rN/U3/NdRgssGJtOmie/pID
-         t6x6dPzjvB48Bh0oaXW6X4K9clQ0ZGKnTuz/YeNWAGT7ozcfc/+S/TICwvjmqC53jlmL
-         Oc9BKsEQoM55Qxfhx603qvgT2uc6oiIjZ0D0OGuJVCQRVH73S7osdWFTsUF/tt+bUNRE
-         rdrrpCo7TtG7DmVtx9ajvegjS2PWl9fdCmmrK4/KaX4f73o0sRsl7F/PS45MdemI9nsG
-         pptQ==
+        b=Yp13gRs+mOjBESvgS3dW2UJAITEor2SvjpFs49T22ecg82o5B97jofDzuUC6T7YfHW
+         wkHmDnlMHbQCXeNYoJjUjg5A2egfSes3CsebRJ9kRzgrrrPV8YoDgZfnBUzaronBmwmN
+         Aw5d0CfCQRQsJ16QQrVBsEu6aLscNKxJBM3WH3uEhwcq9Ta5X1IgwctLMkWsq7ADDFBR
+         lpcdfVEBmBulZT76YlrcnPImI8rm2HFL+p8K15ThN/h63GL5Ff+JcjhILv0XMaluTlMP
+         DDyqHHrf9gn9JJqy+RN1jmXVUKv+oS4FwF5erignmKxWkDMsc9K2h9kB3fH/U17ej8Cg
+         51CQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=8ktO0D7MH9bjr1tGKE1gyg46AiO8hl0gsuRBTiFa29s=;
-        b=EpqLMP6Mc/awyYN1wMEjymPjnwozMsYX+Tdm/eHivvR2e3JW344w5mKNh9l4gJQARm
-         TTjyZk0Anvlo38eyJZZ+oIxtfEcgcck7pQj7HDLi/N/egsekG6l+0AOGJ95+4s6HytHr
-         Jy0ZC8J+p/rKdkfD29AzFuhX1Kb5HOdYqXFZ43dPlVPOM0bhQeuhf7Cr/j+pKvAUQXHW
-         1m6B9oyLvGM003bDfO0PT1R9xn3qI2NWjBxh3T2x8Kjhyqu10qnFOorNb4J2DecZOxQx
-         s0nMLRroE8mL8yUSY2l5Ez9bQFR/1jkMUrUmLO8GtSlCVpznWzDMQbbub0AgPhXh2KdO
-         tLXA==
+        bh=oeYfoFKC6NGW3hBgpSApsQWd42BR/eBusLPjnQeScYs=;
+        b=g+Ya0m2avmD8VmmWJsn0ybsXVaHS2CIspShzqOWZHgY2r52wJ/KGtqLCHekJ+H0Hv8
+         EdHi4mFRRvTtMfX+TJtLIVtBtxkiX+GBBH95SfT/Ab6zXpKgi+x+FuO56HvuyekIH1H5
+         i+PJ1jKgQ+oIzMIzj0jLeN/+3DmmZHXw+qwxvHPST9MVtYHmSuL72Tdkt+zfb5pVlk9P
+         L871MSekKRcUHF2XbLRHuq5L3yS77OTi5++1ba0qv+RsiTW5nJ88AYIbKAJHicm78TVA
+         iatPlN9Ub1qlXpNUbagzk/qXC4tCKdOp+iy16Vhktkr1QxDz8eZetBvRX2V5g4a/DVsM
+         MAew==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A897122DAE
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 165B522E72
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Lukas Czerner <lczerner@redhat.com>,
-	Theodore Tso <tytso@mit.edu>,
-	Ilya Dryomov <idryomov@gmail.com>
-Subject: [PATCH 4.9 04/61] ext4: fix bitmap position validation
-Date: Mon, 30 Apr 2018 12:24:07 -0700
-Message-Id: <20180430183951.709934183@linuxfoundation.org>
+	Dan Carpenter <dan.carpenter@oracle.com>,
+	Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.9 30/61] ALSA: control: Hardening for potential Spectre v1
+Date: Mon, 30 Apr 2018 12:24:33 -0700
+Message-Id: <20180430183953.959159000@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430183951.312721450@linuxfoundation.org>
 References: <20180430183951.312721450@linuxfoundation.org>
@@ -44,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200288532951391?=
-X-GMAIL-MSGID: =?utf-8?q?1599200444144188630?=
+X-GMAIL-THRID: =?utf-8?q?1599200426740166309?=
+X-GMAIL-MSGID: =?utf-8?q?1599200443547527899?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,78 +52,64 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Lukas Czerner <lczerner@redhat.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 22be37acce25d66ecf6403fc8f44df9c5ded2372 upstream.
+commit 088e861edffb84879cf0c0d1b02eda078c3a0ffe upstream.
 
-Currently in ext4_valid_block_bitmap() we expect the bitmap to be
-positioned anywhere between 0 and s_blocksize clusters, but that's
-wrong because the bitmap can be placed anywhere in the block group. This
-causes false positives when validating bitmaps on perfectly valid file
-system layouts. Fix it by checking whether the bitmap is within the group
-boundary.
+As recently Smatch suggested, a few places in ALSA control core codes
+may expand the array directly from the user-space value with
+speculation:
 
-The problem can be reproduced using the following
+  sound/core/control.c:1003 snd_ctl_elem_lock() warn: potential spectre issue 'kctl->vd'
+  sound/core/control.c:1031 snd_ctl_elem_unlock() warn: potential spectre issue 'kctl->vd'
+  sound/core/control.c:844 snd_ctl_elem_info() warn: potential spectre issue 'kctl->vd'
+  sound/core/control.c:891 snd_ctl_elem_read() warn: potential spectre issue 'kctl->vd'
+  sound/core/control.c:939 snd_ctl_elem_write() warn: potential spectre issue 'kctl->vd'
 
-mkfs -t ext3 -E stride=256 /dev/vdb1
-mount /dev/vdb1 /mnt/test
-cd /mnt/test
-wget https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-4.16.3.tar.xz
-tar xf linux-4.16.3.tar.xz
+Although all these seem doing only the first load without further
+reference, we may want to stay in a safer side, so hardening with
+array_index_nospec() would still make sense.
 
-This will result in the warnings in the logs
+In this patch, we put array_index_nospec() to the common
+snd_ctl_get_ioff*() helpers instead of each caller.  These helpers are
+also referred from some drivers, too, and basically all usages are to
+calculate the array index from the user-space value, hence it's better
+to cover there.
 
-EXT4-fs error (device vdb1): ext4_validate_block_bitmap:399: comm tar: bg 84: block 2774529: invalid block bitmap
-
-[ Changed slightly for clarity and to not drop a overflow test -- TYT ]
-
-Signed-off-by: Lukas Czerner <lczerner@redhat.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Reported-by: Ilya Dryomov <idryomov@gmail.com>
-Fixes: 7dac4a1726a9 ("ext4: add validity checks for bitmap block numbers")
-Cc: stable@vger.kernel.org
+BugLink: https://marc.info/?l=linux-kernel&m=152411496503418&w=2
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/balloc.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ include/sound/control.h |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/fs/ext4/balloc.c
-+++ b/fs/ext4/balloc.c
-@@ -320,6 +320,7 @@ static ext4_fsblk_t ext4_valid_block_bit
- 	struct ext4_sb_info *sbi = EXT4_SB(sb);
- 	ext4_grpblk_t offset;
- 	ext4_grpblk_t next_zero_bit;
-+	ext4_grpblk_t max_bit = EXT4_CLUSTERS_PER_GROUP(sb);
- 	ext4_fsblk_t blk;
- 	ext4_fsblk_t group_first_block;
+--- a/include/sound/control.h
++++ b/include/sound/control.h
+@@ -22,6 +22,7 @@
+  *
+  */
  
-@@ -337,7 +338,7 @@ static ext4_fsblk_t ext4_valid_block_bit
- 	/* check whether block bitmap block number is set */
- 	blk = ext4_block_bitmap(sb, desc);
- 	offset = blk - group_first_block;
--	if (offset < 0 || EXT4_B2C(sbi, offset) >= sb->s_blocksize ||
-+	if (offset < 0 || EXT4_B2C(sbi, offset) >= max_bit ||
- 	    !ext4_test_bit(EXT4_B2C(sbi, offset), bh->b_data))
- 		/* bad block bitmap */
- 		return blk;
-@@ -345,7 +346,7 @@ static ext4_fsblk_t ext4_valid_block_bit
- 	/* check whether the inode bitmap block number is set */
- 	blk = ext4_inode_bitmap(sb, desc);
- 	offset = blk - group_first_block;
--	if (offset < 0 || EXT4_B2C(sbi, offset) >= sb->s_blocksize ||
-+	if (offset < 0 || EXT4_B2C(sbi, offset) >= max_bit ||
- 	    !ext4_test_bit(EXT4_B2C(sbi, offset), bh->b_data))
- 		/* bad block bitmap */
- 		return blk;
-@@ -353,8 +354,8 @@ static ext4_fsblk_t ext4_valid_block_bit
- 	/* check whether the inode table block number is set */
- 	blk = ext4_inode_table(sb, desc);
- 	offset = blk - group_first_block;
--	if (offset < 0 || EXT4_B2C(sbi, offset) >= sb->s_blocksize ||
--	    EXT4_B2C(sbi, offset + sbi->s_itb_per_group) >= sb->s_blocksize)
-+	if (offset < 0 || EXT4_B2C(sbi, offset) >= max_bit ||
-+	    EXT4_B2C(sbi, offset + sbi->s_itb_per_group) >= max_bit)
- 		return blk;
- 	next_zero_bit = ext4_find_next_zero_bit(bh->b_data,
- 			EXT4_B2C(sbi, offset + EXT4_SB(sb)->s_itb_per_group),
++#include <linux/nospec.h>
+ #include <sound/asound.h>
+ 
+ #define snd_kcontrol_chip(kcontrol) ((kcontrol)->private_data)
+@@ -147,12 +148,14 @@ int snd_ctl_get_preferred_subdevice(stru
+ 
+ static inline unsigned int snd_ctl_get_ioffnum(struct snd_kcontrol *kctl, struct snd_ctl_elem_id *id)
+ {
+-	return id->numid - kctl->id.numid;
++	unsigned int ioff = id->numid - kctl->id.numid;
++	return array_index_nospec(ioff, kctl->count);
+ }
+ 
+ static inline unsigned int snd_ctl_get_ioffidx(struct snd_kcontrol *kctl, struct snd_ctl_elem_id *id)
+ {
+-	return id->index - kctl->id.index;
++	unsigned int ioff = id->index - kctl->id.index;
++	return array_index_nospec(ioff, kctl->count);
+ }
+ 
+ static inline unsigned int snd_ctl_get_ioff(struct snd_kcontrol *kctl, struct snd_ctl_elem_id *id)
