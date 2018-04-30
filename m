@@ -1,55 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754651AbeD3P2B (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 11:28:01 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:43600 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754415AbeD3P2A (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 11:28:00 -0400
-From: Colin King <colin.king@canonical.com>
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] f2fs: fix spelling mistake: "extenstion" -> "extension"
-Date: Mon, 30 Apr 2018 16:27:44 +0100
-Message-Id: <20180430152744.9927-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.0
+        id S1754668AbeD3P24 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 11:28:56 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34692 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753256AbeD3P2y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 11:28:54 -0400
+Date: Mon, 30 Apr 2018 17:28:51 +0200
+From: Cornelia Huck <cohuck@redhat.com>
+To: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
+Cc: Pierre Morel <pmorel@linux.vnet.ibm.com>, pasic@linux.vnet.ibm.com,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Subject: Re: [PATCH 03/10] vfio: ccw: new SCH_EVENT event
+Message-ID: <20180430172851.2cb3d550.cohuck@redhat.com>
+In-Reply-To: <20180426065954.GP5428@bjsdjshi@linux.vnet.ibm.com>
+References: <1524149293-12658-1-git-send-email-pmorel@linux.vnet.ibm.com>
+        <1524149293-12658-4-git-send-email-pmorel@linux.vnet.ibm.com>
+        <20180426065954.GP5428@bjsdjshi@linux.vnet.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Thu, 26 Apr 2018 14:59:54 +0800
+Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com> wrote:
 
-Trivial fix to spelling mistake in extension list text
+> * Pierre Morel <pmorel@linux.vnet.ibm.com> [2018-04-19 16:48:06 +0200]:
+> 
+> > The Sub channel event callback is threaded using workqueues.
+> > The work uses the FSM introducing the VFIO_CCW_EVENT_SCH_EVENT
+> > event.
+> > The update of the SCHIB is now done inside the FSM function.
+> > 
+> > Signed-off-by: Pierre Morel <pmorel@linux.vnet.ibm.com>
+> > ---
+> >  drivers/s390/cio/vfio_ccw_drv.c     | 33 +++++++++++++--------------------
+> >  drivers/s390/cio/vfio_ccw_fsm.c     | 23 +++++++++++++++++++++++
+> >  drivers/s390/cio/vfio_ccw_private.h |  3 +++
+> >  3 files changed, 39 insertions(+), 20 deletions(-)
+> > 
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- fs/f2fs/sysfs.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> > @@ -171,28 +181,11 @@ static void vfio_ccw_sch_shutdown(struct subchannel *sch)
+> >  static int vfio_ccw_sch_event(struct subchannel *sch, int process)
+> >  {
+> >  	struct vfio_ccw_private *private = dev_get_drvdata(&sch->dev);
+> > -	unsigned long flags;
+> > 
+> > -	spin_lock_irqsave(sch->lock, flags);
+> >  	if (!device_is_registered(&sch->dev))
+> > -		goto out_unlock;
+> > -
+> > -	if (work_pending(&sch->todo_work))
+> > -		goto out_unlock;  
+> Just realized that this has a bug in the orignal implementation. For
+> error out this should return -EAGAIN. We'd need a separated fix on
+> this.
 
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index f33a56d6e6dd..d9050caff80c 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -147,13 +147,13 @@ static ssize_t f2fs_sbi_show(struct f2fs_attr *a,
- 		int len = 0, i;
- 
- 		len += snprintf(buf + len, PAGE_SIZE - len,
--						"cold file extenstion:\n");
-+						"cold file extension:\n");
- 		for (i = 0; i < cold_count; i++)
- 			len += snprintf(buf + len, PAGE_SIZE - len, "%s\n",
- 								extlist[i]);
- 
- 		len += snprintf(buf + len, PAGE_SIZE - len,
--						"hot file extenstion:\n");
-+						"hot file extension:\n");
- 		for (i = cold_count; i < cold_count + hot_count; i++)
- 			len += snprintf(buf + len, PAGE_SIZE - len, "%s\n",
- 								extlist[i]);
--- 
-2.17.0
+Indeed. Will you send a patch, or should I hack something up?
+
+> 
+> > -
+> > -	if (cio_update_schib(sch)) {
+> > -		vfio_ccw_fsm_event(private, VFIO_CCW_EVENT_NOT_OPER);
+> > -		goto out_unlock;
+> > -	}
+> > -
+> > -	private = dev_get_drvdata(&sch->dev);
+> > -	if (private->state == VFIO_CCW_STATE_NOT_OPER) {
+> > -		private->state = private->mdev ? VFIO_CCW_STATE_IDLE :
+> > -				 VFIO_CCW_STATE_STANDBY;
+> > -	}  
+> This hunk was toatally removed, and this is fine because?
+> 
+> > -
+> > -out_unlock:
+> > -	spin_unlock_irqrestore(sch->lock, flags);
+> > +		return -1;  
+> -1 is not a valid code.
+
+-ENODEV looks more fitting, if we decide to go with this rework.
+
+> 
+> > +	WARN_ON(work_pending(&private->event_work));
+> > +	queue_work(vfio_ccw_work_q, &private->event_work);
+> > 
+> >  	return 0;
+> >  }
+
+I'm wondering why this should always be done via a workqueue. It seems
+the other subchannel types try to do as much as possible immediately?
+
+(And returning -EAGAIN already triggers the css code to schedule
+another call later.)
