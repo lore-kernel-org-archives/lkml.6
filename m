@@ -1,116 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755446AbeD3Wlw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 18:41:52 -0400
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:34548 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755102AbeD3Wlu (ORCPT
+        id S1755182AbeD3WwK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 18:52:10 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41914 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751384AbeD3WwJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 18:41:50 -0400
-X-Google-Smtp-Source: AB8JxZqHOswVpqCuHfss0avHWV7hyxethlicP3OQxAaxnsHsIbdYnwLJRi0VoRVVFegP8ic34796ETFGo5Ao3ZeyIV8=
-MIME-Version: 1.0
-In-Reply-To: <20180427195430.237342-1-samitolvanen@google.com>
-References: <20180427195430.237342-1-samitolvanen@google.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Mon, 30 Apr 2018 15:41:48 -0700
-X-Google-Sender-Auth: CTJSuOdafxnFvm-RyCDKdoN3PFc
-Message-ID: <CAGXu5jKmzibsYKZnnD6da3Fri4o36wbUQe4-iG1YHt5FLwcH4g@mail.gmail.com>
-Subject: Re: [PATCH] media: media-device: fix ioctl function types
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-        linux-media@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 30 Apr 2018 18:52:09 -0400
+Date: Mon, 30 Apr 2018 15:52:07 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Chintan Pandya <cpandya@codeaurora.org>
+Cc: vbabka@suse.cz, labbott@redhat.com, catalin.marinas@arm.com,
+        hannes@cmpxchg.org, f.fainelli@gmail.com, xieyisheng1@huawei.com,
+        ard.biesheuvel@linaro.org, richard.weiyang@gmail.com,
+        byungchul.park@lge.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mm: vmalloc: Clean up vunmap to avoid pgtable ops
+ twice
+Message-Id: <20180430155207.35a3dd94c31503c7a6268a8f@linux-foundation.org>
+In-Reply-To: <1523876342-10545-1-git-send-email-cpandya@codeaurora.org>
+References: <1523876342-10545-1-git-send-email-cpandya@codeaurora.org>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 27, 2018 at 12:54 PM, Sami Tolvanen <samitolvanen@google.com> wrote:
-> This change fixes function types for media device ioctls to avoid
-> indirect call mismatches with Control-Flow Integrity checking.
->
-> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+On Mon, 16 Apr 2018 16:29:02 +0530 Chintan Pandya <cpandya@codeaurora.org> wrote:
 
-Thanks for sending these!
+> vunmap does page table clear operations twice in the
+> case when DEBUG_PAGEALLOC_ENABLE_DEFAULT is enabled.
+> 
+> So, clean up the code as that is unintended.
+> 
+> As a perf gain, we save few us. Below ftrace data was
+> obtained while doing 1 MB of vmalloc/vfree on ARM64
+> based SoC *without* this patch applied. After this
+> patch, we can save ~3 us (on 1 extra vunmap_page_range).
+> 
+>   CPU  DURATION                  FUNCTION CALLS
+>   |     |   |                     |   |   |   |
+>  6)               |  __vunmap() {
+>  6)               |    vmap_debug_free_range() {
+>  6)   3.281 us    |      vunmap_page_range();
+>  6) + 45.468 us   |    }
+>  6)   2.760 us    |    vunmap_page_range();
+>  6) ! 505.105 us  |  }
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+It's been a long time since I looked at the vmap code :(
 
--Kees
-
-> ---
->  drivers/media/media-device.c | 21 +++++++++++----------
->  1 file changed, 11 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/media/media-device.c b/drivers/media/media-device.c
-> index 35e81f7c0d2f..bc5c024906e6 100644
-> --- a/drivers/media/media-device.c
-> +++ b/drivers/media/media-device.c
-> @@ -54,9 +54,10 @@ static int media_device_close(struct file *filp)
->         return 0;
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -603,26 +603,6 @@ static void unmap_vmap_area(struct vmap_area *va)
+>  	vunmap_page_range(va->va_start, va->va_end);
 >  }
->
-> -static int media_device_get_info(struct media_device *dev,
-> -                                struct media_device_info *info)
-> +static long media_device_get_info(struct media_device *dev, void *arg)
+>  
+> -static void vmap_debug_free_range(unsigned long start, unsigned long end)
+> -{
+> -	/*
+> -	 * Unmap page tables and force a TLB flush immediately if pagealloc
+> -	 * debugging is enabled.  This catches use after free bugs similarly to
+> -	 * those in linear kernel virtual address space after a page has been
+> -	 * freed.
+> -	 *
+> -	 * All the lazy freeing logic is still retained, in order to minimise
+> -	 * intrusiveness of this debugging feature.
+> -	 *
+> -	 * This is going to be *slow* (linear kernel virtual address debugging
+> -	 * doesn't do a broadcast TLB flush so it is a lot faster).
+> -	 */
+> -	if (debug_pagealloc_enabled()) {
+> -		vunmap_page_range(start, end);
+> -		flush_tlb_kernel_range(start, end);
+> -	}
+> -}
+> -
+>  /*
+>   * lazy_max_pages is the maximum amount of virtual address space we gather up
+>   * before attempting to purge with a TLB flush.
+> @@ -756,6 +736,9 @@ static void free_unmap_vmap_area(struct vmap_area *va)
 >  {
-> +       struct media_device_info *info = (struct media_device_info *)arg;
+>  	flush_cache_vunmap(va->va_start, va->va_end);
+>  	unmap_vmap_area(va);
+> +	if (debug_pagealloc_enabled())
+> +		flush_tlb_kernel_range(va->va_start, va->va_end);
 > +
->         memset(info, 0, sizeof(*info));
->
->         if (dev->driver_name[0])
-> @@ -93,9 +94,9 @@ static struct media_entity *find_entity(struct media_device *mdev, u32 id)
->         return NULL;
+>  	free_vmap_area_noflush(va);
 >  }
->
-> -static long media_device_enum_entities(struct media_device *mdev,
-> -                                      struct media_entity_desc *entd)
-> +static long media_device_enum_entities(struct media_device *mdev, void *arg)
->  {
-> +       struct media_entity_desc *entd = (struct media_entity_desc *)arg;
->         struct media_entity *ent;
->
->         ent = find_entity(mdev, entd->id);
-> @@ -146,9 +147,9 @@ static void media_device_kpad_to_upad(const struct media_pad *kpad,
->         upad->flags = kpad->flags;
->  }
->
-> -static long media_device_enum_links(struct media_device *mdev,
-> -                                   struct media_links_enum *links)
-> +static long media_device_enum_links(struct media_device *mdev, void *arg)
->  {
-> +       struct media_links_enum *links = (struct media_links_enum *)arg;
->         struct media_entity *entity;
->
->         entity = find_entity(mdev, links->entity);
-> @@ -195,9 +196,9 @@ static long media_device_enum_links(struct media_device *mdev,
->         return 0;
->  }
->
-> -static long media_device_setup_link(struct media_device *mdev,
-> -                                   struct media_link_desc *linkd)
-> +static long media_device_setup_link(struct media_device *mdev, void *arg)
->  {
-> +       struct media_link_desc *linkd = (struct media_link_desc *)arg;
->         struct media_link *link = NULL;
->         struct media_entity *source;
->         struct media_entity *sink;
-> @@ -225,9 +226,9 @@ static long media_device_setup_link(struct media_device *mdev,
->         return __media_entity_setup_link(link, linkd->flags);
->  }
->
-> -static long media_device_get_topology(struct media_device *mdev,
-> -                                     struct media_v2_topology *topo)
-> +static long media_device_get_topology(struct media_device *mdev, void *arg)
->  {
-> +       struct media_v2_topology *topo = (struct media_v2_topology *)arg;
->         struct media_entity *entity;
->         struct media_interface *intf;
->         struct media_pad *pad;
-> --
-> 2.17.0.441.gb46fe60e1d-goog
->
+>  
+> @@ -1142,7 +1125,6 @@ void vm_unmap_ram(const void *mem, unsigned int count)
+>  	BUG_ON(!PAGE_ALIGNED(addr));
+>  
+>  	debug_check_no_locks_freed(mem, size);
+> -	vmap_debug_free_range(addr, addr+size);
 
+This appears to be a functional change: if (count <= VMAP_MAX_ALLOC)
+and we're in debug mode then the
+vunmap_page_range/flush_tlb_kernel_range will no longer be performed. 
+Why is this ok?
 
-
--- 
-Kees Cook
-Pixel Security
+>  	if (likely(count <= VMAP_MAX_ALLOC)) {
+>  		vb_free(mem, size);
+> @@ -1499,7 +1481,6 @@ struct vm_struct *remove_vm_area(const void *addr)
+>  		va->flags |= VM_LAZY_FREE;
+>  		spin_unlock(&vmap_area_lock);
+>  
+> -		vmap_debug_free_range(va->va_start, va->va_end);
+>  		kasan_free_shadow(vm);
+>  		free_unmap_vmap_area(va);
+>  
