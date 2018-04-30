@@ -1,44 +1,35 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754781AbeD3Pu4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 11:50:56 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:39929 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754474AbeD3Puy (ORCPT
+        id S1754734AbeD3PyF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 11:54:05 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:33450 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753397AbeD3PyD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 11:50:54 -0400
-Date: Mon, 30 Apr 2018 17:50:50 +0200 (CEST)
-From: Anna-Maria Gleixner <anna-maria@linutronix.de>
-To: linux-kernel@vger.kernel.org
-cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>, "Tobin C. Harding" <me@tobin.cc>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Hashed pointer issues
-Message-ID: <alpine.DEB.2.20.1804301741570.3243@hypnos.tec.linutronix.de>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Mon, 30 Apr 2018 11:54:03 -0400
+Date: Mon, 30 Apr 2018 11:54:01 -0400 (EDT)
+Message-Id: <20180430.115401.814841781132744012.davem@davemloft.net>
+To: yuehaibing@huawei.com
+Cc: ganeshgr@chelsio.com, johannes.berg@intel.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] libcxgb,cxgb4: use __skb_put_zero to simplfy
+ code
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180428043522.12408-1-yuehaibing@huawei.com>
+References: <20180428043522.12408-1-yuehaibing@huawei.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Sat, 28 Apr 2018 12:35:22 +0800
 
-I stumbled over an issue with hashed pointers and tracing. 
+> use helper __skb_put_zero to replace the pattern of __skb_put() && memset()
+> 
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-I'm using trace points for examination and on error the trace buffers
-are dumped. The error occurs when entropy has not been set up, so the
-pointers are not hashed and only (ptrval) is printed instead. The
-pointers are required to distinguish the different objects in the
-trace.
-
-Beside workarounds like patching lib/vsprintf.c helpers before testing
-or dumping trace buffers later (given that kernel comes up properly
-and entropy is set up), is there a possible generic solution for this
-issue? A commandline option for disabling the pointer obfuscation
-would be a pretty handy tool.
-
-
-Thanks,
-
-      Anna-Maria
+Applied, thank you.
