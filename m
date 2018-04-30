@@ -1,202 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754044AbeD3NPD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 09:15:03 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:51892 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752785AbeD3NOO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 09:14:14 -0400
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To: Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>
-Cc: Gwendal Grignou <gwendal@chromium.org>,
-        Sameer Nanda <snanda@chromium.org>, linux-pm@vger.kernel.org,
-        Guenter Roeck <groeck@chromium.org>, linux-kernel@vger.kernel.org,
-        Benson Leung <bleung@chromium.org>, miguel.ojeda.sandonis@gmail.com
-Subject: [PATCH v2 1/3] mfd: cros_ec: Add USBPD charger commands and struct definitions.
-Date: Mon, 30 Apr 2018 15:14:01 +0200
-Message-Id: <20180430131403.14296-2-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180430131403.14296-1-enric.balletbo@collabora.com>
-References: <20180430131403.14296-1-enric.balletbo@collabora.com>
+        id S1753708AbeD3NRW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 09:17:22 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58696 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751741AbeD3NRT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 09:17:19 -0400
+Subject: Re: [PATCH v6 00/11] Intel Processor Trace virtualization enabling
+To: Luwei Kang <luwei.kang@intel.com>, kvm@vger.kernel.org
+Cc: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        rkrcmar@redhat.com, linux-kernel@vger.kernel.org, joro@8bytes.org,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>
+References: <1521544918-31084-1-git-send-email-luwei.kang@intel.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <936aa045-cd48-e749-b1ff-ca19e834a1ae@redhat.com>
+Date: Mon, 30 Apr 2018 15:17:12 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <1521544918-31084-1-git-send-email-luwei.kang@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sameer Nanda <snanda@chromium.org>
+On 20/03/2018 12:21, Luwei Kang wrote:
+> Hi All,
+> 
+> Here is a patch-series which adding Processor Trace enabling in KVM
+> guest. 
+> 
+> Processor Trace virtualization can be work in one of 3 possible modes
+> by set new option "pt_mode". Default value is system mode.
+> a. system-wide: trace both host/guest and output to host buffer;
+> b. host-only: only trace host and output to host buffer;
+> c. host-guest: trace host/guest simultaneous and output to their
+> respective buffer.
 
-The USBPD charger driver gets information from the ChromeOS EC, this
-patch adds the USBPD charger definitions needed by this driver.
+tip folks, could you please ack and/or prepare a topic branch for
+patches 1-3 in this series?
 
-Signed-off-by: Sameer Nanda <snanda@chromium.org>
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
----
+Thanks!
 
-Changes in v2: None
-
- include/linux/mfd/cros_ec_commands.h | 132 ++++++++++++++++++++++++++-
- 1 file changed, 128 insertions(+), 4 deletions(-)
-
-diff --git a/include/linux/mfd/cros_ec_commands.h b/include/linux/mfd/cros_ec_commands.h
-index f2edd9969b40..94dcf331796c 100644
---- a/include/linux/mfd/cros_ec_commands.h
-+++ b/include/linux/mfd/cros_ec_commands.h
-@@ -2593,14 +2593,18 @@ struct ec_params_current_limit {
- } __packed;
- 
- /*
-- * Set maximum external power current.
-+ * Set maximum external voltage / current.
-  */
--#define EC_CMD_EXT_POWER_CURRENT_LIMIT 0xa2
-+#define EC_CMD_EXTERNAL_POWER_LIMIT 0x00A2
- 
--struct ec_params_ext_power_current_limit {
--	uint32_t limit; /* in mA */
-+/* Command v0 is used only on Spring and is obsolete + unsupported */
-+struct ec_params_external_power_limit_v1 {
-+	uint16_t current_lim; /* in mA, or EC_POWER_LIMIT_NONE to clear limit */
-+	uint16_t voltage_lim; /* in mV, or EC_POWER_LIMIT_NONE to clear limit */
- } __packed;
- 
-+#define EC_POWER_LIMIT_NONE 0xffff
-+
- /* Inform the EC when entering a sleep state */
- #define EC_CMD_HOST_SLEEP_EVENT 0xa9
- 
-@@ -2974,6 +2978,12 @@ enum usb_chg_type {
- 	USB_CHG_TYPE_VBUS,
- 	USB_CHG_TYPE_UNKNOWN,
- };
-+enum usb_power_roles {
-+	USB_PD_PORT_POWER_DISCONNECTED,
-+	USB_PD_PORT_POWER_SOURCE,
-+	USB_PD_PORT_POWER_SINK,
-+	USB_PD_PORT_POWER_SINK_NOT_CHARGING,
-+};
- 
- struct usb_chg_measures {
- 	uint16_t voltage_max;
-@@ -2991,6 +3001,120 @@ struct ec_response_usb_pd_power_info {
- 	uint32_t max_power;
- } __packed;
- 
-+struct ec_params_usb_pd_info_request {
-+	uint8_t port;
-+} __packed;
-+
-+/* Read USB-PD Device discovery info */
-+#define EC_CMD_USB_PD_DISCOVERY 0x0113
-+struct ec_params_usb_pd_discovery_entry {
-+	uint16_t vid;  /* USB-IF VID */
-+	uint16_t pid;  /* USB-IF PID */
-+	uint8_t ptype; /* product type (hub,periph,cable,ama) */
-+} __packed;
-+
-+/* Override default charge behavior */
-+#define EC_CMD_PD_CHARGE_PORT_OVERRIDE 0x0114
-+
-+/* Negative port parameters have special meaning */
-+enum usb_pd_override_ports {
-+	OVERRIDE_DONT_CHARGE = -2,
-+	OVERRIDE_OFF = -1,
-+	/* [0, CONFIG_USB_PD_PORT_COUNT): Port# */
-+};
-+
-+struct ec_params_charge_port_override {
-+	int16_t override_port; /* Override port# */
-+} __packed;
-+
-+/* Read (and delete) one entry of PD event log */
-+#define EC_CMD_PD_GET_LOG_ENTRY 0x0115
-+
-+struct ec_response_pd_log {
-+	uint32_t timestamp; /* relative timestamp in milliseconds */
-+	uint8_t type;       /* event type : see PD_EVENT_xx below */
-+	uint8_t size_port;  /* [7:5] port number [4:0] payload size in bytes */
-+	uint16_t data;      /* type-defined data payload */
-+	uint8_t payload[0]; /* optional additional data payload: 0..16 bytes */
-+} __packed;
-+
-+/* The timestamp is the microsecond counter shifted to get about a ms. */
-+#define PD_LOG_TIMESTAMP_SHIFT 10 /* 1 LSB = 1024us */
-+
-+#define PD_LOG_SIZE_MASK  0x1f
-+#define PD_LOG_PORT_MASK  0xe0
-+#define PD_LOG_PORT_SHIFT    5
-+#define PD_LOG_PORT_SIZE(port, size) (((port) << PD_LOG_PORT_SHIFT) | \
-+				      ((size) & PD_LOG_SIZE_MASK))
-+#define PD_LOG_PORT(size_port) ((size_port) >> PD_LOG_PORT_SHIFT)
-+#define PD_LOG_SIZE(size_port) ((size_port) & PD_LOG_SIZE_MASK)
-+
-+/* PD event log : entry types */
-+/* PD MCU events */
-+#define PD_EVENT_MCU_BASE       0x00
-+#define PD_EVENT_MCU_CHARGE             (PD_EVENT_MCU_BASE+0)
-+#define PD_EVENT_MCU_CONNECT            (PD_EVENT_MCU_BASE+1)
-+/* Reserved for custom board event */
-+#define PD_EVENT_MCU_BOARD_CUSTOM       (PD_EVENT_MCU_BASE+2)
-+/* PD generic accessory events */
-+#define PD_EVENT_ACC_BASE       0x20
-+#define PD_EVENT_ACC_RW_FAIL   (PD_EVENT_ACC_BASE+0)
-+#define PD_EVENT_ACC_RW_ERASE  (PD_EVENT_ACC_BASE+1)
-+/* PD power supply events */
-+#define PD_EVENT_PS_BASE        0x40
-+#define PD_EVENT_PS_FAULT      (PD_EVENT_PS_BASE+0)
-+/* PD video dongles events */
-+#define PD_EVENT_VIDEO_BASE     0x60
-+#define PD_EVENT_VIDEO_DP_MODE (PD_EVENT_VIDEO_BASE+0)
-+#define PD_EVENT_VIDEO_CODEC   (PD_EVENT_VIDEO_BASE+1)
-+/* Returned in the "type" field, when there is no entry available */
-+#define PD_EVENT_NO_ENTRY       0xff
-+
-+/*
-+ * PD_EVENT_MCU_CHARGE event definition :
-+ * the payload is "struct usb_chg_measures"
-+ * the data field contains the port state flags as defined below :
-+ */
-+/* Port partner is a dual role device */
-+#define CHARGE_FLAGS_DUAL_ROLE         (1 << 15)
-+/* Port is the pending override port */
-+#define CHARGE_FLAGS_DELAYED_OVERRIDE  (1 << 14)
-+/* Port is the override port */
-+#define CHARGE_FLAGS_OVERRIDE          (1 << 13)
-+/* Charger type */
-+#define CHARGE_FLAGS_TYPE_SHIFT               3
-+#define CHARGE_FLAGS_TYPE_MASK       (0xf << CHARGE_FLAGS_TYPE_SHIFT)
-+/* Power delivery role */
-+#define CHARGE_FLAGS_ROLE_MASK         (7 <<  0)
-+
-+/*
-+ * PD_EVENT_PS_FAULT data field flags definition :
-+ */
-+#define PS_FAULT_OCP                          1
-+#define PS_FAULT_FAST_OCP                     2
-+#define PS_FAULT_OVP                          3
-+#define PS_FAULT_DISCH                        4
-+
-+/*
-+ * PD_EVENT_VIDEO_CODEC payload is "struct mcdp_info".
-+ */
-+struct mcdp_version {
-+	uint8_t major;
-+	uint8_t minor;
-+	uint16_t build;
-+} __packed;
-+
-+struct mcdp_info {
-+	uint8_t family[2];
-+	uint8_t chipid[2];
-+	struct mcdp_version irom;
-+	struct mcdp_version fw;
-+} __packed;
-+
-+/* struct mcdp_info field decoding */
-+#define MCDP_CHIPID(chipid) ((chipid[0] << 8) | chipid[1])
-+#define MCDP_FAMILY(family) ((family[0] << 8) | family[1])
-+
- /* Get info about USB-C SS muxes */
- #define EC_CMD_USB_PD_MUX_INFO 0x11a
- 
--- 
-2.17.0
+Paolo
