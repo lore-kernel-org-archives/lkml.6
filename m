@@ -1,5 +1,5 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2056830-1525128489-2-15333195826141671901
+X-Cyrus-Session-Id: sloti22d1t05-2056830-1525128480-2-4252778818391257923
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525128488; b=DVuUlkGjkbf/6egEExaS4goURzo1Fjh6hHYpj50+HrqhxCU0A/
-    gbEfQhVP9GXNJaohpdezTdonZBD+RUrUdjU2NzWK1/nIpCY7qSdT58dvbCdAoxSR
-    lMRgMqcA3dyt+WBdiWzJnabZsZe4hq09OiXbmrWkS1acH60QzyTRYGYZqXAYlXRk
-    tV/EDlzw3v9wc5i2P8AFkqr1fMeR8VJdqcOx6nRop2Wl9LcHQIbnoFfEB7hD/16f
-    Mza3Q472Ug02bj2mhIQ4pKVoJA5zAP2pQIqOBXtyUYmu5/mTrNN2174irFkoztKC
-    ACDzFUogquqO9qP6XA7iLG6Kt+4cKbxcus7g==
+    1525128479; b=RUgff30jRNl1NYY9Id35CtvOMhASGU7N71mkWMh/iKDMAixJ0f
+    ZdcGh66LNQwCHZtwfALzlpIqHSLWuP8/iHhLo/0UDGIOCck5uihqLlCEBXAI3Fyw
+    9IT/poJQFIHJMRwQEDGbsgiFU3Wkggj0nRHrzXBYjb++dAmUlbjuwunHRGmTU6hl
+    +8WwcC/E7cqS+HzUZ7vZtTCyEsCwucabL/FWp7dwSohlY7aXsc+KKBu8/HNlr3Gl
+    Sl7I2TZGEmRFt/9/24H3m1WsbAydcmFhjqABXTOqsKHXJFIgs5T9dVF0nECWjhQ0
+    9DoIdypWYB6UzCv1e+ojjdveEW8oS4gnocqg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1525128488; bh=
-    phmdIRGKeFkl2sWGnkCOSvrxUfcYIUhVha0VuZnitM8=; b=GCq0i2w5eOnHiqPS
-    ClramUyjA/1fKHMcSJOQeEAjMo0R2zDI8JwwntSpIavtRtkVDyLhGa/pyfeMvxua
-    Gsb3L5FOC+6fyDwj3I6umPeGLiXFP2IMQrOuzkHz5JtfC6S4oUgIJzQWcnlk9Ldf
-    FgUcicwBlOReQA3qV7vi7emRFjnqtYzPCzRGnur996hfhdK/PHYam2/2LtkTxynz
-    v20L/d9aEt+vf2dvs3QjxHy8wIM8MWKQOL3TOrfWkPuc5fYjOYF+DmmBOwrqlnMR
-    k4DSA5OC9XzudmDRHRF4XSI8O/zen3dHIyMeRR7BOZVp/ZMP6qgn127+oLHkCKqv
-    5AavRg==
+    :in-reply-to:references:sender:list-id; s=fm2; t=1525128479; bh=
+    WhIqO8M4FvE30NKnk8bLDYGQORAYepumfUyOUCINWxk=; b=aP4qO7UAiZHf2p+5
+    tCaVDiLpLMZFuMhs31oEfxSS+aexLPA6OiEBg+8abmzTqTLPqzNjfjdt5vqNeQjK
+    GqhIWehd/fd1LdjaFr3MY2vqoKU7J/9h/V7Y4l5RSRMhd99RwnDBlv2EXi4MoLcU
+    q7Fit/XKFsnVkezOAFxlx9UHpZ7uv8kRwIeW3F2WEcUSHL6do8Kolxt5udQwZ500
+    jaNBUlyvbBYDZV1w9JKBZ9VHyTT580o5Hq4q85fNJsBCHSlsqet7eeKlsakQqMxI
+    /NnL6Yv2t2GHtoVdP6nd3x44MSznB2hmLZm39q0o0SdaI7g/ZhwNnOyQcbGRMG+t
+    C45BAQ==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=efficios.com;
@@ -51,28 +51,28 @@ Authentication-Results: mx4.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=efficios.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfOCakRrwyfhXzwREHqmqGdPfOnmjhY3zMFrpOz7TqDJEGZxiKMvFgHHzQJAbxGvAVW84Ar5sGylUNUB0cz9xo0HYsIb/7f2+N2HBWRjz2pQtsdq9kMcG
-    fe5leh4sR1A+nq+CHYF/AtxSvUfxOn92kyMVFHhCFbdqKtpxMYaCmojOMSbCDYve5qhfc0frMJ0eaOepaZkgv5BAlnqCtoeKSBJmnhF+ERpwgLwZoKwWGoNI
+X-CM-Envelope: MS4wfEgrjklvDUy4Qftlt/rO2a2Y2vxowkVA4988MEOoIbBIn2pPDyBb7oJpcTCNtvbQainAsh/VsrLRBhynz02C2d6S/w4CyVU3Qc+iLp9qaNHnBj2Yy+OV
+    f5dQE0CALONzlEm4dHfXZCDNboxt6ehGMvyMXzwR1MY09fta6vMW4+VJxeBpysHyQ7SJaWK0Q0RGKD6dBV30N+DNj+h/SCcsEumtlTV19MggIgf88+hJKx9T
 X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=7d_E57ReAAAA:8
-    a=drOt6m5kAAAA:8 a=7CQSdrXTAAAA:8 a=1XWaLZrsAAAA:8 a=JfrnYn6hAAAA:8
-    a=SOq6UgPBAAAA:8 a=WfulkdPnAAAA:8 a=FOH2dFAWAAAA:8 a=NufY4J3AAAAA:8
-    a=20KFwNOVAAAA:8 a=meVymXHHAAAA:8 a=VnNF1IyMAAAA:8 a=UPm3pfgAAAAA:8
-    a=Z4Rwk6OoAAAA:8 a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8 a=nK1Qfd4pxio8lxmWJb4A:9
-    a=x8gzFH9gYPwA:10 a=jhqOcbufqs7Y1TYCrUUU:22 a=RMMjzBEyIzXRtoq5n5K6:22
-    a=a-qgeE7W1pNrGK8U0ZQC:22 a=1CNFftbPRP8L7MoqJWF3:22 a=3hv5r9HjGAh9o5iR9qwG:22
-    a=56QPVbyS4OZCpcuOg7Z9:22 a=i3VuKzQdj-NEYjvDI-p3:22 a=TPcZfFuj8SYsoCJAFAiX:22
+    a=VnNF1IyMAAAA:8 a=JfrnYn6hAAAA:8 a=1XWaLZrsAAAA:8 a=SOq6UgPBAAAA:8
+    a=WfulkdPnAAAA:8 a=FOH2dFAWAAAA:8 a=NufY4J3AAAAA:8 a=20KFwNOVAAAA:8
+    a=oGMlB6cnAAAA:8 a=meVymXHHAAAA:8 a=UPm3pfgAAAAA:8 a=Z4Rwk6OoAAAA:8
+    a=drOt6m5kAAAA:8 a=7CQSdrXTAAAA:8 a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8
+    a=K9fvYg9zRn_gSVpeIkAA:9 a=x8gzFH9gYPwA:10 a=jhqOcbufqs7Y1TYCrUUU:22
+    a=1CNFftbPRP8L7MoqJWF3:22 a=3hv5r9HjGAh9o5iR9qwG:22 a=56QPVbyS4OZCpcuOg7Z9:22
+    a=i3VuKzQdj-NEYjvDI-p3:22 a=TPcZfFuj8SYsoCJAFAiX:22 a=NdAtdrkLVvyUPsUoGJp4:22
     a=2JgSa4NbpEOStq-L5dxp:22 a=uD9XBtlS4o1URY3aiGdj:22 a=HkZW87K1Qel5hWWM3VKY:22
-    a=AjGcO6oz07-iQ99wixmX:22
+    a=RMMjzBEyIzXRtoq5n5K6:22 a=a-qgeE7W1pNrGK8U0ZQC:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755338AbeD3WsH (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 30 Apr 2018 18:48:07 -0400
-Received: from mail.efficios.com ([167.114.142.138]:52936 "EHLO
+        id S1755441AbeD3Wop (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 30 Apr 2018 18:44:45 -0400
+Received: from mail.efficios.com ([167.114.142.138]:52856 "EHLO
         mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755329AbeD3Wop (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Mon, 30 Apr 2018 18:44:45 -0400
+        with ESMTP id S1755285AbeD3Woo (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Mon, 30 Apr 2018 18:44:44 -0400
 From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 To: Peter Zijlstra <peterz@infradead.org>,
         "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
@@ -96,9 +96,9 @@ Cc: linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         Michael Kerrisk <mtk.manpages@gmail.com>,
         Joel Fernandes <joelaf@google.com>,
         Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: [PATCH 04/14] arm: Wire up restartable sequences system call
-Date: Mon, 30 Apr 2018 18:44:23 -0400
-Message-Id: <20180430224433.17407-5-mathieu.desnoyers@efficios.com>
+Subject: [PATCH 01/14] uapi headers: Provide types_32_64.h (v2)
+Date: Mon, 30 Apr 2018 18:44:20 -0400
+Message-Id: <20180430224433.17407-2-mathieu.desnoyers@efficios.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180430224433.17407-1-mathieu.desnoyers@efficios.com>
 References: <20180430224433.17407-1-mathieu.desnoyers@efficios.com>
@@ -108,51 +108,104 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Wire up the rseq system call on 32-bit ARM.
-
-This provides an ABI improving the speed of a user-space getcpu
-operation on ARM by skipping the getcpu system call on the fast path, as
-well as improving the speed of user-space operations on per-cpu data
-compared to using load-linked/store-conditional.
-
-TODO: wire up rseq_syscall() on return from system call. It is used with
-CONFIG_DEBUG_RSEQ=y to ensure system calls are not issued within rseq critical
-section
+Provide helper macros for fields which represent pointers in
+kernel-userspace ABI. This facilitates handling of 32-bit
+user-space by 64-bit kernels by defining those fields as
+32-bit 0-padding and 32-bit integer on 32-bit architectures,
+which allows the kernel to treat those as 64-bit integers.
+The order of padding and 32-bit integer depends on the
+endianness.
 
 Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-CC: Russell King <linux@arm.linux.org.uk>
-CC: Catalin Marinas <catalin.marinas@arm.com>
-CC: Will Deacon <will.deacon@arm.com>
-CC: Thomas Gleixner <tglx@linutronix.de>
-CC: Paul Turner <pjt@google.com>
-CC: Andrew Hunter <ahh@google.com>
+CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 CC: Peter Zijlstra <peterz@infradead.org>
+CC: Paul Turner <pjt@google.com>
+CC: Thomas Gleixner <tglx@linutronix.de>
+CC: Andrew Hunter <ahh@google.com>
 CC: Andy Lutomirski <luto@amacapital.net>
 CC: Andi Kleen <andi@firstfloor.org>
 CC: Dave Watson <davejwatson@fb.com>
 CC: Chris Lameter <cl@linux.com>
 CC: Ingo Molnar <mingo@redhat.com>
+CC: "H. Peter Anvin" <hpa@zytor.com>
 CC: Ben Maurer <bmaurer@fb.com>
 CC: Steven Rostedt <rostedt@goodmis.org>
-CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 CC: Josh Triplett <josh@joshtriplett.org>
 CC: Linus Torvalds <torvalds@linux-foundation.org>
 CC: Andrew Morton <akpm@linux-foundation.org>
+CC: Russell King <linux@arm.linux.org.uk>
+CC: Catalin Marinas <catalin.marinas@arm.com>
+CC: Will Deacon <will.deacon@arm.com>
+CC: Michael Kerrisk <mtk.manpages@gmail.com>
 CC: Boqun Feng <boqun.feng@gmail.com>
 CC: linux-api@vger.kernel.org
----
- arch/arm/tools/syscall.tbl | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
-index 0bb0e9c6376c..fbc74b5fa3ed 100644
---- a/arch/arm/tools/syscall.tbl
-+++ b/arch/arm/tools/syscall.tbl
-@@ -412,3 +412,4 @@
- 395	common	pkey_alloc		sys_pkey_alloc
- 396	common	pkey_free		sys_pkey_free
- 397	common	statx			sys_statx
-+398	common	rseq			sys_rseq
+---
+
+Changes since v1:
+- Public uapi headers use __u32 and __u64 rather than uint32_t and
+  uint64_t.
+---
+ include/uapi/linux/types_32_64.h | 50 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 50 insertions(+)
+ create mode 100644 include/uapi/linux/types_32_64.h
+
+diff --git a/include/uapi/linux/types_32_64.h b/include/uapi/linux/types_32_64.h
+new file mode 100644
+index 000000000000..0a87ace34a57
+--- /dev/null
++++ b/include/uapi/linux/types_32_64.h
+@@ -0,0 +1,50 @@
++/* SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note */
++#ifndef _UAPI_LINUX_TYPES_32_64_H
++#define _UAPI_LINUX_TYPES_32_64_H
++
++/*
++ * linux/types_32_64.h
++ *
++ * Integer type declaration for pointers across 32-bit and 64-bit systems.
++ *
++ * Copyright (c) 2015-2018 Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
++ */
++
++#ifdef __KERNEL__
++# include <linux/types.h>
++#else
++# include <stdint.h>
++#endif
++
++#include <asm/byteorder.h>
++
++#ifdef __BYTE_ORDER
++# if (__BYTE_ORDER == __BIG_ENDIAN)
++#  define LINUX_BYTE_ORDER_BIG_ENDIAN
++# else
++#  define LINUX_BYTE_ORDER_LITTLE_ENDIAN
++# endif
++#else
++# ifdef __BIG_ENDIAN
++#  define LINUX_BYTE_ORDER_BIG_ENDIAN
++# else
++#  define LINUX_BYTE_ORDER_LITTLE_ENDIAN
++# endif
++#endif
++
++#ifdef __LP64__
++# define LINUX_FIELD_u32_u64(field)			__u64 field
++# define LINUX_FIELD_u32_u64_INIT_ONSTACK(field, v)	field = (intptr_t)v
++#else
++# ifdef LINUX_BYTE_ORDER_BIG_ENDIAN
++#  define LINUX_FIELD_u32_u64(field)	__u32 field ## _padding, field
++#  define LINUX_FIELD_u32_u64_INIT_ONSTACK(field, v)	\
++	field ## _padding = 0, field = (intptr_t)v
++# else
++#  define LINUX_FIELD_u32_u64(field)	__u32 field, field ## _padding
++#  define LINUX_FIELD_u32_u64_INIT_ONSTACK(field, v)	\
++	field = (intptr_t)v, field ## _padding = 0
++# endif
++#endif
++
++#endif /* _UAPI_LINUX_TYPES_32_64_H */
 -- 
 2.11.0
 
