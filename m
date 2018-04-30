@@ -1,73 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754836AbeD3Qbk (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 12:31:40 -0400
-Received: from smtprelay6.synopsys.com ([198.182.37.59]:52232 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753334AbeD3Qbi (ORCPT
+        id S1754899AbeD3QcF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 12:32:05 -0400
+Received: from mail-io0-f171.google.com ([209.85.223.171]:35108 "EHLO
+        mail-io0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754631AbeD3QcE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 12:31:38 -0400
-Subject: Re: [PATCH 06/10] misc: pci_endpoint_test: Add MSI-X support
-To: Alan Douglas <adouglas@cadence.com>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
-        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-        "kishon@ti.com" <kishon@ti.com>,
-        "jesper.nilsson@axis.com" <jesper.nilsson@axis.com>
-Cc: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <cover.1524845816.git.gustavo.pimentel@synopsys.com>
- <633ea6faef782de5ea753bffe5028aceff09115a.1524845816.git.gustavo.pimentel@synopsys.com>
- <SN6PR07MB45124A237879C78453495C50D8820@SN6PR07MB4512.namprd07.prod.outlook.com>
-From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Message-ID: <3485fade-56fd-0078-a330-41187445c984@synopsys.com>
-Date: Mon, 30 Apr 2018 17:30:20 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 30 Apr 2018 12:32:04 -0400
+X-Google-Smtp-Source: AB8JxZo9LBSV+p09gIeRmMvr8fjuovUyfRODQkCFrYfo2ckynvjQSb8qLAFgkLmJd6iQWMdmXXvXCE+ATxk4C2mo1nE=
 MIME-Version: 1.0
-In-Reply-To: <SN6PR07MB45124A237879C78453495C50D8820@SN6PR07MB4512.namprd07.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <alpine.DEB.2.20.1804301741570.3243@hypnos.tec.linutronix.de> <CAGXu5jL1W=AC023asgeMRUXAnhU2vd-RJRqGtOOetQ=aXwDcFQ@mail.gmail.com>
+In-Reply-To: <CAGXu5jL1W=AC023asgeMRUXAnhU2vd-RJRqGtOOetQ=aXwDcFQ@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 30 Apr 2018 16:31:52 +0000
+Message-ID: <CA+55aFwieC1-nAs+NFq9RTwaR8ef9hWa4MjNBWL41F-8wM49eA@mail.gmail.com>
+Subject: Re: Hashed pointer issues
+To: Kees Cook <keescook@chromium.org>
+Cc: Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        tcharding <me@tobin.cc>, Steven Rostedt <rostedt@goodmis.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alan,
+On Mon, Apr 30, 2018 at 9:11 AM Kees Cook <keescook@chromium.org> wrote:
 
-On 30/04/2018 16:35, Alan Douglas wrote:
-> Hi Gustavo,
-> 
-> On April 27, 2018, 4:57 p.m. Gustavo Pimentel wrote:
->> Add MSI-X support and update driver documentation accordingly.
->>
->> Add new driver parameter to allow interruption type selection.
->>
->> Modify the Legacy/MSI/MSI-X test process, by:
->>  - Add and use a specific register located in a BAR, which defines the interrupt
->> type is been triggered.
->>  - Move the interrupt ID number from the command section to a register
->> located in a BAR.
->>
->> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
->> ---
->>  Documentation/misc-devices/pci-endpoint-test.txt |   3 +
->>  drivers/misc/pci_endpoint_test.c                 | 121 +++++++++++++++--------
->>  drivers/pci/endpoint/functions/pci-epf-test.c    |  78 +++++++++++----
->>  3 files changed, 143 insertions(+), 59 deletions(-)
->>
-> In testing these changes  I found that pci_epc_raise_irq() also needs to be
-> updated in pci-epc-core.c, since it has interrupt_num parameter as u8
+> I (or other folks?) had proposed this before, but, AIUI, Linus remains
+> opposed.
 
-Yes, indeed. I updated it together with the pci-epc.h file.
-Thanks Alan, well spotted!
+Yeah, I hate this, because it will make people paper over their problems by
+just booting with that option.
 
-Regards,
-Gustavo
+I think it should just be fixed.
 
-> 
-> Thanks,
-> Alan
-> 
+Is there really any reason why trace buffers have to be dumped so early
+that the entropy hasn't even taken yet?
+
+And if we really want a command line option, can we make that still hash
+the pointer, just force the entropy early. That way kernel developers that
+test that command line option are still testing the *hashing*, they just
+are missing the good entropy.
+
+                 Linus
