@@ -1,122 +1,38 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753701AbeD3BAG (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 29 Apr 2018 21:00:06 -0400
-Received: from mail-io0-f197.google.com ([209.85.223.197]:33545 "EHLO
-        mail-io0-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751061AbeD3BAC (ORCPT
+        id S1753860AbeD3BAa (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 29 Apr 2018 21:00:30 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:53776 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750826AbeD3BA3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Apr 2018 21:00:02 -0400
-X-Google-Smtp-Source: AB8JxZpWxSvKKv1yybolxtEU5csNINc6IE5Et/v/j56DhpjsJeM2gvS60vzz7WqFAZXsYbMDYznWXWnhg0/6GT9buuCRfxBa1ozk
-MIME-Version: 1.0
-Date: Sun, 29 Apr 2018 18:00:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a52337056b065fb3@google.com>
-Subject: WARNING in md_ioctl
-From: syzbot <syzbot+1e46a0864c1a6e9bd3d8@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
-        shli@kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        Sun, 29 Apr 2018 21:00:29 -0400
+Date: Sun, 29 Apr 2018 21:00:25 -0400 (EDT)
+Message-Id: <20180429.210025.1829415202415126984.davem@davemloft.net>
+To: vivien.didelot@savoirfairelinux.com
+Cc: netdev@vger.kernel.org, andrew@lunn.ch, f.fainelli@gmail.com,
+        linux-kernel@vger.kernel.org, kernel@savoirfairelinux.com
+Subject: Re: [PATCH net-next 0/3] net: dsa: mv88e6xxx: remove Global 2 setup
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180427015646.24946-1-vivien.didelot@savoirfairelinux.com>
+References: <20180427015646.24946-1-vivien.didelot@savoirfairelinux.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+From: Vivien Didelot <vivien.didelot@savoirfairelinux.com>
+Date: Thu, 26 Apr 2018 21:56:43 -0400
 
-syzbot hit the following crash on upstream commit
-c61a56ababa404961fa769a2b24229f18e461961 (Sun Apr 29 17:06:05 2018 +0000)
-Merge branch 'x86-urgent-for-linus' of  
-git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
-syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=1e46a0864c1a6e9bd3d8
+> Parts of the mv88e6xxx driver still write arbitrary registers of
+> different banks at setup time, which is misleading especially when
+> supporting multiple device models.
+> 
+> This patchset moves two features setup into the top lovel
+> mv88e6xxx_setup function and kills the old Global 2 register bank setup
+> function. It brings no functional changes.
 
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5771999158730752
-syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=6399853584187392
-Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=6389218171420672
-Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=4617060493481910265
-compiler: gcc (GCC) 8.0.1 20180413 (experimental)
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+1e46a0864c1a6e9bd3d8@syzkaller.appspotmail.com
-It will help syzbot understand when the bug is fixed. See footer for  
-details.
-If you forward the report, please keep this part and the footer.
-
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-md: md0 stopped.
-md: md0 stopped.
-WARNING: CPU: 1 PID: 4511 at drivers/md/md.c:7188 md_ioctl+0x3427/0x6360  
-drivers/md/md.c:7188
-Kernel panic - not syncing: panic_on_warn set ...
-
-CPU: 1 PID: 4511 Comm: syz-executor107 Not tainted 4.17.0-rc2+ #24
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  panic+0x22f/0x4de kernel/panic.c:184
-  __warn.cold.8+0x163/0x1b3 kernel/panic.c:536
-  report_bug+0x252/0x2d0 lib/bug.c:186
-  fixup_bug arch/x86/kernel/traps.c:178 [inline]
-  do_error_trap+0x1de/0x490 arch/x86/kernel/traps.c:296
-  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
-  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:992
-RIP: 0010:md_ioctl+0x3427/0x6360 drivers/md/md.c:7188
-RSP: 0018:ffff8801ad9b7400 EFLAGS: 00010293
-RAX: ffff8801acf7a540 RBX: 0000000000000932 RCX: ffffffff8565f354
-RDX: 0000000000000000 RSI: ffffffff85661c37 RDI: 0000000000000007
-RBP: ffff8801ad9b79c0 R08: ffff8801acf7a540 R09: ffffed0039894699
-R10: ffff8801ad9b73f0 R11: ffff8801cc4a34cf R12: 0000000000000932
-R13: ffff8801cc4a3328 R14: ffff8801ad9b7998 R15: 0000000000000001
-  __blkdev_driver_ioctl block/ioctl.c:303 [inline]
-  blkdev_ioctl+0x9b6/0x2020 block/ioctl.c:601
-  block_ioctl+0xee/0x130 fs/block_dev.c:1877
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  file_ioctl fs/ioctl.c:500 [inline]
-  do_vfs_ioctl+0x1cf/0x16a0 fs/ioctl.c:684
-  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:701
-  __do_sys_ioctl fs/ioctl.c:708 [inline]
-  __se_sys_ioctl fs/ioctl.c:706 [inline]
-  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:706
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x445a59
-RSP: 002b:00007f00dd147da8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000445a59
-RDX: 0000000020000080 RSI: 0000000000000932 RDI: 0000000000000003
-RBP: 00000000006dac3c R08: 00007f00dd148700 R09: 0000000000000000
-R10: 00007f00dd148700 R11: 0000000000000246 R12: 00000000006dac38
-R13: 30646d2f7665642f R14: 00007f00dd1489c0 R15: 0000000000000003
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
-
----
-This bug is generated by a dumb bot. It may contain errors.
-See https://goo.gl/tpsmEJ for details.
-Direct all questions to syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report.
-If you forgot to add the Reported-by tag, once the fix for this bug is  
-merged
-into any tree, please reply to this email with:
-#syz fix: exact-commit-title
-If you want to test a patch for this bug, please reply with:
-#syz test: git://repo/address.git branch
-and provide the patch inline or as an attachment.
-To mark this as a duplicate of another syzbot report, please reply with:
-#syz dup: exact-subject-of-another-report
-If it's a one-off invalid bug report, please reply with:
-#syz invalid
-Note: if the crash happens again, it will cause creation of a new bug  
-report.
-Note: all commands must start from beginning of the line in the email body.
+Series applied, thanks Vivien.
