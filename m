@@ -1,39 +1,39 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrDg0+aIkKmfq/ql0yGKYN5KKJ0oTmOY/V2CuC0BPuRLSRvzHQvBmxesbq0HLWBevc8jb3l
-ARC-Seal: i=1; a=rsa-sha256; t=1525116354; cv=none;
+X-Google-Smtp-Source: AB8JxZqKrZ6pOEOdQk+/GpB6spV5FtdhDuWs8+XcnI4d8i0a762PJXYVwWP1A3y1rEiS7QPUF7+P
+ARC-Seal: i=1; a=rsa-sha256; t=1525116352; cv=none;
         d=google.com; s=arc-20160816;
-        b=a+5mHoQaxIQcQOmwuEFgOCPmrIVsGMWiUh4p+SNpTKOdjrjt8RmUzbnXR6i0V0nG+8
-         mZLxKDs+ZTQ0KatRoHcoQUFumN+o3nCnFj7VUvwAf90Au3jxKUEykAeODJkdzWnbAe/q
-         IrIT44nTrDo0GgXkLhJk1MtThhvPd5Jpu7f2QX0+l4K/PpmCWsPPvaAuZXgUL2E0i6NJ
-         7xSSJY8HBISjVV3QDT4jXu/jNFrBTO7gs/0TN8SQjXd1VjzCzknZnQ7+6SeaXJ3MM+S6
-         +nZvZ09KJidgD4YIQo2VWEMOYg3u4nVAB4uuvf4CnaWau9PcD6YGaETT6Tib8SzAE+Z2
-         +Z3w==
+        b=BotdjK2s6yKsnViNjrIbOMMzvxVCGd47alFCU60Ryio0XSqTAeTCnXnCbBUOT3mhWZ
+         +r8gJUO59aSmNGnGsSifBHKBBIeMOYt3PrlTv/ksTvy/bAWvKedw3mZaw2U5iZ+bJrhH
+         qZg2Ie6ab10mWrInU4S3WMAXpNrMVma0hVCvjZSQTzpeI968Pm+XjlNPS62jJOsZNrcv
+         LgVig8brIhePZBEFxm8mPbJmUn/8K8muc9wHupsYM088/1Fy4B1ePHN0K1QkhKr8D9cN
+         imsiSrfrWZOQbZ+T4KDHmoR/gO8xRImuCNzGadF851U0NCAdBqteQTyZio+qxG59zWn0
+         Uhpg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=sz5a6TiqyR4Tdts4Y4eJaJ2rUsWatzIBEvNClzOLQEE=;
-        b=An40i+ZRUiyD3aEjhvmSQG/6IbHZ/QQIvsIBxC8Ilkg+Wwxu4KZXlvGuPSuWjVnrLK
-         fGLNZesU/BntktKVAGWzpILMgoYYsXBGheXIHODjyFx5u6M1vVGN6OUaTSnyvBinyUR1
-         Qz1gdSkkzM10VVwWtZHauujXb8qn3RZrf2P9IKlEjSFPHOI1CPVM1Ctcshdt/iq7cwuC
-         jmjhwH0EEXPDLE0o0zboEiPkjx4nT98ZO60q7h7HCpHNEFaXCLc3dFoFE/sC3IApaqCI
-         5ednUIZ665UMRo3sEsoWM5DhfuW5UecfqKriwZeaBtiauQCHTR3E0gcUG6FfYkQ8EBz7
-         RTPA==
+        bh=L9jZs6PqEVSd04ZLltTPJaF88dVAwmJ2AEM5Mk1AhTY=;
+        b=IEHkyn+uhDBfSw1WnUvVModpPmvmeI5gPGghaGjJth8opIHz4+Cnollhplc699tH7a
+         75ffOLFNMHVgTininoPpmURNhfU2MRHg4xEKkR4nCMWTZPbie0NRQNz21MYEVNFe+fcv
+         XV2354X1+GQHxeIMFg2a4BC8zEv82LwYC3+1x0SvhLCnNwxmbdAxJo/QTV5VjHgvg5/Y
+         nZ/3iBu8cp64kTBKREm+jetTBiryaLeiM5z0HIGnSmFuM2n4fm8eZyRXNAs3Ymz6TIfW
+         phBb3xakwahJjxm349IO09rw4Y0faHD1o4qcBG2verChWvZ1g4obyrNs1WtStk/Ki93h
+         yHQw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E292921746
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D80C22DC0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Kyle Roeschley <kyle.roeschley@ni.com>,
+	Vasyl Vavrychuk <vvavrychuk@gmail.com>,
 	Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.4 09/44] USB: serial: cp210x: add ID for NI USB serial console
-Date: Mon, 30 Apr 2018 12:24:20 -0700
-Message-Id: <20180430190946.714048453@linuxfoundation.org>
+Subject: [PATCH 4.4 08/44] USB: serial: ftdi_sio: use jtag quirk for Arrow USB Blaster
+Date: Mon, 30 Apr 2018 12:24:19 -0700
+Message-Id: <20180430190946.672704982@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430190946.093694747@linuxfoundation.org>
 References: <20180430190946.093694747@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200291501783641?=
-X-GMAIL-MSGID: =?utf-8?q?1599200406572891178?=
+X-GMAIL-THRID: =?utf-8?q?1599200290734996799?=
+X-GMAIL-MSGID: =?utf-8?q?1599200404842372196?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,29 +52,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kyle Roeschley <kyle.roeschley@ni.com>
+From: Vasyl Vavrychuk <vvavrychuk@gmail.com>
 
-commit 1e23aace21515a8f7615a1de016c0ea8d4e0cc6e upstream.
+commit 470b5d6f0cf4674be2d1ec94e54283a1770b6a1a upstream.
 
-Added the USB VID and PID for the USB serial console on some National
-Instruments devices.
+Arrow USB Blaster integrated on MAX1000 board uses the same vendor ID
+(0x0403) and product ID (0x6010) as the "original" FTDI device.
 
-Signed-off-by: Kyle Roeschley <kyle.roeschley@ni.com>
+This patch avoids picking up by ftdi_sio of the first interface of this
+USB device. After that this device can be used by Arrow user-space JTAG
+driver.
+
+Signed-off-by: Vasyl Vavrychuk <vvavrychuk@gmail.com>
 Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/cp210x.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/usb/serial/ftdi_sio.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/serial/cp210x.c
-+++ b/drivers/usb/serial/cp210x.c
-@@ -210,6 +210,7 @@ static const struct usb_device_id id_tab
- 	{ USB_DEVICE(0x3195, 0xF190) }, /* Link Instruments MSO-19 */
- 	{ USB_DEVICE(0x3195, 0xF280) }, /* Link Instruments MSO-28 */
- 	{ USB_DEVICE(0x3195, 0xF281) }, /* Link Instruments MSO-28 */
-+	{ USB_DEVICE(0x3923, 0x7A0B) }, /* National Instruments USB Serial Console */
- 	{ USB_DEVICE(0x413C, 0x9500) }, /* DW700 GPS USB interface */
- 	{ } /* Terminating Entry */
- };
+--- a/drivers/usb/serial/ftdi_sio.c
++++ b/drivers/usb/serial/ftdi_sio.c
+@@ -1911,7 +1911,8 @@ static int ftdi_8u2232c_probe(struct usb
+ 		return ftdi_jtag_probe(serial);
+ 
+ 	if (udev->product &&
+-		(!strcmp(udev->product, "BeagleBone/XDS100V2") ||
++		(!strcmp(udev->product, "Arrow USB Blaster") ||
++		 !strcmp(udev->product, "BeagleBone/XDS100V2") ||
+ 		 !strcmp(udev->product, "SNAP Connect E10")))
+ 		return ftdi_jtag_probe(serial);
+ 
