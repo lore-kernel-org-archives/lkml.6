@@ -1,161 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754811AbeD3Snh (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 14:43:37 -0400
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:42528 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752534AbeD3Snf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 14:43:35 -0400
-X-Google-Smtp-Source: AB8JxZr5CoPkRux7Gjw7SlBad+G2uHIPKpKGJJGbu6SMbN+FdJ9e2ExvHPLj8iOTDz1nNJi89hiRZbyHfmHqzPRSRMA=
+        id S1754898AbeD3Sor (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 14:44:47 -0400
+Received: from mga06.intel.com ([134.134.136.31]:56304 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752994AbeD3Soq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 14:44:46 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,348,1520924400";
+   d="scan'208";a="47226616"
+Date: Mon, 30 Apr 2018 11:43:47 -0700
+From: Dongwon Kim <dongwon.kim@intel.com>
+To: Juergen Gross <jgross@suse.com>
+Cc: Oleksandr Andrushchenko <andr2000@gmail.com>,
+        Wei Liu <wei.liu2@citrix.com>, Artem Mygaiev <Artem_Mygaiev@epam.com>,
+        konrad.wilk@oracle.com, airlied@linux.ie, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        "Potrola, MateuszX" <mateuszx.potrola@intel.com>,
+        daniel.vetter@intel.com, xen-devel@lists.xenproject.org,
+        boris.ostrovsky@oracle.com,
+        Roger Pau =?iso-8859-1?Q?Monn=E9?= <roger.pau@citrix.com>,
+        "Oleksandr_Andrushchenko@epam.com" <Oleksandr_Andrushchenko@epam.com>
+Subject: Re: [Xen-devel] [PATCH 0/1] drm/xen-zcopy: Add Xen zero-copy helper
+ DRM driver
+Message-ID: <20180430184347.GA20292@downor-Z87X-UD5H>
+References: <ebcbf6ce-1d7a-5f3e-cff8-546d1c010e59@gmail.com>
+ <20180418101058.hyqk3gr3b2ibxswu@MacBook-Pro-de-Roger.local>
+ <20180420071914.GG31310@phenom.ffwll.local>
+ <76cdc65a-7bb1-9377-7bc5-6164e32f7b5d@gmail.com>
+ <20180423115242.ywdwqblj2aseu3fr@citrix.com>
+ <61105351-8896-072b-abf0-757c7f6c0edf@gmail.com>
+ <20180424115437.GT31310@phenom.ffwll.local>
+ <18ab5f76-00b0-42a0-fcb8-e0cbf4cdd527@gmail.com>
+ <20180424203514.GA26787@downor-Z87X-UD5H>
+ <bdeeb76f-ea65-083b-dde4-450584edb068@suse.com>
 MIME-Version: 1.0
-In-Reply-To: <1523975611-15978-25-git-send-email-ldufour@linux.vnet.ibm.com>
-References: <1523975611-15978-1-git-send-email-ldufour@linux.vnet.ibm.com> <1523975611-15978-25-git-send-email-ldufour@linux.vnet.ibm.com>
-From: Punit Agrawal <punitagrawal@gmail.com>
-Date: Mon, 30 Apr 2018 19:43:13 +0100
-Message-ID: <CAD4BONd5DZiKkGPGaYqEcVb+YubVDy43MNNQ8_yztDHWpf0Y7w@mail.gmail.com>
-Subject: Re: [PATCH v10 24/25] x86/mm: add speculative pagefault handling
-To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Cc: akpm@linux-foundation.org, mhocko@kernel.org, peterz@infradead.org,
-        kirill@shutemov.name, ak@linux.intel.com, dave@stgolabs.net,
-        jack@suse.cz, Matthew Wilcox <willy@infradead.org>,
-        benh@kernel.crashing.org, mpe@ellerman.id.au, paulus@samba.org,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
-        sergey.senozhatsky.work@gmail.com,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        David Rientjes <rientjes@google.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Ganesh Mahendran <opensource.ganesh@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
-        npiggin@gmail.com, bsingharora@gmail.com, paulmck@linux.vnet.ibm.com,
-        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
-        x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bdeeb76f-ea65-083b-dde4-450584edb068@suse.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Laurent,
+On Wed, Apr 25, 2018 at 08:12:08AM +0200, Juergen Gross wrote:
+> On 24/04/18 22:35, Dongwon Kim wrote:
+> > Had a meeting with Daniel and talked about bringing out generic
+> > part of hyper-dmabuf to the userspace, which means we most likely
+> > reuse IOCTLs defined in xen-zcopy for our use-case if we follow
+> > his suggestion.
+> > 
+> > So assuming we use these IOCTLs as they are,
+> > Several things I would like you to double-check..
+> > 
+> > 1. returning gref as is to the user space is still unsafe because
+> > it is a constant, easy to guess and any process that hijacks it can easily
+> > exploit the buffer. So I am wondering if it's possible to keep dmabuf-to
+> > -gref or gref-to-dmabuf in kernel space and add other layers on top
+> > of those in actual IOCTLs to add some safety.. We introduced flink like
+> > hyper_dmabuf_id including random number but many says even that is still
+> > not safe.
+> 
+> grefs are usable by root only. When you have root access in dom0 you can
+> do evil things to all VMs even without using grants. That is in no way
+> different to root being able to control all other processes on the
+> system.
 
-I am looking to add support for speculative page fault handling to
-arm64 (effectively porting this patch) and had a few questions.
-Apologies if I've missed an obvious explanation for my queries. I'm
-jumping in bit late to the discussion.
+I honestly didn't know about this. I believed kernel code simply can map those
+pages. However, out of curiosity, how is non-root usage of gref prevented in
+current design? Is there privilege check in grant table driver or hypercalls
+needed by this page mapping is only enabled for root in hypervisor level?
 
-On Tue, Apr 17, 2018 at 3:33 PM, Laurent Dufour
-<ldufour@linux.vnet.ibm.com> wrote:
-> From: Peter Zijlstra <peterz@infradead.org>
->
-> Try a speculative fault before acquiring mmap_sem, if it returns with
-> VM_FAULT_RETRY continue with the mmap_sem acquisition and do the
-> traditional fault.
->
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
->
-> [Clearing of FAULT_FLAG_ALLOW_RETRY is now done in
->  handle_speculative_fault()]
-> [Retry with usual fault path in the case VM_ERROR is returned by
->  handle_speculative_fault(). This allows signal to be delivered]
-> [Don't build SPF call if !CONFIG_SPECULATIVE_PAGE_FAULT]
-> [Try speculative fault path only for multi threaded processes]
-> [Try reuse to the VMA fetch during the speculative path in case of retry]
-> [Call reuse_spf_or_find_vma()]
-> [Handle memory protection key fault]
-> Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-> ---
->  arch/x86/mm/fault.c | 42 ++++++++++++++++++++++++++++++++++++++----
->  1 file changed, 38 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-> index 73bd8c95ac71..59f778386df5 100644
-> --- a/arch/x86/mm/fault.c
-> +++ b/arch/x86/mm/fault.c
-> @@ -1220,7 +1220,7 @@ __do_page_fault(struct pt_regs *regs, unsigned long error_code,
->         struct mm_struct *mm;
->         int fault, major = 0;
->         unsigned int flags = FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_KILLABLE;
-> -       u32 pkey;
-> +       u32 pkey, *pt_pkey = &pkey;
->
->         tsk = current;
->         mm = tsk->mm;
-> @@ -1310,6 +1310,30 @@ __do_page_fault(struct pt_regs *regs, unsigned long error_code,
->                 flags |= FAULT_FLAG_INSTRUCTION;
->
->         /*
-> +        * Do not try speculative page fault for kernel's pages and if
-> +        * the fault was due to protection keys since it can't be resolved.
-> +        */
-> +       if (IS_ENABLED(CONFIG_SPECULATIVE_PAGE_FAULT) &&
-> +           !(error_code & X86_PF_PK)) {
-
-You can simplify this condition by dropping the IS_ENABLED() check as
-you already provide an alternate implementation of
-handle_speculative_fault() when CONFIG_SPECULATIVE_PAGE_FAULT is not
-defined.
-
-> +               fault = handle_speculative_fault(mm, address, flags, &vma);
-> +               if (fault != VM_FAULT_RETRY) {
-> +                       perf_sw_event(PERF_COUNT_SW_SPF, 1, regs, address);
-> +                       /*
-> +                        * Do not advertise for the pkey value since we don't
-> +                        * know it.
-> +                        * This is not a matter as we checked for X86_PF_PK
-> +                        * earlier, so we should not handle pkey fault here,
-> +                        * but to be sure that mm_fault_error() callees will
-> +                        * not try to use it, we invalidate the pointer.
-> +                        */
-> +                       pt_pkey = NULL;
-> +                       goto done;
-> +               }
-> +       } else {
-> +               vma = NULL;
-> +       }
-
-The else part can be dropped if vma is initialised to NULL when it is
-declared at the top of the function.
-
-> +
-> +       /*
->          * When running in the kernel we expect faults to occur only to
->          * addresses in user space.  All other faults represent errors in
->          * the kernel and should generate an OOPS.  Unfortunately, in the
-> @@ -1342,7 +1366,8 @@ __do_page_fault(struct pt_regs *regs, unsigned long error_code,
->                 might_sleep();
->         }
->
-> -       vma = find_vma(mm, address);
-> +       if (!vma || !can_reuse_spf_vma(vma, address))
-> +               vma = find_vma(mm, address);
-
-Is there a measurable benefit from reusing the vma?
-
-Dropping the vma reference unconditionally after speculative page
-fault handling gets rid of the implicit state when "vma != NULL"
-(increased ref-count). I found it a bit confusing to follow.
-
->         if (unlikely(!vma)) {
->                 bad_area(regs, error_code, address);
->                 return;
-> @@ -1409,8 +1434,15 @@ __do_page_fault(struct pt_regs *regs, unsigned long error_code,
->                 if (flags & FAULT_FLAG_ALLOW_RETRY) {
->                         flags &= ~FAULT_FLAG_ALLOW_RETRY;
->                         flags |= FAULT_FLAG_TRIED;
-> -                       if (!fatal_signal_pending(tsk))
-> +                       if (!fatal_signal_pending(tsk)) {
-> +                               /*
-> +                                * Do not try to reuse this vma and fetch it
-> +                                * again since we will release the mmap_sem.
-> +                                */
-> +                               if (IS_ENABLED(CONFIG_SPECULATIVE_PAGE_FAULT))
-> +                                       vma = NULL;
-
-Regardless of the above comment, can the vma be reset here unconditionally?
+And this is pretty critical information for any use-case using grant-table.
+Is there any place(doc/website) this is specified/explained?
 
 Thanks,
-Punit
+DW
+
+
+> 
+> 
+> Juergen
