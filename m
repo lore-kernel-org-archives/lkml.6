@@ -1,39 +1,38 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpuKE3+EzCbTKmCHEBA3kTJb0spG+bOOXWO4g+pjq7tOLwMAwUzgQ6mC5Pc9FFsejJPHf0N
-ARC-Seal: i=1; a=rsa-sha256; t=1525116434; cv=none;
+X-Google-Smtp-Source: AB8JxZrThBsVhhjN9HSGL2uuPkAa5EJtn7UKG5aqxotWVy3GQDJJCqWso471aSI4NB4fchkh343M
+ARC-Seal: i=1; a=rsa-sha256; t=1525116423; cv=none;
         d=google.com; s=arc-20160816;
-        b=rD6JGbERR4u13+gafzRMKUERg8ZVCPkLqqGKF96HHocvPl9Ogcc8vReJ9jAR/qStgZ
-         GJ/kan2omJOo6wK1sP4m2AHWjz/YqgWpiWAKmXnIEhA1EA+tXY71gWyDAsV1oAXYAAd3
-         sPF7zN9VBqgb+VAdBZTSVEzErEoY31DhvQ/lYHHZs/aeXovY75JSTPZGYq1B+Th8yNJT
-         ma6hDd3PjI0PTWghzSkjnH3A5Qj2SnXB/5qouIydiKhHRdkvx6boxcQ2BbSszV5XDQP0
-         2qvyhpLFB0qziT4Yo7G0qiP0VrR+mDHO9p2agxFjzp5ffvVvsR5uC5FS6r+dI7BEgApJ
-         Up2w==
+        b=VswBNqsEBhLh4TsuQBta/EZnnl7eGrcKzvSisGc5y6mUG5sJCm3R7h7QoxnkDSARPt
+         OZ4zUH3Ewh6w4i/3Y75xJGrtjFDb7IGfCP8We2ay8zJd57zWfPKzKUSE+U653B1RvTJ2
+         0fsOY84y4Oz/VKLHpTbNEbO14rEr7Y3/5CheXr26n5yIoTRG50iOTmo993Lwbrm49oC5
+         jBnACsqKaFZyh14Lp4HTEKWT6J5RaDdAtE7vdjFZpHqOa3DijczMOc9i4pP2TgBTyHDt
+         kkfwjcVu0Agr0PNGStb1UjW5Qc2GyvXVQaSWV1BWs3lMXjXZ1UCUtF+WnWAXKYBl9kCa
+         ZKtQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=MzfCqD0VH5FV1UgibykHL4DWPb5KFKhtgWjA9sYxKWM=;
-        b=xZrG1PmwZvB1YFdozzlpCmGHYLOKBKJChg2nH80LuJqol1vItPZ4xFjLee+m2KGlCh
-         nfPPmeyIt4XsCbVESp/ssnj7GUqyo9DZi/eBGecKF7Z8qvBILyprd4kix5XtxXYfnG6u
-         4zgxalFCSzH00hyBQsCN3bIbS2rsx/Xf814u6dw3saDc7QPokjBy1LYZw4AqO/83f7oA
-         OGgj5kp07IaKwQ4IjFF4wKAdOmUiu2Cknz8cpmWaMYJs8Hb8mLQmKT+tohzeSwlS+zTn
-         PEZCadq08Fd82Vb8aUxcuOBaAlGcLI0tQ3GNfd3VGGBuiJJ/n6U7OeMHob8QmfKf/rvX
-         7eBQ==
+        bh=ERtOmHMNwXqfZbRkV3PII5qylkUNGwRwzSJ/Bd0Nqjc=;
+        b=q+emBCQLD0TFna56fMSfi/y+jQzbzO+aozx8C98y5uINk0RaNBaZw759a7ZpXC3tHL
+         WJIjnpz7Cxw8ujLh02fuy5aNu5nsNJQU2+Zrut3ybqndMdSogGBYryO+RD40Fscx8lDP
+         5+6J440P+gFDuqDR/QfnoiLMLEUdP7c55w4AItIptfHqRwi8iJH6iWlZGY72PkIOJs0c
+         KQoX5onbsEgd0wnfU7VgIMlWRb6GKOrYI+6r5KCUVx+jmfQMDfu2qbo8yFLuawzplXS2
+         8e3sDC2bAx7qjOkMdExZPEhDraRo8SQe5XeLbwKmNeN9uP/0YViY/VhpHb1h9qtFEORf
+         Sovw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7767622DCC
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 455A022DAC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dan Carpenter <dan.carpenter@oracle.com>,
-	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 39/91] ALSA: hdspm: Hardening for potential Spectre v1
-Date: Mon, 30 Apr 2018 12:24:21 -0700
-Message-Id: <20180430184006.201800944@linuxfoundation.org>
+	"Michael S. Tsirkin" <mst@redhat.com>
+Subject: [PATCH 4.14 22/91] virtio: add ability to iterate over vqs
+Date: Mon, 30 Apr 2018 12:24:04 -0700
+Message-Id: <20180430184005.367272127@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184004.216234025@linuxfoundation.org>
 References: <20180430184004.216234025@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200425501203379?=
-X-GMAIL-MSGID: =?utf-8?q?1599200489914436580?=
+X-GMAIL-THRID: =?utf-8?q?1599200278542184373?=
+X-GMAIL-MSGID: =?utf-8?q?1599200479353702772?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,89 +51,30 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Michael S. Tsirkin <mst@redhat.com>
 
-commit 10513142a7114d251670361ad40cba2c61403406 upstream.
+commit 24a7e4d20783c0514850f24a5c41ede46ab058f0 upstream.
 
-As recently Smatch suggested, a couple of places in HDSP MADI driver
-may expand the array directly from the user-space value with
-speculation:
-  sound/pci/rme9652/hdspm.c:5717 snd_hdspm_channel_info() warn: potential spectre issue 'hdspm->channel_map_out' (local cap)
-  sound/pci/rme9652/hdspm.c:5734 snd_hdspm_channel_info() warn: potential spectre issue 'hdspm->channel_map_in' (local cap)
+For cleanup it's helpful to be able to simply scan all vqs and discard
+all data. Add an iterator to do that.
 
-This patch puts array_index_nospec() for hardening against them.
-
-BugLink: https://marc.info/?l=linux-kernel&m=152411496503418&w=2
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Cc: stable@vger.kernel.org
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/rme9652/hdspm.c |   24 ++++++++++++++----------
- 1 file changed, 14 insertions(+), 10 deletions(-)
+ include/linux/virtio.h |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/sound/pci/rme9652/hdspm.c
-+++ b/sound/pci/rme9652/hdspm.c
-@@ -137,6 +137,7 @@
- #include <linux/pci.h>
- #include <linux/math64.h>
- #include <linux/io.h>
-+#include <linux/nospec.h>
+--- a/include/linux/virtio.h
++++ b/include/linux/virtio.h
+@@ -157,6 +157,9 @@ int virtio_device_freeze(struct virtio_d
+ int virtio_device_restore(struct virtio_device *dev);
+ #endif
  
- #include <sound/core.h>
- #include <sound/control.h>
-@@ -5698,40 +5699,43 @@ static int snd_hdspm_channel_info(struct
- 		struct snd_pcm_channel_info *info)
- {
- 	struct hdspm *hdspm = snd_pcm_substream_chip(substream);
-+	unsigned int channel = info->channel;
- 
- 	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
--		if (snd_BUG_ON(info->channel >= hdspm->max_channels_out)) {
-+		if (snd_BUG_ON(channel >= hdspm->max_channels_out)) {
- 			dev_info(hdspm->card->dev,
- 				 "snd_hdspm_channel_info: output channel out of range (%d)\n",
--				 info->channel);
-+				 channel);
- 			return -EINVAL;
- 		}
- 
--		if (hdspm->channel_map_out[info->channel] < 0) {
-+		channel = array_index_nospec(channel, hdspm->max_channels_out);
-+		if (hdspm->channel_map_out[channel] < 0) {
- 			dev_info(hdspm->card->dev,
- 				 "snd_hdspm_channel_info: output channel %d mapped out\n",
--				 info->channel);
-+				 channel);
- 			return -EINVAL;
- 		}
- 
--		info->offset = hdspm->channel_map_out[info->channel] *
-+		info->offset = hdspm->channel_map_out[channel] *
- 			HDSPM_CHANNEL_BUFFER_BYTES;
- 	} else {
--		if (snd_BUG_ON(info->channel >= hdspm->max_channels_in)) {
-+		if (snd_BUG_ON(channel >= hdspm->max_channels_in)) {
- 			dev_info(hdspm->card->dev,
- 				 "snd_hdspm_channel_info: input channel out of range (%d)\n",
--				 info->channel);
-+				 channel);
- 			return -EINVAL;
- 		}
- 
--		if (hdspm->channel_map_in[info->channel] < 0) {
-+		channel = array_index_nospec(channel, hdspm->max_channels_in);
-+		if (hdspm->channel_map_in[channel] < 0) {
- 			dev_info(hdspm->card->dev,
- 				 "snd_hdspm_channel_info: input channel %d mapped out\n",
--				 info->channel);
-+				 channel);
- 			return -EINVAL;
- 		}
- 
--		info->offset = hdspm->channel_map_in[info->channel] *
-+		info->offset = hdspm->channel_map_in[channel] *
- 			HDSPM_CHANNEL_BUFFER_BYTES;
- 	}
- 
++#define virtio_device_for_each_vq(vdev, vq) \
++	list_for_each_entry(vq, &vdev->vqs, list)
++
+ /**
+  * virtio_driver - operations for a virtio I/O driver
+  * @driver: underlying device driver (populate name and owner).
