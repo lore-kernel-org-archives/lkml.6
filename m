@@ -1,373 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753878AbeD3BuT (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 29 Apr 2018 21:50:19 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58428 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753659AbeD3BuQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Apr 2018 21:50:16 -0400
-From: NeilBrown <neilb@suse.com>
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 30 Apr 2018 11:50:04 +1000
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH resend] VFS: simplify seq_file iteration code and interface
-In-Reply-To: <87vacsrt0r.fsf@notabene.neil.brown.name>
-References: <87vacsrt0r.fsf@notabene.neil.brown.name>
-Message-ID: <87fu3dihtf.fsf@notabene.neil.brown.name>
+        id S1753962AbeD3CCo (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 29 Apr 2018 22:02:44 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:28619 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1753822AbeD3CCl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Apr 2018 22:02:41 -0400
+X-UUID: ecb9c392048a436195f91e2452d3f592-20180430
+Message-ID: <1525053746.5013.8.camel@mtkswgap22>
+Subject: Re: [PATCH v6 0/2] PCI: mediatek: Fixups for the IRQ handle routine
+ and MT7622's class code
+From: Ryder Lee <ryder.lee@mediatek.com>
+To: Honghui Zhang =?UTF-8?Q?=28=E5=BC=A0=E6=B4=AA=E8=BE=89=29?=
+        <Honghui.Zhang@mediatek.com>
+CC: "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-mediatek@lists.infradead.org"
+        <linux-mediatek@lists.infradead.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Yingjoe Chen =?UTF-8?Q?=28=3F=3F=E8=8B=B1=E6=B4=B2=29?=
+        <Yingjoe.Chen@mediatek.com>,
+        Eddie Huang =?UTF-8?Q?=28=3FS=3F=C7=82=3F=29?=
+        <eddie.huang@mediatek.com>,
+        Youlin Pei =?UTF-8?Q?=28=E8=A3=B4=E5=8F=8B=E6=9E=97=29?=
+        <youlin.pei@mediatek.com>,
+        Hongkun Cao =?UTF-8?Q?=28=E6=9B=B9=E6=B4=AA=E5=9D=A4=29?=
+        <Hongkun.Cao@mediatek.com>,
+        Sean Wang =?UTF-8?Q?=28=E7=8E=8B=E5=BF=97=E4=BA=98=29?=
+        <sean.wang@mediatek.com>,
+        Xinping Qian =?UTF-8?Q?=28=E9=92=B1=E6=96=B0=E5=B9=B3=29?=
+        <xinping.qian@mediatek.com>,
+        Yong Wu =?UTF-8?Q?=28=E5=90=B4=E5=8B=87=29?=
+        <Yong.Wu@mediatek.com>
+Date: Mon, 30 Apr 2018 10:02:26 +0800
+In-Reply-To: <1524201910-22836-1-git-send-email-honghui.zhang@mediatek.com>
+References: <1524201910-22836-1-git-send-email-honghui.zhang@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On Fri, 2018-04-20 at 13:25 +0800, Honghui Zhang (张洪辉) wrote:
+> From: Honghui Zhang <honghui.zhang@mediatek.com>
+> 
+> Two fixups for mediatek's host bridge:
+> The first patch fixup class type and vendor ID for MT7622.
+> The second patch fixup the IRQ handle routine by using irq_chip solution
+> to avoid IRQ reentry which may exist for both MT2712 and MT7622.
+> 
+> Change since v5:
+>  - Make the comments consistend with the code modification in the first patch.
+>  - Using writew to performing a 16-bit write.
+>  - Using irq_chip solution to fix the IRQ issue.
+> 
+> The v5 patchset could be found in:
+>  https://patchwork.kernel.org/patch/10133303
+>  https://patchwork.kernel.org/patch/10133305
+> 
+> Change since v4:
+>  - Only setup vendor ID for MT7622, igorning the device ID since mediatek's
+>    host bridge driver does not cares about the device ID.
+> 
+> Change since v3:
+>  - Setup the class type and vendor ID at the beginning of startup instead
+>    of in a quirk.
+>  - Add mediatek's vendor ID, it could be found in:
+>    https://pcisig.com/membership/member-companies?combine=&page=4
+> 
+> Change since v2:
+>  - Move the initialize of the iterate before the loop to fix an
+>    INTx IRQ issue in the first patch
+> 
+> Change since v1:
+>  - Add the second patch.
+>  - Make the first patch's commit message more standard.
+> Honghui Zhang (2):
+>   PCI: mediatek: Set up vendor ID and class type for MT7622
+>   PCI: mediatek: Using chained IRQ to setup IRQ handle
+> 
+>  drivers/pci/host/pcie-mediatek.c | 220 +++++++++++++++++++++++----------------
+>  include/linux/pci_ids.h          |   2 +
+>  2 files changed, 133 insertions(+), 89 deletions(-)
 
 
-Just resending after 2 weeks silence, in case it fell through a crack.
-Thanks,
-NeilBrown
+Acked-by: Ryder Lee <ryder.lee@mediatek.com> for the series.
 
-("git am -c" understands this line)
-=2D-----------------8<-------------
-
-The documentation for seq_file suggests that it is necessary to be
-able to move the iterator to a given offset, however that is not the
-case.  If the iterator is stored in the private data and is stable
-from one read() syscall to the next, it is only necessary to support
-first/next interactions.  Implementing this in a client is a little
-clumsy.
-=2D if ->start() is given a pos of zero, it should go to start of
-  sequence.
-=2D if ->start() is given the name pos that was given to the most recent
-  next() or start(), it should restore the iterator to state just
-  before that last call
-=2D if ->start is given another number, it should set the iterator one
-  beyond the start just before the last ->start or ->next call.
-
-
-Also, the documentation says that the implementation can interpret the
-pos however it likes (other than zero meaning start), but seq_file
-increments the pos sometimes which does impose on the implementation.
-
-This patch simplifies the interface for first/next iteration and
-simplifies the code, while maintaining complete backward
-compatability.  Now:
-
-=2D if ->start() is given a pos of zero, it should return an iterator
-  placed at the start of the sequence
-=2D if ->start() is given a non-zero pos, it should return the iterator
-  in the same state it was after the last ->start or ->next.
-
-This is particularly useful for interators which walk the multiple
-chains in a hash table, e.g. using rhashtable_walk*. See
-fs/gfs2/glock.c and drivers/staging/lustre/lustre/llite/vvp_dev.c
-
-A large part of achieving this is to *always* call ->next after ->show
-has successfully stored all of an entry in the buffer.  Never just
-increment the index instead.
-Also:
- - always pass &m->index to ->start() and ->next(), never a temp
-   variable
- - don't clear ->from when ->count is zero, as ->from is dead when
-    ->count is zero.
-
-
-Some ->next functions do not increment *pos when they return NULL.
-To maintain compatability with this, we still need to increment
-m->index in one place, if ->next didn't increment it.
-Note that such ->next functions are buggy and should be fixed.
-A simple demonstration is
-   dd if=3D/proc/swaps bs=3D1000 skip=3D1
-Choose any block size larger than the size of /proc/swaps.
-This will always show the whole last line of /proc/swaps.
-
-This patch doesn't work around buggy next() functions for this case.
-
-Signed-off-by: NeilBrown <neilb@suse.com>
-=2D--
- Documentation/filesystems/seq_file.txt | 63 ++++++++++++++++++++++--------=
-----
- fs/seq_file.c                          | 53 +++++++++++-----------------
- 2 files changed, 62 insertions(+), 54 deletions(-)
-
-diff --git a/Documentation/filesystems/seq_file.txt b/Documentation/filesys=
-tems/seq_file.txt
-index 9de4303201e1..d412b236a9d6 100644
-=2D-- a/Documentation/filesystems/seq_file.txt
-+++ b/Documentation/filesystems/seq_file.txt
-@@ -66,23 +66,39 @@ kernel 3.10. Current versions require the following upd=
-ate
-=20
- The iterator interface
-=20
-=2DModules implementing a virtual file with seq_file must implement a simple
-=2Diterator object that allows stepping through the data of interest.
-=2DIterators must be able to move to a specific position - like the file th=
-ey
-=2Dimplement - but the interpretation of that position is up to the iterator
-=2Ditself. A seq_file implementation that is formatting firewall rules, for
-=2Dexample, could interpret position N as the Nth rule in the chain.
-=2DPositioning can thus be done in whatever way makes the most sense for the
-=2Dgenerator of the data, which need not be aware of how a position transla=
-tes
-=2Dto an offset in the virtual file. The one obvious exception is that a
-=2Dposition of zero should indicate the beginning of the file.
-+Modules implementing a virtual file with seq_file must implement an
-+iterator object that allows stepping through the data of interest
-+during a "session" (roughly one read() system call).  If the iterator
-+is able to move to a specific position - like the file they implement,
-+though with freedom to map the position number to a sequence location
-+in whatever way is convenient - the iterator need only exist
-+transiently during a session.  If the iterator cannot easily find a
-+numerical position but works well with a first/next interface, the
-+iterator can be stored in the private data area and continue from one
-+session to the next.
-+
-+A seq_file implementation that is formatting firewall rules from a
-+table, for example, could provide a simple iterator that interprets
-+position N as the Nth rule in the chain.  A seq_file implementation
-+that presents the content of a, potentially volatile, linked list
-+might record a pointer into that list, providing that can be done
-+without risk of the current location being removed.
-+
-+Positioning can thus be done in whatever way makes the most sense for
-+the generator of the data, which need not be aware of how a position
-+translates to an offset in the virtual file. The one obvious exception
-+is that a position of zero should indicate the beginning of the file.
-=20
- The /proc/sequence iterator just uses the count of the next number it
- will output as its position.
-=20
-=2DFour functions must be implemented to make the iterator work. The first,
-=2Dcalled start() takes a position as an argument and returns an iterator
-=2Dwhich will start reading at that position. For our simple sequence examp=
-le,
-+Four functions must be implemented to make the iterator work. The
-+first, called start(), starts a session and takes a position as an
-+argument, returning an iterator which will start reading at that
-+position.  The pos passed to start() will always be either zero, or
-+the most recent pos used in the previous session.
-+
-+For our simple sequence example,
- the start() function looks like:
-=20
- 	static void *ct_seq_start(struct seq_file *s, loff_t *pos)
-@@ -101,11 +117,12 @@ implementations; in most cases the start() function s=
-hould check for a
- "past end of file" condition and return NULL if need be.
-=20
- For more complicated applications, the private field of the seq_file
-=2Dstructure can be used. There is also a special value which can be return=
-ed
-=2Dby the start() function called SEQ_START_TOKEN; it can be used if you wi=
-sh
-=2Dto instruct your show() function (described below) to print a header at =
-the
-=2Dtop of the output. SEQ_START_TOKEN should only be used if the offset is
-=2Dzero, however.
-+structure can be used to hold state from session to session.  There is
-+also a special value which can be returned by the start() function
-+called SEQ_START_TOKEN; it can be used if you wish to instruct your
-+show() function (described below) to print a header at the top of the
-+output. SEQ_START_TOKEN should only be used if the offset is zero,
-+however.
-=20
- The next function to implement is called, amazingly, next(); its job is to
- move the iterator forward to the next position in the sequence.  The
-@@ -121,9 +138,13 @@ complete. Here's the example version:
- 	        return spos;
- 	}
-=20
-=2DThe stop() function is called when iteration is complete; its job, of
-=2Dcourse, is to clean up. If dynamic memory is allocated for the iterator,
-=2Dstop() is the place to free it.
-+The stop() function closes a session; its job, of course, is to clean
-+up. If dynamic memory is allocated for the iterator, stop() is the
-+place to free it; if a lock was taken by start(), stop() must release
-+that lock.  The value that *pos was set to by the last next() call
-+before stop() is remembered, and used for the first start() call of
-+the next session unless lseek() has been called on the file; in that
-+case next start() will be asked to start at position zero.
-=20
- 	static void ct_seq_stop(struct seq_file *s, void *v)
- 	{
-diff --git a/fs/seq_file.c b/fs/seq_file.c
-index c6c27f1f9c98..c6156b309ed2 100644
-=2D-- a/fs/seq_file.c
-+++ b/fs/seq_file.c
-@@ -90,23 +90,22 @@ EXPORT_SYMBOL(seq_open);
-=20
- static int traverse(struct seq_file *m, loff_t offset)
- {
-=2D	loff_t pos =3D 0, index;
-+	loff_t pos =3D 0;
- 	int error =3D 0;
- 	void *p;
-=20
- 	m->version =3D 0;
-=2D	index =3D 0;
-+	m->index =3D 0;
- 	m->count =3D m->from =3D 0;
-=2D	if (!offset) {
-=2D		m->index =3D index;
-+	if (!offset)
- 		return 0;
-=2D	}
-+
- 	if (!m->buf) {
- 		m->buf =3D seq_buf_alloc(m->size =3D PAGE_SIZE);
- 		if (!m->buf)
- 			return -ENOMEM;
- 	}
-=2D	p =3D m->op->start(m, &index);
-+	p =3D m->op->start(m, &m->index);
- 	while (p) {
- 		error =3D PTR_ERR(p);
- 		if (IS_ERR(p))
-@@ -123,20 +122,15 @@ static int traverse(struct seq_file *m, loff_t offset)
- 		if (pos + m->count > offset) {
- 			m->from =3D offset - pos;
- 			m->count -=3D m->from;
-=2D			m->index =3D index;
- 			break;
- 		}
- 		pos +=3D m->count;
- 		m->count =3D 0;
-=2D		if (pos =3D=3D offset) {
-=2D			index++;
-=2D			m->index =3D index;
-+		p =3D m->op->next(m, p, &m->index);
-+		if (pos =3D=3D offset)
- 			break;
-=2D		}
-=2D		p =3D m->op->next(m, p, &index);
- 	}
- 	m->op->stop(m, p);
-=2D	m->index =3D index;
- 	return error;
-=20
- Eoverflow:
-@@ -160,7 +154,6 @@ ssize_t seq_read(struct file *file, char __user *buf, s=
-ize_t size, loff_t *ppos)
- {
- 	struct seq_file *m =3D file->private_data;
- 	size_t copied =3D 0;
-=2D	loff_t pos;
- 	size_t n;
- 	void *p;
- 	int err =3D 0;
-@@ -223,16 +216,11 @@ ssize_t seq_read(struct file *file, char __user *buf,=
- size_t size, loff_t *ppos)
- 		size -=3D n;
- 		buf +=3D n;
- 		copied +=3D n;
-=2D		if (!m->count) {
-=2D			m->from =3D 0;
-=2D			m->index++;
-=2D		}
- 		if (!size)
- 			goto Done;
- 	}
- 	/* we need at least one record in buffer */
-=2D	pos =3D m->index;
-=2D	p =3D m->op->start(m, &pos);
-+	p =3D m->op->start(m, &m->index);
- 	while (1) {
- 		err =3D PTR_ERR(p);
- 		if (!p || IS_ERR(p))
-@@ -243,8 +231,7 @@ ssize_t seq_read(struct file *file, char __user *buf, s=
-ize_t size, loff_t *ppos)
- 		if (unlikely(err))
- 			m->count =3D 0;
- 		if (unlikely(!m->count)) {
-=2D			p =3D m->op->next(m, p, &pos);
-=2D			m->index =3D pos;
-+			p =3D m->op->next(m, p, &m->index);
- 			continue;
- 		}
- 		if (m->count < m->size)
-@@ -256,29 +243,33 @@ ssize_t seq_read(struct file *file, char __user *buf,=
- size_t size, loff_t *ppos)
- 		if (!m->buf)
- 			goto Enomem;
- 		m->version =3D 0;
-=2D		pos =3D m->index;
-=2D		p =3D m->op->start(m, &pos);
-+		p =3D m->op->start(m, &m->index);
- 	}
- 	m->op->stop(m, p);
- 	m->count =3D 0;
- 	goto Done;
- Fill:
- 	/* they want more? let's try to get some more */
-=2D	while (m->count < size) {
-+	while (1) {
- 		size_t offs =3D m->count;
-=2D		loff_t next =3D pos;
-=2D		p =3D m->op->next(m, p, &next);
-+		loff_t pos =3D m->index;
-+
-+		p =3D m->op->next(m, p, &m->index);
-+		if (pos =3D=3D m->index)
-+			/* Buggy ->next function */
-+			m->index++;
- 		if (!p || IS_ERR(p)) {
- 			err =3D PTR_ERR(p);
- 			break;
- 		}
-+		if (m->count >=3D size)
-+			break;
- 		err =3D m->op->show(m, p);
- 		if (seq_has_overflowed(m) || err) {
- 			m->count =3D offs;
- 			if (likely(err <=3D 0))
- 				break;
- 		}
-=2D		pos =3D next;
- 	}
- 	m->op->stop(m, p);
- 	n =3D min(m->count, size);
-@@ -287,11 +278,7 @@ ssize_t seq_read(struct file *file, char __user *buf, =
-size_t size, loff_t *ppos)
- 		goto Efault;
- 	copied +=3D n;
- 	m->count -=3D n;
-=2D	if (m->count)
-=2D		m->from =3D n;
-=2D	else
-=2D		pos++;
-=2D	m->index =3D pos;
-+	m->from =3D n;
- Done:
- 	if (!copied)
- 		copied =3D err;
-=2D-=20
-2.14.0.rc0.dirty
-
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlrmdk0ACgkQOeye3VZi
-gbkHlA//WrcjjSaCDg6maDF9lH+3ubbzZwMRsmUCr31uvCM2yiKl69BQ7mzUfi+A
-4j+094CLCNYu0+MeFTrtzD3rx5Cy2+bdPZ3nGZe4Jhhp1gmGCTS9pWXec5vlzPyK
-MwM1TQTBeD/uaQZmYntOeOAv6crr38MtPbkBTy52SQ2opWouW+zFrc+LkEb7TQav
-nF579XbeSViLka3rzjItZg7fFFhuTgfXxRMZMXJne0zeK80NTaKWDKoIXBCW7qEc
-T3LhaGhorQQhLfPAt+nrhOqFmuAjgNBfw2CpweD1PPysJWPHxkAXaDPatA9mrbbA
-pdsnaA9dVNr8IRbYUzlhFCjra+NRCGJZgmiDNGRAg/F2THUd9ErAQ4FnNyh5k2FE
-B78XtCIJBpd+t6BSNQZigUX92u8Y+KD9qQsAhNy4OAc+VOI/uNprD25r4WLyYF/6
-uGfgZbKFenb0uCM9SYOPh2lq2ZFASyjsFEA+OEtFzJc6o/6gbD62rRuBw2ivtEpp
-80cTAnluUsq8b/2MKz2tebQnF58MEt4E0DEe760elCFWTDK+xrIkZwMjP1oa3Ovb
-mpjW5NXINcq0PHmZzQepyq2cKLJO0+9ms9cAt/lPqvqfon2R4h6sNbeFPm0bzHz1
-ScTuK3Z23QNab2B+svxV2WbaF1BBhdaZXzjbPK5r4EbBCwAFiTM=
-=hH6a
------END PGP SIGNATURE-----
---=-=-=--
+Thanks
