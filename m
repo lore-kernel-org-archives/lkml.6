@@ -1,45 +1,43 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZom6g3qcsOiXFHZMydqT2NZsDeV2ey1+dVNFlxjwslu4z0mXFWV5VvR7w1m0kqRGqXu62H0
-ARC-Seal: i=1; a=rsa-sha256; t=1525116517; cv=none;
+X-Google-Smtp-Source: AB8JxZpTsCV/JalMP0Xi5XJfk5gliThlpXjH6PPLwmS8AdiAoLwrxRnHRkwgRL3/9dqUNS134Mnu
+ARC-Seal: i=1; a=rsa-sha256; t=1525116506; cv=none;
         d=google.com; s=arc-20160816;
-        b=YAKPTSFlAJNO1qRpzSPxeIwsZqQtgCEgADNATm12r1cwzFjw6hKQCU5/3c783IyOrs
-         yzF+2Cym5hnpOFnV/ytmJ0/45e3cGzNXc3IFhwolDmZehPawGxJCJB2xhHObu+CR/U50
-         FOthS1Ck0U/uuDrwLDSvWZZyyam2+QUPuU5QCeU9ojuoSf6lX2lrRAVb1/Dp9BlgaSxz
-         zza5ojO01wxrN6XkWaYlKgTjXNAbxe13Q1L2XxXxD3uJguaXXzyGgAu+h5im6SOuFe82
-         SxCjBCxenhwN8U4vPzcnhDvscmfupDR4RvNpFlO5EiKy9C+XtPNZozMW1e33ZOyYpU/O
-         sIjQ==
+        b=Z0tARhzPFow0Px3Edq2zvnZdMoL8b64Dbia5I+cAn2LvWiWZu4CfGNmNJV6TKAqtom
+         yZDYi04lk8aNW89+xSFbmq1FLDIDfjzenXAVuTrqcy7AX/OfXF+plKm/BflNhWT+vcFi
+         iBqVSK7DT6BYA0X+fWp/QYrtCKkNfc68koAsNzLWzpp16li9P2ecYsGeBuwOsqqd42yp
+         NJwDS36tsamCQ2EGjbBqc9c0OvrVWhsaGlKjW5BZ8CBeJQC9Kj0UgilP+Qa5T2UXwbw0
+         YzZ6Q1iEsalchzcnKeexPq4lSZTCWNsT6u/LcUowQKk1fkx/hRaXGA5dVgLojTJ0s7a/
+         Ydtg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=6R9Og3qVgjfLzH/90ShcVVyLnox5KMBd0h/CUQZkl6Q=;
-        b=C78y9pfknVW14leZGlKgeqtzzSOayRunTJrKUcAfnjEKPpznDTUp/+TLUkwTefcdcJ
-         f9Kj2XvNc9ivM+T1UF6aQnz/H3VGiWjfr5VLgoo0JSmm1GVOdcd3s8Ep86gepJk+/mz0
-         +nZSQ95LHorbgwKYoCVQddTPRLrrbXkxYB/e9FoPn+10hNeB5XbNfv+ar+HHuRjZNoSF
-         yww87ZyzskqYzmZktM7bIUeMM8BUti8fTr1paH2pwAjOs3VPFy3qGQdZ+hhAY1wzSzYP
-         kWxHhs5Cnh7RhGlupMrnFw+RBz1Mke3Xbh8jUatUokqmveXdecfE0pfepQL+dVRasF9C
-         k4nQ==
+        bh=XOTQlK4ZsFRps23EWQim6t8+jA6G3GFJrYTAVjLQ4Kk=;
+        b=mgPVV6GVg+EhTvo7acrJ4JWwN6bCLqxM0Rmg27yUUR1doBYeQ/RefAivTVAszXGTZ4
+         JPq1FpBXNG2GT2kZj3RsFyCq7Dup/xHkzwnbjpmvxa7T1YiZul6U9AxXtqfYw+pz3Wx3
+         NovLR9QPvEuIt4kkKorc8ll/P463MTKJM74GissrGt0hl4zLC6HhOuHiox6FWw4g78+u
+         +8tNuUjwoerrDQPMeGoIrci9koyOf+2ET6oaeHRBsyYgPcI84c2ZpjeHf4j7TjAOrLZP
+         ctWPsWk9z7LWAIC1R7YBMGr+VyS30/Hj0ychJhW63ygVCV/87FaUdmULtEcuRXq5Fc7W
+         orew==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA07B22DC1
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4348322DCB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+40b7287c2dc987c48c81@syzkaller.appspotmail.com,
-	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-	Jiri Slaby <jslaby@suse.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Alan Cox <alan@llwyncelyn.cymru>,
-	Christoph Hellwig <hch@lst.de>,
-	Michal Hocko <mhocko@suse.com>
-Subject: [PATCH 4.16 034/113] tty: Avoid possible error pointer dereference at tty_ldisc_restore().
-Date: Mon, 30 Apr 2018 12:24:05 -0700
-Message-Id: <20180430184016.495545202@linuxfoundation.org>
+	Bart Van Assche <bart.vanassche@wdc.com>,
+	Tejun Heo <tj@kernel.org>,
+	Ming Lei <ming.lei@redhat.com>,
+	Martin Steigerwald <Martin@Lichtvoll.de>,
+	Jianchao Wang <jianchao.w.wang@oracle.com>,
+	Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.16 063/113] blk-mq: start request gstate with gen 1
+Date: Mon, 30 Apr 2018 12:24:34 -0700
+Message-Id: <20180430184017.887475593@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184015.043892819@linuxfoundation.org>
 References: <20180430184015.043892819@linuxfoundation.org>
@@ -49,8 +47,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200577624150021?=
-X-GMAIL-MSGID: =?utf-8?q?1599200577624150021?=
+X-GMAIL-THRID: =?utf-8?q?1599200566405526555?=
+X-GMAIL-MSGID: =?utf-8?q?1599200566405526555?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -58,65 +56,62 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Jianchao Wang <jianchao.w.wang@oracle.com>
 
-commit 598c2d41ff44889dd8eced4f117403e472158d85 upstream.
+commit f4560231ec42092c6662acccabb28c6cac9f5dfb upstream.
 
-syzbot is reporting crashes [1] triggered by memory allocation failure at
-tty_ldisc_get() from tty_ldisc_restore(). While syzbot stops at WARN_ON()
-due to panic_on_warn == true, panic_on_warn == false will after all trigger
-an OOPS by dereferencing old->ops->num if IS_ERR(old) == true.
+rq->gstate and rq->aborted_gstate both are zero before rqs are
+allocated. If we have a small timeout, when the timer fires,
+there could be rqs that are never allocated, and also there could
+be rq that has been allocated but not initialized and started. At
+the moment, the rq->gstate and rq->aborted_gstate both are 0, thus
+the blk_mq_terminate_expired will identify the rq is timed out and
+invoke .timeout early.
 
-We can simplify tty_ldisc_restore() as three calls (old->ops->num, N_TTY,
-N_NULL) to tty_ldisc_failto() in addition to avoiding possible error
-pointer dereference.
+For scsi, this will cause scsi_times_out to be invoked before the
+scsi_cmnd is not initialized, scsi_cmnd->device is still NULL at
+the moment, then we will get crash.
 
-If someone reports kernel panic triggered by forcing all memory allocations
-for tty_ldisc_restore() to fail, we can consider adding __GFP_NOFAIL for
-tty_ldisc_restore() case.
-
-[1] https://syzkaller.appspot.com/bug?id=6ac359c61e71d22e06db7f8f88243feb11d927e7
-
-Reported-by: syzbot+40b7287c2dc987c48c81@syzkaller.appspotmail.com
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jiri Slaby <jslaby@suse.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Alan Cox <alan@llwyncelyn.cymru>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: stable <stable@vger.kernel.org>
+Cc: Bart Van Assche <bart.vanassche@wdc.com>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Ming Lei <ming.lei@redhat.com>
+Cc: Martin Steigerwald <Martin@Lichtvoll.de>
+Cc: stable@vger.kernel.org
+Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/tty_ldisc.c |   13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+ block/blk-core.c |    4 ++++
+ block/blk-mq.c   |    7 +++++++
+ 2 files changed, 11 insertions(+)
 
---- a/drivers/tty/tty_ldisc.c
-+++ b/drivers/tty/tty_ldisc.c
-@@ -527,19 +527,16 @@ static int tty_ldisc_failto(struct tty_s
- static void tty_ldisc_restore(struct tty_struct *tty, struct tty_ldisc *old)
- {
- 	/* There is an outstanding reference here so this is safe */
--	old = tty_ldisc_get(tty, old->ops->num);
--	WARN_ON(IS_ERR(old));
--	tty->ldisc = old;
--	tty_set_termios_ldisc(tty, old->ops->num);
--	if (tty_ldisc_open(tty, old) < 0) {
--		tty_ldisc_put(old);
-+	if (tty_ldisc_failto(tty, old->ops->num) < 0) {
-+		const char *name = tty_name(tty);
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -129,6 +129,10 @@ void blk_rq_init(struct request_queue *q
+ 	rq->part = NULL;
+ 	seqcount_init(&rq->gstate_seq);
+ 	u64_stats_init(&rq->aborted_gstate_sync);
++	/*
++	 * See comment of blk_mq_init_request
++	 */
++	WRITE_ONCE(rq->gstate, MQ_RQ_GEN_INC);
+ }
+ EXPORT_SYMBOL(blk_rq_init);
+ 
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -2076,6 +2076,13 @@ static int blk_mq_init_request(struct bl
+ 
+ 	seqcount_init(&rq->gstate_seq);
+ 	u64_stats_init(&rq->aborted_gstate_sync);
++	/*
++	 * start gstate with gen 1 instead of 0, otherwise it will be equal
++	 * to aborted_gstate, and be identified timed out by
++	 * blk_mq_terminate_expired.
++	 */
++	WRITE_ONCE(rq->gstate, MQ_RQ_GEN_INC);
 +
-+		pr_warn("Falling back ldisc for %s.\n", name);
- 		/* The traditional behaviour is to fall back to N_TTY, we
- 		   want to avoid falling back to N_NULL unless we have no
- 		   choice to avoid the risk of breaking anything */
- 		if (tty_ldisc_failto(tty, N_TTY) < 0 &&
- 		    tty_ldisc_failto(tty, N_NULL) < 0)
--			panic("Couldn't open N_NULL ldisc for %s.",
--			      tty_name(tty));
-+			panic("Couldn't open N_NULL ldisc for %s.", name);
- 	}
+ 	return 0;
  }
  
