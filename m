@@ -1,39 +1,39 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpt+08AKIlg59Ai/N3L+tPOrLhcNYIr/KGfehPd4g4IVHa+l+N1EyDa56vtFlZbo2bdfdM2
-ARC-Seal: i=1; a=rsa-sha256; t=1525116455; cv=none;
+X-Google-Smtp-Source: AB8JxZqiieGfOodOMUZjcNijsKSplAZoajNbmuA/5WYKwKV3gGGg8XSmN6LMJsvYxhcbSseMWTeN
+ARC-Seal: i=1; a=rsa-sha256; t=1525116425; cv=none;
         d=google.com; s=arc-20160816;
-        b=MFgqJ33YB2MfCq4T2f18U6f5il4iOqNlq+nYKvjfcGGikMbMvWsfdFLAWI34OPaRvM
-         dIt6hnDreOPiqbaVLlP1Lyca4npVRgxzCs/QD9M+2/QMq1o0RGVQDHurzWX6AKn4VTOc
-         Dtq77kY2flVNTKmrMsncviTm41AjySQzZE9PEEkyipWX9n6faybZE4dkfGBZOSi1ahsY
-         5KdOhgJ78RhS3nTSKao2zkT5RDE+U2GceaK+ejzt4JP+IBqsm9UbOoTOpMm0n9jCBG58
-         DUukJ6w2ec64BWuTl4iTIq98XvJ+aSzrgE16IvLW8dUL3TGAkewe/E+gHvMWdij4VlqX
-         l5ew==
+        b=XWVo4OS2e64pXlrDDu1V1RTSKmi9LV8IvfXo9ZVJQ5P2HewI4x0KBH07cDilB4kavz
+         j3e+XdWOM7V5+TScs/a8Vo0cQOamlBVCG7nIWmWLzoag9mkDmLEGF0XR1Py1AORtlL23
+         RPPkuFvr2ga6t6QfYwJmNs8iKVeUZitu9PcdLuN8SFBgS+zmdI09TYtwz/0ttCfZJtQw
+         a8fsl/K01wcAx47gmu6cq4yuBMMkiazxbMAYQrtvG8oLpKP3pnqzuCuhtskLEZHyml4y
+         2XmYha+UPiRgsytjWyt/7AuAYH73b6K9/twEe72AnDp0Ktxu14gMF2b8yXkluko0ODWs
+         CL/g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=qNKZRCbxkxcBmq+5QmS7FYkXzOYxHk+1cuEMzG9Vf9U=;
-        b=lmPU/53kkEzsfE6lqbQiv2PIgcUDU82fwuQ14RKvidhTCDTkhsZVa2tVqNyOaA8OGq
-         QzwWoFFWSr/6iCMXWXuMvWfK0IJJQd2rBpmWcmneLFyfR15sQnXei0qWsNwC2m+LUqSv
-         rttsh0HAZPCb2EaUoHhmMWlACgExgo/hzfcOh9OGRtd/CSr7zdr4kBZGzeX38KuHhmEr
-         FRBogMhq13Vxtwl/LluHnqmFbGHYbV1hc5ACjLkknVrtC6gkusyV6ZowVm7+6PFcAp0b
-         kXS5fkSpiK+aQa8V6rW1b4/IkkSuxifZtBYVPtUf/GwjBuRNRDJdEsQj2v0oALx80XPY
-         91PQ==
+        bh=ofyjRU3sihpGLbPzGxLXjb5WpdEPCr0v8mnKGP0Lxus=;
+        b=u07AaTFX/ou74b/XKb8ggxVSRAG+V8sobN9fOADehoXQYpI0wsAK9qAIKMFe834mnt
+         lzOncOt+gKv+KaYbXn0KoHpsnv9F982bpekTc4/nEY4V7JUHlp8/FRy6YPT65AJiTJrB
+         N813dQ0JMUh8Dru68efFQ77PRZzqQe0JCxkHhXkuFRrraYX11s+G0vgcAp26mnjNm6MS
+         cxy/Sx7pQUQnRNt6laLYbptRnsVr4z++ynvtSnWGGgcvcfqu4UzHdurJ4ekfrEEu7aKn
+         o0UdfCfaV5SmK9+psMbCdxOA8J1DVCx6cGd5VJjg/lAYepF3MfloXedg1wOK3lUPWsPV
+         Dshw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7D2522DCB
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DFE822DAC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Todd Kjos <tkjos@google.com>
-Subject: [PATCH 4.14 65/91] ARM: amba: Fix race condition with driver_override
-Date: Mon, 30 Apr 2018 12:24:47 -0700
-Message-Id: <20180430184007.550418127@linuxfoundation.org>
+	=?UTF-8?q?Fran=C3=A7ois=20Valenduc?= <francoisvalenduc@gmail.com>,
+	Theodore Tso <tytso@mit.edu>
+Subject: [PATCH 4.14 03/91] ext4: add MODULE_SOFTDEP to ensure crc32c is included in the initramfs
+Date: Mon, 30 Apr 2018 12:23:45 -0700
+Message-Id: <20180430184004.399963244@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184004.216234025@linuxfoundation.org>
 References: <20180430184004.216234025@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200466223284776?=
-X-GMAIL-MSGID: =?utf-8?q?1599200512133921195?=
+X-GMAIL-THRID: =?utf-8?q?1599200544892175194?=
+X-GMAIL-MSGID: =?utf-8?q?1599200480885109741?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,67 +52,26 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit 6a7228d90d42bcacfe38786756ba62762b91c20a upstream.
+commit 7ef79ad52136712172eb0525bf0b462516bf2f93 upstream.
 
-The driver_override implementation is susceptible to a race condition
-when different threads are reading vs storing a different driver
-override.  Add locking to avoid this race condition.
-
-Cfr. commits 6265539776a0810b ("driver core: platform: fix race
-condition with driver_override") and 9561475db680f714 ("PCI: Fix race
-condition with driver_override").
-
-Fixes: 3cf385713460eb2b ("ARM: 8256/1: driver coamba: add device binding path 'driver_override'")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Todd Kjos <tkjos@google.com>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: a45403b51582 ("ext4: always initialize the crc32c checksum driver")
+Reported-by: François Valenduc <francoisvalenduc@gmail.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/amba/bus.c |   11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ fs/ext4/super.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/amba/bus.c
-+++ b/drivers/amba/bus.c
-@@ -69,8 +69,12 @@ static ssize_t driver_override_show(stru
- 				    struct device_attribute *attr, char *buf)
- {
- 	struct amba_device *dev = to_amba_device(_dev);
-+	ssize_t len;
- 
--	return sprintf(buf, "%s\n", dev->driver_override);
-+	device_lock(_dev);
-+	len = sprintf(buf, "%s\n", dev->driver_override);
-+	device_unlock(_dev);
-+	return len;
- }
- 
- static ssize_t driver_override_store(struct device *_dev,
-@@ -78,7 +82,7 @@ static ssize_t driver_override_store(str
- 				     const char *buf, size_t count)
- {
- 	struct amba_device *dev = to_amba_device(_dev);
--	char *driver_override, *old = dev->driver_override, *cp;
-+	char *driver_override, *old, *cp;
- 
- 	if (count > PATH_MAX)
- 		return -EINVAL;
-@@ -91,12 +95,15 @@ static ssize_t driver_override_store(str
- 	if (cp)
- 		*cp = '\0';
- 
-+	device_lock(_dev);
-+	old = dev->driver_override;
- 	if (strlen(driver_override)) {
- 		dev->driver_override = driver_override;
- 	} else {
- 	       kfree(driver_override);
- 	       dev->driver_override = NULL;
- 	}
-+	device_unlock(_dev);
- 
- 	kfree(old);
- 
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -5865,5 +5865,6 @@ static void __exit ext4_exit_fs(void)
+ MODULE_AUTHOR("Remy Card, Stephen Tweedie, Andrew Morton, Andreas Dilger, Theodore Ts'o and others");
+ MODULE_DESCRIPTION("Fourth Extended Filesystem");
+ MODULE_LICENSE("GPL");
++MODULE_SOFTDEP("pre: crc32c");
+ module_init(ext4_init_fs)
+ module_exit(ext4_exit_fs)
