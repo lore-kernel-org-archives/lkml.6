@@ -1,40 +1,38 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZogTj6Qkm0/vw0vhHJJjQgJM6RgbPLdeVUhRrtnfsIySFge/EmpkD7hobSqFkmtJnFPPZeg
-ARC-Seal: i=1; a=rsa-sha256; t=1525116501; cv=none;
+X-Google-Smtp-Source: AB8JxZriHcPqh8dXrpjj71HjDBtYLe9vJpcEQxMImIgaU9ji0sgbocyJNKppzOkEKWyU+QZoQw1m
+ARC-Seal: i=1; a=rsa-sha256; t=1525116514; cv=none;
         d=google.com; s=arc-20160816;
-        b=xLNGbe411FzjOP+/vamAI5kuaVOKDEk7VtchCn07QeQ3qLxN5ZF19q2N9yqrzfn16b
-         LFKKmIJMTzJbx0jxf/ZeEpZ0F6ub+eotRSKJnLLK7ru4vMkvtFgLOG/4ujDfY4boKiY2
-         ErQY/0p0JKopypjcSHRZppq388c2VBeWM/K6Gj3dSVAD2nF9lbR3jQUPcS0R7wC6Ifoy
-         n/x2vCWJIHwvTBreZ0st1wkOz3UM936a2GM5mhBNFDvDmPg89C0mTn0qz4B+zcvvezdL
-         90IqnZyulcQ64KbzqoSZT1dEMOk+mUGay5oM5sNPu1/NlDD/yJ/rwp0/788771Muj7LO
-         LINw==
+        b=ktyShcdcCasxzw7tICgk4GMIglBtff9bkNdl4Lkk3nrDVk9WDh2uDd+L694noV/TeG
+         na996RM+NJlsQCpZ5iH3caKq5Qx9Bzefzf7t1ZkFKqsijIWSXU3bKtWP+IqVPTApad5h
+         QoPmSqqcl+C4Eh/i03SJYRoznkVaulsQDqyWhqe2BKS9r6LbAv8R6RUA9lwYzSelWPv+
+         tZ/oD14srLm+ueB+RFpPTHPkixgQbHetCWWHv2ihVvu3jg0wPsZOWX8zT/ilKpcKLQsp
+         PReeAgGMEQmxjFq4/Wom2Aev11hoYIM3hXNKMhqfZmMpLWaYJ3ivxEAbUbLczU+AZe/4
+         S4dw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=ianx270AN/l8UszCWfMBt/b/cDsMdQd2EPpkhiYGyZQ=;
-        b=FhTRQCsb1uBmxz/VCEobY8+c0vL5XatxLtSeevp6UdQXDW16FKpUIt8Quy5FUkRDq5
-         f4QLF8dX/f3qLGA+knBbRxyKwnQOVa0l8zgzSYz9+XyaBGIbuNlLLTrkqRMxk80qRbZu
-         iiQVIvwbb4GV2+pTWbpAAaC6+VF3KKUI3OE5TZBRLB8ldAeAHALcVWuIjgXS5YfmbhQt
-         p+KbwMAxVyTamjWmyX1w2ow2cMMkIVmp8DJ7IYvylDTPy2l3elCcElxyk1F8BizWk4JE
-         zh1g0ORZ+l2ll1UZhiJcsbFYxlJbCEO4h81Dhehbqm1q1xNUjXd/P4Q6xjJnXhvnVREO
-         3kuA==
+        bh=R3mi5XvdJA7gY6pFdbGFxau0/VcntJFKth7cPcIIfGc=;
+        b=x9UvYLRndC7Wtqh0jtFDeCXbeZ0SKgzGWiveQb94gEc8zUM8HyYe5Nkqw79D+DvXq9
+         T5BSa1NXgkcUDm3OlRQzhMxlE1krQgUNHLEU2KJAS4JIbGmsmlOhEql3oZNSrOEEDfo8
+         ldNoW6Uv4RUDC5m/plT4Ey0LA/wQksZnTfplmakAdRGoZYTSz3sxcUHF9O+cl642V7bh
+         j66iZ61VzEGXGpDtYBZHq/LaRN1ulC8JqXaTfs76PjP1cRBcsxia5SM9ZchnPfW9rs3e
+         RDL3uD5GdQK3Ki3W1C+nmDZ6VtApnLR9ZJOIMcsib+/dyOhxhWDRX3BU2mnyaTHj4Ymw
+         RYwQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1CDD22DC1
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FCED22DBF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Thor Thayer <thor.thayer@linux.intel.com>,
-	Marek Vasut <marek.vasut@gmail.com>,
-	Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: [PATCH 4.16 054/113] mtd: spi-nor: cadence-quadspi: Fix page fault kernel panic
-Date: Mon, 30 Apr 2018 12:24:25 -0700
-Message-Id: <20180430184017.343577956@linuxfoundation.org>
+	Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.16 040/113] ALSA: hda - Skip jack and others for non-existing PCM streams
+Date: Mon, 30 Apr 2018 12:24:11 -0700
+Message-Id: <20180430184016.748520325@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184015.043892819@linuxfoundation.org>
 References: <20180430184015.043892819@linuxfoundation.org>
@@ -44,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200497469699470?=
-X-GMAIL-MSGID: =?utf-8?q?1599200560315066477?=
+X-GMAIL-THRID: =?utf-8?q?1599200574792885884?=
+X-GMAIL-MSGID: =?utf-8?q?1599200574792885884?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,79 +51,60 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Thor Thayer <thor.thayer@linux.intel.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 47016b341fc3b3fd4909e058c6fa38f165b53646 upstream.
+commit 8a7d6003df41cb16f6b3b620da044fbd92d2f5ee upstream.
 
-The current Cadence QSPI driver caused a kernel panic when loading
-a Root Filesystem from QSPI. The problem was caused by reading more
-bytes than needed because the QSPI operated on 4 bytes at a time.
-<snip>
-[    7.947754] spi_nor_read[1048]:from 0x037cad74, len 1 [bfe07fff]
-[    7.956247] cqspi_read[910]:offset 0x58502516, buffer=bfe07fff
-[    7.956247]
-[    7.966046] Unable to handle kernel paging request at virtual
-address bfe08002
-[    7.973239] pgd = eebfc000
-[    7.975931] [bfe08002] *pgd=2fffb811, *pte=00000000, *ppte=00000000
-</snip>
-Notice above how only 1 byte needed to be read but by reading 4 bytes
-into the end of a mapped page, an unrecoverable page fault occurred.
+When CONFIG_SND_DYNAMIC_MINORS isn't set, there are only limited
+number of devices available, and HD-audio, especially with HDMI/DP
+codec, will fail to create more than two devices.
 
-This patch uses a temporary buffer to hold the 4 bytes read and then
-copies only the bytes required into the buffer. A min() function is
-used to limit the length to prevent buffer overflows.
+The driver warns about the lack of such devices and skips the PCM
+device creations, but the HDMI driver still tries to create the
+corresponding JACK, SPDIF and ELD controls even for the non-existing
+PCM substreams.  This results in confusion on user-space, and even may
+break the operation.
 
-Request testing of this patch on other platforms. This was tested
-on the Intel Arria10 SoCFPGA DevKit.
+Similarly, Intel HDMI/DP codec builds the ELD notification from i915
+graphics driver, and this may be broken if a notification is sent for
+the non-existing PCM stream.
 
-Fixes: 0cf1725676a97fc8 ("mtd: spi-nor: cqspi: Fix build on arches missing readsl/writesl")
-Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
+This patch adds the check of the existence of the assigned PCM
+substream in the both scenarios above, and skips the further operation
+if the PCM substream is not assigned.
+
+Fixes: 9152085defb6 ("ALSA: hda - add DP MST audio support")
 Cc: <stable@vger.kernel.org>
-Reviewed-by: Marek Vasut <marek.vasut@gmail.com>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mtd/spi-nor/cadence-quadspi.c |   19 +++++++++++++++++--
- 1 file changed, 17 insertions(+), 2 deletions(-)
+ sound/pci/hda/patch_hdmi.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/drivers/mtd/spi-nor/cadence-quadspi.c
-+++ b/drivers/mtd/spi-nor/cadence-quadspi.c
-@@ -501,7 +501,9 @@ static int cqspi_indirect_read_execute(s
- 	void __iomem *reg_base = cqspi->iobase;
- 	void __iomem *ahb_base = cqspi->ahb_base;
- 	unsigned int remaining = n_rx;
-+	unsigned int mod_bytes = n_rx % 4;
- 	unsigned int bytes_to_read = 0;
-+	u8 *rxbuf_end = rxbuf + n_rx;
- 	int ret = 0;
+--- a/sound/pci/hda/patch_hdmi.c
++++ b/sound/pci/hda/patch_hdmi.c
+@@ -1383,6 +1383,8 @@ static void hdmi_pcm_setup_pin(struct hd
+ 		pcm = get_pcm_rec(spec, per_pin->pcm_idx);
+ 	else
+ 		return;
++	if (!pcm->pcm)
++		return;
+ 	if (!test_bit(per_pin->pcm_idx, &spec->pcm_in_use))
+ 		return;
  
- 	writel(from_addr, reg_base + CQSPI_REG_INDIRECTRDSTARTADDR);
-@@ -530,11 +532,24 @@ static int cqspi_indirect_read_execute(s
- 		}
+@@ -2151,8 +2153,13 @@ static int generic_hdmi_build_controls(s
+ 	int dev, err;
+ 	int pin_idx, pcm_idx;
  
- 		while (bytes_to_read != 0) {
-+			unsigned int word_remain = round_down(remaining, 4);
+-
+ 	for (pcm_idx = 0; pcm_idx < spec->pcm_used; pcm_idx++) {
++		if (!get_pcm_rec(spec, pcm_idx)->pcm) {
++			/* no PCM: mark this for skipping permanently */
++			set_bit(pcm_idx, &spec->pcm_bitmap);
++			continue;
++		}
 +
- 			bytes_to_read *= cqspi->fifo_width;
- 			bytes_to_read = bytes_to_read > remaining ?
- 					remaining : bytes_to_read;
--			ioread32_rep(ahb_base, rxbuf,
--				     DIV_ROUND_UP(bytes_to_read, 4));
-+			bytes_to_read = round_down(bytes_to_read, 4);
-+			/* Read 4 byte word chunks then single bytes */
-+			if (bytes_to_read) {
-+				ioread32_rep(ahb_base, rxbuf,
-+					     (bytes_to_read / 4));
-+			} else if (!word_remain && mod_bytes) {
-+				unsigned int temp = ioread32(ahb_base);
-+
-+				bytes_to_read = mod_bytes;
-+				memcpy(rxbuf, &temp, min((unsigned int)
-+							 (rxbuf_end - rxbuf),
-+							 bytes_to_read));
-+			}
- 			rxbuf += bytes_to_read;
- 			remaining -= bytes_to_read;
- 			bytes_to_read = cqspi_get_rd_sram_level(cqspi);
+ 		err = generic_hdmi_build_jack(codec, pcm_idx);
+ 		if (err < 0)
+ 			return err;
