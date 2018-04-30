@@ -1,86 +1,218 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754764AbeD3PjQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 11:39:16 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34998 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753582AbeD3PjO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 11:39:14 -0400
-Date: Mon, 30 Apr 2018 17:39:10 +0200
-From: Cornelia Huck <cohuck@redhat.com>
-To: Pierre Morel <pmorel@linux.vnet.ibm.com>
-Cc: pasic@linux.vnet.ibm.com, bjsdjshi@linux.vnet.ibm.com,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Subject: Re: [PATCH 07/10] vfio: ccw: Introduce the INIT event
-Message-ID: <20180430173910.31f13a3a.cohuck@redhat.com>
-In-Reply-To: <1524149293-12658-8-git-send-email-pmorel@linux.vnet.ibm.com>
-References: <1524149293-12658-1-git-send-email-pmorel@linux.vnet.ibm.com>
-        <1524149293-12658-8-git-send-email-pmorel@linux.vnet.ibm.com>
-Organization: Red Hat GmbH
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1754802AbeD3Pjd (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 11:39:33 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:58950 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753582AbeD3Pjb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 11:39:31 -0400
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
+Subject: Re: KASAN: use-after-free Read in perf_trace_rpc_stats_latency
+From: Chuck Lever <chuck.lever@oracle.com>
+In-Reply-To: <00000000000027a3e2056b10e81e@google.com>
+Date: Mon, 30 Apr 2018 11:39:17 -0400
+Cc: Anna Schumaker <anna.schumaker@netapp.com>,
+        Bruce Fields <bfields@fieldses.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jeff Layton <jlayton@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        Trond Myklebust <trond.myklebust@primarydata.com>
+Message-Id: <0F0C0FCB-2D27-4DF5-8D5A-2E4CADC5365D@oracle.com>
+References: <00000000000027a3e2056b10e81e@google.com>
+To: syzbot <syzbot+27db1f90e2b972a5f2d3@syzkaller.appspotmail.com>
+X-Mailer: Apple Mail (2.3445.6.18)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8878 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=8 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804300149
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3UFdckW030871
 
-On Thu, 19 Apr 2018 16:48:10 +0200
-Pierre Morel <pmorel@linux.vnet.ibm.com> wrote:
 
-> The VFIO_CCW_EVENT_INIT event allows to export the initial state
-> into the FSM.
 
-I don't know, that feels a bit unintuitive to me. I would naively
-expect initialization to be done _before_ we activate processing via
-the state machine.
-
+> On Apr 30, 2018, at 9:34 AM, syzbot <syzbot+27db1f90e2b972a5f2d3@syzkaller.appspotmail.com> wrote:
 > 
-> Signed-off-by: Pierre Morel <pmorel@linux.vnet.ibm.com>
+> Hello,
+> 
+> syzbot hit the following crash on bpf-next commit
+> f60ad0a0c441530280a4918eca781a6a94dffa50 (Sun Apr 29 15:45:55 2018 +0000)
+> Merge branch 'bpf_get_stack'
+> syzbot dashboard link: https://syzkaller.appspot.com/bug?extid=27db1f90e2b972a5f2d3
+> 
+> Unfortunately, I don't have any reproducer for this crash yet.
+> Raw console output: https://syzkaller.appspot.com/x/log.txt?id=6741221342969856
+> Kernel config: https://syzkaller.appspot.com/x/.config?id=4410550353033654931
+> compiler: gcc (GCC) 8.0.1 20180413 (experimental)
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+27db1f90e2b972a5f2d3@syzkaller.appspotmail.com
+> It will help syzbot understand when the bug is fixed. See footer for details.
+> If you forward the report, please keep this part and the footer.
+> 
+> rpcbind: RPC call returned error 22
+> rpcbind: RPC call returned error 22
+> rpcbind: RPC call returned error 22
+> rpcbind: RPC call returned error 22
+> ==================================================================
+> BUG: KASAN: use-after-free in strlen+0x83/0xa0 lib/string.c:482
+> Read of size 1 at addr ffff8801d6f0a1c0 by task syz-executor7/5079
+> 
+> CPU: 1 PID: 5079 Comm: syz-executor7 Not tainted 4.17.0-rc2+ #16
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> Call Trace:
+> __dump_stack lib/dump_stack.c:77 [inline]
+> dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+> print_address_description+0x6c/0x20b mm/kasan/report.c:256
+> kasan_report_error mm/kasan/report.c:354 [inline]
+> kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
+> __asan_report_load1_noabort+0x14/0x20 mm/kasan/report.c:430
+> strlen+0x83/0xa0 lib/string.c:482
+> trace_event_get_offsets_rpc_stats_latency include/trace/events/sunrpc.h:215 [inline]
+> perf_trace_rpc_stats_latency+0x318/0x10d0 include/trace/events/sunrpc.h:215
+> trace_rpc_stats_latency include/trace/events/sunrpc.h:215 [inline]
+> rpc_count_iostats_metrics+0x594/0x8a0 net/sunrpc/stats.c:182
+> rpc_count_iostats+0x76/0x90 net/sunrpc/stats.c:195
+> xprt_release+0xa3b/0x1110 net/sunrpc/xprt.c:1351
+> rpc_release_resources_task+0x20/0xa0 net/sunrpc/sched.c:1024
+> rpc_release_task net/sunrpc/sched.c:1068 [inline]
+> __rpc_execute+0x5e9/0xf50 net/sunrpc/sched.c:833
+> rpc_execute+0x37f/0x480 net/sunrpc/sched.c:852
+> rpc_run_task+0x615/0x8c0 net/sunrpc/clnt.c:1053
+> rpc_call_sync+0x196/0x290 net/sunrpc/clnt.c:1082
+> rpc_ping+0x155/0x1f0 net/sunrpc/clnt.c:2513
+> rpc_create_xprt+0x282/0x3f0 net/sunrpc/clnt.c:479
+> rpc_create+0x52e/0x900 net/sunrpc/clnt.c:587
+> nfs_create_rpc_client+0x63e/0x850 fs/nfs/client.c:523
+> nfs_init_client+0x74/0x100 fs/nfs/client.c:634
+> nfs_get_client+0x1065/0x1500 fs/nfs/client.c:425
+> nfs_init_server+0x364/0xfb0 fs/nfs/client.c:670
+> nfs_create_server+0x86/0x5f0 fs/nfs/client.c:953
+> nfs_try_mount+0x177/0xab0 fs/nfs/super.c:1884
+> nfs_fs_mount+0x17de/0x2efd fs/nfs/super.c:2695
+> mount_fs+0xae/0x328 fs/super.c:1267
+> vfs_kern_mount.part.34+0xd4/0x4d0 fs/namespace.c:1037
+> vfs_kern_mount fs/namespace.c:1027 [inline]
+> do_new_mount fs/namespace.c:2518 [inline]
+> do_mount+0x564/0x3070 fs/namespace.c:2848
+> ksys_mount+0x12d/0x140 fs/namespace.c:3064
+> __do_sys_mount fs/namespace.c:3078 [inline]
+> __se_sys_mount fs/namespace.c:3075 [inline]
+> __x64_sys_mount+0xbe/0x150 fs/namespace.c:3075
+> do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+> entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x455979
+> RSP: 002b:00007f1e2785bc68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+> RAX: ffffffffffffffda RBX: 00007f1e2785c6d4 RCX: 0000000000455979
+> RDX: 0000000020fb5ffc RSI: 0000000020343ff8 RDI: 000000002091dff8
+> RBP: 000000000072bf50 R08: 000000002000a000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+> R13: 0000000000000440 R14: 00000000006fa6a0 R15: 0000000000000001
+> 
+> Allocated by task 5079:
+> save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+> set_track mm/kasan/kasan.c:460 [inline]
+> kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
+> __do_kmalloc mm/slab.c:3718 [inline]
+> __kmalloc_track_caller+0x14a/0x760 mm/slab.c:3733
+> kstrdup+0x39/0x70 mm/util.c:56
+> xs_format_common_peer_ports+0x130/0x370 net/sunrpc/xprtsock.c:290
+> xs_format_peer_addresses net/sunrpc/xprtsock.c:303 [inline]
+> xs_setup_udp+0x5ea/0x880 net/sunrpc/xprtsock.c:3037
+> xprt_create_transport+0x1d7/0x596 net/sunrpc/xprt.c:1433
+> rpc_create+0x489/0x900 net/sunrpc/clnt.c:573
+> nfs_create_rpc_client+0x63e/0x850 fs/nfs/client.c:523
+> nfs_init_client+0x74/0x100 fs/nfs/client.c:634
+> nfs_get_client+0x1065/0x1500 fs/nfs/client.c:425
+> nfs_init_server+0x364/0xfb0 fs/nfs/client.c:670
+> nfs_create_server+0x86/0x5f0 fs/nfs/client.c:953
+> nfs_try_mount+0x177/0xab0 fs/nfs/super.c:1884
+> nfs_fs_mount+0x17de/0x2efd fs/nfs/super.c:2695
+> mount_fs+0xae/0x328 fs/super.c:1267
+> vfs_kern_mount.part.34+0xd4/0x4d0 fs/namespace.c:1037
+> vfs_kern_mount fs/namespace.c:1027 [inline]
+> do_new_mount fs/namespace.c:2518 [inline]
+> do_mount+0x564/0x3070 fs/namespace.c:2848
+> ksys_mount+0x12d/0x140 fs/namespace.c:3064
+> __do_sys_mount fs/namespace.c:3078 [inline]
+> __se_sys_mount fs/namespace.c:3075 [inline]
+> __x64_sys_mount+0xbe/0x150 fs/namespace.c:3075
+> do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+> entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> 
+> Freed by task 6:
+> save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+> set_track mm/kasan/kasan.c:460 [inline]
+> __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
+> kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+> __cache_free mm/slab.c:3498 [inline]
+> kfree+0xd9/0x260 mm/slab.c:3813
+> xs_update_peer_port net/sunrpc/xprtsock.c:309 [inline]
+> xs_set_port+0x105/0x180 net/sunrpc/xprtsock.c:1827
+> rpcb_getport_done+0x224/0x2d0 net/sunrpc/rpcb_clnt.c:824
+> rpc_exit_task+0xc9/0x2d0 net/sunrpc/sched.c:725
+> __rpc_execute+0x28a/0xf50 net/sunrpc/sched.c:784
+> rpc_async_schedule+0x16/0x20 net/sunrpc/sched.c:857
+> process_one_work+0xc1e/0x1b50 kernel/workqueue.c:2145
+> worker_thread+0x1cc/0x1440 kernel/workqueue.c:2279
+> kthread+0x345/0x410 kernel/kthread.c:238
+> ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+> 
+> The buggy address belongs to the object at ffff8801d6f0a1c0
+> which belongs to the cache kmalloc-32 of size 32
+> The buggy address is located 0 bytes inside of
+> 32-byte region [ffff8801d6f0a1c0, ffff8801d6f0a1e0)
+> The buggy address belongs to the page:
+> page:ffffea00075bc280 count:1 mapcount:0 mapping:ffff8801d6f0a000 index:0xffff8801d6f0afc1
+> flags: 0x2fffc0000000100(slab)
+> raw: 02fffc0000000100 ffff8801d6f0a000 ffff8801d6f0afc1 0000000100000024
+> raw: ffffea00075c52a0 ffff8801da801238 ffff8801da8001c0 0000000000000000
+> page dumped because: kasan: bad access detected
+> 
+> Memory state around the buggy address:
+> ffff8801d6f0a080: 01 fc fc fc fc fc fc fc 00 02 fc fc fc fc fc fc
+> ffff8801d6f0a100: 00 02 fc fc fc fc fc fc 00 02 fc fc fc fc fc fc
+>> ffff8801d6f0a180: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
+>                                           ^
+> ffff8801d6f0a200: 00 02 fc fc fc fc fc fc 01 fc fc fc fc fc fc fc
+> ffff8801d6f0a280: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
+> ==================================================================
+
+The rpc_task survived longer than the transport. task->tk_xprt
+points to freed memory by the time rpc_count_iostats_metrics
+runs.
+
+The naive fix is to remove the references to task->tk_xprt
+in the trace point. I'm still checking to see if this is the
+fully correct fix.
+
+
 > ---
->  drivers/s390/cio/vfio_ccw_drv.c     | 26 +++++++++++---------------
->  drivers/s390/cio/vfio_ccw_fsm.c     | 21 +++++++++++++++++++++
->  drivers/s390/cio/vfio_ccw_ops.c     | 11 -----------
->  drivers/s390/cio/vfio_ccw_private.h |  1 +
->  4 files changed, 33 insertions(+), 26 deletions(-)
+> This bug is generated by a dumb bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for details.
+> Direct all questions to syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this bug report.
+> If you forgot to add the Reported-by tag, once the fix for this bug is merged
+> into any tree, please reply to this email with:
+> #syz fix: exact-commit-title
+> To mark this as a duplicate of another syzbot report, please reply with:
+> #syz dup: exact-subject-of-another-report
+> If it's a one-off invalid bug report, please reply with:
+> #syz invalid
+> Note: if the crash happens again, it will cause creation of a new bug report.
+> Note: all commands must start from beginning of the line in the email body.
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-nfs" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
->  /*
->   * Device statemachine
->   */
->  fsm_func_t *vfio_ccw_jumptable[NR_VFIO_CCW_STATES][NR_VFIO_CCW_EVENTS] = {
->  	[VFIO_CCW_STATE_NOT_OPER] = {
-> +		[VFIO_CCW_EVENT_INIT]		= fsm_init,
->  		[VFIO_CCW_EVENT_NOT_OPER]	= fsm_nop,
->  		[VFIO_CCW_EVENT_SSCH_REQ]	= fsm_io_error,
->  		[VFIO_CCW_EVENT_INTERRUPT]	= fsm_disabled_irq,
->  		[VFIO_CCW_EVENT_SCH_EVENT]	= fsm_nop,
->  	},
->  	[VFIO_CCW_STATE_STANDBY] = {
-> +		[VFIO_CCW_EVENT_INIT]		= fsm_nop,
->  		[VFIO_CCW_EVENT_NOT_OPER]	= fsm_notoper,
->  		[VFIO_CCW_EVENT_SSCH_REQ]	= fsm_io_error,
->  		[VFIO_CCW_EVENT_INTERRUPT]	= fsm_irq,
->  		[VFIO_CCW_EVENT_SCH_EVENT]	= fsm_sch_event,
->  	},
->  	[VFIO_CCW_STATE_IDLE] = {
-> +		[VFIO_CCW_EVENT_INIT]		= fsm_nop,
->  		[VFIO_CCW_EVENT_NOT_OPER]	= fsm_notoper,
->  		[VFIO_CCW_EVENT_SSCH_REQ]	= fsm_io_request,
->  		[VFIO_CCW_EVENT_INTERRUPT]	= fsm_irq,
->  		[VFIO_CCW_EVENT_SCH_EVENT]	= fsm_sch_event,
->  	},
->  	[VFIO_CCW_STATE_BOXED] = {
-> +		[VFIO_CCW_EVENT_INIT]		= fsm_nop,
->  		[VFIO_CCW_EVENT_NOT_OPER]	= fsm_notoper,
->  		[VFIO_CCW_EVENT_SSCH_REQ]	= fsm_io_busy,
->  		[VFIO_CCW_EVENT_INTERRUPT]	= fsm_irq,
->  		[VFIO_CCW_EVENT_SCH_EVENT]	= fsm_sch_event,
->  	},
->  	[VFIO_CCW_STATE_BUSY] = {
-> +		[VFIO_CCW_EVENT_INIT]		= fsm_nop,
->  		[VFIO_CCW_EVENT_NOT_OPER]	= fsm_notoper,
->  		[VFIO_CCW_EVENT_SSCH_REQ]	= fsm_io_busy,
->  		[VFIO_CCW_EVENT_INTERRUPT]	= fsm_irq,
-
-...especially as you only call it if in the NOT_OPER state. Why should
-this event be generated in any case but in the very beginning?
+--
+Chuck Lever
