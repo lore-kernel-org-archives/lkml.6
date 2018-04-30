@@ -1,42 +1,40 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqfwkkc9rnIf9m0iimZHvq1m3F+Z1gWm9lvIlrIzmgN25pe+Xs3cYhuPG875CAU4UD0ROkF
-ARC-Seal: i=1; a=rsa-sha256; t=1525116511; cv=none;
+X-Google-Smtp-Source: AB8JxZrYPN5mtFhta5P0huVKryYJ+TOVzKlv8qXZtzdNrRyN2DXPVGxiM846lqkc4WFzRAnY70Yw
+ARC-Seal: i=1; a=rsa-sha256; t=1525116508; cv=none;
         d=google.com; s=arc-20160816;
-        b=e58akmRQm46cOWplvxr5lKRpCSlI+oB0lcKp7kX7lBUf1NI5F6RyY7rbe5YeRG/FEG
-         3V18jb+786agqUCfr3z8xJclg/g2tkxaX5tKResk7bJklSdTBBr1m/lQoITGI402ZxkY
-         0nbIgGohE25fgp7kftfQefutfY5KusfIGMGshZPbM78geHYj/o+tvT2isGkAGOcRi9D6
-         sStwBq5LUKbIhXFcmxTgDz/VqZJaVwA2kiet3Pn8oZY1DFYXLWnyUQ5Ve7dKG4T0SNel
-         D7nIoeKygvTrLHs4tzjnZ588xsqgZnc58oHr0B2prYV/Uv+3vzsMBzyTcZTYkwGgdwb/
-         lJ1Q==
+        b=uklMfTg8jl2cfNFoOtVSyk8IjZs+ZtOSrHIu67Ukg6rbybIVdYVvsKN0ftULPZ+QKS
+         h6LF5G90aWOOD3w0J7ZbPkW4oAMSAv9v/XK/owlwvABsDap8ejISo5AdbWoimKIQfe/R
+         a2Z9owDUUzh7K83+emVibSS41z9Lt5D407x6DLZBBPj6B3H4N8BqVUpOP/i48BUayC8O
+         mGZw9X189rS2o8t0k2AP2WprzXCqi/58xqh1FKHT+Pl63JMRIo65SoYb0Kt18JkZYNgs
+         iIAhfJJ007s5eXnE3KNjNjiE2VfYv/wjq6e0TUDoYZAIWKw1TDeV2qpTaM6pLynRrnXa
+         eR/Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=zenE7vJ06nRwXDM1FnObKoL/46KOSb4RZnY6Pucqb1w=;
-        b=WadnYuAaqqntAK2qZCAGfCivj6OaQO28kFsxjnaEQSMDrMuyaoIUBl8crPjyqgSfpg
-         QWi2OPBK7nIiBln0y4GG4DufuYLsMA3ThzTaRfVhRUVdykdYuKGIDwycwkP9b+go9Z33
-         YDb1pz936uN0UoKTTFsuH/Y9U3p9bVS4KNP2BQGr4z35dFy2w1KK+Z1ZrtdR9I/RNGs0
-         xYDefwLZEEZgGhz+Jd9bC2AKRCzgnfPdrc2w+DyFMHAkLb3vUdglaElwTLGZzdytrYKK
-         uKHrvDBOPnEI6oURmSjRlcuBqEMxfS/nIho2bLf6vJSt2Q+VzBrvMXWbkk9NvaNp22/V
-         S+iQ==
+        bh=eCbS8Jgpv+Ngp60Ee/oygW4nnTMJnymqAYuaIqTYjoo=;
+        b=jAmHutYi61B77/Kiu9UXpCozEgpnaCHnwgAIs8wSkQmujDiFfbQPWJ9My610Tg+/Lg
+         QItkT4sn8kHa32t+hxw0YPDawAQ4PRAhHQOHaEbrQFVcsefWSHCiStTIlcbk7UTObBhQ
+         malkxcTPTl+gB/mC34VyMKg9sZAInI7p8FZzH8KpI//l6xeY9vBO55hxMHyYs6SFP5Io
+         JUhUtKlvz6b/eGxjZgsUuxqTZrp9AQnJRCkV2145m6z98h5E2UUqOBgm2ixEbwGqHqc8
+         geNI1yME7De0eljvY/CUQJiUYU33bRaCcvHgOyrN2b3bNe4Yb2Sax1wCWXd4vfyGOHf4
+         BOUA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E88A22DCB
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86A7A22DAC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Victor Gu <xigu@marvell.com>,
-	Wilson Ding <dingwei@marvell.com>,
-	Nadav Haklai <nadavh@marvell.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: [PATCH 4.16 069/113] PCI: aardvark: Fix logic in advk_pcie_{rd,wr}_conf()
-Date: Mon, 30 Apr 2018 12:24:40 -0700
-Message-Id: <20180430184018.143435413@linuxfoundation.org>
+	Oleksandr Natalenko <oleksandr@natalenko.name>,
+	Kees Cook <keescook@chromium.org>,
+	Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.16 064/113] bfq-iosched: ensure to clear bic/bfqq pointers when preparing request
+Date: Mon, 30 Apr 2018 12:24:35 -0700
+Message-Id: <20180430184017.930270070@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184015.043892819@linuxfoundation.org>
 References: <20180430184015.043892819@linuxfoundation.org>
@@ -46,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200461394286923?=
-X-GMAIL-MSGID: =?utf-8?q?1599200570558331616?=
+X-GMAIL-THRID: =?utf-8?q?1599200567169556340?=
+X-GMAIL-MSGID: =?utf-8?q?1599200567169556340?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,50 +53,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Victor Gu <xigu@marvell.com>
+From: Jens Axboe <axboe@kernel.dk>
 
-commit 660661afcd40ed7f515ef3369721ed58e80c0fc5 upstream.
+commit 72961c4e6082be79825265d9193272b8a1634dec upstream.
 
-The PCI configuration space read/write functions were special casing
-the situation where PCI_SLOT(devfn) != 0, and returned
-PCIBIOS_DEVICE_NOT_FOUND in this case.
+Even if we don't have an IO context attached to a request, we still
+need to clear the priv[0..1] pointers, as they could be pointing
+to previously used bic/bfqq structures. If we don't do so, we'll
+either corrupt memory on dispatching a request, or cause an
+imbalance in counters.
 
-However, while this is what is intended for the root bus, it is not
-intended for the child busses, as it prevents discovering devices with
-PCI_SLOT(x) != 0. Therefore, we return PCIBIOS_DEVICE_NOT_FOUND only
-if we're on the root bus.
+Inspired by a fix from Kees.
 
-Fixes: 8c39d710363c1 ("PCI: aardvark: Add Aardvark PCI host controller driver")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Victor Gu <xigu@marvell.com>
-Reviewed-by: Wilson Ding <dingwei@marvell.com>
-Reviewed-by: Nadav Haklai <nadavh@marvell.com>
-[Thomas: tweak commit log.]
-Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Reported-by: Oleksandr Natalenko <oleksandr@natalenko.name>
+Reported-by: Kees Cook <keescook@chromium.org>
+Cc: stable@vger.kernel.org
+Fixes: aee69d78dec0 ("block, bfq: introduce the BFQ-v0 I/O scheduler as an extra scheduler")
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/host/pci-aardvark.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ block/bfq-iosched.c |   10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
---- a/drivers/pci/host/pci-aardvark.c
-+++ b/drivers/pci/host/pci-aardvark.c
-@@ -437,7 +437,7 @@ static int advk_pcie_rd_conf(struct pci_
- 	u32 reg;
- 	int ret;
+--- a/block/bfq-iosched.c
++++ b/block/bfq-iosched.c
+@@ -4911,8 +4911,16 @@ static void bfq_prepare_request(struct r
+ 	bool new_queue = false;
+ 	bool bfqq_already_existing = false, split = false;
  
--	if (PCI_SLOT(devfn) != 0) {
-+	if ((bus->number == pcie->root_bus_nr) && PCI_SLOT(devfn) != 0) {
- 		*val = 0xffffffff;
- 		return PCIBIOS_DEVICE_NOT_FOUND;
- 	}
-@@ -491,7 +491,7 @@ static int advk_pcie_wr_conf(struct pci_
- 	int offset;
- 	int ret;
+-	if (!rq->elv.icq)
++	/*
++	 * Even if we don't have an icq attached, we should still clear
++	 * the scheduler pointers, as they might point to previously
++	 * allocated bic/bfqq structs.
++	 */
++	if (!rq->elv.icq) {
++		rq->elv.priv[0] = rq->elv.priv[1] = NULL;
+ 		return;
++	}
++
+ 	bic = icq_to_bic(rq->elv.icq);
  
--	if (PCI_SLOT(devfn) != 0)
-+	if ((bus->number == pcie->root_bus_nr) && PCI_SLOT(devfn) != 0)
- 		return PCIBIOS_DEVICE_NOT_FOUND;
- 
- 	if (where % size)
+ 	spin_lock_irq(&bfqd->lock);
