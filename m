@@ -1,38 +1,34 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754987AbeD3Qgs (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 12:36:48 -0400
-Received: from mga18.intel.com ([134.134.136.126]:3485 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754961AbeD3Qgq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 12:36:46 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,346,1520924400";
-   d="scan'208";a="47199464"
-Subject: Re: [PATCH 4/9] x86, pkeys: override pkey when moving away from
- PROT_EXEC
-To: Ram Pai <linuxram@us.ibm.com>
-References: <20180326172721.D5B2CBB4@viggo.jf.intel.com>
- <20180326172727.025EBF16@viggo.jf.intel.com>
- <20180407000943.GA15890@ram.oc3035372033.ibm.com>
- <6e3f8e1c-afed-64de-9815-8478e18532aa@intel.com>
- <20180407010919.GB15890@ram.oc3035372033.ibm.com>
- <aedcb0b6-73f5-f72f-742e-b417131895d3@intel.com>
- <20180430075106.GA5666@ram.oc3035372033.ibm.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org, shakeelb@google.com,
-        stable@kernel.org, tglx@linutronix.de, mpe@ellerman.id.au,
-        mingo@kernel.org, akpm@linux-foundation.org, shuah@kernel.org
-From: Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Message-ID: <54b94b65-807d-ebc5-ccfd-30eef1873faf@intel.com>
-Date: Mon, 30 Apr 2018 09:36:44 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        id S1755074AbeD3QiC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 12:38:02 -0400
+Received: from smtprelay6.synopsys.com ([198.182.37.59]:52251 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755056AbeD3QiA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 12:38:00 -0400
+Subject: Re: [PATCH v8 3/9] PCI: endpoint: functions/pci-epf-test: Add second
+ entry
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: "bhelgaas@google.com" <bhelgaas@google.com>,
+        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "kishon@ti.com" <kishon@ti.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+References: <cover.1524829928.git.gustavo.pimentel@synopsys.com>
+ <c2b6cb8de2502e1b5352be3b6d687b1cb4b7033a.1524829928.git.gustavo.pimentel@synopsys.com>
+ <20180430142213.GC32033@e107981-ln.cambridge.arm.com>
+From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Message-ID: <425dfb4f-b249-8496-aa9f-d2a48d0b64b9@synopsys.com>
+Date: Mon, 30 Apr 2018 17:36:42 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180430075106.GA5666@ram.oc3035372033.ibm.com>
+In-Reply-To: <20180430142213.GC32033@e107981-ln.cambridge.arm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -40,28 +36,94 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/30/2018 12:51 AM, Ram Pai wrote:
-> 	/*
-> 	 * Look for a protection-key-drive execute-only mapping
-> 	 * which is now being given permissions that are not
-> 	 * execute-only.  Move it back to the default pkey.
-> 	 */
-> 	if (vma_is_pkey_exec_only(vma) && (prot != PROT_EXEC)) <--------
-> 		return ARCH_DEFAULT_PKEY;
-> 
-> 	/*
-> 	 * The mapping is execute-only.  Go try to get the
-> 	 * execute-only protection key.  If we fail to do that,
-> 	 * fall through as if we do not have execute-only
-> 	 * support.
-> 	 */
-> 	if (prot == PROT_EXEC) {
-> 		pkey = execute_only_pkey(vma->vm_mm);
-> 		if (pkey > 0)
-> 			return pkey;
-> 	}
+Hi Lorenzo,
 
-Yes, that would also work.  It's just a matter of whether you prefer
-having the prot==PROT_EXEC checks in one place or two.  I'd rather leave
-it the way I've got it unless there are major objections since it's been
-tested.
+On 30/04/2018 15:22, Lorenzo Pieralisi wrote:
+> On Fri, Apr 27, 2018 at 12:59:58PM +0100, Gustavo Pimentel wrote:
+>> Add a seconds entry on the pci_epf_test_ids structure that disables the
+> 
+> "Add a second entry..."
+
+Fixed, sorry for letting it slip...
+
+> 
+>> linkup_notifier parameter on driver for the DesignWare EP.
+>>
+>> Allow DesignWare EPs that doesn't have linkup notification signal to work
+>> with pcitest.
+>>
+>> Update the binding documentation accordingly.
+>>
+>> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+>> Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+>> ---
+>> Change v2->v3:
+>>  - Added second entry in pci_epf_test_ids structure.
+>>  - Remove test_reg_bar field assignment on second entry.
+>> Changes v3->v4:
+>>  - Nothing changed, just to follow the patch set version.
+>> Changes v4->v5:
+>>  - Changed pci_epf_test_cfg2 to pci_epf_test_designware.
+>> Changes v5->v6:
+>>  - Changed name field from pci_epf_test_designware to pci_epf_test_dw.
+>> Changes v6->v7:
+>>  - Changed variable name from data_cfg2 to data_linkup_notifier_disabled.
+>> Changes v7->v8:
+>>  - Patch description rework for an imperative verbal mode.
+>>
+>>  Documentation/PCI/endpoint/function/binding/pci-test.txt | 2 ++
+>>  drivers/pci/endpoint/functions/pci-epf-test.c            | 8 ++++++++
+>>  2 files changed, 10 insertions(+)
+>>
+>> diff --git a/Documentation/PCI/endpoint/function/binding/pci-test.txt b/Documentation/PCI/endpoint/function/binding/pci-test.txt
+>> index 3b68b95..dc39f47 100644
+>> --- a/Documentation/PCI/endpoint/function/binding/pci-test.txt
+>> +++ b/Documentation/PCI/endpoint/function/binding/pci-test.txt
+>> @@ -1,6 +1,8 @@
+>>  PCI TEST ENDPOINT FUNCTION
+>>  
+>>  name: Should be "pci_epf_test" to bind to the pci_epf_test driver.
+>> +name: Should be "pci_epf_test_dw" to bind to the pci_epf_test driver
+>> +      with a custom configuration for the designware EP.
+>>  
+>>  Configurable Fields:
+>>  vendorid	 : should be 0x104c
+>> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
+>> index 7cef851..4ab463b 100644
+>> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
+>> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+>> @@ -459,10 +459,18 @@ static int pci_epf_test_bind(struct pci_epf *epf)
+>>  	return 0;
+>>  }
+>>  
+>> +static const struct pci_epf_test_data data_linkup_notifier_disabled = {
+>> +	.linkup_notifier = false
+>> +};
+>> +
+>>  static const struct pci_epf_device_id pci_epf_test_ids[] = {
+>>  	{
+>>  		.name = "pci_epf_test",
+>>  	},
+>> +	{
+>> +		.name = "pci_epf_test_dw",
+>> +		.driver_data = (kernel_ulong_t)&data_linkup_notifier_disabled,
+> 
+> You have not answered my question on this though:
+> 
+> https://urldefense.proofpoint.com/v2/url?u=https-3A__marc.info_-3Fl-3Dlinux-2Dpci-26m-3D152476180723047-26w-3D2&d=DwIBAg&c=DPL6_X_6JkXFx7AXWqB0tg&r=bkWxpLoW-f-E3EdiDCCa0_h0PicsViasSlvIpzZvPxs&m=KsCYNT_jNohKd03qgHN_Q73bRDsN78isEgeuYF8SypU&s=N1gpsLtS4or3TlSamRxP49rYAJv6gjEq7apuhN7paLs&e=
+
+I did not see those questions, sorry. I will respond on top of that email.
+
+Regards,
+Gustavo
+
+> 
+>> +	},
+>>  	{},
+>>  };
+>>  
+>> -- 
+>> 2.7.4
+>>
+>>
+> 
