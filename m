@@ -1,38 +1,38 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqSEiraSp+3GMC3ndNdM7uBZOL6XDgDWFLF+7HS7EaTEymW+aBSaRoePMfPYTecwK/7bOXz
+X-Google-Smtp-Source: AB8JxZqe5G7cufAJ6I+lgPuDJ7OMWLPDVUDf20sdzWm0PbXLEXjEvfJBY+3C61iX/d7VNeVJsOGp
 ARC-Seal: i=1; a=rsa-sha256; t=1525116346; cv=none;
         d=google.com; s=arc-20160816;
-        b=OKDX39qZXMQ37aiwAkw9t9golHBYnwkRr5n9/lrBIgF/QUA45oz1oIL2S3ZZ9s/7pH
-         IvihDTVHXDa2w7Fd3zwRn6BXGhl2CZPvsuRyExp9/9B9T+Lz1Zr67b2p2fK64olHQzYK
-         +8BFziAmQYEMXfQTylIo0WmHeCkMSPpD1afzB4a7nJVeAJ2WHwrMd1JZN+p7ijgZ11Uw
-         fSBm9k8x5NwNM52tizOQLDoZL87iSwB7t25IWRXNi+3KSYrhx3cQkihg86ly3WbjeI7F
-         Y7I0bEu+8e3fa07ZMMpe369tQHjlHcEksFvnd16FjJAFxlARxvdMjF+ILpUMIOFqoQwI
-         OVpw==
+        b=gW4bg+jrMOchplaE+y+8ZznAXEINcTGsZk1HvitcdfgTiAyl9snZuvDBIxqnRzAuc4
+         +7BwgxYFHk6Xci+zQ3dc0oGy9LZiI4fquOpS2f0j2gxZdWxrMJQoIBQZ2YbFRpzh2sfm
+         ck73oV93+CFI48NHqdg7R4zltKjnT7e9Kb3XMWsHDdpsZKUuEMs0rS6aYbVrpMBdd1CF
+         Kfcu3Zmh/XSOfnr17lRQHijeScXGMLlNkh/13c1JPnlcK1AdkcMpkVVlpZFFsRLxUOcC
+         Uy78UVP/hf/8ktFIcNWFRJb3avfbU10hbvxmIceq3jStNleqrixEEB9q2K6tH4w4cbpr
+         h0Nw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=qmtnGdj7beFgh8VlYDHfxlSvMOVG6Ra7EKR/Ql+9a+c=;
-        b=YfliD8SX8Ed8CxDlVnSUHfLZTMBOneKNXOLdvlnH4UHOl+FTqshD8PAxCO7GaNMDNx
-         wpHD7pjl/A+OTxyD1BC+ZDYUeYJovpNHj34EHyWS9JL25NePGKnxANbWsi/lgRKDMBlD
-         TCLhn1Nj+SBh9dL4FI8M7p4qhoNNRnYurEoVY5TDiXbqAM1A0gRF8Et3bH1u43YtGwIK
-         aVVL4hF3+Hib28avw9zHIgZqSYW5WIs2m7bNToTqyZCQSVVG13PYd8zi27kICwP/fGtE
-         K29ub7xAKbNP55TxjdxotPl2zEobROlzImvPKchHcMq4B++2QJXVUlkQtxsMUEHVvUli
-         HMww==
+        bh=SnRVlvChUOip0/mS6gPKmDiTg52hsS/Xc5WRqp68Uj0=;
+        b=Mm/NuC0ay2q2vnYjAh71dx9KJYBI4I3ELJ/qFeLVchDyvEVyyj5o2G16CM0HFaUxnm
+         U2XF7w8yTuKaxzO+ewl2LogCD0ErUL4uVOmUYvD1ST2nuYtKOCwcC7pdrzUxXGlXBcfX
+         cJZZkFK1/pxWlSPyfb1SGWXMbftRws506ed4oU4iQh3CvTBk1oQGsaL2VKi8zK8QBKWK
+         e7kjPhbjwhaks9wxRS6pOsF+TubkFQXq28hQkNkijzCGaqfvpYpsR9RuGiuPML/3pROQ
+         xAzjTNGUxIiUz1cmfOVtUJuJbgYCyrL3wvB3eXVhsvjJttntnS7E8JsbGH/H+CNw3DUc
+         6JdQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64E6F21746
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C002922DAC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"Michael S. Tsirkin" <mst@redhat.com>
-Subject: [PATCH 4.4 13/44] virtio: add ability to iterate over vqs
-Date: Mon, 30 Apr 2018 12:24:24 -0700
-Message-Id: <20180430190946.877993030@linuxfoundation.org>
+	Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.4 12/44] ALSA: usb-audio: Skip broken EU on Dell dock USB-audio
+Date: Mon, 30 Apr 2018 12:24:23 -0700
+Message-Id: <20180430190946.832458154@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430190946.093694747@linuxfoundation.org>
 References: <20180430190946.093694747@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200278542184373?=
-X-GMAIL-MSGID: =?utf-8?q?1599200398866966511?=
+X-GMAIL-THRID: =?utf-8?q?1599200277633443997?=
+X-GMAIL-MSGID: =?utf-8?q?1599200397474452471?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,30 +51,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michael S. Tsirkin <mst@redhat.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 24a7e4d20783c0514850f24a5c41ede46ab058f0 upstream.
+commit 1d8d6428d1da642ddd75b0be2d1bb1123ff8e017 upstream.
 
-For cleanup it's helpful to be able to simply scan all vqs and discard
-all data. Add an iterator to do that.
+The Dell Dock USB-audio device with 0bda:4014 is behaving notoriously
+bad, and we have already applied some workaround to avoid the firmware
+hiccup.  Yet we still need to skip one thing, the Extension Unit at ID
+4, which doesn't react correctly to the mixer ctl access.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+Bugzilla: https://bugzilla.suse.com/show_bug.cgi?id=1090658
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/virtio.h |    3 +++
+ sound/usb/mixer_maps.c |    3 +++
  1 file changed, 3 insertions(+)
 
---- a/include/linux/virtio.h
-+++ b/include/linux/virtio.h
-@@ -124,6 +124,9 @@ int virtio_device_freeze(struct virtio_d
- int virtio_device_restore(struct virtio_device *dev);
- #endif
- 
-+#define virtio_device_for_each_vq(vdev, vq) \
-+	list_for_each_entry(vq, &vdev->vqs, list)
-+
- /**
-  * virtio_driver - operations for a virtio I/O driver
-  * @driver: underlying device driver (populate name and owner).
+--- a/sound/usb/mixer_maps.c
++++ b/sound/usb/mixer_maps.c
+@@ -351,8 +351,11 @@ static struct usbmix_name_map bose_compa
+ /*
+  * Dell usb dock with ALC4020 codec had a firmware problem where it got
+  * screwed up when zero volume is passed; just skip it as a workaround
++ *
++ * Also the extension unit gives an access error, so skip it as well.
+  */
+ static const struct usbmix_name_map dell_alc4020_map[] = {
++	{ 4, NULL },	/* extension unit */
+ 	{ 16, NULL },
+ 	{ 19, NULL },
+ 	{ 0 }
