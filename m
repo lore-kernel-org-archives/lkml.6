@@ -1,38 +1,39 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrCVDdOBFsah7pWMtUeM5XNu/Rkgbr+BXHGp0KBps0hV/JWPF+xl1BG01TCOlYTyDlO/nZr
-ARC-Seal: i=1; a=rsa-sha256; t=1525116474; cv=none;
+X-Google-Smtp-Source: AB8JxZpKBrvTeuYIljFnmp7tJdYu41IK9DpBh0D46fPCpMKmAV9RYykw/pr31Xfw1AXFuXB4CjBz
+ARC-Seal: i=1; a=rsa-sha256; t=1525116480; cv=none;
         d=google.com; s=arc-20160816;
-        b=KYAvWaXBDW5BwmrltBKcrKztg196cwnZxJDzhbHrLm9yV4aei93ycExjmSH/ZFfErb
-         GiAndghYukFlRWMdsCMthEIsKIsdjw8r7o0vPPfRHaSAU2lerZXGJvtkGq7V9IObBGVA
-         HBiK4g9OZ0q7ylRCSromWXTDmsPu5IrArh2AWsqlZ9i1EsDvnIF791d4/OAfMObfz0Ym
-         vAlS8TaYvGPjMtEh+6X0lMIRj5dIHLhFisOBc0T7wQW6AI8SAv/wEKsXmklnqwjSBqKi
-         mZTM/0pI9d2Q8Jey0EVc2LLWJ/8h/ClmrJqeZ1Gn4OnFNX1WbRp30hICajme87Vm54hp
-         NdEQ==
+        b=HH1z9oJPdo44srLqAGR3rqz+n5/L1ydJAkvMjxcPtgK6T8/hVwffZPZv5xmG6vtZba
+         zFP9lqRJSLfctbZdCxKDNckVqOZixkY7gfYSaWGZuMmIDRzEnQD2elJJ+7fICsbDIAlv
+         bI+ho+zxhDr9yS6qE9RgZpTagTkQY/J3MS4vQwvtHcn403ayKh5oOmZTCo0AD36/ns63
+         sP914x4K44pW4xWgqZFCQRgVscQOuLMkJVKS+V7uLpQRl/QRPeoxbPbeV4elNeOb/w7Y
+         3HqoGAaThOw0HqaVXQgkvNOIdYaaMriYmi6ETh337DpONXNQrs+7P3kLgBREKgJqB0eT
+         j5Bw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=taovzLPED0zSuNpqtoMF4KytF0KiM1kNQSXzOfgiwH0=;
-        b=xQvzo5icLjdA5/Sy5VaQzjklSimx7cOxJuks18pUjJMqP3B66e+TiYgWM1UWU5PLZH
-         U02dui3Yydme/ijZfMZqYMUkkBqCoi7BnmCAEYKBVL+2DI8bskunOaLhaGPWCbjXGzNX
-         ApKBZ54zODr8obskYYxYYYyuqs8p+r4b8xg5UDmcHV/DOvyxHvwmkpnYMYXqj82Dre+4
-         uaoVuy85NFYgqLQQK5f+4tlN3u4pLS0REPWxSBnaJ+TjMYfFtJwmd61ahWoeFvCqNWfS
-         Iu9ZAFFJBPZbf/FK1gZaT5C94l7rPfCa9ZjMAF4W6IMEe4IumeXqMGZNrtHuMudZTaXp
-         brVQ==
+        bh=0gTBzhqDZBP9Ra7e8JgGVNS71sYcO4OUR5sintK9pYs=;
+        b=r9dedVkNg+iQnIEQ5YKLxUPqD2OgRG46mFrcDaYGCWuhZqvIQTtgy4AL9WeSJe/ow9
+         GeJQpZRf18rn4OWYLepPDp9B6rtvrXeD5E/fYpV9H6pXOT3rBDLVwEVO2rM49poFTb0v
+         T2kFPZ7P82fAWiMqpZua4R1igT5tFHh9zFFS8twM5RxBbuL50mXdrUe4COLqEqNF4NsI
+         pFL8Rn4cFpNYnfmAyXJsoFblWL+G5g8E7e5ydbBNW0M7wg9CUjCSmsoa/b2vpcEkMgqQ
+         1MxjUzG6bLNG8+xYe0Lyb9XgR3IO+ACKxFVDikJG7zysAwud7vwaJrCe0ihRllsQeRTH
+         +Qzg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8588922DCC
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0C0C22DC1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Shuah Khan <shuahkh@osg.samsung.com>
-Subject: [PATCH 4.16 011/113] usbip: vhci_hcd: Fix usb device and sockfd leaks
-Date: Mon, 30 Apr 2018 12:23:42 -0700
-Message-Id: <20180430184015.551728492@linuxfoundation.org>
+	Quanxian Wang <quanxian.wang@intel.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Subject: [PATCH 4.16 020/113] usb: typec: ucsi: Increase command completion timeout value
+Date: Mon, 30 Apr 2018 12:23:51 -0700
+Message-Id: <20180430184015.932987279@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184015.043892819@linuxfoundation.org>
 References: <20180430184015.043892819@linuxfoundation.org>
@@ -42,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200290205217782?=
-X-GMAIL-MSGID: =?utf-8?q?1599200531789787264?=
+X-GMAIL-THRID: =?utf-8?q?1599200475896831863?=
+X-GMAIL-MSGID: =?utf-8?q?1599200538596059239?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,29 +52,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Shuah Khan <shuahkh@osg.samsung.com>
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-commit 9020a7efe537856eb3e826ebebdf38a5d07a7857 upstream.
+commit b1b59e16075f5e5da2943ce8de724ab96bc3c6c2 upstream.
 
-vhci_hcd fails to do reset to put usb device and sockfd in the
-module remove/stop paths. Fix the leak.
+On some boards, under heavy load, the EC firmware is
+unable to complete commands even in one second. Increasing
+the command completion timeout value to five seconds.
 
-Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
-Cc: stable <stable@vger.kernel.org>
+Reported-by: Quanxian Wang <quanxian.wang@intel.com>
+Fixes: c1b0bc2dabfa ("usb: typec: Add support for UCSI interface")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/usbip/usbip_common.h |    2 +-
+ drivers/usb/typec/ucsi/ucsi.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/usbip/usbip_common.h
-+++ b/drivers/usb/usbip/usbip_common.h
-@@ -243,7 +243,7 @@ enum usbip_side {
- #define	VUDC_EVENT_ERROR_USB	(USBIP_EH_SHUTDOWN | USBIP_EH_UNUSABLE)
- #define	VUDC_EVENT_ERROR_MALLOC	(USBIP_EH_SHUTDOWN | USBIP_EH_UNUSABLE)
+--- a/drivers/usb/typec/ucsi/ucsi.c
++++ b/drivers/usb/typec/ucsi/ucsi.c
+@@ -28,7 +28,7 @@
+  * difficult to estimate the time it takes for the system to process the command
+  * before it is actually passed to the PPM.
+  */
+-#define UCSI_TIMEOUT_MS		1000
++#define UCSI_TIMEOUT_MS		5000
  
--#define	VDEV_EVENT_REMOVED	(USBIP_EH_SHUTDOWN | USBIP_EH_BYE)
-+#define	VDEV_EVENT_REMOVED (USBIP_EH_SHUTDOWN | USBIP_EH_RESET | USBIP_EH_BYE)
- #define	VDEV_EVENT_DOWN		(USBIP_EH_SHUTDOWN | USBIP_EH_RESET)
- #define	VDEV_EVENT_ERROR_TCP	(USBIP_EH_SHUTDOWN | USBIP_EH_RESET)
- #define	VDEV_EVENT_ERROR_MALLOC	(USBIP_EH_SHUTDOWN | USBIP_EH_UNUSABLE)
+ /*
+  * UCSI_SWAP_TIMEOUT_MS - Timeout for role swap requests
