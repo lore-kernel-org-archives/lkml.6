@@ -1,44 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751950AbeD3HUv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 03:20:51 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:41952 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751669AbeD3HUt (ORCPT
+        id S1752084AbeD3HWd (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 03:22:33 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:39239 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751618AbeD3HWc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 03:20:49 -0400
-Date: Mon, 30 Apr 2018 09:20:45 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] fbdev/drm: sh_mobile: remove unused MERAM support
-Message-ID: <20180430072045.pveq4t63amanu6tx@verge.net.au>
-References: <CGME20180427112213epcas2p3ed6890af75e679b537121f2655aa91d8@epcas2p3.samsung.com>
- <1524828105-26585-1-git-send-email-b.zolnierkie@samsung.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1524828105-26585-1-git-send-email-b.zolnierkie@samsung.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Mon, 30 Apr 2018 03:22:32 -0400
+X-Google-Smtp-Source: AB8JxZqZkdRbp3i3xj22xGXWRLouIb19yym+uJy3Qhhap3s2Mmx1OFedbYbhcMRzHloNZjerNAbSnA==
+From: Greentime Hu <green.hu@gmail.com>
+X-Google-Original-From: Greentime Hu <greentime@andestech.com>
+To: linux-kernel@vger.kernel.org, arnd@arndb.de, greentime@andestech.com,
+        green.hu@gmail.com
+Subject: [PATCH 1/3] nds32: Fix the virtual address may map too much range by tlbop issue.
+Date: Mon, 30 Apr 2018 15:20:39 +0800
+Message-Id: <a42871ba8088e343cdfd405426ea25e5727116af.1525072600.git.greentime@andestech.com>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 27, 2018 at 01:21:42PM +0200, Bartlomiej Zolnierkiewicz wrote:
-> Hi,
-> 
-> This patchset removes unused MERAM support (last user was removed
-> 3 years ago) from shmobile fbdev & drm drivers and then removes
-> MERAM driver itself.
-> 
-> If it is okay to merge this patches I would like patch #1 to go
-> through fbdev tree and patch #2 to go through drm tree. Once they
-> are both upstream (v4.18) I will apply patch #3 to fbdev tree.
+We use tlbop to map virtual address in the first beginning, however it
+may map too much if DRAM size is not that big. We have to invalidate the
+mapping when the page table is created.
 
-Nice to see this cleanup, thanks.
+Signed-off-by: Greentime Hu <greentime@andestech.com>
+---
+ arch/nds32/kernel/setup.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+diff --git a/arch/nds32/kernel/setup.c b/arch/nds32/kernel/setup.c
+index ba910e9e4ecb..2f5b2ccebe47 100644
+--- a/arch/nds32/kernel/setup.c
++++ b/arch/nds32/kernel/setup.c
+@@ -293,6 +293,9 @@ void __init setup_arch(char **cmdline_p)
+ 	/* paging_init() sets up the MMU and marks all pages as reserved */
+ 	paging_init();
+ 
++	/* invalidate all TLB entries because the new mapping is created */
++	__nds32__tlbop_flua();
++
+ 	/* use generic way to parse */
+ 	parse_early_param();
+ 
+-- 
+1.9.5
