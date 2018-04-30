@@ -1,42 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755456AbeD3XYx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 19:24:53 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:45359 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752614AbeD3XYw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 19:24:52 -0400
-Date: Tue, 1 May 2018 01:24:48 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org,
-        rmk@armlinux.org.uk, linux-kernel@vger.kernel.org, cphealy@gmail.com,
-        nikita.yoush@cogentembedded.com, vivien.didelot@savoirfairelinux.com,
-        Nisar.Sayed@microchip.com, UNGLinuxDriver@microchip.com
-Subject: Re: [RFC net-next 0/5] Support for PHY test modes
-Message-ID: <20180430232448.GB25602@lunn.ch>
-References: <20180428003237.1536-1-f.fainelli@gmail.com>
- <20180429.225554.2165914401649980919.davem@davemloft.net>
- <eea70076-891c-5caa-a590-ef1b0421f3b2@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <eea70076-891c-5caa-a590-ef1b0421f3b2@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        id S1755454AbeD3X1C (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 19:27:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:43718 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753594AbeD3X1A (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 19:27:00 -0400
+Date: Mon, 30 Apr 2018 16:26:58 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Pavel Tatashin <pasha.tatashin@oracle.com>
+Cc: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de, mhocko@suse.com,
+        linux-mm@kvack.org, mgorman@techsingularity.net, mingo@kernel.org,
+        peterz@infradead.org, rostedt@goodmis.org, fengguang.wu@intel.com,
+        dennisszhou@gmail.com
+Subject: Re: [PATCH v2] mm: access to uninitialized struct page
+Message-Id: <20180430162658.598dd5dcdd0c67e36953281c@linux-foundation.org>
+In-Reply-To: <20180426202619.2768-1-pasha.tatashin@oracle.com>
+References: <20180426202619.2768-1-pasha.tatashin@oracle.com>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Turning these tests on will typically result in the link partner
-> dropping the link with us, and the interface will be non-functional as
-> far as the data path is concerned (similar to an isolation mode). This
-> might warrant properly reporting that to user-space through e.g: a
-> private IFF_* value maybe?
+On Thu, 26 Apr 2018 16:26:19 -0400 Pavel Tatashin <pasha.tatashin@oracle.com> wrote:
 
-Hi Florian
+> The following two bugs were reported by Fengguang Wu:
+> 
+> kernel reboot-without-warning in early-boot stage, last printk:
+> early console in setup code
+> 
+> http://lkml.kernel.org/r/20180418135300.inazvpxjxowogyge@wfg-t540p.sh.intel.com
+> 
+> ...
+>
+> --- a/init/main.c
+> +++ b/init/main.c
+> @@ -585,8 +585,8 @@ asmlinkage __visible void __init start_kernel(void)
+>  	setup_log_buf(0);
+>  	vfs_caches_init_early();
+>  	sort_main_extable();
+> -	trap_init();
+>  	mm_init();
+> +	trap_init();
+>  
+>  	ftrace_init();
 
-I think a IFF_* value would be a good idea. We want to give the user
-some indicate why they don't have working networking. ip link show
-showing PHY-TEST-MODE would help.
-
-	Andrew
+Gulp.  Let's hope that nothing in mm_init() requires that trap_init()
+has been run.  What happens if something goes wrong during mm_init()
+and the architecture attempts to raise a software exception, hits a bus
+error, div-by-zero, etc, etc?  Might there be hard-to-discover
+dependencies in such a case?
