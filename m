@@ -1,42 +1,39 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrTCXfIHaN6Ct1o6UDaPhc3ikulRUnTEvjsyMuYAUaLSFMFrrwmctSe5MbXP3yDtAE5KUpy
-ARC-Seal: i=1; a=rsa-sha256; t=1525116414; cv=none;
+X-Google-Smtp-Source: AB8JxZocoj3dcny+GeX650HeFye3SCYyQa1fa/MkuahK8q814BjqgAej0iAXXdk2o+Ll1IS3ZBH9
+ARC-Seal: i=1; a=rsa-sha256; t=1525116401; cv=none;
         d=google.com; s=arc-20160816;
-        b=ctdHAMER/OwmSOITemsJAFHGzaiswjZXatbzz7brB79UxQpJaSAYQFL5k97rpy7oTv
-         n7XuRp+HKntRoLM71kbJz6JnIsCZbpKTaeY0UmPqwnQMmI1IbmOv7OQJmWTxEIuVSfTX
-         BVo+iNFMDjjlLHA250Uwgl5gKbsJPtVXhPu8GJTNva3hezQ1pYH4IOMv2yUdX9HiVSYX
-         rcdJcDiAz1jQXG1ctfS/aIa63O2evPj84690LOIUf0PX8RWLfWor46U1QcMn2g4uLP76
-         suiaO6iQ9ctyRSua7UT6vluooODjAoWN6dUfrDbt39SXW+3RKMv9G4fzE3VbwtyP+56c
-         F8JQ==
+        b=aYS5HGo9cj13m2MQpkpXjAbGXKmzalXDOpZG0XZ0XZgeIsQwZUO3HFX9Dau43q9ON8
+         i+EW7XALQ6ZdcPi/sVg+29eg7ptB0woTI+DgR0RNDlBqj+KeLEDfIyJHqdAtJybzXYtJ
+         IyzwiK5JTpK+Dd1ZdUgddvxAr40gu0L7P38dGg9q1933oOf5aVSt/8jcgM/vxWHLuT7c
+         4ZItJUs4RVk9xCQgiCm6N1F/cIWqKQR/iiOKx7MA0XjyxeC6UNcq+rrTpeYWRQTqvbX9
+         Myh2LtzYLGcmC5G9crbzJj6xsKq5Mks0X82j+b1CTUcuC7iS5/iUfII0T/MpNFyS/lA9
+         ZVsA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=nzdf+xBcTKbLt+OZLmltrxW9UspAb041uhFkSSb1z/M=;
-        b=v8X6msHbhNoppYq3sVTDPyYviePDgzPMnrZfSaIYbfq8z99TSFgDA6jiB58KLQWjaK
-         RLLqSXfYxwktf0KM/NyIBhs+LwJRtY/GGroH9MJwzN7Boke0hfjwiEPMJuG+BCA1z7zl
-         D1Ym4CHgAf6uggJPDmN/RCLBCsY6kpIIuk588GK9QUL9/5mYqlRpc9wlmcXUAQu9z2xq
-         2H9xXwjA9aY/ggPTjWREovnKQ8f+GlzjhS8XayrMXGYUo+c37rtDbKAZd0uxfVhyCSg8
-         4U3WAnYoIeLI3hy7vSrD+nRBtY3mHiloJiuFSR3KmTs04xPCtrsIuoI997QkBuPTyigJ
-         SQ5w==
+        bh=xD06JwWD0c0ozgSw9WhKJa/nZrfbZfmRWQx7Cluv/w0=;
+        b=T5Y5Fwsx70W7fdlkPYUbN1u+lO6BYAFoI/25BiCiqEhVuLUejl2yliRgoUgUJG+y9/
+         eowVGVlyfJfdrb/g7pUiz1FvlyN89CAbkXg8gHv8cj4vo3NW/We2inZYiB7cI9yHaKwz
+         iH3o0dSdDTQQANhYcvKkoowE/L44SHLJl0kPra8goFOeJ8s5zMDho+E/3oMCSxy2UzQL
+         FFU19qPw9IOFI79il68j/Iv6RBQjk7g/OY3uC9p8CfvlTlll/746z5fQR7o7SPdcDc/w
+         /j7WtmV4tovDAz8YxTpGSjmrVxWzzOhFoQwWoEsgMbXobybdo9Jukh2F1SoQ8kAy45YP
+         6r9A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C382022E02
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBA0722DAE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dmitry Vyukov <dvyukov@google.com>,
-	syzbot+209c0f67f99fec8eb14b@syzkaller.appspotmail.com,
-	syzbot+7fb6d9525a4528104e05@syzkaller.appspotmail.com,
-	syzbot+2e63711063e2d8f9ea27@syzkaller.appspotmail.com,
-	syzbot+de73361ee4971b6e6f75@syzkaller.appspotmail.com
-Subject: [PATCH 4.9 39/61] kobject: dont use WARN for registration failures
-Date: Mon, 30 Apr 2018 12:24:42 -0700
-Message-Id: <20180430183954.632232883@linuxfoundation.org>
+	Ilya Dryomov <idryomov@gmail.com>,
+	Jason Dillaman <dillaman@redhat.com>
+Subject: [PATCH 4.9 50/61] libceph: reschedule a tick in finish_hunting()
+Date: Mon, 30 Apr 2018 12:24:53 -0700
+Message-Id: <20180430183955.562969932@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430183951.312721450@linuxfoundation.org>
 References: <20180430183951.312721450@linuxfoundation.org>
@@ -46,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200285796531709?=
-X-GMAIL-MSGID: =?utf-8?q?1599200468898218575?=
+X-GMAIL-THRID: =?utf-8?q?1599200581417359909?=
+X-GMAIL-MSGID: =?utf-8?q?1599200455794758658?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,45 +52,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dmitry Vyukov <dvyukov@google.com>
+From: Ilya Dryomov <idryomov@gmail.com>
 
-commit 3e14c6abbfb5c94506edda9d8e2c145d79375798 upstream.
+commit 7b4c443d139f1d2b5570da475f7a9cbcef86740c upstream.
 
-This WARNING proved to be noisy. The function still returns an error
-and callers should handle it. That's how most of kernel code works.
-Downgrade the WARNING to pr_err() and leave WARNINGs for kernel bugs.
+If we go without an established session for a while, backoff delay will
+climb to 30 seconds.  The keepalive timeout is also 30 seconds, so it's
+pretty easily hit after a prolonged hunting for a monitor: we don't get
+a chance to send out a keepalive in time, which means we never get back
+a keepalive ack in time, cutting an established session and attempting
+to connect to a different monitor every 30 seconds:
 
-Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
-Reported-by: syzbot+209c0f67f99fec8eb14b@syzkaller.appspotmail.com
-Reported-by: syzbot+7fb6d9525a4528104e05@syzkaller.appspotmail.com
-Reported-by: syzbot+2e63711063e2d8f9ea27@syzkaller.appspotmail.com
-Reported-by: syzbot+de73361ee4971b6e6f75@syzkaller.appspotmail.com
-Cc: stable <stable@vger.kernel.org>
+  [Sun Apr 1 23:37:05 2018] libceph: mon0 10.80.20.99:6789 session established
+  [Sun Apr 1 23:37:36 2018] libceph: mon0 10.80.20.99:6789 session lost, hunting for new mon
+  [Sun Apr 1 23:37:36 2018] libceph: mon2 10.80.20.103:6789 session established
+  [Sun Apr 1 23:38:07 2018] libceph: mon2 10.80.20.103:6789 session lost, hunting for new mon
+  [Sun Apr 1 23:38:07 2018] libceph: mon1 10.80.20.100:6789 session established
+  [Sun Apr 1 23:38:37 2018] libceph: mon1 10.80.20.100:6789 session lost, hunting for new mon
+  [Sun Apr 1 23:38:37 2018] libceph: mon2 10.80.20.103:6789 session established
+  [Sun Apr 1 23:39:08 2018] libceph: mon2 10.80.20.103:6789 session lost, hunting for new mon
+
+The regular keepalive interval is 10 seconds.  After ->hunting is
+cleared in finish_hunting(), call __schedule_delayed() to ensure we
+send out a keepalive after 10 seconds.
+
+Cc: stable@vger.kernel.org # 4.7+
+Link: http://tracker.ceph.com/issues/23537
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+Reviewed-by: Jason Dillaman <dillaman@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- lib/kobject.c |   12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+ net/ceph/mon_client.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/lib/kobject.c
-+++ b/lib/kobject.c
-@@ -234,14 +234,12 @@ static int kobject_add_internal(struct k
- 
- 		/* be noisy on error issues */
- 		if (error == -EEXIST)
--			WARN(1, "%s failed for %s with "
--			     "-EEXIST, don't try to register things with "
--			     "the same name in the same directory.\n",
--			     __func__, kobject_name(kobj));
-+			pr_err("%s failed for %s with -EEXIST, don't try to register things with the same name in the same directory.\n",
-+			       __func__, kobject_name(kobj));
- 		else
--			WARN(1, "%s failed for %s (error: %d parent: %s)\n",
--			     __func__, kobject_name(kobj), error,
--			     parent ? kobject_name(parent) : "'none'");
-+			pr_err("%s failed for %s (error: %d parent: %s)\n",
-+			       __func__, kobject_name(kobj), error,
-+			       parent ? kobject_name(parent) : "'none'");
- 	} else
- 		kobj->state_in_sysfs = 1;
+--- a/net/ceph/mon_client.c
++++ b/net/ceph/mon_client.c
+@@ -1124,6 +1124,7 @@ static void finish_hunting(struct ceph_m
+ 		monc->hunting = false;
+ 		monc->had_a_connection = true;
+ 		un_backoff(monc);
++		__schedule_delayed(monc);
+ 	}
+ }
  
