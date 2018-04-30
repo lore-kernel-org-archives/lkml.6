@@ -1,49 +1,50 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqweVmd3gjMc18rwCoLlkOVQ+iQXQltlPXwW5QfKJiL2jVteKTJ2FqQky4FD/Kh9AC6wnKh
-ARC-Seal: i=1; a=rsa-sha256; t=1525116474; cv=none;
+X-Google-Smtp-Source: AB8JxZrG3Yb3TWj5pkj83XPar60Zr89CcTiSKX8X/Mb5A/Jy5ffqZNG8jLZKvriMrLYn5RczNvP7
+ARC-Seal: i=1; a=rsa-sha256; t=1525116472; cv=none;
         d=google.com; s=arc-20160816;
-        b=XumGgtbLsu2X/Cfr34/LxCzM0Nz7FM1Qp2Vxlg5+YlJgsOEwo9Oadtdk4SK4BhTPPQ
-         figE1T3+HfeaaINEo+iwOqX/IgJffI+dVsZSA5tAHjiaqZGvz1AwTrQ6xiIIoOSLzO79
-         5NHw3o6/aZhriSiprcIRdzhCIeYauDsgM3ntdEDXkVJ1AhTkukz1PXE9qyqPl9WC+Bzv
-         AcpsA9KW3fPAG9Xk7sHMtU/b6cZfSOqNYM/6I/p39GeltswLhMI9F5liHvDT7YfYYKRJ
-         r87SELHJRTrlkk5WVC2445Lcyy34mfMjrmokVtgiQ8oZxTK4X6Gz35cE0t567ddFZGHu
-         d+3A==
+        b=qjIVPtWWv8iC4dwHYxZkiGpJPR8kHTeTmlE/Fcs+vaPEE5PgWap7bP6+zdBEdDPQbb
+         lFmChuP6xLLdeA3efj7gvGl3IxtixVkPUV/+5MnhNeFzANPF1iBx+tqM+4c/ksz2GQnU
+         +k0HL9dqFv35il7bvb8vLeK4IxPSWmz2hLjPc5UvKnxX0wEztikwmn7k9ftxrdFiRbFJ
+         2t6OjLVALUjhzSck0GGuzyloti4fGHU5EjEsYgNhK/jTXzJlvuoFekJQMYWaaaL9poS9
+         9svfmfO3Or6DH3S2a9y4Wp98usEowvOoHBV/YdZl/d077M6CQpbIMu+J2+jDpvpf3yK0
+         rcWA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=4BvKCxUUuwNII4hAb+Hr0NCQXngDG0WhSsLf4Ksas10=;
-        b=XKF8EcXf19/1OBUc6H+jPj55mQdqWaP25A6RG0MtffpP1qdEy6qdzLy9Uq208AWZ2S
-         jCI4fGa4s7kufJ1U8VMLFMmV6P01bJuwIJ1f6BW/uY5QIt1R5edWthMx2jUugVKAr0Z6
-         hkmNyfu867fc53NNTeagfcWwLED+TdEqxJ7undUjW86Oswq4lLKZ9knt/0qBe8/MLdLt
-         T5L885IybPyhbxSFxD8DPIntWPU4zkftaHksMRj0BiWc9w5i+nx0E/qrM1N+gFCPoVEy
-         mcNjTWbFbjBsoN6qKipIYE0KURhfv0xhwwA3SjiaSPTsC2w2BkMbZglROhgDlKhlnYAh
-         mPVQ==
+        bh=UTrCA0h931/lQb02B9Fh1sVmvspJc4zFX68xIthdcNU=;
+        b=iDkIu1+9o0pNFCDQeamAyan6gGFyiyWqbJXf6ygg16fpoEaEmtqvH1tfChub9sIQO0
+         bVHrtXp9S55RIXbNDMjLEaT2L6uJUyl00UTHwAPG9fqQ7BuLiR3Se+lLyI4kSErswUhr
+         zoRu0croHqcs5/HinmJKaH6+qLo2tC6+946PL+m9LXRsPv7kgFy9l20WqIlMD4xSU5MC
+         i1kPkDDgoOsn3LnhCs4bZNJhR3rTMGT0qCo9yPayQhGEOQhxo3p6mWy6KPujC85CdVKn
+         jxKU6FAzUQ1ATRR8ZqcET/8mM3KbHUSeQNoJiciDVYSP+hsnKbP7ywhvE30Y5tQNWzJQ
+         aT/g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2227822DBF
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47BF722DAC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Shuah Khan <shuahkh@osg.samsung.com>
-Subject: [PATCH 4.16 012/113] usbip: vhci_hcd: check rhport before using in vhci_hub_control()
-Date: Mon, 30 Apr 2018 12:23:43 -0700
-Message-Id: <20180430184015.592900904@linuxfoundation.org>
+	syzbot+06c885be0edcdaeab40c@syzkaller.appspotmail.com,
+	Eric Biggers <ebiggers@google.com>,
+	Theodore Tso <tytso@mit.edu>
+Subject: [PATCH 4.16 001/113] ext4: prevent right-shifting extents beyond EXT_MAX_BLOCKS
+Date: Mon, 30 Apr 2018 12:23:32 -0700
+Message-Id: <20180430184015.120135692@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184015.043892819@linuxfoundation.org>
 References: <20180430184015.043892819@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200532252138668?=
-X-GMAIL-MSGID: =?utf-8?q?1599200532252138668?=
+X-GMAIL-THRID: =?utf-8?q?1599200396004789064?=
+X-GMAIL-MSGID: =?utf-8?q?1599200530145057094?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,72 +52,68 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Shuah Khan <shuahkh@osg.samsung.com>
+From: Eric Biggers <ebiggers@google.com>
 
-commit 5b22f676118ff25049382041da0db8012e57c9e8 upstream.
+commit 349fa7d6e1935f49bf4161c4900711b2989180a9 upstream.
 
-Validate !rhport < 0 before using it to access port_status array.
+During the "insert range" fallocate operation, extents starting at the
+range offset are shifted "right" (to a higher file offset) by the range
+length.  But, as shown by syzbot, it's not validated that this doesn't
+cause extents to be shifted beyond EXT_MAX_BLOCKS.  In that case
+->ee_block can wrap around, corrupting the extent tree.
 
-Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
-Cc: stable <stable@vger.kernel.org>
+Fix it by returning an error if the space between the end of the last
+extent and EXT4_MAX_BLOCKS is smaller than the range being inserted.
+
+This bug can be reproduced by running the following commands when the
+current directory is on an ext4 filesystem with a 4k block size:
+
+        fallocate -l 8192 file
+        fallocate --keep-size -o 0xfffffffe000 -l 4096 -n file
+        fallocate --insert-range -l 8192 file
+
+Then after unmounting the filesystem, e2fsck reports corruption.
+
+Reported-by: syzbot+06c885be0edcdaeab40c@syzkaller.appspotmail.com
+Fixes: 331573febb6a ("ext4: Add support FALLOC_FL_INSERT_RANGE for fallocate")
+Cc: stable@vger.kernel.org # v4.2+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/usbip/vhci_hcd.c |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ fs/ext4/extents.c |   16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
 
---- a/drivers/usb/usbip/vhci_hcd.c
-+++ b/drivers/usb/usbip/vhci_hcd.c
-@@ -354,6 +354,8 @@ static int vhci_hub_control(struct usb_h
- 		usbip_dbg_vhci_rh(" ClearHubFeature\n");
- 		break;
- 	case ClearPortFeature:
-+		if (rhport < 0)
-+			goto error;
- 		switch (wValue) {
- 		case USB_PORT_FEAT_SUSPEND:
- 			if (hcd->speed == HCD_USB3) {
-@@ -511,11 +513,16 @@ static int vhci_hub_control(struct usb_h
- 				goto error;
- 			}
+--- a/fs/ext4/extents.c
++++ b/fs/ext4/extents.c
+@@ -5334,8 +5334,9 @@ ext4_ext_shift_extents(struct inode *ino
+ 	stop = le32_to_cpu(extent->ee_block);
  
-+			if (rhport < 0)
-+				goto error;
-+
- 			vhci_hcd->port_status[rhport] |= USB_PORT_STAT_SUSPEND;
- 			break;
- 		case USB_PORT_FEAT_POWER:
- 			usbip_dbg_vhci_rh(
- 				" SetPortFeature: USB_PORT_FEAT_POWER\n");
-+			if (rhport < 0)
-+				goto error;
- 			if (hcd->speed == HCD_USB3)
- 				vhci_hcd->port_status[rhport] |= USB_SS_PORT_STAT_POWER;
- 			else
-@@ -524,6 +531,8 @@ static int vhci_hub_control(struct usb_h
- 		case USB_PORT_FEAT_BH_PORT_RESET:
- 			usbip_dbg_vhci_rh(
- 				" SetPortFeature: USB_PORT_FEAT_BH_PORT_RESET\n");
-+			if (rhport < 0)
-+				goto error;
- 			/* Applicable only for USB3.0 hub */
- 			if (hcd->speed != HCD_USB3) {
- 				pr_err("USB_PORT_FEAT_BH_PORT_RESET req not "
-@@ -534,6 +543,8 @@ static int vhci_hub_control(struct usb_h
- 		case USB_PORT_FEAT_RESET:
- 			usbip_dbg_vhci_rh(
- 				" SetPortFeature: USB_PORT_FEAT_RESET\n");
-+			if (rhport < 0)
-+				goto error;
- 			/* if it's already enabled, disable */
- 			if (hcd->speed == HCD_USB3) {
- 				vhci_hcd->port_status[rhport] = 0;
-@@ -554,6 +565,8 @@ static int vhci_hub_control(struct usb_h
- 		default:
- 			usbip_dbg_vhci_rh(" SetPortFeature: default %d\n",
- 					  wValue);
-+			if (rhport < 0)
-+				goto error;
- 			if (hcd->speed == HCD_USB3) {
- 				if ((vhci_hcd->port_status[rhport] &
- 				     USB_SS_PORT_STAT_POWER) != 0) {
+        /*
+-	 * In case of left shift, Don't start shifting extents until we make
+-	 * sure the hole is big enough to accommodate the shift.
++	* For left shifts, make sure the hole on the left is big enough to
++	* accommodate the shift.  For right shifts, make sure the last extent
++	* won't be shifted beyond EXT_MAX_BLOCKS.
+ 	*/
+ 	if (SHIFT == SHIFT_LEFT) {
+ 		path = ext4_find_extent(inode, start - 1, &path,
+@@ -5355,9 +5356,14 @@ ext4_ext_shift_extents(struct inode *ino
+ 
+ 		if ((start == ex_start && shift > ex_start) ||
+ 		    (shift > start - ex_end)) {
+-			ext4_ext_drop_refs(path);
+-			kfree(path);
+-			return -EINVAL;
++			ret = -EINVAL;
++			goto out;
++		}
++	} else {
++		if (shift > EXT_MAX_BLOCKS -
++		    (stop + ext4_ext_get_actual_len(extent))) {
++			ret = -EINVAL;
++			goto out;
+ 		}
+ 	}
+ 
