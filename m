@@ -1,41 +1,42 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrsrm7xXq+ZWwtZcOJ+v4zP2MACZWbtgA/EnT1YDgXLdSD1DBzA7ZFgoXo5m/UspJtNAlGY
-ARC-Seal: i=1; a=rsa-sha256; t=1525116463; cv=none;
+X-Google-Smtp-Source: AB8JxZrEYNWBs5TB0f3XUyYaDXm9kVSo5/6t0P3fboV47MjTxjXKZrLQFxntz/VnazyChQqWEV/b
+ARC-Seal: i=1; a=rsa-sha256; t=1525116461; cv=none;
         d=google.com; s=arc-20160816;
-        b=jkYeS5RIWmiKLxVXsSH33qfKsSZ6QbhPW7WBxdJfAg7yvY7TB2Iy7cYzLOI607sLk1
-         16AlVw37Z/2hTNF7VOtHZa3uinRnYeMqjf62td+TSQyHT6hHFcCsNN9zGEOuCuMQfrC7
-         b7GJA1rVcR8z2fpxnvUhVXkybJCS4OGZjOloezyQHV94ZufnrQal2oiLASrTK0Wcomdc
-         Gka5eJdM15HFkVvhB/3+rLzozIzwSlQ+yRCbDBb9178Po1t6NWitPdPLWwLxMd2/YmQe
-         pzn7oFwzVurmtvoqo/pHot5+NqZ68ZtAZsbh1qpaI+NYSod0BFFCoSm0maEBwZ4MSJLK
-         gkxw==
+        b=hb2c7e4xv6BO+yxhWwqS6MKu5XZe3B3zIzpsbcZjbYnB39zg9VroMnaCqpjIID4lNP
+         CwfzvLPoBbf1Xqv22VF0l/4OILh2d9GxXYZls8kNQcFwETiOCziZdks3Pd7fgYG3JHRq
+         pB+8FxhvNXNhZp3pFVcdNaCtYglJdtjmp3IVyI9LzXLigrVE+hkUdEIXKYQnRiinXzyw
+         HgkUIHorCUwYE3oKqF6Hn8PKLtu4SOiulXSUc2qrgNKs6MpHSu6v5/DOyvBYqmDs3p/S
+         G0O4+odBTOEurvmEyQc5/99F/qLIWHpXGpDMepXDlNQhGcic4T05eEWApGxH+1CK+Eub
+         eqfA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=4BCaLsfBnHLfGsC2Jwjf55gMHCvqdKzPdCgnZ2HOCRg=;
-        b=pO6JtCJeBBGzSZcTOI13iyj0YKMppi0z3O/9DJBRQ096EOnFUeNM0FdyS5vYXTYgE/
-         qThZaQdSA+HdVRb30jr5k6PQ3jguScHvOzf3cHAx2mGNJUAaOhhiejHPER0aGmNHiT/T
-         L3F/qrhKoaS588yxXyTfzEcX/PFcwkjIMKED5XuGtEGlBn/jT3enI2ldGoiFx3HlDa5n
-         8X6IrNDsc1wx5dHhU38kJAasITrRHYG4+k1uTnLqyBw/ZAiYYe1+NP8RC82+WSVIWAmH
-         WqFDBI3jPjY2EzvKVQWST8raeyegZ54FBcLQFIMELMT5imnm+z06PH4seuWAR94RDjvb
-         knfw==
+        bh=2gEymZPy7cVRukMWcnU+ZJ2oL+Prwmx9uXOwqym7iwE=;
+        b=JvpxeWvkU/LQqHN4mw7HPvLlnfOP+ass/zNg5kDu7ovAviKOcf3Lo0N7R2uf9awn2d
+         u8ucPWpjVn0s2disGTMnrs6JI1MMGAN++x7N0h/Z84ospNkypKRHKPz0yYJmWy3glm1v
+         r0mYguoemjD7lwAMp08NPO3w5FZeeprc1fsZhRK8pzBhiXWZc5sjhZSGw6OtYXqdkLDS
+         f/H4MR3DA9A8I0JFIBEX+jKbIw0WRoi5ijnDkoAoXY8irBx7mDLMl/sz4//w5TNYB1an
+         bPXbdHTvw6wmYqbmZH4D/5f04nZDkIiJCt1yPgfJZnFU4cx2RyhgK6ib8q56/BErMwhl
+         W9jw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D86A222DCC
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0714322E01
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Yazen Ghannam <yazen.ghannam@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@suse.de>,
-	Yazen Ghannam <Yazen.Ghannam@amd.com>
-Subject: [PATCH 4.14 85/91] x86/smpboot: Dont use mwait_play_dead() on AMD systems
-Date: Mon, 30 Apr 2018 12:25:07 -0700
-Message-Id: <20180430184008.726821539@linuxfoundation.org>
+	Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	=?UTF-8?q?Fredrik=20Sch=C3=B6n?= <fredrikschon@gmail.com>
+Subject: [PATCH 4.14 83/91] tools/lib/subcmd/pager.c: do not alias select() params
+Date: Mon, 30 Apr 2018 12:25:05 -0700
+Message-Id: <20180430184008.616426460@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184004.216234025@linuxfoundation.org>
 References: <20180430184004.216234025@linuxfoundation.org>
@@ -45,8 +46,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200418723747238?=
-X-GMAIL-MSGID: =?utf-8?q?1599200520500193185?=
+X-GMAIL-THRID: =?utf-8?q?1599200518600832333?=
+X-GMAIL-MSGID: =?utf-8?q?1599200518600832333?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,42 +55,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Yazen Ghannam <yazen.ghannam@amd.com>
+From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 
-commit da6fa7ef67f07108a1b0cb9fd9e7fcaabd39c051 upstream.
+commit ad343a98e74e85aa91d844310e797f96fee6983b upstream.
 
-Recent AMD systems support using MWAIT for C1 state. However, MWAIT will
-not allow deeper cstates than C1 on current systems.
+Use a separate fd set for select()-s exception fds param to fix the
+following gcc warning:
 
-play_dead() expects to use the deepest state available.  The deepest state
-available on AMD systems is reached through SystemIO or HALT. If MWAIT is
-available, it is preferred over the other methods, so the CPU never reaches
-the deepest possible state.
+  pager.c:36:12: error: passing argument 2 to restrict-qualified parameter aliases with argument 4 [-Werror=restrict]
+    select(1, &in, NULL, &in, NULL);
+              ^~~        ~~~
 
-Don't try to use MWAIT to play_dead() on AMD systems. Instead, use CPUIDLE
-to enter the deepest state advertised by firmware. If CPUIDLE is not
-available then fallback to HALT.
-
-Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Borislav Petkov <bp@suse.de>
-Cc: stable@vger.kernel.org
-Cc: Yazen Ghannam <Yazen.Ghannam@amd.com>
-Link: https://lkml.kernel.org/r/20180403140228.58540-1-Yazen.Ghannam@amd.com
+Link: http://lkml.kernel.org/r/20180101105626.7168-1-sergey.senozhatsky@gmail.com
+Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Fredrik Schön <fredrikschon@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/smpboot.c |    2 ++
- 1 file changed, 2 insertions(+)
+ tools/lib/subcmd/pager.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -1613,6 +1613,8 @@ static inline void mwait_play_dead(void)
- 	void *mwait_ptr;
- 	int i;
+--- a/tools/lib/subcmd/pager.c
++++ b/tools/lib/subcmd/pager.c
+@@ -30,10 +30,13 @@ static void pager_preexec(void)
+ 	 * have real input
+ 	 */
+ 	fd_set in;
++	fd_set exception;
  
-+	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD)
-+		return;
- 	if (!this_cpu_has(X86_FEATURE_MWAIT))
- 		return;
- 	if (!this_cpu_has(X86_FEATURE_CLFLUSH))
+ 	FD_ZERO(&in);
++	FD_ZERO(&exception);
+ 	FD_SET(0, &in);
+-	select(1, &in, NULL, &in, NULL);
++	FD_SET(0, &exception);
++	select(1, &in, NULL, &exception, NULL);
+ 
+ 	setenv("LESS", "FRSX", 0);
+ }
