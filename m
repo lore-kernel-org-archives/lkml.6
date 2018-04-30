@@ -1,57 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752572AbeD3KZV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 06:25:21 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:60792 "EHLO
+        id S1752830AbeD3K1X (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 06:27:23 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:33374 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750882AbeD3KZT (ORCPT
+        with ESMTP id S1750882AbeD3K1V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 06:25:19 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2A97A60588
+        Mon, 30 Apr 2018 06:27:21 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E844B60588
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Subject: Re: mwifiex: fix spelling mistake: "capabilties" -> "capabilities"
+Subject: Re: net: wireless: b43legacy: Replace GFP_ATOMIC with GFP_KERNEL in
+ dma_tx_fragment
 From: Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20180428093621.6806-1-colin.king@canonical.com>
-References: <20180428093621.6806-1-colin.king@canonical.com>
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Amitkumar Karwar <amitkarwar@gmail.com>,
-        Nishant Sarmukadam <nishants@marvell.com>,
-        Ganapathi Bhat <gbhat@marvell.com>, Xinming Hu <huxm@marvell.com>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <1523368459-32128-1-git-send-email-baijiaju1990@gmail.com>
+References: <1523368459-32128-1-git-send-email-baijiaju1990@gmail.com>
+To: Jia-Ju Bai <baijiaju1990@gmail.com>
+Cc: Larry.Finger@lwfinger.net, linux-wireless@vger.kernel.org,
+        b43-dev@lists.infradead.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
 User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20180430102519.0BE96601A1@smtp.codeaurora.org>
-Date: Mon, 30 Apr 2018 10:25:18 +0000 (UTC)
+Message-Id: <20180430102720.D5FC760710@smtp.codeaurora.org>
+Date: Mon, 30 Apr 2018 10:27:20 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Colin Ian King <colin.king@canonical.com> wrote:
+Jia-Ju Bai <baijiaju1990@gmail.com> wrote:
 
-> From: Colin Ian King <colin.king@canonical.com>
+> dma_tx_fragment() is never called in atomic context.
 > 
-> Trivial fix to spelling mistake in function names and text strings
+> dma_tx_fragment() is only called by b43legacy_dma_tx(), which is 
+> only called by b43legacy_tx_work().
+> b43legacy_tx_work() is only set a parameter of INIT_WORK() in 
+> b43legacy_wireless_init().
 > 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Despite never getting called from atomic context,
+> dma_tx_fragment() calls alloc_skb() with GFP_ATOMIC,
+> which does not sleep for allocation.
+> GFP_ATOMIC is not necessary and can be replaced with GFP_KERNEL,
+> which can sleep and improve the possibility of sucessful allocation.
+> 
+> This is found by a static analysis tool named DCNS written by myself.
+> And I also manually check it.
+> 
+> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-Failed to apply:
+Patch applied to wireless-drivers-next.git, thanks.
 
-error: patch failed: drivers/net/wireless/marvell/mwifiex/sta_event.c:933
-error: drivers/net/wireless/marvell/mwifiex/sta_event.c: patch does not apply
-error: Did you hand edit your patch?
-It does not apply to blobs recorded in its index.
-Applying: mwifiex: fix spelling mistake: "capabilties" -> "capabilities"
-Using index info to reconstruct a base tree...
-Patch failed at 0001 mwifiex: fix spelling mistake: "capabilties" -> "capabilities"
-The copy of the patch that failed is found in: .git/rebase-apply/patch
-
-Patch set to Changes Requested.
+6e1d8d1470b2 net: wireless: b43legacy: Replace GFP_ATOMIC with GFP_KERNEL in dma_tx_fragment
 
 -- 
-https://patchwork.kernel.org/patch/10370183/
+https://patchwork.kernel.org/patch/10333217/
 
 https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
