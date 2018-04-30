@@ -1,151 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753559AbeD3JKG (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 05:10:06 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49514 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752653AbeD3JIB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 05:08:01 -0400
-From: Eric Auger <eric.auger@redhat.com>
-To: eric.auger.pro@gmail.com, eric.auger@redhat.com,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com, cdall@kernel.org,
-        peter.maydell@linaro.org
-Cc: andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
-Subject: [PATCH v5 06/12] KVM: arm/arm64: Adapt vgic_v3_check_base to multiple rdist regions
-Date: Mon, 30 Apr 2018 11:07:38 +0200
-Message-Id: <1525079264-25533-7-git-send-email-eric.auger@redhat.com>
-In-Reply-To: <1525079264-25533-1-git-send-email-eric.auger@redhat.com>
-References: <1525079264-25533-1-git-send-email-eric.auger@redhat.com>
+        id S1753683AbeD3JKW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 05:10:22 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:52782 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753205AbeD3JKS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 05:10:18 -0400
+X-Google-Smtp-Source: AB8JxZoKmBBoAR8d7N6YH7VTTkY1wLuwOz6sL7mWIZJmcqWBNjedh430wWoO9n/sdYlG12NK7FTUTQ==
+From: "=?UTF-8?q?Javier=20Gonz=C3=A1lez?=" <javier@javigon.com>
+X-Google-Original-From: =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
+To: mb@lightnvm.io
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
+Subject: [V2 PATCH 00/11] lightnvm: pblk: small fixes
+Date: Mon, 30 Apr 2018 11:09:58 +0200
+Message-Id: <1525079409-6588-1-git-send-email-javier@cnexlabs.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-vgic_v3_check_base() currently only handles the case of a unique
-legacy redistributor region whose size is not explicitly set but
-inferred, instead, from the number of online vcpus.
+Changes since V1 (from Matias):
+ - Improve commit messages
+ - Fix error code on read path refactoring
 
-We adapt it to handle the case of multiple redistributor regions
-with explicitly defined size. We rely on two new helpers:
-- vgic_v3_rdist_overlap() is used to detect overlap with the dist
-  region if defined
-- vgic_v3_rd_region_size computes the size of the redist region,
-  would it be a legacy unique region or a new explicitly sized
-  region.
+Changes can be found at. This includes this series, the 2 extra patches I sent
+for pblk and Hans' write recovery on top.
+	https://github.com/OpenChannelSSD/linux/tree/for-4.18/pblk
 
-Signed-off-by: Eric Auger <eric.auger@redhat.com>
-Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
+A bunch of small fixes and extra checks for pblk. Non is critical, though
+("lightnvm: pblk: check for chunk size before allocating it") might be nice to
+get into 4.17 as it is a fix for the 2.0 pblk patches.
 
----
+Javier
 
-v4 -> v5:
-- s/infered/inferred in the commit msg
-- Added Christoffer's R-b
+Javier González (11):
+  lightnvm: pblk: fail gracefully on line alloc. failure
+  lightnvm: pblk: recheck for bad lines at runtime
+  lightnvm: pblk: check read lba on gc path
+  lightnvn: pblk: improve error msg on corrupted LBAs
+  lightnvm: pblk: warn in case of corrupted write buffer
+  lightnvm: pblk: return NVM_ error on failed submission
+  lightnvm: pblk: remove unnecessary indirection
+  lightnvm: pblk: remove unnecessary argument
+  lightnvm: pblk: check for chunk size before allocating it
+  lightnvn: pass flag on graceful teardown to targets
+  lightnvm: pblk: remove dead function
 
-v3 -> v4:
-- squash vgic_v3_check_base adaptation and vgic_v3_rdist_overlap
-  + vgic_v3_rd_region_size introduction  and put this patch
-  before v3 patch 6
----
- virt/kvm/arm/vgic/vgic-v3.c | 49 +++++++++++++++++++++++++++++----------------
- virt/kvm/arm/vgic/vgic.h    | 10 +++++++++
- 2 files changed, 42 insertions(+), 17 deletions(-)
+ drivers/lightnvm/core.c      | 10 +++---
+ drivers/lightnvm/pblk-core.c | 86 ++++++++++++++++++++++++++------------------
+ drivers/lightnvm/pblk-gc.c   | 10 +++---
+ drivers/lightnvm/pblk-init.c | 38 ++++++++++++--------
+ drivers/lightnvm/pblk-map.c  | 33 ++++++++++++-----
+ drivers/lightnvm/pblk-rb.c   |  5 ++-
+ drivers/lightnvm/pblk-read.c | 75 ++++++++++++++++++++++++++++----------
+ drivers/lightnvm/pblk.h      |  7 ++--
+ include/linux/lightnvm.h     |  2 +-
+ 9 files changed, 174 insertions(+), 92 deletions(-)
 
-diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-v3.c
-index f81a63a..c4a2a46 100644
---- a/virt/kvm/arm/vgic/vgic-v3.c
-+++ b/virt/kvm/arm/vgic/vgic-v3.c
-@@ -410,6 +410,29 @@ int vgic_v3_save_pending_tables(struct kvm *kvm)
- 	return 0;
- }
- 
-+/**
-+ * vgic_v3_rdist_overlap - check if a region overlaps with any
-+ * existing redistributor region
-+ *
-+ * @kvm: kvm handle
-+ * @base: base of the region
-+ * @size: size of region
-+ *
-+ * Return: true if there is an overlap
-+ */
-+bool vgic_v3_rdist_overlap(struct kvm *kvm, gpa_t base, size_t size)
-+{
-+	struct vgic_dist *d = &kvm->arch.vgic;
-+	struct vgic_redist_region *rdreg;
-+
-+	list_for_each_entry(rdreg, &d->rd_regions, list) {
-+		if ((base + size > rdreg->base) &&
-+			(base < rdreg->base + vgic_v3_rd_region_size(kvm, rdreg)))
-+			return true;
-+	}
-+	return false;
-+}
-+
- /*
-  * Check for overlapping regions and for regions crossing the end of memory
-  * for base addresses which have already been set.
-@@ -417,31 +440,23 @@ int vgic_v3_save_pending_tables(struct kvm *kvm)
- bool vgic_v3_check_base(struct kvm *kvm)
- {
- 	struct vgic_dist *d = &kvm->arch.vgic;
--	gpa_t redist_size = KVM_VGIC_V3_REDIST_SIZE;
--	struct vgic_redist_region *rdreg =
--		list_first_entry(&d->rd_regions,
--				 struct vgic_redist_region, list);
--
--	redist_size *= atomic_read(&kvm->online_vcpus);
-+	struct vgic_redist_region *rdreg;
- 
- 	if (!IS_VGIC_ADDR_UNDEF(d->vgic_dist_base) &&
- 	    d->vgic_dist_base + KVM_VGIC_V3_DIST_SIZE < d->vgic_dist_base)
- 		return false;
- 
--	if (rdreg && (rdreg->base + redist_size < rdreg->base))
--		return false;
-+	list_for_each_entry(rdreg, &d->rd_regions, list) {
-+		if (rdreg->base + vgic_v3_rd_region_size(kvm, rdreg) <
-+			rdreg->base)
-+			return false;
-+	}
- 
--	/* Both base addresses must be set to check if they overlap */
--	if (IS_VGIC_ADDR_UNDEF(d->vgic_dist_base) || !rdreg)
-+	if (IS_VGIC_ADDR_UNDEF(d->vgic_dist_base))
- 		return true;
- 
--	if (d->vgic_dist_base + KVM_VGIC_V3_DIST_SIZE <= rdreg->base)
--		return true;
--
--	if (rdreg->base + redist_size <= d->vgic_dist_base)
--		return true;
--
--	return false;
-+	return !vgic_v3_rdist_overlap(kvm, d->vgic_dist_base,
-+				      KVM_VGIC_V3_DIST_SIZE);
- }
- 
- /**
-diff --git a/virt/kvm/arm/vgic/vgic.h b/virt/kvm/arm/vgic/vgic.h
-index fea32cb..e6e3ae9 100644
---- a/virt/kvm/arm/vgic/vgic.h
-+++ b/virt/kvm/arm/vgic/vgic.h
-@@ -262,6 +262,16 @@ vgic_v3_redist_region_full(struct vgic_redist_region *region)
- 
- struct vgic_redist_region *vgic_v3_rdist_free_slot(struct list_head *rdregs);
- 
-+static inline size_t
-+vgic_v3_rd_region_size(struct kvm *kvm, struct vgic_redist_region *rdreg)
-+{
-+	if (!rdreg->count)
-+		return atomic_read(&kvm->online_vcpus) * KVM_VGIC_V3_REDIST_SIZE;
-+	else
-+		return rdreg->count * KVM_VGIC_V3_REDIST_SIZE;
-+}
-+bool vgic_v3_rdist_overlap(struct kvm *kvm, gpa_t base, size_t size);
-+
- int vgic_its_resolve_lpi(struct kvm *kvm, struct vgic_its *its,
- 			 u32 devid, u32 eventid, struct vgic_irq **irq);
- struct vgic_its *vgic_msi_to_its(struct kvm *kvm, struct kvm_msi *msi);
 -- 
-2.5.5
+2.7.4
