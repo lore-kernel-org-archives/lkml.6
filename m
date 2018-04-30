@@ -1,108 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753258AbeD3MhE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 08:37:04 -0400
-Received: from mail-it0-f69.google.com ([209.85.214.69]:36298 "EHLO
-        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752532AbeD3MhC (ORCPT
+        id S1753172AbeD3MjB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 08:39:01 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:39424 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751938AbeD3MjA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 08:37:02 -0400
-X-Google-Smtp-Source: AB8JxZoFDwL0jV2bEx4Eg8qh9EX3zNhCKoXRV0zxx8wuOdVPyIm23MCl6QVBF+d+wYKSGyIQ4wggdQwcb5N8aOgWUtAa38Wfp7pC
+        Mon, 30 Apr 2018 08:39:00 -0400
+X-Google-Smtp-Source: AB8JxZrUMEjoSYYLtBaZW0s7WlMl9QL4R2Rwv8NOo3r6NPAzFC794R8em8GoZO8d1Yi+7ZNmd3MvtQ==
+Date: Mon, 30 Apr 2018 13:38:56 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Kyle Spiers <ksspiers@google.com>
+Cc: linux-kernel@vger.kernel.org, keescook@chromium.org
+Subject: Re: [PATCH v2] rave-sp: Remove VLA
+Message-ID: <20180430123856.GI5147@dell>
+References: <20180427223023.11849-1-ksspiers@google.com>
 MIME-Version: 1.0
-Date: Mon, 30 Apr 2018 05:37:01 -0700
-In-Reply-To: <0000000000001558f3056a369689@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000048d84e056b101c2e@google.com>
-Subject: Re: WARNING in __device_add_disk
-From: syzbot <syzbot+3337db851ace689ceb50@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180427223023.11849-1-ksspiers@google.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found reproducer for the following crash on upstream commit
-6da6c0db5316275015e8cc2959f12a17584aeb64 (Sun Apr 29 21:17:42 2018 +0000)
-Linux v4.17-rc3
-syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=3337db851ace689ceb50
+On Fri, 27 Apr 2018, Kyle Spiers wrote:
 
-So far this crash happened 2 times on upstream.
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5078600311111680
-syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=5938566311968768
-Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=6326042692157440
-Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=6493557782959164711
-compiler: gcc (GCC) 8.0.1 20180413 (experimental)
+> As part of the effort to remove VLAs from the kernel[1], this creates
+> constants for the checksum lengths of CCITT and 8B2C and changes
+> crc_calculated to be the maximum size of a checksum.
+> 
+> https://lkml.org/lkml/2018/3/7/621
+> 
+> Signed-off-by: Kyle Spiers <ksspiers@google.com>
+> ---
+>  drivers/mfd/rave-sp.c | 11 +++++++++--
+>  1 file changed, 9 insertions(+), 2 deletions(-)
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+3337db851ace689ceb50@syzkaller.appspotmail.com
-It will help syzbot understand when the bug is fixed.
+Applied, thanks.
 
-RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 00000000004404a9
-RDX: 00000000004a1d2c RSI: 0000000020000080 RDI: 00000000200000c0
-RBP: 0030656c69662f2e R08: 00007fffca04f610 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000401d90
-R13: 0000000000401e20 R14: 0000000000000000 R15: 0000000000000000
-WARNING: CPU: 1 PID: 4539 at block/genhd.c:685  
-__device_add_disk+0x104a/0x1340 block/genhd.c:685
-Kernel panic - not syncing: panic_on_warn set ...
+Kees, do you want me to add your Ack?
 
-CPU: 1 PID: 4539 Comm: syz-executor708 Not tainted 4.17.0-rc3+ #25
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  panic+0x22f/0x4de kernel/panic.c:184
-  __warn.cold.8+0x163/0x1b3 kernel/panic.c:536
-  report_bug+0x252/0x2d0 lib/bug.c:186
-  fixup_bug arch/x86/kernel/traps.c:178 [inline]
-  do_error_trap+0x1de/0x490 arch/x86/kernel/traps.c:296
-  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
-  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:992
-RIP: 0010:__device_add_disk+0x104a/0x1340 block/genhd.c:685
-RSP: 0018:ffff8801ad26f4e0 EFLAGS: 00010293
-RAX: ffff8801d908e380 RBX: ffff8801d95d8e80 RCX: ffffffff83437c33
-RDX: 0000000000000000 RSI: ffffffff83437d6a RDI: 0000000000000005
-RBP: ffff8801ad26f6b0 R08: ffff8801d908e380 R09: 0000000000000006
-R10: ffff8801d908e380 R11: 0000000000000000 R12: 00000000fffffff4
-R13: ffff8801ad26f688 R14: ffff8801d95d93e0 R15: ffff8801d95d8e84
-  device_add_disk+0x22/0x30 block/genhd.c:705
-  add_disk include/linux/genhd.h:397 [inline]
-  loop_add+0x70b/0x9c0 drivers/block/loop.c:1895
-  loop_probe+0x185/0x1c0 drivers/block/loop.c:1967
-  kobj_lookup+0x269/0x460 drivers/base/map.c:124
-  get_gendisk+0x4c/0x380 block/genhd.c:813
-  bdev_get_gendisk fs/block_dev.c:1063 [inline]
-  bd_start_claiming fs/block_dev.c:1118 [inline]
-  blkdev_get+0x16a/0xb30 fs/block_dev.c:1604
-  blkdev_get_by_path+0x5c/0xe0 fs/block_dev.c:1689
-  mount_bdev+0x5d/0x3e0 fs/super.c:1122
-  fuse_mount_blk+0x34/0x40 fs/fuse/inode.c:1222
-  mount_fs+0xae/0x328 fs/super.c:1267
-  vfs_kern_mount.part.34+0xd4/0x4d0 fs/namespace.c:1037
-  vfs_kern_mount fs/namespace.c:1027 [inline]
-  do_new_mount fs/namespace.c:2518 [inline]
-  do_mount+0x564/0x3070 fs/namespace.c:2848
-  ksys_mount+0x12d/0x140 fs/namespace.c:3064
-  __do_sys_mount fs/namespace.c:3078 [inline]
-  __se_sys_mount fs/namespace.c:3075 [inline]
-  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3075
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4404a9
-RSP: 002b:00007fffca04f5f8 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 00000000004404a9
-RDX: 00000000004a1d2c RSI: 0000000020000080 RDI: 00000000200000c0
-RBP: 0030656c69662f2e R08: 00007fffca04f610 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000401d90
-R13: 0000000000401e20 R14: 0000000000000000 R15: 0000000000000000
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+> diff --git a/drivers/mfd/rave-sp.c b/drivers/mfd/rave-sp.c
+> index 5c858e784a89..4ce96b7137db 100644
+> --- a/drivers/mfd/rave-sp.c
+> +++ b/drivers/mfd/rave-sp.c
+> @@ -45,7 +45,9 @@
+>  #define RAVE_SP_DLE			0x10
+>  
+>  #define RAVE_SP_MAX_DATA_SIZE		64
+> -#define RAVE_SP_CHECKSUM_SIZE		2  /* Worst case scenario on RDU2 */
+> +#define RAVE_SP_CHECKSUM_8B2C		1
+> +#define RAVE_SP_CHECKSUM_CCITT		2
+> +#define RAVE_SP_CHECKSUM_SIZE		RAVE_SP_CHECKSUM_CCITT
+>  /*
+>   * We don't store STX, ETX and unescaped bytes, so Rx is only
+>   * DATA + CSUM
+> @@ -415,7 +417,12 @@ static void rave_sp_receive_frame(struct rave_sp *sp,
+>  	const size_t payload_length  = length - checksum_length;
+>  	const u8 *crc_reported       = &data[payload_length];
+>  	struct device *dev           = &sp->serdev->dev;
+> -	u8 crc_calculated[checksum_length];
+> +	u8 crc_calculated[RAVE_SP_CHECKSUM_SIZE];
+> +
+> +	if (unlikely(checksum_length > sizeof(crc_calculated))) {
+> +		dev_warn(dev, "Checksum too long, dropping\n");
+> +		return;
+> +	}
+>  
+>  	print_hex_dump(KERN_DEBUG, "rave-sp rx: ", DUMP_PREFIX_NONE,
+>  		       16, 1, data, length, false);
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
