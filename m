@@ -1,40 +1,82 @@
-Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZr2W2Vqu2rldvdNpQF00q1iSKh0wi7Jj5a1esgKEjT9owyaoack/G7XVlesuThaDO5bm/FR
-ARC-Seal: i=1; a=rsa-sha256; t=1525116504; cv=none;
-        d=google.com; s=arc-20160816;
-        b=khxylcKWUkfRGQknDCJMXn4msrMpMC7onOP4BSMyS2bzgpwb+Osj2Xl66EOs9omewA
-         M5prv3rMwnbdhe4OOOglXl626m+EwOvWyZYQmRGzHiwCjaw05W8bIjJws/ezb84d4NG8
-         oc9Yg0duOD9btd52Q4dGvfsVd22hl33rZmjxZObx1G9yO6/eg435yOrHe5ktHokxpf2I
-         jqKl7SX5m0xa4iPLcYkKBGTk1V3WAksFACFH3nW2QQ8J/wm6LuSPgk/+RJGIPLduj/g+
-         siM9sT+vW4OYJOfxTT3loKn1SyQjl8ANfKHW4uMkNyKQJ9Wm/Tf7Jv/kg7KiwGablZAU
-         dH2A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=0VSnxZj37jTCBhV0gp6dKi6APap8vQLqnLEpU7Hf8aI=;
-        b=fl3x+Mmip4DVIUIqxUmjlyPXt3KISkJXYyg8mU/LD8KfxC55uyiikgfUnHo9K5RAD+
-         eB/kTkHRDiG88rMu9vV3QvhdZzCciivbf0j7uPUqFA0Vz+ChUePrz8/uHAPPe28djwfI
-         3rukmOJqfNDvqj+THyZN2ZjbMT5hN0p9qDzbOHCyRLZt8OKKO1DPIiH+dOJSY3HFdji9
-         t/WKUWoVw27VVzWXcgcPuHBIsrxADC9E0xfyTURh7l/EiKfDYHN1U9A4TGMkY8iiW8PN
-         yg1ZW2YzJrw/+/EsY2sh4Pxu1DmRU7q9z009KK1TItQ42oCme+s5Oin4ZwpB9uzGpSD7
-         BErQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D11D122DAC
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1851310-1525116787-2-11541596668843912534
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1525116786; b=VOOFkQZc9fy4NXSqKMDFKd5vP/8P0jkxI8CWL13lBGRaDCZT4W
+    95zystUJk+WLa/nrLCHAnyu9f87+ziJp7Tw7g3hpMIoioKtIkKo++wNN2G7NjijH
+    z35Xg7Wm5xlJqM7KdHxgm4btr57/vyA0VaHxqMSZaHg8X9H/xR5YOcv3rjAPP1i2
+    C3G1TnZYjLP8Vjc2c/NC05fKhy2VmiQbQ36x2WvKLV77/yegHBJO69n0hMd0TT3x
+    dK/Ero+fJ3uAos3YwRapmlnkA9yC6ycLI0i7iDg12uN8vRaiWcvXMJwIs5d26SFT
+    0SkWNdAnTCrhHXcTZlFS5UdeiIo0FxenCQvA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1525116786; bh=U+3fIaiuQAP0P0C4MyRhgXjVufcTcA
+    cSdqFvwDtO1AA=; b=IvT19wjT5GNema9011F5AVBiHFVDWCSQuYwRQ+ue/x87do
+    +TuSem0/BgymF8Kq0FxNxABTIIdtQ4BnnB57VwSlpVJIu9+9RexvukYUZR3cN/bk
+    kCCvqDpMcvBdLn3ae+niPgkOOQ507AkVDKtEcGN3r7dsNfFegWxRpz8VR5AP+LQF
+    EH7tx5jiXde6NE87VwuQYt8yhCLKI4isFx3hRo/52nOBL0FLcWtTHXf4hOH/HBMV
+    Uq1y4opZ7V6XI5xJJBhaupxqYM85BwIt6dBY5DwGDSwnTFfvxLSNaE9Ap9Woztu1
+    kNwgThajgH05iL+4V5KiYwgMkHHWebR4FUlhDkGw==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfJNunnvIPsWfDjQEqf6VxBH0ARfFhc95/UHUiIXCO7OCzDePgPHb8WWmWk3JeeN6IbbcjTXk0Cdhq8Hx7xLr7GBOrOLnExF+ESIB0LbPKaX5PGG4PAcY
+    jia1hXEGg5PQI2OKO10BR5LU56VWjQWYAzfnO0uRGBXO81VsBwAr+COrVX8YyFBQeuZhuYd5UhuDpX353hkAr9E8t1NVKb5iXc0TKvGqayV0hLt0WEiBEeWd
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=O-rJpSWE__A3FIjncxQA:9
+    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S932395AbeD3T26 (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 30 Apr 2018 15:28:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37138 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756427AbeD3T25 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 30 Apr 2018 15:28:57 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B378F22DCC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Chris Packham <chris.packham@alliedtelesis.co.nz>,
-	Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: [PATCH 4.16 059/113] mtd: rawnand: marvell: fix the chip-select DT parsing logic
-Date: Mon, 30 Apr 2018 12:24:30 -0700
-Message-Id: <20180430184017.550066346@linuxfoundation.org>
+        stable@vger.kernel.org, Thor Thayer <thor.thayer@linux.intel.com>,
+        Dinh Nguyen <dinguyen@kernel.org>
+Subject: [PATCH 4.16 077/113] ARM: socfpga_defconfig: Remove QSPI Sector 4K size force
+Date: Mon, 30 Apr 2018 12:24:48 -0700
+Message-Id: <20180430184018.445977046@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184015.043892819@linuxfoundation.org>
 References: <20180430184015.043892819@linuxfoundation.org>
@@ -42,10 +84,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200563520704799?=
-X-GMAIL-MSGID: =?utf-8?q?1599200563520704799?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,121 +94,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Miquel Raynal <miquel.raynal@bootlin.com>
+From: Thor Thayer <thor.thayer@linux.intel.com>
 
-commit f6997bec6af43396ff530caee79e178d32774a49 upstream.
+commit 6e8fe39989720b87439fee7817a5ca362b16d931 upstream.
 
-The block responsible of parsing the DT for the number of chip-select
-lines uses an 'if/else if/else if' block. The content of the second and
-third 'else if' conditions are:
-        1/ the actual condition to enter the sub-block and
-        2/ the operation to do in this sub-block.
+Remove QSPI Sector 4K size force which is causing QSPI boot
+problems with the JFFS2 root filesystem.
 
-        [...]
-        else if (condition1_to_enter && action1() == failed)
-                raise_error();
-        else if (condition2_to_enter && action2() == failed)
-                raise_error();
-        [...]
+Fixes the following error:
+     "Magic bitmask 0x1985 not found at ..."
 
-In case of failure, the sub-block is entered and an error raised.
-Otherwise, in case of success, the code would continue erroneously in
-the next 'else if' statement because it did not failed (and did not
-enter the first 'else if' sub-block).
-
-The first 'else if' refers to legacy bindings while the second 'else if'
-refers to new bindings. The second 'else if', which is entered
-erroneously, checks for the 'reg' property, which, for old bindings,
-does not mean anything because it would not be the number of CS
-available, but the regular register map of almost any DT node. This
-being said, the content of the 'reg' property being the register map
-offset and length, it has '2' values, so the number of CS in this
-situation is assumed to be '2'.
-
-When running nand_scan_ident() with 2 CS, the core will check for an
-array of chips. It will first issue a RESET and then a READ_ID. Of
-course this will trigger two timeouts because there is no chip in front
-of the second CS:
-
-[    1.367460] marvell-nfc f2720000.nand: Timeout on CMDD (NDSR: 0x00000080)
-[    1.474292] marvell-nfc f2720000.nand: Timeout on CMDD (NDSR: 0x00000280)
-
-Indeed, this is harmless and the core will then assume there is only one
-valid CS.
-
-Fix the logic in the whole block by entering each sub-block just on the
-'is legacy' condition, doing the action inside the sub-block. This way,
-when the action succeeds, the whole block is left.
-
-Furthermore, for both the old bindings and the new bindings the same
-logic was applied to retrieve the number of CS lines:
-using of_get_property() to get a size in bytes, converted in the actual
-number of lines by dividing it per sizeof(u32) (4 bytes).
-
-This is fine for the 'reg' property which is a list of the CS IDs but
-not for the 'num-cs' property which is directly the value of the number
-of CS.
-
-Anyway, no existing DT uses another value than 'num-cs = <1>' and no
-other value has ever been supported by the old driver (pxa3xx_nand.c).
-Remove this condition and apply a number of 1 CS anyway, as already
-described in the bindings.
-
-Finally, the 'reg' property of a 'nand' node (with the new bindings)
-gives the IDs of each CS line in use. marvell_nand.c driver first look
-at the number of CS lines that are present in this property.
-
-Better use of_property_count_elems_of_size() than dividing by 4 the size
-of the number of bytes returned by of_get_property().
-
-Fixes: 02f26ecf8c772 ("mtd: nand: add reworked Marvell NAND controller driver")
 Cc: stable@vger.kernel.org
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Tested-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
+Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mtd/nand/marvell_nand.c |   25 ++++++++-----------------
- 1 file changed, 8 insertions(+), 17 deletions(-)
+ arch/arm/configs/socfpga_defconfig |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/mtd/nand/marvell_nand.c
-+++ b/drivers/mtd/nand/marvell_nand.c
-@@ -2277,29 +2277,20 @@ static int marvell_nand_chip_init(struct
- 	/*
- 	 * The legacy "num-cs" property indicates the number of CS on the only
- 	 * chip connected to the controller (legacy bindings does not support
--	 * more than one chip). CS are only incremented one by one while the RB
--	 * pin is always the #0.
-+	 * more than one chip). The CS and RB pins are always the #0.
- 	 *
- 	 * When not using legacy bindings, a couple of "reg" and "nand-rb"
- 	 * properties must be filled. For each chip, expressed as a subnode,
- 	 * "reg" points to the CS lines and "nand-rb" to the RB line.
- 	 */
--	if (pdata) {
-+	if (pdata || nfc->caps->legacy_of_bindings) {
- 		nsels = 1;
--	} else if (nfc->caps->legacy_of_bindings &&
--		   !of_get_property(np, "num-cs", &nsels)) {
--		dev_err(dev, "missing num-cs property\n");
--		return -EINVAL;
--	} else if (!of_get_property(np, "reg", &nsels)) {
--		dev_err(dev, "missing reg property\n");
--		return -EINVAL;
--	}
--
--	if (!pdata)
--		nsels /= sizeof(u32);
--	if (!nsels) {
--		dev_err(dev, "invalid reg property size\n");
--		return -EINVAL;
-+	} else {
-+		nsels = of_property_count_elems_of_size(np, "reg", sizeof(u32));
-+		if (nsels <= 0) {
-+			dev_err(dev, "missing/invalid reg property\n");
-+			return -EINVAL;
-+		}
- 	}
- 
- 	/* Alloc the nand chip structure */
+--- a/arch/arm/configs/socfpga_defconfig
++++ b/arch/arm/configs/socfpga_defconfig
+@@ -57,6 +57,7 @@ CONFIG_MTD_M25P80=y
+ CONFIG_MTD_NAND=y
+ CONFIG_MTD_NAND_DENALI_DT=y
+ CONFIG_MTD_SPI_NOR=y
++# CONFIG_MTD_SPI_NOR_USE_4K_SECTORS is not set
+ CONFIG_SPI_CADENCE_QUADSPI=y
+ CONFIG_OF_OVERLAY=y
+ CONFIG_OF_CONFIGFS=y
