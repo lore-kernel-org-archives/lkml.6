@@ -1,120 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752303AbeD3JBb (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 05:01:31 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:7217 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751426AbeD3JB3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 05:01:29 -0400
-Subject: Re: [RFC PATCH 1/2] ACPI / PNP: Don't add "enumeration_by_parent"
- devices
-To: Lee Jones <lee.jones@linaro.org>
-References: <1524218846-169934-1-git-send-email-john.garry@huawei.com>
- <1524218846-169934-2-git-send-email-john.garry@huawei.com>
- <20180420130727.GV2173@lahna.fi.intel.com>
- <27c3f84e-4d53-4b6b-7382-04908082ed01@huawei.com>
- <20180420135222.GY2173@lahna.fi.intel.com>
- <75eae3ac-228f-d6a4-bb0e-4bd27e35c55d@huawei.com>
- <09e3aa95-86ae-ca30-7bb5-a9704d296b43@huawei.com>
- <20180426140808.GK2173@lahna.fi.intel.com>
- <15443a87-2622-01ee-f7f2-426a51ca0f11@huawei.com>
- <44e047a2-93e1-9eff-45b8-d538a7ae9092@huawei.com>
- <20180430053611.GA11990@dell>
-CC: Mika Westerberg <mika.westerberg@linux.intel.com>,
-        <andriy.shevchenko@linux.intel.com>, <rjw@rjwysocki.net>,
-        <linux-acpi@vger.kernel.org>, <lenb@kernel.org>,
-        <lorenzo.pieralisi@arm.com>, <linux-kernel@vger.kernel.org>,
-        <arnd@arndb.de>, <graeme.gregory@linaro.org>, <helgaas@kernel.org>,
-        <linuxarm@huawei.com>, <z.liuxinliang@hisilicon.com>,
-        "Liguozhu (Kenneth)" <liguozhu@hisilicon.com>
-From: John Garry <john.garry@huawei.com>
-Message-ID: <67a620ee-fd1f-4b5e-aa91-9f280a63807b@huawei.com>
-Date: Mon, 30 Apr 2018 10:00:59 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        id S1752429AbeD3JDa (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 05:03:30 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:36552 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752102AbeD3JD0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 05:03:26 -0400
+X-Google-Smtp-Source: AB8JxZpUwTD40m7+HQkJTtLRkDZGMmkBJB3BLJyOCAwQBDbPHo8kC+cHhfn5VIyaOhaD3o/+/ko7/uXQszv/gZ8lSf4=
 MIME-Version: 1.0
-In-Reply-To: <20180430053611.GA11990@dell>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.238]
-X-CFilter-Loop: Reflected
+In-Reply-To: <b0c1e303-ca95-8bc8-a5d4-65e75dc8398a@ti.com>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+ <20180419140641.27926-11-wsa+renesas@sang-engineering.com> <b0c1e303-ca95-8bc8-a5d4-65e75dc8398a@ti.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 30 Apr 2018 11:03:25 +0200
+Message-ID: <CACRpkday+d9iGeX+CRHTEyC=w+oNUK-8oTy0HqugO5PRhHn62w@mail.gmail.com>
+Subject: Re: [PATCH 10/61] gpio: simplify getting .drvdata
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org, Hoan Tran <hotran@apm.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux-OMAP <linux-omap@vger.kernel.org>, linux-tegra@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/04/2018 06:36, Lee Jones wrote:
-> On Fri, 27 Apr 2018, John Garry wrote:
->> On 26/04/2018 15:23, John Garry wrote:
->>> On 26/04/2018 15:08, Mika Westerberg wrote:
->>>> On Thu, Apr 26, 2018 at 02:49:49PM +0100, John Garry wrote:
->>>>> diff --git a/drivers/bus/hisi_lpc.c b/drivers/bus/hisi_lpc.c
->>>>> index 2d4611e..b04425b 100644
->>>>> --- a/drivers/bus/hisi_lpc.c
->>>>> +++ b/drivers/bus/hisi_lpc.c
->>>>> @@ -18,6 +18,8 @@
->>>>>  #include <linux/of_platform.h>
->>>>>  #include <linux/pci.h>
->>>>>  #include <linux/slab.h>
->>>>> +#include <linux/serial_8250.h>
->>>>> +#include "../tty/serial/8250/8250.h"
->>>>>
->>>>>  #define DRV_NAME "hisi-lpc"
->>>>>
->>>>> @@ -345,6 +347,7 @@ static void hisi_lpc_comm_outs(void *hostdata,
->>>>> unsigned
->>>>> long pio,
->>>>>  #define MFD_CHILD_NAME_LEN (ACPI_ID_LEN +
->>>>> sizeof(MFD_CHILD_NAME_PREFIX) -
->>>>> 1)
->>>>>
->>>>>  struct hisi_lpc_mfd_cell {
->>>>> +    struct plat_serial8250_port serial8250_port;
->>>>>      struct mfd_cell_acpi_match acpi_match;
->>>>>      char name[MFD_CHILD_NAME_LEN];
->>>>>      char pnpid[ACPI_ID_LEN];
->>>>> @@ -513,10 +516,31 @@ static int hisi_lpc_acpi_probe(struct device
->>>>> *hostdev)
->>>>>          dev_warn(&child->dev, "set resource fail (%d)\n", ret);
->>>>>              return ret;
->>>>>          }
->>>>> +    if (!strcmp(acpi_device_hid(child), "HISI1031")) {
->>>>
->>>
->>> Hi Mika,
->>>
->>>> Hmm, there is a way in struct mfd_cell to match child devices using _HID
->>>> so is there something preventing you from using that?
->>>
->>> Not that I know about. Can you describe this method? I guess I also
->>> don't need to set the mfd_cell pnpid either for this special case device.
->>>
+On Thu, Apr 19, 2018 at 5:14 PM, Grygorii Strashko
+<grygorii.strashko@ti.com> wrote:
+> On 04/19/2018 09:05 AM, Wolfram Sang wrote:
 >>
->> So we using the mfd_cell to match child devices using _HID. At a glance, I
->> don't actually see other drivers to use mfd_cell_acpi_match.pnpid .
+>> We should get drvdata from struct device directly. Going via
+>> platform_device is an unneeded step back and forth.
 >>
->> Anyway we don't use static tables as we need to update the resources of the
->> cell dynamically. However I do look at a driver like intel_quark_i2c_gpio.c,
->> and this dynamically modifies the value of global mfd_cell array here:
->> https://elixir.bootlin.com/linux/latest/source/drivers/mfd/intel_quark_i2c_gpio.c#L266
+>> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>> ---
 >>
->> I know the cell array is only used at probe time, but this did not look to
->> be good standard practice to me.
+>> Build tested only. buildbot is happy. Please apply individually.
 >
-> Lots of drivers do this to supply dynamic data.  If there is no other
-> sane way of providing such data, it's fine to do.  Although each
-> situation should be dealt with on a case-by-case basis.
 >
+> for gpio-omap.c:
+> Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
 
-Hi Lee,
+Hm I only see the responses not the actual patch, I guess I will find it
+sooner or later.
 
-Thanks for your input.
+Wolfram: if I don't find it, poke me with something sharp so I get to apply it.
 
-I do see others drivers which use dynamic mem for the mfd_cells (like 
-cros_ec_dev.c), so what we're doing in this driver already is not 
-totally unchartered territory. But creating the MFD cells from the ACPI 
-table could be ...
-
-Anyway, I'll cc you in my next patchset and maybe you can kindly check it.
-
-Cheers,
-John
+Yours,
+Linus Walleij
