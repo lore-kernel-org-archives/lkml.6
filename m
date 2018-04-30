@@ -1,52 +1,40 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrV1d9dQTUf1j/lBKcb7zkoYZjfIC1VP/Y+r28LqemYE6Ud+baQoY19q0ycj3lLyMCkEQ3i
-ARC-Seal: i=1; a=rsa-sha256; t=1525116451; cv=none;
+X-Google-Smtp-Source: AB8JxZrkLz1WA4TTEH3OO1lz7BWqm1bk/hfs3zRv2TqCWXlsgXPtQ8XLK7wQxOqNYIMUYDJpBUCq
+ARC-Seal: i=1; a=rsa-sha256; t=1525116450; cv=none;
         d=google.com; s=arc-20160816;
-        b=dC0b/T6BzJVYmTUQGpAKZhWSjVI4zpqTN/0/jpzEOV8xl4yxWgPGz9bvRV8vBbA/ef
-         zi4PJOXGyz0FVkLzMIVRDFBcOO8ESdVPmVLcL9dQtVezz3AyMoR0UjK3k3z/AkcLTTBT
-         JsfuS5J0GBUzt5LwnD7RxTNtG4NJsx5i4Xijl6bvtmt8v5YG0vB9tlyLYiIovk/m4eDn
-         Lz9OpF1gIrWmW+jAHqajqO5f+y/grdii5X0yqVx1OvcgMPqb5KrQcEMTwNY0YRDtWYzD
-         Puvil9ZcEIpmNjsD30MVF4OpR9eFyyBAVqpkECKwFNv1MVLMkO+XCbpJJX9mpYmLhMg/
-         D7NQ==
+        b=fQrMbHrMe4Bzx2hcAVo1B1hcgxZB714O5wCofhtJSawglhuOH/7wb8Xf4F4wMphhzC
+         61QYVEbfCi3qnJ2v4gW8NYFYmyI5nGC3nlikAcRrUvbUBUP3zGQp7sB1sRWJUIzuiPI1
+         i7IvTn1Bf9btDxwKg5XG4IJlKoaDvpjqCnjmnoihTlzZlHMxuUAfCscujcq/cVkf7+Nq
+         fnpkdt6ax0Aw0sGN1E+nImjkUrm5UuR6DxZ/plpDf3ldEjdGRsQnuAgCiWhVj3qm3Z6x
+         yMWHQWw+rcXu6hxiIdKQnw+wZmy43U6DcQ9jVXEHtjA//YYsWdBbX1Xak5zfAnEN7fav
+         Ig0A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=ceG+xHfJR05payNVs7GDNGJ0AsAiXQ5lqsHuiwrSVF4=;
-        b=PlaAk2/uPURhygXFgK1vIKS6c8pRDM1a4cUwNIOsdGUipFkK3RWJrDQkPynJMOC6Zq
-         JANZz/NxM1QbgjOc8rMxpucQPHu8Gkvwh6SRQtX93M7DUV4lOOMVAmbl3HrQPFRRMgzX
-         CxWLaWBZzZuh/2ZfoojZNQMqMBEsFdyUVz2/2O6LcPgD8GhtE7gp09Qhz4H/tmmGxdI/
-         KiFc4wbTzoC9ms62e/AhS8hpwSDdncOVtVC4a5BB5M3FHeBurxa0fZCMjwvymNNAhINU
-         HlWVEkZ0NZETMPBBrouwkK0h7WLirBY3u4kZlyfsuxk4CtYn0xVMoiTIdIsLhpQOxhGW
-         WjKg==
+        bh=giQk4he6JYDw2Xz3HIlcXIve1fG/+S2q09Qz07Lemx8=;
+        b=hAtoX8nnqWil3PpPolvaKg1aRgFt+3DS123pbhfdpzF5btI2K0RJQxO8ce074wjHZ9
+         ZYQp8NoT5C/+RVAum14VxvdEb8Uq7X1SEG0gqfh7pNyfLm0xKMX+/4qKIeW9i9/Pij5q
+         dItcaujgFCu8yEncTw3QY+OkSD0cNlET+PyJQOM1YZQSgHlmMdvmfdCFSWgroeOLcZzq
+         t7oDXslFde/GCNBoqSAjmRGEQ6ihWDO/PhyDugX0AJUyPSFdNwSowKTQ2jJrDZgb4KS9
+         XuX5HWpeU1sl8GSIjIaqgW+W5UKc7LmwkY/dtXTibGHG8JZdBwVoMeE1o65t9mcxK4oP
+         zVqg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB87922DBF
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5573122DCB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	Alan Cox <alan@llwyncelyn.cymru>,
-	Dan Williams <dcbw@redhat.com>,
-	Jiri Prchal <jiri.prchal@aksignal.cz>,
-	Jiri Slaby <jslaby@suse.cz>,
-	Marcel Partap <mpartap@gmx.net>,
-	Merlijn Wajer <merlijn@wizzup.org>,
-	Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
-	Michael Scott <michael.scott@linaro.org>,
-	Pavel Machek <pavel@ucw.cz>,
-	Peter Hurley <peter@hurleysoftware.com>,
-	Russ Gorby <russ.gorby@intel.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Sebastian Reichel <sre@kernel.org>,
-	Tony Lindgren <tony@atomide.com>
-Subject: [PATCH 4.14 30/91] tty: n_gsm: Fix long delays with control frame timeouts in ADM mode
-Date: Mon, 30 Apr 2018 12:24:12 -0700
-Message-Id: <20180430184005.761849347@linuxfoundation.org>
+	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+	syzbot <syzkaller@googlegroups.com>,
+	Jiri Slaby <jslaby@suse.com>
+Subject: [PATCH 4.14 29/91] tty: Dont call panic() at tty_ldisc_init()
+Date: Mon, 30 Apr 2018 12:24:11 -0700
+Message-Id: <20180430184005.696407137@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184004.216234025@linuxfoundation.org>
 References: <20180430184004.216234025@linuxfoundation.org>
@@ -56,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200279464606414?=
-X-GMAIL-MSGID: =?utf-8?q?1599200508327988922?=
+X-GMAIL-THRID: =?utf-8?q?1599200428340821221?=
+X-GMAIL-MSGID: =?utf-8?q?1599200508013090554?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -65,89 +53,70 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tony Lindgren <tony@atomide.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-commit e9ec22547986dd32c5c70da78107ce35dbff1344 upstream.
+commit 903f9db10f18f735e62ba447147b6c434b6af003 upstream.
 
-Commit ea3d8465ab9b ("tty: n_gsm: Allow ADM response in addition to UA for
-control dlci") added support for DLCI to stay in Asynchronous Disconnected
-Mode (ADM). But we still get long delays waiting for commands to other
-DLCI to complete:
+syzbot is reporting kernel panic [1] triggered by memory allocation failure
+at tty_ldisc_get() from tty_ldisc_init(). But since both tty_ldisc_get()
+and caller of tty_ldisc_init() can cleanly handle errors, tty_ldisc_init()
+does not need to call panic() when tty_ldisc_get() failed.
 
---> 5) C: SABM(P)
-Q>  0) C: UIH(F)
-Q>  0) C: UIH(F)
-Q>  0) C: UIH(F)
-...
+[1] https://syzkaller.appspot.com/bug?id=883431818e036ae6a9981156a64b821110f39187
 
-This happens because gsm_control_send() sets cretries timer to T2 that is
-by default set to 34. This will cause resend for T2 times for the control
-frame. In ADM mode, we will never get a response so the control frame, so
-retries are just delaying all the commands.
-
-Let's fix the issue by setting DLCI_MODE_ADM flag after detecting the ADM
-mode for the control DLCI. Then we can use that in gsm_control_send() to
-set retries to 1. This means the control frame will be sent once allowing
-the other end at an opportunity to switch from ADM to ABM mode.
-
-Note that retries will be decremented in gsm_control_retransmit() so
-we don't want to set it to 0 here.
-
-Fixes: ea3d8465ab9b ("tty: n_gsm: Allow ADM response in addition to UA for control dlci")
-Cc: linux-serial@vger.kernel.org
-Cc: Alan Cox <alan@llwyncelyn.cymru>
-Cc: Dan Williams <dcbw@redhat.com>
-Cc: Jiri Prchal <jiri.prchal@aksignal.cz>
-Cc: Jiri Slaby <jslaby@suse.cz>
-Cc: Marcel Partap <mpartap@gmx.net>
-Cc: Merlijn Wajer <merlijn@wizzup.org>
-Cc: Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
-Cc: Michael Scott <michael.scott@linaro.org>
-Cc: Pavel Machek <pavel@ucw.cz>
-Cc: Peter Hurley <peter@hurleysoftware.com>
-Cc: Russ Gorby <russ.gorby@intel.com>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Sebastian Reichel <sre@kernel.org>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jslaby@suse.com>
 Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/n_gsm.c |   12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ drivers/tty/tty_io.c    |    5 ++++-
+ drivers/tty/tty_ldisc.c |    5 +++--
+ include/linux/tty.h     |    2 +-
+ 3 files changed, 8 insertions(+), 4 deletions(-)
 
---- a/drivers/tty/n_gsm.c
-+++ b/drivers/tty/n_gsm.c
-@@ -133,6 +133,9 @@ struct gsm_dlci {
- 	struct mutex mutex;
+--- a/drivers/tty/tty_io.c
++++ b/drivers/tty/tty_io.c
+@@ -2815,7 +2815,10 @@ struct tty_struct *alloc_tty_struct(stru
  
- 	/* Link layer */
-+	int mode;
-+#define DLCI_MODE_ABM		0	/* Normal Asynchronous Balanced Mode */
-+#define DLCI_MODE_ADM		1	/* Asynchronous Disconnected Mode */
- 	spinlock_t lock;	/* Protects the internal state */
- 	struct timer_list t1;	/* Retransmit timer for SABM and UA */
- 	int retries;
-@@ -1376,7 +1379,13 @@ retry:
- 	ctrl->data = data;
- 	ctrl->len = clen;
- 	gsm->pending_cmd = ctrl;
--	gsm->cretries = gsm->n2;
-+
-+	/* If DLCI0 is in ADM mode skip retries, it won't respond */
-+	if (gsm->dlci[0]->mode == DLCI_MODE_ADM)
-+		gsm->cretries = 1;
-+	else
-+		gsm->cretries = gsm->n2;
-+
- 	mod_timer(&gsm->t2_timer, jiffies + gsm->t2 * HZ / 100);
- 	gsm_control_transmit(gsm, ctrl);
- 	spin_unlock_irqrestore(&gsm->control_lock, flags);
-@@ -1484,6 +1493,7 @@ static void gsm_dlci_t1(unsigned long da
- 			if (debug & 8)
- 				pr_info("DLCI %d opening in ADM mode.\n",
- 					dlci->addr);
-+			dlci->mode = DLCI_MODE_ADM;
- 			gsm_dlci_open(dlci);
- 		} else {
- 			gsm_dlci_close(dlci);
+ 	kref_init(&tty->kref);
+ 	tty->magic = TTY_MAGIC;
+-	tty_ldisc_init(tty);
++	if (tty_ldisc_init(tty)) {
++		kfree(tty);
++		return NULL;
++	}
+ 	tty->session = NULL;
+ 	tty->pgrp = NULL;
+ 	mutex_init(&tty->legacy_mutex);
+--- a/drivers/tty/tty_ldisc.c
++++ b/drivers/tty/tty_ldisc.c
+@@ -823,12 +823,13 @@ EXPORT_SYMBOL_GPL(tty_ldisc_release);
+  *	the tty structure is not completely set up when this call is made.
+  */
+ 
+-void tty_ldisc_init(struct tty_struct *tty)
++int tty_ldisc_init(struct tty_struct *tty)
+ {
+ 	struct tty_ldisc *ld = tty_ldisc_get(tty, N_TTY);
+ 	if (IS_ERR(ld))
+-		panic("n_tty: init_tty");
++		return PTR_ERR(ld);
+ 	tty->ldisc = ld;
++	return 0;
+ }
+ 
+ /**
+--- a/include/linux/tty.h
++++ b/include/linux/tty.h
+@@ -701,7 +701,7 @@ extern int tty_unregister_ldisc(int disc
+ extern int tty_set_ldisc(struct tty_struct *tty, int disc);
+ extern int tty_ldisc_setup(struct tty_struct *tty, struct tty_struct *o_tty);
+ extern void tty_ldisc_release(struct tty_struct *tty);
+-extern void tty_ldisc_init(struct tty_struct *tty);
++extern int __must_check tty_ldisc_init(struct tty_struct *tty);
+ extern void tty_ldisc_deinit(struct tty_struct *tty);
+ extern int tty_ldisc_receive_buf(struct tty_ldisc *ld, const unsigned char *p,
+ 				 char *f, int count);
