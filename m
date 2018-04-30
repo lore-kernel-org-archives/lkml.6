@@ -1,101 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754970AbeD3RKx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 13:10:53 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46122 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753508AbeD3RKv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 13:10:51 -0400
-Message-ID: <1525108249.11756.93.camel@redhat.com>
-Subject: Re: [PATCH] IB/core: Make ib_mad_client_id atomic
-From: Doug Ledford <dledford@redhat.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>, jackm <jackm@dev.mellanox.co.il>
-Cc: =?ISO-8859-1?Q?H=E5kon?= Bugge <haakon.bugge@oracle.com>,
-        Don Hiatt <don.hiatt@intel.com>,
-        Dasaratharaman Chandramouli
-        <dasaratharaman.chandramouli@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>, Sean Hefty <sean.hefty@intel.com>,
-        OFED mailing list <linux-rdma@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Date: Mon, 30 Apr 2018 13:10:49 -0400
-In-Reply-To: <20180430144930.GB26895@ziepe.ca>
-References: <20180418142450.15581-1-Haakon.Bugge@oracle.com>
-         <1524196555.11756.30.camel@redhat.com> <20180420153451.GF30433@ziepe.ca>
-         <50E3FE4A-2C6E-4493-92E1-383C349FAE3A@oracle.com>
-         <20180423221618.0000795d@dev.mellanox.co.il>
-         <20180430144930.GB26895@ziepe.ca>
-Organization: Red Hat, Inc.
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-fsORuf+usU5/Vibvb5vC"
-Mime-Version: 1.0
+        id S1752848AbeD3RMU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 13:12:20 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:51272 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751938AbeD3RMQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 13:12:16 -0400
+X-Google-Smtp-Source: AB8JxZru30fy79RKSiAiBtSFpzumGLBha8ozSeD+eXU5uaFLdHuRY9pxKNAs21Tzj1uY91+619Vad9PG8Q+/GjfDNGw=
+MIME-Version: 1.0
+References: <alpine.DEB.2.20.1804301741570.3243@hypnos.tec.linutronix.de>
+ <CAGXu5jL1W=AC023asgeMRUXAnhU2vd-RJRqGtOOetQ=aXwDcFQ@mail.gmail.com>
+ <CA+55aFwieC1-nAs+NFq9RTwaR8ef9hWa4MjNBWL41F-8wM49eA@mail.gmail.com>
+ <20180430124135.0cce92e3@gandalf.local.home> <CA+55aFzpJC4+tuSopeze72D2sv1urGdap8+Bj2Y9hEYitAkE4Q@mail.gmail.com>
+ <CA+55aFyNqnrM=_5pMgEeL20jVKN7MgWKG52pbaR0FayO=5VuXw@mail.gmail.com> <1e0bc2e2-a0d8-16b7-b6a4-cf97ecd99cef@infradead.org>
+In-Reply-To: <1e0bc2e2-a0d8-16b7-b6a4-cf97ecd99cef@infradead.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 30 Apr 2018 17:12:05 +0000
+Message-ID: <CA+55aFzezp7OCpK7HFFQ7LeUZZyFACrhx6px_ZFq5zgoNTwEVw@mail.gmail.com>
+Subject: Re: Hashed pointer issues
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+        Kees Cook <keescook@chromium.org>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        tcharding <me@tobin.cc>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Apr 30, 2018 at 10:06 AM Randy Dunlap <rdunlap@infradead.org> wrote:
+> On 04/30/2018 10:01 AM, Linus Torvalds wrote:
+> >
+> > No kernel command line needed in practice any more. That's assuming any
+> > kernel developer will have an IvyBridge or newer.
 
---=-fsORuf+usU5/Vibvb5vC
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+> any paid kernel developer :)
 
-On Mon, 2018-04-30 at 08:49 -0600, Jason Gunthorpe wrote:
-> On Mon, Apr 23, 2018 at 10:16:18PM +0300, jackm wrote:
->=20
-> > > > TIDs need to be globally unique on the entire machine. =20
-> > Jason, that is not exactly correct.
->=20
-> The expecation for /dev/umad users is that they all receive locally
-> unique TID prefixes. The kernel may be OK to keep things port-specific
-> but it is slightly breaking the API we are presenting to userspace to
-> allow them to alias..
->=20
-> Jason
+I suspect a lot of hobbyists too - it's not like ivy bridge is particularly
+new.
 
-Would people be happier with this commit message then:
+But if not, we can burn that bridge when we get to it.
 
-IB/core: Make ib_mad_client_id atomic
- =20
-Currently, the kernel protects access to the agent ID allocator on a per
-port basis using a spinlock, so it is impossible for two apps/threads on
-the same port to get the same TID, but it is entirely possible for two
-threads on different ports to end up with the same TID. =20
+Also, if you're not paid to do it, I don't think you'll be working a lot of
+error trace buffers during bootup. There are definitely more interesting
+parts of the kernel to play with ;)
 
-As this can be confusing (regardless of it being legal according to the
-IB Spec 1.3, C13-18.1.1, in section 13.4.6.4 - TransactionID usage),
-and as the rdma-core user space API for /dev/umad devices implies unique
-TIDs even across ports, make the TID an atomic type so that no two
-allocations, regardless of port number, will be the same.
-
-Signed-off-by: H=C3=A5kon Bugge <haakon.bugge@oracle.com>
-Reviewed-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
-Reviewed-by: Ira Weiny <ira.weiny@intel.com>
-Reviewed-by: Zhu Yanjun <yanjun.zhu@oracle.com>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
-
-
---=20
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
---=-fsORuf+usU5/Vibvb5vC
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAlrnThkACgkQuCajMw5X
-L93grBAAlcuVjyVohByp3vHuSNDyjvMn66qPcY9XMiAejp0N6xIykq/7ztLkqtqm
-PNj0fYEVbUfGKdueMz6SWFVf/dMHtZMuWrYZ18cG6nuRsO/UfHDfvDM/acIKXUPE
-bTGnZIsa/jqFmLPYW0at0+ww54aAZXchYlWgM24pWBdeqWDx+jVtY7XhGpzE1g/8
-5byLP7VP9wkrSyI+ozhXpUOxJrH2mdUqB7an9WiuFt4TZjd1seEchYp+ywlavX8+
-wAxpLhP+leQcV3hFI1fgGfKaK0VrjWUfGho2GGuHlaCmKnXqUthEWs9cnms/k+I9
-R/hsipt3ZtOfesfkfYFgzqAjLyPj8qikphWVd0/qdHv4W1cKrplpnMNv+pkPSSyc
-DVzzh1FaJF8TUTzBlTQdSL+L/nL50+b2ROJeOoGK/7lbOL4aH78ltf9j4TogC+Do
-myHoC6V1SI5/0xHsl39ZSEdAGX95Ou3CAd+JVVScHiGwvZbTR1q1B6nxZDadXJlM
-k0HGufN8L0IIldQKIsITCxmFG98hgJgu9EgWUVPQuHomdAnkiatr7SuRYYkkNdAj
-V91qHAs6O/nq8zr+EYL7iTRhYFPeqY3HakNWBgBeJh/+lbyOfFeHhFwTYG0/X26b
-bJL+uziVG7mwZUMNsAGolqo4Yi+yfoVLUFMu4UPvRcThCfIIKMM=
-=Mwa9
------END PGP SIGNATURE-----
-
---=-fsORuf+usU5/Vibvb5vC--
+               Linus
