@@ -1,85 +1,140 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754898AbeD3Sor (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 14:44:47 -0400
-Received: from mga06.intel.com ([134.134.136.31]:56304 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752994AbeD3Soq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 14:44:46 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,348,1520924400";
-   d="scan'208";a="47226616"
-Date: Mon, 30 Apr 2018 11:43:47 -0700
-From: Dongwon Kim <dongwon.kim@intel.com>
-To: Juergen Gross <jgross@suse.com>
-Cc: Oleksandr Andrushchenko <andr2000@gmail.com>,
-        Wei Liu <wei.liu2@citrix.com>, Artem Mygaiev <Artem_Mygaiev@epam.com>,
-        konrad.wilk@oracle.com, airlied@linux.ie, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        "Potrola, MateuszX" <mateuszx.potrola@intel.com>,
-        daniel.vetter@intel.com, xen-devel@lists.xenproject.org,
-        boris.ostrovsky@oracle.com,
-        Roger Pau =?iso-8859-1?Q?Monn=E9?= <roger.pau@citrix.com>,
-        "Oleksandr_Andrushchenko@epam.com" <Oleksandr_Andrushchenko@epam.com>
-Subject: Re: [Xen-devel] [PATCH 0/1] drm/xen-zcopy: Add Xen zero-copy helper
- DRM driver
-Message-ID: <20180430184347.GA20292@downor-Z87X-UD5H>
-References: <ebcbf6ce-1d7a-5f3e-cff8-546d1c010e59@gmail.com>
- <20180418101058.hyqk3gr3b2ibxswu@MacBook-Pro-de-Roger.local>
- <20180420071914.GG31310@phenom.ffwll.local>
- <76cdc65a-7bb1-9377-7bc5-6164e32f7b5d@gmail.com>
- <20180423115242.ywdwqblj2aseu3fr@citrix.com>
- <61105351-8896-072b-abf0-757c7f6c0edf@gmail.com>
- <20180424115437.GT31310@phenom.ffwll.local>
- <18ab5f76-00b0-42a0-fcb8-e0cbf4cdd527@gmail.com>
- <20180424203514.GA26787@downor-Z87X-UD5H>
- <bdeeb76f-ea65-083b-dde4-450584edb068@suse.com>
+        id S1754478AbeD3SsQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 14:48:16 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:44033 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753397AbeD3SsO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 14:48:14 -0400
+X-Google-Smtp-Source: AB8JxZo0suwv5kFoiO7oBGFXTicI2KSlPQs5U4nzwwbL66XeBMh+UrQGkcQG/QYv9MZyCzfRhO/xovq/g/hmDyQepJk=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bdeeb76f-ea65-083b-dde4-450584edb068@suse.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1523975611-15978-18-git-send-email-ldufour@linux.vnet.ibm.com>
+References: <1523975611-15978-1-git-send-email-ldufour@linux.vnet.ibm.com> <1523975611-15978-18-git-send-email-ldufour@linux.vnet.ibm.com>
+From: Punit Agrawal <punitagrawal@gmail.com>
+Date: Mon, 30 Apr 2018 19:47:53 +0100
+Message-ID: <CAD4BONeTCmSZgzThatyY66xVx1a9nCgNO+LCory0h9ZpBkn_+w@mail.gmail.com>
+Subject: Re: [PATCH v10 17/25] mm: protect mm_rb tree with a rwlock
+To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Cc: akpm@linux-foundation.org, mhocko@kernel.org, peterz@infradead.org,
+        kirill@shutemov.name, ak@linux.intel.com, dave@stgolabs.net,
+        jack@suse.cz, Matthew Wilcox <willy@infradead.org>,
+        benh@kernel.crashing.org, mpe@ellerman.id.au, paulus@samba.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
+        sergey.senozhatsky.work@gmail.com,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        David Rientjes <rientjes@google.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Ganesh Mahendran <opensource.ganesh@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
+        npiggin@gmail.com, bsingharora@gmail.com, paulmck@linux.vnet.ibm.com,
+        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 25, 2018 at 08:12:08AM +0200, Juergen Gross wrote:
-> On 24/04/18 22:35, Dongwon Kim wrote:
-> > Had a meeting with Daniel and talked about bringing out generic
-> > part of hyper-dmabuf to the userspace, which means we most likely
-> > reuse IOCTLs defined in xen-zcopy for our use-case if we follow
-> > his suggestion.
-> > 
-> > So assuming we use these IOCTLs as they are,
-> > Several things I would like you to double-check..
-> > 
-> > 1. returning gref as is to the user space is still unsafe because
-> > it is a constant, easy to guess and any process that hijacks it can easily
-> > exploit the buffer. So I am wondering if it's possible to keep dmabuf-to
-> > -gref or gref-to-dmabuf in kernel space and add other layers on top
-> > of those in actual IOCTLs to add some safety.. We introduced flink like
-> > hyper_dmabuf_id including random number but many says even that is still
-> > not safe.
-> 
-> grefs are usable by root only. When you have root access in dom0 you can
-> do evil things to all VMs even without using grants. That is in no way
-> different to root being able to control all other processes on the
-> system.
+Hi Laurent,
 
-I honestly didn't know about this. I believed kernel code simply can map those
-pages. However, out of curiosity, how is non-root usage of gref prevented in
-current design? Is there privilege check in grant table driver or hypercalls
-needed by this page mapping is only enabled for root in hypervisor level?
+One nitpick below.
 
-And this is pretty critical information for any use-case using grant-table.
-Is there any place(doc/website) this is specified/explained?
+On Tue, Apr 17, 2018 at 3:33 PM, Laurent Dufour
+<ldufour@linux.vnet.ibm.com> wrote:
+> This change is inspired by the Peter's proposal patch [1] which was
+> protecting the VMA using SRCU. Unfortunately, SRCU is not scaling well in
+> that particular case, and it is introducing major performance degradation
+> due to excessive scheduling operations.
+>
+> To allow access to the mm_rb tree without grabbing the mmap_sem, this patch
+> is protecting it access using a rwlock.  As the mm_rb tree is a O(log n)
+> search it is safe to protect it using such a lock.  The VMA cache is not
+> protected by the new rwlock and it should not be used without holding the
+> mmap_sem.
+>
+> To allow the picked VMA structure to be used once the rwlock is released, a
+> use count is added to the VMA structure. When the VMA is allocated it is
+> set to 1.  Each time the VMA is picked with the rwlock held its use count
+> is incremented. Each time the VMA is released it is decremented. When the
+> use count hits zero, this means that the VMA is no more used and should be
+> freed.
+>
+> This patch is preparing for 2 kind of VMA access :
+>  - as usual, under the control of the mmap_sem,
+>  - without holding the mmap_sem for the speculative page fault handler.
+>
+> Access done under the control the mmap_sem doesn't require to grab the
+> rwlock to protect read access to the mm_rb tree, but access in write must
+> be done under the protection of the rwlock too. This affects inserting and
+> removing of elements in the RB tree.
+>
+> The patch is introducing 2 new functions:
+>  - vma_get() to find a VMA based on an address by holding the new rwlock.
+>  - vma_put() to release the VMA when its no more used.
+> These services are designed to be used when access are made to the RB tree
+> without holding the mmap_sem.
+>
+> When a VMA is removed from the RB tree, its vma->vm_rb field is cleared and
+> we rely on the WMB done when releasing the rwlock to serialize the write
+> with the RMB done in a later patch to check for the VMA's validity.
+>
+> When free_vma is called, the file associated with the VMA is closed
+> immediately, but the policy and the file structure remained in used until
+> the VMA's use count reach 0, which may happens later when exiting an
+> in progress speculative page fault.
+>
+> [1] https://patchwork.kernel.org/patch/5108281/
+>
+> Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+> ---
+>  include/linux/mm.h       |   1 +
+>  include/linux/mm_types.h |   4 ++
+>  kernel/fork.c            |   3 ++
+>  mm/init-mm.c             |   3 ++
+>  mm/internal.h            |   6 +++
+>  mm/mmap.c                | 115 +++++++++++++++++++++++++++++++++++------------
+>  6 files changed, 104 insertions(+), 28 deletions(-)
+>
+
+[...]
+
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index 5601f1ef8bb9..a82950960f2e 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -160,6 +160,27 @@ void unlink_file_vma(struct vm_area_struct *vma)
+>         }
+>  }
+>
+> +static void __free_vma(struct vm_area_struct *vma)
+> +{
+> +       if (vma->vm_file)
+> +               fput(vma->vm_file);
+> +       mpol_put(vma_policy(vma));
+> +       kmem_cache_free(vm_area_cachep, vma);
+> +}
+> +
+> +#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
+> +void put_vma(struct vm_area_struct *vma)
+> +{
+> +       if (atomic_dec_and_test(&vma->vm_ref_count))
+> +               __free_vma(vma);
+> +}
+> +#else
+> +static inline void put_vma(struct vm_area_struct *vma)
+> +{
+> +       return __free_vma(vma);
+
+Please drop the "return".
 
 Thanks,
-DW
+Punit
 
-
-> 
-> 
-> Juergen
+[...]
