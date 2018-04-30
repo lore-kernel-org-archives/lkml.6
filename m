@@ -1,126 +1,289 @@
-Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpBxsueCMRU6pv/PL7p8f9erye0OXHK7i2o3CSMEdOTfg4kXSj/ajRux8YY7H1QwXaBUumO
-ARC-Seal: i=1; a=rsa-sha256; t=1524837635; cv=none;
+Return-Path: <3vlvnWgkbAO8jpqbRccViRggZU.XffXcVljViTfekVek.Tfd@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1525111742; cv=none;
         d=google.com; s=arc-20160816;
-        b=egkgAgj7wfOBxMZsRc9VQ4pqNci3Oc52qjEgJrrwO7YizNnlfA15mvLNy7tuewbNlf
-         Hh68+J4lUa6XPsuAkvBLIboY0eUAFZsgAHLJLEvGF/EJeRXGzVqkQWPl4tAC0xpVLjKJ
-         UYTkSh+5kjyJxNFuKT/uuyIog5vmpQ7iBlalkxV4bEE2dl+jkdIW/99KwuGHbURIaFVQ
-         JUOT5GMWMX8S7ZCSlTeMdFeTVr5ZDK6jeDG0BBWjs9yxTy5OrFdcT00hTnPLbQ4Gcq//
-         5OtFLa6+Zyob80wzn4y7PTqxoIFhJMumFEpqWMKakeaeLj6YJ8MD34Zvtx6GDt2pwc4T
-         oIYA==
+        b=J0Lc4K/Kl5so0XuBGAClM2wJGPuUqR2YplBGRETt/bzrgc+9qx0T3iQYsE5XGn0tff
+         TwsPAXAK/Hr0FV6H7v5d/zUr33kiXLaIi3QOKSk0WoElSuCxGQzgISzJIHMrTmPG/L5k
+         rzXlDiPRy1xC+2q8CwEsYWE+3Xar5XnTZZhfVHb4nBZgZXW28elUNQBBv5ASWhus9d/W
+         KqxpxGylUsXU2sXruI/YuYWck+P0MvB94W1XhU/ypcLiGkdI3E9FQVMl0rv6C9EjQxRf
+         hSf1a2dQXR+oRbKegOJDtGtlLBv80n25qYG45r3HEm+rCQX1xu1jRj/K6EG0zvQy8uwT
+         6rZw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=P/vS5V2iMnC7y8dme3Po9rwod8+4V6lxUTu597BppKE=;
-        b=wF3h1N/rwMhfGZx60ST0eEQwK3YbNncIsAyUH4bjyk+KdI+nQ+I4rCZh0LIngy4Pck
-         g82iU1jdrIl89QlNO+VfhtaGdAL0WiA4RBbgFxd7Mg79gRxO+7vTcLCIlOl0Nesb7zOy
-         I+XJLdaDhfOIInDt18S3pElu6NgJRCFUwSRh12cCqh55V5nJU1RSKXXAn28gThskCK/I
-         pNxREWZD8tbKlDfsZMKly5H1vFZ6NqECi5Leup5/X0FrT07Va9UvC418biPitNVxl/fq
-         RW7rCc2aiJCnsTUS4+Tvnu3I+43RT1vX4AijrA4Uupedees3Vj+4g86u1Sm8tukUKd+E
-         plyw==
+        h=to:from:subject:message-id:date:mime-version
+         :arc-authentication-results;
+        bh=SvGO1dWLVmY6h5vu8gTfvZiYXEQpawG8fyOlNRx+UnY=;
+        b=GzF1kCCHxscF1+4V55DMl+n91+JE36Kz/YIi4najKQAqHsTmqSvwkkCxVVex00h7qs
+         BhznJDOexYXRXgxMIzSfO1M3o+xUAuDtzKzko2RlgudVW4r60XvizYVWtoKQ26qA+DnT
+         izU6EmlQJXfzVeYJzKZ9cGQWSP617l5VE+x33OxYFdOxg6ORAYpr4FH8u/+EsGfFWBRc
+         sIYM3t9DgKVydp60/uVSaUh2VNXxH0GPWQ30SxR/ttiozEFm0IuMgfyzq3DHG0Tcc49L
+         mgpI9V+H4Bm3VOIFe0g3seAVyLHGilqXxi+Yun02+I4cvJaIYR+V6TrGpu38DDgbp8GO
+         v+dA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
+       spf=pass (google.com: domain of 3vlvnwgkbao8jpqbrccvirggzu.xffxcvljvitfekvek.tfd@m3kw2wvrgufz5godrsrytgd7.apphosting.bounces.google.com designates 209.85.220.69 as permitted sender) smtp.mailfrom=3vlvnWgkbAO8jpqbRccViRggZU.XffXcVljViTfekVek.Tfd@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=appspotmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0570B21890
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-	Colin Ian King <colin.king@canonical.com>,
-	Pavel Shilovsky <pshilov@microsoft.com>,
-	Eryu Guan <eguan@redhat.com>,
-	Ronnie Sahlberg <lsahlber@redhat.com>,
-	Steve French <smfrench@gmail.com>
-Subject: [PATCH 4.4 01/50] cifs: do not allow creating sockets except with SMB1 posix exensions
-Date: Fri, 27 Apr 2018 15:58:03 +0200
-Message-Id: <20180427135655.691568591@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180427135655.623669681@linuxfoundation.org>
-References: <20180427135655.623669681@linuxfoundation.org>
-User-Agent: quilt/0.65
+       spf=pass (google.com: domain of 3vlvnwgkbao8jpqbrccvirggzu.xffxcvljvitfekvek.tfd@m3kw2wvrgufz5godrsrytgd7.apphosting.bounces.google.com designates 209.85.220.69 as permitted sender) smtp.mailfrom=3vlvnWgkbAO8jpqbRccViRggZU.XffXcVljViTfekVek.Tfd@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=appspotmail.com
+X-Google-Smtp-Source: AB8JxZoCvLqERNCzCoRY/VSD5UUJhlhTvHn3LnM9h+tMZJI4mKVFw4IAZi9ISQ83pAtoHrfg2QBBPLFMBrW6yYW9xdFPBI0IVdON
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Date: Mon, 30 Apr 2018 11:09:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a6d200056b14bfd4@google.com>
+Subject: INFO: task hung in collapse_huge_page
+From: syzbot <syzbot+e65df5e4d866512cd91d@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, gregkh@linuxfoundation.org, hannes@cmpxchg.org,
+	kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, mhocko@suse.com, rientjes@google.com, shli@fb.com,
+	sj38.park@gmail.com, syzkaller-bugs@googlegroups.com, willy@infradead.org,
+	yang.s@alibaba-inc.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908003745859053?=
-X-GMAIL-MSGID: =?utf-8?q?1598908148633693706?=
+X-GMAIL-THRID: =?utf-8?q?1599195570957601413?=
+X-GMAIL-MSGID: =?utf-8?q?1599195570957601413?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+Hello,
 
-------------------
+syzbot found the following crash on:
 
-From: Steve French <smfrench@gmail.com>
+HEAD commit:    fd40ffc72e2f selinux: fix missing dput() before selinuxfs  
+u...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?id=5175701267283968
+kernel config:   
+https://syzkaller.appspot.com/x/.config?id=-771321277174894814
+dashboard link: https://syzkaller.appspot.com/bug?extid=e65df5e4d866512cd91d
+compiler:       gcc (GCC) 8.0.1 20180301 (experimental)
 
-commit 1d0cffa674cfa7d185a302c8c6850fc50b893bed upstream.
+Unfortunately, I don't have any reproducer for this crash yet.
 
-RHBZ: 1453123
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+e65df5e4d866512cd91d@syzkaller.appspotmail.com
 
-Since at least the 3.10 kernel and likely a lot earlier we have
-not been able to create unix domain sockets in a cifs share
-when mounted using the SFU mount option (except when mounted
-with the cifs unix extensions to Samba e.g.)
-Trying to create a socket, for example using the af_unix command from
-xfstests will cause :
-BUG: unable to handle kernel NULL pointer dereference at 00000000
-00000040
+RAX: ffffffffffffffda RBX: 00007f3f474226d4 RCX: 0000000000455259
+RDX: 0000000000000000 RSI: 00000000200001c0 RDI: 0000000000000013
+RBP: 000000000072bf58 R08: 00000000200002c0 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000014
+R13: 0000000000000402 R14: 00000000006f90d0 R15: 0000000000000000
+INFO: task khugepaged:893 blocked for more than 120 seconds.
+       Not tainted 4.16.0+ #14
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+khugepaged      D22696   893      2 0x80000000
+Call Trace:
+  context_switch kernel/sched/core.c:2848 [inline]
+  __schedule+0x807/0x1e40 kernel/sched/core.c:3490
+  schedule+0xef/0x430 kernel/sched/core.c:3549
+  __rwsem_down_write_failed_common+0x919/0x15d0  
+kernel/locking/rwsem-xadd.c:566
+  rwsem_down_write_failed+0xe/0x10 kernel/locking/rwsem-xadd.c:595
+  call_rwsem_down_write_failed+0x17/0x30 arch/x86/lib/rwsem.S:117
+  __down_write arch/x86/include/asm/rwsem.h:142 [inline]
+  down_write+0xa2/0x120 kernel/locking/rwsem.c:72
+  collapse_huge_page+0x2cf/0x20a0 mm/khugepaged.c:1008
+  khugepaged_scan_pmd mm/khugepaged.c:1217 [inline]
+  khugepaged_scan_mm_slot+0x2082/0x3320 mm/khugepaged.c:1741
+  khugepaged_do_scan mm/khugepaged.c:1822 [inline]
+  khugepaged+0x99c/0xcc0 mm/khugepaged.c:1867
+  kthread+0x345/0x410 kernel/kthread.c:238
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:411
 
-Since no one uses or depends on being able to create unix domains sockets
-on a cifs share the easiest fix to stop this vulnerability is to simply
-not allow creation of any other special files than char or block devices
-when sfu is used.
+Showing all locks held in the system:
+2 locks held by khungtaskd/887:
+  #0: 00000000da18574b (rcu_read_lock){....}, at:  
+check_hung_uninterruptible_tasks kernel/hung_task.c:175 [inline]
+  #0: 00000000da18574b (rcu_read_lock){....}, at: watchdog+0x1ff/0xf60  
+kernel/hung_task.c:249
+  #1: 00000000b2d19eff (tasklist_lock){.+.+}, at:  
+debug_show_all_locks+0xde/0x34a kernel/locking/lockdep.c:4470
+1 lock held by khugepaged/893:
+  #0: 000000005e9ebf28 (&mm->mmap_sem){++++}, at:  
+collapse_huge_page+0x2cf/0x20a0 mm/khugepaged.c:1008
+2 locks held by rs:main Q:Reg/4355:
+  #0: 00000000fbbe3e1f (&f->f_pos_lock){+.+.}, at: __fdget_pos+0x1a9/0x1e0  
+fs/file.c:766
+  #1: 0000000017101d2e (sb_writers#4){++++}, at: file_start_write  
+include/linux/fs.h:2712 [inline]
+  #1: 0000000017101d2e (sb_writers#4){++++}, at: vfs_write+0x452/0x560  
+fs/read_write.c:548
+2 locks held by getty/4447:
+  #0: 00000000eef31803 (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+  #1: 000000008462dcad (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x321/0x1cc0 drivers/tty/n_tty.c:2131
+2 locks held by getty/4448:
+  #0: 0000000088b6b0e6 (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+  #1: 000000001ac62533 (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x321/0x1cc0 drivers/tty/n_tty.c:2131
+2 locks held by getty/4449:
+  #0: 00000000bb91f0f8 (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+  #1: 0000000057fc7078 (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x321/0x1cc0 drivers/tty/n_tty.c:2131
+2 locks held by getty/4450:
+  #0: 000000009dae2019 (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+  #1: 000000000e9ac784 (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x321/0x1cc0 drivers/tty/n_tty.c:2131
+2 locks held by getty/4451:
+  #0: 00000000347d58b3 (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+  #1: 000000004529ab2b (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x321/0x1cc0 drivers/tty/n_tty.c:2131
+2 locks held by getty/4452:
+  #0: 000000001f202914 (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+  #1: 00000000a9aa7ea8 (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x321/0x1cc0 drivers/tty/n_tty.c:2131
+2 locks held by getty/4453:
+  #0: 000000004b0529c9 (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+  #1: 0000000069ad55c2 (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x321/0x1cc0 drivers/tty/n_tty.c:2131
+2 locks held by syz-fuzzer/4473:
+  #0: 000000005e9ebf28 (&mm->mmap_sem){++++}, at:  
+__do_page_fault+0x381/0xe40 arch/x86/mm/fault.c:1328
+  #1: 00000000259e49a0 (sb_pagefaults){++++}, at: sb_start_pagefault  
+include/linux/fs.h:1579 [inline]
+  #1: 00000000259e49a0 (sb_pagefaults){++++}, at:  
+ext4_page_mkwrite+0x1c8/0x1420 fs/ext4/inode.c:6074
+2 locks held by syz-fuzzer/4477:
+  #0: 000000005e9ebf28 (&mm->mmap_sem){++++}, at:  
+__do_page_fault+0x381/0xe40 arch/x86/mm/fault.c:1328
+  #1: 00000000259e49a0 (sb_pagefaults){++++}, at: sb_start_pagefault  
+include/linux/fs.h:1579 [inline]
+  #1: 00000000259e49a0 (sb_pagefaults){++++}, at:  
+ext4_page_mkwrite+0x1c8/0x1420 fs/ext4/inode.c:6074
+1 lock held by syz-executor7/4525:
+  #0: 0000000017101d2e (sb_writers#4){++++}, at: sb_start_write  
+include/linux/fs.h:1550 [inline]
+  #0: 0000000017101d2e (sb_writers#4){++++}, at: mnt_want_write+0x3f/0xc0  
+fs/namespace.c:386
+1 lock held by syz-executor3/4526:
+  #0: 0000000017101d2e (sb_writers#4){++++}, at: sb_start_write  
+include/linux/fs.h:1550 [inline]
+  #0: 0000000017101d2e (sb_writers#4){++++}, at: mnt_want_write+0x3f/0xc0  
+fs/namespace.c:386
+1 lock held by syz-executor1/4528:
+  #0: 0000000017101d2e (sb_writers#4){++++}, at: sb_start_write  
+include/linux/fs.h:1550 [inline]
+  #0: 0000000017101d2e (sb_writers#4){++++}, at: mnt_want_write+0x3f/0xc0  
+fs/namespace.c:386
+1 lock held by syz-executor6/4529:
+  #0: 0000000017101d2e (sb_writers#4){++++}, at: sb_start_write  
+include/linux/fs.h:1550 [inline]
+  #0: 0000000017101d2e (sb_writers#4){++++}, at: mnt_want_write+0x3f/0xc0  
+fs/namespace.c:386
+1 lock held by syz-executor4/6088:
+  #0: 0000000017101d2e (sb_writers#4){++++}, at: sb_start_write  
+include/linux/fs.h:1550 [inline]
+  #0: 0000000017101d2e (sb_writers#4){++++}, at: mnt_want_write+0x3f/0xc0  
+fs/namespace.c:386
+1 lock held by syz-executor5/9599:
+  #0: 0000000017101d2e (sb_writers#4){++++}, at: file_start_write  
+include/linux/fs.h:2712 [inline]
+  #0: 0000000017101d2e (sb_writers#4){++++}, at: vfs_fallocate+0x5be/0x8d0  
+fs/open.c:318
+1 lock held by syz-executor5/9601:
+  #0: 0000000017101d2e (sb_writers#4){++++}, at: sb_start_write  
+include/linux/fs.h:1550 [inline]
+  #0: 0000000017101d2e (sb_writers#4){++++}, at: mnt_want_write+0x3f/0xc0  
+fs/namespace.c:386
+1 lock held by syz-executor0/9580:
+  #0: 0000000017101d2e (sb_writers#4){++++}, at: sb_start_write  
+include/linux/fs.h:1550 [inline]
+  #0: 0000000017101d2e (sb_writers#4){++++}, at: mnt_want_write+0x3f/0xc0  
+fs/namespace.c:386
+1 lock held by syz-executor2/9605:
+  #0: 0000000017101d2e (sb_writers#4){++++}, at: sb_start_write  
+include/linux/fs.h:1550 [inline]
+  #0: 0000000017101d2e (sb_writers#4){++++}, at: mnt_want_write+0x3f/0xc0  
+fs/namespace.c:386
 
-Added update to Ronnie's patch to handle a tcon link leak, and
-to address a buf leak noticed by Gustavo and Colin.
+=============================================
 
-Acked-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-CC:  Colin Ian King <colin.king@canonical.com>
-Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
-Reported-by: Eryu Guan <eguan@redhat.com>
-Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
-Signed-off-by: Steve French <smfrench@gmail.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+NMI backtrace for cpu 1
+CPU: 1 PID: 887 Comm: khungtaskd Not tainted 4.16.0+ #14
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+  nmi_cpu_backtrace.cold.4+0x19/0xce lib/nmi_backtrace.c:103
+  nmi_trigger_cpumask_backtrace+0x151/0x192 lib/nmi_backtrace.c:62
+  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
+  trigger_all_cpu_backtrace include/linux/nmi.h:138 [inline]
+  check_hung_task kernel/hung_task.c:132 [inline]
+  check_hung_uninterruptible_tasks kernel/hung_task.c:190 [inline]
+  watchdog+0xc10/0xf60 kernel/hung_task.c:249
+  kthread+0x345/0x410 kernel/kthread.c:238
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:411
+Sending NMI from CPU 1 to CPUs 0:
+NMI backtrace for cpu 0
+CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.16.0+ #14
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:get_current arch/x86/include/asm/current.h:15 [inline]
+RIP: 0010:lockdep_softirq_start kernel/softirq.c:225 [inline]
+RIP: 0010:__do_softirq+0x1fc/0xaf5 kernel/softirq.c:263
+RSP: 0018:ffff8801db007af0 EFLAGS: 00000046
+RAX: 0000000000000007 RBX: ffffffff88a752c0 RCX: 0000000000000001
+RDX: 0000000000000000 RSI: 0000000080000001 RDI: ffffffff88a75b04
+RBP: ffff8801db007cc8 R08: 0000000000000000 R09: 0000000000000001
+R10: ffffed003b6046c2 R11: ffff8801db023613 R12: ffff8801db02c500
+R13: ffffffff88a752c0 R14: ffff8801db007e68 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff8801db000000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffffff600400 CR3: 00000001d9bea000 CR4: 00000000001406f0
+DR0: 0000000020000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  <IRQ>
+  invoke_softirq kernel/softirq.c:365 [inline]
+  irq_exit+0x1d1/0x200 kernel/softirq.c:405
+  scheduler_ipi+0x52b/0xa30 kernel/sched/core.c:1778
+  smp_reschedule_interrupt+0xed/0x660 arch/x86/kernel/smp.c:277
+  reschedule_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:886
+  </IRQ>
+RIP: 0010:native_safe_halt+0x6/0x10 arch/x86/include/asm/irqflags.h:54
+RSP: 0018:ffffffff88a07c38 EFLAGS: 00000282 ORIG_RAX: ffffffffffffff02
+RAX: dffffc0000000000 RBX: 1ffffffff1140f8a RCX: 0000000000000000
+RDX: 1ffffffff1162f80 RSI: 0000000000000001 RDI: ffffffff88b17c00
+RBP: ffffffff88a07c38 R08: ffffffff88a752c0 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: ffffffff88a07cf0 R14: ffffffff88b17bf0 R15: 0000000000000000
+  arch_safe_halt arch/x86/include/asm/paravirt.h:94 [inline]
+  default_idle+0xc2/0x440 arch/x86/kernel/process.c:354
+  arch_cpu_idle+0x10/0x20 arch/x86/kernel/process.c:345
+  default_idle_call+0x6d/0x90 kernel/sched/idle.c:93
+  cpuidle_idle_call kernel/sched/idle.c:151 [inline]
+  do_idle+0x2f4/0x3c0 kernel/sched/idle.c:241
+  cpu_startup_entry+0x104/0x120 kernel/sched/idle.c:346
+  rest_init+0xe1/0xe4 init/main.c:437
+  start_kernel+0x887/0x8ae init/main.c:717
+  x86_64_start_reservations+0x29/0x2b arch/x86/kernel/head64.c:443
+  x86_64_start_kernel+0x76/0x79 arch/x86/kernel/head64.c:424
+  secondary_startup_64+0xa5/0xb0 arch/x86/kernel/head_64.S:242
+Code: 89 f8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 81 08 00 00 83 ab 44  
+08 00 00 01 c6 85 37 fe ff ff 01 65 48 8b 1c 25 c0 ed 01 00 <48> 8d bb 64  
+08 00 00 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48
+
 
 ---
- fs/cifs/dir.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
---- a/fs/cifs/dir.c
-+++ b/fs/cifs/dir.c
-@@ -673,6 +673,9 @@ int cifs_mknod(struct inode *inode, stru
- 		goto mknod_out;
- 	}
- 
-+	if (!S_ISCHR(mode) && !S_ISBLK(mode))
-+		goto mknod_out;
-+
- 	if (!(cifs_sb->mnt_cifs_flags & CIFS_MOUNT_UNX_EMUL))
- 		goto mknod_out;
- 
-@@ -681,10 +684,8 @@ int cifs_mknod(struct inode *inode, stru
- 
- 	buf = kmalloc(sizeof(FILE_ALL_INFO), GFP_KERNEL);
- 	if (buf == NULL) {
--		kfree(full_path);
- 		rc = -ENOMEM;
--		free_xid(xid);
--		return rc;
-+		goto mknod_out;
- 	}
- 
- 	if (backup_cred(cifs_sb))
-@@ -731,7 +732,7 @@ int cifs_mknod(struct inode *inode, stru
- 		pdev->minor = cpu_to_le64(MINOR(device_number));
- 		rc = tcon->ses->server->ops->sync_write(xid, &fid, &io_parms,
- 							&bytes_written, iov, 1);
--	} /* else if (S_ISFIFO) */
-+	}
- 	tcon->ses->server->ops->close(xid, tcon, &fid);
- 	d_drop(direntry);
- 
+syzbot will keep track of this bug report.
+If you forgot to add the Reported-by tag, once the fix for this bug is  
+merged
+into any tree, please reply to this email with:
+#syz fix: exact-commit-title
+To mark this as a duplicate of another syzbot report, please reply with:
+#syz dup: exact-subject-of-another-report
+If it's a one-off invalid bug report, please reply with:
+#syz invalid
+Note: if the crash happens again, it will cause creation of a new bug  
+report.
+Note: all commands must start from beginning of the line in the email body.
