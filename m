@@ -1,31 +1,31 @@
 Return-Path: <nipun.gupta@nxp.com>
-X-Google-Smtp-Source: AB8JxZqiRdjEDl8cvM1tv94iMMz7PA6I2uTiRdckpkxKbt40bfiq/vebX9OXI/ksxFqypRNQFIy1
-ARC-Seal: i=1; a=rsa-sha256; t=1525069717; cv=none;
+X-Google-Smtp-Source: AB8JxZrfpYGFcy/Isidzw0nqFsTRlTPR8vr750pQDOQlF42XasyPfEA2w/4gxQMD1nY6KO5XhXUF
+ARC-Seal: i=1; a=rsa-sha256; t=1525069706; cv=none;
         d=google.com; s=arc-20160816;
-        b=iNCBc8xK3nZY7gv+n7BtZEmNOxi96aHHp03y/2nalObMmkR4S2rfslbzcFqfToUa0e
-         9Qy1KNrlvdAzmqSgynQYu04SaTWZ5/pRoIq9HGJ/kT7IYnM6Fu9oBQUlBVZG+LnUmwSj
-         l09bphjNz8UCg/gHb366xxqWVW5F7QjuSbzwuxWL4KAZrsMe0Jyh8UONY9tzdHuWnhpS
-         ikln0YWmBFgW8ELZjA10P+wF+vZjvkMXrs0OqvCWsUsP0cansew2cOk/mWK5OYvIYJHz
-         FI+EiSP5Eu9sRFYjEswVMToM16Cy318vNbKcxzlsPMxmGB/5wPumYvkoqPVdAyClq16I
-         VwVA==
+        b=sFcBbAH4dK9PYwE0Jsej/GXB0+jUWMVLJZQqEkln+pYbY5MuNHUpOo1AOZdKyAN8IG
+         R8+gQrVkM6izSZ84Mu1M6k9ElbTA0mZMbWSGdYECIOujfhqjywfbe0ONcyeUwl4j7X42
+         ZO4LQ+wWeBvj2J3TAmsnYcR7Q6B8/0FwP7YZ00754tzbdGs0d4wFq/7DICDi/mJs4L47
+         k4A85pDjXwFyIYKVl0wczOxQDscxHscnXEOC07IrzBgD8rmYOeZIiOfTrWYiRX++XEJd
+         IHYjkBUnwWFe1ZMirkpqwJZyy2L9xexsyLmRmq6/9Q3fGaCZ4/pz0KkBLeCN67Yeed3O
+         1FXQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=spamdiagnosticmetadata:spamdiagnosticoutput:mime-version:references
          :in-reply-to:message-id:date:subject:cc:to:from:dkim-signature
          :arc-authentication-results;
-        bh=GT71q3ErxsD1K0lUb/wZp5bm9eIFTYzYsNSawVBmaME=;
-        b=vyOtWkcU4QG7LF/0ht+SJ8fzQusuawAJRViPRZN5tj7dnML1sNcgP+p3vB3nuLlI1Z
-         fohmyG5u/y2/lm1298TTk+19cWSOnV1b0N3SsdN/8+UYRK7PdyWpk7diKy8objd4Hf9M
-         UlJXI9TzFWEb5pucFjz8aOKeuNqpNAFG5EsNA/M/RAAFGlfJjHFS7NtsJod5G6ylYz8s
-         WKU8xFR6EY7ZLt1Qhmi3Z2gd4DJYku1Ku3IcRwkLc/xRbwxVL6xphpGP1u3vrDFZlORR
-         z0VZz8G9Vze57bCLXt7VX2J+qYr35tmWbS0axqjiI2ReVa1uUZc6m6NByYcoG/P6QIPH
-         MxUg==
+        bh=d9h3X6nH80a78dCyfgRM76QM/OR4gGACQP0YP49V334=;
+        b=ozw4qNsRx2KonzeJDtvSbwfiyLmLaH/s3aXlg5p6PYZCX9g1VttHRpNr6qu35/UMp2
+         3Fm9eSZ5gWJnTKO06TBDx7aMNG2iEXV321a17nz5/l6SNGvMRbMSwlxfVHKpEQZ7w4Xf
+         vs07Dbw7Ow4nbbAFVbQSbbJCV9g/Bm3auavBR7hjZb0q6UbYEHZs3ZvMPKT7wAI5v4Z9
+         100kY58FRXjZZbHFOs3O70UBlOAPJ0SFepm13/sJNd03ZiAywkBM0pqWxa7TblYa/yrL
+         depnpvmQjCJ7b9HGGmFPkmz/NQWIsyP1i5nCWJnYYPZGrsJG4OpSnj6ColQ9TTMW4tJy
+         T0uA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@nxp.com header.s=selector1 header.b=NwVeAB5T;
-       spf=pass (google.com: domain of nipun.gupta@nxp.com designates 104.47.0.44 as permitted sender) smtp.mailfrom=nipun.gupta@nxp.com;
+       dkim=pass header.i=@nxp.com header.s=selector1 header.b=rVcn/qem;
+       spf=pass (google.com: domain of nipun.gupta@nxp.com designates 104.47.0.67 as permitted sender) smtp.mailfrom=nipun.gupta@nxp.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nxp.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@nxp.com header.s=selector1 header.b=NwVeAB5T;
-       spf=pass (google.com: domain of nipun.gupta@nxp.com designates 104.47.0.44 as permitted sender) smtp.mailfrom=nipun.gupta@nxp.com;
+       dkim=pass header.i=@nxp.com header.s=selector1 header.b=rVcn/qem;
+       spf=pass (google.com: domain of nipun.gupta@nxp.com designates 104.47.0.67 as permitted sender) smtp.mailfrom=nipun.gupta@nxp.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nxp.com
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=nipun.gupta@nxp.com;
@@ -54,9 +54,9 @@ Cc: hch@lst.de,
 	laurentiu.tudor@nxp.com,
 	leoyang.li@nxp.com,
 	Nipun Gupta <nipun.gupta@nxp.com>
-Subject: [PATCH v4 3/6] iommu: support iommu configuration for fsl-mc devices
-Date: Mon, 30 Apr 2018 11:57:18 +0530
-Message-Id: <1525069641-8523-4-git-send-email-nipun.gupta@nxp.com>
+Subject: [PATCH v4 1/6] Docs: dt: add fsl-mc iommu-map device-tree binding
+Date: Mon, 30 Apr 2018 11:57:16 +0530
+Message-Id: <1525069641-8523-2-git-send-email-nipun.gupta@nxp.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1525069641-8523-1-git-send-email-nipun.gupta@nxp.com>
 References: <1524824826-29473-1-git-send-email-nipun.gupta@nxp.com>
@@ -70,105 +70,130 @@ X-ClientProxiedBy: PN1PR0101CA0006.INDPRD01.PROD.OUTLOOK.COM
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
 X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(5600026)(2017052603328)(7153060)(7193020);SRVR:AM4PR0401MB2418;
-X-Microsoft-Exchange-Diagnostics: 1;AM4PR0401MB2418;3:16XVRAHihTRqTWNBTUwP/v9SgIRjA7EghAoNbAsBEznFJxiR9DQgkfjME5dSTVWLyTUS+2DZD3DPVGe+KpkYrqpQ7W0boEMyXctXvpacu3AkmL+hYEQNWeG8rkS6pAYUI64d9/RxU+Kouf1qVuQGzFu67i0nAbbMmcY7AmcAnKKGrteL+iBj+6eK3Ak9L8qatw2vMIYTsmjWoGcmpACHLcrSb5SvU+ApdawFwDsystA7nIUBNz/bP+8WKJhF119k;25:cHRd/kVgG6fipriTxr31dOYKCWz4BF9YGSChpKR+0NVgCnPeHJlucvWxkNPakJZqqmyGj3EqsB2wPyzFVijGIr/aTaoXUEv44CRNNtl0o/u0OWeP4ibUiewhrGXm9XOv2NFkQ1HDZxxGJTpjMABGTLDsoTZlTnvYcMz2N1J2DW3C83Lx5cRpbO9mdoAUpnTxWB5IevB4FQwn3xuV2h3NNt+6uItxCkKLfWT1FdZDl3cv16u7Uk5JPOIj79e6ShcFA6/DJcM4tNVaHON5JnBW5Z+f28u/yRdV/DKk8W0bPu4Fs9FWPZ/2wcjUFpdayjUr3lgSMCIkGwOS42L3aEYDQA==;31:N2OMhjAconfgoZ1Q//25zzxIcX+Y/VNwa8l/Da6h6YPL+ZrrsmBz02v/3RtdR5v/eE2GaPJnuVS3wbMHvOCT2amm0n7RZwSo3rqQ7jybkBbFTEL4iP6HQE/AhpddM8qbHEhqXk59u4013XV5GgpFefWaFkj779xi6Vc3QfBE5lqc5l9JnoHM4ulPGxptLR4vnmka76rxzgYQIRafr69aim1I2Fmm/A57/R66ul99BWE=
+X-Microsoft-Exchange-Diagnostics: 1;AM4PR0401MB2418;3:AX3XmspH77RmosMJfbdkg1UGx6+8LYJPez62H0X/wsSx30gFd7mqJjRa9BASL7jSyRR1IxHvRaUFKVoJr6ieFjFkAZ+4OJGWkzxNwO8IqhM2Rc8F+d0zPpik072OSVVKyrTtqMcnXCOgpYFOegIru4akZxDKsV1CeK3S+NX1wEdTPeM7HeYptkgKK8wwTWr1/A70Injwvw6QMkkxky0tQ/leQihsW5DXAaXExUTuRqD3LJegoahvJnCOpvPa90H3;25:a/cRd7J8MylNG6VxO+IQknY575kbYntaB67lQcJb/zSA2m/rrJTFE7ju9UUqIZM47+z8mtNUkqynkP22+PTKtvRXJ9MEeBWXa4ARBHaVJnYxwylD99+5aO+GD5RnCjblBheejzlDw8uegkmN5gsk0ddECyX/lvnFMt/0Ppc94WbNdGWBboSJLUtsyjRZ7ERMH5a62JFfUpv/UIZmeOry73KEaI68Y7yarEUz6Eqrgsl01TUGigmNoVeUCb2yi0uj14FNmBMgGScinU4dyZHP2qv6/NhMZls49LNu+uy1U74T3cclvu6YzfOeT/TLT/UYFkJgxiZCJ3JCUnAITJ18ig==;31:ZfeOUuMtFW7ZmUwH3SzHkgOx5Jm0HtdgxN3RG4MypnsDtS+1MxAU77ELdOmYq74UzzgUujb2HT8vkRX6Uif6EzQQ5uGN1cDXTEO03HlEaGNAXaA8X1ONRIbpNEvDFTDDZKsCnyig0HCcVAISZXkO5bmJsf41HAKPYIWtQmbQF7Pnt2A9DOpS2o5yUmopGyzejrZrAZ2tp5aQ+JgHvmt35wYAvqfbOf2mu9+7Fmk3YVM=
 X-MS-TrafficTypeDiagnostic: AM4PR0401MB2418:
-X-Microsoft-Exchange-Diagnostics: 1;AM4PR0401MB2418;20:i/A4r5le380KkvLpncF9q+rsjDHk226cwWlZ5pTM29TgbA+X6xe3JNsLJ2bol0g5g7N4bEPJRxvT4A4p6WCy+geK9GAbZ7U/ydGWRgFNpe1gPzzqz0P+wUzJxNQG2Tzsln3rKneRMQS37lg8sb9GkwAJjSExob86+e4nNsBoyAhGvQxEB0k4vdDW3d9TDeI/j8od8wgB3gY1ihBo3gri3R5IHzsyCXmntaoOPMednjiBuhCmWxsZt2oTQfXUu+yuT2Vg+PCIhKhruyj02+JG9Im8NpU3u1Soif4cZM+FqfkMPzOeKGvsRMRg1sKUW4T/c/E9H2maICCoQcbBO4DgflDlNPu98IxYTcpTl8ru+m9UxMKKsmE1wgNAK4eenRpPPUC+FAiu3vkp6Gm/ho2HPBroU0NErZGmZYrs9tM9wo9UWiKEShXOmGuGv0jpke661iVM4DoIH0y6Aj+TCu0ZJP5SwjwoYxkFi8S9kQrTm5mk2rYsL+ESgnrCaCd7CkrW;4:6V6UvRUex6yWarsvENvXU7gZHYXmj7c3hF91rkiufn3QbePPz+CSPmbyVu3I0MA/4Q9Y3CkVI5CSoW+o9LnQOtmE1AP1XMt6x9rnV6UoOzL1n3umVWVLsMcDhTx0VydB77iayK07FLGa7O2rmkM5kO7dBFgHoz1SHu5sH0pyUcvIgU5uZWKFDGMnyr5+x4rlRsFDqBKRwQMfe41/0nIDI8WWxjE4kE31DP3QekwPS6MEK5Oev9U9oxBjdCGutZq6aOXselodZMvXgmiLzdmF0CJAvUonSjRbOezaQHv5NVYfTUxBP+xFjB011+Qh5wqd
-X-Microsoft-Antispam-PRVS: <AM4PR0401MB2418E734FF5D00A8FCC3E1D7E6820@AM4PR0401MB2418.eurprd04.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
+X-Microsoft-Exchange-Diagnostics: 1;AM4PR0401MB2418;20:vzmO/GISd2JZloE/9pP4/btD7YRMrL4Nkk+5FRaRkUlfGl1pvONIF1O6qXLODu1MVAhD5PoIcToFDB1q7Xx1aFvxG+Z/FPfNPj1P29h169hid1J2Qb68J5V4lVVNpoEYtj5Wf4JepXbvRq/jd2a5+XBBu/faeKilyH7axHqRcchcAD6zl/fbOXJzO6NPSjpcTGXBt+U4q4O2NM0njtZxVlCJ1coKOWCUqBpjyOAKzlkEbkd2x5KC9xj3CCAQgGA0mKKswxS4hqxs4rXy216Dxol7nfINK+b4yh2GH3+YJ2iGuFNSYjSk2QJYNVUuedaFbSDvsJLwQTeDxRiKdHUvNLoRjzzWZZ3fi39s6d95BJeYhNmWPcO4guThdn/tkS3sH9U0P7tmYI3lFixJWwRcJJ1GR6nIPdU6jbnbUcvG6tIgxiXaBT7/zg75Lb9IVcjapXCKplIHuJm/w528xRLurOXEOPp0YaFN2nczZ6GBqrx8swsIC/Ws7MjqJ8v7X4lm;4:thtwaS8ei3+T3M0yYoMXTL07MqbGqrHHbt5Kb3mmLqrqpmFNo0h90SVFsChlQI0brcMt4P655M5uWJ4NKdefU9YCu//ntEIUx7mRqwOoLgUR7wTAs3nwbLKY1zFrzcnFFI6giIpHS8w+sZuPVLsYJIDfFwgn+34PMH9yqY+YxqyXqEJxnTizdYzN+/rQl4LcnnGYmuI7+1DNrMHbq2Ows6ut00bIHZ+TdOYsRFhsXVn/rcGvPabxY5vcNtzHlMbl4v099nwPoy6ZY7KOjMoL53tcrIpGBgb7Vn4ahEEO9kKErYZFt+c2njtB59gQiEoflJY04Wm5DDmWARuh+mPvUB4jkjRnvx7NSDHFutLyuDc=
+X-Microsoft-Antispam-PRVS: <AM4PR0401MB2418909A3AA73F2AB4BAD301E6820@AM4PR0401MB2418.eurprd04.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(185117386973197)(275809806118684);
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(93006095)(93001095)(3231254)(944501410)(52105095)(10201501046)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:AM4PR0401MB2418;BCL:0;PCL:0;RULEID:;SRVR:AM4PR0401MB2418;
 X-Forefront-PRVS: 0658BAF71F
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(39380400002)(376002)(366004)(346002)(189003)(199004)(36756003)(7736002)(52116002)(5660300001)(105586002)(106356001)(486006)(48376002)(50466002)(316002)(2616005)(55236004)(956004)(11346002)(446003)(476003)(51416003)(16526019)(186003)(6486002)(76176011)(44832011)(47776003)(26005)(97736004)(5009440100003)(66066001)(86362001)(68736007)(81156014)(81166006)(53936002)(16586007)(50226002)(2906002)(7416002)(25786009)(6506007)(8676002)(8936002)(478600001)(39060400002)(6666003)(386003)(6116002)(6512007)(3846002)(305945005)(4326008)(110426005);DIR:OUT;SFP:1101;SCL:1;SRVR:AM4PR0401MB2418;H:b27504-OptiPlex-790.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM4PR0401MB2418;23:4QlPQmBWdACHXIcNAZlW1Ex7unW5pEXOApDd5mw?=
- =?us-ascii?Q?xBcs5EnByKlJqQ13Jo5ow0ryoBbzYhGZlfTwvszOXULJfo7qf81uJz+wIjF+?=
- =?us-ascii?Q?OjHE2C2azFPHb7+gTgpGSVceenbX5bnvle8HmwykzwdpDrNAd+ReJVo7tFJ9?=
- =?us-ascii?Q?KZ8Yz2dsdUQ5zLvnSfK0XHcmFu00EKSaHP6HcoMbhswcONW4xzK/Urln2o1f?=
- =?us-ascii?Q?NlcaRGIrE++aycv9rsNKtPFfgEmWlEyyZh29myj+UW+/oZN/Xg9bwlqncRqb?=
- =?us-ascii?Q?bSJPobkKM6W16MJGLNWuTcHwjqmwEjsk3Puvt6ZczciQfnrf0nWeag7yEOF6?=
- =?us-ascii?Q?FU0AZ7XK1xUwoxFAZvqmBH9WPfuqLj2pPzOaoxUWxNdAObd9eGXjQ7Qfa1LN?=
- =?us-ascii?Q?9CLGhMFK8jllLDIFfpMcW+PfODM34mUZCf6tQiXu27b8d67t5d2k28rKgDEx?=
- =?us-ascii?Q?BE7fFtOcTAT01PSWAbVdELYqSRRTrIMLcdS6CimhxToQp1PW+VXFiex+UuZ3?=
- =?us-ascii?Q?IoSHUMx1hoHErswwC9y1tSHMv+vSsUwh75shV6HTGEuXTRUfmd7Rhyd87mzD?=
- =?us-ascii?Q?McSRYbAFoDS40sksiRVZ9tWfIBYHYVlyg1KRRUj7qfxZVr0xEz5rRRanecxh?=
- =?us-ascii?Q?w7L9rJe+h5vt8bGfZxIUuVEfsGfTfDGn3LuGOISneMpF1tfYnsUXRo5vuMo9?=
- =?us-ascii?Q?Lhn37Fd6D0OkI7coLxQCbw4Y76bTKj/VL3KdOyffoKqDUuy9NhJ3J5lnuZ/h?=
- =?us-ascii?Q?e3IqQ9otvm4ssEjCp0JH4eVxIc0tlrxqLBWFdp8UdQdf2s3mvwontGzS7sGQ?=
- =?us-ascii?Q?2AWfquXg9QYlmuTKmTvpIUxlDYkD5IwZgKRVAGz3xVoECZZbPhtMgnnEsBLO?=
- =?us-ascii?Q?nNvrTD9BnFov/UNL6jrJx55M/gC2uO2bKvQSVzTxdpiX5PwzNN/AS3uiBrnP?=
- =?us-ascii?Q?H/ZWnM9uyNdawDKOTiVntXG7mjHydJ3TPZ2nyAb7CwxIvUdERGYJjNfao0Ol?=
- =?us-ascii?Q?RTwK2bK3qySIRlS6BaecSD4Ou3WY3HoXVuKqImhFoIUtQsRjMQ/cYBgXKkIu?=
- =?us-ascii?Q?Ukl7BDJ0jqcFRY8QJKb5rQQx/Bp1Drn8/V2A0tyJA/K2l/t7uEwAgC0kb5Bx?=
- =?us-ascii?Q?A7NjZvcDQQ+Eih12tWPy9tZpT+CWjgqSdU7msHKpH+C4oB5EHFeplKNbwPjs?=
- =?us-ascii?Q?596BE7vur/zQw0pnluKsP6skdLcPzBp9siVfZ0YCEtiAOIrO0uK6rpI5eMGP?=
- =?us-ascii?Q?iZG/3ha0F4hiPgl22LDSxWHSd1gZEDIp9X/mn/WFaYKUjJwB77+gDw8YK1ih?=
- =?us-ascii?Q?azyQdfBeSGFxZC3YQ1ms41hk=3D?=
-X-Microsoft-Antispam-Message-Info: lYgkDOMBGyl+1LER52veap/9hgUEHsAgdiinyEyR4SoBFLoLCP4KA0Cvg5TlOiSBFBOA0q7ZBId1eoIyVFmUEgmyeLStG6mhx2bTW+bZkgM9FN8vy16TnPY/ht5x17uYcYeVfXxGb9Rn1DYouessq68EPGYQ2AqAwlJv/U98phjNFdRLHWmMDBzoWrSrmTVl
-X-Microsoft-Exchange-Diagnostics: 1;AM4PR0401MB2418;6:NdausAW/l7HtwI7vpL5H/4pP8vf+tJELkOnjA8MGkU7FNAd6eqFfWiPnPTKzxDfa+McUkFuVj3USCYoPGLEsSqk/3wTPuRP341ZlmzqI36NLjupOZQWZOKj2xmx7kUHZ0ejYM1SuaukOw5p4sx7l062Tzd0n1+MrAhtlrUrc+vHdfV3b288TJ5dFDfcawcOPl1JHr3SW9jcvO4WoXTG3uIF/lP1Jmv3I/m5emX3tBXx+jhyIDcvQzJoIJ4HB28COOThHcvD/OcZJv/MSivHRBYudkyVemHbYCGXoiFHDMaee3Q+GagYNDRmThPsY2K4m9n5a8rWJfgrSfoAJCL5R2qCZ9LtrBbkNgqi02fBehv0Zm+IO8koDHiqcXtykH7Ok0y3E05+Ks1ZwxHMCWcDvHkhHr5kflWTg9vIz4u9q5kd+lE3Hx1zz9wr8ZiGxRfNF+A3niGfFAIu55gpLDJSS+w==;5:bphumfdJIE80Ghre44kSHceR/dPHGb55F4SsTL6RFAyaXf2QwEzjG6yBV7HwWgYYM55XoL7hGwEsRWyG1QSf2/mGLsvqxiRudFkJdYmHfT9oNM6e9uR14tlw7zGRrC/jVoC7mfqhD/jnV2Mw0uKluxZNIX1WS8vvHJMDsCO4N0o=;24:YZeCz4SNdeY7EJrsXarlvoYAnZaTpeSFzPCmXb324prou26X9AbN6pAPb8qk5CP90ltTohiVsMJ4QB7az8JVlPWZqxGNpl1zDs1n8U6ZP0I=
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(39380400002)(376002)(366004)(346002)(189003)(199004)(36756003)(7736002)(52116002)(5660300001)(105586002)(106356001)(486006)(48376002)(50466002)(316002)(2616005)(55236004)(956004)(11346002)(446003)(476003)(51416003)(16526019)(186003)(6486002)(76176011)(44832011)(47776003)(26005)(97736004)(5009440100003)(66066001)(86362001)(575784001)(68736007)(81156014)(81166006)(53936002)(16586007)(50226002)(2906002)(7416002)(25786009)(6506007)(8676002)(8936002)(478600001)(39060400002)(386003)(6116002)(6512007)(3846002)(305945005)(4326008)(110426005);DIR:OUT;SFP:1101;SCL:1;SRVR:AM4PR0401MB2418;H:b27504-OptiPlex-790.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM4PR0401MB2418;23:6YZ6tjCIyS8090ZtnRd05qR17wm4MleTHF3SI/5?=
+ =?us-ascii?Q?E98C6oaVh010qmMLmv+/wpBDwdDzDc4kWFi/VtfMzdKvmzvkcGOziuaMBwal?=
+ =?us-ascii?Q?oHItnJycU0KeuSNj5MxSygkkHQcL+TPIBT5A9EPWWkAdx/4rCbOWPuobXNS4?=
+ =?us-ascii?Q?QR0O/C0rFQSTasFGHFqQP6EB56Y0wAFW2DtA2mHX+U6jBQHZ6bLWWM+LfBQ8?=
+ =?us-ascii?Q?T5B82XVaUBCKiUNQM5l4KaCDsPcSRLUy1NtiV6MsZKHykh7XKVpY4NWG+9P1?=
+ =?us-ascii?Q?Put9X3o0ZKt74fEPeFAlWAB60x2v4/T8/6kYpc2d5Fs4FjhAY+t3TBP9A+6K?=
+ =?us-ascii?Q?df6RKohElnZNJ6bOPFDP9fd+GS2Qwl/7kZoQHvTcpeLCsg/Fm5YPAjKl6c3i?=
+ =?us-ascii?Q?pc80b48bq8i7qX8gAm2Q0zaW8o/WKp4iGLa5D/7JK6Rg6UuekldBribfyN5q?=
+ =?us-ascii?Q?4joDw7skOx2LOyWlNTHmrO3XbnLxHa0Px+BsysPJZp7GaomiNyRwa06SH4I6?=
+ =?us-ascii?Q?wyAaYouSdVH9TYh/5s+wuVqpoC8rtoHWGs2cVYxGCPoaxIsCilxQbpWMWfCV?=
+ =?us-ascii?Q?X+X75yizYR1q35h+F+RDssyvXxN5/pLH4Zvjkknf+TJgkMlOTNPGJiUe/IX/?=
+ =?us-ascii?Q?prbGSq/5yUME5nwnaBV8b8JaGtjJ6AFooKM419iVA9NGWagj26rUtMo7RjYc?=
+ =?us-ascii?Q?WHlW68RwhhojeDxuWvc/im0LI7nNJVY1jZwhcnc4+NESCt4RQlAjNfUJWrjP?=
+ =?us-ascii?Q?rpKA1BOL1KocEfVMKSw0txbe25LsnFCjg9FqDKqF/04mG8lS5JSV8VSMvloN?=
+ =?us-ascii?Q?GF9v76xNnxJoFjRRSH+INDWP5vpK9VUm6o9z+SC33lK1XiTU/78PFqYN1Iox?=
+ =?us-ascii?Q?ydtAIRLbBmibBZALUCAnpMlvuBJVUu1YoGP6vvH7Fe2qAuXkanWH1TEunz+M?=
+ =?us-ascii?Q?5jDyVLZi5/jgXG7Z0zkYbQd1y3LU+q3geLiwVGOI+8LCWhn15iMBMaYvyxhn?=
+ =?us-ascii?Q?RlxbWum9dwMMOrPN5ajJPqMtJyKCgFIJquyvToifMdaKc7VDme6ZYbWB4MzP?=
+ =?us-ascii?Q?7YXFME1ppbpwdc3hmIao7hG2+2gxChhoVh4/AiKC8zWVYeExL0Qa8az2YCgL?=
+ =?us-ascii?Q?P6h7bqnRCbECKBMhwhN3xt9wDeud5kMIXkyY5KLL7eK2ZoOjk+xhR2/sUp+I?=
+ =?us-ascii?Q?TVARI5biVjgZOAqblWV3uH1j3Ff1gN/roUoxlB+K8nAgJVs8kCXl5/NBkdwX?=
+ =?us-ascii?Q?zIEgPKBVp0IqvbV+vfImej3NfXVv9zv0kw6y/rovB/+6LPnl9dwut8/1/aDB?=
+ =?us-ascii?Q?yZwXW82A1aliIpWC2POrOzCU=3D?=
+X-Microsoft-Antispam-Message-Info: 4DJqiL/P/hn3U/oDCnH9pN1jVOwgaiTV87MqpxaEIKuVPDFnTlnKuTO+wMcbFXZ4KQ58lHrrkycw9nLiy9LuHjeinsN7AV67DVU5Y8nj3wLPRXroKMPtvK1XgBxCUMYfxHSHWsBZGvbnmnw7wXrBg2l/Rvea5aHpd+yh/Msqxpf8Zpwx5L2ABbtBFx5M5Fn1
+X-Microsoft-Exchange-Diagnostics: 1;AM4PR0401MB2418;6:eb3aS/cuEg9zfhNlRssLZM1h3bh1bFtPjdhTcZmqtk2t1TgfrupZJ6GypmUTpDNyHO0kn6dgzv0cppJi3hiTRTBI5kvPDkJdTSgd0OIYn50Yqrmg+51Au3tCTgIoqxy1tb62DsQacfQrJmqJGko/qVFRgGpEr9EIylGKN6senP8uKuwjl6q/e6HvjtllYJhwAoNnsQ6zYDC9BommMaVfhdzdK2MOKjY1jWGwDnkcZ0Nfx1h6idx/tQ5Bwk8mA1b+eadwmqd6tUeythNQPLQAXT6OP+U7Qo13YudeiqkT2HOlW6J9heHWAoGpgaRAjh0xrJg1ajL6Oj1Hdee+FXeveQETdVciWxVgLqIKxMCYyDzk0VnfTZJwAxY5IjWvfiw4C/Iz869t66bLwoR3KYNZDwC9yDpPPBbMsZl7IvyjTAPbRBNMtcZs30sDIsVWiXkvZKo7rDanllxAEPcJvsQxiA==;5:1hKw1cE0kcLeFj/V9d6BGxvZoNvGKO4ieQHW6enmbBR+yUe0zluMhFeaHt+epiwYUtBdcr+F9EKh9lI/V6Ix+gW5jX8mtHvv8ImoNS/mDPtay4av+I39WQ0F7BIVPs+//lioZ06A9mXeYq4jaS4yGXH2D/+HA2CVQ2RB7uIzljk=;24:w4W4Ytiw6rn8O0Io5Uk4PI34Nqqxiv8krM7QKndrvZ/gNcTzJQSolH2jTEWBiiCVSY/dAGzf9obVV2KSdKFYNWLBQMs+vnmgiaz+OyehS1Q=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;AM4PR0401MB2418;7:yR3XtDFLU+BnvI7ECPS0I2w87KNndsp6Hf4q2qNT6fEaNNXhDn/5eiqm3CIdgyCfj+VpGV7ONLiTcCM/QRe2qQUTcaKoNs6zkebSMFk4GEtUEVSzsQ/Lq1bsaZ0Da6b3GVKuE6u1moD2dMTXHJwdStb2V5zyClMkargN9VOKwS5dMoycA+v/kiicz8o3Q5wSjnD9DOrP0i1fGockO0FZNwI610p1jWEpGIU7B8pmKXshUI3l5M5YNUFOwamz0sKI
-X-MS-Office365-Filtering-Correlation-Id: 3aea9fa4-f3f2-41e3-5193-08d5ae63992f
+X-Microsoft-Exchange-Diagnostics: 1;AM4PR0401MB2418;7:vF4VEDSGrBHDfsR/aPVC5UqT18R3Nimiu70GC+fM6d6UdoKR7JHpT2UOiWzDFaMGh3Ii38EgK8i1W6afhBi2Kl7/hm/PbzDBCflmZ5e6gn7bW80Zs2ZaoMRCwBGWQpm7Y8Hsn8uQq2a736dycRUouKSK6jboyc0+vIF6JU3quVDtoQFkOCwkQAri8l+6QnRj7NrxCqkAkCmcaDNtaiHEa0D5RNRGS1CkoNxQmEX634/nMEb1oRHI7d6IQB8BnlPQ
+X-MS-Office365-Filtering-Correlation-Id: bbc723e0-0efb-4b49-a54b-08d5ae639299
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Apr 2018 06:28:29.6339
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Apr 2018 06:28:18.5776
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3aea9fa4-f3f2-41e3-5193-08d5ae63992f
+X-MS-Exchange-CrossTenant-Network-Message-Id: bbc723e0-0efb-4b49-a54b-08d5ae639299
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM4PR0401MB2418
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598894775327119081?=
-X-GMAIL-MSGID: =?utf-8?q?1599151504365293808?=
+X-GMAIL-THRID: =?utf-8?q?1598894765369527254?=
+X-GMAIL-MSGID: =?utf-8?q?1599151493238519649?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Signed-off-by: Nipun Gupta <nipun.gupta@nxp.com>
----
- drivers/iommu/of_iommu.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+The existing IOMMU bindings cannot be used to specify the relationship
+between fsl-mc devices and IOMMUs. This patch adds a generic binding for
+mapping fsl-mc devices to IOMMUs, using iommu-map property.
 
-diff --git a/drivers/iommu/of_iommu.c b/drivers/iommu/of_iommu.c
-index 811e160..284474d 100644
---- a/drivers/iommu/of_iommu.c
-+++ b/drivers/iommu/of_iommu.c
-@@ -24,6 +24,7 @@
- #include <linux/of_iommu.h>
- #include <linux/of_pci.h>
- #include <linux/slab.h>
-+#include <linux/fsl/mc.h>
+Signed-off-by: Nipun Gupta <nipun.gupta@nxp.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/misc/fsl,qoriq-mc.txt      | 39 ++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt b/Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
+index 6611a7c..8cbed4f 100644
+--- a/Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
++++ b/Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
+@@ -9,6 +9,25 @@ blocks that can be used to create functional hardware objects/devices
+ such as network interfaces, crypto accelerator instances, L2 switches,
+ etc.
  
- #define NO_IOMMU	1
- 
-@@ -159,6 +160,23 @@ static int of_pci_iommu_init(struct pci_dev *pdev, u16 alias, void *data)
- 	return err;
- }
- 
-+static int of_fsl_mc_iommu_init(struct fsl_mc_device *mc_dev,
-+				struct device_node *master_np)
-+{
-+	struct of_phandle_args iommu_spec = { .args_count = 1 };
-+	int err;
++For an overview of the DPAA2 architecture and fsl-mc bus see:
++drivers/staging/fsl-mc/README.txt
 +
-+	err = of_map_rid(master_np, mc_dev->icid, "iommu-map",
-+			 "iommu-map-mask", &iommu_spec.np,
-+			 iommu_spec.args);
-+	if (err)
-+		return err == -ENODEV ? NO_IOMMU : err;
++As described in the above overview, all DPAA2 objects in a DPRC share the
++same hardware "isolation context" and a 10-bit value called an ICID
++(isolation context id) is expressed by the hardware to identify
++the requester.
 +
-+	err = of_iommu_xlate(&mc_dev->dev, &iommu_spec);
-+	of_node_put(iommu_spec.np);
-+	return err;
-+}
++The generic 'iommus' property is insufficient to describe the relationship
++between ICIDs and IOMMUs, so an iommu-map property is used to define
++the set of possible ICIDs under a root DPRC and how they map to
++an IOMMU.
 +
- const struct iommu_ops *of_iommu_configure(struct device *dev,
- 					   struct device_node *master_np)
- {
-@@ -190,6 +208,8 @@ const struct iommu_ops *of_iommu_configure(struct device *dev,
++For generic IOMMU bindings, see
++Documentation/devicetree/bindings/iommu/iommu.txt.
++
++For arm-smmu binding, see:
++Documentation/devicetree/bindings/iommu/arm,smmu.txt.
++
+ Required properties:
  
- 		err = pci_for_each_dma_alias(to_pci_dev(dev),
- 					     of_pci_iommu_init, &info);
-+	} else if (dev_is_fsl_mc(dev)) {
-+		err = of_fsl_mc_iommu_init(to_fsl_mc_device(dev), master_np);
- 	} else {
- 		struct of_phandle_args iommu_spec;
- 		int idx = 0;
+     - compatible
+@@ -88,14 +107,34 @@ Sub-nodes:
+               Value type: <phandle>
+               Definition: Specifies the phandle to the PHY device node associated
+                           with the this dpmac.
++Optional properties:
++
++- iommu-map: Maps an ICID to an IOMMU and associated iommu-specifier
++  data.
++
++  The property is an arbitrary number of tuples of
++  (icid-base,iommu,iommu-base,length).
++
++  Any ICID i in the interval [icid-base, icid-base + length) is
++  associated with the listed IOMMU, with the iommu-specifier
++  (i - icid-base + iommu-base).
+ 
+ Example:
+ 
++        smmu: iommu@5000000 {
++               compatible = "arm,mmu-500";
++               #iommu-cells = <2>;
++               stream-match-mask = <0x7C00>;
++               ...
++        };
++
+         fsl_mc: fsl-mc@80c000000 {
+                 compatible = "fsl,qoriq-mc";
+                 reg = <0x00000008 0x0c000000 0 0x40>,    /* MC portal base */
+                       <0x00000000 0x08340000 0 0x40000>; /* MC control reg */
+                 msi-parent = <&its>;
++                /* define map for ICIDs 23-64 */
++                iommu-map = <23 &smmu 23 41>;
+                 #address-cells = <3>;
+                 #size-cells = <1>;
+ 
 -- 
 1.9.1
