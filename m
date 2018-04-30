@@ -1,18 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752279AbeD3Fu3 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 01:50:29 -0400
-Received: from david.siemens.de ([192.35.17.14]:41496 "EHLO david.siemens.de"
+        id S1752368AbeD3Fut (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 01:50:49 -0400
+Received: from thoth.sbs.de ([192.35.17.2]:41356 "EHLO thoth.sbs.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751778AbeD3FtQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 01:49:16 -0400
+        id S1751807AbeD3FtP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 01:49:15 -0400
 From: Jan Kiszka <jan.kiszka@siemens.com>
 To: Bjorn Helgaas <bhelgaas@google.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 06/10] PCI: Introduce devm_of_pci_get_host_bridge_resources()
-Date: Mon, 30 Apr 2018 07:48:40 +0200
-Message-Id: <215a020abbafc599bda18463db6818fcb0d198c7.1525067324.git.jan.kiszka@siemens.com>
+Cc: Will Deacon <will.deacon@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: [PATCH v2 09/10] PCI: Add support for unbinding the generic PCI host controller
+Date: Mon, 30 Apr 2018 07:48:43 +0200
+Message-Id: <c0f1b44f4b1fda35e3e8d2666ba7961571c31980.1525067324.git.jan.kiszka@siemens.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <cover.1525067324.git.jan.kiszka@siemens.com>
 References: <cover.1525067324.git.jan.kiszka@siemens.com>
@@ -24,88 +26,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jan Kiszka <jan.kiszka@siemens.com>
 
-of_pci_get_host_bridge_resources() allocates the resource structures it
-fills dynamically, but none of its callers care to release them so far.
-Rather than requiring everyone to do this explicitly, introduce a
-managed version of that service. This differs API-wise only in taking a
-reference to the associated device, rather than to the device tree node.
+Particularly useful when working in virtual environments where the
+controller may come and go, but possibly not only there.
 
-As of_pci_get_host_bridge_resources() is an exported interface, we
-cannot simply drop it at this point. After converting all in-tree users
-to the new API, we will phase out the unmanaged one.
-
+CC: Will Deacon <will.deacon@arm.com>
+CC: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 ---
- drivers/pci/of.c       | 28 ++++++++++++++++++++++++++++
- include/linux/of_pci.h | 10 ++++++++++
- 2 files changed, 38 insertions(+)
+ drivers/pci/host/pci-host-common.c  | 13 +++++++++++++
+ drivers/pci/host/pci-host-generic.c |  1 +
+ include/linux/pci-ecam.h            |  1 +
+ 3 files changed, 15 insertions(+)
 
-diff --git a/drivers/pci/of.c b/drivers/pci/of.c
-index 8f6cbf13e18d..f16b343d3b85 100644
---- a/drivers/pci/of.c
-+++ b/drivers/pci/of.c
-@@ -378,6 +378,34 @@ int of_pci_get_host_bridge_resources(struct device_node *dev_node,
- 						  bus_max, resources, io_base);
- }
- EXPORT_SYMBOL_GPL(of_pci_get_host_bridge_resources);
-+
-+/**
-+ * of_pci_get_host_bridge_resources() - Resource-managed parsing of PCI host
-+ *                                      bridge resources from DT
-+ * @dev: host bridge device
-+ * @busno: bus number associated with the bridge root bus
-+ * @bus_max: maximum number of buses for this bridge
-+ * @resources: list where the range of resources will be added after DT parsing
-+ * @io_base: pointer to a variable that will contain on return the physical
-+ * address for the start of the I/O range. Can be NULL if the caller doesn't
-+ * expect I/O ranges to be present in the device tree.
-+ *
-+ * This function will parse the "ranges" property of a PCI host bridge device
-+ * node and setup the resource mapping based on its content. It is expected
-+ * that the property conforms with the Power ePAPR document.
-+ *
-+ * It returns zero if the range parsing has been successful or a standard error
-+ * value if it failed.
-+ */
-+int devm_of_pci_get_host_bridge_resources(struct device *dev,
-+			unsigned char busno, unsigned char bus_max,
-+			struct list_head *resources, resource_size_t *io_base)
-+{
-+	return __of_pci_get_host_bridge_resources(dev, dev->of_node, busno,
-+						  bus_max, resources, io_base);
-+}
-+EXPORT_SYMBOL_GPL(devm_of_pci_get_host_bridge_resources);
-+
- #endif /* CONFIG_OF_ADDRESS */
+diff --git a/drivers/pci/host/pci-host-common.c b/drivers/pci/host/pci-host-common.c
+index 5d028f53fdcd..d8f10451f273 100644
+--- a/drivers/pci/host/pci-host-common.c
++++ b/drivers/pci/host/pci-host-common.c
+@@ -101,5 +101,18 @@ int pci_host_common_probe(struct platform_device *pdev,
+ 		return ret;
+ 	}
  
- /**
-diff --git a/include/linux/of_pci.h b/include/linux/of_pci.h
-index 74eec1943ad2..08b8f02426a5 100644
---- a/include/linux/of_pci.h
-+++ b/include/linux/of_pci.h
-@@ -74,6 +74,9 @@ of_irq_parse_and_map_pci(const struct pci_dev *dev, u8 slot, u8 pin)
- int of_pci_get_host_bridge_resources(struct device_node *dev_node,
- 			unsigned char busno, unsigned char bus_max,
- 			struct list_head *resources, resource_size_t *io_base);
-+int devm_of_pci_get_host_bridge_resources(struct device *dev,
-+			unsigned char busno, unsigned char bus_max,
-+			struct list_head *resources, resource_size_t *io_base);
- #else
- static inline int of_pci_get_host_bridge_resources(struct device_node *dev_node,
- 			unsigned char busno, unsigned char bus_max,
-@@ -81,6 +84,13 @@ static inline int of_pci_get_host_bridge_resources(struct device_node *dev_node,
- {
- 	return -EINVAL;
- }
-+
-+static inline int devm_of_pci_get_host_bridge_resources(struct device *dev,
-+			unsigned char busno, unsigned char bus_max,
-+			struct list_head *resources, resource_size_t *io_base)
-+{
-+	return -EINVAL;
++	platform_set_drvdata(pdev, bridge->bus);
++	return 0;
 +}
++
++int pci_host_common_remove(struct platform_device *pdev)
++{
++	struct pci_bus *bus = platform_get_drvdata(pdev);
++
++	pci_lock_rescan_remove();
++	pci_stop_root_bus(bus);
++	pci_remove_root_bus(bus);
++	pci_unlock_rescan_remove();
++
+ 	return 0;
+ }
+diff --git a/drivers/pci/host/pci-host-generic.c b/drivers/pci/host/pci-host-generic.c
+index 45319ee3b484..dea3ec7592a2 100644
+--- a/drivers/pci/host/pci-host-generic.c
++++ b/drivers/pci/host/pci-host-generic.c
+@@ -95,5 +95,6 @@ static struct platform_driver gen_pci_driver = {
+ 		.suppress_bind_attrs = true,
+ 	},
+ 	.probe = gen_pci_probe,
++	.remove = pci_host_common_remove,
+ };
+ builtin_platform_driver(gen_pci_driver);
+diff --git a/include/linux/pci-ecam.h b/include/linux/pci-ecam.h
+index baadad1aabbc..29efa09d686b 100644
+--- a/include/linux/pci-ecam.h
++++ b/include/linux/pci-ecam.h
+@@ -62,5 +62,6 @@ extern struct pci_ecam_ops xgene_v2_pcie_ecam_ops; /* APM X-Gene PCIe v2.x */
+ /* for DT-based PCI controllers that support ECAM */
+ int pci_host_common_probe(struct platform_device *pdev,
+ 			  struct pci_ecam_ops *ops);
++int pci_host_common_remove(struct platform_device *pdev);
  #endif
- 
  #endif
 -- 
 2.13.6
