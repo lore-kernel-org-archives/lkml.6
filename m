@@ -1,40 +1,39 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZo4PlxEPlPaOcC/fuBoDC0HA3iRbNiSWA+1E3Q2+vad40PA046Hv8Ehd7MheyVALBHzmW3d
-ARC-Seal: i=1; a=rsa-sha256; t=1525116525; cv=none;
+X-Google-Smtp-Source: AB8JxZoSlRk/+j+y0Xv+D4d4uTwiTkvc3uOGKYY+WYmXQdKWwlcKayl+wu25woF4RWFXt+RxqUOX
+ARC-Seal: i=1; a=rsa-sha256; t=1525116524; cv=none;
         d=google.com; s=arc-20160816;
-        b=YUfeg7t1GGlmqS1ajayai1ixRJqIGTHA36wYM0nYh8hgcMat+N6cGaVsLMNkTjHdJt
-         F/LB96pQigzfl4hsHUbYn8TwlmDJuBl6Gu1itg4f01GruGbagL+evC+EQz/N16UPiD+0
-         y5jJzDc+pVZJWGzTnhJF/vbQtYofImnxLa90f6Jy1S3hUfNN5NsfANSGvLndeQiTou4d
-         tCNRbaw9DiQs5BnLL8IUwFQtxe4q0BYqYeue6UCkDIVBpkjv8R5544z8HENyTR9xziTe
-         zscOxC2qJXXgI6ryLfln85VgZI+x0HGRCj36B9G9M40inwVxhWoYkYNMVySwKoaH5sk8
-         I0EQ==
+        b=WJWAD8DQcWzOSYVZMCHVHrPJWoPFFzH2DskFdGFzct9Ak0hulwnPHnUXKE+N5F0t7B
+         KNCRI9X/i+aNwUqAw23vty6DXXimf9vLqxkc7EdqniYx2K//eXrAAJoD/021xrzXd5GC
+         q+UGFKd4vl7G1vwYm6/3alH1oepAnXb4/EKO6IqMRi9H5KlVGPPTZS3jsYQcDJ2TFc4c
+         /76nECsd+jIGDu2LMa7RRMljb9UE1WrAoL3ficQw5+l/4St5ZC+IYObyca3cWjd1yvuX
+         Y4Os3opHh1zkbJLW6S9wL8dS0ARfrotZ/QtAEksmGsrO95FZ+b44YFCKxffNKO611huj
+         +aAw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=zYK2ksb5VB/7PofrsmmHJW1h2BnwjDQrRdxQpqsIvMU=;
-        b=MTSMxbeZcgbcFVnhZ+B4qJYXXMO34WlIB73j666xfjjak06BHZSgm6NHl/WPUwaqJw
-         nJAg2FBQ4hYWTmmBni8dHLBdBKDZDfHTmp1F3SDtzbvam88h35pAf6cIq2Z7ZsljWkD5
-         g55MQkbDXZ3UQqypwWkDu11AyMqPp0rSAWqN5Jjg76LAYEPWFK8WZuRSbuAUzcIwDhdO
-         sx7tzLNTEAtm9tR8cZ3l6CjBPP8dxdi2oFF6wEA+hbObl68zxNdRurvuu91CyTsQGYOI
-         D0GccRYMcj7b2gl9cc8oy5x2lQn/bjqSdgqUQ6d2NG/Tbjl+n9pyyhUn1ESvw57QpDl4
-         OR3Q==
+        bh=JLVorw3+OY1MOOYDwKvE7wctnvK8uTTuHBmFeVhzF0U=;
+        b=ddQOxShHfkxxIwI5fo+QRua/hPDOPRZEzYvxZZcwwP76mNTABcU+/xsJQZc4CJqomj
+         QB6AQOwlnkozBKf+ErRAlJwsSttl5O7I633ITJsetkivQszwGkDQpuX+WA0Tc6M591Ml
+         8XoEgNd6pEgcPQDB87O6cOF1HIH4kcZskwMQmFX6oAN7kbIz5O843Haoaz1vuzpK/VP/
+         zZB33jpDhgn+BvpV3l3do+X/pha23kO0l21LS4Os+38h/0kmngpQsWr2wPVOXUrckYBz
+         szM6rQYwoXOUguLvvHJFa7NTvTU0jlcOu2pNTXBwpHvoBvuehZ7HdcuX8DtpLGiZAdI2
+         ytdQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2C4822DBF
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D57E22DAC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Anatolij Gustschin <agust@denx.de>,
-	Alan Tull <atull@kernel.org>,
-	Moritz Fischer <mdf@kernel.org>
-Subject: [PATCH 4.16 093/113] fpga-manager: altera-ps-spi: preserve nCONFIG state
-Date: Mon, 30 Apr 2018 12:25:04 -0700
-Message-Id: <20180430184019.138135380@linuxfoundation.org>
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Todd Kjos <tkjos@google.com>
+Subject: [PATCH 4.16 075/113] ARM: amba: Dont read past the end of sysfs "driver_override" buffer
+Date: Mon, 30 Apr 2018 12:24:46 -0700
+Message-Id: <20180430184018.368730183@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184015.043892819@linuxfoundation.org>
 References: <20180430184015.043892819@linuxfoundation.org>
@@ -44,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200514004063912?=
-X-GMAIL-MSGID: =?utf-8?q?1599200585561058881?=
+X-GMAIL-THRID: =?utf-8?q?1599200467272175726?=
+X-GMAIL-MSGID: =?utf-8?q?1599200585300766818?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,33 +52,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Anatolij Gustschin <agust@denx.de>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-commit 881c93c0fb73328845898344208fa0bf0d62cac6 upstream.
+commit d2ffed5185df9d8d9ccd150e4340e3b6f96a8381 upstream.
 
-If the driver module is loaded when FPGA is configured, the FPGA
-is reset because nconfig is pulled low (low-active gpio inited
-with GPIOD_OUT_HIGH activates the signal which means setting its
-value to low). Init nconfig with GPIOD_OUT_LOW to prevent this.
+When printing the driver_override parameter when it is 4095 and 4094
+bytes long, the printing code would access invalid memory because we
+need count + 1 bytes for printing.
 
-Signed-off-by: Anatolij Gustschin <agust@denx.de>
-Acked-by: Alan Tull <atull@kernel.org>
-Signed-off-by: Moritz Fischer <mdf@kernel.org>
-Cc: stable <stable@vger.kernel.org> # 4.14+
+Cfr. commits 4efe874aace57dba ("PCI: Don't read past the end of sysfs
+"driver_override" buffer") and bf563b01c2895a4b ("driver core: platform:
+Don't read past the end of "driver_override" buffer").
+
+Fixes: 3cf385713460eb2b ("ARM: 8256/1: driver coamba: add device binding path 'driver_override'")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Todd Kjos <tkjos@google.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/fpga/altera-ps-spi.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/amba/bus.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/fpga/altera-ps-spi.c
-+++ b/drivers/fpga/altera-ps-spi.c
-@@ -249,7 +249,7 @@ static int altera_ps_probe(struct spi_de
+--- a/drivers/amba/bus.c
++++ b/drivers/amba/bus.c
+@@ -84,7 +84,8 @@ static ssize_t driver_override_store(str
+ 	struct amba_device *dev = to_amba_device(_dev);
+ 	char *driver_override, *old, *cp;
  
- 	conf->data = of_id->data;
- 	conf->spi = spi;
--	conf->config = devm_gpiod_get(&spi->dev, "nconfig", GPIOD_OUT_HIGH);
-+	conf->config = devm_gpiod_get(&spi->dev, "nconfig", GPIOD_OUT_LOW);
- 	if (IS_ERR(conf->config)) {
- 		dev_err(&spi->dev, "Failed to get config gpio: %ld\n",
- 			PTR_ERR(conf->config));
+-	if (count > PATH_MAX)
++	/* We need to keep extra room for a newline */
++	if (count >= (PAGE_SIZE - 1))
+ 		return -EINVAL;
+ 
+ 	driver_override = kstrndup(buf, count, GFP_KERNEL);
