@@ -1,39 +1,39 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpUZRAhJ9eGSwAbn/DuAJ2AAk2Yjh4m0tmh2Bj66+Hko66igd0CFCOWoDi26HvqZ7AyFzrW
-ARC-Seal: i=1; a=rsa-sha256; t=1525116420; cv=none;
+X-Google-Smtp-Source: AB8JxZpTkWE3WAVTV8qVHuJQbJnRPZmuVajRrxvrhnPN8CwwG3jc3V4Ypnv9oh9mqF+mVkRI9lwW
+ARC-Seal: i=1; a=rsa-sha256; t=1525116418; cv=none;
         d=google.com; s=arc-20160816;
-        b=NPm83AUWmnWUZ2HTwbYHj4/Jr647u52ExWAE5FlDyMw3h/52D1E9L/ecWFn6wpuhRM
-         6cHvYx+jXYYMO9ANqQw6Je0xZKqXuPFkxDgmv/fhN5lKZWpIjUEXvD/vAgjqtlwUb7x0
-         6bzya4njVQgbKyR2JIcLo/s6MCw6HoYEfGgpV33lmuVrsGZoPUy7CE6KumkiioTolEKC
-         8U3ThFCeBhr9lyjBJOTG0jCn81sl9HvEGPSYDhu//McunlrW1t1BanFQi9dzcXTOH7Q1
-         s//dQBA+Gq7Xh9NCIDzoX7IJaQeN3w4+cHDe8fqtIdcFE+aD41O5pzSRFgIPFEBEEDvm
-         8ftg==
+        b=Cx/HNR0zvxl0Tgj25804Ctl3UeyG+Ek9TucL2bjsHuix8HT+1aL4YuOwcZX4SSqFwp
+         K6dC1HuAk5hWALveHdY8ZD/1iuJM1On1T+E/fxMSvGRtaDDg+O3v82DkGxevTwIXQUiP
+         m29A1GM+Hab/8sq/F4VXr0FRAd+bBYw5aLWgQg/msUVAgf46MuKKhXWnCfS9wwhaQhPi
+         LLQdQuLAhzMPOiE3euyemWoPZV3yICCy/7nwJpx33KjlsJoOzpIXcjHZxyYcBQouC9UJ
+         KI+67eBFaCikZiA9WRpEHkzhAntW1Xmqo4UxUuwxI3QDLPL086WbgyqKw2CsQBlwkL8w
+         HjRA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=89LpjdmtO3Ud1A48G16afZ2lhsxvnmBUew81iOxv3XM=;
-        b=yeUrCtG4m3zOEc41Xj5AkGXVpg4oGC4lUWCBUGWD2XuREgnyw1tDnMTKuKvR4Bb0rr
-         9+TVSeM3CNJbhkenwtWOzbvCcQqEMZF63KDwu1hqVPqT81DCainXlJeLHpj5IoCGEK9i
-         yLCLgSzg1CfsyZLP15+gb5IWbpmmbkq/+J+4DU3mG8rtTrzsx7nZfvX/XZE2GvCIxv9a
-         LzlUlD+7zo8IfrwIEA14E4ldPK1dzItnc2h6Peskze+budymhs/RtjMBNWcXumC6O3J2
-         C5bTdQSdNaag4BgBiwoP1vyhOzC2RD71evvD5BD/rjoXps1MjAIECv1Y+wwD2onUKgsd
-         iIPA==
+        bh=VnCpcWlkk640TfkVD3xIf/xtL+17+RWvZ3KUvsU2pco=;
+        b=XxqToG+xzlQiDTZ5dRqpOvfTZtPjXin+uM0zGxJLH1wgCAnaA/zfxG5F0K+8kPXLVu
+         07fQrNYVZzM/mZX0B9mpbu0Tc0hVK0NIJnwqWIjrOIV3Z9plnjcSh6eSVGxgdFb87uGd
+         FelxcUjq3v6nEdcniPeKgOA9+Q1rpM2PM8Gdn6G7irHanY7nDn+rMpkjvNVz0Oz5KQO5
+         kERyc8kD9JG8oSKDS6LNCHdw/ICj5DSIb1DBvOTbV6JUMwwq9DKc/+Jll00MDC+Q9xcw
+         G09RWX5ngLKWY9By0zBVCKqLA4VI85PzQNfWB7CeksHtMo7VXVobCCXHMbVVARfScOnp
+         r6EA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3942622DCB
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DC2722DBF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Quanxian Wang <quanxian.wang@intel.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Subject: [PATCH 4.14 18/91] usb: typec: ucsi: Increase command completion timeout value
-Date: Mon, 30 Apr 2018 12:24:00 -0700
-Message-Id: <20180430184005.166878717@linuxfoundation.org>
+	Kai-Heng Feng <kai.heng.feng@canonical.com>,
+	Mathias Nyman <mathias.nyman@linux.intel.com>
+Subject: [PATCH 4.14 14/91] xhci: Fix USB ports for Dell Inspiron 5775
+Date: Mon, 30 Apr 2018 12:23:56 -0700
+Message-Id: <20180430184004.957200675@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184004.216234025@linuxfoundation.org>
 References: <20180430184004.216234025@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200475896831863?=
-X-GMAIL-MSGID: =?utf-8?q?1599200475896831863?=
+X-GMAIL-THRID: =?utf-8?q?1599200473674705652?=
+X-GMAIL-MSGID: =?utf-8?q?1599200473674705652?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,32 +52,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-commit b1b59e16075f5e5da2943ce8de724ab96bc3c6c2 upstream.
+commit 621faf4f6a181b6e012c1d1865213f36f4159b7f upstream.
 
-On some boards, under heavy load, the EC firmware is
-unable to complete commands even in one second. Increasing
-the command completion timeout value to five seconds.
+The Dell Inspiron 5775 is a Raven Ridge. The Enable Slot command timed
+out when a USB device gets plugged:
+[ 212.156326] xhci_hcd 0000:03:00.3: Error while assigning device slot ID
+[ 212.156340] xhci_hcd 0000:03:00.3: Max number of devices this xHCI host supports is 64.
+[ 212.156348] usb usb2-port3: couldn't allocate usb_device
 
-Reported-by: Quanxian Wang <quanxian.wang@intel.com>
-Fixes: c1b0bc2dabfa ("usb: typec: Add support for UCSI interface")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+AMD suggests that a delay before xHC suspends can fix the issue.
+
+I can confirm it fixes the issue, so use the suspend delay quirk for
+Raven Ridge's xHC.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/typec/ucsi/ucsi.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/host/xhci-pci.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/typec/ucsi/ucsi.c
-+++ b/drivers/usb/typec/ucsi/ucsi.c
-@@ -31,7 +31,7 @@
-  * difficult to estimate the time it takes for the system to process the command
-  * before it is actually passed to the PPM.
-  */
--#define UCSI_TIMEOUT_MS		1000
-+#define UCSI_TIMEOUT_MS		5000
+--- a/drivers/usb/host/xhci-pci.c
++++ b/drivers/usb/host/xhci-pci.c
+@@ -134,7 +134,10 @@ static void xhci_pci_quirks(struct devic
+ 	if (pdev->vendor == PCI_VENDOR_ID_AMD && usb_amd_find_chipset_info())
+ 		xhci->quirks |= XHCI_AMD_PLL_FIX;
  
- /*
-  * UCSI_SWAP_TIMEOUT_MS - Timeout for role swap requests
+-	if (pdev->vendor == PCI_VENDOR_ID_AMD && pdev->device == 0x43bb)
++	if (pdev->vendor == PCI_VENDOR_ID_AMD &&
++		(pdev->device == 0x15e0 ||
++		 pdev->device == 0x15e1 ||
++		 pdev->device == 0x43bb))
+ 		xhci->quirks |= XHCI_SUSPEND_DELAY;
+ 
+ 	if (pdev->vendor == PCI_VENDOR_ID_AMD)
