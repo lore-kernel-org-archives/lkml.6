@@ -1,83 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754798AbeD3V1h (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 17:27:37 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:45398 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751084AbeD3V1g (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 17:27:36 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DE4D760251
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: pciehp 0000:00:1c.0:pcie004: Timeout on hotplug command 0x1038
- (issued 65284 msec ago)
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Paul Menzel <pmenzel+linux-pci@molgen.mpg.de>,
-        Dave Young <dyoung@redhat.com>, linux-pci@vger.kernel.org,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Lukas Wunner <lukas@wunner.de>, Eric Biederman <ebiederm@xmission.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, Vivek Goyal <vgoyal@redhat.com>
-References: <8770820b-85a0-172b-7230-3a44524e6c9f@molgen.mpg.de>
- <20180427192207.GG8199@bhelgaas-glaptop.roam.corp.google.com>
- <b62c2a8e-fe14-6d7d-147c-0ce3b0c0ab2f@codeaurora.org>
- <20180427211255.GI8199@bhelgaas-glaptop.roam.corp.google.com>
- <20180428005620.GB1675@dhcp-128-65.nay.redhat.com>
- <20180428011845.GC1675@dhcp-128-65.nay.redhat.com>
- <3ebc908fb196168bf0373875ffc5679e@codeaurora.org>
- <d8d134dc-9757-97cd-7a24-cbb21611d6c6@codeaurora.org>
- <20180430211740.GG95643@bhelgaas-glaptop.roam.corp.google.com>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <7285da70-2c3e-c3b7-62e1-fdbb55a77729@codeaurora.org>
-Date: Mon, 30 Apr 2018 17:27:32 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180430211740.GG95643@bhelgaas-glaptop.roam.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1755190AbeD3V14 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 17:27:56 -0400
+Received: from anholt.net ([50.246.234.109]:40736 "EHLO anholt.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755085AbeD3V1y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 17:27:54 -0400
+From: Eric Anholt <eric@anholt.net>
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        bcm-kernel-feedback-list@broadcom.com, Eric Anholt <eric@anholt.net>
+Subject: [GIT PULL 3/3] bcm2835-defconfig-64-next-2018-04-30
+Date: Mon, 30 Apr 2018 14:27:50 -0700
+Message-Id: <20180430212750.12303-3-eric@anholt.net>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180430212750.12303-1-eric@anholt.net>
+References: <20180430212750.12303-1-eric@anholt.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/30/2018 5:17 PM, Bjorn Helgaas wrote:
->> What should we do about this?
->>
->> Since there is an actual HW errata involved, should we quirk this
->> root port and not wait as if remove/shutdown doesn't exist?
-> I was hoping to avoid a quirk because AFAIK all Intel parts have this
-> issue so it will be an ongoing maintenance issue.  I tried to avoid
-> the timeout delays, e.g., with 40b960831cfa ("PCI: pciehp: Compute
-> timeout from hotplug command start time").
-> 
-> But we still see the alarming messages, so we should probably add a
-> quirk to get rid of those.
-> 
-> But I haven't given up on the idea of getting rid of the
-> pciehp_remove() path.  I'm not convinced yet that we actually need to
-> do anything to shut this device down.  I don't like the assumption
-> that kexec requires this.  The kexec is fundamentally just a branch,
-> and anything we do before the branch (i.e., in the old kernel), we
-> should also be able to do after the branch (i.e., in the kexec-ed
-> kernel).
-> 
+The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
 
-In my experience with kexec, MSI type edge interrupts are harmless.
-You might just see a few unhandled interrupt messages during boot
-if something is pending from the first kernel.
+  Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
 
-It is the level interrupts that are more concerning. It remains pending
-until the interrupt source is cleared. CPU never returns from the
-interrupt handler to actually continue booting the second kernel.
+are available in the Git repository at:
 
-Execution doesn't reach to PCIe hp driver initialization for
-acknowledging the interrupt.
+  git://github.com/anholt/linux tags/bcm2835-defconfig-64-next-2018-04-30
 
-How about remove() only if MSI is disabled? Most root port interrupts
-are MSI based anyhow.
+for you to fetch changes up to 69bc5b2c056b4e784b49a8c9c5049561b62352f7:
 
--- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+  arm64: defconfig: Enable LAN and BT support for RPi 3 B+ (2018-04-23 13:28:33 -0700)
+
+----------------------------------------------------------------
+This pull request enables the Raspberry Pi 3 B+'s LAN and bluetooth in
+the arm64 defconfig.
+
+----------------------------------------------------------------
+Stefan Wahren (1):
+      arm64: defconfig: Enable LAN and BT support for RPi 3 B+
+
+ arch/arm64/configs/defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
