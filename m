@@ -1,189 +1,280 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754559AbeD3POb (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 11:14:31 -0400
-Received: from sandeen.net ([63.231.237.45]:34686 "EHLO sandeen.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754363AbeD3PO3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 11:14:29 -0400
-Subject: Re: WARNING: bad unlock balance in xfs_iunlock
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <david@fromorbit.com>,
-        syzbot <syzbot+84a67953651a971809ba@syzkaller.appspotmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-xfs@vger.kernel.org,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        syzkaller <syzkaller@googlegroups.com>
-References: <f403043cbe8414177d0568e81405@google.com>
- <20180403043854.GL1150@dastard>
- <CACT4Y+ZadV0xTqhiGTAHmadAnYaSfPKhUy_TFXMza2o_n8+o9w@mail.gmail.com>
- <20180405213844.GE23861@dastard> <20180406161053.GF7500@magnolia>
- <CACT4Y+aaEOffkFA-B-hMzwzSiQwVpkPrc2udC087a55OTnkS4g@mail.gmail.com>
- <95c1400b-94f2-1af4-2d5d-c61c274c28ff@sandeen.net>
- <CACT4Y+aiwgRg5pk+N7bq9HYpgumTFyqG6-y3EZ8pWkq9-uB1aA@mail.gmail.com>
- <9f8d657c-7f42-7bd9-4477-6c3addf16dee@sandeen.net>
- <CACT4Y+bUx4jw83Ux7w9URL9bCy1ERLaVGTTwvA9Fe_UtLFeqCw@mail.gmail.com>
-From: Eric Sandeen <sandeen@sandeen.net>
-Openpgp: preference=signencrypt
-Autocrypt: addr=sandeen@sandeen.net; prefer-encrypt=mutual; keydata=
- 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 pA==
-Message-ID: <d7c8e0eb-61ed-1aad-6faa-82a0ef8c25b8@sandeen.net>
-Date: Mon, 30 Apr 2018 10:14:28 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
+        id S1754594AbeD3POp (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 11:14:45 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44808 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752534AbeD3POn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 11:14:43 -0400
+Subject: Re: [PATCH v10 08/25] mm: VMA sequence count
+To: Minchan Kim <minchan@kernel.org>
+Cc: akpm@linux-foundation.org, mhocko@kernel.org, peterz@infradead.org,
+        kirill@shutemov.name, ak@linux.intel.com, dave@stgolabs.net,
+        jack@suse.cz, Matthew Wilcox <willy@infradead.org>,
+        benh@kernel.crashing.org, mpe@ellerman.id.au, paulus@samba.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
+        sergey.senozhatsky.work@gmail.com,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        David Rientjes <rientjes@google.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Ganesh Mahendran <opensource.ganesh@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
+        npiggin@gmail.com, bsingharora@gmail.com, paulmck@linux.vnet.ibm.com,
+        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org
+References: <1523975611-15978-1-git-send-email-ldufour@linux.vnet.ibm.com>
+ <1523975611-15978-9-git-send-email-ldufour@linux.vnet.ibm.com>
+ <20180423064259.GC114098@rodete-desktop-imager.corp.google.com>
+From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Date: Mon, 30 Apr 2018 17:14:27 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <CACT4Y+bUx4jw83Ux7w9URL9bCy1ERLaVGTTwvA9Fe_UtLFeqCw@mail.gmail.com>
+In-Reply-To: <20180423064259.GC114098@rodete-desktop-imager.corp.google.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18043015-0040-0000-0000-0000045382AC
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18043015-0041-0000-0000-000020F79A97
+Message-Id: <06b996b0-b831-3d39-8a99-792abfb6a4d1@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-30_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804300146
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/30/18 9:02 AM, Dmitry Vyukov wrote:
-> On Mon, Apr 30, 2018 at 3:49 PM, Eric Sandeen <sandeen@sandeen.net> wrote:
 
-...
 
->>> It just extracted kernel source file name that looked relevant
->>> to this crash and run get_maintainers.pl on it.
->>> Also the image can contain dynamically generated data, which makes it
->>> impossible to have as a file at all.
+On 23/04/2018 08:42, Minchan Kim wrote:
+> On Tue, Apr 17, 2018 at 04:33:14PM +0200, Laurent Dufour wrote:
+>> From: Peter Zijlstra <peterz@infradead.org>
 >>
->> I guess I'm not sure what this means, can you explain?
+>> Wrap the VMA modifications (vma_adjust/unmap_page_range) with sequence
+>> counts such that we can easily test if a VMA is changed.
 > 
-> Say, a value that we generally pass to close system call is not static
-> and can't be dumped to a static file. It's whatever a previous open
-> system call has returned. Inside of the program we memorize the return
-> value of open in a variable and then pass it to close. This generally
-> stands for all system calls. Say, an image can contain an uid, and
-> that uid can be obtained from a system call too.
+> So, seqcount is to protect modifying all attributes of vma?
 
-Ok, but that's the syscall side.  You are operating on a static xfs image,
-correct?  We're only asking for the actual filesystem you're operating
-against.
+The seqcount is used to protect fields that will be used during the speculative
+page fault like boundaries, protections.
 
-(When I say "image" I am talking only about the filesystem itself, not any
-other syzkaller state)
- 
-...
-
->> That was not at all clear to me.  I thought when syzkaller was telling us
->> "on upstream commit XYZ," it meant that it had identified commit XYZ as bad.
->> I'm not sure if anyone else made that mistake, but  perhaps you could also clarify
->> the bug report text in this regard?
-> 
-> Suggestions are welcome. Currently it says "syzbot hit the following
-> crash on upstream commit SHA1", which was supposed to mean just the
-> state of the source tree when the crash happened. But I am not a
-> native speaker, so perhaps I am saying not what I intend to say.
-> 
-> There are also suggestions on report format improvement from +Ted
-> currently in works:
-> https://github.com/google/syzkaller/issues/565#issuecomment-380792942
-> Not sure if they make this distinction 100% clear, though.
-
-Maybe I was the only one who misunderstood, but something like
-
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-HEAD:		f5c754d63d06 mm/swap_state.c: make bool enable_vma_readahead and swap_vma_readahead()
- 
-to make it clear that it has not identified that commit as the culprit, it's
-just the head of the tree you were testing?  (I think I have the correct git
-nomenclature ...)
-
-...
-
->> If the base image only has one allocation group, it makes it more difficult for
->> some tools to work with the image, because there is no redundancy.  1 AG is
->> not a supported or recommended geometry for any real-life use of xfs.
 >>
->> If I am correct that you start with a base image w/ a certain geometry or
->> set of mkfs options, starting with >= 2 AGs would improve the usefulness of the
->> filesystem image.
+>> The unmap_page_range() one allows us to make assumptions about
+>> page-tables; when we find the seqcount hasn't changed we can assume
+>> page-tables are still valid.
 > 
-> syzkaller can generate/mutate images based on structured format
-> templates, but for now we don't have any templates and these are just
-> opaque blobs.
+> Hmm, seqcount covers page-table, too.
+> Please describe what the seqcount want to protect.
 
-Ok, backing up more: When you are testing against an xfs filesystem image, where
-does that image come from?  How is it generated?  A quick look at the syzkaller
-tree didn't make that clear to me.
+The calls to vm_write_begin/end() in unmap_page_range() are used to detect when
+a VMA is being unmap and thus that new page fault should not be satisfied for
+this VMA. This is protecting the VMA unmapping operation, not the page tables
+themselves.
 
-the xfs.repro file you provided at
-https://drive.google.com/file/d/1jzhGGe5SBJcqfsjxCLHoh4Kazke1oTfC/view
+>>
+>> The flip side is that we cannot distinguish between a vma_adjust() and
+>> the unmap_page_range() -- where with the former we could have
+>> re-checked the vma bounds against the address.
+>>
+>> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+>>
+>> [Port to 4.12 kernel]
+>> [Build depends on CONFIG_SPECULATIVE_PAGE_FAULT]
+>> [Introduce vm_write_* inline function depending on
+>>  CONFIG_SPECULATIVE_PAGE_FAULT]
+>> [Fix lock dependency between mapping->i_mmap_rwsem and vma->vm_sequence by
+>>  using vm_raw_write* functions]
+>> [Fix a lock dependency warning in mmap_region() when entering the error
+>>  path]
+>> [move sequence initialisation INIT_VMA()]
+>> Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+>> ---
+>>  include/linux/mm.h       | 44 ++++++++++++++++++++++++++++++++++++++++++++
+>>  include/linux/mm_types.h |  3 +++
+>>  mm/memory.c              |  2 ++
+>>  mm/mmap.c                | 31 +++++++++++++++++++++++++++++++
+>>  4 files changed, 80 insertions(+)
+>>
+>> diff --git a/include/linux/mm.h b/include/linux/mm.h
+>> index efc1248b82bd..988daf7030c9 100644
+>> --- a/include/linux/mm.h
+>> +++ b/include/linux/mm.h
+>> @@ -1264,6 +1264,9 @@ struct zap_details {
+>>  static inline void INIT_VMA(struct vm_area_struct *vma)
+>>  {
+>>  	INIT_LIST_HEAD(&vma->anon_vma_chain);
+>> +#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
+>> +	seqcount_init(&vma->vm_sequence);
+>> +#endif
+>>  }
+>>  
+>>  struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
+>> @@ -1386,6 +1389,47 @@ static inline void unmap_shared_mapping_range(struct address_space *mapping,
+>>  	unmap_mapping_range(mapping, holebegin, holelen, 0);
+>>  }
+>>  
+>> +#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
+>> +static inline void vm_write_begin(struct vm_area_struct *vma)
+>> +{
+>> +	write_seqcount_begin(&vma->vm_sequence);
+>> +}
+>> +static inline void vm_write_begin_nested(struct vm_area_struct *vma,
+>> +					 int subclass)
+>> +{
+>> +	write_seqcount_begin_nested(&vma->vm_sequence, subclass);
+>> +}
+>> +static inline void vm_write_end(struct vm_area_struct *vma)
+>> +{
+>> +	write_seqcount_end(&vma->vm_sequence);
+>> +}
+>> +static inline void vm_raw_write_begin(struct vm_area_struct *vma)
+>> +{
+>> +	raw_write_seqcount_begin(&vma->vm_sequence);
+>> +}
+>> +static inline void vm_raw_write_end(struct vm_area_struct *vma)
+>> +{
+>> +	raw_write_seqcount_end(&vma->vm_sequence);
+>> +}
+>> +#else
+>> +static inline void vm_write_begin(struct vm_area_struct *vma)
+>> +{
+>> +}
+>> +static inline void vm_write_begin_nested(struct vm_area_struct *vma,
+>> +					 int subclass)
+>> +{
+>> +}
+>> +static inline void vm_write_end(struct vm_area_struct *vma)
+>> +{
+>> +}
+>> +static inline void vm_raw_write_begin(struct vm_area_struct *vma)
+>> +{
+>> +}
+>> +static inline void vm_raw_write_end(struct vm_area_struct *vma)
+>> +{
+>> +}
+>> +#endif /* CONFIG_SPECULATIVE_PAGE_FAULT */
+>> +
+>>  extern int access_process_vm(struct task_struct *tsk, unsigned long addr,
+>>  		void *buf, int len, unsigned int gup_flags);
+>>  extern int access_remote_vm(struct mm_struct *mm, unsigned long addr,
+>> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+>> index 21612347d311..db5e9d630e7a 100644
+>> --- a/include/linux/mm_types.h
+>> +++ b/include/linux/mm_types.h
+>> @@ -335,6 +335,9 @@ struct vm_area_struct {
+>>  	struct mempolicy *vm_policy;	/* NUMA policy for the VMA */
+>>  #endif
+>>  	struct vm_userfaultfd_ctx vm_userfaultfd_ctx;
+>> +#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
+>> +	seqcount_t vm_sequence;
+>> +#endif
+>>  } __randomize_layout;
+>>  
+>>  struct core_thread {
+>> diff --git a/mm/memory.c b/mm/memory.c
+>> index f86efcb8e268..f7fed053df80 100644
+>> --- a/mm/memory.c
+>> +++ b/mm/memory.c
+>> @@ -1503,6 +1503,7 @@ void unmap_page_range(struct mmu_gather *tlb,
+>>  	unsigned long next;
+>>  
+>>  	BUG_ON(addr >= end);
+> 
+> The comment about saying it aims for page-table stability will help.
 
-is strange, it doesn't even contain AGF blocks; they aren't fuzzed or corrupted,
-they are completely zeroed out.  I don't know if that's part of the fuzzing,
-or what - what steps led to that image?
+A comment may be added mentioning that we use the seqcount to indicate that the
+VMA is modified, being unmapped. But there is not a real page table protection,
+and I think this may be confusing to talk about page table stability here.
 
-Or put another way, how did you arrive at the fs image values in the reproducer,
-i.e.:
-
-oid loop()
-{
-  memcpy((void*)0x20000000, "xfs", 4);
-  memcpy((void*)0x20000100, "./file0", 8);
-  *(uint64_t*)0x20000200 = 0x20010000;
-  memcpy((void*)0x20010000,
-         "\x58\x46\x53\x42\x00\x00\x10\x00\x00\x00\x00\x00\x00\x00\x10\x00\x00"
-         "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x9f\x98"
-         "\x99\xff\xcb\xa1\x4e\xe6\xad\x52\x08\x20\x67\x09\xed\x75\x00\x00\x00"
-         "\x00\x00\x00\x00\x04\x00\x00\x00\x00\x00\x00\x35\xe0\x00\x00\x00\x00"
-         "\x00\x00\x35\xe1\x00\x00\x00\x00\x00\x00\x35\xe2\x00\x00\x00\x01\x00"
-         "\x00\x10\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x03\x55\xb4\xa4"
-         "\x02\x00\x01\x00\x00\x10\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
-         "\x00\x0c\x09\x08\x04\x0c\x00\x00\x19\x00\x00\x00\x00\x00\x00\x00\x40"
-         "\x00\x00\x00\x00\x00\x00\x00\x3d\x00\x00\x00\x00\x00\x00\x0c\xa3\x00"
-         "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
-         "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00"
-         "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x02\x02",
-         204);
-
-... 
-
-The in-memory xfs filesystem it constructs is damaged, is that an intentional
-part of the fuzzing during the test?
-
--Eric
+> 
+>> +	vm_write_begin(vma);
+>>  	tlb_start_vma(tlb, vma);
+>>  	pgd = pgd_offset(vma->vm_mm, addr);
+>>  	do {
+>> @@ -1512,6 +1513,7 @@ void unmap_page_range(struct mmu_gather *tlb,
+>>  		next = zap_p4d_range(tlb, vma, pgd, addr, next, details);
+>>  	} while (pgd++, addr = next, addr != end);
+>>  	tlb_end_vma(tlb, vma);
+>> +	vm_write_end(vma);
+>>  }
+>>  
+>>  
+>> diff --git a/mm/mmap.c b/mm/mmap.c
+>> index 8bd9ae1dfacc..813e49589ea1 100644
+>> --- a/mm/mmap.c
+>> +++ b/mm/mmap.c
+>> @@ -692,6 +692,30 @@ int __vma_adjust(struct vm_area_struct *vma, unsigned long start,
+>>  	long adjust_next = 0;
+>>  	int remove_next = 0;
+>>  
+>> +	/*
+>> +	 * Why using vm_raw_write*() functions here to avoid lockdep's warning ?
+>> +	 *
+>> +	 * Locked is complaining about a theoretical lock dependency, involving
+>> +	 * 3 locks:
+>> +	 *   mapping->i_mmap_rwsem --> vma->vm_sequence --> fs_reclaim
+>> +	 *
+>> +	 * Here are the major path leading to this dependency :
+>> +	 *  1. __vma_adjust() mmap_sem  -> vm_sequence -> i_mmap_rwsem
+>> +	 *  2. move_vmap() mmap_sem -> vm_sequence -> fs_reclaim
+>> +	 *  3. __alloc_pages_nodemask() fs_reclaim -> i_mmap_rwsem
+>> +	 *  4. unmap_mapping_range() i_mmap_rwsem -> vm_sequence
+>> +	 *
+>> +	 * So there is no way to solve this easily, especially because in
+>> +	 * unmap_mapping_range() the i_mmap_rwsem is grab while the impacted
+>> +	 * VMAs are not yet known.
+>> +	 * However, the way the vm_seq is used is guarantying that we will
+>> +	 * never block on it since we just check for its value and never wait
+>> +	 * for it to move, see vma_has_changed() and handle_speculative_fault().
+>> +	 */
+>> +	vm_raw_write_begin(vma);
+>> +	if (next)
+>> +		vm_raw_write_begin(next);
+>> +
+>>  	if (next && !insert) {
+>>  		struct vm_area_struct *exporter = NULL, *importer = NULL;
+>>  
+>> @@ -902,6 +926,7 @@ int __vma_adjust(struct vm_area_struct *vma, unsigned long start,
+>>  			anon_vma_merge(vma, next);
+>>  		mm->map_count--;
+>>  		mpol_put(vma_policy(next));
+>> +		vm_raw_write_end(next);
+>>  		kmem_cache_free(vm_area_cachep, next);
+>>  		/*
+>>  		 * In mprotect's case 6 (see comments on vma_merge),
+>> @@ -916,6 +941,8 @@ int __vma_adjust(struct vm_area_struct *vma, unsigned long start,
+>>  			 * "vma->vm_next" gap must be updated.
+>>  			 */
+>>  			next = vma->vm_next;
+>> +			if (next)
+>> +				vm_raw_write_begin(next);
+>>  		} else {
+>>  			/*
+>>  			 * For the scope of the comment "next" and
+>> @@ -962,6 +989,10 @@ int __vma_adjust(struct vm_area_struct *vma, unsigned long start,
+>>  	if (insert && file)
+>>  		uprobe_mmap(insert);
+>>  
+>> +	if (next && next != vma)
+>> +		vm_raw_write_end(next);
+>> +	vm_raw_write_end(vma);
+>> +
+>>  	validate_mm(mm);
+>>  
+>>  	return 0;
+>> -- 
+>> 2.7.4
+>>
+> 
