@@ -1,92 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753209AbeD3Mam (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 08:30:42 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:53552 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752521AbeD3Maj (ORCPT
+        id S1753441AbeD3McN (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 08:32:13 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:35720 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752532AbeD3McL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 08:30:39 -0400
-X-Google-Smtp-Source: AB8JxZr/TBOediWI81qURtkm6rIS7drI+IPSMt9msVcU2+n8mjq1Hiu7Hxo0oCdQECRi48euV+FHdw==
-Date: Mon, 30 Apr 2018 13:30:36 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>
-Cc: lgirdwood@gmail.com, broonie@kernel.org, sre@kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 4/4] dt-bindings: mfd: max8998: Add charger subnode
- binding
-Message-ID: <20180430123036.GH5147@dell>
-References: <1524844982-4714-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
- <1524844982-4714-5-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+        Mon, 30 Apr 2018 08:32:11 -0400
+Date: Mon, 30 Apr 2018 13:31:49 +0100
+From: Darren Kenny <darren.kenny@oracle.com>
+To: Wanpeng Li <kernellwp@gmail.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Anthoine Bourgeois <anthoine.bourgeois@blade-group.com>
+Subject: Re: [PATCH] KVM: X86: Limit timer frequency with more smaller
+ interval
+Message-ID: <20180430123149.mroow2pdhglqesrn@starbug-mbp.local>
+Mail-Followup-To: Wanpeng Li <kernellwp@gmail.com>,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Anthoine Bourgeois <anthoine.bourgeois@blade-group.com>
+References: <1525055900-20729-1-git-send-email-wanpengli@tencent.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1524844982-4714-5-git-send-email-pawel.mikolaj.chmiel@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1525055900-20729-1-git-send-email-wanpengli@tencent.com>
+User-Agent: NeoMutt/20180323
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8878 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804300121
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 27 Apr 2018, Paweł Chmiel wrote:
+Hi Wanpeng Li,
 
-> This patch adds devicetree bindings documentation for
-> battery charging controller as the subnode of MAX8998 PMIC.
-> It's based on current behavior of driver.
-> 
-> Fixes: ee999fb3f17f ("mfd: max8998: Add support for Device Tree")
+On Sun, Apr 29, 2018 at 07:38:20PM -0700, Wanpeng Li wrote:
+>From: Wanpeng Li <wanpengli@tencent.com>
+>
+>Anthoine reported:
+> The period used by Windows change over time but it can be 1 milliseconds
+> or less. I saw the limit_periodic_timer_frequency print so 500
+> microseconds is sometimes reached.
+>
+>This patchs limits timer frequency with more smaller interval 200ms(5000Hz)
+>to leave some headroom as Paolo suggested since Windows 10 changed the
+>scheduler tick limit from 1024 Hz to 2048 Hz.
 
-Why is this here?  This patch doesn't look like a fix to me.
+I would suggest re-writing this slightly, removing the 'this patch'
+as some people suggested in other threads, and maybe some other
+small re-wording, e.g.:
 
-> Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
-> ---
->  Documentation/devicetree/bindings/mfd/max8998.txt | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/max8998.txt b/Documentation/devicetree/bindings/mfd/max8998.txt
-> index 23a3650ff2a2..f95610afb57f 100644
-> --- a/Documentation/devicetree/bindings/mfd/max8998.txt
-> +++ b/Documentation/devicetree/bindings/mfd/max8998.txt
-> @@ -50,6 +50,21 @@ Additional properties required if max8998,pmic-buck2-dvs-gpio is defined:
->  - max8998,pmic-buck2-dvs-voltage: An array of 2 voltage values in microvolts
->    for buck2 regulator that can be selected using dvs gpio.
->  
-> +Charger: Configuration for battery charging controller should be added
-> +inside a child node named 'charger'.
-> +  Required properties:
-> +  - max8998,charge-eoc: Setup "End of Charge". If value equals 0,
-> +    remain value set from bootloader or default value will be used.
-> +    Valid values: 0, 10 - 45
-> +
-> +  - max8998,charge-restart: Setup "Charge Restart Level". If value equals 0,
-> +    remain value set from bootloader or default value will be used.
-> +    Valid values: -1, 0, 100, 150, 200
-> +
-> +  - max8998,charge-timeout: Setup "Charge Full Timeout". If value equals 0,
-> +    remain value set from bootloader or default value will be used.
-> +    Valid values: -1, 0, 5, 6, 7
-> +
->  Regulators: All the regulators of MAX8998 to be instantiated shall be
->  listed in a child node named 'regulators'. Each regulator is represented
->  by a child node of the 'regulators' node.
-> @@ -99,6 +114,13 @@ Example:
->  		max8998,pmic-buck2-dvs-gpio = <&gpx0 0 3 0 0>; /* SET3 */
->  		max8998,pmic-buck2-dvs-voltage = <1350000>, <1300000>;
->  
-> +		/* Charger configuration */
-> +		charger {
-> +			max8998,charge-eoc = <0>;
-> +			max8998,charge-restart = <(-1)>;
-> +			max8998,charge-timeout = <7>;
-> +		};
-> +
->  		/* Regulators to instantiate */
->  		regulators {
->  			ldo2_reg: LDO2 {
+  As suggested by Paolo, lower the timer frequency limit to a
+  smaller interval of 200 ms (5000 Hz) to leave some headroom. This
+  is required due to Windows 10 changing the scheduler tick limit
+  from 1024 Hz to 2048 Hz.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Also, in the subject line, maybe write it as 'Lower timer frequency
+limit to 200ms'?
+
+>
+>Reported-by: Anthoine Bourgeois <anthoine.bourgeois@blade-group.com>
+>Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
+>Cc: Paolo Bonzini <pbonzini@redhat.com>
+>Cc: Radim Krčmář <rkrcmar@redhat.com>
+>Cc: Anthoine Bourgeois <anthoine.bourgeois@blade-group.com>
+>Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+
+With those changes (or similar):
+
+Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
+
+>---
+> arch/x86/kvm/x86.c | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
+>
+>diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+>index 51ecd38..dc47073 100644
+>--- a/arch/x86/kvm/x86.c
+>+++ b/arch/x86/kvm/x86.c
+>@@ -114,7 +114,7 @@ module_param(ignore_msrs, bool, S_IRUGO | S_IWUSR);
+> static bool __read_mostly report_ignored_msrs = true;
+> module_param(report_ignored_msrs, bool, S_IRUGO | S_IWUSR);
+>
+>-unsigned int min_timer_period_us = 500;
+>+unsigned int min_timer_period_us = 200;
+> module_param(min_timer_period_us, uint, S_IRUGO | S_IWUSR);
+>
+> static bool __read_mostly kvmclock_periodic_sync = true;
+>-- 
+>2.7.4
+>
