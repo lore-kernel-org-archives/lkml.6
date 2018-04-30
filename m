@@ -1,120 +1,271 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2398620-1525145111-2-9119409014139808879
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, UNPARSEABLE_RELAY 0.001, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: 
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525145111; b=SOC+iUrBF4SqIAWu/Pyi9S6ZhpbYdk1TbNE2CEYY/SS5sscKpz
-    C988fYzPCj/8wtEogucwxYIMYtYaSpep+utJui46HPuLicJ5vIP6s0KfUHz14sKa
-    V4reIUPbvAh9wi0DtffcYgR4l3hXVX8uDBF2JmOsqZTGPbRtLduC6VCPEOLTG+7V
-    ovDIY2S2QZ0Swqoaeu7RwiItY9fgzjgyjSavsXHMr2dM2wtBTvSnBJuupAv7XQqk
-    wwCZNymniaHjdISNkPydQtp9vKYhA2aPhuIttdIOgl1pcD0giNSV9qPNdB3dYYPw
-    I/7Slq62ootzOW7kS2FvPVl+1nm+PhFbNqTA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=to:cc:subject:from:references:date
-    :in-reply-to:message-id:mime-version:content-type:sender
-    :list-id; s=fm2; t=1525145111; bh=NA9cUXIc29pmZlPGLg/n5qlOjV9xLq
-    9Tx/yXT1B8WEA=; b=hqqKAk89ZVv0tZzqLFib4SJDlgHSDxjEWFjarZlwlXBz/6
-    +WQaYvZygoLiJm4vXJKoBaeRC9Y+FAOJPgMhyx2Q7crwvlZZvw5jl2TRjME0c6oj
-    nT9Mrvjvm7VHh3aopmuZIDoWuNFliheHdMeLWCEzWeU0t+8TAT3Eouoxec8wQlnl
-    Y8bjWcqyFOfupC+4KQVC0RUdpxt7k9mR7vxin0pQ4iFbAzKhLdd+TNsvOmF4RsC+
-    EOSVW29DQdmuFOil51Y+nMZZ5hBJ6LQcu0+bxcMCoU5ISVv/Zda6O6ZiOhpIRAet
-    5LQhE3jDXmRYyYYqnXiNw5nMoAorAHlxH3Q/Eh7Q==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=oracle.com
-    header.i=@oracle.com header.b=QOqCMkr8 x-bits=2048 x-keytype=rsa
-    x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=oracle.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=oracle.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=oracle.com
-      header.i=@oracle.com header.b=QOqCMkr8 x-bits=2048 x-keytype=rsa
-      x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=oracle.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=oracle.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfPXB1dvLd6eriOZwbtNmgifKlSf5TBlDOBP5Sf870fCDOGeOyFZ/7eOLz/aYLN664Ui6kDFhVD3LQjmCz2pDuDWAisTT+S5XjTDosYnAX5hpoNZADOVL
-    HloyPl6oe9S0o6AoSfofN1qs0Suo7RWmwlBfJM7hfiQshlKGgcq/Y3nZic0of6Cvm3AujdwpQMV8SFKVzn8bn/Dk6+UUMKZaigZLPe5Aaq4WQ2KdHoMlvUc7
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=VVAyi8jNWOtIG9hKimoA:9
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751928AbeEADY5 (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 30 Apr 2018 23:24:57 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:57566 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751519AbeEADY4 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 30 Apr 2018 23:24:56 -0400
-To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Cc: Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-ide@vger.kernel.org, stable@vger.kernel.org,
-        "Martin K . Petersen" <martin.petersen@oracle.com>
-Subject: Re: [PATCH v2] libata: blacklist Micron SSD
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20180429160138.11091-1-sudip.mukherjee@codethink.co.uk>
-Date: Mon, 30 Apr 2018 23:24:49 -0400
-In-Reply-To: <20180429160138.11091-1-sudip.mukherjee@codethink.co.uk> (Sudip
-        Mukherjee's message of "Sun, 29 Apr 2018 17:01:38 +0100")
-Message-ID: <yq1r2mw83cu.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
+X-Google-Smtp-Source: AB8JxZogQcWXCNwSAX5ai+20Iz5vtElXcfuqyszqO3uKrvPw+kVaDg7TFYJWEcMb4TriQWbZ2mMC
+ARC-Seal: i=1; a=rsa-sha256; t=1525116355; cv=none;
+        d=google.com; s=arc-20160816;
+        b=ij3e6VwkIdRHbHc+PYgtsvJKEb5S8TqLcDaghXZj/UZ9r5WhbBN2WrDmNFl8NcZnkH
+         d3GU81dMah4Xwi9WqPOqvWqCR66xnnh2OjsU2wVcAaKJd5fmy8dwmREr8mY7W6If9Fmi
+         jbs5tXoFMaTA+Eem3E9P/BUdrk5EhvIgdzFT7WOGYQAcvJ/6fZXLwcRmIxs0Ki0lFWwB
+         f8f0eR07QTkGO42kgkiaw4ijznvQkmnVTdif1kKz1w8KqlAee13h7k/a6py0d74GpzNz
+         delrYZ+0OjiIbieB/1fx2/79QKIO1Io7Hy3vWENrQxJq8h1fkSMsoIGLzI+fsPgxn785
+         eicw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:user-agent:mime-version:message-id:date
+         :subject:cc:to:from:dmarc-filter:arc-authentication-results;
+        bh=qALgvHywLzkaklSbAJNRZMmyPmG6hAEesbVKHk0LnqU=;
+        b=VzvLBD/tiaVVGZ+pl/oZcK2A4c3/IvjEpSPiGav+dtOHkDP3s5YfIoVc2ISlWHaJSI
+         jWVSW/o2UFq1LnDqmWIjf41QRETmr6/R/7AZFYhDPv1NdEUFSp7lr1w9GuE20WQra0l0
+         TuR/SCOOiCJdmkPF9qf69oLVa/q9xcnfqRRqf7R90fhacNZra+ImLEw9jXFCIHjiD6VZ
+         XTdlDaOQ9u5qd7Nm9BoH2RkJFhvxbiZUhhiddKeKdaA69VGFsg+sC1arD4umpUEfOQjo
+         ubSjl1bGNxbtkQDLU7Bl2vrjg2wD4LKGD6DHEhw6UuvUPiUhysnQYS/Q0pVJZAsJJRah
+         pSjA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7999422DAE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	torvalds@linux-foundation.org,
+	akpm@linux-foundation.org,
+	linux@roeck-us.net,
+	shuah@kernel.org,
+	patches@kernelci.org,
+	ben.hutchings@codethink.co.uk,
+	lkft-triage@lists.linaro.org,
+	stable@vger.kernel.org
+Subject: [PATCH 4.4 00/44] 4.4.131-stable review
+Date: Mon, 30 Apr 2018 12:24:11 -0700
+Message-Id: <20180430190946.093694747@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8879 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=379
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805010031
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+User-Agent: quilt/0.65
+X-stable: review
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.131-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-4.4.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 4.4.131-rc1
+X-KernelTest-Deadline: 2018-05-02T19:09+00:00
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1599200407080581115?=
+X-GMAIL-MSGID: =?utf-8?q?1599200407080581115?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+This is the start of the stable review cycle for the 4.4.131 release.
+There are 44 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-Sudip,
+Responses should be made by Wed May  2 19:09:34 UTC 2018.
+Anything received after that time might be too late.
 
-> v1: Only M500IT MU01 was blacklisted.
->
-> v2: Whitelist M500IT BG02 and M500DC and then blacklist all other Micron. 
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.131-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+and the diffstat can be found below.
 
-I think my preference would be to blacklist M500IT with the MU01
-firmware (which Micron said was affected) and rely on the "Micron*"
-fallthrough further down for the rest.
+thanks,
 
-I have not gotten firm confirmation on ZRAT behavior so for now we
-should probably just do:
+greg k-h
 
-+ { "Micron_M500IT_*", "MU01",	ATA_HORKAGE_NO_NCQ_TRIM, },
+-------------
+Pseudo-Shortlog of commits:
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 4.4.131-rc1
+
+Vasanthakumar Thiagarajan <vthiagar@qti.qualcomm.com>
+    ath10k: fix rfc1042 header retrieval in QCA4019 with eth decap mode
+
+Romain Izard <romain.izard.pro@gmail.com>
+    serial: mctrl_gpio: Add missing module license
+
+Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+    serial: mctrl_gpio: export mctrl_gpio_disable_ms and mctrl_gpio_init
+
+Yazen Ghannam <yazen.ghannam@amd.com>
+    x86/smpboot: Don't use mwait_play_dead() on AMD systems
+
+Arnd Bergmann <arnd@arndb.de>
+    x86/ipc: Fix x32 version of shmid64_ds and msqid64_ds
+
+Ilya Dryomov <idryomov@gmail.com>
+    libceph: validate con->state at the top of try_write()
+
+Nicolin Chen <nicoleotsuka@gmail.com>
+    ASoC: fsl_esai: Fix divisor calculation failure at lower ratio
+
+Geert Uytterhoeven <geert+renesas@glider.be>
+    ARM: amba: Don't read past the end of sysfs "driver_override" buffer
+
+Geert Uytterhoeven <geert+renesas@glider.be>
+    ARM: amba: Fix race condition with driver_override
+
+Geert Uytterhoeven <geert+renesas@glider.be>
+    ARM: amba: Make driver_override output consistent with other buses
+
+Mahesh Rajashekhara <mahesh.rajashekhara@microsemi.com>
+    scsi: sd: Defer spinning up drive while SANITIZE is in progress
+
+Dmitry Vyukov <dvyukov@google.com>
+    kobject: don't use WARN for registration failures
+
+Joakim Tjernlund <joakim.tjernlund@infinera.com>
+    mtd: cfi: cmdset_0002: Do not allow read/write to suspend erase block.
+
+Joakim Tjernlund <joakim.tjernlund@transmode.se>
+    mtd: cfi: cmdset_0001: Workaround Micron Erase suspend bug.
+
+Joakim Tjernlund <joakim.tjernlund@transmode.se>
+    mtd: cfi: cmdset_0001: Do not allow read/write to suspend erase block.
+
+Kailang Yang <kailang@realtek.com>
+    ALSA: hda/realtek - Add some fixes for ALC233
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: hda: Hardening for potential Spectre v1
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: seq: oss: Hardening for potential Spectre v1
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: seq: oss: Fix unbalanced use lock for synth MIDI device
+
+David Henningsson <diwic@ubuntu.com>
+    ALSA: core: Report audio_tstamp in snd_pcm_sync_ptr
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: control: Hardening for potential Spectre v1
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: rme9652: Hardening for potential Spectre v1
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: hdspm: Hardening for potential Spectre v1
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: asihpi: Hardening for potential Spectre v1
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: opl3: Hardening for potential Spectre v1
+
+Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+    tty: Use __GFP_NOFAIL for tty_ldisc_get()
+
+Tony Lindgren <tony@atomide.com>
+    tty: n_gsm: Fix DLCI handling for ADM mode if debug & 2 is not set
+
+Tony Lindgren <tony@atomide.com>
+    tty: n_gsm: Fix long delays with control frame timeouts in ADM mode
+
+Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+    tty: Don't call panic() at tty_ldisc_init()
+
+Gerd Hoffmann <kraxel@redhat.com>
+    drm/virtio: fix vq wait_event condition
+
+Michael S. Tsirkin <mst@redhat.com>
+    virtio_console: free buffers after reset
+
+Michael S. Tsirkin <mst@redhat.com>
+    virtio: add ability to iterate over vqs
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: usb-audio: Skip broken EU on Dell dock USB-audio
+
+Ravi Chandra Sadineni <ravisadineni@chromium.org>
+    USB: Increment wakeup count on remote wakeup.
+
+Kamil Lulko <kamilx.lulko@intel.com>
+    usb: core: Add quirk for HP v222w 16GB Mini
+
+Kyle Roeschley <kyle.roeschley@ni.com>
+    USB: serial: cp210x: add ID for NI USB serial console
+
+Vasyl Vavrychuk <vvavrychuk@gmail.com>
+    USB: serial: ftdi_sio: use jtag quirk for Arrow USB Blaster
+
+Collin May <collin@collinswebsite.com>
+    USB: serial: simple: add libtransistor console
+
+Shuah Khan <shuahkh@osg.samsung.com>
+    usbip: vhci_hcd: Fix usb device and sockfd leaks
+
+Shuah Khan <shuahkh@osg.samsung.com>
+    usbip: usbip_host: fix to hold parent lock for device_attach() calls
+
+Lukas Czerner <lczerner@redhat.com>
+    ext4: fix bitmap position validation
+
+Theodore Ts'o <tytso@mit.edu>
+    ext4: add validity checks for bitmap block numbers
+
+Theodore Ts'o <tytso@mit.edu>
+    ext4: set h_journal if there is a failure starting a reserved handle
+
+Eric Biggers <ebiggers@google.com>
+    ext4: prevent right-shifting extents beyond EXT_MAX_BLOCKS
+
+
+-------------
+
+Diffstat:
+
+ Makefile                               |  4 +-
+ arch/x86/include/uapi/asm/msgbuf.h     | 31 +++++++++++++
+ arch/x86/include/uapi/asm/shmbuf.h     | 42 +++++++++++++++++
+ arch/x86/kernel/smpboot.c              |  2 +
+ drivers/amba/bus.c                     | 17 ++++---
+ drivers/char/virtio_console.c          | 49 ++++++++++----------
+ drivers/gpu/drm/virtio/virtgpu_vq.c    |  4 +-
+ drivers/mtd/chips/cfi_cmdset_0001.c    | 33 +++++++++++--
+ drivers/mtd/chips/cfi_cmdset_0002.c    |  9 ++--
+ drivers/net/wireless/ath/ath10k/core.c |  8 ++++
+ drivers/net/wireless/ath/ath10k/core.h |  4 ++
+ drivers/scsi/sd.c                      |  2 +
+ drivers/tty/n_gsm.c                    | 23 ++++++++-
+ drivers/tty/serial/serial_mctrl_gpio.c |  5 ++
+ drivers/tty/tty_io.c                   |  5 +-
+ drivers/tty/tty_ldisc.c                | 16 +++----
+ drivers/usb/core/hcd.c                 |  1 +
+ drivers/usb/core/hub.c                 | 10 +++-
+ drivers/usb/core/quirks.c              |  3 ++
+ drivers/usb/serial/Kconfig             |  1 +
+ drivers/usb/serial/cp210x.c            |  1 +
+ drivers/usb/serial/ftdi_sio.c          |  3 +-
+ drivers/usb/serial/usb-serial-simple.c |  7 +++
+ drivers/usb/usbip/stub_main.c          |  5 ++
+ drivers/usb/usbip/usbip_common.h       |  2 +-
+ fs/ext4/balloc.c                       | 17 ++++++-
+ fs/ext4/extents.c                      | 16 +++++--
+ fs/ext4/ialloc.c                       |  7 +++
+ fs/jbd2/transaction.c                  |  1 +
+ include/linux/mtd/flashchip.h          |  1 +
+ include/linux/tty.h                    |  2 +-
+ include/linux/virtio.h                 |  3 ++
+ include/sound/control.h                |  7 ++-
+ lib/kobject.c                          | 12 ++---
+ net/ceph/messenger.c                   |  7 +++
+ sound/core/pcm_native.c                |  1 +
+ sound/core/seq/oss/seq_oss_event.c     | 15 +++---
+ sound/core/seq/oss/seq_oss_midi.c      |  2 +
+ sound/core/seq/oss/seq_oss_synth.c     | 85 ++++++++++++++++++++--------------
+ sound/core/seq/oss/seq_oss_synth.h     |  3 +-
+ sound/drivers/opl3/opl3_synth.c        |  7 ++-
+ sound/pci/asihpi/hpimsginit.c          | 13 ++++--
+ sound/pci/asihpi/hpioctl.c             |  4 +-
+ sound/pci/hda/hda_hwdep.c              | 12 ++++-
+ sound/pci/hda/patch_realtek.c          |  2 +
+ sound/pci/rme9652/hdspm.c              | 24 ++++++----
+ sound/pci/rme9652/rme9652.c            |  6 ++-
+ sound/soc/fsl/fsl_esai.c               |  7 +++
+ sound/usb/mixer_maps.c                 |  3 ++
+ 49 files changed, 408 insertions(+), 136 deletions(-)
