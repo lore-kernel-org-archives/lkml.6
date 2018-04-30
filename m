@@ -1,49 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754915AbeD3QVm (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 12:21:42 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:60046 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754868AbeD3QVk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 12:21:40 -0400
-From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-To: linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org
-Cc: jgross@suse.com, Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Subject: [PATCH 0/4] PVH GDT fixes and cleanup
-Date: Mon, 30 Apr 2018 12:23:35 -0400
-Message-Id: <20180430162339.17143-1-boris.ostrovsky@oracle.com>
-X-Mailer: git-send-email 2.14.3
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8879 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=688
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804300156
+        id S1754749AbeD3QYh (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 12:24:37 -0400
+Received: from mga05.intel.com ([192.55.52.43]:2852 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753334AbeD3QYg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 12:24:36 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,346,1520924400";
+   d="scan'208";a="47195996"
+Subject: Re: [alsa-devel] [PATCH v2] ASoC: da7219: read fmw property to get
+ mclk for non-dts systems
+To: Akshu Agrawal <akshu.agrawal@amd.com>
+Cc: "moderated list:SOUND" <alsa-devel@alsa-project.org>,
+        Support Opensource <support.opensource@diasemi.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Takashi Iwai <tiwai@suse.com>, djkurtz@chromium.org,
+        Mark Brown <broonie@kernel.org>, Alexander.Deucher@amd.com,
+        Adam.Thomson.Opensource@diasemi.com
+References: <1525080203-18947-1-git-send-email-akshu.agrawal@amd.com>
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <cb0df61c-596b-b23c-fc34-52ac4b7830e8@linux.intel.com>
+Date: Mon, 30 Apr 2018 11:24:33 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <1525080203-18947-1-git-send-email-akshu.agrawal@amd.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Switching to new binutils release triggered the first bug.
+On 4/30/18 4:23 AM, Akshu Agrawal wrote:
+> Non-dts based systems can use ACPI DSDT to pass on the mclk
+> to da7219.
+> This enables da7219 mclk to be linked to system clock.
+> Enable/Disable of the mclk is already handled in the codec so
+> platform drivers don't have to explicitly do handling of mclk.
+> 
+> Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
+> ---
+> v2: Fixed kbuild error
+>   include/sound/da7219.h    | 2 ++
+>   sound/soc/codecs/da7219.c | 7 ++++++-
+>   2 files changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/sound/da7219.h b/include/sound/da7219.h
+> index 1bfcb16..df7ddf4 100644
+> --- a/include/sound/da7219.h
+> +++ b/include/sound/da7219.h
+> @@ -38,6 +38,8 @@ struct da7219_pdata {
+>   
+>   	const char *dai_clks_name;
+>   
+> +	const char *mclk_name;
+> +
+>   	/* Mic */
+>   	enum da7219_micbias_voltage micbias_lvl;
+>   	enum da7219_mic_amp_in_sel mic_amp_in_sel;
+> diff --git a/sound/soc/codecs/da7219.c b/sound/soc/codecs/da7219.c
+> index 980a6a8..aed68a4 100644
+> --- a/sound/soc/codecs/da7219.c
+> +++ b/sound/soc/codecs/da7219.c
+> @@ -1624,6 +1624,8 @@ static struct da7219_pdata *da7219_fw_to_pdata(struct snd_soc_component *compone
+>   		dev_warn(dev, "Using default clk name: %s\n",
+>   			 pdata->dai_clks_name);
+>   
+> +	device_property_read_string(dev, "dlg,mclk-name", &pdata->mclk_name);
+> +
+>   	if (device_property_read_u32(dev, "dlg,micbias-lvl", &of_val32) >= 0)
+>   		pdata->micbias_lvl = da7219_fw_micbias_lvl(dev, of_val32);
+>   	else
+> @@ -1905,7 +1907,10 @@ static int da7219_probe(struct snd_soc_component *component)
+>   	da7219_handle_pdata(component);
+>   
+>   	/* Check if MCLK provided */
+> -	da7219->mclk = devm_clk_get(component->dev, "mclk");
+> +	if (da7219->pdata->mclk_name)
+> +		da7219->mclk = clk_get(NULL, da7219->pdata->mclk_name);
+> +	if (!da7219->mclk)
+> +		da7219->mclk = devm_clk_get(component->dev, "mclk");
 
-Not sure if stack canary bug is related to the new tools as well
-(haven't checked it with old tools, but they are really old, from
-Fedora 13 days).
+this looks weird, why are you using different clk functions depending on 
+the existence of a _DSD property? Why not just change the name and keep 
+the same flow, e.g something like
 
-64-bit guests run fine even without adding the entry for GS but my
-guess is that's because Xen toolstack sets cached portions of the
-register to sane values and HW makes fewer checks in long mode.
-Since those values are not part of the ABI I figured I should fix
-it for both 32- and 64-bit mode.
+if(!da7219->pdata->mclk_name)
+	da7219->pdata->mclk_name = "mclk";
+da7219->mclk = devm_clk_get(component->dev, da7219->pdata->mclk_name);
 
 
-Boris Ostrovsky (4):
-  xen/PVH: Replace GDT_ENTRY with explicit constant
-  xen/PVH: Use proper CS selector in long mode
-  xen/PVH: Set up GS segment for stack canary
-  xen/PVH: Remove reserved entry in PVH GDT
-
- arch/x86/xen/xen-pvh.S | 28 +++++++++++++++++++---------
- 1 file changed, 19 insertions(+), 9 deletions(-)
-
--- 
-2.9.3
+>   	if (IS_ERR(da7219->mclk)) {
+>   		if (PTR_ERR(da7219->mclk) != -ENOENT) {
+>   			ret = PTR_ERR(da7219->mclk);
+> 
