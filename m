@@ -1,39 +1,39 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrJRJsGVAsXtcI6j52YCajgFGr5kHEB2RvwK8bCn6LNmxjC/x3S6CXgzjnwjydrhYaDL3D+
-ARC-Seal: i=1; a=rsa-sha256; t=1525116490; cv=none;
+X-Google-Smtp-Source: AB8JxZqbXc1bg3/qgmcwB3FH3xu4dwuVKsLorYmfkF0UUbJX5M9obpu9WNIOD+rzFjow/NLSEioa
+ARC-Seal: i=1; a=rsa-sha256; t=1525116497; cv=none;
         d=google.com; s=arc-20160816;
-        b=wUcr+y/71CKXvCj+EyuD4GHjh0UMDyY2DiqRJ13T7UHxHIs0sSSIv7XhRPiroatFWk
-         BUSgFhah/LLQSpl8371GGvAHjA2vW1ciYW/vT2XcYEUMDbKPRPebwuN/V5nBN6+T3iDE
-         fOWbVGc36OsOQDH5u9ySpaVLFs+uEeGdDzR410hJFAh+lAq9/A2OshUKGLWyOA3jDgpq
-         Lp8yvzrEnnIWE4fgSDye35ue3EvtDuMSlfxHFV4I/Fh+Qj16mHqiDDj0nLUUf49njmoU
-         pZ39Ww4YeQlVCEqH2eoh8HHvnR4cORg0mYp5GzP14dg+u7+hZGs3MzygVl6Ju1OJIAlA
-         SATg==
+        b=IY78tWFw7Igz8sCYxlR4QI4+XbyDglXcB9Z+QJgWIt8ZtFvgzo5RsnqsyN/2aGVwe0
+         CboM9JeKbfTEPFIgFzsLjc7cFCDSf6nGfbB/hNjteGjspiDDSWGEro6j/6Z0JdyddTfq
+         h7Pn9VMHF/lurenwxw9ASXMf28Cd9Ppz362SQZadA1HHCwQKUtPIi0ISLdY8m6qk3siT
+         tZM8SFJLmkAyUJPa7zN23uOSF/jzJdCDIFuyA1IxTnZrtJh2eitjrOonPaL4fYU9uXUm
+         dgHflpWBNwwQOVJoF0rdxAJRkr271EVnNJ+uDDYVp958s2u4At/bUnZ3EP5zF6EfqHp5
+         tb2w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=pC7AIVFl1dYCQOFvkOidnzo7QLpcr5CtVjy/WpOfohw=;
-        b=lyFil/hDfXwphsTyQEgyVtyQCmWwyhkchm9J+aUeWkS1UzYB0fbz+/oLsoK1CAU4o1
-         2/eEeVaJdB7yaRX9l+3/rY8iwPm8BpiJA31ihdeviZB55eGOEU0MeX2+zYpeJwiuvPIn
-         ak5KeBzZuguMXTk8c2ZOrp0Hi9di1wCB4oomOJlp1PnxBSCYG/YwSsIBMoiSqmdaO43h
-         20worK1u1J/JSQ2vrI3edme0SLfXR0MKt9siiROjltdkFqiYWPFttW4xlQEsoLYtF6Pn
-         ACQfMSoaPRUQ0lqIyD4cGUGz2eaGx1dsob/WS6RT06EhP8SKIa5oqM1frvxqza1sDtJC
-         aNUw==
+        bh=L7dadNn9ypz3hjvlJimI74BHtZIjJjVojrRjCi1vgo4=;
+        b=YPZ+rFJC/n+Lr5bXqOauAVql/FBp3PVxkFJZqzvV0ItitV4ogsXR8oDXNrhBxX9cwk
+         FQQZMYY4UbQZ4vk4BCGdrjZq2KbSoqvTOAnpYUgVjcpzw57PACCByPRxvorZBCB7GPi0
+         wFBiCMPYHEY58H04YikNNo+SJ+etNHrkh0xYnnv2WOTLs1y8KfuSxAp+f5AFVf4MrLHv
+         5rmiw2sU52BJ3Auig4d0VFdc9aTgiz1I88IfBN05yZVcjbC+F10aC9VrIslPnUBMlaPU
+         G5mw6Bk8SySYyB5oOZqsSXxXYCODKA7EJjRdG66PX4wiUf1bIsKBDDBogyFLBoKHguVt
+         ZgYw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6622A22E02
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30BF522DCB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jann Horn <jannh@google.com>,
-	Theodore Tso <tytso@mit.edu>
-Subject: [PATCH 4.16 006/113] random: set up the NUMA crng instances after the CRNG is fully initialized
-Date: Mon, 30 Apr 2018 12:23:37 -0700
-Message-Id: <20180430184015.339138140@linuxfoundation.org>
+	Dan Carpenter <dan.carpenter@oracle.com>,
+	Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.16 049/113] ALSA: seq: oss: Hardening for potential Spectre v1
+Date: Mon, 30 Apr 2018 12:24:20 -0700
+Message-Id: <20180430184017.130013434@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184015.043892819@linuxfoundation.org>
 References: <20180430184015.043892819@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200549530804380?=
-X-GMAIL-MSGID: =?utf-8?q?1599200549530804380?=
+X-GMAIL-THRID: =?utf-8?q?1599200408982455335?=
+X-GMAIL-MSGID: =?utf-8?q?1599200556700035826?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,97 +52,334 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 8ef35c866f8862df074a49a93b0309725812dea8 upstream.
+commit 8d218dd8116695ecda7164f97631c069938aa22e upstream.
 
-Until the primary_crng is fully initialized, don't initialize the NUMA
-crng nodes.  Otherwise users of /dev/urandom on NUMA systems before
-the CRNG is fully initialized can get very bad quality randomness.  Of
-course everyone should move to getrandom(2) where this won't be an
-issue, but there's a lot of legacy code out there.  This related to
-CVE-2018-1108.
+As Smatch recently suggested, a few places in OSS sequencer codes may
+expand the array directly from the user-space value with speculation,
+namely there are a significant amount of references to either
+info->ch[] or dp->synths[] array:
 
-Reported-by: Jann Horn <jannh@google.com>
-Fixes: 1e7f583af67b ("random: make /dev/urandom scalable for silly...")
-Cc: stable@kernel.org # 4.8+
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+  sound/core/seq/oss/seq_oss_event.c:315 note_on_event() warn: potential spectre issue 'info->ch' (local cap)
+  sound/core/seq/oss/seq_oss_event.c:362 note_off_event() warn: potential spectre issue 'info->ch' (local cap)
+  sound/core/seq/oss/seq_oss_synth.c:470 snd_seq_oss_synth_load_patch() warn: potential spectre issue 'dp->synths' (local cap)
+  sound/core/seq/oss/seq_oss_event.c:293 note_on_event() warn: potential spectre issue 'dp->synths'
+  sound/core/seq/oss/seq_oss_event.c:353 note_off_event() warn: potential spectre issue 'dp->synths'
+  sound/core/seq/oss/seq_oss_synth.c:506 snd_seq_oss_synth_sysex() warn: potential spectre issue 'dp->synths'
+  sound/core/seq/oss/seq_oss_synth.c:580 snd_seq_oss_synth_ioctl() warn: potential spectre issue 'dp->synths'
+
+Although all these seem doing only the first load without further
+reference, we may want to stay in a safer side, so hardening with
+array_index_nospec() would still make sense.
+
+We may put array_index_nospec() at each place, but here we take a
+different approach:
+
+- For dp->synths[], change the helpers to retrieve seq_oss_synthinfo
+  pointer directly instead of the array expansion at each place
+
+- For info->ch[], harden in a normal way, as there are only a couple
+  of places
+
+As a result, the existing helper, snd_seq_oss_synth_is_valid() is
+replaced with snd_seq_oss_synth_info().  Also, we cover MIDI device
+where a similar array expansion is done, too, although it wasn't
+reported by Smatch.
+
+BugLink: https://marc.info/?l=linux-kernel&m=152411496503418&w=2
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/random.c |   46 +++++++++++++++++++++++++++-------------------
- 1 file changed, 27 insertions(+), 19 deletions(-)
+ sound/core/seq/oss/seq_oss_event.c |   15 ++++---
+ sound/core/seq/oss/seq_oss_midi.c  |    2 
+ sound/core/seq/oss/seq_oss_synth.c |   75 ++++++++++++++++++++-----------------
+ sound/core/seq/oss/seq_oss_synth.h |    3 -
+ 4 files changed, 55 insertions(+), 40 deletions(-)
 
---- a/drivers/char/random.c
-+++ b/drivers/char/random.c
-@@ -787,6 +787,32 @@ static void crng_initialize(struct crng_
- 	crng->init_time = jiffies - CRNG_RESEED_INTERVAL - 1;
+--- a/sound/core/seq/oss/seq_oss_event.c
++++ b/sound/core/seq/oss/seq_oss_event.c
+@@ -26,6 +26,7 @@
+ #include <sound/seq_oss_legacy.h>
+ #include "seq_oss_readq.h"
+ #include "seq_oss_writeq.h"
++#include <linux/nospec.h>
+ 
+ 
+ /*
+@@ -287,10 +288,10 @@ note_on_event(struct seq_oss_devinfo *dp
+ {
+ 	struct seq_oss_synthinfo *info;
+ 
+-	if (!snd_seq_oss_synth_is_valid(dp, dev))
++	info = snd_seq_oss_synth_info(dp, dev);
++	if (!info)
+ 		return -ENXIO;
+ 
+-	info = &dp->synths[dev];
+ 	switch (info->arg.event_passing) {
+ 	case SNDRV_SEQ_OSS_PROCESS_EVENTS:
+ 		if (! info->ch || ch < 0 || ch >= info->nr_voices) {
+@@ -298,6 +299,7 @@ note_on_event(struct seq_oss_devinfo *dp
+ 			return set_note_event(dp, dev, SNDRV_SEQ_EVENT_NOTEON, ch, note, vel, ev);
+ 		}
+ 
++		ch = array_index_nospec(ch, info->nr_voices);
+ 		if (note == 255 && info->ch[ch].note >= 0) {
+ 			/* volume control */
+ 			int type;
+@@ -347,10 +349,10 @@ note_off_event(struct seq_oss_devinfo *d
+ {
+ 	struct seq_oss_synthinfo *info;
+ 
+-	if (!snd_seq_oss_synth_is_valid(dp, dev))
++	info = snd_seq_oss_synth_info(dp, dev);
++	if (!info)
+ 		return -ENXIO;
+ 
+-	info = &dp->synths[dev];
+ 	switch (info->arg.event_passing) {
+ 	case SNDRV_SEQ_OSS_PROCESS_EVENTS:
+ 		if (! info->ch || ch < 0 || ch >= info->nr_voices) {
+@@ -358,6 +360,7 @@ note_off_event(struct seq_oss_devinfo *d
+ 			return set_note_event(dp, dev, SNDRV_SEQ_EVENT_NOTEON, ch, note, vel, ev);
+ 		}
+ 
++		ch = array_index_nospec(ch, info->nr_voices);
+ 		if (info->ch[ch].note >= 0) {
+ 			note = info->ch[ch].note;
+ 			info->ch[ch].vel = 0;
+@@ -381,7 +384,7 @@ note_off_event(struct seq_oss_devinfo *d
+ static int
+ set_note_event(struct seq_oss_devinfo *dp, int dev, int type, int ch, int note, int vel, struct snd_seq_event *ev)
+ {
+-	if (! snd_seq_oss_synth_is_valid(dp, dev))
++	if (!snd_seq_oss_synth_info(dp, dev))
+ 		return -ENXIO;
+ 	
+ 	ev->type = type;
+@@ -399,7 +402,7 @@ set_note_event(struct seq_oss_devinfo *d
+ static int
+ set_control_event(struct seq_oss_devinfo *dp, int dev, int type, int ch, int param, int val, struct snd_seq_event *ev)
+ {
+-	if (! snd_seq_oss_synth_is_valid(dp, dev))
++	if (!snd_seq_oss_synth_info(dp, dev))
+ 		return -ENXIO;
+ 	
+ 	ev->type = type;
+--- a/sound/core/seq/oss/seq_oss_midi.c
++++ b/sound/core/seq/oss/seq_oss_midi.c
+@@ -29,6 +29,7 @@
+ #include "../seq_lock.h"
+ #include <linux/init.h>
+ #include <linux/slab.h>
++#include <linux/nospec.h>
+ 
+ 
+ /*
+@@ -315,6 +316,7 @@ get_mididev(struct seq_oss_devinfo *dp,
+ {
+ 	if (dev < 0 || dev >= dp->max_mididev)
+ 		return NULL;
++	dev = array_index_nospec(dev, dp->max_mididev);
+ 	return get_mdev(dev);
  }
  
-+#ifdef CONFIG_NUMA
-+static void numa_crng_init(void)
-+{
-+	int i;
-+	struct crng_state *crng;
-+	struct crng_state **pool;
-+
-+	pool = kcalloc(nr_node_ids, sizeof(*pool), GFP_KERNEL|__GFP_NOFAIL);
-+	for_each_online_node(i) {
-+		crng = kmalloc_node(sizeof(struct crng_state),
-+				    GFP_KERNEL | __GFP_NOFAIL, i);
-+		spin_lock_init(&crng->lock);
-+		crng_initialize(crng);
-+		pool[i] = crng;
-+	}
-+	mb();
-+	if (cmpxchg(&crng_node_pool, NULL, pool)) {
-+		for_each_node(i)
-+			kfree(pool[i]);
-+		kfree(pool);
-+	}
-+}
-+#else
-+static void numa_crng_init(void) {}
-+#endif
-+
+--- a/sound/core/seq/oss/seq_oss_synth.c
++++ b/sound/core/seq/oss/seq_oss_synth.c
+@@ -26,6 +26,7 @@
+ #include <linux/init.h>
+ #include <linux/module.h>
+ #include <linux/slab.h>
++#include <linux/nospec.h>
+ 
  /*
-  * crng_fast_load() can be called by code in the interrupt service
-  * path.  So we can't afford to dilly-dally.
-@@ -893,6 +919,7 @@ static void crng_reseed(struct crng_stat
- 	spin_unlock_irqrestore(&crng->lock, flags);
- 	if (crng == &primary_crng && crng_init < 2) {
- 		invalidate_batched_entropy();
-+		numa_crng_init();
- 		crng_init = 2;
- 		process_random_ready_list();
- 		wake_up_interruptible(&crng_init_wait);
-@@ -1731,29 +1758,10 @@ static void init_std_data(struct entropy
-  */
- static int rand_initialize(void)
+  * constants
+@@ -339,17 +340,13 @@ snd_seq_oss_synth_cleanup(struct seq_oss
+ 	dp->max_synthdev = 0;
+ }
+ 
+-/*
+- * check if the specified device is MIDI mapped device
+- */
+-static int
+-is_midi_dev(struct seq_oss_devinfo *dp, int dev)
++static struct seq_oss_synthinfo *
++get_synthinfo_nospec(struct seq_oss_devinfo *dp, int dev)
  {
--#ifdef CONFIG_NUMA
--	int i;
--	struct crng_state *crng;
--	struct crng_state **pool;
--#endif
--
- 	init_std_data(&input_pool);
- 	init_std_data(&blocking_pool);
- 	crng_initialize(&primary_crng);
- 	crng_global_init_time = jiffies;
--
--#ifdef CONFIG_NUMA
--	pool = kcalloc(nr_node_ids, sizeof(*pool), GFP_KERNEL|__GFP_NOFAIL);
--	for_each_online_node(i) {
--		crng = kmalloc_node(sizeof(struct crng_state),
--				    GFP_KERNEL | __GFP_NOFAIL, i);
--		spin_lock_init(&crng->lock);
--		crng_initialize(crng);
--		pool[i] = crng;
--	}
--	mb();
--	crng_node_pool = pool;
--#endif
+ 	if (dev < 0 || dev >= dp->max_synthdev)
+-		return 0;
+-	if (dp->synths[dev].is_midi)
+-		return 1;
+-	return 0;
++		return NULL;
++	dev = array_index_nospec(dev, SNDRV_SEQ_OSS_MAX_SYNTH_DEVS);
++	return &dp->synths[dev];
+ }
+ 
+ /*
+@@ -359,11 +356,13 @@ static struct seq_oss_synth *
+ get_synthdev(struct seq_oss_devinfo *dp, int dev)
+ {
+ 	struct seq_oss_synth *rec;
+-	if (dev < 0 || dev >= dp->max_synthdev)
++	struct seq_oss_synthinfo *info = get_synthinfo_nospec(dp, dev);
++
++	if (!info)
+ 		return NULL;
+-	if (! dp->synths[dev].opened)
++	if (!info->opened)
+ 		return NULL;
+-	if (dp->synths[dev].is_midi) {
++	if (info->is_midi) {
+ 		rec = &midi_synth_dev;
+ 		snd_use_lock_use(&rec->use_lock);
+ 	} else {
+@@ -406,10 +405,8 @@ snd_seq_oss_synth_reset(struct seq_oss_d
+ 	struct seq_oss_synth *rec;
+ 	struct seq_oss_synthinfo *info;
+ 
+-	if (snd_BUG_ON(dev < 0 || dev >= dp->max_synthdev))
+-		return;
+-	info = &dp->synths[dev];
+-	if (! info->opened)
++	info = get_synthinfo_nospec(dp, dev);
++	if (!info || !info->opened)
+ 		return;
+ 	if (info->sysex)
+ 		info->sysex->len = 0; /* reset sysex */
+@@ -458,12 +455,14 @@ snd_seq_oss_synth_load_patch(struct seq_
+ 			    const char __user *buf, int p, int c)
+ {
+ 	struct seq_oss_synth *rec;
++	struct seq_oss_synthinfo *info;
+ 	int rc;
+ 
+-	if (dev < 0 || dev >= dp->max_synthdev)
++	info = get_synthinfo_nospec(dp, dev);
++	if (!info)
+ 		return -ENXIO;
+ 
+-	if (is_midi_dev(dp, dev))
++	if (info->is_midi)
+ 		return 0;
+ 	if ((rec = get_synthdev(dp, dev)) == NULL)
+ 		return -ENXIO;
+@@ -471,24 +470,25 @@ snd_seq_oss_synth_load_patch(struct seq_
+ 	if (rec->oper.load_patch == NULL)
+ 		rc = -ENXIO;
+ 	else
+-		rc = rec->oper.load_patch(&dp->synths[dev].arg, fmt, buf, p, c);
++		rc = rec->oper.load_patch(&info->arg, fmt, buf, p, c);
+ 	snd_use_lock_free(&rec->use_lock);
+ 	return rc;
+ }
+ 
+ /*
+- * check if the device is valid synth device
++ * check if the device is valid synth device and return the synth info
+  */
+-int
+-snd_seq_oss_synth_is_valid(struct seq_oss_devinfo *dp, int dev)
++struct seq_oss_synthinfo *
++snd_seq_oss_synth_info(struct seq_oss_devinfo *dp, int dev)
+ {
+ 	struct seq_oss_synth *rec;
++
+ 	rec = get_synthdev(dp, dev);
+ 	if (rec) {
+ 		snd_use_lock_free(&rec->use_lock);
+-		return 1;
++		return get_synthinfo_nospec(dp, dev);
+ 	}
+-	return 0;
++	return NULL;
+ }
+ 
+ 
+@@ -503,16 +503,18 @@ snd_seq_oss_synth_sysex(struct seq_oss_d
+ 	int i, send;
+ 	unsigned char *dest;
+ 	struct seq_oss_synth_sysex *sysex;
++	struct seq_oss_synthinfo *info;
+ 
+-	if (! snd_seq_oss_synth_is_valid(dp, dev))
++	info = snd_seq_oss_synth_info(dp, dev);
++	if (!info)
+ 		return -ENXIO;
+ 
+-	sysex = dp->synths[dev].sysex;
++	sysex = info->sysex;
+ 	if (sysex == NULL) {
+ 		sysex = kzalloc(sizeof(*sysex), GFP_KERNEL);
+ 		if (sysex == NULL)
+ 			return -ENOMEM;
+-		dp->synths[dev].sysex = sysex;
++		info->sysex = sysex;
+ 	}
+ 
+ 	send = 0;
+@@ -557,10 +559,12 @@ snd_seq_oss_synth_sysex(struct seq_oss_d
+ int
+ snd_seq_oss_synth_addr(struct seq_oss_devinfo *dp, int dev, struct snd_seq_event *ev)
+ {
+-	if (! snd_seq_oss_synth_is_valid(dp, dev))
++	struct seq_oss_synthinfo *info = snd_seq_oss_synth_info(dp, dev);
++
++	if (!info)
+ 		return -EINVAL;
+-	snd_seq_oss_fill_addr(dp, ev, dp->synths[dev].arg.addr.client,
+-			      dp->synths[dev].arg.addr.port);
++	snd_seq_oss_fill_addr(dp, ev, info->arg.addr.client,
++			      info->arg.addr.port);
  	return 0;
  }
- early_initcall(rand_initialize);
+ 
+@@ -572,16 +576,18 @@ int
+ snd_seq_oss_synth_ioctl(struct seq_oss_devinfo *dp, int dev, unsigned int cmd, unsigned long addr)
+ {
+ 	struct seq_oss_synth *rec;
++	struct seq_oss_synthinfo *info;
+ 	int rc;
+ 
+-	if (is_midi_dev(dp, dev))
++	info = get_synthinfo_nospec(dp, dev);
++	if (!info || info->is_midi)
+ 		return -ENXIO;
+ 	if ((rec = get_synthdev(dp, dev)) == NULL)
+ 		return -ENXIO;
+ 	if (rec->oper.ioctl == NULL)
+ 		rc = -ENXIO;
+ 	else
+-		rc = rec->oper.ioctl(&dp->synths[dev].arg, cmd, addr);
++		rc = rec->oper.ioctl(&info->arg, cmd, addr);
+ 	snd_use_lock_free(&rec->use_lock);
+ 	return rc;
+ }
+@@ -593,7 +599,10 @@ snd_seq_oss_synth_ioctl(struct seq_oss_d
+ int
+ snd_seq_oss_synth_raw_event(struct seq_oss_devinfo *dp, int dev, unsigned char *data, struct snd_seq_event *ev)
+ {
+-	if (! snd_seq_oss_synth_is_valid(dp, dev) || is_midi_dev(dp, dev))
++	struct seq_oss_synthinfo *info;
++
++	info = snd_seq_oss_synth_info(dp, dev);
++	if (!info || info->is_midi)
+ 		return -ENXIO;
+ 	ev->type = SNDRV_SEQ_EVENT_OSS;
+ 	memcpy(ev->data.raw8.d, data, 8);
+--- a/sound/core/seq/oss/seq_oss_synth.h
++++ b/sound/core/seq/oss/seq_oss_synth.h
+@@ -37,7 +37,8 @@ void snd_seq_oss_synth_cleanup(struct se
+ void snd_seq_oss_synth_reset(struct seq_oss_devinfo *dp, int dev);
+ int snd_seq_oss_synth_load_patch(struct seq_oss_devinfo *dp, int dev, int fmt,
+ 				 const char __user *buf, int p, int c);
+-int snd_seq_oss_synth_is_valid(struct seq_oss_devinfo *dp, int dev);
++struct seq_oss_synthinfo *snd_seq_oss_synth_info(struct seq_oss_devinfo *dp,
++						 int dev);
+ int snd_seq_oss_synth_sysex(struct seq_oss_devinfo *dp, int dev, unsigned char *buf,
+ 			    struct snd_seq_event *ev);
+ int snd_seq_oss_synth_addr(struct seq_oss_devinfo *dp, int dev, struct snd_seq_event *ev);
