@@ -1,68 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754837AbeD3SjB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 14:39:01 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:41717 "EHLO mx1.redhat.com"
+        id S1754848AbeD3SkL (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 14:40:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47710 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754672AbeD3Si6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 14:38:58 -0400
-Date: Mon, 30 Apr 2018 12:38:57 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: "dongbo (E)" <dongbo4@huawei.com>
-Cc: <corbet@lwn.net>, <kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] VFIO: Fix Documentation
-Message-ID: <20180430123857.006a0697@w520.home>
-In-Reply-To: <36f5940b-cac5-9a4a-86cb-7ad9766d5d62@huawei.com>
-References: <1524218521-61496-1-git-send-email-zhangshaokun@hisilicon.com>
-        <36f5940b-cac5-9a4a-86cb-7ad9766d5d62@huawei.com>
+        id S1753608AbeD3SkJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 14:40:09 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE55B21746
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Date: Mon, 30 Apr 2018 13:40:07 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 3/6] PCI: Introduce devm_of_pci_get_host_bridge_resources
+Message-ID: <20180430184007.GC95643@bhelgaas-glaptop.roam.corp.google.com>
+References: <cover.1524582822.git.jan.kiszka@siemens.com>
+ <e387d04ea235c9a4879a897bb730adc383a96635.1524582822.git.jan.kiszka@siemens.com>
+ <20180427222427.GB73638@bhelgaas-glaptop.roam.corp.google.com>
+ <869a8ad9-dd2f-8462-c0c4-2d8a62d74185@siemens.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <869a8ad9-dd2f-8462-c0c4-2d8a62d74185@siemens.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Apr 2018 18:07:27 +0800
-"dongbo (E)" <dongbo4@huawei.com> wrote:
+On Sat, Apr 28, 2018 at 09:28:47AM +0200, Jan Kiszka wrote:
+> On 2018-04-28 00:24, Bjorn Helgaas wrote:
+> > On Tue, Apr 24, 2018 at 05:13:39PM +0200, Jan Kiszka wrote:
+> >> From: Jan Kiszka <jan.kiszka@siemens.com>
+> >>
+> >> of_pci_get_host_bridge_resources allocates the resource structures it
+> >> fills dynamically, but none of its callers care to release them so far.
+> >> Rather than requiring everyone to do this explicitly, introduce a
+> >> managed version of that service. This differs API-wise only in taking a
+> >> reference to the associated device, rather than to the device tree node.
+> >>
+> >> As of_pci_get_host_bridge_resources is an exported interface, we cannot
+> >> simply drop it at this point. After converting all in-tree users to the
+> >> new API, we could phase out the unmanaged one over some grace period.
+> > 
+> > It looks like it might be possible to split this into three or four
+> > patches:
+> > 
+> >   1) Factor __of_pci_get_host_bridge_resources() out of
+> >      of_pci_get_host_bridge_resources()
+> > 
+> >   2) Add struct device * argument
+> > 
+> >   3) Convert pr_info() to dev_info()
+> > 
+> >   4) Add devm_of_pci_get_host_bridge_resources()
+> 
+> Will do. I'm even considering
+> 
+> 5) mark of_pci_get_host_bridge_resources() __deprecated, due to the leak
+>    and no remaining in-tree user - what do you think?
 
-> From: Dong Bo <dongbo4@huawei.com>
-> 
-> Signed-off-by: Dong Bo <dongbo4@huawei.com>
-> ---
+Sounds good.
 
-Hi Dong Bo,
+It'd be nice if we had some guideline about deprecation -- whether we
+actually need to mark things __deprecated, and then how long to wait
+before actually removing them, but I don't see anything in
+Documentation/.
 
-The patch is corrupted, please resend and also include a commit log,
-something as simple as "Update vfio_add_group_dev description to match
-the current API" would be fine.  Thanks,
-
-Alex
-
->  Documentation/vfio.txt | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/vfio.txt b/Documentation/vfio.txt
-> index ef6a511..f1a4d3c 100644
-> --- a/Documentation/vfio.txt
-> +++ b/Documentation/vfio.txt
-> @@ -252,15 +252,14 @@ into VFIO core.  When devices are bound and unbound to the driver,
->  the driver should call vfio_add_group_dev() and vfio_del_group_dev()
->  respectively::
->  -	extern int vfio_add_group_dev(struct iommu_group *iommu_group,
-> -	                              struct device *dev,
-> +	extern int vfio_add_group_dev(struct device *dev,
->  				      const struct vfio_device_ops *ops,
->  				      void *device_data);
->   	extern void *vfio_del_group_dev(struct device *dev);
->   vfio_add_group_dev() indicates to the core to begin tracking the
-> -specified iommu_group and register the specified dev as owned by
-> +iommu_group of the specified dev and register the dev as owned by
->  a VFIO bus driver.  The driver provides an ops structure for callbacks
->  similar to a file operations structure::
->  -- 1.9.1
-> 
-> 
-> .
-> 
-> 
+Looks like it was added by cbe4097f8ae6 ("of/pci: Add support for
+parsing PCI host bridge resources from DT") in v3.18, so it's been
+around for a while and I guess it would be nice to have a grace period
+before removing it.
