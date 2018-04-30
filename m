@@ -1,39 +1,41 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqcwNhtZZ1aXjiqmGPK31eyZCBtx21NR488jv9/iPBiPOG6GxUngqnRuD1ZyIbPVyov/lOP
-ARC-Seal: i=1; a=rsa-sha256; t=1525116349; cv=none;
+X-Google-Smtp-Source: AB8JxZpz8LzB6lskBYimMp1dL/6mg+OZm+Y1uC6iYuVbi7KxKHa6sdBk9NlOIQduc8hN/f9Cz+FE
+ARC-Seal: i=1; a=rsa-sha256; t=1525116348; cv=none;
         d=google.com; s=arc-20160816;
-        b=r88krGURzc3/bLu3fS4uXDwTK6dYuhBvi+CgqJ0h7GFN17vRCiTLvsP55/sv/3Akej
-         YIyLcTp0o3YncN0/LGC5xowajHuLWuUKCqBpFMaJ/PA2vkb9U71Hk5oljKx+Paz3YToL
-         vtXkNpV+0htZN738Z1G57IENN4ZFA+78xmPSrpGeheVB34Ka/32CN3QMXpR0KKBdJIan
-         sW3cPN9NBSr7eiwvdJXGY3291IQs98usNIkPaLynuQaQtDkCS6DT/D8QSI7CHLrYK9rh
-         pREMrJKgh8FFYicPbyGfNC/cJdjN/K3xyg1LDUPy1Uzbf6hI+QMScUwUMe48sA7BIiNG
-         EVlQ==
+        b=p5S1XaIQASxPchD2H7RQcsWhroT1js5JZHFubRPf7cS6CqFx6U+tcxgipF+O7+Cq4F
+         uMCFzayFi/+7TbVWe55s1Wi5K2savR42/oWtasYXLiykB6sOrelJ/Vh9dX2DcQeyk+zi
+         PcgKXvQ+pVt0y/aW4AP5/EX+OEh8+QM7bkrKL/TDrkcI4nyKlcYTR1gJLpTAuK8ZgiNY
+         M3q8hQ8oLll8jqvmlR8Y6yJLp4rBwr1w0fhBNNVVjbNLoRPyCWJlyuWNsrygM3B9w3dL
+         QjMTINPqain7dI5DX3GLbrBvOAChaNSCkEniczZYQut+F7nZtgvIl2CdZ/2hMnq3H61m
+         LaeA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=w/tf157b0gTpuqhfAolz4S0P5YusbdCyg+S4CUc5uVM=;
-        b=DXpJaY40bNiv1feyQsMKQ1D0s+vDYlsIGsAqv9yGUEw4ksXDk5hfCooNf+bJ4Z+pc6
-         a6MiL0s1m6HzbF8mAYYp3RL17E867OkNKiFsw0lMC0sEN/u/xNR+12Bx6udQ3JBlHT4j
-         mJOTEzehUZH23tszZIjOzKI28DgWSnsZma51xpcmVxy5ZFIjGoK8IZ9hfi18C5E9EcPM
-         UfivIZiFfaMErb5HVtIaFGmpwjcKEANqvSqrowvzDIdxb/UvnR2mypjO/ApxKsuAXnq8
-         e7b7bVPAZ09hJCuRCq2XhvvzUkWtYsyxNjp1yB4mQQcPIAM7yv9ZFptTcZo73an8SLRu
-         Xf0w==
+        bh=T6v8JTDYJkQy3JXyya+0jMtt+w9ATCvH+vJ+JiL9PFw=;
+        b=fYuFFRwi7eyGWPtjHL4dzunAFcrNv+E2wKbOdFr3aMBNYq034nAUJRB1FkS2NDLGro
+         ZFj+1xS40OvYLg2IHMyCGSJJ0y258Ex86+ertiWxUHRX8jOIwbmyRPwTHbCy9QKoFh1N
+         HyXH5AIT4egsHt5BuQJW3xsRFiO+k1znYDPD9JEiJhvIlPMcN/rmYC680GwiEYsxZAxR
+         ENWWbsJEaX4jgkqa1NGW9qx8FR5v1g6IP8/UYwYG0iuU935V9i+kCKzu6dZc4KAXSJC2
+         BOmtLatCnZs80dh5ic6xxxZNarfgZQK6vKxe+2lMGNvnEIg7d2gq5tV6mgSqWwezzZGr
+         mJ2g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1737F21746
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5B1C22DBE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Wen Xu <wen.xu@gatech.edu>,
-	Theodore Tso <tytso@mit.edu>
-Subject: [PATCH 4.4 03/44] ext4: add validity checks for bitmap block numbers
-Date: Mon, 30 Apr 2018 12:24:14 -0700
-Message-Id: <20180430190946.461739615@linuxfoundation.org>
+	Alain Magloire <amagloire@blackberry.com>,
+	Gerd Hoffmann <kraxel@redhat.com>,
+	Dave Airlie <airlied@redhat.com>,
+	Sean Paul <seanpaul@chromium.org>
+Subject: [PATCH 4.4 15/44] drm/virtio: fix vq wait_event condition
+Date: Mon, 30 Apr 2018 12:24:26 -0700
+Message-Id: <20180430190946.952441015@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430190946.093694747@linuxfoundation.org>
 References: <20180430190946.093694747@linuxfoundation.org>
@@ -43,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200284172323398?=
-X-GMAIL-MSGID: =?utf-8?q?1599200401398978303?=
+X-GMAIL-THRID: =?utf-8?q?1599200400304649329?=
+X-GMAIL-MSGID: =?utf-8?q?1599200400304649329?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,99 +54,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Gerd Hoffmann <kraxel@redhat.com>
 
-commit 7dac4a1726a9c64a517d595c40e95e2d0d135f6f upstream.
+commit d02d270014f70dcab0117776b81a37b6fca745ae upstream.
 
-An privileged attacker can cause a crash by mounting a crafted ext4
-image which triggers a out-of-bounds read in the function
-ext4_valid_block_bitmap() in fs/ext4/balloc.c.
+Wait until we have enough space in the virt queue to actually queue up
+our request.  Avoids the guest spinning in case we have a non-zero
+amount of free entries but not enough for the request.
 
-This issue has been assigned CVE-2018-1093.
-
-BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=199181
-BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1560782
-Reported-by: Wen Xu <wen.xu@gatech.edu>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Cc: stable@vger.kernel.org
+Reported-by: Alain Magloire <amagloire@blackberry.com>
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+Reviewed-by: Dave Airlie <airlied@redhat.com>
+Link: http://patchwork.freedesktop.org/patch/msgid/20180403095904.11152-1-kraxel@redhat.com
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/balloc.c |   16 ++++++++++++++--
- fs/ext4/ialloc.c |    7 +++++++
- 2 files changed, 21 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/virtio/virtgpu_vq.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/fs/ext4/balloc.c
-+++ b/fs/ext4/balloc.c
-@@ -337,20 +337,25 @@ static ext4_fsblk_t ext4_valid_block_bit
- 	/* check whether block bitmap block number is set */
- 	blk = ext4_block_bitmap(sb, desc);
- 	offset = blk - group_first_block;
--	if (!ext4_test_bit(EXT4_B2C(sbi, offset), bh->b_data))
-+	if (offset < 0 || EXT4_B2C(sbi, offset) >= sb->s_blocksize ||
-+	    !ext4_test_bit(EXT4_B2C(sbi, offset), bh->b_data))
- 		/* bad block bitmap */
- 		return blk;
- 
- 	/* check whether the inode bitmap block number is set */
- 	blk = ext4_inode_bitmap(sb, desc);
- 	offset = blk - group_first_block;
--	if (!ext4_test_bit(EXT4_B2C(sbi, offset), bh->b_data))
-+	if (offset < 0 || EXT4_B2C(sbi, offset) >= sb->s_blocksize ||
-+	    !ext4_test_bit(EXT4_B2C(sbi, offset), bh->b_data))
- 		/* bad block bitmap */
- 		return blk;
- 
- 	/* check whether the inode table block number is set */
- 	blk = ext4_inode_table(sb, desc);
- 	offset = blk - group_first_block;
-+	if (offset < 0 || EXT4_B2C(sbi, offset) >= sb->s_blocksize ||
-+	    EXT4_B2C(sbi, offset + sbi->s_itb_per_group) >= sb->s_blocksize)
-+		return blk;
- 	next_zero_bit = ext4_find_next_zero_bit(bh->b_data,
- 			EXT4_B2C(sbi, offset + EXT4_SB(sb)->s_itb_per_group),
- 			EXT4_B2C(sbi, offset));
-@@ -416,6 +421,7 @@ struct buffer_head *
- ext4_read_block_bitmap_nowait(struct super_block *sb, ext4_group_t block_group)
- {
- 	struct ext4_group_desc *desc;
-+	struct ext4_sb_info *sbi = EXT4_SB(sb);
- 	struct buffer_head *bh;
- 	ext4_fsblk_t bitmap_blk;
- 	int err;
-@@ -424,6 +430,12 @@ ext4_read_block_bitmap_nowait(struct sup
- 	if (!desc)
- 		return ERR_PTR(-EFSCORRUPTED);
- 	bitmap_blk = ext4_block_bitmap(sb, desc);
-+	if ((bitmap_blk <= le32_to_cpu(sbi->s_es->s_first_data_block)) ||
-+	    (bitmap_blk >= ext4_blocks_count(sbi->s_es))) {
-+		ext4_error(sb, "Invalid block bitmap block %llu in "
-+			   "block_group %u", bitmap_blk, block_group);
-+		return ERR_PTR(-EFSCORRUPTED);
-+	}
- 	bh = sb_getblk(sb, bitmap_blk);
- 	if (unlikely(!bh)) {
- 		ext4_error(sb, "Cannot get buffer for block bitmap - "
---- a/fs/ext4/ialloc.c
-+++ b/fs/ext4/ialloc.c
-@@ -119,6 +119,7 @@ static struct buffer_head *
- ext4_read_inode_bitmap(struct super_block *sb, ext4_group_t block_group)
- {
- 	struct ext4_group_desc *desc;
-+	struct ext4_sb_info *sbi = EXT4_SB(sb);
- 	struct buffer_head *bh = NULL;
- 	ext4_fsblk_t bitmap_blk;
- 	int err;
-@@ -128,6 +129,12 @@ ext4_read_inode_bitmap(struct super_bloc
- 		return ERR_PTR(-EFSCORRUPTED);
- 
- 	bitmap_blk = ext4_inode_bitmap(sb, desc);
-+	if ((bitmap_blk <= le32_to_cpu(sbi->s_es->s_first_data_block)) ||
-+	    (bitmap_blk >= ext4_blocks_count(sbi->s_es))) {
-+		ext4_error(sb, "Invalid inode bitmap blk %llu in "
-+			   "block_group %u", bitmap_blk, block_group);
-+		return ERR_PTR(-EFSCORRUPTED);
-+	}
- 	bh = sb_getblk(sb, bitmap_blk);
- 	if (unlikely(!bh)) {
- 		ext4_error(sb, "Cannot read inode bitmap - "
+--- a/drivers/gpu/drm/virtio/virtgpu_vq.c
++++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
+@@ -324,7 +324,7 @@ retry:
+ 	ret = virtqueue_add_sgs(vq, sgs, outcnt, incnt, vbuf, GFP_ATOMIC);
+ 	if (ret == -ENOSPC) {
+ 		spin_unlock(&vgdev->ctrlq.qlock);
+-		wait_event(vgdev->ctrlq.ack_queue, vq->num_free);
++		wait_event(vgdev->ctrlq.ack_queue, vq->num_free >= outcnt + incnt);
+ 		spin_lock(&vgdev->ctrlq.qlock);
+ 		goto retry;
+ 	} else {
+@@ -399,7 +399,7 @@ retry:
+ 	ret = virtqueue_add_sgs(vq, sgs, outcnt, 0, vbuf, GFP_ATOMIC);
+ 	if (ret == -ENOSPC) {
+ 		spin_unlock(&vgdev->cursorq.qlock);
+-		wait_event(vgdev->cursorq.ack_queue, vq->num_free);
++		wait_event(vgdev->cursorq.ack_queue, vq->num_free >= outcnt);
+ 		spin_lock(&vgdev->cursorq.qlock);
+ 		goto retry;
+ 	} else {
