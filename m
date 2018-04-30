@@ -1,38 +1,40 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrYw2k5QXBDkWuEBL99KGu9C/0ikyua3tynpNpQ2OIuLYVsAp5W8T/hUJBVdyqQRsQ/xDHn
-ARC-Seal: i=1; a=rsa-sha256; t=1525116432; cv=none;
+X-Google-Smtp-Source: AB8JxZrDRl5+TnwbZOFLMSRxJaCKIfO41RceBrFQjweZFKca5NCPw6kKHWo5pN7hmMMU6eXvSLqH
+ARC-Seal: i=1; a=rsa-sha256; t=1525116426; cv=none;
         d=google.com; s=arc-20160816;
-        b=lDu/Rtdh7Pcsby06WEEWlj5NNFY+QZ/aSJrRkT0csWQqvT3Lac8HAP+NOSe+9V5aip
-         rvcPjzlapYzctSfDJqSj7ShwSNdTok1XR1iWg7kqE4dUwuz1wJ+lx/sVN1tvjxYfVYJi
-         oPV/XeWQlSnd+qxqyQwmpAZmZ/1I0UIKWz/X0npmNJhGWVycLKgiB4f9TOfqdqJK4oV+
-         eLz9H4mqUpAkpGum0abIDySF3Jin8e3Z6VShGgMEkeTVldJvyO5NbKja/2X1vl2njhJz
-         ZFX+cZ82z5M8jgL6X2fugw5QfQTDi04qEZaxQu7GeQvJrfG7SquAauFX/eU75OcEVhmw
-         uHNw==
+        b=t5flCnnlXonT5N/miuHYkZOMvVUcJuV1Ysiz3y0WzmfzHMbYqSj/bZzmJzGAFozGMr
+         0pveWitPQli80J+cWCR42WJdasS+Fh0jlXAnEtL/OZ+7MIB3YLDyJWWnG3IHhQ7dSG78
+         Y9L5T6GF903nHqqSsP/vNOrcSzvDqsX7ETx6+G+rwnQ6pH+Q2ZbtTfvFE1g3at4sx8Q5
+         3s+GJzSE8XNaPCDN54I9TaRlKKf8sFaFLGJxpLRziEtETVWfuVQ59PnJfPQ6/o75kl+U
+         b5OqCv0Hg91qsTcx7xFoH+PXHv/h5907dsW+beDXaTiWeA+ZEB7C6jODm6/wvUqQBKHE
+         ndWg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=VUh43D/PdK0m6evhnHjUkt8HK0Q0AuvHMOvHyM5HT/k=;
-        b=rMmKr0m4sMTBAN3FzMPDBQTzrbk43WQo3mq7OntuvGzp0VXA03cNIlGyRQdD+c3Yv3
-         SJsFllDpc7nToscDUzjMLNR9nSlj08Fh85VGTllbJLSog94p8txrISqz8yR7oWYnMeID
-         koA1kmPIJoiNvOOQ4XP4KhX0tsHLRkunEA3XFLHGULKSVnn5N9EoSi2uC6VBiNs/zDKn
-         IWLDI8VowVDL/wQfiEJY+Wy25DAQvN8TjNw4LAudn3WeWFOaTtAYACsuO6aQryNDx1xO
-         ENtP5t44lZ7V0dUq/yWVlxyVQAzet8e/DUPfTdXYXDHOfNL74LgE10zAd+pMSah0cGL5
-         3qNQ==
+        bh=TiY4Wuww0uzUsZP8bc8c2XwVKakHacJn06hYsNRDDsE=;
+        b=gV4OEX8rXpzZzigMqKLze6WIyGFV5bg2PXPWN3yGcrf3s5W5ysIJD8+y9GithQfE8X
+         /qH8ck9X0HiyMePuZ4Te98cXusxpvn09OsZcu1yRTzDeif6WvlyNRo1tVVP36iRE8DvF
+         iiLd0JzznkreXHkuaKP8Q6ZRU+YZOtXaXMx2eyFkwCEsngMdPRJGrV2szbpBOIFvmGMR
+         uWVYVwYp+Jup9dBeqlf3R01OncCE9yCv/dpRk4qWWJwv47Hv8DwCPgS/+jFNevxEUcHy
+         iVzK1lBGFnVeNQDlfgP5vOR7KrsM5iGIPgnjAPt6nqX1NzFZCIv8Yp5AlgyIwpc6x3jW
+         3ZBg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A79322DCC
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 728E222DCC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 36/91] ALSA: hda - Skip jack and others for non-existing PCM streams
-Date: Mon, 30 Apr 2018 12:24:18 -0700
-Message-Id: <20180430184006.052682115@linuxfoundation.org>
+	Lukas Czerner <lczerner@redhat.com>,
+	Theodore Tso <tytso@mit.edu>,
+	Ilya Dryomov <idryomov@gmail.com>
+Subject: [PATCH 4.14 05/91] ext4: fix bitmap position validation
+Date: Mon, 30 Apr 2018 12:23:47 -0700
+Message-Id: <20180430184004.492294634@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184004.216234025@linuxfoundation.org>
 References: <20180430184004.216234025@linuxfoundation.org>
@@ -42,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200574792885884?=
-X-GMAIL-MSGID: =?utf-8?q?1599200487676228654?=
+X-GMAIL-THRID: =?utf-8?q?1599200288532951391?=
+X-GMAIL-MSGID: =?utf-8?q?1599200482678742198?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,60 +53,78 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Lukas Czerner <lczerner@redhat.com>
 
-commit 8a7d6003df41cb16f6b3b620da044fbd92d2f5ee upstream.
+commit 22be37acce25d66ecf6403fc8f44df9c5ded2372 upstream.
 
-When CONFIG_SND_DYNAMIC_MINORS isn't set, there are only limited
-number of devices available, and HD-audio, especially with HDMI/DP
-codec, will fail to create more than two devices.
+Currently in ext4_valid_block_bitmap() we expect the bitmap to be
+positioned anywhere between 0 and s_blocksize clusters, but that's
+wrong because the bitmap can be placed anywhere in the block group. This
+causes false positives when validating bitmaps on perfectly valid file
+system layouts. Fix it by checking whether the bitmap is within the group
+boundary.
 
-The driver warns about the lack of such devices and skips the PCM
-device creations, but the HDMI driver still tries to create the
-corresponding JACK, SPDIF and ELD controls even for the non-existing
-PCM substreams.  This results in confusion on user-space, and even may
-break the operation.
+The problem can be reproduced using the following
 
-Similarly, Intel HDMI/DP codec builds the ELD notification from i915
-graphics driver, and this may be broken if a notification is sent for
-the non-existing PCM stream.
+mkfs -t ext3 -E stride=256 /dev/vdb1
+mount /dev/vdb1 /mnt/test
+cd /mnt/test
+wget https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-4.16.3.tar.xz
+tar xf linux-4.16.3.tar.xz
 
-This patch adds the check of the existence of the assigned PCM
-substream in the both scenarios above, and skips the further operation
-if the PCM substream is not assigned.
+This will result in the warnings in the logs
 
-Fixes: 9152085defb6 ("ALSA: hda - add DP MST audio support")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+EXT4-fs error (device vdb1): ext4_validate_block_bitmap:399: comm tar: bg 84: block 2774529: invalid block bitmap
+
+[ Changed slightly for clarity and to not drop a overflow test -- TYT ]
+
+Signed-off-by: Lukas Czerner <lczerner@redhat.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Reported-by: Ilya Dryomov <idryomov@gmail.com>
+Fixes: 7dac4a1726a9 ("ext4: add validity checks for bitmap block numbers")
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_hdmi.c |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ fs/ext4/balloc.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
---- a/sound/pci/hda/patch_hdmi.c
-+++ b/sound/pci/hda/patch_hdmi.c
-@@ -1383,6 +1383,8 @@ static void hdmi_pcm_setup_pin(struct hd
- 		pcm = get_pcm_rec(spec, per_pin->pcm_idx);
- 	else
- 		return;
-+	if (!pcm->pcm)
-+		return;
- 	if (!test_bit(per_pin->pcm_idx, &spec->pcm_in_use))
- 		return;
+--- a/fs/ext4/balloc.c
++++ b/fs/ext4/balloc.c
+@@ -321,6 +321,7 @@ static ext4_fsblk_t ext4_valid_block_bit
+ 	struct ext4_sb_info *sbi = EXT4_SB(sb);
+ 	ext4_grpblk_t offset;
+ 	ext4_grpblk_t next_zero_bit;
++	ext4_grpblk_t max_bit = EXT4_CLUSTERS_PER_GROUP(sb);
+ 	ext4_fsblk_t blk;
+ 	ext4_fsblk_t group_first_block;
  
-@@ -2151,8 +2153,13 @@ static int generic_hdmi_build_controls(s
- 	int dev, err;
- 	int pin_idx, pcm_idx;
- 
--
- 	for (pcm_idx = 0; pcm_idx < spec->pcm_used; pcm_idx++) {
-+		if (!get_pcm_rec(spec, pcm_idx)->pcm) {
-+			/* no PCM: mark this for skipping permanently */
-+			set_bit(pcm_idx, &spec->pcm_bitmap);
-+			continue;
-+		}
-+
- 		err = generic_hdmi_build_jack(codec, pcm_idx);
- 		if (err < 0)
- 			return err;
+@@ -338,7 +339,7 @@ static ext4_fsblk_t ext4_valid_block_bit
+ 	/* check whether block bitmap block number is set */
+ 	blk = ext4_block_bitmap(sb, desc);
+ 	offset = blk - group_first_block;
+-	if (offset < 0 || EXT4_B2C(sbi, offset) >= sb->s_blocksize ||
++	if (offset < 0 || EXT4_B2C(sbi, offset) >= max_bit ||
+ 	    !ext4_test_bit(EXT4_B2C(sbi, offset), bh->b_data))
+ 		/* bad block bitmap */
+ 		return blk;
+@@ -346,7 +347,7 @@ static ext4_fsblk_t ext4_valid_block_bit
+ 	/* check whether the inode bitmap block number is set */
+ 	blk = ext4_inode_bitmap(sb, desc);
+ 	offset = blk - group_first_block;
+-	if (offset < 0 || EXT4_B2C(sbi, offset) >= sb->s_blocksize ||
++	if (offset < 0 || EXT4_B2C(sbi, offset) >= max_bit ||
+ 	    !ext4_test_bit(EXT4_B2C(sbi, offset), bh->b_data))
+ 		/* bad block bitmap */
+ 		return blk;
+@@ -354,8 +355,8 @@ static ext4_fsblk_t ext4_valid_block_bit
+ 	/* check whether the inode table block number is set */
+ 	blk = ext4_inode_table(sb, desc);
+ 	offset = blk - group_first_block;
+-	if (offset < 0 || EXT4_B2C(sbi, offset) >= sb->s_blocksize ||
+-	    EXT4_B2C(sbi, offset + sbi->s_itb_per_group) >= sb->s_blocksize)
++	if (offset < 0 || EXT4_B2C(sbi, offset) >= max_bit ||
++	    EXT4_B2C(sbi, offset + sbi->s_itb_per_group) >= max_bit)
+ 		return blk;
+ 	next_zero_bit = ext4_find_next_zero_bit(bh->b_data,
+ 			EXT4_B2C(sbi, offset + EXT4_SB(sb)->s_itb_per_group),
