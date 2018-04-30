@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1936261-1525120428-2-8446975552792168525
+X-Cyrus-Session-Id: sloti22d1t05-1936261-1525120423-2-16641978153297731787
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES enca, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525120427; b=BF9ndZPO+VBWdqEc/9T+sB0O6mOvGljw7Dz/Bk22S3QWBoiYBC
-    wPJb+guF+i0ED2TVaM8GMspSxFq+qtUg42kL0GHOxNeLIzw1AU9ncLmwRQ63fhpo
-    3ndk6/qoN1W8f8xWvD1FXWMeeAUMqv67Oo6qvTYKsS/nWxgHKYkvjN/tsMWF7uQ6
-    R7ucfg/jq9oaCp/TjVZNQQr/wAWnLnr4C0IZPMB32TdS044Cw2voAIg72Uq1FE+L
-    gj0cIkq3FvzrpWv0w6J+QdroTKFIde2il+jqH7DLB0dI/H9gnXuN5Id9YlAWp0Zz
-    t9KvtKoYoohHJWe1+XiXHEg33gvhyow/JSsw==
+    1525120423; b=BcPLCCBChAtFX0orvtOwm/cSQCp7zsLY/iPZQ7MOEIk2OGqOLm
+    jk89207oTgZNsqdWYkxMEmzjX24CSsxYGfFXFhUB+P09FZURxkHhsPHmq4bwAKVa
+    dONfWzvFEJGh5l7gmWvFa+CtGaAHPKbm3u0AMx6izEBINN/oAkL6KGpJmbP0tchE
+    WOks4AItkxTLNCC6/2S+EA0b7axO49hPpz73KbzRMMu6kyhN32QVOxM084Ey2id4
+    XJo+lAS8bjiJJs7Ik79P5CHwT6/3Kc+7lYunvPOL8A0Iv7Uv09V6U602ZJcnBEvK
+    ZBKac15NXyGEBUEIR0bSCDHZvb8F2iKMmALg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1525120427; bh=8QiN2xWEEIWWVgB7jMxzuVzl4qIql0
-    k53d2EmIjZ0jk=; b=ZWKGJeOlwtybpC3BRo4Dqpyj3ttpHSpYoGrCJogSluQ+QW
-    xahTup1pBtQwsaqDv0id5WSFfFikja/GpLRBC8KsyRc/vAPLjIvTs9qtMWza4Sr4
-    Huy5WHYO3Wtsq+1qiV9T2MyrJpyoAsIH2Lhrm/RIb363T1G7a4n9i5KVeiBSbIEv
-    +7QKMFlz3rFiH9wToYRFnu4vzxqw71gYxxzC34l6AsVhfBQoFM5FlDDX+0GcEliJ
-    bpK6LLLdhLr8S7/CYyBMw8g7ycNiSGH9Zp2rDTAuSJMOJ2xUuIX+vnbSvt6BSYsN
-    gdpZlZvwmMshXA6A1WqtTu+H/PM+DdRQGTNsJx7Q==
+    :list-id; s=fm2; t=1525120423; bh=83NSl0JFzZdCbw/whskBZIGi3t4s9V
+    fIwR7NKJkdyH4=; b=bihslXXoeZRV0Pw7YceA697QhAvethLf0XlQZVkWOOs1Vf
+    Ld1jyrNN5bfyWpK7CDrqkQxeoGJsozl/tELFS23h/qYBMLu7NOk9ATAf3a/h9a8S
+    qL0G95R3EeYb0pxafNxFhCD2J4EvfYsOMwAVB3rgt3pQL2Z1e1VHFTycjGQCGTWZ
+    QgwvPE2Ry9PEmwf5pMnd9cjukHS4oyeRGwLOiZtKBoXdVjKKZiKZlJ4n0yd5BGG7
+    zBh0K+7lrwuvduJpwmI4Cy9yaQuSabI2Untj+f0aIr1nBXFL6x8i6yggtwu/D5/9
+    u51lmh39N6dSEyxoghb6Fbv2ZqZhlviLC6ipVuwA==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,22 +51,22 @@ Authentication-Results: mx5.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfKKCYFHanV/pKrVYMVd3H/OcMutgqr69EpnfvKDwJqPDBFXFdKUswB0c67HsGChACH0Gp5U3mgjR5raBYVHbaR92ADkQwmKEJxQA/hlpUjLywfW0T18p
-    kw/rcAr4DGwK0LRDr3Kr/M/cturXknUay/dBSZg0ty4KhlcUWY5HdEvdTdoF8gReIMw9h1yhuxnky6xJqL3GEVpPXKXg7b1uEuy8YphQ8SUII1koZvhq3Sxi
+X-CM-Envelope: MS4wfC3Y85kv7ZTymXLQ6agPWuZtwaqs+uH2BcERE1Hzs8nYWm62CA/6iuq9GQXgn3bumN5KS/j4N+GfaYwgsxX2NAKQ85b6Mmhbz7Bbg0oBQIJLdSCk/+Jf
+    C1E89Nd04HRpXEBR1Q7D4ZvFwGqbh56aKVRDI9qOvkMnE9/9Pb8za+QNm0lXBOf9dNhDPbD+GQ4caxVJ3UCqTtGxshc2Fz71JYjXUtVtjrgtMD90q9YZ9gwZ
 X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=1XWaLZrsAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=b3VhaXx0qUTUEPc-dk4A:9
+    a=1XWaLZrsAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=5EMsjEJVl8QOgak0-BcA:9
     a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755681AbeD3Uc7 (ORCPT <rfc822;greg@kroah.com>);
+        id S1755492AbeD3Uc7 (ORCPT <rfc822;greg@kroah.com>);
         Mon, 30 Apr 2018 16:32:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59252 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:59250 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755491AbeD3T0D (ORCPT <rfc822;stable@vger.kernel.org>);
+        id S1755463AbeD3T0D (ORCPT <rfc822;stable@vger.kernel.org>);
         Mon, 30 Apr 2018 15:26:03 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03C2D22DCC
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FF7F22DC2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
@@ -75,9 +75,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Todd Kjos <tkjos@google.com>
-Subject: [PATCH 4.4 37/44] ARM: amba: Dont read past the end of sysfs "driver_override" buffer
-Date: Mon, 30 Apr 2018 12:24:48 -0700
-Message-Id: <20180430190947.814524053@linuxfoundation.org>
+Subject: [PATCH 4.4 36/44] ARM: amba: Fix race condition with driver_override
+Date: Mon, 30 Apr 2018 12:24:47 -0700
+Message-Id: <20180430190947.776165866@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430190946.093694747@linuxfoundation.org>
 References: <20180430190946.093694747@linuxfoundation.org>
@@ -97,35 +97,65 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-commit d2ffed5185df9d8d9ccd150e4340e3b6f96a8381 upstream.
+commit 6a7228d90d42bcacfe38786756ba62762b91c20a upstream.
 
-When printing the driver_override parameter when it is 4095 and 4094
-bytes long, the printing code would access invalid memory because we
-need count + 1 bytes for printing.
+The driver_override implementation is susceptible to a race condition
+when different threads are reading vs storing a different driver
+override.  Add locking to avoid this race condition.
 
-Cfr. commits 4efe874aace57dba ("PCI: Don't read past the end of sysfs
-"driver_override" buffer") and bf563b01c2895a4b ("driver core: platform:
-Don't read past the end of "driver_override" buffer").
+Cfr. commits 6265539776a0810b ("driver core: platform: fix race
+condition with driver_override") and 9561475db680f714 ("PCI: Fix race
+condition with driver_override").
 
 Fixes: 3cf385713460eb2b ("ARM: 8256/1: driver coamba: add device binding path 'driver_override'")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Todd Kjos <tkjos@google.com>
 Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/amba/bus.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/amba/bus.c |   11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
 --- a/drivers/amba/bus.c
 +++ b/drivers/amba/bus.c
-@@ -83,7 +83,8 @@ static ssize_t driver_override_store(str
+@@ -68,8 +68,12 @@ static ssize_t driver_override_show(stru
+ 				    struct device_attribute *attr, char *buf)
+ {
  	struct amba_device *dev = to_amba_device(_dev);
- 	char *driver_override, *old, *cp;
++	ssize_t len;
  
--	if (count > PATH_MAX)
-+	/* We need to keep extra room for a newline */
-+	if (count >= (PAGE_SIZE - 1))
+-	return sprintf(buf, "%s\n", dev->driver_override);
++	device_lock(_dev);
++	len = sprintf(buf, "%s\n", dev->driver_override);
++	device_unlock(_dev);
++	return len;
+ }
+ 
+ static ssize_t driver_override_store(struct device *_dev,
+@@ -77,7 +81,7 @@ static ssize_t driver_override_store(str
+ 				     const char *buf, size_t count)
+ {
+ 	struct amba_device *dev = to_amba_device(_dev);
+-	char *driver_override, *old = dev->driver_override, *cp;
++	char *driver_override, *old, *cp;
+ 
+ 	if (count > PATH_MAX)
  		return -EINVAL;
+@@ -90,12 +94,15 @@ static ssize_t driver_override_store(str
+ 	if (cp)
+ 		*cp = '\0';
  
- 	driver_override = kstrndup(buf, count, GFP_KERNEL);
++	device_lock(_dev);
++	old = dev->driver_override;
+ 	if (strlen(driver_override)) {
+ 		dev->driver_override = driver_override;
+ 	} else {
+ 	       kfree(driver_override);
+ 	       dev->driver_override = NULL;
+ 	}
++	device_unlock(_dev);
+ 
+ 	kfree(old);
+ 
