@@ -1,42 +1,39 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqP8a++mgzEY/RGNjhx9ecsvSsZw51JF57WlCbbaJ/T0nJtGQ8Xr2HoGXY6Y1j8ZKH/clgV
-ARC-Seal: i=1; a=rsa-sha256; t=1525116528; cv=none;
+X-Google-Smtp-Source: AB8JxZrObS57vKIQP7lFzN+BhDp/PGfsrNyzuQCH8DR1lLvvfVG3E5CQjJ4o9Q9r3mbhIvkvVV01
+ARC-Seal: i=1; a=rsa-sha256; t=1525116520; cv=none;
         d=google.com; s=arc-20160816;
-        b=gzRzdostpawCxGkLY690ENNbbSYPhVIhn42cfGhEydd6zWfSIijWknr8dw5hI7w5L/
-         j5rKY/lY2v/5rT1bSa/ZtUM6MTo8p37j3Cuo64wGzdZU5gpUhEs/NA67mhasdF42+C7C
-         vAbgf6LDcxD44tT9CJm+BAw8D66Mr9Sh5GpiKWGtmT6CE7Zvb9LkyrUZzn/LTnTJJFB3
-         Q00uBikYP8tITA3jbYF7v5uE79VJz2U1yVezfQ3d71NiqOTG6YYFcBtCZl4PePg5gmJs
-         +bEf8Yj9pRBChcVFvCcBK4KF8+f3DRdzfNVBBpfUsJoxsVMbgxXNRmQ4CJRvqXvs8xlV
-         O6dg==
+        b=lj8xzhTnA0ro9BcNnrfHNUtWathQvmLGPRXzrg4DkPv7PuzrmpcRFQKSNOMHqTNuXh
+         DErfowCgS4koiBXMuZxqwe/vKwDS9+cGYTApmOUiwRV4wwpVqDEtCevMMQzKL987z//M
+         5BFxvJUa9GIGwevyImquRWre3QTHQDQBGRkSEqoAMeaSgvCFDwgYaYBsTsJVPOiTYo2L
+         Tl1TMR0P+38PjUhwAOQjKG0J5IZJoEltoQ/t71asKgF7Xy/92les9EUbX7+CO9TFedIU
+         2xf6XcitJzUD1QMB0evULu26vno5dVZnloDWUAQ5gNQw6MaVnIElD3Q0wB6dgDNball+
+         zsdQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=kHA3CSaVBlhgx2jEtBQu43gvXLQL88i/IUUn7GEoPg0=;
-        b=XjKSkAgAH/rhHz1AgXJxBmD3ECFpUjbFIrVB6w437PsMzRQJMTasuYAjIwhFHkW4K6
-         nVO3jVo7aRHVsQPD4x8Fo0rzaEtyM/Q2hFuEbMhuW7GsIMEZE3PNKpXIjj/JflkB0Z46
-         TUk9ZMAFWpkA25n+hy6w6fpB7ICv9UxfrkSnYIdgjIwwbXrqxeynMRgqGA1cnjJL61Vg
-         YWpa67O9UzfV5TuUHn87rIxRGGvPdxBhR/3hbCHvOvMahoxvX3I/IQXNsRoNfm/sVJVx
-         scBEfCEztkbzTND3lZnHAIGGIZlghP+wAOjiA+qTvlb/RKVE9MmjrgCLxTHMypPQu4ii
-         a9ww==
+        bh=fV289p77wYI00Q6xdprzD/1rv6aWJa50OgfTirzDpYM=;
+        b=At7bBPOcr+0KVihCIjgM1i+ZZO3ZkP0RqaJucjfMzvRdc+NKO5NCuTNhACIxjn6wSn
+         yvKPX/Jfi7yOXfGrW594UXNmSSxoqF+DeRZ08bCpArZuNMqhdhoXG0Odci4gnI+eRqCj
+         F+0aAAVPmrL378ZVU4FfNM8dFjRiFyklTwphE64MVOsdguKM5uiK1j8HmaX+RzwT6yyo
+         hiKqEbtaBSk4Yiiqh1qjiSeTdNG3JP5dn/gKnRLgLbuyYv263pswKveFSwT0410lPUh9
+         yF1TRI7RxGeBrC7PP43LFt9QElzwyckXrW8sU5MJZSD22zVnj/v87IhQTitBViZKmTsS
+         pM3Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2657B22DC1
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E03B122DBF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Antony Chen <antonychen@qnap.com>,
-	Shashank Sharma <shashank.sharma@intel.com>,
-	=?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>,
-	Daniel Vetter <daniel.vetter@ffwll.ch>,
-	Sean Paul <seanpaul@chromium.org>
-Subject: [PATCH 4.16 098/113] drm/edid: Reset more of the display info
-Date: Mon, 30 Apr 2018 12:25:09 -0700
-Message-Id: <20180430184019.356054933@linuxfoundation.org>
+	Ilya Dryomov <idryomov@gmail.com>,
+	Jason Dillaman <dillaman@redhat.com>
+Subject: [PATCH 4.16 086/113] libceph: un-backoff on tick when we have a authenticated session
+Date: Mon, 30 Apr 2018 12:24:57 -0700
+Message-Id: <20180430184018.836367403@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184015.043892819@linuxfoundation.org>
 References: <20180430184015.043892819@linuxfoundation.org>
@@ -46,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200589049664988?=
-X-GMAIL-MSGID: =?utf-8?q?1599200589049664988?=
+X-GMAIL-THRID: =?utf-8?q?1599200455140576288?=
+X-GMAIL-MSGID: =?utf-8?q?1599200580895958900?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,63 +52,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ville Syrjälä <ville.syrjala@linux.intel.com>
+From: Ilya Dryomov <idryomov@gmail.com>
 
-commit 1f6b8eef11c3d097bc8a6b2bbb868eb47ec6f7d8 upstream.
+commit facb9f6eba3df4e8027301cc0e514dc582a1b366 upstream.
 
-We're currently failing to reset everything in display_info.hdmi
-which will potentially cause us to use stale information when
-swapping monitors. Eg. if the user replaces a HDMI 2.0 monitor
-with a HDMI 1.x monitor we will continue to think that the monitor
-supports scrambling. That will lead to a black screen since the
-HDMI 1.x monitor won't understand the scrambled signal.
+This means that if we do some backoff, then authenticate, and are
+healthy for an extended period of time, a subsequent failure won't
+leave us starting our hunting sequence with a large backoff.
 
-Fix the problem by clearing display_info.hdmi fully. And while at
-eliminate some duplicated code by calling drm_reset_display_info()
-in drm_add_display_info().
+Mirrors ceph.git commit d466bc6e66abba9b464b0b69687cf45c9dccf383.
 
-Cc: stable@vger.kernel.org
-Cc: Antony Chen <antonychen@qnap.com>
-Cc: Shashank Sharma <shashank.sharma@intel.com>
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=105655
-Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180424130250.7028-1-ville.syrjala@linux.intel.com
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Tested-by: Antony Chen <antonychen@qnap.com>
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Cc: stable@vger.kernel.org # 4.7+
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+Reviewed-by: Jason Dillaman <dillaman@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/drm_edid.c |   11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+ net/ceph/mon_client.c |   13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
---- a/drivers/gpu/drm/drm_edid.c
-+++ b/drivers/gpu/drm/drm_edid.c
-@@ -4450,6 +4450,7 @@ drm_reset_display_info(struct drm_connec
- 	info->max_tmds_clock = 0;
- 	info->dvi_dual = false;
- 	info->has_hdmi_infoframe = false;
-+	memset(&info->hdmi, 0, sizeof(info->hdmi));
- 
- 	info->non_desktop = 0;
+--- a/net/ceph/mon_client.c
++++ b/net/ceph/mon_client.c
+@@ -209,6 +209,14 @@ static void reopen_session(struct ceph_m
+ 	__open_session(monc);
  }
-@@ -4461,17 +4462,11 @@ u32 drm_add_display_info(struct drm_conn
  
- 	u32 quirks = edid_get_quirks(edid);
- 
-+	drm_reset_display_info(connector);
++static void un_backoff(struct ceph_mon_client *monc)
++{
++	monc->hunt_mult /= 2; /* reduce by 50% */
++	if (monc->hunt_mult < 1)
++		monc->hunt_mult = 1;
++	dout("%s hunt_mult now %d\n", __func__, monc->hunt_mult);
++}
 +
- 	info->width_mm = edid->width_cm * 10;
- 	info->height_mm = edid->height_cm * 10;
+ /*
+  * Reschedule delayed work timer.
+  */
+@@ -963,6 +971,7 @@ static void delayed_work(struct work_str
+ 		if (!monc->hunting) {
+ 			ceph_con_keepalive(&monc->con);
+ 			__validate_auth(monc);
++			un_backoff(monc);
+ 		}
  
--	/* driver figures it out in this case */
--	info->bpc = 0;
--	info->color_formats = 0;
--	info->cea_rev = 0;
--	info->max_tmds_clock = 0;
--	info->dvi_dual = false;
--	info->has_hdmi_infoframe = false;
--
- 	info->non_desktop = !!(quirks & EDID_QUIRK_NON_DESKTOP);
+ 		if (is_auth &&
+@@ -1123,9 +1132,7 @@ static void finish_hunting(struct ceph_m
+ 		dout("%s found mon%d\n", __func__, monc->cur_mon);
+ 		monc->hunting = false;
+ 		monc->had_a_connection = true;
+-		monc->hunt_mult /= 2; /* reduce by 50% */
+-		if (monc->hunt_mult < 1)
+-			monc->hunt_mult = 1;
++		un_backoff(monc);
+ 	}
+ }
  
- 	DRM_DEBUG_KMS("non_desktop set to %d\n", info->non_desktop);
