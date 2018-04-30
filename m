@@ -1,41 +1,39 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrxWlAQR+LdjlQm4QNdJhNrOfRDrzGxaJCYqrz51iSJY4wZfhiehk77RkddIojxl6+2IKhg
-ARC-Seal: i=1; a=rsa-sha256; t=1525116407; cv=none;
+X-Google-Smtp-Source: AB8JxZodk4wexTbirYhozt4Khx13nyTsrbIkZVpAPKbdMllcuS25dtfOlZdtL+5YDGg3q9Cxpugl
+ARC-Seal: i=1; a=rsa-sha256; t=1525116388; cv=none;
         d=google.com; s=arc-20160816;
-        b=HZnWkciXyq5DdUfYALBeCyu1RQWpNwjXrPMyz/Vxw/41maCS4bZGV6efdLrQYjo6xz
-         tZRLCBj7fKH50XtYr6Q26yKt4ATxJbY1r0mCx0Ns3hjIuEKeJ7KHi9lYi4xJQyvz/1Vu
-         h1YKTiKPU7nnFst6fnW5WCz8Y8WTYfJndDZVb1DOKuRXKeiL4jjBE662XT/vhTkUjhho
-         fvuMHA3fB89AtYqHzHkzqW9Sq3Xxr9o+ry7aaV1X575FlemmBbOioD41LZqvPjiAX6C+
-         RvD2U2CD2ZrDz69Lcyexpm6TyRNTU5Nujuliv/MTLg1q00GoHGPvnPMKqnRVKs/mFqUI
-         FOLw==
+        b=rD8venKnQwbi/k0blEWa60mmxQ5dZPkXi3jxlgUebN5+tQX6sC+iWzpkS1bSu1YPhe
+         u4VRCpVpT4PCXsZSeiOFX+2nkM1heaaoidxHmHUEHdOjrwpJqbkNX6hPyc6AiwidsHjU
+         vlyLxGiW6RUfLVUf2WHVE/+2Z8yFQ6okdHgCd1u3f583FDcDxtBbvYgoDbIG3ioanRgR
+         ZJrzAV9qw/rkHxyziWBu8u9U5uLFxsKo/WQ+bCuAyCN2CeP20UuN6mcTzPmFnTanGuI6
+         naD6mcrGTdQ57h7YI6EUgsRfdVYNS04cxMlxn2Wo8V1S07GwR8jx4XAOujPzjk3hx0+U
+         KWOg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=H/EgJzDNcUZ4cPK6rZIEwQOeDwn/Roqh2oEw5A1wWVs=;
-        b=FLcu4hK+FW8x37GeVcr+JVtidYQKph6k5/54gAgb0+331+FhiAOFYY+2qrrveQSl54
-         3XfSn4N73KTwj01H5DAXgYtTHmUIMPl7W2nNiu35jhhDCOGeP3QN0HX6mit+IHKACYKH
-         GkLtiT/uOXTommewrBLrLU6tci7oPyLp/GTw/m284AdOp2gGOJOkSGl1dDH+sddpCzjG
-         +DjWJzuewbifYYdYakrZmdKHfwlrpJRF5Rc1sKB1GTcl/bh5QyCLYdnCxecR/LhesKVf
-         ecxJOD1PUxUFwT7XSQRx3sVWeSutTE9FvfAAEvlQoh4EWjJiPxnfnKAuwfZSYuifd32u
-         hAqA==
+        bh=ng9vU5M3GzLhHtECK5iYMD62EqV3dMSxwo0CoqOoU4g=;
+        b=KRNLr9dQRReb6trNPs0jM58i1RTlejQJMGpENP+tPw1YAn021bMB9ZARc1RZ3JYQOX
+         jibHxtVZrykpr2iYyslhBOEHH8VbbjJE7JlE41DzND+kl+Lc6CIY4S5HF17PP7ujLVe+
+         ciMEWJHZOwYRJmWS0aAMmBpkeC7D2dYR7dpxUVgsvT3ufs4sImX6ond37rB60Dub9tma
+         ow3Dv7bYPTm5u74A9AXl3cJI7e9gUcSB1xef2+IH5oqTWblsRBZsdgNTx+VuyysrXa8z
+         tD8j+iXdXRXODVFFLvj+TjdA2ehCAW8a4UbRPRg2iBdM/U1YzIuML5xyDaoBir308MEr
+         Ba+Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D78A22DCB
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74C6922E03
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Yazen Ghannam <yazen.ghannam@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@suse.de>,
-	Yazen Ghannam <Yazen.Ghannam@amd.com>
-Subject: [PATCH 4.9 59/61] x86/smpboot: Dont use mwait_play_dead() on AMD systems
-Date: Mon, 30 Apr 2018 12:25:02 -0700
-Message-Id: <20180430183956.262525567@linuxfoundation.org>
+	Dan Carpenter <dan.carpenter@oracle.com>,
+	Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.9 29/61] ALSA: rme9652: Hardening for potential Spectre v1
+Date: Mon, 30 Apr 2018 12:24:32 -0700
+Message-Id: <20180430183953.884169906@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430183951.312721450@linuxfoundation.org>
 References: <20180430183951.312721450@linuxfoundation.org>
@@ -45,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200418723747238?=
-X-GMAIL-MSGID: =?utf-8?q?1599200462866947465?=
+X-GMAIL-THRID: =?utf-8?q?1599200426117920838?=
+X-GMAIL-MSGID: =?utf-8?q?1599200442848275736?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,42 +52,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Yazen Ghannam <yazen.ghannam@amd.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit da6fa7ef67f07108a1b0cb9fd9e7fcaabd39c051 upstream.
+commit f526afcd8f71945c23ce581d7864ace93de8a4f7 upstream.
 
-Recent AMD systems support using MWAIT for C1 state. However, MWAIT will
-not allow deeper cstates than C1 on current systems.
+As recently Smatch suggested, one place in RME9652 driver may expand
+the array directly from the user-space value with speculation:
+  sound/pci/rme9652/rme9652.c:2074 snd_rme9652_channel_info() warn: potential spectre issue 'rme9652->channel_map' (local cap)
 
-play_dead() expects to use the deepest state available.  The deepest state
-available on AMD systems is reached through SystemIO or HALT. If MWAIT is
-available, it is preferred over the other methods, so the CPU never reaches
-the deepest possible state.
+This patch puts array_index_nospec() for hardening against it.
 
-Don't try to use MWAIT to play_dead() on AMD systems. Instead, use CPUIDLE
-to enter the deepest state advertised by firmware. If CPUIDLE is not
-available then fallback to HALT.
-
-Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Borislav Petkov <bp@suse.de>
-Cc: stable@vger.kernel.org
-Cc: Yazen Ghannam <Yazen.Ghannam@amd.com>
-Link: https://lkml.kernel.org/r/20180403140228.58540-1-Yazen.Ghannam@amd.com
+BugLink: https://marc.info/?l=linux-kernel&m=152411496503418&w=2
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/smpboot.c |    2 ++
- 1 file changed, 2 insertions(+)
+ sound/pci/rme9652/rme9652.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -1591,6 +1591,8 @@ static inline void mwait_play_dead(void)
- 	void *mwait_ptr;
- 	int i;
+--- a/sound/pci/rme9652/rme9652.c
++++ b/sound/pci/rme9652/rme9652.c
+@@ -26,6 +26,7 @@
+ #include <linux/pci.h>
+ #include <linux/module.h>
+ #include <linux/io.h>
++#include <linux/nospec.h>
  
-+	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD)
-+		return;
- 	if (!this_cpu_has(X86_FEATURE_MWAIT))
- 		return;
- 	if (!this_cpu_has(X86_FEATURE_CLFLUSH))
+ #include <sound/core.h>
+ #include <sound/control.h>
+@@ -2036,9 +2037,10 @@ static int snd_rme9652_channel_info(stru
+ 	if (snd_BUG_ON(info->channel >= RME9652_NCHANNELS))
+ 		return -EINVAL;
+ 
+-	if ((chn = rme9652->channel_map[info->channel]) < 0) {
++	chn = rme9652->channel_map[array_index_nospec(info->channel,
++						      RME9652_NCHANNELS)];
++	if (chn < 0)
+ 		return -EINVAL;
+-	}
+ 
+ 	info->offset = chn * RME9652_CHANNEL_BUFFER_BYTES;
+ 	info->first = 0;
