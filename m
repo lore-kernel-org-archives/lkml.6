@@ -1,71 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754820AbeD3QAK (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 12:00:10 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53522 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754474AbeD3QAJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 12:00:09 -0400
-Date: Mon, 30 Apr 2018 18:00:06 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Andrey Grodzovsky <Andrey.Grodzovsky@amd.com>
-Cc: christian.koenig@amd.com, "Eric W. Biederman" <ebiederm@xmission.com>,
-        David.Panariti@amd.com, amd-gfx@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, Alexander.Deucher@amd.com,
-        akpm@linux-foundation.org
-Subject: Re: [PATCH 2/3] drm/scheduler: Don't call wait_event_killable for
- signaled process.
-Message-ID: <20180430160006.GB10583@redhat.com>
-References: <87muxsbmkp.fsf@xmission.com>
- <8840ac96-50c4-f94d-eb7c-f007940163f3@amd.com>
- <877eowa5qh.fsf@xmission.com>
- <20180425135552.GD7592@redhat.com>
- <f45c7017-c75a-7f0c-b6d5-4d79600cdd33@amd.com>
- <20180425171757.GA10441@redhat.com>
- <c39cb438-1e8a-4f2c-50f6-c6e2a144487b@amd.com>
- <874ljyu98e.fsf@xmission.com>
- <c3c9787d-b279-8169-43d1-74eeb666ffbd@gmail.com>
- <bceb1a1b-c453-782d-5a7d-40fa2f22c813@amd.com>
+        id S1754753AbeD3QCF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 12:02:05 -0400
+Received: from bh-25.webhostbox.net ([208.91.199.152]:45520 "EHLO
+        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753334AbeD3QCD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 12:02:03 -0400
+Date: Mon, 30 Apr 2018 09:01:59 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
+Cc: Borislav Petkov <bp@suse.de>, Thomas Gleixner <tglx@linutronix.de>,
+        Clemens Ladisch <clemens@ladisch.de>,
+        "x86@kernel.org" <x86@kernel.org>, Jean Delvare <jdelvare@suse.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
+        "Woods, Brian" <Brian.Woods@amd.com>
+Subject: Re: [PATCH 1/2] x86/amd_nb: Add support for Raven Ridge CPUs
+Message-ID: <20180430160159.GB19372@roeck-us.net>
+References: <1524966879-9424-1-git-send-email-linux@roeck-us.net>
+ <20180429175305.GB19814@pd.tnic>
+ <a4b1d937-c5b8-67d0-b5f0-312145fefc09@roeck-us.net>
+ <MWHPR12MB1566866B2ACF36EAD7E4856AF8820@MWHPR12MB1566.namprd12.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <bceb1a1b-c453-782d-5a7d-40fa2f22c813@amd.com>
+In-Reply-To: <MWHPR12MB1566866B2ACF36EAD7E4856AF8820@MWHPR12MB1566.namprd12.prod.outlook.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Authenticated_sender: guenter@roeck-us.net
+X-OutGoing-Spam-Status: No, score=-1.0
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - roeck-us.net
+X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
+X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/30, Andrey Grodzovsky wrote:
->
-> What about changing PF_SIGNALED to  PF_EXITING in
-> drm_sched_entity_do_release
->
-> -       if ((current->flags & PF_SIGNALED) && current->exit_code == SIGKILL)
-> +      if ((current->flags & PF_EXITING) && current->exit_code == SIGKILL)
+On Mon, Apr 30, 2018 at 03:38:59PM +0000, Ghannam, Yazen wrote:
+> > -----Original Message-----
+> > From: Guenter Roeck <groeck7@gmail.com> On Behalf Of Guenter Roeck
+> > Sent: Sunday, April 29, 2018 2:24 PM
+> > To: Borislav Petkov <bp@suse.de>; Ghannam, Yazen
+> > <Yazen.Ghannam@amd.com>
+> > Cc: Thomas Gleixner <tglx@linutronix.de>; Clemens Ladisch
+> > <clemens@ladisch.de>; x86@kernel.org; Jean Delvare <jdelvare@suse.com>;
+> > linux-kernel@vger.kernel.org; linux-hwmon@vger.kernel.org; Woods, Brian
+> > <Brian.Woods@amd.com>
+> > Subject: Re: [PATCH 1/2] x86/amd_nb: Add support for Raven Ridge CPUs
+> > 
+> > On 04/29/2018 10:53 AM, Borislav Petkov wrote:
+> > > On Sat, Apr 28, 2018 at 06:54:38PM -0700, Guenter Roeck wrote:
+> > >> Add Raven Ridge root bridge and data fabric PCI IDs.
+> > >> This is required for amd_pci_dev_to_node_id() and amd_smn_read().
+> > >>
+> > >> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> > >> ---
+> > >> This patch is a prerequisite for the second patch in the series.
+> > >> I'll be happy to apply both patches through hwmon if that is acceptable
+> > >> (and Cc: stable for 4.16+). If not, I'll be happy to wait for this patch
+> > >> to be available upstream.
+> > >>
+> > >> Since that there is no public documentation available for Raven Ridge,
+> > >> PCI IDs are derived from output of lspci.
+> > >>
+> > >>   arch/x86/kernel/amd_nb.c | 6 ++++++
+> > >>   1 file changed, 6 insertions(+)
+> > >>
+> > >> diff --git a/arch/x86/kernel/amd_nb.c b/arch/x86/kernel/amd_nb.c
+> > >> index c88e0b127810..bd33613ecb7c 100644
+> > >> --- a/arch/x86/kernel/amd_nb.c
+> > >> +++ b/arch/x86/kernel/amd_nb.c
+> > >> @@ -14,8 +14,11 @@
+> > >>   #include <asm/amd_nb.h>
+> > >>
+> > >>   #define PCI_DEVICE_ID_AMD_17H_ROOT	0x1450
+> > >> +#define PCI_DEVICE_ID_AMD_17H_RR_ROOT	0x15d0
+> > >
+> > > I think the nomenclature we decided upon at the time was
+> > >
+> > > ...AMD_<family>H_M<model>H...
+> > >
+> > > PCI_DEVICE_ID_AMD_15H_M10H_F3, for example.
+> > >
+> > > And in this case, it should be
+> > >
+> > > PCI_DEVICE_ID_AMD_17H_M<which model is RV>H_F<PCI function
+> > number>
+> > >
+> > 
+> > Makes sense.
+> > 
+> > > Yazen, which is the first model of Raven Ridge?
+> > >
+> > 
+> > 2400G is model 17 (0x11). I was unable to find information if there are
+> > other chips/models using the same set of PCI IDs.
+> > 
+> > I'll wait for additional feedback before resending.
+> 
+> There are other models using the same set of IDs, but the first is 10h.
+> 
+Ok, I'll make it PCI_DEVICE_ID_AMD_17H_M10H_ROOT and
+PCI_DEVICE_ID_AMD_17H_M10H_DF_F{3,4}.
 
-let me repeat, please don't use task->exit_code. And in fact this check is racy.
+> Also, the F3 IDs for Fam17h and Fam17hMod10h are used in both amd_nb.c
+> and k10temp.c. Can you please delete the F3 IDs from these files and add
+> them to "include/linux/pci_ids.h"?
+> 
+I'll be happy to do that. However, my preference would be to do that
+in a separate patch. I would like to see this patch and patch 2/2
+applied to 4.16+ since together they fix a potential race condition
+as well as temperature reporting problems with multi-die Zen chips
+(Threadripper and EPYC). The pci_id.h changes are not bug fixes
+and would be more appropriate for v4.18.
 
-But this doesn't matter. Say, we can trivially add SIGNAL_GROUP_KILLED_BY_SIGKILL,
-or do something else, but I fail to understand what are you trying to do. Suppose
-that the check above is correct in that it is true iff the task is exiting and
-it was killed by SIGKILL. What about the "else" branch which does
+Thanks,
+Guenter
 
-	r = wait_event_killable(sched->job_scheduled, ...)
-
-?
-
-Once again, fatal_signal_pending() (or even signal_pending()) is not well defined
-after the exiting task passes exit_signals().
-
-So wait_event_killable() can fail because fatal_signal_pending() is true; and this
-can happen even if it was not killed.
-
-Or it can block and SIGKILL won't be able to wake it up.
-
-> If SIGINT was sent then it's SIGINT,
-
-Yes, but see above. in this case fatal_signal_pending() will be likely true so
-wait_event_killable() will fail unless condition is already true.
-
-Oleg.
+> Thanks!
+> 
+> -Yazen
