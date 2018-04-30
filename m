@@ -1,94 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754370AbeD3OVK (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 10:21:10 -0400
-Received: from dispatch1-us1.ppe-hosted.com ([67.231.154.164]:53124 "EHLO
-        dispatch1-us1.ppe-hosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753759AbeD3OVI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 10:21:08 -0400
-Subject: Re: [PATCH] ethtool: fix a potential missing-check bug
-To: Wenwen Wang <wang6495@umn.edu>
-CC: Kangjie Lu <kjlu@umn.edu>, "David S. Miller" <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Inbar Karmy <inbark@mellanox.com>,
-        Eugenia Emantayev <eugenia@mellanox.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Yury Norov <ynorov@caviumnetworks.com>,
-        Vidya Sagar Ravipati <vidya.chowdary@gmail.com>,
-        Alan Brady <alan.brady@intel.com>,
-        "Stephen Hemminger" <stephen@networkplumber.org>,
-        "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <1525051915-31944-1-git-send-email-wang6495@umn.edu>
-From: Edward Cree <ecree@solarflare.com>
-Message-ID: <00aa634b-edc0-220d-47d1-551c73af9f3b@solarflare.com>
-Date: Mon, 30 Apr 2018 15:20:55 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1754407AbeD3OWT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 10:22:19 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37206 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753172AbeD3OWS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 10:22:18 -0400
+Date: Mon, 30 Apr 2018 15:22:13 +0100
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Cc: bhelgaas@google.com, Joao.Pinto@synopsys.com, jingoohan1@gmail.com,
+        kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v8 3/9] PCI: endpoint: functions/pci-epf-test: Add second
+ entry
+Message-ID: <20180430142213.GC32033@e107981-ln.cambridge.arm.com>
+References: <cover.1524829928.git.gustavo.pimentel@synopsys.com>
+ <c2b6cb8de2502e1b5352be3b6d687b1cb4b7033a.1524829928.git.gustavo.pimentel@synopsys.com>
 MIME-Version: 1.0
-In-Reply-To: <1525051915-31944-1-git-send-email-wang6495@umn.edu>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Content-Language: en-GB
-X-Originating-IP: [10.17.20.45]
-X-MDID: 1525098066-1oYQh2zyq2r5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c2b6cb8de2502e1b5352be3b6d687b1cb4b7033a.1524829928.git.gustavo.pimentel@synopsys.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/04/18 02:31, Wenwen Wang wrote:
-> In ethtool_get_rxnfc(), the object "info" is firstly copied from
-> user-space. If the FLOW_RSS flag is set in the member field flow_type of
-> "info" (and cmd is ETHTOOL_GRXFH), info needs to be copied again from
-> user-space because FLOW_RSS is newer and has new definition, as mentioned
-> in the comment. However, given that the user data resides in user-space, a
-> malicious user can race to change the data after the first copy. By doing
-> so, the user can inject inconsistent data. For example, in the second
-> copy, the FLOW_RSS flag could be cleared in the field flow_type of "info".
-> In the following execution, "info" will be used in the function
-> ops->get_rxnfc(). Such inconsistent data can potentially lead to unexpected
-> information leakage since ops->get_rxnfc() will prepare various types of
-> data according to flow_type, and the prepared data will be eventually
-> copied to user-space. This inconsistent data may also cause undefined
-> behaviors based on how ops->get_rxnfc() is implemented.
-I'm not sure there's actually an issue here, since the only purpose of the
- FLOW_RSS check is to avoid faulting/trampling user memory when the user
- process only has the short version of 'info'.
-If userland subsequently removes the FLOW_RSS flag, then all that will
- happen is that info_size is larger than it ought to be; that cannot affect
- ops->get_rxnfc() since it isn't passed; the op should already be treating
- 'info' as unsafe/user-controlled.
-The only way this could lead to information leakage would be if in the non-
- FLOW_RSS case ops->get_rxnfc() was writing things it shouldn't into the
- latter part of 'info' and was getting away with it so far as that was
- never copied_to_user; that seems improbable to me, but I suppose you might
- want to do the check anyway as belt-and-braces security.
-(A cleaner approach might be to only copy_from_user() the extra region of
- 'info', leaving the previously-copied part alone.  That way each byte is
- only copied_from_user once and thus cannot change.)
+On Fri, Apr 27, 2018 at 12:59:58PM +0100, Gustavo Pimentel wrote:
+> Add a seconds entry on the pci_epf_test_ids structure that disables the
 
--Ed
+"Add a second entry..."
 
-> This patch re-verifies the flow_type field of "info" after the second copy.
-> If the value is not as expected, an error code will be returned.
->
-> Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+> linkup_notifier parameter on driver for the DesignWare EP.
+> 
+> Allow DesignWare EPs that doesn't have linkup notification signal to work
+> with pcitest.
+> 
+> Update the binding documentation accordingly.
+> 
+> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+> Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
 > ---
->  net/core/ethtool.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/net/core/ethtool.c b/net/core/ethtool.c
-> index 03416e6..a121034 100644
-> --- a/net/core/ethtool.c
-> +++ b/net/core/ethtool.c
-> @@ -1032,6 +1032,8 @@ static noinline_for_stack int ethtool_get_rxnfc(struct net_device *dev,
->  		info_size = sizeof(info);
->  		if (copy_from_user(&info, useraddr, info_size))
->  			return -EFAULT;
-> +		if (!(info.flow_type & FLOW_RSS))
-> +			return -EINVAL;
->  	}
+> Change v2->v3:
+>  - Added second entry in pci_epf_test_ids structure.
+>  - Remove test_reg_bar field assignment on second entry.
+> Changes v3->v4:
+>  - Nothing changed, just to follow the patch set version.
+> Changes v4->v5:
+>  - Changed pci_epf_test_cfg2 to pci_epf_test_designware.
+> Changes v5->v6:
+>  - Changed name field from pci_epf_test_designware to pci_epf_test_dw.
+> Changes v6->v7:
+>  - Changed variable name from data_cfg2 to data_linkup_notifier_disabled.
+> Changes v7->v8:
+>  - Patch description rework for an imperative verbal mode.
+> 
+>  Documentation/PCI/endpoint/function/binding/pci-test.txt | 2 ++
+>  drivers/pci/endpoint/functions/pci-epf-test.c            | 8 ++++++++
+>  2 files changed, 10 insertions(+)
+> 
+> diff --git a/Documentation/PCI/endpoint/function/binding/pci-test.txt b/Documentation/PCI/endpoint/function/binding/pci-test.txt
+> index 3b68b95..dc39f47 100644
+> --- a/Documentation/PCI/endpoint/function/binding/pci-test.txt
+> +++ b/Documentation/PCI/endpoint/function/binding/pci-test.txt
+> @@ -1,6 +1,8 @@
+>  PCI TEST ENDPOINT FUNCTION
 >  
->  	if (info.cmd == ETHTOOL_GRXCLSRLALL) {
+>  name: Should be "pci_epf_test" to bind to the pci_epf_test driver.
+> +name: Should be "pci_epf_test_dw" to bind to the pci_epf_test driver
+> +      with a custom configuration for the designware EP.
+>  
+>  Configurable Fields:
+>  vendorid	 : should be 0x104c
+> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
+> index 7cef851..4ab463b 100644
+> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
+> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+> @@ -459,10 +459,18 @@ static int pci_epf_test_bind(struct pci_epf *epf)
+>  	return 0;
+>  }
+>  
+> +static const struct pci_epf_test_data data_linkup_notifier_disabled = {
+> +	.linkup_notifier = false
+> +};
+> +
+>  static const struct pci_epf_device_id pci_epf_test_ids[] = {
+>  	{
+>  		.name = "pci_epf_test",
+>  	},
+> +	{
+> +		.name = "pci_epf_test_dw",
+> +		.driver_data = (kernel_ulong_t)&data_linkup_notifier_disabled,
+
+You have not answered my question on this though:
+
+https://marc.info/?l=linux-pci&m=152476180723047&w=2
+
+> +	},
+>  	{},
+>  };
+>  
+> -- 
+> 2.7.4
+> 
+> 
