@@ -1,40 +1,40 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZr/DEpO05d3+Nzt2xBnwH6vq8xLpMGj3I38Om/TffSQvS5GYRvK5PjGYqIpB0679FPdnKtG
-ARC-Seal: i=1; a=rsa-sha256; t=1525116375; cv=none;
+X-Google-Smtp-Source: AB8JxZqbSls/3QfIBkteZ9ibVKl0XyILNX/1vUftW6o8Pukw2TKUZF9S6TVcESJMOrI7AfzodQcg
+ARC-Seal: i=1; a=rsa-sha256; t=1525116374; cv=none;
         d=google.com; s=arc-20160816;
-        b=zw/QX21D6N4ODid4NE7M34hPuNxBHScOYVGkgnxxdp03lGnSS9HpnLZxTPgq4p5opD
-         4nGKfnxq+v+/B9N97JjtDcBJvuYM3Y9ZpkjH2BpWDF8cxaj2LBdESj9pioh9CqWV+GtK
-         ftO5tKVZdL7kSjlCpb6pzIwxQJ9YW0jXUmEZK4eQPUuJxE0J7TkleVu7gD+emU3WMUeW
-         oxLYpKQuWAdXKfoRBhFazZa4MVn+jG5DrSOBHciJj8i4q3Nd6fJEIwVOGTxQMPk7Jlng
-         2IGil9HH9adAkO/v+d2MkCgS79v4PSCYy0lncqoG9EGQm6rg4pLqk30DSKVTNjmi0kpJ
-         McIg==
+        b=We2mSXoV9WO+JZxXPEUPwjB9wI+SdGa+38IFMMp2OPOBUvaxQU2G/Ivw+EuKaPTxHn
+         FeMIXoeRh10I1HjJmeBfV7rfvw7lc7CBjckpSN97shCaREm17RzqLAzEGnvdcUs02dGX
+         2yPBUkTzmKu3W8DMFI+UUJP8yLZiHm19mlbO41LyicEqpbX4FHxOoY0JXWBAiSnBuyOU
+         TZCRc34kcQ8MChRoa92+xJV4sfA3FeuCCCRSkKc3RLejRVIztMIA5o/vYOJ+3Gg3ue6A
+         hzgLQH4e0DOxiB100u+9pX1mJ1Ho9wHJ3haAJgQPohAwJWnigQYe4SMHug4lZWNqlRlJ
+         qMPg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=gS9kPzm7EMYGvyX/eVlfKuQV0SjiLqMBua/mlqzqWkk=;
-        b=kNVoHfsYkIgdbGVpA2x/TSfsiNKKsExxTVozB/jkzyj44kdifgwJcMyX9ccAo8HaOb
-         S55hs+3HGCrLVU1ClSCO+WcRXeQPCXOKfjX0jHuJv6N5EveCQlOns37vqJ23k0QJjBLc
-         oE7Hp25brztKGteXgNztNIrJFpdJ/1I1hdcC/InIdpPAuBP8h3iqiI8QBLIM5ukZZ+WI
-         +gU1nHoKxgLzAu2Q3nyIQO8DODqm7X5Wm33pM9NyHVvqAPB+u8rS7f+FyqU2q8A26EvS
-         Dld5wnyv7o1qbp57NT0ny/UI0TjnTPXpEcE5NBGehhqJyOAiQbMm5/TdTInjwc4nGyoX
-         n4Ng==
+        bh=GjwC6NtVxYE+5HRoSeaOZs5MuiNV4Zptyv1Orlv4Bkg=;
+        b=HJvyLP82JmM4/QG9RT2CG5J3UIt2Ch1vwg59enCIbNS+ja6pH3NU2NONiOFasWIzpT
+         gtu2aAuBpp+OsHf263ezVWRopaOKfy/Nz+ypTP6/9RSWbHoAfyelPFyj2p22/xsypGhq
+         U/JV9U+PpiKy5Qq3MRDdOjqXWoiC44nzhoja6JPeEGCYFWvBjhLy18QNw8l+B3B1p9DL
+         OC/I/tyPF1LMzpVdkRkSAJpoPVGsFJbTlfoxKJIpicFTqOmh/hFWh93lYwJiZ+EKPYeA
+         cdc+kj2gY2+SWysc+RXzTLJTTBKjQ8KKQfG72F40iCYmQJOB/eilGh3LQ2ih+yTeJSZ2
+         8Epg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CED522DC0
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDA9622DAC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-	syzbot <syzkaller@googlegroups.com>,
-	Jiri Slaby <jslaby@suse.com>
-Subject: [PATCH 4.4 16/44] tty: Dont call panic() at tty_ldisc_init()
-Date: Mon, 30 Apr 2018 12:24:27 -0700
-Message-Id: <20180430190946.991889911@linuxfoundation.org>
+	David Henningsson <diwic@ubuntu.com>,
+	Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+	Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.4 25/44] ALSA: core: Report audio_tstamp in snd_pcm_sync_ptr
+Date: Mon, 30 Apr 2018 12:24:36 -0700
+Message-Id: <20180430190947.346166658@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430190946.093694747@linuxfoundation.org>
 References: <20180430190946.093694747@linuxfoundation.org>
@@ -44,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200428340821221?=
-X-GMAIL-MSGID: =?utf-8?q?1599200428340821221?=
+X-GMAIL-THRID: =?utf-8?q?1599200281194240670?=
+X-GMAIL-MSGID: =?utf-8?q?1599200427297764229?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,70 +53,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: David Henningsson <diwic@ubuntu.com>
 
-commit 903f9db10f18f735e62ba447147b6c434b6af003 upstream.
+commit f853dcaae2f5bbe021161e421bd1576845bae8f6 upstream.
 
-syzbot is reporting kernel panic [1] triggered by memory allocation failure
-at tty_ldisc_get() from tty_ldisc_init(). But since both tty_ldisc_get()
-and caller of tty_ldisc_init() can cleanly handle errors, tty_ldisc_init()
-does not need to call panic() when tty_ldisc_get() failed.
+It looks like a simple mistake that this struct member
+was forgotten.
 
-[1] https://syzkaller.appspot.com/bug?id=883431818e036ae6a9981156a64b821110f39187
+Audio_tstamp isn't used much, and on some archs (such as x86) this
+ioctl is not used by default, so that might be the reason why this
+has slipped for so long.
 
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jiri Slaby <jslaby@suse.com>
-Cc: stable <stable@vger.kernel.org>
+Fixes: 4eeaaeaea1ce ("ALSA: core: add hooks for audio timestamps")
+Signed-off-by: David Henningsson <diwic@ubuntu.com>
+Reviewed-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Cc: <stable@vger.kernel.org> # v3.8+
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/tty_io.c    |    5 ++++-
- drivers/tty/tty_ldisc.c |    5 +++--
- include/linux/tty.h     |    2 +-
- 3 files changed, 8 insertions(+), 4 deletions(-)
+ sound/core/pcm_native.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/tty/tty_io.c
-+++ b/drivers/tty/tty_io.c
-@@ -3154,7 +3154,10 @@ struct tty_struct *alloc_tty_struct(stru
- 
- 	kref_init(&tty->kref);
- 	tty->magic = TTY_MAGIC;
--	tty_ldisc_init(tty);
-+	if (tty_ldisc_init(tty)) {
-+		kfree(tty);
-+		return NULL;
-+	}
- 	tty->session = NULL;
- 	tty->pgrp = NULL;
- 	mutex_init(&tty->legacy_mutex);
---- a/drivers/tty/tty_ldisc.c
-+++ b/drivers/tty/tty_ldisc.c
-@@ -804,12 +804,13 @@ void tty_ldisc_release(struct tty_struct
-  *	the tty structure is not completely set up when this call is made.
-  */
- 
--void tty_ldisc_init(struct tty_struct *tty)
-+int tty_ldisc_init(struct tty_struct *tty)
- {
- 	struct tty_ldisc *ld = tty_ldisc_get(tty, N_TTY);
- 	if (IS_ERR(ld))
--		panic("n_tty: init_tty");
-+		return PTR_ERR(ld);
- 	tty->ldisc = ld;
-+	return 0;
- }
- 
- /**
---- a/include/linux/tty.h
-+++ b/include/linux/tty.h
-@@ -586,7 +586,7 @@ extern int tty_unregister_ldisc(int disc
- extern int tty_set_ldisc(struct tty_struct *tty, int ldisc);
- extern int tty_ldisc_setup(struct tty_struct *tty, struct tty_struct *o_tty);
- extern void tty_ldisc_release(struct tty_struct *tty);
--extern void tty_ldisc_init(struct tty_struct *tty);
-+extern int __must_check tty_ldisc_init(struct tty_struct *tty);
- extern void tty_ldisc_deinit(struct tty_struct *tty);
- extern void tty_ldisc_begin(void);
- 
+--- a/sound/core/pcm_native.c
++++ b/sound/core/pcm_native.c
+@@ -2727,6 +2727,7 @@ static int snd_pcm_sync_ptr(struct snd_p
+ 	sync_ptr.s.status.hw_ptr = status->hw_ptr;
+ 	sync_ptr.s.status.tstamp = status->tstamp;
+ 	sync_ptr.s.status.suspended_state = status->suspended_state;
++	sync_ptr.s.status.audio_tstamp = status->audio_tstamp;
+ 	snd_pcm_stream_unlock_irq(substream);
+ 	if (copy_to_user(_sync_ptr, &sync_ptr, sizeof(sync_ptr)))
+ 		return -EFAULT;
