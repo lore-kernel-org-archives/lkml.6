@@ -1,83 +1,174 @@
 Return-Path: <david@redhat.com>
-X-Google-Smtp-Source: AB8JxZo0fiRkhFUm4WlozXxXOfQ6G4DKfe8n0lS5PWO6p55MZt9IivCwgnCnvwT30S85kpWzczFV
-ARC-Seal: i=1; a=rsa-sha256; t=1525103404; cv=none;
+X-Google-Smtp-Source: AB8JxZobGHUw3OllZHlRjZWA4DsKCkTkov4wte7+OsSSkao4Fp0dD6/9tMScXr/UBgLS/PphFIjz
+ARC-Seal: i=1; a=rsa-sha256; t=1525081381; cv=none;
         d=google.com; s=arc-20160816;
-        b=G37DcyGbJeA2j92ECUJKg+3QCEzLGqJiSxVY7ByVNQrh6M0gDP9SqlX09u0dzRBW0P
-         oznkzlDX/03qlB0TD9f0vC5hSCdojhy9ts8nLGsdzs2x7h44So/SJjc+vh+JqFva0HXT
-         L8u/4RMqFm122t41FwWiliqh6S6+OmwcuGQ8RPP3TL1s90UA0ks2Hk5bpfju07xcbREL
-         /9uLqrV0He3XmkMpjnJSg4UYHZgImEHy1PLQmkM0aS41bE4JZ6TS5NNEtoQB48W7jJtg
-         kDTJCD18zFNTwhJivtFcpaBSpPY8ubQwS3lhokRf/jpK6pjFI522HGL3C//YSp+ndDwd
-         TFNA==
+        b=Gp5mtjI7fdco2YSyCd+xOcxux9dX+6WPWyeYmeuwhBIG09gRP4C+9r3EiZia9dBnu9
+         Sju4/icLiDPxyLgorLywyGJcySAYjmTylKkVUOJ8A5YS7YVSg3sIrvauR7sDa/uBTl0i
+         D1hfXRjI2fIFM2tFir6WCdZqGV8Ku6FlSWgnh5t0AjrzQ63NRcmcAhNwFyO0hSgeKvz6
+         S9Vbj49zCxfbSq96WuWfyLWVnr27U4KBvd9O6db31L3o0omTMy7XoIgX5itHpwIBQ4gH
+         lIvxVRDagfQ95DqpEm/M/qpD6x7FbzUtWo4FzQ8iVh29goRKCV0+7pgWAQYW7qBNTIo+
+         2WtQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:organization:references:cc:to:from
-         :subject:arc-authentication-results;
-        bh=pcMTY9Gr4ts/c8rlPNxhmDDKCfwYWpN4Au8aMU2XMg4=;
-        b=TRGYLqXAjy/gYUrgccSajt37gIevKGGsek/q4jEuCZzsCqZi4cHnF2Xy5sdtZ8eOr1
-         6fzCFixmidO2XmT4st3ru+TEpRjOfr1nga1Z7HEWPpATzBAcn2o9QA1gwmqjvvdzKWXV
-         YiqTFwnbH2Ka4GGdRsqavEJaUTUn3Jgc4w4dOysAEH2zthqsmfx893h/wEkz+PghIAuU
-         CnzcBas5BgUYjXsN3Z0OeMPTO0f7iure8lr/qwHh9X/RIpG5GBorBQBnA10bOecyiFI/
-         tovnRT/pSEv/ilNKhW/rnbEnklOo0QqTZqNlCIJ5/Rts7ROtdg4fzeQ8yNT9UkLeVjrS
-         nmkg==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=k/kevtbN8t5jjZysacuzGBelZ/sEJRGUtgakmDP3mIA=;
+        b=S4qdngjDibCD3Ek/vp27UU9zEbjDOsKmBmw20PoF9KmrJ7/JJSnEcPkrP2NMzE1JmC
+         skZw4y6MY22qyXOD8y9XQMHKw0f0o+CfyawJLLIwGMLkmmrZdBZXFn+bG/bFUkPq2qJe
+         /VcLJtrZh9ZbF+9VflrBoRGENMDrrt50c4ica8P9gNNv0uJ1V00M6sKRnwOdCw1wm5Wi
+         ETNcPDbC7kA3rPjGCIfhLvbMpfpyXysz3QU07nMpWjLjRRXoH6JKQnELHgdDZzzajMup
+         sXjmk8Jal0xflKuqRZfpPQf5BDDvcVSBbhzA5S1vtRAtSBjoKY1geYcJ4NqhxDxqiIXi
+         LLYQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of david@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=david@redhat.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Authentication-Results: mx.google.com;
        spf=pass (google.com: domain of david@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=david@redhat.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
-Subject: Re: [PATCH RCFv2 1/7] mm: introduce and use PageOffline()
 From: David Hildenbrand <david@redhat.com>
-To: Pavel Tatashin <pasha.tatashin@oracle.com>, linux-mm@kvack.org
+To: linux-mm@kvack.org
 Cc: linux-kernel@vger.kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Ingo Molnar <mingo@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
- Philippe Ombredanne <pombredanne@nexb.com>,
- Thomas Gleixner <tglx@linutronix.de>, Dan Williams
- <dan.j.williams@intel.com>, Michal Hocko <mhocko@suse.com>,
- Jan Kara <jack@suse.cz>, "Kirill A. Shutemov"
- <kirill.shutemov@linux.intel.com>, =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?=
- <jglisse@redhat.com>, Matthew Wilcox <mawilcox@microsoft.com>,
- Souptick Joarder <jrdr.linux@gmail.com>, Hugh Dickins <hughd@google.com>,
- Huang Ying <ying.huang@intel.com>, Miles Chen <miles.chen@mediatek.com>,
- Vlastimil Babka <vbabka@suse.cz>, Reza Arbab <arbab@linux.vnet.ibm.com>,
- Mel Gorman <mgorman@suse.de>,
- Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+	David Hildenbrand <david@redhat.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Michal Hocko <mhocko@suse.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Pavel Tatashin <pasha.tatashin@oracle.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH RCFv2 7/7] mm/memory_hotplug: allow online/offline memory by a kernel module
+Date: Mon, 30 Apr 2018 11:42:36 +0200
+Message-Id: <20180430094236.29056-8-david@redhat.com>
+In-Reply-To: <20180430094236.29056-1-david@redhat.com>
 References: <20180430094236.29056-1-david@redhat.com>
- <20180430094236.29056-2-david@redhat.com>
- <4d112f60-3c24-585e-152e-b42d68c899a2@oracle.com>
- <28068791-bee4-095e-7338-cda4d229c3de@redhat.com>
-Organization: Red Hat GmbH
-Message-ID: <d9f6e3bc-5b36-4df6-e55a-d282eee9b050@redhat.com>
-Date: Mon, 30 Apr 2018 17:49:59 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <28068791-bee4-095e-7338-cda4d229c3de@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599163720299287217?=
-X-GMAIL-MSGID: =?utf-8?q?1599186827067646799?=
+X-GMAIL-THRID: =?utf-8?q?1599163734643507607?=
+X-GMAIL-MSGID: =?utf-8?q?1599163734643507607?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+Kernel modules that want to control how/when memory is onlined/offlined
+need a proper interface to these functions. Also, for adding memory
+properly, memory_block_size_bytes is required.
 
->>
->>>
->>> -static void __meminit __init_single_page(struct page *page, unsigned long pfn,
->>> +extern void __meminit init_single_page(struct page *page, unsigned long pfn,
->>
->> I've seen it in other places, but what is the point of having "extern" function in .c file?
-> 
-> I've seen it all over the place, that's why I am using it :) (as I
-> basically had the same question). Can somebody answer that?
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
+Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: David Hildenbrand <david@redhat.com>
+---
+ drivers/base/memory.c          |  1 +
+ include/linux/memory_hotplug.h |  2 ++
+ mm/memory_hotplug.c            | 27 +++++++++++++++++++++++++--
+ 3 files changed, 28 insertions(+), 2 deletions(-)
 
-BTW I was looking at the wrong file (header). This of course has to go!
-
-
+diff --git a/drivers/base/memory.c b/drivers/base/memory.c
+index c785e4c01b23..0a7c79cfaaf8 100644
+--- a/drivers/base/memory.c
++++ b/drivers/base/memory.c
+@@ -88,6 +88,7 @@ unsigned long __weak memory_block_size_bytes(void)
+ {
+ 	return MIN_MEMORY_BLOCK_SIZE;
+ }
++EXPORT_SYMBOL(memory_block_size_bytes);
+ 
+ static unsigned long get_memory_block_size(void)
+ {
+diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
+index ae53017b54df..0e3e48410415 100644
+--- a/include/linux/memory_hotplug.h
++++ b/include/linux/memory_hotplug.h
+@@ -97,6 +97,8 @@ extern void __online_page_increment_counters(struct page *page);
+ extern void __online_page_free(struct page *page);
+ 
+ extern int try_online_node(int nid);
++extern int online_memory_blocks(uint64_t start, uint64_t size);
++extern int offline_memory_blocks(uint64_t start, uint64_t size);
+ 
+ extern bool memhp_auto_online;
+ /* If movable_node boot option specified */
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index c47cc68341fc..849bf0543fb1 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -89,12 +89,14 @@ void mem_hotplug_begin(void)
+ 	cpus_read_lock();
+ 	percpu_down_write(&mem_hotplug_lock);
+ }
++EXPORT_SYMBOL(mem_hotplug_begin);
+ 
+ void mem_hotplug_done(void)
+ {
+ 	percpu_up_write(&mem_hotplug_lock);
+ 	cpus_read_unlock();
+ }
++EXPORT_SYMBOL(mem_hotplug_done);
+ 
+ /* add this memory to iomem resource */
+ static struct resource *register_memory_resource(u64 start, u64 size)
+@@ -980,6 +982,7 @@ int __ref online_pages(unsigned long pfn, unsigned long nr_pages, int online_typ
+ 	memory_notify(MEM_CANCEL_ONLINE, &arg);
+ 	return ret;
+ }
++EXPORT_SYMBOL(online_pages);
+ #endif /* CONFIG_MEMORY_HOTPLUG_SPARSE */
+ 
+ static void reset_node_present_pages(pg_data_t *pgdat)
+@@ -1109,6 +1112,25 @@ static int online_memory_block(struct memory_block *mem, void *arg)
+ 	return device_online(&mem->dev);
+ }
+ 
++static int offline_memory_block(struct memory_block *mem, void *arg)
++{
++	return device_offline(&mem->dev);
++}
++
++int online_memory_blocks(uint64_t start, uint64_t size)
++{
++	return walk_memory_range(PFN_DOWN(start), PFN_UP(start + size - 1),
++				 NULL, online_memory_block);
++}
++EXPORT_SYMBOL(online_memory_blocks);
++
++int offline_memory_blocks(uint64_t start, uint64_t size)
++{
++	return walk_memory_range(PFN_DOWN(start), PFN_UP(start + size - 1),
++				 NULL, offline_memory_block);
++}
++EXPORT_SYMBOL(offline_memory_blocks);
++
+ static int mark_memory_block_driver_managed(struct memory_block *mem, void *arg)
+ {
+ 	mem->driver_managed = true;
+@@ -1197,8 +1219,7 @@ int __ref add_memory_resource(int nid, struct resource *res, bool online,
+ 
+ 	/* online pages if requested */
+ 	if (online)
+-		walk_memory_range(PFN_DOWN(start), PFN_UP(start + size - 1),
+-				  NULL, online_memory_block);
++		online_memory_blocks(start, size);
+ 	else if (driver_managed)
+ 		walk_memory_range(PFN_DOWN(start), PFN_UP(start + size - 1),
+ 				  NULL, mark_memory_block_driver_managed);
+@@ -1297,6 +1318,7 @@ bool is_mem_section_removable(unsigned long start_pfn, unsigned long nr_pages)
+ 	/* All pageblocks in the memory block are likely to be hot-removable */
+ 	return true;
+ }
++EXPORT_SYMBOL(is_mem_section_removable);
+ 
+ /*
+  * Confirm all pages in a range [start, end) belong to the same zone.
+@@ -1759,6 +1781,7 @@ int offline_pages(unsigned long start_pfn, unsigned long nr_pages,
+ {
+ 	return __offline_pages(start_pfn, start_pfn + nr_pages, retry_forever);
+ }
++EXPORT_SYMBOL(offline_pages);
+ #endif /* CONFIG_MEMORY_HOTREMOVE */
+ 
+ /**
 -- 
-
-Thanks,
-
-David / dhildenb
+2.14.3
