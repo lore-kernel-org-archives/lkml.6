@@ -1,165 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753209AbeD3JLS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 05:11:18 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:54189 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751511AbeD3JKb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 05:10:31 -0400
-X-Google-Smtp-Source: AB8JxZrzgSRPCuB9fVH342APaLGJMxa33QZPmqCJf47zq1oE8HdJK1fPuvIWeQUksRNEQkoBa9GXFg==
-Subject: Re: [PATCH v2 2/2] soc: mediatek: add a fixed wait for SRAM stable
-To: Sean Wang <sean.wang@mediatek.com>
-Cc: rjw@rjwysocki.net, khilman@baylibre.com, ulf.hansson@linaro.org,
-        linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Weiyi Lu <weiyi.lu@mediatek.com>
-References: <2e16481e1477dfae0cfb24568d8111da81d92628.1524472331.git.sean.wang@mediatek.com>
- <0ef8e87ba7156e626d1a1a48388f222ce917099b.1524472331.git.sean.wang@mediatek.com>
- <51840588-96e4-2520-f3d7-a61e74da6814@gmail.com>
- <1524476340.12322.14.camel@mtkswgap22>
- <0ec15c8a-ca90-26c3-1ea6-00bf0d48b62a@gmail.com>
- <1525072080.12322.212.camel@mtkswgap22>
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- UXI+r2JwH1CJjrHWeQEI2ucSKsNa8FllDmG/fQ==
-Message-ID: <b45efd5d-755c-6d5c-b226-763801e811ea@gmail.com>
-Date: Mon, 30 Apr 2018 11:10:28 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <1525072080.12322.212.camel@mtkswgap22>
-Content-Type: text/plain; charset=utf-8
+        id S1753910AbeD3JLk (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 05:11:40 -0400
+Received: from mail-by2nam01on0067.outbound.protection.outlook.com ([104.47.34.67]:6807
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752701AbeD3JLh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 05:11:37 -0400
+From: Javier Gonzalez <javier@cnexlabs.com>
+To: =?utf-8?B?TWF0aWFzIEJqw7hybGluZw==?= <mb@lightnvm.io>
+CC: Hans Holmberg <hans.ml.holmberg@owltronix.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Hans Holmberg <hans.holmberg@cnexlabs.com>
+Subject: Re: [PATCH v2 0/3] Rework write error handling in pblk
+Thread-Topic: [PATCH v2 0/3] Rework write error handling in pblk
+Thread-Index: AQHT24+D7OA+myXAk0GlTzhYHhGU0KQWl8oAgAJ3iAA=
+Date: Mon, 30 Apr 2018 09:11:30 +0000
+Message-ID: <33E16356-2CFE-43D2-9298-98CF9D598A51@cnexlabs.com>
+References: <1524548732-4326-1-git-send-email-hans.ml.holmberg@owltronix.com>
+ <7536f5dc-bc11-ae4b-b11e-9c3995142cd0@lightnvm.io>
+In-Reply-To: <7536f5dc-bc11-ae4b-b11e-9c3995142cd0@lightnvm.io>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator: 
+x-originating-ip: [193.106.164.211]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CO2PR06MB522;7:YlExk6voKA8ELiyNP2PXDyQhXXr1RcEjzSnK0Yhc6za9+Lt1fmwUx9Y7/ywtJjPVjbtA930Yy1MPM9Yk8eJL87ksJXQ3sAl5ZNebhy7nl4mqwmFqAh7VEYowIH4FEPP4PAg08Y94uGcHCPc1Ea6lHFTKfYqyrm9MtZ52Xqw4fHPH2oJKTgbTvSm6ObhjDvQtHNKOYBCUdWHihlDfx69bUlOI20jqtMcWQLNjwAdSE0MU8yM6vNE+YTLy4jdeXFtc
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(396003)(346002)(39830400003)(39380400002)(366004)(376002)(189003)(199004)(2906002)(3280700002)(6436002)(68736007)(76176011)(83716003)(99286004)(476003)(2616005)(102836004)(8936002)(53546011)(11346002)(446003)(486006)(4326008)(81156014)(8676002)(14454004)(5250100002)(6486002)(81166006)(106356001)(6506007)(3660700001)(186003)(5660300001)(478600001)(86362001)(229853002)(82746002)(305945005)(966005)(36756003)(2900100001)(3846002)(6116002)(66066001)(26005)(99936001)(6916009)(97736004)(25786009)(54906003)(6306002)(316002)(33656002)(6512007)(6246003)(107886003)(53936002)(105586002)(7736002);DIR:OUT;SFP:1101;SCL:1;SRVR:CO2PR06MB522;H:CO2PR06MB538.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(2017052603328)(7153060)(49563074)(7193020);SRVR:CO2PR06MB522;
+x-ms-traffictypediagnostic: CO2PR06MB522:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=javier@cnexlabs.com;
+x-microsoft-antispam-prvs: <CO2PR06MB52235CE17758A963A6D8E56BA820@CO2PR06MB522.namprd06.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(166708455590820);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(102415395)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231254)(944501410)(52105095)(10201501046)(3002001)(6041310)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:CO2PR06MB522;BCL:0;PCL:0;RULEID:;SRVR:CO2PR06MB522;
+x-forefront-prvs: 0658BAF71F
+x-microsoft-antispam-message-info: dUh5hhfKEC/SiJ0BdivqOpFrMeL0juX5hOL6rEpVSSYyVRnyHF07KUiJzjtRW6xUm7JdAtCKsFCh+Tur55GTufqj5h8UHHw9KZ6xlIe8GNJwvZzIKDpqdO3oHOKqH3PrHn/hf+eNdPK3LB/5BTcctpJCyZIRHd9sBhTdRG7kt0DjuVQKAPoV/be6hCAjUJgw
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: multipart/signed;
+        boundary="Apple-Mail=_E13FE755-3BFF-4A76-9927-26DB353A0D87";
+        protocol="application/pgp-signature"; micalg=pgp-sha512
+MIME-Version: 1.0
+X-MS-Office365-Filtering-Correlation-Id: fd8b929a-6431-4223-996a-08d5ae7a5ceb
+X-OriginatorOrg: cnexlabs.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fd8b929a-6431-4223-996a-08d5ae7a5ceb
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Apr 2018 09:11:30.9105
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: e40dfc2e-c6c1-463a-a598-38602b2c3cff
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO2PR06MB522
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--Apple-Mail=_E13FE755-3BFF-4A76-9927-26DB353A0D87
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=utf-8
 
+> On 28 Apr 2018, at 21.31, Matias Bj=C3=B8rling <mb@lightnvm.io> wrote:
+>=20
+> On 4/23/18 10:45 PM, Hans Holmberg wrote:
+>> From: Hans Holmberg <hans.holmberg@cnexlabs.com>
+>> This patch series fixes the(currently incomplete) write error =
+handling
+>> in pblk by:
+>>  * queuing and re-submitting failed writes in the write buffer
+>>  * evacuating valid data data in lines with write failures, so the
+>>    chunk(s) with write failures can be reset to a known state by the =
+fw
+>> Lines with failures in smeta are put back on the free list.
+>> Failed chunks will be reset on the next use.
+>> If a write failes in emeta, the lba list is cached so the line can be
+>> garbage collected without scanning the out-of-band area.
+>> Changes in V2:
+>> - Added the recov_writes counter increase to the new path
+>> - Moved lba list emeta reading during gc to a separate function
+>> - Allocating the saved lba list with pblk_malloc instead of kmalloc
+>> - Fixed formatting issues
+>> - Removed dead code
+>> Hans Holmberg (3):
+>>   lightnvm: pblk: rework write error recovery path
+>>   lightnvm: pblk: garbage collect lines with failed writes
+>>   lightnvm: pblk: fix smeta write error path
+>>  drivers/lightnvm/pblk-core.c     |  52 +++++++-
+>>  drivers/lightnvm/pblk-gc.c       | 102 +++++++++------
+>>  drivers/lightnvm/pblk-init.c     |  47 ++++---
+>>  drivers/lightnvm/pblk-rb.c       |  39 ------
+>>  drivers/lightnvm/pblk-recovery.c |  91 -------------
+>>  drivers/lightnvm/pblk-rl.c       |  29 ++++-
+>>  drivers/lightnvm/pblk-sysfs.c    |  15 ++-
+>>  drivers/lightnvm/pblk-write.c    | 269 =
+++++++++++++++++++++++++++-------------
+>>  drivers/lightnvm/pblk.h          |  36 ++++--
+>>  9 files changed, 384 insertions(+), 296 deletions(-)
+>=20
+> Thanks Hans. I've applied 1 & 3. The second did not apply cleanly to =
+for-4.18/core. Could you please resend a rebased version?
 
-On 04/30/2018 09:08 AM, Sean Wang wrote:
-> On Fri, 2018-04-27 at 11:46 +0200, Matthias Brugger wrote:
->> Hi Sean,
->>
->> On 04/23/2018 11:39 AM, Sean Wang wrote:
->>> On Mon, 2018-04-23 at 11:31 +0200, Matthias Brugger wrote:
->>>>
->>>> On 04/23/2018 10:36 AM, sean.wang@mediatek.com wrote:
->>>>> From: Sean Wang <sean.wang@mediatek.com>
->>>>>
->>>>> MT7622_POWER_DOMAIN_WB doesn't send an ACK when its managed SRAM becomes
->>>>> stable, which is not like the behavior the other power domains should
->>>>> have. Therefore, it's necessary for such a power domain to have a fixed
->>>>> and well-predefined duration to wait until its managed SRAM can be allowed
->>>>> to access by all functions running on the top.
->>>>>
->>>>> v1 -> v2:
->>>>>  - use MTK_SCPD_FWAIT_SRAM flag as an indication requiring force waiting.
->>>>>
->>>>> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
->>>>> Cc: Matthias Brugger <matthias.bgg@gmail.com>
->>>>> Cc: Ulf Hansson <ulf.hansson@linaro.org>
->>>>> Cc: Weiyi Lu <weiyi.lu@mediatek.com>
->>>>> ---
->>>>>  drivers/soc/mediatek/mtk-scpsys.c | 24 ++++++++++++++++++------
->>>>>  1 file changed, 18 insertions(+), 6 deletions(-)
->>>>>
->>>>> diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
->>>>> index b1b45e4..d4f1a63 100644
->>>>> --- a/drivers/soc/mediatek/mtk-scpsys.c
->>>>> +++ b/drivers/soc/mediatek/mtk-scpsys.c
->>>>> @@ -32,6 +32,7 @@
->>>>>  #define MTK_POLL_TIMEOUT    (jiffies_to_usecs(HZ))
->>>>>  
->>>>>  #define MTK_SCPD_ACTIVE_WAKEUP		BIT(0)
->>>>> +#define MTK_SCPD_FWAIT_SRAM		BIT(1)
->>>>>  #define MTK_SCPD_CAPS(_scpd, _x)	((_scpd)->data->caps & (_x))
->>>>>  
->>>>>  #define SPM_VDE_PWR_CON			0x0210
->>>>> @@ -237,11 +238,22 @@ static int scpsys_power_on(struct generic_pm_domain *genpd)
->>>>>  	val &= ~scpd->data->sram_pdn_bits;
->>>>>  	writel(val, ctl_addr);
->>>>>  
->>>>> -	/* wait until SRAM_PDN_ACK all 0 */
->>>>> -	ret = readl_poll_timeout(ctl_addr, tmp, (tmp & pdn_ack) == 0,
->>>>> -				 MTK_POLL_DELAY_US, MTK_POLL_TIMEOUT);
->>>>> -	if (ret < 0)
->>>>> -		goto err_pwr_ack;
->>>>> +	/* Either wait until SRAM_PDN_ACK all 0 or have a force wait */
->>>>> +	if (!MTK_SCPD_CAPS(scpd, MTK_SCPD_FWAIT_SRAM)) {
->>
->> After having another look on the patch, could you change the order of the if:
->> So that we check for the existence of the MTK_SCPD_FWAIT_SRAM and sleep and in
->> the else branch we to the readl_poll_timeout.
->>
->> I think in the future this will make the code easier to understand as you can
->> easily oversee the '!' negation in the if.
->>
->> Regards,
->> Matthias
->>
-> 
-> Initial thought on the patch is that I would like to save a branch
-> instruction for a most possibly executed block. Or would it be better to
-> add a compiler to branch prediction information? something like that  
-> 
->         /* Either wait until SRAM_PDN_ACK all 0 or have a force wait */
->         if (unlikely(MTK_SCPD_CAPS(scpd, MTK_SCPD_FWAIT_SRAM))) {
->                 /*
->                  * Currently, MTK_SCPD_FWAIT_SRAM is necessary only for
->                  * MT7622_POWER_DOMAIN_WB and thus just a trivial setup
-> is
->                  * applied here.
->                  */
->                 usleep_range(12000, 12100);
-> ...
->  
+Hans' patches apply on top of the fixes I sent this week. I have just
+sent the V2 and the patches still apply. You can find them at:
+  https://github.com/OpenChannelSSD/linux/tree/for-4.18/pblk
 
-Is this a performance critical path? I thought if you turn on the power domain
-for some peripherals, it does not matter if you need a few CPU cycles more or less.
+Javier
 
-Regards,
-Matthias
+--Apple-Mail=_E13FE755-3BFF-4A76-9927-26DB353A0D87
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment; filename="signature.asc"
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE+ws7Qq+qZPG1bJoyIX4xUKFRnnQFAlrm3cAACgkQIX4xUKFR
+nnQ2FA/9E9J9apS2axTcK9V8tnhqPoUUlEnXrRoBjZaI4W7DTev0zTr03x0Eu6Sr
+XM4XEo1VnqQsR6FFb5EFZuXA0UPHMUXJjS9rfn2OzULVuv6lz6Ckb35NnpgUKX+M
+Jegmybh/bEaU32d2iUMDZgVnatH208WDVH0KxBPoILYn+WziBj+SANaeEtb9qxXW
+5bRtBkLgzUcwn33IS0uFiYboV0pvzmCAW3LO36cFfEOeAHrMqH8Zc1twym7ckSDv
+jwJ1yNef9168reLPRY5tAakZ64EhgXeLSDkF3OF7vZNqFWH2ZYsocgLyfMXCvPRu
+Tdo08FGesc8ruyGn0+6YAQnU23rNTGmYoQWSMAMTf6hjPjIGiL94exSs8KMcU56S
+6dXNSuNspXcKwmC6ruOugKHepNE8Uz8dTuBiV8m+OI7rW5JbcHVoy9lWG++rDgNp
+b9mX8bEdiyiEvj/XnAQi9p7URNCmqZwjJ/Tur+HxGrfVQVargNQ6g+iUcl6dEc/l
+u891tUIp9aJcoWrjTaAB5F1qEkXIhPrCcIrvXFwcKrDHnTsUIEiDiLDZvjDaISe+
+bUt3fzsxBPQz3S3Y43pAP3cD0Jw8b74jvDvAtd69Mll5dmIBbTd8pgrjrhaPcW79
+vZmgphbxdUkCunGwqrWVmHNtkHSrPnGfjCFcO1N7bp5jJO6Zm+w=
+=6bPW
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_E13FE755-3BFF-4A76-9927-26DB353A0D87--
