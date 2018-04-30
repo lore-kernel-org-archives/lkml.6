@@ -1,40 +1,39 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpLMVWmvlMaYE4TJNUfmbgvJ0nLmz603IrOkcROmTfOC60eoupNgVoVF9fSAWHBAQNx8Oqb
-ARC-Seal: i=1; a=rsa-sha256; t=1525116508; cv=none;
+X-Google-Smtp-Source: AB8JxZrJRJsGVAsXtcI6j52YCajgFGr5kHEB2RvwK8bCn6LNmxjC/x3S6CXgzjnwjydrhYaDL3D+
+ARC-Seal: i=1; a=rsa-sha256; t=1525116490; cv=none;
         d=google.com; s=arc-20160816;
-        b=BHtRBD7KPvH1rhIGFjhkuXaLEVPadTW+iszd8htjAb7vEKN3VhLmmMdn50yyELtz+T
-         Z9nqwPTunbill2KfEJnHvipZyZtrulD/Lcz7rFjAh6neR3Nqrr1NUiVvWD9deqo9qFxM
-         esn4iBGXCfksnnd6uyR93IQrF4kdZJLpGTFfnhKHwlVghlFLh2BOgtNuIJ9HEDp5mp5b
-         MvqXF06udXYmztGO3seV3Oophv9n0lCfa4h3gT7O9g49vULAHHoK9V5rhWrFtE/AequN
-         WC4V2cSTrSJYb/rVgrSu4Y5+tWZeA3DvI88mUNptgHv6Jaqnl8cXGywHikfmNrz6IiZp
-         6dcQ==
+        b=wUcr+y/71CKXvCj+EyuD4GHjh0UMDyY2DiqRJ13T7UHxHIs0sSSIv7XhRPiroatFWk
+         BUSgFhah/LLQSpl8371GGvAHjA2vW1ciYW/vT2XcYEUMDbKPRPebwuN/V5nBN6+T3iDE
+         fOWbVGc36OsOQDH5u9ySpaVLFs+uEeGdDzR410hJFAh+lAq9/A2OshUKGLWyOA3jDgpq
+         Lp8yvzrEnnIWE4fgSDye35ue3EvtDuMSlfxHFV4I/Fh+Qj16mHqiDDj0nLUUf49njmoU
+         pZ39Ww4YeQlVCEqH2eoh8HHvnR4cORg0mYp5GzP14dg+u7+hZGs3MzygVl6Ju1OJIAlA
+         SATg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=tIOyW98+GmdJGKInuP4LepZKGBF3e4dMKWM6StN7uQQ=;
-        b=yQQz5cfzJCjrW5x+Bi4c4d/4OnRAfn2ErtYH+mtRsVG7IQsLiY6Rrazn+Zgav2FgSh
-         T6bCcq1UkNdcMmXLRlryHM4lZbY2OVHvcVsLgRRu+wBk/Tx0SlWSHCjznW/QrxMtiQgS
-         HQQrtD8o912Xg3cSLGXc54r7wFa4F8aqNt0MoJnlYTD8wUWUbgXMQckuJkl0DnDLsvXA
-         uTwysg7jh1a1+SekTfv6dYuoWf6NyyAlDmF4etuYCEa9CHG7nx68IslsSweAkObXEdVK
-         y4AkdFUQ/VIidM244XPZADY+sodzEAmLa7dkfcX0xt3P3tV3IYU00qhnReSMWoF0DcP8
-         Ob/g==
+        bh=pC7AIVFl1dYCQOFvkOidnzo7QLpcr5CtVjy/WpOfohw=;
+        b=lyFil/hDfXwphsTyQEgyVtyQCmWwyhkchm9J+aUeWkS1UzYB0fbz+/oLsoK1CAU4o1
+         2/eEeVaJdB7yaRX9l+3/rY8iwPm8BpiJA31ihdeviZB55eGOEU0MeX2+zYpeJwiuvPIn
+         ak5KeBzZuguMXTk8c2ZOrp0Hi9di1wCB4oomOJlp1PnxBSCYG/YwSsIBMoiSqmdaO43h
+         20worK1u1J/JSQ2vrI3edme0SLfXR0MKt9siiROjltdkFqiYWPFttW4xlQEsoLYtF6Pn
+         ACQfMSoaPRUQ0lqIyD4cGUGz2eaGx1dsob/WS6RT06EhP8SKIa5oqM1frvxqza1sDtJC
+         aNUw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2886822DC1
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6622A22E02
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Bart Van Assche <bart.vanassche@wdc.com>,
-	Alan Jenkins <alan.christopher.jenkins@gmail.com>,
-	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.16 065/113] block: do not use interruptible wait anywhere
-Date: Mon, 30 Apr 2018 12:24:36 -0700
-Message-Id: <20180430184017.968356287@linuxfoundation.org>
+	Jann Horn <jannh@google.com>,
+	Theodore Tso <tytso@mit.edu>
+Subject: [PATCH 4.16 006/113] random: set up the NUMA crng instances after the CRNG is fully initialized
+Date: Mon, 30 Apr 2018 12:23:37 -0700
+Message-Id: <20180430184015.339138140@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184015.043892819@linuxfoundation.org>
 References: <20180430184015.043892819@linuxfoundation.org>
@@ -44,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200568646349332?=
-X-GMAIL-MSGID: =?utf-8?q?1599200568646349332?=
+X-GMAIL-THRID: =?utf-8?q?1599200549530804380?=
+X-GMAIL-MSGID: =?utf-8?q?1599200549530804380?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,72 +52,97 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alan Jenkins <alan.christopher.jenkins@gmail.com>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit 1dc3039bc87ae7d19a990c3ee71cfd8a9068f428 upstream.
+commit 8ef35c866f8862df074a49a93b0309725812dea8 upstream.
 
-When blk_queue_enter() waits for a queue to unfreeze, or unset the
-PREEMPT_ONLY flag, do not allow it to be interrupted by a signal.
+Until the primary_crng is fully initialized, don't initialize the NUMA
+crng nodes.  Otherwise users of /dev/urandom on NUMA systems before
+the CRNG is fully initialized can get very bad quality randomness.  Of
+course everyone should move to getrandom(2) where this won't be an
+issue, but there's a lot of legacy code out there.  This related to
+CVE-2018-1108.
 
-The PREEMPT_ONLY flag was introduced later in commit 3a0a529971ec
-("block, scsi: Make SCSI quiesce and resume work reliably").  Note the SCSI
-device is resumed asynchronously, i.e. after un-freezing userspace tasks.
-
-So that commit exposed the bug as a regression in v4.15.  A mysterious
-SIGBUS (or -EIO) sometimes happened during the time the device was being
-resumed.  Most frequently, there was no kernel log message, and we saw Xorg
-or Xwayland killed by SIGBUS.[1]
-
-[1] E.g. https://bugzilla.redhat.com/show_bug.cgi?id=1553979
-
-Without this fix, I get an IO error in this test:
-
-# dd if=/dev/sda of=/dev/null iflag=direct & \
-  while killall -SIGUSR1 dd; do sleep 0.1; done & \
-  echo mem > /sys/power/state ; \
-  sleep 5; killall dd  # stop after 5 seconds
-
-The interruptible wait was added to blk_queue_enter in
-commit 3ef28e83ab15 ("block: generic request_queue reference counting").
-Before then, the interruptible wait was only in blk-mq, but I don't think
-it could ever have been correct.
-
-Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Alan Jenkins <alan.christopher.jenkins@gmail.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Reported-by: Jann Horn <jannh@google.com>
+Fixes: 1e7f583af67b ("random: make /dev/urandom scalable for silly...")
+Cc: stable@kernel.org # 4.8+
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- block/blk-core.c |   11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+ drivers/char/random.c |   46 +++++++++++++++++++++++++++-------------------
+ 1 file changed, 27 insertions(+), 19 deletions(-)
 
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -829,7 +829,6 @@ int blk_queue_enter(struct request_queue
- 
- 	while (true) {
- 		bool success = false;
--		int ret;
- 
- 		rcu_read_lock();
- 		if (percpu_ref_tryget_live(&q->q_usage_counter)) {
-@@ -861,14 +860,12 @@ int blk_queue_enter(struct request_queue
- 		 */
- 		smp_rmb();
- 
--		ret = wait_event_interruptible(q->mq_freeze_wq,
--				(atomic_read(&q->mq_freeze_depth) == 0 &&
--				 (preempt || !blk_queue_preempt_only(q))) ||
--				blk_queue_dying(q));
-+		wait_event(q->mq_freeze_wq,
-+			   (atomic_read(&q->mq_freeze_depth) == 0 &&
-+			    (preempt || !blk_queue_preempt_only(q))) ||
-+			   blk_queue_dying(q));
- 		if (blk_queue_dying(q))
- 			return -ENODEV;
--		if (ret)
--			return ret;
- 	}
+--- a/drivers/char/random.c
++++ b/drivers/char/random.c
+@@ -787,6 +787,32 @@ static void crng_initialize(struct crng_
+ 	crng->init_time = jiffies - CRNG_RESEED_INTERVAL - 1;
  }
  
++#ifdef CONFIG_NUMA
++static void numa_crng_init(void)
++{
++	int i;
++	struct crng_state *crng;
++	struct crng_state **pool;
++
++	pool = kcalloc(nr_node_ids, sizeof(*pool), GFP_KERNEL|__GFP_NOFAIL);
++	for_each_online_node(i) {
++		crng = kmalloc_node(sizeof(struct crng_state),
++				    GFP_KERNEL | __GFP_NOFAIL, i);
++		spin_lock_init(&crng->lock);
++		crng_initialize(crng);
++		pool[i] = crng;
++	}
++	mb();
++	if (cmpxchg(&crng_node_pool, NULL, pool)) {
++		for_each_node(i)
++			kfree(pool[i]);
++		kfree(pool);
++	}
++}
++#else
++static void numa_crng_init(void) {}
++#endif
++
+ /*
+  * crng_fast_load() can be called by code in the interrupt service
+  * path.  So we can't afford to dilly-dally.
+@@ -893,6 +919,7 @@ static void crng_reseed(struct crng_stat
+ 	spin_unlock_irqrestore(&crng->lock, flags);
+ 	if (crng == &primary_crng && crng_init < 2) {
+ 		invalidate_batched_entropy();
++		numa_crng_init();
+ 		crng_init = 2;
+ 		process_random_ready_list();
+ 		wake_up_interruptible(&crng_init_wait);
+@@ -1731,29 +1758,10 @@ static void init_std_data(struct entropy
+  */
+ static int rand_initialize(void)
+ {
+-#ifdef CONFIG_NUMA
+-	int i;
+-	struct crng_state *crng;
+-	struct crng_state **pool;
+-#endif
+-
+ 	init_std_data(&input_pool);
+ 	init_std_data(&blocking_pool);
+ 	crng_initialize(&primary_crng);
+ 	crng_global_init_time = jiffies;
+-
+-#ifdef CONFIG_NUMA
+-	pool = kcalloc(nr_node_ids, sizeof(*pool), GFP_KERNEL|__GFP_NOFAIL);
+-	for_each_online_node(i) {
+-		crng = kmalloc_node(sizeof(struct crng_state),
+-				    GFP_KERNEL | __GFP_NOFAIL, i);
+-		spin_lock_init(&crng->lock);
+-		crng_initialize(crng);
+-		pool[i] = crng;
+-	}
+-	mb();
+-	crng_node_pool = pool;
+-#endif
+ 	return 0;
+ }
+ early_initcall(rand_initialize);
