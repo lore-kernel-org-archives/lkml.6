@@ -1,39 +1,41 @@
 Return-Path: <SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpC71Iiy7D13AwD7ZrDxdbJhkqxNKzxKQxs+/sTGydmg6ZJhmNLPJS6JZHNpqfAUSYTSmNv
-ARC-Seal: i=1; a=rsa-sha256; t=1525116421; cv=none;
+X-Google-Smtp-Source: AB8JxZq5llDLCsWU6nmIeFteeLEVu/+I1xRlcRYVhT2PNrsxNvmrfX7gN68TvK5uuRvB+Ih4yknP
+ARC-Seal: i=1; a=rsa-sha256; t=1525116463; cv=none;
         d=google.com; s=arc-20160816;
-        b=rM5dJUTAGq94s3fv8Xsh5jHNG+3MCtMF0FLKEnb65gVzcMc4UzUbJ2Hp1SUnfwVwk1
-         YqLCAO5WAhUEuvFBR7DvlwNsyY6vmTVu3UReKbzR4WYH/3nUVg3MMKzBD+EFEPizyxD+
-         B2mCi6LzSAqa8aEEHKR1XAGBdyvLq9OKmFHijcl+JxSJEy77r2kbt43KImR9V/ys0PfK
-         9dXhlMXzGhrrflEBWU97zx8MgxOKYFL2CoPT9j8rKEw9K7hM6Y8OLuxanYKGgRAcOYBz
-         tu+T3C0eN2h9mMfurzdlSoDMb/B3DqSxI1Ol6lj/6JWpI8tGb1dwOiiWhm+M690WgOOQ
-         T9qQ==
+        b=anPEvp8d5qbtU3jgSG3ZP4riDP5y+cmvFtF7R6rg/0zJLOyRb5ARQjS1g+J1H1qKFm
+         a1wt0Jsn3mXbt3mOHUE8+5xa3Wv2t3wa/n0S1e8aSfKhd8DWHQGf3CydxfAgBspHmXfu
+         uIi6ihjlcrASrVRYwLqt9q1kXzVLVxCM45+XNhVRa5wpC0RbOe47y//7BRs4WwsXkXI6
+         dhaE2iP4aZ7/LBKBtUBePdluZ0VsDBwoADUoPZLZxESsxe5e83zGpp2uaPY/a9oVNYUH
+         laV+kQSfAWlR8znJKa3OiTgNPn9JEcHv8Rx9GZrZZRM7DOpL9VIOrq9Q9ET48eTTFW3q
+         GEfQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=kYBTDKSDlfnwOBfvdb3S9ZhpIIO9UmVC/TnZ/Y371Cg=;
-        b=GsR9wknUJpLKj73gYp3GGPoDLJITsxLrxuChyFUWfcSCvPcx96nLUKyRiJV5v/rha9
-         CgOf11ZE9zZjBXB9ky7c1KT8JSJzPcUeDlo5aKDfg342WRkoJ4ayaVT125WqGL4CikYK
-         39ngE/kt2jiLKVYTrwyFh2Dpf4gwlpSENFqf7WQ4iXve8170idIwR6P3OrUmO1NA84Ka
-         sEetU8IHi3wfFih9ZxOkJY7NU/kbUelN6gnZAZbqTF/roy8ewcOI/6uojpeuQ4le+eYn
-         ui8QJqombWzbbRc+TkMirjSSnVYQxhqk0y8XjvOUZKP+LEYRbR9n1OoFK1ZA1tyW0MMz
-         IueQ==
+        bh=rf7qpNDg/j0fN97wxVSMA9Fl2LKzZRZImIkQOSl+opU=;
+        b=aBuXaRhk+CRrs8TOrULhEj/w3YsKtKWiKok5IcPnBt/YVpc4zerI1Wxav7W4jIpwDU
+         cBULB0YXYRoN1wKv9L1eKtgqeWdNMPVWBIIp0DlmB/TCfLCLYzJr9BJ8WdjHos2WUkNX
+         9dsW8q6JcLPjaSsAE9sn4MPXo5SjM1vOeCcFUJbgAIk//DHZr2YcKFwSSyhZK8dOe1lS
+         7ywUhDyy0n9n6Vh/pNHi7KnDKN9T1hX3QnoQvLRvZHmjBvTOvXNFkReVFBmHprjeB11j
+         7tmu8OmP4UYRncJvOcNevl/Aghf2Q6DIsvzqh9+iwjS5/psqyNOm/1+6WdHRc9MDXtWA
+         x32A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of srs0=k66p=ht=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=K66P=HT=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D60D422DAC
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7706122E02
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Kamil Lulko <kamilx.lulko@intel.com>,
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-Subject: [PATCH 4.14 19/91] usb: core: Add quirk for HP v222w 16GB Mini
-Date: Mon, 30 Apr 2018 12:24:01 -0700
-Message-Id: <20180430184005.218334146@linuxfoundation.org>
+	Vitezslav Samel <vitezslav@samel.cz>,
+	Borislav Petkov <bp@suse.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ashok Raj <ashok.raj@intel.com>
+Subject: [PATCH 4.14 86/91] x86/microcode/intel: Save microcode patch unconditionally
+Date: Mon, 30 Apr 2018 12:25:08 -0700
+Message-Id: <20180430184008.779505767@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180430184004.216234025@linuxfoundation.org>
 References: <20180430184004.216234025@linuxfoundation.org>
@@ -43,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599200291962669964?=
-X-GMAIL-MSGID: =?utf-8?q?1599200476619136732?=
+X-GMAIL-THRID: =?utf-8?q?1599200597007916325?=
+X-GMAIL-MSGID: =?utf-8?q?1599200521330244351?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,35 +54,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kamil Lulko <kamilx.lulko@intel.com>
+From: Borislav Petkov <bp@suse.de>
 
-commit 3180dabe08e3653bf0a838553905d88f3773f29c upstream.
+commit 84749d83758af6576552046b215b9b7f37f9556b upstream.
 
-Add DELAY_INIT quirk to fix the following problem with HP
-v222w 16GB Mini:
+save_mc_for_early() was a no-op on !CONFIG_HOTPLUG_CPU but the
+generic_load_microcode() path saves the microcode patches it has found into
+the cache of patches which is used for late loading too. Regardless of
+whether CPU hotplug is used or not.
 
-usb 1-3: unable to read config index 0 descriptor/start: -110
-usb 1-3: can't read configurations, error -110
-usb 1-3: can't set config #1, error -110
+Make the saving unconditional so that late loading can find the proper
+patch.
 
-Signed-off-by: Kamil Lulko <kamilx.lulko@intel.com>
-Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-Cc: stable <stable@vger.kernel.org>
+Reported-by: Vitezslav Samel <vitezslav@samel.cz>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Vitezslav Samel <vitezslav@samel.cz>
+Tested-by: Ashok Raj <ashok.raj@intel.com>
+Cc: stable@vger.kernel.org
+Link: http://lkml.kernel.org/r/20180418081140.GA2439@pc11.op.pod.cz
+Link: https://lkml.kernel.org/r/20180421081930.15741-1-bp@alien8.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/core/quirks.c |    3 +++
- 1 file changed, 3 insertions(+)
+ arch/x86/kernel/cpu/microcode/intel.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/drivers/usb/core/quirks.c
-+++ b/drivers/usb/core/quirks.c
-@@ -45,6 +45,9 @@ static const struct usb_device_id usb_qu
- 	{ USB_DEVICE(0x03f0, 0x0701), .driver_info =
- 			USB_QUIRK_STRING_FETCH_255 },
+--- a/arch/x86/kernel/cpu/microcode/intel.c
++++ b/arch/x86/kernel/cpu/microcode/intel.c
+@@ -485,7 +485,6 @@ static void show_saved_mc(void)
+  */
+ static void save_mc_for_early(u8 *mc, unsigned int size)
+ {
+-#ifdef CONFIG_HOTPLUG_CPU
+ 	/* Synchronization during CPU hotplug. */
+ 	static DEFINE_MUTEX(x86_cpu_microcode_mutex);
  
-+	/* HP v222w 16GB Mini USB Drive */
-+	{ USB_DEVICE(0x03f0, 0x3f40), .driver_info = USB_QUIRK_DELAY_INIT },
-+
- 	/* Creative SB Audigy 2 NX */
- 	{ USB_DEVICE(0x041e, 0x3020), .driver_info = USB_QUIRK_RESET_RESUME },
+@@ -495,7 +494,6 @@ static void save_mc_for_early(u8 *mc, un
+ 	show_saved_mc();
  
+ 	mutex_unlock(&x86_cpu_microcode_mutex);
+-#endif
+ }
+ 
+ static bool load_builtin_intel_microcode(struct cpio_data *cp)
