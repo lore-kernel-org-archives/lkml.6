@@ -1,280 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754594AbeD3POp (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 11:14:45 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44808 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752534AbeD3POn (ORCPT
+        id S1754616AbeD3PO4 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 11:14:56 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:43355 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752255AbeD3POy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 11:14:43 -0400
-Subject: Re: [PATCH v10 08/25] mm: VMA sequence count
-To: Minchan Kim <minchan@kernel.org>
-Cc: akpm@linux-foundation.org, mhocko@kernel.org, peterz@infradead.org,
-        kirill@shutemov.name, ak@linux.intel.com, dave@stgolabs.net,
-        jack@suse.cz, Matthew Wilcox <willy@infradead.org>,
-        benh@kernel.crashing.org, mpe@ellerman.id.au, paulus@samba.org,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
-        sergey.senozhatsky.work@gmail.com,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        David Rientjes <rientjes@google.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Ganesh Mahendran <opensource.ganesh@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
-        npiggin@gmail.com, bsingharora@gmail.com, paulmck@linux.vnet.ibm.com,
-        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
-        x86@kernel.org
-References: <1523975611-15978-1-git-send-email-ldufour@linux.vnet.ibm.com>
- <1523975611-15978-9-git-send-email-ldufour@linux.vnet.ibm.com>
- <20180423064259.GC114098@rodete-desktop-imager.corp.google.com>
-From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Date: Mon, 30 Apr 2018 17:14:27 +0200
+        Mon, 30 Apr 2018 11:14:54 -0400
+To: harry.wentland@amd.com
+Cc: alexander.deucher@amd.com, alexander.deucher@amd.com,
+        christian.koenig@amd.com, David1.Zhou@amd.com, airlied@linux.ie,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "1761751@bugs.launchpad.net" <1761751@bugs.launchpad.net>
+From: Joseph Salisbury <joseph.salisbury@canonical.com>
+Subject: [REGRESSION] drm/amd/dc: Add dc display driver (v2)
+Openpgp: preference=signencrypt
+Autocrypt: addr=joseph.salisbury@canonical.com; prefer-encrypt=mutual;
+ keydata=
+ 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
+ p24lPxLL08SuCEzuBw==
+Message-ID: <fbb549e9-88a9-cc85-f8f3-e4bd0157b58c@canonical.com>
+Date: Mon, 30 Apr 2018 11:14:50 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180423064259.GC114098@rodete-desktop-imager.corp.google.com>
 Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18043015-0040-0000-0000-0000045382AC
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18043015-0041-0000-0000-000020F79A97
-Message-Id: <06b996b0-b831-3d39-8a99-792abfb6a4d1@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-30_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804300146
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Harry,
+
+A kernel bug report was opened against Ubuntu [0].  After a kernel
+bisect, it was found the following commit introduced the bug:
 
 
-On 23/04/2018 08:42, Minchan Kim wrote:
-> On Tue, Apr 17, 2018 at 04:33:14PM +0200, Laurent Dufour wrote:
->> From: Peter Zijlstra <peterz@infradead.org>
->>
->> Wrap the VMA modifications (vma_adjust/unmap_page_range) with sequence
->> counts such that we can easily test if a VMA is changed.
-> 
-> So, seqcount is to protect modifying all attributes of vma?
+commit 4562236b3bc0a28aeb6ee93b2d8a849a4c4e1c7c
+Author: Harry Wentland <harry.wentland@amd.com>
+Date:   Tue Sep 12 15:58:20 2017 -0400
 
-The seqcount is used to protect fields that will be used during the speculative
-page fault like boundaries, protections.
+    drm/amd/dc: Add dc display driver (v2)
 
->>
->> The unmap_page_range() one allows us to make assumptions about
->> page-tables; when we find the seqcount hasn't changed we can assume
->> page-tables are still valid.
-> 
-> Hmm, seqcount covers page-table, too.
-> Please describe what the seqcount want to protect.
 
-The calls to vm_write_begin/end() in unmap_page_range() are used to detect when
-a VMA is being unmap and thus that new page fault should not be satisfied for
-this VMA. This is protecting the VMA unmapping operation, not the page tables
-themselves.
+The regression was introduced as of v4.15-rc1 and still exists in
+current mainline.  The commit does not need to be reverted to resolve
+the bug.  Disabling the CONFIG_DRM_AMD_DC_PRE_VEGA option makes the bug
+go away.
+   
+I was hoping to get your feedback, since you are the patch author.  Do
+you think gathering any additional data will help diagnose this issue?
+   
 
->>
->> The flip side is that we cannot distinguish between a vma_adjust() and
->> the unmap_page_range() -- where with the former we could have
->> re-checked the vma bounds against the address.
->>
->> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
->>
->> [Port to 4.12 kernel]
->> [Build depends on CONFIG_SPECULATIVE_PAGE_FAULT]
->> [Introduce vm_write_* inline function depending on
->>  CONFIG_SPECULATIVE_PAGE_FAULT]
->> [Fix lock dependency between mapping->i_mmap_rwsem and vma->vm_sequence by
->>  using vm_raw_write* functions]
->> [Fix a lock dependency warning in mmap_region() when entering the error
->>  path]
->> [move sequence initialisation INIT_VMA()]
->> Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
->> ---
->>  include/linux/mm.h       | 44 ++++++++++++++++++++++++++++++++++++++++++++
->>  include/linux/mm_types.h |  3 +++
->>  mm/memory.c              |  2 ++
->>  mm/mmap.c                | 31 +++++++++++++++++++++++++++++++
->>  4 files changed, 80 insertions(+)
->>
->> diff --git a/include/linux/mm.h b/include/linux/mm.h
->> index efc1248b82bd..988daf7030c9 100644
->> --- a/include/linux/mm.h
->> +++ b/include/linux/mm.h
->> @@ -1264,6 +1264,9 @@ struct zap_details {
->>  static inline void INIT_VMA(struct vm_area_struct *vma)
->>  {
->>  	INIT_LIST_HEAD(&vma->anon_vma_chain);
->> +#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
->> +	seqcount_init(&vma->vm_sequence);
->> +#endif
->>  }
->>  
->>  struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
->> @@ -1386,6 +1389,47 @@ static inline void unmap_shared_mapping_range(struct address_space *mapping,
->>  	unmap_mapping_range(mapping, holebegin, holelen, 0);
->>  }
->>  
->> +#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
->> +static inline void vm_write_begin(struct vm_area_struct *vma)
->> +{
->> +	write_seqcount_begin(&vma->vm_sequence);
->> +}
->> +static inline void vm_write_begin_nested(struct vm_area_struct *vma,
->> +					 int subclass)
->> +{
->> +	write_seqcount_begin_nested(&vma->vm_sequence, subclass);
->> +}
->> +static inline void vm_write_end(struct vm_area_struct *vma)
->> +{
->> +	write_seqcount_end(&vma->vm_sequence);
->> +}
->> +static inline void vm_raw_write_begin(struct vm_area_struct *vma)
->> +{
->> +	raw_write_seqcount_begin(&vma->vm_sequence);
->> +}
->> +static inline void vm_raw_write_end(struct vm_area_struct *vma)
->> +{
->> +	raw_write_seqcount_end(&vma->vm_sequence);
->> +}
->> +#else
->> +static inline void vm_write_begin(struct vm_area_struct *vma)
->> +{
->> +}
->> +static inline void vm_write_begin_nested(struct vm_area_struct *vma,
->> +					 int subclass)
->> +{
->> +}
->> +static inline void vm_write_end(struct vm_area_struct *vma)
->> +{
->> +}
->> +static inline void vm_raw_write_begin(struct vm_area_struct *vma)
->> +{
->> +}
->> +static inline void vm_raw_write_end(struct vm_area_struct *vma)
->> +{
->> +}
->> +#endif /* CONFIG_SPECULATIVE_PAGE_FAULT */
->> +
->>  extern int access_process_vm(struct task_struct *tsk, unsigned long addr,
->>  		void *buf, int len, unsigned int gup_flags);
->>  extern int access_remote_vm(struct mm_struct *mm, unsigned long addr,
->> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
->> index 21612347d311..db5e9d630e7a 100644
->> --- a/include/linux/mm_types.h
->> +++ b/include/linux/mm_types.h
->> @@ -335,6 +335,9 @@ struct vm_area_struct {
->>  	struct mempolicy *vm_policy;	/* NUMA policy for the VMA */
->>  #endif
->>  	struct vm_userfaultfd_ctx vm_userfaultfd_ctx;
->> +#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
->> +	seqcount_t vm_sequence;
->> +#endif
->>  } __randomize_layout;
->>  
->>  struct core_thread {
->> diff --git a/mm/memory.c b/mm/memory.c
->> index f86efcb8e268..f7fed053df80 100644
->> --- a/mm/memory.c
->> +++ b/mm/memory.c
->> @@ -1503,6 +1503,7 @@ void unmap_page_range(struct mmu_gather *tlb,
->>  	unsigned long next;
->>  
->>  	BUG_ON(addr >= end);
-> 
-> The comment about saying it aims for page-table stability will help.
+Thanks,
 
-A comment may be added mentioning that we use the seqcount to indicate that the
-VMA is modified, being unmapped. But there is not a real page table protection,
-and I think this may be confusing to talk about page table stability here.
+Joe
 
-> 
->> +	vm_write_begin(vma);
->>  	tlb_start_vma(tlb, vma);
->>  	pgd = pgd_offset(vma->vm_mm, addr);
->>  	do {
->> @@ -1512,6 +1513,7 @@ void unmap_page_range(struct mmu_gather *tlb,
->>  		next = zap_p4d_range(tlb, vma, pgd, addr, next, details);
->>  	} while (pgd++, addr = next, addr != end);
->>  	tlb_end_vma(tlb, vma);
->> +	vm_write_end(vma);
->>  }
->>  
->>  
->> diff --git a/mm/mmap.c b/mm/mmap.c
->> index 8bd9ae1dfacc..813e49589ea1 100644
->> --- a/mm/mmap.c
->> +++ b/mm/mmap.c
->> @@ -692,6 +692,30 @@ int __vma_adjust(struct vm_area_struct *vma, unsigned long start,
->>  	long adjust_next = 0;
->>  	int remove_next = 0;
->>  
->> +	/*
->> +	 * Why using vm_raw_write*() functions here to avoid lockdep's warning ?
->> +	 *
->> +	 * Locked is complaining about a theoretical lock dependency, involving
->> +	 * 3 locks:
->> +	 *   mapping->i_mmap_rwsem --> vma->vm_sequence --> fs_reclaim
->> +	 *
->> +	 * Here are the major path leading to this dependency :
->> +	 *  1. __vma_adjust() mmap_sem  -> vm_sequence -> i_mmap_rwsem
->> +	 *  2. move_vmap() mmap_sem -> vm_sequence -> fs_reclaim
->> +	 *  3. __alloc_pages_nodemask() fs_reclaim -> i_mmap_rwsem
->> +	 *  4. unmap_mapping_range() i_mmap_rwsem -> vm_sequence
->> +	 *
->> +	 * So there is no way to solve this easily, especially because in
->> +	 * unmap_mapping_range() the i_mmap_rwsem is grab while the impacted
->> +	 * VMAs are not yet known.
->> +	 * However, the way the vm_seq is used is guarantying that we will
->> +	 * never block on it since we just check for its value and never wait
->> +	 * for it to move, see vma_has_changed() and handle_speculative_fault().
->> +	 */
->> +	vm_raw_write_begin(vma);
->> +	if (next)
->> +		vm_raw_write_begin(next);
->> +
->>  	if (next && !insert) {
->>  		struct vm_area_struct *exporter = NULL, *importer = NULL;
->>  
->> @@ -902,6 +926,7 @@ int __vma_adjust(struct vm_area_struct *vma, unsigned long start,
->>  			anon_vma_merge(vma, next);
->>  		mm->map_count--;
->>  		mpol_put(vma_policy(next));
->> +		vm_raw_write_end(next);
->>  		kmem_cache_free(vm_area_cachep, next);
->>  		/*
->>  		 * In mprotect's case 6 (see comments on vma_merge),
->> @@ -916,6 +941,8 @@ int __vma_adjust(struct vm_area_struct *vma, unsigned long start,
->>  			 * "vma->vm_next" gap must be updated.
->>  			 */
->>  			next = vma->vm_next;
->> +			if (next)
->> +				vm_raw_write_begin(next);
->>  		} else {
->>  			/*
->>  			 * For the scope of the comment "next" and
->> @@ -962,6 +989,10 @@ int __vma_adjust(struct vm_area_struct *vma, unsigned long start,
->>  	if (insert && file)
->>  		uprobe_mmap(insert);
->>  
->> +	if (next && next != vma)
->> +		vm_raw_write_end(next);
->> +	vm_raw_write_end(vma);
->> +
->>  	validate_mm(mm);
->>  
->>  	return 0;
->> -- 
->> 2.7.4
->>
-> 
+
+[0] http://pad.lv/1761751
