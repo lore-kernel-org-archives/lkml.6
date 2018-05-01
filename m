@@ -1,88 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754478AbeEAKpI (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 06:45:08 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:36354 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752009AbeEAKpH (ORCPT
+        id S1754819AbeEAKpf (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 06:45:35 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:43175 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754623AbeEAKpe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 06:45:07 -0400
-Date: Tue, 1 May 2018 12:44:59 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Kohli, Gaurav" <gkohli@codeaurora.org>
-Cc: tglx@linutronix.de, mpe@ellerman.id.au, mingo@kernel.org,
-        bigeasy@linutronix.de, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Neeraj Upadhyay <neeraju@codeaurora.org>,
-        Will Deacon <will.deacon@arm.com>, Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [PATCH v1] kthread/smpboot: Serialize kthread parking against
- wakeup
-Message-ID: <20180501104459.GF12235@hirez.programming.kicks-ass.net>
-References: <1524645199-5596-1-git-send-email-gkohli@codeaurora.org>
- <20180425200917.GZ4082@hirez.programming.kicks-ass.net>
- <20180426084131.GV4129@hirez.programming.kicks-ass.net>
- <20180426085719.GW4129@hirez.programming.kicks-ass.net>
- <4d3f68f8-e599-6b27-a2e8-9e96b401d57a@codeaurora.org>
- <20180430111744.GE4082@hirez.programming.kicks-ass.net>
- <3af3365b-4e3f-e388-8e90-45a3bd4120fd@codeaurora.org>
- <20180501101845.GE12217@hirez.programming.kicks-ass.net>
+        Tue, 1 May 2018 06:45:34 -0400
+X-Google-Smtp-Source: AB8JxZrOlRjo6zGuXkBe3XT+qUy47SKxZQIltZbf1Lb/5BAtRhpeoyAkVHS8JHLfk4T5qoPA1gJlliSmVekXBg0e2Eo=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180501101845.GE12217@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <32e853dd-3340-653e-a876-dce5de44d990@I-love.SAKURA.ne.jp>
+References: <0000000000001f05330568a6b369@google.com> <32e853dd-3340-653e-a876-dce5de44d990@I-love.SAKURA.ne.jp>
+From: Tigran Aivazian <aivazian.tigran@gmail.com>
+Date: Tue, 1 May 2018 11:45:32 +0100
+Message-ID: <CAK+_RLn7S5MyUUgvGeXxtks2bJcZse=QVzBkEQynjOXcDMTrRw@mail.gmail.com>
+Subject: Re: WARNING: kmalloc bug in bfs_fill_super
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: syzbot <syzbot+71c6b5d68e91149fc8a4@syzkaller.appspotmail.com>,
+        LKML <linux-kernel@vger.kernel.org>, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 01, 2018 at 12:18:45PM +0200, Peter Zijlstra wrote:
-> Aaaah... I think I've spotted a problem there. We clear SHOULD_PARK
-> before we rebind, so if the thread lost the first PARKED store,
-> does the completion, gets migrated, cycles through the loop and now
-> observes !SHOULD_PARK and bails the wait-loop, then __kthread_bind()
-> will forever wait.
+Looks good to me, thank you.
 
-
-Something like so perhaps...
-
---- a/kernel/kthread.c
-+++ b/kernel/kthread.c
-@@ -451,6 +451,21 @@ void kthread_unpark(struct task_struct *
- {
- 	struct kthread *kthread = to_kthread(k);
- 
-+	if (test_bit(KTHREAD_IS_PARKED)) {
-+		/*
-+		 * Newly created kthread was parked when the CPU was offline.
-+		 * The binding was lost and we need to set it again.
-+		 */
-+		if (test_bit(KTHREAD_IS_PER_CPU, &kthread->flags))
-+			__kthread_bind(k, kthread->cpu, TASK_PARKED);
-+	}
-+
-+	/*
-+	 * Ensures the IS_PARKED load precedes the !SHOULD_PARK store.
-+	 * matched by the smp_mb() from test_and_set_bit() in __kthread_parkme().
-+	 */
-+	smp_mb__before_atomic();
-+
- 	clear_bit(KTHREAD_SHOULD_PARK, &kthread->flags);
- 	/*
- 	 * We clear the IS_PARKED bit here as we don't wait
-@@ -458,15 +473,8 @@ void kthread_unpark(struct task_struct *
- 	 * park before that happens we'd see the IS_PARKED bit
- 	 * which might be about to be cleared.
- 	 */
--	if (test_and_clear_bit(KTHREAD_IS_PARKED, &kthread->flags)) {
--		/*
--		 * Newly created kthread was parked when the CPU was offline.
--		 * The binding was lost and we need to set it again.
--		 */
--		if (test_bit(KTHREAD_IS_PER_CPU, &kthread->flags))
--			__kthread_bind(k, kthread->cpu, TASK_PARKED);
-+	if (test_and_clear_bit(KTHREAD_IS_PARKED, &kthread->flags))
- 		wake_up_state(k, TASK_PARKED);
--	}
- }
- EXPORT_SYMBOL_GPL(kthread_unpark);
- 
+On 1 May 2018 at 11:01, Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp> wrote:
+>
+> From 247cae4da0490c2e285e0a99e630ef963fabb6d5 Mon Sep 17 00:00:00 2001
+> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Date: Tue, 1 May 2018 14:15:19 +0900
+> Subject: [PATCH] bfs: add sanity check at bfs_fill_super().
+>
+> syzbot is reporting too large memory allocation at bfs_fill_super() [1].
+> Since file system image is corrupted such that bfs_sb->s_start == 0,
+> bfs_fill_super() is trying to allocate 8MB of continuous memory. Fix this
+> by adding a sanity check on bfs_sb->s_start, __GFP_NOWARN and printf().
+>
+> [1] https://syzkaller.appspot.com/bug?id=16a87c236b951351374a84c8a32f40edbc034e96
+>
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Reported-by: syzbot <syzbot+71c6b5d68e91149fc8a4@syzkaller.appspotmail.com>
+> Cc: Tigran A. Aivazian <aivazian.tigran@gmail.com>
+> ---
+>  fs/bfs/inode.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+>
+> diff --git a/fs/bfs/inode.c b/fs/bfs/inode.c
+> index 9a69392..d81c148 100644
+> --- a/fs/bfs/inode.c
+> +++ b/fs/bfs/inode.c
+> @@ -350,7 +350,8 @@ static int bfs_fill_super(struct super_block *s, void *data, int silent)
+>
+>         s->s_magic = BFS_MAGIC;
+>
+> -       if (le32_to_cpu(bfs_sb->s_start) > le32_to_cpu(bfs_sb->s_end)) {
+> +       if (le32_to_cpu(bfs_sb->s_start) > le32_to_cpu(bfs_sb->s_end) ||
+> +           le32_to_cpu(bfs_sb->s_start) < BFS_BSIZE) {
+>                 printf("Superblock is corrupted\n");
+>                 goto out1;
+>         }
+> @@ -359,9 +360,11 @@ static int bfs_fill_super(struct super_block *s, void *data, int silent)
+>                                         sizeof(struct bfs_inode)
+>                                         + BFS_ROOT_INO - 1;
+>         imap_len = (info->si_lasti / 8) + 1;
+> -       info->si_imap = kzalloc(imap_len, GFP_KERNEL);
+> -       if (!info->si_imap)
+> +       info->si_imap = kzalloc(imap_len, GFP_KERNEL | __GFP_NOWARN);
+> +       if (!info->si_imap) {
+> +               printf("Cannot allocate %u bytes\n", imap_len);
+>                 goto out1;
+> +       }
+>         for (i = 0; i < BFS_ROOT_INO; i++)
+>                 set_bit(i, info->si_imap);
+>
+> --
+> 1.8.3.1
+>
