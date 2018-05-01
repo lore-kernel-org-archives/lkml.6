@@ -1,21 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755310AbeEAJOp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 05:14:45 -0400
-Received: from foss.arm.com ([217.140.101.70]:44224 "EHLO foss.arm.com"
+        id S1755128AbeEAJPG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 05:15:06 -0400
+Received: from foss.arm.com ([217.140.101.70]:44166 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754854AbeEAJLv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 05:11:51 -0400
+        id S1754737AbeEAJLl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 05:11:41 -0400
 From: Suzuki K Poulose <suzuki.poulose@arm.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org,
         mike.leach@linaro.org, robert.walker@arm.com, mark.rutland@arm.com,
         will.deacon@arm.com, robin.murphy@arm.com, sudeep.holla@arm.com,
         frowand.list@gmail.com, robh@kernel.org, john.horley@arm.com,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH v2 17/27] coresight: etr: Add support for save restore buffers
-Date: Tue,  1 May 2018 10:10:47 +0100
-Message-Id: <1525165857-11096-18-git-send-email-suzuki.poulose@arm.com>
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mathieu Poirier <matheiu.poirier@linaro.org>
+Subject: [PATCH v2 13/27] coresight: Add generic TMC sg table framework
+Date: Tue,  1 May 2018 10:10:43 +0100
+Message-Id: <1525165857-11096-14-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1525165857-11096-1-git-send-email-suzuki.poulose@arm.com>
 References: <1525165857-11096-1-git-send-email-suzuki.poulose@arm.com>
@@ -23,303 +24,407 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for creating buffers which can be used in save-restore
-mode (e.g, for use by perf). If the TMC-ETR supports save-restore
-feature, we could support the mode in all buffer backends. However,
-if it doesn't, we should fall back to using in built SG mechanism,
-where we can rotate the SG table by making some adjustments in the
-page table.
+This patch introduces a generic sg table data structure and
+associated operations. An SG table can be used to map a set
+of Data pages where the trace data could be stored by the TMC
+ETR. The information about the data pages could be stored in
+different formats, depending on the type of the underlying
+SG mechanism (e.g, TMC ETR SG vs Coresight CATU). The generic
+structure provides book keeping of the pages used for the data
+as well as the table contents. The table should be filled by
+the user of the infrastructure.
 
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+A table can be created by specifying the number of data pages
+as well as the number of table pages required to hold the
+pointers, where the latter could be different for different
+types of tables. The pages are mapped in the appropriate dma
+data direction mode (i.e, DMA_TO_DEVICE for table pages
+and DMA_FROM_DEVICE for data pages).  The framework can optionally
+accept a set of allocated data pages (e.g, perf ring buffer) and
+map them accordingly. The table and data pages are vmap'ed to allow
+easier access by the drivers. The framework also provides helpers to
+sync the data written to the pages with appropriate directions.
+
+This will be later used by the TMC ETR SG unit and CATU.
+
+Cc: Mathieu Poirier <matheiu.poirier@linaro.org>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- drivers/hwtracing/coresight/coresight-tmc-etr.c | 142 +++++++++++++++++++++++-
- drivers/hwtracing/coresight/coresight-tmc.h     |  16 +++
- 2 files changed, 153 insertions(+), 5 deletions(-)
+ drivers/hwtracing/coresight/coresight-tmc-etr.c | 284 ++++++++++++++++++++++++
+ drivers/hwtracing/coresight/coresight-tmc.h     |  50 +++++
+ 2 files changed, 334 insertions(+)
 
 diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-index fde3fa6..25e7feb 100644
+index 7af72d7..57a8fe1 100644
 --- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
 +++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-@@ -604,7 +604,7 @@ tmc_etr_sg_table_index_to_daddr(struct tmc_sg_table *sg_table, u32 index)
-  *    which starts @base_offset.
-  * 2) Mark the page at the base_offset + size as LAST.
-  */
--static int __maybe_unused
-+static int
- tmc_etr_sg_table_rotate(struct etr_sg_table *etr_table,
- 			unsigned long base_offset, unsigned long size)
- {
-@@ -736,6 +736,9 @@ static int tmc_etr_alloc_flat_buf(struct tmc_drvdata *drvdata,
- 	flat_buf->size = etr_buf->size;
- 	flat_buf->dev = drvdata->dev;
- 	etr_buf->hwaddr = flat_buf->daddr;
-+	etr_buf->rrp = flat_buf->daddr;
-+	etr_buf->rwp = flat_buf->daddr;
-+	etr_buf->status = 0;
- 	etr_buf->mode = ETR_MODE_FLAT;
- 	etr_buf->private = flat_buf;
- 	return 0;
-@@ -777,11 +780,36 @@ static ssize_t tmc_etr_get_data_flat_buf(struct etr_buf *etr_buf,
- 	return len;
- }
+@@ -17,10 +17,294 @@
+ 
+ #include <linux/coresight.h>
+ #include <linux/dma-mapping.h>
++#include <linux/slab.h>
+ #include "coresight-catu.h"
+ #include "coresight-priv.h"
+ #include "coresight-tmc.h"
  
 +/*
-+ * tmc_etr_restore_flat_buf: Restore the flat buffer pointers.
-+ * This is only possible with in-built ETR capability to save-restore
-+ * the pointers. The DBA will still point to the original start of the
-+ * buffer.
++ * tmc_pages_get_offset:  Go through all the pages in the tmc_pages
++ * and map the device address @addr to an offset within the virtual
++ * contiguous buffer.
 + */
-+static int tmc_etr_restore_flat_buf(struct etr_buf *etr_buf,
-+				    unsigned long r_offset,
-+				    unsigned long w_offset,
-+				    unsigned long size,
-+				    u32 status,
-+				    bool has_save_restore)
++static long
++tmc_pages_get_offset(struct tmc_pages *tmc_pages, dma_addr_t addr)
 +{
-+	struct etr_flat_buf *flat_buf = etr_buf->private;
++	int i;
++	dma_addr_t page_start;
 +
-+	if (!has_save_restore || !flat_buf || size > flat_buf->size)
-+		return -EINVAL;
-+	etr_buf->rrp = flat_buf->daddr + (r_offset % flat_buf->size);
-+	etr_buf->rwp = flat_buf->daddr + (w_offset % flat_buf->size);
-+	etr_buf->size = size;
-+	etr_buf->status = status;
-+	return 0;
++	for (i = 0; i < tmc_pages->nr_pages; i++) {
++		page_start = tmc_pages->daddrs[i];
++		if (addr >= page_start && addr < (page_start + PAGE_SIZE))
++			return i * PAGE_SIZE + (addr - page_start);
++	}
++
++	return -EINVAL;
 +}
 +
- static const struct etr_buf_operations etr_flat_buf_ops = {
- 	.alloc = tmc_etr_alloc_flat_buf,
- 	.free = tmc_etr_free_flat_buf,
- 	.sync = tmc_etr_sync_flat_buf,
- 	.get_data = tmc_etr_get_data_flat_buf,
-+	.restore = tmc_etr_restore_flat_buf,
- };
- 
- /*
-@@ -799,6 +827,7 @@ static int tmc_etr_alloc_sg_buf(struct tmc_drvdata *drvdata,
- 	if (IS_ERR(etr_table))
- 		return -ENOMEM;
- 	etr_buf->hwaddr = etr_table->hwaddr;
-+	etr_buf->status = 0;
- 	etr_buf->mode = ETR_MODE_ETR_SG;
- 	etr_buf->private = etr_table;
- 	return 0;
-@@ -825,9 +854,11 @@ static ssize_t tmc_etr_get_data_sg_buf(struct etr_buf *etr_buf, u64 offset,
- static void tmc_etr_sync_sg_buf(struct etr_buf *etr_buf, u64 rrp, u64 rwp)
- {
- 	long r_offset, w_offset;
-+	unsigned long buf_size;
- 	struct etr_sg_table *etr_table = etr_buf->private;
- 	struct tmc_sg_table *table = etr_table->sg_table;
- 
-+	buf_size = tmc_sg_table_buf_size(table);
- 	/* Convert hw address to offset in the buffer */
- 	r_offset = tmc_sg_get_data_page_offset(table, rrp);
- 	if (r_offset < 0) {
-@@ -849,16 +880,62 @@ static void tmc_etr_sync_sg_buf(struct etr_buf *etr_buf, u64 rrp, u64 rwp)
- 	if (etr_buf->full)
- 		etr_buf->len = etr_buf->size;
- 	else
--		etr_buf->len = ((w_offset < r_offset) ? etr_buf->size : 0) +
-+		etr_buf->len = ((w_offset < r_offset) ? buf_size : 0) +
- 				w_offset - r_offset;
- 	tmc_sg_table_sync_data_range(table, r_offset, etr_buf->len);
- }
- 
-+static int tmc_etr_restore_sg_buf(struct etr_buf *etr_buf,
-+				  unsigned long r_offset,
-+				  unsigned long w_offset,
-+				  unsigned long size,
-+				  u32 __always_unused status,
-+				  bool has_save_restore)
++/*
++ * tmc_pages_free : Unmap and free the pages used by tmc_pages.
++ */
++static void tmc_pages_free(struct tmc_pages *tmc_pages,
++			   struct device *dev, enum dma_data_direction dir)
++{
++	int i;
++
++	for (i = 0; i < tmc_pages->nr_pages; i++) {
++		if (tmc_pages->daddrs && tmc_pages->daddrs[i])
++			dma_unmap_page(dev, tmc_pages->daddrs[i],
++					 PAGE_SIZE, dir);
++		if (tmc_pages->pages && tmc_pages->pages[i])
++			__free_page(tmc_pages->pages[i]);
++	}
++
++	kfree(tmc_pages->pages);
++	kfree(tmc_pages->daddrs);
++	tmc_pages->pages = NULL;
++	tmc_pages->daddrs = NULL;
++	tmc_pages->nr_pages = 0;
++}
++
++/*
++ * tmc_pages_alloc : Allocate and map pages for a given @tmc_pages.
++ * If @pages is not NULL, the list of page virtual addresses are
++ * used as the data pages. The pages are then dma_map'ed for @dev
++ * with dma_direction @dir.
++ *
++ * Returns 0 upon success, else the error number.
++ */
++static int tmc_pages_alloc(struct tmc_pages *tmc_pages,
++			   struct device *dev, int node,
++			   enum dma_data_direction dir, void **pages)
++{
++	int i, nr_pages;
++	dma_addr_t paddr;
++	struct page *page;
++
++	nr_pages = tmc_pages->nr_pages;
++	tmc_pages->daddrs = kcalloc(nr_pages, sizeof(*tmc_pages->daddrs),
++					 GFP_KERNEL);
++	if (!tmc_pages->daddrs)
++		return -ENOMEM;
++	tmc_pages->pages = kcalloc(nr_pages, sizeof(*tmc_pages->pages),
++					 GFP_KERNEL);
++	if (!tmc_pages->pages) {
++		kfree(tmc_pages->daddrs);
++		tmc_pages->daddrs = NULL;
++		return -ENOMEM;
++	}
++
++	for (i = 0; i < nr_pages; i++) {
++		if (pages && pages[i]) {
++			page = virt_to_page(pages[i]);
++			get_page(page);
++		} else {
++			page = alloc_pages_node(node,
++						GFP_KERNEL | __GFP_ZERO, 0);
++		}
++		paddr = dma_map_page(dev, page, 0, PAGE_SIZE, dir);
++		if (dma_mapping_error(dev, paddr))
++			goto err;
++		tmc_pages->daddrs[i] = paddr;
++		tmc_pages->pages[i] = page;
++	}
++	return 0;
++err:
++	tmc_pages_free(tmc_pages, dev, dir);
++	return -ENOMEM;
++}
++
++static inline dma_addr_t tmc_sg_table_base_paddr(struct tmc_sg_table *sg_table)
++{
++	if (WARN_ON(!sg_table->data_pages.pages[0]))
++		return 0;
++	return sg_table->table_daddr;
++}
++
++static inline void *tmc_sg_table_base_vaddr(struct tmc_sg_table *sg_table)
++{
++	if (WARN_ON(!sg_table->data_pages.pages[0]))
++		return NULL;
++	return sg_table->table_vaddr;
++}
++
++static inline void *
++tmc_sg_table_data_vaddr(struct tmc_sg_table *sg_table)
++{
++	if (WARN_ON(!sg_table->data_pages.nr_pages))
++		return 0;
++	return sg_table->data_vaddr;
++}
++
++static inline long
++tmc_sg_get_data_page_offset(struct tmc_sg_table *sg_table, dma_addr_t addr)
++{
++	return tmc_pages_get_offset(&sg_table->data_pages, addr);
++}
++
++static inline void tmc_free_table_pages(struct tmc_sg_table *sg_table)
++{
++	if (sg_table->table_vaddr)
++		vunmap(sg_table->table_vaddr);
++	tmc_pages_free(&sg_table->table_pages, sg_table->dev, DMA_TO_DEVICE);
++}
++
++static void tmc_free_data_pages(struct tmc_sg_table *sg_table)
++{
++	if (sg_table->data_vaddr)
++		vunmap(sg_table->data_vaddr);
++	tmc_pages_free(&sg_table->data_pages, sg_table->dev, DMA_FROM_DEVICE);
++}
++
++void tmc_free_sg_table(struct tmc_sg_table *sg_table)
++{
++	tmc_free_table_pages(sg_table);
++	tmc_free_data_pages(sg_table);
++}
++
++/*
++ * Alloc pages for the table. Since this will be used by the device,
++ * allocate the pages closer to the device (i.e, dev_to_node(dev)
++ * rather than the CPU node).
++ */
++static int tmc_alloc_table_pages(struct tmc_sg_table *sg_table)
 +{
 +	int rc;
-+	struct etr_sg_table *etr_table = etr_buf->private;
-+	struct device *dev = etr_table->sg_table->dev;
++	struct tmc_pages *table_pages = &sg_table->table_pages;
 +
-+	/*
-+	 * It is highly unlikely that we have an ETR with in-built SG and
-+	 * Save-Restore capability and we are not sure if the PTRs will
-+	 * be updated.
-+	 */
-+	if (has_save_restore) {
-+		dev_warn_once(dev,
-+		"Unexpected feature combination of SG and save-restore\n");
-+		return -EINVAL;
-+	}
-+
-+	/*
-+	 * Since we cannot program RRP/RWP different from DBAL, the offsets
-+	 * should match.
-+	 */
-+	if (r_offset != w_offset) {
-+		dev_dbg(dev, "Mismatched RRP/RWP offsets\n");
-+		return -EINVAL;
-+	}
-+
-+	/* Make sure the size is aligned */
-+	size &= ~(ETR_SG_PAGE_SIZE - 1);
-+
-+	rc = tmc_etr_sg_table_rotate(etr_table, w_offset, size);
-+	if (!rc) {
-+		etr_buf->hwaddr = etr_table->hwaddr;
-+		etr_buf->rrp = etr_table->hwaddr;
-+		etr_buf->rwp = etr_table->hwaddr;
-+		etr_buf->size = size;
-+	}
-+
++	rc = tmc_pages_alloc(table_pages, sg_table->dev,
++			     dev_to_node(sg_table->dev),
++			     DMA_TO_DEVICE, NULL);
++	if (rc)
++		return rc;
++	sg_table->table_vaddr = vmap(table_pages->pages,
++				     table_pages->nr_pages,
++				     VM_MAP,
++				     PAGE_KERNEL);
++	if (!sg_table->table_vaddr)
++		rc = -ENOMEM;
++	else
++		sg_table->table_daddr = table_pages->daddrs[0];
 +	return rc;
 +}
 +
- static const struct etr_buf_operations etr_sg_buf_ops = {
- 	.alloc = tmc_etr_alloc_sg_buf,
- 	.free = tmc_etr_free_sg_buf,
- 	.sync = tmc_etr_sync_sg_buf,
- 	.get_data = tmc_etr_get_data_sg_buf,
-+	.restore = tmc_etr_restore_sg_buf,
- };
- 
- static const struct etr_buf_operations *etr_buf_ops[] = {
-@@ -899,10 +976,42 @@ static struct etr_buf *tmc_alloc_etr_buf(struct tmc_drvdata *drvdata,
- {
- 	int rc = -ENOMEM;
- 	bool has_etr_sg, has_iommu;
-+	bool has_flat, has_save_restore;
- 	struct etr_buf *etr_buf;
- 
- 	has_etr_sg = tmc_etr_has_cap(drvdata, TMC_ETR_SG);
- 	has_iommu = iommu_get_domain_for_dev(drvdata->dev);
-+	has_save_restore = tmc_etr_has_cap(drvdata, TMC_ETR_SAVE_RESTORE);
-+
-+	/*
-+	 * We can normally use flat DMA buffer provided that the buffer
-+	 * is not used in save restore fashion without hardware support.
-+	 */
-+	has_flat = !(flags & ETR_BUF_F_RESTORE_PTRS) || has_save_restore;
-+
-+	/*
-+	 * To support save-restore on a given ETR we have the following
-+	 * conditions:
-+	 *  1) If the buffer requires save-restore of a pointers as well
-+	 *     as the Status bit, we require ETR support for it and we coul
-+	 *     support all the backends.
-+	 *  2) If the buffer requires only save-restore of pointers, then
-+	 *     we could exploit a circular ETR SG list. None of the other
-+	 *     backends can support it without the ETR feature.
-+	 *
-+	 * If the buffer will be used in a save-restore mode without
-+	 * the ETR support for SAVE_RESTORE, we can only support TMC
-+	 * ETR in-built SG tables which can be rotated to make it work.
-+	 */
-+	if ((flags & ETR_BUF_F_RESTORE_STATUS) && !has_save_restore)
-+		return ERR_PTR(-EINVAL);
-+
-+	if (!has_flat && !has_etr_sg) {
-+		dev_dbg(drvdata->dev,
-+			"No available backends for ETR buffer with flags %x\n",
-+			flags);
-+		return ERR_PTR(-EINVAL);
-+	}
- 
- 	etr_buf = kzalloc(sizeof(*etr_buf), GFP_KERNEL);
- 	if (!etr_buf)
-@@ -922,7 +1031,7 @@ static struct etr_buf *tmc_alloc_etr_buf(struct tmc_drvdata *drvdata,
- 	 * Fallback to available mechanisms.
- 	 *
- 	 */
--	if (!pages &&
-+	if (!pages && has_flat &&
- 	    (!has_etr_sg || has_iommu || size < SZ_1M))
- 		rc = tmc_etr_mode_alloc_buf(ETR_MODE_FLAT, drvdata,
- 					    etr_buf, node, pages);
-@@ -999,6 +1108,29 @@ static void tmc_sync_etr_buf(struct tmc_drvdata *drvdata)
- 		tmc_etr_buf_insert_barrier_packet(etr_buf, etr_buf->offset);
- }
- 
-+static int __maybe_unused
-+tmc_restore_etr_buf(struct tmc_drvdata *drvdata, struct etr_buf *etr_buf,
-+		    unsigned long r_offset, unsigned long w_offset,
-+		    unsigned long size, u32 status)
++static int tmc_alloc_data_pages(struct tmc_sg_table *sg_table, void **pages)
 +{
-+	bool has_save_restore = tmc_etr_has_cap(drvdata, TMC_ETR_SAVE_RESTORE);
++	int rc;
 +
-+	if (WARN_ON_ONCE(!has_save_restore && etr_buf->mode != ETR_MODE_ETR_SG))
++	/* Allocate data pages on the node requested by the caller */
++	rc = tmc_pages_alloc(&sg_table->data_pages,
++			     sg_table->dev, sg_table->node,
++			     DMA_FROM_DEVICE, pages);
++	if (!rc) {
++		sg_table->data_vaddr = vmap(sg_table->data_pages.pages,
++					   sg_table->data_pages.nr_pages,
++					   VM_MAP,
++					   PAGE_KERNEL);
++		if (!sg_table->data_vaddr)
++			rc = -ENOMEM;
++	}
++	return rc;
++}
++
++/*
++ * tmc_alloc_sg_table: Allocate and setup dma pages for the TMC SG table
++ * and data buffers. TMC writes to the data buffers and reads from the SG
++ * Table pages.
++ *
++ * @dev		- Device to which page should be DMA mapped.
++ * @node	- Numa node for mem allocations
++ * @nr_tpages	- Number of pages for the table entries.
++ * @nr_dpages	- Number of pages for Data buffer.
++ * @pages	- Optional list of virtual address of pages.
++ */
++struct tmc_sg_table *tmc_alloc_sg_table(struct device *dev,
++					int node,
++					int nr_tpages,
++					int nr_dpages,
++					void **pages)
++{
++	long rc;
++	struct tmc_sg_table *sg_table;
++
++	sg_table = kzalloc(sizeof(*sg_table), GFP_KERNEL);
++	if (!sg_table)
++		return ERR_PTR(-ENOMEM);
++	sg_table->data_pages.nr_pages = nr_dpages;
++	sg_table->table_pages.nr_pages = nr_tpages;
++	sg_table->node = node;
++	sg_table->dev = dev;
++
++	rc  = tmc_alloc_data_pages(sg_table, pages);
++	if (!rc)
++		rc = tmc_alloc_table_pages(sg_table);
++	if (rc) {
++		tmc_free_sg_table(sg_table);
++		kfree(sg_table);
++		return ERR_PTR(rc);
++	}
++
++	return sg_table;
++}
++
++/*
++ * tmc_sg_table_sync_data_range: Sync the data buffer written
++ * by the device from @offset upto a @size bytes.
++ */
++void tmc_sg_table_sync_data_range(struct tmc_sg_table *table,
++				  u64 offset, u64 size)
++{
++	int i, index, start;
++	int npages = DIV_ROUND_UP(size, PAGE_SIZE);
++	struct device *dev = table->dev;
++	struct tmc_pages *data = &table->data_pages;
++
++	start = offset >> PAGE_SHIFT;
++	for (i = start; i < (start + npages); i++) {
++		index = i % data->nr_pages;
++		dma_sync_single_for_cpu(dev, data->daddrs[index],
++					PAGE_SIZE, DMA_FROM_DEVICE);
++	}
++}
++
++/* tmc_sg_sync_table: Sync the page table */
++void tmc_sg_table_sync_table(struct tmc_sg_table *sg_table)
++{
++	int i;
++	struct device *dev = sg_table->dev;
++	struct tmc_pages *table_pages = &sg_table->table_pages;
++
++	for (i = 0; i < table_pages->nr_pages; i++)
++		dma_sync_single_for_device(dev, table_pages->daddrs[i],
++					   PAGE_SIZE, DMA_TO_DEVICE);
++}
++
++/*
++ * tmc_sg_table_get_data: Get the buffer pointer for data @offset
++ * in the SG buffer. The @bufpp is updated to point to the buffer.
++ * Returns :
++ *	the length of linear data available at @offset.
++ *	or
++ *	<= 0 if no data is available.
++ */
++ssize_t tmc_sg_table_get_data(struct tmc_sg_table *sg_table,
++				u64 offset, size_t len, char **bufpp)
++{
++	size_t size;
++	int pg_idx = offset >> PAGE_SHIFT;
++	int pg_offset = offset & (PAGE_SIZE - 1);
++	struct tmc_pages *data_pages = &sg_table->data_pages;
++
++	size = tmc_sg_table_buf_size(sg_table);
++	if (offset >= size)
 +		return -EINVAL;
-+	/*
-+	 * If we use a circular SG list without ETR support, we can't
-+	 * support restoring "Full" bit.
-+	 */
-+	if (WARN_ON_ONCE(!has_save_restore && status))
-+		return -EINVAL;
-+	if (status & ~TMC_STS_FULL)
-+		return -EINVAL;
-+	if (etr_buf->ops->restore)
-+		return etr_buf->ops->restore(etr_buf, r_offset, w_offset, size,
-+					      status, has_save_restore);
-+	return -EINVAL;
++	len = (len < (size - offset)) ? len : size - offset;
++	len = (len < (PAGE_SIZE - pg_offset)) ? len : (PAGE_SIZE - pg_offset);
++	if (len > 0)
++		*bufpp = page_address(data_pages->pages[pg_idx]) + pg_offset;
++	return len;
 +}
 +
  static inline void tmc_etr_enable_catu(struct tmc_drvdata *drvdata)
  {
  	struct coresight_device *catu = tmc_etr_get_catu_device(drvdata);
-@@ -1058,8 +1190,8 @@ static void tmc_etr_enable_hw(struct tmc_drvdata *drvdata)
- 	 * STS to "not full").
- 	 */
- 	if (tmc_etr_has_cap(drvdata, TMC_ETR_SAVE_RESTORE)) {
--		tmc_write_rrp(drvdata, etr_buf->hwaddr);
--		tmc_write_rwp(drvdata, etr_buf->hwaddr);
-+		tmc_write_rrp(drvdata, etr_buf->rrp);
-+		tmc_write_rwp(drvdata, etr_buf->rwp);
- 		sts = readl_relaxed(drvdata->base + TMC_STS) & ~TMC_STS_FULL;
- 		writel_relaxed(sts, drvdata->base + TMC_STS);
- 	}
 diff --git a/drivers/hwtracing/coresight/coresight-tmc.h b/drivers/hwtracing/coresight/coresight-tmc.h
-index 6f7bec7..1bdfb38 100644
+index 9cbc4d5..74d8f24 100644
 --- a/drivers/hwtracing/coresight/coresight-tmc.h
 +++ b/drivers/hwtracing/coresight/coresight-tmc.h
-@@ -141,12 +141,22 @@ enum etr_mode {
- 	ETR_MODE_ETR_SG,	/* Uses in-built TMC ETR SG mechanism */
+@@ -19,6 +19,7 @@
+ #define _CORESIGHT_TMC_H
+ 
+ #include <linux/miscdevice.h>
++#include <linux/dma-mapping.h>
+ #include "coresight-catu.h"
+ 
+ #define TMC_RSZ			0x004
+@@ -172,6 +173,38 @@ struct tmc_drvdata {
+ 	u32			etr_caps;
  };
  
-+/* ETR buffer should support save-restore */
-+#define ETR_BUF_F_RESTORE_PTRS		0x1
-+#define ETR_BUF_F_RESTORE_STATUS	0x2
++/**
++ * struct tmc_pages - Collection of pages used for SG.
++ * @nr_pages:		Number of pages in the list.
++ * @daddrs:		Array of DMA'able page address.
++ * @pages:		Array pages for the buffer.
++ */
++struct tmc_pages {
++	int nr_pages;
++	dma_addr_t	*daddrs;
++	struct page	**pages;
++};
 +
-+#define ETR_BUF_F_RESTORE_MINIMAL	ETR_BUF_F_RESTORE_PTRS
-+#define ETR_BUF_F_RESTORE_FULL		(ETR_BUF_F_RESTORE_PTRS |\
-+					 ETR_BUF_F_RESTORE_STATUS)
- struct etr_buf_operations;
++/*
++ * struct tmc_sg_table - Generic SG table for TMC
++ * @dev:		Device for DMA allocations
++ * @table_vaddr:	Contiguous Virtual address for PageTable
++ * @data_vaddr:		Contiguous Virtual address for Data Buffer
++ * @table_daddr:	DMA address of the PageTable base
++ * @node:		Node for Page allocations
++ * @table_pages:	List of pages & dma address for Table
++ * @data_pages:		List of pages & dma address for Data
++ */
++struct tmc_sg_table {
++	struct device *dev;
++	void *table_vaddr;
++	void *data_vaddr;
++	dma_addr_t table_daddr;
++	int node;
++	struct tmc_pages table_pages;
++	struct tmc_pages data_pages;
++};
++
+ /* Generic functions */
+ void tmc_wait_for_tmcready(struct tmc_drvdata *drvdata);
+ void tmc_flush_and_stop(struct tmc_drvdata *drvdata);
+@@ -253,4 +286,21 @@ tmc_etr_get_catu_device(struct tmc_drvdata *drvdata)
+ 	return NULL;
+ }
  
- /**
-  * struct etr_buf - Details of the buffer used by ETR
-  * @mode	: Mode of the ETR buffer, contiguous, Scatter Gather etc.
-  * @full	: Trace data overflow
-+ * @status	: Value for STATUS if the ETR supports save-restore.
-+ * @rrp		: Value for RRP{LO:HI} if the ETR supports save-restore
-+ * @rwp		: Value for RWP{LO:HI} if the ETR supports save-restore
-  * @size	: Size of the buffer.
-  * @hwaddr	: Address to be programmed in the TMC:DBA{LO,HI}
-  * @offset	: Offset of the trace data in the buffer for consumption.
-@@ -157,6 +167,9 @@ struct etr_buf_operations;
- struct etr_buf {
- 	enum etr_mode			mode;
- 	bool				full;
-+	u32				status;
-+	dma_addr_t			rrp;
-+	dma_addr_t			rwp;
- 	ssize_t				size;
- 	dma_addr_t			hwaddr;
- 	unsigned long			offset;
-@@ -207,6 +220,9 @@ struct etr_buf_operations {
- 	int (*alloc)(struct tmc_drvdata *drvdata, struct etr_buf *etr_buf,
- 			int node, void **pages);
- 	void (*sync)(struct etr_buf *etr_buf, u64 rrp, u64 rwp);
-+	int (*restore)(struct etr_buf *etr_buf, unsigned long r_offset,
-+		       unsigned long w_offset, unsigned long size,
-+		       u32 status, bool has_save_restore);
- 	ssize_t (*get_data)(struct etr_buf *etr_buf, u64 offset, size_t len,
- 				char **bufpp);
- 	void (*free)(struct etr_buf *etr_buf);
++struct tmc_sg_table *tmc_alloc_sg_table(struct device *dev,
++					int node,
++					int nr_tpages,
++					int nr_dpages,
++					void **pages);
++void tmc_free_sg_table(struct tmc_sg_table *sg_table);
++void tmc_sg_table_sync_table(struct tmc_sg_table *sg_table);
++void tmc_sg_table_sync_data_range(struct tmc_sg_table *table,
++				  u64 offset, u64 size);
++ssize_t tmc_sg_table_get_data(struct tmc_sg_table *sg_table,
++			      u64 offset, size_t len, char **bufpp);
++static inline unsigned long
++tmc_sg_table_buf_size(struct tmc_sg_table *sg_table)
++{
++	return sg_table->data_pages.nr_pages << PAGE_SHIFT;
++}
++
+ #endif
 -- 
 2.7.4
