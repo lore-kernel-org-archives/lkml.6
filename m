@@ -1,210 +1,218 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754192AbeEANRB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 09:17:01 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:37330 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751090AbeEANQ7 (ORCPT
+        id S1755199AbeEANTP (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 09:19:15 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:47884 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753800AbeEANTN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 09:16:59 -0400
-X-Google-Smtp-Source: AB8JxZr4KuU+9CZR/geGNHg5j6q0vSFrklU4kzXuAParICvnSwV/jDSPggKofd2TNVZbtdaQIY4BGQ==
-Date: Tue, 1 May 2018 22:16:46 +0900
-From: Minchan Kim <minchan@kernel.org>
-To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Cc: akpm@linux-foundation.org, mhocko@kernel.org, peterz@infradead.org,
-        kirill@shutemov.name, ak@linux.intel.com, dave@stgolabs.net,
-        jack@suse.cz, Matthew Wilcox <willy@infradead.org>,
-        benh@kernel.crashing.org, mpe@ellerman.id.au, paulus@samba.org,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
-        sergey.senozhatsky.work@gmail.com,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        David Rientjes <rientjes@google.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Ganesh Mahendran <opensource.ganesh@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
-        npiggin@gmail.com, bsingharora@gmail.com, paulmck@linux.vnet.ibm.com,
-        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
-        x86@kernel.org
-Subject: Re: [PATCH v10 08/25] mm: VMA sequence count
-Message-ID: <20180501131646.GB118722@rodete-laptop-imager.corp.google.com>
-References: <1523975611-15978-1-git-send-email-ldufour@linux.vnet.ibm.com>
- <1523975611-15978-9-git-send-email-ldufour@linux.vnet.ibm.com>
- <20180423064259.GC114098@rodete-desktop-imager.corp.google.com>
- <06b996b0-b831-3d39-8a99-792abfb6a4d1@linux.vnet.ibm.com>
+        Tue, 1 May 2018 09:19:13 -0400
+Date: Tue, 1 May 2018 15:19:04 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Kohli, Gaurav" <gkohli@codeaurora.org>
+Cc: tglx@linutronix.de, mpe@ellerman.id.au, mingo@kernel.org,
+        bigeasy@linutronix.de, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Neeraj Upadhyay <neeraju@codeaurora.org>,
+        Will Deacon <will.deacon@arm.com>, Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [PATCH v1] kthread/smpboot: Serialize kthread parking against
+ wakeup
+Message-ID: <20180501131904.GG12217@hirez.programming.kicks-ass.net>
+References: <20180425200917.GZ4082@hirez.programming.kicks-ass.net>
+ <20180426084131.GV4129@hirez.programming.kicks-ass.net>
+ <20180426085719.GW4129@hirez.programming.kicks-ass.net>
+ <4d3f68f8-e599-6b27-a2e8-9e96b401d57a@codeaurora.org>
+ <20180430111744.GE4082@hirez.programming.kicks-ass.net>
+ <3af3365b-4e3f-e388-8e90-45a3bd4120fd@codeaurora.org>
+ <20180501101845.GE12217@hirez.programming.kicks-ass.net>
+ <f134c8d8-e56f-bf29-0177-e6702ae79f2b@codeaurora.org>
+ <20180501113132.GF12217@hirez.programming.kicks-ass.net>
+ <745d762d-9ab3-0749-9b87-9bb03d913071@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <06b996b0-b831-3d39-8a99-792abfb6a4d1@linux.vnet.ibm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <745d762d-9ab3-0749-9b87-9bb03d913071@codeaurora.org>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 30, 2018 at 05:14:27PM +0200, Laurent Dufour wrote:
-> 
-> 
-> On 23/04/2018 08:42, Minchan Kim wrote:
-> > On Tue, Apr 17, 2018 at 04:33:14PM +0200, Laurent Dufour wrote:
-> >> From: Peter Zijlstra <peterz@infradead.org>
-> >>
-> >> Wrap the VMA modifications (vma_adjust/unmap_page_range) with sequence
-> >> counts such that we can easily test if a VMA is changed.
-> > 
-> > So, seqcount is to protect modifying all attributes of vma?
-> 
-> The seqcount is used to protect fields that will be used during the speculative
-> page fault like boundaries, protections.
+> On 5/1/2018 5:01 PM, Peter Zijlstra wrote:
 
-a VMA is changed, it was rather vague to me at this point.
-If you could specify detail fields or some example what seqcount aim for,
-it would help to review.
+> > Let me ponder what the best solution is, it's a bit of a mess.
 
-> 
-> >>
-> >> The unmap_page_range() one allows us to make assumptions about
-> >> page-tables; when we find the seqcount hasn't changed we can assume
-> >> page-tables are still valid.
-> > 
-> > Hmm, seqcount covers page-table, too.
-> > Please describe what the seqcount want to protect.
-> 
-> The calls to vm_write_begin/end() in unmap_page_range() are used to detect when
-> a VMA is being unmap and thus that new page fault should not be satisfied for
-> this VMA. This is protecting the VMA unmapping operation, not the page tables
-> themselves.
+So there's:
 
-Thanks for the detail. yes, please include this phrase instead of "page-table
-are still valid". It makes me confused.
+ - TASK_PARKED, which we can make a special state; this solves the
+   problem because then wait_task_inactive() is guaranteed to see
+   TASK_PARKED and DTRT.
 
-> 
-> >>
-> >> The flip side is that we cannot distinguish between a vma_adjust() and
-> >> the unmap_page_range() -- where with the former we could have
-> >> re-checked the vma bounds against the address.
-> >>
-> >> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> >>
-> >> [Port to 4.12 kernel]
-> >> [Build depends on CONFIG_SPECULATIVE_PAGE_FAULT]
-> >> [Introduce vm_write_* inline function depending on
-> >>  CONFIG_SPECULATIVE_PAGE_FAULT]
-> >> [Fix lock dependency between mapping->i_mmap_rwsem and vma->vm_sequence by
-> >>  using vm_raw_write* functions]
-> >> [Fix a lock dependency warning in mmap_region() when entering the error
-> >>  path]
-> >> [move sequence initialisation INIT_VMA()]
-> >> Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-> >> ---
-> >>  include/linux/mm.h       | 44 ++++++++++++++++++++++++++++++++++++++++++++
-> >>  include/linux/mm_types.h |  3 +++
-> >>  mm/memory.c              |  2 ++
-> >>  mm/mmap.c                | 31 +++++++++++++++++++++++++++++++
-> >>  4 files changed, 80 insertions(+)
-> >>
-> >> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> >> index efc1248b82bd..988daf7030c9 100644
-> >> --- a/include/linux/mm.h
-> >> +++ b/include/linux/mm.h
-> >> @@ -1264,6 +1264,9 @@ struct zap_details {
-> >>  static inline void INIT_VMA(struct vm_area_struct *vma)
-> >>  {
-> >>  	INIT_LIST_HEAD(&vma->anon_vma_chain);
-> >> +#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
-> >> +	seqcount_init(&vma->vm_sequence);
-> >> +#endif
-> >>  }
-> >>  
-> >>  struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
-> >> @@ -1386,6 +1389,47 @@ static inline void unmap_shared_mapping_range(struct address_space *mapping,
-> >>  	unmap_mapping_range(mapping, holebegin, holelen, 0);
-> >>  }
-> >>  
-> >> +#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
-> >> +static inline void vm_write_begin(struct vm_area_struct *vma)
-> >> +{
-> >> +	write_seqcount_begin(&vma->vm_sequence);
-> >> +}
-> >> +static inline void vm_write_begin_nested(struct vm_area_struct *vma,
-> >> +					 int subclass)
-> >> +{
-> >> +	write_seqcount_begin_nested(&vma->vm_sequence, subclass);
-> >> +}
-> >> +static inline void vm_write_end(struct vm_area_struct *vma)
-> >> +{
-> >> +	write_seqcount_end(&vma->vm_sequence);
-> >> +}
-> >> +static inline void vm_raw_write_begin(struct vm_area_struct *vma)
-> >> +{
-> >> +	raw_write_seqcount_begin(&vma->vm_sequence);
-> >> +}
-> >> +static inline void vm_raw_write_end(struct vm_area_struct *vma)
-> >> +{
-> >> +	raw_write_seqcount_end(&vma->vm_sequence);
-> >> +}
-> >> +#else
-> >> +static inline void vm_write_begin(struct vm_area_struct *vma)
-> >> +{
-> >> +}
-> >> +static inline void vm_write_begin_nested(struct vm_area_struct *vma,
-> >> +					 int subclass)
-> >> +{
-> >> +}
-> >> +static inline void vm_write_end(struct vm_area_struct *vma)
-> >> +{
-> >> +}
-> >> +static inline void vm_raw_write_begin(struct vm_area_struct *vma)
-> >> +{
-> >> +}
-> >> +static inline void vm_raw_write_end(struct vm_area_struct *vma)
-> >> +{
-> >> +}
-> >> +#endif /* CONFIG_SPECULATIVE_PAGE_FAULT */
-> >> +
-> >>  extern int access_process_vm(struct task_struct *tsk, unsigned long addr,
-> >>  		void *buf, int len, unsigned int gup_flags);
-> >>  extern int access_remote_vm(struct mm_struct *mm, unsigned long addr,
-> >> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> >> index 21612347d311..db5e9d630e7a 100644
-> >> --- a/include/linux/mm_types.h
-> >> +++ b/include/linux/mm_types.h
-> >> @@ -335,6 +335,9 @@ struct vm_area_struct {
-> >>  	struct mempolicy *vm_policy;	/* NUMA policy for the VMA */
-> >>  #endif
-> >>  	struct vm_userfaultfd_ctx vm_userfaultfd_ctx;
-> >> +#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
-> >> +	seqcount_t vm_sequence;
-> >> +#endif
-> >>  } __randomize_layout;
-> >>  
-> >>  struct core_thread {
-> >> diff --git a/mm/memory.c b/mm/memory.c
-> >> index f86efcb8e268..f7fed053df80 100644
-> >> --- a/mm/memory.c
-> >> +++ b/mm/memory.c
-> >> @@ -1503,6 +1503,7 @@ void unmap_page_range(struct mmu_gather *tlb,
-> >>  	unsigned long next;
-> >>  
-> >>  	BUG_ON(addr >= end);
-> > 
-> > The comment about saying it aims for page-table stability will help.
-> 
-> A comment may be added mentioning that we use the seqcount to indicate that the
-> VMA is modified, being unmapped. But there is not a real page table protection,
-> and I think this may be confusing to talk about page table stability here.
+ - complete(&kthread->parked), which we can do inside schedule(); this
+   solves the problem because then kthread_park() will not return early
+   and the task really is blocked.
 
-Okay, so here you mean seqcount is not protecting VMA's fields but vma unmap
-operation like you mentioned above. I was confused like below description.
+and I'm fairly sure I thought of a 3rd way to cure things, but now that
+I'm writing things down I cannot seem to remember :/ -- could be we muck
+with wait_task_inactive().
 
-"The unmap_page_range() one allows us to make assumptions about
-page-tables; when we find the seqcount hasn't changed we can assume
-page-tables are still valid"
+In any case, I hate all of them, but I think the completion one is the
+least horrible because it gives the strongest guarantees and cleans up
+most. But promoting TASK_PARKED to special certainly is the earier
+patch.
 
-Instead of using page-tables's validness in descriptoin, it would be better
-to use scenario you mentioned about VMA unmap operation and page fault race.
+The below boots, but that's about all I did with it. Opinions?
 
-Thanks.
+---
+
+--- a/include/linux/kthread.h
++++ b/include/linux/kthread.h
+@@ -62,6 +62,7 @@ void *kthread_probe_data(struct task_str
+ int kthread_park(struct task_struct *k);
+ void kthread_unpark(struct task_struct *k);
+ void kthread_parkme(void);
++void kthread_park_complete(struct task_struct *k);
+ 
+ int kthreadd(void *unused);
+ extern struct task_struct *kthreadd_task;
+--- a/kernel/kthread.c
++++ b/kernel/kthread.c
+@@ -55,7 +55,6 @@ enum KTHREAD_BITS {
+ 	KTHREAD_IS_PER_CPU = 0,
+ 	KTHREAD_SHOULD_STOP,
+ 	KTHREAD_SHOULD_PARK,
+-	KTHREAD_IS_PARKED,
+ };
+ 
+ static inline void set_kthread_struct(void *kthread)
+@@ -177,14 +176,12 @@ void *kthread_probe_data(struct task_str
+ 
+ static void __kthread_parkme(struct kthread *self)
+ {
+-	__set_current_state(TASK_PARKED);
+-	while (test_bit(KTHREAD_SHOULD_PARK, &self->flags)) {
+-		if (!test_and_set_bit(KTHREAD_IS_PARKED, &self->flags))
+-			complete(&self->parked);
++	for (;;) {
++		set_current_state(TASK_PARKED);
++		if (!test_bit(KTHREAD_SHOULD_PARK, &self->flags))
++			break;
+ 		schedule();
+-		__set_current_state(TASK_PARKED);
+ 	}
+-	clear_bit(KTHREAD_IS_PARKED, &self->flags);
+ 	__set_current_state(TASK_RUNNING);
+ }
+ 
+@@ -194,6 +191,11 @@ void kthread_parkme(void)
+ }
+ EXPORT_SYMBOL_GPL(kthread_parkme);
+ 
++void kthread_park_complete(struct task_struct *k)
++{
++	complete(&to_kthread(k)->parked);
++}
++
+ static int kthread(void *_create)
+ {
+ 	/* Copy data: it's on kthread's stack */
+@@ -450,22 +452,15 @@ void kthread_unpark(struct task_struct *
+ {
+ 	struct kthread *kthread = to_kthread(k);
+ 
+-	clear_bit(KTHREAD_SHOULD_PARK, &kthread->flags);
+ 	/*
+-	 * We clear the IS_PARKED bit here as we don't wait
+-	 * until the task has left the park code. So if we'd
+-	 * park before that happens we'd see the IS_PARKED bit
+-	 * which might be about to be cleared.
++	 * Newly created kthread was parked when the CPU was offline.
++	 * The binding was lost and we need to set it again.
+ 	 */
+-	if (test_and_clear_bit(KTHREAD_IS_PARKED, &kthread->flags)) {
+-		/*
+-		 * Newly created kthread was parked when the CPU was offline.
+-		 * The binding was lost and we need to set it again.
+-		 */
+-		if (test_bit(KTHREAD_IS_PER_CPU, &kthread->flags))
+-			__kthread_bind(k, kthread->cpu, TASK_PARKED);
+-		wake_up_state(k, TASK_PARKED);
+-	}
++	if (test_bit(KTHREAD_IS_PER_CPU, &kthread->flags))
++		__kthread_bind(k, kthread->cpu, TASK_PARKED);
++
++	clear_bit(KTHREAD_SHOULD_PARK, &kthread->flags);
++	wake_up_state(k, TASK_PARKED);
+ }
+ EXPORT_SYMBOL_GPL(kthread_unpark);
+ 
+@@ -488,12 +483,13 @@ int kthread_park(struct task_struct *k)
+ 	if (WARN_ON(k->flags & PF_EXITING))
+ 		return -ENOSYS;
+ 
+-	if (!test_bit(KTHREAD_IS_PARKED, &kthread->flags)) {
+-		set_bit(KTHREAD_SHOULD_PARK, &kthread->flags);
+-		if (k != current) {
+-			wake_up_process(k);
+-			wait_for_completion(&kthread->parked);
+-		}
++	if (WARN_ON_ONCE(test_bit(KTHREAD_SHOULD_PARK, &kthread->flags)))
++		return -EBUSY;
++
++	set_bit(KTHREAD_SHOULD_PARK, &kthread->flags);
++	if (k != current) {
++		wake_up_process(k);
++		wait_for_completion(&kthread->parked);
+ 	}
+ 
+ 	return 0;
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -7,6 +7,8 @@
+  */
+ #include "sched.h"
+ 
++#include <linux/kthread.h>
++
+ #include <asm/switch_to.h>
+ #include <asm/tlb.h>
+ 
+@@ -2718,20 +2720,28 @@ static struct rq *finish_task_switch(str
+ 		membarrier_mm_sync_core_before_usermode(mm);
+ 		mmdrop(mm);
+ 	}
+-	if (unlikely(prev_state == TASK_DEAD)) {
+-		if (prev->sched_class->task_dead)
+-			prev->sched_class->task_dead(prev);
++	if (unlikely(prev_state & (TASK_DEAD|TASK_PARKED))) {
++		switch (prev_state) {
++		case TASK_DEAD:
++			if (prev->sched_class->task_dead)
++				prev->sched_class->task_dead(prev);
++
++			/*
++			 * Remove function-return probe instances associated with this
++			 * task and put them back on the free list.
++			 */
++			kprobe_flush_task(prev);
+ 
+-		/*
+-		 * Remove function-return probe instances associated with this
+-		 * task and put them back on the free list.
+-		 */
+-		kprobe_flush_task(prev);
++			/* Task is done with its stack. */
++			put_task_stack(prev);
+ 
+-		/* Task is done with its stack. */
+-		put_task_stack(prev);
++			put_task_struct(prev);
++			break;
+ 
+-		put_task_struct(prev);
++		case TASK_PARKED:
++			kthread_park_complete(prev);
++			break;
++		}
+ 	}
+ 
+ 	tick_nohz_task_switch();
