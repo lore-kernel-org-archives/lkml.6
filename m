@@ -1,65 +1,189 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752056AbeEAHLU (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 03:11:20 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:36216 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751340AbeEAHLT (ORCPT
+        id S1752411AbeEAHNc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 03:13:32 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:53043 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751074AbeEAHNa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 03:11:19 -0400
-Date: Tue, 1 May 2018 09:11:12 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Cong Wang <xiyou.wangcong@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Paul Turner <pjt@google.com>,
-        Mike Galbraith <efault@gmx.de>, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH] sched/fair: make CFS bandwidth slice per cpu group
-Message-ID: <20180501071112.GD12217@hirez.programming.kicks-ass.net>
-References: <20180430192925.12589-1-xiyou.wangcong@gmail.com>
- <20180430194251.GB12217@hirez.programming.kicks-ass.net>
- <CAM_iQpXPNKyCGzY3=9HaQYXCXx3hsU3a_6BsFM+6Hw--v5QZUQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAM_iQpXPNKyCGzY3=9HaQYXCXx3hsU3a_6BsFM+6Hw--v5QZUQ@mail.gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        Tue, 1 May 2018 03:13:30 -0400
+X-Google-Smtp-Source: AB8JxZpPyTHNKvwQyrcA0ZlNJGS+3zkGeXBKpk/rrB6fOQOqEcOqRY62mOzx46P65P4FvE/XC6tChQ==
+From: Eyal Reizer <eyalreizer@gmail.com>
+X-Google-Original-From: Eyal Reizer <eyalr@ti.com>
+To: bcousson@baylibre.com, tony@atomide.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-omap@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Eyal Reizer <eyalr@ti.com>
+Subject: [tiL4.14-CON PATCH v2] ARM: dts: am437x-sk-evm: add wilink8 support
+Date: Tue,  1 May 2018 10:13:09 +0300
+Message-Id: <1525158789-32255-1-git-send-email-eyalr@ti.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 30, 2018 at 01:37:16PM -0700, Cong Wang wrote:
-> On Mon, Apr 30, 2018 at 12:42 PM, Peter Zijlstra <peterz@infradead.org> wrote:
-> > On Mon, Apr 30, 2018 at 12:29:25PM -0700, Cong Wang wrote:
-> >> Currently, the sched_cfs_bandwidth_slice_us is a global setting which
-> >> affects all cgroups. Different groups may want different values based
-> >> on their own workload, one size doesn't fit all. The global pool filled
-> >> periodically is per cgroup too, they should have the right to distribute
-> >> their own quota to each local CPU with their own frequency.
-> >
-> > Why.. what happens? This doesn't really tell us anything.
-> 
-> We saw tasks in a container got throttled for many times even
-> when they don't apparently over-burn the CPU's. I tried to reduce
-> the sched_cfs_bandwidth_slice_us from the default 5ms to 1ms,
-> it solved the problem as no tasks got throttled after this change.
-> This is why I want to change it.
+enable mmc3 used for wlan and uart1 used for bluetooth
+configure the gpios used for wlan and bluetooth controls
+add fixed voltage regulator used for wlan power control
 
-The 1ms slice distributes time better at the cost of higher overhead,
-right?
+Signed-off-by: Eyal Reizer <eyalr@ti.com>
+---
+ arch/arm/boot/dts/am437x-sk-evm.dts | 115 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 115 insertions(+)
 
-> And I don't think 1ms will be good for all containers, so in order to
-> minimize the impact, I would like to keep the slice change within
-> each container. This is why I propose this patch rather just
-> `sysctl  -w`. Do you think otherwise?
-
-Well, I think I don't quite remember everything and a Changelog that
-tells me why you want stuff in a little more detail and helps me
-remember some things is a lot more useful than me having to go dig
-through the code myself (which I'll invariably postpone because I'm a
-busy sort of person).
-
-> BTW, people reported a similar (if not same) issue here before:
-> https://gist.github.com/bobrik/2030ff040fad360327a5fab7a09c4ff1
-
-That's not a report, that's a random person on the interweb posting
-random crap. A report lands in my inbox.
+diff --git a/arch/arm/boot/dts/am437x-sk-evm.dts b/arch/arm/boot/dts/am437x-sk-evm.dts
+index 16d9db0..afffdb1 100644
+--- a/arch/arm/boot/dts/am437x-sk-evm.dts
++++ b/arch/arm/boot/dts/am437x-sk-evm.dts
+@@ -15,6 +15,7 @@
+ #include <dt-bindings/pwm/pwm.h>
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/input/input.h>
++#include <dt-bindings/interrupt-controller/irq.h>
+ 
+ / {
+ 	model = "TI AM437x SK EVM";
+@@ -158,6 +159,22 @@
+ 			};
+ 		};
+ 	};
++
++	vmmcwl_fixed: fixedregulator-mmcwl {
++		/*
++		 * WL_EN is not SDIO standard compliant. It is an out of band
++		 * signal and hard to be dealt with in a standard way by the
++		 * SDIO core driver.
++		 * So modelling the WL_EN line as a regulator was a natural
++		 * choice as the MMC core already deals with MMC supplies.
++		 */
++		compatible = "regulator-fixed";
++		regulator-name = "vmmcwl_fixed";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		gpio = <&gpio4 8 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
+ };
+ 
+ &am43xx_pinmux {
+@@ -424,6 +441,62 @@
+ 			AM4372_IOPAD(0xac4, PIN_OUTPUT | MUX_MODE0) /* usb0_drvvbus.usb0_drvvbus */
+ 		>;
+ 	};
++
++	mmc3_pins_default: pinmux_mmc3_pins_default {
++		pinctrl-single,pins = <
++			AM4372_IOPAD(0x9f0, PIN_INPUT_PULLUP | MUX_MODE3) /* (AD21) cam1_data2.mmc2_clk */
++			AM4372_IOPAD(0x9f4, PIN_INPUT_PULLUP | MUX_MODE3) /* (AE22) cam1_data3.mmc2_cmd */
++			AM4372_IOPAD(0x9f8, PIN_INPUT_PULLUP | MUX_MODE3) /* (AD22) cam1_data4.mmc2_dat0 */
++			AM4372_IOPAD(0x9fc, PIN_INPUT_PULLUP | MUX_MODE3) /* (AE23) cam1_data5.mmc2_dat1 */
++			AM4372_IOPAD(0xa00, PIN_INPUT_PULLUP | MUX_MODE3) /* (AD23) cam1_data6.mmc2_dat2 */
++			AM4372_IOPAD(0xa04, PIN_INPUT_PULLUP | MUX_MODE3) /* (AE24) cam1_data7.mmc2_dat3 */
++		>;
++	};
++
++	mmc3_pins_sleep: pinmux_mmc3_pins_sleep {
++		pinctrl-single,pins = <
++			AM4372_IOPAD(0x9f0, PIN_INPUT_PULLDOWN | MUX_MODE7) /* (AD21) cam1_data2.mmc2_clk */
++			AM4372_IOPAD(0x9f4, PIN_INPUT_PULLDOWN | MUX_MODE7) /* (AE22) cam1_data3.mmc2_cmd */
++			AM4372_IOPAD(0x9f8, PIN_INPUT_PULLDOWN | MUX_MODE7) /* (AD22) cam1_data4.mmc2_dat0 */
++			AM4372_IOPAD(0x9fc, PIN_INPUT_PULLDOWN | MUX_MODE7) /* (AE23) cam1_data5.mmc2_dat1 */
++			AM4372_IOPAD(0xa00, PIN_INPUT_PULLDOWN | MUX_MODE7) /* (AD23) cam1_data6.mmc2_dat2 */
++			AM4372_IOPAD(0xa04, PIN_INPUT_PULLDOWN | MUX_MODE7) /* (AE24) cam1_data7.mmc2_dat3 */
++		>;
++	};
++
++	wlan_pins_default: pinmux_wlan_pins_default {
++		pinctrl-single,pins = <
++			AM4372_IOPAD(0x9d0, PIN_OUTPUT_PULLDOWN | MUX_MODE7)		/* cam1_data8.gpio4_8 WL_EN */
++			AM4372_IOPAD(0x9e4, PIN_INPUT | WAKEUP_ENABLE | MUX_MODE7)	/* cam1_wen.gpio4_13 WL_IRQ */
++		>;
++	};
++
++	wlan_pins_sleep: pinmux_wlan_pins_sleep {
++		pinctrl-single,pins = <
++			AM4372_IOPAD(0x9d0, PIN_OUTPUT_PULLDOWN | MUX_MODE7) 		/* cam1_data8.gpio4_8 WL_EN */
++			AM4372_IOPAD(0x9e4, PIN_INPUT | WAKEUP_ENABLE | MUX_MODE7)	/* cam1_wen.gpio4_13 WL_IRQ */
++		>;
++	};
++
++	uart1_bt_pins_default: pinmux_uart1_bt_pins_default {
++		pinctrl-single,pins = <
++			AM4372_IOPAD(0x980, PIN_INPUT | MUX_MODE0)		/* uart1_rxd.uart1_rxd */
++			AM4372_IOPAD(0x984, PIN_OUTPUT_PULLDOWN | MUX_MODE0) 	/* uart1_txd.uart1_txd */
++			AM4372_IOPAD(0x978, PIN_INPUT_PULLUP | MUX_MODE0)	/* uart1_ctsn.uart1_ctsn */
++			AM4372_IOPAD(0x97c, PIN_OUTPUT_PULLDOWN | MUX_MODE0) 	/* uart1_rtsn.uart1_rtsn */
++			AM4372_IOPAD(0x9cc, PIN_OUTPUT_PULLDOWN | MUX_MODE7)	/* cam1_data9.gpio4_7 BT_EN */
++		>;
++	};
++
++	uart1_bt_pins_sleep: pinmux_uart1_bt_pins_sleep {
++		pinctrl-single,pins = <
++			AM4372_IOPAD(0x980, PIN_OUTPUT_PULLDOWN | MUX_MODE7)	/* uart1_rxd.uart1_rxd */
++			AM4372_IOPAD(0x984, PIN_OUTPUT_PULLDOWN | MUX_MODE7) 	/* uart1_txd.uart1_txd */
++			AM4372_IOPAD(0x978, PIN_OUTPUT_PULLDOWN | MUX_MODE7)	/* uart1_ctsn.uart1_ctsn */
++			AM4372_IOPAD(0x97c, PIN_OUTPUT_PULLDOWN | MUX_MODE7) 	/* uart1_rtsn.uart1_rtsn */
++			AM4372_IOPAD(0x9cc, PIN_OUTPUT_PULLUP | MUX_MODE7)	/* cam1_data9.gpio4_7 BT_EN */
++		>;
++	};
+ };
+ 
+ &i2c0 {
+@@ -606,6 +679,10 @@
+ 	status = "okay";
+ };
+ 
++&gpio4 {
++	status = "okay";
++};
++
+ &gpio5 {
+ 	status = "okay";
+ };
+@@ -620,6 +697,44 @@
+ 	cd-gpios = <&gpio0 6 GPIO_ACTIVE_LOW>;
+ };
+ 
++&uart1 {
++	status = "okay";
++	pinctrl-names = "default", "sleep";
++	pinctrl-0 = <&uart1_bt_pins_default>;
++	pinctrl-1 = <&uart1_bt_pins_sleep>;
++};
++
++&mmc3 {
++	status = "okay";
++	/*
++	 * these are on the crossbar and are outlined in the
++	 * xbar-event-map element
++	 */
++	dmas = <&edma_xbar 30 0 1>,
++		<&edma_xbar 31 0 2>;
++	dma-names = "tx", "rx";
++	vmmc-supply = <&vmmcwl_fixed>;
++	bus-width = <4>;
++	pinctrl-names = "default", "sleep";
++	pinctrl-0 = <&mmc3_pins_default>;
++	pinctrl-1 = <&mmc3_pins_sleep>;
++	cap-power-off-card;
++	keep-power-in-suspend;
++	ti,non-removable;
++
++	#address-cells = <1>;
++	#size-cells = <0>;
++	wlcore: wlcore@0 {
++		compatible = "ti,wl1835";
++		pinctrl-names = "default", "sleep";
++		pinctrl-0 = <&wlan_pins_default>;
++		pinctrl-1 = <&wlan_pins_sleep>;
++		reg = <2>;
++		interrupt-parent = <&gpio4>;
++		interrupts = <13 IRQ_TYPE_LEVEL_HIGH>;
++	};
++};
++
+ &usb2_phy1 {
+ 	status = "okay";
+ };
+-- 
+2.7.4
