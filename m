@@ -1,88 +1,203 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756009AbeEAQjM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 12:39:12 -0400
-Received: from mail-sn1nam02on0074.outbound.protection.outlook.com ([104.47.36.74]:28197
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        id S1755957AbeEAQlh (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 12:41:37 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44700 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755849AbeEAQjL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 12:39:11 -0400
-From: Nadav Amit <namit@vmware.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-CC: Josh Poimboeuf <jpoimboe@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: Suboptimal inline heuristics due to non-code sections
-Thread-Topic: Suboptimal inline heuristics due to non-code sections
-Thread-Index: AQHT4RiofuDjvDQvpEaROOrOTLYHiaQa4bMAgAAgoACAABFUgA==
-Date: Tue, 1 May 2018 16:39:09 +0000
-Message-ID: <042668BD-8912-44D4-9CA1-9ABA2F094709@vmware.com>
-References: <A74E4351-A9FA-434D-AD47-3A509F802FFB@vmware.com>
- <20180501134020.fonel3x6plea5xdt@treble>
- <CA+55aFz-11bMkZHWdiiwys32H5jvB4gATvUHT0Vx6pJkFYLb4w@mail.gmail.com>
-In-Reply-To: <CA+55aFz-11bMkZHWdiiwys32H5jvB4gATvUHT0Vx6pJkFYLb4w@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [208.91.2.2]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;SN2PR05MB2718;7:cSY8MO7VCdv3hkAXC6yHQrJKyKK5++2LdecUl6F7mTx1ECqfMzUAUYv1P+DRcPhxBAOLWHa4XXNlYobFgtB+AaGWt0j/GywXENShf0Hn6g2YLdYhcNHkWvzU88UA1jTrltPyD+3fYqph48wOKiT5KR3p2QdA8Jz6pnNYXZZ4bUIrQSOxDs1FhtIAtSrG+uvdtNCJPnvU6/BARIfSSlP0WcxRAg2IFd4rN5JWreGcgaege1QD4cci5573qv6obZtZ;20:RE6y1hZ6+FsXpf0asm+kc/CCYOwmr2c5YVvsRtOML2zRgKkYjdGgqIlePeq9MYxjCP5ro78Hp2wbucag3N9upJpUku++akMa0+rQJ+6A+N27fCFWQl9IZfRLnZV91WUz+GgPnigySaTYau7NXghpooaSmGWXnroGtUE1VbwGghw=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:SN2PR05MB2718;
-x-ms-traffictypediagnostic: SN2PR05MB2718:
-x-microsoft-antispam-prvs: <SN2PR05MB27186E54C793294FD6AC7F44D0810@SN2PR05MB2718.namprd05.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231254)(944501410)(52105095)(10201501046)(93006095)(93001095)(3002001)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123560045)(6072148)(201708071742011);SRVR:SN2PR05MB2718;BCL:0;PCL:0;RULEID:;SRVR:SN2PR05MB2718;
-x-forefront-prvs: 06592CCE58
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(396003)(346002)(39380400002)(366004)(39860400002)(189003)(199004)(8936002)(6506007)(106356001)(5660300001)(6246003)(97736004)(3846002)(53936002)(54906003)(86362001)(83716003)(53546011)(76176011)(229853002)(6916009)(5250100002)(105586002)(6436002)(316002)(6486002)(6116002)(6512007)(14454004)(25786009)(82746002)(8676002)(36756003)(81166006)(186003)(2906002)(446003)(6346003)(2616005)(7736002)(11346002)(99286004)(478600001)(26005)(2900100001)(476003)(3660700001)(81156014)(66066001)(4326008)(33656002)(68736007)(102836004)(486006)(305945005)(3280700002);DIR:OUT;SFP:1101;SCL:1;SRVR:SN2PR05MB2718;H:SN2PR05MB2654.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=namit@vmware.com;
-x-microsoft-antispam-message-info: ZggEL5FhkDnR2xJay32//7IMZHcO2tyHlhaLb5G9vIyUAcV8uNjsCKHfgNS1f9qfPEwyeASMHZjbRZwO8lHzLz3dkQ0Vd1kHuiuUr3RKokwcSuIO4Fi2nNBwcjGHSxpU1y32lOaD4QYowjzINKU1ICHJafy4Hm3dLCEFZ3WhSb6Z9QeqwjqL52PZA1dr1csT
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D0FB3A97C1AAAA48AE51EE774C0FC492@namprd05.prod.outlook.com>
+        id S1751071AbeEAQld (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 12:41:33 -0400
+From: Steve Grubb <sgrubb@redhat.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Tyler Hicks <tyhicks@canonical.com>, linux-kernel@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>,
+        Eric Paris <eparis@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+        linux-audit@redhat.com, linux-security-module@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Subject: Re: [PATCH 2/3] seccomp: Audit attempts to modify the actions_logged sysctl
+Date: Tue, 01 May 2018 12:41:30 -0400
+Message-ID: <2326710.O3RjXv44ne@x2>
+Organization: Red Hat
+In-Reply-To: <CAHC9VhTwrKG2hySCrZaVwHgqyekZXDofkJy9_jCa-CxFgCVUGQ@mail.gmail.com>
+References: <1524856562-22566-1-git-send-email-tyhicks@canonical.com> <1524856562-22566-3-git-send-email-tyhicks@canonical.com> <CAHC9VhTwrKG2hySCrZaVwHgqyekZXDofkJy9_jCa-CxFgCVUGQ@mail.gmail.com>
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: e7d7aa76-a9ac-4b84-365f-08d5af821037
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e7d7aa76-a9ac-4b84-365f-08d5af821037
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 May 2018 16:39:09.3544
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN2PR05MB2718
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w41GdIx7012494
 
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
-
-> On Tue, May 1, 2018 at 6:40 AM Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+On Tuesday, May 1, 2018 11:18:55 AM EDT Paul Moore wrote:
+> On Fri, Apr 27, 2018 at 3:16 PM, Tyler Hicks <tyhicks@canonical.com> wrote:
+> > The decision to log a seccomp action will always be subject to the
+> > value of the kernel.seccomp.actions_logged sysctl, even for processes
+> > that are being inspected via the audit subsystem, in an upcoming patch.
+> > Therefore, we need to emit an audit record on attempts at writing to the
+> > actions_logged sysctl when auditing is enabled.
+> > 
+> > This patch updates the write handler for the actions_logged sysctl to
+> > emit an audit record on attempts to write to the sysctl. Successful
+> > writes to the sysctl will result in a record that includes a normalized
+> > list of logged actions in the "actions" field and a "res" field equal to
+> > 0. Unsuccessful writes to the sysctl will result in a record that
+> > doesn't include the "actions" field and has a "res" field equal to 1.
+> > 
+> > Not all unsuccessful writes to the sysctl are audited. For example, an
+> > audit record will not be emitted if an unprivileged process attempts to
+> > open the sysctl file for reading since that access control check is not
+> > part of the sysctl's write handler.
+> > 
+> > Below are some example audit records when writing various strings to the
+> > actions_logged sysctl.
+> > 
+> > Writing "not-a-real-action" emits:
+> >  type=CONFIG_CHANGE msg=audit(1524600971.363:119): pid=1651 uid=0
+> >  auid=1000 tty=pts8 ses=1 comm="tee" exe="/usr/bin/tee"
+> >  op=seccomp-logging res=1
+> > 
+> > Writing "kill_process kill_thread errno trace log" emits:
+> >  type=CONFIG_CHANGE msg=audit(1524601023.982:131): pid=1658 uid=0
+> >  auid=1000 tty=pts8 ses=1 comm="tee" exe="/usr/bin/tee"
+> >  op=seccomp-logging actions="kill_process kill_thread errno trace log"
+> >  res=0
 > 
->> But if I remove the section completely by removing the
->> pushsection/popsection, then copy_overflow() gets inlined.
+> I've got some additional comments regarding the fields in the code
+> below, but it would be good to hear Steve comment on the "actions"
+> field since his userspace tools are extremely picky about what they
+> will accept.
+
+Its not that the audit user space applications are picky, its that we have a 
+coding standard that everyone needs to abide by so that any parser coded to 
+the specification works. In short, we should not have spaces inside the "" 
+because that can trick a naive parser. What we typically do in a situation 
+like this is add a comma as a separator. But having "" means that the value 
+is untrusted and subject to escaping. I don't think that is the case here. 
+Output is not controlled by the user. Its a list of well known names.
+
+> It looks like you are treating the actions as an untrusted string, which is
+> good, so I suspect you are okay, but still
+
+The function below that logs names is calling audit_log_format which does not 
+handle untrusted strings. I would suggest not treating it as an untrusted 
+string, but as a string with no spaces in it. 
+
+actions=kill_process,kill_thread,errno,trace,log
+
+
+> > Writing the string "log log errno trace kill_process kill_thread", which
+> > is unordered and contains the log action twice, results in the same
+> > 
+> > value as the previous example for the actions field:
+> >  type=CONFIG_CHANGE msg=audit(1524601204.365:152): pid=1704 uid=0
+> >  auid=1000 tty=pts8 ses=1 comm="tee" exe="/usr/bin/tee"
+> >  op=seccomp-logging actions="kill_process kill_thread errno trace log"
+> >  res=0
+> > 
+> > No audit records are generated when reading the actions_logged sysctl.
+> > 
+> > Suggested-by: Steve Grubb <sgrubb@redhat.com>
+> > Signed-off-by: Tyler Hicks <tyhicks@canonical.com>
+> > ---
+> > 
+> >  include/linux/audit.h |  3 +++
+> >  kernel/auditsc.c      | 37 +++++++++++++++++++++++++++++++++++++
+> >  kernel/seccomp.c      | 43 ++++++++++++++++++++++++++++++++++---------
+> >  3 files changed, 74 insertions(+), 9 deletions(-)
 > 
->> So GCC's inlining decisions are somehow influenced by the existence of
->> some random empty section.  This definitely seems like a GCC bug to me.
+> ...
 > 
-> I think gcc uses the size of the string to approximate the size of an
-> inline asm.
+> > diff --git a/include/linux/audit.h b/include/linux/audit.h
+> > index 75d5b03..b311d7d 100644
+> > --- a/include/linux/audit.h
+> > +++ b/include/linux/audit.h
+> > @@ -233,6 +233,7 @@ extern void __audit_inode_child(struct inode *parent,
+> > 
+> >                                 const struct dentry *dentry,
+> >                                 const unsigned char type);
+> >  
+> >  extern void __audit_seccomp(unsigned long syscall, long signr, int
+> >  code);
+> > 
+> > +extern void audit_seccomp_actions_logged(const char *names, int res);
+> > 
+> >  extern void __audit_ptrace(struct task_struct *t);
+> >  
+> >  static inline bool audit_dummy_context(void)
+> > 
+> > @@ -502,6 +503,8 @@ static inline void __audit_seccomp(unsigned long
+> > syscall, long signr, int code)> 
+> >  { }
+> >  static inline void audit_seccomp(unsigned long syscall, long signr, int
+> >  code) { }
+> > 
+> > +static inline void audit_seccomp_actions_logged(const char *names, int
+> > res) +{ }
+> > 
+> >  static inline int auditsc_get_stamp(struct audit_context *ctx,
+> >  
+> >                               struct timespec64 *t, unsigned int *serial)
+> >  
+> >  {
+> > 
+> > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> > index 4e0a4ac..3496238 100644
+> > --- a/kernel/auditsc.c
+> > +++ b/kernel/auditsc.c
+> > @@ -2478,6 +2478,43 @@ void __audit_seccomp(unsigned long syscall, long
+> > signr, int code)> 
+> >         audit_log_end(ab);
+> >  
+> >  }
+> > 
+> > +void audit_seccomp_actions_logged(const char *names, int res)
+> > +{
+> > +       struct tty_struct *tty;
+> > +       const struct cred *cred;
+> > +       struct audit_buffer *ab;
+> > +       char comm[sizeof(current->comm)];
+> > +
+> > +       if (!audit_enabled)
+> > +               return;
+> > +
+> > +       ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_CONFIG_CHANGE);
+> > +       if (unlikely(!ab))
+> > +               return;
 > 
-> So I don't think it's the "empty section" that makes gcc do this, I think
-> it's literally "our inline asms _look_ big”.
+> Instead of NULL, let's pass current->audit_context to
+> audit_log_start().  Yes, most of the AUDIT_CONFIG_CHANGE users pass
+> NULL but all of that is going to need to change because of 1) the
+> audit container ID work and 2) it makes sense to connect records that
+> are related.  Let's do it right the first time here :)
+> 
+> > +       cred = current_cred();
+> > +       tty = audit_get_tty(current);
+> > +       audit_log_format(ab, "pid=%d uid=%u auid=%u tty=%s ses=%u",
+> > +                        task_tgid_nr(current),
+> > +                        from_kuid(&init_user_ns, cred->uid),
+> > +                        from_kuid(&init_user_ns,
+> > +                        audit_get_loginuid(current)),
+> > +                        tty ? tty_name(tty) : "(none)",
+> > +                        audit_get_sessionid(current));
+> > +       audit_put_tty(tty);
+> > +       audit_log_task_context(ab);
+> > +       audit_log_format(ab, " comm=");
+> > +       audit_log_untrustedstring(ab, get_task_comm(comm, current));
+> > +       audit_log_d_path_exe(ab, current->mm);
+> > +       audit_log_format(ab, " op=seccomp-logging");
+> > +       if (names)
+> > +               audit_log_format(ab, " actions=\"%s\"", names);
+> > +
+> > +       audit_log_format(ab, " res=%d", res);
+> > +       audit_log_end(ab);
+> 
+> One of the benefits of using current->audit_context is that we get a
+> lot of this info from the associated SYSCALL record (assuming the
+> admin isn't filtering that, e.g. Fedora defaults).  We can safely drop
+> most everything except for the "op" and "actions" fields.
+> 
+> Steve might also want an "old-actions" field, but I'll let him speak to
+> that.
 
-I didn’t think about that.
+Configuration changes are supposed to show current and new values.
 
-Playing with the code a bit more, it seems that it is actually related to
-the number of “new-lines” in the inline assembly. Removing 4 new-lines from
-_BUG_FLAGS (those that can be removed without breaking assembly) eliminated
-most of the non-inlined versions of copy_overflow().
-
-Would it be reasonable to remove new-lines in such cases?
-
-Regards,
-Nadav
+-Steve
