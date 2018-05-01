@@ -1,59 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753918AbeEAIch (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 04:32:37 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:37014 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751421AbeEAIcd (ORCPT
+        id S1753851AbeEAIeg (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 04:34:36 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:45204 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750994AbeEAIea (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 04:32:33 -0400
-X-Google-Smtp-Source: AB8JxZoPrsk+mMwzwmbSyXwl33PJwHv10lbiKlVWUi55vq9C0wrhTLJmpbg1rBi4eqnqD+V9SYaOKA==
-Date: Tue, 1 May 2018 09:32:29 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: Sebastian Reichel <sre@kernel.org>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Sameer Nanda <snanda@chromium.org>, linux-pm@vger.kernel.org,
-        Guenter Roeck <groeck@chromium.org>, linux-kernel@vger.kernel.org,
-        Benson Leung <bleung@chromium.org>, miguel.ojeda.sandonis@gmail.com
-Subject: Re: [PATCH v2 3/3] mfd: cros_ec_dev: Register cros_usbpd-charger
- driver as a subdevice.
-Message-ID: <20180501083229.GL5147@dell>
-References: <20180430131403.14296-1-enric.balletbo@collabora.com>
- <20180430131403.14296-4-enric.balletbo@collabora.com>
+        Tue, 1 May 2018 04:34:30 -0400
+X-Google-Smtp-Source: AB8JxZrbI7/ZPOjnqUIWWGiB451hFYPUalTrKBn9AZlkSzW/M4VWTMRzLoZIwxyZKCJpSuMstuM6kRp53NMXrwEqdFY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180430131403.14296-4-enric.balletbo@collabora.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1f67f00a-8141-f9af-2120-c78f7cfecb1d@canonical.com>
+References: <56a8953c-d833-837c-57d5-fe758d4db02a@canonical.com>
+ <CAJZ5v0j8GAatWoAra37y3c-ti2Ft5am75KONgEkjB6AaypkCqg@mail.gmail.com>
+ <ae84e595-dede-1409-4aff-3a29a310f2ba@canonical.com> <CAJZ5v0gapMMf=KqBAoDTv0SUBeusrUFPyEz6Z4k8Y3Szizdm5Q@mail.gmail.com>
+ <1f67f00a-8141-f9af-2120-c78f7cfecb1d@canonical.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 1 May 2018 10:34:29 +0200
+X-Google-Sender-Auth: 77E10Pfx-CzG_RPfnjU4q-8KSr4
+Message-ID: <CAJZ5v0iPsoxCLxsq156RvyZ1cWtM9jNMLUPMnE3cqi5r1jk8jg@mail.gmail.com>
+Subject: Re: [Regression] PCI / PM: Simplify device wakeup settings code
+To: Joseph Salisbury <joseph.salisbury@canonical.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        1745646@bugs.launchpad.net,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 30 Apr 2018, Enric Balletbo i Serra wrote:
+On Mon, Apr 30, 2018 at 4:22 PM, Joseph Salisbury
+<joseph.salisbury@canonical.com> wrote:
+> On 04/16/2018 11:58 AM, Rafael J. Wysocki wrote:
+>> On Mon, Apr 16, 2018 at 5:31 PM, Joseph Salisbury
+>> <joseph.salisbury@canonical.com> wrote:
+>>> On 04/13/2018 05:34 PM, Rafael J. Wysocki wrote:
+>>>> On Fri, Apr 13, 2018 at 7:56 PM, Joseph Salisbury
+>>>> <joseph.salisbury@canonical.com> wrote:
+>>>>> Hi Rafael,
+>>>>>
+>>>>> A kernel bug report was opened against Ubuntu [0].  After a kernel
+>>>>> bisect, it was found that reverting the following two commits resolved
+>>>>> this bug:
+>>>>>
+>>>>> 0ce3fcaff929 ("PCI / PM: Restore PME Enable after config space restoration")
+>>>>> 0847684cfc5f("PCI / PM: Simplify device wakeup settings code")
+>>>>>
+>>>>> This is a regression introduced in v4.13-rc1 and still exists in
+>>>>> mainline.  The bug causes the battery to drain when the system is
+>>>>> powered down and unplugged, which does not happed prior to these two
+>>>>> commits.
+>>>> What system and what do you mean by "powered down"?  How much time
+>>>> does it take for the battery to drain now?
+>>> By powered down, the bug reporter is saying physically powered off and
+>>> unplugged.  The system is a HP laptop:
+>>>
+>>> dmi.chassis.vendor: HP
+>>> dmi.product.family: 103C_5335KV HP Notebook
+>>> dmi.product.name: HP Notebook
+>>> vendor_id    : GenuineIntel
+>>> cpu family    : 6
+>>>
+>>>
+>>>>> The bisect actually pointed to commit de3ef1e, but reverting
+>>>>> these two commits fixes the issue.
+>>>>>
+>>>>> I was hoping to get your feedback, since you are the patch author.  Do
+>>>>> you think gathering any additional data will help diagnose this issue,
+>>>>> or would it be best to submit a revert request?
+>>>> First, reverting these is not an option or you will break systems
+>>>> relying on them now.  4.13 is three releases back at this point.
+>>>>
+>>>> Second, your issue appears to be related to the suspend/shutdown path
+>>>> whereas commit 0ce3fcaff929 is mostly about resume, so presumably the
+>>>> change in pci_enable_wake() causes the problem to happen.  Can you try
+>>>> to revert this one alone and see if that helps?
+>>> A test kernel with commits 0ce3fcaff929 and de3ef1eb1cd0 reverted was
+>>> tested.  However, the test kernel still exhibited the bug.
+>> So essentially the bisection result cannot be trusted.
+>
+> We performed some more testing and confirmed just a revert of the
+> following commit resolves the bug:
+>
+> 0847684cfc5f0 ("PCI / PM: Simplify device wakeup settings code")
 
-> Check whether this EC instance has USBPD host command support and
-> instatiate the cros_usbpd-charger driver as a subdevice in such case.
-> 
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> ---
-> 
-> Changes in v2:
-> - [3/3] Use ARRAY_SIZE instead of hardcoded 1.
-> 
->  drivers/mfd/cros_ec_dev.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
+Thanks for confirming this!
 
-Patch looks good to me.
+> Can you think of any suggestions to help debug further?
 
-Does it depend on any of the other patches in the series?
+The root cause of the regression is likely the change in
+pci_enable_wake() removing the device_may_wakeup() check from it.
 
-For my own reference:
-  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+Probably, one of the drivers in the platform calls pci_enable_wake()
+directly from its ->shutdown() callback and that causes the device to
+be set up for system wakeup which in turn causes the power draw while
+the system is off to increase.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+I would look at the PCI drivers used on that platform to find which of
+them call pci_enable_wake() directly from ->shutdown() and I would
+make these calls conditional on device_may_wakeup().
