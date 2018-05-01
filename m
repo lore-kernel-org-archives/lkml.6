@@ -1,71 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755667AbeEAABt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 20:01:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45402 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753530AbeEAABr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 20:01:47 -0400
-Date: Mon, 30 Apr 2018 17:01:45 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Pavel Tatashin <pasha.tatashin@oracle.com>, steven.sistare@oracle.com,
-        daniel.m.jordan@oracle.com, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, mhocko@suse.com, linux-mm@kvack.org,
-        mgorman@techsingularity.net, mingo@kernel.org, peterz@infradead.org,
-        fengguang.wu@intel.com, dennisszhou@gmail.com
-Subject: Re: [PATCH v2] mm: access to uninitialized struct page
-Message-Id: <20180430170145.544342905604331c0e1b95d9@linux-foundation.org>
-In-Reply-To: <20180430195858.5242373c@gandalf.local.home>
-References: <20180426202619.2768-1-pasha.tatashin@oracle.com>
-        <20180430162658.598dd5dcdd0c67e36953281c@linux-foundation.org>
-        <20180430195858.5242373c@gandalf.local.home>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1755498AbeEAAKm (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 20:10:42 -0400
+Received: from ozlabs.org ([203.11.71.1]:60769 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751296AbeEAAKk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 20:10:40 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Tue, 1 May 2018 10:10:17 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@mellanox.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Zhu Yanjun <yanjun.zhu@oracle.com>
+Subject: linux-next: manual merge of the rdma tree with the rdma-fixes tree
+Message-ID: <20180501101017.517b38af@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Wl9dmyWBlHaq7dgRMcNuJ32"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 30 Apr 2018 19:58:58 -0400 Steven Rostedt <rostedt@goodmis.org> wrote:
+--Sig_/Wl9dmyWBlHaq7dgRMcNuJ32
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> On Mon, 30 Apr 2018 16:26:58 -0700
-> Andrew Morton <akpm@linux-foundation.org> wrote:
-> 
-> > On Thu, 26 Apr 2018 16:26:19 -0400 Pavel Tatashin <pasha.tatashin@oracle.com> wrote:
-> > 
-> > > The following two bugs were reported by Fengguang Wu:
-> > > 
-> > > kernel reboot-without-warning in early-boot stage, last printk:
-> > > early console in setup code
-> > > 
-> > > http://lkml.kernel.org/r/20180418135300.inazvpxjxowogyge@wfg-t540p.sh.intel.com
-> > > 
-> > > ...
-> > >
-> > > --- a/init/main.c
-> > > +++ b/init/main.c
-> > > @@ -585,8 +585,8 @@ asmlinkage __visible void __init start_kernel(void)
-> > >  	setup_log_buf(0);
-> > >  	vfs_caches_init_early();
-> > >  	sort_main_extable();
-> > > -	trap_init();
-> > >  	mm_init();
-> > > +	trap_init();
-> > >  
-> > >  	ftrace_init();  
-> > 
-> > Gulp.  Let's hope that nothing in mm_init() requires that trap_init()
-> > has been run.  What happens if something goes wrong during mm_init()
-> > and the architecture attempts to raise a software exception, hits a bus
-> > error, div-by-zero, etc, etc?  Might there be hard-to-discover
-> > dependencies in such a case?
-> 
-> I mentioned the same thing.
-> 
+Hi all,
 
-I guess the same concern applies to all the code which we've always run
-before trap_init(), and that's quite a lot of stuff.  So we should be
-OK.  But don't quote me ;)
+Today's linux-next merge of the rdma tree got a conflict in:
+
+  drivers/infiniband/sw/rxe/rxe_resp.c
+
+between commit:
+
+  9fd4350ba895 ("B/rxe: avoid double kfree_skb")
+
+from the rdma-fixes tree and commit:
+
+  2e47350789eb ("IB/rxe: optimize the function duplicate_request")
+
+from the rdma tree.
+
+I fixed it up (I think - see below) and can carry the fix as necessary.
+This is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/infiniband/sw/rxe/rxe_resp.c
+index 955ff3b6da9c,c45c1ff24497..000000000000
+--- a/drivers/infiniband/sw/rxe/rxe_resp.c
++++ b/drivers/infiniband/sw/rxe/rxe_resp.c
+@@@ -1121,23 -1123,13 +1120,12 @@@ static enum resp_states duplicate_reque
+  		/* Find the operation in our list of responder resources. */
+  		res =3D find_resource(qp, pkt->psn);
+  		if (res) {
+- 			struct sk_buff *skb_copy;
+-=20
+- 			skb_copy =3D skb_clone(res->atomic.skb, GFP_ATOMIC);
+- 			if (skb_copy) {
+- 				rxe_add_ref(qp); /* for the new SKB */
+- 			} else {
+- 				pr_warn("Couldn't clone atomic resp\n");
+- 				rc =3D RESPST_CLEANUP;
+- 				goto out;
+- 			}
+-=20
++ 			skb_get(res->atomic.skb);
+  			/* Resend the result. */
+  			rc =3D rxe_xmit_packet(to_rdev(qp->ibqp.device), qp,
+- 					     pkt, skb_copy);
++ 					     pkt, res->atomic.skb);
+  			if (rc) {
+  				pr_err("Failed resending result. This flow is not handled - skb ignor=
+ed\n");
+- 				rxe_drop_ref(qp);
+ -				kfree_skb(res->atomic.skb);
+  				rc =3D RESPST_CLEANUP;
+  				goto out;
+  			}
+
+--Sig_/Wl9dmyWBlHaq7dgRMcNuJ32
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrnsGkACgkQAVBC80lX
+0GwYKggAieq6QngquggXeIH9/2RF2XQaDmmbOBIpVKsZPF25aO89hyHbRklwdPdF
+/sZ2+BZ3OjKrJc/OjLWiApCHUHOGoEqDrkLji1gYuOX3PT6iGPTBZSAFsFFKZgZv
+sFuJd0faDPmhFfr7mrbUqm6c0gJEc5+e5SDXixyNJ340tus0lYXS9QLZZny0WZzt
+YhKySTSBryciFj1BOdH8Ev9bI9Uk6KVWTSq4i1xMBdW4s5ZmPN8Fg5SHkGMPc0zQ
+q/gBydvibmHWAUUruKqlfcH4gZJqYGc1zQxmVQdFCCVqieZvaeHyAAfKyoNP2KSL
+mSiloMgyIjN+FUUaXj2RpePsdhs+zg==
+=3GkS
+-----END PGP SIGNATURE-----
+
+--Sig_/Wl9dmyWBlHaq7dgRMcNuJ32--
