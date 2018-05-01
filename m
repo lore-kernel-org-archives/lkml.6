@@ -1,41 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754742AbeEALEk (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 07:04:40 -0400
-Received: from mail-wm0-f51.google.com ([74.125.82.51]:52838 "EHLO
-        mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753993AbeEALEi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 07:04:38 -0400
-X-Google-Smtp-Source: AB8JxZr39lYQolrVpZ14TBRZ6RuIdvX8KPI2bIUr+B52g1EJi09Ahmq26BddbBdjXpPEulQm53ZF8ggX61fI9WwvKAE=
+        id S1754577AbeEALLM convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 07:11:12 -0400
+Received: from ozlabs.org ([203.11.71.1]:48289 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753856AbeEALLK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 07:11:10 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Michal =?utf-8?Q?Such=C3=A1nek?= <msuchanek@suse.de>
+Cc: linuxppc-dev@ozlabs.org, linux-kernel@vger.kernel.org,
+        npiggin@gmail.com
+Subject: Re: [PATCH 4/6] powerpc/64s: Enable barrier_nospec based on firmware settings
+In-Reply-To: <20180426180258.04e6bee6@kitsune.suse.cz>
+References: <20180424041559.32410-1-mpe@ellerman.id.au> <20180424041559.32410-4-mpe@ellerman.id.au> <20180426180258.04e6bee6@kitsune.suse.cz>
+Date: Tue, 01 May 2018 21:11:06 +1000
+Message-ID: <87vac7r5px.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-In-Reply-To: <a91ef2fb-09ed-51ae-5dfa-8f71ec81f20c@tony.gen.nz>
-References: <decdbe00-2292-3012-d7ae-6bfa382fc74a@tony.gen.nz>
- <1525165387.23227.44.camel@petrovitsch.priv.at> <a91ef2fb-09ed-51ae-5dfa-8f71ec81f20c@tony.gen.nz>
-From: Richard Weinberger <richard.weinberger@gmail.com>
-Date: Tue, 1 May 2018 13:04:36 +0200
-Message-ID: <CAFLxGvxpe78WhrEKcKRt5XRBMtT-mZUe9Bm=sQsn8-f1TnX0eQ@mail.gmail.com>
-Subject: Re: Suggested new user link command
-To: Tony Wallace <tony@tony.gen.nz>
-Cc: Bernd Petrovitsch <bernd@petrovitsch.priv.at>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 1, 2018 at 12:58 PM, Tony Wallace <tony@tony.gen.nz> wrote:
-> Good point.  But there are gid and uid fields in inode disc record.
+Michal Suchánek <msuchanek@suse.de> writes:
+> Hello,
 >
-> https://ext4.wiki.kernel.org/index.php/Ext4_Disk_Layout#Inode_Table
+> On Tue, 24 Apr 2018 14:15:57 +1000
+> Michael Ellerman <mpe@ellerman.id.au> wrote:
 >
-> I assume these can be use to ensure that the directory in which it is to
-> be placed has permissions to accept the inode.  If that is not the case
-> then it would have to be a root only syscall.
+>> From: Michal Suchanek <msuchanek@suse.de>
+>> 
+>> Check what firmware told us and enable/disable the barrier_nospec as
+>> appropriate.
+>> 
+>> We err on the side of enabling the barrier, as it's no-op on older
+>> systems, see the comment for more detail.
+>> 
+>> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+...
+>
+> I am missing the option for the barrier to be disabled by a kernel
+> commandline argument here.
+>
+> It does make sense to add a kernel parameter that is checked on boot to
+> be compatible with other platforms that implement one.
 
-Before we dig into details, please come up with a very good use case. :-)
-But I'm with Bernd, I don't think it is worth the permissions hassle.
+No other platforms have an option to disable variant 1 mitigations, so
+there isn't an existing parameter we can use.
 
--- 
-Thanks,
-//richard
+Which is not to say we can't add one, but I wasn't sure if it was really
+worth it.
+
+But I guess we should add one, I might do it as a follow-up patch.
+
+cheers
