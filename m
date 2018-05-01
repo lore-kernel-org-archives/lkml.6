@@ -1,146 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755566AbeEAN3R (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 09:29:17 -0400
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:42726 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754841AbeEAN3P (ORCPT
+        id S1755681AbeEAN3o (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 09:29:44 -0400
+Received: from mail-qt0-f172.google.com ([209.85.216.172]:41147 "EHLO
+        mail-qt0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752447AbeEAN3n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 09:29:15 -0400
-Subject: Re: [PATCH v9 01/27] clk: davinci: pll: allow dev == NULL
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
-References: <20180427001745.4116-1-david@lechnology.com>
- <20180427001745.4116-2-david@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <7f968fd3-eb0e-37ba-9f2d-2b948640ef73@ti.com>
-Date: Tue, 1 May 2018 18:57:53 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 1 May 2018 09:29:43 -0400
+X-Google-Smtp-Source: AB8JxZpy5SefoGn+f24lrq1iwkMVYLb+3T8fni7ZoZzFee7A+kv91yZMQrDgYfZ1w3V99NyeA6Xsqw==
+From: Vince Weaver <vincent.weaver@maine.edu>
+X-Google-Original-From: Vince Weaver <vince@maine.edu>
+Date: Tue, 1 May 2018 09:29:38 -0400 (EDT)
+X-X-Sender: vince@macbook-air
+To: Josh Poimboeuf <jpoimboe@redhat.com>
+cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: perf: fuzzer causes stack going in wrong direction warnings
+In-Reply-To: <20180111192112.d35nkotzklicd27c@treble>
+Message-ID: <alpine.DEB.2.21.1805010925140.19413@macbook-air>
+References: <20180109132602.GA2369@hirez.programming.kicks-ass.net> <alpine.DEB.2.21.1801090841300.15884@macbook-air> <20180109151253.GK6176@hirez.programming.kicks-ass.net> <alpine.DEB.2.21.1801091022040.16446@macbook-air> <20180109153341.GL6176@hirez.programming.kicks-ass.net>
+ <alpine.DEB.2.21.1801091052010.16446@macbook-air> <20180109160551.GK3040@hirez.programming.kicks-ass.net> <20180109170716.bqmexpmywwr4bwuv@treble> <20180111052538.2qhj6oxnc24xumhk@treble> <alpine.DEB.2.21.1801111358580.22460@macbook-air>
+ <20180111192112.d35nkotzklicd27c@treble>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20180427001745.4116-2-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday 27 April 2018 05:47 AM, David Lechner wrote:
-> This modifies the TI DaVinci PLL clock driver to allow for the case
-> when dev == NULL. On some (most) SoCs that use this driver, the PLL
-> clock needs to be registered during early boot because it is used
-> for clocksource/clockevent and there will be no platform device available.
-> 
-> Signed-off-by: David Lechner <david@lechnology.com>
+Hello
 
-> diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
-> index 23a24c944f1d..7c4d808b8fdb 100644
-> --- a/drivers/clk/davinci/pll.c
-> +++ b/drivers/clk/davinci/pll.c
-> @@ -111,6 +111,31 @@ struct davinci_pll_clk {
->  #define to_davinci_pll_clk(_hw) \
->  	container_of((_hw), struct davinci_pll_clk, hw)
->  
-> +static inline void *_devm_kzalloc(struct device *dev, size_t size, gfp_t flags)
-> +{
-> +	if (dev)
-> +		return devm_kzalloc(dev, size, flags);
-> +
-> +	return kzalloc(size, flags);
+I reported this back in January, but I think it got lost since everyone 
+was busy with other more pressing matters.
 
-I would shift to using kzalloc() only. The utility of devm_kzalloc() is
-gone if you cannot always rely on it since you have to handle the free
-for the other case. Same thing for other devres APIs below.
+But in any case, the perf_fuzzer still can trigger these type of messages 
+and just wanted to see if they were a cause for concern, or just noise.
 
-> +}
-> +
-> +static inline void *_devm_kmalloc_array(struct device *dev, size_t n,
-> +					size_t size, gfp_t flags)
-> +{
-> +	if (dev)
-> +		return devm_kmalloc_array(dev, n, size, flags);
-> +
-> +	return kmalloc_array(n, size, flags);
-> +}
-> +
-> +static inline struct clk *_devm_clk_register(struct device *dev, struct clk_hw *hw)
-> +{
-> +	if (dev)
-> +		return devm_clk_register(dev, hw);
-> +
-> +	return clk_register(NULL, hw);
-> +}
-> +
+[66620.496076] WARNING: can't dereference registers at 0000000051f78a40 for ip interrupt_entry+0xba/0xc0
+[66620.506117] WARNING: stack recursion on stack type 4
+[67126.898984] WARNING: stack going in the wrong direction? ip=native_sched_clock+0xd/0x90
+[67148.214712] WARNING: can't dereference iret registers at 00000000c8f3c864 for ip error_exit+0x20/0x20
 
 
-> diff --git a/drivers/clk/davinci/pll.h b/drivers/clk/davinci/pll.h
-> index b1b6fb23f972..92a0978a7d29 100644
-> --- a/drivers/clk/davinci/pll.h
-> +++ b/drivers/clk/davinci/pll.h
-> @@ -11,6 +11,7 @@
->  #include <linux/bitops.h>
->  #include <linux/clk-provider.h>
->  #include <linux/of.h>
-> +#include <linux/regmap.h>
->  #include <linux/types.h>
->  
->  #define PLL_HAS_CLKMODE			BIT(0) /* PLL has PLLCTL[CLKMODE] */
-> @@ -94,7 +95,8 @@ struct davinci_pll_obsclk_info {
->  struct clk *davinci_pll_clk_register(struct device *dev,
->  				     const struct davinci_pll_clk_info *info,
->  				     const char *parent_name,
-> -				     void __iomem *base);
-> +				     void __iomem *base,
-> +				     struct regmap *cfgchip);
->  struct clk *davinci_pll_auxclk_register(struct device *dev,
->  					const char *name,
->  					void __iomem *base);
-> @@ -110,32 +112,33 @@ davinci_pll_sysclk_register(struct device *dev,
->  			    const struct davinci_pll_sysclk_info *info,
->  			    void __iomem *base);
->  
-> -int of_davinci_pll_init(struct device *dev,
-> +int of_davinci_pll_init(struct device *dev, struct device_node *node,
->  			const struct davinci_pll_clk_info *info,
->  			const struct davinci_pll_obsclk_info *obsclk_info,
->  			const struct davinci_pll_sysclk_info **div_info,
->  			u8 max_sysclk_id,
-> -			void __iomem *base);
-> +			void __iomem *base,
-> +			struct regmap *cfgchip);
->  
->  /* Platform-specific callbacks */
->  
-> -int da830_pll_init(struct device *dev, void __iomem *base);
-> +int da830_pll_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
->  
-> -int da850_pll0_init(struct device *dev, void __iomem *base);
-> -int da850_pll1_init(struct device *dev, void __iomem *base);
-> -int of_da850_pll0_init(struct device *dev, void __iomem *base);
-> -int of_da850_pll1_init(struct device *dev, void __iomem *base);
-> +int da850_pll0_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
-
-Having this declared both here and in include/linux/clk/davinci.h is
-strange. Can we include that file directly where its needed?
-
-> diff --git a/include/linux/clk/davinci.h b/include/linux/clk/davinci.h
-> new file mode 100644
-> index 000000000000..1298cca509ac
-> --- /dev/null
-> +++ b/include/linux/clk/davinci.h
-> @@ -0,0 +1,24 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Clock driver for TI Davinci PSC controllers
-
-PSC/PLL controllers.
-
-Thanks,
-Sekhar
+Vince
