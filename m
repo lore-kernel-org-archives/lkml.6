@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755416AbeEAJPu (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 05:15:50 -0400
-Received: from foss.arm.com ([217.140.101.70]:44156 "EHLO foss.arm.com"
+        id S1754396AbeEAJLb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 05:11:31 -0400
+Received: from foss.arm.com ([217.140.101.70]:44106 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754550AbeEAJLj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 05:11:39 -0400
+        id S1752950AbeEAJL2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 05:11:28 -0400
 From: Suzuki K Poulose <suzuki.poulose@arm.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org,
@@ -13,9 +13,9 @@ Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org,
         will.deacon@arm.com, robin.murphy@arm.com, sudeep.holla@arm.com,
         frowand.list@gmail.com, robh@kernel.org, john.horley@arm.com,
         Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH v2 12/27] coresight: tmc-etr: Allow commandline option to override SG use
-Date: Tue,  1 May 2018 10:10:42 +0100
-Message-Id: <1525165857-11096-13-git-send-email-suzuki.poulose@arm.com>
+Subject: [PATCH v2 08/27] coresight: tmc-etr: Do not clean trace buffer
+Date: Tue,  1 May 2018 10:10:38 +0100
+Message-Id: <1525165857-11096-9-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1525165857-11096-1-git-send-email-suzuki.poulose@arm.com>
 References: <1525165857-11096-1-git-send-email-suzuki.poulose@arm.com>
@@ -23,80 +23,42 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Coresight TMC-ETR SG mode could be unsafe on a platform where
-the ETR is not properly connected to account for READ operations.
-We use a DT node property to indicate if the system is safe.
-This patch also provides a command line parameter to "force"
-the use of SG mode to override the firmware information.
+We zero out the entire trace buffer used for ETR before it is enabled,
+for helping with debugging. Since we could be restoring an already used
+buffer in perf mode, this could destroy the data. Get rid of this step;
+if someone wants to debug, they can always add it as and when needed.
 
 Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Mike Leach <mike.leach@linaro.org>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
-Hi
+ drivers/hwtracing/coresight/coresight-tmc-etr.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-This is more of a debug patch for people who may want to
-test their platform without too much of hacking. I am not
-too keen on pushing this patch in.
----
- Documentation/admin-guide/kernel-parameters.txt | 8 ++++++++
- drivers/hwtracing/coresight/coresight-tmc.c     | 7 ++++++-
- 2 files changed, 14 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 11fc28e..03b51c3 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -675,6 +675,14 @@
- 			Enable/disable the CPU sampling based debugging.
- 			0: default value, disable debugging
- 			1: enable debugging at boot time
-+	coresight_tmc.etr_force_sg
-+			[ARM, ARM64]
-+			Format: <bool>
-+			Force using the TMC ETR builtin scatter-gather mode
-+			even when it may be unsafe to use.
-+			Default : 0, do not force using the builtin SG mode.
-+				  1, Allow using the SG, ignoring the firmware
-+				     provided information.
- 
- 	cpuidle.off=1	[CPU_IDLE]
- 			disable the cpuidle sub-system
-diff --git a/drivers/hwtracing/coresight/coresight-tmc.c b/drivers/hwtracing/coresight/coresight-tmc.c
-index e38379c..c7bc681 100644
---- a/drivers/hwtracing/coresight/coresight-tmc.c
-+++ b/drivers/hwtracing/coresight/coresight-tmc.c
-@@ -20,6 +20,7 @@
- #include <linux/err.h>
- #include <linux/fs.h>
- #include <linux/miscdevice.h>
-+#include <linux/module.h>
- #include <linux/property.h>
- #include <linux/uaccess.h>
- #include <linux/slab.h>
-@@ -33,6 +34,8 @@
- #include "coresight-priv.h"
- #include "coresight-tmc.h"
- 
-+static bool etr_force_sg;
-+
- void tmc_wait_for_tmcready(struct tmc_drvdata *drvdata)
+diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+index 53a17a8..fc1ff3f 100644
+--- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
++++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+@@ -41,9 +41,6 @@ static void tmc_etr_enable_hw(struct tmc_drvdata *drvdata)
  {
- 	/* Ensure formatter, unformatter and hardware fifo are empty */
-@@ -307,7 +310,8 @@ const struct attribute_group *coresight_tmc_groups[] = {
+ 	u32 axictl, sts;
  
- static inline bool tmc_etr_can_use_sg(struct tmc_drvdata *drvdata)
- {
--	return fwnode_property_present(drvdata->dev->fwnode, "scatter-gather");
-+	return etr_force_sg ||
-+	       fwnode_property_present(drvdata->dev->fwnode, "scatter-gather");
- }
- 
- /* Detect and initialise the capabilities of a TMC ETR */
-@@ -482,3 +486,4 @@ static struct amba_driver tmc_driver = {
- 	.id_table	= tmc_ids,
- };
- builtin_amba_driver(tmc_driver);
-+module_param(etr_force_sg, bool, 0);
+-	/* Zero out the memory to help with debug */
+-	memset(drvdata->vaddr, 0, drvdata->size);
+-
+ 	/*
+ 	 * If this ETR is connected to a CATU, enable it before we turn
+ 	 * this on
+@@ -354,9 +351,8 @@ int tmc_read_unprepare_etr(struct tmc_drvdata *drvdata)
+ 	if (drvdata->mode == CS_MODE_SYSFS) {
+ 		/*
+ 		 * The trace run will continue with the same allocated trace
+-		 * buffer. The trace buffer is cleared in tmc_etr_enable_hw(),
+-		 * so we don't have to explicitly clear it. Also, since the
+-		 * tracer is still enabled drvdata::buf can't be NULL.
++		 * buffer. Since the tracer is still enabled drvdata::buf can't
++		 * be NULL.
+ 		 */
+ 		tmc_etr_enable_hw(drvdata);
+ 	} else {
 -- 
 2.7.4
