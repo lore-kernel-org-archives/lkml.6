@@ -1,29 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751029AbeEAUlN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 16:41:13 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59818 "EHLO
+        id S1751216AbeEAUnA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 16:43:00 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34626 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750755AbeEAUlL (ORCPT
+        with ESMTP id S1750769AbeEAUm7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 16:41:11 -0400
-Date: Wed, 2 May 2018 05:40:36 +0900
+        Tue, 1 May 2018 16:42:59 -0400
+Date: Wed, 2 May 2018 05:42:40 +0900
 From: Mark Brown <broonie@kernel.org>
-To: changbin.du@intel.com
-Cc: yamada.masahiro@socionext.com, michal.lkml@markovi.net,
-        tglx@linutronix.de, mingo@redhat.com, akpm@linux-foundation.org,
-        x86@kernel.org, lgirdwood@gmail.com, arnd@arndb.de,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org
-Subject: Re: [PATCH 2/5] regulator: add dummy of_find_regulator_by_node
-Message-ID: <20180501204033.GB2714@sirena.org.uk>
-References: <1525179614-14571-1-git-send-email-changbin.du@intel.com>
- <1525179614-14571-3-git-send-email-changbin.du@intel.com>
+To: Jean-Jacques Hiblot <jjhiblot@ti.com>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, perex@perex.cz,
+        tiwai@suse.com, dannenberg@ti.com, afd@ti.com,
+        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/3] ASoc: TAS6424: Add support for mute, standby, and
+ faster power on
+Message-ID: <20180501204239.GC2714@sirena.org.uk>
+References: <1525077018-15863-1-git-send-email-jjhiblot@ti.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="Yylu36WmvOXNoKYn"
+        protocol="application/pgp-signature"; boundary="QRj9sO5tAVLaXnSD"
 Content-Disposition: inline
-In-Reply-To: <1525179614-14571-3-git-send-email-changbin.du@intel.com>
+In-Reply-To: <1525077018-15863-1-git-send-email-jjhiblot@ti.com>
 X-Cookie: Rubber bands have snappy endings!
 User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -31,39 +30,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---Yylu36WmvOXNoKYn
+--QRj9sO5tAVLaXnSD
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 01, 2018 at 09:00:11PM +0800, changbin.du@intel.com wrote:
-> From: Changbin Du <changbin.du@intel.com>
->=20
-> If device tree is not enabled, of_find_regulator_by_node() should have
-> a dummy function since the function call is still there.
->=20
-> Signed-off-by: Changbin Du <changbin.du@intel.com>
+On Mon, Apr 30, 2018 at 10:30:15AM +0200, Jean-Jacques Hiblot wrote:
+> mute and standby pins are available on the codec. If they are connected, they
+> should be managed by the driver, instead of relying on gpio hogs or on the
+> initial state of the GPIOs.
 
-This appears to have no obvious connection with the cover letter for the
-series...  The first question here is if this is something best fixed
-with a stub or by fixing the users - is the lack of a stub pointing out
-some bugs in them?  I'm a bit worried about how we've been managing to
-avoid any build test issues here though, surely the various builders
-would have spotted a problem?
+Please do not submit new versions of already applied patches, please
+submit incremental updates to the existing code.  Modifying existing
+commits creates problems for other users building on top of those
+commits so it's best practice to only change pubished git commits if
+absolutely essential.
 
---Yylu36WmvOXNoKYn
+--QRj9sO5tAVLaXnSD
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlro0L0ACgkQJNaLcl1U
-h9CscQf/fCFHs4Y+wOz7y7A8Oi1kYWKHd3GMzcQmKVje+1f40XdgSBRI5bJvdiO1
-NbLfwcMa0x6JlpGNOqrvGSnxBDSg/VD7i2CIBM4zTcmMRebaOu8pjSAuMQTtOY30
-sL2Y+sWxdV+jhrptwIwESPrsc212Mf/rHKKrdgHOSjtwZyCVKBipShRpjcSfWy2p
-6vwUb7searqTv8clBseUgAyZl7SIL/RouXyZIg6cE9/FGa5euhrkMZLkpSzYEj7+
-iM+T12lhL357JISouoqQWJ6irOQTQ/0ZfUIhk3/NcFzCbP1lqsiHMQpwBl09Ttbd
-ztKHAW9dCLbZGJAQHLdL8iXZRVsgEw==
-=k9wt
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlro0T8ACgkQJNaLcl1U
+h9Ad/Qf/emHR5/nYvWAYhMpBMTXLXgR75j75hZWawgl1qYSox9lMkg7whJUj1aEr
+tclFJY8ur33dFsJf5qoozovVfA3ZahUDQ87uniegKZ1bWnHR5DSJl23ioF5yRCjP
++xPZOvtrm13GUzUQWzbcfajnrY77HhHiNJmf7xrRdsyQfk0Chb8/VyQqe0NQ5lgw
+gvg/F4eEBHhK1PSbKGmzHfInaN+56bxujDHaXwqJirOq+NuziCdx1CNgQOobvs8h
+2cG08PsgGCIa88kYHhQq/dBDLd4qOoyYV65VtlCRtN4xuD7kjW1+SmF61ZDySF1K
+b+vBQsu7xFGtXRpqrIusLJHVPYVQCQ==
+=Yom0
 -----END PGP SIGNATURE-----
 
---Yylu36WmvOXNoKYn--
+--QRj9sO5tAVLaXnSD--
