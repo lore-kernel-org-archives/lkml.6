@@ -1,100 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751928AbeEAGkg (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 02:40:36 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:41760 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751011AbeEAGkf (ORCPT
+        id S1751677AbeEAGrC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 02:47:02 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:35114 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751011AbeEAGrB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 02:40:35 -0400
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
-Subject: Re: [PATCH] IB/core: Make ib_mad_client_id atomic
-From: =?utf-8?Q?H=C3=A5kon_Bugge?= <haakon.bugge@oracle.com>
-In-Reply-To: <20180501073816.00001ec6@dev.mellanox.co.il>
-Date: Tue, 1 May 2018 08:40:07 +0200
-Cc: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Don Hiatt <don.hiatt@intel.com>,
-        Dasaratharaman Chandramouli
-        <dasaratharaman.chandramouli@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>, Sean Hefty <sean.hefty@intel.com>,
-        OFED mailing list <linux-rdma@vger.kernel.org>,
+        Tue, 1 May 2018 02:47:01 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 41FC8602CB
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cpandya@codeaurora.org
+Subject: Re: [PATCH v2] mm: vmalloc: Clean up vunmap to avoid pgtable ops
+ twice
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: vbabka@suse.cz, labbott@redhat.com, catalin.marinas@arm.com,
+        hannes@cmpxchg.org, f.fainelli@gmail.com, xieyisheng1@huawei.com,
+        ard.biesheuvel@linaro.org, richard.weiyang@gmail.com,
+        byungchul.park@lge.com, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Message-Id: <451F533C-60E1-4154-9540-92CB83276446@oracle.com>
-References: <20180418142450.15581-1-Haakon.Bugge@oracle.com>
- <1524196555.11756.30.camel@redhat.com> <20180420153451.GF30433@ziepe.ca>
- <50E3FE4A-2C6E-4493-92E1-383C349FAE3A@oracle.com>
- <20180423221618.0000795d@dev.mellanox.co.il>
- <20180430144930.GB26895@ziepe.ca> <1525108249.11756.93.camel@redhat.com>
- <20180501073816.00001ec6@dev.mellanox.co.il>
-To: jackm <jackm@dev.mellanox.co.il>
-X-Mailer: Apple Mail (2.3445.6.18)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8879 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=15 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=862
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805010067
+References: <1523876342-10545-1-git-send-email-cpandya@codeaurora.org>
+ <20180430155207.35a3dd94c31503c7a6268a8f@linux-foundation.org>
+From: Chintan Pandya <cpandya@codeaurora.org>
+Message-ID: <9808b76e-a4e7-95d6-35bf-f64ae4628f0a@codeaurora.org>
+Date: Tue, 1 May 2018 12:16:53 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180430155207.35a3dd94c31503c7a6268a8f@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w416ekS3014750
 
 
 
-> On 1 May 2018, at 06:38, jackm <jackm@dev.mellanox.co.il> wrote:
+On 5/1/2018 4:22 AM, Andrew Morton wrote:
+> On Mon, 16 Apr 2018 16:29:02 +0530 Chintan Pandya <cpandya@codeaurora.org> wrote:
 > 
-> On Mon, 30 Apr 2018 13:10:49 -0400
-> Doug Ledford <dledford@redhat.com> wrote:
+>> vunmap does page table clear operations twice in the
+>> case when DEBUG_PAGEALLOC_ENABLE_DEFAULT is enabled.
+>>
+>> So, clean up the code as that is unintended.
+>>
+>> As a perf gain, we save few us. Below ftrace data was
+>> obtained while doing 1 MB of vmalloc/vfree on ARM64
+>> based SoC *without* this patch applied. After this
+>> patch, we can save ~3 us (on 1 extra vunmap_page_range).
+>>
+>>    CPU  DURATION                  FUNCTION CALLS
+>>    |     |   |                     |   |   |   |
+>>   6)               |  __vunmap() {
+>>   6)               |    vmap_debug_free_range() {
+>>   6)   3.281 us    |      vunmap_page_range();
+>>   6) + 45.468 us   |    }
+>>   6)   2.760 us    |    vunmap_page_range();
+>>   6) ! 505.105 us  |  }
 > 
-> Looks good!
+> It's been a long time since I looked at the vmap code :(
+> 
+>> --- a/mm/vmalloc.c
+>> +++ b/mm/vmalloc.c
+>> @@ -603,26 +603,6 @@ static void unmap_vmap_area(struct vmap_area *va)
+>>   	vunmap_page_range(va->va_start, va->va_end);
+>>   }
+>>   
+>> -static void vmap_debug_free_range(unsigned long start, unsigned long end)
+>> -{
+>> -	/*
+>> -	 * Unmap page tables and force a TLB flush immediately if pagealloc
+>> -	 * debugging is enabled.  This catches use after free bugs similarly to
+>> -	 * those in linear kernel virtual address space after a page has been
+>> -	 * freed.
+>> -	 *
+>> -	 * All the lazy freeing logic is still retained, in order to minimise
+>> -	 * intrusiveness of this debugging feature.
+>> -	 *
+>> -	 * This is going to be *slow* (linear kernel virtual address debugging
+>> -	 * doesn't do a broadcast TLB flush so it is a lot faster).
+>> -	 */
+>> -	if (debug_pagealloc_enabled()) {
+>> -		vunmap_page_range(start, end);
+>> -		flush_tlb_kernel_range(start, end);
+>> -	}
+>> -}
+>> -
+>>   /*
+>>    * lazy_max_pages is the maximum amount of virtual address space we gather up
+>>    * before attempting to purge with a TLB flush.
+>> @@ -756,6 +736,9 @@ static void free_unmap_vmap_area(struct vmap_area *va)
+>>   {
+>>   	flush_cache_vunmap(va->va_start, va->va_end);
+>>   	unmap_vmap_area(va);
+>> +	if (debug_pagealloc_enabled())
+>> +		flush_tlb_kernel_range(va->va_start, va->va_end);
+>> +
+>>   	free_vmap_area_noflush(va);
+>>   }
+>>   
+>> @@ -1142,7 +1125,6 @@ void vm_unmap_ram(const void *mem, unsigned int count)
+>>   	BUG_ON(!PAGE_ALIGNED(addr));
+>>   
+>>   	debug_check_no_locks_freed(mem, size);
+>> -	vmap_debug_free_range(addr, addr+size);
+> 
+> This appears to be a functional change: if (count <= VMAP_MAX_ALLOC)
+> and we're in debug mode then the
+> vunmap_page_range/flush_tlb_kernel_range will no longer be performed.
+> Why is this ok?
+> 
 
-Yes, absolutely!
+Yes, you are right. In vb_free(), we do vunmap_page_range() but not
+flush_tlb_kernel_range(). I will add this stub for debug benefits and
+share v3.
 
-Håkon
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index 6729400..781ce02 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -1036,6 +1036,10 @@ static void vb_free(const void *addr, unsigned 
+long size)
 
+         vunmap_page_range((unsigned long)addr, (unsigned long)addr + size);
+
++       if (debug_pagealloc_enabled())
++               flush_tlb_kernel_range((unsigned long)addr,
++                                       (unsigned long)addr + size);
++
+         spin_lock(&vb->lock);
+
+         /* Expand dirty range */
+
+
+
+>>   	if (likely(count <= VMAP_MAX_ALLOC)) {
+>>   		vb_free(mem, size);
+>> @@ -1499,7 +1481,6 @@ struct vm_struct *remove_vm_area(const void *addr)
+>>   		va->flags |= VM_LAZY_FREE;
+>>   		spin_unlock(&vmap_area_lock);
+>>   
+>> -		vmap_debug_free_range(va->va_start, va->va_end);
+>>   		kasan_free_shadow(vm);
+>>   		free_unmap_vmap_area(va);
+>>   
 > 
-> -Jack
-> 
->> On Mon, 2018-04-30 at 08:49 -0600, Jason Gunthorpe wrote:
->>> On Mon, Apr 23, 2018 at 10:16:18PM +0300, jackm wrote:
->>> 
->>>>>> TIDs need to be globally unique on the entire machine.    
->>>> Jason, that is not exactly correct.  
->>> 
->>> The expecation for /dev/umad users is that they all receive locally
->>> unique TID prefixes. The kernel may be OK to keep things
->>> port-specific but it is slightly breaking the API we are presenting
->>> to userspace to allow them to alias..
->>> 
->>> Jason  
->> 
->> Would people be happier with this commit message then:
->> 
->> IB/core: Make ib_mad_client_id atomic
->> 
->> Currently, the kernel protects access to the agent ID allocator on a
->> per port basis using a spinlock, so it is impossible for two
->> apps/threads on the same port to get the same TID, but it is entirely
->> possible for two threads on different ports to end up with the same
->> TID.  
->> 
->> As this can be confusing (regardless of it being legal according to
->> the IB Spec 1.3, C13-18.1.1, in section 13.4.6.4 - TransactionID
->> usage), and as the rdma-core user space API for /dev/umad devices
->> implies unique TIDs even across ports, make the TID an atomic type so
->> that no two allocations, regardless of port number, will be the same.
->> 
->> Signed-off-by: Håkon Bugge <haakon.bugge@oracle.com>
->> Reviewed-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
->> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
->> Reviewed-by: Zhu Yanjun <yanjun.zhu@oracle.com>
->> Signed-off-by: Doug Ledford <dledford@redhat.com>
->> 
->> 
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+Chintan
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center,
+Inc. is a member of the Code Aurora Forum, a Linux Foundation
+Collaborative Project
