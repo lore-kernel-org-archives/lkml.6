@@ -1,50 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755566AbeEAOPI (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 10:15:08 -0400
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:12519 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754993AbeEAOPG (ORCPT
+        id S1755825AbeEAOPT (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 10:15:19 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:35226 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755074AbeEAOPR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 10:15:06 -0400
-Subject: Re: [PATCH v9 05/27] ARM: davinci: da830: add new clock init using
- common clock framework
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
-References: <20180427001745.4116-1-david@lechnology.com>
- <20180427001745.4116-6-david@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <0e0aac5a-70b5-e90a-2ae4-7209003da922@ti.com>
-Date: Tue, 1 May 2018 19:43:55 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180427001745.4116-6-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Tue, 1 May 2018 10:15:17 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8B42A6090E
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=agustinv@codeaurora.org
+From: Agustin Vega-Frias <agustinv@codeaurora.org>
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Cc: timur@codeaurora.org, agustinv@codeaurora.org
+Subject: [PATCH V1] irqchip/qcom: Fix check for spurious interrupts
+Date: Tue,  1 May 2018 10:14:50 -0400
+Message-Id: <1525184090-26143-1-git-send-email-agustinv@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday 27 April 2018 05:47 AM, David Lechner wrote:
-> This adds the new board-specific clock init in mach-davinci/da830.c
-> using the new common clock framework drivers.
-> 
-> The #ifdefs are needed to prevent compile errors until the entire
-> ARCH_DAVINCI is converted.
-> 
-> Also clean up the #includes since we are adding some here.
-> 
-> Signed-off-by: David Lechner <david@lechnology.com>
+When the interrupts for a combiner span multiple registers we need
+to check if any interrupts have been asserted on each register
+before checking for spurious interrupts.
 
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+Signed-off-by: Agustin Vega-Frias <agustinv@codeaurora.org>
+---
+ drivers/irqchip/qcom-irq-combiner.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks,
-Sekhar
+diff --git a/drivers/irqchip/qcom-irq-combiner.c b/drivers/irqchip/qcom-irq-combiner.c
+index f312659..7f0c0be 100644
+--- a/drivers/irqchip/qcom-irq-combiner.c
++++ b/drivers/irqchip/qcom-irq-combiner.c
+@@ -1,4 +1,4 @@
+-/* Copyright (c) 2015-2016, The Linux Foundation. All rights reserved.
++/* Copyright (c) 2015-2018, The Linux Foundation. All rights reserved.
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License version 2 and
+@@ -68,7 +68,7 @@ static void combiner_handle_irq(struct irq_desc *desc)
+ 
+ 		bit = readl_relaxed(combiner->regs[reg].addr);
+ 		status = bit & combiner->regs[reg].enabled;
+-		if (!status)
++		if (bit && !status)
+ 			pr_warn_ratelimited("Unexpected IRQ on CPU%d: (%08x %08lx %p)\n",
+ 					    smp_processor_id(), bit,
+ 					    combiner->regs[reg].enabled,
+-- 
+Qualcomm Datacenter Technologies, Inc. on behalf of the Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
