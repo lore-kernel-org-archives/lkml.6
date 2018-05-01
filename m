@@ -1,53 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755132AbeEANYP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 09:24:15 -0400
-Received: from mail.netline.ch ([148.251.143.178]:36780 "EHLO
-        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751090AbeEANYO (ORCPT
+        id S1755404AbeEANYR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 09:24:17 -0400
+Received: from mail-wm0-f49.google.com ([74.125.82.49]:40338 "EHLO
+        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752182AbeEANYP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 09:24:14 -0400
-From: =?UTF-8?q?Michel=20D=C3=A4nzer?= <michel@daenzer.net>
-To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Christoph Hellwig <hch@lst.de>
-Cc: iommu@lists.linux-foundation.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] swiotlb: Fix inversed DMA_ATTR_NO_WARN test
-Date: Tue,  1 May 2018 15:24:11 +0200
-Message-Id: <20180501132411.2311-1-michel@daenzer.net>
-X-Mailer: git-send-email 2.17.0
+        Tue, 1 May 2018 09:24:15 -0400
+X-Google-Smtp-Source: AB8JxZrcb4xUMyn08aVVxDR35mfnMVGplmTWXMsA7I3VTXiQxYPS3O/GdRcwH+1iF9JIN6HMGmwHzw==
+Date: Tue, 1 May 2018 14:24:12 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Robin Murphy <robin.murphy@arm.com>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/1] mfd: tps65911-comparator: Fix an off by one bug
+Message-ID: <20180501132412.GO5147@dell>
+References: <20180501094553.31545-1-lee.jones@linaro.org>
+ <54e604bd-61cd-63a8-1d35-864137a5b19a@arm.com>
+ <20180501131036.bm7rcujohxi5devs@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180501131036.bm7rcujohxi5devs@mwanda>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michel Dänzer <michel.daenzer@amd.com>
+On Tue, 01 May 2018, Dan Carpenter wrote:
 
-The result was printing the warning only when we were explicitly asked
-not to.
+> The background is that no one noticed that this driver stopped being
+> buildable in 2012 until I fixed it last week.  This is the third
+> proposed patch to fix the off by one.  All three patches fix the bug,
+> but Lee refused to accept my style and I refused to use Lee's style...
+> Absolutely *no way*!  LOL.  But really neither of us take it personally
+> and we've met in person before and collaborate over email and get along.
+> 
+> This thread has been pretty amusing for me, but let's move on.  :P
 
-Cc: stable@vger.kernel.org
-Fixes: 0176adb004065d6815a8e67946752df4cd947c5b "swiotlb: refactor
- coherent buffer allocation"
-Signed-off-by: Michel Dänzer <michel.daenzer@amd.com>
----
- lib/swiotlb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
++999
 
-diff --git a/lib/swiotlb.c b/lib/swiotlb.c
-index c43ec2271469..e9ac21540628 100644
---- a/lib/swiotlb.c
-+++ b/lib/swiotlb.c
-@@ -750,7 +750,7 @@ swiotlb_alloc_buffer(struct device *dev, size_t size, dma_addr_t *dma_handle,
- 	swiotlb_tbl_unmap_single(dev, phys_addr, size, DMA_TO_DEVICE,
- 			DMA_ATTR_SKIP_CPU_SYNC);
- out_warn:
--	if ((attrs & DMA_ATTR_NO_WARN) && printk_ratelimit()) {
-+	if (!(attrs & DMA_ATTR_NO_WARN) && printk_ratelimit()) {
- 		dev_warn(dev,
- 			"swiotlb: coherent allocation failed, size=%zu\n",
- 			size);
+Plan is to let it sit for a week or so.  Give some more idle
+passers-by to have their say.  Then I'll merge it regardless (/me
+jokes).
+
 -- 
-2.17.0
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
