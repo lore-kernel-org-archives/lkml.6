@@ -1,66 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751536AbeEAE0W (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 00:26:22 -0400
-Received: from mta-p6.oit.umn.edu ([134.84.196.206]:40372 "EHLO
-        mta-p6.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750823AbeEAE0U (ORCPT
+        id S1751090AbeEAEiY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 00:38:24 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:50365 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750817AbeEAEiW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 00:26:20 -0400
-X-Google-Smtp-Source: AB8JxZr/GR1IlVeRMHJYjUjViKl22kcz2iUWRtt0uqdQqulkZRBOky94W/p9vufVuuaB634LbhbIlA==
-From: Wenwen Wang <wang6495@umn.edu>
-To: Wenwen Wang <wang6495@umn.edu>
-Cc: Kangjie Lu <kjlu@umn.edu>, Jon Maloy <jon.maloy@ericsson.com>,
-        Ying Xue <ying.xue@windriver.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        netdev@vger.kernel.org (open list:TIPC NETWORK LAYER),
-        tipc-discussion@lists.sourceforge.net (open list:TIPC NETWORK LAYER),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] tipc: fix a potential missing-check bug
-Date: Mon, 30 Apr 2018 23:26:01 -0500
-Message-Id: <1525148761-11091-1-git-send-email-wang6495@umn.edu>
-X-Mailer: git-send-email 2.7.4
+        Tue, 1 May 2018 00:38:22 -0400
+X-Google-Smtp-Source: AB8JxZr929ja2jKYFabzucM2TuLM/t44w6k/dhkqRVUGCCkEbV9w+W9d1erhOdO5os0hXxDsWjJr9w==
+Date: Tue, 1 May 2018 07:38:16 +0300
+From: jackm <jackm@dev.mellanox.co.il>
+To: Doug Ledford <dledford@redhat.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>,
+        =?ISO-8859-1?Q?H=E5kon?= Bugge <haakon.bugge@oracle.com>,
+        Don Hiatt <don.hiatt@intel.com>,
+        Dasaratharaman Chandramouli
+        <dasaratharaman.chandramouli@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>, Sean Hefty <sean.hefty@intel.com>,
+        OFED mailing list <linux-rdma@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] IB/core: Make ib_mad_client_id atomic
+Message-ID: <20180501073816.00001ec6@dev.mellanox.co.il>
+In-Reply-To: <1525108249.11756.93.camel@redhat.com>
+References: <20180418142450.15581-1-Haakon.Bugge@oracle.com>
+        <1524196555.11756.30.camel@redhat.com>
+        <20180420153451.GF30433@ziepe.ca>
+        <50E3FE4A-2C6E-4493-92E1-383C349FAE3A@oracle.com>
+        <20180423221618.0000795d@dev.mellanox.co.il>
+        <20180430144930.GB26895@ziepe.ca>
+        <1525108249.11756.93.camel@redhat.com>
+Organization: Mellanox
+X-Mailer: Claws Mail 3.15.0 (GTK+ 2.24.31; i686-w64-mingw32)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w414ckvu011868
 
-In tipc_link_xmit(), the member field "len" of l->backlog[imp] must
-be less than the member field "limit" of l->backlog[imp] when imp is
-equal to TIPC_SYSTEM_IMPORTANCE. Otherwise, an error code, i.e., -ENOBUFS,
-is returned. This is enforced by the security check. However, at the end
-of tipc_link_xmit(), the length of "list" is added to l->backlog[imp].len
-without any further check. This can potentially cause unexpected values for
-l->backlog[imp].len. If imp is equal to TIPC_SYSTEM_IMPORTANCE and the
-original value of l->backlog[imp].len is less than l->backlog[imp].limit,
-after this addition, l->backlog[imp] could be larger than
-l->backlog[imp].limit. That means the security check can potentially be
-bypassed, especially when an adversary can control the length of "list".
+On Mon, 30 Apr 2018 13:10:49 -0400
+Doug Ledford <dledford@redhat.com> wrote:
 
-This patch performs such a check after the modification to
-l->backlog[imp].len (if imp is TIPC_SYSTEM_IMPORTANCE) to avoid such
-security issues. An error code will be returned if an unexpected value of
-l->backlog[imp].len is generated.
+Looks good!
 
-Signed-off-by: Wenwen Wang <wang6495@umn.edu>
----
- net/tipc/link.c | 5 +++++
- 1 file changed, 5 insertions(+)
+-Jack
 
-diff --git a/net/tipc/link.c b/net/tipc/link.c
-index 695acb7..62972fa 100644
---- a/net/tipc/link.c
-+++ b/net/tipc/link.c
-@@ -948,6 +948,11 @@ int tipc_link_xmit(struct tipc_link *l, struct sk_buff_head *list,
- 			continue;
- 		}
- 		l->backlog[imp].len += skb_queue_len(list);
-+		if (imp == TIPC_SYSTEM_IMPORTANCE &&
-+		    l->backlog[imp].len >= l->backlog[imp].limit) {
-+			pr_warn("%s<%s>, link overflow", link_rst_msg, l->name);
-+			return -ENOBUFS;
-+		}
- 		skb_queue_splice_tail_init(list, backlogq);
- 	}
- 	l->snd_nxt = seqno;
--- 
-2.7.4
+> On Mon, 2018-04-30 at 08:49 -0600, Jason Gunthorpe wrote:
+> > On Mon, Apr 23, 2018 at 10:16:18PM +0300, jackm wrote:
+> >   
+> > > > > TIDs need to be globally unique on the entire machine.    
+> > > Jason, that is not exactly correct.  
+> > 
+> > The expecation for /dev/umad users is that they all receive locally
+> > unique TID prefixes. The kernel may be OK to keep things
+> > port-specific but it is slightly breaking the API we are presenting
+> > to userspace to allow them to alias..
+> > 
+> > Jason  
+> 
+> Would people be happier with this commit message then:
+> 
+> IB/core: Make ib_mad_client_id atomic
+>   
+> Currently, the kernel protects access to the agent ID allocator on a
+> per port basis using a spinlock, so it is impossible for two
+> apps/threads on the same port to get the same TID, but it is entirely
+> possible for two threads on different ports to end up with the same
+> TID.  
+> 
+> As this can be confusing (regardless of it being legal according to
+> the IB Spec 1.3, C13-18.1.1, in section 13.4.6.4 - TransactionID
+> usage), and as the rdma-core user space API for /dev/umad devices
+> implies unique TIDs even across ports, make the TID an atomic type so
+> that no two allocations, regardless of port number, will be the same.
+> 
+> Signed-off-by: Håkon Bugge <haakon.bugge@oracle.com>
+> Reviewed-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
+> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+> Reviewed-by: Zhu Yanjun <yanjun.zhu@oracle.com>
+> Signed-off-by: Doug Ledford <dledford@redhat.com>
+> 
+> 
