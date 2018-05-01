@@ -1,87 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751294AbeEAUNh (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 16:13:37 -0400
-Received: from bh-25.webhostbox.net ([208.91.199.152]:52923 "EHLO
-        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750785AbeEAUNf (ORCPT
+        id S1751354AbeEAUOt (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 16:14:49 -0400
+Received: from mail-io0-f181.google.com ([209.85.223.181]:44814 "EHLO
+        mail-io0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751074AbeEAUOs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 16:13:35 -0400
-Date: Tue, 1 May 2018 13:13:29 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: kbuild test robot <lkp@intel.com>
-Cc: kbuild-all@01.org, Thomas Gleixner <tglx@linutronix.de>,
-        Clemens Ladisch <clemens@ladisch.de>, Jean Delvare <jdelvare@suse.com>,
-        Borislav Petkov <bp@suse.de>, Yazen Ghannam <Yazen.Ghannam@amd.com>,
-        Brian Woods <brian.woods@amd.com>, linux-kernel@vger.kernel.org,
-        linux-hwmon@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH v2 2/2] hwmon: (k10temp) Use API function to access
- System Management Network
-Message-ID: <20180501201329.GA15515@roeck-us.net>
-References: <1525199182-10474-2-git-send-email-linux@roeck-us.net>
- <201805020322.y0mYt3Nk%fengguang.wu@intel.com>
+        Tue, 1 May 2018 16:14:48 -0400
+X-Google-Smtp-Source: AB8JxZryJZJvyRt2uCcCFdPENppn66gOKHHYK0KD8gZC0jbX5w/opTT7ID1nwMgiD+X2G/0t7/tS1533VEHbzVkbc28=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201805020322.y0mYt3Nk%fengguang.wu@intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Authenticated_sender: guenter@roeck-us.net
-X-OutGoing-Spam-Status: No, score=-1.0
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - roeck-us.net
-X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
-X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+References: <CADDKRnBD=cgptLmDMu0YiaUThO-1ydKaAD4X3sTWfLuP5M5BEw@mail.gmail.com>
+ <alpine.DEB.2.21.1804302151530.1596@nanos.tec.linutronix.de>
+ <CADDKRnAi69PFNH-hyxCTLckJ5UU6-DKWvzGNzxZZhD0sA215qg@mail.gmail.com> <alpine.DEB.2.21.1805011458390.1596@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1805011458390.1596@nanos.tec.linutronix.de>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 01 May 2018 20:14:37 +0000
+Message-ID: <CA+55aFxKbPDrMQssyEtOnYZqE8HcOo=Zx6ASty6CybhwPfT9_g@mail.gmail.com>
+Subject: Re: [v4.17-rcx] Lost IBPB, IBRS_FW support for spectre_v2 mitigation.
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: =?UTF-8?Q?J=C3=B6rg_Otte?= <jrg.otte@gmail.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Borislav Petkov <bp@alien8.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w41KEuY9014597
 
-On Wed, May 02, 2018 at 03:39:19AM +0800, kbuild test robot wrote:
-> Hi Guenter,
-> 
-> I love your patch! Yet something to improve:
-> 
-> [auto build test ERROR on tip/auto-latest]
-> [also build test ERROR on v4.17-rc3 next-20180501]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Guenter-Roeck/x86-amd_nb-Add-support-for-Raven-Ridge-CPUs/20180502-024535
-> config: i386-randconfig-x016-201817 (attached as .config)
-> compiler: gcc-7 (Debian 7.3.0-16) 7.3.0
-> reproduce:
->         # save the attached .config to linux build tree
->         make ARCH=i386 
-> 
-> All errors (new ones prefixed by >>):
-> 
->    drivers/hwmon/k10temp.c: In function 'read_tempreg_nb_f17':
-> >> drivers/hwmon/k10temp.c:126:15: error: implicit declaration of function 'amd_pci_dev_to_node_id'; did you mean 'pci_set_of_node'? [-Werror=implicit-function-declaration]
->      amd_smn_read(amd_pci_dev_to_node_id(pdev),
->                   ^~~~~~~~~~~~~~~~~~~~~~
->                   pci_set_of_node
->    cc1: some warnings being treated as errors
-> 
+On Tue, May 1, 2018 at 5:59 AM Thomas Gleixner <tglx@linutronix.de> wrote:
 
-What would we do without 0day. The driver needs to depend on CONFIG_AMD_NB,
-which makes sense anyway. I'll add that dependency in v3.
+> Then I really have no idea how reverting the patch you pointed out would
+> fix it.
 
-Guenter
+So I do think that the original patch is buggy.
 
-> vim +126 drivers/hwmon/k10temp.c
-> 
->    123	
->    124	static void read_tempreg_nb_f17(struct pci_dev *pdev, u32 *regval)
->    125	{
->  > 126		amd_smn_read(amd_pci_dev_to_node_id(pdev),
->    127			     F17H_M01H_REPORTED_TEMP_CTRL_OFFSET, regval);
->    128	}
->    129	
-> 
-> ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+What I think *may* be going on is:
+
+  - first we do that
+
+                 get_cpu_cap(c);
+                 get_cpu_address_sizes(c);
+
+     but at that point, CPU levels may be masked, and that 0x80000008 leaf
+isn't seen
+
+  - then we do
+
+                 if (this_cpu->c_early_init)
+                         this_cpu->c_early_init(c);
+
+    which calls early_init_intel(), which does that
+
+                 if (msr_clear_bit(MSR_IA32_MISC_ENABLE,
+                                   MSR_IA32_MISC_ENABLE_LIMIT_CPUID_BIT) >
+0) {
+
+    which now raises the cpuid_level.
+
+  - then we do
+
+                         get_cpu_cap(c);
+
+    again, because the cpuid level has been raised, and _now_ it used to get
+that 0x80000008 leaf information.
+
+But with the change, that second call to get_cpu_cap() didn't do anything,
+because the 0x80000008 leaf handling had been moved away.
+
+However, I agree that your patch to just do that CPUID_8000_0008_EBX in
+get_cpu_cap() should have fixed it, and it's possible that Jörg mis-tested
+it.
+
+Jörg, are you sure you didn't somehow get the wrong microcode? Because
+another way for those bits to be cleared again is if
+bad_spectre_microcode() triggers. That should show up in dmesg as "Intel
+Spectre v2 broken microcode detected" though.
+
+            Linus
