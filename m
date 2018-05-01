@@ -1,54 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755865AbeEAOG2 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 10:06:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58036 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755363AbeEAOG1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 10:06:27 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DED32366C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Tue, 1 May 2018 10:06:23 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Joel Fernandes <joelaf@google.com>
-Cc: linux-kernel@vger.kernel.org, Peter Zilstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Glexiner <tglx@linutronix.de>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Fenguang Wu <fengguang.wu@intel.com>,
-        Baohong Liu <baohong.liu@intel.com>,
-        Vedang Patel <vedang.patel@intel.com>, kernel-team@android.com
-Subject: Re: [PATCH RFC v5 3/6] srcu: Add notrace variant of
- srcu_dereference
-Message-ID: <20180501100623.7ebec465@gandalf.local.home>
-In-Reply-To: <20180501014204.67548-4-joelaf@google.com>
-References: <20180501014204.67548-1-joelaf@google.com>
-        <20180501014204.67548-4-joelaf@google.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1755742AbeEAOLN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 10:11:13 -0400
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:12385 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755219AbeEAOLL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 10:11:11 -0400
+Subject: Re: [PATCH v9 04/27] ARM: davinci: pass clock as parameter to
+ davinci_timer_init()
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
+References: <20180427001745.4116-1-david@lechnology.com>
+ <20180427001745.4116-5-david@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <29a9a03c-93f5-dddf-2a6e-da7fd83e0c4f@ti.com>
+Date: Tue, 1 May 2018 19:39:56 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180427001745.4116-5-david@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 30 Apr 2018 18:42:01 -0700
-Joel Fernandes <joelaf@google.com> wrote:
+On Friday 27 April 2018 05:47 AM, David Lechner wrote:
+> This changes davinci_timer_init() so that we pass the clock as a
+> parameter instead of using clk_get(). This is done in preparation
+> for converting to the common clock framework.
+> 
+> It removes the requirement that we have to have a clock with con_id
+> of "timer0", which will be good for DT bindings since clock-names =
+> "timer0" doesn't really make sense.
+> 
+> Also, drop use of extern in header file since we are touching the
+> definition.
+> 
+> Signed-off-by: David Lechner <david@lechnology.com>
 
-> In this series, we are making lockdep use an rcuidle tracepoint. For
-> this reason we need a notrace variant of srcu_dereference since
-> otherwise we get lockdep splats since lockdep hooks may not have run
-> yet. This patch adds the needed variant.
+Reviewed-by: Sekhar Nori <nsekhar@ti.com>
 
-This change log is rather confusing. Why would lockdep use an rcuidle
-tracepoint? I think we need to explain more here.
-
--- Steve
+Thanks,
+Sekhar
