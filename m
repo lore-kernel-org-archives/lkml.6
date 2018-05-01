@@ -1,52 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752447AbeEAI4y (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 04:56:54 -0400
-Received: from omr-a012e.mx.aol.com ([204.29.186.61]:55781 "EHLO
-        omr-a012e.mx.aol.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751071AbeEAI4v (ORCPT
+        id S1752950AbeEAJA0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 05:00:26 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:40635 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751214AbeEAJAW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 04:56:51 -0400
-From: Gao Xiang <hsiangkao@aol.com>
-Subject: workqueue: could work->func be reused for private data by introducing
- per-wq default function?
-To: tj@kernel.org, jiangshanlai@gmail.com
-Cc: linux-kernel@vger.kernel.org
-Message-ID: <64a98b96-c3cc-ae20-30f6-04d7c6f9f113@aol.com>
-Date: Tue, 1 May 2018 16:51:02 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 1 May 2018 05:00:22 -0400
+X-Google-Smtp-Source: AB8JxZr2hMI7AHVm5SNZvE1807PblW8SSSZpDSjROOdq8aZfcWhf0UXcCJCsqLt/VK/RugU4QWns7A==
+Date: Tue, 1 May 2018 11:00:18 +0200
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Eduardo Valentin <edubezval@gmail.com>,
+        Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 03/18] thermal: exynos: always check for critical trip
+ points existence
+Message-ID: <20180501090018.GF27619@mai>
+References: <1524743493-28113-1-git-send-email-b.zolnierkie@samsung.com>
+ <1524743493-28113-4-git-send-email-b.zolnierkie@samsung.com>
+ <20180430144450.GI11457@mai>
+ <CGME20180430152416eucas1p10bde2c1501e7f5f4b284caca3b630ea3@eucas1p1.samsung.com>
+ <5229331.iYYXeBBCxK@amdc3058>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-x-aol-global-disposition: G
-x-aol-sid: 3039ac1afd4e5ae82a9126ec
-X-AOL-IP: 112.65.13.67
+In-Reply-To: <5229331.iYYXeBBCxK@amdc3058>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tejun Heo, Lai Jiangshan,
+On Mon, Apr 30, 2018 at 05:24:15PM +0200, Bartlomiej Zolnierkiewicz wrote:
+> On Monday, April 30, 2018 04:44:50 PM Daniel Lezcano wrote:
+> > On Thu, Apr 26, 2018 at 01:51:18PM +0200, Bartlomiej Zolnierkiewicz wrote:
+> > > * Check for critical trip point existence in exynos_tmu_initialize()
+> > >   so it is checked on all SoCs (except Exynos5433 for now).
+> > 
+> > Why "except Exynos5433" ?
+> 
+> I was a bit vague here - Exynos5433 DTS needs to be fixed first to define
+> critical trip points.
 
+Is it possible to fix the DT in the series, so we get rid of the "FIXME" ?
 
-     I don't know whether the related topic was discussed or not (or 
-it's actually an insane proposal :( )
+-- 
 
-     It seems that the most of workqueues INIT_WORK by a default handle 
-function.
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-     So could we use a per-workqueue default handle function for these 
-workqueues, and leave an extra private data field for each work_struct?
-
-     There are so many work_structs that we could reuse the func field 
-for the other uses.
-
-     Is it acceptable? I haven't dived into the workqueue implementation 
-yet, but it seems not straight-forward for find_worker_executing_work, 
-etc. at a glance.
-
-
-     Thanks,
-
-Gao Xiang
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
