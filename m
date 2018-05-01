@@ -1,208 +1,218 @@
-Return-Path: <yamada.masahiro@socionext.com>
-X-Google-Smtp-Source: AB8JxZofuhWfNZHO5bM0QK7d6pBjGhySTWD8/iazSqJWFYUaHjbW65mT5KNBBxDMIuSjB0X8B1yh
-ARC-Seal: i=1; a=rsa-sha256; t=1525944318; cv=none;
-        d=google.com; s=arc-20160816;
-        b=hF362yI1y078qg1czt/1Y+qbYNbj9dvI5C1x3++wYaGAXP7s+2HTkGuIzinZ4a0T32
-         8/ApRja8/liR5gOBw4rBRvpNADSd3apsw8SEFPZdE6dzULmwl0bdDUlV18AUjJtwKROY
-         HLSQz0PS8exLPjoYDWrpWaeXF8AOvGd1hZ/9uYC5xYuwVUBxdp1Te1RF6/qyLYlQ6voJ
-         md+nvBdQ8nbH1eKLSbtXH1fbZ8NzfyFMe75zIuz7nKuIw+df4ZJ2q/DwoXyIP2fDhCvS
-         PFnIJOApXgpnPIq6/WDuTsXgKGY0+bHuUTRIk034Pd9tpRPfIX7SPKyxXNYfzsgdcLEi
-         Rzwg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:dkim-filter:arc-authentication-results;
-        bh=SWKFAOncQdzL4iVSULVXRVYU7Klnp7u67t9/Cxn3tK8=;
-        b=1Ksuibo0Ti45DsFieCQFqxxGcqdouKWboDpwnClwb0ofLGi4hnvc6SkRGI62NRSgiR
-         wEKpLh/CUhEZ0gCXeL3Cl6t6m34XMKGSTWyplM/AG/g+NsNzTd70bl3vT/rBSo9aHBgB
-         Kt4DqUxqtUeD7caSkOTHrmACrZp39RG4SdRb8BTS41+n4EqBy1bzqaDZ2u9ARnzkTx/w
-         HjeK5pEhgbyaBkgqvtFxr6q7ZiRA1PR4mAUeQUgsvZjqC94LpE+u/+eTiubMBqSAECit
-         YiHHJByBfNTovX2OWXGJY8bbNyVcqh9oLvBEEq7W1qEfp/u0TNmkwwLlaWiTe26/OYz1
-         Tg6Q==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=RZDlzi4x;
-       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.91 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=RZDlzi4x;
-       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.91 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w4A9P223024704
-X-Nifty-SrcIP: [209.85.217.169]
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3231568-1525183717-2-12842705988276228621
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-usb-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1525183717; b=XZ7yw6E7P3GtQDcRFzkEClsQ5qTdKS+2za7X9q8sQRrsjKamLo
+    TYwh3UqKdPQLM63cfi+F1BQcgxWJt2bdDDLUbAaCEQuBbC3HhXwE57oa3HPmyvFd
+    X876/rNSm69xJO6w536rPXqYhKfDUmkFBo11wbBUcAKN/b9U8WpdJW9THn2RE8GF
+    wALj7Sp8JmLjOO37tKZcC0Ye2aXSrqHEGfvWQjWw3PxJs8df1gcAbvSTx9Ynsvyd
+    VrOwVYi9Qr8O72nAqJpkNYSsjxPELB2dThcAtPgKvDuq9hDNK5Zi8AhTU2c70f48
+    Y3xPPxd0eWgZ514fTrr68WqsSjqEadAVzRwg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
+    fm2; t=1525183717; bh=FvJHv/dhTVqH9TkZGn5/ZQwSS/BxVqqNvJFWMoageT
+    g=; b=aoIhlyZ7x7P4BPNg/EW3TMJ+CgKJyYhWlh9kQr0svWkjwqcUWxZ1wIxi6i
+    0CWgHSnQxykIlJwlKYb/fquSdSlCi+dI6675y/BCgKqNEJe5l0vtss0p5iHOAQA9
+    my0Wt3otQ4uN7KFNrSGXC3ddRlGGZtGQ5YtarRtArWSdqoGZ520jSsmMn91fdKnC
+    d0r7KfshYir/qm7iB+iX0Gdi6SPX2CpX7ORSYjvt9g5jhY81hqIhEdmfUnEOGrMN
+    6OTxoI20n/RpVqfHW+9wtiVuoHXSYmeeo0m+NZl7Mb6THyq78ieksLezySbWFfEy
+    u4z8BY8GI+g8To4QvwktcrF7uv6w==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256)
+    header.d=nifty.com header.i=@nifty.com header.b=YBJXcTkx x-bits=2048
+    x-keytype=rsa x-algorithm=sha256 x-selector=dec2015msa;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=socionext.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=socionext.com header.result=pass
+    header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256)
+      header.d=nifty.com header.i=@nifty.com header.b=YBJXcTkx x-bits=2048
+      x-keytype=rsa x-algorithm=sha256 x-selector=dec2015msa;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=socionext.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=socionext.com header.result=pass
+      header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfDKgOp6GVpSgEL4odWhPvzZzEj1ygsRVX7dJSmyo03N59wsAG+6ACaSjkpFEVA2i9VN/kmYG5I38QNaFosyAThgnahDytrmYqLYaXxnX1yYfy5Fy3Nhc
+    86gTLZfco/gZi3o12sT6K13fkm3cXf9pfbVe4YAUXNfKba9UBGtCE+39kbFlFs8V/uwiyeBMmBHRdzII6Wt9ZpFRqESCoxIuplQ9IgjkxZQXcYwcWJ0xIpzp
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=c-n4J4-pAAAA:8 a=VwQbUJbxAAAA:8 a=hsqrQ9mG0DeuFLRPhqIA:9 a=QEXdDO2ut3YA:10
+    a=x8gzFH9gYPwA:10 a=L0NDqeB7ZLmQzAogN4cw:22 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1755492AbeEAOIZ (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 1 May 2018 10:08:25 -0400
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:17948 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755199AbeEAOIW (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Tue, 1 May 2018 10:08:22 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com w41E7q7x011885
+X-Nifty-SrcIP: [209.85.213.53]
+X-Google-Smtp-Source: AB8JxZpcNQg63BMMYrnaQ/zQaJyrgvyrxoyz81KskHTbGEbGaDKKnamVHkxAIaJrg6Tna2EQLj5Bp2il3TkNlZ5AdTk=
 MIME-Version: 1.0
-In-Reply-To: <CAFBinCCWeTUCK=tN4PfKqNuX2yWQuSVkXuzcKfV476uO88032Q@mail.gmail.com>
-References: <1524135818-14825-1-git-send-email-yamada.masahiro@socionext.com>
- <1524135818-14825-3-git-send-email-yamada.masahiro@socionext.com>
- <CAFBinCDwbyovMZ-qAKaMiBfz_YKMwxC1c4MjfNyLAvnXEfXtMw@mail.gmail.com>
- <CAK7LNASCLJWWwsDy7zj1uQNcb8pp8ivcAA=Y_oOUOsFMN+YpSA@mail.gmail.com> <CAFBinCCWeTUCK=tN4PfKqNuX2yWQuSVkXuzcKfV476uO88032Q@mail.gmail.com>
+In-Reply-To: <1524135818-14825-2-git-send-email-yamada.masahiro@socionext.com>
+References: <1524135818-14825-1-git-send-email-yamada.masahiro@socionext.com> <1524135818-14825-2-git-send-email-yamada.masahiro@socionext.com>
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Thu, 10 May 2018 18:24:21 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARoTLAPTdAjkW42LS7ndVP=ywrLwadmB0=cxwX9ETdP4Q@mail.gmail.com>
-Message-ID: <CAK7LNARoTLAPTdAjkW42LS7ndVP=ywrLwadmB0=cxwX9ETdP4Q@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] usb: dwc3: support clocks and resets for DWC3 core
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: yixun.lan@amlogic.com, linux-usb@vger.kernel.org,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Rob Herring <robh@kernel.org>, Roger Quadros <rogerq@ti.com>,
+Date: Tue, 1 May 2018 23:07:11 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQ45=EM2pu01MYA7AuXRfqYCLzzOR3sTa+RmaK09CYtJw@mail.gmail.com>
+Message-ID: <CAK7LNAQ45=EM2pu01MYA7AuXRfqYCLzzOR3sTa+RmaK09CYtJw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] usb: dwc3: use local copy of resource to fix-up
+ register offset
+To: linux-usb@vger.kernel.org,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+Cc: Rob Herring <robh@kernel.org>, Roger Quadros <rogerq@ti.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
         Masami Hiramatsu <mhiramat@kernel.org>,
         Jassi Brar <jaswinder.singh@linaro.org>,
         Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        DTML <devicetree@vger.kernel.org>, Felipe Balbi <balbi@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>
+        Felipe Balbi <balbi@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598172301797892822?=
-X-GMAIL-MSGID: =?utf-8?q?1600068589703196927?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Martin,
+Hi Felipe,
 
 
-2018-04-28 23:20 GMT+09:00 Martin Blumenstingl
-<martin.blumenstingl@googlemail.com>:
-> (adding Yixun from Amlogic to this mail)
+2018-04-19 20:03 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
+> It is not a good idea to directly modify the resource of a platform
+> device.  Modify its local copy, and pass it to devm_ioremap_resource()
+> so that we do not need to restore it in the failure path and the remove
+> hook.
 >
-> On Sat, Apr 28, 2018 at 4:41 AM, Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
->> Hi Martin,
->>
->>
->> 2018-04-24 2:44 GMT+09:00 Martin Blumenstingl
->> <martin.blumenstingl@googlemail.com>:
->>> Hello,
->>>
->>> On Thu, Apr 19, 2018 at 1:03 PM, Masahiro Yamada
->>> <yamada.masahiro@socionext.com> wrote:
->>>> Historically, the clocks and resets are handled on the glue layer
->>>> side instead of the DWC3 core.  For simple cases, dwc3-of-simple.c
->>>> takes care of arbitrary number of clocks and resets.  The DT node
->>>> structure typically looks like as follows:
->>>>
->>>>   dwc3-glue {
->>>>           compatible = "foo,dwc3";
->>>>           clocks = ...;
->>>>           resets = ...;
->>>>           ...
->>>>
->>>>           dwc3 {
->>>>                   compatible = "snps,dwc3";
->>>>                   ...
->>>>           };
->>>>   }
->>>>
->>>> By supporting the clocks and the reset in the dwc3/core.c, it will
->>>> be turned into a single node:
->>>>
->>>>   dwc3 {
->>>>           compatible = "foo,dwc3", "snps,dwc3";
->>>>           clocks = ...;
->>>>           resets = ...;
->>>>           ...
->>>>   }
->>>>
->>>> This commit adds the binding of clocks and resets specific to this IP.
->>>> The number of clocks should generally be the same across SoCs, it is
->>>> just some SoCs either tie clocks together or do not provide software
->>>> control of some of the clocks.
->>>>
->>>> I took the clock names from the Synopsys datasheet: "ref" (ref_clk),
->>>> "bus_early" (bus_clk_early), and "suspend" (suspend_clk).
->>> looking at the code: this could mean that dwc3-exynos.c can be removed
->>> mid-term (assuming the PHY and regulator handling can be
->>> moved/removed/changed)
->>>
->>> does the datasheet state anything about the clock speeds? from
->>> Documentation/devicetree/bindings/usb/dwc3-xilinx.txt:
->>> "bus_clk" Master/Core clock, have to be >= 125 MHz for SS operation
->>> and >= 60MHz for HS operation
->>>
->>>> I found only one reset line in the datasheet, hence the reset-names
->>>> property is omitted.
->>> does the datasheet state whether this is a level or a pulsed reset line?
->>> on Amlogic Meson GXL, GXM and AXG SoCs we use a pulsed (and shared)
->>> reset line (see ff0a632f08759e "usb: dwc3: of-simple: add support for
->>> shared and pulsed reset lines") because the reset line is shared
->>> between various components (USB2 PHY, USB3 PHY, dwc3 controller, ...)
->>> your current approach (having a vendor-specific "foo,dwc3" binding
->>> along with the generic "snps,dwc3") would allow having
->>> per-"of_device_id" settings which could indicate whether the reset
->>> lines are level or pulsed reset if these are "implementation specific"
->>
->> Let me ask a question about your reset controller.
->> (drivers/reset/reset-meson.c)
->>
->> All reset ID supports .reset, .assert, .deassert
->> Is this correct?
-> as far as I know: yes (though I have only ever verified this with the
-> Ethernet controller's reset line)
->
->>
->> I believe you and I use the same DWC3 core IP.
-> this is possible - but I am not sure since I don't have access to
-> Amlogic's internal resources where this should be documented (my
-> knowledge mostly comes from reading Amlogic's out-of-tree kernel code
-> and porting that to mainline)
->
->>
->> I suspect the difference is in the reset controller side.
->>
->> In my case, the reset line is asserted by default.
->> (that is, all FFs in the RTL are put into the initial state
->> on power-on)
->> That's why only reset_deassert() will work for me, I think.
->>
->> What about your case?  Is the reset line in deassert state on power-on?
->> Then, the reset must be explicitly pulsed to put FFs into
->> the initial state.  Is this correct?
-> let me give you a bit of context first:
-> the Amlogic Meson AXG, GXL and GXM SoCs have one reset line for "USB
-> components". this is shared among:
-> - the dwc3 controller
-> - (depending on the SoC) 2 or 3 USB2 PHYs
-> - a USB3 PHY
-> - some OTG detection logic within the registers of the USB3 PHY
->
-> (there is also a gate clock which is assigned to the same components)
->
-> based on my tests I believe that the reset line is "de-asserted" (=
-> USB components are working) by default.
-> asserting that reset line should stop the state machine of all USB
-> components. de-asserting it again should bring all USB components into
-> a defined state.
-> (I'm not sure though if these are HW defaults or if there's some logic
-> in the bootrom / early stage [pre u-boot] bootloaders)
->
-> that said, the "reset" framework currently cannot handle level resets
-> with shared reset lines which are de-asserted by default.
-> to bring the USB components into a defined state I would have to use
-> reset_control_assert() first, then reset_control_deassert(). the reset
-> framework reports an error in this case: [0]
-> using a reset pulse however works in any case, the reset framework
-> ensures that it's only executed once for all shared reset lines (our
-> reset controller hardware probably asserts and de-asserts the reset
-> line internally - this is just speculation though)
->
->
-> Regards
-> Martin
->
->
-> [0] https://elixir.bootlin.com/linux/v4.17-rc2/source/drivers/reset/core.c#L317
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
 
 
-Sorry for the late reply.
+I want this patch applied first
+unless you are opposed to this clean-up.
+
+I'd like to avoid re-sending a trivial patch like this.
 
 
-Personally, I'd like to see a generic solution
-instead of tweaking the reset consumer (dwc3-of-simple.c)
 
 
-I am not sure what the right thing to do,
-but just threw this post:
-
-https://lkml.org/lkml/2018/5/10/116
-
+> ---
+>
+> Changes in v2: None
+>
+>  drivers/usb/dwc3/core.c | 32 ++++++++------------------------
+>  1 file changed, 8 insertions(+), 24 deletions(-)
+>
+> diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+> index a15648d..8e66edd 100644
+> --- a/drivers/usb/dwc3/core.c
+> +++ b/drivers/usb/dwc3/core.c
+> @@ -1245,7 +1245,7 @@ static void dwc3_check_params(struct dwc3 *dwc)
+>  static int dwc3_probe(struct platform_device *pdev)
+>  {
+>         struct device           *dev = &pdev->dev;
+> -       struct resource         *res;
+> +       struct resource         *res, dwc_res;
+>         struct dwc3             *dwc;
+>
+>         int                     ret;
+> @@ -1270,20 +1270,19 @@ static int dwc3_probe(struct platform_device *pdev)
+>         dwc->xhci_resources[0].flags = res->flags;
+>         dwc->xhci_resources[0].name = res->name;
+>
+> -       res->start += DWC3_GLOBALS_REGS_START;
+> -
+>         /*
+>          * Request memory region but exclude xHCI regs,
+>          * since it will be requested by the xhci-plat driver.
+>          */
+> -       regs = devm_ioremap_resource(dev, res);
+> -       if (IS_ERR(regs)) {
+> -               ret = PTR_ERR(regs);
+> -               goto err0;
+> -       }
+> +       dwc_res = *res;
+> +       dwc_res.start += DWC3_GLOBALS_REGS_START;
+> +
+> +       regs = devm_ioremap_resource(dev, &dwc_res);
+> +       if (IS_ERR(regs))
+> +               return PTR_ERR(regs);
+>
+>         dwc->regs       = regs;
+> -       dwc->regs_size  = resource_size(res);
+> +       dwc->regs_size  = resource_size(&dwc_res);
+>
+>         dwc3_get_properties(dwc);
+>
+> @@ -1350,29 +1349,14 @@ static int dwc3_probe(struct platform_device *pdev)
+>         pm_runtime_put_sync(&pdev->dev);
+>         pm_runtime_disable(&pdev->dev);
+>
+> -err0:
+> -       /*
+> -        * restore res->start back to its original value so that, in case the
+> -        * probe is deferred, we don't end up getting error in request the
+> -        * memory region the next time probe is called.
+> -        */
+> -       res->start -= DWC3_GLOBALS_REGS_START;
+> -
+>         return ret;
+>  }
+>
+>  static int dwc3_remove(struct platform_device *pdev)
+>  {
+>         struct dwc3     *dwc = platform_get_drvdata(pdev);
+> -       struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>
+>         pm_runtime_get_sync(&pdev->dev);
+> -       /*
+> -        * restore res->start back to its original value so that, in case the
+> -        * probe is deferred, we don't end up getting error in request the
+> -        * memory region the next time probe is called.
+> -        */
+> -       res->start -= DWC3_GLOBALS_REGS_START;
+>
+>         dwc3_debugfs_exit(dwc);
+>         dwc3_core_exit_mode(dwc);
+> --
+> 2.7.4
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
 
 
