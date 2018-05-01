@@ -1,79 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751176AbeEAEXu (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 00:23:50 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:50490 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750817AbeEAEXs (ORCPT
+        id S1751536AbeEAE0W (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 00:26:22 -0400
+Received: from mta-p6.oit.umn.edu ([134.84.196.206]:40372 "EHLO
+        mta-p6.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750823AbeEAE0U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 00:23:48 -0400
-Subject: Re: [PATCH][next] pinctrl: actions: Fix Kconfig dependency and help
- text
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        linus.walleij@linaro.org, afaerber@suse.de, sfr@canb.auug.org.au
-Cc: linux-next@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180501030047.305-1-manivannan.sadhasivam@linaro.org>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <92d58976-7fe4-517e-95e9-b4255ecb390c@infradead.org>
-Date: Mon, 30 Apr 2018 21:23:46 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180501030047.305-1-manivannan.sadhasivam@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 1 May 2018 00:26:20 -0400
+X-Google-Smtp-Source: AB8JxZr/GR1IlVeRMHJYjUjViKl22kcz2iUWRtt0uqdQqulkZRBOky94W/p9vufVuuaB634LbhbIlA==
+From: Wenwen Wang <wang6495@umn.edu>
+To: Wenwen Wang <wang6495@umn.edu>
+Cc: Kangjie Lu <kjlu@umn.edu>, Jon Maloy <jon.maloy@ericsson.com>,
+        Ying Xue <ying.xue@windriver.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        netdev@vger.kernel.org (open list:TIPC NETWORK LAYER),
+        tipc-discussion@lists.sourceforge.net (open list:TIPC NETWORK LAYER),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] tipc: fix a potential missing-check bug
+Date: Mon, 30 Apr 2018 23:26:01 -0500
+Message-Id: <1525148761-11091-1-git-send-email-wang6495@umn.edu>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/30/2018 08:00 PM, Manivannan Sadhasivam wrote:
-> 1. Fix Kconfig dependency for Actions Semi S900 pinctrl driver which
-> generates below warning in x86:
-> 
-> WARNING: unmet direct dependencies detected for PINCTRL_OWL
->   Depends on [n]: PINCTRL [=y] && (ARCH_ACTIONS || COMPILE_TEST [=n]) && OF [=n]
->   Selected by [y]:
->   - PINCTRL_S900 [=y] && PINCTRL [=y]
-> 
-> 2. Add help text for OWL pinctrl driver
-> 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+In tipc_link_xmit(), the member field "len" of l->backlog[imp] must
+be less than the member field "limit" of l->backlog[imp] when imp is
+equal to TIPC_SYSTEM_IMPORTANCE. Otherwise, an error code, i.e., -ENOBUFS,
+is returned. This is enforced by the security check. However, at the end
+of tipc_link_xmit(), the length of "list" is added to l->backlog[imp].len
+without any further check. This can potentially cause unexpected values for
+l->backlog[imp].len. If imp is equal to TIPC_SYSTEM_IMPORTANCE and the
+original value of l->backlog[imp].len is less than l->backlog[imp].limit,
+after this addition, l->backlog[imp] could be larger than
+l->backlog[imp].limit. That means the security check can potentially be
+bypassed, especially when an adversary can control the length of "list".
 
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
+This patch performs such a check after the modification to
+l->backlog[imp].len (if imp is TIPC_SYSTEM_IMPORTANCE) to avoid such
+security issues. An error code will be returned if an unexpected value of
+l->backlog[imp].len is generated.
 
-Thanks.
+Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+---
+ net/tipc/link.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-> ---
->  drivers/pinctrl/actions/Kconfig | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/actions/Kconfig b/drivers/pinctrl/actions/Kconfig
-> index 1c7309c90f0d..ede97cdbbc12 100644
-> --- a/drivers/pinctrl/actions/Kconfig
-> +++ b/drivers/pinctrl/actions/Kconfig
-> @@ -1,12 +1,14 @@
->  config PINCTRL_OWL
-> -	bool
-> +	bool "Actions Semi OWL pinctrl driver"
->  	depends on (ARCH_ACTIONS || COMPILE_TEST) && OF
->  	select PINMUX
->  	select PINCONF
->  	select GENERIC_PINCONF
-> +	help
-> +	  Say Y here to enable Actions Semi OWL pinctrl driver
->  
->  config PINCTRL_S900
->  	bool "Actions Semi S900 pinctrl driver"
-> -	select PINCTRL_OWL
-> +	depends on PINCTRL_OWL
->  	help
->  	  Say Y here to enable Actions Semi S900 pinctrl driver
-> 
-
-
+diff --git a/net/tipc/link.c b/net/tipc/link.c
+index 695acb7..62972fa 100644
+--- a/net/tipc/link.c
++++ b/net/tipc/link.c
+@@ -948,6 +948,11 @@ int tipc_link_xmit(struct tipc_link *l, struct sk_buff_head *list,
+ 			continue;
+ 		}
+ 		l->backlog[imp].len += skb_queue_len(list);
++		if (imp == TIPC_SYSTEM_IMPORTANCE &&
++		    l->backlog[imp].len >= l->backlog[imp].limit) {
++			pr_warn("%s<%s>, link overflow", link_rst_msg, l->name);
++			return -ENOBUFS;
++		}
+ 		skb_queue_splice_tail_init(list, backlogq);
+ 	}
+ 	l->snd_nxt = seqno;
 -- 
-~Randy
+2.7.4
