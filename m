@@ -1,52 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755453AbeEAODl (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 10:03:41 -0400
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:12060 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754798AbeEAODj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 10:03:39 -0400
-Subject: Re: [PATCH v9 03/27] clk: davinci: psc: allow for dev == NULL
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
-References: <20180427001745.4116-1-david@lechnology.com>
- <20180427001745.4116-4-david@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <8940259b-5811-ce9f-8262-17d39ca0a46f@ti.com>
-Date: Tue, 1 May 2018 19:32:22 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1755779AbeEAOE6 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 10:04:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57776 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755662AbeEAOE5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 10:04:57 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B961B2366C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Tue, 1 May 2018 10:04:53 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Joel Fernandes <joelaf@google.com>
+Cc: linux-kernel@vger.kernel.org,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Peter Zilstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Fenguang Wu <fengguang.wu@intel.com>,
+        Baohong Liu <baohong.liu@intel.com>,
+        Vedang Patel <vedang.patel@intel.com>, kernel-team@android.com
+Subject: Re: [PATCH RFC v5 2/6] srcu: Add notrace variants of
+ srcu_read_{lock,unlock}
+Message-ID: <20180501100453.35e8fcbf@gandalf.local.home>
+In-Reply-To: <20180501014204.67548-3-joelaf@google.com>
+References: <20180501014204.67548-1-joelaf@google.com>
+        <20180501014204.67548-3-joelaf@google.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180427001745.4116-4-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday 27 April 2018 05:47 AM, David Lechner wrote:
-> +static inline void *_devm_kzalloc(struct device *dev, size_t size, gfp_t flags)
-> +{
-> +	if (dev)
-> +		return devm_kzalloc(dev, size, flags);
-> +
-> +	return kzalloc(size, flags);
-> +}
+On Mon, 30 Apr 2018 18:42:00 -0700
+Joel Fernandes <joelaf@google.com> wrote:
 
-I have the same question on the utility of this. A memory allocation
-error so early on is not going to result in a bootable system anyway.
-So, I wonder if its better to just BUG() in such cases. That will
-actually help faster debug than returning an error back. I know the push
-back on using BUG(), but clock drivers are special, and I think thats
-why its seems to be used quite a bit already.
+> From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+> 
+> This is needed for a future tracepoint patch that uses srcu, and to make
+> sure it doesn't call into lockdep.
+> 
+> tracepoint code already calls notrace variants for rcu_read_lock_sched
+> so this patch does the same for srcu which will be used in a later
+> patch. Keeps it consistent with rcu-sched.
+> 
+> [Joel: Added commit message]
+>
 
-Thanks,
-Sekhar
+Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+
+-- Steve
+ 
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Cc: Peter Zilstra <peterz@infradead.org>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Cc: Thomas Glexiner <tglx@linutronix.de>
+> Cc: Boqun Feng <boqun.feng@gmail.com>
+> Cc: Paul McKenney <paulmck@linux.vnet.ibm.com>
+> Cc: Frederic Weisbecker <fweisbec@gmail.com>
+> Cc: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> Cc: Fenguang Wu <fengguang.wu@intel.com>
+> Cc: Baohong Liu <baohong.liu@intel.com>
+> Cc: Vedang Patel <vedang.patel@intel.com>
+> Cc: kernel-team@android.com
+> Signed-off-by: Paul McKenney <paulmck@linux.vnet.ibm.com>
+> Signed-off-by: Joel Fernandes <joelaf@google.com>
+> ---
+>
