@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755370AbeEAMcS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 08:32:18 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:46024 "EHLO mail.bootlin.com"
+        id S1755694AbeEAMce (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 08:32:34 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:46143 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755145AbeEAMcQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 08:32:16 -0400
+        id S1755610AbeEAMcb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 08:32:31 -0400
 From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
 To: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
         marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
@@ -13,12 +13,10 @@ To: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
 Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
         thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, mylene.josserand@bootlin.com,
-        Doug Berger <opendmb@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>
-Subject: [PATCH v8 01/12] ARM: Allow this header to be included by assembly files
-Date: Tue,  1 May 2018 14:31:20 +0200
-Message-Id: <20180501123131.7738-2-mylene.josserand@bootlin.com>
+        linux-kernel@vger.kernel.org, mylene.josserand@bootlin.com
+Subject: [PATCH v8 09/12] ARM: sun9i: smp: Add is_a83t field
+Date: Tue,  1 May 2018 14:31:28 +0200
+Message-Id: <20180501123131.7738-10-mylene.josserand@bootlin.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180501123131.7738-1-mylene.josserand@bootlin.com>
 References: <20180501123131.7738-1-mylene.josserand@bootlin.com>
@@ -29,53 +27,45 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Doug Berger <opendmb@gmail.com>
+To prepare the support of sun8i-a83t, add a field in the smp_data
+structure to know if we are on sun9i-a80 or sun8i-a83t.
 
-The constants defined in this file are equally useful in assembly and C
-source files. The arm64 architecture version of this file allows
-inclusion in both assembly and C source files, so this this commit adds
-that capability to the arm architecture version so that the constants
-don't need to be defined in multiple places.
+Add also a global variable to retrieve which architecture we are
+having.
 
-Signed-off-by: Doug Berger <opendmb@gmail.com>
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
 ---
- arch/arm/include/asm/cputype.h | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ arch/arm/mach-sunxi/mc_smp.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm/include/asm/cputype.h b/arch/arm/include/asm/cputype.h
-index cb546425da8a..e7632f536633 100644
---- a/arch/arm/include/asm/cputype.h
-+++ b/arch/arm/include/asm/cputype.h
-@@ -2,9 +2,6 @@
- #ifndef __ASM_ARM_CPUTYPE_H
- #define __ASM_ARM_CPUTYPE_H
+diff --git a/arch/arm/mach-sunxi/mc_smp.c b/arch/arm/mach-sunxi/mc_smp.c
+index 03f021d0c73e..fc10e3a3268f 100644
+--- a/arch/arm/mach-sunxi/mc_smp.c
++++ b/arch/arm/mach-sunxi/mc_smp.c
+@@ -74,6 +74,7 @@ static void __iomem *sram_b_smp_base;
  
--#include <linux/stringify.h>
--#include <linux/kernel.h>
--
- #define CPUID_ID	0
- #define CPUID_CACHETYPE	1
- #define CPUID_TCM	2
-@@ -98,6 +95,11 @@
- /* Qualcomm implemented cores */
- #define ARM_CPU_PART_SCORPION		0x510002d0
+ extern void sunxi_mc_smp_secondary_startup(void);
+ extern void sunxi_mc_smp_resume(void);
++static bool is_a83t;
  
-+#ifndef __ASSEMBLY__
+ static bool sunxi_core_is_cortex_a15(unsigned int core, unsigned int cluster)
+ {
+@@ -624,6 +625,7 @@ struct sunxi_mc_smp_nodes {
+ struct sunxi_mc_smp_data {
+ 	const char *enable_method;
+ 	int (*get_smp_nodes)(struct sunxi_mc_smp_nodes *nodes);
++	bool is_a83t;
+ };
+ 
+ static void __init sunxi_mc_smp_put_nodes(struct sunxi_mc_smp_nodes *nodes)
+@@ -697,6 +699,8 @@ static int __init sunxi_mc_smp_init(void)
+ 			break;
+ 	}
+ 
++	is_a83t = sunxi_mc_smp_data[i].is_a83t;
 +
-+#include <linux/stringify.h>
-+#include <linux/kernel.h>
-+
- extern unsigned int processor_id;
- 
- #ifdef CONFIG_CPU_CP15
-@@ -326,4 +328,6 @@ static inline int __attribute_const__ cpuid_feature_extract_field(u32 features,
- #define cpuid_feature_extract(reg, field) \
- 	cpuid_feature_extract_field(read_cpuid_ext(reg), field)
- 
-+#endif /* __ASSEMBLY__ */
-+
- #endif
+ 	of_node_put(node);
+ 	if (ret)
+ 		return -ENODEV;
 -- 
 2.11.0
