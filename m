@@ -1,32 +1,38 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755942AbeEAPCQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 11:02:16 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:51481 "EHLO mail.bootlin.com"
+        id S1755720AbeEAPEI (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 11:04:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755825AbeEAPCN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 11:02:13 -0400
-Date: Tue, 1 May 2018 17:02:01 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Sekhar Nori <nsekhar@ti.com>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>, Tony Lindgren <tony@atomide.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 00/12] mtd: nand: davinci: stop using pdev->id as
- chipselect
-Message-ID: <20180501170201.6b3c034a@bbrezillon>
-In-Reply-To: <276f8b2b-34a1-ec00-e348-21b5bcb2f0c0@ti.com>
-References: <20180430082453.8091-1-brgl@bgdev.pl>
-        <20180430120930.4768a7cb@bbrezillon>
-        <276f8b2b-34a1-ec00-e348-21b5bcb2f0c0@ti.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1755230AbeEAPEG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 11:04:06 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9A7D236F2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Tue, 1 May 2018 11:04:03 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Joel Fernandes <joelaf@google.com>, linux-kernel@vger.kernel.org,
+        Peter Zilstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Fenguang Wu <fengguang.wu@intel.com>,
+        Baohong Liu <baohong.liu@intel.com>,
+        Vedang Patel <vedang.patel@intel.com>, kernel-team@android.com
+Subject: Re: [PATCH RFC v5 3/6] srcu: Add notrace variant of
+ srcu_dereference
+Message-ID: <20180501110403.0b661039@gandalf.local.home>
+In-Reply-To: <20180501141817.GE26088@linux.vnet.ibm.com>
+References: <20180501014204.67548-1-joelaf@google.com>
+        <20180501014204.67548-4-joelaf@google.com>
+        <20180501141817.GE26088@linux.vnet.ibm.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -34,45 +40,27 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 1 May 2018 16:01:42 +0530
-Sekhar Nori <nsekhar@ti.com> wrote:
+On Tue, 1 May 2018 07:18:17 -0700
+"Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
 
-> On Monday 30 April 2018 03:39 PM, Boris Brezillon wrote:
-> > Hi Bartosz,
+
+> > diff --git a/include/linux/srcu.h b/include/linux/srcu.h
+> > index 2ec618979b20..a1c4947be877 100644
+> > --- a/include/linux/srcu.h
+> > +++ b/include/linux/srcu.h
+> > @@ -135,6 +135,11 @@ static inline int srcu_read_lock_held(const struct srcu_struct *sp)
+> >   */
+> >  #define srcu_dereference(p, sp) srcu_dereference_check((p), (sp), 0)
 > > 
-> > On Mon, 30 Apr 2018 10:24:41 +0200
-> > Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> >   
-> >> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> >>
-> >> We have the 'ti,davinci-chipselect' property in the device tree, but
-> >> when using platform data the driver silently uses the id field of
-> >> struct platform_device as the chipselect. This is confusing and we
-> >> almost broke the nand support again recently after converting the
-> >> platform to common clock framework (which changed the device id in the
-> >> clock lookup - the problem is gone now that we no longer acquire the
-> >> clock in the nand driver.
-> >>
-> >> This series adds a new field to davinci-nand platform data, then makes
-> >> all board use it and finally modifies the two drivers that make use of
-> >> it.
-> >>
-> >> Bartosz Golaszewski (12):
-> >>   mtd: nand: davinci: store the core chipselect number in platform data  
-> > 
-> > Raw NAND related patches (that is, everything that is not onenand or
-> > SPI NAND) should use the "mtd: rawnand: " prefix now. Other than that,
-> > I'm fine with the patch series, just let me know how you want to have it  
+> > +/**
+> > + * srcu_dereference_notrace - no tracing and no lockdep calls from here
+> > + */
+> > +#define srcu_dereference_notrace(p, sp) srcu_dereference_check((p), (sp), 1)  
 > 
-> Hi Boris, should I convert the "I'm fine" to some sort of formal tag? If
-> yes, what is the tag and for which patches?
+> Given that this is a one-liner, why not just use srcu_dereference_check()
+> directly, with 1 as you do above to disable lockdep?
 
-Yep, you can add
+I prefer what Joel did. It documents why we are doing this. Open coding
+the call directly will just confuse others that touch tracepoint code.
 
-Acked-by: Boris Brezillon <boris.brezillon@bootlin.com>
-
-on patches 1 and 11.
-
-Thanks,
-
-Boris
+-- Steve
