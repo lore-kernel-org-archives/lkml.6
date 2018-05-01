@@ -1,122 +1,187 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755443AbeEAPkx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 11:40:53 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41406 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751071AbeEAPkw (ORCPT
+        id S1755328AbeEAPso convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 11:48:44 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:36290 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750787AbeEAPsl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 11:40:52 -0400
-Date: Tue, 1 May 2018 08:42:05 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Joel Fernandes <joelaf@google.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        "Cc: Frederic Weisbecker" <fweisbec@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Fenguang Wu <fengguang.wu@intel.com>,
-        Baohong Liu <baohong.liu@intel.com>,
-        Vedang Patel <vedang.patel@intel.com>,
-        "Cc: Android Kernel" <kernel-team@android.com>
-Subject: Re: [PATCH RFC v5 5/6] tracepoint: Make rcuidle tracepoint callers
- use SRCU
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180501014204.67548-1-joelaf@google.com>
- <20180501014204.67548-6-joelaf@google.com>
- <20180501102401.2cac5781@gandalf.local.home>
- <20180501143601.GG26088@linux.vnet.ibm.com>
- <CAJWu+op-7oyiO7p_pvWJhcy4UBBwGZRxcuoxzW_GefPr40h-xQ@mail.gmail.com>
- <20180501152135.GJ26088@linux.vnet.ibm.com>
- <CAJWu+oqO0WQwK-iU76D0zWE-A=-pHRPwzh3WG8yWq13G=c7HhQ@mail.gmail.com>
+        Tue, 1 May 2018 11:48:41 -0400
+X-Google-Smtp-Source: AB8JxZqYtM2Ab3E6g79vsGt4/j1pxjv5qhzu6YCbIiSF8KKj6XN5PawOQpF74lGSrnVJsEXk9ZMDSg==
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJWu+oqO0WQwK-iU76D0zWE-A=-pHRPwzh3WG8yWq13G=c7HhQ@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18050115-2213-0000-0000-0000029BEB03
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008957; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000257; SDB=6.01025989; UDB=6.00523970; IPR=6.00805220;
- MB=3.00020883; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-01 15:40:50
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18050115-2214-0000-0000-000059F49479
-Message-Id: <20180501154205.GM26088@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-01_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805010154
+In-Reply-To: <45956397-a593-e51e-8637-655178c5901c@arm.com>
+References: <20180426140728.43155-1-icenowy@aosc.io> <20180426140728.43155-4-icenowy@aosc.io>
+ <03cc2e8c-4a35-3fb4-b408-fd8d4ba3e407@arm.com> <83EDF187-5EB2-4FEB-99BC-9D5B728D3A45@aosc.io>
+ <45956397-a593-e51e-8637-655178c5901c@arm.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Tue, 1 May 2018 23:48:18 +0800
+X-Gmail-Original-Message-ID: <CAGb2v64B6_Rb2VPoZ6563doeVGEZ2WUWE+pMg7-u9SKMq1xCfQ@mail.gmail.com>
+Message-ID: <CAGb2v64B6_Rb2VPoZ6563doeVGEZ2WUWE+pMg7-u9SKMq1xCfQ@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH 3/3] arm64: allwinner: h6: enable MMC0/2 on
+ Pine H64
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Icenowy Zheng <icenowy@aosc.io>, Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>, linux-mmc@vger.kernel.org,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 01, 2018 at 03:23:52PM +0000, Joel Fernandes wrote:
-> On Tue, May 1, 2018 at 8:20 AM Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> wrote:
-> [...]
-> > > > > > --- a/kernel/tracepoint.c
-> > > > > > +++ b/kernel/tracepoint.c
-> > > > > > @@ -31,6 +31,9 @@
-> > > > > >  extern struct tracepoint * const __start___tracepoints_ptrs[];
-> > > > > >  extern struct tracepoint * const __stop___tracepoints_ptrs[];
-> > > > > >
-> > > > > > +DEFINE_SRCU(tracepoint_srcu);
-> > > > > > +EXPORT_SYMBOL_GPL(tracepoint_srcu);
-> > > > > > +
-> > > > > >  /* Set to 1 to enable tracepoint debug output */
-> > > > > >  static const int tracepoint_debug;
-> > > > > >
-> > > > > > @@ -67,11 +70,16 @@ static inline void *allocate_probes(int count)
-> > > > > >     return p == NULL ? NULL : p->probes;
-> > > > > >  }
-> > > > > >
-> > > > > > -static void rcu_free_old_probes(struct rcu_head *head)
-> > > > > > +static void srcu_free_old_probes(struct rcu_head *head)
-> > > > > >  {
-> > > > > >     kfree(container_of(head, struct tp_probes, rcu));
-> > > > > >  }
-> > > > > >
-> > > > > > +static void rcu_free_old_probes(struct rcu_head *head)
-> > > > > > +{
-> > > > > > +   call_srcu(&tracepoint_srcu, head, srcu_free_old_probes);
-> > > > >
-> > > > > Hmm, is it OK to call call_srcu() from a call_rcu() callback? I
-> guess
-> > > > > it would be.
-> > >
-> > > > It is perfectly legal, and quite a bit simpler than setting something
-> > > > up to wait for both to complete concurrently.
-> > >
-> > > Cool. Also in this case if we call both in sequence, then I felt there
-> > > could be a race to free the old data since both callbacks would try to
-> do
-> > > the same thing. The same thing being freeing of the same set of old
-> probes
-> > > which would need some synchronization between the 2 callbacks. With the
-> > > chaining, since the ordering is assured there wouldn't be a question of
-> > > such a race. I could add this reasoning to the changelog as well.
-> 
-> > Actually, as long as you have a solid happens-before between both of the
-> > callbacks and the freeing, you are in good shape.  A release-acquire would
-> > work fine, as would a lock acquired in both callbacks and then acquired
-> > (and possibly released) before the free.
-> 
-> Got it, thanks. For now, if its Ok with you and others, I will leave it in
-> the chained configuration. I also feel this is temporary since in the
-> future if we switch to single rcu mechanism for tracepoints (srcu), then we
-> could do with just a single callback.
+On Mon, Apr 30, 2018 at 5:47 PM, Andre Przywara <andre.przywara@arm.com> wrote:
+> Hi Icenowy,
+>
+> On 27/04/18 08:12, Icenowy Zheng wrote:
+>>
+>>
+>> 于 2018年4月27日 GMT+08:00 上午12:46:26, Andre Przywara <andre.przywara@arm.com> 写到:
+>>> Hi,
+>>>
+>>> On 26/04/18 15:07, Icenowy Zheng wrote:
+>>>> The Pine H64 board have a MicroSD slot connected to MMC0 controller
+>>> of
+>>>> the H6 SoC and a eMMC slot connected to MMC2.
+>>>>
+>>>> Enable them in the device tree.
+>>>>
+>>>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>>>> ---
+>>>>  .../boot/dts/allwinner/sun50i-h6-pine-h64.dts      | 32
+>>> ++++++++++++++++++++++
+>>>>  1 file changed, 32 insertions(+)
+>>>>
+>>>> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
+>>> b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
+>>>> index d36de5eb81f3..78b1cd54687c 100644
+>>>> --- a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
+>>>> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
+>>>> @@ -20,6 +20,38 @@
+>>>>     chosen {
+>>>>             stdout-path = "serial0:115200n8";
+>>>>     };
+>>>> +
+>>>> +   reg_vcc3v3: vcc3v3 {
+>>>> +           compatible = "regulator-fixed";
+>>>> +           regulator-name = "vcc3v3";
+>>>> +           regulator-min-microvolt = <3300000>;
+>>>> +           regulator-max-microvolt = <3300000>;
+>>>> +   };
+>>>> +
+>>>> +   reg_vcc1v8: vcc1v8 {
+>>>> +           compatible = "regulator-fixed";
+>>>> +           regulator-name = "vcc1v8";
+>>>> +           regulator-min-microvolt = <1800000>;
+>>>> +           regulator-max-microvolt = <1800000>;
+>>>> +   };
+>>>> +};
+>>>> +
+>>>> +&mmc0 {
+>>>> +   pinctrl-names = "default";
+>>>> +   pinctrl-0 = <&mmc0_pins>;
+>>>> +   vmmc-supply = <&reg_vcc3v3>;
+>>>
+>>> So this is actually CLDO1 on the AXP, correct?
+>>
+>> I remember it's coupled between two LDOs, to provide enough power.
+>>
+>>>
+>>>
+>>>> +   cd-gpios = <&pio 5 6 GPIO_ACTIVE_LOW>;
+>>>> +   status = "okay";
+>>>> +};
+>>>> +
+>>>> +&mmc2 {
+>>>> +   pinctrl-names = "default";
+>>>> +   pinctrl-0 = <&mmc2_pins>;
+>>>> +   vmmc-supply = <&reg_vcc3v3>;
+>>>> +   vqmmc-supply = <&reg_vcc1v8>;
+>>>
+>>> And this is BLDO2?
+>>
+>> Yes.
+>>
+>>>
+>>> I am just asking because I want to avoid running into the same problem
+>>> as with the A64 before: that future DTs become incompatible with older
+>>> kernels, because we change the power supply to point to the AXP
+>>> regulators, which this kernel does not support yet.
+>>
+>> The answer is just not to keep this compatibility, as it's not
+>> supported option to update DT without updating kernel.
+>
+> Well, I recognise that statement.. ;-) and I understand that it's far
+> easier to handle it this way. But:
+> - Which .dtb are we going to write into the SPI flash? An older one,
+> which covers all kernels, but lacks features? Or a newer one, which
+> limits the bootable kernels to recent versions?
+> - Which DT are we going to give to EFI applications?
+> - Which DT are the BSDs suspected to take? They don't ship their own DTs
+> (which is good!).
+>
+> So I understand that "shipping the DT with the kernel" is the old
+> (embedded!) way of doing things, but I really believe we should stop
+> relying on this and try to come up with backwards compatible DTs, which
+> live in the firmware and get updated there. Because this is what the
+> distros seem to expect from ARM64 boards these days.
+>
+>> P.S. I think the DT will update twice on the kernel side, the
+>> first time keep reg_vcc3v3 (as it's coupled) but use real
+>> regulator for reg_vcc1v8, the second time use the real
+>> coupled regulator for reg_vcc3v3.
+>>
+>>>
+>>> It looks like there are more users of those power rails, so we could
+>>> keep those supplies connected to these fixed regulators here, even with
+>>> AXP-805 support in the kernel.
+>>
+>> It's not a good choice.
+>>
+>>>
+>>> Or we keep this back until we get proper AXP support in the kernel? I
+>>> guess it's quite close to the existing PMICs, so it might be more a
+>>> copy&paste exercise to support the AXP-805?
+>>
+>> It's not a reason to keep it back.
+>
+> So I compared the manuals of the AXP806 and the AXP805, the register
+> interface looks identical to me. I only have a (somewhat) Chinese
+> version of the AXP806 manual, so couldn't really find the difference
+> between the two. Do you know more about it? Is it just maybe the
+> packaging and the electrical properties (like max current supported)?
 
-I have no problem with chained callbacks.  Heck, I even test them in
-rcutorture.  ;-)
+>From what I could tell, they are the same. I'm not sure about max current,
+but that's something not described in the device tree right now. FYI,
+the AXP221s and AXP221 differ slightly in that one has increased current
+capability for one or two of the DC-DCs. We treat them as if they were
+the same right now.
 
-							Thanx, Paul
+> If the I2C register interface is really the same, we could just add the
+> DT nodes for the regulator and be done.
+
+It is. However, we currently lack a "standalone operating mode" property.
+This is different from "master mode".
+
+ChenYu
+
+> Cheers,
+> Andre.
+>
+>>
+>>>
+>>> But apart from this this looks correct to me.
+>>>
+>>> Cheers,
+>>> Andre.
+>>>
+>>>> +   non-removable;
+>>>> +   cap-mmc-hw-reset;
+>>>> +   status = "okay";
+>>>>  };
+>>>>
+>>>>  &uart0 {
+>>>>
