@@ -1,288 +1,125 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-88466-1525238465-2-1156101177503390493
+X-Cyrus-Session-Id: sloti22d1t05-2975324-1525169121-2-6850206252474761770
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: to='UTF-8', plain='utf-8'
+X-Spam-charsets: to='iso-8859-1', plain='iso-8859-1'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525238464; b=JfDeW1joIlIjlHbUf2mVpoSaxkuexkf7cnBdawb7TCfWT7uBFE
-    hr7SDxmS71O3DfII9aK1tvbp1jKIFR/GVegsexf5n1ieOx03bkF7q+lvTGd2jm9C
-    bBa+HedxJtuo0I29Ezplu8FFPx/WphSU641lcOam8KF1ATuhx4Iq9UP+d0jgZVxf
-    kZCmKHu8GnNi7w4zAA3n51RAQwcWRkRCME2h2lSikIoQ9ahf8X/Z619v/WpSTwHu
-    QH2wMcooEIZJ2MWeYpDTw51YT+0ml2EFJQWy7jBac2tEVSZAfL2nUr5P4f10x2DK
-    iYssO41YZjAMYE7gBU0jBTdyoqGoDl0tDfsw==
+    1525169120; b=mImnf2tDEY29p5ZNZWVYpjSyJ0iEcTEfqZY+m3jxbjQPIC2dAB
+    VfpQjQS7vfRWgAGcCRUAV+JfYJYjyfLGTqQgh4kKiqezjwlq6NEXiSsCiEr7xng9
+    YA9wMNTW/9MKV9h0+UJeI6qGDB7hWvYocs+1F0io0tJoq9/1c0N0jrWPk7Bdgdel
+    7CDuUSIMFzfoQFHwfF/5bSdurkU8nlTaH+VNZmgLNVMgG5fD0IkINdGrTpawAhRn
+    6v4NWUg9ydGx8I3acnlGP0Sq3ccrvA1yvlLXixzG+QAef/rELe7iTEuBUJslP1ND
+    ekUhdg5ozEwcrfxvAkLeK4WoK1EphRBk6IqQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1525238464;
-    bh=1xYgAKt2iJfS/CL1Md/DCtQA3KujGSVyfz0fEAUftc0=; b=iDl4HWQ/h9mV
-    sjEb/2lbVCJGi31O1LZppz8YmW/A0qDkYrg9izps7nLFefwzhkkq30DC/3scwltA
-    jq3w9pg2rJQz+BiehAIXVjy5NAXz08stT5UW0o9ZjcoDdDHWp6ecoOotGiP+9qif
-    7NHmH9NkU9ivXqAg8jLw7j5mna/9TAcN29a3/hbAgUSR8Gn2ITvOLCn8/JqKbqLM
-    8+Gn8fJx57VwbZ+rl2RqC1YwsA15hqpbjQ7RseWm4pYguV6YkkfdGAgDIxEjHcDQ
-    mc/vfj6jOy2MicqAbRCATA69sW6IHfOaxQGT9vegEI2r18b7WnKQ2l2uFfa1Z6Hy
-    7ixIknghSw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com
-    header.i=@gmail.com header.b=VxHxG8Xf x-bits=2048 x-keytype=rsa
-    x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:content-transfer-encoding
+    :in-reply-to:sender:list-id; s=fm2; t=1525169120; bh=gYEjQjFUPzG
+    BoMLpcoop7dlKkVoKMw9qw0uN0eA9+9s=; b=lAuwJYc54QT/v1eFWZpuYH1sRaM
+    0P0TpRfTzDBjxJCBBkP6bmTMhslzhm/rA97ZPEORuBx1LGqvANBN61utTKDN4L9Y
+    lYyA1SUlXqiWps9eTAZ2t48T5uEprREXAzXnz7WWBsQ0UuqWccdWfIl/OAcUxhDj
+    Ku7dIcufgINvmiIZ1LqBilMXgdIgu079m0GxkEC7MQytu2XftPBfrDSUNauTja5y
+    6B1OB59SkhMtFMmEe+r3w1v3Oeu3ino8dkIQFWfvcOFNEA8NMlsFEFQsotkXsfps
+    me1WuL4Fw0iUWqb8nbUfzOrEedeWmH1usMx5TkkcQz5UE0PDbTwM2xEf/Ng==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=citrix.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-    header.i=@1e100.net header.b=OOtK6m6Z;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+    header.domain=citrix.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-50 state=0
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com
-      header.i=@gmail.com header.b=VxHxG8Xf x-bits=2048 x-keytype=rsa
-      x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=citrix.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-      header.i=@1e100.net header.b=OOtK6m6Z;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+      header.domain=citrix.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-50 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfLW+J9AdvedE0ksfjl/qEOn+yzk7JlL3MEQZZWsM9C0mkk+JKnZMFuFZI7DyRhLJOPRpv8vWWT0r9bNrcp90gO8tBCG5v5YIDHwf1GQ6xWOz1ucwzEIr
-    ifksn8lrVYMOH3pbkg5Vv0zVUWIY5wMJDDXlVJdRTuBjjDXfUwJjeK4H8Cr2I+rD2jx2xJhE3LcyrUCHApXcqS0qMuR6dyhxUzFA/+T6jaJA549EZw7/3clT
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=x7bEGLp0ZPQA:10
-    a=FrHkxrfzMM0A:10 a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8 a=vkfgAjWNAAAA:8
-    a=gc9acZ-2TVUN36RL1IsA:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
-    a=s88AYcEWOXMFsoP9cgP2:22
+X-CM-Envelope: MS4wfCCJ5b515qpolgLJ7hNi9o/ko9MN3M6556k+DRKgcEQUpUI0TnWNcZ6K4CDMpCfuYwNzJSwD7xd9o1HoiZZBTXFlFoxepcnUvFi7qyfMLkTC0Ug0eq9N
+    AB7WGN/ntPUDQYk16mYgynldvLCexl1WmAS2XhHRnJz+Rgni4H027GlMvS/QFcbxqRcLztl+oTYyZDdDS3ELIXjRVt6AAK87JE5WU6tzfA/hk7vP7tX4rypH
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=8nJEP1OIZ-IA:10 a=VUJBJC2UJ8kA:10
+    a=VwQbUJbxAAAA:8 a=vkfgAjWNAAAA:8 a=0V0yHqixiIOxBLXv9UEA:9 a=wPNLvfGTeEIA:10
+    a=AjGcO6oz07-iQ99wixmX:22 a=s88AYcEWOXMFsoP9cgP2:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750930AbeEBFVC (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 2 May 2018 01:21:02 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:39148 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750873AbeEBFVA (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 2 May 2018 01:21:00 -0400
-X-Google-Smtp-Source: AB8JxZpD/ZbQGzsfjVdO8+NsUIrTkuoZol/07T3jrqjQedp4LGQgUIquU3NBx7PpRAr8g/WAd3fvBQ==
-Subject: Re: [Xen-devel] [PATCH 2/6] xen-netfront: copy response out of shared
- buffer before accessing it
-To: =?UTF-8?Q?Marek_Marczykowski-G=c3=b3recki?=
-        <marmarek@invisiblethingslab.com>, xen-devel@lists.xenproject.org
-Cc: Juergen Gross <jgross@suse.com>,
+        id S1751826AbeEAKFT (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 1 May 2018 06:05:19 -0400
+Received: from smtp03.citrix.com ([162.221.156.55]:46280 "EHLO
+        SMTP03.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751658AbeEAKFS (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 1 May 2018 06:05:18 -0400
+X-IronPort-AV: E=Sophos;i="5.49,350,1520899200";
+   d="scan'208";a="53323911"
+Date: Tue, 1 May 2018 11:05:16 +0100
+From: Wei Liu <wei.liu2@citrix.com>
+To: Marek =?iso-8859-1?Q?Marczykowski-G=F3recki?=
+        <marmarek@invisiblethingslab.com>
+CC: <xen-devel@lists.xenproject.org>, Juergen Gross <jgross@suse.com>,
         "open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>,
-        stable@vger.kernel.org, open list <linux-kernel@vger.kernel.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>
+        <stable@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Wei Liu <wei.liu2@citrix.com>
+Subject: Re: [Xen-devel] [PATCH 4/6] xen-netfront: add range check for Tx
+ response id
+Message-ID: <20180501100516.vjhop37we2rcrvyo@citrix.com>
 References: <cover.7ee732ab822b728ec486a3118ec12e9c06f0f325.1525122026.git-series.marmarek@invisiblethingslab.com>
- <98a855dceb47dbebd9c87e024084f14a5cb127f7.1525122026.git-series.marmarek@invisiblethingslab.com>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <ad92ebe2-60f0-eff8-c937-31189e9555d7@gmail.com>
-Date: Wed, 2 May 2018 08:20:56 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+ <960c6d6300fd3450ae9fb1de1c412bef7dbae992.1525122026.git-series.marmarek@invisiblethingslab.com>
 MIME-Version: 1.0
-In-Reply-To: <98a855dceb47dbebd9c87e024084f14a5cb127f7.1525122026.git-series.marmarek@invisiblethingslab.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+In-Reply-To: <960c6d6300fd3450ae9fb1de1c412bef7dbae992.1525122026.git-series.marmarek@invisiblethingslab.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 05/01/2018 12:01 AM, Marek Marczykowski-GÃ³recki wrote:
-> Make local copy of the response, otherwise backend might modify it while
-> frontend is already processing it - leading to time of check / time of
-> use issue.
->
-> This is complementary to XSA155.
->
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Marek Marczykowski-GÃ³recki <marmarek@invisiblethingslab.com>
+On Mon, Apr 30, 2018 at 11:01:48PM +0200, Marek Marczykowski-Górecki wrote:
+> Tx response ID is fetched from shared page, so make sure it is sane
+> before using it as an array index.
+> 
+> CC: stable@vger.kernel.org
+> Signed-off-by: Marek Marczykowski-Górecki <marmarek@invisiblethingslab.com>
 > ---
->   drivers/net/xen-netfront.c | 51 +++++++++++++++++++--------------------
->   1 file changed, 25 insertions(+), 26 deletions(-)
->
+>  drivers/net/xen-netfront.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 > diff --git a/drivers/net/xen-netfront.c b/drivers/net/xen-netfront.c
-> index 4dd0668..dc99763 100644
+> index 934b8a4..55c9b25 100644
 > --- a/drivers/net/xen-netfront.c
 > +++ b/drivers/net/xen-netfront.c
-> @@ -387,13 +387,13 @@ static void xennet_tx_buf_gc(struct netfront_queue *queue)
->   		rmb(); /* Ensure we see responses up to 'rp'. */
->   
->   		for (cons = queue->tx.rsp_cons; cons != prod; cons++) {
-Side comment: the original concern was expressed on the above counters,
-will those be addressed as a dedicated series?
-> -			struct xen_netif_tx_response *txrsp;
-> +			struct xen_netif_tx_response txrsp;
->   
-> -			txrsp = RING_GET_RESPONSE(&queue->tx, cons);
-> -			if (txrsp->status == XEN_NETIF_RSP_NULL)
-> +			RING_COPY_RESPONSE(&queue->tx, cons, &txrsp);
-> +			if (txrsp.status == XEN_NETIF_RSP_NULL)
->   				continue;
->   
-IMO, there is still no guarantee you access consistent data after this 
-change.
-What if part of the response was ok when you started copying and
-then, in the middle, backend poisons the end of the response?
-This seems to be just like minimizing(?) chances to work with inconsistent
-data rather than removing the possibility of such completely
-> -			id  = txrsp->id;
-> +			id  = txrsp.id;
->   			skb = queue->tx_skbs[id].skb;
->   			if (unlikely(gnttab_query_foreign_access(
->   				queue->grant_tx_ref[id]) != 0)) {
-> @@ -741,7 +741,7 @@ static int xennet_get_extras(struct netfront_queue *queue,
->   			     RING_IDX rp)
->   
->   {
-> -	struct xen_netif_extra_info *extra;
-> +	struct xen_netif_extra_info extra;
->   	struct device *dev = &queue->info->netdev->dev;
->   	RING_IDX cons = queue->rx.rsp_cons;
->   	int err = 0;
-> @@ -757,24 +757,23 @@ static int xennet_get_extras(struct netfront_queue *queue,
->   			break;
->   		}
->   
-> -		extra = (struct xen_netif_extra_info *)
-> -			RING_GET_RESPONSE(&queue->rx, ++cons);
-> +		RING_COPY_RESPONSE(&queue->rx, ++cons, &extra);
->   
-> -		if (unlikely(!extra->type ||
-> -			     extra->type >= XEN_NETIF_EXTRA_TYPE_MAX)) {
-> +		if (unlikely(!extra.type ||
-> +			     extra.type >= XEN_NETIF_EXTRA_TYPE_MAX)) {
->   			if (net_ratelimit())
->   				dev_warn(dev, "Invalid extra type: %d\n",
-> -					extra->type);
-> +					extra.type);
->   			err = -EINVAL;
->   		} else {
-> -			memcpy(&extras[extra->type - 1], extra,
-> -			       sizeof(*extra));
-> +			memcpy(&extras[extra.type - 1], &extra,
-> +			       sizeof(extra));
->   		}
->   
->   		skb = xennet_get_rx_skb(queue, cons);
->   		ref = xennet_get_rx_ref(queue, cons);
->   		xennet_move_rx_slot(queue, skb, ref);
-> -	} while (extra->flags & XEN_NETIF_EXTRA_FLAG_MORE);
-> +	} while (extra.flags & XEN_NETIF_EXTRA_FLAG_MORE);
->   
->   	queue->rx.rsp_cons = cons;
->   	return err;
-> @@ -784,28 +783,28 @@ static int xennet_get_responses(struct netfront_queue *queue,
->   				struct netfront_rx_info *rinfo, RING_IDX rp,
->   				struct sk_buff_head *list)
->   {
-> -	struct xen_netif_rx_response *rx = &rinfo->rx;
-> +	struct xen_netif_rx_response rx = rinfo->rx;
->   	struct xen_netif_extra_info *extras = rinfo->extras;
->   	struct device *dev = &queue->info->netdev->dev;
->   	RING_IDX cons = queue->rx.rsp_cons;
->   	struct sk_buff *skb = xennet_get_rx_skb(queue, cons);
->   	grant_ref_t ref = xennet_get_rx_ref(queue, cons);
-> -	int max = MAX_SKB_FRAGS + (rx->status <= RX_COPY_THRESHOLD);
-> +	int max = MAX_SKB_FRAGS + (rx.status <= RX_COPY_THRESHOLD);
->   	int slots = 1;
->   	int err = 0;
->   	unsigned long ret;
->   
-> -	if (rx->flags & XEN_NETRXF_extra_info) {
-> +	if (rx.flags & XEN_NETRXF_extra_info) {
->   		err = xennet_get_extras(queue, extras, rp);
->   		cons = queue->rx.rsp_cons;
->   	}
->   
->   	for (;;) {
-> -		if (unlikely(rx->status < 0 ||
-> -			     rx->offset + rx->status > XEN_PAGE_SIZE)) {
-> +		if (unlikely(rx.status < 0 ||
-> +			     rx.offset + rx.status > XEN_PAGE_SIZE)) {
->   			if (net_ratelimit())
->   				dev_warn(dev, "rx->offset: %u, size: %d\n",
-> -					 rx->offset, rx->status);
-> +					 rx.offset, rx.status);
->   			xennet_move_rx_slot(queue, skb, ref);
->   			err = -EINVAL;
->   			goto next;
-> @@ -819,7 +818,7 @@ static int xennet_get_responses(struct netfront_queue *queue,
->   		if (ref == GRANT_INVALID_REF) {
->   			if (net_ratelimit())
->   				dev_warn(dev, "Bad rx response id %d.\n",
-> -					 rx->id);
-> +					 rx.id);
->   			err = -EINVAL;
->   			goto next;
->   		}
-> @@ -832,7 +831,7 @@ static int xennet_get_responses(struct netfront_queue *queue,
->   		__skb_queue_tail(list, skb);
->   
->   next:
-> -		if (!(rx->flags & XEN_NETRXF_more_data))
-> +		if (!(rx.flags & XEN_NETRXF_more_data))
->   			break;
->   
->   		if (cons + slots == rp) {
-> @@ -842,7 +841,7 @@ static int xennet_get_responses(struct netfront_queue *queue,
->   			break;
->   		}
->   
-> -		rx = RING_GET_RESPONSE(&queue->rx, cons + slots);
-> +		RING_COPY_RESPONSE(&queue->rx, cons + slots, &rx);
->   		skb = xennet_get_rx_skb(queue, cons + slots);
->   		ref = xennet_get_rx_ref(queue, cons + slots);
->   		slots++;
-> @@ -898,9 +897,9 @@ static RING_IDX xennet_fill_frags(struct netfront_queue *queue,
->   	struct sk_buff *nskb;
->   
->   	while ((nskb = __skb_dequeue(list))) {
-> -		struct xen_netif_rx_response *rx =
-> -			RING_GET_RESPONSE(&queue->rx, ++cons);
-> +		struct xen_netif_rx_response rx;
->   		skb_frag_t *nfrag = &skb_shinfo(nskb)->frags[0];
-> +		RING_COPY_RESPONSE(&queue->rx, ++cons, &rx);
->   
->   		if (shinfo->nr_frags == MAX_SKB_FRAGS) {
->   			unsigned int pull_to = NETFRONT_SKB_CB(skb)->pull_to;
-> @@ -911,7 +910,7 @@ static RING_IDX xennet_fill_frags(struct netfront_queue *queue,
->   		BUG_ON(shinfo->nr_frags >= MAX_SKB_FRAGS);
->   
->   		skb_add_rx_frag(skb, shinfo->nr_frags, skb_frag_page(nfrag),
-> -				rx->offset, rx->status, PAGE_SIZE);
-> +				rx.offset, rx.status, PAGE_SIZE);
->   
->   		skb_shinfo(nskb)->nr_frags = 0;
->   		kfree_skb(nskb);
-> @@ -1007,7 +1006,7 @@ static int xennet_poll(struct napi_struct *napi, int budget)
->   	i = queue->rx.rsp_cons;
->   	work_done = 0;
->   	while ((i != rp) && (work_done < budget)) {
-> -		memcpy(rx, RING_GET_RESPONSE(&queue->rx, i), sizeof(*rx));
-> +		RING_COPY_RESPONSE(&queue->rx, i, rx);
->   		memset(extras, 0, sizeof(rinfo.extras));
->   
->   		err = xennet_get_responses(queue, &rinfo, rp, &tmpq);
+> @@ -394,6 +394,7 @@ static void xennet_tx_buf_gc(struct netfront_queue *queue)
+>  				continue;
+>  
+>  			id  = txrsp.id;
+> +			BUG_ON(id >= NET_TX_RING_SIZE);
+
+It is better to use ARRAY_SIZE here.
+
+Wei.
