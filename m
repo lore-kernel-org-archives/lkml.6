@@ -1,71 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755899AbeEAAnK (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 20:43:10 -0400
-Received: from gateway24.websitewelcome.com ([192.185.51.139]:23008 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1755816AbeEAAnH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 20:43:07 -0400
-X-Authority-Reason: nr=8
-From: Matheus Castello <matheus@castello.eng.br>
-To: linus.walleij@linaro.org, stefan.wahren@i2se.com, eric@anholt.net
-Cc: swarren@wwwdotorg.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Matheus Castello <matheus@castello.eng.br>
-Subject: [PATCH v7 3/3] pinctrl: bcm2835: Add support for output-low output-high properties
-Date: Mon, 30 Apr 2018 20:42:14 -0400
-Message-Id: <1525135334-28506-3-git-send-email-matheus@castello.eng.br>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1525135334-28506-1-git-send-email-matheus@castello.eng.br>
-References: <1525030092-3643-3-git-send-email-matheus@castello.eng.br>
- <1525135334-28506-1-git-send-email-matheus@castello.eng.br>
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - br164.hostgator.com.br
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - castello.eng.br
-X-BWhitelist: no
-X-Source-IP: 191.189.21.134
-X-Source-L: No
-X-Exim-ID: 1fDJNp-000RW1-Ov
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (localhost.localdomain) [191.189.21.134]:27155
-X-Source-Auth: matheus@castello.eng.br
-X-Email-Count: 20
-X-Source-Cap: Y2FzdGUyNDg7Y2FzdGUyNDg7YnIxNjQuaG9zdGdhdG9yLmNvbS5icg==
-X-Local-Domain: yes
+        id S1755929AbeEAAzi (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 20:55:38 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33100 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751365AbeEAAzg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 20:55:36 -0400
+Message-ID: <1525136135.11756.94.camel@redhat.com>
+Subject: Re: linux-next: manual merge of the rdma tree with the rdma-fixes
+ tree
+From: Doug Ledford <dledford@redhat.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Zhu Yanjun <yanjun.zhu@oracle.com>
+Date: Mon, 30 Apr 2018 20:55:35 -0400
+In-Reply-To: <20180501101017.517b38af@canb.auug.org.au>
+References: <20180501101017.517b38af@canb.auug.org.au>
+Organization: Red Hat, Inc.
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-I9SppQfX8HkOfcQA5L16"
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Properties to set initial value of pin output buffer.
-This can be useful for configure hardware in overlay files, and in early
-boot for checking it states in QA sanity tests.
 
-Signed-off-by: Matheus Castello <matheus@castello.eng.br>
-Reviewed-by: Eric Anholt <eric@anholt.net>
----
- drivers/pinctrl/bcm/pinctrl-bcm2835.c | 5 +++++
- 1 file changed, 5 insertions(+)
+--=-I9SppQfX8HkOfcQA5L16
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-index a0b1f5f..136ccaf 100644
---- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-+++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-@@ -965,6 +965,11 @@ static int bcm2835_pinconf_set(struct pinctrl_dev *pctldev,
- 			bcm2835_pull_config_set(pc, pin, BCM2835_PUD_UP);
- 			break;
- 
-+		/* Set output-high or output-low */
-+		case PIN_CONFIG_OUTPUT:
-+			bcm2835_gpio_set_bit(pc, arg ? GPSET0 : GPCLR0, pin);
-+			break;
-+
- 		default:
- 			return -EINVAL;
- 
--- 
-2.7.4
+On Tue, 2018-05-01 at 10:10 +1000, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> Today's linux-next merge of the rdma tree got a conflict in:
+>=20
+>   drivers/infiniband/sw/rxe/rxe_resp.c
+>=20
+> between commit:
+>=20
+>   9fd4350ba895 ("B/rxe: avoid double kfree_skb")
+>=20
+> from the rdma-fixes tree and commit:
+>=20
+>   2e47350789eb ("IB/rxe: optimize the function duplicate_request")
+>=20
+> from the rdma tree.
+>=20
+> I fixed it up (I think - see below) and can carry the fix as necessary.
+> This is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+
+We will probably merge the for-rc branch into the for-next branch in the
+next few days, at which point we will do the conflict resolution
+ourselves and your need to carry anything should drop out.
+
+--=20
+Doug Ledford <dledford@redhat.com>
+    GPG KeyID: B826A3330E572FDD
+    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
+--=-I9SppQfX8HkOfcQA5L16
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAlrnuwcACgkQuCajMw5X
+L93OIhAAmYPokQ6hbId+nYkcCLSfK7EG/hfwXDARB4AQV44pcZEPa0yo5DclvIj4
+j6dHtDl9EZZSrfT7KTB9a/4M+uXVjdUVyyf5fPuABj7axCn43DkIaOftfixzKfUq
+zw/Lm3zb1wD7FXwpT2o++x2uZtkZ58T2zbvKDAmEG6g7ntLPMts4+ZNaFVr0MiEk
+Jl7eXoigIVEJfWXU72o/fSWhbZiXvWGLD4Iuoht8KAzL/r+x74cObBscoGRNoiPr
+KEc5SNfES7zG76fJfSaIYcDzsC3td5R/+mB5ljSMLQQpM/BZ2/OphO7Iz8HeAaAn
+VnEIVfPF+TkLNjkzmDP2wfurRzC7A+aPCovemiWTecIqccTwfgDM3zeF/vLM/TzT
+vDWRYCiQ/aricZA48OloeEyDMjKC1vkpIKMdqOzuS/dbBUMJl5wzNgI3FG6UAIkx
+k6SPKWx3U1/5dThvRPpZiTT8UEQBVe1zPEaFGAccjpqmnRFvd9zI8VcewtHTbZkr
+2BB4YQDxHq7LScVgXZ8QKu+5yfHOiz0w0B+cIolHlEj9yDbB1+KxrdujVLpJV/b4
+IPOAdvM7KSMRvWKkDKe3ftvjPMUajp1LwuYWdID7zMIFRZY99wuFxSxR4MFBVidr
+n8IByKlxZowW57A5PmbZYxLUVYfLdAsZFMWYc+H/qU9Ukg/F3tg=
+=ES9A
+-----END PGP SIGNATURE-----
+
+--=-I9SppQfX8HkOfcQA5L16--
