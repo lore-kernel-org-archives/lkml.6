@@ -1,65 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756119AbeEAS55 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 14:57:57 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7638 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753505AbeEAS5z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 14:57:55 -0400
-From: Salil Mehta <salil.mehta@huawei.com>
-To: <davem@davemloft.net>
-CC: <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
-        <lipeng321@huawei.com>, <mehta.salil.lnk@gmail.com>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>, Yunsheng Lin <linyunsheng@huawei.com>
-Subject: [PATCH net-next 1/9] net: hns3: Remove error log when getting pfc stats fails
-Date: Tue, 1 May 2018 19:55:57 +0100
-Message-ID: <20180501185605.9584-2-salil.mehta@huawei.com>
-X-Mailer: git-send-email 2.8.3
-In-Reply-To: <20180501185605.9584-1-salil.mehta@huawei.com>
-References: <20180501185605.9584-1-salil.mehta@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.202.226.46]
-X-CFilter-Loop: Reflected
+        id S1756283AbeEATK0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 15:10:26 -0400
+Received: from gateway32.websitewelcome.com ([192.185.145.101]:18252 "EHLO
+        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1755443AbeEATKY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 15:10:24 -0400
+X-Authority-Reason: nr=8
+From: Matheus Castello <matheus@castello.eng.br>
+To: linus.walleij@linaro.org
+Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org,
+        Matheus Castello <matheus@castello.eng.br>
+Subject: Re: [PATCH v2 0/2] pinctrl: generic: improve apply_setting error verbosity
+Date: Tue,  1 May 2018 15:09:59 -0400
+Message-Id: <1525201801-25682-1-git-send-email-matheus@castello.eng.br>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <201805011855.LvT1SKBS%fengguang.wu@intel.com>
+References: <201805011855.LvT1SKBS%fengguang.wu@intel.com>
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - br164.hostgator.com.br
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - castello.eng.br
+X-BWhitelist: no
+X-Source-IP: 191.189.21.134
+X-Source-L: No
+X-Exim-ID: 1fDafO-0042Wq-VV
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (localhost.localdomain) [191.189.21.134]:17937
+X-Source-Auth: matheus@castello.eng.br
+X-Email-Count: 1
+X-Source-Cap: Y2FzdGUyNDg7Y2FzdGUyNDg7YnIxNjQuaG9zdGdhdG9yLmNvbS5icg==
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yunsheng Lin <linyunsheng@huawei.com>
+This series is for improve verbosity in debug for error cases using pinconf 
+generic API. Legacy pinctrl-vendor drivers prints error messages with more 
+verbosity when parse invalid or not supported sub-nodes properties. In this 
+series we try to show messages with more information about the pinctrl-vendor 
+driver and sub-nodes that returned error when applied.
 
-When mac supports DCB, but is in GE mode, it does not support
-querying pfc stats, firmware returns error when trying to
-query the pfc stats. this creates a lot of noise in the kernel
-log when it prints the error log.
+Let me know your opinion about this.
 
-This patch fixes it by removing the error log, because it already
-return the error to the user space, so the user should be aware of
-the error.
+Tested Kbuild for arch/x86_64 arch/arm
 
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
----
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+Changes since v1:
+(Suggested by Linus Walleij)
+- Fix errors in Kbuild
+- Use CONFIG_OF instead CONFIG_GENERIC_PINCONF for use it only in flatned 
+device tree enable configurations
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-index 885f25c..c69ecab 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-@@ -134,11 +134,8 @@ static int hclge_pfc_stats_get(struct hclge_dev *hdev,
- 	}
- 
- 	ret = hclge_cmd_send(&hdev->hw, desc, HCLGE_TM_PFC_PKT_GET_CMD_NUM);
--	if (ret) {
--		dev_err(&hdev->pdev->dev,
--			"Get pfc pause stats fail, ret = %d.\n", ret);
-+	if (ret)
- 		return ret;
--	}
- 
- 	for (i = 0; i < HCLGE_TM_PFC_PKT_GET_CMD_NUM; i++) {
- 		struct hclge_pfc_stats_cmd *pfc_stats =
+Matheus Castello (2):
+  pinctrl: generic: add API to solve generic sub-node property name
+  pinctrl: generic: improve apply_setting error verbosity
+
+ drivers/pinctrl/pinconf-generic.c       | 61 +++++++++++++++++----------------
+ drivers/pinctrl/pinconf.c               | 15 +++++++-
+ include/linux/pinctrl/pinconf-generic.h | 32 +++++++++++++++++
+ 3 files changed, 77 insertions(+), 31 deletions(-)
+
 -- 
 2.7.4
