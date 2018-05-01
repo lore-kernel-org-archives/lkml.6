@@ -1,432 +1,275 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753576AbeEAFac (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 01:30:32 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:34926 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750859AbeEAFaP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 01:30:15 -0400
-X-Google-Smtp-Source: AB8JxZpK+sBEkIUvCelEXtnFOEMNg1ic9T6BHvjY3YjcpCJTbLiAU5JbjbKd4vB+gwNpQedvjnmuZg==
-From: Andrey Smirnov <andrew.smirnov@gmail.com>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: Andrey Smirnov <andrew.smirnov@gmail.com>,
-        linux-kernel@vger.kernel.org, Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Aleksander Morgado <aleksander@aleksander.es>
-Subject: [PATCH v3 2/2] nvmem: Add RAVE SP EEPROM driver
-Date: Mon, 30 Apr 2018 22:29:52 -0700
-Message-Id: <20180501052952.26765-3-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180501052952.26765-1-andrew.smirnov@gmail.com>
-References: <20180501052952.26765-1-andrew.smirnov@gmail.com>
+        id S1751340AbeEAFeE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 01:34:04 -0400
+Received: from mail-db5eur01on0139.outbound.protection.outlook.com ([104.47.2.139]:35693
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750823AbeEAFeC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 01:34:02 -0400
+From: "Wan, Jane (Nokia - US/Sunnyvale)" <jane.wan@nokia.com>
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+CC: "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "Bos, Ties (Nokia - US/Sunnyvale)" <ties.bos@nokia.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Boris Brezillon <Boris.Brezillon@bootlin.com>,
+        "richard@nod.at" <richard@nod.at>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
+        "prabhakar.kushwaha@nxp.com" <prabhakar.kushwaha@nxp.com>,
+        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "jagdish.gediya@nxp.com" <jagdish.gediya@nxp.com>,
+        "shreeya.patel23498@gmail.com" <shreeya.patel23498@gmail.com>
+Subject: RE: [PATCH 2/2] Use bit-wise majority to recover the contents of ONFI
+ parameter
+Thread-Topic: [PATCH 2/2] Use bit-wise majority to recover the contents of
+ ONFI parameter
+Thread-Index: AQHT3b3Do6ds25Pnyk2r8NPyYUFu9aQWFzwAgARAm5A=
+Date: Tue, 1 May 2018 05:33:59 +0000
+Message-ID: <VI1PR07MB1615A26D5E38C2568EFADE4C81810@VI1PR07MB1615.eurprd07.prod.outlook.com>
+References: <1524788396-32380-1-git-send-email-Jane.Wan@nokia.com>
+        <1524788396-32380-3-git-send-email-Jane.Wan@nokia.com>
+ <20180428140638.2e2c04dd@xps13>
+In-Reply-To: <20180428140638.2e2c04dd@xps13>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator: 
+msip_labels: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=jane.wan@nokia.com;
+x-originating-ip: [131.228.32.191]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR07MB1039;7:ZdvHgeoBG3W8eiwswSLg/ECmWW3PcC+tLrH1GMFlbZuERa5jYcclZMTMrBFFW2GBDyp7e5uqyCA8M75S0T8w/QyldtlMvFIkikolcIPne6eQtsh+gicdxu/YQzMxZ7/M00F8p+78XsEyMI+GtFt6YdkwZFWfZKsm8iPWCZfv41ZwLjOqdrlxKj1dT6N/QmNftZL9FjrXMqkQbtpBswIhc6SzxvmqxqLroHlSoQWZ5hata9cwBUYr5u2zUgCsMPk5
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:(109105607167333);BCL:0;PCL:0;RULEID:(7020095)(4652020)(8989080)(48565401081)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(8990040)(2017052603328)(49563074)(7193020);SRVR:VI1PR07MB1039;
+x-ms-traffictypediagnostic: VI1PR07MB1039:
+x-microsoft-antispam-prvs: <VI1PR07MB1039E012E1ABEDA475FF98E281810@VI1PR07MB1039.eurprd07.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(82608151540597)(85827821059158)(258649278758335)(109105607167333);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(102415395)(6040522)(2401047)(5005006)(8121501046)(3231254)(11241501184)(806099)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(6055026)(6041310)(20161123564045)(20161123558120)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:VI1PR07MB1039;BCL:0;PCL:0;RULEID:;SRVR:VI1PR07MB1039;
+x-forefront-prvs: 06592CCE58
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39860400002)(346002)(366004)(39380400002)(376002)(13464003)(189003)(199004)(478600001)(39060400002)(229853002)(102836004)(4326008)(97736004)(7696005)(33656002)(54906003)(74316002)(76176011)(3846002)(6116002)(966005)(53546011)(59450400001)(9686003)(2900100001)(6306002)(186003)(6506007)(5890100001)(6246003)(53936002)(99936001)(26005)(316002)(105586002)(5660300001)(446003)(5250100002)(6916009)(55016002)(486006)(3660700001)(86362001)(68736007)(345774005)(14454004)(106356001)(8656006)(3280700002)(7736002)(25786009)(8936002)(7416002)(11346002)(99286004)(2906002)(6436002)(66066001)(305945005)(81166006)(476003)(8676002)(81156014);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR07MB1039;H:VI1PR07MB1615.eurprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: Rkc3aAVniVqSa3fCrv4XNvK96No28ErWJmDMMSuDYU1pBlIvqFswNP/FcLHG+IZSs05Tpvvpv+yX7Wdb3zBN7bHOQRCFtAoNkYUyNDE0SQIiIlGeV4EL22UGHHb/5XBTuRrLSznFLkVsbAl04BwnQIy7q9GOTPTG1bQ7kyDm3Nx/nXUE7seWEB/hy7z/zCQXtlh+huoLdYJjSTycif1oeZme7+k9Bhdc1SW3rIBRoZ1koO/OHAj6cPTA2wViqJWo
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: multipart/mixed;
+        boundary="_002_VI1PR07MB1615A26D5E38C2568EFADE4C81810VI1PR07MB1615eurp_"
+MIME-Version: 1.0
+X-MS-Office365-Filtering-Correlation-Id: bc867eff-c6a2-4454-14bd-08d5af252411
+X-OriginatorOrg: nokia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bc867eff-c6a2-4454-14bd-08d5af252411
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 May 2018 05:33:59.5136
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 5d471751-9675-428d-917b-70f44f9630b0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR07MB1039
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add driver providing access to EEPROMs connected to RAVE SP devices
+--_002_VI1PR07MB1615A26D5E38C2568EFADE4C81810VI1PR07MB1615eurp_
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: linux-kernel@vger.kernel.org
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Aleksander Morgado <aleksander@aleksander.es>
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
----
- drivers/nvmem/Kconfig          |   6 +
- drivers/nvmem/Makefile         |   3 +
- drivers/nvmem/rave-sp-eeprom.c | 357 +++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 366 insertions(+)
- create mode 100644 drivers/nvmem/rave-sp-eeprom.c
+SGkgTWlxdcOobCwNCg0KVGhhbmsgeW91IGZvciB5b3VyIHJlc3BvbnNlIGFuZCBmZWVkYmFjay4g
+IEkndmUgbW9kaWZpZWQgdGhlIGZpeCBiYXNlZCBvbiB5b3VyIGNvbW1lbnRzLiAgDQpQbGVhc2Ug
+c2VlIHRoZSB1cGRhdGVkIHBhdGNoIGZpbGUgYXQgdGhlIGVuZCBvZiB0aGlzIG1lc3NhZ2UgKGFs
+c28gaW4gYXR0YWNobWVudCkuDQpNeSBhbnN3ZXJzIHRvIHlvdXIgY29tbWVudHMvcXVlc3Rpb25z
+IGFyZSBpbmxpbmUgaW4gdGhlIHByZXZpb3VzIG1lc3NhZ2UuDQoNClRoZSBuZXcgcGF0Y2ggaXMg
+cmViYXNlZCBvbiB0b3Agb2YgdjQuMTctcmMxLg0KDQpCZXN0IHJlZ2FyZHMsDQpKYW5lDQoNClVw
+ZGF0ZWQgcGF0Y2g6DQpGcm9tIGUxNGVkN2RjMDgyOTZhNTJmODFkMTQ3ODFkZWUyZjQ1NWRkOTBi
+YmQgTW9uIFNlcCAxNyAwMDowMDowMCAyMDAxDQpGcm9tOiBKYW5lIFdhbiA8SmFuZS5XYW5Abm9r
+aWEuY29tPg0KRGF0ZTogTW9uLCAzMCBBcHIgMjAxOCAxNDowNTo0MCAtMDcwMA0KU3ViamVjdDog
+W1BBVENIIDIvMl0gbXRkOiByYXduYW5kOiBmc2xfaWZjOiB1c2UgYml0LXdpc2UgbWFqb3JpdHkg
+dG8gcmVjb3Zlcg0KIHRoZSBjb250ZW50cyBvZiBPTkZJIHBhcmFtZXRlcg0KDQpQZXIgT05GSSBz
+cGVjaWZpY2F0aW9uIChSZXYuIDQuMCksIGlmIGFsbCBwYXJhbWV0ZXIgcGFnZXMgaGF2ZSBpbnZh
+bGlkDQpDUkMgdmFsdWVzLCB0aGUgYml0LXdpc2UgbWFqb3JpdHkgbWF5IGJlIHVzZWQgdG8gcmVj
+b3ZlciB0aGUgY29udGVudHMgb2YNCnRoZSBwYXJhbWV0ZXIgcGFnZXMgZnJvbSB0aGUgcGFyYW1l
+dGVyIHBhZ2UgY29waWVzIHByZXNlbnQuDQoNClNpZ25lZC1vZmYtYnk6IEphbmUgV2FuIDxKYW5l
+LldhbkBub2tpYS5jb20+DQotLS0NCiBkcml2ZXJzL210ZC9uYW5kL3Jhdy9uYW5kX2Jhc2UuYyB8
+ICAgMzYgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrLS0tLS0tDQogMSBmaWxlIGNoYW5n
+ZWQsIDMwIGluc2VydGlvbnMoKyksIDYgZGVsZXRpb25zKC0pDQoNCmRpZmYgLS1naXQgYS9kcml2
+ZXJzL210ZC9uYW5kL3Jhdy9uYW5kX2Jhc2UuYyBiL2RyaXZlcnMvbXRkL25hbmQvcmF3L25hbmRf
+YmFzZS5jDQppbmRleCA3MmYzYTg5Li40NjRjNGZiIDEwMDY0NA0KLS0tIGEvZHJpdmVycy9tdGQv
+bmFuZC9yYXcvbmFuZF9iYXNlLmMNCisrKyBiL2RyaXZlcnMvbXRkL25hbmQvcmF3L25hbmRfYmFz
+ZS5jDQpAQCAtNTA4Niw2ICs1MDg2LDggQEAgc3RhdGljIGludCBuYW5kX2ZsYXNoX2RldGVjdF9l
+eHRfcGFyYW1fcGFnZShzdHJ1Y3QgbmFuZF9jaGlwICpjaGlwLA0KIAlyZXR1cm4gcmV0Ow0KIH0N
+CiANCisjZGVmaW5lIEdFVF9CSVQoYml0LCB2YWwpICAgKCgodmFsKSA+PiAoYml0KSkgJiAweDAx
+KQ0KKw0KIC8qDQogICogQ2hlY2sgaWYgdGhlIE5BTkQgY2hpcCBpcyBPTkZJIGNvbXBsaWFudCwg
+cmV0dXJucyAxIGlmIGl0IGlzLCAwIG90aGVyd2lzZS4NCiAgKi8NCkBAIC01MDk0LDcgKzUwOTYs
+OCBAQCBzdGF0aWMgaW50IG5hbmRfZmxhc2hfZGV0ZWN0X29uZmkoc3RydWN0IG5hbmRfY2hpcCAq
+Y2hpcCkNCiAJc3RydWN0IG10ZF9pbmZvICptdGQgPSBuYW5kX3RvX210ZChjaGlwKTsNCiAJc3Ry
+dWN0IG5hbmRfb25maV9wYXJhbXMgKnA7DQogCWNoYXIgaWRbNF07DQotCWludCBpLCByZXQsIHZh
+bDsNCisJaW50IGksIHJldCwgdmFsLCBwYWdlc2l6ZTsNCisJdTggKmJ1ZjsNCiANCiAJLyogVHJ5
+IE9ORkkgZm9yIHVua25vd24gY2hpcCBvciBMUCAqLw0KIAlyZXQgPSBuYW5kX3JlYWRpZF9vcChj
+aGlwLCAweDIwLCBpZCwgc2l6ZW9mKGlkKSk7DQpAQCAtNTEwMiw4ICs1MTA1LDkgQEAgc3RhdGlj
+IGludCBuYW5kX2ZsYXNoX2RldGVjdF9vbmZpKHN0cnVjdCBuYW5kX2NoaXAgKmNoaXApDQogCQly
+ZXR1cm4gMDsNCiANCiAJLyogT05GSSBjaGlwOiBhbGxvY2F0ZSBhIGJ1ZmZlciB0byBob2xkIGl0
+cyBwYXJhbWV0ZXIgcGFnZSAqLw0KLQlwID0ga3phbGxvYyhzaXplb2YoKnApLCBHRlBfS0VSTkVM
+KTsNCi0JaWYgKCFwKQ0KKwlwYWdlc2l6ZSA9IHNpemVvZigqcCk7DQorCWJ1ZiA9IGt6YWxsb2Mo
+KHBhZ2VzaXplICogMyksIEdGUF9LRVJORUwpOw0KKwlpZiAoIWJ1ZikNCiAJCXJldHVybiAtRU5P
+TUVNOw0KIA0KIAlyZXQgPSBuYW5kX3JlYWRfcGFyYW1fcGFnZV9vcChjaGlwLCAwLCBOVUxMLCAw
+KTsNCkBAIC01MTEzLDcgKzUxMTcsOCBAQCBzdGF0aWMgaW50IG5hbmRfZmxhc2hfZGV0ZWN0X29u
+Zmkoc3RydWN0IG5hbmRfY2hpcCAqY2hpcCkNCiAJfQ0KIA0KIAlmb3IgKGkgPSAwOyBpIDwgMzsg
+aSsrKSB7DQotCQlyZXQgPSBuYW5kX3JlYWRfZGF0YV9vcChjaGlwLCBwLCBzaXplb2YoKnApLCB0
+cnVlKTsNCisJCXAgPSAoc3RydWN0IG5hbmRfb25maV9wYXJhbXMgKikmYnVmW2kqcGFnZXNpemVd
+Ow0KKwkJcmV0ID0gbmFuZF9yZWFkX2RhdGFfb3AoY2hpcCwgcCwgcGFnZXNpemUsIHRydWUpOw0K
+IAkJaWYgKHJldCkgew0KIAkJCXJldCA9IDA7DQogCQkJZ290byBmcmVlX29uZmlfcGFyYW1fcGFn
+ZTsNCkBAIC01MTI2LDggKzUxMzEsMjcgQEAgc3RhdGljIGludCBuYW5kX2ZsYXNoX2RldGVjdF9v
+bmZpKHN0cnVjdCBuYW5kX2NoaXAgKmNoaXApDQogCX0NCiANCiAJaWYgKGkgPT0gMykgew0KLQkJ
+cHJfZXJyKCJDb3VsZCBub3QgZmluZCB2YWxpZCBPTkZJIHBhcmFtZXRlciBwYWdlOyBhYm9ydGlu
+Z1xuIik7DQotCQlnb3RvIGZyZWVfb25maV9wYXJhbV9wYWdlOw0KKwkJaW50IGosIGssIGw7DQor
+CQl1OCB2LCBtOw0KKw0KKwkJcHJfZXJyKCJDb3VsZCBub3QgZmluZCB2YWxpZCBPTkZJIHBhcmFt
+ZXRlciBwYWdlXG4iKTsNCisJCXByX2luZm8oIlJlY292ZXIgT05GSSBwYXJhbXMgd2l0aCBiaXQt
+d2lzZSBtYWpvcml0eVxuIik7DQorCQlmb3IgKGogPSAwOyBqIDwgcGFnZXNpemU7IGorKykgew0K
+KwkJCXYgPSAwOw0KKwkJCWZvciAoayA9IDA7IGsgPCA4OyBrKyspIHsNCisJCQkJbSA9IDA7DQor
+CQkJCWZvciAobCA9IDA7IGwgPCAzOyBsKyspDQorCQkJCQltICs9IEdFVF9CSVQoaywgYnVmW2wq
+cGFnZXNpemUgKyBqXSk7DQorCQkJCWlmIChtID4gMSkNCisJCQkJCXYgfD0gQklUKGspOw0KKwkJ
+CX0NCisJCQkoKHU4ICopcClbal0gPSB2Ow0KKwkJfQ0KKwkJaWYgKG9uZmlfY3JjMTYoT05GSV9D
+UkNfQkFTRSwgKHVpbnQ4X3QgKilwLCAyNTQpICE9DQorCQkJCWxlMTZfdG9fY3B1KHAtPmNyYykp
+IHsNCisJCQlwcl9lcnIoIk9ORkkgcGFyYW1ldGVyIHJlY292ZXJ5IGZhaWxlZCwgYWJvcnRpbmdc
+biIpOw0KKwkJCWdvdG8gZnJlZV9vbmZpX3BhcmFtX3BhZ2U7DQorCQl9DQogCX0NCiANCiAJLyog
+Q2hlY2sgdmVyc2lvbiAqLw0KLS0gDQoxLjcuOS41DQoNCi0tLS0tT3JpZ2luYWwgTWVzc2FnZS0t
+LS0tDQpGcm9tOiBNaXF1ZWwgUmF5bmFsIFttYWlsdG86bWlxdWVsLnJheW5hbEBib290bGluLmNv
+bV0gDQpTZW50OiBTYXR1cmRheSwgQXByaWwgMjgsIDIwMTggNTowNyBBTQ0KVG86IFdhbiwgSmFu
+ZSAoTm9raWEgLSBVUy9TdW5ueXZhbGUpIDxqYW5lLndhbkBub2tpYS5jb20+DQpDYzogZHdtdzJA
+aW5mcmFkZWFkLm9yZzsgY29tcHV0ZXJzZm9ycGVhY2VAZ21haWwuY29tOyBCb3MsIFRpZXMgKE5v
+a2lhIC0gVVMvU3Vubnl2YWxlKSA8dGllcy5ib3NAbm9raWEuY29tPjsgbGludXgtbXRkQGxpc3Rz
+LmluZnJhZGVhZC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IEJvcmlzIEJyZXpp
+bGxvbiA8Qm9yaXMuQnJlemlsbG9uQGJvb3RsaW4uY29tPg0KU3ViamVjdDogUmU6IFtQQVRDSCAy
+LzJdIFVzZSBiaXQtd2lzZSBtYWpvcml0eSB0byByZWNvdmVyIHRoZSBjb250ZW50cyBvZiBPTkZJ
+IHBhcmFtZXRlcg0KDQpIaSBKYW5lLA0KDQpTYW1lIGNvbW1lbnRzIGFzIGJlZm9yZSwgcGxlYXNl
+OiBnZXQgdGhlIHJpZ2h0IG1haW50YWluZXJzLCBhZGQgYSBjb21taXQgbG9nLCByZWJhc2UgYW5k
+IGZpeCB0aGUgdGl0bGUgcHJlZml4Lg0KW0phbmVdICBBZGRlZC4gIFRoYW5rcy4NCg0KSGF2ZSB5
+b3UgZXZlciBuZWVkZWQvdHJpZWQgdGhpcyBhbGdvcml0aG0gYmVmb3JlPw0KW0phbmVdIFllcywg
+d2UgZ290IGEgYmF0Y2ggb2YgcGFydGljdWxhcmx5IGJhZCBOQU5EIGNoaXBzIHJlY2VudGx5IGFu
+ZCB3ZSBuZWVkZWQgdGhlc2UgY2hhbmdlcyB0byBtYWtlIHRoZW0gd29yayByZWxpYWJseSBvdmVy
+IHRlbXBlcmF0dXJlLiAgVGhlIHBhdGNoIHdhcyB2ZXJpZmllZCB1c2luZyB0aGVzZSBiYWQgY2hp
+cHMuDQoNCk9uIFRodSwgMjYgQXByIDIwMTggMTc6MTk6NTYgLTA3MDAsIEphbmUgV2FuIDxKYW5l
+LldhbkBub2tpYS5jb20+IHdyb3RlOg0KDQo+IFNpZ25lZC1vZmYtYnk6IEphbmUgV2FuIDxKYW5l
+LldhbkBub2tpYS5jb20+DQo+IC0tLQ0KPiAgZHJpdmVycy9tdGQvbmFuZC9uYW5kX2Jhc2UuYyB8
+ICAgMzUgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0tLS0NCj4gIDEgZmlsZSBjaGFu
+Z2VkLCAzMSBpbnNlcnRpb25zKCspLCA0IGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBh
+L2RyaXZlcnMvbXRkL25hbmQvbmFuZF9iYXNlLmMgDQo+IGIvZHJpdmVycy9tdGQvbmFuZC9uYW5k
+X2Jhc2UuYyBpbmRleCBjMmUxMjMyLi4xNjFiNTIzIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL210
+ZC9uYW5kL25hbmRfYmFzZS5jDQo+ICsrKyBiL2RyaXZlcnMvbXRkL25hbmQvbmFuZF9iYXNlLmMN
+Cj4gQEAgLTMxNTMsOCArMzE1MywxMCBAQCBzdGF0aWMgaW50IG5hbmRfZmxhc2hfZGV0ZWN0X29u
+Zmkoc3RydWN0IG10ZF9pbmZvICptdGQsIHN0cnVjdCBuYW5kX2NoaXAgKmNoaXAsDQo+ICAJCQkJ
+CWludCAqYnVzdykNCj4gIHsNCj4gIAlzdHJ1Y3QgbmFuZF9vbmZpX3BhcmFtcyAqcCA9ICZjaGlw
+LT5vbmZpX3BhcmFtczsNCj4gLQlpbnQgaSwgajsNCj4gLQlpbnQgdmFsOw0KPiArCWludCBpLCBq
+LCBrLCBsZW4sIHZhbDsNCj4gKwl1aW50OF90IGNvcHlbM11bMjU2XSwgdjg7DQoNClBsZWFzZSB1
+c2UgdTggaW5zdGVhZCBvZiB1aW50OF90ICguL3NjcmlwdHMvY2hlY2twYXRjaC5wbCAtLXN0cmlj
+dCB3aWxsIGdpdmUgeW91IHRoZSBsaXN0IG9mIHN0eWxpbmcgaXNzdWVzIHRvIGZpeC4NCltKYW5l
+XSBDaGFuZ2VkLg0KDQpJIGRvbid0IHRoaW5rIHlvdSBzaG91bGQgYWxsb2NhdGUgdGhhdCBtdWNo
+IHNwYWNlIG9uIHRoZSBzdGFjaywgcGxlYXNlIHVzZSBkeW5hbWljIGFsbG9jYXRpb24uDQpbSmFu
+ZV0gUGxlYXNlIHNlZSBuZXcgcGF0Y2ggZmlsZS4NCg0KPiArDQo+ICsJbGVuID0gKHNpemVvZigq
+cCkgPiAyNTYpID8gMjU2IDogc2l6ZW9mKCpwKTsNCg0KVGhpcyBpcyBhIG1heGltdW0gZGVyaXZh
+dGlvbiwgdGhlcmUgYXJlIGhlbHBlcnMgZm9yIHRoYXQuDQpbSmFuZV0gTm90IG5lZWRlZCBhZnRl
+ciBjaGFuZ2luZyB0byBkeW5hbWljIGFsbG9jYXRpb24uDQoNCkkgYW0gbm90IHN1cmUgdGhpcyBp
+cyByZWxldmFudCwgd29uJ3QgeW91IHJlYWQgb25seSAyNTYgYnl0ZXMgYW55d2F5Pw0KW0phbmVd
+IEkgbW9kaWZpZWQgdGhlIGNvZGUgdG8gYWxsb2NhdGUgYSBidWZmZXIgdG8gc3RvcmUgYWxsIDMg
+cGFnZXMuICBJZiBpbiBjYXNlIGFsbCAzIHBhZ2VzIGZhaWxlZCwgdXNlIHRoZSBkYXRhIHN0b3Jl
+ZA0KSW4gdGhlIGJ1ZmZlciB0byByZWNvdmVyIHRoZSBjb250ZW50IHRocm91Z2ggYml0LXdpc2Ug
+bWFqb3JpdHkuDQoNCj4gIA0KPiAgCS8qIFRyeSBPTkZJIGZvciB1bmtub3duIGNoaXAgb3IgTFAg
+Ki8NCj4gIAljaGlwLT5jbWRmdW5jKG10ZCwgTkFORF9DTURfUkVBRElELCAweDIwLCAtMSk7IEBA
+IC0zMTcwLDExICszMTcyLDM2IA0KPiBAQCBzdGF0aWMgaW50IG5hbmRfZmxhc2hfZGV0ZWN0X29u
+Zmkoc3RydWN0IG10ZF9pbmZvICptdGQsIHN0cnVjdCBuYW5kX2NoaXAgKmNoaXAsDQo+ICAJCQkJ
+bGUxNl90b19jcHUocC0+Y3JjKSkgew0KPiAgCQkJYnJlYWs7DQo+ICAJCX0NCg0KU3BhY2UuDQpb
+SmFuZV0gY2hlY2tlZCB0aGUgcGF0Y2ggdGhyb3VnaCBjaGVja3BhdGNoLnBsLg0KDQo+ICsJCXBy
+X2VycigiQ1JDIG9mIHBhcmFtZXRlciBwYWdlICVkIGlzIG5vdCB2YWxpZFxuIiwgaSk7DQo+ICsJ
+CWZvciAoaiA9IDA7IGogPCBsZW47IGorKykNCj4gKwkJCWNvcHlbaV1bal0gPSAoKHVpbnQ4X3Qg
+KilwKVtqXTsNCg0KJ2NvcHknIGlzIG1heWJlIG5vdCBhIG1lYW5pbmdmdWwgbmFtZS4NCltKYW5l
+XSAnY29weScgaXMgcmVtb3ZlZC4gIFBsZWFzZSBzZWUgbmV3IHBhdGNoIGZpbGUuDQoNCj4gIAl9
+DQo+ICANCj4gIAlpZiAoaSA9PSAzKSB7DQo+IC0JCXByX2VycigiQ291bGQgbm90IGZpbmQgdmFs
+aWQgT05GSSBwYXJhbWV0ZXIgcGFnZTsgYWJvcnRpbmdcbiIpOw0KPiAtCQlyZXR1cm4gMDsNCj4g
+KwkJcHJfZXJyKCJDb3VsZCBub3QgZmluZCB2YWxpZCBPTkZJIHBhcmFtZXRlciBwYWdlXG4iKTsN
+Cj4gKwkJcHJfaW5mbygiUmVjb3ZlciBPTkZJIHBhcmFtZXRlcnMgd2l0aCBiaXQtd2lzZSBtYWpv
+cml0eVxuIik7DQo+ICsJCWZvciAoaiA9IDA7IGogPCBsZW47IGorKykgew0KPiArCQkJaWYgKGNv
+cHlbMF1bal0gPT0gY29weVsxXVtqXSB8fA0KPiArCQkJICAgIGNvcHlbMF1bal0gPT0gY29weVsy
+XVtqXSkgew0KPiArCQkJCSgodWludDhfdCAqKXApW2pdID0gY29weVswXVtqXTsNCj4gKwkJCX0g
+ZWxzZSBpZiAoY29weVsxXVtqXSA9PSBjb3B5WzJdW2pdKSB7DQo+ICsJCQkJKCh1aW50OF90ICop
+cClbal0gPSBjb3B5WzFdW2pdOw0KPiArCQkJfSBlbHNlIHsNCj4gKwkJCQkoKHVpbnQ4X3QgKilw
+KVtqXSA9IDA7DQo+ICsJCQkJZm9yIChrID0gMDsgayA8IDg7IGsrKykgew0KPiArCQkJCQl2OCA9
+IChjb3B5WzBdW2pdID4+IGspICYgMHgxOw0KDQp2OCBjb3VsZCBiZSBkZWNsYXJlZCBpbiB0aGUg
+ZWxzZSBzdGF0ZW1lbnQgb2YgaW4gdGhlIGZvciBsb29wLg0KVGhlIG5hbWUgY291bGQgYWxzbyBi
+ZSBjaGFuZ2VkLg0KW0phbmVdIENoYW5nZWQuICBQbGVhc2Ugc2VlIHRoZSBuZXcgcGF0Y2ggZmls
+ZS4NCg0KPiArCQkJCQl2OCArPSAoY29weVsxXVtqXSA+PiBrKSAmIDB4MTsNCj4gKwkJCQkJdjgg
+Kz0gKGNvcHlbMl1bal0gPj4gaykgJiAweDE7DQo+ICsJCQkJCWlmICh2OCA+IDEpDQo+ICsJCQkJ
+CQkoKHVpbnQ4X3QgKilwKVtqXSB8PSAoMSA8PCBrKTsNCg0KUGxlYXNlIHVzZSB0aGUgQklUKCkg
+bWFjcm8uDQpbSmFuZV0gQ2hhbmdlZC4gIFBsZWFzZSBzZWUgdGhlIG5ldyBwYXRjaCBmaWxlLg0K
+DQo+ICsJCQkJfQ0KPiArCQkJfQ0KPiArCQl9DQoNClNwYWNlLg0KW0phbmVdIGNoZWNrZWQgdGhl
+IHBhdGNoIHRocm91Z2ggY2hlY2twYXRjaC5wbC4NCg0KPiArCQlpZiAob25maV9jcmMxNihPTkZJ
+X0NSQ19CQVNFLCAodWludDhfdCAqKXAsIDI1NCkgIT0NCj4gKwkJICAgIGxlMTZfdG9fY3B1KHAt
+PmNyYykpIHsNCj4gKwkJCXByX2VycigiT05GSSBwYXJhbWV0ZXIgcmVjb3ZlcnkgZmFpbGVkLCBh
+Ym9ydGluZ1xuIik7DQo+ICsJCQlyZXR1cm4gMDsNCj4gKwkJfQ0KPiAgCX0NCj4gIA0KPiAgCS8q
+IENoZWNrIHZlcnNpb24gKi8NCg0KVGhhbmtzLA0KTWlxdcOobA0KDQotLQ0KTWlxdWVsIFJheW5h
+bCwgQm9vdGxpbiAoZm9ybWVybHkgRnJlZSBFbGVjdHJvbnMpIEVtYmVkZGVkIExpbnV4IGFuZCBL
+ZXJuZWwgZW5naW5lZXJpbmcgaHR0cHM6Ly9ib290bGluLmNvbQ0K
 
-diff --git a/drivers/nvmem/Kconfig b/drivers/nvmem/Kconfig
-index 1090924efdb1..54a3c298247b 100644
---- a/drivers/nvmem/Kconfig
-+++ b/drivers/nvmem/Kconfig
-@@ -175,4 +175,10 @@ config NVMEM_SNVS_LPGPR
- 	  This driver can also be built as a module. If so, the module
- 	  will be called nvmem-snvs-lpgpr.
- 
-+config RAVE_SP_EEPROM
-+	tristate "Rave SP EEPROM Support"
-+	depends on RAVE_SP_CORE
-+	help
-+	  Say y here to enable Rave SP EEPROM support.
-+
- endif
-diff --git a/drivers/nvmem/Makefile b/drivers/nvmem/Makefile
-index e54dcfa6565a..27e96a8efd1c 100644
---- a/drivers/nvmem/Makefile
-+++ b/drivers/nvmem/Makefile
-@@ -37,3 +37,6 @@ obj-$(CONFIG_MESON_MX_EFUSE)	+= nvmem_meson_mx_efuse.o
- nvmem_meson_mx_efuse-y		:= meson-mx-efuse.o
- obj-$(CONFIG_NVMEM_SNVS_LPGPR)	+= nvmem_snvs_lpgpr.o
- nvmem_snvs_lpgpr-y		:= snvs_lpgpr.o
-+obj-$(CONFIG_RAVE_SP_EEPROM)	+= nvmem-rave-sp-eeprom.o
-+nvmem-rave-sp-eeprom-y		:= rave-sp-eeprom.o
-+
-diff --git a/drivers/nvmem/rave-sp-eeprom.c b/drivers/nvmem/rave-sp-eeprom.c
-new file mode 100644
-index 000000000000..50aeea6ec6cc
---- /dev/null
-+++ b/drivers/nvmem/rave-sp-eeprom.c
-@@ -0,0 +1,357 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+
-+/*
-+ * EEPROM driver for RAVE SP
-+ *
-+ * Copyright (C) 2018 Zodiac Inflight Innovations
-+ *
-+ */
-+#include <linux/kernel.h>
-+#include <linux/mfd/rave-sp.h>
-+#include <linux/module.h>
-+#include <linux/nvmem-provider.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+#include <linux/sizes.h>
-+
-+/**
-+ * enum rave_sp_eeprom_access_type - Supported types of EEPROM access
-+ *
-+ * @RAVE_SP_EEPROM_WRITE:	EEPROM write
-+ * @RAVE_SP_EEPROM_READ:	EEPROM read
-+ */
-+enum rave_sp_eeprom_access_type {
-+	RAVE_SP_EEPROM_WRITE = 0,
-+	RAVE_SP_EEPROM_READ  = 1,
-+};
-+
-+/**
-+ * enum rave_sp_eeprom_header_size - EEPROM command header sizes
-+ *
-+ * @RAVE_SP_EEPROM_HEADER_SMALL: EEPROM header size for "small" devices (< 8K)
-+ * @RAVE_SP_EEPROM_HEADER_BIG:	 EEPROM header size for "big" devices (> 8K)
-+ */
-+enum rave_sp_eeprom_header_size {
-+	RAVE_SP_EEPROM_HEADER_SMALL = 4U,
-+	RAVE_SP_EEPROM_HEADER_BIG   = 5U,
-+};
-+
-+#define	RAVE_SP_EEPROM_PAGE_SIZE	32U
-+
-+/**
-+ * struct rave_sp_eeprom_page - RAVE SP EEPROM page
-+ *
-+ * @type:	Access type (see enum rave_sp_eeprom_access_type)
-+ * @success:	Success flag (Success = 1, Failure = 0)
-+ * @data:	Read data
-+
-+ * Note this structure corresponds to RSP_*_EEPROM payload from RAVE
-+ * SP ICD
-+ */
-+struct rave_sp_eeprom_page {
-+	u8  type;
-+	u8  success;
-+	u8  data[RAVE_SP_EEPROM_PAGE_SIZE];
-+} __packed;
-+
-+/**
-+ * struct rave_sp_eeprom - RAVE SP EEPROM device
-+ *
-+ * @sp:			Pointer to parent RAVE SP device
-+ * @mutex:		Lock protecting access to EEPROM
-+ * @address:		EEPROM device address
-+ * @header_size:	Size of EEPROM command header for this device
-+ * @dev:		Pointer to corresponding struct device used for logging
-+ */
-+struct rave_sp_eeprom {
-+	struct rave_sp *sp;
-+	struct mutex mutex;
-+	u8 address;
-+	unsigned int header_size;
-+	struct device *dev;
-+};
-+
-+/**
-+ * rave_sp_eeprom_io - Low-level part of EEPROM page access
-+ *
-+ * @eeprom:	EEPROM device to write to
-+ * @type:	EEPROM access type (read or write)
-+ * @idx:	number of the EEPROM page
-+ * @page:	Data to write or buffer to store result (via page->data)
-+ *
-+ * This function does all of the low-level work required to perform a
-+ * EEPROM access. This includes formatting correct command payload,
-+ * sending it and checking received results.
-+ *
-+ * Returns zero in case of success or negative error code in
-+ * case of failure.
-+ */
-+static int rave_sp_eeprom_io(struct rave_sp_eeprom *eeprom,
-+			     enum rave_sp_eeprom_access_type type,
-+			     u16 idx,
-+			     struct rave_sp_eeprom_page *page)
-+{
-+	const bool is_write = type == RAVE_SP_EEPROM_WRITE;
-+	const unsigned int data_size = is_write ? sizeof(page->data) : 0;
-+	const unsigned int cmd_size = eeprom->header_size + data_size;
-+	const unsigned int rsp_size =
-+		is_write ? sizeof(*page) - sizeof(page->data) : sizeof(*page);
-+	unsigned int offset = 0;
-+	u8 cmd[cmd_size];
-+	int ret;
-+
-+	cmd[offset++] = eeprom->address;
-+	cmd[offset++] = 0;
-+	cmd[offset++] = type;
-+	cmd[offset++] = idx;
-+
-+	/*
-+	 * If there's still room in this command's header it means we
-+	 * are talkin to EEPROM that uses 16-bit page numbers and we
-+	 * have to specify index's MSB in payload as well.
-+	 */
-+	if (offset < eeprom->header_size)
-+		cmd[offset++] = idx >> 8;
-+	/*
-+	 * Copy our data to write to command buffer first. In case of
-+	 * a read data_size should be zero and memcpy would become a
-+	 * no-op
-+	 */
-+	memcpy(&cmd[offset], page->data, data_size);
-+
-+	ret = rave_sp_exec(eeprom->sp, cmd, cmd_size, page, rsp_size);
-+	if (ret)
-+		return ret;
-+
-+	if (page->type != type)
-+		return -EPROTO;
-+
-+	if (!page->success)
-+		return -EIO;
-+
-+	return 0;
-+}
-+
-+/**
-+ * rave_sp_eeprom_page_access - Access single EEPROM page
-+ *
-+ * @eeprom:	EEPROM device to access
-+ * @type:	Access type to perform (read or write)
-+ * @offset:	Offset within EEPROM to access
-+ * @data:	Data buffer
-+ * @data_len:	Size of the data buffer
-+ *
-+ * This function performs a generic access to a single page or a
-+ * portion thereof. Requested access MUST NOT cross the EEPROM page
-+ * boundary.
-+ *
-+ * Returns zero in case of success or negative error code in
-+ * case of failure.
-+ */
-+static int
-+rave_sp_eeprom_page_access(struct rave_sp_eeprom *eeprom,
-+			   enum rave_sp_eeprom_access_type type,
-+			   unsigned int offset, u8 *data,
-+			   size_t data_len)
-+{
-+	const unsigned int page_offset = offset % RAVE_SP_EEPROM_PAGE_SIZE;
-+	const unsigned int page_nr     = offset / RAVE_SP_EEPROM_PAGE_SIZE;
-+	struct rave_sp_eeprom_page page;
-+	int ret;
-+
-+	/*
-+	 * This function will not work if data access we've been asked
-+	 * to do is crossing EEPROM page boundary. Normally this
-+	 * should never happen and getting here would indicate a bug
-+	 * in the code.
-+	 */
-+	if (WARN_ON(data_len > sizeof(page.data) - page_offset))
-+		return -EINVAL;
-+
-+	if (type == RAVE_SP_EEPROM_WRITE) {
-+		/*
-+		 * If doing a partial write we need to do a read first
-+		 * to fill the rest of the page with correct data.
-+		 */
-+		if (data_len < RAVE_SP_EEPROM_PAGE_SIZE) {
-+			ret = rave_sp_eeprom_io(eeprom, RAVE_SP_EEPROM_READ,
-+						page_nr, &page);
-+			if (ret)
-+				return ret;
-+		}
-+
-+		memcpy(&page.data[page_offset], data, data_len);
-+	}
-+
-+	ret = rave_sp_eeprom_io(eeprom, type, page_nr, &page);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * Since we receive the result of the read via 'page.data'
-+	 * buffer we need to copy that to 'data'
-+	 */
-+	if (type == RAVE_SP_EEPROM_READ)
-+		memcpy(data, &page.data[page_offset], data_len);
-+
-+	return 0;
-+}
-+
-+/**
-+ * rave_sp_eeprom_access - Access EEPROM data
-+ *
-+ * @eeprom:	EEPROM device to access
-+ * @type:	Access type to perform (read or write)
-+ * @offset:	Offset within EEPROM to access
-+ * @data:	Data buffer
-+ * @data_len:	Size of the data buffer
-+ *
-+ * This function performs a generic access (either read or write) at
-+ * arbitrary offset (not necessary page aligned) of arbitrary length
-+ * (is not constrained by EEPROM page size).
-+ *
-+ * Returns zero in case of success or negative error code in case of
-+ * failure.
-+ */
-+static int rave_sp_eeprom_access(struct rave_sp_eeprom *eeprom,
-+				 enum rave_sp_eeprom_access_type type,
-+				 unsigned int offset, u8 *data,
-+				 unsigned int data_len)
-+{
-+	unsigned int residue;
-+	unsigned int chunk;
-+	unsigned int head;
-+	int ret;
-+
-+	mutex_lock(&eeprom->mutex);
-+
-+	head    = offset % RAVE_SP_EEPROM_PAGE_SIZE;
-+	residue = data_len;
-+
-+	do {
-+		/*
-+		 * First iteration, if we are doing an access that is
-+		 * not 32-byte aligned, we need to access only data up
-+		 * to a page boundary to avoid corssing it in
-+		 * rave_sp_eeprom_page_access()
-+		 */
-+		if (unlikely(head)) {
-+			chunk = RAVE_SP_EEPROM_PAGE_SIZE - head;
-+			/*
-+			 * This can only happen once per
-+			 * rave_sp_eeprom_access() call, so we set
-+			 * head to zero to process all the other
-+			 * iterations normally.
-+			 */
-+			head  = 0;
-+		} else {
-+			chunk = RAVE_SP_EEPROM_PAGE_SIZE;
-+		}
-+
-+		/*
-+		 * We should never read more that 'residue' bytes
-+		 */
-+		chunk = min(chunk, residue);
-+		ret = rave_sp_eeprom_page_access(eeprom, type, offset,
-+						 data, chunk);
-+		if (ret)
-+			goto out;
-+
-+		residue -= chunk;
-+		offset  += chunk;
-+		data    += chunk;
-+	} while (residue);
-+out:
-+	mutex_unlock(&eeprom->mutex);
-+	return ret;
-+}
-+
-+static int rave_sp_eeprom_reg_read(void *eeprom, unsigned int offset,
-+				   void *val, size_t bytes)
-+{
-+	return rave_sp_eeprom_access(eeprom, RAVE_SP_EEPROM_READ,
-+				     offset, val, bytes);
-+}
-+
-+static int rave_sp_eeprom_reg_write(void *eeprom, unsigned int offset,
-+				    void *val, size_t bytes)
-+{
-+	return rave_sp_eeprom_access(eeprom, RAVE_SP_EEPROM_WRITE,
-+				     offset, val, bytes);
-+}
-+
-+static int rave_sp_eeprom_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct rave_sp *sp = dev_get_drvdata(dev->parent);
-+	struct device_node *np = dev->of_node;
-+	struct nvmem_config config = { 0 };
-+	struct rave_sp_eeprom *eeprom;
-+	struct nvmem_device *nvmem;
-+	u32 reg[2], size;
-+
-+	if (of_property_read_u32_array(np, "reg", reg, ARRAY_SIZE(reg))) {
-+		dev_err(dev, "Failed to parse \"reg\" property\n");
-+		return -EINVAL;
-+	}
-+
-+	size = reg[1];
-+	/*
-+	 * Per ICD, we have no more than 2 bytes to specify EEPROM
-+	 * page.
-+	 */
-+	if (size > U16_MAX * RAVE_SP_EEPROM_PAGE_SIZE) {
-+		dev_err(dev, "Specified size is too big\n");
-+		return -EINVAL;
-+	}
-+
-+	eeprom = devm_kzalloc(dev, sizeof(*eeprom), GFP_KERNEL);
-+	if (!eeprom)
-+		return -ENOMEM;
-+
-+	eeprom->address = reg[0];
-+	eeprom->sp      = sp;
-+	eeprom->dev     = dev;
-+
-+	if (size > SZ_8K)
-+		eeprom->header_size = RAVE_SP_EEPROM_HEADER_BIG;
-+	else
-+		eeprom->header_size = RAVE_SP_EEPROM_HEADER_SMALL;
-+
-+	mutex_init(&eeprom->mutex);
-+
-+	config.id		= -1;
-+	of_property_read_string(np, "zii,eeprom-name", &config.name);
-+	config.priv		= eeprom;
-+	config.dev		= dev;
-+	config.size		= size;
-+	config.reg_read		= rave_sp_eeprom_reg_read;
-+	config.reg_write	= rave_sp_eeprom_reg_write;
-+	config.word_size	= 1;
-+	config.stride		= 1;
-+
-+	nvmem = devm_nvmem_register(dev, &config);
-+
-+	return PTR_ERR_OR_ZERO(nvmem);
-+}
-+
-+static const struct of_device_id rave_sp_eeprom_of_match[] = {
-+	{ .compatible = "zii,rave-sp-eeprom" },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, rave_sp_eeprom_of_match);
-+
-+static struct platform_driver rave_sp_eeprom_driver = {
-+	.probe = rave_sp_eeprom_probe,
-+	.driver	= {
-+		.name = KBUILD_MODNAME,
-+		.of_match_table = rave_sp_eeprom_of_match,
-+	},
-+};
-+module_platform_driver(rave_sp_eeprom_driver);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Andrey Vostrikov <andrey.vostrikov@cogentembedded.com>");
-+MODULE_AUTHOR("Nikita Yushchenko <nikita.yoush@cogentembedded.com>");
-+MODULE_AUTHOR("Andrey Smirnov <andrew.smirnov@gmail.com>");
-+MODULE_DESCRIPTION("RAVE SP EEPROM driver");
--- 
-2.14.3
+--_002_VI1PR07MB1615A26D5E38C2568EFADE4C81810VI1PR07MB1615eurp_
+Content-Type: application/octet-stream;
+	name="0002-mtd-rawnand-fsl_ifc-use-bit-wise-majority-to-recover.patch"
+Content-Description: 0002-mtd-rawnand-fsl_ifc-use-bit-wise-majority-to-recover.patch
+Content-Disposition: attachment;
+	filename="0002-mtd-rawnand-fsl_ifc-use-bit-wise-majority-to-recover.patch";
+	size=2891; creation-date="Tue, 01 May 2018 05:06:45 GMT";
+	modification-date="Tue, 01 May 2018 04:37:57 GMT"
+Content-Transfer-Encoding: base64
+
+RnJvbSBlMTRlZDdkYzA4Mjk2YTUyZjgxZDE0NzgxZGVlMmY0NTVkZDkwYmJkIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBKYW5lIFdhbiA8SmFuZS5XYW5Abm9raWEuY29tPgpEYXRlOiBN
+b24sIDMwIEFwciAyMDE4IDE0OjA1OjQwIC0wNzAwClN1YmplY3Q6IFtQQVRDSCAyLzJdIG10ZDog
+cmF3bmFuZDogZnNsX2lmYzogdXNlIGJpdC13aXNlIG1ham9yaXR5IHRvIHJlY292ZXIKIHRoZSBj
+b250ZW50cyBvZiBPTkZJIHBhcmFtZXRlcgoKUGVyIE9ORkkgc3BlY2lmaWNhdGlvbiAoUmV2LiA0
+LjApLCBpZiBhbGwgcGFyYW1ldGVyIHBhZ2VzIGhhdmUgaW52YWxpZApDUkMgdmFsdWVzLCB0aGUg
+Yml0LXdpc2UgbWFqb3JpdHkgbWF5IGJlIHVzZWQgdG8gcmVjb3ZlciB0aGUgY29udGVudHMgb2YK
+dGhlIHBhcmFtZXRlciBwYWdlcyBmcm9tIHRoZSBwYXJhbWV0ZXIgcGFnZSBjb3BpZXMgcHJlc2Vu
+dC4KClNpZ25lZC1vZmYtYnk6IEphbmUgV2FuIDxKYW5lLldhbkBub2tpYS5jb20+Ci0tLQogZHJp
+dmVycy9tdGQvbmFuZC9yYXcvbmFuZF9iYXNlLmMgfCAgIDM2ICsrKysrKysrKysrKysrKysrKysr
+KysrKysrKysrKy0tLS0tLQogMSBmaWxlIGNoYW5nZWQsIDMwIGluc2VydGlvbnMoKyksIDYgZGVs
+ZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9tdGQvbmFuZC9yYXcvbmFuZF9iYXNlLmMg
+Yi9kcml2ZXJzL210ZC9uYW5kL3Jhdy9uYW5kX2Jhc2UuYwppbmRleCA3MmYzYTg5Li40NjRjNGZi
+IDEwMDY0NAotLS0gYS9kcml2ZXJzL210ZC9uYW5kL3Jhdy9uYW5kX2Jhc2UuYworKysgYi9kcml2
+ZXJzL210ZC9uYW5kL3Jhdy9uYW5kX2Jhc2UuYwpAQCAtNTA4Niw2ICs1MDg2LDggQEAgc3RhdGlj
+IGludCBuYW5kX2ZsYXNoX2RldGVjdF9leHRfcGFyYW1fcGFnZShzdHJ1Y3QgbmFuZF9jaGlwICpj
+aGlwLAogCXJldHVybiByZXQ7CiB9CiAKKyNkZWZpbmUgR0VUX0JJVChiaXQsIHZhbCkgICAoKCh2
+YWwpID4+IChiaXQpKSAmIDB4MDEpCisKIC8qCiAgKiBDaGVjayBpZiB0aGUgTkFORCBjaGlwIGlz
+IE9ORkkgY29tcGxpYW50LCByZXR1cm5zIDEgaWYgaXQgaXMsIDAgb3RoZXJ3aXNlLgogICovCkBA
+IC01MDk0LDcgKzUwOTYsOCBAQCBzdGF0aWMgaW50IG5hbmRfZmxhc2hfZGV0ZWN0X29uZmkoc3Ry
+dWN0IG5hbmRfY2hpcCAqY2hpcCkKIAlzdHJ1Y3QgbXRkX2luZm8gKm10ZCA9IG5hbmRfdG9fbXRk
+KGNoaXApOwogCXN0cnVjdCBuYW5kX29uZmlfcGFyYW1zICpwOwogCWNoYXIgaWRbNF07Ci0JaW50
+IGksIHJldCwgdmFsOworCWludCBpLCByZXQsIHZhbCwgcGFnZXNpemU7CisJdTggKmJ1ZjsKIAog
+CS8qIFRyeSBPTkZJIGZvciB1bmtub3duIGNoaXAgb3IgTFAgKi8KIAlyZXQgPSBuYW5kX3JlYWRp
+ZF9vcChjaGlwLCAweDIwLCBpZCwgc2l6ZW9mKGlkKSk7CkBAIC01MTAyLDggKzUxMDUsOSBAQCBz
+dGF0aWMgaW50IG5hbmRfZmxhc2hfZGV0ZWN0X29uZmkoc3RydWN0IG5hbmRfY2hpcCAqY2hpcCkK
+IAkJcmV0dXJuIDA7CiAKIAkvKiBPTkZJIGNoaXA6IGFsbG9jYXRlIGEgYnVmZmVyIHRvIGhvbGQg
+aXRzIHBhcmFtZXRlciBwYWdlICovCi0JcCA9IGt6YWxsb2Moc2l6ZW9mKCpwKSwgR0ZQX0tFUk5F
+TCk7Ci0JaWYgKCFwKQorCXBhZ2VzaXplID0gc2l6ZW9mKCpwKTsKKwlidWYgPSBremFsbG9jKChw
+YWdlc2l6ZSAqIDMpLCBHRlBfS0VSTkVMKTsKKwlpZiAoIWJ1ZikKIAkJcmV0dXJuIC1FTk9NRU07
+CiAKIAlyZXQgPSBuYW5kX3JlYWRfcGFyYW1fcGFnZV9vcChjaGlwLCAwLCBOVUxMLCAwKTsKQEAg
+LTUxMTMsNyArNTExNyw4IEBAIHN0YXRpYyBpbnQgbmFuZF9mbGFzaF9kZXRlY3Rfb25maShzdHJ1
+Y3QgbmFuZF9jaGlwICpjaGlwKQogCX0KIAogCWZvciAoaSA9IDA7IGkgPCAzOyBpKyspIHsKLQkJ
+cmV0ID0gbmFuZF9yZWFkX2RhdGFfb3AoY2hpcCwgcCwgc2l6ZW9mKCpwKSwgdHJ1ZSk7CisJCXAg
+PSAoc3RydWN0IG5hbmRfb25maV9wYXJhbXMgKikmYnVmW2kqcGFnZXNpemVdOworCQlyZXQgPSBu
+YW5kX3JlYWRfZGF0YV9vcChjaGlwLCBwLCBwYWdlc2l6ZSwgdHJ1ZSk7CiAJCWlmIChyZXQpIHsK
+IAkJCXJldCA9IDA7CiAJCQlnb3RvIGZyZWVfb25maV9wYXJhbV9wYWdlOwpAQCAtNTEyNiw4ICs1
+MTMxLDI3IEBAIHN0YXRpYyBpbnQgbmFuZF9mbGFzaF9kZXRlY3Rfb25maShzdHJ1Y3QgbmFuZF9j
+aGlwICpjaGlwKQogCX0KIAogCWlmIChpID09IDMpIHsKLQkJcHJfZXJyKCJDb3VsZCBub3QgZmlu
+ZCB2YWxpZCBPTkZJIHBhcmFtZXRlciBwYWdlOyBhYm9ydGluZ1xuIik7Ci0JCWdvdG8gZnJlZV9v
+bmZpX3BhcmFtX3BhZ2U7CisJCWludCBqLCBrLCBsOworCQl1OCB2LCBtOworCisJCXByX2Vycigi
+Q291bGQgbm90IGZpbmQgdmFsaWQgT05GSSBwYXJhbWV0ZXIgcGFnZVxuIik7CisJCXByX2luZm8o
+IlJlY292ZXIgT05GSSBwYXJhbXMgd2l0aCBiaXQtd2lzZSBtYWpvcml0eVxuIik7CisJCWZvciAo
+aiA9IDA7IGogPCBwYWdlc2l6ZTsgaisrKSB7CisJCQl2ID0gMDsKKwkJCWZvciAoayA9IDA7IGsg
+PCA4OyBrKyspIHsKKwkJCQltID0gMDsKKwkJCQlmb3IgKGwgPSAwOyBsIDwgMzsgbCsrKQorCQkJ
+CQltICs9IEdFVF9CSVQoaywgYnVmW2wqcGFnZXNpemUgKyBqXSk7CisJCQkJaWYgKG0gPiAxKQor
+CQkJCQl2IHw9IEJJVChrKTsKKwkJCX0KKwkJCSgodTggKilwKVtqXSA9IHY7CisJCX0KKwkJaWYg
+KG9uZmlfY3JjMTYoT05GSV9DUkNfQkFTRSwgKHVpbnQ4X3QgKilwLCAyNTQpICE9CisJCQkJbGUx
+Nl90b19jcHUocC0+Y3JjKSkgeworCQkJcHJfZXJyKCJPTkZJIHBhcmFtZXRlciByZWNvdmVyeSBm
+YWlsZWQsIGFib3J0aW5nXG4iKTsKKwkJCWdvdG8gZnJlZV9vbmZpX3BhcmFtX3BhZ2U7CisJCX0K
+IAl9CiAKIAkvKiBDaGVjayB2ZXJzaW9uICovCi0tIAoxLjcuOS41Cgo=
+
+--_002_VI1PR07MB1615A26D5E38C2568EFADE4C81810VI1PR07MB1615eurp_--
