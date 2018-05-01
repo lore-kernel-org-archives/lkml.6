@@ -1,79 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755933AbeEAQBd (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 12:01:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52426 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753789AbeEAQBb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 12:01:31 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22E6423690
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=djwong@kernel.org
-Date: Tue, 1 May 2018 09:01:30 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Eric Sandeen <sandeen@sandeen.net>
-Subject: [GIT PULL] xfs: fixes for 4.17-rc4
-Message-ID: <20180501160130.GD4127@magnolia>
+        id S1755771AbeEAQHC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 12:07:02 -0400
+Received: from mail-io0-f176.google.com ([209.85.223.176]:45678 "EHLO
+        mail-io0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751071AbeEAQG7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 12:06:59 -0400
+X-Google-Smtp-Source: AB8JxZrId8ddkAYPs+9e25GOsNQHGamtSg/7aLjGQyOnklHCcaOlkXCez/oOLcycAFE6rCAEufEofocYNa04s5yRzEk=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <94eb2c05b2d83650030568cc8bd9@google.com> <e56c1600-8923-dd6b-d065-c2fd2a720404@I-love.SAKURA.ne.jp>
+ <43302799-1c50-4cab-b974-9fe1ca584813@I-love.SAKURA.ne.jp>
+In-Reply-To: <43302799-1c50-4cab-b974-9fe1ca584813@I-love.SAKURA.ne.jp>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 01 May 2018 16:06:48 +0000
+Message-ID: <CA+55aFxaa_+uZ=bOVdevcUwG7ncue7O+i06q4Kb=bWACGwCBjQ@mail.gmail.com>
+Subject: Re: INFO: task hung in wb_shutdown (2)
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
+        Tejun Heo <tj@kernel.org>,
+        syzbot+c0cf869505e03bdf1a24@syzkaller.appspotmail.com,
+        christophe.jaillet@wanadoo.fr,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>, syzkaller-bugs@googlegroups.com,
+        zhangweiping@didichuxing.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        linux-block <linux-block@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Tue, May 1, 2018 at 3:27 AM Tetsuo Handa <
+penguin-kernel@i-love.sakura.ne.jp> wrote:
 
-Here are a few more bug fixes for xfs for 4.17-rc4.  Most of them are
-fixes for bad behavior.
+> Can you review this patch? syzbot has hit this bug for nearly 4000 times
+but
+> is still unable to find a reproducer. Therefore, the only way to test
+would be
+> to apply this patch upstream and test whether the problem is solved.
 
-This series has been run through a full xfstests run during LSF and
-through a quick xfstests run against this morning's master, with no
-major failures reported.  Let me know if there are any merge problems.
+Looks ok to me, except:
 
---D
+> >       smp_wmb();
+> >       clear_bit(WB_shutting_down, &wb->state);
+> > +     smp_mb(); /* advised by wake_up_bit() */
+> > +     wake_up_bit(&wb->state, WB_shutting_down);
 
-The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
+This whole sequence really should just be a pattern with a helper function.
 
-  Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
+And honestly, the pattern probably *should* be
 
-are available in the Git repository at:
+     clear_bit_unlock(bit, &mem);
+     smp_mb__after_atomic()
+     wake_up_bit(&mem, bit);
 
-  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-4.17-fixes-1
+which looks like it is a bit cleaner wrt memory ordering rules.
 
-for you to fetch changes up to 7b38460dc8e4eafba06c78f8e37099d3b34d473c:
-
-  xfs: don't fail when converting shortform attr to long form during ATTR_REPLACE (2018-04-17 19:10:15 -0700)
-
-----------------------------------------------------------------
-Changes since last update:
-- Enhance inode fork verifiers to prevent loading of corrupted metadata.
-- Fix a crash when we try to convert extents format inodes to btree
-  format, we run out of space, but forget to revert the in-core state
-  changes.
-- Fix file size checks when doing INSERT_RANGE that could cause files
-  to end up negative size if there previously was an extent mapped at
-  s_maxbytes.
-- Fix a bug when doing a remove-then-add ATTR_REPLACE xattr update where
-  we forget to clear ATTR_REPLACE after the remove, which causes the
-  attr to be lost and the fs to shut down due to (what it thinks is)
-  inconsistent in-core state.
-
-----------------------------------------------------------------
-Darrick J. Wong (2):
-      xfs: prevent creating negative-sized file via INSERT_RANGE
-      xfs: don't fail when converting shortform attr to long form during ATTR_REPLACE
-
-Eric Sandeen (2):
-      xfs: enhance dinode verifier
-      xfs: set format back to extents if xfs_bmap_extents_to_btree
-
- fs/xfs/libxfs/xfs_attr.c      |  9 ++++++++-
- fs/xfs/libxfs/xfs_bmap.c      |  4 ++++
- fs/xfs/libxfs/xfs_inode_buf.c | 21 +++++++++++++++++++++
- fs/xfs/xfs_file.c             | 14 +++++++++-----
- 4 files changed, 42 insertions(+), 6 deletions(-)
+             Linus
