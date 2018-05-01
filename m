@@ -1,72 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754898AbeEALbl (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 07:31:41 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49100 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753717AbeEALbk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 07:31:40 -0400
-Date: Tue, 1 May 2018 13:31:32 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Kohli, Gaurav" <gkohli@codeaurora.org>
-Cc: tglx@linutronix.de, mpe@ellerman.id.au, mingo@kernel.org,
-        bigeasy@linutronix.de, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Neeraj Upadhyay <neeraju@codeaurora.org>,
-        Will Deacon <will.deacon@arm.com>, Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [PATCH v1] kthread/smpboot: Serialize kthread parking against
- wakeup
-Message-ID: <20180501113132.GF12217@hirez.programming.kicks-ass.net>
-References: <1524645199-5596-1-git-send-email-gkohli@codeaurora.org>
- <20180425200917.GZ4082@hirez.programming.kicks-ass.net>
- <20180426084131.GV4129@hirez.programming.kicks-ass.net>
- <20180426085719.GW4129@hirez.programming.kicks-ass.net>
- <4d3f68f8-e599-6b27-a2e8-9e96b401d57a@codeaurora.org>
- <20180430111744.GE4082@hirez.programming.kicks-ass.net>
- <3af3365b-4e3f-e388-8e90-45a3bd4120fd@codeaurora.org>
- <20180501101845.GE12217@hirez.programming.kicks-ass.net>
- <f134c8d8-e56f-bf29-0177-e6702ae79f2b@codeaurora.org>
+        id S1754998AbeEALc1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 07:32:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43404 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754924AbeEALc0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 07:32:26 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5740521745
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sre@kernel.org
+Date: Tue, 1 May 2018 13:32:22 +0200
+From: Sebastian Reichel <sre@kernel.org>
+To: Colin King <colin.king@canonical.com>
+Cc: linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] power: supply: ab8500_charger: fix spelling mistake:
+ "faile" -> "failed"
+Message-ID: <20180501113222.ypvixxzxkfvwzyhv@earth.universe>
+References: <20180430160450.29264-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="kjdsvpdyaqzdb4cz"
 Content-Disposition: inline
-In-Reply-To: <f134c8d8-e56f-bf29-0177-e6702ae79f2b@codeaurora.org>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180430160450.29264-1-colin.king@canonical.com>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 01, 2018 at 04:10:53PM +0530, Kohli, Gaurav wrote:
-> Yes with loop, it will reset TASK_PARKED but that is not happening in the
-> dumps we have seen.
 
-But was that with or without the fixed wait-loop? I don't care about
-stuff you might have seen with the current code, that is clearly broken.
+--kjdsvpdyaqzdb4cz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > takedown_cpu() can proceed beyond smpboot_park_threads() and kill the
-> > CPU before any of the threads are parked -- per having the complete()
-> > before hitting schedule().
-> > 
-> > And, afaict, that is harmless. When we go offline, sched_cpu_dying() ->
-> > migrate_tasks() will migrate any still runnable threads off the cpu.
-> > But because at this point the thread must be in the PARKED wait-loop, it
-> > will hit schedule() and go to sleep eventually.
-> > 
-> > Also note that kthread_unpark() does __kthread_bind() to rebind the
-> > threads.
-> > 
-> > Aaaah... I think I've spotted a problem there. We clear SHOULD_PARK
-> > before we rebind, so if the thread lost the first PARKED store,
-> > does the completion, gets migrated, cycles through the loop and now
-> > observes !SHOULD_PARK and bails the wait-loop, then __kthread_bind()
-> > will forever wait.
-> > 
-> 
-> So during next unpark
-> __kthread_unpark -> __kthread_bind -> wait_task_inactive (this got failed,
-> as current state is running so failed on below call:
+Hi,
 
-Aah, yes, I seem to have mis-remembered how wait_task_inactive() works.
-And it is indeed still a problem..
+On Mon, Apr 30, 2018 at 05:04:50PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>=20
+> trivial fix to spelling mistake in dev_error message.
+>=20
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
 
-Let me ponder what the best solution is, it's a bit of a mess.
+Thanks, queued.
+
+-- Sebastian
+
+>  drivers/power/supply/ab8500_charger.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/power/supply/ab8500_charger.c b/drivers/power/supply=
+/ab8500_charger.c
+> index ba0e97284ae5..98b335042ba6 100644
+> --- a/drivers/power/supply/ab8500_charger.c
+> +++ b/drivers/power/supply/ab8500_charger.c
+> @@ -3066,7 +3066,7 @@ static int ab8500_charger_init_hw_registers(struct =
+ab8500_charger *di)
+>  		AB8500_SYS_CTRL2_BLOCK,
+>  		AB8500_MAIN_WDOG_CTRL_REG, MAIN_WDOG_ENA);
+>  	if (ret) {
+> -		dev_err(di->dev, "faile to enable main watchdog\n");
+> +		dev_err(di->dev, "failed to enable main watchdog\n");
+>  		goto out;
+>  	}
+> =20
+> --=20
+> 2.17.0
+>=20
+
+--kjdsvpdyaqzdb4cz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlroUDoACgkQ2O7X88g7
++pr7Rw//YujoTpOj0i0REUCoiDK1zbDjRlQImL24dMpV0vNAXOyQmdKuqdxoR4N1
+DtydHjjAzuoQz9Ud44ywecA/AtUBcYus/8sZ+0Q8/UHY6fMH1qwlyHxK/JqxFlDZ
+/Js86liVfItqYFOfFufFb/3N7RsqcQUOnKq9uPiR9dkOsHWVKZ8YlL+cbZX18RSS
+UyL7xaeBJRSdOQ2LECIQythFt9b8fr7sIQKRxYx7idbWU1HwIkjzwvpO4h4XrcS0
+D742RuibWNgVc06X81fMYfbnRkmeNv5anDjpDCYEhqS+VPDb5fM6LoC2x1cpPlD6
+7aaS8/N+QEoBeZeaCqCkF8ToN12HH2PRO+zAqH5wGFN6CjXtyviOFHZFjK+Q4YXJ
+euIBPF4iDfA5kjBkmA/hlHl2n0kAt4g8d7AKxWPWBMPN5C072oH2EJ7xgaGk54Wy
+lyb7hM4TU98rYt3ICOqcmZQOastKbUm+W0rtRZENMjBuVkEQSO/N6Gf1TKOONIk1
+FW+2EiiClsPhCNQC0SDd6Gn+N1ANfZlRZgJTN+D6uiJH8GY1wQ/YFKQwG8x4Al2G
+aYq8LQErFTtdQwUXxrZQSFjZcS6q7MP81CBQY2PDpXCYLjgshI1v6V79L0IaPZOQ
+ApxN47NM0HLDEbNjNjqHBPXaCM1LN2ozMLgelLk79bDSUIMlnsk=
+=xPX8
+-----END PGP SIGNATURE-----
+
+--kjdsvpdyaqzdb4cz--
