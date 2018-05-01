@@ -1,109 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754392AbeEAKOi (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 06:14:38 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:52855 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751826AbeEAKOh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 06:14:37 -0400
-Date: Tue, 1 May 2018 12:14:35 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Ondrej Zary <linux@rainbow-software.org>,
-        Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org,
+        id S1754511AbeEAKPI (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 06:15:08 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45098 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751677AbeEAKPG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 06:15:06 -0400
+Subject: Re: [PATCH 2/7] genirq/msi: Limit level-triggered MSI to platform
+ devices
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jason Cooper <jason@lakedaemon.net>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
         linux-kernel@vger.kernel.org
-Subject: Re: Moving unmaintained filesystems to staging
-Message-ID: <20180501101435.GA18574@amd>
-References: <20180425154602.GA8546@bombadil.infradead.org>
- <20180426061108.GB4977@amd>
- <20180429120705.GA18149@kroah.com>
- <201804292207.26775.linux@rainbow-software.org>
- <20180429233737.GD16033@kroah.com>
+References: <20180423103440.26592-1-marc.zyngier@arm.com>
+ <20180423103440.26592-3-marc.zyngier@arm.com>
+ <alpine.DEB.2.21.1804262148420.1596@nanos.tec.linutronix.de>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <7528a81e-f391-3bae-7ad0-6132f44d5a70@arm.com>
+Date: Tue, 1 May 2018 11:15:03 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="envbJBWh7q8WU6mo"
-Content-Disposition: inline
-In-Reply-To: <20180429233737.GD16033@kroah.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <alpine.DEB.2.21.1804262148420.1596@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 26/04/18 20:50, Thomas Gleixner wrote:
+> On Mon, 23 Apr 2018, Marc Zyngier wrote:
+> 
+>> Nobody would be insane enough to try and use level triggered
+>> MSIs on PCI, but let's make sure it doesn't happen. Also,
+>> let's mandate that the irqchip backing the platform MSI domain
+>> is providing an irq_set_type method (or the whole thing would
+>> be a bit useless).
+>>
+>> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+>> ---
+>>  drivers/base/platform-msi.c | 3 +++
+>>  drivers/pci/msi.c           | 3 +++
+>>  2 files changed, 6 insertions(+)
+>>
+>> diff --git a/drivers/base/platform-msi.c b/drivers/base/platform-msi.c
+>> index 8e22073aeeed..3b9694a6beaa 100644
+>> --- a/drivers/base/platform-msi.c
+>> +++ b/drivers/base/platform-msi.c
+>> @@ -101,6 +101,9 @@ static void platform_msi_update_chip_ops(struct msi_domain_info *info)
+>>  		chip->irq_set_affinity = msi_domain_set_affinity;
+>>  	if (!chip->irq_write_msi_msg)
+>>  		chip->irq_write_msi_msg = platform_msi_write_msg;
+>> +	if (WARN_ON((info->flags & MSI_FLAG_LEVEL_CAPABLE) &&
+>> +		    !chip->irq_set_type))
+> 
+> Shouldn't we just require something like IRQCHIP_SUPPORTS_MSI_LEVEL or such
+> in chip->flags being set instead?
+That definitely makes sense. Thanks for the suggestion.
 
---envbJBWh7q8WU6mo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sun 2018-04-29 16:37:37, Greg KH wrote:
-> On Sun, Apr 29, 2018 at 10:07:26PM +0200, Ondrej Zary wrote:
-> > On Sunday 29 April 2018 14:07:05 Greg KH wrote:
-> > > On Thu, Apr 26, 2018 at 08:11:08AM +0200, Pavel Machek wrote:
-> > > > On Wed 2018-04-25 08:46:02, Matthew Wilcox wrote:
-> > > > > Recently ncpfs got moved to staging.  Also recently, we had some =
-fuzzer
-> > > > > developers report bugs in hfs, which they deem a security hole be=
-cause
-> > > > > Ubuntu attempts to automount an inserted USB device as hfs.
-> > > >
-> > > > We promise "no-regressions" for code in main repository, no such
-> > > > promise for staging. We have quite a lot of code without maintainer.
-> > > >
-> > > > Moving code to staging means it will get broken -- staging was not
-> > > > designed for this. I believe moving anything there is bad idea.
-> > > >
-> > > > Staging is for ugly code, not for code that needs new maintainter.
-> > >
-> > > Staging is used for getting code _out_ of the kernel tree as well as
-> > > _in_.  We use it all the time to move code there, see if anyone shows=
- up
-> > > in 6-8 months to say "I will fix this!", and if not, we delete it.
-> > >
-> > > Look at what just happened to IRDA in the 4.17-rc1 release as an exam=
-ple
-> > > of this.
-> >=20
-> > Really a "great" example of deleting working code :(=20
->=20
-> What do you mean?  The irda code was broken and not working at all.
-> There were loads of bug reports about it for years, with no developers
-> or maintainers willing to do the work on it to get it to actually work
-> again.
->=20
-> If someone does want to step up and do it, great!  It's a simple revert
-> of two git commits and they are back in business.
-
-> Dropping code from the tree is not like it is gone for forever.  If
-> someone wants to pick it up, it is trivial to do so.
-
-That is a lie and you know it.
-
-In particular, having code moved to staging means it is going to
-bitrot, because it will not be updated with global changes.
-
-Plus coding standards change over time, so if you simply revert,
-you'll not be able to simply merge it back.
-
-Plus that revert means bisection is no longer easy/possible to find
-the real breakages.
-
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---envbJBWh7q8WU6mo
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlroPgsACgkQMOfwapXb+vIGvgCgpgu5xKHtASizH4GW7mc/7nyM
-w3MAoIgcScmc/mUsy2Kx2s0ywezRbrX3
-=AuAF
------END PGP SIGNATURE-----
-
---envbJBWh7q8WU6mo--
+	M.
+-- 
+Jazz is not dead. It just smells funny...
