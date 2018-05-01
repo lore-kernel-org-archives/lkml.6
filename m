@@ -1,116 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756060AbeEAR3R convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 13:29:17 -0400
-Received: from esa1.microchip.iphmx.com ([68.232.147.91]:30688 "EHLO
-        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753282AbeEAR3P (ORCPT
+        id S1756184AbeEARfN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 13:35:13 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:42394 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755035AbeEARfK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 13:29:15 -0400
-X-IronPort-AV: E=Sophos;i="5.49,351,1520924400";
-   d="scan'208";a="14385932"
-From: <Woojung.Huh@microchip.com>
-To: <f.fainelli@gmail.com>, <netdev@vger.kernel.org>
-CC: <andrew@lunn.ch>, <rmk@armlinux.org.uk>,
-        <linux-kernel@vger.kernel.org>, <davem@davemloft.net>,
-        <cphealy@gmail.com>, <nikita.yoush@cogentembedded.com>,
-        <vivien.didelot@savoirfairelinux.com>, <Nisar.Sayed@microchip.com>,
-        <UNGLinuxDriver@microchip.com>
-Subject: RE: [RFC net-next 4/5] net: phy: Add support for IEEE standard test
- modes
-Thread-Topic: [RFC net-next 4/5] net: phy: Add support for IEEE standard
- test modes
-Thread-Index: AQHT3ohy2ggOrlDWfkGtc62i2Sy80aQbJc3g
-Date: Tue, 1 May 2018 17:29:13 +0000
-Message-ID: <9235D6609DB808459E95D78E17F2E43D40D553D5@CHN-SV-EXMX02.mchp-main.com>
-References: <20180428003237.1536-1-f.fainelli@gmail.com>
- <20180428003237.1536-5-f.fainelli@gmail.com>
-In-Reply-To: <20180428003237.1536-5-f.fainelli@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.10.76.4]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Tue, 1 May 2018 13:35:10 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 994A3601A0
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date: Tue, 1 May 2018 11:35:07 -0600
+From: Lina Iyer <ilina@codeaurora.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Matthias Kaehlcke <mka@chromium.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>, linux-arm-msm@vger.kernel.org,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Evan Green <evgreen@chromium.org>
+Subject: Re: [PATCH v6 05/10] drivers: qcom: rpmh-rsc: write sleep/wake
+ requests to TCS
+Message-ID: <20180501173507.GC23157@codeaurora.org>
+References: <20180425214111.GC243180@google.com>
+ <20180427173943.GD6380@codeaurora.org>
+ <20180427184017.GI243180@google.com>
+ <20180427194559.GE6380@codeaurora.org>
+ <20180427200605.GJ243180@google.com>
+ <20180427213201.GA23157@codeaurora.org>
+ <20180427215449.GA133494@google.com>
+ <CAD=FV=Wan0G_GG29Q-atBbQS+_7nnbqTndE+yyi_G=scOdGMFA@mail.gmail.com>
+ <20180501161010.GB23157@codeaurora.org>
+ <CAD=FV=XAPLxFqMvWrvAbpki0AvN_TqKgzBYmZAuomVz-9ieK=Q@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <CAD=FV=XAPLxFqMvWrvAbpki0AvN_TqKgzBYmZAuomVz-9ieK=Q@mail.gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Florian,
+On Tue, May 01 2018 at 10:42 -0600, Doug Anderson wrote:
+>Hi,
+>
+>On Tue, May 1, 2018 at 9:10 AM, Lina Iyer <ilina@codeaurora.org> wrote:
+>> Yes, this is incorrect in its current form. This is what it should be -
+>>
+>> static int find_match(const struct tcs_group *tcs, const struct tcs_cmd
+>> *cmd,
+>>                      int len)
+>> {
+>>        int i, j;
+>>
+>>        /* Check for already cached commands */
+>>        for_each_set_bit(i, tcs->slots, MAX_TCS_SLOTS) {
+>>                if (tcs->cmd_cache[i] != cmd[0].addr)
+>>                        continue;
+>>                for (j = 0; j < len; j++) {
+>>                        WARN(tcs->cmd_cache[i + j] != cmd[j].addr,
+>>                             "Message does not match previous sequence.\n");
+>>                        return -EINVAL;
+>>                }
+>
+>If len > 0, won't the above always return -EINVAL?
+>
+>
+>>                if (j == len - 1)
+>>                        return i;
+>
+>Care to explain how you could get here and the test "if (j == len -
+>1)" could be false?  ;-P
+>
+True. Will fix it in the next spin correctly.
 
-> diff --git a/drivers/net/phy/phy-tests.c b/drivers/net/phy/phy-tests.c
-...
-> +/* genphy_set_test - Make a PHY enter one of the standard IEEE defined
-> + * test modes
-> + * @phydev: the PHY device instance
-> + * @test: the desired test mode
-> + * @data: test specific data (none)
-> + *
-> + * This function makes the designated @phydev enter the desired standard
-> + * 100BaseT2 or 1000BaseT test mode as defined in IEEE 802.3-2012 section TWO
-> + * and THREE under 32.6.1.2.1 and 40.6.1.1.2 respectively
-> + */
-> +int genphy_set_test(struct phy_device *phydev,
-> +		    struct ethtool_phy_test *test, const u8 *data)
-> +{
-> +	u16 shift, base, bmcr = 0;
-> +	int ret;
-> +
-> +	/* Exit test mode */
-> +	if (test->mode == PHY_STD_TEST_MODE_NORMAL) {
-> +		ret = phy_read(phydev, MII_CTRL1000);
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		ret &= ~GENMASK(15, 13);
-> +
-> +		return phy_write(phydev, MII_CTRL1000, ret);
-> +	}
-> +
-> +	switch (test->mode) {
-> +	case PHY_STD_TEST_MODE_100BASET2_1:
-> +	case PHY_STD_TEST_MODE_100BASET2_2:
-> +	case PHY_STD_TEST_MODE_100BASET2_3:
-> +		if (!(phydev->supported & PHY_100BT_FEATURES))
-> +			return -EOPNOTSUPP;
-> +
-> +		shift = 14;
-> +		base = test->mode - PHY_STD_TEST_MODE_NORMAL;
-> +		bmcr = BMCR_SPEED100;
-> +		break;
-> +
-> +	case PHY_STD_TEST_MODE_1000BASET_1:
-> +	case PHY_STD_TEST_MODE_1000BASET_2:
-> +	case PHY_STD_TEST_MODE_1000BASET_3:
-> +	case PHY_STD_TEST_MODE_1000BASET_4:
-> +		if (!(phydev->supported & PHY_1000BT_FEATURES))
-> +			return -EOPNOTSUPP;
-> +
-> +		shift = 13;
-> +		base = test->mode - PHY_STD_TEST_MODE_100BASET2_MAX;
-> +		bmcr = BMCR_SPEED1000;
-> +		break;
-> +
-> +	default:
-> +		/* Let an upper driver deal with additional modes it may
-> +		 * support
-> +		 */
-> +		return -EOPNOTSUPP;
-> +	}
-> +
-> +	/* Force speed and duplex */
-> +	ret = phy_write(phydev, MII_BMCR, bmcr | BMCR_FULLDPLX);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	/* Set the desired test mode bit */
-> +	return phy_write(phydev, MII_CTRL1000, (test->mode + base) << shift);
-> +}
-For now, these are for 100B-T2 & 1000B-TX.
-But, other speeds such as 802.3bw/bq/cq have very similar format,
-how about make  phy_write() to BMCR & CTRL1000 as another function call per speed?
-
-Thanks.
-Woojung
+--Lina
