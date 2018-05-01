@@ -1,174 +1,169 @@
 Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-257651-1525244384-2-1762087538837918791
+X-Cyrus-Session-Id: sloti22d1t05-2903157-1525168692-2-164498801193030398
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
   ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+X-Spam-charsets: plain='utf-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525244383; b=jYAL6WN/boDEimQDmV/zrQKTY6Ej9nYpe/DiHVEV4p6qKt6/SG
-    vh6fphsmlyM8VOhGYSL0tByr3oqR7rjXEwb/gWzAePVogijrYMacV2FwHZ9t00T6
-    Pbaz4JPllT6jl+PRfVAtZcdqbGpxa3WjESTnu3NbCHBa7t8o8NoC8KRCCTlxx3dH
-    UnwwXtvrucONQwjcxCFSGKWPUT++AHjtq64NuUoPLYRNfM+ADNgYSKLbXv3ZlETz
-    K/Qg7zQr/VKtN/TtpC3ICepgb4UM/WVoJdrl4viTgTHy5QIHHXv3znd7HxGCSlcJ
-    o4V+z02OPF4mQhpZp1Ntr8CLDOcJsRhDJjqA==
+    1525168691; b=cdsoag2tmo+x6MZGM+8e2pRMaCHA77aIjWhtCuJ41hDC5nLWqs
+    neO36ADh8ei8IuKF6XKiPfWxq/zTeORP4BYaHtVYquvO48qlS8R+t3VejbHr3Cvk
+    /H3iMzTlpBtGuyqZW8eGITOBMHaUL1hiRST1pSJln+IWlVSDc3P3DHcyiOuATL9y
+    PDnNCB7GuBIktpSYGk14CMhta8fu3plDUh4NElkRdshcuKuI67gJwk4Zqa7Wsxbi
+    35cf75AyXkBg+Dpd1+zmHKqUAw68TFpXSuOTrUOxAC2Vb0dkvtKEmfq25XUp7lNK
+    GfmCwRcJLvG6b4D6YwzpAkNl3Y9TDTfUAodA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1525244383; bh=hEnxURXdc4D4USRTLtpQU2BwoKXAMF
-    xg7uY6+oD3cG4=; b=iYskGnDFPD2X0P7o0UUb0pWFwyeZlIb11qSDmJRe9shVpc
-    kSFqJRDVukr5Sh/zvZbw4ZzG0wcEg3f+rur7cN3ZPiljNe9KcLouuy6WIdrmN349
-    girLX7sPHLoocH/d4KgIVe4+h4Uu2J5KcZTy/sYu+2oM74uICpcbcETPQqaAzhjL
-    iBhSbdsi6nuEYdtLozC4s4Lv/auDtSSuKn24RPAIYQk63yMptVVuI77Yz1V3cvkQ
-    rLkzXAaC28kaAM6TWeuAznOBlBr2c9PyRn6UAjyL+BwE//lWkbrZYg89230hrrU+
-    /gjIybgHoduZd2DU+QRWmp9aYSetKMpTFQ3Rs7rg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=subject:to:cc:references:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1525168691;
+    bh=BWD1ZTJ2wWfAbxvUucTt3WsDnBudBUD7Eo+rwYnSSVI=; b=APWIs2Cb4OXV
+    HBHKa39FkRXcLAt4JJxKijD1TSa1MbUqpHEFo57EVC0I+YBhY5p6eEj1nCkADLwy
+    FqMkmDKPP3KChDK87+1+pye8X9lxhjxgt/S1RKmywyrsUs3PWBtMUgQf+MOwqPJ9
+    GfzBQ2hPOGIlM7qb/8wSYBQXjYSwaKUOqe/Rp2Ex9sjrYpSCN4FOSnkE444onLYb
+    D6sYiYAsh1ti34qShXU3sfgEfvtpyKUEOzbwQu9rlnX2VBQlpr3bB+rR+BqBTJ8g
+    tkH0fjSt1cJcz/QvlKbZ5q7jf3nL7RgR1U3tycCf37JpwDaRO+TCIX/oMhXu4HCi
+    9h26reqcxQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
+    header.d=1e100.net header.i=@1e100.net header.b=KCxyzdZW;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linux.intel.com header.result=pass
-    header_org.domain=intel.com header_org.result=pass
-    header_is_org_domain=no;
+    header.domain=redhat.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
+      header.d=1e100.net header.i=@1e100.net header.b=KCxyzdZW;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linux.intel.com header.result=pass
-      header_org.domain=intel.com header_org.result=pass
-      header_is_org_domain=no;
+      header.domain=redhat.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIOigC6T4kITeS62hNoIklVxKw1Pu0EfoBvgs/XMnKtMWT0BuIno53RgDeFl0ZzCVZRBIqS1W+pSS052f3PW8vQLzwgvDBXZEG8fJnmjaKhI8I61XXr2
-    dq2zAluehHok3ho8zVykuuQNXcvLFDiquJ44stpjcNcC6KqUwj65wmLMxjCtqOxKs24lphWCQ9IsZANasSwJSZlrGpDsOFMlZkzRRAY4eLlZ3pHpwlLYLfxY
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=QyXUC8HyAAAA:8 a=JfrnYn6hAAAA:8 a=VwQbUJbxAAAA:8 a=jDrsW6gQXJ2z9ZZLjAEA:9
-    a=CjuIK1q_8ugA:10 a=x8gzFH9gYPwA:10 a=1CNFftbPRP8L7MoqJWF3:22
-    a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfAybQAzMUHo9QOHzFwm4Ob+rQCnBe/gylRjey0KLcFZa4+BsZcr46VNZYYSAXpeyACr/Lx0HjkxQ/mVY4gioNw1V1w+U18ha6z5aYpZc0PtXwtRGway7
+    AyHlGR4J9pG68gSOd6eIw/CjEzDEt/q/yqNbK64Aabx6urG3b7i8tNVjJHJXRR+7kixhmC38gnv4PIVKK0kXsqAU2HFlTr3aDVW27Q/2gDvwqCc4bWiRZkiP
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=QyXUC8HyAAAA:8 a=20KFwNOVAAAA:8 a=VwQbUJbxAAAA:8 a=5WL4R2Ehb5lPF2gFDoEA:9
+    a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750878AbeEBG7h (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 2 May 2018 02:59:37 -0400
-Received: from mga03.intel.com ([134.134.136.65]:16595 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750800AbeEBG7h (ORCPT <rfc822;linux-usb@vger.kernel.org>);
-        Wed, 2 May 2018 02:59:37 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,354,1520924400";
-   d="scan'208";a="51660223"
-Date: Wed, 2 May 2018 09:59:30 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        id S1752009AbeEAJ56 (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 1 May 2018 05:57:58 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:50493 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751090AbeEAJ55 (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Tue, 1 May 2018 05:57:57 -0400
+X-Google-Smtp-Source: AB8JxZrdz8sEu9ceCphSa4U+QUH3/0XebOjotWs8F1niCNs/pA67hxxt3IUw1AUFyoODoqsAzy/9Vw==
+Subject: Re: [PATCH 4/4] usb: roles: intel_xhci: Always allow user control
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Guenter Roeck <linux@roeck-us.net>,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Darren Hart <dvhart@infradead.org>
-Subject: Re: [PATCH 1/4] platform: x86: intel_cht_int33fe: Fix dependencies
-Message-ID: <20180502065930.GD12870@kuha.fi.intel.com>
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
 References: <20180430124158.45269-1-heikki.krogerus@linux.intel.com>
- <20180430124158.45269-2-heikki.krogerus@linux.intel.com>
- <80c86dfd-acd1-6c51-298b-250394818ade@redhat.com>
+ <20180430124158.45269-5-heikki.krogerus@linux.intel.com>
+From: Hans de Goede <hdegoede@redhat.com>
+Message-ID: <9a0b6af4-8d49-8193-2fcd-a956c3f852ed@redhat.com>
+Date: Tue, 1 May 2018 11:57:55 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <80c86dfd-acd1-6c51-298b-250394818ade@redhat.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180430124158.45269-5-heikki.krogerus@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-usb-owner@vger.kernel.org
 X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, May 01, 2018 at 11:53:24AM +0200, Hans de Goede wrote:
-> Hi,
+Hi,
+
+On 30-04-18 14:41, Heikki Krogerus wrote:
+> Trying to determine the USB port type with this mux is very
+> difficult. To simplify the situation, always allowing user
+> control, even if the port is USB Type-C port.
 > 
-> On 30-04-18 14:41, Heikki Krogerus wrote:
-> > The driver will not probe unless bq24190 is loaded, so
-> > making it a dependency.
+> Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com> > ---
+>   drivers/usb/roles/intel-xhci-usb-role-switch.c | 15 +--------------
+>   1 file changed, 1 insertion(+), 14 deletions(-)
 > 
-> Hmm, the dependency is pure run-time, with this Kconfig
-> change if a user now decides to builtin the intel_cht_int33fe
-> driver, the bq24190 driver must also be builtin, I'm not sure
-> if that is a good thing.
+> diff --git a/drivers/usb/roles/intel-xhci-usb-role-switch.c b/drivers/usb/roles/intel-xhci-usb-role-switch.c
+> index 28102127b9d5..6482eee6fd45 100644
+> --- a/drivers/usb/roles/intel-xhci-usb-role-switch.c
+> +++ b/drivers/usb/roles/intel-xhci-usb-role-switch.c
+> @@ -43,15 +43,6 @@ struct intel_xhci_acpi_match {
+>   	int hrv;
+>   };
+>   
+> -/*
+> - * ACPI IDs for PMICs which do not support separate data and power role
+> - * detection (USB ACA detection for micro USB OTG), we allow userspace to
+> - * change the role manually on these.
+> - */
+> -static const struct intel_xhci_acpi_match allow_userspace_ctrl_ids[] = {
+> -	{ "INT33F4",  3 }, /* X-Powers AXP288 PMIC */
+> -};
+> -
+>   static int intel_xhci_usb_set_role(struct device *dev, enum usb_role role)
+>   {
+>   	struct intel_xhci_usb_data *data = dev_get_drvdata(dev);
+> @@ -137,7 +128,6 @@ static int intel_xhci_usb_probe(struct platform_device *pdev)
+>   	struct device *dev = &pdev->dev;
+>   	struct intel_xhci_usb_data *data;
+>   	struct resource *res;
+> -	int i;
+>   
+>   	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+>   	if (!data)
+> @@ -150,10 +140,7 @@ static int intel_xhci_usb_probe(struct platform_device *pdev)
+>   	if (!data->base)
+>   		return -ENOMEM;
+>   
+> -	for (i = 0; i < ARRAY_SIZE(allow_userspace_ctrl_ids); i++)
+> -		if (acpi_dev_present(allow_userspace_ctrl_ids[i].hid, "1",
+> -				     allow_userspace_ctrl_ids[i].hrv))
+> -			sw_desc.allow_userspace_control = true;
+> +	sw_desc.allow_userspace_control = true;
 
-OK. That should be possible to sort out with something like this:
+It would be better to add:
 
-depends on CHARGER_BQ24190=y || CHARGER_BQ24190=INTEL_CHT_INT33FE
+	.allow_userspace_control = true,
 
-I'll fix this one.
+To the initialization of the struct and also make the struct const since
+we are now no longer changing it and usb_role_switch_register() accepts
+it being const.
 
-> > Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> > Cc: Wolfram Sang <wsa@the-dreams.de>
-> > Cc: Darren Hart <dvhart@infradead.org>
-> > Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > ---
-> >   drivers/i2c/busses/Kconfig   | 3 +--
-> >   drivers/platform/x86/Kconfig | 4 ++--
-> >   2 files changed, 3 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-> > index 8d21b9825d71..fce9f2ca0570 100644
-> > --- a/drivers/i2c/busses/Kconfig
-> > +++ b/drivers/i2c/busses/Kconfig
-> > @@ -202,8 +202,7 @@ config I2C_CHT_WC
-> >   	  Note this controller is hooked up to a TI bq24292i charger-IC,
-> >   	  combined with a FUSB302 Type-C port-controller as such it is advised
-> > -	  to also select CONFIG_CHARGER_BQ24190=m and CONFIG_TYPEC_FUSB302=m
-> > -	  (the fusb302 driver currently is in drivers/staging).
-> > +	  to also select CONFIG_TYPEC_FUSB302=m.
-> >   config I2C_NFORCE2
-> >   	tristate "Nvidia nForce2, nForce3 and nForce4"
-> > diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-> > index 39d06dd1f63a..1dbd9d547e60 100644
-> > --- a/drivers/platform/x86/Kconfig
-> > +++ b/drivers/platform/x86/Kconfig
-> > @@ -866,6 +866,7 @@ config ACPI_CMPC
-> >   config INTEL_CHT_INT33FE
-> >   	tristate "Intel Cherry Trail ACPI INT33FE Driver"
-> >   	depends on X86 && ACPI && I2C && REGULATOR
-> > +	depends on CHARGER_BQ24190
-> >   	---help---
-> >   	  This driver add support for the INT33FE ACPI device found on
-> >   	  some Intel Cherry Trail devices.
-> > @@ -877,8 +878,7 @@ config INTEL_CHT_INT33FE
-> >   	  i2c drivers for these chips can bind to the them.
-> >   	  If you enable this driver it is advised to also select
-> > -	  CONFIG_TYPEC_FUSB302=m, CONFIG_CHARGER_BQ24190=m and
-> > -	  CONFIG_BATTERY_MAX17042=m.
-> > +	  CONFIG_TYPEC_FUSB302=m and CONFIG_BATTERY_MAX17042=m.
-> >   config INTEL_INT0002_VGPIO
-> >   	tristate "Intel ACPI INT0002 Virtual GPIO driver"
-> > 
+With that changed:
 
-Thanks,
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 
--- 
-heikki
+Regards,
+
+Hans
