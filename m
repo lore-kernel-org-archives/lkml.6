@@ -1,252 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755872AbeEAM4e (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 08:56:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37964 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755225AbeEAM4b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 08:56:31 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C08722DC2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sre@kernel.org
-Date: Tue, 1 May 2018 14:56:28 +0200
-From: Sebastian Reichel <sre@kernel.org>
-To: sean.wang@mediatek.com
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, lee.jones@linaro.org,
-        a.zummo@towertech.it, alexandre.belloni@free-electrons.com,
-        matthias.bgg@gmail.com, eddie.huang@mediatek.com,
-        devicetree@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 15/17] power: reset: mt6323: add a driver for MT6323
- power controller
-Message-ID: <20180501125628.44nyx25tqsrxkvsl@earth.universe>
-References: <cover.1524646231.git.sean.wang@mediatek.com>
- <51d4fbe0d6a22986ddd2df66c9db39aa1eaab74a.1524646231.git.sean.wang@mediatek.com>
+        id S1755507AbeEAM7Z (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 08:59:25 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46830 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755015AbeEAM7Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 08:59:24 -0400
+Subject: Re: pciehp 0000:00:1c.0:pcie004: Timeout on hotplug command 0x1038
+ (issued 65284 msec ago)
+To: Sinan Kaya <okaya@codeaurora.org>, Bjorn Helgaas <helgaas@kernel.org>
+Cc: Paul Menzel <pmenzel+linux-pci@molgen.mpg.de>,
+        Dave Young <dyoung@redhat.com>, linux-pci@vger.kernel.org,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Lukas Wunner <lukas@wunner.de>, Eric Biederman <ebiederm@xmission.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, Vivek Goyal <vgoyal@redhat.com>
+References: <8770820b-85a0-172b-7230-3a44524e6c9f@molgen.mpg.de>
+ <20180427192207.GG8199@bhelgaas-glaptop.roam.corp.google.com>
+ <b62c2a8e-fe14-6d7d-147c-0ce3b0c0ab2f@codeaurora.org>
+ <20180427211255.GI8199@bhelgaas-glaptop.roam.corp.google.com>
+ <20180428005620.GB1675@dhcp-128-65.nay.redhat.com>
+ <20180428011845.GC1675@dhcp-128-65.nay.redhat.com>
+ <3ebc908fb196168bf0373875ffc5679e@codeaurora.org>
+ <d8d134dc-9757-97cd-7a24-cbb21611d6c6@codeaurora.org>
+ <20180430211740.GG95643@bhelgaas-glaptop.roam.corp.google.com>
+ <7285da70-2c3e-c3b7-62e1-fdbb55a77729@codeaurora.org>
+ <3549ffe8-7605-d72c-5c09-1436a4288c7d@codeaurora.org>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <ffe662be-00c7-ab7f-0e88-8119ccfd9600@arm.com>
+Date: Tue, 1 May 2018 13:59:20 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="2xjqcbc7ra2xrdtp"
-Content-Disposition: inline
-In-Reply-To: <51d4fbe0d6a22986ddd2df66c9db39aa1eaab74a.1524646231.git.sean.wang@mediatek.com>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <3549ffe8-7605-d72c-5c09-1436a4288c7d@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 01/05/18 13:38, Sinan Kaya wrote:
+> +Marc,
+> 
+> On 4/30/2018 5:27 PM, Sinan Kaya wrote:
+>> On 4/30/2018 5:17 PM, Bjorn Helgaas wrote:
+>>>> What should we do about this?
+>>>>
+>>>> Since there is an actual HW errata involved, should we quirk this
+>>>> root port and not wait as if remove/shutdown doesn't exist?
+>>> I was hoping to avoid a quirk because AFAIK all Intel parts have this
+>>> issue so it will be an ongoing maintenance issue.  I tried to avoid
+>>> the timeout delays, e.g., with 40b960831cfa ("PCI: pciehp: Compute
+>>> timeout from hotplug command start time").
+>>>
+>>> But we still see the alarming messages, so we should probably add a
+>>> quirk to get rid of those.
+>>>
+>>> But I haven't given up on the idea of getting rid of the
+>>> pciehp_remove() path.  I'm not convinced yet that we actually need to
+>>> do anything to shut this device down.  I don't like the assumption
+>>> that kexec requires this.  The kexec is fundamentally just a branch,
+>>> and anything we do before the branch (i.e., in the old kernel), we
+>>> should also be able to do after the branch (i.e., in the kexec-ed
+>>> kernel).
+>>>
+>>
+>> In my experience with kexec, MSI type edge interrupts are harmless.
+>> You might just see a few unhandled interrupt messages during boot
+>> if something is pending from the first kernel.
 
---2xjqcbc7ra2xrdtp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Unfortunately, that's not always the case.
 
-Hi,
+A number of GICv3/v4 implementations (a very common interrupt controller
+on ARM servers) cannot be disabled, which means they will keep writing
+to their pending tables long after kexec will have started the new
+kernel. And since we don't track memory allocation across kexec, you
+end-up with significant chances of observing single bit corruption as
+interrupts carry on being delivered. Oh, and you won't actually be able
+to take MSIs because you can't even reprogram the damn thing.
 
-On Wed, Apr 25, 2018 at 05:32:41PM +0800, sean.wang@mediatek.com wrote:
-> From: Sean Wang <sean.wang@mediatek.com>
->=20
-> The power device is responsible for externally down or up the power
-> of the remote MediaTek SoC through the tiny circuit BBPU inside PMIC RTC.
->=20
-> Though it's a part of RTC device, it would be better to be a standalone
-> driver than to be a part of existent RTC driver so as to let us make
-> concentration on works about power-controlling topic and to obtain
-> improvements while the subsystem power/reset constantly growing.
+Yes, this can be considered a HW bug.
 
-I don't understand the above sentence. (I'm fine with adding the
-driver)
+>> It is the level interrupts that are more concerning. It remains pending
+>> until the interrupt source is cleared. CPU never returns from the
+>> interrupt handler to actually continue booting the second kernel.
+> 
+> This makes me wonder why kexec doesn't disable all interrupt sources by
+> itself instead of relying on the drivers shutdown routine. Some drivers
+> don't even have a shutdown callback. Kexec could have done both as another
+> example. Something like.
+> 
+> 1. Call shutdown for all drivers if available.
+> 2. Disable all interrupt sources in the interrupt controller
+> 3. Start the new kernel.
 
-> Currently, the most basic functionality supported is to just power off
-> the system by writing to a special bit field in BBPU register after the
-> system has reached pm_poweroff.
->=20
-> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> ---
->  drivers/power/reset/Kconfig           | 10 ++++
->  drivers/power/reset/Makefile          |  1 +
->  drivers/power/reset/mt6323-poweroff.c | 97 +++++++++++++++++++++++++++++=
-++++++
->  include/linux/mfd/mt6397/rtc.h        |  1 +
->  4 files changed, 109 insertions(+)
->  create mode 100644 drivers/power/reset/mt6323-poweroff.c
->=20
-> diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
-> index df58fc8..7b49d71 100644
-> --- a/drivers/power/reset/Kconfig
-> +++ b/drivers/power/reset/Kconfig
-> @@ -128,6 +128,16 @@ config POWER_RESET_LTC2952
->  	  This driver supports an external powerdown trigger and board power
->  	  down via the LTC2952. Bindings are made in the device tree.
-> =20
-> +config POWER_RESET_MT6323
-> +	bool "MediaTek MT6323 power-off driver"
-> +	depends on MFD_MT6397
-> +	help
-> +	  The power-off driver is responsible for externally shutdown down
-> +	  the power of a remote MediaTek SoC MT6323 is connected to through
-> +	  controlling a tiny circuit BBPU inside MT6323 RTC.
-> +
-> +	  Say Y if you have a board where MT6323 could be found.
-> +
->  config POWER_RESET_QNAP
->  	bool "QNAP power-off driver"
->  	depends on OF_GPIO && PLAT_ORION
-> diff --git a/drivers/power/reset/Makefile b/drivers/power/reset/Makefile
-> index 7778c74..8836172 100644
-> --- a/drivers/power/reset/Makefile
-> +++ b/drivers/power/reset/Makefile
-> @@ -11,6 +11,7 @@ obj-$(CONFIG_POWER_RESET_GPIO) +=3D gpio-poweroff.o
->  obj-$(CONFIG_POWER_RESET_GPIO_RESTART) +=3D gpio-restart.o
->  obj-$(CONFIG_POWER_RESET_HISI) +=3D hisi-reboot.o
->  obj-$(CONFIG_POWER_RESET_MSM) +=3D msm-poweroff.o
-> +obj-$(CONFIG_POWER_RESET_MT6323) +=3D mt6323-poweroff.o
->  obj-$(CONFIG_POWER_RESET_OCELOT_RESET) +=3D ocelot-reset.o
->  obj-$(CONFIG_POWER_RESET_PIIX4_POWEROFF) +=3D piix4-poweroff.o
->  obj-$(CONFIG_POWER_RESET_LTC2952) +=3D ltc2952-poweroff.o
-> diff --git a/drivers/power/reset/mt6323-poweroff.c b/drivers/power/reset/=
-mt6323-poweroff.c
-> new file mode 100644
-> index 0000000..c195766
-> --- /dev/null
-> +++ b/drivers/power/reset/mt6323-poweroff.c
-> @@ -0,0 +1,97 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Power off through MediaTek PMIC
-> + *
-> + * Copyright (C) 2018 MediaTek Inc.
-> + *
-> + * Author: Sean Wang <sean.wang@mediatek.com>
-> + *
-> + */
-> +
-> +#include <linux/err.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
+See above. Although you can shut off the end-point and to some extent
+mask interrupts before jumping into the payload, it is not always
+possible to go back to a reasonable state where you can take actually MSIs.
 
-Not needed
+Thanks,
 
-> +#include <linux/platform_device.h>
-> +#include <linux/mfd/mt6397/core.h>
-> +#include <linux/mfd/mt6397/rtc.h>
-> +
-> +struct mt6323_pwrc {
-> +	struct device *dev;
-> +	struct regmap *regmap;
-> +	u32 base;
-> +};
-> +
-> +static struct mt6323_pwrc *mt_pwrc;
-> +
-> +static void mt6323_do_pwroff(void)
-> +{
-> +	struct mt6323_pwrc *pwrc =3D mt_pwrc;
-> +	unsigned int val;
-> +	int ret;
-> +
-> +	regmap_write(pwrc->regmap, pwrc->base + RTC_BBPU, RTC_BBPU_KEY);
-> +	regmap_write(pwrc->regmap, pwrc->base + RTC_WRTGR, 1);
-> +
-> +	ret =3D regmap_read_poll_timeout(pwrc->regmap,
-> +				       pwrc->base + RTC_BBPU, val,
-> +				       !(val & RTC_BBPU_CBUSY),
-> +				       MTK_RTC_POLL_DELAY_US,
-> +				       MTK_RTC_POLL_TIMEOUT);
-> +	if (ret)
-> +		dev_err(pwrc->dev, "failed to write BBPU: %d\n", ret);
-> +
-> +	/* Wait some time until system down, otherwise, notice with a warn */
-> +	mdelay(1000);
-> +
-> +	WARN_ONCE(1, "Unable to power off system\n");
-> +}
-> +
-> +static int mt6323_pwrc_probe(struct platform_device *pdev)
-> +{
-> +	struct mt6397_chip *mt6397_chip =3D dev_get_drvdata(pdev->dev.parent);
-> +	struct mt6323_pwrc *pwrc;
-> +	struct resource *res;
-> +
-> +	pwrc =3D devm_kzalloc(&pdev->dev, sizeof(*pwrc), GFP_KERNEL);
-> +	if (!pwrc)
-> +		return -ENOMEM;
-> +
-> +	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	pwrc->base =3D res->start;
-> +	pwrc->regmap =3D mt6397_chip->regmap;
-> +	pwrc->dev =3D &pdev->dev;
-> +	mt_pwrc =3D pwrc;
-> +
-> +	pm_power_off =3D &mt6323_do_pwroff;
-> +
-> +	return 0;
-> +}
-> +
-> +static int mt6323_pwrc_remove(struct platform_device *pdev)
-> +{
-> +	if (pm_power_off =3D=3D &mt6323_do_pwroff)
-> +		pm_power_off =3D NULL;
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct of_device_id mt6323_pwrc_dt_match[] =3D {
-> +	{ .compatible =3D "mediatek,mt6323-pwrc" },
-> +	{},
-> +};
-> +MODULE_DEVICE_TABLE(of, mt6323_pwrc_dt_match);
-
-Don't forget to remove the DT table when you respin the series for
-the requested binding changes.
-
-> +static struct platform_driver mt6323_pwrc_driver =3D {
-> +	.probe		=3D mt6323_pwrc_probe,
-> +	.remove		=3D mt6323_pwrc_remove,
-> +	.driver		=3D {
-> +		.name	=3D "mt6323-pwrc",
-> +		.of_match_table =3D mt6323_pwrc_dt_match,
-> +	},
-> +};
-> +
-> +module_platform_driver(mt6323_pwrc_driver);
-> +
-> +MODULE_DESCRIPTION("Poweroff driver for MT6323 PMIC");
-> +MODULE_AUTHOR("Sean Wang <sean.wang@mediatek.com>");
-> +MODULE_LICENSE("GPL v2");
-> diff --git a/include/linux/mfd/mt6397/rtc.h b/include/linux/mfd/mt6397/rt=
-c.h
-> index 480977c..ac932c9 100644
-> --- a/include/linux/mfd/mt6397/rtc.h
-> +++ b/include/linux/mfd/mt6397/rtc.h
-> @@ -16,6 +16,7 @@
-> =20
->  #define RTC_BBPU		0x0000
->  #define RTC_BBPU_CBUSY		BIT(6)
-> +#define RTC_BBPU_KEY            (0x43 << 8)
-> =20
->  #define RTC_WRTGR		0x003c
-
-The driver looks fine otherwise.
-
--- Sebastian
-
---2xjqcbc7ra2xrdtp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlroY/kACgkQ2O7X88g7
-+pp98g/7BSK8woCYmjvXst7kOG9S9fJijnbJ3ClpKKZNlTj+F8QhN17BFhz6Xbyw
-NttirFOSLb+vbVTle1f0UcpnU2hET4pLo70DzaXlIHGTM3rSa2cGebNRmbARolVQ
-UqT11rgCHFE9pn/8dgRhne8l/Mzxks91zc31fEGTcV1G+3iqrTdCrInxqm9oOUa0
-fVGk9T7u0GqVwowxoFM5l4EgdoHbVwPPeYxg7uPz+YHYR/nTsBRHRiu7ROnjDJbB
-XQIuuNlwKSBxgDEjmz/bNAHpk4qpsOx5ccKAbxpNkR3Ujbde+Pgh7mUu5zrY0ZG2
-4ZoYI6wbFlhtqP4yJAxVi59stthrEvCYBorPfzg7uVW093deZNloAcOsuK6tpElu
-idmpSAUH6YWIG9pRSSHpgqIpBkUWMGvDjglEXrg+BbCBlVbTN072hN2IQwqZ/aPr
-z3RtalfvEWiJvGKdI2lUwuCmg23r7lzI8KsNDRn1EdYWX0aZlTcbB9uGp7aph/Ky
-cSIuHuWo5s4dquuDghsYMwx83JbynDjxW1P6Uiqk2fmo5sMBs/Hs/TIY8QctovRs
-EgMtRZvJVdqKLRV2xv0fboPnU18Gknci+sVxV1ebNZGlWFjlVJbXQCySU5nO4V+L
-N2c8TiRV2bZNqJWJWgL9nmFzbwApmcB3J8QnKbSv1LuO7GxW1d4=
-=JauM
------END PGP SIGNATURE-----
-
---2xjqcbc7ra2xrdtp--
+	M.
+-- 
+Jazz is not dead. It just smells funny...
