@@ -1,135 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755742AbeEANAq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 09:00:46 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46886 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755107AbeEANAp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 09:00:45 -0400
-From: Punit Agrawal <punit.agrawal@arm.com>
-To: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Cc: <kvmarm@lists.cs.columbia.edu>, <linux-arm-kernel@lists.infradead.org>,
-        <marc.zyngier@arm.com>, <christoffer.dall@arm.com>,
-        <linux-kernel@vger.kernel.org>, Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH v2 2/4] KVM: arm/arm64: Introduce helpers to manupulate page table entries
-References: <20180501102659.13188-1-punit.agrawal@arm.com>
-        <20180501102659.13188-3-punit.agrawal@arm.com>
-        <3eab5997-30b2-c51a-ca8e-5545bbadffc0@arm.com>
-Date: Tue, 01 May 2018 14:00:43 +0100
-In-Reply-To: <3eab5997-30b2-c51a-ca8e-5545bbadffc0@arm.com> (Suzuki
-        K. Poulose's message of "Tue, 1 May 2018 11:36:26 +0100")
-Message-ID: <871sevr0n8.fsf@e105922-lin.cambridge.arm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        id S1755215AbeEANFF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 09:05:05 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:40158 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754867AbeEANFE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 09:05:04 -0400
+X-Google-Smtp-Source: AB8JxZrkTS4H3bC+T8/vZ+eaP6c19p/dnuaH0oA0utN85qqinApwJhyR7vTqvhiIhvDuiRbKJcRtsg==
+Date: Tue, 1 May 2018 22:04:52 +0900
+From: Minchan Kim <minchan@kernel.org>
+To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Cc: akpm@linux-foundation.org, mhocko@kernel.org, peterz@infradead.org,
+        kirill@shutemov.name, ak@linux.intel.com, dave@stgolabs.net,
+        jack@suse.cz, Matthew Wilcox <willy@infradead.org>,
+        benh@kernel.crashing.org, mpe@ellerman.id.au, paulus@samba.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
+        sergey.senozhatsky.work@gmail.com,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        David Rientjes <rientjes@google.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Ganesh Mahendran <opensource.ganesh@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
+        npiggin@gmail.com, bsingharora@gmail.com, paulmck@linux.vnet.ibm.com,
+        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org
+Subject: Re: [PATCH v10 06/25] mm: make pte_unmap_same compatible with SPF
+Message-ID: <20180501130452.GA118722@rodete-laptop-imager.corp.google.com>
+References: <1523975611-15978-1-git-send-email-ldufour@linux.vnet.ibm.com>
+ <1523975611-15978-7-git-send-email-ldufour@linux.vnet.ibm.com>
+ <20180423063157.GB114098@rodete-desktop-imager.corp.google.com>
+ <dd5c4338-3cbb-c65a-f0c1-c71e2a0037ee@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dd5c4338-3cbb-c65a-f0c1-c71e2a0037ee@linux.vnet.ibm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Suzuki,
+On Mon, Apr 30, 2018 at 04:07:30PM +0200, Laurent Dufour wrote:
+> On 23/04/2018 08:31, Minchan Kim wrote:
+> > On Tue, Apr 17, 2018 at 04:33:12PM +0200, Laurent Dufour wrote:
+> >> pte_unmap_same() is making the assumption that the page table are still
+> >> around because the mmap_sem is held.
+> >> This is no more the case when running a speculative page fault and
+> >> additional check must be made to ensure that the final page table are still
+> >> there.
+> >>
+> >> This is now done by calling pte_spinlock() to check for the VMA's
+> >> consistency while locking for the page tables.
+> >>
+> >> This is requiring passing a vm_fault structure to pte_unmap_same() which is
+> >> containing all the needed parameters.
+> >>
+> >> As pte_spinlock() may fail in the case of a speculative page fault, if the
+> >> VMA has been touched in our back, pte_unmap_same() should now return 3
+> >> cases :
+> >> 	1. pte are the same (0)
+> >> 	2. pte are different (VM_FAULT_PTNOTSAME)
+> >> 	3. a VMA's changes has been detected (VM_FAULT_RETRY)
+> >>
+> >> The case 2 is handled by the introduction of a new VM_FAULT flag named
+> >> VM_FAULT_PTNOTSAME which is then trapped in cow_user_page().
+> > 
+> > I don't see such logic in this patch.
+> > Maybe you introduces it later? If so, please comment on it.
+> > Or just return 0 in case of 2 without introducing VM_FAULT_PTNOTSAME.
+> 
+> Late in the series, pte_spinlock() will check for the VMA's changes and may
+> return 1. This will be then required to handle the 3 cases presented above.
+> 
+> I can move this handling later in the series, but I wondering if this will make
+> it more easier to read.
 
-Thanks for having a look.
+Just nit:
+During reviewing this patch, I was just curious you introduced new thing
+here but I couldn't find any site where use it. It makes review hard. :(
+That's why I said to you that please commet on it if you will use new thing
+late in this series.
+If you think as-is is better for review, it would be better to mention it
+explicitly.
 
-Suzuki K Poulose <Suzuki.Poulose@arm.com> writes:
-
-> On 01/05/18 11:26, Punit Agrawal wrote:
->> Introduce helpers to abstract architectural handling of the conversion
->> of pfn to page table entries and marking a PMD page table entry as a
->> block entry.
->>
->> The helpers are introduced in preparation for supporting PUD hugepages
->> at stage 2 - which are supported on arm64 but do not exist on arm.
->
-> Punit,
->
-> The change are fine by me. However, we usually do not define kvm_*
-> accessors for something which we know matches with the host variant.
-> i.e, PMD and PTE helpers, which are always present and we make use
-> of them directly. (see unmap_stage2_pmds for e.g)
-
-In general, I agree - it makes sense to avoid duplication.
-
-Having said that, the helpers here allow following a common pattern for
-handling the various page sizes - pte, pmd and pud - during stage 2
-fault handling (see patch 4).
-
-As you've said you're OK with this change, I'd prefer to keep this patch
-but will drop it if any others reviewers are concerned about the
-duplication as well.
-
-Thanks,
-Punit
-
->
-> Cheers
-> Suzuki
->
->>
->> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
->> Acked-by: Christoffer Dall <christoffer.dall@arm.com>
->> Cc: Marc Zyngier <marc.zyngier@arm.com>
->> Cc: Russell King <linux@armlinux.org.uk>
->> Cc: Catalin Marinas <catalin.marinas@arm.com>
->> Cc: Will Deacon <will.deacon@arm.com>
->> ---
->>   arch/arm/include/asm/kvm_mmu.h   | 5 +++++
->>   arch/arm64/include/asm/kvm_mmu.h | 5 +++++
->>   virt/kvm/arm/mmu.c               | 7 ++++---
->>   3 files changed, 14 insertions(+), 3 deletions(-)
->>
->> diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
->> index 707a1f06dc5d..5907a81ad5c1 100644
->> --- a/arch/arm/include/asm/kvm_mmu.h
->> +++ b/arch/arm/include/asm/kvm_mmu.h
->> @@ -75,6 +75,11 @@ phys_addr_t kvm_get_idmap_vector(void);
->>   int kvm_mmu_init(void);
->>   void kvm_clear_hyp_idmap(void);
->>   +#define kvm_pfn_pte(pfn, prot)	pfn_pte(pfn, prot)
->> +#define kvm_pfn_pmd(pfn, prot)	pfn_pmd(pfn, prot)
->> +
->> +#define kvm_pmd_mkhuge(pmd)	pmd_mkhuge(pmd)
->> +
->>   static inline void kvm_set_pmd(pmd_t *pmd, pmd_t new_pmd)
->>   {
->>   	*pmd = new_pmd;
->> diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
->> index 082110993647..d962508ce4b3 100644
->> --- a/arch/arm64/include/asm/kvm_mmu.h
->> +++ b/arch/arm64/include/asm/kvm_mmu.h
->> @@ -173,6 +173,11 @@ void kvm_clear_hyp_idmap(void);
->>   #define	kvm_set_pte(ptep, pte)		set_pte(ptep, pte)
->>   #define	kvm_set_pmd(pmdp, pmd)		set_pmd(pmdp, pmd)
->>   +#define kvm_pfn_pte(pfn, prot)		pfn_pte(pfn, prot)
->> +#define kvm_pfn_pmd(pfn, prot)		pfn_pmd(pfn, prot)
->> +
->> +#define kvm_pmd_mkhuge(pmd)		pmd_mkhuge(pmd)
->> +
->>   static inline pte_t kvm_s2pte_mkwrite(pte_t pte)
->>   {
->>   	pte_val(pte) |= PTE_S2_RDWR;
->> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
->> index 686fc6a4b866..74750236f445 100644
->> --- a/virt/kvm/arm/mmu.c
->> +++ b/virt/kvm/arm/mmu.c
->> @@ -1554,8 +1554,9 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->>   		invalidate_icache_guest_page(pfn, vma_pagesize);
->>     	if (hugetlb) {
->> -		pmd_t new_pmd = pfn_pmd(pfn, mem_type);
->> -		new_pmd = pmd_mkhuge(new_pmd);
->> +		pmd_t new_pmd = kvm_pfn_pmd(pfn, mem_type);
->> +
->> +		new_pmd = kvm_pmd_mkhuge(new_pmd);
->>   		if (writable)
->>   			new_pmd = kvm_s2pmd_mkwrite(new_pmd);
->>   @@ -1564,7 +1565,7 @@ static int user_mem_abort(struct kvm_vcpu
->> *vcpu, phys_addr_t fault_ipa,
->>     		ret = stage2_set_pmd_huge(kvm, memcache, fault_ipa,
->> &new_pmd);
->>   	} else {
->> -		pte_t new_pte = pfn_pte(pfn, mem_type);
->> +		pte_t new_pte = kvm_pfn_pte(pfn, mem_type);
->>     		if (writable) {
->>   			new_pte = kvm_s2pte_mkwrite(new_pte);
->>
+Thanks.
