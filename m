@@ -1,57 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754577AbeEALLM convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 07:11:12 -0400
-Received: from ozlabs.org ([203.11.71.1]:48289 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753856AbeEALLK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 07:11:10 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Michal =?utf-8?Q?Such=C3=A1nek?= <msuchanek@suse.de>
-Cc: linuxppc-dev@ozlabs.org, linux-kernel@vger.kernel.org,
-        npiggin@gmail.com
-Subject: Re: [PATCH 4/6] powerpc/64s: Enable barrier_nospec based on firmware settings
-In-Reply-To: <20180426180258.04e6bee6@kitsune.suse.cz>
-References: <20180424041559.32410-1-mpe@ellerman.id.au> <20180424041559.32410-4-mpe@ellerman.id.au> <20180426180258.04e6bee6@kitsune.suse.cz>
-Date: Tue, 01 May 2018 21:11:06 +1000
-Message-ID: <87vac7r5px.fsf@concordia.ellerman.id.au>
+        id S1754867AbeEALL2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 07:11:28 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:46312 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754652AbeEALLY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 07:11:24 -0400
+X-Google-Smtp-Source: AB8JxZonkhTaq+7sarSyqgA9gi6aRl5xcRe7slRwrd3tJO9YTAd/KidHmcVe3urLaOGstK/zQK9G1w==
+Date: Tue, 1 May 2018 13:11:20 +0200
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Eduardo Valentin <edubezval@gmail.com>,
+        Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 17/18] thermal: exynos: remove unused defines for
+ Exynos5433
+Message-ID: <20180501110434.GN27619@mai>
+References: <1524743493-28113-1-git-send-email-b.zolnierkie@samsung.com>
+ <CGME20180426115241epcas1p4472048bd1647d9151718f573e6f1025a@epcas1p4.samsung.com>
+ <1524743493-28113-18-git-send-email-b.zolnierkie@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1524743493-28113-18-git-send-email-b.zolnierkie@samsung.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Michal Suchánek <msuchanek@suse.de> writes:
-> Hello,
->
-> On Tue, 24 Apr 2018 14:15:57 +1000
-> Michael Ellerman <mpe@ellerman.id.au> wrote:
->
->> From: Michal Suchanek <msuchanek@suse.de>
->> 
->> Check what firmware told us and enable/disable the barrier_nospec as
->> appropriate.
->> 
->> We err on the side of enabling the barrier, as it's no-op on older
->> systems, see the comment for more detail.
->> 
->> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-...
->
-> I am missing the option for the barrier to be disabled by a kernel
-> commandline argument here.
->
-> It does make sense to add a kernel parameter that is checked on boot to
-> be compatible with other platforms that implement one.
+On Thu, Apr 26, 2018 at 01:51:32PM +0200, Bartlomiej Zolnierkiewicz wrote:
+> Remove unused defines for Exynos5433.
 
-No other platforms have an option to disable variant 1 mitigations, so
-there isn't an existing parameter we can use.
+I agree to remove these macros but is there a place with the documentation for
+those values if we need to put them back ?
+ 
+> There should be no functional changes caused by this patch.
+> 
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+>  drivers/thermal/samsung/exynos_tmu.c | 5 -----
+>  1 file changed, 5 deletions(-)
+> 
+> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+> index 9639acf..ed02b40 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.c
+> +++ b/drivers/thermal/samsung/exynos_tmu.c
+> @@ -96,11 +96,6 @@
+>  #define EXYNOS4412_MUX_ADDR_SHIFT          20
+>  
+>  /* Exynos5433 specific registers */
+> -#define EXYNOS5433_TMU_REG_CONTROL1		0x024
+> -#define EXYNOS5433_TMU_SAMPLING_INTERVAL	0x02c
+> -#define EXYNOS5433_TMU_COUNTER_VALUE0		0x030
+> -#define EXYNOS5433_TMU_COUNTER_VALUE1		0x034
+> -#define EXYNOS5433_TMU_REG_CURRENT_TEMP1	0x044
+>  #define EXYNOS5433_THD_TEMP_RISE3_0		0x050
+>  #define EXYNOS5433_THD_TEMP_RISE7_4		0x054
+>  #define EXYNOS5433_THD_TEMP_FALL3_0		0x060
+> -- 
+> 1.9.1
+> 
 
-Which is not to say we can't add one, but I wasn't sure if it was really
-worth it.
+-- 
 
-But I guess we should add one, I might do it as a follow-up patch.
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-cheers
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
