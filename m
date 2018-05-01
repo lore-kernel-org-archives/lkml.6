@@ -1,39 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751080AbeEAWNW (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 18:13:22 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56274 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750823AbeEAWNV (ORCPT
+        id S1751214AbeEAWPQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 18:15:16 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:16347 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750859AbeEAWPP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 18:13:21 -0400
-Date: Tue, 1 May 2018 15:13:19 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: dsterba@suse.cz, Christoph Hellwig <hch@infradead.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] proc: use #pragma once
-Message-Id: <20180501151319.33dcb1d48a8526ed521fae9c@linux-foundation.org>
-In-Reply-To: <20180426192444.GA4919@avx2>
-References: <20180423213534.GA9043@avx2>
-        <20180424135409.GA22709@infradead.org>
-        <20180425205531.GA9020@avx2>
-        <20180426102629.scwtdeijbo3342gp@twin.jikos.cz>
-        <20180426192444.GA4919@avx2>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Tue, 1 May 2018 18:15:15 -0400
+To: axboe@kernel.dk, torvalds@linux-foundation.org
+Cc: jack@suse.cz, tj@kernel.org,
+        syzbot+c0cf869505e03bdf1a24@syzkaller.appspotmail.com,
+        christophe.jaillet@wanadoo.fr, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, syzkaller-bugs@googlegroups.com,
+        zhangweiping@didichuxing.com, akpm@linux-foundation.org,
+        dvyukov@google.com, linux-block@vger.kernel.org
+Subject: Re: INFO: task hung in wb_shutdown (2)
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+References: <94eb2c05b2d83650030568cc8bd9@google.com>
+        <e56c1600-8923-dd6b-d065-c2fd2a720404@I-love.SAKURA.ne.jp>
+        <43302799-1c50-4cab-b974-9fe1ca584813@I-love.SAKURA.ne.jp>
+        <CA+55aFxaa_+uZ=bOVdevcUwG7ncue7O+i06q4Kb=bWACGwCBjQ@mail.gmail.com>
+        <bd3e8460-9794-6b57-e7d6-7e18ea34ac0c@kernel.dk>
+In-Reply-To: <bd3e8460-9794-6b57-e7d6-7e18ea34ac0c@kernel.dk>
+Message-Id: <201805020714.FDD52145.OOJtOFVFSMLQFH@I-love.SAKURA.ne.jp>
+X-Mailer: Winbiff [Version 2.51 PL2]
+X-Accept-Language: ja,en,zh
+Date: Wed, 2 May 2018 07:14:51 +0900
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 26 Apr 2018 22:24:44 +0300 Alexey Dobriyan <adobriyan@gmail.com> wrote:
+>From 1b90d7f71d60e743c69cdff3ba41edd1f9f86f93 Mon Sep 17 00:00:00 2001
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Date: Wed, 2 May 2018 07:07:55 +0900
+Subject: [PATCH v2] bdi: wake up concurrent wb_shutdown() callers.
 
-> > The LOC argument also does not sound very convincing.
-> 
-> When was the last time you did -80 kLOC patch for free?
+syzbot is reporting hung tasks at wait_on_bit(WB_shutting_down) in
+wb_shutdown() [1]. This seems to be because commit 5318ce7d46866e1d ("bdi:
+Shutdown writeback on all cgwbs in cgwb_bdi_destroy()") forgot to call
+wake_up_bit(WB_shutting_down) after clear_bit(WB_shutting_down).
 
-That would be the way to do it - sell the idea to Linus, send him a
-script to do it then stand back.  The piecemeal approach is ongoing
-pain.
+Introduce a helper function clear_and_wake_up_bit() and use it, in order
+to avoid similar errors in future.
+
+[1] https://syzkaller.appspot.com/bug?id=b297474817af98d5796bc544e1bb806fc3da0e5e
+
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reported-by: syzbot <syzbot+c0cf869505e03bdf1a24@syzkaller.appspotmail.com>
+Fixes: 5318ce7d46866e1d ("bdi: Shutdown writeback on all cgwbs in cgwb_bdi_destroy()")
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Jens Axboe <axboe@fb.com>
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+---
+ include/linux/wait_bit.h | 17 +++++++++++++++++
+ mm/backing-dev.c         |  2 +-
+ 2 files changed, 18 insertions(+), 1 deletion(-)
+
+diff --git a/include/linux/wait_bit.h b/include/linux/wait_bit.h
+index 9318b21..2b0072f 100644
+--- a/include/linux/wait_bit.h
++++ b/include/linux/wait_bit.h
+@@ -305,4 +305,21 @@ struct wait_bit_queue_entry {
+ 	__ret;								\
+ })
+ 
++/**
++ * clear_and_wake_up_bit - clear a bit and wake up anyone waiting on that bit
++ *
++ * @bit: the bit of the word being waited on
++ * @word: the word being waited on, a kernel virtual address
++ *
++ * You can use this helper if bitflags are manipulated atomically rather than
++ * non-atomically under a lock.
++ */
++static inline void clear_and_wake_up_bit(int bit, void *word)
++{
++	clear_bit_unlock(bit, word);
++	/* See wake_up_bit() for which memory barrier you need to use. */
++	smp_mb__after_atomic();
++	wake_up_bit(word, bit);
++}
++
+ #endif /* _LINUX_WAIT_BIT_H */
+diff --git a/mm/backing-dev.c b/mm/backing-dev.c
+index 023190c..fa5e6d7 100644
+--- a/mm/backing-dev.c
++++ b/mm/backing-dev.c
+@@ -383,7 +383,7 @@ static void wb_shutdown(struct bdi_writeback *wb)
+ 	 * the barrier provided by test_and_clear_bit() above.
+ 	 */
+ 	smp_wmb();
+-	clear_bit(WB_shutting_down, &wb->state);
++	clear_and_wake_up_bit(WB_shutting_down, &wb->state);
+ }
+ 
+ static void wb_exit(struct bdi_writeback *wb)
+-- 
+1.8.3.1
