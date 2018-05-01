@@ -1,129 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754264AbeEAKH7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 06:07:59 -0400
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:61521 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751071AbeEAKH5 (ORCPT
+        id S1752447AbeEAKLQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 06:11:16 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:46955 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750994AbeEAKLP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 06:07:57 -0400
-Subject: Re: [PATCH v7 3/9] PCI: endpoint: functions/pci-epf-test: Add second
- entry
-To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-References: <cover.1524577064.git.gustavo.pimentel@synopsys.com>
- <c6cfd167838ae8e226dee0820983efe918fa4e1f.1524577064.git.gustavo.pimentel@synopsys.com>
- <20180426165605.GA6370@e107981-ln.cambridge.arm.com>
-CC: <bhelgaas@google.com>, <Joao.Pinto@synopsys.com>,
-        <jingoohan1@gmail.com>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <b65caf2e-b002-f591-6215-ff2241b2dfb8@ti.com>
-Date: Tue, 1 May 2018 15:37:47 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
+        Tue, 1 May 2018 06:11:15 -0400
+Subject: Re: kernel BUG at include/linux/mm.h:LINE!
+To: syzbot <syzbot+d96f60296ef613fe1d69@syzkaller.appspotmail.com>,
+        kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, Huang Ying <ying.huang@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@elte.hu>
+References: <0000000000005dbad8056b20cabc@google.com>
+Cc: akpm@linux-foundation.org, bhe@redhat.com, dyoung@redhat.com,
+        mingo@redhat.com, prudo@linux.vnet.ibm.com, takahiro.akashi@linaro.org,
+        tglx@linutronix.de, thomas.lendacky@amd.com, x86@kernel.org,
+        xlpang@redhat.com
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <cb42fdcd-7d00-373b-094f-4188956afc1d@I-love.SAKURA.ne.jp>
+Date: Tue, 1 May 2018 19:10:19 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180426165605.GA6370@e107981-ln.cambridge.arm.com>
-Content-Type: text/plain; charset="windows-1252"
+In-Reply-To: <0000000000005dbad8056b20cabc@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lorenzo,
+>From d54b2acf63191eba3d5052bf34fe6d26e3580ac2 Mon Sep 17 00:00:00 2001
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Date: Tue, 1 May 2018 15:36:52 +0900
+Subject: [PATCH] x86/kexec: avoid double free_page() upon do_kexec_load()
+ failure.
 
-On Thursday 26 April 2018 10:26 PM, Lorenzo Pieralisi wrote:
-> On Tue, Apr 24, 2018 at 02:44:40PM +0100, Gustavo Pimentel wrote:
->> Adds a seconds entry on the pci_epf_test_ids structure that disables the
-> 
-> "Add a second entry to..."
-> 
->> linkup_notifier parameter on driver for the designware EP.
->>
->> This allows designware EPs that doesn't have linkup notification signal
->> to work with pcitest.
->>
->> Updates the binding documentation accordingly.
-> 
-> Valid for all the series: use imperative sentences.
-> 
-> eg:
-> 
-> "Update the binding documentation accordingly".
-> 
-> not
-> 
-> "Updates the binding documentation accordingly".
-> 
->> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
->> Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
->> ---
->> Change v2->v3:
->>  - Added second entry in pci_epf_test_ids structure.
->>  - Remove test_reg_bar field assignment on second entry.
->> Changes v3->v4:
->>  - Nothing changed, just to follow the patch set version.
->> Changes v4->v5:
->>  - Changed pci_epf_test_cfg2 to pci_epf_test_designware.
->> Changes v5->v6:
->>  - Changed name field from pci_epf_test_designware to pci_epf_test_dw.
->> Changes v6->v7:
->>  - Changed variable name from data_cfg2 to data_linkup_notifier_disabled.
->>
->>  Documentation/PCI/endpoint/function/binding/pci-test.txt | 2 ++
->>  drivers/pci/endpoint/functions/pci-epf-test.c            | 8 ++++++++
->>  2 files changed, 10 insertions(+)
->>
->> diff --git a/Documentation/PCI/endpoint/function/binding/pci-test.txt b/Documentation/PCI/endpoint/function/binding/pci-test.txt
->> index 3b68b95..dc39f47 100644
->> --- a/Documentation/PCI/endpoint/function/binding/pci-test.txt
->> +++ b/Documentation/PCI/endpoint/function/binding/pci-test.txt
->> @@ -1,6 +1,8 @@
->>  PCI TEST ENDPOINT FUNCTION
->>  
->>  name: Should be "pci_epf_test" to bind to the pci_epf_test driver.
->> +name: Should be "pci_epf_test_dw" to bind to the pci_epf_test driver
->> +      with a custom configuration for the designware EP.
-> 
-> The link between the "name" and the device created is quite obscure and
-> reading pci-test-howto.txt certainly does not clarify it.
-> 
-> In pci-test-howto.txt an explanation should be added to the configs
-> device creation paragraph to clarify it.
-> 
->>  Configurable Fields:
->>  vendorid	 : should be 0x104c
->> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
->> index 7cef851..4ab463b 100644
->> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
->> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
->> @@ -459,10 +459,18 @@ static int pci_epf_test_bind(struct pci_epf *epf)
->>  	return 0;
->>  }
->>  
->> +static const struct pci_epf_test_data data_linkup_notifier_disabled = {
->> +	.linkup_notifier = false
->> +};
->> +
->>  static const struct pci_epf_device_id pci_epf_test_ids[] = {
->>  	{
->>  		.name = "pci_epf_test",
->>  	},
->> +	{
->> +		.name = "pci_epf_test_dw",
->> +		.driver_data = (kernel_ulong_t)&data_linkup_notifier_disabled,
->> +	},
->>  	{},
-> 
-> Should not this be a property derived from the controller compatible
-> property instead of the test device name written in configfs ?
+syzbot is reporting crashes after memory allocation failure inside
+do_kexec_load() [1]. This is because free_transition_pgtable() is called
+by both init_transition_pgtable() and machine_kexec_cleanup() when memory
+allocation failed inside init_transition_pgtable().
 
-pci_epf_test is an independent driver on its own that operates in a layer above
-the controller driver. So it does not get the controller compatible (which is
-used in controller drivers like pcie-designware-plat.c). pci_epf_test uses
-"pci_epf_device_id" which is _similar_ to "of_device_id" used by platform drivers.
+Regarding 32bit code, machine_kexec_free_page_tables() is called by both
+machine_kexec_alloc_page_tables() and machine_kexec_cleanup() when memory
+allocation failed inside machine_kexec_alloc_page_tables().
 
-Thanks
-Kishon
+Fix this by explicitly setting NULL after free_page().
+
+[1] https://syzkaller.appspot.com/bug?id=91e52396168cf2bdd572fe1e1bc0bc645c1c6b40
+
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reported-by: syzbot <syzbot+d96f60296ef613fe1d69@syzkaller.appspotmail.com>
+Fixes: f5deb79679af6eb4 ("x86: kexec: Use one page table in x86_64 machine_kexec")
+Fixes: 92be3d6bdf2cb349 ("kexec/i386: allocate page table pages dynamically")
+Cc: Huang Ying <ying.huang@intel.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@elte.hu>
+---
+ arch/x86/kernel/machine_kexec_32.c | 5 +++++
+ arch/x86/kernel/machine_kexec_64.c | 4 ++++
+ 2 files changed, 9 insertions(+)
+
+diff --git a/arch/x86/kernel/machine_kexec_32.c b/arch/x86/kernel/machine_kexec_32.c
+index 60cdec6..ceccfe4 100644
+--- a/arch/x86/kernel/machine_kexec_32.c
++++ b/arch/x86/kernel/machine_kexec_32.c
+@@ -57,12 +57,17 @@ static void load_segments(void)
+ static void machine_kexec_free_page_tables(struct kimage *image)
+ {
+ 	free_page((unsigned long)image->arch.pgd);
++	image->arch.pgd = NULL;
+ #ifdef CONFIG_X86_PAE
+ 	free_page((unsigned long)image->arch.pmd0);
++	image->arch.pmd0 = NULL;
+ 	free_page((unsigned long)image->arch.pmd1);
++	image->arch.pmd1 = NULL;
+ #endif
+ 	free_page((unsigned long)image->arch.pte0);
++	image->arch.pte0 = NULL;
+ 	free_page((unsigned long)image->arch.pte1);
++	image->arch.pte1 = NULL;
+ }
+ 
+ static int machine_kexec_alloc_page_tables(struct kimage *image)
+diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
+index a5e55d8..76aaee9 100644
+--- a/arch/x86/kernel/machine_kexec_64.c
++++ b/arch/x86/kernel/machine_kexec_64.c
+@@ -39,9 +39,13 @@
+ static void free_transition_pgtable(struct kimage *image)
+ {
+ 	free_page((unsigned long)image->arch.p4d);
++	image->arch.p4d = NULL;
+ 	free_page((unsigned long)image->arch.pud);
++	image->arch.pud = NULL;
+ 	free_page((unsigned long)image->arch.pmd);
++	image->arch.pmd = NULL;
+ 	free_page((unsigned long)image->arch.pte);
++	image->arch.pte = NULL;
+ }
+ 
+ static int init_transition_pgtable(struct kimage *image, pgd_t *pgd)
+-- 
+1.8.3.1
