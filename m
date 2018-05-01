@@ -1,59 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755810AbeEAMPF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 08:15:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56604 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755267AbeEAMKj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 08:10:39 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 955C723695
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jwboyer@kernel.org
-X-Google-Smtp-Source: AB8JxZo2RfGFrxq6bFDECCR7A/A94HZtEwEbcZGxVoJEdn+o7xXwP1B9dOm2/VnV0e4Z690PiqEhIfA1svCKtKXnQ1k=
-MIME-Version: 1.0
-In-Reply-To: <20180425150635.GA4753@chelsio.com>
-References: <20180425150635.GA4753@chelsio.com>
-From: Josh Boyer <jwboyer@kernel.org>
-Date: Tue, 1 May 2018 08:10:37 -0400
-X-Gmail-Original-Message-ID: <CA+5PVA6f5Jqn29Pn0a5yxkcvypWR4h5baGmdk7FTN_APG0T_XA@mail.gmail.com>
-Message-ID: <CA+5PVA6f5Jqn29Pn0a5yxkcvypWR4h5baGmdk7FTN_APG0T_XA@mail.gmail.com>
-Subject: Re: pull request: linux-firmware: update cxgb4 firmware
-To: Ganesh Goudar <ganeshgr@chelsio.com>
-Cc: Linux Firmware <linux-firmware@kernel.org>,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
-        nirranjan@chelsio.com, indranil@chelsio.com,
-        Arjun V <arjun@chelsio.com>, venkatesh@chelsio.com
-Content-Type: text/plain; charset="UTF-8"
+        id S1755500AbeEAMQT (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 08:16:19 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:39982 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755089AbeEAMQP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 08:16:15 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 86CD7601A0
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cpandya@codeaurora.org
+From: Chintan Pandya <cpandya@codeaurora.org>
+To: Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>, Vlastimil Babka <vbabka@suse.cz>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Chintan Pandya <cpandya@codeaurora.org>
+Subject: [PATCH v3] mm: vmalloc: Clean up vunmap to avoid pgtable ops twice
+Date: Tue,  1 May 2018 17:46:00 +0530
+Message-Id: <1525176960-18408-1-git-send-email-cpandya@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 25, 2018 at 11:06 AM, Ganesh Goudar <ganeshgr@chelsio.com> wrote:
-> Hi,
->
-> Kindly pull the new firmware from the following URL.
-> git://git.chelsio.net/pub/git/linux-firmware.git for-upstream
->
-> Thanks
-> Ganesh
->
-> The following changes since commit 0caed67f661bfa9552b636d1e4af379eda75ed67:
->
->   cxgb4: update firmware to revision 1.19.1.0 (2018-04-25 07:48:21 -0700)
->
-> are available in the git repository at:
->
->   git://git.chelsio.net/pub/git/linux-firmware.git for-upstream
->
-> for you to fetch changes up to 0caed67f661bfa9552b636d1e4af379eda75ed67:
->
->   cxgb4: update firmware to revision 1.19.1.0 (2018-04-25 07:48:21 -0700)
->
-> ----------------------------------------------------------------
+vunmap does page table clear operations twice in the
+case when DEBUG_PAGEALLOC_ENABLE_DEFAULT is enabled.
 
-If you could update your pull request script to include a diffstat,
-that would be appreciated.
+So, clean up the code as that is unintended.
 
-Pulled and pushed out.  Thanks.
+As a perf gain, we save few us. Below ftrace data was
+obtained while doing 1 MB of vmalloc/vfree on ARM64
+based SoC *without* this patch applied. After this
+patch, we can save ~3 us (on 1 extra vunmap_page_range).
 
-josh
+  CPU  DURATION                  FUNCTION CALLS
+  |     |   |                     |   |   |   |
+ 6)               |  __vunmap() {
+ 6)               |    vmap_debug_free_range() {
+ 6)   3.281 us    |      vunmap_page_range();
+ 6) + 45.468 us   |    }
+ 6)   2.760 us    |    vunmap_page_range();
+ 6) ! 505.105 us  |  }
+
+Signed-off-by: Chintan Pandya <cpandya@codeaurora.org>
+---
+ mm/vmalloc.c | 29 +++++++----------------------
+ 1 file changed, 7 insertions(+), 22 deletions(-)
+
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index ebff729..781ce02 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -603,26 +603,6 @@ static void unmap_vmap_area(struct vmap_area *va)
+ 	vunmap_page_range(va->va_start, va->va_end);
+ }
+ 
+-static void vmap_debug_free_range(unsigned long start, unsigned long end)
+-{
+-	/*
+-	 * Unmap page tables and force a TLB flush immediately if pagealloc
+-	 * debugging is enabled.  This catches use after free bugs similarly to
+-	 * those in linear kernel virtual address space after a page has been
+-	 * freed.
+-	 *
+-	 * All the lazy freeing logic is still retained, in order to minimise
+-	 * intrusiveness of this debugging feature.
+-	 *
+-	 * This is going to be *slow* (linear kernel virtual address debugging
+-	 * doesn't do a broadcast TLB flush so it is a lot faster).
+-	 */
+-	if (debug_pagealloc_enabled()) {
+-		vunmap_page_range(start, end);
+-		flush_tlb_kernel_range(start, end);
+-	}
+-}
+-
+ /*
+  * lazy_max_pages is the maximum amount of virtual address space we gather up
+  * before attempting to purge with a TLB flush.
+@@ -756,6 +736,9 @@ static void free_unmap_vmap_area(struct vmap_area *va)
+ {
+ 	flush_cache_vunmap(va->va_start, va->va_end);
+ 	unmap_vmap_area(va);
++	if (debug_pagealloc_enabled())
++		flush_tlb_kernel_range(va->va_start, va->va_end);
++
+ 	free_vmap_area_noflush(va);
+ }
+ 
+@@ -1053,6 +1036,10 @@ static void vb_free(const void *addr, unsigned long size)
+ 
+ 	vunmap_page_range((unsigned long)addr, (unsigned long)addr + size);
+ 
++	if (debug_pagealloc_enabled())
++		flush_tlb_kernel_range((unsigned long)addr,
++					(unsigned long)addr + size);
++
+ 	spin_lock(&vb->lock);
+ 
+ 	/* Expand dirty range */
+@@ -1142,7 +1129,6 @@ void vm_unmap_ram(const void *mem, unsigned int count)
+ 	BUG_ON(!PAGE_ALIGNED(addr));
+ 
+ 	debug_check_no_locks_freed(mem, size);
+-	vmap_debug_free_range(addr, addr+size);
+ 
+ 	if (likely(count <= VMAP_MAX_ALLOC)) {
+ 		vb_free(mem, size);
+@@ -1499,7 +1485,6 @@ struct vm_struct *remove_vm_area(const void *addr)
+ 		va->flags |= VM_LAZY_FREE;
+ 		spin_unlock(&vmap_area_lock);
+ 
+-		vmap_debug_free_range(va->va_start, va->va_end);
+ 		kasan_free_shadow(vm);
+ 		free_unmap_vmap_area(va);
+ 
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation
+Center, Inc., is a member of Code Aurora Forum, a Linux Foundation
+Collaborative Project
