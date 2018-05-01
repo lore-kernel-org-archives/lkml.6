@@ -1,61 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755771AbeEAQHC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 12:07:02 -0400
-Received: from mail-io0-f176.google.com ([209.85.223.176]:45678 "EHLO
-        mail-io0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751071AbeEAQG7 (ORCPT
+        id S1755854AbeEAQOn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 12:14:43 -0400
+Received: from mail-oi0-f49.google.com ([209.85.218.49]:36662 "EHLO
+        mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753789AbeEAQOl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 12:06:59 -0400
-X-Google-Smtp-Source: AB8JxZrId8ddkAYPs+9e25GOsNQHGamtSg/7aLjGQyOnklHCcaOlkXCez/oOLcycAFE6rCAEufEofocYNa04s5yRzEk=
+        Tue, 1 May 2018 12:14:41 -0400
+X-Google-Smtp-Source: AB8JxZrBrVhxWC+8Gii6YCYxd+0t2sXiHU0vUzpSo/8HVmV/BqjlmflHpkYLitkwmmq4eo6bfpTDsw==
+Date: Tue, 1 May 2018 11:14:39 -0500
+From: Rob Herring <robh@kernel.org>
+To: Wesley Terpstra <wesley@sifive.com>
+Cc: Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Noralf =?iso-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>,
+        David Lechner <david@lechnology.com>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+        SZ Lin <sz.lin@moxa.com>, linux-pwm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] dt-bindings: Add "sifive" vendor prefix
+Message-ID: <20180501161439.GA28644@rob-hp-laptop>
+References: <1524869998-2805-1-git-send-email-wesley@sifive.com>
+ <1524869998-2805-3-git-send-email-wesley@sifive.com>
+ <72c263ef-09c3-a05f-3c16-1bc8df667d38@suse.de>
+ <CAMgXwThXvdzi27GjTD-q4Fw7kM5WOCtMewh7U3M4wcLwEx+VQw@mail.gmail.com>
 MIME-Version: 1.0
-References: <94eb2c05b2d83650030568cc8bd9@google.com> <e56c1600-8923-dd6b-d065-c2fd2a720404@I-love.SAKURA.ne.jp>
- <43302799-1c50-4cab-b974-9fe1ca584813@I-love.SAKURA.ne.jp>
-In-Reply-To: <43302799-1c50-4cab-b974-9fe1ca584813@I-love.SAKURA.ne.jp>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 01 May 2018 16:06:48 +0000
-Message-ID: <CA+55aFxaa_+uZ=bOVdevcUwG7ncue7O+i06q4Kb=bWACGwCBjQ@mail.gmail.com>
-Subject: Re: INFO: task hung in wb_shutdown (2)
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
-        Tejun Heo <tj@kernel.org>,
-        syzbot+c0cf869505e03bdf1a24@syzkaller.appspotmail.com,
-        christophe.jaillet@wanadoo.fr,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>, syzkaller-bugs@googlegroups.com,
-        zhangweiping@didichuxing.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        linux-block <linux-block@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMgXwThXvdzi27GjTD-q4Fw7kM5WOCtMewh7U3M4wcLwEx+VQw@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 1, 2018 at 3:27 AM Tetsuo Handa <
-penguin-kernel@i-love.sakura.ne.jp> wrote:
+On Sat, Apr 28, 2018 at 10:37:56PM +0000, Wesley Terpstra wrote:
+> Will do, thanks!
 
-> Can you review this patch? syzbot has hit this bug for nearly 4000 times
-but
-> is still unable to find a reproducer. Therefore, the only way to test
-would be
-> to apply this patch upstream and test whether the problem is solved.
+Don't top post to lists.
 
-Looks ok to me, except:
-
-> >       smp_wmb();
-> >       clear_bit(WB_shutting_down, &wb->state);
-> > +     smp_mb(); /* advised by wake_up_bit() */
-> > +     wake_up_bit(&wb->state, WB_shutting_down);
-
-This whole sequence really should just be a pattern with a helper function.
-
-And honestly, the pattern probably *should* be
-
-     clear_bit_unlock(bit, &mem);
-     smp_mb__after_atomic()
-     wake_up_bit(&mem, bit);
-
-which looks like it is a bit cleaner wrt memory ordering rules.
-
-             Linus
+I've applied this. I assume you'll have things other than the PWM...
+ 
+> On Sat, Apr 28, 2018, 4:21 AM Andreas Färber <afaerber@suse.de> wrote:
+> 
+> > Am 28.04.2018 um 00:59 schrieb Wesley W. Terpstra:
+> > > This adds a vendor prefix "sifive" for SiFive, Inc.
+> > > We make chips.
+> > >
+> > > Signed-off-by: Wesley W. Terpstra <wesley@sifive.com>
+> > > ---
+> > >  Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
+> > >  1 file changed, 1 insertion(+)
+> >
+> > Reviewed-by: Andreas Färber <afaerber@suse.de>
+> >
+> > but please reorder the patches, so that the prefix definition comes
+> > before its first use in the pwm binding.
+> >
+> > Regards,
+> > Andreas
+> >
+> > --
+> > SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+> > GF: Felix Imendörffer, Jane Smithard, Graham Norton
+> > HRB 21284 (AG Nürnberg)
+> >
