@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751867AbeEAWqs (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 18:46:48 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:43610 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751094AbeEAWqh (ORCPT
+        id S1751802AbeEAWqp (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 18:46:45 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:39320 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751064AbeEAWqf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 18:46:37 -0400
-X-Google-Smtp-Source: AB8JxZpHEQg732DrE3AxoNJzW0uadLGhEaZYu5AgeHZVg13sSxbQlcnf0Wh+Vffb2eOMYsW/bfYDCg==
+        Tue, 1 May 2018 18:46:35 -0400
+X-Google-Smtp-Source: AB8JxZqmaRxf0+G6i90dUJL0YLNCkisNQXAJnKMkEFXvB/v1/J4kYyyo0rqOdt6KoZ+lChwwtsSBlQ==
 From: "=?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?=" <jprvita@gmail.com>
 X-Google-Original-From: =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@endlessm.com>
 To: Larry Finger <Larry.Finger@lwfinger.net>
@@ -22,9 +22,9 @@ Cc: Steve deRosier <derosier@gmail.com>,
         LKML <linux-kernel@vger.kernel.org>, Daniel Drake <drake@endlessm.com>,
         =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@endlessm.com>,
         linux@endlessm.com
-Subject: [RFC PATCH 3/3] rtlwifi: btcoex: Always use 2ant-functions for RTL8723BE
-Date: Tue,  1 May 2018 15:46:13 -0700
-Message-Id: <20180501224613.32460-3-jprvita@endlessm.com>
+Subject: [RFC PATCH 2/3] Revert "rtlwifi: fill FW version and subversion"
+Date: Tue,  1 May 2018 15:46:12 -0700
+Message-Id: <20180501224613.32460-2-jprvita@endlessm.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180501224613.32460-1-jprvita@endlessm.com>
 References: <CA+A7VXUUsZHD2gr9TBcV6jZBOPGZv7_vK-wWZ0MvGgiCnAiUgQ@mail.gmail.com>
@@ -36,14 +36,7 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This partially reverts commit 7937f02d1953952a6eaf626b175ea9db5541e699,
-which not only hooked external functions for newer ICs, as described in
-its commit message, but also changed the behavior for RTL8723BE
-depending on the value of board_info.btdm_ant_num.
-
-When board_info.btdm_ant_num == 1, 7937f02d19 changes the codepath to
-use a whole different set of functions ex_btc8723b1ant_*, instead of the
-ex_btc8723b2ant_* that were used before it.
+This reverts commit 874e837d67d0db179c9771f38fd21df07c703e93.
 
 This drastically affects the upload performance and signal strenght on
 the HP 240 G4 laptop, as shown by the results bellow:
@@ -100,158 +93,35 @@ With this change:
 
 Signed-off-by: João Paulo Rechi Vita <jprvita@endlessm.com>
 ---
- .../realtek/rtlwifi/btcoexist/halbtcoutsrc.c  | 62 ++++---------------
- 1 file changed, 12 insertions(+), 50 deletions(-)
+ drivers/net/wireless/realtek/rtlwifi/rtl8188ee/fw.c         | 2 --
+ drivers/net/wireless/realtek/rtlwifi/rtl8723com/fw_common.c | 2 --
+ 2 files changed, 4 deletions(-)
 
-diff --git a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c
-index 86182b917c92..a862b5efdf55 100644
---- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c
-@@ -1452,10 +1452,7 @@ void exhalbtc_init_hw_config(struct btc_coexist *btcoexist, bool wifi_only)
- 		else if (btcoexist->board_info.btdm_ant_num == 1)
- 			ex_btc8821a1ant_init_hwconfig(btcoexist, wifi_only);
- 	} else if (IS_HARDWARE_TYPE_8723B(btcoexist->adapter)) {
--		if (btcoexist->board_info.btdm_ant_num == 2)
--			ex_btc8723b2ant_init_hwconfig(btcoexist);
--		else if (btcoexist->board_info.btdm_ant_num == 1)
--			ex_btc8723b1ant_init_hwconfig(btcoexist, wifi_only);
-+		ex_btc8723b2ant_init_hwconfig(btcoexist);
- 	} else if (IS_HARDWARE_TYPE_8723A(btcoexist->adapter)) {
- 		/* 8723A has no this function */
- 	} else if (IS_HARDWARE_TYPE_8192E(btcoexist->adapter)) {
-@@ -1481,10 +1478,7 @@ void exhalbtc_init_coex_dm(struct btc_coexist *btcoexist)
- 		else if (btcoexist->board_info.btdm_ant_num == 1)
- 			ex_btc8821a1ant_init_coex_dm(btcoexist);
- 	} else if (IS_HARDWARE_TYPE_8723B(btcoexist->adapter)) {
--		if (btcoexist->board_info.btdm_ant_num == 2)
--			ex_btc8723b2ant_init_coex_dm(btcoexist);
--		else if (btcoexist->board_info.btdm_ant_num == 1)
--			ex_btc8723b1ant_init_coex_dm(btcoexist);
-+		ex_btc8723b2ant_init_coex_dm(btcoexist);
- 	} else if (IS_HARDWARE_TYPE_8192E(btcoexist->adapter)) {
- 		if (btcoexist->board_info.btdm_ant_num == 2)
- 			ex_btc8192e2ant_init_coex_dm(btcoexist);
-@@ -1516,10 +1510,7 @@ void exhalbtc_ips_notify(struct btc_coexist *btcoexist, u8 type)
- 		else if (btcoexist->board_info.btdm_ant_num == 1)
- 			ex_btc8821a1ant_ips_notify(btcoexist, ips_type);
- 	} else if (IS_HARDWARE_TYPE_8723B(btcoexist->adapter)) {
--		if (btcoexist->board_info.btdm_ant_num == 2)
--			ex_btc8723b2ant_ips_notify(btcoexist, ips_type);
--		else if (btcoexist->board_info.btdm_ant_num == 1)
--			ex_btc8723b1ant_ips_notify(btcoexist, ips_type);
-+		ex_btc8723b2ant_ips_notify(btcoexist, ips_type);
- 	} else if (IS_HARDWARE_TYPE_8192E(btcoexist->adapter)) {
- 		if (btcoexist->board_info.btdm_ant_num == 2)
- 			ex_btc8192e2ant_ips_notify(btcoexist, ips_type);
-@@ -1549,10 +1540,7 @@ void exhalbtc_lps_notify(struct btc_coexist *btcoexist, u8 type)
- 		else if (btcoexist->board_info.btdm_ant_num == 1)
- 			ex_btc8821a1ant_lps_notify(btcoexist, lps_type);
- 	} else if (IS_HARDWARE_TYPE_8723B(btcoexist->adapter)) {
--		if (btcoexist->board_info.btdm_ant_num == 2)
--			ex_btc8723b2ant_lps_notify(btcoexist, lps_type);
--		else if (btcoexist->board_info.btdm_ant_num == 1)
--			ex_btc8723b1ant_lps_notify(btcoexist, lps_type);
-+		ex_btc8723b2ant_lps_notify(btcoexist, lps_type);
- 	} else if (IS_HARDWARE_TYPE_8192E(btcoexist->adapter)) {
- 		if (btcoexist->board_info.btdm_ant_num == 2)
- 			ex_btc8192e2ant_lps_notify(btcoexist, lps_type);
-@@ -1582,10 +1570,7 @@ void exhalbtc_scan_notify(struct btc_coexist *btcoexist, u8 type)
- 		else if (btcoexist->board_info.btdm_ant_num == 1)
- 			ex_btc8821a1ant_scan_notify(btcoexist, scan_type);
- 	} else if (IS_HARDWARE_TYPE_8723B(btcoexist->adapter)) {
--		if (btcoexist->board_info.btdm_ant_num == 2)
--			ex_btc8723b2ant_scan_notify(btcoexist, scan_type);
--		else if (btcoexist->board_info.btdm_ant_num == 1)
--			ex_btc8723b1ant_scan_notify(btcoexist, scan_type);
-+		ex_btc8723b2ant_scan_notify(btcoexist, scan_type);
- 	} else if (IS_HARDWARE_TYPE_8192E(btcoexist->adapter)) {
- 		if (btcoexist->board_info.btdm_ant_num == 2)
- 			ex_btc8192e2ant_scan_notify(btcoexist, scan_type);
-@@ -1630,10 +1615,7 @@ void exhalbtc_connect_notify(struct btc_coexist *btcoexist, u8 action)
- 		else if (btcoexist->board_info.btdm_ant_num == 1)
- 			ex_btc8821a1ant_connect_notify(btcoexist, asso_type);
- 	} else if (IS_HARDWARE_TYPE_8723B(btcoexist->adapter)) {
--		if (btcoexist->board_info.btdm_ant_num == 2)
--			ex_btc8723b2ant_connect_notify(btcoexist, asso_type);
--		else if (btcoexist->board_info.btdm_ant_num == 1)
--			ex_btc8723b1ant_connect_notify(btcoexist, asso_type);
-+		ex_btc8723b2ant_connect_notify(btcoexist, asso_type);
- 	} else if (IS_HARDWARE_TYPE_8192E(btcoexist->adapter)) {
- 		if (btcoexist->board_info.btdm_ant_num == 2)
- 			ex_btc8192e2ant_connect_notify(btcoexist, asso_type);
-@@ -1666,10 +1648,7 @@ void exhalbtc_mediastatus_notify(struct btc_coexist *btcoexist,
- 		else if (btcoexist->board_info.btdm_ant_num == 1)
- 			ex_btc8821a1ant_media_status_notify(btcoexist, status);
- 	} else if (IS_HARDWARE_TYPE_8723B(btcoexist->adapter)) {
--		if (btcoexist->board_info.btdm_ant_num == 2)
--			ex_btc8723b2ant_media_status_notify(btcoexist, status);
--		else if (btcoexist->board_info.btdm_ant_num == 1)
--			ex_btc8723b1ant_media_status_notify(btcoexist, status);
-+		ex_btc8723b2ant_media_status_notify(btcoexist, status);
- 	} else if (IS_HARDWARE_TYPE_8192E(btcoexist->adapter)) {
- 		if (btcoexist->board_info.btdm_ant_num == 2)
- 			ex_btc8192e2ant_media_status_notify(btcoexist, status);
-@@ -1709,12 +1688,8 @@ void exhalbtc_special_packet_notify(struct btc_coexist *btcoexist, u8 pkt_type)
- 			ex_btc8821a1ant_special_packet_notify(btcoexist,
- 							      packet_type);
- 	} else if (IS_HARDWARE_TYPE_8723B(btcoexist->adapter)) {
--		if (btcoexist->board_info.btdm_ant_num == 2)
--			ex_btc8723b2ant_special_packet_notify(btcoexist,
--							      packet_type);
--		else if (btcoexist->board_info.btdm_ant_num == 1)
--			ex_btc8723b1ant_special_packet_notify(btcoexist,
--							      packet_type);
-+		ex_btc8723b2ant_special_packet_notify(btcoexist,
-+						      packet_type);
- 	} else if (IS_HARDWARE_TYPE_8192E(btcoexist->adapter)) {
- 		if (btcoexist->board_info.btdm_ant_num == 2)
- 			ex_btc8192e2ant_special_packet_notify(btcoexist,
-@@ -1741,12 +1716,7 @@ void exhalbtc_bt_info_notify(struct btc_coexist *btcoexist,
- 			ex_btc8821a1ant_bt_info_notify(btcoexist, tmp_buf,
- 						       length);
- 	} else if (IS_HARDWARE_TYPE_8723B(btcoexist->adapter)) {
--		if (btcoexist->board_info.btdm_ant_num == 2)
--			ex_btc8723b2ant_bt_info_notify(btcoexist, tmp_buf,
--						       length);
--		else if (btcoexist->board_info.btdm_ant_num == 1)
--			ex_btc8723b1ant_bt_info_notify(btcoexist, tmp_buf,
--						       length);
-+		ex_btc8723b2ant_bt_info_notify(btcoexist, tmp_buf, length);
- 	} else if (IS_HARDWARE_TYPE_8192E(btcoexist->adapter)) {
- 		if (btcoexist->board_info.btdm_ant_num == 2)
- 			ex_btc8192e2ant_bt_info_notify(btcoexist, tmp_buf,
-@@ -1763,8 +1733,6 @@ void exhalbtc_rf_status_notify(struct btc_coexist *btcoexist, u8 type)
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/fw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/fw.c
+index 63874512598b..a2eca669873b 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/fw.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/fw.c
+@@ -141,8 +141,6 @@ int rtl88e_download_fw(struct ieee80211_hw *hw,
+ 		return 1;
  
- 	if (IS_HARDWARE_TYPE_8821(btcoexist->adapter)) {
- 	} else if (IS_HARDWARE_TYPE_8723B(btcoexist->adapter)) {
--		if (btcoexist->board_info.btdm_ant_num == 1)
--			ex_btc8723b1ant_rf_status_notify(btcoexist, type);
- 	} else if (IS_HARDWARE_TYPE_8192E(btcoexist->adapter)) {
- 	}
- }
-@@ -1804,10 +1772,7 @@ void exhalbtc_halt_notify(struct btc_coexist *btcoexist)
- 		else if (btcoexist->board_info.btdm_ant_num == 1)
- 			ex_btc8821a1ant_halt_notify(btcoexist);
- 	} else if (IS_HARDWARE_TYPE_8723B(btcoexist->adapter)) {
--		if (btcoexist->board_info.btdm_ant_num == 2)
--			ex_btc8723b2ant_halt_notify(btcoexist);
--		else if (btcoexist->board_info.btdm_ant_num == 1)
--			ex_btc8723b1ant_halt_notify(btcoexist);
-+		ex_btc8723b2ant_halt_notify(btcoexist);
- 	} else if (IS_HARDWARE_TYPE_8192E(btcoexist->adapter)) {
- 		if (btcoexist->board_info.btdm_ant_num == 2)
- 			ex_btc8192e2ant_halt_notify(btcoexist);
-@@ -1880,10 +1845,7 @@ void exhalbtc_periodical(struct btc_coexist *btcoexist)
- 			if (!halbtc_under_ips(btcoexist))
- 				ex_btc8821a1ant_periodical(btcoexist);
- 	} else if (IS_HARDWARE_TYPE_8723B(btcoexist->adapter)) {
--		if (btcoexist->board_info.btdm_ant_num == 2)
--			ex_btc8723b2ant_periodical(btcoexist);
--		else if (btcoexist->board_info.btdm_ant_num == 1)
--			ex_btc8723b1ant_periodical(btcoexist);
-+		ex_btc8723b2ant_periodical(btcoexist);
- 	} else if (IS_HARDWARE_TYPE_8192E(btcoexist->adapter)) {
- 		if (btcoexist->board_info.btdm_ant_num == 2)
- 			ex_btc8192e2ant_periodical(btcoexist);
+ 	pfwheader = (struct rtlwifi_firmware_header *)rtlhal->pfirmware;
+-	rtlhal->fw_version = le16_to_cpu(pfwheader->version);
+-	rtlhal->fw_subversion = pfwheader->subversion;
+ 	pfwdata = rtlhal->pfirmware;
+ 	fwsize = rtlhal->fwsize;
+ 	RT_TRACE(rtlpriv, COMP_FW, DBG_DMESG,
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8723com/fw_common.c b/drivers/net/wireless/realtek/rtlwifi/rtl8723com/fw_common.c
+index 521039c5d4ce..0d1ebc861720 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8723com/fw_common.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8723com/fw_common.c
+@@ -200,8 +200,6 @@ int rtl8723_download_fw(struct ieee80211_hw *hw,
+ 		return 1;
+ 
+ 	pfwheader = (struct rtlwifi_firmware_header *)rtlhal->pfirmware;
+-	rtlhal->fw_version = le16_to_cpu(pfwheader->version);
+-	rtlhal->fw_subversion = pfwheader->subversion;
+ 	pfwdata = rtlhal->pfirmware;
+ 	fwsize = rtlhal->fwsize;
+ 
 -- 
 2.17.0
