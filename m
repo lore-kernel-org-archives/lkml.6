@@ -1,40 +1,35 @@
-Return-Path: <vinod.koul@intel.com>
-X-Google-Smtp-Source: AB8JxZrFdgs3EwpgBuVrm0yrp6acX8L215PAWnTwoQ6HGkh1OllnFkNYAA1IY5KF8jmuamlXLVlN
-ARC-Seal: i=1; a=rsa-sha256; t=1525365101; cv=none;
+Return-Path: <robherring2@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1525178090; cv=none;
         d=google.com; s=arc-20160816;
-        b=CdjelxuUpn9U+iwjvl8ycHJKCqIPGbzeNGj8gr46LSUGoXoAQ3r84jetwN/szuO5NR
-         7Z5s5LlYWhmeCfqWIwbyJoU/fb1pblU0j21FmS+vf1dcySOMSzzMFxCrtXN8rLJzLOMl
-         1bR0BgDIL504SbRLo2Eonr5X6VHT1qkh81PQhii4f3gXCCqHZvlWu27311R2yZVJ4toL
-         /p1OOr8SKrwBXa15onkmVxwB0oFeU6VMzHUCls7cTyqhdhwQ4+TUBAfxvEjQiWxlmu83
-         2M/78giNMbBz7L4ZGFgLDrMmzeTGKFzui344zlVm+ZODhFD9rEe1noXElFN30xHcUqCg
-         JnCQ==
+        b=KfYLNtNqdlkJTInDI7jDv58D09TY5iUA5HZ4bqTlTyHG176rgyEumxLTJHjA0xZ/Y4
+         jFftn9Wyc1fqVM3nT4po7GltHFsVTVEdMfuZrsLs+XdUqLWUvefd9RkyP4JUAGnyGknP
+         cVvwvKCG3c1e0PFh3u2aobZCJESGfr9IKEFzJi+MPiK5CK7bX8MyzUw3Wahy9Fzv7m++
+         0asKe2vevarKR1XS3HbDQL9qV3nBxptnJ6FDGb8DS0a5JNXvy8OBb6lqEbrzOPAi7+3r
+         pX9VLr//ppJmAV0akyoZwHWLcRirVHh8H6Y99QYtbnbFDnzsMMJ3DJrMTj5nXDlckx0Y
+         xhgg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=qRVz2lDWdtc5m4RNkU/czTNj28z/1jVYJzjdco2HX3Q=;
-        b=xASL8oegNIh9FTx0e1K4iF9ojHnYo9VJ/XQcFCpxFJdaWDgr5w5DRuLq75u3OXUM4G
-         xTNSoBFdkmD35NkiQNpWSgCO3ubfwDku72YaxD2jzjZSYUhozbgwVBXYCp4q/J99oydn
-         rJzLsacXh1kCPJ4pIg6MJzjl6UfJ3L6VJcbX2Wc7o+nXLH8nwN7XBj2+yuVqHpZuy4zx
-         QUkBCxa7YHPwJrjrdQYeFdycnDgGCYwhQSIUJQ7KL72zbRWIEaYSM2xEY4NKjffTTEp3
-         vv4fMa5JhCfNzyA9jTEWMfbhRABOP4OT+LmjffmGQJeH0FNDcDhvWTGUjLwXCHBX5PYB
-         bg6w==
+        bh=8Itd33omx9B00SYSPYsGPBWJ/btkaVWnVdFJTkg82yI=;
+        b=W8VlubsnNdcna5o8nykuPwEQw+XILgjM5hr0Pyla4cspceK2jxiTtb7Yt8TFYIBuMF
+         HEdCEkQFM3MKHh3Jj4DpmcNzhgBGGWSLH7wZOTyjkg0EeDCM2dBk9h3BR+PY/oegLgAu
+         E9VLMr5wfOcwxLKbZam9gFsza7Xw8zE6ycCPS4D6ZRJKjp3VlTng1nTUevg9xKgrAaaX
+         tFiWz57/1ZC8/9Paxm+iVudellxxQ9TV3v5DwKqq5rnh3oTL2pUM8DUgxBvYl4dQAnaG
+         /eG1bNOtmMAcX+qVprd52RcUtnBfZJ+JHwu5KFa+0RBn+Ph9paw7TWtWKFA3obD7/8lY
+         Ij/w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of vinod.koul@intel.com designates 134.134.136.65 as permitted sender) smtp.mailfrom=vinod.koul@intel.com
+       spf=pass (google.com: domain of robherring2@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=robherring2@gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of vinod.koul@intel.com designates 134.134.136.65 as permitted sender) smtp.mailfrom=vinod.koul@intel.com
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,359,1520924400";
-   d="scan'208";a="52147504"
-Date: Thu, 3 May 2018 22:06:22 +0530
-From: Vinod Koul <vinod.koul@intel.com>
+       spf=pass (google.com: domain of robherring2@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=robherring2@gmail.com
+X-Google-Smtp-Source: AB8JxZoDEBB1oFZdxSDIx/Ism1TLlsnBu8FHnRV83S3l3oD/BOWZWzlujHxphO59RunTITAZ+WY8Fw==
+Date: Tue, 1 May 2018 07:34:48 -0500
+From: Rob Herring <robh@kernel.org>
 To: Nipun Gupta <nipun.gupta@nxp.com>
 Cc: robin.murphy@arm.com, hch@lst.de, linux@armlinux.org.uk,
 	gregkh@linuxfoundation.org, m.szyprowski@samsung.com,
 	bhelgaas@google.com, zajec5@gmail.com, andy.gross@linaro.org,
 	david.brown@linaro.org, dan.j.williams@intel.com,
-	thierry.reding@gmail.com, robh+dt@kernel.org,
+	vinod.koul@intel.com, thierry.reding@gmail.com,
 	frowand.list@gmail.com, jarkko.sakkinen@linux.intel.com,
 	rafael.j.wysocki@intel.com, dmitry.torokhov@gmail.com,
 	johan@kernel.org, msuchanek@suse.de, linux-kernel@vger.kernel.org,
@@ -45,7 +40,7 @@ Cc: robin.murphy@arm.com, hch@lst.de, linux@armlinux.org.uk,
 	linux-pci@vger.kernel.org, bharat.bhushan@nxp.com,
 	leoyang.li@nxp.com
 Subject: Re: [PATCH v4 2/2] drivers: remove force dma flag from buses
-Message-ID: <20180503163622.GA6014@localhost>
+Message-ID: <20180501123448.GA23861@rob-hp-laptop>
 References: <1520868292-2479-1-git-send-email-nipun.gupta@nxp.com>
  <1524883919-29484-1-git-send-email-nipun.gupta@nxp.com>
  <1524883919-29484-2-git-send-email-nipun.gupta@nxp.com>
@@ -53,10 +48,10 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <1524883919-29484-2-git-send-email-nipun.gupta@nxp.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+User-Agent: Mutt/1.9.4 (2018-02-28)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1595529373186786387?=
-X-GMAIL-MSGID: =?utf-8?q?1599461236315599053?=
+X-GMAIL-MSGID: =?utf-8?q?1599265141132764377?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -85,9 +80,12 @@ On Sat, Apr 28, 2018 at 08:21:59AM +0530, Nipun Gupta wrote:
 >  drivers/base/platform.c       | 3 +--
 >  drivers/bcma/main.c           | 2 +-
 >  drivers/dma/qcom/hidma_mgmt.c | 2 +-
+>  drivers/gpu/host1x/bus.c      | 5 ++---
+>  drivers/of/device.c           | 6 ++++--
+>  drivers/of/of_reserved_mem.c  | 2 +-
+>  drivers/pci/pci-driver.c      | 3 +--
+>  include/linux/device.h        | 4 ----
+>  include/linux/of_device.h     | 8 ++++++--
+>  10 files changed, 17 insertions(+), 19 deletions(-)
 
-This one:
-Acked-by: Vinod Koul <vkoul@kernel.org>
-
--- 
-~Vinod
+Reviewed-by: Rob Herring <robh@kernel.org>
