@@ -1,166 +1,90 @@
-Return-Path: <rdunlap@infradead.org>
-X-Google-Smtp-Source: AB8JxZrFdxICZDu9wo5+H170xbWeHWeKLYiwYHg8CPad9Kp3zn0rWwywR1LKUkio4dYnUyYTBdu+
-ARC-Seal: i=1; a=rsa-sha256; t=1525627217; cv=none;
+Return-Path: <neilb@suse.com>
+X-Google-Smtp-Source: AB8JxZogfz70Ai6zLbCoGsbAHCUYXKRusdtxwy/sbTCUqj1aNsGyIWjbARpwXFLn8HvBPndIMMuF
+ARC-Seal: i=1; a=rsa-sha256; t=1525146782; cv=none;
         d=google.com; s=arc-20160816;
-        b=EzCXVSyZf71SNBf0RVINrEIK0XfizFnDj7a4u9v+s20mi7glg+eXe+fiRvIpEtPh6J
-         mmKBCmfAxPTa2duQdCAZUm+xHa8KLNaqVzZL8y/E/jblbKZRRoiaKfJYLA97zPrm8/El
-         XMxm2GFP0tEsrYphrpwvi2+ephmhpHco+/SCINX5rv8Yc4YJVnq1UGPtpAAbzyxzE3yN
-         tYwG0fhYljT0okjSC2hPHMGaIKobp5afKtGSNOsn3WC/jK5NZMBQ+Q7w0hMGKM2m6mtI
-         KqRWFHH+TfejvepAnOE5MmTKcbi9HrBDCm2Y4XU0KjJRvQ3uC6r63OQgVfrstKI852k+
-         vPFA==
+        b=PPCXkuT69CSQENR/XRP3nb4hmj7UkPaLAovUYGYg0wsuSS70sco0mv3jAGMciqJXvg
+         4lftv5xDXMPyjS6OC6lCGury7Hcw0ehQkHUp2kRDCDDBlhyhezZHLV5t85fF8uBo6nb5
+         +hsX9NV+QLIBXI+Cec4KFb9uENFWTOo2XdcotgUXqspq1gl/D7LOBhxHMicC5O9WHuOQ
+         3VCgTa7W6raVzaeenOzFx0io0ettiCAqq6xCm2wVpmgT54iaFz4jPMI0hnrmmYgObSPJ
+         20rzVIGK+QAUpp2VgUI8EyC5hVYqb7oSGbsBSVLgL3B5MGAc6Z+7QF3Ub5uOp7TsSd4s
+         zirQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:to:subject
-         :dkim-signature:arc-authentication-results;
-        bh=UAozudyOsQcTG9uhjKg1MvoBvE+/LxHExRDi37I2ALc=;
-        b=s7/PgrV+OcfrOFnnHquZThyUyionNgNMnaAZGquf6b6LayJATaOKdEBMaFYt3zEGhb
-         DBhKZE5tz3s48hLjgJQkDGcxbEA1xYK6saJet+/O6a8GNjllQiVeCSiXU3xONUfUitWu
-         IByiE+MiouIt2LTBD3Mt37aeko2YiFcx9EC3Q29PT7KOnEn59cOg3j5yIz4MvHL6T1Q3
-         ZaDuPaff0Dt0EqKDWd0/NoajtWuIBE/8Slexy60IACap6XGMuxECfovexVqdPVnicLmV
-         E4pbCejOr7xGIcDVV2DkmbBi7xs9uIxoOhzTo3xsXZbn8c501ZIkjl9v6doB/cPP4vNt
-         hLmg==
+        h=content-transfer-encoding:mime-version:user-agent:message-id:cc
+         :subject:date:to:from:arc-authentication-results;
+        bh=JMQrrGzG8gY3knOo/YVSCjDCKUb/pDXY9XXb4P5H5Eg=;
+        b=lQmP/0p6uo4r577QtTrTKT5dR9eExHjWjkHIsnWdhlf9/cpAntAAbDDe0yMPU7D4K1
+         XcyKr/wEaqo2ekRpngsdIfS8kf2ls7CtSAhY0em5ab16rN1YMVwpUpCg+3WigU6BL3uA
+         jUE0e+etdfa5ZJclLEZsSniajOkQx96oQNmVbvuDBKGfFSfRX1qgXYov53Odb6nAmRY7
+         FJL3Ao4mx6/uEC6Zb2j9IODozMErOY7A2CxuLlHxILARCBHlaBL4bwzUNxYcyx7kx6D1
+         GaeAbYpAQr/jNxK69kldgDxiSayFYA4eKKVnka2IbDCQ/lL2vYcuEZXcQft5IjuxyCrY
+         qE3w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=merlin.20170209 header.b=ELpjm647;
-       spf=pass (google.com: best guess record for domain of rdunlap@infradead.org designates 2001:8b0:10b:1231::1 as permitted sender) smtp.mailfrom=rdunlap@infradead.org
+       spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=merlin.20170209 header.b=ELpjm647;
-       spf=pass (google.com: best guess record for domain of rdunlap@infradead.org designates 2001:8b0:10b:1231::1 as permitted sender) smtp.mailfrom=rdunlap@infradead.org
-Subject: Re: [PATCH v3] block: add verifier for cmdline partition
-To: Wang YanQing <udknight@gmail.com>, axboe@kernel.dk,
- gregkh@linuxfoundation.org, pombredanne@nexb.com, tglx@linutronix.de,
- caizhiyong@hisilicon.com, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20180506052356.GA11163@udknight>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <cdc6b40d-4bc7-797b-facb-dd2b1552ff49@infradead.org>
-Date: Sun, 6 May 2018 10:20:03 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+       spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
+From: NeilBrown <neilb@suse.com>
+To: Oleg Drokin <oleg.drokin@intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ James Simmons <jsimmons@infradead.org>,
+ Andreas Dilger <andreas.dilger@intel.com>
+Date: Tue, 01 May 2018 13:52:38 +1000
+Subject: [PATCH 00/10] staging: lustre: assorted improvements.
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Lustre Development List <lustre-devel@lists.lustre.org>
+Message-ID: <152514658325.17843.11455067361317157487.stgit@noble>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-In-Reply-To: <20180506052356.GA11163@udknight>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599689092526143942?=
-X-GMAIL-MSGID: =?utf-8?q?1599736083493401247?=
+X-GMAIL-THRID: =?utf-8?q?1599232311872588583?=
+X-GMAIL-MSGID: =?utf-8?q?1599232311872588583?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi,
+First 6 patches are clean-up patches that I pulled out
+of my rhashtable series.  I think these stand alone as
+good cleanups, and having them upstream makes the rhashtable
+series shorter to ease further review.
 
-On 05/05/2018 10:23 PM, Wang YanQing wrote:
-> I meet strange filesystem corruption issue recently, the reason
-> is there are overlaps partitions in cmdline partition argument.
-> 
-> This patch add verifier for cmdline partition, then if there are
-> overlaps partitions, cmdline_partition will log a warning.
-> 
-> Signed-off-by: Wang YanQing <udknight@gmail.com>
-> ---
->  Changes
->  v2-v3:
->  1:Fix log one pair of overlaps partitions twice in cmdline_parts_verifier.
->  2:Fix out of bound access in cmdline_parts_verifier.
-> 
->  v1-v2:
->  1:Don't treat overlaps partition as a error, but log a warning.
-> 
->  block/partitions/cmdline.c | 66 ++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 66 insertions(+)
-> 
-> diff --git a/block/partitions/cmdline.c b/block/partitions/cmdline.c
-> index e333583..fefcc72 100644
-> --- a/block/partitions/cmdline.c
-> +++ b/block/partitions/cmdline.c
-> @@ -58,6 +58,71 @@ static int __init cmdline_parts_setup(char *s)
->  }
->  __setup("blkdevparts=", cmdline_parts_setup);
->  
-> +static bool has_overlaps(sector_t from, sector_t size,
-> +			 sector_t from2, sector_t size2)
-> +{
-> +	sector_t end = from + size;
-> +	sector_t end2 = from2 + size2;
-> +
-> +	if (from >= from2 && from < end2)
-> +		return true;
-> +
-> +	if (end > from2 && end <= end2)
-> +		return true;
-> +
-> +	if (from2 >= from && from2 < end)
-> +		return true;
-> +
-> +	if (end2 > from && end2 <= end)
-> +		return true;
-> +
-> +	return false;
-> +}
-> +
-> +static inline void overlaps_warns_header(void)
-> +{
-> +	pr_warn("\n");
-> +	pr_warn("Overlaps partitions being used in command line partition.\n");
+Second 2 are revised versions of patches I sent previously that
+had conflicts with other patches that landed first.
 
-	        "Overlapping partitions are used in the command line partitions.\n"
+Last is a bugfix for an issue James mentioned a while back.
 
-> +	pr_warn("Don't use filesystems on overlaps partitions:\n");
-
-	        "Don't use filesystems on overlapping partitions:\n"
-
-> +}
-> +
-> +static inline void overlaps_warns_tailer(void)
-> +{
-> +	pr_warn("\n");
-> +}
-> +
-> +static void cmdline_parts_verifier(int slot, struct parsed_partitions *state)
-> +{
-> +	int i;
-> +	bool header = true;
-> +
-> +	for (; slot < state->limit && state->parts[slot].has_info; slot++) {
-> +		for (i = slot+1; i < state->limit && state->parts[i].has_info;
-> +		     i++) {
-> +			if (has_overlaps(state->parts[slot].from,
-> +					 state->parts[slot].size,
-> +					 state->parts[i].from,
-> +					 state->parts[i].size)) {
-> +				if (header) {
-> +					header = false;
-> +					overlaps_warns_header();
-> +				}
-> +				pr_warn("%s[%llu,%llu] overlaps with "
-> +					"%s[%llu,%llu].\n",
-> +					state->parts[slot].info.volname,
-> +					(u64)state->parts[slot].from << 9,
-> +					(u64)state->parts[slot].size << 9,
-> +					state->parts[i].info.volname,
-> +					(u64)state->parts[i].from << 9,
-> +					(u64)state->parts[i].size << 9);
-> +			}
-> +		}
-> +	}
-> +
-> +	if (!header)
-> +		overlaps_warns_tailer();
-> +}
-> +
->  /*
->   * Purpose: allocate cmdline partitions.
->   * Returns:
-> @@ -93,6 +158,7 @@ int cmdline_partition(struct parsed_partitions *state)
->  	disk_size = get_capacity(state->bdev->bd_disk) << 9;
->  
->  	cmdline_parts_set(parts, disk_size, 1, add_part, (void *)state);
-> +	cmdline_parts_verifier(1, (void *)state);
->  
->  	strlcat(state->pp_buf, "\n", PAGE_SIZE);
->  
-> 
+Thanks,
+NeilBrown
 
 
--- 
-~Randy
+---
+
+NeilBrown (10):
+      staging: lustre: ldlm: store name directly in namespace.
+      staging: lustre: make struct lu_site_bkt_data private
+      staging: lustre: lu_object: discard extra lru count.
+      staging: lustre: lu_object: move retry logic inside htable_lookup
+      staging: lustre: fold lu_object_new() into lu_object_find_at()
+      staging: lustre: llite: use more private data in dump_pgcache
+      staging: lustre: llite: remove redundant lookup in dump_pgcache
+      staging: lustre: move misc-device registration closer to related code.
+      staging: lustre: move remaining code from linux-module.c to module.c
+      staging: lustre: fix error deref in ll_splice_alias().
+
+
+ .../staging/lustre/include/linux/libcfs/libcfs.h   |    6 -
+ drivers/staging/lustre/lnet/libcfs/Makefile        |    1 
+ .../lustre/lnet/libcfs/linux/linux-module.c        |  196 --------------------
+ drivers/staging/lustre/lnet/libcfs/module.c        |  162 ++++++++++++++++-
+ drivers/staging/lustre/lustre/include/lu_object.h  |   36 ----
+ drivers/staging/lustre/lustre/include/lustre_dlm.h |    5 -
+ drivers/staging/lustre/lustre/ldlm/ldlm_resource.c |    5 +
+ drivers/staging/lustre/lustre/llite/lcommon_cl.c   |    8 -
+ drivers/staging/lustre/lustre/llite/namei.c        |    8 +
+ drivers/staging/lustre/lustre/llite/vvp_dev.c      |  169 ++++++++---------
+ drivers/staging/lustre/lustre/lov/lov_object.c     |    8 -
+ drivers/staging/lustre/lustre/obdclass/lu_object.c |  169 ++++++++---------
+ 12 files changed, 341 insertions(+), 432 deletions(-)
+ delete mode 100644 drivers/staging/lustre/lnet/libcfs/linux/linux-module.c
+
+--
+Signature
