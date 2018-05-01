@@ -1,99 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755825AbeEAPYF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 11:24:05 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:51945 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755316AbeEAPYE (ORCPT
+        id S1755979AbeEAPZd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 11:25:33 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:37882 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750787AbeEAPZb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 11:24:04 -0400
-X-Google-Smtp-Source: AB8JxZrqtjwgc5QSToCtyBiFGtLNooIWlXieqQNlJmZtTpnXoRdff1a3KW/iFfAFnqIQqwFYLKgoe+45+4C35vc+pxg=
+        Tue, 1 May 2018 11:25:31 -0400
+Subject: Re: [PATCH 4/5] kernel hacking: new config DEBUG_EXPERIENCE to apply
+ GCC -Og optimization
+To: changbin.du@intel.com, yamada.masahiro@socionext.com,
+        michal.lkml@markovi.net, tglx@linutronix.de, mingo@redhat.com,
+        akpm@linux-foundation.org
+Cc: x86@kernel.org, lgirdwood@gmail.com, broonie@kernel.org, arnd@arndb.de,
+        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org
+References: <1525179614-14571-1-git-send-email-changbin.du@intel.com>
+ <1525179614-14571-5-git-send-email-changbin.du@intel.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <f19eae29-3b94-5151-04c5-6fb620bd28e9@infradead.org>
+Date: Tue, 1 May 2018 08:25:27 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-References: <20180501014204.67548-1-joelaf@google.com> <20180501014204.67548-6-joelaf@google.com>
- <20180501102401.2cac5781@gandalf.local.home> <20180501143601.GG26088@linux.vnet.ibm.com>
- <CAJWu+op-7oyiO7p_pvWJhcy4UBBwGZRxcuoxzW_GefPr40h-xQ@mail.gmail.com> <20180501152135.GJ26088@linux.vnet.ibm.com>
-In-Reply-To: <20180501152135.GJ26088@linux.vnet.ibm.com>
-From: Joel Fernandes <joelaf@google.com>
-Date: Tue, 01 May 2018 15:23:52 +0000
-Message-ID: <CAJWu+oqO0WQwK-iU76D0zWE-A=-pHRPwzh3WG8yWq13G=c7HhQ@mail.gmail.com>
-Subject: Re: [PATCH RFC v5 5/6] tracepoint: Make rcuidle tracepoint callers
- use SRCU
-To: Paul McKenney <paulmck@linux.vnet.ibm.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        "Cc: Frederic Weisbecker" <fweisbec@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Fenguang Wu <fengguang.wu@intel.com>,
-        Baohong Liu <baohong.liu@intel.com>,
-        Vedang Patel <vedang.patel@intel.com>,
-        "Cc: Android Kernel" <kernel-team@android.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1525179614-14571-5-git-send-email-changbin.du@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 1, 2018 at 8:20 AM Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-wrote:
-[...]
-> > > > > --- a/kernel/tracepoint.c
-> > > > > +++ b/kernel/tracepoint.c
-> > > > > @@ -31,6 +31,9 @@
-> > > > >  extern struct tracepoint * const __start___tracepoints_ptrs[];
-> > > > >  extern struct tracepoint * const __stop___tracepoints_ptrs[];
-> > > > >
-> > > > > +DEFINE_SRCU(tracepoint_srcu);
-> > > > > +EXPORT_SYMBOL_GPL(tracepoint_srcu);
-> > > > > +
-> > > > >  /* Set to 1 to enable tracepoint debug output */
-> > > > >  static const int tracepoint_debug;
-> > > > >
-> > > > > @@ -67,11 +70,16 @@ static inline void *allocate_probes(int count)
-> > > > >     return p == NULL ? NULL : p->probes;
-> > > > >  }
-> > > > >
-> > > > > -static void rcu_free_old_probes(struct rcu_head *head)
-> > > > > +static void srcu_free_old_probes(struct rcu_head *head)
-> > > > >  {
-> > > > >     kfree(container_of(head, struct tp_probes, rcu));
-> > > > >  }
-> > > > >
-> > > > > +static void rcu_free_old_probes(struct rcu_head *head)
-> > > > > +{
-> > > > > +   call_srcu(&tracepoint_srcu, head, srcu_free_old_probes);
-> > > >
-> > > > Hmm, is it OK to call call_srcu() from a call_rcu() callback? I
-guess
-> > > > it would be.
-> >
-> > > It is perfectly legal, and quite a bit simpler than setting something
-> > > up to wait for both to complete concurrently.
-> >
-> > Cool. Also in this case if we call both in sequence, then I felt there
-> > could be a race to free the old data since both callbacks would try to
-do
-> > the same thing. The same thing being freeing of the same set of old
-probes
-> > which would need some synchronization between the 2 callbacks. With the
-> > chaining, since the ordering is assured there wouldn't be a question of
-> > such a race. I could add this reasoning to the changelog as well.
+Good morning.
 
-> Actually, as long as you have a solid happens-before between both of the
-> callbacks and the freeing, you are in good shape.  A release-acquire would
-> work fine, as would a lock acquired in both callbacks and then acquired
-> (and possibly released) before the free.
+On 05/01/2018 06:00 AM, changbin.du@intel.com wrote:
+> From: Changbin Du <changbin.du@intel.com>
+> 
+> 
+> Signed-off-by: Changbin Du <changbin.du@intel.com>
+> ---
+>  Makefile                     |  4 ++++
+>  include/linux/compiler-gcc.h |  2 +-
+>  include/linux/compiler.h     |  2 +-
+>  lib/Kconfig.debug            | 21 +++++++++++++++++++++
+>  4 files changed, 27 insertions(+), 2 deletions(-)
+> 
 
-Got it, thanks. For now, if its Ok with you and others, I will leave it in
-the chained configuration. I also feel this is temporary since in the
-future if we switch to single rcu mechanism for tracepoints (srcu), then we
-could do with just a single callback.
+> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+> index 90f35ad..2432e77d 100644
+> --- a/lib/Kconfig.debug
+> +++ b/lib/Kconfig.debug
+> @@ -211,6 +211,27 @@ config NO_AUTO_INLINE
+>  
+>  	  Use only if you want to debug the kernel.
+>  
+> +config DEBUG_EXPERIENCE
+> +	bool "Optimize for better debugging experience (-Og)"
+> +	default n
+> +	select NO_AUTO_INLINE
+> +	depends on !CC_OPTIMIZE_FOR_SIZE
+> +	help
+> +	  This will apply GCC '-Og' optimization level get supported from
+
+	                                               which is supported since
+
+> +	  GCC 4.8. This optimization level offers a reasonable level of
+> +	  optimization while maintaining fast compilation and a good
+> +	  debugging experience. It is similar to '-O1' while perfer keeping
+
+	                                               while preferring to keep
+
+> +	  debug ability over runtime speed. The overall performance will
+> +	  drop a bit.
+> +
+> +	  If enabling this option break your kernel, you should either
+
+	                          breaks
+
+> +	  disable this or find a fix (mostly in the arch code). Currently
+> +	  this option has only be tested in qemu x86_64 guest.
+> +
+> +	  Use only if you want to debug the kernel, especially if you want
+> +	  to have better kernel debugging experience with gdb facilities
+> +	  like kgdb and qemu.
+> +
+>  config ENABLE_WARN_DEPRECATED
+>  	bool "Enable __deprecated logic"
+>  	default y
+> 
 
 thanks,
-
-- Joel
+-- 
+~Randy
