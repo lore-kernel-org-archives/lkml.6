@@ -1,122 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755182AbeEAOy0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 10:54:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34654 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753789AbeEAOyY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 10:54:24 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A64F23691
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Tue, 1 May 2018 10:54:20 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: changbin.du@intel.com
-Cc: yamada.masahiro@socionext.com, michal.lkml@markovi.net,
-        tglx@linutronix.de, mingo@redhat.com, akpm@linux-foundation.org,
-        x86@kernel.org, lgirdwood@gmail.com, broonie@kernel.org, arnd@arndb.de,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org
-Subject: Re: [PATCH 3/5] kernel hacking: new config NO_AUTO_INLINE to
- disable compiler atuo-inline optimizations
-Message-ID: <20180501105420.07e41578@gandalf.local.home>
-In-Reply-To: <1525179614-14571-4-git-send-email-changbin.du@intel.com>
-References: <1525179614-14571-1-git-send-email-changbin.du@intel.com>
-        <1525179614-14571-4-git-send-email-changbin.du@intel.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1755171AbeEAO4O (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 10:56:14 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:43839 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752447AbeEAO4N (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 10:56:13 -0400
+X-Google-Smtp-Source: AB8JxZrra/Z1mjo/9G0a+DM08P7PIzp/2clzefDeVCFf0bn1O4P980lDm/pFiUsOxmIo3e0iQKlKJQ==
+Date: Tue, 1 May 2018 09:56:11 -0500
+From: Rob Herring <robh@kernel.org>
+To: Ludovic Barre <ludovic.Barre@st.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Gerald BAEZA <gerald.baeza@st.com>,
+        Loic PALLARDY <loic.pallardy@st.com>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 07/11] irqchip: stm32: add stm32mp1 support with
+ hierarchy domain
+Message-ID: <20180501145611.GA6842@rob-hp-laptop>
+References: <1524759514-12392-1-git-send-email-ludovic.Barre@st.com>
+ <1524759514-12392-8-git-send-email-ludovic.Barre@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1524759514-12392-8-git-send-email-ludovic.Barre@st.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue,  1 May 2018 21:00:12 +0800
-changbin.du@intel.com wrote:
-
-> From: Changbin Du <changbin.du@intel.com>
+On Thu, Apr 26, 2018 at 06:18:30PM +0200, Ludovic Barre wrote:
+> From: Ludovic Barre <ludovic.barre@st.com>
 > 
-> This patch add a new kernel hacking option NO_AUTO_INLINE. Selecting
-> this option will make compiler not auto-inline kernel functions. By
-> enabling this option, all the kernel functions (including static ones)
-> will not be optimized out except those marked as inline or always_inline.
-> This is useful when you are using ftrace to understand the control flow
-> of kernel code or tracing some static functions.
-
-I'm not against this patch, but it's up to others if this gets included
-or not.
-
+> Exti controller has been differently integrated on stm32mp1 SoC.
+> A parent irq has only one external interrupt. A hierachy domain could
+> be used. Handlers are call by parent, each parent interrupt could be
+> masked and unmasked according to the needs.
 > 
-> Signed-off-by: Changbin Du <changbin.du@intel.com>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
 > ---
->  Makefile          |  6 ++++++
->  lib/Kconfig.debug | 13 +++++++++++++
->  2 files changed, 19 insertions(+)
+>  .../interrupt-controller/st,stm32-exti.txt         |   3 +
+>  drivers/irqchip/irq-stm32-exti.c                   | 322 +++++++++++++++++++++
+>  2 files changed, 325 insertions(+)
 > 
-> diff --git a/Makefile b/Makefile
-> index 619a85a..eb694f6 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -775,6 +775,12 @@ KBUILD_CFLAGS 	+= $(call cc-option, -femit-struct-debug-baseonly) \
->  		   $(call cc-option,-fno-var-tracking)
->  endif
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/st,stm32-exti.txt b/Documentation/devicetree/bindings/interrupt-controller/st,stm32-exti.txt
+> index edf03f0..136bd61 100644
+> --- a/Documentation/devicetree/bindings/interrupt-controller/st,stm32-exti.txt
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/st,stm32-exti.txt
+> @@ -5,11 +5,14 @@ Required properties:
+>  - compatible: Should be:
+>      "st,stm32-exti"
+>      "st,stm32h7-exti"
+> +    "st,stm32mp1-exti"
+>  - reg: Specifies base physical address and size of the registers
+>  - interrupt-controller: Indentifies the node as an interrupt controller
+>  - #interrupt-cells: Specifies the number of cells to encode an interrupt
+>    specifier, shall be 2
+>  - interrupts: interrupts references to primary interrupt controller
+> +  (only needed for exti controller with multiple exti under
+> +  same parent interrupt: st,stm32-exti and st,stm32h7-exti")
 >  
-> +ifdef CONFIG_NO_AUTO_INLINE
-> +KBUILD_CFLAGS   += $(call cc-option, -fno-inline-functions) \
-> +		   $(call cc-option, -fno-inline-small-functions) \
-> +		   $(call cc-option, -fno-inline-functions-called-once)
-> +endif
-> +
->  ifdef CONFIG_FUNCTION_TRACER
->  ifndef CC_FLAGS_FTRACE
->  CC_FLAGS_FTRACE := -pg
-> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> index c40c7b7..90f35ad 100644
-> --- a/lib/Kconfig.debug
-> +++ b/lib/Kconfig.debug
-> @@ -198,6 +198,19 @@ config GDB_SCRIPTS
->  	  instance. See Documentation/dev-tools/gdb-kernel-debugging.rst
->  	  for further details.
+>  Example:
 >  
-> +config NO_AUTO_INLINE
-> +	bool "Disable compiler atuo-inline optimizations"
+> diff --git a/drivers/irqchip/irq-stm32-exti.c b/drivers/irqchip/irq-stm32-exti.c
+> index b38c655..ebf7146 100644
+> --- a/drivers/irqchip/irq-stm32-exti.c
+> +++ b/drivers/irqchip/irq-stm32-exti.c
 
-typo: s/atuo/auto/
+[...]
 
-> +	default n
-> +	help
-> +	  This will make compiler not auto-inline kernel functions for
-> +	  optimization. By enabling this option, all the kernel functions
-> +	  (including static ones) will not be optimized out except those
-> +	  marked as inline or always_inline. This is useful when you are
-> +	  using ftrace to understand the control flow of kernel code or
-> +	  tracing some static functions.
+> +static const struct stm32_desc_irq stm32mp1_desc_irq[] = {
+> +	{ .exti = 1, .irq_parent = 7 },
+> +	{ .exti = 2, .irq_parent = 8 },
+> +	{ .exti = 3, .irq_parent = 9 },
+> +	{ .exti = 4, .irq_parent = 10 },
+> +	{ .exti = 5, .irq_parent = 23 },
+> +	{ .exti = 6, .irq_parent = 64 },
+> +	{ .exti = 7, .irq_parent = 65 },
+> +	{ .exti = 8, .irq_parent = 66 },
+> +	{ .exti = 9, .irq_parent = 67 },
+> +	{ .exti = 10, .irq_parent = 40 },
+> +	{ .exti = 11, .irq_parent = 42 },
+> +	{ .exti = 12, .irq_parent = 76 },
+> +	{ .exti = 13, .irq_parent = 77 },
+> +	{ .exti = 14, .irq_parent = 121 },
+> +	{ .exti = 15, .irq_parent = 127 },
+> +	{ .exti = 16, .irq_parent = 1 },
+> +	{ .exti = 65, .irq_parent = 144 },
+> +	{ .exti = 68, .irq_parent = 143 },
+> +	{ .exti = 73, .irq_parent = 129 },
+> +};
 
-Some grammar updates:
-
-	  This will prevent the compiler from optimizing the kernel by
-	  auto-inlining functions not marked with the inline keyword.
-	  With this option, only functions explicitly marked with
-	  "inline" will be inlined. This will allow the function tracer
-	  to trace more functions because it only traces functions that
-	  the compiler has not inlined.
-
-	  Enabling this function can help debugging a kernel if using
-	  the function tracer. But it can also change how the kernel
-	  works, because inlining functions may change the timing,
-	  which could make it difficult while debugging race conditions.
-
-> +
-> +	  Use only if you want to debug the kernel.
-
-The proper way to say the above is:
-
-	  If unsure, select N
-
--- Steve
-
-> +
->  config ENABLE_WARN_DEPRECATED
->  	bool "Enable __deprecated logic"
->  	default y
+You can use an interrupt-map property rather than put this into the 
+driver.
