@@ -1,73 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755771AbeEAO2C (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 10:28:02 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35872 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754829AbeEAO2B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 10:28:01 -0400
-Date: Tue, 1 May 2018 09:28:00 -0500
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: ORC unwinder bad backtrace
-Message-ID: <20180501142800.x2jfiluokkfgik35@treble>
-References: <20180418135438.GC27475@bombadil.infradead.org>
- <20180418154548.eh5oq5inz3l3agyu@treble>
+        id S1755957AbeEAO2T (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 10:28:19 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:43665 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755831AbeEAO2R (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 10:28:17 -0400
+X-Google-Smtp-Source: AB8JxZp5Wi6iSk4NE36F0i7rq7THNfFUhu2LKP4FLDlbFWP2Im++rA1u8KirqYYO1RQtM6gLAcz75A==
+Date: Tue, 1 May 2018 09:28:16 -0500
+From: Rob Herring <robh@kernel.org>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: hans.verkuil@cisco.com, mchehab@kernel.org,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: media: i2c: Add mt9t111 image sensor
+Message-ID: <20180501142816.GA15492@rob-hp-laptop>
+References: <1524654014-17852-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1524654014-17852-2-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180418154548.eh5oq5inz3l3agyu@treble>
-User-Agent: Mutt/1.6.0.1 (2016-04-01)
+In-Reply-To: <1524654014-17852-2-git-send-email-jacopo+renesas@jmondi.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 18, 2018 at 10:45:48AM -0500, Josh Poimboeuf wrote:
-> On Wed, Apr 18, 2018 at 06:54:38AM -0700, Matthew Wilcox wrote:
-> > f81061192 <pte_clear.constprop.18>:
-> > ...
-> > ffffffff810611bf:       90                      nop
-> > ffffffff810611c0 <perf_trace_x86_exceptions>:
-> > 
-> > I suspect an off-by-one error; you don't really mean to point to the
-> > byte before perf_trace_x86_exception, you mean to point to byte 0 of
-> > perf_trace_x86_exception.
-> > 
-> > I'm going to archive up this compilation in case there's anything useful
-> > I can extract for you from it later.
+On Wed, Apr 25, 2018 at 01:00:13PM +0200, Jacopo Mondi wrote:
+> Add device tree bindings documentation for Micron MT9T111/MT9T112 image
+> sensors.
 > 
-> Thanks for reporting this.  So there are really two issues:
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+>  Documentation/devicetree/bindings/mt9t112.txt | 41 +++++++++++++++++++++++++++
+>  1 file changed, 41 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mt9t112.txt
 > 
-> 1) The question marks mean the ORC unwinder got confused (and had to
->    fall back to the crude "just print all text addresses on the stack").
->    This is the real issue.
-> 
-> 2) As you found, what should be "perf_trace_x86_exceptions+0x0" is
->    actually printed as "pte_clear.constprop.18+0x2e".  I don't think
->    this is fixable, because this is printed by the oops fallback code
->    which just blindly prints out all the text addresses it finds on the
->    stack when the unwinder fails.  It can't know whether the address was
->    a call return address (the usual case) or was something else (in this
->    case I suspect it's just a function pointer which just happens to be
->    on the stack), so it assumes the former, and prints it accordingly.
->    This isn't fixable per se -- but it will be "fixed" when we fix #1,
->    which will give a deterministic stack trace instead of using the dumb
->    fallback code.
-> 
-> Is it possible for you to copy the vmlinux somewhere?  That would be the
-> easiest option for debugging.
-> 
-> Otherwise I may ask for some specifics for you to gather from it.
-> 
-> Is it recreatable?  Once I come up with a fix, it would be helpful to
-> test with the same scenario.
-> 
-> Also has the root cause of the stack recursion been found?  It looks
-> like the perf_trace_x86_exceptions() tracepoint code is doing something
-> bad.
+> diff --git a/Documentation/devicetree/bindings/mt9t112.txt b/Documentation/devicetree/bindings/mt9t112.txt
+> new file mode 100644
+> index 0000000..cbad475
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mt9t112.txt
+> @@ -0,0 +1,41 @@
+> +Micron 3.1Mp CMOS Digital Image Sensor
+> +--------------------------------------
+> +
+> +The Micron MT9T111 and MT9T112 are 1/4 inch 3.1Mp System-On-A-Chip (SOC) CMOS
+> +digital image sensors which support up to QXGA (2048x1536) image resolution in
+> +4/3 format.
+> +
+> +The sensors can be programmed through a two-wire serial interface and can
+> +work both in parallel data output mode as well as in MIPI CSI-2 mode.
+> +
+> +Required Properties:
+> +- compatible: shall be one of the following values
+> +  	"micron,mt9t111" for MT9T111 sensors
+> +	"micron,mt9t112" for MT9T112 sensors
+> +
+> +Optional properties:
+> +- powerdown-gpios: reference to powerdown input GPIO signal. Pin name "STANDBY".
+> +  Active level is high.
+> +
+> +The device node shall contain one 'port' sub-node with one 'endpoint' child
+> +node, modeled accordingly to bindings described in:
+> +Documentation/devicetree/bindings/media/video-interfaces.txt
+> +
+> +Example:
+> +--------
+> +
+> +	mt9t112@3d {
 
-Matthew, ping?
+camera-sensor@3d
 
--- 
-Josh
+Otherwise,
+
+Reviewed-by: Rob Herring <robh@kernel.org>
+
+> +		compatible = "micron,mt9t112";
+> +		reg = <0x3d>;
+> +
+> +		powerdown-gpios = <&gpio4 2 GPIO_ACTIVE_HIGH>;
+> +
+> +		port {
+> +			mt9t112_out: endpoint {
+> +				pclk-sample = <1>;
+> +				remote-endpoint = <&ceu_in>;
+> +			};
+> +		};
+> +	};
+> +
+> +
+> -- 
+> 2.7.4
+> 
