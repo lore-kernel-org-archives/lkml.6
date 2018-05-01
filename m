@@ -1,197 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753505AbeEAIDb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 04:03:31 -0400
-Received: from gateway34.websitewelcome.com ([192.185.149.46]:30708 "EHLO
-        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751833AbeEAID0 (ORCPT
+        id S1753688AbeEAIDq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 04:03:46 -0400
+Received: from mail-pf0-f179.google.com ([209.85.192.179]:39285 "EHLO
+        mail-pf0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751421AbeEAIDl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 04:03:26 -0400
-X-Authority-Reason: nr=8
-From: Matheus Castello <matheus@castello.eng.br>
-To: linus.walleij@linaro.org
-Cc: linux-kernel@vger.kernel.org,
-        Matheus Castello <matheus@castello.eng.br>
-Subject: [PATCH v1 1/2] pinctrl: generic: add API to solve generic sub-node property name
-Date: Tue,  1 May 2018 03:40:36 -0400
-Message-Id: <1525160437-5222-2-git-send-email-matheus@castello.eng.br>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1525160437-5222-1-git-send-email-matheus@castello.eng.br>
-References: <1525160437-5222-1-git-send-email-matheus@castello.eng.br>
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - br164.hostgator.com.br
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - castello.eng.br
-X-BWhitelist: no
-X-Source-IP: 191.189.21.134
-X-Source-L: No
-X-Exim-ID: 1fDPue-001g0X-Jl
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (localhost.localdomain) [191.189.21.134]:27442
-X-Source-Auth: matheus@castello.eng.br
-X-Email-Count: 5
-X-Source-Cap: Y2FzdGUyNDg7Y2FzdGUyNDg7YnIxNjQuaG9zdGdhdG9yLmNvbS5icg==
-X-Local-Domain: yes
+        Tue, 1 May 2018 04:03:41 -0400
+X-Google-Smtp-Source: AB8JxZqK+0pRwDiMnnQalag4/Ftqm2xgxuCpaj5l7gVrqNUj/Z1hvPTBtPKwB6IeaQBxVEkvAfKBiQ==
+To: linux-kernel@vger.kernel.org
+From: Tony Wallace <tony@tony.gen.nz>
+Subject: Suggested new user link command
+Openpgp: preference=signencrypt
+Autocrypt: addr=tony@tony.gen.nz; prefer-encrypt=mutual; keydata=
+ xsBNBFJQ2EUBCADNvUoh5QwEOCnkYCEMwg8zJzp8chmFePT2wqVmWAQXVPPKOWsHyGxYmoDe
+ Guqpvmhx4rPpjW9CpX1xN7m6JPGE7FDCpw6WiOjAuNycSUFbKrVaSGpzMHjVx3eJpwOtEGTz
+ DbHmGz32to1D2SwuITmXpVzXLAR4+A9ywSozaZc42UeLf/9jh77SR3mKEJpMxiqD6Ui+XGTV
+ 3zJRPTdh0s8z4lAhgqRM+he8bRpURydaTgGaEUDKDSHL/3bBx+q0QTcnWpGJRDjyqhlO87eu
+ EXtZZbgBwg5+N+OGhZ5pzs82g6tKyHTLUsHsO2fPjXz1SFoxBlhQQRpHg25F4YgfNEOFABEB
+ AAHNKEFudGhvbnkgSmFtZXMgV2FsbGFjZSA8dG9ueUB0b255Lmdlbi5uej7CwHgEEwECACIF
+ AlJQ2EUCGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEDrpo/TJux46690H/AvCKeQ3
+ pSWRWptbEsbWT9xPfmk9eD8LsYIIV/mHu/QhpekHeiSYv59lP3pLcOv7BYhe4oe4rte5Xc5z
+ mllQBTFhFtIqNpv8UDWWmPGmS58nXm9fQaEJGoJ6XVYX9OWcD6B70x1U1DJFj8YJpaoUZLcJ
+ rfbyUfqYVNjmRq3x8prdXZohTki9lHrcqMpyz30MYjV4cCGz/rj9cQpBDlfPIxG10zbyPSvD
+ gclJJ9hGW9FHq3h8oH4kJR4jHUa0o2xy9ZdLQnAl196kB3yonHgFPexb4HPvwRxL23qtSxkY
+ B7p7IJTf0xbk9UOPWD7EhY0ASiFgSw7uv/VwYceVe3PXkCvOwE0EUlDYRQEIAMNv3KI6lMO9
+ Z3UyPwrEwzBWCqKkcVJwCh3UUgHQKSxeYdL8PhFnaQD0kr0J0R1sLKooS+OExu5rmvy3qoQ3
+ BA2f13OUZF2ZotW3woVSGStSniEzs6l7L+mWtBQwyIjSyMPa4tuxKIWgy1b2S1axk0yTgn9w
+ 45ycTLiuT0H9FoNAZahRpU9gvH2gwJkZFoaW+5iibpzceFxUX7bfutdcw2FhV0dh1lkvGcdO
+ QnaoWZcislZ5hFFfy07SDtGBqu46C0hRZKwZ1lj/H4/uJwQXmD6ywEusJDnqjFqellYJHmoP
+ 9s7q3POwWvxr5pXquLb/GlWvmEWFSwyozuypqRsLhzEAEQEAAcLAXwQYAQIACQUCUlDYRQIb
+ DAAKCRA66aP0ybseOoHNCACZ/mwhUt3jxzDAroX+3YosiQRh8cFFHOk6RUpt4eLjrk12DVHY
+ CuNIHf16jyMQybkOeBvyeWxvNpXzapdjMWK7Zp0eVQEAeKj9J/PQzZFHpYy0z0L2OQjKR2q8
+ ciXRMm8ytF/mJZZbYICyyL5Yq4gz8Gs+mXROUmYDvadt9NxMLJH4kynF11FEnIPTq0xBuBuf
+ Q/GAAlKxvc4anYWduDuvHUKcTnRssj6TW5ThxFyoBpuF/h0qDyfcUrE5y+WUcGjYyHu9j6oW
+ UBsT9zlpxkqRNxO38tAnl601FBLtJClYygBz9Ro6DQAIcQX1Wqvcv3jLszOzH2hiu1Yg2Ipz 0Sdc
+Message-ID: <decdbe00-2292-3012-d7ae-6bfa382fc74a@tony.gen.nz>
+Date: Tue, 1 May 2018 20:03:35 +1200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-AU
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4183psw030544
 
-Set dt_params with the definitions of the generic sub-node properties
-global in pinconf-generic.h and add a function to pinconf-generic API
-to decode a packed param returning the string name from sub-node
-property.
+I am suggesting a new command for linking files.  Currently there is no
+easy way to link a file with a known inode number to its correct
+position in the directory tree.  
 
-This can be useful in debug from pinctrl-vendor driver or even for
-debug in pinconf driver.
 
-Signed-off-by: Matheus Castello <matheus@castello.eng.br>
----
- drivers/pinctrl/pinconf-generic.c       | 61 +++++++++++++++++----------------
- include/linux/pinctrl/pinconf-generic.h | 32 +++++++++++++++++
- 2 files changed, 63 insertions(+), 30 deletions(-)
+int ilink(const int inode, const char *newpath)
 
-diff --git a/drivers/pinctrl/pinconf-generic.c b/drivers/pinctrl/pinconf-generic.c
-index b4f7f8a..78585bc 100644
---- a/drivers/pinctrl/pinconf-generic.c
-+++ b/drivers/pinctrl/pinconf-generic.c
-@@ -156,34 +156,6 @@ EXPORT_SYMBOL_GPL(pinconf_generic_dump_config);
- #endif
- 
- #ifdef CONFIG_OF
--static const struct pinconf_generic_params dt_params[] = {
--	{ "bias-bus-hold", PIN_CONFIG_BIAS_BUS_HOLD, 0 },
--	{ "bias-disable", PIN_CONFIG_BIAS_DISABLE, 0 },
--	{ "bias-high-impedance", PIN_CONFIG_BIAS_HIGH_IMPEDANCE, 0 },
--	{ "bias-pull-up", PIN_CONFIG_BIAS_PULL_UP, 1 },
--	{ "bias-pull-pin-default", PIN_CONFIG_BIAS_PULL_PIN_DEFAULT, 1 },
--	{ "bias-pull-down", PIN_CONFIG_BIAS_PULL_DOWN, 1 },
--	{ "drive-open-drain", PIN_CONFIG_DRIVE_OPEN_DRAIN, 0 },
--	{ "drive-open-source", PIN_CONFIG_DRIVE_OPEN_SOURCE, 0 },
--	{ "drive-push-pull", PIN_CONFIG_DRIVE_PUSH_PULL, 0 },
--	{ "drive-strength", PIN_CONFIG_DRIVE_STRENGTH, 0 },
--	{ "input-debounce", PIN_CONFIG_INPUT_DEBOUNCE, 0 },
--	{ "input-disable", PIN_CONFIG_INPUT_ENABLE, 0 },
--	{ "input-enable", PIN_CONFIG_INPUT_ENABLE, 1 },
--	{ "input-schmitt", PIN_CONFIG_INPUT_SCHMITT, 0 },
--	{ "input-schmitt-disable", PIN_CONFIG_INPUT_SCHMITT_ENABLE, 0 },
--	{ "input-schmitt-enable", PIN_CONFIG_INPUT_SCHMITT_ENABLE, 1 },
--	{ "low-power-disable", PIN_CONFIG_LOW_POWER_MODE, 0 },
--	{ "low-power-enable", PIN_CONFIG_LOW_POWER_MODE, 1 },
--	{ "output-disable", PIN_CONFIG_OUTPUT_ENABLE, 0 },
--	{ "output-enable", PIN_CONFIG_OUTPUT_ENABLE, 1 },
--	{ "output-high", PIN_CONFIG_OUTPUT, 1, },
--	{ "output-low", PIN_CONFIG_OUTPUT, 0, },
--	{ "power-source", PIN_CONFIG_POWER_SOURCE, 0 },
--	{ "sleep-hardware-state", PIN_CONFIG_SLEEP_HARDWARE_STATE, 0 },
--	{ "slew-rate", PIN_CONFIG_SLEW_RATE, 0 },
--	{ "skew-delay", PIN_CONFIG_SKEW_DELAY, 0 },
--};
- 
- /**
-  * parse_dt_cfg() - Parse DT pinconf parameters
-@@ -247,14 +219,14 @@ int pinconf_generic_parse_dt_config(struct device_node *np,
- 		return -EINVAL;
- 
- 	/* allocate a temporary array big enough to hold one of each option */
--	max_cfg = ARRAY_SIZE(dt_params);
-+	max_cfg = ARRAY_SIZE(pinconf_dt_params);
- 	if (pctldev)
- 		max_cfg += pctldev->desc->num_custom_params;
- 	cfg = kcalloc(max_cfg, sizeof(*cfg), GFP_KERNEL);
- 	if (!cfg)
- 		return -ENOMEM;
- 
--	parse_dt_cfg(np, dt_params, ARRAY_SIZE(dt_params), cfg, &ncfg);
-+	parse_dt_cfg(np, pinconf_dt_params, ARRAY_SIZE(pinconf_dt_params), cfg, &ncfg);
- 	if (pctldev && pctldev->desc->num_custom_params &&
- 		pctldev->desc->custom_params)
- 		parse_dt_cfg(np, pctldev->desc->custom_params,
-@@ -409,4 +381,33 @@ void pinconf_generic_dt_free_map(struct pinctrl_dev *pctldev,
- }
- EXPORT_SYMBOL_GPL(pinconf_generic_dt_free_map);
- 
-+const char *pinconf_generic_get_param_property_name(struct pinctrl_dev *pctldev,
-+	unsigned int num_configs, unsigned long *param)
-+{
-+	struct pinctrl_desc *desc = pctldev->desc;
-+	unsigned int num_params = ARRAY_SIZE(pinconf_dt_params),
-+		num_custom_params = desc->num_custom_params,
-+		i, j;
-+
-+	for (i = 0; i < num_configs; i++) {
-+		enum pin_config_param pin_param =
-+		pinconf_to_config_param(param[i]);
-+
-+		/* first search on default properties */
-+		for (j = 0; j < num_params; j++) {
-+			if (pin_param == pinconf_dt_params[j].param)
-+				return pinconf_dt_params[j].property;
-+		}
-+
-+		/* search on custom properties */
-+		for (j = 0; j < num_custom_params; j++) {
-+			if (pin_param == desc->custom_params[j].param)
-+				return desc->custom_params[j].property;
-+		}
-+	}
-+
-+	return "property undefined";
-+}
-+EXPORT_SYMBOL_GPL(pinconf_generic_get_param_property_name);
-+
- #endif
-diff --git a/include/linux/pinctrl/pinconf-generic.h b/include/linux/pinctrl/pinconf-generic.h
-index 6c06806..c51f4b3 100644
---- a/include/linux/pinctrl/pinconf-generic.h
-+++ b/include/linux/pinctrl/pinconf-generic.h
-@@ -184,6 +184,35 @@ struct pinconf_generic_params {
- 	u32 default_value;
- };
- 
-+static const struct pinconf_generic_params pinconf_dt_params[] = {
-+	{ "bias-bus-hold", PIN_CONFIG_BIAS_BUS_HOLD, 0 },
-+	{ "bias-disable", PIN_CONFIG_BIAS_DISABLE, 0 },
-+	{ "bias-high-impedance", PIN_CONFIG_BIAS_HIGH_IMPEDANCE, 0 },
-+	{ "bias-pull-up", PIN_CONFIG_BIAS_PULL_UP, 1 },
-+	{ "bias-pull-pin-default", PIN_CONFIG_BIAS_PULL_PIN_DEFAULT, 1 },
-+	{ "bias-pull-down", PIN_CONFIG_BIAS_PULL_DOWN, 1 },
-+	{ "drive-open-drain", PIN_CONFIG_DRIVE_OPEN_DRAIN, 0 },
-+	{ "drive-open-source", PIN_CONFIG_DRIVE_OPEN_SOURCE, 0 },
-+	{ "drive-push-pull", PIN_CONFIG_DRIVE_PUSH_PULL, 0 },
-+	{ "drive-strength", PIN_CONFIG_DRIVE_STRENGTH, 0 },
-+	{ "input-debounce", PIN_CONFIG_INPUT_DEBOUNCE, 0 },
-+	{ "input-disable", PIN_CONFIG_INPUT_ENABLE, 0 },
-+	{ "input-enable", PIN_CONFIG_INPUT_ENABLE, 1 },
-+	{ "input-schmitt", PIN_CONFIG_INPUT_SCHMITT, 0 },
-+	{ "input-schmitt-disable", PIN_CONFIG_INPUT_SCHMITT_ENABLE, 0 },
-+	{ "input-schmitt-enable", PIN_CONFIG_INPUT_SCHMITT_ENABLE, 1 },
-+	{ "low-power-disable", PIN_CONFIG_LOW_POWER_MODE, 0 },
-+	{ "low-power-enable", PIN_CONFIG_LOW_POWER_MODE, 1 },
-+	{ "output-disable", PIN_CONFIG_OUTPUT_ENABLE, 0 },
-+	{ "output-enable", PIN_CONFIG_OUTPUT_ENABLE, 1 },
-+	{ "output-high", PIN_CONFIG_OUTPUT, 1, },
-+	{ "output-low", PIN_CONFIG_OUTPUT, 0, },
-+	{ "power-source", PIN_CONFIG_POWER_SOURCE, 0 },
-+	{ "sleep-hardware-state", PIN_CONFIG_SLEEP_HARDWARE_STATE, 0 },
-+	{ "slew-rate", PIN_CONFIG_SLEW_RATE, 0 },
-+	{ "skew-delay", PIN_CONFIG_SKEW_DELAY, 0 },
-+};
-+
- int pinconf_generic_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- 		struct device_node *np, struct pinctrl_map **map,
- 		unsigned *reserved_maps, unsigned *num_maps,
-@@ -194,6 +223,9 @@ int pinconf_generic_dt_node_to_map(struct pinctrl_dev *pctldev,
- void pinconf_generic_dt_free_map(struct pinctrl_dev *pctldev,
- 		struct pinctrl_map *map, unsigned num_maps);
- 
-+const char *pinconf_generic_get_param_property_name(struct pinctrl_dev *pctldev,
-+		unsigned int num_configs, unsigned long *param);
-+
- static inline int pinconf_generic_dt_node_to_map_group(
- 		struct pinctrl_dev *pctldev, struct device_node *np_config,
- 		struct pinctrl_map **map, unsigned *num_maps)
--- 
-2.7.4
+
+The current alternative to this command is to find the file path
+associated with an inode using the find command and then once found
+using a standard link command.  Obviously this is very inefficient.  I
+am certainly willing to give a patch a go, but I would like approval in
+principle first.
+
+
+Tony Wallace
