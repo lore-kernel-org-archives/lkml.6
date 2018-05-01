@@ -1,217 +1,404 @@
 Return-Path: <neilb@suse.com>
-X-Google-Smtp-Source: AB8JxZq0m/Tndx3sBk3ZMIqJ1i4Q7hPLVAuOd4E4asF/RqQ4mJLJXLAwtz8Ce+eH1ewClvw4HUq8
-ARC-Seal: i=1; a=rsa-sha256; t=1525392524; cv=none;
+X-Google-Smtp-Source: AB8JxZpBGLH0b3nkO8oEazNgUqgkfU8cz6/1Xm4WgOfdPzv4OoZVdvJaZV1xbQ9XU253/3jHGMmn
+ARC-Seal: i=1; a=rsa-sha256; t=1525146850; cv=none;
         d=google.com; s=arc-20160816;
-        b=fCoigCSxdOOJQAJBKl0KU5g39Lvp7jG6RUMgM7KYz+P6O2z7Fg6xfMmA9TNpUcgvEg
-         o2MqsJHJ2SVKgQi4nGt0izsUhf+n2ffbvP6qmNHEdYo7UFkp77ojgUHe9iAiK0EZgt/O
-         bd/naPtqhDLZoUPEc8q6U6MrA+t87yRyUKhS+DaMsumOEehVxBLjB4rbzbvhVxBUM5yO
-         FTypWWWWfb+8cXTmFjGuH3mOrzx3y+s7cwAtLNUN1NlH/Da9puqVKnRXSkOfRoZ//Zke
-         VwzenxlcOcQ2jAEZoFZAfXgeLEtGwg7fMkYJdUItwFh0LoatPG8SqYcW9TPRhS19tjle
-         7sQw==
+        b=BgYIw8a0b7h+O+0daJ/rC5ny2R7JLIy7CnpD/MyIJO3OHT4jqIVWIbSUfYfP5qP+On
+         6fxVTeK/BQPraSMtiOna0dFXKAvrtX3VHV9zrrVQfxPRpqpApK6uTKQ8c8V4iNn+Hxq2
+         WDJo2Al2seQqQ7bzF7wWnv86bozxPB9Np1302bGDijxTvUAgtgZReXLRRCDD59U2B8Wg
+         i/FmDhA8LCOAQ0e6mH/wbB1ZfgywvFeskDmoXCJSzCgfPVEheTT/IAjLFZSgz0K32tcN
+         c5ujQiEAlpXQnGBojDkmAcFG8Fusnc39zTSttV13d7ZNtwjprXIcZkBRW9gkvKvKaL05
+         F0Ow==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:message-id:references:in-reply-to:subject:cc:date:to
-         :from:arc-authentication-results;
-        bh=BZweXGY/nQWibSnT80PqVDW538mHG1KN4xEUR29FtL8=;
-        b=knlOgbY5LF+RESCl44oX+7a7NLVbSFTjuU1Ll1HRdOs9hF4PuvNvOnNnqG69xbyghe
-         zcdxicI5Tg4+7jH2sxxVXOihB35xYX1indcavyKo6wBAak3b+UdotD9aGAU0F5EJ9x0/
-         z5FvMx6ED78MTY00Rg/igHDoMdbisxvoB+3ElkMlJqjVz25eEkAoBTbMcrxGQX/QZiNw
-         dvE8e7Zk2Jt79UJRKVxUp2qdh7grY4u6uMLFEXSfwopaeDBfgTDo2IO9gXZ/1lbjacrY
-         3lDUyWuWNFZHF5EyAZ5NfK5NmBUVKpAAis9VaQVlGvOdgVwB0MLmkdDvcM4Jsdc5iLw6
-         epkQ==
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :in-reply-to:message-id:cc:subject:date:to:from
+         :arc-authentication-results;
+        bh=L5ZCjo68TznP0fufQI09kCAw2/0bpDVDhLjBNfGdxfI=;
+        b=vqYurCpL27XLAxRrKc0i/PwJaRTE3G5ChqQmzeS+IBbyan7sRs23xrGx4JSYBwkFP0
+         2DyMRZiGeuJtJLjtBLjfwA5AbBrq7++qUagOwqQPkwz2D9+4XtOKgU2O6NlDmPiDE3SY
+         Gj7gnN1K6m4fhIrAC0BSF/VIh+S529DZsxnxj+NUkK6u6flbaWHTsB02q0JnmmkcqS3z
+         +yQnd5vQNappunxdoYukWq3uHrR65hb3FabmGxkkkYcwjlrZLPSKJ2/BFrTsFBcYDrbI
+         eYAumZSMcOD5e9Ht7KGtc4pdXPf69foAbLvjp9jTnWrnktYjUio2pI3sU2b3EHandeXH
+         GZ5g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
 Authentication-Results: mx.google.com;
        spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
 From: NeilBrown <neilb@suse.com>
-To: "Dilger\, Andreas" <andreas.dilger@intel.com>
-Date: Fri, 04 May 2018 10:08:35 +1000
-Cc: "Drokin\, Oleg" <oleg.drokin@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, James Simmons <jsimmons@infradead.org>, "Linux
- Kernel Mailing List" <linux-kernel@vger.kernel.org>, Lustre Development List <lustre-devel@lists.lustre.org>
-Subject: Re: [PATCH 03/10] staging: lustre: lu_object: discard extra lru count.
-In-Reply-To: <A3CD6D51-5ADF-41A0-AED2-B1C06935586C@intel.com>
-References: <152514658325.17843.11455067361317157487.stgit@noble> <152514675893.17843.8396665070911641266.stgit@noble> <A3CD6D51-5ADF-41A0-AED2-B1C06935586C@intel.com>
-Message-ID: <87k1skffjw.fsf@notabene.neil.brown.name>
+To: Oleg Drokin <oleg.drokin@intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ James Simmons <jsimmons@infradead.org>,
+ Andreas Dilger <andreas.dilger@intel.com>
+Date: Tue, 01 May 2018 13:52:39 +1000
+Subject: [PATCH 09/10] staging: lustre: move remaining code from
+ linux-module.c to module.c
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Lustre Development List <lustre-devel@lists.lustre.org>
+Message-ID: <152514675915.17843.13015150157081908310.stgit@noble>
+In-Reply-To: <152514658325.17843.11455067361317157487.stgit@noble>
+References: <152514658325.17843.11455067361317157487.stgit@noble>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599232334415255756?=
-X-GMAIL-MSGID: =?utf-8?q?1599489991692535119?=
+X-GMAIL-THRID: =?utf-8?q?1599232383653036659?=
+X-GMAIL-MSGID: =?utf-8?q?1599232383653036659?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+There is no longer any need to keep this code separate,
+and now we can remove linux-module.c
 
-On Tue, May 01 2018, Dilger, Andreas wrote:
+Signed-off-by: NeilBrown <neilb@suse.com>
+Reviewed-by: James Simmons <jsimmons@infradead.org>
+---
+ .../staging/lustre/include/linux/libcfs/libcfs.h   |    4 
+ drivers/staging/lustre/lnet/libcfs/Makefile        |    1 
+ .../lustre/lnet/libcfs/linux/linux-module.c        |  168 --------------------
+ drivers/staging/lustre/lnet/libcfs/module.c        |  131 ++++++++++++++++
+ 4 files changed, 131 insertions(+), 173 deletions(-)
+ delete mode 100644 drivers/staging/lustre/lnet/libcfs/linux/linux-module.c
 
-> On Apr 30, 2018, at 21:52, NeilBrown <neilb@suse.com> wrote:
->>=20
->> lu_object maintains 2 lru counts.
->> One is a per-bucket lsb_lru_len.
->> The other is the per-cpu ls_lru_len_counter.
->>=20
->> The only times the per-bucket counters are use are:
->> - a debug message when an object is added
->> - in lu_site_stats_get when all the counters are combined.
->>=20
->> The debug message is not essential, and the per-cpu counter
->> can be used to get the combined total.
->>=20
->> So discard the per-bucket lsb_lru_len.
->>=20
->> Signed-off-by: NeilBrown <neilb@suse.com>
->
-> Looks reasonable, though it would also be possible to fix the percpu
-> functions rather than adding a workaround in this code.
-
-It would be possibly to change percpu_counter_read_positive() to
-take a const (and we should), but thanks to you highlighting this
-I realized that I should be using percpu_counter_sum_positive(),
-to read across all per-cpu counters.  That takes a spinlock
-so it would be a much harder sell to get it to accept a
-const pointer.
-
-Thanks,
-NeilBrown
-
-
->
-> Reviewed-by: Andreas Dilger <andreas.dilger@dilger.ca>
->
->> ---
->> drivers/staging/lustre/lustre/obdclass/lu_object.c |   24 ++++++++------=
-------
->> 1 file changed, 9 insertions(+), 15 deletions(-)
->>=20
->> diff --git a/drivers/staging/lustre/lustre/obdclass/lu_object.c b/driver=
-s/staging/lustre/lustre/obdclass/lu_object.c
->> index 2a8a25d6edb5..2bf089817157 100644
->> --- a/drivers/staging/lustre/lustre/obdclass/lu_object.c
->> +++ b/drivers/staging/lustre/lustre/obdclass/lu_object.c
->> @@ -57,10 +57,6 @@
->> #include <linux/list.h>
->>=20
->> struct lu_site_bkt_data {
->> -	/**
->> -	 * number of object in this bucket on the lsb_lru list.
->> -	 */
->> -	long			lsb_lru_len;
->> 	/**
->> 	 * LRU list, updated on each access to object. Protected by
->> 	 * bucket lock of lu_site::ls_obj_hash.
->> @@ -187,10 +183,9 @@ void lu_object_put(const struct lu_env *env, struct=
- lu_object *o)
->> 	if (!lu_object_is_dying(top)) {
->> 		LASSERT(list_empty(&top->loh_lru));
->> 		list_add_tail(&top->loh_lru, &bkt->lsb_lru);
->> -		bkt->lsb_lru_len++;
->> 		percpu_counter_inc(&site->ls_lru_len_counter);
->> -		CDEBUG(D_INODE, "Add %p to site lru. hash: %p, bkt: %p, lru_len: %ld\=
-n",
->> -		       o, site->ls_obj_hash, bkt, bkt->lsb_lru_len);
->> +		CDEBUG(D_INODE, "Add %p to site lru. hash: %p, bkt: %p\n",
->> +		       o, site->ls_obj_hash, bkt);
->> 		cfs_hash_bd_unlock(site->ls_obj_hash, &bd, 1);
->> 		return;
->> 	}
->> @@ -238,7 +233,6 @@ void lu_object_unhash(const struct lu_env *env, stru=
-ct lu_object *o)
->>=20
->> 			list_del_init(&top->loh_lru);
->> 			bkt =3D cfs_hash_bd_extra_get(obj_hash, &bd);
->> -			bkt->lsb_lru_len--;
->> 			percpu_counter_dec(&site->ls_lru_len_counter);
->> 		}
->> 		cfs_hash_bd_del_locked(obj_hash, &bd, &top->loh_hash);
->> @@ -422,7 +416,6 @@ int lu_site_purge_objects(const struct lu_env *env, =
-struct lu_site *s,
->> 			cfs_hash_bd_del_locked(s->ls_obj_hash,
->> 					       &bd2, &h->loh_hash);
->> 			list_move(&h->loh_lru, &dispose);
->> -			bkt->lsb_lru_len--;
->> 			percpu_counter_dec(&s->ls_lru_len_counter);
->> 			if (did_sth =3D=3D 0)
->> 				did_sth =3D 1;
->> @@ -621,7 +614,6 @@ static struct lu_object *htable_lookup(struct lu_sit=
-e *s,
->> 		lprocfs_counter_incr(s->ls_stats, LU_SS_CACHE_HIT);
->> 		if (!list_empty(&h->loh_lru)) {
->> 			list_del_init(&h->loh_lru);
->> -			bkt->lsb_lru_len--;
->> 			percpu_counter_dec(&s->ls_lru_len_counter);
->> 		}
->> 		return lu_object_top(h);
->> @@ -1834,19 +1826,21 @@ struct lu_site_stats {
->> 	unsigned int	lss_busy;
->> };
->>=20
->> -static void lu_site_stats_get(struct cfs_hash *hs,
->> +static void lu_site_stats_get(const struct lu_site *s,
->> 			      struct lu_site_stats *stats, int populated)
->> {
->> +	struct cfs_hash *hs =3D s->ls_obj_hash;
->> 	struct cfs_hash_bd bd;
->> 	unsigned int i;
->> +	/* percpu_counter_read_positive() won't accept a const pointer */
->> +	struct lu_site *s2 =3D (struct lu_site *)s;
->
-> It would seem worthwhile to change the percpu_counter_read_positive() and
-> percpu_counter_read() arguments to be "const struct percpu_counter *fbc",
-> rather than doing this cast here.  I can't see any reason that would be b=
-ad,
-> since both implementations just access fbc->count, and do not modify anyt=
-hing.
->
->> +	stats->lss_busy +=3D cfs_hash_size_get(hs) -
->> +		percpu_counter_read_positive(&s2->ls_lru_len_counter);
->> 	cfs_hash_for_each_bucket(hs, &bd, i) {
->> -		struct lu_site_bkt_data *bkt =3D cfs_hash_bd_extra_get(hs, &bd);
->> 		struct hlist_head	*hhead;
->>=20
->> 		cfs_hash_bd_lock(hs, &bd, 1);
->> -		stats->lss_busy  +=3D
->> -			cfs_hash_bd_count_get(&bd) - bkt->lsb_lru_len;
->> 		stats->lss_total +=3D cfs_hash_bd_count_get(&bd);
->> 		stats->lss_max_search =3D max((int)stats->lss_max_search,
->> 					    cfs_hash_bd_depmax_get(&bd));
->> @@ -2039,7 +2033,7 @@ int lu_site_stats_print(const struct lu_site *s, s=
-truct seq_file *m)
->> 	struct lu_site_stats stats;
->>=20
->> 	memset(&stats, 0, sizeof(stats));
->> -	lu_site_stats_get(s->ls_obj_hash, &stats, 1);
->> +	lu_site_stats_get(s, &stats, 1);
->>=20
->> 	seq_printf(m, "%d/%d %d/%ld %d %d %d %d %d %d %d\n",
->> 		   stats.lss_busy,
->>=20
->>=20
->
-> Cheers, Andreas
-> --
-> Andreas Dilger
-> Lustre Principal Architect
-> Intel Corporation
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlrrpIQACgkQOeye3VZi
-gbkCeRAAxIt9W56dEceDCtTHA4FpcsAytHCbbwT3JbRZDqYqOpzXXJw0N8iJTgz5
-RQSafAMTSq6Ht5PuT1NRJQlr5FFYaDHZoSwUXpMhrcKiYnjEoL5vLNXDFSGMqAAT
-sSRlF/bDBIVPZ0aqCV1kRo8MQhCodl8Gwx6X5AHqhGLkIZrIQqSyV7NhX4hk+PKJ
-OGV3Db4pQOu5SpwIhO8zHP7GkWkuIeKf+MoSL72k1KHs026cXeM/wVTuHC4XjQ2b
-TXQwg5CwChAXpOyjkvQEke8KCiMhrfuBLpreiMJCzuTcki3oEvhnEpTxHCgXKMOO
-DzdP+Pg/edfQQeFDDf0H61TEcr08+7+D42K+abZ8V7AE+CeN04VVtmXNdYa2VWGr
-QfEEP7jNwkBfjhGUXPcKePpJvwzduKRQ8dY6ZXw2oerf0kVyTpGPF7G3wSWZ8mVN
-TnN5c3U8Ozt1yVBBeQlxQFzNRjiRbAC4pFXGMSvzB/zvte4inZfyz5ypvKhy6U0w
-ub1thbiqTa0/G0TBLPencLepUWH1EmbfYWa8j7ZGR9IqGQQKHo+JkIZfzwaBSJvH
-bULC6waZUFHwCmpCKlxNZC6DvqPo/oDcPd+XKHXXZ1y5F28OFTrtGNECDeGJO4Od
-nKaD7ON60yW2rdNeakbVczxerkiwnDjvTRzzTfVEQzBsNmsc9qw=
-=p/N0
------END PGP SIGNATURE-----
---=-=-=--
+diff --git a/drivers/staging/lustre/include/linux/libcfs/libcfs.h b/drivers/staging/lustre/include/linux/libcfs/libcfs.h
+index 9263e151451b..d420449b620e 100644
+--- a/drivers/staging/lustre/include/linux/libcfs/libcfs.h
++++ b/drivers/staging/lustre/include/linux/libcfs/libcfs.h
+@@ -138,10 +138,6 @@ struct libcfs_ioctl_handler {
+ int libcfs_register_ioctl(struct libcfs_ioctl_handler *hand);
+ int libcfs_deregister_ioctl(struct libcfs_ioctl_handler *hand);
+ 
+-int libcfs_ioctl_getdata(struct libcfs_ioctl_hdr **hdr_pp,
+-			 const struct libcfs_ioctl_hdr __user *uparam);
+-int libcfs_ioctl_data_adjust(struct libcfs_ioctl_data *data);
+-
+ #define _LIBCFS_H
+ 
+ /**
+diff --git a/drivers/staging/lustre/lnet/libcfs/Makefile b/drivers/staging/lustre/lnet/libcfs/Makefile
+index e6fda27fdabd..e73515789a11 100644
+--- a/drivers/staging/lustre/lnet/libcfs/Makefile
++++ b/drivers/staging/lustre/lnet/libcfs/Makefile
+@@ -5,7 +5,6 @@ subdir-ccflags-y += -I$(srctree)/drivers/staging/lustre/lustre/include
+ obj-$(CONFIG_LNET) += libcfs.o
+ 
+ libcfs-linux-objs := linux-tracefile.o linux-debug.o
+-libcfs-linux-objs += linux-module.o
+ libcfs-linux-objs += linux-crypto.o
+ libcfs-linux-objs += linux-crypto-adler.o
+ 
+diff --git a/drivers/staging/lustre/lnet/libcfs/linux/linux-module.c b/drivers/staging/lustre/lnet/libcfs/linux/linux-module.c
+deleted file mode 100644
+index 954b681f9db7..000000000000
+--- a/drivers/staging/lustre/lnet/libcfs/linux/linux-module.c
++++ /dev/null
+@@ -1,168 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-/*
+- * GPL HEADER START
+- *
+- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 only,
+- * as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful, but
+- * WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+- * General Public License version 2 for more details (a copy is included
+- * in the LICENSE file that accompanied this code).
+- *
+- * You should have received a copy of the GNU General Public License
+- * version 2 along with this program; If not, see
+- * http://www.gnu.org/licenses/gpl-2.0.html
+- *
+- * GPL HEADER END
+- */
+-/*
+- * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
+- * Use is subject to license terms.
+- *
+- * Copyright (c) 2012, Intel Corporation.
+- */
+-/*
+- * This file is part of Lustre, http://www.lustre.org/
+- * Lustre is a trademark of Sun Microsystems, Inc.
+- */
+-
+-#define DEBUG_SUBSYSTEM S_LNET
+-
+-#include <linux/miscdevice.h>
+-#include <linux/libcfs/libcfs.h>
+-
+-static inline size_t libcfs_ioctl_packlen(struct libcfs_ioctl_data *data)
+-{
+-	size_t len = sizeof(*data);
+-
+-	len += cfs_size_round(data->ioc_inllen1);
+-	len += cfs_size_round(data->ioc_inllen2);
+-	return len;
+-}
+-
+-static inline bool libcfs_ioctl_is_invalid(struct libcfs_ioctl_data *data)
+-{
+-	if (data->ioc_hdr.ioc_len > BIT(30)) {
+-		CERROR("LIBCFS ioctl: ioc_len larger than 1<<30\n");
+-		return true;
+-	}
+-	if (data->ioc_inllen1 > BIT(30)) {
+-		CERROR("LIBCFS ioctl: ioc_inllen1 larger than 1<<30\n");
+-		return true;
+-	}
+-	if (data->ioc_inllen2 > BIT(30)) {
+-		CERROR("LIBCFS ioctl: ioc_inllen2 larger than 1<<30\n");
+-		return true;
+-	}
+-	if (data->ioc_inlbuf1 && !data->ioc_inllen1) {
+-		CERROR("LIBCFS ioctl: inlbuf1 pointer but 0 length\n");
+-		return true;
+-	}
+-	if (data->ioc_inlbuf2 && !data->ioc_inllen2) {
+-		CERROR("LIBCFS ioctl: inlbuf2 pointer but 0 length\n");
+-		return true;
+-	}
+-	if (data->ioc_pbuf1 && !data->ioc_plen1) {
+-		CERROR("LIBCFS ioctl: pbuf1 pointer but 0 length\n");
+-		return true;
+-	}
+-	if (data->ioc_pbuf2 && !data->ioc_plen2) {
+-		CERROR("LIBCFS ioctl: pbuf2 pointer but 0 length\n");
+-		return true;
+-	}
+-	if (data->ioc_plen1 && !data->ioc_pbuf1) {
+-		CERROR("LIBCFS ioctl: plen1 nonzero but no pbuf1 pointer\n");
+-		return true;
+-	}
+-	if (data->ioc_plen2 && !data->ioc_pbuf2) {
+-		CERROR("LIBCFS ioctl: plen2 nonzero but no pbuf2 pointer\n");
+-		return true;
+-	}
+-	if ((u32)libcfs_ioctl_packlen(data) != data->ioc_hdr.ioc_len) {
+-		CERROR("LIBCFS ioctl: packlen != ioc_len\n");
+-		return true;
+-	}
+-	if (data->ioc_inllen1 &&
+-	    data->ioc_bulk[data->ioc_inllen1 - 1] != '\0') {
+-		CERROR("LIBCFS ioctl: inlbuf1 not 0 terminated\n");
+-		return true;
+-	}
+-	if (data->ioc_inllen2 &&
+-	    data->ioc_bulk[cfs_size_round(data->ioc_inllen1) +
+-			   data->ioc_inllen2 - 1] != '\0') {
+-		CERROR("LIBCFS ioctl: inlbuf2 not 0 terminated\n");
+-		return true;
+-	}
+-	return false;
+-}
+-
+-int libcfs_ioctl_data_adjust(struct libcfs_ioctl_data *data)
+-{
+-	if (libcfs_ioctl_is_invalid(data)) {
+-		CERROR("libcfs ioctl: parameter not correctly formatted\n");
+-		return -EINVAL;
+-	}
+-
+-	if (data->ioc_inllen1)
+-		data->ioc_inlbuf1 = &data->ioc_bulk[0];
+-
+-	if (data->ioc_inllen2)
+-		data->ioc_inlbuf2 = &data->ioc_bulk[0] +
+-			cfs_size_round(data->ioc_inllen1);
+-
+-	return 0;
+-}
+-
+-int libcfs_ioctl_getdata(struct libcfs_ioctl_hdr **hdr_pp,
+-			 const struct libcfs_ioctl_hdr __user *uhdr)
+-{
+-	struct libcfs_ioctl_hdr hdr;
+-	int err;
+-
+-	if (copy_from_user(&hdr, uhdr, sizeof(hdr)))
+-		return -EFAULT;
+-
+-	if (hdr.ioc_version != LIBCFS_IOCTL_VERSION &&
+-	    hdr.ioc_version != LIBCFS_IOCTL_VERSION2) {
+-		CERROR("libcfs ioctl: version mismatch expected %#x, got %#x\n",
+-		       LIBCFS_IOCTL_VERSION, hdr.ioc_version);
+-		return -EINVAL;
+-	}
+-
+-	if (hdr.ioc_len < sizeof(hdr)) {
+-		CERROR("libcfs ioctl: user buffer too small for ioctl\n");
+-		return -EINVAL;
+-	}
+-
+-	if (hdr.ioc_len > LIBCFS_IOC_DATA_MAX) {
+-		CERROR("libcfs ioctl: user buffer is too large %d/%d\n",
+-		       hdr.ioc_len, LIBCFS_IOC_DATA_MAX);
+-		return -EINVAL;
+-	}
+-
+-	*hdr_pp = kvmalloc(hdr.ioc_len, GFP_KERNEL);
+-	if (!*hdr_pp)
+-		return -ENOMEM;
+-
+-	if (copy_from_user(*hdr_pp, uhdr, hdr.ioc_len)) {
+-		err = -EFAULT;
+-		goto free;
+-	}
+-
+-	if ((*hdr_pp)->ioc_version != hdr.ioc_version ||
+-	    (*hdr_pp)->ioc_len != hdr.ioc_len) {
+-		err = -EINVAL;
+-		goto free;
+-	}
+-
+-	return 0;
+-
+-free:
+-	kvfree(*hdr_pp);
+-	return err;
+-}
+diff --git a/drivers/staging/lustre/lnet/libcfs/module.c b/drivers/staging/lustre/lnet/libcfs/module.c
+index 3fb150a57f49..4c4bf09a78dd 100644
+--- a/drivers/staging/lustre/lnet/libcfs/module.c
++++ b/drivers/staging/lustre/lnet/libcfs/module.c
+@@ -95,6 +95,137 @@ int libcfs_deregister_ioctl(struct libcfs_ioctl_handler *hand)
+ }
+ EXPORT_SYMBOL(libcfs_deregister_ioctl);
+ 
++static inline size_t libcfs_ioctl_packlen(struct libcfs_ioctl_data *data)
++{
++	size_t len = sizeof(*data);
++
++	len += cfs_size_round(data->ioc_inllen1);
++	len += cfs_size_round(data->ioc_inllen2);
++	return len;
++}
++
++static inline bool libcfs_ioctl_is_invalid(struct libcfs_ioctl_data *data)
++{
++	if (data->ioc_hdr.ioc_len > BIT(30)) {
++		CERROR("LIBCFS ioctl: ioc_len larger than 1<<30\n");
++		return true;
++	}
++	if (data->ioc_inllen1 > BIT(30)) {
++		CERROR("LIBCFS ioctl: ioc_inllen1 larger than 1<<30\n");
++		return true;
++	}
++	if (data->ioc_inllen2 > BIT(30)) {
++		CERROR("LIBCFS ioctl: ioc_inllen2 larger than 1<<30\n");
++		return true;
++	}
++	if (data->ioc_inlbuf1 && !data->ioc_inllen1) {
++		CERROR("LIBCFS ioctl: inlbuf1 pointer but 0 length\n");
++		return true;
++	}
++	if (data->ioc_inlbuf2 && !data->ioc_inllen2) {
++		CERROR("LIBCFS ioctl: inlbuf2 pointer but 0 length\n");
++		return true;
++	}
++	if (data->ioc_pbuf1 && !data->ioc_plen1) {
++		CERROR("LIBCFS ioctl: pbuf1 pointer but 0 length\n");
++		return true;
++	}
++	if (data->ioc_pbuf2 && !data->ioc_plen2) {
++		CERROR("LIBCFS ioctl: pbuf2 pointer but 0 length\n");
++		return true;
++	}
++	if (data->ioc_plen1 && !data->ioc_pbuf1) {
++		CERROR("LIBCFS ioctl: plen1 nonzero but no pbuf1 pointer\n");
++		return true;
++	}
++	if (data->ioc_plen2 && !data->ioc_pbuf2) {
++		CERROR("LIBCFS ioctl: plen2 nonzero but no pbuf2 pointer\n");
++		return true;
++	}
++	if ((u32)libcfs_ioctl_packlen(data) != data->ioc_hdr.ioc_len) {
++		CERROR("LIBCFS ioctl: packlen != ioc_len\n");
++		return true;
++	}
++	if (data->ioc_inllen1 &&
++	    data->ioc_bulk[data->ioc_inllen1 - 1] != '\0') {
++		CERROR("LIBCFS ioctl: inlbuf1 not 0 terminated\n");
++		return true;
++	}
++	if (data->ioc_inllen2 &&
++	    data->ioc_bulk[cfs_size_round(data->ioc_inllen1) +
++			   data->ioc_inllen2 - 1] != '\0') {
++		CERROR("LIBCFS ioctl: inlbuf2 not 0 terminated\n");
++		return true;
++	}
++	return false;
++}
++
++static int libcfs_ioctl_data_adjust(struct libcfs_ioctl_data *data)
++{
++	if (libcfs_ioctl_is_invalid(data)) {
++		CERROR("libcfs ioctl: parameter not correctly formatted\n");
++		return -EINVAL;
++	}
++
++	if (data->ioc_inllen1)
++		data->ioc_inlbuf1 = &data->ioc_bulk[0];
++
++	if (data->ioc_inllen2)
++		data->ioc_inlbuf2 = &data->ioc_bulk[0] +
++			cfs_size_round(data->ioc_inllen1);
++
++	return 0;
++}
++
++static int libcfs_ioctl_getdata(struct libcfs_ioctl_hdr **hdr_pp,
++			 const struct libcfs_ioctl_hdr __user *uhdr)
++{
++	struct libcfs_ioctl_hdr hdr;
++	int err;
++
++	if (copy_from_user(&hdr, uhdr, sizeof(hdr)))
++		return -EFAULT;
++
++	if (hdr.ioc_version != LIBCFS_IOCTL_VERSION &&
++	    hdr.ioc_version != LIBCFS_IOCTL_VERSION2) {
++		CERROR("libcfs ioctl: version mismatch expected %#x, got %#x\n",
++		       LIBCFS_IOCTL_VERSION, hdr.ioc_version);
++		return -EINVAL;
++	}
++
++	if (hdr.ioc_len < sizeof(hdr)) {
++		CERROR("libcfs ioctl: user buffer too small for ioctl\n");
++		return -EINVAL;
++	}
++
++	if (hdr.ioc_len > LIBCFS_IOC_DATA_MAX) {
++		CERROR("libcfs ioctl: user buffer is too large %d/%d\n",
++		       hdr.ioc_len, LIBCFS_IOC_DATA_MAX);
++		return -EINVAL;
++	}
++
++	*hdr_pp = kvmalloc(hdr.ioc_len, GFP_KERNEL);
++	if (!*hdr_pp)
++		return -ENOMEM;
++
++	if (copy_from_user(*hdr_pp, uhdr, hdr.ioc_len)) {
++		err = -EFAULT;
++		goto free;
++	}
++
++	if ((*hdr_pp)->ioc_version != hdr.ioc_version ||
++	    (*hdr_pp)->ioc_len != hdr.ioc_len) {
++		err = -EINVAL;
++		goto free;
++	}
++
++	return 0;
++
++free:
++	kvfree(*hdr_pp);
++	return err;
++}
++
+ static int libcfs_ioctl(unsigned long cmd, void __user *uparam)
+ {
+ 	struct libcfs_ioctl_data *data = NULL;
