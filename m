@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756584AbeEASxL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 14:53:11 -0400
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:36920 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756333AbeEASxJ (ORCPT
+        id S1756612AbeEASyE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 14:54:04 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:42844 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756382AbeEASyC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 14:53:09 -0400
-X-Google-Smtp-Source: AB8JxZojF5qA6ui0S9UVzlSd2NtIRZE9T8B5Rn2kpnV8ktfdihGGynZjYv95ncyQSD0t5QCRZyYRDA==
-Subject: Re: [GIT PULL 1/3] bcm2835-dt-next-2018-04-30
+        Tue, 1 May 2018 14:54:02 -0400
+X-Google-Smtp-Source: AB8JxZoZfowjm82mmvMtKN6ewYk7Aq03I0J+r7A7BvDfvji89gcsCqJ9iPcYPIb6F/AOU6FTjBXxCA==
+Subject: Re: [GIT PULL 2/3] bcm2835-defconfig-next-2018-04-30
 To: Eric Anholt <eric@anholt.net>, Florian Fainelli <f.fainelli@gmail.com>
 Cc: linux-rpi-kernel@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Stefan Wahren <stefan.wahren@i2se.com>,
         bcm-kernel-feedback-list@broadcom.com
 References: <20180430212750.12303-1-eric@anholt.net>
+ <20180430212750.12303-2-eric@anholt.net>
 From: Florian Fainelli <f.fainelli@gmail.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
@@ -50,12 +51,12 @@ Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
  y5arMQorqTFWlEOgRA8OP47L9knl9i4xuR0euV6DChDrguup2aJVU8JPBBgRAgAPAhsMBQJU
  X9LxBQkeXB3fAAoJEGFXmRW1Y3YOj4UAn3nrFLPZekMeqX5aD/aq/dsbXSfyAKC45Go0YyxV
  HGuUuzv+GKZ6nsysJw==
-Message-ID: <1f75527c-7e44-15e6-114f-a15e0bbd11ba@gmail.com>
-Date: Tue, 1 May 2018 11:53:00 -0700
+Message-ID: <f93e45e8-8f70-9f5f-fe4c-078e873e8607@gmail.com>
+Date: Tue, 1 May 2018 11:53:59 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180430212750.12303-1-eric@anholt.net>
+In-Reply-To: <20180430212750.12303-2-eric@anholt.net>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -64,32 +65,29 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 04/30/2018 02:27 PM, Eric Anholt wrote:
-> Hi Florian,
-> 
 > The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
 > 
 >   Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
 > 
 > are available in the Git repository at:
 > 
->   git://github.com/anholt/linux tags/bcm2835-dt-next-2018-04-30
+>   git://github.com/anholt/linux tags/bcm2835-defconfig-next-2018-04-30
 > 
-> for you to fetch changes up to bdd6d1fe1cd84806429467ce62a735bdc6bdbae7:
+> for you to fetch changes up to 329fb2b79b132d727dd8a1624da8dc5331eb8633:
 > 
->   arm64: dts: broadcom: Add reference to Raspberry Pi 3 B+ (2018-04-23 15:03:07 -0700)
-> 
-> ----------------------------------------------------------------
-> This pull request brings in Raspberry Pi 3 B+ support and connects
-> HDMI hotplug, LEDs, and wifi/bluetooth on the Raspberry Pi 3.
+>   ARM: multi_v7_defconfig: Enable LAN and BT for RPi 3 B+ (2018-04-23 13:25:49 -0700)
 > 
 > ----------------------------------------------------------------
-> Stefan Wahren (5):
->       ARM: dts: bcm283x: Fix PWM pin assignment
->       ARM: dts: bcm2837: Add missing GPIOs of Expander
->       dt-bindings: bcm: Add Raspberry Pi 3 B+
->       ARM: dts: bcm2837: Add Raspberry Pi 3 B+
->       arm64: dts: broadcom: Add reference to Raspberry Pi 3 B+
+> This pull request enables recent new drivers for the Raspberry Pi, including
+> the networking on the Pi 3 B+.
+> 
+> ----------------------------------------------------------------
+> Stefan Wahren (3):
+>       ARM: bcm2835_defconfig: Enable LAN78XX driver
+>       ARM: bcm2835_defconfig: Enable VCHIQ driver
+>       ARM: multi_v7_defconfig: Enable LAN and BT for RPi 3 B+
 
-Merged into devicetree/next, thanks Eric!
---
+Merged into defconfig/next, thanks Eric!
+-- 
+-- 
 Florian
