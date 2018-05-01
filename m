@@ -1,114 +1,153 @@
-Return-Path: <stern+5b0af0d8@rowland.harvard.edu>
-X-Google-Smtp-Source: ADUXVKJwxMDjqqRiLHKVxgbuEBVwBpAPg/hdNMhKboYc3LjbJ7xxLs7o6y39iTQiuU2+Kt5lNb6Q
-ARC-Seal: i=1; a=rsa-sha256; t=1527172195; cv=none;
+Return-Path: <robh+dt@kernel.org>
+X-Google-Smtp-Source: AB8JxZpM0OqbE6havoGPnKQrgMc3rOIXUEUWzrKyuk1RsvZ5+sharO4unpepcvd0gXCIE+LKmeqP
+ARC-Seal: i=1; a=rsa-sha256; t=1525183564; cv=none;
         d=google.com; s=arc-20160816;
-        b=HRdsG+iSdqGBkHvzinqHMTe0zICGfqLoWE1GB82rSddsjc0TWAjD87DkGbtYLdc6e3
-         fPr4Fyh0RAVYxgcj+irMZ88BEu7tKUsh5oD7gwF3NrcPBSwCCP/L9Dm+MtVRwXwqgTEK
-         CV5VpxrM8TETWl0hJQ9oSrWkbRfKfnA02DpdFlm0Ji0uhdS2l0ghb/selg6Kz3zPlaUJ
-         al34/go6QbgZxrpCojK1JNFjmiMuiA5BFZFw7ZxMNgXNg7k+QhtkRUUeNhVwVLMc7trC
-         VgrjmKG6S1oy4mArcxVEk5rS/UvLG6VBc0dHOLWIl+VoOopyQR2WSS5sL0aGMp+dTD9b
-         cWKQ==
+        b=SG4D3wkhMA7Z5x5/WDQMty3xqqCuuNI94uSdQ4lmvXXYNSAZENSP7pXkyRBa55PcM3
+         /WEapq3ELTENZh3+JXIcNB6DhKWI+mP05f6GkivivUKHAMHaJupKc7o/MeQMxO+YHdA4
+         jQ6Hn1l5HbqYeUE2/WKYhf2oEUtL1aD/cJVdnqlVjDF+2IJuIMP7oXs9yvu6Zarlsx7F
+         HSeX7mXiS8Z5qEkFGn9XiXi6peaLBjHG8iQqkn1Z3ZJ9kmYfnWuUROmSBT7CziUq23Dq
+         wCi7yF+N3ze89eN0vmVLKaxg23bXg58u0NFs0X7Vgd3Rf5KB9N6sQt77DbL0Le6v8dp7
+         Nblw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:message-id:in-reply-to:subject:cc:to:from:date
-         :arc-authentication-results;
-        bh=cbuRQIUmgT6n+PQLJFxypK9qEkte/wPVUjr35ge5Mjo=;
-        b=wKb7z/GRFGADRmiuFxGi87CccBLOIdL99R+llFO8TjeOvHW6vEr1a3jYRoWKz4QSa5
-         EvKpaNr/wd8kjeUlIunAIRZOU5nYHQxousWl7jBZKApTNUPKbYgokNACCuqnGrih9t+G
-         mt3IgyFrsJcq3jMlscEQRpxTAaqoKM3dwjwXzMLFAEYvKf8fHpNUGlphRfvK8Eurqnhv
-         S8aEtpH6yV2nLLJv8LxWkzrJQUopDf0m0nvoE1cXe7HX3xqghU+Piy7i5KTPZKnz5qRx
-         1ebsoyyzp+KKEuIrJLTMgL9gXSrACj+yIJc7YnuYE6B2Lu/33C/Esm865CQa3DspGrRe
-         W7VQ==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dmarc-filter:arc-authentication-results;
+        bh=NloWaau8IXYyP3Ttq6f3t+wH+xSxZw5ztA1bo9l0vLc=;
+        b=ga6KgcRhUTrswhiFWKa8zDaVSZr9385n7drwMshSc3FOoSt0VzhCgeQbNbG7asZzNC
+         +PCZGkttGL8bvnJJSGBon8z5jnoDcwrlEfVjsn4S0GJSfblzpVCF+cI2IOgVDgJqwJz0
+         pPwQhVBC/SKIEDpTEJwKirYNq/1Tcc1+c9bdiHzpgx9IkwoSENpe5lX/OwABOfrZHh+a
+         6QzHn57B9XkJTWxmudO09BROgODqob2TQshpRNcqINX4hSbgwAsW4ErFKMPtq89NIp0t
+         oREMHMFZlORq32GHotjIMHbAc6uJjna5NUYVMlGAVVkVWvYy+AEWHJBcxFmwrAd1DSQa
+         agbA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 192.131.102.54 is neither permitted nor denied by best guess record for domain of stern+5b0af0d8@rowland.harvard.edu) smtp.mailfrom=stern+5b0af0d8@rowland.harvard.edu
+       spf=pass (google.com: best guess record for domain of robh+dt@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=robh+dt@kernel.org
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 192.131.102.54 is neither permitted nor denied by best guess record for domain of stern+5b0af0d8@rowland.harvard.edu) smtp.mailfrom=stern+5b0af0d8@rowland.harvard.edu
-Date: Thu, 24 May 2018 10:29:54 -0400 (EDT)
-From: Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To: Nicolas Boichat <drinkcat@chromium.org>
-cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-     <linux-usb@vger.kernel.org>,
-    Mathias Nyman <mathias.nyman@linux.intel.com>,
-    Felipe Balbi <felipe.balbi@linux.intel.com>,
-    Eugene Korenevsky <ekorenevsky@gmail.com>, Peter Chen <peter.chen@nxp.com>,
-    Daniel Drake <drake@endlessm.com>, Joe Perches <joe@perches.com>,
-    Johan Hovold <johan@kernel.org>,
-    Richard Leitner <richard.leitner@skidata.com>,
-    lkml <linux-kernel@vger.kernel.org>, Guenter Roeck <groeck@chromium.org>
-Subject: Re: [PATCH] usb: hub: Per-port setting to use old enumeration scheme
-In-Reply-To: <CANMq1KD8SpPQ7UTy2wN0J84dsA86Skmbb5q0OjkG+-BZShiv-A@mail.gmail.com>
-Message-ID: <Pine.LNX.4.44L0.1805241018420.1871-100000@iolanthe.rowland.org>
+       spf=pass (google.com: best guess record for domain of robh+dt@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=robh+dt@kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 052E923696
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh+dt@kernel.org
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+In-Reply-To: <20180426091018.GU4615@localhost>
+References: <20180424163458.11947-1-johan@kernel.org> <20180424163458.11947-5-johan@kernel.org>
+ <CAL_Jsq+mCp=geT8t_j+0fuTxAB7C9RYn6pESRpLc2GH273fM1Q@mail.gmail.com> <20180426091018.GU4615@localhost>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Tue, 1 May 2018 09:05:42 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqK=xQBx2YCd0kDP0zLn_LAZb6Mi5UfSTQf2soooVz2unQ@mail.gmail.com>
+Message-ID: <CAL_JsqK=xQBx2YCd0kDP0zLn_LAZb6Mi5UfSTQf2soooVz2unQ@mail.gmail.com>
+Subject: Re: [PATCH 4/7] dt-bindings: gnss: add u-blox binding
+To: Johan Hovold <johan@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mark Rutland <mark.rutland@arm.com>,
+	Andreas Kemnade <andreas@kemnade.info>, Arnd Bergmann <arnd@arndb.de>,
+	"H . Nikolaus Schaller" <hns@goldelico.com>, Pavel Machek <pavel@ucw.cz>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1601219430844559036?=
-X-GMAIL-MSGID: =?utf-8?q?1601356112116072259?=
+X-GMAIL-THRID: =?utf-8?q?1598647064088300079?=
+X-GMAIL-MSGID: =?utf-8?q?1599270881227825489?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, 24 May 2018, Nicolas Boichat wrote:
+On Thu, Apr 26, 2018 at 4:10 AM, Johan Hovold <johan@kernel.org> wrote:
+> On Wed, Apr 25, 2018 at 01:16:58PM -0500, Rob Herring wrote:
+>> On Tue, Apr 24, 2018 at 11:34 AM, Johan Hovold <johan@kernel.org> wrote:
+>> > Add binding for u-blox GNSS receivers.
+>> >
+>> > Note that the u-blox product names encodes form factor (e.g. "neo"),
+>> > chipset (e.g. "8") and variant (e.g. "q"), but that only formfactor and
+>> > chipset is used for the compatible strings (for now).
+>> >
+>> > Signed-off-by: Johan Hovold <johan@kernel.org>
+>> > ---
+>> >  .../devicetree/bindings/gnss/u-blox.txt       | 31 +++++++++++++++++++
+>> >  .../devicetree/bindings/vendor-prefixes.txt   |  1 +
+>> >  2 files changed, 32 insertions(+)
+>> >  create mode 100644 Documentation/devicetree/bindings/gnss/u-blox.txt
+>> >
+>> > diff --git a/Documentation/devicetree/bindings/gnss/u-blox.txt b/Documentation/devicetree/bindings/gnss/u-blox.txt
+>> > new file mode 100644
+>> > index 000000000000..bb54b83a177f
+>> > --- /dev/null
+>> > +++ b/Documentation/devicetree/bindings/gnss/u-blox.txt
+>> > @@ -0,0 +1,31 @@
+>> > +u-blox GNSS Receiver DT binding
+>> > +
+>> > +The u-blox GNSS receivers can use UART, DDC (I2C), SPI and USB interfaces.
+>> > +
+>> > +Please see Documentation/devicetree/bindings/gnss/gnss.txt for generic
+>> > +properties.
+>> > +
+>> > +Required Properties:
+>> > +
+>> > +- compatible   : Must be one of
+>> > +
+>> > +                       "u-blox,neo-8"
+>> > +                       "u-blox,neo-m8"
+>> > +
+>> > +- vcc-supply   : Main voltage regulator (VCC)
+>>
+>> What about V_BCKP?
+>
+> That's the backup supply for for the RTC and batter-backed RAM. In
+> configurations where a battery is not used it should be connected to
+> VCC.
+>
+> How would you model that? I can enable a vbckp regulator at probe, but
+> what if someone then accurately describes the corresponding pin as being
+> connected to VCC?
 
-> On Thu, May 24, 2018 at 12:39 AM, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> > On Wed, May 23, 2018 at 10:03:55AM -0400, Alan Stern wrote:
-> >> On Wed, 23 May 2018, Nicolas Boichat wrote:
-> >>
-> >> > The "old" enumeration scheme is considerably faster (it takes
-> >> > ~294ms instead of ~439ms to get the descriptor).
-> >> >
-> >> > It is currently only possible to use the old scheme globally
-> >> > (/sys/module/usbcore/parameters/old_scheme_first), which is not
-> >> > desirable as the new scheme was introduced to increase compatibility
-> >> > with more devices.
-> >> >
-> >> > However, in our case, we care about time-to-active for a specific
-> >> > USB device (which we make the firmware for), on a specific port
-> >> > (that is pogo-pin based: not a standard USB port). This new
-> >> > sysfs option makes it possible to use the old scheme on a single
-> >> > port only.
-> >> >
-> >> > Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
-> >> > ---
-> >> >
-> >> > There are other "quirks" that we could add to reduce further
-> >> > enumeration time (e.g. reduce USB debounce time, reduce TRSTRCY
-> >> > to 10ms instead of 50ms as used currently), but the logic is quite
-> >> > similar, so it'd be good to have this reviewed first.
-> >>
-> >> I'm not opposed to the idea in principle, although I don't like your
-> >> implementation because it breaks the original old_scheme_first
-> >> parameter.
-> 
-> I don't think it breaks the original parameter? I mean,
-> /sys/module/usbcore/parameters/old_scheme_first is still a global
-> default, while bit 0 of /sys/bus/usb/devices/x/y/z/quirks becomes a
-> port-specific override.
+You mean how to model a battery? It would just be a 'regulator'
+because the regulator binding covers any supply really.
 
-Oops, sorry, my mistake.  My email client wrapped the last line of
-use_new_scheme(), and as a result I missed the fact that
-old_scheme_first was getting or'ed into the expression.
+Then you just set both rails to the same supply phandle.
 
-> >> How do you arrange to set the new quirk before the device is
-> >> discovered?
-> >
-> > Yeah, this last question is what I had when looking at this.  Or does it
-> > not matter at first boot and only matters for wake-up?
-> 
-> It does not matter on boot, we have plenty of time to enumerate the
-> device. We use USB (auto-)suspend and remote wake, so no
-> re-enumeration there either. It only matters on unplug/replug where
-> the device needs to be re-enumerated.
-> 
-> Somewhere in an init script, we would do this (we know in advance that
-> usb1 port2 is the bus/port where we have our pogo-pin USB interface,
-> so we can hard-code the path):
-> echo 1 > /sys/bus/usb/devices/usb1/1-0:1.0/usb1-port2/quirks
-> 
-> We could try to add ACPI support (just like connect_type), but we
-> don't strictly need it for our application.
+> I guess we can check if the regulators are identical,
+> and then just have the driver ignore V_BKUP. Knowing whether there is
+> a (hopefully charged) battery connected could be useful.
 
-Okay, that makes sense.  So this change looks okay to me.
+Regulators are ref counted, so just enable it twice. Or the driver can
+just ignore it until it supports battery backup.
 
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
+> I can't seem to find any other bindings that describe battery supplies,
+> but I'll add it here.
 
-Alan Stern
+There must be some. But then the battery and charger bindings are not
+in the best shape.
+
+>> > +
+>> > +Optional Properties:
+>>
+>> reg is required if using I2C, SPI, or USB.
+>
+> I'll add that (even if there is no driver support for these yet).
+>
+>> Datasheet also shows an interrupt pin.
+>
+> Not used currently, but I'll add it to the binding as well.
+>
+>> > +
+>> > +- timepulse-gpios      : Timepulse (e.g. 1PPS) GPIO (TIMEPULSE)
+>>
+>> Why the 3rd "TIMEPULSE"?
+>
+> That's the pin name, which in this case is identical to the property
+> name, so I'll drop it here.
+
+Then what is the 2nd "Timepulse"?
+
+Maybe just a "pin name: X" prefix so it is clear.
+
+> Take a look at the sirf binding; vendors use different names for their
+> timepulse pins and in that case I added the actual pin names (1PPS, TM)
+> in parenthesis after the description.
+>
+> Note that I mentioned "timepulse-gpios" in the generic binding with the
+> intent of trying to enforce a generic name for pins with such a
+> function (similarly for "enable-gpios", which I guess is already
+> established).
+
+Yes, I think that's good.
+
+Though with the enable-gpios I was debating the name for sirfstar a
+bit because it isn't the normal drive it active to enable, but rather
+a pulse to enable or disable.
+
+Rob
