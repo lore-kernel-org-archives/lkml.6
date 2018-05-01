@@ -1,52 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755711AbeEAMug (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 08:50:36 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:43012 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755259AbeEAMue (ORCPT
+        id S1755688AbeEAMzX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 08:55:23 -0400
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:37243 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754970AbeEAMzV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 08:50:34 -0400
-X-Google-Smtp-Source: AB8JxZr9S61ohHrt5A5a+xW9Rvua5dQ3ovOOGGMOeG0sV3yvnnLv/8NgvveqWIEeuIz7elbbH2mXdA==
-Date: Tue, 1 May 2018 07:50:33 -0500
+        Tue, 1 May 2018 08:55:21 -0400
+X-Google-Smtp-Source: AB8JxZpcZyqX/xIFPRYwQlW2I1uBFxz4yI4SvEG6h15VcFizfT5UlLhgkXl1DqkaIPZ6uQQLkiRcuQ==
+Date: Tue, 1 May 2018 07:55:19 -0500
 From: Rob Herring <robh@kernel.org>
-To: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        linux-kernel@vger.kernel.org, Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Aleksander Morgado <aleksander@aleksander.es>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] dt-bindings: nvmem: Add binding for RAVE SP
- EEPROM driver
-Message-ID: <20180501125033.GA8090@rob-hp-laptop>
-References: <20180501052952.26765-1-andrew.smirnov@gmail.com>
- <20180501052952.26765-2-andrew.smirnov@gmail.com>
+To: Yixun Lan <yixun.lan@amlogic.com>
+Cc: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: net: meson-dwmac: new compatible
+ name for AXG SoC
+Message-ID: <20180501125519.GA14984@rob-hp-laptop>
+References: <20180428102111.18384-1-yixun.lan@amlogic.com>
+ <20180428102111.18384-2-yixun.lan@amlogic.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180501052952.26765-2-andrew.smirnov@gmail.com>
+In-Reply-To: <20180428102111.18384-2-yixun.lan@amlogic.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 30, 2018 at 10:29:51PM -0700, Andrey Smirnov wrote:
-> Add Device Tree bindings for RAVE SP EEPROM driver - an MFD cell of
-> parent RAVE SP driver (documented in
-> Documentation/devicetree/bindings/mfd/zii,rave-sp.txt).
+On Sat, Apr 28, 2018 at 10:21:10AM +0000, Yixun Lan wrote:
+> We need to introduce a new compatible name for the Meson-AXG SoC
+> in order to support the RMII 100M ethernet PHY, since the PRG_ETH0
+> register of the dwmac glue layer is changed from previous old SoC.
 > 
-> Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> Cc: linux-kernel@vger.kernel.org
-> Cc: Chris Healy <cphealy@gmail.com>
-> Cc: Lucas Stach <l.stach@pengutronix.de>
-> Cc: Aleksander Morgado <aleksander@aleksander.es>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
 > ---
->  .../bindings/nvmem/zii,rave-sp-eeprom.txt          | 40 ++++++++++++++++++++++
->  1 file changed, 40 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.txt
+>  Documentation/devicetree/bindings/net/meson-dwmac.txt | 1 +
+>  1 file changed, 1 insertion(+)
 
 Reviewed-by: Rob Herring <robh@kernel.org>
