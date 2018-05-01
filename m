@@ -1,96 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751128AbeEAUdu convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 16:33:50 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51014 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751027AbeEAUdr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 16:33:47 -0400
-Subject: Re: [PATCH v7 4/5] cpuset: Restrict load balancing off cpus to subset
- of cpus.isolated
-To: Tejun Heo <tj@kernel.org>
-Cc: Li Zefan <lizefan@huawei.com>, Johannes Weiner <hannes@cmpxchg.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
-        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
-        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
-        Juri Lelli <juri.lelli@redhat.com>
-References: <1524145624-23655-1-git-send-email-longman@redhat.com>
- <1524145624-23655-5-git-send-email-longman@redhat.com>
- <20180501195148.GC2368884@devbig577.frc2.facebook.com>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <9eb2c45e-e71e-61ef-aa6d-b8124b739cdf@redhat.com>
-Date: Tue, 1 May 2018 16:33:45 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S1751239AbeEAUfz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 16:35:55 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50950 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750755AbeEAUfx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 16:35:53 -0400
+Date: Wed, 2 May 2018 05:35:31 +0900
+From: Mark Brown <broonie@kernel.org>
+To: Ryder Lee <ryder.lee@mediatek.com>
+Cc: Leilk Liu =?utf-8?B?KOWImOejiik=?= <Leilk.Liu@mediatek.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "linux-mediatek@lists.infradead.org"
+        <linux-mediatek@lists.infradead.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] spi: mediatek: Use of_device_get_match_data()
+Message-ID: <20180501203531.GA2714@sirena.org.uk>
+References: <31f944ab8dfcc1d7b6f03b35657a2a34825b5246.1523347340.git.ryder.lee@mediatek.com>
+ <94cba80f703be048666afde1ed53c15c3704c533.1523347340.git.ryder.lee@mediatek.com>
+ <1525073196.21494.3.camel@mtkswgap22>
 MIME-Version: 1.0
-In-Reply-To: <20180501195148.GC2368884@devbig577.frc2.facebook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="Dxnq1zWXvFF0Q93v"
+Content-Disposition: inline
+In-Reply-To: <1525073196.21494.3.camel@mtkswgap22>
+X-Cookie: Rubber bands have snappy endings!
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/01/2018 03:51 PM, Tejun Heo wrote:
-> Hello, Waiman.
->
-> Sorry about the delay.
->
-> On Thu, Apr 19, 2018 at 09:47:03AM -0400, Waiman Long wrote:
->> With the addition of "cpuset.cpus.isolated", it makes sense to add the
->> restriction that load balancing can only be turned off if the CPUs in
->> the isolated cpuset are subset of "cpuset.cpus.isolated".
->>
->> Signed-off-by: Waiman Long <longman@redhat.com>
->> ---
->>  Documentation/cgroup-v2.txt |  7 ++++---
->>  kernel/cgroup/cpuset.c      | 29 ++++++++++++++++++++++++++---
->>  2 files changed, 30 insertions(+), 6 deletions(-)
->>
->> diff --git a/Documentation/cgroup-v2.txt b/Documentation/cgroup-v2.txt
->> index 8d89dc2..c4227ee 100644
->> --- a/Documentation/cgroup-v2.txt
->> +++ b/Documentation/cgroup-v2.txt
->> @@ -1554,9 +1554,10 @@ Cpuset Interface Files
->>  	and will not be moved to other CPUs.
->>  
->>  	This flag is hierarchical and is inherited by child cpusets. It
->> -	can be turned off only when the CPUs in this cpuset aren't
->> -	listed in the cpuset.cpus of other sibling cgroups, and all
->> -	the child cpusets, if present, have this flag turned off.
->> +	can be explicitly turned off only when it is a direct child of
->> +	the root cgroup and the CPUs in this cpuset are subset of the
->> +	root's "cpuset.cpus.isolated".	Moreover, the CPUs cannot be
->> +	listed in the "cpuset.cpus" of other sibling cgroups.
-> It is a little bit convoluted that the isolation requires coordination
-> among root's isolated file and the first-level children's cpus file
-> and the flag.  Maybe I'm missing something but can't we do something
-> like the following?
->
-> * Add isolated flag file, which can only be modified on empty (in
->   terms of cpus) first level children.
->
-> * Once isolated flag is set, CPUs can only be added to the cpus file
->   iff they aren't being used by anyone else and automatically become
->   isolated.
->
-> The first level cpus file is owned by the root cgroup anyway, so
-> there's no danger regarding delegation or whatever and the interface
-> would be a lot simpler.
 
-I think that will work too. We currently don't have a flag to make a
-file visible on first-level children only, but it shouldn't be hard to
-make one.
+--Dxnq1zWXvFF0Q93v
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Putting CPUs into an isolated child cpuset means removing it from the
-root's effective CPUs. So I would probably like to expose the read-only
-cpus.effective in the root cgroup so that we can check changes in the
-effective cpu list.
+On Mon, Apr 30, 2018 at 03:26:36PM +0800, Ryder Lee wrote:
+> Hi Mark,
+>=20
+> Is it okay with you?
+>=20
+> On Mon, 2018-04-16 at 10:33 +0800, Ryder Lee (=E6=9D=8E=E5=BA=9A?V) wrote:
+> > The usage of of_device_get_match_data() reduce the code size a bit.
 
-I will renew the patchset will your suggestion.
+Please don't send content free pings and please allow a reasonable time
+for review.  People get busy, go on holiday, attend conferences and so=20
+on so unless there is some reason for urgency (like critical bug fixes)
+please allow at least a couple of weeks for review.  If there have been
+review comments then people may be waiting for those to be addressed.
+Sending content free pings just adds to the mail volume (if they are
+seen at all) and if something has gone wrong you'll have to resend the
+patches anyway.
 
-Thanks,
-Longman
+--Dxnq1zWXvFF0Q93v
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlroz5IACgkQJNaLcl1U
+h9Aozgf/dlersQlemJt9YYytwTHQpJn6ykNz0dHqAHr3JotCFqSGnkYfnmf1BrhS
+AmkDq4YgOtcv0XoGcdMCLMPeL5Ah2N2w+wkVG1JFXKSevbfAd19+rgyvrj7/iXRN
+z2R2FJu2avyaAGJONG0PZ9raP0CpqaxAfd9vww/n+4py/fnFCp7/r5m1fBbN6rkF
+8i6jOWvA302gUgRk9r8viElBvWNBGmeso2IJBkcevlPET6pCgUg+N0SA5bFY0yJz
+U67oySQy/7z+Au+aJpdPiVsdIwGdRmWyeyGKQoVcuxl0NzERZ/9gjjA48gqTcRHT
+kKupcvzZoCxZeArEo1RoLNrqE51Ynw==
+=psBX
+-----END PGP SIGNATURE-----
+
+--Dxnq1zWXvFF0Q93v--
