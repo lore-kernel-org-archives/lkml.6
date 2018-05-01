@@ -1,108 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755074AbeEAOvr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 10:51:47 -0400
-Received: from foss.arm.com ([217.140.101.70]:48102 "EHLO foss.arm.com"
+        id S1755182AbeEAOy0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 10:54:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34654 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752048AbeEAOvq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 10:51:46 -0400
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, Will Wong <WILLW@xilinx.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: [PATCH] firmware/psci: add support for SYSTEM_RESET2
-Date: Tue,  1 May 2018 15:51:28 +0100
-Message-Id: <1525186288-536-1-git-send-email-sudeep.holla@arm.com>
-X-Mailer: git-send-email 2.7.4
+        id S1753789AbeEAOyY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 10:54:24 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A64F23691
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Tue, 1 May 2018 10:54:20 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: changbin.du@intel.com
+Cc: yamada.masahiro@socionext.com, michal.lkml@markovi.net,
+        tglx@linutronix.de, mingo@redhat.com, akpm@linux-foundation.org,
+        x86@kernel.org, lgirdwood@gmail.com, broonie@kernel.org, arnd@arndb.de,
+        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org
+Subject: Re: [PATCH 3/5] kernel hacking: new config NO_AUTO_INLINE to
+ disable compiler atuo-inline optimizations
+Message-ID: <20180501105420.07e41578@gandalf.local.home>
+In-Reply-To: <1525179614-14571-4-git-send-email-changbin.du@intel.com>
+References: <1525179614-14571-1-git-send-email-changbin.du@intel.com>
+        <1525179614-14571-4-git-send-email-changbin.du@intel.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PSCI v1.1 introduced SYSTEM_RESET2 to allow both architectural resets
-where the semantics are described by the PSCI specification itself as
-well as vendor-specific resets. Currently only system warm reset
-semantics is defined as part of architectural resets by the specification.
+On Tue,  1 May 2018 21:00:12 +0800
+changbin.du@intel.com wrote:
 
-This patch implements support for SYSTEM_RESET2 by making using of
-reboot_mode passed by the reboot infrastructure in the kernel.
+> From: Changbin Du <changbin.du@intel.com>
+> 
+> This patch add a new kernel hacking option NO_AUTO_INLINE. Selecting
+> this option will make compiler not auto-inline kernel functions. By
+> enabling this option, all the kernel functions (including static ones)
+> will not be optimized out except those marked as inline or always_inline.
+> This is useful when you are using ftrace to understand the control flow
+> of kernel code or tracing some static functions.
 
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
----
- drivers/firmware/psci.c   | 21 +++++++++++++++++++++
- include/uapi/linux/psci.h |  2 ++
- 2 files changed, 23 insertions(+)
+I'm not against this patch, but it's up to others if this gets included
+or not.
 
-diff --git a/drivers/firmware/psci.c b/drivers/firmware/psci.c
-index c80ec1d03274..216b1950bbd5 100644
---- a/drivers/firmware/psci.c
-+++ b/drivers/firmware/psci.c
-@@ -88,6 +88,7 @@ static u32 psci_function_id[PSCI_FN_MAX];
- 				PSCI_1_0_EXT_POWER_STATE_TYPE_MASK)
+> 
+> Signed-off-by: Changbin Du <changbin.du@intel.com>
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> ---
+>  Makefile          |  6 ++++++
+>  lib/Kconfig.debug | 13 +++++++++++++
+>  2 files changed, 19 insertions(+)
+> 
+> diff --git a/Makefile b/Makefile
+> index 619a85a..eb694f6 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -775,6 +775,12 @@ KBUILD_CFLAGS 	+= $(call cc-option, -femit-struct-debug-baseonly) \
+>  		   $(call cc-option,-fno-var-tracking)
+>  endif
+>  
+> +ifdef CONFIG_NO_AUTO_INLINE
+> +KBUILD_CFLAGS   += $(call cc-option, -fno-inline-functions) \
+> +		   $(call cc-option, -fno-inline-small-functions) \
+> +		   $(call cc-option, -fno-inline-functions-called-once)
+> +endif
+> +
+>  ifdef CONFIG_FUNCTION_TRACER
+>  ifndef CC_FLAGS_FTRACE
+>  CC_FLAGS_FTRACE := -pg
+> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+> index c40c7b7..90f35ad 100644
+> --- a/lib/Kconfig.debug
+> +++ b/lib/Kconfig.debug
+> @@ -198,6 +198,19 @@ config GDB_SCRIPTS
+>  	  instance. See Documentation/dev-tools/gdb-kernel-debugging.rst
+>  	  for further details.
+>  
+> +config NO_AUTO_INLINE
+> +	bool "Disable compiler atuo-inline optimizations"
 
- static u32 psci_cpu_suspend_feature;
-+bool psci_system_reset2_supported;
+typo: s/atuo/auto/
 
- static inline bool psci_has_ext_power_state(void)
- {
-@@ -253,6 +254,15 @@ static int get_set_conduit_method(struct device_node *np)
+> +	default n
+> +	help
+> +	  This will make compiler not auto-inline kernel functions for
+> +	  optimization. By enabling this option, all the kernel functions
+> +	  (including static ones) will not be optimized out except those
+> +	  marked as inline or always_inline. This is useful when you are
+> +	  using ftrace to understand the control flow of kernel code or
+> +	  tracing some static functions.
 
- static void psci_sys_reset(enum reboot_mode reboot_mode, const char *cmd)
- {
-+	if ((reboot_mode == REBOOT_WARM || reboot_mode == REBOOT_SOFT) &&
-+	    psci_system_reset2_supported)
-+		/*
-+		 * reset_type[31] = 0 (architectural)
-+		 * reset_type[30:0] = 0 (SYSTEM_WARM_RESET)
-+		 * cookie = 0 (ignored by the implementation
-+		 */
-+		invoke_psci_fn(PSCI_FN_NATIVE(1_1, SYSTEM_RESET2), 0, 0, 0);
-+
- 	invoke_psci_fn(PSCI_0_2_FN_SYSTEM_RESET, 0, 0, 0);
- }
+Some grammar updates:
 
-@@ -451,6 +461,16 @@ static const struct platform_suspend_ops psci_suspend_ops = {
- 	.enter          = psci_system_suspend_enter,
- };
+	  This will prevent the compiler from optimizing the kernel by
+	  auto-inlining functions not marked with the inline keyword.
+	  With this option, only functions explicitly marked with
+	  "inline" will be inlined. This will allow the function tracer
+	  to trace more functions because it only traces functions that
+	  the compiler has not inlined.
 
-+static void __init psci_init_system_reset2(void)
-+{
-+	int ret;
-+
-+	ret = psci_features(PSCI_FN_NATIVE(1_1, SYSTEM_RESET2));
-+
-+	if (ret != PSCI_RET_NOT_SUPPORTED)
-+		psci_system_reset2_supported = true;
-+}
-+
- static void __init psci_init_system_suspend(void)
- {
- 	int ret;
-@@ -588,6 +608,7 @@ static int __init psci_probe(void)
- 		psci_init_smccc();
- 		psci_init_cpu_suspend();
- 		psci_init_system_suspend();
-+		psci_init_system_reset2();
- 	}
+	  Enabling this function can help debugging a kernel if using
+	  the function tracer. But it can also change how the kernel
+	  works, because inlining functions may change the timing,
+	  which could make it difficult while debugging race conditions.
 
- 	return 0;
-diff --git a/include/uapi/linux/psci.h b/include/uapi/linux/psci.h
-index b3bcabe380da..5b0ba0062541 100644
---- a/include/uapi/linux/psci.h
-+++ b/include/uapi/linux/psci.h
-@@ -49,8 +49,10 @@
+> +
+> +	  Use only if you want to debug the kernel.
 
- #define PSCI_1_0_FN_PSCI_FEATURES		PSCI_0_2_FN(10)
- #define PSCI_1_0_FN_SYSTEM_SUSPEND		PSCI_0_2_FN(14)
-+#define PSCI_1_1_FN_SYSTEM_RESET2		PSCI_0_2_FN(18)
+The proper way to say the above is:
 
- #define PSCI_1_0_FN64_SYSTEM_SUSPEND		PSCI_0_2_FN64(14)
-+#define PSCI_1_1_FN64_SYSTEM_RESET2		PSCI_0_2_FN64(18)
+	  If unsure, select N
 
- /* PSCI v0.2 power state encoding for CPU_SUSPEND function */
- #define PSCI_0_2_POWER_STATE_ID_MASK		0xffff
--- 
-2.7.4
+-- Steve
+
+> +
+>  config ENABLE_WARN_DEPRECATED
+>  	bool "Enable __deprecated logic"
+>  	default y
