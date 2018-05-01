@@ -1,147 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756097AbeEARD7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 13:03:59 -0400
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:33712 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753505AbeEARD5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 13:03:57 -0400
-X-Google-Smtp-Source: AB8JxZpssZskHiaSlFSg37Oxlbsx0MO/T4trVPWqIxPMDKxeOIjLTfdPh5doEFCnp0dRYs4BlRVkoA==
-Subject: Re: [RFC net-next 4/5] net: phy: Add support for IEEE standard test
- modes
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: netdev@vger.kernel.org, Russell King <rmk@armlinux.org.uk>,
-        open list <linux-kernel@vger.kernel.org>, davem@davemloft.net,
-        cphealy@gmail.com, nikita.yoush@cogentembedded.com,
-        vivien.didelot@savoirfairelinux.com, Nisar.Sayed@microchip.com,
-        UNGLinuxDriver@microchip.com
-References: <20180428003237.1536-1-f.fainelli@gmail.com>
- <20180428003237.1536-5-f.fainelli@gmail.com> <20180430232049.GA25602@lunn.ch>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-Message-ID: <cb717f23-5aae-a30f-1bd3-9ad54662739e@gmail.com>
-Date: Tue, 1 May 2018 10:03:47 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180430232049.GA25602@lunn.ch>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1756060AbeEARIv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 13:08:51 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51248 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753505AbeEARIt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 13:08:49 -0400
+Message-ID: <1525194528.11756.121.camel@redhat.com>
+Subject: Re: [PATCH 3/5] ib_srpt: depend on INFINIBAND_ADDR_TRANS
+From: Doug Ledford <dledford@redhat.com>
+To: Greg Thelen <gthelen@google.com>, Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Bart Van Assche <Bart.VanAssche@wdc.com>,
+        Christoph Hellwig <hch@lst.de>, linux-rdma@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>, Tarick Bedeir <tarick@google.com>
+Date: Tue, 01 May 2018 13:08:48 -0400
+In-Reply-To: <CAHH2K0aJgACn1fQrR=YpifWgOAFTCubcVo+bA+zCFg7++NR1kQ@mail.gmail.com>
+References: <20180425223340.206907-1-gthelen@google.com>
+         <20180430233500.GI26909@ziepe.ca>
+         <CAHH2K0aJgACn1fQrR=YpifWgOAFTCubcVo+bA+zCFg7++NR1kQ@mail.gmail.com>
+Organization: Red Hat, Inc.
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-O2RNN/cu5eujYXI9HcTT"
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/30/2018 04:20 PM, Andrew Lunn wrote:
->> +/* genphy_set_test - Make a PHY enter one of the standard IEEE defined
->> + * test modes
->> + * @phydev: the PHY device instance
->> + * @test: the desired test mode
->> + * @data: test specific data (none)
->> + *
->> + * This function makes the designated @phydev enter the desired standard
->> + * 100BaseT2 or 1000BaseT test mode as defined in IEEE 802.3-2012 section TWO
->> + * and THREE under 32.6.1.2.1 and 40.6.1.1.2 respectively
->> + */
->> +int genphy_set_test(struct phy_device *phydev,
->> +		    struct ethtool_phy_test *test, const u8 *data)
->> +{
->> +	u16 shift, base, bmcr = 0;
->> +	int ret;
->> +
->> +	/* Exit test mode */
->> +	if (test->mode == PHY_STD_TEST_MODE_NORMAL) {
->> +		ret = phy_read(phydev, MII_CTRL1000);
->> +		if (ret < 0)
->> +			return ret;
->> +
->> +		ret &= ~GENMASK(15, 13);
->> +
->> +		return phy_write(phydev, MII_CTRL1000, ret);
->> +	}
-> 
-> Hi Florain
-> 
-> I looked at the Marvell SDK for PHYs. It performs a soft reset after
-> swapping back to normal mode. I assume the broadcom PHY does not need
-> this? But maybe we can add it anyway?
 
-We certainly should reset the PHY, thanks!
+--=-O2RNN/cu5eujYXI9HcTT
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> 
->> +
->> +	switch (test->mode) {
->> +	case PHY_STD_TEST_MODE_100BASET2_1:
->> +	case PHY_STD_TEST_MODE_100BASET2_2:
->> +	case PHY_STD_TEST_MODE_100BASET2_3:
->> +		if (!(phydev->supported & PHY_100BT_FEATURES))
->> +			return -EOPNOTSUPP;
->> +
->> +		shift = 14;
->> +		base = test->mode - PHY_STD_TEST_MODE_NORMAL;
->> +		bmcr = BMCR_SPEED100;
->> +		break;
->> +
->> +	case PHY_STD_TEST_MODE_1000BASET_1:
->> +	case PHY_STD_TEST_MODE_1000BASET_2:
->> +	case PHY_STD_TEST_MODE_1000BASET_3:
->> +	case PHY_STD_TEST_MODE_1000BASET_4:
->> +		if (!(phydev->supported & PHY_1000BT_FEATURES))
->> +			return -EOPNOTSUPP;
->> +
->> +		shift = 13;
->> +		base = test->mode - PHY_STD_TEST_MODE_100BASET2_MAX;
->> +		bmcr = BMCR_SPEED1000;
->> +		break;
->> +
->> +	default:
->> +		/* Let an upper driver deal with additional modes it may
->> +		 * support
->> +		 */
->> +		return -EOPNOTSUPP;
->> +	}
->> +
->> +	/* Force speed and duplex */
->> +	ret = phy_write(phydev, MII_BMCR, bmcr | BMCR_FULLDPLX);
->> +	if (ret < 0)
->> +		return ret;
-> 
-> Should there be something to undo this when returning to normal mode?
+On Tue, 2018-05-01 at 03:08 +0000, Greg Thelen wrote:
+> On Mon, Apr 30, 2018 at 4:35 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+>=20
+> > On Wed, Apr 25, 2018 at 03:33:39PM -0700, Greg Thelen wrote:
+> > > INFINIBAND_SRPT code depends on INFINIBAND_ADDR_TRANS provided symbol=
+s.
+> > > So declare the kconfig dependency.  This is necessary to allow for
+> > > enabling INFINIBAND without INFINIBAND_ADDR_TRANS.
+> > >=20
+> > > Signed-off-by: Greg Thelen <gthelen@google.com>
+> > > Cc: Tarick Bedeir <tarick@google.com>
+> > >  drivers/infiniband/ulp/srpt/Kconfig | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >=20
+> > > diff --git a/drivers/infiniband/ulp/srpt/Kconfig
+>=20
+> b/drivers/infiniband/ulp/srpt/Kconfig
+> > > index 31ee83d528d9..fb8b7182f05e 100644
+> > > +++ b/drivers/infiniband/ulp/srpt/Kconfig
+> > > @@ -1,6 +1,6 @@
+> > >  config INFINIBAND_SRPT
+> > >       tristate "InfiniBand SCSI RDMA Protocol target support"
+> > > -     depends on INFINIBAND && TARGET_CORE
+> > > +     depends on INFINIBAND && INFINIBAND_ADDR_TRANS && TARGET_CORE
+> > Isn't INFINIBAND && INFINIBAND_ADDR_TRANS a bit redundant? Can't have
+> > INFINIBAND_ADDR_TRANS without INFINIBAND.
+>=20
+> By kconfig INFINIBAND_ADDR_TRANS depends on INFINIBAND.  So yes, it seems
+> redundant.  I don't know if anyone has designs to break this dependency a=
+nd
+> allow for ADDR_TRANS without INFINIBAND.
 
-Yes, resetting the PHY would perform that.
--- 
-Florian
+No, not at the moment (and I'm not sure we ever would, it would only
+happen if the subsystem itself became something like RDMA and INFINIBAND
+specifically related only to the INFINIBAND link layer support, in which
+case you might want to enable RoCE without INFINIBAND or something like
+that, but no one has plans to do that as far as I'm aware).
+
+>   Assuming not, I'd be willing to
+> amend my series removing redundant INFINIBAND and a followup series to
+> remove it from similar depends.  Though I'm not familiar with rdma dev tr=
+ee
+> lifecycle.  Is rdma/for-rc a throw away branch (akin to linux-next), or
+> will it be merged into linus/master?  If throwaway, then we can amend
+> its patches, otherwise followups will be needed.
+
+Followups will be needed.
+
+> Let me know what you'd prefer.  Thanks.
+>=20
+> FYI from v4.17-rc3:
+> drivers/staging/lustre/lnet/Kconfig:  depends on LNET && PCI && INFINIBAN=
+D
+> && INFINIBAND_ADDR_TRANS
+> net/9p/Kconfig:       depends on INET && INFINIBAND && INFINIBAND_ADDR_TR=
+ANS
+> net/rds/Kconfig:      depends on RDS && INFINIBAND && INFINIBAND_ADDR_TRA=
+NS
+> net/sunrpc/Kconfig:   depends on SUNRPC && INFINIBAND &&
+> INFINIBAND_ADDR_TRANS
+
+--=20
+Doug Ledford <dledford@redhat.com>
+    GPG KeyID: B826A3330E572FDD
+    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
+--=-O2RNN/cu5eujYXI9HcTT
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAlronyAACgkQuCajMw5X
+L90/YBAAqBrBGCsrbgWK3N3aRy514kyYZTFd2F8f++JB4mJeJOc3toJw7/InH/ZI
+ZID61aoQT//GBY82f7Gmrq6vimfpke0kTJEPCp0bTntvDI/FNMnEkJaXYUzNGUQO
+vGwJRIkc+/ddwq/RzoqgqtZqqMv4WgjgcAZmdbl3fLs49YizkZ+2ID8dcLj+VmGk
+G+ijgrQTu6NmkTNiqt/XBLdyllIr/y8+Mtmvh17iSQHT/cjDqEFisjv1be85gApP
+SbbdScphqgEyUrGIrtLIuzYi7wtJoLO0xDVW4gCYfjqwegVeFBIFH/DJuZtNBOXX
+1txBMP3EyYuQTGAa6fuK2j74yRyxahlJrrf7aa5jX69DbMzaPhOAQ17juTxx31wM
+S3eVXTxYOzTjEYrRyUZ47+aaXkZieeJfQPvjtNTBuhw2+WaHyIzbXCM732ebQKxi
+oNYt+sCfFgHZCP6vAvC9X/WuBWL9lR+X6gBddrhrHVM0lovbAOP/w2nJZMXjGkTM
+DVK+CsAeMPX8Rl/v87tpoWlbs8+c+WQeiQhk4bKEwpdBJhzEqFpKQiwKAkb1UE0Z
+ke6DijPY8BEPT7Qi7oYjq1876idSl0qJ9BvZYIwtJjDni+HAwBXfrI/Rp96EO4ak
+0F58Ld6kkJ5kieSKcfX2aOw+45YPcPd46WUSHNjmQESEixvMxj0=
+=RAGz
+-----END PGP SIGNATURE-----
+
+--=-O2RNN/cu5eujYXI9HcTT--
