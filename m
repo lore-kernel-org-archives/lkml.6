@@ -1,174 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755492AbeEAN6z (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 09:58:55 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52842 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755259AbeEAN6v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 09:58:51 -0400
-Date: Tue, 1 May 2018 08:58:50 -0500
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: Vince Weaver <vincent.weaver@maine.edu>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: Re: perf: fuzzer causes stack going in wrong direction warnings
-Message-ID: <20180501135850.enx4waqd5d7yowlj@treble>
-References: <20180109151253.GK6176@hirez.programming.kicks-ass.net>
- <alpine.DEB.2.21.1801091022040.16446@macbook-air>
- <20180109153341.GL6176@hirez.programming.kicks-ass.net>
- <alpine.DEB.2.21.1801091052010.16446@macbook-air>
- <20180109160551.GK3040@hirez.programming.kicks-ass.net>
- <20180109170716.bqmexpmywwr4bwuv@treble>
- <20180111052538.2qhj6oxnc24xumhk@treble>
- <alpine.DEB.2.21.1801111358580.22460@macbook-air>
- <20180111192112.d35nkotzklicd27c@treble>
- <alpine.DEB.2.21.1805010925140.19413@macbook-air>
+        id S1755590AbeEAN7L (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 09:59:11 -0400
+Received: from mail.netline.ch ([148.251.143.178]:37412 "EHLO
+        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754192AbeEAN7J (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 09:59:09 -0400
+Subject: Re: [PATCH v2 1/2] drm/ttm: Only allocate huge pages with new flag
+ TTM_PAGE_FLAG_TRANSHUGE
+To: Dave Airlie <airlied@gmail.com>,
+        "Koenig, Christian" <christian.koenig@amd.com>
+Cc: dri-devel <dri-devel@lists.freedesktop.org>,
+        amd-gfx mailing list <amd-gfx@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20180426150618.13470-1-michel@daenzer.net>
+ <20180427130811.7642-1-michel@daenzer.net>
+ <CAKb7Uvj6FFRK6dtvR7xpfZDzs0o3QKHq7ESueBBmr_VnQt6XDQ@mail.gmail.com>
+ <e8166443-14f0-1eb3-a6a2-d425792b0643@daenzer.net>
+ <d5f9459e-801c-e592-d06d-c9052ef3ad4d@amd.com>
+ <e5256136-6da0-cc5e-9490-5a70c89dfd83@daenzer.net>
+ <361a765a-f491-4450-867e-fa88857827ee@gmail.com>
+ <CAPM=9tzmmT5G5a_2WCH5xpRr6rhY6sHdi-Kg5my0az_=haVZTw@mail.gmail.com>
+From: =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
+Message-ID: <023175f7-53a0-c85b-f4db-e7d3e3da8691@daenzer.net>
+Date: Tue, 1 May 2018 15:59:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
+In-Reply-To: <CAPM=9tzmmT5G5a_2WCH5xpRr6rhY6sHdi-Kg5my0az_=haVZTw@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1805010925140.19413@macbook-air>
-User-Agent: Mutt/1.6.0.1 (2016-04-01)
+Content-Language: en-CA
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 01, 2018 at 09:29:38AM -0400, Vince Weaver wrote:
-> Hello
+On 2018-05-01 01:15 AM, Dave Airlie wrote:
+>>
+>>
+>> Yes, I fixed the original false positive messages myself with the swiotlb
+>> maintainer and I was CCed in fixing the recent fallout from Chris changes as
+>> well.
 > 
-> I reported this back in January, but I think it got lost since everyone 
-> was busy with other more pressing matters.
+> So do we have a good summary of where this at now?
 > 
-> But in any case, the perf_fuzzer still can trigger these type of messages 
-> and just wanted to see if they were a cause for concern, or just noise.
+> I'm getting reports on 4.16.4 still displaying these, what hammer do I
+> need to hit things with to get 4.16.x+1 to not do this?
 > 
-> [66620.496076] WARNING: can't dereference registers at 0000000051f78a40 for ip interrupt_entry+0xba/0xc0
-> [66620.506117] WARNING: stack recursion on stack type 4
-> [67126.898984] WARNING: stack going in the wrong direction? ip=native_sched_clock+0xd/0x90
-> [67148.214712] WARNING: can't dereference iret registers at 00000000c8f3c864 for ip error_exit+0x20/0x20
+> Is there still outstanding issues upstream.
 
-Sorry, it did fall off my radar thanks to Spectre/Meltdown.  I just
-started looking at some similar reports, so your timing is perfect.
+There are, https://patchwork.freedesktop.org/patch/219765/ should
+hopefully fix the last of it.
 
-I suspect these warnings are similar to issues I saw before with the FP
-unwinder, where it's trying to read the stack of a running task while
-the task is simultaneously writing to the stack.  So basically it's
-probably just noise, but we should try to get rid of the warnings
-because the unwinder is expected to get lost in such a case.
 
-Can you try the following patch?
+> [...] I've no idea if the swiotlb things people report are the false
+> positive, or some new thing.
 
-diff --git a/arch/x86/kernel/dumpstack_64.c b/arch/x86/kernel/dumpstack_64.c
-index 563e28d14f2c..5eb796865b5b 100644
---- a/arch/x86/kernel/dumpstack_64.c
-+++ b/arch/x86/kernel/dumpstack_64.c
-@@ -137,7 +137,9 @@ int get_stack_info(unsigned long *stack, struct task_struct *task,
- 	 */
- 	if (visit_mask) {
- 		if (*visit_mask & (1UL << info->type)) {
--			printk_deferred_once(KERN_WARNING "WARNING: stack recursion on stack type %d\n", info->type);
-+			if (task == current)
-+				printk_deferred_once(KERN_WARNING "WARNING: stack recursion on stack type %d\n",
-+						     info->type);
- 			goto unknown;
- 		}
- 		*visit_mask |= 1UL << info->type;
-diff --git a/arch/x86/kernel/unwind_orc.c b/arch/x86/kernel/unwind_orc.c
-index feb28fee6cea..570435c52ca0 100644
---- a/arch/x86/kernel/unwind_orc.c
-+++ b/arch/x86/kernel/unwind_orc.c
-@@ -7,7 +7,14 @@
- #include <asm/orc_lookup.h>
- 
- #define orc_warn(fmt, ...) \
--	printk_deferred_once(KERN_WARNING pr_fmt("WARNING: " fmt), ##__VA_ARGS__)
-+	printk_deferred_once(KERN_WARNING "WARNING: " fmt, ##__VA_ARGS__)
-+
-+#define orc_warn_current(fmt, ...)					\
-+({									\
-+	if (state->task == current)					\
-+		printk_deferred_once(KERN_WARNING "WARNING: " fmt,	\
-+				     ##__VA_ARGS__);			\
-+})
- 
- extern int __start_orc_unwind_ip[];
- extern int __stop_orc_unwind_ip[];
-@@ -400,8 +407,8 @@ bool unwind_next_frame(struct unwind_state *state)
- 
- 	case ORC_REG_R10:
- 		if (!state->regs || !state->full_regs) {
--			orc_warn("missing regs for base reg R10 at ip %pB\n",
--				 (void *)state->ip);
-+			orc_warn_current("missing regs for base reg R10 at ip %pB\n",
-+					 (void *)state->ip);
- 			goto done;
- 		}
- 		sp = state->regs->r10;
-@@ -409,8 +416,8 @@ bool unwind_next_frame(struct unwind_state *state)
- 
- 	case ORC_REG_R13:
- 		if (!state->regs || !state->full_regs) {
--			orc_warn("missing regs for base reg R13 at ip %pB\n",
--				 (void *)state->ip);
-+			orc_warn_current("missing regs for base reg R13 at ip %pB\n",
-+					 (void *)state->ip);
- 			goto done;
- 		}
- 		sp = state->regs->r13;
-@@ -418,8 +425,8 @@ bool unwind_next_frame(struct unwind_state *state)
- 
- 	case ORC_REG_DI:
- 		if (!state->regs || !state->full_regs) {
--			orc_warn("missing regs for base reg DI at ip %pB\n",
--				 (void *)state->ip);
-+			orc_warn_current("missing regs for base reg DI at ip %pB\n",
-+					 (void *)state->ip);
- 			goto done;
- 		}
- 		sp = state->regs->di;
-@@ -427,8 +434,8 @@ bool unwind_next_frame(struct unwind_state *state)
- 
- 	case ORC_REG_DX:
- 		if (!state->regs || !state->full_regs) {
--			orc_warn("missing regs for base reg DX at ip %pB\n",
--				 (void *)state->ip);
-+			orc_warn_current("missing regs for base reg DX at ip %pB\n",
-+					 (void *)state->ip);
- 			goto done;
- 		}
- 		sp = state->regs->dx;
-@@ -463,8 +470,8 @@ bool unwind_next_frame(struct unwind_state *state)
- 
- 	case ORC_TYPE_REGS:
- 		if (!deref_stack_regs(state, sp, &state->ip, &state->sp)) {
--			orc_warn("can't dereference registers at %p for ip %pB\n",
--				 (void *)sp, (void *)orig_ip);
-+			orc_warn_current("can't dereference registers at %p for ip %pB\n",
-+					 (void *)sp, (void *)orig_ip);
- 			goto done;
- 		}
- 
-@@ -475,8 +482,8 @@ bool unwind_next_frame(struct unwind_state *state)
- 
- 	case ORC_TYPE_REGS_IRET:
- 		if (!deref_stack_iret_regs(state, sp, &state->ip, &state->sp)) {
--			orc_warn("can't dereference iret registers at %p for ip %pB\n",
--				 (void *)sp, (void *)orig_ip);
-+			orc_warn_current("can't dereference iret registers at %p for ip %pB\n",
-+					 (void *)sp, (void *)orig_ip);
- 			goto done;
- 		}
- 
-@@ -518,8 +525,8 @@ bool unwind_next_frame(struct unwind_state *state)
- 	if (state->stack_info.type == prev_type &&
- 	    on_stack(&state->stack_info, (void *)state->sp, sizeof(long)) &&
- 	    state->sp <= prev_sp) {
--		orc_warn("stack going in the wrong direction? ip=%pB\n",
--			 (void *)orig_ip);
-+		orc_warn_current("stack going in the wrong direction? ip=%pB\n",
-+				 (void *)orig_ip);
- 		goto done;
- 	}
- 
+The issues I've seen reported with 4.16 are false positives from TTM's
+perspective, which uses DMA_ATTR_NO_WARN to suppress these warnings, due
+to multiple regressions introduced by commit
+0176adb004065d6815a8e67946752df4cd947c5b "swiotlb: refactor
+ coherent buffer allocation" in 4.16-rc1.
+
+
+-- 
+Earthling Michel Dänzer               |               http://www.amd.com
+Libre software enthusiast             |             Mesa and X developer
