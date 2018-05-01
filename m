@@ -1,70 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752012AbeEAHF2 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 03:05:28 -0400
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:56873 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751340AbeEAHF0 (ORCPT
+        id S1752448AbeEAHF5 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 03:05:57 -0400
+Received: from smtprelay0039.hostedemail.com ([216.40.44.39]:39929 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752090AbeEAHF4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 03:05:26 -0400
-X-ME-Sender: <xms:tRHoWpegVXiBmFrY6FtsJpwHWgzQRMcntq1iJUKTeIzS7NJ92EauMw>
-Date: Tue, 1 May 2018 17:05:21 +1000
-From: tcharding <me@tobin.cc>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Randy Dunlap <rdunlap@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Kees Cook <keescook@chromium.org>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Hashed pointer issues
-Message-ID: <20180501070521.GA3791@eros>
-References: <alpine.DEB.2.20.1804301741570.3243@hypnos.tec.linutronix.de>
- <CAGXu5jL1W=AC023asgeMRUXAnhU2vd-RJRqGtOOetQ=aXwDcFQ@mail.gmail.com>
- <CA+55aFwieC1-nAs+NFq9RTwaR8ef9hWa4MjNBWL41F-8wM49eA@mail.gmail.com>
- <20180430124135.0cce92e3@gandalf.local.home>
- <CA+55aFzpJC4+tuSopeze72D2sv1urGdap8+Bj2Y9hEYitAkE4Q@mail.gmail.com>
- <CA+55aFyNqnrM=_5pMgEeL20jVKN7MgWKG52pbaR0FayO=5VuXw@mail.gmail.com>
- <1e0bc2e2-a0d8-16b7-b6a4-cf97ecd99cef@infradead.org>
- <CA+55aFzezp7OCpK7HFFQ7LeUZZyFACrhx6px_ZFq5zgoNTwEVw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+55aFzezp7OCpK7HFFQ7LeUZZyFACrhx6px_ZFq5zgoNTwEVw@mail.gmail.com>
-X-Mailer: Mutt 1.5.24 (2015-08-30)
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Tue, 1 May 2018 03:05:56 -0400
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::,RULES_HIT:41:355:379:541:599:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3353:3622:3865:3870:3871:3874:4250:4321:5007:6119:6120:7901:7903:8603:10004:10400:10848:10967:11026:11232:11473:11658:11914:12043:12438:12740:12760:12895:13069:13255:13311:13357:13439:14181:14659:14721:21060:21080:21627:30054:30090:30091,0,RBL:90.174.4.65:@perches.com:.lbl8.mailshell.net-62.14.11.190 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:27,LUA_SUMMARY:none
+X-HE-Tag: side00_331de2d47bf02
+X-Filterd-Recvd-Size: 2473
+Message-ID: <e854ad5b8798efc2e33af153c4bdae2c16031e54.camel@perches.com>
+Subject: Re: [RFC v5 PATCH] mm: shmem: make stat.st_blksize return huge page
+ size if THP is on
+From: Joe Perches <joe@perches.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+        Yang Shi <yang.shi@linux.alibaba.com>
+Cc: kirill.shutemov@linux.intel.com, hughd@google.com, mhocko@kernel.org,
+        hch@infradead.org, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Date: Tue, 01 May 2018 00:05:48 -0700
+In-Reply-To: <20180430164000.00f92084ecb1876e481c6a11@linux-foundation.org>
+References: <1524665633-83806-1-git-send-email-yang.shi@linux.alibaba.com>
+         <20180430164000.00f92084ecb1876e481c6a11@linux-foundation.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 30, 2018 at 05:12:05PM +0000, Linus Torvalds wrote:
-> On Mon, Apr 30, 2018 at 10:06 AM Randy Dunlap <rdunlap@infradead.org> wrote:
-> > On 04/30/2018 10:01 AM, Linus Torvalds wrote:
-> > >
-> > > No kernel command line needed in practice any more. That's assuming any
-> > > kernel developer will have an IvyBridge or newer.
+On Mon, 2018-04-30 at 16:40 -0700, Andrew Morton wrote:
+> On Wed, 25 Apr 2018 22:13:53 +0800 Yang Shi <yang.shi@linux.alibaba.com> wrote:
 > 
-> > any paid kernel developer :)
+> > Since tmpfs THP was supported in 4.8, hugetlbfs is not the only
+> > filesystem with huge page support anymore. tmpfs can use huge page via
+> > THP when mounting by "huge=" mount option.
+[]
+> > @@ -571,6 +571,16 @@ static unsigned long shmem_unused_huge_shrink(struct shmem_sb_info *sbinfo,
+> >  }
+> >  #endif /* CONFIG_TRANSPARENT_HUGE_PAGECACHE */
+> >  
+> > +static inline bool is_huge_enabled(struct shmem_sb_info *sbinfo)
+> > +{
+> > +	if (IS_ENABLED(CONFIG_TRANSPARENT_HUGE_PAGECACHE) &&
+> > +	    (shmem_huge == SHMEM_HUGE_FORCE || sbinfo->huge) &&
+> > +	    shmem_huge != SHMEM_HUGE_DENY)
+> > +		return true;
+> > +	else
+> > +		return false;
+> > +}
 > 
-> I suspect a lot of hobbyists too - it's not like ivy bridge is particularly
-> new.
-> 
-> But if not, we can burn that bridge when we get to it.
-> 
-> Also, if you're not paid to do it, I don't think you'll be working a lot of
-> error trace buffers during bootup. There are definitely more interesting
-> parts of the kernel to play with ;)
+> Nit: we don't need that `else'.  Checkpatch normally warns about this,
+> but not in this case.
 
-Turns out my desktop (dev) machine is pretty old. RDRAND is only
-available on 'newer' Core i5  
+because there are those that like symmetry.
 
-	"Intel Secure Key was added in Broadwell, so you need that or any later
-	generation. Broadwell generation means Intel Core i5 or i7 where the
-	4-digit number appended to it starts with a "5"."
+> --- a/mm/shmem.c~mm-shmem-make-statst_blksize-return-huge-page-size-if-thp-is-on-fix
+> +++ a/mm/shmem.c
+> @@ -577,8 +577,7 @@ static inline bool is_huge_enabled(struc
+>  	    (shmem_huge == SHMEM_HUGE_FORCE || sbinfo->huge) &&
+>  	    shmem_huge != SHMEM_HUGE_DENY)
+>  		return true;
+> -	else
+> -		return false;
+> +	return false;
+>  }
 
-	https://superuser.com/questions/999515/what-instruction-set-architecture-isa-is-rdrand-and-rdseed-part-of
+Perhaps this case is better without the if/else as just
 
-
-Lucky the laptop is newer, RDRAND is supported on core M5Y70.
-
-
-	Tobin
+	return <logic>;
