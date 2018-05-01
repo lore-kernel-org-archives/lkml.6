@@ -1,70 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751369AbeEAUBD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 16:01:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36558 "EHLO mail.kernel.org"
+        id S1751148AbeEAUDc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 16:03:32 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:39098 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750780AbeEAUBC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 16:01:02 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73814236FF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Tue, 1 May 2018 16:00:59 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Nicholas Piggin <npiggin@gmail.com>, Ingo Molnar <mingo@redhat.com>,
+        id S1750785AbeEAUDb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 16:03:31 -0400
+Date: Tue, 1 May 2018 22:03:08 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tracing/irqtrace: only call trace_hardirqs_on/off when
- state changes
-Message-ID: <20180501160059.6df6aae4@gandalf.local.home>
-In-Reply-To: <20180501194838.GK12217@hirez.programming.kicks-ass.net>
-References: <20171116161506.19691-1-npiggin@gmail.com>
-        <20180501144620.1e832a09@gandalf.local.home>
-        <20180501191951.GJ12217@hirez.programming.kicks-ass.net>
-        <20180501153840.7281022a@gandalf.local.home>
-        <20180501194838.GK12217@hirez.programming.kicks-ass.net>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Subject: Re: [PATCH v5 4/6] x86/microcode/AMD: Check microcode container data
+ in the late loader
+Message-ID: <20180501200308.GC13171@pd.tnic>
+References: <cover.1524515406.git.mail@maciej.szmigiero.name>
+ <8f204a953dc4b46477e214ebd291021d7ab6fa6c.1524515406.git.mail@maciej.szmigiero.name>
+ <20180430090527.GC6509@pd.tnic>
+ <bce73502-0d18-e50c-b78b-8159dc9f8f66@maciej.szmigiero.name>
+ <20180501084317.GC31863@pd.tnic>
+ <e10212ef-c876-4965-6279-967005f53950@maciej.szmigiero.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <e10212ef-c876-4965-6279-967005f53950@maciej.szmigiero.name>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 1 May 2018 21:48:38 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
+On Tue, May 01, 2018 at 06:19:56PM +0200, Maciej S. Szmigiero wrote:
+> -EINVAL cast to unsigned int is 4294967274 and this value is also
+> a valid count of bytes to skip that this function can return.
 
-> On Tue, May 01, 2018 at 03:38:40PM -0400, Steven Rostedt wrote:
-> > On Tue, 1 May 2018 21:19:51 +0200
-> > Peter Zijlstra <peterz@infradead.org> wrote:  
-> 
-> > > Now, lockdep only minimally tracks these otherwise redundant operations;
-> > > see redundant_hardirqs_{on,off} counters, and loosing that doesn't seen
-> > > like a big issue.
-> > > 
-> > > But I'm confused how this helps track superfluous things, it looks like
-> > > it explicitly tracks _less_ superfluous transitions.  
-> > 
-> > I think it is about triggering on OFF->OFF a warning, as that would
-> > only happen if we have:
-> > 
-> > 	local_irq_save(flags);
-> > 	[..]
-> > 	local_irq_disable();
-> >   
-> 
-> Ahh, ok. Yes, that is easier to do with these changes. The alternative
-> is to add more information to the tracehooks such that we can do the
-> same internally, but whatever.
-> 
-> Yeah, I'm fine with the proposed change, but maybe improve the Changelog
-> a little for slow people like me :-)
+And where exactly in the *old* code do we do that?
 
-Great!
+-- 
+Regards/Gruss,
+    Boris.
 
-Nicholas,
-
-I know this is an old patch (from last November), but want to send it
-again with a proper change log and signed off by?
-
--- Steve
+Good mailing practices for 400: avoid top-posting and trim the reply.
