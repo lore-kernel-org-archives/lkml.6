@@ -1,50 +1,113 @@
-Return-Path: <penguin-kernel@i-love.sakura.ne.jp>
-X-Google-Smtp-Source: AB8JxZqkaEKdYygbOsUfbSQm3mgai2WjIiK6vq4ain1hxySU/Dqo9BX/RN4Rr9gIXxDhDTfS325F
-ARC-Seal: i=1; a=rsa-sha256; t=1525169724; cv=none;
+Return-Path: <poza@codeaurora.org>
+X-Google-Smtp-Source: AB8JxZoL2vaP2GesWMsNq16v6h7fuPWE2Ds7AF+H/flpswf0tqXqF15G2QXUp8Wma1fWrfYwYijI
+ARC-Seal: i=1; a=rsa-sha256; t=1525168858; cv=none;
         d=google.com; s=arc-20160816;
-        b=K58xq9FlQsTUIIthSW2aNzDA6LiDNqwwhU9x4urYFB22nBRoMuMdADQNvbjvct75qT
-         mFC0sBGwBLnH81lwjIqLVjtF1HKAYxr6TA5tIIswIo9oUOuxXv+ugA0NHRHQK787DYYv
-         IR9dACnncuyQQ1qZuC6KAbLkZh61I6JFfR9FWqounS1I1Bc8yaEmq4GSOIwbKbaE5giQ
-         18wSj+6IePC19Uo/yiXCnSbjSBVIGQ0D1zvpIMhH5Q+gaT+6yORrTr8KgT31l+zvDjyl
-         zuddWGRfodN6RAFHKFIha+DCv2HKII6KEDr0qPShH3oH/gzz+vPSyhGHyqHu7wr1nLrR
-         OwzQ==
+        b=TzhO89DnmLuJRAmZ6wxZJPEZfdcZHFREXDopiMUwpyHV0cBOWPSLLQpIkevInytaDD
+         Fr0ZqXDV6sd7PcERg3Tkb2rZNv7mC+piQt7FbGML/rHc+vi34kPvUiOXpAv+24NsoxQ5
+         07uOD/QM6qBMp7Yya13cndGkZz4Pne/RgilcVseRcyUbfr+TGJBZnAVWpL63JFw7xszB
+         4vLhx6VtCiPyDhcCzzKWZ27bckEkJ4lGK2VUhuJR6+9tZaFrt/gXQXqF/8mDakhmh4e+
+         UiD7jPdJ0PtcMUNKfm82PVxVydSFv3gp5xXMr/64udRtJpdJdIUCu9xR2mVdokUmIu+y
+         x7RA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:to:subject
-         :arc-authentication-results;
-        bh=/aKZZMQgqsN/ScErG8q4xz05TJE9+rlwmqPyNfMdGmE=;
-        b=ouENHfYD3JNhpztpnzqPsU01OhK7OZcAiqIjswzEX+5oUnuKfcLBv1P07dSYfpkEsW
-         ovV6byN5IALIvGV0VoYbI7aJk/LO7SP3qjRli61HMs6qvlCAoJdboF37D8Nk4y5kKmO5
-         zPJbcqnFplRxdFrySO65fBYbUYegLMyVWeTtsL+uLJ4zYbwTRKw1d2DtvXLIktkC4UZX
-         WjRrEEZh1593kx+bVfdbYygULUXOJZYO1GJl3WBP5rws9bvArb1oHQMvJP0BwUTQKeQD
-         2HB/bIQcxYeDCBNCw37ZXrUfF26PEwwk3CoqPWxbe8FiNnqxQkYm0eFUBvGO97nSyyHJ
-         nfbA==
+        h=user-agent:message-id:references:in-reply-to:subject:cc:to:from
+         :date:content-transfer-encoding:mime-version:dkim-signature
+         :dkim-signature:arc-authentication-results;
+        bh=H1ZoAAzOjPRA/nG8HmB+jULNXpLl+95gL+ItcPbyd8E=;
+        b=t4LSDYp30tHdFq0BCs9PDULWVFqdWHNMRyqXGtrwhIAl+CFJMnXf6a68YXrde61sRO
+         A+leuHWCoksvTz2fbFwyP1usCEtxmUmDgbOw89gH/VqBp7JsZ2R4PC2nkDWh7fGo8/YG
+         0D75/1CNz7F92uKi+lTcSdPpkbQF5cUqV10O17zpwyO3Ih6SJUF8PDTQFLBZCNjVjnpp
+         xAGKBdwOzf7Un3BsEf3Tlrk037hQBDDCAbzQ8mR4ORQ9B1SzjYa+n8hwbzH70LBx19uy
+         dxw+PQ2FXLbLhcgDTzVUhtNE4yFOSBg+6JERVj8gvwKtJw38PbihtrIBNn1qcB1oga33
+         2AZg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of penguin-kernel@i-love.sakura.ne.jp designates 202.181.97.72 as permitted sender) smtp.mailfrom=penguin-kernel@i-love.sakura.ne.jp
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=QpyjgDT2;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=bw+XJ4Ry;
+       spf=pass (google.com: domain of poza@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=poza@codeaurora.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of penguin-kernel@i-love.sakura.ne.jp designates 202.181.97.72 as permitted sender) smtp.mailfrom=penguin-kernel@i-love.sakura.ne.jp
-Subject: Re: general protection fault in n_tty_set_termios
-To: syzbot <syzbot+ed02be0ad5f26ef4e31b@syzkaller.appspotmail.com>,
-        gregkh@linuxfoundation.org, jslaby@suse.com,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <0000000000003b1d65056b1d9046@google.com>
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <8cec3c41-0d79-c882-4fde-8c8ca4841de2@I-love.SAKURA.ne.jp>
-Date: Tue, 1 May 2018 19:15:19 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=QpyjgDT2;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=bw+XJ4Ry;
+       spf=pass (google.com: domain of poza@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=poza@codeaurora.org
 MIME-Version: 1.0
-In-Reply-To: <0000000000003b1d65056b1d9046@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
+Date: Tue, 01 May 2018 15:30:57 +0530
+From: poza@codeaurora.org
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Philippe Ombredanne
+ <pombredanne@nexb.com>, Thomas Gleixner <tglx@linutronix.de>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Kate Stewart
+ <kstewart@linuxfoundation.org>, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Dongdong Liu <liudongdong3@huawei.com>, Keith
+ Busch <keith.busch@intel.com>, Wei Zhang <wzhang@fb.com>, Sinan Kaya
+ <okaya@codeaurora.org>, Timur Tabi <timur@codeaurora.org>
+Subject: Re: [PATCH v14 0/9] Address error and recovery for AER and DPC
+In-Reply-To: <20180430224002.GI95643@bhelgaas-glaptop.roam.corp.google.com>
+References: <1524496993-29799-1-git-send-email-poza@codeaurora.org>
+ <f97676e307fe7a02f1f2059a140a5e32@codeaurora.org>
+ <20180430224002.GI95643@bhelgaas-glaptop.roam.corp.google.com>
+Message-ID: <42d49b12f1465d6d6c2fdfd182031881@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599235269199846482?=
-X-GMAIL-MSGID: =?utf-8?q?1599256368798615834?=
+X-GMAIL-THRID: =?utf-8?q?1598550963799959493?=
+X-GMAIL-MSGID: =?utf-8?q?1599255461031780545?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This will be essentially same with below one.
-ioctl(TIOCVHANGUP) versus ioctl(TCSETS) can race.
+On 2018-05-01 04:10, Bjorn Helgaas wrote:
+> On Thu, Apr 26, 2018 at 11:00:52AM +0530, poza@codeaurora.org wrote:
+>> On 2018-04-23 20:53, Oza Pawandeep wrote:
+>> > This patch set brings in error handling support for DPC
+>> >
+>> > The current implementation of AER and error message broadcasting to the
+>> > EP driver is tightly coupled and limited to AER service driver.
+>> > It is important to factor out broadcasting and other link handling
+>> > callbacks. So that not only when AER gets triggered, but also when DPC
+>> > get
+>> > triggered (for e.g. ERR_FATAL), callbacks are handled appropriately.
+>> >
+>> > The goal of the patch-set is:
+>> > DPC should handle the error handling and recovery similar to AER,
+>> > because
+>> > finally both are attempting recovery in some or the other way,
+>> > and for that error handling and recovery framework has to be loosely
+>> > coupled.
+>> > ...
+> 
+>> Hi Bjorn,
+>> 
+>> I know I need to rebase this whole patch-set to 4.17 now.
+>> 
+>> But before I do that, can you please help to comment.
+> 
+> My overall comment is that I think the series will be simpler and read
+> better if you first change AER to do remove/re-enumerate, before doing
+> anything with DPC.
+> 
+> This could be done by extracting just the AER part of "PCI/AER/DPC:
+> Align FATAL error handling for AER and DPC" (i.e., adding
+> pcie_do_fatal_recovery()) and moving that to be the very first patch.
+> 
+> It's a small change in terms of code size, but significant to drivers,
+> and it's really the core of the series, so it would be good to clearly
+> establish the policy of:
+> 
+>   ERR_NONFATAL => call driver recovery entry points
+>   ERR_FATAL    => remove and re-enumerate
+> 
+> before bringing DPC into the picture.
+> 
+> Then the subsequent patches would all be more or less mechanical
+> changes to make DPC follow the same model.
 
-#syz dup: KASAN: user-memory-access Write in n_tty_set_termios
+ok I have taken care of you comment, please follow v15, coming next.
+I could not make that the first patch, because I needed to unify 
+pci_wait_for_link function.
+hence it is the second patch, but now the order looks quiet obvious and 
+simplified.
+
+Regards,
+Oza.
+
+> 
+> Bjorn
