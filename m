@@ -1,64 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753978AbeEAIaA (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 04:30:00 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:55631 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753848AbeEAI36 (ORCPT
+        id S1754031AbeEAIbG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 04:31:06 -0400
+Received: from mail-io0-f199.google.com ([209.85.223.199]:46975 "EHLO
+        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752090AbeEAIbC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 04:29:58 -0400
-X-Google-Smtp-Source: AB8JxZpc3qsy4xyBpOCG0vTLGPXn+Zk58oUyCV1TRl4WdwR/Skddc483aFv63GZk6Wm4y8RjkUwc7g==
-Date: Tue, 1 May 2018 09:29:55 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: Sebastian Reichel <sre@kernel.org>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Sameer Nanda <snanda@chromium.org>, linux-pm@vger.kernel.org,
-        Guenter Roeck <groeck@chromium.org>, linux-kernel@vger.kernel.org,
-        Benson Leung <bleung@chromium.org>, miguel.ojeda.sandonis@gmail.com
-Subject: Re: [PATCH v2 2/3] power: supply: add cros-ec USBPD charger driver.
-Message-ID: <20180501082955.GK5147@dell>
-References: <20180430131403.14296-1-enric.balletbo@collabora.com>
- <20180430131403.14296-3-enric.balletbo@collabora.com>
+        Tue, 1 May 2018 04:31:02 -0400
+X-Google-Smtp-Source: AB8JxZqR5e/U2kwwaC3pdJNNeuuWwYRYC9gpiwwxWSIL76aI9sMyVwlVGXH4gqZ0ukH3Gb41aaxEXI8aDwjCSBNkirmmVbOCKJmC
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180430131403.14296-3-enric.balletbo@collabora.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Date: Tue, 01 May 2018 01:31:01 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000005dbad8056b20cabc@google.com>
+Subject: kernel BUG at include/linux/mm.h:LINE!
+From: syzbot <syzbot+d96f60296ef613fe1d69@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, bhe@redhat.com, dyoung@redhat.com,
+        hpa@zytor.com, kirill.shutemov@linux.intel.com,
+        linux-kernel@vger.kernel.org, mingo@redhat.com,
+        prudo@linux.vnet.ibm.com, syzkaller-bugs@googlegroups.com,
+        takahiro.akashi@linaro.org, tglx@linutronix.de,
+        thomas.lendacky@amd.com, x86@kernel.org, xlpang@redhat.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 30 Apr 2018, Enric Balletbo i Serra wrote:
+Hello,
 
-> From: Sameer Nanda <snanda@chromium.org>
-> 
-> This driver gets various bits of information about what is connected to
-> USB PD ports from the EC and converts that into power_supply properties.
-> 
-> Signed-off-by: Sameer Nanda <snanda@chromium.org>
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> ---
-> 
-> Changes in v2:
-> - [2/3] Add SPDX header, use devm_ variant and drop .owner
-> - [2/3] Removed the PD log functionality (will be send on a follow up patch)
-> - [2/3] Removed the extra custom sysfs attributes (will be send on a follow up patch)
-> 
->  drivers/power/supply/Kconfig              |  10 +
->  drivers/power/supply/Makefile             |   1 +
->  drivers/power/supply/cros_usbpd-charger.c | 511 ++++++++++++++++++++++
+syzbot found the following crash on:
 
->  include/linux/mfd/cros_ec.h               |   2 +
+HEAD commit:    6da6c0db5316 Linux v4.17-rc3
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?id=5229040734568448
+kernel config:   
+https://syzkaller.appspot.com/x/.config?id=6493557782959164711
+dashboard link: https://syzkaller.appspot.com/bug?extid=d96f60296ef613fe1d69
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
-Acked-by: Lee Jones <lee.jones@linaro.org>
+Unfortunately, I don't have any reproducer for this crash yet.
 
->  4 files changed, 524 insertions(+)
->  create mode 100644 drivers/power/supply/cros_usbpd-charger.c
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+d96f60296ef613fe1d69@syzkaller.appspotmail.com
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+flags: 0x2fffc0000000000()
+raw: 02fffc0000000000 0000000000000000 0000000000000000 00000000ffffffff
+raw: ffffea00071786e0 ffff8801daf2fdd8 0000000000000000 0000000000000000
+page dumped because: VM_BUG_ON_PAGE(page_ref_count(page) == 0)
+------------[ cut here ]------------
+kernel BUG at include/linux/mm.h:492!
+invalid opcode: 0000 [#1] SMP KASAN
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Modules linked in:
+CPU: 1 PID: 10012 Comm: syz-executor1 Not tainted 4.17.0-rc3+ #25
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:put_page_testzero include/linux/mm.h:492 [inline]
+RIP: 0010:__free_pages+0x14f/0x180 mm/page_alloc.c:4427
+RSP: 0018:ffff8801b881fc08 EFLAGS: 00010203
+RAX: 0000000000000000 RBX: 1ffff10037103f82 RCX: 0000000000000000
+RDX: 0000000000040000 RSI: ffffffff81a5b455 RDI: ffffed0037103f70
+RBP: ffff8801b881fc98 R08: ffff8801b0c9a080 R09: 0000000000000006
+R10: ffff8801b0c9a080 R11: 0000000000000000 R12: ffffea00072e24c0
+R13: 1ffff10037103f86 R14: ffff8801b881fc70 R15: ffffea00072e24dc
+FS:  00007f2e2794c700(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020000000 CR3: 00000001ae61b000 CR4: 00000000001406e0
+DR0: 0000000020000000 DR1: 0000000020000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000600
+Call Trace:
+  free_pages+0x50/0x90 mm/page_alloc.c:4441
+  free_transition_pgtable+0x68/0xf0 arch/x86/kernel/machine_kexec_64.c:42
+  machine_kexec_cleanup+0x9/0x10 arch/x86/kernel/machine_kexec_64.c:268
+  kimage_free+0x1f2/0x270 kernel/kexec_core.c:639
+  do_kexec_load+0x53a/0x790 kernel/kexec.c:170
+  __do_sys_kexec_load kernel/kexec.c:243 [inline]
+  __se_sys_kexec_load kernel/kexec.c:218 [inline]
+  __x64_sys_kexec_load+0x1bf/0x230 kernel/kexec.c:218
+  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x455979
+RSP: 002b:00007f2e2794bc68 EFLAGS: 00000246 ORIG_RAX: 00000000000000f6
+RAX: ffffffffffffffda RBX: 00007f2e2794c6d4 RCX: 0000000000455979
+RDX: 0000000020000000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000013
+R13: 0000000000000403 R14: 00000000006fa0e8 R15: 000000000000000a
+Code: 68 5b 41 5c 41 5d 41 5e 41 5f 5d c3 8b b5 74 ff ff ff 4c 89 e7 e8 02  
+87 ff ff eb c6 48 c7 c6 00 66 d0 87 4c 89 e7 e8 81 7a 0d 00 <0f> 0b 4c 89  
+ef 89 85 70 ff ff ff e8 51 7b 1d 00 8b 85 70 ff ff
+RIP: put_page_testzero include/linux/mm.h:492 [inline] RSP: ffff8801b881fc08
+RIP: __free_pages+0x14f/0x180 mm/page_alloc.c:4427 RSP: ffff8801b881fc08
+---[ end trace f3320966708ec92c ]---
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report.
+If you forgot to add the Reported-by tag, once the fix for this bug is  
+merged
+into any tree, please reply to this email with:
+#syz fix: exact-commit-title
+To mark this as a duplicate of another syzbot report, please reply with:
+#syz dup: exact-subject-of-another-report
+If it's a one-off invalid bug report, please reply with:
+#syz invalid
+Note: if the crash happens again, it will cause creation of a new bug  
+report.
+Note: all commands must start from beginning of the line in the email body.
