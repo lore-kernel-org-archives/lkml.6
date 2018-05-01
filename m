@@ -1,59 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751314AbeEAU6e (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 16:58:34 -0400
-Received: from mail-yb0-f194.google.com ([209.85.213.194]:42843 "EHLO
-        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750780AbeEAU6c (ORCPT
+        id S1751269AbeEAVBS (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 17:01:18 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:42764 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750803AbeEAVBR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 16:58:32 -0400
-X-Google-Smtp-Source: AB8JxZprzz5pAV/qOlXBTG1S3jyKEikDu+GL2h6AK9t0wKDHKVZpOMXWi/HU2/yckiqDljxaeQSCBg==
-Date: Tue, 1 May 2018 13:58:28 -0700
-From: Tejun Heo <tj@kernel.org>
-To: Waiman Long <longman@redhat.com>
-Cc: Li Zefan <lizefan@huawei.com>, Johannes Weiner <hannes@cmpxchg.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
-        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
-        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
-        Juri Lelli <juri.lelli@redhat.com>
-Subject: Re: [PATCH v7 4/5] cpuset: Restrict load balancing off cpus to
- subset of cpus.isolated
-Message-ID: <20180501205828.GD2368884@devbig577.frc2.facebook.com>
-References: <1524145624-23655-1-git-send-email-longman@redhat.com>
- <1524145624-23655-5-git-send-email-longman@redhat.com>
- <20180501195148.GC2368884@devbig577.frc2.facebook.com>
- <9eb2c45e-e71e-61ef-aa6d-b8124b739cdf@redhat.com>
+        Tue, 1 May 2018 17:01:17 -0400
+Date: Tue, 1 May 2018 23:01:15 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] PM / core: Clean up suspend/resume diagnostic
+ messages
+Message-ID: <20180501210115.GB9637@amd>
+References: <152477804633.202432.12678470890830085798.stgit@bhelgaas-glaptop.roam.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="LpQ9ahxlCli8rRTG"
 Content-Disposition: inline
-In-Reply-To: <9eb2c45e-e71e-61ef-aa6d-b8124b739cdf@redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <152477804633.202432.12678470890830085798.stgit@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
 
-On Tue, May 01, 2018 at 04:33:45PM -0400, Waiman Long wrote:
-> I think that will work too. We currently don't have a flag to make a
-> file visible on first-level children only, but it shouldn't be hard to
-> make one.
+--LpQ9ahxlCli8rRTG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I think it'd be fine to make the flag file exist on all !root cgroups
-but only writable on the first level children.
+On Thu 2018-04-26 16:36:20, Bjorn Helgaas wrote:
+> These are pretty minor cleanups to the suspend/resume diagnostic messages.
+>=20
+> The first two are trivial.  The third may break scripts that parse dmesg
+> output.  I looked at scripts/bootgraph.pl, and I don't think it is
+> affected, but there may be others I don't know about.  Let me know if the=
+re
+> are.
 
-> Putting CPUs into an isolated child cpuset means removing it from the
-> root's effective CPUs. So I would probably like to expose the read-only
-> cpus.effective in the root cgroup so that we can check changes in the
-> effective cpu list.
+Looks good.
 
-Ah, yeah, that makes sense.
+Acked-by: Pavel Machek <pavel@ucw.cz>
 
-> I will renew the patchset will your suggestion.
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-Thank you very much.
+--LpQ9ahxlCli8rRTG
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
--- 
-tejun
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlro1ZsACgkQMOfwapXb+vICHQCfepsrP/0TGbrVIm9yHq5lZrU5
+8wgAoJCeACqeBpJgMMQs2sr8zplvkPAp
+=dICQ
+-----END PGP SIGNATURE-----
+
+--LpQ9ahxlCli8rRTG--
