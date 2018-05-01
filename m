@@ -1,112 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754867AbeEANgg (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 09:36:36 -0400
-Received: from esgaroth.petrovitsch.at ([78.47.184.11]:2667 "EHLO
-        esgaroth.tuxoid.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752009AbeEANgf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 09:36:35 -0400
-Message-ID: <1525181758.23227.65.camel@petrovitsch.priv.at>
-Subject: Re: Suggested new user link command
-From: Bernd Petrovitsch <bernd@petrovitsch.priv.at>
-To: Tony Wallace <tony@tony.gen.nz>,
-        Richard Weinberger <richard.weinberger@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Date: Tue, 01 May 2018 15:35:58 +0200
-In-Reply-To: <388f79ad-4ed0-ec39-f649-5c120ee9dc2f@tony.gen.nz>
-References: <decdbe00-2292-3012-d7ae-6bfa382fc74a@tony.gen.nz>
-         <1525165387.23227.44.camel@petrovitsch.priv.at>
-         <a91ef2fb-09ed-51ae-5dfa-8f71ec81f20c@tony.gen.nz>
-         <CAFLxGvxpe78WhrEKcKRt5XRBMtT-mZUe9Bm=sQsn8-f1TnX0eQ@mail.gmail.com>
-         <388f79ad-4ed0-ec39-f649-5c120ee9dc2f@tony.gen.nz>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-DCC-debian-Metrics: esgaroth.tuxoid.at 1169; Body=3 Fuz1=3 Fuz2=3
-X-Spam-Report: *  0.0 UNPARSEABLE_RELAY Informational: message has unparseable relay lines
+        id S1755434AbeEANkX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 09:40:23 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51964 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752009AbeEANkW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 09:40:22 -0400
+Date: Tue, 1 May 2018 08:40:20 -0500
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: Nadav Amit <namit@vmware.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: Suboptimal inline heuristics due to non-code sections
+Message-ID: <20180501134020.fonel3x6plea5xdt@treble>
+References: <A74E4351-A9FA-434D-AD47-3A509F802FFB@vmware.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <A74E4351-A9FA-434D-AD47-3A509F802FFB@vmware.com>
+User-Agent: Mutt/1.6.0.1 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all!
-
-Top-quoting is evil BTW.
-
-On Wed, 2018-05-02 at 00:17 +1200, Tony Wallace wrote:
-> Two issues here:
-> 1) Use case (which I have)
-> 2) Permissions
+On Tue, May 01, 2018 at 06:50:14AM +0000, Nadav Amit wrote:
+> When gcc considers the size of a function for inlining decisions, it
+> apparently considers *all* sections. Since the kernel extensively uses
+> sections for things other than code (e.g., exception-table, bug-table), the
+> optimality of these decisions seem questionable to me.
 > 
-> 1) Use case
+> The objtool’s sections may be the most extreme case, as these sections are
+> discarded, while their size still appears to be considered by the inlining
+> heuristics. It may be beneficial not to consider (some) the other sections
+> as well, as they do not affect code-caching but only increase the kernel
+> size.
 > 
-> I am trying to build a backup system.  To avoid duplication of files
-> over multiple backups I take an Md5 check sum of file contents.  Files
-> with the same sum are hardlinked together.   Files are linked in to a
-> standard directory structure a new link for each backup that the file is
-> part of.  When all backups pointing to a file are deleted the reference
-> count drops to zero and the file is deleted.  We can keep a database of
-> checksums and there related inode numbers for linking purposes.  So why
-
-a) You can store one of the filenames instead of the inode number.
-b) You can keep an extra directory with a hardlink named as the inode 
-   number (and delete the entries there if the link count drops to 1).
-
-> not have some reference copy to link against it would take no extra
-> space.  Well it doesn't, but it keeps at least one copy of the file on
-
-You have a (disk) space problems on an backup system?
-I don't think so, Tim;-)
-
-> disk forever and the reference count never drops to zero.  Using one of
-> the backup copies to link to (as stored as the reference copy in the
-> database) will not work as it could be deleted at any time.
+> To illustrate the issue, consider the function copy_overflow():
 > 
-> I have seen on stack overflow others wanting to do this also.
-
-"Do. Or do not. There is no try." - Yoda
-SCNR .....
-
-> 2) Permissions
+>    0xffffffff819315e0 <+0>:	push   %rbp
+>    0xffffffff819315e1 <+1>:	mov    %rsi,%rdx
+>    0xffffffff819315e4 <+4>:	mov    %edi,%esi
+>    0xffffffff819315e6 <+6>:	mov    $0xffffffff820bc4b8,%rdi
+>    0xffffffff819315ed <+13>:	mov    %rsp,%rbp
+>    0xffffffff819315f0 <+16>:	callq  0xffffffff81089b70 <__warn_printk>
+>    0xffffffff819315f5 <+21>:	ud2    
+>    0xffffffff819315f7 <+23>:	pop    %rbp
+>    0xffffffff819315f8 <+24>:	retq   
 > 
-> To maintain security there are two requirements: 
-> 2.1) The effective user must have rights to the inode, that is they must
-> either own it or be root
-> 2.2) The effective user must have rights file creation rights to the
-> directory where it is being linked
+> This function seems to me as a great candidate for inlining. Yet, in my 4.16
+> build (using gcc 7.2), I get 38 non-inlined instances of this function in
+> vmlinux. Forcing CONFIG_STACK_VALIDATION to be disabled reduces the number
+> non-inlined instances to 35. Removing, in addition, the data which is saved
+> in the __bug_table makes all the instances of the function to be inlined.
+> 
+> Obviously this certain function can be set as __always_inline, but the inline
+> heuristics seems to me as wrongfully biased. 
+> 
+> What do you think?
+> 
+> Is there a way to make gcc to ignore sections for its inlining heuristics?
 
-Obviously (und useful). And on a backup system, there is no problem
-about that (because the backup software probably runs as root anyways
-because otherwise 2.1) below will limit the deduplication severely).
+Good find.
 
-But for a (to be mainlined/accepted) new syscall, one should think
-about all situations/use cases and not just one.
+Playing around with one of the affected files (crypto/af_alg.o), if I
+make the .discard.reachable section empty by removing the text reference
+from the annotate_reachable() macro, then copy_overflow() still isn't
+inlined.
 
-Additionally to the 2 items above, one needs also x-permissions on
-*all* directories from / to one existing hardlink in the traditional
-case and such a syscall bypasses that.
-Think about it: Everyone can write a progrm to try link all inodes from
- 0 to ~0 to a directory entry and gets all files with restrictions 2.1)
-and 2.2) from below.
-ATM it is enough to `chmod o= ~` to keep all others from all files in
-my $HOME. Afterwards it's no longer that easy.
+But if I remove the section completely by removing the
+pushsection/popsection, then copy_overflow() gets inlined.
 
-> If you say no, that is fine, but I do think this idea has merit and can
-> be done without compromising the system.
+So GCC's inlining decisions are somehow influenced by the existence of
+some random empty section.  This definitely seems like a GCC bug to me.
 
-I'm no one to say no (or yes;-) here to anything;-) I'm just thinking
-about the implications.
-
-And you can always implement a patch and if it's ignored/not accepted,
-you can use it locally anyways - no one can stop that:-)
-
-One more - more constructive - thing: Perhaps it is more
-acceptable/useful if there is a mount option which must be activated on
-the backup filesystems and that is not activated anywhere else.
-
-MfG,
-	Bernd
 -- 
-Bernd Petrovitsch                  Email : bernd@petrovitsch.priv.at
-                     LUGA : http://www.luga.at
+Josh
