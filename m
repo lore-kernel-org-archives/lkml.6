@@ -1,105 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755498AbeEAAKm (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 20:10:42 -0400
-Received: from ozlabs.org ([203.11.71.1]:60769 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751296AbeEAAKk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 20:10:40 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Tue, 1 May 2018 10:10:17 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@mellanox.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Zhu Yanjun <yanjun.zhu@oracle.com>
-Subject: linux-next: manual merge of the rdma tree with the rdma-fixes tree
-Message-ID: <20180501101017.517b38af@canb.auug.org.au>
+        id S1755712AbeEAAMB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 20:12:01 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:34725 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753842AbeEAAL7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 20:11:59 -0400
+X-Google-Smtp-Source: AB8JxZrULXy5FgMKR96PRrnSwvTYaEUEEIfKg0kw+bhZ4cOkmVQMLgcahguZ+ah0BS9EpHqW0C6me6ccUXn+UDwtDMs=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Wl9dmyWBlHaq7dgRMcNuJ32"; protocol="application/pgp-signature"
+In-Reply-To: <20180430235927.28712-1-eric@anholt.net>
+References: <20180430235927.28712-1-eric@anholt.net>
+From: Stefan Schake <stschake@gmail.com>
+Date: Tue, 1 May 2018 02:11:37 +0200
+Message-ID: <CAOZHkRyboQ2uPmv6EXZSnKFLEchBavRYy1jAzm6VzxfqSEgQkw@mail.gmail.com>
+Subject: Re: [PATCH] drm/vc4: Add a pad field to align drm_vc4_submit_cl to 64 bits.
+To: Eric Anholt <eric@anholt.net>
+Cc: dri-devel <dri-devel@lists.freedesktop.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/Wl9dmyWBlHaq7dgRMcNuJ32
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, May 1, 2018 at 1:59 AM, Eric Anholt <eric@anholt.net> wrote:
+> I had originally asked Stefan Schake to drop the pad field from the
+> syncobj changes that just landed, because I couldn't come up with a
+> reason to align to 64 bits.
+>
+> Talking with Dave Airlie about the new v3d driver's submit ioctl, we
+> came up with a reason: sizeof() on 64-bit platforms may align to 64
+> bits, in which case the userspace will be submitting the aligned size
+> and the final 32 bits won't be zero-padded by the kernel.  If
+> userspace doesn't zero-fill, then a future ABI change adding a 32-bit
+> field at the end could potentially cause the kernel to read undefined
+> data from old userspace (our userspace happens to use structure
+> initialization that zero-fills, but as a general rule we try not to
+> rely on that in the kernel).
+>
 
-Hi all,
+Did a quick sizeof check on arm64 and that indeed came to 176 mod 8 = 0,
+suggesting we need this additional pad. So fwiw
 
-Today's linux-next merge of the rdma tree got a conflict in:
+Reviewed-by: Stefan Schake <stschake@gmail.com>
 
-  drivers/infiniband/sw/rxe/rxe_resp.c
-
-between commit:
-
-  9fd4350ba895 ("B/rxe: avoid double kfree_skb")
-
-from the rdma-fixes tree and commit:
-
-  2e47350789eb ("IB/rxe: optimize the function duplicate_request")
-
-from the rdma tree.
-
-I fixed it up (I think - see below) and can carry the fix as necessary.
-This is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/infiniband/sw/rxe/rxe_resp.c
-index 955ff3b6da9c,c45c1ff24497..000000000000
---- a/drivers/infiniband/sw/rxe/rxe_resp.c
-+++ b/drivers/infiniband/sw/rxe/rxe_resp.c
-@@@ -1121,23 -1123,13 +1120,12 @@@ static enum resp_states duplicate_reque
-  		/* Find the operation in our list of responder resources. */
-  		res =3D find_resource(qp, pkt->psn);
-  		if (res) {
-- 			struct sk_buff *skb_copy;
--=20
-- 			skb_copy =3D skb_clone(res->atomic.skb, GFP_ATOMIC);
-- 			if (skb_copy) {
-- 				rxe_add_ref(qp); /* for the new SKB */
-- 			} else {
-- 				pr_warn("Couldn't clone atomic resp\n");
-- 				rc =3D RESPST_CLEANUP;
-- 				goto out;
-- 			}
--=20
-+ 			skb_get(res->atomic.skb);
-  			/* Resend the result. */
-  			rc =3D rxe_xmit_packet(to_rdev(qp->ibqp.device), qp,
-- 					     pkt, skb_copy);
-+ 					     pkt, res->atomic.skb);
-  			if (rc) {
-  				pr_err("Failed resending result. This flow is not handled - skb ignor=
-ed\n");
-- 				rxe_drop_ref(qp);
- -				kfree_skb(res->atomic.skb);
-  				rc =3D RESPST_CLEANUP;
-  				goto out;
-  			}
-
---Sig_/Wl9dmyWBlHaq7dgRMcNuJ32
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrnsGkACgkQAVBC80lX
-0GwYKggAieq6QngquggXeIH9/2RF2XQaDmmbOBIpVKsZPF25aO89hyHbRklwdPdF
-/sZ2+BZ3OjKrJc/OjLWiApCHUHOGoEqDrkLji1gYuOX3PT6iGPTBZSAFsFFKZgZv
-sFuJd0faDPmhFfr7mrbUqm6c0gJEc5+e5SDXixyNJ340tus0lYXS9QLZZny0WZzt
-YhKySTSBryciFj1BOdH8Ev9bI9Uk6KVWTSq4i1xMBdW4s5ZmPN8Fg5SHkGMPc0zQ
-q/gBydvibmHWAUUruKqlfcH4gZJqYGc1zQxmVQdFCCVqieZvaeHyAAfKyoNP2KSL
-mSiloMgyIjN+FUUaXj2RpePsdhs+zg==
-=3GkS
------END PGP SIGNATURE-----
-
---Sig_/Wl9dmyWBlHaq7dgRMcNuJ32--
+Thanks,
+Stefan
