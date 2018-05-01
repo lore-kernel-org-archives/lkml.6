@@ -1,75 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755958AbeEANuJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 09:50:09 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41522 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755507AbeEANsn (ORCPT
+        id S1755729AbeEANu6 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 09:50:58 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:39091 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754867AbeEANu4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 09:48:43 -0400
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: linux-integrity@vger.kernel.org
-Cc: Hans de Goede <hdegoede@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Peter Jones <pjones@redhat.com>, Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-        David Howells <dhowells@redhat.com>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>,
-        "Luis R . Rodriguez" <mcgrof@suse.com>,
-        Matthew Garrett <mjg59@google.com>
-Subject: [PATCH 2/6] ima: prevent sysfs fallback firmware loading
-Date: Tue,  1 May 2018 09:48:19 -0400
-X-Mailer: git-send-email 2.7.5
-In-Reply-To: <1525182503-13849-1-git-send-email-zohar@linux.vnet.ibm.com>
-References: <1525182503-13849-1-git-send-email-zohar@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18050113-0020-0000-0000-00000417CA32
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18050113-0021-0000-0000-000042ACE1DF
-Message-Id: <1525182503-13849-3-git-send-email-zohar@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-01_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805010138
+        Tue, 1 May 2018 09:50:56 -0400
+X-Google-Smtp-Source: AB8JxZrKlHVErpUp9ECue6eTElq7DWOeVz78MJcAzBKF/LoaBcSM8nlFw8CzakD0xwrY5MLB+PH6FQ==
+Date: Tue, 1 May 2018 08:50:54 -0500
+From: Rob Herring <robh@kernel.org>
+To: Amit Nischal <anischal@codeaurora.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Odelu Kukatla <okukatla@codeaurora.org>,
+        Taniya Das <tdas@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: clock: Introduce QCOM Video clock
+ bindings
+Message-ID: <20180501135054.GA373@rob-hp-laptop>
+References: <1524576771-31096-1-git-send-email-anischal@codeaurora.org>
+ <1524576771-31096-2-git-send-email-anischal@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1524576771-31096-2-git-send-email-anischal@codeaurora.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With an IMA policy requiring signed firmware, this patch prevents
-the sysfs fallback method of loading firmware.
+On Tue, Apr 24, 2018 at 07:02:50PM +0530, Amit Nischal wrote:
+> Add device tree bindings for video clock controller for Qualcomm
+> Technology Inc's SoCs.
+> 
+> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+> ---
+>  .../devicetree/bindings/clock/qcom,videocc.txt     | 18 ++++++++++++++++
+>  include/dt-bindings/clock/qcom,videocc-sdm845.h    | 25 ++++++++++++++++++++++
+>  2 files changed, 43 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,videocc.txt
+>  create mode 100644 include/dt-bindings/clock/qcom,videocc-sdm845.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,videocc.txt b/Documentation/devicetree/bindings/clock/qcom,videocc.txt
+> new file mode 100644
+> index 0000000..1c23b41
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,videocc.txt
+> @@ -0,0 +1,18 @@
+> +Qualcomm Video Clock & Reset Controller Binding
+> +-----------------------------------------------
+> +
+> +Required properties :
+> +- compatible : shall contain "qcom,videocc-sdm845"
 
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Luis R. Rodriguez <mcgrof@suse.com>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Matthew Garrett <mjg59@google.com>
----
- security/integrity/ima/ima_main.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+'<vendor>,<soc>-<block>' is the preferred order. 
 
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 754ece08e1c6..8759280dccf6 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -453,7 +453,17 @@ int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
- 		}
- 		return 0;
- 	}
-+
-+	if (read_id == READING_FIRMWARE_FALLBACK) {
-+		if ((ima_appraise & IMA_APPRAISE_FIRMWARE) &&
-+		    (ima_appraise & IMA_APPRAISE_ENFORCE)) {
-+			pr_err("Prevent firmware sysfs fallback loading.\n");
-+			return -EACCES;
-+		}
-+		return 0;
-+	}
- 	return 0;
-+
- }
- 
- static int read_idmap[READING_MAX_ID] = {
--- 
-2.7.5
+Every single QCom binding... Can someone spread the word in QCom.
+
+> +- reg : shall contain base register location and length
+> +- #clock-cells : shall contain 1
+> +- #reset-cells : shall contain 1
+> +- #power-domain-cells : shall contain 1
+
+No header definitions for resets and power-domain? There's no 
+requirement to have headers, but the binding should be complete even if 
+you don't have a driver yet.
+
+> +
+> +Example:
+> +	videocc: qcom,videocc@ab00000 {
+
+clock-controller@...
+
+> +		compatible = "qcom,videocc-sdm845";
+> +		reg = <0xab00000 0x10000>;
+> +		#clock-cells = <1>;
+> +		#reset-cells = <1>;
+> +		#power-domain-cells = <1>;
+> +	};
+> diff --git a/include/dt-bindings/clock/qcom,videocc-sdm845.h b/include/dt-bindings/clock/qcom,videocc-sdm845.h
+> new file mode 100644
+> index 0000000..f5f7599
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/qcom,videocc-sdm845.h
+> @@ -0,0 +1,25 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/* Copyright (c) 2016-2018, The Linux Foundation. All rights reserved. */
+> +
+> +#ifndef _DT_BINDINGS_CLK_MSM_VIDEO_CC_SDM845_H
+> +#define _DT_BINDINGS_CLK_MSM_VIDEO_CC_SDM845_H
+> +
+> +#define VIDEO_CC_APB_CLK			0
+> +#define VIDEO_CC_AT_CLK				1
+> +#define VIDEO_CC_QDSS_TRIG_CLK			2
+> +#define VIDEO_CC_QDSS_TSCTR_DIV8_CLK		3
+> +#define VIDEO_CC_VCODEC0_AXI_CLK		4
+> +#define VIDEO_CC_VCODEC0_CORE_CLK		5
+> +#define VIDEO_CC_VCODEC1_AXI_CLK		6
+> +#define VIDEO_CC_VCODEC1_CORE_CLK		7
+> +#define VIDEO_CC_VENUS_AHB_CLK			8
+> +#define VIDEO_CC_VENUS_CLK_SRC			9
+> +#define VIDEO_CC_VENUS_CTL_AXI_CLK		10
+> +#define VIDEO_CC_VENUS_CTL_CORE_CLK		11
+> +#define VIDEO_PLL0				12
+> +
+> +#define VENUS_GDSC				0
+> +#define VCODEC0_GDSC				1
+> +#define VCODEC1_GDSC				2
+> +
+> +#endif
+> --
+> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+> of Code Aurora Forum, hosted by The Linux Foundation
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
