@@ -1,17 +1,17 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751554AbeEAUzg (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 16:55:36 -0400
-Received: from mga09.intel.com ([134.134.136.24]:14537 "EHLO mga09.intel.com"
+        id S1751575AbeEAUzj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 16:55:39 -0400
+Received: from mga12.intel.com ([192.55.52.136]:3874 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751084AbeEAUzd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 16:55:33 -0400
+        id S1751084AbeEAUzh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 16:55:37 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,352,1520924400";
-   d="scan'208";a="51538956"
-Subject: [PATCH 5/6] dax: use copy_to_iter_mcsafe() in dax_iomap_actor()
+   d="scan'208";a="50670693"
+Subject: [PATCH 6/6] x86, nfit_test: unit test for memcpy_mcsafe()
 From: Dan Williams <dan.j.williams@intel.com>
 To: linux-nvdimm@lists.01.org
 Cc: x86@kernel.org, Ingo Molnar <mingo@redhat.com>,
@@ -22,9 +22,10 @@ Cc: x86@kernel.org, Ingo Molnar <mingo@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, tony.luck@intel.com
-Date: Tue, 01 May 2018 13:45:35 -0700
-Message-ID: <152520753501.36522.5856044229551545705.stgit@dwillia2-desk3.amr.corp.intel.com>
+        Tony Luck <tony.luck@intel.com>, linux-kernel@vger.kernel.org,
+        tony.luck@intel.com
+Date: Tue, 01 May 2018 13:45:40 -0700
+Message-ID: <152520754070.36522.10230040264697144000.stgit@dwillia2-desk3.amr.corp.intel.com>
 In-Reply-To: <152520750404.36522.15462513519590065300.stgit@dwillia2-desk3.amr.corp.intel.com>
 References: <152520750404.36522.15462513519590065300.stgit@dwillia2-desk3.amr.corp.intel.com>
 User-Agent: StGit/0.18-2-gc94f
@@ -35,10 +36,20 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Protect the dax read(2) path from media errors with
-copy_to_iter_mcsafe(). If a machine check truncates a transfer we abort
-the remainder of the transfer and communicate the number of bytes
-successfully completed.
+Given the fact that the ACPI "EINJ" (error injection) facility is not
+universally available, implement software infrastructure to validate the
+memcpy_mcsafe() exception handling implementation.
+
+For each potential read exception point in memcpy_mcsafe(), inject a
+emulated exception point at the address identified by 'mcsafe_inject'
+variable. With this infrastructure implement a test to validate that the
+'bytes remaining' calculation is correct for a range of various source
+buffer alignments.
+
+This code is compiled out by default. The CONFIG_MCSAFE_DEBUG
+configuration symbol needs to be manually enabled by editing
+Kconfig.debug. I.e. this functionality can not be accidentally enabled
+by a user / distro, it's only for development.
 
 Cc: <x86@kernel.org>
 Cc: Ingo Molnar <mingo@redhat.com>
@@ -50,49 +61,245 @@ Cc: Andy Lutomirski <luto@amacapital.net>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Reported-by: Tony Luck <tony.luck@intel.com>
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
- fs/dax.c |   20 +++++++++++---------
- 1 file changed, 11 insertions(+), 9 deletions(-)
+ arch/x86/Kconfig.debug              |    3 ++
+ arch/x86/include/asm/mcsafe_debug.h |   50 +++++++++++++++++++++++++++++++++++
+ arch/x86/lib/memcpy_64.S            |   39 ++++++++++++++++++++++-----
+ tools/testing/nvdimm/test/nfit.c    |   48 ++++++++++++++++++++++++++++++++++
+ 4 files changed, 132 insertions(+), 8 deletions(-)
+ create mode 100644 arch/x86/include/asm/mcsafe_debug.h
 
-diff --git a/fs/dax.c b/fs/dax.c
-index aaec72ded1b6..e7894ab791cb 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -991,6 +991,7 @@ dax_iomap_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
- 	struct iov_iter *iter = data;
- 	loff_t end = pos + length, done = 0;
- 	ssize_t ret = 0;
-+	size_t xfer;
- 	int id;
+diff --git a/arch/x86/Kconfig.debug b/arch/x86/Kconfig.debug
+index 192e4d2f9efc..8bdec78a405f 100644
+--- a/arch/x86/Kconfig.debug
++++ b/arch/x86/Kconfig.debug
+@@ -72,6 +72,9 @@ config EARLY_PRINTK_USB_XDBC
+ 	  You should normally say N here, unless you want to debug early
+ 	  crashes or need a very simple printk logging facility.
  
- 	if (iov_iter_rw(iter) == READ) {
-@@ -1054,18 +1055,19 @@ dax_iomap_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
- 		 * vfs_write(), depending on which operation we are doing.
- 		 */
- 		if (iov_iter_rw(iter) == WRITE)
--			map_len = dax_copy_from_iter(dax_dev, pgoff, kaddr,
-+			xfer = dax_copy_from_iter(dax_dev, pgoff, kaddr,
- 					map_len, iter);
- 		else
--			map_len = copy_to_iter(kaddr, map_len, iter);
--		if (map_len <= 0) {
--			ret = map_len ? map_len : -EFAULT;
--			break;
--		}
-+			xfer = copy_to_iter_mcsafe(kaddr, map_len, iter);
- 
--		pos += map_len;
--		length -= map_len;
--		done += map_len;
-+		pos += xfer;
-+		length -= xfer;
-+		done += xfer;
++config MCSAFE_DEBUG
++	def_bool n
 +
-+		if (xfer == 0)
-+			ret = -EFAULT;
-+		if (xfer < map_len)
-+			break;
- 	}
- 	dax_read_unlock(id);
+ config X86_PTDUMP_CORE
+ 	def_bool n
+ 
+diff --git a/arch/x86/include/asm/mcsafe_debug.h b/arch/x86/include/asm/mcsafe_debug.h
+new file mode 100644
+index 000000000000..0f85d24b46c5
+--- /dev/null
++++ b/arch/x86/include/asm/mcsafe_debug.h
+@@ -0,0 +1,50 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _MCSAFE_DEBUG_H_
++#define _MCSAFE_DEBUG_H_
++
++#ifndef __ASSEMBLY__
++#ifdef CONFIG_MCSAFE_DEBUG
++extern unsigned long mcsafe_inject;
++
++static inline void set_mcsafe_inject(void *addr)
++{
++	if (addr)
++		mcsafe_inject = (unsigned long) addr;
++	else
++		mcsafe_inject = ~0UL;
++}
++#else /* CONFIG_MCSAFE_DEBUG */
++static inline void set_mcsafe_inject(void *addr)
++{
++}
++#endif /* CONFIG_MCSAFE_DEBUG */
++
++#else /* __ASSEMBLY__ */
++#include <asm/export.h>
++
++#ifdef CONFIG_MCSAFE_DEBUG
++.macro MCSAFE_DEBUG_CTL
++	.pushsection .data
++	.align 8
++	.globl mcsafe_inject
++	mcsafe_inject:
++		.quad 0
++	EXPORT_SYMBOL_GPL(mcsafe_inject)
++	.popsection
++.endm
++
++.macro MCSAFE_DEBUG offset reg count target
++	leaq \offset(\reg), %r9
++	addq \count, %r9
++	cmp mcsafe_inject, %r9
++	jg \target
++.endm
++#else
++.macro MCSAFE_DEBUG_CTL
++.endm
++
++.macro MCSAFE_DEBUG offset reg count target
++.endm
++#endif /* CONFIG_MCSAFE_DEBUG */
++#endif /* __ASSEMBLY__ */
++#endif /* _MCSAFE_DEBUG_H_ */
+diff --git a/arch/x86/lib/memcpy_64.S b/arch/x86/lib/memcpy_64.S
+index fc9c1f594c71..e47e8efe3e29 100644
+--- a/arch/x86/lib/memcpy_64.S
++++ b/arch/x86/lib/memcpy_64.S
+@@ -3,6 +3,7 @@
+ #include <linux/linkage.h>
+ #include <asm/errno.h>
+ #include <asm/cpufeatures.h>
++#include <asm/mcsafe_debug.h>
+ #include <asm/alternative-asm.h>
+ #include <asm/export.h>
+ 
+@@ -183,6 +184,9 @@ ENTRY(memcpy_orig)
+ ENDPROC(memcpy_orig)
+ 
+ #ifndef CONFIG_UML
++
++MCSAFE_DEBUG_CTL
++
+ /*
+  * memcpy_mcsafe_unrolled - memory copy with machine check exception handling
+  * Note that we only catch machine checks when reading the source addresses.
+@@ -205,6 +209,7 @@ ENTRY(memcpy_mcsafe_unrolled)
+ 	negl %ecx
+ 	subl %ecx, %edx
+ .L_read_leading_bytes:
++	MCSAFE_DEBUG 0 %rsi $1 .E_leading_bytes
+ 	movb (%rsi), %al
+ .L_write_leading_bytes:
+ 	movb %al, (%rdi)
+@@ -221,18 +226,34 @@ ENTRY(memcpy_mcsafe_unrolled)
+ 	jz .L_no_whole_cache_lines
+ 
+ 	/* Loop copying whole cache lines */
+-.L_cache_r0: movq (%rsi), %r8
+-.L_cache_r1: movq 1*8(%rsi), %r9
+-.L_cache_r2: movq 2*8(%rsi), %r10
+-.L_cache_r3: movq 3*8(%rsi), %r11
++.L_cache_r0:
++	MCSAFE_DEBUG 0 %rsi $8 .E_cache_0
++	movq (%rsi), %r8
++.L_cache_r1:
++	MCSAFE_DEBUG 1*8 %rsi $8 .E_cache_1
++	movq 1*8(%rsi), %r9
++.L_cache_r2:
++	MCSAFE_DEBUG 2*8 %rsi $8 .E_cache_2
++	movq 2*8(%rsi), %r10
++.L_cache_r3:
++	MCSAFE_DEBUG 3*8 %rsi $8 .E_cache_3
++	movq 3*8(%rsi), %r11
+ .L_cache_w0: movq %r8, (%rdi)
+ .L_cache_w1: movq %r9, 1*8(%rdi)
+ .L_cache_w2: movq %r10, 2*8(%rdi)
+ .L_cache_w3: movq %r11, 3*8(%rdi)
+-.L_cache_r4: movq 4*8(%rsi), %r8
+-.L_cache_r5: movq 5*8(%rsi), %r9
+-.L_cache_r6: movq 6*8(%rsi), %r10
+-.L_cache_r7: movq 7*8(%rsi), %r11
++.L_cache_r4:
++	MCSAFE_DEBUG 4*8 %rsi $8 .E_cache_4
++	movq 4*8(%rsi), %r8
++.L_cache_r5:
++	MCSAFE_DEBUG 5*8 %rsi $8 .E_cache_5
++	movq 5*8(%rsi), %r9
++.L_cache_r6:
++	MCSAFE_DEBUG 6*8 %rsi $8 .E_cache_6
++	movq 6*8(%rsi), %r10
++.L_cache_r7:
++	MCSAFE_DEBUG 7*8 %rsi $8 .E_cache_7
++	movq 7*8(%rsi), %r11
+ .L_cache_w4: movq %r8, 4*8(%rdi)
+ .L_cache_w5: movq %r9, 5*8(%rdi)
+ .L_cache_w6: movq %r10, 6*8(%rdi)
+@@ -251,6 +272,7 @@ ENTRY(memcpy_mcsafe_unrolled)
+ 
+ 	/* Copy trailing words */
+ .L_read_trailing_words:
++	MCSAFE_DEBUG 0 %rsi $8 .E_trailing_words
+ 	movq (%rsi), %r8
+ .L_write_trailing_words:
+ 	mov %r8, (%rdi)
+@@ -267,6 +289,7 @@ ENTRY(memcpy_mcsafe_unrolled)
+ 	/* Copy trailing bytes */
+ 	movl %edx, %ecx
+ .L_read_trailing_bytes:
++	MCSAFE_DEBUG 0 %rsi $1 .E_trailing_bytes
+ 	movb (%rsi), %al
+ .L_write_trailing_bytes:
+ 	movb %al, (%rdi)
+diff --git a/tools/testing/nvdimm/test/nfit.c b/tools/testing/nvdimm/test/nfit.c
+index 4ea385be528f..dc039e91711e 100644
+--- a/tools/testing/nvdimm/test/nfit.c
++++ b/tools/testing/nvdimm/test/nfit.c
+@@ -29,6 +29,8 @@
+ #include "nfit_test.h"
+ #include "../watermark.h"
+ 
++#include <asm/mcsafe_debug.h>
++
+ /*
+  * Generate an NFIT table to describe the following topology:
+  *
+@@ -2681,6 +2683,51 @@ static struct platform_driver nfit_test_driver = {
+ 	.id_table = nfit_test_id,
+ };
+ 
++static char mcsafe_buf[PAGE_SIZE] __attribute__((__aligned__(PAGE_SIZE)));
++
++void mcsafe_test(void)
++{
++	bool do_inject = false;
++	int i;
++
++	if (IS_ENABLED(CONFIG_MCSAFE_DEBUG)) {
++		pr_info("%s: run...\n", __func__);
++	} else {
++		pr_info("%s: disabled, skip.\n", __func__);
++		return;
++	}
++
++retry:
++	for (i = 0; i < 512; i++) {
++		unsigned long expect, rem;
++		void *src, *dst;
++
++		if (do_inject) {
++			set_mcsafe_inject(&mcsafe_buf[1024]);
++			expect = 512 - i;
++		} else {
++			set_mcsafe_inject(NULL);
++			expect = 0;
++		}
++
++		dst = &mcsafe_buf[2048];
++		src = &mcsafe_buf[1024 - i];
++		rem = memcpy_mcsafe_unrolled(dst, src, 512);
++		if (rem == expect)
++			continue;
++		pr_info("%s: copy(%#lx, %#lx, %d) offset: %d got: %ld expect: %ld\n",
++				__func__, ((unsigned long) dst) & ~PAGE_MASK,
++				((unsigned long ) src) & ~PAGE_MASK,
++				512, i, rem, expect);
++	}
++
++	if (!do_inject) {
++		do_inject = true;
++		goto retry;
++	}
++	set_mcsafe_inject(NULL);
++}
++
+ static __init int nfit_test_init(void)
+ {
+ 	int rc, i;
+@@ -2689,6 +2736,7 @@ static __init int nfit_test_init(void)
+ 	libnvdimm_test();
+ 	acpi_nfit_test();
+ 	device_dax_test();
++	mcsafe_test();
+ 
+ 	nfit_test_setup(nfit_test_lookup, nfit_test_evaluate_dsm);
  
