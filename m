@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753444AbeEAJLO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 05:11:14 -0400
-Received: from foss.arm.com ([217.140.101.70]:44024 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751920AbeEAJLL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 05:11:11 -0400
+        id S1753859AbeEAJLU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 05:11:20 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44050 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751920AbeEAJLQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 05:11:16 -0400
 From: Suzuki K Poulose <suzuki.poulose@arm.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org,
@@ -13,9 +13,9 @@ Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org,
         will.deacon@arm.com, robin.murphy@arm.com, sudeep.holla@arm.com,
         frowand.list@gmail.com, robh@kernel.org, john.horley@arm.com,
         Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH v2 01/27] coresight: ETM: Add support for ARM Cortex-A73
-Date: Tue,  1 May 2018 10:10:31 +0100
-Message-Id: <1525165857-11096-2-git-send-email-suzuki.poulose@arm.com>
+Subject: [PATCH v2 03/27] coresight: Add helper device type
+Date: Tue,  1 May 2018 10:10:33 +0100
+Message-Id: <1525165857-11096-4-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1525165857-11096-1-git-send-email-suzuki.poulose@arm.com>
 References: <1525165857-11096-1-git-send-email-suzuki.poulose@arm.com>
@@ -23,63 +23,182 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add ARM Cortex A-73 ETM PIDs to the known ETM ips. While at it
-also add description of the CPU to which the ETM belongs, to make
-it easier to identify the ETM devices.
+Add a new coresight device type, which do not belong to any
+of the existing types, i.e, source, sink, link etc. A helper
+device could be connected to a coresight device, which could
+augment the functionality of the coresight device.
+
+This is intended to cover Coresight Address Translation Unit (CATU)
+devices, which provide improved Scatter Gather mechanism for TMC
+ETR. The idea is that the helper device could be controlled by
+the driver of the device it is attached to (in this case ETR),
+transparent to the generic coresight driver (and paths).
+
+The operations include enable(), disable(), both of which could
+accept a device specific "data" which the driving device and
+the helper device could share. Since they don't appear in the
+coresight "path" tracked by software, we have to ensure that
+they are powered up/down whenever the master device is turned
+on.
 
 Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- drivers/hwtracing/coresight/coresight-etm4x.c | 24 +++++++++++++++---------
- 1 file changed, 15 insertions(+), 9 deletions(-)
+ drivers/hwtracing/coresight/coresight.c | 46 ++++++++++++++++++++++++++++++---
+ include/linux/coresight.h               | 24 +++++++++++++++++
+ 2 files changed, 67 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/hwtracing/coresight/coresight-etm4x.c b/drivers/hwtracing/coresight/coresight-etm4x.c
-index cf364a5..e84d80b 100644
---- a/drivers/hwtracing/coresight/coresight-etm4x.c
-+++ b/drivers/hwtracing/coresight/coresight-etm4x.c
-@@ -1034,7 +1034,8 @@ static int etm4_probe(struct amba_device *adev, const struct amba_id *id)
- 	}
- 
- 	pm_runtime_put(&adev->dev);
--	dev_info(dev, "%s initialized\n", (char *)id->data);
-+	dev_info(dev, "CPU%d: %s initialized\n",
-+			drvdata->cpu, (char *)id->data);
- 
- 	if (boot_enable) {
- 		coresight_enable(drvdata->csdev);
-@@ -1053,20 +1054,25 @@ static int etm4_probe(struct amba_device *adev, const struct amba_id *id)
+diff --git a/drivers/hwtracing/coresight/coresight.c b/drivers/hwtracing/coresight/coresight.c
+index 389c4ba..fd0251e 100644
+--- a/drivers/hwtracing/coresight/coresight.c
++++ b/drivers/hwtracing/coresight/coresight.c
+@@ -430,6 +430,43 @@ struct coresight_device *coresight_get_enabled_sink(bool deactivate)
+ 	return dev ? to_coresight_device(dev) : NULL;
  }
  
- static const struct amba_id etm4_ids[] = {
--	{       /* ETM 4.0 - Cortex-A53  */
-+	{
- 		.id	= 0x000bb95d,
- 		.mask	= 0x000fffff,
--		.data	= "ETM 4.0",
-+		.data	= "Cortex-A53 ETM v4.0",
++/*
++ * coresight_prepare_device - Prepare this device and any of the helper
++ * devices connected to it for trace operation. Since the helper devices
++ * don't appear on the trace path, they should be handled along with the
++ * the master device.
++ */
++static void coresight_prepare_device(struct coresight_device *csdev)
++{
++	int i;
++
++	for (i = 0; i < csdev->nr_outport; i++) {
++		struct coresight_device *child = csdev->conns[i].child_dev;
++
++		if (child && child->type == CORESIGHT_DEV_TYPE_HELPER)
++			pm_runtime_get_sync(child->dev.parent);
++	}
++
++	pm_runtime_get_sync(csdev->dev.parent);
++}
++
++/*
++ * coresight_release_device - Release this device and any of the helper
++ * devices connected to it for trace operation.
++ */
++static void coresight_release_device(struct coresight_device *csdev)
++{
++	int i;
++
++	for (i = 0; i < csdev->nr_outport; i++) {
++		struct coresight_device *child = csdev->conns[i].child_dev;
++
++		if (child && child->type == CORESIGHT_DEV_TYPE_HELPER)
++			pm_runtime_put(child->dev.parent);
++	}
++	pm_runtime_put(csdev->dev.parent);
++}
++
+ /**
+  * _coresight_build_path - recursively build a path from a @csdev to a sink.
+  * @csdev:	The device to start from.
+@@ -480,8 +517,7 @@ static int _coresight_build_path(struct coresight_device *csdev,
+ 
+ 	node->csdev = csdev;
+ 	list_add(&node->link, path);
+-	pm_runtime_get_sync(csdev->dev.parent);
+-
++	coresight_prepare_device(csdev);
+ 	return 0;
+ }
+ 
+@@ -524,7 +560,7 @@ void coresight_release_path(struct list_head *path)
+ 	list_for_each_entry_safe(nd, next, path, link) {
+ 		csdev = nd->csdev;
+ 
+-		pm_runtime_put_sync(csdev->dev.parent);
++		coresight_release_device(csdev);
+ 		list_del(&nd->link);
+ 		kfree(nd);
+ 	}
+@@ -775,6 +811,10 @@ static struct device_type coresight_dev_type[] = {
+ 		.name = "source",
+ 		.groups = coresight_source_groups,
  	},
--	{       /* ETM 4.0 - Cortex-A57 */
 +	{
- 		.id	= 0x000bb95e,
- 		.mask	= 0x000fffff,
--		.data	= "ETM 4.0",
-+		.data	= "Cortex-A57 ETM v4.0",
- 	},
--	{       /* ETM 4.0 - A72, Maia, HiSilicon */
--		.id = 0x000bb95a,
--		.mask = 0x000fffff,
--		.data = "ETM 4.0",
-+	{
-+		.id	= 0x000bb95a,
-+		.mask	= 0x000fffff,
-+		.data	= "Cortex-A72 ETM v4.0",
++		.name = "helper",
 +	},
-+	{
-+		.id	= 0x000bb959,
-+		.mask	= 0x000fffff,
-+		.data	= "Cortex-A73 ETM v4.0",
- 	},
- 	{ 0, 0},
++
  };
+ 
+ static void coresight_device_release(struct device *dev)
+diff --git a/include/linux/coresight.h b/include/linux/coresight.h
+index 556fe59..5e926f7 100644
+--- a/include/linux/coresight.h
++++ b/include/linux/coresight.h
+@@ -47,6 +47,7 @@ enum coresight_dev_type {
+ 	CORESIGHT_DEV_TYPE_LINK,
+ 	CORESIGHT_DEV_TYPE_LINKSINK,
+ 	CORESIGHT_DEV_TYPE_SOURCE,
++	CORESIGHT_DEV_TYPE_HELPER,
+ };
+ 
+ enum coresight_dev_subtype_sink {
+@@ -69,6 +70,10 @@ enum coresight_dev_subtype_source {
+ 	CORESIGHT_DEV_SUBTYPE_SOURCE_SOFTWARE,
+ };
+ 
++enum coresight_dev_subtype_helper {
++	CORESIGHT_DEV_SUBTYPE_HELPER_NONE,
++};
++
+ /**
+  * union coresight_dev_subtype - further characterisation of a type
+  * @sink_subtype:	type of sink this component is, as defined
+@@ -77,6 +82,8 @@ enum coresight_dev_subtype_source {
+  *			by @coresight_dev_subtype_link.
+  * @source_subtype:	type of source this component is, as defined
+  *			by @coresight_dev_subtype_source.
++ * @helper_subtype:	type of helper this component is, as defined
++ *			by @coresight_dev_subtype_helper.
+  */
+ union coresight_dev_subtype {
+ 	/* We have some devices which acts as LINK and SINK */
+@@ -85,6 +92,7 @@ union coresight_dev_subtype {
+ 		enum coresight_dev_subtype_link link_subtype;
+ 	};
+ 	enum coresight_dev_subtype_source source_subtype;
++	enum coresight_dev_subtype_helper helper_subtype;
+ };
+ 
+ /**
+@@ -181,6 +189,7 @@ struct coresight_device {
+ #define source_ops(csdev)	csdev->ops->source_ops
+ #define sink_ops(csdev)		csdev->ops->sink_ops
+ #define link_ops(csdev)		csdev->ops->link_ops
++#define helper_ops(csdev)	csdev->ops->helper_ops
+ 
+ /**
+  * struct coresight_ops_sink - basic operations for a sink
+@@ -240,10 +249,25 @@ struct coresight_ops_source {
+ 			struct perf_event *event);
+ };
+ 
++/**
++ * struct coresight_ops_helper - Operations for a helper device.
++ *
++ * All operations could pass in a device specific data, which could
++ * help the helper device to determine what to do.
++ *
++ * @enable	: Turn the device ON.
++ * @disable	: Turn the device OFF.
++ */
++struct coresight_ops_helper {
++	int (*enable)(struct coresight_device *csdev, void *data);
++	int (*disable)(struct coresight_device *csdev, void *data);
++};
++
+ struct coresight_ops {
+ 	const struct coresight_ops_sink *sink_ops;
+ 	const struct coresight_ops_link *link_ops;
+ 	const struct coresight_ops_source *source_ops;
++	const struct coresight_ops_helper *helper_ops;
+ };
+ 
+ #ifdef CONFIG_CORESIGHT
 -- 
 2.7.4
