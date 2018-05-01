@@ -1,114 +1,195 @@
-Return-Path: <npiggin@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1525750825; cv=none;
+Return-Path: <benh@kernel.crashing.org>
+X-Google-Smtp-Source: AB8JxZqoF37AwE4O02Fjs3Vpo07eN0ItLNu/R79XRynJ7THxW9BvgZuiEIZu7aecWHEc0WVrjqyH
+ARC-Seal: i=1; a=rsa-sha256; t=1525168147; cv=none;
         d=google.com; s=arc-20160816;
-        b=kbqCSSVYcNOERhhDnyQVFdlB28jgG6NYfKQDjcaV5KDUJA3U+MltP8GM6Cqu/S0qx9
-         b8pwU2m7Ev2A4sKZESgflqbvmmqLd9Hz6ch/QduCU3yz600dgkvW6dwMdlDC1oHOnccf
-         A3G3BKaPVwA58GaT2YGf4LkPD/tYlVv2pvLLNghS0ML7Z4uTGWTGlNJR6I23KUSSsftn
-         BL9jr4MdClyvwvmkTRQtoPoVNQnlGxNdYQ9cSM3Y0KLCRNPrOywpPhCMEUlYuqYWPDvD
-         GT1c/ugJss5JSXmQ/SFpOpScX2lfK5mMQtsH08YqQVmp8AQLhz73QzRWMVLmVDPXNu1y
-         LN3w==
+        b=SlJ2UOML9XSbTIGFcJoAP3XE0EXMOiUIQsZz7uxisT5kQN/V/zEabCeWCAIp18B392
+         Ugb484xJCBSFyOi4HkeN6XbcdlQRgeKwR56ohAxXqPK3Shln5FhhGkti628Z4t70xWW0
+         7YOFf1h+nSW3Sx7R1+cZtmzOeBOcZXdZPShZFE8+w8HlrDbgmDFy0QUDrOZR49tIaExj
+         6Sv0XmRL2JtmKlgv5NSwOXJi64uW03m4+xPNHtxKs9ydfl7up7W6Y1gBkHl5VyOxo6Bx
+         jy6ySw/viNiRjzyCOpn0/s1+nTzJJ/O1OPraT8mdo9lH78LNn4YFo9D2BgVE/wzT1mqt
+         MA+Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:organization:references
-         :in-reply-to:message-id:subject:cc:to:from:date:dkim-signature
-         :arc-authentication-results;
-        bh=KiYQ+0FS11nO4Ta97MyUarAhmBEE+lBl/jqHhFtTlK0=;
-        b=kfU2tXzCRpqF3uKF+WGG2UUnCanW+mRHuBC1m2QhfyvifHgElcGIZL8tPtFTRlxX46
-         kTwD+iJ/8A+lT7vi972JZ/jbE9YtlYppNNzP9uqByQuQtlK/LmpArn1VZAhMUXdZw5ko
-         7OOi/W8tbEk/RsbQIjrw0JS6h5HvwtS9pOVX/F7B1jv8sgL2J90PKvvZKnRbxMbIJdsM
-         xXKTkAtnF5AoDXlZ4lnP/OiJiARmznBb+xOvvZIzwiu6E1HFAHrjzTN26dgOh3l2q1vV
-         nXp0l/3Uxe8nh8wHWjSPx5nPPQM9fRpLIhN886mVtep0dmfFSOqw7fv3mjDJqtyJIK6M
-         LvPw==
+        h=content-transfer-encoding:mime-version:references:in-reply-to:date
+         :cc:to:from:subject:message-id:arc-authentication-results;
+        bh=tEdT99gCz/TvpAaEozeYaFagslr5rCGclk3qNB9BBH8=;
+        b=wLhfD+WeXSACwCNfVmd9Tcz2V0aVS7hm8U/HT9c9yJGeqQjcyDntmdmkVSskMQDV/P
+         XQqSr6rAny46q7yNSPgRh5DKV4hm6f0efIMMdZd8Kxo4bx5gIiKXdIJqXj6ZXykVOCMV
+         rKVzmrH9hI7G3j7jXV+LMhzFwyJQOaYzLwJxY8lURUJWc/7bTpZ+8aw9Y4YLJMvuLnSe
+         W2h+dtvMT4SRZ3u9t/jqAqS5LPCiYNYXGkPfulVVX/q5gnlU0hF3iH4056yAHv0/u/fV
+         htbuOVKxK7dZEPUrHJRIq9/jPu/QlX5hfilgO/q+Qn1vOtj+Qh70yXVdcRDDIGFUyqXb
+         6gsQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=uhuHPezA;
-       spf=pass (google.com: domain of npiggin@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=npiggin@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=pass (google.com: domain of benh@kernel.crashing.org designates 63.228.1.57 as permitted sender) smtp.mailfrom=benh@kernel.crashing.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=uhuHPezA;
-       spf=pass (google.com: domain of npiggin@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=npiggin@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AB8JxZqgfa4SP+HtjGQlxMj3ULM0pPUnrnG6Boz+pcL31jlmWHN8MmFvcsBlc03k98JdMPmCITP3Ug==
-Date: Tue, 8 May 2018 13:40:13 +1000
-From: Nicholas Piggin <npiggin@gmail.com>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: linuxppc-dev@lists.ozlabs.org, Jiri Slaby <jslaby@suse.com>,
- linux-kernel@vger.kernel.org, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 04/15] powerpc/powernv: opal-kmsg use flush fallback
- from console code
-Message-ID: <20180508134013.472b7981@roar.ozlabs.ibm.com>
-In-Reply-To: <87wowfbvm0.fsf@concordia.ellerman.id.au>
+       spf=pass (google.com: domain of benh@kernel.crashing.org designates 63.228.1.57 as permitted sender) smtp.mailfrom=benh@kernel.crashing.org
+Message-ID: <1525168138.2325.100.camel@kernel.crashing.org>
+Subject: Re: [PATCH 08/15] powerpc/powernv: implement opal_put_chars_atomic
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To: Nicholas Piggin <npiggin@gmail.com>, linuxppc-dev@lists.ozlabs.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby
+	 <jslaby@suse.com>, linux-kernel@vger.kernel.org
+Date: Tue, 01 May 2018 19:48:58 +1000
+In-Reply-To: <20180430145558.4308-9-npiggin@gmail.com>
 References: <20180430145558.4308-1-npiggin@gmail.com>
-	<20180430145558.4308-5-npiggin@gmail.com>
-	<87muxg80ga.fsf@concordia.ellerman.id.au>
-	<20180504153717.4806d9c4@roar.ozlabs.ibm.com>
-	<87wowfbvm0.fsf@concordia.ellerman.id.au>
-Organization: IBM
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+	 <20180430145558.4308-9-npiggin@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599183451122520462?=
-X-GMAIL-MSGID: =?utf-8?q?1599865698048194506?=
+X-GMAIL-THRID: =?utf-8?q?1599183467019394764?=
+X-GMAIL-MSGID: =?utf-8?q?1599254715137748501?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, 07 May 2018 20:36:39 +1000
-Michael Ellerman <mpe@ellerman.id.au> wrote:
+On Tue, 2018-05-01 at 00:55 +1000, Nicholas Piggin wrote:
+> The RAW console does not need writes to be atomic, so relax
+> opal_put_chars to be able to do partial writes, and implement an
+> _atomic variant which does not take a spinlock. This API is used
+> in xmon, so the less locking that is used, the better chance there
+> is that a crash can be debugged.
 
-> Nicholas Piggin <npiggin@gmail.com> writes:
-> > On Fri, 04 May 2018 15:16:37 +1000
-> > Michael Ellerman <mpe@ellerman.id.au> wrote:  
-> >> Nicholas Piggin <npiggin@gmail.com> writes:  
-> >> > Use the more refined and tested event polling loop from opal_put_chars
-> >> > as the fallback console flush in the opal-kmsg path. This loop is used
-> >> > by the console driver today, whereas the opal-kmsg fallback is not
-> >> > likely to have been used for years.
-> >> >
-> >> > Use WARN_ONCE rather than a printk when the fallback is invoked to
-> >> > prepare for moving the console flush into a common function.    
-> >> 
-> >> Do we want to add a WARN in that path? If we're panicking things might
-> >> get worse if we WARN (which takes a trap).  
-> >
-> > True, probably a good idea not to... oh there's a printk_once so
-> > that'll work nicely.  
+Same comment I already had :-) "atomic" in Linux tends to mean
+something else (ie, atomic context), so I'd rather have something
+like opal_put_chars_sync() or such...
+
+> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+> ---
+>  arch/powerpc/include/asm/opal.h       |  1 +
+>  arch/powerpc/platforms/powernv/opal.c | 37 +++++++++++++++++++--------
+>  drivers/tty/hvc/hvc_opal.c            | 18 +++++++++----
+>  3 files changed, 41 insertions(+), 15 deletions(-)
 > 
-> Cool.
-> 
-> I have this series in a tree so you can send me an incremental diff if
-> it's reasonably small.
-
-It's a one liner (also moved location of message back to where it was
-originally).
-
-The next patch will clash because it moves this over into opal.c, so
-you'd have to fix that by hand.
-
-Thanks,
-Nick
-
----
- arch/powerpc/platforms/powernv/opal-kmsg.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/powerpc/platforms/powernv/opal-kmsg.c b/arch/powerpc/platforms/powernv/opal-kmsg.c
-index fd2bbf4fd6dc..c610ef3541aa 100644
---- a/arch/powerpc/platforms/powernv/opal-kmsg.c
-+++ b/arch/powerpc/platforms/powernv/opal-kmsg.c
-@@ -53,12 +53,12 @@ static void force_opal_console_flush(struct kmsg_dumper *dumper,
- 	} else {
- 		__be64 evt;
- 
--		WARN_ONCE(1, "opal: OPAL_CONSOLE_FLUSH missing.\n");
- 		/*
- 		 * If OPAL_CONSOLE_FLUSH is not implemented in the firmware,
- 		 * the console can still be flushed by calling the polling
- 		 * function while it has OPAL_EVENT_CONSOLE_OUTPUT events.
- 		 */
-+		printk_once(KERN_NOTICE "opal: OPAL_CONSOLE_FLUSH missing.\n");
- 		do {
- 			opal_poll_events(&evt);
- 		} while (be64_to_cpu(evt) & OPAL_EVENT_CONSOLE_OUTPUT);
--- 
-2.17.0
+> diff --git a/arch/powerpc/include/asm/opal.h b/arch/powerpc/include/asm/opal.h
+> index bbff49fab0e5..5d7072411561 100644
+> --- a/arch/powerpc/include/asm/opal.h
+> +++ b/arch/powerpc/include/asm/opal.h
+> @@ -303,6 +303,7 @@ extern void opal_configure_cores(void);
+>  
+>  extern int opal_get_chars(uint32_t vtermno, char *buf, int count);
+>  extern int opal_put_chars(uint32_t vtermno, const char *buf, int total_len);
+> +extern int opal_put_chars_atomic(uint32_t vtermno, const char *buf, int total_len);
+>  extern int opal_flush_console(uint32_t vtermno);
+>  
+>  extern void hvc_opal_init_early(void);
+> diff --git a/arch/powerpc/platforms/powernv/opal.c b/arch/powerpc/platforms/powernv/opal.c
+> index 55d4b1983110..bcdb90ada938 100644
+> --- a/arch/powerpc/platforms/powernv/opal.c
+> +++ b/arch/powerpc/platforms/powernv/opal.c
+> @@ -344,9 +344,9 @@ int opal_get_chars(uint32_t vtermno, char *buf, int count)
+>  	return 0;
+>  }
+>  
+> -int opal_put_chars(uint32_t vtermno, const char *data, int total_len)
+> +static int __opal_put_chars(uint32_t vtermno, const char *data, int total_len, bool atomic)
+>  {
+> -	unsigned long flags;
+> +	unsigned long flags = 0 /* shut up gcc */;
+>  	int written;
+>  	__be64 olen;
+>  	s64 rc;
+> @@ -354,11 +354,8 @@ int opal_put_chars(uint32_t vtermno, const char *data, int total_len)
+>  	if (!opal.entry)
+>  		return -ENODEV;
+>  
+> -	/* We want put_chars to be atomic to avoid mangling of hvsi
+> -	 * packets. To do that, we first test for room and return
+> -	 * -EAGAIN if there isn't enough.
+> -	 */
+> -	spin_lock_irqsave(&opal_write_lock, flags);
+> +	if (atomic)
+> +		spin_lock_irqsave(&opal_write_lock, flags);
+>  	rc = opal_console_write_buffer_space(vtermno, &olen);
+>  	if (rc || be64_to_cpu(olen) < total_len) {
+>  		/* Closed -> drop characters */
+> @@ -391,14 +388,18 @@ int opal_put_chars(uint32_t vtermno, const char *data, int total_len)
+>  
+>  	written = be64_to_cpu(olen);
+>  	if (written < total_len) {
+> -		/* Should not happen */
+> -		pr_warn("atomic console write returned partial len=%d written=%d\n", total_len, written);
+> +		if (atomic) {
+> +			/* Should not happen */
+> +			pr_warn("atomic console write returned partial "
+> +				"len=%d written=%d\n", total_len, written);
+> +		}
+>  		if (!written)
+>  			written = -EAGAIN;
+>  	}
+>  
+>  out:
+> -	spin_unlock_irqrestore(&opal_write_lock, flags);
+> +	if (atomic)
+> +		spin_unlock_irqrestore(&opal_write_lock, flags);
+>  
+>  	/* In the -EAGAIN case, callers loop, so we have to flush the console
+>  	 * here in case they have interrupts off (and we don't want to wait
+> @@ -412,6 +413,22 @@ int opal_put_chars(uint32_t vtermno, const char *data, int total_len)
+>  	return written;
+>  }
+>  
+> +int opal_put_chars(uint32_t vtermno, const char *data, int total_len)
+> +{
+> +	return __opal_put_chars(vtermno, data, total_len, false);
+> +}
+> +
+> +/*
+> + * opal_put_chars_atomic will not perform partial-writes. Data will be
+> + * atomically written to the terminal or not at all. This is not strictly
+> + * true at the moment because console space can race with OPAL's console
+> + * writes.
+> + */
+> +int opal_put_chars_atomic(uint32_t vtermno, const char *data, int total_len)
+> +{
+> +	return __opal_put_chars(vtermno, data, total_len, true);
+> +}
+> +
+>  int opal_flush_console(uint32_t vtermno)
+>  {
+>  	s64 rc;
+> diff --git a/drivers/tty/hvc/hvc_opal.c b/drivers/tty/hvc/hvc_opal.c
+> index af122ad7f06d..0a72f98ee082 100644
+> --- a/drivers/tty/hvc/hvc_opal.c
+> +++ b/drivers/tty/hvc/hvc_opal.c
+> @@ -183,9 +183,15 @@ static int hvc_opal_probe(struct platform_device *dev)
+>  			return -ENOMEM;
+>  		pv->proto = proto;
+>  		hvc_opal_privs[termno] = pv;
+> -		if (proto == HV_PROTOCOL_HVSI)
+> -			hvsilib_init(&pv->hvsi, opal_get_chars, opal_put_chars,
+> +		if (proto == HV_PROTOCOL_HVSI) {
+> +			/*
+> +			 * We want put_chars to be atomic to avoid mangling of
+> +			 * hvsi packets.
+> +			 */
+> +			hvsilib_init(&pv->hvsi,
+> +				     opal_get_chars, opal_put_chars_atomic,
+>  				     termno, 0);
+> +		}
+>  
+>  		/* Instanciate now to establish a mapping index==vtermno */
+>  		hvc_instantiate(termno, termno, ops);
+> @@ -376,8 +382,9 @@ void __init hvc_opal_init_early(void)
+>  	else if (of_device_is_compatible(stdout_node,"ibm,opal-console-hvsi")) {
+>  		hvc_opal_boot_priv.proto = HV_PROTOCOL_HVSI;
+>  		ops = &hvc_opal_hvsi_ops;
+> -		hvsilib_init(&hvc_opal_boot_priv.hvsi, opal_get_chars,
+> -			     opal_put_chars, index, 1);
+> +		hvsilib_init(&hvc_opal_boot_priv.hvsi,
+> +			     opal_get_chars, opal_put_chars_atomic,
+> +			     index, 1);
+>  		/* HVSI, perform the handshake now */
+>  		hvsilib_establish(&hvc_opal_boot_priv.hvsi);
+>  		pr_devel("hvc_opal: Found HVSI console\n");
+> @@ -409,7 +416,8 @@ void __init udbg_init_debug_opal_hvsi(void)
+>  	hvc_opal_privs[index] = &hvc_opal_boot_priv;
+>  	hvc_opal_boot_termno = index;
+>  	udbg_init_opal_common();
+> -	hvsilib_init(&hvc_opal_boot_priv.hvsi, opal_get_chars, opal_put_chars,
+> +	hvsilib_init(&hvc_opal_boot_priv.hvsi,
+> +		     opal_get_chars, opal_put_chars_atomic,
+>  		     index, 1);
+>  	hvsilib_establish(&hvc_opal_boot_priv.hvsi);
+>  }
