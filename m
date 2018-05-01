@@ -1,97 +1,180 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751269AbeEATww (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 15:52:52 -0400
-Received: from mail-bl2nam02on0049.outbound.protection.outlook.com ([104.47.38.49]:42925
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        id S1751311AbeEATxA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 15:53:00 -0400
+Received: from mail-by2nam01on0079.outbound.protection.outlook.com ([104.47.34.79]:51024
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750766AbeEATwu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 15:52:50 -0400
+        id S1751275AbeEATw5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 15:52:57 -0400
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=Gary.Hook@amd.com;
-Subject: [PATCH 0/2] Tweak AMD IOMMU logging
+Subject: [PATCH 1/2] iommu/amd - Update the PASID information printed to the
+ system log
 From: Gary R Hook <gary.hook@amd.com>
 To: iommu@lists.linux-foundation.org
 Cc: joro@8bytes.org, linux-kernel@vger.kernel.org
-Date: Tue, 01 May 2018 14:52:43 -0500
-Message-ID: <152520429853.30928.9793486018349326103.stgit@taos>
+Date: Tue, 01 May 2018 14:52:52 -0500
+Message-ID: <152520437211.30928.8410126837908568791.stgit@taos>
+In-Reply-To: <152520429853.30928.9793486018349326103.stgit@taos>
+References: <152520429853.30928.9793486018349326103.stgit@taos>
 User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [165.204.78.1]
-X-ClientProxiedBy: SN4PR0501CA0056.namprd05.prod.outlook.com
- (2603:10b6:803:41::33) To CY1PR12MB0698.namprd12.prod.outlook.com
- (2a01:111:e400:c43b::16)
+X-ClientProxiedBy: SN4PR0501CA0049.namprd05.prod.outlook.com
+ (2603:10b6:803:41::26) To SN1PR12MB0702.namprd12.prod.outlook.com
+ (2a01:111:e400:c42a::16)
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(2017052603328)(7153060)(7193020);SRVR:CY1PR12MB0698;
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR12MB0698;3:TUaPvjnEjC248g9ku4QWBqRU7q793fGdEIMmZN2HNlpjqMZ1ZY3arIJNOYdyoo4+OZx9wb+X5AWEgQaFh+kLdcsllz/q7QxWufU3nYiDusjFRexj8btkE7dSz/bx6SnI+5lmuUb71lP0ZBSeT1pm8mJjwIvRLPRdyi7AxqZDKb1apHM2YHyaBVK/p1dYA+ioYvXaDX0hTvltViCUkwruNzfIFQRDvFhYYkNmVmZyUCOEEqUBw95gTyVjI762QJ9r;25:AWyqDZ5yT0XVpRZGVS/G8tFHegCFUEs8P3c7aHi1GV+g1XI62hts9sk6X7UENGwiiJRLRjz7+YeTPqPHiocrq0O9nSpcYD+Sjz33yGlR0jRy3AbgtRzWzIOzZacZlIYLNF790UWXV2hUZNQ+B8wQsBd7lpsPdRoXpbA2QJMJnWv8j6HoXUpI9WCsuk7gQE/Q8exzyRHLDEYOrkTK5UiKxj/deFJm77i6QDj6zZ4NP39KPrxDmO0tt/0T1JLnUGtabkKszJWiiXIJNlw58cEQ5rgbZZtwF9+xkjeVsGdT76ziJ+Q7gHWIqDcwqMZHT22kQbg9tJl01GdovvWHwF1/AA==;31:8dG/8Yc0Hg2VeRzRhnJESdhL+9DcgJ6+xuCbbFun9iWUdmRLvTYtHYaPEYvjQikKnMHCmZLCDeB8FTV7Jr6uSLyE2vCZcKgwdaCmqCvjAg6CqIhsmjoSXdIZ4eu1x0TrNeGFpf/hSgv1/CROX9tk+UiOLSn9fzqgwYfiufCN2pFugDjk+VxP6ItWU+XwLSR2xpPnheeHUl+6kIQTHYoYSc0WizHqafkZd9MeQs3DNGk=
-X-MS-TrafficTypeDiagnostic: CY1PR12MB0698:
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR12MB0698;20:Igp160rc4+W0bxKfrK+20cUkd6KBv7XWQG4uCKT1rui7ZFVh5U/yqQzwHPCe7gdb5thLrPJdylUqMs/UQ5Cz0plDUUMry/NMBlBs3t1o+YWUvgvW6FtI+ZycoW+7V4w0W4hOO/ILoLyTppoik27WZsLViTXOYo1jR9208HQwst64Hyw5Bjj/oxKi0UkiIeJyJzT27GlLCBq2qIIdTX8IEyURS595qyHv0LzGwAemvg2L576YmdQ07fwujSQyTdc6LSX7QQ4d5uucHIjYRb6YT8K7JknNIklUZDmV5K6w9juYsU9FRNMkuMsd3mQzrLNwZBQPost8cqgYwUnisl6Vi/ChxA/rnN8/X5jySLDd/p7aiNUOv5wVwrSqRpcXI+zFHAFPdqnkfnhBiUryOZtbOyEhG6psfy2lgt9do33DM2R6Rq0mFwWo+G6RPUotGJgiUS3rmoLwCRK3Q8MNWSjwH83toOa24DULT2zDtXpdb4R4hkO7jzrgqdli0bBxcDBW;4:DtQVFC2dO3uuEPbbN7ywsBKTEqPJYqs80igTjWLZRVDKRIinJFwWACkYF5bUk74LXCC2xA02UHrEdpWG0UhTKj1/UtdPr5IGmu3+eS9E6IR3rOTM0AApn6Iha1D6Y2Gi6k7eWPUIr4jQSEh7mjX9RSRBTFPg9xSc/X2Sp2oiqpesZHP97fF7NBi+Se4Q5ad81/7mVEC4aBgBg466ALjKv4jhJOx3GJH4euP1ZHXYl011jHaRU1IlX4YyPia5G2GXWyWZDBqLAp/rwu8uaBPfWQ==
-X-Microsoft-Antispam-PRVS: <CY1PR12MB0698AA517D1F43CA6A5D377CFD810@CY1PR12MB0698.namprd12.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3231254)(944501410)(52105095)(3002001)(93006095)(93001095)(6055026)(6041310)(20161123558120)(20161123564045)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:CY1PR12MB0698;BCL:0;PCL:0;RULEID:;SRVR:CY1PR12MB0698;
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(48565401081)(2017052603328)(7153060)(7193020);SRVR:SN1PR12MB0702;
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB0702;3:zzs5HwoRuKrApkLsCEUBk7aedX+AfwnFK55VvEx9Be5ek5rKyn4bWPzK5ZmsyBWaAkiIwRR1YG2Beb0j0HaVrgsu0lKmL/bXwH27bucWqnDhR5t6RcSQmg3XwsWtZ68nurum46N1QCcn4yhiy5/bLJyWiZorFWZCSBKGGPB/1NvI6dGhN3Rm/QJ7NtG+2K3EUrOx574N/wotmOx91P1CA6wUOIydhzb+HE9gN+WfOEAauuaZP+hkb09MrnR3TxhG;25:SQm5fKrxNkLLOlnRH6xEAUdZEWqs+YgelC3RWLeCXX3han1uqta+aMklJjVhlQ6HCrQ3xTHkyBg9qQ4lbqiDfkqJi0adAN43P+xz3P3mhKZ81pwDV/bcsUS9xrGH2TBG9x7Wbep6/jWVfc2AuFnxF96YKpb1QCD5zLCOFGC3CMiow/g23cLuHLoG0Rq00x+iFaLKufZASy8fW99xklRJ0P6iXj7T1cDDyw1i2VlinDQUF2cJUe4/XoxbSEOS9h3sQ3OhpwKgXHgW+GIkvomTOQVix+i7Ml3wY8ilsPDu2A7X4bHVnva+oLwnIHLIlsZh9Gq5mAJgJRj8Ce5t46PzOw==;31:5MkvTVWUCLP5TzI/xJnvuo1gkJi4g7FOtlVfq5TAh31lEqVg8rCj0cyCv58B7r6pS0mOSGDZwryIn9DogE3/MEyvd2M7sTQCdPqpx/HppcnBIctwxmACyJXKwdML3Qdd7tjMtk68PDUOwQ4r8QH4Ntzo/rgUdNJC+N3PrkG1kLuwIsXfFjFx1T6lD0SSiKeYjH3h+KHHQaT0FSPHlW8PqaF+CP3a/EA8sS19mZI9BnY=
+X-MS-TrafficTypeDiagnostic: SN1PR12MB0702:
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB0702;20:ZHsM7+3dEJ1ibtTAkDJbVqqM0oDJ4gw86bCB7v7RPWGlvp8NyTDvznEkvEiSvgo1ggXkxuvZrijGsWsBqpsbWMne8aGfpHEBOvmaou7/LZbYCWECr/f5VVUuPbS/vE4nlsmIkmENvjCw9/mwySQ4Mmhp8OEg/JMqPQsZ+dtKCs6/lGJATe0vDQ/lwcFJfM89kki2ifEn5Lzk9RWz9P48DUa6lafxRj1VDFpWeUqRn071r6BNjY7XEmrtSP/4dQuM9GfozyjQgySZDLmTkr630kw5jWemrZGND0SlxAjFI0UdOm1zZizyUcaLUuWIxs6Ca8soIuoAEU087/vbXnIzi/RBOHZQp+UGmFyoiI8Pe7D+eAdIrHuEHuxvCxs35omC/U6gYBYb17Gk7+1A07xhaicsSaVyndtnaJSBh1jfIY/nNwJD2ghZ1j6Ow5daebBSsyuy2xi5zUFaNcPW+lRUZf6/TPCN8r+sorLx/H0UUUU9RhJvp42zis/ka6WnRFbn;4:z1zkKupHMOsaVkvSKc6m015SWC5rZ6LNsgacYA+N+RQ6FYNJqxKR3HclcuZu8v/kgHJcfMndptZ/sEzMtT77h+mHyTDKHPLIe+N2MQidos80v9elyHqZWpEiNsFZ9t8nBo2TQM8urmWyGuMkU2Ij/19dtVD9qxoXD224nu8dHe4JhBbQiLB3YNlbCaYTF5zTd246fKrz/VwTbXBfxBubhMyfAyYhG8OxNV42WXJtWDleapyjfnibXLnoWeE+1fXG0yiU+546e9q4gan8s9KYiDyEO9LTDdQCUjHIZsYA39uPYbe14rp/291SzglBhMQx
+X-Microsoft-Antispam-PRVS: <SN1PR12MB07024573E08FA956D4D3416EFD810@SN1PR12MB0702.namprd12.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(767451399110);
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231254)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(6041310)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(6072148)(201708071742011);SRVR:SN1PR12MB0702;BCL:0;PCL:0;RULEID:;SRVR:SN1PR12MB0702;
 X-Forefront-PRVS: 06592CCE58
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6049001)(7916004)(366004)(39860400002)(39380400002)(346002)(396003)(376002)(199004)(189003)(86362001)(316002)(2351001)(305945005)(4326008)(16526019)(77096007)(25786009)(58126008)(16576012)(3846002)(478600001)(5660300001)(26005)(186003)(68736007)(2906002)(230700001)(6116002)(52116002)(97736004)(53936002)(6916009)(2486003)(50466002)(59450400001)(81166006)(103116003)(81156014)(47776003)(8676002)(9686003)(72206003)(6666003)(105586002)(6486002)(33716001)(956004)(33896004)(486006)(66066001)(476003)(23676004)(106356001)(2361001)(8936002)(7736002)(386003)(217873001);DIR:OUT;SFP:1101;SCL:1;SRVR:CY1PR12MB0698;H:[127.0.1.1];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtDWTFQUjEyTUIwNjk4OzIzOi9CZWN2d3lCbk9uWjAwUVkrSDZhQzJpNlo1?=
- =?utf-8?B?QTFWMFRVQzBEc2NlLzBtM0Y1RVdrRGtWd0FpN1Rqb2FHcndwTndYS215dzhJ?=
- =?utf-8?B?NUhYQ21HRXpUWDFKdCt2UVA2b2NkR25xVFUzSFcxQWtlWEdwVkxVTkNOQXds?=
- =?utf-8?B?RVl0OURkVkZYdSsrU2lnNFFiU3dCaXF0Vk1uRGVsdWRmazhXMWVvU1hBSzJN?=
- =?utf-8?B?bmNUM1lxRk1JbGc3UDBuTEl2MUtZZzgxbHBYQk1sSXhFZGJyVnhxTWdyU2gr?=
- =?utf-8?B?NFlRRUdhb25ZLytNVm5OakxuOERWcTE0UXhLMTdHS2QzZ04yRjhNRFIzckk2?=
- =?utf-8?B?K2JIMTR6dDByVVBVdFdOMmV3dzFhc0wzUTFneTZ2OFZ3bGgxWGhYVUR2VHBx?=
- =?utf-8?B?Z1U5Z2gydU02MEZlVFpZdGhNVnVScmEzbjViSzJwTlpoalRoWnRDRzZOcmw2?=
- =?utf-8?B?bEF1SWs4SjQ2eHFpWjRoOG5tL1hvdHdjOE9semw5aE56akhtUEhBcE5mV3F6?=
- =?utf-8?B?VWxCNFZSdE9Sb2JwSzBNcFkxbWpqc1ZrYXFJY3lDWGtWelFUdU5Vb1lBU3Yx?=
- =?utf-8?B?TjZpdjBxWjZJc0ppb3VRVko4VFgxNjZ4K3I4bEFHY2FQNmxESDdyWE1laUZB?=
- =?utf-8?B?UENLblFVWEE2bVg3R1I0U1FoSWZSNjVDaEU5alpBSUJaVnNBaExFbHlLNWNj?=
- =?utf-8?B?Z3VhT3BocmI1SUs1eVB3ODZ5ZTIxaVpxVGlVT08yS0VzOUg1eDZkZXRvOE9k?=
- =?utf-8?B?OSsvb2JCNmJ6bUFRbFN2Q1lTTnhVT0pJa0Y3Y1lYbHlvY3hXdkNla0xXWTNB?=
- =?utf-8?B?ODl0VTA4cUFrUlRCL1FXVkNsWnFtbGZjT1g5ei9xOWw1d3VzNnpIa0JNaSs5?=
- =?utf-8?B?bTFmR3o5OEFCVFd2N09naGpLdjV0UjR0allpNnRndVkvNGFrdjd0ZUJReEho?=
- =?utf-8?B?a1ptNE83cTNnblkzUjVBc1RWVVBzSWJPR2dQTysrd2grZmR4QkJ5eHlOaVhB?=
- =?utf-8?B?SUY2TzhZUzlxSTlmaEY3THAzSmlRaHBxSlVOanZZbW12U2RJelBRc3Rsc0Zi?=
- =?utf-8?B?SEROV1RCcVhlRmV5NUM5VEpiOHd3OEl2eUJOU1FHU25Mem9ma01QUHJQUG1x?=
- =?utf-8?B?cW9GY1Q4WVpmK0xQV09KemVUaytidjJ2QXBlMTY2ajY3NTZTK3RJQ3hadVd1?=
- =?utf-8?B?b0FJQjlpbENMSHdiWjBGdWxjZ1cxelRCY1EramxGS290ZlhSTkVoWGlMcEZq?=
- =?utf-8?B?Y1dtMkl4ZENPcU1VcHJDbkFVUFdkcFU2Q3IzbFl2OUw4ZkNvRG0yd1duSkt4?=
- =?utf-8?B?MUpvdUhoUDlXQUtqRW0zSHBUSXRRQUlraThaRzZOeG8waHVsaVp3ZmNmM1Ez?=
- =?utf-8?B?SU5VcVk4RHY5NEpINmVxU283dFNGblVFM0RONTZZOUJOa0NtK0dWQWo5TzJU?=
- =?utf-8?B?cWFrL3R3eHpYa0pCVHJyRVVZbGxuays4bTZEbjdZQk1DYWd0a3ljYkVxTi9C?=
- =?utf-8?B?SWFCSkFVSnR4cUtmU1lKWGdrWW1HMGFRS093T2JBM2EyNDhKUzcvczRTQ0Qx?=
- =?utf-8?B?OUhSTURMN01vYys1TXNFWkZhdEozU0pQbWovaHQrUzJzNlRXdlBSUWNOVDA5?=
- =?utf-8?B?S2s3eDIwVWFjNXMxSi9kcmhOTjZWR3lKVzBPSlR0S0JJaExMN0MrOFRqOE50?=
- =?utf-8?B?a01PWGp0TmExYjJheXBWb1FDL09OSWk0V0w5UnBIeUtBelc1dlIxeTdFM2FW?=
- =?utf-8?Q?DNB4dQt+cFXASNXjW7tfynwoOu5UiK19A+9VU=3D?=
-X-Microsoft-Antispam-Message-Info: PWbLJlPtIs2ZYm8CzVQhYoRSgH3mFyqi7IgDtTFBBC97kb0xw8OJtVV+KDpYF9FFPOIjlbb0lV8tJLxbRXeyG9XJI3vccH0of20QOvl5WVIyUCzHEjQQx2V2n5dkzQrljzyMYlcrjaNkDDuK2xTtKjNNrRJ3/0E9uyp+K55n7fweP9s5UrPHTch2GZHBl7Wu
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR12MB0698;6:kmmtj19PKGBhP9NKs8mUIL81VAnaOkjOWA6QWqIOn9JAUStXTU9zwxdt3hYnylzzifEDNonVe+zjH3ef9ZOr+zoSFyAn+rvF3HX+vdN4UGT0U6DP/HIKGXL6vEaM6L+JSQEN8B9hRnDbPsfUTLh+oFsqEkhirStqBFH4O4lC48R8WsbGETIfbN4jMeBXnlZnV0kXpK60qvQB6itVt3nRSkbsD0uIhWgtwFdSvcTkhy8P12ebgSGmvwncL+fBg2hcqTGnUqrVQBZ5Oy/XY569/AQbf/MhLjzhvATmUcZIxEYe856/EYqS9RFIU9bo2rE5ZIiEFxiZd0Mgzkn5cNzWL8UPnJnk2WBY9E44n/cRw6g0Wq+8d7by+VU3v9e43P50bGeOFTiHzZfu6gehL2nvMi4LXDoRnaV3eBGS9nmUwKjM4KEx/bphbTUatOiqO1thYfMlSfkmLTuLFHrwJRIZIg==;5:3B5YW+n9RbAIFuRfmSQ+PULSPLokyWEiTBG7c2CubRIILUAxFfn05yt2VUtG4RXlvn2dWvzmuabH64+x9hRHUS4wZZjHLkA74S68iJIWYwuKcGN1yzuwU/QUdkDG/hp2pGvgj5OB0LUh94EwtzcvrA8pcW7JAH2161NMoJQPY6E=;24:spp6Rezqu8CkOeMMRYSYLO35A2bkxvrw88UeIBc1xgshjQA+1gpEx2EuvLwpUIuaJCNoosHdImuKSrcCkPBce7YG3OcRnletTFMoWIut5gA=
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6049001)(7916004)(366004)(396003)(376002)(39860400002)(346002)(39380400002)(189003)(199004)(2906002)(316002)(476003)(50466002)(478600001)(81156014)(4326008)(53936002)(7736002)(25786009)(105586002)(47776003)(186003)(16576012)(58126008)(16526019)(230700001)(68736007)(66066001)(2361001)(9686003)(956004)(5660300001)(486006)(77096007)(103116003)(81166006)(11346002)(8676002)(23676004)(6116002)(59450400001)(97736004)(446003)(3846002)(305945005)(33896004)(106356001)(386003)(6486002)(8936002)(86362001)(52116002)(2486003)(76176011)(26005)(2351001)(72206003)(6916009)(33716001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN1PR12MB0702;H:[127.0.1.1];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtTTjFQUjEyTUIwNzAyOzIzOnF5Z0w2Sy9VV1d0K090UmtzWjNyM0s5bmR2?=
+ =?utf-8?B?MGl2QXkxQWFZb0RJRVVnNi83Q3NIckVnYWY5NXRka2NKSGFhSnR6QU1KaVlv?=
+ =?utf-8?B?TkVGdGlUck5xaG1vM3kyUi93dkFhMm9oRzFkR21SSlRld1ZMbzJrbXVWVDFK?=
+ =?utf-8?B?NnVpbmw5a2s2M1Flb21nQVh4Vi9hcjExaXZha3ZOVDZuTXVwOGxDTk82MjRC?=
+ =?utf-8?B?cXR6eURGZW5ZVTEvQURWUHFOd3BxZHZkR1hNb2pSNTZ2ZVEydmZ3YnROMDVL?=
+ =?utf-8?B?MkFBck96YVcwZlZlVzRFVWxZZGloZ0FDMGpyT3Axa2lKRHlJRU1RUStIZVdV?=
+ =?utf-8?B?aHRyODhKT2RpK3o4NUtTT2FnUHlvVG1nUlhVcVhkc2tZVDJVdTVRS0E4YnlJ?=
+ =?utf-8?B?OHpUcW1JWFQ2RWxuV0lDUmNJK0FmOUlFcjVqK3FaZDExM0xBK0pjdlR3YUE5?=
+ =?utf-8?B?elFOeFh1MmJHdWVOUWJ6dWtqRUJkUWo5WnlIejRoWUZvQVVYQ0tmWFdnejc2?=
+ =?utf-8?B?WEpuZTdOWGhOWHpzWk9rckFiZHBpclpmRjRMeTFDUGF2QmxBQnFIQlRNZ3Y3?=
+ =?utf-8?B?cG9DUWxoV3ZYOXR0b0VUMXVMdFJDTFg1R1dlcmpKR3g1a2VBQlpuSzVRanZ5?=
+ =?utf-8?B?S29Lb283c29Ed2VDaEhuNVNRWXVjL2psR09Oc0pkREQ4eHd5VzNEalpqWm5y?=
+ =?utf-8?B?YmZib3dmTThWNU5RWGEyVzBEM0YrSkM3VXlqRHYwaWhWKzFVdHBPM0xFSmcw?=
+ =?utf-8?B?L1VMM011dmNlQzBjbk1ERGNhK1NlTTBOT2ovbEgwakV2SjJvbUFid0tibEhC?=
+ =?utf-8?B?Vk56ZW94b3o3dmZOK0doL0hyRWxCYkExTGJ5R1lHZWtJOWlnVXpLb1dvcFVz?=
+ =?utf-8?B?cWZtT0JSaitZZldXVVBETzFwU1U3N0hZdFhpV0N4b3krcldaN2NpQ3ZpZVc5?=
+ =?utf-8?B?cmJMRjJhWXJGSTR1VElYbjEzSXRFSU5FeUttSXFTS2tORVJnbW1KUlZmQTJB?=
+ =?utf-8?B?dmRwRnNMeWp1SmJQRVBPMzBBeXNPaGU5L093bGMwOWlXOTBaWDRna1hPajRY?=
+ =?utf-8?B?dlc4Qmg4VlZGaXZNVldId0Z6ZlJhUldyN2M0d1I5NytuSGFiNjVqTlBja2hB?=
+ =?utf-8?B?VEhnQ0syN1NLNGVRNHdlMWh2ejNKNEtpYSs3QUxUeFh3eHlvUnlOWnNxbTVP?=
+ =?utf-8?B?bjhlODlBVXVOV3BYMS9JWWQ1TWU0bk0xRFNaK25yNk83SzFneUFrNjVCQTA1?=
+ =?utf-8?B?SUR0bHdnWTcvdklOczJyWThXRkY3SDBwcDI3YXpQUmhMVDQxajE5SitBeDdJ?=
+ =?utf-8?B?WjIyQ1pXTnNlRVNuS1ZnRXMyellSd2J0aHo5VTIxL3FRcWpVK2JyRkJBMGpy?=
+ =?utf-8?B?VWJsME9NbFJ5Y3hZVlBZNmFJUDkwMXRSK2s3cnZjVDVwUG1YY2JjdlJrWDdP?=
+ =?utf-8?B?TVE4RVRpUWtmRzVPd21LVGpzaVZ6RXRFSlFsMDdtOWp3ZTdlblhieVozZXVq?=
+ =?utf-8?B?NkhKSU0vU25JVlV1N3AydzZBMS9vcFRYZzBsc1Vpcm8xbE5VVFJnWEpuQmJx?=
+ =?utf-8?B?ZXBFNHA2eG14My9nQUg4Tm1XRzRIeFUwczRVcGRFTjZFa0Z0QkIxeE1Nd3N5?=
+ =?utf-8?B?VVphQlRIanNzeEtvajVXMWpCK1lxMWQzclZqaGdsZmUxRC9obG9INnlpQkFl?=
+ =?utf-8?B?VnBvTVBKYTFGc0lpRXZmQ1pnT3pIK0VnbWIrdUp1Qkg5NzhRRElBd3JkUHMv?=
+ =?utf-8?B?a045dUNMNzVjVDQwdGJiWVFBYzN5MFJMQWhVTTliMS9JQzFEVDBhR3RkQTZ6?=
+ =?utf-8?Q?wcV3QWfchHm3I?=
+X-Microsoft-Antispam-Message-Info: MIw4KvGNtrXPp/Phol2n1RUl8hjNfaee1U1//oWQrmKxZBItG8/+NbC1jx/uqUBF2gy240l1/svZM0snbLhumvW50co+OD8uNGgmrSJuxdBAj7Lv1q6BUAwcU7N603Y2tkA66extK8vF9t7x6n+YpwmkHF1Cc9iIdqaesG7MAd5SAZwHtEHgGECdhuf0dwgr
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB0702;6:3CeyADRSmcyWNfarIR51lvqaCS7zT6Tll257cOS/QP5aWxxx4bLd3p86EdbVnfyTL5hygqW3aE4WxlhYqwEMw1osd1ryCwNBzs8HvqfDApZz+yf2agZ702wNUHjRx6fb5oYZE/+MQNSkToH40OSbqNJmheOozU1aokPCdXAm2i5bK8/Sa3iiuGYYk++LAXFGRmuXjq+XX7HX558YC359TOaEI7lCnGoc7zy8sIQlVzXV78+XjKiLh5p3W0KsfThhsOaRSKbxkQZdvdMfqnsHygMGhQb1RzXtLUmqx4fy02KwOuN907tgJdVjSAxNEpOhhxI0ocbxr+kBzUOEfP8HSNJgB3TFcZzNVIQIwbL2bDKsebsnUKGljo+vx0K+9lLW6lrrq+PTAVQv+hQAoS5rldv2SJ19MSYJGJiYf83hfWWwZtt9ngqMsSWxyKHMccvtALGpINpVS9IRmgRfmnvC5w==;5:O7WqjtY87uaeEaSPO/djhNaSxvxVvL1h5K8EsMJrcFKFDYpmCw7LPeWwlYlt1Zak0HY9gb/KG+ueN7S2MtCG1yh2K0kH6tWEQ+oHmR5k0SuN5uZnbmKikSmFg70+mC5Ka+fvSVc6OF7b4TTDqJ+mozjT/K5HN3Qak8J71p9KIxU=;24:mh1Sdl4nFr3Pu4I00+gdDLZJXjfCtiqH/B65ZwiAosnii4/F9l3L3ZcU1ahGOdXiPzllfe0cIT421QcGVImdrzkxWLz/8PliB/382hF721s=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR12MB0698;7:R8M6WUBNsgsOlEtsP1zU/hJxBujayfCQzDDnkhNKnjSQG3Q1EeYuxzbAdHzvzcPlLe02zNTiR6/mUCAInsKV9cbgiWI0sc+10BoUez0pBp/8URyEYqHTwoKcxtlTJ3sQQYxzuKVwrcZlIkkmZ1rbioGhPJH7RnXcSV0AX3VHnS4E/fGrCxVpQgInK5OYs4n9mB73q1M3iF3WHQCyH5aQL00uStGbba2uSVsn5TBgTozt2C/xHG6xXfG6+AmEBNHM;20:P7Vo9ekGnV29wSYLf3FAhIdYU/FMNWkHOZ+of+6Ew/NLtjR2dy/33oftj5FM9bEjcfQbunmU5o+1xr6mKX7YGkoci6x6X4GnFTgKQpO3E3Ch4d9aAbadztjy7LXWJ0xTxW2vnEVP9jaQVNMdXcMcYpPaXmYRLmRoj8kEIH1NcjWSSZabVOsz3Yb43F2qZERcsmd9SeAaG498ZUCXC46Ihu23ISO07Auc+rvyWY1d54RmiRzefnz2OcrqF6ryFBve
-X-MS-Office365-Filtering-Correlation-Id: 0ca10328-5ff3-447a-ff06-08d5af9d1c99
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB0702;7:fdowxKLoil50AGhoRTB1mbAYQKEwnJfcUxwsTkXiZH+BvL66nHDo/WT1f7r0BN3E8P8JI+Oh3+Reh+vQoyxxveXvHxRJOsZ2KqdnKX2pp3jp0P5wvjeZ/FiC+9iwzdjRXGH4BSrCpObm1x2CCkUy/wRkFnO2OWmheHPtw4B5KWFa1VHOp2QsobgljjGLuaGqjdGbhBROtQVnECxBlL8r5M1Teym2tptIWUERvnAObAANLWN6pvbQgKzS5eFdEe+A;20:/LVTv477c5PRxBe11LD0OjwC5R3cB2aSj/UuxOHTzX5dSP5qUeumFYjnZcBtK4YPjJlQ/yzNNoi6OWO8Gvo8+lmRzPYdykjusloX7JSy2lFjP99pjt6E6hG/k2ntocZzmOEO4fUzdGQW/WTyBvsdkBti7lh1k0yRWrKBh3XGWYQCvIBGL3Ppiz0cZqBkeyX6AN9j3FjwlFW8D7mehxKBcufOaitBYkmt+Rhho071kyvbBUYLkUrZdWBOWWU7+Bc0
+X-MS-Office365-Filtering-Correlation-Id: fdda26df-0678-4056-fe9b-08d5af9d2181
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 May 2018 19:52:46.4248 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0ca10328-5ff3-447a-ff06-08d5af9d1c99
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 May 2018 19:52:54.8280 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: fdda26df-0678-4056-fe9b-08d5af9d2181
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR12MB0698
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR12MB0702
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update the AMD IOMMU log messages to be more precise, and
-add a log message for a new event type.
+Provide detailed data for each event, as appropriate.
 
+Signed-off-by: Gary R Hook <gary.hook@amd.com>
 ---
+ drivers/iommu/amd_iommu.c |   31 +++++++++++++------------------
+ 1 file changed, 13 insertions(+), 18 deletions(-)
 
-Gary R Hook (2):
-      iommu/amd - Update the PASID information printed to the system log
-      iommu/amd - Update logging information for new event type
-
-
- drivers/iommu/amd_iommu.c       |   39 +++++++++++++++++++++------------------
- drivers/iommu/amd_iommu_types.h |    1 +
- 2 files changed, 22 insertions(+), 18 deletions(-)
-
---
+diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+index 8c469b51185f..a557565d4413 100644
+--- a/drivers/iommu/amd_iommu.c
++++ b/drivers/iommu/amd_iommu.c
+@@ -544,7 +544,7 @@ static void amd_iommu_report_page_fault(u16 devid, u16 domain_id,
+ static void iommu_print_event(struct amd_iommu *iommu, void *__evt)
+ {
+ 	struct device *dev = iommu->iommu.dev;
+-	int type, devid, domid, flags;
++	int type, devid, pasid, flags;
+ 	volatile u32 *event = __evt;
+ 	int count = 0;
+ 	u64 address;
+@@ -552,7 +552,7 @@ static void iommu_print_event(struct amd_iommu *iommu, void *__evt)
+ retry:
+ 	type    = (event[1] >> EVENT_TYPE_SHIFT)  & EVENT_TYPE_MASK;
+ 	devid   = (event[0] >> EVENT_DEVID_SHIFT) & EVENT_DEVID_MASK;
+-	domid   = (event[1] >> EVENT_DOMID_SHIFT) & EVENT_DOMID_MASK;
++	pasid   = PPR_PASID(*(u64 *)&event[0]);
+ 	flags   = (event[1] >> EVENT_FLAGS_SHIFT) & EVENT_FLAGS_MASK;
+ 	address = (u64)(((u64)event[3]) << 32) | event[2];
+ 
+@@ -567,7 +567,7 @@ static void iommu_print_event(struct amd_iommu *iommu, void *__evt)
+ 	}
+ 
+ 	if (type == EVENT_TYPE_IO_FAULT) {
+-		amd_iommu_report_page_fault(devid, domid, address, flags);
++		amd_iommu_report_page_fault(devid, pasid, address, flags);
+ 		return;
+ 	} else {
+ 		dev_err(dev, "AMD-Vi: Event logged [");
+@@ -575,10 +575,9 @@ static void iommu_print_event(struct amd_iommu *iommu, void *__evt)
+ 
+ 	switch (type) {
+ 	case EVENT_TYPE_ILL_DEV:
+-		dev_err(dev, "ILLEGAL_DEV_TABLE_ENTRY device=%02x:%02x.%x "
+-			"address=0x%016llx flags=0x%04x]\n",
++		dev_err(dev, "ILLEGAL_DEV_TABLE_ENTRY device=%02x:%02x.%x pasid=0x%05x address=0x%016llx flags=0x%04x]\n",
+ 			PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
+-			address, flags);
++			pasid, address, flags);
+ 		dump_dte_entry(devid);
+ 		break;
+ 	case EVENT_TYPE_DEV_TAB_ERR:
+@@ -588,34 +587,30 @@ static void iommu_print_event(struct amd_iommu *iommu, void *__evt)
+ 			address, flags);
+ 		break;
+ 	case EVENT_TYPE_PAGE_TAB_ERR:
+-		dev_err(dev, "PAGE_TAB_HARDWARE_ERROR device=%02x:%02x.%x "
+-			"domain=0x%04x address=0x%016llx flags=0x%04x]\n",
++		dev_err(dev, "PAGE_TAB_HARDWARE_ERROR device=%02x:%02x.%x domain=0x%04x address=0x%016llx flags=0x%04x]\n",
+ 			PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
+-			domid, address, flags);
++			pasid, address, flags);
+ 		break;
+ 	case EVENT_TYPE_ILL_CMD:
+ 		dev_err(dev, "ILLEGAL_COMMAND_ERROR address=0x%016llx]\n", address);
+ 		dump_command(address);
+ 		break;
+ 	case EVENT_TYPE_CMD_HARD_ERR:
+-		dev_err(dev, "COMMAND_HARDWARE_ERROR address=0x%016llx "
+-			"flags=0x%04x]\n", address, flags);
++		dev_err(dev, "COMMAND_HARDWARE_ERROR address=0x%016llx flags=0x%04x]\n",
++			address, flags);
+ 		break;
+ 	case EVENT_TYPE_IOTLB_INV_TO:
+-		dev_err(dev, "IOTLB_INV_TIMEOUT device=%02x:%02x.%x "
+-			"address=0x%016llx]\n",
++		dev_err(dev, "IOTLB_INV_TIMEOUT device=%02x:%02x.%x address=0x%016llx]\n",
+ 			PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
+ 			address);
+ 		break;
+ 	case EVENT_TYPE_INV_DEV_REQ:
+-		dev_err(dev, "INVALID_DEVICE_REQUEST device=%02x:%02x.%x "
+-			"address=0x%016llx flags=0x%04x]\n",
++		dev_err(dev, "INVALID_DEVICE_REQUEST device=%02x:%02x.%x pasid=0x%05x address=0x%016llx flags=0x%04x]\n",
+ 			PCI_BUS_NUM(devid), PCI_SLOT(devid), PCI_FUNC(devid),
+-			address, flags);
++			pasid, address, flags);
+ 		break;
+ 	default:
+-		dev_err(dev, KERN_ERR "UNKNOWN event[0]=0x%08x event[1]=0x%08x "
+-			"event[2]=0x%08x event[3]=0x%08x\n",
++		dev_err(dev, "UNKNOWN event[0]=0x%08x event[1]=0x%08x event[2]=0x%08x event[3]=0x%08x\n",
+ 			event[0], event[1], event[2], event[3]);
+ 	}
+ 
