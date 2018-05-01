@@ -1,77 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754375AbeEAKBY (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 06:01:24 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:15194 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753423AbeEAKBX (ORCPT
+        id S1754051AbeEAKCs (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 06:02:48 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:42673 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750994AbeEAKCq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 06:01:23 -0400
-Subject: Re: WARNING: kmalloc bug in bfs_fill_super
-To: syzbot <syzbot+71c6b5d68e91149fc8a4@syzkaller.appspotmail.com>,
-        aivazian.tigran@gmail.com, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-References: <0000000000001f05330568a6b369@google.com>
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <32e853dd-3340-653e-a876-dce5de44d990@I-love.SAKURA.ne.jp>
-Date: Tue, 1 May 2018 19:01:08 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 1 May 2018 06:02:46 -0400
+X-Google-Smtp-Source: AB8JxZqRHBj4853rqKG9UhAn9VHWjrh3VWdYwoq8IJBWeGU70Ohi1q5sGMcjPYa5a0eQjf4kzvyHPw==
+Date: Tue, 1 May 2018 12:02:42 +0200
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Eduardo Valentin <edubezval@gmail.com>,
+        Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 13/18] thermal: exynos: set trips in ascending order in
+ exynos7_tmu_initialize()
+Message-ID: <20180501100242.GJ27619@mai>
+References: <1524743493-28113-1-git-send-email-b.zolnierkie@samsung.com>
+ <CGME20180426115231epcas2p3727de5409903e05811c2b5ed10ee0a51@epcas2p3.samsung.com>
+ <1524743493-28113-14-git-send-email-b.zolnierkie@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <0000000000001f05330568a6b369@google.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1524743493-28113-14-git-send-email-b.zolnierkie@samsung.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->From 247cae4da0490c2e285e0a99e630ef963fabb6d5 Mon Sep 17 00:00:00 2001
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Date: Tue, 1 May 2018 14:15:19 +0900
-Subject: [PATCH] bfs: add sanity check at bfs_fill_super().
+On Thu, Apr 26, 2018 at 01:51:28PM +0200, Bartlomiej Zolnierkiewicz wrote:
+> Set trips in ascending order in exynos7_tmu_initialize() (it should
+> make no difference in driver operation). This prepares the driver
+> code to moving trips setting from ->tmu_initialize method to
+> exynos_tmu_initialize().
+> 
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+>  drivers/thermal/samsung/exynos_tmu.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+> index 12b60e2..571511f 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.c
+> +++ b/drivers/thermal/samsung/exynos_tmu.c
+> @@ -618,7 +618,7 @@ static void exynos7_tmu_initialize(struct platform_device *pdev)
+>  	sanitize_temp_error(data, trim_info);
+>  
+>  	/* Write temperature code for rising and falling threshold */
+> -	for (i = (of_thermal_get_ntrips(tz) - 1); i >= 0; i--) {
+> +	for (i = 0; i < of_thermal_get_ntrips(tz); i++) {
 
-syzbot is reporting too large memory allocation at bfs_fill_super() [1].
-Since file system image is corrupted such that bfs_sb->s_start == 0,
-bfs_fill_super() is trying to allocate 8MB of continuous memory. Fix this
-by adding a sanity check on bfs_sb->s_start, __GFP_NOWARN and printf().
+Capped with data->ntrip ?
 
-[1] https://syzkaller.appspot.com/bug?id=16a87c236b951351374a84c8a32f40edbc034e96
+>  		tz->ops->get_trip_temp(tz, i, &temp);
+>  		temp /= MCELSIUS;
+>  		exynos7_tmu_set_trip_temp(data, i, temp);
+> -- 
+> 1.9.1
+> 
 
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: syzbot <syzbot+71c6b5d68e91149fc8a4@syzkaller.appspotmail.com>
-Cc: Tigran A. Aivazian <aivazian.tigran@gmail.com>
----
- fs/bfs/inode.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/fs/bfs/inode.c b/fs/bfs/inode.c
-index 9a69392..d81c148 100644
---- a/fs/bfs/inode.c
-+++ b/fs/bfs/inode.c
-@@ -350,7 +350,8 @@ static int bfs_fill_super(struct super_block *s, void *data, int silent)
- 
- 	s->s_magic = BFS_MAGIC;
- 
--	if (le32_to_cpu(bfs_sb->s_start) > le32_to_cpu(bfs_sb->s_end)) {
-+	if (le32_to_cpu(bfs_sb->s_start) > le32_to_cpu(bfs_sb->s_end) ||
-+	    le32_to_cpu(bfs_sb->s_start) < BFS_BSIZE) {
- 		printf("Superblock is corrupted\n");
- 		goto out1;
- 	}
-@@ -359,9 +360,11 @@ static int bfs_fill_super(struct super_block *s, void *data, int silent)
- 					sizeof(struct bfs_inode)
- 					+ BFS_ROOT_INO - 1;
- 	imap_len = (info->si_lasti / 8) + 1;
--	info->si_imap = kzalloc(imap_len, GFP_KERNEL);
--	if (!info->si_imap)
-+	info->si_imap = kzalloc(imap_len, GFP_KERNEL | __GFP_NOWARN);
-+	if (!info->si_imap) {
-+		printf("Cannot allocate %u bytes\n", imap_len);
- 		goto out1;
-+	}
- 	for (i = 0; i < BFS_ROOT_INO; i++)
- 		set_bit(i, info->si_imap);
- 
 -- 
-1.8.3.1
+
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
