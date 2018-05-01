@@ -1,106 +1,202 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752673AbeEAHjH (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 03:39:07 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:34902 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751340AbeEAHjF (ORCPT
+        id S1752012AbeEAHuy (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 03:50:54 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:34444 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751071AbeEAHuw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 03:39:05 -0400
-X-Google-Smtp-Source: AB8JxZp7gxDnRB/BRZz6BGdzL1izYhNsQcpQB9I+ffu0pwUUzZbLaITwTd37WEr9EHYFY76AoefLMm5W/afxks26AiE=
+        Tue, 1 May 2018 03:50:52 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1AEF5601A0
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=gkohli@codeaurora.org
+Subject: Re: [PATCH v1] kthread/smpboot: Serialize kthread parking against
+ wakeup
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: tglx@linutronix.de, mpe@ellerman.id.au, mingo@kernel.org,
+        bigeasy@linutronix.de, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Neeraj Upadhyay <neeraju@codeaurora.org>,
+        Will Deacon <will.deacon@arm.com>, Oleg Nesterov <oleg@redhat.com>
+References: <1524645199-5596-1-git-send-email-gkohli@codeaurora.org>
+ <20180425200917.GZ4082@hirez.programming.kicks-ass.net>
+ <20180426084131.GV4129@hirez.programming.kicks-ass.net>
+ <20180426085719.GW4129@hirez.programming.kicks-ass.net>
+ <4d3f68f8-e599-6b27-a2e8-9e96b401d57a@codeaurora.org>
+ <20180430111744.GE4082@hirez.programming.kicks-ass.net>
+From: "Kohli, Gaurav" <gkohli@codeaurora.org>
+Message-ID: <3af3365b-4e3f-e388-8e90-45a3bd4120fd@codeaurora.org>
+Date: Tue, 1 May 2018 13:20:26 +0530
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1804302151530.1596@nanos.tec.linutronix.de>
-References: <CADDKRnBD=cgptLmDMu0YiaUThO-1ydKaAD4X3sTWfLuP5M5BEw@mail.gmail.com>
- <alpine.DEB.2.21.1804302151530.1596@nanos.tec.linutronix.de>
-From: =?UTF-8?Q?J=C3=B6rg_Otte?= <jrg.otte@gmail.com>
-Date: Tue, 1 May 2018 09:39:04 +0200
-Message-ID: <CADDKRnAi69PFNH-hyxCTLckJ5UU6-DKWvzGNzxZZhD0sA215qg@mail.gmail.com>
-Subject: Re: [v4.17-rcx] Lost IBPB, IBRS_FW support for spectre_v2 mitigation.
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: kirill.shutemov@linux.intel.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Borislav Petkov <bp@alien8.de>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180430111744.GE4082@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w417dDhv027102
 
-2018-04-30 21:53 GMT+02:00 Thomas Gleixner <tglx@linutronix.de>:
-> Jörg,
->
-> On Mon, 30 Apr 2018, Jörg Otte wrote:
->
->> In v4.16 I already had support for BPB, IBRS_FW for spectre_v2 mitigation.
->> But this went away in v17-rcx.
->>
->> With 4.16 I have:
->> jojo@fichte:~$ cd /sys/devices/system/cpu/vulnerabilities; grep ".*" *
->> meltdown:Mitigation: PTI
->> spectre_v1:Mitigation: __user pointer sanitization
->> spectre_v2:Mitigation: Full generic retpoline, IBPB, IBRS_FW
->>
->> With 4.17-rcx I have:
->> meltdown:Mitigation: PTI
->> spectre_v1:Mitigation: __user pointer sanitization
->> spectre_v2:Mitigation: Full generic retpoline
->>
->> Processor is
->> vendor_id       : GenuineIntel
->> cpu family      : 6
->> model           : 60
->> model name      : Intel(R) Core(TM) i5-4200M CPU @ 2.50GHz
->> stepping        : 3
->> microcode       : 0x24
->>
->>
->> The problem goes away if I revert:
->> d94a155 x86/cpu: Prevent cpuinfo_x86::x86_phys_bits adjustment corruption
->
-> Does the patch below fix the problem for you?
->
-> Thanks,
->
->         tglx
->
-> 8<------------------
-> Subject: x86/cpu: Restore CPUID_8000_0008_EBX reload
-> From: Thomas Gleixner <tglx@linutronix.de>
-> Date: Mon, 30 Apr 2018 21:47:46 +0200
->
-> The recent commt which addresses the x86_phys_bits corruption with
-> encrypted memory on CPUID reload after a microcode update lost the reload
-> of CPUID_8000_0008_EBX as well.
->
-> As a consequence IBRS and IBRS_FW are not longer detected
->
-> Restore the behaviour by bringing the reload of CPUID_8000_0008_EBX back,.
->
-> Fixes: d94a155c59c9 ("x86/cpu: Prevent cpuinfo_x86::x86_phys_bits adjustment corruption")
-> Reported-by: Jörg Otte <jrg.otte@gmail.com>
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: kirill.shutemov@linux.intel.com
-> ---
->  arch/x86/kernel/cpu/common.c |    5 +++++
->  1 file changed, 5 insertions(+)
->
-> --- a/arch/x86/kernel/cpu/common.c
-> +++ b/arch/x86/kernel/cpu/common.c
-> @@ -848,6 +848,11 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
->                 c->x86_power = edx;
->         }
->
-> +       if (c->extended_cpuid_level >= 0x80000008) {
-> +               cpuid(0x80000008, &eax, &ebx, &ecx, &edx);
-> +               c->x86_capability[CPUID_8000_0008_EBX] = ebx;
-> +       }
-> +
->         if (c->extended_cpuid_level >= 0x8000000a)
->                 c->x86_capability[CPUID_8000_000A_EDX] = cpuid_edx(0x8000000a);
->
+sorry for spam, Adding list
 
-No, does not fix it.
+On 4/30/2018 4:47 PM, Peter Zijlstra wrote:
+> On Thu, Apr 26, 2018 at 09:23:25PM +0530, Kohli, Gaurav wrote:
+>> On 4/26/2018 2:27 PM, Peter Zijlstra wrote:
+>>
+>>> On Thu, Apr 26, 2018 at 10:41:31AM +0200, Peter Zijlstra wrote:
+>>>> diff --git a/kernel/kthread.c b/kernel/kthread.c
+>>>> index cd50e99202b0..4b6503c6a029 100644
+>>>> --- a/kernel/kthread.c
+>>>> +++ b/kernel/kthread.c
+>>>> @@ -177,12 +177,13 @@ void *kthread_probe_data(struct task_struct *task)
+>>>>    static void __kthread_parkme(struct kthread *self)
+>>>>    {
+>>>> -	__set_current_state(TASK_PARKED);
+>>>> -	while (test_bit(KTHREAD_SHOULD_PARK, &self->flags)) {
+>>>> +	for (;;) {
+>>>> +		__set_task_state(TASK_PARKED);
+>>> 		set_current_state(TASK_PARKED);
+>>>
+>>> of course..
+>>
+>> Hi Peter,
+>>
+>> Maybe i am missing something , but still that race can come as we don't put task_parked on special state.
+>>
+>> Controller                                                                       Hotplug
+>>
+>>                                                                                   Loop
+>>
+>>                                                                                   Task_Interruptible
+>>
+>> Set SHOULD_PARK
+>>
+>> wakeup -> Proceeds
+>>
+>>                                                                                    Set Running
+>>
+>>                                                                                    kthread_parkme
+>>
+>>                                                                                    SET TASK_PARKED
+>>
+>>                                                                                    schedule
+>>
+>> Set TASK_RUNNING
+>>
+>> Can you please correct ME, if I misunderstood this.
+> 
+> If that could happen, all wait-loops would be broken. However,
+> AFAICT that cannot happen, because ttwu_remote() and schedule()
+> serialize on rq->lock. See:
+> 
+> 
+> A						B
+> 
+> for (;;) {
+> 	set_current_state(UNINTERRUPTIBLE);
+> 
+> 						cond1 = true;
+> 						wake_up_process(A)
+> 						  lock(A->pi_lock)
+> 						  smp_mb__after_spinlock()
+> 						  if (A->state & TASK_NORMAL)
+> 						    A->on_rq && ttwu_remote()
+> 	if (cond1) // true
+> 		break;
+> 	schedule();
+> }
+> __set_current_state(RUNNING);
+> 
 
-Thanks, Jörg
+Hi Peter,
+
+Sorry for the late reply and i was on leave.
+
+Thanks for the new patches, We will apply and test for issue reproduction.
+
+But In our older case, where we have seen failure below is the wake up 
+path and ftraces, Wakeup occured  and completed before schedule call only.
+
+So final state of CPUHP is running not parked. I have also pasted debug 
+ftraces that we got during issue reproduction.
+
+Here wakeup for cpuhp is below:
+
+takedown_cpu-> kthread_park-> wake_up_process
+
+
+  39,034,311,742,395  apps (10240)        Trace Printk 
+cpuhp/0  (16)  [000]  39015.625000: <debug> __kthread_parkme state=512 
+task=ffffffcc7458e680 flags: 0x5 -> state 5 -> state is parked inside 
+parkme function
+
+39,034,311,846,510  apps (10240)        Trace Printk 
+cpuhp/0  (16)  [000]  39015.625000: <debug> before schedule 
+__kthread_parkme state=0 task=ffffffcc7458e680 flags: 0xd  ->  just 
+before schedule call, state is running
+
+tatic void __kthread_parkme(struct kthread *self)
+
+{
+
+         __set_current_state(TASK_PARKED);
+
+         while (test_bit(KTHREAD_SHOULD_PARK, &self->flags)) {
+
+                 if (!test_and_set_bit(KTHREAD_IS_PARKED, &self->flags))
+
+                         complete(&self->parked);
+
+                 schedule();
+
+                 __set_current_state(TASK_PARKED);
+
+         }
+
+         clear_bit(KTHREAD_IS_PARKED, &self->flags);
+
+         __set_current_state(TASK_RUNNING);
+
+}
+
+So my point is here also, if it is reschedule then it can set 
+TASK_PARKED, but it seems after takedown_cpu call this thread never get 
+a chance to run, So final state is TASK_RUNNING.
+
+In our current fix also can't we observe same scenario where final state 
+is TASK_RUNNING.
+
+Regards
+
+Gaurav
+
+> for (;;) {
+> 	set_current_state(UNINTERRUPTIBLE);
+> 	if (cond2)
+> 		break;
+> 
+> 	schedule();
+> 	  lock(rq->lock)
+> 	  smp_mb__after_spinlock();
+> 	  deactivate_task(A);
+> 	  <sched-out>
+> 	  unlock(rq->lock);
+> 						      rq = __task_rq_lock(A)
+> 						      if (A->on_rq) // false
+> 						        A->state = TASK_RUNNING;
+> 						      __task_rq_unlock(rq)
+> 
+> 
+> Either A's schedule() must observe RUNNING (not shown) or B must
+> observe !A->on_rq (shown) and not issue the store.
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, 
+Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project.
