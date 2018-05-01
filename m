@@ -1,78 +1,228 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754765AbeEAK1n (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 06:27:43 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:33499 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750994AbeEAK1j (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 06:27:39 -0400
-Subject: Re: INFO: task hung in wb_shutdown (2)
-To: Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
-        Tejun Heo <tj@kernel.org>
-Cc: syzbot <syzbot+c0cf869505e03bdf1a24@syzkaller.appspotmail.com>,
-        christophe.jaillet@wanadoo.fr, LKML <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>, syzkaller-bugs@googlegroups.com,
-        weiping zhang <zhangweiping@didichuxing.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dmitry Vyukov <dvyukov@google.com>, linux-block@vger.kernel.org
-References: <94eb2c05b2d83650030568cc8bd9@google.com>
- <e56c1600-8923-dd6b-d065-c2fd2a720404@I-love.SAKURA.ne.jp>
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <43302799-1c50-4cab-b974-9fe1ca584813@I-love.SAKURA.ne.jp>
-Date: Tue, 1 May 2018 19:27:14 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <e56c1600-8923-dd6b-d065-c2fd2a720404@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1754856AbeEAK2A (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 06:28:00 -0400
+Received: from foss.arm.com ([217.140.101.70]:45240 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751658AbeEAK17 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 06:27:59 -0400
+From: Punit Agrawal <punit.agrawal@arm.com>
+To: kvmarm@lists.cs.columbia.edu
+Cc: Punit Agrawal <punit.agrawal@arm.com>,
+        linux-arm-kernel@lists.infradead.org, marc.zyngier@arm.com,
+        christoffer.dall@arm.com, linux-kernel@vger.kernel.org,
+        suzuki.poulose@arm.com, Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH v2 4/4] KVM: arm64: Add support for PUD hugepages at stage 2
+Date: Tue,  1 May 2018 11:26:59 +0100
+Message-Id: <20180501102659.13188-5-punit.agrawal@arm.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180501102659.13188-1-punit.agrawal@arm.com>
+References: <20180501102659.13188-1-punit.agrawal@arm.com>
+X-ARM-No-Footer: FoSSMail
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tejun, Jan, Jens,
+KVM currently supports PMD hugepages at stage 2. Extend the stage 2
+fault handling to add support for PUD hugepages.
 
-Can you review this patch? syzbot has hit this bug for nearly 4000 times but
-is still unable to find a reproducer. Therefore, the only way to test would be
-to apply this patch upstream and test whether the problem is solved.
+Addition of pud hugepage support enables additional hugepage
+sizes (e.g., 1G with 4K granule) which can be useful on cores that
+support mapping larger block sizes in the TLB entries.
 
-On 2018/04/24 21:19, Tetsuo Handa wrote:
->>From 39ed6be8a2c12dfe54feaa5abbc2ec46103022bf Mon Sep 17 00:00:00 2001
-> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Date: Tue, 24 Apr 2018 11:59:08 +0900
-> Subject: [PATCH] bdi: wake up concurrent wb_shutdown() callers.
-> 
-> syzbot is reporting hung tasks at wait_on_bit(WB_shutting_down) in
-> wb_shutdown() [1]. This might be because commit 5318ce7d46866e1d ("bdi:
-> Shutdown writeback on all cgwbs in cgwb_bdi_destroy()") forgot to call
-> wake_up_bit(WB_shutting_down) after clear_bit(WB_shutting_down).
-> 
-> [1] https://syzkaller.appspot.com/bug?id=b297474817af98d5796bc544e1bb806fc3da0e5e
-> 
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Reported-by: syzbot <syzbot+c0cf869505e03bdf1a24@syzkaller.appspotmail.com>
-> Fixes: 5318ce7d46866e1d ("bdi: Shutdown writeback on all cgwbs in cgwb_bdi_destroy()")
-> Cc: Tejun Heo <tj@kernel.org>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: Jens Axboe <axboe@fb.com>
-> ---
->  mm/backing-dev.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/mm/backing-dev.c b/mm/backing-dev.c
-> index 023190c..dadac99 100644
-> --- a/mm/backing-dev.c
-> +++ b/mm/backing-dev.c
-> @@ -384,6 +384,8 @@ static void wb_shutdown(struct bdi_writeback *wb)
->  	 */
->  	smp_wmb();
->  	clear_bit(WB_shutting_down, &wb->state);
-> +	smp_mb(); /* advised by wake_up_bit() */
-> +	wake_up_bit(&wb->state, WB_shutting_down);
->  }
->  
->  static void wb_exit(struct bdi_writeback *wb)
-> 
+Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
+Cc: Christoffer Dall <christoffer.dall@arm.com>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+---
+ arch/arm/include/asm/kvm_mmu.h         | 19 ++++++++++++
+ arch/arm64/include/asm/kvm_mmu.h       | 15 ++++++++++
+ arch/arm64/include/asm/pgtable-hwdef.h |  4 +++
+ arch/arm64/include/asm/pgtable.h       |  2 ++
+ virt/kvm/arm/mmu.c                     | 40 ++++++++++++++++++++++++--
+ 5 files changed, 77 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
+index 224c22c0a69c..155916dbdd7e 100644
+--- a/arch/arm/include/asm/kvm_mmu.h
++++ b/arch/arm/include/asm/kvm_mmu.h
+@@ -77,8 +77,11 @@ void kvm_clear_hyp_idmap(void);
+ 
+ #define kvm_pfn_pte(pfn, prot)	pfn_pte(pfn, prot)
+ #define kvm_pfn_pmd(pfn, prot)	pfn_pmd(pfn, prot)
++#define kvm_pfn_pud(pfn, prot)	(__pud(0))
+ 
+ #define kvm_pmd_mkhuge(pmd)	pmd_mkhuge(pmd)
++/* No support for pud hugepages */
++#define kvm_pud_mkhuge(pud)	(pud)
+ 
+ /*
+  * The following kvm_*pud*() functionas are provided strictly to allow
+@@ -95,6 +98,22 @@ static inline bool kvm_s2pud_readonly(pud_t *pud)
+ 	return false;
+ }
+ 
++static inline void kvm_set_pud(pud_t *pud, pud_t new_pud)
++{
++	BUG();
++}
++
++static inline pud_t kvm_s2pud_mkwrite(pud_t pud)
++{
++	BUG();
++	return pud;
++}
++
++static inline pud_t kvm_s2pud_mkexec(pud_t pud)
++{
++	BUG();
++	return pud;
++}
+ 
+ static inline void kvm_set_pmd(pmd_t *pmd, pmd_t new_pmd)
+ {
+diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
+index f440cf216a23..f49a68fcbf26 100644
+--- a/arch/arm64/include/asm/kvm_mmu.h
++++ b/arch/arm64/include/asm/kvm_mmu.h
+@@ -172,11 +172,14 @@ void kvm_clear_hyp_idmap(void);
+ 
+ #define	kvm_set_pte(ptep, pte)		set_pte(ptep, pte)
+ #define	kvm_set_pmd(pmdp, pmd)		set_pmd(pmdp, pmd)
++#define kvm_set_pud(pudp, pud)		set_pud(pudp, pud)
+ 
+ #define kvm_pfn_pte(pfn, prot)		pfn_pte(pfn, prot)
+ #define kvm_pfn_pmd(pfn, prot)		pfn_pmd(pfn, prot)
++#define kvm_pfn_pud(pfn, prot)		pfn_pud(pfn, prot)
+ 
+ #define kvm_pmd_mkhuge(pmd)		pmd_mkhuge(pmd)
++#define kvm_pud_mkhuge(pud)		pud_mkhuge(pud)
+ 
+ static inline pte_t kvm_s2pte_mkwrite(pte_t pte)
+ {
+@@ -190,6 +193,12 @@ static inline pmd_t kvm_s2pmd_mkwrite(pmd_t pmd)
+ 	return pmd;
+ }
+ 
++static inline pud_t kvm_s2pud_mkwrite(pud_t pud)
++{
++	pud_val(pud) |= PUD_S2_RDWR;
++	return pud;
++}
++
+ static inline pte_t kvm_s2pte_mkexec(pte_t pte)
+ {
+ 	pte_val(pte) &= ~PTE_S2_XN;
+@@ -202,6 +211,12 @@ static inline pmd_t kvm_s2pmd_mkexec(pmd_t pmd)
+ 	return pmd;
+ }
+ 
++static inline pud_t kvm_s2pud_mkexec(pud_t pud)
++{
++	pud_val(pud) &= ~PUD_S2_XN;
++	return pud;
++}
++
+ static inline void kvm_set_s2pte_readonly(pte_t *ptep)
+ {
+ 	pteval_t old_pteval, pteval;
+diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
+index fd208eac9f2a..e327665e94d1 100644
+--- a/arch/arm64/include/asm/pgtable-hwdef.h
++++ b/arch/arm64/include/asm/pgtable-hwdef.h
+@@ -193,6 +193,10 @@
+ #define PMD_S2_RDWR		(_AT(pmdval_t, 3) << 6)   /* HAP[2:1] */
+ #define PMD_S2_XN		(_AT(pmdval_t, 2) << 53)  /* XN[1:0] */
+ 
++#define PUD_S2_RDONLY		(_AT(pudval_t, 1) << 6)   /* HAP[2:1] */
++#define PUD_S2_RDWR		(_AT(pudval_t, 3) << 6)   /* HAP[2:1] */
++#define PUD_S2_XN		(_AT(pudval_t, 2) << 53)  /* XN[1:0] */
++
+ /*
+  * Memory Attribute override for Stage-2 (MemAttr[3:0])
+  */
+diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+index 7c4c8f318ba9..31ea9fda07e3 100644
+--- a/arch/arm64/include/asm/pgtable.h
++++ b/arch/arm64/include/asm/pgtable.h
+@@ -386,6 +386,8 @@ static inline int pmd_protnone(pmd_t pmd)
+ 
+ #define pud_write(pud)		pte_write(pud_pte(pud))
+ 
++#define pud_mkhuge(pud)		(__pud(pud_val(pud) & ~PUD_TABLE_BIT))
++
+ #define __pud_to_phys(pud)	__pte_to_phys(pud_pte(pud))
+ #define __phys_to_pud_val(phys)	__phys_to_pte_val(phys)
+ #define pud_pfn(pud)		((__pud_to_phys(pud) & PUD_MASK) >> PAGE_SHIFT)
+diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+index 3afbf693e045..1fb108d47dbd 100644
+--- a/virt/kvm/arm/mmu.c
++++ b/virt/kvm/arm/mmu.c
+@@ -1036,6 +1036,26 @@ static int stage2_set_pmd_huge(struct kvm *kvm, struct kvm_mmu_memory_cache
+ 	return 0;
+ }
+ 
++static int stage2_set_pud_huge(struct kvm *kvm, struct kvm_mmu_memory_cache *cache,
++			       phys_addr_t addr, const pud_t *new_pud)
++{
++	pud_t *pud, old_pud;
++
++	pud = stage2_get_pud(kvm, cache, addr);
++	VM_BUG_ON(!pud);
++
++	old_pud = *pud;
++	if (pud_present(old_pud)) {
++		pud_clear(pud);
++		kvm_tlb_flush_vmid_ipa(kvm, addr);
++	} else {
++		get_page(virt_to_page(pud));
++	}
++
++	kvm_set_pud(pud, *new_pud);
++	return 0;
++}
++
+ static bool stage2_is_exec(struct kvm *kvm, phys_addr_t addr)
+ {
+ 	pmd_t *pmdp;
+@@ -1467,9 +1487,12 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+ 	}
+ 
+ 	vma_pagesize = vma_kernel_pagesize(vma);
+-	if (vma_pagesize == PMD_SIZE && !logging_active) {
++	if ((vma_pagesize == PMD_SIZE || vma_pagesize == PUD_SIZE) &&
++	    !logging_active) {
++		struct hstate *h = hstate_vma(vma);
++
+ 		hugetlb = true;
+-		gfn = (fault_ipa & PMD_MASK) >> PAGE_SHIFT;
++		gfn = (fault_ipa & huge_page_mask(h)) >> PAGE_SHIFT;
+ 	} else {
+ 		/*
+ 		 * Pages belonging to memslots that don't have the same
+@@ -1556,7 +1579,18 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+ 	if (exec_fault)
+ 		invalidate_icache_guest_page(pfn, vma_pagesize);
+ 
+-	if (hugetlb) {
++	if (vma_pagesize == PUD_SIZE) {
++		pud_t new_pud = kvm_pfn_pud(pfn, mem_type);
++
++		new_pud = kvm_pud_mkhuge(new_pud);
++		if (writable)
++			new_pud = kvm_s2pud_mkwrite(new_pud);
++
++		if (stage2_should_exec(kvm, fault_ipa, exec_fault, fault_status))
++			new_pud = kvm_s2pud_mkexec(new_pud);
++
++		ret = stage2_set_pud_huge(kvm, memcache, fault_ipa, &new_pud);
++	} else if (vma_pagesize == PMD_SIZE) {
+ 		pmd_t new_pmd = kvm_pfn_pmd(pfn, mem_type);
+ 
+ 		new_pmd = kvm_pmd_mkhuge(new_pmd);
+-- 
+2.17.0
