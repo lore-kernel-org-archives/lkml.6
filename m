@@ -1,127 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756565AbeEASwN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 14:52:13 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:42714 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756382AbeEASwM (ORCPT
+        id S1756584AbeEASxL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 14:53:11 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:36920 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756333AbeEASxJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 14:52:12 -0400
-Subject: Re: [ANNOUNCE] Kconfiglib menuconfig implementation
-To: Ulf Magnusson <ulfalizer@gmail.com>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <CAFkk2KRTnRpi5thUGTM2+LZMyitggdJtiOBO7E0pTn93fz6-SQ@mail.gmail.com>
- <d4c3b2ab-385d-fe7a-bdb1-2d497d620de5@infradead.org>
- <25f6b309-9346-7e28-beeb-a37e69a91ce8@infradead.org>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <ac506aa3-e5f6-9bfa-a18b-441e04b21d97@infradead.org>
-Date: Tue, 1 May 2018 11:52:10 -0700
+        Tue, 1 May 2018 14:53:09 -0400
+X-Google-Smtp-Source: AB8JxZojF5qA6ui0S9UVzlSd2NtIRZE9T8B5Rn2kpnV8ktfdihGGynZjYv95ncyQSD0t5QCRZyYRDA==
+Subject: Re: [GIT PULL 1/3] bcm2835-dt-next-2018-04-30
+To: Eric Anholt <eric@anholt.net>, Florian Fainelli <f.fainelli@gmail.com>
+Cc: linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        bcm-kernel-feedback-list@broadcom.com
+References: <20180430212750.12303-1-eric@anholt.net>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ HGuUuzv+GKZ6nsysJw==
+Message-ID: <1f75527c-7e44-15e6-114f-a15e0bbd11ba@gmail.com>
+Date: Tue, 1 May 2018 11:53:00 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <25f6b309-9346-7e28-beeb-a37e69a91ce8@infradead.org>
+In-Reply-To: <20180430212750.12303-1-eric@anholt.net>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/01/2018 11:13 AM, Randy Dunlap wrote:
-> On 05/01/2018 10:56 AM, Randy Dunlap wrote:
->> On 04/30/2018 05:57 PM, Ulf Magnusson wrote:
->>> Hello,
->>>
->>> Kconfiglib (https://github.com/ulfalizer/Kconfiglib) now has a
->>> terminal menuconfig implementation, implemented in plain curses
->>> (which is in the Python standard library).
->>>
->>> The interface should feel familiar to people used to mconf. It has
->>> some features that mconf lacks:
->>>
->>>   - Seamless resizing
->>>
->>>   - Unicode support
->>>
->>>   - Runs on Windows (via 'pip install windows-curses', which uses
->>>     PDCurses)
->>>
->>>   - Improved information displays:
->>>
->>>     * All expressions are split into readable chunks
->>>
->>>     * Menus and comments have information displays
->>>
->>>   - Relatively easy-to-read and easy-to-tweak code.
->>>
->>>     Kconfiglib automatically invalidates symbols as needed, and
->>>     values can never get stale, which helps.
->>>
->>> Some upcoming features are mouse support and a search feature that
->>> can jump directly to the definition of a symbol. The jump-to feature
->>> will use a "show-all" mode in case the symbol isn't visible.
->>>
->>> See the Kconfiglib GitHub page for screenshots. The menuconfig
->>> implementation is at
->>> https://github.com/ulfalizer/Kconfiglib/blob/master/menuconfig.py.
->>> The docstring at the top has some more information.
->>
->> Hi,
->>
->> I'm probably missing some python additive (I hope it's that easy), but
->> menuconfig.py is not liking the "degree" symbol in drivers/net/can/peak_canfd/Kconfig:
->>
->> config CAN_PEAK_PCIEFD
->> 	depends on PCI
->> 	tristate "PEAK-System PCAN-PCIe FD cards"
->> 	---help---
->> 	  This driver adds support for the PEAK-System PCI Express FD
->> 	  CAN-FD cards family.
->> 	  These 1x or 2x CAN-FD channels cards offer CAN 2.0 a/b as well as
->> 	  CAN-FD access to the CAN bus. Besides the nominal bitrate of up to
->> 	  1 Mbit/s, the data bytes of CAN-FD frames can be transmitted with
->> 	  up to 12 Mbit/s. A galvanic isolation of the CAN ports protects the
->> 	  electronics of the card and the respective computer against
->> 	  disturbances of up to 500 Volts. The PCAN-PCI Express FD can be
->> 	  operated with ambient temperatures in a range of -40 to +85 °C.
->>
->>
->> kconfiglib.KconfigSyntaxError: 
->> Malformed ascii in drivers/net/can/peak_canfd/Kconfig
->> Context: b't temperatures in a range of -40 to +85 \xc2\xb0C.\n'
->> Problematic data: b'\xc2'
->> Reason: ordinal not in range(128)
+On 04/30/2018 02:27 PM, Eric Anholt wrote:
+> Hi Florian,
 > 
-> BTW, after modifying 4 other instances of this "error," I have it running.
-> Now looking/testing. :)
+> The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
+> 
+>   Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
+> 
+> are available in the Git repository at:
+> 
+>   git://github.com/anholt/linux tags/bcm2835-dt-next-2018-04-30
+> 
+> for you to fetch changes up to bdd6d1fe1cd84806429467ce62a735bdc6bdbae7:
+> 
+>   arm64: dts: broadcom: Add reference to Raspberry Pi 3 B+ (2018-04-23 15:03:07 -0700)
+> 
+> ----------------------------------------------------------------
+> This pull request brings in Raspberry Pi 3 B+ support and connects
+> HDMI hotplug, LEDs, and wifi/bluetooth on the Raspberry Pi 3.
+> 
+> ----------------------------------------------------------------
+> Stefan Wahren (5):
+>       ARM: dts: bcm283x: Fix PWM pin assignment
+>       ARM: dts: bcm2837: Add missing GPIOs of Expander
+>       dt-bindings: bcm: Add Raspberry Pi 3 B+
+>       ARM: dts: bcm2837: Add Raspberry Pi 3 B+
+>       arm64: dts: broadcom: Add reference to Raspberry Pi 3 B+
 
-Hi Ulf,
-
-Here are a few comments for you FWIW.
-
-menuconfig.py uses the terminal window space better than menuconfig:
-fewer margins, less Help text so more usable lines.
-
-ESC/q is nicer than in ESC+ESC in menuconfig.
-
-What is the lower colored line for? I don't see it being used.
-
-On Quit, don't need to prompt for Save when the file is already saved
-or has not been modified.
-
-When menuconfig displays the Kconfig menu tree and it is over term-width
-characters, it truncates on the left so that the user can see all of
-the current menu name. menuconfig.py truncates on the right so that
-the current menu name may be partially lost or totally lost.
-
-To enable=y a tristate symbol, cannot enter Y, must do Space Space to cycle
-from N to M to Y.
-
-No / symbol search. I use that a lot, but I don't claim to be a
-typical user.
-
-
-Thanks.
--- 
-~Randy
+Merged into devicetree/next, thanks Eric!
+--
+Florian
