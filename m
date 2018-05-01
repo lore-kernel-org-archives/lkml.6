@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753056AbeEABmV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 21:42:21 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:44932 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751428AbeEABmU (ORCPT
+        id S1755833AbeEABm2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 21:42:28 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:44110 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755600AbeEABmY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 21:42:20 -0400
-X-Google-Smtp-Source: AB8JxZozshnLXVlvE/tCtl7LwLkRbZVjf9lrLpsrYPH70WppeCx12cFhL0M2A6GD2Q+RgMRt33M9+g==
+        Mon, 30 Apr 2018 21:42:24 -0400
+X-Google-Smtp-Source: AB8JxZpzMUv4z8YZjyO5tPYZnkxqoQMnpMq8IzUUpwvWWhZHkd3jr4d1L6nCA3aP5RN1njVZU+bhxg==
 From: Joel Fernandes <joelaf@google.com>
 To: linux-kernel@vger.kernel.org
 Cc: Joel Fernandes <joelaf@google.com>,
@@ -25,55 +25,20 @@ Cc: Joel Fernandes <joelaf@google.com>,
         Fenguang Wu <fengguang.wu@intel.com>,
         Baohong Liu <baohong.liu@intel.com>,
         Vedang Patel <vedang.patel@intel.com>, kernel-team@android.com
-Subject: [PATCH RFC v5 0/6] Centralize and unify usage of preempt/irq tracepoints
-Date: Mon, 30 Apr 2018 18:41:58 -0700
-Message-Id: <20180501014204.67548-1-joelaf@google.com>
+Subject: [PATCH RFC v5 3/6] srcu: Add notrace variant of srcu_dereference
+Date: Mon, 30 Apr 2018 18:42:01 -0700
+Message-Id: <20180501014204.67548-4-joelaf@google.com>
 X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
+In-Reply-To: <20180501014204.67548-1-joelaf@google.com>
+References: <20180501014204.67548-1-joelaf@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the next revision of preempt/irq tracepoint centralization and
-unified usage across the kernel [1].
-The preempt/irq tracepoints exist but not everything in the kernel is
-using it. This makes things not work simultaneously (for ex, only either
-lockdep or irqsoff events can be used at a time). This series is an attempt to
-solve that, and also results in a nice clean up of kernel in general.
-Several ifdefs are simpler, and the design is more unified and better.
-Also as a result of this, we also speeded performance all rcuidle
-tracepoints since their handling is simpler.
-
-v5:
-- Fixed performance issues due to rcu-idle handling
-
-Joel Fernandes (5):
-  softirq: reorder trace_softirqs_on to prevent lockdep splat
-  srcu: Add notrace variant of srcu_dereference
-  trace/irqsoff: Split reset into seperate functions
-  tracepoint: Make rcuidle tracepoint callers use SRCU
-  tracing: Centralize preemptirq tracepoints and unify their usage
-
-Paul E. McKenney (1):
-  srcu: Add notrace variants of srcu_read_{lock,unlock}
-
- include/linux/ftrace.h            |  11 +-
- include/linux/irqflags.h          |  11 +-
- include/linux/lockdep.h           |   8 +-
- include/linux/preempt.h           |   2 +-
- include/linux/srcu.h              |  22 +++
- include/linux/tracepoint.h        |  47 +++++-
- include/trace/events/preemptirq.h |  23 +--
- init/main.c                       |   5 +-
- kernel/locking/lockdep.c          |  35 ++---
- kernel/sched/core.c               |   2 +-
- kernel/softirq.c                  |   6 +-
- kernel/trace/Kconfig              |  22 ++-
- kernel/trace/Makefile             |   2 +-
- kernel/trace/trace_irqsoff.c      | 235 +++++++++---------------------
- kernel/trace/trace_preemptirq.c   |  71 +++++++++
- kernel/tracepoint.c               |  10 +-
- 16 files changed, 283 insertions(+), 229 deletions(-)
- create mode 100644 kernel/trace/trace_preemptirq.c
+In this series, we are making lockdep use an rcuidle tracepoint. For
+this reason we need a notrace variant of srcu_dereference since
+otherwise we get lockdep splats since lockdep hooks may not have run
+yet. This patch adds the needed variant.
 
 Cc: Steven Rostedt <rostedt@goodmis.org>
 Cc: Peter Zilstra <peterz@infradead.org>
@@ -92,5 +57,25 @@ Cc: Baohong Liu <baohong.liu@intel.com>
 Cc: Vedang Patel <vedang.patel@intel.com>
 Cc: kernel-team@android.com
 Signed-off-by: Joel Fernandes <joelaf@google.com>
+---
+ include/linux/srcu.h | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/include/linux/srcu.h b/include/linux/srcu.h
+index 2ec618979b20..a1c4947be877 100644
+--- a/include/linux/srcu.h
++++ b/include/linux/srcu.h
+@@ -135,6 +135,11 @@ static inline int srcu_read_lock_held(const struct srcu_struct *sp)
+  */
+ #define srcu_dereference(p, sp) srcu_dereference_check((p), (sp), 0)
+ 
++/**
++ * srcu_dereference_notrace - no tracing and no lockdep calls from here
++ */
++#define srcu_dereference_notrace(p, sp) srcu_dereference_check((p), (sp), 1)
++
+ /**
+  * srcu_read_lock - register a new reader for an SRCU-protected structure.
+  * @sp: srcu_struct in which to register the new reader.
 -- 
 2.17.0.441.gb46fe60e1d-goog
