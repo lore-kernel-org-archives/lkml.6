@@ -1,55 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755267AbeEAMZW convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 08:25:22 -0400
-Received: from ozlabs.org ([203.11.71.1]:42103 "EHLO ozlabs.org"
+        id S1755155AbeEAMbM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 08:31:12 -0400
+Received: from mga01.intel.com ([192.55.52.88]:54409 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755068AbeEAMZV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 08:25:21 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Michal =?utf-8?Q?Such=C3=A1nek?= <msuchanek@suse.de>
-Cc: linuxppc-dev@ozlabs.org, npiggin@gmail.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/6] powerpc/64s: Add support for ori barrier_nospec patching
-In-Reply-To: <20180426181042.38971664@kitsune.suse.cz>
-References: <20180424041559.32410-1-mpe@ellerman.id.au> <20180424041559.32410-2-mpe@ellerman.id.au> <20180426181042.38971664@kitsune.suse.cz>
-Date: Tue, 01 May 2018 22:25:14 +1000
-Message-ID: <87sh7br2ad.fsf@concordia.ellerman.id.au>
+        id S1754827AbeEAMbL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 08:31:11 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,351,1520924400";
+   d="scan'208";a="224806764"
+Subject: Re: [V4 PATCH] perf parse-events: Specially handle uncore event alias
+ in small groups
+To: Jiri Olsa <jolsa@redhat.com>
+Cc: acme@kernel.org, mingo@redhat.com, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, namhyung@kernel.org,
+        ganapatrao.kulkarni@cavium.com, zhangshaokun@hisilicon.com,
+        yao.jin@linux.intel.com, will.deacon@arm.com, ak@linux.intel.com,
+        agustinv@codeaurora.org
+References: <1524768379-157997-1-git-send-email-kan.liang@linux.intel.com>
+ <20180501091512.GA4813@krava>
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+Message-ID: <d2b94d2c-1bbb-bf7c-2aa6-102660bf4a7d@linux.intel.com>
+Date: Tue, 1 May 2018 08:31:02 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20180501091512.GA4813@krava>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Michal Suchánek <msuchanek@suse.de> writes:
-> On Tue, 24 Apr 2018 14:15:55 +1000
-> Michael Ellerman <mpe@ellerman.id.au> wrote:
+
+>> +static int
+>> +parse_events__set_leader_for_uncore_aliase(char *name, struct list_head *list,
+>> +					   struct parse_events_state *parse_state)
+>> +{
+>> +	struct perf_evsel *evsel, *leader;
+>> +	uintptr_t *leaders;
+>> +	bool is_leader = true;
+>> +	int i, nr_pmu = 0, total_members, ret = 0;
+>> +
+>> +	leader = list_first_entry(list, struct perf_evsel, node);
+>> +	evsel = list_last_entry(list, struct perf_evsel, node);
+>> +	total_members = evsel->idx - leader->idx + 1;
+>> +
+>> +	leaders = calloc(total_members, sizeof(uintptr_t));
+>> +	if (!leaders)
+>> +		return 0;
+> 
+> I see.. I meant we should return -ENOMEM in here, but
+> we don't check it in the called anyway.. so perhaps
+> 
+> 	if (WARN_ON(!leaders))
+> 		return 0;
 >
->> From: Michal Suchanek <msuchanek@suse.de>
->> 
->> Based on the RFI patching. This is required to be able to disable the
->> speculation barrier.
+
+Sure. I will change it in V5.
+
+> 
+>> +
+>> +	 __evlist__for_each_entry(list, evsel) {
+>> +
+>> +		/* Only split the uncore group which members use alias */
+>> +		if (!evsel->use_uncore_alias)
+>> +			goto out;
+>> +
+>> +		/* The events must be from the same uncore block */
+>> +		if (!is_same_uncore_block(leader->pmu_name, evsel->pmu_name))
+>> +			goto out;
+>> +
+>> +		if (!is_leader)
+>> +			continue;
+>> +		/*
+>> +		 * If the event's PMU name starts to repeat, it must be a new
+>> +		 * event. That can be used to distinguish the leader from
+>> +		 * other members, even they have the same event name.
+>> +		 */
+>> +		if ((leader != evsel) && (leader->pmu_name == evsel->pmu_name)) {
+>> +			is_leader = false;
+>> +			continue;
+>> +		}
+> 
+> I still don't get why you don't 'break' in here.. you set is_leader to false,
+> then the loop will never get pass the !is_leader condition above
 >
-> why do you not patch the nospec barrier which is included as part of
-> the RFI flush code?
 
-We didn't want to put it in the asm like you had, because not all RFI
-flush types need the spec barrier.
+All the members must use alias, and be from the same uncore block.
+We have to go through the whole group to check the events.
 
-So it's more complicated than just patching in the spec barrier, we'd
-need to only patch it in if the configured RFI flush also needed it.
-
-> I think when debugging the code it would make more sense if RFI is
-> patched by RFI patcher and nospec by nospec patcher.
-
-True. I think what I'm saying is that the spec barrier in the RFI
-flush is not a nospec barrier, it's part of that RFI flush type.
-
-> A separate question is if the RFI flush would break without the nospec
-> barrier.
-
-The ORI flush requires it, but the others don't.
-
-cheers
+Thanks,
+Kan
