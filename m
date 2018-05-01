@@ -1,90 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751160AbeEAULx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 16:11:53 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:39392 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750797AbeEAULw (ORCPT
+        id S1751294AbeEAUNh (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 16:13:37 -0400
+Received: from bh-25.webhostbox.net ([208.91.199.152]:52923 "EHLO
+        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750785AbeEAUNf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 16:11:52 -0400
-X-Google-Smtp-Source: AB8JxZqyaZsZLz9xMNKk7f//2yMv12Q14Gyv4lNr4rEipoNOx4DCKO0c3kT8dfFkE1eB0IjRGAAiPg==
-From: Laura Abbott <labbott@redhat.com>
-To: Dave Anderson <anderson@redhat.com>, Kees Cook <keescook@chromium.org>,
-        akpm@linux-foundation.org
-Cc: Laura Abbott <labbott@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Ingo Molnar <mingo@kernel.org>, Andi Kleen <andi@firstfloor.org>
-Subject: [PATCH] proc/kcore: Don't bounds check against address 0
-Date: Tue,  1 May 2018 13:11:43 -0700
-Message-Id: <20180501201143.15121-1-labbott@redhat.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <1039518799.26129578.1525185916272.JavaMail.zimbra@redhat.com>
+        Tue, 1 May 2018 16:13:35 -0400
+Date: Tue, 1 May 2018 13:13:29 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: kbuild test robot <lkp@intel.com>
+Cc: kbuild-all@01.org, Thomas Gleixner <tglx@linutronix.de>,
+        Clemens Ladisch <clemens@ladisch.de>, Jean Delvare <jdelvare@suse.com>,
+        Borislav Petkov <bp@suse.de>, Yazen Ghannam <Yazen.Ghannam@amd.com>,
+        Brian Woods <brian.woods@amd.com>, linux-kernel@vger.kernel.org,
+        linux-hwmon@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH v2 2/2] hwmon: (k10temp) Use API function to access
+ System Management Network
+Message-ID: <20180501201329.GA15515@roeck-us.net>
+References: <1525199182-10474-2-git-send-email-linux@roeck-us.net>
+ <201805020322.y0mYt3Nk%fengguang.wu@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201805020322.y0mYt3Nk%fengguang.wu@intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Authenticated_sender: guenter@roeck-us.net
+X-OutGoing-Spam-Status: No, score=-1.0
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - roeck-us.net
+X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
+X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The existing kcore code checks for bad addresses against
-__va(0) with the assumption that this is the lowest address
-on the system. This may not hold true on some systems (e.g.
-arm64) and produce overflows and crashes. Switch to using
-other functions to validate the address range.
+On Wed, May 02, 2018 at 03:39:19AM +0800, kbuild test robot wrote:
+> Hi Guenter,
+> 
+> I love your patch! Yet something to improve:
+> 
+> [auto build test ERROR on tip/auto-latest]
+> [also build test ERROR on v4.17-rc3 next-20180501]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> 
+> url:    https://github.com/0day-ci/linux/commits/Guenter-Roeck/x86-amd_nb-Add-support-for-Raven-Ridge-CPUs/20180502-024535
+> config: i386-randconfig-x016-201817 (attached as .config)
+> compiler: gcc-7 (Debian 7.3.0-16) 7.3.0
+> reproduce:
+>         # save the attached .config to linux build tree
+>         make ARCH=i386 
+> 
+> All errors (new ones prefixed by >>):
+> 
+>    drivers/hwmon/k10temp.c: In function 'read_tempreg_nb_f17':
+> >> drivers/hwmon/k10temp.c:126:15: error: implicit declaration of function 'amd_pci_dev_to_node_id'; did you mean 'pci_set_of_node'? [-Werror=implicit-function-declaration]
+>      amd_smn_read(amd_pci_dev_to_node_id(pdev),
+>                   ^~~~~~~~~~~~~~~~~~~~~~
+>                   pci_set_of_node
+>    cc1: some warnings being treated as errors
+> 
 
-Tested-by: Dave Anderson <anderson@redhat.com>
-Signed-off-by: Laura Abbott <labbott@redhat.com>
----
-I took your previous comments as a tested by, please let me know if that
-was wrong. This should probably just go through -mm. I don't think this
-is necessary for stable but I can request it later if necessary.
----
- fs/proc/kcore.c | 23 ++++++++++++++++-------
- 1 file changed, 16 insertions(+), 7 deletions(-)
+What would we do without 0day. The driver needs to depend on CONFIG_AMD_NB,
+which makes sense anyway. I'll add that dependency in v3.
 
-diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
-index d1e82761de81..e64ecb9f2720 100644
---- a/fs/proc/kcore.c
-+++ b/fs/proc/kcore.c
-@@ -209,25 +209,34 @@ kclist_add_private(unsigned long pfn, unsigned long nr_pages, void *arg)
- {
- 	struct list_head *head = (struct list_head *)arg;
- 	struct kcore_list *ent;
-+	struct page *p;
-+
-+	if (!pfn_valid(pfn))
-+		return 1;
-+
-+	p = pfn_to_page(pfn);
-+	if (!memmap_valid_within(pfn, p, page_zone(p)))
-+		return 1;
- 
- 	ent = kmalloc(sizeof(*ent), GFP_KERNEL);
- 	if (!ent)
- 		return -ENOMEM;
--	ent->addr = (unsigned long)__va((pfn << PAGE_SHIFT));
-+	ent->addr = (unsigned long)page_to_virt(p);
- 	ent->size = nr_pages << PAGE_SHIFT;
- 
--	/* Sanity check: Can happen in 32bit arch...maybe */
--	if (ent->addr < (unsigned long) __va(0))
-+	if (!virt_addr_valid(ent->addr))
- 		goto free_out;
- 
- 	/* cut not-mapped area. ....from ppc-32 code. */
- 	if (ULONG_MAX - ent->addr < ent->size)
- 		ent->size = ULONG_MAX - ent->addr;
- 
--	/* cut when vmalloc() area is higher than direct-map area */
--	if (VMALLOC_START > (unsigned long)__va(0)) {
--		if (ent->addr > VMALLOC_START)
--			goto free_out;
-+	/*
-+	 * We've already checked virt_addr_valid so we know this address
-+	 * is a valid pointer, therefore we can check against it to determine
-+	 * if we need to trim
-+	 */
-+	if (VMALLOC_START > ent->addr) {
- 		if (VMALLOC_START - ent->addr < ent->size)
- 			ent->size = VMALLOC_START - ent->addr;
- 	}
--- 
-2.14.3
+Guenter
+
+> vim +126 drivers/hwmon/k10temp.c
+> 
+>    123	
+>    124	static void read_tempreg_nb_f17(struct pci_dev *pdev, u32 *regval)
+>    125	{
+>  > 126		amd_smn_read(amd_pci_dev_to_node_id(pdev),
+>    127			     F17H_M01H_REPORTED_TEMP_CTRL_OFFSET, regval);
+>    128	}
+>    129	
+> 
+> ---
+> 0-DAY kernel test infrastructure                Open Source Technology Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
