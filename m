@@ -1,48 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755712AbeEAAMB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 20:12:01 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:34725 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753842AbeEAAL7 (ORCPT
+        id S1755681AbeEAAUQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 20:20:16 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:38229 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751346AbeEAAUN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 20:11:59 -0400
-X-Google-Smtp-Source: AB8JxZrULXy5FgMKR96PRrnSwvTYaEUEEIfKg0kw+bhZ4cOkmVQMLgcahguZ+ah0BS9EpHqW0C6me6ccUXn+UDwtDMs=
+        Mon, 30 Apr 2018 20:20:13 -0400
+X-Google-Smtp-Source: AB8JxZrbdCT5JEZIMEsi+BIVjO75fAKyf8FoZZPiJOoUFiteQgP0Y5cUBSQUgKI0luEBdG++TcjlOA==
+Date: Mon, 30 Apr 2018 17:20:10 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Sibi Sankar <sibis@codeaurora.org>
+Cc: andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-soc@vger.kernel.org
+Subject: Re: [PATCH v2] arm64: dts: qcom: Add SDM845 SMEM nodes
+Message-ID: <20180501002009.GP18510@minitux>
+References: <20180430144428.3288-1-sibis@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20180430235927.28712-1-eric@anholt.net>
-References: <20180430235927.28712-1-eric@anholt.net>
-From: Stefan Schake <stschake@gmail.com>
-Date: Tue, 1 May 2018 02:11:37 +0200
-Message-ID: <CAOZHkRyboQ2uPmv6EXZSnKFLEchBavRYy1jAzm6VzxfqSEgQkw@mail.gmail.com>
-Subject: Re: [PATCH] drm/vc4: Add a pad field to align drm_vc4_submit_cl to 64 bits.
-To: Eric Anholt <eric@anholt.net>
-Cc: dri-devel <dri-devel@lists.freedesktop.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180430144428.3288-1-sibis@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 1, 2018 at 1:59 AM, Eric Anholt <eric@anholt.net> wrote:
-> I had originally asked Stefan Schake to drop the pad field from the
-> syncobj changes that just landed, because I couldn't come up with a
-> reason to align to 64 bits.
->
-> Talking with Dave Airlie about the new v3d driver's submit ioctl, we
-> came up with a reason: sizeof() on 64-bit platforms may align to 64
-> bits, in which case the userspace will be submitting the aligned size
-> and the final 32 bits won't be zero-padded by the kernel.  If
-> userspace doesn't zero-fill, then a future ABI change adding a 32-bit
-> field at the end could potentially cause the kernel to read undefined
-> data from old userspace (our userspace happens to use structure
-> initialization that zero-fills, but as a general rule we try not to
-> rely on that in the kernel).
->
+On Mon 30 Apr 07:44 PDT 2018, Sibi Sankar wrote:
 
-Did a quick sizeof check on arm64 and that indeed came to 176 mod 8 = 0,
-suggesting we need this additional pad. So fwiw
+> Add all the necessary dt nodes to support SMEM driver
+> on SDM845. It also adds the required memory carveouts
+> so that the kernel does not access memory that is in
+> use.
+> 
+> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 
-Reviewed-by: Stefan Schake <stschake@gmail.com>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-Thanks,
-Stefan
+Regards,
+Bjorn
+
+> ---
+> 
+> This patch depends on:
+> https://patchwork.kernel.org/patch/10276419/
+> https://patchwork.kernel.org/patch/10363361/
+> 
+>  arch/arm64/boot/dts/qcom/sdm845.dtsi | 38 ++++++++++++++++++++++++++++
+>  1 file changed, 38 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> index 9be763da0664..55e7d7e23b10 100644
+> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> @@ -21,6 +21,27 @@
+>  		reg = <0 0x80000000 0 0>;
+>  	};
+>  
+> +	reserved-memory {
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +		ranges;
+> +
+> +		memory@85fc0000 {
+> +			reg = <0 0x85fc0000 0 0x20000>;
+> +			no-map;
+> +		};
+> +
+> +		smem_mem: memory@86000000 {
+> +			reg = <0x0 0x86000000 0x0 0x200000>;
+> +			no-map;
+> +		};
+> +
+> +		memory@86200000 {
+> +			reg = <0 0x86200000 0 0x2d00000>;
+> +			no-map;
+> +		};
+> +	};
+> +
+>  	cpus {
+>  		#address-cells = <2>;
+>  		#size-cells = <0>;
+> @@ -147,6 +168,18 @@
+>  		};
+>  	};
+>  
+> +	tcsr_mutex: hwlock {
+> +		compatible = "qcom,tcsr-mutex";
+> +		syscon = <&tcsr_mutex_regs 0 0x1000>;
+> +		#hwlock-cells = <1>;
+> +	};
+> +
+> +	smem {
+> +		compatible = "qcom,smem";
+> +		memory-region = <&smem_mem>;
+> +		hwlocks = <&tcsr_mutex 3>;
+> +	};
+> +
+>  	psci {
+>  		compatible = "arm,psci-1.0";
+>  		method = "smc";
+> @@ -339,6 +372,11 @@
+>  			};
+>  		};
+>  
+> +		tcsr_mutex_regs: syscon@1f40000 {
+> +			compatible = "syscon";
+> +			reg = <0x1f40000 0x40000>;
+> +		};
+> +
+>  		apss_shared: mailbox@17990000 {
+>  			compatible = "qcom,sdm845-apss-shared";
+>  			reg = <0x17990000 0x1000>;
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> 
