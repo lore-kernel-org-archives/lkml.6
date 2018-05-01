@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751907AbeEAWqu (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 18:46:50 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:33883 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751171AbeEAWqe (ORCPT
+        id S1751867AbeEAWqs (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 18:46:48 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:43610 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751094AbeEAWqh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 18:46:34 -0400
-X-Google-Smtp-Source: AB8JxZpfc26Gcp13fp73N1Uch8dNkZx3RNUUtYpYmtWEcayY+Y1Fw1Peri0SziM9wWO1Z9eMIN3kFA==
+        Tue, 1 May 2018 18:46:37 -0400
+X-Google-Smtp-Source: AB8JxZpHEQg732DrE3AxoNJzW0uadLGhEaZYu5AgeHZVg13sSxbQlcnf0Wh+Vffb2eOMYsW/bfYDCg==
 From: "=?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?=" <jprvita@gmail.com>
 X-Google-Original-From: =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@endlessm.com>
 To: Larry Finger <Larry.Finger@lwfinger.net>
@@ -22,12 +22,13 @@ Cc: Steve deRosier <derosier@gmail.com>,
         LKML <linux-kernel@vger.kernel.org>, Daniel Drake <drake@endlessm.com>,
         =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@endlessm.com>,
         linux@endlessm.com
-Subject: [RFC PATCH 1/3] rtlwifi: btcoex: Don't init antenna position to main port
-Date: Tue,  1 May 2018 15:46:11 -0700
-Message-Id: <20180501224613.32460-1-jprvita@endlessm.com>
+Subject: [RFC PATCH 3/3] rtlwifi: btcoex: Always use 2ant-functions for RTL8723BE
+Date: Tue,  1 May 2018 15:46:13 -0700
+Message-Id: <20180501224613.32460-3-jprvita@endlessm.com>
 X-Mailer: git-send-email 2.17.0
-In-Reply-To: <CA+A7VXUUsZHD2gr9TBcV6jZBOPGZv7_vK-wWZ0MvGgiCnAiUgQ@mail.gmail.com>
+In-Reply-To: <20180501224613.32460-1-jprvita@endlessm.com>
 References: <CA+A7VXUUsZHD2gr9TBcV6jZBOPGZv7_vK-wWZ0MvGgiCnAiUgQ@mail.gmail.com>
+ <20180501224613.32460-1-jprvita@endlessm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -35,10 +36,14 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This partially reverts commit 40d9dd4f1c5dcd0d4a2a1f0efcd225c9c4b36d6f,
-which does not only remove global variables from btcoex, as described on
-its commit message, but also does a few other things -- in particular,
-setting the default antenna position to BTC_ANTENNA_AT_MAIN_PORT.
+This partially reverts commit 7937f02d1953952a6eaf626b175ea9db5541e699,
+which not only hooked external functions for newer ICs, as described in
+its commit message, but also changed the behavior for RTL8723BE
+depending on the value of board_info.btdm_ant_num.
+
+When board_info.btdm_ant_num == 1, 7937f02d19 changes the codepath to
+use a whole different set of functions ex_btc8723b1ant_*, instead of the
+ex_btc8723b2ant_* that were used before it.
 
 This drastically affects the upload performance and signal strenght on
 the HP 240 G4 laptop, as shown by the results bellow:
@@ -46,7 +51,7 @@ the HP 240 G4 laptop, as shown by the results bellow:
 Without this change:
 
  $ sudo iw dev wlp2s0 scan | grep -B3 JJ | grep signal
- 	signal: -42.00 dBm
+        signal: -42.00 dBm
  $ iperf3 -c 192.168.1.254
  Connecting to host 192.168.1.254, port 5201
  [  4] local 192.168.1.253 port 39678 connected to 192.168.1.254 port 5201
@@ -71,7 +76,7 @@ Without this change:
 With this change:
 
  $ sudo iw dev wlp2s0 scan | grep -B3 JJ | grep signal
- 	signal: -14.00 dBm
+        signal: -14.00 dBm
  $ iperf3 -c 192.168.1.254
  Connecting to host 192.168.1.254, port 5201
  [  4] local 192.168.1.253 port 59380 connected to 192.168.1.254 port 5201
@@ -95,22 +100,158 @@ With this change:
 
 Signed-off-by: João Paulo Rechi Vita <jprvita@endlessm.com>
 ---
- drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c | 3 ---
- 1 file changed, 3 deletions(-)
+ .../realtek/rtlwifi/btcoexist/halbtcoutsrc.c  | 62 ++++---------------
+ 1 file changed, 12 insertions(+), 50 deletions(-)
 
 diff --git a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c
-index b026e80940a4..86182b917c92 100644
+index 86182b917c92..a862b5efdf55 100644
 --- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c
 +++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c
-@@ -1388,9 +1388,6 @@ bool exhalbtc_bind_bt_coex_withadapter(void *adapter)
- 	ant_num = rtl_get_hwpg_ant_num(rtlpriv);
- 	exhalbtc_set_ant_num(rtlpriv, BT_COEX_ANT_TYPE_PG, ant_num);
+@@ -1452,10 +1452,7 @@ void exhalbtc_init_hw_config(struct btc_coexist *btcoexist, bool wifi_only)
+ 		else if (btcoexist->board_info.btdm_ant_num == 1)
+ 			ex_btc8821a1ant_init_hwconfig(btcoexist, wifi_only);
+ 	} else if (IS_HARDWARE_TYPE_8723B(btcoexist->adapter)) {
+-		if (btcoexist->board_info.btdm_ant_num == 2)
+-			ex_btc8723b2ant_init_hwconfig(btcoexist);
+-		else if (btcoexist->board_info.btdm_ant_num == 1)
+-			ex_btc8723b1ant_init_hwconfig(btcoexist, wifi_only);
++		ex_btc8723b2ant_init_hwconfig(btcoexist);
+ 	} else if (IS_HARDWARE_TYPE_8723A(btcoexist->adapter)) {
+ 		/* 8723A has no this function */
+ 	} else if (IS_HARDWARE_TYPE_8192E(btcoexist->adapter)) {
+@@ -1481,10 +1478,7 @@ void exhalbtc_init_coex_dm(struct btc_coexist *btcoexist)
+ 		else if (btcoexist->board_info.btdm_ant_num == 1)
+ 			ex_btc8821a1ant_init_coex_dm(btcoexist);
+ 	} else if (IS_HARDWARE_TYPE_8723B(btcoexist->adapter)) {
+-		if (btcoexist->board_info.btdm_ant_num == 2)
+-			ex_btc8723b2ant_init_coex_dm(btcoexist);
+-		else if (btcoexist->board_info.btdm_ant_num == 1)
+-			ex_btc8723b1ant_init_coex_dm(btcoexist);
++		ex_btc8723b2ant_init_coex_dm(btcoexist);
+ 	} else if (IS_HARDWARE_TYPE_8192E(btcoexist->adapter)) {
+ 		if (btcoexist->board_info.btdm_ant_num == 2)
+ 			ex_btc8192e2ant_init_coex_dm(btcoexist);
+@@ -1516,10 +1510,7 @@ void exhalbtc_ips_notify(struct btc_coexist *btcoexist, u8 type)
+ 		else if (btcoexist->board_info.btdm_ant_num == 1)
+ 			ex_btc8821a1ant_ips_notify(btcoexist, ips_type);
+ 	} else if (IS_HARDWARE_TYPE_8723B(btcoexist->adapter)) {
+-		if (btcoexist->board_info.btdm_ant_num == 2)
+-			ex_btc8723b2ant_ips_notify(btcoexist, ips_type);
+-		else if (btcoexist->board_info.btdm_ant_num == 1)
+-			ex_btc8723b1ant_ips_notify(btcoexist, ips_type);
++		ex_btc8723b2ant_ips_notify(btcoexist, ips_type);
+ 	} else if (IS_HARDWARE_TYPE_8192E(btcoexist->adapter)) {
+ 		if (btcoexist->board_info.btdm_ant_num == 2)
+ 			ex_btc8192e2ant_ips_notify(btcoexist, ips_type);
+@@ -1549,10 +1540,7 @@ void exhalbtc_lps_notify(struct btc_coexist *btcoexist, u8 type)
+ 		else if (btcoexist->board_info.btdm_ant_num == 1)
+ 			ex_btc8821a1ant_lps_notify(btcoexist, lps_type);
+ 	} else if (IS_HARDWARE_TYPE_8723B(btcoexist->adapter)) {
+-		if (btcoexist->board_info.btdm_ant_num == 2)
+-			ex_btc8723b2ant_lps_notify(btcoexist, lps_type);
+-		else if (btcoexist->board_info.btdm_ant_num == 1)
+-			ex_btc8723b1ant_lps_notify(btcoexist, lps_type);
++		ex_btc8723b2ant_lps_notify(btcoexist, lps_type);
+ 	} else if (IS_HARDWARE_TYPE_8192E(btcoexist->adapter)) {
+ 		if (btcoexist->board_info.btdm_ant_num == 2)
+ 			ex_btc8192e2ant_lps_notify(btcoexist, lps_type);
+@@ -1582,10 +1570,7 @@ void exhalbtc_scan_notify(struct btc_coexist *btcoexist, u8 type)
+ 		else if (btcoexist->board_info.btdm_ant_num == 1)
+ 			ex_btc8821a1ant_scan_notify(btcoexist, scan_type);
+ 	} else if (IS_HARDWARE_TYPE_8723B(btcoexist->adapter)) {
+-		if (btcoexist->board_info.btdm_ant_num == 2)
+-			ex_btc8723b2ant_scan_notify(btcoexist, scan_type);
+-		else if (btcoexist->board_info.btdm_ant_num == 1)
+-			ex_btc8723b1ant_scan_notify(btcoexist, scan_type);
++		ex_btc8723b2ant_scan_notify(btcoexist, scan_type);
+ 	} else if (IS_HARDWARE_TYPE_8192E(btcoexist->adapter)) {
+ 		if (btcoexist->board_info.btdm_ant_num == 2)
+ 			ex_btc8192e2ant_scan_notify(btcoexist, scan_type);
+@@ -1630,10 +1615,7 @@ void exhalbtc_connect_notify(struct btc_coexist *btcoexist, u8 action)
+ 		else if (btcoexist->board_info.btdm_ant_num == 1)
+ 			ex_btc8821a1ant_connect_notify(btcoexist, asso_type);
+ 	} else if (IS_HARDWARE_TYPE_8723B(btcoexist->adapter)) {
+-		if (btcoexist->board_info.btdm_ant_num == 2)
+-			ex_btc8723b2ant_connect_notify(btcoexist, asso_type);
+-		else if (btcoexist->board_info.btdm_ant_num == 1)
+-			ex_btc8723b1ant_connect_notify(btcoexist, asso_type);
++		ex_btc8723b2ant_connect_notify(btcoexist, asso_type);
+ 	} else if (IS_HARDWARE_TYPE_8192E(btcoexist->adapter)) {
+ 		if (btcoexist->board_info.btdm_ant_num == 2)
+ 			ex_btc8192e2ant_connect_notify(btcoexist, asso_type);
+@@ -1666,10 +1648,7 @@ void exhalbtc_mediastatus_notify(struct btc_coexist *btcoexist,
+ 		else if (btcoexist->board_info.btdm_ant_num == 1)
+ 			ex_btc8821a1ant_media_status_notify(btcoexist, status);
+ 	} else if (IS_HARDWARE_TYPE_8723B(btcoexist->adapter)) {
+-		if (btcoexist->board_info.btdm_ant_num == 2)
+-			ex_btc8723b2ant_media_status_notify(btcoexist, status);
+-		else if (btcoexist->board_info.btdm_ant_num == 1)
+-			ex_btc8723b1ant_media_status_notify(btcoexist, status);
++		ex_btc8723b2ant_media_status_notify(btcoexist, status);
+ 	} else if (IS_HARDWARE_TYPE_8192E(btcoexist->adapter)) {
+ 		if (btcoexist->board_info.btdm_ant_num == 2)
+ 			ex_btc8192e2ant_media_status_notify(btcoexist, status);
+@@ -1709,12 +1688,8 @@ void exhalbtc_special_packet_notify(struct btc_coexist *btcoexist, u8 pkt_type)
+ 			ex_btc8821a1ant_special_packet_notify(btcoexist,
+ 							      packet_type);
+ 	} else if (IS_HARDWARE_TYPE_8723B(btcoexist->adapter)) {
+-		if (btcoexist->board_info.btdm_ant_num == 2)
+-			ex_btc8723b2ant_special_packet_notify(btcoexist,
+-							      packet_type);
+-		else if (btcoexist->board_info.btdm_ant_num == 1)
+-			ex_btc8723b1ant_special_packet_notify(btcoexist,
+-							      packet_type);
++		ex_btc8723b2ant_special_packet_notify(btcoexist,
++						      packet_type);
+ 	} else if (IS_HARDWARE_TYPE_8192E(btcoexist->adapter)) {
+ 		if (btcoexist->board_info.btdm_ant_num == 2)
+ 			ex_btc8192e2ant_special_packet_notify(btcoexist,
+@@ -1741,12 +1716,7 @@ void exhalbtc_bt_info_notify(struct btc_coexist *btcoexist,
+ 			ex_btc8821a1ant_bt_info_notify(btcoexist, tmp_buf,
+ 						       length);
+ 	} else if (IS_HARDWARE_TYPE_8723B(btcoexist->adapter)) {
+-		if (btcoexist->board_info.btdm_ant_num == 2)
+-			ex_btc8723b2ant_bt_info_notify(btcoexist, tmp_buf,
+-						       length);
+-		else if (btcoexist->board_info.btdm_ant_num == 1)
+-			ex_btc8723b1ant_bt_info_notify(btcoexist, tmp_buf,
+-						       length);
++		ex_btc8723b2ant_bt_info_notify(btcoexist, tmp_buf, length);
+ 	} else if (IS_HARDWARE_TYPE_8192E(btcoexist->adapter)) {
+ 		if (btcoexist->board_info.btdm_ant_num == 2)
+ 			ex_btc8192e2ant_bt_info_notify(btcoexist, tmp_buf,
+@@ -1763,8 +1733,6 @@ void exhalbtc_rf_status_notify(struct btc_coexist *btcoexist, u8 type)
  
--	/* set default antenna position to main  port */
--	btcoexist->board_info.btdm_ant_pos = BTC_ANTENNA_AT_MAIN_PORT;
--
- 	single_ant_path = rtl_get_hwpg_single_ant_path(rtlpriv);
- 	exhalbtc_set_single_ant_path(btcoexist, single_ant_path);
- 
+ 	if (IS_HARDWARE_TYPE_8821(btcoexist->adapter)) {
+ 	} else if (IS_HARDWARE_TYPE_8723B(btcoexist->adapter)) {
+-		if (btcoexist->board_info.btdm_ant_num == 1)
+-			ex_btc8723b1ant_rf_status_notify(btcoexist, type);
+ 	} else if (IS_HARDWARE_TYPE_8192E(btcoexist->adapter)) {
+ 	}
+ }
+@@ -1804,10 +1772,7 @@ void exhalbtc_halt_notify(struct btc_coexist *btcoexist)
+ 		else if (btcoexist->board_info.btdm_ant_num == 1)
+ 			ex_btc8821a1ant_halt_notify(btcoexist);
+ 	} else if (IS_HARDWARE_TYPE_8723B(btcoexist->adapter)) {
+-		if (btcoexist->board_info.btdm_ant_num == 2)
+-			ex_btc8723b2ant_halt_notify(btcoexist);
+-		else if (btcoexist->board_info.btdm_ant_num == 1)
+-			ex_btc8723b1ant_halt_notify(btcoexist);
++		ex_btc8723b2ant_halt_notify(btcoexist);
+ 	} else if (IS_HARDWARE_TYPE_8192E(btcoexist->adapter)) {
+ 		if (btcoexist->board_info.btdm_ant_num == 2)
+ 			ex_btc8192e2ant_halt_notify(btcoexist);
+@@ -1880,10 +1845,7 @@ void exhalbtc_periodical(struct btc_coexist *btcoexist)
+ 			if (!halbtc_under_ips(btcoexist))
+ 				ex_btc8821a1ant_periodical(btcoexist);
+ 	} else if (IS_HARDWARE_TYPE_8723B(btcoexist->adapter)) {
+-		if (btcoexist->board_info.btdm_ant_num == 2)
+-			ex_btc8723b2ant_periodical(btcoexist);
+-		else if (btcoexist->board_info.btdm_ant_num == 1)
+-			ex_btc8723b1ant_periodical(btcoexist);
++		ex_btc8723b2ant_periodical(btcoexist);
+ 	} else if (IS_HARDWARE_TYPE_8192E(btcoexist->adapter)) {
+ 		if (btcoexist->board_info.btdm_ant_num == 2)
+ 			ex_btc8192e2ant_periodical(btcoexist);
 -- 
 2.17.0
