@@ -1,83 +1,133 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753248AbeDADlE (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 31 Mar 2018 23:41:04 -0400
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:37323 "EHLO
-        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753000AbeDADlB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 31 Mar 2018 23:41:01 -0400
-X-IronPort-AV: E=Sophos;i="5.48,389,1517846400";
-   d="scan'208";a="178012442"
-From: Bart Van Assche <Bart.VanAssche@wdc.com>
-To: "wakko@animx.eu.org" <wakko@animx.eu.org>,
-        "richard.weinberger@gmail.com" <richard.weinberger@gmail.com>
-CC: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
-Subject: Re: 4.15.14 crash with iscsi target and dvd
-Thread-Topic: 4.15.14 crash with iscsi target and dvd
-Thread-Index: AQHTyTSBb5uvLpZh0kGvcKoLkXFdJKPq6GkAgABbqIA=
-Date: Sun, 1 Apr 2018 03:40:56 +0000
-Message-ID: <b68bf187c9cde1c36489fc5ab2187ca8750a1292.camel@wdc.com>
-References: <20180331015903.GA29398@animx.eu.org>
-         <CAFLxGvzbA9XzXLsH56iyqYkitrSnBbOzD977u4266=w5zw0jNg@mail.gmail.com>
-         <20180331221252.GA25573@animx.eu.org>
-In-Reply-To: <20180331221252.GA25573@animx.eu.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Bart.VanAssche@wdc.com;
-x-originating-ip: [76.103.131.8]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR04MB0926;7:sljiSI0RG7XF171rWor6BXeG4nLU65Ze2U8cYh73psayc7QT5G6Idya8cXNoely8QeARaHKDXE8pbiV9dcWxt1DK4Y9gmKCCGfN+WBJAdsr42mts/KmhIO6dzdpFXZjLXxKUpAYQ+1zXrCUW1Q3hA3z2B0xioL0QCOY8ccx9FFR/I2S5uVSGdJGyAx49tmA8oRVJWRP4XFjXBVbyc3JEgYuTTU8x61HbidW+mOKozNTjHJF0Re52BYCuBES1Jx+T;20:t5RWPpt9ivqI/CT52v5rGpRCGIQZCSurSfsBeIZWLSUGVr27qaMCOPW4BY2llsQQnEEEhqNCJwmUKY7Bz+XiKxZHGwlskcoAOvoVbXniNNl7cnxCike8Up75M0NgbNvjmDp59qLAGcIvMkdHk9aOXzwqL8FAcu07/gygVO9wH/8=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 39f1e763-6eb6-4656-282b-08d597826078
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB0926;
-x-ms-traffictypediagnostic: MWHPR04MB0926:
-wdcipoutbound: EOP-TRUE
-x-microsoft-antispam-prvs: <MWHPR04MB09264553193D10A793B7531B98A70@MWHPR04MB0926.namprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3231221)(944501327)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123560045)(6072148)(201708071742011);SRVR:MWHPR04MB0926;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB0926;
-x-forefront-prvs: 06290ECA9D
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(366004)(39380400002)(346002)(39860400002)(396003)(377424004)(189003)(199004)(86362001)(6116002)(66066001)(118296001)(2616005)(11346002)(36756003)(97736004)(3660700001)(2501003)(26005)(2900100001)(5250100002)(25786009)(186003)(68736007)(3280700002)(72206003)(7736002)(305945005)(39060400002)(54906003)(99286004)(110136005)(4326008)(3846002)(2906002)(105586002)(486005)(476003)(486005)(8936002)(76176011)(8676002)(6506007)(53546011)(14454004)(81166006)(59450400001)(81156014)(6436002)(106356001)(229853002)(102836004)(446003)(6246003)(6512007)(6486002)(316002)(53936002)(5660300001)(478600001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB0926;H:MWHPR04MB1198.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: XZuimLLNyVsfqSHmXzoRE/IslGiFZGlyyVotUszrw2RH/zfQXri17t3H59lRnIZpPjQhup8LtMFGGwSEoUGkvZ7UqlN9+cCO1xevW9drC8fWoq0LiBzI4G4fDFCDFDUr481AkaPeQUy1ErXVI+cdG+KNoJ+P7jzx/eo0PqpfT+TA8KXighdlEi1UOSZw9Y9a6mLFUaLrUmTn/lHZegxGj80BpaEXExDXdJGQXyIVYQNlbc+dbJUClv5XwGSOgaJ6bIhj9S+kG75pT4vI/osMmPpb96KZmXQsX18FjQJR79Yz3PwHilnRboYLFU5f57kLqw/Ui97aPHHPqKQfZDeppRbfyYIp5Di0G0QJoU4L4+3VR/dU7Qd+3efrm/RvcwrzaVKqepo+4nJWC2DIM90zpf4savdfBX1h6qtaysPONEs=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <DF6EA897B30A794E917E4EB95C6C1A26@namprd04.prod.outlook.com>
+Return-Path: <3oe_nWgkbAPww23oeppivettmh.ksskpiywivgsrxirx.gsq@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1525149601; cv=none;
+        d=google.com; s=arc-20160816;
+        b=iSkxGNCjEFzvpT+8J8nUdT0jnbNd2OcZI8u/Tyt17a4FHo+Y9K8IzzCa0vi8ctsVLI
+         sUBa5IMQAFfE1P7BvxyPj+IZ00j0dzW1Yek/+A8qTeJUYV+08bURR08pXHQ2qyWDvbkD
+         Olfj4nD14BuRiLvacCMzbChUE/vvemziTlneqanMp75cMtxXTHONTsqDgcNu9H29jw1J
+         Owz6seD3EYM8yuUptPfvnnusfm6LaHJQW3d8TlrN2KLddmubJ1KgW3mQ/h9v8uRf+xLT
+         i2LXrvsj1hOkGHaCH3SODy5IyoJPMi+wpCf5deT0VEhP55842qzpclzfrd97Z3u9hhwQ
+         GN0g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=to:from:subject:message-id:date:mime-version
+         :arc-authentication-results;
+        bh=h+xs1ePZKm8HQjfm26K8Vt9/ZTQZt/tJ9sP2a4XXr8M=;
+        b=DhVaUmspky8COnwZ6wgQFilkl7U1OLYufYZ9gdGwH0KRwyMiVyX/20KC4Lm71DqIwh
+         WsE4yI7ubfKm4qq6vpraYT8TxOakpRu/J8fSzpmBKFeNnzpj8hRotpqr7fPv9T9PiS5m
+         +Zxm0nbCVoo8ULPznWop3cya7xwAlttw/paw+4ZXLdGhMu4oFFTKERzR/rHMcpYrXcg8
+         cukgz4Dc99HMgnkd0qcSt2VNp4nlehnyh2CS5Jt32Pvvi/6ORrF6ZqqgOTLixxrrbEix
+         u8m7y2LjHvwop2YxY9cdGlI8MWaPHYabLyLVlzwMnu7u/aZTlAGRH8oQ1rdubFJskr0e
+         0g9Q==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of 3oe_nwgkbapww23oeppivettmh.ksskpiywivgsrxirx.gsq@m3kw2wvrgufz5godrsrytgd7.apphosting.bounces.google.com designates 209.85.220.69 as permitted sender) smtp.mailfrom=3oe_nWgkbAPww23oeppivettmh.ksskpiywivgsrxirx.gsq@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=appspotmail.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of 3oe_nwgkbapww23oeppivettmh.ksskpiywivgsrxirx.gsq@m3kw2wvrgufz5godrsrytgd7.apphosting.bounces.google.com designates 209.85.220.69 as permitted sender) smtp.mailfrom=3oe_nWgkbAPww23oeppivettmh.ksskpiywivgsrxirx.gsq@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=appspotmail.com
+X-Google-Smtp-Source: AB8JxZqhiKlbYYfC/d6eOV4k8QrV+WtR0lc9VkGWHFVSdAx/OOcWCkarRryAzvbDiOInb9gNCyBwHW4gZliwdLZ+/SJ1bBCjUgDN
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 39f1e763-6eb6-4656-282b-08d597826078
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Apr 2018 03:40:56.2041
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB0926
-Sender: linux-kernel-owner@vger.kernel.org
-List-ID: <linux-kernel.vger.kernel.org>
+Date: Mon, 30 Apr 2018 21:40:01 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000003b1d65056b1d9046@google.com>
+Subject: general protection fault in n_tty_set_termios
+From: syzbot <syzbot+ed02be0ad5f26ef4e31b@syzkaller.appspotmail.com>
+To: gregkh@linuxfoundation.org, jslaby@suse.com, linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1599235269199846482?=
+X-GMAIL-MSGID: =?utf-8?q?1599235269199846482?=
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w313f7Dm021755
+List-ID: <linux-kernel.vger.kernel.org>
 
-On Sat, 2018-03-31 at 18:12 -0400, Wakko Warner wrote:
-> Richard Weinberger wrote:
-> > On Sat, Mar 31, 2018 at 3:59 AM, Wakko Warner <wakko@animx.eu.org> wrote:
-> > > I reported this before but noone responded.
-> > 
-> > Because you're sending only to LKML.
-> > CC'ing storage folks.
-> 
-> Thank you.  I wasn't sure who I needed to send it to.
+Hello,
 
-Hello Wakko,
+syzbot found the following crash on:
 
-Can you share the output of lsscsi? I would like to know whether or not you
-are using a (S)ATA CDROM.
+HEAD commit:    8188fc8bef8c Merge  
+git://git.kernel.org/pub/scm/linux/kerne...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?id=5093449355231232
+kernel config:   
+https://syzkaller.appspot.com/x/.config?id=6493557782959164711
+dashboard link: https://syzkaller.appspot.com/bug?extid=ed02be0ad5f26ef4e31b
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syzkaller  
+repro:https://syzkaller.appspot.com/x/repro.syz?id=6543533393575936
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?id=5754063643738112
 
-Thanks,
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+ed02be0ad5f26ef4e31b@syzkaller.appspotmail.com
 
-Bart.
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] SMP KASAN
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Modules linked in:
+CPU: 1 PID: 4509 Comm: syz-executor654 Not tainted 4.17.0-rc3+ #26
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:n_tty_set_termios+0x2d9/0xe80 drivers/tty/n_tty.c:1782
+RSP: 0018:ffff8801b42df698 EFLAGS: 00010203
+RAX: 0000000000000001 RBX: 0000000000000000 RCX: 000000000000000b
+RDX: dffffc0000000000 RSI: 0000000000000000 RDI: 0000000000000005
+RBP: ffff8801b42df6d0 R08: ffff8801d97aa000 R09: 0000000000000002
+R10: ffff8801d97aa888 R11: ffff8801d97aa000 R12: ffff8801d9bea500
+R13: ffff8801d9bea8b4 R14: 000000000000005d R15: ffff8801b42df730
+FS:  00007f082d3d7700(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f082d3b5e78 CR3: 00000001ac8aa000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  tty_set_termios+0x7a0/0xac0 drivers/tty/tty_ioctl.c:341
+  set_termios+0x41e/0x7d0 drivers/tty/tty_ioctl.c:414
+  tty_mode_ioctl+0x855/0xb50 drivers/tty/tty_ioctl.c:749
+  n_tty_ioctl_helper+0x54/0x3b0 drivers/tty/tty_ioctl.c:940
+  n_tty_ioctl+0x54/0x320 drivers/tty/n_tty.c:2441
+  tty_ioctl+0x5e1/0x1870 drivers/tty/tty_io.c:2655
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:500 [inline]
+  do_vfs_ioctl+0x1cf/0x16a0 fs/ioctl.c:684
+  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:701
+  __do_sys_ioctl fs/ioctl.c:708 [inline]
+  __se_sys_ioctl fs/ioctl.c:706 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:706
+  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x445d19
+RSP: 002b:00007f082d3d6da8 EFLAGS: 00000297 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00000000006dac3c RCX: 0000000000445d19
+RDX: 0000000020000040 RSI: 0000000000005402 RDI: 0000000000000033
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000297 R12: 00000000006dac38
+R13: 6d74702f7665642f R14: 00007f082d3d79c0 R15: 0000000000000007
+Code: 8b 45 d0 31 ff 83 e0 02 89 c6 89 45 d0 e8 50 4a e1 fd 8b 45 d0 4c 89  
+f1 48 ba 00 00 00 00 00 fc ff df 85 c0 0f 95 c0 48 c1 e9 03 <0f> b6 14 11  
+4c 89 f1 83 e1 07 38 ca 7f 08 84 d2 0f 85 96 09 00
+RIP: n_tty_set_termios+0x2d9/0xe80 drivers/tty/n_tty.c:1782 RSP:  
+ffff8801b42df698
+---[ end trace b89be7398398fc5c ]---
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report.
+If you forgot to add the Reported-by tag, once the fix for this bug is  
+merged
+into any tree, please reply to this email with:
+#syz fix: exact-commit-title
+If you want to test a patch for this bug, please reply with:
+#syz test: git://repo/address.git branch
+and provide the patch inline or as an attachment.
+To mark this as a duplicate of another syzbot report, please reply with:
+#syz dup: exact-subject-of-another-report
+If it's a one-off invalid bug report, please reply with:
+#syz invalid
+Note: if the crash happens again, it will cause creation of a new bug  
+report.
+Note: all commands must start from beginning of the line in the email body.
