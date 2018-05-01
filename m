@@ -1,52 +1,39 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751090AbeEAWFA (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 18:05:00 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54082 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750780AbeEAWE7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 18:04:59 -0400
-Date: Tue, 1 May 2018 17:04:58 -0500
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: Vince Weaver <vincent.weaver@maine.edu>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: Re: perf: fuzzer causes stack going in wrong direction warnings
-Message-ID: <20180501220458.p3rgwzh3jcqt4jmm@treble>
-References: <20180109153341.GL6176@hirez.programming.kicks-ass.net>
- <alpine.DEB.2.21.1801091052010.16446@macbook-air>
- <20180109160551.GK3040@hirez.programming.kicks-ass.net>
- <20180109170716.bqmexpmywwr4bwuv@treble>
- <20180111052538.2qhj6oxnc24xumhk@treble>
- <alpine.DEB.2.21.1801111358580.22460@macbook-air>
- <20180111192112.d35nkotzklicd27c@treble>
- <alpine.DEB.2.21.1805010925140.19413@macbook-air>
- <20180501135850.enx4waqd5d7yowlj@treble>
- <alpine.DEB.2.21.1805011557240.19937@macbook-air>
+        id S1751178AbeEAWKF convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 18:10:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49592 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750780AbeEAWKE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 18:10:04 -0400
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1805011557240.19937@macbook-air>
-User-Agent: Mutt/1.6.0.1 (2016-04-01)
+Content-Transfer-Encoding: 8BIT
+To: Alexandre Torgue <alexandre.torgue@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>, gabriel.fernandez@st.com
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1524556723-26926-1-git-send-email-gabriel.fernandez@st.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, olivier.bideau@st.com,
+        Loic PALLARDY <loic.pallardy@st.com>,
+        benjamin GAIGNARD <benjamin.gaignard@st.com>,
+        Gabriel Fernandez <gabriel.fernandez@st.com>
+References: <1524556723-26926-1-git-send-email-gabriel.fernandez@st.com>
+Message-ID: <152521260300.138124.15551649788620481848@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH] clk: stm32mp1: Add CLK_IGNORE_UNUSED to ck_sys_dbg clock
+Date: Tue, 01 May 2018 15:10:03 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 01, 2018 at 03:59:31PM -0400, Vince Weaver wrote:
-> On Tue, 1 May 2018, Josh Poimboeuf wrote:
+Quoting gabriel.fernandez@st.com (2018-04-24 00:58:43)
+> From: Gabriel Fernandez <gabriel.fernandez@st.com>
 > 
-> > Can you try the following patch?
+> Don't disable the dbg clock if was set by bootloader.
 > 
-> I applied the patch, but the warnings don't really look that different.
-> 
-> [   62.220322] WARNING: stack recursion on stack type 4
-> [   62.220326] WARNING: can't dereference registers at 000000009ca2e86d for ip swapgs_restore_regs_and_return_to_usermode+0x79/0x87
-> [  367.597013] WARNING: stack going in the wrong direction? ip=native_sched_clock+0x9/0x90
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+> ---
 
-Bummer.  I'll need to come up with a patch to dump more info.
-
--- 
-Josh
+Is this a critical fix for this merge window? Please add "Fixes:" tag.
