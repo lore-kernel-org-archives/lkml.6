@@ -1,73 +1,84 @@
-Return-Path: <ingo.flaschberger@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1525183836; cv=none;
+Return-Path: <drustafa@yandex.ru>
+X-Google-Smtp-Source: AB8JxZoXOCqx/7jpOtBoheilECPmmEuv5eanZZa/x3Vqkpa5M6DUIU18/tLfLmwVM0kTUjRtijL0
+ARC-Seal: i=1; a=rsa-sha256; t=1525200878; cv=none;
         d=google.com; s=arc-20160816;
-        b=J+ifI3jnWR4WHFz0hzsXdFI9i0Xd0Kp6Cx5zVlNAFN2AbZgi3hFtQacVvigrK31jev
-         0EZYkOuz8Q0Ny1g4h+kFZJ9OKkKLwHR92PBdmzotFQ8TrrBzuZwKisjr6SkWsX+1T56n
-         HzUEuTE/MbPdWdM4qrnirQoUv1PhP0wYkn1pY39YKky0Hxdkk/O6gPIYdG0uSJJyqO62
-         UXMD/OFsW3pxQXpij242d8Rn+kCBeMEdhqlSjS8Z8JKyV8TIRuSAy7NhlFlrw0tyAQrP
-         WUjkfDsOpOBTGyUPMwDl88fLYu5PTxs9GWv6WnvVQctTKYcGYPDw1yjd2aXEXE63dVbV
-         2f3w==
+        b=qDhjySEls+gUU9wArKeSVE4QCIqPMdXi9T6K66scPSmT9C4Chz6pd2BGcXOXFdji2j
+         +eF8lSwUvbvXh/ckQwi56daW18YfC1hjmca9SeRt1BTHcXMgrOFSPx7/qnswjCacKLN/
+         3ZI5m/9nuwcWOaY0fJPd6WmrGFimCNIT8oOnrbQw8NFDYoxsOJwtenYlhvcjZZKBXLlk
+         mD+l8YRvnuEWfsVbI+naJOiTji/RQS2t0vSIaT/No7uB1SgLGQ1QaxZ2FPmG+UVMJi/N
+         3pcOtLkPzs+erhWWXPykLpe4wrs5A8cvvj53WNXhydyABbKorpc5DHG63isqAnmosdSI
+         vt2A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-language:content-transfer-encoding:mime-version:user-agent
-         :date:message-id:subject:from:to:dkim-signature
+        h=content-transfer-encoding:date:message-id:mime-version:subject
+         :references:in-reply-to:to:envelope-from:from:dkim-signature
          :arc-authentication-results;
-        bh=13MQcFiv0AWfmNEIg+64ei445suodT5Kf8iqo8LAGlY=;
-        b=AauMkD6ODqCSr5AvJoqdmbn1xz6vYanqrAo+BpaGEJKnKqfszsjuZ+s8IN1UXSaLZ2
-         zheGnNYSIpwtPMywwpAMclaq7NPjZ/2rz0qv7vLc6ZyAtuUBNlGjQ3xtq1eUeys+aIH2
-         g9wL+wo0HRVcRBurkxdFF+AMncvgRk2aiaXgF0yc4zI/19iugy3Zd1wuXSiZ7OYRRycr
-         05lanKKtWJdigE9yUVZAiPrK8TWjkwB0Mm2bMg1y6vRb9wnvmFXdDPOSCWlH9BKTwE/l
-         oSBu2ISQqjTGtVq5avegE87SePhqcLPzxFQbGTCm6k7DEw74Mhr2LmkUdnNPmkfpqxHN
-         dQjg==
+        bh=lGW3PBZ570U27NIyjKAbSvApHzK9pGw1SbyMoSWCfFc=;
+        b=PSVx0eQ0iDTSHloXaO6n4mJxy9zmzw85OllfdZR/LlblVs0a4scIV9SiHrQCX4rAjv
+         g922C6ajOmp4P2jJxZ+HCgfKjJRACTOhy1YIRe9acW7S+NL0zli0v9VeAQSjVHwA3J9h
+         dYJ1NK6bONKqSospg22FZ+HLVswEk9F71J/lyNuo6BVWIPLywzuOgcKr5DWZ34EluqmB
+         okZjNY2vOfdQDjBSaPOqrNrhj0MBIIM74If6FI4K5sQXqgUMBpcG3i8vHUQSLTsP8s+c
+         Kae38th68LG8BLj1w8Y5lWNuoCs2ZEG/NuWh0IyOsiSEWx7qpZ8JZfCnCExqR0sAL4DS
+         kZWQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Ne0afZgW;
-       spf=pass (google.com: domain of ingo.flaschberger@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ingo.flaschberger@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       dkim=pass header.i=@yandex.ru header.s=mail header.b=FV1BaFQX;
+       spf=pass (google.com: domain of drustafa@yandex.ru designates 37.9.109.248 as permitted sender) smtp.mailfrom=drustafa@yandex.ru
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Ne0afZgW;
-       spf=pass (google.com: domain of ingo.flaschberger@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ingo.flaschberger@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AB8JxZp3QHBpr2rGP6aFi77/GZAA4N1Hy2a4FmYrpGWJRDT5lWUJgI621T96l8jM9UwGI4SgmyFhgQ==
-To: linux-kernel@vger.kernel.org, zbr@ioremap.net, gregkh@linuxfoundation.org
-From: Ingo Flaschberger <ingo.flaschberger@gmail.com>
-Subject: [PATCH] 1wire: family module autoload fails because of upper/lower
- case mismatch.
-Message-ID: <629ce39b-e3ad-1a4a-be11-7eb3da064ce6@gmail.com>
-Date: Tue, 1 May 2018 16:10:33 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+       dkim=pass header.i=@yandex.ru header.s=mail header.b=FV1BaFQX;
+       spf=pass (google.com: domain of drustafa@yandex.ru designates 37.9.109.248 as permitted sender) smtp.mailfrom=drustafa@yandex.ru
+Authentication-Results: mxback5o.mail.yandex.net; dkim=pass header.i=@yandex.ru
+From: Evgeniy Polyakov <zbr@ioremap.net>
+Envelope-From: drustafa@yandex.ru
+To: Ingo Flaschberger <ingo.flaschberger@gmail.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+In-Reply-To: <629ce39b-e3ad-1a4a-be11-7eb3da064ce6@gmail.com>
+References: <629ce39b-e3ad-1a4a-be11-7eb3da064ce6@gmail.com>
+Subject: Re: [PATCH] 1wire: family module autoload fails because of upper/lower case mismatch.
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Message-Id: <5841141525200877@web25j.yandex.ru>
+X-Mailer: Yamail [ http://yandex.ru ] 5.0
+Date: Tue, 01 May 2018 21:54:37 +0300
 Content-Transfer-Encoding: 8bit
-Content-Language: de-AT
+Content-Type: text/plain; charset=utf-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1599271166540841953?=
-X-GMAIL-MSGID: =?utf-8?q?1599271166540841953?=
+X-GMAIL-MSGID: =?utf-8?q?1599289036828022969?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-1wire family module autoload fails because of upper/lower
-  case mismatch.
+Hi Ingo
 
-Signed-off-by: Ingo Flaschberger <ingo.flaschberger@gmail.com>
+Sorry for late reply and because of forcing you to resend the patch, your changes are correct
+
+01.05.2018, 17:10, "Ingo Flaschberger" <ingo.flaschberger@gmail.com>:
+> 1wire family module autoload fails because of upper/lower
+>   case mismatch.
+>
+> Signed-off-by: Ingo Flaschberger <ingo.flaschberger@gmail.com>
+
+Greg, please pull this patch into your tree.
+Should it be stable material?
+
 Acked-by: Evgeniy Polyakov <zbr@ioremap.net>
-Cc: stable <stable@vger.kernel.org>
 
----
-  drivers/w1/w1.c | 2 +-
-  1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/w1/w1.c b/drivers/w1/w1.c
-index ab0931e..aa458f2 100644
---- a/drivers/w1/w1.c
-+++ b/drivers/w1/w1.c
-@@ -741,7 +741,7 @@ int w1_attach_slave_device(struct w1_master *dev, struct w1_reg_num *rn)
- 
- 	/* slave modules need to be loaded in a context with unlocked mutex */
- 	mutex_unlock(&dev->mutex);
--	request_module("w1-family-0x%02x", rn->family);
-+	request_module("w1-family-0x%02X", rn->family);
- 	mutex_lock(&dev->mutex);
- 
- 	spin_lock(&w1_flock);
--- 
-2.7.4
+> ---
+>   drivers/w1/w1.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/w1/w1.c b/drivers/w1/w1.c
+> index ab0931e..aa458f2 100644
+> --- a/drivers/w1/w1.c
+> +++ b/drivers/w1/w1.c
+> @@ -741,7 +741,7 @@ int w1_attach_slave_device(struct w1_master *dev,
+> struct w1_reg_num *rn)
+>
+>          /* slave modules need to be loaded in a context with unlocked
+> mutex */
+>          mutex_unlock(&dev->mutex);
+> -       request_module("w1-family-0x%02x", rn->family);
+> +       request_module("w1-family-0x%02X", rn->family);
+>          mutex_lock(&dev->mutex);
+>
+>          spin_lock(&w1_flock);
+> --
+> 2.7.4
