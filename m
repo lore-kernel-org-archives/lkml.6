@@ -1,106 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756541AbeEASs7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 14:48:59 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:40818 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756404AbeEASs5 (ORCPT
+        id S1756565AbeEASwN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 14:52:13 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:42714 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756382AbeEASwM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 14:48:57 -0400
-X-Google-Smtp-Source: AB8JxZpewtgPXduCKFypEa/XYt6XEymUZyzzsPPM65IRd7IoPNMyJL4vlfcSNiX9aDopUuOlDhqGWA==
-Date: Tue, 1 May 2018 11:48:53 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Javier Martinez Canillas <javierm@redhat.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-input@vger.kernel.org,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Nick Dyer <nick@shmanahar.org>, Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] Input: atmel_mxt_ts - add missing compatible strings to
- OF device table
-Message-ID: <20180501184853.GB52077@dtor-ws>
-References: <20180410095340.24074-1-javierm@redhat.com>
+        Tue, 1 May 2018 14:52:12 -0400
+Subject: Re: [ANNOUNCE] Kconfiglib menuconfig implementation
+To: Ulf Magnusson <ulfalizer@gmail.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <CAFkk2KRTnRpi5thUGTM2+LZMyitggdJtiOBO7E0pTn93fz6-SQ@mail.gmail.com>
+ <d4c3b2ab-385d-fe7a-bdb1-2d497d620de5@infradead.org>
+ <25f6b309-9346-7e28-beeb-a37e69a91ce8@infradead.org>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <ac506aa3-e5f6-9bfa-a18b-441e04b21d97@infradead.org>
+Date: Tue, 1 May 2018 11:52:10 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180410095340.24074-1-javierm@redhat.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <25f6b309-9346-7e28-beeb-a37e69a91ce8@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 10, 2018 at 11:53:40AM +0200, Javier Martinez Canillas wrote:
-> Commit af503716ac14 ("i2c: core: report OF style module alias for devices
-> registered via OF") fixed how the I2C core reports the module alias when
-> devices are registered via OF.
+On 05/01/2018 11:13 AM, Randy Dunlap wrote:
+> On 05/01/2018 10:56 AM, Randy Dunlap wrote:
+>> On 04/30/2018 05:57 PM, Ulf Magnusson wrote:
+>>> Hello,
+>>>
+>>> Kconfiglib (https://github.com/ulfalizer/Kconfiglib) now has a
+>>> terminal menuconfig implementation, implemented in plain curses
+>>> (which is in the Python standard library).
+>>>
+>>> The interface should feel familiar to people used to mconf. It has
+>>> some features that mconf lacks:
+>>>
+>>>   - Seamless resizing
+>>>
+>>>   - Unicode support
+>>>
+>>>   - Runs on Windows (via 'pip install windows-curses', which uses
+>>>     PDCurses)
+>>>
+>>>   - Improved information displays:
+>>>
+>>>     * All expressions are split into readable chunks
+>>>
+>>>     * Menus and comments have information displays
+>>>
+>>>   - Relatively easy-to-read and easy-to-tweak code.
+>>>
+>>>     Kconfiglib automatically invalidates symbols as needed, and
+>>>     values can never get stale, which helps.
+>>>
+>>> Some upcoming features are mouse support and a search feature that
+>>> can jump directly to the definition of a symbol. The jump-to feature
+>>> will use a "show-all" mode in case the symbol isn't visible.
+>>>
+>>> See the Kconfiglib GitHub page for screenshots. The menuconfig
+>>> implementation is at
+>>> https://github.com/ulfalizer/Kconfiglib/blob/master/menuconfig.py.
+>>> The docstring at the top has some more information.
+>>
+>> Hi,
+>>
+>> I'm probably missing some python additive (I hope it's that easy), but
+>> menuconfig.py is not liking the "degree" symbol in drivers/net/can/peak_canfd/Kconfig:
+>>
+>> config CAN_PEAK_PCIEFD
+>> 	depends on PCI
+>> 	tristate "PEAK-System PCAN-PCIe FD cards"
+>> 	---help---
+>> 	  This driver adds support for the PEAK-System PCI Express FD
+>> 	  CAN-FD cards family.
+>> 	  These 1x or 2x CAN-FD channels cards offer CAN 2.0 a/b as well as
+>> 	  CAN-FD access to the CAN bus. Besides the nominal bitrate of up to
+>> 	  1 Mbit/s, the data bytes of CAN-FD frames can be transmitted with
+>> 	  up to 12 Mbit/s. A galvanic isolation of the CAN ports protects the
+>> 	  electronics of the card and the respective computer against
+>> 	  disturbances of up to 500 Volts. The PCAN-PCI Express FD can be
+>> 	  operated with ambient temperatures in a range of -40 to +85 °C.
+>>
+>>
+>> kconfiglib.KconfigSyntaxError: 
+>> Malformed ascii in drivers/net/can/peak_canfd/Kconfig
+>> Context: b't temperatures in a range of -40 to +85 \xc2\xb0C.\n'
+>> Problematic data: b'\xc2'
+>> Reason: ordinal not in range(128)
 > 
-> But the atmel_mxt_ts driver only has an "atmel,maxtouch" compatible in its
-> OF device ID table, so if a Device Tree is using a different one, autoload
-> won't be working for the module (the matching works because the I2C device
-> ID table is used as a fallback).
-> 
-> So add compatible strings for each of the entries in the I2C device table.
-> 
-> Fixes: af503716ac14 ("i2c: core: report OF style module alias for devices registered via OF")
-> Reported-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
-> ---
-> 
->  Documentation/devicetree/bindings/input/atmel,maxtouch.txt | 6 +++++-
->  drivers/input/touchscreen/atmel_mxt_ts.c                   | 4 ++++
->  2 files changed, 9 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/input/atmel,maxtouch.txt b/Documentation/devicetree/bindings/input/atmel,maxtouch.txt
-> index 23e3abc3fdef..cd43fb8bc2ce 100644
-> --- a/Documentation/devicetree/bindings/input/atmel,maxtouch.txt
-> +++ b/Documentation/devicetree/bindings/input/atmel,maxtouch.txt
-> @@ -1,8 +1,12 @@
->  Atmel maXTouch touchscreen/touchpad
->  
->  Required properties:
-> -- compatible:
-> +- compatible: Must be one of the following
-> +    atmel,qt602240_ts
-> +    atmel,atmel_mxt_ts
-> +    atmel,atmel_mxt_tp
->      atmel,maxtouch
-> +    atmel,mXT224
+> BTW, after modifying 4 other instances of this "error," I have it running.
+> Now looking/testing. :)
 
-I do not think we should document ad-hoc compatible strings that were
-introduced by various vendors as the documented ones, so I'd rather
-dropped this chunk and leave only "atmel,maxtouch" as compatible that
-everyone should be using.
+Hi Ulf,
 
-The changes to the driver to support the existing DTSes can of course be
-applied.
+Here are a few comments for you FWIW.
 
-Rob, any objections?
+menuconfig.py uses the terminal window space better than menuconfig:
+fewer margins, less Help text so more usable lines.
 
->  
->  - reg: The I2C address of the device
->  
-> diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
-> index 7659bc48f1db..e8ef83f168d6 100644
-> --- a/drivers/input/touchscreen/atmel_mxt_ts.c
-> +++ b/drivers/input/touchscreen/atmel_mxt_ts.c
-> @@ -3238,7 +3238,11 @@ static int __maybe_unused mxt_resume(struct device *dev)
->  static SIMPLE_DEV_PM_OPS(mxt_pm_ops, mxt_suspend, mxt_resume);
->  
->  static const struct of_device_id mxt_of_match[] = {
-> +	{ .compatible = "atmel,qt602240_ts", },
-> +	{ .compatible = "atmel,atmel_mxt_ts", },
-> +	{ .compatible = "atmel,atmel_mxt_tp", },
->  	{ .compatible = "atmel,maxtouch", },
-> +	{ .compatible = "atmel,mXT224", },
->  	{},
->  };
->  MODULE_DEVICE_TABLE(of, mxt_of_match);
-> -- 
-> 2.14.3
-> 
+ESC/q is nicer than in ESC+ESC in menuconfig.
+
+What is the lower colored line for? I don't see it being used.
+
+On Quit, don't need to prompt for Save when the file is already saved
+or has not been modified.
+
+When menuconfig displays the Kconfig menu tree and it is over term-width
+characters, it truncates on the left so that the user can see all of
+the current menu name. menuconfig.py truncates on the right so that
+the current menu name may be partially lost or totally lost.
+
+To enable=y a tristate symbol, cannot enter Y, must do Space Space to cycle
+from N to M to Y.
+
+No / symbol search. I use that a lot, but I don't claim to be a
+typical user.
+
 
 Thanks.
-
 -- 
-Dmitry
+~Randy
