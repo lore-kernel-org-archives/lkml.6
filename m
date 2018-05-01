@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752958AbeEAIUQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 04:20:16 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:55550 "EHLO
+        id S1753406AbeEAIZz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 04:25:55 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:55646 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750994AbeEAIUO (ORCPT
+        with ESMTP id S1751421AbeEAIZx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 04:20:14 -0400
+        Tue, 1 May 2018 04:25:53 -0400
 From: Colin King <colin.king@canonical.com>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Alex Deucher <alexander.deucher@amd.com>, alsa-devel@alsa-project.org
+To: Michal Kalderon <Michal.Kalderon@cavium.com>,
+        Ariel Elior <Ariel.Elior@cavium.com>,
+        Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-rdma@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] ASoC: amd: fix spelling mistake: "failer" -> "failure"
-Date: Tue,  1 May 2018 09:20:01 +0100
-Message-Id: <20180501082001.21904-1-colin.king@canonical.com>
+Subject: [PATCH] RDMA/qedr: fix spelling mistake: "failes" -> "fails"
+Date: Tue,  1 May 2018 09:25:49 +0100
+Message-Id: <20180501082549.22215-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -25,25 +26,25 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Trivial fix to spelling mistake in dev_err error message
+Trivial fix to spelling mistake in DP_ERR error message
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- sound/soc/amd/acp-pcm-dma.c | 2 +-
+ drivers/infiniband/hw/qedr/verbs.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/amd/acp-pcm-dma.c b/sound/soc/amd/acp-pcm-dma.c
-index 9c026c4d26d4..2b9a020e0b3e 100644
---- a/sound/soc/amd/acp-pcm-dma.c
-+++ b/sound/soc/amd/acp-pcm-dma.c
-@@ -1014,7 +1014,7 @@ static int acp_dma_new(struct snd_soc_pcm_runtime *rtd)
+diff --git a/drivers/infiniband/hw/qedr/verbs.c b/drivers/infiniband/hw/qedr/verbs.c
+index 7d3763b2e01c..35f3b6f8fd45 100644
+--- a/drivers/infiniband/hw/qedr/verbs.c
++++ b/drivers/infiniband/hw/qedr/verbs.c
+@@ -2579,7 +2579,7 @@ static int qedr_set_page(struct ib_mr *ibmr, u64 addr)
+ 	u32 pbes_in_page;
+ 
+ 	if (unlikely(mr->npages == mr->info.pbl_info.num_pbes)) {
+-		DP_ERR(mr->dev, "qedr_set_page failes when %d\n", mr->npages);
++		DP_ERR(mr->dev, "qedr_set_page fails when %d\n", mr->npages);
+ 		return -ENOMEM;
  	}
- 	if (ret < 0)
- 		dev_err(component->dev,
--			"buffer preallocation failer error:%d\n", ret);
-+			"buffer preallocation failure error:%d\n", ret);
- 	return ret;
- }
  
 -- 
 2.17.0
