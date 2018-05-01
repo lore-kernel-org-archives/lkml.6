@@ -1,92 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755725AbeEAPKx (ORCPT <rfc822;w@1wt.eu>);
+        id S1755877AbeEAPKz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 11:10:55 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57492 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1755742AbeEAPKx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 1 May 2018 11:10:53 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:33667 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754798AbeEAPKw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 11:10:52 -0400
-From: Colin King <colin.king@canonical.com>
-To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] parport: parport_serial: Add WCH CH382L PCIe single parallel port support
-Date: Tue,  1 May 2018 16:10:50 +0100
-Message-Id: <20180501151050.15399-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.0
+Date: Tue, 1 May 2018 17:10:50 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@kernel.org, tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        will.deacon@arm.com, mpe@ellerman.id.au, bigeasy@linutronix.de,
+        gkohli@codeaurora.org, neeraju@codeaurora.org
+Subject: Re: [PATCH 2/2] sched: Introduce set_special_state()
+Message-ID: <20180501151050.GA13094@redhat.com>
+References: <20180430141751.377491406@infradead.org>
+ <20180430142235.900370484@infradead.org>
+ <20180430164545.GA10951@redhat.com>
+ <20180430194024.GA12217@hirez.programming.kicks-ass.net>
+ <20180501095054.GD12235@hirez.programming.kicks-ass.net>
+ <20180501135924.GA12696@redhat.com>
+ <20180501142251.GH12217@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180501142251.GH12217@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On 05/01, Peter Zijlstra wrote:
+>
+> On Tue, May 01, 2018 at 03:59:24PM +0200, Oleg Nesterov wrote:
+> > On 05/01, Peter Zijlstra wrote:
+> > >
+> > > The only code I found that seems to care is ptrace_attach(), where we
+> > > wait for JOBCTL_TRAPPING to get cleared. That same function has a
+> > > comment about hiding the STOPPED -> RUNNING -> TRACED transition. So I'm
+> > > assuming it needs to observe TRACED if it observes !TRAPPING.
+> >
+> > Yes, exactly.
+> >
+> > > But I don't think there's enough barriers on that end to guarantee this.
+> > > Any ->state load after wait_on_bit() is, afact, free to have happened
+> > > before the ->jobctl load.
+> >
+> > do_wait() does set_current_state() before it checks ->state or anything else.
+>
+> But how are ptrace_attach() and do_wait() related?
 
-The WCH CH382L PCIe adapter has 1 parallel port but unlike the similar
-WCH CH328 adapter there are no serial ports connected to it.
+Yes.
 
-PCIe device ID 1c00:3050:
+> I guess I'm missing
+> something fairly fundamental here.
 
-02:00.0 Serial controller: Device 1c00:3050 (rev 10) (prog-if 05 [16850])
-	Subsystem: Device 1c00:3050
-	Flags: fast devsel, IRQ 16
-	I/O ports at 2000 [size=256]
-	Memory at d0000000 (32-bit, prefetchable) [size=32K]
-	I/O ports at 2100 [size=4]
-	Expansion ROM at b0200000 [disabled] [size=32K]
-	Capabilities: [60] Power Management version 3
-	Capabilities: [68] MSI: Enable- Count=1/32 Maskable+ 64bit+
-	Capabilities: [80] Express Legacy Endpoint, MSI 00
-	Capabilities: [100] Advanced Error Reporting
-	Kernel driver in use: parport_pc
-	Kernel modules: parport_pc, parport_serial
+You are missing the fact that ptrace API is very old and ugly ;)
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/parport/parport_serial.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Just one example. If the debugger knows that the task is STOPPED then it has
+all rights to do, say,
 
-diff --git a/drivers/parport/parport_serial.c b/drivers/parport/parport_serial.c
-index ae9e01ef7599..b71cfe0f82e1 100644
---- a/drivers/parport/parport_serial.c
-+++ b/drivers/parport/parport_serial.c
-@@ -58,6 +58,7 @@ enum parport_pc_pci_cards {
- 	timedia_9079c,
- 	wch_ch353_1s1p,
- 	wch_ch353_2s1p,
-+	wch_ch382_0s1p,
- 	wch_ch382_2s1p,
- 	brainboxes_5s1p,
- 	sunix_2s1p,
-@@ -147,6 +148,7 @@ static struct parport_pc_pci cards[] = {
- 	/* timedia_9079c */             { 1, { { 2, 3 }, } },
- 	/* wch_ch353_1s1p*/             { 1, { { 1, -1}, } },
- 	/* wch_ch353_2s1p*/             { 1, { { 2, -1}, } },
-+	/* wch_ch382_0s1p*/		{ 1, { { 2, -1}, } },
- 	/* wch_ch382_2s1p*/             { 1, { { 2, -1}, } },
- 	/* brainboxes_5s1p */           { 1, { { 3, -1 }, } },
- 	/* sunix_2s1p */                { 1, { { 3, -1 }, } },
-@@ -252,6 +254,7 @@ static struct pci_device_id parport_serial_pci_tbl[] = {
- 	/* WCH CARDS */
- 	{ 0x4348, 0x5053, PCI_ANY_ID, PCI_ANY_ID, 0, 0, wch_ch353_1s1p},
- 	{ 0x4348, 0x7053, 0x4348, 0x3253, 0, 0, wch_ch353_2s1p},
-+	{ 0x1c00, 0x3050, 0x1c00, 0x3050, 0, 0, wch_ch382_0s1p},
- 	{ 0x1c00, 0x3250, 0x1c00, 0x3250, 0, 0, wch_ch382_2s1p},
- 
- 	/* BrainBoxes PX272/PX306 MIO card */
-@@ -494,6 +497,12 @@ static struct pciserial_board pci_parport_serial_boards[] = {
- 		.base_baud      = 115200,
- 		.uart_offset    = 8,
- 	},
-+	[wch_ch382_0s1p] = {
-+		.flags          = FL_BASE0,
-+		.num_ports      = 0,
-+		.base_baud      = 115200,
-+		.uart_offset    = 8,
-+	},
- 	[wch_ch382_2s1p] = {
- 		.flags          = FL_BASE0,
- 		.num_ports      = 2,
--- 
-2.17.0
+	ptrace(PTRACE_ATTACH, pid);
+	BUG_ON(pid != waitpid(pid, WNOHANG));
+
+Or even do another ptrace() request right after ptrace(PTRACE_ATTACH) returns,
+without do_wait().
+
+And unless my memory fools me, gdb even has some test-cases for this... Not sure,
+but it certainly looks at tracee->state in /proc before it does PTRACE_ATTACH,
+because if it was already STOPPED then gdb won't have any notification from the
+tracee.
+
+> Anyway, does the below look ok?
+
+Yes, thanks.
+
+Oleg.
