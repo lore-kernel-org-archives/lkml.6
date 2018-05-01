@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754898AbeEAJLw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 05:11:52 -0400
-Received: from foss.arm.com ([217.140.101.70]:44214 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751676AbeEAJLt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 05:11:49 -0400
+        id S1754952AbeEAJMA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 05:12:00 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44238 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751676AbeEAJLy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 05:11:54 -0400
 From: Suzuki K Poulose <suzuki.poulose@arm.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org,
@@ -13,9 +13,9 @@ Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org,
         will.deacon@arm.com, robin.murphy@arm.com, sudeep.holla@arm.com,
         frowand.list@gmail.com, robh@kernel.org, john.horley@arm.com,
         Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH v2 16/27] coresight: tmc-etr: Add transparent buffer management
-Date: Tue,  1 May 2018 10:10:46 +0100
-Message-Id: <1525165857-11096-17-git-send-email-suzuki.poulose@arm.com>
+Subject: [PATCH v2 18/27] coresight: catu: Add support for scatter gather tables
+Date: Tue,  1 May 2018 10:10:48 +0100
+Message-Id: <1525165857-11096-19-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1525165857-11096-1-git-send-email-suzuki.poulose@arm.com>
 References: <1525165857-11096-1-git-send-email-suzuki.poulose@arm.com>
@@ -23,724 +23,472 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-At the moment we always use contiguous memory for TMC ETR tracing
-when used from sysfs. The size of the buffer is fixed at boot time
-and can only be changed by modifiying the DT. With the introduction
-of SG support we could support really large buffers in that mode.
-This patch abstracts the buffer used for ETR to switch between a
-contiguous buffer or a SG table depending on the availability of
-the memory.
+This patch adds the support for setting up a SG table for use
+by the CATU. We reuse the tmc_sg_table to represent the table/data
+pages, even though the table format is different.
 
-This also enables the sysfs mode to use the ETR in SG mode depending
-on configured the trace buffer size. Also, since ETR will use the
-new infrastructure to manage the buffer, we can get rid of some
-of the members in the tmc_drvdata and clean up the fields a bit.
+Similar to ETR SG table, CATU uses a 4KB page size for data buffers
+as well as page tables. All table entries are 64bit wide and have
+the following format:
+
+        63                      12      1  0
+        x-----------------------------------x
+        |        Address [63-12] | SBZ  | V |
+        x-----------------------------------x
+
+	Where [V] ->	 0 - Pointer is invalid
+			 1 - Pointer is Valid
+
+CATU uses only first half of the page for data page pointers.
+i.e, single table page will only have 256 page pointers, addressing
+upto 1MB of data. The second half of a table page contains only two
+pointers at the end of the page (i.e, pointers at index 510 and 511),
+which are used as links to the "Previous" and "Next" page tables
+respectively.
+
+The first table page has an "Invalid" previous pointer and the
+next pointer entry points to the second page table if there is one.
+Similarly the last table page has an "Invalid" next pointer to
+indicate the end of the table chain.
+
+We create a circular buffer (i.e, first_table[prev] => last_table
+and last_table[next] => first_table) by default and provide
+helpers to make the buffer linear from a given offset. When we
+set the buffer to linear, we also mark the "pointers" in the
+outside the given "range" as invalid. We have to do this only
+for the starting and ending tables, as we disconnect the other
+table by invalidating the links. This will allow the ETR buf to
+be restored from a given offset with any size.
 
 Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- drivers/hwtracing/coresight/coresight-tmc-etr.c | 451 +++++++++++++++++++-----
- drivers/hwtracing/coresight/coresight-tmc.h     |  57 ++-
- 2 files changed, 418 insertions(+), 90 deletions(-)
+ drivers/hwtracing/coresight/coresight-catu.c | 409 +++++++++++++++++++++++++++
+ 1 file changed, 409 insertions(+)
 
-diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-index d18043d..fde3fa6 100644
---- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
-+++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-@@ -23,6 +23,13 @@
+diff --git a/drivers/hwtracing/coresight/coresight-catu.c b/drivers/hwtracing/coresight/coresight-catu.c
+index 2cd69a6..4cc2928 100644
+--- a/drivers/hwtracing/coresight/coresight-catu.c
++++ b/drivers/hwtracing/coresight/coresight-catu.c
+@@ -16,10 +16,419 @@
+ 
+ #include "coresight-catu.h"
  #include "coresight-priv.h"
- #include "coresight-tmc.h"
++#include "coresight-tmc.h"
  
-+struct etr_flat_buf {
-+	struct device	*dev;
-+	dma_addr_t	daddr;
-+	void		*vaddr;
-+	size_t		size;
-+};
-+
- /*
-  * The TMC ETR SG has a page size of 4K. The SG table contains pointers
-  * to 4KB buffers. However, the OS may use a PAGE_SIZE different from
-@@ -666,7 +673,7 @@ tmc_etr_sg_table_rotate(struct etr_sg_table *etr_table,
-  * @size	- Total size of the data buffer
-  * @pages	- Optional list of page virtual address
-  */
--static struct etr_sg_table __maybe_unused *
-+static struct etr_sg_table *
- tmc_init_etr_sg_table(struct device *dev, int node,
- 		  unsigned long size, void **pages)
- {
-@@ -702,6 +709,296 @@ tmc_init_etr_sg_table(struct device *dev, int node,
- 	return etr_table;
- }
+ #define csdev_to_catu_drvdata(csdev)	\
+ 	dev_get_drvdata(csdev->dev.parent)
  
 +/*
-+ * tmc_etr_alloc_flat_buf: Allocate a contiguous DMA buffer.
++ * CATU uses a page size of 4KB for page tables as well as data pages.
++ * Each 64bit entry in the table has the following format.
++ *
++ *	63			12	1  0
++ *	------------------------------------
++ *	|	 Address [63-12] | SBZ	| V|
++ *	------------------------------------
++ *
++ * Where bit[0] V indicates if the address is valid or not.
++ * Each 4K table pages have upto 256 data page pointers, taking upto 2K
++ * size. There are two Link pointers, pointing to the previous and next
++ * table pages respectively at the end of the 4K page. (i.e, entry 510
++ * and 511).
++ *  E.g, a table of two pages could look like :
++ *
++ *                 Table Page 0               Table Page 1
++ * SLADDR ===> x------------------x  x--> x-----------------x
++ * INADDR    ->|  Page 0      | V |  |    | Page 256    | V | <- INADDR+1M
++ *             |------------------|  |    |-----------------|
++ * INADDR+4K ->|  Page 1      | V |  |    |                 |
++ *             |------------------|  |    |-----------------|
++ *             |  Page 2      | V |  |    |                 |
++ *             |------------------|  |    |-----------------|
++ *             |   ...        | V |  |    |    ...          |
++ *             |------------------|  |    |-----------------|
++ * INADDR+1020K|  Page 255    | V |  |    |   Page 511  | V |
++ * SLADDR+2K==>|------------------|  |    |-----------------|
++ *             |  UNUSED      |   |  |    |                 |
++ *             |------------------|  |    |                 |
++ *             |  UNUSED      |   |  |    |                 |
++ *             |------------------|  |    |                 |
++ *             |    ...       |   |  |    |                 |
++ *             |------------------|  |    |-----------------|
++ *             |   IGNORED    | 0 |  |    | Table Page 0| 1 |
++ *             |------------------|  |    |-----------------|
++ *             |  Table Page 1| 1 |--x    | IGNORED     | 0 |
++ *             x------------------x       x-----------------x
++ * SLADDR+4K==>
++ *
++ * The base input address (used by the ETR, programmed in INADDR_{LO,HI})
++ * must be aligned to 1MB (the size addressable by a single page table).
++ * The CATU maps INADDR{LO:HI} to the first page in the table pointed
++ * to by SLADDR{LO:HI} and so on.
++ *
 + */
-+static int tmc_etr_alloc_flat_buf(struct tmc_drvdata *drvdata,
-+				  struct etr_buf *etr_buf, int node,
-+				  void **pages)
-+{
-+	struct etr_flat_buf *flat_buf;
++typedef u64 cate_t;
 +
-+	/* We cannot reuse existing pages for flat buf */
-+	if (pages)
-+		return -EINVAL;
++#define CATU_PAGE_SHIFT		12
++#define CATU_PAGE_SIZE		(1UL << CATU_PAGE_SHIFT)
++#define CATU_PAGES_PER_SYSPAGE	(PAGE_SIZE / CATU_PAGE_SIZE)
 +
-+	flat_buf = kzalloc(sizeof(*flat_buf), GFP_KERNEL);
-+	if (!flat_buf)
-+		return -ENOMEM;
++/* Page pointers are only allocated in the first 2K half */
++#define CATU_PTRS_PER_PAGE	((CATU_PAGE_SIZE >> 1) / sizeof(cate_t))
++#define CATU_PTRS_PER_SYSPAGE	(CATU_PAGES_PER_SYSPAGE * CATU_PTRS_PER_PAGE)
++#define CATU_LINK_PREV		((CATU_PAGE_SIZE / sizeof(cate_t)) - 2)
++#define CATU_LINK_NEXT		((CATU_PAGE_SIZE / sizeof(cate_t)) - 1)
 +
-+	flat_buf->vaddr = dma_alloc_coherent(drvdata->dev, etr_buf->size,
-+					   &flat_buf->daddr, GFP_KERNEL);
-+	if (!flat_buf->vaddr) {
-+		kfree(flat_buf);
-+		return -ENOMEM;
-+	}
-+
-+	flat_buf->size = etr_buf->size;
-+	flat_buf->dev = drvdata->dev;
-+	etr_buf->hwaddr = flat_buf->daddr;
-+	etr_buf->mode = ETR_MODE_FLAT;
-+	etr_buf->private = flat_buf;
-+	return 0;
-+}
-+
-+static void tmc_etr_free_flat_buf(struct etr_buf *etr_buf)
-+{
-+	struct etr_flat_buf *flat_buf = etr_buf->private;
-+
-+	if (flat_buf && flat_buf->daddr)
-+		dma_free_coherent(flat_buf->dev, flat_buf->size,
-+				  flat_buf->vaddr, flat_buf->daddr);
-+	kfree(flat_buf);
-+}
-+
-+static void tmc_etr_sync_flat_buf(struct etr_buf *etr_buf, u64 rrp, u64 rwp)
-+{
-+	/*
-+	 * Adjust the buffer to point to the beginning of the trace data
-+	 * and update the available trace data.
-+	 */
-+	etr_buf->offset = rrp - etr_buf->hwaddr;
-+	if (etr_buf->full)
-+		etr_buf->len = etr_buf->size;
-+	else
-+		etr_buf->len = rwp - rrp;
-+}
-+
-+static ssize_t tmc_etr_get_data_flat_buf(struct etr_buf *etr_buf,
-+					 u64 offset, size_t len, char **bufpp)
-+{
-+	struct etr_flat_buf *flat_buf = etr_buf->private;
-+
-+	*bufpp = (char *)flat_buf->vaddr + offset;
-+	/*
-+	 * tmc_etr_buf_get_data already adjusts the length to handle
-+	 * buffer wrapping around.
-+	 */
-+	return len;
-+}
-+
-+static const struct etr_buf_operations etr_flat_buf_ops = {
-+	.alloc = tmc_etr_alloc_flat_buf,
-+	.free = tmc_etr_free_flat_buf,
-+	.sync = tmc_etr_sync_flat_buf,
-+	.get_data = tmc_etr_get_data_flat_buf,
-+};
++#define CATU_ADDR_SHIFT		12
++#define CATU_ADDR_MASK		~(((cate_t)1 << CATU_ADDR_SHIFT) - 1)
++#define CATU_ENTRY_VALID	((cate_t)0x1)
++#define CATU_ENTRY_INVALID	((cate_t)0)
++#define CATU_VALID_ENTRY(addr) \
++	(((cate_t)(addr) & CATU_ADDR_MASK) | CATU_ENTRY_VALID)
++#define CATU_ENTRY_ADDR(entry)	((cate_t)(entry) & ~((cate_t)CATU_ENTRY_VALID))
 +
 +/*
-+ * tmc_etr_alloc_sg_buf: Allocate an SG buf @etr_buf. Setup the parameters
-+ * appropriately.
++ * Index into the CATU entry pointing to the page within
++ * the table. Each table entry can point to a 4KB page, with
++ * a total of 255 entries in the table adding upto 1MB per table.
++ *
++ * So, bits 19:12 gives you the index of the entry in
++ * the table.
 + */
-+static int tmc_etr_alloc_sg_buf(struct tmc_drvdata *drvdata,
-+				struct etr_buf *etr_buf, int node,
-+				void **pages)
++static inline unsigned long catu_offset_to_entry_idx(unsigned long offset)
 +{
-+	struct etr_sg_table *etr_table;
-+
-+	etr_table = tmc_init_etr_sg_table(drvdata->dev, node,
-+					  etr_buf->size, pages);
-+	if (IS_ERR(etr_table))
-+		return -ENOMEM;
-+	etr_buf->hwaddr = etr_table->hwaddr;
-+	etr_buf->mode = ETR_MODE_ETR_SG;
-+	etr_buf->private = etr_table;
-+	return 0;
++	return (offset & (SZ_1M - 1)) >> 12;
 +}
 +
-+static void tmc_etr_free_sg_buf(struct etr_buf *etr_buf)
++static inline void catu_update_state(cate_t *catep, int valid)
 +{
-+	struct etr_sg_table *etr_table = etr_buf->private;
-+
-+	if (etr_table) {
-+		tmc_free_sg_table(etr_table->sg_table);
-+		kfree(etr_table);
-+	}
++	*catep &= ~CATU_ENTRY_VALID;
++	*catep |= valid ? CATU_ENTRY_VALID : CATU_ENTRY_INVALID;
 +}
 +
-+static ssize_t tmc_etr_get_data_sg_buf(struct etr_buf *etr_buf, u64 offset,
-+				       size_t len, char **bufpp)
++/*
++ * Update the valid bit for a given range of indices [start, end)
++ * in the given table @table.
++ */
++static inline void catu_update_state_range(cate_t *table, int start,
++						 int end, int valid)
 +{
-+	struct etr_sg_table *etr_table = etr_buf->private;
++	int i;
++	cate_t *pentry = &table[start];
++	cate_t state = valid ? CATU_ENTRY_VALID : CATU_ENTRY_INVALID;
 +
-+	return tmc_sg_table_get_data(etr_table->sg_table, offset, len, bufpp);
-+}
++	/* Limit the "end" to maximum range */
++	if (end > CATU_PTRS_PER_PAGE)
++		end = CATU_PTRS_PER_PAGE;
 +
-+static void tmc_etr_sync_sg_buf(struct etr_buf *etr_buf, u64 rrp, u64 rwp)
-+{
-+	long r_offset, w_offset;
-+	struct etr_sg_table *etr_table = etr_buf->private;
-+	struct tmc_sg_table *table = etr_table->sg_table;
-+
-+	/* Convert hw address to offset in the buffer */
-+	r_offset = tmc_sg_get_data_page_offset(table, rrp);
-+	if (r_offset < 0) {
-+		dev_warn(table->dev,
-+			 "Unable to map RRP %llx to offset\n", rrp);
-+		etr_buf->len = 0;
-+		return;
-+	}
-+
-+	w_offset = tmc_sg_get_data_page_offset(table, rwp);
-+	if (w_offset < 0) {
-+		dev_warn(table->dev,
-+			 "Unable to map RWP %llx to offset\n", rwp);
-+		etr_buf->len = 0;
-+		return;
-+	}
-+
-+	etr_buf->offset = r_offset;
-+	if (etr_buf->full)
-+		etr_buf->len = etr_buf->size;
-+	else
-+		etr_buf->len = ((w_offset < r_offset) ? etr_buf->size : 0) +
-+				w_offset - r_offset;
-+	tmc_sg_table_sync_data_range(table, r_offset, etr_buf->len);
-+}
-+
-+static const struct etr_buf_operations etr_sg_buf_ops = {
-+	.alloc = tmc_etr_alloc_sg_buf,
-+	.free = tmc_etr_free_sg_buf,
-+	.sync = tmc_etr_sync_sg_buf,
-+	.get_data = tmc_etr_get_data_sg_buf,
-+};
-+
-+static const struct etr_buf_operations *etr_buf_ops[] = {
-+	[ETR_MODE_FLAT] = &etr_flat_buf_ops,
-+	[ETR_MODE_ETR_SG] = &etr_sg_buf_ops,
-+};
-+
-+static inline int tmc_etr_mode_alloc_buf(int mode,
-+					 struct tmc_drvdata *drvdata,
-+					 struct etr_buf *etr_buf, int node,
-+					 void **pages)
-+{
-+	int rc;
-+
-+	switch (mode) {
-+	case ETR_MODE_FLAT:
-+	case ETR_MODE_ETR_SG:
-+		rc = etr_buf_ops[mode]->alloc(drvdata, etr_buf, node, pages);
-+		if (!rc)
-+			etr_buf->ops = etr_buf_ops[mode];
-+		return rc;
-+	default:
-+		return -EINVAL;
++	for (i = start; i < end; i++, pentry++) {
++		*pentry &= ~(cate_t)CATU_ENTRY_VALID;
++		*pentry |= state;
 +	}
 +}
 +
 +/*
-+ * tmc_alloc_etr_buf: Allocate a buffer use by ETR.
-+ * @drvdata	: ETR device details.
-+ * @size	: size of the requested buffer.
-+ * @flags	: Required properties for the buffer.
-+ * @node	: Node for memory allocations.
-+ * @pages	: An optional list of pages.
++ * Update valid bit for all entries in the range [start, end)
 + */
-+static struct etr_buf *tmc_alloc_etr_buf(struct tmc_drvdata *drvdata,
-+					 ssize_t size, int flags,
-+					 int node, void **pages)
++static inline void
++catu_table_update_offset_range(cate_t *table,
++			       unsigned long start,
++			       unsigned long end,
++			       int valid)
 +{
-+	int rc = -ENOMEM;
-+	bool has_etr_sg, has_iommu;
-+	struct etr_buf *etr_buf;
++	catu_update_state_range(table,
++				catu_offset_to_entry_idx(start),
++				catu_offset_to_entry_idx(end),
++				valid);
++}
 +
-+	has_etr_sg = tmc_etr_has_cap(drvdata, TMC_ETR_SG);
-+	has_iommu = iommu_get_domain_for_dev(drvdata->dev);
++static inline void catu_table_update_prev(cate_t *table, int valid)
++{
++	catu_update_state(&table[CATU_LINK_PREV], valid);
++}
 +
-+	etr_buf = kzalloc(sizeof(*etr_buf), GFP_KERNEL);
-+	if (!etr_buf)
-+		return ERR_PTR(-ENOMEM);
++static inline void catu_table_update_next(cate_t *table, int valid)
++{
++	catu_update_state(&table[CATU_LINK_NEXT], valid);
++}
 +
-+	etr_buf->size = size;
++/*
++ * catu_get_table : Retrieve the table pointers for the given @offset
++ * within the buffer. The buffer is wrapped around to a valid offset.
++ *
++ * Returns : The CPU virtual address for the beginning of the table
++ * containing the data page pointer for @offset. If @daddrp is not NULL,
++ * @daddrp points the DMA address of the beginning of the table.
++ */
++static inline cate_t *catu_get_table(struct tmc_sg_table *catu_table,
++				     unsigned long offset,
++				     dma_addr_t *daddrp)
++{
++	unsigned long buf_size = tmc_sg_table_buf_size(catu_table);
++	unsigned int table_nr, pg_idx, pg_offset;
++	struct tmc_pages *table_pages = &catu_table->table_pages;
++	void *ptr;
++
++	/* Make sure offset is within the range */
++	offset %= buf_size;
 +
 +	/*
-+	 * If we have to use an existing list of pages, we cannot reliably
-+	 * use a contiguous DMA memory (even if we have an IOMMU). Otherwise,
-+	 * we use the contiguous DMA memory if at least one of the following
-+	 * conditions is true:
-+	 *  a) The ETR cannot use Scatter-Gather.
-+	 *  b) we have a backing IOMMU
-+	 *  c) The requested memory size is smaller (< 1M).
-+	 *
-+	 * Fallback to available mechanisms.
-+	 *
++	 * Each table can address 1MB and a single kernel page can
++	 * contain "CATU_PAGES_PER_SYSPAGE" CATU tables.
 +	 */
-+	if (!pages &&
-+	    (!has_etr_sg || has_iommu || size < SZ_1M))
-+		rc = tmc_etr_mode_alloc_buf(ETR_MODE_FLAT, drvdata,
-+					    etr_buf, node, pages);
-+	if (rc && has_etr_sg)
-+		rc = tmc_etr_mode_alloc_buf(ETR_MODE_ETR_SG, drvdata,
-+					    etr_buf, node, pages);
-+	if (rc) {
-+		kfree(etr_buf);
-+		return ERR_PTR(rc);
-+	}
-+
-+	return etr_buf;
++	table_nr = offset >> 20;
++	/* Find the table page where the table_nr lies in */
++	pg_idx = table_nr / CATU_PAGES_PER_SYSPAGE;
++	pg_offset = (table_nr % CATU_PAGES_PER_SYSPAGE) * CATU_PAGE_SIZE;
++	if (daddrp)
++		*daddrp = table_pages->daddrs[pg_idx] + pg_offset;
++	ptr = page_address(table_pages->pages[pg_idx]);
++	return (cate_t *)((unsigned long)ptr + pg_offset);
 +}
 +
-+static void tmc_free_etr_buf(struct etr_buf *etr_buf)
++#ifdef CATU_DEBUG
++static void catu_dump_table(struct tmc_sg_table *catu_table)
 +{
-+	WARN_ON(!etr_buf->ops || !etr_buf->ops->free);
-+	etr_buf->ops->free(etr_buf);
-+	kfree(etr_buf);
++	int i;
++	cate_t *table;
++	unsigned long table_end, buf_size, offset = 0;
++
++	buf_size = tmc_sg_table_buf_size(catu_table);
++	dev_dbg(catu_table->dev,
++		"Dump table %p, tdaddr: %llx\n",
++		catu_table, catu_table->table_daddr);
++
++	while (offset < buf_size) {
++		table_end = offset + SZ_1M < buf_size ?
++			    offset + SZ_1M : buf_size;
++		table = catu_get_table(catu_table, offset, NULL);
++		for (i = 0; offset < table_end; i++, offset += CATU_PAGE_SIZE)
++			dev_dbg(catu_table->dev, "%d: %llx\n", i, table[i]);
++		dev_dbg(catu_table->dev, "Prev : %llx, Next: %llx\n",
++			table[CATU_LINK_PREV], table[CATU_LINK_NEXT]);
++		dev_dbg(catu_table->dev, "== End of sub-table ===");
++	}
++	dev_dbg(catu_table->dev, "== End of Table ===");
++}
++
++#else
++static inline void catu_dump_table(struct tmc_sg_table *catu_table)
++{
++}
++#endif
++
++/*
++ * catu_update_table: Update the start and end tables for the
++ * region [base, base + size) to, validate/invalidate the pointers
++ * outside the area.
++ *
++ * CATU expects the table base address (SLADDR) aligned to 4K.
++ * If the @base is not aligned to 1MB, we should mark all the
++ * pointers in the start table before @base "INVALID".
++ * Similarly all pointers in the last table beyond (@base + @size)
++ * should be marked INVALID.
++ * The table page containinig the "base" is marked first (by
++ * marking the previous link INVALID) and the table page
++ * containing "base + size" is marked last (by marking next
++ * link INVALID).
++ * By default we have to update the state of pointers
++ * for offsets in the range :
++ *    Start table: [0, ALIGN_DOWN(base))
++ *    End table  : [ALIGN(end + 1), SZ_1M)
++ * But, if we the buffer wraps around and ends in the same table
++ * as the "base", (i,e this should be :
++ *         [ALIGN(end + 1), base)
++ *
++ * Returns the dma_address for the start_table, which can be set as
++ * SLADDR.
++ */
++static dma_addr_t catu_update_table(struct tmc_sg_table *catu_table,
++				    u64 base, u64 size, int valid)
++{
++	cate_t *start_table, *end_table;
++	dma_addr_t taddr;
++	u64 buf_size, end = base + size - 1;
++	unsigned int start_off = 0;	/* Offset to begin in start_table */
++	unsigned int end_off = SZ_1M;	/* Offset to end in the end_table */
++
++	buf_size = tmc_sg_table_buf_size(catu_table);
++	if (end > buf_size)
++		end -= buf_size;
++
++	/* Get both the virtual and the DMA address of the first table */
++	start_table = catu_get_table(catu_table, base, &taddr);
++	end_table = catu_get_table(catu_table, end, NULL);
++
++	/* Update the "PREV" link for the starting table */
++	catu_table_update_prev(start_table, valid);
++
++	/* Update the "NEXT" link only if this is not the start_table */
++	if (end_table != start_table) {
++		catu_table_update_next(end_table, valid);
++	} else if (end < base) {
++		/*
++		 * If the buffer has wrapped around and we have got the
++		 * "end" before "base" in the same table, we need to be
++		 * extra careful. We only need to invalidate the ptrs
++		 * in between the "end" and "base".
++		 */
++		start_off = ALIGN(end, CATU_PAGE_SIZE);
++		end_off = 0;
++	}
++
++	/* Update the pointers in the starting table before the "base" */
++	catu_table_update_offset_range(start_table,
++				       start_off,
++				       base,
++				       valid);
++	if (end_off)
++		catu_table_update_offset_range(end_table,
++					       end,
++					       end_off,
++					       valid);
++
++	catu_dump_table(catu_table);
++	return taddr;
 +}
 +
 +/*
-+ * tmc_etr_buf_get_data: Get the pointer the trace data at @offset
-+ * with a maximum of @len bytes.
-+ * Returns: The size of the linear data available @pos, with *bufpp
-+ * updated to point to the buffer.
++ * catu_set_table : Set the buffer to act as linear buffer
++ * from @base of @size.
++ *
++ * Returns : The DMA address for the table containing base.
++ * This can then be programmed into SLADDR.
 + */
-+static ssize_t tmc_etr_buf_get_data(struct etr_buf *etr_buf,
-+				    u64 offset, size_t len, char **bufpp)
++static dma_addr_t
++catu_set_table(struct tmc_sg_table *catu_table, u64 base, u64 size)
 +{
-+	/* Adjust the length to limit this transaction to end of buffer */
-+	len = (len < (etr_buf->size - offset)) ? len : etr_buf->size - offset;
-+
-+	return etr_buf->ops->get_data(etr_buf, (u64)offset, len, bufpp);
++	/* Make all the entries outside this range invalid */
++	dma_addr_t sladdr =  catu_update_table(catu_table, base, size, 0);
++	/* Sync the changes to memory for CATU */
++	tmc_sg_table_sync_table(catu_table);
++	return sladdr;
 +}
 +
-+static inline s64
-+tmc_etr_buf_insert_barrier_packet(struct etr_buf *etr_buf, u64 offset)
++static void __maybe_unused
++catu_reset_table(struct tmc_sg_table *catu_table, u64 base, u64 size)
 +{
-+	ssize_t len;
-+	char *bufp;
-+
-+	len = tmc_etr_buf_get_data(etr_buf, offset,
-+				   CORESIGHT_BARRIER_PKT_SIZE, &bufp);
-+	if (WARN_ON(len <= CORESIGHT_BARRIER_PKT_SIZE))
-+		return -EINVAL;
-+	coresight_insert_barrier_packet(bufp);
-+	return offset + CORESIGHT_BARRIER_PKT_SIZE;
++	/* Make all the entries outside this range valid */
++	(void)catu_update_table(catu_table, base, size, 1);
 +}
 +
 +/*
-+ * tmc_sync_etr_buf: Sync the trace buffer availability with drvdata.
-+ * Makes sure the trace data is synced to the memory for consumption.
-+ * @etr_buf->offset will hold the offset to the beginning of the trace data
-+ * within the buffer, with @etr_buf->len bytes to consume.
++ * catu_populate_table : Populate the given CATU table.
++ * The table is always populated as a circular table.
++ * i.e, the "prev" link of the "first" table points to the "last"
++ * table and the "next" link of the "last" table points to the
++ * "first" table. The buffer should be made linear by calling
++ * catu_set_table().
 + */
-+static void tmc_sync_etr_buf(struct tmc_drvdata *drvdata)
-+{
-+	struct etr_buf *etr_buf = drvdata->etr_buf;
-+	u64 rrp, rwp;
-+	u32 status;
-+
-+	rrp = tmc_read_rrp(drvdata);
-+	rwp = tmc_read_rwp(drvdata);
-+	status = readl_relaxed(drvdata->base + TMC_STS);
-+	etr_buf->full = status & TMC_STS_FULL;
-+
-+	WARN_ON(!etr_buf->ops || !etr_buf->ops->sync);
-+
-+	etr_buf->ops->sync(etr_buf, rrp, rwp);
-+
-+	/* Insert barrier packets at the beginning, if there was an overflow */
-+	if (etr_buf->full)
-+		tmc_etr_buf_insert_barrier_packet(etr_buf, etr_buf->offset);
-+}
-+
- static inline void tmc_etr_enable_catu(struct tmc_drvdata *drvdata)
- {
- 	struct coresight_device *catu = tmc_etr_get_catu_device(drvdata);
-@@ -721,6 +1018,7 @@ static inline void tmc_etr_disable_catu(struct tmc_drvdata *drvdata)
- static void tmc_etr_enable_hw(struct tmc_drvdata *drvdata)
- {
- 	u32 axictl, sts;
-+	struct etr_buf *etr_buf = drvdata->etr_buf;
- 
- 	/*
- 	 * If this ETR is connected to a CATU, enable it before we turn
-@@ -733,7 +1031,7 @@ static void tmc_etr_enable_hw(struct tmc_drvdata *drvdata)
- 	/* Wait for TMCSReady bit to be set */
- 	tmc_wait_for_tmcready(drvdata);
- 
--	writel_relaxed(drvdata->size / 4, drvdata->base + TMC_RSZ);
-+	writel_relaxed(etr_buf->size / 4, drvdata->base + TMC_RSZ);
- 	writel_relaxed(TMC_MODE_CIRCULAR_BUFFER, drvdata->base + TMC_MODE);
- 
- 	axictl = readl_relaxed(drvdata->base + TMC_AXICTL);
-@@ -746,16 +1044,22 @@ static void tmc_etr_enable_hw(struct tmc_drvdata *drvdata)
- 		axictl |= TMC_AXICTL_ARCACHE_OS;
- 	}
- 
-+	if (etr_buf->mode == ETR_MODE_ETR_SG) {
-+		if (WARN_ON(!tmc_etr_has_cap(drvdata, TMC_ETR_SG)))
-+			return;
-+		axictl |= TMC_AXICTL_SCT_GAT_MODE;
-+	}
-+
- 	writel_relaxed(axictl, drvdata->base + TMC_AXICTL);
--	tmc_write_dba(drvdata, drvdata->paddr);
-+	tmc_write_dba(drvdata, etr_buf->hwaddr);
- 	/*
- 	 * If the TMC pointers must be programmed before the session,
- 	 * we have to set it properly (i.e, RRP/RWP to base address and
- 	 * STS to "not full").
- 	 */
- 	if (tmc_etr_has_cap(drvdata, TMC_ETR_SAVE_RESTORE)) {
--		tmc_write_rrp(drvdata, drvdata->paddr);
--		tmc_write_rwp(drvdata, drvdata->paddr);
-+		tmc_write_rrp(drvdata, etr_buf->hwaddr);
-+		tmc_write_rwp(drvdata, etr_buf->hwaddr);
- 		sts = readl_relaxed(drvdata->base + TMC_STS) & ~TMC_STS_FULL;
- 		writel_relaxed(sts, drvdata->base + TMC_STS);
- 	}
-@@ -771,63 +1075,53 @@ static void tmc_etr_enable_hw(struct tmc_drvdata *drvdata)
- }
- 
- /*
-- * Return the available trace data in the buffer @pos, with a maximum
-- * limit of @len, also updating the @bufpp on where to find it.
-+ * Return the available trace data in the buffer (starts at etr_buf->offset,
-+ * limited by etr_buf->len) from @pos, with a maximum limit of @len,
-+ * also updating the @bufpp on where to find it. Since the trace data
-+ * starts at anywhere in the buffer, depending on the RRP, we adjust the
-+ * @len returned to handle buffer wrapping around.
-  */
- ssize_t tmc_etr_get_sysfs_trace(struct tmc_drvdata *drvdata,
--			    loff_t pos, size_t len, char **bufpp)
-+				loff_t pos, size_t len, char **bufpp)
- {
-+	s64 offset;
- 	ssize_t actual = len;
--	char *bufp = drvdata->buf + pos;
--	char *bufend = (char *)(drvdata->vaddr + drvdata->size);
--
--	/* Adjust the len to available size @pos */
--	if (pos + actual > drvdata->len)
--		actual = drvdata->len - pos;
-+	struct etr_buf *etr_buf = drvdata->etr_buf;
- 
-+	if (pos + actual > etr_buf->len)
-+		actual = etr_buf->len - pos;
- 	if (actual <= 0)
- 		return actual;
- 
--	/*
--	 * Since we use a circular buffer, with trace data starting
--	 * @drvdata->buf, possibly anywhere in the buffer @drvdata->vaddr,
--	 * wrap the current @pos to within the buffer.
--	 */
--	if (bufp >= bufend)
--		bufp -= drvdata->size;
--	/*
--	 * For simplicity, avoid copying over a wrapped around buffer.
--	 */
--	if ((bufp + actual) > bufend)
--		actual = bufend - bufp;
--	*bufpp = bufp;
--	return actual;
-+	/* Compute the offset from which we read the data */
-+	offset = etr_buf->offset + pos;
-+	if (offset >= etr_buf->size)
-+		offset -= etr_buf->size;
-+	return tmc_etr_buf_get_data(etr_buf, offset, actual, bufpp);
- }
- 
--static void tmc_etr_dump_hw(struct tmc_drvdata *drvdata)
-+static struct etr_buf *
-+tmc_etr_setup_sysfs_buf(struct tmc_drvdata *drvdata)
- {
--	u32 val;
--	u64 rwp;
-+	return tmc_alloc_etr_buf(drvdata, drvdata->size,
-+				 0, cpu_to_node(0), NULL);
-+}
- 
--	rwp = tmc_read_rwp(drvdata);
--	val = readl_relaxed(drvdata->base + TMC_STS);
 +static void
-+tmc_etr_free_sysfs_buf(struct etr_buf *buf)
++catu_populate_table(struct tmc_sg_table *catu_table)
 +{
-+	if (buf)
-+		tmc_free_etr_buf(buf);
++	int i, dpidx, s_dpidx;
++	unsigned long offset, buf_size, last_offset;
++	dma_addr_t data_daddr;
++	dma_addr_t prev_taddr, next_taddr, cur_taddr;
++	cate_t *table_ptr, *next_table;
++
++	buf_size = tmc_sg_table_buf_size(catu_table);
++	dpidx = s_dpidx = 0;
++	offset = 0;
++
++	table_ptr = catu_get_table(catu_table, 0, &cur_taddr);
++	/*
++	 * Use the address of the "last" table as the "prev" link
++	 * for the first table.
++	 */
++	(void)catu_get_table(catu_table, buf_size - 1, &prev_taddr);
++
++	while (offset < buf_size) {
++		/*
++		 * The @offset is always 1M aligned here and we have an
++		 * empty table @table_ptr to fill. Each table can address
++		 * upto 1MB data buffer. The last table may have fewer
++		 * entries if the buffer size is not aligned.
++		 */
++		last_offset = (offset + SZ_1M) < buf_size ?
++			      (offset + SZ_1M) : buf_size;
++		for (i = 0; offset < last_offset; i++) {
++
++			data_daddr = catu_table->data_pages.daddrs[dpidx] +
++				     s_dpidx * CATU_PAGE_SIZE;
++#ifdef CATU_DEBUG
++			dev_dbg(catu_table->dev,
++				"[table %5d:%03d] 0x%llx\n",
++				(offset >> 20), i, data_daddr);
++#endif
++			table_ptr[i] = CATU_VALID_ENTRY(data_daddr);
++			offset += CATU_PAGE_SIZE;
++			/* Move the pointers for data pages */
++			s_dpidx = (s_dpidx + 1) % CATU_PAGES_PER_SYSPAGE;
++			if (s_dpidx == 0)
++				dpidx++;
++		}
++
++		/*
++		 * If we have finished all the valid entries, fill the rest of
++		 * the table (i.e, last table page) with invalid entries,
++		 * to fail the lookups.
++		 */
++		if (offset == buf_size)
++			catu_table_update_offset_range(table_ptr,
++						       offset - 1, SZ_1M, 0);
++
++		/*
++		 * Find the next table by looking up the table that contains
++		 * @offset. For the last table, this will return the very
++		 * first table (as the offset == buf_size, and thus returns
++		 * the table for offset = 0.)
++		 */
++		next_table = catu_get_table(catu_table, offset, &next_taddr);
++		table_ptr[CATU_LINK_PREV] = CATU_VALID_ENTRY(prev_taddr);
++		table_ptr[CATU_LINK_NEXT] = CATU_VALID_ENTRY(next_taddr);
++
++#ifdef CATU_DEBUG
++		dev_dbg(catu_table->dev,
++			"[table%5d]: Cur: 0x%llx Prev: 0x%llx, Next: 0x%llx\n",
++			(offset >> 20) - 1,  cur_taddr, prev_taddr, next_taddr);
++#endif
++
++		/* Update the prev/next addresses */
++		prev_taddr = cur_taddr;
++		cur_taddr = next_taddr;
++		table_ptr = next_table;
++	}
 +}
- 
--	/*
--	 * Adjust the buffer to point to the beginning of the trace data
--	 * and update the available trace data.
--	 */
--	if (val & TMC_STS_FULL) {
--		drvdata->buf = drvdata->vaddr + rwp - drvdata->paddr;
--		drvdata->len = drvdata->size;
--		coresight_insert_barrier_packet(drvdata->buf);
--	} else {
--		drvdata->buf = drvdata->vaddr;
--		drvdata->len = rwp - drvdata->paddr;
--	}
-+static void tmc_etr_sync_sysfs_buf(struct tmc_drvdata *drvdata)
++
++static struct tmc_sg_table __maybe_unused *
++catu_init_sg_table(struct device *catu_dev, int node,
++		   ssize_t size, void **pages)
 +{
-+	tmc_sync_etr_buf(drvdata);
- }
- 
- static void tmc_etr_disable_hw(struct tmc_drvdata *drvdata)
- {
++	int nr_tpages;
++	struct tmc_sg_table *catu_table;
 +
- 	CS_UNLOCK(drvdata->base);
- 
- 	tmc_flush_and_stop(drvdata);
-@@ -836,7 +1130,8 @@ static void tmc_etr_disable_hw(struct tmc_drvdata *drvdata)
- 	 * read before the TMC is disabled.
- 	 */
- 	if (drvdata->mode == CS_MODE_SYSFS)
--		tmc_etr_dump_hw(drvdata);
-+		tmc_etr_sync_sysfs_buf(drvdata);
++	/*
++	 * Each table can address upto 1MB and we can have
++	 * CATU_PAGES_PER_SYSPAGE tables in a system page.
++	 */
++	nr_tpages = DIV_ROUND_UP(size, SZ_1M) / CATU_PAGES_PER_SYSPAGE;
++	catu_table = tmc_alloc_sg_table(catu_dev, node, nr_tpages,
++					size >> PAGE_SHIFT, pages);
++	if (IS_ERR(catu_table))
++		return catu_table;
 +
- 	tmc_disable_hw(drvdata);
- 
- 	CS_LOCK(drvdata->base);
-@@ -850,34 +1145,31 @@ static int tmc_enable_etr_sink_sysfs(struct coresight_device *csdev)
- 	int ret = 0;
- 	bool used = false;
- 	unsigned long flags;
--	void __iomem *vaddr = NULL;
--	dma_addr_t paddr;
- 	struct tmc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
-+	struct etr_buf *new_buf = NULL, *free_buf = NULL;
- 
- 
- 	/*
--	 * If we don't have a buffer release the lock and allocate memory.
--	 * Otherwise keep the lock and move along.
-+	 * If we are enabling the ETR from disabled state, we need to make
-+	 * sure we have a buffer with the right size. The etr_buf is not reset
-+	 * immediately after we stop the tracing in SYSFS mode as we wait for
-+	 * the user to collect the data. We may be able to reuse the existing
-+	 * buffer, provided the size matches. Any allocation has to be done
-+	 * with the lock released.
- 	 */
- 	spin_lock_irqsave(&drvdata->spinlock, flags);
--	if (!drvdata->vaddr) {
-+	if (!drvdata->etr_buf || (drvdata->etr_buf->size != drvdata->size)) {
- 		spin_unlock_irqrestore(&drvdata->spinlock, flags);
--
--		/*
--		 * Contiguous  memory can't be allocated while a spinlock is
--		 * held.  As such allocate memory here and free it if a buffer
--		 * has already been allocated (from a previous session).
--		 */
--		vaddr = dma_alloc_coherent(drvdata->dev, drvdata->size,
--					   &paddr, GFP_KERNEL);
--		if (!vaddr)
--			return -ENOMEM;
-+		/* Allocate memory with the spinlock released */
-+		free_buf = new_buf = tmc_etr_setup_sysfs_buf(drvdata);
-+		if (IS_ERR(new_buf))
-+			return PTR_ERR(new_buf);
- 
- 		/* Let's try again */
- 		spin_lock_irqsave(&drvdata->spinlock, flags);
- 	}
- 
--	if (drvdata->reading) {
-+	if (drvdata->reading || drvdata->mode == CS_MODE_PERF) {
- 		ret = -EBUSY;
- 		goto out;
- 	}
-@@ -885,21 +1177,20 @@ static int tmc_enable_etr_sink_sysfs(struct coresight_device *csdev)
- 	/*
- 	 * In sysFS mode we can have multiple writers per sink.  Since this
- 	 * sink is already enabled no memory is needed and the HW need not be
--	 * touched.
-+	 * touched, even if the buffer size has changed.
- 	 */
- 	if (drvdata->mode == CS_MODE_SYSFS)
- 		goto out;
- 
- 	/*
--	 * If drvdata::buf == NULL, use the memory allocated above.
--	 * Otherwise a buffer still exists from a previous session, so
--	 * simply use that.
-+	 * If we don't have a buffer or it doesn't match the requested size,
-+	 * use the memory allocated above. Otherwise reuse it.
- 	 */
--	if (drvdata->buf == NULL) {
-+	if (!drvdata->etr_buf ||
-+	    (new_buf && drvdata->etr_buf->size != new_buf->size)) {
- 		used = true;
--		drvdata->vaddr = vaddr;
--		drvdata->paddr = paddr;
--		drvdata->buf = drvdata->vaddr;
-+		free_buf = drvdata->etr_buf;
-+		drvdata->etr_buf = new_buf;
- 	}
- 
- 	drvdata->mode = CS_MODE_SYSFS;
-@@ -908,8 +1199,8 @@ static int tmc_enable_etr_sink_sysfs(struct coresight_device *csdev)
- 	spin_unlock_irqrestore(&drvdata->spinlock, flags);
- 
- 	/* Free memory outside the spinlock if need be */
--	if (!used && vaddr)
--		dma_free_coherent(drvdata->dev, drvdata->size, vaddr, paddr);
-+	if (free_buf)
-+		tmc_etr_free_sysfs_buf(free_buf);
- 
- 	if (!ret)
- 		dev_info(drvdata->dev, "TMC-ETR enabled\n");
-@@ -988,8 +1279,8 @@ int tmc_read_prepare_etr(struct tmc_drvdata *drvdata)
- 		goto out;
- 	}
- 
--	/* If drvdata::buf is NULL the trace data has been read already */
--	if (drvdata->buf == NULL) {
-+	/* If drvdata::etr_buf is NULL the trace data has been read already */
-+	if (drvdata->etr_buf == NULL) {
- 		ret = -EINVAL;
- 		goto out;
- 	}
-@@ -1008,8 +1299,7 @@ int tmc_read_prepare_etr(struct tmc_drvdata *drvdata)
- int tmc_read_unprepare_etr(struct tmc_drvdata *drvdata)
- {
- 	unsigned long flags;
--	dma_addr_t paddr;
--	void __iomem *vaddr = NULL;
-+	struct etr_buf *etr_buf = NULL;
- 
- 	/* config types are set a boot time and never change */
- 	if (WARN_ON_ONCE(drvdata->config_type != TMC_CONFIG_TYPE_ETR))
-@@ -1030,17 +1320,16 @@ int tmc_read_unprepare_etr(struct tmc_drvdata *drvdata)
- 		 * The ETR is not tracing and the buffer was just read.
- 		 * As such prepare to free the trace buffer.
- 		 */
--		vaddr = drvdata->vaddr;
--		paddr = drvdata->paddr;
--		drvdata->buf = drvdata->vaddr = NULL;
-+		etr_buf =  drvdata->etr_buf;
-+		drvdata->etr_buf = NULL;
- 	}
- 
- 	drvdata->reading = false;
- 	spin_unlock_irqrestore(&drvdata->spinlock, flags);
- 
- 	/* Free allocated memory out side of the spinlock */
--	if (vaddr)
--		dma_free_coherent(drvdata->dev, drvdata->size, vaddr, paddr);
-+	if (etr_buf)
-+		tmc_free_etr_buf(etr_buf);
- 
- 	return 0;
- }
-diff --git a/drivers/hwtracing/coresight/coresight-tmc.h b/drivers/hwtracing/coresight/coresight-tmc.h
-index 74d8f24..6f7bec7 100644
---- a/drivers/hwtracing/coresight/coresight-tmc.h
-+++ b/drivers/hwtracing/coresight/coresight-tmc.h
-@@ -56,6 +56,7 @@
- #define TMC_STS_TMCREADY_BIT	2
- #define TMC_STS_FULL		BIT(0)
- #define TMC_STS_TRIGGERED	BIT(1)
++	catu_populate_table(catu_table);
++	/* Make the buf linear from offset 0 */
++	(void)catu_set_table(catu_table, 0, size);
 +
- /*
-  * TMC_AXICTL - 0x110
-  *
-@@ -135,6 +136,35 @@ enum tmc_mem_intf_width {
- #define CORESIGHT_SOC_600_ETR_CAPS	\
- 	(TMC_ETR_SAVE_RESTORE | TMC_ETR_AXI_ARCACHE)
- 
-+enum etr_mode {
-+	ETR_MODE_FLAT,		/* Uses contiguous flat buffer */
-+	ETR_MODE_ETR_SG,	/* Uses in-built TMC ETR SG mechanism */
-+};
++	dev_dbg(catu_dev,
++		"Setup table %p, size %ldKB, %d table pages\n",
++		catu_table, (unsigned long)size >> 10,  nr_tpages);
++	catu_dump_table(catu_table);
++	return catu_table;
++}
 +
-+struct etr_buf_operations;
-+
-+/**
-+ * struct etr_buf - Details of the buffer used by ETR
-+ * @mode	: Mode of the ETR buffer, contiguous, Scatter Gather etc.
-+ * @full	: Trace data overflow
-+ * @size	: Size of the buffer.
-+ * @hwaddr	: Address to be programmed in the TMC:DBA{LO,HI}
-+ * @offset	: Offset of the trace data in the buffer for consumption.
-+ * @len		: Available trace data @buf (may round up to the beginning).
-+ * @ops		: ETR buffer operations for the mode.
-+ * @private	: Backend specific information for the buf
-+ */
-+struct etr_buf {
-+	enum etr_mode			mode;
-+	bool				full;
-+	ssize_t				size;
-+	dma_addr_t			hwaddr;
-+	unsigned long			offset;
-+	s64				len;
-+	const struct etr_buf_operations	*ops;
-+	void				*private;
-+};
-+
- /**
-  * struct tmc_drvdata - specifics associated to an TMC component
-  * @base:	memory mapped base address for this component.
-@@ -142,11 +172,10 @@ enum tmc_mem_intf_width {
-  * @csdev:	component vitals needed by the framework.
-  * @miscdev:	specifics to handle "/dev/xyz.tmc" entry.
-  * @spinlock:	only one at a time pls.
-- * @buf:	area of memory where trace data get sent.
-- * @paddr:	DMA start location in RAM.
-- * @vaddr:	virtual representation of @paddr.
-- * @size:	trace buffer size.
-- * @len:	size of the available trace.
-+ * @buf:	Snapshot of the trace data for ETF/ETB.
-+ * @etr_buf:	details of buffer used in TMC-ETR
-+ * @len:	size of the available trace for ETF/ETB.
-+ * @size:	trace buffer size for this TMC (common for all modes).
-  * @mode:	how this TMC is being used.
-  * @config_type: TMC variant, must be of type @tmc_config_type.
-  * @memwidth:	width of the memory interface databus, in bytes.
-@@ -161,11 +190,12 @@ struct tmc_drvdata {
- 	struct miscdevice	miscdev;
- 	spinlock_t		spinlock;
- 	bool			reading;
--	char			*buf;
--	dma_addr_t		paddr;
--	void __iomem		*vaddr;
--	u32			size;
-+	union {
-+		char		*buf;		/* TMC ETB */
-+		struct etr_buf	*etr_buf;	/* TMC ETR */
-+	};
- 	u32			len;
-+	u32			size;
- 	u32			mode;
- 	enum tmc_config_type	config_type;
- 	enum tmc_mem_intf_width	memwidth;
-@@ -173,6 +203,15 @@ struct tmc_drvdata {
- 	u32			etr_caps;
- };
- 
-+struct etr_buf_operations {
-+	int (*alloc)(struct tmc_drvdata *drvdata, struct etr_buf *etr_buf,
-+			int node, void **pages);
-+	void (*sync)(struct etr_buf *etr_buf, u64 rrp, u64 rwp);
-+	ssize_t (*get_data)(struct etr_buf *etr_buf, u64 offset, size_t len,
-+				char **bufpp);
-+	void (*free)(struct etr_buf *etr_buf);
-+};
-+
- /**
-  * struct tmc_pages - Collection of pages used for SG.
-  * @nr_pages:		Number of pages in the list.
+ coresight_simple_reg32(struct catu_drvdata, control, CATU_CONTROL);
+ coresight_simple_reg32(struct catu_drvdata, status, CATU_STATUS);
+ coresight_simple_reg32(struct catu_drvdata, mode, CATU_MODE);
 -- 
 2.7.4
