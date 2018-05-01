@@ -1,59 +1,74 @@
-Return-Path: <davem@davemloft.net>
-X-Google-Smtp-Source: AB8JxZoxcGPglPXlqq5RRrtuEw7DV138L2r15IzgsV1EQZOAiD1zhMc10eCOQMTXLwhuLBeSbYy+
-ARC-Seal: i=1; a=rsa-sha256; t=1525184600; cv=none;
+Return-Path: <robherring2@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1525181948; cv=none;
         d=google.com; s=arc-20160816;
-        b=mcpq8HHcZCXhD+PgQL6jllYn1yUXIxryEJBeOqhAhLrXqNcQiAwDAi4dXcuPP2gpYj
-         XOwLct+8P09606yix2sVQGqH+0nQJptYufYv8PVRc4CUQGPouzyQyItUK13laVqcjSlf
-         ditA0yTij32a5k8x0JRHHRBuKmEF6PnTPIr41wcw2IucLKznunfkJr/b8yimgvl/HLex
-         reSGQGDH64qVK0gENejmgP4mPGVvxka2xYGcCEnU44O7WDA9Lq4GHp45p2lG6GXn7VQq
-         fF3yONzHbS8CrAh00fI4VsiiTRE798annN+udhqbdWnqeqrZuAOCiLcQk4pA2y+wUyas
-         KsQg==
+        b=v+fC8dx0HDquOqlt9bBp02dBsSzUXdrX+/RpfayNx5BaG7E94YzIN/M4VeEqUJOCag
+         U6p9bJHZFCOeOcJRkdquqhRCCkpEtfXR5vWZ9TVlso2UYF1k4bUYzLhlKlQXNIerR77E
+         vUd9nZ4PXkGq9kw+6dS1u+Ps+BrkT2LZIR3TY8pWGVvVIMX1hyJiEpJh2AULQz6Ir5RC
+         1nSL+4ow4Vy0Z3RfTRzC/ynJKLLzJF3TdhvUaqBm6+Bf9ATpG11btD2qJqGHnarNVM9e
+         dzOQfFK/81hRlCsVMFDfmIeFQxrc55MkCivCDvm8fEPKPH07mWG29z/9QjmR2TBsPCL0
+         aCrg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:arc-authentication-results;
-        bh=vz1cu9WUkyPaIOk/ilYLQhRR9iTm/biqK/KVeYzZnq0=;
-        b=f3GBZ/OFzX5ivgWNOWDljuvTIY+39hpS20AYORfa9JtwGd36v4Qi3Z+yNa2iMCdeek
-         eCysE1w/w5KvY2VB8v9DyLlRuqUxeaVGFVmXs2vxlXsIui6z/J2qoCWfuMXK1f2MflzS
-         cxKnEgALdoOpme+2t0TYfamtPftD4GYMKHqmz7QqDYfc0E6+I2Fr+0ITU2SXhN+9quN4
-         txnbqqvETP/Zbde2YiTJ8LYIj0nGge27BwhOMaKcgxGUnoSFO8IBm7jronAVEA2gT3E1
-         msVwHawMTfDXKN328T8l9d9KU3AvqKOpMDH/JCPJvbQgImngnL+4c+LrBfoZGe6x369C
-         sXjQ==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=xUX6W7+vwIdMFXoEyd39s+p434VVz2QFOxh4tyPDzGo=;
+        b=dMnbTNWz2VCd1PLGNzYfdjxWhMiMgamr/7ewUx8juiO3YNrYdZIJ3cDKwdHPXzEhN5
+         uSoKhZ8DENcfallRZNy3PDMStMnBgmat1ylzcq0M92RPZvqD2NVPPS4iabHcZN54Zbsd
+         SlI0HAz6aQivCbHWo0HavqtGMlJ+nHgzCBhvDgLeDBJYgIIGV0wSxno319H6MhIPijWZ
+         R6h/4zmofHUjO5/Hgb5gyjVHw+BLW18JPwtpm5B/eT8wSdpp4BVp76ugFe8Jisv5wj4d
+         5ZIDDGL0NsVz1OEfXeXB+6YVzmmD3rQCjZCsUTiyZtjAX/okU9t/CKq9wCNENmu2OTXo
+         EOuQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 184.105.139.130 is neither permitted nor denied by best guess record for domain of davem@davemloft.net) smtp.mailfrom=davem@davemloft.net
+       spf=pass (google.com: domain of robherring2@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=robherring2@gmail.com
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 184.105.139.130 is neither permitted nor denied by best guess record for domain of davem@davemloft.net) smtp.mailfrom=davem@davemloft.net
-Date: Tue, 01 May 2018 10:23:17 -0400 (EDT)
-Message-Id: <20180501.102317.2272802053999668772.davem@davemloft.net>
-To: ebiederm@xmission.com
-Cc: christian.brauner@ubuntu.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, avagin@virtuozzo.com, ktkhai@virtuozzo.com,
- serge@hallyn.com, gregkh@linuxfoundation.org
-Subject: Re: [PATCH net-next 0/2 v5] netns: uevent filtering
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <87fu3cbsdw.fsf@xmission.com>
-References: <20180429104412.22445-1-christian.brauner@ubuntu.com>
-	<87fu3cbsdw.fsf@xmission.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+       spf=pass (google.com: domain of robherring2@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=robherring2@gmail.com
+X-Google-Smtp-Source: AB8JxZoGIT1gorkw0wLwIJ5e1lVfS5IaGcTIQ51IfIsI+HaT99bs11E01g3UTLqS5RITz5b2KS5Vhg==
+Date: Tue, 1 May 2018 08:39:06 -0500
+From: Rob Herring <robh@kernel.org>
+To: Tony Lindgren <tony@atomide.com>
+Cc: linux-omap@vger.kernel.org, Dave Gerlach <d-gerlach@ti.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nishanth Menon <nm@ti.com>, Suman Anna <s-anna@ti.com>,
+	Tero Kristo <t-kristo@ti.com>, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
+Subject: Re: [PATCH 09/16] bus: ti-sysc: Add handling for clkctrl opt clocks
+Message-ID: <20180501133906.GA18650@rob-hp-laptop>
+References: <20180423174549.57412-1-tony@atomide.com>
+ <20180423174549.57412-10-tony@atomide.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180423174549.57412-10-tony@atomide.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599077004828533491?=
-X-GMAIL-MSGID: =?utf-8?q?1599271967165511695?=
+X-GMAIL-THRID: =?utf-8?q?1598559971820741391?=
+X-GMAIL-MSGID: =?utf-8?q?1599269186464544018?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: ebiederm@xmission.com (Eric W. Biederman)
-Date: Mon, 30 Apr 2018 10:55:55 -0500
-
-> Christian Brauner <christian.brauner@ubuntu.com> writes:
+On Mon, Apr 23, 2018 at 10:45:42AM -0700, Tony Lindgren wrote:
+> There can be up to eight optional device functional gate gate clocks for
+> each clkctrl instance in clkctrl register bits 8 to 15. Some of them are
+> only needed for module level reset while others may always be needed
+> during use. Let's add support for those and update the binding doc
+> accordingly.
 > 
->> Hey everyone,
->>
->> This is the new approach to uevent filtering as discussed (see the
->> threads in [1], [2], and [3]). It only contains *non-functional
->> changes*.
- ...
-> Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
+> Note that the optional clkctrl mux and divider clocks starting at bit 20
+> can be directly mapped to the child devices, and ti-sysc does not need to
+> manage those.
+> 
+> And as GPIOs need the optional clocks for reset, we can now add it with
+> SYSC_QUIRK_OPT_CLKS_IN_RESET.
+> 
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Tero Kristo <t-kristo@ti.com>
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Tony Lindgren <tony@atomide.com>
+> ---
+>  .../devicetree/bindings/bus/ti-sysc.txt       |   6 +-
 
-Series applied, thanks everyone.
+Reviewed-by: Rob Herring <robh@kernel.org>
+
+>  drivers/bus/ti-sysc.c                         | 140 ++++++++++++++----
+>  2 files changed, 120 insertions(+), 26 deletions(-)
