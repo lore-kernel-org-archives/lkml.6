@@ -1,77 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751679AbeEAWwD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 18:52:03 -0400
-Received: from ipmail07.adl2.internode.on.net ([150.101.137.131]:25541 "EHLO
-        ipmail07.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751064AbeEAWwC (ORCPT
+        id S1751862AbeEAXDD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 19:03:03 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:39415 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751615AbeEAXC7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 18:52:02 -0400
-Date: Wed, 2 May 2018 08:51:59 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: syzbot <syzbot+84a67953651a971809ba@syzkaller.appspotmail.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-xfs@vger.kernel.org,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Subject: Re: WARNING: bad unlock balance in xfs_iunlock
-Message-ID: <20180501225159.GY23861@dastard>
-References: <f403043cbe8414177d0568e81405@google.com>
- <20180403043854.GL1150@dastard>
- <CACT4Y+ZadV0xTqhiGTAHmadAnYaSfPKhUy_TFXMza2o_n8+o9w@mail.gmail.com>
- <CACT4Y+aQZ8KbU1C-sJ2PUKn_788SEKQpYGjoLaRDJrP9vXjs-A@mail.gmail.com>
+        Tue, 1 May 2018 19:02:59 -0400
+X-Google-Smtp-Source: AB8JxZqjQ36XNBA01JwBoyWD45GWpH/3+M2Zs8BXyKUclBrFB5gFVsTgAZ2LjshEsJza0t/1f2v1oqw34wW4yuP0lYk=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+aQZ8KbU1C-sJ2PUKn_788SEKQpYGjoLaRDJrP9vXjs-A@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <CA+55aFwoOee_8H-1KRnY1G-Ud4Rez16s8xjVbG8YOPn1jqxxtg@mail.gmail.com>
+References: <152520750404.36522.15462513519590065300.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <CA+55aFwoOee_8H-1KRnY1G-Ud4Rez16s8xjVbG8YOPn1jqxxtg@mail.gmail.com>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Tue, 1 May 2018 16:02:58 -0700
+Message-ID: <CAPcyv4jA98NVNqYFpj29OHE45HVp1DMH9oFO4-neWKA_4WKTwA@mail.gmail.com>
+Subject: Re: [PATCH 0/6] use memcpy_mcsafe() for copy_to_iter()
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        Tony Luck <tony.luck@intel.com>, Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@amacapital.net>, Ingo Molnar <mingo@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 30, 2018 at 03:24:48PM +0200, Dmitry Vyukov wrote:
-> On Thu, Apr 5, 2018 at 8:54 PM, Dmitry Vyukov <dvyukov@google.com> wrote:
-> > On Tue, Apr 3, 2018 at 6:38 AM, Dave Chinner <david@fromorbit.com> wrote:
-> >> On Mon, Apr 02, 2018 at 07:01:02PM -0700, syzbot wrote:
-> >>> Hello,
-> >>>
-> >>> syzbot hit the following crash on upstream commit
-> >>> 86bbbebac1933e6e95e8234c4f7d220c5ddd38bc (Mon Apr 2 18:47:07 2018 +0000)
-> >>> Merge branch 'ras-core-for-linus' of
-> >>> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
-> >>> syzbot dashboard link:
-> >>> https://syzkaller.appspot.com/bug?extid=84a67953651a971809ba
-> >>>
-> >>> C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5719304272084992
-> >>> syzkaller reproducer:
-> >>> https://syzkaller.appspot.com/x/repro.syz?id=5767783983874048
-> >>
-> >> What a mess. A hand built, hopelessly broken filesystem image made
-> >> up of hex dumps, written into a mmap()d region of memory, then
-> >> copied into a tmpfs file and mounted with the loop device.
-> >>
-> >> Engineers that can debug broken filesystems don't grow on trees.  If
-> >> we are to have any hope of understanding what the hell this test is
-> >> doing, the bot needs to supply us with a copy of the built
-> >> filesystem image the test uses. We need to be able to point forensic
-> >> tools at the image to decode all the structures into human readable
-> >> format - if we are forced to do that by hand or jump through hoops
-> >> to create our own filesystem image than I'm certainly not going to
-> >> waste time looking at these reports...
-> >
-> > Hi Dave,
-> >
-> > Here is the image:
-> > https://drive.google.com/file/d/1jzhGGe5SBJcqfsjxCLHoh4Kazke1oTfC/view
-> 
-> Have anybody looked at the bug and the image yet?
+On Tue, May 1, 2018 at 2:05 PM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Tue, May 1, 2018 at 1:55 PM Dan Williams <dan.j.williams@intel.com>
+> wrote:
+>
+>> The result of the bypass is that the kernel treats machine checks during
+>> read as system fatal (reboot) when they could simply be flagged as an
+>> I/O error, similar to performing reads through the pmem driver. Prevent
+>> this fatal condition by deploying memcpy_mcsafe() in the fsdax read
+>> path.
+>
+> How about just changing the rules, and go the old "Don't do that then" way?
+>
+> IOW, get rid of the whole idea that MCS errors should be fatal. It's wrong
+> and pointless anyway.
+>
+> The while approach seems fundamentally buggered, if you ever want to mmap
+> one of these things. And don't you want that?
+>
+> So why continue down a fundamentally broken path?
 
-Yes, I did that a couple of weeks ago. Couldn't reproduce on a TOT
-kernel here.
+I'm confused. Are you talking about getting rid of the block-layer
+bypass or changing how MCS errors are handled? If it's the former I've
+gotten push back in the past trying to remove the bypass, but I feel
+better about my chances to slay that beast wielding the +5 Hammer of
+Linus. If it's the latter, MCS error handling, I don't see how get
+around something like copy_to_iter_mcsafe().
 
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+You mention mmap. Yes, we want the predominant access model to be
+dax-mmap for Persistent Memory, but there's still the question about
+what to do with media errors. To date we are trying to mirror the
+error handling model for System Memory, i.e. SIGBUS to the process
+that consumed the error. Is that error handling model also problematic
+in your view?
