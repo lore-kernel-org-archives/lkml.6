@@ -1,64 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756320AbeEARl3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 13:41:29 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:12617 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756284AbeEARl0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 13:41:26 -0400
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-To: "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>
-CC: Sekhar Nori <nsekhar@ti.com>, <linux-kernel@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: [PATCH] net: ethernet: ti: cpsw: fix packet leaking in dual_mac mode
-Date: Tue, 1 May 2018 12:41:22 -0500
-Message-ID: <20180501174122.11323-1-grygorii.strashko@ti.com>
-X-Mailer: git-send-email 2.10.5
+        id S1756228AbeEARsB (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 13:48:01 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:46148 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755443AbeEARr7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 13:47:59 -0400
+Date: Tue, 1 May 2018 19:47:52 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org,
+        rmk@armlinux.org.uk, linux-kernel@vger.kernel.org, cphealy@gmail.com,
+        nikita.yoush@cogentembedded.com, vivien.didelot@savoirfairelinux.com,
+        Nisar.Sayed@microchip.com, UNGLinuxDriver@microchip.com
+Subject: Re: [RFC net-next 0/5] Support for PHY test modes
+Message-ID: <20180501174752.GA1265@lunn.ch>
+References: <20180428003237.1536-1-f.fainelli@gmail.com>
+ <20180429.225554.2165914401649980919.davem@davemloft.net>
+ <eea70076-891c-5caa-a590-ef1b0421f3b2@gmail.com>
+ <20180430232448.GB25602@lunn.ch>
+ <19a6bf90-03d5-aa63-5f35-3b26801b79a9@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <19a6bf90-03d5-aa63-5f35-3b26801b79a9@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In dual_mac mode packets arrived on one port should not be forwarded by
-switch hw to another port. Only Linux Host can forward packets between
-ports. The below test case (reported in [1]) shows that packet arrived on
-one port can be leaked to anoter (reproducible with dual port evms):
- - connect port 1 (eth0) to linux Host 0 and run tcpdump or Wireshark
- - connect port 2 (eth1) to linux Host 1 with vlan 1 configured
- - ping <IPx> from Host 1 through vlan 1 interface.
-ARP packets will be seen on Host 0.
+On Tue, May 01, 2018 at 10:21:54AM -0700, Florian Fainelli wrote:
+> On 04/30/2018 04:24 PM, Andrew Lunn wrote:
+> >> Turning these tests on will typically result in the link partner
+> >> dropping the link with us, and the interface will be non-functional as
+> >> far as the data path is concerned (similar to an isolation mode). This
+> >> might warrant properly reporting that to user-space through e.g: a
+> >> private IFF_* value maybe?
+> > 
+> > Hi Florian
+> > 
+> > I think a IFF_* value would be a good idea. We want to give the user
+> > some indicate why they don't have working networking. ip link show
+> > showing PHY-TEST-MODE would help.
+> 
+> IF_OPER_TESTING as defined in RFC 2863 looks like the correct way to
+> signal that. I did a quick test and setting operstate to
+> IFF_OPER_TESTING seems to correctly get reflected by iproute2/ifconfig
+> which no longer see RUNNING though the interface is still UP.
 
-Issue happens because dual_mac mode is implemnted using two vlans: 1 (Port
-1+Port 0) and 2 (Port 2+Port 0), so there are vlan records created for for
-each vlan. By default, the ALE will find valid vlan record in its table
-when vlan 1 tagged packet arrived on Port 2 and so forwards packet to all
-ports which are vlan 1 members (like Port.
+Hi Florian
 
-To avoid such behaviorr the ALE VLAN ID Ingress Check need to be enabled
-for each external CPSW port (ALE_PORTCTLn.VID_INGRESS_CHECK) so ALE will
-drop ingress packets if Rx port is not VLAN member.
+I should really play with this.... but is the opstate printed by ip
+link show? Not showing RUNNING is not the best hint something else is
+going on. Actually saying TESTING somewhere is much clearer.
 
-Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
----
- drivers/net/ethernet/ti/cpsw.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/net/ethernet/ti/cpsw.c b/drivers/net/ethernet/ti/cpsw.c
-index 5047f4b..46500a2 100644
---- a/drivers/net/ethernet/ti/cpsw.c
-+++ b/drivers/net/ethernet/ti/cpsw.c
-@@ -1340,6 +1340,8 @@ static inline void cpsw_add_dual_emac_def_ale_entries(
- 	cpsw_ale_add_ucast(cpsw->ale, priv->mac_addr,
- 			   HOST_PORT_NUM, ALE_VLAN |
- 			   ALE_SECURE, slave->port_vlan);
-+	cpsw_ale_control_set(cpsw->ale, slave_port,
-+			     ALE_PORT_DROP_UNKNOWN_VLAN, 1);
- }
- 
- static void soft_reset_slave(struct cpsw_slave *slave)
--- 
-2.10.5
+      Andrew
