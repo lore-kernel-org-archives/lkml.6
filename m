@@ -1,111 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753993AbeEAKTC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 06:19:02 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:41732 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750994AbeEAKTA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 06:19:00 -0400
-Date: Tue, 1 May 2018 12:18:45 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Kohli, Gaurav" <gkohli@codeaurora.org>
-Cc: tglx@linutronix.de, mpe@ellerman.id.au, mingo@kernel.org,
-        bigeasy@linutronix.de, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Neeraj Upadhyay <neeraju@codeaurora.org>,
-        Will Deacon <will.deacon@arm.com>, Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [PATCH v1] kthread/smpboot: Serialize kthread parking against
- wakeup
-Message-ID: <20180501101845.GE12217@hirez.programming.kicks-ass.net>
-References: <1524645199-5596-1-git-send-email-gkohli@codeaurora.org>
- <20180425200917.GZ4082@hirez.programming.kicks-ass.net>
- <20180426084131.GV4129@hirez.programming.kicks-ass.net>
- <20180426085719.GW4129@hirez.programming.kicks-ass.net>
- <4d3f68f8-e599-6b27-a2e8-9e96b401d57a@codeaurora.org>
- <20180430111744.GE4082@hirez.programming.kicks-ass.net>
- <3af3365b-4e3f-e388-8e90-45a3bd4120fd@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3af3365b-4e3f-e388-8e90-45a3bd4120fd@codeaurora.org>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        id S1754613AbeEAK1Q (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 06:27:16 -0400
+Received: from foss.arm.com ([217.140.101.70]:45186 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754477AbeEAK1P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 06:27:15 -0400
+From: Punit Agrawal <punit.agrawal@arm.com>
+To: kvmarm@lists.cs.columbia.edu
+Cc: Punit Agrawal <punit.agrawal@arm.com>,
+        linux-arm-kernel@lists.infradead.org, marc.zyngier@arm.com,
+        christoffer.dall@arm.com, linux-kernel@vger.kernel.org,
+        suzuki.poulose@arm.com
+Subject: [PATCH v2 0/4] KVM: Support PUD hugepages at stage 2
+Date: Tue,  1 May 2018 11:26:55 +0100
+Message-Id: <20180501102659.13188-1-punit.agrawal@arm.com>
+X-Mailer: git-send-email 2.17.0
+X-ARM-No-Footer: FoSSMail
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 01, 2018 at 01:20:26PM +0530, Kohli, Gaurav wrote:
-> But In our older case, where we have seen failure below is the wake up path
-> and ftraces, Wakeup occured  and completed before schedule call only.
-> 
-> So final state of CPUHP is running not parked. I have also pasted debug
-> ftraces that we got during issue reproduction.
-> 
-> Here wakeup for cpuhp is below:
-> 
-> takedown_cpu-> kthread_park-> wake_up_process
-> 
-> 
->  39,034,311,742,395  apps (10240)        Trace Printk cpuhp/0  (16)  [000]
-> 39015.625000: <debug> __kthread_parkme state=512 task=ffffffcc7458e680
-> flags: 0x5 -> state 5 -> state is parked inside parkme function
-> 
-> 39,034,311,846,510  apps (10240)        Trace Printk cpuhp/0  (16)  [000]
-> 39015.625000: <debug> before schedule __kthread_parkme state=0
-> task=ffffffcc7458e680 flags: 0xd  ->  just before schedule call, state is
-> running
-> 
-> tatic void __kthread_parkme(struct kthread *self)
-> 
-> {
-> 
->         __set_current_state(TASK_PARKED);
-> 
->         while (test_bit(KTHREAD_SHOULD_PARK, &self->flags)) {
-> 
->                 if (!test_and_set_bit(KTHREAD_IS_PARKED, &self->flags))
-> 
->                         complete(&self->parked);
-> 
->                 schedule();
-> 
->                 __set_current_state(TASK_PARKED);
-> 
->         }
-> 
->         clear_bit(KTHREAD_IS_PARKED, &self->flags);
-> 
->         __set_current_state(TASK_RUNNING);
-> 
-> }
-> 
-> So my point is here also, if it is reschedule then it can set TASK_PARKED,
-> but it seems after takedown_cpu call this thread never get a chance to run,
-> So final state is TASK_RUNNING.
-> 
-> In our current fix also can't we observe same scenario where final state is
-> TASK_RUNNING.
+Hi,
 
-I'm not sure I understand your concern. Loosing the TASK_PARKED store
-with the above code is obviously bad. But with the loop as proposed I
-don't see a problem.
+This patchset adds support for PUD hugepages at stage 2. This feature
+is useful on cores that have support for large sized TLB mappings
+(e.g., 1GB for 4K granule). Previous postings can be found at [0][1].
 
-takedown_cpu() can proceed beyond smpboot_park_threads() and kill the
-CPU before any of the threads are parked -- per having the complete()
-before hitting schedule().
+Support is added to code that is shared between arm and arm64. Dummy
+helpers for arm are provided as the port does not support PUD hugepage
+sizes.
 
-And, afaict, that is harmless. When we go offline, sched_cpu_dying() ->
-migrate_tasks() will migrate any still runnable threads off the cpu.
-But because at this point the thread must be in the PARKED wait-loop, it
-will hit schedule() and go to sleep eventually.
+There is a small conflict with the series to add support for 52 bit
+IPA[2]. The patches have been functionally tested on an A57 based
+system. The patchset is based on v4.17-rc3 and incorporates feedback
+received on the previous version.
 
-Also note that kthread_unpark() does __kthread_bind() to rebind the
-threads.
+Thanks,
+Punit
 
-Aaaah... I think I've spotted a problem there. We clear SHOULD_PARK
-before we rebind, so if the thread lost the first PARKED store,
-does the completion, gets migrated, cycles through the loop and now
-observes !SHOULD_PARK and bails the wait-loop, then __kthread_bind()
-will forever wait.
+Changes v2:
+* Create helper to check if the page should have exec permission [1/4]
+* Fix broken condition to detect THP hugepage [1/4]
+* Fix in-correct hunk resulting from a rebase [4/4]
 
-Is that what you had in mind?
+[0] https://www.spinics.net/lists/arm-kernel/msg628053.html
+[1] https://lkml.org/lkml/2018/4/20/566
+[2] https://lwn.net/Articles/750176/
+
+Punit Agrawal (4):
+  KVM: arm/arm64: Share common code in user_mem_abort()
+  KVM: arm/arm64: Introduce helpers to manupulate page table entries
+  KVM: arm64: Support dirty page tracking for PUD hugepages
+  KVM: arm64: Add support for PUD hugepages at stage 2
+
+ arch/arm/include/asm/kvm_mmu.h         |  40 +++++++++
+ arch/arm64/include/asm/kvm_mmu.h       |  30 +++++++
+ arch/arm64/include/asm/pgtable-hwdef.h |   4 +
+ arch/arm64/include/asm/pgtable.h       |   2 +
+ virt/kvm/arm/mmu.c                     | 120 +++++++++++++++++--------
+ 5 files changed, 161 insertions(+), 35 deletions(-)
+
+-- 
+2.17.0
