@@ -1,81 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751354AbeEAUOt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 16:14:49 -0400
-Received: from mail-io0-f181.google.com ([209.85.223.181]:44814 "EHLO
-        mail-io0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751074AbeEAUOs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 16:14:48 -0400
-X-Google-Smtp-Source: AB8JxZryJZJvyRt2uCcCFdPENppn66gOKHHYK0KD8gZC0jbX5w/opTT7ID1nwMgiD+X2G/0t7/tS1533VEHbzVkbc28=
+        id S1751128AbeEAUdu convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 16:33:50 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51014 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751027AbeEAUdr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 16:33:47 -0400
+Subject: Re: [PATCH v7 4/5] cpuset: Restrict load balancing off cpus to subset
+ of cpus.isolated
+To: Tejun Heo <tj@kernel.org>
+Cc: Li Zefan <lizefan@huawei.com>, Johannes Weiner <hannes@cmpxchg.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
+        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
+        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
+        Juri Lelli <juri.lelli@redhat.com>
+References: <1524145624-23655-1-git-send-email-longman@redhat.com>
+ <1524145624-23655-5-git-send-email-longman@redhat.com>
+ <20180501195148.GC2368884@devbig577.frc2.facebook.com>
+From: Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <9eb2c45e-e71e-61ef-aa6d-b8124b739cdf@redhat.com>
+Date: Tue, 1 May 2018 16:33:45 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-References: <CADDKRnBD=cgptLmDMu0YiaUThO-1ydKaAD4X3sTWfLuP5M5BEw@mail.gmail.com>
- <alpine.DEB.2.21.1804302151530.1596@nanos.tec.linutronix.de>
- <CADDKRnAi69PFNH-hyxCTLckJ5UU6-DKWvzGNzxZZhD0sA215qg@mail.gmail.com> <alpine.DEB.2.21.1805011458390.1596@nanos.tec.linutronix.de>
-In-Reply-To: <alpine.DEB.2.21.1805011458390.1596@nanos.tec.linutronix.de>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 01 May 2018 20:14:37 +0000
-Message-ID: <CA+55aFxKbPDrMQssyEtOnYZqE8HcOo=Zx6ASty6CybhwPfT9_g@mail.gmail.com>
-Subject: Re: [v4.17-rcx] Lost IBPB, IBRS_FW support for spectre_v2 mitigation.
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: =?UTF-8?Q?J=C3=B6rg_Otte?= <jrg.otte@gmail.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Borislav Petkov <bp@alien8.de>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180501195148.GC2368884@devbig577.frc2.facebook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w41KEuY9014597
 
-On Tue, May 1, 2018 at 5:59 AM Thomas Gleixner <tglx@linutronix.de> wrote:
+On 05/01/2018 03:51 PM, Tejun Heo wrote:
+> Hello, Waiman.
+>
+> Sorry about the delay.
+>
+> On Thu, Apr 19, 2018 at 09:47:03AM -0400, Waiman Long wrote:
+>> With the addition of "cpuset.cpus.isolated", it makes sense to add the
+>> restriction that load balancing can only be turned off if the CPUs in
+>> the isolated cpuset are subset of "cpuset.cpus.isolated".
+>>
+>> Signed-off-by: Waiman Long <longman@redhat.com>
+>> ---
+>>  Documentation/cgroup-v2.txt |  7 ++++---
+>>  kernel/cgroup/cpuset.c      | 29 ++++++++++++++++++++++++++---
+>>  2 files changed, 30 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/Documentation/cgroup-v2.txt b/Documentation/cgroup-v2.txt
+>> index 8d89dc2..c4227ee 100644
+>> --- a/Documentation/cgroup-v2.txt
+>> +++ b/Documentation/cgroup-v2.txt
+>> @@ -1554,9 +1554,10 @@ Cpuset Interface Files
+>>  	and will not be moved to other CPUs.
+>>  
+>>  	This flag is hierarchical and is inherited by child cpusets. It
+>> -	can be turned off only when the CPUs in this cpuset aren't
+>> -	listed in the cpuset.cpus of other sibling cgroups, and all
+>> -	the child cpusets, if present, have this flag turned off.
+>> +	can be explicitly turned off only when it is a direct child of
+>> +	the root cgroup and the CPUs in this cpuset are subset of the
+>> +	root's "cpuset.cpus.isolated".	Moreover, the CPUs cannot be
+>> +	listed in the "cpuset.cpus" of other sibling cgroups.
+> It is a little bit convoluted that the isolation requires coordination
+> among root's isolated file and the first-level children's cpus file
+> and the flag.  Maybe I'm missing something but can't we do something
+> like the following?
+>
+> * Add isolated flag file, which can only be modified on empty (in
+>   terms of cpus) first level children.
+>
+> * Once isolated flag is set, CPUs can only be added to the cpus file
+>   iff they aren't being used by anyone else and automatically become
+>   isolated.
+>
+> The first level cpus file is owned by the root cgroup anyway, so
+> there's no danger regarding delegation or whatever and the interface
+> would be a lot simpler.
 
-> Then I really have no idea how reverting the patch you pointed out would
-> fix it.
+I think that will work too. We currently don't have a flag to make a
+file visible on first-level children only, but it shouldn't be hard to
+make one.
 
-So I do think that the original patch is buggy.
+Putting CPUs into an isolated child cpuset means removing it from the
+root's effective CPUs. So I would probably like to expose the read-only
+cpus.effective in the root cgroup so that we can check changes in the
+effective cpu list.
 
-What I think *may* be going on is:
+I will renew the patchset will your suggestion.
 
-  - first we do that
-
-                 get_cpu_cap(c);
-                 get_cpu_address_sizes(c);
-
-     but at that point, CPU levels may be masked, and that 0x80000008 leaf
-isn't seen
-
-  - then we do
-
-                 if (this_cpu->c_early_init)
-                         this_cpu->c_early_init(c);
-
-    which calls early_init_intel(), which does that
-
-                 if (msr_clear_bit(MSR_IA32_MISC_ENABLE,
-                                   MSR_IA32_MISC_ENABLE_LIMIT_CPUID_BIT) >
-0) {
-
-    which now raises the cpuid_level.
-
-  - then we do
-
-                         get_cpu_cap(c);
-
-    again, because the cpuid level has been raised, and _now_ it used to get
-that 0x80000008 leaf information.
-
-But with the change, that second call to get_cpu_cap() didn't do anything,
-because the 0x80000008 leaf handling had been moved away.
-
-However, I agree that your patch to just do that CPUID_8000_0008_EBX in
-get_cpu_cap() should have fixed it, and it's possible that Jörg mis-tested
-it.
-
-Jörg, are you sure you didn't somehow get the wrong microcode? Because
-another way for those bits to be cleared again is if
-bad_spectre_microcode() triggers. That should show up in dmesg as "Intel
-Spectre v2 broken microcode detected" though.
-
-            Linus
+Thanks,
+Longman
