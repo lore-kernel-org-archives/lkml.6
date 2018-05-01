@@ -1,108 +1,685 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755695AbeEAMR1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 08:17:27 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:34944 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755215AbeEAMRX (ORCPT
+        id S1755820AbeEAMRg (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 08:17:36 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:57130 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755728AbeEAMRc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 08:17:23 -0400
-X-Google-Smtp-Source: AB8JxZrzMKMdWjKZ1j+gaKT54XZBUy7KI1/TW9zo1Fjm6+fy+qizmJHj/bFZzbxPu0OpS3hMlZeGgQ==
-Subject: Re: Suggested new user link command
-To: Richard Weinberger <richard.weinberger@gmail.com>
-Cc: Bernd Petrovitsch <bernd@petrovitsch.priv.at>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <decdbe00-2292-3012-d7ae-6bfa382fc74a@tony.gen.nz>
- <1525165387.23227.44.camel@petrovitsch.priv.at>
- <a91ef2fb-09ed-51ae-5dfa-8f71ec81f20c@tony.gen.nz>
- <CAFLxGvxpe78WhrEKcKRt5XRBMtT-mZUe9Bm=sQsn8-f1TnX0eQ@mail.gmail.com>
-From: Tony Wallace <tony@tony.gen.nz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tony@tony.gen.nz; prefer-encrypt=mutual; keydata=
- xsBNBFJQ2EUBCADNvUoh5QwEOCnkYCEMwg8zJzp8chmFePT2wqVmWAQXVPPKOWsHyGxYmoDe
- Guqpvmhx4rPpjW9CpX1xN7m6JPGE7FDCpw6WiOjAuNycSUFbKrVaSGpzMHjVx3eJpwOtEGTz
- DbHmGz32to1D2SwuITmXpVzXLAR4+A9ywSozaZc42UeLf/9jh77SR3mKEJpMxiqD6Ui+XGTV
- 3zJRPTdh0s8z4lAhgqRM+he8bRpURydaTgGaEUDKDSHL/3bBx+q0QTcnWpGJRDjyqhlO87eu
- EXtZZbgBwg5+N+OGhZ5pzs82g6tKyHTLUsHsO2fPjXz1SFoxBlhQQRpHg25F4YgfNEOFABEB
- AAHNKEFudGhvbnkgSmFtZXMgV2FsbGFjZSA8dG9ueUB0b255Lmdlbi5uej7CwHgEEwECACIF
- AlJQ2EUCGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEDrpo/TJux46690H/AvCKeQ3
- pSWRWptbEsbWT9xPfmk9eD8LsYIIV/mHu/QhpekHeiSYv59lP3pLcOv7BYhe4oe4rte5Xc5z
- mllQBTFhFtIqNpv8UDWWmPGmS58nXm9fQaEJGoJ6XVYX9OWcD6B70x1U1DJFj8YJpaoUZLcJ
- rfbyUfqYVNjmRq3x8prdXZohTki9lHrcqMpyz30MYjV4cCGz/rj9cQpBDlfPIxG10zbyPSvD
- gclJJ9hGW9FHq3h8oH4kJR4jHUa0o2xy9ZdLQnAl196kB3yonHgFPexb4HPvwRxL23qtSxkY
- B7p7IJTf0xbk9UOPWD7EhY0ASiFgSw7uv/VwYceVe3PXkCvOwE0EUlDYRQEIAMNv3KI6lMO9
- Z3UyPwrEwzBWCqKkcVJwCh3UUgHQKSxeYdL8PhFnaQD0kr0J0R1sLKooS+OExu5rmvy3qoQ3
- BA2f13OUZF2ZotW3woVSGStSniEzs6l7L+mWtBQwyIjSyMPa4tuxKIWgy1b2S1axk0yTgn9w
- 45ycTLiuT0H9FoNAZahRpU9gvH2gwJkZFoaW+5iibpzceFxUX7bfutdcw2FhV0dh1lkvGcdO
- QnaoWZcislZ5hFFfy07SDtGBqu46C0hRZKwZ1lj/H4/uJwQXmD6ywEusJDnqjFqellYJHmoP
- 9s7q3POwWvxr5pXquLb/GlWvmEWFSwyozuypqRsLhzEAEQEAAcLAXwQYAQIACQUCUlDYRQIb
- DAAKCRA66aP0ybseOoHNCACZ/mwhUt3jxzDAroX+3YosiQRh8cFFHOk6RUpt4eLjrk12DVHY
- CuNIHf16jyMQybkOeBvyeWxvNpXzapdjMWK7Zp0eVQEAeKj9J/PQzZFHpYy0z0L2OQjKR2q8
- ciXRMm8ytF/mJZZbYICyyL5Yq4gz8Gs+mXROUmYDvadt9NxMLJH4kynF11FEnIPTq0xBuBuf
- Q/GAAlKxvc4anYWduDuvHUKcTnRssj6TW5ThxFyoBpuF/h0qDyfcUrE5y+WUcGjYyHu9j6oW
- UBsT9zlpxkqRNxO38tAnl601FBLtJClYygBz9Ro6DQAIcQX1Wqvcv3jLszOzH2hiu1Yg2Ipz 0Sdc
-Message-ID: <388f79ad-4ed0-ec39-f649-5c120ee9dc2f@tony.gen.nz>
-Date: Wed, 2 May 2018 00:17:13 +1200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 1 May 2018 08:17:32 -0400
+Date: Tue, 1 May 2018 14:17:28 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: Lee Jones <lee.jones@linaro.org>,
+        Gwendal Grignou <gwendal@chromium.org>,
+        Sameer Nanda <snanda@chromium.org>, linux-pm@vger.kernel.org,
+        Guenter Roeck <groeck@chromium.org>, linux-kernel@vger.kernel.org,
+        Benson Leung <bleung@chromium.org>, miguel.ojeda.sandonis@gmail.com
+Subject: Re: [PATCH v2 2/3] power: supply: add cros-ec USBPD charger driver.
+Message-ID: <20180501121728.65bow5vzpzfeq4en@earth.universe>
+References: <20180430131403.14296-1-enric.balletbo@collabora.com>
+ <20180430131403.14296-3-enric.balletbo@collabora.com>
 MIME-Version: 1.0
-In-Reply-To: <CAFLxGvxpe78WhrEKcKRt5XRBMtT-mZUe9Bm=sQsn8-f1TnX0eQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-AU
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="6lx4kbazbrlpguxh"
+Content-Disposition: inline
+In-Reply-To: <20180430131403.14296-3-enric.balletbo@collabora.com>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w41CHhFN023832
-
-Two issues here:
-1) Use case (which I have)
-2) Permissions
-
-1) Use case
-
-I am trying to build a backup system.  To avoid duplication of files
-over multiple backups I take an Md5 check sum of file contents.  Files
-with the same sum are hardlinked together.   Files are linked in to a
-standard directory structure a new link for each backup that the file is
-part of.  When all backups pointing to a file are deleted the reference
-count drops to zero and the file is deleted.  We can keep a database of
-checksums and there related inode numbers for linking purposes.  So why
-not have some reference copy to link against it would take no extra
-space.  Well it doesn't, but it keeps at least one copy of the file on
-disk forever and the reference count never drops to zero.  Using one of
-the backup copies to link to (as stored as the reference copy in the
-database) will not work as it could be deleted at any time.
-
-I have seen on stack overflow others wanting to do this also.
-
-2) Permissions
-
-To maintain security there are two requirements: 
-2.1) The effective user must have rights to the inode, that is they must
-either own it or be root
-2.2) The effective user must have rights file creation rights to the
-directory where it is being linked
-
-If you say no, that is fine, but I do think this idea has merit and can
-be done without compromising the system.
-
-I am off to bed, it is the middle of the night here in New Zealand.
 
 
+--6lx4kbazbrlpguxh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Tony
+Hi Enric,
 
+On Mon, Apr 30, 2018 at 03:14:02PM +0200, Enric Balletbo i Serra wrote:
+> From: Sameer Nanda <snanda@chromium.org>
+>=20
+> This driver gets various bits of information about what is connected to
+> USB PD ports from the EC and converts that into power_supply properties.
+>=20
+> Signed-off-by: Sameer Nanda <snanda@chromium.org>
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> ---
+>=20
+> Changes in v2:
+> - [2/3] Add SPDX header, use devm_ variant and drop .owner
+> - [2/3] Removed the PD log functionality (will be send on a follow up pat=
+ch)
+> - [2/3] Removed the extra custom sysfs attributes (will be send on a foll=
+ow up patch)
 
-On 01/05/18 23:04, Richard Weinberger wrote:
-> On Tue, May 1, 2018 at 12:58 PM, Tony Wallace <tony@tony.gen.nz> wrote:
->> Good point.  But there are gid and uid fields in inode disc record.
->>
->> https://ext4.wiki.kernel.org/index.php/Ext4_Disk_Layout#Inode_Table
->>
->> I assume these can be use to ensure that the directory in which it is to
->> be placed has permissions to accept the inode.  If that is not the case
->> then it would have to be a root only syscall.
-> Before we dig into details, please come up with a very good use case. :-)
-> But I'm with Bernd, I don't think it is worth the permissions hassle.
->
+Thanks, it makes reviewing the patchset easier.
+
+>  drivers/power/supply/Kconfig              |  10 +
+>  drivers/power/supply/Makefile             |   1 +
+>  drivers/power/supply/cros_usbpd-charger.c | 511 ++++++++++++++++++++++
+>  include/linux/mfd/cros_ec.h               |   2 +
+>  4 files changed, 524 insertions(+)
+>  create mode 100644 drivers/power/supply/cros_usbpd-charger.c
+>=20
+> diff --git a/drivers/power/supply/Kconfig b/drivers/power/supply/Kconfig
+> index 428b426842f4..046eb23ba6f0 100644
+> --- a/drivers/power/supply/Kconfig
+> +++ b/drivers/power/supply/Kconfig
+> @@ -624,4 +624,14 @@ config CHARGER_RT9455
+>  	help
+>  	  Say Y to enable support for Richtek RT9455 battery charger.
+> =20
+> +config CHARGER_CROS_USBPD
+> +	tristate "ChromeOS EC based USBPD charger"
+> +	depends on MFD_CROS_EC
+> +	default n
+> +	help
+> +	  Say Y here to enable ChromeOS EC based USBPD charger
+> +	  driver. This driver gets various bits of information about
+> +	  what is connected to USB PD ports from the EC and converts
+> +	  that into power_supply properties.
+> +
+>  endif # POWER_SUPPLY
+> diff --git a/drivers/power/supply/Makefile b/drivers/power/supply/Makefile
+> index e83aa843bcc6..907e26f824b2 100644
+> --- a/drivers/power/supply/Makefile
+> +++ b/drivers/power/supply/Makefile
+> @@ -83,3 +83,4 @@ obj-$(CONFIG_CHARGER_TPS65090)	+=3D tps65090-charger.o
+>  obj-$(CONFIG_CHARGER_TPS65217)	+=3D tps65217_charger.o
+>  obj-$(CONFIG_AXP288_FUEL_GAUGE) +=3D axp288_fuel_gauge.o
+>  obj-$(CONFIG_AXP288_CHARGER)	+=3D axp288_charger.o
+> +obj-$(CONFIG_CHARGER_CROS_USBPD)	+=3D cros_usbpd-charger.o
+> diff --git a/drivers/power/supply/cros_usbpd-charger.c b/drivers/power/su=
+pply/cros_usbpd-charger.c
+> new file mode 100644
+> index 000000000000..c57d1c41828c
+> --- /dev/null
+> +++ b/drivers/power/supply/cros_usbpd-charger.c
+> @@ -0,0 +1,511 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Power supply driver for ChromeOS EC based USB PD Charger.
+> + *
+> + * Copyright (c) 2014 - 2018 Google, Inc
+> + */
+> +
+> +#include <linux/module.h>
+> +#include <linux/mfd/cros_ec.h>
+> +#include <linux/mfd/cros_ec_commands.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/power_supply.h>
+> +#include <linux/slab.h>
+> +
+> +#define CHARGER_DIR_NAME			"CROS_USBPD_CHARGER%d"
+> +#define CHARGER_DIR_NAME_LENGTH			sizeof(CHARGER_DIR_NAME)
+> +#define CHARGER_CACHE_UPDATE_DELAY		msecs_to_jiffies(500)
+> +#define CHARGER_MANUFACTURER_MODEL_LENGTH	32
+> +
+> +#define DRV_NAME "cros-usbpd-charger"
+> +
+> +struct port_data {
+> +	int port_number;
+> +	char name[CHARGER_DIR_NAME_LENGTH];
+> +	char manufacturer[CHARGER_MANUFACTURER_MODEL_LENGTH];
+> +	char model_name[CHARGER_MANUFACTURER_MODEL_LENGTH];
+> +	struct power_supply *psy;
+> +	struct power_supply_desc psy_desc;
+> +	int psy_usb_type;
+> +	int psy_online;
+> +	int psy_status;
+> +	int psy_current_max;
+> +	int psy_voltage_max_design;
+> +	int psy_voltage_now;
+> +	int psy_power_max;
+> +	struct charger_data *charger;
+> +	unsigned long last_update;
+> +};
+> +
+> +struct charger_data {
+> +	struct device *dev;
+> +	struct cros_ec_dev *ec_dev;
+> +	struct cros_ec_device *ec_device;
+> +	int num_charger_ports;
+> +	int num_registered_psy;
+> +	struct port_data *ports[EC_USB_PD_MAX_PORTS];
+> +	struct notifier_block notifier;
+> +};
+> +
+> +static enum power_supply_property cros_usbpd_charger_props[] =3D {
+> +	POWER_SUPPLY_PROP_ONLINE,
+> +	POWER_SUPPLY_PROP_STATUS,
+> +	POWER_SUPPLY_PROP_CURRENT_MAX,
+> +	POWER_SUPPLY_PROP_VOLTAGE_MAX_DESIGN,
+> +	POWER_SUPPLY_PROP_VOLTAGE_NOW,
+> +	POWER_SUPPLY_PROP_MODEL_NAME,
+> +	POWER_SUPPLY_PROP_MANUFACTURER,
+> +};
+> +
+> +static int cros_usbpd_charger_ec_command(struct charger_data *charger,
+> +					 unsigned int version,
+> +					 unsigned int command,
+> +					 void *outdata,
+> +					 unsigned int outsize,
+> +					 void *indata,
+> +					 unsigned int insize)
+> +{
+> +	struct cros_ec_dev *ec_dev =3D charger->ec_dev;
+> +	struct cros_ec_command *msg;
+> +	int ret;
+> +
+> +	msg =3D kzalloc(sizeof(*msg) + max(outsize, insize), GFP_KERNEL);
+> +	if (!msg)
+> +		return -ENOMEM;
+> +
+> +	msg->version =3D version;
+> +	msg->command =3D ec_dev->cmd_offset + command;
+> +	msg->outsize =3D outsize;
+> +	msg->insize =3D insize;
+> +
+> +	if (outsize)
+> +		memcpy(msg->data, outdata, outsize);
+> +
+> +	ret =3D cros_ec_cmd_xfer_status(charger->ec_device, msg);
+> +	if (ret >=3D 0 && insize)
+> +		memcpy(indata, msg->data, insize);
+> +
+> +	kfree(msg);
+> +	return ret;
+> +}
+> +
+> +static int cros_usbpd_charger_get_num_ports(struct charger_data *charger)
+> +{
+> +	struct ec_response_usb_pd_ports resp;
+> +	int ret;
+> +
+> +	ret =3D cros_usbpd_charger_ec_command(charger, 0, EC_CMD_USB_PD_PORTS,
+> +					    NULL, 0, &resp, sizeof(resp));
+> +	if (ret < 0) {
+> +		dev_err(charger->dev,
+> +			"Unable to get the number or ports (err:0x%x)\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	return resp.num_ports;
+> +}
+> +
+> +static int cros_usbpd_charger_get_discovery_info(struct port_data *port)
+> +{
+> +	struct charger_data *charger =3D port->charger;
+> +	struct ec_params_usb_pd_discovery_entry resp;
+> +	struct ec_params_usb_pd_info_request req;
+> +	int ret;
+> +
+> +	req.port =3D port->port_number;
+> +
+> +	ret =3D cros_usbpd_charger_ec_command(charger, 0,
+> +					    EC_CMD_USB_PD_DISCOVERY,
+> +					    &req, sizeof(req),
+> +					    &resp, sizeof(resp));
+> +	if (ret < 0) {
+> +		dev_err(charger->dev,
+> +			"Unable to query discovery info (err:0x%x)\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	dev_dbg(charger->dev, "Port %d: VID =3D 0x%x, PID=3D0x%x, PTYPE=3D0x%x\=
+n",
+> +		port->port_number, resp.vid, resp.pid, resp.ptype);
+> +
+> +	snprintf(port->manufacturer, sizeof(port->manufacturer), "%x",
+> +		 resp.vid);
+> +	snprintf(port->model_name, sizeof(port->model_name), "%x", resp.pid);
+> +
+> +	return 0;
+> +}
+> +
+> +static int cros_usbpd_charger_get_power_info(struct port_data *port)
+> +{
+> +	struct charger_data *charger =3D port->charger;
+> +	struct ec_response_usb_pd_power_info resp;
+> +	struct ec_params_usb_pd_power_info req;
+> +	int last_psy_status, last_psy_usb_type;
+> +	struct device *dev =3D charger->dev;
+> +	int ret;
+> +
+> +	req.port =3D port->port_number;
+> +	ret =3D cros_usbpd_charger_ec_command(charger, 0,
+> +					    EC_CMD_USB_PD_POWER_INFO,
+> +					    &req, sizeof(req),
+> +					    &resp, sizeof(resp));
+> +	if (ret < 0) {
+> +		dev_err(dev, "Unable to query PD power info (err:0x%x)\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	last_psy_status =3D port->psy_status;
+> +	last_psy_usb_type =3D port->psy_usb_type;
+> +
+> +	switch (resp.role) {
+> +	case USB_PD_PORT_POWER_DISCONNECTED:
+> +		port->psy_status =3D POWER_SUPPLY_STATUS_NOT_CHARGING;
+> +		port->psy_online =3D 0;
+> +		break;
+> +	case USB_PD_PORT_POWER_SOURCE:
+> +		port->psy_status =3D POWER_SUPPLY_STATUS_NOT_CHARGING;
+> +		port->psy_online =3D 0;
+> +		break;
+> +	case USB_PD_PORT_POWER_SINK:
+> +		port->psy_status =3D POWER_SUPPLY_STATUS_CHARGING;
+> +		port->psy_online =3D 1;
+> +		break;
+> +	case USB_PD_PORT_POWER_SINK_NOT_CHARGING:
+> +		port->psy_status =3D POWER_SUPPLY_STATUS_NOT_CHARGING;
+> +		port->psy_online =3D 1;
+> +		break;
+> +	default:
+> +		dev_err(dev, "Unknown role %d\n", resp.role);
+> +		break;
+> +	}
+> +
+> +	port->psy_voltage_max_design =3D resp.meas.voltage_max;
+> +	port->psy_voltage_now =3D resp.meas.voltage_now;
+> +	port->psy_current_max =3D resp.meas.current_max;
+> +	port->psy_power_max =3D resp.max_power;
+> +
+> +	switch (resp.type) {
+> +	case USB_CHG_TYPE_BC12_SDP:
+> +	case USB_CHG_TYPE_VBUS:
+> +		port->psy_usb_type =3D POWER_SUPPLY_USB_TYPE_SDP;
+> +		break;
+> +	case USB_CHG_TYPE_NONE:
+> +		/*
+> +		 * For dual-role devices when we are a source, the firmware
+> +		 * reports the type as NONE. Report such chargers as type
+> +		 * USB_PD_DRP.
+> +		 */
+> +		if (resp.role =3D=3D USB_PD_PORT_POWER_SOURCE && resp.dualrole)
+> +			port->psy_usb_type =3D POWER_SUPPLY_USB_TYPE_PD_DRP;
+> +		else
+> +			port->psy_usb_type =3D POWER_SUPPLY_USB_TYPE_SDP;
+> +		break;
+> +	case USB_CHG_TYPE_OTHER:
+> +	case USB_CHG_TYPE_PROPRIETARY:
+> +		port->psy_usb_type =3D POWER_SUPPLY_USB_TYPE_APPLE_BRICK_ID;
+> +		break;
+> +	case USB_CHG_TYPE_C:
+> +		port->psy_usb_type =3D POWER_SUPPLY_USB_TYPE_C;
+> +		break;
+> +	case USB_CHG_TYPE_BC12_DCP:
+> +		port->psy_usb_type =3D POWER_SUPPLY_USB_TYPE_DCP;
+> +		break;
+> +	case USB_CHG_TYPE_BC12_CDP:
+> +		port->psy_usb_type =3D POWER_SUPPLY_USB_TYPE_CDP;
+> +		break;
+> +	case USB_CHG_TYPE_PD:
+> +		if (resp.dualrole)
+> +			port->psy_usb_type =3D POWER_SUPPLY_USB_TYPE_PD_DRP;
+> +		else
+> +			port->psy_usb_type =3D POWER_SUPPLY_USB_TYPE_PD;
+> +		break;
+> +	case USB_CHG_TYPE_UNKNOWN:
+> +		/*
+> +		 * While the EC is trying to determine the type of charger that
+> +		 * has been plugged in, it will report the charger type as
+> +		 * unknown. Additionally since the power capabilities are
+> +		 * unknown, report the max current and voltage as zero.
+> +		 */
+> +		port->psy_usb_type =3D POWER_SUPPLY_USB_TYPE_UNKNOWN;
+> +		port->psy_voltage_max_design =3D 0;
+> +		port->psy_current_max =3D 0;
+> +		break;
+> +	default:
+> +		dev_err(dev, "Port %d: default case!\n", port->port_number);
+> +		port->psy_usb_type =3D POWER_SUPPLY_USB_TYPE_SDP;
+> +	}
+> +
+> +	port->psy_desc.type =3D POWER_SUPPLY_TYPE_USB;
+> +
+> +	dev_dbg(dev,
+> +		"Port %d: type=3D%d vmax=3D%d vnow=3D%d cmax=3D%d clim=3D%d pmax=3D%d\=
+n",
+> +		port->port_number, resp.type, resp.meas.voltage_max,
+> +		resp.meas.voltage_now, resp.meas.current_max,
+> +		resp.meas.current_lim, resp.max_power);
+> +
+> +	/*
+> +	 * If power supply type or status changed, explicitly call
+> +	 * power_supply_changed. This results in udev event getting generated
+> +	 * and allows user mode apps to react quicker instead of waiting for
+> +	 * their next poll of power supply status.
+> +	 */
+> +	if (last_psy_usb_type !=3D port->psy_usb_type ||
+> +	    last_psy_status !=3D port->psy_status)
+> +		power_supply_changed(port->psy);
+> +
+> +	return 0;
+> +}
+> +
+> +static int cros_usbpd_charger_get_port_status(struct port_data *port,
+> +					      bool ratelimit)
+> +{
+> +	int ret;
+> +
+> +	if (ratelimit &&
+> +	    time_is_after_jiffies(port->last_update +
+> +				  CHARGER_CACHE_UPDATE_DELAY))
+> +		return 0;
+> +
+> +	ret =3D cros_usbpd_charger_get_power_info(port);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret =3D cros_usbpd_charger_get_discovery_info(port);
+> +	port->last_update =3D jiffies;
+> +
+> +	return ret;
+> +}
+> +
+> +static void cros_usbpd_charger_power_changed(struct power_supply *psy)
+> +{
+> +	struct port_data *port =3D power_supply_get_drvdata(psy);
+> +	struct charger_data *charger =3D port->charger;
+> +	int i;
+> +
+> +	for (i =3D 0; i < charger->num_registered_psy; i++)
+> +		cros_usbpd_charger_get_port_status(charger->ports[i], false);
+> +}
+> +
+> +static int cros_usbpd_charger_get_prop(struct power_supply *psy,
+> +				       enum power_supply_property psp,
+> +				       union power_supply_propval *val)
+> +{
+> +	struct port_data *port =3D power_supply_get_drvdata(psy);
+> +	struct charger_data *charger =3D port->charger;
+> +	struct cros_ec_device *ec_device =3D charger->ec_device;
+> +	struct device *dev =3D charger->dev;
+> +	int ret;
+> +
+> +	/* Only refresh ec_port_status for dynamic properties */
+> +	switch (psp) {
+> +	case POWER_SUPPLY_PROP_ONLINE:
+> +		/*
+> +		 * If mkbp_event_supported, then we can be assured that
+> +		 * the driver's state for the online property is consistent
+> +		 * with the hardware. However, if we aren't event driven,
+> +		 * the optimization before to skip an ec_port_status get
+> +		 * and only returned cached values of the online property will
+> +		 * cause a delay in detecting a cable attach until one of the
+> +		 * other properties are read.
+> +		 *
+> +		 * Allow an ec_port_status refresh for online property check
+> +		 * if we're not already online to check for plug events if
+> +		 * not mkbp_event_supported.
+> +		 */
+> +		if (ec_device->mkbp_event_supported || port->psy_online)
+> +			break;
+> +	case POWER_SUPPLY_PROP_CURRENT_MAX:
+> +	case POWER_SUPPLY_PROP_VOLTAGE_MAX_DESIGN:
+> +	case POWER_SUPPLY_PROP_VOLTAGE_NOW:
+> +		ret =3D cros_usbpd_charger_get_port_status(port, true);
+> +		if (ret < 0) {
+> +			dev_err(dev, "Failed to get port status (err:0x%x)\n",
+> +				ret);
+> +			return -EINVAL;
+> +		}
+> +		break;
+> +	default:
+> +		break;
+> +	}
+> +
+> +	switch (psp) {
+> +	case POWER_SUPPLY_PROP_ONLINE:
+> +		val->intval =3D port->psy_online;
+> +		break;
+> +	case POWER_SUPPLY_PROP_STATUS:
+> +		val->intval =3D port->psy_status;
+> +		break;
+> +	case POWER_SUPPLY_PROP_CURRENT_MAX:
+> +		val->intval =3D port->psy_current_max * 1000;
+> +		break;
+> +	case POWER_SUPPLY_PROP_VOLTAGE_MAX_DESIGN:
+> +		val->intval =3D port->psy_voltage_max_design * 1000;
+> +		break;
+> +	case POWER_SUPPLY_PROP_VOLTAGE_NOW:
+> +		val->intval =3D port->psy_voltage_now * 1000;
+> +		break;
+> +	case POWER_SUPPLY_PROP_MODEL_NAME:
+> +		val->strval =3D port->model_name;
+> +		break;
+> +	case POWER_SUPPLY_PROP_MANUFACTURER:
+> +		val->strval =3D port->manufacturer;
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+
+Missing POWER_SUPPLY_PROP_USB_TYPE, don't throw away your work from
+cros_usbpd_charger_get_power_info() :)
+
+> +
+> +	return 0;
+> +}
+> +
+> +static int cros_usbpd_charger_ec_event(struct notifier_block *nb,
+> +				       unsigned long queued_during_suspend,
+> +				       void *_notify)
+> +{
+> +	struct cros_ec_device *ec_device;
+> +	struct charger_data *charger;
+> +	struct device *dev;
+> +	u32 host_event;
+> +
+> +	charger =3D container_of(nb, struct charger_data, notifier);
+> +	ec_device =3D charger->ec_device;
+> +	dev =3D charger->dev;
+> +
+> +	host_event =3D cros_ec_get_host_event(ec_device);
+> +	if (host_event & EC_HOST_EVENT_MASK(EC_HOST_EVENT_PD_MCU)) {
+> +		cros_usbpd_charger_power_changed(charger->ports[0]->psy);
+> +		return NOTIFY_OK;
+> +	} else {
+> +		return NOTIFY_DONE;
+> +	}
+> +}
+> +
+> +static int cros_usbpd_charger_probe(struct platform_device *pd)
+> +{
+> +	struct cros_ec_dev *ec_dev =3D dev_get_drvdata(pd->dev.parent);
+> +	struct cros_ec_device *ec_device =3D ec_dev->ec_dev;
+> +	struct power_supply_desc *psy_desc;
+> +	struct device *dev =3D &pd->dev;
+> +	struct charger_data *charger;
+> +	struct power_supply *psy;
+> +	struct port_data *port;
+> +	int ret =3D -EINVAL;
+> +	int i;
+> +
+> +	charger =3D devm_kzalloc(dev, sizeof(struct charger_data),
+> +			       GFP_KERNEL);
+> +	if (!charger)
+> +		return -ENOMEM;
+> +
+> +	charger->dev =3D dev;
+> +	charger->ec_dev =3D ec_dev;
+> +	charger->ec_device =3D ec_device;
+> +
+> +	platform_set_drvdata(pd, charger);
+> +
+> +	charger->num_charger_ports =3D cros_usbpd_charger_get_num_ports(charger=
+);
+> +	if (charger->num_charger_ports <=3D 0) {
+> +		/*
+> +		 * This can happen on a system that doesn't support USB PD.
+> +		 * Log a message, but no need to warn.
+> +		 */
+> +		dev_info(dev, "No charging ports found\n");
+> +		ret =3D -ENODEV;
+> +		goto fail_nowarn;
+> +	}
+> +
+> +	for (i =3D 0; i < charger->num_charger_ports; i++) {
+> +		struct power_supply_config psy_cfg =3D {};
+> +
+> +		port =3D devm_kzalloc(dev, sizeof(struct port_data), GFP_KERNEL);
+> +		if (!port) {
+> +			ret =3D -ENOMEM;
+> +			goto fail;
+> +		}
+> +
+> +		port->charger =3D charger;
+> +		port->port_number =3D i;
+> +		sprintf(port->name, CHARGER_DIR_NAME, i);
+> +
+> +		psy_desc =3D &port->psy_desc;
+> +		psy_desc->name =3D port->name;
+> +		psy_desc->type =3D POWER_SUPPLY_TYPE_USB;
+> +		psy_desc->get_property =3D cros_usbpd_charger_get_prop;
+> +		psy_desc->external_power_changed =3D
+> +					cros_usbpd_charger_power_changed;
+> +		psy_desc->properties =3D cros_usbpd_charger_props;
+> +		psy_desc->num_properties =3D
+> +					ARRAY_SIZE(cros_usbpd_charger_props);
+
+You also need to add psy_desc->usb_types and psy_desc->num_usb_types
+for POWER_SUPPLY_PROP_USB_TYPE. It should contains a list of
+supported USB types.
+
+> +		psy_cfg.drv_data =3D port;
+> +
+> +		psy =3D devm_power_supply_register_no_ws(dev, psy_desc,
+> +						       &psy_cfg);
+> +		if (IS_ERR(psy)) {
+> +			dev_err(dev, "Failed to register power supply\n");
+> +			continue;
+> +		}
+> +		port->psy =3D psy;
+> +
+> +		charger->ports[charger->num_registered_psy++] =3D port;
+> +		ec_device->charger =3D psy;
+> +	}
+> +
+> +	if (!charger->num_registered_psy) {
+> +		ret =3D -ENODEV;
+> +		dev_err(dev, "No power supplies registered\n");
+> +		goto fail;
+> +	}
+> +
+> +	if (ec_device->mkbp_event_supported) {
+> +		/* Get PD events from the EC */
+> +		charger->notifier.notifier_call =3D cros_usbpd_charger_ec_event;
+> +		ret =3D blocking_notifier_chain_register(
+> +						&ec_device->event_notifier,
+> +						&charger->notifier);
+> +		if (ret < 0)
+> +			dev_warn(dev, "failed to register notifier\n");
+
+I don't see this being unregistered on removal? I suggest (untested):
+
+ret =3D devm_add_action_or_reset(dev,
+    cros_usbpd_charger_unregister_notifier, charger);
+if (ret < 0)
+    return ret;
+
+static void cros_usbpd_charger_unregister_notifier(void *data)
+{
+    struct charger_data *charger =3D data;
+    struct cros_ec_device *ec_device =3D charger->ec_device;
+
+    blocking_notifier_chain_unregister(&ec_device->event_notifier,
+                                       &charger->notifier);
+}
+
+> +	}
+> +
+> +	return 0;
+> +
+> +fail:
+> +	WARN(1, "%s: Failing probe (err:0x%x)\n", dev_name(dev), ret);
+> +
+> +fail_nowarn:
+> +	dev_info(dev, "Failing probe (err:0x%x)\n", ret);
+> +	return ret;
+> +}
+> +
+> +#ifdef CONFIG_PM_SLEEP
+> +static int cros_usbpd_charger_resume(struct device *dev)
+> +{
+> +	struct charger_data *charger =3D dev_get_drvdata(dev);
+> +	int i;
+> +
+> +	if (!charger)
+> +		return 0;
+> +
+> +	for (i =3D 0; i < charger->num_registered_psy; i++) {
+> +		power_supply_changed(charger->ports[i]->psy);
+> +		charger->ports[i]->last_update =3D
+> +				jiffies - CHARGER_CACHE_UPDATE_DELAY;
+> +	}
+> +
+> +	return 0;
+> +}
+> +#endif
+> +
+> +static SIMPLE_DEV_PM_OPS(cros_usbpd_charger_pm_ops, NULL,
+> +			 cros_usbpd_charger_resume);
+> +
+> +static struct platform_driver cros_usbpd_charger_driver =3D {
+> +	.driver =3D {
+> +		.name =3D DRV_NAME,
+> +		.pm =3D &cros_usbpd_charger_pm_ops,
+> +	},
+> +	.probe =3D cros_usbpd_charger_probe
+> +};
+> +
+> +module_platform_driver(cros_usbpd_charger_driver);
+> +
+> +MODULE_LICENSE("GPL");
+> +MODULE_DESCRIPTION("ChromeOS EC USBPD charger");
+> +MODULE_ALIAS("platform:" DRV_NAME);
+> diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.h
+> index f36125ee9245..a1eb39344231 100644
+> --- a/include/linux/mfd/cros_ec.h
+> +++ b/include/linux/mfd/cros_ec.h
+> @@ -19,6 +19,7 @@
+>  #include <linux/cdev.h>
+>  #include <linux/device.h>
+>  #include <linux/notifier.h>
+> +#include <linux/power_supply.h>
+>  #include <linux/mfd/cros_ec_commands.h>
+>  #include <linux/mutex.h>
+> =20
+> @@ -143,6 +144,7 @@ struct cros_ec_device {
+>  			struct cros_ec_command *msg);
+>  	int (*pkt_xfer)(struct cros_ec_device *ec,
+>  			struct cros_ec_command *msg);
+> +	struct power_supply *charger;
+>  	struct mutex lock;
+>  	bool mkbp_event_supported;
+>  	struct blocking_notifier_head event_notifier;
+> --=20
+
+-- Sebastian
+
+--6lx4kbazbrlpguxh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlroWtQACgkQ2O7X88g7
++ppyehAAna4rGMkGk3pDuiJErKCmjOT/cJPzPMPrwITjSBWAxF+Wp+wo/rSsvJi3
+QATPBGdlRN9WVPiLnrIlsePvsnMX+Yq9fVQrpNasFfscMXvsVv8jRBfZYGb04ELT
+m4tcmO0L6WmvQY0WDT2zo1/a/6TxTl/sj1kTOBZTLvFMtTc2W5H3+UbHuxmvwwJp
+H2lA7eGpC3JZYlf4zWuH4GNldy5y0KskCh53XuNCMUCk5ttMnjyxYzqucwNp3Dw2
+Wo4lK7PJUx9tBAOpuowzH5Anok7R4uOUM03eNTe/k5FNaCdHIHuQcWMvxMUi2+6o
+/AAeUSOo7UUob8EYRjy8mCXmANN9ZrhZw8h0ma9vKcqm3uRETMQ5gp2YbKoOZG6e
+GXEfvrwxyeXp4Mn1zeZ3n5Enhweb3CeKgOcHhr17uJWcKedUtBa6KCwZRfFJhcQt
+X/VcuiTYJvkK+tqWSaeuXNf8nZ0WhUy8QfFUhrcyQyPoLVnHKebormaj1WJYEMgX
+ZGSEzo+i/YaEx9R0BwIe418PNnVNxZfRAtfYP77e1TnVvHgZcIg17vLZoFs4Fi1e
+446tRv+VQE+zzj/z/nn0CV0dwrCLk1rB1U0/5IYv0fIlx0ty1SJ6vYaBuJoyvx0i
+fUUTFHfYFSD3ex1WJpI5APmK6lLJpfRyxPjtjHhVXw+wXX1nZAI=
+=bBP5
+-----END PGP SIGNATURE-----
+
+--6lx4kbazbrlpguxh--
