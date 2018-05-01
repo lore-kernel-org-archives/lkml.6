@@ -1,146 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755865AbeEABpl (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 21:45:41 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:39123 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751429AbeEABpj (ORCPT
+        id S1751772AbeEABux (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 21:50:53 -0400
+Received: from mail-out.m-online.net ([212.18.0.9]:34787 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751261AbeEABuw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 21:45:39 -0400
-X-Google-Smtp-Source: AB8JxZoJV+Bnl329C1+uk2RHwI2lF6sMoXSJE0SLmabXtBLPf0xLqpQ9kXvpaQZXp8pt1AsXnOpT4g==
-Subject: Re: [PATCH] z3fold: fix reclaim lock-ups
-To: Vitaly Wool <vitalywool@gmail.com>, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux-MM <linux-mm@kvack.org>
-Cc: Oleksiy.Avramchenko@sony.com, Matthew Wilcox <mawilcox@microsoft.com>,
-        stable@kernel.org, asavery@chromium.org
-References: <20180430125800.444cae9706489f412ad12621@gmail.com>
-From: Guenter Roeck <linux@roeck-us.net>
-Message-ID: <e1364949-5c3e-d175-0764-e6d497734284@roeck-us.net>
-Date: Mon, 30 Apr 2018 18:45:36 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180430125800.444cae9706489f412ad12621@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 30 Apr 2018 21:50:52 -0400
+X-Auth-Info: ZkgvTIxIphWsKYrQaux7Aw/vee4nDVrvdThxQZ+tt+E=
+From: Marek Vasut <marex@denx.de>
+To: linux-kernel@vger.kernel.org
+Cc: Marek Vasut <marex@denx.de>,
+        Javier Martinez Canillas <javier@osg.samsung.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH] regulator: ltc3676: Assure PGOOD mask is set before changing voltage
+Date: Tue,  1 May 2018 03:50:45 +0200
+Message-Id: <20180501015045.19166-1-marex@denx.de>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vitaly,
+Make sure the DVBxB bit 5, PGOOD mask, is set before changing voltage
+on the buck converters. If the PGOOD mask bit is not set, the PMIC may
+deassert the PGOOD signal during the voltage transition.
 
-On 04/30/2018 03:58 AM, Vitaly Wool wrote:
-> Do not try to optimize in-page object layout while the page is
-> under reclaim. This fixes lock-ups on reclaim and improves reclaim
-> performance at the same time.
-> 
+On systems that use the PGOOD signal as a power OK indication for the
+board or SoC, which should be the case on correct designs, deasserting
+the PGOOD signal will lead to system reset or shutdown, which is not
+the expected behavior when changing PMIC buck converter voltage.
 
-A heads-up: z3fold is still crashing (due to a NULL pointer access) under
-heavy memory pressure with this patch applied. That doesn't mean the patch
-should not be applied - the new crash is different - but there is more work
-to do.
+Signed-off-by: Marek Vasut <marex@denx.de>
+Cc: Javier Martinez Canillas <javier@osg.samsung.com>
+Cc: Mark Brown <broonie@kernel.org>
+---
+NOTE: This was observed on an iMX6Q design during DVFS. When the cpufreq
+      driver changed the frequency and scaled the voltage up, the system
+      froze. This was because the PGOOD went down and the voltage rails
+      lost power shortly after.
+---
+ drivers/regulator/ltc3676.c | 20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
 
-See https://bugs.chromium.org/p/chromium/issues/detail?id=822360#c21 for a
-crash log. This was seen with chromeos-4.14 with (I hope) all relevant z3fold
-patches applied. I am trying to reproduce the problem on top of mainline.
-
-Guenter
-
-> Reported-by: Guenter Roeck <linux@roeck-us.net>
-> Signed-off-by: Vitaly Wool <vitaly.vul@sony.com>
-> ---
->   mm/z3fold.c | 42 ++++++++++++++++++++++++++++++------------
->   1 file changed, 30 insertions(+), 12 deletions(-)
-> 
-> diff --git a/mm/z3fold.c b/mm/z3fold.c
-> index c0bca6153b95..901c0b07cbda 100644
-> --- a/mm/z3fold.c
-> +++ b/mm/z3fold.c
-> @@ -144,7 +144,8 @@ enum z3fold_page_flags {
->   	PAGE_HEADLESS = 0,
->   	MIDDLE_CHUNK_MAPPED,
->   	NEEDS_COMPACTING,
-> -	PAGE_STALE
-> +	PAGE_STALE,
-> +	UNDER_RECLAIM
->   };
->   
->   /*****************
-> @@ -173,6 +174,7 @@ static struct z3fold_header *init_z3fold_page(struct page *page,
->   	clear_bit(MIDDLE_CHUNK_MAPPED, &page->private);
->   	clear_bit(NEEDS_COMPACTING, &page->private);
->   	clear_bit(PAGE_STALE, &page->private);
-> +	clear_bit(UNDER_RECLAIM, &page->private);
->   
->   	spin_lock_init(&zhdr->page_lock);
->   	kref_init(&zhdr->refcount);
-> @@ -756,6 +758,10 @@ static void z3fold_free(struct z3fold_pool *pool, unsigned long handle)
->   		atomic64_dec(&pool->pages_nr);
->   		return;
->   	}
-> +	if (test_bit(UNDER_RECLAIM, &page->private)) {
-> +		z3fold_page_unlock(zhdr);
-> +		return;
-> +	}
->   	if (test_and_set_bit(NEEDS_COMPACTING, &page->private)) {
->   		z3fold_page_unlock(zhdr);
->   		return;
-> @@ -840,6 +846,8 @@ static int z3fold_reclaim_page(struct z3fold_pool *pool, unsigned int retries)
->   			kref_get(&zhdr->refcount);
->   			list_del_init(&zhdr->buddy);
->   			zhdr->cpu = -1;
-> +			set_bit(UNDER_RECLAIM, &page->private);
-> +			break;
->   		}
->   
->   		list_del_init(&page->lru);
-> @@ -887,25 +895,35 @@ static int z3fold_reclaim_page(struct z3fold_pool *pool, unsigned int retries)
->   				goto next;
->   		}
->   next:
-> -		spin_lock(&pool->lock);
->   		if (test_bit(PAGE_HEADLESS, &page->private)) {
->   			if (ret == 0) {
-> -				spin_unlock(&pool->lock);
->   				free_z3fold_page(page);
->   				return 0;
->   			}
-> -		} else if (kref_put(&zhdr->refcount, release_z3fold_page)) {
-> -			atomic64_dec(&pool->pages_nr);
-> +			spin_lock(&pool->lock);
-> +			list_add(&page->lru, &pool->lru);
-> +			spin_unlock(&pool->lock);
-> +		} else {
-> +			z3fold_page_lock(zhdr);
-> +			clear_bit(UNDER_RECLAIM, &page->private);
-> +			 if (kref_put(&zhdr->refcount,
-> +					release_z3fold_page_locked)) {
-> +				atomic64_dec(&pool->pages_nr);
-> +				return 0;
-> +			}
-> +			/*
-> +			 * if we are here, the page is still not completely
-> +			 * free. Take the global pool lock then to be able
-> +			 * to add it back to the lru list
-> +			 */
-> +			spin_lock(&pool->lock);
-> +			list_add(&page->lru, &pool->lru);
->   			spin_unlock(&pool->lock);
-> -			return 0;
-> +			z3fold_page_unlock(zhdr);
->   		}
->   
-> -		/*
-> -		 * Add to the beginning of LRU.
-> -		 * Pool lock has to be kept here to ensure the page has
-> -		 * not already been released
-> -		 */
-> -		list_add(&page->lru, &pool->lru);
-> +		/* We started off locked to we need to lock the pool back */
-> +		spin_lock(&pool->lock);
->   	}
->   	spin_unlock(&pool->lock);
->   	return -EAGAIN;
-> 
+diff --git a/drivers/regulator/ltc3676.c b/drivers/regulator/ltc3676.c
+index 662ee05ea44d..9dec1609ff66 100644
+--- a/drivers/regulator/ltc3676.c
++++ b/drivers/regulator/ltc3676.c
+@@ -52,6 +52,7 @@
+ #define LTC3676_CLIRQ     0x1F
+ 
+ #define LTC3676_DVBxA_REF_SELECT	BIT(5)
++#define LTC3676_DVBxB_PGOOD_MASK	BIT(5)
+ 
+ #define LTC3676_IRQSTAT_PGOOD_TIMEOUT	BIT(3)
+ #define LTC3676_IRQSTAT_UNDERVOLT_WARN	BIT(4)
+@@ -123,6 +124,23 @@ static int ltc3676_set_suspend_mode(struct regulator_dev *rdev,
+ 				  mask, val);
+ }
+ 
++static int ltc3676_set_voltage_sel(struct regulator_dev *rdev, unsigned selector)
++{
++	struct ltc3676 *ltc3676 = rdev_get_drvdata(rdev);
++	struct device *dev = ltc3676->dev;
++	int ret, dcdc = rdev_get_id(rdev);
++
++	dev_dbg(dev, "%s id=%d selector=%d\n", __func__, dcdc, selector);
++
++	ret = regmap_update_bits(ltc3676->regmap, rdev->desc->vsel_reg + 1,
++				 LTC3676_DVBxB_PGOOD_MASK,
++				 LTC3676_DVBxB_PGOOD_MASK);
++	if (ret)
++		return ret;
++
++	return regulator_set_voltage_sel_regmap(rdev, selector);
++}
++
+ static inline unsigned int ltc3676_scale(unsigned int uV, u32 r1, u32 r2)
+ {
+ 	uint64_t tmp;
+@@ -166,7 +184,7 @@ static const struct regulator_ops ltc3676_linear_regulator_ops = {
+ 	.disable = regulator_disable_regmap,
+ 	.is_enabled = regulator_is_enabled_regmap,
+ 	.list_voltage = regulator_list_voltage_linear,
+-	.set_voltage_sel = regulator_set_voltage_sel_regmap,
++	.set_voltage_sel = ltc3676_set_voltage_sel,
+ 	.get_voltage_sel = regulator_get_voltage_sel_regmap,
+ 	.set_suspend_voltage = ltc3676_set_suspend_voltage,
+ 	.set_suspend_mode = ltc3676_set_suspend_mode,
+-- 
+2.16.2
