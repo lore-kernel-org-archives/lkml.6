@@ -1,122 +1,153 @@
 Return-Path: <neilb@suse.com>
-X-Google-Smtp-Source: AB8JxZoAQWWGPRB7v8NrAllHK5+xf2rgXwS5EkUpt8tWNOIh6VGr+Qvah/PEHYoPbnrX6JnM77Gr
-ARC-Seal: i=1; a=rsa-sha256; t=1525394100; cv=none;
+X-Google-Smtp-Source: AB8JxZquFGmm1RMhEeIMKC18g++e97rhpB+WeP8XiQmxKGBAEZtsK5tqH+wvrafABPQCEyx+L3HB
+ARC-Seal: i=1; a=rsa-sha256; t=1525146803; cv=none;
         d=google.com; s=arc-20160816;
-        b=eTu+/33yqLXoN6+f0V1+tCW9JLTlKQ3IZD5MRwEe3w5nzOrW+pGDbpC5oS07DXSoYy
-         bw+csUv491Hcd67vo3nkR9SOLON7aES/FCyR1YmQlKgYQ0ZwMBokr5HPhXJJ42ykkAPA
-         81zTHiqgwkSwSBqp5CfpkUMo+NJCmtDMivPuwgSa6DzJ6IH8n09E1fyoNk2ctyV/U/3J
-         Nwf/FuT2BmXuuAV+3aOXa8NkATgTUpYsyYoeesfJ/DhRKvMcb09Wo7VWcRG0Mm183i5W
-         FHEx3SpM6WRjQvjdyI7fm8dfJUZDdzyNZsRDq172GX676GL8xZ4fH7nnKIHYkrXrzMy1
-         qM2w==
+        b=rZznEYZL5a6hAdkBwdzdPpwHvABJrs6lM9YtN9IdvKiyuxIqvN5J1sGq+Sc7sO1sNT
+         8Cuw1FWMRnnHuI/L692zaz2EIp5zlHr7vOc/Cc8BxnmFhq4LoSK0GN/aByCoQZcFU8KB
+         r2XEQzUnhcJc3YGeb80xEdkT1zTjeODs/IH1+KdzM4MkLHJXZeLyXA613M4Vf0u5l+1t
+         lTv4WE2XY2eX3gqNsMbp3qpWznjABVhGSGaZNxOT2PS6YKCdlNexVwP6WVCOwheZsbJs
+         1cBGlpOabCH9byllbboFUPc5MrYYK6slNDg/d47BizfiCpXpcTz0KD52tBEUGQ39hWiN
+         zckA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:message-id:references:in-reply-to:subject:cc:date:to
-         :from:arc-authentication-results;
-        bh=ye39Fz/IT0aOPUtLSHxhy8w6PfUYlTMuDMrRF8PXb/Y=;
-        b=u62W+XLm2X20nQ2ckJdKhnPqWsTNeNlY2H6nKNhkjPJfINdbc1HtKmT0kjvPeTu4BQ
-         3Eo0kshRQOp6TFTw9cNxPqUBzEnVHEijp7hpg+H8tHTuKD6KLt1a9av3xA+5g3TD/wNV
-         RlVvZLOkRlgx3x6+2kq1uykS/b0/HnFkBUdsDzcrq/V1DRWnY5+xdUYDyAZuWL4/jbcf
-         B13qX/hY9Wmtl027kQZUCXIWV5AtXLPWQ54CZOjzYyIXDiozeRhujyOhX4AgihXgtFcD
-         oSB/PIYzhx8pvnOe0a8fPWdejUk1gTc6BXaDT7Pna0DLo//KjQUhIqugupGROVXdu0Vq
-         ZtAQ==
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :in-reply-to:message-id:cc:subject:date:to:from
+         :arc-authentication-results;
+        bh=Uqo69BuPC0z68tJ3X6GrZ2/K/kaDfrN0FQIqz/ISxgc=;
+        b=xsu40HZuhbNHCxDUdQx+GgT9wYyzDbMnfs8gZ4BVoTkQQ7196Nq3O7TbgrXjln5R+z
+         6KsL8EH9FYaAgZE0+M1bNpY8Hh5W2bPwwhrQQHdKDdmAz55cgwk1Tpbq4EPlsiVlHbwL
+         8UsBYz7a22BSfZMcHaF5/N8HCjg22pAIBck4VAkU1uyZG+HKmN/2lM+2yudwLmRPlzTF
+         4LoTKFFCkdkvdpDmwKyBVeYlIG3hshh3vFQrCRbrK+GPxM71v6LXTlTksuIYpFkNeI3m
+         aJOGCAr8h91O4H47pmnMMDiAxU/p9c0GAT8N3q0NM1A4cLY9bd6YwM9w/GwvkmXade7V
+         djoQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
 Authentication-Results: mx.google.com;
        spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
 From: NeilBrown <neilb@suse.com>
-To: James Simmons <jsimmons@infradead.org>
-Date: Fri, 04 May 2018 10:34:51 +1000
-Cc: Oleg Drokin <oleg.drokin@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andreas Dilger <andreas.dilger@intel.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Lustre Development List <lustre-devel@lists.lustre.org>
-Subject: Re: [PATCH 10/10] staging: lustre: fix error deref in ll_splice_alias().
-In-Reply-To: <alpine.LFD.2.21.1805020403530.2551@casper.infradead.org>
-References: <152514658325.17843.11455067361317157487.stgit@noble> <152514675919.17843.11688659715084804936.stgit@noble> <alpine.LFD.2.21.1805020403530.2551@casper.infradead.org>
-Message-ID: <87d0ycfec4.fsf@notabene.neil.brown.name>
+To: Oleg Drokin <oleg.drokin@intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ James Simmons <jsimmons@infradead.org>,
+ Andreas Dilger <andreas.dilger@intel.com>
+Date: Tue, 01 May 2018 13:52:38 +1000
+Subject: [PATCH 03/10] staging: lustre: lu_object: discard extra lru count.
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Lustre Development List <lustre-devel@lists.lustre.org>
+Message-ID: <152514675893.17843.8396665070911641266.stgit@noble>
+In-Reply-To: <152514658325.17843.11455067361317157487.stgit@noble>
+References: <152514658325.17843.11455067361317157487.stgit@noble>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599232390798280014?=
-X-GMAIL-MSGID: =?utf-8?q?1599491644289831418?=
+X-GMAIL-THRID: =?utf-8?q?1599232334415255756?=
+X-GMAIL-MSGID: =?utf-8?q?1599232334415255756?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+lu_object maintains 2 lru counts.
+One is a per-bucket lsb_lru_len.
+The other is the per-cpu ls_lru_len_counter.
 
-On Wed, May 02 2018, James Simmons wrote:
+The only times the per-bucket counters are use are:
+- a debug message when an object is added
+- in lu_site_stats_get when all the counters are combined.
 
->> d_splice_alias() can return an ERR_PTR().
->> If it does while debugging is enabled, the following
->> CDEBUG() will dereference that error and crash.
->>=20
->> So add appropriate checking, and provide a separate
->> debug message for the error case.
->
-> Yeah!!! It fixed the issues. Thank you.
+The debug message is not essential, and the per-cpu counter
+can be used to get the combined total.
 
-:-)
-So I've made it "Reported-and-tested-by: James"
+So discard the per-bucket lsb_lru_len.
 
-Thanks,
-NeilBrown
+Signed-off-by: NeilBrown <neilb@suse.com>
+Reviewed-by: Andreas Dilger <andreas.dilger@dilger.ca>
+---
+ drivers/staging/lustre/lustre/obdclass/lu_object.c |   24 ++++++++------------
+ 1 file changed, 9 insertions(+), 15 deletions(-)
 
-
->
-> Reviewed-by: James Simmons <jsimmons@infradead.org>
->=20=20
->> Reported-by: James Simmons <jsimmons@infradead.org>
->> Fixes: e9d4f0b9f559 ("staging: lustre: llite: use d_splice_alias for dir=
-ectories.")
->> Signed-off-by: NeilBrown <neilb@suse.com>
->> ---
->>  drivers/staging/lustre/lustre/llite/namei.c |    8 ++++++--
->>  1 file changed, 6 insertions(+), 2 deletions(-)
->>=20
->> diff --git a/drivers/staging/lustre/lustre/llite/namei.c b/drivers/stagi=
-ng/lustre/lustre/llite/namei.c
->> index 6c9ec462eb41..24a6873d86a2 100644
->> --- a/drivers/staging/lustre/lustre/llite/namei.c
->> +++ b/drivers/staging/lustre/lustre/llite/namei.c
->> @@ -442,11 +442,15 @@ struct dentry *ll_splice_alias(struct inode *inode=
-, struct dentry *de)
->>  	} else {
->>  		struct dentry *new =3D d_splice_alias(inode, de);
->>=20=20
->> +		if (IS_ERR(new))
->> +			CDEBUG(D_DENTRY, "splice inode %p as %pd gives error %lu\n",
->> +			       inode, de, PTR_ERR(new));
->>  		if (new)
->>  			de =3D new;
->>  	}
->> -	CDEBUG(D_DENTRY, "Add dentry %p inode %p refc %d flags %#x\n",
->> -	       de, d_inode(de), d_count(de), de->d_flags);
->> +	if (!IS_ERR(de))
->> +		CDEBUG(D_DENTRY, "Add dentry %p inode %p refc %d flags %#x\n",
->> +		       de, d_inode(de), d_count(de), de->d_flags);
->>  	return de;
->>  }
->>=20=20
->>=20
->>=20
->>=20
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlrrqqsACgkQOeye3VZi
-gbl2CA//QeoHQARQk3FPfe38vYXX18Hw8Z+vxHNLqKLnXs35N7FirGkOasT3oig/
-+CGdHW8Hzc2MVtul3KuK/bc4SD/cjYKZp2emMZlLYaGkx6bDCUrW04M/IiU3LAbj
-NTujJoLwTFBcNNh3m8Q3kQEEFATtnIx/KDjvql1owLH3nsYT/Q/tMYKwcmDK1bW/
-7L8RNuQZrUTd8ioxWNk9wZsq4qgKdJEoO2DBrtzhDOddbStgh1vDJd6yJRk4CCQW
-Eavq2LvAjRlWo9HguGwTpdggTMWqODej5qb6fsTvn44+EQSBHBXCb6ita5XknVBP
-JLBPyr9fmbV0O53+js9qIMElPxQ/qpclWlTbdH1ZDMKeOFqpDadcoCLHS059bQ38
-Q9GUsLZOYuD7kbzdqjH2HpSNJUvAIlxi9Iby6KbQXOh1SrHJRqpm3K3aSF5lkHPl
-wFBWCjlNgH2fzF8Y01Ds6AsPy3oR+T+9YjZhfiXclTSpi0SydhqXVuS8DWWZNO4V
-PpcvxBx755zKUyTmzOK0wHlWni+ZFXjti1vdhi5cnWiexiN53oLgHbWHFJ+9YUQi
-fm2X6Ju5/FIMb/EmSNqh6OebNZrTcCircL8+JTxOCOPaKHo+O09wEbDI3kPPiWd4
-5rHNMM5EEswU4k0lAZQ3s1Hzt9tTIsjhNmO1BqlHYRxTfxrBB0U=
-=9nUO
------END PGP SIGNATURE-----
---=-=-=--
+diff --git a/drivers/staging/lustre/lustre/obdclass/lu_object.c b/drivers/staging/lustre/lustre/obdclass/lu_object.c
+index 2a8a25d6edb5..2bf089817157 100644
+--- a/drivers/staging/lustre/lustre/obdclass/lu_object.c
++++ b/drivers/staging/lustre/lustre/obdclass/lu_object.c
+@@ -57,10 +57,6 @@
+ #include <linux/list.h>
+ 
+ struct lu_site_bkt_data {
+-	/**
+-	 * number of object in this bucket on the lsb_lru list.
+-	 */
+-	long			lsb_lru_len;
+ 	/**
+ 	 * LRU list, updated on each access to object. Protected by
+ 	 * bucket lock of lu_site::ls_obj_hash.
+@@ -187,10 +183,9 @@ void lu_object_put(const struct lu_env *env, struct lu_object *o)
+ 	if (!lu_object_is_dying(top)) {
+ 		LASSERT(list_empty(&top->loh_lru));
+ 		list_add_tail(&top->loh_lru, &bkt->lsb_lru);
+-		bkt->lsb_lru_len++;
+ 		percpu_counter_inc(&site->ls_lru_len_counter);
+-		CDEBUG(D_INODE, "Add %p to site lru. hash: %p, bkt: %p, lru_len: %ld\n",
+-		       o, site->ls_obj_hash, bkt, bkt->lsb_lru_len);
++		CDEBUG(D_INODE, "Add %p to site lru. hash: %p, bkt: %p\n",
++		       o, site->ls_obj_hash, bkt);
+ 		cfs_hash_bd_unlock(site->ls_obj_hash, &bd, 1);
+ 		return;
+ 	}
+@@ -238,7 +233,6 @@ void lu_object_unhash(const struct lu_env *env, struct lu_object *o)
+ 
+ 			list_del_init(&top->loh_lru);
+ 			bkt = cfs_hash_bd_extra_get(obj_hash, &bd);
+-			bkt->lsb_lru_len--;
+ 			percpu_counter_dec(&site->ls_lru_len_counter);
+ 		}
+ 		cfs_hash_bd_del_locked(obj_hash, &bd, &top->loh_hash);
+@@ -422,7 +416,6 @@ int lu_site_purge_objects(const struct lu_env *env, struct lu_site *s,
+ 			cfs_hash_bd_del_locked(s->ls_obj_hash,
+ 					       &bd2, &h->loh_hash);
+ 			list_move(&h->loh_lru, &dispose);
+-			bkt->lsb_lru_len--;
+ 			percpu_counter_dec(&s->ls_lru_len_counter);
+ 			if (did_sth == 0)
+ 				did_sth = 1;
+@@ -621,7 +614,6 @@ static struct lu_object *htable_lookup(struct lu_site *s,
+ 		lprocfs_counter_incr(s->ls_stats, LU_SS_CACHE_HIT);
+ 		if (!list_empty(&h->loh_lru)) {
+ 			list_del_init(&h->loh_lru);
+-			bkt->lsb_lru_len--;
+ 			percpu_counter_dec(&s->ls_lru_len_counter);
+ 		}
+ 		return lu_object_top(h);
+@@ -1834,19 +1826,21 @@ struct lu_site_stats {
+ 	unsigned int	lss_busy;
+ };
+ 
+-static void lu_site_stats_get(struct cfs_hash *hs,
++static void lu_site_stats_get(const struct lu_site *s,
+ 			      struct lu_site_stats *stats, int populated)
+ {
++	struct cfs_hash *hs = s->ls_obj_hash;
+ 	struct cfs_hash_bd bd;
+ 	unsigned int i;
++	/* percpu_counter_read_positive() won't accept a const pointer */
++	struct lu_site *s2 = (struct lu_site *)s;
+ 
++	stats->lss_busy += cfs_hash_size_get(hs) -
++		percpu_counter_read_positive(&s2->ls_lru_len_counter);
+ 	cfs_hash_for_each_bucket(hs, &bd, i) {
+-		struct lu_site_bkt_data *bkt = cfs_hash_bd_extra_get(hs, &bd);
+ 		struct hlist_head	*hhead;
+ 
+ 		cfs_hash_bd_lock(hs, &bd, 1);
+-		stats->lss_busy  +=
+-			cfs_hash_bd_count_get(&bd) - bkt->lsb_lru_len;
+ 		stats->lss_total += cfs_hash_bd_count_get(&bd);
+ 		stats->lss_max_search = max((int)stats->lss_max_search,
+ 					    cfs_hash_bd_depmax_get(&bd));
+@@ -2039,7 +2033,7 @@ int lu_site_stats_print(const struct lu_site *s, struct seq_file *m)
+ 	struct lu_site_stats stats;
+ 
+ 	memset(&stats, 0, sizeof(stats));
+-	lu_site_stats_get(s->ls_obj_hash, &stats, 1);
++	lu_site_stats_get(s, &stats, 1);
+ 
+ 	seq_printf(m, "%d/%d %d/%ld %d %d %d %d %d %d %d\n",
+ 		   stats.lss_busy,
