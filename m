@@ -1,218 +1,245 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755199AbeEANTP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 09:19:15 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:47884 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753800AbeEANTN (ORCPT
+        id S1755590AbeEANU1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 09:20:27 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:33251 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751658AbeEANUY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 09:19:13 -0400
-Date: Tue, 1 May 2018 15:19:04 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Kohli, Gaurav" <gkohli@codeaurora.org>
-Cc: tglx@linutronix.de, mpe@ellerman.id.au, mingo@kernel.org,
-        bigeasy@linutronix.de, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Neeraj Upadhyay <neeraju@codeaurora.org>,
-        Will Deacon <will.deacon@arm.com>, Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [PATCH v1] kthread/smpboot: Serialize kthread parking against
- wakeup
-Message-ID: <20180501131904.GG12217@hirez.programming.kicks-ass.net>
-References: <20180425200917.GZ4082@hirez.programming.kicks-ass.net>
- <20180426084131.GV4129@hirez.programming.kicks-ass.net>
- <20180426085719.GW4129@hirez.programming.kicks-ass.net>
- <4d3f68f8-e599-6b27-a2e8-9e96b401d57a@codeaurora.org>
- <20180430111744.GE4082@hirez.programming.kicks-ass.net>
- <3af3365b-4e3f-e388-8e90-45a3bd4120fd@codeaurora.org>
- <20180501101845.GE12217@hirez.programming.kicks-ass.net>
- <f134c8d8-e56f-bf29-0177-e6702ae79f2b@codeaurora.org>
- <20180501113132.GF12217@hirez.programming.kicks-ass.net>
- <745d762d-9ab3-0749-9b87-9bb03d913071@codeaurora.org>
+        Tue, 1 May 2018 09:20:24 -0400
+X-Google-Smtp-Source: AB8JxZoP2ogtnRilhbxG1B4Vly8sIKIeQCri5yjzu53TE6cq92GslusQMNWaDptxW4q9hF4YUAmbT63WrzGFktdXXjI=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <745d762d-9ab3-0749-9b87-9bb03d913071@codeaurora.org>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180428102111.18384-3-yixun.lan@amlogic.com>
+References: <20180428102111.18384-1-yixun.lan@amlogic.com> <20180428102111.18384-3-yixun.lan@amlogic.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Tue, 1 May 2018 15:20:02 +0200
+Message-ID: <CAFBinCA6N=q6ZtuA9nfd=8VJjZMg9v8bdqZabVWiyc2-sGB0Qw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] net: stmmac: dwmac-meson: extend phy mode setting
+To: Yixun Lan <yixun.lan@amlogic.com>
+Cc: "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>,
+        Rob Herring <robh@kernel.org>, Jerome Brunet <jbrunet@baylibre.com>,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On 5/1/2018 5:01 PM, Peter Zijlstra wrote:
+Hello Yixun,
 
-> > Let me ponder what the best solution is, it's a bit of a mess.
+On Sat, Apr 28, 2018 at 12:21 PM, Yixun Lan <yixun.lan@amlogic.com> wrote:
+>   In the Meson-AXG SoC, the phy mode setting of PRG_ETH0 in the glue layer
+> is extended from bit[0] to bit[2:0].
+>   There is no problem if we configure it to the RGMII 1000M PHY mode,
+> since the register setting is coincidentally compatible with previous one,
+> but for the RMII 100M PHY mode, the configuration need to be changed to
+> value - b100.
+>   This patch was verified with a RTL8201F 100M ethernet PHY.
+>
+> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+> ---
+>  .../ethernet/stmicro/stmmac/dwmac-meson8b.c   | 120 +++++++++++++++---
+>  1 file changed, 104 insertions(+), 16 deletions(-)
+>
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
+> index 7cb794094a70..4ff231df7322 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/io.h>
+>  #include <linux/ioport.h>
+>  #include <linux/module.h>
+> +#include <linux/of_device.h>
+>  #include <linux/of_net.h>
+>  #include <linux/mfd/syscon.h>
+>  #include <linux/platform_device.h>
+> @@ -29,6 +30,10 @@
+>
+>  #define PRG_ETH0_RGMII_MODE            BIT(0)
+>
+> +#define PRG_ETH0_EXT_PHY_MODE_MASK     GENMASK(2, 0)
+> +#define PRG_ETH0_EXT_RGMII_MODE                1
+> +#define PRG_ETH0_EXT_RMII_MODE         4
+> +
+>  /* mux to choose between fclk_div2 (bit unset) and mpll2 (bit set) */
+>  #define PRG_ETH0_CLK_M250_SEL_SHIFT    4
+>  #define PRG_ETH0_CLK_M250_SEL_MASK     GENMASK(4, 4)
+> @@ -47,12 +52,20 @@
+>
+>  #define MUX_CLK_NUM_PARENTS            2
+>
+> +struct meson8b_dwmac;
+> +
+> +struct meson8b_dwmac_data {
+> +       int (*set_phy_mode)(struct meson8b_dwmac *dwmac);
+> +};
+> +
+>  struct meson8b_dwmac {
+> -       struct device           *dev;
+> -       void __iomem            *regs;
+> -       phy_interface_t         phy_mode;
+> -       struct clk              *rgmii_tx_clk;
+> -       u32                     tx_delay_ns;
+> +       struct device                   *dev;
+> +       void __iomem                    *regs;
+> +
+> +       const struct meson8b_dwmac_data *data;
+> +       phy_interface_t                 phy_mode;
+> +       struct clk                      *rgmii_tx_clk;
+> +       u32                             tx_delay_ns;
+>  };
+>
+>  struct meson8b_dwmac_clk_configs {
+> @@ -171,6 +184,59 @@ static int meson8b_init_rgmii_tx_clk(struct meson8b_dwmac *dwmac)
+>         return 0;
+>  }
+>
+> +static int meson8b_set_phy_mode(struct meson8b_dwmac *dwmac)
+> +{
+> +       switch (dwmac->phy_mode) {
+> +       case PHY_INTERFACE_MODE_RGMII:
+> +       case PHY_INTERFACE_MODE_RGMII_RXID:
+> +       case PHY_INTERFACE_MODE_RGMII_ID:
+> +       case PHY_INTERFACE_MODE_RGMII_TXID:
+> +               /* enable RGMII mode */
+> +               meson8b_dwmac_mask_bits(dwmac, PRG_ETH0,
+> +                                       PRG_ETH0_RGMII_MODE,
+> +                                       PRG_ETH0_RGMII_MODE);
+> +               break;
+> +       case PHY_INTERFACE_MODE_RMII:
+> +               /* disable RGMII mode -> enables RMII mode */
+> +               meson8b_dwmac_mask_bits(dwmac, PRG_ETH0,
+> +                                       PRG_ETH0_RGMII_MODE, 0);
+> +               break;
+> +       default:
+> +               dev_err(dwmac->dev, "fail to set phy-mode %s\n",
+> +                       phy_modes(dwmac->phy_mode));
+> +               return -EINVAL;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static int meson_axg_set_phy_mode(struct meson8b_dwmac *dwmac)
+> +{
+> +       switch (dwmac->phy_mode) {
+> +       case PHY_INTERFACE_MODE_RGMII:
+> +       case PHY_INTERFACE_MODE_RGMII_RXID:
+> +       case PHY_INTERFACE_MODE_RGMII_ID:
+> +       case PHY_INTERFACE_MODE_RGMII_TXID:
+> +               /* enable RGMII mode */
+> +               meson8b_dwmac_mask_bits(dwmac, PRG_ETH0,
+> +                                       PRG_ETH0_EXT_PHY_MODE_MASK,
+> +                                       PRG_ETH0_EXT_RGMII_MODE);
+> +               break;
+> +       case PHY_INTERFACE_MODE_RMII:
+> +               /* disable RGMII mode -> enables RMII mode */
+if you have to re-send it for whatever reason:
+maybe you could remove the comments from meson_axg_set_phy_mode. the
+"older" register layout requires un-setting RGMII mode to enable RMII
+mode. however, for AXG there seem to be two dedicated values (1 and 4)
+for each mode
 
-So there's:
+apart from that:
+Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
- - TASK_PARKED, which we can make a special state; this solves the
-   problem because then wait_task_inactive() is guaranteed to see
-   TASK_PARKED and DTRT.
-
- - complete(&kthread->parked), which we can do inside schedule(); this
-   solves the problem because then kthread_park() will not return early
-   and the task really is blocked.
-
-and I'm fairly sure I thought of a 3rd way to cure things, but now that
-I'm writing things down I cannot seem to remember :/ -- could be we muck
-with wait_task_inactive().
-
-In any case, I hate all of them, but I think the completion one is the
-least horrible because it gives the strongest guarantees and cleans up
-most. But promoting TASK_PARKED to special certainly is the earier
-patch.
-
-The below boots, but that's about all I did with it. Opinions?
-
----
-
---- a/include/linux/kthread.h
-+++ b/include/linux/kthread.h
-@@ -62,6 +62,7 @@ void *kthread_probe_data(struct task_str
- int kthread_park(struct task_struct *k);
- void kthread_unpark(struct task_struct *k);
- void kthread_parkme(void);
-+void kthread_park_complete(struct task_struct *k);
- 
- int kthreadd(void *unused);
- extern struct task_struct *kthreadd_task;
---- a/kernel/kthread.c
-+++ b/kernel/kthread.c
-@@ -55,7 +55,6 @@ enum KTHREAD_BITS {
- 	KTHREAD_IS_PER_CPU = 0,
- 	KTHREAD_SHOULD_STOP,
- 	KTHREAD_SHOULD_PARK,
--	KTHREAD_IS_PARKED,
- };
- 
- static inline void set_kthread_struct(void *kthread)
-@@ -177,14 +176,12 @@ void *kthread_probe_data(struct task_str
- 
- static void __kthread_parkme(struct kthread *self)
- {
--	__set_current_state(TASK_PARKED);
--	while (test_bit(KTHREAD_SHOULD_PARK, &self->flags)) {
--		if (!test_and_set_bit(KTHREAD_IS_PARKED, &self->flags))
--			complete(&self->parked);
-+	for (;;) {
-+		set_current_state(TASK_PARKED);
-+		if (!test_bit(KTHREAD_SHOULD_PARK, &self->flags))
-+			break;
- 		schedule();
--		__set_current_state(TASK_PARKED);
- 	}
--	clear_bit(KTHREAD_IS_PARKED, &self->flags);
- 	__set_current_state(TASK_RUNNING);
- }
- 
-@@ -194,6 +191,11 @@ void kthread_parkme(void)
- }
- EXPORT_SYMBOL_GPL(kthread_parkme);
- 
-+void kthread_park_complete(struct task_struct *k)
-+{
-+	complete(&to_kthread(k)->parked);
-+}
-+
- static int kthread(void *_create)
- {
- 	/* Copy data: it's on kthread's stack */
-@@ -450,22 +452,15 @@ void kthread_unpark(struct task_struct *
- {
- 	struct kthread *kthread = to_kthread(k);
- 
--	clear_bit(KTHREAD_SHOULD_PARK, &kthread->flags);
- 	/*
--	 * We clear the IS_PARKED bit here as we don't wait
--	 * until the task has left the park code. So if we'd
--	 * park before that happens we'd see the IS_PARKED bit
--	 * which might be about to be cleared.
-+	 * Newly created kthread was parked when the CPU was offline.
-+	 * The binding was lost and we need to set it again.
- 	 */
--	if (test_and_clear_bit(KTHREAD_IS_PARKED, &kthread->flags)) {
--		/*
--		 * Newly created kthread was parked when the CPU was offline.
--		 * The binding was lost and we need to set it again.
--		 */
--		if (test_bit(KTHREAD_IS_PER_CPU, &kthread->flags))
--			__kthread_bind(k, kthread->cpu, TASK_PARKED);
--		wake_up_state(k, TASK_PARKED);
--	}
-+	if (test_bit(KTHREAD_IS_PER_CPU, &kthread->flags))
-+		__kthread_bind(k, kthread->cpu, TASK_PARKED);
-+
-+	clear_bit(KTHREAD_SHOULD_PARK, &kthread->flags);
-+	wake_up_state(k, TASK_PARKED);
- }
- EXPORT_SYMBOL_GPL(kthread_unpark);
- 
-@@ -488,12 +483,13 @@ int kthread_park(struct task_struct *k)
- 	if (WARN_ON(k->flags & PF_EXITING))
- 		return -ENOSYS;
- 
--	if (!test_bit(KTHREAD_IS_PARKED, &kthread->flags)) {
--		set_bit(KTHREAD_SHOULD_PARK, &kthread->flags);
--		if (k != current) {
--			wake_up_process(k);
--			wait_for_completion(&kthread->parked);
--		}
-+	if (WARN_ON_ONCE(test_bit(KTHREAD_SHOULD_PARK, &kthread->flags)))
-+		return -EBUSY;
-+
-+	set_bit(KTHREAD_SHOULD_PARK, &kthread->flags);
-+	if (k != current) {
-+		wake_up_process(k);
-+		wait_for_completion(&kthread->parked);
- 	}
- 
- 	return 0;
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -7,6 +7,8 @@
-  */
- #include "sched.h"
- 
-+#include <linux/kthread.h>
-+
- #include <asm/switch_to.h>
- #include <asm/tlb.h>
- 
-@@ -2718,20 +2720,28 @@ static struct rq *finish_task_switch(str
- 		membarrier_mm_sync_core_before_usermode(mm);
- 		mmdrop(mm);
- 	}
--	if (unlikely(prev_state == TASK_DEAD)) {
--		if (prev->sched_class->task_dead)
--			prev->sched_class->task_dead(prev);
-+	if (unlikely(prev_state & (TASK_DEAD|TASK_PARKED))) {
-+		switch (prev_state) {
-+		case TASK_DEAD:
-+			if (prev->sched_class->task_dead)
-+				prev->sched_class->task_dead(prev);
-+
-+			/*
-+			 * Remove function-return probe instances associated with this
-+			 * task and put them back on the free list.
-+			 */
-+			kprobe_flush_task(prev);
- 
--		/*
--		 * Remove function-return probe instances associated with this
--		 * task and put them back on the free list.
--		 */
--		kprobe_flush_task(prev);
-+			/* Task is done with its stack. */
-+			put_task_stack(prev);
- 
--		/* Task is done with its stack. */
--		put_task_stack(prev);
-+			put_task_struct(prev);
-+			break;
- 
--		put_task_struct(prev);
-+		case TASK_PARKED:
-+			kthread_park_complete(prev);
-+			break;
-+		}
- 	}
- 
- 	tick_nohz_task_switch();
+> +               meson8b_dwmac_mask_bits(dwmac, PRG_ETH0,
+> +                                       PRG_ETH0_EXT_PHY_MODE_MASK,
+> +                                       PRG_ETH0_EXT_RMII_MODE);
+> +               break;
+> +       default:
+> +               dev_err(dwmac->dev, "fail to set phy-mode %s\n",
+> +                       phy_modes(dwmac->phy_mode));
+> +               return -EINVAL;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+>  static int meson8b_init_prg_eth(struct meson8b_dwmac *dwmac)
+>  {
+>         int ret;
+> @@ -188,10 +254,6 @@ static int meson8b_init_prg_eth(struct meson8b_dwmac *dwmac)
+>
+>         case PHY_INTERFACE_MODE_RGMII_ID:
+>         case PHY_INTERFACE_MODE_RGMII_TXID:
+> -               /* enable RGMII mode */
+> -               meson8b_dwmac_mask_bits(dwmac, PRG_ETH0, PRG_ETH0_RGMII_MODE,
+> -                                       PRG_ETH0_RGMII_MODE);
+> -
+>                 /* only relevant for RMII mode -> disable in RGMII mode */
+>                 meson8b_dwmac_mask_bits(dwmac, PRG_ETH0,
+>                                         PRG_ETH0_INVERTED_RMII_CLK, 0);
+> @@ -224,10 +286,6 @@ static int meson8b_init_prg_eth(struct meson8b_dwmac *dwmac)
+>                 break;
+>
+>         case PHY_INTERFACE_MODE_RMII:
+> -               /* disable RGMII mode -> enables RMII mode */
+> -               meson8b_dwmac_mask_bits(dwmac, PRG_ETH0, PRG_ETH0_RGMII_MODE,
+> -                                       0);
+> -
+>                 /* invert internal clk_rmii_i to generate 25/2.5 tx_rx_clk */
+>                 meson8b_dwmac_mask_bits(dwmac, PRG_ETH0,
+>                                         PRG_ETH0_INVERTED_RMII_CLK,
+> @@ -274,6 +332,11 @@ static int meson8b_dwmac_probe(struct platform_device *pdev)
+>                 goto err_remove_config_dt;
+>         }
+>
+> +       dwmac->data = (const struct meson8b_dwmac_data *)
+> +               of_device_get_match_data(&pdev->dev);
+> +       if (!dwmac->data)
+> +               return -EINVAL;
+> +
+>         res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+>         dwmac->regs = devm_ioremap_resource(&pdev->dev, res);
+>         if (IS_ERR(dwmac->regs)) {
+> @@ -298,6 +361,10 @@ static int meson8b_dwmac_probe(struct platform_device *pdev)
+>         if (ret)
+>                 goto err_remove_config_dt;
+>
+> +       ret = dwmac->data->set_phy_mode(dwmac);
+> +       if (ret)
+> +               goto err_remove_config_dt;
+> +
+>         ret = meson8b_init_prg_eth(dwmac);
+>         if (ret)
+>                 goto err_remove_config_dt;
+> @@ -316,10 +383,31 @@ static int meson8b_dwmac_probe(struct platform_device *pdev)
+>         return ret;
+>  }
+>
+> +static const struct meson8b_dwmac_data meson8b_dwmac_data = {
+> +       .set_phy_mode = meson8b_set_phy_mode,
+> +};
+> +
+> +static const struct meson8b_dwmac_data meson_axg_dwmac_data = {
+> +       .set_phy_mode = meson_axg_set_phy_mode,
+> +};
+> +
+>  static const struct of_device_id meson8b_dwmac_match[] = {
+> -       { .compatible = "amlogic,meson8b-dwmac" },
+> -       { .compatible = "amlogic,meson8m2-dwmac" },
+> -       { .compatible = "amlogic,meson-gxbb-dwmac" },
+> +       {
+> +               .compatible = "amlogic,meson8b-dwmac",
+> +               .data = &meson8b_dwmac_data,
+> +       },
+> +       {
+> +               .compatible = "amlogic,meson8m2-dwmac",
+> +               .data = &meson8b_dwmac_data,
+> +       },
+> +       {
+> +               .compatible = "amlogic,meson-gxbb-dwmac",
+> +               .data = &meson8b_dwmac_data,
+> +       },
+> +       {
+> +               .compatible = "amlogic,meson-axg-dwmac",
+> +               .data = &meson_axg_dwmac_data,
+> +       },
+>         { }
+>  };
+>  MODULE_DEVICE_TABLE(of, meson8b_dwmac_match);
+> --
+> 2.17.0
+>
