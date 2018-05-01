@@ -1,73 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751128AbeEAVbH (ORCPT <rfc822;w@1wt.eu>);
+        id S1751283AbeEAVbL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 17:31:11 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59090 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750743AbeEAVbH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 1 May 2018 17:31:07 -0400
-Received: from mail-pg0-f52.google.com ([74.125.83.52]:35974 "EHLO
-        mail-pg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750743AbeEAVbE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 17:31:04 -0400
-X-Google-Smtp-Source: AB8JxZpOkQxgETPsMs0p+G/mbev+ekqj+ssU9lQgFZUcez94UZtUXHYsWHIHidieJaaj08yVbi7Egw==
-Subject: Re: INFO: task hung in wb_shutdown (2)
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: Jan Kara <jack@suse.cz>, Tejun Heo <tj@kernel.org>,
-        syzbot+c0cf869505e03bdf1a24@syzkaller.appspotmail.com,
-        christophe.jaillet@wanadoo.fr,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>, syzkaller-bugs@googlegroups.com,
-        zhangweiping@didichuxing.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        linux-block <linux-block@vger.kernel.org>
-References: <94eb2c05b2d83650030568cc8bd9@google.com>
- <e56c1600-8923-dd6b-d065-c2fd2a720404@I-love.SAKURA.ne.jp>
- <43302799-1c50-4cab-b974-9fe1ca584813@I-love.SAKURA.ne.jp>
- <CA+55aFxaa_+uZ=bOVdevcUwG7ncue7O+i06q4Kb=bWACGwCBjQ@mail.gmail.com>
-From: Jens Axboe <axboe@kernel.dk>
-Message-ID: <bd3e8460-9794-6b57-e7d6-7e18ea34ac0c@kernel.dk>
-Date: Tue, 1 May 2018 15:30:59 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+Subject: Re: [PATCH v7 4/5] cpuset: Restrict load balancing off cpus to subset
+ of cpus.isolated
+To: Tejun Heo <tj@kernel.org>
+Cc: Li Zefan <lizefan@huawei.com>, Johannes Weiner <hannes@cmpxchg.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
+        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
+        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
+        Juri Lelli <juri.lelli@redhat.com>
+References: <1524145624-23655-1-git-send-email-longman@redhat.com>
+ <1524145624-23655-5-git-send-email-longman@redhat.com>
+ <20180501195148.GC2368884@devbig577.frc2.facebook.com>
+ <9eb2c45e-e71e-61ef-aa6d-b8124b739cdf@redhat.com>
+ <20180501205828.GD2368884@devbig577.frc2.facebook.com>
+From: Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <c3064aa6-6114-95f2-6204-e80937f40a92@redhat.com>
+Date: Tue, 1 May 2018 17:31:05 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <CA+55aFxaa_+uZ=bOVdevcUwG7ncue7O+i06q4Kb=bWACGwCBjQ@mail.gmail.com>
+In-Reply-To: <20180501205828.GD2368884@devbig577.frc2.facebook.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/1/18 10:06 AM, Linus Torvalds wrote:
-> On Tue, May 1, 2018 at 3:27 AM Tetsuo Handa <
-> penguin-kernel@i-love.sakura.ne.jp> wrote:
-> 
->> Can you review this patch? syzbot has hit this bug for nearly 4000 times
-> but
->> is still unable to find a reproducer. Therefore, the only way to test
-> would be
->> to apply this patch upstream and test whether the problem is solved.
-> 
-> Looks ok to me, except:
-> 
->>>       smp_wmb();
->>>       clear_bit(WB_shutting_down, &wb->state);
->>> +     smp_mb(); /* advised by wake_up_bit() */
->>> +     wake_up_bit(&wb->state, WB_shutting_down);
-> 
-> This whole sequence really should just be a pattern with a helper function.
-> 
-> And honestly, the pattern probably *should* be
-> 
->      clear_bit_unlock(bit, &mem);
->      smp_mb__after_atomic()
->      wake_up_bit(&mem, bit);
-> 
-> which looks like it is a bit cleaner wrt memory ordering rules.
+On 05/01/2018 04:58 PM, Tejun Heo wrote:
+> Hello,
+>
+> On Tue, May 01, 2018 at 04:33:45PM -0400, Waiman Long wrote:
+>> I think that will work too. We currently don't have a flag to make a
+>> file visible on first-level children only, but it shouldn't be hard to
+>> make one.
+> I think it'd be fine to make the flag file exist on all !root cgroups
+> but only writable on the first level children.
 
-Agree, that construct looks saner than introducing a "random"
-smp_mb(). As a pattern helper, should probably be introduced
-after the fact.
+Right. This flag will be inherited by child cgroups like the
+sched_load_balance.
 
--- 
-Jens Axboe
+Cheers,
+Longman
