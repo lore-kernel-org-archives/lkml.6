@@ -1,77 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755737AbeD3X7a (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 19:59:30 -0400
-Received: from anholt.net ([50.246.234.109]:41754 "EHLO anholt.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755633AbeD3X73 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 19:59:29 -0400
-From: Eric Anholt <eric@anholt.net>
-To: dri-devel@lists.freedesktop.org,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Stefan Schake <stschake@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Eric Anholt <eric@anholt.net>
-Subject: [PATCH] drm/vc4: Add a pad field to align drm_vc4_submit_cl to 64 bits.
-Date: Mon, 30 Apr 2018 16:59:27 -0700
-Message-Id: <20180430235927.28712-1-eric@anholt.net>
-X-Mailer: git-send-email 2.17.0
+        id S1755667AbeEAABt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 20:01:49 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45402 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753530AbeEAABr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 20:01:47 -0400
+Date: Mon, 30 Apr 2018 17:01:45 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Pavel Tatashin <pasha.tatashin@oracle.com>, steven.sistare@oracle.com,
+        daniel.m.jordan@oracle.com, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, mhocko@suse.com, linux-mm@kvack.org,
+        mgorman@techsingularity.net, mingo@kernel.org, peterz@infradead.org,
+        fengguang.wu@intel.com, dennisszhou@gmail.com
+Subject: Re: [PATCH v2] mm: access to uninitialized struct page
+Message-Id: <20180430170145.544342905604331c0e1b95d9@linux-foundation.org>
+In-Reply-To: <20180430195858.5242373c@gandalf.local.home>
+References: <20180426202619.2768-1-pasha.tatashin@oracle.com>
+        <20180430162658.598dd5dcdd0c67e36953281c@linux-foundation.org>
+        <20180430195858.5242373c@gandalf.local.home>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I had originally asked Stefan Schake to drop the pad field from the
-syncobj changes that just landed, because I couldn't come up with a
-reason to align to 64 bits.
+On Mon, 30 Apr 2018 19:58:58 -0400 Steven Rostedt <rostedt@goodmis.org> wrote:
 
-Talking with Dave Airlie about the new v3d driver's submit ioctl, we
-came up with a reason: sizeof() on 64-bit platforms may align to 64
-bits, in which case the userspace will be submitting the aligned size
-and the final 32 bits won't be zero-padded by the kernel.  If
-userspace doesn't zero-fill, then a future ABI change adding a 32-bit
-field at the end could potentially cause the kernel to read undefined
-data from old userspace (our userspace happens to use structure
-initialization that zero-fills, but as a general rule we try not to
-rely on that in the kernel).
+> On Mon, 30 Apr 2018 16:26:58 -0700
+> Andrew Morton <akpm@linux-foundation.org> wrote:
+> 
+> > On Thu, 26 Apr 2018 16:26:19 -0400 Pavel Tatashin <pasha.tatashin@oracle.com> wrote:
+> > 
+> > > The following two bugs were reported by Fengguang Wu:
+> > > 
+> > > kernel reboot-without-warning in early-boot stage, last printk:
+> > > early console in setup code
+> > > 
+> > > http://lkml.kernel.org/r/20180418135300.inazvpxjxowogyge@wfg-t540p.sh.intel.com
+> > > 
+> > > ...
+> > >
+> > > --- a/init/main.c
+> > > +++ b/init/main.c
+> > > @@ -585,8 +585,8 @@ asmlinkage __visible void __init start_kernel(void)
+> > >  	setup_log_buf(0);
+> > >  	vfs_caches_init_early();
+> > >  	sort_main_extable();
+> > > -	trap_init();
+> > >  	mm_init();
+> > > +	trap_init();
+> > >  
+> > >  	ftrace_init();  
+> > 
+> > Gulp.  Let's hope that nothing in mm_init() requires that trap_init()
+> > has been run.  What happens if something goes wrong during mm_init()
+> > and the architecture attempts to raise a software exception, hits a bus
+> > error, div-by-zero, etc, etc?  Might there be hard-to-discover
+> > dependencies in such a case?
+> 
+> I mentioned the same thing.
+> 
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
----
-
-danvet, could you update the "Botching up IOCTLs" post with this
-explanation for why we need struct size alignment for non-array
-structs?
-
- drivers/gpu/drm/vc4/vc4_gem.c | 5 +++++
- include/uapi/drm/vc4_drm.h    | 2 ++
- 2 files changed, 7 insertions(+)
-
-diff --git a/drivers/gpu/drm/vc4/vc4_gem.c b/drivers/gpu/drm/vc4/vc4_gem.c
-index a4c4be3ac6af..7910b9acedd6 100644
---- a/drivers/gpu/drm/vc4/vc4_gem.c
-+++ b/drivers/gpu/drm/vc4/vc4_gem.c
-@@ -1132,6 +1132,11 @@ vc4_submit_cl_ioctl(struct drm_device *dev, void *data,
- 		return -EINVAL;
- 	}
- 
-+	if (args->pad2 != 0) {
-+		DRM_DEBUG("Invalid pad: 0x%08x\n", args->pad2);
-+		return -EINVAL;
-+	}
-+
- 	exec = kcalloc(1, sizeof(*exec), GFP_KERNEL);
- 	if (!exec) {
- 		DRM_ERROR("malloc failure on exec struct\n");
-diff --git a/include/uapi/drm/vc4_drm.h b/include/uapi/drm/vc4_drm.h
-index 2be4fe3610b8..2cac6277a1d7 100644
---- a/include/uapi/drm/vc4_drm.h
-+++ b/include/uapi/drm/vc4_drm.h
-@@ -193,6 +193,8 @@ struct drm_vc4_submit_cl {
- 	 * render job. 0 means ignore.
- 	 */
- 	__u32 out_sync;
-+
-+	__u32 pad2;
- };
- 
- /**
--- 
-2.17.0
+I guess the same concern applies to all the code which we've always run
+before trap_init(), and that's quite a lot of stuff.  So we should be
+OK.  But don't quote me ;)
