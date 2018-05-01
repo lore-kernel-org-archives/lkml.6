@@ -1,151 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755937AbeEAOeV (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 10:34:21 -0400
-Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:57887 "EHLO
-        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1755492AbeEAOeT (ORCPT
+        id S1756038AbeEAOeu (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 10:34:50 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57022 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1755876AbeEAOes (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 10:34:19 -0400
-From: Liming Sun <lsun@mellanox.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc: Liming Sun <lsun@mellanox.com>, linux-mmc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 1/3] mmc: dw_mmc-bluefield: Add driver extension
-Date: Tue,  1 May 2018 10:32:33 -0400
-Message-Id: <1525185155-24469-1-git-send-email-lsun@mellanox.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <026fa942828c54fda5bad225981e56abc808b949.1524497286.git.lsun@mellanox.com>
-References: <026fa942828c54fda5bad225981e56abc808b949.1524497286.git.lsun@mellanox.com>
+        Tue, 1 May 2018 10:34:48 -0400
+Date: Tue, 1 May 2018 07:36:01 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Joel Fernandes <joelaf@google.com>, linux-kernel@vger.kernel.org,
+        Peter Zilstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Fenguang Wu <fengguang.wu@intel.com>,
+        Baohong Liu <baohong.liu@intel.com>,
+        Vedang Patel <vedang.patel@intel.com>, kernel-team@android.com
+Subject: Re: [PATCH RFC v5 5/6] tracepoint: Make rcuidle tracepoint callers
+ use SRCU
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180501014204.67548-1-joelaf@google.com>
+ <20180501014204.67548-6-joelaf@google.com>
+ <20180501102401.2cac5781@gandalf.local.home>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180501102401.2cac5781@gandalf.local.home>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18050114-0048-0000-0000-00000266829C
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008957; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000257; SDB=6.01025967; UDB=6.00523957; IPR=6.00805198;
+ MB=3.00020882; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-01 14:34:46
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18050114-0049-0000-0000-000044F78B9C
+Message-Id: <20180501143601.GG26088@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-01_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805010146
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit adds extension to the dw_mmc driver for Mellanox BlueField
-SoC. It updates the UHS_REG_EXT register to bring up the eMMC card on
-this SoC.
+On Tue, May 01, 2018 at 10:24:01AM -0400, Steven Rostedt wrote:
+> On Mon, 30 Apr 2018 18:42:03 -0700
+> Joel Fernandes <joelaf@google.com> wrote:
+> 
+> > In recent tests with IRQ on/off tracepoints, a large performance
+> > overhead ~10% is noticed when running hackbench. This is root caused to
+> > calls to rcu_irq_enter_irqson and rcu_irq_exit_irqson from the
+> > tracepoint code. Following a long discussion on the list [1] about this,
+> > we concluded that srcu is a better alternative for use during rcu idle.
+> > Although it does involve extra barriers, its lighter than the sched-rcu
+> > version which has to do additional RCU calls to notify RCU idle about
+> > entry into RCU sections.
+> > 
+> > In this patch, we change the underlying implementation of the
+> > trace_*_rcuidle API to use SRCU. This has shown to improve performance
+> > alot for the high frequency irq enable/disable tracepoints.
 
-Signed-off-by: Liming Sun <lsun@mellanox.com>
----
- drivers/mmc/host/Kconfig            |  9 +++++
- drivers/mmc/host/Makefile           |  1 +
- drivers/mmc/host/dw_mmc-bluefield.c | 72 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 82 insertions(+)
- create mode 100644 drivers/mmc/host/dw_mmc-bluefield.c
+[ . . . ]
 
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index 9589f9c..26ac6b5 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -717,6 +717,15 @@ config MMC_DW_K3
- 	  Synopsys DesignWare Memory Card Interface driver. Select this option
- 	  for platforms based on Hisilicon K3 SoC's.
- 
-+config MMC_DW_BLUEFIELD
-+	tristate "BlueField specific extensions for Synopsys DW Memory Card Interface"
-+	depends on MMC_DW
-+	select MMC_DW_PLTFM
-+	help
-+	  This selects support for Mellanox BlueField SoC specific extensions to
-+	  the Synopsys DesignWare Memory Card Interface driver. Select this
-+	  option for platforms based on Mellanox BlueField SoC's.
-+
- config MMC_DW_PCI
- 	tristate "Synopsys Designware MCI support on PCI bus"
- 	depends on MMC_DW && PCI
-diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
-index 6aead24..267b3f1 100644
---- a/drivers/mmc/host/Makefile
-+++ b/drivers/mmc/host/Makefile
-@@ -55,6 +55,7 @@ obj-$(CONFIG_MMC_DW_K3)		+= dw_mmc-k3.o
- obj-$(CONFIG_MMC_DW_PCI)	+= dw_mmc-pci.o
- obj-$(CONFIG_MMC_DW_ROCKCHIP)	+= dw_mmc-rockchip.o
- obj-$(CONFIG_MMC_DW_ZX)		+= dw_mmc-zx.o
-+obj-$(CONFIG_MMC_DW_BLUEFIELD)	+= dw_mmc-bluefield.o
- obj-$(CONFIG_MMC_SH_MMCIF)	+= sh_mmcif.o
- obj-$(CONFIG_MMC_JZ4740)	+= jz4740_mmc.o
- obj-$(CONFIG_MMC_VUB300)	+= vub300.o
-diff --git a/drivers/mmc/host/dw_mmc-bluefield.c b/drivers/mmc/host/dw_mmc-bluefield.c
-new file mode 100644
-index 0000000..12067b1
---- /dev/null
-+++ b/drivers/mmc/host/dw_mmc-bluefield.c
-@@ -0,0 +1,72 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2018 Mellanox Technologies.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/io.h>
-+#include <linux/irq.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/mmc/host.h>
-+#include <linux/mmc/mmc.h>
-+#include <linux/of.h>
-+
-+#include "dw_mmc.h"
-+#include "dw_mmc-pltfm.h"
-+
-+static void dw_mci_bluefield_set_ios(struct dw_mci *host, struct mmc_ios *ios)
-+{
-+	u32 regs;
-+
-+	/* Set drive=4 (bit 29:23) and sample=2 (bit 22:16) in UHS_REG_EXT. */
-+	regs = mci_readl(host, UHS_REG_EXT);
-+	regs = (regs & ~0x3F100000 & ~0x7F0000) | (4 << 23) | (2 << 16);
-+	mci_writel(host, UHS_REG_EXT, regs);
-+}
-+
-+static const struct dw_mci_drv_data bluefield_drv_data = {
-+	.set_ios		= dw_mci_bluefield_set_ios
-+};
-+
-+static const struct of_device_id dw_mci_bluefield_match[] = {
-+	{ .compatible = "mellanox,bluefield-dw-mshc",
-+		.data = &bluefield_drv_data },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, dw_mci_bluefield_match);
-+
-+static int dw_mci_bluefield_probe(struct platform_device *pdev)
-+{
-+	const struct dw_mci_drv_data *drv_data = NULL;
-+	const struct of_device_id *match;
-+
-+	if (pdev->dev.of_node) {
-+		match = of_match_node(dw_mci_bluefield_match,
-+				      pdev->dev.of_node);
-+		drv_data = match->data;
-+	}
-+
-+	return dw_mci_pltfm_register(pdev, drv_data);
-+}
-+
-+static struct platform_driver dw_mci_bluefield_pltfm_driver = {
-+	.probe		= dw_mci_bluefield_probe,
-+	.remove		= dw_mci_pltfm_remove,
-+	.driver		= {
-+		.name		= "dwmmc_bluefield",
-+		.of_match_table	= dw_mci_bluefield_match,
-+		.pm		= &dw_mci_pltfm_pmops,
-+	},
-+};
-+
-+module_platform_driver(dw_mci_bluefield_pltfm_driver);
-+
-+MODULE_DESCRIPTION("BlueField DW Multimedia Card driver");
-+MODULE_AUTHOR("Mellanox Technologies");
-+MODULE_LICENSE("GPL v2");
--- 
-1.8.3.1
+> > --- a/kernel/tracepoint.c
+> > +++ b/kernel/tracepoint.c
+> > @@ -31,6 +31,9 @@
+> >  extern struct tracepoint * const __start___tracepoints_ptrs[];
+> >  extern struct tracepoint * const __stop___tracepoints_ptrs[];
+> >  
+> > +DEFINE_SRCU(tracepoint_srcu);
+> > +EXPORT_SYMBOL_GPL(tracepoint_srcu);
+> > +
+> >  /* Set to 1 to enable tracepoint debug output */
+> >  static const int tracepoint_debug;
+> >  
+> > @@ -67,11 +70,16 @@ static inline void *allocate_probes(int count)
+> >  	return p == NULL ? NULL : p->probes;
+> >  }
+> >  
+> > -static void rcu_free_old_probes(struct rcu_head *head)
+> > +static void srcu_free_old_probes(struct rcu_head *head)
+> >  {
+> >  	kfree(container_of(head, struct tp_probes, rcu));
+> >  }
+> >  
+> > +static void rcu_free_old_probes(struct rcu_head *head)
+> > +{
+> > +	call_srcu(&tracepoint_srcu, head, srcu_free_old_probes);
+> 
+> Hmm, is it OK to call call_srcu() from a call_rcu() callback? I guess
+> it would be.
+
+It is perfectly legal, and quite a bit simpler than setting something
+up to wait for both to complete concurrently.
+
+Of course, if you unconditionally call call_srcu() from that same
+srcu_struct's callback, SRCU will be unable to safely delete the
+srcu_struct, so cleanup_srcu_struct() will react by leaking memory.  ;-)
+
+Normal RCU deals with the analogous situation by leaving at least one
+callback uninvoked when the system goes down.
+
+							Thanx, Paul
+
+> I think we should add a comment to why we are doing this. Something
+> like:
+> 
+> /*
+>  * Tracepoint probes are protected by both sched RCU and SRCU, by
+>  * calling the SRCU callback in the sched RCU callback we cover
+>  * both cases.
+>  */
+> 
+> Or something along those lines.
+> 
+> -- Steve
+> 
+> 
+> > +}
+> > +
+> >  static inline void release_probes(struct tracepoint_func *old)
+> >  {
+> >  	if (old) {
+> 
