@@ -1,122 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751186AbeEATr0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 15:47:26 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:46754 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750803AbeEATrY (ORCPT
+        id S1751171AbeEATso (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 15:48:44 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:33094 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750766AbeEATsn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 15:47:24 -0400
-X-Google-Smtp-Source: AB8JxZpTPspiTxYeX3fyCqfEzQbbBfccBABLU3ezyXkeb9Km9NBI7lwLSBHGNG7/ssuyEhvQnfzOCkMzi4AeudkLOhI=
+        Tue, 1 May 2018 15:48:43 -0400
+Date: Tue, 1 May 2018 21:48:38 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Nicholas Piggin <npiggin@gmail.com>, Ingo Molnar <mingo@redhat.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tracing/irqtrace: only call trace_hardirqs_on/off when
+ state changes
+Message-ID: <20180501194838.GK12217@hirez.programming.kicks-ass.net>
+References: <20171116161506.19691-1-npiggin@gmail.com>
+ <20180501144620.1e832a09@gandalf.local.home>
+ <20180501191951.GJ12217@hirez.programming.kicks-ass.net>
+ <20180501153840.7281022a@gandalf.local.home>
 MIME-Version: 1.0
-In-Reply-To: <CAFkk2KRozscmd4kQSJKwKmY3WpTody7S5XZZObf8SKLF62k6+w@mail.gmail.com>
-References: <CAFkk2KRTnRpi5thUGTM2+LZMyitggdJtiOBO7E0pTn93fz6-SQ@mail.gmail.com>
- <d4c3b2ab-385d-fe7a-bdb1-2d497d620de5@infradead.org> <CAFkk2KRozscmd4kQSJKwKmY3WpTody7S5XZZObf8SKLF62k6+w@mail.gmail.com>
-From: Ulf Magnusson <ulfalizer@gmail.com>
-Date: Tue, 1 May 2018 21:47:23 +0200
-Message-ID: <CAFkk2KRkEt3+786QvyjzPPAm+3HDe2+ydzZJpshfdKyUDQVfuw@mail.gmail.com>
-Subject: Re: [ANNOUNCE] Kconfiglib menuconfig implementation
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180501153840.7281022a@gandalf.local.home>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w41JlVQe005633
 
-On Tue, May 1, 2018 at 9:12 PM, Ulf Magnusson <ulfalizer@gmail.com> wrote:
-> On Tue, May 1, 2018 at 7:56 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
->> On 04/30/2018 05:57 PM, Ulf Magnusson wrote:
->>> Hello,
->>>
->>> Kconfiglib (https://github.com/ulfalizer/Kconfiglib) now has a
->>> terminal menuconfig implementation, implemented in plain curses
->>> (which is in the Python standard library).
->>>
->>> The interface should feel familiar to people used to mconf. It has
->>> some features that mconf lacks:
->>>
->>>   - Seamless resizing
->>>
->>>   - Unicode support
->>>
->>>   - Runs on Windows (via 'pip install windows-curses', which uses
->>>     PDCurses)
->>>
->>>   - Improved information displays:
->>>
->>>     * All expressions are split into readable chunks
->>>
->>>     * Menus and comments have information displays
->>>
->>>   - Relatively easy-to-read and easy-to-tweak code.
->>>
->>>     Kconfiglib automatically invalidates symbols as needed, and
->>>     values can never get stale, which helps.
->>>
->>> Some upcoming features are mouse support and a search feature that
->>> can jump directly to the definition of a symbol. The jump-to feature
->>> will use a "show-all" mode in case the symbol isn't visible.
->>>
->>> See the Kconfiglib GitHub page for screenshots. The menuconfig
->>> implementation is at
->>> https://github.com/ulfalizer/Kconfiglib/blob/master/menuconfig.py.
->>> The docstring at the top has some more information.
->>
->> Hi,
->>
->> I'm probably missing some python additive (I hope it's that easy), but
->> menuconfig.py is not liking the "degree" symbol in drivers/net/can/peak_canfd/Kconfig:
->>
->> config CAN_PEAK_PCIEFD
->>         depends on PCI
->>         tristate "PEAK-System PCAN-PCIe FD cards"
->>         ---help---
->>           This driver adds support for the PEAK-System PCI Express FD
->>           CAN-FD cards family.
->>           These 1x or 2x CAN-FD channels cards offer CAN 2.0 a/b as well as
->>           CAN-FD access to the CAN bus. Besides the nominal bitrate of up to
->>           1 Mbit/s, the data bytes of CAN-FD frames can be transmitted with
->>           up to 12 Mbit/s. A galvanic isolation of the CAN ports protects the
->>           electronics of the card and the respective computer against
->>           disturbances of up to 500 Volts. The PCAN-PCI Express FD can be
->>           operated with ambient temperatures in a range of -40 to +85 °C.
->>
->>
->> kconfiglib.KconfigSyntaxError:
->> Malformed ascii in drivers/net/can/peak_canfd/Kconfig
->> Context: b't temperatures in a range of -40 to +85 \xc2\xb0C.\n'
->> Problematic data: b'\xc2'
->> Reason: ordinal not in range(128)
->>
->>
->> thanks,
->> --
->> ~Randy
->
-> Thanks for trying it out!
->
-> You're probably running in the C locale, which implies an ASCII
-> encoding. That has caused enough trouble that the Python devs decided
-> to automatically convert it to UTF-8 in Python 3.7:
-> https://www.python.org/dev/peps/pep-0538/. LC_CTYPE=C.UTF-8 should fix
-> it.
->
-> It's a bit silly to have it crash for something like that though. I
-> could force UTF-8 instead of respecting the locale (though it feels
-> neater to respect settings), or tell Python to ignore decoding errors.
-> Should probably do something at least...
->
-> Cheers,
-> Ulf
+On Tue, May 01, 2018 at 03:38:40PM -0400, Steven Rostedt wrote:
+> On Tue, 1 May 2018 21:19:51 +0200
+> Peter Zijlstra <peterz@infradead.org> wrote:
 
-Leaning towards just forcing UTF-8. It's what you want in 99% of
-cases, and ignoring decoding errors would be unsafe for Unicode string
-values.
+> > Now, lockdep only minimally tracks these otherwise redundant operations;
+> > see redundant_hardirqs_{on,off} counters, and loosing that doesn't seen
+> > like a big issue.
+> > 
+> > But I'm confused how this helps track superfluous things, it looks like
+> > it explicitly tracks _less_ superfluous transitions.
+> 
+> I think it is about triggering on OFF->OFF a warning, as that would
+> only happen if we have:
+> 
+> 	local_irq_save(flags);
+> 	[..]
+> 	local_irq_disable();
+> 
 
-Could make the forcing optional, and default to on...
+Ahh, ok. Yes, that is easier to do with these changes. The alternative
+is to add more information to the tracehooks such that we can do the
+same internally, but whatever.
 
-Cheers,
-Ulf
+Yeah, I'm fine with the proposed change, but maybe improve the Changelog
+a little for slow people like me :-)
