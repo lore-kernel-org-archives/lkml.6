@@ -1,54 +1,25 @@
-Return-Path: <agraf@suse.de>
-X-Google-Smtp-Source: AB8JxZrg6G4u3QhCBQGjPxrOXnNStdnAkj1p7AQPApXsUBZ2wHbdZhJOVPXPetKqjZZck8w0tbP5
-ARC-Seal: i=1; a=rsa-sha256; t=1525266978; cv=none;
-        d=google.com; s=arc-20160816;
-        b=pP59XWXRnMUcxurcRUT19z85jD2QhhlZiD10ePk2olFX4fjz5svqn9GKL22dJguiSJ
-         7GnLD7HoBhbiyImopzzOCOKLuz2Vtn4uPDAbS5gi0nM8rE3yZGGR9I7ZD6WfKJcNqKVr
-         UPEhCdWdRZ99VW700nE+ntmBDh0/B1NDdOknmriYTF+JgCdE3ctJqUPvoOzC6/BxN7R2
-         VKghFmkKJxWfZHnuVDaO9Crkr6xpNgQfpZRgjvUFc5IM9S0ZEPIHBdELT2CgeUf4wgQ3
-         D0gU9Co8qFiO8maoFp745TVuEF750mnIhz2NfW4j1X45GzbugrVJyZOo081VdHeM2BSf
-         KEfA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-language:content-transfer-encoding:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :arc-authentication-results;
-        bh=4Ko+V7IlSu5tZEkwd6zwNfliw7mqIVuxiV2PWqgDWXo=;
-        b=g/BWmDPUB/OvA7AFOiBvCPX70QbAa/yWu2JS8hmFLaSOaW9H1DSPo9Agyz7vjppr1M
-         Tyc9dqBde6fEVGz4SiNF9/6TOIjbvA4IVWONa9nFv0h1ag9KHSshkMoKTdawYDHCXbds
-         URe2skUpIKmAAI1W8vvOL5/XEBgEhTseVG3Ajf2GZ+6x1gbMmZdoI53bSmyKeuncfEih
-         Uzpwl08oGbOjhnguFGVaw35Z7eHInLGBo8hl5dw5kxpXyCB8lebpi3lCIzDOfxsRRh4n
-         Cxo7S7ycRGyfNFqP3TlP5X0/6bUzVP4/M/enjXZ7JOvjHMS3yOL573ihsr8zXDa07MQN
-         c4Zg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of agraf@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=agraf@suse.de
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of agraf@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=agraf@suse.de
+Date: Tue, 1 May 2018 15:08:03 -0700
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Rob Herring <robh@kernel.org>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	Grant Likely <grant.likely@arm.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Mark Brown <broonie@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	boot-architecture@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	Alexander Graf <agraf@suse.de>
 Subject: Re: [RFC PATCH] driver core: make deferring probe forever optional
-To: Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Grant Likely <grant.likely@arm.com>, Linus Walleij
- <linus.walleij@linaro.org>, Mark Brown <broonie@kernel.org>,
- Stephen Boyd <sboyd@kernel.org>, boot-architecture@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org
+Message-ID: <20180501220803.GB31900@kroah.com>
 References: <20180501213114.20183-1-robh@kernel.org>
-From: Alexander Graf <agraf@suse.de>
-Message-ID: <e7755330-bb6f-ad3a-fb82-7fc85a4cfac3@suse.de>
-Date: Wed, 2 May 2018 15:16:16 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <20180501213114.20183-1-robh@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599298891509345819?=
-X-GMAIL-MSGID: =?utf-8?q?1599358346910684928?=
+User-Agent: Mutt/1.9.5 (2018-04-13)
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 05/01/2018 11:31 PM, Rob Herring wrote:
+On Tue, May 01, 2018 at 04:31:14PM -0500, Rob Herring wrote:
 > Deferred probe will currently wait forever on dependent devices to probe,
 > but sometimes a driver will never exist. It's also not always critical for
 > a driver to exist. Platforms can rely on default configuration from the
@@ -60,7 +31,7 @@ On 05/01/2018 11:31 PM, Rob Herring wrote:
 > disabled in the kernel config. The 2nd case is the kernel version may
 > simply not have the dependent driver. This can happen if using a newer DT
 > (provided by firmware perhaps) with a stable kernel version.
->
+> 
 > Unfortunately, this change breaks with modules as we have no way of
 > knowing when modules are done loading. One possibility is to make this
 > opt in or out based on compatible strings rather than at a subsystem level.
@@ -68,21 +39,50 @@ On 05/01/2018 11:31 PM, Rob Herring wrote:
 > maybe the lists are pretty small. There's only a handful of subsystems
 > that can be optional, and then only so many drivers in those that can be
 > modules (at least for pinctrl, many drivers are built-in only).
->
+> 
 > Cc: Alexander Graf <agraf@suse.de>
 > Signed-off-by: Rob Herring <robh@kernel.org>
 > ---
-> This patch came out of a discussion on the ARM boot-architecture
-> list[1] about DT forwards and backwards compatibility issues. There are
-> issues with newer DTs breaking on older, stable kernels. Some of these
-> are difficult to solve, but cases of optional devices not having
+> This patch came out of a discussion on the ARM boot-architecture 
+> list[1] about DT forwards and backwards compatibility issues. There are 
+> issues with newer DTs breaking on older, stable kernels. Some of these 
+> are difficult to solve, but cases of optional devices not having 
 > kernel support should be solvable.
+> 
+> I tested this on a RPi3 B with the pinctrl driver forced off. With this 
+> change, the MMC/SD and UART drivers can function without the pinctrl 
+> driver.
+> 
+> Rob
+> 
+> [1] https://lists.linaro.org/pipermail/boot-architecture/2018-April/000466.html
+> 
+>  drivers/base/dd.c            | 16 ++++++++++++++++
+>  drivers/pinctrl/devicetree.c |  2 +-
+>  include/linux/device.h       |  2 ++
+>  3 files changed, 19 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+> index c9f54089429b..5848808b9d7a 100644
+> --- a/drivers/base/dd.c
+> +++ b/drivers/base/dd.c
+> @@ -226,6 +226,15 @@ void device_unblock_probing(void)
+>  	driver_deferred_probe_trigger();
+>  }
+>  
+> +
+> +int driver_deferred_probe_optional(void)
+> +{
+> +	if (initcalls_done)
+> +		return -ENODEV;
+> +
+> +	return -EPROBE_DEFER;
+> +}
 
-I think this is a reasonable approach. Maybe this should be a CONFIG 
-option that disallows pinctrl drivers (and power domain later) to be =m? 
-Then by default we could force those drivers to be compiled in, but if 
-you really wanted to do kernel modules for pinctrl/pd you'd consciously 
-potentially lose forward compatibility.
+The name is ackward for this function, but I can't think of anything
+better at the moment, sorry.  However, the overall idea for this is
+sane, no objection from me at all for this change.
 
+thanks,
 
-Alex
+greg k-h
