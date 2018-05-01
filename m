@@ -1,136 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756038AbeEAOeu (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 10:34:50 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57022 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755876AbeEAOes (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 10:34:48 -0400
-Date: Tue, 1 May 2018 07:36:01 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Joel Fernandes <joelaf@google.com>, linux-kernel@vger.kernel.org,
-        Peter Zilstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Glexiner <tglx@linutronix.de>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Fenguang Wu <fengguang.wu@intel.com>,
-        Baohong Liu <baohong.liu@intel.com>,
-        Vedang Patel <vedang.patel@intel.com>, kernel-team@android.com
-Subject: Re: [PATCH RFC v5 5/6] tracepoint: Make rcuidle tracepoint callers
- use SRCU
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180501014204.67548-1-joelaf@google.com>
- <20180501014204.67548-6-joelaf@google.com>
- <20180501102401.2cac5781@gandalf.local.home>
+        id S1756046AbeEAOf3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 10:35:29 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36840 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1755453AbeEAOf1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 10:35:27 -0400
+Date: Tue, 1 May 2018 16:35:24 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Andrey Grodzovsky <Andrey.Grodzovsky@amd.com>
+Cc: christian.koenig@amd.com, "Eric W. Biederman" <ebiederm@xmission.com>,
+        David.Panariti@amd.com, amd-gfx@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, Alexander.Deucher@amd.com,
+        akpm@linux-foundation.org
+Subject: Re: [PATCH 2/3] drm/scheduler: Don't call wait_event_killable for
+ signaled process.
+Message-ID: <20180501143524.GA13017@redhat.com>
+References: <877eowa5qh.fsf@xmission.com>
+ <20180425135552.GD7592@redhat.com>
+ <f45c7017-c75a-7f0c-b6d5-4d79600cdd33@amd.com>
+ <20180425171757.GA10441@redhat.com>
+ <c39cb438-1e8a-4f2c-50f6-c6e2a144487b@amd.com>
+ <874ljyu98e.fsf@xmission.com>
+ <c3c9787d-b279-8169-43d1-74eeb666ffbd@gmail.com>
+ <bceb1a1b-c453-782d-5a7d-40fa2f22c813@amd.com>
+ <20180430160006.GB10583@redhat.com>
+ <e5b0221d-84ba-10ff-4a58-4fa27c99650f@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20180501102401.2cac5781@gandalf.local.home>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18050114-0048-0000-0000-00000266829C
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008957; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000257; SDB=6.01025967; UDB=6.00523957; IPR=6.00805198;
- MB=3.00020882; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-01 14:34:46
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18050114-0049-0000-0000-000044F78B9C
-Message-Id: <20180501143601.GG26088@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-01_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805010146
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e5b0221d-84ba-10ff-4a58-4fa27c99650f@amd.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 01, 2018 at 10:24:01AM -0400, Steven Rostedt wrote:
-> On Mon, 30 Apr 2018 18:42:03 -0700
-> Joel Fernandes <joelaf@google.com> wrote:
-> 
-> > In recent tests with IRQ on/off tracepoints, a large performance
-> > overhead ~10% is noticed when running hackbench. This is root caused to
-> > calls to rcu_irq_enter_irqson and rcu_irq_exit_irqson from the
-> > tracepoint code. Following a long discussion on the list [1] about this,
-> > we concluded that srcu is a better alternative for use during rcu idle.
-> > Although it does involve extra barriers, its lighter than the sched-rcu
-> > version which has to do additional RCU calls to notify RCU idle about
-> > entry into RCU sections.
-> > 
-> > In this patch, we change the underlying implementation of the
-> > trace_*_rcuidle API to use SRCU. This has shown to improve performance
-> > alot for the high frequency irq enable/disable tracepoints.
+On 04/30, Andrey Grodzovsky wrote:
+>
+> On 04/30/2018 12:00 PM, Oleg Nesterov wrote:
+> >On 04/30, Andrey Grodzovsky wrote:
+> >>What about changing PF_SIGNALED to  PF_EXITING in
+> >>drm_sched_entity_do_release
+> >>
+> >>-       if ((current->flags & PF_SIGNALED) && current->exit_code == SIGKILL)
+> >>+      if ((current->flags & PF_EXITING) && current->exit_code == SIGKILL)
+> >let me repeat, please don't use task->exit_code. And in fact this check is racy
+> >
+> >But this doesn't matter. Say, we can trivially add SIGNAL_GROUP_KILLED_BY_SIGKILL,
+> >or do something else,
+>
+> Can you explain where is the race and what is a possible alternative then ?
 
-[ . . . ]
+Oh. I mentioned this race automatically, because I am pedant ;) Let me repeat
+that this doesn't really matter, and let me remind that the caller of fop->release
+can be completely unrelated process, say $cat /proc/pid/fdinfo. And in any case
+->exit_code should not be used outside of ptrace/exit paths.
 
-> > --- a/kernel/tracepoint.c
-> > +++ b/kernel/tracepoint.c
-> > @@ -31,6 +31,9 @@
-> >  extern struct tracepoint * const __start___tracepoints_ptrs[];
-> >  extern struct tracepoint * const __stop___tracepoints_ptrs[];
-> >  
-> > +DEFINE_SRCU(tracepoint_srcu);
-> > +EXPORT_SYMBOL_GPL(tracepoint_srcu);
-> > +
-> >  /* Set to 1 to enable tracepoint debug output */
-> >  static const int tracepoint_debug;
-> >  
-> > @@ -67,11 +70,16 @@ static inline void *allocate_probes(int count)
-> >  	return p == NULL ? NULL : p->probes;
-> >  }
-> >  
-> > -static void rcu_free_old_probes(struct rcu_head *head)
-> > +static void srcu_free_old_probes(struct rcu_head *head)
-> >  {
-> >  	kfree(container_of(head, struct tp_probes, rcu));
-> >  }
-> >  
-> > +static void rcu_free_old_probes(struct rcu_head *head)
-> > +{
-> > +	call_srcu(&tracepoint_srcu, head, srcu_free_old_probes);
-> 
-> Hmm, is it OK to call call_srcu() from a call_rcu() callback? I guess
-> it would be.
+OK, the race. Consider a process P with a main thread M and a sub-thread T.
 
-It is perfectly legal, and quite a bit simpler than setting something
-up to wait for both to complete concurrently.
+T does pthread_exit(), enters do_exit() and gets a preemption before exit_files().
 
-Of course, if you unconditionally call call_srcu() from that same
-srcu_struct's callback, SRCU will be unable to safely delete the
-srcu_struct, so cleanup_srcu_struct() will react by leaking memory.  ;-)
+The process is killed by SIGKILL. M calls do_group_exit(), do_exit() and passes
+exit_files(). However, it doesn't call close_files() because T has another reference.
 
-Normal RCU deals with the analogous situation by leaving at least one
-callback uninvoked when the system goes down.
+T resumes, calls close_files(), fput(), etc, and then exit_task_work(), so
+it can finally call ->release() with current->exit_code == 0 desptite the fact
+the process was killed.
 
-							Thanx, Paul
+Again, again, this doesn't matter. We can distinguish killed-or-not, by SIGKILL-
+or-not. But I still do not think we actually need this. At least in ->release()
+paths, ->flush() may differ.
 
-> I think we should add a comment to why we are doing this. Something
-> like:
-> 
-> /*
->  * Tracepoint probes are protected by both sched RCU and SRCU, by
->  * calling the SRCU callback in the sched RCU callback we cover
->  * both cases.
->  */
-> 
-> Or something along those lines.
-> 
-> -- Steve
-> 
-> 
-> > +}
-> > +
-> >  static inline void release_probes(struct tracepoint_func *old)
-> >  {
-> >  	if (old) {
-> 
+Oleg.
