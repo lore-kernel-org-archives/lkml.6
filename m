@@ -1,39 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752355AbeEAIA2 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 04:00:28 -0400
-Received: from smtp.ctxuk.citrix.com ([185.25.65.24]:34264 "EHLO
-        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751171AbeEAIAX (ORCPT
+        id S1752958AbeEAICP (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 04:02:15 -0400
+Received: from gateway31.websitewelcome.com ([192.185.143.47]:24424 "EHLO
+        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751171AbeEAICN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 04:00:23 -0400
-X-IronPort-AV: E=Sophos;i="5.49,350,1520899200";
-   d="scan'208";a="72417881"
-Date: Tue, 1 May 2018 09:00:09 +0100
-From: Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
-To: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-CC: <linux-kernel@vger.kernel.org>, <xen-devel@lists.xenproject.org>,
-        <jgross@suse.com>
-Subject: Re: [Xen-devel] [PATCH 4/4] xen/PVH: Remove reserved entry in PVH GDT
-Message-ID: <20180501080009.wnjmno5pietptixo@MacBook-Pro-de-Roger.local>
-References: <20180430162339.17143-1-boris.ostrovsky@oracle.com>
- <20180430162339.17143-5-boris.ostrovsky@oracle.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20180430162339.17143-5-boris.ostrovsky@oracle.com>
-User-Agent: NeoMutt/20180323
-X-ClientProxiedBy: AMSPEX02CAS02.citrite.net (10.69.22.113) To
- AMSPEX02CL02.citrite.net (10.69.22.126)
+        Tue, 1 May 2018 04:02:13 -0400
+X-Authority-Reason: nr=8
+From: Matheus Castello <matheus@castello.eng.br>
+To: linus.walleij@linaro.org
+Cc: linux-kernel@vger.kernel.org,
+        Matheus Castello <matheus@castello.eng.br>
+Subject: [PATCH v1 0/2] pinctrl: generic: improve apply_setting error verbosity
+Date: Tue,  1 May 2018 03:40:35 -0400
+Message-Id: <1525160437-5222-1-git-send-email-matheus@castello.eng.br>
+X-Mailer: git-send-email 2.7.4
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - br164.hostgator.com.br
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - castello.eng.br
+X-BWhitelist: no
+X-Source-IP: 191.189.21.134
+X-Source-L: No
+X-Exim-ID: 1fDPuT-001g0X-1T
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (localhost.localdomain) [191.189.21.134]:27442
+X-Source-Auth: matheus@castello.eng.br
+X-Email-Count: 2
+X-Source-Cap: Y2FzdGUyNDg7Y2FzdGUyNDg7YnIxNjQuaG9zdGdhdG9yLmNvbS5icg==
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 30, 2018 at 12:23:39PM -0400, Boris Ostrovsky wrote:
-> And without it we can't use _BOOT_XX macros any longer so define new ones.
+This series is for improve verbosity in debug for error cases using pinconf 
+generic API. Legacy pinctrl-vendor drivers prints error messages with more 
+verbosity when parse invalid or not supported sub-nodes properties. In this 
+series we try to show messages with more information about the pinctrl-vendor 
+driver and sub-nodes that returned error when applied.
 
-Not being that familiar with Linux internals I'm not sure I see the
-benefit of this. Isn't there a risk that some other code is going to
-use the __BOOT_XX defines?
+Let me know your opinion about this.
 
-Thanks, Roger.
+Matheus Castello (2):
+  pinctrl: generic: add API to solve generic sub-node property name
+  pinctrl: generic: improve apply_setting error verbosity
+
+ drivers/pinctrl/pinconf-generic.c       | 61 +++++++++++++++++----------------
+ drivers/pinctrl/pinconf.c               | 15 +++++++-
+ include/linux/pinctrl/pinconf-generic.h | 32 +++++++++++++++++
+ 3 files changed, 77 insertions(+), 31 deletions(-)
+
+-- 
+2.7.4
