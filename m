@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755725AbeEANsw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 09:48:52 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42178 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754340AbeEANsr (ORCPT
+        id S1755799AbeEANs6 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 09:48:58 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45934 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1755188AbeEANsz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 09:48:47 -0400
+        Tue, 1 May 2018 09:48:55 -0400
 From: Mimi Zohar <zohar@linux.vnet.ibm.com>
 To: linux-integrity@vger.kernel.org
 Cc: Hans de Goede <hdegoede@redhat.com>,
@@ -17,18 +17,18 @@ Cc: Hans de Goede <hdegoede@redhat.com>,
         "Luis R . Rodriguez" <mcgrof@kernel.org>,
         "Luis R . Rodriguez" <mcgrof@suse.com>,
         Kees Cook <keescook@chromium.org>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 3/6] firmware: differentiate between signed regulatory.db and other firmware
-Date: Tue,  1 May 2018 09:48:20 -0400
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Stephen Boyd <stephen.boyd@linaro.org>
+Subject: [PATCH 5/6] ima: verify kernel firmware signatures when using a preallocated buffer
+Date: Tue,  1 May 2018 09:48:22 -0400
 X-Mailer: git-send-email 2.7.5
 In-Reply-To: <1525182503-13849-1-git-send-email-zohar@linux.vnet.ibm.com>
 References: <1525182503-13849-1-git-send-email-zohar@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18050113-0040-0000-0000-00000434CD9E
+x-cbid: 18050113-0040-0000-0000-00000434CDA2
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18050113-0041-0000-0000-00002638E687
-Message-Id: <1525182503-13849-4-git-send-email-zohar@linux.vnet.ibm.com>
+x-cbparentid: 18050113-0041-0000-0000-00002638E68D
+Message-Id: <1525182503-13849-6-git-send-email-zohar@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-01_07:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -40,47 +40,31 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allow LSMs and IMA to differentiate between signed regulatory.db and
-other firmware.
+Don't differentiate between kernel_read_file_id READING_FIRMWARE and
+READING_FIRMWARE_PREALLOC_BUFFER enumerations.
 
+Fixes: a098ecd firmware: support loading into a pre-allocated buffer (since 4.8)
 Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 Cc: Luis R. Rodriguez <mcgrof@suse.com>
 Cc: David Howells <dhowells@redhat.com>
 Cc: Kees Cook <keescook@chromium.org>
-Cc: Seth Forshee <seth.forshee@canonical.com>
-Cc: Johannes Berg <johannes.berg@intel.com>
+Cc: Serge E. Hallyn <serge@hallyn.com>
+Cc: Stephen Boyd <stephen.boyd@linaro.org>
 ---
- drivers/base/firmware_loader/main.c | 5 +++++
- include/linux/fs.h                  | 1 +
- 2 files changed, 6 insertions(+)
+ security/integrity/ima/ima_main.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
-index eb34089e4299..d7cdf04a8681 100644
---- a/drivers/base/firmware_loader/main.c
-+++ b/drivers/base/firmware_loader/main.c
-@@ -318,6 +318,11 @@ fw_get_filesystem_firmware(struct device *device, struct fw_priv *fw_priv)
- 			break;
- 		}
- 
-+#ifdef CONFIG_CFG80211_REQUIRE_SIGNED_REGDB
-+		if ((strcmp(fw_priv->fw_name, "regulatory.db") == 0) ||
-+		    (strcmp(fw_priv->fw_name, "regulatory.db.p7s") == 0))
-+			id = READING_FIRMWARE_REGULATORY_DB;
-+#endif
- 		fw_priv->size = 0;
- 		rc = kernel_read_file_from_path(path, &fw_priv->data, &size,
- 						msize, id);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index dc16a73c3d38..d1153c2884b9 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2811,6 +2811,7 @@ extern int do_pipe_flags(int *, int);
- 	id(FIRMWARE, firmware)		\
- 	id(FIRMWARE_PREALLOC_BUFFER, firmware)	\
- 	id(FIRMWARE_FALLBACK, firmware)	\
-+	id(FIRMWARE_REGULATORY_DB, firmware)	\
- 	id(MODULE, kernel-module)		\
- 	id(KEXEC_IMAGE, kexec-image)		\
- 	id(KEXEC_INITRAMFS, kexec-initramfs)	\
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 71b5a51c6709..eb9c273ab81d 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -469,6 +469,7 @@ int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
+ static int read_idmap[READING_MAX_ID] = {
+ 	[READING_FIRMWARE] = FIRMWARE_CHECK,
+ 	[READING_FIRMWARE_REGULATORY_DB] = FIRMWARE_CHECK,
++	[READING_FIRMWARE_PREALLOC_BUFFER] = FIRMWARE_CHECK,
+ 	[READING_MODULE] = MODULE_CHECK,
+ 	[READING_KEXEC_IMAGE] = KEXEC_KERNEL_CHECK,
+ 	[READING_KEXEC_INITRAMFS] = KEXEC_INITRAMFS_CHECK,
 -- 
 2.7.5
