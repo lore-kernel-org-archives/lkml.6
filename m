@@ -1,149 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754960AbeEALxq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 07:53:46 -0400
-Received: from foss.arm.com ([217.140.101.70]:45904 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754623AbeEALxp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 07:53:45 -0400
-Date: Tue, 1 May 2018 12:54:05 +0100
-From: Will Deacon <will.deacon@arm.com>
-To: Kim Phillips <kim.phillips@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, jnair@caviumnetworks.com,
-        Robert.Richter@cavium.com, Vadim.Lomovtsev@cavium.com,
-        Jan.Glauber@cavium.com, gklkml16@gmail.com
-Subject: Re: [PATCH v4 2/2] ThunderX2: Add Cavium ThunderX2 SoC UNCORE PMU
- driver
-Message-ID: <20180501115405.GE25237@arm.com>
-References: <20180425090047.6485-1-ganapatrao.kulkarni@cavium.com>
- <20180425090047.6485-3-ganapatrao.kulkarni@cavium.com>
- <20180426170624.bfcba885431d57d0de2a3ddd@arm.com>
- <20180427093027.ngtuoezyh6mtz26p@lakrids.cambridge.arm.com>
- <20180427081525.f9dcc756678baf3bb6e6e473@arm.com>
- <20180427143719.GA5093@arm.com>
- <20180427104629.2bff4b4b683a93ddf39f8df5@arm.com>
- <20180427160914.GA5286@arm.com>
- <20180427115625.b5191d381cd41e7ee092fea1@arm.com>
+        id S1755074AbeEALyY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 07:54:24 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45928 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754571AbeEALyW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 07:54:22 -0400
+Date: Tue, 1 May 2018 12:54:17 +0100
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Gustavo Pimentel <gustavo.pimentel@synopsys.com>, bhelgaas@google.com,
+        Joao.Pinto@synopsys.com, jingoohan1@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v7 3/9] PCI: endpoint: functions/pci-epf-test: Add second
+ entry
+Message-ID: <20180501115417.GD19391@e107981-ln.cambridge.arm.com>
+References: <cover.1524577064.git.gustavo.pimentel@synopsys.com>
+ <c6cfd167838ae8e226dee0820983efe918fa4e1f.1524577064.git.gustavo.pimentel@synopsys.com>
+ <20180426165605.GA6370@e107981-ln.cambridge.arm.com>
+ <b65caf2e-b002-f591-6215-ff2241b2dfb8@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180427115625.b5191d381cd41e7ee092fea1@arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <b65caf2e-b002-f591-6215-ff2241b2dfb8@ti.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kim,
-
-On Fri, Apr 27, 2018 at 11:56:25AM -0500, Kim Phillips wrote:
-> On Fri, 27 Apr 2018 17:09:14 +0100
-> Will Deacon <will.deacon@arm.com> wrote:
-> > On Fri, Apr 27, 2018 at 10:46:29AM -0500, Kim Phillips wrote:
-> > > On Fri, 27 Apr 2018 15:37:20 +0100
-> > > Will Deacon <will.deacon@arm.com> wrote:
-> > > > For anything under drivers/perf/, I'd prefer not to have these prints
-> > > > and instead see efforts to improve error reporting via the perf system
-> > > > call interface.
-> > > 
-> > > We'd all prefer that, and for all PMU drivers, why should ones under
-> > > drivers/perf be treated differently?
+On Tue, May 01, 2018 at 03:37:47PM +0530, Kishon Vijay Abraham I wrote:
+> Hi Lorenzo,
+> 
+> On Thursday 26 April 2018 10:26 PM, Lorenzo Pieralisi wrote:
+> > On Tue, Apr 24, 2018 at 02:44:40PM +0100, Gustavo Pimentel wrote:
+> >> Adds a seconds entry on the pci_epf_test_ids structure that disables the
 > > 
-> > Because they're the ones I maintain...
-> 
-> You represent a minority on your opinion on this matter though.
-
-I'm not sure that's true -- you tend to be the only one raising this issue;
-I think most people don't actually care one way or the other. If you know of
-others who care about it too then I suggest you work together as a group to
-solve the problem in a way which is amenable to the upstream maintainers.
-Then you won't have to worry about fixing it personally. You could even
-propose a topic for plumbers if there is enough interest in a general
-framework for propagating error messages to userspace.
-
-> > > As you are already aware, I've personally tried to fix this problem -
-> > > that has existed since before the introduction of the perf tool (I
-> > > consider it a syscall-independent enhanced error interface), multiple
-> > > times, and failed.
+> > "Add a second entry to..."
 > > 
-> > Why is that my problem? Try harder?
-> 
-> It's your problem because we're here reviewing a patch that happens to
-> fall under your maintainership.  I'll be the first person to tell you
-> I'm obviously incompetent and haven't been able to come up with a
-> solution that is acceptable for everyone up to and including Linus
-> Torvalds.  I'm just noticing a chronic usability problem that can be
-> easily alleviated in the context of this patch review.
-
-I don't see how incompetence has anything to do with it and, like most
-people (lucky gits...), I doubt Torvalds cares too deeply about PMU driver
-internals. No arguments on the usability problem, but this ain't the fix
-you're looking for: it's a bodge. We've been over this many times before.
-
-> > > So until someone comes up with a solution that works for everyone
-> > > up to and including Linus Torvalds (who hasn't put up a problem
-> > > pulling PMU drivers emitting things to dmesg so far, by the way), this
-> > > keep PMU drivers' errors silent preference of yours is unnecessarily
-> > > impeding people trying to measure system performance on Arm based
-> > > machines - all other archs' maintainers are fine with PMU drivers using
-> > > dmesg.
+> >> linkup_notifier parameter on driver for the designware EP.
+> >>
+> >> This allows designware EPs that doesn't have linkup notification signal
+> >> to work with pcitest.
+> >>
+> >> Updates the binding documentation accordingly.
 > > 
-> > Good for them, although I'm pretty sure that at least the x86 folks are
-> > against this crap too.
-> 
-> Unfortunately, it doesn't affect them nearly as much as it does our
-> more diverse platforms, which is why I don't think they care to do
-> much about it.
-
-x86 has its fair share of PMUs too, so I don't think we're special in this
-regard. The main difference seems to be that they have better support in
-the perf tool for diagnosing problems.
-
-> > > > Anyway, I think this driver has bigger problems that need addressing.
-> > > 
-> > > To me it represents yet another PMU driver submission - as the years go
-> > > by - that is lacking in the user messaging area.  Which reminds me, can
-> > > you take another look at applying this?:
+> > Valid for all the series: use imperative sentences.
 > > 
-> > As I said before, I'm not going to take anything that logs above pr_debug
-> > for things that are directly triggerable from userspace. Spin a version
+> > eg:
+> > 
+> > "Update the binding documentation accordingly".
+> > 
+> > not
+> > 
+> > "Updates the binding documentation accordingly".
+> > 
+> >> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+> >> Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+> >> ---
+> >> Change v2->v3:
+> >>  - Added second entry in pci_epf_test_ids structure.
+> >>  - Remove test_reg_bar field assignment on second entry.
+> >> Changes v3->v4:
+> >>  - Nothing changed, just to follow the patch set version.
+> >> Changes v4->v5:
+> >>  - Changed pci_epf_test_cfg2 to pci_epf_test_designware.
+> >> Changes v5->v6:
+> >>  - Changed name field from pci_epf_test_designware to pci_epf_test_dw.
+> >> Changes v6->v7:
+> >>  - Changed variable name from data_cfg2 to data_linkup_notifier_disabled.
+> >>
+> >>  Documentation/PCI/endpoint/function/binding/pci-test.txt | 2 ++
+> >>  drivers/pci/endpoint/functions/pci-epf-test.c            | 8 ++++++++
+> >>  2 files changed, 10 insertions(+)
+> >>
+> >> diff --git a/Documentation/PCI/endpoint/function/binding/pci-test.txt b/Documentation/PCI/endpoint/function/binding/pci-test.txt
+> >> index 3b68b95..dc39f47 100644
+> >> --- a/Documentation/PCI/endpoint/function/binding/pci-test.txt
+> >> +++ b/Documentation/PCI/endpoint/function/binding/pci-test.txt
+> >> @@ -1,6 +1,8 @@
+> >>  PCI TEST ENDPOINT FUNCTION
+> >>  
+> >>  name: Should be "pci_epf_test" to bind to the pci_epf_test driver.
+> >> +name: Should be "pci_epf_test_dw" to bind to the pci_epf_test driver
+> >> +      with a custom configuration for the designware EP.
+> > 
+> > The link between the "name" and the device created is quite obscure and
+> > reading pci-test-howto.txt certainly does not clarify it.
+> > 
+> > In pci-test-howto.txt an explanation should be added to the configs
+> > device creation paragraph to clarify it.
+> > 
+> >>  Configurable Fields:
+> >>  vendorid	 : should be 0x104c
+> >> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
+> >> index 7cef851..4ab463b 100644
+> >> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
+> >> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+> >> @@ -459,10 +459,18 @@ static int pci_epf_test_bind(struct pci_epf *epf)
+> >>  	return 0;
+> >>  }
+> >>  
+> >> +static const struct pci_epf_test_data data_linkup_notifier_disabled = {
+> >> +	.linkup_notifier = false
+> >> +};
+> >> +
+> >>  static const struct pci_epf_device_id pci_epf_test_ids[] = {
+> >>  	{
+> >>  		.name = "pci_epf_test",
+> >>  	},
+> >> +	{
+> >> +		.name = "pci_epf_test_dw",
+> >> +		.driver_data = (kernel_ulong_t)&data_linkup_notifier_disabled,
+> >> +	},
+> >>  	{},
+> > 
+> > Should not this be a property derived from the controller compatible
+> > property instead of the test device name written in configfs ?
 > 
-> Why?  There are plenty of things that emit stuff into dmesg that are
-> directly triggerable from userspace.  Is it because it upsets fuzzing
-> tests?  How about those be run with a patched kernel that somehow
-> mitigates the printing?
+> pci_epf_test is an independent driver on its own that operates in a layer above
+> the controller driver. So it does not get the controller compatible (which is
+> used in controller drivers like pcie-designware-plat.c). pci_epf_test uses
+> "pci_epf_device_id" which is _similar_ to "of_device_id" used by platform drivers.
 
-[we've been over this before]
+I understand that, the problem is that the independent driver depends on
+features of the related controller driver as this patch shows. This
+patch basically says that if you use a specific path in configfs (that
+includes pci_epf_test_dw) your device has specific HW features (eg
+linkup notifier above), that obviously depends on the platform HW not on
+the string you use in configfs.
 
-There are two camps that might find this information useful:
+What I am questioning is a) if I understand this right and b) whether
+this is the right approach.
 
-  1. People writing userspace support for a new PMU using the
-     perf_event_open syscall
-
-  2. People trying to use a tool which abstracts the PMU details to some
-     degree (e.g. perf tool)
-
-Those in (1) can get by with pr_debug. Sure, they have to recompile, but
-it's not like there are many people in this camp and they'll probably be
-working with the PMU driver writer to some degree anyway and taking new
-kernel drops.
-
-Those in (2) may not have access to dmesg, absolutely should not be able
-to spam it (since this could hide other important messages), will probably
-struggle to match an internal message from the PMU driver to their
-invocation of the high-level tool and may well be in a multi-user
-environment so will struggle to identify the messages that they are
-responsible for. What they actually want is for the perf tool to give
-them more information, and dmesg is not the right channel for that, for
-similar reasons.
-
-> > using pr_debug and I'll queue it.
-> 
-> How about using a ratelimited dev_err variant?
-
-Nah, I don't want dmesg being parsed by users of perf tool. pr_debug should
-be sufficient for perf tool developers working with a new PMU type.
-
-Will
+Lorenzo
