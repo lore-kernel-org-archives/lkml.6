@@ -1,87 +1,147 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756176AbeEARAb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 13:00:31 -0400
-Received: from mail-vk0-f52.google.com ([209.85.213.52]:42079 "EHLO
-        mail-vk0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755905AbeEARAa (ORCPT
+        id S1756097AbeEARD7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 13:03:59 -0400
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:33712 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753505AbeEARD5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 13:00:30 -0400
-X-Google-Smtp-Source: AB8JxZrE7xhF/x1X+p8ucsAWN4CHwxhRPoJqbIVySfOL3imnuisKgwkeq7fpHcxJffVEwjLB2x4UDAV98ckz9RHBTFI=
+        Tue, 1 May 2018 13:03:57 -0400
+X-Google-Smtp-Source: AB8JxZpssZskHiaSlFSg37Oxlbsx0MO/T4trVPWqIxPMDKxeOIjLTfdPh5doEFCnp0dRYs4BlRVkoA==
+Subject: Re: [RFC net-next 4/5] net: phy: Add support for IEEE standard test
+ modes
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: netdev@vger.kernel.org, Russell King <rmk@armlinux.org.uk>,
+        open list <linux-kernel@vger.kernel.org>, davem@davemloft.net,
+        cphealy@gmail.com, nikita.yoush@cogentembedded.com,
+        vivien.didelot@savoirfairelinux.com, Nisar.Sayed@microchip.com,
+        UNGLinuxDriver@microchip.com
+References: <20180428003237.1536-1-f.fainelli@gmail.com>
+ <20180428003237.1536-5-f.fainelli@gmail.com> <20180430232049.GA25602@lunn.ch>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ HGuUuzv+GKZ6nsysJw==
+Message-ID: <cb717f23-5aae-a30f-1bd3-9ad54662739e@gmail.com>
+Date: Tue, 1 May 2018 10:03:47 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <4ad99a55-9c93-5ea1-5954-3cb6e5ba7df9@rasmusvillemoes.dk>
-References: <CAGXu5jL9hqQGe672CmvFwqNbtTr=qu7WRwHuS4Vy7o5sX_UTgg@mail.gmail.com>
- <alpine.DEB.2.20.1803072212160.2814@hadrien> <20180308025812.GA9082@bombadil.infradead.org>
- <alpine.DEB.2.20.1803080722300.3754@hadrien> <20180308230512.GD29073@bombadil.infradead.org>
- <alpine.DEB.2.20.1803131818550.3117@hadrien> <20180313183220.GA21538@bombadil.infradead.org>
- <CAGXu5jKLaY2vzeFNaEhZOXbMgDXp4nF4=BnGCFfHFRwL6LXNHA@mail.gmail.com>
- <20180429203023.GA11891@bombadil.infradead.org> <CAGXu5j+N9tt4rxaUMxoZnE-ziqU_yu-jkt-cBZ=R8wmYq6XBTg@mail.gmail.com>
- <20180430201607.GA7041@bombadil.infradead.org> <4ad99a55-9c93-5ea1-5954-3cb6e5ba7df9@rasmusvillemoes.dk>
-From: Kees Cook <keescook@chromium.org>
-Date: Tue, 1 May 2018 10:00:27 -0700
-X-Google-Sender-Auth: I71GrQZNrT8Uko8P2mO2r9dAHoY
-Message-ID: <CAGXu5j+tYhQOfVMkZdPzW5CX103LHpm8SYSN51VFLufn0Z0y6Q@mail.gmail.com>
-Subject: Re: [PATCH 2/2] mm: Add kvmalloc_ab_c and kvzalloc_struct
-To: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Daniel Vetter <daniel.vetter@intel.com>
-Cc: Matthew Wilcox <willy@infradead.org>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <mawilcox@microsoft.com>, Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        cocci@systeme.lip6.fr, Himanshu Jha <himanshujha199640@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180430232049.GA25602@lunn.ch>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 30, 2018 at 2:29 PM, Rasmus Villemoes
-<linux@rasmusvillemoes.dk> wrote:
-> On 2018-04-30 22:16, Matthew Wilcox wrote:
->> On Mon, Apr 30, 2018 at 12:02:14PM -0700, Kees Cook wrote:
->>>
->>> Getting the constant ordering right could be part of the macro
->>> definition, maybe? i.e.:
->>>
->>> static inline void *kmalloc_ab(size_t a, size_t b, gfp_t flags)
->>> {
->>>     if (__builtin_constant_p(a) && a != 0 && \
->>>         b > SIZE_MAX / a)
->>>             return NULL;
->>>     else if (__builtin_constant_p(b) && b != 0 && \
->>>                a > SIZE_MAX / b)
->>>             return NULL;
->>>
->>>     return kmalloc(a * b, flags);
->>> }
->>
->> Ooh, if neither a nor b is constant, it just didn't do a check ;-(  This
->> stuff is hard.
->>
->>> (I just wish C had a sensible way to catch overflow...)
->>
->> Every CPU I ever worked with had an "overflow" bit ... do we have a
->> friend on the C standards ctte who might figure out a way to let us
->> write code that checks it?
->
-> gcc 5.1+ (I think) have the __builtin_OP_overflow checks that should
-> generate reasonable code. Too bad there's no completely generic
-> check_all_ops_in_this_expression(a+b*c+d/e, or_jump_here). Though it's
-> hard to define what they should be checked against - probably would
-> require all subexpressions (including the variables themselves) to have
-> the same type.
->
-> plug: https://lkml.org/lkml/2015/7/19/358
+On 04/30/2018 04:20 PM, Andrew Lunn wrote:
+>> +/* genphy_set_test - Make a PHY enter one of the standard IEEE defined
+>> + * test modes
+>> + * @phydev: the PHY device instance
+>> + * @test: the desired test mode
+>> + * @data: test specific data (none)
+>> + *
+>> + * This function makes the designated @phydev enter the desired standard
+>> + * 100BaseT2 or 1000BaseT test mode as defined in IEEE 802.3-2012 section TWO
+>> + * and THREE under 32.6.1.2.1 and 40.6.1.1.2 respectively
+>> + */
+>> +int genphy_set_test(struct phy_device *phydev,
+>> +		    struct ethtool_phy_test *test, const u8 *data)
+>> +{
+>> +	u16 shift, base, bmcr = 0;
+>> +	int ret;
+>> +
+>> +	/* Exit test mode */
+>> +	if (test->mode == PHY_STD_TEST_MODE_NORMAL) {
+>> +		ret = phy_read(phydev, MII_CTRL1000);
+>> +		if (ret < 0)
+>> +			return ret;
+>> +
+>> +		ret &= ~GENMASK(15, 13);
+>> +
+>> +		return phy_write(phydev, MII_CTRL1000, ret);
+>> +	}
+> 
+> Hi Florain
+> 
+> I looked at the Marvell SDK for PHYs. It performs a soft reset after
+> swapping back to normal mode. I assume the broadcom PHY does not need
+> this? But maybe we can add it anyway?
 
-That's a very nice series. Why did it never get taken? It seems to do
-the right things quite correctly.
+We certainly should reset the PHY, thanks!
 
-Daniel, while this isn't a perfect solution, is this something you'd
-use in graphics-land?
+> 
+>> +
+>> +	switch (test->mode) {
+>> +	case PHY_STD_TEST_MODE_100BASET2_1:
+>> +	case PHY_STD_TEST_MODE_100BASET2_2:
+>> +	case PHY_STD_TEST_MODE_100BASET2_3:
+>> +		if (!(phydev->supported & PHY_100BT_FEATURES))
+>> +			return -EOPNOTSUPP;
+>> +
+>> +		shift = 14;
+>> +		base = test->mode - PHY_STD_TEST_MODE_NORMAL;
+>> +		bmcr = BMCR_SPEED100;
+>> +		break;
+>> +
+>> +	case PHY_STD_TEST_MODE_1000BASET_1:
+>> +	case PHY_STD_TEST_MODE_1000BASET_2:
+>> +	case PHY_STD_TEST_MODE_1000BASET_3:
+>> +	case PHY_STD_TEST_MODE_1000BASET_4:
+>> +		if (!(phydev->supported & PHY_1000BT_FEATURES))
+>> +			return -EOPNOTSUPP;
+>> +
+>> +		shift = 13;
+>> +		base = test->mode - PHY_STD_TEST_MODE_100BASET2_MAX;
+>> +		bmcr = BMCR_SPEED1000;
+>> +		break;
+>> +
+>> +	default:
+>> +		/* Let an upper driver deal with additional modes it may
+>> +		 * support
+>> +		 */
+>> +		return -EOPNOTSUPP;
+>> +	}
+>> +
+>> +	/* Force speed and duplex */
+>> +	ret = phy_write(phydev, MII_BMCR, bmcr | BMCR_FULLDPLX);
+>> +	if (ret < 0)
+>> +		return ret;
+> 
+> Should there be something to undo this when returning to normal mode?
 
--Kees
-
+Yes, resetting the PHY would perform that.
 -- 
-Kees Cook
-Pixel Security
+Florian
