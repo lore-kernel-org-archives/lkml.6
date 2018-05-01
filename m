@@ -1,94 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751833AbeEAGuS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 02:50:18 -0400
-Received: from mail-sn1nam02on0059.outbound.protection.outlook.com ([104.47.36.59]:39221
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751083AbeEAGuR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 02:50:17 -0400
-From: Nadav Amit <namit@vmware.com>
-To: Josh Poimboeuf <jpoimboe@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-CC: Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Suboptimal inline heuristics due to non-code sections
-Thread-Topic: Suboptimal inline heuristics due to non-code sections
-Thread-Index: AQHT4RiozIiV7/XJckSM7Cv1H8EVuA==
-Date: Tue, 1 May 2018 06:50:14 +0000
-Message-ID: <A74E4351-A9FA-434D-AD47-3A509F802FFB@vmware.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=namit@vmware.com;
-x-originating-ip: [208.91.2.2]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;SN2PR05MB2496;7:XJC9dHoHXmcX2GQtCHoZzMXWK0zBv4A18yfepTvjE9OqzT4z0XqGV6Qc6HkjDx0oq559KkeEtl1g9KqMz0QtKYGh8tDpeAqtxvpeOVmbWJkOAK7gHuOVfLl9lXiz4wRo5ARpQ+KxpzflbNXsQaJjhxQ1HL9omKABH1Mjkh0nWsyYulDxiWSZC0+WfABIDj9KAxgCMBUL5R9IUgx5rtYUvUpFcucswixPy2T9gQnixztLqDXxNzz1yn0tqKdb+uC3;20:ZjGPuG6dRv8d28Mhc592IDCdO9McBfLqzx9rFnYypUllSlB/cNpX4VuwvdGVwxDTFiXZ+w2Qt0qCD39h1cxsTnzrextfmdjhlcbtFo52tiIsFubG4ImDR0Nn3y4eSOHZqNVeGMa/3Anrm2E8sf9b517WjhxxYwTsHZTm8JLRCmI=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(2017052603328)(7153060)(7193020);SRVR:SN2PR05MB2496;
-x-ms-traffictypediagnostic: SN2PR05MB2496:
-x-microsoft-antispam-prvs: <SN2PR05MB24968A2F4CBA45662EDE22AAD0810@SN2PR05MB2496.namprd05.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231254)(944501410)(52105095)(10201501046)(3002001)(93006095)(93001095)(6041310)(20161123562045)(20161123564045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:SN2PR05MB2496;BCL:0;PCL:0;RULEID:;SRVR:SN2PR05MB2496;
-x-forefront-prvs: 06592CCE58
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(346002)(396003)(376002)(39380400002)(39860400002)(199004)(189003)(97736004)(5660300001)(4326008)(25786009)(7736002)(8936002)(305945005)(5250100002)(81156014)(81166006)(8676002)(83716003)(2906002)(478600001)(3280700002)(36756003)(86362001)(68736007)(6486002)(54906003)(6436002)(26005)(6506007)(102836004)(2616005)(82746002)(59450400001)(186003)(316002)(486006)(106356001)(3846002)(6116002)(14454004)(105586002)(66066001)(2900100001)(99286004)(3660700001)(110136005)(6512007)(53936002)(476003)(33656002);DIR:OUT;SFP:1101;SCL:1;SRVR:SN2PR05MB2496;H:SN2PR05MB2654.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: I8E0UmvxkZvfSiQgj+D8ISXHeEBPWd9HOMiEY/zv4IwL6HVD3B2f/ub9Aer3wj0MCwKrhW538Av2jqdBdz/fM8gR/Z3bIQjikSCB54FdcJBni9kkymUIHS3oaFo/sjzyafBjejtQm1uFUlUsXe9ku0efpgbJUGcuF/eSBlTvzJMoNI1hf9ADMIW8DdKJlAgH
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <DDB25BF1A5B6BB43B03B59CA3984B30A@namprd05.prod.outlook.com>
+        id S1752012AbeEAHF2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 03:05:28 -0400
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:56873 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751340AbeEAHF0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 03:05:26 -0400
+X-ME-Sender: <xms:tRHoWpegVXiBmFrY6FtsJpwHWgzQRMcntq1iJUKTeIzS7NJ92EauMw>
+Date: Tue, 1 May 2018 17:05:21 +1000
+From: tcharding <me@tobin.cc>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Kees Cook <keescook@chromium.org>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Hashed pointer issues
+Message-ID: <20180501070521.GA3791@eros>
+References: <alpine.DEB.2.20.1804301741570.3243@hypnos.tec.linutronix.de>
+ <CAGXu5jL1W=AC023asgeMRUXAnhU2vd-RJRqGtOOetQ=aXwDcFQ@mail.gmail.com>
+ <CA+55aFwieC1-nAs+NFq9RTwaR8ef9hWa4MjNBWL41F-8wM49eA@mail.gmail.com>
+ <20180430124135.0cce92e3@gandalf.local.home>
+ <CA+55aFzpJC4+tuSopeze72D2sv1urGdap8+Bj2Y9hEYitAkE4Q@mail.gmail.com>
+ <CA+55aFyNqnrM=_5pMgEeL20jVKN7MgWKG52pbaR0FayO=5VuXw@mail.gmail.com>
+ <1e0bc2e2-a0d8-16b7-b6a4-cf97ecd99cef@infradead.org>
+ <CA+55aFzezp7OCpK7HFFQ7LeUZZyFACrhx6px_ZFq5zgoNTwEVw@mail.gmail.com>
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: 3d6737ef-657a-4165-69e8-08d5af2fcb4a
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3d6737ef-657a-4165-69e8-08d5af2fcb4a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 May 2018 06:50:14.9877
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN2PR05MB2496
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+55aFzezp7OCpK7HFFQ7LeUZZyFACrhx6px_ZFq5zgoNTwEVw@mail.gmail.com>
+X-Mailer: Mutt 1.5.24 (2015-08-30)
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w416oPZB019958
 
-When gcc considers the size of a function for inlining decisions, it
-apparently considers *all* sections. Since the kernel extensively uses
-sections for things other than code (e.g., exception-table, bug-table), the
-optimality of these decisions seem questionable to me.
+On Mon, Apr 30, 2018 at 05:12:05PM +0000, Linus Torvalds wrote:
+> On Mon, Apr 30, 2018 at 10:06 AM Randy Dunlap <rdunlap@infradead.org> wrote:
+> > On 04/30/2018 10:01 AM, Linus Torvalds wrote:
+> > >
+> > > No kernel command line needed in practice any more. That's assuming any
+> > > kernel developer will have an IvyBridge or newer.
+> 
+> > any paid kernel developer :)
+> 
+> I suspect a lot of hobbyists too - it's not like ivy bridge is particularly
+> new.
+> 
+> But if not, we can burn that bridge when we get to it.
+> 
+> Also, if you're not paid to do it, I don't think you'll be working a lot of
+> error trace buffers during bootup. There are definitely more interesting
+> parts of the kernel to play with ;)
 
-The objtool’s sections may be the most extreme case, as these sections are
-discarded, while their size still appears to be considered by the inlining
-heuristics. It may be beneficial not to consider (some) the other sections
-as well, as they do not affect code-caching but only increase the kernel
-size.
+Turns out my desktop (dev) machine is pretty old. RDRAND is only
+available on 'newer' Core i5  
 
-To illustrate the issue, consider the function copy_overflow():
+	"Intel Secure Key was added in Broadwell, so you need that or any later
+	generation. Broadwell generation means Intel Core i5 or i7 where the
+	4-digit number appended to it starts with a "5"."
 
-   0xffffffff819315e0 <+0>:	push   %rbp
-   0xffffffff819315e1 <+1>:	mov    %rsi,%rdx
-   0xffffffff819315e4 <+4>:	mov    %edi,%esi
-   0xffffffff819315e6 <+6>:	mov    $0xffffffff820bc4b8,%rdi
-   0xffffffff819315ed <+13>:	mov    %rsp,%rbp
-   0xffffffff819315f0 <+16>:	callq  0xffffffff81089b70 <__warn_printk>
-   0xffffffff819315f5 <+21>:	ud2    
-   0xffffffff819315f7 <+23>:	pop    %rbp
-   0xffffffff819315f8 <+24>:	retq   
+	https://superuser.com/questions/999515/what-instruction-set-architecture-isa-is-rdrand-and-rdseed-part-of
 
-This function seems to me as a great candidate for inlining. Yet, in my 4.16
-build (using gcc 7.2), I get 38 non-inlined instances of this function in
-vmlinux. Forcing CONFIG_STACK_VALIDATION to be disabled reduces the number
-non-inlined instances to 35. Removing, in addition, the data which is saved
-in the __bug_table makes all the instances of the function to be inlined.
 
-Obviously this certain function can be set as __always_inline, but the inline
-heuristics seems to me as wrongfully biased. 
+Lucky the laptop is newer, RDRAND is supported on core M5Y70.
 
-What do you think?
 
-Is there a way to make gcc to ignore sections for its inlining heuristics?
-
-Thanks,
-Nadav
+	Tobin
