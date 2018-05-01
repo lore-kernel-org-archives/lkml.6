@@ -1,105 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754924AbeEAK2T (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 06:28:19 -0400
-Received: from foss.arm.com ([217.140.101.70]:45212 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753545AbeEAK1n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 06:27:43 -0400
-From: Punit Agrawal <punit.agrawal@arm.com>
-To: kvmarm@lists.cs.columbia.edu
-Cc: Punit Agrawal <punit.agrawal@arm.com>,
-        linux-arm-kernel@lists.infradead.org, marc.zyngier@arm.com,
-        christoffer.dall@arm.com, linux-kernel@vger.kernel.org,
-        suzuki.poulose@arm.com, Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH v2 2/4] KVM: arm/arm64: Introduce helpers to manupulate page table entries
-Date: Tue,  1 May 2018 11:26:57 +0100
-Message-Id: <20180501102659.13188-3-punit.agrawal@arm.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180501102659.13188-1-punit.agrawal@arm.com>
-References: <20180501102659.13188-1-punit.agrawal@arm.com>
-X-ARM-No-Footer: FoSSMail
+        id S1754283AbeEAKaw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 06:30:52 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:29849 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750994AbeEAKau (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 06:30:50 -0400
+Subject: Re: [PATCH 01/12] mtd: nand: davinci: store the core chipselect
+ number in platform data
+From: Sekhar Nori <nsekhar@ti.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>, Tony Lindgren <tony@atomide.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mtd@lists.infradead.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180430082453.8091-1-brgl@bgdev.pl>
+ <20180430082453.8091-2-brgl@bgdev.pl>
+ <3dccc5af-2df1-8374-e4e8-0a8b9ea1ae99@ti.com>
+ <8b7e4588-5a35-6c18-fe60-148d6ccf778c@ti.com>
+Message-ID: <447b4f2f-27c8-f552-d058-3b2eba71a765@ti.com>
+Date: Tue, 1 May 2018 15:59:40 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <8b7e4588-5a35-6c18-fe60-148d6ccf778c@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce helpers to abstract architectural handling of the conversion
-of pfn to page table entries and marking a PMD page table entry as a
-block entry.
+On Tuesday 01 May 2018 03:23 PM, Sekhar Nori wrote:
+> On Tuesday 01 May 2018 02:55 PM, Sekhar Nori wrote:
+>> On Monday 30 April 2018 01:54 PM, Bartosz Golaszewski wrote:
+>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>>
+>>> We have the 'ti,davinci-chipselect' property in the device tree, but
+>>> when using platform data the driver silently uses the id field of
+>>> struct platform_device as the chipselect. This is confusing and we
+>>> almost broke the nand support again recently after converting the
+>>> platform to common clock framework (which changed the device id in the
+>>> clock lookup - the problem is gone now that we no longer acquire the
+>>> clock in the nand driver.
+>>>
+>>> This patch adds a new filed - core_chipsel - to the platform_data.
+>>
+>> s/filed/field
+>>
+>>> Subsequent patches will convert the platforms to using this new field.
+>>
+>> Can you add a comment for this new field too, like how we have for most
+>> other fields?
+>>
+>> Curious on what 'core' in core_chipsel means. Something to do with
+>> chip-select offset we have on DA850?
+> 
+> Looks like you may have just picked the terminology from DaVinci NAND
+> driver (introduced back in 2009). But in this context, it means the
+> 0-indexed chip-select number that of the asynchronous memory interface
+> to which the NAND device is connected.
+> 
+> So, may be a comment here will suffice.
 
-The helpers are introduced in preparation for supporting PUD hugepages
-at stage 2 - which are supported on arm64 but do not exist on arm.
+This is what I committed:
 
-Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
-Acked-by: Christoffer Dall <christoffer.dall@arm.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
----
- arch/arm/include/asm/kvm_mmu.h   | 5 +++++
- arch/arm64/include/asm/kvm_mmu.h | 5 +++++
- virt/kvm/arm/mmu.c               | 7 ++++---
- 3 files changed, 14 insertions(+), 3 deletions(-)
+--8<--
+commit 533d93703fa717fdf74c4fb711c868c4fdc8b475 (HEAD -> refs/heads/v4.18/nand-cs-simplification)
+Author:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
+AuthorDate: Mon Apr 30 10:24:42 2018 +0200
+Commit:     Sekhar Nori <nsekhar@ti.com>
+CommitDate: Tue May 1 15:57:47 2018 +0530
 
-diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
-index 707a1f06dc5d..5907a81ad5c1 100644
---- a/arch/arm/include/asm/kvm_mmu.h
-+++ b/arch/arm/include/asm/kvm_mmu.h
-@@ -75,6 +75,11 @@ phys_addr_t kvm_get_idmap_vector(void);
- int kvm_mmu_init(void);
- void kvm_clear_hyp_idmap(void);
+    mtd: nand: davinci: store the core chipselect number in platform data
+    
+    We have the 'ti,davinci-chipselect' property in the device tree, but
+    when using platform data the driver silently uses the id field of
+    struct platform_device as the chipselect. This is confusing and we
+    almost broke the nand support again recently after converting the
+    platform to common clock framework (which changed the device id in the
+    clock lookup - the problem is gone now that we no longer acquire the
+    clock in the nand driver.
+    
+    This patch adds a new field - core_chipsel - to the platform_data.
+    Subsequent patches will convert the platforms to using this new field.
+    
+    Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+    Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+
+diff --git a/include/linux/platform_data/mtd-davinci.h b/include/linux/platform_data/mtd-davinci.h
+index f1a2cf655bdb..1bbfa27cccb4 100644
+--- a/include/linux/platform_data/mtd-davinci.h
++++ b/include/linux/platform_data/mtd-davinci.h
+@@ -56,6 +56,16 @@ struct davinci_nand_pdata {		/* platform_data */
+ 	uint32_t		mask_ale;
+ 	uint32_t		mask_cle;
  
-+#define kvm_pfn_pte(pfn, prot)	pfn_pte(pfn, prot)
-+#define kvm_pfn_pmd(pfn, prot)	pfn_pmd(pfn, prot)
++	/*
++	 * 0-indexed chip-select number of the asynchronous
++	 * interface to which the NAND device has been connected.
++	 *
++	 * So, if you have NAND connected to CS3 of DA850, you
++	 * will pass '1' here. Since the asynchronous interface
++	 * on DA850 starts from CS2.
++	 */
++	uint32_t		core_chipsel;
 +
-+#define kvm_pmd_mkhuge(pmd)	pmd_mkhuge(pmd)
-+
- static inline void kvm_set_pmd(pmd_t *pmd, pmd_t new_pmd)
- {
- 	*pmd = new_pmd;
-diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
-index 082110993647..d962508ce4b3 100644
---- a/arch/arm64/include/asm/kvm_mmu.h
-+++ b/arch/arm64/include/asm/kvm_mmu.h
-@@ -173,6 +173,11 @@ void kvm_clear_hyp_idmap(void);
- #define	kvm_set_pte(ptep, pte)		set_pte(ptep, pte)
- #define	kvm_set_pmd(pmdp, pmd)		set_pmd(pmdp, pmd)
+ 	/* for packages using two chipselects */
+ 	uint32_t		mask_chipsel;
  
-+#define kvm_pfn_pte(pfn, prot)		pfn_pte(pfn, prot)
-+#define kvm_pfn_pmd(pfn, prot)		pfn_pmd(pfn, prot)
-+
-+#define kvm_pmd_mkhuge(pmd)		pmd_mkhuge(pmd)
-+
- static inline pte_t kvm_s2pte_mkwrite(pte_t pte)
- {
- 	pte_val(pte) |= PTE_S2_RDWR;
-diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
-index 686fc6a4b866..74750236f445 100644
---- a/virt/kvm/arm/mmu.c
-+++ b/virt/kvm/arm/mmu.c
-@@ -1554,8 +1554,9 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
- 		invalidate_icache_guest_page(pfn, vma_pagesize);
- 
- 	if (hugetlb) {
--		pmd_t new_pmd = pfn_pmd(pfn, mem_type);
--		new_pmd = pmd_mkhuge(new_pmd);
-+		pmd_t new_pmd = kvm_pfn_pmd(pfn, mem_type);
-+
-+		new_pmd = kvm_pmd_mkhuge(new_pmd);
- 		if (writable)
- 			new_pmd = kvm_s2pmd_mkwrite(new_pmd);
- 
-@@ -1564,7 +1565,7 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
- 
- 		ret = stage2_set_pmd_huge(kvm, memcache, fault_ipa, &new_pmd);
- 	} else {
--		pte_t new_pte = pfn_pte(pfn, mem_type);
-+		pte_t new_pte = kvm_pfn_pte(pfn, mem_type);
- 
- 		if (writable) {
- 			new_pte = kvm_s2pte_mkwrite(new_pte);
--- 
-2.17.0
