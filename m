@@ -1,53 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755996AbeEAPFP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 11:05:15 -0400
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:37618 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753072AbeEAPFN (ORCPT
+        id S1755600AbeEAPHO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 11:07:14 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:40782 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754798AbeEAPHN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 11:05:13 -0400
-X-Google-Smtp-Source: AB8JxZq76RtZblv59l53l0bj56hfMktbKtzgwXAyJB/KlHhputwHy5EU1zVHd2hLt75vqxW9m80iVg==
-Date: Tue, 1 May 2018 10:05:12 -0500
-From: Rob Herring <robh@kernel.org>
-To: Moritz Fischer <mdf@kernel.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        netdev@vger.kernel.org, davem@davemloft.net, mark.rutland@arm.com
-Subject: Re: [RFC/PATCH] net: ethernet: nixge: Use of_get_mac_address()
-Message-ID: <20180501150512.GA21443@rob-hp-laptop>
-References: <20180426215742.18966-1-mdf@kernel.org>
- <20180426220401.bad53hxnkxwvgjot@derp-derp.lan>
+        Tue, 1 May 2018 11:07:13 -0400
+X-Google-Smtp-Source: AB8JxZq1P3i629KLPVrUB3gj3BWg5CFuwYuvGom5h/MBqcCQY6VboD0T8OYa6JaoyvYAsjCM+/dsNCDr+hU9lNOs3FQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180426220401.bad53hxnkxwvgjot@derp-derp.lan>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20180501014204.67548-1-joelaf@google.com> <20180501014204.67548-4-joelaf@google.com>
+ <20180501100623.7ebec465@gandalf.local.home>
+In-Reply-To: <20180501100623.7ebec465@gandalf.local.home>
+From: Joel Fernandes <joelaf@google.com>
+Date: Tue, 01 May 2018 15:07:01 +0000
+Message-ID: <CAJWu+oprTcnEhDprzaRmaO3-fyJ8vsdZP+ceNAEg2TqK-ZXwQA@mail.gmail.com>
+Subject: Re: [PATCH RFC v5 3/6] srcu: Add notrace variant of srcu_dereference
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        "Cc: Frederic Weisbecker" <fweisbec@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Fenguang Wu <fengguang.wu@intel.com>,
+        Baohong Liu <baohong.liu@intel.com>,
+        Vedang Patel <vedang.patel@intel.com>,
+        "Cc: Android Kernel" <kernel-team@android.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 26, 2018 at 03:04:01PM -0700, Moritz Fischer wrote:
-> On Thu, Apr 26, 2018 at 02:57:42PM -0700, Moritz Fischer wrote:
-> > Make nixge driver work with 'mac-address' property instead of
-> > 'address' property. There are currently no in-tree users and
-> > the only users of this driver are devices that use overlays
-> > we control to instantiate the device together with the corresponding
-> > FPGA images.
-> > 
-> > Signed-off-by: Moritz Fischer <mdf@kernel.org>
-> > ---
-> > 
-> > Hi David, Rob,
-> > 
-> > with Mike's change that enable the generic 'mac-address'
-> > binding that I barely missed with the submission of this
-> > driver I was wondering if we can still change the binding.
-> > 
-> > I'm aware that this generally is a nonono case, since the binding
-> > is considered API, but since there are no users outside of our
-> > devicetree overlays that we ship with our devices I thought I'd ask.
+On Tue, May 1, 2018 at 7:06 AM Steven Rostedt <rostedt@goodmis.org> wrote:
 
-Fine by me. It really comes down to whether there are any users that 
-would be impacted.
+> On Mon, 30 Apr 2018 18:42:01 -0700
+> Joel Fernandes <joelaf@google.com> wrote:
 
-Rob
+> > In this series, we are making lockdep use an rcuidle tracepoint. For
+> > this reason we need a notrace variant of srcu_dereference since
+> > otherwise we get lockdep splats since lockdep hooks may not have run
+> > yet. This patch adds the needed variant.
+
+> This change log is rather confusing. Why would lockdep use an rcuidle
+> tracepoint? I think we need to explain more here.
+
+Patch 6/6 registers lockdep onto irq_disable and irq_enable tracepoints
+which use rcuidle:
+https://github.com/torvalds/linux/blob/master/kernel/trace/trace_irqsoff.c#L791
+
+I can add more details to the change log about this.
+
+thanks,
+
+- Joel
