@@ -1,54 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756068AbeEAQR1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 12:17:27 -0400
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:39511 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755035AbeEAQRZ (ORCPT
+        id S1756077AbeEAQRm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 12:17:42 -0400
+Received: from mail-pg0-f49.google.com ([74.125.83.49]:37760 "EHLO
+        mail-pg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753789AbeEAQRl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 12:17:25 -0400
-X-Google-Smtp-Source: AB8JxZq7WmTkW3fz3vZdfNozd2C24rzWwbK0T38DXaCu+AUjHABt96REbP5QQAPi9Mr4jQjbVjXN1Q==
-Date: Tue, 1 May 2018 11:17:23 -0500
-From: Rob Herring <robh@kernel.org>
-To: Jagan Teki <jagan@amarulasolutions.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 04/21] bindings: display: Add compatible for A64 DE2
- pipeline
-Message-ID: <20180501161723.GA376@rob-hp-laptop>
-References: <20180430114058.5061-1-jagan@amarulasolutions.com>
- <20180430114058.5061-5-jagan@amarulasolutions.com>
+        Tue, 1 May 2018 12:17:41 -0400
+X-Google-Smtp-Source: AB8JxZpfQ2YjA6wBlZmLHjO78r/esKsoX2iUU8VJTff+i2qQ2d1dZwTQCrQvd0bqrFCr7RFx3pJ2Kg==
+Subject: Re: INFO: task hung in wb_shutdown (2)
+To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Jan Kara <jack@suse.cz>, Tejun Heo <tj@kernel.org>
+Cc: syzbot <syzbot+c0cf869505e03bdf1a24@syzkaller.appspotmail.com>,
+        christophe.jaillet@wanadoo.fr, LKML <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>, syzkaller-bugs@googlegroups.com,
+        weiping zhang <zhangweiping@didichuxing.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dmitry Vyukov <dvyukov@google.com>, linux-block@vger.kernel.org
+References: <94eb2c05b2d83650030568cc8bd9@google.com>
+ <e56c1600-8923-dd6b-d065-c2fd2a720404@I-love.SAKURA.ne.jp>
+ <43302799-1c50-4cab-b974-9fe1ca584813@I-love.SAKURA.ne.jp>
+From: Jens Axboe <axboe@kernel.dk>
+Message-ID: <16c2860a-05db-9534-5960-e26c9ba9214c@kernel.dk>
+Date: Tue, 1 May 2018 10:12:34 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180430114058.5061-5-jagan@amarulasolutions.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <43302799-1c50-4cab-b974-9fe1ca584813@I-love.SAKURA.ne.jp>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 30, 2018 at 05:10:41PM +0530, Jagan Teki wrote:
-> Allwinner A64 has DE2 pipeline similar to other Allwinner
-> SOC's like A83T, H3/H5.
-
-'dt-bindings: ' for the subject prefix.
-
+On 5/1/18 4:27 AM, Tetsuo Handa wrote:
+> Tejun, Jan, Jens,
 > 
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> ---
->  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 1 +
->  1 file changed, 1 insertion(+)
+> Can you review this patch? syzbot has hit this bug for nearly 4000 times but
+> is still unable to find a reproducer. Therefore, the only way to test would be
+> to apply this patch upstream and test whether the problem is solved.
 
-Otherwise,
+I'll review it today.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+-- 
+Jens Axboe
