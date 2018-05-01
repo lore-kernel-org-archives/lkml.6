@@ -1,64 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754552AbeEAKbd (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 06:31:33 -0400
-Received: from mail-wr0-f178.google.com ([209.85.128.178]:35928 "EHLO
-        mail-wr0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751920AbeEAKbb (ORCPT
+        id S1754639AbeEAKc0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 06:32:26 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:29913 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751090AbeEAKcZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 06:31:31 -0400
-X-Google-Smtp-Source: AB8JxZp47oIGo3eT0zCPdQzeP3lpCu+25HMtSIebx7RmckwR+mwXvnDEMSNAeK5329O0FMeHwzu0wQ==
-Date: Tue, 1 May 2018 12:31:26 +0200
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Eduardo Valentin <edubezval@gmail.com>,
-        Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 14/18] thermal: exynos: move trips setting to
- exynos_tmu_initialize()
-Message-ID: <20180501103126.GK27619@mai>
-References: <1524743493-28113-1-git-send-email-b.zolnierkie@samsung.com>
- <CGME20180426115234epcas1p47cf54556fd061e8f90a4df4a2c62f7ce@epcas1p4.samsung.com>
- <1524743493-28113-15-git-send-email-b.zolnierkie@samsung.com>
+        Tue, 1 May 2018 06:32:25 -0400
+Subject: Re: [PATCH 00/12] mtd: nand: davinci: stop using pdev->id as
+ chipselect
+To: Boris Brezillon <boris.brezillon@bootlin.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+CC: Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>, Tony Lindgren <tony@atomide.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20180430082453.8091-1-brgl@bgdev.pl>
+ <20180430120930.4768a7cb@bbrezillon>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <276f8b2b-34a1-ec00-e348-21b5bcb2f0c0@ti.com>
+Date: Tue, 1 May 2018 16:01:42 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1524743493-28113-15-git-send-email-b.zolnierkie@samsung.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180430120930.4768a7cb@bbrezillon>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 26, 2018 at 01:51:29PM +0200, Bartlomiej Zolnierkiewicz wrote:
-> * Add dummy exynos4210_tmu_set_trip_hyst() helper.
+On Monday 30 April 2018 03:39 PM, Boris Brezillon wrote:
+> Hi Bartosz,
 > 
-> * Add ->tmu_set_trip_temp and ->tmu_set_trip_hyst methods to struct
->   exynos_tmu_data and set them in exynos_map_dt_data().
+> On Mon, 30 Apr 2018 10:24:41 +0200
+> Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 > 
-> * Move trips setting to exynos_tmu_initialize().
+>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>
+>> We have the 'ti,davinci-chipselect' property in the device tree, but
+>> when using platform data the driver silently uses the id field of
+>> struct platform_device as the chipselect. This is confusing and we
+>> almost broke the nand support again recently after converting the
+>> platform to common clock framework (which changed the device id in the
+>> clock lookup - the problem is gone now that we no longer acquire the
+>> clock in the nand driver.
+>>
+>> This series adds a new field to davinci-nand platform data, then makes
+>> all board use it and finally modifies the two drivers that make use of
+>> it.
+>>
+>> Bartosz Golaszewski (12):
+>>   mtd: nand: davinci: store the core chipselect number in platform data
 > 
-> There should be no functional changes caused by this patch.
-> 
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> ---
+> Raw NAND related patches (that is, everything that is not onenand or
+> SPI NAND) should use the "mtd: rawnand: " prefix now. Other than that,
+> I'm fine with the patch series, just let me know how you want to have it
 
-[ ... ]
+Hi Boris, should I convert the "I'm fine" to some sort of formal tag? If
+yes, what is the tag and for which patches?
 
-> +/* failing thresholds are not supported on Exynos4210 */
-> +static void exynos4210_tmu_set_trip_hyst(struct exynos_tmu_data *data,
-> +					 int trip, u8 temp, u8 hyst)
-> +{
-> +}
-> +
-
-May be you can get rid of this empty function and check against a NULL pointer
-in exynos_tmu_initialize ?
-
--- 
-
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Thanks,
+Sekhar
