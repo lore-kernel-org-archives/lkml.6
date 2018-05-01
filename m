@@ -1,121 +1,95 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1767633-1525317279-2-2271115344507619911
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, UNPARSEABLE_RELAY 0.001, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: 
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525317278; b=Q4ejBww4zHtkbguHmZcAUji7Er2T++QhqRIMwd9NRKBK7eLEwE
-    EsZAwDcuXwzRgVfq7XCNSku3/11WSCsz46UkJDz6FyPqoKaL2+q4yBkBJh8C3IRu
-    b789O2cOFSkODG9qZ7oVnbKq1Mv0CnhkszKdGKBxuog7wZ/kyV1TiFMKBm64SGu7
-    E7E6P5CdVf1ZScsMXz9ybSt+b1CWCqNuao3N51i+0EptNjkVHXRaevMFZG43WJAY
-    aygyid2QAhR7zOyOdk3m+36Q+l5vPqWeReCFnjG5r+JPtB93UwQFGFYfiEenPcFo
-    WnTHgb9trwvkNCXP6bnDydcR1/LA9jMBjTxA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=to:cc:subject:from:references:date
-    :in-reply-to:message-id:mime-version:content-type:sender
-    :list-id; s=fm2; t=1525317278; bh=fxZudmGtRqte4U10+h+GFhf/ghCzLQ
-    d2GJIF1NxsBZI=; b=R3Lo81dakYmRh/C7JotZfOlQlXGAt1yotzjUOFTqcDdkkg
-    dxJyhcuEgOXcrlfRnj4TMGIakydeCyjylYdlgJXM/NVW/++eZ9tiLHPG+NJuhlaC
-    CJq8oLzgzOACv9aISRBiFUMklw1T4Sc+4u+qUScrb6Gy+Ad696hBxvud876bxHbd
-    nR7PDYJ/ZEE/qBmWj94psauCwiGVjI7aHsEZCCNi+3H+Xf+6gjG5DKkYRylsda8h
-    o4uP3cSRECXlfLxyZCWZEnLW/XZsjYX1ICh23H9VCQ5T5JDvJi9Qu1Mdc0DUfhuv
-    9ZzZS+5I9RcFG6gcLPyUra17ajhq3MF8GzUZfgOg==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=oracle.com
-    header.i=@oracle.com header.b=dHhJAe6y x-bits=2048 x-keytype=rsa
-    x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=oracle.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=oracle.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=oracle.com
-      header.i=@oracle.com header.b=dHhJAe6y x-bits=2048 x-keytype=rsa
-      x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=oracle.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=oracle.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIfSvkQaUM/8DLkxHdVZmGtyeeWcWm2msfp/L8XqMSLR7a1Dq32YnkLGQEyoPk+6Q0CpGx/cEDkdKalXBLycGzYolXFLdRrxFSasBxtfA3hWGoS0vd1J
-    DWclxzvsnAqnzz7hjIfOq2iFYayxpgVRXfOdmkJGWaYOFJ/H5uNltfhfmuVeiKyn1z5By2dMglbxze8G3i2ZosrVLGrJUHtFqgpiw5N25f54hbZDXoKwzPqm
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=OLL_FvSJAAAA:8
-    a=mNNkpRWBsY0LLLdI38EA:9 a=haRAhhrbeAoA:10 a=F5WLKBdkEQcA:10 a=wbbTpC8Z_7cA:10
-    a=oIrB72frpwYPwTMnlWqB:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752033AbeECDOf (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 2 May 2018 23:14:35 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:57212 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752011AbeECDOd (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 2 May 2018 23:14:33 -0400
-To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-ide@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2] libata: blacklist Micron SSD
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20180429160138.11091-1-sudip.mukherjee@codethink.co.uk>
-        <yq1r2mw83cu.fsf@oracle.com> <20180502215950.GA4621@sudip-laptop>
-Date: Wed, 02 May 2018 23:14:24 -0400
-In-Reply-To: <20180502215950.GA4621@sudip-laptop> (Sudip Mukherjee's message
-        of "Wed, 2 May 2018 22:59:50 +0100")
-Message-ID: <yq1muxh4ei7.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8881 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=372
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805030027
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Return-Path: <me@tobin.cc>
+X-Google-Smtp-Source: AB8JxZo8UjUSaUpVVoaWTQvyUupk+xnk33RYBFT87O3RFKxeFyWn7qZ5L1dzbDt+hnmAnG3OLZ0h
+ARC-Seal: i=1; a=rsa-sha256; t=1525217661; cv=none;
+        d=google.com; s=arc-20160816;
+        b=1Hvm2diXycsgQR+LtTz2Xc7XPuZdxLJFkOMYQC476fN/8WTkIdSNtQH7pxxkUbzvin
+         LEXjPw5LJFm1NhDzQ8m1liU2VHcaV+JfUw5wRhD9s9zHXznRnf1j51MagTx0bI5kyI4J
+         k8EcaPqUnytHpIFMGrHIJ3xUro50TR+vv9Da1ZlD1WgkgjvCFD91dL0Tak1vOnkmoFn5
+         ctOYxQZQSkdPj9Twpc7XzORt09AqLKrmjnV13nQ38WsKXxoZb3FNeosoKqThQ6tVXIz5
+         Bs6xTK6SuHS3ZT9PRSNwL/mu+UFIeAP/yJNFavfcPsepu5ppZuAwUIWEp+0dDps4wDrO
+         zMNg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:dkim-signature:dkim-signature
+         :arc-authentication-results;
+        bh=0JlHTlVYoFi+DEQerNIjTyv5rTW2PQaGt0X/oO2hmLg=;
+        b=z/91THoVzsRt0pmxbBLWCj4uL6GwfLekWtxHupvGl0bbty0wg8K4X5fjCo8pKA6pvm
+         ScNOawhDHYsOFqi6jxhnaxQ+5PsQOA/d6dKb8wPq4eHgNnBINsF0IQ6S8t9XM41GJOuv
+         o074E67oi1Vt/Jt/94Qw3vd+Nzh9Q/ieIcrgEdRtOdSRZv+u/bQoA9fsI+UWYojVqa3f
+         CVpfglV+byj9OKQIEmZ/mhIp9VyokNOYl9m5IZLP6SU8+SZ7saZjO5j90u7nTp7kRrj1
+         QMwtu/aBBoH0+YfoKx2MxO4KNJpXEx1ZB23drzRrWYZnwJ17IR5bHUc9U0IbZBCCPfOv
+         4dSQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@tobin.cc header.s=fm3 header.b=PWfKMki2;
+       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=a7mbvA7p;
+       spf=neutral (google.com: 66.111.4.26 is neither permitted nor denied by best guess record for domain of me@tobin.cc) smtp.mailfrom=me@tobin.cc
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@tobin.cc header.s=fm3 header.b=PWfKMki2;
+       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=a7mbvA7p;
+       spf=neutral (google.com: 66.111.4.26 is neither permitted nor denied by best guess record for domain of me@tobin.cc) smtp.mailfrom=me@tobin.cc
+X-ME-Sender: <xms:fPnoWgphQOk1PVOv91_YUvxQGRA2aQXe4WwDLpGxa0aT3_-WyCNW5Q>
+From: "Tobin C. Harding" <me@tobin.cc>
+To: linux-kernel@vger.kernel.org
+Cc: "Tobin C. Harding" <me@tobin.cc>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Kees Cook <keescook@chromium.org>,
+	Anna-Maria Gleixner <anna-maria@linutronix.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Theodore Ts'o" <tytso@mit.edu>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 0/3] enable early printing of hashed pointers
+Date: Wed,  2 May 2018 09:33:37 +1000
+Message-Id: <1525217620-4107-1-git-send-email-me@tobin.cc>
+X-Mailer: git-send-email 2.7.4
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1599306634651133431?=
+X-GMAIL-MSGID: =?utf-8?q?1599306634651133431?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+Currently if an attempt is made to print a pointer before there is
+enough entropy then '(____ptrval____)' is printed.  This makes debugging
+stack traces during early boot difficult.
 
-Sudip,
+It was observed that we can relax the requirement for cryptographically
+secure hashing when debugging while still maintaining pointer hashing
+behaviour.  This allows kernels to be debugged without developers
+relying on different pointer printing behavior.
 
->> I think my preference would be to blacklist M500IT with the MU01
->> firmware (which Micron said was affected) and rely on the "Micron*"
->> fallthrough further down for the rest.
->
-> This patch was based on your reply at:
-> https://www.spinics.net/lists/linux-ide/msg55370.html
+Most of this code (excluding the command line option stuff) was written
+by Kees and Linus on LKML.  Any mistakes introduced are however my own.
 
-Yep, but they have confirmed it's only that model and firmware rev
-that's affected. I just haven't gotten the comprehensive matrix of all
-current models and firmware revs I was hoping for.
+For the command line option stuff I copied crypto/fips.c mixed with
+kernel/power/hibernate.c 
+
+Taking suggestions please on the get_random_bytes_arch() local variable
+name 'left' (I thought of 'togo' and 'rem' (as in remaining) as well).
+
+Testing
+
+The command line option stuff has been verified to work.  I have built
+and booted a patched kernel on a machine without RDRAND (qemu) and on a
+machine with RDRAND (intel core M5Y70).  The code appears to work as it
+is written.  I am unsure however whether this solves the initial
+problem.  I tried printing a pointer from within 
+init/main.c:kernel_init() and that did _not_ work.  I do not know how
+early is early, or in other words, when we are hoping for this to work.
+
+thanks,
+Tobin.
+
+
+Tobin C. Harding (3):
+  random: Fix whitespace pre random-bytes work
+  random: Return nbytes filled from hw RNG
+  vsprintf: Add use-early-random-bytes cmd line option
+
+ drivers/char/random.c  | 19 ++++++++++---------
+ include/linux/random.h |  2 +-
+ lib/vsprintf.c         | 50 +++++++++++++++++++++++++++++++++++++++++++++++---
+ 3 files changed, 58 insertions(+), 13 deletions(-)
 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.7.4
