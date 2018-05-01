@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756612AbeEASyE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 14:54:04 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:42844 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756382AbeEASyC (ORCPT
+        id S1756617AbeEASyz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 14:54:55 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:44429 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756382AbeEASyx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 14:54:02 -0400
-X-Google-Smtp-Source: AB8JxZoZfowjm82mmvMtKN6ewYk7Aq03I0J+r7A7BvDfvji89gcsCqJ9iPcYPIb6F/AOU6FTjBXxCA==
-Subject: Re: [GIT PULL 2/3] bcm2835-defconfig-next-2018-04-30
+        Tue, 1 May 2018 14:54:53 -0400
+X-Google-Smtp-Source: AB8JxZpLbDQi+TIx430khYI+fncuDuR3cWz+7RzXPErDien1vEAvma52XUrwO2RgouvZmYvT4PbYUg==
+Subject: Re: [GIT PULL 3/3] bcm2835-defconfig-64-next-2018-04-30
 To: Eric Anholt <eric@anholt.net>, Florian Fainelli <f.fainelli@gmail.com>
 Cc: linux-rpi-kernel@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Stefan Wahren <stefan.wahren@i2se.com>,
         bcm-kernel-feedback-list@broadcom.com
 References: <20180430212750.12303-1-eric@anholt.net>
- <20180430212750.12303-2-eric@anholt.net>
+ <20180430212750.12303-3-eric@anholt.net>
 From: Florian Fainelli <f.fainelli@gmail.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
@@ -51,12 +51,12 @@ Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
  y5arMQorqTFWlEOgRA8OP47L9knl9i4xuR0euV6DChDrguup2aJVU8JPBBgRAgAPAhsMBQJU
  X9LxBQkeXB3fAAoJEGFXmRW1Y3YOj4UAn3nrFLPZekMeqX5aD/aq/dsbXSfyAKC45Go0YyxV
  HGuUuzv+GKZ6nsysJw==
-Message-ID: <f93e45e8-8f70-9f5f-fe4c-078e873e8607@gmail.com>
-Date: Tue, 1 May 2018 11:53:59 -0700
+Message-ID: <cc43f06a-a30e-950a-f694-e312e55d2f53@gmail.com>
+Date: Tue, 1 May 2018 11:54:49 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180430212750.12303-2-eric@anholt.net>
+In-Reply-To: <20180430212750.12303-3-eric@anholt.net>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -71,23 +71,20 @@ On 04/30/2018 02:27 PM, Eric Anholt wrote:
 > 
 > are available in the Git repository at:
 > 
->   git://github.com/anholt/linux tags/bcm2835-defconfig-next-2018-04-30
+>   git://github.com/anholt/linux tags/bcm2835-defconfig-64-next-2018-04-30
 > 
-> for you to fetch changes up to 329fb2b79b132d727dd8a1624da8dc5331eb8633:
+> for you to fetch changes up to 69bc5b2c056b4e784b49a8c9c5049561b62352f7:
 > 
->   ARM: multi_v7_defconfig: Enable LAN and BT for RPi 3 B+ (2018-04-23 13:25:49 -0700)
-> 
-> ----------------------------------------------------------------
-> This pull request enables recent new drivers for the Raspberry Pi, including
-> the networking on the Pi 3 B+.
+>   arm64: defconfig: Enable LAN and BT support for RPi 3 B+ (2018-04-23 13:28:33 -0700)
 > 
 > ----------------------------------------------------------------
-> Stefan Wahren (3):
->       ARM: bcm2835_defconfig: Enable LAN78XX driver
->       ARM: bcm2835_defconfig: Enable VCHIQ driver
->       ARM: multi_v7_defconfig: Enable LAN and BT for RPi 3 B+
+> This pull request enables the Raspberry Pi 3 B+'s LAN and bluetooth in
+> the arm64 defconfig.
+> 
+> ----------------------------------------------------------------
+> Stefan Wahren (1):
+>       arm64: defconfig: Enable LAN and BT support for RPi 3 B+
 
-Merged into defconfig/next, thanks Eric!
--- 
+Merged into defconfig-arm64/next, thanks Eric!
 -- 
 Florian
