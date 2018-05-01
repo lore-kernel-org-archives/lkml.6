@@ -1,470 +1,182 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751631AbeEAWlO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 18:41:14 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:51600 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751007AbeEAWlL (ORCPT
+        id S1751853AbeEAWlw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 18:41:52 -0400
+Received: from mail-pf0-f181.google.com ([209.85.192.181]:45053 "EHLO
+        mail-pf0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750743AbeEAWls (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 18:41:11 -0400
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
-Cc: netdev@vger.kernel.org, kexec@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        davem@davemloft.net, viro@zeniv.linux.org.uk,
-        stephen@networkplumber.org, akpm@linux-foundation.org,
-        torvalds@linux-foundation.org, ganeshgr@chelsio.com,
-        nirranjan@chelsio.com, indranil@chelsio.com
-References: <cover.1525197407.git.rahul.lakkireddy@chelsio.com>
-        <cover.1525197407.git.rahul.lakkireddy@chelsio.com>
-        <b6065b53c5446d98ee55e09119f6821f979418d4.1525197408.git.rahul.lakkireddy@chelsio.com>
-Date: Tue, 01 May 2018 17:41:00 -0500
-In-Reply-To: <b6065b53c5446d98ee55e09119f6821f979418d4.1525197408.git.rahul.lakkireddy@chelsio.com>
-        (Rahul Lakkireddy's message of "Tue, 1 May 2018 23:57:45 +0530")
-Message-ID: <87o9hzyp6r.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Tue, 1 May 2018 18:41:48 -0400
+X-Google-Smtp-Source: AB8JxZobaDxbvR+fdAmnr/3SpXA1TwEcYMN7CxKZdCppGp0H+8sZb/Nuyis1RAEjyMK8zA8P8TpqxwzPnDPFEebvIPY=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1fDdxJ-0006uf-E0;;;mid=<87o9hzyp6r.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.174.25;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX18wKAcA1M06ONhFG3FvOCqww2SKPY3odmY=
-X-SA-Exim-Connect-IP: 97.119.174.25
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.7 XMSubLong Long Subject
-        *  1.2 LotsOfNums_01 BODY: Lots of long strings of numbers
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.1 XMSolicitRefs_0 Weightloss drug
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: *;Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 781 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 2.7 (0.3%), b_tie_ro: 1.87 (0.2%), parse: 1.22 (0.2%),
-        extract_message_metadata: 21 (2.7%), get_uri_detail_list: 7 (0.9%),
-        tests_pri_-1000: 8 (1.0%), tests_pri_-950: 1.22 (0.2%), tests_pri_-900: 1.02
-        (0.1%), tests_pri_-400: 64 (8.2%), check_bayes: 63 (8.0%), b_tokenize: 31
-        (3.9%), b_tok_get_all: 17 (2.1%), b_comp_prob: 5 (0.7%), b_tok_touch_all: 7
-        (0.9%), b_finish: 0.86 (0.1%), tests_pri_0: 671 (86.0%),
-        check_dkim_signature: 1.05 (0.1%), check_dkim_adsp: 3.0 (0.4%),
-        tests_pri_500: 7 (0.9%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH net-next v7 1/3] vmcore: add API to collect hardware dump in second kernel
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+In-Reply-To: <059b40f0-b8e2-b55f-92d5-a859ba4204a4@lwfinger.net>
+References: <CA+A7VXX+z8FrDhzW2BQ6AGMJ=_j_53wkUL_YNgkreEbWSh+jCw@mail.gmail.com>
+ <afdf0498-c0a9-936c-0c9b-1b6da6eb5957@lwfinger.net> <CA+A7VXWjWaSSUiX3h_rpFXrSwtUkynKR9tpvnsSe=DZrC+mF-Q@mail.gmail.com>
+ <059b40f0-b8e2-b55f-92d5-a859ba4204a4@lwfinger.net>
+From: =?UTF-8?Q?Jo=C3=A3o_Paulo_Rechi_Vita?= <jprvita@gmail.com>
+Date: Tue, 1 May 2018 15:41:07 -0700
+Message-ID: <CA+A7VXUUsZHD2gr9TBcV6jZBOPGZv7_vK-wWZ0MvGgiCnAiUgQ@mail.gmail.com>
+Subject: Re: RTL8723BE performance regression
+To: Larry Finger <Larry.Finger@lwfinger.net>
+Cc: Steve deRosier <derosier@gmail.com>,
+        Yan-Hsuan Chuang <yhchuang@realtek.com>,
+        Ping-Ke Shih <pkshih@realtek.com>, Birming Chiu <birming@realtek.com>,
+        Shaofu <shaofu@realtek.com>, Steven Ting <steventing@realtek.com>,
+        Chaoming Li <chaoming_li@realsil.com.cn>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, Daniel Drake <drake@endlessm.com>,
+        =?UTF-8?Q?Jo=C3=A3o_Paulo_Rechi_Vita?= <jprvita@endlessm.com>,
+        linux@endlessm.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w41MfwKI008277
 
-Rahul Lakkireddy <rahul.lakkireddy@chelsio.com> writes:
+On Tue, Apr 3, 2018 at 7:51 PM, Larry Finger <Larry.Finger@lwfinger.net> wrote:
+> On 04/03/2018 09:37 PM, João Paulo Rechi Vita wrote:
+>>
+>> On Tue, Apr 3, 2018 at 7:28 PM, Larry Finger <Larry.Finger@lwfinger.net>
+>> wrote:
+>>
+>> (...)
+>>
+>>> As the antenna selection code changes affected your first bisection, do
+>>> you
+>>> have one of those HP laptops with only one antenna and the incorrect
+>>> coding
+>>> in the FUSE?
+>>
+>>
+>> Yes, that is why I've been passing ant_sel=1 during my tests -- this
+>> was needed to achieve a good performance in the past, before this
+>> regression. I've also opened the laptop chassis and confirmed the
+>> antenna cable is plugged to the connector labeled with "1" on the
+>> card.
+>>
+>>> If so, please make sure that you still have the same signal
+>>> strength for good and bad cases. I have tried to keep the driver and the
+>>> btcoex code in sync, but there may be some combinations of antenna
+>>> configuration and FUSE contents that cause the code to fail.
+>>>
+>>
+>> What is the recommended way to monitor the signal strength?
+>
+>
+> The btcoex code is developed for multiple platforms by a different group
+> than the Linux driver. I think they made a change that caused ant_sel to
+> switch from 1 to 2. At least numerous comments at
+> github.com/lwfinger/rtlwifi_new claimed they needed to make that change.
+>
+> Mhy recommended method is to verify the wifi device name with "iw dev". Then
+> using that device
+>
+> sudo iw dev <dev_name> scan | egrep "SSID|signal"
+>
 
-> The sequence of actions done by device drivers to append their device
-> specific hardware/firmware logs to /proc/vmcore are as follows:
+I have confirmed that the performance regression is indeed tied to
+signal strength: on the good cases signal was between -16 and -8 dBm,
+whereas in bad cases signal was always between -50 to - 40 dBm. I've
+also switched to testing bandwidth in controlled LAN environment using
+iperf3, as suggested by Steve deRosier, with the DUT being the only
+machine connected to the 2.4 GHz radio and the machine running the
+iperf3 server connected via ethernet.
 
-Except for the missing include that the kbuild test robot caught
-I am not seeing a problems.
+Using those two tests (iperf3 and signal strength) I've dug deeper
+into the culprit I had found previously, commit 7937f02d1953,
+reverting it partially and testing the resulting driver, to isolate
+which change was causing the problem. Besides "hooking up external
+functions for newer ICs", as described by the commit message, that
+commit also added code to decided whether ex_btc8723b1ant_*() or
+ex_btc8723b2ant_*() functions should be used in halbtcoutsrc.c,
+depending on the value of board_info.btdm_ant_num, whereas before that
+commit ex_btc8723b2ant_*() were always used. Reverting to always using
+ex_btc8723b2ant_*() functions fixes the regression on v4.15.
 
-Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
+I've also tried to bisect between v4.15..v4.16 to find what else was
+causing problems there, as the changes mentioned above on top of v4.16
+did not solve the problem. The bisect pointed to "874e837d67d0
+rtlwifi: fill FW version and subversion", only but reverting it plus
+the changes mentioned above also didn't yield good results. That's
+when I decided to get a bit creative: starting on v4.16 I first
+applied the changes to have ex_btc8723b2ant_*() always being used, as
+mentioned above, then reverted every commit between v4.15..v4.16
+affecting drivers/net/wireless/realtek/rtlwifi/, and verified the
+resulting kernel had a good performance. Then I started trimming down
+the history and testing along the way, to reduce to the minimum set of
+changes that had to be reverted in order to restore the good
+performance. In addition to the ex_btc8723b2ant_*() changes and
+reverting "874e837d67d0 rtlwifi: fill FW version and subversion", I've
+also had to remove the following lines from
+drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c, which
+were introduced by "40d9dd4f1c5d rtlwifi: btcoex: Remove global
+variables from btcoex", in order to restore the upload performance and
+signal strength.
 
-> 1. During probe (before hardware is initialized), device drivers
-> register to the vmcore module (via vmcore_add_device_dump()), with
-> callback function, along with buffer size and log name needed for
-> firmware/hardware log collection.
->
-> 2. vmcore module allocates the buffer with requested size. It adds
-> an Elf note and invokes the device driver's registered callback
-> function.
->
-> 3. Device driver collects all hardware/firmware logs into the buffer
-> and returns control back to vmcore module.
->
-> Ensure that the device dump buffer size is always aligned to page size
-> so that it can be mmaped.
->
-> Also, rename alloc_elfnotes_buf() to vmcore_alloc_buf() to make it more
-> generic and reserve NT_VMCOREDD note type to indicate vmcore device
-> dump.
->
-> Suggested-by: Eric Biederman <ebiederm@xmission.com>.
-> Signed-off-by: Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
-> Signed-off-by: Ganesh Goudar <ganeshgr@chelsio.com>
-> ---
-> v7:
-> - Removed "CHELSIO" vendor identifier in Elf Note name. Instead,
->   writing "LINUX".
-> - Moved vmcoredd_header to new file include/uapi/linux/vmcore.h
-> - Reworked vmcoredd_header to include Elf Note as part of the header
->   itself.
-> - Removed vmcoredd_get_note_size().
-> - Renamed vmcoredd_write_note() to vmcoredd_write_header().
-> - Replaced all "unsigned long" with "unsigned int" for device dump
->   size since max size of Elf Word is u32.
->
-> v6:
-> - Reworked device dump elf note name to contain vendor identifier.
-> - Added vmcoredd_header that precedes actual dump in the Elf Note.
-> - Device dump's name is moved inside vmcoredd_header.
->
-> v5:
-> - Removed enabling CONFIG_PROC_VMCORE_DEVICE_DUMP by default and
->   updated help message to indicate that the driver must be present
->   in second kernel's initramfs to collect the underlying device
->   snapshot.
->
-> v4:
-> - Made __vmcore_add_device_dump() static.
-> - Moved compile check to define vmcore_add_device_dump() to
->   crash_dump.h to fix compilation when vmcore.c is not compiled in.
-> - Convert ---help--- to help in Kconfig as indicated by checkpatch.
-> - Rebased to tip.
->
-> v3:
-> - Dropped sysfs crashdd module.
-> - Added CONFIG_PROC_VMCORE_DEVICE_DUMP to allow configuring device
->   dump support.
-> - Moved logic related to adding dumps from crashdd to vmcore module.
-> - Rename all crashdd* to vmcoredd*.
->
-> v2:
-> - Added ABI Documentation for crashdd.
-> - Directly use octal permission instead of macro.
->
-> Changes since rfc v2:
-> - Moved exporting crashdd from procfs to sysfs.  Suggested by
->   Stephen Hemminger <stephen@networkplumber.org>
-> - Moved code from fs/proc/crashdd.c to fs/crashdd/ directory.
-> - Replaced all proc API with sysfs API and updated comments.
-> - Calling driver callback before creating the binary file under
->   crashdd sysfs.
-> - Changed binary dump file permission from S_IRUSR to S_IRUGO.
-> - Changed module name from CRASH_DRIVER_DUMP to CRASH_DEVICE_DUMP.
->
-> rfc v2:
-> - Collecting logs in 2nd kernel instead of during kernel panic.
->   Suggested by Eric Biederman <ebiederm@xmission.com>.
-> - Patch added in this series.
->
->  fs/proc/Kconfig             |  15 +++++
->  fs/proc/vmcore.c            | 140 +++++++++++++++++++++++++++++++++++++++++---
->  include/linux/crash_dump.h  |  18 ++++++
->  include/linux/kcore.h       |   6 ++
->  include/uapi/linux/elf.h    |   1 +
->  include/uapi/linux/vmcore.h |  16 +++++
->  6 files changed, 187 insertions(+), 9 deletions(-)
->  create mode 100644 include/uapi/linux/vmcore.h
->
-> diff --git a/fs/proc/Kconfig b/fs/proc/Kconfig
-> index 1ade1206bb89..0eaeb41453f5 100644
-> --- a/fs/proc/Kconfig
-> +++ b/fs/proc/Kconfig
-> @@ -43,6 +43,21 @@ config PROC_VMCORE
->          help
->          Exports the dump image of crashed kernel in ELF format.
->  
-> +config PROC_VMCORE_DEVICE_DUMP
-> +	bool "Device Hardware/Firmware Log Collection"
-> +	depends on PROC_VMCORE
-> +	default n
-> +	help
-> +	  After kernel panic, device drivers can collect the device
-> +	  specific snapshot of their hardware or firmware before the
-> +	  underlying devices are initialized in crash recovery kernel.
-> +	  Note that the device driver must be present in the crash
-> +	  recovery kernel's initramfs to collect its underlying device
-> +	  snapshot.
-> +
-> +	  If you say Y here, the collected device dumps will be added
-> +	  as ELF notes to /proc/vmcore.
-> +
->  config PROC_SYSCTL
->  	bool "Sysctl support (/proc/sys)" if EXPERT
->  	depends on PROC_FS
-> diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
-> index a45f0af22a60..60fce8dfe4e3 100644
-> --- a/fs/proc/vmcore.c
-> +++ b/fs/proc/vmcore.c
-> @@ -20,6 +20,7 @@
->  #include <linux/init.h>
->  #include <linux/crash_dump.h>
->  #include <linux/list.h>
-> +#include <linux/mutex.h>
->  #include <linux/vmalloc.h>
->  #include <linux/pagemap.h>
->  #include <linux/uaccess.h>
-> @@ -44,6 +45,12 @@ static u64 vmcore_size;
->  
->  static struct proc_dir_entry *proc_vmcore;
->  
-> +#ifdef CONFIG_PROC_VMCORE_DEVICE_DUMP
-> +/* Device Dump list and mutex to synchronize access to list */
-> +static LIST_HEAD(vmcoredd_list);
-> +static DEFINE_MUTEX(vmcoredd_mutex);
-> +#endif /* CONFIG_PROC_VMCORE_DEVICE_DUMP */
-> +
->  /*
->   * Returns > 0 for RAM pages, 0 for non-RAM pages, < 0 on error
->   * The called function has to take care of module refcounting.
-> @@ -302,10 +309,8 @@ static const struct vm_operations_struct vmcore_mmap_ops = {
->  };
->  
->  /**
-> - * alloc_elfnotes_buf - allocate buffer for ELF note segment in
-> - *                      vmalloc memory
-> - *
-> - * @notes_sz: size of buffer
-> + * vmcore_alloc_buf - allocate buffer in vmalloc memory
-> + * @sizez: size of buffer
->   *
->   * If CONFIG_MMU is defined, use vmalloc_user() to allow users to mmap
->   * the buffer to user-space by means of remap_vmalloc_range().
-> @@ -313,12 +318,12 @@ static const struct vm_operations_struct vmcore_mmap_ops = {
->   * If CONFIG_MMU is not defined, use vzalloc() since mmap_vmcore() is
->   * disabled and there's no need to allow users to mmap the buffer.
->   */
-> -static inline char *alloc_elfnotes_buf(size_t notes_sz)
-> +static inline char *vmcore_alloc_buf(size_t size)
->  {
->  #ifdef CONFIG_MMU
-> -	return vmalloc_user(notes_sz);
-> +	return vmalloc_user(size);
->  #else
-> -	return vzalloc(notes_sz);
-> +	return vzalloc(size);
->  #endif
->  }
->  
-> @@ -665,7 +670,7 @@ static int __init merge_note_headers_elf64(char *elfptr, size_t *elfsz,
->  		return rc;
->  
->  	*notes_sz = roundup(phdr_sz, PAGE_SIZE);
-> -	*notes_buf = alloc_elfnotes_buf(*notes_sz);
-> +	*notes_buf = vmcore_alloc_buf(*notes_sz);
->  	if (!*notes_buf)
->  		return -ENOMEM;
->  
-> @@ -851,7 +856,7 @@ static int __init merge_note_headers_elf32(char *elfptr, size_t *elfsz,
->  		return rc;
->  
->  	*notes_sz = roundup(phdr_sz, PAGE_SIZE);
-> -	*notes_buf = alloc_elfnotes_buf(*notes_sz);
-> +	*notes_buf = vmcore_alloc_buf(*notes_sz);
->  	if (!*notes_buf)
->  		return -ENOMEM;
->  
-> @@ -1145,6 +1150,120 @@ static int __init parse_crash_elf_headers(void)
->  	return 0;
->  }
->  
-> +#ifdef CONFIG_PROC_VMCORE_DEVICE_DUMP
-> +/**
-> + * vmcoredd_write_header - Write vmcore device dump header at the
-> + * beginning of the dump's buffer.
-> + * @buf: Output buffer where the note is written
-> + * @data: Dump info
-> + * @size: Size of the dump
-> + *
-> + * Fills beginning of the dump's buffer with vmcore device dump header.
-> + */
-> +static void vmcoredd_write_header(void *buf, struct vmcoredd_data *data,
-> +				  u32 size)
-> +{
-> +	struct vmcoredd_header *vdd_hdr = (struct vmcoredd_header *)buf;
-> +
-> +	vdd_hdr->n_namesz = sizeof(vdd_hdr->name);
-> +	vdd_hdr->n_descsz = size + sizeof(vdd_hdr->dump_name);
-> +	vdd_hdr->n_type = NT_VMCOREDD;
-> +
-> +	strncpy((char *)vdd_hdr->name, VMCOREDD_NOTE_NAME,
-> +		sizeof(vdd_hdr->name));
-> +	memcpy(vdd_hdr->dump_name, data->dump_name, sizeof(vdd_hdr->dump_name));
-> +}
-> +
-> +/**
-> + * vmcore_add_device_dump - Add a buffer containing device dump to vmcore
-> + * @data: dump info.
-> + *
-> + * Allocate a buffer and invoke the calling driver's dump collect routine.
-> + * Write Elf note at the beginning of the buffer to indicate vmcore device
-> + * dump and add the dump to global list.
-> + */
-> +static int __vmcore_add_device_dump(struct vmcoredd_data *data)
-> +{
-> +	struct vmcoredd_node *dump;
-> +	void *buf = NULL;
-> +	size_t data_size;
-> +	int ret;
-> +
-> +	if (!data || !strlen(data->dump_name) ||
-> +	    !data->vmcoredd_callback || !data->size)
-> +		return -EINVAL;
-> +
-> +	dump = vzalloc(sizeof(*dump));
-> +	if (!dump) {
-> +		ret = -ENOMEM;
-> +		goto out_err;
-> +	}
-> +
-> +	/* Keep size of the buffer page aligned so that it can be mmaped */
-> +	data_size = roundup(sizeof(struct vmcoredd_header) + data->size,
-> +			    PAGE_SIZE);
-> +
-> +	/* Allocate buffer for driver's to write their dumps */
-> +	buf = vmcore_alloc_buf(data_size);
-> +	if (!buf) {
-> +		ret = -ENOMEM;
-> +		goto out_err;
-> +	}
-> +
-> +	vmcoredd_write_header(buf, data, data_size -
-> +			      sizeof(struct vmcoredd_header));
-> +
-> +	/* Invoke the driver's dump collection routing */
-> +	ret = data->vmcoredd_callback(data, buf +
-> +				      sizeof(struct vmcoredd_header));
-> +	if (ret)
-> +		goto out_err;
-> +
-> +	dump->buf = buf;
-> +	dump->size = data_size;
-> +
-> +	/* Add the dump to driver sysfs list */
-> +	mutex_lock(&vmcoredd_mutex);
-> +	list_add_tail(&dump->list, &vmcoredd_list);
-> +	mutex_unlock(&vmcoredd_mutex);
-> +
-> +	return 0;
-> +
-> +out_err:
-> +	if (buf)
-> +		vfree(buf);
-> +
-> +	if (dump)
-> +		vfree(dump);
-> +
-> +	return ret;
-> +}
-> +
-> +int vmcore_add_device_dump(struct vmcoredd_data *data)
-> +{
-> +	return __vmcore_add_device_dump(data);
-> +}
-> +EXPORT_SYMBOL(vmcore_add_device_dump);
-> +#endif /* CONFIG_PROC_VMCORE_DEVICE_DUMP */
-> +
-> +/* Free all dumps in vmcore device dump list */
-> +static void vmcore_free_device_dumps(void)
-> +{
-> +#ifdef CONFIG_PROC_VMCORE_DEVICE_DUMP
-> +	mutex_lock(&vmcoredd_mutex);
-> +	while (!list_empty(&vmcoredd_list)) {
-> +		struct vmcoredd_node *dump;
-> +
-> +		dump = list_first_entry(&vmcoredd_list, struct vmcoredd_node,
-> +					list);
-> +		list_del(&dump->list);
-> +		vfree(dump->buf);
-> +		vfree(dump);
-> +	}
-> +	mutex_unlock(&vmcoredd_mutex);
-> +#endif /* CONFIG_PROC_VMCORE_DEVICE_DUMP */
-> +}
-> +
->  /* Init function for vmcore module. */
->  static int __init vmcore_init(void)
->  {
-> @@ -1192,4 +1311,7 @@ void vmcore_cleanup(void)
->  		kfree(m);
->  	}
->  	free_elfcorebuf();
-> +
-> +	/* clear vmcore device dump list */
-> +	vmcore_free_device_dumps();
->  }
-> diff --git a/include/linux/crash_dump.h b/include/linux/crash_dump.h
-> index f7ac2aa93269..3e4ba9d753c8 100644
-> --- a/include/linux/crash_dump.h
-> +++ b/include/linux/crash_dump.h
-> @@ -5,6 +5,7 @@
->  #include <linux/kexec.h>
->  #include <linux/proc_fs.h>
->  #include <linux/elf.h>
-> +#include <uapi/linux/vmcore.h>
->  
->  #include <asm/pgtable.h> /* for pgprot_t */
->  
-> @@ -93,4 +94,21 @@ static inline bool is_kdump_kernel(void) { return 0; }
->  #endif /* CONFIG_CRASH_DUMP */
->  
->  extern unsigned long saved_max_pfn;
-> +
-> +/* Device Dump information to be filled by drivers */
-> +struct vmcoredd_data {
-> +	char dump_name[VMCOREDD_MAX_NAME_BYTES]; /* Unique name of the dump */
-> +	unsigned int size;                       /* Size of the dump */
-> +	/* Driver's registered callback to be invoked to collect dump */
-> +	int (*vmcoredd_callback)(struct vmcoredd_data *data, void *buf);
-> +};
-> +
-> +#ifdef CONFIG_PROC_VMCORE_DEVICE_DUMP
-> +int vmcore_add_device_dump(struct vmcoredd_data *data);
-> +#else
-> +static inline int vmcore_add_device_dump(struct vmcoredd_data *data)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +#endif /* CONFIG_PROC_VMCORE_DEVICE_DUMP */
->  #endif /* LINUX_CRASHDUMP_H */
-> diff --git a/include/linux/kcore.h b/include/linux/kcore.h
-> index 80db19d3a505..8de55e4b5ee9 100644
-> --- a/include/linux/kcore.h
-> +++ b/include/linux/kcore.h
-> @@ -28,6 +28,12 @@ struct vmcore {
->  	loff_t offset;
->  };
->  
-> +struct vmcoredd_node {
-> +	struct list_head list;	/* List of dumps */
-> +	void *buf;		/* Buffer containing device's dump */
-> +	unsigned int size;	/* Size of the buffer */
-> +};
-> +
->  #ifdef CONFIG_PROC_KCORE
->  extern void kclist_add(struct kcore_list *, void *, size_t, int type);
->  #else
-> diff --git a/include/uapi/linux/elf.h b/include/uapi/linux/elf.h
-> index e2535d6dcec7..4e12c423b9fe 100644
-> --- a/include/uapi/linux/elf.h
-> +++ b/include/uapi/linux/elf.h
-> @@ -421,6 +421,7 @@ typedef struct elf64_shdr {
->  #define NT_ARM_SYSTEM_CALL	0x404	/* ARM system call number */
->  #define NT_ARM_SVE	0x405		/* ARM Scalable Vector Extension registers */
->  #define NT_ARC_V2	0x600		/* ARCv2 accumulator/extra registers */
-> +#define NT_VMCOREDD	0x700		/* Vmcore Device Dump Note */
->  
->  /* Note header in a PT_NOTE section */
->  typedef struct elf32_note {
-> diff --git a/include/uapi/linux/vmcore.h b/include/uapi/linux/vmcore.h
-> new file mode 100644
-> index 000000000000..f9eab9a37370
-> --- /dev/null
-> +++ b/include/uapi/linux/vmcore.h
-> @@ -0,0 +1,16 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef _UAPI_VMCORE_H
-> +#define _UAPI_VMCORE_H
-> +
-> +#define VMCOREDD_NOTE_NAME "LINUX"
-> +#define VMCOREDD_MAX_NAME_BYTES 44
-> +
-> +struct vmcoredd_header {
-> +	__u32 n_namesz; /* Name size */
-> +	__u32 n_descsz; /* Content size */
-> +	__u32 n_type;   /* NT_VMCOREDD */
-> +	__u8 name[8];   /* LINUX\0\0\0 */
-> +	__u8 dump_name[VMCOREDD_MAX_NAME_BYTES]; /* Device dump's name */
-> +};
-> +
-> +#endif /* _UAPI_VMCORE_H */
+        /* set default antenna position to main  port */
+        btcoexist->board_info.btdm_ant_pos = BTC_ANTENNA_AT_MAIN_PORT;
+
+These are the results I've got on v4.16 (similarly on
+wireless-drivers-next-for-davem-2018-03-29 or v4.15):
+
+     $ sudo iw dev wlp2s0 scan | grep -B3 JJ | grep signal
+            signal: -42.00 dBm
+     $ iperf3 -c 192.168.1.254
+     Connecting to host 192.168.1.254, port 5201
+     [  4] local 192.168.1.253 port 39678 connected to 192.168.1.254 port 5201
+     [ ID] Interval           Transfer     Bandwidth       Retr  Cwnd
+     [  4]   0.00-1.00   sec   735 KBytes  6.02 Mbits/sec    1   1.41 KBytes
+     [  4]   1.00-2.00   sec   274 KBytes  2.25 Mbits/sec    1   1.41 KBytes
+     [  4]   2.00-3.00   sec  0.00 Bytes  0.00 bits/sec    0   1.41 KBytes
+     [  4]   3.00-4.00   sec  0.00 Bytes  0.00 bits/sec    0   1.41 KBytes
+     [  4]   4.00-5.00   sec  0.00 Bytes  0.00 bits/sec    1   28.3 KBytes
+     [  4]   5.00-6.00   sec   423 KBytes  3.47 Mbits/sec    3   41.0 KBytes
+     [  4]   6.00-7.00   sec   840 KBytes  6.88 Mbits/sec    0   58.0 KBytes
+     [  4]   7.00-8.00   sec   830 KBytes  6.79 Mbits/sec    1   1.41 KBytes
+     [  4]   8.00-9.00   sec  0.00 Bytes  0.00 bits/sec    0   1.41 KBytes
+     [  4]   9.00-10.00  sec  0.00 Bytes  0.00 bits/sec    0   1.41 KBytes
+     - - - - - - - - - - - - - - - - - - - - - - - - -
+     [ ID] Interval           Transfer     Bandwidth       Retr
+     [  4]   0.00-10.00  sec  3.03 MBytes  2.54 Mbits/sec    7
+    sender
+     [  4]   0.00-10.00  sec  2.88 MBytes  2.41 Mbits/sec
+    receiver
+
+     iperf Done.
+
+And these are the results on v4.16 with all the changes mentioned on
+the previous paragraph, and similar results were obtained when
+applying the same changes on the current wireless-drivers-next master
+branch (f56324baf329):
+
+     $ sudo iw dev wlp2s0 scan | grep -B3 JJ | grep signal
+            signal: -14.00 dBm
+     $ iperf3 -c 192.168.1.254
+     Connecting to host 192.168.1.254, port 5201
+     [  4] local 192.168.1.253 port 59380 connected to 192.168.1.254 port 5201
+     [ ID] Interval           Transfer     Bandwidth       Retr  Cwnd
+     [  4]   0.00-1.00   sec  4.63 MBytes  38.8 Mbits/sec    0    194 KBytes
+     [  4]   1.00-2.00   sec  4.58 MBytes  38.4 Mbits/sec    0    273 KBytes
+     [  4]   2.00-3.00   sec  5.05 MBytes  42.3 Mbits/sec    0    332 KBytes
+     [  4]   3.00-4.00   sec  4.98 MBytes  41.8 Mbits/sec    0    393 KBytes
+     [  4]   4.00-5.00   sec  4.76 MBytes  39.9 Mbits/sec    0    434 KBytes
+     [  4]   5.00-6.00   sec  4.85 MBytes  40.7 Mbits/sec    0    434 KBytes
+     [  4]   6.00-7.00   sec  3.96 MBytes  33.2 Mbits/sec    0    464 KBytes
+     [  4]   7.00-8.00   sec  4.74 MBytes  39.8 Mbits/sec    0    481 KBytes
+     [  4]   8.00-9.00   sec  4.22 MBytes  35.4 Mbits/sec    0    508 KBytes
+     [  4]   9.00-10.00  sec  4.09 MBytes  34.3 Mbits/sec    0    564 KBytes
+     - - - - - - - - - - - - - - - - - - - - - - - - -
+     [ ID] Interval           Transfer     Bandwidth       Retr
+     [  4]   0.00-10.00  sec  45.9 MBytes  38.5 Mbits/sec    0
+    sender
+     [  4]   0.00-10.00  sec  45.0 MBytes  37.7 Mbits/sec
+    receiver
+
+     iperf Done.
+
+I'll send an RFC patchset with the changes that I mentioned above.
+Please advise whether those changes themselves should be merged, or if
+you suggest a different approach.
