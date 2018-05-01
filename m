@@ -1,63 +1,176 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751307AbeEAVdb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 17:33:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35218 "EHLO mail.kernel.org"
+        id S1751401AbeEAVfM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 17:35:12 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43545 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750743AbeEAVd3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 17:33:29 -0400
-X-Google-Smtp-Source: AB8JxZp9bWUncSBBgLJs9HPUNKj070iM2XEDAh2zT5p+o88m+OscZ1ipGGamHg8A1fMMTHqIPWUGa2s6uHRrDY26FQ4=
+        id S1751079AbeEAVfL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 17:35:11 -0400
+From: NeilBrown <neilb@suse.com>
+To: paulmck@linux.vnet.ibm.com
+Date: Wed, 02 May 2018 07:34:56 +1000
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Trond Myklebust <trond.myklebust@primarydata.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>, linux-nfs@vger.kernel.org,
+        Lai Jiangshan <jiangshanlai@gmail.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/4 v2] rculist: add list_for_each_entry_from_rcu()
+In-Reply-To: <20180501141404.GD26088@linux.vnet.ibm.com>
+References: <152506256513.7246.13171564155614823841.stgit@noble> <152506269061.7246.13075216914692813995.stgit@noble> <20180430052032.GA16963@localhost> <20180430134308.GT26088@linux.vnet.ibm.com> <20180430111454.722c2aa8@gandalf.local.home> <20180430153505.GW26088@linux.vnet.ibm.com> <87y3h4gjdq.fsf@notabene.neil.brown.name> <20180501141404.GD26088@linux.vnet.ibm.com>
+Message-ID: <87vac7giv3.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-In-Reply-To: <20180501205713.GA130399@dtor-ws>
-References: <20180410095340.24074-1-javierm@redhat.com> <20180501184853.GB52077@dtor-ws>
- <CAL_JsqJ-UTGrPm2tiS1yVFweWB_LH2JSBpOpMtogTYFi7pCsGA@mail.gmail.com> <20180501205713.GA130399@dtor-ws>
-From: Rob Herring <robh+dt@kernel.org>
-Date: Tue, 1 May 2018 16:33:07 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqKs7Jb0yCM+mUHwqRfrhzCPar1rHq4J+cCyxne=rVoV3g@mail.gmail.com>
-Message-ID: <CAL_JsqKs7Jb0yCM+mUHwqRfrhzCPar1rHq4J+cCyxne=rVoV3g@mail.gmail.com>
-Subject: Re: [PATCH v2] Input: atmel_mxt_ts - add missing compatible strings
- to OF device table
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Javier Martinez Canillas <javierm@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-input@vger.kernel.org,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Nick Dyer <nick@shmanahar.org>, Mark Rutland <mark.rutland@arm.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 1, 2018 at 3:57 PM, Dmitry Torokhov
-<dmitry.torokhov@gmail.com> wrote:
-> From: Javier Martinez Canillas <javierm@redhat.com>
->
-> Commit af503716ac14 ("i2c: core: report OF style module alias for devices
-> registered via OF") fixed how the I2C core reports the module alias when
-> devices are registered via OF.
->
-> But the atmel_mxt_ts driver only has an "atmel,maxtouch" compatible in its
-> OF device ID table, so if a Device Tree is using a different one, autoload
-> won't be working for the module (the matching works because the I2C device
-> ID table is used as a fallback).
->
-> So add compatible strings for each of the entries in the I2C device table.
->
-> Fixes: af503716ac14 ("i2c: core: report OF style module alias for devices registered via OF")
-> Reported-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
-> Tested-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> [dtor: document which compatibles are deprecated and should not be used]
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> ---
->  .../devicetree/bindings/input/atmel,maxtouch.txt   |    7 +++++++
->  drivers/input/touchscreen/atmel_mxt_ts.c           |    5 +++++
->  2 files changed, 12 insertions(+)
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+On Tue, May 01 2018, Paul E. McKenney wrote:
 
-Someone is going to make the dts updates, right?
+> On Tue, May 01, 2018 at 01:11:29PM +1000, NeilBrown wrote:
+>>=20
+>> list_for_each_entry_from_rcu() is an RCU version of
+>> list_for_each_entry_from().  It walks a linked list under rcu
+>> protection, from a given start point.
+>>=20
+>> It is similar to list_for_each_entry_continue_rcu() but starts *at*
+>> the given position rather than *after* it.
+>>=20
+>> Naturally, the start point must be known to be in the list.
+>>=20
+>> Also update the documentation for list_for_each_entry_continue_rcu()
+>> to match the documentation for the new list_for_each_entry_from_rcu(),
+>> and add list_for_each_entry_from_rcu() and the already existing
+>> hlist_for_each_entry_from_rcu() to section 7 of whatisRCU.txt.
+>>=20
+>> Signed-off-by: NeilBrown <neilb@suse.com>
+>
+> I am guessing that it would be more convenient for you to carry this
+> with the patches using it, so:
+>
+> Reviewed-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+
+Thanks Paul,
+ yes I do hope this patch will go in with the other NFS patches.
+ I'll wait to see what Trond and Anna think before proceeding with
+ anything myself.
+
+Thanks a lot,
+NeilBrown
+
+
+>
+> If not, please let me know.
+>
+> 							Thanx, Paul
+>
+>> ---
+>>  Documentation/RCU/whatisRCU.txt |  2 ++
+>>  include/linux/rculist.h         | 32 +++++++++++++++++++++++++++++++-
+>>  2 files changed, 33 insertions(+), 1 deletion(-)
+>>=20
+>> diff --git a/Documentation/RCU/whatisRCU.txt b/Documentation/RCU/whatisR=
+CU.txt
+>> index a27fbfb0efb8..b7d38bd212d2 100644
+>> --- a/Documentation/RCU/whatisRCU.txt
+>> +++ b/Documentation/RCU/whatisRCU.txt
+>> @@ -814,11 +814,13 @@ RCU list traversal:
+>>  	list_next_rcu
+>>  	list_for_each_entry_rcu
+>>  	list_for_each_entry_continue_rcu
+>> +	list_for_each_entry_from_rcu
+>>  	hlist_first_rcu
+>>  	hlist_next_rcu
+>>  	hlist_pprev_rcu
+>>  	hlist_for_each_entry_rcu
+>>  	hlist_for_each_entry_rcu_bh
+>> +	hlist_for_each_entry_from_rcu
+>>  	hlist_for_each_entry_continue_rcu
+>>  	hlist_for_each_entry_continue_rcu_bh
+>>  	hlist_nulls_first_rcu
+>> diff --git a/include/linux/rculist.h b/include/linux/rculist.h
+>> index 127f534fec94..4786c2235b98 100644
+>> --- a/include/linux/rculist.h
+>> +++ b/include/linux/rculist.h
+>> @@ -396,13 +396,43 @@ static inline void list_splice_tail_init_rcu(struc=
+t list_head *list,
+>>   * @member:	the name of the list_head within the struct.
+>>   *
+>>   * Continue to iterate over list of given type, continuing after
+>> - * the current position.
+>> + * the current position which must have been in the list when the RCU r=
+ead
+>> + * lock was taken.
+>> + * This would typically require either that you obtained the node from a
+>> + * previous walk of the list in the same RCU read-side critical section=
+, or
+>> + * that you held some sort of non-RCU reference (such as a reference co=
+unt)
+>> + * to keep the node alive *and* in the list.
+>> + *
+>> + * This iterator is similar to list_for_each_entry_from_rcu() except
+>> + * this starts after the given position and that one starts at the given
+>> + * position.
+>>   */
+>>  #define list_for_each_entry_continue_rcu(pos, head, member) 		\
+>>  	for (pos =3D list_entry_rcu(pos->member.next, typeof(*pos), member); \
+>>  	     &pos->member !=3D (head);	\
+>>  	     pos =3D list_entry_rcu(pos->member.next, typeof(*pos), member))
+>>=20=20
+>> +/**
+>> + * list_for_each_entry_from_rcu - iterate over a list from current point
+>> + * @pos:	the type * to use as a loop cursor.
+>> + * @head:	the head for your list.
+>> + * @member:	the name of the list_node within the struct.
+>> + *
+>> + * Iterate over the tail of a list starting from a given position,
+>> + * which must have been in the list when the RCU read lock was taken.
+>> + * This would typically require either that you obtained the node from a
+>> + * previous walk of the list in the same RCU read-side critical section=
+, or
+>> + * that you held some sort of non-RCU reference (such as a reference co=
+unt)
+>> + * to keep the node alive *and* in the list.
+>> + *
+>> + * This iterator is similar to list_for_each_entry_continue_rcu() except
+>> + * this starts from the given position and that one starts from the pos=
+ition
+>> + * after the given position.
+>> + */
+>> +#define list_for_each_entry_from_rcu(pos, head, member)			\
+>> +	for (; &(pos)->member !=3D (head);					\
+>> +		pos =3D list_entry_rcu(pos->member.next, typeof(*(pos)), member))
+>> +
+>>  /**
+>>   * hlist_del_rcu - deletes entry from hash list without re-initializati=
+on
+>>   * @n: the element to delete from the hash list.
+>> --=20
+>> 2.14.0.rc0.dirty
+>>=20
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlro3YAACgkQOeye3VZi
+gbn1cg/7B/lreIqWbpbNaUQLBofW0qaNYU+036XvxxEOioH0KIjJUlEGPlTQXAMf
+6+CQzRZxDv40yY9Qhplmt+7NzKlwtmE0CKX91vA7eVBPsvEj4yMb+WtUFC3g84hP
+eqZW7E6KLMIT4WutuuuBnB0C6MIGvaNyRGZkZEEBdJKvCgsOjUEIuo7rrI0Vk5pR
+YALDOvoUgacG1zO43UFKLXTJOcRDX+2Rkaa8zxEGZbkdCA2CayqqYAhKbaDKNv+S
+WZM6C5+c/NKWqwug0g8u/7pu0RuAK1j87NSRQUwwvFYbK9LybNgI2dUjTBLbN8Zu
+xdI3yEnNIvxLi4Al2LgxwgcIuNgjabl60DYDaArIfTKDsW2mQphQU7X7A89JpnAP
+pesmeaaM4BeHrP6WMl3Ntl9jhYc+qupS3vgJLdiiMPHTbtqVw8Af+I9g+ieQMft2
+j5936wSi6ES75qLAUrkWCEHSAZlPf4Uxaf8j1fjP9CdKvLGPanNz/VCAtb2ibvuf
+luprWq3JM2dT24hvZHhUSs4SvYizs3RFBdpbBH8fF5GoEC6Jg0d7i9ByVuaRKATi
+ZWMxRhsPw4hNs7DuQA4EnG91XskC9yk/b+Ri/Ma/GXTJVENDne+6Px4OqS4gsiDB
+lThL/T6+1xFKPgcPmWzX0szTt0iu0nrZ9Fwe70k0+c9OhWZx2u0=
+=UHW1
+-----END PGP SIGNATURE-----
+--=-=-=--
