@@ -1,157 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755259AbeEAN2t (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 09:28:49 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:40499 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753856AbeEAN2q (ORCPT
+        id S1755566AbeEAN3R (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 09:29:17 -0400
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:42726 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754841AbeEAN3P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 09:28:46 -0400
-X-Google-Smtp-Source: AB8JxZoCkM8GFTiSf/sKEiF37EkaptYdkUJTTNKIObZ+fikeGkqOdy96PpSG7DXlfK5bGRTNovQR5g==
-Date: Tue, 1 May 2018 08:28:44 -0500
-From: Rob Herring <robh@kernel.org>
-To: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] irqchip: Add support for Renesas RZ/N1 GPIO interrupt
- multiplexer
-Message-ID: <20180501132844.GA8298@rob-hp-laptop>
-References: <1524490386-1544-1-git-send-email-phil.edworthy@renesas.com>
+        Tue, 1 May 2018 09:29:15 -0400
+Subject: Re: [PATCH v9 01/27] clk: davinci: pll: allow dev == NULL
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
+References: <20180427001745.4116-1-david@lechnology.com>
+ <20180427001745.4116-2-david@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <7f968fd3-eb0e-37ba-9f2d-2b948640ef73@ti.com>
+Date: Tue, 1 May 2018 18:57:53 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1524490386-1544-1-git-send-email-phil.edworthy@renesas.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180427001745.4116-2-david@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 23, 2018 at 02:33:06PM +0100, Phil Edworthy wrote:
-> On RZ/N1 devices, there are 3 Synopsys DesignWare GPIO blocks each
-> configured to have 32 interrupt outputs, so we have a total of 96 GPIO
-> interrupts. All of these are passed to the GPIO IRQ Muxer, which selects
-> 8 of the GPIO interrupts to pass onto the GIC. The interrupt signals
-> aren't latched, so there is nothing to do in this driver when an interrupt
-> is received, other than tell the corresponding GPIO block.
+On Friday 27 April 2018 05:47 AM, David Lechner wrote:
+> This modifies the TI DaVinci PLL clock driver to allow for the case
+> when dev == NULL. On some (most) SoCs that use this driver, the PLL
+> clock needs to be registered during early boot because it is used
+> for clocksource/clockevent and there will be no platform device available.
 > 
-> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-> ---
->  .../interrupt-controller/renesas,rzn1-mux.txt      |  85 ++++++++++
+> Signed-off-by: David Lechner <david@lechnology.com>
 
-Please split bindings to a separate patch.
+> diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
+> index 23a24c944f1d..7c4d808b8fdb 100644
+> --- a/drivers/clk/davinci/pll.c
+> +++ b/drivers/clk/davinci/pll.c
+> @@ -111,6 +111,31 @@ struct davinci_pll_clk {
+>  #define to_davinci_pll_clk(_hw) \
+>  	container_of((_hw), struct davinci_pll_clk, hw)
+>  
+> +static inline void *_devm_kzalloc(struct device *dev, size_t size, gfp_t flags)
+> +{
+> +	if (dev)
+> +		return devm_kzalloc(dev, size, flags);
+> +
+> +	return kzalloc(size, flags);
 
->  drivers/irqchip/Kconfig                            |  10 ++
->  drivers/irqchip/Makefile                           |   1 +
->  drivers/irqchip/irq-rzn1-irq-mux.c                 | 178 +++++++++++++++++++++
->  4 files changed, 274 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/renesas,rzn1-mux.txt
->  create mode 100644 drivers/irqchip/irq-rzn1-irq-mux.c
-> 
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/renesas,rzn1-mux.txt b/Documentation/devicetree/bindings/interrupt-controller/renesas,rzn1-mux.txt
+I would shift to using kzalloc() only. The utility of devm_kzalloc() is
+gone if you cannot always rely on it since you have to handle the free
+for the other case. Same thing for other devres APIs below.
+
+> +}
+> +
+> +static inline void *_devm_kmalloc_array(struct device *dev, size_t n,
+> +					size_t size, gfp_t flags)
+> +{
+> +	if (dev)
+> +		return devm_kmalloc_array(dev, n, size, flags);
+> +
+> +	return kmalloc_array(n, size, flags);
+> +}
+> +
+> +static inline struct clk *_devm_clk_register(struct device *dev, struct clk_hw *hw)
+> +{
+> +	if (dev)
+> +		return devm_clk_register(dev, hw);
+> +
+> +	return clk_register(NULL, hw);
+> +}
+> +
+
+
+> diff --git a/drivers/clk/davinci/pll.h b/drivers/clk/davinci/pll.h
+> index b1b6fb23f972..92a0978a7d29 100644
+> --- a/drivers/clk/davinci/pll.h
+> +++ b/drivers/clk/davinci/pll.h
+> @@ -11,6 +11,7 @@
+>  #include <linux/bitops.h>
+>  #include <linux/clk-provider.h>
+>  #include <linux/of.h>
+> +#include <linux/regmap.h>
+>  #include <linux/types.h>
+>  
+>  #define PLL_HAS_CLKMODE			BIT(0) /* PLL has PLLCTL[CLKMODE] */
+> @@ -94,7 +95,8 @@ struct davinci_pll_obsclk_info {
+>  struct clk *davinci_pll_clk_register(struct device *dev,
+>  				     const struct davinci_pll_clk_info *info,
+>  				     const char *parent_name,
+> -				     void __iomem *base);
+> +				     void __iomem *base,
+> +				     struct regmap *cfgchip);
+>  struct clk *davinci_pll_auxclk_register(struct device *dev,
+>  					const char *name,
+>  					void __iomem *base);
+> @@ -110,32 +112,33 @@ davinci_pll_sysclk_register(struct device *dev,
+>  			    const struct davinci_pll_sysclk_info *info,
+>  			    void __iomem *base);
+>  
+> -int of_davinci_pll_init(struct device *dev,
+> +int of_davinci_pll_init(struct device *dev, struct device_node *node,
+>  			const struct davinci_pll_clk_info *info,
+>  			const struct davinci_pll_obsclk_info *obsclk_info,
+>  			const struct davinci_pll_sysclk_info **div_info,
+>  			u8 max_sysclk_id,
+> -			void __iomem *base);
+> +			void __iomem *base,
+> +			struct regmap *cfgchip);
+>  
+>  /* Platform-specific callbacks */
+>  
+> -int da830_pll_init(struct device *dev, void __iomem *base);
+> +int da830_pll_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
+>  
+> -int da850_pll0_init(struct device *dev, void __iomem *base);
+> -int da850_pll1_init(struct device *dev, void __iomem *base);
+> -int of_da850_pll0_init(struct device *dev, void __iomem *base);
+> -int of_da850_pll1_init(struct device *dev, void __iomem *base);
+> +int da850_pll0_init(struct device *dev, void __iomem *base, struct regmap *cfgchip);
+
+Having this declared both here and in include/linux/clk/davinci.h is
+strange. Can we include that file directly where its needed?
+
+> diff --git a/include/linux/clk/davinci.h b/include/linux/clk/davinci.h
 > new file mode 100644
-> index 0000000..f28a365
+> index 000000000000..1298cca509ac
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,rzn1-mux.txt
-> @@ -0,0 +1,85 @@
-> +* Renesas RZ/N1 GPIO Interrupt Multiplexer
-> +
-> +On Renesas RZ/N1 devices, there are 3 Synopsys DesignWare GPIO blocks each
-> +configured to have 32 interrupt outputs, so we have a total of 96 GPIO
-> +interrupts. All of these are passed to the GPIO IRQ Muxer, which selects
-> +8 of the GPIO interrupts to pass onto the GIC.
-> +
-> +A single node in the device tree is used to describe the GPIO IRQ Muxer.
-> +
-> +Required properties:
-> +- compatible: the SoC specific name, i.e. "renesas,r9a06g032-gpioirq"
-> +   or "renesas,r9a06g033-gpioirq" followed by the SoC family name, i.e.
-> +   "renesas,rzn1-gpioirq".
-> +- interrupt-controller: Identifies the node as an interrupt controller.
-> +- #interrupt-cells: should be <1>. The meaning of the cells is the input
-> +   interrupt index, 0 to 95.
-> +- reg: Base address and size of GPIO IRQ Muxer registers.
-> +- interrupts: The list of interrupts generated by the muxer which are then
-> +   connected to a parent interrupt controller. The format of the interrupt
-> +   specifier depends in the interrupt parent controller.
-> +- gpioirq-#N: One property for each interrupt output from the GPIO IRQ Muxer
-> +   that specifies the input interrupt to use, #N is from 0 to 7.
+> +++ b/include/linux/clk/davinci.h
+> @@ -0,0 +1,24 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Clock driver for TI Davinci PSC controllers
 
-Why do you need this in DT? Can't the driver handle this dynamically? 
-When you request an interrupt on a GPIO line, then connect that GPIO 
-line to a free IRQ line. 
+PSC/PLL controllers.
 
-If you really need this in DT, then interrupt-map can be used here.
-
-> +
-> +Optional properties:
-> +- interrupt-parent: pHandle of the parent interrupt controller, if not
-> +   inherited from the parent node.
-> +
-> +
-> +Example:
-> +
-> +	The following is an example for the RZ/N1D SoC.
-> +
-> +	gpioirq: gpioirq@51000480 {
-> +		compatible = "renesas,r9a06g032-gpioirq",
-> +				"renesas,rzn1-gpioirq";
-> +		reg = <0x51000480 0x20>;
-> +		interrupts =
-> +			<GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
-> +			<GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>,
-> +			<GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>,
-> +			<GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>,
-> +			<GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>,
-> +			<GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>,
-> +			<GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>,
-> +			<GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
-> +		interrupt-controller;
-> +		#interrupt-cells = <1>;
-> +		status = "disabled";
-
-Don't show status in examples.
-
-> +	};
-> +
-> +	gpio0: gpio@5000b000 {
-> +		compatible = "snps,dw-apb-gpio";
-> +		reg = <0x5000b000 0x80>;
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		clock-names = "bus";
-> +		clocks = <&hclk_gpio0>;
-> +		status = "disabled";
-> +
-> +		gpio0a: gpio-controller@0 {
-> +			compatible = "snps,dw-apb-gpio-port";
-> +			bank-name = "gpio0a";
-> +			gpio-controller;
-> +			#gpio-cells = <2>;
-> +			snps,nr-gpios = <32>;
-> +			reg = <0>;
-> +
-> +			interrupt-controller;
-> +			interrupt-parent = <&gpioirq>;
-> +			interrupts =   < 0  1  2  3  4  5  6  7
-> +					 8  9 10 11 12 13 14 15
-> +					16 17 18 19 20 21 22 23
-> +					24 25 26 27 28 29 30 31 >;
-> +			#interrupt-cells = <2>;
-> +		};
-> +	};
-> +
-> +
-> +	The following is an example for a board using this.
-
-Don't show the soc/board split. This is convention, but not part of the 
-binding.
-
-> +
-> +	&gpioirq {
-> +		status = "okay";
-> +		gpioirq-0 = <24>;	/* gpio0a 24 */
-> +		gpioirq-4 = <3>;	/* gpio0a 3 */
-> +	};
+Thanks,
+Sekhar
