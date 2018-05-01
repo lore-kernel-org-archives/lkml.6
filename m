@@ -1,17 +1,17 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751501AbeEAUzX (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 16:55:23 -0400
-Received: from mga11.intel.com ([192.55.52.93]:58112 "EHLO mga11.intel.com"
+        id S1751522AbeEAUz3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 16:55:29 -0400
+Received: from mga17.intel.com ([192.55.52.151]:38485 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751050AbeEAUzV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 16:55:21 -0400
+        id S1751050AbeEAUz0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 16:55:26 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,352,1520924400";
-   d="scan'208";a="37644285"
-Subject: [PATCH 3/6] x86, memcpy_mcsafe: add write-protection-fault handling
+   d="scan'208";a="195917648"
+Subject: [PATCH 4/6] x86, memcpy_mcsafe: define copy_to_iter_mcsafe()
 From: Dan Williams <dan.j.williams@intel.com>
 To: linux-nvdimm@lists.01.org
 Cc: x86@kernel.org, Ingo Molnar <mingo@redhat.com>,
@@ -23,8 +23,8 @@ Cc: x86@kernel.org, Ingo Molnar <mingo@redhat.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-kernel@vger.kernel.org, tony.luck@intel.com
-Date: Tue, 01 May 2018 13:45:24 -0700
-Message-ID: <152520752472.36522.6229986239583637697.stgit@dwillia2-desk3.amr.corp.intel.com>
+Date: Tue, 01 May 2018 13:45:29 -0700
+Message-ID: <152520752986.36522.6608981678390805141.stgit@dwillia2-desk3.amr.corp.intel.com>
 In-Reply-To: <152520750404.36522.15462513519590065300.stgit@dwillia2-desk3.amr.corp.intel.com>
 References: <152520750404.36522.15462513519590065300.stgit@dwillia2-desk3.amr.corp.intel.com>
 User-Agent: StGit/0.18-2-gc94f
@@ -35,17 +35,10 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation for using memcpy_mcsafe() to handle user copies it needs
-to be to handle write-protection faults while writing user pages. Add
-MMU-fault handlers alongside the machine-check exception handlers.
-
-Note that the machine check fault exception handling makes assumptions
-about source buffer alignment and poison alignment. In the write fault
-case, given the destination buffer is arbitrarily aligned, it needs a
-separate / additional fault handling approach. The mcsafe_handle_tail()
-helper is reused. The @limit argument is set to @len since there is no
-safety concern about retriggering an MMU fault, and this simplifies the
-assembly.
+Use the updated memcpy_mcsafe() implementation to define
+copy_user_mcsafe() and copy_to_iter_mcsafe(). The most significant
+difference from typical copy_to_iter() is that the ITER_KVEC and
+ITER_BVEC iterator types can fail to complete a full transfer.
 
 Cc: <x86@kernel.org>
 Cc: Ingo Molnar <mingo@redhat.com>
@@ -57,46 +50,144 @@ Cc: Andy Lutomirski <luto@amacapital.net>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Co-developed-by: Tony Luck <tony.luck@intel.com>
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
- arch/x86/lib/memcpy_64.S |   21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ arch/x86/include/asm/uaccess_64.h |   11 +++++++
+ include/linux/uio.h               |   10 ++++++
+ lib/iov_iter.c                    |   59 +++++++++++++++++++++++++++++++++++++
+ 3 files changed, 80 insertions(+)
 
-diff --git a/arch/x86/lib/memcpy_64.S b/arch/x86/lib/memcpy_64.S
-index 97b772fcf62f..fc9c1f594c71 100644
---- a/arch/x86/lib/memcpy_64.S
-+++ b/arch/x86/lib/memcpy_64.S
-@@ -345,6 +345,16 @@ EXPORT_SYMBOL_GPL(memcpy_mcsafe_unrolled)
- 	mov	%ecx, %eax
- 	ret
+diff --git a/arch/x86/include/asm/uaccess_64.h b/arch/x86/include/asm/uaccess_64.h
+index c064a77e8fcb..e0e2cbdf3e2b 100644
+--- a/arch/x86/include/asm/uaccess_64.h
++++ b/arch/x86/include/asm/uaccess_64.h
+@@ -47,6 +47,17 @@ copy_user_generic(void *to, const void *from, unsigned len)
+ }
  
-+.E_write_cache_X:
-+	shll	$6, %ecx
-+	jmp	.E_handle_tail
-+.E_write_trailing_words:
-+	shll	$3, %ecx
-+.E_handle_tail:
-+	addl	%edx, %ecx
-+	movl	%ecx, %edx
-+	jmp mcsafe_handle_tail
+ static __always_inline __must_check unsigned long
++copy_to_user_mcsafe(void *to, const void *from, unsigned len)
++{
++	unsigned long ret;
 +
- 	.previous
++	__uaccess_begin();
++	ret = memcpy_mcsafe(to, from, len);
++	__uaccess_end();
++	return ret;
++}
++
++static __always_inline __must_check unsigned long
+ raw_copy_from_user(void *dst, const void __user *src, unsigned long size)
+ {
+ 	int ret = 0;
+diff --git a/include/linux/uio.h b/include/linux/uio.h
+index e67e12adb136..0f9923321983 100644
+--- a/include/linux/uio.h
++++ b/include/linux/uio.h
+@@ -92,6 +92,7 @@ size_t copy_page_from_iter(struct page *page, size_t offset, size_t bytes,
+ 			 struct iov_iter *i);
  
- 	_ASM_EXTABLE_FAULT(.L_read_leading_bytes, .E_leading_bytes)
-@@ -358,4 +368,15 @@ EXPORT_SYMBOL_GPL(memcpy_mcsafe_unrolled)
- 	_ASM_EXTABLE_FAULT(.L_cache_r7, .E_cache_7)
- 	_ASM_EXTABLE_FAULT(.L_read_trailing_words, .E_trailing_words)
- 	_ASM_EXTABLE_FAULT(.L_read_trailing_bytes, .E_trailing_bytes)
-+	_ASM_EXTABLE(.L_write_leading_bytes, .E_leading_bytes)
-+	_ASM_EXTABLE(.L_cache_w0, .E_write_cache_X)
-+	_ASM_EXTABLE(.L_cache_w1, .E_write_cache_X)
-+	_ASM_EXTABLE(.L_cache_w2, .E_write_cache_X)
-+	_ASM_EXTABLE(.L_cache_w3, .E_write_cache_X)
-+	_ASM_EXTABLE(.L_cache_w4, .E_write_cache_X)
-+	_ASM_EXTABLE(.L_cache_w5, .E_write_cache_X)
-+	_ASM_EXTABLE(.L_cache_w6, .E_write_cache_X)
-+	_ASM_EXTABLE(.L_cache_w7, .E_write_cache_X)
-+	_ASM_EXTABLE(.L_write_trailing_words, .E_write_trailing_words)
-+	_ASM_EXTABLE(.L_write_trailing_bytes, .E_trailing_bytes)
- #endif
+ size_t _copy_to_iter(const void *addr, size_t bytes, struct iov_iter *i);
++size_t _copy_to_iter_mcsafe(const void *addr, size_t bytes, struct iov_iter *i);
+ size_t _copy_from_iter(void *addr, size_t bytes, struct iov_iter *i);
+ bool _copy_from_iter_full(void *addr, size_t bytes, struct iov_iter *i);
+ size_t _copy_from_iter_nocache(void *addr, size_t bytes, struct iov_iter *i);
+@@ -107,6 +108,15 @@ size_t copy_to_iter(const void *addr, size_t bytes, struct iov_iter *i)
+ }
+ 
+ static __always_inline __must_check
++size_t copy_to_iter_mcsafe(const void *addr, size_t bytes, struct iov_iter *i)
++{
++	if (unlikely(!check_copy_size(addr, bytes, true)))
++		return 0;
++	else
++		return _copy_to_iter_mcsafe(addr, bytes, i);
++}
++
++static __always_inline __must_check
+ size_t copy_from_iter(void *addr, size_t bytes, struct iov_iter *i)
+ {
+ 	if (unlikely(!check_copy_size(addr, bytes, false)))
+diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+index 970212670b6a..e1a52c49e79c 100644
+--- a/lib/iov_iter.c
++++ b/lib/iov_iter.c
+@@ -139,6 +139,15 @@ static int copyout(void __user *to, const void *from, size_t n)
+ 	return n;
+ }
+ 
++static int copyout_mcsafe(void __user *to, const void *from, size_t n)
++{
++	if (access_ok(VERIFY_WRITE, to, n)) {
++		kasan_check_read(from, n);
++		n = copy_to_user_mcsafe((__force void *) to, from, n);
++	}
++	return n;
++}
++
+ static int copyin(void *to, const void __user *from, size_t n)
+ {
+ 	if (access_ok(VERIFY_READ, from, n)) {
+@@ -461,6 +470,19 @@ static void memcpy_to_page(struct page *page, size_t offset, const char *from, s
+ 	kunmap_atomic(to);
+ }
+ 
++static unsigned long memcpy_mcsafe_to_page(struct page *page, size_t offset,
++		const char *from, size_t len)
++{
++	unsigned long ret;
++	char *to;
++
++	to = kmap_atomic(page);
++	ret = memcpy_mcsafe(to + offset, from, len);
++	kunmap_atomic(to);
++
++	return ret;
++}
++
+ static void memzero_page(struct page *page, size_t offset, size_t len)
+ {
+ 	char *addr = kmap_atomic(page);
+@@ -573,6 +595,43 @@ size_t _copy_to_iter(const void *addr, size_t bytes, struct iov_iter *i)
+ }
+ EXPORT_SYMBOL(_copy_to_iter);
+ 
++size_t _copy_to_iter_mcsafe(const void *addr, size_t bytes, struct iov_iter *i)
++{
++	const char *from = addr;
++	unsigned long rem, curr_addr, s_addr = (unsigned long) addr;
++
++	if (unlikely(i->type & ITER_PIPE)) {
++		WARN_ON(1);
++		return 0;
++	}
++	if (iter_is_iovec(i))
++		might_fault();
++	iterate_and_advance(i, bytes, v,
++		copyout_mcsafe(v.iov_base, (from += v.iov_len) - v.iov_len, v.iov_len),
++		({
++		rem = memcpy_mcsafe_to_page(v.bv_page, v.bv_offset,
++                               (from += v.bv_len) - v.bv_len, v.bv_len);
++		if (rem) {
++			curr_addr = (unsigned long) from;
++			bytes = curr_addr - s_addr - rem;
++			return bytes;
++		}
++		}),
++		({
++		rem = memcpy_mcsafe(v.iov_base, (from += v.iov_len) - v.iov_len,
++				v.iov_len);
++		if (rem) {
++			curr_addr = (unsigned long) from;
++			bytes = curr_addr - s_addr - rem;
++			return bytes;
++		}
++		})
++	)
++
++	return bytes;
++}
++EXPORT_SYMBOL(_copy_to_iter_mcsafe);
++
+ size_t _copy_from_iter(void *addr, size_t bytes, struct iov_iter *i)
+ {
+ 	char *to = addr;
