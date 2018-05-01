@@ -1,189 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752504AbeEAHYj (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 03:24:39 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:53597 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751519AbeEAHYh (ORCPT
+        id S1752673AbeEAHjH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 03:39:07 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:34902 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751340AbeEAHjF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 03:24:37 -0400
-X-Google-Smtp-Source: AB8JxZpKelYq0raHcyxGZEw3g5wx8DJGWWKVDXREnNHqWKucJfmYg1h7tcdtvv+asKuY3x4EE5FwpQ==
-From: Eyal Reizer <eyalreizer@gmail.com>
-X-Google-Original-From: Eyal Reizer <eyalr@ti.com>
-To: bcousson@baylibre.com, tony@atomide.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Eyal Reizer <eyalr@ti.com>
-Subject: [PATCH] arm: dts: am437x-sk-evm: add wilink8 support
-Date: Tue,  1 May 2018 10:24:13 +0300
-Message-Id: <1525159453-32489-1-git-send-email-eyalr@ti.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 1 May 2018 03:39:05 -0400
+X-Google-Smtp-Source: AB8JxZp7gxDnRB/BRZz6BGdzL1izYhNsQcpQB9I+ffu0pwUUzZbLaITwTd37WEr9EHYFY76AoefLMm5W/afxks26AiE=
+MIME-Version: 1.0
+In-Reply-To: <alpine.DEB.2.21.1804302151530.1596@nanos.tec.linutronix.de>
+References: <CADDKRnBD=cgptLmDMu0YiaUThO-1ydKaAD4X3sTWfLuP5M5BEw@mail.gmail.com>
+ <alpine.DEB.2.21.1804302151530.1596@nanos.tec.linutronix.de>
+From: =?UTF-8?Q?J=C3=B6rg_Otte?= <jrg.otte@gmail.com>
+Date: Tue, 1 May 2018 09:39:04 +0200
+Message-ID: <CADDKRnAi69PFNH-hyxCTLckJ5UU6-DKWvzGNzxZZhD0sA215qg@mail.gmail.com>
+Subject: Re: [v4.17-rcx] Lost IBPB, IBRS_FW support for spectre_v2 mitigation.
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: kirill.shutemov@linux.intel.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Borislav Petkov <bp@alien8.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w417dDhv027102
 
-enable mmc3 used for wlan and uart1 used for bluetooth
-configure the gpios used for wlan and bluetooth controls
-add fixed voltage regulator used for wlan power control
+2018-04-30 21:53 GMT+02:00 Thomas Gleixner <tglx@linutronix.de>:
+> Jörg,
+>
+> On Mon, 30 Apr 2018, Jörg Otte wrote:
+>
+>> In v4.16 I already had support for BPB, IBRS_FW for spectre_v2 mitigation.
+>> But this went away in v17-rcx.
+>>
+>> With 4.16 I have:
+>> jojo@fichte:~$ cd /sys/devices/system/cpu/vulnerabilities; grep ".*" *
+>> meltdown:Mitigation: PTI
+>> spectre_v1:Mitigation: __user pointer sanitization
+>> spectre_v2:Mitigation: Full generic retpoline, IBPB, IBRS_FW
+>>
+>> With 4.17-rcx I have:
+>> meltdown:Mitigation: PTI
+>> spectre_v1:Mitigation: __user pointer sanitization
+>> spectre_v2:Mitigation: Full generic retpoline
+>>
+>> Processor is
+>> vendor_id       : GenuineIntel
+>> cpu family      : 6
+>> model           : 60
+>> model name      : Intel(R) Core(TM) i5-4200M CPU @ 2.50GHz
+>> stepping        : 3
+>> microcode       : 0x24
+>>
+>>
+>> The problem goes away if I revert:
+>> d94a155 x86/cpu: Prevent cpuinfo_x86::x86_phys_bits adjustment corruption
+>
+> Does the patch below fix the problem for you?
+>
+> Thanks,
+>
+>         tglx
+>
+> 8<------------------
+> Subject: x86/cpu: Restore CPUID_8000_0008_EBX reload
+> From: Thomas Gleixner <tglx@linutronix.de>
+> Date: Mon, 30 Apr 2018 21:47:46 +0200
+>
+> The recent commt which addresses the x86_phys_bits corruption with
+> encrypted memory on CPUID reload after a microcode update lost the reload
+> of CPUID_8000_0008_EBX as well.
+>
+> As a consequence IBRS and IBRS_FW are not longer detected
+>
+> Restore the behaviour by bringing the reload of CPUID_8000_0008_EBX back,.
+>
+> Fixes: d94a155c59c9 ("x86/cpu: Prevent cpuinfo_x86::x86_phys_bits adjustment corruption")
+> Reported-by: Jörg Otte <jrg.otte@gmail.com>
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Cc: kirill.shutemov@linux.intel.com
+> ---
+>  arch/x86/kernel/cpu/common.c |    5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> --- a/arch/x86/kernel/cpu/common.c
+> +++ b/arch/x86/kernel/cpu/common.c
+> @@ -848,6 +848,11 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
+>                 c->x86_power = edx;
+>         }
+>
+> +       if (c->extended_cpuid_level >= 0x80000008) {
+> +               cpuid(0x80000008, &eax, &ebx, &ecx, &edx);
+> +               c->x86_capability[CPUID_8000_0008_EBX] = ebx;
+> +       }
+> +
+>         if (c->extended_cpuid_level >= 0x8000000a)
+>                 c->x86_capability[CPUID_8000_000A_EDX] = cpuid_edx(0x8000000a);
+>
 
-Signed-off-by: Eyal Reizer <eyalr@ti.com>
----
- arch/arm/boot/dts/am437x-sk-evm.dts | 115 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 115 insertions(+)
+No, does not fix it.
 
-diff --git a/arch/arm/boot/dts/am437x-sk-evm.dts b/arch/arm/boot/dts/am437x-sk-evm.dts
-index 16d9db0..afffdb1 100644
---- a/arch/arm/boot/dts/am437x-sk-evm.dts
-+++ b/arch/arm/boot/dts/am437x-sk-evm.dts
-@@ -15,6 +15,7 @@
- #include <dt-bindings/pwm/pwm.h>
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/input/input.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
- 
- / {
- 	model = "TI AM437x SK EVM";
-@@ -158,6 +159,22 @@
- 			};
- 		};
- 	};
-+
-+	vmmcwl_fixed: fixedregulator-mmcwl {
-+		/*
-+		 * WL_EN is not SDIO standard compliant. It is an out of band
-+		 * signal and hard to be dealt with in a standard way by the
-+		 * SDIO core driver.
-+		 * So modelling the WL_EN line as a regulator was a natural
-+		 * choice as the MMC core already deals with MMC supplies.
-+		 */
-+		compatible = "regulator-fixed";
-+		regulator-name = "vmmcwl_fixed";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		gpio = <&gpio4 8 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
- };
- 
- &am43xx_pinmux {
-@@ -424,6 +441,62 @@
- 			AM4372_IOPAD(0xac4, PIN_OUTPUT | MUX_MODE0) /* usb0_drvvbus.usb0_drvvbus */
- 		>;
- 	};
-+
-+	mmc3_pins_default: pinmux_mmc3_pins_default {
-+		pinctrl-single,pins = <
-+			AM4372_IOPAD(0x9f0, PIN_INPUT_PULLUP | MUX_MODE3) /* (AD21) cam1_data2.mmc2_clk */
-+			AM4372_IOPAD(0x9f4, PIN_INPUT_PULLUP | MUX_MODE3) /* (AE22) cam1_data3.mmc2_cmd */
-+			AM4372_IOPAD(0x9f8, PIN_INPUT_PULLUP | MUX_MODE3) /* (AD22) cam1_data4.mmc2_dat0 */
-+			AM4372_IOPAD(0x9fc, PIN_INPUT_PULLUP | MUX_MODE3) /* (AE23) cam1_data5.mmc2_dat1 */
-+			AM4372_IOPAD(0xa00, PIN_INPUT_PULLUP | MUX_MODE3) /* (AD23) cam1_data6.mmc2_dat2 */
-+			AM4372_IOPAD(0xa04, PIN_INPUT_PULLUP | MUX_MODE3) /* (AE24) cam1_data7.mmc2_dat3 */
-+		>;
-+	};
-+
-+	mmc3_pins_sleep: pinmux_mmc3_pins_sleep {
-+		pinctrl-single,pins = <
-+			AM4372_IOPAD(0x9f0, PIN_INPUT_PULLDOWN | MUX_MODE7) /* (AD21) cam1_data2.mmc2_clk */
-+			AM4372_IOPAD(0x9f4, PIN_INPUT_PULLDOWN | MUX_MODE7) /* (AE22) cam1_data3.mmc2_cmd */
-+			AM4372_IOPAD(0x9f8, PIN_INPUT_PULLDOWN | MUX_MODE7) /* (AD22) cam1_data4.mmc2_dat0 */
-+			AM4372_IOPAD(0x9fc, PIN_INPUT_PULLDOWN | MUX_MODE7) /* (AE23) cam1_data5.mmc2_dat1 */
-+			AM4372_IOPAD(0xa00, PIN_INPUT_PULLDOWN | MUX_MODE7) /* (AD23) cam1_data6.mmc2_dat2 */
-+			AM4372_IOPAD(0xa04, PIN_INPUT_PULLDOWN | MUX_MODE7) /* (AE24) cam1_data7.mmc2_dat3 */
-+		>;
-+	};
-+
-+	wlan_pins_default: pinmux_wlan_pins_default {
-+		pinctrl-single,pins = <
-+			AM4372_IOPAD(0x9d0, PIN_OUTPUT_PULLDOWN | MUX_MODE7)		/* cam1_data8.gpio4_8 WL_EN */
-+			AM4372_IOPAD(0x9e4, PIN_INPUT | WAKEUP_ENABLE | MUX_MODE7)	/* cam1_wen.gpio4_13 WL_IRQ */
-+		>;
-+	};
-+
-+	wlan_pins_sleep: pinmux_wlan_pins_sleep {
-+		pinctrl-single,pins = <
-+			AM4372_IOPAD(0x9d0, PIN_OUTPUT_PULLDOWN | MUX_MODE7)		/* cam1_data8.gpio4_8 WL_EN */
-+			AM4372_IOPAD(0x9e4, PIN_INPUT | WAKEUP_ENABLE | MUX_MODE7)	/* cam1_wen.gpio4_13 WL_IRQ */
-+		>;
-+	};
-+
-+	uart1_bt_pins_default: pinmux_uart1_bt_pins_default {
-+		pinctrl-single,pins = <
-+			AM4372_IOPAD(0x980, PIN_INPUT | MUX_MODE0)		/* uart1_rxd.uart1_rxd */
-+			AM4372_IOPAD(0x984, PIN_OUTPUT_PULLDOWN | MUX_MODE0)	/* uart1_txd.uart1_txd */
-+			AM4372_IOPAD(0x978, PIN_INPUT_PULLUP | MUX_MODE0)	/* uart1_ctsn.uart1_ctsn */
-+			AM4372_IOPAD(0x97c, PIN_OUTPUT_PULLDOWN | MUX_MODE0)	/* uart1_rtsn.uart1_rtsn */
-+			AM4372_IOPAD(0x9cc, PIN_OUTPUT_PULLDOWN | MUX_MODE7)	/* cam1_data9.gpio4_7 BT_EN */
-+		>;
-+	};
-+
-+	uart1_bt_pins_sleep: pinmux_uart1_bt_pins_sleep {
-+		pinctrl-single,pins = <
-+			AM4372_IOPAD(0x980, PIN_OUTPUT_PULLDOWN | MUX_MODE7)	/* uart1_rxd.uart1_rxd */
-+			AM4372_IOPAD(0x984, PIN_OUTPUT_PULLDOWN | MUX_MODE7)	/* uart1_txd.uart1_txd */
-+			AM4372_IOPAD(0x978, PIN_OUTPUT_PULLDOWN | MUX_MODE7)	/* uart1_ctsn.uart1_ctsn */
-+			AM4372_IOPAD(0x97c, PIN_OUTPUT_PULLDOWN | MUX_MODE7)	/* uart1_rtsn.uart1_rtsn */
-+			AM4372_IOPAD(0x9cc, PIN_OUTPUT_PULLUP | MUX_MODE7)	/* cam1_data9.gpio4_7 BT_EN */
-+		>;
-+	};
- };
- 
- &i2c0 {
-@@ -606,6 +679,10 @@
- 	status = "okay";
- };
- 
-+&gpio4 {
-+	status = "okay";
-+};
-+
- &gpio5 {
- 	status = "okay";
- };
-@@ -620,6 +697,44 @@
- 	cd-gpios = <&gpio0 6 GPIO_ACTIVE_LOW>;
- };
- 
-+&uart1 {
-+	status = "okay";
-+	pinctrl-names = "default", "sleep";
-+	pinctrl-0 = <&uart1_bt_pins_default>;
-+	pinctrl-1 = <&uart1_bt_pins_sleep>;
-+};
-+
-+&mmc3 {
-+	status = "okay";
-+	/*
-+	 * these are on the crossbar and are outlined in the
-+	 * xbar-event-map element
-+	 */
-+	dmas = <&edma_xbar 30 0 1>,
-+		<&edma_xbar 31 0 2>;
-+	dma-names = "tx", "rx";
-+	vmmc-supply = <&vmmcwl_fixed>;
-+	bus-width = <4>;
-+	pinctrl-names = "default", "sleep";
-+	pinctrl-0 = <&mmc3_pins_default>;
-+	pinctrl-1 = <&mmc3_pins_sleep>;
-+	cap-power-off-card;
-+	keep-power-in-suspend;
-+	ti,non-removable;
-+
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	wlcore: wlcore@0 {
-+		compatible = "ti,wl1835";
-+		pinctrl-names = "default", "sleep";
-+		pinctrl-0 = <&wlan_pins_default>;
-+		pinctrl-1 = <&wlan_pins_sleep>;
-+		reg = <2>;
-+		interrupt-parent = <&gpio4>;
-+		interrupts = <13 IRQ_TYPE_LEVEL_HIGH>;
-+	};
-+};
-+
- &usb2_phy1 {
- 	status = "okay";
- };
--- 
-2.7.4
+Thanks, Jörg
