@@ -1,91 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756102AbeEAPbO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 11:31:14 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43410 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755434AbeEAPbM (ORCPT
+        id S1755922AbeEAPd0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 11:33:26 -0400
+Received: from mail-wr0-f179.google.com ([209.85.128.179]:45879 "EHLO
+        mail-wr0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753878AbeEAPdZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 11:31:12 -0400
-Subject: Re: [PATCH 03/24] VFS: Introduce the structs and doc for a filesystem
- context [ver #7]
-To: David Howells <dhowells@redhat.com>
-Cc: viro@zeniv.linux.org.uk, linux-nfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org
-References: <05034a85-013b-30b6-ce17-4c95d4cab195@infradead.org>
- <152414466005.23902.12967974041384198114.stgit@warthog.procyon.org.uk>
- <152414468332.23902.3065751107691714414.stgit@warthog.procyon.org.uk>
- <8450.1525184950@warthog.procyon.org.uk>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <96dacc1b-cffa-3aa2-71f5-70c8159c805e@infradead.org>
-Date: Tue, 1 May 2018 08:31:00 -0700
+        Tue, 1 May 2018 11:33:25 -0400
+X-Google-Smtp-Source: AB8JxZoWK1LRYMNnobwxKHTBdWW3j/eTHLHzKaij2RA0EWO8BIDIvvCPtLq+Qcoir7QZysSzBtjuqg==
+Subject: Re: [PATCH v3 2/2] nvmem: Add RAVE SP EEPROM driver
+To: Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Aleksander Morgado <aleksander@aleksander.es>
+References: <20180501052952.26765-1-andrew.smirnov@gmail.com>
+ <20180501052952.26765-3-andrew.smirnov@gmail.com>
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <e6f74f86-a427-4165-cbc0-27fe129dab8e@linaro.org>
+Date: Tue, 1 May 2018 16:33:22 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <8450.1525184950@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180501052952.26765-3-andrew.smirnov@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/01/2018 07:29 AM, David Howells wrote:
-> Randy Dunlap <rdunlap@infradead.org> wrote:
-> 
->>> + (2) Parse the options and attach them to the context.  Options may be passed
->>> +     individually from userspace.
->>
->> Does this say that step (2) can be multiple small steps?
-> 
-> Perhaps "phase (2)" would be a better name than "step (2)".  During (2),
-> multiple argument-supplying calls may be made.
 
-Ack.
 
->> How does step (2) know when userspace has completed sending individual
->> options?
-> 
-> Moving to phase (3) terminates phase (2).  This is triggered by userspace
-> writing "x create" or "x reconfigure" to the fd as things stand.
-> 
->>> + (6) Return an error message attached to the context.
->>
->> where/how is this done?
-> 
-> That got taken out and made general - which Linus then objected to.  I need to
-> reinsert this and make it fscontext-specific as most people would really like
-> to have it, the mount process being able to produce so many weird and
-> wonderful errors.
-> 
->>> +When the VFS creates this, it allocates ->fs_context_size bytes (as specified
->>> +by the file_system_type object) to hold both the fs_context struct and any
->>> +extra data required by the filesystem.  The fs_context struct is placed at the
->>> +beginning of this space.  Any extra space beyond that is for use by the
->>> +filesystem.  The filesystem should wrap the struct in its own, e.g.:
->>
->>                                                       in its own struct, e.g.:
-> 
-> How about "... The filesystem should wrap the struct in one of its own, e.g."?
+On 01/05/18 06:29, Andrey Smirnov wrote:
+> +// SPDX-License-Identifier: GPL-2.0+
+...
+> +MODULE_LICENSE("GPL");
+I think this should be
+MODULE_LICENSE("GPL v2");
 
-OK.
-
->>> + (*) int security_fs_context_parse_option(struct fs_context *fc, char *opt);	
->>> +
->>> +     Called for each mount option.  The arguments are as for the
->>> +     ->parse_option() method.  An active LSM may reject one with an error, pass
->>> +     one over and return 0 or consume one and return 1.  If consumed, the
->>
->> What does "pass one over" mean?
-> 
-> How about:
-> 
-> 	An active LSM may return 0 to pass the option on to the filesystem, 1
-> 	to cause the option to be discarded or an error to cause the option to
-> 	be rejected.
-
-Much better. Thanks.
-
--- 
-~Randy
+--srini
