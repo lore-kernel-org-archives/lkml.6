@@ -1,153 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755487AbeEAJNl (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 05:13:41 -0400
-Received: from mail-it0-f69.google.com ([209.85.214.69]:42235 "EHLO
-        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754964AbeEAJMD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 05:12:03 -0400
-X-Google-Smtp-Source: AB8JxZrTenaJPj1z2GAGlNQIF+bs55W2N8iy2+gva2gGe1tYlVSgkxezAUIVdMqcw5cWoVMfpU43GHSyPHqKVMgS2I/942hBts3B
-MIME-Version: 1.0
-Date: Tue, 01 May 2018 02:12:02 -0700
-In-Reply-To: <000000000000311cdd0569510cc7@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000007fb72056b215d2b@google.com>
-Subject: Re: KMSAN: uninit-value in _decode_session6
-From: syzbot <syzbot+2974b85346f85b586f4d@syzkaller.appspotmail.com>
-To: davem@davemloft.net, herbert@gondor.apana.org.au, kuznet@ms2.inr.ac.ru,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        steffen.klassert@secunet.com, syzkaller-bugs@googlegroups.com,
-        yoshfuji@linux-ipv6.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        id S1755507AbeEAJOG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 05:14:06 -0400
+Received: from foss.arm.com ([217.140.101.70]:44266 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754932AbeEAJL7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 05:11:59 -0400
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org,
+        mike.leach@linaro.org, robert.walker@arm.com, mark.rutland@arm.com,
+        will.deacon@arm.com, robin.murphy@arm.com, sudeep.holla@arm.com,
+        frowand.list@gmail.com, robh@kernel.org, john.horley@arm.com,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: [PATCH v2 20/27] coresight: tmc: Add configuration support for trace buffer size
+Date: Tue,  1 May 2018 10:10:50 +0100
+Message-Id: <1525165857-11096-21-git-send-email-suzuki.poulose@arm.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1525165857-11096-1-git-send-email-suzuki.poulose@arm.com>
+References: <1525165857-11096-1-git-send-email-suzuki.poulose@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found a reproducer for the following crash on:
+Now that we can dynamically switch between contiguous memory and
+SG table depending on the trace buffer size, provide the support
+for selecting an appropriate buffer size.
 
-HEAD commit:    d2d741e5d189 kmsan: add initialization for shmem pages
-git tree:       https://github.com/google/kmsan.git/master
-console output: https://syzkaller.appspot.com/x/log.txt?id=6550343064223744
-kernel config:   
-https://syzkaller.appspot.com/x/.config?id=328654897048964367
-dashboard link: https://syzkaller.appspot.com/bug?extid=2974b85346f85b586f4d
-compiler:       clang version 7.0.0 (trunk 329391)
-syzkaller  
-repro:https://syzkaller.appspot.com/x/repro.syz?id=5023772637659136
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?id=5102535626981376
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+---
+ .../ABI/testing/sysfs-bus-coresight-devices-tmc    |  8 ++++++
+ drivers/hwtracing/coresight/coresight-tmc.c        | 33 ++++++++++++++++++++++
+ 2 files changed, 41 insertions(+)
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+2974b85346f85b586f4d@syzkaller.appspotmail.com
-
-IPv6: ADDRCONF(NETDEV_UP): veth1: link is not ready
-IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
-IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
-8021q: adding VLAN 0 to HW filter on device team0
-==================================================================
-BUG: KMSAN: uninit-value in _decode_session6+0x6d2/0x16e0  
-net/ipv6/xfrm6_policy.c:151
-CPU: 0 PID: 4529 Comm: syz-executor165 Not tainted 4.16.0+ #87
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:17 [inline]
-  dump_stack+0x185/0x1d0 lib/dump_stack.c:53
-  kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
-  __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:683
-  _decode_session6+0x6d2/0x16e0 net/ipv6/xfrm6_policy.c:151
-  __xfrm_decode_session+0x151/0x200 net/xfrm/xfrm_policy.c:2368
-  xfrm_decode_session_reverse include/net/xfrm.h:1213 [inline]
-  icmpv6_route_lookup net/ipv6/icmp.c:372 [inline]
-  icmp6_send+0x2bf7/0x3730 net/ipv6/icmp.c:551
-  icmpv6_send+0xe0/0x110 net/ipv6/ip6_icmp.c:43
-  ip6_link_failure+0x8f/0x580 net/ipv6/route.c:2034
-  dst_link_failure include/net/dst.h:426 [inline]
-  ip6_tnl_xmit+0x1423/0x3af0 net/ipv6/ip6_tunnel.c:1215
-  ip6ip6_tnl_xmit net/ipv6/ip6_tunnel.c:1367 [inline]
-  ip6_tnl_start_xmit+0x1cc0/0x1ef0 net/ipv6/ip6_tunnel.c:1390
-  __netdev_start_xmit include/linux/netdevice.h:4066 [inline]
-  netdev_start_xmit include/linux/netdevice.h:4075 [inline]
-  xmit_one net/core/dev.c:3026 [inline]
-  dev_hard_start_xmit+0x5f1/0xc70 net/core/dev.c:3042
-  __dev_queue_xmit+0x27ee/0x3520 net/core/dev.c:3557
-  dev_queue_xmit+0x4b/0x60 net/core/dev.c:3590
-  neigh_direct_output+0x42/0x50 net/core/neighbour.c:1390
-  neigh_output include/net/neighbour.h:482 [inline]
-  ip6_finish_output2+0x1d01/0x2130 net/ipv6/ip6_output.c:120
-  ip6_finish_output+0xae9/0xba0 net/ipv6/ip6_output.c:154
-  NF_HOOK_COND include/linux/netfilter.h:277 [inline]
-  ip6_output+0x597/0x6c0 net/ipv6/ip6_output.c:171
-  dst_output include/net/dst.h:443 [inline]
-  ip6_local_out+0x15e/0x1d0 net/ipv6/output_core.c:176
-  ip6_send_skb net/ipv6/ip6_output.c:1682 [inline]
-  ip6_push_pending_frames+0x218/0x4d0 net/ipv6/ip6_output.c:1702
-  rawv6_push_pending_frames net/ipv6/raw.c:616 [inline]
-  rawv6_sendmsg+0x4235/0x4fb0 net/ipv6/raw.c:935
-  inet_sendmsg+0x48d/0x740 net/ipv4/af_inet.c:764
-  sock_sendmsg_nosec net/socket.c:630 [inline]
-  sock_sendmsg net/socket.c:640 [inline]
-  sock_write_iter+0x3b9/0x470 net/socket.c:909
-  call_write_iter include/linux/fs.h:1782 [inline]
-  new_sync_write fs/read_write.c:469 [inline]
-  __vfs_write+0x7fb/0x9f0 fs/read_write.c:482
-  vfs_write+0x463/0x8d0 fs/read_write.c:544
-  SYSC_write+0x172/0x360 fs/read_write.c:589
-  SyS_write+0x55/0x80 fs/read_write.c:581
-  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-RIP: 0033:0x4418b9
-RSP: 002b:00007ffece331e68 EFLAGS: 00000217 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00000000004418b9
-RDX: 000000000000036b RSI: 0000000020000240 RDI: 0000000000000004
-RBP: 00000000006cd018 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000217 R12: 00000000004025b0
-R13: 0000000000402640 R14: 0000000000000000 R15: 0000000000000000
-
-Uninit was created at:
-  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
-  kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:188
-  kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:314
-  kmsan_slab_alloc+0x11/0x20 mm/kmsan/kmsan.c:321
-  slab_post_alloc_hook mm/slab.h:445 [inline]
-  slab_alloc_node mm/slub.c:2737 [inline]
-  __kmalloc_node_track_caller+0xaed/0x11c0 mm/slub.c:4369
-  __kmalloc_reserve net/core/skbuff.c:138 [inline]
-  pskb_expand_head+0x21d/0x1a70 net/core/skbuff.c:1458
-  __pskb_pull_tail+0x1d7/0x2300 net/core/skbuff.c:1878
-  pskb_may_pull include/linux/skbuff.h:2112 [inline]
-  ip6_tnl_parse_tlv_enc_lim+0x7f5/0xa90 net/ipv6/ip6_tunnel.c:411
-  ip6ip6_tnl_xmit net/ipv6/ip6_tunnel.c:1326 [inline]
-  ip6_tnl_start_xmit+0x911/0x1ef0 net/ipv6/ip6_tunnel.c:1390
-  __netdev_start_xmit include/linux/netdevice.h:4066 [inline]
-  netdev_start_xmit include/linux/netdevice.h:4075 [inline]
-  xmit_one net/core/dev.c:3026 [inline]
-  dev_hard_start_xmit+0x5f1/0xc70 net/core/dev.c:3042
-  __dev_queue_xmit+0x27ee/0x3520 net/core/dev.c:3557
-  dev_queue_xmit+0x4b/0x60 net/core/dev.c:3590
-  neigh_direct_output+0x42/0x50 net/core/neighbour.c:1390
-  neigh_output include/net/neighbour.h:482 [inline]
-  ip6_finish_output2+0x1d01/0x2130 net/ipv6/ip6_output.c:120
-  ip6_finish_output+0xae9/0xba0 net/ipv6/ip6_output.c:154
-  NF_HOOK_COND include/linux/netfilter.h:277 [inline]
-  ip6_output+0x597/0x6c0 net/ipv6/ip6_output.c:171
-  dst_output include/net/dst.h:443 [inline]
-  ip6_local_out+0x15e/0x1d0 net/ipv6/output_core.c:176
-  ip6_send_skb net/ipv6/ip6_output.c:1682 [inline]
-  ip6_push_pending_frames+0x218/0x4d0 net/ipv6/ip6_output.c:1702
-  rawv6_push_pending_frames net/ipv6/raw.c:616 [inline]
-  rawv6_sendmsg+0x4235/0x4fb0 net/ipv6/raw.c:935
-  inet_sendmsg+0x48d/0x740 net/ipv4/af_inet.c:764
-  sock_sendmsg_nosec net/socket.c:630 [inline]
-  sock_sendmsg net/socket.c:640 [inline]
-  sock_write_iter+0x3b9/0x470 net/socket.c:909
-  call_write_iter include/linux/fs.h:1782 [inline]
-  new_sync_write fs/read_write.c:469 [inline]
-  __vfs_write+0x7fb/0x9f0 fs/read_write.c:482
-  vfs_write+0x463/0x8d0 fs/read_write.c:544
-  SYSC_write+0x172/0x360 fs/read_write.c:589
-  SyS_write+0x55/0x80 fs/read_write.c:581
-  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-==================================================================
+diff --git a/Documentation/ABI/testing/sysfs-bus-coresight-devices-tmc b/Documentation/ABI/testing/sysfs-bus-coresight-devices-tmc
+index 4fe677e..ea78714 100644
+--- a/Documentation/ABI/testing/sysfs-bus-coresight-devices-tmc
++++ b/Documentation/ABI/testing/sysfs-bus-coresight-devices-tmc
+@@ -83,3 +83,11 @@ KernelVersion:	4.7
+ Contact:	Mathieu Poirier <mathieu.poirier@linaro.org>
+ Description:	(R) Indicates the capabilities of the Coresight TMC.
+ 		The value is read directly from the DEVID register, 0xFC8,
++
++What:		/sys/bus/coresight/devices/<memory_map>.tmc/buffer_size
++Date:		August 2018
++KernelVersion:	4.18
++Contact:	Mathieu Poirier <mathieu.poirier@linaro.org>
++Description:	(RW) Size of the trace buffer for TMC-ETR when used in SYSFS
++		mode. Writable only for TMC-ETR configurations. The value
++		should be aligned to the kernel pagesize.
+diff --git a/drivers/hwtracing/coresight/coresight-tmc.c b/drivers/hwtracing/coresight/coresight-tmc.c
+index c7bc681..4d41b4b 100644
+--- a/drivers/hwtracing/coresight/coresight-tmc.c
++++ b/drivers/hwtracing/coresight/coresight-tmc.c
+@@ -288,8 +288,41 @@ static ssize_t trigger_cntr_store(struct device *dev,
+ }
+ static DEVICE_ATTR_RW(trigger_cntr);
+ 
++static ssize_t buffer_size_show(struct device *dev,
++				struct device_attribute *attr, char *buf)
++{
++	struct tmc_drvdata *drvdata = dev_get_drvdata(dev->parent);
++
++	return sprintf(buf, "%#x\n", drvdata->size);
++}
++
++static ssize_t buffer_size_store(struct device *dev,
++				 struct device_attribute *attr,
++				 const char *buf, size_t size)
++{
++	int ret;
++	unsigned long val;
++	struct tmc_drvdata *drvdata = dev_get_drvdata(dev->parent);
++
++	/* Only permitted for TMC-ETRs */
++	if (drvdata->config_type != TMC_CONFIG_TYPE_ETR)
++		return -EPERM;
++
++	ret = kstrtoul(buf, 0, &val);
++	if (ret)
++		return ret;
++	/* The buffer size should be page aligned */
++	if (val & (PAGE_SIZE - 1))
++		return -EINVAL;
++	drvdata->size = val;
++	return size;
++}
++
++static DEVICE_ATTR_RW(buffer_size);
++
+ static struct attribute *coresight_tmc_attrs[] = {
+ 	&dev_attr_trigger_cntr.attr,
++	&dev_attr_buffer_size.attr,
+ 	NULL,
+ };
+ 
+-- 
+2.7.4
