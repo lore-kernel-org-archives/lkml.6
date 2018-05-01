@@ -1,96 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755957AbeEAO2T (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 10:28:19 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:43665 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755831AbeEAO2R (ORCPT
+        id S1755971AbeEAO3B (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 10:29:01 -0400
+Received: from mail-oi0-f49.google.com ([209.85.218.49]:45167 "EHLO
+        mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755305AbeEAO27 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 10:28:17 -0400
-X-Google-Smtp-Source: AB8JxZp5Wi6iSk4NE36F0i7rq7THNfFUhu2LKP4FLDlbFWP2Im++rA1u8KirqYYO1RQtM6gLAcz75A==
-Date: Tue, 1 May 2018 09:28:16 -0500
+        Tue, 1 May 2018 10:28:59 -0400
+X-Google-Smtp-Source: AB8JxZqP6pTfGwZbWSf7mqAUUj8K2fXMuyJecd8r+R8pEAMpQRQeDN0SW0iKMEtIZbkmvCeqzyWJvg==
+Date: Tue, 1 May 2018 09:28:57 -0500
 From: Rob Herring <robh@kernel.org>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: hans.verkuil@cisco.com, mchehab@kernel.org,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: media: i2c: Add mt9t111 image sensor
-Message-ID: <20180501142816.GA15492@rob-hp-laptop>
-References: <1524654014-17852-1-git-send-email-jacopo+renesas@jmondi.org>
- <1524654014-17852-2-git-send-email-jacopo+renesas@jmondi.org>
+To: Sibi Sankar <sibis@codeaurora.org>
+Cc: andy.gross@linaro.org, mark.rutland@arm.com,
+        bjorn.andersson@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org,
+        devicetree@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jassisinghbrar@gmail.com,
+        will.deacon@arm.com, catalin.marinas@arm.com
+Subject: Re: [PATCH 1/3] dt-bindings: mailbox: Add APSS shared binding for
+ SDM845 SoCs
+Message-ID: <20180501142857.GA16990@rob-hp-laptop>
+References: <20180425143803.11260-1-sibis@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1524654014-17852-2-git-send-email-jacopo+renesas@jmondi.org>
+In-Reply-To: <20180425143803.11260-1-sibis@codeaurora.org>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 25, 2018 at 01:00:13PM +0200, Jacopo Mondi wrote:
-> Add device tree bindings documentation for Micron MT9T111/MT9T112 image
-> sensors.
+On Wed, Apr 25, 2018 at 08:08:01PM +0530, Sibi Sankar wrote:
+> Include SDM845 APSS shared to the list of possible bindings
 > 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 > ---
->  Documentation/devicetree/bindings/mt9t112.txt | 41 +++++++++++++++++++++++++++
->  1 file changed, 41 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mt9t112.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/mt9t112.txt b/Documentation/devicetree/bindings/mt9t112.txt
-> new file mode 100644
-> index 0000000..cbad475
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mt9t112.txt
-> @@ -0,0 +1,41 @@
-> +Micron 3.1Mp CMOS Digital Image Sensor
-> +--------------------------------------
-> +
-> +The Micron MT9T111 and MT9T112 are 1/4 inch 3.1Mp System-On-A-Chip (SOC) CMOS
-> +digital image sensors which support up to QXGA (2048x1536) image resolution in
-> +4/3 format.
-> +
-> +The sensors can be programmed through a two-wire serial interface and can
-> +work both in parallel data output mode as well as in MIPI CSI-2 mode.
-> +
-> +Required Properties:
-> +- compatible: shall be one of the following values
-> +  	"micron,mt9t111" for MT9T111 sensors
-> +	"micron,mt9t112" for MT9T112 sensors
-> +
-> +Optional properties:
-> +- powerdown-gpios: reference to powerdown input GPIO signal. Pin name "STANDBY".
-> +  Active level is high.
-> +
-> +The device node shall contain one 'port' sub-node with one 'endpoint' child
-> +node, modeled accordingly to bindings described in:
-> +Documentation/devicetree/bindings/media/video-interfaces.txt
-> +
-> +Example:
-> +--------
-> +
-> +	mt9t112@3d {
-
-camera-sensor@3d
-
-Otherwise,
+>  .../devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt        | 1 +
+>  1 file changed, 1 insertion(+)
 
 Reviewed-by: Rob Herring <robh@kernel.org>
-
-> +		compatible = "micron,mt9t112";
-> +		reg = <0x3d>;
-> +
-> +		powerdown-gpios = <&gpio4 2 GPIO_ACTIVE_HIGH>;
-> +
-> +		port {
-> +			mt9t112_out: endpoint {
-> +				pclk-sample = <1>;
-> +				remote-endpoint = <&ceu_in>;
-> +			};
-> +		};
-> +	};
-> +
-> +
-> -- 
-> 2.7.4
-> 
