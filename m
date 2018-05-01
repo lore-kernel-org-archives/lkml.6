@@ -1,29 +1,32 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751392AbeEAUzH (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 16:55:07 -0400
-Received: from mga18.intel.com ([134.134.136.126]:44372 "EHLO mga18.intel.com"
+        id S1751465AbeEAUzU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 16:55:20 -0400
+Received: from mga05.intel.com ([192.55.52.43]:16005 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751050AbeEAUzG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 16:55:06 -0400
+        id S1751050AbeEAUzR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 16:55:17 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,352,1520924400";
-   d="scan'208";a="52365552"
-Subject: [PATCH 0/6] use memcpy_mcsafe() for copy_to_iter()
+   d="scan'208";a="37900906"
+Subject: [PATCH 2/6] x86, memcpy_mcsafe: return bytes remaining
 From: Dan Williams <dan.j.williams@intel.com>
 To: linux-nvdimm@lists.01.org
-Cc: Tony Luck <tony.luck@intel.com>, Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@amacapital.net>, Ingo Molnar <mingo@redhat.com>,
+Cc: x86@kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>,
         Al Viro <viro@zeniv.linux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Peter Zijlstra <peterz@infradead.org>,
         Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         linux-kernel@vger.kernel.org, tony.luck@intel.com
-Date: Tue, 01 May 2018 13:45:09 -0700
-Message-ID: <152520750404.36522.15462513519590065300.stgit@dwillia2-desk3.amr.corp.intel.com>
+Date: Tue, 01 May 2018 13:45:19 -0700
+Message-ID: <152520751957.36522.6348894783685371152.stgit@dwillia2-desk3.amr.corp.intel.com>
+In-Reply-To: <152520750404.36522.15462513519590065300.stgit@dwillia2-desk3.amr.corp.intel.com>
+References: <152520750404.36522.15462513519590065300.stgit@dwillia2-desk3.amr.corp.intel.com>
 User-Agent: StGit/0.18-2-gc94f
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -32,61 +35,257 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently memcpy_mcsafe() is only deployed in the pmem driver when
-reading through a /dev/pmemX block device. However, a filesystem in dax
-mode mounted on a /dev/pmemX block device will bypass the block layer
-and the driver for reads. The filesystem-dax (fsdax) read case uses
-dax_direct_access() and copy_to_iter() to bypass the block layer.
+Machine check safe memory copies are currently deployed in the pmem
+driver whenever reading from persistent memory media, so that -EIO is
+returned rather than triggering a kernel panic. While this protects most
+pmem accesses, it is not complete in the filesystem-dax case. When
+filesystem-dax is enabled reads may bypass the block layer and the
+driver via dax_iomap_actor() and its usage of copy_to_iter().
 
-The result of the bypass is that the kernel treats machine checks during
-read as system fatal (reboot) when they could simply be flagged as an
-I/O error, similar to performing reads through the pmem driver. Prevent
-this fatal condition by deploying memcpy_mcsafe() in the fsdax read
-path.
+In preparation for creating a copy_to_iter() variant that can handle
+machine checks, teach memcpy_mcsafe() to return the number of bytes
+remaining rather than -EFAULT when an exception occurs.
 
-The main differences between this copy_to_user_mcsafe() and
-copy_user_generic_unrolled() are:
+Given that the source buffer is aligned to 8-bytes and that x86 reports
+poison in terms of cachelines, we can assume that all reads faults occur
+at cacheline boundaries. When an exception occurs we have succeeded in
+reading some data before the poisoned cacheline. mcsafe_handle_tail() is
+introduced as a common helper to complete the copy operation on the good
+data while also being careful to limit the accesses to the known good
+cachelines to limit reduce the chance for additional machine check
+exceptions.
 
-* Typical tail/residue handling after a fault retries the copy
-  byte-by-byte until the fault happens again. Re-triggering machine
-  checks is potentially fatal so the implementation uses source alignment
-  and poison alignment assumptions to limit the residue copying to known
-  good bytes.
-
-* SMAP coordination is handled external to the assembly with
-  __uaccess_begin() and __uaccess_end().
-
-* ITER_KVEC and ITER_BVEC can now end prematurely with an error.
-
-The new MCSAFE_DEBUG facility is proposed as a way to unit test the
-exception handling without requiring an ACPI EINJ capable platform.
-
-Thanks to Tony Luck for his review, test, and implementation ideas on
-initial versions of this patchset.
-
+Cc: <x86@kernel.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Co-developed-by: Tony Luck <tony.luck@intel.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
+ arch/x86/include/asm/string_64.h  |    8 ++-
+ arch/x86/include/asm/uaccess_64.h |    3 +
+ arch/x86/lib/memcpy_64.S          |   85 +++++++++++++++++++++++++++++++------
+ arch/x86/lib/usercopy_64.c        |   12 +++++
+ drivers/nvdimm/claim.c            |    3 +
+ drivers/nvdimm/pmem.c             |    6 +--
+ include/linux/string.h            |    4 +-
+ 7 files changed, 98 insertions(+), 23 deletions(-)
 
-Dan Williams (6):
-      x86, memcpy_mcsafe: update labels in support of write fault handling
-      x86, memcpy_mcsafe: return bytes remaining
-      x86, memcpy_mcsafe: add write-protection-fault handling
-      x86, memcpy_mcsafe: define copy_to_iter_mcsafe()
-      dax: use copy_to_iter_mcsafe() in dax_iomap_actor()
-      x86, nfit_test: unit test for memcpy_mcsafe()
-
-
- arch/x86/Kconfig.debug              |    3 +
- arch/x86/include/asm/mcsafe_debug.h |   50 ++++++++++
- arch/x86/include/asm/string_64.h    |    8 +-
- arch/x86/include/asm/uaccess_64.h   |   14 +++
- arch/x86/lib/memcpy_64.S            |  178 ++++++++++++++++++++++++++++-------
- arch/x86/lib/usercopy_64.c          |   12 ++
- drivers/nvdimm/claim.c              |    3 -
- drivers/nvdimm/pmem.c               |    6 +
- fs/dax.c                            |   20 ++--
- include/linux/string.h              |    4 -
- include/linux/uio.h                 |   10 ++
- lib/iov_iter.c                      |   59 ++++++++++++
- tools/testing/nvdimm/test/nfit.c    |   48 +++++++++
- 13 files changed, 360 insertions(+), 55 deletions(-)
- create mode 100644 arch/x86/include/asm/mcsafe_debug.h
+diff --git a/arch/x86/include/asm/string_64.h b/arch/x86/include/asm/string_64.h
+index 533f74c300c2..92ee5e187113 100644
+--- a/arch/x86/include/asm/string_64.h
++++ b/arch/x86/include/asm/string_64.h
+@@ -116,7 +116,8 @@ int strcmp(const char *cs, const char *ct);
+ #endif
+ 
+ #define __HAVE_ARCH_MEMCPY_MCSAFE 1
+-__must_check int memcpy_mcsafe_unrolled(void *dst, const void *src, size_t cnt);
++__must_check unsigned long memcpy_mcsafe_unrolled(void *dst, const void *src,
++		size_t cnt);
+ DECLARE_STATIC_KEY_FALSE(mcsafe_key);
+ 
+ /**
+@@ -131,9 +132,10 @@ DECLARE_STATIC_KEY_FALSE(mcsafe_key);
+  * actually do machine check recovery. Everyone else can just
+  * use memcpy().
+  *
+- * Return 0 for success, -EFAULT for fail
++ * Return 0 for success, or number of bytes not copied if there was an
++ * exception.
+  */
+-static __always_inline __must_check int
++static __always_inline __must_check unsigned long
+ memcpy_mcsafe(void *dst, const void *src, size_t cnt)
+ {
+ #ifdef CONFIG_X86_MCE
+diff --git a/arch/x86/include/asm/uaccess_64.h b/arch/x86/include/asm/uaccess_64.h
+index 62546b3a398e..c064a77e8fcb 100644
+--- a/arch/x86/include/asm/uaccess_64.h
++++ b/arch/x86/include/asm/uaccess_64.h
+@@ -194,4 +194,7 @@ __copy_from_user_flushcache(void *dst, const void __user *src, unsigned size)
+ unsigned long
+ copy_user_handle_tail(char *to, char *from, unsigned len);
+ 
++unsigned long
++mcsafe_handle_tail(char *to, char *from, unsigned len, unsigned limit);
++
+ #endif /* _ASM_X86_UACCESS_64_H */
+diff --git a/arch/x86/lib/memcpy_64.S b/arch/x86/lib/memcpy_64.S
+index 6a416a7df8ee..97b772fcf62f 100644
+--- a/arch/x86/lib/memcpy_64.S
++++ b/arch/x86/lib/memcpy_64.S
+@@ -283,22 +283,79 @@ ENDPROC(memcpy_mcsafe_unrolled)
+ EXPORT_SYMBOL_GPL(memcpy_mcsafe_unrolled)
+ 
+ 	.section .fixup, "ax"
+-	/* Return -EFAULT for any failure */
+-.L_memcpy_mcsafe_fail:
+-	mov	$-EFAULT, %rax
++	/* Return number of bytes not copied for any failure */
++
++	/*
++	 * For .E_cache_{1,2,3} we have successfully read {8,16,24}
++	 * bytes before crossing into the poison cacheline. Arrange for
++	 * mcsafe_handle_tail to write those {8,16,24} bytes to the
++	 * destination without re-triggering the machine check. %ecx
++	 * contains the limit and %edx contains total bytes remaining.
++	 */
++.E_cache_1:
++	shll	$6, %ecx
++	addl	%ecx, %edx
++	movl	$8, %ecx
++	jmp mcsafe_handle_tail
++.E_cache_2:
++	shll	$6, %ecx
++	addl	%ecx, %edx
++	movl	$16, %ecx
++	jmp mcsafe_handle_tail
++.E_cache_3:
++	shll	$6, %ecx
++	addl	%ecx, %edx
++	movl	$24, %ecx
++	jmp mcsafe_handle_tail
++	/*
++	 * In contrast to .E_cache_{1,2,3}, .E_cache_{5,6,7} have
++	 * successfully copied 32-bytes before crossing into the
++	 * poisoned cacheline.
++	 */
++.E_cache_5:
++	shll	$6, %ecx
++	addl	%ecx, %edx
++	movl	$8, %ecx
++	jmp .E_cache_upper
++.E_cache_6:
++	shll	$6, %ecx
++	addl	%ecx, %edx
++	movl	$16, %ecx
++	jmp .E_cache_upper
++.E_cache_7:
++	shll	$6, %ecx
++	addl	%ecx, %edx
++	movl	$24, %ecx
++	jmp .E_cache_upper
++.E_cache_upper:
++	addq	$32, %rsi
++	addq	$32, %rdi
++	subl	$32, %edx
++	jmp mcsafe_handle_tail
++.E_trailing_words:
++	shll	$3, %ecx
++	jmp .E_leading_bytes
++.E_cache_4:
++	subl	$32, %edx
++.E_cache_0:
++	shll	$6, %ecx
++.E_leading_bytes:
++	addl	%edx, %ecx
++.E_trailing_bytes:
++	mov	%ecx, %eax
+ 	ret
+ 
+ 	.previous
+ 
+-	_ASM_EXTABLE_FAULT(.L_read_leading_bytes, .L_memcpy_mcsafe_fail)
+-	_ASM_EXTABLE_FAULT(.L_cache_r0, .L_memcpy_mcsafe_fail)
+-	_ASM_EXTABLE_FAULT(.L_cache_r1, .L_memcpy_mcsafe_fail)
+-	_ASM_EXTABLE_FAULT(.L_cache_r2, .L_memcpy_mcsafe_fail)
+-	_ASM_EXTABLE_FAULT(.L_cache_r3, .L_memcpy_mcsafe_fail)
+-	_ASM_EXTABLE_FAULT(.L_cache_r4, .L_memcpy_mcsafe_fail)
+-	_ASM_EXTABLE_FAULT(.L_cache_r5, .L_memcpy_mcsafe_fail)
+-	_ASM_EXTABLE_FAULT(.L_cache_r6, .L_memcpy_mcsafe_fail)
+-	_ASM_EXTABLE_FAULT(.L_cache_r7, .L_memcpy_mcsafe_fail)
+-	_ASM_EXTABLE_FAULT(.L_read_trailing_words, .L_memcpy_mcsafe_fail)
+-	_ASM_EXTABLE_FAULT(.L_read_trailing_bytes, .L_memcpy_mcsafe_fail)
++	_ASM_EXTABLE_FAULT(.L_read_leading_bytes, .E_leading_bytes)
++	_ASM_EXTABLE_FAULT(.L_cache_r0, .E_cache_0)
++	_ASM_EXTABLE_FAULT(.L_cache_r1, .E_cache_1)
++	_ASM_EXTABLE_FAULT(.L_cache_r2, .E_cache_2)
++	_ASM_EXTABLE_FAULT(.L_cache_r3, .E_cache_3)
++	_ASM_EXTABLE_FAULT(.L_cache_r4, .E_cache_4)
++	_ASM_EXTABLE_FAULT(.L_cache_r5, .E_cache_5)
++	_ASM_EXTABLE_FAULT(.L_cache_r6, .E_cache_6)
++	_ASM_EXTABLE_FAULT(.L_cache_r7, .E_cache_7)
++	_ASM_EXTABLE_FAULT(.L_read_trailing_words, .E_trailing_words)
++	_ASM_EXTABLE_FAULT(.L_read_trailing_bytes, .E_trailing_bytes)
+ #endif
+diff --git a/arch/x86/lib/usercopy_64.c b/arch/x86/lib/usercopy_64.c
+index 75d3776123cc..e2bcc7d85436 100644
+--- a/arch/x86/lib/usercopy_64.c
++++ b/arch/x86/lib/usercopy_64.c
+@@ -75,6 +75,18 @@ copy_user_handle_tail(char *to, char *from, unsigned len)
+ 	return len;
+ }
+ 
++__visible unsigned long
++mcsafe_handle_tail(char *to, char *from, unsigned len, unsigned limit)
++{
++	for (; len && limit; --len, --limit, to++) {
++		unsigned long rem = memcpy_mcsafe_unrolled(to, from, 1);
++
++		if (rem)
++			break;
++	}
++	return len;
++}
++
+ #ifdef CONFIG_ARCH_HAS_UACCESS_FLUSHCACHE
+ /**
+  * clean_cache_range - write back a cache range with CLWB
+diff --git a/drivers/nvdimm/claim.c b/drivers/nvdimm/claim.c
+index 30852270484f..2e96b34bc936 100644
+--- a/drivers/nvdimm/claim.c
++++ b/drivers/nvdimm/claim.c
+@@ -276,7 +276,8 @@ static int nsio_rw_bytes(struct nd_namespace_common *ndns,
+ 	if (rw == READ) {
+ 		if (unlikely(is_bad_pmem(&nsio->bb, sector, sz_align)))
+ 			return -EIO;
+-		return memcpy_mcsafe(buf, nsio->addr + offset, size);
++		if (memcpy_mcsafe(buf, nsio->addr + offset, size) != 0)
++			return -EIO;
+ 	}
+ 
+ 	if (unlikely(is_bad_pmem(&nsio->bb, sector, sz_align))) {
+diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
+index 9d714926ecf5..e023d6aa22b5 100644
+--- a/drivers/nvdimm/pmem.c
++++ b/drivers/nvdimm/pmem.c
+@@ -101,15 +101,15 @@ static blk_status_t read_pmem(struct page *page, unsigned int off,
+ 		void *pmem_addr, unsigned int len)
+ {
+ 	unsigned int chunk;
+-	int rc;
++	unsigned long rem;
+ 	void *mem;
+ 
+ 	while (len) {
+ 		mem = kmap_atomic(page);
+ 		chunk = min_t(unsigned int, len, PAGE_SIZE);
+-		rc = memcpy_mcsafe(mem + off, pmem_addr, chunk);
++		rem = memcpy_mcsafe(mem + off, pmem_addr, chunk);
+ 		kunmap_atomic(mem);
+-		if (rc)
++		if (rem)
+ 			return BLK_STS_IOERR;
+ 		len -= chunk;
+ 		off = 0;
+diff --git a/include/linux/string.h b/include/linux/string.h
+index dd39a690c841..4a5a0eb7df51 100644
+--- a/include/linux/string.h
++++ b/include/linux/string.h
+@@ -147,8 +147,8 @@ extern int memcmp(const void *,const void *,__kernel_size_t);
+ extern void * memchr(const void *,int,__kernel_size_t);
+ #endif
+ #ifndef __HAVE_ARCH_MEMCPY_MCSAFE
+-static inline __must_check int memcpy_mcsafe(void *dst, const void *src,
+-		size_t cnt)
++static inline __must_check unsigned long memcpy_mcsafe(void *dst,
++		const void *src, size_t cnt)
+ {
+ 	memcpy(dst, src, cnt);
+ 	return 0;
