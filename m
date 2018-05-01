@@ -1,124 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755402AbeEAOCO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 10:02:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57276 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754084AbeEAOCN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 10:02:13 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E6E22366C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Tue, 1 May 2018 10:02:10 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Joel Fernandes <joelaf@google.com>
-Cc: linux-kernel@vger.kernel.org, Peter Zilstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Glexiner <tglx@linutronix.de>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Fenguang Wu <fengguang.wu@intel.com>,
-        Baohong Liu <baohong.liu@intel.com>,
-        Vedang Patel <vedang.patel@intel.com>, kernel-team@android.com
-Subject: Re: [PATCH RFC v5 1/6] softirq: reorder trace_softirqs_on to
- prevent lockdep splat
-Message-ID: <20180501100210.32181f48@gandalf.local.home>
-In-Reply-To: <20180501014204.67548-2-joelaf@google.com>
-References: <20180501014204.67548-1-joelaf@google.com>
-        <20180501014204.67548-2-joelaf@google.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1755453AbeEAODl (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 10:03:41 -0400
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:12060 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754798AbeEAODj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 10:03:39 -0400
+Subject: Re: [PATCH v9 03/27] clk: davinci: psc: allow for dev == NULL
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
+References: <20180427001745.4116-1-david@lechnology.com>
+ <20180427001745.4116-4-david@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <8940259b-5811-ce9f-8262-17d39ca0a46f@ti.com>
+Date: Tue, 1 May 2018 19:32:22 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180427001745.4116-4-david@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 30 Apr 2018 18:41:59 -0700
-Joel Fernandes <joelaf@google.com> wrote:
-
-> I'm able to reproduce a lockdep splat when CONFIG_PROVE_LOCKING=y and
-> CONFIG_PREEMPTIRQ_EVENTS=y.
-
-Needs more info in the change log. It also requires that
-CONFIG_DEBUG_LOCKED=y is set.
-
-Add this to the change log:
-
-The issue was this:
-
-Start with: preempt_count = 1 << SOFTIRQ_SHIFT
-
-	__local_bh_enable(cnt = 1 << SOFTIRQ_SHIFT) {
-		if (softirq_count() == (cnt && SOFTIRQ_MASK)) {
-			trace_softirqs_on() {
-				current->softirqs_enabled = 1;
-			}
-		}
-		preempt_count_sub(cnt) {
-			trace_preempt_on() {
-				tracepoint() {
-					rcu_read_lock_sched() {
-						// jumps into lockdep
-
-Where preempt_count still has softirqs disabled, but
-current->softirqs_enabled is true, and we get a splat.
-
-This patch should be separate (as you had it before), and needs to be
-submitted now because it already causes issues. We can add:
-
-Cc: stable@vger.kernel.org
-Fixes: d59158162e032 ("tracing: Add support for preempt and irq enable/disable events")
-
--- Steve
-
-
-> 
-> $ echo 1 > /d/tracing/events/preemptirq/preempt_enable/enable
-> 
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Cc: Peter Zilstra <peterz@infradead.org>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Cc: Thomas Glexiner <tglx@linutronix.de>
-> Cc: Boqun Feng <boqun.feng@gmail.com>
-> Cc: Paul McKenney <paulmck@linux.vnet.ibm.com>
-> Cc: Frederic Weisbecker <fweisbec@gmail.com>
-> Cc: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> Cc: Fenguang Wu <fengguang.wu@intel.com>
-> Cc: Baohong Liu <baohong.liu@intel.com>
-> Cc: Vedang Patel <vedang.patel@intel.com>
-> Cc: kernel-team@android.com
-> Signed-off-by: Joel Fernandes <joelaf@google.com>
-> ---
->  kernel/softirq.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/softirq.c b/kernel/softirq.c
-> index 24d243ef8e71..47e2f61938c0 100644
-> --- a/kernel/softirq.c
-> +++ b/kernel/softirq.c
-> @@ -139,9 +139,13 @@ static void __local_bh_enable(unsigned int cnt)
->  {
->  	lockdep_assert_irqs_disabled();
->  
-> +	if (preempt_count() == cnt)
-> +		trace_preempt_on(CALLER_ADDR0, get_lock_parent_ip());
+On Friday 27 April 2018 05:47 AM, David Lechner wrote:
+> +static inline void *_devm_kzalloc(struct device *dev, size_t size, gfp_t flags)
+> +{
+> +	if (dev)
+> +		return devm_kzalloc(dev, size, flags);
 > +
->  	if (softirq_count() == (cnt & SOFTIRQ_MASK))
->  		trace_softirqs_on(_RET_IP_);
-> -	preempt_count_sub(cnt);
-> +
-> +	__preempt_count_sub(cnt);
->  }
->  
->  /*
+> +	return kzalloc(size, flags);
+> +}
+
+I have the same question on the utility of this. A memory allocation
+error so early on is not going to result in a bootable system anyway.
+So, I wonder if its better to just BUG() in such cases. That will
+actually help faster debug than returning an error back. I know the push
+back on using BUG(), but clock drivers are special, and I think thats
+why its seems to be used quite a bit already.
+
+Thanks,
+Sekhar
