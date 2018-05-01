@@ -1,67 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753072AbeEAJ1A (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 05:27:00 -0400
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:35713 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751071AbeEAJ06 (ORCPT
+        id S1753991AbeEAJ2u (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 05:28:50 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:52793 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751071AbeEAJ2s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 05:26:58 -0400
-Subject: Re: [PATCH 01/12] mtd: nand: davinci: store the core chipselect
- number in platform data
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>, Tony Lindgren <tony@atomide.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mtd@lists.infradead.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20180430082453.8091-1-brgl@bgdev.pl>
- <20180430082453.8091-2-brgl@bgdev.pl>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <3dccc5af-2df1-8374-e4e8-0a8b9ea1ae99@ti.com>
-Date: Tue, 1 May 2018 14:55:50 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 1 May 2018 05:28:48 -0400
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Yisheng Xie <xieyisheng1@huawei.com>
+Cc: bhelgaas@google.com, lenb@kernel.org, linux-pci@vger.kernel.org,
+        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        guohanjun@huawei.com, jcm@redhat.com, toshi.kani@hpe.com,
+        tanxiaojun@huawei.com, wangzhou1@hisilicon.com,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Hanjun Guo <hanjun.guo@linaro.org>
+Subject: Re: [PATCH v2 1/2] PCI ACPI: Avoid panic when PCI IO resource's size is not page aligned
+Date: Tue, 01 May 2018 11:28:31 +0200
+Message-ID: <3699960.UXjPS91TgB@aspire.rjw.lan>
+In-Reply-To: <1522480343-37669-1-git-send-email-xieyisheng1@huawei.com>
+References: <1522480343-37669-1-git-send-email-xieyisheng1@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20180430082453.8091-2-brgl@bgdev.pl>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday 30 April 2018 01:54 PM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Saturday, March 31, 2018 9:12:22 AM CEST Yisheng Xie wrote:
+> Zhou reported a bug on Hisilicon arm64 D06 platform with 64KB page size:
 > 
-> We have the 'ti,davinci-chipselect' property in the device tree, but
-> when using platform data the driver silently uses the id field of
-> struct platform_device as the chipselect. This is confusing and we
-> almost broke the nand support again recently after converting the
-> platform to common clock framework (which changed the device id in the
-> clock lookup - the problem is gone now that we no longer acquire the
-> clock in the nand driver.
+>  [    2.470908] kernel BUG at lib/ioremap.c:72!
+>  [    2.475079] Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
+>  [    2.480551] Modules linked in:
+>  [    2.483594] CPU: 1 PID: 1 Comm: swapper/0 Not tainted 4.16.0-rc7-00062-g0b41260-dirty #23
+>  [    2.491756] Hardware name: Huawei D06/D06, BIOS Hisilicon D06 UEFI Nemo 2.0 RC0 - B120 03/23/2018
+>  [    2.500614] pstate: 80c00009 (Nzcv daif +PAN +UAO)
+>  [    2.505395] pc : ioremap_page_range+0x268/0x36c
+>  [    2.509912] lr : pci_remap_iospace+0xe4/0x100
+>  [...]
+>  [    2.603733] Call trace:
+>  [    2.606168]  ioremap_page_range+0x268/0x36c
+>  [    2.610337]  pci_remap_iospace+0xe4/0x100
+>  [    2.614334]  acpi_pci_probe_root_resources+0x1d4/0x214
+>  [    2.619460]  pci_acpi_root_prepare_resources+0x18/0xa8
+>  [    2.624585]  acpi_pci_root_create+0x98/0x214
+>  [    2.628843]  pci_acpi_scan_root+0x124/0x20c
+>  [    2.633013]  acpi_pci_root_add+0x224/0x494
+>  [    2.637096]  acpi_bus_attach+0xf8/0x200
+>  [    2.640918]  acpi_bus_attach+0x98/0x200
+>  [    2.644740]  acpi_bus_attach+0x98/0x200
+>  [    2.648562]  acpi_bus_scan+0x48/0x9c
+>  [    2.652125]  acpi_scan_init+0x104/0x268
+>  [    2.655948]  acpi_init+0x308/0x374
+>  [    2.659337]  do_one_initcall+0x48/0x14c
+>  [    2.663160]  kernel_init_freeable+0x19c/0x250
+>  [    2.667504]  kernel_init+0x10/0x100
+>  [    2.670979]  ret_from_fork+0x10/0x18
 > 
-> This patch adds a new filed - core_chipsel - to the platform_data.
-
-s/filed/field
-
-> Subsequent patches will convert the platforms to using this new field.
-
-Can you add a comment for this new field too, like how we have for most
-other fields?
-
-Curious on what 'core' in core_chipsel means. Something to do with
-chip-select offset we have on DA850?
-
+> The cause is the size of PCI IO resource is 32KB, which is 4K aligned but
+> not 64KB aligned, however, ioremap_page_range() request the range as page
+> aligned or it will trigger a BUG_ON() on ioremap_pte_range() it calls, as
+> ioremap_pte_range increase the addr by PAGE_SIZE, which makes addr != end
+> until trigger BUG_ON, if its incoming end is not page aligned. More detail
+> trace is as following:
 > 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>  ioremap_page_range
+>  -> ioremap_p4d_range
+>     -> ioremap_p4d_range
+>        -> ioremap_pud_range
+>           -> ioremap_pmd_range
+>              -> ioremap_pte_range
+> 
+> This patch fix the bug by align the size of PCI IO resource to PAGE_SIZE.
+> 
+> Reported-by: Zhou Wang <wangzhou1@hisilicon.com>
+> Tested-by: Xiaojun Tan <tanxiaojun@huawei.com>
+> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
+> ---
+> I mark this as v2 for I have post a RFC version:
+> 
+>  https://lkml.org/lkml/2018/3/30/8
+>  
+> v2:
+>  * Let the caller of ioremap_page_range() align the request by PAGE_SIZE - per Toshi
+> 
+> Thanks
+> Yisheng
+> 
+>  drivers/acpi/pci_root.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/acpi/pci_root.c b/drivers/acpi/pci_root.c
+> index 6fc204a..b758ca3 100644
+> --- a/drivers/acpi/pci_root.c
+> +++ b/drivers/acpi/pci_root.c
+> @@ -746,7 +746,7 @@ static void acpi_pci_root_remap_iospace(struct resource_entry *entry)
+>  		goto err;
+>  
+>  	res->start = port;
+> -	res->end = port + length - 1;
+> +	res->end = PAGE_ALIGN(port + length) - 1;
 
-Thanks,
-Sekhar
+Shouldn't pci_remap_iospace() sanitize its arguments instead?
+
+>  	entry->offset = port - pci_addr;
+>  
+>  	if (pci_remap_iospace(res, cpu_addr) < 0)
+> 
