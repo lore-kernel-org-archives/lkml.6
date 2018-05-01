@@ -1,75 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756046AbeEAOf3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 10:35:29 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36840 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755453AbeEAOf1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 10:35:27 -0400
-Date: Tue, 1 May 2018 16:35:24 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Andrey Grodzovsky <Andrey.Grodzovsky@amd.com>
-Cc: christian.koenig@amd.com, "Eric W. Biederman" <ebiederm@xmission.com>,
-        David.Panariti@amd.com, amd-gfx@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, Alexander.Deucher@amd.com,
-        akpm@linux-foundation.org
-Subject: Re: [PATCH 2/3] drm/scheduler: Don't call wait_event_killable for
- signaled process.
-Message-ID: <20180501143524.GA13017@redhat.com>
-References: <877eowa5qh.fsf@xmission.com>
- <20180425135552.GD7592@redhat.com>
- <f45c7017-c75a-7f0c-b6d5-4d79600cdd33@amd.com>
- <20180425171757.GA10441@redhat.com>
- <c39cb438-1e8a-4f2c-50f6-c6e2a144487b@amd.com>
- <874ljyu98e.fsf@xmission.com>
- <c3c9787d-b279-8169-43d1-74eeb666ffbd@gmail.com>
- <bceb1a1b-c453-782d-5a7d-40fa2f22c813@amd.com>
- <20180430160006.GB10583@redhat.com>
- <e5b0221d-84ba-10ff-4a58-4fa27c99650f@amd.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e5b0221d-84ba-10ff-4a58-4fa27c99650f@amd.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S1756068AbeEAOfi (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 10:35:38 -0400
+Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:58303 "EHLO
+        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1755992AbeEAOff (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 10:35:35 -0400
+From: Liming Sun <lsun@mellanox.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc: Liming Sun <lsun@mellanox.com>, linux-mmc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 2/3] dt-bindings: mmc: Add binding for BlueField SoC
+Date: Tue,  1 May 2018 10:32:34 -0400
+Message-Id: <1525185155-24469-2-git-send-email-lsun@mellanox.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1525185155-24469-1-git-send-email-lsun@mellanox.com>
+References: <1525185155-24469-1-git-send-email-lsun@mellanox.com>
+In-Reply-To: <026fa942828c54fda5bad225981e56abc808b949.1524497286.git.lsun@mellanox.com>
+References: <026fa942828c54fda5bad225981e56abc808b949.1524497286.git.lsun@mellanox.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/30, Andrey Grodzovsky wrote:
->
-> On 04/30/2018 12:00 PM, Oleg Nesterov wrote:
-> >On 04/30, Andrey Grodzovsky wrote:
-> >>What about changing PF_SIGNALED to  PF_EXITING in
-> >>drm_sched_entity_do_release
-> >>
-> >>-       if ((current->flags & PF_SIGNALED) && current->exit_code == SIGKILL)
-> >>+      if ((current->flags & PF_EXITING) && current->exit_code == SIGKILL)
-> >let me repeat, please don't use task->exit_code. And in fact this check is racy
-> >
-> >But this doesn't matter. Say, we can trivially add SIGNAL_GROUP_KILLED_BY_SIGKILL,
-> >or do something else,
->
-> Can you explain where is the race and what is a possible alternative then ?
+This commit adds "mellanox,bluefield-dw-mshc" for dwmmc driver
+extension on Mellanox BlueField SoC platform.
 
-Oh. I mentioned this race automatically, because I am pedant ;) Let me repeat
-that this doesn't really matter, and let me remind that the caller of fop->release
-can be completely unrelated process, say $cat /proc/pid/fdinfo. And in any case
-->exit_code should not be used outside of ptrace/exit paths.
+Signed-off-by: Liming Sun <lsun@mellanox.com>
+---
+ .../devicetree/bindings/mmc/bluefield-dw-mshc.txt  | 29 ++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mmc/bluefield-dw-mshc.txt
 
-OK, the race. Consider a process P with a main thread M and a sub-thread T.
-
-T does pthread_exit(), enters do_exit() and gets a preemption before exit_files().
-
-The process is killed by SIGKILL. M calls do_group_exit(), do_exit() and passes
-exit_files(). However, it doesn't call close_files() because T has another reference.
-
-T resumes, calls close_files(), fput(), etc, and then exit_task_work(), so
-it can finally call ->release() with current->exit_code == 0 desptite the fact
-the process was killed.
-
-Again, again, this doesn't matter. We can distinguish killed-or-not, by SIGKILL-
-or-not. But I still do not think we actually need this. At least in ->release()
-paths, ->flush() may differ.
-
-Oleg.
+diff --git a/Documentation/devicetree/bindings/mmc/bluefield-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/bluefield-dw-mshc.txt
+new file mode 100644
+index 0000000..75bd844d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mmc/bluefield-dw-mshc.txt
+@@ -0,0 +1,29 @@
++* Mellanox Bluefield SoC specific extensions to the Synopsys Designware
++  Mobile Storage Host Controller
++
++Read synopsys-dw-mshc.txt for more details
++
++The Synopsys designware mobile storage host controller is used to interface
++a SoC with storage medium such as eMMC or SD/MMC cards. This file documents
++differences between the core Synopsys dw mshc controller properties described
++by synopsys-dw-mshc.txt and the properties used by the Mellanox Bluefield SoC
++specific extensions to the Synopsys Designware Mobile Storage Host Controller.
++
++Required Properties:
++
++* compatible: should be one of the following.
++  - "mellanox,bluefield-dw-mshc": for controllers with Mellanox Bluefield SoC
++    specific extensions.
++
++Example:
++
++	/* Mellanox Bluefield SoC MMC */
++	mmc@0x6008000 {
++		compatible = "mellanox,bluefield-dw-mshc";
++		reg = <0x6008000 0x400>;
++		interrupts = <32>;
++		fifo-depth = <0x100>;
++		clock-frequency = <24000000>;
++		bus-width = <8>;
++		cap-mmc-highspeed;
++	};
+-- 
+1.8.3.1
