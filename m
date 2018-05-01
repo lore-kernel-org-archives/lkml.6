@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755849AbeEANtB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 09:49:01 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46400 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755751AbeEANs5 (ORCPT
+        id S1755929AbeEANte (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 09:49:34 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41364 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1755632AbeEANsv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 09:48:57 -0400
+        Tue, 1 May 2018 09:48:51 -0400
 From: Mimi Zohar <zohar@linux.vnet.ibm.com>
 To: linux-integrity@vger.kernel.org
 Cc: Hans de Goede <hdegoede@redhat.com>,
@@ -17,18 +17,18 @@ Cc: Hans de Goede <hdegoede@redhat.com>,
         "Luis R . Rodriguez" <mcgrof@kernel.org>,
         "Luis R . Rodriguez" <mcgrof@suse.com>,
         Kees Cook <keescook@chromium.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Stephen Boyd <stephen.boyd@linaro.org>
-Subject: [RFC PATCH 6/6] ima: prevent loading firmware into a pre-allocated buffer
-Date: Tue,  1 May 2018 09:48:23 -0400
+        Seth Forshee <seth.forshee@canonical.com>,
+        Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 4/6] ima: coordinate with signed regulatory.db
+Date: Tue,  1 May 2018 09:48:21 -0400
 X-Mailer: git-send-email 2.7.5
 In-Reply-To: <1525182503-13849-1-git-send-email-zohar@linux.vnet.ibm.com>
 References: <1525182503-13849-1-git-send-email-zohar@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18050113-0040-0000-0000-00000434CDA3
+x-cbid: 18050113-0040-0000-0000-00000434CDA1
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18050113-0041-0000-0000-00002638E68E
-Message-Id: <1525182503-13849-7-git-send-email-zohar@linux.vnet.ibm.com>
+x-cbparentid: 18050113-0041-0000-0000-00002638E68A
+Message-Id: <1525182503-13849-5-git-send-email-zohar@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-01_07:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -40,47 +40,48 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Question: can the device access the pre-allocated buffer at any time?
+Based on IMA policy, measure and appraise regulatory.db firmware as
+usual, but on signature verification failure rely on regdb signature.
 
-By allowing devices to request firmware be loaded directly into a
-pre-allocated buffer, will this allow the device access to the firmware
-before the kernel has verified the firmware signature?
-
-Is it dependent on the type of buffer allocated (eg. DMA)?  For example,
-qcom_mdt_load() -> qcom_scm_pas_init_image() -> dma_alloc_coherent().
-
-With an IMA policy requiring signed firmware, this patch would prevent
-loading firmware into a pre-allocated buffer.
+For systems wanting IMA-appraisal enforcement on all firmware, including
+regdb, do not enable CONFIG_CFG80211_REQUIRE_SIGNED_REGDB.
 
 Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 Cc: Luis R. Rodriguez <mcgrof@suse.com>
 Cc: David Howells <dhowells@redhat.com>
 Cc: Kees Cook <keescook@chromium.org>
-Cc: Serge E. Hallyn <serge@hallyn.com>
-Cc: Stephen Boyd <stephen.boyd@linaro.org>
+Cc: Seth Forshee <seth.forshee@canonical.com>
+Cc: Johannes Berg <johannes.berg@intel.com>
 ---
- security/integrity/ima/ima_main.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ security/integrity/ima/ima_main.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
 diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index eb9c273ab81d..3098131f77c4 100644
+index 8759280dccf6..71b5a51c6709 100644
 --- a/security/integrity/ima/ima_main.c
 +++ b/security/integrity/ima/ima_main.c
-@@ -454,6 +454,15 @@ int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
- 		return 0;
- 	}
+@@ -468,6 +468,7 @@ int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
  
-+	if (read_id == READING_FIRMWARE_PREALLOC_BUFFER) {
-+		if ((ima_appraise & IMA_APPRAISE_FIRMWARE) &&
-+		    (ima_appraise & IMA_APPRAISE_ENFORCE)) {
-+			pr_err("Prevent device from accessing firmware prior to verifying the firmware signature.\n");
-+			return -EACCES;
-+		}
-+		return 0;
-+	}
+ static int read_idmap[READING_MAX_ID] = {
+ 	[READING_FIRMWARE] = FIRMWARE_CHECK,
++	[READING_FIRMWARE_REGULATORY_DB] = FIRMWARE_CHECK,
+ 	[READING_MODULE] = MODULE_CHECK,
+ 	[READING_KEXEC_IMAGE] = KEXEC_KERNEL_CHECK,
+ 	[READING_KEXEC_INITRAMFS] = KEXEC_INITRAMFS_CHECK,
+@@ -515,8 +516,12 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
+ 
+ 	func = read_idmap[read_id] ?: FILE_CHECK;
+ 	security_task_getsecid(current, &secid);
+-	return process_measurement(file, current_cred(), secid, buf, size,
+-				   MAY_READ, func, 0);
++	ret = process_measurement(file, current_cred(), secid, buf, size,
++				  MAY_READ, func, 0);
 +
- 	if (read_id == READING_FIRMWARE_FALLBACK) {
- 		if ((ima_appraise & IMA_APPRAISE_FIRMWARE) &&
- 		    (ima_appraise & IMA_APPRAISE_ENFORCE)) {
++	/* Co-ordination with signed regdb */
++	if (ret < -EACCES && read_id == READING_FIRMWARE_REGULATORY_DB)
++		return 0;
+ }
+ 
+ static int __init init_ima(void)
 -- 
 2.7.5
