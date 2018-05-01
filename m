@@ -1,62 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756219AbeEAQTl (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 12:19:41 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:37906 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755316AbeEAQTg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 12:19:36 -0400
-X-Google-Smtp-Source: AB8JxZo8NuEPnf4tJklPp3DKOLKqtaq7noIB2m4/UavMdnootgzKRzJTlFCYO1wSjgGRRLAuUF77sg==
+        id S1756016AbeEAQUA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 12:20:00 -0400
+Received: from vps-vb.mhejs.net ([37.28.154.113]:56138 "EHLO vps-vb.mhejs.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755402AbeEAQT6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 12:19:58 -0400
+Subject: Re: [PATCH v5 4/6] x86/microcode/AMD: Check microcode container data
+ in the late loader
+To: Borislav Petkov <bp@alien8.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+References: <cover.1524515406.git.mail@maciej.szmigiero.name>
+ <8f204a953dc4b46477e214ebd291021d7ab6fa6c.1524515406.git.mail@maciej.szmigiero.name>
+ <20180430090527.GC6509@pd.tnic>
+ <bce73502-0d18-e50c-b78b-8159dc9f8f66@maciej.szmigiero.name>
+ <20180501084317.GC31863@pd.tnic>
+From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Message-ID: <e10212ef-c876-4965-6279-967005f53950@maciej.szmigiero.name>
+Date: Tue, 1 May 2018 18:19:56 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180501161618.GA32350@rob-hp-laptop>
-References: <20180430114058.5061-1-jagan@amarulasolutions.com>
- <20180430114058.5061-2-jagan@amarulasolutions.com> <20180501161618.GA32350@rob-hp-laptop>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 2 May 2018 00:19:13 +0800
-X-Gmail-Original-Message-ID: <CAGb2v64ZTQ0jAaSpDXtV58c-EE2FMMbVASLLjxjGkWM3iJTMHg@mail.gmail.com>
-Message-ID: <CAGb2v64ZTQ0jAaSpDXtV58c-EE2FMMbVASLLjxjGkWM3iJTMHg@mail.gmail.com>
-Subject: Re: [PATCH 01/21] dt-bindings: clock: Add compatible for A64 DE2 CCU
-To: Rob Herring <robh@kernel.org>
-Cc: Jagan Teki <jagan@amarulasolutions.com>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180501084317.GC31863@pd.tnic>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 2, 2018 at 12:16 AM, Rob Herring <robh@kernel.org> wrote:
-> On Mon, Apr 30, 2018 at 05:10:38PM +0530, Jagan Teki wrote:
->> Allwinner A64 has DE2 CCU which is similar to H3/H5 SoC.
->>
->> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
->> ---
->>  Documentation/devicetree/bindings/clock/sun8i-de2.txt | 1 +
->>  1 file changed, 1 insertion(+)
->
-> Reviewed-by: Rob Herring <robh@kernel.org>
+On 01.05.2018 10:43, Borislav Petkov wrote:
+> On Tue, May 01, 2018 at 12:27:51AM +0200, Maciej S. Szmigiero wrote:
+>> 1) -EINVAL maps to a valid return value of 4294967274 bytes.
+>> We have a different behavior for invalid data in the container file
+>> (including too large lengths) than for grave errors like a failed memory
+>> allocation.
+> 
+> WTF?
 
-Hi Rob,
+Could you please elaborate this comment?
 
-Do we need to add this if it's just a soc-specific compatible
-we add in the device tree to future proof things in case we
-discover quirks later on?
+-EINVAL cast to unsigned int is 4294967274 and this value is also
+a valid count of bytes to skip that this function can return.
 
-AFAIK we haven't been doing this, and this is likely to create
-some confusion, because they aren't actually mentioned anywhere
-in the driver.
+The "grave errors" behavior comes from the existing code, a comment
+in code above verify_and_add_patch() says:
+"a grave error like a memory allocation has failed and the driver cannot
+continue functioning normally. In such cases, we tear down everything
+we've used up so far and exit."
 
-ChenYu
+>> 2) This function single caller (__load_microcode_amd()) normalized any
+>> error that verify_and_add_patch() returned to UCODE_ERROR anyway,
+> 
+> So?
+
+This means that there is no loss of information here.
+
+The function these three points are about (verify_and_add_patch()) is
+declared as "static", so it cannot be called from any other kernel code.
+
+>> 3) The existing code uses a convention that zero return value means
+>> 'terminate processing' for the parse_container() function in the early
+>> loader which normally returns a 'bytes consumed' value, as this function
+>> does.
+> 
+> parse_container() could very well change its convention to return
+> negative on error and positive value if the loop is supposed to skip
+> bytes.
+> 
+
+Yes, but then the problem from the point 1) above will be introduced
+also to parse_container().
+
+Maciej
