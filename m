@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755148AbeEANsp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 09:48:45 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40238 "EHLO
+        id S1755725AbeEANsw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 09:48:52 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42178 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755487AbeEANsl (ORCPT
+        by vger.kernel.org with ESMTP id S1754340AbeEANsr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 09:48:41 -0400
+        Tue, 1 May 2018 09:48:47 -0400
 From: Mimi Zohar <zohar@linux.vnet.ibm.com>
 To: linux-integrity@vger.kernel.org
 Cc: Hans de Goede <hdegoede@redhat.com>,
@@ -16,17 +16,19 @@ Cc: Hans de Goede <hdegoede@redhat.com>,
         David Howells <dhowells@redhat.com>,
         "Luis R . Rodriguez" <mcgrof@kernel.org>,
         "Luis R . Rodriguez" <mcgrof@suse.com>,
-        Kees Cook <keescook@chromium.org>, Matthew Garrett <mjg59@google.com>
-Subject: [PATCH 1/6] firmware: permit LSMs and IMA to fail firmware sysfs fallback loading
-Date: Tue,  1 May 2018 09:48:18 -0400
+        Kees Cook <keescook@chromium.org>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 3/6] firmware: differentiate between signed regulatory.db and other firmware
+Date: Tue,  1 May 2018 09:48:20 -0400
 X-Mailer: git-send-email 2.7.5
 In-Reply-To: <1525182503-13849-1-git-send-email-zohar@linux.vnet.ibm.com>
 References: <1525182503-13849-1-git-send-email-zohar@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18050113-0040-0000-0000-00000453CC13
+x-cbid: 18050113-0040-0000-0000-00000434CD9E
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18050113-0041-0000-0000-000020F7E72F
-Message-Id: <1525182503-13849-2-git-send-email-zohar@linux.vnet.ibm.com>
+x-cbparentid: 18050113-0041-0000-0000-00002638E687
+Message-Id: <1525182503-13849-4-git-send-email-zohar@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-01_07:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -38,52 +40,45 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add an LSM hook prior to allowing firmware sysfs fallback loading.
+Allow LSMs and IMA to differentiate between signed regulatory.db and
+other firmware.
 
 Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 Cc: Luis R. Rodriguez <mcgrof@suse.com>
 Cc: David Howells <dhowells@redhat.com>
 Cc: Kees Cook <keescook@chromium.org>
-Cc: Matthew Garrett <mjg59@google.com>
+Cc: Seth Forshee <seth.forshee@canonical.com>
+Cc: Johannes Berg <johannes.berg@intel.com>
 ---
- drivers/base/firmware_loader/fallback.c | 7 +++++++
- include/linux/fs.h                      | 1 +
- 2 files changed, 8 insertions(+)
+ drivers/base/firmware_loader/main.c | 5 +++++
+ include/linux/fs.h                  | 1 +
+ 2 files changed, 6 insertions(+)
 
-diff --git a/drivers/base/firmware_loader/fallback.c b/drivers/base/firmware_loader/fallback.c
-index 31b5015b59fe..23d2af30474e 100644
---- a/drivers/base/firmware_loader/fallback.c
-+++ b/drivers/base/firmware_loader/fallback.c
-@@ -651,6 +651,8 @@ static bool fw_force_sysfs_fallback(unsigned int opt_flags)
+diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
+index eb34089e4299..d7cdf04a8681 100644
+--- a/drivers/base/firmware_loader/main.c
++++ b/drivers/base/firmware_loader/main.c
+@@ -318,6 +318,11 @@ fw_get_filesystem_firmware(struct device *device, struct fw_priv *fw_priv)
+ 			break;
+ 		}
  
- static bool fw_run_sysfs_fallback(unsigned int opt_flags)
- {
-+	int ret;
-+
- 	if (fw_fallback_config.ignore_sysfs_fallback) {
- 		pr_info_once("Ignoring firmware sysfs fallback due to sysctl knob\n");
- 		return false;
-@@ -659,6 +661,11 @@ static bool fw_run_sysfs_fallback(unsigned int opt_flags)
- 	if ((opt_flags & FW_OPT_NOFALLBACK))
- 		return false;
- 
-+	/* Also permit LSMs and IMA to fail firmware sysfs fallback */
-+	ret = security_kernel_read_file(NULL, READING_FIRMWARE_FALLBACK);
-+	if (ret < 0)
-+		return ret;
-+
- 	return fw_force_sysfs_fallback(opt_flags);
- }
- 
++#ifdef CONFIG_CFG80211_REQUIRE_SIGNED_REGDB
++		if ((strcmp(fw_priv->fw_name, "regulatory.db") == 0) ||
++		    (strcmp(fw_priv->fw_name, "regulatory.db.p7s") == 0))
++			id = READING_FIRMWARE_REGULATORY_DB;
++#endif
+ 		fw_priv->size = 0;
+ 		rc = kernel_read_file_from_path(path, &fw_priv->data, &size,
+ 						msize, id);
 diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 760d8da1b6c7..dc16a73c3d38 100644
+index dc16a73c3d38..d1153c2884b9 100644
 --- a/include/linux/fs.h
 +++ b/include/linux/fs.h
-@@ -2810,6 +2810,7 @@ extern int do_pipe_flags(int *, int);
- 	id(UNKNOWN, unknown)		\
+@@ -2811,6 +2811,7 @@ extern int do_pipe_flags(int *, int);
  	id(FIRMWARE, firmware)		\
  	id(FIRMWARE_PREALLOC_BUFFER, firmware)	\
-+	id(FIRMWARE_FALLBACK, firmware)	\
+ 	id(FIRMWARE_FALLBACK, firmware)	\
++	id(FIRMWARE_REGULATORY_DB, firmware)	\
  	id(MODULE, kernel-module)		\
  	id(KEXEC_IMAGE, kexec-image)		\
  	id(KEXEC_INITRAMFS, kexec-initramfs)	\
