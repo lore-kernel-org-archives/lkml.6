@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755524AbeEAJOY (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 05:14:24 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44252 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754907AbeEAJL4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 05:11:56 -0400
+        id S1755310AbeEAJOp (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 05:14:45 -0400
+Received: from foss.arm.com ([217.140.101.70]:44224 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754854AbeEAJLv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 05:11:51 -0400
 From: Suzuki K Poulose <suzuki.poulose@arm.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org,
@@ -13,9 +13,9 @@ Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org,
         will.deacon@arm.com, robin.murphy@arm.com, sudeep.holla@arm.com,
         frowand.list@gmail.com, robh@kernel.org, john.horley@arm.com,
         Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH v2 19/27] coresight: catu: Plug in CATU as a backend for ETR buffer
-Date: Tue,  1 May 2018 10:10:49 +0100
-Message-Id: <1525165857-11096-20-git-send-email-suzuki.poulose@arm.com>
+Subject: [PATCH v2 17/27] coresight: etr: Add support for save restore buffers
+Date: Tue,  1 May 2018 10:10:47 +0100
+Message-Id: <1525165857-11096-18-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1525165857-11096-1-git-send-email-suzuki.poulose@arm.com>
 References: <1525165857-11096-1-git-send-email-suzuki.poulose@arm.com>
@@ -23,415 +23,303 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that we can use a CATU with a scatter gather table, add support
-for the TMC ETR to make use of the connected CATU in translate mode.
-This is done by adding CATU as new buffer mode. CATU's SLADDR must
-always be 4K aligned. Thus the INADDR (base VA) is always 1M aligned
-and we adjust the DBA for the ETR to align to the "offset" within
-the 1MB page.
+Add support for creating buffers which can be used in save-restore
+mode (e.g, for use by perf). If the TMC-ETR supports save-restore
+feature, we could support the mode in all buffer backends. However,
+if it doesn't, we should fall back to using in built SG mechanism,
+where we can rotate the SG table by making some adjustments in the
+page table.
 
 Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- drivers/hwtracing/coresight/coresight-catu.c    | 189 +++++++++++++++++++++++-
- drivers/hwtracing/coresight/coresight-catu.h    |  30 ++++
- drivers/hwtracing/coresight/coresight-tmc-etr.c |  23 ++-
- drivers/hwtracing/coresight/coresight-tmc.h     |   1 +
- 4 files changed, 235 insertions(+), 8 deletions(-)
+ drivers/hwtracing/coresight/coresight-tmc-etr.c | 142 +++++++++++++++++++++++-
+ drivers/hwtracing/coresight/coresight-tmc.h     |  16 +++
+ 2 files changed, 153 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/hwtracing/coresight/coresight-catu.c b/drivers/hwtracing/coresight/coresight-catu.c
-index 4cc2928..a4792fa 100644
---- a/drivers/hwtracing/coresight/coresight-catu.c
-+++ b/drivers/hwtracing/coresight/coresight-catu.c
-@@ -22,6 +22,21 @@
- 	dev_get_drvdata(csdev->dev.parent)
- 
- /*
-+ * catu_etr_buf		- CATU buffer descriptor
-+ * @catu_table		- SG table for the CATU
-+ * @sladdr		- Table base address for CATU
-+ * @start_offset	- Current offset where the ETR starts writing
-+ *			  within the buffer.
-+ * @cur_size		- Current size used by the ETR.
-+ */
-+struct catu_etr_buf {
-+	struct tmc_sg_table	*catu_table;
-+	u64			sladdr;
-+	u64			start_offset;
-+	u64			cur_size;
-+};
-+
-+/*
-  * CATU uses a page size of 4KB for page tables as well as data pages.
-  * Each 64bit entry in the table has the following format.
-  *
-@@ -87,6 +102,9 @@ typedef u64 cate_t;
- 	(((cate_t)(addr) & CATU_ADDR_MASK) | CATU_ENTRY_VALID)
- #define CATU_ENTRY_ADDR(entry)	((cate_t)(entry) & ~((cate_t)CATU_ENTRY_VALID))
- 
-+/* CATU expects the INADDR to be aligned to 1M. */
-+#define CATU_DEFAULT_INADDR	(1ULL << 20)
-+
- /*
-  * Index into the CATU entry pointing to the page within
-  * the table. Each table entry can point to a 4KB page, with
-@@ -401,7 +419,7 @@ catu_populate_table(struct tmc_sg_table *catu_table)
- 	}
- }
- 
--static struct tmc_sg_table __maybe_unused *
-+static struct tmc_sg_table *
- catu_init_sg_table(struct device *catu_dev, int node,
- 		   ssize_t size, void **pages)
- {
-@@ -429,6 +447,149 @@ catu_init_sg_table(struct device *catu_dev, int node,
- 	return catu_table;
- }
- 
-+static void catu_free_etr_buf(struct etr_buf *etr_buf)
-+{
-+	struct catu_etr_buf *catu_buf;
-+
-+	if (!etr_buf || etr_buf->mode != ETR_MODE_CATU || !etr_buf->private)
-+		return;
-+	catu_buf = etr_buf->private;
-+	tmc_free_sg_table(catu_buf->catu_table);
-+	kfree(catu_buf);
-+}
-+
-+static ssize_t catu_get_data_etr_buf(struct etr_buf *etr_buf, u64 offset,
-+				     size_t len, char **bufpp)
-+{
-+	struct catu_etr_buf *catu_buf = etr_buf->private;
-+
-+	return tmc_sg_table_get_data(catu_buf->catu_table, offset, len, bufpp);
-+}
-+
-+static void catu_sync_etr_buf(struct etr_buf *etr_buf, u64 rrp, u64 rwp)
-+{
-+	struct catu_etr_buf *catu_buf = etr_buf->private;
-+	s64 r_offset, w_offset;
-+	unsigned long buf_size = tmc_sg_table_buf_size(catu_buf->catu_table);
-+
-+	/*
-+	 * ETR started off at etr_buf->hwaddr which corresponds to
-+	 * start_offset within the trace buffer. Convert the RRP/RWP
-+	 * offsets within the trace buffer.
-+	 */
-+	r_offset = (s64)rrp - etr_buf->hwaddr + catu_buf->start_offset;
-+	r_offset -= (r_offset > buf_size) ? buf_size : 0;
-+
-+	w_offset = (s64)rwp - etr_buf->hwaddr + catu_buf->start_offset;
-+	w_offset -= (w_offset > buf_size) ? buf_size : 0;
-+
-+	if (!etr_buf->full) {
-+		etr_buf->len = w_offset - r_offset;
-+		if (w_offset < r_offset)
-+			etr_buf->len += buf_size;
-+	} else {
-+		etr_buf->len = etr_buf->size;
-+	}
-+
-+	etr_buf->offset = r_offset;
-+	tmc_sg_table_sync_data_range(catu_buf->catu_table,
-+				     r_offset, etr_buf->len);
-+}
-+
-+static inline void catu_set_etr_buf(struct etr_buf *etr_buf, u64 base, u64 size)
-+{
-+	struct catu_etr_buf *catu_buf = etr_buf->private;
-+
-+	catu_buf->start_offset = base;
-+	catu_buf->cur_size = size;
-+
-+	/*
-+	 * CATU always maps 1MB aligned addresses. ETR should start at
-+	 * the offset within the first table.
-+	 */
-+	etr_buf->hwaddr = CATU_DEFAULT_INADDR + (base & (SZ_1M - 1));
-+	etr_buf->size = size;
-+	etr_buf->rwp = etr_buf->rrp = etr_buf->hwaddr;
-+}
-+
-+static int catu_restore_etr_buf(struct etr_buf *etr_buf,
-+				unsigned long r_offset,
-+				unsigned long w_offset,
-+				unsigned long size,
-+				u32 status,
-+				bool has_save_restore)
-+{
-+	struct catu_etr_buf *catu_buf = etr_buf->private;
-+	u64 end = w_offset + size;
-+	u64 cur_end = catu_buf->start_offset + catu_buf->cur_size;
-+
-+	/*
-+	 * We cannot support rotation without a full table
-+	 * at the end. i.e, the buffer size should be aligned
-+	 * to 1MB.
-+	 */
-+	if (tmc_sg_table_buf_size(catu_buf->catu_table) & (SZ_1M - 1))
-+		return -EINVAL;
-+
-+	/*
-+	 * We don't have to make any changes to the table if the
-+	 * current (start, end) and the new (start, end) are in the
-+	 * same pages respectively.
-+	 */
-+	if ((w_offset ^ catu_buf->start_offset) & ~(CATU_PAGE_SIZE - 1) ||
-+	    (end ^ cur_end) & ~(CATU_PAGE_SIZE - 1)) {
-+		catu_reset_table(catu_buf->catu_table, catu_buf->start_offset,
-+				 catu_buf->cur_size);
-+		catu_buf->sladdr = catu_set_table(catu_buf->catu_table,
-+						  w_offset, size);
-+	}
-+
-+	catu_set_etr_buf(etr_buf, w_offset, size);
-+
-+	return 0;
-+}
-+
-+static int catu_alloc_etr_buf(struct tmc_drvdata *tmc_drvdata,
-+			      struct etr_buf *etr_buf, int node, void **pages)
-+{
-+	struct coresight_device *csdev;
-+	struct device *catu_dev;
-+	struct tmc_sg_table *catu_table;
-+	struct catu_etr_buf *catu_buf;
-+
-+	csdev = tmc_etr_get_catu_device(tmc_drvdata);
-+	if (!csdev)
-+		return -ENODEV;
-+	catu_dev = csdev->dev.parent;
-+	catu_buf = kzalloc(sizeof(*catu_buf), GFP_KERNEL);
-+	if (!catu_buf)
-+		return -ENOMEM;
-+
-+	catu_table = catu_init_sg_table(catu_dev, node, etr_buf->size, pages);
-+	if (IS_ERR(catu_table)) {
-+		kfree(catu_buf);
-+		return PTR_ERR(catu_table);
-+	}
-+
-+	etr_buf->mode = ETR_MODE_CATU;
-+	etr_buf->private = catu_buf;
-+	catu_buf->catu_table = catu_table;
-+
-+	/* By default make the buffer linear from 0 with full size */
-+	catu_set_etr_buf(etr_buf, 0, etr_buf->size);
-+	catu_dump_table(catu_table);
-+
-+	return 0;
-+}
-+
-+const struct etr_buf_operations etr_catu_buf_ops = {
-+	.alloc = catu_alloc_etr_buf,
-+	.free = catu_free_etr_buf,
-+	.sync = catu_sync_etr_buf,
-+	.get_data = catu_get_data_etr_buf,
-+	.restore = catu_restore_etr_buf,
-+};
-+
- coresight_simple_reg32(struct catu_drvdata, control, CATU_CONTROL);
- coresight_simple_reg32(struct catu_drvdata, status, CATU_STATUS);
- coresight_simple_reg32(struct catu_drvdata, mode, CATU_MODE);
-@@ -467,9 +628,11 @@ static inline int catu_wait_for_ready(struct catu_drvdata *drvdata)
- 				 CATU_STATUS, CATU_STATUS_READY, 1);
- }
- 
--static int catu_enable_hw(struct catu_drvdata *drvdata, void *__unused)
-+static int catu_enable_hw(struct catu_drvdata *drvdata, void *data)
- {
- 	u32 control;
-+	u32 mode;
-+	struct etr_buf *etr_buf = data;
- 
- 	if (catu_wait_for_ready(drvdata))
- 		dev_warn(drvdata->dev, "Timeout while waiting for READY\n");
-@@ -481,9 +644,27 @@ static int catu_enable_hw(struct catu_drvdata *drvdata, void *__unused)
- 	}
- 
- 	control |= BIT(CATU_CONTROL_ENABLE);
--	catu_write_mode(drvdata, CATU_MODE_PASS_THROUGH);
-+
-+	if (etr_buf && etr_buf->mode == ETR_MODE_CATU) {
-+		struct catu_etr_buf *catu_buf = etr_buf->private;
-+
-+		mode = CATU_MODE_TRANSLATE;
-+		catu_write_axictrl(drvdata, CATU_OS_AXICTRL);
-+		catu_write_sladdr(drvdata, catu_buf->sladdr);
-+		catu_write_inaddr(drvdata, CATU_DEFAULT_INADDR);
-+	} else {
-+		mode = CATU_MODE_PASS_THROUGH;
-+		catu_write_sladdr(drvdata, 0);
-+		catu_write_inaddr(drvdata, 0);
-+	}
-+
-+	catu_write_irqen(drvdata, 0);
-+	catu_write_mode(drvdata, mode);
- 	catu_write_control(drvdata, control);
--	dev_dbg(drvdata->dev, "Enabled in Pass through mode\n");
-+	dev_dbg(drvdata->dev, "Enabled in %s mode\n",
-+		(mode == CATU_MODE_PASS_THROUGH) ?
-+		"Pass through" :
-+		"Translate");
- 	return 0;
- }
- 
-diff --git a/drivers/hwtracing/coresight/coresight-catu.h b/drivers/hwtracing/coresight/coresight-catu.h
-index cd58d6f..b673a73 100644
---- a/drivers/hwtracing/coresight/coresight-catu.h
-+++ b/drivers/hwtracing/coresight/coresight-catu.h
-@@ -29,6 +29,32 @@
- #define CATU_MODE_PASS_THROUGH	0U
- #define CATU_MODE_TRANSLATE	1U
- 
-+#define CATU_AXICTRL_ARCACHE_SHIFT	4
-+#define CATU_AXICTRL_ARCACHE_MASK	0xf
-+#define CATU_AXICTRL_ARPROT_MASK	0x3
-+#define CATU_AXICTRL_ARCACHE(arcache)		\
-+	(((arcache) & CATU_AXICTRL_ARCACHE_MASK) << CATU_AXICTRL_ARCACHE_SHIFT)
-+
-+#define CATU_AXICTRL_VAL(arcache, arprot)	\
-+	(CATU_AXICTRL_ARCACHE(arcache) | ((arprot) & CATU_AXICTRL_ARPROT_MASK))
-+
-+#define AXI3_AxCACHE_WB_READ_ALLOC	0x7
-+/*
-+ * AXI - ARPROT bits:
-+ * See AMBA AXI & ACE Protocol specification (ARM IHI 0022E)
-+ * sectionA4.7 Access Permissions.
-+ *
-+ * Bit 0: 0 - Unprivileged access, 1 - Privileged access
-+ * Bit 1: 0 - Secure access, 1 - Non-secure access.
-+ * Bit 2: 0 - Data access, 1 - instruction access.
-+ *
-+ * CATU AXICTRL:ARPROT[2] is res0 as we always access data.
-+ */
-+#define CATU_OS_ARPROT			0x2
-+
-+#define CATU_OS_AXICTRL		\
-+	CATU_AXICTRL_VAL(AXI3_AxCACHE_WB_READ_ALLOC, CATU_OS_ARPROT)
-+
- #define CATU_STATUS_READY	8
- #define CATU_STATUS_ADRERR	0
- #define CATU_STATUS_AXIERR	4
-@@ -71,6 +97,8 @@ catu_write_##name(struct catu_drvdata *drvdata, u64 val)		\
- 
- CATU_REG32(control, CATU_CONTROL);
- CATU_REG32(mode, CATU_MODE);
-+CATU_REG32(irqen, CATU_IRQEN);
-+CATU_REG32(axictrl, CATU_AXICTRL);
- CATU_REG_PAIR(sladdr, CATU_SLADDRLO, CATU_SLADDRHI)
- CATU_REG_PAIR(inaddr, CATU_INADDRLO, CATU_INADDRHI)
- 
-@@ -86,4 +114,6 @@ static inline bool coresight_is_catu_device(struct coresight_device *csdev)
- 	       subtype == CORESIGHT_DEV_SUBTYPE_HELPER_CATU;
- }
- 
-+extern const struct etr_buf_operations etr_catu_buf_ops;
-+
- #endif
 diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-index 25e7feb..41dde0a 100644
+index fde3fa6..25e7feb 100644
 --- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
 +++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-@@ -941,6 +941,9 @@ static const struct etr_buf_operations etr_sg_buf_ops = {
- static const struct etr_buf_operations *etr_buf_ops[] = {
- 	[ETR_MODE_FLAT] = &etr_flat_buf_ops,
- 	[ETR_MODE_ETR_SG] = &etr_sg_buf_ops,
-+#ifdef CONFIG_CORESIGHT_CATU
-+	[ETR_MODE_CATU] = &etr_catu_buf_ops,
-+#endif
+@@ -604,7 +604,7 @@ tmc_etr_sg_table_index_to_daddr(struct tmc_sg_table *sg_table, u32 index)
+  *    which starts @base_offset.
+  * 2) Mark the page at the base_offset + size as LAST.
+  */
+-static int __maybe_unused
++static int
+ tmc_etr_sg_table_rotate(struct etr_sg_table *etr_table,
+ 			unsigned long base_offset, unsigned long size)
+ {
+@@ -736,6 +736,9 @@ static int tmc_etr_alloc_flat_buf(struct tmc_drvdata *drvdata,
+ 	flat_buf->size = etr_buf->size;
+ 	flat_buf->dev = drvdata->dev;
+ 	etr_buf->hwaddr = flat_buf->daddr;
++	etr_buf->rrp = flat_buf->daddr;
++	etr_buf->rwp = flat_buf->daddr;
++	etr_buf->status = 0;
+ 	etr_buf->mode = ETR_MODE_FLAT;
+ 	etr_buf->private = flat_buf;
+ 	return 0;
+@@ -777,11 +780,36 @@ static ssize_t tmc_etr_get_data_flat_buf(struct etr_buf *etr_buf,
+ 	return len;
+ }
+ 
++/*
++ * tmc_etr_restore_flat_buf: Restore the flat buffer pointers.
++ * This is only possible with in-built ETR capability to save-restore
++ * the pointers. The DBA will still point to the original start of the
++ * buffer.
++ */
++static int tmc_etr_restore_flat_buf(struct etr_buf *etr_buf,
++				    unsigned long r_offset,
++				    unsigned long w_offset,
++				    unsigned long size,
++				    u32 status,
++				    bool has_save_restore)
++{
++	struct etr_flat_buf *flat_buf = etr_buf->private;
++
++	if (!has_save_restore || !flat_buf || size > flat_buf->size)
++		return -EINVAL;
++	etr_buf->rrp = flat_buf->daddr + (r_offset % flat_buf->size);
++	etr_buf->rwp = flat_buf->daddr + (w_offset % flat_buf->size);
++	etr_buf->size = size;
++	etr_buf->status = status;
++	return 0;
++}
++
+ static const struct etr_buf_operations etr_flat_buf_ops = {
+ 	.alloc = tmc_etr_alloc_flat_buf,
+ 	.free = tmc_etr_free_flat_buf,
+ 	.sync = tmc_etr_sync_flat_buf,
+ 	.get_data = tmc_etr_get_data_flat_buf,
++	.restore = tmc_etr_restore_flat_buf,
  };
  
- static inline int tmc_etr_mode_alloc_buf(int mode,
-@@ -953,6 +956,9 @@ static inline int tmc_etr_mode_alloc_buf(int mode,
- 	switch (mode) {
- 	case ETR_MODE_FLAT:
- 	case ETR_MODE_ETR_SG:
-+#ifdef CONFIG_CORESIGHT_CATU
-+	case ETR_MODE_CATU:
-+#endif
- 		rc = etr_buf_ops[mode]->alloc(drvdata, etr_buf, node, pages);
- 		if (!rc)
- 			etr_buf->ops = etr_buf_ops[mode];
-@@ -977,11 +983,15 @@ static struct etr_buf *tmc_alloc_etr_buf(struct tmc_drvdata *drvdata,
+ /*
+@@ -799,6 +827,7 @@ static int tmc_etr_alloc_sg_buf(struct tmc_drvdata *drvdata,
+ 	if (IS_ERR(etr_table))
+ 		return -ENOMEM;
+ 	etr_buf->hwaddr = etr_table->hwaddr;
++	etr_buf->status = 0;
+ 	etr_buf->mode = ETR_MODE_ETR_SG;
+ 	etr_buf->private = etr_table;
+ 	return 0;
+@@ -825,9 +854,11 @@ static ssize_t tmc_etr_get_data_sg_buf(struct etr_buf *etr_buf, u64 offset,
+ static void tmc_etr_sync_sg_buf(struct etr_buf *etr_buf, u64 rrp, u64 rwp)
+ {
+ 	long r_offset, w_offset;
++	unsigned long buf_size;
+ 	struct etr_sg_table *etr_table = etr_buf->private;
+ 	struct tmc_sg_table *table = etr_table->sg_table;
+ 
++	buf_size = tmc_sg_table_buf_size(table);
+ 	/* Convert hw address to offset in the buffer */
+ 	r_offset = tmc_sg_get_data_page_offset(table, rrp);
+ 	if (r_offset < 0) {
+@@ -849,16 +880,62 @@ static void tmc_etr_sync_sg_buf(struct etr_buf *etr_buf, u64 rrp, u64 rwp)
+ 	if (etr_buf->full)
+ 		etr_buf->len = etr_buf->size;
+ 	else
+-		etr_buf->len = ((w_offset < r_offset) ? etr_buf->size : 0) +
++		etr_buf->len = ((w_offset < r_offset) ? buf_size : 0) +
+ 				w_offset - r_offset;
+ 	tmc_sg_table_sync_data_range(table, r_offset, etr_buf->len);
+ }
+ 
++static int tmc_etr_restore_sg_buf(struct etr_buf *etr_buf,
++				  unsigned long r_offset,
++				  unsigned long w_offset,
++				  unsigned long size,
++				  u32 __always_unused status,
++				  bool has_save_restore)
++{
++	int rc;
++	struct etr_sg_table *etr_table = etr_buf->private;
++	struct device *dev = etr_table->sg_table->dev;
++
++	/*
++	 * It is highly unlikely that we have an ETR with in-built SG and
++	 * Save-Restore capability and we are not sure if the PTRs will
++	 * be updated.
++	 */
++	if (has_save_restore) {
++		dev_warn_once(dev,
++		"Unexpected feature combination of SG and save-restore\n");
++		return -EINVAL;
++	}
++
++	/*
++	 * Since we cannot program RRP/RWP different from DBAL, the offsets
++	 * should match.
++	 */
++	if (r_offset != w_offset) {
++		dev_dbg(dev, "Mismatched RRP/RWP offsets\n");
++		return -EINVAL;
++	}
++
++	/* Make sure the size is aligned */
++	size &= ~(ETR_SG_PAGE_SIZE - 1);
++
++	rc = tmc_etr_sg_table_rotate(etr_table, w_offset, size);
++	if (!rc) {
++		etr_buf->hwaddr = etr_table->hwaddr;
++		etr_buf->rrp = etr_table->hwaddr;
++		etr_buf->rwp = etr_table->hwaddr;
++		etr_buf->size = size;
++	}
++
++	return rc;
++}
++
+ static const struct etr_buf_operations etr_sg_buf_ops = {
+ 	.alloc = tmc_etr_alloc_sg_buf,
+ 	.free = tmc_etr_free_sg_buf,
+ 	.sync = tmc_etr_sync_sg_buf,
+ 	.get_data = tmc_etr_get_data_sg_buf,
++	.restore = tmc_etr_restore_sg_buf,
+ };
+ 
+ static const struct etr_buf_operations *etr_buf_ops[] = {
+@@ -899,10 +976,42 @@ static struct etr_buf *tmc_alloc_etr_buf(struct tmc_drvdata *drvdata,
+ {
  	int rc = -ENOMEM;
  	bool has_etr_sg, has_iommu;
- 	bool has_flat, has_save_restore;
-+	bool has_sg, has_catu;
++	bool has_flat, has_save_restore;
  	struct etr_buf *etr_buf;
  
  	has_etr_sg = tmc_etr_has_cap(drvdata, TMC_ETR_SG);
  	has_iommu = iommu_get_domain_for_dev(drvdata->dev);
- 	has_save_restore = tmc_etr_has_cap(drvdata, TMC_ETR_SAVE_RESTORE);
-+	has_catu = !!tmc_etr_get_catu_device(drvdata);
++	has_save_restore = tmc_etr_has_cap(drvdata, TMC_ETR_SAVE_RESTORE);
 +
-+	has_sg = has_catu || has_etr_sg;
++	/*
++	 * We can normally use flat DMA buffer provided that the buffer
++	 * is not used in save restore fashion without hardware support.
++	 */
++	has_flat = !(flags & ETR_BUF_F_RESTORE_PTRS) || has_save_restore;
++
++	/*
++	 * To support save-restore on a given ETR we have the following
++	 * conditions:
++	 *  1) If the buffer requires save-restore of a pointers as well
++	 *     as the Status bit, we require ETR support for it and we coul
++	 *     support all the backends.
++	 *  2) If the buffer requires only save-restore of pointers, then
++	 *     we could exploit a circular ETR SG list. None of the other
++	 *     backends can support it without the ETR feature.
++	 *
++	 * If the buffer will be used in a save-restore mode without
++	 * the ETR support for SAVE_RESTORE, we can only support TMC
++	 * ETR in-built SG tables which can be rotated to make it work.
++	 */
++	if ((flags & ETR_BUF_F_RESTORE_STATUS) && !has_save_restore)
++		return ERR_PTR(-EINVAL);
++
++	if (!has_flat && !has_etr_sg) {
++		dev_dbg(drvdata->dev,
++			"No available backends for ETR buffer with flags %x\n",
++			flags);
++		return ERR_PTR(-EINVAL);
++	}
  
- 	/*
- 	 * We can normally use flat DMA buffer provided that the buffer
-@@ -1006,7 +1016,7 @@ static struct etr_buf *tmc_alloc_etr_buf(struct tmc_drvdata *drvdata,
- 	if ((flags & ETR_BUF_F_RESTORE_STATUS) && !has_save_restore)
- 		return ERR_PTR(-EINVAL);
- 
--	if (!has_flat && !has_etr_sg) {
-+	if (!has_flat && !has_sg) {
- 		dev_dbg(drvdata->dev,
- 			"No available backends for ETR buffer with flags %x\n",
- 			flags);
-@@ -1032,17 +1042,22 @@ static struct etr_buf *tmc_alloc_etr_buf(struct tmc_drvdata *drvdata,
+ 	etr_buf = kzalloc(sizeof(*etr_buf), GFP_KERNEL);
+ 	if (!etr_buf)
+@@ -922,7 +1031,7 @@ static struct etr_buf *tmc_alloc_etr_buf(struct tmc_drvdata *drvdata,
+ 	 * Fallback to available mechanisms.
  	 *
  	 */
- 	if (!pages && has_flat &&
--	    (!has_etr_sg || has_iommu || size < SZ_1M))
-+	    (!has_sg || has_iommu || size < SZ_1M))
+-	if (!pages &&
++	if (!pages && has_flat &&
+ 	    (!has_etr_sg || has_iommu || size < SZ_1M))
  		rc = tmc_etr_mode_alloc_buf(ETR_MODE_FLAT, drvdata,
  					    etr_buf, node, pages);
- 	if (rc && has_etr_sg)
- 		rc = tmc_etr_mode_alloc_buf(ETR_MODE_ETR_SG, drvdata,
- 					    etr_buf, node, pages);
-+	if (rc && has_catu)
-+		rc = tmc_etr_mode_alloc_buf(ETR_MODE_CATU, drvdata,
-+					    etr_buf, node, pages);
- 	if (rc) {
- 		kfree(etr_buf);
- 		return ERR_PTR(rc);
+@@ -999,6 +1108,29 @@ static void tmc_sync_etr_buf(struct tmc_drvdata *drvdata)
+ 		tmc_etr_buf_insert_barrier_packet(etr_buf, etr_buf->offset);
+ }
+ 
++static int __maybe_unused
++tmc_restore_etr_buf(struct tmc_drvdata *drvdata, struct etr_buf *etr_buf,
++		    unsigned long r_offset, unsigned long w_offset,
++		    unsigned long size, u32 status)
++{
++	bool has_save_restore = tmc_etr_has_cap(drvdata, TMC_ETR_SAVE_RESTORE);
++
++	if (WARN_ON_ONCE(!has_save_restore && etr_buf->mode != ETR_MODE_ETR_SG))
++		return -EINVAL;
++	/*
++	 * If we use a circular SG list without ETR support, we can't
++	 * support restoring "Full" bit.
++	 */
++	if (WARN_ON_ONCE(!has_save_restore && status))
++		return -EINVAL;
++	if (status & ~TMC_STS_FULL)
++		return -EINVAL;
++	if (etr_buf->ops->restore)
++		return etr_buf->ops->restore(etr_buf, r_offset, w_offset, size,
++					      status, has_save_restore);
++	return -EINVAL;
++}
++
+ static inline void tmc_etr_enable_catu(struct tmc_drvdata *drvdata)
+ {
+ 	struct coresight_device *catu = tmc_etr_get_catu_device(drvdata);
+@@ -1058,8 +1190,8 @@ static void tmc_etr_enable_hw(struct tmc_drvdata *drvdata)
+ 	 * STS to "not full").
+ 	 */
+ 	if (tmc_etr_has_cap(drvdata, TMC_ETR_SAVE_RESTORE)) {
+-		tmc_write_rrp(drvdata, etr_buf->hwaddr);
+-		tmc_write_rwp(drvdata, etr_buf->hwaddr);
++		tmc_write_rrp(drvdata, etr_buf->rrp);
++		tmc_write_rwp(drvdata, etr_buf->rwp);
+ 		sts = readl_relaxed(drvdata->base + TMC_STS) & ~TMC_STS_FULL;
+ 		writel_relaxed(sts, drvdata->base + TMC_STS);
  	}
- 
-+	dev_dbg(drvdata->dev, "allocated buffer of size %ldKB in mode %d\n",
-+		(unsigned long)size >> 10, etr_buf->mode);
- 	return etr_buf;
- }
- 
-@@ -1136,7 +1151,7 @@ static inline void tmc_etr_enable_catu(struct tmc_drvdata *drvdata)
- 	struct coresight_device *catu = tmc_etr_get_catu_device(drvdata);
- 
- 	if (catu && helper_ops(catu)->enable)
--		helper_ops(catu)->enable(catu, NULL);
-+		helper_ops(catu)->enable(catu, drvdata->etr_buf);
- }
- 
- static inline void tmc_etr_disable_catu(struct tmc_drvdata *drvdata)
-@@ -1144,7 +1159,7 @@ static inline void tmc_etr_disable_catu(struct tmc_drvdata *drvdata)
- 	struct coresight_device *catu = tmc_etr_get_catu_device(drvdata);
- 
- 	if (catu && helper_ops(catu)->disable)
--		helper_ops(catu)->disable(catu, NULL);
-+		helper_ops(catu)->disable(catu, drvdata->etr_buf);
- }
- 
- static void tmc_etr_enable_hw(struct tmc_drvdata *drvdata)
 diff --git a/drivers/hwtracing/coresight/coresight-tmc.h b/drivers/hwtracing/coresight/coresight-tmc.h
-index 1bdfb38..1f6aa49 100644
+index 6f7bec7..1bdfb38 100644
 --- a/drivers/hwtracing/coresight/coresight-tmc.h
 +++ b/drivers/hwtracing/coresight/coresight-tmc.h
-@@ -139,6 +139,7 @@ enum tmc_mem_intf_width {
- enum etr_mode {
- 	ETR_MODE_FLAT,		/* Uses contiguous flat buffer */
+@@ -141,12 +141,22 @@ enum etr_mode {
  	ETR_MODE_ETR_SG,	/* Uses in-built TMC ETR SG mechanism */
-+	ETR_MODE_CATU,		/* Use SG mechanism in CATU */
  };
  
- /* ETR buffer should support save-restore */
++/* ETR buffer should support save-restore */
++#define ETR_BUF_F_RESTORE_PTRS		0x1
++#define ETR_BUF_F_RESTORE_STATUS	0x2
++
++#define ETR_BUF_F_RESTORE_MINIMAL	ETR_BUF_F_RESTORE_PTRS
++#define ETR_BUF_F_RESTORE_FULL		(ETR_BUF_F_RESTORE_PTRS |\
++					 ETR_BUF_F_RESTORE_STATUS)
+ struct etr_buf_operations;
+ 
+ /**
+  * struct etr_buf - Details of the buffer used by ETR
+  * @mode	: Mode of the ETR buffer, contiguous, Scatter Gather etc.
+  * @full	: Trace data overflow
++ * @status	: Value for STATUS if the ETR supports save-restore.
++ * @rrp		: Value for RRP{LO:HI} if the ETR supports save-restore
++ * @rwp		: Value for RWP{LO:HI} if the ETR supports save-restore
+  * @size	: Size of the buffer.
+  * @hwaddr	: Address to be programmed in the TMC:DBA{LO,HI}
+  * @offset	: Offset of the trace data in the buffer for consumption.
+@@ -157,6 +167,9 @@ struct etr_buf_operations;
+ struct etr_buf {
+ 	enum etr_mode			mode;
+ 	bool				full;
++	u32				status;
++	dma_addr_t			rrp;
++	dma_addr_t			rwp;
+ 	ssize_t				size;
+ 	dma_addr_t			hwaddr;
+ 	unsigned long			offset;
+@@ -207,6 +220,9 @@ struct etr_buf_operations {
+ 	int (*alloc)(struct tmc_drvdata *drvdata, struct etr_buf *etr_buf,
+ 			int node, void **pages);
+ 	void (*sync)(struct etr_buf *etr_buf, u64 rrp, u64 rwp);
++	int (*restore)(struct etr_buf *etr_buf, unsigned long r_offset,
++		       unsigned long w_offset, unsigned long size,
++		       u32 status, bool has_save_restore);
+ 	ssize_t (*get_data)(struct etr_buf *etr_buf, u64 offset, size_t len,
+ 				char **bufpp);
+ 	void (*free)(struct etr_buf *etr_buf);
 -- 
 2.7.4
