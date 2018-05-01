@@ -1,80 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751445AbeEAVKb convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 17:10:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58444 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751004AbeEAVK3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 17:10:29 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FC5D2368F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
-Content-Type: text/plain; charset="utf-8"
+        id S1751291AbeEAVPR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 17:15:17 -0400
+Received: from mail-wm0-f47.google.com ([74.125.82.47]:51856 "EHLO
+        mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751004AbeEAVPQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 17:15:16 -0400
+X-Google-Smtp-Source: AB8JxZqlvuNurotc1yNUBTtxzhqyIgs2TNpHj+kjoIFM21ZQ6QLO//6NRK7VdOR8S8u5tEHWVtvrfk7jbkslLr0pw+k=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Taniya Das <tdas@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1525164093-16645-2-git-send-email-tdas@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Odelu Kukatla <okukatla@codeaurora.org>,
-        Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-References: <1525164093-16645-1-git-send-email-tdas@codeaurora.org>
- <1525164093-16645-2-git-send-email-tdas@codeaurora.org>
-Message-ID: <152520902751.138124.3904360654314728163@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [v5 1/2] dt-bindings: clock: Introduce QCOM RPMh clock bindings
-Date: Tue, 01 May 2018 14:10:27 -0700
+In-Reply-To: <20180501160059.6df6aae4@gandalf.local.home>
+References: <20171116161506.19691-1-npiggin@gmail.com> <20180501144620.1e832a09@gandalf.local.home>
+ <20180501191951.GJ12217@hirez.programming.kicks-ass.net> <20180501153840.7281022a@gandalf.local.home>
+ <20180501194838.GK12217@hirez.programming.kicks-ass.net> <20180501160059.6df6aae4@gandalf.local.home>
+From: Joel Fernandes <joel.opensrc@gmail.com>
+Date: Tue, 1 May 2018 14:15:14 -0700
+Message-ID: <CAEi0qNkbjrdx8A4rfNCJd-1BGMUXZRbbLJEkZuVab+oprWhcDQ@mail.gmail.com>
+Subject: Re: [PATCH] tracing/irqtrace: only call trace_hardirqs_on/off when
+ state changes
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        Nicholas Piggin <npiggin@gmail.com>, Ingo Molnar <mingo@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Taniya Das (2018-05-01 01:41:32)
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt b/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
-> new file mode 100644
-> index 0000000..ecc1dbe
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
-> @@ -0,0 +1,32 @@
-> +Qualcomm Technologies, Inc. RPMh Clocks
-> +-------------------------------------------------------
-> +
-> +Resource Power Manager Hardened (RPMh) manages shared resources on
-> +some Qualcomm Technologies Inc. SoCs. It accepts clock requests from
-> +other hardware subsystems via RSC to control clocks.
-> +
-> +Required properties :
-> +- compatible : shall contain "qcom,sdm845-rpmh-clk"
-> +
-> +- #clock-cells : must contain 1
-> +
-> +Optional properties :
-> +- assigned-clk-divs : property should contain a list of divs for each clock in
-> +                       the clk-output-names property. In case divs are not
-> +                       provided the clock rate would be same as parent rate.
-> +- clk-output-names :  a list of strings of clock output signal for the divs to
-> +                        be applied.
-> +
-> +Example :
-> +
-> +#include <dt-bindings/clock/qcom,rpmh.h>
-> +
-> +       &apps_rsc {
-> +               rpmhcc: clock-controller {
-> +                       compatible = "qcom,sdm845-rpmh-clk";
-> +                       #clock-cells = <1>;
-> +                       assigned-clk-divs = <2 2 2>;
+On Tue, May 1, 2018 at 1:00 PM, Steven Rostedt <rostedt@goodmis.org> wrote:
+> On Tue, 1 May 2018 21:48:38 +0200
+> Peter Zijlstra <peterz@infradead.org> wrote:
+>
+>> On Tue, May 01, 2018 at 03:38:40PM -0400, Steven Rostedt wrote:
+>> > On Tue, 1 May 2018 21:19:51 +0200
+>> > Peter Zijlstra <peterz@infradead.org> wrote:
+>>
+>> > > Now, lockdep only minimally tracks these otherwise redundant operations;
+>> > > see redundant_hardirqs_{on,off} counters, and loosing that doesn't seen
+>> > > like a big issue.
+>> > >
+>> > > But I'm confused how this helps track superfluous things, it looks like
+>> > > it explicitly tracks _less_ superfluous transitions.
+>> >
+>> > I think it is about triggering on OFF->OFF a warning, as that would
+>> > only happen if we have:
+>> >
+>> >     local_irq_save(flags);
+>> >     [..]
+>> >     local_irq_disable();
+>> >
+>>
+>> Ahh, ok. Yes, that is easier to do with these changes. The alternative
+>> is to add more information to the tracehooks such that we can do the
+>> same internally, but whatever.
+>>
+>> Yeah, I'm fine with the proposed change, but maybe improve the Changelog
+>> a little for slow people like me :-)
+>
+> Great!
+>
+> Nicholas,
+>
+> I know this is an old patch (from last November), but want to send it
+> again with a proper change log and signed off by?
 
-This property shouldn't need to exist. Instead, add a fixed div-2 clock
-to the DTS file (I guess in the SoC file) to divide the crystal
-frequency into the rate you want (19.2 MHz in this case).
+I actually wrote the exact same patch yesterday with changes Matsami
+suggested. However I decided not to send it, since it didn't have any
+performance improvement (which was the reason I wrote it).
 
-> +                       clk-output-names = "bi_tcxo", "lnbb_clk2",
-> +                                               "lnbb_clk3";
+Also with my recent set, I don't think it will help detect repeated
+calls to trace_hardirqs_off because we are handling that recursive
+case by using per-cpu variable and bailing out if there is a
+recursion, before even calling into lockdep.
 
-We don't need this either.
+I have mixed feelings about this patch, I am Ok with this patch but I
+suggest its sent with the follow-up patch that shows its use of this.
+And also appreciate if such a follow-up patch is rebased onto the IRQ
+tracepoint work: https://patchwork.kernel.org/patch/10373129/
+
+What do you think?
+
+thanks,
+
+ - Joel
