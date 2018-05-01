@@ -1,59 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755866AbeEAMfF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 08:35:05 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:41574 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755230AbeEAMfC (ORCPT
+        id S1755328AbeEAMiw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 08:38:52 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:46718 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755044AbeEAMiv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 08:35:02 -0400
-Subject: Re: [Xen-devel] [PATCH 4/4] xen/PVH: Remove reserved entry in PVH GDT
-To: =?UTF-8?Q?Roger_Pau_Monn=c3=a9?= <roger.pau@citrix.com>
-Cc: linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        jgross@suse.com
-References: <20180430162339.17143-1-boris.ostrovsky@oracle.com>
- <20180430162339.17143-5-boris.ostrovsky@oracle.com>
- <20180501080009.wnjmno5pietptixo@MacBook-Pro-de-Roger.local>
-From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Message-ID: <5a357f3d-b66e-ca55-0601-18a89b549f4a@oracle.com>
-Date: Tue, 1 May 2018 08:34:53 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Tue, 1 May 2018 08:38:51 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 570C4601A0
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+Subject: Re: pciehp 0000:00:1c.0:pcie004: Timeout on hotplug command 0x1038
+ (issued 65284 msec ago)
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Paul Menzel <pmenzel+linux-pci@molgen.mpg.de>,
+        Dave Young <dyoung@redhat.com>, linux-pci@vger.kernel.org,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Lukas Wunner <lukas@wunner.de>, Eric Biederman <ebiederm@xmission.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, Vivek Goyal <vgoyal@redhat.com>,
+        Marc Zyngier <marc.zyngier@arm.com>
+References: <8770820b-85a0-172b-7230-3a44524e6c9f@molgen.mpg.de>
+ <20180427192207.GG8199@bhelgaas-glaptop.roam.corp.google.com>
+ <b62c2a8e-fe14-6d7d-147c-0ce3b0c0ab2f@codeaurora.org>
+ <20180427211255.GI8199@bhelgaas-glaptop.roam.corp.google.com>
+ <20180428005620.GB1675@dhcp-128-65.nay.redhat.com>
+ <20180428011845.GC1675@dhcp-128-65.nay.redhat.com>
+ <3ebc908fb196168bf0373875ffc5679e@codeaurora.org>
+ <d8d134dc-9757-97cd-7a24-cbb21611d6c6@codeaurora.org>
+ <20180430211740.GG95643@bhelgaas-glaptop.roam.corp.google.com>
+ <7285da70-2c3e-c3b7-62e1-fdbb55a77729@codeaurora.org>
+From: Sinan Kaya <okaya@codeaurora.org>
+Message-ID: <3549ffe8-7605-d72c-5c09-1436a4288c7d@codeaurora.org>
+Date: Tue, 1 May 2018 08:38:47 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180501080009.wnjmno5pietptixo@MacBook-Pro-de-Roger.local>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <7285da70-2c3e-c3b7-62e1-fdbb55a77729@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8879 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=836
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805010126
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
++Marc,
 
-
-On 05/01/2018 04:00 AM, Roger Pau Monné wrote:
-> On Mon, Apr 30, 2018 at 12:23:39PM -0400, Boris Ostrovsky wrote:
->> And without it we can't use _BOOT_XX macros any longer so define new ones.
+On 4/30/2018 5:27 PM, Sinan Kaya wrote:
+> On 4/30/2018 5:17 PM, Bjorn Helgaas wrote:
+>>> What should we do about this?
+>>>
+>>> Since there is an actual HW errata involved, should we quirk this
+>>> root port and not wait as if remove/shutdown doesn't exist?
+>> I was hoping to avoid a quirk because AFAIK all Intel parts have this
+>> issue so it will be an ongoing maintenance issue.  I tried to avoid
+>> the timeout delays, e.g., with 40b960831cfa ("PCI: pciehp: Compute
+>> timeout from hotplug command start time").
+>>
+>> But we still see the alarming messages, so we should probably add a
+>> quirk to get rid of those.
+>>
+>> But I haven't given up on the idea of getting rid of the
+>> pciehp_remove() path.  I'm not convinced yet that we actually need to
+>> do anything to shut this device down.  I don't like the assumption
+>> that kexec requires this.  The kexec is fundamentally just a branch,
+>> and anything we do before the branch (i.e., in the old kernel), we
+>> should also be able to do after the branch (i.e., in the kexec-ed
+>> kernel).
+>>
 > 
-> Not being that familiar with Linux internals I'm not sure I see the
-> benefit of this. Isn't there a risk that some other code is going to
-> use the __BOOT_XX defines?
+> In my experience with kexec, MSI type edge interrupts are harmless.
+> You might just see a few unhandled interrupt messages during boot
+> if something is pending from the first kernel.
+> 
+> It is the level interrupts that are more concerning. It remains pending
+> until the interrupt source is cleared. CPU never returns from the
+> interrupt handler to actually continue booting the second kernel.
 
-The startup code we are jumping to loads their own GDT and I don't see 
-any explicit references to segments.
+This makes me wonder why kexec doesn't disable all interrupt sources by
+itself instead of relying on the drivers shutdown routine. Some drivers
+don't even have a shutdown callback. Kexec could have done both as another
+example. Something like.
 
-The reason I added this patch was that since we are adding another 
-segment descriptor (GS) we are now using PVH-specific GDT and so we are 
-not sharing layout with other code anymore. (Also, the new GS segment 
-overlaps with __BOOT_TSS so I kind of broke it already there, not 
-unintentionally).
+1. Call shutdown for all drivers if available.
+2. Disable all interrupt sources in the interrupt controller
+3. Start the new kernel.
 
-But if people think I should stick with __BOOT_XX I can drop this patch 
-(and then probably move GS down one entry).
+> 
+> Execution doesn't reach to PCIe hp driver initialization for
+> acknowledging the interrupt.
+> 
+> How about remove() only if MSI is disabled? Most root port interrupts
+> are MSI based anyhow.
+> 
 
 
--boris
+-- 
+Sinan Kaya
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
