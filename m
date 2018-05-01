@@ -1,166 +1,85 @@
-Return-Path: <samuel.thibault@ens-lyon.org>
-X-Google-Smtp-Source: AB8JxZoWnIyp4sc9hhYFy2wo8JPrmZgJBnPU88WuH5sRpcPXZ8fQzfK+MNDaGZUEgl5CJ8AEtmCy
-ARC-Seal: i=1; a=rsa-sha256; t=1525221624; cv=none;
+Return-Path: <linux-kselftest-owner@vger.kernel.org>
+X-Google-Smtp-Source: AB8JxZpMAVdSzoFAHtE4ck+qfPovhP04YT8LrZ4EgnIlo2/5wGkR6xq7wEWx0gUgQgJsf9ADaG9B
+ARC-Seal: i=1; a=rsa-sha256; t=1525215307; cv=none;
         d=google.com; s=arc-20160816;
-        b=aEn0/4iCmVt1q7skuerCj91g1GtuvoS7XVedhKfg94+pkrPF4vL6xkh/eQd8ljyJqo
-         UkEtba/RT2X9I5zzhL12nCcNIO0eDsq4OJe/OwbhiOyGv5UO7bjIfFWPBTBQFAKBxsYe
-         efTgkBr5HQ2leMv2ZM8O6kdb/TQHewrsLBSFpYCf4deHB9apgdD4CJ3Lpx4DuaFbzf+z
-         2RdgGNl03aQZCK8fcxhSXRs7Bx+vh8pxC1+RNQ5MpB0K3rYJe8XurSBT89Y/dnQKPzCd
-         GNrqLArOv+wjQd5qGZq4zyNmq+wXkhbNQm90Kil8/f0sJirF7+rGPsWM6WMqzpozuD+A
-         uK9g==
+        b=lnmoYXABH5CI+HnrrqroftirHWG4GCV0/KT1xQb0uiFo4V0rOSceB+BcFuBaZNJ28c
+         Sjs4Tjen18zpD1Asc9yVT9OjjLYJlP9YdnJyH9myaitytLSRsEeZhgxzJU+Gf73i2raz
+         hOqVMWCV4T8q9NVEpuz3Us00lZBLdn0fbDnqHTiLzEkK/cURj8VX3lHQaC7EteOo3idD
+         zx9g6BjEdPyydp8n8L73Ts4BJZgx5FGK3F6T8jkgcR9qD0Un7pmFBklPpzELpKtyHx/s
+         8z6Q2jl80hjEB50qCFMP3kqVKC4w9W0I/NT4mhArAHApP3lULvh9idcL5iQHYcWkiuhV
+         fi6w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:organization:content-disposition:mime-version
-         :mail-followup-to:message-id:subject:to:from:date
+        h=list-id:precedence:sender:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=Th14AxXv3gXt6NuYB6pOgNGob337LkYurSOXNS9Eu9c=;
-        b=tiNyHnPJ30c9eBvT8oVCHX65Bm8P2gw1PcvFLmbsz8mIDJsjKwA03FphvRIH0iWns3
-         6M1Ea2FlCebFfoEm4eYrrfrc/eWNMQ9hrvsZqjRqGZHv6nawKIHeQSNCyWp4HJMp2BjK
-         PCLtCrQ6dWs5LbO+fkjLZ8neR1GqY4z0q99CZzYjG9YsGxDuB8BMQoMtQTNVUw+IqRaN
-         sjid3TKnZVQhbf46zmV7qKk4ASkKthlyjEp7CVinABtrKbA16UqOohPwg7nsOShK7V6N
-         DmgcxCi8kV8CvZvn0VH4WW3OZBML/W0dPaLLtiUf8tDAs05Q+lC/yy3br7ArN2B8Xlgp
-         nleA==
+        bh=WS5TRV9y8MX0x1Z4AEQ/ammxwL4K29vOMQGJFMZ3/58=;
+        b=KPVBNgGXE4dbbaoNFPC6muDHNgpg4MnW1lbfW2jIGA4/ohTce6IAL2ZggWH6Dok/aG
+         xWcn9tiPzw2T5kjqN9zRhNaIzT/R+XgQ3TF8RfVZeeuLuXyqwF6nhfSVh60GP9EbIKGG
+         CmdS1CcHYzXaxI4UKWDoAfFhPFR1pbSTMzqJEQeEgFRgiWz3oMqeOhmIIrSPzYjUrcIW
+         xy9UgyoGtYwddkNOVp2h7RwFujUOPsQfdcRxe/PVLtJ70eGex2N/u/a/rWHEWnrnYKap
+         qjvpylHRKDJvPUcA1ay0TPYegr5o2glSSSNhUgJaKd52vDhe93EC2NtZU/DmPiZ2fCym
+         3TQA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 185.233.100.1 is neither permitted nor denied by domain of samuel.thibault@ens-lyon.org) smtp.mailfrom=samuel.thibault@ens-lyon.org
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 185.233.100.1 is neither permitted nor denied by domain of samuel.thibault@ens-lyon.org) smtp.mailfrom=samuel.thibault@ens-lyon.org
-Date: Wed, 2 May 2018 02:40:17 +0200
-From: Samuel Thibault <samuel.thibault@ens-lyon.org>
-To: gregkh@linuxfoundation.org, w.d.hubbs@gmail.com, chris@the-brannons.com,
-	kirk@reisers.ca, devel@driverdev.osuosl.org,
-	linux-kernel@vger.kernel.org, speakup@linux-speakup.org
-Subject: Re: [PATCH] staging: speakup: Add pause command used on switching to
- graphical mode
-Message-ID: <20180502004017.hityg7k7cxhn75na@var.youpi.perso.aquilenet.fr>
-Mail-Followup-To: Samuel Thibault <samuel.thibault@ens-lyon.org>,
-	gregkh@linuxfoundation.org, w.d.hubbs@gmail.com,
-	chris@the-brannons.com, kirk@reisers.ca, devel@driverdev.osuosl.org,
-	linux-kernel@vger.kernel.org, speakup@linux-speakup.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Organization: I am not organized
-User-Agent: NeoMutt/20170113 (1.7.2)
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751265AbeEAWzG (ORCPT <rfc822;gregkh@linuxfoundation.org>);
+        Tue, 1 May 2018 18:55:06 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:38343 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751064AbeEAWzF (ORCPT
+        <rfc822;linux-kselftest@vger.kernel.org>);
+        Tue, 1 May 2018 18:55:05 -0400
+From: "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
+To: shuah@kernel.org
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/7] Kselftest framework SKIP handling
+Date: Tue,  1 May 2018 16:54:32 -0600
+Message-Id: <cover.1525212671.git.shuah@kernel.org>
+X-Mailer: git-send-email 2.14.1
+Sender: linux-kselftest-owner@vger.kernel.org
+X-Mailing-List: linux-kselftest@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599310790536411239?=
-X-GMAIL-MSGID: =?utf-8?q?1599310790536411239?=
+X-GMAIL-THRID: =?utf-8?q?1599304165769785836?=
+X-GMAIL-MSGID: =?utf-8?q?1599304165769785836?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-For software speech syntheses to be able to manage concurrent audio card
-access, they need to know when speakup stops emitting text to be spoken
-because the console has switched to graphical mode.  This introduces a
-PAUSE command to do so.
+Kselftest framework currently treats all non-zero return codes from tests
+as failures. When tests are skipped with non-zero return code, because of
+unmet dependencies and/or unsupported configuration, it reports them as
+failed. This will lead to too many false negatives even on the tests that
+couldn't be run.
 
-Signed-off-by: Samuel Thibault <samuel.thibault@ens-lyon.org>
+This patch series fixes the problem by adding SKIP handling:
 
-Index: linux-4.15/drivers/staging/speakup/speakup_dummy.c
-===================================================================
---- linux-4.15.orig/drivers/staging/speakup/speakup_dummy.c
-+++ linux-4.15/drivers/staging/speakup/speakup_dummy.c
-@@ -30,6 +30,7 @@
- static struct var_t vars[] = {
- 	{ CAPS_START, .u.s = {"CAPS_START\n" } },
- 	{ CAPS_STOP, .u.s = {"CAPS_STOP\n" } },
-+	{ PAUSE, .u.s = {"PAUSE\n"} },
- 	{ RATE, .u.n = {"RATE %d\n", 8, 1, 16, 0, 0, NULL } },
- 	{ PITCH, .u.n = {"PITCH %d\n", 8, 0, 16, 0, 0, NULL } },
- 	{ VOL, .u.n = {"VOL %d\n", 8, 0, 16, 0, 0, NULL } },
-Index: linux-4.15/drivers/staging/speakup/speakup_soft.c
-===================================================================
---- linux-4.15.orig/drivers/staging/speakup/speakup_soft.c
-+++ linux-4.15/drivers/staging/speakup/speakup_soft.c
-@@ -45,6 +45,7 @@ static int misc_registered;
- static struct var_t vars[] = {
- 	{ CAPS_START, .u.s = {"\x01+3p" } },
- 	{ CAPS_STOP, .u.s = {"\x01-3p" } },
-+	{ PAUSE, .u.n = {"\x01P" } },
- 	{ RATE, .u.n = {"\x01%ds", 2, 0, 9, 0, 0, NULL } },
- 	{ PITCH, .u.n = {"\x01%dp", 5, 0, 9, 0, 0, NULL } },
- 	{ VOL, .u.n = {"\x01%dv", 5, 0, 9, 0, 0, NULL } },
-@@ -164,7 +165,7 @@ static char *get_initstring(void)
- 	var = synth_soft.vars;
- 	while (var->var_id != MAXVARS) {
- 		if (var->var_id != CAPS_START && var->var_id != CAPS_STOP &&
--		    var->var_id != DIRECT)
-+		    var->var_id != PAUSE && var->var_id != DIRECT)
- 			cp = cp + sprintf(cp, var->u.n.synth_fmt,
- 					  var->u.n.value);
- 		var++;
-Index: linux-4.15/drivers/staging/speakup/spk_types.h
-===================================================================
---- linux-4.15.orig/drivers/staging/speakup/spk_types.h
-+++ linux-4.15/drivers/staging/speakup/spk_types.h
-@@ -42,7 +42,7 @@ enum var_id_t {
- 	SAY_CONTROL, SAY_WORD_CTL, NO_INTERRUPT, KEY_ECHO,
- 	SPELL_DELAY, PUNC_LEVEL, READING_PUNC,
- 	ATTRIB_BLEEP, BLEEPS,
--	RATE, PITCH, VOL, TONE, PUNCT, VOICE, FREQUENCY, LANG, DIRECT,
-+	RATE, PITCH, VOL, TONE, PUNCT, VOICE, FREQUENCY, LANG, DIRECT, PAUSE,
- 	CAPS_START, CAPS_STOP, CHARTAB,
- 	MAXVARS
- };
-Index: linux-4.15/drivers/staging/speakup/varhandlers.c
-===================================================================
---- linux-4.15.orig/drivers/staging/speakup/varhandlers.c
-+++ linux-4.15/drivers/staging/speakup/varhandlers.c
-@@ -44,6 +44,7 @@ static struct st_var_header var_headers[
- 	{ "lang", LANG, VAR_NUM, NULL, NULL },
- 	{ "chartab", CHARTAB, VAR_PROC, NULL, NULL },
- 	{ "direct", DIRECT, VAR_NUM, NULL, NULL },
-+	{ "pause", PAUSE, VAR_STRING, spk_str_pause, NULL },
- };
- 
- static struct st_var_header *var_ptrs[MAXVARS] = { NULL, NULL, NULL };
-Index: linux-4.15/drivers/staging/speakup/main.c
-===================================================================
---- linux-4.15.orig/drivers/staging/speakup/main.c
-+++ linux-4.15/drivers/staging/speakup/main.c
-@@ -76,6 +76,8 @@ short spk_punc_mask;
- int spk_punc_level, spk_reading_punc;
- char spk_str_caps_start[MAXVARLEN + 1] = "\0";
- char spk_str_caps_stop[MAXVARLEN + 1] = "\0";
-+char spk_str_pause[MAXVARLEN + 1] = "\0";
-+bool spk_paused = 0;
- const struct st_bits_data spk_punc_info[] = {
- 	{"none", "", 0},
- 	{"some", "/$%&@", SOME},
-@@ -1789,6 +1791,11 @@ static void speakup_con_update(struct vc
- 		/* Speakup output, discard */
- 		return;
- 	speakup_date(vc);
-+	if (vc->vc_mode == KD_GRAPHICS && !spk_paused && spk_str_pause[0])
-+	{
-+		synth_printf("%s", spk_str_pause);
-+		spk_paused = 1;
-+	}
- 	spin_unlock_irqrestore(&speakup_info.spinlock, flags);
- }
- 
-Index: linux-4.15/drivers/staging/speakup/speakup.h
-===================================================================
---- linux-4.15.orig/drivers/staging/speakup/speakup.h
-+++ linux-4.15/drivers/staging/speakup/speakup.h
-@@ -94,7 +94,8 @@ extern struct spk_synth *synth;
- extern char spk_pitch_buff[];
- extern u_char *spk_our_keys[];
- extern short spk_punc_masks[];
--extern char spk_str_caps_start[], spk_str_caps_stop[];
-+extern char spk_str_caps_start[], spk_str_caps_stop[], spk_str_pause[];
-+extern bool spk_paused;
- extern const struct st_bits_data spk_punc_info[];
- extern u_char spk_key_buf[600];
- extern char *spk_characters[];
-Index: linux-4.15/drivers/staging/speakup/buffers.c
-===================================================================
---- linux-4.15.orig/drivers/staging/speakup/buffers.c
-+++ linux-4.15/drivers/staging/speakup/buffers.c
-@@ -76,6 +76,9 @@ void synth_buffer_add(u16 ch)
- 	*buff_in++ = ch;
- 	if (buff_in > buffer_end)
- 		buff_in = synth_buffer;
-+	/* We have written something to the speech synthesis, so we are not
-+	 * paused any more. */
-+	spk_paused = 0;
- }
- 
- u16 synth_buffer_getc(void)
+The common RUN_TESTS and EMIT_TESTS functions are changed to test for
+SKIP=4 return from tests. This change enables the framework and tests
+that return SKIP=4 will report SKIP, other continue to report FAIL/PASS.
+
+KSFT_SKIP has been changed to report Skip code of 4 instead of KSFT_PASS
+to clearly differentiate the skipped tests.
+
+I am working on Test changes to report SKIP instead FAIL/PASS when they get
+skipped. I will be sending them out later this week.
+
+In addition, I made changes to improve the reporting and cleaned up both
+RUN_TESTS and EMIT_TESTS define to remove duplicate test output strings.
+
+Shuah Khan (Samsung OSG) (7):
+  selftests: lib.mk: cleanup RUN_TESTS define and make it readable
+  selftests: lib.mk: add SKIP handling to RUN_TESTS define
+  selftests: lib.mk: move running and printing result to a new function
+  selftests: lib.mk: Include test suite name in the RUN_TESTS output
+  selftests: lib.mk: add SKIP handling and test suite name to EMIT_TESTS
+  selftests: lib.mk: add test execute bit check to EMIT_TESTS
+  selftests: kselftest: change KSFT_SKIP=4 instead of KSFT_PASS
+
+ tools/testing/selftests/Makefile    |  3 +-
+ tools/testing/selftests/kselftest.h |  2 +-
+ tools/testing/selftests/lib.mk      | 55 +++++++++++++++++++++++++++----------
+ 3 files changed, 44 insertions(+), 16 deletions(-)
+
+-- 
+2.14.1
+
