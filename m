@@ -1,96 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755155AbeEANr0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 09:47:26 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:59003 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754084AbeEANrZ (ORCPT
+        id S1755455AbeEANsj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 09:48:39 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40170 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754340AbeEANsh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 09:47:25 -0400
-Subject: Re: [PATCH v9 02/27] clk: davinci: da850-pll: change PLL0 to
- CLK_OF_DECLARE
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
-References: <20180427001745.4116-1-david@lechnology.com>
- <20180427001745.4116-3-david@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <fe791ecf-ebd0-4e9e-722e-bfa07acc4ea2@ti.com>
-Date: Tue, 1 May 2018 19:16:10 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180427001745.4116-3-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Tue, 1 May 2018 09:48:37 -0400
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: linux-integrity@vger.kernel.org
+Cc: Hans de Goede <hdegoede@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Peter Jones <pjones@redhat.com>, Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+        David Howells <dhowells@redhat.com>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>
+Subject: [PATCH 0/6] firmware: kernel signature verification 
+Date: Tue,  1 May 2018 09:48:17 -0400
+X-Mailer: git-send-email 2.7.5
+X-TM-AS-GCONF: 00
+x-cbid: 18050113-0040-0000-0000-00000453CC11
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18050113-0041-0000-0000-000020F7E72E
+Message-Id: <1525182503-13849-1-git-send-email-zohar@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-01_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805010138
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday 27 April 2018 05:47 AM, David Lechner wrote:
-> PLL0 on davinci/da850-type device needs to be registered early in boot
-> because it is needed for clocksource/clockevent. Change the driver
-> to use CLK_OF_DECLARE for this special case.
-> 
-> Signed-off-by: David Lechner <david@lechnology.com>
-> ---
-> 
-> v9 changes:
-> - new patch in v9
-> 
-> 
->  drivers/clk/davinci/pll-da850.c | 26 ++++++++++++++++++++++----
->  drivers/clk/davinci/pll.c       |  4 +++-
->  drivers/clk/davinci/pll.h       |  2 +-
->  3 files changed, 26 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/clk/davinci/pll-da850.c b/drivers/clk/davinci/pll-da850.c
-> index 00a6ece7b524..743527de1da2 100644
-> --- a/drivers/clk/davinci/pll-da850.c
-> +++ b/drivers/clk/davinci/pll-da850.c
-> @@ -12,6 +12,8 @@
->  #include <linux/init.h>
->  #include <linux/kernel.h>
->  #include <linux/mfd/da8xx-cfgchip.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/of_address.h>
->  #include <linux/of.h>
->  #include <linux/types.h>
->  
-> @@ -135,11 +137,27 @@ static const struct davinci_pll_sysclk_info *da850_pll0_sysclk_info[] = {
->  	NULL
->  };
->  
-> -int of_da850_pll0_init(struct device *dev, void __iomem *base, struct regmap *cfgchip)
-> +void of_da850_pll0_init(struct device_node *node)
->  {
-> -	return of_davinci_pll_init(dev, dev->of_node, &da850_pll0_info,
-> -				   &da850_pll0_obsclk_info,
-> -				   da850_pll0_sysclk_info, 7, base, cfgchip);
-> +	void __iomem *base;
-> +	struct regmap *cfgchip;
-> +
-> +	base = of_iomap(node, 0);
-> +	if (!base) {
-> +		pr_err("%s: ioremap failed\n", __func__);
-> +		return;
-> +	}
-> +
-> +	cfgchip = syscon_regmap_lookup_by_compatible("ti,da830-cfgchip");
-> +	if (IS_ERR(cfgchip)) {
-> +		pr_warn("%s: failed to get cfgchip (%ld)\n", __func__,
-> +			PTR_ERR(cfgchip));
-> +		cfgchip = NULL;
-> +	}
+Allow LSMs and IMA to differentiate between different methods of
+firmware loading (eg. direct loading, sysfs fallback) and to
+differentiate/coordinate between signature verification methods (eg.
+regdb, IMA-appraisal).
 
-Is this error handling for cfgchip needed here considering
-davinci_pll_clk_register() already checks and warns.
+In addition, the last two patches address the pre-allocated buffer.  The
+first of these patches doesn't differentiate between reading the
+firmware first into kernel memory and verifying the kernel signature,
+versus reading the firmware directly into a pre-allocated buffer.
 
-Thanks,
-Sekhar
+The last patch, which is posted as an RFC, questions whether the device
+can access the pre-allocated buffer before the kernel signature has been
+verified.
+
+Mimi Zohar (6):
+  firmware: permit LSMs and IMA to fail firmware sysfs fallback loading
+  ima: prevent sysfs fallback firmware loading
+  firmware: differentiate between signed regulatory.db and other
+    firmware
+  ima: coordinate with signed regulatory.db
+  ima: verify kernel firmware signatures when using a preallocated
+    buffer
+  ima: prevent loading firmware into a pre-allocated buffer
+
+ drivers/base/firmware_loader/fallback.c |  7 +++++++
+ drivers/base/firmware_loader/main.c     |  5 +++++
+ include/linux/fs.h                      |  2 ++
+ security/integrity/ima/ima_main.c       | 29 +++++++++++++++++++++++++++--
+ 4 files changed, 41 insertions(+), 2 deletions(-)
+
+-- 
+2.7.5
