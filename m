@@ -1,62 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756602AbeEAS4b (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 14:56:31 -0400
-Received: from mail-yw0-f195.google.com ([209.85.161.195]:41225 "EHLO
-        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756382AbeEAS4a (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 14:56:30 -0400
-X-Google-Smtp-Source: AB8JxZrgdjPGNjO2IhdYATkeEMhg7YEhc1j7AzruW/J2ApDGjF5sDIG5mrNhuBWXM4Q7WcgDw+5bgMU1SXh+FUHqMKw=
+        id S1756312AbeEAS56 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 14:57:58 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7639 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754790AbeEAS5z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 14:57:55 -0400
+From: Salil Mehta <salil.mehta@huawei.com>
+To: <davem@davemloft.net>
+CC: <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
+        <lipeng321@huawei.com>, <mehta.salil.lnk@gmail.com>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>
+Subject: [PATCH net-next 0/9] Misc bug fixes for HNS3 Ethernet driver
+Date: Tue, 1 May 2018 19:55:56 +0100
+Message-ID: <20180501185605.9584-1-salil.mehta@huawei.com>
+X-Mailer: git-send-email 2.8.3
 MIME-Version: 1.0
-References: <20180430111245.31072-1-mika.westerberg@linux.intel.com>
-In-Reply-To: <20180430111245.31072-1-mika.westerberg@linux.intel.com>
-From: Yehezkel Bernat <yehezkelshb@gmail.com>
-Date: Tue, 01 May 2018 18:56:13 +0000
-Message-ID: <CA+CmpXtiJx=Ufk6tdZOa+4m3uLiR3KoY1hknWmBZ5c0AUg6yEQ@mail.gmail.com>
-Subject: Re: [PATCH v2] thunderbolt: Handle NULL boot ACL entries properly
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Andreas Noever <andreas.noever@gmail.com>, michael.jamet@intel.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.202.226.46]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 30, 2018 at 2:12 PM Mika Westerberg <
-mika.westerberg@linux.intel.com> wrote:
+This patch-set presents some miscellaneous bug fixs and cleanups for
+HNS3 Ethernet Driver.
 
-> If the boot ACL entry is already NULL we should not fill in the upper
-> two DWs with 0xfffffffff. Otherwise they are not shown as empty entries
-> when the sysfs attribute is read.
+Fuyun Liang (1):
+  net: hns3: Fix to support autoneg only for port attached with phy
 
-> Fixes: 9aaa3b8b4c56 ("thunderbolt: Add support for preboot ACL")
-> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> ---
-> Changes from v1 (https://lkml.org/lkml/2018/4/27/845):
+Huazhong Tan (5):
+  net: hns3: fix to correctly fetch l4 protocol outer header
+  net: hns3: Fixes the out of bounds access in hclge_map_tqp
+  net: hns3: Fixes the error legs in hclge_init_ae_dev function
+  net: hns3: fix for phy_addr error in hclge_mac_mdio_config
+  net: hns3: fix a dead loop in hclge_cmd_csq_clean
 
->   * Use || instead of && to make sure UUIDs with only one zero DW
->     are still treated as valid.
+Xi Wang (1):
+  net: hns3: Remove packet statistics in the range of 8192~12287
 
->   drivers/thunderbolt/icm.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+Yunsheng Lin (2):
+  net: hns3: Remove error log when getting pfc stats fails
+  net: hns3: Fix for packet loss due wrong filter config in VLAN tbls
 
-> diff --git a/drivers/thunderbolt/icm.c b/drivers/thunderbolt/icm.c
-> index 2d2ceda9aa26..500911f16498 100644
-> --- a/drivers/thunderbolt/icm.c
-> +++ b/drivers/thunderbolt/icm.c
-> @@ -1255,7 +1255,7 @@ static int icm_ar_get_boot_acl(struct tb *tb,
-uuid_t *uuids, size_t nuuids)
->                          /* Map empty entries to null UUID */
->                          uuid[0] = 0;
->                          uuid[1] = 0;
-> -               } else {
-> +               } else if (uuid[0] != 0 || uuid[1] != 0) {
->                          /* Upper two DWs are always one's */
->                          uuid[2] = 0xffffffff;
->                          uuid[3] = 0xffffffff;
-> --
-> 2.17.0
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c    |   2 +-
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c |  19 +++
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 167 ++++++++++++++-------
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.h    |  20 ++-
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c |   7 +-
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_mdio.c    |   7 +-
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c  |   5 +-
+ 7 files changed, 153 insertions(+), 74 deletions(-)
 
-
-Acked-by: Yehezkel Bernat <yehezkelshb@gmail.com>
+-- 
+2.7.4
