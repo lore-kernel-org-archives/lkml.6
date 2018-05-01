@@ -1,78 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754891AbeEAKjy (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 06:39:54 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:39306 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754198AbeEAKju (ORCPT
+        id S1754937AbeEAKkD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 06:40:03 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:30136 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754198AbeEAKkA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 06:39:50 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0CD0C6079C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vviswana@codeaurora.org
-From: Vijay Viswanath <vviswana@codeaurora.org>
-To: adrian.hunter@intel.com, ulf.hansson@linaro.org
-Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        shawn.lin@rock-chips.com, linux-arm-msm@vger.kernel.org,
-        georgi.djakov@linaro.org, asutoshd@codeaurora.org,
-        stummala@codeaurora.org, venkatg@codeaurora.org, jeremymc@redhat.com,
-        vviswana@codeaurora.org, bjorn.andersson@linaro.org,
-        riteshh@codeaurora.org, vbadigan@codeaurora.org, dianders@google.com,
-        sayalil@codeaurora.org
-Subject: [PATCH RFC 4/4] host: sdhci-msm: implement get_current_limit() host op
-Date: Tue,  1 May 2018 16:09:13 +0530
-Message-Id: <1525171153-24476-5-git-send-email-vviswana@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1525171153-24476-1-git-send-email-vviswana@codeaurora.org>
-References: <1525171153-24476-1-git-send-email-vviswana@codeaurora.org>
+        Tue, 1 May 2018 06:40:00 -0400
+Subject: Re: [PATCH 01/12] mtd: nand: davinci: store the core chipselect
+ number in platform data
+From: Sekhar Nori <nsekhar@ti.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>, Tony Lindgren <tony@atomide.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mtd@lists.infradead.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180430082453.8091-1-brgl@bgdev.pl>
+ <20180430082453.8091-2-brgl@bgdev.pl>
+ <3dccc5af-2df1-8374-e4e8-0a8b9ea1ae99@ti.com>
+ <8b7e4588-5a35-6c18-fe60-148d6ccf778c@ti.com>
+ <447b4f2f-27c8-f552-d058-3b2eba71a765@ti.com>
+Message-ID: <ffaf8789-ce3f-aa04-8a0c-e713cfed03dd@ti.com>
+Date: Tue, 1 May 2018 16:09:12 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <447b4f2f-27c8-f552-d058-3b2eba71a765@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sahitya Tummala <stummala@codeaurora.org>
+On Tuesday 01 May 2018 03:59 PM, Sekhar Nori wrote:
+> On Tuesday 01 May 2018 03:23 PM, Sekhar Nori wrote:
+>> On Tuesday 01 May 2018 02:55 PM, Sekhar Nori wrote:
+>>> On Monday 30 April 2018 01:54 PM, Bartosz Golaszewski wrote:
+>>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>>>
+>>>> We have the 'ti,davinci-chipselect' property in the device tree, but
+>>>> when using platform data the driver silently uses the id field of
+>>>> struct platform_device as the chipselect. This is confusing and we
+>>>> almost broke the nand support again recently after converting the
+>>>> platform to common clock framework (which changed the device id in the
+>>>> clock lookup - the problem is gone now that we no longer acquire the
+>>>> clock in the nand driver.
+>>>>
+>>>> This patch adds a new filed - core_chipsel - to the platform_data.
+>>>
+>>> s/filed/field
+>>>
+>>>> Subsequent patches will convert the platforms to using this new field.
+>>>
+>>> Can you add a comment for this new field too, like how we have for most
+>>> other fields?
+>>>
+>>> Curious on what 'core' in core_chipsel means. Something to do with
+>>> chip-select offset we have on DA850?
+>>
+>> Looks like you may have just picked the terminology from DaVinci NAND
+>> driver (introduced back in 2009). But in this context, it means the
+>> 0-indexed chip-select number that of the asynchronous memory interface
+>> to which the NAND device is connected.
+>>
+>> So, may be a comment here will suffice.
+> 
+> This is what I committed:
+> 
+> --8<--
+> commit 533d93703fa717fdf74c4fb711c868c4fdc8b475 (HEAD -> refs/heads/v4.18/nand-cs-simplification)
+> Author:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> AuthorDate: Mon Apr 30 10:24:42 2018 +0200
+> Commit:     Sekhar Nori <nsekhar@ti.com>
+> CommitDate: Tue May 1 15:57:47 2018 +0530
+> 
+>     mtd: nand: davinci: store the core chipselect number in platform data
 
-This is needed to get the current capabilities of vdd
-regulator that is not managed by SDHCI driver.
+Missed the rawnand prefix here. Sigh. Here is the fixed headline.
 
-Change-Id: I927c14b9890f1d672fe8a3e89d0b334f43463b36
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
-Signed-off-by: Vijay Viswanath <vviswana@codeaurora.org>
----
- drivers/mmc/host/sdhci-msm.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+mtd: rawnand: davinci: store the core chipselect number in platform data
 
-diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-index 0e0f12d..083b4a5 100644
---- a/drivers/mmc/host/sdhci-msm.c
-+++ b/drivers/mmc/host/sdhci-msm.c
-@@ -2079,6 +2079,18 @@ static void sdhci_msm_set_default_hw_caps(struct device *dev,
- 	{},
- };
- 
-+static unsigned int sdhci_msm_get_current_limit(struct sdhci_host *host)
-+{
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
-+	struct sdhci_msm_reg_data *vdd_data = msm_host->pdata.vdd_data;
-+	u32 max_curr = 0;
-+
-+	if (vdd_data)
-+		max_curr = vdd_data->hpm_uA;
-+	return max_curr;
-+}
-+
- MODULE_DEVICE_TABLE(of, sdhci_msm_dt_match);
- 
- static const struct sdhci_ops sdhci_msm_ops = {
-@@ -2090,6 +2102,7 @@ static void sdhci_msm_set_default_hw_caps(struct device *dev,
- 	.set_uhs_signaling = sdhci_msm_set_uhs_signaling,
- 	.write_w = sdhci_msm_writew,
- 	.write_b = sdhci_msm_writeb,
-+	.get_current_limit = sdhci_msm_get_current_limit,
- };
- 
- static const struct sdhci_pltfm_data sdhci_msm_pdata = {
--- 
- Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+Thanks,
+Sekhar
