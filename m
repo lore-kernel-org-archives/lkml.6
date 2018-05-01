@@ -1,59 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755492AbeEANlH (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 09:41:07 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35714 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752182AbeEANlE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 09:41:04 -0400
-Subject: Re: [PATCH v6 3/8] sysctl: Warn when a clamped sysctl parameter is
- set out of range
-To: Kees Cook <keescook@chromium.org>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, LKML <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        linux-doc@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-References: <1524862838-8247-1-git-send-email-longman@redhat.com>
- <1524862838-8247-4-git-send-email-longman@redhat.com>
- <CAGXu5jJrkeJTCrajYh3oCnYsfLCtL+LBvRbMn75p4=gxKzBpcQ@mail.gmail.com>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <9016b939-b92c-e230-df26-f4462f09c2b9@redhat.com>
-Date: Tue, 1 May 2018 09:41:03 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S1755397AbeEANmq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 09:42:46 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:42925 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752009AbeEANmo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 09:42:44 -0400
+X-Google-Smtp-Source: AB8JxZqu46f1RYFeil58LfETWMgTjIVsTD/mrqQg0l2F83BESOwZ9giPJrt9CH+AzanUsG6kb+X+3A==
+Date: Tue, 1 May 2018 08:42:42 -0500
+From: Rob Herring <robh@kernel.org>
+To: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Vikash Garodia <vgarodia@codeaurora.org>, devicetree@vger.kernel.org
+Subject: Re: [PATCH 27/28] venus: add sdm845 compatible and resource data
+Message-ID: <20180501134242.GA31402@rob-hp-laptop>
+References: <20180424124436.26955-1-stanimir.varbanov@linaro.org>
+ <20180424124436.26955-28-stanimir.varbanov@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5jJrkeJTCrajYh3oCnYsfLCtL+LBvRbMn75p4=gxKzBpcQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180424124436.26955-28-stanimir.varbanov@linaro.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/30/2018 06:40 PM, Kees Cook wrote:
-> I like this series overall, thanks! No objections from me. One thing I
-> noted, though:
->
-> On Fri, Apr 27, 2018 at 2:00 PM, Waiman Long <longman@redhat.com> wrote:
->>                 if (param->min && *param->min > val) {
->>                         if (clamp) {
->>                                 val = *param->min;
->> +                               clamped = true;
->>                         } else {
->>                                 return -EINVAL;
->>                         }
-> This appears as a common bit of logic in many places in the series. It
-> seems like it'd make sense to make this a helper of some kind?
->
-> -Kees
->
-We can't have an inline helper function because the types are different.
-We may be able to use a helper macro, but helper macro like that may be
-not well accepted by the kernel community.
+On Tue, Apr 24, 2018 at 03:44:35PM +0300, Stanimir Varbanov wrote:
+> This adds sdm845 DT compatible string with it's resource
+> data table.
+> 
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+> ---
+>  .../devicetree/bindings/media/qcom,venus.txt       |  1 +
+>  drivers/media/platform/qcom/venus/core.c           | 22 ++++++++++++++++++++++
+>  2 files changed, 23 insertions(+)
 
-Cheers,
-Longman
+Reviewed-by: Rob Herring <robh@kernel.org>
