@@ -1,85 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756754AbeEAS6v (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 14:58:51 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7643 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1756652AbeEAS6K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 14:58:10 -0400
-From: Salil Mehta <salil.mehta@huawei.com>
-To: <davem@davemloft.net>
-CC: <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
-        <lipeng321@huawei.com>, <mehta.salil.lnk@gmail.com>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>, Huazhong Tan <tanhuazhong@huawei.com>
-Subject: [PATCH net-next 5/9] net: hns3: fix for phy_addr error in hclge_mac_mdio_config
-Date: Tue, 1 May 2018 19:56:01 +0100
-Message-ID: <20180501185605.9584-6-salil.mehta@huawei.com>
-X-Mailer: git-send-email 2.8.3
-In-Reply-To: <20180501185605.9584-1-salil.mehta@huawei.com>
-References: <20180501185605.9584-1-salil.mehta@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.202.226.46]
-X-CFilter-Loop: Reflected
+        id S1756786AbeEAS64 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 14:58:56 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:38875 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756652AbeEAS6x (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 14:58:53 -0400
+X-Google-Smtp-Source: AB8JxZqLd8WH5pDDnTWrT0A1USndCkCxf/fmgbZeOcCpebB+0CeP+j3icZKcZ2tJEWGolwhPdpXzCQ==
+From: Anand Moon <linux.amoon@gmail.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Anand Moon <linux.amoon@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] ARM64: dts: meson: update maximum frequency for sdcard to 200MHz
+Date: Wed,  2 May 2018 00:29:02 +0530
+Message-Id: <20180501185902.3556-2-linux.amoon@gmail.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180501185902.3556-1-linux.amoon@gmail.com>
+References: <20180501185902.3556-1-linux.amoon@gmail.com>
+To: unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Huazhong Tan <tanhuazhong@huawei.com>
+update the maximum frequency of the sdcard to 200Mhz
+to support high speed read/write with uhs mode.
 
-When phy exists, phy_addr must less than PHY_MAX_ADDR.
-If not, hclge_mac_mdio_config should return error.
-And for fiber(phy_addr=0xff), it does not need hclge_mac_mdio_config.
-
-Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c | 12 +++++++-----
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mdio.c |  7 +++++--
- 2 files changed, 12 insertions(+), 7 deletions(-)
+odroid@odroid64:~$ sudo cat /sys/kernel/debug/mmc1/ios
+[sudo] password for odroid:
+clock:          200000000 Hz
+actual clock:   200000000 Hz
+vdd:            21 (3.3 ~ 3.4 V)
+bus mode:       2 (push-pull)
+chip select:    0 (don't care)
+power mode:     2 (on)
+bus width:      2 (4 bits)
+timing spec:    6 (sd uhs SDR104)
+signal voltage: 1 (1.80 V)
+driver type:    0 (driver type B)
+---
+ arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index b5e0c58..cc09713 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -5503,11 +5503,13 @@ static int hclge_init_ae_dev(struct hnae3_ae_dev *ae_dev)
- 		goto err_sriov_disable;
- 	}
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
+index c90f8b46c60c..ab868eaddb46 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
+@@ -256,7 +256,7 @@
  
--	ret = hclge_mac_mdio_config(hdev);
--	if (ret) {
--		dev_warn(&hdev->pdev->dev,
--			 "mdio config fail ret=%d\n", ret);
--		goto err_sriov_disable;
-+	if (hdev->hw.mac.media_type == HNAE3_MEDIA_TYPE_COPPER) {
-+		ret = hclge_mac_mdio_config(hdev);
-+		if (ret) {
-+			dev_err(&hdev->pdev->dev,
-+				"mdio config fail ret=%d\n", ret);
-+			goto err_sriov_disable;
-+		}
- 	}
- 
- 	ret = hclge_mac_init(hdev);
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mdio.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mdio.c
-index 682c2d6..9f7932e42 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mdio.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mdio.c
-@@ -140,8 +140,11 @@ int hclge_mac_mdio_config(struct hclge_dev *hdev)
- 	struct mii_bus *mdio_bus;
- 	int ret;
- 
--	if (hdev->hw.mac.phy_addr >= PHY_MAX_ADDR)
--		return 0;
-+	if (hdev->hw.mac.phy_addr >= PHY_MAX_ADDR) {
-+		dev_err(&hdev->pdev->dev, "phy_addr(%d) is too large.\n",
-+			hdev->hw.mac.phy_addr);
-+		return -EINVAL;
-+	}
- 
- 	mdio_bus = devm_mdiobus_alloc(&hdev->pdev->dev);
- 	if (!mdio_bus)
+ 	bus-width = <4>;
+ 	cap-sd-highspeed;
+-	max-frequency = <100000000>;
++	max-frequency = <200000000>;
+ 	disable-wp;
+ 	sd-uhs-sdr12;
+ 	sd-uhs-sdr25;
 -- 
-2.7.4
+2.17.0
