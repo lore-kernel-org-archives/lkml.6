@@ -1,56 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755987AbeEAOYr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 10:24:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44362 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755316AbeEAOYn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 10:24:43 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACACE23690
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Tue, 1 May 2018 10:24:40 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Joel Fernandes <joelaf@google.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        "Cc: Frederic Weisbecker" <fweisbec@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Fenguang Wu <fengguang.wu@intel.com>,
-        Baohong Liu <baohong.liu@intel.com>,
-        Vedang Patel <vedang.patel@intel.com>,
-        "Cc: Android Kernel" <kernel-team@android.com>
-Subject: Re: [PATCH RFC v5 5/6] tracepoint: Make rcuidle tracepoint callers
- use SRCU
-Message-ID: <20180501102440.3e7e0fe7@gandalf.local.home>
-In-Reply-To: <CAJWu+oozGFeGq84JJ4HMkbM4HB702gUZ0=bx7qLG5DiqUAu67A@mail.gmail.com>
-References: <20180501014204.67548-1-joelaf@google.com>
-        <20180501014204.67548-6-joelaf@google.com>
-        <CAJWu+oozGFeGq84JJ4HMkbM4HB702gUZ0=bx7qLG5DiqUAu67A@mail.gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1755943AbeEAO0C (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 10:26:02 -0400
+Received: from mail-oi0-f42.google.com ([209.85.218.42]:40578 "EHLO
+        mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754630AbeEAO0A (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 10:26:00 -0400
+X-Google-Smtp-Source: AB8JxZqwetcOTXjpq86Ioly/6OCg7RcN0ESyJCW23jg+ZlgXfFTQSZQtm882Ea6IWbaRyFk1czba9A==
+Date: Tue, 1 May 2018 09:25:59 -0500
+From: Rob Herring <robh@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>, Mark Rutland <mark.rutland@arm.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: panel: lvds: Fix path to display timing
+ bindings
+Message-ID: <20180501142559.GA13179@rob-hp-laptop>
+References: <1524642578-2885-1-git-send-email-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1524642578-2885-1-git-send-email-geert+renesas@glider.be>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 01 May 2018 01:56:01 +0000
-Joel Fernandes <joelaf@google.com> wrote:
+On Wed, Apr 25, 2018 at 09:49:38AM +0200, Geert Uytterhoeven wrote:
+> Fixes: 14da3ed8dd08c581 ("devicetree/bindings: display: Document common
+> panel properties")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  Documentation/devicetree/bindings/display/panel/panel-common.txt | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-> This last bit is supposed to be srcu_dereference_notrace. The hunk to use
-> that is actually in patch 6/6 , sorry about that. I've fixed it in my tree
-> and it means patches 5/6 and 6/6 need an update. Steve, if you want me to
-> repost  it right away I can do that, or can wait for additional comments
-> and then repost.
+Applied.
 
-Wait for additional comments.
-
--- Steve
+Rob
