@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756664AbeEASaY (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 14:30:24 -0400
-Received: from stargate.chelsio.com ([12.32.117.8]:48560 "EHLO
-        stargate.chelsio.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756437AbeEAS3C (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1756438AbeEAS3C (ORCPT <rfc822;w@1wt.eu>);
         Tue, 1 May 2018 14:29:02 -0400
+Received: from stargate.chelsio.com ([12.32.117.8]:29844 "EHLO
+        stargate.chelsio.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755539AbeEAS3A (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 14:29:00 -0400
 From: Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
 To: netdev@vger.kernel.org, kexec@lists.infradead.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
@@ -15,148 +15,156 @@ Cc: davem@davemloft.net, viro@zeniv.linux.org.uk, ebiederm@xmission.com,
         torvalds@linux-foundation.org, ganeshgr@chelsio.com,
         nirranjan@chelsio.com, indranil@chelsio.com,
         Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
-Subject: [PATCH net-next v7 3/3] cxgb4: collect hardware dump in second kernel
-Date: Tue,  1 May 2018 23:57:47 +0530
-Message-Id: <ebe9a2077b4ded5af84451afbb5b1ccf491954b2.1525197408.git.rahul.lakkireddy@chelsio.com>
+Subject: [PATCH net-next v7 0/3] kernel: add support to collect hardware logs in crash recovery kernel
+Date: Tue,  1 May 2018 23:57:44 +0530
+Message-Id: <cover.1525197407.git.rahul.lakkireddy@chelsio.com>
 X-Mailer: git-send-email 2.5.3
-In-Reply-To: <cover.1525197407.git.rahul.lakkireddy@chelsio.com>
-References: <cover.1525197407.git.rahul.lakkireddy@chelsio.com>
-In-Reply-To: <cover.1525197407.git.rahul.lakkireddy@chelsio.com>
-References: <cover.1525197407.git.rahul.lakkireddy@chelsio.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Register callback to collect hardware/firmware dumps in second kernel
-before hardware/firmware is initialized. The dumps for each device
-will be available as elf notes in /proc/vmcore in second kernel.
+On production servers running variety of workloads over time, kernel
+panic can happen sporadically after days or even months. It is
+important to collect as much debug logs as possible to root cause
+and fix the problem, that may not be easy to reproduce. Snapshot of
+underlying hardware/firmware state (like register dump, firmware
+logs, adapter memory, etc.), at the time of kernel panic will be very
+helpful while debugging the culprit device driver.
 
-Signed-off-by: Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
-Signed-off-by: Ganesh Goudar <ganeshgr@chelsio.com>
+This series of patches add new generic framework that enable device
+drivers to collect device specific snapshot of the hardware/firmware
+state of the underlying device in the crash recovery kernel. In crash
+recovery kernel, the collected logs are added as elf notes to
+/proc/vmcore, which is copied by user space scripts for post-analysis.
+
+The sequence of actions done by device drivers to append their device
+specific hardware/firmware logs to /proc/vmcore are as follows:
+
+1. During probe (before hardware is initialized), device drivers
+register to the vmcore module (via vmcore_add_device_dump()), with
+callback function, along with buffer size and log name needed for
+firmware/hardware log collection.
+
+2. vmcore module allocates the buffer with requested size. It adds
+an elf note and invokes the device driver's registered callback
+function.
+
+3. Device driver collects all hardware/firmware logs into the buffer
+and returns control back to vmcore module.
+
+The device specific hardware/firmware logs can be seen as elf notes
+with note type 0x700, as shown below:
+
+# readelf -n /proc/vmcore
+
+Displaying notes found at file offset 0x00001000 with length 0x040032c0:
+  Owner                 Data size	Description
+  LINUX                0x02000fec	Unknown note type: (0x00000700)
+  LINUX                0x02000fec	Unknown note type: (0x00000700)
+  CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
+  CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
+  CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
+  CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
+  CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
+  CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
+  CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
+  CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
+  VMCOREINFO           0x00000785	Unknown note type: (0x00000000)
+
+Patch 1 adds API to vmcore module to allow drivers to register callback
+to collect the device specific hardware/firmware logs.  The logs will
+be added to /proc/vmcore as elf notes.
+
+Patch 2 updates read and mmap logic to append device specific hardware/
+firmware logs as elf notes.
+
+Patch 3 shows a cxgb4 driver example using the API to collect
+hardware/firmware logs in crash recovery kernel, before hardware is
+initialized.
+
+Thanks,
+Rahul
+
 ---
 v7:
-- Removed "CHELSIO" vendor identifier in Elf Note name.
+- Removed "CHELSIO" vendor identifier in Elf Note name. Instead,
+  writing "LINUX".
+- Moved vmcoredd_header to new file include/uapi/linux/vmcore.h
+- Reworked vmcoredd_header to include Elf Note as part of the header
+  itself.
+- Removed vmcoredd_get_note_size().
+- Renamed vmcoredd_write_note() to vmcoredd_write_header().
+- Replaced all "unsigned long" with "unsigned int" for device dump
+  size since max size of Elf Word is u32.
 
 v6:
-- Added "CHELSIO" string as vendor identifier in the Elf Note name.
+- Reworked device dump elf note name to contain vendor identifier.
+- Added vmcoredd_header that precedes actual dump in the Elf Note.
+- Device dump's name is moved inside vmcoredd_header.
+- Added "CHELSIO" string as vendor identifier in the Elf Note name
+  for cxgb4 device dumps.
 
 v5:
-- No changes.
+- Removed enabling CONFIG_PROC_VMCORE_DEVICE_DUMP by default and
+  updated help message.
 
 v4:
-- No changes.
+- Made __vmcore_add_device_dump() static.
+- Moved compile check to define vmcore_add_device_dump() to
+  crash_dump.h to fix compilation when vmcore.c is not compiled in.
+- Convert ---help--- to help in Kconfig as indicated by checkpatch.
+- Rebased to tip.
 
 v3:
-- Replaced all crashdd* with vmcoredd*.
-- Replaced crashdd_add_dump() with vmcore_add_device_dump().
-- Updated comments and commit message.
+- Dropped sysfs crashdd module.
+- Exported dumps as elf notes. Suggested by Eric Biederman
+  <ebiederm@xmission.com>.  Added as patch 2 in this version.
+- Added CONFIG_PROC_VMCORE_DEVICE_DUMP to allow configuring device
+  dump support.
+- Moved logic related to adding dumps from crashdd to vmcore module.
+- Rename all crashdd* to vmcoredd*.
+- Updated comments.
 
 v2:
-- No Changes.
+- Added ABI Documentation for crashdd.
+- Directly use octal permission instead of macro.
 
 Changes since rfc v2:
-- Update comments and commit message for sysfs change.
+- Moved exporting crashdd from procfs to sysfs. Suggested by
+  Stephen Hemminger <stephen@networkplumber.org>
+- Moved code from fs/proc/crashdd.c to fs/crashdd/ directory.
+- Replaced all proc API with sysfs API and updated comments.
+- Calling driver callback before creating the binary file under
+  crashdd sysfs.
+- Changed binary dump file permission from S_IRUSR to S_IRUGO.
+- Changed module name from CRASH_DRIVER_DUMP to CRASH_DEVICE_DUMP.
 
 rfc v2:
-- Updated dump registration to the new API in patch 1.
+- Collecting logs in 2nd kernel instead of during kernel panic.
+  Suggested by Eric Biederman <ebiederm@xmission.com>.
+- Added new crashdd module that exports /proc/crashdd/ containing
+  driver's registered hardware/firmware logs in patch 1.
+- Replaced the API to allow drivers to register their hardware/firmware
+  log collect routine in crash recovery kernel in patch 1.
+- Updated patch 2 to use the new API in patch 1.
 
- drivers/net/ethernet/chelsio/cxgb4/cxgb4.h       |  4 ++++
- drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.c | 25 ++++++++++++++++++++++++
- drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.h |  3 +++
- drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c  | 10 ++++++++++
- 4 files changed, 42 insertions(+)
+Rahul Lakkireddy (3):
+  vmcore: add API to collect hardware dump in second kernel
+  vmcore: append device dumps to vmcore as elf notes
+  cxgb4: collect hardware dump in second kernel
 
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4.h b/drivers/net/ethernet/chelsio/cxgb4/cxgb4.h
-index 688f95440af2..01e7aad4ce5b 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4.h
-+++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4.h
-@@ -50,6 +50,7 @@
- #include <linux/net_tstamp.h>
- #include <linux/ptp_clock_kernel.h>
- #include <linux/ptp_classify.h>
-+#include <linux/crash_dump.h>
- #include <asm/io.h>
- #include "t4_chip_type.h"
- #include "cxgb4_uld.h"
-@@ -964,6 +965,9 @@ struct adapter {
- 	struct hma_data hma;
- 
- 	struct srq_data *srq;
-+
-+	/* Dump buffer for collecting logs in kdump kernel */
-+	struct vmcoredd_data vmcoredd;
- };
- 
- /* Support for "sched-class" command to allow a TX Scheduling Class to be
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.c
-index 143686c60234..085691eb2b95 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.c
-@@ -488,3 +488,28 @@ void cxgb4_init_ethtool_dump(struct adapter *adapter)
- 	adapter->eth_dump.version = adapter->params.fw_vers;
- 	adapter->eth_dump.len = 0;
- }
-+
-+static int cxgb4_cudbg_vmcoredd_collect(struct vmcoredd_data *data, void *buf)
-+{
-+	struct adapter *adap = container_of(data, struct adapter, vmcoredd);
-+	u32 len = data->size;
-+
-+	return cxgb4_cudbg_collect(adap, buf, &len, CXGB4_ETH_DUMP_ALL);
-+}
-+
-+int cxgb4_cudbg_vmcore_add_dump(struct adapter *adap)
-+{
-+	struct vmcoredd_data *data = &adap->vmcoredd;
-+	u32 len;
-+
-+	len = sizeof(struct cudbg_hdr) +
-+	      sizeof(struct cudbg_entity_hdr) * CUDBG_MAX_ENTITY;
-+	len += CUDBG_DUMP_BUFF_SIZE;
-+
-+	data->size = len;
-+	snprintf(data->dump_name, sizeof(data->dump_name), "%s_%s",
-+		 cxgb4_driver_name, adap->name);
-+	data->vmcoredd_callback = cxgb4_cudbg_vmcoredd_collect;
-+
-+	return vmcore_add_device_dump(data);
-+}
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.h b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.h
-index ce1ac9a1c878..ef59ba1ed968 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.h
-+++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.h
-@@ -41,8 +41,11 @@ enum CXGB4_ETHTOOL_DUMP_FLAGS {
- 	CXGB4_ETH_DUMP_HW = (1 << 1), /* various FW and HW dumps */
- };
- 
-+#define CXGB4_ETH_DUMP_ALL (CXGB4_ETH_DUMP_MEM | CXGB4_ETH_DUMP_HW)
-+
- u32 cxgb4_get_dump_length(struct adapter *adap, u32 flag);
- int cxgb4_cudbg_collect(struct adapter *adap, void *buf, u32 *buf_size,
- 			u32 flag);
- void cxgb4_init_ethtool_dump(struct adapter *adapter);
-+int cxgb4_cudbg_vmcore_add_dump(struct adapter *adap);
- #endif /* __CXGB4_CUDBG_H__ */
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
-index 24d2865b8806..32cad0acf76c 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
-@@ -5544,6 +5544,16 @@ static int init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	if (err)
- 		goto out_free_adapter;
- 
-+	if (is_kdump_kernel()) {
-+		/* Collect hardware state and append to /proc/vmcore */
-+		err = cxgb4_cudbg_vmcore_add_dump(adapter);
-+		if (err) {
-+			dev_warn(adapter->pdev_dev,
-+				 "Fail collecting vmcore device dump, err: %d. Continuing\n",
-+				 err);
-+			err = 0;
-+		}
-+	}
- 
- 	if (!is_t4(adapter->params.chip)) {
- 		s_qpp = (QUEUESPERPAGEPF0_S +
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4.h       |   4 +
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.c |  25 ++
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.h |   3 +
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c  |  10 +
+ fs/proc/Kconfig                                  |  15 +
+ fs/proc/vmcore.c                                 | 387 ++++++++++++++++++++++-
+ include/linux/crash_dump.h                       |  18 ++
+ include/linux/kcore.h                            |   6 +
+ include/uapi/linux/elf.h                         |   1 +
+ include/uapi/linux/vmcore.h                      |  16 +
+ 10 files changed, 472 insertions(+), 13 deletions(-)
+ create mode 100644 include/uapi/linux/vmcore.h
+
 -- 
 2.14.1
