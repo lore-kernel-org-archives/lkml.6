@@ -1,48 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756077AbeEAQRm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 12:17:42 -0400
-Received: from mail-pg0-f49.google.com ([74.125.83.49]:37760 "EHLO
-        mail-pg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753789AbeEAQRl (ORCPT
+        id S1756119AbeEAQSW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 12:18:22 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:43714 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756053AbeEAQSU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 12:17:41 -0400
-X-Google-Smtp-Source: AB8JxZpfQ2YjA6wBlZmLHjO78r/esKsoX2iUU8VJTff+i2qQ2d1dZwTQCrQvd0bqrFCr7RFx3pJ2Kg==
-Subject: Re: INFO: task hung in wb_shutdown (2)
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Jan Kara <jack@suse.cz>, Tejun Heo <tj@kernel.org>
-Cc: syzbot <syzbot+c0cf869505e03bdf1a24@syzkaller.appspotmail.com>,
-        christophe.jaillet@wanadoo.fr, LKML <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>, syzkaller-bugs@googlegroups.com,
-        weiping zhang <zhangweiping@didichuxing.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dmitry Vyukov <dvyukov@google.com>, linux-block@vger.kernel.org
-References: <94eb2c05b2d83650030568cc8bd9@google.com>
- <e56c1600-8923-dd6b-d065-c2fd2a720404@I-love.SAKURA.ne.jp>
- <43302799-1c50-4cab-b974-9fe1ca584813@I-love.SAKURA.ne.jp>
-From: Jens Axboe <axboe@kernel.dk>
-Message-ID: <16c2860a-05db-9534-5960-e26c9ba9214c@kernel.dk>
-Date: Tue, 1 May 2018 10:12:34 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Tue, 1 May 2018 12:18:20 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9A98960710
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date: Tue, 1 May 2018 10:10:10 -0600
+From: Lina Iyer <ilina@codeaurora.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Matthias Kaehlcke <mka@chromium.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>, linux-arm-msm@vger.kernel.org,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Evan Green <evgreen@chromium.org>
+Subject: Re: [PATCH v6 05/10] drivers: qcom: rpmh-rsc: write sleep/wake
+ requests to TCS
+Message-ID: <20180501161010.GB23157@codeaurora.org>
+References: <20180419221635.17849-1-ilina@codeaurora.org>
+ <20180419221635.17849-6-ilina@codeaurora.org>
+ <20180425214111.GC243180@google.com>
+ <20180427173943.GD6380@codeaurora.org>
+ <20180427184017.GI243180@google.com>
+ <20180427194559.GE6380@codeaurora.org>
+ <20180427200605.GJ243180@google.com>
+ <20180427213201.GA23157@codeaurora.org>
+ <20180427215449.GA133494@google.com>
+ <CAD=FV=Wan0G_GG29Q-atBbQS+_7nnbqTndE+yyi_G=scOdGMFA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <43302799-1c50-4cab-b974-9fe1ca584813@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <CAD=FV=Wan0G_GG29Q-atBbQS+_7nnbqTndE+yyi_G=scOdGMFA@mail.gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/1/18 4:27 AM, Tetsuo Handa wrote:
-> Tejun, Jan, Jens,
-> 
-> Can you review this patch? syzbot has hit this bug for nearly 4000 times but
-> is still unable to find a reproducer. Therefore, the only way to test would be
-> to apply this patch upstream and test whether the problem is solved.
+On Fri, Apr 27 2018 at 17:24 -0600, Doug Anderson wrote:
+>Hi,
+>
+>On Fri, Apr 27, 2018 at 2:54 PM, Matthias Kaehlcke <mka@chromium.org> wrote:
+>>> > Am I getting something wrong here?
+>>>
+>>> The for_each_set_bit() should increment the 'i' and we would attempt to
+>>> compare the first address in the request with the next command in the
+>>> TCS cache. If they don't match we repeat the process again. If it does,
+>>> then we loop through 'j' to find if the sequence matches.
+>>>
+>>> Did I miss something?
+>>
+>> One of us is clearly in need of more caffeine or ready for the
+>> weekend, it might be me :) Maybe another pair of eyeballs could help
+I need them both. Sorry about the back and forth. I understand what the
+problem is. The code doesnt look right. I seem to have messed it up.
+Thanks Matthias for being patient and going through this.
 
-I'll review it today.
+>> to resolve this deadlock ...
+>>
+>> My single stepping above assumes that tcs->cmd_cache[i] matches
+>> cmd[0].addr, i.e. we either found the start of the sequence we are
+>> looking for or another sequence that starts with the same address. My
+>> claim is that the code returns i in either case, whether the
+>> subsequent addresses match or not.
+>
+>I haven't reviewed this patch in detail, but I attempted to be another
+>pair of eyes here.  Something is definitely wrong with the "for (j =
+>0; j < len; j++)" loop.  I believe the code that's written right now
+>is equivalent to this much shorter function:
+>
+>+static int find_match(const struct tcs_group *tcs, const struct tcs_cmd *cmd,
+>+                     int len)
+>+{
+>+       int i, j;
+>+
+>+       /* Check for already cached commands */
+>+       for_each_set_bit(i, tcs->slots, MAX_TCS_SLOTS) {
+>+               if (tcs->cmd_cache[i] == cmd[0].addr)
+>+                       return i;
+>+       }
+>+
+>+       return -ENODATA;
+>+}
+>
+>Specifically the test "if (tcs->cmd_cache[i] != cmd[0].addr)" does not
+>take "j" into account.  Thus if it was false when "j == 0" it will
+>continue to be false for "j == 1", "j == 2", etc.  Eventually you'll
+>hit the "else if (j == len - 1)" and return.
+>
+>I believe that's what Matthias has been saying.  I personally haven't
+>looked at the rest of the patch to see how things out to be fixed, but
+>I'm quite convinced that the function either has a bug or should be
+>written as the shorter version I've written above.
+>
+Yes, this is incorrect in its current form. This is what it should be -
 
--- 
-Jens Axboe
+static int find_match(const struct tcs_group *tcs, const struct tcs_cmd *cmd,
+                      int len)
+{
+        int i, j;
+
+        /* Check for already cached commands */
+        for_each_set_bit(i, tcs->slots, MAX_TCS_SLOTS) {
+                if (tcs->cmd_cache[i] != cmd[0].addr)
+                        continue;
+                for (j = 0; j < len; j++) {
+                        WARN(tcs->cmd_cache[i + j] != cmd[j].addr,
+                             "Message does not match previous sequence.\n");
+                        return -EINVAL;
+                }
+                if (j == len - 1)
+                        return i;
+        }
+
+        return -ENODATA;
+}
+
+
+Thanks,
+Lina
