@@ -1,73 +1,157 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755117AbeEAN1I (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 09:27:08 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:52380 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751090AbeEAN1G (ORCPT
+        id S1755259AbeEAN2t (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 09:28:49 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:40499 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753856AbeEAN2q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 09:27:06 -0400
-X-Google-Smtp-Source: AB8JxZpx+KyOqcjayOblZtunWNSj/qOEyIhTE1jYkvN6CjMC8uwqgoVJbnIZUpk+kAuhCCqJ+JAhCQ==
-Date: Tue, 1 May 2018 14:27:02 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Sameer Nanda <snanda@chromium.org>, linux-pm@vger.kernel.org,
-        Guenter Roeck <groeck@chromium.org>, linux-kernel@vger.kernel.org,
-        Benson Leung <bleung@chromium.org>, miguel.ojeda.sandonis@gmail.com
-Subject: Re: [PATCH v2 2/3] power: supply: add cros-ec USBPD charger driver.
-Message-ID: <20180501132702.GP5147@dell>
-References: <20180430131403.14296-1-enric.balletbo@collabora.com>
- <20180430131403.14296-3-enric.balletbo@collabora.com>
- <20180501121728.65bow5vzpzfeq4en@earth.universe>
+        Tue, 1 May 2018 09:28:46 -0400
+X-Google-Smtp-Source: AB8JxZoCkM8GFTiSf/sKEiF37EkaptYdkUJTTNKIObZ+fikeGkqOdy96PpSG7DXlfK5bGRTNovQR5g==
+Date: Tue, 1 May 2018 08:28:44 -0500
+From: Rob Herring <robh@kernel.org>
+To: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Marc Zyngier <marc.zyngier@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] irqchip: Add support for Renesas RZ/N1 GPIO interrupt
+ multiplexer
+Message-ID: <20180501132844.GA8298@rob-hp-laptop>
+References: <1524490386-1544-1-git-send-email-phil.edworthy@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180501121728.65bow5vzpzfeq4en@earth.universe>
+In-Reply-To: <1524490386-1544-1-git-send-email-phil.edworthy@renesas.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 01 May 2018, Sebastian Reichel wrote:
-
-> Hi Enric,
+On Mon, Apr 23, 2018 at 02:33:06PM +0100, Phil Edworthy wrote:
+> On RZ/N1 devices, there are 3 Synopsys DesignWare GPIO blocks each
+> configured to have 32 interrupt outputs, so we have a total of 96 GPIO
+> interrupts. All of these are passed to the GPIO IRQ Muxer, which selects
+> 8 of the GPIO interrupts to pass onto the GIC. The interrupt signals
+> aren't latched, so there is nothing to do in this driver when an interrupt
+> is received, other than tell the corresponding GPIO block.
 > 
-> On Mon, Apr 30, 2018 at 03:14:02PM +0200, Enric Balletbo i Serra wrote:
-> > From: Sameer Nanda <snanda@chromium.org>
-> > 
-> > This driver gets various bits of information about what is connected to
-> > USB PD ports from the EC and converts that into power_supply properties.
-> > 
-> > Signed-off-by: Sameer Nanda <snanda@chromium.org>
-> > Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> > ---
-> > 
-> > Changes in v2:
-> > - [2/3] Add SPDX header, use devm_ variant and drop .owner
-> > - [2/3] Removed the PD log functionality (will be send on a follow up patch)
-> > - [2/3] Removed the extra custom sysfs attributes (will be send on a follow up patch)
+> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> ---
+>  .../interrupt-controller/renesas,rzn1-mux.txt      |  85 ++++++++++
+
+Please split bindings to a separate patch.
+
+>  drivers/irqchip/Kconfig                            |  10 ++
+>  drivers/irqchip/Makefile                           |   1 +
+>  drivers/irqchip/irq-rzn1-irq-mux.c                 | 178 +++++++++++++++++++++
+>  4 files changed, 274 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/renesas,rzn1-mux.txt
+>  create mode 100644 drivers/irqchip/irq-rzn1-irq-mux.c
 > 
-> Thanks, it makes reviewing the patchset easier.
-> 
-> >  drivers/power/supply/Kconfig              |  10 +
-> >  drivers/power/supply/Makefile             |   1 +
-> >  drivers/power/supply/cros_usbpd-charger.c | 511 ++++++++++++++++++++++
-> >  include/linux/mfd/cros_ec.h               |   2 +
-> >  4 files changed, 524 insertions(+)
-> >  create mode 100644 drivers/power/supply/cros_usbpd-charger.c
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/renesas,rzn1-mux.txt b/Documentation/devicetree/bindings/interrupt-controller/renesas,rzn1-mux.txt
+> new file mode 100644
+> index 0000000..f28a365
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,rzn1-mux.txt
+> @@ -0,0 +1,85 @@
+> +* Renesas RZ/N1 GPIO Interrupt Multiplexer
+> +
+> +On Renesas RZ/N1 devices, there are 3 Synopsys DesignWare GPIO blocks each
+> +configured to have 32 interrupt outputs, so we have a total of 96 GPIO
+> +interrupts. All of these are passed to the GPIO IRQ Muxer, which selects
+> +8 of the GPIO interrupts to pass onto the GIC.
+> +
+> +A single node in the device tree is used to describe the GPIO IRQ Muxer.
+> +
+> +Required properties:
+> +- compatible: the SoC specific name, i.e. "renesas,r9a06g032-gpioirq"
+> +   or "renesas,r9a06g033-gpioirq" followed by the SoC family name, i.e.
+> +   "renesas,rzn1-gpioirq".
+> +- interrupt-controller: Identifies the node as an interrupt controller.
+> +- #interrupt-cells: should be <1>. The meaning of the cells is the input
+> +   interrupt index, 0 to 95.
+> +- reg: Base address and size of GPIO IRQ Muxer registers.
+> +- interrupts: The list of interrupts generated by the muxer which are then
+> +   connected to a parent interrupt controller. The format of the interrupt
+> +   specifier depends in the interrupt parent controller.
+> +- gpioirq-#N: One property for each interrupt output from the GPIO IRQ Muxer
+> +   that specifies the input interrupt to use, #N is from 0 to 7.
 
-[...]
+Why do you need this in DT? Can't the driver handle this dynamically? 
+When you request an interrupt on a GPIO line, then connect that GPIO 
+line to a free IRQ line. 
 
-Sebastian,
+If you really need this in DT, then interrupt-map can be used here.
 
-When you review a patch, would you mind chopping/snipping unnecessary
-text please?  The chunks in-between the ones you reply to.
+> +
+> +Optional properties:
+> +- interrupt-parent: pHandle of the parent interrupt controller, if not
+> +   inherited from the parent node.
+> +
+> +
+> +Example:
+> +
+> +	The following is an example for the RZ/N1D SoC.
+> +
+> +	gpioirq: gpioirq@51000480 {
+> +		compatible = "renesas,r9a06g032-gpioirq",
+> +				"renesas,rzn1-gpioirq";
+> +		reg = <0x51000480 0x20>;
+> +		interrupts =
+> +			<GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
+> +			<GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>,
+> +			<GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>,
+> +			<GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>,
+> +			<GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>,
+> +			<GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>,
+> +			<GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>,
+> +			<GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
+> +		interrupt-controller;
+> +		#interrupt-cells = <1>;
+> +		status = "disabled";
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Don't show status in examples.
+
+> +	};
+> +
+> +	gpio0: gpio@5000b000 {
+> +		compatible = "snps,dw-apb-gpio";
+> +		reg = <0x5000b000 0x80>;
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +		clock-names = "bus";
+> +		clocks = <&hclk_gpio0>;
+> +		status = "disabled";
+> +
+> +		gpio0a: gpio-controller@0 {
+> +			compatible = "snps,dw-apb-gpio-port";
+> +			bank-name = "gpio0a";
+> +			gpio-controller;
+> +			#gpio-cells = <2>;
+> +			snps,nr-gpios = <32>;
+> +			reg = <0>;
+> +
+> +			interrupt-controller;
+> +			interrupt-parent = <&gpioirq>;
+> +			interrupts =   < 0  1  2  3  4  5  6  7
+> +					 8  9 10 11 12 13 14 15
+> +					16 17 18 19 20 21 22 23
+> +					24 25 26 27 28 29 30 31 >;
+> +			#interrupt-cells = <2>;
+> +		};
+> +	};
+> +
+> +
+> +	The following is an example for a board using this.
+
+Don't show the soc/board split. This is convention, but not part of the 
+binding.
+
+> +
+> +	&gpioirq {
+> +		status = "okay";
+> +		gpioirq-0 = <24>;	/* gpio0a 24 */
+> +		gpioirq-4 = <3>;	/* gpio0a 3 */
+> +	};
