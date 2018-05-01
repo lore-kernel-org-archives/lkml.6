@@ -1,73 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756275AbeEAQYM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 12:24:12 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:54793 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755905AbeEAQYC (ORCPT
+        id S1756357AbeEAQZH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 12:25:07 -0400
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:33834 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756315AbeEAQYs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 12:24:02 -0400
-X-Google-Smtp-Source: AB8JxZoj2S5+hpBQjKPa4hJ3apv7jpsz6fYie0eFAuxLcBEBiq7nTTfOoLcOSkKOtOVoxvCjB38j6A==
-MIME-Version: 1.0
-In-Reply-To: <20180430114058.5061-4-jagan@amarulasolutions.com>
-References: <20180430114058.5061-1-jagan@amarulasolutions.com> <20180430114058.5061-4-jagan@amarulasolutions.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Wed, 2 May 2018 00:23:38 +0800
-X-Gmail-Original-Message-ID: <CAGb2v66MKooAAroCzYdsXZDY0Oh66Dydpy59xj80QfiY+5mz_A@mail.gmail.com>
-Message-ID: <CAGb2v66MKooAAroCzYdsXZDY0Oh66Dydpy59xj80QfiY+5mz_A@mail.gmail.com>
-Subject: Re: [PATCH 03/21] clk: sunxi-ng: Enable DE2_CCU for Allwinner 64-bit SoCs
-To: Jagan Teki <jagan@amarulasolutions.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Tue, 1 May 2018 12:24:48 -0400
+X-Google-Smtp-Source: AB8JxZo6g81tOuQew9OZO1fCIhILvk+67isTEWIP6xGNkSgZPCM1t4uae2JWzWbZJEvocAIcV4xaLw==
+Date: Tue, 1 May 2018 11:24:46 -0500
+From: Rob Herring <robh@kernel.org>
+To: Liming Sun <lsun@mellanox.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+        Will Deacon <will.deacon@arm.com>, linux-mmc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/3] dt-bindings: mmc: Add binding for BlueField SoC
+Message-ID: <20180501162446.GA10012@rob-hp-laptop>
+References: <026fa942828c54fda5bad225981e56abc808b949.1524497286.git.lsun@mellanox.com>
+ <1525185155-24469-2-git-send-email-lsun@mellanox.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1525185155-24469-2-git-send-email-lsun@mellanox.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 30, 2018 at 7:40 PM, Jagan Teki <jagan@amarulasolutions.com> wrote:
-> Allwinner 64-bit SoC like H5/A64 has DE2 CCU so enable them
-> as default.
->
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+On Tue, May 01, 2018 at 10:32:34AM -0400, Liming Sun wrote:
+> This commit adds "mellanox,bluefield-dw-mshc" for dwmmc driver
+> extension on Mellanox BlueField SoC platform.
+> 
+> Signed-off-by: Liming Sun <lsun@mellanox.com>
 > ---
->  drivers/clk/sunxi-ng/Kconfig | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
-> index 79dfd296c3d1..1fffd3bf6ff3 100644
-> --- a/drivers/clk/sunxi-ng/Kconfig
-> +++ b/drivers/clk/sunxi-ng/Kconfig
-> @@ -58,6 +58,8 @@ config SUN8I_V3S_CCU
->
->  config SUN8I_DE2_CCU
->         bool "Support for the Allwinner SoCs DE2 CCU"
-> +       default ARM64 && ARCH_SUNXI
-> +       depends on (DRM_SUN4I && (ARM64 && ARCH_SUNXI)) || COMPILE_TEST
+>  .../devicetree/bindings/mmc/bluefield-dw-mshc.txt  | 29 ++++++++++++++++++++++
+>  1 file changed, 29 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mmc/bluefield-dw-mshc.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/mmc/bluefield-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/bluefield-dw-mshc.txt
+> new file mode 100644
+> index 0000000..75bd844d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mmc/bluefield-dw-mshc.txt
+> @@ -0,0 +1,29 @@
+> +* Mellanox Bluefield SoC specific extensions to the Synopsys Designware
+> +  Mobile Storage Host Controller
+> +
+> +Read synopsys-dw-mshc.txt for more details
+> +
+> +The Synopsys designware mobile storage host controller is used to interface
+> +a SoC with storage medium such as eMMC or SD/MMC cards. This file documents
+> +differences between the core Synopsys dw mshc controller properties described
+> +by synopsys-dw-mshc.txt and the properties used by the Mellanox Bluefield SoC
+> +specific extensions to the Synopsys Designware Mobile Storage Host Controller.
+> +
+> +Required Properties:
+> +
+> +* compatible: should be one of the following.
+> +  - "mellanox,bluefield-dw-mshc": for controllers with Mellanox Bluefield SoC
+> +    specific extensions.
+> +
+> +Example:
+> +
+> +	/* Mellanox Bluefield SoC MMC */
+> +	mmc@0x6008000 {
 
-There is no reason to depend on DRM_SUN4I. There is no compile dependency.
+Drop the '0x'.
 
-Also, this is needed on SUN8I as well, pretty much anything with DE 2.0.
-So you shouldn't limit it to ARM64. That pretty much breaks things for
-people with A83T's or H3's. In fact you should enable it by default for
-these as well.
+Building your dtb with 'W=1' will warn on this.
 
-ChenYu
+With that,
 
->
->  config SUN8I_R40_CCU
->         bool "Support for the Allwinner R40 CCU"
-> --
-> 2.14.3
->
+Reviewed-by: Rob Herring <robh@kernel.org>
+
+> +		compatible = "mellanox,bluefield-dw-mshc";
+> +		reg = <0x6008000 0x400>;
+> +		interrupts = <32>;
+> +		fifo-depth = <0x100>;
+> +		clock-frequency = <24000000>;
+> +		bus-width = <8>;
+> +		cap-mmc-highspeed;
+> +	};
+> -- 
+> 1.8.3.1
+> 
