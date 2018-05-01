@@ -1,70 +1,167 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756037AbeEAAj4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 30 Apr 2018 20:39:56 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:40488 "EHLO mx1.redhat.com"
+        id S1755839AbeEAAlU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 30 Apr 2018 20:41:20 -0400
+Received: from mga11.intel.com ([192.55.52.93]:56986 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751540AbeEAAjQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Apr 2018 20:39:16 -0400
-From: Al Stone <ahs3@redhat.com>
-To: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Al Stone <ahs3@redhat.com>, "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>
-Subject: [PATCH v3 1/3] ACPI: improve function documentation for acpi_parse_entries_array()
-Date: Mon, 30 Apr 2018 18:39:05 -0600
-Message-Id: <20180501003907.4322-2-ahs3@redhat.com>
-In-Reply-To: <20180501003907.4322-1-ahs3@redhat.com>
-References: <20180501003907.4322-1-ahs3@redhat.com>
+        id S1751451AbeEAAlT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Apr 2018 20:41:19 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,349,1520924400";
+   d="scan'208";a="220613308"
+Date: Mon, 30 Apr 2018 17:38:39 -0700 (PDT)
+From: Shivappa Vikas <vikas.shivappa@linux.intel.com>
+X-X-Sender: vikas@vshiva-Udesk
+To: Vikas Shivappa <vikas.shivappa@linux.intel.com>
+cc: vikas.shivappa@intel.com, tony.luck@intel.com,
+        ravi.v.shankar@intel.com, fenghua.yu@intel.com, x86@kernel.org,
+        tglx@linutronix.de, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        ak@linux.intel.com
+Subject: Re: [PATCH V2 0/6] Memory bandwidth allocation software
+ controller(mba_sc)
+In-Reply-To: <1524263781-14267-1-git-send-email-vikas.shivappa@linux.intel.com>
+Message-ID: <alpine.DEB.2.10.1804301737150.12136@vshiva-Udesk>
+References: <1524263781-14267-1-git-send-email-vikas.shivappa@linux.intel.com>
+User-Agent: Alpine 2.10 (DEB 1266 2009-07-14)
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I found the description of the table_size argument to the function
-acpi_parse_entries_array() unclear and ambiguous.  This is a minor
-documentation change to improve that description so I don't misuse
-the argument again in the future, and it is hopefully clearer to
-other future users.
 
-Signed-off-by: Al Stone <ahs3@redhat.com>
-Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
-Cc: Len Brown <lenb@kernel.org>
----
- drivers/acpi/tables.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+Hello Thomas,
 
-diff --git a/drivers/acpi/tables.c b/drivers/acpi/tables.c
-index 849c4fb19b03..4a3410aa6540 100644
---- a/drivers/acpi/tables.c
-+++ b/drivers/acpi/tables.c
-@@ -222,7 +222,7 @@ void acpi_table_print_madt_entry(struct acpi_subtable_header *header)
-  * acpi_parse_entries_array - for each proc_num find a suitable subtable
-  *
-  * @id: table id (for debugging purposes)
-- * @table_size: single entry size
-+ * @table_size: size of the root table
-  * @table_header: where does the table start?
-  * @proc: array of acpi_subtable_proc struct containing entry id
-  *        and associated handler with it
-@@ -233,6 +233,11 @@ void acpi_table_print_madt_entry(struct acpi_subtable_header *header)
-  * on it. Assumption is that there's only single handler for particular
-  * entry id.
-  *
-+ * The table_size is not the size of the complete ACPI table (the length
-+ * field in the header struct), but only the size of the root table; i.e.,
-+ * the offset from the very first byte of the complete ACPI table, to the
-+ * first byte of the very first subtable.
-+ *
-  * On success returns sum of all matching entries for all proc handlers.
-  * Otherwise, -ENODEV or -EINVAL is returned.
-  */
-@@ -400,7 +405,7 @@ int __init acpi_table_parse(char *id, acpi_tbl_table_handler handler)
- 		return -ENODEV;
- }
- 
--/* 
-+/*
-  * The BIOS is supposed to supply a single APIC/MADT,
-  * but some report two.  Provide a knob to use either.
-  * (don't you wish instance 0 and 1 were not the same?)
--- 
-2.14.3
+I have sent a new version trying to address your feedback. Made this 
+more cleaner also. Would be great if you could let me know any feedback.
+
+Regards,
+Vikas
+
+On Fri, 20 Apr 2018, Vikas Shivappa wrote:
+
+> Sending the second version of MBA software controller which addresses
+> the feedback on V1. Thanks to the feedback from Thomas on the V1. Thomas
+> was unhappy about the bad structure and english in the documentation and
+> comments explaining the changes and also about duct taping of data
+> structure which saves the throttle MSRs. Also issues were pointed out in
+> the mounting and other init code.
+> This series also changed the counting
+> and feedback loop patches with some improvements to not do any division
+> and take care of hierarchy and some l2 -> l3 traffic scenarios.
+> 
+> The patches are based on 4.16.
+> 
+> Background:
+> 
+> Intel RDT memory bandwidth allocation (MBA) currently uses the resctrl
+> interface and uses the schemata file in each rdtgroup to specify the max
+> "bandwidth percentage" that is allowed to be used by the "threads" and
+> "cpus" in the rdtgroup. These values are specified "per package" in each
+> rdtgroup in the schemata file as below:
+> 
+> $ cat /sys/fs/resctrl/p1/schemata 
+>     L3:0=7ff;1=7ff
+>     MB:0=100;1=50
+> 
+> In the above example the MB is the memory bandwidth percentage and "0"
+> and "1" specify the package/socket ids. The threads in rdtgroup "p1"
+> would get 100% memory bandwidth on socket0 and 50% bandwidth on socket1.
+> 
+> Problem:
+> 
+> However there are confusions in specifying the MBA in "percentage":
+> 
+> 1. In some scenarios, when user increases bandwidth percentage values he
+>    does not not see any raw bandwidth increase in "MBps" 
+> 2. Same bandwidth "percentage values" may mean different raw bandwidth
+>    in "MBps".
+> 3. This interface may also end up unnecessarily controlling the L2 <->
+>    L3 traffic which has no or very minimal L3 external traffic.
+> 
+> Proposed solution:
+> 
+> In short, we let user specify the bandwidth in "MBps" and we introduce
+> a software feedback loop which measures the bandwidth using MBM and
+> restricts the bandwidth "percentage" internally.
+> 
+> The fact that Memory bandwidth allocation(MBA) is a core specific
+> mechanism where as memory bandwidth monitoring(MBM) is done at the
+> package level is what leads to confusion when users try to apply control
+> via the MBA and then monitor the bandwidth to see if the controls are
+> effective. Below are details on such scenarios:
+> 
+> 1. User may *not* see increase in actual bandwidth when bandwidth
+>    percentage values are increased:
+> 
+> This can occur when aggregate L2 external bandwidth is more than L3
+> external bandwidth. Consider an SKL SKU with 24 cores on a package and
+> where L2 external  is 10GBps (hence aggregate L2 external bandwidth is
+> 240GBps) and L3 external bandwidth is 100GBps. Now a workload with '20
+> threads, having 50% bandwidth, each consuming 5GBps' consumes the max L3
+> bandwidth of 100GBps although the percentage value specified is only 50%
+> << 100%. Hence increasing the bandwidth percentage will not yield any
+> more bandwidth. This is because although the L2 external bandwidth still
+> has capacity, the L3 external bandwidth is fully used. Also note that
+> this would be dependent on number of cores the benchmark is run on.
+> 
+> 2. Same bandwidth percentage may mean different actual bandwidth
+>    depending on # of threads:
+> 
+> For the same SKU in #1, a 'single thread, with 10% bandwidth' and '4
+> thread, with 10% bandwidth' can consume upto 10GBps and 40GBps although
+> they have same percentage bandwidth of 10%. This is simply because as
+> threads start using more cores in an rdtgroup, the actual bandwidth may
+> increase or vary although user specified bandwidth percentage is same.
+> 
+> In order to mitigate this and make the interface more user friendly,
+> resctrl added support for specifying the bandwidth in "MBps" as well.
+> The kernel underneath would use a software feedback mechanism or
+> a "Software Controller" which reads the actual bandwidth using MBM
+> counters and adjust the memory bandwidth percentages to ensure
+> 
+> 	"actual bandwidth < user specified bandwidth".
+> 
+> By default, the schemata would take the bandwidth percentage values
+> where as user can switch to the "MBA software controller" mode using
+> a mount option 'mba_MBps'. The schemata format is specified in the
+> below.
+> 
+> To use the feature mount the file system using mba_MBps option:
+>  
+> $ mount -t resctrl resctrl -o mba_MBps /sys/fs/resctrl
+> 
+> If the MBA is specified in MBps then user can enter the max bandwidth in
+> MBps rather than the percentage values. The default value when mounted
+> is max_u32.
+> 
+> $ echo "L3:0=3;1=c\nMB:0=1024;1=500" > /sys/fs/resctrl/p0/schemata
+> $ echo "L3:0=3;1=3\nMB:0=1024;1=500" > /sys/fs/resctrl/p1/schemata
+> 
+> In the above example the tasks in "p1" and "p0" rdtgroup
+> would use a max bandwidth of 1024MBps on socket0 and 500MBps on socket1.
+> 
+> Vikas Shivappa (6):
+>   x86/intel_rdt/mba_sc: Documentation for MBA software
+>     controller(mba_sc)
+>   x86/intel_rdt/mba_sc: Enable/disable MBA software controller(mba_sc)
+>   x86/intel_rdt/mba_sc: Add initialization support
+>   x86/intel_rdt/mba_sc: Add schemata support
+>   x86/intel_rdt/mba_sc: Prepare for feedback loop
+>   x86/intel_rdt/mba_sc: Feedback loop to dynamically update mem
+>     bandwidth
+> 
+>  Documentation/x86/intel_rdt_ui.txt          |  75 +++++++++++--
+>  arch/x86/kernel/cpu/intel_rdt.c             |  50 ++++++---
+>  arch/x86/kernel/cpu/intel_rdt.h             |  18 +++
+>  arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c |  24 +++-
+>  arch/x86/kernel/cpu/intel_rdt_monitor.c     | 166 ++++++++++++++++++++++++++--
+>  arch/x86/kernel/cpu/intel_rdt_rdtgroup.c    |  33 ++++++
+>  6 files changed, 333 insertions(+), 33 deletions(-)
+> 
+> -- 
+> 1.9.1
+> 
+> 
