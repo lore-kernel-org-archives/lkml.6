@@ -1,89 +1,149 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754891AbeEALwu (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 07:52:50 -0400
-Received: from mail-io0-f182.google.com ([209.85.223.182]:33058 "EHLO
-        mail-io0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754662AbeEALws (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 07:52:48 -0400
-X-Google-Smtp-Source: AB8JxZrl6aQjlotAdKk2xkS1DQZAnkNEimlYS9TXJWSuSi2cs4n0tNuWN61EM6lazadhwMYkgeUKtW/nWdLOr51nKl8=
+        id S1754960AbeEALxq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 07:53:46 -0400
+Received: from foss.arm.com ([217.140.101.70]:45904 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754623AbeEALxp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 07:53:45 -0400
+Date: Tue, 1 May 2018 12:54:05 +0100
+From: Will Deacon <will.deacon@arm.com>
+To: Kim Phillips <kim.phillips@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, jnair@caviumnetworks.com,
+        Robert.Richter@cavium.com, Vadim.Lomovtsev@cavium.com,
+        Jan.Glauber@cavium.com, gklkml16@gmail.com
+Subject: Re: [PATCH v4 2/2] ThunderX2: Add Cavium ThunderX2 SoC UNCORE PMU
+ driver
+Message-ID: <20180501115405.GE25237@arm.com>
+References: <20180425090047.6485-1-ganapatrao.kulkarni@cavium.com>
+ <20180425090047.6485-3-ganapatrao.kulkarni@cavium.com>
+ <20180426170624.bfcba885431d57d0de2a3ddd@arm.com>
+ <20180427093027.ngtuoezyh6mtz26p@lakrids.cambridge.arm.com>
+ <20180427081525.f9dcc756678baf3bb6e6e473@arm.com>
+ <20180427143719.GA5093@arm.com>
+ <20180427104629.2bff4b4b683a93ddf39f8df5@arm.com>
+ <20180427160914.GA5286@arm.com>
+ <20180427115625.b5191d381cd41e7ee092fea1@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <01000163186628e6-3fe4abfc-eaaf-470c-90c8-2d8ad91db8f1-000000@email.amazonses.com>
-References: <b6aa3fac-a768-e27d-3070-00d929ebc245@gmail.com>
- <20180426192524.GD5965@thunk.org> <2add15cb-2113-0504-a732-81255ea61bf5@gmail.com>
- <20180426235630.GG5965@thunk.org> <3eb5761e-7b25-4178-0560-fba5eb43ce6a@gmail.com>
- <20180427201036.GL5965@thunk.org> <20180429143205.GD13475@amd>
- <20180429170541.lrzwyihrd6d75rql@sultan-box> <20180429184101.GA31156@amd>
- <20180429202033.ysmc42mj2rrk3h7p@sultan-box> <20180429220519.GQ5965@thunk.org>
- <01000163186628e6-3fe4abfc-eaaf-470c-90c8-2d8ad91db8f1-000000@email.amazonses.com>
-From: Justin Forbes <jmforbes@linuxtx.org>
-Date: Tue, 1 May 2018 06:52:47 -0500
-Message-ID: <CAFxkdAogN0S9vgQhKoO+Zpp07bXveDQYPLvwjULoTRv3Or83qQ@mail.gmail.com>
-Subject: Re: Linux messages full of `random: get_random_u32 called from`
-To: Jeremy Cline <jeremy@jcline.org>
-Cc: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Sultan Alsawaf <sultanxda@gmail.com>, Pavel Machek <pavel@ucw.cz>,
-        LKML <linux-kernel@vger.kernel.org>, Jann Horn <jannh@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180427115625.b5191d381cd41e7ee092fea1@arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 30, 2018 at 4:12 PM, Jeremy Cline <jeremy@jcline.org> wrote:
-> On 04/29/2018 06:05 PM, Theodore Y. Ts'o wrote:
->> On Sun, Apr 29, 2018 at 01:20:33PM -0700, Sultan Alsawaf wrote:
->>> On Sun, Apr 29, 2018 at 08:41:01PM +0200, Pavel Machek wrote:
->>>> Umm. No. https://www.youtube.com/watch?v=xneBjc8z0DE
->>>
->>> Okay, but /dev/urandom isn't a solution to this problem because it isn't usable
->>> until crng init is complete, so it suffers from the same init lag as
->>> /dev/random.
->>
->> It's more accurate to say that using /dev/urandom is no worse than
->> before (from a few years ago).  There are, alas, plenty of
->> distributions and user space application programmers that basically
->> got lazy using /dev/urandom, and assumed that there would be plenty of
->> entropy during early system startup.
->>
->> When they switched over the getrandom(2), the most egregious examples
->> of this caused pain (and they got fixed), but due to a bug in
->> drivers/char/random.c, if getrandom(2) was called after the entropy
->> pool was "half initialized", it would not block, but proceed.
->>
->> Is that exploitable?  Well, Jann and I didn't find an _obvious_ way to
->> exploit the short coming, which is this wasn't treated like an
->> emergency situation ala the embarassing situation we had five years
->> ago[1].
->>
->> [1] https://factorable.net/paper.html
->>
->> However, it was enough to make us be uncomfortable, which is why I
->> pushed the changes that I did.  At least on the devices we had at
->> hand, using the distributions that we typically use, the impact seemed
->> minimal.  Unfortuantely, there is no way to know for sure without
->> rolling out change and seeing who screams.  In the ideal world,
->> software would not require cryptographic randomness immediately after
->> boot, before the user logs in.  And ***really***, as in [1], softwaret
->> should not be generating long-term public keys that are essential to
->> the security of the box a few seconds immediately after the device is
->> first unboxed and plugged in.i
->>
->> What would be useful is if people gave reports that listed exactly
->> what laptop and distributions they are using.  Just "a high spec x86
->> laptop" isn't terribly useful, because *my* brand-new Dell XPS 13
->> running Debian testing is working just fine.  The year, model, make,
->> and CPU type plus what distribution (and distro version number) you
->> are running is useful, so I can assess how wide spread the unhappiness
->> is going to be, and what mitigation steps make sense.
->
-> Fedora has started seeing some bug reports on this for Fedora 27[0] and
-> I've asked reporters to include their hardware details.
->
-> [0] https://bugzilla.redhat.com/show_bug.cgi?id=1572944
->
+Hi Kim,
 
-We have also had reports that Fedora users are seeing this on Google
-Compute Engine.
+On Fri, Apr 27, 2018 at 11:56:25AM -0500, Kim Phillips wrote:
+> On Fri, 27 Apr 2018 17:09:14 +0100
+> Will Deacon <will.deacon@arm.com> wrote:
+> > On Fri, Apr 27, 2018 at 10:46:29AM -0500, Kim Phillips wrote:
+> > > On Fri, 27 Apr 2018 15:37:20 +0100
+> > > Will Deacon <will.deacon@arm.com> wrote:
+> > > > For anything under drivers/perf/, I'd prefer not to have these prints
+> > > > and instead see efforts to improve error reporting via the perf system
+> > > > call interface.
+> > > 
+> > > We'd all prefer that, and for all PMU drivers, why should ones under
+> > > drivers/perf be treated differently?
+> > 
+> > Because they're the ones I maintain...
+> 
+> You represent a minority on your opinion on this matter though.
 
-Justin
+I'm not sure that's true -- you tend to be the only one raising this issue;
+I think most people don't actually care one way or the other. If you know of
+others who care about it too then I suggest you work together as a group to
+solve the problem in a way which is amenable to the upstream maintainers.
+Then you won't have to worry about fixing it personally. You could even
+propose a topic for plumbers if there is enough interest in a general
+framework for propagating error messages to userspace.
+
+> > > As you are already aware, I've personally tried to fix this problem -
+> > > that has existed since before the introduction of the perf tool (I
+> > > consider it a syscall-independent enhanced error interface), multiple
+> > > times, and failed.
+> > 
+> > Why is that my problem? Try harder?
+> 
+> It's your problem because we're here reviewing a patch that happens to
+> fall under your maintainership.  I'll be the first person to tell you
+> I'm obviously incompetent and haven't been able to come up with a
+> solution that is acceptable for everyone up to and including Linus
+> Torvalds.  I'm just noticing a chronic usability problem that can be
+> easily alleviated in the context of this patch review.
+
+I don't see how incompetence has anything to do with it and, like most
+people (lucky gits...), I doubt Torvalds cares too deeply about PMU driver
+internals. No arguments on the usability problem, but this ain't the fix
+you're looking for: it's a bodge. We've been over this many times before.
+
+> > > So until someone comes up with a solution that works for everyone
+> > > up to and including Linus Torvalds (who hasn't put up a problem
+> > > pulling PMU drivers emitting things to dmesg so far, by the way), this
+> > > keep PMU drivers' errors silent preference of yours is unnecessarily
+> > > impeding people trying to measure system performance on Arm based
+> > > machines - all other archs' maintainers are fine with PMU drivers using
+> > > dmesg.
+> > 
+> > Good for them, although I'm pretty sure that at least the x86 folks are
+> > against this crap too.
+> 
+> Unfortunately, it doesn't affect them nearly as much as it does our
+> more diverse platforms, which is why I don't think they care to do
+> much about it.
+
+x86 has its fair share of PMUs too, so I don't think we're special in this
+regard. The main difference seems to be that they have better support in
+the perf tool for diagnosing problems.
+
+> > > > Anyway, I think this driver has bigger problems that need addressing.
+> > > 
+> > > To me it represents yet another PMU driver submission - as the years go
+> > > by - that is lacking in the user messaging area.  Which reminds me, can
+> > > you take another look at applying this?:
+> > 
+> > As I said before, I'm not going to take anything that logs above pr_debug
+> > for things that are directly triggerable from userspace. Spin a version
+> 
+> Why?  There are plenty of things that emit stuff into dmesg that are
+> directly triggerable from userspace.  Is it because it upsets fuzzing
+> tests?  How about those be run with a patched kernel that somehow
+> mitigates the printing?
+
+[we've been over this before]
+
+There are two camps that might find this information useful:
+
+  1. People writing userspace support for a new PMU using the
+     perf_event_open syscall
+
+  2. People trying to use a tool which abstracts the PMU details to some
+     degree (e.g. perf tool)
+
+Those in (1) can get by with pr_debug. Sure, they have to recompile, but
+it's not like there are many people in this camp and they'll probably be
+working with the PMU driver writer to some degree anyway and taking new
+kernel drops.
+
+Those in (2) may not have access to dmesg, absolutely should not be able
+to spam it (since this could hide other important messages), will probably
+struggle to match an internal message from the PMU driver to their
+invocation of the high-level tool and may well be in a multi-user
+environment so will struggle to identify the messages that they are
+responsible for. What they actually want is for the perf tool to give
+them more information, and dmesg is not the right channel for that, for
+similar reasons.
+
+> > using pr_debug and I'll queue it.
+> 
+> How about using a ratelimited dev_err variant?
+
+Nah, I don't want dmesg being parsed by users of perf tool. pr_debug should
+be sufficient for perf tool developers working with a new PMU type.
+
+Will
