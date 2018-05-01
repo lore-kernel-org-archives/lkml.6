@@ -1,22 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754234AbeEAJLY (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 05:11:24 -0400
-Received: from foss.arm.com ([217.140.101.70]:44066 "EHLO foss.arm.com"
+        id S1754534AbeEAJLc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 05:11:32 -0400
+Received: from foss.arm.com ([217.140.101.70]:44094 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753731AbeEAJLV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 05:11:21 -0400
+        id S1751920AbeEAJL0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 05:11:26 -0400
 From: Suzuki K Poulose <suzuki.poulose@arm.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org,
         mike.leach@linaro.org, robert.walker@arm.com, mark.rutland@arm.com,
         will.deacon@arm.com, robin.murphy@arm.com, sudeep.holla@arm.com,
         frowand.list@gmail.com, robh@kernel.org, john.horley@arm.com,
-        Suzuki K Poulose <suzuki.poulose@arm.com>, devicetree@vger.kernel.org,
-        Mathieu Poirier <mathieu.poirier@arm.com>
-Subject: [PATCH v2 05/27] dts: bindings: Document device tree binding for CATU
-Date: Tue,  1 May 2018 10:10:35 +0100
-Message-Id: <1525165857-11096-6-git-send-email-suzuki.poulose@arm.com>
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: [PATCH v2 07/27] coresight: tmc: Hide trace buffer handling for file read
+Date: Tue,  1 May 2018 10:10:37 +0100
+Message-Id: <1525165857-11096-8-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1525165857-11096-1-git-send-email-suzuki.poulose@arm.com>
 References: <1525165857-11096-1-git-send-email-suzuki.poulose@arm.com>
@@ -24,102 +23,178 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document CATU device-tree bindings. CATU augments the TMC-ETR
-by providing an improved Scatter Gather mechanism for streaming
-trace data to non-contiguous system RAM pages.
+At the moment we adjust the buffer pointers for reading the trace
+data via misc device in the common code for ETF/ETB and ETR. Since
+we are going to change how we manage the buffer for ETR, let us
+move the buffer manipulation to the respective driver files, hiding
+it from the common code. We do so by adding type specific helpers
+for finding the length of data and the pointer to the buffer,
+for a given length at a file position.
 
-Cc: devicetree@vger.kernel.org
-Cc: frowand.list@gmail.com
-Cc: Rob Herring <robh@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Mathieu Poirier <mathieu.poirier@arm.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- .../devicetree/bindings/arm/coresight.txt          | 52 ++++++++++++++++++++++
- 1 file changed, 52 insertions(+)
+ drivers/hwtracing/coresight/coresight-tmc-etf.c | 18 +++++++++++
+ drivers/hwtracing/coresight/coresight-tmc-etr.c | 34 ++++++++++++++++++++
+ drivers/hwtracing/coresight/coresight-tmc.c     | 41 ++++++++++++++-----------
+ drivers/hwtracing/coresight/coresight-tmc.h     |  4 +++
+ 4 files changed, 79 insertions(+), 18 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/coresight.txt b/Documentation/devicetree/bindings/arm/coresight.txt
-index 15ac8e8..cdd84d0 100644
---- a/Documentation/devicetree/bindings/arm/coresight.txt
-+++ b/Documentation/devicetree/bindings/arm/coresight.txt
-@@ -39,6 +39,8 @@ its hardware characteristcs.
+diff --git a/drivers/hwtracing/coresight/coresight-tmc-etf.c b/drivers/hwtracing/coresight/coresight-tmc-etf.c
+index e2513b7..2113e93 100644
+--- a/drivers/hwtracing/coresight/coresight-tmc-etf.c
++++ b/drivers/hwtracing/coresight/coresight-tmc-etf.c
+@@ -120,6 +120,24 @@ static void tmc_etf_disable_hw(struct tmc_drvdata *drvdata)
+ 	CS_LOCK(drvdata->base);
+ }
  
- 		- System Trace Macrocell:
- 			"arm,coresight-stm", "arm,primecell"; [1]
-+		- Coresight Address Translation Unit (CATU)
-+			"arm, coresight-catu", "arm,primecell";
++/*
++ * Return the available trace data in the buffer from @pos, with
++ * a maximum limit of @len, updating the @bufpp on where to
++ * find it.
++ */
++ssize_t tmc_etb_get_sysfs_trace(struct tmc_drvdata *drvdata,
++				  loff_t pos, size_t len, char **bufpp)
++{
++	ssize_t actual = len;
++
++	/* Adjust the len to available size @pos */
++	if (pos + actual > drvdata->len)
++		actual = drvdata->len - pos;
++	if (actual > 0)
++		*bufpp = drvdata->buf + pos;
++	return actual;
++}
++
+ static int tmc_enable_etf_sink_sysfs(struct coresight_device *csdev)
+ {
+ 	int ret = 0;
+diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+index bff46f2..53a17a8 100644
+--- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
++++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+@@ -92,6 +92,40 @@ static void tmc_etr_enable_hw(struct tmc_drvdata *drvdata)
+ 	CS_LOCK(drvdata->base);
+ }
  
- 	* reg: physical base address and length of the register
- 	  set(s) of the component.
-@@ -86,6 +88,9 @@ its hardware characteristcs.
- 	* arm,buffer-size: size of contiguous buffer space for TMC ETR
- 	 (embedded trace router)
++/*
++ * Return the available trace data in the buffer @pos, with a maximum
++ * limit of @len, also updating the @bufpp on where to find it.
++ */
++ssize_t tmc_etr_get_sysfs_trace(struct tmc_drvdata *drvdata,
++			    loff_t pos, size_t len, char **bufpp)
++{
++	ssize_t actual = len;
++	char *bufp = drvdata->buf + pos;
++	char *bufend = (char *)(drvdata->vaddr + drvdata->size);
++
++	/* Adjust the len to available size @pos */
++	if (pos + actual > drvdata->len)
++		actual = drvdata->len - pos;
++
++	if (actual <= 0)
++		return actual;
++
++	/*
++	 * Since we use a circular buffer, with trace data starting
++	 * @drvdata->buf, possibly anywhere in the buffer @drvdata->vaddr,
++	 * wrap the current @pos to within the buffer.
++	 */
++	if (bufp >= bufend)
++		bufp -= drvdata->size;
++	/*
++	 * For simplicity, avoid copying over a wrapped around buffer.
++	 */
++	if ((bufp + actual) > bufend)
++		actual = bufend - bufp;
++	*bufpp = bufp;
++	return actual;
++}
++
+ static void tmc_etr_dump_hw(struct tmc_drvdata *drvdata)
+ {
+ 	const u32 *barrier;
+diff --git a/drivers/hwtracing/coresight/coresight-tmc.c b/drivers/hwtracing/coresight/coresight-tmc.c
+index 0ea04f5..7a4e84f 100644
+--- a/drivers/hwtracing/coresight/coresight-tmc.c
++++ b/drivers/hwtracing/coresight/coresight-tmc.c
+@@ -131,35 +131,40 @@ static int tmc_open(struct inode *inode, struct file *file)
+ 	return 0;
+ }
  
-+* Optional property for CATU :
-+	* interrupts : Exactly one SPI may be listed for reporting the address
-+	  error
++static inline ssize_t tmc_get_sysfs_trace(struct tmc_drvdata *drvdata,
++					loff_t pos, size_t len, char **bufpp)
++{
++	switch (drvdata->config_type) {
++	case TMC_CONFIG_TYPE_ETB:
++	case TMC_CONFIG_TYPE_ETF:
++		return tmc_etb_get_sysfs_trace(drvdata, pos, len, bufpp);
++	case TMC_CONFIG_TYPE_ETR:
++		return tmc_etr_get_sysfs_trace(drvdata, pos, len, bufpp);
++	}
++
++	return  -EINVAL;
++}
++
+ static ssize_t tmc_read(struct file *file, char __user *data, size_t len,
+ 			loff_t *ppos)
+ {
++	char *bufp;
++	ssize_t actual;
+ 	struct tmc_drvdata *drvdata = container_of(file->private_data,
+ 						   struct tmc_drvdata, miscdev);
+-	char *bufp = drvdata->buf + *ppos;
++	actual = tmc_get_sysfs_trace(drvdata, *ppos, len, &bufp);
++	if (actual <= 0)
++		return 0;
  
- Example:
+-	if (*ppos + len > drvdata->len)
+-		len = drvdata->len - *ppos;
+-
+-	if (drvdata->config_type == TMC_CONFIG_TYPE_ETR) {
+-		if (bufp == (char *)(drvdata->vaddr + drvdata->size))
+-			bufp = drvdata->vaddr;
+-		else if (bufp > (char *)(drvdata->vaddr + drvdata->size))
+-			bufp -= drvdata->size;
+-		if ((bufp + len) > (char *)(drvdata->vaddr + drvdata->size))
+-			len = (char *)(drvdata->vaddr + drvdata->size) - bufp;
+-	}
+-
+-	if (copy_to_user(data, bufp, len)) {
++	if (copy_to_user(data, bufp, actual)) {
+ 		dev_dbg(drvdata->dev, "%s: copy_to_user failed\n", __func__);
+ 		return -EFAULT;
+ 	}
  
-@@ -118,6 +123,35 @@ Example:
- 		};
- 	};
+-	*ppos += len;
++	*ppos += actual;
++	dev_dbg(drvdata->dev, "%zu bytes copied\n", actual);
  
-+	etr@20070000 {
-+		compatible = "arm,coresight-tmc", "arm,primecell";
-+		reg = <0 0x20070000 0 0x1000>;
-+
-+		clocks = <&oscclk6a>;
-+		clock-names = "apb_pclk";
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			/* input port */
-+			port@0 {
-+				reg =  <0>;
-+				etr_in_port: endpoint {
-+					slave-mode;
-+					remote-endpoint = <&replicator2_out_port0>;
-+				};
-+			};
-+
-+			/* CATU link represented by output port */
-+			port@1 {
-+				reg = <0>;
-+				etr_out_port: endpoint {
-+					remote-endpoint = <&catu_in_port>;
-+				};
-+			};
-+		};
-+	};
-+
- 2. Links
- 	replicator {
- 		/* non-configurable replicators don't show up on the
-@@ -247,5 +281,23 @@ Example:
- 		};
- 	};
+-	dev_dbg(drvdata->dev, "%s: %zu bytes copied, %d bytes left\n",
+-		__func__, len, (int)(drvdata->len - *ppos));
+-	return len;
++	return actual;
+ }
  
-+5. CATU
-+
-+	catu@207e0000 {
-+		compatible = "arm,coresight-catu", "arm,primecell";
-+		reg = <0 0x207e0000 0 0x1000>;
-+
-+		clocks = <&oscclk6a>;
-+		clock-names = "apb_pclk";
-+
-+		interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
-+		port {
-+			catu_in_port: endpoint {
-+				slave-mode;
-+				remote-endpoint = <&etr_out_port>;
-+			};
-+		};
-+	};
-+
- [1]. There is currently two version of STM: STM32 and STM500.  Both
- have the same HW interface and as such don't need an explicit binding name.
+ static int tmc_release(struct inode *inode, struct file *file)
+diff --git a/drivers/hwtracing/coresight/coresight-tmc.h b/drivers/hwtracing/coresight/coresight-tmc.h
+index cdff853..9cbc4d5 100644
+--- a/drivers/hwtracing/coresight/coresight-tmc.h
++++ b/drivers/hwtracing/coresight/coresight-tmc.h
+@@ -184,10 +184,14 @@ int tmc_read_unprepare_etb(struct tmc_drvdata *drvdata);
+ extern const struct coresight_ops tmc_etb_cs_ops;
+ extern const struct coresight_ops tmc_etf_cs_ops;
+ 
++ssize_t tmc_etb_get_sysfs_trace(struct tmc_drvdata *drvdata,
++				loff_t pos, size_t len, char **bufpp);
+ /* ETR functions */
+ int tmc_read_prepare_etr(struct tmc_drvdata *drvdata);
+ int tmc_read_unprepare_etr(struct tmc_drvdata *drvdata);
+ extern const struct coresight_ops tmc_etr_cs_ops;
++ssize_t tmc_etr_get_sysfs_trace(struct tmc_drvdata *drvdata,
++				loff_t pos, size_t len, char **bufpp);
+ 
+ 
+ #define TMC_REG_PAIR(name, lo_off, hi_off)				\
 -- 
 2.7.4
