@@ -1,61 +1,179 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751094AbeEBA4J (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 20:56:09 -0400
-Received: from imap.thunk.org ([74.207.234.97]:51366 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750863AbeEBA4H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 20:56:07 -0400
-Date: Tue, 1 May 2018 20:56:04 -0400
-From: "Theodore Y. Ts'o" <tytso@mit.edu>
-To: Sultan Alsawaf <sultanxda@gmail.com>
-Cc: Justin Forbes <jmforbes@linuxtx.org>, Jeremy Cline <jeremy@jcline.org>,
-        Pavel Machek <pavel@ucw.cz>, LKML <linux-kernel@vger.kernel.org>,
-        Jann Horn <jannh@google.com>
-Subject: Re: Linux messages full of `random: get_random_u32 called from`
-Message-ID: <20180502005604.GJ10479@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Sultan Alsawaf <sultanxda@gmail.com>,
-        Justin Forbes <jmforbes@linuxtx.org>,
-        Jeremy Cline <jeremy@jcline.org>, Pavel Machek <pavel@ucw.cz>,
-        LKML <linux-kernel@vger.kernel.org>, Jann Horn <jannh@google.com>
-References: <20180429143205.GD13475@amd>
- <20180429170541.lrzwyihrd6d75rql@sultan-box>
- <20180429184101.GA31156@amd>
- <20180429202033.ysmc42mj2rrk3h7p@sultan-box>
- <20180429220519.GQ5965@thunk.org>
- <01000163186628e6-3fe4abfc-eaaf-470c-90c8-2d8ad91db8f1-000000@email.amazonses.com>
- <CAFxkdAogN0S9vgQhKoO+Zpp07bXveDQYPLvwjULoTRv3Or83qQ@mail.gmail.com>
- <20180501125518.GI20585@thunk.org>
- <CAFxkdArLwrG8x6fNtLUfHedKrH_0d97V6UEzOCBgK8Shkir9pQ@mail.gmail.com>
- <20180502004317.kxwiu2oephgbi6ok@sultan-box>
+        id S1751074AbeEBBCW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 21:02:22 -0400
+Received: from lucky1.263xmail.com ([211.157.147.134]:46876 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750755AbeEBBCU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 21:02:20 -0400
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 1
+X-MAIL-DELIVERY: 0
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+X-IP-DOMAINF: 1
+X-RL-SENDER: shawn.lin@rock-chips.com
+X-FST-TO: stable@kernel.org
+X-SENDER-IP: 58.22.7.114
+X-LOGIN-NAME: shawn.lin@rock-chips.com
+X-UNIQUE-TAG: <392fce2a03b49e2d91b6d891fcca5970>
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        shawn.lin@rock-chips.com, linux-mmc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@kernel.org
+Subject: Re: [PATCH v5 1/3] mmc: dw_mmc-bluefield: Add driver extension
+To: Liming Sun <lsun@mellanox.com>, Mark Rutland <mark.rutland@arm.com>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+References: <026fa942828c54fda5bad225981e56abc808b949.1524497286.git.lsun@mellanox.com>
+ <1525198787-46403-1-git-send-email-lsun@mellanox.com>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+Message-ID: <c95b926f-2129-c6de-7112-728eea9c7a3a@rock-chips.com>
+Date: Wed, 2 May 2018 09:02:03 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180502004317.kxwiu2oephgbi6ok@sultan-box>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+In-Reply-To: <1525198787-46403-1-git-send-email-lsun@mellanox.com>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 01, 2018 at 05:43:17PM -0700, Sultan Alsawaf wrote:
+On 2018/5/2 2:19, Liming Sun wrote:
+> This commit adds extension to the dw_mmc driver for Mellanox BlueField
+> SoC. It updates the UHS_REG_EXT register to bring up the eMMC card on
+> this SoC.
 > 
-> I've attached what I think is a reasonable stopgap solution until this is
-> actually fixed. If you're willing to revert the CVE-2018-1108 patches
-> completely, then I don't think you'll mind using this patch in the meantime.
+> Cc: stable@kernel.org
 
-I would put it slightly differently; reverting the CVE-2018-1108
-patches is less dangerous than what you are proposing in your attached
-patch.
+Why?
 
-Again, I think the right answer is to fix userspace to not require
-cryptographic grade entropy during early system startup, and for
-people to *think* about what they are doing.  I've looked at the
-systemd's use of hmac in journal-authenticate, and as near as I can
-tell, there isn't any kind of explanation about why it was necessary,
-or what threat it was trying to protect against.
+> Signed-off-by: Liming Sun <lsun@mellanox.com>
+> Reviewed-by: David Woods <dwoods@mellanox.com>
+> ---
+>   drivers/mmc/host/Kconfig            |  9 +++++
+>   drivers/mmc/host/Makefile           |  1 +
+>   drivers/mmc/host/dw_mmc-bluefield.c | 72 +++++++++++++++++++++++++++++++++++++
+>   3 files changed, 82 insertions(+)
+>   create mode 100644 drivers/mmc/host/dw_mmc-bluefield.c
+> 
+> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+> index 9589f9c..26ac6b5 100644
+> --- a/drivers/mmc/host/Kconfig
+> +++ b/drivers/mmc/host/Kconfig
+> @@ -717,6 +717,15 @@ config MMC_DW_K3
+>   	  Synopsys DesignWare Memory Card Interface driver. Select this option
+>   	  for platforms based on Hisilicon K3 SoC's.
+>   
+> +config MMC_DW_BLUEFIELD
 
-						- Ted
+And did you have feedback of my comment in V2£¿
+http://lists-archives.com/linux-kernel/29104830-mmc-dw_mmc-bluefield-add-driver-extension.html
+
+> +	tristate "BlueField specific extensions for Synopsys DW Memory Card Interface"
+> +	depends on MMC_DW
+> +	select MMC_DW_PLTFM
+> +	help
+> +	  This selects support for Mellanox BlueField SoC specific extensions to
+> +	  the Synopsys DesignWare Memory Card Interface driver. Select this
+> +	  option for platforms based on Mellanox BlueField SoC's.
+> +
+>   config MMC_DW_PCI
+>   	tristate "Synopsys Designware MCI support on PCI bus"
+>   	depends on MMC_DW && PCI
+> diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
+> index 6aead24..267b3f1 100644
+> --- a/drivers/mmc/host/Makefile
+> +++ b/drivers/mmc/host/Makefile
+> @@ -55,6 +55,7 @@ obj-$(CONFIG_MMC_DW_K3)		+= dw_mmc-k3.o
+>   obj-$(CONFIG_MMC_DW_PCI)	+= dw_mmc-pci.o
+>   obj-$(CONFIG_MMC_DW_ROCKCHIP)	+= dw_mmc-rockchip.o
+>   obj-$(CONFIG_MMC_DW_ZX)		+= dw_mmc-zx.o
+> +obj-$(CONFIG_MMC_DW_BLUEFIELD)	+= dw_mmc-bluefield.o
+>   obj-$(CONFIG_MMC_SH_MMCIF)	+= sh_mmcif.o
+>   obj-$(CONFIG_MMC_JZ4740)	+= jz4740_mmc.o
+>   obj-$(CONFIG_MMC_VUB300)	+= vub300.o
+> diff --git a/drivers/mmc/host/dw_mmc-bluefield.c b/drivers/mmc/host/dw_mmc-bluefield.c
+> new file mode 100644
+> index 0000000..12067b1
+> --- /dev/null
+> +++ b/drivers/mmc/host/dw_mmc-bluefield.c
+> @@ -0,0 +1,72 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2018 Mellanox Technologies.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + */
+> +
+> +#include <linux/module.h>
+> +#include <linux/io.h>
+> +#include <linux/irq.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_runtime.h>
+> +#include <linux/mmc/host.h>
+> +#include <linux/mmc/mmc.h>
+> +#include <linux/of.h>
+> +
+> +#include "dw_mmc.h"
+> +#include "dw_mmc-pltfm.h"
+> +
+> +static void dw_mci_bluefield_set_ios(struct dw_mci *host, struct mmc_ios *ios)
+> +{
+> +	u32 regs;
+> +
+> +	/* Set drive=4 (bit 29:23) and sample=2 (bit 22:16) in UHS_REG_EXT. */
+> +	regs = mci_readl(host, UHS_REG_EXT);
+> +	regs = (regs & ~0x3F100000 & ~0x7F0000) | (4 << 23) | (2 << 16);
+> +	mci_writel(host, UHS_REG_EXT, regs);
+> +}
+> +
+> +static const struct dw_mci_drv_data bluefield_drv_data = {
+> +	.set_ios		= dw_mci_bluefield_set_ios
+> +};
+> +
+> +static const struct of_device_id dw_mci_bluefield_match[] = {
+> +	{ .compatible = "mellanox,bluefield-dw-mshc",
+> +		.data = &bluefield_drv_data },
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(of, dw_mci_bluefield_match);
+> +
+> +static int dw_mci_bluefield_probe(struct platform_device *pdev)
+> +{
+> +	const struct dw_mci_drv_data *drv_data = NULL;
+> +	const struct of_device_id *match;
+> +
+> +	if (pdev->dev.of_node) {
+> +		match = of_match_node(dw_mci_bluefield_match,
+> +				      pdev->dev.of_node);
+> +		drv_data = match->data;
+> +	}
+> +
+> +	return dw_mci_pltfm_register(pdev, drv_data);
+> +}
+> +
+> +static struct platform_driver dw_mci_bluefield_pltfm_driver = {
+> +	.probe		= dw_mci_bluefield_probe,
+> +	.remove		= dw_mci_pltfm_remove,
+> +	.driver		= {
+> +		.name		= "dwmmc_bluefield",
+> +		.of_match_table	= dw_mci_bluefield_match,
+> +		.pm		= &dw_mci_pltfm_pmops,
+> +	},
+> +};
+> +
+> +module_platform_driver(dw_mci_bluefield_pltfm_driver);
+> +
+> +MODULE_DESCRIPTION("BlueField DW Multimedia Card driver");
+> +MODULE_AUTHOR("Mellanox Technologies");
+> +MODULE_LICENSE("GPL v2");
+> 
