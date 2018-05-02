@@ -1,26 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751731AbeEBOOq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 10:14:46 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:56939 "EHLO
+        id S1751770AbeEBOPO (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 10:15:14 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:38769 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751706AbeEBOOl (ORCPT
+        with ESMTP id S1751246AbeEBOPM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 10:14:41 -0400
-Date: Wed, 2 May 2018 07:14:21 -0700
+        Wed, 2 May 2018 10:15:12 -0400
+Date: Wed, 2 May 2018 07:14:52 -0700
 From: tip-bot for Peter Zijlstra <tipbot@zytor.com>
-Message-ID: <tip-e3b4f79025e0a4eb7e2a2c7d24dadfa1e38893b0@git.kernel.org>
-Cc: peterz@infradead.org, rafael.j.wysocki@intel.com,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        diego.viola@gmail.com, mingo@kernel.org, hpa@zytor.com
-Reply-To: mingo@kernel.org, hpa@zytor.com, peterz@infradead.org,
-        diego.viola@gmail.com, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, rafael.j.wysocki@intel.com
-In-Reply-To: <20180430100344.533326547@infradead.org>
-References: <20180430100344.533326547@infradead.org>
+Message-ID: <tip-cd2af07d823e5287cd6c91d54337348c2a873462@git.kernel.org>
+Cc: peterz@infradead.org, rafael.j.wysocki@intel.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, mingo@kernel.org, tglx@linutronix.de
+Reply-To: hpa@zytor.com, rafael.j.wysocki@intel.com, peterz@infradead.org,
+        mingo@kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de
+In-Reply-To: <20180430100344.594904898@infradead.org>
+References: <20180430100344.594904898@infradead.org>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:timers/urgent] x86/tsc: Fix mark_tsc_unstable()
-Git-Commit-ID: e3b4f79025e0a4eb7e2a2c7d24dadfa1e38893b0
+Subject: [tip:timers/urgent] clocksource: Consistent de-rate when marking
+ unstable
+Git-Commit-ID: cd2af07d823e5287cd6c91d54337348c2a873462
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -33,71 +32,55 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  e3b4f79025e0a4eb7e2a2c7d24dadfa1e38893b0
-Gitweb:     https://git.kernel.org/tip/e3b4f79025e0a4eb7e2a2c7d24dadfa1e38893b0
+Commit-ID:  cd2af07d823e5287cd6c91d54337348c2a873462
+Gitweb:     https://git.kernel.org/tip/cd2af07d823e5287cd6c91d54337348c2a873462
 Author:     Peter Zijlstra <peterz@infradead.org>
-AuthorDate: Mon, 30 Apr 2018 12:00:12 +0200
+AuthorDate: Mon, 30 Apr 2018 12:00:13 +0200
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Wed, 2 May 2018 16:10:40 +0200
+CommitDate: Wed, 2 May 2018 16:10:41 +0200
 
-x86/tsc: Fix mark_tsc_unstable()
+clocksource: Consistent de-rate when marking unstable
 
-mark_tsc_unstable() also needs to affect tsc_early, Now that
-clocksource_mark_unstable() can be used on a clocksource irrespective of
-its registration state, use it on both tsc_early and tsc.
+When a registered clocksource gets marked unstable the watchdog_kthread
+will de-rate and re-select the clocksource. Ensure it also de-rates
+when getting called on an unregistered clocksource.
 
-This does however require cs->list to be initialized empty, otherwise it
-cannot tell the registation state before registation.
-
-Fixes: aa83c45762a2 ("x86/tsc: Introduce early tsc clocksource")
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Diego Viola <diego.viola@gmail.com>
 Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Cc: len.brown@intel.com
 Cc: rjw@rjwysocki.net
+Cc: diego.viola@gmail.com
 Cc: rui.zhang@intel.com
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180430100344.533326547@infradead.org
+Link: https://lkml.kernel.org/r/20180430100344.594904898@infradead.org
 
 ---
- arch/x86/kernel/tsc.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+ kernel/time/clocksource.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
-index 23f36bc236ba..74392d9d51e0 100644
---- a/arch/x86/kernel/tsc.c
-+++ b/arch/x86/kernel/tsc.c
-@@ -1067,6 +1067,7 @@ static struct clocksource clocksource_tsc_early = {
- 	.resume			= tsc_resume,
- 	.mark_unstable		= tsc_cs_mark_unstable,
- 	.tick_stable		= tsc_cs_tick_stable,
-+	.list			= LIST_HEAD_INIT(clocksource_tsc_early.list),
- };
+diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
+index 935f39eb8aac..605656df16c4 100644
+--- a/kernel/time/clocksource.c
++++ b/kernel/time/clocksource.c
+@@ -152,12 +152,19 @@ static void __clocksource_unstable(struct clocksource *cs)
+ 	cs->flags &= ~(CLOCK_SOURCE_VALID_FOR_HRES | CLOCK_SOURCE_WATCHDOG);
+ 	cs->flags |= CLOCK_SOURCE_UNSTABLE;
  
- /*
-@@ -1086,6 +1087,7 @@ static struct clocksource clocksource_tsc = {
- 	.resume			= tsc_resume,
- 	.mark_unstable		= tsc_cs_mark_unstable,
- 	.tick_stable		= tsc_cs_tick_stable,
-+	.list			= LIST_HEAD_INIT(clocksource_tsc.list),
- };
+-	if (list_empty(&cs->list))
++	/*
++	 * If the clocksource is registered clocksource_watchdog_kthread() will
++	 * re-rate and re-select.
++	 */
++	if (list_empty(&cs->list)) {
++		cs->rating = 0;
+ 		return;
++	}
  
- void mark_tsc_unstable(char *reason)
-@@ -1098,13 +1100,9 @@ void mark_tsc_unstable(char *reason)
- 		clear_sched_clock_stable();
- 	disable_sched_clock_irqtime();
- 	pr_info("Marking TSC unstable due to %s\n", reason);
--	/* Change only the rating, when not registered */
--	if (clocksource_tsc.mult) {
--		clocksource_mark_unstable(&clocksource_tsc);
--	} else {
--		clocksource_tsc.flags |= CLOCK_SOURCE_UNSTABLE;
--		clocksource_tsc.rating = 0;
--	}
-+
-+	clocksource_mark_unstable(&clocksource_tsc_early);
-+	clocksource_mark_unstable(&clocksource_tsc);
+ 	if (cs->mark_unstable)
+ 		cs->mark_unstable(cs);
+ 
++	/* kick clocksource_watchdog_kthread() */
+ 	if (finished_booting)
+ 		schedule_work(&watchdog_work);
  }
- 
- EXPORT_SYMBOL_GPL(mark_tsc_unstable);
