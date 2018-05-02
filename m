@@ -1,80 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751767AbeEBNWD (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 09:22:03 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:37482 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751739AbeEBNWA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 09:22:00 -0400
-X-Google-Smtp-Source: AB8JxZqM5BAH8WavahHrwftuz1X+mUtPgsT3mBuralnKff0tH7PKcM0sl5wYC75epJkY+X6JDf5T2w==
-Subject: Re: [PATCH v2] watchdog: sp805: add restart handler
-To: Jongsung Kim <neidhard.kim@lge.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Chanho Min <chanho.min@lge.com>
-References: <1525247979-23156-1-git-send-email-neidhard.kim@lge.com>
-From: Guenter Roeck <linux@roeck-us.net>
-Message-ID: <cf2f151a-06d7-368e-7ae5-68e992dfc3ea@roeck-us.net>
-Date: Wed, 2 May 2018 06:21:57 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <1525247979-23156-1-git-send-email-neidhard.kim@lge.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1751711AbeEBNVu (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 09:21:50 -0400
+Received: from ozlabs.org ([203.11.71.1]:44427 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751414AbeEBNVM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 09:21:12 -0400
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: linuxppc-dev@ozlabs.org
+Cc: viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org
+Subject: [PATCH 5/6] powerpc/syscalls: kill ppc32_select()
+Date: Wed,  2 May 2018 23:20:50 +1000
+Message-Id: <20180502132051.28861-5-mpe@ellerman.id.au>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180502132051.28861-1-mpe@ellerman.id.au>
+References: <20180502132051.28861-1-mpe@ellerman.id.au>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/02/2018 12:59 AM, Jongsung Kim wrote:
-> Add restart handler for SP805 watchdog so that the driver can be
-> used to reboot the system.
-> 
-> Signed-off-by: Jongsung Kim <neidhard.kim@lge.com>
-> Cc: Guenter Roeck <linux@roeck-us.net>
-> ---
->   drivers/watchdog/sp805_wdt.c | 13 +++++++++++++
->   1 file changed, 13 insertions(+)
-> 
-> diff --git a/drivers/watchdog/sp805_wdt.c b/drivers/watchdog/sp805_wdt.c
-> index 03805bc..969369e 100644
-> --- a/drivers/watchdog/sp805_wdt.c
-> +++ b/drivers/watchdog/sp805_wdt.c
-> @@ -121,6 +121,18 @@ static unsigned int wdt_timeleft(struct watchdog_device *wdd)
->   	return div_u64(load, rate);
->   }
->   
-> +static int
-> +wdt_restart(struct watchdog_device *wdd, unsigned long mode, void *cmd)
-> +{
-> +	struct sp805_wdt *wdt = watchdog_get_drvdata(wdd);
-> +
-> +	writel_relaxed(0, wdt->base + WDTCONTROL);
-> +	writel_relaxed(0, wdt->base + WDTLOAD);
-> +	writel_relaxed(INT_ENABLE | RESET_ENABLE, wdt->base + WDTCONTROL);
-> +
-> +	return 0;
-> +}
-> +
->   static int wdt_config(struct watchdog_device *wdd, bool ping)
->   {
->   	struct sp805_wdt *wdt = watchdog_get_drvdata(wdd);
-> @@ -197,6 +209,7 @@ static const struct watchdog_ops wdt_ops = {
->   	.ping		= wdt_ping,
->   	.set_timeout	= wdt_setload,
->   	.get_timeleft	= wdt_timeleft,
-> +	.restart	= wdt_restart,
->   };
->   
->   static int
-> 
-Please add the restart priority
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-	watchdog_set_restart_priority(&wdt->wdd, 128);
+it had always been pointless - compat_sys_select() sign-extends
+the first argument just fine on its own.
 
-before registering the watchdog.
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+[mpe: Use COMPAT_SPU_NEW() to keep systbl_chk.sh happy]
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+---
+ arch/powerpc/include/asm/systbl.h | 2 +-
+ arch/powerpc/kernel/sys_ppc32.c   | 9 ---------
+ 2 files changed, 1 insertion(+), 10 deletions(-)
 
-Thanks,
-Guenter
+diff --git a/arch/powerpc/include/asm/systbl.h b/arch/powerpc/include/asm/systbl.h
+index b91701c0711a..cdf528089a63 100644
+--- a/arch/powerpc/include/asm/systbl.h
++++ b/arch/powerpc/include/asm/systbl.h
+@@ -147,7 +147,7 @@ SYSCALL_SPU(setfsuid)
+ SYSCALL_SPU(setfsgid)
+ SYSCALL_SPU(llseek)
+ COMPAT_SYS_SPU(getdents)
+-SYSX_SPU(sys_select,ppc32_select,sys_select)
++COMPAT_SPU_NEW(select)
+ SYSCALL_SPU(flock)
+ SYSCALL_SPU(msync)
+ COMPAT_SYS_SPU(readv)
+diff --git a/arch/powerpc/kernel/sys_ppc32.c b/arch/powerpc/kernel/sys_ppc32.c
+index c11c73373691..bdf58ba1a94b 100644
+--- a/arch/powerpc/kernel/sys_ppc32.c
++++ b/arch/powerpc/kernel/sys_ppc32.c
+@@ -52,15 +52,6 @@
+ #include <asm/syscalls.h>
+ #include <asm/switch_to.h>
+ 
+-
+-asmlinkage long ppc32_select(u32 n, compat_ulong_t __user *inp,
+-		compat_ulong_t __user *outp, compat_ulong_t __user *exp,
+-		compat_uptr_t tvp_x)
+-{
+-	/* sign extend n */
+-	return compat_sys_select((int)n, inp, outp, exp, compat_ptr(tvp_x));
+-}
+-
+ unsigned long compat_sys_mmap2(unsigned long addr, size_t len,
+ 			  unsigned long prot, unsigned long flags,
+ 			  unsigned long fd, unsigned long pgoff)
+-- 
+2.14.1
