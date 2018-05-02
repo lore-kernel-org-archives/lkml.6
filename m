@@ -1,62 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751575AbeEBNzu (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 09:55:50 -0400
-Received: from mga01.intel.com ([192.55.52.88]:58147 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751500AbeEBNzp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 09:55:45 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,354,1520924400";
-   d="scan'208";a="225150788"
-From: changbin.du@intel.com
-To: yamada.masahiro@socionext.com, michal.lkml@markovi.net,
-        tglx@linutronix.de, mingo@redhat.com, akpm@linux-foundation.org
-Cc: rostedt@goodmis.org, rdunlap@infradead.org, x86@kernel.org,
-        lgirdwood@gmail.com, broonie@kernel.org, arnd@arndb.de,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, Changbin Du <changbin.du@intel.com>
-Subject: [PATCH v2 5/5] asm-generic: fix build error in fix_to_virt with CONFIG_DEBUG_EXPERIENCE
-Date: Wed,  2 May 2018 21:45:00 +0800
-Message-Id: <1525268700-10631-6-git-send-email-changbin.du@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1525268700-10631-1-git-send-email-changbin.du@intel.com>
-References: <1525268700-10631-1-git-send-email-changbin.du@intel.com>
+        id S1751650AbeEBN4H (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 09:56:07 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:56294 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751602AbeEBN4D (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 09:56:03 -0400
+Date: Wed, 2 May 2018 15:55:56 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, diego.viola@gmail.com,
+        len.brown@intel.com, rjw@rjwysocki.net, rui.zhang@intel.com
+Subject: Re: [PATCH v2 3/7] clocksource: Initialize cs->wd_list
+Message-ID: <20180502135556.GT12217@hirez.programming.kicks-ass.net>
+References: <20180430100008.503783478@infradead.org>
+ <20180430100344.472662715@infradead.org>
+ <alpine.DEB.2.21.1805021536460.1560@nanos.tec.linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1805021536460.1560@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Changbin Du <changbin.du@intel.com>
+On Wed, May 02, 2018 at 03:37:30PM +0200, Thomas Gleixner wrote:
+> On Mon, 30 Apr 2018, Peter Zijlstra wrote:
+> 
+> > A number of places relies on list_empty(&cs->wd_list), however the
+> > list_head does not get initialized. Do so upon registration, such that
+> > thereafter it is possible to rely on list_empty() correctly reflecting
+> > the list membership status.
+> > 
+> > Tested-by: Diego Viola <diego.viola@gmail.com>
+> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> 
+> The next patch is marked for stable, but this one not. Confused
 
-With '-Og' optimization level, GCC would not optimize a count for a loop
-as a constant value. But BUILD_BUG_ON() only accept compile-time constant
-values.
+Patch ordering issue mostly. I only marked stable those that fix the
+immediate/reported problem.
 
-arch/arm/mm/mmu.o: In function `fix_to_virt':
-/home/changbin/work/linux/./include/asm-generic/fixmap.h:31: undefined reference to `__compiletime_assert_31'
-Makefile:1051: recipe for target 'vmlinux' failed
-make: *** [vmlinux] Error 1
+I noticed this while working on the code, this fixes, afaict, a
+pre-existing issue, where the current code relies on
+list_empty(&->wd_list), but we don't actually initialize it at all.
 
-Signed-off-by: Changbin Du <changbin.du@intel.com>
----
- include/asm-generic/fixmap.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/include/asm-generic/fixmap.h b/include/asm-generic/fixmap.h
-index 827e4d3..a6576d4 100644
---- a/include/asm-generic/fixmap.h
-+++ b/include/asm-generic/fixmap.h
-@@ -28,7 +28,8 @@
-  */
- static __always_inline unsigned long fix_to_virt(const unsigned int idx)
- {
--	BUILD_BUG_ON(idx >= __end_of_fixed_addresses);
-+	BUILD_BUG_ON(__builtin_constant_p(idx) &&
-+		     idx >= __end_of_fixed_addresses);
- 	return __fix_to_virt(idx);
- }
- 
--- 
-2.7.4
+Marking it stable is probably fine, but I didn't go to great lengths to
+test the individual code paths affected.
