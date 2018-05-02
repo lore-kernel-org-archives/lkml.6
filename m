@@ -1,112 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751582AbeEBOBA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 10:01:00 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46132 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751109AbeEBOAz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 10:00:55 -0400
-Message-ID: <1525269652.11756.134.camel@redhat.com>
-Subject: Re: linux-next: manual merge of the rdma tree with the rdma-fixes
- tree
-From: Doug Ledford <dledford@redhat.com>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Zhu Yanjun <yanjun.zhu@oracle.com>
-Date: Wed, 02 May 2018 10:00:52 -0400
-In-Reply-To: <20180502102237.GG20375@mtr-leonro.local>
-References: <20180501101017.517b38af@canb.auug.org.au>
-         <1525136135.11756.94.camel@redhat.com>
-         <20180502102237.GG20375@mtr-leonro.local>
-Organization: Red Hat, Inc.
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-eMP6AqRXDUkEHD4UIcWj"
-Mime-Version: 1.0
+        id S1751613AbeEBOB0 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 10:01:26 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:33817 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751036AbeEBOBY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 10:01:24 -0400
+Date: Wed, 2 May 2018 07:01:01 -0700
+From: tip-bot for Agustin Vega-Frias <tipbot@zytor.com>
+Message-ID: <tip-1bc2463cee92ef0e2034c813d5e511adeb58b5fd@git.kernel.org>
+Cc: linux-kernel@vger.kernel.org, jason@lakedaemon.net,
+        agustinv@codeaurora.org, tglx@linutronix.de, hpa@zytor.com,
+        mingo@kernel.org, marc.zyngier@arm.com
+Reply-To: marc.zyngier@arm.com, hpa@zytor.com, mingo@kernel.org,
+        tglx@linutronix.de, agustinv@codeaurora.org, jason@lakedaemon.net,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <1525184090-26143-1-git-send-email-agustinv@codeaurora.org>
+References: <1525184090-26143-1-git-send-email-agustinv@codeaurora.org>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:irq/urgent] irqchip/qcom: Fix check for spurious interrupts
+Git-Commit-ID: 1bc2463cee92ef0e2034c813d5e511adeb58b5fd
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  1bc2463cee92ef0e2034c813d5e511adeb58b5fd
+Gitweb:     https://git.kernel.org/tip/1bc2463cee92ef0e2034c813d5e511adeb58b5fd
+Author:     Agustin Vega-Frias <agustinv@codeaurora.org>
+AuthorDate: Tue, 1 May 2018 10:14:50 -0400
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Wed, 2 May 2018 15:56:10 +0200
 
---=-eMP6AqRXDUkEHD4UIcWj
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+irqchip/qcom: Fix check for spurious interrupts
 
-On Wed, 2018-05-02 at 13:22 +0300, Leon Romanovsky wrote:
-> On Mon, Apr 30, 2018 at 08:55:35PM -0400, Doug Ledford wrote:
-> > On Tue, 2018-05-01 at 10:10 +1000, Stephen Rothwell wrote:
-> > > Hi all,
-> > >=20
-> > > Today's linux-next merge of the rdma tree got a conflict in:
-> > >=20
-> > >   drivers/infiniband/sw/rxe/rxe_resp.c
-> > >=20
-> > > between commit:
-> > >=20
-> > >   9fd4350ba895 ("B/rxe: avoid double kfree_skb")
-> > >=20
-> > > from the rdma-fixes tree and commit:
-> > >=20
-> > >   2e47350789eb ("IB/rxe: optimize the function duplicate_request")
-> > >=20
-> > > from the rdma tree.
-> > >=20
-> > > I fixed it up (I think - see below) and can carry the fix as necessar=
-y.
-> > > This is now fixed as far as linux-next is concerned, but any non triv=
-ial
-> > > conflicts should be mentioned to your upstream maintainer when your t=
-ree
-> > > is submitted for merging.  You may also want to consider cooperating
-> > > with the maintainer of the conflicting tree to minimise any particula=
-rly
-> > > complex conflicts.
-> > >=20
-> >=20
-> > We will probably merge the for-rc branch into the for-next branch in th=
-e
-> > next few days, at which point we will do the conflict resolution
-> > ourselves and your need to carry anything should drop out.
->=20
-> Isn't "rdma/wip/for-testing" branch intended for this?
+When the interrupts for a combiner span multiple registers it must be
+checked if any interrupts have been asserted on each register before
+checking for spurious interrupts.
 
-Not really.  It's there to provide a pre-merged branch for people to
-test.  But, I've rarely seen a release cycle where, *sometime*, we
-didn't get a patch set in the for-next that depends on changes in the
-for-rc area, and in that case, you need to merge for-rc into for-next.=20
-If we don't have that this cycle, then you're right, I won't merge for-
-rc into for-next and for-testing will be the throwaway merge branch.  On
-occasion, if the merge fixups needed between for-rc and for-next get too
-difficult for a non-RDMA person to sus out, then we will do a merge of
-for-rc into for-next simply so we can provide the right merge fixup, but
-I doubt this merge fixup rises to that level.
+Checking each register seperately leads to false positive warnings.
 
---=20
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
---=-eMP6AqRXDUkEHD4UIcWj
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+[ tglx: Massaged changelog ]
 
------BEGIN PGP SIGNATURE-----
+Fixes: f20cc9b00c7b ("irqchip/qcom: Add IRQ combiner driver")
+Signed-off-by: Agustin Vega-Frias <agustinv@codeaurora.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jason Cooper <jason@lakedaemon.net>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: timur@codeaurora.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/1525184090-26143-1-git-send-email-agustinv@codeaurora.org
 
-iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAlrpxJQACgkQuCajMw5X
-L934eBAAjucQJds1M425l/yZ0FBrq7ZAmx/z+HaSyTbzk+0vjeSXEnKNWKhS3VNH
-MeR13EfT1Jag2e8+WvbetjGEL+fIjZxKVCER0cT9+tJPXaK+kzGlLwsVXcPAbNeX
-iAIxOcgh6DQWQ5jU0dfkQdj8omEC8lEZOkY5uGWgqrwtWTAdAQgVPnxJ7cADprGf
-1tX9M3GyLU44WCOrxx6UYi1TRJ67ulmwJWaSH7mRocBwvSWaz79phAgVPj9NqJAi
-4492FxReszSK0IUl6ckKIGgQKGqPXimyh5Si6Pg1snlsnUMbHsqxPdmWQ11f/7c7
-smVT6sh8lTMa2DZj34754dpyRVl9c2l61stjYEeho4LqIGQma+VFmHhSsg5j0+pS
-tS88NWmzO2pD9xWBMKkfzmn1N//X+ZClH6IvLzvcQHH/MaKNGBXM6yJ7ONNR8Xsl
-G0TbtG3UpeipO3SAQ02oVV/53zxRmIV7+iKhHMboEmwLOwW0EVZ7x/mE3htNHMdy
-3NDEN/B5zrpx/61B9vTzxlVBQQwj6qkqBqjA8wXZHUuKJtqeW151g03gbcItEerT
-jt7+7wDstW0YfToOumPt9TlfUI2SorXzan9TAHPyUEGW4jaVdNWk9IH2dVgB1ksN
-gFxN2rhQnyeESqfBE8O0CISsmAMphF0ws6yDtF/dXnNEsrW9QJ8=
-=rqS9
------END PGP SIGNATURE-----
+---
+ drivers/irqchip/qcom-irq-combiner.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---=-eMP6AqRXDUkEHD4UIcWj--
+diff --git a/drivers/irqchip/qcom-irq-combiner.c b/drivers/irqchip/qcom-irq-combiner.c
+index f31265937439..7f0c0be322e0 100644
+--- a/drivers/irqchip/qcom-irq-combiner.c
++++ b/drivers/irqchip/qcom-irq-combiner.c
+@@ -1,4 +1,4 @@
+-/* Copyright (c) 2015-2016, The Linux Foundation. All rights reserved.
++/* Copyright (c) 2015-2018, The Linux Foundation. All rights reserved.
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License version 2 and
+@@ -68,7 +68,7 @@ static void combiner_handle_irq(struct irq_desc *desc)
+ 
+ 		bit = readl_relaxed(combiner->regs[reg].addr);
+ 		status = bit & combiner->regs[reg].enabled;
+-		if (!status)
++		if (bit && !status)
+ 			pr_warn_ratelimited("Unexpected IRQ on CPU%d: (%08x %08lx %p)\n",
+ 					    smp_processor_id(), bit,
+ 					    combiner->regs[reg].enabled,
