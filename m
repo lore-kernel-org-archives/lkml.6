@@ -1,5 +1,5 @@
 Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-257651-1525243988-2-2013936617071721210
+X-Cyrus-Session-Id: sloti22d1t05-257651-1525243956-2-11959337490736030704
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525243987; b=JPEPEI7zATUdRnJlCmt43s7FrkYvqBoCWGayU4UFQG5NzFKnYY
-    sKYAe0dDPcAnuXKIYo34PdcNuWDfuDuU6/KuswkZD3BcyUgr99KIsFVdFmB5vjhz
-    SP89tcl6HaoN4Zx7qnNvCEMbteEFSo9ZZz0iXhVa+MKODTORnxp0IaazUD0gr3Xo
-    RHVuq45J9y1hXNn677bAh7R9J6LUsUh/mqr1ZMJJsgj280IO6xPW5qH6hpSWTXz2
-    aQi4yOTZOpdZaVGlJiYLTZ9SOjqNS0t9eCJ5MSchy8/cPLoGSkWdYw7VkNoC4ZuW
-    JTbgjXP4CQIa15ssLj5jj5Ay5/orWUBHepZw==
+    1525243956; b=ZwCCcO/3hdpm/Ta8d0VSOHFCij5PLvWT11+QcujgnBw2nwy1eB
+    WjEJvFzk5qXfIvrZFo5jZIo9meSPelXrSCAdO7zJWaPpV2x+jQX4uX7SQLpsz1ip
+    S6WCiiO0ORqPXRBNmXL3UqEYkG4lB4jp5NnoFS9QrQ9+I/dGiBLoyOhG3JyDlln6
+    a9wAqzMAfIMbby8KbMSOzTYyCLKvzhmlPhkrLA1RYBIqpWnr28uQVVCTe3MkfdGV
+    twkLkvTUXN7xr3uFG6lIcwajEX/4upyDWTEvsVb6SsbOw4OX60rcMjCFXYHn9v86
+    rvzWW/e+aD/chpyyqMqrJwXSpkPWUrDpSK3w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:cc:subject:message-id
     :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1525243987; bh=QuTY5jSbhR3J2DeO0vWtNjVegU7wtn
-    jRRfvWtLrqVgM=; b=cqm9sMlxaL8Xik3lbhjkPnpNPTsRIeodxmimp4W96ROfoa
-    ugar85MfHQBR08pFP59uYPmqFjc91v1QIg98d5/qJ/XN+KHaTsz6gfG6XKek2vEf
-    Sy9bpOjFibybPrf2XgUseiHCcexymMGNnVIo6OYNgrwMrr5r1PxnzPYFykEIYPyz
-    jA059BqE4ak5qlb0e5akJIeoYDPRbdpRXNmk4FsoEZr5gQbXR5We7DDMOGVUMmmK
-    bHoWEwWmmndrzHUS3LUQK90PHOfWNL7TNWNsZeCU1wm3NkmKBiijnIBW5tc6l9QI
-    /L67FFPm5U52qcrzKSiemQsvFhGhacWnkZjdfpcw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1525243956; bh=xN0aQUgAtKroXvEzgpc18hHVButw+S
+    uigms6g74QtNQ=; b=bGM2Vxh8jC3PEXztWnT4HFHH7ZX7FNEVOwzEfocY/6kK27
+    gBl++10N12X53YhNP23772lfqYzbT/pAIu1jNd/q2VqIzXnuUuV9jBSUY/+ocLQa
+    Q9Ndy1mvimkit0rGNqYffubQbVN239BfL7iWv315c9ADDnBF4SLvK53easjOnBty
+    bO0M6o16phS10TMz/r7HFT2Je1BTswhhk7D2lUaN9/G5XskQTjUuAu2dptKAce/c
+    l5HV/Iv2lkn9IklmkMmrhEKBSjW+ssDhDX9L4xlCyST43PX0rD2QjZSMMCuWjd3z
+    rxcKFFnbO7dhgMgezO9rAgl9OCero2TPfjflEPCQ==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -44,7 +44,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     header_org.domain=intel.com header_org.result=pass
     header_is_org_domain=no;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
@@ -61,43 +61,42 @@ Authentication-Results: mx5.messagingengine.com;
       header_is_org_domain=no;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfG2+p4HZzMh6hzhyDMfGTZC8Dhkw4lA18sTk3oE7q4aFWoTfquu17P90whdLTRFfJJ7pB8cyLWWvy6wdmZtbQuEIq/1IvB9GyCMwk1mnoJSk8FvTbfJZ
-    9NeJ9YEUOnQqgBI0kVCz3m3LLH6icUmiO6g1a9KHBFKhA1Pk8Owg8FYkSTbEkt9ShuA+cEgf03e0IOQ7Nt8Oi0lDuMkRVFNSUE7FGIccNAX/Lorw55QfInry
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfMSPP5P4P5P2iqIcdSAFnkCDXvwnykkPj/GCgS9b26rn8ep9WWHC7s1T+PIzBkKSneIaTotBiM6Lmdrzgbwxx02RmJtwThUZStd+eP6NR42DfWIUqLRJ
+    Hc/d+KGkYD8E0VN1bk/S3yS/osSkhKeUNy+ZoYPCkURipKYkW2yh04AzK8mIaYiQ8nNTibQIF6mLxqnILEjLg4+dJYuSHET3/14pNunWMTzA9h88IEj9C2aR
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=QyXUC8HyAAAA:8 a=20KFwNOVAAAA:8 a=VwQbUJbxAAAA:8 a=QNJw_f0IIQwzQNCnCDgA:9
-    a=CjuIK1q_8ugA:10 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=Q9Yb8OaVvmUjSXqEEU8A:9 a=CjuIK1q_8ugA:10
+    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751128AbeEBGww (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 2 May 2018 02:52:52 -0400
-Received: from mga04.intel.com ([192.55.52.120]:35466 "EHLO mga04.intel.com"
+        id S1750942AbeEBGwR (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 2 May 2018 02:52:17 -0400
+Received: from mga09.intel.com ([134.134.136.24]:52034 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751116AbeEBGww (ORCPT <rfc822;linux-usb@vger.kernel.org>);
-        Wed, 2 May 2018 02:52:52 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1750895AbeEBGwQ (ORCPT <rfc822;linux-usb@vger.kernel.org>);
+        Wed, 2 May 2018 02:52:16 -0400
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,353,1520924400";
-   d="scan'208";a="51659014"
-Date: Wed, 2 May 2018 09:52:48 +0300
+   d="scan'208";a="51658827"
+Date: Wed, 2 May 2018 09:52:12 +0300
 From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Hans de Goede <hdegoede@redhat.com>
+To: Guenter Roeck <linux@roeck-us.net>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hans de Goede <hdegoede@redhat.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Guenter Roeck <linux@roeck-us.net>,
         linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH 4/4] usb: roles: intel_xhci: Always allow user control
-Message-ID: <20180502065248.GC12870@kuha.fi.intel.com>
+Subject: Re: [PATCH 3/4] usb: typec: fusb302: Fix debugfs issue
+Message-ID: <20180502065212.GB12870@kuha.fi.intel.com>
 References: <20180430124158.45269-1-heikki.krogerus@linux.intel.com>
- <20180430124158.45269-5-heikki.krogerus@linux.intel.com>
- <9a0b6af4-8d49-8193-2fcd-a956c3f852ed@redhat.com>
+ <20180430124158.45269-4-heikki.krogerus@linux.intel.com>
+ <293cc83d-28d9-149e-9c7a-f73b6df930d7@roeck-us.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9a0b6af4-8d49-8193-2fcd-a956c3f852ed@redhat.com>
+In-Reply-To: <293cc83d-28d9-149e-9c7a-f73b6df930d7@roeck-us.net>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-usb-owner@vger.kernel.org
 X-Mailing-List: linux-usb@vger.kernel.org
@@ -105,66 +104,55 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, May 01, 2018 at 11:57:55AM +0200, Hans de Goede wrote:
-> Hi,
-> 
-> On 30-04-18 14:41, Heikki Krogerus wrote:
-> > Trying to determine the USB port type with this mux is very
-> > difficult. To simplify the situation, always allowing user
-> > control, even if the port is USB Type-C port.
+On Mon, Apr 30, 2018 at 06:34:03AM -0700, Guenter Roeck wrote:
+> On 04/30/2018 05:41 AM, Heikki Krogerus wrote:
+> > Removing the "fusb302" debugfs directory when unloading
+> > the driver. That allows the driver to be loaded more then
+> > ones.
 > > 
-> > Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com> > ---
-> >   drivers/usb/roles/intel-xhci-usb-role-switch.c | 15 +--------------
-> >   1 file changed, 1 insertion(+), 14 deletions(-)
+> > This fixes an issue where the driver, if unloaded, can't be
+> > re-loaded, as the "fusb302" debugfs directory already
+> > exists. While here, removing useless condition when creating
+> > the debugfs directory.
 > > 
-> > diff --git a/drivers/usb/roles/intel-xhci-usb-role-switch.c b/drivers/usb/roles/intel-xhci-usb-role-switch.c
-> > index 28102127b9d5..6482eee6fd45 100644
-> > --- a/drivers/usb/roles/intel-xhci-usb-role-switch.c
-> > +++ b/drivers/usb/roles/intel-xhci-usb-role-switch.c
-> > @@ -43,15 +43,6 @@ struct intel_xhci_acpi_match {
-> >   	int hrv;
-> >   };
-> > -/*
-> > - * ACPI IDs for PMICs which do not support separate data and power role
-> > - * detection (USB ACA detection for micro USB OTG), we allow userspace to
-> > - * change the role manually on these.
-> > - */
-> > -static const struct intel_xhci_acpi_match allow_userspace_ctrl_ids[] = {
-> > -	{ "INT33F4",  3 }, /* X-Powers AXP288 PMIC */
-> > -};
-> > -
-> >   static int intel_xhci_usb_set_role(struct device *dev, enum usb_role role)
+> > Fixes: 76f0c53d08b9 ("usb: typec: fusb302: Move out of staging")
+> > Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> > ---
+> >   drivers/usb/typec/fusb302/fusb302.c | 9 ++++-----
+> >   1 file changed, 4 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/drivers/usb/typec/fusb302/fusb302.c b/drivers/usb/typec/fusb302/fusb302.c
+> > index eba6bb890b17..0e5d0aa052f5 100644
+> > --- a/drivers/usb/typec/fusb302/fusb302.c
+> > +++ b/drivers/usb/typec/fusb302/fusb302.c
+> > @@ -218,11 +218,9 @@ static struct dentry *rootdir;
+> >   static int fusb302_debugfs_init(struct fusb302_chip *chip)
 > >   {
-> >   	struct intel_xhci_usb_data *data = dev_get_drvdata(dev);
-> > @@ -137,7 +128,6 @@ static int intel_xhci_usb_probe(struct platform_device *pdev)
-> >   	struct device *dev = &pdev->dev;
-> >   	struct intel_xhci_usb_data *data;
-> >   	struct resource *res;
-> > -	int i;
-> >   	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-> >   	if (!data)
-> > @@ -150,10 +140,7 @@ static int intel_xhci_usb_probe(struct platform_device *pdev)
-> >   	if (!data->base)
-> >   		return -ENOMEM;
-> > -	for (i = 0; i < ARRAY_SIZE(allow_userspace_ctrl_ids); i++)
-> > -		if (acpi_dev_present(allow_userspace_ctrl_ids[i].hid, "1",
-> > -				     allow_userspace_ctrl_ids[i].hrv))
-> > -			sw_desc.allow_userspace_control = true;
-> > +	sw_desc.allow_userspace_control = true;
+> >   	mutex_init(&chip->logbuffer_lock);
+> > -	if (!rootdir) {
+> > -		rootdir = debugfs_create_dir("fusb302", NULL);
+> > -		if (!rootdir)
+> > -			return -ENOMEM;
+> > -	}
 > 
-> It would be better to add:
-> 
-> 	.allow_userspace_control = true,
-> 
-> To the initialization of the struct and also make the struct const since
-> we are now no longer changing it and usb_role_switch_register() accepts
-> it being const.
+> I think the idea here was to permit more than one instance of the driver,
+> and have all debugfs file entries under the fusb302 directory. Loading the
+> second instance will fail after this patch is applied.
 
-Makes sense.
+OK, need to come up with something else for this issue then.
 
-> With that changed:
-> 
-> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+> > +	rootdir = debugfs_create_dir("fusb302", NULL);
+> > +	if (!rootdir)
+> > +		return -ENOMEM;
+> >   	chip->dentry = debugfs_create_file(dev_name(chip->dev),
+> >   					   S_IFREG | 0444, rootdir,
+> > @@ -234,6 +232,7 @@ static int fusb302_debugfs_init(struct fusb302_chip *chip)
+> >   static void fusb302_debugfs_exit(struct fusb302_chip *chip)
+> >   {
+> >   	debugfs_remove(chip->dentry);
+> > +	debugfs_remove(rootdir); >   }
+> >   #else
+> > 
 
 Thanks,
 
