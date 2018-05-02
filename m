@@ -1,591 +1,773 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751480AbeEBTnI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 15:43:08 -0400
-Received: from mga07.intel.com ([134.134.136.100]:44988 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751361AbeEBTnE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 15:43:04 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,354,1520924400";
-   d="gz'50?scan'50,208,50";a="37933876"
-Date: Thu, 3 May 2018 03:42:16 +0800
-From: kbuild test robot <lkp@intel.com>
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: kbuild-all@01.org, Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Larry Woodman <lwoodman@redhat.com>, linux-kernel@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [PATCH] x86/mm: Introduce 'no5vl kernel parameter
-Message-ID: <201805030327.vPYiNV2G%fengguang.wu@intel.com>
-References: <20180502161027.36395-1-kirill.shutemov@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="KsGdsel6WgEHnImy"
-Content-Disposition: inline
-In-Reply-To: <20180502161027.36395-1-kirill.shutemov@linux.intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+        id S1751673AbeEBTl5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 15:41:57 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:38186 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751245AbeEBTh6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 15:37:58 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E300460585
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+From: Lina Iyer <ilina@codeaurora.org>
+To: andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
+Cc: rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, sboyd@kernel.org, evgreen@chromium.org,
+        dianders@chromium.org, Lina Iyer <ilina@codeaurora.org>
+Subject: [PATCH v7 01/10] drivers: qcom: rpmh-rsc: add RPMH controller for QCOM SoCs
+Date: Wed,  2 May 2018 13:37:40 -0600
+Message-Id: <20180502193749.31004-2-ilina@codeaurora.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180502193749.31004-1-ilina@codeaurora.org>
+References: <20180502193749.31004-1-ilina@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Add controller driver for QCOM SoCs that have hardware based shared
+resource management. The hardware IP known as RSC (Resource State
+Coordinator) houses multiple Direct Resource Voter (DRV) for different
+execution levels. A DRV is a unique voter on the state of a shared
+resource. A Trigger Control Set (TCS) is a bunch of slots that can house
+multiple resource state requests, that when triggered will issue those
+requests through an internal bus to the Resource Power Manager Hardened
+(RPMH) blocks. These hardware blocks are capable of adjusting clocks,
+voltages, etc. The resource state request from a DRV are aggregated
+along with state requests from other processors in the SoC and the
+aggregate value is applied on the resource.
 
---KsGdsel6WgEHnImy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Some important aspects of the RPMH communication -
+- Requests are <addr, value> with some header information
+- Multiple requests (upto 16) may be sent through a TCS, at a time
+- Requests in a TCS are sent in sequence
+- Requests may be fire-n-forget or completion (response expected)
+- Multiple TCS from the same DRV may be triggered simultaneously
+- Cannot send a request if another request for the same addr is in
+  progress from the same DRV
+- When all the requests from a TCS are complete, an IRQ is raised
+- The IRQ handler needs to clear the TCS before it is available for
+  reuse
+- TCS configuration is specific to a DRV
+- Platform drivers may use DRV from different RSCs to make requests
 
-Hi Kirill,
+Resource state requests made when CPUs are active are called 'active'
+state requests. Requests made when all the CPUs are powered down (idle
+state) are called 'sleep' state requests. They are matched by a
+corresponding 'wake' state requests which puts the resources back in to
+previously requested active state before resuming any CPU. TCSes are
+dedicated for each type of requests. Active mode TCSes (AMC) are used to
+send requests immediately to the resource, while control TCS are used to
+provide specific information to the controller. Sleep and Wake TCS send
+sleep and wake requests, after and before the system halt respectively.
 
-Thank you for the patch! Perhaps something to improve:
-
-[auto build test WARNING on tip/auto-latest]
-[also build test WARNING on v4.17-rc3 next-20180502]
-[cannot apply to tip/x86/core]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Kirill-A-Shutemov/x86-mm-Introduce-no5vl-kernel-parameter/20180503-030855
-config: i386-randconfig-x019-201817 (attached as .config)
-compiler: gcc-7 (Debian 7.3.0-16) 7.3.0
-reproduce:
-        # save the attached .config to linux build tree
-        make ARCH=i386 
-
-All warnings (new ones prefixed by >>):
-
-   In file included from include/linux/kernel.h:10:0,
-                    from include/linux/list.h:9,
-                    from include/linux/preempt.h:11,
-                    from include/linux/spinlock.h:51,
-                    from include/linux/mmzone.h:8,
-                    from include/linux/bootmem.h:8,
-                    from arch/x86/kernel/cpu/common.c:1:
-   arch/x86/kernel/cpu/common.c: In function 'early_identify_cpu':
-   arch/x86/kernel/cpu/common.c:1009:7: error: '__pgtable_l5_enabled' undeclared (first use in this function); did you mean 'pgtable_l5_enabled'?
-     if (!__pgtable_l5_enabled)
-          ^
-   include/linux/compiler.h:58:30: note: in definition of macro '__trace_if'
-     if (__builtin_constant_p(!!(cond)) ? !!(cond) :   \
-                                 ^~~~
->> arch/x86/kernel/cpu/common.c:1009:2: note: in expansion of macro 'if'
-     if (!__pgtable_l5_enabled)
-     ^~
-   arch/x86/kernel/cpu/common.c:1009:7: note: each undeclared identifier is reported only once for each function it appears in
-     if (!__pgtable_l5_enabled)
-          ^
-   include/linux/compiler.h:58:30: note: in definition of macro '__trace_if'
-     if (__builtin_constant_p(!!(cond)) ? !!(cond) :   \
-                                 ^~~~
->> arch/x86/kernel/cpu/common.c:1009:2: note: in expansion of macro 'if'
-     if (!__pgtable_l5_enabled)
-     ^~
-
-vim +/if +1009 arch/x86/kernel/cpu/common.c
-
-  1007	
-  1008		/* Clear the 5-level paging feature if user asked for 'no5lvl' */
-> 1009		if (!__pgtable_l5_enabled)
-  1010			setup_clear_cpu_cap(X86_FEATURE_LA57);
-  1011	}
-  1012	
-
+Signed-off-by: Lina Iyer <ilina@codeaurora.org>
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 
---KsGdsel6WgEHnImy
-Content-Type: application/gzip
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
+Changes in v7:
+	- rename 'm' and 'n' variable names
 
-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
+Changes in v6:
+	- Remove tasklet and response object
+	- introduce rpm_write_tcs_cmd() function
+	- rename tcs_irq_handler()
+	- avoid bool in structures. Fix tcs.h.
+Changes in v4:
+	- lots of variable name changes as suggested by Stephen B
+	- use of const for data pointers
+	- fix comments and other code syntax
+	- use of bitmap for tcs_in_use instead of atomic
+---
+ drivers/soc/qcom/Kconfig                |  10 +
+ drivers/soc/qcom/Makefile               |   1 +
+ drivers/soc/qcom/rpmh-internal.h        |  69 ++++
+ drivers/soc/qcom/rpmh-rsc.c             | 481 ++++++++++++++++++++++++
+ include/dt-bindings/soc/qcom,rpmh-rsc.h |  14 +
+ include/soc/qcom/tcs.h                  |  56 +++
+ 6 files changed, 631 insertions(+)
+ create mode 100644 drivers/soc/qcom/rpmh-internal.h
+ create mode 100644 drivers/soc/qcom/rpmh-rsc.c
+ create mode 100644 include/dt-bindings/soc/qcom,rpmh-rsc.h
+ create mode 100644 include/soc/qcom/tcs.h
 
---KsGdsel6WgEHnImy--
+diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+index 5c4535b545cc..1887e1b1f43b 100644
+--- a/drivers/soc/qcom/Kconfig
++++ b/drivers/soc/qcom/Kconfig
+@@ -56,6 +56,16 @@ config QCOM_RMTFS_MEM
+ 
+ 	  Say y here if you intend to boot the modem remoteproc.
+ 
++config QCOM_RPMH
++	bool "Qualcomm RPM-Hardened (RPMH) Communication"
++	depends on ARCH_QCOM && ARM64 && OF || COMPILE_TEST
++	help
++	  Support for communication with the hardened-RPM blocks in
++	  Qualcomm Technologies Inc (QTI) SoCs. RPMH communication uses an
++	  internal bus to transmit state requests for shared resources. A set
++	  of hardware components aggregate requests for these resources and
++	  help apply the aggregated state on the resource.
++
+ config QCOM_SMEM
+ 	tristate "Qualcomm Shared Memory Manager (SMEM)"
+ 	depends on ARCH_QCOM
+diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
+index dcebf2814e6d..39d3a059ee50 100644
+--- a/drivers/soc/qcom/Makefile
++++ b/drivers/soc/qcom/Makefile
+@@ -6,6 +6,7 @@ obj-$(CONFIG_QCOM_PM)	+=	spm.o
+ obj-$(CONFIG_QCOM_QMI_HELPERS)	+= qmi_helpers.o
+ qmi_helpers-y	+= qmi_encdec.o qmi_interface.o
+ obj-$(CONFIG_QCOM_RMTFS_MEM)	+= rmtfs_mem.o
++obj-$(CONFIG_QCOM_RPMH)	+=	rpmh-rsc.o
+ obj-$(CONFIG_QCOM_SMD_RPM)	+= smd-rpm.o
+ obj-$(CONFIG_QCOM_SMEM) +=	smem.o
+ obj-$(CONFIG_QCOM_SMEM_STATE) += smem_state.o
+diff --git a/drivers/soc/qcom/rpmh-internal.h b/drivers/soc/qcom/rpmh-internal.h
+new file mode 100644
+index 000000000000..cc29176f1303
+--- /dev/null
++++ b/drivers/soc/qcom/rpmh-internal.h
+@@ -0,0 +1,69 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
++ */
++
++
++#ifndef __RPM_INTERNAL_H__
++#define __RPM_INTERNAL_H__
++
++#include <linux/bitmap.h>
++#include <soc/qcom/tcs.h>
++
++#define TCS_TYPE_NR			4
++#define MAX_CMDS_PER_TCS		16
++#define MAX_TCS_PER_TYPE		3
++#define MAX_TCS_NR			(MAX_TCS_PER_TYPE * TCS_TYPE_NR)
++
++struct rsc_drv;
++
++/**
++ * struct tcs_group: group of Trigger Command Sets (TCS) to send state requests
++ * to the controller
++ *
++ * @drv:       the controller
++ * @type:      type of the TCS in this group - active, sleep, wake
++ * @mask:      mask of the TCSes relative to all the TCSes in the RSC
++ * @offset:    start of the TCS group relative to the TCSes in the RSC
++ * @num_tcs:   number of TCSes in this type
++ * @ncpt:      number of commands in each TCS
++ * @lock:      lock for synchronizing this TCS writes
++ * @req:       requests that are sent from the TCS
++ */
++struct tcs_group {
++	struct rsc_drv *drv;
++	int type;
++	u32 mask;
++	u32 offset;
++	int num_tcs;
++	int ncpt;
++	spinlock_t lock;
++	const struct tcs_request *req[MAX_TCS_PER_TYPE];
++};
++
++/**
++ * struct rsc_drv: the Direct Resource Voter (DRV) of the
++ * Resource State Coordinator controller (RSC)
++ *
++ * @name:       controller identifier
++ * @tcs_base:   start address of the TCS registers in this controller
++ * @id:         instance id in the controller (Direct Resource Voter)
++ * @num_tcs:    number of TCSes in this DRV
++ * @tcs:        TCS groups
++ * @tcs_in_use: s/w state of the TCS
++ * @lock:       synchronize state of the controller
++ */
++struct rsc_drv {
++	const char *name;
++	void __iomem *tcs_base;
++	int id;
++	int num_tcs;
++	struct tcs_group tcs[TCS_TYPE_NR];
++	DECLARE_BITMAP(tcs_in_use, MAX_TCS_NR);
++	spinlock_t lock;
++};
++
++
++int rpmh_rsc_send_data(struct rsc_drv *drv, const struct tcs_request *msg);
++
++#endif /* __RPM_INTERNAL_H__ */
+diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
+new file mode 100644
+index 000000000000..829c4429aa20
+--- /dev/null
++++ b/drivers/soc/qcom/rpmh-rsc.c
+@@ -0,0 +1,481 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
++ */
++
++#define pr_fmt(fmt) "%s " fmt, KBUILD_MODNAME
++
++#include <linux/atomic.h>
++#include <linux/delay.h>
++#include <linux/export.h>
++#include <linux/interrupt.h>
++#include <linux/io.h>
++#include <linux/kernel.h>
++#include <linux/list.h>
++#include <linux/of.h>
++#include <linux/of_irq.h>
++#include <linux/of_platform.h>
++#include <linux/platform_device.h>
++#include <linux/slab.h>
++#include <linux/spinlock.h>
++
++#include <soc/qcom/tcs.h>
++#include <dt-bindings/soc/qcom,rpmh-rsc.h>
++
++#include "rpmh-internal.h"
++
++#define RSC_DRV_TCS_OFFSET		672
++#define RSC_DRV_CMD_OFFSET		20
++
++/* DRV Configuration Information Register */
++#define DRV_PRNT_CHLD_CONFIG		0x0C
++#define DRV_NUM_TCS_MASK		0x3F
++#define DRV_NUM_TCS_SHIFT		6
++#define DRV_NCPT_MASK			0x1F
++#define DRV_NCPT_SHIFT			27
++
++/* Register offsets */
++#define RSC_DRV_IRQ_ENABLE		0x00
++#define RSC_DRV_IRQ_STATUS		0x04
++#define RSC_DRV_IRQ_CLEAR		0x08
++#define RSC_DRV_CMD_WAIT_FOR_CMPL	0x10
++#define RSC_DRV_CONTROL			0x14
++#define RSC_DRV_STATUS			0x18
++#define RSC_DRV_CMD_ENABLE		0x1C
++#define RSC_DRV_CMD_MSGID		0x30
++#define RSC_DRV_CMD_ADDR		0x34
++#define RSC_DRV_CMD_DATA		0x38
++#define RSC_DRV_CMD_STATUS		0x3C
++#define RSC_DRV_CMD_RESP_DATA		0x40
++
++#define TCS_AMC_MODE_ENABLE		BIT(16)
++#define TCS_AMC_MODE_TRIGGER		BIT(24)
++
++/* TCS CMD register bit mask */
++#define CMD_MSGID_LEN			8
++#define CMD_MSGID_RESP_REQ		BIT(8)
++#define CMD_MSGID_WRITE			BIT(16)
++#define CMD_STATUS_ISSUED		BIT(8)
++#define CMD_STATUS_COMPL		BIT(16)
++
++static u32 read_tcs_reg(struct rsc_drv *drv, int reg, int tcs_id, int cmd_id)
++{
++	return readl_relaxed(drv->tcs_base + reg + RSC_DRV_TCS_OFFSET * tcs_id +
++			     RSC_DRV_CMD_OFFSET * cmd_id);
++}
++
++static void write_tcs_cmd(struct rsc_drv *drv, int reg, int tcs_id, int cmd_id,
++			  u32 data)
++{
++	writel_relaxed(data, drv->tcs_base + reg + RSC_DRV_TCS_OFFSET * tcs_id +
++		       RSC_DRV_CMD_OFFSET * cmd_id);
++}
++
++static void write_tcs_reg(struct rsc_drv *drv, int reg, int tcs_id, u32 data)
++{
++	writel_relaxed(data, drv->tcs_base + reg + RSC_DRV_TCS_OFFSET * tcs_id);
++}
++
++static void write_tcs_reg_sync(struct rsc_drv *drv, int reg, int tcs_id,
++			       u32 data)
++{
++	writel(data, drv->tcs_base + reg + RSC_DRV_TCS_OFFSET * tcs_id);
++	for (;;) {
++		if (data == readl(drv->tcs_base + reg +
++				  RSC_DRV_TCS_OFFSET * tcs_id))
++			break;
++		udelay(1);
++	}
++}
++
++static bool tcs_is_free(struct rsc_drv *drv, int tcs_id)
++{
++	return !test_bit(tcs_id, drv->tcs_in_use) &&
++	       read_tcs_reg(drv, RSC_DRV_STATUS, tcs_id, 0);
++}
++
++static struct tcs_group *get_tcs_of_type(struct rsc_drv *drv, int type)
++{
++	return &drv->tcs[type];
++}
++
++static struct tcs_group *get_tcs_for_msg(struct rsc_drv *drv,
++					 const struct tcs_request *msg)
++{
++	int type;
++
++	switch (msg->state) {
++	case RPMH_ACTIVE_ONLY_STATE:
++		type = ACTIVE_TCS;
++		break;
++	default:
++		return ERR_PTR(-EINVAL);
++	}
++
++	return get_tcs_of_type(drv, type);
++}
++
++static const struct tcs_request *get_req_from_tcs(struct rsc_drv *drv,
++						  int tcs_id)
++{
++	struct tcs_group *tcs;
++	int i;
++
++	for (i = 0; i < drv->num_tcs; i++) {
++		tcs = &drv->tcs[i];
++		if (tcs->mask & BIT(tcs_id))
++			return tcs->req[tcs_id - tcs->offset];
++	}
++
++	return NULL;
++}
++
++/**
++ * tcs_tx_done: TX Done interrupt handler
++ */
++static irqreturn_t tcs_tx_done(int irq, void *p)
++{
++	struct rsc_drv *drv = p;
++	int i, j;
++	unsigned long irq_status;
++	const struct tcs_request *req;
++	struct tcs_cmd *cmd;
++
++	irq_status = read_tcs_reg(drv, RSC_DRV_IRQ_STATUS, 0, 0);
++
++	for_each_set_bit(i, &irq_status, BITS_PER_LONG) {
++		req = get_req_from_tcs(drv, i);
++		if (!req) {
++			WARN_ON(1);
++			goto skip;
++		}
++
++		for (j = 0; j < req->num_cmds; j++) {
++			u32 sts;
++
++			cmd = &req->cmds[j];
++			sts = read_tcs_reg(drv, RSC_DRV_CMD_STATUS, i, j);
++			if (!(sts & CMD_STATUS_ISSUED) ||
++			   ((req->wait_for_compl || cmd->wait) &&
++			   !(sts & CMD_STATUS_COMPL))) {
++				pr_err("Incomplete request: %s: addr=%#x data=%#x",
++				       drv->name, cmd->addr, cmd->data);
++			}
++		}
++skip:
++		/* Reclaim the TCS */
++		write_tcs_reg(drv, RSC_DRV_CMD_ENABLE, i, 0);
++		write_tcs_reg(drv, RSC_DRV_IRQ_CLEAR, 0, BIT(i));
++		spin_lock(&drv->lock);
++		clear_bit(i, drv->tcs_in_use);
++		spin_unlock(&drv->lock);
++	}
++
++	return IRQ_HANDLED;
++}
++
++static void __tcs_buffer_write(struct rsc_drv *drv, int tcs_id, int cmd_id,
++			       const struct tcs_request *msg)
++{
++	u32 msgid, cmd_msgid;
++	u32 cmd_enable = 0;
++	u32 cmd_complete;
++	struct tcs_cmd *cmd;
++	int i, j;
++
++	cmd_msgid = CMD_MSGID_LEN;
++	cmd_msgid |= msg->wait_for_compl ? CMD_MSGID_RESP_REQ : 0;
++	cmd_msgid |= CMD_MSGID_WRITE;
++
++	cmd_complete = read_tcs_reg(drv, RSC_DRV_CMD_WAIT_FOR_CMPL, tcs_id, 0);
++
++	for (i = 0, j = cmd_id; i < msg->num_cmds; i++, j++) {
++		cmd = &msg->cmds[i];
++		cmd_enable |= BIT(j);
++		cmd_complete |= cmd->wait << j;
++		msgid = cmd_msgid;
++		msgid |= cmd->wait ? CMD_MSGID_RESP_REQ : 0;
++		write_tcs_cmd(drv, RSC_DRV_CMD_MSGID, tcs_id, j, msgid);
++		write_tcs_cmd(drv, RSC_DRV_CMD_ADDR, tcs_id, j, cmd->addr);
++		write_tcs_cmd(drv, RSC_DRV_CMD_DATA, tcs_id, j, cmd->data);
++	}
++
++	write_tcs_reg(drv, RSC_DRV_CMD_WAIT_FOR_CMPL, tcs_id, cmd_complete);
++	cmd_enable |= read_tcs_reg(drv, RSC_DRV_CMD_ENABLE, tcs_id, 0);
++	write_tcs_reg(drv, RSC_DRV_CMD_ENABLE, tcs_id, cmd_enable);
++}
++
++static void __tcs_trigger(struct rsc_drv *drv, int tcs_id)
++{
++	u32 enable;
++
++	/*
++	 * HW req: Clear the DRV_CONTROL and enable TCS again
++	 * While clearing ensure that the AMC mode trigger is cleared
++	 * and then the mode enable is cleared.
++	 */
++	enable = read_tcs_reg(drv, RSC_DRV_CONTROL, tcs_id, 0);
++	enable &= ~TCS_AMC_MODE_TRIGGER;
++	write_tcs_reg_sync(drv, RSC_DRV_CONTROL, tcs_id, enable);
++	enable &= ~TCS_AMC_MODE_ENABLE;
++	write_tcs_reg_sync(drv, RSC_DRV_CONTROL, tcs_id, enable);
++
++	/* Enable the AMC mode on the TCS and then trigger the TCS */
++	enable = TCS_AMC_MODE_ENABLE;
++	write_tcs_reg_sync(drv, RSC_DRV_CONTROL, tcs_id, enable);
++	enable |= TCS_AMC_MODE_TRIGGER;
++	write_tcs_reg_sync(drv, RSC_DRV_CONTROL, tcs_id, enable);
++}
++
++static int check_for_req_inflight(struct rsc_drv *drv, struct tcs_group *tcs,
++				  const struct tcs_request *msg)
++{
++	unsigned long curr_enabled;
++	u32 addr;
++	int i, j, k;
++	int tcs_id = tcs->offset;
++
++	for (i = 0; i < tcs->num_tcs; i++, tcs_id++) {
++		if (tcs_is_free(drv, tcs_id))
++			continue;
++
++		curr_enabled = read_tcs_reg(drv, RSC_DRV_CMD_ENABLE, tcs_id, 0);
++
++		for_each_set_bit(j, &curr_enabled, MAX_CMDS_PER_TCS) {
++			addr = read_tcs_reg(drv, RSC_DRV_CMD_ADDR, tcs_id, j);
++			for (k = 0; k < msg->num_cmds; k++) {
++				if (addr == msg->cmds[k].addr)
++					return -EBUSY;
++			}
++		}
++	}
++
++	return 0;
++}
++
++static int find_free_tcs(struct tcs_group *tcs)
++{
++	int i;
++
++	for (i = 0; i < tcs->num_tcs; i++) {
++		if (tcs_is_free(tcs->drv, tcs->offset + i))
++			return tcs->offset + i;
++	}
++
++	return -EBUSY;
++}
++
++static int tcs_write(struct rsc_drv *drv, const struct tcs_request *msg)
++{
++	struct tcs_group *tcs;
++	int tcs_id;
++	unsigned long flags;
++	int ret;
++
++	tcs = get_tcs_for_msg(drv, msg);
++	if (IS_ERR(tcs))
++		return PTR_ERR(tcs);
++
++	spin_lock_irqsave(&tcs->lock, flags);
++	spin_lock(&drv->lock);
++	/*
++	 * The h/w does not like if we send a request to the same address,
++	 * when one is already in-flight or being processed.
++	 */
++	ret = check_for_req_inflight(drv, tcs, msg);
++	if (ret) {
++		spin_unlock(&drv->lock);
++		goto done_write;
++	}
++
++	tcs_id = find_free_tcs(tcs);
++	if (tcs_id < 0) {
++		ret = tcs_id;
++		spin_unlock(&drv->lock);
++		goto done_write;
++	}
++
++	tcs->req[tcs_id - tcs->offset] = msg;
++	set_bit(tcs_id, drv->tcs_in_use);
++	spin_unlock(&drv->lock);
++
++	__tcs_buffer_write(drv, tcs_id, 0, msg);
++	__tcs_trigger(drv, tcs_id);
++
++done_write:
++	spin_unlock_irqrestore(&tcs->lock, flags);
++	return ret;
++}
++
++/**
++ * rpmh_rsc_send_data: Validate the incoming message and write to the
++ * appropriate TCS block.
++ *
++ * @drv: the controller
++ * @msg: the data to be sent
++ *
++ * Return: 0 on success, -EINVAL on error.
++ * Note: This call blocks until a valid data is written to the TCS.
++ */
++int rpmh_rsc_send_data(struct rsc_drv *drv, const struct tcs_request *msg)
++{
++	int ret;
++
++	if (!msg || !msg->cmds || !msg->num_cmds ||
++	    msg->num_cmds > MAX_RPMH_PAYLOAD) {
++		WARN_ON(1);
++		return -EINVAL;
++	}
++
++	do {
++		ret = tcs_write(drv, msg);
++		if (ret == -EBUSY) {
++			pr_info_ratelimited("TCS Busy, retrying RPMH message send: addr=%#x\n",
++					    msg->cmds[0].addr);
++			udelay(10);
++		}
++	} while (ret == -EBUSY);
++
++	return ret;
++}
++EXPORT_SYMBOL(rpmh_rsc_send_data);
++
++static int rpmh_probe_tcs_config(struct platform_device *pdev,
++				 struct rsc_drv *drv)
++{
++	struct tcs_type_config {
++		u32 type;
++		u32 n;
++	} tcs_cfg[TCS_TYPE_NR] = { { 0 } };
++	struct device_node *dn = pdev->dev.of_node;
++	u32 config, max_tcs, ncpt;
++	int i, ret, n, st = 0;
++	struct tcs_group *tcs;
++	struct resource *res;
++	void __iomem *base;
++	char drv_id[10] = {0};
++
++	snprintf(drv_id, ARRAY_SIZE(drv_id), "drv-%d", drv->id);
++	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, drv_id);
++	base = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(base))
++		return PTR_ERR(base);
++
++	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "tcs-offset");
++	drv->tcs_base = base + res->start;
++
++	config = readl_relaxed(base + DRV_PRNT_CHLD_CONFIG);
++
++	max_tcs = config;
++	max_tcs &= DRV_NUM_TCS_MASK << (DRV_NUM_TCS_SHIFT * drv->id);
++	max_tcs = max_tcs >> (DRV_NUM_TCS_SHIFT * drv->id);
++
++	ncpt = config & (DRV_NCPT_MASK << DRV_NCPT_SHIFT);
++	ncpt = ncpt >> DRV_NCPT_SHIFT;
++
++	n = of_property_count_u32_elems(dn, "qcom,tcs-config");
++	if (n != 2 * TCS_TYPE_NR)
++		return -EINVAL;
++
++	for (i = 0; i < TCS_TYPE_NR; i++) {
++		ret = of_property_read_u32_index(dn, "qcom,tcs-config",
++						 i * 2, &tcs_cfg[i].type);
++		if (ret)
++			return ret;
++		if (tcs_cfg[i].type >= TCS_TYPE_NR)
++			return -EINVAL;
++
++		ret = of_property_read_u32_index(dn, "qcom,tcs-config",
++						 i * 2 + 1, &tcs_cfg[i].n);
++		if (ret)
++			return ret;
++		if (tcs_cfg[i].n > MAX_TCS_PER_TYPE)
++			return -EINVAL;
++	}
++
++	for (i = 0; i < TCS_TYPE_NR; i++) {
++		tcs = &drv->tcs[tcs_cfg[i].type];
++		if (tcs->drv)
++			return -EINVAL;
++		tcs->drv = drv;
++		tcs->type = tcs_cfg[i].type;
++		tcs->num_tcs = tcs_cfg[i].n;
++		tcs->ncpt = ncpt;
++		spin_lock_init(&tcs->lock);
++
++		if (!tcs->num_tcs || tcs->type == CONTROL_TCS)
++			continue;
++
++		if (st + tcs->num_tcs > max_tcs ||
++		    st + tcs->num_tcs >= BITS_PER_BYTE * sizeof(tcs->mask))
++			return -EINVAL;
++
++		tcs->mask = ((1 << tcs->num_tcs) - 1) << st;
++		tcs->offset = st;
++		st += tcs->num_tcs;
++	}
++
++	drv->num_tcs = st;
++
++	return 0;
++}
++
++static int rpmh_rsc_probe(struct platform_device *pdev)
++{
++	struct device_node *dn = pdev->dev.of_node;
++	struct rsc_drv *drv;
++	int ret, irq;
++
++	drv = devm_kzalloc(&pdev->dev, sizeof(*drv), GFP_KERNEL);
++	if (!drv)
++		return -ENOMEM;
++
++	ret = of_property_read_u32(dn, "qcom,drv-id", &drv->id);
++	if (ret)
++		return ret;
++
++	drv->name = of_get_property(dn, "label", NULL);
++	if (!drv->name)
++		drv->name = dev_name(&pdev->dev);
++
++	ret = rpmh_probe_tcs_config(pdev, drv);
++	if (ret)
++		return ret;
++
++	spin_lock_init(&drv->lock);
++	bitmap_zero(drv->tcs_in_use, MAX_TCS_NR);
++
++	irq = platform_get_irq(pdev, 0);
++	if (irq < 0)
++		return irq;
++
++	ret = devm_request_irq(&pdev->dev, irq, tcs_tx_done,
++			       IRQF_TRIGGER_HIGH | IRQF_NO_SUSPEND,
++			       drv->name, drv);
++	if (ret)
++		return ret;
++
++	/* Enable the active TCS to send requests immediately */
++	write_tcs_reg(drv, RSC_DRV_IRQ_ENABLE, 0, drv->tcs[ACTIVE_TCS].mask);
++
++	return devm_of_platform_populate(&pdev->dev);
++}
++
++static const struct of_device_id rpmh_drv_match[] = {
++	{ .compatible = "qcom,rpmh-rsc", },
++	{ }
++};
++
++static struct platform_driver rpmh_driver = {
++	.probe = rpmh_rsc_probe,
++	.driver = {
++		  .name = "rpmh",
++		  .of_match_table = rpmh_drv_match,
++	},
++};
++
++static int __init rpmh_driver_init(void)
++{
++	return platform_driver_register(&rpmh_driver);
++}
++arch_initcall(rpmh_driver_init);
+diff --git a/include/dt-bindings/soc/qcom,rpmh-rsc.h b/include/dt-bindings/soc/qcom,rpmh-rsc.h
+new file mode 100644
+index 000000000000..868f998ea998
+--- /dev/null
++++ b/include/dt-bindings/soc/qcom,rpmh-rsc.h
+@@ -0,0 +1,14 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
++ */
++
++#ifndef __DT_QCOM_RPMH_RSC_H__
++#define __DT_QCOM_RPMH_RSC_H__
++
++#define SLEEP_TCS	0
++#define WAKE_TCS	1
++#define ACTIVE_TCS	2
++#define CONTROL_TCS	3
++
++#endif /* __DT_QCOM_RPMH_RSC_H__ */
+diff --git a/include/soc/qcom/tcs.h b/include/soc/qcom/tcs.h
+new file mode 100644
+index 000000000000..262876a59e86
+--- /dev/null
++++ b/include/soc/qcom/tcs.h
+@@ -0,0 +1,56 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
++ */
++
++#ifndef __SOC_QCOM_TCS_H__
++#define __SOC_QCOM_TCS_H__
++
++#define MAX_RPMH_PAYLOAD	16
++
++/**
++ * rpmh_state: state for the request
++ *
++ * RPMH_SLEEP_STATE:       State of the resource when the processor subsystem
++ *                         is powered down. There is no client using the
++ *                         resource actively.
++ * RPMH_WAKE_ONLY_STATE:   Resume resource state to the value previously
++ *                         requested before the processor was powered down.
++ * RPMH_ACTIVE_ONLY_STATE: Active or AMC mode requests. Resource state
++ *                         is aggregated immediately.
++ */
++enum rpmh_state {
++	RPMH_SLEEP_STATE,
++	RPMH_WAKE_ONLY_STATE,
++	RPMH_ACTIVE_ONLY_STATE,
++};
++
++/**
++ * struct tcs_cmd: an individual request to RPMH.
++ *
++ * @addr: the address of the resource slv_id:18:16 | offset:0:15
++ * @data: the resource state request
++ * @wait: wait for this request to be complete before sending the next
++ */
++struct tcs_cmd {
++	u32 addr;
++	u32 data;
++	u32 wait;
++};
++
++/**
++ * struct tcs_request: A set of tcs_cmds sent together in a TCS
++ *
++ * @state:          state for the request.
++ * @wait_for_compl: wait until we get a response from the h/w accelerator
++ * @num_cmds:       the number of @cmds in this request
++ * @cmds:           an array of tcs_cmds
++ */
++struct tcs_request {
++	enum rpmh_state state;
++	u32 wait_for_compl;
++	u32 num_cmds;
++	struct tcs_cmd *cmds;
++};
++
++#endif /* __SOC_QCOM_TCS_H__ */
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
