@@ -1,149 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751095AbeEBHIu (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 03:08:50 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:36978 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750800AbeEBHIp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 03:08:45 -0400
-X-Google-Smtp-Source: AB8JxZqNrZZ7o4z8BDXjHBI4bqvt+jsVPu5lh7+z2rUVxsBCm4P7l0L5AD4SkAJlrSh1BMh5+xWN9w==
-From: Jia He <hejianet@gmail.com>
-To: Christoffer Dall <christoffer.dall@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu
-Cc: linux-kernel@vger.kernel.org, Jia He <jia.he@hxt-semitech.com>,
-        li.zhang@hxt-semitech.com
-Subject: [PATCH] KVM: arm/arm64: fix unaligned hva start and end in handle_hva_to_gpa
-Date: Wed,  2 May 2018 15:08:31 +0800
-Message-Id: <1525244911-5519-1-git-send-email-hejianet@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
+        id S1751050AbeEBHOo (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 03:14:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52836 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750822AbeEBHOk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 03:14:40 -0400
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Amit Nischal <anischal@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1525105210-8689-3-git-send-email-anischal@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Odelu Kukatla <okukatla@codeaurora.org>,
+        Taniya Das <tdas@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Amit Nischal <anischal@codeaurora.org>
+References: <1525105210-8689-1-git-send-email-anischal@codeaurora.org>
+ <1525105210-8689-3-git-send-email-anischal@codeaurora.org>
+Message-ID: <152524527938.138124.8505584329413678951@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v6 2/3] clk: qcom: Add support for BRANCH_NO_DELAY flag for
+ branch clocks
+Date: Wed, 02 May 2018 00:14:39 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w427EmZN023874
 
-From: Jia He <jia.he@hxt-semitech.com>
+Quoting Amit Nischal (2018-04-30 09:20:09)
+> diff --git a/drivers/clk/qcom/clk-branch.h b/drivers/clk/qcom/clk-branch.h
+> index 284df3f..5d621f3 100644
+> --- a/drivers/clk/qcom/clk-branch.h
+> +++ b/drivers/clk/qcom/clk-branch.h
+> @@ -42,6 +42,7 @@ struct clk_branch {
+>  #define BRANCH_HALT_ENABLE             1 /* pol: 0 = halt */
+>  #define BRANCH_HALT_ENABLE_VOTED       (BRANCH_HALT_ENABLE | BRANCH_VOTED)
+>  #define BRANCH_HALT_DELAY              2 /* No bit to check; just delay */
+> +#define BRANCH_NO_DELAY                        3 /* No bit to check; without delay */
 
-In our armv8a server (QDF2400), I noticed a WARN_ON as follows:
+Let's call it BRANCH_HALT_SKIP and indicate that it's skipping the halt
+bit check. Technically there is a bit to check, we just refuse to check
+it. I've reworked and applied this patch as below.
 
-[  800.202850] WARNING: CPU: 33 PID: 255 at arch/arm64/kvm/../../../virt/kvm/arm/mmu.c:1670 kvm_age_hva_handler+0xcc/0xd4
-[  800.213535] Modules linked in: vhost_net vhost tap xt_CHECKSUM ipt_MASQUERADE nf_nat_masquerade_ipv4 ip6t_rpfilter ipt_REJECT nf_reject_ipv4 ip6t_REJECT nf_reject_ipv6 xt_conntrack ip_set nfnetlink ebtable_nat ebtable_broute bridge stp llc ip6table_nat nf_conntrack_ipv6 nf_defrag_ipv6 nf_nat_ipv6 ip6table_mangle ip6table_security ip6table_raw iptable_nat nf_conntrack_ipv4 nf_defrag_ipv4 nf_nat_ipv4 nf_nat nf_conntrack iptable_mangle iptable_security iptable_raw ebtable_filter ebtables ip6table_filter ip6_tables iptable_filter rpcrdma ib_isert iscsi_target_mod ib_iser libiscsi scsi_transport_iscsi ib_srpt target_core_mod ib_srp scsi_transport_srp ib_ipoib rdma_ucm ib_ucm ib_uverbs ib_umad rdma_cm ib_cm vfat fat iw_cm mlx5_ib ib_core dm_mirror dm_region_hash dm_log dm_mod crc32_ce ipmi_ssif sg nfsd
-[  800.284115]  auth_rpcgss nfs_acl lockd grace sunrpc ip_tables xfs libcrc32c mlx5_core ixgbe mlxfw devlink mdio ahci_platform libahci_platform qcom_emac libahci hdma hdma_mgmt i2c_qup
-[  800.300382] CPU: 33 PID: 255 Comm: khugepaged Tainted: G        W       4.14.36+ #6
-[  800.308030] Hardware name: <snip for confidential issues>
-[  800.318717] task: ffff8017c949c000 task.stack: ffff8017c9498000
-[  800.324629] PC is at kvm_age_hva_handler+0xcc/0xd4
-[  800.329412] LR is at handle_hva_to_gpa+0xec/0x15c
-[  800.334109] pc : [<ffff0000080b4f2c>] lr : [<ffff0000080b4838>] pstate: 20400145
-[  800.341496] sp : ffff8017c949b260
-[  800.344804] x29: ffff8017c949b260 x28: ffff801663e25008
-[  800.350110] x27: 0000000000020000 x26: 00000001fb1a0000
-[  800.355416] x25: 0000ffff605b0200 x24: 0000ffff605a0200
-[  800.360722] x23: 0000000000000000 x22: 000000000000ffff
-[  800.366028] x21: 00000001fb1a0000 x20: ffff8017c085a000
-[  800.371334] x19: ffff801663e20008 x18: 0000000000000000
-[  800.376641] x17: 0000000000000000 x16: 0000000000000000
-[  800.381947] x15: 0000000000000000 x14: 3d646e655f617668
-[  800.387254] x13: 2c30303230623530 x12: 36666666663d646e
-[  800.392560] x11: 652c303032306135 x10: 3036666666663d74
-[  800.397867] x9 : 0000000000003796 x8 : 655f6e66672c3030
-[  800.403173] x7 : ffff00000859434c x6 : ffff8017f9c30cb8
-[  800.408479] x5 : ffff8017f9c30cb8 x4 : ffff0000080b4e60
-[  800.413786] x3 : 0000000000000000 x2 : 0000000000020000
-[  800.419092] x1 : 00000001fb1a0000 x0 : 0000000020000000
-[  800.424398] Call trace:
-[  800.426838] Exception stack(0xffff8017c949b120 to 0xffff8017c949b260)
-[  800.433272] b120: 0000000020000000 00000001fb1a0000 0000000000020000 0000000000000000
-[  800.441095] b140: ffff0000080b4e60 ffff8017f9c30cb8 ffff8017f9c30cb8 ffff00000859434c
-[  800.448918] b160: 655f6e66672c3030 0000000000003796 3036666666663d74 652c303032306135
-[  800.456740] b180: 36666666663d646e 2c30303230623530 3d646e655f617668 0000000000000000
-[  800.464563] b1a0: 0000000000000000 0000000000000000 0000000000000000 ffff801663e20008
-[  800.472385] b1c0: ffff8017c085a000 00000001fb1a0000 000000000000ffff 0000000000000000
-[  800.480208] b1e0: 0000ffff605a0200 0000ffff605b0200 00000001fb1a0000 0000000000020000
-[  800.488030] b200: ffff801663e25008 ffff8017c949b260 ffff0000080b4838 ffff8017c949b260
-[  800.495853] b220: ffff0000080b4f2c 0000000020400145 0000000000000001 ffff8017c949b2a0
-[  800.503676] b240: ffffffffffffffff ffff8017c949b260 ffff8017c949b260 ffff0000080b4f2c
-[  800.511498] [<ffff0000080b4f2c>] kvm_age_hva_handler+0xcc/0xd4
-[  800.517324] [<ffff0000080b4838>] handle_hva_to_gpa+0xec/0x15c
-[  800.523063] [<ffff0000080b6c5c>] kvm_age_hva+0x5c/0xcc
-[  800.528194] [<ffff0000080a7c3c>] kvm_mmu_notifier_clear_flush_young+0x54/0x90
-[  800.535324] [<ffff00000827a0e8>] __mmu_notifier_clear_flush_young+0x6c/0xa8
-[  800.542279] [<ffff00000825a644>] page_referenced_one+0x1e0/0x1fc
-[  800.548279] [<ffff00000827e8f8>] rmap_walk_ksm+0x124/0x1a0
-[  800.553759] [<ffff00000825c974>] rmap_walk+0x94/0x98
-[  800.558717] [<ffff00000825ca98>] page_referenced+0x120/0x180
-[  800.564369] [<ffff000008228c58>] shrink_active_list+0x218/0x4a4
-[  800.570281] [<ffff000008229470>] shrink_node_memcg+0x58c/0x6fc
-[  800.576107] [<ffff0000082296c4>] shrink_node+0xe4/0x328
-[  800.581325] [<ffff000008229c9c>] do_try_to_free_pages+0xe4/0x3b8
-[  800.587324] [<ffff00000822a094>] try_to_free_pages+0x124/0x234
-[  800.593150] [<ffff000008216aa0>] __alloc_pages_nodemask+0x564/0xf7c
-[  800.599412] [<ffff000008292814>] khugepaged_alloc_page+0x38/0xb8
-[  800.605411] [<ffff0000082933bc>] collapse_huge_page+0x74/0xd70
-[  800.611238] [<ffff00000829470c>] khugepaged_scan_mm_slot+0x654/0xa98
-[  800.617585] [<ffff000008294e0c>] khugepaged+0x2bc/0x49c
-[  800.622803] [<ffff0000080ffb70>] kthread+0x124/0x150
-[  800.627762] [<ffff0000080849f0>] ret_from_fork+0x10/0x1c
-[  800.633066] ---[ end trace 944c130b5252fb01 ]---
--------------------------------------------------------------------------
+>From f9ddbd74bf4940d3b7a0eb076eb254833660643c Mon Sep 17 00:00:00 2001
+From: Amit Nischal <anischal@codeaurora.org>
+Date: Mon, 30 Apr 2018 21:50:09 +0530
+Subject: [PATCH] clk: qcom: Add support for BRANCH_HALT_SKIP flag for branch
+ clocks
 
-The root cause might be: we can't guarantee that the parameter start and end
-in handle_hva_to_gpa is PAGE_SIZE aligned, let alone hva_start and hva_end.
+There could be few clocks where the clock status bit is not
+required to be polled as the clock on/off would be controlled
+by enabling/disabling external source. Add support for the
+same by introducing new flag named as 'BRANCH_HALT_SKIP'.
 
-This bug is introduced by commit 056aad67f836 ("kvm: arm/arm64: Rework gpa
-callback handlers")
-
-It fixes the bug by use pfn size converted.
-
-Fixes: 056aad67f836 ("kvm: arm/arm64: Rework gpa callback handlers")
-
-Signed-off-by: jia.he@hxt-semitech.com
-Signed-off-by: li.zhang@hxt-semitech.com
+Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+[sboyd@kernel.org: Rename flag to BRANCH_HALT_SKIP]
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 ---
- virt/kvm/arm/mmu.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/clk/qcom/clk-branch.c | 7 +++++--
+ drivers/clk/qcom/clk-branch.h | 1 +
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
-index 7f6a944..9dd7ae4 100644
---- a/virt/kvm/arm/mmu.c
-+++ b/virt/kvm/arm/mmu.c
-@@ -1744,7 +1744,7 @@ static int handle_hva_to_gpa(struct kvm *kvm,
- 	/* we only care about the pages that the guest sees */
- 	kvm_for_each_memslot(memslot, slots) {
- 		unsigned long hva_start, hva_end;
--		gfn_t gpa;
-+		gpa_t gpa, gpa_end;
+diff --git a/drivers/clk/qcom/clk-branch.c b/drivers/clk/qcom/clk-branch.c
+index 26f7af315066..c58c5538b1b6 100644
+--- a/drivers/clk/qcom/clk-branch.c
++++ b/drivers/clk/qcom/clk-branch.c
+@@ -77,8 +77,11 @@ static int clk_branch_wait(const struct clk_branch *br, bool enabling,
+ 	bool voted = br->halt_check & BRANCH_VOTED;
+ 	const char *name = clk_hw_get_name(&br->clkr.hw);
  
- 		hva_start = max(start, memslot->userspace_addr);
- 		hva_end = min(end, memslot->userspace_addr +
-@@ -1753,7 +1753,9 @@ static int handle_hva_to_gpa(struct kvm *kvm,
- 			continue;
- 
- 		gpa = hva_to_gfn_memslot(hva_start, memslot) << PAGE_SHIFT;
--		ret |= handler(kvm, gpa, (u64)(hva_end - hva_start), data);
-+		gpa_end = hva_to_gfn_memslot(hva_end + PAGE_SIZE - 1, memslot)
-+							 << PAGE_SHIFT;
-+		ret |= handler(kvm, gpa, (u64)(gpa_end - gpa), data);
- 	}
- 
- 	return ret;
-@@ -1823,7 +1825,7 @@ static int kvm_age_hva_handler(struct kvm *kvm, gpa_t gpa, u64 size, void *data)
- 	pmd_t *pmd;
- 	pte_t *pte;
- 
--	WARN_ON(size != PAGE_SIZE && size != PMD_SIZE);
-+	WARN_ON((size & ~PAGE_MASK) != 0);
- 	pmd = stage2_get_pmd(kvm, NULL, gpa);
- 	if (!pmd || pmd_none(*pmd))	/* Nothing there */
+-	/* Skip checking halt bit if the clock is in hardware gated mode */
+-	if (clk_branch_in_hwcg_mode(br))
++	/*
++	 * Skip checking halt bit if we're explicitly ignoring the bit or the
++	 * clock is in hardware gated mode
++	 */
++	if (br->halt_check == BRANCH_HALT_SKIP || clk_branch_in_hwcg_mode(br))
  		return 0;
-@@ -1843,7 +1845,7 @@ static int kvm_test_age_hva_handler(struct kvm *kvm, gpa_t gpa, u64 size, void *
- 	pmd_t *pmd;
- 	pte_t *pte;
  
--	WARN_ON(size != PAGE_SIZE && size != PMD_SIZE);
-+	WARN_ON((size & ~PAGE_MASK) != 0);
- 	pmd = stage2_get_pmd(kvm, NULL, gpa);
- 	if (!pmd || pmd_none(*pmd))	/* Nothing there */
- 		return 0;
+ 	if (br->halt_check == BRANCH_HALT_DELAY || (!enabling && voted)) {
+diff --git a/drivers/clk/qcom/clk-branch.h b/drivers/clk/qcom/clk-branch.h
+index 284df3f3c55f..1702efb1c511 100644
+--- a/drivers/clk/qcom/clk-branch.h
++++ b/drivers/clk/qcom/clk-branch.h
+@@ -42,6 +42,7 @@ struct clk_branch {
+ #define BRANCH_HALT_ENABLE		1 /* pol: 0 = halt */
+ #define BRANCH_HALT_ENABLE_VOTED	(BRANCH_HALT_ENABLE | BRANCH_VOTED)
+ #define BRANCH_HALT_DELAY		2 /* No bit to check; just delay */
++#define BRANCH_HALT_SKIP		3 /* Don't check halt bit */
+ 
+ 	struct clk_regmap clkr;
+ };
 -- 
-1.8.3.1
+Sent by a computer through tubes
