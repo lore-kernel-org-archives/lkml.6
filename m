@@ -1,125 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751294AbeEBLXt (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 07:23:49 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:35385 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750898AbeEBLXp (ORCPT
+        id S1751382AbeEBLYK (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 07:24:10 -0400
+Received: from mail-pf0-f179.google.com ([209.85.192.179]:40954 "EHLO
+        mail-pf0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751073AbeEBLYJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 07:23:45 -0400
-X-Google-Smtp-Source: AB8JxZqamvGXpxyIQd2k2R/0zTf30KID6p3Y69DH/inlh9HqPdHEVFH4PbFDgchSeNMlIKCghiYedFf+4ybMwRVnD8Q=
+        Wed, 2 May 2018 07:24:09 -0400
+X-Google-Smtp-Source: AB8JxZqn+ZC1F40Po0R+bV+Nfgjk05/r8leZdNDXnoV5NawUhgbpGZSZAgNZ/qMK0bLFJNkTzJF/j7lu56AwaOdcEw0=
 MIME-Version: 1.0
-In-Reply-To: <000000000000cbaaf6056b341859@google.com>
-References: <000000000000cbaaf6056b341859@google.com>
+In-Reply-To: <201805021930.CBE82399.QFHtOOJFMVFOSL@I-love.SAKURA.ne.jp>
+References: <CACT4Y+bGjnajib6P4a0SxYkNUJpg_x8abEkec8AR+oBmC=-QUQ@mail.gmail.com>
+ <20171105201834.GA8126@zzz.localdomain> <201804162302.GBI43737.OLFSOFQHVJMFtO@I-love.SAKURA.ne.jp>
+ <201804202306.FGC05220.OOJFMFOSFHtLQV@I-love.SAKURA.ne.jp>
+ <CACT4Y+Y3M2kB0YWhwD04NkL1-iNHPuDfDDf9BLoPD3GZ6Gg-Yw@mail.gmail.com> <201805021930.CBE82399.QFHtOOJFMVFOSL@I-love.SAKURA.ne.jp>
 From: Dmitry Vyukov <dvyukov@google.com>
-Date: Wed, 2 May 2018 13:23:23 +0200
-Message-ID: <CACT4Y+bTo34q4=7X8zGL_XVOGoYd7fqhfAbCAWUxsr-N96Kyxw@mail.gmail.com>
-Subject: Re: general protection fault in lo_ioctl (2)
-To: syzbot <syzbot+bf89c128e05dd6c62523@syzkaller.appspotmail.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
+Date: Wed, 2 May 2018 13:23:47 +0200
+Message-ID: <CACT4Y+ZaYFt70NrPaib7KFmLe1xQciMnEzWpUDzP6vQJmyctoA@mail.gmail.com>
+Subject: Re: possible deadlock in blkdev_reread_part
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Eric Biggers <ebiggers3@gmail.com>,
+        syzbot+4684a000d5abdade83fac55b1e7d1f935ef1936e@syzkaller.appspotmail.com,
+        Jens Axboe <axboe@kernel.dk>, LKML <linux-kernel@vger.kernel.org>,
         syzkaller-bugs <syzkaller-bugs@googlegroups.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 2, 2018 at 9:33 AM, syzbot
-<syzbot+bf89c128e05dd6c62523@syzkaller.appspotmail.com> wrote:
-> Hello,
+On Wed, May 2, 2018 at 12:30 PM, Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+> Dmitry Vyukov wrote:
+>> > syzbot is reporting various bugs which involve /dev/loopX.
+>> > Two of them
+>> >
+>> >   INFO: rcu detected stall in lo_ioctl
+>> >   https://syzkaller.appspot.com/bug?id=7b49fb610af9cca78c24e9f796f2e8b0d5573997
+>> >
+>> >   general protection fault in lo_ioctl (2)
+>> >   https://syzkaller.appspot.com/bug?id=f3cfe26e785d85f9ee259f385515291d21bd80a3
+>>
+>> /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+>>
+>> Now there is a repro for this one. I've pushed it to kernel mailing lists:
+>>
+>> https://groups.google.com/d/msg/syzkaller-bugs/c8KUcTAzTvA/3o_7g6-tAwAJ
 >
-> syzbot found the following crash on:
->
-> HEAD commit:    fff75eb2a08c Merge tag 'errseq-v4.17' of
-> git://git.kernel.o...
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?id=5301511529693184
-> kernel config:
-> https://syzkaller.appspot.com/x/.config?id=6493557782959164711
-> dashboard link: https://syzkaller.appspot.com/bug?extid=bf89c128e05dd6c62523
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> userspace arch: i386
-> syzkaller
-> repro:https://syzkaller.appspot.com/x/repro.syz?id=5000693362458624
+> OK, thanks. But among loop related reports, this will be a dup of
+> "INFO: rcu detected stall in blkdev_ioctl" which already has C reproducer.
+> Should we merge them?
 
-#syz dup: INFO: rcu detected stall in blkdev_ioctl
+Yes, sure, I will take care of it.
 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+bf89c128e05dd6c62523@syzkaller.appspotmail.com
+>   INFO: rcu detected stall in blkdev_ioctl
+>   https://syzkaller.appspot.com/bug?id=1f7b710f4110f225aed1f4263ec2b98b8dbd472e
 >
-> kasan: CONFIG_KASAN_INLINE enabled
-> kasan: GPF could be caused by NULL-ptr deref or user memory access
-> general protection fault: 0000 [#1] SMP KASAN
-> Dumping ftrace buffer:
->    (ftrace buffer empty)
-> Modules linked in:
-> CPU: 0 PID: 10637 Comm: syz-executor1 Not tainted 4.17.0-rc3+ #52
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> RIP: 0010:loop_set_fd drivers/block/loop.c:901 [inline]
-> RIP: 0010:lo_ioctl+0x1ae8/0x2130 drivers/block/loop.c:1397
-> RSP: 0018:ffff8801bd6dfc08 EFLAGS: 00010202
-> RAX: 0000000000000037 RBX: ffff8801d296db00 RCX: dffffc0000000000
-> RDX: 0000000000000000 RSI: ffffffff84b2cd57 RDI: 00000000000001b8
-> RBP: ffff8801bd6dfc80 R08: ffff8801c46943c0 R09: ffffed003b5c46c2
-> R10: 0000000000000003 R11: 0000000000000001 R12: 0000000000000000
-> R13: 0000000000000000 R14: ffff8801b58561a0 R15: ffff8801b58560c0
-> FS:  0000000000000000(0000) GS:ffff8801dae00000(0063) knlGS:00000000f7f2eb40
-> CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-> CR2: 0000000008138024 CR3: 00000001d03df000 CR4: 00000000001406f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  lo_compat_ioctl+0xc1/0x170 drivers/block/loop.c:1602
->  compat_blkdev_ioctl+0x3c2/0x1b20 block/compat_ioctl.c:406
->  __do_compat_sys_ioctl fs/compat_ioctl.c:1461 [inline]
->  __se_compat_sys_ioctl fs/compat_ioctl.c:1407 [inline]
->  __ia32_compat_sys_ioctl+0x221/0x640 fs/compat_ioctl.c:1407
->  do_syscall_32_irqs_on arch/x86/entry/common.c:323 [inline]
->  do_fast_syscall_32+0x345/0xf9b arch/x86/entry/common.c:394
->  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
-> RIP: 0023:0xf7f32cb9
-> RSP: 002b:00000000f7f2e0ac EFLAGS: 00000282 ORIG_RAX: 0000000000000036
-> RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 0000000000004c00
-> RDX: 0000000000000003 RSI: 0000000000000000 RDI: 0000000000000000
-> RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000292 R12: 0000000000000000
-> R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-> Code: e8 03 80 3c 08 00 0f 85 2c 02 00 00 4d 8b ad f0 00 00 00 48 b9 00 00
-> 00 00 00 fc ff df 49 8d bd b8 01 00 00 48 89 f8 48 c1 e8 03 <80> 3c 08 00 0f
-> 85 f9 01 00 00 4d 8b ad b8 01 00 00 48 b9 00 00
-> RIP: loop_set_fd drivers/block/loop.c:901 [inline] RSP: ffff8801bd6dfc08
-> RIP: lo_ioctl+0x1ae8/0x2130 drivers/block/loop.c:1397 RSP: ffff8801bd6dfc08
-> ---[ end trace a15583efe355602c ]---
+>   general protection fault in lo_ioctl (2)
+>   https://syzkaller.appspot.com/bug?id=f3cfe26e785d85f9ee259f385515291d21bd80a3
+>   #syz dup: INFO: rcu detected stall in blkdev_ioctl
 >
+>   INFO: rcu detected stall in lo_compat_ioctl
+>   https://syzkaller.appspot.com/bug?id=6299555c4e252b53f7a2ae2b8216cc9456c56ac0
+>   #syz dup: INFO: rcu detected stall in blkdev_ioctl
 >
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>   INFO: rcu detected stall in lo_ioctl
+>   https://syzkaller.appspot.com/bug?id=7b49fb610af9cca78c24e9f796f2e8b0d5573997
+>   #syz dup: INFO: rcu detected stall in blkdev_ioctl
 >
-> syzbot will keep track of this bug report.
-> If you forgot to add the Reported-by tag, once the fix for this bug is
-> merged
-> into any tree, please reply to this email with:
-> #syz fix: exact-commit-title
-> If you want to test a patch for this bug, please reply with:
-> #syz test: git://repo/address.git branch
-> and provide the patch inline or as an attachment.
-> To mark this as a duplicate of another syzbot report, please reply with:
-> #syz dup: exact-subject-of-another-report
-> If it's a one-off invalid bug report, please reply with:
-> #syz invalid
-> Note: if the crash happens again, it will cause creation of a new bug
-> report.
-> Note: all commands must start from beginning of the line in the email body.
+>   INFO: task hung in lo_ioctl
+>   https://syzkaller.appspot.com/bug?id=608144371e7fc2cb6285b9ed871fb1eb817a61ce
 >
-> --
-> You received this message because you are subscribed to the Google Groups
-> "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an
-> email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit
-> https://groups.google.com/d/msgid/syzkaller-bugs/000000000000cbaaf6056b341859%40google.com.
-> For more options, visit https://groups.google.com/d/optout.
+>   INFO: task hung in lo_open (2)
+>   https://syzkaller.appspot.com/bug?id=1f93b57f496d969efb9fb24167f6f9de5ee068fd
+>
+>   possible deadlock in blkdev_reread_part
+>   https://syzkaller.appspot.com/bug?id=bf154052f0eea4bc7712499e4569505907d15889
+>
+>   INFO: task hung in loop_control_ioctl
+>   https://syzkaller.appspot.com/bug?id=61fe32c77ea00412c5149bd34649a65b7f672b5e
+>
+>   WARNING in sysfs_remove_group
+>   https://syzkaller.appspot.com/bug?id=3f86c0edf75c86d2633aeb9dd69eccc70bc7e90b
+>
+>>
+>> > suggest that loop module is not thread safe. The former suggests that
+>> > l->lo_backing_file is forming circular loop and the latter suggests that
+>> > l->lo_backing_file became NULL.
