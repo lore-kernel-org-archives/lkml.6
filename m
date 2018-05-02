@@ -1,147 +1,140 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-1876815-1525323190-2-4739918997266982069
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1424822-1525298399-2-6189067974972718001
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES svenda,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: cc='UTF-8', plain='utf-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525323189; b=HjRCLgNYZ8THR3o5KYRtLeI+YFD7R2MIAC66PHg0csV+uf+iut
-    3y0LsevWZdRYipN5jJGGYe+7GzkcxdmpjLPN7eFT5V039IWJrZTztWgJSG8yHjsu
-    koX0S4gB+UH6IpNLq2zjngCZyoRdwol3JxyIQWZt+sG3Lacnc7HgJTo8T6nJHzjA
-    jqdBCQ5mgK8IwQC7E1+pjUoEVWhnFnQdKyxnXHW3O3ZTL1j876/IGUjrgFDBiNRk
-    cNskbBHnfHhUpVuU9wzXLZdVqBVUHgxQqWqxXDwVQ9o5e7MTfRV7YJ5LkSw1VHlK
-    mvC9Djo8Bbk4QVy2PZuxq+I3T5SNEyoD+LLg==
+    1525298398; b=HSEEgoJEBwzbfhJuqGBj/DasHkJ7zU/3NGBohDECtq/W8wJSGt
+    M6/3m+Lgp80MJsYAsS8Vsq3Z1CD2wqW8cbS5amXBGs2du2UgWUqb4jexjltqXOZh
+    vXxDCISFmUiCDSx/BmYV7wy8nqZRmikUCJK5LSTh3+Dm+QPQ1p4cbo77AMziVSa4
+    XU373Tnd1v8BquucPMorI3O0gND1xYKzQ3/e4y6BiIQJPmM3566ilWu6XwzkjXTZ
+    QljDv+DozQb5AYdUiVDm+4r2xoHshvFsar/Alj7AGhcAOXAWJNcA0MuNyTps/6+H
+    ibWPwnqaIpC0aiBWwbthbDYXAeJ1bvG4+tKg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:subject:date:message-id
-    :mime-version:list-id:list-unsubscribe:list-archive:list-post
-    :list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1525323189; bh=Fb+/5
-    7o2NlicMyCmCSzbgbx6gHw1B1SdhtQMYUguWBY=; b=lYGp3Eh2ImTfNgqxlFpC/
-    zcD1qqGSBwWM9+OWkYccy5daBRmw3yYkN+je6oCirughRdeG3rW8nMyXOZJ3CRU2
-    bgAlRhI+Ok30l03/t/1NwdfitPvsAGg+KKmpHPqVfGUHSvtSFmCCYcrc8Ei7kAbt
-    CPVF6CX3WA/7RTN1ywh3BlVHKrnv09x0zhyOXLW+9PbHBq4a0FUomnedJsWzZzPB
-    FnRiNzUS7gmUsA/bMsfp54oS+LMXavqohKbn8qFC5V9zJppYYqgHRNZDF8qejFTN
-    hO+ML/r0BAUTaC13N7GV6LdV0Wd+r4jdn/2OvyrougSBPRnbzSVo79N5JLPXD7u8
-    A==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=google.com header.i=@google.com header.b=TsYLjMfp x-bits=2048
-    x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=reject,has-list-id=yes,d=reject) header.from=google.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-    smtp.helo=whitealder.osuosl.org;
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=fm2; t=1525298398; bh=ly7X564v5cEJEM4wap/JjJ8EifKDiI
+    MwEMjh4ccUHMw=; b=BILxbCqlnilTZ/nCgBbek1u1PAXa+A/o8qokQRnnLJtRhs
+    uOC0Kk1Jn5uE2A36EVoNZY5J17KDyWiCxGu48YefL14FR4NCTWEz+0VBFuLbb0uo
+    UIZ0bUkT/gqkEYil24tw9PrQWayAyozxRhqIAHFEvlF0Ood7K76milQvzOYYzDIi
+    hXCEjDyae8VZHs8dGwkN3n/LXDNjfj3c+yuEaJH+qfmnZN3E2snIC5pwrt4/d+ke
+    J/4o/zAEsJBvhfLUKaNzsaZo6fAdq69bWn5uhI5qjfXLXJII77xoneOf2yd4vTV6
+    HyEAyb1e3AWjoM1kvHELbBP6xxJRImApvG1uxwmw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com
+    header.i=@gmail.com header.b=diMflFDS x-bits=2048 x-keytype=rsa
+    x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
-    header.d=1e100.net header.i=@1e100.net header.b=erNqLd8b;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org
-    x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-    smtp_is_org_domain=yes header.domain=google.com header.result=pass
-    header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-    bits=128/128;
+    x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
+    header.i=@1e100.net header.b=F1BvyviY;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=google.com header.i=@google.com header.b=TsYLjMfp x-bits=2048
-      x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=reject,has-list-id=yes,d=reject) header.from=google.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-      smtp.helo=whitealder.osuosl.org;
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com
+      header.i=@gmail.com header.b=diMflFDS x-bits=2048 x-keytype=rsa
+      x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
-      header.d=1e100.net header.i=@1e100.net header.b=erNqLd8b;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org
-      x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-      smtp_is_org_domain=yes header.domain=google.com header.result=pass
-      header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-      bits=128/128;
+    x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
+      header.i=@1e100.net header.b=F1BvyviY;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfPY7EVyBgzA8who3pX2Gz2t/mAbJrPIYLvdSsw56bq+KxdbtsF80yB+wu98bAdwY+r/XugAQDkKbHftG2VHljjaMzRxsLmT2pJvhD+TGM3/Lkq6LnNhI
-    LGpC8jAyGSh2xfY0mgk7DREChoYL62CP3E+2KtpHZidEIXjhyHBtk27vmZP74bVjT1gnxQuuvoARFZ8s/KIlua5NWa2/LAomU0EUj8WYA+c0WZLZbDmX5DqY
-    5Q2U0DNCq5DXaUV7eszFtg==
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
-    a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=IkcTkHD0fZMA:10 a=xqWC_Br6kY4A:10
-    a=VUJBJC2UJ8kA:10 a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=ag1SF4gXAAAA:8
-    a=n8i27M1mAAAA:8 a=1XWaLZrsAAAA:8 a=lTbjQzD5AAAA:8 a=DDOyTI_5AAAA:8
-    a=uWkGACebqQqNKXD9YiMA:9 a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
-    a=w8YF5asEQ23juLwKoPR8:22 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-CM-Envelope: MS4wfNdCuTPZJjjb9Qolcz/t9+2NZHd3WmhlR484L5AtzVRkJ/XMohmAmY7E/dWgf8M6djYnyl0TSdvtTSqxjhtksGtLizLucXy3eeHpq1+ugYYrEGV18G4Z
+    5Ss4cH4qLgD5V/tN7WGY0YaD6VyZ1tYGY+1MOk+1Pv28SP8+9eP5/NxAhatE6kuC8gvOlmrskvlmTzWkDVZ8xsddT4P9fPreBJNbZkhgg7TCzm7UFUvyx4Cy
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=x7bEGLp0ZPQA:10
+    a=zLncjWLdyN0A:10 a=VUJBJC2UJ8kA:10 a=OLL_FvSJAAAA:8 a=VwQbUJbxAAAA:8
+    a=Su8_OrzxtfAo5s6NOz8A:9 a=CjuIK1q_8ugA:10 a=haRAhhrbeAoA:10 a=F5WLKBdkEQcA:10
+    a=oIrB72frpwYPwTMnlWqB:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
-X-ME-CMCategory: discussion
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AB8JxZqt+ezCZ6ZpXeKFVYbNmoYfNmYi2qab1w5vdXYcvj1GWmVMCUNG/JW9T2h66cEraROWUrhgVQ==
-From: Alistair Strachan <astrachan@google.com>
-To: linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] staging: Android: vsoc: Fix a i386-randconfig warning.
-Date: Wed,  2 May 2018 21:45:56 -0700
-Message-Id: <20180503044556.157075-1-astrachan@google.com>
-X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751261AbeEBV74 (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 2 May 2018 17:59:56 -0400
+Received: from mail-wr0-f172.google.com ([209.85.128.172]:36134 "EHLO
+        mail-wr0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751045AbeEBV7z (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 2 May 2018 17:59:55 -0400
+X-Google-Smtp-Source: AB8JxZqN3TWG8idCAe6q6xttRKbDH5/eNkbdwif0i4NMiRYpt7gqCyH+ZrtAiB1E1E3Mgj5fGrJAag==
+Date: Wed, 2 May 2018 22:59:50 +0100
+From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+To: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-ide@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2] libata: blacklist Micron SSD
+Message-ID: <20180502215950.GA4621@sudip-laptop>
+References: <20180429160138.11091-1-sudip.mukherjee@codethink.co.uk>
+ <yq1r2mw83cu.fsf@oracle.com>
 MIME-Version: 1.0
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, kernel-team@android.com,
- Todd Kjos <tkjos@android.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Greg Hartman <ghartman@google.com>, Alistair Strachan <astrachan@google.com>,
- =?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
- Martijn Coenen <maco@android.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <yq1r2mw83cu.fsf@oracle.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Rml4ICJ3YXJuaW5nOiBjYXN0IHRvIHBvaW50ZXIgZnJvbSBpbnRlZ2VyIG9mIGRpZmZlcmVudCBz
-aXplIiB3aGVuCnByaW50aW5nIHRoZSByZWdpb24gc2htIHBoeXNpY2FsIGFkZHJlc3MuIFVzZSB0
-aGUgJXBhIGNvbnZlcnNpb24Kc3BlY2lmaWVyIGFuZCBwYXNzIHRoZSByZXNvdXJjZSBieSByZWZl
-cmVuY2UuCgpDYzogR3JlZyBLcm9haC1IYXJ0bWFuIDxncmVna2hAbGludXhmb3VuZGF0aW9uLm9y
-Zz4KQ2M6IEFydmUgSGrDuG5uZXbDpWcgPGFydmVAYW5kcm9pZC5jb20+CkNjOiBUb2RkIEtqb3Mg
-PHRram9zQGFuZHJvaWQuY29tPgpDYzogTWFydGlqbiBDb2VuZW4gPG1hY29AYW5kcm9pZC5jb20+
-CkNjOiBHcmVnIEhhcnRtYW4gPGdoYXJ0bWFuQGdvb2dsZS5jb20+CkNjOiBkZXZlbEBkcml2ZXJk
-ZXYub3N1b3NsLm9yZwpDYzoga2VybmVsLXRlYW1AYW5kcm9pZC5jb20KU2lnbmVkLW9mZi1ieTog
-QWxpc3RhaXIgU3RyYWNoYW4gPGFzdHJhY2hhbkBnb29nbGUuY29tPgotLS0KIGRyaXZlcnMvc3Rh
-Z2luZy9hbmRyb2lkL3Zzb2MuYyB8IDQgKystLQogMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9u
-cygrKSwgMiBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL3N0YWdpbmcvYW5kcm9p
-ZC92c29jLmMgYi9kcml2ZXJzL3N0YWdpbmcvYW5kcm9pZC92c29jLmMKaW5kZXggNzk0MTM3Yjc3
-NTFmLi4zZTZlNGFmN2Q2YTEgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvc3RhZ2luZy9hbmRyb2lkL3Zz
-b2MuYworKysgYi9kcml2ZXJzL3N0YWdpbmcvYW5kcm9pZC92c29jLmMKQEAgLTgwMCw4ICs4MDAs
-OCBAQCBzdGF0aWMgaW50IHZzb2NfcHJvYmVfZGV2aWNlKHN0cnVjdCBwY2lfZGV2ICpwZGV2LAog
-CXZzb2NfZGV2LnNobV9waHlzX3N0YXJ0ID0gcGNpX3Jlc291cmNlX3N0YXJ0KHBkZXYsIFNIQVJF
-RF9NRU1PUllfQkFSKTsKIAl2c29jX2Rldi5zaG1fc2l6ZSA9IHBjaV9yZXNvdXJjZV9sZW4ocGRl
-diwgU0hBUkVEX01FTU9SWV9CQVIpOwogCi0JZGV2X2luZm8oJnBkZXYtPmRldiwgInNoYXJlZCBt
-ZW1vcnkgQCBETUEgJXAgc2l6ZT0weCV6eFxuIiwKLQkJICh2b2lkICopdnNvY19kZXYuc2htX3Bo
-eXNfc3RhcnQsIHZzb2NfZGV2LnNobV9zaXplKTsKKwlkZXZfaW5mbygmcGRldi0+ZGV2LCAic2hh
-cmVkIG1lbW9yeSBAIERNQSAlcGEgc2l6ZT0weCV6eFxuIiwKKwkJICZ2c29jX2Rldi5zaG1fcGh5
-c19zdGFydCwgdnNvY19kZXYuc2htX3NpemUpOwogCXZzb2NfZGV2Lmtlcm5lbF9tYXBwZWRfc2ht
-ID0gcGNpX2lvbWFwX3djKHBkZXYsIFNIQVJFRF9NRU1PUllfQkFSLCAwKTsKIAlpZiAoIXZzb2Nf
-ZGV2Lmtlcm5lbF9tYXBwZWRfc2htKSB7CiAJCWRldl9lcnIoJnZzb2NfZGV2LmRldi0+ZGV2LCAi
-Y2Fubm90IGlvbWFwIHJlZ2lvblxuIik7Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fCmRldmVsIG1haWxpbmcgbGlzdApkZXZlbEBsaW51eGRyaXZlcnByb2pl
-Y3Qub3JnCmh0dHA6Ly9kcml2ZXJkZXYubGludXhkcml2ZXJwcm9qZWN0Lm9yZy9tYWlsbWFuL2xp
-c3RpbmZvL2RyaXZlcmRldi1kZXZlbAo=
+Hi Martin,
+
+On Mon, Apr 30, 2018 at 11:24:49PM -0400, Martin K. Petersen wrote:
+> 
+> Sudip,
+> 
+> > v1: Only M500IT MU01 was blacklisted.
+> >
+> > v2: Whitelist M500IT BG02 and M500DC and then blacklist all other Micron. 
+> 
+> I think my preference would be to blacklist M500IT with the MU01
+> firmware (which Micron said was affected) and rely on the "Micron*"
+> fallthrough further down for the rest.
+
+This patch was based on your reply at:
+https://www.spinics.net/lists/linux-ide/msg55370.html
+
+> 
+> I have not gotten firm confirmation on ZRAT behavior so for now we
+> should probably just do:
+> 
+> + { "Micron_M500IT_*", "MU01",	ATA_HORKAGE_NO_NCQ_TRIM, },
+
+My v1 patch had only MU01 with ATA_HORKAGE_NO_NCQ_TRIM and
+ATA_HORKAGE_ZERO_AFTER_TRIM. I am not very much confident on only
+having ATA_HORKAGE_NO_NCQ_TRIM as we have seen huge regression due to
+243918be6393 ("libata: Do not blacklist Micron M500DC"). Unless, Micron
+confirms that it can only have 'ATA_HORKAGE_NO_NCQ_TRIM' I think we
+should go for both. I don't think we should mark it as ZRAT supported,
+(without Micron confirmation) and cause another regression.
+My v1 patch is at https://patchwork.kernel.org/patch/10287605/
+Do you want me to resend it again?
+
+--
+Regards
+Sudip
