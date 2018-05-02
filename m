@@ -1,93 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751611AbeEBRtm (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 13:49:42 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:46902 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750942AbeEBRti (ORCPT
+        id S1751447AbeEBRt4 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 13:49:56 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:36929 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751885AbeEBRtw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 13:49:38 -0400
-X-Google-Smtp-Source: AB8JxZrIZQG0/W3fB22bJ+0KINSuIDJFuP2zoa1o9ao+V9194yITjiBxVoYZeg9nL/qI2w/PONvRHg==
-Subject: Re: Linux messages full of `random: get_random_u32 called from`
-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Justin Forbes <jmforbes@linuxtx.org>, Jeremy Cline <jeremy@jcline.org>,
-        Sultan Alsawaf <sultanxda@gmail.com>, Pavel Machek <pavel@ucw.cz>,
-        LKML <linux-kernel@vger.kernel.org>, Jann Horn <jannh@google.com>
-References: <20180429170541.lrzwyihrd6d75rql@sultan-box>
- <20180429184101.GA31156@amd> <20180429202033.ysmc42mj2rrk3h7p@sultan-box>
- <20180429220519.GQ5965@thunk.org>
- <01000163186628e6-3fe4abfc-eaaf-470c-90c8-2d8ad91db8f1-000000@email.amazonses.com>
- <CAFxkdAogN0S9vgQhKoO+Zpp07bXveDQYPLvwjULoTRv3Or83qQ@mail.gmail.com>
- <20180501125518.GI20585@thunk.org>
- <CAFxkdArLwrG8x6fNtLUfHedKrH_0d97V6UEzOCBgK8Shkir9pQ@mail.gmail.com>
- <20180502000250.GI10479@thunk.org>
- <CAFxkdAp83uWnju0KZKd2edveuzmiDW_sqMORC7uoR+pwgQECNw@mail.gmail.com>
- <20180502162653.GB3461@thunk.org>
-From: Laura Abbott <labbott@redhat.com>
-Message-ID: <3851ac8b-357d-3c82-2195-936e3c459212@redhat.com>
-Date: Wed, 2 May 2018 10:49:34 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 2 May 2018 13:49:52 -0400
+Date: Wed, 2 May 2018 10:49:41 -0700
+From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-5dhgh7x8g9hx5hpxlp3k08jp@git.kernel.org>
+Cc: mingo@kernel.org, tglx@linutronix.de, adrian.hunter@intel.com,
+        hpa@zytor.com, linux-kernel@vger.kernel.org, wangnan0@huawei.com,
+        namhyung@kernel.org, acme@redhat.com, dsahern@gmail.com,
+        jolsa@kernel.org
+Reply-To: mingo@kernel.org, namhyung@kernel.org, wangnan0@huawei.com,
+        linux-kernel@vger.kernel.org, jolsa@kernel.org, acme@redhat.com,
+        dsahern@gmail.com, adrian.hunter@intel.com, tglx@linutronix.de,
+        hpa@zytor.com
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf machine: Shorten machine__load_kallsyms()
+ signature
+Git-Commit-ID: 329f0adef39aedb8ac4be279c3394f32b53b1a88
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <20180502162653.GB3461@thunk.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/02/2018 09:26 AM, Theodore Y. Ts'o wrote:
-> On Wed, May 02, 2018 at 07:09:11AM -0500, Justin Forbes wrote:
->> Yes, Fedora libgcrypt is carrying a patch which makes it particularly
->> painful for us, we have reached out to the libgcrypt maintainer to
->> follow up on that end. But as I said before, even without that code
->> path (no dracut-fips) we are seeing some instances of 4 minute boots.
->> This is not really a workable user experience.  And are you sure that
->> every cloud platform and VM platform offers, makes it possible to
->> config virtio-rng?
-> 
-> Unfortunately, the answer is no.  Google Compute Engine, alas, does
-> not currently support virtio-rng.  With my Google hat on, I can't
-> comment on future product features.  With my upstream developer hat
-> on, I'll give you three guesses what I have been advocating and
-> pushing for internally, and the first two don't count.  :-)
-> 
-> That being said, I just booted a Debian 9 (Stable, aka Stretch)
-> standard kernel, and then installed 4.17-rc3 (which has the
-> CVE-2018-1108 patches).  The crng_init=2 message doesn't appear
-> immediately, and it does appear quite a bit later comapred to
-> the standard 4.9.0-6-amd64 Debian 9 kernel.  However, the lack of a
-> fully initialized random pool doesn't prevent the standard Debian 9
-> image from booting:
-> 
-> May  2 15:33:42 localhost kernel: [    0.000000] Linux version 4.17.0-rc3-xfstests (tytso@cwcc) (gcc version 7.3.0 (Debian 7.3.0-16)) #169 SMP Wed May 2 11:28:17 EDT 2018
-> May  2 15:33:42 localhost kernel: [    1.456883] random: fast init done
-> May  2 15:33:46 rng-testing systemd[1]: Startup finished in 3.202s (kernel) + 5.963s (userspace) = 9.166s.
-> May  2 15:33:46 rng-testing google-accounts: INFO Starting Google Accounts daemon.
-> May  2 15:44:39 rng-testing kernel: [  661.436664] random: crng init done
-> 
-> So it really does appear to be something going on with Fedora's
-> userspace; can you help try to track down what it is?
-> 
-> Thanks,
-> 
-> 						- Ted
-> 
+Commit-ID:  329f0adef39aedb8ac4be279c3394f32b53b1a88
+Gitweb:     https://git.kernel.org/tip/329f0adef39aedb8ac4be279c3394f32b53b1a88
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Wed, 25 Apr 2018 11:40:32 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Thu, 26 Apr 2018 13:47:10 -0300
 
-It is a Fedora patch we're carrying
-https://src.fedoraproject.org/rpms/libgcrypt/blob/master/f/libgcrypt-1.6.2-fips-ctor.patch#_23
-so yes, it is a Fedora specific use case.
- From talking to the libgcrypt team, this is a FIPS mode requirement
-to run power on self test at the library constructor and the self
-test of libgrcypt ends up requiring a fully seeded RNG. Citation
-is in section 9.10 of
-https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Module-Validation-Program/documents/fips140-2/FIPS1402IG.pdf
+perf machine: Shorten machine__load_kallsyms() signature
 
-The response was this _could_ be fixed in libgcrypt but it needs
-to be done carefully to ensure nothing actually gets broken. So in
-the mean time we're stuck with userspace getting blocked whenever
-some program decides to use libgcrypt too early.
+So far the only use is for MAP__FUNCTION, and since we're going to
+remove that split, remove the map_type argument in machine__load_kallsyms().
 
-Thanks,
-Laura
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-5dhgh7x8g9hx5hpxlp3k08jp@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/tests/vmlinux-kallsyms.c |  2 +-
+ tools/perf/util/machine.c           |  8 +++-----
+ tools/perf/util/machine.h           | 10 ++++++++--
+ 3 files changed, 12 insertions(+), 8 deletions(-)
+
+diff --git a/tools/perf/tests/vmlinux-kallsyms.c b/tools/perf/tests/vmlinux-kallsyms.c
+index 9bb84fe365e2..b99e60593664 100644
+--- a/tools/perf/tests/vmlinux-kallsyms.c
++++ b/tools/perf/tests/vmlinux-kallsyms.c
+@@ -56,7 +56,7 @@ int test__vmlinux_matches_kallsyms(struct test *test __maybe_unused, int subtest
+ 	 * be compacted against the list of modules found in the "vmlinux"
+ 	 * code and with the one got from /proc/modules from the "kallsyms" code.
+ 	 */
+-	if (machine__load_kallsyms(&kallsyms, "/proc/kallsyms", type) <= 0) {
++	if (machine__load_kallsyms(&kallsyms, "/proc/kallsyms") <= 0) {
+ 		pr_debug("dso__load_kallsyms ");
+ 		goto out;
+ 	}
+diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+index fc71f2c69c8b..d39432c7db86 100644
+--- a/tools/perf/util/machine.c
++++ b/tools/perf/util/machine.c
+@@ -137,13 +137,11 @@ struct machine *machine__new_kallsyms(void)
+ 	struct machine *machine = machine__new_host();
+ 	/*
+ 	 * FIXME:
+-	 * 1) MAP__FUNCTION will go away when we stop loading separate maps for
+-	 *    functions and data objects.
+-	 * 2) We should switch to machine__load_kallsyms(), i.e. not explicitely
++	 * 1) We should switch to machine__load_kallsyms(), i.e. not explicitely
+ 	 *    ask for not using the kcore parsing code, once this one is fixed
+ 	 *    to create a map per module.
+ 	 */
+-	if (machine && machine__load_kallsyms(machine, "/proc/kallsyms", MAP__FUNCTION) <= 0) {
++	if (machine && machine__load_kallsyms(machine, "/proc/kallsyms") <= 0) {
+ 		machine__delete(machine);
+ 		machine = NULL;
+ 	}
+@@ -988,7 +986,7 @@ int machines__create_kernel_maps(struct machines *machines, pid_t pid)
+ 	return machine__create_kernel_maps(machine);
+ }
+ 
+-int machine__load_kallsyms(struct machine *machine, const char *filename,
++int __machine__load_kallsyms(struct machine *machine, const char *filename,
+ 			     enum map_type type)
+ {
+ 	struct map *map = machine__kernel_map(machine);
+diff --git a/tools/perf/util/machine.h b/tools/perf/util/machine.h
+index 92303ac718a6..dc95404959ee 100644
+--- a/tools/perf/util/machine.h
++++ b/tools/perf/util/machine.h
+@@ -237,8 +237,14 @@ struct map *machine__findnew_module_map(struct machine *machine, u64 start,
+ 					const char *filename);
+ int arch__fix_module_text_start(u64 *start, const char *name);
+ 
+-int machine__load_kallsyms(struct machine *machine, const char *filename,
+-			   enum map_type type);
++int __machine__load_kallsyms(struct machine *machine, const char *filename,
++			     enum map_type type);
++
++static inline int machine__load_kallsyms(struct machine *machine, const char *filename)
++{
++	return __machine__load_kallsyms(machine, filename, MAP__FUNCTION);
++}
++
+ int machine__load_vmlinux_path(struct machine *machine, enum map_type type);
+ 
+ size_t machine__fprintf_dsos_buildid(struct machine *machine, FILE *fp,
