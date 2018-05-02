@@ -1,89 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751326AbeEBT3r (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 15:29:47 -0400
-Received: from mail-ot0-f170.google.com ([74.125.82.170]:37659 "EHLO
-        mail-ot0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751181AbeEBT3m (ORCPT
+        id S1751188AbeEBTb7 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 15:31:59 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:40991 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751027AbeEBTbz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 15:29:42 -0400
-X-Google-Smtp-Source: AB8JxZqoeLNkboZTNGYrNId2SNJN5STUAlZOsHBE3UKnNiDFrbayWiFkJbrMc/TdHO2rkRqLTW+bEg==
-Subject: Re: [RFC PATCH v3 3/3] acpi: apei: Warn when GHES marks correctable
- errors as "fatal"
-To: Pavel Machek <pavel@ucw.cz>, Borislav Petkov <bp@alien8.de>
-Cc: linux-acpi@vger.kernel.org, linux-edac@vger.kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Robert Moore <robert.moore@intel.com>,
-        Erik Schmauss <erik.schmauss@intel.com>,
-        Tyler Baicar <tbaicar@codeaurora.org>,
-        Will Deacon <will.deacon@arm.com>, James Morse <james.morse@arm.com>,
-        Shiju Jose <shiju.jose@huawei.com>,
-        "Jonathan (Zhixiong) Zhang" <zjzhang@codeaurora.org>,
-        Dongjiu Geng <gengdongjiu@huawei.com>, linux-kernel@vger.kernel.org,
-        devel@acpica.org
-References: <20180416215903.7318-1-mr.nuke.me@gmail.com>
- <20180425203957.18224-1-mr.nuke.me@gmail.com>
- <20180425203957.18224-4-mr.nuke.me@gmail.com>
- <20180426112057.GB15009@pd.tnic> <20180502191029.hcvf56xbdna7oi4k@devuan>
-From: "Alex G." <mr.nuke.me@gmail.com>
-Message-ID: <2e1b1d18-08b5-fa85-be7b-ab29ac2195b3@gmail.com>
-Date: Wed, 2 May 2018 14:29:40 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Wed, 2 May 2018 15:31:55 -0400
+X-Google-Smtp-Source: AB8JxZpY2hgeliJOG9PMZGOcTTJJHGfnxl7pGsV08RPhmKlLdpZl9rxEDKLyh/sT4TwOUH15BWaJJeR+wnknCu55eBY=
 MIME-Version: 1.0
-In-Reply-To: <20180502191029.hcvf56xbdna7oi4k@devuan>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CA+7wUswCFsW9Uf2i9gBkCffJO=yqgRORL0znBW50RojtdvRkew@mail.gmail.com>
+References: <20180423195055.26069-1-malat@debian.org> <CAAqcGHn+3HMC_tVsOsLB1Vycdv7SYZ=1SYc0Cg3Gx-Xe=sExMg@mail.gmail.com>
+ <CA+7wUswCFsW9Uf2i9gBkCffJO=yqgRORL0znBW50RojtdvRkew@mail.gmail.com>
+From: Mathieu Malaterre <malat@debian.org>
+Date: Wed, 2 May 2018 21:31:33 +0200
+X-Google-Sender-Auth: Q5j6Ipz8yMAkUvbOprfofa_S7BM
+Message-ID: <CA+7wUsyNiOee5oxoPqU2HDWpfbCQZ-XUhWQjNb+rvFs5mGXsyA@mail.gmail.com>
+Subject: Re: [PATCH] kbuild/debian: Use KBUILD_BUILD_* when set
+To: Riku Voipio <riku.voipio@linaro.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/02/2018 02:10 PM, Pavel Machek wrote:
-> On Thu 2018-04-26 13:20:57, Borislav Petkov wrote:
->> On Wed, Apr 25, 2018 at 03:39:51PM -0500, Alexandru Gagniuc wrote:
->>> There seems to be a culture amongst BIOS teams to want to crash the
->>> OS when an error can't be handled in firmware. Marking GHES errors as
->>> "fatal" is a very common way to do this.
+On Wed, May 2, 2018 at 9:27 PM, Mathieu Malaterre <malat@debian.org> wrote:
+> On Wed, May 2, 2018 at 1:30 PM, Riku Voipio <riku.voipio@linaro.org> wrote:
+>> On 23 April 2018 at 22:50, Mathieu Malaterre <malat@debian.org> wrote:
+>>> Be nice to the user and check env vars KBUILD_BUILD_USER &
+>>> KBUILD_BUILD_HOST when those are set.
+>>
+>> mkdebian sets the maintainer address as "$name <$email>", but this
+>> patch only sets the email part. I also wonder about the precedence, I
+>> think KBUILD_* should be considered over the generic Debian variables.
+>
+> I simply tried to re-use the KBUILD_* env vars whenever possible. This
+> did made sense, since:
+>
+> $ dmesg|grep debian
+>                                                                   ~
+> [    0.000000] Linux version 4.14.0-0.bpo.3-amd64
+> (debian-kernel@lists.debian.org) (gcc version 6.3.0 20170516 (Debian
+> 6.3.0-18)) #1 SMP Debian 4.14.13-1~bpo9+1 (2018-01-14)
+>
+> and
+>
+> $ apt-cache show linux-image-amd64| grep Main
+>                                                                   ~
+> Maintainer: Debian Kernel Team <debian-kernel@lists.debian.org>
+>
+> I do not believe this should take precedence over DEBEMAIL.
+
+It seems that the env var DEBEMAIL is now accepting a new syntax (at
+least I was not aware of this syntax):
+
+https://manpages.debian.org/unstable/devscripts/dch.1.en.html
+
+[...]If the environment variable DEBEMAIL is set, this will be used
+for the email address. If this variable has the form "name <email>",
+then the maintainer name will also be taken from here[...]
+
+I'll send a v2 that check DEBEMAIL does not contains '<>'.
+
+>> Riku
+>>
+>>> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+>>> ---
+>>>  scripts/package/mkdebian | 2 ++
+>>>  1 file changed, 2 insertions(+)
 >>>
->>> However, a number of errors reported by GHES may be fatal in the sense
->>> a device or link is lost, but are not fatal to the system. When there
->>> is a disagreement with firmware about the handleability of an error,
->>> print a warning message.
-> 
-> 
->>> +
->>> +	if ((sev >= GHES_SEV_PANIC) && (ghes_actual_severity(ghes) < sev)) {
->>> +		pr_warn("FIRMWARE BUG: Firmware sent fatal error that we were able to correct");
->>> +		pr_warn("BROKEN FIRMWARE: Complain to your hardware vendor");
->>
->> Pasting the same comment from last time since you missed it:
->>
->> "No, I don't want any of that crap issuing stuff in dmesg and then people
->> opening bugs and running around and trying to replace hardware.
-> 
-> We want to see warnings. Maybe they can be toned done. We even have
-> dedicated distros for firmware testing.
-
-I'm told that had we had this warning when the r740 BIOS was in
-development, we would have solved a lot of the issues that I'm currently
-working on. That would, in turn, have exposed bigger issues, and we
-would have had a platform to fix and test those bigger issues.
-
-Hardware vendors who test on linux might be scratching their heads at
-this error, though they tend to figure out what they're doing wrong, and
-fix it.
-
-One argument against was "expensive support calls", on which I call BS.
-The firmware resources are expensive, but those are there whether or not
-the customers call to complain.
-
-Alex
-
->> Good mailing practices for 400: avoid top-posting and trim the reply.
-> 
-> Good mailing practices -- limit use of four letter words on public lists.
-
-Then can't show word 'four'.
+>>> diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
+>>> index 6adb3a16ba3b..05d58d3ae8a0 100755
+>>> --- a/scripts/package/mkdebian
+>>> +++ b/scripts/package/mkdebian
+>>> @@ -76,6 +76,8 @@ if [ -n "$DEBEMAIL" ]; then
+>>>         email=$DEBEMAIL
+>>>  elif [ -n "$EMAIL" ]; then
+>>>         email=$EMAIL
+>>> +elif [ -n "$KBUILD_BUILD_USER" ] && [ -n "$KBUILD_BUILD_HOST" ]; then
+>>> +       email=$KBUILD_BUILD_USER@$KBUILD_BUILD_HOST
+>>>  else
+>>>         email=$(id -nu)@$(hostname -f 2>/dev/null || hostname)
+>>>  fi
+>>> --
+>>> 2.11.0
+>>>
+>>> --
+>>> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
+>>> the body of a message to majordomo@vger.kernel.org
+>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
