@@ -1,741 +1,171 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751234AbeEBHea (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 03:34:30 -0400
-Received: from mail-pg0-f51.google.com ([74.125.83.51]:38107 "EHLO
-        mail-pg0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750869AbeEBHeZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 03:34:25 -0400
-X-Google-Smtp-Source: AB8JxZr7XVD6bECvkwn5fylhxWNsDFG+DnPuhFAnHx9+D42jIjjy8VsFM0N1ABwbhdGclfcI1m/Ct+an5whpd2TQHYo=
+        id S1751140AbeEBHgR (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 03:36:17 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39136 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750895AbeEBHgN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 03:36:13 -0400
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org
+Cc: x86@kernel.org, Roman Kagan <rkagan@virtuozzo.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>,
+        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
+        Tianyu Lan <Tianyu.Lan@microsoft.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] KVM: x86: VMX: hyper-v: Enlightened MSR-Bitmap support
+References: <20180416105033.28778-1-vkuznets@redhat.com>
+Date: Wed, 02 May 2018 09:36:09 +0200
+In-Reply-To: <20180416105033.28778-1-vkuznets@redhat.com> (Vitaly Kuznetsov's
+        message of "Mon, 16 Apr 2018 12:50:33 +0200")
+Message-ID: <8736zatspi.fsf@vitty.brq.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <201804202306.FGC05220.OOJFMFOSFHtLQV@I-love.SAKURA.ne.jp>
-References: <001a11446e86e97ceb055cf07f4e@google.com> <CACT4Y+bGjnajib6P4a0SxYkNUJpg_x8abEkec8AR+oBmC=-QUQ@mail.gmail.com>
- <20171105201834.GA8126@zzz.localdomain> <201804162302.GBI43737.OLFSOFQHVJMFtO@I-love.SAKURA.ne.jp>
- <201804202306.FGC05220.OOJFMFOSFHtLQV@I-love.SAKURA.ne.jp>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Wed, 2 May 2018 09:34:03 +0200
-Message-ID: <CACT4Y+Y3M2kB0YWhwD04NkL1-iNHPuDfDDf9BLoPD3GZ6Gg-Yw@mail.gmail.com>
-Subject: Re: possible deadlock in blkdev_reread_part
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: Eric Biggers <ebiggers3@gmail.com>,
-        syzbot+4684a000d5abdade83fac55b1e7d1f935ef1936e@syzkaller.appspotmail.com,
-        Jens Axboe <axboe@kernel.dk>, LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-/\/\/\/\/\/\On Fri, Apr 20, 2018 at 4:06 PM, Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
-> Tetsuo Handa wrote:
->> Eric Biggers wrote:
->> > It seems that ->bd_mutex is held while opening and closing block devices, which
->> > should rank it above both ->lo_ctl_mutex and loop_index_mutex (see lo_open() and
->> > lo_release()).
->> >
->> > But blkdev_reread_part(), which takes ->bd_mutex, is called from some of the
->> > ioctls while ->lo_ctl_mutex is held.
->> >
->> > Perhaps we should call blkdev_reread_part() at the end of the ioctls, after
->> > ->lo_ctl_mutex has been dropped?  But it looks like that can do I/O to the
->> > device, which probably could race with loop_clr_fd()...
->> >
->> > Or perhaps we should just take both locks for the ioctls, in the order
->> > ->bd_mutex, then ->lo_ctl_mutex -- and then use __blkdev_reread_part()?
->>
->> But do we really need ->lo_ctl_mutex ? What is the purpose of ->lo_ctl_mutex ?
->> If the purpose of ->lo_ctl_mutex is to serialize ioctl() request against each
->> loop device when multiple threads opened the same loop device, I feel that
->>
->>   There is no need to use ->lo_ctl_mutex which the lockdep will check and
->>   complain, provided that ioctl() request cannot recurse into ioctl() request.
->>   Instead, we can use simple flag variable whether an ioctl() is in progress.
->>
->>   There is no need to use ->lo_ctl_mutex from __lo_release(), for it is
->>   guaranteed that there is no in-flight ioctl() request when __lo_release()
->>   is called, and loop_index_mutex is blocking further open() requests.
->>
->> and simplify like below.
->>
-> Can we test this patch?
->
-> >From 0ca0694b74ca4b02e9d2e3f46c9d960ba167adec Mon Sep 17 00:00:00 2001
-> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Date: Fri, 20 Apr 2018 22:54:42 +0900
-> Subject: [PATCH] block/loop: Serialize ioctl operations.
->
-> syzbot is reporting various bugs which involve /dev/loopX.
-> Two of them
->
->   INFO: rcu detected stall in lo_ioctl
->   https://syzkaller.appspot.com/bug?id=7b49fb610af9cca78c24e9f796f2e8b0d5573997
->
->   general protection fault in lo_ioctl (2)
->   https://syzkaller.appspot.com/bug?id=f3cfe26e785d85f9ee259f385515291d21bd80a3
+Vitaly Kuznetsov <vkuznets@redhat.com> writes:
 
-/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
-
-Now there is a repro for this one. I've pushed it to kernel mailing lists:
-
-https://groups.google.com/d/msg/syzkaller-bugs/c8KUcTAzTvA/3o_7g6-tAwAJ
-
-> suggest that loop module is not thread safe. The former suggests that
-> l->lo_backing_file is forming circular loop and the latter suggests that
-> l->lo_backing_file became NULL.
+> Enlightened MSR-Bitmap is a natural extension of Enlightened VMCS:
+> Hyper-V Top Level Functional Specification states:
 >
-> In fact, recursion avoidance check in loop_set_fd() is traversing loop
-> devices without holding each lo->lo_ctl_mutex lock. lo_state can become
-> Lo_rundown and lo_backing_file can become NULL if raced with loop_clr_fd().
+> "The L1 hypervisor may collaborate with the L0 hypervisor to make MSR
+> accesses more efficient. It can enable enlightened MSR bitmaps by setting
+> the corresponding field in the enlightened VMCS to 1. When enabled, the L0
+> hypervisor does not monitor the MSR bitmaps for changes. Instead, the L1
+> hypervisor must invalidate the corresponding clean field after making
+> changes to one of the MSR bitmaps."
 >
->   /* Avoid recursion */
->   f = file;
->   while (is_loop_device(f)) {
->     struct loop_device *l;
+> I reached out to Hyper-V team for additional details and I got the
+> following information:
 >
->     if (f->f_mapping->host->i_bdev == bdev)
->       goto out_putf;
+> "Current Hyper-V implementation works as following:
 >
->     l = f->f_mapping->host->i_bdev->bd_disk->private_data;
->     if (l->lo_state == Lo_unbound) {
->       error = -EINVAL;
->       goto out_putf;
->     }
->     f = l->lo_backing_file;
->   }
+> If the enlightened MSR bitmap is not enabled:
+> - All MSR accesses of L2 guests cause physical VM-Exits
 >
-> Since ioctl() request on loop devices is not frequent operation, we don't
-> need fine grained locking. Let's use global lock rather than dancing with
-> locking order inside this recursion avoidance check.
+> If the enlightened MSR bitmap is enabled:
+> - Physical VM-Exits for L2 accesses to certain MSRs (currently FS_BASE,
+>   GS_BASE and KERNEL_GS_BASE) are avoided, thus making these MSR accesses
+>   faster."
 >
-> Strategy is that the global lock is held upon entry of ioctl() request,
-> and release it before either starting operations which might recurse or
-> leaving ioctl() request. After the global lock is released, current thread
-> no longer uses "struct loop_device" memory because it might be modified
-> by next ioctl() request which was waiting for current ioctl() request.
+> I tested my series with a tight rdmsrl loop in L2, for KERNEL_GS_BASE the
+> results are:
 >
-> In order to enforce this strategy, this patch inversed
-> loop_reread_partitions() and loop_unprepare_queue() in loop_clr_fd().
-> I don't know whether it breaks something, but I don't have testcases.
+> Without Enlightened MSR-Bitmap: 1300 cycles/read
+> With Enlightened MSR-Bitmap: 120 cycles/read
 >
-> Since this patch serializes using global lock, race bugs should no longer
-> exist. Thus, it will be easy to test whether this patch broke something.
->
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Reported-by: syzbot <syzbot+e5e426c6a47c26ada908348fe84aff916a26d337@syzkaller.appspotmail.com>
-> Reported-by: syzbot <syzbot+116e7de10c6752bf5e1e@syzkaller.appspotmail.com>
-> Cc: Jens Axboe <axboe@kernel.dk>
+> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+> Tested-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
 > ---
->  drivers/block/loop.c | 231 ++++++++++++++++++++++++++++-----------------------
->  drivers/block/loop.h |   1 -
->  2 files changed, 128 insertions(+), 104 deletions(-)
+> - Changes since 'v1': drop 'enable_emsr_bitmap' static key usage
+>   [Paolo Bonzini]
+> - Added 'Tested-by' from Lan Tianyu. Hope it stands after the changes.
+
+Ping? :-)
+
+> ---
+>  arch/x86/include/asm/hyperv-tlfs.h |  9 ++++++++-
+>  arch/x86/kvm/vmx.c                 | 25 +++++++++++++++++++++++++
+>  2 files changed, 33 insertions(+), 1 deletion(-)
 >
-> diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-> index c9d0449..59716d1 100644
-> --- a/drivers/block/loop.c
-> +++ b/drivers/block/loop.c
-> @@ -81,11 +81,50 @@
->  #include <linux/uaccess.h>
+> diff --git a/arch/x86/include/asm/hyperv-tlfs.h b/arch/x86/include/asm/hyperv-tlfs.h
+> index 1c602ad4bda8..26e7e2240066 100644
+> --- a/arch/x86/include/asm/hyperv-tlfs.h
+> +++ b/arch/x86/include/asm/hyperv-tlfs.h
+> @@ -300,6 +300,9 @@ struct ms_hyperv_tsc_page {
+>  /* TSC emulation after migration */
+>  #define HV_X64_MSR_REENLIGHTENMENT_CONTROL	0x40000106
 >
->  static DEFINE_IDR(loop_index_idr);
-> -static DEFINE_MUTEX(loop_index_mutex);
-> +static DEFINE_MUTEX(loop_mutex);
-> +static void *loop_mutex_owner; /* == __mutex_owner(&loop_mutex) */
+> +/* Nested features (CPUID 0x4000000A) EAX */
+> +#define HV_X64_NESTED_MSR_BITMAP		BIT(19)
+> +
+>  struct hv_reenlightenment_control {
+>  	__u64 vector:8;
+>  	__u64 reserved1:8;
+> @@ -665,7 +668,11 @@ struct hv_enlightened_vmcs {
+>  	u32 hv_clean_fields;
+>  	u32 hv_padding_32;
+>  	u32 hv_synthetic_controls;
+> -	u32 hv_enlightenments_control;
+> +	struct {
+> +		u32 nested_flush_hypercall:1;
+> +		u32 msr_bitmap:1;
+> +		u32 reserved:30;
+> +	} hv_enlightenments_control;
+>  	u32 hv_vp_id;
 >
->  static int max_part;
->  static int part_shift;
+>  	u64 hv_vm_id;
+> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+> index b2f8a700aeef..babc9ef121a4 100644
+> --- a/arch/x86/kvm/vmx.c
+> +++ b/arch/x86/kvm/vmx.c
+> @@ -1090,6 +1090,16 @@ static inline u16 evmcs_read16(unsigned long field)
+>  	return *(u16 *)((char *)current_evmcs + offset);
+>  }
 >
-> +/*
-> + * lock_loop - Lock loop_mutex.
-> + */
-> +static void lock_loop(void)
+> +static inline void evmcs_touch_msr_bitmap(void)
 > +{
-> +       mutex_lock(&loop_mutex);
-> +       loop_mutex_owner = current;
+> +	if (unlikely(!current_evmcs))
+> +		return;
+> +
+> +	if (current_evmcs->hv_enlightenments_control.msr_bitmap)
+> +		current_evmcs->hv_clean_fields &=
+> +			~HV_VMX_ENLIGHTENED_CLEAN_FIELD_MSR_BITMAP;
 > +}
 > +
-> +/*
-> + * lock_loop_killable - Lock loop_mutex unless killed.
-> + */
-> +static int lock_loop_killable(void)
-> +{
-> +       int err = mutex_lock_killable(&loop_mutex);
+>  static void evmcs_load(u64 phys_addr)
+>  {
+>  	struct hv_vp_assist_page *vp_ap =
+> @@ -1174,6 +1184,7 @@ static inline u32 evmcs_read32(unsigned long field) { return 0; }
+>  static inline u16 evmcs_read16(unsigned long field) { return 0; }
+>  static inline void evmcs_load(u64 phys_addr) {}
+>  static inline void evmcs_sanitize_exec_ctrls(struct vmcs_config *vmcs_conf) {}
+> +static inline void evmcs_touch_msr_bitmap(void) {}
+>  #endif /* IS_ENABLED(CONFIG_HYPERV) */
+>
+>  static inline bool is_exception_n(u32 intr_info, u8 vector)
+> @@ -4218,6 +4229,14 @@ static int alloc_loaded_vmcs(struct loaded_vmcs *loaded_vmcs)
+>  		if (!loaded_vmcs->msr_bitmap)
+>  			goto out_vmcs;
+>  		memset(loaded_vmcs->msr_bitmap, 0xff, PAGE_SIZE);
 > +
-> +       if (err)
-> +               return err;
-> +       loop_mutex_owner = current;
-> +       return 0;
-> +}
+> +		if (static_branch_unlikely(&enable_evmcs) &&
+> +		    (ms_hyperv.nested_features & HV_X64_NESTED_MSR_BITMAP)) {
+> +			struct hv_enlightened_vmcs *evmcs =
+> +				(struct hv_enlightened_vmcs *)loaded_vmcs->vmcs;
 > +
-> +/*
-> + * unlock_loop - Unlock loop_mutex as needed.
-> + *
-> + * Explicitly call this function before calling fput() or blkdev_reread_part()
-> + * in order to avoid circular lock dependency. After this function is called,
-> + * current thread is no longer allowed to access "struct loop_device" memory,
-> + * for another thread would access that memory as soon as loop_mutex is held.
-> + */
-> +static void unlock_loop(void)
-> +{
-> +       if (loop_mutex_owner == current) {
-> +               loop_mutex_owner = NULL;
-> +               mutex_unlock(&loop_mutex);
-> +       }
-> +}
+> +			evmcs->hv_enlightenments_control.msr_bitmap = 1;
+> +		}
+>  	}
+>  	return 0;
+>
+> @@ -5335,6 +5354,9 @@ static void __always_inline vmx_disable_intercept_for_msr(unsigned long *msr_bit
+>  	if (!cpu_has_vmx_msr_bitmap())
+>  		return;
+>
+> +	if (static_branch_unlikely(&enable_evmcs))
+> +		evmcs_touch_msr_bitmap();
 > +
->  static int transfer_xor(struct loop_device *lo, int cmd,
->                         struct page *raw_page, unsigned raw_off,
->                         struct page *loop_page, unsigned loop_off,
-> @@ -604,7 +643,12 @@ static void loop_reread_partitions(struct loop_device *lo,
->                                    struct block_device *bdev)
->  {
->         int rc;
-> +       /* Save variables which might change after unlock_loop() is called. */
-> +       char filename[sizeof(lo->lo_file_name)];
-> +       const int num = lo->lo_number;
+>  	/*
+>  	 * See Intel PRM Vol. 3, 20.6.9 (MSR-Bitmap Address). Early manuals
+>  	 * have the write-low and read-high bitmap offsets the wrong way round.
+> @@ -5370,6 +5392,9 @@ static void __always_inline vmx_enable_intercept_for_msr(unsigned long *msr_bitm
+>  	if (!cpu_has_vmx_msr_bitmap())
+>  		return;
 >
-> +       memmove(filename, lo->lo_file_name, sizeof(filename));
-> +       unlock_loop();
->         /*
->          * bd_mutex has been held already in release path, so don't
->          * acquire it if this function is called in such case.
-> @@ -619,7 +663,7 @@ static void loop_reread_partitions(struct loop_device *lo,
->                 rc = blkdev_reread_part(bdev);
->         if (rc)
->                 pr_warn("%s: partition scan of loop%d (%s) failed (rc=%d)\n",
-> -                       __func__, lo->lo_number, lo->lo_file_name, rc);
-> +                       __func__, num, filename, rc);
->  }
->
->  /*
-> @@ -637,6 +681,7 @@ static int loop_change_fd(struct loop_device *lo, struct block_device *bdev,
->         struct inode    *inode;
->         int             error;
->
-> +       lockdep_assert_held(&loop_mutex);
->         error = -ENXIO;
->         if (lo->lo_state != Lo_bound)
->                 goto out;
-> @@ -673,12 +718,14 @@ static int loop_change_fd(struct loop_device *lo, struct block_device *bdev,
->         loop_update_dio(lo);
->         blk_mq_unfreeze_queue(lo->lo_queue);
->
-> -       fput(old_file);
->         if (lo->lo_flags & LO_FLAGS_PARTSCAN)
-> -               loop_reread_partitions(lo, bdev);
-> +               loop_reread_partitions(lo, bdev); /* calls unlock_loop() */
-> +       unlock_loop();
-> +       fput(old_file);
->         return 0;
->
->   out_putf:
-> +       unlock_loop();
->         fput(file);
->   out:
->         return error;
-> @@ -862,6 +909,7 @@ static int loop_set_fd(struct loop_device *lo, fmode_t mode,
->         int             error;
->         loff_t          size;
->
-> +       lockdep_assert_held(&loop_mutex);
->         /* This is safe, since we have a reference from open(). */
->         __module_get(THIS_MODULE);
->
-> @@ -936,19 +984,21 @@ static int loop_set_fd(struct loop_device *lo, fmode_t mode,
->         set_blocksize(bdev, S_ISBLK(inode->i_mode) ?
->                       block_size(inode->i_bdev) : PAGE_SIZE);
->
-> +       /*
-> +        * Grab the block_device to prevent its destruction after we
-> +        * put /dev/loopXX inode. Later in loop_clr_fd() we bdput(bdev).
-> +        */
-> +       bdgrab(bdev);
+> +	if (static_branch_unlikely(&enable_evmcs))
+> +		evmcs_touch_msr_bitmap();
 > +
->         lo->lo_state = Lo_bound;
->         if (part_shift)
->                 lo->lo_flags |= LO_FLAGS_PARTSCAN;
->         if (lo->lo_flags & LO_FLAGS_PARTSCAN)
-> -               loop_reread_partitions(lo, bdev);
-> -
-> -       /* Grab the block_device to prevent its destruction after we
-> -        * put /dev/loopXX inode. Later in loop_clr_fd() we bdput(bdev).
-> -        */
-> -       bdgrab(bdev);
-> +               loop_reread_partitions(lo, bdev); /* calls unlock_loop() */
->         return 0;
->
->   out_putf:
-> +       unlock_loop();
->         fput(file);
->   out:
->         /* This is safe: open() is still holding a reference. */
-> @@ -998,7 +1048,9 @@ static int loop_clr_fd(struct loop_device *lo)
->         struct file *filp = lo->lo_backing_file;
->         gfp_t gfp = lo->old_gfp_mask;
->         struct block_device *bdev = lo->lo_device;
-> +       bool reread;
->
-> +       lockdep_assert_held(&loop_mutex);
->         if (lo->lo_state != Lo_bound)
->                 return -ENXIO;
->
-> @@ -1014,7 +1066,6 @@ static int loop_clr_fd(struct loop_device *lo)
->          */
->         if (atomic_read(&lo->lo_refcnt) > 1) {
->                 lo->lo_flags |= LO_FLAGS_AUTOCLEAR;
-> -               mutex_unlock(&lo->lo_ctl_mutex);
->                 return 0;
->         }
->
-> @@ -1059,20 +1110,14 @@ static int loop_clr_fd(struct loop_device *lo)
->         /* This is safe: open() is still holding a reference. */
->         module_put(THIS_MODULE);
->         blk_mq_unfreeze_queue(lo->lo_queue);
-> -
-> -       if (lo->lo_flags & LO_FLAGS_PARTSCAN && bdev)
-> -               loop_reread_partitions(lo, bdev);
-> +       reread = (lo->lo_flags & LO_FLAGS_PARTSCAN) && bdev;
->         lo->lo_flags = 0;
->         if (!part_shift)
->                 lo->lo_disk->flags |= GENHD_FL_NO_PART_SCAN;
->         loop_unprepare_queue(lo);
-> -       mutex_unlock(&lo->lo_ctl_mutex);
-> -       /*
-> -        * Need not hold lo_ctl_mutex to fput backing file.
-> -        * Calling fput holding lo_ctl_mutex triggers a circular
-> -        * lock dependency possibility warning as fput can take
-> -        * bd_mutex which is usually taken before lo_ctl_mutex.
-> -        */
-> +       if (reread)
-> +               loop_reread_partitions(lo, bdev); /* calls unlock_loop() */
-> +       unlock_loop();
->         fput(filp);
->         return 0;
->  }
-> @@ -1162,7 +1207,7 @@ static int loop_clr_fd(struct loop_device *lo)
->              !(lo->lo_flags & LO_FLAGS_PARTSCAN)) {
->                 lo->lo_flags |= LO_FLAGS_PARTSCAN;
->                 lo->lo_disk->flags &= ~GENHD_FL_NO_PART_SCAN;
-> -               loop_reread_partitions(lo, lo->lo_device);
-> +               loop_reread_partitions(lo, lo->lo_device); /* calls unlock_loop() */
->         }
->
->         return err;
-> @@ -1171,14 +1216,13 @@ static int loop_clr_fd(struct loop_device *lo)
->  static int
->  loop_get_status(struct loop_device *lo, struct loop_info64 *info)
->  {
-> -       struct file *file;
-> +       struct path path;
->         struct kstat stat;
->         int ret;
->
-> -       if (lo->lo_state != Lo_bound) {
-> -               mutex_unlock(&lo->lo_ctl_mutex);
-> +       lockdep_assert_held(&loop_mutex);
-> +       if (lo->lo_state != Lo_bound)
->                 return -ENXIO;
-> -       }
->
->         memset(info, 0, sizeof(*info));
->         info->lo_number = lo->lo_number;
-> @@ -1195,17 +1239,17 @@ static int loop_clr_fd(struct loop_device *lo)
->                        lo->lo_encrypt_key_size);
->         }
->
-> -       /* Drop lo_ctl_mutex while we call into the filesystem. */
-> -       file = get_file(lo->lo_backing_file);
-> -       mutex_unlock(&lo->lo_ctl_mutex);
-> -       ret = vfs_getattr(&file->f_path, &stat, STATX_INO,
-> -                         AT_STATX_SYNC_AS_STAT);
-> +       /* Drop loop_mutex while we call into the filesystem. */
-> +       path = lo->lo_backing_file->f_path;
-> +       path_get(&path);
-> +       unlock_loop();
-> +       ret = vfs_getattr(&path, &stat, STATX_INO, AT_STATX_SYNC_AS_STAT);
->         if (!ret) {
->                 info->lo_device = huge_encode_dev(stat.dev);
->                 info->lo_inode = stat.ino;
->                 info->lo_rdevice = huge_encode_dev(stat.rdev);
->         }
-> -       fput(file);
-> +       path_put(&path);
->         return ret;
->  }
->
-> @@ -1267,6 +1311,7 @@ static int loop_clr_fd(struct loop_device *lo)
->         struct loop_info info;
->         struct loop_info64 info64;
->
-> +       lockdep_assert_held(&loop_mutex);
->         if (copy_from_user(&info, arg, sizeof (struct loop_info)))
->                 return -EFAULT;
->         loop_info64_from_old(&info, &info64);
-> @@ -1278,6 +1323,7 @@ static int loop_clr_fd(struct loop_device *lo)
->  {
->         struct loop_info64 info64;
->
-> +       lockdep_assert_held(&loop_mutex);
->         if (copy_from_user(&info64, arg, sizeof (struct loop_info64)))
->                 return -EFAULT;
->         return loop_set_status(lo, &info64);
-> @@ -1289,10 +1335,8 @@ static int loop_clr_fd(struct loop_device *lo)
->         struct loop_info64 info64;
->         int err;
->
-> -       if (!arg) {
-> -               mutex_unlock(&lo->lo_ctl_mutex);
-> +       if (!arg)
->                 return -EINVAL;
-> -       }
->         err = loop_get_status(lo, &info64);
->         if (!err)
->                 err = loop_info64_to_old(&info64, &info);
-> @@ -1307,10 +1351,8 @@ static int loop_clr_fd(struct loop_device *lo)
->         struct loop_info64 info64;
->         int err;
->
-> -       if (!arg) {
-> -               mutex_unlock(&lo->lo_ctl_mutex);
-> +       if (!arg)
->                 return -EINVAL;
-> -       }
->         err = loop_get_status(lo, &info64);
->         if (!err && copy_to_user(arg, &info64, sizeof(info64)))
->                 err = -EFAULT;
-> @@ -1320,6 +1362,7 @@ static int loop_clr_fd(struct loop_device *lo)
->
->  static int loop_set_capacity(struct loop_device *lo)
->  {
-> +       lockdep_assert_held(&loop_mutex);
->         if (unlikely(lo->lo_state != Lo_bound))
->                 return -ENXIO;
->
-> @@ -1329,6 +1372,8 @@ static int loop_set_capacity(struct loop_device *lo)
->  static int loop_set_dio(struct loop_device *lo, unsigned long arg)
->  {
->         int error = -ENXIO;
-> +
-> +       lockdep_assert_held(&loop_mutex);
->         if (lo->lo_state != Lo_bound)
->                 goto out;
->
-> @@ -1342,6 +1387,7 @@ static int loop_set_dio(struct loop_device *lo, unsigned long arg)
->
->  static int loop_set_block_size(struct loop_device *lo, unsigned long arg)
->  {
-> +       lockdep_assert_held(&loop_mutex);
->         if (lo->lo_state != Lo_bound)
->                 return -ENXIO;
->
-> @@ -1364,12 +1410,10 @@ static int lo_ioctl(struct block_device *bdev, fmode_t mode,
->         unsigned int cmd, unsigned long arg)
->  {
->         struct loop_device *lo = bdev->bd_disk->private_data;
-> -       int err;
-> +       int err = lock_loop_killable();
->
-> -       err = mutex_lock_killable_nested(&lo->lo_ctl_mutex, 1);
->         if (err)
-> -               goto out_unlocked;
-> -
-> +               return err;
->         switch (cmd) {
->         case LOOP_SET_FD:
->                 err = loop_set_fd(lo, mode, bdev, arg);
-> @@ -1378,10 +1422,7 @@ static int lo_ioctl(struct block_device *bdev, fmode_t mode,
->                 err = loop_change_fd(lo, bdev, arg);
->                 break;
->         case LOOP_CLR_FD:
-> -               /* loop_clr_fd would have unlocked lo_ctl_mutex on success */
->                 err = loop_clr_fd(lo);
-> -               if (!err)
-> -                       goto out_unlocked;
->                 break;
->         case LOOP_SET_STATUS:
->                 err = -EPERM;
-> @@ -1391,8 +1432,7 @@ static int lo_ioctl(struct block_device *bdev, fmode_t mode,
->                 break;
->         case LOOP_GET_STATUS:
->                 err = loop_get_status_old(lo, (struct loop_info __user *) arg);
-> -               /* loop_get_status() unlocks lo_ctl_mutex */
-> -               goto out_unlocked;
-> +               break;
->         case LOOP_SET_STATUS64:
->                 err = -EPERM;
->                 if ((mode & FMODE_WRITE) || capable(CAP_SYS_ADMIN))
-> @@ -1401,8 +1441,7 @@ static int lo_ioctl(struct block_device *bdev, fmode_t mode,
->                 break;
->         case LOOP_GET_STATUS64:
->                 err = loop_get_status64(lo, (struct loop_info64 __user *) arg);
-> -               /* loop_get_status() unlocks lo_ctl_mutex */
-> -               goto out_unlocked;
-> +               break;
->         case LOOP_SET_CAPACITY:
->                 err = -EPERM;
->                 if ((mode & FMODE_WRITE) || capable(CAP_SYS_ADMIN))
-> @@ -1421,9 +1460,7 @@ static int lo_ioctl(struct block_device *bdev, fmode_t mode,
->         default:
->                 err = lo->ioctl ? lo->ioctl(lo, cmd, arg) : -EINVAL;
->         }
-> -       mutex_unlock(&lo->lo_ctl_mutex);
-> -
-> -out_unlocked:
-> +       unlock_loop();
->         return err;
->  }
->
-> @@ -1524,6 +1561,7 @@ struct compat_loop_info {
->         struct loop_info64 info64;
->         int ret;
->
-> +       lockdep_assert_held(&loop_mutex);
->         ret = loop_info64_from_compat(arg, &info64);
->         if (ret < 0)
->                 return ret;
-> @@ -1537,10 +1575,9 @@ struct compat_loop_info {
->         struct loop_info64 info64;
->         int err;
->
-> -       if (!arg) {
-> -               mutex_unlock(&lo->lo_ctl_mutex);
-> +       lockdep_assert_held(&loop_mutex);
-> +       if (!arg)
->                 return -EINVAL;
-> -       }
->         err = loop_get_status(lo, &info64);
->         if (!err)
->                 err = loop_info64_to_compat(&info64, arg);
-> @@ -1555,20 +1592,16 @@ static int lo_compat_ioctl(struct block_device *bdev, fmode_t mode,
->
->         switch(cmd) {
->         case LOOP_SET_STATUS:
-> -               err = mutex_lock_killable(&lo->lo_ctl_mutex);
-> -               if (!err) {
-> +               err = lock_loop_killable();
-> +               if (!err)
->                         err = loop_set_status_compat(lo,
->                                                      (const struct compat_loop_info __user *)arg);
-> -                       mutex_unlock(&lo->lo_ctl_mutex);
-> -               }
->                 break;
->         case LOOP_GET_STATUS:
-> -               err = mutex_lock_killable(&lo->lo_ctl_mutex);
-> -               if (!err) {
-> +               err = lock_loop_killable();
-> +               if (!err)
->                         err = loop_get_status_compat(lo,
->                                                      (struct compat_loop_info __user *)arg);
-> -                       /* loop_get_status() unlocks lo_ctl_mutex */
-> -               }
->                 break;
->         case LOOP_SET_CAPACITY:
->         case LOOP_CLR_FD:
-> @@ -1583,6 +1616,7 @@ static int lo_compat_ioctl(struct block_device *bdev, fmode_t mode,
->                 err = -ENOIOCTLCMD;
->                 break;
->         }
-> +       unlock_loop();
->         return err;
->  }
->  #endif
-> @@ -1590,37 +1624,30 @@ static int lo_compat_ioctl(struct block_device *bdev, fmode_t mode,
->  static int lo_open(struct block_device *bdev, fmode_t mode)
->  {
->         struct loop_device *lo;
-> -       int err = 0;
-> +       int err = lock_loop_killable();
->
-> -       mutex_lock(&loop_index_mutex);
-> +       if (err)
-> +               return err;
->         lo = bdev->bd_disk->private_data;
-> -       if (!lo) {
-> +       if (!lo)
->                 err = -ENXIO;
-> -               goto out;
-> -       }
-> -
-> -       atomic_inc(&lo->lo_refcnt);
-> -out:
-> -       mutex_unlock(&loop_index_mutex);
-> +       else
-> +               atomic_inc(&lo->lo_refcnt);
-> +       unlock_loop();
->         return err;
->  }
->
->  static void __lo_release(struct loop_device *lo)
->  {
-> -       int err;
-> -
->         if (atomic_dec_return(&lo->lo_refcnt))
->                 return;
-> -
-> -       mutex_lock(&lo->lo_ctl_mutex);
-> +       lockdep_assert_held(&loop_mutex);
->         if (lo->lo_flags & LO_FLAGS_AUTOCLEAR) {
->                 /*
->                  * In autoclear mode, stop the loop thread
->                  * and remove configuration after last close.
->                  */
-> -               err = loop_clr_fd(lo);
-> -               if (!err)
-> -                       return;
-> +               loop_clr_fd(lo);
->         } else if (lo->lo_state == Lo_bound) {
->                 /*
->                  * Otherwise keep thread (if running) and config,
-> @@ -1629,15 +1656,13 @@ static void __lo_release(struct loop_device *lo)
->                 blk_mq_freeze_queue(lo->lo_queue);
->                 blk_mq_unfreeze_queue(lo->lo_queue);
->         }
-> -
-> -       mutex_unlock(&lo->lo_ctl_mutex);
->  }
->
->  static void lo_release(struct gendisk *disk, fmode_t mode)
->  {
-> -       mutex_lock(&loop_index_mutex);
-> +       lock_loop();
->         __lo_release(disk->private_data);
-> -       mutex_unlock(&loop_index_mutex);
-> +       unlock_loop();
->  }
->
->  static const struct block_device_operations lo_fops = {
-> @@ -1676,10 +1701,8 @@ static int unregister_transfer_cb(int id, void *ptr, void *data)
->         struct loop_device *lo = ptr;
->         struct loop_func_table *xfer = data;
->
-> -       mutex_lock(&lo->lo_ctl_mutex);
->         if (lo->lo_encryption == xfer)
->                 loop_release_xfer(lo);
-> -       mutex_unlock(&lo->lo_ctl_mutex);
->         return 0;
->  }
->
-> @@ -1691,8 +1714,14 @@ int loop_unregister_transfer(int number)
->         if (n == 0 || n >= MAX_LO_CRYPT || (xfer = xfer_funcs[n]) == NULL)
->                 return -EINVAL;
->
-> +       /*
-> +        * cleanup_cryptoloop() cannot handle errors because it is called
-> +        * from module_exit(). Thus, don't give up upon SIGKILL here.
-> +        */
-> +       lock_loop();
->         xfer_funcs[n] = NULL;
->         idr_for_each(&loop_index_idr, &unregister_transfer_cb, xfer);
-> +       unlock_loop();
->         return 0;
->  }
->
-> @@ -1860,7 +1889,6 @@ static int loop_add(struct loop_device **l, int i)
->         if (!part_shift)
->                 disk->flags |= GENHD_FL_NO_PART_SCAN;
->         disk->flags |= GENHD_FL_EXT_DEVT;
-> -       mutex_init(&lo->lo_ctl_mutex);
->         atomic_set(&lo->lo_refcnt, 0);
->         lo->lo_number           = i;
->         spin_lock_init(&lo->lo_lock);
-> @@ -1936,20 +1964,19 @@ static int loop_lookup(struct loop_device **l, int i)
->  static struct kobject *loop_probe(dev_t dev, int *part, void *data)
->  {
->         struct loop_device *lo;
-> -       struct kobject *kobj;
-> -       int err;
-> +       struct kobject *kobj = NULL;
-> +       int err = lock_loop_killable();
->
-> -       mutex_lock(&loop_index_mutex);
-> +       *part = 0;
-> +       if (err)
-> +               return NULL;
->         err = loop_lookup(&lo, MINOR(dev) >> part_shift);
->         if (err < 0)
->                 err = loop_add(&lo, MINOR(dev) >> part_shift);
-> -       if (err < 0)
-> -               kobj = NULL;
-> -       else
-> +       if (err >= 0)
->                 kobj = get_disk_and_module(lo->lo_disk);
-> -       mutex_unlock(&loop_index_mutex);
-> +       unlock_loop();
->
-> -       *part = 0;
->         return kobj;
->  }
->
-> @@ -1957,9 +1984,11 @@ static long loop_control_ioctl(struct file *file, unsigned int cmd,
->                                unsigned long parm)
->  {
->         struct loop_device *lo;
-> -       int ret = -ENOSYS;
-> +       int ret = lock_loop_killable();
->
-> -       mutex_lock(&loop_index_mutex);
-> +       if (ret)
-> +               return ret;
-> +       ret = -ENOSYS;
->         switch (cmd) {
->         case LOOP_CTL_ADD:
->                 ret = loop_lookup(&lo, parm);
-> @@ -1973,21 +2002,17 @@ static long loop_control_ioctl(struct file *file, unsigned int cmd,
->                 ret = loop_lookup(&lo, parm);
->                 if (ret < 0)
->                         break;
-> -               ret = mutex_lock_killable(&lo->lo_ctl_mutex);
->                 if (ret)
->                         break;
->                 if (lo->lo_state != Lo_unbound) {
->                         ret = -EBUSY;
-> -                       mutex_unlock(&lo->lo_ctl_mutex);
->                         break;
->                 }
->                 if (atomic_read(&lo->lo_refcnt) > 0) {
->                         ret = -EBUSY;
-> -                       mutex_unlock(&lo->lo_ctl_mutex);
->                         break;
->                 }
->                 lo->lo_disk->private_data = NULL;
-> -               mutex_unlock(&lo->lo_ctl_mutex);
->                 idr_remove(&loop_index_idr, lo->lo_number);
->                 loop_remove(lo);
->                 break;
-> @@ -1997,7 +2022,7 @@ static long loop_control_ioctl(struct file *file, unsigned int cmd,
->                         break;
->                 ret = loop_add(&lo, -1);
->         }
-> -       mutex_unlock(&loop_index_mutex);
-> +       unlock_loop();
->
->         return ret;
->  }
-> @@ -2081,10 +2106,10 @@ static int __init loop_init(void)
->                                   THIS_MODULE, loop_probe, NULL, NULL);
->
->         /* pre-create number of devices given by config or max_loop */
-> -       mutex_lock(&loop_index_mutex);
-> +       lock_loop();
->         for (i = 0; i < nr; i++)
->                 loop_add(&lo, i);
-> -       mutex_unlock(&loop_index_mutex);
-> +       unlock_loop();
->
->         printk(KERN_INFO "loop: module loaded\n");
->         return 0;
-> diff --git a/drivers/block/loop.h b/drivers/block/loop.h
-> index 0f45416..61c6421 100644
-> --- a/drivers/block/loop.h
-> +++ b/drivers/block/loop.h
-> @@ -54,7 +54,6 @@ struct loop_device {
->
->         spinlock_t              lo_lock;
->         int                     lo_state;
-> -       struct mutex            lo_ctl_mutex;
->         struct kthread_worker   worker;
->         struct task_struct      *worker_task;
->         bool                    use_dio;
-> --
-> 1.8.3.1
+>  	/*
+>  	 * See Intel PRM Vol. 3, 20.6.9 (MSR-Bitmap Address). Early manuals
+>  	 * have the write-low and read-high bitmap offsets the wrong way round.
+
+-- 
+  Vitaly
