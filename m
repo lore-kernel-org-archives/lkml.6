@@ -1,129 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751045AbeEBH7y (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 03:59:54 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:38546 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750800AbeEBH7x (ORCPT
+        id S1751317AbeEBIBz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 04:01:55 -0400
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:43766 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750869AbeEBIBx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 03:59:53 -0400
-X-Google-Smtp-Source: AB8JxZpQKkvC9YMduC16fcmOZHEeUtClOmRODGRgTz4XcqtqZE8ShWRigA5Ialtl1gH/J1ba7gsdIQ==
-Subject: Re: [PATCH v2 0/5] ALSA: xen-front: Add Xen para-virtualized frontend
- driver
-To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org, jgross@suse.com,
-        boris.ostrovsky@oracle.com, konrad.wilk@oracle.com, perex@perex.cz,
-        tiwai@suse.com
-Cc: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20180416062453.24743-1-andr2000@gmail.com>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <632c83d7-feb7-bc36-bf4d-22145dfeccb0@gmail.com>
-Date: Wed, 2 May 2018 10:59:49 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 2 May 2018 04:01:53 -0400
+X-Google-Smtp-Source: AB8JxZrOs7MD1T/1TB8z3Z7dn1RaImBZ10BR7z3WggrV0BM7nDtMyD9O0QLqgsvrYDidgYA8MBnjXd0IoO5Wj5gifUQ=
 MIME-Version: 1.0
-In-Reply-To: <20180416062453.24743-1-andr2000@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+In-Reply-To: <20180406195231.14868-1-malat@debian.org>
+References: <20180406195231.14868-1-malat@debian.org>
+From: Mathieu Malaterre <malat@debian.org>
+Date: Wed, 2 May 2018 10:01:32 +0200
+X-Google-Sender-Auth: zPiWQuklSk0KDRYMFdyPz03Te40
+Message-ID: <CA+7wUsxOsU6pw3wGt9VTj=wBf6uW6wTUdydU5jJQw+STVBiJ8Q@mail.gmail.com>
+Subject: Re: [PATCH] fs: Add MODULE_SOFTDEP declarations for hard-coded crypto drivers
+To: "Theodore Ts'o" <tytso@mit.edu>
+Cc: Milan Kupcevic <milan@debian.org>, Ben Hutchings <ben@decadent.org.uk>,
+        Mathieu Malaterre <malat@debian.org>,
+        Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Gentle reminder...
+On Fri, Apr 6, 2018 at 9:52 PM, Mathieu Malaterre <malat@debian.org> wrote:
+> This helps initramfs builders and other tools to find the full
+> dependencies of a module.
 
-I think that Xen side comments are already there and still I miss
+Replaced by:
 
-some input from ALSA community on patch #5.
+https://github.com/torvalds/linux/commit/7ef79ad521367
 
-Thank you,
-
-Oleksandr
-
-
-On 04/16/2018 09:24 AM, Oleksandr Andrushchenko wrote:
-> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+> Debian on powerpc (ppc32) still uses yaboot as default boot loader. Using a
+> default installation (debian-installer) 64bit and metadata_csum feature are
+> not setup in ext4. This is discussed in more details at:
 >
-> Please note: this patch series depends on [3].
+> https://bugs.debian.org/825110#81
 >
-> This patch series adds support for Xen [1] para-virtualized
-> sound frontend driver. It implements the protocol from
-> include/xen/interface/io/sndif.h with the following limitations:
-> - mute/unmute is not supported
-> - get/set volume is not supported
-> Volume control is not supported for the reason that most of the
-> use-cases (at the moment) are based on scenarious where
-> unprivileged OS (e.g. Android, AGL etc) use software mixers.
+> and implemented here:
 >
-> Both capture and playback are supported.
+> https://anonscm.debian.org/cgit/d-i/partman-ext3.git/patch/?id=f87dc92157262de1ad8dd3f2343436f08271b4dc
 >
-> Corresponding backend, implemented as a user-space application, can be
-> found at [2].
+> This means that building the kernel as default debian package:
 >
-> Thank you,
-> Oleksandr
+>   make ARCH=powerpc XYZ_defconfig
+>   make -j8 ARCH=powerpc CROSS_COMPILE=powerpc-linux-gnu- bindeb-pkg
 >
-> Changes since v1:
-> *****************
+> Will lead to the following boot failure (initramfs prompt):
 >
-> 1. Moved driver from sound/drivers to sound/xen
+>   /dev/sda3: clean, 127679/305216 files, 11128559/1220703 blocks done.
+>   [    5.592819] EXT4-fs (sda3): Cannot load crc32c driver.
+>   mount: mounting /dev/sda3 on /root failed: No such file or directory
 >
-> 2. Coding style changes to better meet Linux Kernel
+> Link: https://bugs.debian.org/819725
+> Link: https://salsa.debian.org/kernel-team/linux/blob/master/debian/patches/bugfix/all/fs-add-module_softdep-declarations-for-hard-coded-cr.patch
+> Suggested-by: Ben Hutchings <ben@decadent.org.uk>
+> Cc: Milan Kupcevic <milan@debian.org>
+> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+> ---
+>  fs/ext4/super.c | 1 +
+>  1 file changed, 1 insertion(+)
 >
-> 3. Added explicit back and front synchronization
->     In order to provide explicit synchronization between backend and
->     frontend the following changes are introduced in the protocol:
->      - add new ring buffer for sending asynchronous events from
->        backend to frontend to report number of bytes played by the
->        frontend (XENSND_EVT_CUR_POS)
->      - introduce trigger events for playback control: start/stop/pause/resume
->      - add "req-" prefix to event-channel and ring-ref to unify naming
->        of the Xen event channels for requests and events
->
-> 4. Added explicit back and front parameter negotiation
->     In order to provide explicit stream parameter negotiation between
->     backend and frontend the following changes are introduced in the protocol:
->     add XENSND_OP_HW_PARAM_QUERY request to read/update
->     configuration space for the parameters given: request passes
->     desired parameter's intervals/masks and the response to this request
->     returns allowed min/max intervals/masks to be used.
->
-> [1] https://xenproject.org/
-> [2] https://github.com/xen-troops/snd_be
-> [3] https://lkml.org/lkml/2018/4/12/522
->
-> Oleksandr Andrushchenko (5):
->    ALSA: xen-front: Introduce Xen para-virtualized sound frontend driver
->    ALSA: xen-front: Read sound driver configuration from Xen store
->    ALSA: xen-front: Implement Xen event channel handling
->    ALSA: xen-front: Implement handling of shared buffers
->    ALSA: xen-front: Implement ALSA virtual sound driver
->
->   sound/Kconfig                     |   2 +
->   sound/Makefile                    |   2 +-
->   sound/xen/Kconfig                 |  10 +
->   sound/xen/Makefile                |   9 +
->   sound/xen/xen_snd_front.c         | 410 +++++++++++++++++++
->   sound/xen/xen_snd_front.h         |  57 +++
->   sound/xen/xen_snd_front_alsa.c    | 830 ++++++++++++++++++++++++++++++++++++++
->   sound/xen/xen_snd_front_alsa.h    |  23 ++
->   sound/xen/xen_snd_front_cfg.c     | 517 ++++++++++++++++++++++++
->   sound/xen/xen_snd_front_cfg.h     |  46 +++
->   sound/xen/xen_snd_front_evtchnl.c | 478 ++++++++++++++++++++++
->   sound/xen/xen_snd_front_evtchnl.h |  92 +++++
->   sound/xen/xen_snd_front_shbuf.c   | 193 +++++++++
->   sound/xen/xen_snd_front_shbuf.h   |  36 ++
->   14 files changed, 2704 insertions(+), 1 deletion(-)
->   create mode 100644 sound/xen/Kconfig
->   create mode 100644 sound/xen/Makefile
->   create mode 100644 sound/xen/xen_snd_front.c
->   create mode 100644 sound/xen/xen_snd_front.h
->   create mode 100644 sound/xen/xen_snd_front_alsa.c
->   create mode 100644 sound/xen/xen_snd_front_alsa.h
->   create mode 100644 sound/xen/xen_snd_front_cfg.c
->   create mode 100644 sound/xen/xen_snd_front_cfg.h
->   create mode 100644 sound/xen/xen_snd_front_evtchnl.c
->   create mode 100644 sound/xen/xen_snd_front_evtchnl.h
->   create mode 100644 sound/xen/xen_snd_front_shbuf.c
->   create mode 100644 sound/xen/xen_snd_front_shbuf.h
+> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> index 185f7e61f4cf..10bda040e78f 100644
+> --- a/fs/ext4/super.c
+> +++ b/fs/ext4/super.c
+> @@ -5886,5 +5886,6 @@ static void __exit ext4_exit_fs(void)
+>  MODULE_AUTHOR("Remy Card, Stephen Tweedie, Andrew Morton, Andreas Dilger, Theodore Ts'o and others");
+>  MODULE_DESCRIPTION("Fourth Extended Filesystem");
+>  MODULE_LICENSE("GPL");
+> +MODULE_SOFTDEP("pre: crypto-crc32c");
+>  module_init(ext4_init_fs)
+>  module_exit(ext4_exit_fs)
+> --
+> 2.11.0
 >
