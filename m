@@ -1,24 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751853AbeEBRtC (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 13:49:02 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:47041 "EHLO
+        id S1751873AbeEBRtY (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 13:49:24 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:48323 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751287AbeEBRtA (ORCPT
+        with ESMTP id S1751617AbeEBRtT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 13:49:00 -0400
-Date: Wed, 2 May 2018 10:48:35 -0700
-From: tip-bot for Takashi Iwai <tipbot@zytor.com>
-Message-ID: <tip-ffef80ecf89f0a883e976534a62db04059d3a4f6@git.kernel.org>
-Cc: mingo@kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org,
-        hpa@zytor.com, tglx@linutronix.de, acme@redhat.com, tiwai@suse.de
-Reply-To: peterz@infradead.org, mingo@kernel.org, linux-kernel@vger.kernel.org,
-        tiwai@suse.de, acme@redhat.com, tglx@linutronix.de, hpa@zytor.com
-In-Reply-To: <20180424150456.17353-1-tiwai@suse.de>
-References: <20180424150456.17353-1-tiwai@suse.de>
+        Wed, 2 May 2018 13:49:19 -0400
+Date: Wed, 2 May 2018 10:49:07 -0700
+From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-qsgbxfyaohc80c9ma049dubm@git.kernel.org>
+Cc: dsahern@gmail.com, adrian.hunter@intel.com, jolsa@kernel.org,
+        hpa@zytor.com, tglx@linutronix.de, acme@redhat.com,
+        linux-kernel@vger.kernel.org, wangnan0@huawei.com, mingo@kernel.org,
+        namhyung@kernel.org
+Reply-To: linux-kernel@vger.kernel.org, acme@redhat.com, wangnan0@huawei.com,
+        mingo@kernel.org, namhyung@kernel.org, hpa@zytor.com,
+        tglx@linutronix.de, adrian.hunter@intel.com, jolsa@kernel.org,
+        dsahern@gmail.com
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf Documentation: Support for asciidoctor
-Git-Commit-ID: ffef80ecf89f0a883e976534a62db04059d3a4f6
+Subject: [tip:perf/core] perf machine: Introduce machine__kernel_maps()
+Git-Commit-ID: 68a741868a0612408a46fda4c06663315d40c544
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -31,156 +33,109 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  ffef80ecf89f0a883e976534a62db04059d3a4f6
-Gitweb:     https://git.kernel.org/tip/ffef80ecf89f0a883e976534a62db04059d3a4f6
-Author:     Takashi Iwai <tiwai@suse.de>
-AuthorDate: Tue, 24 Apr 2018 17:04:56 +0200
+Commit-ID:  68a741868a0612408a46fda4c06663315d40c544
+Gitweb:     https://git.kernel.org/tip/68a741868a0612408a46fda4c06663315d40c544
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Tue, 24 Apr 2018 17:06:25 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Thu, 26 Apr 2018 13:47:10 -0300
 
-perf Documentation: Support for asciidoctor
+perf machine: Introduce machine__kernel_maps()
 
-The asciidoc package seems behind the recent big wave of python3
-conversion, and we were advised to switch to asciidoctor instead.  It's
-almost compatible but some extensions used for perf documentation don't
-work with it.  Here is the patch to cover them, and add the proper
-support for asciidoctor.
+That returns the a data structure contained the ordered list of kernel
+modules + the main kernel maps, one more step in removing the
+MAP__{FUNCTION,VARIABLE} split.
 
-Pass USE_ASCIIDOCTOR=yes to make for using asciidoctor instead of
-asciidoc.  The man source and manual attributes are passed via command
-options.  The support for these attributes have been fixed in the
-latest asciidoctor code.
-
-Since asciidoctor can covert to a man page and an HTML directly, we
-can omit the dependency on xmlto when USE_ASCIIDOCTOR is set.
-
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180424150456.17353-1-tiwai@suse.de
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-qsgbxfyaohc80c9ma049dubm@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/Documentation/Makefile                  | 29 ++++++++++++++++++----
- tools/perf/Documentation/asciidoctor-extensions.rb | 29 ++++++++++++++++++++++
- 2 files changed, 53 insertions(+), 5 deletions(-)
+ tools/perf/tests/vmlinux-kallsyms.c |  4 ++--
+ tools/perf/util/event.c             |  3 +--
+ tools/perf/util/machine.h           | 12 ++++++++++++
+ tools/perf/util/probe-event.c       |  3 +--
+ 4 files changed, 16 insertions(+), 6 deletions(-)
 
-diff --git a/tools/perf/Documentation/Makefile b/tools/perf/Documentation/Makefile
-index db11478e30b4..42261a9b280e 100644
---- a/tools/perf/Documentation/Makefile
-+++ b/tools/perf/Documentation/Makefile
-@@ -47,7 +47,8 @@ man5dir=$(mandir)/man5
- man7dir=$(mandir)/man7
+diff --git a/tools/perf/tests/vmlinux-kallsyms.c b/tools/perf/tests/vmlinux-kallsyms.c
+index d80416e07f4b..9bb84fe365e2 100644
+--- a/tools/perf/tests/vmlinux-kallsyms.c
++++ b/tools/perf/tests/vmlinux-kallsyms.c
+@@ -20,7 +20,7 @@ int test__vmlinux_matches_kallsyms(struct test *test __maybe_unused, int subtest
+ 	struct map *kallsyms_map, *vmlinux_map, *map;
+ 	struct machine kallsyms, vmlinux;
+ 	enum map_type type = MAP__FUNCTION;
+-	struct maps *maps = &vmlinux.kmaps.maps[type];
++	struct maps *maps = machine__kernel_maps(&vmlinux);
+ 	u64 mem_start, mem_end;
+ 	bool header_printed;
  
- ASCIIDOC=asciidoc
--ASCIIDOC_EXTRA = --unsafe
-+ASCIIDOC_EXTRA = --unsafe -f asciidoc.conf
-+ASCIIDOC_HTML = xhtml11
- MANPAGE_XSL = manpage-normal.xsl
- XMLTO_EXTRA =
- INSTALL?=install
-@@ -55,6 +56,14 @@ RM ?= rm -f
- DOC_REF = origin/man
- HTML_REF = origin/html
+@@ -228,7 +228,7 @@ next_pair:
  
-+ifdef USE_ASCIIDOCTOR
-+ASCIIDOC = asciidoctor
-+ASCIIDOC_EXTRA = -a compat-mode
-+ASCIIDOC_EXTRA += -I. -rasciidoctor-extensions
-+ASCIIDOC_EXTRA += -a mansource="perf" -a manmanual="perf Manual"
-+ASCIIDOC_HTML = xhtml5
-+endif
+ 	header_printed = false;
+ 
+-	maps = &kallsyms.kmaps.maps[type];
++	maps = machine__kernel_maps(&kallsyms);
+ 
+ 	for (map = maps__first(maps); map; map = map__next(map)) {
+ 		if (!map->priv) {
+diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
+index 9d94c59046d1..542bd5b79e48 100644
+--- a/tools/perf/util/event.c
++++ b/tools/perf/util/event.c
+@@ -464,8 +464,7 @@ int perf_event__synthesize_modules(struct perf_tool *tool,
+ {
+ 	int rc = 0;
+ 	struct map *pos;
+-	struct map_groups *kmaps = &machine->kmaps;
+-	struct maps *maps = &kmaps->maps[MAP__FUNCTION];
++	struct maps *maps = machine__kernel_maps(machine);
+ 	union perf_event *event = zalloc((sizeof(event->mmap) +
+ 					  machine->id_hdr_size));
+ 	if (event == NULL) {
+diff --git a/tools/perf/util/machine.h b/tools/perf/util/machine.h
+index 66cc200ef86f..92303ac718a6 100644
+--- a/tools/perf/util/machine.h
++++ b/tools/perf/util/machine.h
+@@ -70,12 +70,24 @@ struct map *__machine__kernel_map(struct machine *machine, enum map_type type)
+ 	return machine->vmlinux_maps[type];
+ }
+ 
++/*
++ * The main kernel (vmlinux) map
++ */
+ static inline
+ struct map *machine__kernel_map(struct machine *machine)
+ {
+ 	return __machine__kernel_map(machine, MAP__FUNCTION);
+ }
+ 
++/*
++ * kernel (the one returned by machine__kernel_map()) plus kernel modules maps
++ */
++static inline
++struct maps *machine__kernel_maps(struct machine *machine)
++{
++	return &machine->kmaps.maps[MAP__FUNCTION];
++}
 +
- infodir?=$(prefix)/share/info
- MAKEINFO=makeinfo
- INSTALL_INFO=install-info
-@@ -73,10 +82,12 @@ ifeq ($(_tmp_tool_path),)
- 	missing_tools = $(ASCIIDOC)
- endif
+ int machine__get_kernel_start(struct machine *machine);
  
-+ifndef USE_ASCIIDOCTOR
- _tmp_tool_path := $(call get-executable,$(XMLTO))
- ifeq ($(_tmp_tool_path),)
- 	missing_tools += $(XMLTO)
- endif
-+endif
+ static inline u64 machine__kernel_start(struct machine *machine)
+diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
+index d5e2516d5981..50139764c6d7 100644
+--- a/tools/perf/util/probe-event.c
++++ b/tools/perf/util/probe-event.c
+@@ -161,8 +161,7 @@ static int kernel_get_symbol_address_by_name(const char *name, u64 *addr,
  
- #
- # For asciidoc ...
-@@ -264,9 +275,17 @@ clean:
+ static struct map *kernel_get_module_map(const char *module)
+ {
+-	struct map_groups *grp = &host_machine->kmaps;
+-	struct maps *maps = &grp->maps[MAP__FUNCTION];
++	struct maps *maps = machine__kernel_maps(host_machine);
+ 	struct map *pos;
  
- $(MAN_HTML): $(OUTPUT)%.html : %.txt
- 	$(QUIET_ASCIIDOC)$(RM) $@+ $@ && \
--	$(ASCIIDOC) -b xhtml11 -d manpage -f asciidoc.conf \
-+	$(ASCIIDOC) -b $(ASCIIDOC_HTML) -d manpage \
-+		$(ASCIIDOC_EXTRA) -aperf_version=$(PERF_VERSION) -o $@+ $< && \
-+	mv $@+ $@
-+
-+ifdef USE_ASCIIDOCTOR
-+$(OUTPUT)%.1 $(OUTPUT)%.5 $(OUTPUT)%.7 : $(OUTPUT)%.txt
-+	$(QUIET_ASCIIDOC)$(RM) $@+ $@ && \
-+	$(ASCIIDOC) -b manpage -d manpage \
- 		$(ASCIIDOC_EXTRA) -aperf_version=$(PERF_VERSION) -o $@+ $< && \
- 	mv $@+ $@
-+endif
- 
- $(OUTPUT)%.1 $(OUTPUT)%.5 $(OUTPUT)%.7 : $(OUTPUT)%.xml
- 	$(QUIET_XMLTO)$(RM) $@ && \
-@@ -274,7 +293,7 @@ $(OUTPUT)%.1 $(OUTPUT)%.5 $(OUTPUT)%.7 : $(OUTPUT)%.xml
- 
- $(OUTPUT)%.xml : %.txt
- 	$(QUIET_ASCIIDOC)$(RM) $@+ $@ && \
--	$(ASCIIDOC) -b docbook -d manpage -f asciidoc.conf \
-+	$(ASCIIDOC) -b docbook -d manpage \
- 		$(ASCIIDOC_EXTRA) -aperf_version=$(PERF_VERSION) -o $@+ $< && \
- 	mv $@+ $@
- 
-@@ -321,13 +340,13 @@ howto-index.txt: howto-index.sh $(wildcard howto/*.txt)
- 	mv $@+ $@
- 
- $(patsubst %,%.html,$(ARTICLES)) : %.html : %.txt
--	$(QUIET_ASCIIDOC)$(ASCIIDOC) -b xhtml11 $*.txt
-+	$(QUIET_ASCIIDOC)$(ASCIIDOC) -b $(ASCIIDOC_HTML) $*.txt
- 
- WEBDOC_DEST = /pub/software/tools/perf/docs
- 
- $(patsubst %.txt,%.html,$(wildcard howto/*.txt)): %.html : %.txt
- 	$(QUIET_ASCIIDOC)$(RM) $@+ $@ && \
--	sed -e '1,/^$$/d' $< | $(ASCIIDOC) -b xhtml11 - >$@+ && \
-+	sed -e '1,/^$$/d' $< | $(ASCIIDOC) -b $(ASCIIDOC_HTML) - >$@+ && \
- 	mv $@+ $@
- 
- # UNIMPLEMENTED
-diff --git a/tools/perf/Documentation/asciidoctor-extensions.rb b/tools/perf/Documentation/asciidoctor-extensions.rb
-new file mode 100644
-index 000000000000..d148fe95c0c4
---- /dev/null
-+++ b/tools/perf/Documentation/asciidoctor-extensions.rb
-@@ -0,0 +1,29 @@
-+require 'asciidoctor'
-+require 'asciidoctor/extensions'
-+
-+module Perf
-+  module Documentation
-+    class LinkPerfProcessor < Asciidoctor::Extensions::InlineMacroProcessor
-+      use_dsl
-+
-+      named :chrome
-+
-+      def process(parent, target, attrs)
-+        if parent.document.basebackend? 'html'
-+          %(<a href="#{target}.html">#{target}(#{attrs[1]})</a>\n)
-+        elsif parent.document.basebackend? 'manpage'
-+          "#{target}(#{attrs[1]})"
-+        elsif parent.document.basebackend? 'docbook'
-+          "<citerefentry>\n" \
-+            "<refentrytitle>#{target}</refentrytitle>" \
-+            "<manvolnum>#{attrs[1]}</manvolnum>\n" \
-+          "</citerefentry>\n"
-+        end
-+      end
-+    end
-+  end
-+end
-+
-+Asciidoctor::Extensions.register do
-+  inline_macro Perf::Documentation::LinkPerfProcessor, :linkperf
-+end
+ 	/* A file path -- this is an offline module */
