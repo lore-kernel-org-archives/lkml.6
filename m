@@ -1,536 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751308AbeEBHkt (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 03:40:49 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:41406 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750945AbeEBHkm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 03:40:42 -0400
+        id S1751343AbeEBHk4 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 03:40:56 -0400
+Received: from mail-ve1eur01on0126.outbound.protection.outlook.com ([104.47.1.126]:59104
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751036AbeEBHko (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 03:40:44 -0400
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=peda@axentia.se;
+From: Peter Rosin <peda@axentia.se>
+To: linux-kernel@vger.kernel.org
+Cc: Peter Rosin <peda@axentia.se>, Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Sandy Huang <hjc@rock-chips.com>,
+        =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Vincent Abriou <vincent.abriou@st.com>,
+        dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: [PATCH 0/3] drm: fix some bridge api misunderstandings
+Date: Wed,  2 May 2018 09:40:22 +0200
+Message-Id: <20180502074025.12421-1-peda@axentia.se>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Wed, 02 May 2018 13:10:40 +0530
-From: Vikash Garodia <vgarodia@codeaurora.org>
-To: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 26/28] venus: implementing multi-stream support
-In-Reply-To: <20180424124436.26955-27-stanimir.varbanov@linaro.org>
-References: <20180424124436.26955-1-stanimir.varbanov@linaro.org>
- <20180424124436.26955-27-stanimir.varbanov@linaro.org>
-Message-ID: <d3611ce941e71fd901cce70da89f9ab4@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain
+X-Originating-IP: [85.226.244.23]
+X-ClientProxiedBy: HE1PR07CA0036.eurprd07.prod.outlook.com
+ (2603:10a6:7:66::22) To VI1PR0202MB2784.eurprd02.prod.outlook.com
+ (2603:10a6:800:db::9)
+X-MS-PublicTrafficType: Email
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(5600026)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:VI1PR0202MB2784;
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0202MB2784;3:Ji00veqRLrBFs+O1YSuySEj07aVoPdecg9dd+xkjDOuu0hX2n+cYOF03sv2kZEdSE5HMUjknbfUv/LyJgoaDAN5vHEpXC3Pzid4/+on807n1UO2Gk29H7kj4ZHbLOo+V14dZtS5BKgH0069LQnGvfD50g2OB9OGkEReCzvSILc1BUvhtUj206zENrvw1psLjfM3jZCZkN0XDB8IKgmdkPU0E8EaFSJLPQQiJoHIpb3PPry76Hkqg6/GmIjv5A5Py;25:J0yDP3/EJ3R/wkSTo1Mf5SH+kCPU91BevnxK8jGzJ6IZrI7RSEzvROCXHdbpb0+oDJ9jpDr76lJpbEYbUXtOtVLbh+/sEd+ezEFRkZqQKfX5whYPuEcD7syLNRnmcuL5St+3BVuV6QaAvxh2e2O1T96mqfd76t3ZsT0JxUq2wNMcUNBSBLyRhWO46sf6xlTaOghtzFf9isA/6w4WI4mI93/DNQVQED17OxXstznu7nTgg8YbHVNF5OM1SseiStOS+cD0yJWphnrE5hptzNNQcFIy43koE1hc5tSmFMWiQIlfEsvOsZDiwnp42zZ2iSgeCo76yspGw3IycHZVQ5OcdQ==;31:l7WoqEAfhBtPMv8hC1jaTTXm1G+NLUf04vdyStMAGEb4FVFs0j0KskRxP2zh9iQj3tMgMK9aJshRR9MH8/Q9Y+eA4C8tfyaEq1LLA4xW0tV7WGAgYo/UOFg3OEc478yvAY16BISw3vC7xb0NUedBJonMNDanjrAxEUoiWj6v2/uAvYlle0zr9h3av7dxvCE1UPas9b/x0A9sZNFaAV4JqBMeCS1vYPHwfcxzG17bPCk=
+X-MS-TrafficTypeDiagnostic: VI1PR0202MB2784:
+X-Microsoft-Antispam-PRVS: <VI1PR0202MB27848F6052716C23110D4A04BC800@VI1PR0202MB2784.eurprd02.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231254)(944501410)(52105095)(6041310)(20161123562045)(2016111802025)(20161123560045)(20161123564045)(20161123558120)(6043046)(6072148)(201708071742011);SRVR:VI1PR0202MB2784;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0202MB2784;
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0202MB2784;4:beQ/nhCqtXdb0AKLjZTKMnrpu9EhhrHtg7sVLb5O0Jbh+2aZU2y2W/iJxc73QtVRdLcjHffxcPelbgq05VLhmD0t55QruJXdV5OyPUhEMQUm80E0sZG3fBHidyFYzvPHsEJ3wBOJlZpahw7F4UCj720zWN2r3A+uvSGvbHBuZwcUWvVLp7BDE2t3A5f1/g5CcM3Oo1Wv3QpvbwJ/PAyubDlhBTGaW8d3bCelvYq4+vFlmAHBMREpfThzAuGaLrkFjdow4yjSbRbqqWFGObNfvg==
+X-Forefront-PRVS: 06607E485E
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(376002)(346002)(366004)(39830400003)(39380400002)(199004)(189003)(105586002)(36756003)(7416002)(50226002)(86362001)(81166006)(5660300001)(81156014)(478600001)(50466002)(48376002)(8676002)(8936002)(2906002)(106356001)(6666003)(6486002)(68736007)(7736002)(186003)(305945005)(6116002)(1076002)(16526019)(6916009)(3846002)(2351001)(5890100001)(74482002)(2361001)(97736004)(26005)(53936002)(66066001)(47776003)(54906003)(6512007)(386003)(6506007)(16586007)(316002)(4326008)(25786009)(486006)(476003)(956004)(2616005)(52116002)(51416003)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0202MB2784;H:orc.pedanet;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR0202MB2784;23:kCUzSQgcgAlWf/pVn6x5XP8kKxKTAo17qCiXe5z?=
+ =?us-ascii?Q?ZFbrTSHCkECgDXaqTxz3kkdJvrPq2CGUwHdKNEbaJo8c0u6OwR5QRUHV2tWw?=
+ =?us-ascii?Q?WgEW35LO10uROC7qOWOHzNzHnMwk4885mGHvRTYWsuSC1i7DW+fHmaP2iQ93?=
+ =?us-ascii?Q?eHNsWX/UCPBTqvH3byglHhtXPx9VwBBax1i3vpSkIRr+1zTVgavHEUmjsg3h?=
+ =?us-ascii?Q?e5xgXaFlvZbOEN3QtHP7jQr4eixKljqkP2OJMPd5M1h8yx6+kDGBNdhr7dmC?=
+ =?us-ascii?Q?0lLw7Fpxho7r79jP6BOjxDaD110lPtL4+n2XXlvbockjocvKqG3vpqkRqMWa?=
+ =?us-ascii?Q?aZRFzDaT21r9vLVrNqnDk3Z688BCOIajbevrFjtmk65JojGlF7TBKCReCyz8?=
+ =?us-ascii?Q?dlJpxhx6d6h1WJTYgJacuJgefnEpj0Za6vB2hZXzn/eVtF9ILkkU4DHJBawp?=
+ =?us-ascii?Q?awLQXjtAPbDkThyBVMK1Cnp09UuJXuiG5+9swkXjPDJCC7WfmriJIYHRu3QT?=
+ =?us-ascii?Q?GXzlunTG1CwubD4sgonBaRtq9ZZAsYpJwS3piPJ5aLw4jO9AjBpGXv3s3ex2?=
+ =?us-ascii?Q?0aIQYG8NxNgE+EYjZHIMl5g51qtsHLhbJIXTaML34BxYzhJIB6bXi84UeNsH?=
+ =?us-ascii?Q?nXrJwLv1yir7eewFGNiCVsITegj8Lx5znyPs6mhV2dDoTY74xixt8Fdxw1vJ?=
+ =?us-ascii?Q?00wLJidCRR4X1eoevQML3EKOS3aadDFj0hi+iSnZfepq1zibyz/o317qd605?=
+ =?us-ascii?Q?2j+bh90TsYJZh6kdhjBrEQpq0kyqIwUqVViG9vWxLTeuUhyMj1ntH43lPa7s?=
+ =?us-ascii?Q?LLH7VS5nUxL8reE3Qa5eydXZUZZ7mxvsHMihaCxmsmZdn7jYkPeIkePNeWAs?=
+ =?us-ascii?Q?q/IOr79ieI/rMUzpO3XLdnI881neJX0F3aAypLxDXBnt2+3awa/WJFmpsh/T?=
+ =?us-ascii?Q?0pWNLmVsYJLS+KfsjmZd7XjAKz444PYyEUCtZ+4CNqAbCk1+hGvY7whl3HCv?=
+ =?us-ascii?Q?5V5m38Ij5eqTs/U5kNh6ZsmyxlmNvbPcBCg3feMJ6cQL8Z9DbzuzHqksouee?=
+ =?us-ascii?Q?qAaVcDTBKgkQ7tfnYiAUHpi+6kTbKUWQmVEKXlR+0GeuZ2AlKwwvEU7onrpw?=
+ =?us-ascii?Q?Lelkhj0l6rOXcGWr/cLiHfURNyd+Ek8DoOBsVndugmia32Kmy3gbQ2phDKNy?=
+ =?us-ascii?Q?re18Kr1clBTO+aMwpmY+qgZtzcuGSSVmKlnIKTgMQUqvRLr96NpUi9453Mtf?=
+ =?us-ascii?Q?dPxnlIU/If6W8+T/NlEvVohsiz6PNal7yyugH2o0IkllUbB+msEPgidKEPEj?=
+ =?us-ascii?Q?MyA=3D=3D?=
+X-Microsoft-Antispam-Message-Info: ll77goVjKi3ewn72w2UL4mhu9Nj3AN/YjkQCnouVKWXPrDn6mmWQOMTBfB5CLp+gioDbBCjuP4gsd8vdbpuQt39wlLvp8yVR9HGDsHRnzxvlR0vwsqLE3vAwpLtBSPrAeqLUFlb8Of976Z+EPxG1ZSt3OE2O3NtLNIXwwIVpyTg43YgEYfNOFdfN9UbChqmh
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0202MB2784;6:XHxac9arl8NwrGyg2+9/gfnjHUqRgcwvVpr+l99mH2raYkd5k9fTusPnwMMqr/PhyFOTf8L3AEGDtsX+3r7tAPSFv0k4R1Hi6dh8Cx5iM7K+jiOdQX/Z9UlvJmRbsyPD/1KQViP0zDEWsDZoM4ri8UVlFWGRVUeB0RU7X+pPYEGNVqgw90i6ijY18m/lpu4ae48/a9aqmJVd6CW7UySI19RE09k3/p772sTyIQvr/pbH+pwnxogbC0ZSCfN/QT9nXa4OZep37I3tAhSl+vYFeAjnBC0POb4kAwqk5t+Ub1WHnj/E/1esCwUGnrZ2qClDZAVpbB4bzsIl38vgEBsh9kM5kE0EWutIyyxFqMKhVMZZzg/RTDXZAc9etBm2GfLQ2l7oKJ12Cs4qg6eVF38z7Y/bkQ3ZXXZmAiau8/e7Lcj29ZRMkHh+IVEprM16CLwf6Umgcv2S1oF9FwzsxvI44w==;5:eHSFRUmP8R8BShioY/ZhjFsboSJsFzRMcqXFYU3elU/iPG6Bso49diYpNM46d06iEN0SGEcAdLBVI5C5UcRnstlcaobbIyiS1QEhCaPuY7XHvfWSc7UxlraK+DyQ233u+h5FnMRq2v4W8Brm8lUsxq2VEAvKi0m8uL/A0ou8Zow=;24:Yhbm+tsRNztlPkzKTF9goRuFy69XaAsD5HJZ9gLes2Mwpr9NRgAyorJotciziTChyvKaG2SJApQUKLuJ49sayaNgygIcDo9oFOtL+pStE2I=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0202MB2784;7:M66JDIdw7hHCnoaurCV7UPVVa080g2y89F/Y1kMiUaPFO0SElem+dCTpacQjzbcDe0Moi5WnzT2NrOuXa8ZlETkg62To0qEVIbziqKFcAtybfmyD2r08sAbSBY/6mIo1xHiEgNZAkE0DjgIq5OvI5ugrhgcSoS+BkrWC74FGcSWBl0cLpUB5cfCvVKMhX3D25/UdaHl/S9SzyTudx0cyjVZVNj3zaRcGu/tt+zhnwQjkvMCthh2dEdT/T9HyUWOa
+X-MS-Office365-Filtering-Correlation-Id: a1478653-26d2-4975-7a9f-08d5b00000fb
+X-OriginatorOrg: axentia.se
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 May 2018 07:40:39.3887 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a1478653-26d2-4975-7a9f-08d5b00000fb
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0202MB2784
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Stanimir,
+Hi!
 
-On 2018-04-24 18:14, Stanimir Varbanov wrote:
-> This is implementing a multi-stream decoder support. The multi
-> stream gives an option to use the secondary decoder output
-> with different raw format (or the same in case of crop).
-> 
-> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-> ---
->  drivers/media/platform/qcom/venus/core.h    |   1 +
->  drivers/media/platform/qcom/venus/helpers.c | 204 
-> +++++++++++++++++++++++++++-
->  drivers/media/platform/qcom/venus/helpers.h |   6 +
->  drivers/media/platform/qcom/venus/vdec.c    |  91 ++++++++++++-
->  drivers/media/platform/qcom/venus/venc.c    |   1 +
->  5 files changed, 299 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/media/platform/qcom/venus/core.h
-> b/drivers/media/platform/qcom/venus/core.h
-> index 4d6c05f156c4..85e66e2dd672 100644
-> --- a/drivers/media/platform/qcom/venus/core.h
-> +++ b/drivers/media/platform/qcom/venus/core.h
-> @@ -259,6 +259,7 @@ struct venus_inst {
->  	struct list_head list;
->  	struct mutex lock;
->  	struct venus_core *core;
-> +	struct list_head dpbbufs;
->  	struct list_head internalbufs;
->  	struct list_head registeredbufs;
->  	struct list_head delayed_process;
-> diff --git a/drivers/media/platform/qcom/venus/helpers.c
-> b/drivers/media/platform/qcom/venus/helpers.c
-> index ed569705ecac..87dcf9973e6f 100644
-> --- a/drivers/media/platform/qcom/venus/helpers.c
-> +++ b/drivers/media/platform/qcom/venus/helpers.c
-> @@ -85,6 +85,112 @@ bool venus_helper_check_codec(struct venus_inst
-> *inst, u32 v4l2_pixfmt)
->  }
->  EXPORT_SYMBOL_GPL(venus_helper_check_codec);
-> 
-> +static int venus_helper_queue_dpb_bufs(struct venus_inst *inst)
-> +{
-> +	struct intbuf *buf;
-> +	int ret = 0;
-> +
-> +	if (list_empty(&inst->dpbbufs))
-> +		return 0;
-> +
-> +	list_for_each_entry(buf, &inst->dpbbufs, list) {
-> +		struct hfi_frame_data fdata;
-> +
-> +		memset(&fdata, 0, sizeof(fdata));
-> +		fdata.alloc_len = buf->size;
-> +		fdata.device_addr = buf->da;
-> +		fdata.buffer_type = buf->type;
-> +
-> +		ret = hfi_session_process_buf(inst, &fdata);
-> +		if (ret)
-> +			goto fail;
-> +	}
-> +
-> +fail:
-> +	return ret;
-> +}
-> +
-> +int venus_helper_free_dpb_bufs(struct venus_inst *inst)
-> +{
-> +	struct intbuf *buf, *n;
-> +
-> +	if (list_empty(&inst->dpbbufs))
-> +		return 0;
-> +
-> +	list_for_each_entry_safe(buf, n, &inst->dpbbufs, list) {
-> +		list_del_init(&buf->list);
-> +		dma_free_attrs(inst->core->dev, buf->size, buf->va, buf->da,
-> +			       buf->attrs);
-> +		kfree(buf);
-> +	}
-> +
-> +	INIT_LIST_HEAD(&inst->dpbbufs);
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(venus_helper_free_dpb_bufs);
-> +
-> +int venus_helper_alloc_dpb_bufs(struct venus_inst *inst)
-> +{
-> +	struct venus_core *core = inst->core;
-> +	struct device *dev = core->dev;
-> +	enum hfi_version ver = core->res->hfi_version;
-> +	struct hfi_buffer_requirements bufreq;
-> +	u32 buftype = inst->dpb_buftype;
-> +	unsigned int dpb_size = 0;
-> +	struct intbuf *buf;
-> +	unsigned int i;
-> +	u32 count;
-> +	int ret;
-> +
-> +	/* no need to allocate dpb buffers */
-> +	if (!inst->dpb_fmt)
-> +		return 0;
-> +
-> +	if (inst->dpb_buftype == HFI_BUFFER_OUTPUT)
-> +		dpb_size = inst->output_buf_size;
-> +	else if (inst->dpb_buftype == HFI_BUFFER_OUTPUT2)
-> +		dpb_size = inst->output2_buf_size;
-> +
-> +	if (!dpb_size)
-> +		return 0;
-> +
-> +	ret = venus_helper_get_bufreq(inst, buftype, &bufreq);
-> +	if (ret)
-> +		return ret;
-> +
-> +	count = HFI_BUFREQ_COUNT_MIN(&bufreq, ver);
-> +
-> +	for (i = 0; i < count; i++) {
-> +		buf = kzalloc(sizeof(*buf), GFP_KERNEL);
-> +		if (!buf) {
-> +			ret = -ENOMEM;
-> +			goto fail;
-> +		}
-> +
-> +		buf->type = buftype;
-> +		buf->size = dpb_size;
-> +		buf->attrs = DMA_ATTR_WRITE_COMBINE |
-> +			     DMA_ATTR_NO_KERNEL_MAPPING;
-> +		buf->va = dma_alloc_attrs(dev, buf->size, &buf->da, GFP_KERNEL,
-> +					  buf->attrs);
-> +		if (!buf->va) {
-> +			kfree(buf);
-> +			ret = -ENOMEM;
-> +			goto fail;
-> +		}
-> +
-> +		list_add_tail(&buf->list, &inst->dpbbufs);
-> +	}
-> +
-> +	return 0;
-> +
-> +fail:
-> +	venus_helper_free_dpb_bufs(inst);
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(venus_helper_alloc_dpb_bufs);
-> +
->  static int intbufs_set_buffer(struct venus_inst *inst, u32 type)
->  {
->  	struct venus_core *core = inst->core;
-> @@ -342,7 +448,10 @@ session_process_buf(struct venus_inst *inst,
-> struct vb2_v4l2_buffer *vbuf)
->  		if (vbuf->flags & V4L2_BUF_FLAG_LAST || !fdata.filled_len)
->  			fdata.flags |= HFI_BUFFERFLAG_EOS;
->  	} else if (type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
-> -		fdata.buffer_type = HFI_BUFFER_OUTPUT;
-> +		if (inst->session_type == VIDC_SESSION_TYPE_ENC)
-> +			fdata.buffer_type = HFI_BUFFER_OUTPUT;
-> +		else
-> +			fdata.buffer_type = inst->opb_buftype;
->  		fdata.filled_len = 0;
->  		fdata.offset = 0;
->  	}
-> @@ -675,6 +784,27 @@ int venus_helper_set_color_format(struct
-> venus_inst *inst, u32 pixfmt)
->  }
->  EXPORT_SYMBOL_GPL(venus_helper_set_color_format);
-> 
-> +int venus_helper_set_multistream(struct venus_inst *inst, bool out_en,
-> +				 bool out2_en)
-> +{
-> +	struct hfi_multi_stream multi = {0};
-> +	u32 ptype = HFI_PROPERTY_PARAM_VDEC_MULTI_STREAM;
-> +	int ret;
-> +
-> +	multi.buffer_type = HFI_BUFFER_OUTPUT;
-> +	multi.enable = out_en;
-> +
-> +	ret = hfi_session_set_property(inst, ptype, &multi);
-> +	if (ret)
-> +		return ret;
-> +
-> +	multi.buffer_type = HFI_BUFFER_OUTPUT2;
-> +	multi.enable = out2_en;
-> +
-> +	return hfi_session_set_property(inst, ptype, &multi);
-> +}
-> +EXPORT_SYMBOL_GPL(venus_helper_set_multistream);
-> +
->  int venus_helper_set_dyn_bufmode(struct venus_inst *inst)
->  {
->  	u32 ptype = HFI_PROPERTY_PARAM_BUFFER_ALLOC_MODE;
-> @@ -822,9 +952,10 @@ EXPORT_SYMBOL_GPL(venus_helper_vb2_buf_init);
->  int venus_helper_vb2_buf_prepare(struct vb2_buffer *vb)
->  {
->  	struct venus_inst *inst = vb2_get_drv_priv(vb->vb2_queue);
-> +	unsigned int out_buf_size = venus_helper_get_opb_size(inst);
-> 
->  	if (vb->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE &&
-> -	    vb2_plane_size(vb, 0) < inst->output_buf_size)
-> +	    vb2_plane_size(vb, 0) < out_buf_size)
->  		return -EINVAL;
->  	if (vb->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE &&
->  	    vb2_plane_size(vb, 0) < inst->input_buf_size)
-> @@ -894,6 +1025,8 @@ void venus_helper_vb2_stop_streaming(struct 
-> vb2_queue *q)
->  		if (ret)
->  			hfi_session_abort(inst);
-> 
-> +		venus_helper_free_dpb_bufs(inst);
-> +
->  		load_scale_clocks(core);
->  		INIT_LIST_HEAD(&inst->registeredbufs);
->  	}
-> @@ -932,8 +1065,14 @@ int venus_helper_vb2_start_streaming(struct
-> venus_inst *inst)
->  	if (ret)
->  		goto err_unload_res;
-> 
-> +	ret = venus_helper_queue_dpb_bufs(inst);
-> +	if (ret)
-> +		goto err_session_stop;
-> +
->  	return 0;
-> 
-> +err_session_stop:
-> +	hfi_session_stop(inst);
->  err_unload_res:
->  	hfi_session_unload_res(inst);
->  err_unreg_bufs:
-> @@ -987,6 +1126,67 @@ void venus_helper_init_instance(struct venus_inst 
-> *inst)
->  }
->  EXPORT_SYMBOL_GPL(venus_helper_init_instance);
-> 
-> +static bool find_fmt_from_caps(struct venus_caps *caps, u32 buftype, 
-> u32 fmt)
-> +{
-> +	unsigned int i;
-> +
-> +	for (i = 0; i < caps->num_fmts; i++) {
-> +		if (caps->fmts[i].buftype == buftype &&
-> +		    caps->fmts[i].fmt == fmt)
-> +			return true;
-> +	}
-> +
-> +	return false;
-> +}
-> +
-> +int venus_helper_get_out_fmts(struct venus_inst *inst, u32 v4l2_fmt,
-> +			      u32 *out_fmt, u32 *out2_fmt, bool ubwc)
-> +{
-> +	struct venus_core *core = inst->core;
-> +	struct venus_caps *caps;
-> +	u32 ubwc_fmt, fmt = to_hfi_raw_fmt(v4l2_fmt);
-> +	bool found, found_ubwc;
-> +
-> +	*out_fmt = *out2_fmt = 0;
-> +
-> +	if (!fmt)
-> +		return -EINVAL;
-> +
-> +	caps = venus_caps_by_codec(core, inst->hfi_codec, 
-> inst->session_type);
-> +	if (!caps)
-> +		return -EINVAL;
-> +
-> +	if (ubwc) {
-> +		ubwc_fmt = fmt | HFI_COLOR_FORMAT_UBWC_BASE;
-> +		found_ubwc = find_fmt_from_caps(caps, HFI_BUFFER_OUTPUT,
-> +						ubwc_fmt);
-> +		found = find_fmt_from_caps(caps, HFI_BUFFER_OUTPUT2, fmt);
-> +
-> +		if (found_ubwc && found) {
-> +			*out_fmt = ubwc_fmt;
-> +			*out2_fmt = fmt;
-> +			return 0;
-> +		}
-> +	}
-> +
-> +	found = find_fmt_from_caps(caps, HFI_BUFFER_OUTPUT, fmt);
-> +	if (found) {
-> +		*out_fmt = fmt;
-> +		*out2_fmt = 0;
-> +		return 0;
-> +	}
-> +
-> +	found = find_fmt_from_caps(caps, HFI_BUFFER_OUTPUT2, fmt);
-> +	if (found) {
-> +		*out_fmt = 0;
-> +		*out2_fmt = fmt;
-> +		return 0;
-> +	}
-> +
-> +	return -EINVAL;
-> +}
-> +EXPORT_SYMBOL_GPL(venus_helper_get_out_fmts);
-> +
->  int venus_helper_power_enable(struct venus_core *core, u32 
-> session_type,
->  			      bool enable)
->  {
-> diff --git a/drivers/media/platform/qcom/venus/helpers.h
-> b/drivers/media/platform/qcom/venus/helpers.h
-> index 92b167a47166..2475f284f396 100644
-> --- a/drivers/media/platform/qcom/venus/helpers.h
-> +++ b/drivers/media/platform/qcom/venus/helpers.h
-> @@ -50,10 +50,16 @@ int venus_helper_set_raw_format(struct venus_inst
-> *inst, u32 hfi_format,
->  int venus_helper_set_color_format(struct venus_inst *inst, u32 fmt);
->  int venus_helper_set_dyn_bufmode(struct venus_inst *inst);
->  int venus_helper_set_bufsize(struct venus_inst *inst, u32 bufsize,
-> u32 buftype);
-> +int venus_helper_set_multistream(struct venus_inst *inst, bool out_en,
-> +				 bool out2_en);
->  unsigned int venus_helper_get_opb_size(struct venus_inst *inst);
->  void venus_helper_acquire_buf_ref(struct vb2_v4l2_buffer *vbuf);
->  void venus_helper_release_buf_ref(struct venus_inst *inst, unsigned 
-> int idx);
->  void venus_helper_init_instance(struct venus_inst *inst);
-> +int venus_helper_get_out_fmts(struct venus_inst *inst, u32 fmt, u32 
-> *out_fmt,
-> +			      u32 *out2_fmt, bool ubwc);
-> +int venus_helper_alloc_dpb_bufs(struct venus_inst *inst);
-> +int venus_helper_free_dpb_bufs(struct venus_inst *inst);
->  int venus_helper_power_enable(struct venus_core *core, u32 
-> session_type,
->  			      bool enable);
->  #endif
-> diff --git a/drivers/media/platform/qcom/venus/vdec.c
-> b/drivers/media/platform/qcom/venus/vdec.c
-> index 589fc13b84bc..7deee104ac56 100644
-> --- a/drivers/media/platform/qcom/venus/vdec.c
-> +++ b/drivers/media/platform/qcom/venus/vdec.c
-> @@ -532,10 +532,16 @@ static int vdec_set_properties(struct venus_inst 
-> *inst)
->  	return 0;
->  }
-> 
-> +#define is_ubwc_fmt(fmt) (!!((fmt) & HFI_COLOR_FORMAT_UBWC_BASE))
-> +
->  static int vdec_output_conf(struct venus_inst *inst)
->  {
->  	struct venus_core *core = inst->core;
->  	struct hfi_enable en = { .enable = 1 };
-> +	u32 width = inst->out_width;
-> +	u32 height = inst->out_height;
-> +	u32 out_fmt, out2_fmt;
-> +	bool ubwc = false;
->  	u32 ptype;
->  	int ret;
-> 
-> @@ -554,6 +560,78 @@ static int vdec_output_conf(struct venus_inst 
-> *inst)
->  			return ret;
->  	}
-> 
-> +	if (width > 1920 && height > ALIGN(1080, 32))
-> +		ubwc = true;
-> +
-> +	if (IS_V4(core))
-> +		ubwc = true;
-> +
-> +	ret = venus_helper_get_out_fmts(inst, inst->fmt_cap->pixfmt, 
-> &out_fmt,
-> +					&out2_fmt, ubwc);
-> +	if (ret)
-> +		return ret;
-> +
-> +	inst->output_buf_size =
-> +			venus_helper_get_framesz_raw(out_fmt, width, height);
-> +	inst->output2_buf_size =
-> +			venus_helper_get_framesz_raw(out2_fmt, width, height);
-> +
-> +	if (is_ubwc_fmt(out_fmt)) {
-> +		inst->opb_buftype = HFI_BUFFER_OUTPUT2;
-> +		inst->opb_fmt = out2_fmt;
-> +		inst->dpb_buftype = HFI_BUFFER_OUTPUT;
-> +		inst->dpb_fmt = out_fmt;
-> +	} else if (is_ubwc_fmt(out2_fmt)) {
-> +		inst->opb_buftype = HFI_BUFFER_OUTPUT;
-> +		inst->opb_fmt = out_fmt;
-> +		inst->dpb_buftype = HFI_BUFFER_OUTPUT2;
-> +		inst->dpb_fmt = out2_fmt;
-> +	} else {
-> +		inst->opb_buftype = HFI_BUFFER_OUTPUT;
-> +		inst->opb_fmt = out_fmt;
-> +		inst->dpb_buftype = 0;
-> +		inst->dpb_fmt = 0;
-> +	}
-> +
-> +	ret = venus_helper_set_raw_format(inst, inst->opb_fmt,
-> +					  inst->opb_buftype);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (inst->dpb_fmt) {
-> +		ret = venus_helper_set_multistream(inst, false, true);
-> +		if (ret)
-> +			return ret;
-> +
-> +		ret = venus_helper_set_raw_format(inst, inst->dpb_fmt,
-> +						  inst->dpb_buftype);
-> +		if (ret)
-> +			return ret;
-> +
-> +		ret = venus_helper_set_output_resolution(inst, width, height,
-> +							 HFI_BUFFER_OUTPUT2);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	if (IS_V3(core) || IS_V4(core)) {
-> +		if (inst->output2_buf_size) {
-> +			ret = venus_helper_set_bufsize(inst,
-> +						       inst->output2_buf_size,
-> +						       HFI_BUFFER_OUTPUT2);
-> +			if (ret)
-> +				return ret;
-> +		}
-> +
-> +		if (inst->output_buf_size) {
-> +			ret = venus_helper_set_bufsize(inst,
-> +						       inst->output_buf_size,
-> +						       HFI_BUFFER_OUTPUT);
-> +			if (ret)
-> +				return ret;
-> +		}
-> +	}
-> +
->  	ret = venus_helper_set_dyn_bufmode(inst);
->  	if (ret)
->  		return ret;
-> @@ -624,6 +702,8 @@ static int vdec_queue_setup(struct vb2_queue *q,
->  	int ret = 0;
-> 
->  	if (*num_planes) {
-> +		unsigned int output_buf_size = venus_helper_get_opb_size(inst);
-> +
->  		if (q->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE &&
->  		    *num_planes != inst->fmt_out->num_planes)
->  			return -EINVAL;
-> @@ -637,7 +717,7 @@ static int vdec_queue_setup(struct vb2_queue *q,
->  			return -EINVAL;
-> 
->  		if (q->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE &&
-> -		    sizes[0] < inst->output_buf_size)
-> +		    sizes[0] < output_buf_size)
->  			return -EINVAL;
-> 
->  		return 0;
-> @@ -746,6 +826,10 @@ static int vdec_start_streaming(struct vb2_queue
-> *q, unsigned int count)
->  	if (ret)
->  		goto deinit_sess;
-> 
-> +	ret = venus_helper_alloc_dpb_bufs(inst);
-> +	if (ret)
-> +		goto deinit_sess;
-> +
->  	ret = venus_helper_vb2_start_streaming(inst);
->  	if (ret)
->  		goto deinit_sess;
-> @@ -797,9 +881,11 @@ static void vdec_buf_done(struct venus_inst
-> *inst, unsigned int buf_type,
->  	vbuf->field = V4L2_FIELD_NONE;
-> 
->  	if (type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
-> +		unsigned int opb_sz = venus_helper_get_opb_size(inst);
-> +
->  		vb = &vbuf->vb2_buf;
->  		vb->planes[0].bytesused =
-> -			max_t(unsigned int, inst->output_buf_size, bytesused);
-> +			max_t(unsigned int, opb_sz, bytesused);
->  		vb->planes[0].data_offset = data_offset;
->  		vb->timestamp = timestamp_us * NSEC_PER_USEC;
->  		vbuf->sequence = inst->sequence_cap++;
-> @@ -945,6 +1031,7 @@ static int vdec_open(struct file *file)
->  	if (!inst)
->  		return -ENOMEM;
-> 
-> +	INIT_LIST_HEAD(&inst->dpbbufs);
->  	INIT_LIST_HEAD(&inst->registeredbufs);
->  	INIT_LIST_HEAD(&inst->internalbufs);
->  	INIT_LIST_HEAD(&inst->list);
-> diff --git a/drivers/media/platform/qcom/venus/venc.c
-> b/drivers/media/platform/qcom/venus/venc.c
-> index 54f253b98b24..a703bce78abc 100644
-> --- a/drivers/media/platform/qcom/venus/venc.c
-> +++ b/drivers/media/platform/qcom/venus/venc.c
-> @@ -1084,6 +1084,7 @@ static int venc_open(struct file *file)
->  	if (!inst)
->  		return -ENOMEM;
-> 
-> +	INIT_LIST_HEAD(&inst->dpbbufs);
->  	INIT_LIST_HEAD(&inst->registeredbufs);
->  	INIT_LIST_HEAD(&inst->internalbufs);
->  	INIT_LIST_HEAD(&inst->list);
+While looking at various drm bridge users, I came across these
+issues.
 
-The dpb buffers queued to hardware will be returned back to host either 
-during flush
-or when the session is stopped. Host should not send these buffers to 
-client.
-vdec_buf_done should be handling in a way to drop dpb buffers from 
-sending to client.
+Cheers,
+Peter
 
-Thanks,
-Vikash
+Peter Rosin (3):
+  drm/sti: do not remove the drm_bridge that was never added
+  drm/rockchip: lvds: avoid duplicating drm_bridge_attach
+  drm/exynos: hdmi: avoid duplicating drm_bridge_attach
+
+ drivers/gpu/drm/exynos/exynos_hdmi.c     | 2 --
+ drivers/gpu/drm/rockchip/rockchip_lvds.c | 2 --
+ drivers/gpu/drm/sti/sti_hda.c            | 1 -
+ drivers/gpu/drm/sti/sti_hdmi.c           | 1 -
+ 4 files changed, 6 deletions(-)
+
+-- 
+2.11.0
