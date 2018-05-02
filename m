@@ -1,81 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751109AbeEBKYe (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 06:24:34 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:33768 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750897AbeEBKYa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 06:24:30 -0400
-Date: Wed, 2 May 2018 12:24:16 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Waiman Long <longman@redhat.com>
-Cc: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>, Ingo Molnar <mingo@redhat.com>,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
-        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
-        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
-        Juri Lelli <juri.lelli@redhat.com>
-Subject: Re: [PATCH v7 2/5] cpuset: Add cpuset.sched_load_balance to v2
-Message-ID: <20180502102416.GJ12180@hirez.programming.kicks-ass.net>
-References: <1524145624-23655-1-git-send-email-longman@redhat.com>
- <1524145624-23655-3-git-send-email-longman@redhat.com>
+        id S1751188AbeEBKZ7 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 06:25:59 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:45463 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750849AbeEBKZ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 06:25:57 -0400
+Date: Wed, 2 May 2018 12:25:45 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Jane Wan <Jane.Wan@nokia.com>
+Cc: dwmw2@infradead.org, computersforpeace@gmail.com, ties.bos@nokia.com,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] Use bit-wise majority to recover the contents of
+ ONFI parameter
+Message-ID: <20180502122545.6bd28c3b@bbrezillon>
+In-Reply-To: <1524788396-32380-3-git-send-email-Jane.Wan@nokia.com>
+References: <1524788396-32380-1-git-send-email-Jane.Wan@nokia.com>
+        <1524788396-32380-3-git-send-email-Jane.Wan@nokia.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1524145624-23655-3-git-send-email-longman@redhat.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 19, 2018 at 09:47:01AM -0400, Waiman Long wrote:
-> +  cpuset.sched_load_balance
-> +	A read-write single value file which exists on non-root cgroups.
+Hi Jane,
 
-Uhhm.. it should very much exist in the root group too. Otherwise you
-cannot disable it there, which is required to allow smaller groups to
-load-balance between themselves.
+On Thu, 26 Apr 2018 17:19:56 -0700
+Jane Wan <Jane.Wan@nokia.com> wrote:
 
-> +	The default is "1" (on), and the other possible value is "0"
-> +	(off).
+> Signed-off-by: Jane Wan <Jane.Wan@nokia.com>
+> ---
+>  drivers/mtd/nand/nand_base.c |   35 +++++++++++++++++++++++++++++++----
+>  1 file changed, 31 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/mtd/nand/nand_base.c b/drivers/mtd/nand/nand_base.c
+> index c2e1232..161b523 100644
+> --- a/drivers/mtd/nand/nand_base.c
+> +++ b/drivers/mtd/nand/nand_base.c
+> @@ -3153,8 +3153,10 @@ static int nand_flash_detect_onfi(struct mtd_info *mtd, struct nand_chip *chip,
+>  					int *busw)
+>  {
+>  	struct nand_onfi_params *p = &chip->onfi_params;
+> -	int i, j;
+> -	int val;
+> +	int i, j, k, len, val;
+> +	uint8_t copy[3][256], v8;
 > +
-> +	When it is on, tasks within this cpuset will be load-balanced
-> +	by the kernel scheduler.  Tasks will be moved from CPUs with
-> +	high load to other CPUs within the same cpuset with less load
-> +	periodically.
-> +
-> +	When it is off, there will be no load balancing among CPUs on
-> +	this cgroup.  Tasks will stay in the CPUs they are running on
-> +	and will not be moved to other CPUs.
-> +
-> +	This flag is hierarchical and is inherited by child cpusets. It
-> +	can be turned off only when the CPUs in this cpuset aren't
-> +	listed in the cpuset.cpus of other sibling cgroups, and all
-> +	the child cpusets, if present, have this flag turned off.
-> +
-> +	Once it is off, it cannot be turned back on as long as the
-> +	parent cgroup still has this flag in the off state.
+> +	len = (sizeof(*p) > 256) ? 256 : sizeof(*p);
+>  
+>  	/* Try ONFI for unknown chip or LP */
+>  	chip->cmdfunc(mtd, NAND_CMD_READID, 0x20, -1);
+> @@ -3170,11 +3172,36 @@ static int nand_flash_detect_onfi(struct mtd_info *mtd, struct nand_chip *chip,
+>  				le16_to_cpu(p->crc)) {
+>  			break;
+>  		}
+> +		pr_err("CRC of parameter page %d is not valid\n", i);
+> +		for (j = 0; j < len; j++)
+> +			copy[i][j] = ((uint8_t *)p)[j];
+>  	}
+>  
+>  	if (i == 3) {
+> -		pr_err("Could not find valid ONFI parameter page; aborting\n");
+> -		return 0;
+> +		pr_err("Could not find valid ONFI parameter page\n");
+> +		pr_info("Recover ONFI parameters with bit-wise majority\n");
+> +		for (j = 0; j < len; j++) {
+> +			if (copy[0][j] == copy[1][j] ||
+> +			    copy[0][j] == copy[2][j]) {
+> +				((uint8_t *)p)[j] = copy[0][j];
+> +			} else if (copy[1][j] == copy[2][j]) {
+> +				((uint8_t *)p)[j] = copy[1][j];
+> +			} else {
+> +				((uint8_t *)p)[j] = 0;
+> +				for (k = 0; k < 8; k++) {
+> +					v8 = (copy[0][j] >> k) & 0x1;
+> +					v8 += (copy[1][j] >> k) & 0x1;
+> +					v8 += (copy[2][j] >> k) & 0x1;
+> +					if (v8 > 1)
+> +						((uint8_t *)p)[j] |= (1 << k);
+> +				}
+> +			}
+> +		}
 
-That too is wrong and broken. You explicitly want to turn it on for
-children.
+I'd like this bit-wise majority algorithm to be generic and moved to
+nand_base.c, because we might want to do the same in the core and make
+it work for any number of repetitions of the PARAM page.
 
-So the idea is that you can have:
+> +		if (onfi_crc16(ONFI_CRC_BASE, (uint8_t *)p, 254) !=
+> +		    le16_to_cpu(p->crc)) {
+> +			pr_err("ONFI parameter recovery failed, aborting\n");
+> +			return 0;
+> +		}
+>  	}
+>  
+>  	/* Check version */
 
-		R
-	      /   \
-            A       B
+Thanks,
 
-With:
-
-	R cpus=0-3, load_balance=0
-	A cpus=0-1, load_balance=1
-	B cpus=2-3, load_balance=1
-
-Which will allow all tasks in A,B (and its children) to load-balance
-across 0-1 or 2-3 resp.
-
-If you don't allow the root group to disable load_balance, it will
-always be the largest group and load-balancing will always happen system
-wide.
+Boris
