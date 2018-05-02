@@ -1,120 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751525AbeEBORZ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 10:17:25 -0400
-Received: from foss.arm.com ([217.140.101.70]:59292 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750999AbeEBORV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 10:17:21 -0400
-From: Punit Agrawal <punit.agrawal@arm.com>
-To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Cc: akpm@linux-foundation.org, mhocko@kernel.org, peterz@infradead.org,
-        kirill@shutemov.name, ak@linux.intel.com, dave@stgolabs.net,
-        jack@suse.cz, Matthew Wilcox <willy@infradead.org>,
-        benh@kernel.crashing.org, mpe@ellerman.id.au, paulus@samba.org,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
-        sergey.senozhatsky.work@gmail.com,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        David Rientjes <rientjes@google.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Ganesh Mahendran <opensource.ganesh@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
-        npiggin@gmail.com, bsingharora@gmail.com, paulmck@linux.vnet.ibm.com,
-        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
-        x86@kernel.org
-Subject: Re: [PATCH v10 00/25] Speculative page faults
-References: <1523975611-15978-1-git-send-email-ldufour@linux.vnet.ibm.com>
-Date: Wed, 02 May 2018 15:17:19 +0100
-In-Reply-To: <1523975611-15978-1-git-send-email-ldufour@linux.vnet.ibm.com>
-        (Laurent Dufour's message of "Tue, 17 Apr 2018 16:33:06 +0200")
-Message-ID: <87bmdynnv4.fsf@e105922-lin.cambridge.arm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        id S1751428AbeEBOTI (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 10:19:08 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36428 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750936AbeEBOTG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 10:19:06 -0400
+Date: Wed, 2 May 2018 17:19:05 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: Jason Wang <jasowang@redhat.com>, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
+Subject: [PATCH] Revert "vhost: make msg padding explicit"
+Message-ID: <1525270740-460646-1-git-send-email-mst@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mutt-Fcc: =sent
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Laurent,
+This reverts commit 93c0d549c4c5a7382ad70de6b86610b7aae57406.
 
-One query below -
+Unfortunately the padding will break 32 bit userspace.
+Ouch. Need to add some compat code, revert for now.
 
-Laurent Dufour <ldufour@linux.vnet.ibm.com> writes:
-
-[...]
-
->
-> Ebizzy:
-> -------
-> The test is counting the number of records per second it can manage, the
-> higher is the best. I run it like this 'ebizzy -mTRp'. To get consistent
-> result I repeated the test 100 times and measure the average result. The
-> number is the record processes per second, the higher is the best.
->
->   		BASE		SPF		delta	
-> 16 CPUs x86 VM	12405.52	91104.52	634.39%
-> 80 CPUs P8 node 37880.01	76201.05	101.16%
-
-How do you measure the number of records processed? Is there a specific
-version of ebizzy that reports this? I couldn't find a way to get this
-information with the ebizzy that's included in ltp.
-
->
-> Here are the performance counter read during a run on a 16 CPUs x86 VM:
->  Performance counter stats for './ebizzy -mRTp':
->             860074      faults
->             856866      spf
->                285      pagefault:spf_pte_lock
->               1506      pagefault:spf_vma_changed
->                  0      pagefault:spf_vma_noanon
->                 73      pagefault:spf_vma_notsup
->                  0      pagefault:spf_vma_access
->                  0      pagefault:spf_pmd_changed
->
-> And the ones captured during a run on a 80 CPUs Power node:
->  Performance counter stats for './ebizzy -mRTp':
->             722695      faults
->             699402      spf
->              16048      pagefault:spf_pte_lock
->               6838      pagefault:spf_vma_changed
->                  0      pagefault:spf_vma_noanon
->                277      pagefault:spf_vma_notsup
->                  0      pagefault:spf_vma_access
->                  0      pagefault:spf_pmd_changed
->
-> In ebizzy's case most of the page fault were handled in a speculative way,
-> leading the ebizzy performance boost.
-
-A trial run showed increased fault handling when SPF is enabled on an
-8-core ARM64 system running 4.17-rc3. I am using a port of your x86
-patch to enable spf on arm64.
-
-SPF
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 ---
+ include/uapi/linux/vhost.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-Performance counter stats for './ebizzy -vvvmTRp':
-
-         1,322,736      faults                                                      
-         1,299,241      software/config=11/                                         
-
-      10.005348034 seconds time elapsed
-
-No SPF
------
-
- Performance counter stats for './ebizzy -vvvmTRp':
-
-           708,916      faults
-                 0      software/config=11/
-
-      10.005807432 seconds time elapsed
-
-Thanks,
-Punit
-
-[...]
+diff --git a/include/uapi/linux/vhost.h b/include/uapi/linux/vhost.h
+index 5a8ad06..c51f8e5 100644
+--- a/include/uapi/linux/vhost.h
++++ b/include/uapi/linux/vhost.h
+@@ -68,7 +68,6 @@ struct vhost_iotlb_msg {
+ 
+ struct vhost_msg {
+ 	int type;
+-	int padding0;
+ 	union {
+ 		struct vhost_iotlb_msg iotlb;
+ 		__u8 padding[64];
+-- 
+MST
