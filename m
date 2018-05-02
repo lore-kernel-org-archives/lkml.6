@@ -1,45 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751669AbeEBOTf (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 10:19:35 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55586 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751602AbeEBOT2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 10:19:28 -0400
-Date: Wed, 2 May 2018 17:19:27 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: David Miller <davem@davemloft.net>
-Cc: kevin@guarana.org, linux-kernel@vger.kernel.org, jasowang@redhat.com,
-        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH] vhost: make msg padding explicit
-Message-ID: <20180502171909-mutt-send-email-mst@kernel.org>
-References: <20180501.140551.1944561534446599966.davem@davemloft.net>
- <20180502062809.GA14485@la.guarana.org>
- <20180502162932-mutt-send-email-mst@kernel.org>
- <20180502.100446.106883595468297057.davem@davemloft.net>
+        id S1751707AbeEBOTl (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 10:19:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59396 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751641AbeEBOTd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 10:19:33 -0400
+Date: Wed, 2 May 2018 10:19:30 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: changbin.du@intel.com
+Cc: yamada.masahiro@socionext.com, michal.lkml@markovi.net,
+        tglx@linutronix.de, mingo@redhat.com, akpm@linux-foundation.org,
+        rdunlap@infradead.org, x86@kernel.org, lgirdwood@gmail.com,
+        broonie@kernel.org, arnd@arndb.de, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
+Subject: Re: [PATCH v2 5/5] asm-generic: fix build error in fix_to_virt with
+ CONFIG_DEBUG_EXPERIENCE
+Message-ID: <20180502101930.25a5437d@gandalf.local.home>
+In-Reply-To: <1525268700-10631-6-git-send-email-changbin.du@intel.com>
+References: <1525268700-10631-1-git-send-email-changbin.du@intel.com>
+        <1525268700-10631-6-git-send-email-changbin.du@intel.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180502.100446.106883595468297057.davem@davemloft.net>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 02, 2018 at 10:04:46AM -0400, David Miller wrote:
-> From: "Michael S. Tsirkin" <mst@redhat.com>
-> Date: Wed, 2 May 2018 16:36:37 +0300
-> 
-> > Ouch.  True - and in particular the 32 bit ABI on 64 bit kernels doesn't
-> > work at all. Hmm. It's relatively new and maybe there aren't any 32 bit
-> > users yet. Thoughts?
-> 
-> If it's been in a released kernel version, we really aren't at liberty
-> to play "maybe nobody uses this" UAPI changing games.
-> 
-> Please send me a revert.
+On Wed,  2 May 2018 21:45:00 +0800
+changbin.du@intel.com wrote:
 
-Sent. Looking at compat mess now.
+> From: Changbin Du <changbin.du@intel.com>
+> 
+> With '-Og' optimization level, GCC would not optimize a count for a loop
+> as a constant value. But BUILD_BUG_ON() only accept compile-time constant
+> values.
+> 
+> arch/arm/mm/mmu.o: In function `fix_to_virt':
+> /home/changbin/work/linux/./include/asm-generic/fixmap.h:31: undefined reference to `__compiletime_assert_31'
+> Makefile:1051: recipe for target 'vmlinux' failed
+> make: *** [vmlinux] Error 1
+> 
+> Signed-off-by: Changbin Du <changbin.du@intel.com>
+> ---
+>  include/asm-generic/fixmap.h | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/asm-generic/fixmap.h b/include/asm-generic/fixmap.h
+> index 827e4d3..a6576d4 100644
+> --- a/include/asm-generic/fixmap.h
+> +++ b/include/asm-generic/fixmap.h
+> @@ -28,7 +28,8 @@
+>   */
+>  static __always_inline unsigned long fix_to_virt(const unsigned int idx)
+>  {
+> -	BUILD_BUG_ON(idx >= __end_of_fixed_addresses);
+> +	BUILD_BUG_ON(__builtin_constant_p(idx) &&
+> +		     idx >= __end_of_fixed_addresses);
 
--- 
-MST
+Hmm, this changes the check slightly. Perhaps we should only do this
+when your config is active:
+
+{
+	BUILD_BUG_ON(
+/* CONFIG_DEBUG_OPTIMIZE may cause idx not to be constant */
+#ifdef CONFIG_DEBUG_OPTIMIZE
+		__builtin_constant_p(idx) &&
+#endif
+		idx >= __end_of_fixed_addresses);
+
+}
+
+-- Steve
+
+>  	return __fix_to_virt(idx);
+>  }
+>  
