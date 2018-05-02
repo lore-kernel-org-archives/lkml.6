@@ -1,86 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751234AbeEBKas (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 06:30:48 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:30912 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750849AbeEBKap (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 06:30:45 -0400
-To: dvyukov@google.com
-Cc: ebiggers3@gmail.com,
-        syzbot+4684a000d5abdade83fac55b1e7d1f935ef1936e@syzkaller.appspotmail.com,
-        axboe@kernel.dk, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: possible deadlock in blkdev_reread_part
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-References: <CACT4Y+bGjnajib6P4a0SxYkNUJpg_x8abEkec8AR+oBmC=-QUQ@mail.gmail.com>
-        <20171105201834.GA8126@zzz.localdomain>
-        <201804162302.GBI43737.OLFSOFQHVJMFtO@I-love.SAKURA.ne.jp>
-        <201804202306.FGC05220.OOJFMFOSFHtLQV@I-love.SAKURA.ne.jp>
-        <CACT4Y+Y3M2kB0YWhwD04NkL1-iNHPuDfDDf9BLoPD3GZ6Gg-Yw@mail.gmail.com>
-In-Reply-To: <CACT4Y+Y3M2kB0YWhwD04NkL1-iNHPuDfDDf9BLoPD3GZ6Gg-Yw@mail.gmail.com>
-Message-Id: <201805021930.CBE82399.QFHtOOJFMVFOSL@I-love.SAKURA.ne.jp>
-X-Mailer: Winbiff [Version 2.51 PL2]
-X-Accept-Language: ja,en,zh
-Date: Wed, 2 May 2018 19:30:33 +0900
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        id S1751269AbeEBKbu (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 06:31:50 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:45827 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750878AbeEBKbt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 06:31:49 -0400
+Date: Wed, 2 May 2018 12:31:37 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Jane Wan <Jane.Wan@nokia.com>
+Cc: dwmw2@infradead.org, computersforpeace@gmail.com, ties.bos@nokia.com,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] Use bit-wise majority to recover the contents of
+ ONFI parameter
+Message-ID: <20180502123137.60d151fd@bbrezillon>
+In-Reply-To: <20180502122545.6bd28c3b@bbrezillon>
+References: <1524788396-32380-1-git-send-email-Jane.Wan@nokia.com>
+        <1524788396-32380-3-git-send-email-Jane.Wan@nokia.com>
+        <20180502122545.6bd28c3b@bbrezillon>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dmitry Vyukov wrote:
-> > syzbot is reporting various bugs which involve /dev/loopX.
-> > Two of them
-> >
-> >   INFO: rcu detected stall in lo_ioctl
-> >   https://syzkaller.appspot.com/bug?id=7b49fb610af9cca78c24e9f796f2e8b0d5573997
-> >
-> >   general protection fault in lo_ioctl (2)
-> >   https://syzkaller.appspot.com/bug?id=f3cfe26e785d85f9ee259f385515291d21bd80a3
+On Wed, 2 May 2018 12:25:45 +0200
+Boris Brezillon <boris.brezillon@bootlin.com> wrote:
+
+> Hi Jane,
 > 
-> /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+> On Thu, 26 Apr 2018 17:19:56 -0700
+> Jane Wan <Jane.Wan@nokia.com> wrote:
 > 
-> Now there is a repro for this one. I've pushed it to kernel mailing lists:
+> > Signed-off-by: Jane Wan <Jane.Wan@nokia.com>
+> > ---
+> >  drivers/mtd/nand/nand_base.c |   35 +++++++++++++++++++++++++++++++----
+> >  1 file changed, 31 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/mtd/nand/nand_base.c b/drivers/mtd/nand/nand_base.c
+> > index c2e1232..161b523 100644
+> > --- a/drivers/mtd/nand/nand_base.c
+> > +++ b/drivers/mtd/nand/nand_base.c
+> > @@ -3153,8 +3153,10 @@ static int nand_flash_detect_onfi(struct mtd_info *mtd, struct nand_chip *chip,
+> >  					int *busw)
+> >  {
+> >  	struct nand_onfi_params *p = &chip->onfi_params;
+> > -	int i, j;
+> > -	int val;
+> > +	int i, j, k, len, val;
+> > +	uint8_t copy[3][256], v8;
+> > +
+> > +	len = (sizeof(*p) > 256) ? 256 : sizeof(*p);
+> >  
+> >  	/* Try ONFI for unknown chip or LP */
+> >  	chip->cmdfunc(mtd, NAND_CMD_READID, 0x20, -1);
+> > @@ -3170,11 +3172,36 @@ static int nand_flash_detect_onfi(struct mtd_info *mtd, struct nand_chip *chip,
+> >  				le16_to_cpu(p->crc)) {
+> >  			break;
+> >  		}
+> > +		pr_err("CRC of parameter page %d is not valid\n", i);
+> > +		for (j = 0; j < len; j++)
+> > +			copy[i][j] = ((uint8_t *)p)[j];
+> >  	}
+> >  
+> >  	if (i == 3) {
+> > -		pr_err("Could not find valid ONFI parameter page; aborting\n");
+> > -		return 0;
+> > +		pr_err("Could not find valid ONFI parameter page\n");
+> > +		pr_info("Recover ONFI parameters with bit-wise majority\n");
+> > +		for (j = 0; j < len; j++) {
+> > +			if (copy[0][j] == copy[1][j] ||
+> > +			    copy[0][j] == copy[2][j]) {
+> > +				((uint8_t *)p)[j] = copy[0][j];
+> > +			} else if (copy[1][j] == copy[2][j]) {
+> > +				((uint8_t *)p)[j] = copy[1][j];
+> > +			} else {
+> > +				((uint8_t *)p)[j] = 0;
+> > +				for (k = 0; k < 8; k++) {
+> > +					v8 = (copy[0][j] >> k) & 0x1;
+> > +					v8 += (copy[1][j] >> k) & 0x1;
+> > +					v8 += (copy[2][j] >> k) & 0x1;
+> > +					if (v8 > 1)
+> > +						((uint8_t *)p)[j] |= (1 << k);
+> > +				}
+> > +			}
+> > +		}  
 > 
-> https://groups.google.com/d/msg/syzkaller-bugs/c8KUcTAzTvA/3o_7g6-tAwAJ
+> I'd like this bit-wise majority algorithm to be generic and moved to
+> nand_base.c, because we might want to do the same in the core and make
+> it work for any number of repetitions of the PARAM page.
 
-OK, thanks. But among loop related reports, this will be a dup of
-"INFO: rcu detected stall in blkdev_ioctl" which already has C reproducer.
-Should we merge them?
-
-  INFO: rcu detected stall in blkdev_ioctl
-  https://syzkaller.appspot.com/bug?id=1f7b710f4110f225aed1f4263ec2b98b8dbd472e
-
-  general protection fault in lo_ioctl (2)
-  https://syzkaller.appspot.com/bug?id=f3cfe26e785d85f9ee259f385515291d21bd80a3
-  #syz dup: INFO: rcu detected stall in blkdev_ioctl
-
-  INFO: rcu detected stall in lo_compat_ioctl
-  https://syzkaller.appspot.com/bug?id=6299555c4e252b53f7a2ae2b8216cc9456c56ac0
-  #syz dup: INFO: rcu detected stall in blkdev_ioctl
-
-  INFO: rcu detected stall in lo_ioctl
-  https://syzkaller.appspot.com/bug?id=7b49fb610af9cca78c24e9f796f2e8b0d5573997
-  #syz dup: INFO: rcu detected stall in blkdev_ioctl
-
-  INFO: task hung in lo_ioctl
-  https://syzkaller.appspot.com/bug?id=608144371e7fc2cb6285b9ed871fb1eb817a61ce
-
-  INFO: task hung in lo_open (2)
-  https://syzkaller.appspot.com/bug?id=1f93b57f496d969efb9fb24167f6f9de5ee068fd
-
-  possible deadlock in blkdev_reread_part
-  https://syzkaller.appspot.com/bug?id=bf154052f0eea4bc7712499e4569505907d15889
-
-  INFO: task hung in loop_control_ioctl
-  https://syzkaller.appspot.com/bug?id=61fe32c77ea00412c5149bd34649a65b7f672b5e
-
-  WARNING in sysfs_remove_group
-  https://syzkaller.appspot.com/bug?id=3f86c0edf75c86d2633aeb9dd69eccc70bc7e90b
-
-> 
-> > suggest that loop module is not thread safe. The former suggests that
-> > l->lo_backing_file is forming circular loop and the latter suggests that
-> > l->lo_backing_file became NULL.
+Never mind, I thought you were implementing that in the FSL IFC driver,
+but you're actually modifying the core.
