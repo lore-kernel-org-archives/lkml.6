@@ -1,60 +1,64 @@
-Return-Path: <hdegoede@redhat.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1525295308; cv=none;
+Return-Path: <damian.tometzki@icloud.com>
+X-Google-Smtp-Source: AB8JxZr2SvszazNqYAHiVKFekHa0Gfg4krvGLdJ44vlJMSaARZEthNEMMQfihzFn25i+1bo36E9i
+ARC-Seal: i=1; a=rsa-sha256; t=1525291403; cv=none;
         d=google.com; s=arc-20160816;
-        b=d+i2DV1+8g4/ikIygXSE2uQnLCakWzX7F7Jj8gLCFyp9NJgWbaT/P9ZoJb/5RVc9r/
-         KH1H0yLjP3CiLchFi6X1Q9kVRljo+dirz75PLwYmcMfagvqPwZqi0yL6YO6IdzltcM5M
-         Tg8FyLNOGw+EqW9uC6jAnfpws4dpLvbnzJK3gXcYOgeU3aHEaSoK1AOZgsYA97FLaa+0
-         Ekh70TQ54ANCt6iec9u7II/3DW8JL/IjFnZ83uaisztSxW+5ZfcQkalRgDRiYBT3FVYR
-         X90UUQaBxi4iutcf0b7TevV89Uy2fl5J/K9LZFjBXT4WlJscs4hBwuJPidWcAB2GI9Qg
-         Lpvg==
+        b=xf4eHmcPWsFwVMw6zHBx2FJ8rn5nDKBV/idhzjleITeJuAvtdI9pZJQPnvaU8Px4ij
+         oGa3Hm4liGnPr+/lReuaOatEsxVWHXnpt1LrJ03ChAe2XYG6tD5gPXtXEBC3a0ycy1Ko
+         A0KA5kJdhFYOwdy5rcTMWoxaPZK88EfcLvNIwEYpf7kmxWgHMG2PGvcvRjNiB7nKZp7S
+         R449yjPvvGPnx3lJJuCudejbFEWvnhS4kiN1NRYnW9anEBs1il1M2IieRF+s9Gaf0QSG
+         rSz1r8f5kWde4YkxvoQnRMioZZQmVunU6JTHQWSipg4ZBi7JIREd1Wj2/v9XXSsiTnfZ
+         yqmg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:to:subject
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:dkim-signature
          :arc-authentication-results;
-        bh=MVH3g2Vjr3yK9EtqIL6rg6MfHbORyHFnMP6FGFvRoTw=;
-        b=V4o63YKKrTn2EiMygG9GxLPbXuvpb86YP7YS3yxXWxNJHJ6Yn9V8AsR4I4qm8fSKM1
-         Diq59ChHCoMXydazoACJbzXIb+uKZtColNHqkyCbzYva+KFPWqaPvvywnLjSd+WA1zgT
-         /G47cFvZOQq+ZMDQDpf8czlqYE/3Tc53r6EulFys/4tzFXZWOQoQOrZPnjoh7iJN/Qc6
-         KcRlA33j+uMtHldJiRzWrp9f3acUvvGIe7xhw8I39n4ux1Y6Byy10aQSnXHYEPSp7cgd
-         HbtOz55crTAS8Wi+EFf0HLgAIVHDTvrVRdjJysWSMIz1HSur3ON9jXEoToUy/+6+KnID
-         dgYw==
+        bh=Rlz6qHSXaRwoUzmAaB6tUQRXsfRs9vgAUet6d71J5Y0=;
+        b=m+JfVtXtYSMDyHw9I0xnSGs97apLJUilP/7dWIxhrd75tYuqcUyn0QfdeBFoWFRjVH
+         nPkkAnew3gRRmVGXgVb0lK38chb+xJtyN64eJ7rPiG5A5xD/KD4OMFQT2b5YiOV1ANlj
+         5RCW4g2xFySzYty3mEL0nwpwc8VXMT0yT7u20CHjeh9TtnYMHbOyOOdelg9hihEFwxqU
+         oZKIgdCEK4Po3KWUiUxqSVBJ2DlqwOoW+AyubLD1XEk6Q6ntyWxSJD2mKivDCbdC6Z5A
+         hKcOFhjw93sDsroEPOwgBOdy9VkEXCO5sSk9o4sHB+MYlxBfdlz4+xzVzRXIhhHnFURI
+         OZng==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of hdegoede@redhat.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+       dkim=pass header.i=@icloud.com header.s=04042017 header.b=jvd5XuSf;
+       spf=pass (google.com: domain of damian.tometzki@icloud.com designates 17.139.149.167 as permitted sender) smtp.mailfrom=damian.tometzki@icloud.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=icloud.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of hdegoede@redhat.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
-X-Google-Smtp-Source: AB8JxZrDr3j+5hHznQEm93fBLnlVxki7YjjeKNd9+K5p3+99kMvNwQkgZwzogm67WwRHf62LNcNrZQ==
+       dkim=pass header.i=@icloud.com header.s=04042017 header.b=jvd5XuSf;
+       spf=pass (google.com: domain of damian.tometzki@icloud.com designates 17.139.149.167 as permitted sender) smtp.mailfrom=damian.tometzki@icloud.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=icloud.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,,
+ definitions=2018-05-02_07:,, signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0
+ clxscore=1015 suspectscore=0 malwarescore=0 phishscore=0 adultscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1707230000 definitions=main-1805020169
+Content-type: text/plain; charset=us-ascii
+MIME-version: 1.0 (1.0)
 Subject: Re: Bug in vboxguest: After commit Merge tag 'char-misc-4.17-rc3'
-To: Greg KH <gregkh@linuxfoundation.org>, arnd@arndb.de,
- linux-kernel@vger.kernel.org
+From: Damian Tometzki <damian.tometzki@icloud.com>
+X-Mailer: iPhone Mail (15E302)
+In-reply-to: <20180502193735.GA2444@zrhn9910b>
+Date: Wed, 02 May 2018 22:03:17 +0200
+Cc: linux-kernel@vger.kernel.org
+Content-transfer-encoding: quoted-printable
+Message-id: <AD91D21C-CB83-403D-A521-EC5949E76B20@icloud.com>
 References: <20180502193735.GA2444@zrhn9910b>
- <20180502200615.GB16341@kroah.com> <20180502204612.GA2089@zrhn9910b>
-From: Hans de Goede <hdegoede@redhat.com>
-Message-ID: <2bc020fe-a298-f988-a95f-c33123d6be6c@redhat.com>
-Date: Wed, 2 May 2018 23:08:26 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180502204612.GA2089@zrhn9910b>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+To: hdegoede@redhat.com, arnd@arndb.de, gregkh@linuxfoundation.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1599382342256929089?=
-X-GMAIL-MSGID: =?utf-8?q?1599388054224521793?=
+X-GMAIL-MSGID: =?utf-8?q?1599383958424885704?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi,
+Hello together,
 
-On 05/02/2018 10:46 PM, damian wrote:
-> Hello Greg,
-> 
-> it is PATCH 3 virt: vbox: Use __get_free_pages insteas of kmalloc for DMA32 memory.
+after commit "Merge tag 'char-misc-4.17-rc3' d8a332730e757129e70675679f2b2a0=
+3f1ecf65e my virtualbox with Ubuntu 16.04 no longer works correctly.
+The focus on a window for example "terminal window" only works very delayed.=
+ Or a move of the window with the mouse isnt possible.=20
+I reverted the commit 'd8a332730e757129e70675679f2b2a03f1ecf65e' and now wor=
+ks all normal.=20
 
-Weird. I'm currently on vacation. I will look into this first thing next Monday.
-
-Regards,
-
-Hans
+Best regards=20
+Damian
