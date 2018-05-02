@@ -1,77 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751076AbeEBSJW (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 14:09:22 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:38505 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750800AbeEBSJS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 14:09:18 -0400
-X-Google-Smtp-Source: AB8JxZqZWR+SqNZs6w1m4qzKpke4braNeTzOGr2PkrfoMCbvCstn3t0CAIAwavbwj2dbYtV70G7HsA==
-Date: Wed, 2 May 2018 11:09:14 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
-Subject: [git pull] Input updates for v4.17-rc3
-Message-ID: <20180502180914.GA67132@dtor-ws>
+        id S1751317AbeEBSK6 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 14:10:58 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:59791 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750944AbeEBSK5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 14:10:57 -0400
+Date: Wed, 2 May 2018 20:10:46 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/6] clocksource: rework Atmel TCB timer driver
+Message-ID: <20180502181046.GG19273@piout.net>
+References: <20180418105143.3577-1-alexandre.belloni@bootlin.com>
+ <20180426164623.tlv6kz5yopk6voxx@breakpoint.cc>
+ <20180426185233.GU4813@piout.net>
+ <20180502133418.xa26c5ta2ytxxjcn@linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180502133418.xa26c5ta2ytxxjcn@linutronix.de>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On 02/05/2018 15:34:18+0200, Sebastian Andrzej Siewior wrote:
+> On 2018-04-26 20:52:33 [+0200], Alexandre Belloni wrote:
+> > 
+> > I don't remember you posted anything for the TCB. Wasn't it focused on
+> > getting rid of the PIT irq?
+> 
+> the PIT irq which was shared with the UART one some devices, yes this
+> was part of it. The other essential piece was using a higher frequency
+> for the device:
+>   https://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git/tree/patches/clocksource-tclib-allow-higher-clockrates.patch?h=linux-4.14.y-rt-patches
+> 
+> > As said below, this is solving multiple issues, including the one for
+> > SoCs that don't have the PIT.
+> will the PIT be removed? Where it needs the PIT?
+> 
 
-Please pull from:
+The last patch is unselecting the PIT driver so by default it is not
+enabled. The PIT driver will stay just in case someone has to use it
+e.g. when they are using all the TCB channels for something else.
+However, recent Atmel SoC have a TCB without any output so it can ony be
+used as a timer. Some other SoCs don't have a PIT at all.
 
-	git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git for-linus
+> > I don't think you ending up with nothing but probably you removed the
+> > PIT and kept ATMEL_TCLIB which is the combination that is really
+> > difficult to protect from. I don't think it is worth the added Kconfig
+> > complexity.
+> 
+> TCLIB was still enabled yes. It is 'oldconfig'.
+> 
 
-to receive updates for the input subsystem: just a few driver fixes.
+Hum, ok, I'll try to provide a cleaner path.
 
-Changelog:
----------
+> > The remaining one would be "clocksource: TCLIB: Allow higher clock rates
+> > for clock events"
+> 
+> I see. So I would need to keep that patch in queue after it was
+> dismissed from dutyâ€¦
 
-Christophe JAILLET (1):
-      Input: synaptics-rmi4 - fix an unchecked out of memory error path
-
-Dmitry Torokhov (1):
-      Input: leds - fix out of bound access
-
-Javier Martinez Canillas (1):
-      Input: atmel_mxt_ts - add missing compatible strings to OF device table
-
-Masanari Iida (1):
-      Input: hideep_ts - fix a typo in Kconfig
-
-Nick Dyer (1):
-      Input: atmel_mxt_ts - fix the firmware update
-
-Pali Rohár (1):
-      Input: alps - fix reporting pressure of v3 trackstick
-
-Vittorio Gambaletta (VittGam) (1):
-      Input: atmel_mxt_ts - add touchpad button mapping for Samsung Chromebook Pro
-
-Wolfram Sang (1):
-      MAINTAINERS: Rakesh Iyer can't be reached anymore
-
-Diffstat:
---------
-
- .../devicetree/bindings/input/atmel,maxtouch.txt   |   7 +
- MAINTAINERS                                        |   1 -
- drivers/input/input-leds.c                         |   8 +-
- drivers/input/mouse/alps.c                         |   2 +-
- drivers/input/rmi4/rmi_spi.c                       |   7 +-
- drivers/input/touchscreen/Kconfig                  |   2 +-
- drivers/input/touchscreen/atmel_mxt_ts.c           | 200 +++++++++++++--------
- 7 files changed, 142 insertions(+), 85 deletions(-)
-
-Thanks.
-
+Boris suggested a DT binding to allow changing the rate but it didn't
+reach consensus at the time. this is something that will ne to be
+revived at some point and I would very much like having that upstream
+too.
 
 -- 
-Dmitry
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
