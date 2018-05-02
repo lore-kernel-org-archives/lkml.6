@@ -1,99 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751272AbeEBJdN (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 05:33:13 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:34572 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750883AbeEBJdL (ORCPT
+        id S1751331AbeEBJd0 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 05:33:26 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:58184 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750883AbeEBJdT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 05:33:11 -0400
-Subject: Re: [PATCH v2 1/3] mfd: cros_ec: Add USBPD charger commands and
- struct definitions.
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Sebastian Reichel <sre@kernel.org>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Sameer Nanda <snanda@chromium.org>, linux-pm@vger.kernel.org,
-        Guenter Roeck <groeck@chromium.org>, linux-kernel@vger.kernel.org,
-        Benson Leung <bleung@chromium.org>, miguel.ojeda.sandonis@gmail.com
-References: <20180430131403.14296-1-enric.balletbo@collabora.com>
- <20180430131403.14296-2-enric.balletbo@collabora.com>
- <20180501082905.GJ5147@dell>
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Message-ID: <b8fd0545-4baa-ab82-462e-95179aa9b32d@collabora.com>
-Date: Wed, 2 May 2018 11:33:06 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180501082905.GJ5147@dell>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        Wed, 2 May 2018 05:33:19 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180502093317euoutp013e366dc0a3d5a9ff7b40862f2b558b0f~qyhDVd__q0668306683euoutp01_
+X-AuditID: cbfec7f2-1dbff70000011644-58-5ae985dc9e88
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Eduardo Valentin <edubezval@gmail.com>,
+        Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 11/18] thermal: exynos: add
+ exynos*_tmu_set_[trip,hyst]() helpers
+Date: Wed, 02 May 2018 11:33:15 +0200
+Message-id: <2658994.PYbssquHNy@amdc3058>
+User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
+In-reply-to: <20180501095540.GH27619@mai>
+MIME-version: 1.0
+Content-transfer-encoding: 7Bit
+Content-type: text/plain; charset="us-ascii"
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrAIsWRmVeSWpSXmKPExsWy7djPc7p3Wl9GGbw5Lmsx77Osxfwr11gt
+        Lu+aw2bxufcIo8WM8/uYLJ487GNzYPPYOesuu8fiPS+ZPO5c28Pm8XmTXABLFJdNSmpOZllq
+        kb5dAlfGvTOb2ApOcFcsXK/bwLibs4uRk0NCwESi50UraxcjF4eQwApGiRcPVzOBJIQEPjNK
+        /NrtA1N082I7I0R8GaPErs+ZEA2/GSWad/SxgSTYBKwkJravAisSEdCTaHzfxgRSxCywilGi
+        /9M7sKnCAuES116+YwGxWQRUJWYvnwnWzCugKTFzzVmwZlEBL4kt+9rB6jmB4nv/bYGqEZT4
+        MfkeWC+zgLzEvv1TWSFsHYmzx9YxgiyTEFjDJvFgy11WiLNdJL4saWWDsIUlXh3fwg5hy0hc
+        ntzNAtHQzCjxbcceZojEBEaJPeuFIGxricPHL0Jt4JOYtG06UA0HUJxXoqMNqsRDou/kHSaI
+        sKPE/SZBeKi8m/OdZQKj7Cwkd89CcvcsJHcvYGRexSieWlqcm55abJiXWq5XnJhbXJqXrpec
+        n7uJEZgOTv87/mkH49dLSYcYBTgYlXh4DfJeRAmxJpYVV+YeYpTgYFYS4V3Z8SxKiDclsbIq
+        tSg/vqg0J7X4EKM0B4uSOG+cRl2UkEB6YklqdmpqQWoRTJaJg1OqgVF4VVdS54VVE5sv9zHY
+        vl3p9lJwmdvmnrPKy0tYN2o7pgUZ11/dIDJP2IhVzsh8zj3fx7vvxmT/Kn1fJ7Ri3e8iaaa5
+        zu/OP89Vv/r22I3jxwotN77M6Ku899ClSWzx0xTWVx89tptbcQRPmvLhtbHBr0UKQbEv99wI
+        s1Iq9gosu+11fubJfh4lluKMREMt5qLiRADX7nTMAwMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrCLMWRmVeSWpSXmKPExsVy+t/xq7q3W19GGex9Y2Mx77Osxfwr11gt
+        Lu+aw2bxufcIo8WM8/uYLJ487GNzYPPYOesuu8fiPS+ZPO5c28Pm8XmTXABLFJdNSmpOZllq
+        kb5dAlfGvTOb2ApOcFcsXK/bwLibs4uRk0NCwETi5sV2xi5GLg4hgSWMEr8fvmYESQgJ/GWU
+        2HQtHcRmE7CSmNi+CiwuIqAn0fi+jQmkgVlgFaPEytZeZpCEsEC4xOUl79lBbBYBVYnZy2ey
+        gdi8ApoSM9ecBWsWFfCS2LKvnQnE5gSK7/23hQ1i83JGiQd75zJBNAhK/Jh8jwXEZhaQl9i3
+        fyorhK0lsX7ncaYJjPyzkJTNQlI2C0nZAkbmVYwiqaXFuem5xUZ6xYm5xaV56XrJ+bmbGIFh
+        u+3Yzy07GLveBR9iFOBgVOLhNch7ESXEmlhWXJl7iFGCg1lJhHdlx7MoId6UxMqq1KL8+KLS
+        nNTiQ4zSHCxK4rznDSqjhATSE0tSs1NTC1KLYLJMHJxSDYyR7p9ne91uk2/cvXZC06OSvZ61
+        R6teMBR2+PNHXS+ckPb8ZvYkIYtJO5PkDFevnn7k0RPrrEtxD6recN/Lar9pzr5Vz6D/UTPT
+        u/qWjtu7qo5rrDXqn6rsnhnFp8jjLy3Q79Y4nWWVQPhz9/Papqe3M8oGqSc9Xzy/Y+HOibzL
+        v4Rfys/1NVNiKc5INNRiLipOBABG1huQVwIAAA==
+X-CMS-MailID: 20180502093316eucas1p1e7e7b2f27eae677dde9882a4aedd2ed7
+X-Msg-Generator: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180502093316eucas1p1e7e7b2f27eae677dde9882a4aedd2ed7
+X-RootMTR: 20180502093316eucas1p1e7e7b2f27eae677dde9882a4aedd2ed7
+References: <1524743493-28113-1-git-send-email-b.zolnierkie@samsung.com>
+        <1524743493-28113-12-git-send-email-b.zolnierkie@samsung.com>
+        <20180501095540.GH27619@mai>
+        <CGME20180502093316eucas1p1e7e7b2f27eae677dde9882a4aedd2ed7@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lee,
+On Tuesday, May 01, 2018 11:55:40 AM Daniel Lezcano wrote:
+> On Thu, Apr 26, 2018 at 01:51:26PM +0200, Bartlomiej Zolnierkiewicz wrote:
+> > Add exynos*_tmu_set_[trip,hyst]() helpers and convert
+> > all ->tmu_initialize implementations accordingly.
+> > 
+> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> > ---
+> >  drivers/thermal/samsung/exynos_tmu.c | 282 +++++++++++++++++------------------
+> >  1 file changed, 140 insertions(+), 142 deletions(-)
+> > 
+> > diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+> > index 82484c5..80265d2 100644
+> > --- a/drivers/thermal/samsung/exynos_tmu.c
+> > +++ b/drivers/thermal/samsung/exynos_tmu.c
+> > @@ -305,30 +305,6 @@ static void sanitize_temp_error(struct exynos_tmu_data *data, u32 trim_info)
+> >  			EXYNOS_TMU_TEMP_MASK;
+> >  }
+> 
+> [ ... ]
+> 
+> > +static void exynos4210_tmu_set_trip_temp(struct exynos_tmu_data *data,
+> > +					 int trip, u8 temp)
+> > +{
+> > +	const struct thermal_trip * const trips =
+> > +		of_thermal_get_trip_points(data->tzd);
+> > +	u8 ref, th_code;
+> 
+> I would not do this kind of change (unsigned long => u8) with this patch.
+> Just code reorg and another patch to tweak the variable types if needed.
 
-Thanks for the reviews.
+This is so minor change and it is has been already tested so I prefer to
+not split it from this patch now.
 
-On 01/05/18 10:29, Lee Jones wrote:
-> On Mon, 30 Apr 2018, Enric Balletbo i Serra wrote:
-> 
->> From: Sameer Nanda <snanda@chromium.org>
->>
->> The USBPD charger driver gets information from the ChromeOS EC, this
->> patch adds the USBPD charger definitions needed by this driver.
->>
->> Signed-off-by: Sameer Nanda <snanda@chromium.org>
->> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
->> ---
->>
->> Changes in v2: None
->>
->>  include/linux/mfd/cros_ec_commands.h | 132 ++++++++++++++++++++++++++-
->>  1 file changed, 128 insertions(+), 4 deletions(-)
->>
->> diff --git a/include/linux/mfd/cros_ec_commands.h b/include/linux/mfd/cros_ec_commands.h
->> index f2edd9969b40..94dcf331796c 100644
->> --- a/include/linux/mfd/cros_ec_commands.h
->> +++ b/include/linux/mfd/cros_ec_commands.h
-> 
-> [...]
-> 
->> +struct ec_response_pd_log {
->> +	uint32_t timestamp; /* relative timestamp in milliseconds */
->> +	uint8_t type;       /* event type : see PD_EVENT_xx below */
->> +	uint8_t size_port;  /* [7:5] port number [4:0] payload size in bytes */
->> +	uint16_t data;      /* type-defined data payload */
->> +	uint8_t payload[0]; /* optional additional data payload: 0..16 bytes */
->> +} __packed;
-> 
-> I think this whole file should be converted to Kerneldoc format.
-> 
-
-Ok, is something I can do, let me do this in a separate patchset though.
-
-> [...]
-> 
->> +/*
->> + * PD_EVENT_MCU_CHARGE event definition :
->> + * the payload is "struct usb_chg_measures"
->> + * the data field contains the port state flags as defined below :
->> + */
->> +/* Port partner is a dual role device */
->> +#define CHARGE_FLAGS_DUAL_ROLE         (1 << 15)
-> 
-> BIT()?
-> 
-
-Changed in next version, there are also other places (not in this patch) where
-the BIT() macro is not used. I'll send separate patchset to change it and to
-convert to kerneldoc format.
-
->> +/* Port is the pending override port */
->> +#define CHARGE_FLAGS_DELAYED_OVERRIDE  (1 << 14)
->> +/* Port is the override port */
->> +#define CHARGE_FLAGS_OVERRIDE          (1 << 13)
-> 
-> [...]
-> 
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
