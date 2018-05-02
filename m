@@ -1,81 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751347AbeEBLxS (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 07:53:18 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:39117 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750930AbeEBLxQ (ORCPT
+        id S1751372AbeEBLxx (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 07:53:53 -0400
+Received: from mail-io0-f172.google.com ([209.85.223.172]:33923 "EHLO
+        mail-io0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751020AbeEBLxu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 07:53:16 -0400
-X-Google-Smtp-Source: AB8JxZrwzoq0+oQGXcoPqhOEYRH1ctvtn4cqNvH/bIygfb1GJ3fHpKdi7yirBU1BLcL5ZRWgFEcEjw==
-From: Michal Simek <michal.simek@xilinx.com>
-To: devicetree@vger.kernel.org
-Cc: monstr@monstr.eu, Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] arm64: zynqmp: Add support for Avnet Ultra96 rev1 board
-Date: Wed,  2 May 2018 13:53:14 +0200
-Message-Id: <80d21c84d427cb6b4122efd3dea7f1c4ab4cf2be.1525261987.git.michal.simek@xilinx.com>
-X-Mailer: git-send-email 2.17.0
+        Wed, 2 May 2018 07:53:50 -0400
+X-Google-Smtp-Source: AB8JxZp9ySrHWwMj9pi3GBXS+h+yd4QLVmaUE0fQV0iv1q1Ub/6BBW6Y4weAhj5i7PjqJCmthz/tgqWEyH5hgBBVh0s=
+MIME-Version: 1.0
+In-Reply-To: <cover.1524933096.git.hns@goldelico.com>
+References: <cover.1524933096.git.hns@goldelico.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 2 May 2018 13:53:49 +0200
+Message-ID: <CACRpkdZPqMMUMbMq5BSD2FpqVojvVKukEh4KR-TW4do_G+DLDg@mail.gmail.com>
+Subject: Re: [PATCH v5 0/7] pcal6524 extensions and fixes for pca953x driver
+To: "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc: Kumar Gala <galak@codeaurora.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Alexandre Courbot <gnurou@gmail.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Discussions about the Letux Kernel
+        <letux-kernel@openphoenux.org>,
+        kernel@pyra-handheld.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Avnet Ultra96 rev1 board is commercialized Xilinx zcu100 revC/D
-internal board. The patch is reusing zcu100 revC files but changing
-model description and compatible strings which are used for example by
-libmraa.
+On Sat, Apr 28, 2018 at 6:31 PM, H. Nikolaus Schaller <hns@goldelico.com> wrote:
 
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
----
+> V5:
+> * fix wrong split up between patches 1/7and 2/7.
 
-I choose this option because there are houndreds of zcu100 boards
-created and this will enable support both versions.
+v5 is looking really nice, giving reviewers a chance to ACK
+etc before applying, but will probably apply it anyways in a
+few days.
 
-Record avnet prefix was sent by separate patch.
----
- arch/arm64/boot/dts/xilinx/Makefile           |  1 +
- .../boot/dts/xilinx/avnet-ultra96-rev1.dts    | 19 +++++++++++++++++++
- 2 files changed, 20 insertions(+)
- create mode 100644 arch/arm64/boot/dts/xilinx/avnet-ultra96-rev1.dts
+Nice work on this series!
 
-diff --git a/arch/arm64/boot/dts/xilinx/Makefile b/arch/arm64/boot/dts/xilinx/Makefile
-index d452f80e7601..60f5443f3ef4 100644
---- a/arch/arm64/boot/dts/xilinx/Makefile
-+++ b/arch/arm64/boot/dts/xilinx/Makefile
-@@ -1,4 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0
-+dtb-$(CONFIG_ARCH_ZYNQMP) += avnet-ultra96-rev1.dtb
- dtb-$(CONFIG_ARCH_ZYNQMP) += zynqmp-zc1232-revA.dtb
- dtb-$(CONFIG_ARCH_ZYNQMP) += zynqmp-zc1254-revA.dtb
- dtb-$(CONFIG_ARCH_ZYNQMP) += zynqmp-zc1275-revA.dtb
-diff --git a/arch/arm64/boot/dts/xilinx/avnet-ultra96-rev1.dts b/arch/arm64/boot/dts/xilinx/avnet-ultra96-rev1.dts
-new file mode 100644
-index 000000000000..88aa06fa78a8
---- /dev/null
-+++ b/arch/arm64/boot/dts/xilinx/avnet-ultra96-rev1.dts
-@@ -0,0 +1,19 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * dts file for Avnet Ultra96 rev1
-+ *
-+ * (C) Copyright 2018, Xilinx, Inc.
-+ *
-+ * Michal Simek <michal.simek@xilinx.com>
-+ */
-+
-+/dts-v1/;
-+
-+#include "zynqmp-zcu100-revC.dts"
-+
-+/ {
-+	model = "Avnet Ultra96 Rev1";
-+	compatible = "avnet,ultra96-rev1", "avnet,ultra96",
-+		     "xlnx,zynqmp-zcu100-revC", "xlnx,zynqmp-zcu100",
-+		     "xlnx,zynqmp";
-+};
--- 
-2.17.0
+Yours,
+Linus Walleij
