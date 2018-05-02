@@ -1,124 +1,183 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751348AbeEBNrE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 09:47:04 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42532 "EHLO mx1.redhat.com"
+        id S1751310AbeEBNvF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 09:51:05 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41060 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751109AbeEBNrC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 09:47:02 -0400
-Subject: Re: [PATCH v7 2/5] cpuset: Add cpuset.sched_load_balance to v2
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>, Ingo Molnar <mingo@redhat.com>,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
-        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
-        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
-        Juri Lelli <juri.lelli@redhat.com>
-References: <1524145624-23655-1-git-send-email-longman@redhat.com>
- <1524145624-23655-3-git-send-email-longman@redhat.com>
- <20180502102416.GJ12180@hirez.programming.kicks-ass.net>
- <14d7604c-1254-1146-e2b6-23f4cc020b34@redhat.com>
- <20180502134225.GR12217@hirez.programming.kicks-ass.net>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <94c80e1c-049d-6ec3-8e8c-40eb88d1341d@redhat.com>
-Date: Wed, 2 May 2018 09:47:00 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S1751109AbeEBNvC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 09:51:02 -0400
+Date: Wed, 2 May 2018 16:51:01 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Tiwei Bie <tiwei.bie@intel.com>
+Cc: Jason Wang <jasowang@redhat.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org, wexu@redhat.com,
+        jfreimann@redhat.com
+Subject: Re: [RFC v3 4/5] virtio_ring: add event idx support in packed ring
+Message-ID: <20180502164828-mutt-send-email-mst@kernel.org>
+References: <20180425051550.24342-1-tiwei.bie@intel.com>
+ <20180425051550.24342-5-tiwei.bie@intel.com>
+ <34781052-df9f-e505-cd3f-08e460b34dcc@redhat.com>
+ <20180502072819.mf5l3dypk6dwx2s7@debian>
 MIME-Version: 1.0
-In-Reply-To: <20180502134225.GR12217@hirez.programming.kicks-ass.net>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180502072819.mf5l3dypk6dwx2s7@debian>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/02/2018 09:42 AM, Peter Zijlstra wrote:
-> On Wed, May 02, 2018 at 09:29:54AM -0400, Waiman Long wrote:
->> On 05/02/2018 06:24 AM, Peter Zijlstra wrote:
->>> On Thu, Apr 19, 2018 at 09:47:01AM -0400, Waiman Long wrote:
->>>> +  cpuset.sched_load_balance
->>>> +	A read-write single value file which exists on non-root cgroups.
->>> Uhhm.. it should very much exist in the root group too. Otherwise you
->>> cannot disable it there, which is required to allow smaller groups to
->>> load-balance between themselves.
->>>
->>>> +	The default is "1" (on), and the other possible value is "0"
->>>> +	(off).
->>>> +
->>>> +	When it is on, tasks within this cpuset will be load-balanced
->>>> +	by the kernel scheduler.  Tasks will be moved from CPUs with
->>>> +	high load to other CPUs within the same cpuset with less load
->>>> +	periodically.
->>>> +
->>>> +	When it is off, there will be no load balancing among CPUs on
->>>> +	this cgroup.  Tasks will stay in the CPUs they are running on
->>>> +	and will not be moved to other CPUs.
->>>> +
->>>> +	This flag is hierarchical and is inherited by child cpusets. It
->>>> +	can be turned off only when the CPUs in this cpuset aren't
->>>> +	listed in the cpuset.cpus of other sibling cgroups, and all
->>>> +	the child cpusets, if present, have this flag turned off.
->>>> +
->>>> +	Once it is off, it cannot be turned back on as long as the
->>>> +	parent cgroup still has this flag in the off state.
->>> That too is wrong and broken. You explicitly want to turn it on for
->>> children.
->>>
->>> So the idea is that you can have:
->>>
->>> 		R
->>> 	      /   \
->>>             A       B
->>>
->>> With:
->>>
->>> 	R cpus=0-3, load_balance=0
->>> 	A cpus=0-1, load_balance=1
->>> 	B cpus=2-3, load_balance=1
->>>
->>> Which will allow all tasks in A,B (and its children) to load-balance
->>> across 0-1 or 2-3 resp.
->>>
->>> If you don't allow the root group to disable load_balance, it will
->>> always be the largest group and load-balancing will always happen system
->>> wide.
->> If you look at the remaining patches in the series, I was proposing a
->> different way to support isolcpus and separate sched domains with
->> turning off load balancing in the root cgroup.
->>
->> For me, it doesn't feel right to have load balancing disabled in the
->> root cgroup as we probably cannot move all the tasks away from the root
->> cgroup anyway. I am going to update the current patchset to incorporate
->> suggestion from Tejun. It will probably be ready sometime next week.
->>
-> I've read half of the next patch that adds the isolation thing. And
-> while that kludges around the whole root cgorup is magic thing, it
-> doesn't help if you move the above scenario on level down:
->
->
-> 	R
->      /    \
->    A        B
->           /   \
->         C       D
->
->
-> R: cpus=0-7, load_balance=0
-> A: cpus=0-1, load_balance=1
-> B: cpus=2-7, load_balance=0
-> C: cpus=2-3, load_balance=1
-> D: cpus=4-7, load_balance=1
->
->
-> Also, I feel we should strive to have a minimal amount of tasks that
-> cannot be moved out of the root group; the current set is far too large.
+On Wed, May 02, 2018 at 03:28:19PM +0800, Tiwei Bie wrote:
+> On Wed, May 02, 2018 at 10:51:06AM +0800, Jason Wang wrote:
+> > On 2018年04月25日 13:15, Tiwei Bie wrote:
+> > > This commit introduces the event idx support in packed
+> > > ring. This feature is temporarily disabled, because the
+> > > implementation in this patch may not work as expected,
+> > > and some further discussions on the implementation are
+> > > needed, e.g. do we have to check the wrap counter when
+> > > checking whether a kick is needed?
+> > > 
+> > > Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
+> > > ---
+> > >   drivers/virtio/virtio_ring.c | 53 ++++++++++++++++++++++++++++++++++++++++----
+> > >   1 file changed, 49 insertions(+), 4 deletions(-)
+> > > 
+> > > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> > > index 0181e93897be..b1039c2985b9 100644
+> > > --- a/drivers/virtio/virtio_ring.c
+> > > +++ b/drivers/virtio/virtio_ring.c
+> > > @@ -986,7 +986,7 @@ static inline int virtqueue_add_packed(struct virtqueue *_vq,
+> > >   static bool virtqueue_kick_prepare_packed(struct virtqueue *_vq)
+> > >   {
+> > >   	struct vring_virtqueue *vq = to_vvq(_vq);
+> > > -	u16 flags;
+> > > +	u16 new, old, off_wrap, flags;
+> > >   	bool needs_kick;
+> > >   	u32 snapshot;
+> > > @@ -995,7 +995,12 @@ static bool virtqueue_kick_prepare_packed(struct virtqueue *_vq)
+> > >   	 * suppressions. */
+> > >   	virtio_mb(vq->weak_barriers);
+> > > +	old = vq->next_avail_idx - vq->num_added;
+> > > +	new = vq->next_avail_idx;
+> > > +	vq->num_added = 0;
+> > > +
+> > >   	snapshot = *(u32 *)vq->vring_packed.device;
+> > > +	off_wrap = virtio16_to_cpu(_vq->vdev, snapshot & 0xffff);
+> > >   	flags = cpu_to_virtio16(_vq->vdev, snapshot >> 16) & 0x3;
+> > >   #ifdef DEBUG
+> > > @@ -1006,7 +1011,10 @@ static bool virtqueue_kick_prepare_packed(struct virtqueue *_vq)
+> > >   	vq->last_add_time_valid = false;
+> > >   #endif
+> > > -	needs_kick = (flags != VRING_EVENT_F_DISABLE);
+> > > +	if (flags == VRING_EVENT_F_DESC)
+> > > +		needs_kick = vring_need_event(off_wrap & ~(1<<15), new, old);
+> > 
+> > I wonder whether or not the math is correct. Both new and event are in the
+> > unit of descriptor ring size, but old looks not.
+> 
+> What vring_need_event() cares is the distance between
+> `new` and `old`, i.e. vq->num_added. So I think there
+> is nothing wrong with `old`. But the calculation of the
+> distance between `new` and `event_idx` isn't right when
+> `new` wraps. How do you think about the below code:
+> 
+> 	wrap_counter = off_wrap >> 15;
+> 	event_idx = off_wrap & ~(1<<15);
+> 	if (wrap_counter != vq->wrap_counter)
+> 		event_idx -= vq->vring_packed.num;
+> 	
+> 	needs_kick = vring_need_event(event_idx, new, old);
 
-What exactly is the use case you have in mind with loading balancing
-disabled in B, but enabled in C and D? We would like to support some
-sensible use cases, but not every possible combinations.
+I suspect this hack won't work for non power of 2 ring.
 
-Cheers,
-Longman
+
+> Best regards,
+> Tiwei Bie
+> 
+> 
+> > 
+> > Thanks
+> > 
+> > > +	else
+> > > +		needs_kick = (flags != VRING_EVENT_F_DISABLE);
+> > >   	END_USE(vq);
+> > >   	return needs_kick;
+> > >   }
+> > > @@ -1116,6 +1124,15 @@ static void *virtqueue_get_buf_ctx_packed(struct virtqueue *_vq,
+> > >   	if (vq->last_used_idx >= vq->vring_packed.num)
+> > >   		vq->last_used_idx -= vq->vring_packed.num;
+> > > +	/* If we expect an interrupt for the next entry, tell host
+> > > +	 * by writing event index and flush out the write before
+> > > +	 * the read in the next get_buf call. */
+> > > +	if (vq->event_flags_shadow == VRING_EVENT_F_DESC)
+> > > +		virtio_store_mb(vq->weak_barriers,
+> > > +				&vq->vring_packed.driver->off_wrap,
+> > > +				cpu_to_virtio16(_vq->vdev, vq->last_used_idx |
+> > > +						(vq->wrap_counter << 15)));
+> > > +
+> > >   #ifdef DEBUG
+> > >   	vq->last_add_time_valid = false;
+> > >   #endif
+> > > @@ -1143,10 +1160,17 @@ static unsigned virtqueue_enable_cb_prepare_packed(struct virtqueue *_vq)
+> > >   	/* We optimistically turn back on interrupts, then check if there was
+> > >   	 * more to do. */
+> > > +	/* Depending on the VIRTIO_RING_F_USED_EVENT_IDX feature, we need to
+> > > +	 * either clear the flags bit or point the event index at the next
+> > > +	 * entry. Always update the event index to keep code simple. */
+> > > +
+> > > +	vq->vring_packed.driver->off_wrap = cpu_to_virtio16(_vq->vdev,
+> > > +			vq->last_used_idx | (vq->wrap_counter << 15));
+> > >   	if (vq->event_flags_shadow == VRING_EVENT_F_DISABLE) {
+> > >   		virtio_wmb(vq->weak_barriers);
+> > > -		vq->event_flags_shadow = VRING_EVENT_F_ENABLE;
+> > > +		vq->event_flags_shadow = vq->event ? VRING_EVENT_F_DESC :
+> > > +						     VRING_EVENT_F_ENABLE;
+> > >   		vq->vring_packed.driver->flags = cpu_to_virtio16(_vq->vdev,
+> > >   							vq->event_flags_shadow);
+> > >   	}
+> > > @@ -1172,15 +1196,34 @@ static bool virtqueue_poll_packed(struct virtqueue *_vq, unsigned last_used_idx)
+> > >   static bool virtqueue_enable_cb_delayed_packed(struct virtqueue *_vq)
+> > >   {
+> > >   	struct vring_virtqueue *vq = to_vvq(_vq);
+> > > +	u16 bufs, used_idx, wrap_counter;
+> > >   	START_USE(vq);
+> > >   	/* We optimistically turn back on interrupts, then check if there was
+> > >   	 * more to do. */
+> > > +	/* Depending on the VIRTIO_RING_F_USED_EVENT_IDX feature, we need to
+> > > +	 * either clear the flags bit or point the event index at the next
+> > > +	 * entry. Always update the event index to keep code simple. */
+> > > +
+> > > +	/* TODO: tune this threshold */
+> > > +	bufs = (u16)(vq->next_avail_idx - vq->last_used_idx) * 3 / 4;
+> > > +
+> > > +	used_idx = vq->last_used_idx + bufs;
+> > > +	wrap_counter = vq->wrap_counter;
+> > > +
+> > > +	if (used_idx >= vq->vring_packed.num) {
+> > > +		used_idx -= vq->vring_packed.num;
+> > > +		wrap_counter ^= 1;
+> > > +	}
+> > > +
+> > > +	vq->vring_packed.driver->off_wrap = cpu_to_virtio16(_vq->vdev,
+> > > +			used_idx | (wrap_counter << 15));
+> > >   	if (vq->event_flags_shadow == VRING_EVENT_F_DISABLE) {
+> > >   		virtio_wmb(vq->weak_barriers);
+> > > -		vq->event_flags_shadow = VRING_EVENT_F_ENABLE;
+> > > +		vq->event_flags_shadow = vq->event ? VRING_EVENT_F_DESC :
+> > > +						     VRING_EVENT_F_ENABLE;
+> > >   		vq->vring_packed.driver->flags = cpu_to_virtio16(_vq->vdev,
+> > >   							vq->event_flags_shadow);
+> > >   	}
+> > > @@ -1822,8 +1865,10 @@ void vring_transport_features(struct virtio_device *vdev)
+> > >   		switch (i) {
+> > >   		case VIRTIO_RING_F_INDIRECT_DESC:
+> > >   			break;
+> > > +#if 0
+> > >   		case VIRTIO_RING_F_EVENT_IDX:
+> > >   			break;
+> > > +#endif
+> > >   		case VIRTIO_F_VERSION_1:
+> > >   			break;
+> > >   		case VIRTIO_F_IOMMU_PLATFORM:
+> > 
