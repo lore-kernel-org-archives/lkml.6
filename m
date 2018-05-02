@@ -1,96 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753362AbeEBAMb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 20:12:31 -0400
-Received: from mail-pg0-f45.google.com ([74.125.83.45]:47096 "EHLO
-        mail-pg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751825AbeEBAM2 (ORCPT
+        id S1751501AbeEBAga (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 20:36:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45406 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750969AbeEBAg2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 20:12:28 -0400
-X-Google-Smtp-Source: AB8JxZqlff30b32PIS2v4lQ05QDjCNLmZAu6VLONDVyPN6CjrNGFDfwUh83twOwBfVzajxRK6iKDOA==
-Date: Wed, 2 May 2018 10:12:14 +1000
-From: Nicholas Piggin <npiggin@gmail.com>
-To: Joel Fernandes <joel.opensrc@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] tracing/irqtrace: only call trace_hardirqs_on/off when
- state changes
-Message-ID: <20180502101214.746650bc@roar.ozlabs.ibm.com>
-In-Reply-To: <CAEi0qNkbjrdx8A4rfNCJd-1BGMUXZRbbLJEkZuVab+oprWhcDQ@mail.gmail.com>
-References: <20171116161506.19691-1-npiggin@gmail.com>
-        <20180501144620.1e832a09@gandalf.local.home>
-        <20180501191951.GJ12217@hirez.programming.kicks-ass.net>
-        <20180501153840.7281022a@gandalf.local.home>
-        <20180501194838.GK12217@hirez.programming.kicks-ass.net>
-        <20180501160059.6df6aae4@gandalf.local.home>
-        <CAEi0qNkbjrdx8A4rfNCJd-1BGMUXZRbbLJEkZuVab+oprWhcDQ@mail.gmail.com>
-Organization: IBM
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
+        Tue, 1 May 2018 20:36:28 -0400
+Date: Tue, 1 May 2018 17:36:26 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Mikulas Patocka <mpatocka@redhat.com>
+Cc: Michal Hocko <mhocko@kernel.org>, Matthew Wilcox <willy@infradead.org>,
+        David Miller <davem@davemloft.net>, linux-mm@kvack.org,
+        eric.dumazet@gmail.com, edumazet@google.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mst@redhat.com, jasowang@redhat.com,
+        virtualization@lists.linux-foundation.org, dm-devel@redhat.com,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH] kvmalloc: always use vmalloc if CONFIG_DEBUG_VM
+Message-Id: <20180501173626.4593a87d0d64f6cc9d219d20@linux-foundation.org>
+In-Reply-To: <alpine.LRH.2.02.1804241229410.23702@file01.intranet.prod.int.rdu2.redhat.com>
+References: <20180420130852.GC16083@dhcp22.suse.cz>
+        <alpine.LRH.2.02.1804201635180.25408@file01.intranet.prod.int.rdu2.redhat.com>
+        <20180420210200.GH10788@bombadil.infradead.org>
+        <alpine.LRH.2.02.1804201704580.25408@file01.intranet.prod.int.rdu2.redhat.com>
+        <20180421144757.GC14610@bombadil.infradead.org>
+        <alpine.LRH.2.02.1804221733520.7995@file01.intranet.prod.int.rdu2.redhat.com>
+        <20180423151545.GU17484@dhcp22.suse.cz>
+        <alpine.LRH.2.02.1804232006540.2299@file01.intranet.prod.int.rdu2.redhat.com>
+        <20180424133146.GG17484@dhcp22.suse.cz>
+        <alpine.LRH.2.02.1804241107010.31601@file01.intranet.prod.int.rdu2.redhat.com>
+        <20180424161242.GK17484@dhcp22.suse.cz>
+        <alpine.LRH.2.02.1804241229410.23702@file01.intranet.prod.int.rdu2.redhat.com>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 1 May 2018 14:15:14 -0700
-Joel Fernandes <joel.opensrc@gmail.com> wrote:
+On Tue, 24 Apr 2018 12:33:01 -0400 (EDT) Mikulas Patocka <mpatocka@redhat.com> wrote:
 
-> On Tue, May 1, 2018 at 1:00 PM, Steven Rostedt <rostedt@goodmis.org> wrote:
-> > On Tue, 1 May 2018 21:48:38 +0200
-> > Peter Zijlstra <peterz@infradead.org> wrote:
-> >  
-> >> On Tue, May 01, 2018 at 03:38:40PM -0400, Steven Rostedt wrote:  
-> >> > On Tue, 1 May 2018 21:19:51 +0200
-> >> > Peter Zijlstra <peterz@infradead.org> wrote:  
-> >>  
-> >> > > Now, lockdep only minimally tracks these otherwise redundant operations;
-> >> > > see redundant_hardirqs_{on,off} counters, and loosing that doesn't seen
-> >> > > like a big issue.
-> >> > >
-> >> > > But I'm confused how this helps track superfluous things, it looks like
-> >> > > it explicitly tracks _less_ superfluous transitions.  
-> >> >
-> >> > I think it is about triggering on OFF->OFF a warning, as that would
-> >> > only happen if we have:
-> >> >
-> >> >     local_irq_save(flags);
-> >> >     [..]
-> >> >     local_irq_disable();
-> >> >  
-> >>
-> >> Ahh, ok. Yes, that is easier to do with these changes. The alternative
-> >> is to add more information to the tracehooks such that we can do the
-> >> same internally, but whatever.
-> >>
-> >> Yeah, I'm fine with the proposed change, but maybe improve the Changelog
-> >> a little for slow people like me :-)  
-> >
-> > Great!
-> >
-> > Nicholas,
-> >
-> > I know this is an old patch (from last November), but want to send it
-> > again with a proper change log and signed off by?  
 > 
-> I actually wrote the exact same patch yesterday with changes Matsami
-> suggested. However I decided not to send it, since it didn't have any
-> performance improvement (which was the reason I wrote it).
 > 
-> Also with my recent set, I don't think it will help detect repeated
-> calls to trace_hardirqs_off because we are handling that recursive
-> case by using per-cpu variable and bailing out if there is a
-> recursion, before even calling into lockdep.
+> On Tue, 24 Apr 2018, Michal Hocko wrote:
 > 
-> I have mixed feelings about this patch, I am Ok with this patch but I
-> suggest its sent with the follow-up patch that shows its use of this.
-> And also appreciate if such a follow-up patch is rebased onto the IRQ
-> tracepoint work: https://patchwork.kernel.org/patch/10373129/
+> > On Tue 24-04-18 11:30:40, Mikulas Patocka wrote:
+> > > 
+> > > 
+> > > On Tue, 24 Apr 2018, Michal Hocko wrote:
+> > > 
+> > > > On Mon 23-04-18 20:25:15, Mikulas Patocka wrote:
+> > > > 
+> > > > > Fixing __vmalloc code 
+> > > > > is easy and it doesn't require cooperation with maintainers.
+> > > > 
+> > > > But it is a hack against the intention of the scope api.
+> > > 
+> > > It is not!
+> > 
+> > This discussion simply doesn't make much sense it seems. The scope API
+> > is to document the scope of the reclaim recursion critical section. That
+> > certainly is not a utility function like vmalloc.
 > 
-> What do you think?
+> That 15-line __vmalloc bugfix doesn't prevent you (or any other kernel 
+> developer) from converting the code to the scope API. You make nonsensical 
+> excuses.
+> 
 
-I'll try to dig it up and resend. Thanks for the feedback on it.
+Fun thread!
 
-Thanks,
-Nick
+Winding back to the original problem, I'd state it as
+
+- Caller uses kvmalloc() but passes the address into vmalloc-naive
+  DMA API and
+
+- Caller uses kvmalloc() but passes the address into kfree()
+
+Yes?
+
+If so, then...
+
+Is there a way in which, in the kvmalloc-called-kmalloc path, we can
+tag the slab-allocated memory with a "this memory was allocated with
+kvmalloc()" flag?  I *think* there's extra per-object storage available
+with suitable slab/slub debugging options?  Perhaps we could steal one
+bit from the redzone, dunno.
+
+If so then we can
+
+a) set that flag in kvmalloc() if the kmalloc() call succeeded
+
+b) check for that flag in the DMA code, WARN if it is set.
+
+c) in kvfree(), clear that flag before calling kfree()
+
+d) in kfree(), check for that flag and go WARN() if set.
+
+So both potential bugs are detected all the time, dependent upon
+CONFIG_SLUB_DEBUG (and perhaps other slub config options).
