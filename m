@@ -1,143 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751292AbeEBHXd (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 03:23:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54384 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751115AbeEBHXa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 03:23:30 -0400
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Amit Nischal <anischal@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1525105210-8689-4-git-send-email-anischal@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Odelu Kukatla <okukatla@codeaurora.org>,
-        Taniya Das <tdas@codeaurora.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Amit Nischal <anischal@codeaurora.org>
-References: <1525105210-8689-1-git-send-email-anischal@codeaurora.org>
- <1525105210-8689-4-git-send-email-anischal@codeaurora.org>
-Message-ID: <152524580953.138124.2159165461856101134@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v6 3/3] clk: qcom: Add Global Clock controller (GCC) driver for
- SDM845
-Date: Wed, 02 May 2018 00:23:29 -0700
+        id S1751127AbeEBH0K (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 03:26:10 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34602 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750930AbeEBH0J (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 03:26:09 -0400
+From: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc: cohuck@redhat.com, borntraeger@de.ibm.com, bjsdjshi@linux.ibm.com,
+        pasic@linux.ibm.com, pmorel@linux.ibm.com,
+        Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
+Subject: [PATCH 1/1] vfio: ccw: fix error return in vfio_ccw_sch_event
+Date: Wed,  2 May 2018 09:25:59 +0200
+X-Mailer: git-send-email 2.13.5
+X-TM-AS-GCONF: 00
+x-cbid: 18050207-0028-0000-0000-00000988D7DE
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008959; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000258; SDB=6.01026304; UDB=6.00524157; IPR=6.00805535;
+ MB=3.00020891; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-02 07:26:06
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18050207-0029-0000-0000-00003A9EDB03
+Message-Id: <20180502072559.50691-1-bjsdjshi@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-02_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805020074
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w427NcTQ026086
 
-Quoting Amit Nischal (2018-04-30 09:20:10)
-> ---
->  .../devicetree/bindings/clock/qcom,gcc.txt         |    1 +
->  drivers/clk/qcom/Kconfig                           |   10 +-
->  drivers/clk/qcom/Makefile                          |    1 +
->  drivers/clk/qcom/gcc-sdm845.c                      | 3480 ++++++++++++++++++++
->  include/dt-bindings/clock/qcom,gcc-sdm845.h        |  239 ++
+If device has not been registered, or there is a pending work,
+we should reschedule a sch_event call again.
 
-Do the split that Rob suggests please, given that you're resending. And
-also include his reviewed-by tag.
+Signed-off-by: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
+---
+ drivers/s390/cio/vfio_ccw_drv.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
->  5 files changed, 3727 insertions(+), 4 deletions(-)
->  create mode 100644 drivers/clk/qcom/gcc-sdm845.c
->  create mode 100644 include/dt-bindings/clock/qcom,gcc-sdm845.h
-> 
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index e42e1af..3298beb 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -218,13 +218,15 @@ config MSM_MMCC_8996
->           Say Y if you want to support multimedia devices such as display,
->           graphics, video encode/decode, camera, etc.
-> 
-> -config MSM_GCC_8998
-> -       tristate "MSM8998 Global Clock Controller"
-> +config SDM_GCC_845
-> +       tristate "SDM845 Global Clock Controller"
-> +       select QCOM_GDSC
->         depends on COMMON_CLK_QCOM
->         help
-> -         Support for the global clock controller on msm8998 devices.
-> +         Support for the global clock controller on Qualcomm Technologies, Inc
-> +         sdm845 devices.
->           Say Y if you want to use peripheral devices such as UART, SPI,
-> -         i2c, USB, UFS, SD/eMMC, PCIe, etc.
-> +         I2C, USB, UFS, SDDC, PCIe, etc.
-
-This is all wrong.
-
-> 
->  config SPMI_PMIC_CLKDIV
->         tristate "SPMI PMIC clkdiv Support"
-> diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
-> new file mode 100644
-> index 0000000..6484cba
-> --- /dev/null
-> +++ b/drivers/clk/qcom/gcc-sdm845.c
-> @@ -0,0 +1,3480 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-> + */
-> +
-[...]
-> +                       .name = "gcc_disp_axi_clk",
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch gcc_disp_gpll0_clk_src = {
-> +       .halt_reg = 0x52004,
-> +       .halt_check = BRANCH_HALT_DELAY,
-
-What about this one? It's not a phy so I'm confused again why we're
-unable to check the halt bit. To be clear(er), I don't see why we ever
-want to have HALT_DELAY used. Hopefully we can remove that flag.
-
->From what I recall, the flag is there for clks that don't toggle their
-status bit at all, but that we know take a few cycles to ungate the
-upstream clk. So we threw a delay into the code to make sure that when
-clk_enable() returned, a driver wouldn't try to use hardware before the
-clk was actually on. But these cases should pretty much never happen,
-hence all the pushback against this flag.
-
-> +       .clkr = {
-> +               .enable_reg = 0x52004,
-> +               .enable_mask = BIT(18),
-> +               .hw.init = &(struct clk_init_data){
-> +                       .name = "gcc_disp_gpll0_clk_src",
-> +                       .parent_names = (const char *[]){
-> +                               "gpll0",
-> +                       },
-> +                       .num_parents = 1,
-[...]
-> +               .enable_reg = 0x7508c,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(struct clk_init_data){
-> +                       .name = "gcc_ufs_card_phy_aux_clk",
-> +                       .parent_names = (const char *[]){
-> +                               "gcc_ufs_card_phy_aux_clk_src",
-> +                       },
-> +                       .num_parents = 1,
-> +                       .flags = CLK_SET_RATE_PARENT,
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch gcc_ufs_card_rx_symbol_0_clk = {
-> +       .halt_reg = 0x75018,
-> +       .halt_check = BRANCH_HALT_DELAY,
-
-There are still HALT_DELAY flags for UFS though? Why?
-
-Also, are you going to send DFS support for the QUP clks? I would like
-to see that code merged soon.
+diff --git a/drivers/s390/cio/vfio_ccw_drv.c b/drivers/s390/cio/vfio_ccw_drv.c
+index ea6a2d0b2894..770fa9cfc310 100644
+--- a/drivers/s390/cio/vfio_ccw_drv.c
++++ b/drivers/s390/cio/vfio_ccw_drv.c
+@@ -177,6 +177,7 @@ static int vfio_ccw_sch_event(struct subchannel *sch, int process)
+ {
+ 	struct vfio_ccw_private *private = dev_get_drvdata(&sch->dev);
+ 	unsigned long flags;
++	int rc = -EAGAIN;
+ 
+ 	spin_lock_irqsave(sch->lock, flags);
+ 	if (!device_is_registered(&sch->dev))
+@@ -187,6 +188,7 @@ static int vfio_ccw_sch_event(struct subchannel *sch, int process)
+ 
+ 	if (cio_update_schib(sch)) {
+ 		vfio_ccw_fsm_event(private, VFIO_CCW_EVENT_NOT_OPER);
++		rc = 0;
+ 		goto out_unlock;
+ 	}
+ 
+@@ -195,11 +197,12 @@ static int vfio_ccw_sch_event(struct subchannel *sch, int process)
+ 		private->state = private->mdev ? VFIO_CCW_STATE_IDLE :
+ 				 VFIO_CCW_STATE_STANDBY;
+ 	}
++	rc = 0;
+ 
+ out_unlock:
+ 	spin_unlock_irqrestore(sch->lock, flags);
+ 
+-	return 0;
++	return rc;
+ }
+ 
+ static struct css_device_id vfio_ccw_sch_ids[] = {
+-- 
+2.13.5
