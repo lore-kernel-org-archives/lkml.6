@@ -1,109 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751555AbeEBOs4 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 10:48:56 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:56235 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751011AbeEBOsv (ORCPT
+        id S1751723AbeEBOtb (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 10:49:31 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:53450 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751652AbeEBOt1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 10:48:51 -0400
-Date: Wed, 2 May 2018 07:48:45 -0700
-From: tip-bot for Thomas Gleixner <tipbot@zytor.com>
-Message-ID: <tip-c65732e4f72124ca5a3a0dd3bee0d3cee39c7170@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        tim.c.chen@linux.intel.com, jrg.otte@gmail.com, mingo@kernel.org,
-        hpa@zytor.com, torvalds@linux-foundation.org
-Reply-To: mingo@kernel.org, tim.c.chen@linux.intel.com, jrg.otte@gmail.com,
-        tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org, hpa@zytor.com
-In-Reply-To: <alpine.DEB.2.21.1805021043510.1668@nanos.tec.linutronix.de>
-References: <alpine.DEB.2.21.1805021043510.1668@nanos.tec.linutronix.de>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/cpu: Restore CPUID_8000_0008_EBX reload
-Git-Commit-ID: c65732e4f72124ca5a3a0dd3bee0d3cee39c7170
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Wed, 2 May 2018 10:49:27 -0400
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: David Howells <dhowells@redhat.com>,
+        Matthew Garrett <mjg59@google.com>, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, kexec@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <1523572911-16363-1-git-send-email-zohar@linux.vnet.ibm.com>
+        <1523572911-16363-3-git-send-email-zohar@linux.vnet.ibm.com>
+Date: Wed, 02 May 2018 09:45:30 -0500
+In-Reply-To: <1523572911-16363-3-git-send-email-zohar@linux.vnet.ibm.com>
+        (Mimi Zohar's message of "Thu, 12 Apr 2018 18:41:50 -0400")
+Message-ID: <87h8nqglpx.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain
+X-XM-SPF: eid=1fDt2P-0001V2-IZ;;;mid=<87h8nqglpx.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.174.25;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19HUl1dxhN65w7xXBUwMNRlsYBVIPVmL6E=
+X-SA-Exim-Connect-IP: 97.119.174.25
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa05 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.1 XMSolicitRefs_0 Weightloss drug
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+        *  1.0 T_XMDrugObfuBody_08 obfuscated drug references
+X-Spam-DCC: XMission; sa05 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Mimi Zohar <zohar@linux.vnet.ibm.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 2220 ms - load_scoreonly_sql: 0.06 (0.0%),
+        signal_user_changed: 3.8 (0.2%), b_tie_ro: 2.5 (0.1%), parse: 1.51 (0.1%),
+        extract_message_metadata: 6 (0.2%), get_uri_detail_list: 2.5 (0.1%),
+        tests_pri_-1000: 6 (0.3%), tests_pri_-950: 1.95 (0.1%), tests_pri_-900: 1.59
+        (0.1%), tests_pri_-400: 23 (1.0%), check_bayes: 21 (1.0%), b_tokenize: 6
+        (0.3%), b_tok_get_all: 7 (0.3%), b_comp_prob: 2.1 (0.1%), b_tok_touch_all:
+        3.3 (0.1%), b_finish: 0.59 (0.0%), tests_pri_0: 2160 (97.3%),
+        check_dkim_signature: 0.50 (0.0%), check_dkim_adsp: 2006 (90.3%),
+        tests_pri_500: 4.0 (0.2%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH 2/3] kexec: call LSM hook for kexec_load syscall
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  c65732e4f72124ca5a3a0dd3bee0d3cee39c7170
-Gitweb:     https://git.kernel.org/tip/c65732e4f72124ca5a3a0dd3bee0d3cee39c7170
-Author:     Thomas Gleixner <tglx@linutronix.de>
-AuthorDate: Mon, 30 Apr 2018 21:47:46 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Wed, 2 May 2018 16:44:38 +0200
+Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
 
-x86/cpu: Restore CPUID_8000_0008_EBX reload
+> Allow LSMs and IMA to differentiate between the kexec_load and
+> kexec_file_load syscalls by adding an "unnecessary" call to
+> security_kernel_read_file() in kexec_load.  This would be similar to the
+> existing init_module syscall calling security_kernel_read_file().
 
-The recent commt which addresses the x86_phys_bits corruption with
-encrypted memory on CPUID reload after a microcode update lost the reload
-of CPUID_8000_0008_EBX as well.
+Given the reasonable desire to load a policy that ensures everything
+has a signature I don't have fundamental objections.
 
-As a consequence IBRS and IBRS_FW are not longer detected
+security_kernel_read_file as a hook seems an odd choice.  At the very
+least it has a bad name because there is no file reading going on here.
 
-Restore the behaviour by bringing the reload of CPUID_8000_0008_EBX
-back. This restore has a twist due to the convoluted way the cpuid analysis
-works:
+I am concerned that I don't see CONFIG_KEXEC_VERIFY_SIG being tested
+anywhere.  Which means I could have a kernel compiled without that and I
+would be allowed to use kexec_file_load without signature checking.
+While kexec_load would be denied.
 
-CPUID_8000_0008_EBX is used by AMD to enumerate IBRB, IBRS, STIBP. On Intel
-EBX is not used. But the speculation control code sets the AMD bits when
-running on Intel depending on the Intel specific speculation control
-bits. This was done to use the same bits for alternatives.
+Am I missing something here?
 
-The change which moved the 8000_0008 evaluation out of get_cpu_cap() broke
-this nasty scheme due to ordering. So that on Intel the store to
-CPUID_8000_0008_EBX clears the IBRB, IBRS, STIBP bits which had been set
-before by software.
+Eric
 
-So the actual CPUID_8000_0008_EBX needs to go back to the place where it
-was and the phys/virt address space calculation cannot touch it.
 
-In hindsight this should have used completely synthetic bits for IBRB,
-IBRS, STIBP instead of reusing the AMD bits, but that's for 4.18.
 
-/me needs to find time to cleanup that steaming pile of ...
-
-Fixes: d94a155c59c9 ("x86/cpu: Prevent cpuinfo_x86::x86_phys_bits adjustment corruption")
-Reported-by: Jörg Otte <jrg.otte@gmail.com>
-Reported-by: Tim Chen <tim.c.chen@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Jörg Otte <jrg.otte@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: kirill.shutemov@linux.intel.com
-Cc: Borislav Petkov <bp@alien8.de
-Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1805021043510.1668@nanos.tec.linutronix.de
----
- arch/x86/kernel/cpu/common.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 8a5b185735e1..ce243f7d2d4e 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -848,6 +848,11 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
- 		c->x86_power = edx;
- 	}
- 
-+	if (c->extended_cpuid_level >= 0x80000008) {
-+		cpuid(0x80000008, &eax, &ebx, &ecx, &edx);
-+		c->x86_capability[CPUID_8000_0008_EBX] = ebx;
-+	}
-+
- 	if (c->extended_cpuid_level >= 0x8000000a)
- 		c->x86_capability[CPUID_8000_000A_EDX] = cpuid_edx(0x8000000a);
- 
-@@ -871,7 +876,6 @@ static void get_cpu_address_sizes(struct cpuinfo_x86 *c)
- 
- 		c->x86_virt_bits = (eax >> 8) & 0xff;
- 		c->x86_phys_bits = eax & 0xff;
--		c->x86_capability[CPUID_8000_0008_EBX] = ebx;
- 	}
- #ifdef CONFIG_X86_32
- 	else if (cpu_has(c, X86_FEATURE_PAE) || cpu_has(c, X86_FEATURE_PSE36))
+> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> ---
+>  kernel/kexec.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+>
+> diff --git a/kernel/kexec.c b/kernel/kexec.c
+> index aed8fb2564b3..d1386cfc6796 100644
+> --- a/kernel/kexec.c
+> +++ b/kernel/kexec.c
+> @@ -11,6 +11,7 @@
+>  #include <linux/capability.h>
+>  #include <linux/mm.h>
+>  #include <linux/file.h>
+> +#include <linux/security.h>
+>  #include <linux/kexec.h>
+>  #include <linux/mutex.h>
+>  #include <linux/list.h>
+> @@ -195,11 +196,21 @@ static int do_kexec_load(unsigned long entry, unsigned long nr_segments,
+>  static inline int kexec_load_check(unsigned long nr_segments,
+>  				   unsigned long flags)
+>  {
+> +	int result;
+> +
+>  	/* We only trust the superuser with rebooting the system. */
+>  	if (!capable(CAP_SYS_BOOT) || kexec_load_disabled)
+>  		return -EPERM;
+>  
+>  	/*
+> +	 * Allow LSMs and IMA to differentiate between kexec_load and
+> +	 * kexec_file_load syscalls.
+> +	 */
+> +	result = security_kernel_read_file(NULL, READING_KEXEC_IMAGE);
+> +	if (result < 0)
+> +		return result;
+> +
+> +	/*
+>  	 * Verify we have a legal set of flags
+>  	 * This leaves us room for future extensions.
+>  	 */
