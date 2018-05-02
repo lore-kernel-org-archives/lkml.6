@@ -1,253 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751568AbeEBRrN (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 13:47:13 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:46392 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750849AbeEBRrK (ORCPT
+        id S1751599AbeEBRrV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 13:47:21 -0400
+Received: from mail-ot0-f182.google.com ([74.125.82.182]:41693 "EHLO
+        mail-ot0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750849AbeEBRrN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 13:47:10 -0400
-X-Google-Smtp-Source: AB8JxZr7Ft1gAUcWnzZcSgtylYkMmVdnGUNSKJvOFIcYR0/JeXBOs35YB9dAOBnoEnHM2Ns3qJAw+g==
-From: Cong Wang <xiyou.wangcong@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Cong Wang <xiyou.wangcong@gmail.com>, Paul Turner <pjt@google.com>,
-        Peter Zijlstra <peterz@infradead.org>, Mike Galbraith <efault@gmx.de>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>
-Subject: [Patch v2] sched/fair: make CFS bandwidth slice per cpu group
-Date: Wed,  2 May 2018 10:46:58 -0700
-Message-Id: <20180502174658.13013-1-xiyou.wangcong@gmail.com>
-X-Mailer: git-send-email 2.9.4
+        Wed, 2 May 2018 13:47:13 -0400
+X-Google-Smtp-Source: AB8JxZr9iIqKN87afqlPhYiQ/odHFfnzKDky11XzWS/ihOQ5fcEupSmTL5vpYfxAo0RsxiXEA11z5INZFL2of8AHKTM=
+MIME-Version: 1.0
+In-Reply-To: <CALCETrXxnaj+YL_NDM1u0tM9v6p8ZtQw62n+y4Tv4ScB0DdZPw@mail.gmail.com>
+References: <152520750404.36522.15462513519590065300.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <CA+55aFwoOee_8H-1KRnY1G-Ud4Rez16s8xjVbG8YOPn1jqxxtg@mail.gmail.com>
+ <CAPcyv4jA98NVNqYFpj29OHE45HVp1DMH9oFO4-neWKA_4WKTwA@mail.gmail.com>
+ <CA+55aFwZ3hrrOJ5W-C8gdam3aGNxz8FEAq9gPnRBkVmwu4BvYA@mail.gmail.com>
+ <CAPcyv4i=cjQr9xvxt+Mjp-fhzyNJdTTp7uaAtpJN9R4gPg_j-Q@mail.gmail.com>
+ <CA+55aFyZXWoiWnEU8S1PNNyUTWsi7UCnBuDKOobfMLaE8uFKJg@mail.gmail.com>
+ <CAPcyv4jTUn2gSPSB1r7p9A7VNxBf54Aa5dnGbGsomDqmbvsHLQ@mail.gmail.com>
+ <CA+55aFzDt1uvDBqgkB0T2o2-d5Fi0tBiGcy5iAZ-wRNdAL4uQw@mail.gmail.com>
+ <CAPcyv4hQVKL=OtoYbWDGfOMdWen3MkF5qBPrek98+w2gODHvtg@mail.gmail.com>
+ <CAPcyv4ixtVC3w9BE3Z2ME-qMPCh9evBKP51SDrNPXAsg7xH1RQ@mail.gmail.com>
+ <CA+55aFy2LAzRbjCEghN_7SAZgAOr0RoUFDwYkkB+V91jdTg-YA@mail.gmail.com> <CALCETrXxnaj+YL_NDM1u0tM9v6p8ZtQw62n+y4Tv4ScB0DdZPw@mail.gmail.com>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Wed, 2 May 2018 10:47:12 -0700
+Message-ID: <CAPcyv4jNkPjYLitvkw4mzXpm650rcYA7GJ6++psp_FZLRshE0g@mail.gmail.com>
+Subject: Re: [PATCH 0/6] use memcpy_mcsafe() for copy_to_iter()
+To: Andy Lutomirski <luto@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Tony Luck <tony.luck@intel.com>, Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>, X86 ML <x86@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We saw tasks in a CPU cgroup got throttled for many times even
-when they don't apparently over-burn the CPU's. I tried to trace
-the cause and noticed that one of the problems here is that the
-local CPU which got the last chunk of quota doesn't use all of
-them and prevents other CPUs to reuse the unused CPU time. So
-reducing sched_cfs_bandwidth_slice_us from the default 5ms to 1ms
-mostly solves the problem, at least no tasks got throttled after
-this change in my test case.
+On Wed, May 2, 2018 at 9:19 AM, Andy Lutomirski <luto@kernel.org> wrote:
+> On Tue, May 1, 2018 at 8:34 PM Linus Torvalds
+> <torvalds@linux-foundation.org>
+> wrote:
+>
+>> On Tue, May 1, 2018 at 8:22 PM Dan Williams <dan.j.williams@intel.com>
+>> wrote:
+>
+>> > All that to say that having a typical RAM page covering poisoned pmem
+>> > would complicate the 'clear badblocks' implementation.
+>
+>> Ugh, ok.
+>
+>> I guess the good news is that your patches aren't so big, and don't really
+>> affect anything else.
+>
+>
+> I pondered this a bit.  Doing better might be a big pain in the arse.  The
+> interesting case is where ordinary kernel code (memcpy, plain old memory
+> operands, etc) access faulty pmem.  This means that there's no extable
+> entry around.  If we actually try to recover, we have a few problems:
+>
+>   - We can't sanely skip the instruction without causing random errors.
+>
+>   - If the access was through the kernel direct map, then we could plausibly
+> remap a different page in place of the faulty page.  The problem is that,
+> if the page is *writable* and we share it between more than one faulty
+> page, then we're enabling a giant information leak.  But we still need to
+> figure out how we're supposed to invalidate the old mapping from a random,
+> potentially atomic context.
+>
+>   - If the access is through kmap or similar, then we're talking about
+> modifying a PTE out from under kernel code that really isn't expecting us
+> to modify it.
+>
+>   - How are we supposed to signal the process or fail a syscall?  The fault
+> could have come from interrupt context, softirq context, kernel thread
+> context, etc, and figuring out who's to blame seems quite awkward and
+> fragile.
+>
+> All that being said, I suspect that we still have issues even with accesses
+> to user VAs that are protected by extable entries.  The whole #MC mechanism
+> is a supremely shitty interface for recoverable errors (especially on
+> Intel), and I'm a bit scared of what happens if the offending access is,
+> say, inside a perf NMI.
+>
+> Dan, is there any chance you could put some pressure on the architecture
+> folks to invent an entirely new, less shitty way to tell the OS about
+> recoverable memory errors?  And to make it testable by normal people?
+> Needing big metal EINJ hardware to test the house of cards that is #MC is
+> just awful and means that there are few enough kernel developers that are
+> actually able to test that I can probably count them on one hand.  And I'm
+> not one of them...
 
-However, the sched_cfs_bandwidth_slice_us is a global setting which
-affects all cgroups. Different cgroups may want different values based
-on their own workload, 5ms or 1ms is not suitable for all the cgroups.
-A smaller slice distributes CPU time more fairly at a cost of slightly
-higher overhead. We have to minimize the impact of the slice change.
-On the other hand, the global pool filled periodically is per cgroup,
-each cgroup should have the right to distribute its own quota to the
-local CPUs with its own preferred frequency.
-
-This patch intrdouces cpu.cfs_slice_us which allows each cgroup to
-specify its own slice length without any global impact. And the
-global sysctl sched_cfs_bandwidth_slice_us now becomes the default
-value of each cpu.cfs_slice_us. Note, updating this sysctl does not
-automatically update existing cgroups using a default value, users
-will have to update each existing cgroup accordingly to make a global
-change.
-
-Cc: Paul Turner <pjt@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Mike Galbraith <efault@gmx.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
----
- Documentation/scheduler/sched-bwc.txt | 14 +++++++----
- kernel/sched/core.c                   | 44 +++++++++++++++++++++++++++++++++++
- kernel/sched/fair.c                   | 22 +++++++++++-------
- kernel/sched/sched.h                  |  1 +
- 4 files changed, 69 insertions(+), 12 deletions(-)
-
-diff --git a/Documentation/scheduler/sched-bwc.txt b/Documentation/scheduler/sched-bwc.txt
-index f6b1873f68ab..b2d6ff02e5b3 100644
---- a/Documentation/scheduler/sched-bwc.txt
-+++ b/Documentation/scheduler/sched-bwc.txt
-@@ -48,19 +48,25 @@ and return the group to an unconstrained state once more.
- Any updates to a group's bandwidth specification will result in it becoming
- unthrottled if it is in a constrained state.
- 
--System wide settings
-+Slice
- --------------------
- For efficiency run-time is transferred between the global pool and CPU local
- "silos" in a batch fashion.  This greatly reduces global accounting pressure
- on large systems.  The amount transferred each time such an update is required
- is described as the "slice".
- 
--This is tunable via procfs:
--	/proc/sys/kernel/sched_cfs_bandwidth_slice_us (default=5ms)
--
- Larger slice values will reduce transfer overheads, while smaller values allow
- for more fine-grained consumption.
- 
-+The per-group file cpu.cfs_slice_us controls the slice length within each CPU
-+group, different groups could set different values for their own preference.
-+Its default value is tunable via procfs:
-+
-+	/proc/sys/kernel/sched_cfs_bandwidth_slice_us (default=5ms)
-+
-+Note, updating this file does not automatically update existing groups using
-+a default slice.
-+
- Statistics
- ----------
- A group's bandwidth statistics are exported via 3 fields in cpu.stat.
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 5e10aaeebfcc..48a7547b6744 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -6670,6 +6670,33 @@ long tg_get_cfs_period(struct task_group *tg)
- 	return cfs_period_us;
- }
- 
-+static int tg_set_cfs_slice(struct task_group *tg, long cfs_slice_us)
-+{
-+	u64 quota, slice;
-+
-+	if (cfs_slice_us <= 0)
-+		return -ERANGE;
-+	quota = tg->cfs_bandwidth.quota;
-+	if (quota == RUNTIME_INF)
-+		return -EINVAL;
-+	slice = (u64)cfs_slice_us * NSEC_PER_USEC;
-+	if (slice > quota)
-+		return -EINVAL;
-+
-+	tg->cfs_bandwidth.slice = slice;
-+	return 0;
-+}
-+
-+static long tg_get_cfs_slice(struct task_group *tg)
-+{
-+	u64 slice_us;
-+
-+	slice_us = tg->cfs_bandwidth.slice;
-+	do_div(slice_us, NSEC_PER_USEC);
-+
-+	return slice_us;
-+}
-+
- static s64 cpu_cfs_quota_read_s64(struct cgroup_subsys_state *css,
- 				  struct cftype *cft)
- {
-@@ -6694,6 +6721,18 @@ static int cpu_cfs_period_write_u64(struct cgroup_subsys_state *css,
- 	return tg_set_cfs_period(css_tg(css), cfs_period_us);
- }
- 
-+static s64 cpu_cfs_slice_read_s64(struct cgroup_subsys_state *css,
-+				  struct cftype *cft)
-+{
-+	return tg_get_cfs_slice(css_tg(css));
-+}
-+
-+static int cpu_cfs_slice_write_s64(struct cgroup_subsys_state *css,
-+				   struct cftype *cftype, s64 cfs_quota_us)
-+{
-+	return tg_set_cfs_slice(css_tg(css), cfs_quota_us);
-+}
-+
- struct cfs_schedulable_data {
- 	struct task_group *tg;
- 	u64 period, quota;
-@@ -6837,6 +6876,11 @@ static struct cftype cpu_legacy_files[] = {
- 		.write_u64 = cpu_cfs_period_write_u64,
- 	},
- 	{
-+		.name = "cfs_slice_us",
-+		.read_s64 = cpu_cfs_slice_read_s64,
-+		.write_s64 = cpu_cfs_slice_write_s64,
-+	},
-+	{
- 		.name = "stat",
- 		.seq_show = cpu_cfs_stat_show,
- 	},
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 54dc31e7ab9b..b4f93a334566 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -4539,11 +4539,6 @@ static inline u64 default_cfs_period(void)
- 	return 100000000ULL;
- }
- 
--static inline u64 sched_cfs_bandwidth_slice(void)
--{
--	return (u64)sysctl_sched_cfs_bandwidth_slice * NSEC_PER_USEC;
--}
--
- /*
-  * Replenish runtime according to assigned quota and update expiration time.
-  * We use sched_clock_cpu directly instead of rq->clock to avoid adding
-@@ -4577,6 +4572,11 @@ static inline u64 cfs_rq_clock_task(struct cfs_rq *cfs_rq)
- 	return rq_clock_task(rq_of(cfs_rq)) - cfs_rq->throttled_clock_task_time;
- }
- 
-+static inline u64 cfs_bandwidth_slice(struct cfs_bandwidth *cfs_b)
-+{
-+	return cfs_b->slice;
-+}
-+
- /* returns 0 on failure to allocate runtime */
- static int assign_cfs_rq_runtime(struct cfs_rq *cfs_rq)
- {
-@@ -4585,7 +4585,7 @@ static int assign_cfs_rq_runtime(struct cfs_rq *cfs_rq)
- 	u64 amount = 0, min_amount, expires;
- 
- 	/* note: this is a positive sum as runtime_remaining <= 0 */
--	min_amount = sched_cfs_bandwidth_slice() - cfs_rq->runtime_remaining;
-+	min_amount = cfs_bandwidth_slice(cfs_b) - cfs_rq->runtime_remaining;
- 
- 	raw_spin_lock(&cfs_b->lock);
- 	if (cfs_b->quota == RUNTIME_INF)
-@@ -5004,7 +5004,7 @@ static void __return_cfs_rq_runtime(struct cfs_rq *cfs_rq)
- 		cfs_b->runtime += slack_runtime;
- 
- 		/* we are under rq->lock, defer unthrottling using a timer */
--		if (cfs_b->runtime > sched_cfs_bandwidth_slice() &&
-+		if (cfs_b->runtime > cfs_bandwidth_slice(cfs_b) &&
- 		    !list_empty(&cfs_b->throttled_cfs_rq))
- 			start_cfs_slack_bandwidth(cfs_b);
- 	}
-@@ -5031,7 +5031,7 @@ static __always_inline void return_cfs_rq_runtime(struct cfs_rq *cfs_rq)
-  */
- static void do_sched_cfs_slack_timer(struct cfs_bandwidth *cfs_b)
- {
--	u64 runtime = 0, slice = sched_cfs_bandwidth_slice();
-+	u64 runtime = 0, slice = cfs_bandwidth_slice(cfs_b);
- 	u64 expires;
- 
- 	/* confirm we're still not at a refresh boundary */
-@@ -5151,12 +5151,18 @@ static enum hrtimer_restart sched_cfs_period_timer(struct hrtimer *timer)
- 	return idle ? HRTIMER_NORESTART : HRTIMER_RESTART;
- }
- 
-+static inline u64 cfs_default_bandwidth_slice(void)
-+{
-+	return (u64)sysctl_sched_cfs_bandwidth_slice * NSEC_PER_USEC;
-+}
-+
- void init_cfs_bandwidth(struct cfs_bandwidth *cfs_b)
- {
- 	raw_spin_lock_init(&cfs_b->lock);
- 	cfs_b->runtime = 0;
- 	cfs_b->quota = RUNTIME_INF;
- 	cfs_b->period = ns_to_ktime(default_cfs_period());
-+	cfs_b->slice = cfs_default_bandwidth_slice();
- 
- 	INIT_LIST_HEAD(&cfs_b->throttled_cfs_rq);
- 	hrtimer_init(&cfs_b->period_timer, CLOCK_MONOTONIC, HRTIMER_MODE_ABS_PINNED);
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 15750c222ca2..35e8ca4e35a2 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -331,6 +331,7 @@ struct cfs_bandwidth {
- 	raw_spinlock_t		lock;
- 	ktime_t			period;
- 	u64			quota;
-+	u64			slice;
- 	u64			runtime;
- 	s64			hierarchical_quota;
- 	u64			runtime_expires;
--- 
-2.13.0
+I feel this testing pain too. The EINJ facility is not ubiquitous
+which is why I punted and wrote patch 6 to unit test this. You're
+right that does not scale for all the potential places we'd like to be
+able to safely handle memory errors in the kernel.
