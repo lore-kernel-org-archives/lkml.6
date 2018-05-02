@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751628AbeEBKAY (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 06:00:24 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:44177 "EHLO mail.bootlin.com"
+        id S1751725AbeEBKAd (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 06:00:33 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:44190 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751500AbeEBKAP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 06:00:15 -0400
+        id S1751559AbeEBKAU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 06:00:20 -0400
 From: Antoine Tenart <antoine.tenart@bootlin.com>
 To: herbert@gondor.apana.org.au, davem@davemloft.net
 Cc: Antoine Tenart <antoine.tenart@bootlin.com>,
@@ -13,9 +13,9 @@ Cc: Antoine Tenart <antoine.tenart@bootlin.com>,
         thomas.petazzoni@bootlin.com, maxime.chevallier@bootlin.com,
         gregory.clement@bootlin.com, miquel.raynal@bootlin.com,
         nadavh@marvell.com, oferh@marvell.com, igall@marvell.com
-Subject: [PATCH 05/10] crypto: inside-secure - make the key and context size computation dynamic
-Date: Wed,  2 May 2018 11:57:20 +0200
-Message-Id: <20180502095725.31935-6-antoine.tenart@bootlin.com>
+Subject: [PATCH 03/10] crypto: inside-secure - rework the alg type settings in the context
+Date: Wed,  2 May 2018 11:57:18 +0200
+Message-Id: <20180502095725.31935-4-antoine.tenart@bootlin.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180502095725.31935-1-antoine.tenart@bootlin.com>
 References: <20180502095725.31935-1-antoine.tenart@bootlin.com>
@@ -23,36 +23,39 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patches makes the key and context size computation dynamic when
-using memzero_explicit() on these two arrays. This is safer, cleaner and
-will help future modifications of the driver when these two parameters
-sizes will changes (the context size will be bigger when using AEAD
-algorithms).
+This patches reworks the way the algorithm type is set in the context,
+by using the fact that the decryption algorithms are just a combination
+of the algorithm encryption type and CONTEXT_CONTROL_TYPE_NULL_IN.
+
+This will help having simpler code when adding the AEAD support, to
+avoid ending up with an endless switch case block.
 
 Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
 ---
- drivers/crypto/inside-secure/safexcel_cipher.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/crypto/inside-secure/safexcel_cipher.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/crypto/inside-secure/safexcel_cipher.c b/drivers/crypto/inside-secure/safexcel_cipher.c
-index 7c801aace04b..a658f8f14002 100644
+index a5e904a404d7..4977039f3d33 100644
 --- a/drivers/crypto/inside-secure/safexcel_cipher.c
 +++ b/drivers/crypto/inside-secure/safexcel_cipher.c
-@@ -554,13 +554,13 @@ static int safexcel_cipher_cra_exit(struct crypto_tfm *tfm)
- {
- 	struct safexcel_cipher_ctx *ctx = crypto_tfm_ctx(tfm);
+@@ -104,10 +104,13 @@ static int safexcel_context_control(struct safexcel_cipher_ctx *ctx,
+ 	struct safexcel_crypto_priv *priv = ctx->priv;
+ 	int ctrl_size;
  
--	memzero_explicit(ctx->key, 8 * sizeof(u32));
-+	memzero_explicit(ctx->key, sizeof(ctx->key));
+-	if (sreq->direction == SAFEXCEL_ENCRYPT)
+-		cdesc->control_data.control0 |= CONTEXT_CONTROL_TYPE_CRYPTO_OUT;
+-	else
+-		cdesc->control_data.control0 |= CONTEXT_CONTROL_TYPE_CRYPTO_IN;
++	cdesc->control_data.control0 |= CONTEXT_CONTROL_TYPE_CRYPTO_OUT;
++
++	/* The decryption control type is a combination of the encryption type
++	 * and CONTEXT_CONTROL_TYPE_NULL_IN, for all types.
++	 */
++	if (sreq->direction == SAFEXCEL_DECRYPT)
++		cdesc->control_data.control0 |= CONTEXT_CONTROL_TYPE_NULL_IN;
  
- 	/* context not allocated, skip invalidation */
- 	if (!ctx->base.ctxr)
- 		return -ENOMEM;
- 
--	memzero_explicit(ctx->base.ctxr->data, 8 * sizeof(u32));
-+	memzero_explicit(ctx->base.ctxr->data, sizeof(ctx->base.ctxr->data));
- 	return 0;
- }
- 
+ 	cdesc->control_data.control0 |= CONTEXT_CONTROL_KEY_EN;
+ 	cdesc->control_data.control1 |= ctx->mode;
 -- 
 2.17.0
