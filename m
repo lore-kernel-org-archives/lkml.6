@@ -1,27 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751544AbeEBSAg (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 14:00:36 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:54783 "EHLO
+        id S1751329AbeEBSBB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 14:01:01 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:47013 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750918AbeEBSAb (ORCPT
+        with ESMTP id S1751076AbeEBSA7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 14:00:31 -0400
-Date: Wed, 2 May 2018 11:00:22 -0700
+        Wed, 2 May 2018 14:00:59 -0400
+Date: Wed, 2 May 2018 10:59:51 -0700
 From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-us590h81uqgxaumucfttqj50@git.kernel.org>
-Cc: david.gilbert@linaro.org, dsahern@gmail.com,
-        linux-kernel@vger.kernel.org, namhyung@kernel.org,
-        adrian.hunter@intel.com, wangnan0@huawei.com, acme@redhat.com,
-        dave.martin@linaro.org, mingo@kernel.org, hpa@zytor.com,
-        jolsa@kernel.org, tglx@linutronix.de
-Reply-To: wangnan0@huawei.com, linux-kernel@vger.kernel.org,
-        namhyung@kernel.org, adrian.hunter@intel.com, david.gilbert@linaro.org,
-        dsahern@gmail.com, jolsa@kernel.org, tglx@linutronix.de, hpa@zytor.com,
-        acme@redhat.com, dave.martin@linaro.org, mingo@kernel.org
+Message-ID: <tip-khmi5jccpcwqa9nybefluzqp@git.kernel.org>
+Cc: tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        adrian.hunter@intel.com, hpa@zytor.com, namhyung@kernel.org,
+        wangnan0@huawei.com, mingo@kernel.org, acme@redhat.com,
+        jolsa@kernel.org, dsahern@gmail.com
+Reply-To: tglx@linutronix.de, linux-kernel@vger.kernel.org, mingo@kernel.org,
+        wangnan0@huawei.com, namhyung@kernel.org, adrian.hunter@intel.com,
+        hpa@zytor.com, jolsa@kernel.org, acme@redhat.com, dsahern@gmail.com
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf symbols: Use symbol type instead of map->type
-Git-Commit-ID: 18231d79466e6b183b4f3b2aa66231fb4052fb85
+Subject: [tip:perf/core] perf symbols: No need to special case MAP__FUNCTION
+ in fixup
+Git-Commit-ID: d1fd8d9e6b7b72c8a51bd43b17409c37d82cddef
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -34,46 +33,60 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  18231d79466e6b183b4f3b2aa66231fb4052fb85
-Gitweb:     https://git.kernel.org/tip/18231d79466e6b183b4f3b2aa66231fb4052fb85
+Commit-ID:  d1fd8d9e6b7b72c8a51bd43b17409c37d82cddef
+Gitweb:     https://git.kernel.org/tip/d1fd8d9e6b7b72c8a51bd43b17409c37d82cddef
 Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Thu, 26 Apr 2018 12:45:17 -0300
+AuthorDate: Thu, 26 Apr 2018 12:36:37 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Thu, 26 Apr 2018 13:47:20 -0300
 
-perf symbols: Use symbol type instead of map->type
+perf symbols: No need to special case MAP__FUNCTION in fixup
 
-map->type is going away, we can derive it from map->prot, so use
-the same logic as in the kernel's arch/arm/kernel/module.c file:
-
-  ELF32_ST_TYPE(sym->st_info) == STT_FUNC && !(sym->st_value & 1))
-
-This was introduced in b2f8fb237e9c ("perf symbols: Fix annotation of
-thumb code"), that fix is maintained with this change.
+In 39b12f781271 ("perf tools: Make it possible to read object code from
+vmlinux") we special case MAP__FUNCTION maps inconsistently, the first
+test tests the map type while the following tests added by this patch
+don't do that, be consistent and elliminate this special case.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Dave Martin <dave.martin@linaro.org>
 Cc: David Ahern <dsahern@gmail.com>
-Cc: Dr. David Alan Gilbert <david.gilbert@linaro.org>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-us590h81uqgxaumucfttqj50@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-khmi5jccpcwqa9nybefluzqp@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/symbol-elf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/util/sort.c       | 2 +-
+ tools/perf/util/symbol-elf.c | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
+diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
+index 49a41b4b59cf..e65903a695a6 100644
+--- a/tools/perf/util/sort.c
++++ b/tools/perf/util/sort.c
+@@ -282,7 +282,7 @@ static int _hist_entry__sym_snprintf(struct map *map, struct symbol *sym,
+ 
+ 	ret += repsep_snprintf(bf + ret, size - ret, "[%c] ", level);
+ 	if (sym && map) {
+-		if (map->type == MAP__VARIABLE) {
++		if (sym->type == STT_OBJECT) {
+ 			ret += repsep_snprintf(bf + ret, size - ret, "%s", sym->name);
+ 			ret += repsep_snprintf(bf + ret, size - ret, "+0x%llx",
+ 					ip - map->unmap_ip(map, sym->start));
 diff --git a/tools/perf/util/symbol-elf.c b/tools/perf/util/symbol-elf.c
-index cf2e6f428bb4..82a1aadc245f 100644
+index 88f6f3050665..cf2e6f428bb4 100644
 --- a/tools/perf/util/symbol-elf.c
 +++ b/tools/perf/util/symbol-elf.c
-@@ -982,7 +982,7 @@ int dso__load_sym(struct dso *dso, struct map *map, struct symsrc *syms_ss,
- 		/* On ARM, symbols for thumb functions have 1 added to
- 		 * the symbol address as a flag - remove it */
- 		if ((ehdr.e_machine == EM_ARM) &&
--		    (map->type == MAP__FUNCTION) &&
-+		    (GELF_ST_TYPE(sym.st_info) == STT_FUNC) &&
- 		    (sym.st_value & 1))
- 			--sym.st_value;
+@@ -921,10 +921,10 @@ int dso__load_sym(struct dso *dso, struct map *map, struct symsrc *syms_ss,
  
+ 	dso->adjust_symbols = runtime_ss->adjust_symbols || ref_reloc(kmap);
+ 	/*
+-	 * Initial kernel and module mappings do not map to the dso.  For
+-	 * function mappings, flag the fixups.
++	 * Initial kernel and module mappings do not map to the dso.
++	 * Flag the fixups.
+ 	 */
+-	if (map->type == MAP__FUNCTION && (dso->kernel || kmodule)) {
++	if (dso->kernel || kmodule) {
+ 		remap_kernel = true;
+ 		adjust_kernel_syms = dso->adjust_symbols;
+ 	}
