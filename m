@@ -1,46 +1,47 @@
 Return-Path: <keescook@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1525265503; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1525294943; cv=none;
         d=google.com; s=arc-20160816;
-        b=ZiO+cccCevqdQDFi3dm7XU2/NZPcd46X0GrdCfNcudAtxDfVm7WRy00X2Z7UOqnqKG
-         i2JJG6KOKe46xfRJ/CTjMH7diBq9GL56W1hvLYqs9Gs9KcAeD6qfN35uZim+KmpSmd7V
-         TxiZm51Q6Pa97ccLQ+B2OVfP0HR5xsnorkd6JKPpVqlqFoIHJrmtXklJcRKnPetlQepj
-         QybCJyyC4yUzZuT5NcpaNfyY9ivv9AFaJb/GPFyBprD8dbrqYfAssA1Gw1Pz+1aRSbqX
-         6eaC5ic9uvV75YN9Hdz0wO07SaXFKoEWGXpi5zL1kxH2Kb+wk+jPAeL4dhygAi56fVp/
-         nifw==
+        b=CTvvFiBTCwHhdafVw3isiyiHbsUTmj9E90l2/xkWoVAF+g7olLfs73cSoP7odg0js0
+         vmzYWxv5K8+Jh07GRL5oGsBnI8yjqmJX6d0FKeP1skqt4/v8yZkadk+vroSJTWTdhW3p
+         JzLN2XToA2FLTu0hCyF4MjONim/DHWc6Kejop3i12sEwdIJ+NFqSfcSkHcZbzRdvJrXV
+         wPo+4wPTPQmL8rFjGtjRlLqObc/ggO4ztwsn1sc7K0MlrhRGkdutmfZC5r5HIHZ+/Ana
+         RKeb5wcx3oB0XOFjkydTdKaKrlXDQHqXnyNXtqzmzI7x7385u88b06VakC9uGWK+JCFv
+         4cQQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
          :mime-version:dkim-signature:dkim-signature
          :arc-authentication-results;
-        bh=W04P6KGqjbMUB+gUCYq/tYQhRBd7ZDxFAkKDtVX9cig=;
-        b=w8SFqSUNNBADTQVQTDdd32N4BVoNgFbiZMkjjgl62y9x2iL6b7wfzTevy3hGsh85A2
-         /K6Lyy0kT2wLfid47Z7v8BELOEtCO3dQsYm6X/viw0ccrbwH/YSSA1ze4rOJown90A4F
-         gR7iVCcVn+X5BD/uLRsYzjzPMMXejXi8iLIi1l96cJpCOfxEjeY0fvn/yxhzIxkb2wN4
-         2QQokZx19b3vkDXEzFZlkAjDT6zUv3ecf5CxcUY2ph4w4UtirOE2+1do6HEpBSvctQQV
-         roZ1tgJZe0JdI+BemcrcA+Dy4L6M52wq/hVBjzMZRO7az0vccFocItADOws/4KU5+d8w
-         vLYg==
+        bh=+E5Du/B18iggdjyiF01EinpNkCOfPSpUHq5gAqkhoLs=;
+        b=Ok8vQGzeavgfBW+WLApnqdTeLWb5fT5jybn+IzWRTnnRIWmS+GFCbCJh08XA9OL8lo
+         Vsz7PrLe4xdniqMvWu4zcNAxck8x1ZCDJg6N951XuZuHYN6p8yhJ52VHwoqfrQ8ZulHH
+         TDPrmyeuqtYTA4ZTs0QLE7+lBiN+9Shbhha+uYu3GKOa11WY0JgTDzYUq2xxNGC3DTUN
+         3clD5ABPaQD98w8ZnAj6BLb0ENDrN7wmUlmtNvZLmWCOKCnJsNwKTkSuNiRdFLkhKikd
+         505rgrM03iggDegjRkpukUXJeDEbm5pr/psSW1jNZHf6Ng1/OBSwX3Nt+Xk6GuUmvmj2
+         c+iQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=AkTug334;
-       dkim=pass header.i=@chromium.org header.s=google header.b=MxI3bt5A;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=X8+O43kk;
+       dkim=pass header.i=@chromium.org header.s=google header.b=OANIXiOJ;
        spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=AkTug334;
-       dkim=pass header.i=@chromium.org header.s=google header.b=MxI3bt5A;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=X8+O43kk;
+       dkim=pass header.i=@chromium.org header.s=google header.b=OANIXiOJ;
        spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
-X-Google-Smtp-Source: AB8JxZolST/hkSep/YQ+ECEGVFoAJUBqFz8MUgrP7jeehWRBNAOuq5vJ0PfDFX+7bWca1ORfoUNu37YXGwiioeeZCcc=
+X-Google-Smtp-Source: AB8JxZoYxioI25q9WHIRSvX9XkF5GJJgLNdCYopAUbKA5S/IlbKsGDGyNilFanlkHFpkMTu0yvwfryMbgcz1uVWOX0I=
 MIME-Version: 1.0
 Sender: keescook@google.com
-In-Reply-To: <alpine.DEB.2.21.1805021438470.1560@nanos.tec.linutronix.de>
+In-Reply-To: <CAGXu5jJDwLfg0LPYkYKZcgqwbej-xVUB+6rSaLE+OvKQxy-Y9w@mail.gmail.com>
 References: <1523024546-6150-1-git-send-email-alex.popov@linux.com>
  <1523024546-6150-3-git-send-email-alex.popov@linux.com> <4e668302-8754-3f4e-3372-d0d7ba30cfa3@linux.intel.com>
  <CAGXu5jJ_0e63QSv0YZsQoT_=zN8U-83nwxrQ10h=QjszbHK-aQ@mail.gmail.com>
  <alpine.DEB.2.21.1805021041260.1668@nanos.tec.linutronix.de>
- <CAGXu5j+4Rj3oOH_iHhfD9sMMa2hRVm_dp9oA6YKhN9omhjdtEg@mail.gmail.com> <alpine.DEB.2.21.1805021438470.1560@nanos.tec.linutronix.de>
+ <CAGXu5j+4Rj3oOH_iHhfD9sMMa2hRVm_dp9oA6YKhN9omhjdtEg@mail.gmail.com>
+ <alpine.DEB.2.21.1805021438470.1560@nanos.tec.linutronix.de> <CAGXu5jJDwLfg0LPYkYKZcgqwbej-xVUB+6rSaLE+OvKQxy-Y9w@mail.gmail.com>
 From: Kees Cook <keescook@chromium.org>
-Date: Wed, 2 May 2018 05:51:42 -0700
-X-Google-Sender-Auth: WikyI_-eknJaPQb2ONlI-BwtNaE
-Message-ID: <CAGXu5jJDwLfg0LPYkYKZcgqwbej-xVUB+6rSaLE+OvKQxy-Y9w@mail.gmail.com>
+Date: Wed, 2 May 2018 14:02:22 -0700
+X-Google-Sender-Auth: RRK8XGcCJV34b9HcJL8sgGqOjsQ
+Message-ID: <CAGXu5jJ1rPmb_fs=iN5x6fTMtew8+jxrb=VxQQwiPLYzjxE07g@mail.gmail.com>
 Subject: Re: [PATCH v11 2/6] x86/entry: Add STACKLEAK erasing the kernel stack
  at the end of syscalls
 To: Thomas Gleixner <tglx@linutronix.de>
@@ -70,46 +71,56 @@ Cc: Dave Hansen <dave.hansen@linux.intel.com>,
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597007022879408472?=
-X-GMAIL-MSGID: =?utf-8?q?1599356800610650868?=
+X-GMAIL-MSGID: =?utf-8?q?1599387670995231559?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, May 2, 2018 at 5:39 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> On Wed, 2 May 2018, Kees Cook wrote:
->> On Wed, May 2, 2018 at 1:42 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
->> > On Mon, 30 Apr 2018, Kees Cook wrote:
->> >
->> >> On Mon, Apr 23, 2018 at 9:23 PM, Dave Hansen
->> >> <dave.hansen@linux.intel.com> wrote:
->> >> > Hi Alexander,
->> >> >
->> >> > You can add:
->> >> >
->> >> > Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
->> >> >
->> >> > for this patch if you like.  I haven't taken a super close look at the
->> >> > rest, but this is certainly minimally invasive from my point of view for
->> >> > the entry code.  Thanks, again for reworking it.
->> >>
->> >> Thanks Dave!
->> >>
->> >> Given this improvement and your review, I'm going to start carrying
->> >> this for linux-next. Linus, if you're still opposed to this even after
->> >> the changes here in v11, please let us know. I'd rather hash things
->> >> out now instead of during a NAK in the 4.18 merge window. :)
->> >
->> > Kees, can we please route that x86/entry stuff through tip to avoid
->> > conflicts as there are other changes in that area on the horizon.
+On Wed, May 2, 2018 at 5:51 AM, Kees Cook <keescook@chromium.org> wrote:
+> On Wed, May 2, 2018 at 5:39 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
+>> On Wed, 2 May 2018, Kees Cook wrote:
+>>> On Wed, May 2, 2018 at 1:42 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
+>>> > On Mon, 30 Apr 2018, Kees Cook wrote:
+>>> >
+>>> >> On Mon, Apr 23, 2018 at 9:23 PM, Dave Hansen
+>>> >> <dave.hansen@linux.intel.com> wrote:
+>>> >> > Hi Alexander,
+>>> >> >
+>>> >> > You can add:
+>>> >> >
+>>> >> > Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
+>>> >> >
+>>> >> > for this patch if you like.  I haven't taken a super close look at the
+>>> >> > rest, but this is certainly minimally invasive from my point of view for
+>>> >> > the entry code.  Thanks, again for reworking it.
+>>> >>
+>>> >> Thanks Dave!
+>>> >>
+>>> >> Given this improvement and your review, I'm going to start carrying
+>>> >> this for linux-next. Linus, if you're still opposed to this even after
+>>> >> the changes here in v11, please let us know. I'd rather hash things
+>>> >> out now instead of during a NAK in the 4.18 merge window. :)
+>>> >
+>>> > Kees, can we please route that x86/entry stuff through tip to avoid
+>>> > conflicts as there are other changes in that area on the horizon.
+>>>
+>>> Sure, let me figure out how best to split up the patches, since it
+>>> touch x86/entry, gcc-plugins, and lkdtm. Thanks!
 >>
->> Sure, let me figure out how best to split up the patches, since it
->> touch x86/entry, gcc-plugins, and lkdtm. Thanks!
+>> Are they independent or do they carry dependencies?
 >
-> Are they independent or do they carry dependencies?
+> They carry dependencies, as it interacts with the gcc plugin (and
+> lkdtm). As I don't have other plugin changes for 4.18 queued, you
+> could take the whole series for x86/entry if you want? Otherwise I can
+> try to split out the x86 change so it's more self-contained.
 
-They carry dependencies, as it interacts with the gcc plugin (and
-lkdtm). As I don't have other plugin changes for 4.18 queued, you
-could take the whole series for x86/entry if you want? Otherwise I can
-try to split out the x86 change so it's more self-contained.
+The best way to do this would be to add the x86 entry changes without
+CONFIG_GCC_PLUGIN_STACKLEAK, which leaves the results not
+compile-testable. Alternatively, if you carried everything, it'd be
+weird too, with arm64 coming (which has small changes to the plugin).
+
+I think it'd be better for this to go via my tree with your Ack (where
+I can carry the plugin, lkdtm, x86, and arm64 changes). How does that
+sound?
 
 -Kees
 
