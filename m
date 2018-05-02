@@ -1,183 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751310AbeEBNvF (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 09:51:05 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41060 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751109AbeEBNvC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 09:51:02 -0400
-Date: Wed, 2 May 2018 16:51:01 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Tiwei Bie <tiwei.bie@intel.com>
-Cc: Jason Wang <jasowang@redhat.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org, wexu@redhat.com,
-        jfreimann@redhat.com
-Subject: Re: [RFC v3 4/5] virtio_ring: add event idx support in packed ring
-Message-ID: <20180502164828-mutt-send-email-mst@kernel.org>
-References: <20180425051550.24342-1-tiwei.bie@intel.com>
- <20180425051550.24342-5-tiwei.bie@intel.com>
- <34781052-df9f-e505-cd3f-08e460b34dcc@redhat.com>
- <20180502072819.mf5l3dypk6dwx2s7@debian>
+        id S1751371AbeEBNw0 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 09:52:26 -0400
+Received: from mail-oi0-f45.google.com ([209.85.218.45]:39168 "EHLO
+        mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750898AbeEBNwV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 09:52:21 -0400
+X-Google-Smtp-Source: AB8JxZrtvZeDf0mb5QLSr/MSM+SqGA6BbT2L+ihdspI0rut3GyVY2MNXvoB+Vy8s/hyGaCTETovJlH+Wr/G9uFOSmaw=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180502072819.mf5l3dypk6dwx2s7@debian>
+In-Reply-To: <20180502083021.GC2851@pd.tnic>
+References: <152520750404.36522.15462513519590065300.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <CA+55aFwoOee_8H-1KRnY1G-Ud4Rez16s8xjVbG8YOPn1jqxxtg@mail.gmail.com>
+ <CAPcyv4jA98NVNqYFpj29OHE45HVp1DMH9oFO4-neWKA_4WKTwA@mail.gmail.com>
+ <CA+55aFwZ3hrrOJ5W-C8gdam3aGNxz8FEAq9gPnRBkVmwu4BvYA@mail.gmail.com>
+ <CAPcyv4i=cjQr9xvxt+Mjp-fhzyNJdTTp7uaAtpJN9R4gPg_j-Q@mail.gmail.com> <20180502083021.GC2851@pd.tnic>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Wed, 2 May 2018 06:52:19 -0700
+Message-ID: <CAPcyv4h_5DHBwMr_9VKy-HT5HGquGZ8gJfqBVqATawJmw9YO8w@mail.gmail.com>
+Subject: Re: [PATCH 0/6] use memcpy_mcsafe() for copy_to_iter()
+To: Borislav Petkov <bp@alien8.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        Tony Luck <tony.luck@intel.com>, Peter Zijlstra <peterz@infradead.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@amacapital.net>, Ingo Molnar <mingo@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 02, 2018 at 03:28:19PM +0800, Tiwei Bie wrote:
-> On Wed, May 02, 2018 at 10:51:06AM +0800, Jason Wang wrote:
-> > On 2018年04月25日 13:15, Tiwei Bie wrote:
-> > > This commit introduces the event idx support in packed
-> > > ring. This feature is temporarily disabled, because the
-> > > implementation in this patch may not work as expected,
-> > > and some further discussions on the implementation are
-> > > needed, e.g. do we have to check the wrap counter when
-> > > checking whether a kick is needed?
-> > > 
-> > > Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
-> > > ---
-> > >   drivers/virtio/virtio_ring.c | 53 ++++++++++++++++++++++++++++++++++++++++----
-> > >   1 file changed, 49 insertions(+), 4 deletions(-)
-> > > 
-> > > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> > > index 0181e93897be..b1039c2985b9 100644
-> > > --- a/drivers/virtio/virtio_ring.c
-> > > +++ b/drivers/virtio/virtio_ring.c
-> > > @@ -986,7 +986,7 @@ static inline int virtqueue_add_packed(struct virtqueue *_vq,
-> > >   static bool virtqueue_kick_prepare_packed(struct virtqueue *_vq)
-> > >   {
-> > >   	struct vring_virtqueue *vq = to_vvq(_vq);
-> > > -	u16 flags;
-> > > +	u16 new, old, off_wrap, flags;
-> > >   	bool needs_kick;
-> > >   	u32 snapshot;
-> > > @@ -995,7 +995,12 @@ static bool virtqueue_kick_prepare_packed(struct virtqueue *_vq)
-> > >   	 * suppressions. */
-> > >   	virtio_mb(vq->weak_barriers);
-> > > +	old = vq->next_avail_idx - vq->num_added;
-> > > +	new = vq->next_avail_idx;
-> > > +	vq->num_added = 0;
-> > > +
-> > >   	snapshot = *(u32 *)vq->vring_packed.device;
-> > > +	off_wrap = virtio16_to_cpu(_vq->vdev, snapshot & 0xffff);
-> > >   	flags = cpu_to_virtio16(_vq->vdev, snapshot >> 16) & 0x3;
-> > >   #ifdef DEBUG
-> > > @@ -1006,7 +1011,10 @@ static bool virtqueue_kick_prepare_packed(struct virtqueue *_vq)
-> > >   	vq->last_add_time_valid = false;
-> > >   #endif
-> > > -	needs_kick = (flags != VRING_EVENT_F_DISABLE);
-> > > +	if (flags == VRING_EVENT_F_DESC)
-> > > +		needs_kick = vring_need_event(off_wrap & ~(1<<15), new, old);
-> > 
-> > I wonder whether or not the math is correct. Both new and event are in the
-> > unit of descriptor ring size, but old looks not.
-> 
-> What vring_need_event() cares is the distance between
-> `new` and `old`, i.e. vq->num_added. So I think there
-> is nothing wrong with `old`. But the calculation of the
-> distance between `new` and `event_idx` isn't right when
-> `new` wraps. How do you think about the below code:
-> 
-> 	wrap_counter = off_wrap >> 15;
-> 	event_idx = off_wrap & ~(1<<15);
-> 	if (wrap_counter != vq->wrap_counter)
-> 		event_idx -= vq->vring_packed.num;
-> 	
-> 	needs_kick = vring_need_event(event_idx, new, old);
+On Wed, May 2, 2018 at 1:30 AM, Borislav Petkov <bp@alien8.de> wrote:
+> On Tue, May 01, 2018 at 07:25:57PM -0700, Dan Williams wrote:
+>> Right, but the only way to make MCE non-fatal is to teach the machine
+>> check handler about recoverable conditions. This patch teaches the
+>> machine check handler how to recover copy_to_iter() errors.
+>
+> Yeah, about that: maybe we talked about this at the time but does the
+> actual MCE signature state the error was caused by a read from an nvdimm
+> range?
 
-I suspect this hack won't work for non power of 2 ring.
-
-
-> Best regards,
-> Tiwei Bie
-> 
-> 
-> > 
-> > Thanks
-> > 
-> > > +	else
-> > > +		needs_kick = (flags != VRING_EVENT_F_DISABLE);
-> > >   	END_USE(vq);
-> > >   	return needs_kick;
-> > >   }
-> > > @@ -1116,6 +1124,15 @@ static void *virtqueue_get_buf_ctx_packed(struct virtqueue *_vq,
-> > >   	if (vq->last_used_idx >= vq->vring_packed.num)
-> > >   		vq->last_used_idx -= vq->vring_packed.num;
-> > > +	/* If we expect an interrupt for the next entry, tell host
-> > > +	 * by writing event index and flush out the write before
-> > > +	 * the read in the next get_buf call. */
-> > > +	if (vq->event_flags_shadow == VRING_EVENT_F_DESC)
-> > > +		virtio_store_mb(vq->weak_barriers,
-> > > +				&vq->vring_packed.driver->off_wrap,
-> > > +				cpu_to_virtio16(_vq->vdev, vq->last_used_idx |
-> > > +						(vq->wrap_counter << 15)));
-> > > +
-> > >   #ifdef DEBUG
-> > >   	vq->last_add_time_valid = false;
-> > >   #endif
-> > > @@ -1143,10 +1160,17 @@ static unsigned virtqueue_enable_cb_prepare_packed(struct virtqueue *_vq)
-> > >   	/* We optimistically turn back on interrupts, then check if there was
-> > >   	 * more to do. */
-> > > +	/* Depending on the VIRTIO_RING_F_USED_EVENT_IDX feature, we need to
-> > > +	 * either clear the flags bit or point the event index at the next
-> > > +	 * entry. Always update the event index to keep code simple. */
-> > > +
-> > > +	vq->vring_packed.driver->off_wrap = cpu_to_virtio16(_vq->vdev,
-> > > +			vq->last_used_idx | (vq->wrap_counter << 15));
-> > >   	if (vq->event_flags_shadow == VRING_EVENT_F_DISABLE) {
-> > >   		virtio_wmb(vq->weak_barriers);
-> > > -		vq->event_flags_shadow = VRING_EVENT_F_ENABLE;
-> > > +		vq->event_flags_shadow = vq->event ? VRING_EVENT_F_DESC :
-> > > +						     VRING_EVENT_F_ENABLE;
-> > >   		vq->vring_packed.driver->flags = cpu_to_virtio16(_vq->vdev,
-> > >   							vq->event_flags_shadow);
-> > >   	}
-> > > @@ -1172,15 +1196,34 @@ static bool virtqueue_poll_packed(struct virtqueue *_vq, unsigned last_used_idx)
-> > >   static bool virtqueue_enable_cb_delayed_packed(struct virtqueue *_vq)
-> > >   {
-> > >   	struct vring_virtqueue *vq = to_vvq(_vq);
-> > > +	u16 bufs, used_idx, wrap_counter;
-> > >   	START_USE(vq);
-> > >   	/* We optimistically turn back on interrupts, then check if there was
-> > >   	 * more to do. */
-> > > +	/* Depending on the VIRTIO_RING_F_USED_EVENT_IDX feature, we need to
-> > > +	 * either clear the flags bit or point the event index at the next
-> > > +	 * entry. Always update the event index to keep code simple. */
-> > > +
-> > > +	/* TODO: tune this threshold */
-> > > +	bufs = (u16)(vq->next_avail_idx - vq->last_used_idx) * 3 / 4;
-> > > +
-> > > +	used_idx = vq->last_used_idx + bufs;
-> > > +	wrap_counter = vq->wrap_counter;
-> > > +
-> > > +	if (used_idx >= vq->vring_packed.num) {
-> > > +		used_idx -= vq->vring_packed.num;
-> > > +		wrap_counter ^= 1;
-> > > +	}
-> > > +
-> > > +	vq->vring_packed.driver->off_wrap = cpu_to_virtio16(_vq->vdev,
-> > > +			used_idx | (wrap_counter << 15));
-> > >   	if (vq->event_flags_shadow == VRING_EVENT_F_DISABLE) {
-> > >   		virtio_wmb(vq->weak_barriers);
-> > > -		vq->event_flags_shadow = VRING_EVENT_F_ENABLE;
-> > > +		vq->event_flags_shadow = vq->event ? VRING_EVENT_F_DESC :
-> > > +						     VRING_EVENT_F_ENABLE;
-> > >   		vq->vring_packed.driver->flags = cpu_to_virtio16(_vq->vdev,
-> > >   							vq->event_flags_shadow);
-> > >   	}
-> > > @@ -1822,8 +1865,10 @@ void vring_transport_features(struct virtio_device *vdev)
-> > >   		switch (i) {
-> > >   		case VIRTIO_RING_F_INDIRECT_DESC:
-> > >   			break;
-> > > +#if 0
-> > >   		case VIRTIO_RING_F_EVENT_IDX:
-> > >   			break;
-> > > +#endif
-> > >   		case VIRTIO_F_VERSION_1:
-> > >   			break;
-> > >   		case VIRTIO_F_IOMMU_PLATFORM:
-> > 
+It does not, and this routine would still need to support emulated
+persistent memory, or physical address ranges that the administrator
+has forced the kernel to treat as pmem that are otherwise not known to
+platform firmware.
