@@ -1,115 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751192AbeEBKaO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 06:30:14 -0400
-Received: from foss.arm.com ([217.140.101.70]:56854 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751011AbeEBKaL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 06:30:11 -0400
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, Will Wong <WILLW@xilinx.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: [PATCH v2] firmware/psci: add support for SYSTEM_RESET2
-Date: Wed,  2 May 2018 11:30:03 +0100
-Message-Id: <1525257003-8608-1-git-send-email-sudeep.holla@arm.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1525186288-536-1-git-send-email-sudeep.holla@arm.com>
-References: <1525186288-536-1-git-send-email-sudeep.holla@arm.com>
+        id S1751234AbeEBKas (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 06:30:48 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:30912 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750849AbeEBKap (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 06:30:45 -0400
+To: dvyukov@google.com
+Cc: ebiggers3@gmail.com,
+        syzbot+4684a000d5abdade83fac55b1e7d1f935ef1936e@syzkaller.appspotmail.com,
+        axboe@kernel.dk, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: possible deadlock in blkdev_reread_part
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+References: <CACT4Y+bGjnajib6P4a0SxYkNUJpg_x8abEkec8AR+oBmC=-QUQ@mail.gmail.com>
+        <20171105201834.GA8126@zzz.localdomain>
+        <201804162302.GBI43737.OLFSOFQHVJMFtO@I-love.SAKURA.ne.jp>
+        <201804202306.FGC05220.OOJFMFOSFHtLQV@I-love.SAKURA.ne.jp>
+        <CACT4Y+Y3M2kB0YWhwD04NkL1-iNHPuDfDDf9BLoPD3GZ6Gg-Yw@mail.gmail.com>
+In-Reply-To: <CACT4Y+Y3M2kB0YWhwD04NkL1-iNHPuDfDDf9BLoPD3GZ6Gg-Yw@mail.gmail.com>
+Message-Id: <201805021930.CBE82399.QFHtOOJFMVFOSL@I-love.SAKURA.ne.jp>
+X-Mailer: Winbiff [Version 2.51 PL2]
+X-Accept-Language: ja,en,zh
+Date: Wed, 2 May 2018 19:30:33 +0900
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PSCI v1.1 introduced SYSTEM_RESET2 to allow both architectural resets
-where the semantics are described by the PSCI specification itself as
-well as vendor-specific resets. Currently only system warm reset
-semantics is defined as part of architectural resets by the specification.
+Dmitry Vyukov wrote:
+> > syzbot is reporting various bugs which involve /dev/loopX.
+> > Two of them
+> >
+> >   INFO: rcu detected stall in lo_ioctl
+> >   https://syzkaller.appspot.com/bug?id=7b49fb610af9cca78c24e9f796f2e8b0d5573997
+> >
+> >   general protection fault in lo_ioctl (2)
+> >   https://syzkaller.appspot.com/bug?id=f3cfe26e785d85f9ee259f385515291d21bd80a3
+> 
+> /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+> 
+> Now there is a repro for this one. I've pushed it to kernel mailing lists:
+> 
+> https://groups.google.com/d/msg/syzkaller-bugs/c8KUcTAzTvA/3o_7g6-tAwAJ
 
-This patch implements support for SYSTEM_RESET2 by making using of
-reboot_mode passed by the reboot infrastructure in the kernel.
+OK, thanks. But among loop related reports, this will be a dup of
+"INFO: rcu detected stall in blkdev_ioctl" which already has C reproducer.
+Should we merge them?
 
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
----
- drivers/firmware/psci.c   | 21 +++++++++++++++++++++
- include/uapi/linux/psci.h |  2 ++
- 2 files changed, 23 insertions(+)
+  INFO: rcu detected stall in blkdev_ioctl
+  https://syzkaller.appspot.com/bug?id=1f7b710f4110f225aed1f4263ec2b98b8dbd472e
 
-v1->v2:
-	- Added mising static anotation to psci_system_reset2_supported
-	- Added missing ')' in the comment
+  general protection fault in lo_ioctl (2)
+  https://syzkaller.appspot.com/bug?id=f3cfe26e785d85f9ee259f385515291d21bd80a3
+  #syz dup: INFO: rcu detected stall in blkdev_ioctl
 
-diff --git a/drivers/firmware/psci.c b/drivers/firmware/psci.c
-index c80ec1d03274..91748725534e 100644
---- a/drivers/firmware/psci.c
-+++ b/drivers/firmware/psci.c
-@@ -88,6 +88,7 @@ static u32 psci_function_id[PSCI_FN_MAX];
- 				PSCI_1_0_EXT_POWER_STATE_TYPE_MASK)
+  INFO: rcu detected stall in lo_compat_ioctl
+  https://syzkaller.appspot.com/bug?id=6299555c4e252b53f7a2ae2b8216cc9456c56ac0
+  #syz dup: INFO: rcu detected stall in blkdev_ioctl
 
- static u32 psci_cpu_suspend_feature;
-+static bool psci_system_reset2_supported;
+  INFO: rcu detected stall in lo_ioctl
+  https://syzkaller.appspot.com/bug?id=7b49fb610af9cca78c24e9f796f2e8b0d5573997
+  #syz dup: INFO: rcu detected stall in blkdev_ioctl
 
- static inline bool psci_has_ext_power_state(void)
- {
-@@ -253,6 +254,15 @@ static int get_set_conduit_method(struct device_node *np)
+  INFO: task hung in lo_ioctl
+  https://syzkaller.appspot.com/bug?id=608144371e7fc2cb6285b9ed871fb1eb817a61ce
 
- static void psci_sys_reset(enum reboot_mode reboot_mode, const char *cmd)
- {
-+	if ((reboot_mode == REBOOT_WARM || reboot_mode == REBOOT_SOFT) &&
-+	    psci_system_reset2_supported)
-+		/*
-+		 * reset_type[31] = 0 (architectural)
-+		 * reset_type[30:0] = 0 (SYSTEM_WARM_RESET)
-+		 * cookie = 0 (ignored by the implementation)
-+		 */
-+		invoke_psci_fn(PSCI_FN_NATIVE(1_1, SYSTEM_RESET2), 0, 0, 0);
-+
- 	invoke_psci_fn(PSCI_0_2_FN_SYSTEM_RESET, 0, 0, 0);
- }
+  INFO: task hung in lo_open (2)
+  https://syzkaller.appspot.com/bug?id=1f93b57f496d969efb9fb24167f6f9de5ee068fd
 
-@@ -451,6 +461,16 @@ static const struct platform_suspend_ops psci_suspend_ops = {
- 	.enter          = psci_system_suspend_enter,
- };
+  possible deadlock in blkdev_reread_part
+  https://syzkaller.appspot.com/bug?id=bf154052f0eea4bc7712499e4569505907d15889
 
-+static void __init psci_init_system_reset2(void)
-+{
-+	int ret;
-+
-+	ret = psci_features(PSCI_FN_NATIVE(1_1, SYSTEM_RESET2));
-+
-+	if (ret != PSCI_RET_NOT_SUPPORTED)
-+		psci_system_reset2_supported = true;
-+}
-+
- static void __init psci_init_system_suspend(void)
- {
- 	int ret;
-@@ -588,6 +608,7 @@ static int __init psci_probe(void)
- 		psci_init_smccc();
- 		psci_init_cpu_suspend();
- 		psci_init_system_suspend();
-+		psci_init_system_reset2();
- 	}
+  INFO: task hung in loop_control_ioctl
+  https://syzkaller.appspot.com/bug?id=61fe32c77ea00412c5149bd34649a65b7f672b5e
 
- 	return 0;
-diff --git a/include/uapi/linux/psci.h b/include/uapi/linux/psci.h
-index b3bcabe380da..5b0ba0062541 100644
---- a/include/uapi/linux/psci.h
-+++ b/include/uapi/linux/psci.h
-@@ -49,8 +49,10 @@
+  WARNING in sysfs_remove_group
+  https://syzkaller.appspot.com/bug?id=3f86c0edf75c86d2633aeb9dd69eccc70bc7e90b
 
- #define PSCI_1_0_FN_PSCI_FEATURES		PSCI_0_2_FN(10)
- #define PSCI_1_0_FN_SYSTEM_SUSPEND		PSCI_0_2_FN(14)
-+#define PSCI_1_1_FN_SYSTEM_RESET2		PSCI_0_2_FN(18)
-
- #define PSCI_1_0_FN64_SYSTEM_SUSPEND		PSCI_0_2_FN64(14)
-+#define PSCI_1_1_FN64_SYSTEM_RESET2		PSCI_0_2_FN64(18)
-
- /* PSCI v0.2 power state encoding for CPU_SUSPEND function */
- #define PSCI_0_2_POWER_STATE_ID_MASK		0xffff
--- 
-2.7.4
+> 
+> > suggest that loop module is not thread safe. The former suggests that
+> > l->lo_backing_file is forming circular loop and the latter suggests that
+> > l->lo_backing_file became NULL.
