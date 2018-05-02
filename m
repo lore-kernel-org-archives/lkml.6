@@ -1,104 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751748AbeEBOaL (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 10:30:11 -0400
-Received: from mout.web.de ([212.227.15.14]:58367 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751020AbeEBOaA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 10:30:00 -0400
-Subject: Re: [PATCH] platform/x86: asus-wmi: Add keyboard backlight toggle
- support
-To: Chris Chiu <chiu@endlessm.com>, corentin.chary@gmail.com,
-        dvhart@infradead.org, andy@infradead.org
-Cc: acpi4asus-user@lists.sourceforge.net,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux@endlessm.com
-References: <20180502060224.44903-1-chiu@endlessm.com>
-From: "Puma D." <puma.d@web.de>
-Message-ID: <09b12fe1-3023-5e16-7c80-e73a8c3634fd@web.de>
-Date: Wed, 2 May 2018 16:29:25 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180502060224.44903-1-chiu@endlessm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: de-DE
-X-Provags-ID: V03:K1:IRSTPkDXa+XbraONAD3V8qt8w+lWs2X/8kNLlJJMdN5MQ/XErBj
- n3+x3YMERFskHM+6+pWbI/kVqJ8P72h5L1Azm0sBmcTWlQ5TR31fXIqzek6T6ilIAqFDBqi
- WRWPXGUOlwjWWBKbw3SmdJOkESMqvOCuk5WBXhX4sNBXurw2V+L2Cgi9ywJgrarLB6y0Y/t
- Za9AdYXMsIAy9oIZTDxUQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:chAjjBcTJIs=:UrAOFpuzotMo/ppcMsCKoV
- rOsPSIXswnx+B8Q2EOAvlQndKoUMJNQROE5lOaU5xkYTsl7Xd+5DdYLYHPKvQGk1GzddbRZrK
- x7dixr9i6brn39g7CA3g+SIIJGA3KvrpCnaA9ifgUUsRWXf/UyWRFraPI7/tdNvM/8aEokpWK
- Fybfycml7Nkm6EjadKUGh0cqas+P8t8g5U4BwbjMJdFIEu9QbG6mVDDi31fYWlMqEcVQfGjlA
- PyVqMnukj+nsBcuilv7/Ker+sMtttVB0Gf4yI4aXuXc222wVlZ5sawDNcESdr0axv9RlGLYpt
- ua8TTszHlTXhJrcvaFpRyQ/Gtn2OyyVAuLKzQNQntkvgHV88OdhMKG822FBohPVW5bIiQ8MeM
- R5khFPMqYTUnJA6uGT2dN+hjI0FE00JLnK1CBR0ceiKWoNe4E9KeueYj6eslVdBPWveTU/6J7
- 2n2ZkZV2w2+XJCAcx/QC5QnAeEmDxYV744/ADXPfytD2/SE9/2MzExiGVHzFjFufB+T9iG/Vt
- VNGU7Dgk9xSNc7+uY/rOFKGqhFuVOlk/eyWyaddRvKphpOa/VpijNYBqsqmZ8ycwhH6yk4xb4
- FHCmDhrNqjQvH8AoqMsHdV+SP0eziMvJeoDbBtKsGTyqZ+Vx9oh3kjx+oLG8x0yS19U/0Je4C
- 9fqy33MYffVawiB8YhbegixNnsAlcvZefBrYLTeFpczC3ncbPFTAjWrSdbh6TZB7t8mYgj4Ca
- WMd9q1UxamTXC7683TH1bFAln0AMI5fiD1oGwRKwXlhgXYaRjv+HtUFsuzp4NyzItqLSofCKq
- XDa7M7i
+        id S1751809AbeEBOae (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 10:30:34 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:50843 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751253AbeEBOaa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 10:30:30 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180502143028euoutp020f46ae588f357f5b8c4ae1b1e8a85fd8~q2khW3bYN3053930539euoutp02h
+X-AuditID: cbfec7f2-1c1ff70000011644-40-5ae9cb823281
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org
+Cc: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH] ARM: EXYNOS: no need to select ARCH_HAS_BANDGAP any longer
+Date: Wed, 02 May 2018 16:30:26 +0200
+Message-id: <9721484.FBO9LEPOs5@amdc3058>
+User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
+MIME-version: 1.0
+Content-transfer-encoding: 7Bit
+Content-type: text/plain; charset="us-ascii"
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrNIsWRmVeSWpSXmKPExsWy7djP87rNp19GGXy6wmTR//g1s8X58xvY
+        LTY9vsZqcXnXHDaLGef3MTmwemxa1cnmsXlJvcfnTXIBzFFcNimpOZllqUX6dglcGQdvTGAq
+        eMFacXmZVwNjA2sXIyeHhICJxPYJNxm7GLk4hARWMErsfP8ayvnMKLHs8CW4qq9vjzNDJJYx
+        Sly4eweq6jejxLGZj8Cq2ASsJCa2r2IEsUUE3CUW/F/DBmIzC+RInJjylgXEFhbwllj6fgOY
+        zSKgKtF28AZYL6+ApsTCT9vYQWxRAS+JLfvamSDighI/Jt9jgZgjL7Fv/1RWCFtH4uyxdWBH
+        SAj8ZJW43rAM6lQXibnHpzNB2MISr45vYYewZSQuT+5mgWhoZpT4tmMPM0RiAqPEnvVCELa1
+        xOHjF6E28ElM2jYdqIYDKM4r0dEGVeIhMelrLwuE7Sjx+8YtsCeFBGIlFv96yjyBUWYWkrtn
+        Ibl7FpK7FzAyr2IUTy0tzk1PLTbMSy3XK07MLS7NS9dLzs/dxAiM8tP/jn/awfj1UtIhRgEO
+        RiUeXoO8F1FCrIllxZW5hxglOJiVRHhXdjyLEuJNSaysSi3Kjy8qzUktPsQozcGiJM4bp1EX
+        JSSQnliSmp2aWpBaBJNl4uCUamA0qXb/krrF1HlBu+G39kN/Hsjt6r7HvsL9/ZvLBg9XLn2h
+        x/jPWOppw7wtHQnlzY1xAVcE5042jNlarsUqLzKTtaNc8O7t39/VJXPXPmb9//moYeypyMxH
+        OaUm16WCk9lqzj3Ocn7v/9RUPODP5bmHqplnPrJwe2C7smIyzxSZupginbvblLcpsRRnJBpq
+        MRcVJwIAly77we4CAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrILMWRmVeSWpSXmKPExsVy+t/xy7pNp19GGVw+qWjR//g1s8X58xvY
+        LTY9vsZqcXnXHDaLGef3MTmwemxa1cnmsXlJvcfnTXIBzFFcNimpOZllqUX6dglcGQdvTGAq
+        eMFacXmZVwNjA2sXIyeHhICJxNe3x5m7GLk4hASWMErs61sG5fxllOhu+AtWxSZgJTGxfRUj
+        iC0i4C6x4P8aNhCbWSBHYsnLvSwgtrCAt8TS9xvAbBYBVYm2gzfAenkFNCUWftrGDmKLCnhJ
+        bNnXzgQRF5T4MfkeC8QceYl9+6eyQthaEut3HmeawMg7C0nZLCRls5CULWBkXsUoklpanJue
+        W2ykV5yYW1yal66XnJ+7iREYcNuO/dyyg7HrXfAhRgEORiUeXoO8F1FCrIllxZW5hxglOJiV
+        RHhXdjyLEuJNSaysSi3Kjy8qzUktPsQozcGiJM573qAySkggPbEkNTs1tSC1CCbLxMEp1cC4
+        TPvajJLJbS+b1dof2divLBbazHP2V0CsUJfJrHPnbs1R3HtaQumOnvUWfuHfs3rfvDir+2n5
+        z1zLZ7rSaRyx7tZHmGavPKwnFnryXl7QzYiK8Ol1H7Q4Vnw4yClyRPTlP76Q2ysqDgk9Ylao
+        YpNannbr09qY0i3ct08zHLBIutWuY7ZpYxKHEktxRqKhFnNRcSIAXPcjXjQCAAA=
+X-CMS-MailID: 20180502143026eucas1p144f0f581196615d9c0fba89a562e6e12
+X-Msg-Generator: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180502143026eucas1p144f0f581196615d9c0fba89a562e6e12
+X-RootMTR: 20180502143026eucas1p144f0f581196615d9c0fba89a562e6e12
+References: <CGME20180502143026eucas1p144f0f581196615d9c0fba89a562e6e12@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02.05.2018 08:02, Chris Chiu wrote:
-> Some Asus laptops like UX550GE has hotkey (Fn+F7) for keyboard
-> backlight toggle. In this UX550GE, the hotkey incremet the level
-> of brightness for each keypress from 1 to 3, and then switch it
-> off when the brightness has been the max. This commit interprets
-> the code 0xc7 generated from hotkey to KEY_KBDILLUMUP to increment
-> the brightness, then pass KEY_KBDILLUMTOGGLE to user space after
-> the brightness max been reached for switching the led off.
->
-> https://phabricator.endlessm.com/T21390
->
-> Signed-off-by: Chris Chiu <chiu@endlessm.com>
-> ---
->   drivers/platform/x86/asus-nb-wmi.c | 1 +
->   drivers/platform/x86/asus-wmi.c    | 8 ++++++++
->   2 files changed, 9 insertions(+)
->
-> diff --git a/drivers/platform/x86/asus-nb-wmi.c b/drivers/platform/x86/asus-nb-wmi.c
-> index 136ff2b..14c502e 100644
-> --- a/drivers/platform/x86/asus-nb-wmi.c
-> +++ b/drivers/platform/x86/asus-nb-wmi.c
-> @@ -496,6 +496,7 @@ static const struct key_entry asus_nb_wmi_keymap[] = {
->   	{ KE_KEY, 0xC4, { KEY_KBDILLUMUP } },
->   	{ KE_KEY, 0xC5, { KEY_KBDILLUMDOWN } },
->   	{ KE_IGNORE, 0xC6, },  /* Ambient Light Sensor notification */
-> +	{ KE_KEY, 0xC7, { KEY_KBDILLUMTOGGLE } },
->   	{ KE_END, 0},
->   };
->   
-> diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
-> index 1f6e68f..b64ff90 100644
-> --- a/drivers/platform/x86/asus-wmi.c
-> +++ b/drivers/platform/x86/asus-wmi.c
-> @@ -67,6 +67,7 @@ MODULE_LICENSE("GPL");
->   #define NOTIFY_BRNDOWN_MAX		0x2e
->   #define NOTIFY_KBD_BRTUP		0xc4
->   #define NOTIFY_KBD_BRTDWN		0xc5
-> +#define NOTIFY_KBD_BRTTOGGLE		0xc7
->   
->   /* WMI Methods */
->   #define ASUS_WMI_METHODID_SPEC	        0x43455053 /* BIOS SPECification */
-> @@ -1745,6 +1746,13 @@ static void asus_wmi_notify(u32 value, void *context)
->   		}
->   	}
->   
-> +	if (code == NOTIFY_KBD_BRTTOGGLE) {
-> +		if (asus->kbd_led_wk < asus->kbd_led.max_brightness)
-> +			code = NOTIFY_KBD_BRTUP;
-> +		else
-> +			code = NOTIFY_KBD_BRTTOGGLE;
-> +	}
-Did you intend the else branch to be a noop?
+This is not needed since commit fcbb1e02ee54 ("drivers: thermal:
+Remove ARCH_HAS_BANDGAP dependency for samsung") from 2014.
 
-> +
->   	if (is_display_toggle(code) &&
->   	    asus->driver->quirks->no_display_toggle)
->   		goto exit;
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+---
+ arch/arm/mach-exynos/Kconfig |    1 -
+ 1 file changed, 1 deletion(-)
+
+Index: b/arch/arm/mach-exynos/Kconfig
+===================================================================
+--- a/arch/arm/mach-exynos/Kconfig	2018-03-07 13:57:25.249409707 +0100
++++ b/arch/arm/mach-exynos/Kconfig	2018-05-02 16:23:38.573626832 +0200
+@@ -8,7 +8,6 @@
+ menuconfig ARCH_EXYNOS
+ 	bool "Samsung EXYNOS"
+ 	depends on ARCH_MULTI_V7
+-	select ARCH_HAS_BANDGAP
+ 	select ARCH_HAS_HOLES_MEMORYMODEL
+ 	select ARCH_SUPPORTS_BIG_ENDIAN
+ 	select ARM_AMBA
