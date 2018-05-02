@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752111AbeEBP5t (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 11:57:49 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:7221 "EHLO huawei.com"
+        id S1752119AbeEBP6I (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 11:58:08 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7220 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751988AbeEBP5q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 11:57:46 -0400
+        id S1752044AbeEBP5o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 11:57:44 -0400
 From: John Garry <john.garry@huawei.com>
 To: <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
 CC: <linux-scsi@vger.kernel.org>, <linuxarm@huawei.com>,
         <linux-kernel@vger.kernel.org>, Xiaofei Tan <tanxiaofei@huawei.com>,
         "John Garry" <john.garry@huawei.com>
-Subject: [PATCH 09/11] scsi: hisi_sas: remove redundant handling to event95 for v3
-Date: Wed, 2 May 2018 23:56:32 +0800
-Message-ID: <1525276594-92173-10-git-send-email-john.garry@huawei.com>
+Subject: [PATCH 11/11] scsi: hisi_sas: workaround a v3 hw hilink bug
+Date: Wed, 2 May 2018 23:56:34 +0800
+Message-ID: <1525276594-92173-12-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1525276594-92173-1-git-send-email-john.garry@huawei.com>
 References: <1525276594-92173-1-git-send-email-john.garry@huawei.com>
@@ -27,44 +27,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Xiaofei Tan <tanxiaofei@huawei.com>
 
-Event95 is used for DFX purpose. The relevant bit for this
-interrupt in the ENT_INT_SRC_MSK3 register has been disabled,
-so remove the processing.
+There is an SoC bug of v3 hw development version. When hot-
+unplugging a directly attached disk, the PHY down interrupt
+may not happen. It is very easy to appear on some boards.
+
+When this issue occurs, the controller will receive many invalid
+dword frames, and the "alos" fields of register HILINK_ERR_DFX
+can indicate that disk was unplugged.
+
+As an workaround solution, this patch detects this issue in
+the channel interrupt, and workaround it by following steps:
+- Disable the PHY
+- Clear error code and interrupt
+- Enable the PHY
+
+Then the HW will reissue PHY down interrupt.
 
 Signed-off-by: Xiaofei Tan <tanxiaofei@huawei.com>
 Signed-off-by: John Garry <john.garry@huawei.com>
 ---
- drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+ drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 25 ++++++++++++++++++++++++-
+ 1 file changed, 24 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-index 026faee..d6e705f 100644
+index 28bb71e..492c3be 100644
 --- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
 +++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-@@ -1331,14 +1331,9 @@ static irqreturn_t int_chnl_int_v3_hw(int irq_no, void *p)
+@@ -106,6 +106,7 @@
+ #define COMPL_Q_0_RD_PTR		0x4f0
+ #define AWQOS_AWCACHE_CFG	0xc84
+ #define ARQOS_ARCACHE_CFG	0xc88
++#define HILINK_ERR_DFX		0xe04
+ 
+ /* phy registers requiring init */
+ #define PORT_BASE			(0x2000)
+@@ -167,6 +168,7 @@
+ #define CHL_INT1_DMAC_RX_AXI_RD_ERR_OFF	22
+ #define CHL_INT2			(PORT_BASE + 0x1bc)
+ #define CHL_INT2_SL_IDAF_TOUT_CONF_OFF	0
++#define CHL_INT2_RX_INVLD_DW_OFF	30
+ #define CHL_INT2_STP_LINK_TIMEOUT_OFF	31
+ #define CHL_INT0_MSK			(PORT_BASE + 0x1c0)
+ #define CHL_INT1_MSK			(PORT_BASE + 0x1c4)
+@@ -1345,6 +1347,7 @@ static irqreturn_t int_chnl_int_v3_hw(int irq_no, void *p)
  {
  	struct hisi_hba *hisi_hba = p;
  	struct device *dev = hisi_hba->dev;
--	u32 ent_msk, ent_tmp, irq_msk;
-+	u32 irq_msk;
++	struct pci_dev *pci_dev = hisi_hba->pci_dev;
+ 	u32 irq_msk;
  	int phy_no = 0;
  
--	ent_msk = hisi_sas_read32(hisi_hba, ENT_INT_SRC_MSK3);
--	ent_tmp = ent_msk;
--	ent_msk |= ENT_INT_SRC_MSK3_ENT95_MSK_MSK;
--	hisi_sas_write32(hisi_hba, ENT_INT_SRC_MSK3, ent_msk);
--
- 	irq_msk = hisi_sas_read32(hisi_hba, CHNL_INT_STATUS)
- 				& 0xeeeeeeee;
+@@ -1410,8 +1413,28 @@ static irqreturn_t int_chnl_int_v3_hw(int irq_no, void *p)
  
-@@ -1415,8 +1410,6 @@ static irqreturn_t int_chnl_int_v3_hw(int irq_no, void *p)
- 		phy_no++;
- 	}
+ 			hisi_sas_phy_write32(hisi_hba, phy_no,
+ 					     CHL_INT2, irq_value2);
+-		}
  
--	hisi_sas_write32(hisi_hba, ENT_INT_SRC_MSK3, ent_tmp);
--
- 	return IRQ_HANDLED;
- }
++			if ((irq_value2 & BIT(CHL_INT2_RX_INVLD_DW_OFF)) &&
++			    (pci_dev->revision == 0x20)) {
++				u32 reg_value;
++				int rc;
++
++				rc = hisi_sas_read32_poll_timeout_atomic(
++					HILINK_ERR_DFX, reg_value,
++					!((reg_value >> 8) & BIT(phy_no)),
++					1000, 10000);
++				if (rc) {
++					disable_phy_v3_hw(hisi_hba, phy_no);
++					hisi_sas_phy_write32(hisi_hba, phy_no,
++						CHL_INT2,
++						BIT(CHL_INT2_RX_INVLD_DW_OFF));
++					hisi_sas_phy_read32(hisi_hba, phy_no,
++						ERR_CNT_INVLD_DW);
++					mdelay(1);
++					enable_phy_v3_hw(hisi_hba, phy_no);
++				}
++			}
++		}
  
+ 		if (irq_msk & (2 << (phy_no * 4)) && irq_value0) {
+ 			hisi_sas_phy_write32(hisi_hba, phy_no,
 -- 
 1.9.1
