@@ -1,150 +1,67 @@
-Return-Path: <me@tobin.cc>
-X-Google-Smtp-Source: AB8JxZqnHkJEwYNcAr+PwvtTGhF/Mm0kyD/ejOyWEEhEFOmogTcKXFQl3Vmi4+O4lT02VTBQJEPG
-ARC-Seal: i=1; a=rsa-sha256; t=1525217671; cv=none;
+Return-Path: <akpm@linux-foundation.org>
+X-Google-Smtp-Source: AB8JxZpeJk63PJB3eiCx7phJTf5JEwuw9zWKeEO6QRI51+CuA9QMsf3R4WP1/klccasbLj4wX8+T
+ARC-Seal: i=1; a=rsa-sha256; t=1525298207; cv=none;
         d=google.com; s=arc-20160816;
-        b=lNsGmWJaoFVF5urFGeT/77nyYayZCmjE/3zIviun7BUyTvndSZq3h+oSeWzj6xfiKz
-         SlXlVsRN0WytgPrWD9xjNKpBavxs+Y1RgbwWJ4zp0nMbr/Yr2G2e5rpvj3svL77wdIRj
-         /UHpbWwbivn0iErVpDCYvCRT9lRIY3BPwhwHC+RWRu/n1SOp8dmCkryiO9t5lnQImS2m
-         At85QtuOl/bAkzmInFGQvbN6Nyz/2cntVtUwiwaLh0mqqxQBUvnQzsl3ylZf3hde5xZU
-         QT91nfUpsuA0Wr5wfTByeGexdjDYh4K6FJabTjPcyABPz4Thf0ZFCkoajcF/7ngUFeJo
-         W7DA==
+        b=dQweoqiNOrP3pPxs2gl7SFxboiAVWFlZKACp7yAhq0+EYxU7JpCikMqVgFgoWR5KJR
+         IUFOTT7dMhP1+k2JF6yqgvWiHmPJ68WRtGn+ldAvbXX4EfOCKmxWgnPMINIldlfdbAVv
+         Sftc1DevIFM27AVGXWl68WnwVp3jq1u/XHisuhe0GCDesAtlAMW+1Fuh1uV4X1A0HsJv
+         EG7HtxtSNsSGxmv11oaF70H3fH4ojq17KfsyPvM8WwvJ1eQl+o7hfe5+ESdpMFbkX4yg
+         3Y04Ar0F3WosHVVIdCzmBYfseTorfElPp3BqwiBKfY1kkMJya3Mq8gjTGtY5G0uvc2Pz
+         eoRA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:dkim-signature:arc-authentication-results;
-        bh=FbLyIHYkBqT18RrhqpCDTQeafDLAoBl3yfAs43RRStg=;
-        b=mzxOGEn2S4Y0p+6NKDqtQXIC+iDJnqKW9cRIfvvBecIY8q8HQ7lDRIrfYimwh3RKDD
-         zWfjrdGLcNJZZmayGdMuBkARtvjZOp84EJOdb/PwMXUEqMgyRodE9FFYDTrFNqhSb4gL
-         m9xcDSfeVqgueYZYzZlsu7rP5hECo3SJp2977ovL+9l4LA+TBPyBSBPsfbKK+D0UPQjF
-         Vx/Zq+dUsZmCZAvLhPOsDB/CgmK3VmW/CzPpIE094F9j0fjID7XWZmY8brBtdPfprKBK
-         rOX35OsUtNBgbTIvn5sPk40IuDcCClQo4bxscFre5JylKSyuq114kmtco1T86YaDFwi2
-         UHgw==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=CObdZbbgd6njYagf1O8hFrSs5a7+wZSPlTAO9hxgJQ4=;
+        b=Zk93KJG6WbuUI4UU+b55TNHrZp1/cv+FUlzxyXISA9/lB0V5L45iCy6aleXBwXWGJB
+         Z1tGBxno+5xDVLDbWye8aWax/xnLNG0giV6Qw3u7ft3k9HkZkT26cCbynaiRpu0W0tv4
+         voIK9ZkXS/ov9NEEZSrxn/J5vA6RVhbDEvPEczVmSrjg+TaI0vTA14ouAt/2y+VbvlBd
+         8LScsERDB2TrrBAUNwbeTwVsR7QtVbwWE5NYX2fua2kJQc8rgqkdk1eP9I0GRPWhZlqF
+         hYVknSjjKaGyMAbKLhREfqmwdGgZ5ZUeE0vUk5O5w3/DIzCTUcpo7IrVJF+Bfw9Iof5Q
+         qJpA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@tobin.cc header.s=fm3 header.b=FRrnB+U4;
-       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=Za0+UjHR;
-       spf=neutral (google.com: 66.111.4.26 is neither permitted nor denied by best guess record for domain of me@tobin.cc) smtp.mailfrom=me@tobin.cc
+       spf=softfail (google.com: domain of transitioning akpm@linux-foundation.org does not designate 104.133.9.71 as permitted sender) smtp.mailfrom=akpm@linux-foundation.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@tobin.cc header.s=fm3 header.b=FRrnB+U4;
-       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=Za0+UjHR;
-       spf=neutral (google.com: 66.111.4.26 is neither permitted nor denied by best guess record for domain of me@tobin.cc) smtp.mailfrom=me@tobin.cc
-X-ME-Sender: <xms:h_noWtnINUOFvCwHkj3JR57Z6xv2ewips49vqh0dqFYk5nWLGySang>
-From: "Tobin C. Harding" <me@tobin.cc>
-To: linux-kernel@vger.kernel.org
-Cc: "Tobin C. Harding" <me@tobin.cc>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Kees Cook <keescook@chromium.org>,
-	Anna-Maria Gleixner <anna-maria@linutronix.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Theodore Ts'o" <tytso@mit.edu>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 3/3] vsprintf: Add use-early-random-bytes cmd line option
-Date: Wed,  2 May 2018 09:33:40 +1000
-Message-Id: <1525217620-4107-4-git-send-email-me@tobin.cc>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1525217620-4107-1-git-send-email-me@tobin.cc>
+       spf=softfail (google.com: domain of transitioning akpm@linux-foundation.org does not designate 104.133.9.71 as permitted sender) smtp.mailfrom=akpm@linux-foundation.org
+Date: Wed, 2 May 2018 14:56:45 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: "Tobin C. Harding" <me@tobin.cc>
+Cc: linux-kernel@vger.kernel.org, Linus Torvalds
+ <torvalds@linux-foundation.org>, Randy Dunlap <rdunlap@infradead.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Kees Cook <keescook@chromium.org>,
+ Anna-Maria Gleixner <anna-maria@linutronix.de>, "Theodore Ts'o"
+ <tytso@mit.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd
+ Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 3/3] vsprintf: Add use-early-random-bytes cmd line
+ option
+Message-Id: <20180502145645.a1fa72b86f2501432f003edc@linux-foundation.org>
+In-Reply-To: <1525217620-4107-4-git-send-email-me@tobin.cc>
 References: <1525217620-4107-1-git-send-email-me@tobin.cc>
+	<1525217620-4107-4-git-send-email-me@tobin.cc>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1599306645428721863?=
-X-GMAIL-MSGID: =?utf-8?q?1599306645428721863?=
+X-GMAIL-MSGID: =?utf-8?q?1599391093336177714?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Currently if an attempt is made to print a pointer before there is
-enough entropy then '(____ptrval____)' is printed.  This makes debugging
-early stage stack traces difficult.  We can relax the requirement for
-cryptographically secure hashing when debugging while still maintaining
-pointer hashing behaviour.
+On Wed,  2 May 2018 09:33:40 +1000 "Tobin C. Harding" <me@tobin.cc> wrote:
 
-Add a command line option 'use-early-random-bytes'.  When enabled get
-key material from the hw RNG if available.
+> Currently if an attempt is made to print a pointer before there is
+> enough entropy then '(____ptrval____)' is printed.  This makes debugging
+> early stage stack traces difficult.  We can relax the requirement for
+> cryptographically secure hashing when debugging while still maintaining
+> pointer hashing behaviour.
+> 
+> Add a command line option 'use-early-random-bytes'.  When enabled get
+> key material from the hw RNG if available.
 
-This option should NOT be enabled on production kernels.
+Documentation/admin-guide/kernel-parameters.rst, please.
 
-Suggested-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Tobin C. Harding <me@tobin.cc>
----
- lib/vsprintf.c | 50 +++++++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 47 insertions(+), 3 deletions(-)
+> This option should NOT be enabled on production kernels.
 
-diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-index b82f0c6c2aec..7b9cf6bb9fd2 100644
---- a/lib/vsprintf.c
-+++ b/lib/vsprintf.c
-@@ -1654,12 +1654,39 @@ char *device_node_string(char *buf, char *end, struct device_node *dn,
- 	return widen_string(buf, buf - buf_start, end, spec);
- }
- 
-+/*
-+ * Command line option use_early_random_bytes allows debugging early in
-+ * the boot sequence, if enabled we attempt to use the hw RNG to get
-+ * ptr_key material.  Do NOT use on production kernels.
-+ */
-+static int use_early_random_bytes;
-+EXPORT_SYMBOL(use_early_random_bytes);
-+
-+/*
-+ * Process kernel command-line parameter at boot time.
-+ * use_early_random_bytes=0 or use_early_random_bytes=1
-+ */
-+static int __init use_early_random_bytes_enable(char *str)
-+{
-+	long option;
-+	int ret;
-+
-+	ret = !!kstrtol(str, 10, &option);
-+	if (ret == 0 && option != 0)
-+		use_early_random_bytes = 1;
-+
-+	pr_info("use_early_random_bytes: %s\n",
-+	        use_early_random_bytes ? "enabled" : "disabled");
-+
-+	return 1;
-+}
-+__setup("use-early-random-bytes=", use_early_random_bytes_enable);
-+
- static bool have_filled_random_ptr_key __read_mostly;
- static siphash_key_t ptr_key __read_mostly;
- 
--static void fill_random_ptr_key(struct random_ready_callback *unused)
-+static void ptr_key_ready(void)
- {
--	get_random_bytes(&ptr_key, sizeof(ptr_key));
- 	/*
- 	 * have_filled_random_ptr_key==true is dependent on get_random_bytes().
- 	 * ptr_to_id() needs to see have_filled_random_ptr_key==true
-@@ -1669,13 +1696,30 @@ static void fill_random_ptr_key(struct random_ready_callback *unused)
- 	WRITE_ONCE(have_filled_random_ptr_key, true);
- }
- 
-+static void fill_random_ptr_key(struct random_ready_callback *unused)
-+{
-+	get_random_bytes(&ptr_key, sizeof(ptr_key));
-+	ptr_key_ready();
-+}
-+
- static struct random_ready_callback random_ready = {
- 	.func = fill_random_ptr_key
- };
- 
- static int __init initialize_ptr_random(void)
- {
--	int ret = add_random_ready_callback(&random_ready);
-+	int ret;
-+
-+	if (use_early_random_bytes) {
-+		int nbytes = sizeof(ptr_key);
-+
-+		if (get_random_bytes_arch(&ptr_key, nbytes) == nbytes) {
-+			ptr_key_ready();
-+			return 0;
-+		}
-+	}
-+
-+	ret = add_random_ready_callback(&random_ready);
- 
- 	if (!ret) {
- 		return 0;
--- 
-2.7.4
+And the documentation should explain why this recommendation is made. 
+Here was I scratching my head wondering why this feature isn't just
+permanently enabled.  Still scratching away...
