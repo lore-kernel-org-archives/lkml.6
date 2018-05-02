@@ -1,85 +1,209 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751809AbeEBRvl (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 13:51:41 -0400
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:45352 "EHLO
-        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751087AbeEBRva (ORCPT
+        id S1751834AbeEBRwK (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 13:52:10 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:34903 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751236AbeEBRwG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 13:51:30 -0400
-X-IronPort-AV: E=Sophos;i="5.49,354,1520870400";
-   d="scan'208";a="77098166"
-From: Adam Manzanares <Adam.Manzanares@wdc.com>
-To: Christoph Hellwig <hch@infradead.org>
-CC: "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "bcrl@kvack.org" <bcrl@kvack.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] fs: add RWF_IOPRIO
-Thread-Topic: [PATCH 1/2] fs: add RWF_IOPRIO
-Thread-Index: AQHT4KRlEd5NDzQNtkaeY+N6d8GL1KQctbOAgAAFYwA=
-Date: Wed, 2 May 2018 17:51:25 +0000
-Message-ID: <e97ca367-a5d2-5780-a339-0be1aac33f03@wdc.com>
-References: <20180430165740.2842-1-adam.manzanares@wdc.com>
- <20180430165740.2842-2-adam.manzanares@wdc.com>
- <20180502173207.GA27997@infradead.org>
-In-Reply-To: <20180502173207.GA27997@infradead.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Adam.Manzanares@wdc.com;
-x-originating-ip: [199.255.44.172]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR04MB0203;7:avqQcn5Lthx5jcMbP8K2EUNGCSlXAM417XGggUdVtgjw8yS9d8gOVUGw7G0asdm2uTAjrr4XtEnNmsO4Gw16d9veacQVt9xXPoCjfGwtYfiH6Xhow+DyN3xfxDZ81AStqUh/ju3Ctj0dvV2RHP8zeVvIYpAF2/25N6JABfilBcMCafIFSKWHlMiw6zygUcrZZKuL8N1f0ZL55efaPUAbtVh8iLPy8AZd5727vCjP+A65zG9bR6G3vaEArkVaI5qU;20:FVfysp39/ZTJPyhHUB7m9cfZYWiTzQQihAeaQBdsLcZBd4hfLWiIuF20o5wiFJ3c7O8NwftOD+CS/ECnYEtyDM0oz0rFElRxVayPqgL8cgGTNsqumDOECj+1W+ikeFafpNEjbwvt4SeeEiBWCLb4LEMDo4yoG10VQexgYPWcijo=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DM5PR04MB0203;
-x-ms-traffictypediagnostic: DM5PR04MB0203:
-wdcipoutbound: EOP-TRUE
-x-microsoft-antispam-prvs: <DM5PR04MB02032A853BC2BB09A961AB6DF0800@DM5PR04MB0203.namprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231254)(944501410)(52105095)(6055026)(6041310)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR04MB0203;BCL:0;PCL:0;RULEID:;SRVR:DM5PR04MB0203;
-x-forefront-prvs: 06607E485E
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39380400002)(396003)(346002)(376002)(39860400002)(199004)(189003)(476003)(36756003)(478600001)(5660300001)(486006)(8936002)(81156014)(31686004)(4326008)(14454004)(105586002)(81166006)(2616005)(6486002)(31696002)(86362001)(6116002)(3660700001)(446003)(3846002)(3280700002)(99286004)(72206003)(316002)(11346002)(6512007)(8676002)(25786009)(5250100002)(6246003)(102836004)(53546011)(305945005)(6506007)(66066001)(6436002)(2900100001)(6916009)(229853002)(54906003)(97736004)(106356001)(76176011)(2906002)(68736007)(7736002)(53936002)(186003)(26005);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR04MB0203;H:DM5PR04MB0282.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: oqQjo+9yMco8IthB910zov0dU1ZXh4DnPhiHRq8SS7XOtTweTEqwm2CLBe/U04hloMg4ua719+Z4gOnPPiQJ9/ue7rt1+i4eXeSE70czg3ypOBALl8HoMcQQSqeJSJ15Ds7uqw9+diMUoPG44X7LIBz9jpR7u0a9/1TqQ3fukFQxABJMXbd/zE73KU4ZgmMB
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <1C29FEC7474AEF48B1C81DB1C5F1E13D@namprd04.prod.outlook.com>
+        Wed, 2 May 2018 13:52:06 -0400
+Date: Wed, 2 May 2018 10:51:54 -0700
+From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-18iiiw25r75xn7zlppjldk48@git.kernel.org>
+Cc: tglx@linutronix.de, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        mingo@kernel.org, acme@redhat.com, jolsa@kernel.org, dsahern@gmail.com,
+        namhyung@kernel.org, adrian.hunter@intel.com, wangnan0@huawei.com
+Reply-To: linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de,
+        wangnan0@huawei.com, namhyung@kernel.org, adrian.hunter@intel.com,
+        jolsa@kernel.org, dsahern@gmail.com, mingo@kernel.org, acme@redhat.com
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf map: Shorten map_groups__find() signature
+Git-Commit-ID: abe5449d2de6ccc58444451b6fed130100892097
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: e210014c-8a8d-46c9-b6d6-08d5b0555311
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e210014c-8a8d-46c9-b6d6-08d5b0555311
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 May 2018 17:51:25.3921
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR04MB0203
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w42Hpnxg016362
 
+Commit-ID:  abe5449d2de6ccc58444451b6fed130100892097
+Gitweb:     https://git.kernel.org/tip/abe5449d2de6ccc58444451b6fed130100892097
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Wed, 25 Apr 2018 12:39:22 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Thu, 26 Apr 2018 13:47:12 -0300
 
+perf map: Shorten map_groups__find() signature
 
-On 5/2/18 10:32 AM, Christoph Hellwig wrote:
-> On Mon, Apr 30, 2018 at 09:57:39AM -0700, adam.manzanares@wdc.com wrote:
->> From: Adam Manzanares <adam.manzanares@wdc.com>
->>
->> This is the per-I/O equivalent of the ioprio_set system call.
->>
->> When the RWF_IOPRIO flag is set then the aio_reqprio field of the iocb
->> is interpreted as an I/O scheduling class and priority.
-> 
-> I think this belongs into the IOCB_FLAG_* flags namespace for aio_flags
-> field as it isn't a field valid for plain read/write.
-> 
-> Also you probably want to merge both patches as they only really
-> make sense together.
-> 
+Removing the map_type, that is going away.
 
-I will make the changes and send out a v2.
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-18iiiw25r75xn7zlppjldk48@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/arch/arm/tests/dwarf-unwind.c     | 2 +-
+ tools/perf/arch/arm64/tests/dwarf-unwind.c   | 2 +-
+ tools/perf/arch/powerpc/tests/dwarf-unwind.c | 2 +-
+ tools/perf/arch/x86/tests/dwarf-unwind.c     | 2 +-
+ tools/perf/tests/vmlinux-kallsyms.c          | 3 +--
+ tools/perf/util/event.c                      | 2 +-
+ tools/perf/util/map.c                        | 5 ++---
+ tools/perf/util/map.h                        | 9 +++++++--
+ tools/perf/util/symbol.c                     | 2 +-
+ 9 files changed, 16 insertions(+), 13 deletions(-)
+
+diff --git a/tools/perf/arch/arm/tests/dwarf-unwind.c b/tools/perf/arch/arm/tests/dwarf-unwind.c
+index 8cb347760233..7d7a65ca2e8d 100644
+--- a/tools/perf/arch/arm/tests/dwarf-unwind.c
++++ b/tools/perf/arch/arm/tests/dwarf-unwind.c
+@@ -25,7 +25,7 @@ static int sample_ustack(struct perf_sample *sample,
+ 
+ 	sp = (unsigned long) regs[PERF_REG_ARM_SP];
+ 
+-	map = map_groups__find(thread->mg, MAP__VARIABLE, (u64) sp);
++	map = __map_groups__find(thread->mg, MAP__VARIABLE, (u64) sp);
+ 	if (!map) {
+ 		pr_debug("failed to get stack map\n");
+ 		free(buf);
+diff --git a/tools/perf/arch/arm64/tests/dwarf-unwind.c b/tools/perf/arch/arm64/tests/dwarf-unwind.c
+index e907f0f4c20c..f053eae3b6eb 100644
+--- a/tools/perf/arch/arm64/tests/dwarf-unwind.c
++++ b/tools/perf/arch/arm64/tests/dwarf-unwind.c
+@@ -25,7 +25,7 @@ static int sample_ustack(struct perf_sample *sample,
+ 
+ 	sp = (unsigned long) regs[PERF_REG_ARM64_SP];
+ 
+-	map = map_groups__find(thread->mg, MAP__VARIABLE, (u64) sp);
++	map = __map_groups__find(thread->mg, MAP__VARIABLE, (u64) sp);
+ 	if (!map) {
+ 		pr_debug("failed to get stack map\n");
+ 		free(buf);
+diff --git a/tools/perf/arch/powerpc/tests/dwarf-unwind.c b/tools/perf/arch/powerpc/tests/dwarf-unwind.c
+index 30cbbd6d5be0..b22d643cb602 100644
+--- a/tools/perf/arch/powerpc/tests/dwarf-unwind.c
++++ b/tools/perf/arch/powerpc/tests/dwarf-unwind.c
+@@ -26,7 +26,7 @@ static int sample_ustack(struct perf_sample *sample,
+ 
+ 	sp = (unsigned long) regs[PERF_REG_POWERPC_R1];
+ 
+-	map = map_groups__find(thread->mg, MAP__VARIABLE, (u64) sp);
++	map = __map_groups__find(thread->mg, MAP__VARIABLE, (u64) sp);
+ 	if (!map) {
+ 		pr_debug("failed to get stack map\n");
+ 		free(buf);
+diff --git a/tools/perf/arch/x86/tests/dwarf-unwind.c b/tools/perf/arch/x86/tests/dwarf-unwind.c
+index 95036c7a59e8..7da845026323 100644
+--- a/tools/perf/arch/x86/tests/dwarf-unwind.c
++++ b/tools/perf/arch/x86/tests/dwarf-unwind.c
+@@ -26,7 +26,7 @@ static int sample_ustack(struct perf_sample *sample,
+ 
+ 	sp = (unsigned long) regs[PERF_REG_X86_SP];
+ 
+-	map = map_groups__find(thread->mg, MAP__VARIABLE, (u64) sp);
++	map = __map_groups__find(thread->mg, MAP__VARIABLE, (u64) sp);
+ 	if (!map) {
+ 		pr_debug("failed to get stack map\n");
+ 		free(buf);
+diff --git a/tools/perf/tests/vmlinux-kallsyms.c b/tools/perf/tests/vmlinux-kallsyms.c
+index a99b0c118541..702cea7371ac 100644
+--- a/tools/perf/tests/vmlinux-kallsyms.c
++++ b/tools/perf/tests/vmlinux-kallsyms.c
+@@ -19,7 +19,6 @@ int test__vmlinux_matches_kallsyms(struct test *test __maybe_unused, int subtest
+ 	struct symbol *sym;
+ 	struct map *kallsyms_map, *vmlinux_map, *map;
+ 	struct machine kallsyms, vmlinux;
+-	enum map_type type = MAP__FUNCTION;
+ 	struct maps *maps = machine__kernel_maps(&vmlinux);
+ 	u64 mem_start, mem_end;
+ 	bool header_printed;
+@@ -205,7 +204,7 @@ next_pair:
+ 		mem_start = vmlinux_map->unmap_ip(vmlinux_map, map->start);
+ 		mem_end = vmlinux_map->unmap_ip(vmlinux_map, map->end);
+ 
+-		pair = map_groups__find(&kallsyms.kmaps, type, mem_start);
++		pair = map_groups__find(&kallsyms.kmaps, mem_start);
+ 		if (pair == NULL || pair->priv)
+ 			continue;
+ 
+diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
+index 542bd5b79e48..a8739cd0d8ca 100644
+--- a/tools/perf/util/event.c
++++ b/tools/perf/util/event.c
+@@ -1534,7 +1534,7 @@ struct map *__thread__find_map(struct thread *thread, u8 cpumode, enum map_type
+ 		return NULL;
+ 	}
+ try_again:
+-	al->map = map_groups__find(mg, type, al->addr);
++	al->map = __map_groups__find(mg, type, al->addr);
+ 	if (al->map == NULL) {
+ 		/*
+ 		 * If this is outside of all known maps, and is a negative
+diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
+index f553e302bf9c..91e2afb010f8 100644
+--- a/tools/perf/util/map.c
++++ b/tools/perf/util/map.c
+@@ -574,7 +574,7 @@ struct symbol *map_groups__find_symbol(struct map_groups *mg,
+ 				       enum map_type type, u64 addr,
+ 				       struct map **mapp)
+ {
+-	struct map *map = map_groups__find(mg, type, addr);
++	struct map *map = __map_groups__find(mg, type, addr);
+ 
+ 	/* Ensure map is loaded before using map->map_ip */
+ 	if (map != NULL && map__load(map) >= 0) {
+@@ -627,8 +627,7 @@ int map_groups__find_ams(struct addr_map_symbol *ams)
+ 	if (ams->addr < ams->map->start || ams->addr >= ams->map->end) {
+ 		if (ams->map->groups == NULL)
+ 			return -1;
+-		ams->map = map_groups__find(ams->map->groups, ams->map->type,
+-					    ams->addr);
++		ams->map = __map_groups__find(ams->map->groups, ams->map->type, ams->addr);
+ 		if (ams->map == NULL)
+ 			return -1;
+ 	}
+diff --git a/tools/perf/util/map.h b/tools/perf/util/map.h
+index 8ff75be0a965..b4bcf569a131 100644
+--- a/tools/perf/util/map.h
++++ b/tools/perf/util/map.h
+@@ -214,12 +214,17 @@ static inline void map_groups__remove(struct map_groups *mg, struct map *map)
+ 	maps__remove(&mg->maps[map->type], map);
+ }
+ 
+-static inline struct map *map_groups__find(struct map_groups *mg,
+-					   enum map_type type, u64 addr)
++static inline struct map *__map_groups__find(struct map_groups *mg,
++					     enum map_type type, u64 addr)
+ {
+ 	return maps__find(&mg->maps[type], addr);
+ }
+ 
++static inline struct map *map_groups__find(struct map_groups *mg, u64 addr)
++{
++	return __map_groups__find(mg, MAP__FUNCTION, addr);
++}
++
+ static inline struct map *map_groups__first(struct map_groups *mg,
+ 					    enum map_type type)
+ {
+diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
+index 0bf4cf76f36a..25701078beab 100644
+--- a/tools/perf/util/symbol.c
++++ b/tools/perf/util/symbol.c
+@@ -723,7 +723,7 @@ static int dso__split_kallsyms_for_kcore(struct dso *dso, struct map *map)
+ 		if (module)
+ 			*module = '\0';
+ 
+-		curr_map = map_groups__find(kmaps, map->type, pos->start);
++		curr_map = __map_groups__find(kmaps, map->type, pos->start);
+ 
+ 		if (!curr_map) {
+ 			symbol__delete(pos);
