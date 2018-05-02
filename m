@@ -1,60 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751148AbeEBIt5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 04:49:57 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:52519 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751073AbeEBItx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 04:49:53 -0400
-X-Google-Smtp-Source: AB8JxZoH7nbIL9W0wwC5nuEp7ESbkoFUizDBtfTTFTqN7cMPlIc2ogWi4WYctfXhh+SFRmdWQT9D6BKSvx6iNCafzi0=
+        id S1751127AbeEBIwm (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 04:52:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43154 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750849AbeEBIwi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 04:52:38 -0400
+Date: Wed, 2 May 2018 16:52:22 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Heiko Stuebner <heiko@sntech.de>, Jun Nie <jun.nie@linaro.org>,
+        Baoyou Xie <baoyou.xie@linaro.org>, linux-pm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH 50/61] thermal: simplify getting .drvdata
+Message-ID: <20180502085221.GH3443@dragon>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+ <20180419140641.27926-51-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-References: <20180425132641.106385-1-tweek@google.com> <20180501114940.GD20978@linux.intel.com>
-In-Reply-To: <20180501114940.GD20978@linux.intel.com>
-From: Thiebaud Weksteen <tweek@google.com>
-Date: Wed, 02 May 2018 08:49:41 +0000
-Message-ID: <CA+zpnLdasAFPKRXB=5SgiAi5=W08tgkbQTjO26V=PxjphJai=w@mail.gmail.com>
-Subject: Re: [PATCH v3 1/4] tpm: Add explicit endianness cast
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: Nayna Jain <nayna@linux.vnet.ibm.com>, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180419140641.27926-51-wsa+renesas@sang-engineering.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 1, 2018 at 1:49 PM Jarkko Sakkinen <
-jarkko.sakkinen@linux.intel.com> wrote:
+On Thu, Apr 19, 2018 at 04:06:20PM +0200, Wolfram Sang wrote:
+> We should get drvdata from struct device directly. Going via
+> platform_device is an unneeded step back and forth.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+> 
+> Build tested only. buildbot is happy. Please apply individually.
+> 
+>  drivers/thermal/rockchip_thermal.c | 8 +++-----
+>  drivers/thermal/spear_thermal.c    | 8 +++-----
+>  drivers/thermal/zx2967_thermal.c   | 6 ++----
+>  3 files changed, 8 insertions(+), 14 deletions(-)
 
-> On Wed, Apr 25, 2018 at 03:26:41PM +0200, Thiebaud Weksteen wrote:
-> > Signed-off-by: Thiebaud Weksteen <tweek@google.com>
-> > ---
-> >  drivers/char/tpm/tpm_eventlog_of.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/char/tpm/tpm_eventlog_of.c
-b/drivers/char/tpm/tpm_eventlog_of.c
-> > index 96fd5646f866..ea0f16f19d73 100644
-> > --- a/drivers/char/tpm/tpm_eventlog_of.c
-> > +++ b/drivers/char/tpm/tpm_eventlog_of.c
-> > @@ -56,8 +56,8 @@ int tpm_read_log_of(struct tpm_chip *chip)
-> >        * but physical tpm needs the conversion.
-> >        */
-> >       if (of_property_match_string(np, "compatible", "IBM,vtpm") < 0) {
-> > -             size = be32_to_cpup(sizep);
-> > -             base = be64_to_cpup(basep);
-> > +             size = be32_to_cpup((__force __be32 *)sizep);
-> > +             base = be64_to_cpup((__force __be64 *)basep);
-> >       } else {
-> >               size = *sizep;
-> >               base = *basep;
-> > --
-> > 2.17.0.484.g0c8726318c-goog
-> >
+For zx2967_thermal,
 
-> Repeal and replace, right (no change log)?
-
-Yep, that's right. Thanks.
-
-
-> /Jarkko
+Acked-by: Shawn Guo <shawnguo@kernel.org>
