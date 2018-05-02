@@ -1,119 +1,167 @@
 Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1097881-1525702162-2-5531306561863431252
+X-Cyrus-Session-Id: sloti22d1t05-1358616-1525295321-2-507033539502869137
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, MAILING_LIST_MULTI -1, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
-  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES ensv, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525702161; b=A0zrez3B1r8rKcSaSyK6BvQTabv0Mrq2ecLgOVkVrefV4yoar5
-    s0O5WPrh9erdB6qKFpnacejFLcalG6WdsQzX8EOugSUU42QNO1y0Qp3O5GNWdQQN
-    5wCghHil64FIoxB8rU5OtiISmziYurQiziuGGQMPZD3M0XAD3sXhfzww7WENCmOf
-    IpFoznh8gSjnxKs9BlTIBBqr0C9EwjTA8fgGf6otKfPY0Pl5Q9ykGTtxAfQtR4zW
-    C9fVUW4yNWQ5Lr9piGmB40XxlpHyTwiv+8ns1A6rcT5sac3FWbEE0jPZyx7SXXlG
-    DvNCf0adoHLRoxqat6eBz7ZfFp56Ya1X0Xow==
+    1525295320; b=hCGP0V1oaLnplnEUeLSqjXIbI5/x1gFgXuG/2Aeu/2ZI47yeL6
+    8b3OEDrGmKRjGq2sOwEkVHHqZZF5sksB0NtwcFLwwPYWH4vlCQa0RkWKFhJc8GU8
+    2ClugSuRc/4egfroWF/GgjoqaNZBn08qRy6Jlkc+P0QC6wf+S64NDmDM8G/CIoFh
+    iihWTL0MBO/UsCl3ScOXcGaj0/xrQ0MIO+XiyKGNIF+OVP4BLUikkb0KNRgcdJY7
+    j/dTaxyUCyQ/iJE0kOXjNYoXkLaUmTtqS8D05NynUJCDHRl7J+J7OICzikob/l3N
+    b5bFlfNEuQ3i2GG7m2f13HgvHxqvf0V7Smzg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1525702161; bh=6Y2RohyIQ3mMhuhfowiTECOi+pBza4
-    Foy8Q17jDGRY8=; b=mJzOV2gmPY5WxSpPnMrQDvdne4C8JrO3mrW//pohrH7CsB
-    tTwEaTHoHTYkCbI8eXDZUo8PDWnWKbB9LcExxNJ2LDpTvEIwGwoSw2nyvHFB+eex
-    OlWcXeXkD8XXk9hUgemTLTwntKJ+aO7TZ1Rs4zfrhaP0LBVvuUMVoTY4Z5vs5GN0
-    EPWGlFwikU3VMNIRDIXJ/T4tGcJ9+T9Kqgw5dPDm/Z2IJcK2mJ07A8TR/GqvRNbu
-    j8Is5tKm/gtfB5gmT8w/FXGv1UWA59kH9HTOgo6RfZlebIvA4P+QewGcD2HPV7iV
-    5fFxx/HlprJkKvGfwrLzzv8VlYpjdLwNSQxcRzuA==
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=fm2; t=1525295320; bh=
+    BZiGREMIG/r42ppzB7PBPzKLDT12aLnE4Szxb/hX4bo=; b=PJ1xDc0JDrBBsP+s
+    wV7mNhFt8Hp4DrcF4UmugcEITBHhbTxKDxZ6xzSN5/2OO/xc2cF23JOKaqQ00R9B
+    14s6psmFuO1YkPUegAKavNqzYNtkh0oGtGbz2XQ+aWzqV6PAyBpvb6i+HMn/IBaN
+    WdiFFU7n7Fvkvghzu/igwWs/L1MpGS7w5Go/EaWtGhiVxFhpSM+gK7F70Ms6gO0J
+    cMXCF27VpXSswLlzjDSPiBLYY4Qc6wDbhzItIcDXwzO5BGD/FRjsP9zr8HomRjTO
+    Lgaae+dGYvGgI/+Ma2CZbsmrFZ4InNhyLAVxeRy2/6Pq4RWJig7JZ7wxiAsOKfxI
+    86upkw==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    dkim=fail (body has been altered, 1024-bit rsa key sha256)
+    header.d=codeaurora.org header.i=@codeaurora.org header.b=BossQlqh
+    x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dkim=fail (body has been altered, 1024-bit rsa key sha256)
+    header.d=codeaurora.org header.i=@codeaurora.org header.b=BossQlqh
+    x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=codeaurora.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
+    x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
-    header.d=1e100.net header.i=@1e100.net header.b=j7Lf1nHj;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    header.domain=codeaurora.org header.result=pass
+    header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    dkim=fail (body has been altered, 1024-bit rsa key sha256)
+      header.d=codeaurora.org header.i=@codeaurora.org header.b=BossQlqh
+      x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dkim=fail (body has been altered, 1024-bit rsa key sha256)
+      header.d=codeaurora.org header.i=@codeaurora.org header.b=BossQlqh
+      x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=codeaurora.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
+    x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
-      header.d=1e100.net header.i=@1e100.net header.b=j7Lf1nHj;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+      header.domain=codeaurora.org header.result=pass
+      header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfM1t66UPvuUW+xCvUiMleMoT2op51Y58GmKOK2O2qozWwgtwCoRBQlr99C/TSrAOc4WYvnnsLoofeHBkoYwds1KYVQAkQrrn60ldw000Sv5Q4qT6RWeL
-    x9x2Z4ryGMnDnrIBal/0rXpQi7yuQXkP4a4O+tBpaST9RBGCFeBHPbYwjsi8tjpYLpgCRs+wELYhEA6pRm098uJwDfh25yEVGAvmKGakajz42T0A7rqdqEfQ
+X-CM-Envelope: MS4wfI8xSsddIS2zV1Oio6RqwjzuMyDWZ+RLOp0koScaPRoeiNv9LHNZ9AJ2wGJzx2iQWNnvYOeXXof4jqmRQy3zidvxyadPKK4+eM2T2mrAZftxU0XnASGu
+    MKnc2hQJkWPaJ4eRwzSFDn3lw5v5aqn9NoTgTd+Z6S0QYa/mVskwYRzICNAXdzwVqqYAWlbFadgfIGzotnmubnEGdgnnsmR4+YO1CD2Zx7D/D2OnussfSsag
 X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=cm27Pg_UAAAA:8 a=LpQP-O61AAAA:8 a=VwQbUJbxAAAA:8 a=LNwN9wm3qrp9moekUMsA:9
-    a=CjuIK1q_8ugA:10 a=x8gzFH9gYPwA:10 a=xmb-EsYY8bH0VWELuYED:22
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=LpQP-O61AAAA:8
+    a=VwQbUJbxAAAA:8 a=_G8kjDvXgOUUA3mkzmEA:9 a=x8gzFH9gYPwA:10
     a=pioyyrs4ZptJ924tMmac:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752616AbeEGOIV (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 7 May 2018 10:08:21 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:43437 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751943AbeEGOIR (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Mon, 7 May 2018 10:08:17 -0400
-X-Google-Smtp-Source: AB8JxZotT0oqVfCc6zAMxsREjAi67cyULPLS/zkBg01nz21RJhxVzyLQ8OXpZN0FnZfzNQFfzLGzRw==
-Date: Mon, 7 May 2018 09:08:15 -0500
-From: Rob Herring <robh@kernel.org>
-To: Manu Gautam <mgautam@codeaurora.org>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>, sboyd@kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        id S1751698AbeEBVIb (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 2 May 2018 17:08:31 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:59450 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751724AbeEBVGg (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Wed, 2 May 2018 17:06:36 -0400
+X-Remote-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Remote-Spam-Level: 
+X-Remote-Spam-Status: No, score=-2.8 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,T_DKIM_INVALID autolearn=no autolearn_force=no version=3.4.0
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 88239607E4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mgautam@codeaurora.org
+From: Manu Gautam <mgautam@codeaurora.org>
+To: Kishon Vijay Abraham I <kishon@ti.com>, robh@kernel.org,
+        sboyd@kernel.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         dianders@chromium.org, evgreen@chromium.org,
         Vivek Gautam <vivek.gautam@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH v5 4/7] dt-bindings: phy-qcom-qmp: Update bindings for
- sdm845
-Message-ID: <20180507140815.GA22684@rob-hp-laptop>
+        linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
+        Manu Gautam <mgautam@codeaurora.org>
+Subject: [PATCH v5 1/7] clk: msm8996-gcc: Mark halt check as no-op for USB/PCIE pipe_clk
+Date: Thu,  3 May 2018 02:36:08 +0530
+Message-Id: <1525295174-15995-2-git-send-email-mgautam@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1525295174-15995-1-git-send-email-mgautam@codeaurora.org>
 References: <1525295174-15995-1-git-send-email-mgautam@codeaurora.org>
- <1525295174-15995-5-git-send-email-mgautam@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1525295174-15995-5-git-send-email-mgautam@codeaurora.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-usb-owner@vger.kernel.org
 X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, May 03, 2018 at 02:36:11AM +0530, Manu Gautam wrote:
-> Update compatible strings for USB3 PHYs on SDM845.
-> One is QMPv3 DisplayPort-USB combo PHY and other one
-> is USB UNI PHY which is single lane USB3 PHY without
-> DP capability. While at it also remove "qcom,qmp-v3-usb3-phy"
-> compatible string which was earlier added for sdm845
-> only as there wouldn't be any user of same.
-> 
-> Reviewed-by: Douglas Anderson <dianders@chromium.org>
-> Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
-> ---
->  Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+The USB and PCIE pipe clocks are sourced from external clocks
+inside the QMP USB/PCIE PHYs. Enabling or disabling of PIPE RCG
+clocks is dependent on PHY initialization sequence hence
+update halt_check to BRANCH_HALT_SKIP for these clocks so
+that clock status bit is not polled when enabling or disabling
+the clocks. It allows to simplify PHY client driver code which
+is both user and source of the pipe_clk and avoid error logging
+related status check on clk_disable/enable.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
+---
+ drivers/clk/qcom/gcc-msm8996.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
+index 3d64529..b73e7f1 100644
+--- a/drivers/clk/qcom/gcc-msm8996.c
++++ b/drivers/clk/qcom/gcc-msm8996.c
+@@ -1418,6 +1418,7 @@ enum {
+ 
+ static struct clk_branch gcc_usb3_phy_pipe_clk = {
+ 	.halt_reg = 0x50004,
++	.halt_check = BRANCH_HALT_SKIP,
+ 	.clkr = {
+ 		.enable_reg = 0x50004,
+ 		.enable_mask = BIT(0),
+@@ -2472,6 +2473,7 @@ enum {
+ 
+ static struct clk_branch gcc_pcie_0_pipe_clk = {
+ 	.halt_reg = 0x6b018,
++	.halt_check = BRANCH_HALT_SKIP,
+ 	.clkr = {
+ 		.enable_reg = 0x6b018,
+ 		.enable_mask = BIT(0),
+@@ -2547,6 +2549,7 @@ enum {
+ 
+ static struct clk_branch gcc_pcie_1_pipe_clk = {
+ 	.halt_reg = 0x6d018,
++	.halt_check = BRANCH_HALT_SKIP,
+ 	.clkr = {
+ 		.enable_reg = 0x6d018,
+ 		.enable_mask = BIT(0),
+@@ -2622,6 +2625,7 @@ enum {
+ 
+ static struct clk_branch gcc_pcie_2_pipe_clk = {
+ 	.halt_reg = 0x6e018,
++	.halt_check = BRANCH_HALT_SKIP,
+ 	.clkr = {
+ 		.enable_reg = 0x6e018,
+ 		.enable_mask = BIT(0),
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
