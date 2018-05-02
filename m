@@ -1,5 +1,5 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1359032-1525295808-2-16091504276632460329
+X-Cyrus-Session-Id: sloti22d1t05-1359032-1525295789-2-17565987425819852662
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525295807; b=eevqUQbb/b1q8YSMNO7L5W1EKonmoZPRZUuKZNhBgqWveKXTjh
-    kx+mevQLsMVPWshIhpKCzTgtYCyAyhmd5EuvExk2EtnThiBRyxRIG6bljJewcOUg
-    zcaPyd/1B/Pk5PQ2DBPadiFvXcD1IMDC3jpQL9tg2BsaxsWtetyDvzpKgzxQ2FqJ
-    qimcJ/xOTL2cMsjMqFFsFV2wlgTkpiwh+g9N3vrNxCQPnRAlY499HrDMfQ+UI9jo
-    BRC6vT4ubr00Xp6N7hJH6RN1sYQMUljX2H7sFEQ8f4ojwndPB8tI+Yljo74I2roc
-    +w7HmBmaqQLDS1u5vjoTXgStFWYxAdHbiVbA==
+    1525295789; b=RJNo/M8sp4q6y9AFyCNL4XTdR4AFC4vJxU18lRhwEC93vw8AIg
+    FSdhq1zdG3cDF5CJ5fMV5y1LIIOKOypmDOr5g4aEMIXU3+bMLGqpoVMmThtngpsF
+    bQOz+ZJT7dYMXIvItjaoXvsJGjufk2LUVMAHySw40LLQEpYkICi75Yyz9JKRyqS7
+    Lm03dch3BH7pi+aDnH13fKGySfzO2CyvalGWkWdA/P6peruVjXcB+E3Qh4nR6lFn
+    bZZSdZMNFt3mQn+ECDkBPiM5C8RIOYcFDYf4PLFP/ZfabcOFQ0xY0kL0TR4g6N3Z
+    EVUmQlXSqWLYGpfy11qKacIKIBE6UEVefJPw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1525295807; bh=
-    IDHV1q44KNBqJedpwrcmCmGjZ03aFhiPmG3VpekIivI=; b=Ef+CpCPQX6OwLww5
-    wTMA3dUzDqzGx7QOslPtR1Za7pNmewOBwKxV/64QrL2P8wfQiO+yE09v5ddmuXIX
-    osU3oj5UtliN4twOB0CpIztsbvrnB9QMXhbZECMPtVdq2HU46dnsYDt5FfDk3uZX
-    ppBL9D08Qj5jiQG7Qak6YnYhgaRLpEhqTb1/Uw0BL2+7W1Kkfv1aW5feGBhhfiL3
-    dw2IWVWc1bNDCn50w6Aiq3zPX0KW9BOHqzYO6QFPWjuy+EcZ+mFXDAOqyVg0SxRa
-    vzcRy1BOcRg5pdNdHu3nFH5fh/5tMgkZxTuvOHTdtOKfGOUwSSnYeXrfYBxtSoPY
-    3Onqkg==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:sender:list-id; s=fm2; t=1525295789; bh=
+    YZtx+w3Ey2XDBXzeIYx8tdn2GvrN8gLv/s48jW1pTN8=; b=gGYdwaePaodFmVZp
+    IC1jLgwZXDFYK9pUp17DMcckOyNZbpF93dHPmx9kv4WFQt0NAs+QRKFx1e6tdLGP
+    JMQ0Cs+gUkWRL6Q++xKhaX3mfnI/ZEqoHRQEQe0ubDzT7eE4A15o7+odJlnyo0NY
+    LaQvWjNyZipYVPCfXK4pMESolz1ISUfR6tmkduaETBhbLIGsVCYGLiUL+hi8j5Sj
+    qQWKm7QHsjwz3MoSJv+6xSie+k6G/zZhqwJLyVHS7uDHGy/mvHlMPJnIsAI01ur5
+    m+IFVejG43z5OyceMCMCbHvCqrWHtgwKU95v6FjKu38wyAca+NMGpF0HOH3Df6jK
+    FVJ+/Q==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=infradead.org header.i=@infradead.org header.b=H1AGFS5h
+    header.d=infradead.org header.i=@infradead.org header.b=c7n16Pmj
     x-bits=2048 x-keytype=rsa x-algorithm=sha256
     x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
@@ -44,10 +44,10 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=infradead.org header.i=@infradead.org header.b=H1AGFS5h
+      header.d=infradead.org header.i=@infradead.org header.b=c7n16Pmj
       x-bits=2048 x-keytype=rsa x-algorithm=sha256
       x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
@@ -62,29 +62,29 @@ Authentication-Results: mx2.messagingengine.com;
       header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfOCM/qBZoHQD3q3cGMRkr8+LLtiCqm92hUGI8v19ncf/zM1Z+ep8o3kuLB+M5iTMkOv4yOqqCxKJ5W//tHLnjhKrPwlAmsX/zN3903LnBYCN6hY3Ecum
-    /gsxWPNGpMMGB05xLb7LxxumH5R83MhiMZ/OyxpWfMtMZrOH9ZcITHbqYFtUn/AitKBqWNngQACq/K+8yA5WAYC+0bAnM0AzaXqnt7t6sNywsIZr3LC4P3Dx
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=yPCof4ZbAAAA:8
-    a=VwQbUJbxAAAA:8 a=OmBnyCUHKzbxSlJ2ThoA:9 a=x8gzFH9gYPwA:10
-    a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfNMmKYmm1UJBrLOWUydyWfoq2ibqgVZE1WOTC9JpV46ilPHl9+lP8QMhPtRgwi6yZcW/GUJp/jLDvIIMIkt4pVe4ET4cWjYCZ58qJxNQa9flbQLAAaJP
+    uE2xIg1Z52xz39M7fTdxdHU6JwtLj8QiE+vWMaYdSJe4yaI0l20ps+3mIcV0sTvdtHKhdbHYJJynrHFicbswcyfUkfYyaP34zYNDFatN8XSwRQas5idCw+ga
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=20KFwNOVAAAA:8
+    a=ag1SF4gXAAAA:8 a=yPCof4ZbAAAA:8 a=VwQbUJbxAAAA:8 a=Zmq7VYwpCUWw3LpwOMAA:9
+    a=x8gzFH9gYPwA:10 a=Yupwre4RP9_Eg_Bd0iYG:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751628AbeEBVPD (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 2 May 2018 17:15:03 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:37834 "EHLO
+        id S1751654AbeEBVQP (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 2 May 2018 17:16:15 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:37854 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751603AbeEBVPC (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Wed, 2 May 2018 17:15:02 -0400
+        with ESMTP id S1751751AbeEBVPH (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Wed, 2 May 2018 17:15:07 -0400
 From: Christoph Hellwig <hch@lst.de>
 To: viro@zeniv.linux.org.uk
 Cc: Avi Kivity <avi@scylladb.com>, linux-aio@kvack.org,
         linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 2/7] aio: remove an outdated BUG_ON and comment in aio_complete
-Date: Wed,  2 May 2018 23:14:43 +0200
-Message-Id: <20180502211448.18276-3-hch@lst.de>
+Subject: [PATCH 3/7] aio: sanitize ki_list handling
+Date: Wed,  2 May 2018 23:14:44 +0200
+Message-Id: <20180502211448.18276-4-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180502211448.18276-1-hch@lst.de>
 References: <20180502211448.18276-1-hch@lst.de>
@@ -95,36 +95,59 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-These days we don't treat sync iocbs special in the aio completion code as
-they never use it.  Remove the old comment and BUG_ON given that the
-current definition of is_sync_kiocb makes it impossible to hit.
+Instead of handcoded non-null checks always initialize ki_list to an
+empty list and use list_empty / list_empty_careful on it.  While we're
+at it also error out on a double call to kiocb_set_cancel_fn instead
+of ignoring it.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
+Acked-by: Jeff Moyer <jmoyer@redhat.com>
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 ---
- fs/aio.c | 9 ---------
- 1 file changed, 9 deletions(-)
+ fs/aio.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
 diff --git a/fs/aio.c b/fs/aio.c
-index add46b06be86..7c1855afd723 100644
+index 7c1855afd723..18507743757a 100644
 --- a/fs/aio.c
 +++ b/fs/aio.c
-@@ -1107,15 +1107,6 @@ static void aio_complete(struct kiocb *kiocb, long res, long res2)
+@@ -553,13 +553,12 @@ void kiocb_set_cancel_fn(struct kiocb *iocb, kiocb_cancel_fn *cancel)
+ 	struct kioctx *ctx = req->ki_ctx;
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&ctx->ctx_lock, flags);
+-
+-	if (!req->ki_list.next)
+-		list_add(&req->ki_list, &ctx->active_reqs);
++	if (WARN_ON_ONCE(!list_empty(&req->ki_list)))
++		return;
+ 
++	spin_lock_irqsave(&ctx->ctx_lock, flags);
++	list_add_tail(&req->ki_list, &ctx->active_reqs);
+ 	req->ki_cancel = cancel;
+-
+ 	spin_unlock_irqrestore(&ctx->ctx_lock, flags);
+ }
+ EXPORT_SYMBOL(kiocb_set_cancel_fn);
+@@ -1039,7 +1038,7 @@ static inline struct aio_kiocb *aio_get_req(struct kioctx *ctx)
+ 		goto out_put;
+ 
+ 	percpu_ref_get(&ctx->reqs);
+-
++	INIT_LIST_HEAD(&req->ki_list);
+ 	req->ki_ctx = ctx;
+ 	return req;
+ out_put:
+@@ -1107,7 +1106,7 @@ static void aio_complete(struct kiocb *kiocb, long res, long res2)
  		file_end_write(file);
  	}
  
--	/*
--	 * Special case handling for sync iocbs:
--	 *  - events go directly into the iocb for fast handling
--	 *  - the sync task with the iocb in its stack holds the single iocb
--	 *    ref, no other paths have a way to get another ref
--	 *  - the sync task helpfully left a reference to itself in the iocb
--	 */
--	BUG_ON(is_sync_kiocb(kiocb));
--
- 	if (iocb->ki_list.next) {
+-	if (iocb->ki_list.next) {
++	if (!list_empty_careful(&iocb->ki_list)) {
  		unsigned long flags;
  
+ 		spin_lock_irqsave(&ctx->ctx_lock, flags);
 -- 
 2.17.0
 
