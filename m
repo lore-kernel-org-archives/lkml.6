@@ -1,87 +1,89 @@
-Return-Path: <sudeep.holla@arm.com>
-X-Google-Smtp-Source: AB8JxZojf6gv2d2LMBJEv3OnFbHpYR8xIgUy+p/3FHpgHIivCVm9X3IxI5KjcvJo3UWpzaPxhW/B
-ARC-Seal: i=1; a=rsa-sha256; t=1525185991; cv=none;
+Return-Path: <rjwysocki@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1525249454; cv=none;
         d=google.com; s=arc-20160816;
-        b=es337UiLrohtIFXcXJcnM2niKY10mHR4bAAtSOpSp+bpyiHbUUjOLczI4JOQrR26PO
-         cIWG8+OAfmg70/1I3prS5Fac4R+tiMe0wfeEfPXUMcYdYcXDPGn8X26h7F9mj1aIqMpt
-         rlbNOz1nVI2/Zt0bbuCaBHnBt/XHDg9xgGwhxb/q1q6HL9lU68d3Awy02A7Nb/JQ8dAT
-         KJsuvavj4U1UCLetg8Xq83enaA84PJJPswtmz5MoY4WELqg9/xP8UAq/7yDbYhJjbYwY
-         5OAL7Ox+LeSB1aZwlIH/cvVHTcuhvW+6KwiT3kB6s29e2m0VU0vrJ4ZTmSoWAxiTUOC8
-         zkDw==
+        b=05EomUXYhwyXt6n4z67oPKeR3huhTsaNJNo4BXCoUgRQ9a9KduJm1UvdR+rjIQ7qEl
+         aRW7X3fwHFQPnGJVGIgA0qGV/p3rxKyICZRhdNw8yw2Jz7hJb5SHW03N8gg+2KNSelLw
+         4mmPueGEu2ynG3e36zz+HPoIuOQhY72oS9/0/4BQvOr2Bk/qHqx1jmYCk2mmRw8ZENTu
+         9wnu8lNiBiacR874crncrOPFaQbvkxxtpmSZuO2lx1tJhaBb9+gSXBIZjqIHMhyzuTOF
+         +833J6epCxq2hF844Ff5ciZJFlJ0LLCqzIJCI5XLIJ6MNVm79Hqhql7TSfuCm90fVEkX
+         AECA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:organization:from:references:to:subject
-         :cc:arc-authentication-results;
-        bh=TLPBJbbTX2RGW/g4PAfA75QFGwfgMxhxL0Cb3r4jCt8=;
-        b=dFzKc+fqmiv71Y8zV/iCbw8o6eB82n3+4mOAgM6MWWc2jfxxRHo4BuOPfj5rvIjKiB
-         mzG1uem/Q6qrCL8JZXztjmDnNqu5MUx3QcZ7IUXusWxZE/fVDMxUDZR9iGiGW/Rqa2PG
-         AUUhiPCyI2TwAv1sqEltqtm7mmCxICdkaAvzZ4wmHoEfW4CL1WZrSYDBQTeV+mlXTkhH
-         M+4ZF/KcGyIkpFQk1584MRxv2m1DV8XVwuVB+oS25Fb6uvulQ+MVdF5UDga3DOYDNO3t
-         PvxgLLIU1AKtDJWu/By37mN1xQivGliohgyQQpINM1RPfSTf9kekESTW2oF858YEl0UF
-         WtUw==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=YB4k2kQ7dqgXWvo2sQvH4wpdLxwjjbqOmTVHYxIe0zw=;
+        b=sCL1h4QOBlClIzW/VGuUnmVH6Y5VmUAi8PvjIkDP+DxITgFYAadjYY0fQy7bsxeMlP
+         bQqbRJUk5qFIjjOfBeMsss2zejbI53tleoWyUlOgeUcVfYirW6G9IaAZnTcG3Qep/maY
+         1Z0lovTxwW+zJ9o28L7mU5GKberiboRvH+tzIlBHm24PGnBgjTeT8DlxRSxcdOQsAurb
+         YR3o6WZ7xnBt/NoLoM4Dgh/BpUbLR90ERVyiL8DFbJu58dsEZ5tn6QujpfqoKusOJv0A
+         /IxJvcdmPgukCrz13BpSmRl9M0crK3M4LIYJdZ6tZ0X0nnQL8Kc3hC+HfD+tQaz4cquu
+         LbTQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of sudeep.holla@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=sudeep.holla@arm.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=dJMZxHfV;
+       spf=pass (google.com: domain of rjwysocki@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=rjwysocki@gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of sudeep.holla@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=sudeep.holla@arm.com
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
- linux-arm-kernel@lists.infradead.org, Lorenzo.Pieralisi@arm.com,
- hanjun.guo@linaro.org, rjw@rjwysocki.net, Will.Deacon@arm.com,
- Catalin.Marinas@arm.com, gregkh@linuxfoundation.org, Mark.Rutland@arm.com,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- wangxiongfeng2@huawei.com, vkilari@codeaurora.org, ahs3@redhat.com,
- Dietmar.Eggemann@arm.com, Morten.Rasmussen@arm.com, palmer@sifive.com,
- lenb@kernel.org, john.garry@huawei.com, austinwc@codeaurora.org,
- tnowicki@caviumnetworks.com, jhugo@qti.qualcomm.com, timur@qti.qualcomm.com,
- ard.biesheuvel@linaro.org
-Subject: Re: [PATCH v8 11/13] arm64: topology: enable ACPI/PPTT based CPU
- topology
-To: Jeremy Linton <jeremy.linton@arm.com>, linux-acpi@vger.kernel.org
-References: <20180425233121.13270-1-jeremy.linton@arm.com>
- <20180425233121.13270-12-jeremy.linton@arm.com>
-From: Sudeep Holla <sudeep.holla@arm.com>
-Organization: ARM
-Message-ID: <ab8357f0-61d5-2996-46ca-5bc5d3e097cf@arm.com>
-Date: Tue, 1 May 2018 15:46:22 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=dJMZxHfV;
+       spf=pass (google.com: domain of rjwysocki@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=rjwysocki@gmail.com
+X-Google-Smtp-Source: AB8JxZp9Z+NRSlYlY/uakmpuy5Rf4GRH9wQySOZ8fMmrnVT6Yv9TLSbLjDnI9uRRo/kseBmCc9LiOoI/rcUuYBnAXR0=
 MIME-Version: 1.0
-In-Reply-To: <20180425233121.13270-12-jeremy.linton@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Sender: rjwysocki@gmail.com
+In-Reply-To: <ab8357f0-61d5-2996-46ca-5bc5d3e097cf@arm.com>
+References: <20180425233121.13270-1-jeremy.linton@arm.com> <20180425233121.13270-12-jeremy.linton@arm.com>
+ <ab8357f0-61d5-2996-46ca-5bc5d3e097cf@arm.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 2 May 2018 10:24:14 +0200
+X-Google-Sender-Auth: eDUwdnTEj72kYdBEr3yfvl6xZWY
+Message-ID: <CAJZ5v0jwtSkw1x+MQVYo60YDeW0+jxLy2d4spQOu+i=pY7fjyQ@mail.gmail.com>
+Subject: Re: [PATCH v8 11/13] arm64: topology: enable ACPI/PPTT based CPU topology
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Jeremy Linton <jeremy.linton@arm.com>,
+	ACPI Devel Maling List <linux-acpi@vger.kernel.org>, linux-arm-kernel@lists.infradead.org,
+	Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>, Hanjun Guo <hanjun.guo@linaro.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>, Will Deacon <Will.Deacon@arm.com>,
+	Catalin Marinas <Catalin.Marinas@arm.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Mark Rutland <Mark.Rutland@arm.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-riscv@lists.infradead.org,
+	wangxiongfeng2@huawei.com, vkilari@codeaurora.org, Al Stone <ahs3@redhat.com>,
+	Dietmar Eggemann <Dietmar.Eggemann@arm.com>, Morten Rasmussen <Morten.Rasmussen@arm.com>, palmer@sifive.com,
+	Len Brown <lenb@kernel.org>, John Garry <john.garry@huawei.com>, austinwc@codeaurora.org,
+	tnowicki@caviumnetworks.com, jhugo@qti.qualcomm.com, timur@qti.qualcomm.com,
+	Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1598766328036390506?=
-X-GMAIL-MSGID: =?utf-8?q?1599273425959815991?=
+X-GMAIL-MSGID: =?utf-8?q?1599339972119607679?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+On Tue, May 1, 2018 at 4:46 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
+>
+>
+> On 26/04/18 00:31, Jeremy Linton wrote:
+>> Propagate the topology information from the PPTT tree to the
+>> cpu_topology array. We can get the thread id and core_id by assuming
+>> certain levels of the PPTT tree correspond to those concepts.
+>> The package_id is flagged in the tree and can be found by calling
+>> find_acpi_cpu_topology_package() which terminates
+>> its search when it finds an ACPI node flagged as the physical
+>> package. If the tree doesn't contain enough levels to represent
+>> all of the requested levels then the root node will be returned
+>> for all subsequent levels.
+>>
+>
+> Acked-by: Sudeep Holla <sudeep.holla@arm.com>
+>
+> [..]
+>
+>> @@ -304,6 +345,8 @@ void __init init_cpu_topology(void)
+>>        * Discard anything that was parsed if we hit an error so we
+>>        * don't use partial information.
+>>        */
+>> -     if (of_have_populated_dt() && parse_dt_topology())
+>> +     if ((!acpi_disabled) && parse_acpi_topology())
+>
+> [nit] not sure if extra () is need above,
 
+No, it isn't.
 
-On 26/04/18 00:31, Jeremy Linton wrote:
-> Propagate the topology information from the PPTT tree to the
-> cpu_topology array. We can get the thread id and core_id by assuming
-> certain levels of the PPTT tree correspond to those concepts.
-> The package_id is flagged in the tree and can be found by calling
-> find_acpi_cpu_topology_package() which terminates
-> its search when it finds an ACPI node flagged as the physical
-> package. If the tree doesn't contain enough levels to represent
-> all of the requested levels then the root node will be returned
-> for all subsequent levels.
-> 
+> but I am fine either way.
 
-Acked-by: Sudeep Holla <sudeep.holla@arm.com>
-
-[..]
-
-> @@ -304,6 +345,8 @@ void __init init_cpu_topology(void)
->  	 * Discard anything that was parsed if we hit an error so we
->  	 * don't use partial information.
->  	 */
-> -	if (of_have_populated_dt() && parse_dt_topology())
-> +	if ((!acpi_disabled) && parse_acpi_topology())
-
-[nit] not sure if extra () is need above, but I am fine either way.
-
--- 
-Regards,
-Sudeep
+The redundant parens need to go away, really.
