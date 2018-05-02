@@ -1,94 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751095AbeEBFkM (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 01:40:12 -0400
-Received: from goliath.siemens.de ([192.35.17.28]:42967 "EHLO
-        goliath.siemens.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750928AbeEBFkK (ORCPT
+        id S1751143AbeEBFow (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 01:44:52 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:39272 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751111AbeEBFov (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 01:40:10 -0400
-Subject: Re: [PATCH 3/6] PCI: Introduce devm_of_pci_get_host_bridge_resources
-To: Sinan Kaya <okaya@codeaurora.org>, Bjorn Helgaas <helgaas@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-References: <cover.1524582822.git.jan.kiszka@siemens.com>
- <e387d04ea235c9a4879a897bb730adc383a96635.1524582822.git.jan.kiszka@siemens.com>
- <20180427222427.GB73638@bhelgaas-glaptop.roam.corp.google.com>
- <869a8ad9-dd2f-8462-c0c4-2d8a62d74185@siemens.com>
- <20180430184007.GC95643@bhelgaas-glaptop.roam.corp.google.com>
- <5e218659-b512-b622-25e0-5bb5a8f4b87d@codeaurora.org>
-From: Jan Kiszka <jan.kiszka@siemens.com>
-Message-ID: <5dd1e93a-b85b-a3eb-08de-6989c6a782c2@siemens.com>
-Date: Wed, 2 May 2018 07:39:42 +0200
-User-Agent: Mozilla/5.0 (X11; U; Linux i686 (x86_64); de; rv:1.8.1.12)
- Gecko/20080226 SUSE/2.0.0.12-1.1 Thunderbird/2.0.0.12 Mnenhy/0.7.5.666
+        Wed, 2 May 2018 01:44:51 -0400
+X-Google-Smtp-Source: AB8JxZryuf2GA2wyD8XndKhGW3/WxFn6ex+ZYmgddaXmfT9jh7IzQk8M7EU1gRtXbdYR9iuw5/f8UvK3i2TbwHAItJw=
 MIME-Version: 1.0
-In-Reply-To: <5e218659-b512-b622-25e0-5bb5a8f4b87d@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180417141547.GA30799@jordon-HP-15-Notebook-PC>
+References: <20180417141547.GA30799@jordon-HP-15-Notebook-PC>
+From: Souptick Joarder <jrdr.linux@gmail.com>
+Date: Wed, 2 May 2018 11:14:48 +0530
+Message-ID: <CAFqt6zYFxJPMbcyLbJp6qrRDmcy4A+KAk9NhEvy-kVMBL2dySg@mail.gmail.com>
+Subject: Re: [PATCH] hwtracing: intel_th: Change return type to vm_fault_t
+To: alexander.shishkin@linux.intel.com
+Cc: linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-04-30 20:43, Sinan Kaya wrote:
-> On 4/30/2018 2:40 PM, Bjorn Helgaas wrote:
->> On Sat, Apr 28, 2018 at 09:28:47AM +0200, Jan Kiszka wrote:
->>> On 2018-04-28 00:24, Bjorn Helgaas wrote:
->>>> On Tue, Apr 24, 2018 at 05:13:39PM +0200, Jan Kiszka wrote:
->>>>> From: Jan Kiszka <jan.kiszka@siemens.com>
->>>>>
->>>>> of_pci_get_host_bridge_resources allocates the resource structures it
->>>>> fills dynamically, but none of its callers care to release them so far.
->>>>> Rather than requiring everyone to do this explicitly, introduce a
->>>>> managed version of that service. This differs API-wise only in taking a
->>>>> reference to the associated device, rather than to the device tree node.
->>>>>
->>>>> As of_pci_get_host_bridge_resources is an exported interface, we cannot
->>>>> simply drop it at this point. After converting all in-tree users to the
->>>>> new API, we could phase out the unmanaged one over some grace period.
->>>>
->>>> It looks like it might be possible to split this into three or four
->>>> patches:
->>>>
->>>>   1) Factor __of_pci_get_host_bridge_resources() out of
->>>>      of_pci_get_host_bridge_resources()
->>>>
->>>>   2) Add struct device * argument
->>>>
->>>>   3) Convert pr_info() to dev_info()
->>>>
->>>>   4) Add devm_of_pci_get_host_bridge_resources()
->>>
->>> Will do. I'm even considering
->>>
->>> 5) mark of_pci_get_host_bridge_resources() __deprecated, due to the leak
->>>    and no remaining in-tree user - what do you think?
->>
->> Sounds good.
->>
->> It'd be nice if we had some guideline about deprecation -- whether we
->> actually need to mark things __deprecated, and then how long to wait
->> before actually removing them, but I don't see anything in
->> Documentation/.
-> 
-> I'm under the impression that we don't quite care about out-of-tree drivers.
-> I have seen many times out-of-tree drivers to be broken due to API changes,
-> renames or even parameter meaning change. 
-> 
-> If the plan is to remove the API, just remove the API today.
+Any comment for this patch ?
 
-I've already sent a __deprecated patch on Monday [1], in v2 of this
-series [2]. Please vote against that there, and I will replace it with a
-complete removal of that API.
-
-Thanks,
-Jan
-
-[1] https://lkml.org/lkml/2018/4/30/22
-[2] https://lkml.org/lkml/2018/4/30/24
-
--- 
-Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-Corporate Competence Center Embedded Linux
+On Tue, Apr 17, 2018 at 7:45 PM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
+> Use new return type vm_fault_t for fault handler. For
+> now, this is just documenting that the function returns
+> a VM_FAULT value rather than an errno. Once all instances
+> are converted, vm_fault_t will become a distinct type.
+>
+> Reference id -> 1c8f422059ae ("mm: change return type to
+> vm_fault_t")
+>
+> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> ---
+>  drivers/hwtracing/intel_th/msu.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/hwtracing/intel_th/msu.c b/drivers/hwtracing/intel_th/msu.c
+> index dfb57ea..0ac84eb 100644
+> --- a/drivers/hwtracing/intel_th/msu.c
+> +++ b/drivers/hwtracing/intel_th/msu.c
+> @@ -1190,7 +1190,7 @@ static void msc_mmap_close(struct vm_area_struct *vma)
+>         mutex_unlock(&msc->buf_mutex);
+>  }
+>
+> -static int msc_mmap_fault(struct vm_fault *vmf)
+> +static vm_fault_t msc_mmap_fault(struct vm_fault *vmf)
+>  {
+>         struct msc_iter *iter = vmf->vma->vm_file->private_data;
+>         struct msc *msc = iter->msc;
+> --
+> 1.9.1
+>
