@@ -1,44 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751708AbeEBVCI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 17:02:08 -0400
-Received: from namei.org ([65.99.196.166]:59166 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751148AbeEBVCG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 17:02:06 -0400
-Date: Thu, 3 May 2018 07:01:55 +1000 (AEST)
-From: James Morris <jmorris@namei.org>
-To: Tyler Hicks <tyhicks@canonical.com>
-cc: linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>,
-        Paul Moore <paul@paul-moore.com>, Eric Paris <eparis@redhat.com>,
-        Steve Grubb <sgrubb@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
-        linux-audit@redhat.com, linux-security-module@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] seccomp: Separate read and write code for
- actions_logged sysctl
-In-Reply-To: <1525276400-7161-2-git-send-email-tyhicks@canonical.com>
-Message-ID: <alpine.LRH.2.21.1805030701220.30206@namei.org>
-References: <1525276400-7161-1-git-send-email-tyhicks@canonical.com> <1525276400-7161-2-git-send-email-tyhicks@canonical.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1751731AbeEBVEM (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 17:04:12 -0400
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:34031 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751503AbeEBVEJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 17:04:09 -0400
+X-Google-Smtp-Source: AB8JxZoemIriATh0eRCBRzH9d6nnf5eYsLthvfwsoEa2caP6u3nhYTOFqKsQcOkO7gO4xUS3SpPF0g==
+Message-ID: <1525295047.30573.1.camel@redhat.com>
+Subject: Re: [PATCH] scsi: qla2xxx: remove the unused tcm_qla2xxx_cmd_wq
+From: Laurence Oberman <loberman@redhat.com>
+To: Andrei Vagin <avagin@openvz.org>, qla2xxx-upstream@qlogic.com
+Cc: linux-scsi@vger.kernel.org,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-kernel@vger.kernel.org
+Date: Wed, 02 May 2018 17:04:07 -0400
+In-Reply-To: <20180502203113.13183-1-avagin@openvz.org>
+References: <20180502203113.13183-1-avagin@openvz.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2 May 2018, Tyler Hicks wrote:
-
-> Break the read and write paths of the kernel.seccomp.actions_logged
-> sysctl into separate functions to maintain readability. An upcoming
-> change will need to audit writes, but not reads, of this sysctl which
-> would introduce too many conditional code paths on whether or not the
-> 'write' parameter evaluates to true.
+On Wed, 2018-05-02 at 13:31 -0700, Andrei Vagin wrote:
+> Signed-off-by: Andrei Vagin <avagin@openvz.org>
+> ---
+>  drivers/scsi/qla2xxx/tcm_qla2xxx.c | 10 ----------
+>  1 file changed, 10 deletions(-)
 > 
-> Signed-off-by: Tyler Hicks <tyhicks@canonical.com>
+> diff --git a/drivers/scsi/qla2xxx/tcm_qla2xxx.c
+> b/drivers/scsi/qla2xxx/tcm_qla2xxx.c
+> index aadfeaac3898..b63440fec18e 100644
+> --- a/drivers/scsi/qla2xxx/tcm_qla2xxx.c
+> +++ b/drivers/scsi/qla2xxx/tcm_qla2xxx.c
+> @@ -48,7 +48,6 @@
+>  #include "tcm_qla2xxx.h"
+>  
+>  static struct workqueue_struct *tcm_qla2xxx_free_wq;
+> -static struct workqueue_struct *tcm_qla2xxx_cmd_wq;
+>  
+>  /*
+>   * Parse WWN.
+> @@ -1976,16 +1975,8 @@ static int tcm_qla2xxx_register_configfs(void)
+>  		goto out_fabric_npiv;
+>  	}
+>  
+> -	tcm_qla2xxx_cmd_wq = alloc_workqueue("tcm_qla2xxx_cmd", 0,
+> 0);
+> -	if (!tcm_qla2xxx_cmd_wq) {
+> -		ret = -ENOMEM;
+> -		goto out_free_wq;
+> -	}
+> -
+>  	return 0;
+>  
+> -out_free_wq:
+> -	destroy_workqueue(tcm_qla2xxx_free_wq);
+>  out_fabric_npiv:
+>  	target_unregister_template(&tcm_qla2xxx_npiv_ops);
+>  out_fabric:
+> @@ -1995,7 +1986,6 @@ static int tcm_qla2xxx_register_configfs(void)
+>  
+>  static void tcm_qla2xxx_deregister_configfs(void)
+>  {
+> -	destroy_workqueue(tcm_qla2xxx_cmd_wq);
+>  	destroy_workqueue(tcm_qla2xxx_free_wq);
+>  
+>  	target_unregister_template(&tcm_qla2xxx_ops);
+When I first saw this I thought, no way, it must be used, but when I
+had a closer look and checked its indeed not used or even made
+external.
 
-Reviewed-by: James Morris <james.morris@microsoft.com>
+This looks OK to me.
 
--- 
-James Morris
-<jmorris@namei.org>
+Reviewed-by: Laurence Oberman <loberman@redhat.com>
