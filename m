@@ -1,50 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751445AbeEBUa2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 16:30:28 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:41775 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750993AbeEBUaW (ORCPT
+        id S1751351AbeEBUbW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 16:31:22 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:32912 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750939AbeEBUbS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 16:30:22 -0400
-X-Google-Smtp-Source: AB8JxZry1m4AdB8UBpsOYDKlXaMwV1/Hpj7EwK4KNCo7cbpm/Zc0S4Y+yrjVJgbmg2gM5IfYA59yIQ+tU1Qelp9rHO8=
-MIME-Version: 1.0
-In-Reply-To: <1525179614-14571-5-git-send-email-changbin.du@intel.com>
-References: <1525179614-14571-1-git-send-email-changbin.du@intel.com> <1525179614-14571-5-git-send-email-changbin.du@intel.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Wed, 2 May 2018 16:30:21 -0400
-X-Google-Sender-Auth: wLUmBW10zixqRt189pu0PAt3QLY
-Message-ID: <CAK8P3a0c++Ti_39WPXwwjjmRx+EUozzCVY5Y2qicyEeLop6_6w@mail.gmail.com>
-Subject: Re: [PATCH 4/5] kernel hacking: new config DEBUG_EXPERIENCE to apply
- GCC -Og optimization
-To: changbin.du@intel.com
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 2 May 2018 16:31:18 -0400
+X-Google-Smtp-Source: AB8JxZoRzVzviweIVMwibyVwvm4WspVScj1VmC1br7p4QbXPiiG6fSue3iFHIUYYV2T68mMm9TmBHg==
+From: Andrei Vagin <avagin@openvz.org>
+To: qla2xxx-upstream@qlogic.com
+Cc: linux-scsi@vger.kernel.org,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-kernel@vger.kernel.org, Andrei Vagin <avagin@openvz.org>
+Subject: [PATCH] scsi: qla2xxx: remove the unused tcm_qla2xxx_cmd_wq
+Date: Wed,  2 May 2018 13:31:13 -0700
+Message-Id: <20180502203113.13183-1-avagin@openvz.org>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 1, 2018 at 9:00 AM,  <changbin.du@intel.com> wrote:
-> From: Changbin Du <changbin.du@intel.com>
-> +config DEBUG_EXPERIENCE
-> +       bool "Optimize for better debugging experience (-Og)"
-> +       default n
-> +       select NO_AUTO_INLINE
-> +       depends on !CC_OPTIMIZE_FOR_SIZE
-> +       help
+Signed-off-by: Andrei Vagin <avagin@openvz.org>
+---
+ drivers/scsi/qla2xxx/tcm_qla2xxx.c | 10 ----------
+ 1 file changed, 10 deletions(-)
 
-How about having this as another option alongside CC_OPTIMIZE_FOR_SIZE
-and CC_OPTIMIZE_FOR_PERFORMANCE in the same choice statement?
-
-We could also add another option for -Os (for faster compiles)  or possibly
-for -O3 (if anyone cares) in there.
-
-      Arnd
+diff --git a/drivers/scsi/qla2xxx/tcm_qla2xxx.c b/drivers/scsi/qla2xxx/tcm_qla2xxx.c
+index aadfeaac3898..b63440fec18e 100644
+--- a/drivers/scsi/qla2xxx/tcm_qla2xxx.c
++++ b/drivers/scsi/qla2xxx/tcm_qla2xxx.c
+@@ -48,7 +48,6 @@
+ #include "tcm_qla2xxx.h"
+ 
+ static struct workqueue_struct *tcm_qla2xxx_free_wq;
+-static struct workqueue_struct *tcm_qla2xxx_cmd_wq;
+ 
+ /*
+  * Parse WWN.
+@@ -1976,16 +1975,8 @@ static int tcm_qla2xxx_register_configfs(void)
+ 		goto out_fabric_npiv;
+ 	}
+ 
+-	tcm_qla2xxx_cmd_wq = alloc_workqueue("tcm_qla2xxx_cmd", 0, 0);
+-	if (!tcm_qla2xxx_cmd_wq) {
+-		ret = -ENOMEM;
+-		goto out_free_wq;
+-	}
+-
+ 	return 0;
+ 
+-out_free_wq:
+-	destroy_workqueue(tcm_qla2xxx_free_wq);
+ out_fabric_npiv:
+ 	target_unregister_template(&tcm_qla2xxx_npiv_ops);
+ out_fabric:
+@@ -1995,7 +1986,6 @@ static int tcm_qla2xxx_register_configfs(void)
+ 
+ static void tcm_qla2xxx_deregister_configfs(void)
+ {
+-	destroy_workqueue(tcm_qla2xxx_cmd_wq);
+ 	destroy_workqueue(tcm_qla2xxx_free_wq);
+ 
+ 	target_unregister_template(&tcm_qla2xxx_ops);
+-- 
+2.14.3
