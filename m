@@ -1,118 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751279AbeEBCJa (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 22:09:30 -0400
-Received: from ozlabs.org ([203.11.71.1]:46415 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750766AbeEBCJY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 22:09:24 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Wed, 2 May 2018 12:09:21 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>
-Subject: linux-next: manual merge of the bpf-next tree with the bpf tree
-Message-ID: <20180502120921.654cc338@canb.auug.org.au>
+        id S1751268AbeEBCMF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 22:12:05 -0400
+Received: from mail-io0-f200.google.com ([209.85.223.200]:37957 "EHLO
+        mail-io0-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750921AbeEBCMD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 22:12:03 -0400
+X-Google-Smtp-Source: AB8JxZq5ovz0hQakQG+nbO4JpvVW0UV8bz9q0DAs8phKWfPpa+tgAnhaSWqJqopyFnJUQvjxGtCwfYGdYWU8NPB65TppwNYLC1Aw
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/_k_JFlMG2Jm7dvySI/MN3oN"; protocol="application/pgp-signature"
+Date: Tue, 01 May 2018 19:12:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d3fc4d056b2f9ca2@google.com>
+Subject: WARNING in __snd_pcm_lib_xfer
+From: syzbot <syzbot+1dac3a4f6bc9c1c675d4@syzkaller.appspotmail.com>
+To: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        o-takashi@sakamocchi.jp, perex@perex.cz,
+        syzkaller-bugs@googlegroups.com, tiwai@suse.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/_k_JFlMG2Jm7dvySI/MN3oN
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hello,
 
-Hi all,
+syzbot found the following crash on:
 
-Today's linux-next merge of the bpf-next tree got a conflict in:
+HEAD commit:    fff75eb2a08c Merge tag 'errseq-v4.17' of  
+git://git.kernel.o...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?id=6530078334779392
+kernel config:   
+https://syzkaller.appspot.com/x/.config?id=6493557782959164711
+dashboard link: https://syzkaller.appspot.com/bug?extid=1dac3a4f6bc9c1c675d4
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+userspace arch: i386
+syzkaller  
+repro:https://syzkaller.appspot.com/x/repro.syz?id=5691583680741376
 
-  tools/testing/selftests/bpf/test_progs.c
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+1dac3a4f6bc9c1c675d4@syzkaller.appspotmail.com
 
-between commit:
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+IPVS: ftp: loaded support on port[0] = 21
+WARNING: CPU: 1 PID: 4520 at sound/core/pcm_lib.c:2057 pcm_sanity_check  
+sound/core/pcm_lib.c:2057 [inline]
+WARNING: CPU: 1 PID: 4520 at sound/core/pcm_lib.c:2057  
+__snd_pcm_lib_xfer+0x7c3/0x1d10 sound/core/pcm_lib.c:2122
+Kernel panic - not syncing: panic_on_warn set ...
 
-  a4e21ff8d9a3 ("bpf: minor fix to selftest test_stacktrace_build_id()")
+CPU: 1 PID: 4520 Comm: syz-executor0 Not tainted 4.17.0-rc3+ #52
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+  panic+0x22f/0x4de kernel/panic.c:184
+  __warn.cold.8+0x163/0x1b3 kernel/panic.c:536
+  report_bug+0x252/0x2d0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:178 [inline]
+  do_error_trap+0x1de/0x490 arch/x86/kernel/traps.c:296
+  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:992
+RIP: 0010:pcm_sanity_check sound/core/pcm_lib.c:2057 [inline]
+RIP: 0010:__snd_pcm_lib_xfer+0x7c3/0x1d10 sound/core/pcm_lib.c:2122
+RSP: 0018:ffff8801d97b7898 EFLAGS: 00010293
+RAX: ffff8801ad00e0c0 RBX: ffff8801d965e100 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff85c3d333 RDI: ffff8801d965e418
+RBP: ffff8801d97b7b38 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000003 R11: 0000000000000000 R12: ffffffff884945c0
+R13: 0000000000000000 R14: ffff8801d965e100 R15: ffff8801cdd2c940
+  snd_pcm_lib_readv include/sound/pcm.h:1113 [inline]
+  snd_pcm_ioctl_xfern_compat+0x266/0x330 sound/core/pcm_compat.c:448
+  snd_pcm_ioctl_compat+0xc96/0x1c90 sound/core/pcm_compat.c:716
+  __do_compat_sys_ioctl fs/compat_ioctl.c:1461 [inline]
+  __se_compat_sys_ioctl fs/compat_ioctl.c:1407 [inline]
+  __ia32_compat_sys_ioctl+0x221/0x640 fs/compat_ioctl.c:1407
+  do_syscall_32_irqs_on arch/x86/entry/common.c:323 [inline]
+  do_fast_syscall_32+0x345/0xf9b arch/x86/entry/common.c:394
+  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
+RIP: 0023:0xf7f51cb9
+RSP: 002b:00000000ffafd6ac EFLAGS: 00000282 ORIG_RAX: 0000000000000036
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00000000800c4153
+RDX: 0000000020000040 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000292 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
-from the bpf tree and commit:
 
-  79b453501310 ("tools/bpf: add a test for bpf_get_stack with tracepoint pr=
-og")
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-from the bpf-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc tools/testing/selftests/bpf/test_progs.c
-index fac581f1c57f,aa336f0abebc..000000000000
---- a/tools/testing/selftests/bpf/test_progs.c
-+++ b/tools/testing/selftests/bpf/test_progs.c
-@@@ -1137,9 -1193,14 +1193,14 @@@ static void test_stacktrace_build_id(vo
-  		  err, errno))
-  		goto disable_pmu;
- =20
-+ 	stack_amap_fd =3D bpf_find_map(__func__, obj, "stack_amap");
-+ 	if (CHECK(stack_amap_fd < 0, "bpf_find_map stack_amap",
-+ 		  "err %d errno %d\n", err, errno))
-+ 		goto disable_pmu;
-+=20
-  	assert(system("dd if=3D/dev/urandom of=3D/dev/zero count=3D4 2> /dev/nul=
-l")
-  	       =3D=3D 0);
- -	assert(system("./urandom_read if=3D/dev/urandom of=3D/dev/zero count=3D4=
- 2> /dev/null") =3D=3D 0);
- +	assert(system("./urandom_read") =3D=3D 0);
-  	/* disable stack trace collection */
-  	key =3D 0;
-  	val =3D 1;
-@@@ -1188,8 -1249,15 +1249,15 @@@
-  		previous_key =3D key;
-  	} while (bpf_map_get_next_key(stackmap_fd, &previous_key, &key) =3D=3D 0=
-);
- =20
-- 	CHECK(build_id_matches < 1, "build id match",
-- 	      "Didn't find expected build ID from the map\n");
-+ 	if (CHECK(build_id_matches < 1, "build id match",
- -		  "Didn't find expected build ID from the map"))
-++		  "Didn't find expected build ID from the map\n"))
-+ 		goto disable_pmu;
-+=20
-+ 	stack_trace_len =3D PERF_MAX_STACK_DEPTH
-+ 		* sizeof(struct bpf_stack_build_id);
-+ 	err =3D compare_stack_ips(stackmap_fd, stack_amap_fd, stack_trace_len);
-+ 	CHECK(err, "compare_stack_ips stackmap vs. stack_amap",
-+ 	      "err %d errno %d\n", err, errno);
- =20
-  disable_pmu:
-  	ioctl(pmu_fd, PERF_EVENT_IOC_DISABLE);
-
---Sig_/_k_JFlMG2Jm7dvySI/MN3oN
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrpHdEACgkQAVBC80lX
-0Gyj6gf/aZzO0mkQ2ixocOBeZd0aMqsiUhprVRtqjOxYDuXWR6EYXcIH/obgxtvU
-E1yEgZ1eKsKiWYdOwvV0qL0LYq/o9e5AqiEp1T5uh5LN969j6II/xIM3DZe/4zoV
-+74vrwR+meSqMKb84wmXKZbcmOeWUepkoQsx1FDOFWgVYTLO3gRb7tBqL/iAa95e
-LFXtZWPh90KuNeIWQekXF0KOwXcrMxTmuHBrsZkxVKo54fRaIO7sktX4vqUDNWdp
-FTblv+9tWzWdZTPfPCMhFMkdlQUiRV+KW3t+I0YHUYhtr1zHuc6lvj0Bh5lozF8d
-u695GQGw990B6coNOYWpcbVxxDCiig==
-=WoIr
------END PGP SIGNATURE-----
-
---Sig_/_k_JFlMG2Jm7dvySI/MN3oN--
+syzbot will keep track of this bug report.
+If you forgot to add the Reported-by tag, once the fix for this bug is  
+merged
+into any tree, please reply to this email with:
+#syz fix: exact-commit-title
+If you want to test a patch for this bug, please reply with:
+#syz test: git://repo/address.git branch
+and provide the patch inline or as an attachment.
+To mark this as a duplicate of another syzbot report, please reply with:
+#syz dup: exact-subject-of-another-report
+If it's a one-off invalid bug report, please reply with:
+#syz invalid
+Note: if the crash happens again, it will cause creation of a new bug  
+report.
+Note: all commands must start from beginning of the line in the email body.
