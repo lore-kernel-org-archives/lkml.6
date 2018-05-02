@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750966AbeEBHyE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 03:54:04 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:42807 "EHLO
+        id S1751167AbeEBHyu (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 03:54:50 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:37307 "EHLO
         mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750859AbeEBHyD (ORCPT
+        with ESMTP id S1751025AbeEBHyt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 03:54:03 -0400
-X-Google-Smtp-Source: AB8JxZrFlZriRq75iPXJxjIRjsha3XcX4FClCzU4+142TBCQ8BV3phkMBM/1jS/jXgWeVQ82E4J/bw==
+        Wed, 2 May 2018 03:54:49 -0400
+X-Google-Smtp-Source: AB8JxZqdydkLPwZ8BOYaWvtB3/NEClO35KMro3JaRXjAM90MAfCX/onaceNCFFYqYTUD2R2t/bkfCA==
 From: Ganesh Mahendran <opensource.ganesh@gmail.com>
 To: ldufour@linux.vnet.ibm.com, catalin.marinas@arm.com,
         will.deacon@arm.com
 Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, Ganesh Mahendran <opensource.ganesh@gmail.com>
 Subject: [PATCH 1/2] arm64/mm: define ARCH_SUPPORTS_SPECULATIVE_PAGE_FAULT
-Date: Wed,  2 May 2018 15:53:21 +0800
-Message-Id: <1525247602-1565-1-git-send-email-opensource.ganesh@gmail.com>
+Date: Wed,  2 May 2018 15:54:31 +0800
+Message-Id: <1525247672-2165-1-git-send-email-opensource.ganesh@gmail.com>
 X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
