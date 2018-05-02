@@ -1,84 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751899AbeEAXrf (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 19:47:35 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:40978 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751447AbeEAXrd (ORCPT
+        id S1753340AbeEBACH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 20:02:07 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36708 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753312AbeEBACF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 19:47:33 -0400
-X-Google-Smtp-Source: AB8JxZr2727h6toiio+0+8tTEfarVhBHJWk/Du29x/Hxs77kI84r1fdDrhHqLiJFrJOzGBO7nyEPXA==
-From: Evan Green <evgreen@chromium.org>
-To: Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Evan Green <evgreen@chromium.org>
-Subject: [PATCH RFC] mmc: sdhci: Don't get card-detect without preemption
-Date: Tue,  1 May 2018 16:47:21 -0700
-Message-Id: <20180501234721.187135-1-evgreen@chromium.org>
-X-Mailer: git-send-email 2.13.5
+        Tue, 1 May 2018 20:02:05 -0400
+Date: Tue, 1 May 2018 17:02:03 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: David Rientjes <rientjes@google.com>,
+        "Joel Fernandes (Google)" <joel.opensrc@gmail.com>,
+        Waiman Long <longman@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        rdunlap@infradead.org
+Subject: Re: [PATCH] proc/stat: Separate out individual irq counts into
+ /proc/stat_irqs
+Message-Id: <20180501170203.d2b0a99acf0b5288476a11a7@linux-foundation.org>
+In-Reply-To: <20180424061859.GA16181@avx2>
+References: <20180419190846.GE2066@avx2>
+        <1c3b9cf3-3a36-568f-3da2-e560a721f4aa@redhat.com>
+        <20180419195504.GA4343@avx2>
+        <eb7c1569-e445-5cbb-6d10-2694b625232a@redhat.com>
+        <20180419203949.GA4555@avx2>
+        <c0530769-50c3-87ad-1558-164873482130@redhat.com>
+        <CAEi0qNn9KbTtUxLvFKvq958BhG9KrpY=S-89T5HJBebO9Da4zw@mail.gmail.com>
+        <20180421203422.GA14396@avx2>
+        <20180421203604.GB14396@avx2>
+        <alpine.DEB.2.21.1804232249380.82340@chino.kir.corp.google.com>
+        <20180424061859.GA16181@avx2>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For a controller with SDHCI_QUIRK_NO_CARD_NO_RESET, there are several
-conditions where sdhci_do_reset is called under a spinlock with interrupts
-disabled. The card detect is often a GPIO, which might sleep. Avoid
-asking for the card detect status if interrupts are disabled to prevent
-a warning like the following:
+On Tue, 24 Apr 2018 09:18:59 +0300 Alexey Dobriyan <adobriyan@gmail.com> wrote:
 
-[    2.480199] Call trace:
-[    2.480218] [<ffffff800808a698>] dump_backtrace+0x0/0x228
-[    2.480224] [<ffffff800808a8e0>] show_stack+0x20/0x28
-[    2.480235] [<ffffff80088a0214>] dump_stack+0x90/0xb0
-[    2.480245] [<ffffff80080d7aa8>] ___might_sleep+0x110/0x128
-[    2.480248] [<ffffff80080d7b38>] __might_sleep+0x78/0x88
-[    2.480260] [<ffffff80083cdd28>] gpiod_get_raw_value_cansleep+0x2c/0xc4
-[    2.480269] [<ffffff80086a93a8>] mmc_gpio_get_cd+0x3c/0x68
-[    2.480275] [<ffffff80086b008c>] sdhci_get_cd+0x20/0x98
-[    2.480280] [<ffffff80086b081c>] sdhci_do_reset+0x50/0x88
-[    2.480283] [<ffffff80086b4640>] sdhci_tasklet_finish+0x1a8/0x270
-[    2.480292] [<ffffff80080b29d4>] tasklet_action+0x90/0xf4
-[    2.480296] [<ffffff80080813b8>] __do_softirq+0x1c8/0x360
-[    2.480300] [<ffffff80080b2408>] irq_exit+0x88/0xd0
+> On Mon, Apr 23, 2018 at 10:54:18PM -0700, David Rientjes wrote:
+> > On Sat, 21 Apr 2018, Alexey Dobriyan wrote:
+> > 
+> > > > On Thu, Apr 19, 2018 at 04:23:02PM -0700, Joel Fernandes (Google) wrote:
+> > > > > Can we not just remove per-IRQ stats from /proc/stat (since I gather
+> > > > > from this discussion it isn't scalable), and just have applications
+> > > > > that need per-IRQ stats use /proc/interrupts ?
+> > > > 
+> > > > If you can prove noone is using them in /proc/stat...
+> > > 
+> > > And you can't even stick WARN into /proc/stat to find out.
+> > > 
+> > 
+> > FWIW, removing per irq counts from /proc/stat would break some of our
+> > scripts.  We could adapt to that, but everybody else would have to as
+> > well, so I'm afraid it's not going to be possible.
+> 
+> Excellent!
+> 
+> > It would probably be better to extract out the stats that you're actually
+> > interested in to a new file.
+> 
+> This is the worst scenario. Individual IRQ stats are going to live in 2 places.
+> And /proc/stat still would be slow.
 
----
+No, a new /proc/stat2 which omits the `intr' line would be fast(er). 
+Although if we're going to do such a thing we might choose to
+reorganize and prune /proc/stat2 even further, and actually put some
+thought into it - the current one is a bit of a dog's breakfast.
 
-I discovered this warning while trying to bring up SD, somewhat unsuccessfully,
-on a new device, and hit this error path.
+Dumb question(s):
 
-This change is not ideal as it only makes a best effort to adhere to the quirk,
-but may in some cases end up resetting the controller with no card present.
+a) if we moved the `intr' line to the very end of /proc/stat, would
+   anything break?  Maybe.
 
-Another option I considered was trying to call sdhci_do_reset within only
-sleepable contexts. I actually got as far as converting the tasklet to a
-work queue, and deferring the reset to the end of the function in
-sdhci_request_done. But 1) I'm not sure if that deferral was actually safe,
-and 2) we call sdhci_do_reset from under the lock in several other places,
-such as sdhci_card_event and sdhci_cqe_disable.
+b) if an application were then to read stuff from /proc/stat and
+   were to stop reading before it read the `intr' line, would
+   its read from /proc/stat still be slow?
 
-Finally, I also considered calling the non-_maysleep gpio functions in
-mmc_gpio_get_cd. I assume this is not workable as someone somewhere has put
-a card detect off of a PMIC or GPIO expander.
-
-Any advice?
-
----
- drivers/mmc/host/sdhci.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index 759278dd317d..c5273acf6987 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -210,7 +210,7 @@ static void sdhci_do_reset(struct sdhci_host *host, u8 mask)
- 	if (host->quirks & SDHCI_QUIRK_NO_CARD_NO_RESET) {
- 		struct mmc_host *mmc = host->mmc;
- 
--		if (!mmc->ops->get_cd(mmc))
-+		if (preemptible() && !mmc->ops->get_cd(mmc))
- 			return;
- 	}
- 
--- 
-2.13.5
+c) if the answer to b) is "yes" then can we change that?  Only go
+   off and prepare the `intr' line if the application is really truly
+   reading it in?
