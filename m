@@ -1,116 +1,208 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751755AbeEBQp7 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 12:45:59 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:52748 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751100AbeEBQp4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 12:45:56 -0400
-Subject: Re: [PATCH] [v3] x86: Convert x86_platform_ops to timespec64
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Jan Kiszka <jan.kiszka@siemens.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Borislav Petkov <bp@suse.de>, Andy Lutomirski <luto@kernel.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        jailhouse-dev@googlegroups.com, kvm@vger.kernel.org,
-        xen-devel <xen-devel@lists.xenproject.org>
-References: <20180427201435.3194219-1-arnd@arndb.de>
- <b8d3167b-ee9f-f14d-e43e-73aa2719d6ae@oracle.com>
- <CAK8P3a0T8RkPgHm6F+Y+RHBdi7v5ho1hQ8w+MwWFcOk5TbMaCw@mail.gmail.com>
-From: Joao Martins <joao.m.martins@oracle.com>
-Message-ID: <92ef9d3a-d2bc-59db-de43-4845a46fd2d8@oracle.com>
-Date: Wed, 2 May 2018 17:44:47 +0100
+        id S1751782AbeEBQvx (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 12:51:53 -0400
+Received: from foss.arm.com ([217.140.101.70]:33056 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751100AbeEBQvu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 12:51:50 -0400
+Date: Wed, 2 May 2018 17:51:44 +0100
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v7 3/9] PCI: endpoint: functions/pci-epf-test: Add second
+ entry
+Message-ID: <20180502165144.GB4871@e107981-ln.cambridge.arm.com>
+References: <cover.1524577064.git.gustavo.pimentel@synopsys.com>
+ <c6cfd167838ae8e226dee0820983efe918fa4e1f.1524577064.git.gustavo.pimentel@synopsys.com>
+ <20180426165605.GA6370@e107981-ln.cambridge.arm.com>
+ <b65caf2e-b002-f591-6215-ff2241b2dfb8@ti.com>
+ <20180501115417.GD19391@e107981-ln.cambridge.arm.com>
+ <5d625d04-38fe-7d5a-67fc-5ea92039474c@ti.com>
+ <20180501142607.GA21911@e107981-ln.cambridge.arm.com>
+ <bfaebf3c-2175-f4b2-89c5-336ff9396ed0@synopsys.com>
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a0T8RkPgHm6F+Y+RHBdi7v5ho1hQ8w+MwWFcOk5TbMaCw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8881 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805020140
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bfaebf3c-2175-f4b2-89c5-336ff9396ed0@synopsys.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/28/2018 11:09 AM, Arnd Bergmann wrote:
-> On Sat, Apr 28, 2018 at 12:21 AM, Joao Martins
-> <joao.m.martins@oracle.com> wrote:
->> On 04/27/2018 09:13 PM, Arnd Bergmann wrote:
->>> diff --git a/arch/x86/kernel/pvclock.c b/arch/x86/kernel/pvclock.c
->>> index 761f6af6efa5..637982efecd8 100644
->>> --- a/arch/x86/kernel/pvclock.c
->>> +++ b/arch/x86/kernel/pvclock.c
->>> @@ -123,28 +123,35 @@ u64 pvclock_clocksource_read(struct pvclock_vcpu_time_info *src)
->>>
->>>  void pvclock_read_wallclock(struct pvclock_wall_clock *wall_clock,
->>>                           struct pvclock_vcpu_time_info *vcpu_time,
->>> -                         struct timespec *ts)
->>> +                         struct timespec64 *ts)
->>>  {
->>>       u32 version;
->>>       u64 delta;
->>> -     struct timespec now;
->>> +     struct timespec64 now;
->>>
->>>       /* get wallclock at system boot */
->>>       do {
->>>               version = wall_clock->version;
->>>               rmb();          /* fetch version before time */
->>> +             /*
->>> +              * Note: wall_clock->sec is a u32 value, so it can
->>> +              * only store dates between 1970 and 2106. To allow
->>> +              * times beyond that, we need to create a new hypercall
->>> +              * interface with an extended pvclock_wall_clock structure
->>> +              * like ARM has.
->>> +              */
->>>               now.tv_sec  = wall_clock->sec;
->>
->> IIUC the interface you're probably speaking about is common to both ARM and x86
->> on Xen[*] (since Xen 4.6) i.e.
->>
->>         now.tv_sec  = ((uint64_t)s->wc_sec_hi << 32) | s->wc_sec;
->>
->> s representing struct shared_info like on ARM (there's a 32-bit hole where
->> wc_sec_hi is placed on x86_64/ARM). Except on x86 32-bit guests wc_sec_hi is
->> located elsewhere.
->>
->>         Joao
->>
->> [*]
->> https://xenbits.xen.org/docs/4.6-testing/hypercall/x86_64/include,public,xen.h.html#incontents_startofday_shared
+On Wed, May 02, 2018 at 11:39:00AM +0100, Gustavo Pimentel wrote:
+> Hi Lorenzo,
 > 
-> Ah, good. How portable is that? Will it do the right thing (i.e.
-> guarantee to have
-> zeroes on the upper half, or the epoch if supported) on all versions of both KVM
-> and Xen, or do we need an additional check in there?
->
-The whole shared info page is zeroed out by Xen when allocated, so on
-unsupported platforms that includes the upper half. But I don't know if this is
-considered ABI or not. FWIW, the oldest release (2.0) has that behavior.
+> On 01/05/2018 15:26, Lorenzo Pieralisi wrote:
+> > On Tue, May 01, 2018 at 05:53:59PM +0530, Kishon Vijay Abraham I wrote:
+> >> Hi Lorenzo,
+> >>
+> >> On Tuesday 01 May 2018 05:24 PM, Lorenzo Pieralisi wrote:
+> >>> On Tue, May 01, 2018 at 03:37:47PM +0530, Kishon Vijay Abraham I wrote:
+> >>>> Hi Lorenzo,
+> >>>>
+> >>>> On Thursday 26 April 2018 10:26 PM, Lorenzo Pieralisi wrote:
+> >>>>> On Tue, Apr 24, 2018 at 02:44:40PM +0100, Gustavo Pimentel wrote:
+> >>>>>> Adds a seconds entry on the pci_epf_test_ids structure that disables the
+> >>>>>
+> >>>>> "Add a second entry to..."
+> >>>>>
+> >>>>>> linkup_notifier parameter on driver for the designware EP.
+> >>>>>>
+> >>>>>> This allows designware EPs that doesn't have linkup notification signal
+> >>>>>> to work with pcitest.
+> >>>>>>
+> >>>>>> Updates the binding documentation accordingly.
+> >>>>>
+> >>>>> Valid for all the series: use imperative sentences.
+> >>>>>
+> >>>>> eg:
+> >>>>>
+> >>>>> "Update the binding documentation accordingly".
+> >>>>>
+> >>>>> not
+> >>>>>
+> >>>>> "Updates the binding documentation accordingly".
+> >>>>>
+> >>>>>> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+> >>>>>> Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+> >>>>>> ---
+> >>>>>> Change v2->v3:
+> >>>>>>  - Added second entry in pci_epf_test_ids structure.
+> >>>>>>  - Remove test_reg_bar field assignment on second entry.
+> >>>>>> Changes v3->v4:
+> >>>>>>  - Nothing changed, just to follow the patch set version.
+> >>>>>> Changes v4->v5:
+> >>>>>>  - Changed pci_epf_test_cfg2 to pci_epf_test_designware.
+> >>>>>> Changes v5->v6:
+> >>>>>>  - Changed name field from pci_epf_test_designware to pci_epf_test_dw.
+> >>>>>> Changes v6->v7:
+> >>>>>>  - Changed variable name from data_cfg2 to data_linkup_notifier_disabled.
+> >>>>>>
+> >>>>>>  Documentation/PCI/endpoint/function/binding/pci-test.txt | 2 ++
+> >>>>>>  drivers/pci/endpoint/functions/pci-epf-test.c            | 8 ++++++++
+> >>>>>>  2 files changed, 10 insertions(+)
+> >>>>>>
+> >>>>>> diff --git a/Documentation/PCI/endpoint/function/binding/pci-test.txt b/Documentation/PCI/endpoint/function/binding/pci-test.txt
+> >>>>>> index 3b68b95..dc39f47 100644
+> >>>>>> --- a/Documentation/PCI/endpoint/function/binding/pci-test.txt
+> >>>>>> +++ b/Documentation/PCI/endpoint/function/binding/pci-test.txt
+> >>>>>> @@ -1,6 +1,8 @@
+> >>>>>>  PCI TEST ENDPOINT FUNCTION
+> >>>>>>  
+> >>>>>>  name: Should be "pci_epf_test" to bind to the pci_epf_test driver.
+> >>>>>> +name: Should be "pci_epf_test_dw" to bind to the pci_epf_test driver
+> >>>>>> +      with a custom configuration for the designware EP.
+> >>>>>
+> >>>>> The link between the "name" and the device created is quite obscure and
+> >>>>> reading pci-test-howto.txt certainly does not clarify it.
+> >>>>>
+> >>>>> In pci-test-howto.txt an explanation should be added to the configs
+> >>>>> device creation paragraph to clarify it.
+> >>>>>
+> >>>>>>  Configurable Fields:
+> >>>>>>  vendorid	 : should be 0x104c
+> >>>>>> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
+> >>>>>> index 7cef851..4ab463b 100644
+> >>>>>> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
+> >>>>>> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+> >>>>>> @@ -459,10 +459,18 @@ static int pci_epf_test_bind(struct pci_epf *epf)
+> >>>>>>  	return 0;
+> >>>>>>  }
+> >>>>>>  
+> >>>>>> +static const struct pci_epf_test_data data_linkup_notifier_disabled = {
+> >>>>>> +	.linkup_notifier = false
+> >>>>>> +};
+> >>>>>> +
+> >>>>>>  static const struct pci_epf_device_id pci_epf_test_ids[] = {
+> >>>>>>  	{
+> >>>>>>  		.name = "pci_epf_test",
+> >>>>>>  	},
+> >>>>>> +	{
+> >>>>>> +		.name = "pci_epf_test_dw",
+> >>>>>> +		.driver_data = (kernel_ulong_t)&data_linkup_notifier_disabled,
+> >>>>>> +	},
+> >>>>>>  	{},
+> >>>>>
+> >>>>> Should not this be a property derived from the controller compatible
+> >>>>> property instead of the test device name written in configfs ?
+> >>>>
+> >>>> pci_epf_test is an independent driver on its own that operates in a layer above
+> >>>> the controller driver. So it does not get the controller compatible (which is
+> >>>> used in controller drivers like pcie-designware-plat.c). pci_epf_test uses
+> >>>> "pci_epf_device_id" which is _similar_ to "of_device_id" used by platform drivers.
+> >>>
+> >>> I understand that, the problem is that the independent driver depends on
+> >>> features of the related controller driver as this patch shows. This
+> >>> patch basically says that if you use a specific path in configfs (that
+> >>> includes pci_epf_test_dw) your device has specific HW features (eg
+> >>> linkup notifier above), that obviously depends on the platform HW not on
+> >>> the string you use in configfs.
+> >>>
+> >>> What I am questioning is a) if I understand this right and b) whether
+> >>> this is the right approach.
+> >>
+> >> Your understanding is right. Ideally pci-epf-test driver shouldn't have any HW
+> >> specific configuration. But different HW have different configurations and
+> >> pci-epf-test should be informed of the configuration the HW supports.
+> > 
+> > I am honestly very confused. First off, I do not understand what this
+> > patch really does (or better what DW can't do so that it needs a
+> > specific configfs string and therefore a specific configuration).
+> > 
+> > What's the purpose of the linkup notifier ? What does it mean that
+> > the DW HW can't handle it ?
+> > 
+> > Are we referring to the pci_epf_linkup() function ?
+> > 
+> > If it is a HW configuration (ie the DW HW does not have a signal to
+> > report that the link is up ?) its enablement must depend on HW
+> > controller properties not configfs entries, I do not like what this
+> > patch does (probably because I am confused and I do not understand it).
+> > 
+> > Please let me know your thoughts on this, thanks.
+> 
+> On my setup, the EP is unable generate a signal which is responsible
+> for notify that the link is established, being therefore necessary to
+> emulate it, this is done by setting the linkup_notifier variable to
+> false.
 
-But this is Xen that I'm speaking about; KVM doesn't support this IIUC.
+What I do not understand is why the workqueue notification can't be called
+irrespective of the linkup notifier value from pci_epf_test_bind(),
+what's the point in calling it earlier with pci_epf_linkup() (or the
+other way around why is it safe to call it a bind() time if there
+is no notification available - which is the DW case).
 
-On KVM, there's HC_CLOCK_PAIRING hypercall or else *maybe* host could just write
-wc_sec_hi at the end of the wall_clock struct (with the current MSR) and given
-that it's (PAGE_SIZE aligned) guest memory, guest could always keep it zeroed
-out for unsupported platforms (that won't write more than 12bytes).
+[...]
 
-> I'd suggest leaving the implementation of that to a follow-up patch that you
-> can add once my patch is merged.
+> Since the linkup notifier and BAR index (where auxiliary registers are
+> located) may be configurable and is something platform dependent,
+> perhaps the configuration of this variables should be done by module
+> parameter and not by configfs, leaving this configuration
+> responsibility in charge of each platform.
 
-/nods
+They are platform dependent because they depend on the EP controller.
+That's why I said that those are EP controller parameters. I do not
+think they are module parameters either - they should be part of HW
+description in firmware.
 
-	Joao
+Lorenzo
+
+> I think this option is also a good alternative, simple and clean. What
+> do you think?
+> 
+> >>
+> >> Thanks
+> >> Kishon
+> 
+> Regards,
+> Gustavo
+> 
