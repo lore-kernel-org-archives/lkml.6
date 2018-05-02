@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751461AbeEBNzd (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 09:55:33 -0400
+        id S1751539AbeEBNzo (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 09:55:44 -0400
 Received: from mga01.intel.com ([192.55.52.88]:58147 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750930AbeEBNz3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 09:55:29 -0400
+        id S1751500AbeEBNzm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 09:55:42 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,354,1520924400";
-   d="scan'208";a="225150712"
+   d="scan'208";a="225150771"
 From: changbin.du@intel.com
 To: yamada.masahiro@socionext.com, michal.lkml@markovi.net,
         tglx@linutronix.de, mingo@redhat.com, akpm@linux-foundation.org
@@ -18,39 +18,35 @@ Cc: rostedt@goodmis.org, rdunlap@infradead.org, x86@kernel.org,
         lgirdwood@gmail.com, broonie@kernel.org, arnd@arndb.de,
         linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arch@vger.kernel.org, Changbin Du <changbin.du@intel.com>
-Subject: [PATCH v2 0/5] kernel hacking: GCC optimization for debug experience (-Og)
-Date: Wed,  2 May 2018 21:44:55 +0800
-Message-Id: <1525268700-10631-1-git-send-email-changbin.du@intel.com>
+Subject: [PATCH v2 4/5] kernel hacking: new config DEBUG_EXPERIENCE to apply GCC -Og optimization
+Date: Wed,  2 May 2018 21:44:59 +0800
+Message-Id: <1525268700-10631-5-git-send-email-changbin.du@intel.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1525268700-10631-1-git-send-email-changbin.du@intel.com>
+References: <1525268700-10631-1-git-send-email-changbin.du@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Changbin Du <changbin.du@intel.com>
 
-Hi all,
-I know some kernel developers was searching for a method to dissable GCC
-optimizations, probably they want to apply GCC '-O0' option. But since Linux
-kernel replys on GCC optimization to remove some dead code, so '-O0' just
-breaks the build. They do need this because they want to debug kernel with
-qemu, simics, kgtp or kgdb.
+This will apply GCC '-Og' optimization level which is supported
+since GCC 4.8. This optimization level offers a reasonable level
+of optimization while maintaining fast compilation and a good
+debugging experience. It is similar to '-O1' while perfer keeping
+debug ability over runtime speed.
 
-Thanks for the GCC '-Og' optimization level introduced in GCC 4.8, which
-offers a reasonable level of optimization while maintaining fast compilation
-and a good debugging experience. It is similar to '-O1' while perfer keeping
-debug ability over runtime speed. With '-Og', we can build a kernel with
-better debug ability and little performance drop after some simple change.
+If enabling this option breaks your kernel, you should either
+disable this or find a fix (mostly in the arch code). Currently
+this option has only be tested on x86_64 platform.
 
-In this series, firstly introduce a new config CONFIG_NO_AUTO_INLINE after two
-fixes for this new option. With this option, only functions explicitly marked
-with "inline" will  be inlined. This will allow the function tracer to trace
-more functions because it only traces functions that the compiler has not
-inlined.
+This option can satisfy people who was searching for a method
+to disable compiler optimizations so to achieve better kernel
+debugging experience with kgdb or qemu.
 
-Then introduce new config CONFIG_DEBUG_EXPERIENCE which apply '-Og'
-optimization level for whole kernel, with a simple fix in fix_to_virt().
-Currently this option is only tested on a QEMU gust and it works fine.
-
+The main problem of '-Og' is we must not use __attribute__((error(msg))).
+The compiler will report error though the call to error function
+still can be optimize out. So we must fallback to array tricky.
 
 Comparison of vmlinux size: a bit smaller.
 
@@ -63,7 +59,6 @@ Comparison of vmlinux size: a bit smaller.
     $ size vmlinux
        text    data     bss     dec     hex filename
     21499032   10102758 2920908 34522698        20ec64a vmlinux
-
 
 Comparison of system performance: a bit drop (~6%).
     This benchmark of kernel compilation is suggested by Ingo Molnar.
@@ -109,26 +104,98 @@ Comparison of system performance: a bit drop (~6%).
 
          233.574187771 seconds time elapsed                  ( +-  0.19% )
 
-Changbin Du (5):
-  x86/mm: surround level4_kernel_pgt with #ifdef
-    CONFIG_X86_5LEVEL...#endif
-  regulator: add dummy function of_find_regulator_by_node
-  kernel hacking: new config NO_AUTO_INLINE to disable compiler
-    auto-inline optimizations
-  kernel hacking: new config DEBUG_EXPERIENCE to apply GCC -Og
-    optimization
-  asm-generic: fix build error in fix_to_virt with
-    CONFIG_DEBUG_EXPERIENCE
+Signed-off-by: Changbin Du <changbin.du@intel.com>
 
- Makefile                          | 10 ++++++++++
- arch/x86/include/asm/pgtable_64.h |  2 ++
- arch/x86/kernel/head64.c          | 13 ++++++-------
- drivers/regulator/internal.h      |  9 +++++++--
- include/asm-generic/fixmap.h      |  3 ++-
- include/linux/compiler-gcc.h      |  2 +-
- include/linux/compiler.h          |  2 +-
- lib/Kconfig.debug                 | 39 +++++++++++++++++++++++++++++++++++++++
- 8 files changed, 68 insertions(+), 12 deletions(-)
+---
+v2:
+  o Improve performance benchmark as suggested by Ingo.
+  o Grammar updates in description. (Randy Dunlap)
+---
+ Makefile                     |  4 ++++
+ include/linux/compiler-gcc.h |  2 +-
+ include/linux/compiler.h     |  2 +-
+ lib/Kconfig.debug            | 21 +++++++++++++++++++++
+ 4 files changed, 27 insertions(+), 2 deletions(-)
 
+diff --git a/Makefile b/Makefile
+index eb694f6..6a10469 100644
+--- a/Makefile
++++ b/Makefile
+@@ -639,6 +639,9 @@ KBUILD_CFLAGS	+= $(call cc-disable-warning, format-truncation)
+ KBUILD_CFLAGS	+= $(call cc-disable-warning, format-overflow)
+ KBUILD_CFLAGS	+= $(call cc-disable-warning, int-in-bool-context)
+ 
++ifdef CONFIG_DEBUG_EXPERIENCE
++KBUILD_CFLAGS	+= $(call cc-option, -Og)
++else
+ ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
+ KBUILD_CFLAGS	+= $(call cc-option,-Oz,-Os)
+ KBUILD_CFLAGS	+= $(call cc-disable-warning,maybe-uninitialized,)
+@@ -649,6 +652,7 @@ else
+ KBUILD_CFLAGS   += -O2
+ endif
+ endif
++endif
+ 
+ KBUILD_CFLAGS += $(call cc-ifversion, -lt, 0409, \
+ 			$(call cc-disable-warning,maybe-uninitialized,))
+diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
+index b4bf73f..b8b3832 100644
+--- a/include/linux/compiler-gcc.h
++++ b/include/linux/compiler-gcc.h
+@@ -192,7 +192,7 @@
+ 
+ #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
+ 
+-#ifndef __CHECKER__
++#if !defined(__CHECKER__) && !defined(CONFIG_DEBUG_EXPERIENCE)
+ # define __compiletime_warning(message) __attribute__((warning(message)))
+ # define __compiletime_error(message) __attribute__((error(message)))
+ #endif /* __CHECKER__ */
+diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+index ab4711c..952cc7f 100644
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -301,7 +301,7 @@ unsigned long read_word_at_a_time(const void *addr)
+  * sparse see a constant array size without breaking compiletime_assert on old
+  * versions of GCC (e.g. 4.2.4), so hide the array from sparse altogether.
+  */
+-# ifndef __CHECKER__
++# if !defined(__CHECKER__) && !defined(CONFIG_DEBUG_EXPERIENCE)
+ #  define __compiletime_error_fallback(condition) \
+ 	do { ((void)sizeof(char[1 - 2 * condition])); } while (0)
+ # endif
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index ab55801..e264199 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -216,6 +216,27 @@ config NO_AUTO_INLINE
+ 
+ 	  If unsure, select N.
+ 
++config DEBUG_EXPERIENCE
++	bool "Optimize for better debugging experience (-Og)"
++	default n
++	select NO_AUTO_INLINE
++	depends on !CC_OPTIMIZE_FOR_SIZE
++	help
++	  This will apply GCC '-Og' optimization level which is supported
++	  since GCC 4.8. This optimization level offers a reasonable level
++	  of optimization while maintaining fast compilation and a good
++	  debugging experience. It is similar to '-O1' while preferring to
++	  keep debug ability over runtime speed. The overall performance
++	  will drop a bit (~6%).
++
++	  Use only if you want to debug the kernel, especially if you want
++	  to have better kernel debugging experience with gdb facilities
++	  like kgdb or qemu. If enabling this option breaks your kernel,
++	  you should either disable this or find a fix (mostly in the arch
++	  code). Currently this option has only be tested on x86_64 platform.
++
++	  If unsure, select N.
++
+ config ENABLE_WARN_DEPRECATED
+ 	bool "Enable __deprecated logic"
+ 	default y
 -- 
 2.7.4
