@@ -1,55 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751982AbeEBP4y (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 11:56:54 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:46764 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750954AbeEBP4u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 11:56:50 -0400
-To: =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org
-Cc: Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
-        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>
-References: <20180423233046.21476-1-logang@deltatee.com>
- <b8acf835-df94-9967-2327-8f0e39d88511@amd.com>
-From: Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <805645c1-ea40-2e57-88eb-5dd34e579b2e@deltatee.com>
-Date: Wed, 2 May 2018 09:56:09 -0600
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752039AbeEBP5g (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 11:57:36 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:54537 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751658AbeEBP51 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 11:57:27 -0400
+From: John Garry <john.garry@huawei.com>
+To: <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
+CC: <linux-scsi@vger.kernel.org>, <linuxarm@huawei.com>,
+        <linux-kernel@vger.kernel.org>, Xiang Chen <chenxiang66@hisilicon.com>,
+        "John Garry" <john.garry@huawei.com>
+Subject: [PATCH 01/11] scsi: hisi_sas: optimise the usage of DQ locking
+Date: Wed, 2 May 2018 23:56:24 +0800
+Message-ID: <1525276594-92173-2-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1525276594-92173-1-git-send-email-john.garry@huawei.com>
+References: <1525276594-92173-1-git-send-email-john.garry@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <b8acf835-df94-9967-2327-8f0e39d88511@amd.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, christian.koenig@amd.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v4 00/14] Copy Offload in NVMe Fabrics with P2P PCI Memory
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christian,
+From: Xiang Chen <chenxiang66@hisilicon.com>
 
-On 5/2/2018 5:51 AM, Christian König wrote:
-> it would be rather nice to have if you could separate out the functions 
-> to detect if peer2peer is possible between two devices.
+In the DQ tasklet processing it is not necessary to take the DQ
+lock, as there is no contention between adding slots to the CQ and
+removing slots from the matching DQ.
 
-This would essentially be pci_p2pdma_distance() in the existing 
-patchset. It returns the sum of the distance between a list of clients 
-and a P2PDMA provider. It returns -1 if peer2peer is not possible 
-between the devices (presently this means they are not behind the same 
-root port).
+In addition, since we run each DQ in a separate tasklet context,
+there would be no possible contention between DQ processing
+running for the same queue in parallel.
 
-Logan
+It is still necessary to take hisi_hba lock when free'ing slots.
+
+Signed-off-by: Xiang Chen <chenxiang66@hisilicon.com>
+Signed-off-by: John Garry <john.garry@huawei.com>
+---
+ drivers/scsi/hisi_sas/hisi_sas_v2_hw.c | 3 ---
+ drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 3 ---
+ 2 files changed, 6 deletions(-)
+
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
+index a5abde8..384e4ef 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
+@@ -3151,14 +3151,12 @@ static void cq_tasklet_v2_hw(unsigned long val)
+ 	struct hisi_sas_complete_v2_hdr *complete_queue;
+ 	u32 rd_point = cq->rd_point, wr_point, dev_id;
+ 	int queue = cq->id;
+-	struct hisi_sas_dq *dq = &hisi_hba->dq[queue];
+ 
+ 	if (unlikely(hisi_hba->reject_stp_links_msk))
+ 		phys_try_accept_stp_links_v2_hw(hisi_hba);
+ 
+ 	complete_queue = hisi_hba->complete_hdr[queue];
+ 
+-	spin_lock(&dq->lock);
+ 	wr_point = hisi_sas_read32(hisi_hba, COMPL_Q_0_WR_PTR +
+ 				   (0x14 * queue));
+ 
+@@ -3208,7 +3206,6 @@ static void cq_tasklet_v2_hw(unsigned long val)
+ 	/* update rd_point */
+ 	cq->rd_point = rd_point;
+ 	hisi_sas_write32(hisi_hba, COMPL_Q_0_RD_PTR + (0x14 * queue), rd_point);
+-	spin_unlock(&dq->lock);
+ }
+ 
+ static irqreturn_t cq_interrupt_v2_hw(int irq_no, void *p)
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
+index 33735a7..afc1242 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
+@@ -1721,11 +1721,9 @@ static void cq_tasklet_v3_hw(unsigned long val)
+ 	struct hisi_sas_complete_v3_hdr *complete_queue;
+ 	u32 rd_point = cq->rd_point, wr_point;
+ 	int queue = cq->id;
+-	struct hisi_sas_dq *dq = &hisi_hba->dq[queue];
+ 
+ 	complete_queue = hisi_hba->complete_hdr[queue];
+ 
+-	spin_lock(&dq->lock);
+ 	wr_point = hisi_sas_read32(hisi_hba, COMPL_Q_0_WR_PTR +
+ 				   (0x14 * queue));
+ 
+@@ -1752,7 +1750,6 @@ static void cq_tasklet_v3_hw(unsigned long val)
+ 	/* update rd_point */
+ 	cq->rd_point = rd_point;
+ 	hisi_sas_write32(hisi_hba, COMPL_Q_0_RD_PTR + (0x14 * queue), rd_point);
+-	spin_unlock(&dq->lock);
+ }
+ 
+ static irqreturn_t cq_interrupt_v3_hw(int irq_no, void *p)
+-- 
+1.9.1
