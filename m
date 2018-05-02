@@ -1,263 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751245AbeEBIEh (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 04:04:37 -0400
-Received: from mga03.intel.com ([134.134.136.65]:19623 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750947AbeEBIEf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 04:04:35 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,354,1520924400";
-   d="scan'208";a="37773141"
-Date: Wed, 2 May 2018 16:05:18 +0800
-From: Tiwei Bie <tiwei.bie@intel.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: mst@redhat.com, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jfreimann@redhat.com, wexu@redhat.com
-Subject: Re: [RFC V3 PATCH 1/8] vhost: move get_rx_bufs to vhost.c
-Message-ID: <20180502080518.h52wme46fnqpyfpf@debian>
-References: <1524461700-5469-1-git-send-email-jasowang@redhat.com>
- <1524461700-5469-2-git-send-email-jasowang@redhat.com>
+        id S1751326AbeEBIGn (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 04:06:43 -0400
+Received: from eddie.linux-mips.org ([148.251.95.138]:48490 "EHLO
+        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750928AbeEBIGj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 04:06:39 -0400
+Date: Wed, 2 May 2018 10:06:36 +0200
+From: Ladislav Michl <ladis@linux-mips.org>
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>, Roger Quadros <rogerq@ti.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>, Tony Lindgren <tony@atomide.com>,
+        "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Andreas Kemnade <andreas@kemnade.info>
+Subject: Re: [PATCH v2] mtd: onenand: omap2: Disable DMA for HIGHMEM buffers
+Message-ID: <20180502080636.GA2124@lenoch>
+References: <20180416065256.GA24455@lenoch>
+ <20180420220134.3021860f@bbrezillon>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1524461700-5469-2-git-send-email-jasowang@redhat.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180420220134.3021860f@bbrezillon>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 23, 2018 at 01:34:53PM +0800, Jason Wang wrote:
-> Move get_rx_bufs() to vhost.c and rename it to
-> vhost_get_rx_bufs(). This helps to hide vring internal layout from
+Hi Boris,
 
-A small typo. Based on the code change in this patch, it
-seems that this function is renamed to vhost_get_bufs().
+(and apologies for delay)
 
-Thanks
-
-
-> specific device implementation. Packed ring implementation will
-> benefit from this.
+On Fri, Apr 20, 2018 at 10:01:34PM +0200, Boris Brezillon wrote:
+> Hi Ladislav,
 > 
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
-> ---
->  drivers/vhost/net.c   | 83 ++-------------------------------------------------
->  drivers/vhost/vhost.c | 78 +++++++++++++++++++++++++++++++++++++++++++++++
->  drivers/vhost/vhost.h |  7 +++++
->  3 files changed, 88 insertions(+), 80 deletions(-)
+> On Mon, 16 Apr 2018 08:52:59 +0200
+> Ladislav Michl <ladis@linux-mips.org> wrote:
 > 
-> diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-> index 986058a..762aa81 100644
-> --- a/drivers/vhost/net.c
-> +++ b/drivers/vhost/net.c
-> @@ -664,83 +664,6 @@ static int vhost_net_rx_peek_head_len(struct vhost_net *net, struct sock *sk)
->  	return len;
->  }
->  
-> -/* This is a multi-buffer version of vhost_get_desc, that works if
-> - *	vq has read descriptors only.
-> - * @vq		- the relevant virtqueue
-> - * @datalen	- data length we'll be reading
-> - * @iovcount	- returned count of io vectors we fill
-> - * @log		- vhost log
-> - * @log_num	- log offset
-> - * @quota       - headcount quota, 1 for big buffer
-> - *	returns number of buffer heads allocated, negative on error
-> - */
-> -static int get_rx_bufs(struct vhost_virtqueue *vq,
-> -		       struct vring_used_elem *heads,
-> -		       int datalen,
-> -		       unsigned *iovcount,
-> -		       struct vhost_log *log,
-> -		       unsigned *log_num,
-> -		       unsigned int quota)
-> -{
-> -	unsigned int out, in;
-> -	int seg = 0;
-> -	int headcount = 0;
-> -	unsigned d;
-> -	int r, nlogs = 0;
-> -	/* len is always initialized before use since we are always called with
-> -	 * datalen > 0.
-> -	 */
-> -	u32 uninitialized_var(len);
-> -
-> -	while (datalen > 0 && headcount < quota) {
-> -		if (unlikely(seg >= UIO_MAXIOV)) {
-> -			r = -ENOBUFS;
-> -			goto err;
-> -		}
-> -		r = vhost_get_vq_desc(vq, vq->iov + seg,
-> -				      ARRAY_SIZE(vq->iov) - seg, &out,
-> -				      &in, log, log_num);
-> -		if (unlikely(r < 0))
-> -			goto err;
-> -
-> -		d = r;
-> -		if (d == vq->num) {
-> -			r = 0;
-> -			goto err;
-> -		}
-> -		if (unlikely(out || in <= 0)) {
-> -			vq_err(vq, "unexpected descriptor format for RX: "
-> -				"out %d, in %d\n", out, in);
-> -			r = -EINVAL;
-> -			goto err;
-> -		}
-> -		if (unlikely(log)) {
-> -			nlogs += *log_num;
-> -			log += *log_num;
-> -		}
-> -		heads[headcount].id = cpu_to_vhost32(vq, d);
-> -		len = iov_length(vq->iov + seg, in);
-> -		heads[headcount].len = cpu_to_vhost32(vq, len);
-> -		datalen -= len;
-> -		++headcount;
-> -		seg += in;
-> -	}
-> -	heads[headcount - 1].len = cpu_to_vhost32(vq, len + datalen);
-> -	*iovcount = seg;
-> -	if (unlikely(log))
-> -		*log_num = nlogs;
-> -
-> -	/* Detect overrun */
-> -	if (unlikely(datalen > 0)) {
-> -		r = UIO_MAXIOV + 1;
-> -		goto err;
-> -	}
-> -	return headcount;
-> -err:
-> -	vhost_discard_vq_desc(vq, headcount);
-> -	return r;
-> -}
-> -
->  /* Expects to be always run from workqueue - which acts as
->   * read-size critical section for our kind of RCU. */
->  static void handle_rx(struct vhost_net *net)
-> @@ -790,9 +713,9 @@ static void handle_rx(struct vhost_net *net)
->  	while ((sock_len = vhost_net_rx_peek_head_len(net, sock->sk))) {
->  		sock_len += sock_hlen;
->  		vhost_len = sock_len + vhost_hlen;
-> -		headcount = get_rx_bufs(vq, vq->heads + nheads, vhost_len,
-> -					&in, vq_log, &log,
-> -					likely(mergeable) ? UIO_MAXIOV : 1);
-> +		headcount = vhost_get_bufs(vq, vq->heads + nheads, vhost_len,
-> +					   &in, vq_log, &log,
-> +					   likely(mergeable) ? UIO_MAXIOV : 1);
->  		/* On error, stop handling until the next kick. */
->  		if (unlikely(headcount < 0))
->  			goto out;
-> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-> index f3bd8e9..6b455f6 100644
-> --- a/drivers/vhost/vhost.c
-> +++ b/drivers/vhost/vhost.c
-> @@ -2097,6 +2097,84 @@ int vhost_get_vq_desc(struct vhost_virtqueue *vq,
->  }
->  EXPORT_SYMBOL_GPL(vhost_get_vq_desc);
->  
-> +/* This is a multi-buffer version of vhost_get_desc, that works if
-> + *	vq has read descriptors only.
-> + * @vq		- the relevant virtqueue
-> + * @datalen	- data length we'll be reading
-> + * @iovcount	- returned count of io vectors we fill
-> + * @log		- vhost log
-> + * @log_num	- log offset
-> + * @quota       - headcount quota, 1 for big buffer
-> + *	returns number of buffer heads allocated, negative on error
-> + */
-> +int vhost_get_bufs(struct vhost_virtqueue *vq,
-> +		   struct vring_used_elem *heads,
-> +		   int datalen,
-> +		   unsigned *iovcount,
-> +		   struct vhost_log *log,
-> +		   unsigned *log_num,
-> +		   unsigned int quota)
-> +{
-> +	unsigned int out, in;
-> +	int seg = 0;
-> +	int headcount = 0;
-> +	unsigned d;
-> +	int r, nlogs = 0;
-> +	/* len is always initialized before use since we are always called with
-> +	 * datalen > 0.
-> +	 */
-> +	u32 uninitialized_var(len);
-> +
-> +	while (datalen > 0 && headcount < quota) {
-> +		if (unlikely(seg >= UIO_MAXIOV)) {
-> +			r = -ENOBUFS;
-> +			goto err;
-> +		}
-> +		r = vhost_get_vq_desc(vq, vq->iov + seg,
-> +				      ARRAY_SIZE(vq->iov) - seg, &out,
-> +				      &in, log, log_num);
-> +		if (unlikely(r < 0))
-> +			goto err;
-> +
-> +		d = r;
-> +		if (d == vq->num) {
-> +			r = 0;
-> +			goto err;
-> +		}
-> +		if (unlikely(out || in <= 0)) {
-> +			vq_err(vq, "unexpected descriptor format for RX: "
-> +				"out %d, in %d\n", out, in);
-> +			r = -EINVAL;
-> +			goto err;
-> +		}
-> +		if (unlikely(log)) {
-> +			nlogs += *log_num;
-> +			log += *log_num;
-> +		}
-> +		heads[headcount].id = cpu_to_vhost32(vq, d);
-> +		len = iov_length(vq->iov + seg, in);
-> +		heads[headcount].len = cpu_to_vhost32(vq, len);
-> +		datalen -= len;
-> +		++headcount;
-> +		seg += in;
-> +	}
-> +	heads[headcount - 1].len = cpu_to_vhost32(vq, len + datalen);
-> +	*iovcount = seg;
-> +	if (unlikely(log))
-> +		*log_num = nlogs;
-> +
-> +	/* Detect overrun */
-> +	if (unlikely(datalen > 0)) {
-> +		r = UIO_MAXIOV + 1;
-> +		goto err;
-> +	}
-> +	return headcount;
-> +err:
-> +	vhost_discard_vq_desc(vq, headcount);
-> +	return r;
-> +}
-> +EXPORT_SYMBOL_GPL(vhost_get_bufs);
-> +
->  /* Reverse the effect of vhost_get_vq_desc. Useful for error handling. */
->  void vhost_discard_vq_desc(struct vhost_virtqueue *vq, int n)
->  {
-> diff --git a/drivers/vhost/vhost.h b/drivers/vhost/vhost.h
-> index 6c844b9..52edd242 100644
-> --- a/drivers/vhost/vhost.h
-> +++ b/drivers/vhost/vhost.h
-> @@ -185,6 +185,13 @@ int vhost_get_vq_desc(struct vhost_virtqueue *,
->  		      struct iovec iov[], unsigned int iov_count,
->  		      unsigned int *out_num, unsigned int *in_num,
->  		      struct vhost_log *log, unsigned int *log_num);
-> +int vhost_get_bufs(struct vhost_virtqueue *vq,
-> +		   struct vring_used_elem *heads,
-> +		   int datalen,
-> +		   unsigned *iovcount,
-> +		   struct vhost_log *log,
-> +		   unsigned *log_num,
-> +		   unsigned int quota);
->  void vhost_discard_vq_desc(struct vhost_virtqueue *, int n);
->  
->  int vhost_vq_init_access(struct vhost_virtqueue *);
-> -- 
-> 2.7.4
+> > dma_map_single doesn't get the proper DMA address for vmalloced area,
 > 
+> That's not true, it returns the right DMA (physical) address, it's just
+> that:
+
+To be honest I used log message from commit dcf08227e964 which is dealing
+with the same issue.
+
+> 1/ the memory location is not necessarily physically contiguous
+> 2/ in case your arch is VIVT ot VIPT, there may be several entries in
+>    the cache pointing to the same physical location, and the cache
+>    maintenance operations done by dma_map_single() will only operate on
+>    one of these entries.
+
+Well, there are few things suspicious here: DMA is used to transfer data
+to system memory from bufferram which is 3kB in size. Nikolaus reported
+Internal error: Oops: 805 [#1] PREEMPT SMP ARM
+PC is at v7_dma_inv_range+0x30/0x48
+LR is at dma_cache_maint_page+0xd0/0xe0
+but I do not see how could it happen if it would be caused by 1/ or 2/ above.
+Cache issue would cause data inconsistencies which should be caught by upper
+MTD layers.
+
+And given that replacing dma_map_single with dma_map_page done in first
+version of patch also fixed oops, it is not caused by 1/
+CPU is OMAP3630 based on Cortex-A8, D-cache is often described as PIPT but
+seems to be VIPT with built-in alias detection mechanism - anyone with
+better knowledge will eventually correct me, thank you.
+
+> > so disable DMA in this case.
+> > 
+> 
+> The fix looks good though. Can you rephrase your commit message to make
+> it clearer.
+
+Sure, I'd like to, but I do not know what's root cause yet :)
+
+> Thanks,
+> 
+> Boris
+	
+Best regards,
+	ladis
