@@ -1,77 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751100AbeEBOvF (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 10:51:05 -0400
-Received: from muru.com ([72.249.23.125]:39736 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751393AbeEBOvD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 10:51:03 -0400
-Date: Wed, 2 May 2018 07:51:00 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Eyal Reizer <eyalreizer@gmail.com>
-Cc: bcousson@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Eyal Reizer <eyalr@ti.com>
-Subject: Re: [PATCH] arm: dts: am437x-sk-evm: add wilink8 support
-Message-ID: <20180502145100.GK98604@atomide.com>
-References: <1525159453-32489-1-git-send-email-eyalr@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1525159453-32489-1-git-send-email-eyalr@ti.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1751514AbeEBOxM (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 10:53:12 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:48650 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750921AbeEBOxH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 10:53:07 -0400
+Message-ID: <1525272784.4115.3.camel@HansenPartnership.com>
+Subject: [GIT PULL] SCSI fixes for 4.17-rc3
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Date: Wed, 02 May 2018 07:53:04 -0700
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Eyal Reizer <eyalreizer@gmail.com> [180501 00:26]:
-> enable mmc3 used for wlan and uart1 used for bluetooth
-> configure the gpios used for wlan and bluetooth controls
-> add fixed voltage regulator used for wlan power control
-...
->  / {
->  	model = "TI AM437x SK EVM";
-> @@ -158,6 +159,22 @@
->  			};
->  		};
->  	};
-> +
-> +	vmmcwl_fixed: fixedregulator-mmcwl {
-> +		/*
-> +		 * WL_EN is not SDIO standard compliant. It is an out of band
-> +		 * signal and hard to be dealt with in a standard way by the
-> +		 * SDIO core driver.
-> +		 * So modelling the WL_EN line as a regulator was a natural
-> +		 * choice as the MMC core already deals with MMC supplies.
-> +		 */
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vmmcwl_fixed";
-> +		regulator-min-microvolt = <1800000>;
-> +		regulator-max-microvolt = <1800000>;
-> +		gpio = <&gpio4 8 GPIO_ACTIVE_HIGH>;
-> +		enable-active-high;
-> +	};
->  };
+Three small bug fixes: an illegally overlapping memcmp in target code,
+a potential infinite loop in isci under certain rare phy conditions and
+an ATA queue depth (performance) correction for storvsc.
 
-Interesting that it needs much longer delay here compared to the
-earlier?
+The patch is available here:
 
-BTW, I do have a patch in work to add pwrseq support for wlcore that
-allows leaving out the regulator here. It still needs a bit more
-work though.
+git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
 
-And I also have a series in work to make wlcore use runtime PM that
-needs even more work, just FYI to avoid any duplicate work.
+The short changelog is:
 
-Hmm you don't happen to have a patch series somewhere making
-wlcore use the SDIO dat lien interrupt?
+Bryant G Ly (1):
+      scsi: target: Fix fortify_panic kernel exception
 
-I think we should use that when idle rather than the (edge) gpio
-interrupt as the SDIO dat interrupt is level sensitive and wired
-to the always on gpio bank for most SDIO controller instances.
-On runtime PM wakeup, there's no status anywhere to been with the
-GPIO edge interrupt.
+Colin Ian King (1):
+      scsi: isci: Fix infinite loop in while loop
 
-Regards,
+Long Li (1):
+      scsi: storvsc: Set up correct queue depth values for IDE devices
 
-Tony
+And the diffstat:
+
+ drivers/scsi/isci/port_config.c     | 3 +--
+ drivers/scsi/storvsc_drv.c          | 7 +++++--
+ drivers/target/target_core_iblock.c | 8 ++++----
+ 3 files changed, 10 insertions(+), 8 deletions(-)
+
+With full diff below.
+
+James
+
+---
+
+diff --git a/drivers/scsi/isci/port_config.c b/drivers/scsi/isci/port_config.c
+index edb7be786c65..9e8de1462593 100644
+--- a/drivers/scsi/isci/port_config.c
++++ b/drivers/scsi/isci/port_config.c
+@@ -291,7 +291,7 @@ sci_mpc_agent_validate_phy_configuration(struct isci_host *ihost,
+ 		 * Note: We have not moved the current phy_index so we will actually
+ 		 *       compare the startting phy with itself.
+ 		 *       This is expected and required to add the phy to the port. */
+-		while (phy_index < SCI_MAX_PHYS) {
++		for (; phy_index < SCI_MAX_PHYS; phy_index++) {
+ 			if ((phy_mask & (1 << phy_index)) == 0)
+ 				continue;
+ 			sci_phy_get_sas_address(&ihost->phys[phy_index],
+@@ -311,7 +311,6 @@ sci_mpc_agent_validate_phy_configuration(struct isci_host *ihost,
+ 					      &ihost->phys[phy_index]);
+ 
+ 			assigned_phy_mask |= (1 << phy_index);
+-			phy_index++;
+ 		}
+ 
+ 	}
+diff --git a/drivers/scsi/storvsc_drv.c b/drivers/scsi/storvsc_drv.c
+index 8c51d628b52e..a2ec0bc9e9fa 100644
+--- a/drivers/scsi/storvsc_drv.c
++++ b/drivers/scsi/storvsc_drv.c
+@@ -1722,11 +1722,14 @@ static int storvsc_probe(struct hv_device *device,
+ 		max_targets = STORVSC_MAX_TARGETS;
+ 		max_channels = STORVSC_MAX_CHANNELS;
+ 		/*
+-		 * On Windows8 and above, we support sub-channels for storage.
++		 * On Windows8 and above, we support sub-channels for storage
++		 * on SCSI and FC controllers.
+ 		 * The number of sub-channels offerred is based on the number of
+ 		 * VCPUs in the guest.
+ 		 */
+-		max_sub_channels = (num_cpus / storvsc_vcpus_per_sub_channel);
++		if (!dev_is_ide)
++			max_sub_channels =
++				(num_cpus - 1) / storvsc_vcpus_per_sub_channel;
+ 	}
+ 
+ 	scsi_driver.can_queue = (max_outstanding_req_per_channel *
+diff --git a/drivers/target/target_core_iblock.c b/drivers/target/target_core_iblock.c
+index 07c814c42648..60429011292a 100644
+--- a/drivers/target/target_core_iblock.c
++++ b/drivers/target/target_core_iblock.c
+@@ -427,8 +427,8 @@ iblock_execute_zero_out(struct block_device *bdev, struct se_cmd *cmd)
+ {
+ 	struct se_device *dev = cmd->se_dev;
+ 	struct scatterlist *sg = &cmd->t_data_sg[0];
+-	unsigned char *buf, zero = 0x00, *p = &zero;
+-	int rc, ret;
++	unsigned char *buf, *not_zero;
++	int ret;
+ 
+ 	buf = kmap(sg_page(sg)) + sg->offset;
+ 	if (!buf)
+@@ -437,10 +437,10 @@ iblock_execute_zero_out(struct block_device *bdev, struct se_cmd *cmd)
+ 	 * Fall back to block_execute_write_same() slow-path if
+ 	 * incoming WRITE_SAME payload does not contain zeros.
+ 	 */
+-	rc = memcmp(buf, p, cmd->data_length);
++	not_zero = memchr_inv(buf, 0x00, cmd->data_length);
+ 	kunmap(sg_page(sg));
+ 
+-	if (rc)
++	if (not_zero)
+ 		return TCM_LOGICAL_UNIT_COMMUNICATION_FAILURE;
+ 
+ 	ret = blkdev_issue_zeroout(bdev,
