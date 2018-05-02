@@ -1,50 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751401AbeEBHQx (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 03:16:53 -0400
-Received: from mail-vk0-f54.google.com ([209.85.213.54]:35190 "EHLO
-        mail-vk0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751127AbeEBHQv (ORCPT
+        id S1751196AbeEBHTg (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 03:19:36 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:50269 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751021AbeEBHTd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 03:16:51 -0400
-X-Google-Smtp-Source: AB8JxZrJxVv/Jg4YG/NkgV5ccU7giIueEZhns1VDrbbOVJ0Nc8M6WIDR4H91SHQ+9IN9/GLAMC+OLeUMkpSMDPVZSok=
+        Wed, 2 May 2018 03:19:33 -0400
+X-Google-Smtp-Source: AB8JxZpaY2RN4Hcb2ivv8C7U7Wney3I9ma+ZWz72njgg6NT429Fu6ifWWTSJHCeXMHc0Rc18A6QPaii1d3RTvj5sGOg=
 MIME-Version: 1.0
-In-Reply-To: <1525198442-13755-1-git-send-email-geert@linux-m68k.org>
-References: <1525198442-13755-1-git-send-email-geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 2 May 2018 09:16:50 +0200
-X-Google-Sender-Auth: MP8tL-Vzlr_NLm8PdS2Scwc3Wyk
-Message-ID: <CAMuHMdU-X+GyC80c6N2E_-D5uuV9FQvHtfr9=96kH7U6V5gJOg@mail.gmail.com>
-Subject: Re: Build regressions/improvements in v4.17-rc3
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+In-Reply-To: <1525224594.2901.4.camel@hxt-semitech.com>
+References: <1524625806-23133-1-git-send-email-shunyong.yang@hxt-semitech.com>
+ <CAKv+Gu89B-E+L2qybT9n5j72c+1vm1az4H9Cp7E71aP3i3VE6A@mail.gmail.com> <1525224594.2901.4.camel@hxt-semitech.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date: Wed, 2 May 2018 09:19:32 +0200
+Message-ID: <CAKv+Gu_QfR0=md3kqQXEufw+3j5BF-hgzfxSy=PTNKrusyUsiw@mail.gmail.com>
+Subject: Re: [PATCH] efi/capsule-loader: Don't output reset log when header
+ flags is not set
+To: "Yang, Shunyong" <shunyong.yang@hxt-semitech.com>
+Cc: "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Zheng, Joey" <yu.zheng@hxt-semitech.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 1, 2018 at 8:14 PM, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> JFYI, when comparing v4.17-rc3[1] to v4.17-rc2[3], the summaries are:
->   - build errors: +3/-0
+On 2 May 2018 at 03:29, Yang, Shunyong <shunyong.yang@hxt-semitech.com> wrote:
+> Hi, Ard,
+>
+> On Tue, 2018-05-01 at 11:54 +0200, Ard Biesheuvel wrote:
+>> On 25 April 2018 at 05:10, Shunyong Yang <shunyong.yang@hxt-semitech.
+>> com> wrote:
+>> >
+>> > It means firmware attempts to immediately process or launch the
+>> > capsule
+>> > when flags in capsule header is not set. Moreover, reset is not
+>> > needed
+>> > in this case. Current code will output log to indicate reset.
+>> >
+>> > This patch adds a branch to avoid reset log output when the flags
+>> > is not
+>> > set.
+>> >
+>> > Cc: Joey Zheng <yu.zheng@hxt-semitech.com>
+>> > Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
+>> > ---
+>> >  drivers/firmware/efi/capsule-loader.c | 13 +++++++++----
+>> >  1 file changed, 9 insertions(+), 4 deletions(-)
+>> >
+>> > diff --git a/drivers/firmware/efi/capsule-loader.c
+>> > b/drivers/firmware/efi/capsule-loader.c
+>> > index e456f4602df1..a63b8e5bde23 100644
+>> > --- a/drivers/firmware/efi/capsule-loader.c
+>> > +++ b/drivers/firmware/efi/capsule-loader.c
+>> > @@ -134,10 +134,15 @@ static ssize_t
+>> > efi_capsule_submit_update(struct capsule_info *cap_info)
+>> >
+>> >         /* Indicate capsule binary uploading is done */
+>> >         cap_info->index = NO_FURTHER_WRITE_ACTION;
+>> > -       pr_info("Successfully upload capsule file with reboot type
+>> > '%s'\n",
+>> > -               !cap_info->reset_type ? "RESET_COLD" :
+>> > -               cap_info->reset_type == 1 ? "RESET_WARM" :
+>> > -               "RESET_SHUTDOWN");
+>> > +
+>> > +       if (cap_info->header.flags)
+>> You should check for the relevant flag bits here, because the 16
+>> lower
+>> bits are platform dependent.
+> In current three bits in flags, CAPSULE_FLAGS_POPULATE_SYSTEM_TABLE and
+> CAPSULE_FLAGS_INITIATE_RESET are dependent on
+> CAPSULE_FLAGS_PERSIST_ACROSS_RESET.
+>
+> So, maybe I only need to check CAPSULE_FLAGS_PERSIST_ACROSS_RESET?
+>
 
-  + error: core.c: undefined reference to `of_find_regulator_by_node':
- => .text+0xa4d)
+Yes I think that's fine
 
-i386-randconfig
-
-More context:
-    drivers/regulator/core.o: In function `regulator_dev_lookup':
-
-> [1] http://kisskb.ellerman.id.au/kisskb/head/6da6c0db5316275015e8cc2959f12a17584aeb64/ (244 out of 246 configs)
-> [3] http://kisskb.ellerman.id.au/kisskb/head/6d08b06e67cd117f6992c46611dfb4ce267cd71e/ (244 out of 246 configs)
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+>>
+>> >
+>> > +               pr_info("Successfully upload capsule file with
+>> > reboot type '%s'\n",
+>> > +                       !cap_info->reset_type ? "RESET_COLD" :
+>> > +                       cap_info->reset_type == 1 ? "RESET_WARM" :
+>> > +                       "RESET_SHUTDOWN");
+>> > +       else
+>> > +               pr_info("Successfully upload, process and launch
+>> > capsule file\n");
+>> > +
+>> >         return 0;
+>> >  }
+>> >
+>> > --
+>> > 1.8.3.1
+>> > --
+> To unsubscribe from this list: send the line "unsubscribe linux-efi" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
