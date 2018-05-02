@@ -1,18 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751563AbeEBNVI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 09:21:08 -0400
-Received: from ozlabs.org ([203.11.71.1]:41731 "EHLO ozlabs.org"
+        id S1751659AbeEBNVV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 09:21:21 -0400
+Received: from ozlabs.org ([203.11.71.1]:40415 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751391AbeEBNVG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 09:21:06 -0400
+        id S1751391AbeEBNVJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 09:21:09 -0400
 From: Michael Ellerman <mpe@ellerman.id.au>
 To: linuxppc-dev@ozlabs.org
 Cc: viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/6] powerpc/syscalls: Switch trivial cases to SYSCALL_DEFINE
-Date: Wed,  2 May 2018 23:20:46 +1000
-Message-Id: <20180502132051.28861-1-mpe@ellerman.id.au>
+Subject: [PATCH 3/6] powerpc/syscalls: switch rtas(2) to SYSCALL_DEFINE
+Date: Wed,  2 May 2018 23:20:48 +1000
+Message-Id: <20180502132051.28861-3-mpe@ellerman.id.au>
 X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180502132051.28861-1-mpe@ellerman.id.au>
+References: <20180502132051.28861-1-mpe@ellerman.id.au>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -20,98 +22,113 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 From: Al Viro <viro@zeniv.linux.org.uk>
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+[mpe: Update sys_ni.c for s/ppc_rtas/sys_rtas/]
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 ---
- arch/powerpc/kernel/pci_32.c               | 6 +++---
- arch/powerpc/kernel/pci_64.c               | 4 ++--
- arch/powerpc/mm/subpage-prot.c             | 4 +++-
- arch/powerpc/platforms/cell/spu_syscalls.c | 3 ++-
- 4 files changed, 10 insertions(+), 7 deletions(-)
+ arch/powerpc/include/asm/syscalls.h         | 2 +-
+ arch/powerpc/include/asm/systbl.h           | 2 +-
+ arch/powerpc/kernel/rtas.c                  | 3 ++-
+ arch/powerpc/kernel/systbl.S                | 1 -
+ arch/powerpc/kernel/systbl_chk.c            | 1 -
+ arch/powerpc/platforms/cell/spu_callbacks.c | 1 -
+ kernel/sys_ni.c                             | 2 +-
+ 7 files changed, 5 insertions(+), 7 deletions(-)
 
-diff --git a/arch/powerpc/kernel/pci_32.c b/arch/powerpc/kernel/pci_32.c
-index 85ad2f78b889..af36e46c3ed6 100644
---- a/arch/powerpc/kernel/pci_32.c
-+++ b/arch/powerpc/kernel/pci_32.c
-@@ -16,6 +16,7 @@
- #include <linux/of.h>
- #include <linux/slab.h>
- #include <linux/export.h>
-+#include <linux/syscalls.h>
+diff --git a/arch/powerpc/include/asm/syscalls.h b/arch/powerpc/include/asm/syscalls.h
+index 1b90a3516a35..398171fdcd9f 100644
+--- a/arch/powerpc/include/asm/syscalls.h
++++ b/arch/powerpc/include/asm/syscalls.h
+@@ -16,7 +16,7 @@ asmlinkage long sys_mmap2(unsigned long addr, size_t len,
+ 		unsigned long prot, unsigned long flags,
+ 		unsigned long fd, unsigned long pgoff);
+ asmlinkage long ppc64_personality(unsigned long personality);
+-asmlinkage int ppc_rtas(struct rtas_args __user *uargs);
++asmlinkage long sys_rtas(struct rtas_args __user *uargs);
  
- #include <asm/processor.h>
- #include <asm/io.h>
-@@ -283,7 +284,8 @@ pci_bus_to_hose(int bus)
-  * Note that the returned IO or memory base is a physical address
-  */
- 
--long sys_pciconfig_iobase(long which, unsigned long bus, unsigned long devfn)
-+SYSCALL_DEFINE3(pciconfig_iobase, long, which,
-+		unsigned long, bus, unsigned long, devfn)
- {
- 	struct pci_controller* hose;
- 	long result = -EOPNOTSUPP;
-@@ -307,5 +309,3 @@ long sys_pciconfig_iobase(long which, unsigned long bus, unsigned long devfn)
- 
- 	return result;
- }
--
--
-diff --git a/arch/powerpc/kernel/pci_64.c b/arch/powerpc/kernel/pci_64.c
-index 15ce0306b092..dff28f903512 100644
---- a/arch/powerpc/kernel/pci_64.c
-+++ b/arch/powerpc/kernel/pci_64.c
-@@ -203,8 +203,8 @@ void pcibios_setup_phb_io_space(struct pci_controller *hose)
- #define IOBASE_ISA_IO		3
- #define IOBASE_ISA_MEM		4
- 
--long sys_pciconfig_iobase(long which, unsigned long in_bus,
--			  unsigned long in_devfn)
-+SYSCALL_DEFINE3(pciconfig_iobase, long, which, unsigned long, in_bus,
-+			  unsigned long, in_devfn)
- {
- 	struct pci_controller* hose;
- 	struct pci_bus *tmp_bus, *bus = NULL;
-diff --git a/arch/powerpc/mm/subpage-prot.c b/arch/powerpc/mm/subpage-prot.c
-index f14a07c2fb90..9d16ee251fc0 100644
---- a/arch/powerpc/mm/subpage-prot.c
-+++ b/arch/powerpc/mm/subpage-prot.c
-@@ -13,6 +13,7 @@
- #include <linux/types.h>
- #include <linux/mm.h>
- #include <linux/hugetlb.h>
-+#include <linux/syscalls.h>
- 
- #include <asm/pgtable.h>
- #include <linux/uaccess.h>
-@@ -185,7 +186,8 @@ static void subpage_mark_vma_nohuge(struct mm_struct *mm, unsigned long addr,
-  * in a 2-bit field won't allow writes to a page that is otherwise
-  * write-protected.
-  */
--long sys_subpage_prot(unsigned long addr, unsigned long len, u32 __user *map)
-+SYSCALL_DEFINE3(subpage_prot, unsigned long, addr,
-+		unsigned long, len, u32 __user *, map)
- {
- 	struct mm_struct *mm = current->mm;
- 	struct subpage_prot_table *spt = &mm->context.spt;
-diff --git a/arch/powerpc/platforms/cell/spu_syscalls.c b/arch/powerpc/platforms/cell/spu_syscalls.c
-index 5e6e0bad6db6..263413a34823 100644
---- a/arch/powerpc/platforms/cell/spu_syscalls.c
-+++ b/arch/powerpc/platforms/cell/spu_syscalls.c
+ #endif /* __KERNEL__ */
+ #endif /* __ASM_POWERPC_SYSCALLS_H */
+diff --git a/arch/powerpc/include/asm/systbl.h b/arch/powerpc/include/asm/systbl.h
+index d61f9c96d916..b91701c0711a 100644
+--- a/arch/powerpc/include/asm/systbl.h
++++ b/arch/powerpc/include/asm/systbl.h
+@@ -260,7 +260,7 @@ COMPAT_SYS_SPU(utimes)
+ COMPAT_SYS_SPU(statfs64)
+ COMPAT_SYS_SPU(fstatfs64)
+ SYSX(sys_ni_syscall,ppc_fadvise64_64,ppc_fadvise64_64)
+-PPC_SYS_SPU(rtas)
++SYSCALL_SPU(rtas)
+ OLDSYS(debug_setcontext)
+ SYSCALL(ni_syscall)
+ COMPAT_SYS(migrate_pages)
+diff --git a/arch/powerpc/kernel/rtas.c b/arch/powerpc/kernel/rtas.c
+index 3f1c4fcbe0aa..8afd146bc9c7 100644
+--- a/arch/powerpc/kernel/rtas.c
++++ b/arch/powerpc/kernel/rtas.c
 @@ -26,6 +26,7 @@
- #include <linux/syscalls.h>
- #include <linux/rcupdate.h>
- #include <linux/binfmts.h>
+ #include <linux/memblock.h>
+ #include <linux/slab.h>
+ #include <linux/reboot.h>
 +#include <linux/syscalls.h>
  
- #include <asm/spu.h>
- 
-@@ -90,7 +91,7 @@ SYSCALL_DEFINE4(spu_create, const char __user *, name, unsigned int, flags,
- 	return ret;
+ #include <asm/prom.h>
+ #include <asm/rtas.h>
+@@ -1050,7 +1051,7 @@ struct pseries_errorlog *get_pseries_errorlog(struct rtas_error_log *log,
  }
  
--asmlinkage long sys_spu_run(int fd, __u32 __user *unpc, __u32 __user *ustatus)
-+SYSCALL_DEFINE3(spu_run,int, fd, __u32 __user *, unpc, __u32 __user *, ustatus)
+ /* We assume to be passed big endian arguments */
+-asmlinkage int ppc_rtas(struct rtas_args __user *uargs)
++SYSCALL_DEFINE1(rtas, struct rtas_args __user *, uargs)
  {
- 	long ret;
- 	struct fd arg;
+ 	struct rtas_args args;
+ 	unsigned long flags;
+diff --git a/arch/powerpc/kernel/systbl.S b/arch/powerpc/kernel/systbl.S
+index 7ccb7f81f8db..c7d5216d91d7 100644
+--- a/arch/powerpc/kernel/systbl.S
++++ b/arch/powerpc/kernel/systbl.S
+@@ -35,7 +35,6 @@
+ #endif
+ #define SYSCALL_SPU(func)	SYSCALL(func)
+ #define COMPAT_SYS_SPU(func)	COMPAT_SYS(func)
+-#define PPC_SYS_SPU(func)	PPC_SYS(func)
+ #define SYSX_SPU(f, f3264, f32)	SYSX(f, f3264, f32)
+ 
+ .section .rodata,"a"
+diff --git a/arch/powerpc/kernel/systbl_chk.c b/arch/powerpc/kernel/systbl_chk.c
+index 55323a620cfe..28476e811644 100644
+--- a/arch/powerpc/kernel/systbl_chk.c
++++ b/arch/powerpc/kernel/systbl_chk.c
+@@ -31,7 +31,6 @@
+ 
+ #define SYSCALL_SPU(func)	SYSCALL(func)
+ #define COMPAT_SYS_SPU(func)	COMPAT_SYS(func)
+-#define PPC_SYS_SPU(func)	PPC_SYS(func)
+ #define SYSX_SPU(f, f3264, f32)	SYSX(f, f3264, f32)
+ 
+ /* Just insert a marker for ni_syscalls */
+diff --git a/arch/powerpc/platforms/cell/spu_callbacks.c b/arch/powerpc/platforms/cell/spu_callbacks.c
+index a494028b2cdf..d5bb8c8d769a 100644
+--- a/arch/powerpc/platforms/cell/spu_callbacks.c
++++ b/arch/powerpc/platforms/cell/spu_callbacks.c
+@@ -44,7 +44,6 @@ static void *spu_syscall_table[] = {
+ 
+ #define SYSCALL_SPU(func)	sys_##func,
+ #define COMPAT_SYS_SPU(func)	sys_##func,
+-#define PPC_SYS_SPU(func)	ppc_##func,
+ #define SYSX_SPU(f, f3264, f32)	f,
+ 
+ #include <asm/systbl.h>
+diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
+index 9791364925dc..3751a511e2b8 100644
+--- a/kernel/sys_ni.c
++++ b/kernel/sys_ni.c
+@@ -365,7 +365,7 @@ COND_SYSCALL(s390_pci_mmio_write);
+ COND_SYSCALL_COMPAT(s390_ipc);
+ 
+ /* powerpc */
+-cond_syscall(ppc_rtas);
++COND_SYSCALL(rtas);
+ COND_SYSCALL(spu_run);
+ COND_SYSCALL(spu_create);
+ COND_SYSCALL(subpage_prot);
 -- 
 2.14.1
