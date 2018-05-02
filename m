@@ -1,149 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751417AbeEBDJ4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 23:09:56 -0400
-Received: from mga18.intel.com ([134.134.136.126]:61508 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751139AbeEBDJx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 23:09:53 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,353,1520924400";
-   d="scan'208";a="42290114"
-Subject: Re: [PATCH 6/9] iommu/vt-d: Allocate and free pasid table
-To: "Liu, Yi L" <yi.l.liu@intel.com>,
-        David Woodhouse <dwmw2@infradead.org>, Joerg Roedel <joro@8bytes.org>
-References: <1523934202-21669-1-git-send-email-baolu.lu@linux.intel.com>
- <1523934202-21669-7-git-send-email-baolu.lu@linux.intel.com>
- <A2975661238FB949B60364EF0F2C257439BE752C@SHSMSX104.ccr.corp.intel.com>
-Cc: "Raj, Ashok" <ashok.raj@intel.com>,
-        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
-        "Pan, Jacob jun" <jacob.jun.pan@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>, "Sun, Yi Y" <yi.y.sun@intel.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>
-From: Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <5AE92BF9.2090106@linux.intel.com>
-Date: Wed, 2 May 2018 11:09:45 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        id S1751240AbeEBDNq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 23:13:46 -0400
+Received: from mail-it0-f53.google.com ([209.85.214.53]:40632 "EHLO
+        mail-it0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750823AbeEBDNm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 23:13:42 -0400
+X-Google-Smtp-Source: AB8JxZppv9DU6eiPmAt+oibHLOfMYdeSrZxruo42ZuaV0XB4leGSMx1XA+g13+lGo2ezK3UDcuutKaTj958jleBrVzY=
 MIME-Version: 1.0
-In-Reply-To: <A2975661238FB949B60364EF0F2C257439BE752C@SHSMSX104.ccr.corp.intel.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+References: <152520750404.36522.15462513519590065300.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <CA+55aFwoOee_8H-1KRnY1G-Ud4Rez16s8xjVbG8YOPn1jqxxtg@mail.gmail.com>
+ <CAPcyv4jA98NVNqYFpj29OHE45HVp1DMH9oFO4-neWKA_4WKTwA@mail.gmail.com>
+ <CA+55aFwZ3hrrOJ5W-C8gdam3aGNxz8FEAq9gPnRBkVmwu4BvYA@mail.gmail.com>
+ <CAPcyv4i=cjQr9xvxt+Mjp-fhzyNJdTTp7uaAtpJN9R4gPg_j-Q@mail.gmail.com>
+ <CA+55aFyZXWoiWnEU8S1PNNyUTWsi7UCnBuDKOobfMLaE8uFKJg@mail.gmail.com> <CAPcyv4jTUn2gSPSB1r7p9A7VNxBf54Aa5dnGbGsomDqmbvsHLQ@mail.gmail.com>
+In-Reply-To: <CAPcyv4jTUn2gSPSB1r7p9A7VNxBf54Aa5dnGbGsomDqmbvsHLQ@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 02 May 2018 03:13:31 +0000
+Message-ID: <CA+55aFzDt1uvDBqgkB0T2o2-d5Fi0tBiGcy5iAZ-wRNdAL4uQw@mail.gmail.com>
+Subject: Re: [PATCH 0/6] use memcpy_mcsafe() for copy_to_iter()
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        Tony Luck <tony.luck@intel.com>, Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@amacapital.net>, Ingo Molnar <mingo@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Tue, May 1, 2018 at 8:03 PM Dan Williams <dan.j.williams@intel.com>
+wrote:
 
-On 05/01/2018 05:22 PM, Liu, Yi L wrote:
->> From: Lu Baolu [mailto:baolu.lu@linux.intel.com]
->> Sent: Tuesday, April 17, 2018 11:03 AM
->>
->> This patch allocates PASID table for a domain at the time when
->> it is being created (if any devices using this domain supports
->> PASID feature), and free it when the domain is freed.
->>
->> Cc: Ashok Raj <ashok.raj@intel.com>
->> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
->> Cc: Kevin Tian <kevin.tian@intel.com>
->> Cc: Liu Yi L <yi.l.liu@intel.com>
->> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
->> ---
->>  drivers/iommu/intel-iommu.c | 13 +++++++++++++
->>  drivers/iommu/intel-svm.c   |  8 --------
->>  include/linux/intel-iommu.h | 10 ++++++++--
->>  3 files changed, 21 insertions(+), 10 deletions(-)
->>
->> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
->> index caa0b5c..99c643b 100644
->> --- a/drivers/iommu/intel-iommu.c
->> +++ b/drivers/iommu/intel-iommu.c
->> @@ -2460,6 +2460,18 @@ static struct dmar_domain
->> *dmar_insert_one_dev_info(struct intel_iommu *iommu,
->>  		dev->archdata.iommu = info;
->>  	spin_unlock_irqrestore(&device_domain_lock, flags);
->>
->> +	if (dev && dev_is_pci(dev) && info->pasid_supported) {
->> +		if (pasid_enabled(iommu)) {
->> +			size_t size, count;
->> +
->> +			size = sizeof(struct pasid_entry);
->> +			count = min_t(int,
->> +				      pci_max_pasids(to_pci_dev(dev)),
->> +				      intel_pasid_max_id);
->> +			ret = intel_pasid_alloc_table(dev, size, count);
-> No check for the return value?
+> Because dax. There's no page cache indirection games we can play here
+> to poison a page and map in another page. The mapped page is 1:1
+> associated with the filesystem block and physical memory address.
 
-Nice catch. Will fix it in a v2.
+I'm not talking page cache indirection.
 
->
->> +		}
->> +	}
->> +
->>  	if (dev && domain_context_mapping(domain, dev)) {
->>  		pr_err("Domain context map for %s failed\n", dev_name(dev));
->>  		dmar_remove_one_dev_info(domain, dev);
->> @@ -4826,6 +4838,7 @@ static void dmar_remove_one_dev_info(struct
->> dmar_domain *domain,
->>  	unsigned long flags;
->>
->>  	spin_lock_irqsave(&device_domain_lock, flags);
->> +	intel_pasid_free_table(dev);
->>  	info = dev->archdata.iommu;
->>  	__dmar_remove_one_dev_info(info);
->>  	spin_unlock_irqrestore(&device_domain_lock, flags);
->> diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
->> index 24d0ea1..3abc94f 100644
->> --- a/drivers/iommu/intel-svm.c
->> +++ b/drivers/iommu/intel-svm.c
->> @@ -34,14 +34,6 @@
->>
->>  static irqreturn_t prq_event_thread(int irq, void *d);
->>
->> -struct pasid_entry {
->> -	u64 val;
->> -};
->> -
->> -struct pasid_state_entry {
->> -	u64 val;
->> -};
->> -
->>  int intel_svm_alloc_pasid_tables(struct intel_iommu *iommu)
->>  {
->>  	struct page *pages;
->> diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
->> index bee7a3f..08e5811 100644
->> --- a/include/linux/intel-iommu.h
->> +++ b/include/linux/intel-iommu.h
->> @@ -382,8 +382,14 @@ enum {
->>  #define VTD_FLAG_TRANS_PRE_ENABLED	(1 << 0)
->>  #define VTD_FLAG_IRQ_REMAP_PRE_ENABLED	(1 << 1)
->>
->> -struct pasid_entry;
->> -struct pasid_state_entry;
->> +struct pasid_entry {
->> +	u64 val;
->> +};
->> +
->> +struct pasid_state_entry {
->> +	u64 val;
->> +};
->> +
->>  struct page_req_dsc;
->>
->>  struct dmar_domain {
-> Overall, this patch looks good to me. But need to fix the comment above.
->
-> Reviewed-by: Liu, Yi L <yi.l.liu@intel.com>
->
-> Regards,
-> Yi Liu
+I'm talking literally mapping a different page into the kernel virtual
+address space that the failing read was done for.
 
-Sure.
+But you seem to be right that we don't actually support that. I'm guessing
+the hwpoison code has never had to run in that kind of situation and will
+just give up.
 
-Best regards,
-Lu Baolu
+That would seem to be sad. It really feels like the obvious solution to any
+MCE's - just map a dummy page at the address that causes problems.
+
+That can have bad effects for real memory (because who knows what internal
+kernel data structure might be in there), but would seem to be the
+_optimal_ solution for some  random pmem access. And makes it absolutely
+trivial to just return to the execution that got  the error exception.
+
+                Linus
