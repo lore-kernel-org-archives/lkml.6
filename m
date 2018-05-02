@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751425AbeEBBLL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 21:11:11 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:55628 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751174AbeEBBKj (ORCPT
+        id S1751495AbeEBBLy (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 21:11:54 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:40990 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751269AbeEBBKh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 21:10:39 -0400
-X-Google-Smtp-Source: AB8JxZorXSddS93FoJJTGGDTdbq/J30HAjb4zyU6yySXoq35mHyJwnkVBQZkXQij3CeLsuC/ARXx/A==
+        Tue, 1 May 2018 21:10:37 -0400
+X-Google-Smtp-Source: AB8JxZrqLY/qBBAxkc24FzexBU1NRy3DZDJFEp+FpdF83ZZdV1MUvoo6YKbttxo+xSxpr24O7NBfBg==
 From: Alex Elder <elder@linaro.org>
 To: andy.gross@linaro.org
 Cc: clew@codeaurora.org, aneela@codeaurora.org, david.brown@linaro.org,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 11/12] soc: qcom: smem: verify partition host ids match
-Date: Tue,  1 May 2018 20:10:18 -0500
-Message-Id: <20180502011019.22812-12-elder@linaro.org>
+Subject: [PATCH 09/12] soc: qcom: smem: verify partition offset_free_uncached
+Date: Tue,  1 May 2018 20:10:16 -0500
+Message-Id: <20180502011019.22812-10-elder@linaro.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180502011019.22812-1-elder@linaro.org>
 References: <20180502011019.22812-1-elder@linaro.org>
@@ -23,88 +23,62 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add verification in qcom_smem_partition_header() that the host ids
-found in a partition's header structure match those in its partition
-table entry.
+Add verification in qcom_smem_partition_header() that the
+offset_free_uncached field in a partition's header structure does
+not exceed the partition's size.
 
 Signed-off-by: Alex Elder <elder@linaro.org>
 ---
- drivers/soc/qcom/smem.c | 34 +++++++++++++++-------------------
- 1 file changed, 15 insertions(+), 19 deletions(-)
+ drivers/soc/qcom/smem.c | 21 +++++++--------------
+ 1 file changed, 7 insertions(+), 14 deletions(-)
 
 diff --git a/drivers/soc/qcom/smem.c b/drivers/soc/qcom/smem.c
-index 54c504e41508..7383a0e1b468 100644
+index f1e6e4609ccb..7ef415c4d62e 100644
 --- a/drivers/soc/qcom/smem.c
 +++ b/drivers/soc/qcom/smem.c
-@@ -734,7 +734,7 @@ static u32 qcom_smem_get_item_count(struct qcom_smem *smem)
-  */
- static struct smem_partition_header *
- qcom_smem_partition_header(struct qcom_smem *smem,
--		struct smem_ptable_entry *entry)
-+		struct smem_ptable_entry *entry, u16 host0, u16 host1)
- {
- 	struct smem_partition_header *header;
- 	u32 size;
-@@ -748,6 +748,17 @@ qcom_smem_partition_header(struct qcom_smem *smem,
+@@ -755,6 +755,12 @@ qcom_smem_partition_header(struct qcom_smem *smem,
  		return NULL;
  	}
  
-+	if (host0 != le16_to_cpu(header->host0)) {
-+		dev_err(smem->dev, "bad host0 (%hu != %hu)\n",
-+				host0, le16_to_cpu(header->host0));
-+		return NULL;
-+	}
-+	if (host1 != le16_to_cpu(header->host1)) {
-+		dev_err(smem->dev, "bad host1 (%hu != %hu)\n",
-+				host1, le16_to_cpu(header->host1));
++	if (le32_to_cpu(header->offset_free_uncached) > size) {
++		dev_err(smem->dev, "bad partition free uncached (%u > %u)\n",
++			le32_to_cpu(header->offset_free_uncached), size);
 +		return NULL;
 +	}
 +
- 	size = le32_to_cpu(header->size);
- 	if (size != le32_to_cpu(entry->size)) {
- 		dev_err(smem->dev, "bad partition size (%u != %u)\n",
-@@ -769,7 +780,6 @@ static int qcom_smem_set_global_partition(struct qcom_smem *smem)
+ 	return header;
+ }
+ 
+@@ -763,7 +769,7 @@ static int qcom_smem_set_global_partition(struct qcom_smem *smem)
  	struct smem_partition_header *header;
  	struct smem_ptable_entry *entry;
  	struct smem_ptable *ptable;
--	u32 host0, host1;
+-	u32 host0, host1, size;
++	u32 host0, host1;
  	bool found = false;
  	int i;
  
-@@ -798,18 +808,11 @@ static int qcom_smem_set_global_partition(struct qcom_smem *smem)
+@@ -803,13 +809,6 @@ static int qcom_smem_set_global_partition(struct qcom_smem *smem)
  		return -EINVAL;
  	}
  
--	header = qcom_smem_partition_header(smem, entry);
-+	header = qcom_smem_partition_header(smem, entry,
-+				SMEM_GLOBAL_HOST, SMEM_GLOBAL_HOST);
- 	if (!header)
- 		return -EINVAL;
- 
--	host0 = le16_to_cpu(header->host0);
--	host1 = le16_to_cpu(header->host1);
--
--	if (host0 != SMEM_GLOBAL_HOST || host1 != SMEM_GLOBAL_HOST) {
--		dev_err(smem->dev, "Global partition hosts are invalid\n");
+-	size = le32_to_cpu(header->offset_free_uncached);
+-	if (size > le32_to_cpu(header->size)) {
+-		dev_err(smem->dev,
+-			"Global partition has invalid free pointer\n");
 -		return -EINVAL;
 -	}
 -
  	smem->global_partition = header;
  	smem->global_cacheline = le32_to_cpu(entry->cacheline);
  
-@@ -860,17 +863,10 @@ static int qcom_smem_enumerate_partitions(struct qcom_smem *smem,
+@@ -871,12 +870,6 @@ static int qcom_smem_enumerate_partitions(struct qcom_smem *smem,
  			return -EINVAL;
  		}
  
--		header = qcom_smem_partition_header(smem, entry);
-+		header = qcom_smem_partition_header(smem, entry, host0, host1);
- 		if (!header)
- 			return -EINVAL;
- 
--		if (host0 != le16_to_cpu(header->host0) ||
--				host1 != le16_to_cpu(header->host1)) {
+-		if (le32_to_cpu(header->offset_free_uncached) > le32_to_cpu(header->size)) {
 -			dev_err(smem->dev,
--				"Partition %d hosts don't match\n", i);
+-				"Partition %d has invalid free pointer\n", i);
 -			return -EINVAL;
 -		}
 -
