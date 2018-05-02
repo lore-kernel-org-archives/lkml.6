@@ -1,102 +1,171 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751561AbeEBNe0 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 09:34:26 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:54060 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751344AbeEBNeX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 09:34:23 -0400
-Date: Wed, 2 May 2018 15:34:18 +0200
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/6] clocksource: rework Atmel TCB timer driver
-Message-ID: <20180502133418.xa26c5ta2ytxxjcn@linutronix.de>
-References: <20180418105143.3577-1-alexandre.belloni@bootlin.com>
- <20180426164623.tlv6kz5yopk6voxx@breakpoint.cc>
- <20180426185233.GU4813@piout.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+        id S1751562AbeEBNf4 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 09:35:56 -0400
+Received: from mga14.intel.com ([192.55.52.115]:21075 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751011AbeEBNfw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 09:35:52 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,354,1520924400";
+   d="scan'208";a="52574647"
+From: "Winkler, Tomas" <tomas.winkler@intel.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC: "'Jason Gunthorpe'" <jgg@ziepe.ca>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "'linux-integrity@vger.kernel.org'" <linux-integrity@vger.kernel.org>,
+        "'linux-security-module@vger.kernel.org'"
+        <linux-security-module@vger.kernel.org>,
+        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] tpm: tpm_crb: relinquish locality on error path.
+Thread-Topic: [PATCH] tpm: tpm_crb: relinquish locality on error path.
+Thread-Index: AQHTzovCXbr+Xqq9jkSj9yBS1IttZ6P4GCYAgAGeicCAAAoXAIAAs/uQgA9COvCABkUzAIAANFFggAw0OwCAADKoEA==
+Date: Wed, 2 May 2018 13:35:47 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9427B083@hasmsx108.ger.corp.intel.com>
+References: <20180407161236.22969-1-tomas.winkler@intel.com>
+ <c06b86c0b58888f750e6e00c33be33ab54d39257.camel@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B94252660@hasmsx108.ger.corp.intel.com>
+ <4984305eae452b7a72b8a13aa20cecec420df580.camel@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B94252945@hasmsx108.ger.corp.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B942627FD@hasmsx108.ger.corp.intel.com>
+ <20180424160328.GA5119@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B94272F33@hasmsx108.ger.corp.intel.com>
+ <20180502133246.GA6091@linux.intel.com>
+In-Reply-To: <20180502133246.GA6091@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiM2QwODU2NjgtZTk1Ny00NmQyLWIxYWQtNTllMzhiNjYzZTliIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiI3WVFPU21FOUlDaGdtQUNiSUVlVTRnQmxzMUc5aEdxMjFpdmdcL1M4M0FMQVwvWWYxVnJRcjBTMzhvN3plUVlzTWMifQ==
+dlp-product: dlpe-windows
+dlp-version: 11.0.200.100
+dlp-reaction: no-action
+x-originating-ip: [10.12.116.124]
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20180426185233.GU4813@piout.net>
-User-Agent: NeoMutt/20180323
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-04-26 20:52:33 [+0200], Alexandre Belloni wrote:
-> 
-> I don't remember you posted anything for the TCB. Wasn't it focused on
-> getting rid of the PIT irq?
 
-the PIT irq which was shared with the UART one some devices, yes this
-was part of it. The other essential piece was using a higher frequency
-for the device:
-  https://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git/tree/patches/clocksource-tclib-allow-higher-clockrates.patch?h=linux-4.14.y-rt-patches
 
-> As said below, this is solving multiple issues, including the one for
-> SoCs that don't have the PIT.
-will the PIT be removed? Where it needs the PIT?
+> 
+> On Tue, Apr 24, 2018 at 08:04:01PM +0000, Winkler, Tomas wrote:
+> > > Subject: Re: [PATCH] tpm: tpm_crb: relinquish locality on error path.
+> > >
+> > > On Fri, Apr 20, 2018 at 01:19:12PM +0000, Winkler, Tomas wrote:
+> > > > > > On Tue, 2018-04-10 at 09:00 +0000, Winkler, Tomas wrote:
+> > > > > > > >
+> > > > > > > > On Sat, 2018-04-07 at 19:12 +0300, Tomas Winkler wrote:
+> > > > > > > > > In crb_map_io() function, __crb_request_locality() is
+> > > > > > > > > called prior to crb_cmd_ready(), but if one of the
+> > > > > > > > > consecutive function fails the flow bails out instead of
+> > > > > > > > > trying to relinquish
+> > > locality.
+> > > > > > > > > This patch adds goto jump to __crb_relinquish_locality()
+> > > > > > > > > on the error path.
+> > > > > > > > >
+> > > > > > > > > Fixes: 888d867df441 (tpm: cmd_ready command can be
+> > > > > > > > > issued only after granting
+> > > > > > > > > locality)
+> > > > > > > > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> > > > > > > > > ---
+> > > > > > > > >  drivers/char/tpm/tpm_crb.c | 10 +++++++---
+> > > > > > > > >  1 file changed, 7 insertions(+), 3 deletions(-)
+> > > > > > > > >
+> > > > > > > > > diff --git a/drivers/char/tpm/tpm_crb.c
+> > > > > > > > > b/drivers/char/tpm/tpm_crb.c index
+> > > > > > > > > 7f78482cd157..34fbc6cb097b
+> > > > > > > > > 100644
+> > > > > > > > > --- a/drivers/char/tpm/tpm_crb.c
+> > > > > > > > > +++ b/drivers/char/tpm/tpm_crb.c
+> > > > > > > > > @@ -511,8 +511,10 @@ static int crb_map_io(struct
+> > > > > > > > > acpi_device *device, struct crb_priv *priv,
+> > > > > > > > >
+> > > > > > > > >  	priv->regs_t = crb_map_res(dev, priv, &io_res, buf-
+> > > > > > > > > >control_address,
+> > > > > > > > >  				   sizeof(struct crb_regs_tail));
+> > > > > > > > > -	if (IS_ERR(priv->regs_t))
+> > > > > > > > > -		return PTR_ERR(priv->regs_t);
+> > > > > > > > > +	if (IS_ERR(priv->regs_t)) {
+> > > > > > > > > +		ret = PTR_ERR(priv->regs_t);
+> > > > > > > > > +		goto out_relinquish_locality;
+> > > > > > > > > +	}
+> > > > > > > > >
+> > > > > > > > >  	/*
+> > > > > > > > >  	 * PTT HW bug w/a: wake up the device to access @@
+> > > > > > > > > -520,7
+> > > > > > > > > +522,7
+> > > > > > > >
+> > > > > > > > @@
+> > > > > > > > > static int crb_map_io(struct acpi_device *device, struct
+> > > > > > > > > crb_priv *priv,
+> > > > > > > > >  	 */
+> > > > > > > > >  	ret = crb_cmd_ready(dev, priv);
+> > > > > > > > >  	if (ret)
+> > > > > > > > > -		return ret;
+> > > > > > > > > +		goto out_relinquish_locality;
+> > > > > > > > >
+> > > > > > > > >  	pa_high = ioread32(&priv->regs_t->ctrl_cmd_pa_high);
+> > > > > > > > >  	pa_low  = ioread32(&priv->regs_t->ctrl_cmd_pa_low);
+> > > > > > > > > @@ -565,6 +567,8 @@ static int crb_map_io(struct
+> > > > > > > > > acpi_device *device, struct crb_priv *priv,
+> > > > > > > > >
+> > > > > > > > >  	crb_go_idle(dev, priv);
+> > > > > > > > >
+> > > > > > > > > +out_relinquish_locality:
+> > > > > > > > > +
+> > > > > > > > >  	__crb_relinquish_locality(dev, priv, 0);
+> > > > > > > > >
+> > > > > > > > >  	return ret;
+> > > > > > > >
+> > > > > > > > Thanks, please just call it before returning in the error path.
+> > > > > > >
+> > > > > > > Can you please elaborate why, isn't the centralized exiting
+> > > > > > > of functions preferred kernel coding style?
+> > > > > > > https://www.kernel.org/doc/html/v4.11/process/coding-style.h
+> > > > > > > tml#
+> > > > > > > cent
+> > > > > > > ra
+> > > > > > > lized-ex
+> > > > > > > iting-of-functions
+> > > > > >
+> > > > > > You exit only from one location (not multiple) and not from a
+> > > > > > nested context. Here you just add more complexity by doing this.
+> > > > >
+> > > > > Where is the complexity ? I see it as a standard way of undoing on
+> exit.
+> > > > > Tomas
+> > > >
+> > > > Jarkko, can you please respond.
+> > > > Thanks
+> > > > Tomas
+> > >
+> > > I was away for Mon-Wed last week and did not work on TPM for Thu-Fri.
+> > >
+> > > My earlier comment was incorrect as there are two locations to exit
+> > > (not sure how I managed to overlook the patch that way).
+> > >
+> > > Thus, I have only two very  minor requets:
+> > >
+> > > * Remove the extra newline (the last line addition in the patch).
+> > Okay
+> > > * Use just label named out as we have only one exception handler.
+> > Cannot do that, as the bail out is prior to cmd_ready request so there is no
+> need for go_idle which is under out label.
+> > >
+> > > I'll move on to testing, and if it it passes, I can do those updates myself.
+> > Thanks,  I prefer to resend myself.
+> >
+> > Tomas
+> 
+> Add my tested-by as it is cosmectic change, thanks.
 
-> Ok, if I understand correctly tc_clkevt2_set_oneshot is called from
-> atomic context so it shouldn't call tc_clkevt2_shutdown.
-> 
-> Back in 2016, tglx said:
-> "There was an earlier discussion about the clk stuff. Actually the lock
-> protecting disable/enable should be made raw, but there was some crap going on
-> in some of the clk callbacks which made that impossible. We realy should
-> revisit this."
-> 
-> Anyway, I'll try to avoid disabling the clock just to reenable it
-> afterwards.
-> 
-> (Actually, I've just checked before sending and I've found your patch,
-> I'll do something similar)
-thanks.
 
-> > >  - the current solution is wasting some TCB channels
-> > > 
-> > > The plan is to get this driver upstream, then convert the TCB PWM driver to be
-> > > able to get rid of the tcb_clksrc driver along with atmel_tclib.
-> > 
-> > The config options are now less than optimal (for me at least). On
-> > oldconfig it asks you for PIT and I say selected no because I wanted the
-> > new one. So I end up with nothing.
-> > Not sure you want do something about it…
-> > 
-> 
-> I don't think you ending up with nothing but probably you removed the
-> PIT and kept ATMEL_TCLIB which is the combination that is really
-> difficult to protect from. I don't think it is worth the added Kconfig
-> complexity.
-
-TCLIB was still enabled yes. It is 'oldconfig'.
-
-> > Is the resolution more or the same compared what we have in -RT? On an
-> > idle system this clocks goes up to 180us/ 190us while the old clock
-> > started at 160us and moved to around 180us after one hackbench
-> > invocation. This could be nothing, it could be a lower frequency of the
-> > clockevents device.
-> > 
-> 
-> The driver shouldn't change anything on that side.
-> 
-> > If you intend to stick with this driver then I would replace the current
-> > hack in -RT with this series.
-> > 
-> 
-> That is one of the goal, yes.
-> 
-> The remaining one would be "clocksource: TCLIB: Allow higher clock rates
-> for clock events"
-
-I see. So I would need to keep that patch in queue after it was
-dismissed from duty…
-
-Sebastian
+What change exactly? I had impression you've accepted the patch as is?
+Thanks
+Tomas
