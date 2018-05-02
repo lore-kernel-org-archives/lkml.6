@@ -1,10 +1,10 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4101065-1525230505-2-5055516430105259605
+X-Cyrus-Session-Id: sloti22d1t05-4101065-1525230477-2-9501734708277397408
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES enro, BAYES_USED global,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525230504; b=CoBLn3HWI21jkHoJB1OiE5cWVZdLBY92vuysiWEVI/wUI6qV3p
-    9GPJj3h12Q8jW1eLiEVZ9kThC1twxDHY7un/YeaDlWEZAQKQmN7ojT11RKuA81Vv
-    g+LEx/sjVh19JtUeRbN8SrN18njB3InqbuiEil+xE63sNBfEWXk9JLNzwmIDzGJh
-    TdLUc1Mvac1sanIIqQWO/6cLF/u8rkckABe1qg14Xobj2At3Q8zDqHnX+kThr4qu
-    tp+OtA0mKmf2WIiXkqmbTxQzr4v29HJW6bwM5rQdVvzsyZk0ltfHokYdg4Bo+UfV
-    T3OMnxJ0cikwaJE8FKTToNwFfydE3XxrpJjQ==
+    1525230477; b=O4vtA36b2/bsumX/F6v3BozgpQx8CikN27uYzZ62l0IRGUNoDy
+    puAQeQV8Ep/zXVlhoSM6NTND6MwogHy3jQlg1Vl5j86swzeiCv2hP5nuvVXiXbfj
+    rUWRIVtCNOqx7xp4XoJQ48OoPp3ui7N4kghNt7dI5poG74Puklh/I7B1aZKg1kKL
+    ZnSyvdfXZcNtjzm9/BzJDaxRzS6RRIf6roAAJNGnkMw25AcuSumu6ZiZrRftLV2K
+    +k81XQNUKieVQG0zsvHwQoRNezgODp2T7+AdpPuAZ9nTve1Az1YIrtpS+UkvKTTe
+    UVqEYBVCvl1PCISZ8WHk9R4U+iCWyH7cNbwQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1525230504; bh=
-    EcDOiG9R9UFJPKnOzR6VsnYAlhrNUJLf44LK5ZW/WPI=; b=gb0cxinhLEbAhZLX
-    XCkN9NpO5tCcn0zRhyfUl/ZdFxAGc81TBQH1pomY4H+xIrEUyjdqoaKXTb1m4pUW
-    1KlZIlxK+qLPI75HR8u6XCDun0iOcrDSShUb3DdUPMsb7Mu9ygmXz9gWSDSx8PTU
-    f1EOkICIt3x3C5nblUpQ+0NX9UfkgG4igJD+9zLwW5wTc0diaaOXIc/YvndijaId
-    97HQnFPMF+2Aurf3ooifWbxrOBGigjcLW5GkKHKdlpk6K24K9GsYAGcMojvb/qn0
-    oZ0qbd0fdyeUXwEcSbz4QMfHkzIR8PH/unLKW1K5eMJI/oh9NL36Bhl7f4WCCnal
-    HVGzrg==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:sender:list-id; s=fm2; t=1525230477; bh=
+    JTTk1SlxZZFd0VNvIt4hGdKLUZMOYFoNrX30rx9MwKk=; b=Z9D7j6rEy9RedTTU
+    RBzipR8xgpa/vAxNPv7b1PtcoMMK7Tand6CiyfdkUYOjqQCcSv5cqPuVg2VYQstl
+    jhgu3L+77QZxgPIwviO6HK2rN2LUiXNBJPBpyzpHCgPv+8AKguKZ6bbOLqKPom0p
+    zzr2sZEOQpeX63U0OGpSgZ3j0lrZJrC+09k2gmjHbRhAYUaqSGyp+o7YA5iJICAL
+    H4A0YPduyCP54q8AzgUG+kp0MVMTRGdsy4CPbY5TNRPLtLCVm86Vw/wJ0vyEHY81
+    eWKv484/V+QSldjBqkY0XQMTvh0WqGtByuouMW+xBJPAyqJDru1ILPweo2YeGX/j
+    2Z3T+Q==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -42,7 +42,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=intel.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
@@ -57,26 +57,26 @@ Authentication-Results: mx4.messagingengine.com;
       header.domain=intel.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfK63L8Xup7+mEwz6k1Sl0sMhaiBIM0aJBESgZSPSB+odGZBZa7iOR+EX3cgEJhLfy+dJoLTX3/Phkk/MUfYAYncxKs9FgJ9eHeFz/RENhymYFFVl56ZB
-    BxfUOmpw0pPTzFq2i4zBFUwFfyknKAZxh4puAVKztCDKOWvsud2LPxmb1Pyvyfm+OrFVWOeVKPlm/3cVcCP8ReYSsV1goENw9PXUWUg/w50aB61mfBYakEII
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfDeuAcun9dNDQZoxg8ioJ+DAqFsP6MfdDaI0TQ062wsfgcwPcOKHsK1PgjNHvdAJx9AipxwzVxdYe7Wr0hP+ipeZ1Xb0ph4TGEFixt0OHp5CO4lbd89e
+    oU8YieNAEM+biT8f5zrYXM6/Uy1d+YX/zcAR1u3de6r+Lb1+32xkxkB3J8fPnZIbhfmDvbe1ECKQ++jqJSrGwOYtfbFivv1F1pGmj+F46kosi6P8O6uV936Z
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=QyXUC8HyAAAA:8
-    a=VwQbUJbxAAAA:8 a=xc2XTRMxS-wbUm1phvUA:9 a=IPxNYz59a0QIK62-:21
-    a=iz4iQLsm0KqY_e1Y:21 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=VwQbUJbxAAAA:8 a=7mDuTfA3LRDM-GoIaDYA:9 a=x8gzFH9gYPwA:10
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751234AbeEBDIJ (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 1 May 2018 23:08:09 -0400
-Received: from mga12.intel.com ([192.55.52.136]:63836 "EHLO mga12.intel.com"
+        id S1751472AbeEBDHb (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 1 May 2018 23:07:31 -0400
+Received: from mga12.intel.com ([192.55.52.136]:63837 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751308AbeEBDB6 (ORCPT <rfc822;linux-api@vger.kernel.org>);
-        Tue, 1 May 2018 23:01:58 -0400
+        id S1751359AbeEBDCB (ORCPT <rfc822;linux-api@vger.kernel.org>);
+        Tue, 1 May 2018 23:02:01 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,353,1520924400";
-   d="scan'208";a="46058293"
+   d="scan'208";a="46058318"
 From: Wu Hao <hao.wu@intel.com>
 To: atull@kernel.org, mdf@kernel.org, linux-fpga@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -87,9 +87,9 @@ Cc: linux-api@vger.kernel.org, luwei.kang@intel.com,
         Shiva Rao <shiva.rao@intel.com>,
         Christopher Rauer <christopher.rauer@intel.com>,
         Xiao Guangrong <guangrong.xiao@linux.intel.com>
-Subject: [PATCH v5 07/28] fpga: dfl: add chardev support for feature devices
-Date: Wed,  2 May 2018 10:50:10 +0800
-Message-Id: <1525229431-3087-8-git-send-email-hao.wu@intel.com>
+Subject: [PATCH v5 08/28] fpga: dfl: add dfl_fpga_cdev_find_port
+Date: Wed,  2 May 2018 10:50:11 +0800
+Message-Id: <1525229431-3087-9-git-send-email-hao.wu@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1525229431-3087-1-git-send-email-hao.wu@intel.com>
 References: <1525229431-3087-1-git-send-email-hao.wu@intel.com>
@@ -99,222 +99,106 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-For feature devices drivers, both the FPGA Management Engine (FME) and
-Accelerated Function Unit (AFU) driver need to expose user interfaces via
-the device file, for example, mmap and ioctls.
-
-This patch adds chardev support in the dfl driver for feature devices,
-FME and AFU. It reserves the chardev regions for FME and AFU, and provide
-interfaces for FME and AFU driver to register their device file operations.
+For feature devices, we need a method to find the port dedicated
+to the device. This patch adds a function dfl_fpga_cdev_find_port
+for this purpose. e.g FPGA Management Engine (FME) Partial
+Reconfiguration sub feature, it uses this function to find
+dedicated port on the device for PR function implementation.
 
 Signed-off-by: Tim Whisonant <tim.whisonant@intel.com>
 Signed-off-by: Enno Luebbers <enno.luebbers@intel.com>
 Signed-off-by: Shiva Rao <shiva.rao@intel.com>
 Signed-off-by: Christopher Rauer <christopher.rauer@intel.com>
-Signed-off-by: Zhang Yi <yi.z.zhang@intel.com>
 Signed-off-by: Xiao Guangrong <guangrong.xiao@linux.intel.com>
 Signed-off-by: Wu Hao <hao.wu@intel.com>
+Acked-by: Alan Tull <atull@kernel.org>
+Acked-by: Moritz Fischer <mdf@kernel.org>
 ---
-v2: rebased
-v3: move chardev support to fpga-dfl framework
-v4: rebase, and add more comments in code.
-v5: rebase, and add dfl_ prefix to APIs and data structures.
+v3: s/fpga_for_each_port/fpga_cdev_find_port/
+    move fpga_cdev_find_port to fpga-dfl module.
+v4: improve description in commit message.
+    add comments to remind user to put_device after use this function.
+v5: add "dfl_" prefix to functions.
+    improve function comments per suggestion from Alan Tull.
+    add Acked-by from Alan and Moritz.
 ---
- drivers/fpga/dfl.c | 104 ++++++++++++++++++++++++++++++++++++++++++++++++++++-
- drivers/fpga/dfl.h |  14 ++++++++
- 2 files changed, 117 insertions(+), 1 deletion(-)
+ drivers/fpga/dfl.c | 32 ++++++++++++++++++++++++++++++++
+ drivers/fpga/dfl.h | 21 +++++++++++++++++++++
+ 2 files changed, 53 insertions(+)
 
 diff --git a/drivers/fpga/dfl.c b/drivers/fpga/dfl.c
-index c1462e9..18aba02 100644
+index 18aba02..1e06efb 100644
 --- a/drivers/fpga/dfl.c
 +++ b/drivers/fpga/dfl.c
-@@ -74,6 +74,96 @@ static enum dfl_id_type feature_dev_id_type(struct platform_device *pdev)
- 	return DFL_ID_MAX;
+@@ -795,6 +795,38 @@ void dfl_fpga_remove_feature_devs(struct dfl_fpga_cdev *cdev)
  }
+ EXPORT_SYMBOL_GPL(dfl_fpga_remove_feature_devs);
  
-+struct dfl_chardev_info {
-+	const char *name;
-+	dev_t devt;
-+};
-+
-+/* indexed by enum dfl_fpga_devt_type */
-+struct dfl_chardev_info dfl_chrdevs[] = {
-+	{.name = DFL_FPGA_FEATURE_DEV_FME},	/* DFL_FPGA_DEVT_FME */
-+	{.name = DFL_FPGA_FEATURE_DEV_PORT},	/* DFL_FPGA_DEVT_AFU */
-+};
-+
-+static void dfl_chardev_uinit(void)
++/**
++ * __dfl_fpga_cdev_find_port - find a port under given container device
++ *
++ * @cdev: container device
++ * @data: data passed to match function
++ * @match: match function used to find specific port from the port device list
++ *
++ * Find a port device under container device. This function needs to be
++ * invoked with lock held.
++ *
++ * Return: pointer to port's platform device if successful, NULL otherwise.
++ *
++ * NOTE: you will need to drop the device reference with put_device() after use.
++ */
++struct platform_device *
++__dfl_fpga_cdev_find_port(struct dfl_fpga_cdev *cdev, void *data,
++			  int (*match)(struct platform_device *, void *))
 +{
-+	int i;
++	struct dfl_feature_platform_data *pdata;
++	struct platform_device *port_dev;
 +
-+	for (i = 0; i < DFL_FPGA_DEVT_MAX; i++)
-+		if (MAJOR(dfl_chrdevs[i].devt)) {
-+			unregister_chrdev_region(dfl_chrdevs[i].devt,
-+						 MINORMASK);
-+			dfl_chrdevs[i].devt = MKDEV(0, 0);
-+		}
-+}
++	list_for_each_entry(pdata, &cdev->port_dev_list, node) {
++		port_dev = pdata->dev;
 +
-+static int dfl_chardev_init(void)
-+{
-+	int i, ret;
-+
-+	for (i = 0; i < DFL_FPGA_DEVT_MAX; i++) {
-+		ret = alloc_chrdev_region(&dfl_chrdevs[i].devt, 0, MINORMASK,
-+					  dfl_chrdevs[i].name);
-+		if (ret)
-+			goto exit;
++		if (match(port_dev, data) && get_device(&port_dev->dev))
++			return port_dev;
 +	}
 +
-+	return 0;
-+
-+exit:
-+	dfl_chardev_uinit();
-+	return ret;
++	return NULL;
 +}
++EXPORT_SYMBOL_GPL(__dfl_fpga_cdev_find_port);
 +
-+static dev_t dfl_get_devt(enum dfl_fpga_devt_type type, int id)
-+{
-+	WARN_ON(type >= DFL_FPGA_DEVT_MAX);
-+
-+	return MKDEV(MAJOR(dfl_chrdevs[type].devt), id);
-+}
-+
-+/**
-+ * dfl_fpga_register_dev_ops - register cdev ops for feature dev
-+ *
-+ * @pdev: feature dev.
-+ * @fops: file operations for feature dev's cdev.
-+ * @owner: owning module/driver.
-+ *
-+ * Return: 0 on success, negative error code otherwise.
-+ */
-+int dfl_fpga_register_dev_ops(struct platform_device *pdev,
-+			      const struct file_operations *fops,
-+			      struct module *owner)
-+{
-+	struct dfl_feature_platform_data *pdata = dev_get_platdata(&pdev->dev);
-+
-+	cdev_init(&pdata->cdev, fops);
-+	pdata->cdev.owner = owner;
-+
-+	/*
-+	 * set parent to the feature device so that its refcount is
-+	 * decreased after the last refcount of cdev is gone, that
-+	 * makes sure the feature device is valid during device
-+	 * file's life-cycle.
-+	 */
-+	pdata->cdev.kobj.parent = &pdev->dev.kobj;
-+
-+	return cdev_add(&pdata->cdev, pdev->dev.devt, 1);
-+}
-+EXPORT_SYMBOL_GPL(dfl_fpga_register_dev_ops);
-+
-+/**
-+ * dfl_fpga_unregister_dev_ops - unregister cdev ops for feature dev
-+ * @pdev: feature dev.
-+ */
-+void dfl_fpga_unregister_dev_ops(struct platform_device *pdev)
-+{
-+	struct dfl_feature_platform_data *pdata = dev_get_platdata(&pdev->dev);
-+
-+	cdev_del(&pdata->cdev);
-+}
-+EXPORT_SYMBOL_GPL(dfl_fpga_unregister_dev_ops);
-+
- /**
-  * struct build_feature_devs_info - info collected during feature dev build.
-  *
-@@ -208,9 +298,13 @@ static int build_info_commit_dev(struct build_feature_devs_info *binfo)
- 		      enum dfl_id_type type, const char *name,
- 		      void __iomem *ioaddr)
- {
-+	enum dfl_fpga_devt_type devt_type = DFL_FPGA_DEVT_FME;
- 	struct platform_device *fdev;
- 	int ret;
- 
-+	if (type == PORT_ID)
-+		devt_type = DFL_FPGA_DEVT_PORT;
-+
- 	/* we will create a new device, commit current device first */
- 	ret = build_info_commit_dev(binfo);
- 	if (ret)
-@@ -234,6 +328,7 @@ static int build_info_commit_dev(struct build_feature_devs_info *binfo)
- 		return fdev->id;
- 
- 	fdev->dev.parent = &binfo->cdev->region->dev;
-+	fdev->dev.devt = dfl_get_devt(devt_type, fdev->id);
- 
- 	return 0;
- }
-@@ -702,13 +797,20 @@ void dfl_fpga_remove_feature_devs(struct dfl_fpga_cdev *cdev)
- 
  static int __init dfl_fpga_init(void)
  {
-+	int ret;
-+
- 	dfl_ids_init();
- 
--	return 0;
-+	ret = dfl_chardev_init();
-+	if (ret)
-+		dfl_ids_destroy();
-+
-+	return ret;
- }
- 
- static void __exit dfl_fpga_exit(void)
- {
-+	dfl_chardev_uinit();
- 	dfl_ids_destroy();
- }
- 
+ 	int ret;
 diff --git a/drivers/fpga/dfl.h b/drivers/fpga/dfl.h
-index 2ede915..5fcb1a1 100644
+index 5fcb1a1..2b6aaef 100644
 --- a/drivers/fpga/dfl.h
 +++ b/drivers/fpga/dfl.h
-@@ -15,6 +15,7 @@
- #define __FPGA_DFL_H
+@@ -290,4 +290,25 @@ struct dfl_fpga_cdev *
+ dfl_fpga_enumerate_feature_devs(struct dfl_fpga_enum_info *info);
+ void dfl_fpga_remove_feature_devs(struct dfl_fpga_cdev *cdev);
  
- #include <linux/bitfield.h>
-+#include <linux/cdev.h>
- #include <linux/delay.h>
- #include <linux/fs.h>
- #include <linux/iopoll.h>
-@@ -150,6 +151,7 @@ struct dfl_feature {
-  *
-  * @node: node to link feature devs to container device's port_dev_list.
-  * @lock: mutex to protect platform data.
-+ * @cdev: cdev of feature dev.
-  * @dev: ptr to platform device linked with this platform data.
-  * @dfl_cdev: ptr to container device.
-  * @disable_count: count for port disable.
-@@ -159,6 +161,7 @@ struct dfl_feature {
- struct dfl_feature_platform_data {
- 	struct list_head node;
- 	struct mutex lock;
-+	struct cdev cdev;
- 	struct platform_device *dev;
- 	struct dfl_fpga_cdev *dfl_cdev;
- 	unsigned int disable_count;
-@@ -176,6 +179,17 @@ static inline int dfl_feature_platform_data_size(const int num)
- 		num * sizeof(struct dfl_feature);
- }
- 
-+enum dfl_fpga_devt_type {
-+	DFL_FPGA_DEVT_FME,
-+	DFL_FPGA_DEVT_PORT,
-+	DFL_FPGA_DEVT_MAX,
-+};
++/*
++ * need to drop the device reference with put_device() after use port platform
++ * device returned by __dfl_fpga_cdev_find_port and dfl_fpga_cdev_find_port
++ * functions.
++ */
++struct platform_device *
++__dfl_fpga_cdev_find_port(struct dfl_fpga_cdev *cdev, void *data,
++			  int (*match)(struct platform_device *, void *));
 +
-+int dfl_fpga_register_dev_ops(struct platform_device *pdev,
-+			      const struct file_operations *fops,
-+			      struct module *owner);
-+void dfl_fpga_unregister_dev_ops(struct platform_device *pdev);
++static inline struct platform_device *
++dfl_fpga_cdev_find_port(struct dfl_fpga_cdev *cdev, void *data,
++			int (*match)(struct platform_device *, void *))
++{
++	struct platform_device *pdev;
 +
- #define dfl_fpga_dev_for_each_feature(pdata, feature)			    \
- 	for ((feature) = (pdata)->features;				    \
- 	   (feature) < (pdata)->features + (pdata)->num; (feature)++)
++	mutex_lock(&cdev->lock);
++	pdev = __dfl_fpga_cdev_find_port(cdev, data, match);
++	mutex_unlock(&cdev->lock);
++
++	return pdev;
++}
+ #endif /* __FPGA_DFL_H */
 -- 
 1.8.3.1
 
